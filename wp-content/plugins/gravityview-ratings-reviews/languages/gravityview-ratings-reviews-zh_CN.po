@@ -1,0 +1,463 @@
+# Copyright (C) 2015 Katz Web Services, Inc.
+# This file is distributed under the same license as the GravityView - Ratings & Reviews package.
+# Translators:
+msgid ""
+msgstr ""
+"Project-Id-Version: GravityView Ratings & Reviews\n"
+"Report-Msgid-Bugs-To: https://gravityview.co/support/\n"
+"POT-Creation-Date: 2015-05-08 17:18:53+00:00\n"
+"PO-Revision-Date: 2014-12-11 23:25+0000\n"
+"Last-Translator: Katz Web Services, Inc. <support@katz.co>\n"
+"Language-Team: Chinese (China) (http://www.transifex.com/katzwebservices/gravityview-ratings-reviews/language/zh_CN/)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: zh_CN\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: grunt-wp-i18n 0.5.2\n"
+"X-Poedit-Basepath: ../\n"
+"X-Poedit-Bookmarks: \n"
+"X-Poedit-Country: United States\n"
+"X-Poedit-KeywordsList: __;_e;_x:1,2c;_ex:1,2c;_n:1,2;_nx:1,2,4c;_n_noop:1,2;_nx_noop:1,2,3c;esc_attr__;esc_html__;esc_attr_e;esc_html_e;esc_attr_x:1,2c;esc_html_x:1,2c;\n"
+"X-Poedit-SearchPath-0: .\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Textdomain-Support: yes\n"
+
+#: includes/class-fields.php:48
+msgid "No review text:"
+msgstr "无评价提示︰"
+
+#: includes/class-fields.php:49
+msgid "Text to display when there are no reviews."
+msgstr "有没有任何评价时要显示的文本。"
+
+#: includes/class-fields.php:50
+msgid "No Review. Be the First!"
+msgstr "还没有评价，去评价吧！"
+
+#: includes/class-fields.php:55
+msgid "One review text:"
+msgstr "“一条评价”提示︰"
+
+#: includes/class-fields.php:56
+msgid "Text to display when there is one review."
+msgstr "有一个评价时要显示的文本。"
+
+#: includes/class-fields.php:57 includes/class-helper.php:158
+#: includes/class-helper.php:260
+msgid "1 Review"
+msgstr "1 条评价"
+
+#: includes/class-fields.php:62
+msgid "More reviews text:"
+msgstr "“更多评价”提示︰"
+
+#: includes/class-fields.php:64 includes/class-helper.php:154
+#: includes/class-helper.php:261
+msgid "% Reviews"
+msgstr "% 条评价"
+
+#: includes/class-fields.php:69
+msgid "Show average rating (stars or votes)"
+msgstr "显示平均评分 （星级或投票）"
+
+#: includes/class-fields.php:91 includes/class-sorting.php:41
+msgid "Reviews Link"
+msgstr "评论链接"
+
+#: includes/class-fields.php:93
+msgid "Display ratings and link to reviews."
+msgstr "显示评级并链接到点评。"
+
+#: includes/class-form-fields.php:203
+msgid "Total: 1 Star"
+msgstr "1星总数："
+
+#: includes/class-form-fields.php:208
+msgid "Total: 2 Stars"
+msgstr "2星总数："
+
+#: includes/class-form-fields.php:213
+msgid "Total: 3 Stars"
+msgstr "3星总数："
+
+#: includes/class-form-fields.php:218
+msgid "Total: 4 Stars"
+msgstr "4星总数："
+
+#: includes/class-form-fields.php:223
+msgid "Total: 5 Stars"
+msgstr "5星总数："
+
+#: includes/class-form-fields.php:228 includes/fields/stars.php:40
+msgid "Stars Rating"
+msgstr "星级（5星）"
+
+#: includes/class-form-fields.php:233
+msgid "Total: Down Votes"
+msgstr "吐槽总数："
+
+#: includes/class-form-fields.php:238
+msgid "Total: Neutral Votes"
+msgstr "中性总数："
+
+#: includes/class-form-fields.php:243
+msgid "Total: Up Votes"
+msgstr "点赞总数："
+
+#: includes/class-form-fields.php:248 includes/fields/votes.php:27
+msgid "Votes Rating"
+msgstr "总体评价"
+
+#: includes/class-form-fields.php:254
+msgid "Total: Ratings"
+msgstr "评级总计"
+
+#: includes/class-form-fields.php:262
+msgid "Review Comments & Data"
+msgstr "评论内容&数据"
+
+#: includes/class-helper.php:156
+msgid "No Reviews"
+msgstr "没有评价"
+
+#: includes/class-helper.php:259
+msgid "Leave a Review"
+msgstr "写评价"
+
+#: includes/class-helper.php:317
+msgid "Reviews of this entry"
+msgstr "此条目的评价"
+
+#: includes/class-helper.php:457
+msgid "Edit This"
+msgstr "编辑这个"
+
+#. translators: 1: The rating, 2: The number of ratings
+#: includes/class-helper.php:737
+msgid "%1$s rating based on %2$s rating"
+msgid_plural "%1$s rating based on %2$s ratings"
+msgstr[0] "%1$s 个评级，一共 %1$ 个评级"
+
+#. translators: 1: The rating
+#: includes/class-helper.php:741 includes/class-helper.php:948
+msgid "%s rating"
+msgstr "%s 个评分"
+
+#: includes/class-helper.php:877
+msgid "+%d"
+msgstr "+%d"
+
+#: includes/class-helper.php:878
+msgid "-%d"
+msgstr "-%d"
+
+#: includes/class-helper.php:879
+msgid "No Rating"
+msgstr "没有评级"
+
+#. translators: 1: The rating, 2: The number of ratings
+#: includes/class-helper.php:944
+msgid "%1$s rating based on %2$s vote"
+msgid_plural "%1$s rating based on %2$s votes"
+msgstr[0] "%1$s 个评级，一共 %1$ 次投票"
+
+#: includes/class-helper.php:965
+msgid "Up vote shows the entry is useful for the author"
+msgstr "点赞说明该条目获得客户好评"
+
+#: includes/class-helper.php:971
+msgid "Down vote shows the entry is not useful for the author"
+msgstr "吐槽说明该条目让客户不满意"
+
+#: includes/class-helper.php:1141
+msgid "%s(): Argument #%d is not an array"
+msgstr "%s(): # Argument%d不是一个数组"
+
+#: includes/class-meta-box-edit-review.php:124
+msgid "GravityView - Review Attributes"
+msgstr "GravityView-评价属性"
+
+#: includes/class-meta-box-edit-review.php:160 includes/class-review.php:595
+msgid "Title"
+msgstr "标题"
+
+#: includes/class-meta-box-edit-review.php:167
+#: includes/class-meta-box-edit-review.php:181 includes/class-review.php:600
+msgid "Rate"
+msgstr "评级"
+
+#: includes/class-meta-box.php:49
+msgid "Enable entry reviews"
+msgstr "启用条目评价"
+
+#: includes/class-meta-box.php:56
+msgid "Hide ratings fields"
+msgstr "隐藏评级字段"
+
+#: includes/class-meta-box.php:66
+msgid "Allow empty review text"
+msgstr "允许评价为空"
+
+#: includes/class-meta-box.php:67
+msgid "Comments on reviews always require text."
+msgstr "评论的评论总是需要文本。"
+
+#: includes/class-meta-box.php:75
+msgid "Limit to one review per person per entry"
+msgstr "限制每人只能为一个条目写一条评价"
+
+#: includes/class-meta-box.php:83
+msgid "Review type"
+msgstr "评价类型"
+
+#: includes/class-meta-box.php:88
+msgid "Vote (&uarr;/&darr;)"
+msgstr "投票 (&uarr; / &darr;)"
+
+#: includes/class-meta-box.php:89
+msgid "5-Star Rating"
+msgstr "5星评级"
+
+#: includes/class-meta-box.php:109
+msgid "Ratings & Reviews"
+msgstr "评级与评价"
+
+#: includes/class-post-bridge.php:102 includes/class-post-bridge.php:103
+msgid "Entry"
+msgstr "条目"
+
+#: includes/class-post-bridge.php:104
+msgid "View Entry"
+msgstr "查看条目"
+
+#: includes/class-post-bridge.php:140
+msgid "GF entry ID %d, GF form ID %d"
+msgstr "GF 条目 ID %d，GF 表单 ID %d"
+
+#: includes/class-post-bridge.php:163
+msgid "Unable to create post bridge"
+msgstr "无法创建文章桥接"
+
+#: includes/class-review.php:162
+msgid "GravityView Reviews"
+msgstr "GravityView 评价"
+
+#: includes/class-review.php:371 includes/class-review.php:1007
+msgid "You have already reviewed this entry."
+msgstr "您已经评价过此条目。"
+
+#: includes/class-review.php:542
+msgid ""
+"Duplicate review detected; it looks as though you&#8217;ve already said "
+"that!"
+msgstr "发现重复评价；貌似你已经评价过了！"
+
+#: includes/class-review.php:954
+msgid "Name"
+msgstr "姓名"
+
+#: includes/class-review.php:956
+msgid "Email"
+msgstr "电子邮件"
+
+#: includes/class-review.php:958
+msgid "Website"
+msgstr "网址"
+
+#: includes/class-review.php:962
+msgid "Required fields are marked %s"
+msgstr "必填内容标记为 %s"
+
+#: includes/class-review.php:992
+msgid "You must be <a href=\"%s\">logged in</a> to post a comment."
+msgstr "你必须先<a href=\"%s\">登录</a>然后再发表评论。"
+
+#: includes/class-review.php:994
+msgid ""
+"Logged in as <a href=\"%1$s\">%2$s</a>. <a href=\"%3$s\" title=\"Log out of "
+"this account\">Log out?</a>"
+msgstr "登录用户： <a href=\"%1$s\">%2$s</a> | <a href=\"%3$s\" title=\"Log out of this account\">退出登录？</a>"
+
+#: includes/class-review.php:995
+msgid "Your email address will not be published."
+msgstr "您的电子邮箱地址不会被公开。"
+
+#: includes/class-review.php:996
+msgid ""
+"You may use these <abbr title=\"HyperText Markup Language\">HTML</abbr> tags"
+" and attributes: %s"
+msgstr "您可能需要 <abbr title=“HyperText Markup Language”>HTML</abbr> 标签和属性: %s"
+
+#: includes/class-review.php:1000
+msgid "Review this entry"
+msgstr "需求评价"
+
+#: includes/class-review.php:1001
+msgid "Reply to %s"
+msgstr "回复 %s"
+
+#: includes/class-review.php:1002
+msgid "Cancel reply"
+msgstr "取消回复"
+
+#: includes/class-review.php:1003
+msgid "Post Review"
+msgstr "发表评价"
+
+#: includes/class-review.php:1035
+msgid "Comment"
+msgstr "评论"
+
+#: includes/class-review.php:1036
+msgid "Post Comment"
+msgstr "发表评论"
+
+#: includes/class-review.php:1037
+msgid "Leave comment on this review"
+msgstr "发表文字评论"
+
+#: includes/class-review.php:1038
+msgid "Cancel comment"
+msgstr "取消评论"
+
+#: includes/class-review.php:1039
+msgid "<%= number %> rating"
+msgstr "<%= 数字 %> 评级"
+
+#: includes/fields/stars.php:42
+msgid "Display the entry's star rating (out of 5)"
+msgstr "显示条目的星级（共5个)"
+
+#: includes/fields/votes.php:28
+msgid "Display the aggregate up/down rating."
+msgstr "显示总计点赞/吐槽评级。"
+
+#: lib/EDD_SL_Plugin_Updater.php:181
+msgid ""
+"There is a new version of %1$s available. <a target=\"_blank\" "
+"class=\"thickbox\" href=\"%2$s\">View version %3$s details</a>."
+msgstr "有一个新的版本 %1$s可用。<a target=\"_blank\" class=\"thickbox\" href=\"%2$s\">查看版本 %3$s 的详细信息</a>。"
+
+#: lib/EDD_SL_Plugin_Updater.php:188
+msgid ""
+"There is a new version of %1$s available. <a target=\"_blank\" "
+"class=\"thickbox\" href=\"%2$s\">View version %3$s details</a> or <a "
+"href=\"%4$s\">update now</a>."
+msgstr "有一个新的版本 %1$s可用。<a target=\"_blank\" class=\"thickbox\" href=\"%2$s\">查看版本 %3$s 详情</a>或<a href=\"%4$s\">现在更新</a>。"
+
+#: lib/EDD_SL_Plugin_Updater.php:332
+msgid "You do not have permission to install plugin updates"
+msgstr "你无权安装插件更新"
+
+#: lib/EDD_SL_Plugin_Updater.php:332
+msgid "Error"
+msgstr "错误"
+
+#: lib/class-gravityview-extension.php:351
+msgid "Could not activate the %s Extension; GravityView is not active."
+msgstr "不能激活 %s 扩展；GravityView未启用。"
+
+#: lib/class-gravityview-extension.php:355
+msgid "The %s Extension requires GravityView Version %s or newer."
+msgstr "%s 扩展需要GravityView版本 %s 或更高。"
+
+#: lib/class-gravityview-extension.php:359
+msgid ""
+"The %s Extension requires PHP Version %s or newer. Please ask your host to "
+"upgrade your server's PHP."
+msgstr "%s 扩展需要PHP版本 %s 或更新的。请访问您的主机升级服务器的 PHP。"
+
+#: templates/review-item.php:41
+msgid ""
+"<span class=\"by\">%s</span> <cite class=\"gv-review-author-link fn\" "
+"itemprop=\"author\">%s</cite>"
+msgstr "<span class=\"由\">%s</span> <cite class=\"gv-review-author-link fn\" itemprop=\"作者\">%s</cite>"
+
+#: templates/review-item.php:42
+msgid "By"
+msgstr "由"
+
+#: templates/review-item.php:57
+msgid "Edit"
+msgstr "编辑"
+
+#: templates/review-item.php:62
+msgid "This %s is awaiting moderation."
+msgstr "此 %s 正等待评价。"
+
+#: templates/review-item.php:108
+msgid "Comment on this review"
+msgstr "此评价的文字评论"
+
+#: templates/review-item.php:109
+msgid "Log in to comment"
+msgstr "登录后才能评论哦！"
+
+#: templates/review-list-footer.php:14 templates/review-list-header.php:51
+msgid "Comment navigation"
+msgstr "评论导航"
+
+#: templates/review-list-footer.php:15 templates/review-list-header.php:52
+msgid "&larr; Older Comments"
+msgstr "&larr; 更早的评论"
+
+#: templates/review-list-footer.php:16 templates/review-list-header.php:53
+msgid "Newer Comments &rarr;"
+msgstr "最新评论 &rarr;"
+
+#: templates/review-list-header.php:21
+msgid "One review of this entry"
+msgid_plural "%1$s reviews of this entry"
+msgstr[0] "%1$s 个此条目的评价"
+
+#: templates/review-list-header.php:44
+msgid "This entry has no reviews."
+msgstr "此条目没有任何评价。"
+
+#: includes/class-fields.php:63
+msgctxt "The placeholder symbol that will be replaced"
+msgid ""
+"Text to display when there are more than one reviews. %s is replaced by the "
+"number of reviews."
+msgstr "有不止一个评价时要显示的文本。%s 被替换为评价数量。"
+
+#: includes/class-helper.php:653
+msgctxt "Rating description shown when hovering over a star"
+msgid "1 star"
+msgstr "1星"
+
+#: includes/class-helper.php:654
+msgctxt "Rating description shown when hovering over a star"
+msgid "2 stars"
+msgstr "2星"
+
+#: includes/class-helper.php:655
+msgctxt "Rating description shown when hovering over a star"
+msgid "3 stars"
+msgstr "3星"
+
+#: includes/class-helper.php:656
+msgctxt "Rating description shown when hovering over a star"
+msgid "4 stars"
+msgstr "4星"
+
+#: includes/class-helper.php:657
+msgctxt "Rating description shown when hovering over a star"
+msgid "5 stars"
+msgstr "5星"
+
+#: includes/class-review.php:990
+msgctxt "noun"
+msgid "Review"
+msgstr "评价"
+
+#: templates/review-item.php:49
+msgctxt "Item being reviewed"
+msgid "Entry %s"
+msgstr "条目 %s"
+
+#: templates/review-item.php:54
+msgctxt "1: date, 2: time"
+msgid "%1$s at %2$s"
+msgstr "%1$s ， %2$s"
