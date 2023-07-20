@@ -1,0 +1,542 @@
+# Copyright (C) 2023 GravityKit
+# This file is distributed under the same license as the GravityView - Ratings & Reviews package.
+msgid ""
+msgstr ""
+"Project-Id-Version: GravityView - Ratings & Reviews 2.2.1\n"
+"Report-Msgid-Bugs-To: https://gravityview.co/support/\n"
+"POT-Creation-Date: 2015-05-08 17:18:53+00:00\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"PO-Revision-Date: 2023-MO-DA HO:MI+ZONE\n"
+"Last-Translator: Katz Web Services, Inc. <support@katz.co>\n"
+"Language-Team: Katz Web Services, Inc. <support@katz.co>\n"
+"X-Generator: grunt-wp-i18n 0.5.4\n"
+"X-Poedit-KeywordsList: "
+"__;_e;_x:1,2c;_ex:1,2c;_n:1,2;_nx:1,2,4c;_n_noop:1,2;_nx_noop:1,2,3c;esc_"
+"attr__;esc_html__;esc_attr_e;esc_html_e;esc_attr_x:1,2c;esc_html_x:1,2c;\n"
+"Language: en_US\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Poedit-Country: United States\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-Basepath: ../\n"
+"X-Poedit-SearchPath-0: .\n"
+"X-Poedit-Bookmarks: \n"
+"X-Textdomain-Support: yes\n"
+
+#: includes/class-fields.php:49
+msgid "No review text:"
+msgstr ""
+
+#: includes/class-fields.php:50
+msgid "Text to display when there are no reviews."
+msgstr ""
+
+#: includes/class-fields.php:51
+msgid "No Review. Be the First!"
+msgstr ""
+
+#: includes/class-fields.php:56
+msgid "One review text:"
+msgstr ""
+
+#: includes/class-fields.php:57
+msgid "Text to display when there is one review."
+msgstr ""
+
+#: includes/class-fields.php:58 includes/class-helper.php:188
+#: includes/class-helper.php:294
+msgid "1 Review"
+msgstr ""
+
+#: includes/class-fields.php:63
+msgid "More reviews text:"
+msgstr ""
+
+#: includes/class-fields.php:65 includes/class-helper.php:184
+#: includes/class-helper.php:295
+msgid "% Reviews"
+msgstr ""
+
+#: includes/class-fields.php:70
+msgid "Show average rating (stars or votes)"
+msgstr ""
+
+#: includes/class-fields.php:92 includes/class-sorting.php:41
+msgid "Reviews Link"
+msgstr ""
+
+#: includes/class-fields.php:95
+msgid "Display ratings and link to reviews."
+msgstr ""
+
+#: includes/class-form-fields.php:200
+msgid "Total: 1 Star"
+msgstr ""
+
+#: includes/class-form-fields.php:205
+msgid "Total: 2 Stars"
+msgstr ""
+
+#: includes/class-form-fields.php:210
+msgid "Total: 3 Stars"
+msgstr ""
+
+#: includes/class-form-fields.php:215
+msgid "Total: 4 Stars"
+msgstr ""
+
+#: includes/class-form-fields.php:220
+msgid "Total: 5 Stars"
+msgstr ""
+
+#: includes/class-form-fields.php:225 includes/fields/stars.php:42
+msgid "Stars Rating"
+msgstr ""
+
+#: includes/class-form-fields.php:230
+msgid "Total: Down Votes"
+msgstr ""
+
+#: includes/class-form-fields.php:235
+msgid "Total: Neutral Votes"
+msgstr ""
+
+#: includes/class-form-fields.php:240
+msgid "Total: Up Votes"
+msgstr ""
+
+#: includes/class-form-fields.php:245 includes/fields/votes.php:29
+msgid "Votes Rating"
+msgstr ""
+
+#: includes/class-form-fields.php:251
+msgid "Total: Ratings"
+msgstr ""
+
+#: includes/class-form-fields.php:259
+msgid "Review Comments & Data"
+msgstr ""
+
+#: includes/class-helper.php:186
+msgid "No Reviews"
+msgstr ""
+
+#: includes/class-helper.php:293
+msgid "Leave a Review"
+msgstr ""
+
+#: includes/class-helper.php:362
+msgid "Reviews of this entry"
+msgstr ""
+
+#: includes/class-helper.php:507
+msgid "Edit This"
+msgstr ""
+
+#: includes/class-helper.php:545
+msgid "This entry no longer exists."
+msgstr ""
+
+#: includes/class-helper.php:551
+msgid "The form connected to this entry no longer exists."
+msgstr ""
+
+#: includes/class-helper.php:556
+msgid "Gravity Forms must be active to view this entry."
+msgstr ""
+
+#: includes/class-helper.php:822
+#. translators: 1: The rating, 2: The number of ratings
+msgid "%1$s rating based on %2$s rating"
+msgid_plural "%1$s rating based on %2$s ratings"
+msgstr[0] ""
+msgstr[1] ""
+
+#: includes/class-helper.php:826 includes/class-helper.php:1036
+#. translators: 1: The rating
+msgid "%s rating"
+msgstr ""
+
+#: includes/class-helper.php:966
+msgid "+%d"
+msgstr ""
+
+#: includes/class-helper.php:967
+msgid "-%d"
+msgstr ""
+
+#: includes/class-helper.php:968
+msgid "No Rating"
+msgstr ""
+
+#: includes/class-helper.php:1032
+#. translators: 1: The rating, 2: The number of ratings
+msgid "%1$s rating based on %2$s vote"
+msgid_plural "%1$s rating based on %2$s votes"
+msgstr[0] ""
+msgstr[1] ""
+
+#: includes/class-helper.php:1056
+msgid "Up vote shows the entry is useful for the author"
+msgstr ""
+
+#: includes/class-helper.php:1062
+msgid "Down vote shows the entry is not useful for the author"
+msgstr ""
+
+#: includes/class-helper.php:1251
+msgid "%s(): Argument #%d is not an array"
+msgstr ""
+
+#: includes/class-meta-box-edit-review.php:124
+msgid "GravityView - Review Attributes"
+msgstr ""
+
+#: includes/class-meta-box-edit-review.php:160 includes/class-review.php:624
+msgid "Title"
+msgstr ""
+
+#: includes/class-meta-box-edit-review.php:167
+#: includes/class-meta-box-edit-review.php:181 includes/class-review.php:629
+msgid "Rate"
+msgstr ""
+
+#: includes/class-meta-box.php:49
+msgid "Enable entry reviews"
+msgstr ""
+
+#: includes/class-meta-box.php:56
+msgid "Hide ratings fields"
+msgstr ""
+
+#: includes/class-meta-box.php:67
+msgid "Allow empty review text"
+msgstr ""
+
+#: includes/class-meta-box.php:68
+msgid "Comments on reviews always require text."
+msgstr ""
+
+#: includes/class-meta-box.php:77
+msgid "Limit to one review per person per entry"
+msgstr ""
+
+#: includes/class-meta-box.php:86
+msgid "Review type"
+msgstr ""
+
+#: includes/class-meta-box.php:91
+msgid "Vote (&uarr;/&darr;)"
+msgstr ""
+
+#: includes/class-meta-box.php:92
+msgid "5-Star Rating"
+msgstr ""
+
+#: includes/class-meta-box.php:113
+msgid "Ratings & Reviews"
+msgstr ""
+
+#: includes/class-post-bridge.php:105 includes/class-post-bridge.php:106
+msgid "Entry"
+msgstr ""
+
+#: includes/class-post-bridge.php:107
+msgid "View Entry"
+msgstr ""
+
+#: includes/class-post-bridge.php:158
+msgid "GF entry ID %d, GF form ID %d"
+msgstr ""
+
+#: includes/class-post-bridge.php:181
+msgid "Unable to create post bridge"
+msgstr ""
+
+#: includes/class-recalculate-ratings.php:45
+msgid "Recalculate Ratings"
+msgstr ""
+
+#: includes/class-recalculate-ratings.php:68
+msgid "Ratings recalculated."
+msgstr ""
+
+#: includes/class-review.php:167
+msgid "GravityView Reviews"
+msgstr ""
+
+#: includes/class-review.php:401 includes/class-review.php:1055
+#: templates/fields/field-rate_entry-html.php:30
+msgid "You have already reviewed this entry."
+msgstr ""
+
+#: includes/class-review.php:570
+msgid ""
+"Duplicate review detected; it looks as though you&#8217;ve already said "
+"that!"
+msgstr ""
+
+#: includes/class-review.php:1001
+msgid "Name"
+msgstr ""
+
+#: includes/class-review.php:1003
+msgid "Email"
+msgstr ""
+
+#: includes/class-review.php:1005
+msgid "Website"
+msgstr ""
+
+#: includes/class-review.php:1009
+msgid "Required fields are marked %s"
+msgstr ""
+
+#: includes/class-review.php:1040
+msgid "You must be <a href=\"%s\">logged in</a> to post a comment."
+msgstr ""
+
+#: includes/class-review.php:1042
+msgid ""
+"Logged in as <a href=\"%1$s\">%2$s</a>. <a href=\"%3$s\" title=\"Log out of "
+"this account\">Log out?</a>"
+msgstr ""
+
+#: includes/class-review.php:1043
+msgid "Your email address will not be published."
+msgstr ""
+
+#: includes/class-review.php:1044
+msgid ""
+"You may use these <abbr title=\"HyperText Markup Language\">HTML</abbr> "
+"tags and attributes: %s"
+msgstr ""
+
+#: includes/class-review.php:1048
+msgid "Review this entry"
+msgstr ""
+
+#: includes/class-review.php:1049
+msgid "Reply to %s"
+msgstr ""
+
+#: includes/class-review.php:1050
+msgid "Cancel reply"
+msgstr ""
+
+#: includes/class-review.php:1051
+msgid "Post Review"
+msgstr ""
+
+#: includes/class-review.php:1085
+msgid "Comment"
+msgstr ""
+
+#: includes/class-review.php:1086
+msgid "Post Comment"
+msgstr ""
+
+#: includes/class-review.php:1087
+msgid "Leave comment on this review"
+msgstr ""
+
+#: includes/class-review.php:1088
+msgid "Cancel comment"
+msgstr ""
+
+#: includes/class-review.php:1089
+msgid "<%= number %> rating"
+msgstr ""
+
+#: includes/fields/rate_entry.php:36
+msgid "Rate Entry"
+msgstr ""
+
+#: includes/fields/rate_entry.php:37
+msgid "Rate entry in multiple entries view"
+msgstr ""
+
+#: includes/fields/rate_entry.php:122
+msgid "Entry rating could not be updated. Please try again or contact support."
+msgstr ""
+
+#: includes/fields/rate_entry.php:129
+msgid "Entry could not be rated. Please try again or contact support."
+msgstr ""
+
+#: includes/fields/rate_entry.php:149
+msgid "You can  could not be rated. Please try again or contact support."
+msgstr ""
+
+#: includes/fields/stars.php:44
+msgid "Display the entry's star rating (out of 5)"
+msgstr ""
+
+#: includes/fields/votes.php:30
+msgid "Display the aggregate up/down rating."
+msgstr ""
+
+#: lib/EDD_SL_Plugin_Updater.php:257
+#. translators: the plugin name.
+msgid "There is a new version of %1$s available."
+msgstr ""
+
+#: lib/EDD_SL_Plugin_Updater.php:263
+msgid "Contact your network administrator to install the update."
+msgstr ""
+
+#: lib/EDD_SL_Plugin_Updater.php:268
+#. translators: 1. opening anchor tag, do not translate 2. the new plugin
+#. version 3. closing anchor tag, do not translate.
+msgid "%1$sView version %2$s details%3$s."
+msgstr ""
+
+#: lib/EDD_SL_Plugin_Updater.php:276
+msgid "%1$sView version %2$s details%3$s or %4$supdate now%5$s."
+msgstr ""
+
+#: lib/EDD_SL_Plugin_Updater.php:287
+msgid "Update now."
+msgstr ""
+
+#: lib/EDD_SL_Plugin_Updater.php:519
+msgid "You do not have permission to install plugin updates"
+msgstr ""
+
+#: lib/EDD_SL_Plugin_Updater.php:519
+msgid "Error"
+msgstr ""
+
+#: lib/class-gravityview-extension.php:359
+msgid "Could not activate the %s Extension; GravityView is not active."
+msgstr ""
+
+#: lib/class-gravityview-extension.php:363
+msgid "The %s Extension requires GravityView Version %s or newer."
+msgstr ""
+
+#: lib/class-gravityview-extension.php:367
+msgid ""
+"The %s Extension requires PHP Version %s or newer. Please ask your host to "
+"upgrade your server's PHP."
+msgstr ""
+
+#: lib/class-gravityview-extension.php:371
+msgid ""
+"The %s Extension is not compatible with this version of GravityView. Please "
+"update the Extension to the latest version."
+msgstr ""
+
+#: templates/fields/field-rate_entry-html.php:24
+msgid "Please log in to rate an entry from this View."
+msgstr ""
+
+#: templates/fields/field-rate_entry-html.php:26
+msgid "To rate an entry, please enable this option in the View settings."
+msgstr ""
+
+#: templates/fields/field-rate_entry-html.php:28
+msgid ""
+"To rate an entry from this View, please allow empty review text in the View "
+"settings."
+msgstr ""
+
+#: templates/review-item.php:41
+msgid ""
+"<span class=\"by\">%s</span> <cite class=\"gv-review-author-link fn\" "
+"itemprop=\"author\">%s</cite>"
+msgstr ""
+
+#: templates/review-item.php:42
+msgid "By"
+msgstr ""
+
+#: templates/review-item.php:57
+msgid "Edit"
+msgstr ""
+
+#: templates/review-item.php:62
+msgid "This %s is awaiting moderation."
+msgstr ""
+
+#: templates/review-item.php:108
+msgid "Comment on this review"
+msgstr ""
+
+#: templates/review-item.php:109
+msgid "Log in to comment"
+msgstr ""
+
+#: templates/review-list-footer.php:14 templates/review-list-header.php:51
+msgid "Comment navigation"
+msgstr ""
+
+#: templates/review-list-footer.php:15 templates/review-list-header.php:52
+msgid "&larr; Older Comments"
+msgstr ""
+
+#: templates/review-list-footer.php:16 templates/review-list-header.php:53
+msgid "Newer Comments &rarr;"
+msgstr ""
+
+#: templates/review-list-header.php:21
+msgid "One review of this entry"
+msgid_plural "%1$s reviews of this entry"
+msgstr[0] ""
+msgstr[1] ""
+
+#: templates/review-list-header.php:44
+msgid "This entry has no reviews."
+msgstr ""
+
+#. Description of the plugin/theme
+msgid "Adds support for rating and reviewing Gravity Forms entries in GravityView"
+msgstr ""
+
+#: includes/class-fields.php:64
+msgctxt "The placeholder symbol that will be replaced"
+msgid ""
+"Text to display when there are more than one reviews. %s is replaced by the "
+"number of reviews."
+msgstr ""
+
+#: includes/class-helper.php:739
+msgctxt "Rating description shown when hovering over a star"
+msgid "1 star"
+msgstr ""
+
+#: includes/class-helper.php:740
+msgctxt "Rating description shown when hovering over a star"
+msgid "2 stars"
+msgstr ""
+
+#: includes/class-helper.php:741
+msgctxt "Rating description shown when hovering over a star"
+msgid "3 stars"
+msgstr ""
+
+#: includes/class-helper.php:742
+msgctxt "Rating description shown when hovering over a star"
+msgid "4 stars"
+msgstr ""
+
+#: includes/class-helper.php:743
+msgctxt "Rating description shown when hovering over a star"
+msgid "5 stars"
+msgstr ""
+
+#: includes/class-review.php:1038
+msgctxt "noun"
+msgid "Review"
+msgstr ""
+
+#: templates/review-item.php:49
+msgctxt "Item being reviewed"
+msgid "Entry %s"
+msgstr ""
+
+#: templates/review-item.php:54
+msgctxt "1: date, 2: time"
+msgid "%1$s at %2$s"
+msgstr ""

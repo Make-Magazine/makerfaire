@@ -1,0 +1,326 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: GravityView - Ratings Reviews Extension\n"
+"POT-Creation-Date: 2014-12-11 16:21-0700\n"
+"PO-Revision-Date: 2014-12-11 16:22-0700\n"
+"Last-Translator: Katz Web Services, Inc. <support@katz.co>\n"
+"Language-Team: Katz Web Services, Inc. <support@katz.co>\n"
+"Language: en_US\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.7.1\n"
+"X-Poedit-Basepath: ..\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-KeywordsList: __;_e;_n:1,2;_x:1,2c;_ex:1,2c;_nx:4c,1,2;esc_attr__;"
+"esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;esc_html_x:1,2c;_n_noop:1,2;"
+"_nx_noop:3c,1,2;__ngettext_noop:1,2\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Poedit-SearchPath-0: .\n"
+
+#: includes/class-fields.php:45
+msgid "No review text:"
+msgstr ""
+
+#: includes/class-fields.php:46
+msgid "Text to display when there are no reviews."
+msgstr ""
+
+#: includes/class-fields.php:47
+msgid "No Review. Be the First!"
+msgstr ""
+
+#: includes/class-fields.php:52
+msgid "One review text:"
+msgstr ""
+
+#: includes/class-fields.php:53
+msgid "Text to display when there is one review."
+msgstr ""
+
+#: includes/class-fields.php:54 includes/class-helper.php:104
+#: includes/class-helper.php:147
+msgid "1 Review"
+msgstr ""
+
+#: includes/class-fields.php:59
+msgid "More reviews text:"
+msgstr ""
+
+#: includes/class-fields.php:60
+#, php-format
+msgctxt "The placeholder symbol that will be replaced"
+msgid ""
+"Text to display when there are more than one reviews. %s is replaced by the "
+"number of reviews."
+msgstr ""
+
+#: includes/class-fields.php:61 includes/class-helper.php:100
+#: includes/class-helper.php:148
+msgid "% Reviews"
+msgstr ""
+
+#: includes/class-fields.php:66
+msgid "Show average rating (stars or votes)"
+msgstr ""
+
+#: includes/class-fields.php:88
+msgid "Reviews Link"
+msgstr ""
+
+#: includes/class-helper.php:102
+msgid "No Reviews"
+msgstr ""
+
+#: includes/class-helper.php:146
+msgid "Leave a Review"
+msgstr ""
+
+#: includes/class-helper.php:195
+msgid "Reviews of this entry"
+msgstr ""
+
+#: includes/class-helper.php:316
+msgid "Edit This"
+msgstr ""
+
+#: includes/class-helper.php:530
+msgid "Name"
+msgstr ""
+
+#: includes/class-helper.php:532
+msgid "Email"
+msgstr ""
+
+#: includes/class-helper.php:534
+msgid "Website"
+msgstr ""
+
+#: includes/class-helper.php:538
+#, php-format
+msgid "Required fields are marked %s"
+msgstr ""
+
+#: includes/class-helper.php:566
+msgctxt "noun"
+msgid "Review"
+msgstr ""
+
+#: includes/class-helper.php:568
+#, php-format
+msgid "You must be <a href=\"%s\">logged in</a> to post a comment."
+msgstr ""
+
+#: includes/class-helper.php:570
+#, php-format
+msgid ""
+"Logged in as <a href=\"%1$s\">%2$s</a>. <a href=\"%3$s\" title=\"Log out of "
+"this account\">Log out?</a>"
+msgstr ""
+
+#: includes/class-helper.php:571
+msgid "Your email address will not be published."
+msgstr ""
+
+#: includes/class-helper.php:572
+#, php-format
+msgid ""
+"You may use these <abbr title=\"HyperText Markup Language\">HTML</abbr> tags "
+"and attributes: %s"
+msgstr ""
+
+#: includes/class-helper.php:576
+msgid "Review this entry"
+msgstr ""
+
+#: includes/class-helper.php:577
+#, php-format
+msgid "Reply to %s"
+msgstr ""
+
+#: includes/class-helper.php:578
+msgid "Cancel reply"
+msgstr ""
+
+#: includes/class-helper.php:579
+msgid "Post Review"
+msgstr ""
+
+#: includes/class-helper.php:583 includes/class-review.php:164
+msgid "You have already reviewed this entry."
+msgstr ""
+
+#: includes/class-helper.php:673
+#, php-format
+msgid "%1$s rating based on %2$s rating"
+msgid_plural "%1$s rating based on %2$s ratings"
+msgstr[0] ""
+msgstr[1] ""
+
+#: includes/class-helper.php:677 includes/class-helper.php:768
+#, php-format
+msgid "%s rating"
+msgstr ""
+
+#: includes/class-helper.php:764
+#, php-format
+msgid "%1$s rating based on %2$s vote"
+msgid_plural "%1$s rating based on %2$s votes"
+msgstr[0] ""
+msgstr[1] ""
+
+#: includes/class-helper.php:779 includes/class-helper.php:797
+msgid "Up vote shows the entry is useful for the author"
+msgstr ""
+
+#: includes/class-helper.php:784 includes/class-helper.php:802
+msgid "Down vote shows the entry is not useful for the author"
+msgstr ""
+
+#: includes/class-loader.php:91
+msgid "Ratings & Reviews"
+msgstr ""
+
+#: includes/class-meta-box-edit-review.php:47
+msgid "Review Attributes"
+msgstr ""
+
+#: includes/class-meta-box-edit-review.php:85 includes/class-review.php:284
+msgid "Title"
+msgstr ""
+
+#: includes/class-meta-box-edit-review.php:92
+#: includes/class-meta-box-edit-review.php:106 includes/class-review.php:288
+msgid "Rate"
+msgstr ""
+
+#: includes/class-meta-box.php:44
+msgid "Allow reviews for each entry"
+msgstr ""
+
+#: includes/class-meta-box.php:51
+msgid "Limit to one review per person per entry"
+msgstr ""
+
+#: includes/class-meta-box.php:58
+msgid "Review type"
+msgstr ""
+
+#: includes/class-meta-box.php:63
+msgid "Vote (arrow up/down)"
+msgstr ""
+
+#: includes/class-meta-box.php:64
+msgid "5-Stars Rating"
+msgstr ""
+
+#: includes/class-meta-box.php:86
+msgid "Ratings and Reviews"
+msgstr ""
+
+#: includes/class-post-bridge.php:99 includes/class-post-bridge.php:100
+msgid "Entry"
+msgstr ""
+
+#: includes/class-post-bridge.php:101
+msgid "View Entry"
+msgstr ""
+
+#: includes/class-post-bridge.php:126
+#, php-format
+msgid "GF entry ID %d, GF form ID %d"
+msgstr ""
+
+#: includes/class-post-bridge.php:135
+msgid "Unable to create post bridge"
+msgstr ""
+
+#: includes/class-review.php:186
+msgid ""
+"Duplicate review detected; it looks as though you&#8217;ve already said that!"
+msgstr ""
+
+#: includes/class-review.php:585
+msgid "Comment"
+msgstr ""
+
+#: includes/class-review.php:586
+msgid "Post Comment"
+msgstr ""
+
+#: includes/class-review.php:587
+msgid "Leave comment on this review"
+msgstr ""
+
+#: includes/class-review.php:588
+msgid "Cancel comment"
+msgstr ""
+
+#: includes/templates/review-item.php:30
+#, php-format
+msgid "This %s is awaiting moderation."
+msgstr ""
+
+#: includes/templates/review-item.php:71
+#, php-format
+msgid ""
+"<span class=\"by\">%s</span> <cite class=\"fn gv-review-author-link\">%s</"
+"cite> on"
+msgstr ""
+
+#: includes/templates/review-item.php:72
+msgid "By"
+msgstr ""
+
+#: includes/templates/review-item.php:79
+#, php-format
+msgid "%1$s at %2$s"
+msgstr ""
+
+#: includes/templates/review-item.php:83
+msgid "(Edit)"
+msgstr ""
+
+#: includes/templates/review-item.php:113
+msgid "Comment on this review"
+msgstr ""
+
+#: includes/templates/review-item.php:114
+msgid "Log in to comment"
+msgstr ""
+
+#: includes/templates/review-list-footer.php:13
+#: includes/templates/review-list-header.php:49
+msgid "Comment navigation"
+msgstr ""
+
+#: includes/templates/review-list-footer.php:14
+#: includes/templates/review-list-header.php:50
+msgid "&larr; Older Comments"
+msgstr ""
+
+#: includes/templates/review-list-footer.php:15
+#: includes/templates/review-list-header.php:51
+msgid "Newer Comments &rarr;"
+msgstr ""
+
+#: includes/templates/review-list-header.php:19
+#, php-format
+msgid "One review of this entry"
+msgid_plural "%1$s reviews of this entry"
+msgstr[0] ""
+msgstr[1] ""
+
+#: includes/templates/review-list-header.php:42
+msgid "This entry has no reviews."
+msgstr ""
+
+#: lib/class-gravityview-extension.php:173
+#, php-format
+msgid "Could not activate the %s Extension; GravityView is not active."
+msgstr ""
+
+#: lib/class-gravityview-extension.php:183
+#, php-format
+msgid "The %s Extension requires GravityView Version %s or newer."
+msgstr ""
