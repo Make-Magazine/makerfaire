@@ -12,14 +12,6 @@ if(isset($_GET['formID'])) $sql.= ' and form_id='.$_GET['formID'];
 $mysqli->query("SET NAMES 'utf8'");
 $result = $mysqli->query($sql) or trigger_error($mysqli->error."[$sql]");
 
-$msFieldArr = array(151,22,217,320,321,16,32,287,
-      '161', '160', '234', '185', '201', '217', '209', '200', '310', '369', '443',  //maker 1
-      '158', '258', '162', '192', '208', '224', '216', '199', '311', '370', '444',  //maker 2
-      '155', '259', '167', '190', '207', '223', '215', '193', '312', '371', '445',  //maker 3
-      '156', '260', '166', '191', '206', '222', '214', '198', '313', '372', '446',  //maker 4
-      '157', '261', '165', '189', '205', '220', '213', '195', '314', '373', '447',  //maker 5
-      '159', '262', '164', '188', '204', '221', '211', '197', '315', '374', '448',  //maker 6
-      '154', '263', '163', '187', '203', '219', '212', '196', '316', '375', '449'); //maker 7
 $publicFields = array(109,11,110,105,151,22,16,27,32,151,160,234,217,158,258,224,155,259,223,156,260,222,157,261,220,159,262,221,154,263,219);
 ?>
 <!doctype html>
@@ -104,7 +96,6 @@ $publicFields = array(109,11,110,105,151,22,16,27,32,151,160,234,217,158,258,224
             <td style="width:  3%">Admin Only</td>
             <td style="width:  3%">Req</td>
             <td style="width:  3%">Public</td>
-            <td style="width:  3%">MS</td>
           </tr>
         </thead>
       <?php
@@ -115,7 +106,7 @@ $publicFields = array(109,11,110,105,151,22,16,27,32,151,160,234,217,158,258,224
         $array = (array) $array;
       }
 
-      usort($jsonArray, "cmp");
+      //usort($jsonArray, "cmp");
       //   var_dump($jsonArray);
       foreach($jsonArray as $field){
         if($field['type'] != 'html' && $field['type'] != 'section' && $field['type'] != 'page'){
@@ -153,8 +144,7 @@ $publicFields = array(109,11,110,105,151,22,16,27,32,151,160,234,217,158,258,224
             </td>
             <td class="tcenter"><?php echo (isset($field['visibility']) && $field['visibility']=='administrative'?'<i class="fas fa-check" aria-hidden="true"></i>':'');?></td>
             <td class="tcenter"><?php echo ($field['isRequired']?'<i class="fas fa-check" aria-hidden="true"></i>':'');?></td>
-            <td class="tcenter"><?php echo (in_array($field['id'],$publicFields)?'<i class="fas fa-check" aria-hidden="true"></i>':'');?></td>
-            <td class="tcenter"><?php echo (in_array($field['id'],$msFieldArr)?'<i class="fas fa-check" aria-hidden="true"></i>':'');?></td>
+            <td class="tcenter"><?php echo (in_array($field['id'],$publicFields)?'<i class="fas fa-check" aria-hidden="true"></i>':'');?></td>            
 
           </tr>
           <?php
