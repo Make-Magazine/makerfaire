@@ -313,7 +313,17 @@ function buildFaireDrop(&$wp_admin_bar, $faire_id = null) {
                         'href' => $adminURL . '&sort=0&dir=DESC&' . urlencode('filterField[]') . '=303|is|' . str_replace(' ', '+', $statusRow->meta_value),
                         'meta' => array('class' => 'my-toolbar-page'),
                         'parent' => 'mf_admin_child_' . $formRow->form_id));
-                }
+                }            
+            }
+
+            //add BA23 interest form admin review link
+            if ((isset($faire) && $faire=='BA23')) {
+                array_push($args, array(
+                    'id' => 'mf_admin_child_gv_review',
+                    'title' => 'Interest Form Entry Review',
+                    'href' => 'https://makerfaire.com/ba23-admin-view/',
+                    'meta' => array('class' => 'my-toolbar-page'),
+                    'parent' => 'mf_admin_parent_' . $faire));                    
             }
 
             //add scheduling link

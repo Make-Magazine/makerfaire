@@ -322,7 +322,7 @@ function set_entry_status($lead,$form){
 
 			//Handle acceptance status changes
 			if ($is_acceptance_status_changed ){
-        if($acceptance_status_change == 'Accepted'){
+        if($acceptance_status_change == 'Accepted' || $acceptance_status_change == 'Interested'){
           //trigger an action
           do_action('entry-accepted', $lead);
 
