@@ -34,6 +34,14 @@ function custom_entry_meta($entry_meta, $form_id) {
         'is_default_column' => false
     );
 
+
+    //create new meta field to hold master_entry_id
+    $entry_meta['master_entry_id'] = array(
+        'label' => 'Master Entry ID',
+        'is_numeric' => true,
+        'is_default_column' => false
+    );
+
     //create new meta field to hold resource status and resource assign to
     $entry_meta['res_status'] = array(
         'label' => 'Resource Status',

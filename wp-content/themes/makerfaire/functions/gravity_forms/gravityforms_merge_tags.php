@@ -32,33 +32,33 @@ function mf_custom_merge_tags($merge_tags, $form_id, $fields, $element_id) {
 * replace custom merge tags in notifications
 * @param string $text
 * @param array $form
-* @param array $lead
+* @param array $entry
 * @param bool $url_encode
 * @param bool $esc_html
 * @param bool $nl2br
 * @param string $format
 * @return string
 */
-function mf_replace_merge_tags($text, $form, $lead, $url_encode, $esc_html, $nl2br, $format) {
+function mf_replace_merge_tags($text, $form, $entry, $url_encode, $esc_html, $nl2br, $format) {
   global $wpdb;
-  $entry_id = (isset($lead['id'])?$lead['id']:'');
+  $entry_id = (isset($entry['id'])?$entry['id']:'');
 
   //faire id
   if (strpos($text, '{faire_id}')       !== false) {
-    $sql = "select faire from wp_mf_faire where FIND_IN_SET (".$lead['form_id'].",wp_mf_faire.form_ids)> 0";
+    $sql = "select faire from wp_mf_faire where FIND_IN_SET (".$entry['form_id'].",wp_mf_faire.form_ids)> 0";
     $faireId = $wpdb->get_var($sql);
     $text = str_replace('{faire_id}', $faireId, $text);
   }
 
   //Entry Schedule
   if (strpos($text, '{entry_schedule}') !== false) {
-    $schedule = get_schedule($lead);
+    $schedule = get_schedule($entry);
     $text = str_replace('{entry_schedule}', $schedule, $text);
   }
 
   //scheduled locations {sched_loc}
   if (strpos($text, '{sched_loc}') !== false) {
-    $schedule = get_schedule($lead,true);
+    $schedule = get_schedule($entry,true);
     $text = str_replace('{sched_loc}', $schedule, $text);
   }
 
@@ -99,7 +99,7 @@ function mf_replace_merge_tags($text, $form, $lead, $url_encode, $esc_html, $nl2
     }
 
     $resTable = '<table cellpadding="10" width=60%><tr><th width="40%">Resource</th><th>Quantity</th></tr>';
-    $resources = get_mf_resources($lead, $excResources, $incResources);
+    $resources = get_mf_resources($entry, $excResources, $incResources);
 
     foreach($resources as $entRes){
       $resTable .= '<tr><td>'.$entRes['resource'].'</td><td style="text-align:center">'.$entRes['qty'].'</td></tr>';
@@ -120,7 +120,7 @@ function mf_replace_merge_tags($text, $form, $lead, $url_encode, $esc_html, $nl2
     $attArr = explode(",",$attIDs);
     $attTable  = '<table cellpadding="10"  width=60%><tr><th width="40%">Attribute</th><th>Value</th></tr>';
     foreach($attArr as $att){
-      $AttText = get_attribute($lead,trim($att));
+      $AttText = get_attribute($entry,trim($att));
       if(!empty($AttText)){
         $attTable .= '<tr>';
         foreach($AttText as $attDetail){
@@ -191,18 +191,18 @@ function mf_replace_merge_tags($text, $form, $lead, $url_encode, $esc_html, $nl2
   //Supplemental Form Token
   if (strpos($text, '{supp_form_token') !== false) {
     //pull form information for this entry
-    $form = GFAPI::get_form($lead['form_id']);
+    $form = GFAPI::get_form($entry['form_id']);
     
     //If this form was supposed to create a master entry, we need to pull the supplemental form token from the master entry
     if(isset($form['master_form_id']) && $form['master_form_id']!=''){
-      if(!isset($lead['master_entry_id'])){
+      if(!isset($entry['master_entry_id'])){
         return $text;
       }
-      $master_entryID = $lead['master_entry_id'];
+      $master_entryID = $entry['master_entry_id'];
       $master_entry = GFAPI::get_entry($master_entryID);
       $mf_supplemental_token = (isset($master_entry['fg_easypassthrough_token'])?$master_entry['fg_easypassthrough_token']:'');      
     }else{
-      $mf_supplemental_token = (isset($lead['fg_easypassthrough_token'])? $lead['fg_easypassthrough_token']:'');
+      $mf_supplemental_token = (isset($entry['fg_easypassthrough_token'])? $entry['fg_easypassthrough_token']:'');
     }
     
     if($mf_supplemental_token !='')    
