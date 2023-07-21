@@ -357,7 +357,9 @@ function set_entry_status($lead,$form){
 				//Handle notifications for acceptance
 				$notifications_to_send = GFCommon::get_notifications_to_send( 'mf_acceptance_status_changed', $form, $lead );
         foreach ( $notifications_to_send as $notification ) {
-          if($notification['isActive']){
+          error_log(print_r($notification,TRUE));
+          
+          if($notification['isActive']){            
             GFCommon::send_notification( $notification, $form, $lead );
           }
 				}
