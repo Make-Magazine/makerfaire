@@ -15,11 +15,9 @@ function entry_accepted_cb( $entry ) {
     if($entry['form_id']==258){
       $master_data[855] =  $entry[21];      
     }        
-    error_log('in function entry_accepted_cb. printing interest form entry here');
-    error_log(print_r($entry,TRUE));
-    
+
     //first check if we've already created a master entry. if we have, update it
-    if(isset($entry['entry_id'])) {
+    if(isset($entry['entry_id'])&& $entry['entry_id']!='') {
       GFAPI::update_entry( $master_data, $entry['entry_id'] );
     }else{        
       //set the master form id
