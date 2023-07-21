@@ -1386,7 +1386,7 @@ class GP_Easy_Passthrough extends GP_Feed_Plugin {
 	* @return array|bool
 	*/
 	public function get_field_values( $form_id = null ) {
-error_log($form_id);
+
 		// If no form ID is set, return an empty array.
 		if ( rgblank( $form_id ) ) {
 			return array();
