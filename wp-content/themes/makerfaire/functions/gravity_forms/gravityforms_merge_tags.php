@@ -208,7 +208,7 @@ function mf_replace_merge_tags($text, $form, $entry, $url_encode, $esc_html, $nl
     //error_log('query is '. 'SELECT meta_value FROM wp_gf_entry_meta where entry_id='.$entry_id.' and meta_key="fg_easypassthrough_token" limit 1');
     //error_log('$mf_supplemental_token='.$mf_supplemental_token);
     if($mf_supplemental_token !='')    
-      $text = $mf_supplemental_token;    
+      $text = str_replace('{supp_form_token}', $mf_supplemental_token, $text);    
   }  
   //error_log('notification text is '.$text);
   return $text;
