@@ -18,15 +18,18 @@ function entry_accepted_cb( $entry ) {
 
     //first check if we've already created a master entry. if we have, update it
     if(isset($entry['master_entry_id'])&& $entry['master_entry_id']!='') {
-      GFAPI::update_entry( $master_data, $entry['master_entry_id'] );
+      //TBD this statement is removing the token 
+      //GFAPI::update_entry( $master_data, $entry['master_entry_id'] );
     }else{        
+      //otherwise, create master entry
+
       //set the master form id
       $master_data['form_id'] = $form['master_form_id'];
-
-      //otherwise, create master entry
+      
       $master_entry_id = GFAPI::add_entry($master_data);
-      $master_entry = GFAPI::get_entry($master_entry_id);
-      $master_form = GFAPI::get_form($form['master_form_id']);
+      $master_entry    = GFAPI::get_entry($master_entry_id);
+     
+      $master_form     = GFAPI::get_form($form['master_form_id']);
       gform_update_meta( $entry['id'], 'master_entry_id', $master_entry_id);
       
       // this filter triggers the easy pass through plugin to generate a token

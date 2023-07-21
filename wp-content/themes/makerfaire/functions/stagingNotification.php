@@ -21,7 +21,7 @@ function change_email_to($notification, $form, $entry) {
          $notification['to'] = MF_OVERRITE_EMAIL;
          if (isset($notification['bcc'])) $notification['bcc'] = '';
       }else{
-      	$notification = array();
+      	//$notification = array();
       }
    }
    
