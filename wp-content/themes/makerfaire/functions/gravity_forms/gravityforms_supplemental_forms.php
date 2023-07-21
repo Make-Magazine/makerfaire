@@ -30,7 +30,7 @@ function entry_accepted_cb( $entry ) {
       gform_update_meta( $entry['id'], 'master_entry_id', $master_entry_id);
       
       // this filter triggers the easy pass through plugin to generate a token
-      apply_filters( 'gform_entry_post_save', $master_entry, $form );
+      apply_filters( 'gform_entry_post_save', $master_entry, $master_form );
     }
     
   }    
