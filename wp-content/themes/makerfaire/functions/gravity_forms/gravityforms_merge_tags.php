@@ -195,6 +195,9 @@ function mf_replace_merge_tags($text, $form, $lead, $url_encode, $esc_html, $nl2
     
     //If this form was supposed to create a master entry, we need to pull the supplemental form token from the master entry
     if(isset($form['master_form_id']) && $form['master_form_id']!=''){
+      if(!isset($lead['master_entry_id'])){
+        return $text;
+      }
       $master_entryID = $lead['master_entry_id'];
       $master_entry = GFAPI::get_entry($master_entryID);
       $mf_supplemental_token = (isset($master_entry['fg_easypassthrough_token'])?$master_entry['fg_easypassthrough_token']:'');      
