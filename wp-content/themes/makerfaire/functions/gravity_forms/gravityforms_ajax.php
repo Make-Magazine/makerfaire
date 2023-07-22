@@ -324,7 +324,7 @@ function set_entry_status($lead,$form){
 			if ($is_acceptance_status_changed ){
         if($acceptance_status_change == 'Accepted' || $acceptance_status_change == 'Interested'){
           //trigger an action
-          do_action('entry-accepted', $lead);
+          entry_accepted_cb($lead);          
 
           /*
            * If the status is accepted, trigger a cron job to generate EventBrite Tickets.

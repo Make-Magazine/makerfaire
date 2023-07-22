@@ -39,9 +39,6 @@ function entry_accepted_cb( $entry ) {
   }    
 }
 
-add_action( 'entry-accepted', 'entry_accepted_cb', 10, 1 );
-
-
 /*
  * this logic copies information from 1 entry into another based on parameter names set in form 2
  * It will return the entry object for the new Form
