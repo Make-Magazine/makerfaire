@@ -199,18 +199,16 @@ function mf_replace_merge_tags($text, $form, $entry, $url_encode, $esc_html, $nl
         return $text;
       }
       $entry_id = $entry['master_entry_id'];
-      //error_log('entry id is now set to ').$entry_id;
-      //$master_entry = GFAPI::get_entry($master_entryID);                  
-      //$mf_supplemental_token = (isset($master_entry['fg_easypassthrough_token'])?$master_entry['fg_easypassthrough_token']:'');      
+      error_log('entry id is now set to ').$entry_id;      
     }
-
-    $mf_supplemental_token = $wpdb->get_var('SELECT meta_value FROM wp_gf_entry_meta where entry_id='.$entry_id.' and meta_key="fg_easypassthrough_token" limit 1');
-    //error_log('query is '. 'SELECT meta_value FROM wp_gf_entry_meta where entry_id='.$entry_id.' and meta_key="fg_easypassthrough_token" limit 1');
-    //error_log('$mf_supplemental_token='.$mf_supplemental_token);
-    if($mf_supplemental_token !='')    
-      $text = str_replace('{supp_form_token}', $mf_supplemental_token, $text);    
+    if($entry_id!=''){
+      $mf_supplemental_token = $wpdb->get_var('SELECT meta_value FROM wp_gf_entry_meta where entry_id='.$entry_id.' and meta_key="fg_easypassthrough_token" limit 1');
+      if($mf_supplemental_token !='') {
+        $text = str_replace('{supp_form_token}', $mf_supplemental_token, $text);    
+      }        
+    }
+    error_log('notification text is '.$text);    
   }  
-  //error_log('notification text is '.$text);
   return $text;
 }
 
