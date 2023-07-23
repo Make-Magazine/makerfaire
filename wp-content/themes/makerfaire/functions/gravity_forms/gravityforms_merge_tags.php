@@ -195,19 +195,21 @@ function mf_replace_merge_tags($text, $form, $entry, $url_encode, $esc_html, $nl
     
     //If this form was supposed to create a master entry, we need to pull the supplemental form token from the master entry
     if(isset($form['master_form_id']) && $form['master_form_id']!=''){
-      if(!isset($entry['master_entry_id'])){
+      $master_entry_id = $wpdb->get_var('SELECT meta_value FROM wp_gf_entry_meta where entry_id='.$entry_id.' and meta_key="master_entry_id" limit 1');      
+
+      if($master_entry_id==''){
+        error_log('master_entry_id is blank for entry id ').$entry_id;
         return $text;
       }
-      $entry_id = $entry['master_entry_id'];
-      error_log('entry id is now set to ').$entry_id;      
+      $entry_id = $master_entry_id;
     }
+
     if($entry_id!=''){
       $mf_supplemental_token = $wpdb->get_var('SELECT meta_value FROM wp_gf_entry_meta where entry_id='.$entry_id.' and meta_key="fg_easypassthrough_token" limit 1');
       if($mf_supplemental_token !='') {
         $text = str_replace('{supp_form_token}', $mf_supplemental_token, $text);    
       }        
     }
-    error_log('notification text is '.$text);    
   }  
   return $text;
 }

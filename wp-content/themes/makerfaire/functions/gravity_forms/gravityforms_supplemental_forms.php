@@ -13,27 +13,24 @@ function entry_accepted_cb( $entry ) {
       
     //move multi images from maker interest form to master form
     if($entry['form_id']==258){
-      $master_data[833] =  $entry[21];      
+      $master_data['input_833'] =  $entry[21];      
     }        
 
     //first check if we've already created a master entry. if we have, update it
-    if(isset($entry['master_entry_id'])&& $entry['master_entry_id']!='') {
+    if(isset($entry['master_entry_id']) && $entry['master_entry_id']!='') {
       //TBD this statement is removing the token 
       //GFAPI::update_entry( $master_data, $entry['master_entry_id'] );
     }else{        
-      //otherwise, create master entry
-
-      //set the master form id
-      //$master_data['form_id'] = $form['master_form_id'];      
-      //$master_entry_id = GFAPI::add_entry($master_data);
-      //$master_entry    = GFAPI::get_entry($master_entry_id);
-      //$master_form     = GFAPI::get_form($form['master_form_id']);
-      $master_entry = GFAPI::submit_form($form['master_form_id'],$master_data);
-
-      gform_update_meta( $entry['id'], 'master_entry_id', $master_entry['entry_id']);
+      //otherwise, create master entry                  
+      $master_entry = GFAPI::submit_form($form['master_form_id'],$master_data);      
+      if ( is_wp_error( $master_entry ) ) {
+        $error_message = $master_entry->get_error_message();
+        GFCommon::log_debug( __METHOD__ . '(): GFAPI Error Message => ' . $error_message );        
+        return;
+      }else{        
+        gform_update_meta( $entry['id'], 'master_entry_id', $master_entry['entry_id']);      
+      }
       
-      // this filter triggers the easy pass through plugin to generate a token
-      //apply_filters( 'gform_entry_post_save', $master_entry, $master_form );
     }
     
   }    
@@ -68,7 +65,7 @@ function copy_entry_to_new_form ($fromEntry){
       case 'name':
       case 'address':
         foreach($field->inputs as $key=>$input) {
-          if ($input['name']!='') {
+          if ($input['name']!='') {            
             $parmsArray[] =  array('from_id' => $input['id'], 'to_param' => $input['name']);            
           }
         }
@@ -115,6 +112,7 @@ function copy_entry_to_new_form ($fromEntry){
 
     $fromFieldId = $fieldInfo['from_id'];
 
+    $toFieldID = 'input_'.str_replace('.','_',$toFieldID);
     if(isset($fromEntry[$fromFieldId])){
       $toEntry[$toFieldID] = $fromEntry[$fromFieldId];              
     }else{
