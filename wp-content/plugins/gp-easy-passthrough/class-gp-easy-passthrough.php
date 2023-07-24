@@ -1267,7 +1267,7 @@ class GP_Easy_Passthrough extends GP_Feed_Plugin {
 							$parameter_value = null;
 
 							// If the field already allows dynamic population and the input has a value, use it.
-							if ( $field->allowsPrepopulate ) {
+							if ( $field->allowsPrepopulate && isset($input['name'])) {
 								$parameter_value = GFFormsModel::get_parameter_value( $input['name'], array(), $field );
 							}
 
