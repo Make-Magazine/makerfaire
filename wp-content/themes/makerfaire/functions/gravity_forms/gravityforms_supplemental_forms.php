@@ -126,7 +126,7 @@ function copy_entry_to_new_form ($fromEntry){
 /* We will copy over all supplemental fields into original entry */
 function update_original_entry($form,$origEntryID){
   //Loop thru form fields 
-  foreach ($form['fields'] as $field) {
+  foreach ($form['fields'] as $field) {    
      //  Do not update values from read only fields
      if(!$field->gwreadonly_enable){
       // If the field type is checkbox, name or address, we need to ensure we blank out data for previously submitted information
@@ -146,8 +146,8 @@ function update_original_entry($form,$origEntryID){
           break;
         default:
           //find submitted value
-          $updValue =  (isset($_POST['input_'.$field['id']])?$_POST['input_'.$field['id']]:'');
-          GFAPI::update_entry_field( $origEntryID, $field['id'], stripslashes($updValue) );
+          $updValue =  (isset($_POST['input_'.$field->id])?$_POST['input_'.$field->id]:'');
+          GFAPI::update_entry_field( $origEntryID, $field->id, stripslashes($updValue) );
           break;
       }           
     }
