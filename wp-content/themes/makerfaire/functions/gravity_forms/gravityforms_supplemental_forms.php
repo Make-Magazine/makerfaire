@@ -10,12 +10,7 @@ function entry_accepted_cb( $entry ) {
   //check if a master entry needs to be created
   if(isset($form['master_form_id']) && $form['master_form_id']!=''){    
     $master_data = copy_entry_to_new_form($entry, $form['master_form_id']);
-      
-    //move multi images from maker interest form to master form
-    if($entry['form_id']==258){
-      $master_data['input_833'] =  $entry[21];      
-    }        
-
+  
     //first check if we've already created a master entry. if we have, update it
     if(isset($entry['master_entry_id']) && $entry['master_entry_id']!='') {
       //TBD this statement is removing the token 
@@ -27,7 +22,10 @@ function entry_accepted_cb( $entry ) {
         $error_message = $master_entry->get_error_message();
         GFCommon::log_debug( __METHOD__ . '(): GFAPI Error Message => ' . $error_message );        
         return;
-      }else{        
+      }else{ 
+        ////move multi images from maker interest form to master form
+        //update images here as the submit form doesn't work well with upload files
+        GFAPI::update_entry_field( $master_entry['entry_id'], 833, $entry[21] );       
         gform_update_meta( $entry['id'], 'master_entry_id', $master_entry['entry_id']);      
       }
       
