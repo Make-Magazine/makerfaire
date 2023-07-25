@@ -323,7 +323,7 @@ function gf_collapsible_sections($form, $lead) {
         'logistics' => array(60, 344, 345, 61, 62, 347, 348, 64, 65, 68, 69, 70, 71, 72, 73, 74, 75, 76),
         'additional' => array(123, 130, 287, 134, 37, 38, 41),
         'images' => array(22, 65, 111, 122, 217, 224, 223, 222, 220, 221, 219),
-        'imagesOver' => array(324, 334, 326, 338, 333, 337, 332, 336, 331, 335)
+        'imagesOver' => array(324, 334, 330, 338, 333, 337, 332, 336, 331, 335)
     );
     //additional Entries
     $addEntries = '<table width="100%">

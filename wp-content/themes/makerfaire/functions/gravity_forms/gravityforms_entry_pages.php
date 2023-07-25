@@ -33,7 +33,7 @@ function checkForRibbons($postID=0,$entryID=0){
  * Field ID         Description
  * 324              Image Override 1
  * 334              Image Override 1 place
- * 326              Image Override 2
+ * 330              Image Override 2
  * 338              Image Override 2 place
  * 333              Image Override 2
  * 337              Image Override 3 place
