@@ -25,7 +25,7 @@ function entry_accepted_cb( $entry ) {
       }else{ 
         //move multi images from maker interest form to master form
         //update images here as the submit form doesn't work well with upload files
-        GFAPI::update_entry_field( $master_entry['entry_id'], 855, $entry[21] );       
+        GFAPI::update_entry_field( $master_entry['entry_id'], '878', $entry['21'] );       
 
         //set maker 1 name and email from the contact fields
         //160 - maker 1 name
@@ -33,7 +33,10 @@ function entry_accepted_cb( $entry ) {
         GFAPI::update_entry_field( $master_entry['entry_id'], '160.6', $entry['96.6'] );       
 
         //161 - maker 1 email
-        GFAPI::update_entry_field( $master_entry['entry_id'], '161', $entry[98] );       
+        GFAPI::update_entry_field( $master_entry['entry_id'], '161', $entry['98'] );       
+
+        //110 - group bio
+        GFAPI::update_entry_field( $master_entry['entry_id'], '110', $entry['8'] );
 
         //set master_entry_id meta field
         gform_update_meta( $entry['id'], 'master_entry_id', $master_entry['entry_id']);     
@@ -187,12 +190,15 @@ function update_original_entry($form,$origEntryID){
 
   //hard coded fields to push back to master entry - TBD get form of $origEntryID and if form type=master, do the below
 
-  //update Maker 1 name with field 96
-  if(isset($_POST['input_96_3'])) GFAPI::update_entry_field( $origEntryID, 160.3, $_POST['input_96_3'] );
-  if(isset($_POST['input_96_6'])) GFAPI::update_entry_field( $origEntryID, 160.6, $_POST['input_96_6'] );      
+  //update Maker 1 name(96) with field 96 - Contact Name
+  if(isset($_POST['input_96_3'])) GFAPI::update_entry_field( $origEntryID, '160.3', $_POST['input_96_3'] );
+  if(isset($_POST['input_96_6'])) GFAPI::update_entry_field( $origEntryID, '160.6', $_POST['input_96_6'] );      
 
-  //update Maker 1 email with field 98
-  if(isset($_POST['input_98'])) GFAPI::update_entry_field( $origEntryID, 161, $_POST['input_98']);      
+  //update Maker 1 email(161) with field 98 - Contact Email
+  if(isset($_POST['input_98'])) GFAPI::update_entry_field( $origEntryID, '161', $_POST['input_98']);   
+  
+  //update Group Bio(110) with 234 - Maker 1 Bio
+  if(isset($_POST['input_234'])) GFAPI::update_entry_field( $origEntryID, '110', $_POST['input_234']);   
 
 }
 
