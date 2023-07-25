@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by gravityview on 20-June-2023 using Strauss.
+ * Modified by gravityview on 21-July-2023 using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 
@@ -501,27 +501,27 @@ class ProductManager {
 					'coming_soon'         => Arr::get( $remote_product, 'info.coming_soon' ),
 					'title'               => Arr::get( $remote_product, 'info.title' ),
 					'excerpt'             => Arr::get( $remote_product, 'info.excerpt' ),
-					'buy_link'            => esc_url( Arr::get( $remote_product, 'info.buy_url', '' ) ),
-					'link'                => esc_url( Arr::get( $remote_product, 'info.link', '' ) ),
-					'icon'                => esc_url( Arr::get( $remote_product, 'info.icon', '' ) ),
+					'buy_link'            => esc_url_raw( Arr::get( $remote_product, 'info.buy_url', '' ) ),
+					'link'                => esc_url_raw( Arr::get( $remote_product, 'info.link', '' ) ),
+					'icon'                => esc_url_raw( Arr::get( $remote_product, 'info.icon', '' ) ),
 					'icons'               => [
-						'1x' => esc_url( Arr::get( $icons, '1x', '' ) ),
-						'2x' => esc_url( Arr::get( $icons, '2x', '' ) ),
+						'1x' => esc_url_raw( Arr::get( $icons, '1x', '' ) ),
+						'2x' => esc_url_raw( Arr::get( $icons, '2x', '' ) ),
 					],
 					'banners'             => [
-						'low'  => esc_url( Arr::get( $banners, 'low', '' ) ),
-						'high' => esc_url( Arr::get( $banners, 'high', '' ) ),
+						'low'  => esc_url_raw( Arr::get( $banners, 'low', '' ) ),
+						'high' => esc_url_raw( Arr::get( $banners, 'high', '' ) ),
 					],
 					'sections'            => [
 						'description' => Arr::get( $sections, 'description' ),
 						'changelog'   => $this->truncate_product_changelog(
 							Arr::get( $sections, 'changelog' ),
-							esc_url( Arr::get( $remote_product, 'info.link', '' ) )
+							esc_url_raw( Arr::get( $remote_product, 'info.link', '' ) )
 						),
 					],
 					'server_version'      => Arr::get( $remote_product, 'licensing.version' ),
 					'modified_date'       => Arr::get( $remote_product, 'info.modified_date' ),
-					'docs'                => esc_url( Arr::get( $remote_product, 'info.docs_url', '' ) ),
+					'docs'                => esc_url_raw( Arr::get( $remote_product, 'info.docs_url', '' ) ),
 					'system_requirements' => Arr::get( $remote_product, 'system_requirements', [] ),
 					'plugin_dependencies' => Arr::get( $remote_product, 'plugin_dependencies', [] ),
 				];

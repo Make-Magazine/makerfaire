@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by gravityview on 20-June-2023 using Strauss.
+ * Modified by gravityview on 21-July-2023 using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 
@@ -24,7 +24,7 @@ use GravityKit\GravityView\Foundation\Helpers\Arr;
 use GravityKit\GravityView\Foundation\WP\RESTController;
 
 class Core {
-	const VERSION = '1.1.0';
+	const VERSION = '1.1.1';
 
 	const ID = 'gk_foundation';
 

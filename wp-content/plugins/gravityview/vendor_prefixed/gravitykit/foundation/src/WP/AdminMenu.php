@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by gravityview on 20-June-2023 using Strauss.
+ * Modified by gravityview on 21-July-2023 using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 
@@ -288,11 +288,13 @@ class AdminMenu {
 	 * @retun void
 	 */
 	static function add_submenu_item( $submenu, $position = 'top' ) {
-		if ( ! isset( $submenu['id'] ) && ! isset( self::$_submenus[ $position ] ) ) {
+		if ( ! isset( $submenu['id'] ) ) {
 			return;
 		}
 
 		$submenus = self::get_submenus();
+
+		$submenus[ $position ] = Arr::get( $submenus, $position, [] );
 
 		if ( ! isset( $submenu['order'] ) ) {
 			$order = array_column( $submenus[ $position ], 'order' );

@@ -21,6 +21,20 @@ Beautifully display your Gravity Forms entries. Learn more on [gravitykit.com](h
 
 == Changelog ==
 
+= 2.18.3 on July 20, 2023 =
+
+* Fixed: Incorrect total entry count and hidden pagination when View contains an Entry Edit field
+
+= 2.18.2 on July 12, 2023 =
+
+* Fixed: Performance issue
+* Fixed: [WP-CLI](https://wp-cli.org/) not displaying available GravityKit product updates
+* Updated: [Foundation](https://www.gravitykit.com/foundation/) to version 1.1.1
+
+__Developer Notes:__
+
+* Added: `gk/gravityview/view/entries/cache` filter to provide control over the caching of View entries (default: `true`)
+
 = 2.18.1 on June 20, 2023 =
 
 * Fixed: PHP warning message that appeared when attempting to edit a View
@@ -2862,4 +2876,4 @@ We're just getting started with what can be done with DataTables. We'll have muc
 * Liftoff!
 
 
-= 1688664034-4249 =
+= 1690304600-4249 =
