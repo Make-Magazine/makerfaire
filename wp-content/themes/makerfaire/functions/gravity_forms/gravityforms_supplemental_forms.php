@@ -23,10 +23,21 @@ function entry_accepted_cb( $entry ) {
         GFCommon::log_debug( __METHOD__ . '(): GFAPI Error Message => ' . $error_message );        
         return;
       }else{ 
-        ////move multi images from maker interest form to master form
+        //move multi images from maker interest form to master form
         //update images here as the submit form doesn't work well with upload files
-        GFAPI::update_entry_field( $master_entry['entry_id'], 833, $entry[21] );       
-        gform_update_meta( $entry['id'], 'master_entry_id', $master_entry['entry_id']);      
+        GFAPI::update_entry_field( $master_entry['entry_id'], 855, $entry[21] );       
+
+        //set maker 1 name and email from the contact fields
+        //160 - maker 1 name
+        GFAPI::update_entry_field( $master_entry['entry_id'], '160.3', $entry['96.3'] );       
+        GFAPI::update_entry_field( $master_entry['entry_id'], '160.6', $entry['96.6'] );       
+
+        //161 - maker 1 email
+        GFAPI::update_entry_field( $master_entry['entry_id'], '161', $entry[98] );       
+
+        //set master_entry_id meta field
+        gform_update_meta( $entry['id'], 'master_entry_id', $master_entry['entry_id']);     
+      
       }
       
     }
@@ -127,6 +138,10 @@ function copy_entry_to_new_form ($fromEntry){
 function update_original_entry($form,$origEntryID){
   //Loop thru form fields 
   foreach ($form['fields'] as $field) {    
+    if($field->id==854){
+      error_log('nested form entry field data');
+      error_log(print_r($field,TRUE));
+    }
      //  Do not update values from read only fields
      if(!$field->gwreadonly_enable){
       // If the field type is checkbox, name or address, we need to ensure we blank out data for previously submitted information
@@ -140,23 +155,50 @@ function update_original_entry($form,$origEntryID){
             /*
              * if the field is set, update with submitted value, else, update with blanks
              */
-            $updValue =  (isset($_POST['input_'.$inputID]) ? $_POST['input_'.$inputID] : '');
+            $updValue =  (isset($_POST['input_'.$inputID]) ? $_POST['input_'.$inputID] : '');            
             GFAPI::update_entry_field( $origEntryID, $updField, stripslashes($updValue) );          
+          }
+          break;
+        case 'list':
+          //list data is stored serialized
+          if( isset($_POST['input_'.$field->id]) && !is_serialized( $_POST['input_'.$field->id]) ) {
+            $updValue = maybe_serialize($_POST['input_'.$field->id] );            
+            GFAPI::update_entry_field( $origEntryID, $field->id, stripslashes($updValue) );  
           }
           break;
         default:
           //find submitted value
-          $updValue =  (isset($_POST['input_'.$field->id])?$_POST['input_'.$field->id]:'');
+          $updValue =  (isset($_POST['input_'.$field->id])?$_POST['input_'.$field->id]:'');                    
           GFAPI::update_entry_field( $origEntryID, $field->id, stripslashes($updValue) );
           break;
       }           
     }
   }
+  //uploaded files
+  if(isset($_POST['gform_uploaded_files'])){
+    $uploaded_files = json_decode(stripslashes($_POST['gform_uploaded_files']));    
+    
+    foreach($uploaded_files as $key=>$value){
+      $inputID  = str_replace("input_", "", $key);      
+      GFAPI::update_entry_field( $origEntryID, $inputID, stripslashes($value) );      
+    }
+
+  }
+
+  //hard coded fields to push back to master entry - TBD get form of $origEntryID and if form type=master, do the below
+
+  //update Maker 1 name with field 96
+  if(isset($_POST['input_96_3'])) GFAPI::update_entry_field( $origEntryID, 160.3, $_POST['input_96_3'] );
+  if(isset($_POST['input_96_6'])) GFAPI::update_entry_field( $origEntryID, 160.6, $_POST['input_96_6'] );      
+
+  //update Maker 1 email with field 98
+  if(isset($_POST['input_98'])) GFAPI::update_entry_field( $origEntryID, 161, $_POST['input_98']);      
+
 }
 
 /* DO NOT USE - OLD function - replaced with update_original_entry 
 Used to update linked fields back to original entry */
-function updLinked_fields($form,$origEntryID){
+function OLD_updLinked_fields($form,$origEntryID){
   //Loop thru form fields and look for parameter names of 'field-*'
   //  These are set to update original entry fields
   foreach ($form['fields'] as $field) {
@@ -213,6 +255,7 @@ function updLinked_fields($form,$origEntryID){
       }
     }
   } //end foreach loop
+
 }
 
 //when a supplemental form is submitted, find the initial formid based on entry id
