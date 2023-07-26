@@ -15,38 +15,44 @@ function entry_accepted_cb( $entry ) {
     if(isset($entry['master_entry_id']) && $entry['master_entry_id']!='') {
       //TBD this statement is removing the token 
       //GFAPI::update_entry( $master_data, $entry['master_entry_id'] );
-    }else{        
-      //otherwise, create master entry                  
-      error_log('master_data');
-      error_log(print_r($master_data,TRUE));
+    }else{        //otherwise, create master entry                        
+      //warning HARD CODING to follow
+      //set maker 1 name and email from the contact fields
+      
+      //160 - maker 1 name
+      $master_data['160.3'] = $entry['96.3'];
+      $master_data['160.3'] = $entry['96.6'];       
+      
+      //161 - maker 1 email
+      $master_data['161'] = $entry['98'];               
+
+      //110 - group bio
+      $master_data['110'] = $entry['8'];       
+
+      //field 27 - Project Website
+        /* This is a list field. we need to pull out the first website and populate it  */
+      $website = unserialize($entry['99']);      
+      $master_data['input_27'] = $website[0];
+
       $master_entry = GFAPI::submit_form($form['master_form_id'],$master_data);      
       if ( is_wp_error( $master_entry ) ) {
         $error_message = $master_entry->get_error_message();
         GFCommon::log_debug( __METHOD__ . '(): GFAPI Error Message => ' . $error_message );        
         return;
       }else{ 
-        //move multi images from maker interest form to master form
-        //update images here as the submit form doesn't work well with upload files
-        GFAPI::update_entry_field( $master_entry['entry_id'], '878', $entry['21'] );       
-
-        //set maker 1 name and email from the contact fields
-        //160 - maker 1 name
-        GFAPI::update_entry_field( $master_entry['entry_id'], '160.3', $entry['96.3'] );       
-        GFAPI::update_entry_field( $master_entry['entry_id'], '160.6', $entry['96.6'] );       
-
-        //161 - maker 1 email
-        GFAPI::update_entry_field( $master_entry['entry_id'], '161', $entry['98'] );       
-
-        //110 - group bio
-        GFAPI::update_entry_field( $master_entry['entry_id'], '110', $entry['8'] );
-
-        //set master_entry_id meta field
-        gform_update_meta( $entry['id'], 'master_entry_id', $master_entry['entry_id']);     
-      
-      }
-      
-    }
-    
+        if(!isset($master_entry['entry_id'])){
+          error_log('master entry id is not set');          
+          error_log(print_r($master_entry,TRUE));
+        }else{
+          //move multi images from maker interest form to master form
+          //update images here as the submit form doesn't work well with upload files
+          GFAPI::update_entry_field( $master_entry['entry_id'], '878', $entry['21'] );       
+                       
+          //set master_entry_id meta field
+          gform_update_meta( $entry['id'], 'master_entry_id', $master_entry['entry_id']);     
+        }              
+      }      
+    }    
   }    
 }
 
