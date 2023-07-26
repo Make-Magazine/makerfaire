@@ -191,9 +191,9 @@ if ( ! $gravityview->entries->count() ) {
 						<div class="clear"></div>
 
 						<div class="actionSection">
-						<div class="submit-date">
+						<?php /*<div class="submit-date">
 							<span class="gv-field-label">Submitted: </span> <?php echo esc_html( GFCommon::format_date( $entryData['date_created'], false, 'm/d/Y' )); ?>
-						</div>
+						</div> */ ?>
 						<!-- Action Bar for Entries -->
 						<div class="entry-action-buttons">
 							<!-- Get Your Tickets Section -->
