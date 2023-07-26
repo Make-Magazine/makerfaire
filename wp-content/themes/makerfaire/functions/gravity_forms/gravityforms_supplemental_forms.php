@@ -148,11 +148,7 @@ function copy_entry_to_new_form ($fromEntry){
 /* We will copy over all supplemental fields into original entry */
 function update_original_entry($form,$origEntryID){
   //Loop thru form fields 
-  foreach ($form['fields'] as $field) {    
-    if($field->id==854){
-      error_log('nested form entry field data');
-      error_log(print_r($field,TRUE));
-    }
+  foreach ($form['fields'] as $field) {        
      //  Do not update values from read only fields
      if(!$field->gwreadonly_enable){
       // If the field type is checkbox, name or address, we need to ensure we blank out data for previously submitted information
