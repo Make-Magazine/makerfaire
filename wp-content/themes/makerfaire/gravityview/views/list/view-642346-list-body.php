@@ -63,7 +63,8 @@ $template::body_before( $gravityview );
 			</a>
 			<div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
 			<ul class="bulletless">
-				<li><a class="dropdown-item" href="/make-education-forum/" target="_blank">Make: Education Forum</a></li>
+				<li><a class="dropdown-item" href="/bay-area/call-for-makers/" target="_blank">Maker Faire Bay Area 2023</a></li>
+				<!--<li><a class="dropdown-item" href="/make-education-forum/" target="_blank">Make: Education Forum</a></li>-->
 				<!--<li><a class="dropdown-item" href="/virtually-maker-faire-call-2020-for-makers/" target="_blank">Virtually Maker Faire</a></li>-->
 				<!--<li><a class="dropdown-item" href="/new-york/call-for-makers/" target="_blank">World Maker Faire New York</a></li>-->
 				<!--<li><a class="dropdown-item" href="/bay-area/call-for-makers/" target="_blank">Maker Faire Bay Area</a></li>-->
@@ -173,12 +174,19 @@ if ( ! $gravityview->entries->count() ) {
 						}elseif($dispGVeditLink){
 							?>
 							<span class="editLink">
-							<a href="<?php echo $GVeditLink;?>"><i class="fas fa-edit" aria-hidden="true"></i><?php echo $editEntryLabel;?></a>
+								<a href="<?php echo $GVeditLink;?>"><i class="fas fa-edit" aria-hidden="true"></i><?php echo $editEntryLabel;?></a>
 							</span>
 							<?php
 						}
 						
 						?>
+							<span class="editLink">
+								<a href="/bay-area/logistics-information/?ep_token=<?php echo $entryData['fg_easypassthrough_token'];?>"><i class="fas fa-edit" aria-hidden="true"></i>Manage Logistics Info</a>
+							</span>
+							<span class="editLink">
+								<a href="/bay-area/public-information/?ep_token=<?php echo $entryData['fg_easypassthrough_token'];?>"><i class="fas fa-edit" aria-hidden="true"></i>Manage Public Info</a>
+							</span>
+
 						</div>
 						<div class="clear"></div>
 
@@ -269,7 +277,7 @@ if ( ! $gravityview->entries->count() ) {
 									//View Link
 									$url = do_shortcode('[gv_entry_link action="read" return="url" view_id="'.$viewID.'" entry_id="'.$entryData['id'].'"]');
 									$url = str_replace('/view/', '/', $url);  //remove view slug from URL
-									?><a href="<?php echo $url;?>">View Entry</a><?php
+									/* ?><a href="<?php echo $url;?>">View Entry</a><?php */
 
 									if($dispEditPub) { ?>
 										<a href="<?php echo $viewEditLink;?>">
