@@ -20,6 +20,11 @@ Inline Editing is a powerful way to quickly make changes to a form entry without
 
 == Changelog ==
 
+= 2.0.1 on July 12, 2023 =
+
+* Fixed: HTML markup being included when exporting View entries to CSV/TSV
+* Updated: [Foundation](https://www.gravitykit.com/foundation/) to version 1.1.1
+
 = 2.0 on May 11, 2023 =
 
 * Fixed: File uploads were being saved to the WordPress upload directory, not the Gravity Forms uploads directory
@@ -310,4 +315,4 @@ __Developer Updates:__
 - Blastoff!
 
 
-= 1688664048-4249 =
+= 1690335083-4249 =

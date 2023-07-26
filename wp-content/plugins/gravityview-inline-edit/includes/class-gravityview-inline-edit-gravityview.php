@@ -353,9 +353,9 @@ final class GravityView_Inline_Edit_GravityView extends GravityView_Inline_Edit_
 	 *
 	 */
 	public function wrap_gravityview_field_value( $output, $context ) {
+		$is_export = $context->template instanceof GV\Field_CSV_Template && ( get_query_var( 'csv' ) || get_query_var( 'tsv' ) );
 
-		if ( ! $this->is_inline_edit_enabled( $context ) ) {
-
+		if ( ! $this->is_inline_edit_enabled( $context ) || $is_export ) {
 			// Don't keep running this filter.
 			remove_filter( 'gravityview/template/field/output', array( $this, 'wrap_gravityview_field_value' ), 10 );
 

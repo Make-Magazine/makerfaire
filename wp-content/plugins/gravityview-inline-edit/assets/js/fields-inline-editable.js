@@ -25,7 +25,7 @@
             $.fn.editableform.buttons = gv_inline_x.buttons;
             $.fn.editableContainer.Inline.prototype.containerClass = 'gv-editable-container gform_wrapper editable-container editable-inline';
             $.fn.editableContainer.Popup.prototype.containerClass = 'gv-editable-container gform_wrapper editable-container editable-popup gv-editable-popover';
-            $.fn.popover.Constructor.DEFAULTS.template = '<div class="gv-editable-popover popover" role="tooltip"><div class="arrow"></div><h3 class="popover-title"></h3><div class="popover-content"></div></div>';
+			( $.fn.popover.Constructor.defaults || $.fn.popover.Constructor.Default || {} ).template = '<div class="gv-editable-popover popover" role="tooltip"><div class="arrow"></div><h3 class="popover-title"></h3><div class="popover-content"></div></div>';
             $.fn.popover.Constructor.prototype.destroy = function () {
                 var that = this;
                 clearTimeout( this.timeout );

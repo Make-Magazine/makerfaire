@@ -45,11 +45,16 @@
 .tl-gk_foundation_trustedlogin-auth .tl-gk_foundation_trustedlogin-auth__checkbox--large {
   transform: scale(1.2);
 }
-.tl-gk_foundation_trustedlogin-auth .dashicons--small {
+.tl-gk_foundation_trustedlogin-auth .dashicons--small,
+.tl-gk_foundation_trustedlogin-auth .dashicons--medium {
   height: 18px;
   width: 18px;
   font-size: 18px;
   vertical-align: text-top;
+}
+.tl-gk_foundation_trustedlogin-auth .dashicons--medium {
+  vertical-align: text-bottom;
+  line-height: 1.2;
 }
 .tl-gk_foundation_trustedlogin-auth .dashicons--large {
   font-size: 32px;
@@ -91,11 +96,11 @@
   background-color: #fef1ea;
   border-radius: 5px;
 }
+.tl-gk_foundation_trustedlogin-auth .tl-gk_foundation_trustedlogin-toggle {
+  cursor: pointer;
+}
 .tl-gk_foundation_trustedlogin-auth .tl-gk_foundation_trustedlogin-auth__roles {
   padding: 24px 10px 24px;
-}
-.tl-gk_foundation_trustedlogin-auth .tl-gk_foundation_trustedlogin-auth__roles .tl-gk_foundation_trustedlogin-toggle {
-  cursor: pointer;
 }
 .tl-gk_foundation_trustedlogin-auth .tl-gk_foundation_trustedlogin-auth__roles .tl-gk_foundation_trustedlogin-toggle .dashicons {
   margin-left: 0;
@@ -159,7 +164,7 @@
 }
 .tl-gk_foundation_trustedlogin-auth h2 {
   font-size: 1.25em;
-  line-height: 1.75;
+  line-height: 1.7;
   font-weight: 400;
   margin: 0;
 }
@@ -175,7 +180,7 @@
 .tl-gk_foundation_trustedlogin-auth h2.tl-gk_foundation_trustedlogin-auth__intro {
   text-align: center;
   font-size: 2em;
-  line-height: 1.4;
+  line-height: 1.375;
   padding: 10px 30px;
 }
 .tl-gk_foundation_trustedlogin-auth.tl-gk_foundation_trustedlogin-grant-access .tl-gk_foundation_trustedlogin-auth__roles, .tl-gk_foundation_trustedlogin-auth.tl-gk_foundation_trustedlogin-has-access .tl-gk_foundation_trustedlogin-auth__content {
@@ -204,6 +209,14 @@
 .tl-gk_foundation_trustedlogin-auth .tl-gk_foundation_trustedlogin-auth__intro,
 .tl-gk_foundation_trustedlogin-auth .tl-gk_foundation_trustedlogin-auth__details {
   padding: 12px 20px;
+}
+.tl-gk_foundation_trustedlogin-auth .tl-gk_foundation_trustedlogin-ticket__fields {
+  margin-top: 12px;
+}
+.tl-gk_foundation_trustedlogin-auth .tl-gk_foundation_trustedlogin-ticket__fields textarea {
+  padding: 8px 10px;
+  font-size: 17px;
+  line-height: 1.375;
 }
 .tl-gk_foundation_trustedlogin-auth .button-danger {
   border: 1px solid #a2aab2;
@@ -312,7 +325,7 @@
 }
 .tl-gk_foundation_trustedlogin-auth .notice h3 {
   font-size: 1.2em;
-  line-height: 1.4;
+  line-height: 1.375;
   margin: 12px 0 12px;
 }
 .tl-gk_foundation_trustedlogin-auth .notice p {
@@ -331,6 +344,12 @@
 }
 .tl-gk_foundation_trustedlogin-auth .tl-gk_foundation_trustedlogin-auth__logo a:after {
   content: "";
+}
+.tl-gk_foundation_trustedlogin-auth .tl-gk_foundation_trustedlogin-auth__admin_debugging {
+  text-align: left;
+  max-height: 25vh;
+  overflow-y: auto;
+  text-align: left;
 }
 .tl-gk_foundation_trustedlogin-auth footer {
   padding: 12px;

@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by __root__ on 11-May-2023 using Strauss.
+ * Modified by __root__ on 12-July-2023 using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 
@@ -40,6 +40,8 @@ class Encryption {
 	 * @return void
 	 */
 	private function __construct( $secret_key = '' ) {
+		$this->require_sodium();
+
 		if ( ! $secret_key ) {
 			$secret_key = wp_salt();
 		}
@@ -173,5 +175,30 @@ class Encryption {
 	 */
 	public function get_random_nonce() {
 		return random_bytes( SODIUM_CRYPTO_SECRETBOX_NONCEBYTES );
+	}
+
+	/**
+	 * Includes PHP polyfill for ext/sodium if some core functions are not available.
+	 *
+	 * @since 1.1.1
+	 *
+	 * @return void
+	 */
+	private function require_sodium() {
+		$required_functions = [
+			'sodium_hex2bin',
+			'sodium_bin2base64',
+			'sodium_base642bin',
+			'sodium_crypto_secretbox',
+			'sodium_crypto_secretbox_open',
+		];
+
+		foreach ( $required_functions as $function ) {
+			if ( ! function_exists( $function ) ) {
+				require_once ABSPATH . WPINC . '/sodium_compat/autoload.php';
+
+				break;
+			}
+		}
 	}
 }

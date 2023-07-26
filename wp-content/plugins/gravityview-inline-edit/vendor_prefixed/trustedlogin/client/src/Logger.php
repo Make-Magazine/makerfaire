@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by __root__ on 11-May-2023 using Strauss.
+ * Modified by __root__ on 12-July-2023 using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 namespace GravityKit\GravityEdit\Foundation\ThirdParty\TrustedLogin;

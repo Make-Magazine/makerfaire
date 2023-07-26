@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by __root__ on 11-May-2023 using Strauss.
+ * Modified by __root__ on 12-July-2023 using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 
@@ -111,12 +111,18 @@ class Framework {
 	 * @return void
 	 */
 	public function init() {
-		if ( ! $this->current_user_can( 'view_licenses' ) && ! $this->current_user_can( 'view_products' ) ) {
+		if ( did_action( 'gk/foundation/licenses/initialized' ) ) {
 			return;
 		}
 
-		if ( ! is_admin() || did_action( 'gk/foundation/licenses/initialized' ) ) {
-			return;
+		if ( 'cli' !== php_sapi_name() ) {
+			if ( ! is_admin() ) {
+				return;
+			}
+
+			if ( ! $this->current_user_can( 'view_licenses' ) && ! $this->current_user_can( 'view_products' ) ) {
+				return;
+			}
 		}
 
 		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_assets' ] );
