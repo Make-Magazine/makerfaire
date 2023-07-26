@@ -25,7 +25,7 @@ function check_entry_display( $check_entry_display, $entry ) {
   if($count > 0) return false;
   return $check_entry_display;
 }
-add_filter('gravityview/common/get_entry/check_entry_display', 'check_entry_display', 10, 2 );
+//add_filter('gravityview/common/get_entry/check_entry_display', 'check_entry_display', 10, 2 );
 
 /* add query var for MAT to edit the entry */
 add_filter( 'query_vars', 'mat_register_query_var' );

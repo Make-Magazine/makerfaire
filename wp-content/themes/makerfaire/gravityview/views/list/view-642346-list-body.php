@@ -47,25 +47,7 @@ $template::body_before( $gravityview );
     });
   });
   </script>
-<?php
-
-// There are no entries.
-if ( ! $gravityview->entries->count() ) {
-
-	$no_results_css_class = 'gv-no-results gv-no-results-text';
-
-	if ( 1 === (int) $gravityview->view->settings->get( 'no_entries_options', '0' ) ) {
-		$no_results_css_class = 'gv-no-results gv-no-results-form';
-	}
-
-	?>
-	<div class="gv-list-view <?php echo esc_attr( $no_results_css_class ); ?>">
-		<div class="gv-list-view-title">
-			<h3><?php echo gv_no_results( true, $gravityview ); ?></h3>
-		</div>
-	</div>
 	<?php
-} else {
 	$current_user = wp_get_current_user();
 	?>
 	<div class="clearfix">
@@ -93,6 +75,23 @@ if ( ! $gravityview->entries->count() ) {
 
 	<hr class="header-break">
 	<?php
+// There are no entries.
+if ( ! $gravityview->entries->count() ) {
+
+	$no_results_css_class = 'gv-no-results gv-no-results-text';
+
+	if ( 1 === (int) $gravityview->view->settings->get( 'no_entries_options', '0' ) ) {
+		$no_results_css_class = 'gv-no-results gv-no-results-form';
+	}
+
+	?>
+	<div class="gv-list-view <?php echo esc_attr( $no_results_css_class ); ?>">
+		<div class="gv-list-view-title">
+			<h3><?php echo gv_no_results( true, $gravityview ); ?></h3>
+		</div>
+	</div>
+	<?php
+} else {
 	$editEntryLabel = 'Manage Photos';
 	//var_dump($gravityview->entries->all());
 	// There are entries. Loop through them.
