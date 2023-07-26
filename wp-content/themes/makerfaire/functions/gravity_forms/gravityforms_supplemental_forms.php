@@ -177,6 +177,10 @@ function update_original_entry($form,$origEntryID){
             GFAPI::update_entry_field( $origEntryID, $field->id, stripslashes($updValue) );  
           }
           break;
+        case 'page':
+        case 'section':  
+        case 'html':
+          break;  
         default:
           //find submitted value
           $updValue =  (isset($_POST['input_'.$field->id])?$_POST['input_'.$field->id]:'');                    

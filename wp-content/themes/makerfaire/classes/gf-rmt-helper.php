@@ -393,7 +393,8 @@ class GFRMTHELPER {
        $form_type != 'Performance' &&
        $form_type != 'Workshop' &&
        $form_type != 'Sponsor' &&
-       $form_type != 'Startup Sponsor' ){
+       $form_type != 'Startup Sponsor' &&
+       $form_type != 'Master' ){
       return;
     }
 

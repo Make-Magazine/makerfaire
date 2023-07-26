@@ -44,10 +44,17 @@ function processTasks( $entry, $form) {
       $lead_id = $entry['id'];
       $taskID   = $form_id.'-'.$task['id'];
       if ( GFCommon::evaluate_conditional_logic( $task['conditionalLogic'], $form, $entry ) ) {
-        $action_URL = $task['form2use'];
-        $action_URL .= '?entry-id='.$lead_id;
-        $action_URL .= '&contact-email='.$entry['98'];
-        $action_URL .= '&taskID='.$taskID;
+        //Master forms use a EP token. all others use the old method
+        if($form['form_type']=='Master'){
+          $action_URL = $task['form2use'];
+          $action_URL .= '?ep_token='.$entry['fg_easypassthrough_token'];
+        }else{
+          $action_URL = $task['form2use'];
+          $action_URL .= '?entry-id='.$lead_id;
+          $action_URL .= '&contact-email='.$entry['98'];
+          $action_URL .= '&taskID='.$taskID;
+        }
+        
 
         //check if this task was previously set, if yes  do nothing
         //if no, set the task
