@@ -9,7 +9,7 @@ if ( ! isset( $gravityview ) || empty( $gravityview->template ) ) {
 	gravityview()->log->error( '{file} template loaded without context', array( 'file' => __FILE__ ) );
 	return;
 }
-$viewID = '642346'; //stage id
+$viewID = '642359'; 
 
 $template = $gravityview->template;
 $current_user = wp_get_current_user();
