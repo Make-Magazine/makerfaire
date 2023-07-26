@@ -9,7 +9,7 @@ if ( ! isset( $gravityview ) || empty( $gravityview->template ) ) {
 	gravityview()->log->error( '{file} template loaded without context', array( 'file' => __FILE__ ) );
 	return;
 }
-$viewID = '6423476'; //stage id
+$viewID = '642346'; //stage id
 
 $template = $gravityview->template;
 $current_user = wp_get_current_user();
@@ -93,8 +93,9 @@ if ( ! $gravityview->entries->count() ) {
 	<?php
 } else {
 	$editEntryLabel = 'Manage Photos';
-	//var_dump($gravityview->entries->all());
-	// There are entries. Loop through them.
+	$post_id = get_the_ID();
+
+	// There are entries. Loop through them.	
 	foreach ( $gravityview->entries->all() as $multientry ) {		
 		$entryData = $multientry->as_entry();				
 		$image =  (isset($entryData['22']) && $entryData['22'] != '' ? $entryData['22']:get_template_directory_uri() .'/images/no-image.png');
@@ -103,13 +104,15 @@ if ( ! $gravityview->entries->count() ) {
 
 		//edit media links (defined in the 'Edit Entry' section of the view)
 		$dispGVeditLink = TRUE;
-		$GVeditLink = do_shortcode('[gv_entry_link action="edit" return="url" view_id="'.$viewID.'" entry_id="'.$entryData['id'].'"]');
-        //$GVeditLink = str_replace('/view/', '/', $GVeditLink);  //remove view slug from URL
 		
+		$GVeditLink = do_shortcode('[gv_entry_link post_id="'.$post_id.'" action="edit" return="url" view_id="'.$viewID.'" entry_id="'.$entryData['id'].'"]');
+		
+		//set tasks for entry
+		$entryData['tasks'] = $maker->get_tasks_by_entry($entryData['id']);		
+
 		//TBD - need to set these fields
 		$entryData['mat_message']   = '';		
 		$entryData['ticketing'] = array();
-		$entryData['tasks'] = $maker->get_tasks_by_entry($entryData['id']);		
 
 		$dispEditPub = FALSE;
 		$viewEditLink = '';
