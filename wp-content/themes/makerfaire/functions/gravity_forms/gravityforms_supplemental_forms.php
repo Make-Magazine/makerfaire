@@ -17,6 +17,8 @@ function entry_accepted_cb( $entry ) {
       //GFAPI::update_entry( $master_data, $entry['master_entry_id'] );
     }else{        
       //otherwise, create master entry                  
+      error_log('master_data');
+      error_log(print_r($master_data,TRUE));
       $master_entry = GFAPI::submit_form($form['master_form_id'],$master_data);      
       if ( is_wp_error( $master_entry ) ) {
         $error_message = $master_entry->get_error_message();
