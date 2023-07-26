@@ -17,6 +17,10 @@ function entry_accepted_cb( $entry ) {
       //GFAPI::update_entry( $master_data, $entry['master_entry_id'] );
     }else{        //otherwise, create master entry                        
       //warning HARD CODING to follow
+
+      //transfer the created_by to the master entry so they have edit rights to it
+      if(isset( $entry['created_by'])) $master_data['created_by'] = $entry['created_by'];
+
       //set maker 1 name and email from the contact fields
       
       //160 - maker 1 name
