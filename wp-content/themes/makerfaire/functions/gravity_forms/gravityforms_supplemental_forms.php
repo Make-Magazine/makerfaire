@@ -169,16 +169,43 @@ function update_original_entry($form,$origEntryID){
             /*
              * if the field is set, update with submitted value, else, update with blanks
              */
-            $updValue =  (isset($_POST['input_'.$inputID]) ? $_POST['input_'.$inputID] : '');            
-            GFAPI::update_entry_field( $origEntryID, $updField, stripslashes($updValue) );          
+            if(isset($_POST['input_'.$inputID] )){
+              $updValue =  $_POST['input_'.$inputID];            
+              GFAPI::update_entry_field( $origEntryID, $updField, stripslashes($updValue) );          
+            }            
           }
           break;
-        case 'list':
-          //list data is stored serialized
-          if( isset($_POST['input_'.$field->id]) && !is_serialized( $_POST['input_'.$field->id]) ) {
-            $updValue = maybe_serialize($_POST['input_'.$field->id] );            
-            GFAPI::update_entry_field( $origEntryID, $field->id, stripslashes($updValue) );  
-          }
+        case 'list':                              
+          if(isset($_POST['input_'.$field->id])){
+            $options=array();
+            foreach($field->choices as $choice){
+              $options[] = $choice['value'];
+            }  
+            
+            if(is_array($_POST['input_'.$field->id])){
+              $input_value = $_POST['input_'.$field->id];
+              $num_list_items = count($_POST['input_'.$field->id]) - 1;              
+
+              $x=0;
+              $output = array();
+              while($x <= $num_list_items){
+                $list_array = array();
+                foreach($options as $option){
+                  $list_array[$option] = $input_value[$x]; 
+                  $x++;
+                }    
+                $output[]=$list_array;                        
+              }
+            }
+
+            //list data is stored serialized        
+            $updValue = maybe_serialize($output);            
+             
+            $serialize = 'a:2:{i:0;a:2:{s:8:"Platform";s:8:"facebook";s:9:"Your Link";s:20:"https://facebook.com";}i:1;a:2:{s:8:"Platform";s:7:"twitter";s:9:"Your Link";s:19:"https://twitter.com";}}';
+ 
+            GFAPI::update_entry_field( $origEntryID, $field->id, $updValue);  
+          }          
+          
           break;
         case 'page':
         case 'section':  
@@ -186,10 +213,14 @@ function update_original_entry($form,$origEntryID){
           break;  
         default:
           //find submitted value
-          $updValue =  (isset($_POST['input_'.$field->id])?$_POST['input_'.$field->id]:'');                    
-          GFAPI::update_entry_field( $origEntryID, $field->id, stripslashes($updValue) );
+          if(isset($_POST['input_'.$field->id])){
+            $updValue =  $_POST['input_'.$field->id];                    
+            GFAPI::update_entry_field( $origEntryID, $field->id, stripslashes($updValue) );
+          }
+          
           break;
-      }           
+      }
+           
     }
   }
   //uploaded files
