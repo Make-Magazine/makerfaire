@@ -20,20 +20,29 @@ function entry_accepted_cb( $entry ) {
       //set maker 1 name and email from the contact fields
       
       //160 - maker 1 name
-      $master_data['160.3'] = $entry['96.3'];
-      $master_data['160.3'] = $entry['96.6'];       
+      $master_data['input_160.3'] = $entry['1.3'];
+      $master_data['input_160.6'] = $entry['1.6'];       
       
       //161 - maker 1 email
-      $master_data['161'] = $entry['98'];               
+      $master_data['input_161'] = $entry['98'];               
 
       //110 - group bio
-      $master_data['110'] = $entry['8'];       
+      $master_data['input_110'] = $entry['8'];       
 
       //field 27 - Project Website
         /* This is a list field. we need to pull out the first website and populate it  */
       $website = unserialize($entry['99']);      
-      $master_data['input_27'] = $website[0];
 
+      //validate the website to ensure it's a valid url      
+      if (wp_http_validate_url($website[0])) {
+        //check to ensure they have http:// or https:// as part of their url
+        $master_data['input_27'] = trim($website[0]);
+      }  else{
+        $master_data['input_27'] = '';
+      }
+      
+      error_log('master data below');
+      error_log(print_r($master_data,TRUE));
       $master_entry = GFAPI::submit_form($form['master_form_id'],$master_data);      
       if ( is_wp_error( $master_entry ) ) {
         $error_message = $master_entry->get_error_message();

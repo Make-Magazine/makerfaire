@@ -9,8 +9,7 @@ if ( ! isset( $gravityview ) || empty( $gravityview->template ) ) {
 	gravityview()->log->error( '{file} template loaded without context', array( 'file' => __FILE__ ) );
 	return;
 }
-$viewID = '642345'; 
-$publicInfoViewID = '642349';
+$viewID = '6423476'; //stage id
 
 $template = $gravityview->template;
 $current_user = wp_get_current_user();
@@ -101,6 +100,7 @@ if ( ! $gravityview->entries->count() ) {
 		$entryData = $multientry->as_entry();				
 		$image =  (isset($entryData['22']) && $entryData['22'] != '' ? $entryData['22']:get_template_directory_uri() .'/images/no-image.png');
 		$entryStatus = (isset($entryData['303']) && $entryData['303'] != '' ? $entryData['303'] : 'Unknown');
+		$statusBlock  = ($entryStatus == 'Accepted' ? 'greenStatus':'greyStatus');
 
 		//edit media links (defined in the 'Edit Entry' section of the view)
 		$dispGVeditLink = TRUE;
