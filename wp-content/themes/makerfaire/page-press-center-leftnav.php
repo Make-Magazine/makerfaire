@@ -197,6 +197,7 @@ elseif($layout_type === 'brand_assets') {
    }
 
 }
+the_content();
 ?>
          </div> <!-- end content -->
       </div> <!-- end row -->
