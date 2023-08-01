@@ -652,3 +652,9 @@ b, strong {
 		margin: 0 30px;
 	}
 }
+// stop elementor full width from breaking containers
+.page-template-elementor_header_footer {
+  .e-con, .e-con > .e-con-inner {
+    display: block;
+  }
+}
