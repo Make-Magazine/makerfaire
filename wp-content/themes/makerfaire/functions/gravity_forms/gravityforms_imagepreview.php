@@ -6,13 +6,11 @@
  */
 function wd_gravity_image_thumb_upload() {
     
-	// change this to your page ID so it's not loaded on each page
-	
-    if ( is_page('641770') ) {        
-		
+	// only run this on pages with gravity forms
+    if ( /*is_page('641770')*/ has_gform() ) {        
 		// change this to your form ID so we know where the images are uploaded to
-        $upload_path = GFFormsModel::get_upload_url( '258' );
-        
+        $gf_id = get_shortcode_attributes('gravityform')[0]['id'];
+        $upload_path = GFFormsModel::get_upload_url( $gf_id );
      ?>
 
      <style>
@@ -53,33 +51,10 @@ function wd_gravity_image_thumb_upload() {
             
             var fileName = up.settings.multipart_params.gform_unique_id + '_input_' + fieldId +'_'+ file.target_name;
             var fid =  "fid"+  Math.ceil((Math.random() * (10000 - 1000)) + 1000); 
-
-            //Converting Image to the base64
-            
-            function convertImgToBase64URL(url, callback, outputFormat){
-                var img = new Image();
-                img.crossOrigin = 'Anonymous';
-                img.onload = function(){
-                    var canvas = document.createElement('CANVAS'),
-                    ctx = canvas.getContext('2d'), dataURL;
-                    canvas.height = (300 * img.height)/img.width;
-                    canvas.width = 300; //img.width;
-                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-                    dataURL = canvas.toDataURL(outputFormat);
-                    callback(dataURL);
-                    canvas = null; 
-                };
-                img.src = url;
-                return url;
-            }
            
-            var previewURL = convertImgToBase64URL( myFilePath + temp_name , function(base64Img){
-              var ffid = "#"+fid;
-              $(ffid).attr("src", base64Img); 
-              console.log('RESULT:', base64Img);   
-            });
+            var previewURL = myFilePath + temp_name;
 
-            html = '<img id="'+fid+"\" src='"+previewURL+"' style='max-width:150px;height:auto;'/><img class='gform_delete' " + "src='" + imagesUrl + "/delete.png' "+ "onclick='gformDeleteUploadedFile(" + formId + "," + fieldId + ", this);' " + "alt='" + strings.delete_file + "' title='" + strings.delete_file + "' />";
+            html = '<img id="'+fid+"\" src='"+previewURL+"' alt='"+fileName+"' style='max-width:150px;height:auto;'/><img class='gform_delete' " + "src='" + imagesUrl + "/delete.png' "+ "onclick='gformDeleteUploadedFile(" + formId + "," + fieldId + ", this);' " + "alt='" + strings.delete_file + "' title='" + strings.delete_file + "' />";
             return html;
         });
 
@@ -91,3 +66,14 @@ function wd_gravity_image_thumb_upload() {
     }
 
 add_action('wp_head','wd_gravity_image_thumb_upload');
+
+// conditional to check whether Gravity Forms shortcode is on a page
+function has_gform() {
+    global $post;
+    $all_content = get_the_content();
+    if (strpos($all_content,'[gravityform') !== false) {
+        return true;
+    } else {
+        return false;
+    }
+}

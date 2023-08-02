@@ -92,3 +92,43 @@ function make_rss_func($atts) {
 }
 
 add_shortcode('make_rss', 'make_rss_func');
+
+// function to return the attributes for a given shortcode present on a page
+function get_shortcode_attributes( $shortcode_tag ) {
+    global $post;
+    if( has_shortcode( $post->post_content, $shortcode_tag ) ) {
+        $output = array();
+        //get shortcode regex pattern wordpress function
+        $pattern = get_shortcode_regex( [ $shortcode_tag ] );
+        if (   preg_match_all( '/'. $pattern .'/s', $post->post_content, $matches ) )
+        {
+            $keys = array();
+            $output = array();
+            foreach( $matches[0] as $key => $value) {
+                // $matches[3] return the shortcode attribute as string
+                // replace space with '&' for parse_str() function
+                $get = str_replace(" ", "&" , trim( $matches[3][$key] ) );
+                $get = str_replace('"', '' , $get );
+                parse_str( $get, $sub_output );
+
+                //get all shortcode attribute keys
+                $keys = array_unique( array_merge(  $keys, array_keys( $sub_output )) );
+                $output[] = $sub_output;
+            }
+            if( $keys && $output ) {
+                // Loop the output array and add the missing shortcode attribute key
+                foreach ($output as $key => $value) {
+                    // Loop the shortcode attribute key
+                    foreach ($keys as $attr_key) {
+                        $output[$key][$attr_key] = isset( $output[$key] )  && isset( $output[$key] ) ? $output[$key][$attr_key] : NULL;
+                    }
+                    //sort the array key
+                    ksort( $output[$key]);
+                }
+            }
+        }
+        return $output;
+    }else{
+        return false;
+    }
+}
