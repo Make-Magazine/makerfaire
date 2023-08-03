@@ -213,9 +213,7 @@ add_action('wp_ajax_update-lock-resAtt','update_lock_resAtt');
  */
 
 add_action( 'wp_ajax_mf-update-entry', 'mf_admin_MFupdate_entry' );
-function mf_admin_MFupdate_entry(){
-  error_log('update entry');
-  error_log(print_r($_POST,TRUE));
+function mf_admin_MFupdate_entry(){  
   //Get the current action
   $mfAction = $_POST['mfAction'];
   $response = array('rebuild'=>'', 'rebuildHTML'=>'');
@@ -313,7 +311,7 @@ function set_entry_status($lead,$form){
   $acceptance_current_status = isset($lead['303']) ? $lead['303'] : '';
 
 	$is_acceptance_status_changed = (strcmp($acceptance_current_status, $acceptance_status_change) != 0);
-
+  
 	if (!empty($entry_id)){
 		if (!empty($acceptance_status_change)){
       //Update Field for Acceptance Status
