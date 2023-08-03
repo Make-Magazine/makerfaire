@@ -24,10 +24,11 @@ function wd_gravity_image_thumb_upload() {
         .ginput_preview_list .ginput_preview{
             float: left;
             width: 170px;
-            margin: 1%;
+            padding: 1%;
             display: block;
             position: relative;
             margin-bottom: 15px;
+            overflow: hidden;
         }   
 
         .ginput_preview_list .gform_delete{
