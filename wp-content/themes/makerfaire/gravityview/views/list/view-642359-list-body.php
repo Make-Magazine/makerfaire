@@ -45,6 +45,12 @@ $template::body_before( $gravityview );
           jQuery('[data-toggle="popover"]').popover('hide');
       }
     });
+	jQuery(".notification-counter").each(function() {
+		console.log(jQuery(this).attr("data-count"));
+		if(jQuery(this).attr("data-count") != 0) {
+			jQuery(this).click();
+		}
+	});
   });
   </script>
 	<?php
@@ -238,7 +244,7 @@ if ( ! $gravityview->entries->count() ) {
 									?>
 
 									<button type="button" class="btn btn-default btn-no-border notifications-button toggle-popover" data-toggle="popover">TASKS
-									<div class="notification-counter toggle-popover" data-toggle="popover"><?php echo count($tasks['toDo']);?></div>
+									<div class="notification-counter toggle-popover" data-toggle="popover" data-count="<?php echo count($tasks['toDo']);?>"><?php echo count($tasks['toDo']);?></div>
 									</button>
 									<div class="popover-content hidden">
 									<div class="manage-entry-popover row">

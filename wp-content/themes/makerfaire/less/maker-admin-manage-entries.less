@@ -187,7 +187,7 @@
       }
     }
     .entry-action-buttons {
-      float: right;
+      width: 100%;
       .hideSmall {
         @media screen and (max-width: 1199px) {
           display: none;
@@ -227,6 +227,9 @@
         height: 1.5em;
         display: inherit;
         line-height: 1.5em;
+        &[data-count="0"] {
+          background-color: green;
+        }
       }
     }
     .entry-main-content {
