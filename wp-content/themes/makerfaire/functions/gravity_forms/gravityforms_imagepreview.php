@@ -7,16 +7,18 @@
 function wd_gravity_image_thumb_upload() {
     
 	// only run this on pages with gravity forms
-    if ( /*is_page('641770')*/ has_gform() ) {        
-		// change this to your form ID so we know where the images are uploaded to
-        $gf_id = get_shortcode_attributes('gravityform')[0]['id'];
-        $upload_path = GFFormsModel::get_upload_url( $gf_id );
+    if ( is_page('641770') || is_page('478584') /*has_gf()*/ ) {        
+		// TODO, use this $gf_id variable to it works for all gravity forms and gravity views, it just needs to get the gf id from the gravityview
+       // $gf_id = (has_gf() == "gf") ? get_shortcode_attributes('gravityform')[0]['id'] : get_id_from_gravityview_somehow;
+        $upload_path = GFFormsModel::get_upload_url( '258' );
+        if(is_page('478584')) {
+            $upload_path = GFFormsModel::get_upload_url( '260' );
+        }
      ?>
 
      <style>
         .ginput_preview_list {
             overflow: hidden;
-            margin: 0 -1%;
         }
 
         .ginput_preview_list .ginput_preview{
@@ -67,12 +69,14 @@ function wd_gravity_image_thumb_upload() {
 
 add_action('wp_head','wd_gravity_image_thumb_upload');
 
-// conditional to check whether Gravity Forms shortcode is on a page
-function has_gform() {
+// conditional to check whether Gravity Forms or Gravity View shortcode is on a page
+function has_gf() {
     global $post;
     $all_content = get_the_content();
     if (strpos($all_content,'[gravityform') !== false) {
-        return true;
+        return "gf";
+    } else if(strpos($all_content,'[gravityview') !== false) {
+        return "gv";
     } else {
         return false;
     }
