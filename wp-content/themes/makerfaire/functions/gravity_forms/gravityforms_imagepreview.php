@@ -29,6 +29,7 @@ function wd_gravity_image_thumb_upload() {
             position: relative;
             margin-bottom: 15px;
             overflow: hidden;
+            overflow-wrap: break-word;
         }   
 
         .ginput_preview_list .gform_delete{
