@@ -214,12 +214,14 @@ add_action('wp_ajax_update-lock-resAtt','update_lock_resAtt');
 
 add_action( 'wp_ajax_mf-update-entry', 'mf_admin_MFupdate_entry' );
 function mf_admin_MFupdate_entry(){
+  error_log('update entry');
+  error_log(print_r($_POST,TRUE));
   //Get the current action
   $mfAction = $_POST['mfAction'];
   $response = array('rebuild'=>'', 'rebuildHTML'=>'');
   //Only process if there was a gravity forms action
   if (!empty($mfAction)){
-    $entry_id     = $_POST['entry_id'];
+    $entry_id     = $_POST['entry_id'];    
     $lead         = GFAPI::get_entry( $entry_id );
     $form_id      = isset($lead['form_id']) ? $lead['form_id'] : 0;
     $form         = RGFormsModel::get_form_meta($form_id);
