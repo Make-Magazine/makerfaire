@@ -42,3 +42,14 @@ function makersign_rewrite_rules() {
 
 //hide the Approve/Reject Entry column in entry list
 add_filter('gravityview/approve_entries/hide-if-no-connections', '__return_true');
+
+
+add_filter( 'gravityview_edit_entry_title', 'gk_change_edit_entry_title', 10, 2);
+function gk_change_edit_entry_title( $previous_text = 'Edit Entry', $GV_object ) {
+  if($GV_object->view_id=='642359'){
+    return 'Manage Photos';
+  }else{
+    return $previous_text;
+  }
+  
+}
