@@ -90,20 +90,22 @@ function load_scripts() {
     $my_version = $my_theme->get('Version');
 
     // Styles
-    wp_enqueue_style('make-gravityforms', get_stylesheet_directory_uri() . '/css/gravityforms.css');
+    if(has_gf()) {
+        wp_enqueue_style('make-gravityforms', get_stylesheet_directory_uri() . '/css/gravityforms.css');
+    }
     wp_enqueue_style('make-bootstrap', get_stylesheet_directory_uri() . '/css/bootstrap.min.css');
     wp_enqueue_style('make-bootstrapdialog', get_stylesheet_directory_uri() . '/css/bootstrap-dialog.min.css', true);
     // wp_enqueue_style('wpb-google-fonts', 'https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,900|Roboto+Condensed:400', false);
     wp_enqueue_style('make-styles', get_stylesheet_directory_uri() . '/css/style.min.css', array(), $my_version);
 
     wp_enqueue_style('jquery-datetimepicker-css', get_stylesheet_directory_uri() . '/css/jquery.datetimepicker.css', '', '', true);
-    wp_enqueue_style('mf-datatables', get_stylesheet_directory_uri() . '/css/mf-datatables.css', '', '', true);
+    if (is_admin()) {
+        wp_enqueue_style('mf-datatables', get_stylesheet_directory_uri() . '/css/mf-datatables.css', '', '', true);
+    }
     wp_enqueue_style('fancybox', '//cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.6/css/jquery.fancybox.min.css', '', 'all');
     wp_enqueue_style('universal-firstload.css', UNIVERSAL_MAKEHUB_ASSET_URL_PREFIX . '/wp-content/universal-assets/v2/css/universal-firstload.min.css', array(), $my_version);
     wp_enqueue_style('universal.css', UNIVERSAL_MAKEHUB_ASSET_URL_PREFIX . '/wp-content/universal-assets/v2/css/universal.min.css', array(), $my_version);
 
-    // font awesome load script
-    wp_enqueue_script('fontawesome5-js', 'https://kit.fontawesome.com/7c927d1b5e.js', array(), '', true);
     //auth0
     wp_enqueue_script('auth0', 'https://cdn.auth0.com/js/auth0/9.6.1/auth0.min.js', array(), false, true);
     // space time for timezone hijinks
@@ -160,10 +162,12 @@ function remove_unnecessary_scripts() {
 add_action( 'wp_print_scripts', 'remove_unnecessary_scripts', PHP_INT_MAX ); // we want this to happen absolutely last
 
 function remove_unnecessary_styles() {
+    wp_dequeue_style( 'font-awesome' );
+	wp_dequeue_style( 'essb-fontawsome' );
     if (is_admin()) {
 		wp_deregister_style( 'elementor-ai' );
 		wp_dequeue_style( 'elementor-ai' );
-	}
+	} 
 }
 add_action( 'wp_print_styles', 'remove_unnecessary_styles', PHP_INT_MAX ); // we want this to happen absolutely last
 
