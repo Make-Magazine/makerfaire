@@ -46,7 +46,6 @@ $template::body_before( $gravityview );
       }
     });
 	jQuery(".notification-counter").each(function() {
-		console.log(jQuery(this).attr("data-count"));
 		if(jQuery(this).attr("data-count") != 0) {
 			jQuery(this).click();
 		}
