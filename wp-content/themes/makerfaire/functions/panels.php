@@ -524,7 +524,10 @@ function get6ColLayout() {
 
 function get1ColWYSIWYG() {
     $return = '';
-    $column_1 = get_sub_field('column_1');
+    
+    $column_1 = get_sub_field('column_1',false);        
+    $column_1 = apply_filters('the_content', stripslashes($column_1));    
+    
     $cta_button = get_sub_field('cta_button');
     $cta_button_url = get_sub_field('cta_button_url');
     $return .= '<section class="content-panel single-block">
