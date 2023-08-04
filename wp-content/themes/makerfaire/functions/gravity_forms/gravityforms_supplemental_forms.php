@@ -246,9 +246,6 @@ function update_original_entry($form,$origEntryID){
 
   //update Maker 1 email(161) with field 98 - Contact Email
   if(isset($_POST['input_98'])) GFAPI::update_entry_field( $origEntryID, '161', $_POST['input_98']);   
-  
-  //update Group Bio(110) with 234 - Maker 1 Bio
-  if(isset($_POST['input_234'])) GFAPI::update_entry_field( $origEntryID, '110', $_POST['input_234']);   
 
 }
 

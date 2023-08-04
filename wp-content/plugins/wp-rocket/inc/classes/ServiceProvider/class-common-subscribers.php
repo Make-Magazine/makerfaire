@@ -20,9 +20,7 @@ class Common_Subscribers extends AbstractServiceProvider {
 	 * @var array
 	 */
 	protected $provides = [
-		'db_optimization_subscriber',
-		'webp_subscriber',
-		'detect_missing_tags',
+		'detect_missing_tags_subscriber',
 	];
 
 	/**
@@ -31,18 +29,6 @@ class Common_Subscribers extends AbstractServiceProvider {
 	 * @return void
 	 */
 	public function register() {
-		$options = $this->getContainer()->get( 'options' );
-
-		$this->getContainer()->share( 'db_optimization_subscriber', 'WP_Rocket\Subscriber\Admin\Database\Optimization_Subscriber' )
-			->addArgument( $this->getContainer()->get( 'db_optimization' ) )
-			->addArgument( $options )
-			->addTag( 'common_subscriber' );
-		$this->getContainer()->share( 'webp_subscriber', 'WP_Rocket\Subscriber\Media\Webp_Subscriber' )
-			->addArgument( $options )
-			->addArgument( $this->getContainer()->get( 'options_api' ) )
-			->addArgument( $this->getContainer()->get( 'cdn_subscriber' ) )
-			->addArgument( $this->getContainer()->get( 'beacon' ) )
-			->addTag( 'common_subscriber' );
 		$this->getContainer()->share( 'detect_missing_tags_subscriber', 'WP_Rocket\Subscriber\Tools\Detect_Missing_Tags_Subscriber' )
 			->addTag( 'common_subscriber' );
 	}

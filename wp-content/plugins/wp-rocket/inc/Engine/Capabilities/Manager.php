@@ -17,7 +17,6 @@ class Manager implements ActivationInterface, DeactivationInterface {
 		'rocket_purge_posts',
 		'rocket_purge_terms',
 		'rocket_purge_users',
-		'rocket_purge_opcache',
 		'rocket_purge_cloudflare_cache',
 		'rocket_purge_sucuri_cache',
 		'rocket_preload_cache',
@@ -139,6 +138,29 @@ class Manager implements ActivationInterface, DeactivationInterface {
 		];
 
 		return $groups;
+	}
+
+	/**
+	 * Add WP Rocket as a cap group in Members
+	 */
+	public function add_cap_group_to_members() {
+		\members_register_cap_group(
+			'wp_rocket',
+			[
+				'label'    => esc_html( 'WP Rocket' ),
+				'priority' => 42,
+				'caps'     => $this->get_capabilities(),
+			]
+		);
+	}
+
+	/**
+	 * Add WP Rocket capabilities to Members
+	 */
+	public function add_caps_to_members() {
+		foreach ( $this->get_capabilities() as $cap ) {
+			\members_register_cap( $cap, [ 'label' => $cap ] );
+		}
 	}
 
 	/**
