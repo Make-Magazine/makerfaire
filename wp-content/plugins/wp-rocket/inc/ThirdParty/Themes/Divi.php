@@ -2,12 +2,17 @@
 
 namespace WP_Rocket\ThirdParty\Themes;
 
-use WP_Rocket\Admin\Options;
-use WP_Rocket\Admin\Options_Data;
-use WP_Rocket\Event_Management\Subscriber_Interface;
+use WP_Rocket\Admin\{Options, Options_Data};
 use WP_Rocket\Engine\Optimization\DelayJS\HTML;
 
-class Divi implements Subscriber_Interface {
+class Divi extends ThirdpartyTheme {
+	/**
+	 * Theme name
+	 *
+	 * @var string
+	 */
+	protected static $theme_name = 'divi';
+
 	/**
 	 * Options API instance.
 	 *
@@ -53,14 +58,19 @@ class Divi implements Subscriber_Interface {
 			'rocket_specify_dimension_images' => 'disable_image_dimensions_height_percentage',
 		];
 
-		if ( ! self::is_divi() ) {
+		if ( ! self::is_current_theme() ) {
 			return $events;
 		}
-
 		$events['rocket_exclude_js']                            = 'exclude_js';
 		$events['rocket_maybe_disable_youtube_lazyload_helper'] = 'add_divi_to_description';
 
 		$events['wp_enqueue_scripts'] = 'disable_divi_jquery_body';
+
+		$events['rocket_exclude_css'] = 'exclude_css_from_combine';
+
+		$events['wp']                = 'disable_dynamic_css_on_rucss';
+		$events['after_setup_theme'] = 'remove_assets_generated';
+
 		return $events;
 	}
 
@@ -96,8 +106,7 @@ class Divi implements Subscriber_Interface {
 	 * @return void
 	 */
 	public function maybe_disable_youtube_preview( $name, $theme ) {
-		if ( ! self::is_divi( $theme ) ) {
-
+		if ( ! self::is_current_theme( $theme ) ) {
 			return;
 		}
 
@@ -115,7 +124,7 @@ class Divi implements Subscriber_Interface {
 	 * @return array
 	 */
 	public function add_divi_to_description( $disable_youtube_lazyload ) {
-		if ( ! self::is_divi() ) {
+		if ( ! self::is_current_theme() ) {
 			return $disable_youtube_lazyload;
 		}
 
@@ -144,19 +153,6 @@ class Divi implements Subscriber_Interface {
 	}
 
 	/**
-	 * Checks if the current theme (or parent) is Divi
-	 *
-	 * @since 3.6.3
-	 *
-	 * @param WP_Theme $theme Instance of the theme.
-	 */
-	private static function is_divi( $theme = null ) {
-		$theme = $theme instanceof WP_Theme ? $theme : wp_get_theme();
-
-		return ( 'Divi' === $theme->get( 'Name' ) || 'divi' === $theme->get_template() );
-	}
-
-	/**
 	 * Disable divi jquery body.
 	 *
 	 * @since 3.9.3
@@ -171,5 +167,51 @@ class Divi implements Subscriber_Interface {
 			add_filter( 'et_builder_enable_jquery_body', '__return_false' );
 		}
 
+	}
+
+	/**
+	 * Excludes Divi's CSS files from CSS combination
+	 *
+	 * @since 3.10.1
+	 *
+	 * @param array $exclude_css An array of CSS to be excluded.
+	 *
+	 * @return array the updated array of paths
+	 */
+	public function exclude_css_from_combine( $exclude_css ) {
+
+		if ( ! (bool) $this->options->get( 'minify_concatenate_css', 0 ) ) {
+			return $exclude_css;
+		}
+
+		$wp_content = wp_parse_url( content_url( '/' ), PHP_URL_PATH );
+
+		if ( $wp_content ) {
+			$exclude_css[] = $wp_content . 'et-cache/(.*).css';
+		}
+
+		return $exclude_css;
+	}
+
+	/**
+	 * Disable Divi dynamic CSS when RUCSS is activated
+	 *
+	 * @return void
+	 */
+	public function disable_dynamic_css_on_rucss() {
+		if ( ! $this->options->get( 'remove_unused_css', false ) ) {
+			return;
+		}
+		add_filter( 'et_use_dynamic_css', '__return_false' );
+
+	}
+
+	/**
+	 * Remove dynamic late assets action.
+	 *
+	 * @return void
+	 */
+	public function remove_assets_generated() {
+		remove_all_actions( 'et_dynamic_late_assets_generated' );
 	}
 }
