@@ -70,7 +70,7 @@ function make_rss_func($atts) {
                                     <p class="p-title">' . smartTruncate(esc_html($item->get_title()), 60, " ") . '</p>
 								</div>
 								<div class="content">
-                                    <img src="' . get_first_image_url($item->get_content()) . '" alt="' . esc_html($item->get_title()) . ' featured image">                                    
+                                    <img src="' . legacy_get_resized_remote_image_url(get_first_image_url($item->get_content()), 250, 250) . '" alt="' . esc_html($item->get_title()) . ' featured image">                                    
                                     <p>' . get_summary($item->get_content()) . '</p>
                                 </div>
                             </a>
