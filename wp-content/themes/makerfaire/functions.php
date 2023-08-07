@@ -136,6 +136,8 @@ function load_scripts() {
                 'home_url' => get_home_url(),
                 'logout_nonce' => wp_create_nonce('ajax-logout-nonce'),
                 'wp_user_email' => wp_get_current_user()->user_email,
+                'wp_user_nicename' => wp_get_current_user()->display_name,
+                'wp_user_avatar' => esc_url( get_avatar_url( wp_get_current_user()->user_email ) ),
             )
     );
 
