@@ -12,6 +12,7 @@ node_modules/
 
 # ignore cache files
 *.cache
+*wp-content/plugins/*/cache
 wp-content/wp-rocket-config/*
 
 # wordpress specific
