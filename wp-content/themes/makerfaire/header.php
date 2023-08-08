@@ -152,12 +152,22 @@
 		<?php
 		// Universal Nav
 		echo basicCurl(UNIVERSAL_MAKEHUB_ASSET_URL_PREFIX . '/wp-content/universal-assets/v2/page-elements/universal-topnav.html');
+               
 		?>
 		<div id="universal-subnav" class="nav-level-2">
 			<?php
+            $post_data = get_post($post->post_parent);
+            $parent_slug = $post_data->post_name;
+             if($parent_slug=='bay-area'){
+                $secondary_nav='bay_area_secondary_nav';
+             }else{
+                $secondary_nav='secondary_universal_menu';
+             }
+             
 			  wp_nav_menu( array(
-				  'menu'              => 'secondary_universal_menu',
-				  'theme_location'    => 'secondary_universal_menu',
+				  'menu_id'           => 'menu-secondary_universal_menu',
+				  'menu'              => $secondary_nav,
+                  'theme_location'    => $secondary_nav,
 				  'depth'             => 1,
 				  'container'         => '',
 				  'container_class'   => '',
