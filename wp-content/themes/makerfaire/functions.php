@@ -128,6 +128,7 @@ function load_scripts() {
     // Localize
     $translation_array = array('templateUrl' => get_stylesheet_directory_uri(), 'ajaxurl' => admin_url('admin-ajax.php'));
     wp_localize_script('built', 'object_name', $translation_array);
+    $auth0_user_data = json_decode(get_user_meta(wp_get_current_user()->ID)['wp_auth0_obj'][0])->user_metadata;
     wp_localize_script(
         'built-libs',
         'ajax_object',
@@ -136,8 +137,9 @@ function load_scripts() {
                 'home_url' => get_home_url(),
                 'logout_nonce' => wp_create_nonce('ajax-logout-nonce'),
                 'wp_user_email' => wp_get_current_user()->user_email,
-                'wp_user_nicename' => wp_get_current_user()->display_name,
-                'wp_user_avatar' => esc_url( get_avatar_url( wp_get_current_user()->user_email ) ),
+                'wp_user_nicename' => isset($auth0_user_data) ? $auth0_user_data->first_name . " " . $auth0_user_data->last_name : wp_get_current_user()->display_name,
+                'wp_user_avatar' => isset($auth0_user_data->picture) ? $auth0_user_data->picture : esc_url( get_avatar_url( wp_get_current_user()->user_email ) ),
+                'wp_user_memlevel' => isset($auth0_user_data->membership_level) ? $auth0_user_data->membership_level : "",
             )
     );
 
