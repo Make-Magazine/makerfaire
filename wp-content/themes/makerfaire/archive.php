@@ -1,4 +1,4 @@
 <?php
-header( 'Location: ' . get_bloginfo('home') );
+header( 'Location: ' . get_bloginfo('url') );
 ?>
   

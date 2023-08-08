@@ -12,6 +12,7 @@ node_modules/
 
 # ignore cache files
 *.cache
+*wp-content/plugins/*/cache
 wp-content/wp-rocket-config/*
 
 # wordpress specific
@@ -78,7 +79,6 @@ wp-content/mu-plugins/*
 /wp-content/themes/twentytwentytwo
 /wp-content/themes/index.php
 /wp-content/plugins/index.php
-/wp-content/plugins/akismet*
 
 # large/disallowed file types
 # a CDN should be used for these
