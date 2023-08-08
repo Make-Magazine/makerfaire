@@ -10,7 +10,7 @@ function entry_accepted_cb( $entry ) {
   //check if a master entry needs to be created
   if(isset($form['master_form_id']) && $form['master_form_id']!=''){    
     $master_data = copy_entry_to_new_form($entry, $form['master_form_id']);
-  
+    
     //first check if we've already created a master entry. if we have, update it
     if(isset($entry['master_entry_id']) && $entry['master_entry_id']!='') {
       //TBD this statement is removing the token 
@@ -24,21 +24,23 @@ function entry_accepted_cb( $entry ) {
       //set maker 1 name and email from the contact fields
       
       //160 - maker 1 name
-      $master_data['input_160.3'] = $entry['1.3'];
-      $master_data['input_160.6'] = $entry['1.6'];       
+      $master_data['input_160.3'] = (isset($entry['1.3'])?$entry['1.3']:'');
+      $master_data['input_160.6'] = (isset($entry['1.6'])?$entry['1.6']:'');       
       
       //161 - maker 1 email
-      $master_data['input_161'] = $entry['98'];               
+      $master_data['input_161'] = (isset($entry['98'])?$entry['98']:'');               
 
       //110 - group bio
-      $master_data['input_110'] = $entry['8'];       
+      $master_data['input_110'] = (isset($entry['8']) ? $entry['8'] :'');       
 
       //field 27 - Project Website
         /* This is a list field. we need to pull out the first website and populate it  */
-      $website = unserialize($entry['99']);      
+      if(isset($entry['99'])){
+        $website = unserialize($entry['99']);      
+      }       
 
       //validate the website to ensure it's a valid url      
-      if (wp_http_validate_url($website[0])) {
+      if (isset($website[0]) && wp_http_validate_url($website[0])) {
         //check to ensure they have http:// or https:// as part of their url
         $master_data['input_27'] = trim($website[0]);
       }  else{
@@ -62,7 +64,7 @@ function entry_accepted_cb( $entry ) {
           //set master_entry_id meta field
           gform_update_meta( $entry['id'], 'master_entry_id', $master_entry['entry_id']);     
         }              
-      }      
+      }  
     }    
   }    
 }
@@ -71,7 +73,7 @@ function entry_accepted_cb( $entry ) {
  * this logic copies information from 1 entry into another based on parameter names set in form 2
  * It will return the entry object for the new Form
  */
-function copy_entry_to_new_form ($fromEntry){  
+function copy_entry_to_new_form ($fromEntry){    
   $from_form = GFAPI::get_form($fromEntry['form_id']);
   $fieldIDarr = array(
     'project-name'         => 151,
@@ -105,8 +107,10 @@ function copy_entry_to_new_form ($fromEntry){
       //where is radio?
       case 'checkbox':
         foreach($field->inputs as $key=>$input) {
-          if ($input['name']!='') {
-            $parmsArray[] =  array('from_id' => $input['id'], 'to_param' => $field->inputName);            
+          if ($input['label']!='') {
+            //we need to calculate the to parmater and add in the various decimal points
+            $to_param = substr($input['id'], strpos($input['id'], ".") + 1);
+            $parmsArray[] =  array('from_id' => $input['id'], 'to_param' => $field->inputName.'.'.$to_param);            
           }
         }        
         break;         
@@ -150,7 +154,7 @@ function copy_entry_to_new_form ($fromEntry){
       //this is to be sure to blank out any radio buttons that have been unset
       $toEntry[$toFieldID] = '';      
     }
-      
+
   }
   
   return $toEntry;
