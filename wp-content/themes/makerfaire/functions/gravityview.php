@@ -51,5 +51,31 @@ function gk_change_edit_entry_title( $previous_text = 'Edit Entry', $GV_object )
   }else{
     return $previous_text;
   }
-  
+}
+add_action('gravityview/template/before', 'set_gravityview_inline_edit_cookies');
+
+/**
+ * Set cookies toggling Inline Edit to on by default. Requires GravityView 2.0.
+ *
+ * @uses gravityview_get_current_view_data
+ * @uses setcookie
+ *
+ * @return void
+ */
+function set_gravityview_inline_edit_cookies( \GV\Template_Context $gravityview = null ) {
+	wp_print_scripts( 'jquery-cookie' );
+?>
+	<script>
+		jQuery( window ).on( 'load', function() {
+			if( jQuery.cookie ) {
+			<?php
+				printf( "jQuery.cookie( 'gv-inline-edit-view-%d', 'enabled', { path: '%s', domain: '%s' } );", $gravityview->view->ID, COOKIEPATH, COOKIE_DOMAIN, is_ssl() );
+			?>
+			} else {
+				console.error("Could not set cookie for inline-edit.");
+			}
+
+		}); 
+	</script>
+<?php
 }
