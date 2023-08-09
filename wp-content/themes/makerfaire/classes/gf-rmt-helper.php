@@ -38,8 +38,8 @@ class GFRMTHELPER {
     //set faire_location for this entry
     $faire_location= $wpdb->get_var("SELECT faire_location "
                                  . "   FROM wp_mf_faire "
-                                 . "   WHERE FIND_IN_SET (".$form['id'] . ",wp_mf_faire.non_public_forms)> 0 OR "
-                                 . "         FIND_IN_SET (".$form['id'] . ",wp_mf_faire.form_ids)> 0 order by id desc limit 1");
+                                 . "   WHERE FIND_IN_SET (".$form['id'] . ", replace(wp_mf_faire.non_public_forms, \" \", \"\") )> 0 OR "
+                                 . "         FIND_IN_SET (".$form['id'] . ", replace(wp_mf_faire.form_ids, \" \", \"\"))> 0 order by id desc limit 1");
 
     /* RMT logic is stored in wp_rmt_rules and wp_rmt_rules_logic */
 
@@ -68,6 +68,7 @@ class GFRMTHELPER {
       $pass = false;
       foreach($rule['logic'] as $logic){
         $field_number = $logic['field_number'];
+                
         if($field_number=='faire_location'){
           $entryfield = $faire_location;
         }elseif($field_number=='form_type'){
@@ -107,11 +108,12 @@ class GFRMTHELPER {
       }
 
       //logic met - set RMT field
-      if($pass){
+      if($pass){        
         //look if there is a a field in the value or comment field (these are surrounded by {} )
         $value   = findFieldData($rule['value'], $entry);
         $comment = findFieldData($rule['comment'], $entry);
-
+        $value = (int) $value;
+        
         if($rule['rmt_type']=='resource') {
           //set $value and $comment {}
           $resource[] = array($rule['rmt_field'],$value,$comment);
@@ -120,7 +122,7 @@ class GFRMTHELPER {
         }
       }
     }
-
+        
     //if form type=payment we need to map resource fields back to the original entry
     if($form_type == 'Payment' ){
       //get original entry id
@@ -154,7 +156,7 @@ class GFRMTHELPER {
      *  R E S O U R C E S
      *
      */
-    foreach($resource as $value){
+    foreach($resource as $value){      
       $resource_id = $value[0];
       $qty         = $value[1];
       $comment     = htmlspecialchars($value[2]);
@@ -229,10 +231,10 @@ class GFRMTHELPER {
                 $chgRPTins[] = RMTchangeArray($user, $entryID, $form['id'], $resource_id, $res->resource_id, $resource_id, 'RMT resource: id changed');
             }
           }
-        }else{
-            //insert this record
-        	if(is_int($qty)){
-	          $wpdb->get_results("INSERT INTO `wp_rmt_entry_resources`  (`entry_id`, `resource_id`, `qty`, `comment`, user) "
+        }else{          
+          //insert this record
+        	if(is_int($qty)){            
+            $wpdb->get_results("INSERT INTO `wp_rmt_entry_resources`  (`entry_id`, `resource_id`, `qty`, `comment`, user) "
 	                          . " VALUES (".$entryID.",".$resource_id .",".$qty . ',"' . $comment.'",'.$user.')');
 	
 	          //update change report
