@@ -207,9 +207,7 @@ function update_original_entry($form,$origEntryID){
             }
 
             //list data is stored serialized        
-            $updValue = maybe_serialize($output);            
-             
-            $serialize = 'a:2:{i:0;a:2:{s:8:"Platform";s:8:"facebook";s:9:"Your Link";s:20:"https://facebook.com";}i:1;a:2:{s:8:"Platform";s:7:"twitter";s:9:"Your Link";s:19:"https://twitter.com";}}';
+            $updValue = maybe_serialize($output);                                     
  
             GFAPI::update_entry_field( $origEntryID, $field->id, $updValue);  
           }          
@@ -234,12 +232,12 @@ function update_original_entry($form,$origEntryID){
   //uploaded files
   if(isset($_POST['gform_uploaded_files'])){
     $uploaded_files = json_decode(stripslashes($_POST['gform_uploaded_files']));    
-    
-    foreach($uploaded_files as $key=>$value){
-      $inputID  = str_replace("input_", "", $key);      
-      GFAPI::update_entry_field( $origEntryID, $inputID, stripslashes($value) );      
-    }
-
+    if(is_array($uploaded_files)){
+      foreach($uploaded_files as $key=>$value){
+        $inputID  = str_replace("input_", "", $key);      
+        GFAPI::update_entry_field( $origEntryID, $inputID, stripslashes($value) );      
+      }
+    }    
   }
 
   //hard coded fields to push back to master entry - TBD get form of $origEntryID and if form type=master, do the below
@@ -251,6 +249,10 @@ function update_original_entry($form,$origEntryID){
   //update Maker 1 email(161) with field 98 - Contact Email
   if(isset($_POST['input_98'])) GFAPI::update_entry_field( $origEntryID, '161', $_POST['input_98']);   
 
+  //need to trigger the gform_after_update_entry to trigger RMT logic
+  $origEntry = GFAPI::get_entry($origEntryID);
+  $origForm  = GFAPI::get_form($origEntry['form_id']); 
+  do_action( 'gform_after_update_entry', $origForm, $origEntryID, $origEntry );  
 }
 
 /* DO NOT USE - OLD function - replaced with update_original_entry 
