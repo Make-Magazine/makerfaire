@@ -139,9 +139,13 @@ if ( ! $gravityview->entries->count() ) {
 				</div> <!-- close .statusBox -->
 				<div class="entryImg">
 					<div class="faire-entry-image-wrp">
-					<a href="<?php echo $image;?>">
-						<div class="image-container" style="background-image: url('<?php echo $image;?>');"></div>
-					</a>
+					<?php if(!isset($entryData['22']) || $entryData['22'] == '' && $dispGVeditLink ) { // user doesn't have an image set ?>
+						<div class="empty-image"><p><b style="font-weight: 500;">You have not set a featured image.</b><br /><br />Please <a href="<?php echo $GVeditLink;?>">manage your photos here</a>.</p></div>
+					<?php } else { ?>
+						<a href="<?php echo $image;?>">
+							<div class="image-container" style="background-image: url('<?php echo $image;?>');"></div>
+						</a>
+					<?php } ?>
 					</div>
 				</div> <!-- close .entryImg-->
 				<div class="entry-main-content">

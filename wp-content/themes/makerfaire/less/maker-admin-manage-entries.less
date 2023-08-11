@@ -105,6 +105,24 @@
           height: 17vw;
         }
       }
+      .empty-image {
+        display: flex;
+        align-items: center;
+        height: 20vw;
+        text-align: center;
+        background:#f1f1f1;
+        padding: 25px;
+        @media (max-width: 767px) {
+          height: 49vw;
+        }
+        @media screen and (min-width: 768px) and (max-width: 1199px) {
+          height: 20vw;
+        }
+
+        @media screen and (min-width: 1200px) {
+          height: 17vw;
+        }
+      }
     }
     .entry-main-content {
       @media (max-width: 767px) {
@@ -234,6 +252,10 @@
           background-color: green;
         }
       }
+    }
+    .manage-button .fa-cog {
+      float: right;
+      padding: 7px;
     }
     .entry-main-content {
       @media screen and (min-width: 768px) and (max-width: 1199px) {
