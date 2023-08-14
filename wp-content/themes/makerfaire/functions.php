@@ -519,3 +519,10 @@ function codismo_table_column( $column, $post_id ) {
 
 //pull in custom elementor widgets
 require_once('elementor/make-widgets.php');
+
+//extend wp login to 90 days
+add_filter( 'auth_cookie_expiration', 'extend_login_session' );
+
+function extend_login_session( $expire ) {
+  return 7776000; // seconds for 90 day time period
+}
