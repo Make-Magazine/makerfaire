@@ -36,14 +36,20 @@ function processTasks_setup($form, $entry_id) {
  * Function to proces task rules and assign tasks to entries
  */
 function processTasks( $entry, $form) {
-  if(isset($form['tasks'])){
+  
+  if(isset($form['tasks'])){  
     global $wpdb;
     $tasks   = $form['tasks'];
     $form_id = $form['id'];
 		foreach ( $tasks as $task ) {
+      if(!$task['isActive']){
+        continue;
+      }
+      
       $lead_id = $entry['id'];
       $taskID   = $form_id.'-'.$task['id'];
-      if ( GFCommon::evaluate_conditional_logic( $task['conditionalLogic'], $form, $entry ) ) {
+      
+      if ( GFCommon::evaluate_conditional_logic( $task['conditionalLogic'], $form, $entry ) ) {      
         //Master forms use a EP token. all others use the old method
         if($form['form_type']=='Master'){
           $action_URL = $task['form2use'];
