@@ -454,8 +454,10 @@ function set_entry_status_content($lead,$form){
 			}
 		}
 
-		$entry_info_entry['307'] = $location_comment_change;
-    mf_update_entry_field($entry_id,'307',$location_comment_change);
+		if($location_comment_change!=''){
+      $entry_info_entry['307'] = $location_comment_change;
+      mf_update_entry_field($entry_id,'307',$location_comment_change);
+    }
 
 	}
 }
