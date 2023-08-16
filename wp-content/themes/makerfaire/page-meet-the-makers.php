@@ -21,7 +21,7 @@ if (($showMakeProjects === 'mponly' || $showMakeProjects === 'mfandmp') && $MPCa
 ?>
 
 <div class="mtm" ng-app="mtm">
-    <div ng-controller="mtmMakers"  ng-cloak="">
+    <div ng-controller="mtmMakers">
         <input type="hidden" id="forms2use" value="<?php echo $faire_forms_trimmed; ?>" />
         <input type="hidden" id="mtm-faire" value="<?php echo get_field('faire'); ?>" />
         <input type="hidden" id="noMakerText" value="<?php echo $noMakerText; ?>" />
@@ -134,9 +134,21 @@ if (($showMakeProjects === 'mponly' || $showMakeProjects === 'mfandmp') && $MPCa
         </div>
 
         <div class="mtm-results" mtm-scroll="loadMore()">
-            <div ng-show="!makers.length" class="container loading">
-                <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
-                <span class="sr-only"><?php _e("Loading", 'makerfaire') ?>...</span>
+            <div ng-show="!makers.length" class="mtm-results-cont loading">
+                <div class="loading-container">
+                    <img src="https://make.co/wp-content/universal-assets/v2/images/makey-spinner.gif" />
+                    <span class="sr-only"><?php _e("Loading", 'makerfaire') ?>...</span>
+                </div>
+                <div class="ng-scope"><a href="javascript:void();" style="pointer-events:none;"><article class="mtm-maker"><div class="mtm-info"></div><div class="mtm-image" style="background-image:url(https://makerfaire.com/wp-content/themes/makerfaire/images/stripe_bg1.gif);"></div></article></a></div>
+                <div class="ng-scope"><a href="javascript:void();" style="pointer-events:none;"><article class="mtm-maker"><div class="mtm-info"></div><div class="mtm-image" style="background-image:url(https://makerfaire.com/wp-content/themes/makerfaire/images/stripe_bg1.gif);"></div></article></a></div>
+                <div class="ng-scope"><a href="javascript:void();" style="pointer-events:none;"><article class="mtm-maker"><div class="mtm-info"></div><div class="mtm-image" style="background-image:url(https://makerfaire.com/wp-content/themes/makerfaire/images/stripe_bg1.gif);"></div></article></a></div>
+                <div class="ng-scope"><a href="javascript:void();" style="pointer-events:none;"><article class="mtm-maker"><div class="mtm-info"></div><div class="mtm-image" style="background-image:url(https://makerfaire.com/wp-content/themes/makerfaire/images/stripe_bg1.gif);"></div></article></a></div>
+                <div class="ng-scope"><a href="javascript:void();" style="pointer-events:none;"><article class="mtm-maker"><div class="mtm-info"></div><div class="mtm-image" style="background-image:url(https://makerfaire.com/wp-content/themes/makerfaire/images/stripe_bg1.gif);"></div></article></a></div>
+                <div class="ng-scope"><a href="javascript:void();" style="pointer-events:none;"><article class="mtm-maker"><div class="mtm-info"></div><div class="mtm-image" style="background-image:url(https://makerfaire.com/wp-content/themes/makerfaire/images/stripe_bg1.gif);"></div></article></a></div>
+                <div class="ng-scope"><a href="javascript:void();" style="pointer-events:none;"><article class="mtm-maker"><div class="mtm-info"></div><div class="mtm-image" style="background-image:url(https://makerfaire.com/wp-content/themes/makerfaire/images/stripe_bg1.gif);"></div></article></a></div>
+                <div class="ng-scope"><a href="javascript:void();" style="pointer-events:none;"><article class="mtm-maker"><div class="mtm-info"></div><div class="mtm-image" style="background-image:url(https://makerfaire.com/wp-content/themes/makerfaire/images/stripe_bg1.gif);"></div></article></a></div>
+                <div class="ng-scope"><a href="javascript:void();" style="pointer-events:none;"><article class="mtm-maker"><div class="mtm-info"></div><div class="mtm-image" style="background-image:url(https://makerfaire.com/wp-content/themes/makerfaire/images/stripe_bg1.gif);"></div></article></a></div>
+                <div class="ng-scope"><a href="javascript:void();" style="pointer-events:none;"><article class="mtm-maker"><div class="mtm-info"></div><div class="mtm-image" style="background-image:url(https://makerfaire.com/wp-content/themes/makerfaire/images/stripe_bg1.gif);"></div></article></a></div>
             </div>
             <!-- Grid View -->
             <div ng-show="layout == 'grid'" class="mtm-results-cont">

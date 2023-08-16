@@ -16,7 +16,7 @@ if (getUrlParam("featured")) {
 mtm.controller('mtmMakers', ['$scope', '$sce', '$filter', '$http', function ($scope, $sce, $filter, $http) {
         $scope.trust = $sce.trustAsHtml; // for rendering html
         //infinite scroll
-        $scope.limit = 20;
+        $scope.limit = 10;
         var counter = 0;
         $scope.loadMore = function () {
             $scope.limit += 5;

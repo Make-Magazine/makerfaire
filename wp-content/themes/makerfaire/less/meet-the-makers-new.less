@@ -97,7 +97,7 @@
 
     .mtm-filter {
         padding-top: 20px;
-        padding-bottom: 20px;
+        padding-bottom: 5px;
         text-align: center;
         .mtm-filter-view {
             display: inline-block;
@@ -403,10 +403,14 @@
 			}
 		}
 	}
-    .loading {
-        min-height: 300px;
+    .loading-container {
+        position: absolute;
+        top: 500px;
+        width: 100%;
         text-align: center;
-        padding-top: 9%;
+        margin: 0 auto;
+        z-index: 999;
+        font-size: 50px;
     }
     .filter-alpha-wrapper {
         text-align: center;
