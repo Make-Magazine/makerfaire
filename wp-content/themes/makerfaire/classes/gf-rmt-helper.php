@@ -108,13 +108,13 @@ class GFRMTHELPER {
       }
 
       //logic met - set RMT field
-      if($pass){        
+      if($pass){             
         //look if there is a a field in the value or comment field (these are surrounded by {} )
         $value   = findFieldData($rule['value'], $entry);
-        $comment = findFieldData($rule['comment'], $entry);
-        $value = (int) $value;
+        $comment = findFieldData($rule['comment'], $entry);        
         
         if($rule['rmt_type']=='resource') {
+          $value = (int) $value; //resource values are quantity fields and need to be an integer. 
           //set $value and $comment {}
           $resource[] = array($rule['rmt_field'],$value,$comment);
         } elseif($rule['rmt_type']=='attribute') {
@@ -122,7 +122,7 @@ class GFRMTHELPER {
         }
       }
     }
-        
+       
     //if form type=payment we need to map resource fields back to the original entry
     if($form_type == 'Payment' ){
       //get original entry id
