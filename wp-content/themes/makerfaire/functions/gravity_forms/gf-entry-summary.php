@@ -204,7 +204,7 @@ function gf_summary_metabox($form, $lead) {
         "Keith Hammond" => "keith@make.co",
         "Katie Kunde" => "katie@make.co");
     $emailtoaliases = array(
-        "Maker Relations" => "makers@makerfaire.com",
+        "Maker Relations" => "makers@make.co",
         "PR" => "pr@make.co",
             //"Sales" => "sales@makerfaire.com",
             //"Sustainability" => "sustainability@makerfaire.com",
