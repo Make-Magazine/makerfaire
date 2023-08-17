@@ -156,27 +156,28 @@
 		?>
 		<div id="universal-subnav" class="nav-level-2">
 			<?php
-            $post_data = get_post($post->post_parent);
-            $parent_slug = $post_data->post_name;
-             if($parent_slug=='bay-area'){
-                $secondary_nav='bay_area_secondary_nav';
-             }else{
-                $secondary_nav='secondary_universal_menu';
-             }
-             
-			  wp_nav_menu( array(
-				  'menu_id'           => 'menu-secondary_universal_menu',
-				  'menu'              => $secondary_nav,
-                  'theme_location'    => $secondary_nav,
-				  'depth'             => 1,
-				  'container'         => '',
-				  'container_class'   => '',
-				  'link_before'       => '<span>',
-				  'link_after'        => '</span>',
-				  'menu_class'        => 'nav navbar-nav',
-				  'fallback_cb'       => 'wp_bootstrap_navwalker::fallback',
-				  'walker'            => new wp_bootstrap_navwalker())
-			  );
+            $secondary_nav='secondary_universal_menu';
+            if(is_object($post)) {
+                $post_data = get_post($post->post_parent);
+                $parent_slug = $post_data->post_name;
+                if($parent_slug=='bay-area'){
+                    $secondary_nav='bay_area_secondary_nav';
+                }
+            } 
+
+            wp_nav_menu( array(
+                'menu_id'           => 'menu-secondary_universal_menu',
+                'menu'              => $secondary_nav,
+                'theme_location'    => $secondary_nav,
+                'depth'             => 1,
+                'container'         => '',
+                'container_class'   => '',
+                'link_before'       => '<span>',
+                'link_after'        => '</span>',
+                'menu_class'        => 'nav navbar-nav',
+                'fallback_cb'       => 'wp_bootstrap_navwalker::fallback',
+                'walker'            => new wp_bootstrap_navwalker())
+            );
 			?>
 		</div>
 		<div id="content" class="site-content">
