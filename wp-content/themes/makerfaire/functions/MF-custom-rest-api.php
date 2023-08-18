@@ -247,7 +247,7 @@ function getMTMentries($formIDs, $faireID) {
             $categories = implode(',', $category);
             //don't return location information if the show location isn't set
             //$location = ($showLoc?($result->area==NULL?'':$result->area):'');
-            $location = array();
+            $locations = array();
             if ($showLoc && $result->area != NULL) {
                 $locations = array_unique(explode(',', $result->area));
             }
@@ -480,7 +480,7 @@ function getMakerList($entryID, $faireID) {
 
             // pull the individual maker names... or at least the first one!
             foreach ($child_entryID_array as $child_entryID) {
-                if ($child_entryID != $entryId) { //no need to process the entry we are looking at
+                if ($child_entryID != $entryID) { //no need to process the entry we are looking at
                     $child_entry = GFAPI::get_entry($child_entryID);
                     //error_log(print_r($child_entry, TRUE));
                     if (!is_wp_error($child_entry) && $child_entry['form_id'] == 246) {
