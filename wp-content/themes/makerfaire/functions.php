@@ -128,7 +128,10 @@ function load_scripts() {
     // Localize
     $translation_array = array('templateUrl' => get_stylesheet_directory_uri(), 'ajaxurl' => admin_url('admin-ajax.php'));
     wp_localize_script('built', 'object_name', $translation_array);
-    $auth0_user_data = wp_get_current_user()->ID != 0 ? json_decode(get_user_meta(wp_get_current_user()->ID)['wp_auth0_obj'][0])->user_metadata : null;
+    $auth0_user_data = null;
+    if(wp_get_current_user()->ID != 0 && isset(json_decode(get_user_meta(wp_get_current_user()->ID)['wp_auth0_obj'][0])->user_metadata)) {
+        $auth0_user_data = json_decode(get_user_meta(wp_get_current_user()->ID)['wp_auth0_obj'][0])->user_metadata;
+    } 
     wp_localize_script(
         'built-libs',
         'ajax_object',
