@@ -216,6 +216,7 @@ function set_export_values($value, $form_id, $field_id, $lead) {
     if ($field_id == 320 || strpos($field_id, '302.') !== false) {
         $value = get_CPT_name($value);
     } else {
+        $field = GFAPI::get_field($form_id, $field_id);
         $field_type = RGFormsModel::get_input_type($field);
         if (in_array($field_type, array('checkbox', 'radio'))) {
             $value = RGFormsModel::get_lead_field_value($lead, $field);
