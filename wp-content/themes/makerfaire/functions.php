@@ -128,9 +128,16 @@ function load_scripts() {
     // Localize
     $translation_array = array('templateUrl' => get_stylesheet_directory_uri(), 'ajaxurl' => admin_url('admin-ajax.php'));
     wp_localize_script('built', 'object_name', $translation_array);
+    $user = wp_get_current_user();
     $auth0_user_data = null;
-    if(wp_get_current_user()->ID != 0 && isset(json_decode(get_user_meta(wp_get_current_user()->ID)['wp_auth0_obj'][0])->user_metadata)) {
-        $auth0_user_data = json_decode(get_user_meta(wp_get_current_user()->ID)['wp_auth0_obj'][0])->user_metadata;
+    // if user is logged in 
+    if( isset($user->ID) && $user->ID != 0 ) {
+        $user_meta = get_user_meta($user->ID);
+        // wp_auth0_obj stores auth0 data for user in a json string. Not all users have user_metadata set in this string on first login, so let's test for that before setting auth0_user_data
+        // var_dump($user_meta['wp_auth0_obj'][0]);
+        if(str_contains($user_meta['wp_auth0_obj'][0], "user_metadata")) {
+            $auth0_user_data = json_decode($user_meta['wp_auth0_obj'][0])->user_metadata;
+        }
     } 
     wp_localize_script(
         'built-libs',
@@ -139,9 +146,9 @@ function load_scripts() {
                 'ajax_url' => admin_url('admin-ajax.php'),
                 'home_url' => get_home_url(),
                 'logout_nonce' => wp_create_nonce('ajax-logout-nonce'),
-                'wp_user_email' => wp_get_current_user()->user_email,
-                'wp_user_nicename' => isset($auth0_user_data) ? $auth0_user_data->first_name . " " . $auth0_user_data->last_name : wp_get_current_user()->display_name,
-                'wp_user_avatar' => isset($auth0_user_data->picture) ? $auth0_user_data->picture : esc_url( get_avatar_url( wp_get_current_user()->user_email ) ),
+                'wp_user_email' => $user->user_email,
+                'wp_user_nicename' => isset($auth0_user_data->first_name) && isset($auth0_user_data->last_name) ? $auth0_user_data->first_name . " " . $auth0_user_data->last_name : $user->display_name,
+                'wp_user_avatar' => isset($auth0_user_data->picture) ? $auth0_user_data->picture : esc_url( get_avatar_url( $user->user_email ) ),
                 'wp_user_memlevel' => isset($auth0_user_data->membership_level) ? $auth0_user_data->membership_level : "",
             )
     );
