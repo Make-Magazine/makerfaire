@@ -564,8 +564,8 @@ function getMakerInfoLegacy($entry) {
     $displayType = (isset($entry['105']) ? $entry['105'] : '');
 
     $isGroup = $isList = $isSingle = false;
-    $isGroup = (strpos($displayType, 'group') !== false);
-    $isList = (strpos($displayType, 'list') !== false);
+    $isGroup = (stripos($displayType, 'group') !== false);
+    $isList = (stripos($displayType, 'list') !== false);
     $isSingle = (strpos($displayType, 'One') !== false);
 
     $makers = array();
