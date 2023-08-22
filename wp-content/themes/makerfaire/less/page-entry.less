@@ -1,11 +1,10 @@
+.page-template-page-entry .site-container {
+	overflow-y: hidden;
+}
 .entry-page {
 	background: #F2F2F2;
-   margin-bottom: 30px;
-	@media screen and (max-width: 767px) {
-		margin-top: 70px;
-	}
-	.content { padding: 0px; }
-	
+    margin-bottom: 30px;
+	.container-fluid { width: 90%; }
 	.group-entries, .group-entry {
 		margin-top: 0px;
 		border-top: 0px;
@@ -36,7 +35,10 @@
 		background: #fff;
 		border-top: solid 15px #F2F2F2;
 		border-bottom: solid 15px #F2F2F2;
-		padding-bottom: 15px;
+		border-left: solid 15px #F2F2F2;
+		@media screen and (max-width: 981px) {
+			border-left: 0px;
+		}
 		#project_short { 
 			margin-bottom: 0px;
 		}
@@ -64,6 +66,7 @@
 				display: none;
 			}
 			.essb_item {
+				margin-bottom: 0px;
 				margin-right: 5px !important;
 				&:last-of-type {
 					margin-right: 0px !important;
@@ -95,17 +98,10 @@
 				}
 			}
 		}
-		.entry-categories {
-			b { font-weight: 400; }
-			clear: both;
-			font-size: 20px;
-			padding-top: 20px;
+		.entry-website {
+			width: 100%
 		}
-      .entry-website {
-         width: 100%
-      }
 	}
-	
 	
 	// The Righthand side
 	#entrySidebar {
@@ -181,6 +177,30 @@
 			}
 		}
 		.btn { width: 100%; }
+	}
+
+	#entryFullWidth {
+		background: #fff;
+		padding: 15px;
+		margin: 0px 15px 30px;
+		#projectGallery {
+			display: flex;
+			flex-wrap: wrap;
+			margin-bottom: 15px;
+			gap: 10px;
+			.gallery-item {
+				flex: 20%;
+				max-height: 200px;
+				overflow: hidden;
+				img { width: 100%; }
+			}
+		}
+		.entry-categories {
+			b { font-weight: 400; }
+			clear: both;
+			font-size: 20px;
+			padding-top: 20px;
+		}
 	}
 
    /* Related to the editSection */
@@ -311,7 +331,7 @@
 		padding: 10px 0px;
 		a {
 			&::before {
-				font-family: FontAwesome;
+				font-family: FontAwesomeBrands;
 				visibility: visible;
 			}
 			&[href*="facebook"] {
@@ -410,3 +430,21 @@
 		}
 	}	
 }
+
+.row.flex-row {
+	display: flex;
+	flex-wrap: wrap;
+	&> [class*='col-'] {
+		display: flex;
+		flex-direction: column;
+		.sidebar-type {
+			flex-grow: 1;
+			display: flex;
+			flex-direction: column;
+			div:last-child {
+				flex-grow: 1;
+			}
+		}
+	}
+}
+  

@@ -282,7 +282,73 @@
 						-webkit-transition: all .35s;
 						transition: all .35s;
 					}
+                    .mtm-maker {
+                        //background-color: #fff;
+                        position: relative;
+                        font-family: Roboto;
+                        //-webkit-box-shadow: 0 2px 5px 0 hsla(0,0%,65.9%,.5);
+                        //box-shadow: 0 2px 5px 0 hsla(0,0%,65.9%,.5);
+                        border-radius: 3px;
+                        -webkit-transition: all .35s;
+                        transition: all .35s;
+                        width: 100%;
+                           height: 100%;
+                        padding: 5px;
+                        h3 {
+                            margin: 0px 0px 10px;
+                            height: 45px;
+                            overflow: hidden;
+                            word-break: break-word;
+                            color: #0a0a0a;
+                            font-weight: 600;
+                            font-size: 1rem;
+                            line-height: var(--lh);
+                            position: relative;
+                            padding-right: 15px;;
+                            display: -webkit-box;
+                            -webkit-line-clamp: 3;
+                            -webkit-box-orient: vertical;
+                            overflow: hidden;
+                        }
+                        .bottom-line{
+                            margin: 10px 0 5px;
+                            white-space: nowrap;
+                            font-size: .8rem;
+                            overflow: hidden;
+                            width: 100%;
+                            text-overflow: ellipsis;
+                            letter-spacing: 0;
+                            display: flex;
+                            justify-content: space-between;
+                            .mtm-cat {
+                                color: #00adee;
+                                font-weight: 500;
+                                font-size: .8rem;
+                                margin-right: .25rem;
+                                float: left;
+                            }
+                            span {
+                                font-size: .8rem;
+                                color: #aaa;
+                                text-transform: capitalize;
+                                .group-name {
+                                    display: inline-block;
+                                    margin-right: 5px;
+                                }
+                            }
+                        }
+                        .mtm-image {
+                            height: 65%;
+                            background-size: cover;
+                            background-position: 50%;
+                        }
+                        .read-more-btn {
+                            width: 100%;
+                            height: 35px;
+                        }
+                    }
 					&:hover{
+                        text-decoration: none;
 						-webkit-transform: scale(1.015);
 						transform: scale(1.015);
 						-webkit-box-shadow: 0 5px 15px -1px rgba(98,98,98,.44);
@@ -290,81 +356,15 @@
 						&::after {
 							opacity: 1;
 						}
+                        .read-more-btn {
+                            background: #fff;
+                            color: #005e9a;
+                        }
 					}
-					&:hover {
-						text-decoration: none;
-					}
+                    
 				}
 			}
-			.mtm-maker {
-				background-color: #fff;
-				position: relative;
-				font-family: Roboto;
-				-webkit-box-shadow: 0 2px 5px 0 hsla(0,0%,65.9%,.5);
-				box-shadow: 0 2px 5px 0 hsla(0,0%,65.9%,.5);
-				-webkit-transition: all .35s;
-				transition: all .35s;
-				width: 100%;
-   				height: 100%;
-				.mtm-info {
-					padding: 1.3rem 1.3rem 0;
-					height: 35%;
-					display: flex;
-                    flex-direction: column;
-					--lh: 1.5rem;
-					.top-line{
-						white-space: nowrap;
-						font-size: .8rem;
-						overflow: hidden;
-						width: 100%;
-						text-overflow: ellipsis;
-						letter-spacing: 0;
-						.mtm-cat {
-							color: #00adee;
-							font-weight: 500;
-							font-size: .8rem;
-							margin-right: .25rem;
-							float: left;
-						}
-						span {
-							font-size: .8rem;
-							margin: 2.5px;
-							color: #aaa;
-							text-transform: capitalize;
-							.group-name {
-								display: inline-block;
-								margin-right: 5px;
-							}
-						}
-					}
-					h3 {
-						margin: auto 0 ;
-						overflow: hidden;
-						word-break: break-word;
-						color: #0a0a0a;
-						font-weight: 600;
-						font-size: 1rem;
-						line-height: var(--lh);
-						position: relative;
-						padding-right: 15px;;
-						display: -webkit-box;
-						-webkit-line-clamp: 3;
-						-webkit-box-orient: vertical;
-						overflow: hidden;
-					}
-					&:hover h3 {
-						opacity: 1;
-						transition: all 0.2s ease;
-					}
 
-				}
-				.mtm-image {
-					height: 65%;
-					background-size: cover;
-					background-position: 50%;
-				}
-
-			}
 
 		}
 		.mtm-results-cont-list {

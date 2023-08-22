@@ -100,6 +100,8 @@ if (isset($entry->errors)) {
 
     $project_name = (isset($entry['151']) ? $entry['151'] : '');  //Change Project Name
     $project_photo = (isset($entry['22']) ? legacy_get_fit_remote_image_url($entry['22'], 750, 500) : '');
+    // this returns an array of image urls from the additional images field
+    $project_gallery = (isset($entry['878']) ? explode(",", str_replace(array( '[', ']', '"' ), '', $entry['878'])) : '');
     $project_short = (isset($entry['16']) ? $entry['16'] : '');    // Description
     //field 287 and field 877 can be used in a form for any text input question.
     //We will display these on the entry detail form
@@ -300,48 +302,46 @@ if ($formType == 'Sponsor' || $formType == 'Startup Sponsor' || !$displayMakers)
         });
     });
 </script>
-<div class="container-fluid entry-page">
-    <div class="row">
-        <div class="content col-xs-12">
-            <input type="hidden" id="faire_tz"  value="<?php echo $timeZone; ?>" />
+<div class="entry-page">
+    <?php if(isset($timeZone)) { ?>
+        <input type="hidden" id="faire_tz" value="<?php echo $timeZone; ?>" />
+    <?php
+    }
+    // If there is edit in the url, they get all these options
+    if ($makerEdit) {
+        ?>
+        <div class="makerEditHead">
+            <input type="hidden" id="entry_id" value="<?php echo $entryId; ?>" />
+            <a class="pull-left" target="_blank" href="/maker-sign/<?php echo $entryId ?>/<?php echo $faireShort; ?>/">
+                <i class="far fa-file-image" aria-hidden="true"></i>View Your Maker Sign
+            </a>
+
             <?php
-            // If there is edit in the url, they get all these options
-            if ($makerEdit) {
-                ?>
-                <div class="makerEditHead">
-                    <input type="hidden" id="entry_id" value="<?php echo $entryId; ?>" />
-                    <a class="pull-left" target="_blank" href="/maker-sign/<?php echo $entryId ?>/<?php echo $faireShort; ?>/">
-                        <i class="far fa-file-image" aria-hidden="true"></i>View Your Maker Sign
-                    </a>
-
-                    <?php
-                    $GVeditLink = do_shortcode('[gv_entry_link action="edit" return="url" view_id="636924" entry_id="' . $entryId . '"]');
-                    $GVeditLink = str_replace('/view/', '/', $GVeditLink);  //remove view slug from URL
-                    ?>
-                    <span class="editLink pull-right">
-                        <a href="<?php echo $GVeditLink; ?>"><i class="fas fa-edit" aria-hidden="true"></i>Edit Public information</a>
-                    </span>
-                    <div class="clear"></div>
-                </div>
-                <br/>
-                <?php
-            }
-
-            if ($validEntry) {
-                //display the normal entry public information page
-                include TEMPLATEPATH . '/pages/page-entry-view.php';
-                if ($makerEdit) {
-                    //use the edit entry public info page
-                    include TEMPLATEPATH . '/pages/page-entry-edit.php';
-                }
-            } else { //entry is not active
-                echo '<div class="container"><h2>Invalid entry</h2></div>';
-                echo '<div class="entry-footer">' . displayEntryFooter() . '</div>';
-            }
+            $GVeditLink = do_shortcode('[gv_entry_link action="edit" return="url" view_id="636924" entry_id="' . $entryId . '"]');
+            $GVeditLink = str_replace('/view/', '/', $GVeditLink);  //remove view slug from URL
             ?>
-        </div><!--col-xs-12-->
-    </div><!--row-->
-</div><!--container-->
+            <span class="editLink pull-right">
+                <a href="<?php echo $GVeditLink; ?>"><i class="fas fa-edit" aria-hidden="true"></i>Edit Public information</a>
+            </span>
+            <div class="clear"></div>
+        </div>
+        <br/>
+        <?php
+    }
+
+    if ($validEntry) {
+        //display the normal entry public information page
+        include TEMPLATEPATH . '/pages/page-entry-view.php';
+        if ($makerEdit) {
+            //use the edit entry public info page
+            include TEMPLATEPATH . '/pages/page-entry-edit.php';
+        }
+    } else { //entry is not active
+        echo '<div class="container"><h2>Invalid entry</h2></div>';
+        echo '<div class="entry-footer">' . displayEntryFooter() . '</div>';
+    }
+    ?>
+</div><!--entry-page-->
 
 <?php
 get_footer();
@@ -565,6 +565,9 @@ function getMakerInfoLegacy($entry) {
 
     $isGroup = $isList = $isSingle = false;
     $isGroup = (strpos($displayType, 'group') !== false);
+    if(isset($groupname)) {
+        $isGroup = true;
+    }
     $isList = (strpos($displayType, 'list') !== false);
     $isSingle = (strpos($displayType, 'One') !== false);
 
