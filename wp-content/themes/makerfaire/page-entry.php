@@ -547,8 +547,6 @@ function getMakerInfo($entry) {
 function getMakerInfoLegacy($entry) {
     //set group information
     global $isGroup;
-    global $isList;
-    global $isSingle;
     global $groupname;
     global $groupphoto;
     global $groupbio;
@@ -563,10 +561,8 @@ function getMakerInfoLegacy($entry) {
     // A group or association
     $displayType = (isset($entry['105']) ? $entry['105'] : '');
 
-    $isGroup = $isList = $isSingle = false;
+    $isGroup = false;
     $isGroup = (stripos($displayType, 'group') !== false);
-    $isList = (stripos($displayType, 'list') !== false);
-    $isSingle = (strpos($displayType, 'One') !== false);
 
     $makers = array();
     //set maker information

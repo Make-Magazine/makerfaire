@@ -79,7 +79,29 @@
             <div class="sidebar-type"> <!-- Maker/Group/Worskhop etc -->
                 <?php if ($dispMakerInfo) { ?>
                     <?php
-                    if (count($makers) > 0) {
+                    if ($isGroup) {
+                        ?>
+                        <div class="entry-header"><h2>GROUP</h2></div>
+                        <div class="entry-page-maker-info">
+                            <div class="row padbottom">
+                                <div class="col-xs-12">
+                                    <h3 class="text-capitalize" id="groupname"><?php echo $groupname; ?></h3>
+                                </div>
+                                <div class="col-xs-12">
+                                    <div class="entry-page-maker-img">
+                                        <img class="img-responsive" src="<?php echo (!empty($groupphoto) ? legacy_get_fit_remote_image_url($groupphoto, 400, 400) : get_stylesheet_directory_uri() . '/images/maker-placeholder.jpg' ); ?>" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-xs-12"><p id="groupbio"><?php echo $groupbio; ?></p></div>
+                            </div>
+                            <div class="row">
+                                <div class="col-xs-12"><?php echo $groupsocial; ?></div>
+                            </div>
+                        </div>
+                        <?php
+                    } else {
                         if (count($makers) == 1) {
                             echo '<div class="entry-header"><h2>MAKER</h2></div>';
                         } else {
@@ -123,30 +145,7 @@
                             }
                         }
                     }
-                    if ($isGroup) {
-                        ?>
-                        <div class="entry-header"><h2>GROUP</h2></div>
-                        <div class="entry-page-maker-info">
-                            <div class="row padbottom">
-                                <div class="col-xs-12">
-                                    <h3 class="text-capitalize" id="groupname"><?php echo $groupname; ?></h3>
-                                </div>
-                                <div class="col-xs-12">
-                                    <div class="entry-page-maker-img">
-                                        <img class="img-responsive" src="<?php echo (!empty($groupphoto) ? legacy_get_fit_remote_image_url($groupphoto, 400, 400) : get_stylesheet_directory_uri() . '/images/maker-placeholder.jpg' ); ?>" />
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-xs-12"><p id="groupbio"><?php echo $groupbio; ?></p></div>
-                            </div>
-                            <div class="row">
-                                <div class="col-xs-12"><?php echo $groupsocial; ?></div>
-                            </div>
-                        </div>
-                        <?php
-                    }
-                }
+                } 
                 ?>
             </div>
         </div>  <!-- END SIDEBAR -->
