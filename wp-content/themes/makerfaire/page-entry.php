@@ -565,9 +565,6 @@ function getMakerInfoLegacy($entry) {
 
     $isGroup = $isList = $isSingle = false;
     $isGroup = (strpos($displayType, 'group') !== false);
-    if(isset($groupname)) {
-        $isGroup = true;
-    }
     $isList = (strpos($displayType, 'list') !== false);
     $isSingle = (strpos($displayType, 'One') !== false);
 
