@@ -61,13 +61,13 @@ while ( $row = $result->fetch_array(MYSQLI_ASSOC) ) {
 }
 
 //entry data
-$sql = "SELECT wp_gf_entry_meta.meta_key, wp_gf_entry_meta.meta_value as value
+$sql = "SELECT entry_id, wp_gf_entry_meta.meta_key, wp_gf_entry_meta.meta_value as value
         FROM wp_gf_entry
           left outer join wp_gf_entry_meta
             on wp_gf_entry_meta.entry_id = wp_gf_entry.id
         where wp_gf_entry.form_id = $form
         and wp_gf_entry.status='active'
-        ORDER BY gf_entry_meta.entry_id asc, gf_entry_meta.meta_value asc";
+        ORDER BY wp_gf_entry_meta.entry_id asc, wp_gf_entry_meta.meta_value asc";
 
 //loop thru entry data
 $entries = $mysqli->query($sql) or trigger_error($mysqli->error."[$sql]");
