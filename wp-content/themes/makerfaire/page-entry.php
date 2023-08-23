@@ -235,6 +235,9 @@ foreach ($entry as $key => $field) {
             $displayFormType = false;
     }
 }
+if($formType == 'Master') {
+    $displayFormType = false;
+}
 
 
 // Project Inline video
