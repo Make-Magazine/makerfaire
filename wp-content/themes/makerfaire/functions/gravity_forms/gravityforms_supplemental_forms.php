@@ -1,163 +1,226 @@
 <?php
-/* 
- * When an entry is accepted, check if it has a master form id set.
- * If it does, create a master form entry
+/* Supplemental forms are used to allow makers to submit additional data that is then written back to their 
+   entry. This can be done by either using a token from GF EasyPassthrough or by requiring the makers to
+   enter their entry ID and contact email. */ 
+ 
+ 
+   /*This function checks if the entry-id set on the form is valid
+ * If it is, then it compares the entered email to see if it matches the previous
+ * one used on the entry. if it all passes, then they can move to the next step
+ * otherwise it returns errors
  */
-function entry_accepted_cb( $entry ) {  
-  //pull form information for this entry
-  $form = GFAPI::get_form($entry['form_id']);
-  
-  //check if a master entry needs to be created
-  if(isset($form['master_form_id']) && $form['master_form_id']!=''){    
-    $master_data = copy_entry_to_new_form($entry, $form['master_form_id']);
+
+ add_filter('gform_validation', 'custom_validation');
+/* Supplemental forms via entry ID and contact email */
+function custom_validation($validation_result) {
+  $form = $validation_result['form'];
+
+  //supplemental forms are always a form type of other
+  if(isset($form['form_type']) && $form['form_type']=='Other'){
+    // determine if entry-id and contact-email id's are in the submitted form
+    $entryID = get_value_by_label('entry-id', $form);
+    $contact_email = get_value_by_label('contact-email', $form);
     
-    //first check if we've already created a master entry. if we have, update it
-    if(isset($entry['master_entry_id']) && $entry['master_entry_id']!='') {
-      //TBD this statement is removing the token 
-      //GFAPI::update_entry( $master_data, $entry['master_entry_id'] );
-    }else{        //otherwise, create master entry                        
-      //warning HARD CODING to follow
+    if (!empty($entryID) && !empty($contact_email)) {
+      $entryid   = rgpost('input_' . $entryID['id']);
+      $sub_email = rgpost('input_' . $contact_email['id']);
 
-      //transfer the created_by to the master entry so they have edit rights to it
-      if(isset( $entry['created_by'])) $master_data['created_by'] = $entry['created_by'];
-
-      //set maker 1 name and email from the contact fields
+      //check if entry is valid
+      $entry = GFAPI::get_entry($entryid);
       
-      //160 - maker 1 name
-      $master_data['input_160.3'] = (isset($entry['1.3'])?$entry['1.3']:'');
-      $master_data['input_160.6'] = (isset($entry['1.6'])?$entry['1.6']:'');       
-      
-      //161 - maker 1 email
-      $master_data['input_161'] = (isset($entry['98'])?$entry['98']:'');               
-
-      //110 - group bio
-      $master_data['input_110'] = (isset($entry['8']) ? $entry['8'] :'');       
-
-      //field 27 - Project Website
-        /* This is a list field. we need to pull out the first website and populate it  */
-      if(isset($entry['99'])){
-        $website = unserialize($entry['99']);      
-      }       
-
-      //validate the website to ensure it's a valid url      
-      if (isset($website[0]) && wp_http_validate_url($website[0])) {
-        //check to ensure they have http:// or https:// as part of their url
-        $master_data['input_27'] = trim($website[0]);
-      }  else{
-        $master_data['input_27'] = '';
-      }
+      if (is_array($entry) && $entry['status']=='active') {        
+        foreach ($form['fields'] as &$field) {
+          if ($field->id == $contact_email['id']) {     //contact_email
+            //pull contact email from original entry
+            $contactEmail = (isset($entry['98'])? $entry['98']:'');
             
-      $master_entry = GFAPI::submit_form($form['master_form_id'],$master_data);      
-      if ( is_wp_error( $master_entry ) ) {
-        $error_message = $master_entry->get_error_message();
-        GFCommon::log_debug( __METHOD__ . '(): GFAPI Error Message => ' . $error_message );        
-        return;
-      }else{ 
-        if(!isset($master_entry['entry_id'])){
-          error_log('master entry id is not set');          
-          error_log(print_r($master_entry,TRUE));
-        }else{
-          //move multi images from maker interest form to master form
-          //update images here as the submit form doesn't work well with upload files
-          GFAPI::update_entry_field( $master_entry['entry_id'], '878', $entry['21'] );       
-                       
-          //set master_entry_id meta field
-          gform_update_meta( $entry['id'], 'master_entry_id', $master_entry['entry_id']);     
-        }              
-      }  
-    }    
-  }    
+            //check if the submitted email matches the contact email on the entry
+            if (strtolower($sub_email) != strtolower($contactEmail)) {
+              // set the form validation to false
+              $validation_result['is_valid'] = false;
+              $field->failed_validation = true;
+              $field->validation_message = 'Email does not match contact email on the project';
+            }
+          }
+        }
+      } else {
+        // set the form validation to false
+        $validation_result['is_valid'] = false;
+        //finding Field with ID of 1 and marking it as failed validation
+        foreach ($form['fields'] as &$field) {
+          if ($field->id == $entryID['id']) {
+            // set the form validation to false
+            $validation_result['is_valid'] = false;
+            $field->failed_validation = true;
+            $field->validation_message = 'Invalid Project ID';
+            break;
+          }
+        }
+      }
+    }        
+  } //end check form type
+
+  //Assign modified $form object back to the validation result
+  $validation_result['form'] = $form;
+  return $validation_result;
 }
 
+add_filter( 'gform_pre_render', 'populate_fields' ); //all forms
+add_filter( 'gform_pre_validation', 'populate_fields' );
+add_filter( 'gform_admin_pre_render', 'populate_fields' );
+add_filter( 'gform_pre_submission_filter', 'populate_fields' );
+
 /*
- * this logic copies information from 1 entry into another based on parameter names set in form 2
- * It will return the entry object for the new Form
+ * this logic is for page 2 of 'linked forms'
+ * It will take the entry id submitted on page one and use that
+ *    to pull in various data from the original form submission
  */
-function copy_entry_to_new_form ($fromEntry){    
-  $from_form = GFAPI::get_form($fromEntry['form_id']);
-  $fieldIDarr = array(
-    'project-name'         => 151,
-    'contact-email'        =>  98,
-    'exhibit-contain-fire' =>  83,
-    'interactive-exhibit'  =>  84,
-    'fire-safety-issues'   =>  85,
-    'serving-food'         =>  44,
-    'you-are-entity'       =>  45,
-    'plans-type'           =>  55,
-    'short-project-desc'   =>  16,
-    'entry-id'             => $fromEntry['id']);    
 
-  $parmsArray = array();  
-  
-  //find the submitted original entry id
-  foreach ($from_form['fields'] as $field) {
-    $parmName = '';
-    $value = '';
-    switch($field->type) {
-      //parameter name is stored in a different place
-      case 'name':
-      case 'address':
-        foreach($field->inputs as $key=>$input) {
-          if ($input['name']!='') {            
-            $parmsArray[] =  array('from_id' => $input['id'], 'to_param' => $input['name']);            
+function populate_fields($form) {
+  if( !class_exists( 'GFFormDisplay' ) ) {
+    return $form;
+  }
+  $jqueryVal = '';
+  if(isset($form['form_type']) && $form['form_type']=='Other'){
+    //this is a 2-page form with the data from page one being displayed in an html field on following pages
+    $current_page = GFFormDisplay::get_current_page($form['id']);
+
+    if ($current_page > 1) {
+      //find the submitted entry id
+      $return = get_value_by_label('entry-id', $form, array());
+
+      $entry_id = rgpost('input_'.$return['id']);
+
+      //is entry id set?
+      if($entry_id != '') {
+        //pull the original entry
+        $entry = GFAPI::get_entry($entry_id); //original entry ID
+        $form_id = $form['id'];
+
+        //find the submitted original entry id
+        foreach ($form['fields'] as &$field) {
+          $parmName = '';
+          $value = '';
+          switch($field->type) {
+            //parameter name is stored in a different place
+            case 'name':
+            case 'address':
+              foreach($field->inputs as $key=>$input) {
+                if ($input['name']!='') {
+                  $parmName =  $input['name'];
+                  $pos = strpos($parmName, 'field-');
+                  if ($pos !== false) { //populate by field ID?
+                    $field_id = str_replace("field-", "", $input['name']);
+                    $field->inputs[$key]['defaultValue'] = $entry[$field_id];
+                    $jqueryVal .= "jQuery('#input_".$form_id."_".str_replace('.','_',$field_id)."').val('".$entry[$field_id]."');";
+                  }
+                }
+              }
+              break;
+          }
+
+          if (isset($field->inputName) && $field->inputName != '') {
+            $parmName = $field->inputName;
+
+            //check for 'field-' to see if the value should be populated by original entry field data
+            $pos = strpos($parmName, 'field-');
+
+            //populate field using field id's from original form
+            if ($pos !== false) { //populate by field ID?
+              //strip the 'field-' from the parameter name to get the field number
+              $field_id = str_replace("field-", "", $parmName);
+              $fieldType = $field->type;
+
+              switch ($fieldType) {
+                case 'name':
+                  foreach($field->inputs as &$input) {  //loop thru name inputs
+                    if(isset($input['name']) && $input['name'] != ''){  //check if parameter name is set
+                      $pos = strpos($input['name'], 'field-');
+                      if ($pos !== false) { //is it requesting to be set by field id?
+                        //strip the 'field-' from the parameter name to get the field number
+                        $field_id = str_replace("field-", "", $input['name']);
+                        $input['content'] = (isset($entry[$field_id]) ? $entry[$field_id] : '');;
+                      }
+                    }
+                  }
+                  break;
+                case 'checkbox':
+                  //find which fields are set
+                  foreach($field->inputs as $key=>$input) {
+                    //need to get the decimal indicator from the input in order to set the field id
+                    if (($pos = strpos($input['id'], ".")) !== FALSE) {
+                      $decPos = substr($input['id'], $pos+1);
+                    }
+                    $fieldNum = $field_id.'.'.$decPos;
+                    //check if field is set in the entry
+                    if(!empty($entry[$fieldNum])) {
+                      if($field->choices[$key]['value'] == $entry[$fieldNum]){
+                        $field->choices[$key]['isSelected'] = true;
+                        $jqueryVal .= "jQuery( '#choice_".$form_id."_".str_replace('.','_',$input['id'])."' ).prop( 'checked', true );";
+                      }
+                    }
+                  }
+
+                  break;
+                default:
+                  $field->defaultValue = (isset($entry[$field_id]) ? $entry[$field_id] : "");
+                  break;
+              }
+            }elseif ( strpos( $field->inputName, 'rmt_att_lock' ) !== false ||
+                      strpos( $field->inputName, 'rmt_res_cat_lock') !==false
+                    ) {  //is paramater name set to a merge field?
+              $text = $field->inputName;
+              $field->defaultValue = rmt_lock_ind($text, $entry_id);
+            } else { //populate by specific parameter name
+              //populate fields
+              $fieldIDarr = array(
+                  'project-name'         => 151,
+                  'contact-email'        =>  98,
+                  'exhibit-contain-fire' =>  83,
+                  'interactive-exhibit'  =>  84,
+                  'fire-safety-issues'   =>  85,
+                  'serving-food'         =>  44,
+                  'you-are-entity'       =>  45,
+                  'plans-type'           => "55",
+                  'short-project-desc'   =>  16,
+                  'entry-id'             => $entry_id);
+
+              //find the project name for submitted entry-id
+              if (isset($fieldIDarr[$parmName])) {
+                if ($parmName == 'plans-type') {
+                  $planstypevalues = array();
+                  for ($i = 1; $i <= 6; $i++) {
+                    if (isset($entry['55.' . $i]) && !empty($entry['55.' . $i])) {
+                      $planstypevalues[] = $entry['55.' . $i];
+                    }
+                  }
+                  $value = implode(',', $planstypevalues);
+                } elseif($parmName == 'entry-id') {
+                  $value = $entry_id;
+                } else {
+                  $value = $entry[$fieldIDarr[$parmName]];
+                }
+              }
+
+              $field->defaultValue = $value;
+            }
           }
         }
-        break;
-      //TBD - why are you using input name here for to_param
-      //where is radio?
-      case 'checkbox':
-        foreach($field->inputs as $key=>$input) {
-          if ($input['label']!='') {
-            //we need to calculate the to parmater and add in the various decimal points
-            $to_param = substr($input['id'], strpos($input['id'], ".") + 1);
-            $parmsArray[] =  array('from_id' => $input['id'], 'to_param' => $field->inputName.'.'.$to_param);            
-          }
-        }        
-        break;         
-      
-      default:
-        if($field->inputName!=''){
-          $parmsArray[] =  array('from_id' => $field->id, 'to_param'=>$field->inputName);        
-        }
-        
-        break;   
-    }
+      }
+
+    } //end check current page
+  }
+  if($jqueryVal!=''){
+    ?>
+    <script>
+      jQuery( document ).ready(function() {
+        <?php echo $jqueryVal;?>
+      });
+    </script>
+    <?php
   }
 
-  //set the master form id
-  $toEntry = array();
-  foreach($parmsArray as $fieldInfo){
-    $parmName = $fieldInfo['to_param'];
-
-    //if parm name starts with 'field-', pull from that field id
-    $pos = strpos($parmName, 'field-');
-          
-    if ($pos !== false) { //populate by field ID?
-      //strip the 'field-' from the parameter name to get the field number
-      $toFieldID = str_replace("field-", "", $parmName);      
-    }else{ //are we populating by specific parameter name        
-      if(isset($fieldIDarr[$parmName])){
-        $toFieldID = $fieldIDarr[$parmName];
-      }else{
-        error_log('unknown parameter name');
-        error_log(print_r($fieldInfo,TRUE));
-        continue;
-      }      
-    }
-
-    $fromFieldId = $fieldInfo['from_id'];
-
-    $toFieldID = 'input_'.str_replace('.','_',$toFieldID);
-    if(isset($fromEntry[$fromFieldId])){
-      $toEntry[$toFieldID] = $fromEntry[$fromFieldId];              
-    }else{
-      //this is to be sure to blank out any radio buttons that have been unset
-      $toEntry[$toFieldID] = '';      
-    }
-
-  }
-  
-  return $toEntry;
+  return $form;
 }
 
 /* We will copy over all supplemental fields into original entry */
