@@ -106,7 +106,12 @@ if ( ! $gravityview->entries->count() ) {
 		$entryData = $multientry->as_entry();				
 		$image =  (isset($entryData['22']) && $entryData['22'] != '' ? $entryData['22']:get_template_directory_uri() .'/images/no-image.png');
 		$entryStatus = (isset($entryData['303']) && $entryData['303'] != '' ? $entryData['303'] : 'Unknown');
-		$statusBlock  = ($entryStatus == 'Accepted' ? 'greenStatus':'greyStatus');
+		
+		//status specific logic
+		$statusBlock  = ($entryStatus == 'Accepted' ? 'greenStatus':'greyStatus');				
+		$dispCancel   = ($entryStatus != 'Cancelled' && $entryStatus != 'Rejected'?true:false);
+		//$dispDelete   = ($entryStatus == 'Proposed' || $entryStatus == 'In Progress'?true:false);		
+		$dispDelete = FALSE;
 
 		//edit media links (defined in the 'Edit Entry' section of the view)
 		$dispGVeditLink = TRUE;
@@ -123,10 +128,7 @@ if ( ! $gravityview->entries->count() ) {
 		$dispEditPub = FALSE;
 		$viewEditLink = '';
 		$dispRMTeditLink = FALSE;
-		$RMTeditLink = '';		
-		
-		$dispCancel = FALSE;
-		$dispDelete = FALSE;
+		$RMTeditLink = '';						
 
 		//Maker Faire portal html
 		?>
@@ -307,13 +309,13 @@ if ( ! $gravityview->entries->count() ) {
 									<div>
 									<?php
 									if($dispCancel){  ?>
-										<a href="#cancelEntry" data-toggle="modal" data-entry-id="<?php echo $entryData['lead_id'];?>" data-projName="<?php echo $entryData['presentation_title'];?>">Cancel Entry</a>
+										<a href="#cancelEntry" data-toggle="modal" data-entry-id="<?php echo $entryData['id'];?>" data-projName="<?php echo $entryData['151'];?>">Cancel Entry</a>
 									<?php
 									}
 									//Delete Link
 									if($dispDelete){
 										?>
-										<a href="#deleteEntry" data-toggle="modal" data-entry-id="<?php echo $entryData['lead_id'];?>" data-projName="<?php echo $entryData['presentation_title'];?>">Delete Entry</a>
+										<a href="#deleteEntry" data-toggle="modal" data-entry-id="<?php echo $entryData['id'];?>" data-projName="<?php echo $entryData['151'];?>">Delete Entry</a>
 										<?php
 									}
 									?>
@@ -331,6 +333,29 @@ if ( ! $gravityview->entries->count() ) {
 	} //end foreach
 }//end check for records
 ?>
+ <!-- Modal to cancel entry -->
+ <div class="modal" id="cancelEntry">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            <h4 class="modal-title">Cancel <span id="projName"></span>, Exhibit ID: <span id="cancelEntryID" name="entryID"></span></h4>
+        </div>
+        <div class="modal-body">
+            <div id="cancelText">
+                <p>Sorry you can't make it. Why are you canceling?</p><br/>
+                <textarea rows="4" cols="50" name="cancelReason"></textarea>
+            </div>
+        <span id="cancelResponse"></span><br/>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" id="submitCancel">Submit</button>
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
 </div> <!-- / .maker-admin-manage-faire-entries-mobile -->
 <?php
 /** @action `gravityview/template/list/body/after` */
