@@ -152,7 +152,7 @@
     </div>
     <div class="row">
         <div id="entryFullWidth">
-            <?php if(isset($project_gallery)) { ?>
+            <?php if(isset($project_gallery) && $project_gallery !== "") { ?>
                 <div id="projectGallery">
                 <?php foreach($project_gallery as $image) { ?>
                     <div class="gallery-item"><img src='<?php echo legacy_get_fit_remote_image_url($image, 750, 500); ?>' /></div>
