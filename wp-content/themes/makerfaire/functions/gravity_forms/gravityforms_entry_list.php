@@ -214,6 +214,7 @@ function remove_gf_filter($filter_links, $form, $include_counts) {
          unset($filter_links[$key]);
       }
    }
+   return $filter_links;
 }
 
 //remove teh approve/dissaprove column added by gravity view
