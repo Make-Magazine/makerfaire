@@ -125,8 +125,11 @@ if ( ! $gravityview->entries->count() ) {
 		$entryData['mat_message']   = '';		
 		$entryData['ticketing'] = array();
 
-		$dispEditPub = FALSE;
-		$viewEditLink = '';
+		//Public facing profile page edit link 'See Your Maker Page'
+		$dispEditPub = ($entryStatus == 'Accepted' ? true : false);		
+        $viewEditLink = "/maker/entry/" . $entryData['id']."/edit/";
+
+		//tbd
 		$dispRMTeditLink = FALSE;
 		$RMTeditLink = '';						
 
@@ -167,16 +170,16 @@ if ( ! $gravityview->entries->count() ) {
 					<!-- Form Type -->
 					<div class="exhibitID entryData">
 						<span class="entryStandout"><?php echo $entryData['id'];?></span>
-						</div> <!-- close exhibitID -->
+					</div> <!-- close exhibitID -->
 
-						<div>
+					<div>
 						<?php              
 						if($dispEditPub) { ?>
 							<span class="editLink">
-							<a href="<?php echo $viewEditLink;?>">
-								<i class="far fa-eye" aria-hidden="true"></i>
-								View/Edit Public Information
-							</a>
+								<a href="<?php echo $viewEditLink;?>">
+									<i class="far fa-eye" aria-hidden="true"></i>
+									See Your Maker Page
+								</a>
 							</span>
 						<?php
 						}
@@ -292,7 +295,7 @@ if ( ! $gravityview->entries->count() ) {
 
 									if($dispEditPub) { ?>
 										<a href="<?php echo $viewEditLink;?>">
-										View/Edit Public Information
+											See Your Maker Page
 										</a>
 									<?php
 									}
