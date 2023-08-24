@@ -8,11 +8,10 @@ function mf_custom_toolbar($form_id) {
    $view = (isset($_GET['view']) ? $_GET['view'] : '');
    $page = (isset($_GET['page']) ? $_GET['page'] : '');
    if (($view == '' || $view == 'entries') && $page == 'gf_entries') {
-      $output = return_MF_navigation();
       //append the filter results
       $form = GFAPI::get_form($form_id);
       $fieldSep = '|';
-      $output .= '<span class="gf_admin_page_subtitle">';
+      $output = '<span class="gf_admin_page_subtitle">';
 
       if (isset($_GET['filterField']) && is_array($_GET['filterField'])) {
          foreach ($_GET['filterField'] as $key => $value) {
@@ -80,93 +79,6 @@ function mf_custom_toolbar($form_id) {
       $output .= '</span>';
       echo $output;
    }
-}
-
-function return_MF_navigation() {
-   global $wpdb;
-   //pull from the faire table - faire, faire location, faire name, and faire form ID's
-   $sql = "select faire, faire_name, faire_location, form_ids
-          from wp_mf_faire
-          ORDER BY faire_location ASC, `wp_mf_faire`.`start_dt` DESC";
-
-   foreach ($wpdb->get_results($sql) as $row) {
-      //create an array keyed by faire location- Bay Area, New York, DC
-      $faireNav[$row->faire_location][$row->faire] = array('faire-name' => $row->faire_name, 'url' => admin_url('admin.php') . '?page=gf_entries', 'count' => 0);
-
-      //build an array of form id's removing any blank spaces before hand
-      $formids = explode(",", trim($row->form_ids));
-      $faireCount = 0;
-      //loop thru form ids
-      foreach ($formids as $formID) {
-         $formSQL = "SELECT form.title,  meta_value as entry_status, count(*) as count
-                  FROM  wp_gf_entry
-                  JOIN  wp_gf_entry_meta
-                    ON  wp_gf_entry.id = wp_gf_entry_meta.entry_id AND
-                        wp_gf_entry_meta.meta_key = '303'
-                  JOIN  wp_gf_form form
-                    ON  wp_gf_entry.form_id = form.id AND
-                        is_trash != 1
-                  WHERE wp_gf_entry.status = 'active' AND
-                        wp_gf_entry.form_id= $formID
-                  group by entry_status";
-         $formCount = 0;
-         foreach ($wpdb->get_results($formSQL) as $formRow) {
-            $formCount += $formRow->count;
-            $faireCount += $formRow->count;
-            $adminURL = admin_url('admin.php') . "?page=gf_entries&view=entries&id=" . $formID;
-            $faireNav[$row->faire_location][$row->faire]['forms'][$formID]['status'][] = array(
-                'status' => $formRow->entry_status,
-                'url' => $adminURL . '&sort=0&dir=DESC&filterField[]=303|is|' . str_replace(' ', '+', $formRow->entry_status),
-                'count' => $formRow->count);
-
-            $faireNav[$row->faire_location][$row->faire]['forms'][$formID]['data'] = array(
-                'formName' => $formRow->title,
-                'url' => $adminURL,
-                'count' => $formCount);
-         }
-      }
-      //populate faire count
-      $faireNav[$row->faire_location][$row->faire]['count'] = $faireCount;
-   }
-
-   //build the nav output
-   $nav = '<nav id="faire_nav"><ul>';
-
-   foreach ($faireNav as $locKey => $locations) {
-      //first build list of locations
-      $nav .= '<li class="dropdown"><span style="text-decoration: none" class="dropdown-toggle" data-toggle="dropdown">' . $locKey . '</span>';
-
-      if (is_array($locations)) { //break this down by Faire
-         $nav .= '<ul>';
-         foreach ($locations as $faireKey => $faire) {
-            $nav .= '<li><span>' . $faire['faire-name'] . ' (' . $faire['count'] . ')</span>';
-            if (isset($faire['forms']) && is_array($faire['forms'])) {  //break this down by Form
-               $nav .= '<ul>';
-               foreach ($faire['forms'] as $formID => $form) {
-                  $nav .= '<li><a href="' . $form['data']['url'] . '">' . $form['data']['formName'] . ' (' . $form['data']['count'] . ')</a>';
-                  if (isset($form['status']) && is_array($form['status'])) {  //break this down by status
-                     $nav .= '<ul>';
-                     foreach ($form['status'] as $formstatus) {
-                        $nav .= '<li><a href="' . $formstatus['url'] . '">' . $formstatus['status'] . ' (' . $formstatus['count'] . ')</a></li>';
-                     }
-                     $nav .= '</ul>';  //end status break down
-                  }
-                  $nav .= '</li>';
-               }
-               $nav .= '</ul>';  //end form break down
-            }
-            $nav .= '</li>';
-         }
-         $nav .= '</ul>';  //end faire  break down
-      }
-      $nav .= '</li>';
-   }
-   $nav .= '</ul>';  //end location  break down
-   $nav .= '</nav>';
-
-
-
-   return $nav;
 }
 
 add_filter('gform_entries_field_value', 'modify_field_display_values', 10, 4);
@@ -296,7 +208,13 @@ function add_MF_edit_link($form_id = NULL, $field_id = NULL, $value = NULL, $lea
 add_filter('gform_filter_links_entry_list', 'remove_gf_filter', 10, 3);
 
 function remove_gf_filter($filter_links, $form, $include_counts) {
-   return array();
+   $remove_array=array('unread','gv_approved', 'gv_disapproved','gv_unapproved');
+   foreach($filter_links as $key=>$filter_item){
+      if(in_array($filter_item['id'],$remove_array)){      
+         unset($filter_links[$key]);
+      }
+   }
+   return $filter_links;
 }
 
 //remove teh approve/dissaprove column added by gravity view
