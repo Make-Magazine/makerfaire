@@ -188,7 +188,7 @@ if ( ! $gravityview->entries->count() ) {
 						}elseif($dispGVeditLink){
 							?>
 							<span class="editLink">
-								<a href="<?php echo $GVeditLink;?>"><i class="fas fa-edit" aria-hidden="true"></i><?php echo $editEntryLabel;?></a>
+								<a href="<?php echo $GVeditLink;?>"><i class="fas fa-image" aria-hidden="true"></i><?php echo $editEntryLabel;?></a>
 							</span>
 							<?php
 						}

@@ -319,7 +319,7 @@ if ($formType == 'Sponsor' || $formType == 'Startup Sponsor' || !$displayMakers)
         <div class="makerEditHead">
             <input type="hidden" id="entry_id" value="<?php echo $entryId; ?>" />
             <a class="pull-left" target="_blank" href="<?php echo $GVeditLink; ?>/">
-                <i class="far fa-file-image" aria-hidden="true"></i>Manage Your Photos
+                <i class="fas fa-image" aria-hidden="true"></i>Manage Your Photos
             </a>
             <!--
             <a class="pull-left" target="_blank" href="/maker-sign/<?php echo $entryId ?>/<?php echo $faireShort; ?>/">
