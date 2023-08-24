@@ -82,7 +82,8 @@ if (isset($entry->errors)) {
     // build array of categories
     $mainCategory = '';
     $categories = array();
-    if (isset($entry['320'])) {
+    
+    if (isset($entry['320']) && $entry['320']!='') {
         $mainCategory = get_term($entry['320'])->name;
         $categories[] = $mainCategory;
     }
@@ -305,6 +306,7 @@ if ($formType == 'Sponsor' || $formType == 'Startup Sponsor' || !$displayMakers)
         });
     });
 </script>
+
 <div class="entry-page">
     <?php if(isset($timeZone)) { ?>
         <input type="hidden" id="faire_tz" value="<?php echo $timeZone; ?>" />
@@ -312,19 +314,20 @@ if ($formType == 'Sponsor' || $formType == 'Startup Sponsor' || !$displayMakers)
     }
     // If there is edit in the url, they get all these options
     if ($makerEdit) {
+        $GVeditLink = do_shortcode('[gv_entry_link post_id="478584" action="edit" return="url" view_id="642359" entry_id="'.$entryId.'"]');
         ?>
         <div class="makerEditHead">
             <input type="hidden" id="entry_id" value="<?php echo $entryId; ?>" />
+            <a class="pull-left" target="_blank" href="<?php echo $GVeditLink; ?>/">
+                <i class="far fa-file-image" aria-hidden="true"></i>Manage Your Photos
+            </a>
+            <!--
             <a class="pull-left" target="_blank" href="/maker-sign/<?php echo $entryId ?>/<?php echo $faireShort; ?>/">
                 <i class="far fa-file-image" aria-hidden="true"></i>View Your Maker Sign
-            </a>
+            </a>-->
 
-            <?php
-            $GVeditLink = do_shortcode('[gv_entry_link action="edit" return="url" view_id="636924" entry_id="' . $entryId . '"]');
-            $GVeditLink = str_replace('/view/', '/', $GVeditLink);  //remove view slug from URL
-            ?>
             <span class="editLink pull-right">
-                <a href="<?php echo $GVeditLink; ?>"><i class="fas fa-edit" aria-hidden="true"></i>Edit Public information</a>
+                <a href="/bay-area/public-information/?ep_token=<?php echo (isset($entry['fg_easypassthrough_token'])?$entry['fg_easypassthrough_token']:'');?>"><i class="fas fa-edit" aria-hidden="true"></i>Manage Public Info</a>                
             </span>
             <div class="clear"></div>
         </div>

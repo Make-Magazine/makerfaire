@@ -62,7 +62,7 @@ mtm.controller('mtmMakers', ['$scope', '$sce', '$filter', '$http', function ($sc
         var showMakeProjects = jQuery('#showMakeProjects').val();
         var MPCategory = jQuery('#MPCategory').val();
 
-        if (showMakeProjects !== 'mfonly') {
+        if (showMakeProjects !== 'mfonly' && showMakeProjects != '') {
             //console.log('pulling makeprojects data');
             //call to make projects
             $http.get('https://makeprojects.com/api/projects/category/' + MPCategory + '?limit=200&offset=0&sort=recent_activity&platform=projects', {headers: {'X-Partner': 'make'}})

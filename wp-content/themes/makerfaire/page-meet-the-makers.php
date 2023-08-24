@@ -93,8 +93,8 @@ if (($showMakeProjects === 'mponly' || $showMakeProjects === 'mfandmp') && $MPCa
                 <div class="col-sm-4 filter-section">
                     <div class="dropdown" ng-if="locations.length > 0">
                         <button class="btn btn-link dropdown-toggle" type="button" id="location-dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                            <span ng-show="makerSearch.location != ''">{{makerSearch.location}}</span>
-                            <span ng-show="makerSearch.location == ''">All <?php echo (get_field('faire') == 'VMF2020' ? 'Tracks' : 'Locations'); ?></span>
+                            <span ng-if="makerSearch.location != ''">{{makerSearch.location}}</span>
+                            <span ng-if="makerSearch.location == ''">All <?php echo (get_field('faire') == 'VMF2020' ? 'Tracks' : 'Locations'); ?></span>
                             <i class="fa fa-chevron-down" aria-hidden="true"></i>
                         </button>
                         <ul class="dropdown-menu" aria-labelledby="location-dropdownMenu">
@@ -109,8 +109,8 @@ if (($showMakeProjects === 'mponly' || $showMakeProjects === 'mfandmp') && $MPCa
                     </div>
                     <div class="dropdown">
                         <button class="btn btn-link dropdown-toggle" type="button" id="mtm-dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                            <span ng-show="makerSearch.categories != ''">{{makerSearch.categories}}</span>
-                            <span ng-show="makerSearch.categories == ''">All Topics</span>
+                            <span ng-if="makerSearch.categories != ''">{{makerSearch.categories}}</span>
+                            <span ng-if="makerSearch.categories == ''">All Topics</span>
                             <i class="fa fa-chevron-down" aria-hidden="true"></i>
                         </button>
 
@@ -151,7 +151,7 @@ if (($showMakeProjects === 'mponly' || $showMakeProjects === 'mfandmp') && $MPCa
                 </div>
             </div>
             <!-- Grid View -->
-            <div ng-show="layout == 'grid'" class="mtm-results-cont">
+            <div ng-if="layout == 'grid'" class="mtm-results-cont">
                 <div ng-repeat="maker in makers| filter : makerSearch | limitTo: limit">
                     <a href="{{maker.link}}" target="_blank">
                         <article class="mtm-maker">
@@ -169,7 +169,7 @@ if (($showMakeProjects === 'mponly' || $showMakeProjects === 'mfandmp') && $MPCa
             </div>
 
             <!-- List View -->
-            <div ng-show="layout == 'list'" class="mtm-results-cont-list container">
+            <div ng-if="layout == 'list'" class="mtm-results-cont-list container">
                 <div class="filter-alpha-wrapper">
                     <span class="filterAlpha" ng-repeat="searchLetter in alphabet.split('') track by $index">
                         <a href="" target="none" class="pointer-on-hover" ng-click="setLetter(searchLetter)">{{ searchLetter}}</a>
