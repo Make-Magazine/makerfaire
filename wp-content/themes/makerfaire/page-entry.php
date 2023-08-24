@@ -99,6 +99,10 @@ if (isset($entry->errors)) {
     //get makers info
     $makers = getMakerInfo($entry);
 
+    //BA23 - we are only using field 217 for both the maker photo and the group photo    
+    $groupphoto = (isset($entry['217']) ? $entry['217'] : '');
+
+
     $project_name = (isset($entry['151']) ? $entry['151'] : '');  //Change Project Name
     $project_photo = (isset($entry['22']) ? legacy_get_fit_remote_image_url($entry['22'], 750, 500) : '');
     // this returns an array of image urls from the additional images field
