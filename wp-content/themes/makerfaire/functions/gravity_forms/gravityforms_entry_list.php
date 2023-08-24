@@ -208,7 +208,12 @@ function add_MF_edit_link($form_id = NULL, $field_id = NULL, $value = NULL, $lea
 add_filter('gform_filter_links_entry_list', 'remove_gf_filter', 10, 3);
 
 function remove_gf_filter($filter_links, $form, $include_counts) {
-   return array();
+   $remove_array=array('unread','gv_approved', 'gv_disapproved','gv_unapproved');
+   foreach($filter_links as $key=>$filter_item){
+      if(in_array($filter_item['id'],$remove_array)){      
+         unset($filter_links[$key]);
+      }
+   }
 }
 
 //remove teh approve/dissaprove column added by gravity view
