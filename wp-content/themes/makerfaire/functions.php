@@ -224,18 +224,7 @@ function load_admin_scripts() {
     wp_enqueue_style('jquery-datetimepicker-css', get_stylesheet_directory_uri() . '/css/jquery.datetimepicker.css');
     wp_enqueue_style('mf-admin-style', get_stylesheet_directory_uri() . '/css/mf-admin-style.min.css', array(), $my_version);
 
-    wp_enqueue_script('sack');
-    //custom scripts for national
-    $user = wp_get_current_user();
-    $is_national = (in_array('national', (array) $user->roles));
-    if ($is_national) {
-        wp_enqueue_script('make-gravityforms', get_stylesheet_directory_uri() . '/js/libs/gravityformsnationaladmin.js', array('jquery'), null);
-    }
-
-    $is_barnesandnoble = (in_array('barnes__noble', (array) $user->roles));
-    if ($is_barnesandnoble) {
-        wp_enqueue_script('make-gravityforms', get_stylesheet_directory_uri() . '/js/libs/gravityformsbarnesandnobleadmin.js', array('jquery'), null);
-    }
+    wp_enqueue_script('sack');    
 }
 
 add_action('admin_enqueue_scripts', 'load_admin_scripts');
