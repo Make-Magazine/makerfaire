@@ -31,7 +31,7 @@ foreach($form['fields'] as $field){
 }  
   
 $entryData = array();
-$search_criteria = array();
+$search_criteria = array('status'        => 'active');
 $sorting         = array();
 $paging          = array( 'offset' => 0, 'page_size' => 500 );
 $entries = GFAPI::get_entries( $formID, $search_criteria, $sorting, $paging );
