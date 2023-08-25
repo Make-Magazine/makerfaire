@@ -5,14 +5,14 @@
         <h3>Forms</h3>
         Search Forms: <input type="text" ng-model="formSearch">
         <select name="formSelect" ng-model="reports.formSelect" multiple style="max-width: -webkit-fill-available;">
-          <option ng-repeat="form in reports.forms | filter:formSearch" value="{{form.id}}">{{form.id}} - {{form.name}}</option>
+          <option ng-repeat="form in reports.forms | orderBy:'-id' | filter:formSearch" value="{{form.id}}">{{form.id}} - {{form.name}}</option>
         </select>
       </div>
       <div class="col-md-6 checkbox">
          <h3>Schedule</h3>
         <label>
           <input type="checkbox" ng-model="reports.location">Include Location Information<br/>
-          <input type="checkbox" ng-model="reports.tickets">Include Ticket Information
+          <input type="checkbox" ng-model="reports.tickets">Include Ticket Information<br/>          
         </label>
       </div>
     </div>
@@ -75,7 +75,7 @@
       <div class="col-md-1">
         <h4>Other:</h4>
         <span ng-if="reports.location">Location</span>
-        <span ng-if="reports.tickets">Tickets</span>
+        <span ng-if="reports.tickets">Tickets</span>        
       </div>
     </div>
 
@@ -86,6 +86,7 @@
 
   <!-- grid to hold report data -->
   <div ng-if="reports.showGrid && !reports.showbuild" class="reportsView animated fadeInUp">
+    <button ng-model="showGrid" ng-click="showGrid=false;reports.showbuild=true">Change Report Options</button>
     <div ng-if="reports.subRoute=='drill'">
       <button id="changeGrouping" type="button" class="btn btn-success" ng-click="reports.changeGrouping('item')">Group by Item->Type</button>
       <button id="changeGrouping" type="button" class="btn btn-success" ng-click="reports.changeGrouping('faire')">Group by Faire->Area->Subarea</button>
