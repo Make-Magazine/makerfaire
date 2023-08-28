@@ -562,14 +562,31 @@ function duplicate_entry_data($form_change,$current_entry_id ){
   $lead_id    = $wpdb->insert_id;
   $return = 'Entry '.$lead_id.' created in Form '.$form_change;
 
+  //if GF easypassthrough is active, we need to reset the token 
+  $resetToken = (class_exists('GP_Easy_Passthrough')?TRUE:FALSE);
+
   //add a note to the new entry
   $results=mf_add_note( $lead_id, 'Copied Entry ID:'.$current_entry_id.' into form '.$form_change.'. New Entry ID ='.$lead_id);
 
   foreach($current_fields as $row){
-    $fieldValue = ($row->meta_key != '303'? $row->meta_value: 'Proposed');
-
+    //do not write the easypassthrough token on duplicate
+    if($resetToken && $row->meta_key == 'fg_easypassthrough_token'){
+      continue;
+    }elseif($row->meta_key == '303') {
+      $fieldValue = 'Proposed';
+    }else{
+      $fieldValue = $row->meta_value;
+    }    
+    
     $wpdb->query($wpdb->prepare("INSERT INTO $lead_detail_table(entry_id, form_id, meta_key, meta_value) VALUES(%d, %s, %s, %s)",
             $lead_id, $form_change, $row->meta_key, $fieldValue));
+  }
+
+  //save the entry in order to recreate a new easy passthrough token
+  if($resetToken){
+    $form = gfapi::get_form($form_change);
+    $lead = gfapi::get_entry($lead_id);
+    apply_filters( 'gform_entry_post_save', $lead, $form );
   }
 
   //update/insert into maker tables
