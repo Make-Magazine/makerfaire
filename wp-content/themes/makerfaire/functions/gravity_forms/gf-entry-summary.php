@@ -31,7 +31,7 @@ function gf_summary_metabox($form, $lead) {
     $size_request_heightwidth = ((isset($lead['345']) && strlen($lead['345']) > 0 ) ? $lead['345'] . ' X ' : '') .
             ((isset($lead['344']) && strlen($lead['344']) > 0 ) ? $lead['344'] : '');
     $size_request_other = (isset($lead['61']) ? $lead['61'] : '');
-    $entry_form_type = $form['title'];
+    $entry_form_type = $form['form_type'];
     $entry_form_status = (isset($lead['303']) ? $lead['303'] : '');
     $wkey = (isset($lead['27']) ? $lead['27'] : '');
     $vkey = (isset($lead['32']) ? $lead['32'] : '');
@@ -59,6 +59,7 @@ function gf_summary_metabox($form, $lead) {
     $makerPhoto7 = (isset($lead['219']) ? $lead['219'] : '');
     $makergroupname = (isset($lead['109']) ? $lead['109'] : '');
     $makerGroupPhoto = (isset($lead['111']) ? $lead['111'] : '');
+    $suppToken  = (isset($lead['fg_easypassthrough_token']) ? $lead['fg_easypassthrough_token'] : '');
 
     $field55 = RGFormsModel::get_field($form, '55');
     $whatareyourplansvalues = (isset($field55['choices'])?$field55['choices']:'');    
@@ -107,8 +108,15 @@ function gf_summary_metabox($form, $lead) {
 					<tr>
 						<td valign="top"><strong>Status:</strong></td>
 						<td valign="top">' . esc_attr($entry_form_status) . '</td>
-					</tr>
-					<tr>
+					</tr>'.
+($suppToken!=''
+?
+          '<tr>
+            <td valign="top"><strong>Supplemental Token ID:</strong></td>
+						<td valign="top">' . $suppToken . '</td>
+          </tr>'
+:'')
+					.'<tr>
 						<td valign="top"><strong>Website:</strong></td>
 						<td valign="top"><a href="' . esc_url($wkey) . '" target="_blank">' . esc_url($wkey) . '</a></td>
 					</tr>
