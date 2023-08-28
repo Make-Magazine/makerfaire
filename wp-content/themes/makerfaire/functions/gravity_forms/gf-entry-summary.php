@@ -31,6 +31,7 @@ function gf_summary_metabox($form, $lead) {
     $size_request_heightwidth = ((isset($lead['345']) && strlen($lead['345']) > 0 ) ? $lead['345'] . ' X ' : '') .
             ((isset($lead['344']) && strlen($lead['344']) > 0 ) ? $lead['344'] : '');
     $size_request_other = (isset($lead['61']) ? $lead['61'] : '');
+
     $entry_form_type = $form['form_type'];
     $entry_form_status = (isset($lead['303']) ? $lead['303'] : '');
     $wkey = (isset($lead['27']) ? $lead['27'] : '');
@@ -109,7 +110,7 @@ function gf_summary_metabox($form, $lead) {
 						<td valign="top"><strong>Status:</strong></td>
 						<td valign="top">' . esc_attr($entry_form_status) . '</td>
 					</tr>'.
-($suppToken!=''
+($suppToken!='' && $form['form_type'] =='Master'
 ?
           '<tr>
             <td valign="top"><strong>Supplemental Token ID:</strong></td>
