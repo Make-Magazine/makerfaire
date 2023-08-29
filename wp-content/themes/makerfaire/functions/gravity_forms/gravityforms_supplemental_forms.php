@@ -393,7 +393,7 @@ function update_original_data($entry, $form ){
   // update meta
   $updateEntryID = get_value_by_label('entry-id', $form, $entry);
   
-  if(isset($updateEntryID['value'])){
+  if(isset($updateEntryID['value']) && $updateEntryID['value']!=''){
     gform_update_meta( $entry['id'], 'entry_id', $updateEntryID['value'] );
     update_original_entry($form,$updateEntryID['value']);
   }
