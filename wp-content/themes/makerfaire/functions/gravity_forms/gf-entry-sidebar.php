@@ -73,6 +73,7 @@ function display_entry_info_box($form, $lead) {
 	$phone      = (isset($lead["99"])             ? $lead["99"]:'');
 	$phonetype  = (isset($lead["148"])            ? $lead["148"]:'');
   
+  $master_entry_id = '';
   if(isset($form['master_form_id']) && $form['master_form_id']!=''){
     $master_entry_id  = (isset($lead["master_entry_id"]) ? $lead["master_entry_id"]:'');
     $master_entry_link = '/wp-admin/admin.php?page=gf_entries&view=entry&id='.$form['master_form_id'].'&lid='.$master_entry_id;
