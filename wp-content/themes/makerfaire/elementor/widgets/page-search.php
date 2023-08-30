@@ -73,6 +73,12 @@ class Page_Search extends Widget_Base {
 				border: solid 1px #ccc;
 				border-radius: 5px;
 			}
+			@media screen and (max-width: 768px) {
+				.make-searchbar {
+					top: auto;
+					bottom: 0px;
+				}
+			}
 			.make-searchbar h4 {
 				width: 100%;
 				margin-top: 0px;
