@@ -120,7 +120,7 @@ $publicFields = array(109,11,110,105,151,22,16,27,32,151,160,234,217,158,258,224
             case 'address':
               $parmArray=array();
               foreach($field['inputs'] as $key=>$input) {
-                if ($input->name!='') {
+                if (isset($input->name) && $input->name!='') {
                   $parmArray[] = $input->name.'('.$input->id.')';
                 }
               }
@@ -143,7 +143,7 @@ $publicFields = array(109,11,110,105,151,22,16,27,32,151,160,234,217,158,258,224
                   echo '<tr><td>'.($choice->value!=$choice->text?$choice->value.'-'.$choice->text:$choice->text).'</td><td>'.$choice->price.'</td></tr>';
                 }
                 echo '</table>';
-              }elseif($field['type']=='checkbox'||$field['type']=='radio'||$field['type']=='select' ||$field['type']=='address'){
+              }elseif($field['type']=='checkbox'||$field['type']=='radio'||$field['type']=='select' ||$field['type']=='address'||$field['type']=='name'){
                 echo '<ul style="padding-left: 20px;">';
                 if(isset($field['inputs']) && !empty($field['inputs'])){
                   foreach($field['inputs'] as $choice){
