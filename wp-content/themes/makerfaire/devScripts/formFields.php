@@ -92,10 +92,11 @@ $publicFields = array(109,11,110,105,151,22,16,27,32,151,160,234,217,158,258,224
             <td style="width:  3%">ID</td>
             <td style="width: 40%">Label</td>
             <td style="width:  3%">Type</td>
-            <td style="width: 40%">Options</td>
-            <td style="width:  3%">Admin Only</td>
-            <td style="width:  3%">Req</td>
-            <td style="width:  3%">Public</td>
+            <td style="width: 30%">Options</td>
+            <td style="width: 10%">Parameter Name </td>
+            <td style="width:  1%">Admin Only</td>
+            <td style="width:  1%">Req</td>
+            <td style="width:  1%">Public</td>
           </tr>
         </thead>
       <?php
@@ -112,6 +113,21 @@ $publicFields = array(109,11,110,105,151,22,16,27,32,151,160,234,217,158,258,224
         if($field['type'] != 'html' && $field['type'] != 'section' && $field['type'] != 'page'){
           //var_dump($field);
           $label = (isset($field['adminLabel']) && trim($field['adminLabel']) != '' ? $field['adminLabel'] : $field['label']);
+          $paramName=(isset($field['inputName'])?$field['inputName']:'');          
+          switch($field['type']) {
+            //parameter name is stored in a different place
+            case 'name':
+            case 'address':
+              $parmArray=array();
+              foreach($field['inputs'] as $key=>$input) {
+                if (isset($input->name) && $input->name!='') {
+                  $parmArray[] = $input->name.'('.$input->id.')';
+                }
+              }
+              $paramName = implode("<br/>", $parmArray);
+              break;
+          }
+
           if($label=='' && $field['type']=='checkbox') $label = $field['choices'][0]->text;
 
           ?>
@@ -127,7 +143,7 @@ $publicFields = array(109,11,110,105,151,22,16,27,32,151,160,234,217,158,258,224
                   echo '<tr><td>'.($choice->value!=$choice->text?$choice->value.'-'.$choice->text:$choice->text).'</td><td>'.$choice->price.'</td></tr>';
                 }
                 echo '</table>';
-              }elseif($field['type']=='checkbox'||$field['type']=='radio'||$field['type']=='select' ||$field['type']=='address'){
+              }elseif($field['type']=='checkbox'||$field['type']=='radio'||$field['type']=='select' ||$field['type']=='address'||$field['type']=='name'){
                 echo '<ul style="padding-left: 20px;">';
                 if(isset($field['inputs']) && !empty($field['inputs'])){
                   foreach($field['inputs'] as $choice){
@@ -142,9 +158,10 @@ $publicFields = array(109,11,110,105,151,22,16,27,32,151,160,234,217,158,258,224
               }
               ?>
             </td>
-            <td class="tcenter"><?php echo (isset($field['visibility']) && $field['visibility']=='administrative'?'<i class="fas fa-check" aria-hidden="true"></i>':'');?></td>
-            <td class="tcenter"><?php echo ($field['isRequired']?'<i class="fas fa-check" aria-hidden="true"></i>':'');?></td>
-            <td class="tcenter"><?php echo (in_array($field['id'],$publicFields)?'<i class="fas fa-check" aria-hidden="true"></i>':'');?></td>            
+            <td><?php echo $paramName;?></td>
+            <td class="tcenter"><?php echo (isset($field['visibility']) && $field['visibility']=='administrative'?'X':'');?></td>
+            <td class="tcenter"><?php echo ($field['isRequired']?'X':'');?></td>
+            <td class="tcenter"><?php echo (in_array($field['id'],$publicFields)?'X':'');?></td>            
 
           </tr>
           <?php

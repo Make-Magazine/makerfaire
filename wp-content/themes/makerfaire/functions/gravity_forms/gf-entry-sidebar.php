@@ -72,6 +72,12 @@ function display_entry_info_box($form, $lead) {
 	$email      = (isset($lead["98"])             ? $lead["98"]:'');
 	$phone      = (isset($lead["99"])             ? $lead["99"]:'');
 	$phonetype  = (isset($lead["148"])            ? $lead["148"]:'');
+  
+  $master_entry_id = '';
+  if(isset($form['master_form_id']) && $form['master_form_id']!=''){
+    $master_entry_id  = (isset($lead["master_entry_id"]) ? $lead["master_entry_id"]:'');
+    $master_entry_link = '/wp-admin/admin.php?page=gf_entries&view=entry&id='.$form['master_form_id'].'&lid='.$master_entry_id;
+  }
   $resource_display = '';
   $resource_displayText = '';
   if($mode == 'view' && (isset($form['form_type']) && $form['form_type']!='Default')) {
@@ -95,7 +101,8 @@ function display_entry_info_box($form, $lead) {
         	$phonetype.':  '. $phone.'<br />
       	</div>'.
       	__( 'Filled out: ', 'gravityforms' ). esc_html( GFCommon::format_date( $lead['date_created'], false, 'Y/m/d' ) ) .'<br /><br/>'
-      . do_action( 'gform_entry_info', $form['id'], $lead ) .
+      . do_action( 'gform_entry_info', $form['id'], $lead ) 
+      . ($master_entry_id!=''? 'Master Entry ID: <a href="'.$master_entry_link.'">'.$master_entry_id.'</a>':'').
    	 '<div id="delete-action" style="float:none;">';
       switch ( $lead['status'] ) {
         case 'spam' :

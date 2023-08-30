@@ -107,6 +107,9 @@ if ( ! $gravityview->entries->count() ) {
 		$image =  (isset($entryData['22']) && $entryData['22'] != '' ? $entryData['22']:get_template_directory_uri() .'/images/no-image.png');
 		$entryStatus = (isset($entryData['303']) && $entryData['303'] != '' ? $entryData['303'] : 'Unknown');
 		
+		//with BA23 we introduced Pending. We need to call it Proposed in the back end as a lot of code is linked to this. Rename so makers see pending
+		if($entryStatus=='Proposed')	$entryStatus="Pending";
+		
 		//status specific logic
 		$statusBlock  = ($entryStatus == 'Accepted' ? 'greenStatus':'greyStatus');				
 		$dispCancel   = ($entryStatus != 'Cancelled' && $entryStatus != 'Rejected'?true:false);

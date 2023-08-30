@@ -1122,8 +1122,8 @@ function ent2resource($table, $faire, $type) {
          if (ucwords($type) != $formType)
             continue;
       }
-      //do not return Presenation records
-      if ($formType == 'Presentation')
+      //do not return Presenation records or entries from form type other
+      if ($formType == 'Presentation' || $formType == 'Other') 
          continue; //skip this record
 
       $dbdata['form_type'] = $formType;

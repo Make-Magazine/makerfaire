@@ -223,76 +223,123 @@ function populate_fields($form) {
   return $form;
 }
 
-/* We will copy over all supplemental fields into original entry */
-function update_original_entry($form,$origEntryID){
+/* This function copies data from the supplemental form back into the 
+   Master/Original Entry. Field ID's are noted in the parameter name by 
+   prepending field- to the field ID.
+   $form = supplemental form Object
+   $origEntryID = Master/Original entry to push data to 
+ */
+function update_original_entry($form, $origEntryID){
   //Loop thru form fields 
   foreach ($form['fields'] as $field) {        
      //  Do not update values from read only fields
-     if(!$field->gwreadonly_enable){
-      // If the field type is checkbox, name or address, we need to ensure we blank out data for previously submitted information
+     if(!$field->gwreadonly_enable){            
+      $parmName = $field->inputName;                           
+      $pos = strpos($parmName, 'field-');
+      if ($pos !== false) { //populate by field ID?
+        $updField = str_replace("field-", "", $parmName);
+      }else{
+        $updField = '';
+      }
+      
       switch($field->type) {
-        case 'checkbox':                  
+        case 'checkbox':    
+          if($updField!=''){
+            //loop through and set all checkbox fields blank            
+            foreach($field->inputs as $input){          
+              $fromField =  $input['id'];
+              //find decimal point
+              $fromArr = explode('.', $fromField);
+              $decPoint = $fromArr[1];
+              $inputID  = str_replace(".", "_", $fromField);              
+              $updValue =  (isset($_POST['input_'.$inputID])?$_POST['input_'.$inputID]:'');            
+              
+              GFAPI::update_entry_field( $origEntryID, (int) $updField.'.'.$decPoint, stripslashes($updValue) );
+            }  
+          }
+          break;              
         case 'name':
-        case 'address':
-          foreach($field->inputs as $input){
-            $updField = $input['id'];
-            $inputID  = str_replace(".", "_", $updField);
-            /*
-             * if the field is set, update with submitted value, else, update with blanks
-             */
-            if(isset($_POST['input_'.$inputID] )){
-              $updValue =  $_POST['input_'.$inputID];            
-              GFAPI::update_entry_field( $origEntryID, $updField, stripslashes($updValue) );          
-            }            
+        case 'address':          
+          // loop through all inputs and set
+          foreach($field->inputs as $input){          
+            $updField='';
+            $fromField =  $input['id'];
+
+            //parameter name is stored at the input level            
+            $parmName =  $input['name'];
+            
+            $pos = strpos($parmName, 'field-');
+            if ($pos !== false) { //populate by field ID?
+              $updField = str_replace("field-", "", $parmName);
+            }
+            
+            //if the update field id was set, push back to the original entry
+            if($updField!=''){
+              $inputID  = str_replace(".", "_", $fromField);              
+              $updValue =  (isset($_POST['input_'.$inputID])?$_POST['input_'.$inputID]:'');    
+             
+              GFAPI::update_entry_field( $origEntryID, $updField, stripslashes($updValue) );
+            }                        
           }
           break;
-        case 'list':                              
-          if(isset($_POST['input_'.$field->id])){
-            $options=array();
-            foreach($field->choices as $choice){
-              $options[] = $choice['value'];
-            }  
-            
-            if(is_array($_POST['input_'.$field->id])){
-              $input_value = $_POST['input_'.$field->id];
-              $num_list_items = count($_POST['input_'.$field->id]) - 1;              
+        case 'list':          
+          //if the field id was set, push back to the original entry
+          if($updField!=''){
+            $updValue = ''; //blank out update field in case all values are deleted
 
-              $x=0;
-              $output = array();
-              while($x <= $num_list_items){
-                $list_array = array();
-                foreach($options as $option){
-                  $list_array[$option] = $input_value[$x]; 
-                  $x++;
-                }    
-                $output[]=$list_array;                        
+            //if the field was populated, link through and build the data
+            if(isset($_POST['input_'.$field->id])){
+              $options=array();
+              foreach($field->choices as $choice){
+                $options[] = $choice['value'];
+              }  
+              
+              if(is_array($_POST['input_'.$field->id])){
+                $input_value = $_POST['input_'.$field->id];
+                $num_list_items = count($_POST['input_'.$field->id]) - 1;              
+  
+                $x=0;
+                $output = array();
+                while($x <= $num_list_items){
+                  $list_array = array();
+                  foreach($options as $option){
+                    $list_array[$option] = $input_value[$x]; 
+                    $x++;
+                  }    
+                  $output[]=$list_array;                        
+                }
               }
-            }
-
-            //list data is stored serialized        
-            $updValue = maybe_serialize($output);                                     
- 
-            GFAPI::update_entry_field( $origEntryID, $field->id, $updValue);  
-          }          
-          
+  
+              //list data is stored serialized        
+              $updValue = maybe_serialize($output);                                     
+                 
+            }   
+            GFAPI::update_entry_field( $origEntryID, $updField, $updValue);  
+          }                        
           break;
+        //skip these  
         case 'page':
         case 'section':  
         case 'html':
           break;  
         default:
-          //find submitted value
-          if(isset($_POST['input_'.$field->id])){
-            $updValue =  $_POST['input_'.$field->id];                    
-            GFAPI::update_entry_field( $origEntryID, $field->id, stripslashes($updValue) );
+          //if the field id was set, push back to the original entry
+          if($updField!=''){
+            //find submitted value
+            if(isset($_POST['input_'.$field->id])){
+              $updValue =  $_POST['input_'.$field->id];                    
+              GFAPI::update_entry_field( $origEntryID, $updField, stripslashes($updValue) );
+            }
           }
+          
           
           break;
       }
            
     }
   }
-  //uploaded files
+  
+  //uploaded files - these must match supplemental field id to master/original field id 
   if(isset($_POST['gform_uploaded_files'])){
     $uploaded_files = json_decode(stripslashes($_POST['gform_uploaded_files']));    
     if(is_array($uploaded_files)){
@@ -318,68 +365,6 @@ function update_original_entry($form,$origEntryID){
   do_action( 'gform_after_update_entry', $origForm, $origEntryID, $origEntry );  
 }
 
-/* DO NOT USE - OLD function - replaced with update_original_entry 
-Used to update linked fields back to original entry */
-function OLD_updLinked_fields($form,$origEntryID){
-  //Loop thru form fields and look for parameter names of 'field-*'
-  //  These are set to update original entry fields
-  foreach ($form['fields'] as $field) {
-    //find parameter name
-    $parmName = '';
-    switch($field->type) {
-      //parameter name is stored in a different place
-      case 'name':
-      case 'address':
-        foreach($field->inputs as $key=>$input) {
-          if (isset($input['name']) && $input['name']!='') {
-            $parmName =  $input['name'];
-            $pos = strpos($parmName, 'field-');
-            if ($pos !== false) { //populate by field ID?
-              $field_id = str_replace("field-", "", $input['name']);
-            }
-          }
-        }
-        break;
-    }
-
-    if ($parmName=='' && $field->inputName != '') {
-      $parmName = $field->inputName;
-    }
-
-    if($parmName!=''){
-      /* Now that we have the parameter name, check if it contains 'field-' */
-      $pos = strpos($parmName, 'field-');
-
-      if ($pos !== false) {
-        //find the field ID passed to update the linked entry
-        $updField = str_replace("field-", "", $parmName);  //strip the 'field-' from the parameter name to get the field number
-
-        //  Do not update values from read only fields
-        if(!$field->gwreadonly_enable){
-          //multiple field options to update
-          if($field->type == 'checkbox'){
-            foreach($field->inputs as $input){
-              $updField = $input['id'];
-              $inputID  = str_replace(".", "_", $updField);
-              /*
-               * if the field is set, update with submitted  value
-               *  else, update with blanks
-               */
-              $updValue =  (isset($_POST['input_'.$inputID]) ? $_POST['input_'.$inputID] : '');
-              GFAPI::update_entry_field( $origEntryID, $updField, stripslashes($updValue) );          
-            }
-          }else{
-            //find submitted value
-            $updValue =  (isset($_POST['input_'.$field['id']])?$_POST['input_'.$field['id']]:'');
-            GFAPI::update_entry_field( $origEntryID, $updField, stripslashes($updValue) );
-          }
-        }
-      }
-    }
-  } //end foreach loop
-
-}
-
 //when a supplemental form is submitted, find the initial formid based on entry id
 // and add the fields from the supplemental form to that original entry
 add_action('gform_after_update_entry', 'update_original_data_pre', 10, 3 );  // $form,$entry_id,$orig_entry=array()
@@ -393,7 +378,7 @@ function update_original_data($entry, $form ){
   // update meta
   $updateEntryID = get_value_by_label('entry-id', $form, $entry);
   
-  if(isset($updateEntryID['value'])){
+  if(isset($updateEntryID['value']) && $updateEntryID['value']!=''){
     gform_update_meta( $entry['id'], 'entry_id', $updateEntryID['value'] );
     update_original_entry($form,$updateEntryID['value']);
   }

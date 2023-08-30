@@ -11,19 +11,22 @@ if (!is_user_logged_in())
     auth_redirect();
 include 'header.php';
 
+
 /* required to display wp-admin bar */
 /** WordPress Administration Screen API */
 
 require_once(ABSPATH . 'wp-admin/includes/class-wp-screen.php');
 require_once(ABSPATH . 'wp-admin/includes/screen.php');
-
 require_once(ABSPATH . 'wp-admin/includes/template.php');
 
 //do_action( 'admin_init' );
 wp_footer();
 /* end section for wp-admin bar */
 ?>
-
+<!--remove elementor-->
+<style>
+.elementor{display:none}
+</style>
   <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
     <div class="navbar-header">
       <button href="#menu-toggle" class="slidebar-toggle" id="menu-toggle">

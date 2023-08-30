@@ -235,31 +235,47 @@ function mf_custom_import_entries() {
   // display content for custom menu item when selected
   add_action( 'gform_export_page_mf_custom_export_entries', 'mf_custom_export_entries' );
   function mf_custom_export_entries() {
-
     GFExport::page_header('MF Custom Export');
-
     ?>
-    <div class="dropdown" style="position:absolute">
-      <button class="btn btn-default dropdown-toggle" type="button" id="mfexportdata" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-        Select Form
-        <span class="caret"></span>
-      </button>
-      <ul class="dropdown-menu" aria-labelledby="mfexportdata">
-        <?php
-        //create a crypt key to pass to entriesExport.php to avoid outside from accessing
-        //$date  = date('mdY');
-        //$crypt = crypt($date, AUTH_SALT);
-        $crypt = 'abcd';
-        $forms = RGFormsModel::get_forms( 1, 'title' );
-        foreach ( $forms as $form ) { ?>
-          <li><a href="/wp-content/themes/makerfaire/devScripts/entriesExport.php?formID=<?php echo absint( $form->id ).'&auth='.$crypt; ?>"><?php echo esc_html( $form->title ); ?></a></li>
-          <?php
-        }
-        ?>
-      </ul>
-    </div>
-
-
+    <div id="gform_export" class="gform_settings_form">
+      <div class="gform-settings-panel gform-settings-panel--full">
+	      <header class="gform-settings-panel__header"><legend class="gform-settings-panel__title">Maker Faire Custom Export Entries</legend></header>
+        <div class="gform-settings-panel__content">
+          <div class="gform-settings-description">Select a form below to export entries.</div>
+          <table class="form-table">
+            <tbody>
+              <tr valign="top">
+                <th scope="row">
+                  <label for="export_form">Select a Form</label> 
+                </th>
+                <td>
+                  <div class="dropdown">
+                    <button class="btn btn-default dropdown-toggle" type="button" id="mfexportdata" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                      Select Form
+                      <span class="caret"></span>
+                    </button>                    
+                  
+                    <ul class="dropdown-menu" aria-labelledby="mfexportdata">
+                      <?php
+                      //create a crypt key to pass to entriesExport.php to avoid outside from accessing
+                      //$date  = date('mdY');
+                      //$crypt = crypt($date, AUTH_SALT);
+                      $crypt = 'abcd';
+                      $forms = RGFormsModel::get_forms( 1, 'title' );
+                      foreach ( $forms as $form ) { ?>
+                        <li><a href="/wp-content/themes/makerfaire/devScripts/entriesExport.php?formID=<?php echo absint( $form->id ).'&auth='.$crypt; ?>"><?php echo esc_html( $form->title ); ?></a></li>
+                        <?php
+                      }
+                      ?>
+                    </ul>
+                  </div>  
+                </td>
+              </tr>
+            </tbody>    
+          </table>              
+        </div>      
+      </div>  
+    </div>  
     <?php
     GFExport::page_footer();
 

@@ -252,9 +252,9 @@ class Upcoming_Faires extends Widget_Base {
 
 		$past_or_future = "";
 		if($past_or_future_value == '>') {
-			$past_or_future = " AND event_start_dt > '" . $date_start . "'";
+			$past_or_future = " AND IFNULL(event_end_dt,event_start_dt) > '" . $date_start . "'";
 		} else if($past_or_future_value == '<') {
-			$past_or_future = " AND event_start_dt < '" . $date_start . "'";
+			$past_or_future = " AND IFNULL(event_end_dt,event_start_dt) < '" . $date_start . "'";
 		}
 		$year = ($settings['year'] == 0 || $settings['year'] > date("Y")) ? "" : " AND faire_year = " . $settings['year'] . " ";
 		$limit = $settings['number'];

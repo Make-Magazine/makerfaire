@@ -31,7 +31,8 @@ function gf_summary_metabox($form, $lead) {
     $size_request_heightwidth = ((isset($lead['345']) && strlen($lead['345']) > 0 ) ? $lead['345'] . ' X ' : '') .
             ((isset($lead['344']) && strlen($lead['344']) > 0 ) ? $lead['344'] : '');
     $size_request_other = (isset($lead['61']) ? $lead['61'] : '');
-    $entry_form_type = $form['title'];
+
+    $entry_form_type = $form['form_type'];
     $entry_form_status = (isset($lead['303']) ? $lead['303'] : '');
     $wkey = (isset($lead['27']) ? $lead['27'] : '');
     $vkey = (isset($lead['32']) ? $lead['32'] : '');
@@ -59,6 +60,7 @@ function gf_summary_metabox($form, $lead) {
     $makerPhoto7 = (isset($lead['219']) ? $lead['219'] : '');
     $makergroupname = (isset($lead['109']) ? $lead['109'] : '');
     $makerGroupPhoto = (isset($lead['111']) ? $lead['111'] : '');
+    $suppToken  = (isset($lead['fg_easypassthrough_token']) ? $lead['fg_easypassthrough_token'] : '');
 
     $field55 = RGFormsModel::get_field($form, '55');
     $whatareyourplansvalues = (isset($field55['choices'])?$field55['choices']:'');    
@@ -107,8 +109,15 @@ function gf_summary_metabox($form, $lead) {
 					<tr>
 						<td valign="top"><strong>Status:</strong></td>
 						<td valign="top">' . esc_attr($entry_form_status) . '</td>
-					</tr>
-					<tr>
+					</tr>'.
+($suppToken!='' && $form['form_type'] =='Master'
+?
+          '<tr>
+            <td valign="top"><strong>Supplemental Token ID:</strong></td>
+						<td valign="top">' . $suppToken . '</td>
+          </tr>'
+:'')
+					.'<tr>
 						<td valign="top"><strong>Website:</strong></td>
 						<td valign="top"><a href="' . esc_url($wkey) . '" target="_blank">' . esc_url($wkey) . '</a></td>
 					</tr>
@@ -320,7 +329,7 @@ function gf_collapsible_sections($form, $lead) {
     }
 
     $data = array('content' => array(11, 16, 320, 321, 66, 67, 293),
-        'logistics' => array(60, 344, 345, 61, 62, 347, 348, 64, 65, 68, 69, 70, 71, 72, 73, 74, 75, 76),
+        'logistics' => array(60, 344, 345, 61, 62, 347, 348, 64, 65, 68, 69, 70, 71, 72, 73, 74, 75, 76, 803, 806, 805),
         'additional' => array(123, 130, 287, 134, 37, 38, 41),
         'images' => array(22, 65, 111, 122, 217, 224, 223, 222, 220, 221, 219, 878),
         'imagesOver' => array(324, 334, 330, 338, 333, 337, 332, 336, 331, 335)
