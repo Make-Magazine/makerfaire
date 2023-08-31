@@ -137,8 +137,8 @@ class Page_Search extends Widget_Base {
 			 * specified context on input
 			 */
 			$input.on("input", function() {
-				// if there are accordions on the page, open them otherwise we can't search
-				if(!jQuery(".elementor-tab-title").hasClass('elementor-active')) {
+				// if there are accordions closed on the page, open them, otherwise we can't search
+				if(jQuery(".elementor-tab-content:hidden")) {
 					jQuery('.elementor-tab-title').addClass('elementor-active');
 					jQuery('.elementor-tab-content').css('display', 'block');
 				}
