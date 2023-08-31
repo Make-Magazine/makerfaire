@@ -138,7 +138,8 @@ class Page_Search extends Widget_Base {
 			 */
 			$input.on("input", function() {
 				// if there are accordions closed on the page, open them, otherwise we can't search
-				if(jQuery(".elementor-tab-content:hidden")) {
+				if(jQuery('.elementor-tab-title[aria-expanded="false"]').length > 0) {
+					jQuery('.elementor-tab-title').attr('aria-expanded', 'true');
 					jQuery('.elementor-tab-title').addClass('elementor-active');
 					jQuery('.elementor-tab-content').css('display', 'block');
 				}
@@ -168,14 +169,14 @@ class Page_Search extends Widget_Base {
 			 */
 			$nextBtn.add($prevBtn).on("click", function() {
 				if ($results.length) {
-				currentIndex += jQuery(this).is($prevBtn) ? -1 : 1;
-				if (currentIndex < 0) {
-					currentIndex = $results.length - 1;
-				}
-				if (currentIndex > $results.length - 1) {
-					currentIndex = 0;
-				}
-				jumpTo();
+					currentIndex += jQuery(this).is($prevBtn) ? -1 : 1;
+					if (currentIndex < 0) {
+						currentIndex = $results.length - 1;
+					}
+					if (currentIndex > $results.length - 1) {
+						currentIndex = 0;
+					}
+					jumpTo();
 				}
 			});
 		});
