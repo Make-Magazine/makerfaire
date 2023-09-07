@@ -274,6 +274,9 @@ function mf_admin_MFupdate_entry(){
       case 'update_fee_mgmt' :
         set_feeMgmt($lead,$form);
         break;
+      case 'update_exhibit_type' :
+        set_exhibit_type($lead,$form);
+        break;        
       default:
         $response['result'] = 'Error: Invalid Action Passed';
         break;
@@ -752,6 +755,30 @@ function set_feeMgmt($lead,$form){
 				$exploded_fee_mgmt = explode("_",$fee_mgmt);
 				$entry_info_entry[$exploded_fee_mgmt[0]] = $exploded_fee_mgmt[1];
 				mf_update_entry_field($entry_id,$exploded_fee_mgmt[0],$exploded_fee_mgmt[1]);
+			}
+		}
+	}
+}
+
+//Update Exhibit Type
+function set_exhibit_type($lead,$form){
+  $entry_id             = $lead['id'];
+	$exhibit_type_change  = $_POST['entry_exhibit_type'];
+
+	$field339 = RGFormsModel::get_field($form,'339');
+
+	if (!empty($entry_id)){
+		/* Clear out old choices */
+		foreach($field339['inputs'] as $choice){
+			mf_update_entry_field($entry_id,$choice['id'],'');
+		}
+
+		/* Save entries */
+		if (!empty($exhibit_type_change)){
+			foreach($exhibit_type_change as $exhibit_type){
+				$exploded_exhibit_type = explode("_",$exhibit_type);
+				$entry_info_entry[$exploded_exhibit_type[0]] = $exploded_exhibit_type[1];
+				mf_update_entry_field($entry_id,$exploded_exhibit_type[0],$exploded_exhibit_type[1]);
 			}
 		}
 	}
