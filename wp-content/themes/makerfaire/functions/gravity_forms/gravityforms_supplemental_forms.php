@@ -229,7 +229,7 @@ function populate_fields($form) {
    $form = supplemental form Object
    $origEntryID = Master/Original entry to push data to 
  */
-function update_original_entry($form, $origEntryID){
+function update_original_entry($form, $origEntryID, $suppEntry){
   //Loop thru form fields 
   foreach ($form['fields'] as $field) {        
      //  Do not update values from read only fields
@@ -317,6 +317,16 @@ function update_original_entry($form, $origEntryID){
             GFAPI::update_entry_field( $origEntryID, $updField, $updValue);  
           }                        
           break;
+        case 'fileupload':
+          /* unable to set a parameter name for file upload fields, so the field ID must be the same 
+             on the supplemental form and the master form. 
+             In addition the full file path can only be retrieved from the supplemental entry, 
+             not the post fields 
+          */
+          $updValue= (isset($suppEntry[$field->id])?$suppEntry[$field->id] :'');   
+    
+          GFAPI::update_entry_field( $origEntryID, $field->id, stripslashes($updValue) );  
+          break;
         //skip these  
         case 'page':
         case 'section':  
@@ -327,7 +337,7 @@ function update_original_entry($form, $origEntryID){
           if($updField!=''){
             //find submitted value
             if(isset($_POST['input_'.$field->id])){
-              $updValue =  $_POST['input_'.$field->id];                    
+              $updValue =  $_POST['input_'.$field->id];                 
               GFAPI::update_entry_field( $origEntryID, $updField, stripslashes($updValue) );
             }
           }
@@ -338,17 +348,22 @@ function update_original_entry($form, $origEntryID){
            
     }
   }
-  
+/*
   //uploaded files - these must match supplemental field id to master/original field id 
   if(isset($_POST['gform_uploaded_files'])){
+
     $uploaded_files = json_decode(stripslashes($_POST['gform_uploaded_files']));    
+
     if(is_array($uploaded_files)){
       foreach($uploaded_files as $key=>$value){
-        $inputID  = str_replace("input_", "", $key);      
-        GFAPI::update_entry_field( $origEntryID, $inputID, stripslashes($value) );      
+        $inputID  = str_replace("input_", "", $key);    
+        echo 'inputID='.$inputID.' update value is '.$suppEntry[$inputID];
+        die();
+        $updValue= (isset($suppEntry[$inputID])?$suppEntry[$inputID] :'');  
+        GFAPI::update_entry_field( $origEntryID, $inputID, stripslashes($updValue) );      
       }
     }    
-  }
+  }*/
 
   //hard coded fields to push back to master entry - TBD get form of $origEntryID and if form type=master, do the below
 
@@ -380,7 +395,7 @@ function update_original_data($entry, $form ){
   
   if(isset($updateEntryID['value']) && $updateEntryID['value']!=''){
     gform_update_meta( $entry['id'], 'entry_id', $updateEntryID['value'] );
-    update_original_entry($form,$updateEntryID['value']);
+    update_original_entry($form,$updateEntryID['value'], $entry);
   }
 }
 
