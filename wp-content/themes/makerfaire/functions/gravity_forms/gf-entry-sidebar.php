@@ -11,6 +11,7 @@ function add_sidebar_sections($form, $lead) {
     $sidebar .= display_entry_rating_box($form, $lead);
     if(isset($form['form_type']) && $form['form_type']!='Default'){
       $sidebar .= display_entry_fee_mgmt_box($form, $lead);
+      $sidebar .= display_exhibit_type_box($form, $lead);
     }
     
     $sidebar .= display_entry_notes_box($form, $lead);
@@ -227,6 +228,18 @@ function display_entry_fee_mgmt_box($form, $lead) {
   $return .= '<span class="updMsg update_fee_mgmtMsg"></span>';
   return addExpandBox($return,'Fee Management','fee-mgmt');
 }
+
+/* update exhibit type */
+function display_exhibit_type_box($form, $lead) {
+  $fieldName  = 'entry_exhibit_type';
+  $field_id   = '339';
+
+  $return     = field_display($lead,$form,$field_id,$fieldName);
+  $return .= '<input type="button" name="update_exhibit_type" value="Update Exhibit Type" class="button" style="width:auto;padding-bottom:2px;" onclick="updateMgmt(\'update_exhibit_type\');"/>';
+  $return .= '<span class="updMsg update_exhibit_typeMsg"></span>';
+  return addExpandBox($return,'Exhibit Type','exhibit_type');
+}
+
 function display_entry_notes_box($form, $lead) {
   /* Notes Sidebar Area */
   $notes = RGFormsModel::get_lead_notes( $lead['id'] );

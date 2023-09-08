@@ -27,6 +27,12 @@ function check_entry_display( $check_entry_display, $entry ) {
 }
 //add_filter('gravityview/common/get_entry/check_entry_display', 'check_entry_display', 10, 2 );
 
+
+add_filter('gravityview-inline-edit/edit-mode', 'modify_inline_display', 10, 1 );
+function modify_inline_display( $mode = '' ) {
+  return 'inline';
+}
+
 /* add query var for MAT to edit the entry */
 add_filter( 'query_vars', 'mat_register_query_var' );
 function mat_register_query_var( $vars ) {

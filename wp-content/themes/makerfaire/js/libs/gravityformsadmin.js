@@ -599,13 +599,23 @@ function updateMgmt(action) {
 	} else if (action == 'update_fee_mgmt') {
 		//set processing icon on the screen
 		jQuery(".update_fee_mgmt_msg").html(processing_icon);
-		//preliminary location
+		//pfee mgmt
 		var entry_info_fee_mgmt = [];
 		jQuery("[name='entry_info_fee_mgmt[]']:checked").each(function() {
 			// push all checked locations to array
 			entry_info_fee_mgmt.push(jQuery(this).val());
 		});
 		data.entry_info_fee_mgmt = entry_info_fee_mgmt;
+	} else if (action == 'update_exhibit_type') {
+		//set processing icon on the screen
+		jQuery(".update_exhibit_typeMsg").html(processing_icon);
+		//exhibit type
+		var entry_exhibit_type = [];
+		jQuery("[name='entry_exhibit_type[]']:checked").each(function() {
+			// push all checked locations to array
+			entry_exhibit_type.push(jQuery(this).val());
+		});
+		data.entry_exhibit_type = entry_exhibit_type;
 	}
 
 	jQuery.post(ajaxurl, data, function(r) {

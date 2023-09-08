@@ -94,7 +94,8 @@ if (isset($entry->errors)) {
             }
         }
     }
-    $categoryDisplay = display_categories($categories);
+    
+    $categoryDisplay = (!empty($categories)?display_categories($categories):'');
 
     //get makers info
     $makers = getMakerInfo($entry);
@@ -105,8 +106,16 @@ if (isset($entry->errors)) {
 
     $project_name = (isset($entry['151']) ? $entry['151'] : '');  //Change Project Name
     $project_photo = (isset($entry['22']) ? legacy_get_fit_remote_image_url($entry['22'], 750, 500) : '');
+
     // this returns an array of image urls from the additional images field
     $project_gallery = (isset($entry['878']) ? explode(",", str_replace(array( '[', ']', '"' ), '', $entry['878'])) : '');
+
+    //if the main project photo isn't set but the photo gallery is, use the first image in the photo gallery
+    if($project_photo=='' && is_array($project_gallery)){
+        $project_photo = $project_gallery[0];
+    }
+    
+    
     $project_short = (isset($entry['16']) ? $entry['16'] : '');    // Description
     //field 287 and field 877 can be used in a form for any text input question.
     //We will display these on the entry detail form

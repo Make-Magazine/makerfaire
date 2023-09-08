@@ -177,7 +177,8 @@ function getMTMentries($formIDs, $faireID) {
     //find all active entries for selected forms
     $query = "SELECT  lead.id                         AS entry_id, 
                      (SELECT meta_value FROM   wp_gf_entry_meta WHERE  meta_key = 303 AND entry_id = lead.id) AS entry_status, 
-                     (SELECT meta_value FROM   wp_gf_entry_meta WHERE  meta_key = 22  AND entry_id = lead.id) AS proj_photo, 
+                     (SELECT meta_value FROM   wp_gf_entry_meta WHERE  meta_key = 22  AND entry_id = lead.id) AS proj_photo,
+                     (SELECT meta_value FROM   wp_gf_entry_meta WHERE  meta_key = 878  AND entry_id = lead.id) AS proj_photo_gallery,  
                      (SELECT meta_value FROM   wp_gf_entry_meta WHERE  meta_key = 151 AND entry_id = lead.id) AS proj_name, 
                      (SELECT meta_value FROM   wp_gf_entry_meta WHERE  meta_key = 16  AND entry_id = lead.id) AS short_desc, 
                      (SELECT meta_value FROM   wp_gf_entry_meta WHERE  meta_key = 320 AND entry_id = lead.id) AS prime_cat, 
@@ -196,7 +197,7 @@ function getMTMentries($formIDs, $faireID) {
     if ($faireID == 'VMF2020') {
         $query = "SELECT  lead.id                         AS entry_id, 
                      (SELECT meta_value FROM   wp_gf_entry_meta WHERE  meta_key = 303 AND entry_id = lead.id) AS entry_status, 
-                     (SELECT meta_value FROM   wp_gf_entry_meta WHERE  meta_key = 22  AND entry_id = lead.id) AS proj_photo, 
+                     (SELECT meta_value FROM   wp_gf_entry_meta WHERE  meta_key = 22  AND entry_id = lead.id) AS proj_photo,                     
                      (SELECT meta_value FROM   wp_gf_entry_meta WHERE  meta_key = 151 AND entry_id = lead.id) AS proj_name, 
                      (SELECT meta_value FROM   wp_gf_entry_meta WHERE  meta_key = 16  AND entry_id = lead.id) AS short_desc, 
                      (SELECT meta_value FROM   wp_gf_entry_meta WHERE  meta_key = 320 AND entry_id = lead.id) AS prime_cat, 
@@ -228,13 +229,18 @@ function getMTMentries($formIDs, $faireID) {
             $overrideImg = findOverride($result->entry_id, 'mtm');
             if ($overrideImg != '')
                 $projPhoto = $overrideImg;
-
+            
+            //if the main project photo isn't set but the photo gallery is, use the first image in the photo gallery            
+            $project_gallery = (isset($result->proj_photo_gallery) ? explode(",", str_replace(array( '[', ']', '"' ), '', $result->proj_photo_gallery)) : '');
+            if($projPhoto=='' && is_array($project_gallery)){                
+                $projPhoto = $project_gallery[0];                                
+            }
             $fitPhoto = legacy_get_resized_remote_image_url($projPhoto, 350, 350);
 
             // Check to see if the fit photo returned an image
             if ($fitPhoto == NULL)
                 $fitPhoto = $projPhoto;
-
+                
             $makerList = getMakerList($result->entry_id, $faireID);
 
             //get array of categories. set name based on category id

@@ -42,7 +42,7 @@
             </div>
             <?php
             if (!empty($project_website)) {
-                ?> <a href="<?php echo $project_website; ?>" class="btn universal-btn entry-website"target="_blank" >Project Website</a><?php
+                ?> <a href="<?php echo $project_website; ?>" class="btn universal-btn entry-website"target="_blank" ><?php if($formType !='Sponsor') echo 'Project';?> Website</a><?php
             }
 
             if (display_group($entryId)) {
@@ -87,11 +87,16 @@
                                 <div class="col-xs-12">
                                     <h3 class="text-capitalize" id="groupname"><?php echo $groupname; ?></h3>
                                 </div>
+                                <?php 
+                                if(!empty($groupphoto)) { ?>
+
                                 <div class="col-xs-12">
                                     <div class="entry-page-maker-img">
-                                        <img class="img-responsive" src="<?php echo (!empty($groupphoto) ? legacy_get_fit_remote_image_url($groupphoto, 400, 400) : get_stylesheet_directory_uri() . '/images/maker-placeholder.jpg' ); ?>" />
+                                        <img class="img-responsive" src="<?php echo legacy_get_fit_remote_image_url($groupphoto, 400, 400); ?>" />
                                     </div>
                                 </div>
+                                <?php 
+                                } ?>
                             </div>
                             <div class="row">
                                 <div class="col-xs-12"><p id="groupbio"><?php echo $groupbio; ?></p></div>
@@ -118,11 +123,17 @@
                                                 <span class="text-capitalize"><?php echo $maker['lastname']; ?></span>
                                             </h3>
                                         </div>
+                                        <?php
+                                        if(!empty($maker['photo'])){
+                                        ?>
                                         <div class="col-xs-12">
                                             <div class="entry-page-maker-img">
-                                                <img class="img-responsive" src="<?php echo (!empty($maker['photo']) ? legacy_get_resized_remote_image_url($maker['photo'], 400, 400) : get_stylesheet_directory_uri() . '/images/makey-profile-default.png' ); ?>" />
+                                                <img class="img-responsive" src="<?php echo legacy_get_resized_remote_image_url($maker['photo'], 400, 400); ?>" />
                                             </div>
                                         </div>
+                                        <?php
+                                        }
+                                        ?>
                                     </div>
                                     <div class="row">
                                         <div class="col-xs-12"><p><?php echo $maker['bio']; ?></p></div>
@@ -161,7 +172,7 @@
             <?php } 
                 echo $video;  //project Video
                 echo $video2; //field386
-                if ($categoryDisplay) {
+                if ($categoryDisplay ) {
                     ?><div class="entry-categories"><?php echo $categoryDisplay; ?></div><?php
                 }
             ?>
