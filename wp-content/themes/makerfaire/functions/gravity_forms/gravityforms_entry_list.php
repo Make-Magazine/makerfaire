@@ -91,7 +91,7 @@ function modify_field_display_values($value, $form_id, $field_id, $lead) {
       $input_type = $field->get_input_type();
       $columns = '';
       if ($input_type == 'website') {
-         if ($field !== null) {
+        if ($field !== null) {
             $value = $field->get_value_entry_list($value, $lead, $field_id, $columns, $form);
             $value = "<a href='" . esc_attr($value) . "' target='_blank' alt='" . esc_attr($value) . "' title='" . esc_attr($value) . "'>" . esc_attr(GFCommon::truncate_url($value)) . '</a>';
          } else {
@@ -113,6 +113,27 @@ function modify_field_display_values($value, $form_id, $field_id, $lead) {
             }
          }
       }
+   }else{
+      //meta data
+      global $wpdb;
+
+      switch ($field_id){
+         case 'area':
+            $value = $wpdb->get_var("SELECT area FROM `wp_mf_location`  
+               left outer join wp_mf_faire_subarea on wp_mf_faire_subarea.id=subarea_id
+               left outer join wp_mf_faire_area on wp_mf_faire_subarea.area_id=wp_mf_faire_area.ID
+            where entry_id=".$lead['id']);
+            break;
+         case 'subarea':
+            $value = $wpdb->get_var("SELECT subarea FROM `wp_mf_location`  
+               left outer join wp_mf_faire_subarea on wp_mf_faire_subarea.id=subarea_id
+            where entry_id=".$lead['id']);
+            break;
+         case 'location':
+            $value = $wpdb->get_var("SELECT location FROM `wp_mf_location`                
+            where entry_id=".$lead['id']);
+            break;            
+      } 
    }
    return $value;
 }

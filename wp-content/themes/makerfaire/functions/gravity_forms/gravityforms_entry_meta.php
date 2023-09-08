@@ -77,13 +77,34 @@ function custom_entry_meta($entry_meta, $form_id) {
             )
         )
     );
+
+    //final area
+    $entry_meta['area'] = array(
+        'label' => 'Area',
+        'is_numeric' => false,
+        'is_default_column' => true
+    );
+
+    //final subarea
+    $entry_meta['subarea'] = array(
+        'label' => 'SubArea',
+        'is_numeric' => false,
+        'is_default_column' => true
+    );
+
+    //final location
+    $entry_meta['location'] = array(
+        'label' => 'Location',
+        'is_numeric' => false,
+        'is_default_column' => true
+    );    
     return $entry_meta;
 }
 
 //set the default value for entry rating
 function update_entry_ID_meta($key, $lead, $form) {
     //default entry_-_id
-    //$value = '';
+    $value = '';
     return $value;
 }
 
