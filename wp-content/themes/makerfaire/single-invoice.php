@@ -227,7 +227,7 @@ get_header(); ?>
             Invoice Number: ".$invoice_id."%0D%0A
             Invoice: ".$invoiceLink;
         ?>
-        <a class="invoice-special-bil" href="mailto:ar@makermedia.com,sponsorrelations@makermedia.com?subject=<?php echo $subject;?>&body=<?php echo $body;?>">Special Billing Options</a>
+        <a class="invoice-special-bil" href="mailto:ar@make.co,sponsorrelations@make.co?subject=<?php echo $subject;?>&body=<?php echo $body;?>">Special Billing Options</a>
         <br/><br/>
       </div><!-- /invoice -->
 		</div><!--Content-->

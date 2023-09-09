@@ -37,7 +37,7 @@ function mf_entry_detail_head($form, $lead) {
   $outputURL = admin_url( 'admin.php' ) . "?page=gf_entries&view=entries&id=".$form['id']  . $outputVar;
 
   foreach($_GET as $key=>$variable){
-    if($key!='view' && $key!='page' && $key!='lid'){      
+    if($key!='view' && $key!='page' && $key!='lid' && $key != 'filterField'){            
       $outputURL .= '&'.$key.'='.$variable;
     }
   }
