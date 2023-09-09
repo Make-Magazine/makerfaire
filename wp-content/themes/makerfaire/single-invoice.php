@@ -80,7 +80,7 @@ function gf_orig_entry_id($form) {
 	return $form;
 }
 
-add_filter( 'gform_submit_button', 'add_paragraph_below_submit', 10, 2 );
+//add_filter( 'gform_submit_button', 'add_paragraph_below_submit', 10, 2 );
 function add_paragraph_below_submit( $button, $form ) {
   if(isset($form['form_type']) && $form['form_type']=='Invoice'){
     $button = "<button class='button gform_next_button' id='gform_submit_button_{$form['id']}'><span>Pay Now</span></button>";
