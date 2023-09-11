@@ -10,8 +10,25 @@ jQuery(document).ready(function(){
     jQuery(".owl-carousel").owlCarousel({
         margin:10,
         loop:true,
-        items:4
+        items:4,
+        lazyLoad: true,
+        autoplay: true,
+        responsive:{
+            0:{
+                items:1,
+                nav:true
+            },
+            600:{
+                items:2,
+                nav:false
+            },
+            900:{
+                items:3,
+                nav:false
+            },
+        }
     });
+
     jQuery('#projectGallery .owl-item').on("click", function () {
         //every time you click on an owl item, open a dialog modal to show the images
         var owlItem = jQuery(this);
