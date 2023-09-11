@@ -80,7 +80,7 @@ function gf_orig_entry_id($form) {
 	return $form;
 }
 
-add_filter( 'gform_submit_button', 'add_paragraph_below_submit', 10, 2 );
+//add_filter( 'gform_submit_button', 'add_paragraph_below_submit', 10, 2 );
 function add_paragraph_below_submit( $button, $form ) {
   if(isset($form['form_type']) && $form['form_type']=='Invoice'){
     $button = "<button class='button gform_next_button' id='gform_submit_button_{$form['id']}'><span>Pay Now</span></button>";
@@ -227,7 +227,7 @@ get_header(); ?>
             Invoice Number: ".$invoice_id."%0D%0A
             Invoice: ".$invoiceLink;
         ?>
-        <a class="invoice-special-bil" href="mailto:ar@makermedia.com,sponsorrelations@makermedia.com?subject=<?php echo $subject;?>&body=<?php echo $body;?>">Special Billing Options</a>
+        <a class="invoice-special-bil" href="mailto:ar@make.co,sponsorrelations@make.co?subject=<?php echo $subject;?>&body=<?php echo $body;?>">Special Billing Options</a>
         <br/><br/>
       </div><!-- /invoice -->
 		</div><!--Content-->
