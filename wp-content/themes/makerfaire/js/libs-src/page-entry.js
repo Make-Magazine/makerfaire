@@ -10,9 +10,11 @@ jQuery(document).ready(function(){
     jQuery(".owl-carousel").owlCarousel({
         margin:10,
         loop:true,
-        items:4,
+        autoWidth:false,
+        nav:true,
+        navText : ['<i class="fa fa-chevron-left" aria-hidden="true"></i>','<i class="fa fa-chevron-right" aria-hidden="true"></i>'],
         lazyLoad: true,
-        autoplay: true,
+        items:4,
         responsive:{
             0:{
                 items:1,
