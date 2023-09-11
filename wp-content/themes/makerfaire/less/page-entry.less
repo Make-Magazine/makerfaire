@@ -453,3 +453,32 @@
 	}
 }
   
+.dialog-nav-btn {
+	position: absolute;
+	top: 50%;
+	background: rgba(255, 255, 255, .8);
+	border: none;
+	border-radius: 50px;
+	width: 50px;
+	height: 50px;
+	font-size: 32px;
+	font-weight: bold;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	&:before {
+		font-family: FontAwesome;
+	}
+}
+.dialog-nav-btn.dialog-prev-btn {
+	left: -10px;
+	&:before {
+		content: "\f100";
+	}
+}
+.dialog-nav-btn.dialog-next-btn {
+	right: -10px;
+	&:before {
+		content: "\f101";
+	}
+}
