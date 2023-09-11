@@ -218,6 +218,7 @@ get_header(); ?>
         <!-- Payment Form -->
         <?php echo do_shortcode( '[gravityform id="152" name="Invoice" title="false" description="false"]' ); ?>
         <?php
+        /* remove for ba23
           $subject = "Special Billing Options - ". $billing_company_name.'- '.$origEntryID;
 
           $invoiceLink = 'http://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
@@ -226,8 +227,10 @@ get_header(); ?>
             Sponsor Name: ".$sponsorName."%0D%0A
             Invoice Number: ".$invoice_id."%0D%0A
             Invoice: ".$invoiceLink;
+            <a class="invoice-special-bil" href="mailto:ar@make.co,sponsorrelations@make.co?subject=<?php echo $subject;?>&body=<?php echo $body;?>">Special Billing Options</a>
+            */
         ?>
-        <a class="invoice-special-bil" href="mailto:ar@make.co,sponsorrelations@make.co?subject=<?php echo $subject;?>&body=<?php echo $body;?>">Special Billing Options</a>
+        
         <br/><br/>
       </div><!-- /invoice -->
 		</div><!--Content-->
