@@ -27,12 +27,22 @@
 }
 
 @media print {
+  @page { margin: 0; }
+
+  body.admin-bar {
+    margin-top: 0 !important;
+  }
+  body { margin: 30cm; }
+  #page .site-content {
+    padding-top: 0px !important;
+  }
   header, footer {
     display: none;
   }
+  
   .invoice {
-    .btn, .gform_footer, .invoice-special-bil {
-      display: none;
+    .btn, .gform_footer, .invoice-special-bil, #field_152_14  {
+      display: none !important;
     }
     .invoice-header {
       .col-xs-10,

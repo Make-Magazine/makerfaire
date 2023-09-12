@@ -117,7 +117,7 @@ get_header(); ?>
         <div class="row invoice-billing">
           <div class="col-sm-6">
             <div class="row">
-              <div class="col-xs-3"><b>Bill to:</b></div>
+              <div class="col-xs-3"><b>Bill To:</b></div>
               <div class="col-xs-9"><?php echo $billing_company_name;?></div>
             </div>
             <div class="row">
@@ -146,28 +146,28 @@ get_header(); ?>
             </div>
           </div>
           <div class="col-sm-6">
-                        <div class="row">
-              <div class="col-xs-3"><b>Invoice number:</b></div>
-              <div class="col-xs-9"><?php echo $invoice_id; ?></div>
+            <div class="row">
+              <div class="col-xs-4"><b>Invoice Number:</b></div>
+              <div class="col-xs-8"><?php echo $invoice_id; ?></div>
             </div>
             <?php if($invoice_date!=''){?>
             <div class="row">
-              <div class="col-xs-3"><b>Invoice Date:</b></div>
-              <div class="col-xs-9"><?php echo $invoice_date;?></div>
+              <div class="col-xs-4"><b>Invoice Date:</b></div>
+              <div class="col-xs-8"><?php echo $invoice_date;?></div>
             </div>
             <?php } ?>
             <div class="row">
-              <div class="col-xs-3"><b>Due Date:</b></div>
-              <div class="col-xs-9">Due Upon Receipt</div>
+              <div class="col-xs-4"><b>Due Date:</b></div>
+              <div class="col-xs-8">Due Upon Receipt</div>
             </div>
             <br/>
             <div class="row">
-              <div class="col-xs-3"><b>Deliver to:</b></div>
-              <div class="col-xs-9">Exhibit Space Onsite</div>
+              <div class="col-xs-4"><b>Deliver To:</b></div>
+              <div class="col-xs-8">Exhibit Space Onsite</div>
             </div>
             <div class="row">
-              <div class="col-xs-3"><b>Sponsor:</b></div>
-              <div class="col-xs-9"><?php echo $sponsorName;?></div>
+              <div class="col-xs-4"><b>Sponsor:</b></div>
+              <div class="col-xs-8"><?php echo $sponsorName;?></div>
             </div>
           </div>
         </div>
