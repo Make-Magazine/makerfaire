@@ -10,6 +10,15 @@ class maker {
    * @var string
    */
   var $maker_email;
+  var $dispLimit;
+  var $dispPage;
+  var $totalNumEntries;
+  var $isSponsor;
+  var $isMaker;
+  var $first_name;
+  var $last_name;
+  var $maker_id;
+
 
   private $_settings;
   /**

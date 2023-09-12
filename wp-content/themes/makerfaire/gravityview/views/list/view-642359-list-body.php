@@ -17,6 +17,10 @@ $current_user = wp_get_current_user();
 //require_once our model
 require_once( get_template_directory().'/models/maker.php' );
 
+//currently this view is only for form 260
+$form_id  = 260;
+$form     = GFAPI::get_form($form_id);
+
 //instantiate the model
 $maker   = new maker($current_user->user_email);
 
@@ -102,8 +106,9 @@ if ( ! $gravityview->entries->count() ) {
 	$post_id = get_the_ID();
 
 	// There are entries. Loop through them.	
-	foreach ( $gravityview->entries->all() as $multientry ) {		
+	foreach ( $gravityview->entries->all() as $multientry ) {				
 		$entryData = $multientry->as_entry();				
+	
 		$image =  (isset($entryData['22']) && $entryData['22'] != '' ? $entryData['22']:get_template_directory_uri() .'/images/no-image.png');
 		$entryStatus = (isset($entryData['303']) && $entryData['303'] != '' ? $entryData['303'] : 'Unknown');
 		
@@ -122,19 +127,46 @@ if ( ! $gravityview->entries->count() ) {
 		$GVeditLink = do_shortcode('[gv_entry_link post_id="'.$post_id.'" action="edit" return="url" view_id="'.$viewID.'" entry_id="'.$entryData['id'].'"]');
 		
 		//set tasks for entry
-		$entryData['tasks'] = $maker->get_tasks_by_entry($entryData['id']);		
+		$entryData['tasks'] = $maker->get_tasks_by_entry($entryData['id']);			
 
-		//TBD - need to set these fields
-		$entryData['mat_message']   = '';		
+        //get Maker messaging
+        $text = GFCommon::replace_variables(rgar($form, 'mat_message'),$form, $entryData,false,false);
+        $text = do_shortcode( $text ); //process any conditional logic
+        $entryData['mat_message']          = $text;
+
+        //MAT switch to display the edit resources link
+        $entryData['mat_disp_res_link']    = rgar($form, 'mat_disp_res_link');
+
+        //process any shortcode logic in the resource modal layout
+        $text = GFCommon::replace_variables(rgar($form, 'mat_res_modal_layout'),$form, $entryData);
+        $text = do_shortcode( $text );
+        $entryData['mat_res_modal_layout'] = $text;
+
+        //set the URL for the edit resource link
+        $entryData['mat_edit_res_url'] = "/bay-area/logistics-information/?ep_token=". $entryData['fg_easypassthrough_token'];
+
+		//RMT edit link
+		$dispRMTeditLink = ($entryData['mat_disp_res_link'] == 'yes' && $entryStatus == 'Accepted')? TRUE: FALSE;        
+		if($dispRMTeditLink){
+			$RMTeditLink = '<span class="editLink">
+			<button type="button" class="btn btn-default btn-no-border edit-button toggle-popover" data-toggle="popover">
+			  <i class="far fa-eye" aria-hidden="true"></i>View/Edit Setup
+			</button>
+			<div class="popover-content hidden">'.
+			  $entryData['mat_res_modal_layout'].'
+			  <div class="clear">
+				  <a href="'.$entryData['mat_edit_res_url'].'">Edit</a>
+				</div>
+			</div>
+		  </span>';
+		}
+		
+		//default ticketing to off TBD
 		$entryData['ticketing'] = array();
 
 		//Public facing profile page edit link 'See Your Maker Page'
 		$dispEditPub = ($entryStatus == 'Accepted' ? true : false);		
-        $viewEditLink = "/maker/entry/" . $entryData['id']."/edit/";
-
-		//tbd
-		$dispRMTeditLink = FALSE;
-		$RMTeditLink = '';						
+        $viewEditLink = "/maker/entry/" . $entryData['id']."/edit/";					
 
 		//Maker Faire portal html
 		?>
