@@ -134,9 +134,10 @@ function load_scripts() {
     if( isset($user->ID) && $user->ID != 0 ) {
         $user_meta = get_user_meta($user->ID);
         // wp_auth0_obj stores auth0 data for user in a json string. Not all users have user_metadata set in this string on first login, so let's test for that before setting auth0_user_data
-        // var_dump($user_meta['wp_auth0_obj'][0]);
-        if(str_contains($user_meta['wp_auth0_obj'][0], "user_metadata")) {
-            $auth0_user_data = json_decode($user_meta['wp_auth0_obj'][0])->user_metadata;
+        if(isset($user_meta['wp_auth0_obj'])) {
+            if(str_contains($user_meta['wp_auth0_obj'][0], "user_metadata")) {
+                $auth0_user_data = json_decode($user_meta['wp_auth0_obj'][0])->user_metadata;
+            }
         }
     } 
     wp_localize_script(
