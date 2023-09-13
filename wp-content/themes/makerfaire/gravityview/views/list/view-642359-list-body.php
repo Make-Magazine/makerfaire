@@ -212,7 +212,7 @@ if ( ! $gravityview->entries->count() ) {
 						if($dispEditPub) { ?>
 							<span class="editLink">
 								<a href="<?php echo $viewEditLink;?>">
-									<i class="far fa-eye" aria-hidden="true"></i>
+									<i class="fa fa-eye" aria-hidden="true"></i>
 									See Your Maker Page
 								</a>
 							</span>
