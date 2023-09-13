@@ -10,7 +10,7 @@ jQuery(document).ready(function(){
     var numImages = jQuery('.owl-carousel .gallery-item').length;
     jQuery(".owl-carousel").owlCarousel({
         margin:10,
-        loop: numImages <= 2 ? false : true,
+        loop: false,
         autoWidth:false,
         nav: numImages <= 1 ? false : true,
         navText : numImages <= 1 ? [] : ['<i class="fa fa-chevron-left" aria-hidden="true"></i>','<i class="fa fa-chevron-right" aria-hidden="true"></i>'],
@@ -53,15 +53,23 @@ jQuery(document).ready(function(){
                 {
                     "class": "dialog-nav-btn dialog-prev-btn",
                     click: function() {
-                        jQuery("#dialog img").attr("src", owlItem.prev(".owl-item").children(".gallery-item").children("img").attr("src"));
-                        owlItem = owlItem.prev();
+                        if(owlItem.prev(".owl-item").children(".gallery-item").children("img").attr("src")) {
+                            jQuery("#dialog img").attr("src", owlItem.prev(".owl-item").children(".gallery-item").children("img").attr("src"));
+                            owlItem = owlItem.prev();
+                        } else {
+                            jQuery("#dialog").dialog('close');
+                        }
                     }
                 },
                 {
                     "class": "dialog-nav-btn dialog-next-btn",
                     click: function() {  
-                        jQuery("#dialog img").attr("src", owlItem.next(".owl-item").children(".gallery-item").children("img").attr("src"));
-                        owlItem = owlItem.next();
+                        if(owlItem.next(".owl-item").children(".gallery-item").children("img").attr("src")) {
+                            jQuery("#dialog img").attr("src", owlItem.next(".owl-item").children(".gallery-item").children("img").attr("src"));
+                            owlItem = owlItem.next();
+                        } else {
+                            jQuery("#dialog").dialog('close');
+                        }
                     }
                 }
             ],
