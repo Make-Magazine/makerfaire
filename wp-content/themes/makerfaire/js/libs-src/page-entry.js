@@ -7,12 +7,13 @@ function showEdit(){
 
 // owl-carousel for the page entry project gallery
 jQuery(document).ready(function(){
+    var numImages = jQuery('.owl-carousel .gallery-item').length;
     jQuery(".owl-carousel").owlCarousel({
         margin:10,
-        loop:true,
+        loop: numImages <= 2 ? false : true,
         autoWidth:false,
-        nav:true,
-        navText : ['<i class="fa fa-chevron-left" aria-hidden="true"></i>','<i class="fa fa-chevron-right" aria-hidden="true"></i>'],
+        nav: numImages <= 1 ? false : true,
+        navText : numImages <= 1 ? [] : ['<i class="fa fa-chevron-left" aria-hidden="true"></i>','<i class="fa fa-chevron-right" aria-hidden="true"></i>'],
         lazyLoad: true,
         items:4,
         responsive:{
@@ -28,6 +29,15 @@ jQuery(document).ready(function(){
                 items:3,
                 nav:false
             },
+            1200:{
+                items:4,
+                nav:false
+            },
+        },
+        onInitialize: function (event) {
+            if (numImages < 4) {
+               this.settings.items = numImages;
+            }
         }
     });
 
@@ -39,7 +49,7 @@ jQuery(document).ready(function(){
             dialogClass: "hide-heading",
             modal: true,
             // these buttons will go to the next image from the #projectGallery and replace the src of the image in the modal with the next or previous image in the gallery
-            buttons: [
+            buttons: numImages <= 1 ? [] : [
                 {
                     "class": "dialog-nav-btn dialog-prev-btn",
                     click: function() {
