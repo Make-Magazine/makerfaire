@@ -12,8 +12,8 @@ jQuery(document).ready(function(){
         margin:10,
         loop: false,
         autoWidth:false,
-        nav: numImages <= 1 ? false : true,
-        navText : numImages <= 1 ? [] : ['<i class="fa fa-chevron-left" aria-hidden="true"></i>','<i class="fa fa-chevron-right" aria-hidden="true"></i>'],
+        nav: numImages <= 4 ? false : true,
+        navText : numImages <= 4 ? [] : ['<i class="fa fa-chevron-left" aria-hidden="true"></i>','<i class="fa fa-chevron-right" aria-hidden="true"></i>'],
         lazyLoad: true,
         items:4,
         responsive:{
