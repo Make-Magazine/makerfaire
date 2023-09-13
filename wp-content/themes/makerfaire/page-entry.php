@@ -35,6 +35,14 @@ if (isset($entry->errors)) {
     $form = GFAPI::get_form($form_id);
     $formType = $form['form_type'];
 
+    if ($formType == "Master") {
+        if( (isset($entry['339.4']) && stripos($entry['339.4'], 'sponsor')) || (isset($entry['339.5']) && stripos($entry['339.5'], 'sponsor')) ) {
+            $formType = "Sponsor";
+            $sponsorshipLevel = isset($entry['339.4']) ? $entry['339.4'] : $entry['339.5'];
+        }
+    }
+    
+
     //error_log(print_r($form, TRUE));
 
     if ($formType == "Sponsor") {
@@ -350,7 +358,11 @@ if ($formType == 'Sponsor' || $formType == 'Startup Sponsor' || !$displayMakers)
 
     if ($validEntry) {
         //display the normal entry public information page
-        include TEMPLATEPATH . '/pages/page-entry-view.php';
+        if($formType == "Sponsor") {
+            include TEMPLATEPATH . '/pages/page-entry-view.php';
+        } else {
+            include TEMPLATEPATH . '/pages/page-entry-sponsor-view.php';
+        }
         if ($makerEdit) {
             //use the edit entry public info page
             include TEMPLATEPATH . '/pages/page-entry-edit.php';
