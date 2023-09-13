@@ -35,3 +35,6 @@
         </div>
     </div>
 </div>
+<div class="entry-footer">
+    <?php echo displayEntryFooter(); ?>
+</div>
