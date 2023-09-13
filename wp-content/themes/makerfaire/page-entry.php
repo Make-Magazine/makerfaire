@@ -36,7 +36,8 @@ if (isset($entry->errors)) {
     $formType = $form['form_type'];
 
     if ($formType == "Master") {
-        if( (isset($entry['339.4']) && stripos($entry['339.4'], 'sponsor')) || (isset($entry['339.5']) && stripos($entry['339.5'], 'sponsor')) ) {
+        if( (isset($entry['339.4']) && stripos($entry['339.4'], 'sponsor') !== false) || 
+            (isset($entry['339.5']) && stripos($entry['339.5'], 'sponsor') !== false) ) {
             $formType = "Sponsor";
             $sponsorshipLevel = isset($entry['339.4']) ? $entry['339.4'] : $entry['339.5'];
         }
