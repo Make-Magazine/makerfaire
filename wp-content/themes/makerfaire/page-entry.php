@@ -295,7 +295,7 @@ if (!empty($project_video2) && validate_url($project_video2)) {
 
 //decide if display maker info
 $dispMakerInfo = true;
-if ($formType == 'Sponsor' || $formType == 'Startup Sponsor' || !$displayMakers) {
+if (!$displayMakers) {
     $dispMakerInfo = false;
 }
 
@@ -359,9 +359,9 @@ if ($formType == 'Sponsor' || $formType == 'Startup Sponsor' || !$displayMakers)
     if ($validEntry) {
         //display the normal entry public information page
         if($formType == "Sponsor") {
-            include TEMPLATEPATH . '/pages/page-entry-view.php';
-        } else {
             include TEMPLATEPATH . '/pages/page-entry-sponsor-view.php';
+        } else {
+            include TEMPLATEPATH . '/pages/page-entry-view.php';
         }
         if ($makerEdit) {
             //use the edit entry public info page
@@ -671,7 +671,6 @@ function getSocial($entrySocial) {
 		foreach ($socialArray as $link) {
 			//verify that the social media link provided is not blank and is a valid url
 			if ($link && isset($link['Your Link']) && $link['Your Link'] != '' && validate_url($link['Your Link'])) {
-
 				//platform was misspelled as plateform in some earlier forms
 				if(isset($link['Platform'])){
 					$platform = $link['Platform'];
