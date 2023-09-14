@@ -7,12 +7,13 @@ function showEdit(){
 
 // owl-carousel for the page entry project gallery
 jQuery(document).ready(function(){
+    var numImages = jQuery('.owl-carousel .gallery-item').length;
     jQuery(".owl-carousel").owlCarousel({
         margin:10,
-        loop:true,
+        loop: false,
         autoWidth:false,
-        nav:true,
-        navText : ['<i class="fa fa-chevron-left" aria-hidden="true"></i>','<i class="fa fa-chevron-right" aria-hidden="true"></i>'],
+        nav: numImages <= 4 ? false : true,
+        navText : numImages <= 4 ? [] : ['<i class="fa fa-chevron-left" aria-hidden="true"></i>','<i class="fa fa-chevron-right" aria-hidden="true"></i>'],
         lazyLoad: true,
         items:4,
         responsive:{
@@ -28,6 +29,15 @@ jQuery(document).ready(function(){
                 items:3,
                 nav:false
             },
+            1200:{
+                items:4,
+                nav:false
+            },
+        },
+        onInitialize: function (event) {
+            if (numImages < 4) {
+               this.settings.items = numImages;
+            }
         }
     });
 
@@ -39,19 +49,27 @@ jQuery(document).ready(function(){
             dialogClass: "hide-heading",
             modal: true,
             // these buttons will go to the next image from the #projectGallery and replace the src of the image in the modal with the next or previous image in the gallery
-            buttons: [
+            buttons: numImages <= 1 ? [] : [
                 {
                     "class": "dialog-nav-btn dialog-prev-btn",
                     click: function() {
-                        jQuery("#dialog img").attr("src", owlItem.prev(".owl-item").children(".gallery-item").children("img").attr("src"));
-                        owlItem = owlItem.prev();
+                        if(owlItem.prev(".owl-item").children(".gallery-item").children("img").attr("src")) {
+                            jQuery("#dialog img").attr("src", owlItem.prev(".owl-item").children(".gallery-item").children("img").attr("src"));
+                            owlItem = owlItem.prev();
+                        } else {
+                            jQuery("#dialog").dialog('close');
+                        }
                     }
                 },
                 {
                     "class": "dialog-nav-btn dialog-next-btn",
                     click: function() {  
-                        jQuery("#dialog img").attr("src", owlItem.next(".owl-item").children(".gallery-item").children("img").attr("src"));
-                        owlItem = owlItem.next();
+                        if(owlItem.next(".owl-item").children(".gallery-item").children("img").attr("src")) {
+                            jQuery("#dialog img").attr("src", owlItem.next(".owl-item").children(".gallery-item").children("img").attr("src"));
+                            owlItem = owlItem.next();
+                        } else {
+                            jQuery("#dialog").dialog('close');
+                        }
                     }
                 }
             ],

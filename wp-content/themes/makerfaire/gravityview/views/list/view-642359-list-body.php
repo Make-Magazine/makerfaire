@@ -150,7 +150,7 @@ if ( ! $gravityview->entries->count() ) {
 		if($dispRMTeditLink){
 			$RMTeditLink = '<span class="editLink">
 			<button type="button" class="btn btn-default btn-no-border edit-button toggle-popover" data-toggle="popover">
-			  <i class="far fa-eye" aria-hidden="true"></i>View/Edit Setup
+			  <i class="fa fa-eye" aria-hidden="true"></i>View/Edit Setup
 			</button>
 			<div class="popover-content hidden">'.
 			  $entryData['mat_res_modal_layout'].'
@@ -212,7 +212,7 @@ if ( ! $gravityview->entries->count() ) {
 						if($dispEditPub) { ?>
 							<span class="editLink">
 								<a href="<?php echo $viewEditLink;?>">
-									<i class="far fa-eye" aria-hidden="true"></i>
+									<i class="fa fa-eye" aria-hidden="true"></i>
 									See Your Maker Page
 								</a>
 							</span>
