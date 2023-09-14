@@ -181,7 +181,7 @@ get_header();
  */
 $makerEdit = false;
 if ($editEntry == 'edit') {
-    //check if loggest in user has access to this entry
+    //check if logged in user has access to this entry
     $current_user = wp_get_current_user();
 
     //require_once our model
@@ -396,7 +396,7 @@ function display_entry_schedule($entry) {
     $weekend = '';
     $weekendField = $fieldData['879'];
     foreach($weekendField->inputs as $key=>$input){                
-        if(isset($entry[$input['id']])){
+        if(isset($entry[$input['id']]) && $entry[$input['id']]!='' ){
             if($weekend !='') $weekend .='<br/>';
             $weekend .= (isset($weekendField->choices[$key]['value'])?$weekendField->choices[$key]['value']:$input['label']);
         }
