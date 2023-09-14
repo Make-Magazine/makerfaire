@@ -34,21 +34,15 @@ if (isset($entry->errors)) {
     $form_id = $entry['form_id'];
     $form = GFAPI::get_form($form_id);
     $formType = $form['form_type'];
-
-    if ($formType == "Master") {
+    if ($formType == "Sponsor") {
+        $sponsorshipLevel = $entry["442.3"];
+    }elseif ($formType == "Master") {
         if( (isset($entry['339.4']) && stripos($entry['339.4'], 'sponsor') !== false) || 
             (isset($entry['339.5']) && stripos($entry['339.5'], 'sponsor') !== false) ) {
             $formType = "Sponsor";
-            $sponsorshipLevel = isset($entry['339.4']) ? $entry['339.4'] : $entry['339.5'];
+            $sponsorshipLevel = isset($entry['339.4']) && $entry['339.4']!='' ? $entry['339.4'] : $entry['339.5'];
         }
-    }
-    
-
-    //error_log(print_r($form, TRUE));
-
-    if ($formType == "Sponsor") {
-        $sponsorshipLevel = $entry["442.3"];
-    }
+    }    
 
     //build an array of field information for updating fields
     foreach ($form['fields'] as $field) {

@@ -9,7 +9,7 @@
         <h1><?php echo $project_title; ?></h1>
         <span class="divider-separator"></span>
         <h2 class="entry-type">
-            <?php if ($displayFormType == true) { echo $formType; } ?>
+            <?php if ($sponsorshipLevel != '') { echo $sponsorshipLevel; } ?>
         </h2>
         <div class="entry-location">
             <?php if (isset($location) && $location == true) { echo "Find us at " . $location; } ?>

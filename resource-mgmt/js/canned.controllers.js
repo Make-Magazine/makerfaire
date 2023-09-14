@@ -181,7 +181,7 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
     }else
     if(subRoute=='am_summary'){
       vars = {"formSelect":[],
-              "formType":["Exhibit","Performance","Startup Sponsor","Sponsor","Show Management"],
+              "formType":["Master","Exhibit","Performance","Startup Sponsor","Sponsor","Show Management"],
               "faire": faire,
               "useFormSC": true,
               "entryIDorder": 200,
@@ -289,7 +289,7 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
     }else
     if(subRoute=="am_tcp"){
       vars = {"formSelect":[],
-              "formType":["Exhibit","Performance","Startup Sponsor","Sponsor","Show Management"],
+              "formType":["Master","Exhibit","Performance","Startup Sponsor","Sponsor","Show Management"],
               "faire": faire,
               "useFormSC": true,
               "entryIDorder": 200,
@@ -323,7 +323,7 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
     }else
     if(subRoute=="table_chairs"){
       vars = {"formSelect":[],
-              "formType":["Exhibit","Performance","Startup Sponsor","Sponsor","Show Management"],
+              "formType":["Master","Exhibit","Performance","Startup Sponsor","Sponsor","Show Management"],
               "faire": faire,
               "dispFormID":false,
               "useFormSC": true,
@@ -349,7 +349,7 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
     }else
     if(subRoute=="barr_fence"){
       vars = {"formSelect":[],
-              "formType":["Exhibit","Performance","Startup Sponsor","Sponsor","Show Management"],
+              "formType":["Master","Exhibit","Performance","Startup Sponsor","Sponsor","Show Management"],
               "faire": faire,
               "dispFormID":false,
               "useFormSC": true,
@@ -370,7 +370,7 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
       $scope.reports.callAJAX(vars);
     }else if(subRoute=="electrical"){
       vars = {"formSelect":[],
-              "formType":["Exhibit","Performance","Startup Sponsor","Sponsor","Show Management"],
+              "formType":["Master","Exhibit","Performance","Startup Sponsor","Sponsor","Show Management"],
               "faire": faire,
               "dispFormID":false,
               "useFormSC": true,
@@ -390,7 +390,7 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
       $scope.reports.callAJAX(vars);
     }else if(subRoute=="guest_seat"){
       vars = {"formSelect":[],
-              "formType":["Exhibit","Performance","Startup Sponsor","Sponsor","Show Management"],
+              "formType":["Master","Exhibit","Performance","Startup Sponsor","Sponsor","Show Management"],
               "faire": faire,
               "selectedFields":[
                 {"id":151,"label":"Record Name","choices":"","type":"text","inputs":"", "order":25},
@@ -409,7 +409,7 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
       $scope.reports.callAJAX(vars);
     }else if(subRoute=="wb_stools"){
       vars = {"formSelect":[],
-              "formType":["Exhibit","Performance","Startup Sponsor","Sponsor","Show Management"],
+              "formType":["Master","Exhibit","Performance","Startup Sponsor","Sponsor","Show Management"],
               "faire": faire,
               "selectedFields":[
                 {"id":151,"label":"Record Name","choices":"","type":"text","inputs":"", "order":25},
@@ -427,7 +427,7 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
       var subTitle = 'WB/Stools';
       $scope.reports.callAJAX(vars);
     }else if(subRoute=="label"){
-      vars = {"formSelect":[],"formType":["Exhibit","Startup Sponsor","Sponsor","Show Management"],
+      vars = {"formSelect":[],"formType":["Master","Exhibit","Startup Sponsor","Sponsor","Show Management"],
               "faire": faire,
               "dispFormID":false,
               "useFormSC": true,
