@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by __root__ on 12-July-2023 using Strauss.
+ * Modified by __root__ on 07-September-2023 using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 
@@ -12,8 +12,9 @@ use GravityKit\GravityEdit\Foundation\Helpers\Core as CoreHelpers;
 use GravityKit\GravityEdit\Foundation\ThirdParty\Illuminate\Validation;
 use GravityKit\GravityEdit\Foundation\ThirdParty\Illuminate\Filesystem;
 use GravityKit\GravityEdit\Foundation\ThirdParty\Illuminate\Translation;
+use Exception;
 
-class ValidatorException extends \Exception { }
+class ValidatorException extends Exception { }
 
 class SettingsValidator {
 	/**
@@ -82,7 +83,7 @@ class SettingsValidator {
 			if ( ! is_array( $parameters ) ) {
 				return false;
 			}
-			
+
 
 			return in_array( $parameters[0], $value );
 		} );
@@ -119,7 +120,7 @@ class SettingsValidator {
 			if ( ! $validator->fails() ) {
 				return true;
 			}
-		} catch ( \Exception $e ) {
+		} catch ( Exception $e ) {
 			throw new ValidatorException( $e->getMessage() );
 		}
 

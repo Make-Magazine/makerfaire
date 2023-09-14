@@ -193,8 +193,8 @@
 
 		fields = $.extend( fields, obj.getDefaultFieldCallbacks() );
 
-		if ( typeof window.gravitykit.maps.searchFields !== 'undefined' ) {
-			window.gravitykit.maps.searchFields.resetCurrentLocation( $field );
+		if ( typeof window.GravityKit.GravityMaps.searchFields !== 'undefined' ) {
+			window.GravityKit.GravityMaps.searchFields.resetCurrentLocation( $field );
 		}
 
 		// Get the place details from the autocomplete object.

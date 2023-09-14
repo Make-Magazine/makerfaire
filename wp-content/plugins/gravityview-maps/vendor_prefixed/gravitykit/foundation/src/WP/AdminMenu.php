@@ -132,13 +132,14 @@ class AdminMenu {
 				$submenu_item_id = Arr::get( $submenu_item, 'id' );
 
 				$filtered_submenu = [
-					'id'         => $submenu_item_id,
-					'slug'       => self::WP_ADMIN_MENU_SLUG,
-					'page_title' => Arr::get( $submenu_item, 'page_title' ),
-					'menu_title' => Arr::get( $submenu_item, 'menu_title' ) . $this->get_badge_counter_markup( $submenu_item_id, $badge_count ),
-					'capability' => Arr::get( $submenu_item, 'capability' ),
-					'callback'   => Arr::get( $submenu_item, 'callback' ),
-					'hide'       => Arr::get( $submenu_item, 'hide' ),
+					'id'                 => $submenu_item_id,
+					'slug'               => self::WP_ADMIN_MENU_SLUG,
+					'page_title'         => Arr::get( $submenu_item, 'page_title' ),
+					'menu_title'         => Arr::get( $submenu_item, 'menu_title' ) . $this->get_badge_counter_markup( $submenu_item_id, $badge_count ),
+					'capability'         => Arr::get( $submenu_item, 'capability' ),
+					'callback'           => Arr::get( $submenu_item, 'callback' ),
+					'hide'               => Arr::get( $submenu_item, 'hide' ),
+					'hide_admin_notices' => Arr::get( $submenu_item, 'hide_admin_notices' ),
 				];
 
 				if ( $index === count( $submenu_data ) - 1 ) {
@@ -195,7 +196,11 @@ class AdminMenu {
 
 		$top_level_menu_action = SettingsFramework::get_instance()->get_plugin_setting( Core::ID, 'top_level_menu_action', 'submenu' );
 
-		if ( in_array( $top_level_menu_action, Arr::pluck( $filtered_submenus, 'id' ) ) && $top_level_menu_action !== Arr::get( $filtered_submenus, '0.id' ) ) {
+		$top_level_menu_action_submenu = Arr::first( $filtered_submenus, function ( $submenu ) use ( $top_level_menu_action ) {
+			return $submenu['id'] === $top_level_menu_action;
+		} );
+
+		if ( $top_level_menu_action_submenu && $top_level_menu_action !== Arr::get( $filtered_submenus, '0.id' ) ) {
 			// Add and hide a first submenu item that will be used as an action for the top-level menu GravityKit menu.
 			// An alternative is to use the `parent_file` filter, but that would still show the first submenu item's ID in the URL.
 			add_submenu_page(
@@ -216,6 +221,39 @@ class AdminMenu {
 				return $styles;
 			} );
 
+			// When the user hovers over the top-level menu item, replace the menu title with the first submenu item's title.
+			add_filter( 'gk/foundation/inline-scripts', function ( $styles ) use ( $top_level_menu_action ) {
+				$styles[] = [
+					'script' => <<<JS
+document.addEventListener( 'DOMContentLoaded', () => {
+	const menuLinkEl = document.querySelector( 'a.toplevel_page__gk_admin_menu' );
+	const menuNameEl = menuLinkEl.querySelector( 'div.wp-menu-name' );
+	const menuActionEl = document.querySelector( '#${top_level_menu_action}-badge' )?.parentNode;
+
+	if ( !menuLinkEl || !menuNameEl || !menuActionEl ) {
+		return;
+	}
+
+	menuNameEl.dataset.originalContent = menuNameEl.innerHTML;
+
+	const restoreOriginalContent = () => {
+		menuNameEl.innerHTML = menuNameEl.dataset.originalContent;
+	};
+
+	const showMenuActionContent = () => {
+		menuNameEl.innerHTML = menuActionEl.innerHTML;
+	};
+
+	menuLinkEl.addEventListener( 'mouseover', showMenuActionContent );
+	menuLinkEl.addEventListener( 'mouseout', restoreOriginalContent );
+	menuLinkEl.addEventListener( 'focus', showMenuActionContent );
+	menuLinkEl.addEventListener( 'blur', restoreOriginalContent );
+} );
+JS
+				];
+
+				return $styles;
+			} );
 		}
 
 		// Add submenus.
@@ -228,6 +266,17 @@ class AdminMenu {
 				$filtered_submenu['id'],
 				$filtered_submenu['callback']
 			);
+
+			if ( isset( $filtered_submenu['hide_admin_notices'] ) ) {
+				add_action( 'in_admin_header', function () use ( $filtered_submenu ) {
+					if ( $filtered_submenu['id'] !== Arr::get( $_REQUEST, 'page' ) ) {
+						return;
+					}
+
+					remove_all_actions( 'user_admin_notices' );
+					remove_all_actions( 'admin_notices' );
+				}, 999 );
+			}
 
 			// Add divider unless it's the last submenu item that we've added.
 			if ( ! isset( $filtered_submenu['divider'] ) || $index === count( $filtered_submenus ) - 1 ) {
@@ -257,7 +306,7 @@ class AdminMenu {
 			// Styles for submenus that should be hidden.
 			$hide_styles = [];
 
-			foreach ( $filtered_submenus as $index => $submenu ) {
+			foreach ( $filtered_submenus as $submenu ) {
 				if ( isset( $submenu['top_level_menu_action'] ) ) {
 					$hide_styles[] = '#toplevel_page_' . self::WP_ADMIN_MENU_SLUG . ' ul.wp-submenu li:nth-child(2)';
 				}
@@ -288,11 +337,13 @@ class AdminMenu {
 	 * @retun void
 	 */
 	static function add_submenu_item( $submenu, $position = 'top' ) {
-		if ( ! isset( $submenu['id'] ) && ! isset( self::$_submenus[ $position ] ) ) {
+		if ( ! isset( $submenu['id'] ) ) {
 			return;
 		}
 
 		$submenus = self::get_submenus();
+
+		$submenus[ $position ] = Arr::get( $submenus, $position, [] );
 
 		if ( ! isset( $submenu['order'] ) ) {
 			$order = array_column( $submenus[ $position ], 'order' );

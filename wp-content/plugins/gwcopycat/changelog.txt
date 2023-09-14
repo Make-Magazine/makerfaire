@@ -1,6 +1,20 @@
 
 # Changelog
 
+## 1.4.67
+
+	- Fixed an issue with Address fields not copying correctly.
+
+## 1.4.66
+
+	- Fixed an issue where Select fields would not have their default values copied in some cases.
+	- Fixed an issue with Multi Select field not copying values correctly to the List field.
+
+## 1.4.65
+
+	- Fixed an issue with Copy Cat not working for List fields.
+	- Updated `require` call to use `plugin_dir_path()`.
+
 ## 1.4.64
 
 	- Updated references to `String.prototype.format()` to use `String.prototype.gformFormat()` as the former will be removed in Gravity Forms 2.8.

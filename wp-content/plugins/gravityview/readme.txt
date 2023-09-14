@@ -1,7 +1,7 @@
 === GravityView ===
 Tags: gravity forms, directory, gravity forms directory
 Requires at least: 4.7
-Tested up to: 6.2
+Tested up to: 6.3
 Requires PHP: 7.2.0
 Stable tag: trunk
 Contributors: The GravityKit Team
@@ -20,6 +20,24 @@ Beautifully display your Gravity Forms entries. Learn more on [gravitykit.com](h
 3. Follow the instructions
 
 == Changelog ==
+
+= 2.18.6 on September 7, 2023 =
+
+* Improved: Introduced a gear icon to the editor tabs that brings you directly to the Settings metabox
+* Improved: Support for RTL languages
+* Updated: [Foundation](https://www.gravitykit.com/foundation/) to version 1.2.2
+
+= 2.18.5 on September 1, 2023 =
+
+* Fixed: Fatal error caused by GravityView version 2.18.4
+
+= 2.18.4 on August 31, 2023 =
+
+* Added: A "Direct Access" summary in the Publish box in the View editor that makes it easy to see and modify whether a View is accessible directly
+* Improved: Views will now remember the Settings tab you are on after you save a View
+* Fixed: Resolved a fatal error that occurred under certain circumstances due to passing the wrong parameter type to a WordPress function
+* Updated: The video on the Getting Started page
+* Updated: [Foundation](https://www.gravitykit.com/foundation/) to version 1.2
 
 = 2.18.3 on July 20, 2023 =
 
@@ -2876,4 +2894,4 @@ We're just getting started with what can be done with DataTables. We'll have muc
 * Liftoff!
 
 
-= 1690304600-4249 =
+= 1694710165-4249 =

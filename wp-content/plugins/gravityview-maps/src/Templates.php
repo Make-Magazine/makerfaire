@@ -54,6 +54,12 @@ class Templates extends Component {
 	 * @return void
 	 */
 	function register_map_template() {
+
+		// When GravityView is enabled but not active due to version mismatch, the class will not exist.
+		if ( ! class_exists( '\GravityKit\GravityMaps\Template_Map_Default' ) ) {
+			return;
+		}
+
 		new Template_Map_Default;
 		new Template_Preset_Business_Map;
 	}

@@ -141,6 +141,7 @@ const ko = window.ko;
 		 */
 		self.initSession = function() {
 			if (typeof window['gpnfSessionPromise_' + self.formId] === 'undefined') {
+				self.sessionData.gpnf_context = self.ajaxContext;
 				window['gpnfSessionPromise_' + self.formId] = $.post( self.ajaxUrl, self.sessionData, function( response ) {
 					/**
 					 * Do something after the Nested Forms session has been initialized.
@@ -293,8 +294,8 @@ const ko = window.ko;
 
 			var $spinner = new AjaxSpinner( event.target, self.spinnerUrl, '' );
 
-			self.getFormHtml().done(function (html) {
-				self.setModalContent(html);
+			self.getFormHtml().done(function (response) {
+				self.setModalContent(response.formHtml);
 				self.openModal( $( event.target ) );
 			}).always(function() {
 				$spinner.destroy();
@@ -770,7 +771,7 @@ const ko = window.ko;
 				gpnf_nested_form_field_id: self.fieldId,
 				gpnf_context: self.ajaxContext
 			}, function( response ) {
-				self.formHtml = response;
+				self.formHtml = response.formHtml;
 			} );
 
 		};
@@ -792,7 +793,7 @@ const ko = window.ko;
 					$spinner.destroy();
 					$trigger.css( { visibility: 'visible' } );
 
-					self.setModalContent( response, 'edit' );
+					self.setModalContent( response.formHtml, 'edit' );
 					self.openModal( function() {
 						// This is the element to which the focus should be returned after the modal is closed.
 						return self.$parentFormContainer.find( '[data-entryid="' + entryId + '"]' ).find( '.edit' ).find( 'a, button' );
@@ -835,7 +836,8 @@ const ko = window.ko;
 			$.post( self.ajaxUrl, {
 				action: 'gpnf_delete_entry',
 				nonce:  GPNFData.nonces.deleteEntry,
-				gpnf_entry_id: item.id
+				gpnf_entry_id: item.id,
+				gpnf_context: self.ajaxContext
 				}, function( response ) {
 
 					if ($spinner) {
@@ -888,7 +890,8 @@ const ko = window.ko;
 					nonce: GPNFData.nonces.duplicateEntry,
 					gpnf_entry_id: entryId,
 					gpnf_parent_form_id: self.formId,
-					gpnf_nested_form_field_id: self.fieldId
+					gpnf_nested_form_field_id: self.fieldId,
+					gpnf_context: self.ajaxContext
 				},
 				function( response ) {
 

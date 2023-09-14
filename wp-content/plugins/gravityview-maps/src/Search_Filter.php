@@ -10,9 +10,9 @@ use GravityView_View;
  * Register and launch search filters component.
  *
  * @link      http://gravityview.co
- * @since     TBD
+ * @since     2.2.1
  *
- * @since     TBD
+ * @since     2.2.1
  * @author    GravityView <hello@gravityview.co>
  * @package   GravityView_Maps
  * @copyright Copyright 2015, Katz Web Services, Inc.
@@ -160,7 +160,6 @@ class Search_Filter extends Component {
 				'operator' => 'contains',
 				'value' => '1',
 			],
-			'mode' => 'any',
 		];
 
 		return $search_criteria;
@@ -487,14 +486,9 @@ class Search_Filter extends Component {
 		}
 		$bounds_condition->set_bounds( $bounds );
 
-		$query_parts   = $query->_introspect();
-		$expressions   = $query_parts['where']->expressions;
-		$expressions[] = $bounds_condition;
-
-		$where = GF_Query_Condition::_and( ...$expressions );
+		$query_parts     = $query->_introspect();
+		$where           = static::replace_condition( $query_parts['where'], 'geolocation', $bounds_condition );
 		$query->where( $where );
-
-		static::replace_geolocation_with_empty( $query );
 
 		$this->set_has_geolocation_condition( true );
 	}
@@ -573,14 +567,9 @@ class Search_Filter extends Component {
 		$radius_condition->set_longitude( $long );
 		$radius_condition->set_radius( $radius );
 
-		$query_parts   = $query->_introspect();
-		$expressions   = $query_parts['where']->expressions;
-		$expressions[] = $radius_condition;
-
-		$where = GF_Query_Condition::_and( ...$expressions );
+		$query_parts     = $query->_introspect();
+		$where           = static::replace_condition( $query_parts['where'], 'geolocation', $radius_condition );
 		$query->where( $where );
-
-		static::replace_geolocation_with_empty( $query );
 
 		$this->set_has_geolocation_condition( true );
 	}
@@ -668,6 +657,27 @@ class Search_Filter extends Component {
 		}
 
 		return $condition;
+	}
+
+	/**
+	 * Properly use the search mode from the search widget.
+	 *
+	 * @since 2.2.1
+	 *
+	 * @param \GV\View $view
+	 *
+	 * @return string
+	 */
+	public static function get_search_mode( \GV\View $view ): string {
+		$widgets = array_filter( $view->widgets->all(), static function ( $widget ) {
+			return $widget instanceof \GravityView_Widget_Search;
+		} );
+		if ( empty( $widgets ) ) {
+			return GF_Query_Condition::_AND;
+		}
+		$widget = reset( $widgets );
+		$settings = $widget->as_configuration();
+		return $settings['search_mode'] === 'all' ? GF_Query_Condition::_AND : GF_Query_Condition::_OR;
 	}
 
 	/**

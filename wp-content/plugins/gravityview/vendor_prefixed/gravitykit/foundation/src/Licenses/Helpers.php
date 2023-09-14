@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by gravityview on 21-July-2023 using Strauss.
+ * Modified by gravityview on 07-September-2023 using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 
@@ -14,7 +14,7 @@ class Helpers {
 	/**
 	 * Performs remote call to GravityKit's EDD API.
 	 *
-	 * @sice 1.0
+	 * @since 1.0.0
 	 *
 	 * @param string $url
 	 * @param array  $args

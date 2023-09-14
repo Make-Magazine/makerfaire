@@ -17,6 +17,9 @@ class GP_Read_Only extends GWPerk {
 		$this->add_tooltip( $this->key( 'readonly' ), __( '<h6>Read-only</h6> Set field as "readonly". Read-only fields will be visible on the form but cannot be modified by the user.', 'gravityperks' ) );
 		$this->enqueue_field_settings();
 
+		// Actions
+		add_action( 'gform_enqueue_scripts', array( $this, 'enqueue_form_styles' ) );
+
 		// Filters
 		add_filter( 'gform_field_input', array( $this, 'read_only_input' ), 11, 5 );
 
@@ -40,6 +43,75 @@ class GP_Read_Only extends GWPerk {
 			}, 5, 1 );
 		}
 
+	}
+
+	function enqueue_form_styles( $form ) {
+		if ( ! $this->should_enqueue_frontend( $form ) ) {
+			return;
+		}
+
+		wp_enqueue_style( 'gwreadonly', $this->get_base_url() . '/css/gwreadonly.css', array(), $this->version );
+	}
+
+	/**
+	 * Determine if frontend scripts/styles should be enqueued. Loop through fields and check if read only is enabled
+	 * on any field.
+	 *
+	 * @param $form
+	 *
+	 * @return bool
+	 */
+	public function should_enqueue_frontend( $form ) {
+		if ( GFCommon::is_form_editor() ) {
+			return false;
+		}
+
+		return $this->is_applicable_form( $form );
+	}
+
+	/**
+	 * @param $form
+	 *
+	 * @return boolean Whether this form has read only forms.
+	 */
+	public function is_applicable_form( $form ) {
+		return ! empty( $this->get_readonly_fields( $form ) );
+	}
+
+	/**
+	 * @param $form
+	 *
+	 * @return GF_Field[] List of fields that are read-only.
+	 */
+	public function get_readonly_fields( $form ) {
+		if ( empty( $form['fields'] ) ) {
+			return array();
+		}
+
+		$fields = array();
+
+		foreach ( $form['fields'] as $field ) {
+			if ( $this->is_readonly_field( $field ) ) {
+				$fields[] = $field;
+			}
+		}
+
+		return $fields;
+	}
+
+	/**
+	 * @param GF_Field $field
+	 *
+	 * @return boolean
+	 */
+	public function is_readonly_field( $field ) {
+		$input_type = RGFormsModel::get_input_type( $field );
+
+		if ( in_array( $input_type, $this->unsupported_field_types ) ) {
+			return false;
+		}
+
+		return ! ! rgar( $field, $this->key( 'enable' ) );
 	}
 
 	public function field_settings_ui() {
@@ -282,8 +354,12 @@ class GP_Read_Only extends GWPerk {
 
 		$hc_input_id = $this->get_hidden_capture_input_id( $form_id, $input_id );
 
-		if ( is_array( $value ) ) {
+		$field = GFAPI::get_field( $form_id, $input_id );
+
+		if ( is_array( $value ) && ! empty( $field->inputs ) ) {
 			$value = rgar( $value, (string) $input_id );
+		} elseif ( is_array( $value ) ) {
+			$value = json_encode( $value );
 		}
 
 		return sprintf( '<input type="hidden" id="%s" name="%s" value="%s" class="gf-default-disabled" />', $hc_input_id, $hc_input_id, esc_attr( $value ) );
@@ -346,6 +422,14 @@ class GP_Read_Only extends GWPerk {
 			// Only use hidden capture if $_POST does not already contain a value for this inputs;
 			// this allows support for checking/unchecking via JS (i.e. checkbox fields).
 			if ( empty( $_POST[ "input_{$full_input_id}" ] ) && $value ) {
+				if ( method_exists( 'GFCommon', 'is_json' ) ) {
+					$stripped_slashes_value = stripslashes( $value );
+
+					if ( GFCommon::is_json( $stripped_slashes_value ) ) {
+						$value = GFCommon::maybe_decode_json( $stripped_slashes_value );
+					}
+				}
+
 				$_POST[ "input_{$full_input_id}" ] = $value;
 			}
 		}

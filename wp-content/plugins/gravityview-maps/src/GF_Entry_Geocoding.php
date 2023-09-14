@@ -259,6 +259,12 @@ HTML;
 	 * @return array $entry_meta Updated meta entry object with latitude/longitude
 	 */
 	public function add_entry_meta( $entry_meta, $form_id ) {
+
+		// When GravityView is enabled but not active due to version mismatch, the class will not exist.
+		if ( ! class_exists( 'GV\GF_Form' ) ) {
+			return $entry_meta;
+		}
+
 		$form = GF_Form::by_id( $form_id );
 
 		if ( ! $form ) {

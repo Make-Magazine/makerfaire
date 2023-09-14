@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by gravityview on 21-July-2023 using Strauss.
+ * Modified by gravityview on 07-September-2023 using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 
@@ -119,27 +119,29 @@ class EDD {
 		}
 
 		try {
-			$products_data = ProductManager::get_instance()->get_products_data( [ 'skip_cache' => $skip_cache ] );
+			$products_data = ProductManager::get_instance()->get_products_data( [ 'skip_request_cache' => true, 'skip_remote_cache' => $skip_cache ] );
 		} catch ( Exception $e ) {
 			LoggerFramework::get_instance()->error( "Can't get products data when checking for updated versions: " . $e->getMessage() );
 
 			return $transient_data;
 		}
 
-		foreach ( $products_data as $path => $product ) {
-			if ( ! Arr::get( $product, 'installed' ) ) {
+		foreach ( $products_data as $product ) {
+			if ( ! $product['installed'] || $product['third_party'] ) {
 				continue;
 			}
+
+			$product_path = $product['path'];
 
 			$wp_product_data = $this->format_product_data( $product );
 
 			if ( $product['update_available'] ) {
-				$transient_data->response[ $path ] = $wp_product_data;
+				$transient_data->response[ $product_path ] = $wp_product_data;
 			} else {
-				$transient_data->no_update[ $path ] = $wp_product_data;
+				$transient_data->no_update[ $product_path ] = $wp_product_data;
 			}
 
-			$transient_data->checked[ $path ] = Arr::get( $product, 'installed_version' );
+			$transient_data->checked[ $product_path ] = $product['installed_version'];
 		}
 
 		$transient_data->last_checked = time();
@@ -166,35 +168,40 @@ class EDD {
 
 		$license = Arr::get( $product, 'licenses.0' );
 
-		$download_link = Arr::get( $licenses_data, "{$license}.products.{$product['id']}.download" );
+		if ( $product['free'] && $product['download_link'] ) {
+			$download_link = $product['download_link'];
+		} else {
+			$download_link = Arr::get( $licenses_data, "{$license}.products.{$product['id']}.download" );
+		}
 
 		$formatted_data = [
-			'plugin'       => Arr::get( $product, 'path' ),
-			'name'         => Arr::get( $product, 'title' ),
-			'id'           => Arr::get( $product, 'id' ),
-			'slug'         => Arr::get( $product, 'slug' ),
-			'version'      => Arr::get( $product, 'server_version' ),
-			'new_version'  => Arr::get( $product, 'server_version' ),
-			'url'          => Arr::get( $product, 'link' ),
-			'homepage'     => Arr::get( $product, 'link' ),
-			'icons'        => [
-				'1x' => Arr::get( $product, 'icons.1x' ),
-				'2x' => Arr::get( $product, 'icons.2x' ),
+			'plugin'                 => $product['path'],
+			'name'                   => $product['name'],
+			'id'                     => $product['id'],
+			'slug'                   => $product['slug'],
+			'gk_product_text_domain' => $product['text_domain'],
+			'version'                => $product['server_version'],
+			'new_version'            => $product['server_version'],
+			'url'                    => $product['link'],
+			'homepage'               => $product['link'],
+			'icons'                  => [
+				'1x' => $product['icons']['1x'],
+				'2x' => $product['icons']['2x'],
 			],
-			'banners'      => [
-				'low'  => Arr::get( $product, 'banners.low' ),
-				'high' => Arr::get( $product, 'banners.high' ),
+			'banners'                => [
+				'low'  => $product['banners']['low'],
+				'high' => $product['banners']['high'],
 			],
-			'sections'     => [
-				'description' => Arr::get( $product, 'sections.description' ),
-				'changelog'   => Arr::get( $product, 'sections.changelog' ),
+			'sections'               => [
+				'description' => $product['sections']['description'],
+				'changelog'   => $product['sections']['changelog'],
 			],
-			'requires'     => Arr::get( $product, 'system_requirements.wp.version' ),
-			'tested'       => Arr::get( $product, 'system_requirements.wp.tested' ),
-			'requires_php' => Arr::get( $product, 'system_requirements.php.version' ),
+			'requires'               => Arr::get( $product, 'system_requirements.wp.version' ),
+			'tested'                 => Arr::get( $product, 'system_requirements.wp.tested' ),
+			'requires_php'           => Arr::get( $product, 'system_requirements.php.version' ),
 		];
 
-		if ( $download_link ) {
+		if ( $download_link && ( $product['free'] || ! empty( $product['licenses'] ) ) ) {
 			$formatted_data['package']       = $download_link;
 			$formatted_data['download_link'] = $download_link;
 		}
@@ -216,7 +223,7 @@ class EDD {
 	 */
 	public function display_product_information( $result, $action, $args ) {
 		try {
-			$products_data = ProductManager::get_instance()->get_products_data( [ 'key_by' => 'slug' ] );
+			$products = ProductManager::get_instance()->get_products_data();
 		} catch ( Exception $e ) {
 			LoggerFramework::get_instance()->error( "Can't get products data when displaying the changelog: " . $e->getMessage() );
 
@@ -227,7 +234,9 @@ class EDD {
 			return $result;
 		}
 
-		$product = Arr::get( $products_data, $args->slug );
+		$product = Arr::first( $products, function ( $product ) use ( $args ) {
+			return $product['slug'] === $args->slug;
+		} );
 
 		if ( ! $product ) {
 			return $result;

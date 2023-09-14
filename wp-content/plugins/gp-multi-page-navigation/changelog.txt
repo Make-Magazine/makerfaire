@@ -1,6 +1,10 @@
 
 # Changelog
 
+## 1.2.3
+
+	- Fixed minor visual compatibility issues between GP Page Transitions and GP Multi-page Navigation.
+
 ## 1.2.2
 
 	- Fixed an issue where page links could duplicate if using Multi-page Navigation with Page Transitions.

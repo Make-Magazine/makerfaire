@@ -14,7 +14,7 @@ class Helpers {
 	/**
 	 * Performs remote call to GravityKit's EDD API.
 	 *
-	 * @sice 1.0
+	 * @since 1.0.0
 	 *
 	 * @param string $url
 	 * @param array  $args

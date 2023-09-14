@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by __root__ on 12-July-2023 using Strauss.
+ * Modified by __root__ on 07-September-2023 using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 
@@ -121,12 +121,19 @@ class Core {
 	 * @see   https://github.com/WordPress/wordpress-develop/blob/2bb5679d666474d024352fa53f07344affef7e69/src/wp-admin/includes/plugin.php#L274-L411
 	 *
 	 * @since 1.0.0
+	 * @since 1.2.0 Added $skip_cache parameter.
+	 *
+	 * @param bool $skip_cache (optional) Whether to skip cache when getting plugins data. Default: false.
 	 *
 	 * @return array[]
 	 */
-	public static function get_plugins() {
+	public static function get_plugins( $skip_cache = false ) {
 		if ( ! function_exists( 'get_plugins' ) ) {
 			require_once ABSPATH . 'wp-admin/includes/plugin.php';
+		}
+
+		if ( $skip_cache ) {
+			wp_cache_delete( 'plugins', 'plugins' );
 		}
 
 		return get_plugins();
@@ -137,17 +144,20 @@ class Core {
 	 *
 	 * @since 1.0.0
 	 * @since 1.0.4 Moved from GravityKit\Foundation\Licenses\ProductManager to GravityKit\Foundation\Helpers\Core.
+	 * @since 1.2.0 Added $skip_cache parameter.
 	 *
-	 * @return array{name:string, path: string, plugin_file:string, version: string, text_domain: string, active: bool, network_active?: bool}
+	 * @param bool $skip_cache (optional) Whether to skip cache when getting plugins data. Default: false.
+	 *
+	 * @return array{name:string, path: string, plugin_file:string, installed: bool, installed_version: string, version: string, text_domain: string, active: bool, network_active: bool, free: bool, has_update: bool, download_link: string|null}
 	 */
-	public static function get_installed_plugins() {
+	public static function get_installed_plugins( $skip_cache = false ) {
 		if ( ! function_exists( 'is_plugin_active' ) ) {
 			require_once ABSPATH . 'wp-admin/includes/plugin.php';
 		}
 
 		$plugins = [];
 
-		foreach ( self::get_plugins() as $path => $plugin ) {
+		foreach ( self::get_plugins( $skip_cache ) as $path => $plugin ) {
 			if ( empty( $plugin['TextDomain'] ) ) {
 				continue;
 			}
@@ -156,11 +166,45 @@ class Core {
 				'name'              => $plugin['Name'],
 				'path'              => $path,
 				'plugin_file'       => file_exists( WP_PLUGIN_DIR . DIRECTORY_SEPARATOR . $path ) ? WP_PLUGIN_DIR . DIRECTORY_SEPARATOR . $path : null,
+				'installed'         => true,
+				'installed_version' => $plugin['Version'],
 				'version'           => $plugin['Version'],
 				'text_domain'       => $plugin['TextDomain'],
 				'active'            => is_plugin_active( $path ),
 				'network_activated' => is_plugin_active_for_network( $path ),
+				'free'              => true, // @TODO: possibly handle this differently.
+				'has_update'        => false, // @TODO: detect if there's an update available.
+				'download_link'     => null, // @TODO: get the download link if there's an update available.
 			);
+
+			$dependencies = [
+				'0.0.1' => [
+					'system' => [],
+					'plugin' => [],
+				]
+			];
+
+			$required_php_version = $plugin['RequiresPHP'] ?? null;
+			$required_wp_version  = $plugin['RequiresWP'] ?? null;
+
+			if ( $required_php_version ) {
+				$dependencies['0.0.1']['system'][] = [
+					'name'    => 'PHP',
+					'version' => $required_php_version,
+					'icon'    => 'https://www.gravitykit.com/wp-content/uploads/2023/08/wordpress-alt.svg',
+				];
+			}
+
+
+			if ( $required_wp_version ) {
+				$dependencies['0.0.1']['system'][] = [
+					'name'    => 'WordPress',
+					'version' => $required_wp_version,
+					'icon'    => 'https://www.gravitykit.com/wp-content/uploads/2023/08/wordpress-alt.svg',
+				];
+			}
+
+			$plugins[ $plugin['TextDomain'] ]['dependencies'] = $dependencies;
 		}
 
 		return $plugins;
@@ -171,13 +215,15 @@ class Core {
 	 *
 	 * @since 1.0.0
 	 * @since 1.0.4 Moved from GravityKit\Foundation\Licenses\ProductManager to GravityKit\Foundation\Helpers\Core.
+	 * @since 1.2.0 Added $skip_cache parameter.
 	 *
 	 * @param string $text_domains_str Text domain(s). Optionally pipe-separated (e.g. 'gravityview|gk-gravtiyview').
+	 * @param bool   $skip_cache       (optional) Whether to skip cache when getting plugins data. Default: false.
 	 *
 	 * @return array|null An array with plugin data or null if not installed.
 	 */
-	public static function get_installed_plugin_by_text_domain( $text_domains_str ) {
-		$installed_plugins = self::get_installed_plugins();
+	public static function get_installed_plugin_by_text_domain( $text_domains_str, $skip_cache = false ) {
+		$installed_plugins = self::get_installed_plugins( $skip_cache );
 
 		$text_domains_arr = explode( '|', $text_domains_str );
 
@@ -221,8 +267,7 @@ class Core {
 	 * @return bool
 	 */
 	public static function is_callable_function( $value ) {
-		return ( is_string( $value ) && function_exists( $value ) ) ||
-		       ( is_object( $value ) && ( $value instanceof Closure ) );
+		return ( is_string( $value ) && function_exists( $value ) ) || $value instanceof Closure;
 	}
 
 	/**
@@ -243,5 +288,25 @@ class Core {
 
 		return ( is_object( $value[0] ) || is_string( $value[0] ) ) &&
 		       method_exists( $value[0], $value[1] );
+	}
+
+	/**
+	 * Checks if script is executed in a WP CLI environment.
+	 *
+	 * @since 1.2.0
+	 *
+	 * @return bool
+	 */
+	public static function is_wp_cli() {
+		return defined( 'WP_CLI' ) && WP_CLI;
+	}
+
+	/**
+	 * Checks if script is executed in a CLI environment.
+	 *
+	 * @return bool
+	 */
+	public static function is_cli() {
+		return php_sapi_name() === 'cli';
 	}
 }

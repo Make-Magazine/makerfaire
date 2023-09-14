@@ -2,13 +2,13 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by __root__ on 12-July-2023 using Strauss.
+ * Modified by __root__ on 07-September-2023 using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 
 namespace GravityKit\GravityEdit\Foundation\Helpers;
 
-use \GravityKit\GravityEdit\Foundation\ThirdParty\Illuminate\Support\Arr as IlluminateArr;
+use GravityKit\GravityEdit\Foundation\ThirdParty\Illuminate\Support\Arr as IlluminateArr;
 
 /**
  * We use Laravel's Arr class for all array helper methods. This is a wrapper as we may swap out the underlying class in the future, add or modify methods, etc.

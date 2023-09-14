@@ -7,7 +7,7 @@
  * @copyright 2021 Katz Web Services, Inc.
  *
  * @license GPL-2.0-or-later
- * Modified by __root__ on 12-July-2023 using Strauss.
+ * Modified by __root__ on 07-September-2023 using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 namespace GravityKit\GravityEdit\Foundation\ThirdParty\TrustedLogin;
@@ -47,7 +47,7 @@ final class Encryption {
 	/**
 	 * @var string Endpoint path to Vendor public key.
 	 */
-	private $vendor_public_key_endpoint = 'wp-json/trustedlogin/v1/public_key';
+	private $vendor_public_key_endpoint = '/trustedlogin/v1/public_key';
 
 	/**
 	 * Encryption constructor.
@@ -268,7 +268,7 @@ final class Encryption {
 		 */
 		$key_endpoint = apply_filters( 'trustedlogin/' . $this->config->ns() . '/vendor/public_key/endpoint', $this->vendor_public_key_endpoint );
 
-		$public_key_url = trailingslashit( $public_key_website ) . ltrim( $key_endpoint, '/' );
+		$public_key_url = add_query_arg( array( 'rest_route' => $key_endpoint ), trailingslashit( $public_key_website ) );
 
 		return $public_key_url;
 	}

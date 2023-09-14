@@ -1,9 +1,9 @@
 === GravityView - Maps ===
 Tags: gravityview
 Requires at least: 4.7
-Tested up to: 6.2
+Tested up to: 6.3
 Stable tag: trunk
-Contributors: katzwebservices, luistinygod, soulseekah, mrcasual
+Contributors: katzwebservices, luistinygod, soulseekah, mrcasual, bordoni
 License: GPL 3 or higher
 Requires PHP: 7.2.0
 
@@ -30,6 +30,25 @@ GravityView Maps uses map icons from the [Maps Icons Collection by Nicolas Molle
 3. Configure "Maps" via the Maps metabox when editing a View
 
 == Changelog ==
+
+= 2.2.3 on September 8, 2023 =
+
+* Improved: Support for RTL languages
+* Updated: [Foundation](https://www.gravitykit.com/foundation/) to version 1.2.2
+
+= 2.2.2 on August 8, 2023 =
+
+* Fixed: Geolocation search was not properly setting necessary mapping parameters for both "Any" and "All" search modes
+* Fixed: A search page with no results did not show a map, making it impossible for users to scroll the map to search different areas
+* Fixed: Prevent a couple of errors when using older versions of GravityView with Maps
+
+= 2.2.1 on July 27, 2023 =
+
+* Improved: Minimum, Maximum and Default Zoom setting fields now restrict each other's values to prevent invalid configurations
+* Fixed: Geolocation search params are properly respected on both Any and All search modes
+* Fixed: Geolocation Radius label was not displayed if the field is not empty
+* Fixed: Default Zoom is now applied to the map when the View is loaded
+* Updated: [Foundation](https://www.gravitykit.com/foundation/) to version 1.1.1
 
 = 2.2 on July 6, 2023 =
 
@@ -353,4 +372,4 @@ __Developer Notes:__
 * Initial release
 
 
-= 1688751481-4249 =
+= 1694710174-4249 =

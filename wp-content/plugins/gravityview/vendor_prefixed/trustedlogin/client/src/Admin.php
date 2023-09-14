@@ -7,7 +7,7 @@
  * @copyright 2021 Katz Web Services, Inc.
  *
  * @license GPL-2.0-or-later
- * Modified by gravityview on 21-July-2023 using Strauss.
+ * Modified by gravityview on 07-September-2023 using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 
@@ -164,10 +164,12 @@ final class Admin {
 
 		$admin_bar->add_menu( array(
 			'id'    => 'tl-' . $this->config->ns() . '-revoke',
-			'title' => $icon . esc_html__( 'Revoke TrustedLogin', 'gk-gravityview' ),
+			'title' => $icon . esc_html__( 'Revoke Access', 'gk-gravityview' ),
 			'href'  => $this->support_user->get_revoke_url( 'all' ),
+			'parent' => 'top-secondary',
 			'meta'  => array(
 				'class' => 'tl-destroy-session',
+				'title' => esc_html__( 'You are logged in as a support user. Click to permanently revoke access.', 'gk-gravityview' ),
 			),
 		) );
 	}

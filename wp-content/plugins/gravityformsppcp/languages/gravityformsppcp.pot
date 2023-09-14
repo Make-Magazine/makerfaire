@@ -2,16 +2,16 @@
 # This file is distributed under the GPL-3.0+.
 msgid ""
 msgstr ""
-"Project-Id-Version: Gravity Forms PayPal Checkout Add-On 2.6.0\n"
+"Project-Id-Version: Gravity Forms PayPal Checkout Add-On 2.7.0\n"
 "Report-Msgid-Bugs-To: https://gravityforms.com/support\n"
 "Last-Translator: Gravity Forms <support@gravityforms.com>\n"
 "Language-Team: Gravity Forms <support@gravityforms.com>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2023-06-07T17:26:59+00:00\n"
+"POT-Creation-Date: 2023-09-01T17:38:00+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"X-Generator: WP-CLI 2.7.1\n"
+"X-Generator: WP-CLI 2.8.1\n"
 "X-Domain: gravityformsppcp\n"
 
 #. Plugin Name of the plugin
@@ -72,7 +72,7 @@ msgid "Are you sure you want to disconnect all Gravity Forms sites connected to 
 msgstr ""
 
 #: class-gf-ppcp.php:692
-#: class-gf-ppcp.php:3358
+#: class-gf-ppcp.php:3369
 msgid "Cannot complete request, please contact us for further assistance."
 msgstr ""
 
@@ -427,75 +427,75 @@ msgid " Reason code: %s."
 msgstr ""
 
 #. translators: %1$s is the Subscription Amount, %2$s is the Subscription ID and %3$s is the Transaction ID.
-#: class-gf-ppcp.php:2494
+#: class-gf-ppcp.php:2498
 msgid "Subscription has been paid. Amount: %1$s. Subscription Id: %2$s, Transaction Id: %3$s"
 msgstr ""
 
-#: class-gf-ppcp.php:2658
+#: class-gf-ppcp.php:2662
 msgid "Failed to initialize the API. Cannot process the webhook."
 msgstr ""
 
-#: class-gf-ppcp.php:2683
+#: class-gf-ppcp.php:2694
 msgid "Cannot verify the webhook signature."
 msgstr ""
 
-#: class-gf-ppcp.php:2693
+#: class-gf-ppcp.php:2704
 msgid "Webhook verification failed."
 msgstr ""
 
-#: class-gf-ppcp.php:2896
+#: class-gf-ppcp.php:2907
 msgid "Vertical"
 msgstr ""
 
-#: class-gf-ppcp.php:2900
+#: class-gf-ppcp.php:2911
 msgid "Horizontal"
 msgstr ""
 
-#: class-gf-ppcp.php:2908
+#: class-gf-ppcp.php:2919
 msgid "Responsive"
 msgstr ""
 
-#: class-gf-ppcp.php:2912
+#: class-gf-ppcp.php:2923
 msgid "Large"
 msgstr ""
 
-#: class-gf-ppcp.php:2916
+#: class-gf-ppcp.php:2927
 msgid "Medium"
 msgstr ""
 
-#: class-gf-ppcp.php:2920
+#: class-gf-ppcp.php:2931
 msgid "Small"
 msgstr ""
 
-#: class-gf-ppcp.php:2928
+#: class-gf-ppcp.php:2939
 msgid "Rectangle"
 msgstr ""
 
-#: class-gf-ppcp.php:2932
+#: class-gf-ppcp.php:2943
 msgid "Pill"
 msgstr ""
 
-#: class-gf-ppcp.php:2940
+#: class-gf-ppcp.php:2951
 msgid "Gold"
 msgstr ""
 
-#: class-gf-ppcp.php:2944
+#: class-gf-ppcp.php:2955
 msgid "Blue"
 msgstr ""
 
-#: class-gf-ppcp.php:2948
+#: class-gf-ppcp.php:2959
 msgid "Silver"
 msgstr ""
 
-#: class-gf-ppcp.php:2952
+#: class-gf-ppcp.php:2963
 msgid "White"
 msgstr ""
 
-#: class-gf-ppcp.php:2956
+#: class-gf-ppcp.php:2967
 msgid "Black"
 msgstr ""
 
-#: class-gf-ppcp.php:3051
+#: class-gf-ppcp.php:3062
 #: includes/class-gf-field-paypal.php:461
 #: includes/class-gf-field-paypal.php:538
 #: includes/class-gf-field-paypal.php:683
@@ -505,60 +505,60 @@ msgid "PayPal Checkout"
 msgstr ""
 
 #. translators: Placeholder is the debug id.
-#: class-gf-ppcp.php:3100
+#: class-gf-ppcp.php:3111
 msgid " PayPal Debug ID: %s"
 msgstr ""
 
 #. translators: %1$s is the type, %2$s is the id.
-#: class-gf-ppcp.php:3122
+#: class-gf-ppcp.php:3133
 msgid "Entry for %1$s id: %2$s was not found. Webhook cannot be processed."
 msgstr ""
 
-#: class-gf-ppcp.php:3271
+#: class-gf-ppcp.php:3282
 msgid "Cannot create a new order on PayPal. If the error persists, please contact us for further assistance."
 msgstr ""
 
-#: class-gf-ppcp.php:3285
+#: class-gf-ppcp.php:3296
 msgid "The payment total must be greater than 0."
 msgstr ""
 
-#: class-gf-ppcp.php:3319
+#: class-gf-ppcp.php:3330
 msgid "Cannot create a new subscription on PayPal. If the error persists, please contact us for further assistance."
 msgstr ""
 
-#: class-gf-ppcp.php:3326
+#: class-gf-ppcp.php:3337
 msgid "Unauthorized request, please refresh the form and try again."
 msgstr ""
 
-#: class-gf-ppcp.php:3396
+#: class-gf-ppcp.php:3407
 msgid "Cannot capture payment. If the error persists, please contact us for further assistance."
 msgstr ""
 
-#: class-gf-ppcp.php:3430
+#: class-gf-ppcp.php:3441
 msgid "Cannot refund payment. If the error persists, please contact us for further assistance."
 msgstr ""
 
-#: class-gf-ppcp.php:3440
+#: class-gf-ppcp.php:3451
 msgid "Refund request is pending"
 msgstr ""
 
-#: class-gf-ppcp.php:3443
+#: class-gf-ppcp.php:3454
 msgid "Refund request failed"
 msgstr ""
 
-#: class-gf-ppcp.php:3492
+#: class-gf-ppcp.php:3503
 msgid "There was a problem with your submission."
 msgstr ""
 
-#: class-gf-ppcp.php:3770
+#: class-gf-ppcp.php:3766
 msgid "Capture Payment"
 msgstr ""
 
-#: class-gf-ppcp.php:3774
+#: class-gf-ppcp.php:3770
 msgid "Refund Payment"
 msgstr ""
 
-#: class-gf-ppcp.php:3875
+#: class-gf-ppcp.php:3871
 msgid "Invalid form configuration. PayPal does not support creating subscriptions using the Credit Card field."
 msgstr ""
 

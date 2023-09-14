@@ -264,7 +264,7 @@ function gvMapsDisplayErrorNotice( error_text ) {
 			if (
 				(
 					typeof $map !== 'undefined'
-					&& $map.hasClass( ' gk-multi-entry-map' )
+					&& $map.hasClass( 'gk-multi-entry-map' )
 				)
 				&& map.getZoom() > self.MapOptions.zoom
 			) {
@@ -273,7 +273,10 @@ function gvMapsDisplayErrorNotice( error_text ) {
 
 			if ( 'undefined' !== typeof self.MapOptions.center && self.MapOptions.center.lat && self.MapOptions.center.lng ) {
 				map.setCenter( self.MapOptions.center );
+			} else if ( $map.hasClass( 'gk-no-markers' ) ) {
+				map.setCenter( { lat: 0, lng: 0 } );
 			}
+
 		} );
 	};
 

@@ -3,7 +3,7 @@
 Plugin Name: Gravity Forms PayPal Checkout Add-On
 Plugin URI: https://gravityforms.com
 Description: Integrates Gravity Forms with PayPal, enabling end users to purchase goods and services through Gravity Forms.
-Version: 2.6.0
+Version: 2.7.0
 Author: Gravity Forms
 Author URI: https://gravityforms.com
 License: GPL-3.0+
@@ -31,7 +31,7 @@ along with this program.  If not, see http://www.gnu.org/licenses.
 defined( 'ABSPATH' ) || die();
 
 // Defines the current version of the Gravity Forms PayPal Checkout Add-On.
-define( 'GF_PPCP_VERSION', '2.6.0' );
+define( 'GF_PPCP_VERSION', '2.7.0' );
 
 // Defines the minimum version of Gravity Forms required to run Gravity Forms PayPal Checkout Add-On.
 define( 'GF_PPCP_MIN_GF_VERSION', '2.4.13' );

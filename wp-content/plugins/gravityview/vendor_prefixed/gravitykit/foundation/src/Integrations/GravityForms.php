@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by gravityview on 21-July-2023 using Strauss.
+ * Modified by gravityview on 07-September-2023 using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 
@@ -61,7 +61,7 @@ class GravityForms {
 			$registered_plugins = Core::get_instance()->get_registered_plugins();
 
 			foreach ( $registered_plugins as $registered_plugin ) {
-				$plugin_data = CoreHelpers::get_plugin_data( $registered_plugin );
+				$plugin_data = CoreHelpers::get_plugin_data( $registered_plugin['plugin_file'] );
 
 				/**
 				 * Controls whether to include a GravityKit product in GF's system report.

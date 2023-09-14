@@ -1,6 +1,14 @@
 
 # Changelog
 
+## 1.9.18
+
+	- Fixed issues with Read Only Multi Selects sometimes causing a validation error or submitting values with backslashes in them.
+
+## 1.9.17
+
+	- Fixed issue where up/down arrows in read only number fields could show in certain scenarios depending on a user's browser, the browser version, and WordPress theme.
+
 ## 1.9.16
 
 	- Fixed issue where Signature fields that were marked as read-only wouldn't work correctly after a recent Gravity Forms update.

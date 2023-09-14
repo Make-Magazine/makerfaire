@@ -378,7 +378,7 @@ class GP_Limit_Checkboxes extends GWPerk {
 		$count  = 0;
 
 		foreach ( $field_ids as $field_id ) {
-			$count += rgar( $counts, $field_id );
+			$count += (int) rgar( $counts, $field_id );
 		}
 
 		return $count;

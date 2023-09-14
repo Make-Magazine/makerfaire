@@ -150,6 +150,14 @@ class GP_Easy_Passthrough extends GP_Feed_Plugin {
 	protected $passed_through_entries = array();
 
 	/**
+	 * Flag to determine if an entry was loaded using the "ep_token" GET param.
+	 *
+	 * @since  1.9.22
+	 * @var array
+	 */
+	protected $populated_from_token = null;
+
+	/**
 	* Get instance of this class.
 	*
 	* @since  1.0
@@ -984,6 +992,12 @@ class GP_Easy_Passthrough extends GP_Feed_Plugin {
 		// Store entry ID.
 		$this->store_entry_id( $entry, $form );
 
+		// Set flag to indiciate that an entry was populated with the token.
+		$this->populated_from_token = array(
+			'entry_id' => $entry['id'],
+			'form_id'  => $form['id'],
+		);
+
 	}
 
 	public function can_user_edit_gpnf_entries( $can_edit, $entry ) {
@@ -1064,7 +1078,7 @@ class GP_Easy_Passthrough extends GP_Feed_Plugin {
 
 		// Get field values.
 		$field_values = $this->get_field_values( $form['id'] );
-		
+
 		// If no field values were found, return.
 		if ( ! $field_values ) {
 
@@ -1267,7 +1281,7 @@ class GP_Easy_Passthrough extends GP_Feed_Plugin {
 							$parameter_value = null;
 
 							// If the field already allows dynamic population and the input has a value, use it.
-							if ( $field->allowsPrepopulate && isset($input['name'])) {
+							if ( $field->allowsPrepopulate ) {
 								$parameter_value = GFFormsModel::get_parameter_value( $input['name'], array(), $field );
 							}
 
@@ -1480,9 +1494,13 @@ class GP_Easy_Passthrough extends GP_Feed_Plugin {
 					continue;
 				}
 
-				// Use entry ID from session.
-				$source_entry_id = $session[ $this->get_slug() . '_' . $source_form['id'] ];
-
+				// If populated using a token, then do not use session.
+				if ( ! empty( $this->populated_from_token ) ) {
+					$source_entry_id = $this->populated_from_token['entry_id'];
+				} else {
+					// Use entry ID from session.
+					$source_entry_id = $session[ $this->get_slug() . '_' . $source_form['id'] ];
+				}
 			}
 
 			// If no entry exists for source form, skip.
@@ -1670,7 +1688,6 @@ class GP_Easy_Passthrough extends GP_Feed_Plugin {
 
 	}
 
-
 	/**
 	 * Clear out the field values for the current form. Useful for integrating with GP Reload Form.
 	 *
@@ -1695,7 +1712,6 @@ class GP_Easy_Passthrough extends GP_Feed_Plugin {
 		 * @param int|null $form_id The form ID for which feeds are being fetched.
 		 */
 		$feeds = gf_apply_filters( array( 'gpep_active_feeds', $form_id ), parent::get_active_feeds( $form_id ), $form_id );
-
 		return $feeds;
 	}
 
@@ -1976,7 +1992,7 @@ class GP_Easy_Passthrough extends GP_Feed_Plugin {
 			);
 
 		}
-		
+
 		// If entry ID was not found, return.
 		if ( ! $entry_id ) {
 			return null;

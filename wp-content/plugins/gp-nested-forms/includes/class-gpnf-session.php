@@ -9,9 +9,16 @@ class GPNF_Session {
 	private $_cookie;
 	private $_hashcode;
 
-	public function __construct( $form_id ) {
+	public function __construct( $form_id_or_context ) {
 
-		$this->_form_id = $form_id;
+		if ( ! is_array( $form_id_or_context ) ) {
+			$context = self::create_session_context( $form_id_or_context );
+		} else {
+			$context = $form_id_or_context;
+		}
+
+		$this->_form_id = $context['form_id'];
+		$this->_context = $context;
 		$this->_cookie  = $this->get_cookie();
 
 	}
@@ -67,7 +74,7 @@ class GPNF_Session {
 		else {
 			$data = array(
 				'form_id'        => $this->_form_id,
-				'hash'           => $this->make_hashcode(),
+				'hash'           => $this->get_runtime_hashcode(),
 				'user_id'        => get_current_user_id(),
 				'nested_entries' => array(),
 			);
@@ -108,7 +115,7 @@ class GPNF_Session {
 	}
 
 	public function set_cookie() {
-		setcookie( $this->get_cookie_name(), json_encode( $this->_cookie ), time() + 60 * 60 * 24 * 7, COOKIEPATH, COOKIE_DOMAIN, is_ssl() );
+		$result = setcookie( $this->get_cookie_name(), json_encode( $this->_cookie ), time() + 60 * 60 * 24 * 7, COOKIEPATH, COOKIE_DOMAIN, is_ssl() );
 	}
 
 	public function get_cookie() {
@@ -123,7 +130,8 @@ class GPNF_Session {
 	}
 
 	public function get_cookie_name() {
-		$name = implode( '_', array( self::COOKIE_NAME, $this->_form_id ) );
+		$context_slug = sanitize_title( implode( '_', $this->get_context() ) );
+		$name         = implode( '_', array( self::COOKIE_NAME, $context_slug ) );
 		/**
 		 * Filter the name of the session cookie GPNF uses for a given form
 		 *
@@ -133,6 +141,10 @@ class GPNF_Session {
 		 * @param string $form_id Parent form ID that the nested form belongs to.
 		 */
 		return apply_filters( 'gpnf_cookie_name', $name, $this->_form_id );
+	}
+
+	public function get_context() {
+		return $this->_context;
 	}
 
 	public function delete_cookie() {
@@ -285,6 +297,65 @@ class GPNF_Session {
 		$data = gf_apply_filters( array( 'gpnf_session_script_data', $form_id ), $data );
 
 		return $data;
+	}
+
+	/**
+	 * Return the current URL path plus any whitelisted query parameters. If the request is an AJAX request, return the
+	 * path from the context provided in the request.
+	 *
+	 * @return mixed|string
+	 */
+	public static function get_session_path() {
+
+		if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
+			$path = rgars( $_REQUEST, 'gpnf_context/path', '' );
+			// We've accounted for all instances within Nested Forms, but I've added this in case there is some sort of
+			// 3rd-party scenario where the GPNF context is not set in their AJAX request.
+			if ( ! $path ) {
+				gp_nested_forms()->log( __METHOD__ . '(): No path found in AJAX request. Request details: %s', print_r( $_REQUEST, true ) );
+			}
+			return $path;
+		}
+
+		$url = wp_parse_url( $_SERVER['REQUEST_URI'] );
+		$path = $url['path'];
+
+		if ( ! isset( $url['query'] ) ) {
+			return $path;
+		}
+
+		parse_str( $url['query'], $query );
+
+		// Update this list with any parameters that should constitute a unique session. `gf_page` accounts for Gravity
+		// Forms' preview mode. Worth noting: sessions are always unique to the current parent form ID.
+		/**
+		 * Filter the query parameters that should be included in the session path indicating a unique session.
+		 *
+		 * @since 1.1.35
+		 *
+		 * @param array $query_args An array of query parameters that should be included in the session path to indicate a unique session.
+		 */
+		$unique_query_args = apply_filters( 'gpnf_unique_session_query_args', array( 'gf_page' ) );
+
+		$query = array_intersect_key( $query, array_flip( $unique_query_args ) );
+		if ( empty( $query ) ) {
+			return $path;
+		}
+
+		$query = http_build_query( $query );
+		$path .= '?' . $query;
+
+		return $path;
+	}
+
+	public static function create_session_context( $parent_form_id ) {
+
+		$context = array(
+			'form_id' => $parent_form_id,
+			'path'    => self::get_session_path(),
+		);
+
+		return $context;
 	}
 
 }

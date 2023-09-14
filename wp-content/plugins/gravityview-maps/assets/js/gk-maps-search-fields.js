@@ -1,7 +1,3 @@
-window.gravitykit = window.gravitykit || {};
-window.gravitykit.maps = window.gravitykit.maps || {};
-window.gravitykit.maps.searchFields = window.gravitykit.maps.searchFields || {};
-
 ( ( $, obj, GravityMaps ) => {
 	"use strict";
 

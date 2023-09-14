@@ -15,6 +15,7 @@ defined( 'ABSPATH' ) || exit;
 
 class GravityView_Ratings_Reviews_Form_Fields extends GravityView_Ratings_Reviews_Component {
 
+	
 	/**
 	 * Callback when this component is loaded by the loader.
 	 *

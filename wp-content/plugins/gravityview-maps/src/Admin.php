@@ -829,12 +829,18 @@ class Admin extends Component {
 	 * @return \GV\View[] \GV\View objects without REST API enabled.
 	 */
 	protected function get_map_views_without_rest(): array {
+
+		// When GravityView is enabled but not active due to version mismatch, the class will not exist.
+		if ( ! class_exists( '\GV\View' ) ) {
+			return [];
+		}
+
 	    // Try to get the cached results
 	    $cached_views = isset( $_GET['cache'] ) ? false : get_transient( self::TRANSIENT_KEY_MAPS_WITHOUT_REST );
 
 	    // If the cached results are available, return them
 	    if ( $cached_views !== false && is_array( $cached_views ) ) {
-			return array_map( [ \GV\View::class, 'by_id' ], $cached_views );
+			return (array) array_map( [ \GV\View::class, 'by_id' ], $cached_views );
 	    }
 
 		$args = [
@@ -867,7 +873,7 @@ class Admin extends Component {
 		// Cache the results for 12 hours.
 	    set_transient( self::TRANSIENT_KEY_MAPS_WITHOUT_REST, $view_ids, DAY_IN_SECONDS / 2 );
 
-		return $views;
+		return (array) $views;
 	}
 
 	/**
@@ -1014,7 +1020,12 @@ class Admin extends Component {
 	public function enqueue_scripts( $hook ) {
 		$script_debug = ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? '' : '.min';
 
+		wp_register_script( 'gk-maps-base', plugins_url( "assets/js/base{$script_debug}.js", $this->loader->path ), [ 'wp-hooks' ], $this->loader->plugin_version );
+
 		wp_register_script( 'gravityview_maps_admin', plugins_url( 'assets/js/admin' . $script_debug . '.js', $this->loader->path ), array( 'jquery' ), $this->loader->plugin_version );
+
+		wp_register_script( 'gk-maps-metabox-zoom-restrictions', plugins_url( 'assets/js/metabox/zoom-restrictions' . $script_debug . '.js', $this->loader->path ), [ 'jquery', 'gk-maps-base' ], $this->loader->plugin_version );
+
 		wp_localize_script( 'gravityview_maps_admin', 'GV_MAPS_ADMIN', array(
 			'nonce'                    => wp_create_nonce( 'gravityview_maps_admin' ),
 			'labelMapIconUploadTitle'  => __( 'GravityView Maps Custom Map Icon', 'gk-gravitymaps' ),
@@ -1034,6 +1045,7 @@ class Admin extends Component {
 		wp_enqueue_style( 'gravityview_maps_admin_css', plugins_url( 'assets/css/admin.css', $this->loader->path ), array(), $this->loader->plugin_version );
 
 		wp_enqueue_script( 'gravityview_maps_admin' );
+		wp_enqueue_script( 'gk-maps-metabox-zoom-restrictions' );
 	}
 
 	/**

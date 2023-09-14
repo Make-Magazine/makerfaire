@@ -3,7 +3,7 @@
         'name' => 'katzwebservices/gravityview-maps',
         'pretty_version' => 'dev-main',
         'version' => 'dev-main',
-        'reference' => '0470229a6c3fafb09fcd6201008780d41297e2ac',
+        'reference' => 'c17607c6b2445f5d06d179a941343578612582ef',
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -40,7 +40,7 @@
         'gravitykit/foundation' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
-            'reference' => '68ab192a262f83b46b4c2957010971d0d476563c',
+            'reference' => '77b662681223db0da43c5d4545de0e8f6d0ba17b',
             'type' => 'library',
             'install_path' => __DIR__ . '/../gravitykit/foundation',
             'aliases' => array(
@@ -105,7 +105,7 @@
         'katzwebservices/gravityview-maps' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
-            'reference' => '0470229a6c3fafb09fcd6201008780d41297e2ac',
+            'reference' => 'c17607c6b2445f5d06d179a941343578612582ef',
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
@@ -189,7 +189,7 @@
         'trustedlogin/client' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
-            'reference' => '6062085585489c018bc6e9b6daefd654582b97a0',
+            'reference' => '3aecfa088ee2f864b516c1abef7229264a9e472a',
             'type' => 'library',
             'install_path' => __DIR__ . '/../trustedlogin/client',
             'aliases' => array(

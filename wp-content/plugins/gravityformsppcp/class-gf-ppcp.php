@@ -2460,8 +2460,10 @@ class GF_PPCP extends GFPaymentAddOn {
 
 		switch ( $event['event_type'] ) {
 			case 'PAYMENT.CAPTURE.REFUNDED':
+			case 'PAYMENT.CAPTURE.REVERSED':
 				$action['type']   = 'refund_payment';
-				$action['amount'] = $this->get_amount_import( rgars( $event, 'resource/seller_payable_breakdown/total_refunded_amount/value' ), $entry['currency'] );
+				$amount           = rgars( $event, 'resource/seller_payable_breakdown/total_refunded_amount/value' ) ? rgars( $event, 'resource/seller_payable_breakdown/total_refunded_amount/value' ) : rgars( $event, 'resource/amount/total' );
+				$action['amount'] = $this->get_amount_import( abs( $amount ), $entry['currency'] );
 
 				break;
 			case 'PAYMENT.AUTHORIZATION.VOIDED':
@@ -2477,10 +2479,12 @@ class GF_PPCP extends GFPaymentAddOn {
 
 				break;
 			case 'PAYMENT.CAPTURE.DENIED':
+			case 'PAYMENT.CAPTURE.DECLINED':
 				$payment_status = rgar( $entry, 'payment_status' );
 				if ( in_array( $payment_status, array( 'Authorized', 'Pending' ) ) ) {
 					$action['type']   = 'fail_payment';
-					$action['amount'] = $this->get_amount_import( rgars( $event, 'resource/amount/value' ), $entry['currency'] );
+					$amount           = rgars( $event, 'resource/amount/value' ) ? rgars( $event, 'resource/amount/value' ) : rgars( $event, 'resource/amount/total' );
+					$action['amount'] = $this->get_amount_import( $amount, $entry['currency'] );
 				}
 
 				break;
@@ -2536,7 +2540,7 @@ class GF_PPCP extends GFPaymentAddOn {
 			'id'               => $event['id'],
 			'type'             => $event['event_type'],
 			'event_version'    => $event['event_version'],
-			'resource_version' => $event['resource_version'],
+			'resource_version' => rgar( $event, 'resource_version' ),
 		);
 
 		$this->log_debug( __METHOD__ . '() Webhook log => ' . print_r( $log_details, 1 ) );
@@ -2658,12 +2662,19 @@ class GF_PPCP extends GFPaymentAddOn {
 			return new WP_Error( 'error_initialize_api', esc_html__( 'Failed to initialize the API. Cannot process the webhook.', 'gravityformsppcp' ) );
 		}
 
-		$body     = @file_get_contents( 'php://input' );
-		$event    = json_decode( $body, true );
-		$settings = $this->get_plugin_setting( $this->get_environment() );
+		$body        = @file_get_contents( 'php://input' );
+		$event       = json_decode( $body, true );
+		$environment =  $this->get_environment();
+		$settings    = $this->get_plugin_setting( $environment );
 
 		if ( empty( $event ) ) {
 			return false;
+		}
+
+		// Bypass the webhook verification when debugging in the sandbox.
+		$is_sandbox_debugging = defined( 'GF_DEBUG' ) && GF_DEBUG && $environment == 'sandbox';
+		if ( $is_sandbox_debugging ) {
+			return $event;
 		}
 
 		$data = array(
@@ -3489,9 +3500,7 @@ class GF_PPCP extends GFPaymentAddOn {
 	public function paypal_checkout_error_message() {
 		$authorization_result = $this->authorization;
 
-		$message = "<div class='validation_error'>" . esc_html__( 'There was a problem with your submission.', 'gravityformsppcp' ) . ' ' . $authorization_result['error_message'] . '</div>';
-
-		return $message;
+		return '<h2 class="gform_submission_error"><span class="gform-icon gform-icon--close"></span>'. esc_html__( 'There was a problem with your submission.', 'gravityformsppcp' ) .' '. $authorization_result['error_message'] .'</h2>';
 	}
 
 	/**
@@ -3646,25 +3655,12 @@ class GF_PPCP extends GFPaymentAddOn {
 	 */
 	public function get_enabled_funding_sources() {
 		$enabled_funding = array(
-			'venmo'       => 'Venmo',
-			'bancontact'  => 'Bancontact',
-			'blik'        => 'Blik',
-			'boleto'      => 'Boleto',
-			'eps'         => 'EPS',
-			'giropay'     => 'Giropay',
-			'ideal'       => 'Ideal',
-			'itau'        => 'Itaú',
-			'maxima'      => 'Maxima',
-			'mercadopago' => 'Mercado Pago',
-			'mybank'      => 'MyBank',
-			'oxxo'        => 'OXXO',
-			'p24'         => 'P24',
-			'payu'        => 'PayU',
-			'sepa'        => 'SEPA',
-			'sofort'      => 'SOFORT',
-			'trustly'     => 'Trustly',
-			'wechatpay'   => 'WeChat Pay',
-			'zimpler'     => 'zimpler',
+			'card'     => 'Card',
+			'credit'   => 'Credit',
+			'paylater' => 'Pay Later',
+			'sepa'     => 'SEPA',
+			'ideal'    => 'Ideal',
+			'venmo'    => 'Venmo',
 		);
 
 		/**

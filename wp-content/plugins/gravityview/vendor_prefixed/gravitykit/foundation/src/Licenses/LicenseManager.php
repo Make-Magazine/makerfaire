@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by gravityview on 21-July-2023 using Strauss.
+ * Modified by gravityview on 07-September-2023 using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 
@@ -21,7 +21,7 @@ use GFFormsModel;
 class LicenseManager {
 	const EDD_LICENSES_API_ENDPOINT = 'https://www.gravitykit.com';
 
-	const EDD_LICENSES_API_VERSION = 2;
+	const EDD_LICENSES_API_VERSION = 3;
 
 	const EDD_ACTION_CHECK_LICENSE = 'check_license';
 
@@ -40,10 +40,18 @@ class LicenseManager {
 
 	/**
 	 * @since 1.0.0
+	 * @since 1.2.0 Renamed to $licenses_data.
 	 *
 	 * @var array Cached licenses data object.
 	 */
-	public $_licenses_data;
+	public $licenses_data;
+
+	/**
+	 * @since 1.2.0
+	 *
+	 * @var bool Whether license data exists but can't be decrypted.
+	 */
+	public $is_decryptable = true;
 
 	/**
 	 * Returns class instance.
@@ -84,9 +92,7 @@ class LicenseManager {
 
 		add_filter( 'gk/foundation/ajax/' . Framework::AJAX_ROUTER . '/routes', [ $this, 'configure_ajax_routes' ] );
 
-		add_action( 'after_plugin_row', [ $this, 'display_license_info_on_plugins_page' ], 10, 2 );
-
-		$this->update_submenu_badge_count();
+		$this->update_manage_your_kit_submenu_badge_count();
 
 		$initialized = true;
 	}
@@ -154,8 +160,8 @@ class LicenseManager {
 	 * @return array
 	 */
 	public function get_licenses_data() {
-		if ( ! empty( $this->_licenses_data ) ) {
-			return $this->_licenses_data;
+		if ( is_array( $this->licenses_data ) ) {
+			return $this->licenses_data;
 		}
 
 		$licenses_data = get_site_option( Framework::ID );
@@ -164,9 +170,11 @@ class LicenseManager {
 			$licenses_data = json_decode( Encryption::get_instance()->decrypt( $licenses_data ) ?: '', true );
 		}
 
-		$this->_licenses_data = $licenses_data ?: [];
+		$this->is_decryptable = is_array( $licenses_data );
 
-		return $this->_licenses_data;
+		$this->licenses_data = $licenses_data ?: [];
+
+		return $this->licenses_data;
 	}
 
 	/**
@@ -183,7 +191,7 @@ class LicenseManager {
 
 		array_multisort( $licenses_data, SORT_ASC, $expiry_dates );
 
-		$this->_licenses_data = $licenses_data;
+		$this->licenses_data = $licenses_data;
 
 		try {
 			$licenses_data = Encryption::get_instance()->encrypt( json_encode( $licenses_data ) );
@@ -236,23 +244,6 @@ class LicenseManager {
 		}
 
 		return $product_license_map;
-	}
-
-	/**
-	 * Returns licenses for a product.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @param int|string $id Product ID or text domain.
-	 *
-	 * @return array
-	 */
-	public function get_product_licenses( $id ) {
-		$key_by = ! ctype_alpha( $id ) ? 'id' : 'text_domain';
-
-		$product_license_map = $this->get_product_license_map( $key_by );
-
-		return ! empty( $product_license_map[ $id ] ) ? $product_license_map[ $id ] : [];
 	}
 
 	/**
@@ -354,24 +345,27 @@ class LicenseManager {
 			}
 
 			$normalized_license_data = [
-				'name'         => ! empty( $data['customer_name'] ) ? $data['customer_name'] : null,
-				'email'        => ! empty( $data['customer_email'] ) ? $data['customer_email'] : null,
-				'license_name' => ! empty( $data['license_name'] ) ? $data['license_name'] : null,
-				'expiry'       => $expiry,
-				'key'          => $license_key,
-				'products'     => [],
-				'_raw'         => $data,
+				'name'             => $data['customer_name'] ?? null,
+				'email'            => $data['customer_email'] ?? null,
+				'license_name'     => $data['license_name'] ?? null,
+				'expiry'           => $expiry,
+				'key'              => $license_key,
+				'products'         => [],
+				'license_limit'    => $data['license_limit'] ?? null,
+				'site_count'       => $data['site_count'] ?? null,
+				'activations_left' => $data['activations_left'] ?? null,
+				'_raw'             => $data,
 			];
 
 			if ( ! empty( $data['products'] ) ) {
 				foreach ( $data['products'] as $product ) {
-					if ( empty( $product['files'][0]['file'] ) || empty( $product['id'] ) || empty( $product['textdomain'] ) ) {
+					if ( empty( $product['files'][0]['file'] ) || empty( $product['id'] ) || empty( $product['text_domain'] ) ) {
 						continue;
 					}
 
 					$normalized_license_data['products'][ $product['id'] ] = [
 						'id'          => $product['id'],
-						'text_domain' => $product['textdomain'],
+						'text_domain' => $product['text_domain'],
 						'download'    => $product['files'][0]['file']
 					];
 				}
@@ -434,7 +428,7 @@ class LicenseManager {
 	 *
 	 * @throws Exception
 	 *
-	 * @return array License information.
+	 * @return array{products:array,licenses:array}
 	 */
 	public function ajax_activate_license( array $payload ) {
 		if ( ! Framework::get_instance()->current_user_can( 'manage_licenses' ) ) {
@@ -445,7 +439,9 @@ class LicenseManager {
 			throw new Exception( esc_html__( 'Missing license key.', 'gk-gravityview' ) );
 		}
 
-		return $this->modify_license_data_for_frontend_output( $this->activate_license( $payload['key'] ) );
+		$this->activate_license( $payload['key'] );
+
+		return Framework::get_instance()->ajax_get_app_data( [] );
 	}
 
 	/**
@@ -457,7 +453,7 @@ class LicenseManager {
 	 *
 	 * @throws Exception
 	 *
-	 * @return array License information.
+	 * @return array
 	 */
 	public function activate_license( $license_key ) {
 		if ( ! Framework::get_instance()->current_user_can( 'manage_licenses' ) ) {
@@ -475,10 +471,6 @@ class LicenseManager {
 
 			if ( ! $response['_raw']['success'] ) {
 				throw new Exception( $this->get_license_key_status_message( $response['_raw']['error'] ) );
-			}
-
-			if ( ! $response['_raw']['success'] ) {
-				throw new Exception( esc_html__( 'Could not get information on products associated with this license.', 'gk-gravityview' ) );
 			}
 		} catch ( Exception $e ) {
 			throw new Exception( $e->getMessage() );
@@ -508,7 +500,7 @@ class LicenseManager {
 	 *
 	 * @throws Exception
 	 *
-	 * @return void
+	 * @return array{products:array,licenses:array}
 	 */
 	public function ajax_deactivate_license( array $payload ) {
 		$payload = wp_parse_args( $payload, [
@@ -529,6 +521,8 @@ class LicenseManager {
 		}
 
 		$this->deactivate_license( $license_key, (bool) $payload['force_removal'] );
+
+		return Framework::get_instance()->ajax_get_app_data( [] );
 	}
 
 	/**
@@ -576,12 +570,13 @@ class LicenseManager {
 
 	/**
 	 * Adds additional data to the license object for use in the frontend.
-	 * - Encrypts license key
-	 * - Formats expiration date or message if license is expired
+	 * - Encrypts license key;
+	 * - Formats expiration date or message if license is expired; and
+	 * - Optionally hides personal information.
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param $license
+	 * @param array $license
 	 *
 	 * @return array
 	 */
@@ -589,13 +584,12 @@ class LicenseManager {
 		$expiry  = ! empty( $license['expiry'] ) ? $license['expiry'] : 'invalid';
 		$expired = false;
 
-		if ( ! ctype_alpha( $expiry ) ) {
+		if ( preg_match( '/[^a-z]/i', $expiry ) ) {
 			$expired = $this->is_expired_license( $expiry );
 
 			$expiry = $expired
 				? human_time_diff( $expiry, current_time( 'timestamp' ) ) . ' ' . esc_html_x( 'ago', 'Indicates "time ago"', 'gk-gravityview' )
 				: date_i18n( get_option( 'date_format' ), $expiry );
-
 		}
 
 		try {
@@ -604,6 +598,19 @@ class LicenseManager {
 			LoggerFramework::get_instance()->error( 'Failed to encrypt license key: ' . $e->getMessage() );
 
 			$encrypted_key = 'key_encryption_failed';
+		}
+
+		/**
+		 * @filter `gk/foundation/licenses/hide-personal-information` Hides the license holder's name/email.
+		 *
+		 * @since  1.2.0
+		 *
+		 * @param bool $hide_personal_information Default: false.
+		 */
+		$hide_personal_information = apply_filters( 'gk/foundation/licenses/hide-personal-information', false );
+
+		if ( $hide_personal_information ) {
+			$license['name'] = $license['email'] = '✽✽✽';
 		}
 
 		return array_merge( $license, [
@@ -878,91 +885,6 @@ class LicenseManager {
 	}
 
 	/**
-	 * Optionally adds notices to installed plugins when license is invalid or expired.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @param string $plugin_name
-	 * @param array  $plugin_data
-	 *
-	 * @return void
-	 */
-	public function display_license_info_on_plugins_page( $plugin_name, $plugin_data ) {
-		static $products_data;
-
-		if ( is_multisite() && ! CoreHelpers::is_network_admin() ) {
-			return;
-		}
-
-		$is_active = CoreHelpers::is_network_admin() ? is_plugin_active_for_network( $plugin_name ) : is_plugin_active( $plugin_name );
-
-		if ( ! $is_active ) {
-			return;
-		}
-
-		$licenses_data = $this->get_licenses_data();
-
-		if ( ! $products_data ) {
-			try {
-				$products_data = ProductManager::get_instance()->get_products_data( [ 'key_by' => 'text_domain' ] );
-			} catch ( Exception $e ) {
-				LoggerFramework::get_instance()->error( "Failed to get products on the plugins page. {$e->getMessage()}." );
-
-				return;
-			}
-		}
-
-		if ( ! isset( $products_data[ $plugin_data['TextDomain'] ] ) ) {
-			return;
-		}
-
-		$this_plugin = $products_data[ $plugin_data['TextDomain'] ];
-
-		$valid_licenses = [];
-
-		foreach ( $this_plugin['licenses'] as $license_key ) {
-			if ( ! isset( $licenses_data[ $license_key ] ) ) {
-				continue;
-			}
-
-			$valid_licenses[] = $license_key;
-		}
-
-		if ( ! empty( $valid_licenses ) ) {
-			return;
-		}
-
-		add_filter( "after_plugin_row_{$plugin_name}", function ( $plugin_name, $plugin_data ) use ( $this_plugin ) {
-			$url = Framework::get_instance()->get_link_to_product_search( $this_plugin['id'] );
-
-			$message = strtr(
-				esc_html_x( 'This is an unlicensed product. Please [link]visit the licensing page[/link] to enter a valid license or to purchase a new one.', 'Placeholders inside [] are not to be translated.', 'gk-gravityview' ),
-				[
-					'[link]'  => '<a href="' . $url . '">',
-					'[/link]' => '</a>'
-				]
-			);
-
-			$screen      = get_current_screen();
-			$columns     = get_column_headers( $screen );
-			$colspan     = ! is_countable( $columns ) ? 3 : count( $columns );
-			$plugin_slug = isset( $plugin_data['slug'] ) ? $plugin_data['slug'] : sanitize_title( $plugin_data['Name'] );
-			$plugin_name = $plugin_data['Name'];
-
-			echo <<<HTML
-<tr class="plugin-update-tr active gk-custom-plugin-update-message" data-slug="{$plugin_slug}11" data-plugin="{$plugin_name}">
-	<td colspan="{$colspan}" class="plugin-update colspanchange">
-		<div class="update-message notice inline notice-error notice-alt">
-			<p>{$message}</p>
-		</div>
-	</td>
-</tr>
-<style>tr[data-slug="{$plugin_slug}"]:not(.gk-custom-plugin-update-message) td, tr[data-slug="{$plugin_slug}"]:not(.gk-custom-plugin-update-message) th { box-shadow: none !important; }</style>
-HTML;
-		}, 11, 2 );
-	}
-
-	/**
 	 * Retrieves site data (plugin versions, integrations, etc.) to be sent along with the license check.
 	 *
 	 * @since 1.0.0
@@ -1042,13 +964,13 @@ HTML;
 	}
 
 	/**
-	 * Optionally updates the Licenses submenu badge count if any of the products are unlicensed.
+	 * Optionally updates the Manage Your Kit submenu badge count if any of the products are unlicensed.
 	 *
-	 * @since 1.0.0
+	 * @since 1.2.0
 	 *
 	 * @return void
 	 */
-	public function update_submenu_badge_count() {
+	public function update_manage_your_kit_submenu_badge_count() {
 		if ( ! Framework::get_instance()->current_user_can( 'manage_licenses' ) ) {
 			return;
 		}
@@ -1064,7 +986,11 @@ HTML;
 		$update_count = 0;
 
 		foreach ( $products_data as $product ) {
-			if ( $product['active'] && empty( $product['licenses'] ) ) {
+			if ( $product['third_party'] || $product['hidden'] ) {
+				continue;
+			}
+
+			if ( $product['installed'] && ! $product['free'] && empty( $product['licenses'] ) ) {
 				$update_count++;
 			}
 		}

@@ -98,4 +98,12 @@ AND ANY CHANGES MADE HERE WILL BE OVERWRITTEN.
 			}
 	}
 
+/* Smart Payment Buttons: Conversational Form Overrides */
+
+.gform-theme--foundation .gform-conversational__field-form-footer .gform_ppcp_smart_payment_buttons {
+		inline-size: auto;
+		margin-block: 0;
+		margin-inline: 0;
+	}
+
 /*# sourceMappingURL=theme-foundation.css.map */

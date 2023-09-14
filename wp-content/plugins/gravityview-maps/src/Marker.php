@@ -114,7 +114,7 @@ class Marker {
 	/**
 	 * Gravity Forms address field object
 	 *
-	 * @deprecated TBD
+	 * @deprecated 2.2.1
 	 *
 	 * @var array
 	 */
@@ -139,19 +139,19 @@ class Marker {
 	 */
 	public function __construct( $__deprecated_one = null, $__deprecated_two = null, $__deprecated_three = null, $__deprecated_four = null ) {
 		if ( ! empty( $__deprecated_one ) ) {
-			_deprecated_argument( __METHOD__, 'TBD', '$entry was deprecated in please use the factory methods `from_address_field` and `from_coordinate_fields`' );
+			_deprecated_argument( __METHOD__, '2.2.1', '$entry was deprecated in please use the factory methods `from_address_field` and `from_coordinate_fields`' );
 		}
 
 		if ( ! empty( $__deprecated_two ) ) {
-			_deprecated_argument( __METHOD__, 'TBD', '$position_field was deprecated in please use the factory methods `from_address_field` and `from_coordinate_fields`' );
+			_deprecated_argument( __METHOD__, '2.2.1', '$position_field was deprecated in please use the factory methods `from_address_field` and `from_coordinate_fields`' );
 		}
 
 		if ( ! empty( $__deprecated_three ) ) {
-			_deprecated_argument( __METHOD__, 'TBD', '$icon was deprecated in please use the factory methods `from_address_field` and `from_coordinate_fields`' );
+			_deprecated_argument( __METHOD__, '2.2.1', '$icon was deprecated in please use the factory methods `from_address_field` and `from_coordinate_fields`' );
 		}
 
 		if ( ! empty( $__deprecated_four ) ) {
-			_deprecated_argument( __METHOD__, 'TBD', '$mode was deprecated in please use the factory methods `from_address_field` and `from_coordinate_fields`' );
+			_deprecated_argument( __METHOD__, '2.2.1', '$mode was deprecated in please use the factory methods `from_address_field` and `from_coordinate_fields`' );
 		}
 		// Here just to prevent backwards compatibility issues. No longer used.
 	}
@@ -455,7 +455,7 @@ class Marker {
 		 *
 		 * @since  1.0.4
 		 * @since  1.6
-		 * @since  TBD Pass $marker object as the fourth parameter.
+		 * @since  2.2.1 Pass $marker object as the fourth parameter.
 		 *
 		 * @param string           $address Address value.
 		 * @param array            $entry   Gravity Forms entry object.
@@ -497,7 +497,7 @@ class Marker {
 	 */
 	public function set_entry_url( $__deprecated = null ): void {
 		if ( ! empty( $__deprecated ) ) {
-			_deprecated_argument( __METHOD__, 'TBD', 'The entry url is now based on the current entry.' );
+			_deprecated_argument( __METHOD__, '2.2.1', 'The entry url is now based on the current entry.' );
 		}
 
 		if ( ! function_exists( 'gv_entry_link' ) ) {
@@ -510,7 +510,7 @@ class Marker {
 		 * @filter `gravityview/maps/marker/url` Filter the marker single entry view url
 		 *
 		 * @since  1.4
-		 * @since  TBD Added `$marker` parameter.
+		 * @since  2.2.1 Added `$marker` parameter.
 		 *
 		 * @param string $url    Single entry view url
 		 * @param array  $entry  Gravity Forms entry object
@@ -530,7 +530,7 @@ class Marker {
 	 * Return ID of the field that's used to generate the marker
 	 *
 	 * @since      1.6
-	 * @deprecated TBD Deprecated in favor of `get_id()`
+	 * @deprecated 2.2.1 Deprecated in favor of `get_id()`
 	 *
 	 * @return integer
 	 */
@@ -607,11 +607,11 @@ class Marker {
 	 */
 	protected function generate_address( $__deprecated_one = null, $__deprecated_two = null ): void {
 		if ( ! empty( $__deprecated_one ) ) {
-			_deprecated_argument( __METHOD__, 'TBD', '$entry was deprecated in please use the factory methods `from_address_field` and `from_coordinate_fields`' );
+			_deprecated_argument( __METHOD__, '2.2.1', '$entry was deprecated in please use the factory methods `from_address_field` and `from_coordinate_fields`' );
 		}
 
 		if ( ! empty( $__deprecated_two ) ) {
-			_deprecated_argument( __METHOD__, 'TBD', '$position_field was deprecated in please use the factory methods `from_address_field` and `from_coordinate_fields`' );
+			_deprecated_argument( __METHOD__, '2.2.1', '$position_field was deprecated in please use the factory methods `from_address_field` and `from_coordinate_fields`' );
 		}
 
 		$entry = $this->get_entry();
@@ -690,11 +690,11 @@ class Marker {
 	 */
 	protected function generate_position_from_address( $__deprecated_one = null, $__deprecated_two = null ): void {
 		if ( ! empty( $__deprecated_one ) ) {
-			_deprecated_argument( __METHOD__, 'TBD', '$entry was deprecated in please use the factory methods `from_address_field` and `from_coordinate_fields`' );
+			_deprecated_argument( __METHOD__, '2.2.1', '$entry was deprecated in please use the factory methods `from_address_field` and `from_coordinate_fields`' );
 		}
 
 		if ( ! empty( $__deprecated_two ) ) {
-			_deprecated_argument( __METHOD__, 'TBD', '$field was deprecated in please use the factory methods `from_address_field` and `from_coordinate_fields`' );
+			_deprecated_argument( __METHOD__, '2.2.1', '$field was deprecated in please use the factory methods `from_address_field` and `from_coordinate_fields`' );
 		}
 
 		$entry   = $this->get_entry();
@@ -763,11 +763,11 @@ class Marker {
 	 */
 	protected function generate_position_from_coordinates( $__deprecated_one = null, $__deprecated_two = null ): void {
 		if ( ! empty( $__deprecated_one ) ) {
-			_deprecated_argument( __METHOD__, 'TBD', '$entry was deprecated in please use the factory methods `from_address_field` and `from_coordinate_fields`' );
+			_deprecated_argument( __METHOD__, '2.2.1', '$entry was deprecated in please use the factory methods `from_address_field` and `from_coordinate_fields`' );
 		}
 
 		if ( ! empty( $__deprecated_two ) ) {
-			_deprecated_argument( __METHOD__, 'TBD', '$field was deprecated in please use the factory methods `from_address_field` and `from_coordinate_fields`' );
+			_deprecated_argument( __METHOD__, '2.2.1', '$field was deprecated in please use the factory methods `from_address_field` and `from_coordinate_fields`' );
 		}
 
 		$this->position = [

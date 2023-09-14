@@ -5,7 +5,7 @@ namespace GravityKit\GravityView\Foundation\ThirdParty\Illuminate\Support;
 /**
  * @license MIT
  *
- * Modified by gravityview on 21-July-2023 using Strauss.
+ * Modified by gravityview on 07-September-2023 using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 

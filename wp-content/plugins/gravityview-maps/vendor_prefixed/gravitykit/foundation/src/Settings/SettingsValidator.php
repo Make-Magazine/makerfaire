@@ -12,8 +12,9 @@ use GravityKit\GravityMaps\Foundation\Helpers\Core as CoreHelpers;
 use GravityKit\GravityMaps\Foundation\ThirdParty\Illuminate\Validation;
 use GravityKit\GravityMaps\Foundation\ThirdParty\Illuminate\Filesystem;
 use GravityKit\GravityMaps\Foundation\ThirdParty\Illuminate\Translation;
+use Exception;
 
-class ValidatorException extends \Exception { }
+class ValidatorException extends Exception { }
 
 class SettingsValidator {
 	/**
@@ -82,7 +83,7 @@ class SettingsValidator {
 			if ( ! is_array( $parameters ) ) {
 				return false;
 			}
-			
+
 
 			return in_array( $parameters[0], $value );
 		} );
@@ -119,7 +120,7 @@ class SettingsValidator {
 			if ( ! $validator->fails() ) {
 				return true;
 			}
-		} catch ( \Exception $e ) {
+		} catch ( Exception $e ) {
 			throw new ValidatorException( $e->getMessage() );
 		}
 

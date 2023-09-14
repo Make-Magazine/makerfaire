@@ -15,6 +15,9 @@
 	text-decoration: underline;
 }
 
-.gform-theme--framework .gf_step_number {
-	margin-right: var(--gform-theme-field-page-steps-step-gap);
+.gform-theme--framework .gpmpn-step-linked a {
+	align-items: center;
+	display: flex;
+	gap: var(--gform-theme-field-page-steps-step-gap);
+	position: relative;
 }

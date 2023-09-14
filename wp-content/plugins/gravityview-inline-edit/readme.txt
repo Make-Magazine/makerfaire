@@ -1,7 +1,7 @@
 === GravityEdit ===
 Tags: gravity forms, inline edit, gravityview
-Requires at least: 4.4
-Tested up to: 6.2
+Requires at least: 5.1
+Tested up to: 6.3
 Contributors: The GravityKit Team
 License: GPL 2
 Requires PHP: 7.2.0
@@ -10,7 +10,7 @@ Easily edit your Gravity Forms field values without having to go to the Edit Ent
 
 == Description ==
 
-Inline Editing is a powerful way to quickly make changes to a form entry without needing to enter an Edit Entry form individually. [Learn more about the plugin](https://www.gravitykit.com/extensions/gravityview-inline-edit/).
+Inline Editing is a powerful way to quickly make changes to a form entry without needing to enter an Edit Entry form individually. [Learn more about the plugin](https://www.gravitykit.com/products/gravityview-inline-edit/).
 
 == Installation ==
 
@@ -19,6 +19,11 @@ Inline Editing is a powerful way to quickly make changes to a form entry without
 3. Set your license key
 
 == Changelog ==
+
+= 2.0.2 on September 7, 2023 =
+
+* Improved: Support for RTL languages
+* Updated: [Foundation](https://www.gravitykit.com/foundation/) to version 1.2.2
 
 = 2.0.1 on July 12, 2023 =
 
@@ -130,8 +135,8 @@ __Developer Updates:__
 
 = 1.5 on January 26, 2022 =
 
-* Added: GravityView field setting to disable Inline Edit for a field ([read how set this up](https://docs.gravityview.co/article/826-how-to-enable-or-disable-inline-edit-per-field))
-* Added: Support for creating entry revisions after each edit (requires the [Gravity Forms Entry Revisions](https://gravityview.co/extensions/entry-revisions/) add-on Version 1.1 or newer)
+* Added: GravityView field setting to disable Inline Edit for a field ([read how set this up](https://docs.gravitykit.com/article/826-how-to-enable-or-disable-inline-edit-per-field))
+* Added: Support for creating entry revisions after each edit (requires the [Gravity Forms Entry Revisions](https://www.gravitykit.com/products/entry-revisions/) add-on Version 1.1 or newer)
 * Improved: Made the input sizes larger when using "Popup" Inline Edit Mode
 * Improved: Display of Inline Edit settings in Gravity Forms 2.5+
 * Updated: Polish translation (thanks, Dariusz!) and German translation (thanks, Michael!)
@@ -214,11 +219,11 @@ __Developer Updates:__
 * Fixed: Certain field types not working when using Inline Edit with GravityView DataTables layout
 * Improved: Reduced number of calls to the database
 * Improved: Always show when an update is available, even if the license is not entered
-* Translated into Polish by [@dariusz.zielonka](https://www.transifex.com/user/profile/dariusz.zielonka/)
+* Translated into Polish by @dariusz.zielonka
 
 = 1.3 on July 3, 2018 =
 
-* Added: Support for using Inline Edit with [GravityView DataTables](https://gravityview.co/extensions/datatables/)! Requires Version 2.3+ of the DataTables extension.
+* Added: Support for using Inline Edit with [GravityView DataTables](https://www.gravitykit.com/products/datatables/)! Requires Version 2.3+ of the DataTables extension.
 
 __Developer Updates:__
 
@@ -299,7 +304,7 @@ __Developer Updates:__
 
 = 1.0.3 on July 18, 2017 =
 
-* Fixed: [Gravity Forms Import Entries plugin](https://gravityview.co/extensions/gravity-forms-entry-importer/) not able to upload files when active
+* Fixed: [Gravity Forms Import Entries plugin](https://www.gravitykit.com/products/gravity-forms-entry-importer/) not able to upload files when active
 
 = 1.0.2 on July 18, 2017 =
 
@@ -315,4 +320,4 @@ __Developer Updates:__
 - Blastoff!
 
 
-= 1690335083-4249 =
+= 1694710152-4249 =

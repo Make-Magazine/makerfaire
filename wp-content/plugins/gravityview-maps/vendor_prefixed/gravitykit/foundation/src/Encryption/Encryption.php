@@ -40,8 +40,10 @@ class Encryption {
 	 * @return void
 	 */
 	private function __construct( $secret_key = '' ) {
+		$this->require_sodium();
+
 		if ( ! $secret_key ) {
-			$secret_key = wp_salt();
+			$secret_key = defined( 'GRAVITYKIT_SECRET_KEY' ) ? GRAVITYKIT_SECRET_KEY : wp_salt();
 		}
 
 		if ( strlen( $secret_key ) < SODIUM_CRYPTO_SECRETBOX_KEYBYTES ) {
@@ -83,12 +85,12 @@ class Encryption {
 	 * @param bool        $use_random_nonce (optional) Whether to use random nonce. Default: true.
 	 * @param string|null $custom_nonce     (optional) Custom IV value to use. Default: null.
 	 *
-	 * @return false|mixed|string
+	 * @return false|string
 	 */
 	public function encrypt( $data, $use_random_nonce = true, $custom_nonce = null ) {
 		try {
 			if ( ! $use_random_nonce ) {
-				$nonce = $custom_nonce ? $custom_nonce : sodium_hex2bin( self::DEFAULT_NONCE );
+				$nonce = $custom_nonce ?: sodium_hex2bin( self::DEFAULT_NONCE );
 			} else {
 				$nonce = $this->get_random_nonce();
 			}
@@ -139,12 +141,12 @@ class Encryption {
 		$encrypted = mb_substr( $encrypted, SODIUM_CRYPTO_SECRETBOX_NONCEBYTES, null, '8bit' );
 
 		try {
-			$decrypted = sodium_crypto_secretbox_open( $encrypted, $nonce, $this->_secret_key );
+			$decrypted = sodium_crypto_secretbox_open( $encrypted, $nonce, $this->_secret_key ) ?? null;
 		} catch ( Exception $e ) {
 			return null;
 		}
 
-		return $decrypted !== false ? $decrypted : null;
+		return $decrypted;
 	}
 
 	/**
@@ -173,5 +175,30 @@ class Encryption {
 	 */
 	public function get_random_nonce() {
 		return random_bytes( SODIUM_CRYPTO_SECRETBOX_NONCEBYTES );
+	}
+
+	/**
+	 * Includes PHP polyfill for ext/sodium if some core functions are not available.
+	 *
+	 * @since 1.1.1
+	 *
+	 * @return void
+	 */
+	private function require_sodium() {
+		$required_functions = [
+			'sodium_hex2bin',
+			'sodium_bin2base64',
+			'sodium_base642bin',
+			'sodium_crypto_secretbox',
+			'sodium_crypto_secretbox_open',
+		];
+
+		foreach ( $required_functions as $function ) {
+			if ( ! function_exists( $function ) ) {
+				require_once ABSPATH . WPINC . '/sodium_compat/autoload.php';
+
+				break;
+			}
+		}
 	}
 }

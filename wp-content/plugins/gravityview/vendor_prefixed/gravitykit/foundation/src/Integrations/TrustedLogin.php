@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by gravityview on 21-July-2023 using Strauss.
+ * Modified by gravityview on 07-September-2023 using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 
@@ -103,19 +103,20 @@ class TrustedLogin {
 	 * @return void
 	 */
 	public function add_gk_submenu_item() {
-		$tl_config = new TrustedLoginConfig( $this->get_config() );
+		$tl_config  = new TrustedLoginConfig( $this->get_config() );
 		$tl_logging = new TrustedLoginLogging( $tl_config );
-		$tl_form   = new TrustedLoginForm( $tl_config, $tl_logging, new TrustedLoginSupportUser( $tl_config, $tl_logging ), new TrustedLoginSiteAccess( $tl_config, $tl_logging ) );
+		$tl_form    = new TrustedLoginForm( $tl_config, $tl_logging, new TrustedLoginSupportUser( $tl_config, $tl_logging ), new TrustedLoginSiteAccess( $tl_config, $tl_logging ) );
 
 		$page_title = $menu_title = esc_html__( 'Grant Support Access', 'gk-gravityview' );
 
 		AdminMenu::add_submenu_item( [
-			'page_title' => $page_title,
-			'menu_title' => $menu_title,
-			'capability' => $this->_capability,
-			'id'         => self::ID,
-			'callback'   => [ $tl_form, 'print_auth_screen' ],
-			'order'      => 1,
+			'page_title'         => $page_title,
+			'menu_title'         => $menu_title,
+			'capability'         => $this->_capability,
+			'id'                 => self::ID,
+			'callback'           => [ $tl_form, 'print_auth_screen' ],
+			'order'              => 1,
+			'hide_admin_notices' => true,
 		], 'bottom' );
 	}
 
@@ -192,7 +193,7 @@ class TrustedLogin {
 
 		foreach ( $license_manager->get_licenses_data() as $license_data ) {
 			if ( Arr::get( $license_data, 'products' ) && ! $license_manager->is_expired_license( Arr::get( $license_data, 'expiry' ) ) ) {
-				Arr::set( $config, 'auth.license_key', Arr::get( $license_data, 'key' ));
+				Arr::set( $config, 'auth.license_key', Arr::get( $license_data, 'key' ) );
 
 				break;
 			}

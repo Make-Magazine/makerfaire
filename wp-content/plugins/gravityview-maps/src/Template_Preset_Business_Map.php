@@ -2,6 +2,11 @@
 
 namespace GravityKit\GravityMaps;
 
+// When GravityView is enabled but not active due to version mismatch, the class will not exist.
+if ( ! class_exists( '\GravityKit\GravityMaps\Template_Map_Default' ) ) {
+	return;
+}
+
 /**
  * Defines default (list) template for the Business Map View
  */

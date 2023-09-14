@@ -85,6 +85,7 @@
 						.find('a').remove();
 
 					$( this ).addClass( 'gpmpn-step-current' );
+					$( this ).addClass( 'gf_step_active' );
 				}
 
 			} );

@@ -1,6 +1,14 @@
 
 # Changelog
 
+## 1.9.23
+
+	- Fixed PHP 8.2 warnings.
+
+## 1.9.22
+
+	- Fixed an issue where session values would be preferred over Easy Passthrough tokens passed using `ep_token`.
+
 ## 1.9.21
 
 	- Fixed PHP 8.1 deprecation notices.

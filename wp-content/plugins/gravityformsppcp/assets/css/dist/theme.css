@@ -44,7 +44,7 @@ AND ANY CHANGES MADE HERE WILL BE OVERWRITTEN.
 			vertical-align: top;
 		}
 .gform_wrapper.gravity-theme .gform_previous_button, .gform_wrapper.gform_legacy_markup_wrapper .gform_previous_button {
-		height: 0%;
+		height: 0.00001%;
 	}
 .gform_wrapper.gravity-theme .gform_footer .gform_ppcp_smart_payment_buttons, .gform_wrapper.gform_legacy_markup_wrapper .gform_footer .gform_ppcp_smart_payment_buttons {
 		margin-right: 16px;

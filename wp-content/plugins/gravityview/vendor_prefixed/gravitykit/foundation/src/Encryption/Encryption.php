@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by gravityview on 21-July-2023 using Strauss.
+ * Modified by gravityview on 07-September-2023 using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 
@@ -43,7 +43,7 @@ class Encryption {
 		$this->require_sodium();
 
 		if ( ! $secret_key ) {
-			$secret_key = wp_salt();
+			$secret_key = defined( 'GRAVITYKIT_SECRET_KEY' ) ? GRAVITYKIT_SECRET_KEY : wp_salt();
 		}
 
 		if ( strlen( $secret_key ) < SODIUM_CRYPTO_SECRETBOX_KEYBYTES ) {
@@ -85,12 +85,12 @@ class Encryption {
 	 * @param bool        $use_random_nonce (optional) Whether to use random nonce. Default: true.
 	 * @param string|null $custom_nonce     (optional) Custom IV value to use. Default: null.
 	 *
-	 * @return false|mixed|string
+	 * @return false|string
 	 */
 	public function encrypt( $data, $use_random_nonce = true, $custom_nonce = null ) {
 		try {
 			if ( ! $use_random_nonce ) {
-				$nonce = $custom_nonce ? $custom_nonce : sodium_hex2bin( self::DEFAULT_NONCE );
+				$nonce = $custom_nonce ?: sodium_hex2bin( self::DEFAULT_NONCE );
 			} else {
 				$nonce = $this->get_random_nonce();
 			}
@@ -141,12 +141,12 @@ class Encryption {
 		$encrypted = mb_substr( $encrypted, SODIUM_CRYPTO_SECRETBOX_NONCEBYTES, null, '8bit' );
 
 		try {
-			$decrypted = sodium_crypto_secretbox_open( $encrypted, $nonce, $this->_secret_key );
+			$decrypted = sodium_crypto_secretbox_open( $encrypted, $nonce, $this->_secret_key ) ?? null;
 		} catch ( Exception $e ) {
 			return null;
 		}
 
-		return $decrypted !== false ? $decrypted : null;
+		return $decrypted;
 	}
 
 	/**

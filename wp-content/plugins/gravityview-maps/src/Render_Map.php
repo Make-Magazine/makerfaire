@@ -87,7 +87,7 @@ class Render_Map extends Component {
 
 		add_action( 'gravityview_after', [ $this, 'localize_javascript' ], 100, 1 );
 
-		add_filter( 'gravityview/template/text/no_entries', [ $this, 'include_map_no_results' ], 20 );
+		add_filter( 'gravityview/template/text/no_entries', [ $this, 'include_map_no_results' ], 20, 3 );
 
 		add_filter( 'gravityview/widgets/wrapper_css_class', [ $this, 'add_widget_wrapper_search_css_class' ], 10, 2 );
 	}
@@ -97,12 +97,31 @@ class Render_Map extends Component {
 	 *
 	 * @since 2.0
 	 *
-	 * @param $html
+	 * @param string $html
+	 * @param bool $is_search
+	 * @param \GV\Template_Context|null $context
 	 *
 	 * @return string
 	 */
-	public function include_map_no_results( $html ) {
+	public function include_map_no_results( $html, $is_search, $context = null ) {
+
+		if ( null === $context ) {
+			// First, test if it's legacy.
+			$gravityview = \GravityView_View::getInstance();
+			if ( ! empty( $gravityview->template_part_slug ) && 'map' !== $gravityview->template_part_slug ) {
+				return $html;
+			}
+		} elseif ( ! $context instanceof \GV\Template_Context ) {
+			// Sanity check: should only be null or context.
+			return $html;
+		} elseif ( isset( $context->template::$slug ) && 'map' !== $context->template::$slug ) {
+			// Not a map layout.
+			return $html;
+		}
+
 		ob_start();
+
+		$this->render_map_div( null, $context );
 		$map_html = ob_get_clean();
 
 		return $map_html . $html;
@@ -479,6 +498,10 @@ class Render_Map extends Component {
 		if ( $is_multi_entry_map ) {
 			$markers       = $this->get_marker_array( GravityView_View::getInstance() );
 			$map_css_class .= ' gk-multi-entry-map';
+
+			if ( empty( $markers ) ) {
+				$map_css_class .= ' gk-no-markers';
+			}
 		} else {
 			$markers = Data::get_instance()->get_markers_by_entry( $entry_id );
 			$markers = array_values( array_map( static function ( $marker ) {

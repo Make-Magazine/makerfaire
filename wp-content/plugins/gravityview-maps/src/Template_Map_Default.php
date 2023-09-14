@@ -4,6 +4,11 @@ namespace GravityKit\GravityMaps;
 
 use GravityView_Template;
 
+// When GravityView is enabled but not active due to version mismatch, the class will not exist.
+if ( ! class_exists( 'GravityView_Template' ) ) {
+	return;
+}
+
 /**
  * Defines default (list) template for the Map View
  */

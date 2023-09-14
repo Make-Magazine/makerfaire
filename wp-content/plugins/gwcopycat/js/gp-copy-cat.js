@@ -388,8 +388,8 @@
 							hasValue = $targetElem.val();
 						}
 
-						// if overwrite is false and a value exists, skip
-						if ( ! isOverwrite && hasValue) {
+						// if overwrite is false and a value exists (except for the select field), skip
+						if ( ! isOverwrite && hasValue && ! $( elem ).is( 'select' ) ) {
 							return true;
 						}
 
@@ -492,9 +492,9 @@
 
 						// Copy Cat for Inline Date Picker
 						if ( $( $targetElem[0] ).hasClass( 'has-inline-datepicker' ) ) {
-							var targetFieldId = $targetElem[0].id.split('_').pop();
+							var targetDatepickerFieldId = $targetElem[0].id.split('_').pop();
 							var formId = self.formId;
-							$( '#datepicker_' + formId + '_' + targetFieldId ).datepicker( "setDate", value );
+							$( '#datepicker_' + formId + '_' + targetDatepickerFieldId ).datepicker( "setDate", value );
 						}
 
 						// Only append gpcc-populated classes when an actual value has been copied
@@ -710,6 +710,9 @@
 				group = group.filter( ':checked' );
 			}
 
+			if (groupType == 'source' && group.is( 'select' ) && ! group.parents().hasClass('ginput_container_address')) {
+				group = group.find( ':selected' );
+			}
 			/**
 			 * Add/remove inputs from the field group.
 			 *

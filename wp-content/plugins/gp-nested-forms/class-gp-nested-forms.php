@@ -1132,8 +1132,16 @@ class GP_Nested_Forms extends GP_Plugin {
 		}
 
 		$markup = trim( ob_get_clean() );
-		wp_send_json( $markup );
 
+		/**
+		 * This previously just use to send the string using wp_send_json(), but when used with Weglot Translate, the
+		 * JSON string was malformed.
+		 *
+		 * Sending an object resolves the issue.
+		 */
+		wp_send_json( array(
+			'formHtml' => $markup,
+		) );
 	}
 
 	public function ajax_refresh_markup() {
@@ -1201,7 +1209,16 @@ class GP_Nested_Forms extends GP_Plugin {
 		$this->unload_nested_form_hooks( '', $nested_form_id );
 
 		$markup = trim( ob_get_clean() );
-		wp_send_json( $markup );
+
+		/**
+		 * This previously just use to send the string using wp_send_json(), but when used with Weglot Translate, the
+		 * JSON string was malformed.
+		 *
+		 * Sending an object resolves the issue.
+		 */
+		wp_send_json( array(
+			'formHtml' => $markup,
+		) );
 
 	}
 
@@ -2208,10 +2225,10 @@ class GP_Nested_Forms extends GP_Plugin {
 			$entries        = $this->get_submitted_nested_entries( $form, $field->id );
 			$primary_color  = $field->gpnfModalHeaderColor ? $field->gpnfModalHeaderColor : '#3498db';
 
-			$ajax_context = array();
-			if ( get_queried_object_id() ) {
-				$ajax_context['post_id'] = get_queried_object_id();
-			}
+			$ajax_context = array(
+				'post_id' => get_queried_object_id(),
+				'path'    => GPNF_Session::get_session_path(),
+			);
 
 			$args = array(
 				'formId'              => $form['id'],
@@ -2563,7 +2580,7 @@ class GP_Nested_Forms extends GP_Plugin {
 		}
 
 		$incomplete_submission_info = GFFormsModel::get_draft_submission_values( $this->get_save_and_continue_token( $form['id'] ) );
-		if ( $incomplete_submission_info['form_id'] != $form['id'] ) {
+		if ( empty( $incomplete_submission_info ) || $incomplete_submission_info['form_id'] != $form['id'] ) {
 			return array();
 		}
 

@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by __root__ on 12-July-2023 using Strauss.
+ * Modified by __root__ on 07-September-2023 using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 
@@ -72,7 +72,7 @@ function is_disabled_via_url( $plugin_file ) {
 		return $_is_disabled( $_COOKIE[ $cookie ] );
 	}
 
-	$disable_loading = isset( $_GET['gk_disable_loading'] ) ? $_GET['gk_disable_loading'] : null; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+	$disable_loading = $_GET['gk_disable_loading'] ?? null; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 
 	if ( is_null( $disable_loading ) ) {
 		return false;

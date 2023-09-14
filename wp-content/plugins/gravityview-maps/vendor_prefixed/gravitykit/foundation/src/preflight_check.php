@@ -72,7 +72,7 @@ function is_disabled_via_url( $plugin_file ) {
 		return $_is_disabled( $_COOKIE[ $cookie ] );
 	}
 
-	$disable_loading = isset( $_GET['gk_disable_loading'] ) ? $_GET['gk_disable_loading'] : null; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+	$disable_loading = $_GET['gk_disable_loading'] ?? null; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 
 	if ( is_null( $disable_loading ) ) {
 		return false;

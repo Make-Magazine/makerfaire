@@ -354,12 +354,15 @@ class Framework {
 		$page_title = $menu_title = esc_html__( 'Settings', 'gk-gravitymaps' );
 
 		AdminMenu::add_submenu_item( [
-			'page_title' => $page_title,
-			'menu_title' => $menu_title,
-			'capability' => $this->_capability,
-			'id'         => self::ID,
-			'callback'   => '__return_false', // Content will be injected into #wpbody by gk-setting.js (see /UI/Settings/src/main-prod.js)
-			'order'      => 2,
+			'page_title'         => $page_title,
+			'menu_title'         => $menu_title,
+			'capability'         => $this->_capability,
+			'id'                 => self::ID,
+			'callback'           => function () {
+				// Settings data will be injected into #wpbody by gk-setting.js (see /UI/Settings/src/main-prod.js)
+			},
+			'order'              => 2,
+			'hide_admin_notices' => true,
 		], 'top' );
 	}
 
@@ -411,7 +414,7 @@ class Framework {
 			return;
 		}
 
-		if ( !$this->is_settings_page() ) {
+		if ( ! $this->is_settings_page() ) {
 			return;
 		}
 
@@ -435,8 +438,9 @@ class Framework {
 
 		$script_data = array_merge(
 			[
-				'config'  => $config,
-				'plugins' => array_values( $plugins_data ),
+				'config'                => $config,
+				'plugins'               => array_values( $plugins_data ),
+				'languageDirection'     => is_rtl() ? 'rtl' : 'ltr',
 			],
 			FoundationCore::ajax_router()->get_ajax_params( self::AJAX_ROUTER )
 		);
@@ -475,10 +479,10 @@ class Framework {
 				}
 
 				wp_enqueue_script(
-					self::ID . '-' . md5( Arr::get( $script, 'file' ), '' ),
+					self::ID . '-' . md5( $script['file'] ),
 					plugin_dir_url( $script['file'] ) . basename( $script['file'] ),
 					Arr::get( $script, 'deps', [] ),
-					filemtime( Arr::get( $script, 'file' ) )
+					filemtime( $script['file'] )
 				);
 			}
 			foreach ( $styles as $style ) {
@@ -487,10 +491,10 @@ class Framework {
 				}
 
 				wp_enqueue_style(
-					self::ID . '-' . md5( Arr::get( $style, 'file' ), '' ),
+					self::ID . '-' . md5( $style['file'] ),
 					plugin_dir_url( $style['file'] ) . basename( $style['file'] ),
 					Arr::get( $style, 'deps', [] ),
-					filemtime( Arr::get( $style, 'file' ) )
+					filemtime( $style['file'] )
 				);
 			}
 
@@ -501,10 +505,9 @@ class Framework {
 		wp_deregister_style( 'forms' );
 		wp_register_style( 'forms', false );
 
-		// Load UI translations using the text domain of the plugin that instantiated Foundation.
-		$registered_plugins            = FoundationCore::get_instance()->get_registered_plugins();
-		$foundation_source_plugin_data = CoreHelpers::get_plugin_data( $registered_plugins['foundation_source'] );
-		TranslationsFramework::get_instance()->load_frontend_translations( $foundation_source_plugin_data['TextDomain'], '', 'gk-foundation' );
+		// Load UI translations using the text domain of the product that instantiated Foundation.
+		$foundation_information = FoundationCore::get_instance()->get_foundation_information();
+		TranslationsFramework::get_instance()->load_frontend_translations( $foundation_information['source_plugin']['TextDomain'], '', 'gk-foundation' );
 	}
 
 	/**
@@ -547,7 +550,7 @@ class Framework {
 				throw new ValidatorException( esc_html__( 'Plugin settings data not found.', 'gk-gravitymaps' ) );
 			}
 
-			foreach ( $ui_settings as $id => $value ) {
+			foreach ( $ui_settings as $value ) {
 				$ui_settings['id'] = sanitize_text_field( $value );
 			}
 
@@ -635,7 +638,7 @@ class Framework {
 
 		foreach ( $requirements as $requirement ) {
 			$required_value = $requirement['value'];
-			$setting_value  = isset( $settings[ $requirement['id'] ] ) ? $settings[ $requirement['id'] ] : null;
+			$setting_value  = $settings[ $requirement['id'] ] ?? null;
 			$operator       = $requirement['operator'];
 
 			if ( ! Helpers::compare_values( $required_value, $setting_value, $operator ) ) {

@@ -124,7 +124,7 @@ class Framework implements LoggerInterface {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param string $logger_id    (optional) Unique logger identifier that's prefixed to each log entry or used with some handlers.. Default: gravitykit.
+	 * @param string $logger_id    (optional) Unique logger identifier that's prefixed to each log entry or used with some handlers. Default: gravitykit.
 	 * @param string $logger_title (optional) Logger title (used in the admin UI). Default: GravityKit.
 	 *
 	 * @return Framework
@@ -346,7 +346,7 @@ HTML;
 				'id'          => 'logger_type',
 				'type'        => 'select',
 				'title'       => esc_html__( 'Log Type', 'gk-gravitymaps' ),
-				'description' => esc_html__( 'Where to store log output', 'gk-gravitymaps' ),
+				'description' => esc_html__( 'Where to store log output.', 'gk-gravitymaps' ),
 				'value'       => $logger_type,
 				'choices'     => [
 					[

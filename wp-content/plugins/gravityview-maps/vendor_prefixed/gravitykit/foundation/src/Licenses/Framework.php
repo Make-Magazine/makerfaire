@@ -14,6 +14,8 @@ use GravityKit\GravityMaps\Foundation\WP\AdminMenu;
 use GravityKit\GravityMaps\Foundation\Translations\Framework as TranslationsFramework;
 use GravityKit\GravityMaps\Foundation\Logger\Framework as LoggerFramework;
 use GravityKit\GravityMaps\Foundation\Helpers\Core as CoreHelpers;
+use GravityKit\GravityMaps\Foundation\Licenses\WP\PluginsPage;
+use GravityKit\GravityMaps\Foundation\Licenses\WP\UpdatesPage;
 
 class Framework {
 	const ID = 'gk_licenses';
@@ -68,10 +70,18 @@ class Framework {
 				( ! is_super_admin() && current_user_can( 'gk_foundation_install_products' ) ) ||
 				( ! is_multisite() && current_user_can( 'install_plugins' ) ) ||
 				( is_multisite() && current_user_can( 'manage_network_plugins' ) && CoreHelpers::is_network_admin() ),
+			'update_products'     =>
+				( ! is_super_admin() && current_user_can( 'gk_foundation_update_products' ) ) ||
+				( ! is_multisite() && current_user_can( 'update_plugins' ) ) ||
+				( is_multisite() && current_user_can( 'manage_network_plugins' ) && CoreHelpers::is_network_admin() ),
 			'activate_products'   =>
 				( ! is_super_admin() && current_user_can( 'gk_foundation_activate_products' ) ) ||
 				( ! is_multisite() && current_user_can( 'activate_plugins' ) ) ||
 				( is_multisite() && ( current_user_can( 'activate_plugins' ) || current_user_can( 'manage_network_plugins' ) ) ),
+			'delete_products'     =>
+				( ! is_super_admin() && current_user_can( 'gk_foundation_delete_products' ) ) ||
+				( ! is_multisite() && current_user_can( 'delete_plugins' ) ) ||
+				( is_multisite() && current_user_can( 'manage_network_plugins' ) && CoreHelpers::is_network_admin() ),
 			'deactivate_products' =>
 				( ! is_super_admin() && current_user_can( 'gk_foundation_deactivate_products' ) ) ||
 				( ! is_multisite() && current_user_can( 'install_plugins' ) ) ||
@@ -111,13 +121,18 @@ class Framework {
 	 * @return void
 	 */
 	public function init() {
+		if ( did_action( 'gk/foundation/licenses/initialized' ) ) {
+			return;
+		}
+
+		if ( ! is_admin() ) {
+			return;
+		}
+
 		if ( ! $this->current_user_can( 'view_licenses' ) && ! $this->current_user_can( 'view_products' ) ) {
 			return;
 		}
 
-		if ( ! is_admin() || did_action( 'gk/foundation/licenses/initialized' ) ) {
-			return;
-		}
 
 		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_assets' ] );
 
@@ -130,6 +145,9 @@ class Framework {
 		$this->_license_manager->init();
 
 		EDD::get_instance()->init();
+		ProductHistoryManager::get_instance()->init();
+		PluginsPage::get_instance()->init();
+		UpdatesPage::get_instance()->init();
 
 		$this->add_gk_submenu_item();
 
@@ -169,7 +187,7 @@ class Framework {
 	 *
 	 * @throws Exception
 	 *
-	 * @return array
+	 * @return array{products:array,licenses:array}
 	 */
 	public function ajax_get_app_data( array $payload ) {
 		$payload = wp_parse_args( $payload, [
@@ -182,14 +200,25 @@ class Framework {
 			throw new Exception( esc_html__( 'You do not have permission to view this page.', 'gk-gravitymaps' ) );
 		}
 
-		// When skipping cache, we need to first refresh licenses and then products since the products data depends on the licenses data.
+		// When skipping cache, we need to first refresh licenses and then products since the products data depends on the licenses' data.
 		if ( $this->current_user_can( 'view_licenses' ) ) {
-			$response['licenses'] = LicenseManager::get_instance()->ajax_get_licenses_data( $payload );
+			$licenses_payload = $payload;
+
+			$response['licenses'] = [
+				'licenses' => $this->_license_manager->ajax_get_licenses_data( $licenses_payload ),
+				'meta'     => [
+					'is_decryptable' => $this->_license_manager->is_decryptable,
+				],
+			];
 		}
 
 		if ( $this->current_user_can( 'view_products' ) ) {
+			$products_payload = array_merge( $payload, [ 'skip_remote_cache' => $payload['skip_cache'] ] );
+
+			unset( $products_payload['skip_cache'] );
+
 			try {
-				$response['products'] = ProductManager::get_instance()->ajax_get_products_data( $payload );
+				$response['products'] = $this->_product_manager->ajax_get_products_data( $products_payload );
 			} catch ( Exception $e ) {
 				throw new Exception( $e->getMessage() );
 			}
@@ -222,12 +251,15 @@ class Framework {
 	 */
 	public function add_gk_submenu_item() {
 		AdminMenu::add_submenu_item( [
-			'page_title' => $this->get_framework_title(),
-			'menu_title' => $this->get_framework_title(),
-			'capability' => 'manage_options',
-			'id'         => self::ID,
-			'callback'   => '__return_false', // Content will be injected into #wpbody by gk-licenses.js (see /UI/Licenses/src/main-prod.js)
-			'order'      => 1,
+			'page_title'         => $this->get_framework_title(),
+			'menu_title'         => $this->get_framework_title(),
+			'capability'         => 'manage_options',
+			'id'                 => self::ID,
+			'callback'           => function () {
+				// Settings data will be injected into #wpbody by gk-setting.js (see /UI/Settings/src/main-prod.js)
+			},
+			'order'              => 1,
+			'hide_admin_notices' => true,
 		], 'top' );
 	}
 
@@ -267,16 +299,29 @@ class Framework {
 
 		$script_data = array_merge(
 			[
-				'appTitle'       => $this->get_framework_title(),
-				'isNetworkAdmin' => CoreHelpers::is_network_admin(),
-				'permissions'    => $this->_permissions,
+				'appTitle'                  => $this->get_framework_title(),
+				'isNetworkAdmin'            => CoreHelpers::is_network_admin(),
+				'permissions'               => $this->_permissions,
+				'frontendFoundationVersion' => FoundationCore::VERSION,
+				'backendFoundationVersion'  => FoundationCore::VERSION,
+				'pluginsPageUrl'            => CoreHelpers::is_network_admin() ? network_admin_url( 'plugins.php' ) : admin_url( 'plugins.php' ),
+				'languageDirection'         => is_rtl() ? 'rtl' : 'ltr',
 			],
 			FoundationCore::ajax_router()->get_ajax_params( self::AJAX_ROUTER )
 		);
 
-		if ( $this->_permissions['view_licenses'] ) {
-			$script_data['licensesData'] = LicenseManager::get_instance()->ajax_get_licenses_data( [] );
+		$app_data = [
+			'products' => [],
+			'licenses' => [],
+		];
+
+		try {
+			$app_data = $this->ajax_get_app_data( [] );
+		} catch ( Exception $e ) {
+			// No need to handle the error here.
 		}
+
+		$script_data = array_merge( $script_data, $app_data );
 
 		wp_localize_script(
 			self::ID,
@@ -295,10 +340,9 @@ class Framework {
 		wp_deregister_style( 'forms' );
 		wp_register_style( 'forms', false );
 
-		// Load UI translations using the text domain of the plugin that instantiated Foundation.
-		$registered_plugins            = FoundationCore::get_instance()->get_registered_plugins();
-		$foundation_source_plugin_data = CoreHelpers::get_plugin_data( $registered_plugins['foundation_source'] );
-		TranslationsFramework::get_instance()->load_frontend_translations( $foundation_source_plugin_data['TextDomain'], '', 'gk-foundation' );
+		// Load UI translations using the text domain of the product that instantiated Foundation.
+		$foundation_information = FoundationCore::get_instance()->get_foundation_information();
+		TranslationsFramework::get_instance()->load_frontend_translations( $foundation_information['source_plugin']['TextDomain'], '', 'gk-foundation' );
 	}
 
 	/**
@@ -309,7 +353,11 @@ class Framework {
 	 * @return bool
 	 */
 	function current_user_can( $permission ) {
-		return isset( $this->_permissions[ $permission ] ) ? $this->_permissions[ $permission ] : false;
+		if ( CoreHelpers::is_cli() ) {
+			return true;
+		}
+
+		return $this->_permissions[ $permission ] ?? false;
 	}
 
 	/**

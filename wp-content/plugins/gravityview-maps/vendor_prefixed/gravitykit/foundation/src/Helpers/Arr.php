@@ -8,7 +8,7 @@
 
 namespace GravityKit\GravityMaps\Foundation\Helpers;
 
-use \GravityKit\GravityMaps\Foundation\ThirdParty\Illuminate\Support\Arr as IlluminateArr;
+use GravityKit\GravityMaps\Foundation\ThirdParty\Illuminate\Support\Arr as IlluminateArr;
 
 /**
  * We use Laravel's Arr class for all array helper methods. This is a wrapper as we may swap out the underlying class in the future, add or modify methods, etc.

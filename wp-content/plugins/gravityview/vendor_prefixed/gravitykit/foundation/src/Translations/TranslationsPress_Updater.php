@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by gravityview on 21-July-2023 using Strauss.
+ * Modified by gravityview on 07-September-2023 using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 
@@ -41,7 +41,7 @@ class TranslationsPress_Updater {
 	 *
 	 * @var string
 	 */
-	private $_slug = '';
+	private $_slug;
 
 	/**
 	 * Translations storage path.
@@ -140,7 +140,7 @@ class TranslationsPress_Updater {
 	public function get_plugin_translations() {
 		$this->set_all_translations();
 
-		return isset( $this->_all_translations->projects[ $this->_slug ] ) ? $this->_all_translations->projects[ $this->_slug ] : [];
+		return $this->_all_translations->projects[ $this->_slug ] ?? [];
 	}
 
 	/**
@@ -415,7 +415,7 @@ class TranslationsPress_Updater {
 		$T15S_language_slug = $this->get_slug_from_locale( $translation['language'] );
 
 		if ( ! $T15S_language_slug ) {
-			LoggerFramework::get_instance()->warn( 'Unable to get the T15S language slug for ' . $translation['language'] . ' locale.' );
+			LoggerFramework::get_instance()->warning( 'Unable to get the T15S language slug for ' . $translation['language'] . ' locale.' );
 
 			return;
 		}
@@ -840,6 +840,6 @@ class TranslationsPress_Updater {
 			'zul'         => 'zul'
 		];
 
-		return Arr::get( $slug_to_locale_map, $locale, null );
+		return $slug_to_locale_map[ $locale ] ?? null;
 	}
 }

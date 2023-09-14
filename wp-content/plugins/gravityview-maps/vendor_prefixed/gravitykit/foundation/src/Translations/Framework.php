@@ -11,6 +11,7 @@ namespace GravityKit\GravityMaps\Foundation\Translations;
 use GravityKit\GravityMaps\Foundation\Core as FoundationCore;
 use GravityKit\GravityMaps\Foundation\Helpers\Core as CoreHelpers;
 use GravityKit\GravityMaps\Foundation\Logger\Framework as LoggerFramework;
+use Exception;
 
 class Framework {
 	const ID = 'gk-translations';
@@ -82,8 +83,8 @@ class Framework {
 			return;
 		}
 
-		foreach ( FoundationCore::get_instance()->get_registered_plugins() as $plugin_file ) {
-			$plugin_data = CoreHelpers::get_plugin_data( $plugin_file );
+		foreach ( FoundationCore::get_instance()->get_registered_plugins() as $plugin ) {
+			$plugin_data = CoreHelpers::get_plugin_data( $plugin['plugin_file'] );
 
 			if ( isset( $plugin_data['TextDomain'] ) ) {
 				$this->_text_domains[] = $plugin_data['TextDomain'];
@@ -142,7 +143,7 @@ class Framework {
 		$current_user = wp_get_current_user();
 
 		if ( ! $this->can_install_languages() ) {
-			$this->_logger->addError(
+			$this->_logger->error(
 				sprintf(
 					'User "%s" does not have permissions to install languages.',
 					$current_user->user_login
@@ -160,8 +161,8 @@ class Framework {
 			if ( isset( $translations[ $new_language ] ) ) {
 				$this->load_backend_translations( $text_domain, $new_language );
 			}
-		} catch ( \Exception $e ) {
-			$this->_logger->addError( $e->getMessage() );
+		} catch ( Exception $e ) {
+			$this->_logger->error( $e->getMessage() );
 		}
 	}
 

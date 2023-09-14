@@ -61,7 +61,7 @@ class GravityForms {
 			$registered_plugins = Core::get_instance()->get_registered_plugins();
 
 			foreach ( $registered_plugins as $registered_plugin ) {
-				$plugin_data = CoreHelpers::get_plugin_data( $registered_plugin );
+				$plugin_data = CoreHelpers::get_plugin_data( $registered_plugin['plugin_file'] );
 
 				/**
 				 * Controls whether to include a GravityKit product in GF's system report.
@@ -82,7 +82,7 @@ class GravityForms {
 				$author = wp_kses( Arr::get( $plugin_data, 'Author' ), 'post' );
 
 				$table['items'][] = [
-					'label'                     => sprintf( '<a href="%s">%s</a>', esc_url( Arr::get( $plugin_data, 'PluginURI', '' ) ), Arr::get( $plugin_data, 'Name' ) ),
+					'label'                     => sprintf( '<a href="%s">%s</a>', esc_url_raw( Arr::get( $plugin_data, 'PluginURI', '' ) ), Arr::get( $plugin_data, 'Name' ) ),
 					'label_export'              => Arr::get( $plugin_data, 'Name' ),
 					'value'                     => sprintf( 'by %s - %s', $author, esc_html( Arr::get( $plugin_data, 'Version' ) ) ),
 					'value_export'              => sprintf( 'by %s - %s', $author, esc_html( Arr::get( $plugin_data, 'Version' ) ) ),

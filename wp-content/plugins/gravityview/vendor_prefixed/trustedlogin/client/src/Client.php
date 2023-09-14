@@ -15,10 +15,10 @@
  *
  * @package GravityKit\GravityView\Foundation\ThirdParty\TrustedLogin\Client
  *
- * @copyright 2021 Katz Web Services, Inc.
+ * @copyright 2023 Katz Web Services, Inc.
  *
  * @license GPL-2.0-or-later
- * Modified by gravityview on 21-July-2023 using Strauss.
+ * Modified by gravityview on 07-September-2023 using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 
@@ -41,7 +41,7 @@ final class Client {
 	 * @var string The current SDK version.
 	 * @since 1.0.0
 	 */
-	const VERSION = '1.5.1';
+	const VERSION = '1.6.0';
 
 	/**
 	 * @var Config

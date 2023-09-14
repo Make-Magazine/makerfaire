@@ -1,6 +1,10 @@
 
 # Changelog
 
+## 1.3.13
+
+	- Fixed PHP 8 warnings.
+
 ## 1.3.12
 
 	- Added new `GPLimitCheckboxes.getCheckboxCheckedCount()` and `GPLimitCheckboxes.isGroupBelowMin()` JavaScript methods.
