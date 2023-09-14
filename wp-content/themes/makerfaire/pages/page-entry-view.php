@@ -27,7 +27,7 @@
 
             <!-- Project Image -->
             <p id="proj_img">
-                <img class="img-responsive dispPhoto" src="<?php echo $project_photo; ?>" />
+                <img alt="<?php echo $project_title; ?>" class="img-responsive dispPhoto" src="<?php echo $project_photo; ?>" />
             </p>
 
             <!-- Project Short Description -->
@@ -60,7 +60,7 @@
             <div class="entryInfo">
                 <?php
                 //display schedule/location information if there is any
-                echo display_entry_schedule($entryId);
+                echo display_entry_schedule($entry);
                 if (!empty($handsOn)) {
                     echo $handsOn;
                 }
@@ -92,7 +92,7 @@
 
                                 <div class="col-xs-12">
                                     <div class="entry-page-maker-img">
-                                        <img class="img-responsive" src="<?php echo legacy_get_fit_remote_image_url($groupphoto, 400, 400); ?>" />
+                                        <img alt="<?php echo $groupname; ?>" class="img-responsive" src="<?php echo legacy_get_fit_remote_image_url($groupphoto, 400, 400); ?>" />
                                     </div>
                                 </div>
                                 <?php 
@@ -128,7 +128,7 @@
                                         ?>
                                         <div class="col-xs-12">
                                             <div class="entry-page-maker-img">
-                                                <img class="img-responsive" src="<?php echo legacy_get_resized_remote_image_url($maker['photo'], 400, 400); ?>" />
+                                                <img alt="<?php echo $maker['firstname'].' '.$maker['lastname']; ?>" class="img-responsive" src="<?php echo legacy_get_resized_remote_image_url($maker['photo'], 400, 400); ?>" />
                                             </div>
                                         </div>
                                         <?php
@@ -165,8 +165,8 @@
         <div id="entryFullWidth">
             <?php if(isset($project_gallery) && $project_gallery !== "") { ?>
                 <div id="projectGallery" class="owl-carousel">
-                <?php foreach($project_gallery as $image) { ?>
-                    <div class="gallery-item"><img src='<?php echo legacy_get_fit_remote_image_url($image, 750, 500); ?>' /></div>
+                <?php foreach($project_gallery as $key=>$image) { ?>
+                    <div class="gallery-item"><img alt="<?php echo $project_title;?> - exhibit detail <?php echo $key;?>"  src='<?php echo legacy_get_fit_remote_image_url($image, 750, 500); ?>' /></div>
                 <?php } ?>
                 </div>
             <?php } 

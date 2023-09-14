@@ -85,17 +85,16 @@ if (isset($entry->errors)) {
             $timeZone = $results->time_zone;
         }
     }
-
-
-
+    
     // build array of categories
     $mainCategory = '';
-    $categories = array();
-    
+    $categories = array();    
+
     if (isset($entry['320']) && $entry['320']!='') {
         $mainCategory = get_term($entry['320'])->name;
         $categories[] = $mainCategory;
     }
+
     foreach ($entry as $key => $value) {
         if (strpos($key, '321.') !== false && $value != null) {
             if (get_term($value)->name != $mainCategory) {
@@ -378,7 +377,7 @@ if (!$displayMakers) {
 <?php
 get_footer();
 
-function display_entry_schedule($entry_id) {
+function display_entry_schedule($entry) {
     global $wpdb;
     global $faireID;
     global $faire;
@@ -388,6 +387,20 @@ function display_entry_schedule($entry_id) {
     global $faire_map;
     global $program_guide;
     global $timeZone;
+    global $fieldData;
+    
+    //set entry id
+    $entry_id=$entry['id'];
+
+    //set weekend value
+    $weekend = '';
+    $weekendField = $fieldData['879'];
+    foreach($weekendField->inputs as $key=>$input){                
+        if(isset($entry[$input['id']])){
+            if($weekend !='') $weekend .='<br/>';
+            $weekend .= (isset($weekendField->choices[$key]['value'])?$weekendField->choices[$key]['value']:$input['label']);
+        }
+    }
 
     $backlink = "/" . $url_sub_path . "/meet-the-makers/";
 
@@ -406,7 +419,10 @@ function display_entry_schedule($entry_id) {
             . " order by schedule.start_dt";
     $results = $wpdb->get_results($sql);
     $return = "";
-    $return .= '<div class="faireTitle padbottom"><h3 class="faireName">' . ucwords(str_replace('-', ' ', $faire)) . '</h3></div>';
+    $return .= '<div class="faireTitle padbottom">
+                    <h3 class="faireName">' . ucwords(str_replace('-', ' ', $faire)) . '</h3>
+                    '.($weekend!=''?$weekend:'').'
+                </div>';
     if (!$show_sched) {
         return $return;
     }
@@ -485,6 +501,7 @@ function display_group($entryID) {
     global $wpdb;
     global $faireID;
     global $faire;
+    
     $return = '';
 
     //look for all associated entries but exclude trashed entries
