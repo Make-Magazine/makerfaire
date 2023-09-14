@@ -27,8 +27,12 @@
                     ?> <a href="<?php echo $project_website; ?>" class="sponsor-website" target="_blank" ><i class="fa fa-globe"></i><?php echo $project_website; ?></a><?php
                 } ?>
                 <?php if ($dispMakerInfo) { 
-                    foreach ($makers as $key => $maker) { 
-                        echo $maker['social']; 
+                    if ($isGroup) {
+                        echo $groupsocial;
+                    } else {
+                        foreach ($makers as $key => $maker) { 
+                            echo $maker['social']; 
+                        }
                     }
                 } ?>
             </div>
