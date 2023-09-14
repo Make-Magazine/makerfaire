@@ -506,8 +506,13 @@
 	}
 	.sponsor-head {
 		text-align: center;
-		h1 {
-			font-size: 86px;
+		@media screen and (min-width: 768px) {
+			h1 {font-size: 60px;}
+		}	
+		@media screen and (min-width: 1024px) {
+			h1 {font-size: 80px;}
+		}	
+		h1 {			
 			font-weight: 600;
 		}
 		.entry-type {
