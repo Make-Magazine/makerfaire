@@ -397,7 +397,7 @@ function display_entry_schedule($entry) {
     $weekendField = $fieldData['879'];
     foreach($weekendField->inputs as $key=>$input){                
         if(isset($entry[$input['id']]) && $entry[$input['id']]!='' ){
-            if($weekend !='') $weekend .='<br/>';
+            if($weekend !='') $weekend .=' & ';
             $weekend .= (isset($weekendField->choices[$key]['value'])?$weekendField->choices[$key]['value']:$input['label']);
         }
     }
@@ -421,7 +421,7 @@ function display_entry_schedule($entry) {
     $return = "";
     $return .= '<div class="faireTitle padbottom">
                     <h3 class="faireName">' . ucwords(str_replace('-', ' ', $faire)) . '</h3>
-                    '.($weekend!=''?$weekend:'').'
+                    '.($weekend!=''?'<br/><h4>Exhibiting on:</h4>'.$weekend:'').'
                 </div>';
     if (!$show_sched) {
         return $return;
