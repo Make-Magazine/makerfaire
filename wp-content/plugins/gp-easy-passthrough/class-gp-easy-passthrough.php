@@ -229,6 +229,7 @@ class GP_Easy_Passthrough extends GP_Feed_Plugin {
 			add_action( 'wp_logout', array( $this, 'clear_session' ) );
 		}
 
+		add_action( 'gravityview/duplicate-entry/duplicated', array( $this, 'gv_update_token_for_duplicate_entry' ), 10, 2 );
 	}
 
 	/**
@@ -1712,6 +1713,7 @@ class GP_Easy_Passthrough extends GP_Feed_Plugin {
 		 * @param int|null $form_id The form ID for which feeds are being fetched.
 		 */
 		$feeds = gf_apply_filters( array( 'gpep_active_feeds', $form_id ), parent::get_active_feeds( $form_id ), $form_id );
+
 		return $feeds;
 	}
 
@@ -2043,6 +2045,18 @@ class GP_Easy_Passthrough extends GP_Feed_Plugin {
 		}
 
 		return $choices;
+	}
+
+	/**
+	 * Regenerate token for a duplicated entry
+	 *
+	 * @param array $duplicated_entry
+	 * @param array $entry
+	 */
+	public function gv_update_token_for_duplicate_entry( $duplicated_entry, $entry ) {
+		gform_delete_meta( $duplicated_entry['id'], 'fg_easypassthrough_token' );
+		$duplicated_entry['fg_easypassthrough_token'] = gp_easy_passthrough()->get_entry_token( $duplicated_entry );
+		GFAPI::update_entry( $duplicated_entry);
 	}
 
 	/**
