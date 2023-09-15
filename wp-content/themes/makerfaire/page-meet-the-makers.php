@@ -4,6 +4,7 @@
  */
 get_header();
 
+//Pull ACF data
 $faire_forms = get_field('faire-forms');
 $faire_forms_trimmed = preg_replace('/\s+/', '', $faire_forms);
 
@@ -11,7 +12,7 @@ $noMakerText = get_field('no_makers_found_text');
 if ($noMakerText == '')
     $noMakerText = 'No makers found';
 
-//Pull from Make: Projects
+//Pull from Make: Projects?
 $showMakeProjects = get_field('show_make_projects');
 $MPCategory = get_field('make:_projects_category_to_pull_from');
 
@@ -91,6 +92,25 @@ if (($showMakeProjects === 'mponly' || $showMakeProjects === 'mfandmp') && $MPCa
                     </div>
                 </div>
                 <div class="col-sm-4 filter-section">
+                    <!-- Weekend Filter -->
+                    <div class="dropdown" ng-if="weekends.length > 0">
+                        <button class="btn btn-link dropdown-toggle" type="button" id="weekend-dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                            <span ng-if="makerSearch.weekend != ''">{{makerSearch.weekend}}</span>
+                            <span ng-if="makerSearch.weekend == ''">Weekends Exhibiting</span>
+                            <i class="fa fa-chevron-down" aria-hidden="true"></i>
+                        </button>
+                        <ul class="dropdown-menu" aria-labelledby="weekend-dropdownMenu">
+                            <li>
+                                <a class="pointer-on-hover" ng-click="makerSearch.weekend = ''"><?php _e("Any", 'makerfaire') ?></a>
+                            </li>
+
+                            <li ng-repeat="weekend in weekends| orderBy: 'weekend'">
+                                <a class="pointer-on-hover" ng-click="makerSearch.weekend = weekend">{{weekend}}</a>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Area Filter -->
                     <div class="dropdown" ng-if="locations.length > 0">
                         <button class="btn btn-link dropdown-toggle" type="button" id="location-dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                             <span ng-if="makerSearch.location != ''">{{makerSearch.location}}</span>

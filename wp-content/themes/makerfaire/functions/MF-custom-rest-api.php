@@ -169,9 +169,10 @@ function getMTMentries($formIDs, $faireID) {
     $showLoc = false;
     $query = "select show_sched from wp_mf_faire where faire = '" . $faireID . "'";
 
-    $result = $wpdb->get_row($query);
+    $show_sched = $wpdb->get_var($query);
+    
     //var_dump($result);
-    if ($result->show_sched === "1")
+    if ($show_sched === "1")
         $showLoc = true;
 
     //find all active entries for selected forms
@@ -184,6 +185,7 @@ function getMTMentries($formIDs, $faireID) {
                      (SELECT meta_value FROM   wp_gf_entry_meta WHERE  meta_key = '320' AND entry_id = lead.id) AS prime_cat, 
                      (SELECT Group_concat(meta_value) FROM   wp_gf_entry_meta WHERE  meta_key LIKE '321.%' AND entry_id = lead.id GROUP  BY entry_id) AS second_cat, 
                      (SELECT Group_concat(meta_value) FROM   wp_gf_entry_meta WHERE  meta_key LIKE '304.%' AND entry_id = lead.id GROUP  BY entry_id) AS flags,
+                     (SELECT Group_concat(meta_value) FROM   wp_gf_entry_meta WHERE  meta_key LIKE '879.%' AND entry_id = lead.id GROUP  BY entry_id) AS weekends, 
                      (SELECT Group_concat(wp_mf_faire_area.area)      
                       FROM `wp_mf_location` 
                       left outer join wp_mf_faire_subarea on wp_mf_location.subarea_id = wp_mf_faire_subarea.id 
@@ -249,8 +251,19 @@ function getMTMentries($formIDs, $faireID) {
             foreach ($leadCategory as $leadCat) {
                 $category[] = htmlspecialchars_decode(get_CPT_name($leadCat));
             }
-            $category[] = htmlspecialchars_decode(get_CPT_name($result->prime_cat));
-            $categories = implode(',', $category);
+            $category[] = htmlspecialchars_decode(get_CPT_name($result->prime_cat));            
+
+            //weekends                                    
+            $weekends = explode(',', $result->weekends);
+            foreach ($weekends as &$weekend){
+                if($weekend=='Wk1'){
+                    $weekend='First Weekend';
+                }elseif($weekend=='Wk2'){
+                    $weekend='Second Weekend';
+
+                }
+            }
+
             //don't return location information if the show location isn't set
             //$location = ($showLoc?($result->area==NULL?'':$result->area):'');
             $locations = array();
@@ -260,6 +273,7 @@ function getMTMentries($formIDs, $faireID) {
             if ($faireID == 'VMF2020') {
                 $locations = array(html_entity_decode(get_CPT_name($result->area)));
             }
+
             if($locations==NULL)
                 $locations = '';
             $data['entity'][] = array(
@@ -272,7 +286,8 @@ function getMTMentries($formIDs, $faireID) {
                 'flag' => $flag, //only set if flag is set to 'Featured Maker'
                 'handson' => $handson, //only set if handson is set to 'Featured Handson'
                 'makerList' => $makerList,
-                'location' => $locations
+                'location' => $locations,
+                'weekend' => $weekends
             );
         }
     }
