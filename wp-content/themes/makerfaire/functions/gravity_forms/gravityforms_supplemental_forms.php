@@ -80,6 +80,11 @@ function populate_fields($form) {
   if( !class_exists( 'GFFormDisplay' ) ) {
     return $form;
   }
+  
+  if(!isset($return['id'])){
+    return $form;
+  }
+
   $jqueryVal = '';
   if(isset($form['form_type']) && $form['form_type']=='Other'){
     //this is a 2-page form with the data from page one being displayed in an html field on following pages
@@ -88,7 +93,6 @@ function populate_fields($form) {
     if ($current_page > 1) {
       //find the submitted entry id
       $return = get_value_by_label('entry-id', $form, array());
-
       $entry_id = rgpost('input_'.$return['id']);
 
       //is entry id set?
