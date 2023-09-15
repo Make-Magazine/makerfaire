@@ -169,7 +169,6 @@
                 'menu_id'           => 'menu-secondary_universal_menu',
                 'menu'              => $secondary_nav,
                 'theme_location'    => $secondary_nav,
-                'depth'             => 1,
                 'container'         => '',
                 'container_class'   => '',
                 'link_before'       => '<span>',
