@@ -241,10 +241,14 @@ function get_attribute($lead,$attID){
   $return = array();
   $entry_id = (isset($lead['id'])?$lead['id']:'');
 
+  if(!is_numeric($attID) || !is_numeric($entry_id)){
+    return $return;    
+  }
+
   if($entry_id!='' && $attID!=''){
     //gather resource data
     $sql = "SELECT value,"
-            . " (select category from wp_rmt_entry_att_categories where wp_rmt_entry_att_categories.ID = attribute_id)as attribute "
+            . " (select category from wp_rmt_entry_att_categories where wp_rmt_entry_att_categories.ID = attribute_id) as attribute "
             . " FROM `wp_rmt_entry_attributes`  "
             . " where entry_id = ".$entry_id." and attribute_id = ".$attID." order by attribute ASC, value ASC";
     $results = $wpdb->get_results($sql);

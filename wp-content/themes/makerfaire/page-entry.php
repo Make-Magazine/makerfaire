@@ -35,7 +35,7 @@ if (isset($entry->errors)) {
     $form = GFAPI::get_form($form_id);
     $formType = $form['form_type'];
     if ($formType == "Sponsor") {
-        $sponsorshipLevel = $entry["442.3"];
+        $sponsorshipLevel = (isset($entry["442.3"])?$entry["442.3"]:'');
     }elseif ($formType == "Master") {
         if( (isset($entry['339.4']) && stripos($entry['339.4'], 'sponsor') !== false) || 
             (isset($entry['339.5']) && stripos($entry['339.5'], 'sponsor') !== false) ) {
@@ -388,7 +388,7 @@ function display_entry_schedule($entry) {
 
     //set weekend value
     $weekend = '';
-    $weekendField = $fieldData['879'];
+    $weekendField = (isset($fieldData['879'])?$fieldData['879']:'');
     if(isset($weekendField->inputs)){
         foreach($weekendField->inputs as $key=>$input){                
             if(isset($entry[$input['id']]) && $entry[$input['id']]!='' ){
