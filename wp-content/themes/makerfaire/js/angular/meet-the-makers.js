@@ -23,16 +23,19 @@ mtm.controller('mtmMakers', ['$scope', '$sce', '$filter', '$http', function ($sc
         };
 
         $scope.location = '';
+        $scope.weekend = '';
         $scope.flag = '';
         $scope.showHandsOn = '';
         $scope.handson = '';
         $scope.locations = [];
+        $scope.weekends = [];
         $scope.letter = '';
         $scope.makerSearch = {};
         $scope.makerSearch.flag = '';
         $scope.makerSearch.handson = '';
         $scope.makerSearch.categories = '';
         $scope.makerSearch.location = '';
+        $scope.makerSearch.weekend = '';
         $scope.alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
 
         $scope.layout = 'grid';
@@ -148,6 +151,10 @@ mtm.controller('mtmMakers', ['$scope', '$sce', '$filter', '$http', function ($sc
             $scope.makerSearch.location = location;
         };
 
+        $scope.setWkndFilter = function (weekend) {
+            $scope.makerSearch.weekend = weekend;
+        };
+
         $scope.setFlagFilter = function (flag) {
             $scope.flag = flag;
         };
@@ -170,11 +177,23 @@ mtm.controller('mtmMakers', ['$scope', '$sce', '$filter', '$http', function ($sc
             $scope.category = '';
         };
 
-        //watch the maker variable, if it changes update the location and category drop down
+        //watch the maker variable, if it changes update the location, category and weekend drop downs
         $scope.$watch("makers", function (newValue, oldValue) {
             var catList = [];
             var locList = [];
+            var wkndList = [];
             angular.forEach($scope.makers, function (maker) {
+                //weekends
+                var weekend = maker.weekend;
+                if (weekend != null) {
+                    angular.forEach(weekend, function (wknd) {
+                        if (wkndList.indexOf(wknd) === -1 && wknd !== '') {
+                            wkndList.push(wknd);
+                        }
+                    });
+                }
+
+                //locations
                 var location = maker.location;
                 if (location != null) {
                     angular.forEach(location, function (loc) {
@@ -200,7 +219,15 @@ mtm.controller('mtmMakers', ['$scope', '$sce', '$filter', '$http', function ($sc
                 }
             });
 
+            //categories
             $scope.tags = catList;
+            //weekends
+            $scope.weekends = [];
+            if (wkndList.length > 0) {
+                var collator = new Intl.Collator(undefined, {numeric: true, sensitivity: 'base'});
+                $scope.weekends = wkndList.sort(collator.compare);
+            }   
+            //locations
             $scope.locations = [];
             if (locList.length > 0) {
                 var collator = new Intl.Collator(undefined, {numeric: true, sensitivity: 'base'});
