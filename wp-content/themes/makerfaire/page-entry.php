@@ -258,33 +258,53 @@ if($formType == 'Master') {
 
 // Project Inline video
 $video = '';
-if (!empty($project_video) && validate_url($project_video)) {
-    $dispVideo = str_replace('//vimeo.com', '//player.vimeo.com/video', $project_video);
+if (!empty($project_video) && validate_url($project_video)) {        
+    $dispVideo='';
+
     //youtube has two type of url formats we need to look for and change
-    $videoID = parse_yturl($dispVideo);
+    $videoID = parse_yturl($project_video);
     if ($videoID != false) {
         $dispVideo = 'https://www.youtube.com/embed/' . $videoID;
+    }else{
+        //Vimeo
+        $pos = stripos($project_video, 'vimeo');
+        if ($pos !== false) {
+            $dispVideo = str_replace('//vimeo.com', '//player.vimeo.com/video', $project_video);            
+        }
     }
-    $video = '<div class="entry-video">
-              <div class="embed-youtube">
-                <iframe src="' . $dispVideo . '" width="500" height="281" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
-              </div>
-            </div>';
+
+    if($dispVideo != ''){
+        $video = '<div class="entry-video">
+                <div class="embed-youtube">
+                    <iframe src="' . $dispVideo . '" width="500" height="281" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+                </div>
+                </div>';
+    }    
 }
 
 $video2 = '';
 if (!empty($project_video2) && validate_url($project_video2)) {
-    $dispVideo = str_replace('//vimeo.com', '//player.vimeo.com/video', $project_video2);
+    $dispVideo='';
+
     //youtube has two type of url formats we need to look for and change
-    $videoID = parse_yturl($dispVideo);
+    $videoID = parse_yturl($project_video2);
     if ($videoID != false) {
         $dispVideo = 'https://www.youtube.com/embed/' . $videoID;
+    }else{
+        //Vimeo
+        $pos = stripos($project_video2, 'vimeo');
+        if ($pos !== false) {
+            $dispVideo = str_replace('//vimeo.com', '//player.vimeo.com/video', $project_video2);            
+        }
     }
-    $video2 = '<div class="entry-video">
-              <div class="embed-youtube">
-                <iframe src="' . $dispVideo . '" width="500" height="281" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
-              </div>
-            </div>';
+    
+    if($dispVideo != ''){
+        $video = '<div class="entry-video">
+                <div class="embed-youtube">
+                    <iframe src="' . $dispVideo . '" width="500" height="281" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+                </div>
+                </div>';
+    }
 }
 
 //decide if display maker info
