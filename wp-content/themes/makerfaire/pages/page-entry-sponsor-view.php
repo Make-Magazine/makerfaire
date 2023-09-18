@@ -38,9 +38,15 @@
             </div>
         </div>
     </div>
-    <?php if(isset($project_gallery) && $project_gallery[0] !== "" || !empty($video) || !empty($video2) ) { ?>
+    <?php if( 
+            (is_array($project_gallery) && $project_gallery[0] !=='')
+            || 
+            (isset($video) && !empty($video))  
+            || 
+            (isset($video2) && !empty($video2) )  
+           ) { ?>
         <div id="entryFullWidth" class="sponsor-media">
-            <?php if(isset($project_gallery) && is_array($project_gallery) && $project_gallery[0]!== "") { ?>
+            <?php if(is_array($project_gallery) && $project_gallery[0]!== "") { ?>
                 <div id="projectGallery" class="owl-carousel">
                 <?php foreach($project_gallery as $key=>$image) { ?>
                     <div class="gallery-item"><img alt="<?php echo $project_title;?> - exhibit detail <?php echo $key;?>"  src='<?php echo legacy_get_fit_remote_image_url($image, 750, 500); ?>' /></div>
