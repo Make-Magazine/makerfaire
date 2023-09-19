@@ -259,52 +259,27 @@ if($formType == 'Master') {
 // Project Inline video
 $video = '';
 if (!empty($project_video) && validate_url($project_video)) {        
-    $dispVideo='';
-
-    //youtube has two type of url formats we need to look for and change
-    $videoID = parse_yturl($project_video);
-    if ($videoID != false) {
-        $dispVideo = 'https://www.youtube.com/embed/' . $videoID;
-    }else{
-        //Vimeo
-        $pos = stripos($project_video, 'vimeo');
-        if ($pos !== false) {
-            $dispVideo = str_replace('//vimeo.com', '//player.vimeo.com/video', $project_video);            
-        }
-    }
-
-    if($dispVideo != ''){
+    global $wp_embed;
+    // We want only youtube or vimeo videos to display,
+    if($project_video != '' && is_valid_video($project_video) ){
         $video = '<div class="entry-video">
-                <div class="embed-youtube">
-                    <iframe src="' . $dispVideo . '" width="500" height="281" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
-                </div>
+                <div class="embed-youtube">';
+        $video .=  $wp_embed->run_shortcode('[embed]' . $project_video. '[/embed]');
+        $video .= '</div>
                 </div>';
     }    
 }
 
 $video2 = '';
 if (!empty($project_video2) && validate_url($project_video2)) {
-    $dispVideo='';
-
-    //youtube has two type of url formats we need to look for and change
-    $videoID = parse_yturl($project_video2);
-    if ($videoID != false) {
-        $dispVideo = 'https://www.youtube.com/embed/' . $videoID;
-    }else{
-        //Vimeo
-        $pos = stripos($project_video2, 'vimeo');
-        if ($pos !== false) {
-            $dispVideo = str_replace('//vimeo.com', '//player.vimeo.com/video', $project_video2);            
-        }
-    }
-    
-    if($dispVideo != ''){
-        $video = '<div class="entry-video">
-                <div class="embed-youtube">
-                    <iframe src="' . $dispVideo . '" width="500" height="281" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
-                </div>
+    global $wp_embed;
+    if($project_video2 != '' && is_valid_video($project_video2) ){
+        $video2 = '<div class="entry-video">
+                <div class="embed-youtube">';
+        $video2 .=  $wp_embed->run_shortcode('[embed]' . $project_video2. '[/embed]');
+        $video2 .= '</div>
                 </div>';
-    }
+    }    
 }
 
 //decide if display maker info

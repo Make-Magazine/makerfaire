@@ -90,7 +90,7 @@ if (!current_user_can('edit_posts')) {
 /**
  *  Check if input string is a valid YouTube URL
  *  and try to extract the YouTube Video ID from it.
- *  @author  Stephan Schmitz <eyecatchup@gmail.com>
+ *  @author  Rio Roth-Barreiro <rio@make.co>
  *  @param   $url   string   The string that shall be checked.
  *  @return  mixed           Returns YouTube Video ID, or (boolean) false.
  */
@@ -98,6 +98,18 @@ function parse_yturl($url){
     $pattern = '#^(?:https?://)?(?:www\.)?(?:youtu\.be/|youtube\.com(?:/embed/|/v/|/watch\?v=|/watch\?.+&v=))([\w-]{11})(?:.+)?$#x';
     preg_match($pattern, $url, $matches);
     return (isset($matches[1])) ? $matches[1] : false;
+}
+
+/**
+ *  Check if input string is a valid YouTube or Vimeo URL
+ *  @author  Rio Roth-Barreiro <rio@make.co>
+ *  @param   $url   string   The string that shall be checked.
+ *  @return  true if we are good
+ */
+function is_valid_video($url) {
+    if(( preg_match('#^(?:https?://)?(?:www\.)?(?:youtu\.be/|youtube\.com(?:/embed/|/v/|/shorts/|/playlist\?list=|/watch))(.*?)#x', $url) || preg_match('#^https?://(.+\.)?vimeo\.com/.*#', $url) ) ) {
+        return true;
+    }
 }
 
 /**
