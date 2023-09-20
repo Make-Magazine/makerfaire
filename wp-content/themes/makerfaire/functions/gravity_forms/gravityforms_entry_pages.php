@@ -8,7 +8,7 @@ function checkForRibbons($postID=0,$entryID=0){
         $sql = "select * from wp_mf_ribbons where entry_id = ".$entryID." order by ribbonType";
     }
     $ribbons = $wpdb->get_results($sql);
-    $return = "";
+    $return = '<div class="ribbon-wrapper">';
     //check for 0??
     $blueCount = $redCount = 0;
     foreach($ribbons as $ribbon){
@@ -24,7 +24,8 @@ function checkForRibbons($postID=0,$entryID=0){
         }
       }
     }
-    return $return;
+    $return .= '</div>'
+;    return $return;
 }
 
 

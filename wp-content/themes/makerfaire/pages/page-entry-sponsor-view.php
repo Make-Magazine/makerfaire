@@ -38,13 +38,7 @@
             </div>
         </div>
     </div>
-    <?php if( 
-            (is_array($project_gallery) && $project_gallery[0] !=='')
-            || 
-            (isset($video) && !empty($video))  
-            || 
-            (isset($video2) && !empty($video2) )  
-           ) { ?>
+    <?php if( (is_array($project_gallery) && $project_gallery[0] !=='') || (isset($video) && !empty($video)) || (isset($video2) && !empty($video2)) ) { ?>
         <div id="entryFullWidth" class="sponsor-media">
             <?php if(is_array($project_gallery) && $project_gallery[0]!== "") { ?>
                 <div id="projectGallery" class="owl-carousel">
