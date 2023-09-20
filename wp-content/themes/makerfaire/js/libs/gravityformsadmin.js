@@ -374,9 +374,14 @@ function resAttLock(currentEle, lock) {
 }
 
 function insertRowDB(type) {
-	var fieldNames = ''; var fieldValues = '';
+	var fieldNames = ''; 
+	var fieldValues = '';
+	var allSelected = true;
 	var insertArr = {};
 	insertArr['entry_id'] = jQuery('[name="entry_info_entry_id"]').val();
+	if( type == "res" && ( !jQuery("#resitem .thVal").val() || !jQuery("#restype .thVal").val() || !jQuery("#resqty .thVal").val() ) ) {
+		allSelected = false;
+	}
 	//update DB table with AJAX
 	jQuery('#' + type + 'RowNew td').each(function(i, obj) {
 		//set fieldNames and fieldValues to a comma separated string of data
@@ -392,50 +397,60 @@ function insertRowDB(type) {
 			insertArr[fName] = value;
 		}
 		that = jQuery(this).find(".thVal");
-		//display the dropdown value not the id
-		if (that.is('select')) {
-			jQuery(this).html(jQuery(that).find("option:selected").text());
-		} else {
-			//set textarea and input to html
-			jQuery(this).html(value);
+		
+		if(allSelected == true) {
+			//display the dropdown value not the id
+			if (that.is('select')) {
+				jQuery(this).html(jQuery(that).find("option:selected").text());
+			} else {
+				//set textarea and input to html
+				jQuery(this).html(value);
+			}
 		}
 
 	});
 
-	if (type == 'res') {
-		var table = 'wp_rmt_entry_resources';
-		var dataArray = resourceArray;
-	} else if (type == 'att') {
-		var table = 'wp_rmt_entry_attributes';
-		var dataArray = attributeArray;
-	} else if (type == 'attn') {
-		var table = 'wp_rmt_entry_attn';
-		var dataArray = attentionArray;
+	if(allSelected == false) {
+		alert("You must fill out Item, Type and Qty fields to submit")
+	} else {
+
+		if (type == 'res') {
+			var table = 'wp_rmt_entry_resources';
+			var dataArray = resourceArray;
+		} else if (type == 'att') {
+			var table = 'wp_rmt_entry_attributes';
+			var dataArray = attributeArray;
+		} else if (type == 'attn') {
+			var table = 'wp_rmt_entry_attn';
+			var dataArray = attentionArray;
+		}
+		var data = {
+			'action': 'update-entry-resAtt',
+			'insertArr': insertArr,
+			'ID': 0,
+			'table': table
+		};
+		jQuery.post(ajaxurl, data, function(response) {
+			//set actions column
+			jQuery('#' + type + 'RowNew #actions').html('<span onclick="resAttDelete(\'#' + type + 'Row' + response.ID + '\')"><i class="fas fa-minus-circle fa-lg"></i></span></td>');
+
+			//set item to locked
+			jQuery('#' + type + 'RowNew .lock').html('<span class="lockIcon" onclick="resAttLock(\'#' + type + 'Row' + response.ID + '\,0)">' + '<i class="fas fa-lock fa-lg"></i>' + '</span>');
+			//update fields with returned row id
+			for (i = 0; i < dataArray.length; i++) {
+				jQuery('#' + type + 'RowNew #' + dataArray[i]['id']).attr('id', dataArray[i]['id'] + '_' + response.ID);
+			}
+
+			//after adding row set row id to the correct value
+			jQuery('#' + type + 'RowNew').attr('id', type + 'Row' + response.ID);
+
+			//update the date/time and user info
+			jQuery('#' + type + 'user_' + response.ID).html(response.user);
+			jQuery('#' + type + 'dateupdate_' + response.ID).html(response.dateupdate);
+		});
+
 	}
-	var data = {
-		'action': 'update-entry-resAtt',
-		'insertArr': insertArr,
-		'ID': 0,
-		'table': table
-	};
-	jQuery.post(ajaxurl, data, function(response) {
-		//set actions column
-		jQuery('#' + type + 'RowNew #actions').html('<span onclick="resAttDelete(\'#' + type + 'Row' + response.ID + '\')"><i class="fas fa-minus-circle fa-lg"></i></span></td>');
 
-		//set item to locked
-		jQuery('#' + type + 'RowNew .lock').html('<span class="lockIcon" onclick="resAttLock(\'#' + type + 'Row' + response.ID + '\,0)">' + '<i class="fas fa-lock fa-lg"></i>' + '</span>');
-		//update fields with returned row id
-		for (i = 0; i < dataArray.length; i++) {
-			jQuery('#' + type + 'RowNew #' + dataArray[i]['id']).attr('id', dataArray[i]['id'] + '_' + response.ID);
-		}
-
-		//after adding row set row id to the correct value
-		jQuery('#' + type + 'RowNew').attr('id', type + 'Row' + response.ID);
-
-		//update the date/time and user info
-		jQuery('#' + type + 'user_' + response.ID).html(response.user);
-		jQuery('#' + type + 'dateupdate_' + response.ID).html(response.dateupdate);
-	});
 }
 function updateDB(newVal, currentEle) {
 	var fieldName = ''; var ID = ''; var table = ""; var type = "";
