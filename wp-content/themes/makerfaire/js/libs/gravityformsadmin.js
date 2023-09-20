@@ -379,7 +379,7 @@ function insertRowDB(type) {
 	var allSelected = true;
 	var insertArr = {};
 	insertArr['entry_id'] = jQuery('[name="entry_info_entry_id"]').val();
-	if( !jQuery("#resitem .thVal").val() || !jQuery("#restype .thVal").val() || !jQuery("#resqty .thVal").val()  ) {
+	if( type == "res" && ( !jQuery("#resitem .thVal").val() || !jQuery("#restype .thVal").val() || !jQuery("#resqty .thVal").val() ) ) {
 		allSelected = false;
 	}
 	//update DB table with AJAX
@@ -411,7 +411,7 @@ function insertRowDB(type) {
 	});
 
 	if(allSelected == false) {
-		alert("you must fill out all Item, Type and Qty to submit")
+		alert("You must fill out Item, Type and Qty fields to submit")
 	} else {
 
 		if (type == 'res') {
