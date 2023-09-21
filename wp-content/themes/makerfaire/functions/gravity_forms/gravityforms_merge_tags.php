@@ -17,6 +17,7 @@ function mf_custom_merge_tags($merge_tags, $form_id, $fields, $element_id) {
     $merge_tags[] = array('label' => 'Entry Resources', 'tag' => '{entry_resources}');
     $merge_tags[] = array('label' => 'Entry Attributes', 'tag' => '{entry_attributes}');
     $merge_tags[] = array('label' => 'Scheduled Locations', 'tag' => '{sched_loc}');
+    $merge_tags[] = array('label' => 'Entry Locations', 'tag' => '{entry_loc}');
     $merge_tags[] = array('label' => 'Faire ID', 'tag' => '{faire_id}');
     $merge_tags[] = array('label' => 'Resource Category Lock Ind', 'tag' => '{rmt_res_cat_lock}');
     $merge_tags[] = array('label' => 'Attribute Lock Ind', 'tag' => '{rmt_att_lock}');
@@ -56,10 +57,10 @@ function mf_replace_merge_tags($text, $form, $entry, $url_encode, $esc_html, $nl
     $text = str_replace('{entry_schedule}', $schedule, $text);
   }
 
-  //scheduled locations {sched_loc}
-  if (strpos($text, '{sched_loc}') !== false) {
-    $schedule = get_schedule($entry,true);
-    $text = str_replace('{sched_loc}', $schedule, $text);
+  //scheduled locations {entry_loc}
+  if (strpos($text, '{entry_loc}') !== false) {
+    $schedule = get_location($entry,true);
+    $text = str_replace('{entry_loc}', $schedule, $text);
   }
 
   //Entry Resources
@@ -332,3 +333,30 @@ function get_schedule($lead,$locsOnly = false){
     return $schedule;
 }
 
+/* Return area/subarea for entry */
+function get_location($entry){
+  global $wpdb;
+  $location = '';
+  $entry_id = (isset($entry['id'])?$entry['id']:'');
+
+  if($entry_id!=''){
+      //get scheduling information for this entry
+      $sql = "SELECT  area.area, subarea.subarea, subarea.nicename, location
+              FROM    wp_mf_location location,
+                      wp_mf_faire_subarea subarea,
+                      wp_mf_faire_area area
+
+              where       location.entry_id   = $entry_id
+                      and subarea.id          = location.subarea_id
+                      and area.id             = subarea.area_id";
+
+      $results = $wpdb->get_results($sql);
+      if($wpdb->num_rows > 0){
+          foreach($results as $row){
+            $subarea = ($row->nicename!=''&&$row->nicename!=''?$row->nicename:$row->subarea);
+            $location .= ($location!=''?',':''). ucfirst($row->location).' - ' . $row->area.' : '.$subarea;
+          }
+      }
+  }
+  return $location;
+}
