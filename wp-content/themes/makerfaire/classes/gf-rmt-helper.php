@@ -62,9 +62,9 @@ class GFRMTHELPER {
           'field_number' => $row->field_number,
           'operator'     => $row->operator,
           'value'        => $row->logic_value);
-    }
+    }    
 
-    foreach($rules as $rule){
+    foreach($rules as $rule){              
       $pass = false;
       foreach($rule['logic'] as $logic){
         $field_number = $logic['field_number'];
@@ -77,36 +77,36 @@ class GFRMTHELPER {
           $entryfield = $entry[$field_number];
         }else{
           $entryfield = '';
-        }
+        }        
 
         //check logic here
         if($logic['operator'] == 'is') {
-          if($entryfield == $logic['value']) {
+          if(strtolower($entryfield) == strtolower($logic['value'])) {
             $pass = true;
           }else{
             $pass = false;
             break;
           }
         } elseif($logic['operator'] == 'not') {
-          if($entryfield != $logic['value']) {
+          if(strtolower($entryfield) != strtolower($logic['value'])) {
             $pass = true;
           }else{
             $pass = false;
             break;
           }
         } elseif($logic['operator'] == 'contains') {
-          $pos = strpos($entryfield, $logic['value']);
+          $pos = stripos($entryfield, $logic['value']);
           if ($pos !== false){
             $pass = true;
           }else{
             $pass = false;
             break;
-          }
+          }       
         } else {
           //other operator logic goes here
-        }
+        }   
       }
-
+                        
       //logic met - set RMT field
       if($pass){             
         //look if there is a a field in the value or comment field (these are surrounded by {} )
