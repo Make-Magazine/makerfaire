@@ -4,10 +4,11 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
+
 // set up database
 $root = $_SERVER['DOCUMENT_ROOT'];
 require_once ($root . '/wp-config.php');
-require_once ($root . '/wp-includes/wp-db.php');
+require_once ($root . '/wp-includes/class-wpdb.php');
 
 /*if (!is_user_logged_in())
    auth_redirect();*/
@@ -25,12 +26,13 @@ class PDF extends FPDF {
    // Page header
    function Header() {
       // Header required when using restful structures for Chrome
+      /*
       header('HTTP/1.0 200 OK');
       header('Cache-Control: public, must-revalidate, max-age=0');
       header('Pragma: no-cache');
       header('Accept-Ranges: bytes');
       header("Content-Transfer-Encoding: binary");
-      header("Content-type: application/pdf");
+      header("Content-type: application/pdf");*/
       // Faire sign setup
       global $root;
       global $wp_query;
@@ -120,7 +122,7 @@ try {
          $pdf->Output($entryid . '.pdf', 'I');
       }
 
-      // error_log('after writing pdf '.date('h:i:s'),0);
+      //error_log('after writing pdf '.date('h:i:s'),0);
    } else {
       echo 'No Entry ID submitted';
    }
@@ -161,6 +163,14 @@ function createOutput($entry_id, $pdf) {
    if ($overrideImg != '')
       $project_photo = $overrideImg;
 
+   // project gallery was introduced with BA23 - this returns an array of image urls from the additional images field
+   $project_gallery = (isset($entry['878']) ? explode(",", str_replace(array( '[', ']', '"' ), '', $entry['878'])) : '');
+
+   //if the main project photo isn't set but the photo gallery is, use the first image in the photo gallery
+   if($project_photo=='' && is_array($project_gallery)){
+       $project_photo = $project_gallery[0];
+   }
+   
    $project_short = (isset($entry['16']) ? filterText($entry['16']) : '');
    $project_title = (isset($entry['151']) ? filterText((string) $entry['151']) : '');
    $project_title = preg_replace('/\v+|\\\[rn]/', '<br/>', $project_title);

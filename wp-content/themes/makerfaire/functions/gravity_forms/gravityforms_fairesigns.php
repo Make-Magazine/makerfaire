@@ -153,7 +153,7 @@ function createSignZip() {
                 $appendFormId .= '_' . $formId;
             }
         } else {
-            $appendFormId = '_' . $formId;
+            $appendFormId = '_' . $filterFormId;
         }
     }
     if (!empty($filterError)) {
@@ -316,7 +316,7 @@ function createEntList() {
     global $wpdb;
     $faire = (isset($_POST['faire']) ? $_POST['faire'] : '');
     $type = (isset($_POST['type']) ? $_POST['type'] : '');
-
+    
     $entList = array();
     if ($type != 'presenter') {
         $sql = "select form_ids from wp_mf_faire where faire='" . $faire . "'";
@@ -327,7 +327,7 @@ function createEntList() {
 
         foreach ($forms as $formId) {
             $form = GFAPI::get_form($formId);
-            if ($form['form_type'] == 'Exhibit' || $form['form_type'] == 'Sponsor' || $form['form_type'] == 'Startup Sponsor') {
+            if ($form['form_type'] == 'Master' || $form['form_type'] == 'Exhibit' || $form['form_type'] == 'Sponsor' || $form['form_type'] == 'Startup Sponsor') {
                 $sql = "SELECT wp_gf_entry.id as lead_id, wp_gf_entry_meta.meta_value as lead_status " . " FROM `wp_gf_entry`, wp_gf_entry_meta" . " where status='active' and meta_key=303 and wp_gf_entry_meta.entry_id = wp_gf_entry.id" . "   and wp_gf_entry_meta.meta_value!='Rejected' and wp_gf_entry_meta.meta_value!='Cancelled'" . "   and wp_gf_entry.form_id=" . $formId;
                 $results = $wpdb->get_results($sql);
 
@@ -362,7 +362,7 @@ function createEntList() {
 add_action('wp_ajax_createEntList', 'createEntList');
 
 function massGenerateSigns($entList, $type, $faire) {
-    error_log('Start mass generate signs for ' . $faire . ' - ' . $type);
+    //error_log('Start mass generate signs for ' . $faire . ' - ' . $type);
     //$response['entList'] = 'Process Submitted. Please check back for an update';
     //wp_send_json($response);
     $fpdiLink = ($type === 'signs' ? 'makersigns' : ($type === 'presenter' ? 'presenterSigns' : 'tabletag'));
@@ -373,19 +373,29 @@ function massGenerateSigns($entList, $type, $faire) {
     foreach ($entList as $i => $entryID) {
         // URL from which data will be fetched      
         $fetchURL = get_template_directory_uri() . '/fpdi/' . $fpdiLink . '.php?eid=' . $entryID . '&type=save&faire=' . $faire;
-        //error_log('Generate sign for ' . $entryID. $fetchURL);
+        
         $ch = curl_init();
+        
+        //check if local server
+        $host = $_SERVER['HTTP_HOST'];
+        if (strpos($host, '.local') > -1) {
+            //do not check ssl
+          curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+          curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        }
+        
         curl_setopt($ch, CURLOPT_URL, $fetchURL);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         $result[] = curl_exec($ch);
-        curl_close($ch);
+        
+        curl_close($ch);        
     }
 
     date_default_timezone_set('America/Los_Angeles');
     error_log('End mass generate signs for ' . $faire . ' - ' . $type . '. ' . date('m-d-y  h:i:s A'));
     //write completion file
     $path = ($type === 'signs' ? 'maker' : ($type === 'presenter' ? 'presenter' : 'tabletags'));
-
+    
     //if directory does note exist, create it
     if (!file_exists( TEMPLATEPATH . '/signs/' . $faire . '/' . $path)) {
     	mkdir( TEMPLATEPATH . '/signs/' . $faire . '/' . $path, 0777, true);
