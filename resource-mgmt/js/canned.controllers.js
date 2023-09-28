@@ -160,7 +160,7 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
     }else
     if(subRoute=='nonprofit_pymt'){
        vars = {"formSelect":[],
-              "formType":["Exhibit"],
+              "formType":["Exhibit", "Master"],
               "faire": faire,
               "payments":true,
               "selectedFields":[
@@ -229,7 +229,7 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
     }else
     if(subRoute=='zoho'){
       vars = {"formSelect":[],
-              "formType":["Exhibit","Performance","Startup Sponsor","Sponsor","Show Management"],
+              "formType":["Master", "Exhibit","Performance","Startup Sponsor","Sponsor","Show Management"],
               "faire": faire,
               "useFormSC": true,
               "entryIDorder": 200,
