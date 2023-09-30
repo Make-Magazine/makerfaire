@@ -46,16 +46,8 @@ if($form_id==0){
         . "  FROM wp_gf_entry "
         . "left outer join wp_gf_entry_meta on wp_gf_entry_meta.entry_id =wp_gf_entry.id and wp_gf_entry_meta.meta_key=303 "
         . " WHERE wp_gf_entry.status = 'active' and wp_gf_entry.form_id = ".$form_id." and wp_gf_entry_meta.meta_value='Accepted'";
-  
-  //testing entries:  
-  // Maker week 1     - 73841 yes
-  // Maker week 2     - 73840 yes
-  // Maker full event - 73842 yes
-  // Startup sponsor week 1     - 74619 yes
-  // Sponsor week 1             - 74614 yes
-  // Sponsor week 2             - 74618 yes
 
-  $sql = $sql .= ' and wp_gf_entry.id in(73841, 73840, 73842, 74619, 74229, 74614, 74618, 84600) ';        
+  //$sql = $sql .= ' and wp_gf_entry.id in(73841, 74619, 74614, 74618, 73840) ';        
   
   $results = $wpdb->get_results($sql);
   $accCount = 0;
@@ -73,14 +65,25 @@ if($form_id==0){
     
     if(is_array($entReturn)){
       $entArray = end($entReturn);
-      $entLevel = $entArray['value'];
+      $entType = $entArray['value'];
     }else{
-      $entLevel = $entReturn;
+      $entType = 'maker';
     }    
-    echo 'for entry '.$entryID.' $entLevel = '.$entLevel.' weekends: '.$row->weekend.'<Br/>';
+
+    $pos = stripos($entType, 'sponsor');
+    if ($pos !== false) {
+      $pos2 = stripos($entType, 'startup');
+      if($pos2 !== false){
+        $entLevel='startup sponsor';
+      }else{
+        $entLevel='sponsor';
+      }      
+    }else{
+      $entLevel='maker';
+    }
+        
     $entWkndArr = explode(",",$row->weekend);
-    var_dump($entWkndArr);
-    echo '<br/>';
+    
     //sql to pull all tickets available for this entry
     $tktSQL = "select event_ticket_id, eb_ticket_type.ticket_type, eb_ticket_type.qty, eb_ticket_type.hidden, eb_ticket_type.weekend_ind, eb_ticket_type.discount, ticketID,  eb_event.EB_event_id as eventID " .
               "from eb_ticket_type ". 
@@ -138,9 +141,9 @@ if($form_id==0){
           )
         );
       }        
-              
+      echo 'for entry '.$entryID.' $entLevel = '.$entLevel.' $entType: '.$entType.' ';              
       echo 'Generating '.$accessCode.' EventID ='.$tck_row->eventID.' quantity '.$tck_row->qty.' weekend '.$tck_row->weekend_ind.'<br/>';      
- 
+ /*
         //call eventbrite to create access code
         $access_codes = $eventbrite->post('/organizations/27283522055/discounts/', $args);
               
@@ -155,7 +158,7 @@ if($form_id==0){
                 . ' VALUES ('.$entryID.',"'.$accessCode.'",'.$hidden.','.$tck_row->event_ticket_id.')'
                 . ' on duplicate key update access_code = "'.$accessCode.'"';
 
-        $wpdb->get_results($dbSQL);
+        $wpdb->get_results($dbSQL);*/
       if($accCount>100) exit;
     }
     if($accCount>100) exit;
