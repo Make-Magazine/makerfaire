@@ -253,16 +253,19 @@ function getMTMentries($formIDs, $faireID) {
             }
             $category[] = htmlspecialchars_decode(get_CPT_name($result->prime_cat));            
 
-            //weekends                                    
-            $weekends = explode(',', $result->weekends);
-            foreach ($weekends as &$weekend){
-                if($weekend=='Wk1'){
-                    $weekend='First Weekend';
-                }elseif($weekend=='Wk2'){
-                    $weekend='Second Weekend';
-
+            //weekends               
+            if(isset($result->weekends)){
+                $weekends = explode(',', $result->weekends);
+                foreach ($weekends as &$weekend){
+                    if($weekend=='Wk1'){
+                        $weekend='First Weekend';
+                    }elseif($weekend=='Wk2'){
+                        $weekend='Second Weekend';
+                    }
                 }
-            }
+            }    else{
+                $weekends='';
+            }                             
 
             //don't return location information if the show location isn't set
             //$location = ($showLoc?($result->area==NULL?'':$result->area):'');

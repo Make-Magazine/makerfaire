@@ -436,9 +436,8 @@ function gf_collapsible_sections($form, $lead) {
       </div>
 
       <div role="tabpanel" class="tab-pane"  id="ticketing">
-        <div class="panel-group">';
-    		$return.= "EventBrite Logic is currently disabled. Please talk to Engineering to re-enable this.";
-/*
+        <div class="panel-group">';    		
+
     $ticketing = entryTicketing($lead);
     if ($ticketing) {
         $return .= $ticketing;
@@ -465,7 +464,7 @@ function gf_collapsible_sections($form, $lead) {
                     I\'m sorry.  There is not an Eventbrite event set up for this faire.
                   </div>';
         }
-    }*/
+    }
     $return .= '
         </div>
       </div>
@@ -496,6 +495,7 @@ function displayContent($content, $lead, $fieldData, $display = 'table') {
                     if ($field->multipleFiles) {
                         if (!empty($value)) {
                             $array = json_decode($value, true);
+                            $display_value = '';
                             foreach ($array as $file) {
                                 $path = pathinfo($file);
                                 $ext = strtolower($path['extension']);
@@ -510,7 +510,7 @@ function displayContent($content, $lead, $fieldData, $display = 'table') {
                         }
                     } else {
                         $path = pathinfo($value);
-                        $ext = strtolower($path['extension']);
+                        $ext = (isset($path['extension'])?strtolower($path['extension']):'');
                         $supported_image = array('gif', 'jpg', 'jpeg', 'png');
                         if (in_array($ext, $supported_image)) {
                             $displayItem = '<img width="100px" src="' . legacy_get_resized_remote_image_url($value, 100, 100) . '" alt="" />';
@@ -916,7 +916,7 @@ function entryTicketing($lead, $format = 'admin') {
     $sql = 'select eb_entry_access_code.*, eb_eventToTicket.title, eb_eventToTicket.subtitle,'
             . ' (SELECT EB_event_id FROM `eb_event` where eb_event.ID = eb_eventToTicket.eventID) as event_id'
             . ' from eb_entry_access_code,eb_eventToTicket'
-            . ' where eb_eventToTicket.ticketID=eb_entry_access_code.EBticket_id'
+            . ' where eb_eventToTicket.ID=eb_entry_access_code.EBticket_id'
             . ' and entry_id = ' . $entry_id . ' order by eb_eventToTicket.disp_order';
 
     $results = $wpdb->get_results($sql);

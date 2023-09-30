@@ -33,7 +33,7 @@ $template::body_before( $gravityview );
     jQuery('a[href$="jpg"], a[href$="png"], a[href$="jpeg"]').fancybox();
     //jQuery('[data-toggle="tooltip"]').tooltip();
     jQuery('body').tooltip( {selector: '[data-toggle=tooltip]'} );
-    //returns content based on separate element - For Notificationd, get your tickets and
+    //returns content based on separate element - For Notifications, get your tickets and
     jQuery(".toggle-popover").popover({
         html : true,
         placement : "auto bottom",
@@ -161,8 +161,17 @@ if ( ! $gravityview->entries->count() ) {
 		  </span>';
 		}
 		
-		//default ticketing to off TBD
-		$entryData['ticketing'] = array();
+		//default ticketing to off TBD 
+		//TBD check if the faire is passed
+		$entryData['ticketing'] = entryTicketing($entryData,'MAT');
+		/*
+		 //set ticketing and task information if the faire is not past
+		 if ($row['end_dt'] >= $today) {
+			$data['ticketing']    = entryTicketing($entry,'MAT');
+			//get tasks
+			$data['tasks'] = $this->get_tasks_by_entry($row['lead_id']);
+		  }
+*/
 
 		//Public facing profile page edit link 'See Your Maker Page'
 		$dispEditPub = ($entryStatus == 'Accepted' ? true : false);		
@@ -207,7 +216,7 @@ if ( ! $gravityview->entries->count() ) {
 						<span class="entryStandout"><?php echo $entryData['id'];?></span>
 					</div> <!-- close exhibitID -->
 
-					<div>
+					<div class="editLinkRow">
 						<?php              
 						if($dispEditPub) { ?>
 							<span class="editLink">
@@ -229,14 +238,14 @@ if ( ! $gravityview->entries->count() ) {
 						}
 						
 						?>
-							<span class="editLink">
-								<a href="/bay-area/logistics-information/?ep_token=<?php echo $entryData['fg_easypassthrough_token'];?>"><i class="fas fa-edit" aria-hidden="true"></i>Manage Logistics Info</a>
-							</span>
-							<span class="editLink">
-								<a href="/bay-area/public-information/?ep_token=<?php echo $entryData['fg_easypassthrough_token'];?>"><i class="fas fa-edit" aria-hidden="true"></i>Manage Public Info</a>
-							</span>
+						<span class="editLink">
+							<a href="/bay-area/logistics-information/?ep_token=<?php echo $entryData['fg_easypassthrough_token'];?>"><i class="fas fa-edit" aria-hidden="true"></i>Manage Logistics Info</a>
+						</span>
+						<span class="editLink">
+							<a href="/bay-area/public-information/?ep_token=<?php echo $entryData['fg_easypassthrough_token'];?>"><i class="fas fa-edit" aria-hidden="true"></i>Manage Public Info</a>
+						</span>
 
-						</div>
+					</div>
 						<div class="clear"></div>
 
 						<div class="actionSection">
@@ -251,7 +260,7 @@ if ( ! $gravityview->entries->count() ) {
 							if(!empty($entryData['ticketing']) && $entryStatus == 'Accepted'){ ?>
 							<button type="button" class="btn btn-default btn-no-border manage-button toggle-popover" data-toggle="popover">
 								<span class="hideSmall">GET YOUR </span>ENTRY PASSES
-								<div class="fas fa-ticket fa-lg toggle-popover" data-toggle="popover"></div>
+									<div class="fas fa-ticket fa-lg toggle-popover" data-toggle="popover"></div>
 							</button>
 							<div class="popover-content hidden">
 								<?php
@@ -287,7 +296,7 @@ if ( ! $gravityview->entries->count() ) {
 									?>
 
 									<button type="button" class="btn btn-default btn-no-border notifications-button toggle-popover" data-toggle="popover">TASKS
-									<div class="notification-counter toggle-popover" data-toggle="popover" data-count="<?php echo count($tasks['toDo']);?>"><?php echo count($tasks['toDo']);?></div>
+											<div class="notification-counter toggle-popover" data-toggle="popover" data-count="<?php echo count($tasks['toDo']);?>"><?php echo count($tasks['toDo']);?></div>
 									</button>
 									<div class="popover-content hidden">
 									<div class="manage-entry-popover row">
@@ -317,7 +326,7 @@ if ( ! $gravityview->entries->count() ) {
 
 							<!-- Manage Entry links -->
 							<button type="button" class="btn btn-default btn-no-border manage-button toggle-popover" data-toggle="popover">MANAGE
-							<div class="toggle-popover fas fa-cog fa-lg" data-toggle="popover"></div>
+									<div class="toggle-popover fas fa-cog fa-lg" data-toggle="popover"></div>
 							</button>
 							<div class="popover-content hidden">
 								<div class="manage-entry-popover row">

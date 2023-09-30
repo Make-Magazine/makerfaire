@@ -5,8 +5,13 @@ function checkForRibbons($postID=0,$entryID=0){
     if($postID != 0){
         $sql = "select * from wp_mf_ribbons where post_id = ".$postID." order by ribbonType";
     }else{
+      if($entryID==0 || $entryID==''){
+        return '';
+      }else{
         $sql = "select * from wp_mf_ribbons where entry_id = ".$entryID." order by ribbonType";
+      }        
     }
+    
     $ribbons = $wpdb->get_results($sql);
     $return = '<div class="ribbon-wrapper">';
     //check for 0??

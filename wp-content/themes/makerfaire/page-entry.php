@@ -384,11 +384,13 @@ function display_entry_schedule($entry) {
     //set weekend value
     $weekend = '';
     $weekendField = (isset($fieldData['879'])?$fieldData['879']:'');
-    if(isset($weekendField->inputs)){
+    
+    if(isset($weekendField->inputs) && is_array($weekendField->inputs)){        
         foreach($weekendField->inputs as $key=>$input){                
-            if(isset($entry[$input['id']]) && $entry[$input['id']]!='' ){
+            
+            if(isset($entry[$input['id']]) && $entry[$input['id']]!='' ){                
                 if($weekend !='') $weekend .=' & ';
-                $weekend .= (isset($weekendField->choices[$key]['value'])?$weekendField->choices[$key]['value']:$input['label']);
+                $weekend .= $input['label'];
             }
         }
     }

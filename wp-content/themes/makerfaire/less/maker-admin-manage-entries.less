@@ -73,7 +73,7 @@
   }
   .gv-list-view-title-maker-entry {
     @media (max-width: 1199px) {
-      font-size: .9em;
+      //font-size: .9em;
     }
     @media (min-width: 767px) {
       position: relative;
@@ -130,7 +130,7 @@
         }
         @media screen and (min-width: 768px) and (max-width: 1199px) {
           min-height: 18vw;
-          font-size: .9em;
+          //font-size: .9em;
         }
         @media screen and (min-width: 1200px) {
           min-height: 14.8vw;
@@ -185,11 +185,12 @@
         }
       }
     }
+    .editLinkRow {
+      display:flex;  
+    }
     .editLink {
-      margin-top: 1em;
-      margin-left: 1em;
-      float: left;
-      font-size: .9em;
+      margin: 1em;      
+            
       @media (max-width: 1199px) {
         margin-left: 0;
         margin-top: .5em;
@@ -215,16 +216,17 @@
     .submit-date,
     .entry-action-buttons {
       line-height: 2em;
-      font-size: 14px;
+      display: flex;
+      gap: 30px;
       .btn {
-        line-height: 2em;
-        font-size: 14px;
+        line-height: 2em;        
+        padding: 10px;
         @media screen and (max-width: 1199px) {
           padding-right: .2em;
           padding-left: .2em;
         }
         @media screen and (max-width: 1199px) {
-          font-size: .9em;
+          //font-size: .9em;
         }
       }
       @media (max-width: 767px) {
@@ -236,6 +238,10 @@
         font-size: .8em;
       }
     }
+    .toggle-popover {
+      display: inline-block;
+    }
+
     .popover {
       z-index: 600;
     }
@@ -246,7 +252,7 @@
         width: 1.5em;
         border-radius: 50%;
         height: 1.5em;
-        display: inherit;
+        display: inline-block;
         line-height: 1.5em;
         &[data-count="0"] {
           background-color: green;
@@ -290,13 +296,12 @@
         width: 100%;
         position: relative;
         bottom: 0;
-        height: 2.5em;
+        height: auto;
         margin-top: 1em;
       }
     }
   }
   .manage-entry-popover {
-    font-size: 14px;
     h6, a, .disabled {
       display: block;
       padding: 6px 10px;

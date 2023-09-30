@@ -18,7 +18,7 @@ function change_email_to($notification, $form, $entry) {
       // Check for local sites
       if (defined('MF_OVERRITE_EMAIL')) {
          $notification['toType'] = 'email';
-         $notification['to'] = MF_OVERRITE_EMAIL;
+         $notification['to'] = 'alicia@make.co';
          if (isset($notification['bcc'])) $notification['bcc'] = '';
       }else{
       	//$notification = array();
