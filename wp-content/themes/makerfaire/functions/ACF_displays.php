@@ -28,6 +28,7 @@ function do_image_grid($args) {
                     $return .= '<div class="img-size">' . $imageArr['width'] . ' x ' . $imageArr['height'] . '</div>';
                     $return .= '<button class="btn universal-btn btn-info btn-copy-html" onclick="copyMe(\'img_' . $imageArr['id'] . '\')">COPY HTML</button>';
                     $return .= '<div class="copyDiv" id="img_' . $imageArr['id'] . '"><a href="https://makerfaire.com/bay-area/"><img src="' . $imageArr['url'] . '" alt="' . $imageArr['title'] . '" width="' . $imageArr['width'] . '" height="' . $imageArr['height'] . '" border="0" /></a></div>';
+                    $return .= '<a target="_blank" class="download_btn" href="' . $image_url . '" download="' . strtok(basename($image_url), '.') .'">Download</a>';
 
                     $return .= '</div>';
                 }
