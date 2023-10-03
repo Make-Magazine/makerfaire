@@ -212,6 +212,8 @@
           display: none;
         }
       }
+      display: flex;
+      flex-wrap: wrap;
     }
     .submit-date,
     .entry-action-buttons {
@@ -239,7 +241,13 @@
       }
     }
     .toggle-popover {
-      display: inline-block;
+      display: flex;
+      align-items: center;
+      margin-left: 7px;
+      span, a { margin-left: 5px; }
+      .fa:before {
+        font-size: 24px;
+      }
     }
 
     .popover {
@@ -258,10 +266,6 @@
           background-color: green;
         }
       }
-    }
-    .manage-button .fa-cog {
-      float: right;
-      padding-left: 7px;
     }
     .entry-main-content {
       @media screen and (min-width: 768px) and (max-width: 1199px) {
@@ -285,6 +289,7 @@
       }
       i.fa-chevron-circle-right {
         color: #00B4F3;
+        font-size: 24px;
       }
     }
 
