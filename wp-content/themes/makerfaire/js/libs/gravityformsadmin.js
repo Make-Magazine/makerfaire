@@ -14,16 +14,18 @@ jQuery(document).ready(function() {
 			}
 		);
 
-		jQuery('#datetimepicker').datetimepicker({ value: '2015/04/15 05:03', step: 10 });
+		jQuery('#datetimepicker').datetimepicker({ value: '2015/04/15 05:03', step: 30 });
 		jQuery('#datetimepickerstart').datetimepicker({
 			formatTime: 'g:i a',
 			formatDate: 'd.m.Y',
-			defaultTime: '10:00 am'
+			defaultTime: '10:00 am', 
+			step: 30,
 		});
 		jQuery('#datetimepickerend').datetimepicker({
 			formatTime: 'g:i a',
 			formatDate: 'd.m.Y',
-			defaultTime: '10:00 am'
+			defaultTime: '10:00 am', 
+			step: 30,
 		});
 
 		jQuery('#gf_admin_page_title').click(
@@ -654,16 +656,18 @@ function updateMgmt(action) {
 		if (r.rebuild !== '' && r.rebuildHTML !== '') {
 			jQuery("." + r.rebuild).replaceWith(r.rebuildHTML);
 			//reset the date time picker fields
-			jQuery('#datetimepicker').datetimepicker({ value: '2015/04/15 05:03', step: 10 });
+			jQuery('#datetimepicker').datetimepicker({ value: '2015/04/15 05:03', step: 30 });
 			jQuery('#datetimepickerstart').datetimepicker({
 				formatTime: 'g:i a',
 				formatDate: 'd.m.Y',
-				defaultTime: '10:00 am'
+				defaultTime: '10:00 am', 
+				step: 30,
 			});
 			jQuery('#datetimepickerend').datetimepicker({
 				formatTime: 'g:i a',
 				formatDate: 'd.m.Y',
-				defaultTime: '10:00 am'
+				defaultTime: '10:00 am', 
+				step: 30,
 			});
 		}
 
