@@ -47,8 +47,24 @@ if($form_id==0){
         . "left outer join wp_gf_entry_meta on wp_gf_entry_meta.entry_id =wp_gf_entry.id and wp_gf_entry_meta.meta_key=303 "
         . " WHERE wp_gf_entry.status = 'active' and wp_gf_entry.form_id = ".$form_id." and wp_gf_entry_meta.meta_value='Accepted'";
 
-  //$sql = $sql .= ' and wp_gf_entry.id in(73841, 74619, 74614, 74618, 73840) ';        
+  //$sql = $sql .= ' and wp_gf_entry.id in(74565, 74751, 74427, 73937, 75075, 73876, 73911, 73921, 74997, 74618, 74620, 75047) ';        
+  //$sql = $sql .= ' and wp_gf_entry.id in(74751, 75075, 73911, 74842) ';        
   
+  // 74565 maker and presenter - week 2 correct1  
+  // 74427 presenter and sponsor - week 2 correct1
+  // 73937 presenter and maker - both weekends correct1
+  // 73876 performer and maker - both weekends  correct1
+  // 73921 performer and sponsor - week 2 correct1
+  // 74997 maker only - both weekends correct1
+  // 74618 sponsor only - week 2 correct1
+  // 74620 startup sponosor - both weekends correct1
+  // 75047 - maker no weekend set correct1
+  
+  // 74842 0 show management both weekends
+  // 73911 performer and presenter - both weekends
+  // 75075 performer - week 1 
+  // 74751 presenter only - week 1
+
   $results = $wpdb->get_results($sql);
   $accCount = 0;
   $entCount = 0;
@@ -58,30 +74,29 @@ if($form_id==0){
     $entCount++;
     $entryID  = $row->lead_id;
 
-    //for each entry, find the entry or sponsor level
+    //for each entry, find the exhibit type
     $entry    = GFAPI::get_entry( $entryID );
 
     $entReturn = get_value_by_label('entLevel', $form, $entry);
+    $entReturn = (array) $entReturn;
     
-    if(is_array($entReturn)){
-      $entArray = end($entReturn);      
-      $entType = $entArray['value'];
-    }else{
-      $entType = 'maker';
-    }    
+    $exit = FALSE;
+    foreach ($entReturn as $exhibitArr){
+      $entLevel= strtolower($exhibitArr['value']);
+      switch ($exhibitArr['value']) {
+        case 'Maker':
+        case 'Sponsor':
+        case 'Startup Sponsor':
+        case 'Show Management':          
+          $exit = TRUE;
+          break;                          
+      }
 
-    $pos = stripos($entType, 'sponsor');
-    if ($pos !== false) {
-      $pos2 = stripos($entType, 'startup');
-      if($pos2 !== false){
-        $entLevel='startup sponsor';
-      }else{
-        $entLevel='sponsor';
+      if($exit) {
+        break;
       }      
-    }else{
-      $entLevel='maker';
     }
-        
+    
     $entWkndArr = explode(",",$row->weekend);
     
     //sql to pull all tickets available for this entry
@@ -141,7 +156,7 @@ if($form_id==0){
           )
         );
       }        
-      echo 'for entry '.$entryID.' $entLevel = '.$entLevel.' $entType: '.$entType.' ';              
+      echo 'for entry '.$entryID.' $entLevel = '.$entLevel.' ';              
       echo 'Generating '.$accessCode.' EventID ='.$tck_row->eventID.' quantity '.$tck_row->qty.' weekend '.$tck_row->weekend_ind.'<br/>';      
  
         //call eventbrite to create access code

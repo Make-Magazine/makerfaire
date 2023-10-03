@@ -464,9 +464,12 @@ function gf_collapsible_sections($form, $lead) {
         if ($EBcount >= 1) {
             $return .= '
             <div id="noTickets">
-              No Access Codes found for this entry. Click the ticket icon to generate<br/>
+              No Access Codes found for this entry.<br/>
+              
+              <input type="button" name="" value="Generate Access Codes" class="button" 
+                style="width:auto;padding-bottom:2px;" onclick="ebAccessTokens()" />
               <br/>
-              <p onclick="ebAccessTokens()"><i class="fa fa-ticket fa-3x" aria-hidden="true"></i></i></p>
+              
             </div>
 
             <div style="display:none" id="createTickets">

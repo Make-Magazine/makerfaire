@@ -1,14 +1,14 @@
 <?php
 /* Functions specific to EventBrite ticketing process */
 
-//generate Eventbrite Access Codes for entry
+//generate Eventbrite Access Codes for specific entry
 function ebAccessTokens(){
   $entryID  = $_POST['entryID'];
   $response = genEBtickets($entryID);
   wp_send_json($response);
   exit;
 }
-//add_action('wp_ajax_ebAccessTokens', 'ebAccessTokens');
+add_action('wp_ajax_ebAccessTokens', 'ebAccessTokens');
 
 // This function is called with ajax to update the hidden indicator for
 // the eventbrite access codes
@@ -27,33 +27,43 @@ function ebUpdateAC(){
   wp_send_json($response);
   exit;
 }
-//add_action('wp_ajax_ebUpdateAC', 'ebUpdateAC');
+add_action('wp_ajax_ebUpdateAC', 'ebUpdateAC');
 
 /* Used to generate ticket codes */
-function genEBtickets($entryID){
-  if (!class_exists('eventbrite')) {
-    require_once(TEMPLATEPATH.'/classes/eventbrite.class.inc');
+function genEBtickets($entryID ){
+  if(!is_numeric(($entryID))){
+    return;
   }
 
+  if (!class_exists('eventbrite')) {
+    require_once(TEMPLATEPATH.'/classes/eventbrite.php');
+  }
+
+  $token = 'PRNE4A3Q2DYEBYSM7GKX'; //oauth token  
+  $eventbrite = new eventbrite($token);
+
   global $wpdb;
+
   $response = array();
   $entry    = GFAPI::get_entry( $entryID );
-  $form_id  = $entry['form_id'];
 
-  if(is_array($entry))
-    $form = GFAPI::get_form($form_id);
-
+  //pull form information
+  $form_id  = $entry['form_id'];  
+  $form = GFAPI::get_form($form_id);
   $form_type = $form['form_type'];
 
-  //get faire ID for this form
+  //get eventID for this form
+  $eidArr = array();
+  $EIBarr = array();
   $sql = "select wp_mf_faire.ID, eb_event.ID as event_id, EB_event_id as eib "
-          . " from wp_mf_faire, eb_event "
-          . " where FIND_IN_SET ($form_id,wp_mf_faire.form_ids)> 0"
-          . " and wp_mf_faire.ID = eb_event.wp_mf_faire_id";
+  . " from wp_mf_faire, eb_event "
+  . " where FIND_IN_SET ($form_id,wp_mf_faire.form_ids)> 0"
+  . " and wp_mf_faire.ID = eb_event.wp_mf_faire_id";
+  
   $faire = $wpdb->get_results($sql);
-  if($wpdb->num_rows > 0){
-    $eidArr = array();
-    $EIBarr = array();
+
+  if($wpdb->num_rows > 0){    
+    //a faire can be set up with multiple events
     foreach($faire as $row){
       $eidArr[]               = $row->event_id;
       $EIBarr[$row->event_id] = $row->eib;
@@ -64,77 +74,110 @@ function genEBtickets($entryID){
     $event_id = 0;
   }
 
-  // Entry level is stored in field 442 and can only be Presenting, Goldsmith, Silversmith, Coppersmith or Blacksmith
-  $validLevels = array('Presenting', 'Goldsmith', 'Silversmith', 'Coppersmith', 'Blacksmith');
+  // find the exhibit type  
+  $entReturn = get_value_by_label('entLevel', $form, $entry);
+  $entReturn = (array) $entReturn;
+  
+  $exit = FALSE;
+  foreach ($entReturn as $exhibitArr){
+    $entLevel= strtolower($exhibitArr['value']);
+    switch ($exhibitArr['value']) {
+      case 'Maker':
+      case 'Sponsor':
+      case 'Startup Sponsor':
+      case 'Show Management':          
+        $exit = TRUE;
+        break;                          
+    }
 
-  $entReturn = get_value_by_label('entLevel', $form,$entry);
-  if(is_array($entReturn)){
-    $entArray = end($entReturn);
-    $entLevel = $entArray['value'];
-  }else{
-    $entLevel = $entReturn;
+    if($exit) {
+      break;
+    }      
+  }
+  
+  //Final Weekend
+  $entWkndArr = get_value_by_id('879', $form, $entry);  
+  $entWkndArr = (array) $entWkndArr;
+
+  //sql to pull all tickets available for this entry
+  $tktSQL = "select event_ticket_id, eb_ticket_type.ticket_type, eb_ticket_type.qty, eb_ticket_type.hidden, eb_ticket_type.weekend_ind, eb_ticket_type.discount, ticketID,  eb_event.EB_event_id as eventID " .
+            "from eb_ticket_type ". 
+            "left outer join eb_eventToTicket on eb_ticket_type.event_ticket_id = eb_eventToTicket.ID ".
+            "left outer join eb_event on eb_event.ID=eb_eventToTicket.eventID " .
+            "left outer join eb_entry_access_code on `EBticket_id` = event_ticket_id and entry_id = ".$entryID.", ".
+            "wp_mf_form_types ".
+  
+            "where wp_mf_form_types.form_type='".$form_type."' ".
+            "AND eb_eventToTicket.eventID in (".$event_id.") ".
+            "AND eb_ticket_type.form_type = wp_mf_form_types.ID ".
+            "AND eb_ticket_type.entLevel='".strtolower($entLevel)."' ".
+            "AND eb_eventToTicket.ticketID is not null ".
+            "AND entry_id is NULL";        
+  
+  $tck_results = $wpdb->get_results($tktSQL);
+  foreach($tck_results as $tck_row){
+     //if this ticket is for a specific weekend, let's make sure the entry is exhibiting that weekend
+     if($tck_row->weekend_ind !='' && !in_array($tck_row->weekend_ind,$entWkndArr)){        
+      continue;
+    }
+    //generate random 3 digit number for access code
+    $rand = rand(0,999);
+
+    //generate access code for each ticket type
+    $hidden     = $tck_row->hidden;
+    $accessCode = "Z-".$tck_row->ticket_type.$entryID.$rand;      
+    
+    $ticket_ids = (array) json_decode($tck_row->ticketID);
+    $ticket_ids = array_map('strval', $ticket_ids);
+    if($tck_row->discount==0){
+      $args = array(
+        "discount" => 
+        array(
+          "type" => "access",
+          "code" => $accessCode,            
+          "event_id" => $tck_row->eventID,
+          "ticket_class_ids" => $ticket_ids,
+          "quantity_available" => $tck_row->qty    
+        )
+      );
+    }else{
+      $args = array(
+        "discount" => 
+        array(
+          "type" => "coded",
+          "code" => $accessCode,
+          "percent_off" => number_format($tck_row->discount,2),
+          "event_id" => $tck_row->eventID,
+          "ticket_class_ids" => $ticket_ids,
+          "quantity_available" => $tck_row->qty    
+        )
+      );
+    }
+
+  /*  error_log('for entry '.$entryID.' $entLevel = '.$entLevel.' '.
+    'Generating '.$accessCode.' EventID ='.$tck_row->eventID.' quantity '.$tck_row->qty.' weekend '.$tck_row->weekend_ind);      */
+
+    //call eventbrite to create access code
+    $access_codes = $eventbrite->post('/organizations/27283522055/discounts/', $args);
+              
+    if(isset($access_codes->status_code) && $access_codes->status_code==400){
+      error_log('error in call to EB for entry ID '.$entryID.'');
+      error_log($access_codes->error_description);        
+      exit;
+    }
+    
+    //save access codes to db
+    $dbSQL = 'INSERT INTO `eb_entry_access_code`(`entry_id`, `access_code`, `hidden`,EBticket_id) '
+            . ' VALUES ('.$entryID.',"'.$accessCode.'",'.$hidden.','.$tck_row->event_ticket_id.')'
+            . ' on duplicate key update access_code = "'.$accessCode.'"';
+
+    $wpdb->get_results($dbSQL);        
+
   }
 
-  //determine what ticket types to request
-  $sql = 'select  eb_ticket_type.ticket_type, qty, hidden,ticketID as ticket_id,
-                  eb_eventToTicket.eventID
-          from    eb_ticket_type
-            left outer join eb_eventToTicket on
-              eb_eventToTicket.eventID in ('.$event_id.') and
-              eb_eventToTicket.ticket_type = eb_ticket_type.ticket_type,
-                  wp_mf_form_types
-          where   wp_mf_form_types.form_type="'.$form_type.'"    and
-                  eb_ticket_type.event_id in ('.$event_id.')     and
-                  eb_ticket_type.form_type = wp_mf_form_types.ID and
-                  entLevel="'.strtolower ($entLevel).'"          and
-                  ticketID is not null';
-
-  $results = $wpdb->get_results($sql);
-
-  if($wpdb->num_rows > 0){
-    $eventbrite = new eventbrite();
-
-    $digits = 3;
-
-    $charIP = (string) $entry['ip'];
-    $rand   =  substr(base_convert($charIP, 10, 36),0,$digits);
-    foreach($results as $row){
-      //generate access code for each ticket type
-      $hidden     = $row->hidden;
-      $accessCode = $row->ticket_type.$entryID.$rand;
-      //if this access Code has already been created, do not resend to EB
-      $ACcount = $wpdb->get_var('select count(*) from eb_entry_access_code where access_code = "'.$accessCode .'"');
-      $EB_event_id = $EIBarr[$row->eventID];
-      if($ACcount==0){
-        $args = array(
-          'id'   => $EB_event_id,
-          'data' => 'access_codes',
-          'create' => array(
-            'access_code.code'                => $accessCode,
-            'access_code.ticket_ids'          => $row->ticket_id,
-            'access_code.quantity_available'  => $row->qty
-          )
-        );
-
-        //call eventbrite to create access code
-        $access_codes = $eventbrite->events($args);
-        if(isset($access_codes->status_code)&&$access_codes->status_code==400){
-          $response['msg'] =  $access_codes->error_description;
-          exit;
-        }else{
-          $response[$accessCode] = $access_codes->resource_uri;
-        }
-
-        //save access codes to db
-        $dbSQL = 'INSERT INTO `eb_entry_access_code`(`entry_id`, `access_code`, `hidden`,EBticket_id) '
-                . ' VALUES ('.$entryID.',"'.$accessCode.'",'.$hidden.','.$row->ticket_id.')'
-                . ' on duplicate key update access_code = "'.$accessCode.'"';
-
-        $wpdb->get_results($dbSQL);
-      }
-    }
+  if($wpdb->num_rows > 0){    
     $response['msg'] = 'Access Codes generated.  Please refresh to see<br/>';
   }
   return $response;
 }
-//add_action( 'sidebar_entry_update', 'genEBtickets', 10, 1 );
+add_action( 'sidebar_entry_update', 'genEBtickets', 10, 1 );
