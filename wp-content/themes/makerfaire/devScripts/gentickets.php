@@ -64,7 +64,7 @@ if($form_id==0){
     $entReturn = get_value_by_label('entLevel', $form, $entry);
     
     if(is_array($entReturn)){
-      $entArray = end($entReturn);
+      $entArray = end($entReturn);      
       $entType = $entArray['value'];
     }else{
       $entType = 'maker';
@@ -97,7 +97,7 @@ if($form_id==0){
               "AND eb_ticket_type.form_type = wp_mf_form_types.ID ".
               "AND eb_ticket_type.entLevel='".strtolower($entLevel)."' ".
               "AND eb_eventToTicket.ticketID is not null ".
-              "AND entry_id is NULL";
+              "AND entry_id is NULL";              
          
     $tck_results = $wpdb->get_results($tktSQL);
     foreach($tck_results as $tck_row){
@@ -143,7 +143,7 @@ if($form_id==0){
       }        
       echo 'for entry '.$entryID.' $entLevel = '.$entLevel.' $entType: '.$entType.' ';              
       echo 'Generating '.$accessCode.' EventID ='.$tck_row->eventID.' quantity '.$tck_row->qty.' weekend '.$tck_row->weekend_ind.'<br/>';      
- /*
+ 
         //call eventbrite to create access code
         $access_codes = $eventbrite->post('/organizations/27283522055/discounts/', $args);
               
@@ -158,7 +158,7 @@ if($form_id==0){
                 . ' VALUES ('.$entryID.',"'.$accessCode.'",'.$hidden.','.$tck_row->event_ticket_id.')'
                 . ' on duplicate key update access_code = "'.$accessCode.'"';
 
-        $wpdb->get_results($dbSQL);*/
+        $wpdb->get_results($dbSQL);
       if($accCount>100) exit;
     }
     if($accCount>100) exit;
