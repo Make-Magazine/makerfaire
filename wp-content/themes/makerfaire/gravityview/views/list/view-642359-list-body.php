@@ -268,13 +268,15 @@ if ( ! $gravityview->entries->count() ) {
 								?>
 								<div class="row mat-ticketing">
 									<div class="col-xs-10 col-sm-10 col-md-10 col-lg-10">
-									<div class="title"><?php echo $ticket['title'];?></div>
-									<div class="subtitle"><?php echo $ticket['subtitle'];?></div>
+										<a target="_blank" href="<?php echo $ticket['link'];?>">
+											<div class="title"><?php echo $ticket['title'];?></div>
+											<div class="subtitle"><?php echo $ticket['subtitle'];?></div>
+										</a>
 									</div>
 									<div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
-									<a target="_blank" href="<?php echo $ticket['link'];?>">
-										<i class="fas fa-chevron-circle-right fa-2x" aria-hidden="true"></i>
-									</a>
+										<a target="_blank" href="<?php echo $ticket['link'];?>">
+											<i class="fas fa-chevron-circle-right fa-2x" aria-hidden="true"></i>
+										</a>
 									</div>
 								</div>
 								<?php
