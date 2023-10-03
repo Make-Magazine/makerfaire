@@ -328,7 +328,7 @@ if ( ! $gravityview->entries->count() ) {
 
 							<!-- Manage Entry links -->
 							<button type="button" class="btn btn-default btn-no-border manage-button toggle-popover" data-toggle="popover">MANAGE
-									<div class="toggle-popover fas fa-cog fa-lg" data-toggle="popover"></div>
+									<div class="toggle-popover fa fa-cog fa-lg" data-toggle="popover"></div>
 							</button>
 							<div class="popover-content hidden">
 								<div class="manage-entry-popover row">
