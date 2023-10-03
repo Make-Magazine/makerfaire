@@ -232,7 +232,7 @@ if ( ! $gravityview->entries->count() ) {
 						}elseif($dispGVeditLink){
 							?>
 							<span class="editLink">
-								<a href="<?php echo $GVeditLink;?>"><i class="fas fa-image" aria-hidden="true"></i><?php echo $editEntryLabel;?></a>
+								<a href="<?php echo $GVeditLink;?>"><i class="fa fa-image" aria-hidden="true"></i><?php echo $editEntryLabel;?></a>
 							</span>
 							<?php
 						}
@@ -260,7 +260,7 @@ if ( ! $gravityview->entries->count() ) {
 							if(!empty($entryData['ticketing']) && $entryStatus == 'Accepted'){ ?>
 							<button type="button" class="btn btn-default btn-no-border manage-button toggle-popover" data-toggle="popover">
 								<span class="hideSmall">GET YOUR </span>ENTRY PASSES
-									<div class="fas fa-ticket fa-lg toggle-popover" data-toggle="popover"></div>
+									<div class="fa fa-ticket fa-lg toggle-popover" data-toggle="popover"></div>
 							</button>
 							<div class="popover-content hidden">
 								<?php
@@ -275,7 +275,7 @@ if ( ! $gravityview->entries->count() ) {
 									</div>
 									<div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
 										<a target="_blank" href="<?php echo $ticket['link'];?>">
-											<i class="fas fa-chevron-circle-right fa-2x" aria-hidden="true"></i>
+											<i class="fa fa-chevron-circle-right fa-2x" aria-hidden="true"></i>
 										</a>
 									</div>
 								</div>
