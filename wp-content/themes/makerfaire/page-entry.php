@@ -823,10 +823,10 @@ function displayEntryFooter() {
 
     // we're going to check if the schedule page exists
     //find the parent page
-    $parentPage = get_page_by_path('/' . $url_sub_path . '/');
+    $parentPage = get_page_by_path($url_sub_path . '/');
     $schedulePage = '';
-    $mtmPage = '';
-    if(isset($parentPage->ID)){
+    $mtmPage = '';    
+    if(isset($parentPage->ID)){        
     	$args = array('parent' => $parentPage->ID, 'meta_key' => '_wp_page_template', 'meta_value' => 'page-meet-the-makers.php');
     	$mtmPages = get_pages($args);
     	$mtmPage = (isset($mtmPages[0]) ? $mtmPages[0] : '');
@@ -838,7 +838,7 @@ function displayEntryFooter() {
     $return = '';
     $return .= '<div class="faireActions container">';
 
-    //set the 'backlink' text and link (only set on valid entries)
+    //set the 'backlink' text and link (only set on valid entries)    
     if ($faire != '') {
         $url = parse_url(wp_get_referer()); //getting the referring URL
         $url['path'] = rtrim($url['path'], "/"); //remove any trailing slashes
@@ -850,9 +850,9 @@ function displayEntryFooter() {
         if ($makerEdit) {
             $backlink = "/manage-entries/";
             $backMsg = 'Back to Your Maker Faire Portal';
-        }
-
-        if ($mtmPage && isset($mtmPage->post_status) && $mtmPage->post_status == 'publish' || $backlink == "/manage-entries/") {
+        }    
+        
+        if (($mtmPage && isset($mtmPage->post_status) && $mtmPage->post_status == 'publish') || $backlink == "/manage-entries/") {
             $return .= '<div class="faireAction-box">
 		            		<a class="btn universal-btn" href="' . $backlink . '"><h4>' . $backMsg . '</h4></a>
 						</div>';

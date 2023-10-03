@@ -12,6 +12,7 @@ function add_sidebar_sections($form, $lead) {
     if(isset($form['form_type']) && $form['form_type']!='Default'){
       $sidebar .= display_entry_fee_mgmt_box($form, $lead);
       $sidebar .= display_exhibit_type_box($form, $lead);
+      $sidebar .= display_final_wknd_box($form, $lead);     
     }
     
     $sidebar .= display_entry_notes_box($form, $lead);
@@ -240,6 +241,16 @@ function display_exhibit_type_box($form, $lead) {
   return addExpandBox($return,'Exhibit Type','exhibit_type');
 }
 
+/* update final weekend */
+function display_final_wknd_box($form, $lead) {
+  $fieldName  = 'entry_final_weekend';
+  $field_id   = '879';
+
+  $return     = field_display($lead,$form,$field_id,$fieldName);
+  $return .= '<input type="button" name="update_final_weekend" value="Update Final Weekend" class="button" style="width:auto;padding-bottom:2px;" onclick="updateMgmt(\'update_final_weekend\');"/>';
+  $return .= '<span class="updMsg update_final_weekendMsg"></span>';
+  return addExpandBox($return,'Final Weekend','final_weekend');
+}
 function display_entry_notes_box($form, $lead) {
   /* Notes Sidebar Area */
   $notes = RGFormsModel::get_lead_notes( $lead['id'] );

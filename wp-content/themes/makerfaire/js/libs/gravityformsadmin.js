@@ -631,6 +631,16 @@ function updateMgmt(action) {
 			entry_exhibit_type.push(jQuery(this).val());
 		});
 		data.entry_exhibit_type = entry_exhibit_type;
+	} else if (action == 'update_final_weekend') {
+		//set processing icon on the screen
+		jQuery(".update_final_weekend_typeMsg").html(processing_icon);
+		//final weekend
+		var entry_final_weekend = [];
+		jQuery("[name='entry_final_weekend[]']:checked").each(function() {
+			// push all checked locations to array
+			entry_final_weekend.push(jQuery(this).val());
+		});
+		data.entry_final_weekend = entry_final_weekend;
 	}
 
 	jQuery.post(ajaxurl, data, function(r) {

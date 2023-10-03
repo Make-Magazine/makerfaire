@@ -1,5 +1,4 @@
 <?php
-
 // Adding Entry Detail and checking for Processing Posts
 add_action("gform_entry_detail_content_before", "add_main_text_before", 10, 2);
 
@@ -32,7 +31,14 @@ function gf_summary_metabox($form, $lead) {
             ((isset($lead['344']) && strlen($lead['344']) > 0 ) ? $lead['344'] : '');
     $size_request_other = (isset($lead['61']) ? $lead['61'] : '');
 
-    $entry_form_type = $form['form_type'];
+    //starting BA23 we are now using exhibit type instead of form_type
+    $exhibit_types = array_filter($lead, function($key) {
+      return strpos($key, '339.') === 0;
+    }, ARRAY_FILTER_USE_KEY);
+    
+    $exhibit_types = implode(",", array_filter($exhibit_types));
+    $entry_form_type = ($exhibit_types!=''?$exhibit_types:$form['form_type']);
+
     $entry_form_status = (isset($lead['303']) ? $lead['303'] : '');
     $wkey = (isset($lead['27']) ? $lead['27'] : '');
     $vkey = (isset($lead['32']) ? $lead['32'] : '');
@@ -81,6 +87,13 @@ function gf_summary_metabox($form, $lead) {
     $parent_entry_ID = $lead['gpnf_entry_parent'];    
     $parent_form = ($parent_entry_ID!=''?$lead['gpnf_entry_parent_form']:'');                    
     
+    //starting BA23 we added a new field of final Weekend
+    $finalWeekend = array_filter($lead, function($key) {
+      return strpos($key, '879.') === 0;
+    }, ARRAY_FILTER_USE_KEY);
+    
+    $finalWeekend = implode("<br/>", array_filter($finalWeekend));
+
     $return = '
 
 <table cellspacing="0" class="gf-entry-summary">
@@ -183,6 +196,10 @@ function gf_summary_metabox($form, $lead) {
           <tr>
             <td valign="top"><strong>Schedule/Location:</strong></td>
             <td>' . display_schedule($form['id'], $lead, 'summary') . '</td>
+          </tr>
+          <tr>
+            <td valign="top"><strong>Final Weekend:</strong></td>
+            <td>' . $finalWeekend . '</td>        
           </tr>
           <tr>
             <td>

@@ -276,7 +276,10 @@ function mf_admin_MFupdate_entry(){
         break;
       case 'update_exhibit_type' :
         set_exhibit_type($lead,$form);
-        break;        
+        break; 
+      case 'update_final_weekend' :
+        set_final_weekend($lead,$form);
+        break;          
       default:
         $response['result'] = 'Error: Invalid Action Passed';
         break;
@@ -779,6 +782,30 @@ function set_exhibit_type($lead,$form){
 				$exploded_exhibit_type = explode("_",$exhibit_type);
 				$entry_info_entry[$exploded_exhibit_type[0]] = $exploded_exhibit_type[1];
 				mf_update_entry_field($entry_id,$exploded_exhibit_type[0],$exploded_exhibit_type[1]);
+			}
+		}
+	}
+}
+
+//Update Final Weekend
+function set_final_weekend($lead,$form){
+  $entry_id             = $lead['id'];
+	$final_weekend_change  = $_POST['entry_final_weekend'];
+
+	$field879 = RGFormsModel::get_field($form,'879');
+
+	if (!empty($entry_id)){
+		/* Clear out old choices */
+		foreach($field879['inputs'] as $choice){
+			mf_update_entry_field($entry_id,$choice['id'],'');
+		}
+
+		/* Save entries */
+		if (!empty($final_weekend_change)){
+			foreach($final_weekend_change as $final_weekend){
+				$exploded_final_weekend = explode("_",$final_weekend);
+				$entry_info_entry[$exploded_final_weekend[0]] = $exploded_final_weekend[1];
+				mf_update_entry_field($entry_id,$exploded_final_weekend[0],$exploded_final_weekend[1]);
 			}
 		}
 	}
