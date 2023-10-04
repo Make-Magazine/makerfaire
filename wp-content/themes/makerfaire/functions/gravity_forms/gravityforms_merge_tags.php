@@ -385,6 +385,8 @@ function get_location($entry, $type='full'){
               $location .= $subarea;
             }elseif($type== 'area'){
               $location .= $row->area;
+            }elseif($type=='booth'){
+              $location .= ucfirst($row->location);
             }else{
               $location .= ucfirst($row->location).' - ' . $row->area.' : ' . $subarea;
             }            
