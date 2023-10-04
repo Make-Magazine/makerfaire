@@ -107,7 +107,7 @@ if (isset($entry->errors)) {
 
 
     $project_name = (isset($entry['151']) ? $entry['151'] : '');  //Change Project Name
-    $project_photo = (isset($entry['22']) ? legacy_get_fit_remote_image_url($entry['22'], 750, 500) : '');
+    $project_photo = (isset($entry['22']) ? $entry['22'] : '');
 
     // this returns an array of image urls from the additional images field
     $project_gallery = (isset($entry['878']) ? explode(",", str_replace(array( '[', ']', '"' ), '', $entry['878'])) : '');
