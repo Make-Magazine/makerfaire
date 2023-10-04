@@ -18,6 +18,9 @@ function mf_custom_merge_tags($merge_tags, $form_id, $fields, $element_id) {
     $merge_tags[] = array('label' => 'Entry Attributes', 'tag' => '{entry_attributes}');
     $merge_tags[] = array('label' => 'Scheduled Locations', 'tag' => '{sched_loc}');
     $merge_tags[] = array('label' => 'Entry Locations', 'tag' => '{entry_loc}');
+    $merge_tags[] = array('label' => 'Entry Area Only', 'tag' => '{entry_area}');
+    $merge_tags[] = array('label' => 'Entry Subarea Only', 'tag' => '{entry_subarea}');
+    $merge_tags[] = array('label' => 'Entry Booth Number', 'tag' => '{entry_booth}');
     $merge_tags[] = array('label' => 'Faire ID', 'tag' => '{faire_id}');
     $merge_tags[] = array('label' => 'Resource Category Lock Ind', 'tag' => '{rmt_res_cat_lock}');
     $merge_tags[] = array('label' => 'Attribute Lock Ind', 'tag' => '{rmt_att_lock}');
@@ -59,8 +62,26 @@ function mf_replace_merge_tags($text, $form, $entry, $url_encode, $esc_html, $nl
 
   //scheduled locations {entry_loc}
   if (strpos($text, '{entry_loc}') !== false) {
-    $schedule = get_location($entry,true);
+    $schedule = get_location($entry, 'full');
     $text = str_replace('{entry_loc}', $schedule, $text);
+  }
+
+  //scheduled locations {entry_area}
+  if (strpos($text, '{entry_area}') !== false) {
+    $schedule = get_location($entry, 'area');
+    $text = str_replace('{entry_area}', $schedule, $text);
+  }
+
+  //scheduled locations {entry_subarea}
+  if (strpos($text, '{entry_subarea}') !== false) {
+    $schedule = get_location($entry, 'subarea');
+    $text = str_replace('{entry_subarea}', $schedule, $text);
+  }
+
+  //scheduled locations {entry_booth}
+  if (strpos($text, '{entry_booth}') !== false) {
+    $schedule = get_location($entry, 'booth');
+    $text = str_replace('{entry_booth}', $schedule, $text);
   }
 
   //Entry Resources
@@ -334,7 +355,7 @@ function get_schedule($lead,$locsOnly = false){
 }
 
 /* Return area/subarea for entry */
-function get_location($entry){
+function get_location($entry, $type='full'){
   global $wpdb;
   $location = '';
   $entry_id = (isset($entry['id'])?$entry['id']:'');
@@ -353,8 +374,20 @@ function get_location($entry){
       $results = $wpdb->get_results($sql);
       if($wpdb->num_rows > 0){
           foreach($results as $row){
-            $subarea = ($row->nicename!=''&&$row->nicename!=''?$row->nicename:$row->subarea);
-            $location .= ($location!=''?',':''). ucfirst($row->location).' - ' . $row->area.' : '.$subarea;
+            //if there are multiple locations separate with a space
+            $location .= ($location != '' ? ',' : '');
+
+            //set subarea text to nicename if set
+            $subarea = ($row->nicename != '' && $row->nicename != '' ? $row->nicename:$row->subarea);
+
+            //set response based on type
+            if($type == 'subarea') {
+              $location .= $subarea;
+            }elseif($type== 'area'){
+              $location .= $row->area;
+            }else{
+              $location .= ucfirst($row->location).' - ' . $row->area.' : ' . $subarea;
+            }            
           }
       }
   }
