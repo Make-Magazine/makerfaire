@@ -27,14 +27,13 @@ class PDF extends FPDF {
 
    // Page header
    function Header() {
-      // Header required when using restful structures for Chrome
-      /*
+      // Header required when using restful structures for Chrome, otherwise generating signs curl will get a 403
       header('HTTP/1.0 200 OK');
       header('Cache-Control: public, must-revalidate, max-age=0');
       header('Pragma: no-cache');
       header('Accept-Ranges: bytes');
       header("Content-Transfer-Encoding: binary");
-      header("Content-type: application/pdf");*/
+      header("Content-type: application/pdf");
       // Faire sign setup
       global $root;
       global $wp_query;
