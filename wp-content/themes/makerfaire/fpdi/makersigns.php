@@ -175,7 +175,7 @@ function createOutput($entry_id, $pdf) {
    }
    
    $project_short = (isset($entry['16']) ? filterText($entry['16']) : '');
-   $project_affiliation = (isset($entry['168']) ? filterText((string) $entry['168']) : 'SF Bazaar');
+   $project_affiliation = (isset($entry['168']) ? filterText((string) $entry['168']) : '');
    $project_title = (isset($entry['151']) ? filterText((string) $entry['151']) : '');
    //$project_title = "this is my long long title it goes for two lines, maybe more";
    $project_title = preg_replace('/\v+|\\\[rn]/', '<br/>', $project_title);
@@ -187,7 +187,7 @@ function createOutput($entry_id, $pdf) {
                    ON  location.subarea_id = subarea.ID
     where location.entry_id=$entry_id" . ' AND location.location <> ""';
    $location_results = $wpdb->get_results($location_sql);
-   $project_subarea = $location_results[0]->nicename;
+   $project_subarea = isset($location_results[0]->nicename) ? $location_results[0]->nicename : '';
    $project_booth = $location_results[0]->location;
 
    /***************************************************************************
@@ -273,7 +273,7 @@ function createOutput($entry_id, $pdf) {
       $photo_extension = pathinfo($project_photo, PATHINFO_EXTENSION);
       if ($photo_extension) {
          //fit image onto pdf
-         $project_photo = legacy_get_fit_remote_image_url($project_photo, 200, 200, 0);
+         $project_photo = legacy_get_fit_remote_image_url($project_photo, 450, 450, 0);
          // figure out whether x or y is bigger on the image and make it fit for that
          list($x1, $y1) = getimagesize($project_photo);
          $x2 = 180;
