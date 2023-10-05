@@ -273,7 +273,7 @@ function createOutput($entry_id, $pdf) {
       $photo_extension = pathinfo($project_photo, PATHINFO_EXTENSION);
       if ($photo_extension) {
          //fit image onto pdf
-         $project_photo = legacy_get_fit_remote_image_url($project_photo, 450, 450, 0);
+         $project_photo = legacy_get_fit_remote_image_url($project_photo, 750, 750, 0);
          // figure out whether x or y is bigger on the image and make it fit for that
          list($x1, $y1) = getimagesize($project_photo);
          $x2 = 180;
