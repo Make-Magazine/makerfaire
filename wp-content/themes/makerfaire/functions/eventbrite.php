@@ -33,16 +33,15 @@ add_action('wp_ajax_ebUpdateAC', 'ebUpdateAC');
 function genEBtickets($entryID ){
   if(!is_numeric(($entryID))){
     return;
-  }
+  }  
 
+  global $wpdb;
   if (!class_exists('eventbrite')) {
     require_once(TEMPLATEPATH.'/classes/eventbrite.php');
   }
 
   $token = 'PRNE4A3Q2DYEBYSM7GKX'; //oauth token  
   $eventbrite = new eventbrite($token);
-
-  global $wpdb;
 
   $response = array();
   $entry    = GFAPI::get_entry( $entryID );
@@ -154,14 +153,16 @@ function genEBtickets($entryID ){
       );
     }
 
-  /*  error_log('for entry '.$entryID.' $entLevel = '.$entLevel.' '.
-    'Generating '.$accessCode.' EventID ='.$tck_row->eventID.' quantity '.$tck_row->qty.' weekend '.$tck_row->weekend_ind);      */
-
-    //call eventbrite to create access code
+    /*
+    error_log('for entry '.$entryID.' $entLevel = '.$entLevel.' '.
+    'Generating '.$accessCode.' EventID ='.$tck_row->eventID.' quantity '.$tck_row->qty.' weekend '.$tck_row->weekend_ind);      
+    error_log(print_r($args,TRUE));*/
+    
+    //call eventbrite to create access code    
     $access_codes = $eventbrite->post('/organizations/27283522055/discounts/', $args);
-              
-    if(isset($access_codes->status_code) && $access_codes->status_code==400){
-      error_log('error in call to EB for entry ID '.$entryID.'');
+
+    if(isset($access_codes->status_code)){
+      error_log('error in call to EB for entry ID '.$entryID.'. Error code - '.$access_codes->status_code);
       error_log($access_codes->error_description);        
       exit;
     }

@@ -19,11 +19,6 @@ include_once TEMPLATEPATH . '/classes/legacy-helper.php';
 //cron job
 include_once TEMPLATEPATH . '/classes/cronJob.php';
 
-//eventbrite API
-if (is_admin()) {
-include_once TEMPLATEPATH . '/classes/eventbrite.class.inc';
-}
-
 if (defined('WP_CLI') && WP_CLI) {
     require_once('plugins/wp-cli/wp-cli.php');
 }
