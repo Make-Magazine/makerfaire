@@ -118,22 +118,29 @@
                 }
                 ?>
                 
-                    <div class="entryInfo">
-                        <?php
-                        //display schedule/location information if there is any
-                        echo display_entry_schedule($entry); 
-                        if (!empty($registerLink)) {
-                            ?>
-                            <a href="<?php echo $registerLink; ?>" class="btn universal-btn-red" style="margin-top:10px;">Register Here</a>
-                            <?php
-                        }
-                        if (!empty($viewNow)) {
-                            ?>
-                            <a href="<?php echo $viewNow; ?>" class="btn universal-btn-red" style="margin-top:10px;">Watch Live</a>
-                        <?php }
+                <div class="entryInfo">
+                    <?php
+                    //display schedule/location information if there is any
+                    echo display_entry_schedule($entry); 
+                    if (!empty($registerLink)) {
                         ?>
-                    </div>
-                
+                        <a href="<?php echo $registerLink; ?>" class="btn universal-btn-red" style="margin-top:10px;">Register Here</a>
+                        <?php
+                    }
+                    if (!empty($viewNow)) {
+                        ?>
+                        <a href="<?php echo $viewNow; ?>" class="btn universal-btn-red" style="margin-top:10px;">Watch Live</a>
+                    <?php 
+                    }                        
+
+                    if (display_group($entryId)) { ?>
+                        <div class="group-entry"><?php echo display_group($entryId); ?></div><?php
+                    }
+                    if (display_groupEntries($entryId)) { ?>
+                        <div class="group-entries"><?php echo display_groupEntries($entryId); ?></div><?php 
+                    }
+                    ?>
+                </div>                
             </div>
         </div>  <!-- END SIDEBAR -->
     </div>
@@ -159,31 +166,25 @@
                     <p><?php echo nl2br($presentation_description); ?></p>                
                 </div>
                 <?php
-            }?>
+            }
             
-
-            <?php
-            if (!empty($project_website)) {
-                ?> <a href="<?php echo $project_website; ?>" class="btn universal-btn entry-website"target="_blank" ><?php if($formType !='Sponsor') echo 'Project';?> Website</a><?php
+            if (!empty($project_website)) { ?> 
+                <a href="<?php echo $project_website; ?>" class="btn universal-btn entry-website"target="_blank" ><?php if($formType !='Sponsor') echo 'Project';?> Website</a><?php
             }
-
-            if (display_group($entryId)) {
-                ?><div class="group-entry"><?php echo display_group($entryId); ?></div><?php
-            }
-            if (display_groupEntries($entryId)) {
-                ?><div class="group-entries"><?php echo display_groupEntries($entryId); ?></div>
-            <?php }
+            
             $url = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
             echo do_shortcode('[easy-social-share buttons="facebook,pinterest,reddit,twitter,linkedin,love,more" morebutton_icon="dots" morebutton="2" counters="yes" counter_pos="after" total_counter_pos="hidden" animation="essb_icon_animation6" style="icon" fullwidth="yes" template="6" postid="' . $entryId . '" url="' . $url . '" text="' . $project_title . '"]');
             ?>
         </div>
     </div>
     <div class="row">
-        <div id="entryFullWidth">
-            <?php if(isset($project_gallery) && $project_gallery !== "") { ?>
+        <div id="entryFullWidth">            
+            <?php if(isset($project_gallery) && !empty($project_gallery)) { ?>
                 <div id="projectGallery" class="owl-carousel">
-                <?php foreach($project_gallery as $key=>$image) { ?>
-                    <div class="gallery-item"><img alt="<?php echo $project_title;?> - exhibit detail <?php echo $key;?>"  src='<?php echo legacy_get_fit_remote_image_url($image, 750, 500); ?>' /></div>
+                <?php foreach($project_gallery as $key=>$image) { 
+                        if($image!=''){?>
+                            <div class="gallery-item"><img alt="<?php echo $project_title;?> - exhibit detail <?php echo $key;?>"  src='<?php echo legacy_get_fit_remote_image_url($image, 750, 500); ?>' /></div>
+                        <?php } ?>
                 <?php } ?>
                 </div>
             <?php } 

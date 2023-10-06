@@ -512,19 +512,18 @@ function display_group($entryID) {
           where (parentID=" . $entryID . " or childID=" . $entryID . ") and child.status != 'trash' and parent.status != 'trash' GROUP BY wp_mf_lead_rel.parentID";
     $results = $wpdb->get_results($sql);
     if ($wpdb->num_rows > 0) {
-        if ($results[0]->parentID != $entryID) {
-            $title = '';
+        if ($results[0]->parentID != $entryID) {            
             $type = 'child';
-            $return .= '<ul class="group-list">';
+            $return .= '<div class="group-list">';
             foreach ($results as $row) {
                 $link_entryID = ($type == 'parent' ? $row->childID : $row->parentID);
                 $entry = GFAPI::get_entry($link_entryID);
                 //Title
                 $project_title = esc_html($entry['151']);
                 $project_title = preg_replace('/\v+|\\\[rn]/', '<br/>', $project_title);
-                $return .= '<li>Part of: <a href="/maker/entry/' . $link_entryID . '">' . $project_title . '</a></li>';
+                $return .= '<span>Part of: <a href="/maker/entry/' . $link_entryID . '">' . $project_title . '</a></span>';
             }
-            return $return .= "</ul>";
+            return $return .= "</div>";
         }
     }
 }
@@ -536,28 +535,33 @@ function display_groupEntries($entryID) {
     $return = '';
 
     //look for all associated entries but exclude trashed entries
-    $sql = "select wp_mf_lead_rel.*
-          from wp_mf_lead_rel
-          left outer join wp_gf_entry  child on wp_mf_lead_rel.childID = child.id
-          left outer join wp_gf_entry parent on wp_mf_lead_rel.parentID = parent.id
-          where (parentID=" . $entryID . " or childID=" . $entryID . ") and child.status != 'trash' and parent.status != 'trash' GROUP BY wp_mf_lead_rel.childID";
+    $sql = "select wp_mf_lead_rel.* 
+            from wp_mf_lead_rel 
+            left outer join wp_gf_entry child on wp_mf_lead_rel.childID = child.id 
+            left outer join wp_gf_entry_meta on child.id = wp_gf_entry_meta.entry_id and wp_gf_entry_meta.meta_key =303 
+            left outer join wp_gf_entry parent on wp_mf_lead_rel.parentID = parent.id 
+            
+            where (parentID=" . $entryID . " or childID=" . $entryID . ") 
+            AND child.status != 'trash' 
+            AND parent.status != 'trash' 
+            AND wp_gf_entry_meta.meta_value='Accepted';";
+        
     $results = $wpdb->get_results($sql);
     if ($wpdb->num_rows > 0) {
         if ($results[0]->parentID == $entryID) {
-            $title = '<h4>Exhibits in this group:</h4>';
-            $type = 'parent';
-            $return .= $title . '<ul class="group-list">';
+            $return .= '<h4>Exhibits in this group:</h4>';
+            $type = 'parent';            
             foreach ($results as $row) {
                 $link_entryID = ($type == 'parent' ? $row->childID : $row->parentID);
                 $entry = GFAPI::get_entry($link_entryID);
                 //Title
                 $project_title = esc_html($entry['151']);
                 $project_title = preg_replace('/\v+|\\\[rn]/', '<br/>', $project_title);
-                $return .= '<li><a href="/maker/entry/' . $link_entryID . '">' . $project_title . '</a></li>';
-            }
-            return $return .= "</ul>";
+                $return .= '<span><a href="/maker/entry/' . $link_entryID . '">' . $project_title . '</a></span><br/>';
+            }            
         }
     }
+    return $return;
 }
 
 // provide a linked list of the categories
