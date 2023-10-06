@@ -80,7 +80,7 @@ if ($displayNav) {
                                 <div class="filter-wrapper">
                                     <div class="schedule-filters" ng-show="showSchedules">
                                         <div class="sched-col-4">Filter by:</div>
-                                        <div class="sched-col-4">
+                                        <?php /* <div class="sched-col-4">
                                             <div class="dropdown">
                                                 <button class="btn btn-link dropdown-toggle" type="button" id="mtm-dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                                                     <span ng-show="schedSearch.category != ''">{{schedSearch.category}}</span>
@@ -97,7 +97,7 @@ if ($displayNav) {
                                                     </li>
                                                 </ul>
                                             </div>
-                                        </div>
+                                        </div> */ ?>
                                         <div class="sched-col-4">
                                             <div class="dropdown">
                                                 <button class="btn btn-link dropdown-toggle" type="button" id="mtm-dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
@@ -186,7 +186,7 @@ if ($displayNav) {
                                                 </div>
                                             </div>
                                         <?php } ?>
-                                        <div class="sched-col-4">
+                                        <?php /* <div class="sched-col-4">
                                             <div class="faux-checkbox">
                                                 <label>Featured</label>
                                                 <ul class="nav nav-pills">
@@ -198,13 +198,15 @@ if ($displayNav) {
                                                     </li>
                                                 </ul>
                                             </div>
-                                        </div>
+                                        </div> */ ?>
                                         <?php if ($faireType == "VMF") { ?>
                                             <div class="sched-col-4">
                                                 <div class='timezone-wrapper'>
                                                     <span class="timezone-label">Select Timezone:</span> <?php echo select_Timezone($timeZone); ?>
                                                 </div>
                                             </div>
+                                        <?php } else { ?>
+                                            <div class="disclaimer">* All times shown in PDT</div>
                                         <?php } ?>
                                     </div>
                                 </div>
@@ -217,19 +219,18 @@ if ($displayNav) {
                                         <input type="hidden" name="filter_text"     value="{{schedSearch.$}}">
                                         <input type="hidden" name="parent_slug"     value="<?php echo $parent_slug; ?>">
 
-                                        <span class="fa-stack fa-sm">
-                                            <i class="fas fa-circle fa-stack-2x"></i>
-                                            <i class="far fa-calendar-alt fa-stack-1x fa-inverse"></i>
+                                        <span class="calendar-btn">
+                                            <i class="fas fa-calendar"></i>
+                                            <input type="submit" value="Download Filtered Calendar">
                                         </span>
-                                        <input type="submit" value="Download Filtered Calendar">
+                                        
                                     </form>
 
                                     <a class="calendar" style="cursor:pointer;" onclick="window.frames['printSchedule'].focus();window.frames['printSchedule'].print();printScheduleEvent();event.preventDefault();">
-                                        <span class="fa-stack fa-sm">
-                                            <i class="fas fa-circle fa-stack-2x"></i>
-                                            <i class="fas fa-print fa-stack-1x fa-inverse"></i>
-                                        </span>
-                                        Print filtered schedule
+                                        <span class="calendar-btn">
+                                            <i class="fas fa-print"></i>
+                                            Print filtered schedule
+                                        </span> 
                                     </a>
                                 </div>
                             </div>
@@ -248,47 +249,44 @@ if ($displayNav) {
                                     <!-- if we are in the faire time, only display events that haven't occurred yet inFaire = {{inFaire}} {{todaysDate | date:'yyyy-MM-ddTHH:mm:ss'}} -->
                                     <div ng-repeat="schedule in schedules| filter : schedSearch | dateFilter: filterdow | orderBy: ['time_start', 'time_end'] | limitTo: limit">
 
-                                        <div class="row sched-row">
-                                            <div class="sched-col-1">
-                                                <a href="/maker/entry/{{schedule.id}}">
-                                                    <div class="sched-img" style="background-image:url({{schedule.thumb_img_url}});"></div>
-                                                </a>
-                                            </div>
+                                        <div class="sched-row">
 
-                                            <div class="sched-flex-row">
-                                                <div class="sched-col-2">
-                                                    <h3>
-                                                        <a href="/maker/entry/{{schedule.id}}">{{schedule.name}}</a>
-                                                    </h3>
-                                                    <p class="sched-description" ng-bind-html="trust(schedule.maker_list)"></p>
-                                                    <p class="stage-track stage-{{schedule.stageOrder}}">{{schedule.nicename}}</p>
-                                                </div>
+                                            <div class="stage-track stage-{{schedule.stageOrder}} area-{{schedule.stageClass}}">{{schedule.nicename}}</div>
 
-                                                <div class="sched-col-3">
-                                                    <div class="row">
-                                                        <div class="col-xs-3 col-sm-12 dispDay">
-                                                            {{schedule.time_start| date: "EEEE"}}
+                                            <a href="/maker/entry/{{schedule.id}}">
+                                                <div class="sched-img" style="background-image:url({{schedule.thumb_img_url}});"></div>
+                                            </a>
+
+                                            <div class="sched-wrapper">
+
+                                                <div class="sched-meta">
+                                                    <div class="sched-time">
+                                                        <div class="dispDay">
+                                                            {{schedule.time_start| date: "EEEE, MMMM d"}}
                                                         </div>
-                                                        <div class="col-xs-9 col-sm-12">
-                                                            <span class="dispStartTime">{{schedule.time_start| date: "shortTime"}}</span> -
-                                                            <span class="lineBr"><br/></span>
-                                                            <span class="dispEndTime">{{schedule.time_end| date: "shortTime"}}</span>
-                                                            <div class="start_dt hidden">{{schedule.time_start| date: 'MMM dd, yyyy HH:mm:ss'}}</div>
-                                                            <div class="end_dt hidden">{{schedule.time_end| date: 'MMM dd, yyyy HH:mm:ss'}}</div>
-                                                        </div>
+                                                        <span class="dispStartTime">{{schedule.time_start| date: "shortTime"}}</span> -
+                                                        <span class="dispEndTime">{{schedule.time_end| date: "shortTime"}}</span>
+                                                        <div class="start_dt hidden">{{schedule.time_start| date: 'MMM dd, yyyy HH:mm:ss'}}</div>
+                                                        <div class="end_dt hidden">{{schedule.time_end| date: 'MMM dd, yyyy HH:mm:ss'}}</div>
                                                     </div>
-                                                </div>
-                                                <div class="sched-col-4">
-                                                    <h4 class="featured" ng-show="schedule.featured != NULL && schedule.featured == 'Featured'">Featured</h4>
-                                                    <div class="sched-registration" ng-show="schedule.registration != NULL && schedule.registration != ''">
-                                                        <a class="btn universal-btn" href="{{schedule.registration}}" target="_blank">Register Here</a>
-                                                    </div>
-                                                    <div class="sched-viewNow" ng-show="schedule.view_now != NULL && schedule.view_now != ''">
-                                                        <a class="btn universal-btn" href="{{schedule.view_now}}" target="_blank">Watch Live</a>
-                                                    </div>
+                                                    <div class="sched-type {{schedule.type | lowercase}}">{{schedule.type}}</div>
                                                 </div>
 
-                                                <div class="col-xs-10 col-xs-offset-2 sched-more-info">
+                                                <h3> <a href="/maker/entry/{{schedule.id}}">{{schedule.name}}</a> </h3>
+                                                <!--<p class="sched-name" ng-bind-html="trust(schedule.maker_list)"></p>-->
+                                                
+                                                <p class="sched-description" ng-bind-html="schedule.desc"></p><a href="/maker/entry/{{schedule.id}}" class="read-more-btn">Read More</a>
+                                                
+                                                <h4 class="featured" ng-show="schedule.featured != NULL && schedule.featured == 'Featured'">Featured</h4>
+                                                <div class="sched-registration" ng-show="schedule.registration != NULL && schedule.registration != ''">
+                                                    <a class="btn universal-btn" href="{{schedule.registration}}" target="_blank">Register Here</a>
+                                                </div>
+                                                <div class="sched-viewNow" ng-show="schedule.view_now != NULL && schedule.view_now != ''">
+                                                    <a class="btn universal-btn" href="{{schedule.view_now}}" target="_blank">Watch Live</a>
+                                                </div>
+
+
+                                                <?php /* <div class="sched-more-info">
                                                     <div class="panel-heading">
                                                         <span ng-click="schedule.isCollapsed = !schedule.isCollapsed" ng-init="schedule.isCollapsed = true"><?php _e('quick view', 'MiniMakerFaire'); ?>
                                                             <i class="fas fa-lg" ng-class="{'fa-angle-down': schedule.isCollapsed, 'fa-angle-up': !schedule.isCollapsed}"></i>
@@ -300,8 +298,10 @@ if ($displayNav) {
                                                             <a href="/maker/entry/{{schedule.id}}" target="none"><?php _e('full details', 'MiniMakerFaire'); ?></a>
                                                         </div>
                                                     </div>
-                                                </div>
+                                                </div> */ ?>
+
                                             </div>
+
                                         </div>
 
                                     </div>
