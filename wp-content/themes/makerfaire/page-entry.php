@@ -33,17 +33,24 @@ if (isset($entry->errors)) {
     //find out which faire this entry is for to set the 'look for more makers link'
     $form_id = $entry['form_id'];
     $form = GFAPI::get_form($form_id);
+
+    //check exhibit type (formerly known as form type)
+    $exhibit_type = array();
     $formType = $form['form_type'];
     if ($formType == "Sponsor") {
         $sponsorshipLevel = (isset($entry["442.3"])?$entry["442.3"]:'');
-    }elseif ($formType == "Master") {
-        if( (isset($entry['339.4']) && stripos($entry['339.4'], 'sponsor') !== false) || 
-            (isset($entry['339.5']) && stripos($entry['339.5'], 'sponsor') !== false) ) {
-            $formType = "Sponsor";
-            $sponsorshipLevel = isset($entry['339.4']) && $entry['339.4']!='' ? $entry['339.4'] : $entry['339.5'];
-        }
+    }elseif ($formType == "Master") {                    
+        foreach ($entry as $key => $value) {
+            if (strpos($key, '339.') === 0) {         
+                if($value!='') $exhibit_type[$key] = $value;       
+                if(stripos($value, 'sponsor') !== false){
+                    $formType = "Sponsor";
+                    $sponsorshipLevel = $value;                    
+                }                                             
+            }          
+        }        
     }    
-
+    
     //build an array of field information for updating fields
     foreach ($form['fields'] as $field) {
         $fieldID = $field->id;
@@ -119,6 +126,9 @@ if (isset($entry->errors)) {
     
     
     $project_short = (isset($entry['16']) ? $entry['16'] : '');    // Description
+    $presentation_title  = (isset($entry['880']) ? $entry['880'] : ''); 
+    $presentation_description = (isset($entry['882']) ? $entry['882'] : '');
+
     //field 287 and field 877 can be used in a form for any text input question.
     //We will display these on the entry detail form
     $field_287 = '';
@@ -251,9 +261,6 @@ foreach ($entry as $key => $field) {
             $displayFormType = false;
     }
 }
-if($formType == 'Master') {
-    $displayFormType = false;
-}
 
 
 // Project Inline video
@@ -294,7 +301,7 @@ if (!$displayMakers) {
 ?>
 <div class="clear"></div>
 <script type="text/javascript">
-    jQuery(document).ready(function () {
+/*    jQuery(document).ready(function () {
 
         jQuery(".timeZoneSelect").on("change", function () {
             var tzone = jQuery('#faire_tz').val();
@@ -314,7 +321,7 @@ if (!$displayMakers) {
             dispEndTime = e.format('time');
             jQuery("#dispEndTime").text(dispEndTime);
         });
-    });
+    });*/
 </script>
 
 <div class="entry-page">
@@ -368,16 +375,12 @@ get_footer();
 
 function display_entry_schedule($entry) {
     global $wpdb;
-    global $faireID;
     global $faire;
     global $show_sched;
-    global $backMsg;
-    global $url_sub_path;
-    global $faire_map;
-    global $program_guide;
-    global $timeZone;
-    global $fieldData;
-    
+    global $url_sub_path;    
+    global $fieldData;    
+    global $exhibit_type;
+
     //set entry id
     $entry_id=$entry['id'];
 
@@ -411,41 +414,34 @@ function display_entry_schedule($entry) {
             . " group by area, subarea, location, schedule.start_dt"
             . " order by schedule.start_dt";
     $results = $wpdb->get_results($sql);
-    $return = "";
-    $return .= '<div class="faireTitle padbottom">
-                    <h3 class="faireName">' . ucwords(str_replace('-', ' ', $faire)) . '</h3>
-                    '.($weekend!=''?'<br/><h4>Exhibiting on:</h4>'.$weekend:'').'
-                </div>';
-    if (!$show_sched) {
-        return $return;
-    }
+        
+    $schedule = '';    
+    $location = '';
 
-    if ($wpdb->num_rows > 0) {
-
-        $return .= '<div id="entry-schedule">
-                   <div class="row padbottom">';
-
+    if ($wpdb->num_rows > 0) {           
         $prev_start_dt = NULL;
         $prev_location = NULL;
         $multipleLocations = NULL;
 
-        foreach ($results as $row) {
+        //split the results into base location and schedule        
+        foreach ($results as $row) {       
+            //schedule data     
             if (!is_null($row->start_dt)) {
                 $start_dt = strtotime($row->start_dt);
-                $end_dt = strtotime($row->end_dt);
+                $end_dt   = strtotime($row->end_dt);
                 $current_start_dt = date("l, F j", $start_dt);
                 $current_location = $row->area . ' - ' . ($row->nicename != '' ? $row->nicename : $row->subarea);
 
                 if ($prev_start_dt == NULL) {
-                    $return .= '<div class="entry-date-time col-xs-12">';
+                    $schedule .= '<div class="entry-date-time col-xs-12">';
                 }
 
                 if ($prev_start_dt != $current_start_dt) {
                     //This is not the first new date
                     if ($prev_start_dt != NULL) {
-                        $return .= '</div><div class="entry-date-time col-xs-12">';
+                        $schedule .= '</div><div class="entry-date-time col-xs-12">';
                     }
-                    $return .= '<h5><span id="startDT">' . $current_start_dt . '</span></h5><br/>';
+                    $schedule .= '<h5><span id="startDT">' . $current_start_dt . '</span></h5>';
                     $prev_start_dt = $current_start_dt;
                     $prev_location = null;
                     $multipleLocations = TRUE;
@@ -453,47 +449,58 @@ function display_entry_schedule($entry) {
                 // this is a new location
                 if ($prev_location != $current_location) {
                     $prev_location = $current_location;
-                    $return .= '<small class="text-muted">' . $current_location . '</small><br />';
+                    $schedule .= '<small class="text-muted">' . $current_location . '</small><br/>';
                 }
 
-                $return .= '<small class="text-muted">Time:</small> <span id="dispStartTime">' . date("g:i a", $start_dt) . '</span> - <span id="dispEndTime">' . date("g:i a", $end_dt) . '</span></small><br />';
+                $schedule .= '<small class="text-muted"></small> <span id="dispStartTime">' . date("g:i a", $start_dt) . '</span> - <span id="dispEndTime">' . date("g:i a", $end_dt) . '</span></small><br />';
+                if($row->location!=''){
+                    $schedule .= $row->location;
+                }
+                //The below is for virtual events;
                 //spacetime tool wants date in ISO format - July 2, 2017 5:01:00
-                $return .= '<input id="start_dt" name="start_dt" value="' . date("F j, Y H:i:s", $start_dt) . '" type="hidden">';
-                $return .= '<input id="end_dt" name="end_dt" value="' . date("F j, Y H:i:s", $end_dt) . '" type="hidden">';
-                $return .= select_Timezone($timeZone);
+                //$return .= '<input id="start_dt" name="start_dt" value="' . date("F j, Y H:i:s", $start_dt) . '" type="hidden">';
+                //$return .= '<input id="end_dt" name="end_dt" value="' . date("F j, Y H:i:s", $end_dt) . '" type="hidden">';
+                //$return .= select_Timezone($timeZone);
             } else {
+                //base location at faire
                 global $faire_start;
                 global $faire_end;
-                $return .= '<div class="entry-date-time col-xs-12">';
-
-                $faire_start = strtotime($faire_start);
-                $faire_end = strtotime($faire_end);
-
-                $dateRange = progDateRange($faire_start, $faire_end);
-
-                //tbd change this to be dynamically populated
-                if ($dateRange != "" && $dateRange != null) {
-                    $return .= '<h5>' . natural_language_join($dateRange) . ': ' . date("F j", $faire_start) . '-' . date("j", $faire_end) . '</h5>';
-                }
-                $return .= '<small class="text-muted">LOCATION:</small> ' . $row->area . ' - ' . ($row->nicename != '' ? $row->nicename : $row->subarea) . '</small>';
-
-                $return .= '</div>'; // end date time location block
+                
+                $location .= '<div class="entry-date-time col-xs-12">';
+                $location .= '  <small class="text-muted">in </small> ' . $row->area . ' - ' . ($row->nicename != '' ? $row->nicename : $row->subarea) . '</small>';
+                $location .= '</div>'; // end date time location block
+                                                    
             }
-        }
-        $return .= '</div>
-              </div>';
+        } //end for each loop       
         if ($multipleLocations == TRUE) { // this is kind of a mess to require this
-            $return .= "</div>";
+            $schedule .= "</div>";
         }
-    }
+    } //end if location data found
 
+
+    $return = '';
+
+    //don't show weekend or location if a booth isn't set
+    if(in_array('Maker',$exhibit_type))   {
+        //weekend and base location
+        $return .= '<div class="entry-weekend">                    
+                        '.($weekend!=''?'<h4>Exhibiting on:</h4>'.$weekend:'').
+                         $location.
+                   '</div>';
+    }
+    
+    if ($show_sched && $schedule!='') {
+        $return .=  '<div class="entry-schedule">
+                        <h4>Schedule:</h4>'
+                        . $schedule .                           
+                    '</div>';        
+    }
+        
     return $return;
 }
 
 function display_group($entryID) {
-    global $wpdb;
-    global $faireID;
-    global $faire;
+    global $wpdb;    
     
     $return = '';
 
@@ -525,9 +532,7 @@ function display_group($entryID) {
 /* This function is used to display grouped entries and links */
 
 function display_groupEntries($entryID) {
-    global $wpdb;
-    global $faireID;
-    global $faire;
+    global $wpdb;    
     $return = '';
 
     //look for all associated entries but exclude trashed entries
@@ -786,9 +791,7 @@ function updateFieldValue($fieldID, $newValue, $entryId) {
     }
 }
 
-function displayEntryFooter() {
-    global $wpdb;
-    global $faireID;
+function displayEntryFooter() {    
     global $faire;
 	global $faire_name;
     global $faire_year;
@@ -796,9 +799,7 @@ function displayEntryFooter() {
     global $backMsg;
     global $url_sub_path;
     global $faire_map;
-    global $program_guide;
     global $makerEdit;
-    global $faire_location_db;
 
     $faire_location = "Bay Area";
     $faire_link = "/bay-area";
