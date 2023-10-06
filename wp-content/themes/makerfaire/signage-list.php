@@ -56,7 +56,7 @@ $schedList = get_schedule_list($location, $short_description, $day, $faire);
                 echo 'Topic: ' . ucwords($filter_topic) . '<br/>';
             if ($filter_stage != '')
                 echo 'Stage: ' . $filter_stage . '<br/>';
-            if ($filter_text != '')
+            if ($filter_text != '' && $filter_text != 'undefined')
                 echo 'Text: '. ucwords($filter_text) . '<br/>';
         }
         echo $schedList;

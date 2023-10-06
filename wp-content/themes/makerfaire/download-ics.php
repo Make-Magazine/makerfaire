@@ -20,7 +20,7 @@ $filter_text    = (isset($_POST['filter_text']) ? urldecode($_POST['filter_text'
 $schedules = getSchedule($formIDs);
 $parent_slug = 'bay-area';
 if (strtolower($parent_slug) === 'bay-area') {
-    $location = 'San Mateo County Event Center 1346 Saratoga Dr, San Mateo, CA 94403';
+    $location = 'Mare Island 560 Nimitz Ave, Vallejo, CA 94592';
 } elseif (strtolower($parent_slug) === 'new-york') {
     $location = 'New York Hall of Science 47-01 111th St, Corona, NY 11368';
 }

@@ -68,7 +68,7 @@ scheduleApp.controller('scheduleCtrl', ['$scope', '$sce', '$filter', '$http', fu
         filterdow = "";
 
         if (todaysDate.getTime() > faire_start.getTime() &&
-                todaysDate.getTime() <= faire_end.getTime()) {
+            todaysDate.getTime() <= faire_end.getTime()) {
             $scope.inFaire = true;
             inFaire = true;
             //todayDOW = weekday[todaysDate.getDay()];
@@ -98,7 +98,7 @@ scheduleApp.controller('scheduleCtrl', ['$scope', '$sce', '$filter', '$http', fu
                     var dateList = [];
                     var catList = [];
                     angular.forEach($scope.schedules, function (schedule) {
-                        defDOW = $filter('date')(schedule.time_start, "EEEE");
+                        defDOW = $filter('date')(schedule.time_start, "EEEE, MMMM d");
 
                         if (dateList.indexOf(defDOW) == -1)
                             dateList.push(defDOW);
@@ -128,8 +128,8 @@ scheduleApp.controller('scheduleCtrl', ['$scope', '$sce', '$filter', '$http', fu
             $scope.featured = featured;
         };
         $scope.setDateFilter = function (date) {
-            $scope.filterdow = $filter('date')(date, "EEEE");
-            filterdow = $filter('date')(date, "EEEE");
+            $scope.filterdow = $filter('date')(date, "EEEE, MMMM d");
+            filterdow = $filter('date')(date, "EEEE, MMMM d");
             buildPrintSchedURL();//add day variable to 
         };
         // console.log("Scope is ", + $scope);
@@ -186,7 +186,7 @@ scheduleApp.filter('dateFilter', function ($filter) {
             var out = [];
             // Loop thru the schedule and return only items that meet the selected date         
             angular.forEach(schedules, function (schedule) {
-                if (filterdow === $filter('date')(schedule.time_start, "EEEE")) {
+                if (filterdow === $filter('date')(schedule.time_start, "EEEE, MMMM d")) {
                     out.push(schedule);
                 }
             });
@@ -234,7 +234,7 @@ function schedScroll($window) {
                     var bottom_of_screen = jQuery(window).scrollTop() + window.innerHeight;
                     if (bottom_of_screen > top_of_element) {
                         scope.$apply(attrs.schedScroll);
-                        changeTimeZone(jQuery(".timeZoneSelect").val());
+                        //changeTimeZone(jQuery(".timeZoneSelect").val());
                     }
 
                 }
