@@ -6,6 +6,7 @@
             "key": "field_58e5234ba5f59",
             "label": "Display data from these forms:",
             "name": "schedule_ids",
+            "aria-label": "",
             "type": "text",
             "instructions": "Enter one or more Form IDs here. If you add more than one id, separate each with a hyphen. ie: \r\n46-45-49-47-71-60\r\n<br>\r\nYou can find the Form IDs in Forms > Forms > ID column.",
             "required": 1,
@@ -25,6 +26,7 @@
             "key": "field_5ec437868baaf",
             "label": "Faire Type",
             "name": "faire_type",
+            "aria-label": "",
             "type": "select",
             "instructions": "Faire Type may determine some layout options",
             "required": 0,
@@ -39,13 +41,184 @@
                 "NY": "New York",
                 "VMF": "Virtual"
             },
-            "default_value": [],
+            "default_value": false,
             "allow_null": 0,
             "multiple": 0,
             "ui": 0,
             "return_format": "value",
             "ajax": 0,
             "placeholder": ""
+        },
+        {
+            "key": "field_652087c3328ec",
+            "label": "Additional Presenters",
+            "name": "additional_presenters",
+            "aria-label": "",
+            "type": "repeater",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "layout": "table",
+            "pagination": 0,
+            "min": 0,
+            "max": 0,
+            "collapsed": "",
+            "button_label": "Add Row",
+            "rows_per_page": 20,
+            "sub_fields": [
+                {
+                    "key": "field_652087d2328ed",
+                    "label": "Presentation Date",
+                    "name": "presentation_date",
+                    "aria-label": "",
+                    "type": "text",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "maxlength": "",
+                    "placeholder": "Saturday 10\/14\/23",
+                    "prepend": "",
+                    "append": "",
+                    "parent_repeater": "field_652087c3328ec"
+                },
+                {
+                    "key": "field_652087e3328ee",
+                    "label": "Presentation Title",
+                    "name": "presentation_title",
+                    "aria-label": "",
+                    "type": "text",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "maxlength": "",
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": "",
+                    "parent_repeater": "field_652087c3328ec"
+                },
+                {
+                    "key": "field_6520880c328ef",
+                    "label": "Presenter Name",
+                    "name": "presenter_name",
+                    "aria-label": "",
+                    "type": "text",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "maxlength": "",
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": "",
+                    "parent_repeater": "field_652087c3328ec"
+                },
+                {
+                    "key": "field_65208832328f0",
+                    "label": "Presentation Time",
+                    "name": "presentation_time",
+                    "aria-label": "",
+                    "type": "text",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "maxlength": "",
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": "",
+                    "parent_repeater": "field_652087c3328ec"
+                },
+                {
+                    "key": "field_65208849328f1",
+                    "label": "Presentation Description",
+                    "name": "presentation_description",
+                    "aria-label": "",
+                    "type": "textarea",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "maxlength": "",
+                    "rows": "",
+                    "placeholder": "",
+                    "new_lines": "",
+                    "parent_repeater": "field_652087c3328ec"
+                },
+                {
+                    "key": "field_65208856328f2",
+                    "label": "Presentation Type",
+                    "name": "presentation_type",
+                    "aria-label": "",
+                    "type": "text",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "maxlength": "",
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": "",
+                    "parent_repeater": "field_652087c3328ec"
+                },
+                {
+                    "key": "field_652088dd328f3",
+                    "label": "Presentation Stage",
+                    "name": "presentation_stage",
+                    "aria-label": "",
+                    "type": "text",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "maxlength": "",
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": "",
+                    "parent_repeater": "field_652087c3328ec"
+                }
+            ]
         }
     ],
     "location": [
@@ -73,7 +246,8 @@
         "tags",
         "send-trackbacks"
     ],
-    "active": 1,
+    "active": true,
     "description": "",
-    "modified": 1589918325
+    "show_in_rest": 0,
+    "modified": 1696631025
 }

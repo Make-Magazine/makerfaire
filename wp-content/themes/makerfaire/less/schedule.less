@@ -395,6 +395,7 @@ h4.featured {
 					&.area-bike-alley { background: #B5A5D7}
 					&.area-pedal-power-stage { background: #005e9a; color:#fff; }
 					&.area-center-stage { background: #eb002a; color:#fff; }
+					&.area-make\:-demo-stage { background: #05aeef; }
 				}
 				.sched-img {
 					width: 145px;
@@ -439,6 +440,11 @@ h4.featured {
 						&.demo::before {
 							content: "\f06e";
 						}
+					}
+					.featured {
+						margin: 0px;
+						color: #000;
+						font-weight: 500;
 					}
 				}
 				h3 {
@@ -525,12 +531,6 @@ h4.featured {
 					}
 				}
 			}
-			.sched-col-2 { 
-				display: flex;
-				flex-flow: column wrap;
-				justify-content: flex-start;
-				min-height: 100%;
-			}
 			.universal-btn {
 				height: 40px;
 				width: 100%;
@@ -544,6 +544,33 @@ h4.featured {
 	.lineBr {
 		@media (max-width:992px) {
 			display: none;
+		}
+	}
+	.additionalPresentions {
+		display: flex;
+		gap: 15px;
+		.presentation {
+			background: #1f1a2c;
+			color: #fff;
+			border-radius: 10px;
+			padding: 30px;
+			display: flex;
+			flex-direction: column;
+			.presentation-date, .presenter-name, .presentation-type, .presentation-stage { font-weight: 500; }
+			.presentation-time { 
+				font-weight: 400;
+				color: #3fafed;
+			}
+			.presentation-title { 
+				margin-top: 5px;
+				font-weight: 600;
+			}
+			.presentation-meta {
+				margin-top: auto;
+			}
+		}
+		@media screen and (max-width: 768px) {
+			flex-direction: column;
 		}
 	}
 }
