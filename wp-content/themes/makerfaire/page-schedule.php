@@ -28,8 +28,7 @@ if ($displayNav) {
                 <?php
             }
 
-
-//set faire
+            //set faire
             $post_data = get_post($post->post_parent);
             $parent_slug = $post_data->post_name;
 
@@ -270,6 +269,7 @@ if ($displayNav) {
                                                         <div class="end_dt hidden">{{schedule.time_end| date: 'MMM dd, yyyy HH:mm:ss'}}</div>
                                                     </div>
                                                     <div class="sched-type {{schedule.type | lowercase}}">{{schedule.type}}</div>
+                                                    <div class="featured" ng-show="schedule.featured != NULL && schedule.featured == 'Featured'">Featured</div>
                                                 </div>
 
                                                 <h3> <a href="/maker/entry/{{schedule.id}}">{{schedule.name}}</a> </h3>
@@ -277,7 +277,6 @@ if ($displayNav) {
                                                 
                                                 <p class="sched-description" ng-bind-html="schedule.desc"></p><a href="/maker/entry/{{schedule.id}}" class="read-more-btn">Read More</a>
                                                 
-                                                <h4 class="featured" ng-show="schedule.featured != NULL && schedule.featured == 'Featured'">Featured</h4>
                                                 <div class="sched-registration" ng-show="schedule.registration != NULL && schedule.registration != ''">
                                                     <a class="btn universal-btn" href="{{schedule.registration}}" target="_blank">Register Here</a>
                                                 </div>
@@ -310,6 +309,24 @@ if ($displayNav) {
                                     </div>
                                 </div><!-- .sched-body -->
                                 <div class="load-trigger"></div>
+                                <div class="additionalPresentions">
+                                    <?php
+                                    GLOBAL $acf_blocks;
+                                    $presentations = get_field('additional_presenters');
+                                    foreach($presentations as $presentation) { ?>
+                                        <div class='presentation'>
+                                            <p class="presentation-date"><?php echo $presentation['presentation_date']; ?></p>  
+                                            <h3 class="presentation-title"><?php echo $presentation['presentation_title']; ?></h3>  
+                                            <p class="presenter-name"><?php echo $presentation['presenter_name']; ?></p>
+                                            <p class="presentation-time"><?php echo $presentation['presentation_time']; ?></p>
+                                            <p class="presentation-description"><?php echo $presentation['presentation_description']; ?></p>
+                                            <div class="presentation-meta">
+                                                <p class="presentation-type"><?php echo $presentation['presentation_type']; ?></p>
+                                                <p class="presentation-stage"><?php echo $presentation['presentation_stage']; ?></p>
+                                            </div>
+                                        </div>
+                                    <?php } ?>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -317,11 +334,11 @@ if ($displayNav) {
                 <!--LeftNav Containers-->
                 <?php
                 if ($displayNav) {
-                    ?>
-                </div>
+                ?>
             </div>
         </div>
-    <?php } ?>
+    </div>
+<?php } ?>
 
     <?php
 } else { //display what is in content
