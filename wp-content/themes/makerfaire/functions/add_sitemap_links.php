@@ -98,7 +98,7 @@ add_action('init', 'register_entries_sitemap', 99);
  */
 function register_entries_sitemap() {
    global $wpseo_sitemaps; global $form_types;
-   if ($wpseo_sitemaps) {
+   if ($wpseo_sitemaps && is_array($form_types)) {
       //generate a sitemap for each exhibit form
       $forms = GFAPI::get_forms(true, false);
       

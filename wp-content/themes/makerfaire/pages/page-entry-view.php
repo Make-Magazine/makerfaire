@@ -10,69 +10,32 @@
             <!-- Project Title and ribbons -->
             <?php echo $ribbons; ?>
             <div class="entry-header">
-
-                <div class="entry-type">
-                    <?php
-                    if ($displayFormType == true) {
-                        echo $formType;
-                    }
-                    ?>
-                </div>
-
                 <h1>
                     <span id="project_title"><?php echo $project_title; ?></span>
                 </h1>
-
             </div>
 
             <!-- Project Image -->
             <p id="proj_img">
                 <img alt="<?php echo $project_title; ?>" class="img-responsive dispPhoto" src="<?php echo $project_photo; ?>" />
-            </p>
-
-            <!-- Project Short Description -->
-            <div id="project_short" class="lead">
-                <p><?php echo nl2br($project_short); ?></p>
-                <?php if (isset($field_287) && $field_287 != '') { ?>
-                    <p><b><?php echo $label_287; ?>:</b><br/><?php echo nl2br($field_287); ?></p>
-                <?php } ?>
-                <?php if (isset($field_877) && $field_877 != '') { ?>
-                    <p><b><?php echo $label_877; ?>:</b><br/><?php echo nl2br($field_877); ?></p>
-                <?php } ?>
-            </div>
-            <?php
-            if (!empty($project_website)) {
-                ?> <a href="<?php echo $project_website; ?>" class="btn universal-btn entry-website"target="_blank" ><?php if($formType !='Sponsor') echo 'Project';?> Website</a><?php
-            }
-
-            if (display_group($entryId)) {
-                ?><div class="group-entry"><?php echo display_group($entryId); ?></div><?php
-            }
-            if (display_groupEntries($entryId)) {
-                ?><div class="group-entries"><?php echo display_groupEntries($entryId); ?></div>
-            <?php }
-            $url = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
-            echo do_shortcode('[easy-social-share buttons="facebook,pinterest,reddit,twitter,linkedin,love,more" morebutton_icon="dots" morebutton="2" counters="yes" counter_pos="after" total_counter_pos="hidden" animation="essb_icon_animation6" style="icon" fullwidth="yes" template="6" postid="' . $entryId . '" url="' . $url . '" text="' . $project_title . '"]');
-            ?>
+            </p>            
         </div>
 
         <div class="col-md-4 col-sm-12 col-xs-12" id="entrySidebar">
             <div class="entryInfo">
+                <div class="bottom"><h3 class="faireName"><?php echo ucwords(str_replace('-', ' ', $faire));?></h3></div>
+                <div class="entry-type">                    
+                    <?php
+                    if ($displayFormType == true) {
+                        echo implode(" & ",$exhibit_type);
+                    }
+                    ?>
+                </div>
                 <?php
-                //display schedule/location information if there is any
-                echo display_entry_schedule($entry);
                 if (!empty($handsOn)) {
                     echo $handsOn;
                 }
-                if (!empty($registerLink)) {
-                    ?>
-                    <a href="<?php echo $registerLink; ?>" class="btn universal-btn-red" style="margin-top:10px;">Register Here</a>
-                    <?php
-                }
-                if (!empty($viewNow)) {
-                    ?>
-                    <a href="<?php echo $viewNow; ?>" class="btn universal-btn-red" style="margin-top:10px;">Watch Live</a>
-                <?php } ?>
+                ?>
             </div>
 
 
@@ -106,12 +69,8 @@
                             </div>
                         </div>
                         <?php
-                    } else {
-                        if (count($makers) == 1) {
-                            echo '<div class="entry-header"><h2>MAKER</h2></div>';
-                        } else {
-                            echo '<div class="entry-header"><h2>MAKERS</h2></div>';
-                        }
+                    } else {                        
+                        //echo '<div class="entry-header"><h2>MAKER'.(count($makers) != 1?'S':'').'</h2></div>';                        
                         foreach ($makers as $key => $maker) {
                             if ($maker['firstname'] != '') {
                                 ?>
@@ -156,10 +115,68 @@
                             }
                         }
                     }
-                } 
+                }
                 ?>
+                
+                    <div class="entryInfo">
+                        <?php
+                        //display schedule/location information if there is any
+                        echo display_entry_schedule($entry); 
+                        if (!empty($registerLink)) {
+                            ?>
+                            <a href="<?php echo $registerLink; ?>" class="btn universal-btn-red" style="margin-top:10px;">Register Here</a>
+                            <?php
+                        }
+                        if (!empty($viewNow)) {
+                            ?>
+                            <a href="<?php echo $viewNow; ?>" class="btn universal-btn-red" style="margin-top:10px;">Watch Live</a>
+                        <?php }
+                        ?>
+                    </div>
+                
             </div>
         </div>  <!-- END SIDEBAR -->
+    </div>
+    <div class="row">
+        <div id="entryFullWidth">
+            <!-- Project Short Description -->
+            <div id="project_short" class="lead">
+                <p><?php echo nl2br($project_short); ?></p>
+                <?php if (isset($field_287) && $field_287 != '') { ?>
+                    <p><b><?php echo $label_287; ?>:</b><br/><?php echo nl2br($field_287); ?></p>
+                <?php } ?>
+                <?php if (isset($field_877) && $field_877 != '') { ?>
+                    <p><b><?php echo $label_877; ?>:</b><br/><?php echo nl2br($field_877); ?></p>
+                <?php } ?>
+            </div>
+            <!-- Presentation information (if provided) -->
+            <?php 
+            if($presentation_title!=''){
+                ?>
+                <div id="project_short" class="lead">
+                    <h3>Also presenting at:</h3>
+                    <p><?php echo nl2br($presentation_title); ?></p>
+                    <p><?php echo nl2br($presentation_description); ?></p>                
+                </div>
+                <?php
+            }?>
+            
+
+            <?php
+            if (!empty($project_website)) {
+                ?> <a href="<?php echo $project_website; ?>" class="btn universal-btn entry-website"target="_blank" ><?php if($formType !='Sponsor') echo 'Project';?> Website</a><?php
+            }
+
+            if (display_group($entryId)) {
+                ?><div class="group-entry"><?php echo display_group($entryId); ?></div><?php
+            }
+            if (display_groupEntries($entryId)) {
+                ?><div class="group-entries"><?php echo display_groupEntries($entryId); ?></div>
+            <?php }
+            $url = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
+            echo do_shortcode('[easy-social-share buttons="facebook,pinterest,reddit,twitter,linkedin,love,more" morebutton_icon="dots" morebutton="2" counters="yes" counter_pos="after" total_counter_pos="hidden" animation="essb_icon_animation6" style="icon" fullwidth="yes" template="6" postid="' . $entryId . '" url="' . $url . '" text="' . $project_title . '"]');
+            ?>
+        </div>
     </div>
     <div class="row">
         <div id="entryFullWidth">

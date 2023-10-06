@@ -30,6 +30,52 @@
 		line-height: 24px;
 	}
 	
+	.entry-type {
+		font-family: "Roboto";
+		font-weight: 400;
+		font-size: 18px;
+		color: #9B9B9B;
+		margin-top: 15px;
+	}
+
+	.entry-website {
+		width: 100%;
+		@media screen and (max-width: 768px) {
+			margin-bottom: 15px;
+		}
+	}
+	#project_short { 
+		margin-bottom: 0px;
+	}
+	.essb_links {
+		@media screen and (max-width: 768px) {
+			display: none;
+		}
+		.essb_item {
+			margin-bottom: 0px;
+			margin-right: 5px !important;
+			&:last-of-type {
+				margin-right: 0px !important;
+				width: calc(14% - 18px) !important;
+				a { background: #1052BA !important; }
+			}
+			a { 
+				height: 50px;
+				text-align: center;
+				.essb_network_name {
+					margin-top: -10px;
+					margin-bottom: 0px;
+				}
+				.essb_counter_bottom {
+					font-size: 10px;
+				}
+			}
+		}
+	}
+	.entry-weekend{		
+		padding-bottom:20px;
+		display:inline-block;
+	}
 	// The Lefthand side
 	#viewEntry {
 		background: #fff;
@@ -38,10 +84,7 @@
 		border-left: solid 15px #F2F2F2;
 		@media screen and (max-width: 981px) {
 			border-left: 0px;
-		}
-		#project_short { 
-			margin-bottom: 0px;
-		}
+		}		
 		.ribbon-wrapper {
 			position: relative;
 			right: 0%;
@@ -52,40 +95,8 @@
 			h1 { 
 				font-size: 38px;
 				margin-top: 10px;
-			}
-			.entry-type {
-				font-family: "Roboto";
-				font-weight: 400;
-				font-size: 18px;
-				color: #9B9B9B;
-				margin-top: 15px;
-			}
-		}
-		.essb_links {
-			@media screen and (max-width: 768px) {
-				display: none;
-			}
-			.essb_item {
-				margin-bottom: 0px;
-				margin-right: 5px !important;
-				&:last-of-type {
-					margin-right: 0px !important;
-					width: calc(14% - 18px) !important;
-					a { background: #1052BA !important; }
-				}
-				a { 
-					height: 50px;
-					text-align: center;
-					.essb_network_name {
-						margin-top: -10px;
-						margin-bottom: 0px;
-					}
-					.essb_counter_bottom {
-						font-size: 10px;
-					}
-				}
-			}
-		}
+			}			
+		}		
 		#proj_img img { width: 100%; }
 		.group-entries { 
 			padding-top: 20px;
@@ -96,12 +107,6 @@
 						width: 100%;
 					}
 				}
-			}
-		}
-		.entry-website {
-			width: 100%;
-			@media screen and (max-width: 768px) {
-				margin-bottom: 15px;
 			}
 		}
 	}

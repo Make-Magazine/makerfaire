@@ -33,16 +33,15 @@ add_action('wp_ajax_ebUpdateAC', 'ebUpdateAC');
 function genEBtickets($entryID ){
   if(!is_numeric(($entryID))){
     return;
-  }
+  }  
 
+  global $wpdb;
   if (!class_exists('eventbrite')) {
     require_once(TEMPLATEPATH.'/classes/eventbrite.php');
   }
 
   $token = 'PRNE4A3Q2DYEBYSM7GKX'; //oauth token  
   $eventbrite = new eventbrite($token);
-
-  global $wpdb;
 
   $response = array();
   $entry    = GFAPI::get_entry( $entryID );
@@ -95,9 +94,13 @@ function genEBtickets($entryID ){
     }      
   }
   
-  //Final Weekend
-  $entWkndArr = get_value_by_id('879', $form, $entry);  
-  $entWkndArr = (array) $entWkndArr;
+  //Final Weekend  
+  $entWkndArr = array();
+  foreach ($entry as $key => $value) {
+    if (strpos($key, '879.') === 0) {
+        $entWkndArr[$key] = $value;
+    }
+  }  
 
   //sql to pull all tickets available for this entry
   $tktSQL = "select event_ticket_id, eb_ticket_type.ticket_type, eb_ticket_type.qty, eb_ticket_type.hidden, eb_ticket_type.weekend_ind, eb_ticket_type.discount, ticketID,  eb_event.EB_event_id as eventID " .
@@ -114,7 +117,8 @@ function genEBtickets($entryID ){
             "AND eb_eventToTicket.ticketID is not null ".
             "AND entry_id is NULL";        
   
-  $tck_results = $wpdb->get_results($tktSQL);
+  $tck_results = $wpdb->get_results($tktSQL);  
+
   foreach($tck_results as $tck_row){
      //if this ticket is for a specific weekend, let's make sure the entry is exhibiting that weekend
      if($tck_row->weekend_ind !='' && !in_array($tck_row->weekend_ind,$entWkndArr)){        
@@ -154,16 +158,20 @@ function genEBtickets($entryID ){
       );
     }
 
-  /*  error_log('for entry '.$entryID.' $entLevel = '.$entLevel.' '.
-    'Generating '.$accessCode.' EventID ='.$tck_row->eventID.' quantity '.$tck_row->qty.' weekend '.$tck_row->weekend_ind);      */
+    /*
+    error_log('for entry '.$entryID.' $entLevel = '.$entLevel.' '.
+    'Generating '.$accessCode.' EventID ='.$tck_row->eventID.' quantity '.$tck_row->qty.' weekend '.$tck_row->weekend_ind);      
+    error_log(print_r($args,TRUE));*/
+    
 
-    //call eventbrite to create access code
+    //call eventbrite to create access code    
     $access_codes = $eventbrite->post('/organizations/27283522055/discounts/', $args);
-              
-    if(isset($access_codes->status_code) && $access_codes->status_code==400){
-      error_log('error in call to EB for entry ID '.$entryID.'');
+    
+    if(isset($access_codes->status_code)){
+      error_log('error in call to EB for entry ID '.$entryID.'. Error code - '.$access_codes->status_code);
       error_log($access_codes->error_description);        
-      exit;
+      $response['msg'] = 'Error generating Access Codes';
+      return $response;      
     }
     
     //save access codes to db
@@ -174,10 +182,8 @@ function genEBtickets($entryID ){
     $wpdb->get_results($dbSQL);        
 
   }
-
-  if($wpdb->num_rows > 0){    
-    $response['msg'] = 'Access Codes generated.  Please refresh to see<br/>';
-  }
+  
+  $response['msg'] = 'Access Codes generated.  Please refresh to see<br/>';
   return $response;
 }
 add_action( 'sidebar_entry_update', 'genEBtickets', 10, 1 );
