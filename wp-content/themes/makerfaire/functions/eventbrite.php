@@ -94,9 +94,13 @@ function genEBtickets($entryID ){
     }      
   }
   
-  //Final Weekend
-  $entWkndArr = get_value_by_id('879', $form, $entry);  
-  $entWkndArr = (array) $entWkndArr;
+  //Final Weekend  
+  $entWkndArr = array();
+  foreach ($entry as $key => $value) {
+    if (strpos($key, '879.') === 0) {
+        $entWkndArr[$key] = $value;
+    }
+  }  
 
   //sql to pull all tickets available for this entry
   $tktSQL = "select event_ticket_id, eb_ticket_type.ticket_type, eb_ticket_type.qty, eb_ticket_type.hidden, eb_ticket_type.weekend_ind, eb_ticket_type.discount, ticketID,  eb_event.EB_event_id as eventID " .
