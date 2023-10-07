@@ -312,11 +312,17 @@ function filterByForm($form, $row, array &$entries, $area, $subarea, $type, $fil
 
 add_action('wp_ajax_createSignZip', 'createSignZip');
 
-function createEntList() {
-    global $wpdb;
+add_action('wp_ajax_createEntList', 'CronCreateEntList');
+function cronCreateEntList(){
     $faire = (isset($_POST['faire']) ? $_POST['faire'] : '');
-    $type = (isset($_POST['type']) ? $_POST['type'] : '');
-    
+    $type = (isset($_POST['type']) ? $_POST['type'] : '');    
+    wp_schedule_single_event(time() + 1,'create_mf_signs', array($faire, $type));
+}
+
+add_action( 'create_mf_signs', 'createEntList', 10, 2 );
+function createEntList($faire, $type) {
+    global $wpdb;    
+
     $entList = array();
     if ($type != 'presenter') {
         $sql = "select form_ids from wp_mf_faire where faire='" . $faire . "'";
@@ -358,8 +364,6 @@ function createEntList() {
     //wp_send_json($response);
     exit();
 }
-
-add_action('wp_ajax_createEntList', 'createEntList');
 
 function massGenerateSigns($entList, $type, $faire) {
     //error_log('Start mass generate signs for ' . $faire . ' - ' . $type);

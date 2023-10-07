@@ -186,8 +186,9 @@ function createOutput($entry_id, $pdf) {
                    ON  location.subarea_id = subarea.ID
     where location.entry_id=$entry_id" . ' AND location.location <> ""';
    $location_results = $wpdb->get_results($location_sql);
+   
    $project_subarea = isset($location_results[0]->nicename) ? $location_results[0]->nicename : '';
-   $project_booth = $location_results[0]->location;
+   $project_booth = isset($location_results[0]->location) ? $location_results[0]->location : '';
 
    /***************************************************************************
     * Project ID
