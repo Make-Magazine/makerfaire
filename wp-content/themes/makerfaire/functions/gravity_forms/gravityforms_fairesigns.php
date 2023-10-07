@@ -345,7 +345,7 @@ function createEntList($faire, $type) {
         }
     } else {
         $select_query = "SELECT entity.lead_id as entry_id
-                      FROM    wp_mf_schedule schedule,
+                          FROM    wp_mf_schedule schedule,
                               wp_mf_entity entity
 
                       where   schedule.entry_id       = entity.lead_id
@@ -365,36 +365,81 @@ function createEntList($faire, $type) {
     exit();
 }
 
-function massGenerateSigns($entList, $type, $faire) {
-    //error_log('Start mass generate signs for ' . $faire . ' - ' . $type);
-    //$response['entList'] = 'Process Submitted. Please check back for an update';
-    //wp_send_json($response);
+function massGenerateSigns($entList, $type, $faire) {    
     $fpdiLink = ($type === 'signs' ? 'makersigns' : ($type === 'presenter' ? 'presenterSigns' : 'tabletag'));
+    if($type=='signs'){
+        require_once(TEMPLATEPATH . '/fpdi/' . $fpdiLink . '.php');    
+        //submit each url individually
+        foreach ($entList as $i => $entryID) {
+            $pdf = new PDF_Clipping();;
+            $pdf->AddFont('Benton Sans', 'B', 'bentonsans-bold-webfont.php');
+            $pdf->AddFont('Benton Sans', '', 'bentonsans-regular-webfont.php');
+            $pdf->AddPage('P', array(381, 381));
+            $pdf->SetFont('Benton Sans', '', 12);
+            $pdf->Image(TEMPLATEPATH.'/fpdi/signBackground2023.png', 0, 0, 381, 381); // background image
+            //$pdf->SetFillColor(255, 255, 255); white background
+            $pdf->SetMargins(20,139,22); //left, top, right
 
-    $result = array();
+            $resizeImage = createOutput($entryID, $pdf);
 
-    //submit each url individually
-    foreach ($entList as $i => $entryID) {
-        // URL from which data will be fetched      
-        $fetchURL = get_template_directory_uri() . '/fpdi/' . $fpdiLink . '.php?eid=' . $entryID . '&type=save&faire=' . $faire;
-        
-        $ch = curl_init();
-        
-        //check if local server
-        $host = $_SERVER['HTTP_HOST'];
-        if (strpos($host, '.local') > -1) {
-            //do not check ssl
-          curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
-          curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+            // file names
+            $validFile = TEMPLATEPATH . '/signs/' . $faire . '/maker/' . $entryID . '.pdf';
+            $errorFile = TEMPLATEPATH . '/signs/' . $faire . '/maker/error/' . $entryID . '.pdf';
+
+            if ($resizeImage) {
+                $filename = $validFile;
+                // If the file exists in the error log - delete it  
+                if (file_exists($errorFile)) {
+                    unlink(realpath($errorFile));
+                }
+            } else {
+                $filename = $errorFile;
+                // If the file exists in the regular path - delete it    
+                if (file_exists($validFile)) {
+                    unlink(realpath($validFile));
+                }
+            }
+            $dirname = dirname($filename);
+                
+            if (!is_dir($dirname)) {
+                mkdir($dirname, 0755, true);
+            }
+            if (ob_get_contents())
+                ob_clean();
+            $pdf->Output($filename, 'F');
         }
-        curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1; .NET CLR 1.0.3705; .NET CLR 1.1.4322)');
+    }else{
+        $result = array();
 
-        curl_setopt($ch, CURLOPT_URL, $fetchURL);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        $result[] = curl_exec($ch);
-        
-        curl_close($ch);        
+        //submit each url individually
+        foreach ($entList as $i => $entryID) {
+            // URL from which data will be fetched      
+            $fetchURL = get_template_directory_uri() . '/fpdi/' . $fpdiLink . '.php?eid=' . $entryID . '&type=save&faire=' . $faire;
+            
+            $ch = curl_init();
+            
+            //check if local server
+            $host = $_SERVER['HTTP_HOST'];
+            if (strpos($host, '.local') > -1) {
+                //do not check ssl
+            curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+            }
+            curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1; .NET CLR 1.0.3705; .NET CLR 1.1.4322)');
+
+            curl_setopt($ch, CURLOPT_URL, $fetchURL);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+            $result[] = curl_exec($ch);
+            
+            curl_close($ch);        
+        }
     }
+    
+    
+
+    
+
+    
 
     date_default_timezone_set('America/Los_Angeles');
     error_log('End mass generate signs for ' . $faire . ' - ' . $type . '. ' . date('m-d-y  h:i:s A'));

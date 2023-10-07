@@ -55,83 +55,6 @@ class PDF extends FPDF {
 
 }
 
-// Instanciation of inherited class
-try {
-   $pdf = new PDF_Clipping();;
-   $pdf->AddFont('Benton Sans', 'B', 'bentonsans-bold-webfont.php');
-   $pdf->AddFont('Benton Sans', '', 'bentonsans-regular-webfont.php');
-   $pdf->AddPage('P', array(381, 381));
-   $pdf->SetFont('Benton Sans', '', 12);
-   $pdf->Image('signBackground2023.png', 0, 0, 381, 381); // background image
-   //$pdf->SetFillColor(255, 255, 255); white background
-   $pdf->SetMargins(20,139,22); //left, top, right
-   
-   // get the entry-id, if one isn't set return an error
-   $eid = '';
-   if (isset($wp_query->query_vars['eid'])) {
-      $eid = $wp_query->query_vars['eid'];
-      //error_log("EID Query Vars: " . $wp_query->query_vars['eid']);
-   } else if (isset($_GET['eid']) && $_GET['eid'] != '') {
-      $eid = $_GET['eid'];
-      //error_log("EID: ".$_GET['eid']);
-   }
-
-   if (isset($eid) && $eid != '') {
-      $faire = '';
-      if (isset($wp_query->query_vars['faire'])) {
-         $faire = $wp_query->query_vars['faire'];
-      } else if (isset($_GET['faire']) && $_GET['faire'] != '') {
-         $faire = $_GET['faire'];
-      }
-      $entryid = sanitize_text_field($eid);
-      $resizeImage = createOutput($entryid, $pdf);
-      // error_log("Resize Image: $resizeImage for Entry Id: $entryid");
-      if (isset($_GET['type']) && $_GET['type'] == 'download') {
-         if (ob_get_contents())
-            ob_clean();
-         $pdf->Output($entryid . '.pdf', 'D');
-      } elseif (isset($_GET['type']) && $_GET['type'] == 'save') {
-         $validFile = TEMPLATEPATH . '/signs/' . $faire . '/maker/' . $entryid . '.pdf';
-         $errorFile = TEMPLATEPATH . '/signs/' . $faire . '/maker/error/' . $entryid . '.pdf';
-
-         if ($resizeImage) {
-            $filename = $validFile;
-            // If the file exists in the error log - delete it  
-            if (file_exists($errorFile)) {
-               unlink(realpath($errorFile));
-            }
-         } else {
-            $filename = $errorFile;
-            // If the file exists in the regular path - delete it    
-            if (file_exists($validFile)) {
-               unlink(realpath($validFile));
-            }
-         }
-
-         $dirname = dirname($filename);
-         
-         if (!is_dir($dirname)) {
-            mkdir($dirname, 0755, true);
-         }
-         if (ob_get_contents())
-            ob_clean();
-         $pdf->Output($filename, 'F');
-
-         exit();
-      } else {
-         if (ob_get_contents())
-            ob_clean();
-         $pdf->Output($entryid . '.pdf', 'I');
-      }
-
-      //error_log('after writing pdf '.date('h:i:s'),0);
-   } else {
-      echo 'No Entry ID submitted';
-   }
-} catch (Exception $e) {
-   error_log("Unable to create PDF due to: " . $e);
-}
-
 function createOutput($entry_id, $pdf) {
    // Initialize the variable that the image was resized
    $resizeImage = 1;
@@ -155,7 +78,7 @@ function createOutput($entry_id, $pdf) {
    // maker 1 bio
    //$bio = (isset($entry['234']) ? filterText($entry['234']) : '');
 
-   $groupname = (isset($entry['109']) ? filterText($entry['109']) : '');
+   //$groupname = (isset($entry['109']) ? filterText($entry['109']) : '');
    //$groupbio = (isset($entry['110']) ? filterText($entry['110']) : '');
 
    // Field from Gravity form which is the image
@@ -173,7 +96,7 @@ function createOutput($entry_id, $pdf) {
        $project_photo = $project_gallery[0];
    }
    
-   $project_short = (isset($entry['16']) ? filterText($entry['16']) : '');
+   //$project_short = (isset($entry['16']) ? filterText($entry['16']) : '');
    $project_affiliation = (isset($entry['168']) ? filterText((string) $entry['168']) : '');
    $project_title = (isset($entry['151']) ? filterText((string) $entry['151']) : '');
    //$project_title = "this is my long long title it goes for two lines, maybe more";
