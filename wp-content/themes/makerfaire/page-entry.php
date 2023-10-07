@@ -50,7 +50,7 @@ if (isset($entry->errors)) {
             }          
         }        
     }    
-    
+    var_dump($exhibit_type);
     //build an array of field information for updating fields
     foreach ($form['fields'] as $field) {
         $fieldID = $field->id;

@@ -237,7 +237,7 @@ if ($displayNav) {
 
                         <div ng-show="!schedules.length" class="container loading">
                             <i class="fas fa-spinner fa-pulse fa-3x fa-fw"></i>
-                            <br/><b style="font-size: 25px;padding-top: 15px;display: block;">Please Wait While We Load Your Virtually Maker Faire Experience</b>
+                            <br/><b style="font-size: 25px;padding-top: 15px;display: block;">Please Wait While We Load Your Maker Faire Experience</b>
                             <span class="sr-only"><?php _e("Loading", 'makerfaire') ?>...</span>
                         </div>
 
@@ -313,19 +313,23 @@ if ($displayNav) {
                                     <?php
                                     GLOBAL $acf_blocks;
                                     $presentations = get_field('additional_presenters');
-                                    foreach($presentations as $presentation) { ?>
-                                        <div class='presentation'>
-                                            <p class="presentation-date"><?php echo $presentation['presentation_date']; ?></p>  
-                                            <h3 class="presentation-title"><?php echo $presentation['presentation_title']; ?></h3>  
-                                            <p class="presenter-name"><?php echo $presentation['presenter_name']; ?></p>
-                                            <p class="presentation-time"><?php echo $presentation['presentation_time']; ?></p>
-                                            <p class="presentation-description"><?php echo $presentation['presentation_description']; ?></p>
-                                            <div class="presentation-meta">
-                                                <p class="presentation-type"><?php echo $presentation['presentation_type']; ?></p>
-                                                <p class="presentation-stage"><?php echo $presentation['presentation_stage']; ?></p>
+                                    if(is_array($presentations)){
+                                        foreach($presentations as $presentation) { ?>
+                                            <div class='presentation'>
+                                                <p class="presentation-date"><?php echo $presentation['presentation_date']; ?></p>  
+                                                <h3 class="presentation-title"><?php echo $presentation['presentation_title']; ?></h3>  
+                                                <p class="presenter-name"><?php echo $presentation['presenter_name']; ?></p>
+                                                <p class="presentation-time"><?php echo $presentation['presentation_time']; ?></p>
+                                                <p class="presentation-description"><?php echo $presentation['presentation_description']; ?></p>
+                                                <div class="presentation-meta">
+                                                    <p class="presentation-type"><?php echo $presentation['presentation_type']; ?></p>
+                                                    <p class="presentation-stage"><?php echo $presentation['presentation_stage']; ?></p>
+                                                </div>
                                             </div>
-                                        </div>
-                                    <?php } ?>
+                                        <?php 
+                                        }
+                                    } ?>
+                                    
                                 </div>
                             </div>
                         </div>
