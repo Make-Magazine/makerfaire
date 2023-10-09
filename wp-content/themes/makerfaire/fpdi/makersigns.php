@@ -173,12 +173,20 @@ function createOutput($entry_id, $pdf) {
    if($project_photo=='' && is_array($project_gallery)){
        $project_photo = $project_gallery[0];
    }
-   $project_photo= stripslashes($project_photo);   
-   $imgSize = getimagesize($project_photo);
-
-   if(isset($imgSize["bits"]) && $imgSize["bits"]==16){
-      $project_photo  = TEMPLATEPATH.'/fpdi/BA23_Badge.png';//fpdf does not support 16 bit png images      
-   }
+   
+   if($project_photo !=''){
+      $project_photo= stripslashes($project_photo);      
+      $imgSize = getimagesize($project_photo);
+      if($imgSize['mime']!= 'image/jpeg' && $imgSize['mime']!= 'image/png'){
+         error_log('mime type is '.$imgSize['mime'].' for '.$project_photo);
+         error_log("Bad image for $entry_id");
+         $project_photo  = TEMPLATEPATH.'/fpdi/BA23_Badge.png';//fpdf does not support 16 bit png images      
+         
+      }elseif(isset($imgSize["bits"]) && $imgSize["bits"]==16){
+         error_log("Bad image for $entry_id");
+         $project_photo  = TEMPLATEPATH.'/fpdi/BA23_Badge.png';//fpdf does not support 16 bit png images      
+      }
+   }   
 
    //$project_short = (isset($entry['16']) ? filterText($entry['16']) : '');
    $project_affiliation = (isset($entry['168']) ? filterText((string) $entry['168']) : '');
@@ -276,7 +284,7 @@ function createOutput($entry_id, $pdf) {
     * field 22 - project photo
     * image should never be larger than 450x450
     ***************************************************************************/
-   if ($project_photo != '') {
+   if ($project_photo != '') {      
       $photo_extension = pathinfo($project_photo, PATHINFO_EXTENSION);
       if ($photo_extension) {
          //fit image onto pdf

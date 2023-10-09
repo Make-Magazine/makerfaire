@@ -366,7 +366,7 @@ function createEntList($faire, $type) {
 }
 
 function massGenerateSigns($entList, $type, $faire) {
-    //error_log('Start mass generate signs for ' . $faire . ' - ' . $type);
+    error_log('Start mass generate signs for ' . $faire . ' - ' . $type);
     //$response['entList'] = 'Process Submitted. Please check back for an update';
     //wp_send_json($response);
     $fpdiLink = ($type === 'signs' ? 'makersigns' : ($type === 'presenter' ? 'presenterSigns' : 'tabletag'));
