@@ -177,13 +177,15 @@ function createOutput($entry_id, $pdf) {
    if($project_photo !=''){
       $project_photo= stripslashes($project_photo);      
       $imgSize = getimagesize($project_photo);
-      if($imgSize['mime']!= 'image/jpeg' && $imgSize['mime']!= 'image/png'){
-         error_log('mime type is '.$imgSize['mime'].' for '.$project_photo);
-         error_log("Bad image for $entry_id");
+      if(!$imgSize){
+         error_log('error in getimagesize for '.$project_photo.' for '.$entry_id);         
+         $project_photo  = TEMPLATEPATH.'/fpdi/BA23_Badge.png';//fpdf does not support 16 bit png images      
+      }elseif($imgSize['mime']!= 'image/jpeg' && $imgSize['mime']!= 'image/png'){
+         error_log('mime type is '.$imgSize['mime'].' for '.$project_photo.' for '.$entry_id);         
          $project_photo  = TEMPLATEPATH.'/fpdi/BA23_Badge.png';//fpdf does not support 16 bit png images      
          
       }elseif(isset($imgSize["bits"]) && $imgSize["bits"]==16){
-         error_log("Bad image for $entry_id");
+         error_log("16bit depth image for $entry_id");
          $project_photo  = TEMPLATEPATH.'/fpdi/BA23_Badge.png';//fpdf does not support 16 bit png images      
       }
    }   
