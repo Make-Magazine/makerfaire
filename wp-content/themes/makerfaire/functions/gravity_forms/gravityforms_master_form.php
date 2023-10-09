@@ -55,7 +55,7 @@ function entry_accepted_cb( $entry ) {
         return;
       }else{ 
         if(!isset($master_entry['entry_id'])){
-          error_log('master entry id is not set');          
+          error_log('master entry id is not set for interest entry '.$entry['entry_id']);      
           error_log(print_r($master_entry,TRUE));
         }else{
           //move multi images from maker interest form to master form
