@@ -62,8 +62,8 @@ try {
    $pdf->AddFont('Benton Sans', '', 'bentonsans-regular-webfont.php');
    $pdf->AddPage('P', array(381, 381));
    $pdf->SetFont('Benton Sans', '', 12);
-   $pdf->Image('signBackground2023.png', 0, 0, 381, 381); // background image
-   //$pdf->SetFillColor(255, 255, 255); white background
+   $pdf->Image(TEMPLATEPATH.'/fpdi/signBackground2023.png', 0, 0, 381, 381); // background image
+   
    $pdf->SetMargins(20,139,22); //left, top, right
    
    // get the entry-id, if one isn't set return an error
@@ -85,6 +85,7 @@ try {
       }
       $entryid = sanitize_text_field($eid);
       $resizeImage = createOutput($entryid, $pdf);
+
       // error_log("Resize Image: $resizeImage for Entry Id: $entryid");
       if (isset($_GET['type']) && $_GET['type'] == 'download') {
          if (ob_get_contents())
@@ -155,7 +156,7 @@ function createOutput($entry_id, $pdf) {
    // maker 1 bio
    //$bio = (isset($entry['234']) ? filterText($entry['234']) : '');
 
-   $groupname = (isset($entry['109']) ? filterText($entry['109']) : '');
+   //$groupname = (isset($entry['109']) ? filterText($entry['109']) : '');
    //$groupbio = (isset($entry['110']) ? filterText($entry['110']) : '');
 
    // Field from Gravity form which is the image
@@ -172,8 +173,14 @@ function createOutput($entry_id, $pdf) {
    if($project_photo=='' && is_array($project_gallery)){
        $project_photo = $project_gallery[0];
    }
-   
-   $project_short = (isset($entry['16']) ? filterText($entry['16']) : '');
+   $project_photo= stripslashes($project_photo);   
+   $imgSize = getimagesize($project_photo);
+
+   if(isset($imgSize["bits"]) && $imgSize["bits"]==16){
+      $project_photo  = TEMPLATEPATH.'/fpdi/BA23_Badge.png';//fpdf does not support 16 bit png images      
+   }
+
+   //$project_short = (isset($entry['16']) ? filterText($entry['16']) : '');
    $project_affiliation = (isset($entry['168']) ? filterText((string) $entry['168']) : '');
    $project_title = (isset($entry['151']) ? filterText((string) $entry['151']) : '');
    //$project_title = "this is my long long title it goes for two lines, maybe more";
@@ -421,4 +428,40 @@ function resizeToFit($imgFilename) {
    );
 }
 
+function get_png_imageinfo($file) {
+	if (empty($file)) return false;
+
+	$info = unpack('A8sig/Nchunksize/A4chunktype/Nwidth/Nheight/Cbit-depth/'.
+        'Ccolor/Ccompression/Cfilter/Cinterface', 
+		file_get_contents($file,0,null,0,29))
+		;
+
+	if (empty($info)) return false;
+echo 'get_png_imageinfo1';
+	if ("\x89\x50\x4E\x47\x0D\x0A\x1A\x0A"!=array_shift($info))
+		return false; // no PNG signature.
+      echo 'get_png_imageinfo2';
+	if (13 != array_shift($info))
+		return false; // wrong length for IHDR chunk.
+      echo 'get_png_imageinfo3';
+	if ('IHDR'!==array_shift($info))
+		return false; // a non-IHDR chunk singals invalid data.
+      echo 'get_png_imageinfo4';
+	$color = $info['color'];
+
+	$type = array(0=>'Greyscale', 2=>'Truecolour', 3=>'Indexed-colour',
+	4=>'Greyscale with alpha', 6=>'Truecolour with alpha');
+
+	if (empty($type[$color]))
+		return false; // invalid color value
+
+	$info['color-type'] = $type[$color];
+
+	$samples = ((($color%4)%3)?3:1)+($color>3);
+
+	$info['channels'] = $samples;
+	$info['bits'] = $info['bit-depth'];
+
+	return $info;
+}
 ?>
