@@ -9,10 +9,8 @@
 //set up database
 $root = $_SERVER['DOCUMENT_ROOT'];
 require_once( $root . '/wp-config.php' );
-require_once( $root . '/wp-includes/wp-db.php' );
 
-//error_log('start of makersigns.php '.date('h:i:s'),0);
-// require tFPDF
+// require FPDF
 require_once('fpdf/fpdf.php');
 
 class PDF extends FPDF {
