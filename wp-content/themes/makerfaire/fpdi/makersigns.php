@@ -242,7 +242,7 @@ function createOutput($entry_id, $pdf) {
     ***************************************************************************/
     if ($project_affiliation != '') {
       $pdf->setTextColor(255, 255, 255);
-      $pdf->SetXY(20, 20);
+      $pdf->SetXY(20, 7);
    
       // auto adjust the font so the text will fit
       $x = 32; // set the starting font size
@@ -253,7 +253,7 @@ function createOutput($entry_id, $pdf) {
          $x = $x-.1; // Decrease the variable which holds the font size
          $pdf->SetFont('Benton Sans', 'B', $x);
       }*/
-      $lineHeight = $x * 0.2645833333333 * 1.5;
+      $lineHeight = $x * 0.333 * 1.5;
    
       /* Output the title at the required font size */
       $pdf->MultiCell(340, $lineHeight, strtoupper($project_affiliation), 0, 'C');
