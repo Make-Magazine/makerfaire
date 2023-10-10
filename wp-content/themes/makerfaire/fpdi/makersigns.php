@@ -372,7 +372,7 @@ function createOutput($entry_id, $pdf) {
       $pdf->MultiCell(0, $lineHeight, $groupbio, 0, 'L', true);
    } else { */
       $makerList = implode(', ', $makers);
-      $pdf->SetFont('Benton Sans', 'B', 40);
+      $pdf->SetFont('Benton Sans', 'B', 38);
 
       // auto adjust the font so the text will fit
       $x = 50; // set the starting font size
@@ -383,7 +383,7 @@ function createOutput($entry_id, $pdf) {
          $pdf->SetFont('Benton Sans', '', $x);
       }
       $lineHeight = $x * 0.2645833333333 * 1.5;
-      $pdf->MultiCell(100, $lineHeight, strtoupper($makerList), 0, 'L', false);
+      $pdf->MultiCell(120, $lineHeight, strtoupper($makerList), 0, 'L', false);
       // if size of makers is 1, then display maker bio
       /* if (sizeof($makers) == 1) {
          $pdf->setTextColor(0);
