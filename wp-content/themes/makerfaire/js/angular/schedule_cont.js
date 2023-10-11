@@ -99,9 +99,7 @@ scheduleApp.controller('scheduleCtrl', ['$scope', '$sce', '$filter', '$http', fu
                     var catList = [];
                     angular.forEach($scope.schedules, function (schedule) {
                         defDOW = $filter('date')(schedule.time_start, "EEEE, MMMM d");
-                        
-                        if (dateList.indexOf(schedule.time_start) == -1)
-                            dateList.push({ startDt: schedule.time_start, dow: defDOW });
+                        dateList.push({ startDt: schedule.time_start, dow: defDOW });
 
                         var categories = schedule.category;
                         if (categories != null) {
