@@ -7,8 +7,10 @@ if ( ! defined( 'WP_ADMIN' ) ) {
 
 require_once '../wp-load.php';
 
-if (!is_user_logged_in())
-    auth_redirect();
+$userLoggedIn=TRUE;
+if (!is_user_logged_in()){
+  $userLoggedIn=FALSE;
+}    
 include 'header.php';
 
 
@@ -46,7 +48,7 @@ wp_footer();
     <!-- Sidebar -->
     <div id="slidebar-white" class="slidebar-nav">
       <nav id="navbar-white" class="navbar navbar-default" role="navigation">
-        <?php include 'nav.html';?>
+        <?php include 'nav.php';?>
       </nav><!--/.navbar -->
     </div><!--/.sidebar-nav -->
     <!-- Page Content -->
