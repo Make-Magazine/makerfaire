@@ -200,7 +200,9 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
                 {"id":303,"label":"Status","choices":"Accepted","type":"radio"},
                 {"id":303,"label":"Status","choices":"Rejected","type":"radio"},
                 {"id":303,"label":"Status","choices":"Wait List","type":"radio"},
-                {"id":303,"label":"Status","choices":"Cancelled","type":"radio"}
+                {"id":303,"label":"Status","choices":"Cancelled","type":"radio"},
+                {"id":879,"label":"Weekend","choices":"all","type":"checkbox"},
+                {"id":339,"label":"Exhibit Type","choices":"all","type":"checkbox"}
              ],
              "rmtData":{
                 "resource":[
@@ -235,7 +237,9 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
               "entryIDorder": 200,
               "locationOrder": 300,
               "formTypeorder":400,
-              "selectedFields":[
+              "selectedFields":[          
+                {"id":879,"label":"Weekend","choices":"all","type":"checkbox"},
+                {"id":339,"label":"Exhibit Type","choices":"all","type":"checkbox"},
                 {"id":16,"label":"EXHIBIT SUMMARY","choices":"","type":"textarea","inputs":"", "order":1500},
                 {"id":83,"label":"FIRE","choices":"Yes","type":"radio", "order":1800},
                 {"id":83,"label":"FIRE","choices":"No","type":"radio", "order":1800},
@@ -301,7 +305,9 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
                 {"id":303,"label":"Status","choices":"Accepted","type":"radio"},
                 {"id":303,"label":"Status","choices":"Rejected","type":"radio"},
                 {"id":303,"label":"Status","choices":"Wait List","type":"radio"},
-                {"id":303,"label":"Status","choices":"Cancelled","type":"radio"}
+                {"id":303,"label":"Status","choices":"Cancelled","type":"radio"},
+                {"id":879,"label":"Weekend","choices":"all","type":"checkbox"},
+                {"id":339,"label":"Exhibit Type","choices":"all","type":"checkbox"}
               ],
               "rmtData":{
                 "resource":[
@@ -334,6 +340,8 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
               "selectedFields":[
                 {"id":151,"label":"Exhibit","choices":"","type":"text","inputs":"", "order":250},
                 {"id":303,"label":"Status","choices":"Accepted","type":"radio","exact":true,"hide":true, "order":600},
+                {"id":879,"label":"Weekend","choices":"all","type":"checkbox"},
+                {"id":339,"label":"Exhibit Type","choices":"all","type":"checkbox"},
               ],
               "rmtData":{
                 "resource":[
@@ -355,7 +363,9 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
               "useFormSC": true,
               "selectedFields":[
                 {"id":151,"label":"Exhibit","type":"text", "order":25},
-                {"id":303,"label":"Status","choices":"Accepted","type":"radio","exact":true,"hide":true}
+                {"id":303,"label":"Status","choices":"Accepted","type":"radio","exact":true,"hide":true},
+                {"id":879,"label":"Weekend","choices":"all","type":"checkbox"},
+                {"id":339,"label":"Exhibit Type","choices":"all","type":"checkbox"},
               ],
               "orderBy":'location',
               "rmtData":{
@@ -376,7 +386,9 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
               "useFormSC": true,
               "selectedFields":[
                 {"id":151,"label":"EXHIBIT","choices":"","type":"text","inputs":"", "order":25},
-                {"id":303,"label":"Status","choices":"Accepted","type":"radio","exact":true,"hide":true}
+                {"id":303,"label":"Status","choices":"Accepted","type":"radio","exact":true,"hide":true},
+                {"id":879,"label":"Weekend","choices":"all","type":"checkbox"},
+                {"id":339,"label":"Exhibit Type","choices":"all","type":"checkbox"},
               ],
               "rmtData":{
                 "resource":[
@@ -395,7 +407,9 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
               "selectedFields":[
                 {"id":151,"label":"Record Name","choices":"","type":"text","inputs":"", "order":25},
                 {"id":303,"label":"Status","choices":"Proposed","type":"radio"},
-                {"id":303,"label":"Status","choices":"Accepted","type":"radio"}
+                {"id":303,"label":"Status","choices":"Accepted","type":"radio"},
+                {"id":879,"label":"Weekend","choices":"all","type":"checkbox"},
+                {"id":339,"label":"Exhibit Type","choices":"all","type":"checkbox"},
               ],
               "rmtData":{
                 "resource":[
@@ -414,7 +428,9 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
               "selectedFields":[
                 {"id":151,"label":"Record Name","choices":"","type":"text","inputs":"", "order":25},
                 {"id":303,"label":"Status","choices":"Proposed","type":"radio"},
-                {"id":303,"label":"Status","choices":"Accepted","type":"radio"}
+                {"id":303,"label":"Status","choices":"Accepted","type":"radio"},
+                {"id":879,"label":"Weekend","choices":"all","type":"checkbox"},
+                {"id":339,"label":"Exhibit Type","choices":"all","type":"checkbox"},
               ],
               "rmtData":{
                 "resource":[
@@ -449,6 +465,8 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
                 {"id": "44",  "label":"FOOD","choices":"all","type":"radio","order":180},    //column S
                 {"id": "84",  "label":"TOOL","choices":"all","type":"radio","order":190},  //column T
                 {"id": "83",  "label":"FIRE","choices":"all","type":"radio","order":200}, //column U
+                {"id":879,"label":"Weekend","choices":"all","type":"checkbox"},
+                {"id":339,"label":"Exhibit Type","choices":"all","type":"checkbox"},
               ],
               "rmtData":{
                 "resource":[
@@ -478,7 +496,9 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
                 {"id":303,"label":"Status","choices":"Accepted","type":"radio"},
                 {"id":303,"label":"Status","choices":"Rejected","type":"radio"},
                 {"id":303,"label":"Status","choices":"Wait List","type":"radio"},
-                {"id":303,"label":"Status","choices":"Cancelled","type":"radio"},
+                {"id":303,"label":"Status","choices":"Cancelled","type":"radio"},                
+                {"id":879,"label":"Weekend","choices":"all","type":"checkbox"},
+                {"id":339,"label":"Exhibit Type","choices":"all","type":"checkbox"},
                 {"id":737,"label":"Additional Items","choices":"","type":"textarea"},
                 {"id":749,"label":"Custom Order","choices":"","type":"textarea","inputs":""},
                 {"id":750,"label":"Custom Order Price","choices":"","type":"number","inputs":""}
