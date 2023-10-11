@@ -178,8 +178,8 @@ if ($displayNav) {
                                                             <a ng-click="setDateFilter('')" class="pointer-on-hover"><?php _e("All Days", 'makerfaire') ?></a>
                                                         </li>
 
-                                                        <li ng-repeat="dayOfWeek in dates">
-                                                            <a class="pointer-on-hover" ng-click="setDateFilter(dayOfWeek)">{{dayOfWeek}}</a>
+                                                        <li ng-repeat="date in dates | orderBy:'startDt' | unique : 'dow'">
+                                                            <a class="pointer-on-hover" ng-click="setDateFilter(date.dow)">{{date.dow}}</a>
                                                         </li>
                                                     </ul>
                                                 </div>
