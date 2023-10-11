@@ -1479,8 +1479,8 @@ function getSocialPanel() {
 
 function get_faire_backlink() {
     $back_link = get_field('back_link');
-    $back_link_url = $back_link['back_link_url'];
-    $back_link_text = $back_link['back_link_text'];
+    $back_link_url = (isset($back_link['back_link_url'])?$back_link['back_link_url']:'');
+    $back_link_text = (isset($back_link['back_link_text'])?$back_link['back_link_text']:'');
     $back_link_html = '';
     if ($back_link_url != '' && $back_link_text != '') {
         $back_link_html = '<div class="faire-backlink">
