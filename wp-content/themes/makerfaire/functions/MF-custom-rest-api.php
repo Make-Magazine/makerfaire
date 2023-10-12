@@ -283,7 +283,7 @@ function getMTMentries($formIDs, $faireID) {
                 'id' => $result->entry_id,
                 'link' => '/maker/entry/'.$result->entry_id,
                 'name' => $result->proj_name,
-                'large_img_url' => $fitPhoto,
+                'large_img_url' => $projPhoto,
                 'categories' => $category,
                 'description' => $result->short_desc,
                 'flag' => $flag, //only set if flag is set to 'Featured Maker'
