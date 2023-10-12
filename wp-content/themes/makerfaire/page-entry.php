@@ -490,9 +490,10 @@ function display_entry_schedule($entry) {
     }else{
         if(in_array('Sponsor',$exhibit_type) || in_array('Startup Sponsor',$exhibit_type)){
                     //weekend and base location
-        $return .= '<div class="entry-weekend">                                        
-                    Located '.$location.
-                    '</div>';
+            $return .= '<div class="entry-weekend">                                        
+                        Located '.$location.
+                        '</div>';
+                        $show_sched = FALSE;           
         }
     }
     
