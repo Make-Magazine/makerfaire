@@ -257,9 +257,9 @@ function getMTMentries($formIDs, $faireID) {
             if(isset($result->weekends)){
                 $weekends = explode(',', $result->weekends);
                 foreach ($weekends as &$weekend){
-                    if($weekend=='Wk1'){
+                    if($weekend=='Wk1' || $weekend=='Fri1'){
                         $weekend='First Weekend';
-                    }elseif($weekend=='Wk2'){
+                    }elseif($weekend=='Wk2' || $weekend=='Fri2'){
                         $weekend='Second Weekend';
                     }
                 }
