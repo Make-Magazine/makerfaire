@@ -373,7 +373,7 @@ if (!$displayMakers) {
 <?php
 get_footer();
 
-function display_entry_schedule($entry) {
+function display_entry_schedule($entry) {    
     global $wpdb;
     global $faire;
     global $show_sched;
@@ -487,6 +487,13 @@ function display_entry_schedule($entry) {
                         '.($weekend!=''?'<h4>Exhibiting on:</h4>'.$weekend:'').
                          $location.
                    '</div>';
+    }else{
+        if(in_array('Sponsor',$exhibit_type) || in_array('Startup Sponsor',$exhibit_type)){
+                    //weekend and base location
+        $return .= '<div class="entry-weekend">                                        
+                    Located '.$location.
+                    '</div>';
+        }
     }
     
     if ($show_sched && $schedule!='') {

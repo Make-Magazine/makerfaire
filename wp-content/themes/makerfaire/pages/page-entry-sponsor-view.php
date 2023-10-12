@@ -35,8 +35,9 @@
                         }
                     }
                 } ?>
-            </div>
-        </div>
+            </div>            
+            <?php echo display_entry_schedule($entry); ?>
+        </div> 
     </div>
     <?php if( (is_array($project_gallery) && $project_gallery[0] !=='') || (isset($video) && !empty($video)) || (isset($video2) && !empty($video2)) ) { ?>
         <div id="entryFullWidth" class="sponsor-media">
