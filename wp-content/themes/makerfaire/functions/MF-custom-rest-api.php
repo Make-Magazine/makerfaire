@@ -247,10 +247,11 @@ function getMTMentries($formIDs, $faireID) {
 
             //get array of categories. set name based on category id
             $category = array();
+            /*
             $leadCategory = explode(',', $result->second_cat);
             foreach ($leadCategory as $leadCat) {
                 $category[] = htmlspecialchars_decode(get_CPT_name($leadCat));
-            }
+            }*/
             $category[] = htmlspecialchars_decode(get_CPT_name($result->prime_cat));            
 
             //weekends               
