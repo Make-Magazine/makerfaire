@@ -237,6 +237,7 @@ function getMTMentries($formIDs, $faireID) {
             if($projPhoto=='' && is_array($project_gallery)){                
                 $projPhoto = $project_gallery[0];                                
             }
+
             $fitPhoto = legacy_get_resized_remote_image_url($projPhoto, 350, 350);
 
             // Check to see if the fit photo returned an image
@@ -339,6 +340,7 @@ function getSchedule($formIDs, $faireID) {
               location.latitude, location.longitude,
               (select meta_value as value from wp_gf_entry_meta where wp_gf_entry_meta.entry_id = schedule.entry_id AND wp_gf_entry_meta.meta_key like '22')  as photo,
               (select meta_value as value from wp_gf_entry_meta where wp_gf_entry_meta.entry_id = schedule.entry_id AND wp_gf_entry_meta.meta_key like '217') as mkr1_photo,
+              (SELECT meta_value FROM   wp_gf_entry_meta WHERE  meta_key = '878'  AND entry_id = lead.id) AS proj_photo_gallery,  
               (select meta_value as value from wp_gf_entry_meta where wp_gf_entry_meta.entry_id = schedule.entry_id AND wp_gf_entry_meta.meta_key like '151') as name,
               (select meta_value as value from wp_gf_entry_meta where wp_gf_entry_meta.entry_id = schedule.entry_id AND wp_gf_entry_meta.meta_key like '880') as presentation_name,
               (select meta_value as value from wp_gf_entry_meta where wp_gf_entry_meta.entry_id = schedule.entry_id AND wp_gf_entry_meta.meta_key like '16')  as short_desc,     
@@ -395,10 +397,16 @@ function getSchedule($formIDs, $faireID) {
         if ($overrideImg != '')
             $projPhoto = $overrideImg;
 
+        //if the main project photo isn't set but the photo gallery is, use the first image in the photo gallery            
+        $project_gallery = (isset($row->proj_photo_gallery) ? explode(",", str_replace(array( '[', ']', '"' ), '', $row->proj_photo_gallery)) : '');
+        if($projPhoto=='' && is_array($project_gallery)){                
+            $projPhoto = $project_gallery[0];                                
+        }
+
         $fitPhoto = legacy_get_resized_remote_image_url($projPhoto, 200, 200);
         if ($fitPhoto == NULL)
-            $fitPhoto = $row->photo;
-
+            $fitPhoto = $projPhoto;
+        
         //format start and end date
         $startDay = date_create($row->time_start);
         $startDate = date_format($startDay, 'Y-m-d') . 'T' . date_format($startDay, 'H:i:s');
