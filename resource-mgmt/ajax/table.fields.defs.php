@@ -40,6 +40,7 @@ $tableFields['wp_rmt_entry_resources']['query'] =
         . 'from wp_rmt_entry_resources, wp_gf_entry, wp_mf_faire '
         . 'where wp_gf_entry.id = entry_id '
         . 'and   find_in_set (wp_gf_entry.form_id,wp_mf_faire.form_ids) > 0 '
+        . 'and   wp_gf_entry.status="active" '
         . 'and   wp_mf_faire.id = '. $faire;
 //faire
 $cellToolTipTemplate = '<div class="ui-grid-cell-contents wrap" title="{{COL_FIELD}}" data-toggle="tooltip" >{{ COL_FIELD }}</div>';
