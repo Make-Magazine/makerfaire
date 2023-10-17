@@ -5,6 +5,146 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.8.1] - 2023-10-10
+### Changed
+- Changes title of the my-jetpack page to "My Jetpack" [#33486]
+- Updated package dependencies. [#33428]
+
+### Fixed
+- My Jetpack: fix fatal error [#33523]
+- My Jetpack: fix Stats card status when not connected [#33521]
+
+## [3.8.0] - 2023-10-03
+### Added
+- Display a new section on My Jetpack to display the stats of the site. [#33283]
+
+## [3.7.0] - 2023-09-28
+### Added
+- Add a section to display stats from Jetpack Stats in My Jetpack [#33160]
+
+### Changed
+- Redirect to a proper upgrade page for free license owners [#33297]
+
+## [3.6.0] - 2023-09-25
+### Added
+- Add barebones infrastructure for querying jetpack product data. [#33095]
+
+### Changed
+- Stats: link to purchase page within WP Admin. [#33227]
+
+## [3.5.0] - 2023-09-19
+### Changed
+- Added support for upgradable products. Updated the Stats card  to handle upgradeable products. [#33058]
+- Updated Jetpack submenu sort order so individual features are alpha-sorted. [#32958]
+
+### Fixed
+- My Jetpack: Add AI Assistant Monthly to required plan check [#33078]
+
+## [3.4.5] - 2023-09-13
+### Changed
+- Updated package dependencies. [#33001]
+
+## [3.4.4] - 2023-09-11
+### Changed
+- General: remove WP 6.1 backwards compatibility checks [#32772]
+
+### Fixed
+- Stats: stop showing upgrade button for sites with Complete plan [#32870]
+
+## [3.4.3] - 2023-09-04
+### Changed
+- Updated package dependencies. [#32803]
+- Updated package dependencies. [#32804]
+
+## [3.4.2] - 2023-08-23
+### Changed
+- Updated package dependencies. [#32605]
+
+## [3.4.1] - 2023-08-22
+### Changed
+- Connection: allow dismissing the IDC modal. [#32594]
+
+## [3.4.0] - 2023-08-21
+### Added
+- Support Jetpack AI Yearly offering [#32130]
+
+### Changed
+- Use the new method to render Connection initial state. [#32499]
+
+## [3.3.3] - 2023-08-14
+### Added
+- Make My Jetpack the default WP-Admin page for Jetpack. [#32385]
+
+### Changed
+- Start showing My Jetpack for authors, editors, and contributors [#32420]
+
+## [3.3.2] - 2023-08-09
+### Fixed
+- Revert My Jetpack as first menu item. [#32384]
+
+## [3.3.1] - 2023-08-09
+### Changed
+- Updated package dependencies. [#32166]
+
+## [3.3.0] - 2023-08-07
+### Added
+- Add Identity Crisis screen modal. [#32249]
+
+### Changed
+- Move 'My Jetpack' sub-menu item to first position. [#32240]
+
+### Fixed
+- Fix IDC modal height issue. [#32316]
+
+## [3.2.1] - 2023-08-01
+### Added
+- Add transient caching for zendesk jwt auth token. [#32140]
+
+### Changed
+- My Jetpack: Rename the namespace of the JWT endpoint, and register it only when it isn't already registered [#32081]
+
+## [3.2.0] - 2023-07-25
+### Added
+- My Jetpack: register jetpack-ai-jwt endpoint [#31965]
+- My Jetpack: release Paid Stats to the public [#32020]
+
+### Changed
+- My Jetpack: changed Stats features wording [#32046]
+- Updated package dependencies. [#31999]
+- Updated package dependencies. [#32040]
+
+### Fixed
+- Make Jetpack logo in footer smaller [#31627]
+- My Jetpack: enabled Stats purchase flow returning to Stats Dashboard [#31959]
+
+## [3.1.3] - 2023-07-17
+### Changed
+- Updated package dependencies. [#31872]
+
+### Fixed
+- Hide connection owner information if the data is invalid
+- Don't suggest user connection if user is already connected, but connection owner is invalid [#31618]
+
+## [3.1.2] - 2023-07-11
+### Changed
+- Updated package dependencies. [#31785]
+
+## [3.1.1] - 2023-07-10
+### Fixed
+- Make product card primary buttons links when applicable [#31611]
+
+## [3.1.0] - 2023-07-05
+### Added
+- Added Jetpack Stats card to My Jetpack [#31589]
+
+### Changed
+- Jetpack Stats: Enable skipping interstitial page [#31629]
+- Updated package dependencies. [#31659]
+
+### Fixed
+- My Jetpack: hide Stats card for standalone plugins [#31689]
+- Organize product cards in list [#31606]
+
 ## [3.0.0] - 2023-06-26
 ### Added
 - Add authentication to Zendesk chat. [#31339]
@@ -913,6 +1053,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Created package
 
+[3.8.1]: https://github.com/Automattic/jetpack-my-jetpack/compare/3.8.0...3.8.1
+[3.8.0]: https://github.com/Automattic/jetpack-my-jetpack/compare/3.7.0...3.8.0
+[3.7.0]: https://github.com/Automattic/jetpack-my-jetpack/compare/3.6.0...3.7.0
+[3.6.0]: https://github.com/Automattic/jetpack-my-jetpack/compare/3.5.0...3.6.0
+[3.5.0]: https://github.com/Automattic/jetpack-my-jetpack/compare/3.4.5...3.5.0
+[3.4.5]: https://github.com/Automattic/jetpack-my-jetpack/compare/3.4.4...3.4.5
+[3.4.4]: https://github.com/Automattic/jetpack-my-jetpack/compare/3.4.3...3.4.4
+[3.4.3]: https://github.com/Automattic/jetpack-my-jetpack/compare/3.4.2...3.4.3
+[3.4.2]: https://github.com/Automattic/jetpack-my-jetpack/compare/3.4.1...3.4.2
+[3.4.1]: https://github.com/Automattic/jetpack-my-jetpack/compare/3.4.0...3.4.1
+[3.4.0]: https://github.com/Automattic/jetpack-my-jetpack/compare/3.3.3...3.4.0
+[3.3.3]: https://github.com/Automattic/jetpack-my-jetpack/compare/3.3.2...3.3.3
+[3.3.2]: https://github.com/Automattic/jetpack-my-jetpack/compare/3.3.1...3.3.2
+[3.3.1]: https://github.com/Automattic/jetpack-my-jetpack/compare/3.3.0...3.3.1
+[3.3.0]: https://github.com/Automattic/jetpack-my-jetpack/compare/3.2.1...3.3.0
+[3.2.1]: https://github.com/Automattic/jetpack-my-jetpack/compare/3.2.0...3.2.1
+[3.2.0]: https://github.com/Automattic/jetpack-my-jetpack/compare/3.1.3...3.2.0
+[3.1.3]: https://github.com/Automattic/jetpack-my-jetpack/compare/3.1.2...3.1.3
+[3.1.2]: https://github.com/Automattic/jetpack-my-jetpack/compare/3.1.1...3.1.2
+[3.1.1]: https://github.com/Automattic/jetpack-my-jetpack/compare/3.1.0...3.1.1
+[3.1.0]: https://github.com/Automattic/jetpack-my-jetpack/compare/3.0.0...3.1.0
 [3.0.0]: https://github.com/Automattic/jetpack-my-jetpack/compare/2.15.0...3.0.0
 [2.15.0]: https://github.com/Automattic/jetpack-my-jetpack/compare/2.14.3...2.15.0
 [2.14.3]: https://github.com/Automattic/jetpack-my-jetpack/compare/2.14.2...2.14.3

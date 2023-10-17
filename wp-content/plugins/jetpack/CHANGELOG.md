@@ -2,11 +2,646 @@
 
 ### This is a list detailing changes for all Jetpack releases.
 
-## 12.4-a.0 - unreleased
+## 12.8-a.0 - unreleased
 
 This is an alpha version! The changes listed here are not final.
 
-## 12.3 - 2023-07-05
+## 12.7 - 2023-10-12
+### Enhancements
+- Blogroll: move blogroll and blogroll-items blocks from beta to production, along with various improvements. [#33475] [#33483]
+- Newsletter: launch the ability to create tiered newsletter plans. [#32710]
+
+### Improved compatibility
+- AI Chat block: fix icon color in block selector. [#33478]
+
+### Bug fixes
+- AI Assistant: do not register the editor plugin if the site is not connected to WordPress.com. [#33408]
+- AI Chat block: fix text wrapping in button for Firefox. [#33519]
+- Block Editor: update the Likes and Sharing copy in the Jetpack menu to address grammatical mistake. [#33509]
+- Subscriptions module: fix fatal error caused by undefined constant. [#33473]
+
+### Other changes <!-- Non-user-facing changes go here. This section will not be copied to readme.txt. -->
+- Add conditional rendering for newsletter categories based on the wpcom_newsletter_categories_location filter [#33376]
+- Add jetpack_memberships_product_id to the list of post meta to sync. [#33323]
+- AI Excerpt: set support document link depending on site type [#33499]
+- Incorrect typing for a meta field [#33515]
+- Paywall: login paragraph to use theme text colour [#33532]
+- Paywall block: remove "beta" from the name in block.json [#33527]
+- Removed WPCOM-specific references from site settings endpoint. [#33466]
+- Sharing: improve the display of the official X button. [#33474]
+- Sites API: add was_hosting_trial flag to data returned for site details. [#33487]
+- Updated package dependencies. [#33455]
+
+## 12.7-a.7 - 2023-10-04
+### Improved compatibility
+- Notifications: temporarily disable the notifications admin bar menu on any block editor page to allow for Gutenberg 16.7 compatability. [#33458]
+
+## 12.7-a.5 - 2023-10-03
+### Enhancements
+- AI Chat: Enhanced error presentation and UX improvements. [#33387] [#33401]
+- AI Search Block: release the Jetpack AI Search Block. [#33432]
+- Block Editor: add a new post publish panel for quick sharing. [#33244]
+- Block Editor: display the SEO and Sharing editor panels in the block editor under the Jetpack side menu. [#33258] [#33226]
+- Blogroll Block: Update blogroll appender styling and functionality. [#33328]
+- Sharing: add X sharing button. [#33134]
+- Social Menu & Social Media Icons: Add support for the X icon. [#33118]
+- SSO: offer ability to force a site to use Jetpack SSO with Two-Factor Authentication for certain roles. [#33259]
+- Subscription block: drop unnecessary .0 from big subscriber counts. [#33430]
+
+### Bug fixes
+- AI Excerpts: avoid errors on Custom Post Types that do not support excerpts. [#33439]
+- Carousel: avoid invalid markup notices in Google Pagespeed insights. [#33413]
+- External Media: do not surface the endpoint to contributors, are unable to upload media anyway. [#33451]
+- Google Doc block: fix Google Doc blocks not rendering in the editor. [#33441]
+- Shortcodes: improve validation of attributes dislayed with the Crowdsignal shortcode. [#33450]
+
+### Other changes <!-- Non-user-facing changes go here. This section will not be copied to readme.txt. -->
+- AI Assistant: Enable backend prompts for 10% of production sites. [#33356]
+- Add user content link tracking and redirection for links coming from emails. [#32832]
+- Blocks: change the way Social Previews are registered, from a block to a plugin. [#33238]
+- Fix block view scripts being loaded twice. [#33406]
+- Fix description for jetpack_sitemap_video_skip_post. [#33379]
+- Subscriptions: fix broken Paywall login link for custom domains [#33363]
+- Likes: move editor plugin to the plugins' directory. [#33241]
+- Plugin assets: add spanish version of our banners. [#33436]
+- SEO Tools: move editor plugin to the plugins' directory, since this is not a block. [#33240]
+- Standardize block description phrasing. [#33382]
+
+## 12.7-a.3 - 2023-09-28
+### Enhancements
+- AI Excerpt: Add `Beta` label to sidebar panel. [#33302]
+- AI Excerpt: disable `Generate` button when there's no post content. [#33304]
+- AI Extension: Add keyboard shortcut to stop action on forms. [#33271]
+- Blogroll: Disable blogroll appender sites that have been added to blogroll block. [#33327]
+- Fix styling of multiple elements in the ai-chat block. [#33352]
+- Improves the blogroll subscribe form alignment. [#33344]
+- Jetpack Likes: display the Likes editor panel with an invitation to activate the feature when it is disabled. [#33298]
+- Paywall: add a filter to define a custom paywall. [#33077]
+
+### Improved compatibility
+- Admin menu: Update view capabilities for Home & Stats to be independant from edit_posts. [#33255]
+- Lazy Images: prepare feature for its deprecation, coming in November. You will be able to rely on Lazy loading features provided by WordPress itself. [#33208]
+
+### Bug fixes
+- Dashboard: avoid errors when dashboard is accessed by WordPress users with a custom non-admin role. [#33264]
+- Dashboard: do not display Apps and Support cards to users who do not need that information. [#33264]
+- Site Editor: Fix block exception error in Site Editor. [#33350]
+- Subscriptions: Fix conditions for showing modal. [#33314]
+
+### Other changes <!-- Non-user-facing changes go here. This section will not be copied to readme.txt. -->
+- AI Excerpt: move content-lens feature to prod. [#32969]
+- AI Excerpt: update label and help of "words" control. [#33341]
+- AI Excerpt: do not extend when the AI Assistant feature is not supported. [#33380]
+- AI Excerpt: do not save the post before requesting the excerpt content. [#33377]
+- AI Chat: delegate adding the beta suffix to filter. [#33348]
+- Add an action to facilitate tracking paywalled post views by subscribers [#33290]
+- Adds an action when subscription tokens are authed. [#33294]
+- copy change [#33369]
+- Jetpack Sync: fix unit tests to be compatible with the new WordPress Core revision saving mechanism. [#33354]
+- Remove some left-over PHP 5.2 compatibility code. [#33288]
+- Subscribe modal: enable for Jetpack sites. [#33235]
+- Use WordPress `str_starts_with`, `str_ends_with`, and `str_contains` polyfills. [#33288]
+
+## 12.7-a.1 - 2023-09-25
+### Enhancements
+- Added a new post publish panel for quick sharing. [#33231]
+- AI Assistant: Modify language reminder for toolbar options. [#33211]
+- AI Assistant: Start using backend to generate the prompts. [#33018]
+- AI Assistant: Update block description. [#33218]
+- AI Chat: Fix feedback section styles and include svg for icons. [#33187]
+- AI Chat: Show guideline message. [#33180]
+- AI Extension: Show AI Form extension with connection nudge for disconnected users. [#33186]
+- Blogroll: Add blog appender site searching. [#33060]
+- Blogroll: Fix blogroll block typography editor styling. [#33209]
+- Blogroll: Update blogroll appender height, max lines of text, and container scrolling. [#33245]
+- Blogroll: Update CSS styling to allow blogroll block color styling customizations. [#33214]
+- Blogroll Block: Add the ability to subscribe to recommended blogs. [#33199]
+- Paywall Block: Update description. [#33274]
+- Sidebar: Rename the "Inbox" menu to "My Mailboxes" for domain-only sites. [#33239]
+- Update Blogroll appender accessibility. [#33269]
+
+### Improved compatibility
+- Improve color handling for the newsletter categories. [#33206]
+
+### Bug fixes
+- AI Chat: Remove extra request in $search->is_active() and only load initial state in editor. [#33195]
+- AI Extension: Revert PR causing stream rendering issue on Firefox. [#33223]
+- Dashboard: Avoid errors when dashboard is accessed by WordPress users with a custom non-admin role. [#33263]
+- Fix menu focus state without My Jetpack. [#33251]
+- Fix subscribe block button not showing on newline. [#33260]
+- Hide launchpad modal on first post for bloggers. [#33098]
+- Skip video file addition to upload queue if it fails the space/allowance check. [#33212]
+
+### Other changes <!-- Non-user-facing changes go here. This section will not be copied to readme.txt. -->
+- Adds legacy contact and locked mode options for 100-year plan. [#33081]
+- Adjust styling in AI chat button. [#33213]
+- Site Settings Endpoint: Allow for updating and retrieving of the wpcom_newsletter_categories site option via the endpoint. [#33234]
+- Subscriptions Block: Do not append newsletter category exclusions to subscribe url when none categories were checked. [#33181]
+
+## 12.6.2 - 2023-09-27
+### Bug fixes
+- Fix erroneous path check in Jetpack_Gutenberg class [#33318]
+- Fix warning about Dashboard being unset in WooCommerce analytics class [#33343]
+
+## 12.6.1 - 2023-09-21
+### Bug Fixes
+- WooCommerce Analytics: fix a fatal error that can occur with WooCommerce enabled.
+
+## [12.6] - 2023-09-19
+### Enhancements
+- AI Assistant: add prompts for correct feature configuration. [#33064]
+- AI Assistant: proof-of-concept for expandable messages on the backend using form generation prompt. [#32679]
+- AI Assistant: proof-of-concept for server-side prompts, starting with form generation prompts. [#32495]
+- AI Excerpt: add the Accept button. [#32889]
+- AI Excerpt: add the Discard button to the panel. [#32890]
+- AI Excerpt: ensure to save the post before asking a suggestion. [#32891]
+- AI Excerpt: show upgrade banner when site achieves requests limit. [#32895]
+- AI Extension: add create-with-voice beta extension. [#32742]
+- AI Extension: enhance blocks parsing flickering with child blocks. [#32635]
+- AI Extension: introduce Create with voice jetpack block - initial implementation. [#32750]
+- AI Extension: use new AIControl component from AI package and remove local implementation. [#32682]
+- AI-chat Block: add ability to chat with the site. [#32741]
+- Business Hours Block: refactor block registration to avoid duplication. [#32698]
+- Classic Editor Markdown: add support for double-tilde strikethrough, e.g. `~~strikethrough~~`. [#33057]
+- Connection UI: use Redux state to pass the "from" property. [#32600]
+- Content Lens: connect excerpt panel with AI Assistant. [#32846]
+- Create with voice: connect block with useMediaRecording() hook. [#32769]
+- Create with voice: introduce Done button. [#32792]
+- Create with voice: set block properties by using useBlockProps() custom hook. [#32782]
+- Create with voice: show audio duration when recording audio. [#32827]
+- Featured Blogs: add item block. [#32746]
+- Gravatar profile widget: add srcset. [#32662]
+- Jetpack Assistant: add placeholder UX for the prompt input. [#33080]
+- Jetpack Social: display the Social editor panel with an invitation to activate the feature when it is disabled. [#33149]
+- Launchpad save modal: persist the user option when they opt to hide the modal. [#32567]
+- Newsletters: add support for newsletter categories. [#32666]
+- Newsletters: improve flows around access and paywall. [#32615]
+- Paywall Block: add toolbar options. [#32659]
+- Paywall Block: disable Paid subscribers button if plans are not set up. [#32663]
+- Paywall Block: improve excerpts handling. [#32809]
+- Paywall Block: improved settings panel. [#32801]
+- Paywall Block: improved toolbar. [#32765]
+- Paywall Block: redesign visuals for the mobile editor. [#32672]
+- Paywall Block: release to WP.com and Jetpack. [#32625]
+- Paywall: better content for when waiting for email validation. [#32800]
+- Related Posts: make the block available even when the feature has not been activated yet. [#32930]
+- Security: Blocks: avoid saving invalid block attributes that may appear to other editors on the site. [#33184]
+- Sidebar: rename the "Inbox" menu to "My Mailboxes". [#32992]
+- Site Editor: point the Site Editor's `<` link to the theme showcase when previewing a theme. [#32913]
+- Social: add the change setting for the auto conversion feature. [#32712]
+- Social: add the new auto-conversion toggle. [#32597]
+- Subscribe modal: bump modal Z-index up. [#32621]
+- Subscription Block: add newsletter categories to the content view. [#32756]
+- Subscriptions Block: render in emails. [#32409]
+- Subscriptions: add edit link for subscribe modal. [#32722]
+- Subscriptions: add number formatting for subscriber count in newsletter module. [#32646]
+- Subscriptions: remove newsletter flow+theme and FSE theme check for the subscribe modal. Leave WP.com check. [#32607]
+- Tiled gallery module: add srcset to images. [#32598]
+- WordPress.com Toolbar: add site monitoring menu and remove site logs. [#32458]
+
+### Improved compatibility
+- Carousel: add new hook allowing third-parties to customize the metadata displayed within the Carousel modal. [#32749]
+- General: Jetpack now requires WordPress version 6.2. [#32762]
+- General: remove WP 6.1 backwards compatibility checks. [#32772]
+- Lazy Images: discourage enabling of Lazy loading images as now 90% of browser support the feature natively and this version in Jetpack can conflict with the upcoming WordPress interactivity API. [#33030]
+- Shortcodes: exclude images with broken URL from galleries. [#32556]
+- Subscriptions: change the text color of selected newsletter categories to be more easily readable. [#33104]
+- Theme fields: only add is_block_theme to theme response when WordPress version is < 6.3 [#31660]
+- WC Analytics: ensure correct values are tracked for cart/checkout block/template tracking when using WC Blocks cart and checkout templates. [#32715]
+
+### Bug fixes
+- AI Chat: fix block styles not loading. [#33090]
+- AI Chat: fix styles not loading in the editor. [#33120]
+- AI Extension: remove HTML fragments from AI-generated forms on site editor. [#32798]
+- Admin Menu: display Newsletter settings submenu item for Jetpack connected sites. [#33065]
+- Blocks: fix block icons for display on wp.org. [#32754]
+- Blocks: use custom Facebook and Instagram icons in Jetpack's Facebook and Instagram blocks to avoid issues in accessibility inspector. [#32705]
+- Comments: remove mention of Twitter as a log in option since it is no longer available. [#32717]
+- Comments: remove the Twitter service as a login provider. [#30273]
+- Cookie Consent Block: fix block positioning in the editor. [#32622]
+- Donation Block: fix issue with Danish Krone. [#33072]
+- Featured images fallback: fix undefined variable warnings. [#33179]
+- Fixed a Global Styles UI performance issue in the Site Editor. [#32641]
+- Launchpad modal: reduce API calls for modal dismiss flag. [#32751]
+- Load the Jetpack block assets in the iframe directly in WP-Admin and keep the existing behavior on the front-end, for compatibility reasons. [#32706]
+- My Plans: allow two year plans to show on the page. [#32904]
+- Nav Unification: flips order of tags and categories submenu of posts. [#32619]
+- Newsletters: allow Newsletter plans in the Premium Content and Recurring Payment blocks again. [#32850]
+- Paywall block: avoid undefined variable warning. [#32578]
+- Paywall block: fix autosave before redirecting the user. [#33033]
+- Paywall block: fix default plan being selected in payment block. [#32640]
+- Remove use of `Jetpack_Membership::get_connected_account_id()`. [#32620]
+- Subscription Block: fix blog appearance. [#33144]
+- Subscriptions: add subscribe modal mobile padding. [#32725]
+- Subscriptions: email subscribers now receive full posts. [#32647]
+- Subscriptions: hide modal if paywall block exists. [#32757]
+- Subscriptions: hide modal if post is subscribers-only. [#32867]
+- Subscriptions: tweak subscribe modal text/spacing. [#32724]
+- VideoPress Block: Check if VideoPress module is active in order to register the VideoPress video block. [#32680]
+- Widgets: fix an issue that caused the notice displayed when updating widgets to overlap the admin menu. [#32921]
+
+### Other changes <!-- Non-user-facing changes go here. This section will not be copied to readme.txt. -->
+- Admin: load the Jetpack block assets in the iframe directly to the WordPress.com reader instead of opening a popout menu. [#32763]
+- AI Assistant: add error handling when request is too long. [#33157]
+- AI Assistant: add language reminder to action prompts. [#32814]
+- AI Assistant: change conditions to show AI guidelines on input. [#33084]
+- AI Assistant: register ai-assistant-backend-prompts beta extension. [#33017]
+- AI Assistant: remove upgrade button when user is not administrator. [#33015]
+- AI Assistant: use backend prompts for the "Generate feedback" feature. [#33052]
+- AI Chat: Basic error handling and minor refactor into components. [#32989]
+- AI Chat: add customizable placeholder text. [#33087]
+- AI Chat: add prompt override for the chat-with-a-blog feature. [#32994]
+- AI Chat: introduce WPCOM compatibility for AI-Chat. [#32972]
+- AI Excerpt: add AI Settings toggle button to control. [#32970]
+- AI Excerpt: add a fallback for ToggleGroupControl components. [#33115]
+- AI Excerpt: add language and tone to AI setting toggle control. [#33111]
+- AI Excerpt: connect UI with data layer. [#32875]
+- AI Excerpt: disable Generate button on completed requests. [#32924]
+- AI Excerpt: do not disable Generate button when there is a request error. [#32927]
+- AI Excerpt: pick and pass raw post content to the server side. [#32939]
+- AI Excerpt: re-enable AI Excerpt panel. [#32993]
+- AI Excerpt: re-enable generate button when options change. [#32943]
+- AI Excerpt: remove core Excerpt panel when registering the AI Excerpt one. [#32997]
+- AI Excerpt: show a notice when request fails. [#32917]
+- AI Excerpt: show the number of words in an excerpt. [#32881]
+- AI Excerpt: stop and reset suggestions request once the panel gets hidden. [#33008]
+- AI Excerpt: the extension isn't properly supported by P2 sites. Disable for now. [#32977]
+- AI Extension: avoid empty form state after AI request. [#33183]
+- AI Extension: extend only Jetpack Form blocks with AI Data. [#33026]
+- AI Extension: import libraries from @wordpress/element package. [#33005]
+- AI Extension: only show input automatically for empty forms. [#32986]
+- Add META_NAME_FOR_POST_TIER_ID_SETTINGS const for later developments. [#32677]
+- Add tracking to my account page in WooCommerce [#33145]
+- Add wpcom_newsletter_categories_enabled site option. [#32569]
+- Added a test for the WooCommerce HPOS option that is now synced. [#32530]
+- Added to-test.md entries for 12.6. [#32987]
+- Adding test for default whitelist option. [#32632]
+- Adjust styling and UX of changing the block label. Stop triggering the search from Gutenberg. [#33178]
+- Akismet: updated spelling of the Akismet product. [#32908]
+- Akismet: utilize the Jetpack Admin UI package for handling the Akismet menu. [#32911]
+- Blogroll: WIP block. [#32967]
+- Blogroll: added a beta block under construction. [#32848]
+- Blogroll: fix block icon. [#33076]
+- Blogroll: rename Author Recommendations to Blogroll. [#32624]
+- Calypsoify module: remove styles that conflict with WordPress.com. [#32919]
+- Connected Account: update membership product type comment. [#32678]
+- Content Lens: add the "ai-content-lens" beta extension. [#32847]
+- Content Lens: pass post content when requesting post excerpt. [#32920]
+- Content Lens: replace core post excerpt with AI Post Excerpt. [#32845]
+- Dashboard: update the way we fetch the current theme's stylesheet to build site editor link. [#32744]
+- Enable block registration by specifying block.json path. [#32697]
+- Featured images fallback: add srcset. [#32824]
+- Masterbar: removes submenu items of Reader link in the masterbar. This makes the Reader link
+- Other: fix a potential bug. [#32768]
+- Other: fix copy. [#32813]
+- Other: fix link. [#32887]
+- Other: link styles and scripts to block.json automatically. [#32720]
+- Other: minor copy change. [#32797]
+- Other: move block registration when plugin activated. [#33050]
+- Other: move the feature of changing backlink into mu-wpcom. [#33024]
+- Other: refactor experimental blocks registration. [#33073]
+- Other: register beta blocks by specifying path to block.json. [#32815]
+- Other: resolves an undefined key error on sites with uploaded media without file extensions. [#32961]
+- Other: restore some Requests library v1 back-compat code, apparently WordPress.com Simple skipped that part of their update to WP 6.2. [#32894]
+- Other: updated package dependencies. [#32605], [#32803], [#32804], [#32966], [#33001], [#33043]
+- Payment Button Block: remove "Mark this payment plan as a donation" toggle. [#32529]
+- Paywall: add login link. [#32849]
+- Paywall: add tracks to emails. [#32713]
+- Paywall: magic link to all users. [#32941]
+- Paywall: register block for native mobile editor behind the dev flag. [#32553]
+- Paywall: remove fill properties from block SVG icon. [#32638]
+- SAL: prevent a potential undefined function error. [#32962]
+- Site endpoint: added is_commercial to site options. [#32595]
+- Social: fix video previews for Social Previews. [#33132]
+- Stats: add sticker tests to override `is_commercial`. [#32758]
+- Stats: utilize the modern Admin_UI package so the Jetpack submenu can be alpha-sorted. [#32958]
+- Subscriptions: cleans up the memberships class to make it more DRY. [#32571]
+- Subscriptions: nicer subscribers number. [#32651]
+- Track store admin actions in WooCommerce analytics. Add a store_admin property to all WooCommerce analytics events. [#32692]
+- WooCommerce: only allow administrators the ability to modify products. [#32699]
+
+## [12.5] - 2023-08-23
+### Enhancements
+- AI Assistant: various backend improvements.
+- AI Extension: various improvements AI Assistant, update styles, and bug fixes.
+- AI Extension: launch Jetpack AI support for Form blocks.
+- Dashboard: add Social Image Generator options to Jetpack Social settings. [#32475]
+- Mailchimp block: allow transforming to subscribe block. [#32482]
+- Paywall Block: add a notice explaining what the Paywall block does in relationship to newsletters. [#32320]
+- Paywall Block: improve paywall rendering on emails. [#32340]
+- Paywall block: various improvements to UX and styles.
+- Social: update social connection toggles to be button switches. [#32305]
+- Subscribe Modal: make subscribe modal editable. [#32522]
+
+### Improved compatibility
+- Blocks: add block.json metadata.
+
+### Bug fixes
+- Blocks: ensure the Markdown and Repeat Visitor blocks use clear contrasting colors when using a dark theme. [#32464]
+- Publicize: prevent metadata updates for published posts [#32301]
+- Shortcode embeds: avoid errors when a request to Flickr fails. [#32531]
+
+### Other changes <!-- Non-user-facing changes go here. This section will not be copied to readme.txt. -->
+- Add Woocommerce product post type to sitemaps if WooCommerce is present [#32570]
+- AI Assistant: Specify input background color [#32527]
+- AI Assistant: Update example copyright [#32491]
+- AI Extension: Add extension toolbar click event [#32489]
+- AI Extension: be able to show AI Assistant from children Jetpack Form blocks [#32540]
+- AI Extension: Change event parameter name [#32493]
+- AI Extension: check missing blocks when parsing Jetpack Form blocks in the AI generation process [#32576]
+- AI Extension: clean the AI Assistant bar input once the suggestion is done [#32547]
+- AI Extension: consolidate Block Toolbar button style [#32584]
+- AI Extension: do not extend Jetpack Form when it's inside of a query loop [#32555]
+- AI Extension: do not send request when AI assistant input is empty [#32590]
+- AI Extension: fix bug when focusing on the input element when component mount [#32575]
+- AI Extension: handle Jetpack Form button instances when composing via AI assistant [#32581]
+- AI Extension: Move extension to production. [#32403]
+- AI Extension: Start sending ai-assistant as the default feature name for the AI Assistant on the completion request [#32592]
+- Blocks: add "Beta" suffix to Beta blocks' descriptions in block.json file. [#32536]
+- Cookie Consent Block: avoid PHP notice [#32488]
+- Created V2 edit and delete endpoints for memberships products. [#32412]
+- Remove jetpack option jetpack-memberships-connected-account-id. [#32125]
+- Subscribe modal: don't use template parts [#32480]
+- Settings menu in WP.com: add newsletter and podcasting sections. [#32146]
+- Subscribe modal: update toggle copy. [#32512]
+- Supports Jetpack AI Yearly offering. [#32130]
+- Update icons of Jetpack blocks. [#32568]
+- Use the new method to render Connection initial state. [#32499]
+
+## 12.5-a.11 - 2023-08-15
+### Enhancements
+- Subscriptions: add a Subscribers menu to the Jetpack dashboard navigation. [#31718]
+
+### Improved compatibility
+- Infinite Scroll: avoid PHP notices when using the latest version of WordPress, 6.3. [#32454]
+
+### Other changes <!-- Non-user-facing changes go here. This section will not be copied to readme.txt. -->
+- Remove unused blocks from block index [#32426]
+- Copy block.json files in Jetpack extensions build [#32431]
+
+## 12.5-a.9 - 2023-08-14
+### Enhancements
+- AI Assistant: various stylistic and back-end enhancements to the Jetpack AI Assistant.
+- AI Assistant: tweaks assistant bar in narrow spaces [#32416]
+- AI Extension: allow AI response generation to be stopped. [#32382]
+- Dashboard: make My Jetpack the default WP-Admin page for Jetpack. [#32385]
+- Newsletter: move Newsletter settings to their own section. [#32302]
+- Subscriptions: a membership product can be created without a prior connected account [#31749]
+
+### Bug fixes
+- AI Extension: fix visual issue of AI toolbar when editor sidebar is opened [#32395]
+- Subscriptions: adds more accurate check for when to show the subscribe modal [#32356]
+
+### Other changes <!-- Non-user-facing changes go here. This section will not be copied to readme.txt. -->
+- AI Extension: check the AI quota exceeded from the AI context [#32430]
+- AI Extension: clean up unusable remnant code [#32402]
+- AI Extension: consolidate assistant bar implementation [#32425]
+- AI Extension: fcus on input after suggestions [#32400]
+- AI Extension: improve show/hide assistant bar when fixed [#32414]
+- AI Extension: move from popover to portal [#32419]
+- AI Extension: move isFixed logic to AI Assistant bar component [#32444]
+- AI Extension: move out of popover in large screens [#32376]
+- AI Extension: remove unneeded AI component styles [#32396]
+- AI Extension: set role and aria-label for the assistant bar [#32457]
+- AI Extension: tweak styles in AI Assistant Anchor [#32421]
+- AI Extension: tweak the AI assistant message text styles [#32434]
+- AI Extension: update proofread with the AI Status Indicator component [#32397]
+- AI Form Extension: remove error notice on new request [#32405]
+- API: add backup undo feature [#32442]
+- Dashboard: update link to Subscribers to always point to WordPress.com. [#32393]
+- Internet Defense League Widget: remove campaign management and load images locally. [#32196]
+- Make the AI Assistant input to receive focus on first render for forms variations [#32447]
+- Remove extensions/blocks/contact-form directory, it is now handled by packages/forms [#32440]
+- Update testing instructions [#32460]
+
+## 12.5-a.7 - 2023-08-09
+### Enhancements
+- AI Extension: fix AI Assistant bar position in the Top toolbar mode. [#32374]
+- AI Extension: update view of AI assistant bar on mobile. [#32377]
+- SSO: enable "Match by Email" by default. [#32370]
+
+## 12.5-a.5 - 2023-08-09
+### Enhancements
+- AI Assistant: change tracked event to English instead of translated value and track language and tone change [#32291]
+- AI Assistant: fix grammar and typos on Proofread feature [#32321]
+- AI Extension: fix visual issue in Assistant bar when switching viewport size. [#32344] [#32330]
+- AI Extension: Introduce AI Assistant bar. [#32359]
+- Paywall block: add transforms for "more" and "nextpage" core blocks. [#32338]
+
+### Bug fixes
+- Add subscribe button on premium content block on self-hosted [#32318]
+
+### Other changes <!-- Non-user-facing changes go here. This section will not be copied to readme.txt. -->
+- Blocks: avoid hardcoding the version number when creating a new block via the CLI command [#32110]
+- AI Control: clean up props [#32360]
+- AI Extension: add UpgradePrompt if upgrade is required. [#32326]
+- AI Plugin: Add upgrade path. [#32327]
+- Move out of api.js [#32273]
+- Updated package dependencies. [#32307]
+
+## 12.5-a.3 - 2023-08-07
+### Enhancements
+- Added SIG modal ui [#31665]
+- Add Inspector Panel with Newsletter visibility options to Paywall Block [#32263]
+- AI Assistant: Add requirement for one button in forms [#32234]
+- AI Assistant: Auto open AI control in form assistant [#32271]
+- AI Assistant: Fix form popover after changing viewport [#32247]
+- AI Assistant: Fix incomplete HTML tags and allow columns on forms [#32276]
+- AI Assistant: Render response from the AI [#32209]
+- AI Extension: Connect AI Control component on popover placement. [#32210]
+- AI Extension: Connect AI Data context with components [#32197]
+- AI Extension: handle AI assistant component in mobile [#32242]
+- AI Extension: Improve undo action behavior by controlling the way received valid blocks are rendered. [#32277]
+- AI Extension: increase the page height when AI Assistant bar is visible [#32252]
+- AI Extension: relocate the Assistant component for the Jetpack From block [#32194]
+- AI Extension: select Form when selecting child block [#32212]
+- AI Extension: Send custom feature name for requesting form completions so they can be handled differently on the backend. [#32303]
+- AI Extension: show AiStatusIndicator into the assistant bar [#32272]
+- AI Extension: show a Notice when AI needs to provide feedback [#32222]
+- AI Extension: stop suggestion when form block is deleted [#32241]
+- AI Extension: Update placeholder copyright [#32300]
+- AI Extension: use assistant to edit Jetpack Format content [#32217]
+- AI Plugin: Add track for get feedback feature [#32319]
+- Better Paywall Block styles [#32308]
+- Fix small regression on Newsletter panels [#32270]
+- Jetpack editor extensions: use shared component for the logo. [#32257]
+- Make 'My Jetpack' the first sub-menu item, above 'Dashboard'. [#32240]
+- Memberships: Ensure endpoint handles source param [#32071]
+- Newsletters: update the appearance of "subscribers only" and "paid subscribers only" content wall [#31880]
+- paywall dynamic copy [#32201]
+- Subscription modal: adjust modal template markup and styles for easier modification and mobile friendliness. [#32230]
+
+### Bug fixes
+- AI Extension: Stop handling popover close event to prevent the AI Control from hiding when it loses focus. [#32246]
+- Social: Fix race condition in mobile app's post request [#32287]
+
+### Other changes <!-- Non-user-facing changes go here. This section will not be copied to readme.txt. -->
+- minor copy change [#32261]
+- Refactored subscriber count data to come from store instead of props. [#32095]
+
+## 12.5-a.1 - 2023-08-01
+### Enhancements
+- AI Assistant: various backend improvements.
+- AI Assistant: disable feedback button if post is empty [#32122]
+- Block editor: add Google Photo integration to Gutenberg's Media Sidebar for Jetpack connected sites. [#32047]
+- Dashboard: update the SEO hide page control from a checkbox to a toggle. [#32059]
+- Donation block: display the default Stripe currency in the Donation block and add a "check" icon next to the selected currency in the currency dropdown [#31795]
+- Dashboard: update the likes and sharing button controls in the Jetpack sidebar from checkboxes to toggles. [#32060]
+- Paywall block: update the block styles. [#32101]
+
+### Bug fixes
+- Dashboard: do not allow toggling the Subscriptions feature on or off when not connected to Jetpack. [#32179]
+- Donation block: fix issue where an invalid amount entered would persist when switching tabs in the block editor. [#32098]
+
+### Other changes <!-- Non-user-facing changes go here. This section will not be copied to readme.txt. -->
+- Remove feature flag for subscriptions newsletter. [#32045]
+- Add track events to monitor which media sources get inserted through the Media Inserter [#32103]
+- Add Paywall block scaffold [#32093]
+- Add paywall logic to newsletters [#32119]
+- AI Assistant: do not pass postId to suggestions hook. It isn't required. [#32104]
+- AI Assistant: Register ai-assistant-form-support beta flag to control the form extension we are working on. [#32162]
+- AI Assistant: remove unused code from AI Extension [#32035]
+- AI Assistant: import Icons from AI Client pkg [#32173]
+- AI Assistant: show/hide assistant container for Jetpack Form block [#32189]
+- AI Assistant: use AI Client suggestion hook. Clean the internal hook. [#32077]
+- AI Extension: introduce UI Handler context for the Jetpack Form AI Assistant feature [#32186]
+- AI Extension: start to extend Jetpack From block [#32181]
+- AI Assistant: Add custom form prompt [#32165]
+- AI Assistant: Add function calling feature [#32161]
+- Jetpack AI: Add support for different limits of free requests and different upgrade prompts. [#32096]
+- Paywall block: limit to post level, add icon [#32137]
+- Performance settings: update position in wpcom menu [#32149]
+- Related posts block: add srcset to thumbnails [#32026]
+- Social: add upsell links in the sharing section of the Jetpack plugin. [#32032]
+- Subcribe modal: add conditions for display. [#32043]
+- Subscriptions: Remove subscribe modal feature flag. [#32002]
+- The media inserter Google Photos service is now aware of the connection status of the service [#32058]
+- Update SEO tools textarea in editor plugin container to be 100% wide [#32056]
+- We hide the search input for the Google Photos Sidebar Media integration since it is not searchable [#32108]
+- WooCommerce Analytics events: Introduce 'jetpack_woocommerce_analytics_event_props' filter [#32052]
+
+## [12.4] - 2023-08-01
+### Enhancements
+- Added Pexels integrations to the Media Sidebar of the block editor. [#31914]
+- AI Assistant: improved the upgrade prompt logic when requesting suggestions. [#31949]
+- AI Assistant: introduce sidebar and proofread components. [#32001]
+- AI Assistant: release the Get Feedback feature. [#32041]
+- AI Assistant: update upgrade prompt message with new wording and formatting. [#32014]
+- Dashboard: highlight Jetpack Newsletter in recommendations flow. [#31940]
+- Dashboard: update link to configure Related Posts when you use a Block theme on your site. [#31847]
+- Newsletter: Only display the "NL access" column if we have published one paid-newsletter. [#31960]
+
+### Improved compatibility
+- General: indicate full compatibility with the latest version of WordPress, 6.3. [#31910]
+
+### Bug fixes
+- Fix issue with Paid-content block on self-hosted env by enabling sub-blocks [#32180]
+- Payments Block: update link to support documentation. [#31986]
+
+### Other changes <!-- Non-user-facing changes go here. This section will not be copied to readme.txt. -->
+- Added a "to test" draft for Jetpack 12.4. [#32048]
+- Added things to the to-test file to amend for the latest release. [#32054]
+- AI Assistant: Connect logic with get feedback sidebar. [#32018]
+- AI Assistant: import and use askQuestion() from AI Client pkg. [#31964]
+- AI Assistant: import and use SuggestionsEventSource() from AI Client package. [#31944]
+- AI Assistant: use AI Client package to get jwt token. [#31924]
+- AI Extension: remove multiple-blocks-edition obsolete implementation. [#32023]
+- Blaze: add missing Advertising menu in Calypso, for self-hosted sites. [#32109]
+- Comments: add filter allowing customizing the heading tag used in comment reply title. [#31930]
+- Dashboard: only display Earn section in search results when appropriate. [#31937]
+- Fix some `require` paths to not uselessly call `plugin_basename()`. [#31997]
+- Fix typo [#31977]
+- Sites API: add was_migration_trial flag to data returned for site details. [#31907]
+- Transferred 'get_calypso_env()' method from Jetpack class to the Status package. [#31906]
+- Updated package dependencies. [#31923]
+- Updated package dependencies. [#32040]
+- Update props passed to JetpackFooter [#31627]
+- Whitelist jetpack_memberships_site_subscriber post meta to allow for syncing to WordPress.com [#31956]
+- Widget Visibility: add new filter to allow third-parties to add Widget Visibility support to their own blocks. [#31928]
+
+## 12.4-a.7 - 2023-07-18
+### Bug fixes
+- Sharing: fix icon font display following the addition of the Threads icon. [#31932]
+
+## 12.4-a.5 - 2023-07-17
+### Enhancements
+- AI Assistant: various improvements to syntax parsing, formatting, and other backend enhancements.
+- AI Extension: transform block to AI Assistant when using an AI Extension suggestion. [#31603]
+- Akismet: show correct logo for all Jetpack plans that include Akismet. [#31826]
+- Dashboard: add a new "Earn" section to the settings. [#31696]
+- Newsletters: add frontend subscriber modal. [#31393]
+- Social Menu & Social Media Icons: add support for the Threads service. [#31873]
+- Stats: show stats products in My Plan. [#31732]
+- Subscriptions: link to new Subscription management page from the Jetpack dashboard. [#31720]
+
+### Improved compatibility
+- Customizer: make the testimonial, featured content, portfolio, and related post customizer sections be shown only if current theme is not a block theme. [#31730] [#31779] [#31754] [#31755]
+- Social Links: prevent social links foom being used in block themes. [#31838]
+- WordPress.com REST API: avoid PHP notice when using PHP 8.2. [#31909]
+
+### Bug fixes
+- AI Assistant: fix crash when transforming to AI Assistant. [#31813]
+- API: fix PHP warning in list posts endpoint. [#31837]
+- Contact Form: avoid fatal errors when exporting form data to CSV. [#31858]
+- Forms: fix Forms dropdown required validation. [#31894]
+- Related Posts: do not display related posts in emails and outside of WordPress context. [#31861]
+
+### Other changes <!-- Non-user-facing changes go here. This section will not be copied to readme.txt. -->
+- Follow-up fix for Automattic/jetpack/pull/31861. [#31871]
+- Updated package dependencies. [#31769]
+- Top posts widget: add srcset to thumbnails. [#31869]
+- AI Assistant: add Gutenberg syntax parsing. [#31766]
+- AI Assistant: display upgrade prompt for Simple and Atomic sites. [#31643]
+- AI Assistant: do not pre-populate inner blocks if Gutenberg syntax is not enabled. [#31822]
+- AI Assistant: extend blocks when upgrade is required. [#31814]
+- AI Assistant: extend list block and enhance content parsing. [#31901]
+- AI Assistant: fix transform issue when content has formatted text. [#31790]
+- AI Assistant: update AI Assistant request to be POST based. [#31128]
+- AI Assistant: introduce `ghostwriter` into AI Assistant block prompt. [#31806]
+- AI Extension: fix transform issue when Ask AI Assistant option. [#31842]
+- Sync: add cache check when trying to spawn dedicated sync or update JETPACK\_\_VERSION to avoid additional requests to the DB. [#31645]
+
+## 12.4-a.3 - 2023-07-10
+### Enhancements
+- AI Assistant: add dev playground panel [#31762]
+- AI Assistant: Add GPT4 endpoint parameter [#31763]
+- AI Assistant: Enable custom prompt if provided [#31764]
+- Akismet: use Akismet logo instead of Jetpack logo in masthead [#31464]
+
+### Improved compatibility
+- Sharing: deprecate the Skype sharing button, as Skype ddoes not support those buttons anymore. [#31636]
+
+### Bug fixes
+- AI Assistant: Only append flag if no error [#31767]
+- Fixed users menu item pointing to wp-admin on Atomic sites. [#31699]
+
+### Other changes <!-- Non-user-facing changes go here. This section will not be copied to readme.txt. -->
+- AI Assistant: Add playground flag in initial state [#31757]
+
+## 12.4-a.1 - 2023-07-05
+### Enhancements
+- AI Assistant: Keep original content when trying again after transforming a paragraph using the "Ask AI Assistant" button. [#31597]
+- Contact Forms: remove the default title ("You got a new response!") added to emails sent for new feedback received. [#31667]
+- Cookie Consent Block: Persist markup and ensure it is rendered in the footer. [#31511]
+- Custom CSS: Display a notice to recommend the use of Global Styles when you use a Block theme on your site. [#31413]
+- Subscribers page: Add subscribers page to menu. [#31567]
+
+### Improved compatibility
+- Tiled Galleries: Fix deprecation notices that may appear in logs when using PHP 8.2. [#31640]
+
+### Bug fixes
+- Dashboard: Fix Jetpack footer accessibility issues. [#31417]
+- Search: when using a block theme, display a link to add a Search Block instead of a Search Widget in the Jetpack dashboard. [#31614]
+
+### Other changes <!-- Non-user-facing changes go here. This section will not be copied to readme.txt. -->
+- Add wpcom_site_setup property to /sites/{siteId} endpoint [#31664]
+- Dashboard: update wording for Custom CSS section when using a Block theme. [#31634]
+- Sync wpcom_site_setup site option [#31662]
+- Updated package dependencies. [#31659]
+- Updated package dependencies. [#31661]
+- WordPress.com Toolbar: only add Blaze Dashboard link once. [#31617]
+
+## [12.3] - 2023-07-05
 ### Enhancements
 - AI Assistant: extend AI features to select core blocks.
 - AI Extension: add ask assistant menu option. [#31568]
@@ -1009,7 +1644,7 @@ This is an alpha version! The changes listed here are not final.
 - WAF: update WAF package version in composer.lock [#27528]
 - WordAds: fix syntax in wordards-ccpa.js causing it to be included in all merge commits. [#27667]
 
-## 11.6 - 2022-12-06
+## [11.6] - 2022-12-06
 ### Enhancements
 - Editor: adds an experimental editor extension that displays a placeholder blogging prompt when starting a new post. [#26680]
 - Form Block: fix form placeholder background color. [#27629]
@@ -1132,7 +1767,7 @@ This is an alpha version! The changes listed here are not final.
 ## [11.5] - 2022-11-01
 ### Enhancements
 - Dashboard: add connection widget for unconnected sites. [#26596]
-- Dashboard: add Jetpack Search Free  and Jetpack Social to My Products. [#27007, #26990]
+- Dashboard: add Jetpack Search Free and Jetpack Social to My Products. [#27007, #26990]
 - Form block: add Contact Form child blocks to the Block Library. [#26937]
 - Form block: add default spacing attributes on all form variations. [#26916]
 - Form block: change layout flex styles. [#26914]
@@ -1577,7 +2212,7 @@ This is an alpha version! The changes listed here are not final.
 - Publicize: synced changes made to Publicize package files. [#24941] [#24943]
 - Tests: fix incorrect React prop type in select-dropdown/item. [#24915]
 - Updated package dependencies. [#24923]
-- VideoPress: under the hood improvements including moving to a VideoPressPlayer component, uploading progress handler function and saving custom sizes  [#24883] [#24858] [#24893]
+- VideoPress: under the hood improvements including moving to a VideoPressPlayer component, uploading progress handler function and saving custom sizes [#24883] [#24858] [#24893]
 - VideoPress: save video player attributes of the VideoPress block. [#24888]
 - VideoPress: add VideoPressUploader component. [#24920]
 - VideoPress: include private videos URL in VideoPress block (v6) GUID parse. [#24918]
@@ -1618,9 +2253,9 @@ This is an alpha version! The changes listed here are not final.
 ### Bug fixes
 - Contact Form Block: display expected success message when used in FSE header or footer. [#24727]
 - Photon: do not return Photonized URLs to the block editor in WordPress 6.0. [#24769]
-- Search: avoid broken images in search results by preferring the _jetpack_featured_media_url postmeta over the GUID. [#24718]
+- Search: avoid broken images in search results by preferring the \_jetpack_featured_media_url postmeta over the GUID. [#24718]
 - SEO Tools: allow WooCommerce to use custom SEO description for the shop page. [#24726]
-- Sharing: avoid fatal errors when email sharing process is called  without clicking on the button. [#24776]
+- Sharing: avoid fatal errors when email sharing process is called without clicking on the button. [#24776]
 - VideoPress: fix embeds in classic editor when theme has no $content_width set. [#24756]
 - VideoPress Block: fix Cancel button on block and provide better error message when video format is not supported. [#24757]
 
@@ -1696,7 +2331,7 @@ This is an alpha version! The changes listed here are not final.
 - phpcs changes for likes [#24368]
 - Publicize Components: Move the remaining components and hooks required for Jetpack Social [#24464]
 - Refactor to use hasActiveSiteFeature to centralize the source of truth to WPCOM_Features. [#24152]
-- Sync: Add '_jetpack_blogging_prompt_key' to rest api public metadata via the rest_api_allowed_public_metadata filter [#24515]
+- Sync: Add '\_jetpack_blogging_prompt_key' to rest api public metadata via the rest_api_allowed_public_metadata filter [#24515]
 - Jetpack: correct prices in product descriptions [#24461]
 - Updated package dependencies. [#24432]
 - Use correct `COOKIEPATH` constant. [#24516]
@@ -1869,7 +2504,7 @@ This is an alpha version! The changes listed here are not final.
 - My Jetpack: Updated to require licensing package when licensing UI enabled.
 - Nav-unification: Update nudge to support Pro plan.
 - Payments Block: Display the product manager on free plan sites connected to Stripe.
-- Premium Content blocks: subscription button from emails and notifications opens the checkout dialog  (WordPress.com specific).
+- Premium Content blocks: subscription button from emails and notifications opens the checkout dialog (WordPress.com specific).
 - Remove code in native files that was causing the rnmobile build to fail.
 - Revert Jetpack not hard disconnecting on deactivation
 - Updated package dependencies.
@@ -2072,7 +2707,7 @@ This is an alpha version! The changes listed here are not final.
 - Jetpack: fix missing "Connect User" button after restoring a connection.
 - Pay with PayPal widget: enable widget to work in block-based widget editor and full site editor.
 - SEO Tools: ensure Twitter cards get correct description when a site has a blank tagline.
-- Payments: swap JETPACK_VERSION for the correct JETPACK__VERSION.
+- Payments: swap JETPACK_VERSION for the correct JETPACK\_\_VERSION.
 - Premium Content block: when a visitor subscribes, they now see the premium content without needing to reload the page.
 
 ### Other changes <!-- Non-user-facing changes go here. This section will not be copied to readme.txt. -->
@@ -2780,7 +3415,7 @@ This is an alpha version! The changes listed here are not final.
 
 ### Other changes <!-- Non-user-facing changes go here. This section will not be copied to readme.txt. -->
 - Add back skipped tests checking the Screen Options functionality of Nav Unification.
-- Add wp-block-button__link to the button on the subscription widget.
+- Add wp-block-button\_\_link to the button on the subscription widget.
 - Admin menu: improve security by sanitizing return value of get_current_screen function.
 - Dashboard: do not display Jetpack version on WoA sites.
 - Dashboard: show the Connect button on the Media card in site-only mode.
@@ -3804,7 +4439,7 @@ This is an alpha version! The changes listed here are not final.
 - Sharing: add direct link to share button customization for logged-in admins.
 - Widgets: introduce new Instagram Widget.
 - Widgets: add additional options to the Twitter Timeline widget.
-- Widgets: add the rel attribute to links with target=”_blank” in the Social Icons widget.
+- Widgets: add the rel attribute to links with target=”\_blank” in the Social Icons widget.
 - WordAds: update ad units to be more flexible and dynamic.
 
 ### Improved compatibility
@@ -4604,7 +5239,7 @@ This is an alpha version! The changes listed here are not final.
 - Social Icons: Remove Google+, uses the generic Google now.
 - Subscriptions: Correct conflicts that were possible with the checkboxes after a comment submission form.
 - Theme Tools: Ensure Featured Content tag is retained on a post after saving. Thanks Anis Ladram, you're a Jetpack contributor now!
-- Uninstalling Jetpack: Prevent notice about JETPACK__PLUGIN_DIR already being defined when programmatically uninstalling Jetpack. (But why would you uninstall?)
+- Uninstalling Jetpack: Prevent notice about JETPACK\_\_PLUGIN_DIR already being defined when programmatically uninstalling Jetpack. (But why would you uninstall?)
 - Widgets: Remove the Cookies & Consents Banner (not just hide it) after consenting. Thanks Tony Tettinger!
 
 ## [7.2.1] - 2019-04-04
@@ -5094,7 +5729,7 @@ This is an alpha version! The changes listed here are not final.
 - JSON API: Added support for Google My Business integration available on WordPress.com.
 - Masterbar: We removed the Next Steps link from the Account sidebar.
 - Publicize: Let the user know that we are going to send emails to subscribers and publicize to the different accounts.
-- Settings: Added  "Privacy Information" links to each Jetpack module/feature card.
+- Settings: Added "Privacy Information" links to each Jetpack module/feature card.
 - Shortcodes: Mixcloud shortcode now uses oEmbed.
 - Stats: Added a new filter jetpack_honor_dnt_header_for_stats, which if enabled would not track stats for visitors with DNT enabled.
 - Sync: Removed requirement for gzencode.
@@ -5214,7 +5849,7 @@ This is an alpha version! The changes listed here are not final.
 - Search: Updated the Jetpack Search settings card to be more helpful in setting up the widget.
 - Search: We made the "Add Jetpack Search Widget" link in the Search module settings card open the widgets section of the customizer.
 - Search: Move any active search widgets to the inactive list if you disable the search module.
-- Search: Only log mysql and ES query times that are less than 60 seconds.  There are some outliers that mess up our stats.
+- Search: Only log mysql and ES query times that are less than 60 seconds. There are some outliers that mess up our stats.
 - Sync: Improved the way widget titles are synchronized to WordPress.com servers when widgets are saved or updated.
 - Twitter Cards: Added new jetpack_twitter_image_default filter to allow themes and plugins to customize twitter:image when no suitable image is found automatically.
 - We updated the way we handle Jetpack's green color in out stylesheets for better compatibility with Jetpack's new logo.
@@ -5229,7 +5864,7 @@ This is an alpha version! The changes listed here are not final.
 - Sync: Added the jetpack_sync_action_before_enqueue action that's done when anything gets enqueued before being synchronized to WordPress.com servers.
 
 ### Bug fixes
-- Admin Page: Removed all linting warnings for the JS code of the Admin page.  These were only shown in development builds.
+- Admin Page: Removed all linting warnings for the JS code of the Admin page. These were only shown in development builds.
 - Connect: Fixed an issue that sometimes resulted in a notice being shown about another user already having connected a Jetpack site when attempting to connect your site to WordPress.com
 - General: Added suppress_filters param to get_posts / get_children function calls.
 - Markdown: Updated WordAds code to not use create_function which is getting deprecated in PHP 7.2.
@@ -5830,7 +6465,7 @@ This is an alpha version! The changes listed here are not final.
 - We're now forcing only Photon URLs to HTTPS as your custom CDN URLs may use a different protocol.
 - If a Publicize connection is not shared with all users on the site, do not trigger Publicize for the other users.
 - Publicize was having trouble working with scheduled posts, this should be fixed now.
-- SSO may not have been displaying the login form when using JSON API authorization.  Sorry about that, we've fixed it.
+- SSO may not have been displaying the login form when using JSON API authorization. Sorry about that, we've fixed it.
 - We've eliminated some PHP notices that were showing with some Shortcodes.
 - There was a Top Posts Widget image size issue when using list layouts, but is no longer causing issues.
 - We fixed some notices and warnings when updating data from the WordPress.com central interface.
@@ -5927,7 +6562,7 @@ This release improves Jetpack compatibility with WordPress 4.7.
 - Custom post types have been added to the WP REST API output.
 - Many of the screenshots throughout the plugin have been replaced by SVGs in order to make Jetpack smaller.
 - New endpoints have been added to allow the installation of plugin and theme zip files via the API.
-- Twelve new filters to make Jetpack more extensible!  See: http://wp.me/p5U9nj-2Ow.
+- Twelve new filters to make Jetpack more extensible! See: http://wp.me/p5U9nj-2Ow.
 - New widget: "Google Translate" to allow users to translate your site into their own language.
 - New widget: "My Community" where you can see who recently interacted with your site.
 - One of the biggest issues facing Jetpack users for years now has been difficulties in moving sites from one domain name to another. This update makes strides towards improving that process.
@@ -6185,7 +6820,7 @@ This release improves Jetpack compatibility with WordPress 4.7.
 - Post By Email: Added an additional layer of security to prevent unauthorized
   changes to Post By Email settings.
 - Likes: Fixed an XSS vulnerability in the Likes module.
-- REST API/Contact Form:  We've eliminated unauthenticated access to Feedback
+- REST API/Contact Form: We've eliminated unauthenticated access to Feedback
   posts.
 
 ### Feature Improvements
@@ -6711,7 +7346,7 @@ the Jetpack community. Read more about it here: http://wp.me/p1moTy-1VN
 - Enhancement: Shortcode Embeds: New Wufoo Shortcode from WordPress.com
 - Enhancement: Shortcode Embeds: Mixcloud: handle accented characters in URLs
 - Enhancement: Site Logo: Adding itemprops to support logo schema.
-- Enhancement: Slideshow Gallery: New parameters *size* and *autostart*
+- Enhancement: Slideshow Gallery: New parameters _size_ and _autostart_
 - Enhancement: Slideshow Gallery: Use more reliable CSS for resizing instead
   of js
 - Enhancement: Stats: No longer track stats for preview pages
@@ -7231,7 +7866,7 @@ Other bugfixes and enhancements at https://github.com/Automattic/jetpack/commits
   code.
 - Enhancement: Shortcode: Google Maps: Update the regex to handle new format
   for embeds.
-- Enhancement: Likes: Avoid a PHP Notice when $_POST['post_type'] is not set
+- Enhancement: Likes: Avoid a PHP Notice when $\_POST['post_type'] is not set
   in meta_box_save.
 - Enhancement: Smush images to save on file size.
 - Enhancement: Publicize: Enable opt-in publicizing of custom post types.
@@ -7392,7 +8027,7 @@ Other bugfixes and enhancements at https://github.com/Automattic/jetpack/commits
 - Bug Fix: Contact Form: Stopped using a short tag.
 - Bug Fix: Changed CSS selector to catch MP6 stylings.
 - Bug Fix: Dropped `__FILE__` references in class.jetpack.php in favor of
-  JETPACK__PLUGIN_DIR constant, now code that deactivates the plugin from the
+  JETPACK\_\_PLUGIN_DIR constant, now code that deactivates the plugin from the
   connect nag works again.
 - Bug Fix: Random Redirect: Add random-redirect to the plugins overriden list,
   in case someone is using Matt's Random Redirect plugin.
@@ -8276,7 +8911,7 @@ Other bugfixes and enhancements at https://github.com/Automattic/jetpack/commits
 - Bug Fix: Sharedaddy: Fix PHP Warning.
 - Enhancement: AtD: Add spellcheck button to Distraction Free Writing screen.
 - Translations: Added: Bosnian, Danish, German, Finnish, Galician, Croatian,
-  Indonesian,  Macedonian, Norwegian (Bokmål), Russian, Slovak, Serbian, Swedish
+  Indonesian, Macedonian, Norwegian (Bokmål), Russian, Slovak, Serbian, Swedish
 - Translations: Updated: Spanish, French, Italian, Japanese, Brazilian
   Portuguese, Portuguese
 
@@ -8337,13 +8972,17 @@ Other bugfixes and enhancements at https://github.com/Automattic/jetpack/commits
 
 - Initial release
 
-[11.6]: https://wp.me/p1moTy-PLI
+[12.6]: https://wp.me/p1moTy-VLL
+[12.5]: https://wp.me/p1moTy-Vab
+[12.4]: https://wp.me/p1moTy-UQY
+[12.3]: https://wp.me/p1moTy-Uk3
 [12.2]: https://wp.me/p1moTy-Tzw
 [12.1]: https://wp.me/p1moTy-TA2
 [12.0]: https://wp.me/p1moTy-RGw
 [11.9]: https://wp.me/p1moTy-RdX
 [11.8]: https://wp.me/p1moTy-QEM
 [11.7]: https://wp.me/p1moTy-Q9t
+[11.6]: https://wp.me/p1moTy-PLI
 [11.5]: https://wp.me/p1moTy-Ppq
 [11.4]: https://wp.me/p1moTy-O5I
 [11.3]: https://wp.me/p1moTy-M5i

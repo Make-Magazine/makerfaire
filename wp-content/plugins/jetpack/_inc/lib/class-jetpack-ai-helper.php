@@ -8,6 +8,7 @@
 
 use Automattic\Jetpack\Connection\Client;
 use Automattic\Jetpack\Connection\Manager;
+use Automattic\Jetpack\Search\Plan as Search_Plan;
 use Automattic\Jetpack\Status;
 use Automattic\Jetpack\Status\Visitor;
 
@@ -84,6 +85,32 @@ class Jetpack_AI_Helper {
 		 * @param bool $default Are AI features enabled? Defaults to false.
 		 */
 		return apply_filters( 'jetpack_ai_enabled', $default );
+	}
+
+	/**
+	 * Return true if the AI chat feature should be active on the current site.
+	 *
+	 * @todo IS_WPCOM (the endpoints need to be updated too).
+	 *
+	 * @return bool
+	 */
+	public static function is_ai_chat_enabled() {
+		$default = false;
+
+		$connection = new Manager();
+		$plan       = new Search_Plan();
+		if ( $connection->is_connected() && $plan->supports_search() ) {
+			$default = true;
+		}
+
+		/**
+		 * Filter whether the AI chat feature is enabled in the Jetpack plugin.
+		 *
+		 * @since 12.6
+		 *
+		 * @param bool $default Is AI chat enabled? Defaults to false.
+		 */
+		return apply_filters( 'jetpack_ai_chat_enabled', $default );
 	}
 
 	/**
@@ -318,20 +345,14 @@ class Jetpack_AI_Helper {
 
 			$blog_id        = get_current_blog_id();
 			$is_over_limit  = \OpenAI_Limit_Usage::is_blog_over_request_limit( $blog_id );
-			$requests_limit = \OpenAI_Limit_Usage::NUM_FREE_REQUESTS_LIMIT;
+			$requests_limit = \OpenAI_Limit_Usage::get_free_requests_limit( $blog_id );
 			$requests_count = \OpenAI_Request_Count::get_count( $blog_id );
 
-			/*
-			 * Check if the site requires an upgrade.
-			 * Ideally, the feature availability
-			 * should support site-type handling.
-			 * @todo: research how to do it.
-			 */
-			$blogs_details   = get_blog_details( $blog_id );
-			$is_jetpack_site = is_blog_jetpack( $blogs_details ) && ! is_blog_atomic( $blogs_details );
-			$require_upgrade = $is_jetpack_site ?
-				$is_over_limit && ! $has_ai_assistant_feature :
-				false;
+			// Check if the site requires an upgrade.
+			$require_upgrade = $is_over_limit && ! $has_ai_assistant_feature;
+
+			// Determine the upgrade type
+			$upgrade_type = wpcom_is_vip( $blog_id ) ? 'vip' : 'default';
 
 			return array(
 				'has-feature'          => $has_ai_assistant_feature,
@@ -339,6 +360,7 @@ class Jetpack_AI_Helper {
 				'requests-count'       => $requests_count,
 				'requests-limit'       => $requests_limit,
 				'site-require-upgrade' => $require_upgrade,
+				'upgrade-type'         => $upgrade_type,
 			);
 		}
 
@@ -360,7 +382,7 @@ class Jetpack_AI_Helper {
 
 		$response_code = wp_remote_retrieve_response_code( $wpcom_request );
 		if ( 200 === $response_code ) {
-			return json_decode( wp_remote_retrieve_body( $wpcom_request ) );
+			return json_decode( wp_remote_retrieve_body( $wpcom_request ), true );
 		} else {
 			return new WP_Error(
 				'failed_to_fetch_data',

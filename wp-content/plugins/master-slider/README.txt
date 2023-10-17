@@ -7,7 +7,7 @@ Tags: slider, image slider, wordpress slider, video slider, best slider plugin, 
 Requires PHP: 5.4
 Requires at least: 5.0
 Tested up to: 6.2.2
-Stable tag: 3.9.1
+Stable tag: 3.9.3
 
 Build SEO friendly sliders fast and easy with Master Slider. The most advanced responsive HTML5 WordPress slider plugin, with touch swipe navigation that works smoothly on desktop and devices.
 
@@ -237,8 +237,11 @@ Bugs can be reported in our [support forums](http://wordpress.org/tags/master-sl
 
 == Changelog ==
 
-= 3.9.1 =
+= 3.9.3 =
+= Version 3.9.1/ (21.08.2023) =
+- [Fixed]: Minor bugs fixed.
 
+= 3.9.1 =
 = Version 3.9.1/ (12.06.2023) =
 - [Fixed]: Minor bugs fixed.
 

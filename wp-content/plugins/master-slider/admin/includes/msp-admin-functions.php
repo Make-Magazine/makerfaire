@@ -228,8 +228,7 @@ add_shortcode( 'msp-stats', 'msp_api_stats_shortcode' );
  * @return int
  */
 function msp_get_pro_users_num(){
-    $download_num = msp_api_stats_shortcode( array( 'item-id' => '7467925', 'item-param' => 'sales_number', 'cache_in_minutes' => 1200  ) );
-    return number_format_i18n( floor( ($download_num/1000) ) * 1000 ). '+';
+    return number_format_i18n( 35000 ). '+';
 }
 
 
