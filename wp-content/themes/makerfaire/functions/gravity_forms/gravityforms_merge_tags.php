@@ -388,7 +388,9 @@ function get_location($entry, $type='full'){
             }elseif($type=='booth'){
               $location .= ucfirst($row->location);
             }else{
-              $location .= ucfirst($row->location).' - ' . $row->area.' : ' . $subarea;
+              if($row->location!=''){
+                $location .= ucfirst($row->location).' - ' . $row->area.' : ' . $subarea;
+              }              
             }            
           }
       }
