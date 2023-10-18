@@ -191,7 +191,12 @@ function getMTMentries($formIDs, $faireID) {
                       left outer join wp_mf_faire_subarea on wp_mf_location.subarea_id = wp_mf_faire_subarea.id 
                       left outer join wp_mf_faire_area on wp_mf_faire_subarea.area_id = wp_mf_faire_area.id 
                       WHERE wp_mf_location.entry_id = lead.id
-                      GROUP  BY entry_id) AS area
+                      GROUP  BY entry_id) AS area,
+                      (SELECT Group_concat(wp_mf_faire_subarea.nicename)      
+                      FROM `wp_mf_location` 
+                      left outer join wp_mf_faire_subarea on wp_mf_location.subarea_id = wp_mf_faire_subarea.id 
+                      WHERE wp_mf_location.entry_id = lead.id
+                      GROUP  BY entry_id) AS subarea
               FROM   wp_gf_entry AS lead 
               WHERE  lead.status = 'active' 
                      AND lead.form_id IN(" . implode(",", $formIDarr) . ")";
@@ -273,7 +278,7 @@ function getMTMentries($formIDs, $faireID) {
             //$location = ($showLoc?($result->area==NULL?'':$result->area):'');
             $locations = array();
             if ($showLoc && $result->area != NULL) {
-                $locations = array_unique(explode(',', $result->area));
+                $locations = array_unique(explode(',', $result->subarea));
             }
             if ($faireID == 'VMF2020') {
                 $locations = array(html_entity_decode(get_CPT_name($result->area)));
