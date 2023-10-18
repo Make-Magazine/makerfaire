@@ -1,5 +1,10 @@
 var mtm = angular.module('mtm', ['angular.filter', 'ngSanitize']);
 
+var initialLocation = "";
+if (getUrlParam("location")) {
+    initialLocation = getUrlParam("location");
+}
+
 var initialCategory = "";
 if (getUrlParam("category")) {
     initialCategory = getUrlParam("category");
@@ -50,6 +55,10 @@ mtm.controller('mtmMakers', ['$scope', '$sce', '$filter', '$http', function ($sc
         var formIDs = jQuery('#forms2use').val();
         var faireID = jQuery('#mtm-faire').val();
         formIDs = replaceAll(formIDs, ",", "-");
+
+        if (initialLocation) {
+            $scope.makerSearch.location = initialLocation;
+        }
 
         if (initialCategory) {
             $scope.makerSearch.categories = initialCategory;
