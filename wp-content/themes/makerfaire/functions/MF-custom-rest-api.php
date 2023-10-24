@@ -176,44 +176,44 @@ function getMTMentries($formIDs, $faireID) {
         $showLoc = true;
 
     //find all active entries for selected forms
-    $query = "SELECT  lead.id                         AS entry_id, 
-                     (SELECT meta_value FROM   wp_gf_entry_meta WHERE  meta_key = '303' AND entry_id = lead.id) AS entry_status, 
-                     (SELECT meta_value FROM   wp_gf_entry_meta WHERE  meta_key = '22'  AND entry_id = lead.id) AS proj_photo,
-                     (SELECT meta_value FROM   wp_gf_entry_meta WHERE  meta_key = '878'  AND entry_id = lead.id) AS proj_photo_gallery,  
-                     (SELECT meta_value FROM   wp_gf_entry_meta WHERE  meta_key = '151' AND entry_id = lead.id) AS proj_name, 
-                     (SELECT meta_value FROM   wp_gf_entry_meta WHERE  meta_key = '16'  AND entry_id = lead.id) AS short_desc, 
-                     (SELECT meta_value FROM   wp_gf_entry_meta WHERE  meta_key = '320' AND entry_id = lead.id) AS prime_cat, 
-                     (SELECT Group_concat(meta_value) FROM   wp_gf_entry_meta WHERE  meta_key LIKE '321.%' AND entry_id = lead.id GROUP  BY entry_id) AS second_cat, 
-                     (SELECT Group_concat(meta_value) FROM   wp_gf_entry_meta WHERE  meta_key LIKE '304.%' AND entry_id = lead.id GROUP  BY entry_id) AS flags,
-                     (SELECT Group_concat(meta_value) FROM   wp_gf_entry_meta WHERE  meta_key LIKE '879.%' AND entry_id = lead.id GROUP  BY entry_id) AS weekends, 
+    $query = "SELECT  entry.id                         AS entry_id, 
+                     (SELECT meta_value FROM   wp_gf_entry_meta WHERE  meta_key = '303' AND entry_id = entry.id) AS entry_status, 
+                     (SELECT meta_value FROM   wp_gf_entry_meta WHERE  meta_key = '22'  AND entry_id = entry.id) AS proj_photo,
+                     (SELECT meta_value FROM   wp_gf_entry_meta WHERE  meta_key = '878'  AND entry_id = entry.id) AS proj_photo_gallery,  
+                     (SELECT meta_value FROM   wp_gf_entry_meta WHERE  meta_key = '151' AND entry_id = entry.id) AS proj_name, 
+                     (SELECT meta_value FROM   wp_gf_entry_meta WHERE  meta_key = '16'  AND entry_id = entry.id) AS short_desc, 
+                     (SELECT meta_value FROM   wp_gf_entry_meta WHERE  meta_key = '320' AND entry_id = entry.id) AS prime_cat, 
+                     (SELECT Group_concat(meta_value) FROM   wp_gf_entry_meta WHERE  meta_key LIKE '321.%' AND entry_id = entry.id GROUP  BY entry_id) AS second_cat, 
+                     (SELECT Group_concat(meta_value) FROM   wp_gf_entry_meta WHERE  meta_key LIKE '304.%' AND entry_id = entry.id GROUP  BY entry_id) AS flags,
+                     (SELECT Group_concat(meta_value) FROM   wp_gf_entry_meta WHERE  meta_key LIKE '879.%' AND entry_id = entry.id GROUP  BY entry_id) AS weekends, 
                      (SELECT Group_concat(wp_mf_faire_area.area)      
                       FROM `wp_mf_location` 
                       left outer join wp_mf_faire_subarea on wp_mf_location.subarea_id = wp_mf_faire_subarea.id 
                       left outer join wp_mf_faire_area on wp_mf_faire_subarea.area_id = wp_mf_faire_area.id 
-                      WHERE wp_mf_location.entry_id = lead.id
+                      WHERE wp_mf_location.entry_id = entry.id
                       GROUP  BY entry_id) AS area,
                       (SELECT Group_concat(wp_mf_faire_subarea.nicename)      
                       FROM `wp_mf_location` 
                       left outer join wp_mf_faire_subarea on wp_mf_location.subarea_id = wp_mf_faire_subarea.id 
-                      WHERE wp_mf_location.entry_id = lead.id
+                      WHERE wp_mf_location.entry_id = entry.id
                       GROUP  BY entry_id) AS subarea
-              FROM   wp_gf_entry AS lead 
-              WHERE  lead.status = 'active' 
-                     AND lead.form_id IN(" . implode(",", $formIDarr) . ")";
+              FROM   wp_gf_entry AS entry 
+              WHERE  entry.status = 'active' 
+                     AND entry.form_id IN(" . implode(",", $formIDarr) . ")";
     //legacy faires have location set, virtual faires do not. 
     if ($faireID == 'VMF2020') {
-        $query = "SELECT  lead.id                         AS entry_id, 
-                     (SELECT meta_value FROM   wp_gf_entry_meta WHERE  meta_key = '303' AND entry_id = lead.id) AS entry_status, 
-                     (SELECT meta_value FROM   wp_gf_entry_meta WHERE  meta_key = '22'  AND entry_id = lead.id) AS proj_photo,                     
-                     (SELECT meta_value FROM   wp_gf_entry_meta WHERE  meta_key = '151' AND entry_id = lead.id) AS proj_name, 
-                     (SELECT meta_value FROM   wp_gf_entry_meta WHERE  meta_key = '16'  AND entry_id = lead.id) AS short_desc, 
-                     (SELECT meta_value FROM   wp_gf_entry_meta WHERE  meta_key = '320' AND entry_id = lead.id) AS prime_cat, 
-                     (SELECT Group_concat(meta_value) FROM   wp_gf_entry_meta WHERE  meta_key LIKE '321.%' AND entry_id = lead.id GROUP  BY entry_id) AS second_cat, 
-                     (SELECT Group_concat(meta_value) FROM   wp_gf_entry_meta WHERE  meta_key LIKE '304.%' AND entry_id = lead.id GROUP  BY entry_id) AS flags,
-                     (SELECT meta_value FROM   wp_gf_entry_meta WHERE  meta_key = '320' AND entry_id = lead.id) AS area
-              FROM   wp_gf_entry AS lead 
-              WHERE  lead.status = 'active' 
-                     AND lead.form_id IN(" . implode(",", $formIDarr) . ")";
+        $query = "SELECT  entry.id                         AS entry_id, 
+                     (SELECT meta_value FROM   wp_gf_entry_meta WHERE  meta_key = '303' AND entry_id = entry.id) AS entry_status, 
+                     (SELECT meta_value FROM   wp_gf_entry_meta WHERE  meta_key = '22'  AND entry_id = entry.id) AS proj_photo,                     
+                     (SELECT meta_value FROM   wp_gf_entry_meta WHERE  meta_key = '151' AND entry_id = entry.id) AS proj_name, 
+                     (SELECT meta_value FROM   wp_gf_entry_meta WHERE  meta_key = '16'  AND entry_id = entry.id) AS short_desc, 
+                     (SELECT meta_value FROM   wp_gf_entry_meta WHERE  meta_key = '320' AND entry_id = entry.id) AS prime_cat, 
+                     (SELECT Group_concat(meta_value) FROM   wp_gf_entry_meta WHERE  meta_key LIKE '321.%' AND entry_id = entry.id GROUP  BY entry_id) AS second_cat, 
+                     (SELECT Group_concat(meta_value) FROM   wp_gf_entry_meta WHERE  meta_key LIKE '304.%' AND entry_id = entry.id GROUP  BY entry_id) AS flags,
+                     (SELECT meta_value FROM   wp_gf_entry_meta WHERE  meta_key = '320' AND entry_id = entry.id) AS area
+              FROM   wp_gf_entry AS entry 
+              WHERE  entry.status = 'active' 
+                     AND entry.form_id IN(" . implode(",", $formIDarr) . ")";
     }
     $results = $wpdb->get_results($query);
 
@@ -345,7 +345,7 @@ function getSchedule($formIDs, $faireID) {
               location.latitude, location.longitude,
               (select meta_value as value from wp_gf_entry_meta where wp_gf_entry_meta.entry_id = schedule.entry_id AND wp_gf_entry_meta.meta_key like '22')  as photo,
               (select meta_value as value from wp_gf_entry_meta where wp_gf_entry_meta.entry_id = schedule.entry_id AND wp_gf_entry_meta.meta_key like '217') as mkr1_photo,
-              (SELECT meta_value FROM   wp_gf_entry_meta WHERE  meta_key = '878'  AND entry_id = lead.id) AS proj_photo_gallery,  
+              (SELECT meta_value FROM   wp_gf_entry_meta WHERE  meta_key = '878'  AND entry_id = entry.id) AS proj_photo_gallery,  
               (select meta_value as value from wp_gf_entry_meta where wp_gf_entry_meta.entry_id = schedule.entry_id AND wp_gf_entry_meta.meta_key like '151') as name,
               (select meta_value as value from wp_gf_entry_meta where wp_gf_entry_meta.entry_id = schedule.entry_id AND wp_gf_entry_meta.meta_key like '880') as presentation_name,
               (select meta_value as value from wp_gf_entry_meta where wp_gf_entry_meta.entry_id = schedule.entry_id AND wp_gf_entry_meta.meta_key like '16')  as short_desc,     
@@ -359,9 +359,9 @@ function getSchedule($formIDs, $faireID) {
                left outer join wp_mf_location as location on location_id = location.id
                left outer join wp_mf_faire_subarea subarea on subarea.id = location.subarea_id
                left outer join wp_mf_faire_area area on area.id = subarea.area_id
-               left outer join wp_gf_entry as lead on schedule.entry_id = lead.id
+               left outer join wp_gf_entry as entry on schedule.entry_id = entry.id
                left outer join wp_gf_entry_meta as lead_detail on schedule.entry_id = lead_detail.entry_id and lead_detail.meta_key = '303'
-               where lead.status = 'active' and lead_detail.meta_value='Accepted' "
+               where entry.status = 'active' and lead_detail.meta_value='Accepted' "
             . " and lead_detail.form_id in(" . implode(",", $formIDarr) . ") "
             /* code to hide scheduled items as they occur */
                 //. " and schedule.end_dt >= now()+ INTERVAL -4 HOUR  " //eastern time
