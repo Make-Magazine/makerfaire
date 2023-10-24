@@ -217,7 +217,7 @@ function getMTMentries($formIDs, $faireID) {
               WHERE  entry.status = 'active' 
                      AND entry.form_id IN(" . implode(",", $formIDarr) . ")";
     }
-    echo $query;
+    
     $results = $wpdb->get_results($query);
 
     //build entry array
