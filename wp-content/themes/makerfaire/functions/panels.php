@@ -267,18 +267,18 @@ function getFeatEvPanel($row_layout) {
     if ($dynamic) {
         $formid = ($acf_blocks ? get_field('enter_formid_here') : get_sub_field('enter_formid_here'));
         $query = "SELECT schedule.entry_id, schedule.start_dt as time_start, schedule.end_dt as time_end, schedule.type,
-                       lead_detail.value as entry_status, DAYNAME(schedule.start_dt) as day,location.location,
-                       (SELECT value FROM {$wpdb->prefix}rg_lead_detail WHERE lead_id = schedule.entry_id AND field_number like '304.3'
-                           AND value like 'Featured Maker')  as flag,
-                       (SELECT value FROM {$wpdb->prefix}rg_lead_detail WHERE lead_id = schedule.entry_id AND field_number like '22')  as photo,
-                       (SELECT value FROM {$wpdb->prefix}rg_lead_detail WHERE lead_id = schedule.entry_id AND field_number like '151') as name,
-                       (SELECT value FROM {$wpdb->prefix}rg_lead_detail WHERE lead_id = schedule.entry_id AND field_number like '16')  as short_desc
-                  FROM {$wpdb->prefix}mf_schedule as schedule
-                       left outer join {$wpdb->prefix}mf_location as location on location_id = location.id
-                       left outer join {$wpdb->prefix}rg_lead as lead on schedule.entry_id = lead.id
-                       left outer join {$wpdb->prefix}rg_lead_detail as lead_detail on
-                       schedule.entry_id = lead_detail.lead_id AND field_number = 303
-                 WHERE lead.status = 'active' AND lead_detail.value='Accepted'";
+        lead_detail.meta_value as entry_status, DAYNAME(schedule.start_dt) as day,location.location,
+        (SELECT meta_value FROM wp_gf_entry_meta WHERE entry_id = schedule.entry_id AND meta_key like '304.3' AND meta_value like 'Featured Maker')  as flag,
+        (SELECT meta_value FROM wp_gf_entry_meta WHERE wp_gf_entry_meta.entry_id = schedule.entry_id AND meta_key like '22')  as photo,
+        (SELECT meta_value FROM wp_gf_entry_meta WHERE wp_gf_entry_meta.entry_id = schedule.entry_id AND meta_key like '151') as name,
+        (SELECT meta_value FROM wp_gf_entry_meta WHERE wp_gf_entry_meta.entry_id = schedule.entry_id AND meta_key like '16')  as short_desc
+        
+        FROM wp_mf_schedule as schedule
+        left outer join wp_gf_entry as entry on entry_id = entry.id
+        left outer join wp_mf_location as location on location_id = location.id        
+        left outer join wp_gf_entry_meta as lead_detail on schedule.entry_id = lead_detail.entry_id AND lead_detail.meta_key = '303'
+                               
+        WHERE entry.status = 'active' AND lead_detail.meta_value='Accepted' and entry.form_id=".$formid;
 
         foreach ($wpdb->get_results($query) as $row) {
             //only write schedule for featured events
