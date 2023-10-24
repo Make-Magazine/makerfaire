@@ -159,7 +159,8 @@ function mf_fairedata(WP_REST_Request $request) {
     exit;
 }
 
-function getMTMentries($formIDs, $faireID) {
+function getMTMentries($formIDs, $faireID) {    
+    die('i am here!!!');
     $data['entity'] = array();
     $formIDarr = array_map('intval', explode("-", $formIDs));
 
@@ -200,6 +201,7 @@ function getMTMentries($formIDs, $faireID) {
               FROM   wp_gf_entry AS entry 
               WHERE  entry.status = 'active' 
                      AND entry.form_id IN(" . implode(",", $formIDarr) . ")";
+                     echo $query;
     //legacy faires have location set, virtual faires do not. 
     if ($faireID == 'VMF2020') {
         $query = "SELECT  entry.id                         AS entry_id, 
