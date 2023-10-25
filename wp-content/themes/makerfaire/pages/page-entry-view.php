@@ -72,7 +72,7 @@
                     } else {                        
                         //echo '<div class="entry-header"><h2>MAKER'.(count($makers) != 1?'S':'').'</h2></div>';                        
                         //foreach ($makers as $key => $maker) {
-                            if ($makers[1]['firstname'] != '') {
+                            if (isset($makers[1]['firstname']) && $makers[1]['firstname'] != '') {
                                 ?>
                                 <div class="entry-page-maker-info">
                                     <div class="row padbottom">

@@ -79,19 +79,23 @@ function genEBtickets($entryID ){
   
   $exit = FALSE;
   foreach ($entReturn as $exhibitArr){
-    $entLevel= strtolower($exhibitArr['value']);
-    switch ($exhibitArr['value']) {
-      case 'Maker':
-      case 'Sponsor':
-      case 'Startup Sponsor':
-      case 'Show Management':          
-        $exit = TRUE;
-        break;                          
-    }
+    if(isset($exhibitArr['value'])){
+      $entLevel= strtolower($exhibitArr['value']);
+      switch ($exhibitArr['value']) {
+        case 'Maker':
+        case 'Sponsor':
+        case 'Startup Sponsor':
+        case 'Show Management':          
+          $exit = TRUE;
+          break;                          
+      }
 
-    if($exit) {
-      break;
-    }      
+      if($exit) {
+        break;
+      }      
+    }else{
+      $entLevel = '';
+    }    
   }
   
   //Final Weekend  
