@@ -133,11 +133,14 @@
                     <?php 
                     }                        
 
-                    if (display_group($entryId)) { ?>
-                        <div class="group-entry"><?php echo display_group($entryId); ?></div><?php
+                    $displayGroup = display_group($entryId);
+                    if ($displayGroup!='') { ?>
+                        <div class="group-entry"><?php echo $displayGroup; ?></div><?php
                     }
-                    if (display_groupEntries($entryId)) { ?>
-                        <div class="group-entries"><?php echo display_groupEntries($entryId); ?></div><?php 
+
+                    $groupEntries = display_groupEntries($entryId);
+                    if ($groupEntries) { ?>
+                        <div class="group-entries"><?php echo $groupEntries; ?></div><?php 
                     }
                     ?>
                 </div>                
