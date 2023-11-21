@@ -23,8 +23,7 @@ include '../../../../wp-load.php';
     $number=(isset($_GET['number'])?$_GET['number']:5000);
     $users = get_users(array('offset'=>$offset, 'number'=>$number));
     foreach($users as $user){
-        if( isset($user->ID) && $user->ID != 0 ) {
-            error_log("we are a valid user");
+        if( isset($user->ID) && $user->ID != 0 ) {            
             $user_meta = get_user_meta($user->ID);
             if(isset($user_meta['wp_auth0_obj'])) {
                 //user data has been stored in multiple places over the lifespan of auth0. need to check everywhere
