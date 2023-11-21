@@ -19,7 +19,9 @@ include '../../../../wp-load.php';
       
     <?php
     echo 'start of code<br/>';
-    $users = get_users();
+    $offset=(isset($_GET['offset'])?$_GET['offset']:0);
+    $number=(isset($_GET['number'])?$_GET['number']:5000);
+    $users = get_users(array('offset'=>$offset, 'number'=>$number));
     foreach($users as $user){
         if( isset($user->ID) && $user->ID != 0 ) {
             error_log("we are a valid user");
