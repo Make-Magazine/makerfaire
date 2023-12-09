@@ -40,7 +40,8 @@ function genEBtickets($entryID ){
     require_once(TEMPLATEPATH.'/classes/eventbrite.php');
   }
 
-  $token = 'PRNE4A3Q2DYEBYSM7GKX'; //oauth token  
+  $token = OAUTH_TOKEN;
+  
   $eventbrite = new eventbrite($token);
 
   $response = array();
@@ -169,7 +170,7 @@ function genEBtickets($entryID ){
     
 
     //call eventbrite to create access code    
-    $access_codes = $eventbrite->post('/organizations/27283522055/discounts/', $args);
+    $access_codes = $eventbrite->post('/organizations/'.EB_ORG.'/discounts/', $args);
     
     if(isset($access_codes->status_code)){
       error_log('error in call to EB for entry ID '.$entryID.'. Error code - '.$access_codes->status_code);
