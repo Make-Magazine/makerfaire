@@ -10,12 +10,12 @@ define('NETWORK_HOME_URL',network_home_url());
 
 
 /*
-$oAuthToken = 'PRNE4A3Q2DYEBYSM7GKX'; //BA and NY
+$oAuthToken = OAUTH_TOKEN; //BA and NY
 $orgID = 2581145421;
 */
 
-$oAuthToken = 'ELFIIHNPCMMWXQHFAQOT'; //global
-$orgID    = 27283522055; //global mf
+$oAuthToken = GOAUTH_TOKEN; //global
+$orgID    = GEB_ORG; //global mf
 $headers = array("authorization: Bearer ".$oAuthToken); 
 
 $pageNum = (isset($_GET['pagenum'])?$_GET['pagenum']:1);

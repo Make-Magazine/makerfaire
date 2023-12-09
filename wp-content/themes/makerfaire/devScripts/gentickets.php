@@ -5,7 +5,7 @@ error_reporting(E_ALL); ini_set('display_errors', '1');
 
 //form id passed in url
 $form_id = (isset($_GET['form_id'])?$_GET['form_id']:0);
-$token = 'PRNE4A3Q2DYEBYSM7GKX';
+$token = OAUTH_TOKEN;
 
 //no form passed? Error
 if($form_id==0){

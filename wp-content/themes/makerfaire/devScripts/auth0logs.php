@@ -14,7 +14,8 @@ include '../../../../wp-load.php';
 
 //First do the authentication
 $url = "https://makermedia.auth0.com/oauth/token";
-$post_data = "{\"grant_type\":\"client_credentials\",\"client_id\": \"Ya3K0wmP182DRTexd1NdoeLolgXOlqO1\",\"client_secret\": \"eu9e8LC7fvrKb9ou5JglKdIv67QDvhkiMg32vm0q433SMXD5PW3elCV7OuiSFs6n\",\"audience\": \"https://makermedia.auth0.com/api/v2/\"}";
+$post_data = "{\"grant_type\":\"client_credentials\",\"client_id\": ".AUTHO_CLIENTID.",
+    \"client_secret\": ".AUTH0_SECRETKEY.",\"audience\": \"https://makermedia.auth0.com/api/v2/\"}";
 $authRes = curlCall($url, $post_data);
 
 if(isset($authRes->access_token)){
