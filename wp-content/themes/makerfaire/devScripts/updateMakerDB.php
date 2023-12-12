@@ -240,7 +240,8 @@ function buildMakerData($lead, $form_id) {
     $entry_id = $lead['id'];
 
     /* set entry information */        
-    $main_category =  (isset($lead['320']) ? $lead['320'] : '');
+    $main_category =  (isset($lead['320']) ? get_CPT_name($lead['320']) : '');
+    echo 'for entry id '.$entry_id.' 320 = '.$lead['320'].' $main_category='.$main_category.'<br/>';
     $all_categories = array();
 
     //Categories (loop through all fields to find the categories)
@@ -249,11 +250,15 @@ function buildMakerData($lead, $form_id) {
             //4 additional categories
             $pos = strpos($leadKey, '321');
             if ($pos !== false) {
-                $all_categories[] = $leadValue;
+                $all_categories[] = get_CPT_name($leadValue);
             }
         }
     }
 
+    if($main_category=='' && is_array($all_categories)) {
+        $main_category = $all_categories[0];
+    }
+    
     //verify we only have unique categories
     $all_categories = array_unique($all_categories);
 
