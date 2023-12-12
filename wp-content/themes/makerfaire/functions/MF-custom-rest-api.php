@@ -211,7 +211,7 @@ function getMakerDirEntries($years) {
             'link' => $result->entry_link,
             'name' => substr(html_entity_decode($result->title, ENT_QUOTES),0,35),
             'large_img_url' => $projPhoto,
-            'categories' => $primeCat,
+            'categories' => (array) $primeCat,
             'description' => $desc,    
             'faire_year' => $result->faire_year,    
             'faire_name' => trim($result->faire_name),    
