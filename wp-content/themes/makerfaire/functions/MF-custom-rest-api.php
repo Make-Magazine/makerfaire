@@ -2,13 +2,13 @@
 
 /* adds a custom REST API endpoint of makerfaire */
 add_action('rest_api_init', function () {
-    //get faire data such as Meet the Makers and Schedule information based on form id(s)
-    register_rest_route('makerfaire', '/v2/fairedata/(?P<type>[a-z0-9\-]+)/(?P<formids>[a-z0-9\-]+)', array(
+    //get faire data such as Meet the Makers and Schedule information based on form id(s) or faire year
+    register_rest_route('makerfaire', '/v2/fairedata/(?P<type>[a-z0-9\-]+)/(?P<dataids>[a-z0-9\-]+)', array(
         'methods' => 'GET',
         'callback' => 'mf_fairedata',
         'permission_callback' => '__return_true'
     ));
-    register_rest_route('makerfaire', '/v2/fairedata/(?P<type>[a-z0-9\-]+)/(?P<formids>[a-z0-9\-]+)/(?P<faireid>[a-z0-9\-]+)', array(
+    register_rest_route('makerfaire', '/v2/fairedata/(?P<type>[a-z0-9\-]+)/(?P<dataids>[a-z0-9\-]+)/(?P<faireid>[a-z0-9\-]+)', array(
         'methods' => 'GET',
         'callback' => 'mf_fairedata',
         'permission_callback' => '__return_true'
@@ -134,48 +134,107 @@ function mf_updateEntry(WP_REST_Request $request) {
 }
 
 function mf_fairedata(WP_REST_Request $request) {
-    $type = $request['type'];
-    $formIDs = $request['formids'];
+    $type = $request['type'];    
+    $dataids = $request['dataids'];
     $faireID = $request['faireid'];
 
-    if ($type != '' && $formIDs != '') {
+    if ($type != '' && $dataids != '') {
         $data = array();
         switch ($type) {
-            case 'mtm':
-                $data = getMTMentries($formIDs, $faireID);
+            case 'mtm':                
+                $data = getMTMentries($dataids, $faireID);
                 break;
+            case 'makerDir':
+                $data = getMakerDirEntries($dataids);
+                break;    
             case 'categories':
-                $data = getCategories($formIDs);
+                $data = getCategories($dataids);
                 break;
             case 'schedule':
-                $data = getSchedule($formIDs, $faireID);
+                $data = getSchedule($dataids, $faireID);
                 break;
         }
-    } else {
-        $data['error'] = 'Error: Type or Form IDs not submitted';
+    }else{
+        $data['error'] = 'Error: Type or data ids not submitted';
     }
 
     wp_send_json($data);
     exit;
 }
-
-function getMTMentries($formIDs, $faireID) {    
-    
+function getMakerDirEntries($years) {            
     $data['entity'] = array();
-    $formIDarr = array_map('intval', explode("-", $formIDs));
+    $yearsArr = array_map('intval', explode("-", $years));
 
     global $wpdb;
-
-    //find if the show location switch is turned on
-    $showLoc = false;
-    $query = "select show_sched from wp_mf_faire where faire = '" . $faireID . "'";
-
-    $show_sched = $wpdb->get_var($query);
+    // Data to return title, public_desc, project_photo, main_category, faire_name, faire_year, maker_list
+        //find all active entries for selected years
+    $query = "select blog_id, entry_id, title, public_desc, project_photo, main_category, category, faire_name, faire_year,
+                (select concat(first_name, ' ', last_name)
+                    from wp_mf_dir_maker_to_entry maker2entry 
+                    left outer join wp_mf_dir_maker maker 
+                        on maker2entry.maker_id = maker.maker_id 
+                    where maker2entry.blog_id = wp_mf_dir_entry.blog_id and maker2entry.entry_id = wp_mf_dir_entry.entry_id 
+                    and maker2entry.maker_type <> 'contact'
+                order by maker_type limit 1) as maker, entry_link
+                from wp_mf_dir_entry where faire_year in(" . implode(",", $yearsArr) . ") and LOWER(status)='accepted'";
     
-    //var_dump($result);
-    if ($show_sched === "1")
-        $showLoc = true;
+    $results = $wpdb->get_results($query);
 
+    //build entry array
+    $entries = array();
+    foreach ($results as $result) {        
+        $entry_id = $result->entry_id;    
+        $makerList = $result->maker;
+
+        //project photo
+        $projPhoto = $result->project_photo;
+        $fitPhoto = legacy_get_resized_remote_image_url($projPhoto, 275, 266);
+
+        // Check to see if the fit photo returned an image
+        if ($fitPhoto == NULL)
+            $fitPhoto = $projPhoto;
+
+        //get array of categories. set name based on category id
+        $category = array();
+        
+        $leadCategory = explode(',', $result->category);
+        foreach ($leadCategory as $leadCat) {
+            $value = htmlspecialchars_decode(get_CPT_name($leadCat));
+            if($value!='') $category[] = $value;    
+        }
+        $primeCat = htmlspecialchars_decode(get_CPT_name($result->main_category));
+        if($primeCat!='')   $category[]=$primeCat;
+              
+        $desc = substr(html_entity_decode($result->public_desc, ENT_QUOTES), 0, 60);
+        $data['entity'][] = array(
+            'id' => $entry_id,
+            'link' => $result->entry_link,
+            'name' => substr(html_entity_decode($result->title, ENT_QUOTES),0,25),
+            'large_img_url' => $projPhoto,
+            'categories' => $category,
+            'description' => $desc,    
+            'faire_year' => $result->faire_year,    
+            'faire_name' => $result->faire_name,    
+            'blog_id' =>    $result->blog_id,    
+            'makerList' => $makerList              
+        );
+        
+    }
+
+    //randomly order entries
+    shuffle($data['entity']);
+
+    return $data;
+}
+//end getMakerDirEntries
+
+function getMTMentries($formIDs = '', $faireID='', $years='') {        
+    global $wpdb;
+    
+    $formIDarr = array_map('intval', explode("-", $formIDs));
+    
+    $data['entity'] = array();    
+    
     //find all active entries for selected forms
     $query = "SELECT  entry.id                         AS entry_id, 
                      (SELECT meta_value FROM   wp_gf_entry_meta WHERE  meta_key = '303' AND entry_id = entry.id) AS entry_status, 
@@ -312,7 +371,6 @@ function getMTMentries($formIDs, $faireID) {
 
     return $data;
 }
-
 //end getMTMentries
 
 function getCategories($formIDs) {
