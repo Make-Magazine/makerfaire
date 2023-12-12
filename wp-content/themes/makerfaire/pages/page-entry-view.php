@@ -70,24 +70,24 @@
                         </div>
                         <?php
                     } else {                        
-                        //echo '<div class="entry-header"><h2>MAKER'.(count($makers) != 1?'S':'').'</h2></div>';                        
-                        //foreach ($makers as $key => $maker) {
-                            if (isset($makers[1]['firstname']) && $makers[1]['firstname'] != '') {
+                        echo '<div class="entry-header"><h2>MAKER'.(count($makers) != 1?'S':'').'</h2></div>';                        
+                        foreach ($makers as $key => $maker) {
+                            if (isset($maker['firstname']) && $maker['firstname'] != '') {
                                 ?>
                                 <div class="entry-page-maker-info">
                                     <div class="row padbottom">
                                         <div class="col-xs-12">
                                             <h3>
-                                                <span class="text-capitalize"><?php echo $makers[1]['firstname']; ?></span>
-                                                <span class="text-capitalize"><?php echo $makers[1]['lastname']; ?></span>
+                                                <span class="text-capitalize"><?php echo $maker['firstname']; ?></span>
+                                                <span class="text-capitalize"><?php echo $maker['lastname']; ?></span>
                                             </h3>
                                         </div>
                                         <?php
-                                        if(!empty($makers[1]['photo'])){
+                                        if(!empty($maker['photo'])){
                                         ?>
                                         <div class="col-xs-12">
                                             <div class="entry-page-maker-img">
-                                                <img alt="<?php echo $makers[1]['firstname'].' '.$makers[1]['lastname']; ?>" class="img-responsive" src="<?php echo legacy_get_resized_remote_image_url($makers[1]['photo'], 400, 400); ?>" />
+                                                <img alt="<?php echo $maker['firstname'].' '.$maker['lastname']; ?>" class="img-responsive" src="<?php echo legacy_get_resized_remote_image_url($maker['photo'], 400, 400); ?>" />
                                             </div>
                                         </div>
                                         <?php
@@ -95,17 +95,17 @@
                                         ?>
                                     </div>
                                     <div class="row">
-                                        <div class="col-xs-12"><p><?php echo $makers[1]['bio']; ?></p></div>
+                                        <div class="col-xs-12"><p><?php echo $maker['bio']; ?></p></div>
                                     </div>
                                     <div class="row">
-                                        <div class="col-xs-12"><?php echo $makers[1]['social']; ?></div>
+                                        <div class="col-xs-12"><?php echo $maker['social']; ?></div>
                                     </div>
                                     <?php
-                                    if (!empty($makers[1]['website'])) {
+                                    if (!empty($maker['website'])) {
                                         ?>
                                         <div class="row">
                                             <div class="col-xs-12">
-                                                <a href="<?php echo $makers[1]['website']; ?>" class="btn universal-btn entry-website"target="_blank" >Maker Website</a>
+                                                <a href="<?php echo $maker['website']; ?>" class="btn universal-btn entry-website"target="_blank" >Maker Website</a>
                                             </div>
                                         </div>
                                         <?php }
@@ -113,7 +113,7 @@
                                 </div>
                                 <?php
                             }
-                        //}
+                        }
                     }
                 }
                 ?>

@@ -128,7 +128,7 @@ if ($noMakerText == '')
             </div>
             <!-- Grid View -->
             <div ng-if="layout == 'grid'" class="mtm-results-cont">
-                <div ng-repeat="maker in makers" style="height:600px;">
+                <div ng-repeat="maker in makers | limitTo: limit" style="height:600px;">                
                     <a href="{{maker.link}}" target="_blank">
                         <article class="mtm-maker">
                             <h4>{{maker.name}}</h5>

@@ -21,12 +21,16 @@ makerdir.controller('mdirMakers', ['$scope', '$sce', '$filter', '$http', functio
         $scope.makerSearch.flag = '';
         $scope.makerSearch.categories = '';
         $scope.makerSearch.faire = '';
+
         $scope.alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
 
         $scope.layout = 'grid';
         $scope.category = '';
+        
+        //faire search
         $scope.faire = '';
-        $scope.faires = [];
+        $scope.faires = [];        
+
         $scope.tags = [];
         $scope.makers = [];
         catJson = [];
@@ -55,7 +59,7 @@ makerdir.controller('mdirMakers', ['$scope', '$sce', '$filter', '$http', functio
                 jQuery('.mtm .loading').html(noMakerText);
             })
             .finally(function () {
-                //console.log($scope.makers);
+                console.log($scope.makerSearch);
             })  ;
         
         
@@ -83,16 +87,15 @@ makerdir.controller('mdirMakers', ['$scope', '$sce', '$filter', '$http', functio
         //watch the maker variable, if it changes update the category drop downs
         $scope.$watch("makers", function (newValue, oldValue) {
             var catList = [];
-            
+            var faireList = [];
+
             angular.forEach($scope.makers, function (maker) {    
                 //faires
-                var faire = maker.faire_name;
-                if (faire != null) {
-                    angular.forEach(faire, function (faire) {
-                        if (faireList.indexOf(faire) === -1 && faire !== '') {
-                            faireList.push(faire);
-                        }
-                    });
+                var faireName = maker.faire_name;
+                if (faireName != null) {                    
+                    if (faireList.indexOf(faireName) === -1 && faireName !== '') {
+                        faireList.push(faireName);
+                    }                    
                 }
 
                 var categories = maker.categories;
@@ -141,7 +144,7 @@ makerdir.controller('mdirMakers', ['$scope', '$sce', '$filter', '$http', functio
 });
 
 makerdir.directive('makerdirScroll', ['$window', makerdirScroll]);
-function makerdircroll($window) {
+function makerdirScroll($window) {
     return {
         link: function (scope, element, attrs) {
             var handler;
@@ -160,9 +163,7 @@ function makerdircroll($window) {
             $window.on('scroll', handler);
         }
     };
-
-}
-;
+};
 
 
 function replaceAll(str, find, replace) {

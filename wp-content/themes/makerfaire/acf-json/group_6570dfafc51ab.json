@@ -1,0 +1,85 @@
+{
+    "key": "group_6570dfafc51ab",
+    "title": "Maker Directory Page",
+    "fields": [
+        {
+            "key": "field_6570dfafe5ea6",
+            "label": "No Makers Found Text",
+            "name": "no_makers_found_text",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "This text is displayed on the page when no makers are found matching the forms entered or search results entered.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "No makers found",
+            "placeholder": "",
+            "prepend": "",
+            "append": "",
+            "maxlength": ""
+        },
+        {
+            "key": "field_6570dfafe5eae",
+            "label": "Faire Forms",
+            "name": "faire-forms",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "Comma separated list of form id's to pull accepted makers from to display on the page",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": "",
+            "maxlength": ""
+        },
+        {
+            "key": "field_6570dfd0287e0",
+            "label": "Faire Years",
+            "name": "faire-years",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "Comma separated list of faire years to pull accepted makers from to display on the page",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "maxlength": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": ""
+        }
+    ],
+    "location": [
+        [
+            {
+                "param": "page_template",
+                "operator": "==",
+                "value": "page-maker-directory.php"
+            }
+        ]
+    ],
+    "menu_order": 0,
+    "position": "normal",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "hide_on_screen": "",
+    "active": true,
+    "description": "",
+    "show_in_rest": 0,
+    "modified": 1701896215
+}
