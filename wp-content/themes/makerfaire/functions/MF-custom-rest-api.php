@@ -199,10 +199,10 @@ function getMakerDirEntries($years) {
         
         $leadCategory = explode(',', $result->category);
         foreach ($leadCategory as $leadCat) {
-            $value = htmlspecialchars_decode(get_CPT_name($leadCat));
+            $value = html_entity_decode($leadCat, ENT_QUOTES);
             if($value!='') $category[] = $value;    
         }
-        $primeCat = htmlspecialchars_decode(get_CPT_name($result->main_category));
+        $primeCat = html_entity_decode($result->main_category, ENT_QUOTES);
         if($primeCat!='')   $category[]=$primeCat;
               
         $desc = substr(html_entity_decode($result->public_desc, ENT_QUOTES), 0, 75);
