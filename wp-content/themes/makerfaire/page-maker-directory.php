@@ -125,7 +125,7 @@ if ($noMakerText == '')
                     <a href="{{maker.link}}" target="_blank">
                         <article class="mtm-maker">
                             <h4>{{maker.name}}</h5>
-                            <h5>{{maker.faire_name}} - {{maker.faire_year}}</h5>
+                            <p>{{maker.faire_name}} - {{maker.faire_year}}</p>
                             <div class="mtm-image" style="background-image:url({{maker.large_img_url}});"></div>
                             <p>{{maker.description}}</p>
                             <div class="bottom-line">

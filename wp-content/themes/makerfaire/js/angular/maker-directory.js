@@ -18,7 +18,6 @@ makerdir.controller('mdirMakers', ['$scope', '$sce', '$filter', '$http', functio
         $scope.limit = 8;
         var counter = 0;
         $scope.loadMore = function () {
-            alert('here');
             $scope.limit += 4;
         };
         
@@ -72,8 +71,8 @@ makerdir.controller('mdirMakers', ['$scope', '$sce', '$filter', '$http', functio
                 jQuery('.mtm .loading').html(noMakerText);
             })
             .finally(function () {
-                console.log($scope.makerSearch);
-            })  ;
+                //console.log($scope.makerSearch);
+            });
         
         
         $scope.setFlagFilter = function (flag) {
@@ -157,8 +156,8 @@ makerdir.controller('mdirMakers', ['$scope', '$sce', '$filter', '$http', functio
     };
 });
 
-makerdir.directive('mdirScroll', ['$window', mdirScroll]);
-function mdirScroll($window) {
+makerdir.directive('makerdirScroll', ['$window', makerdirScroll]);
+function makerdirScroll($window) {
     return {
         link: function (scope, element, attrs) {
             var handler;
@@ -170,7 +169,7 @@ function mdirScroll($window) {
                     var top_of_element = jQuery(".load-trigger").offset().top;
                     var bottom_of_screen = jQuery(window).scrollTop() + window.innerHeight;
                     if (bottom_of_screen > top_of_element) {
-                        scope.$apply(attrs.mdirScroll);
+                        scope.$apply(attrs.makerdirScroll);
                     }
                 }
             };
