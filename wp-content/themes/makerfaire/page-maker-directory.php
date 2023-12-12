@@ -64,24 +64,23 @@ if ($noMakerText == '')
 
                 </div>
                 <div ng-show="makers.length !==0" class="col-sm-4 filter-section">
-                     <!-- Faire Filter -->
-                     <div class="dropdown" ng-if="faires.length > 0">
-                        <button class="btn btn-link dropdown-toggle" type="button" id="faire-dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                            <span ng-if="makerSearch.faire != ''">{{makerSearch.faire}}</span>
-                            <span ng-if="makerSearch.faire == ''">All Faires</span>
+                    <!-- Faire Filter -->
+                    <div class="dropdown" ng-if="faire_names.length > 0">
+                        <button class="btn btn-link dropdown-toggle" type="button" id="faire_name-dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                            <span ng-if="makerSearch.faire_name != ''">{{makerSearch.faire_name}}</span>
+                            <span ng-if="makerSearch.faire_name == ''">Faires</span>
                             <i class="fa fa-chevron-down" aria-hidden="true"></i>
                         </button>
-                        <ul class="dropdown-menu" aria-labelledby="faire-dropdownMenu">
+                        <ul class="dropdown-menu" aria-labelledby="faire_name-dropdownMenu">
                             <li>
-                                <a class="pointer-on-hover" ng-click="makerSearch.faire = ''"><?php _e("All", 'makerfaire') ?></a>
+                                <a class="pointer-on-hover" ng-click="makerSearch.faire_name = ''"><?php _e("Any", 'makerfaire') ?></a>
                             </li>
 
-                            <li ng-repeat="faire in faires | orderBy: 'faire'">
-                                <a class="pointer-on-hover" ng-click="makerSearch.faire = faire">{{faire}}</a>
+                            <li ng-repeat="faire_name in faire_names| orderBy: 'faire_name'">
+                                <a class="pointer-on-hover" ng-click="makerSearch.faire_name = faire_name">{{faire_name}}</a>
                             </li>
                         </ul>
                     </div>
-
 
                     <!--Category filter-->
                     <div class="dropdown">
@@ -91,12 +90,6 @@ if ($noMakerText == '')
                             <i class="fa fa-chevron-down" aria-hidden="true"></i>
                         </button>
 
-                        <ul>
-                            <li ng-repeat="maker in makers| filter:{categories: {id}}">
-                                {{ maker.categories}}
-                            </li>
-
-                        </ul>
                         <ul class="dropdown-menu topic-menu" aria-labelledby="mtm-dropdownMenu">
                             <li>
                                 <a class="pointer-on-hover" ng-click="makerSearch.categories = ''"><?php _e("All", 'makerfaire') ?></a>
@@ -110,7 +103,7 @@ if ($noMakerText == '')
             </div>
         </div>
 
-        <div class="mtm-results" makerdirScroll="loadMore()">
+        <div class="mtm-results" makerdir-scroll="loadMore()">
             <!-- Default View Prior to data load-->
             <div ng-show="!makers.length" class="mtm-results-cont loading">                
                 <div class="ng-scope"><a href="javascript:void();" style="pointer-events:none;"><article class="mtm-maker"><h3></h3><div class="mtm-image" style="background-image:url(https://makerfaire.com/wp-content/themes/makerfaire/images/stripe_bg1.gif);"></div><div class="bottom-line">&nbsp;</div><div class="read-more-btn universal-btn"></div></article></a></div>
@@ -127,8 +120,8 @@ if ($noMakerText == '')
                 </div>
             </div>
             <!-- Grid View -->
-            <div ng-if="layout == 'grid'" class="mtm-results-cont">
-                <div ng-repeat="maker in makers | limitTo: limit" style="height:600px;">                
+            <div ng-if="layout == 'grid'" class="mtm-results-cont">                
+                <div ng-repeat="maker in makers| filter : makerSearch | limitTo: limit" style="height:600px;">                
                     <a href="{{maker.link}}" target="_blank">
                         <article class="mtm-maker">
                             <h4>{{maker.name}}</h5>

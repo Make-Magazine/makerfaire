@@ -127,6 +127,8 @@ if (($showMakeProjects === 'mponly' || $showMakeProjects === 'mfandmp') && $MPCa
                             </li>
                         </ul>
                     </div>
+
+                    <!--Category filter-->
                     <div class="dropdown">
                         <button class="btn btn-link dropdown-toggle" type="button" id="mtm-dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                             <span ng-if="makerSearch.categories != ''">{{makerSearch.categories}}</span>

@@ -214,7 +214,7 @@ function getMakerDirEntries($years) {
             'categories' => $category,
             'description' => $desc,    
             'faire_year' => $result->faire_year,    
-            'faire_name' => $result->faire_name,    
+            'faire_name' => trim($result->faire_name),    
             'blog_id' =>    $result->blog_id,    
             'makerList' => $makerList              
         );

@@ -1,26 +1,35 @@
 var makerdir = angular.module('makerdir', ['angular.filter', 'ngSanitize']);
 
+//pass initial category in url param
 var initialCategory = "";
 if (getUrlParam("category")) {
     initialCategory = getUrlParam("category");
 }
 
+//pass initial fare in url param
+var initialFaire = "";
+if (getUrlParam("faire")) {
+    initialFaire = getUrlParam("faire");
+}
+
 makerdir.controller('mdirMakers', ['$scope', '$sce', '$filter', '$http', function ($scope, $sce, $filter, $http) {    
         $scope.trust = $sce.trustAsHtml; // for rendering html
         //infinite scroll
-        $scope.limit = 10;
+        $scope.limit = 8;
         var counter = 0;
         $scope.loadMore = function () {
-            $scope.limit += 5;
+            alert('here');
+            $scope.limit += 4;
         };
         
         $scope.flag = '';
         $scope.letter = '';
 
         $scope.makerSearch = {};
-        $scope.makerSearch.flag = '';
+
+        //$scope.makerSearch.flag = '';
         $scope.makerSearch.categories = '';
-        $scope.makerSearch.faire = '';
+        $scope.makerSearch.faire_name = '';
 
         $scope.alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
 
@@ -28,8 +37,8 @@ makerdir.controller('mdirMakers', ['$scope', '$sce', '$filter', '$http', functio
         $scope.category = '';
         
         //faire search
-        $scope.faire = '';
-        $scope.faires = [];        
+        $scope.faire_name = '';
+        $scope.faire_names = [];        
 
         $scope.tags = [];
         $scope.makers = [];
@@ -42,6 +51,10 @@ makerdir.controller('mdirMakers', ['$scope', '$sce', '$filter', '$http', functio
         
         if (initialCategory) {
             $scope.makerSearch.categories = initialCategory;
+        }
+
+        if (initialFaire) {
+            $scope.makerSearch.faire_name = initialFaire;
         }
 
         //call to MF custom rest API                
@@ -71,10 +84,11 @@ makerdir.controller('mdirMakers', ['$scope', '$sce', '$filter', '$http', functio
             $scope.category = tag;
         };
 
-        $scope.setFaireFilter = function (faire) {
-            $scope.makerSearch.faire = faire;
+        $scope.setFaireFilter = function (faire_name) {
+            $scope.makerSearch.faire_name = faire_name;
         };
 
+        
         $scope.setLetter = function (startsWith) {
             $scope.letter = startsWith;
         };
@@ -91,10 +105,10 @@ makerdir.controller('mdirMakers', ['$scope', '$sce', '$filter', '$http', functio
 
             angular.forEach($scope.makers, function (maker) {    
                 //faires
-                var faireName = maker.faire_name;
-                if (faireName != null) {                    
-                    if (faireList.indexOf(faireName) === -1 && faireName !== '') {
-                        faireList.push(faireName);
+                var faire_name = maker.faire_name;
+                if (faire_name != null) {                    
+                    if (faireList.indexOf(faire_name) === -1 && faire_name !== '') {
+                        faireList.push(faire_name);
                     }                    
                 }
 
@@ -117,12 +131,12 @@ makerdir.controller('mdirMakers', ['$scope', '$sce', '$filter', '$http', functio
             //categories
             $scope.tags = catList;                      
 
-            //faires
-            $scope.faires = [];
+            //faires            
+            $scope.faire_names = [];
             if (faireList.length > 0) {
                 var collator = new Intl.Collator(undefined, {numeric: true, sensitivity: 'base'});
-                $scope.faires = faireList.sort(collator.compare);
-            }  
+                $scope.faire_names = faireList.sort(collator.compare);
+            }           
         }, true);
     }]);
 
@@ -143,8 +157,8 @@ makerdir.controller('mdirMakers', ['$scope', '$sce', '$filter', '$http', functio
     };
 });
 
-makerdir.directive('makerdirScroll', ['$window', makerdirScroll]);
-function makerdirScroll($window) {
+makerdir.directive('mdirScroll', ['$window', mdirScroll]);
+function mdirScroll($window) {
     return {
         link: function (scope, element, attrs) {
             var handler;
@@ -156,7 +170,7 @@ function makerdirScroll($window) {
                     var top_of_element = jQuery(".load-trigger").offset().top;
                     var bottom_of_screen = jQuery(window).scrollTop() + window.innerHeight;
                     if (bottom_of_screen > top_of_element) {
-                        scope.$apply(attrs.makerdirScroll);
+                        scope.$apply(attrs.mdirScroll);
                     }
                 }
             };
