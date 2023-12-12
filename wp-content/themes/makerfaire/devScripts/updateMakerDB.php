@@ -129,7 +129,11 @@ function updateMakerTables($entry, $form_id, $blog_id) {
     
     //build Maker and Entry Data Array
     $data = buildMakerData($entry, $form_id);
-
+    
+    //if this maker is marked as do not display, exit
+    if(!$data){
+        return;
+    }
     $makerData  = $data['maker'];
     $entryData  = $data['entry'];
     
@@ -240,8 +244,7 @@ function buildMakerData($lead, $form_id) {
     $entry_id = $lead['id'];
 
     /* set entry information */        
-    $main_category =  (isset($lead['320']) ? get_CPT_name($lead['320']) : '');
-    echo 'for entry id '.$entry_id.' 320 = '.$lead['320'].' $main_category='.$main_category.'<br/>';
+    $main_category =  (isset($lead['320']) ? get_CPT_name($lead['320']) : '');    
     $all_categories = array();
 
     //Categories (loop through all fields to find the categories)
@@ -253,12 +256,17 @@ function buildMakerData($lead, $form_id) {
                 $all_categories[] = get_CPT_name($leadValue);
             }
         }
+        $pos = strpos($leadKey, '304.');
+        if ($pos !== false) {
+            if ($leadValue == 'no-public-view')
+                return false;
+        }
     }
 
-    if($main_category=='' && is_array($all_categories)) {
+    if($main_category=='' && is_array($all_categories) && !empty($all_categories)) {            
         $main_category = $all_categories[0];
     }
-    
+
     //verify we only have unique categories
     $all_categories = array_unique($all_categories);
 
@@ -281,15 +289,7 @@ function buildMakerData($lead, $form_id) {
         if(is_array($project_gallery) && !empty($project_gallery)){
             $project_photo = $project_gallery[0];        
         }        
-    }
-    
-    foreach ($lead as $key => $field) {
-        $pos = strpos($key, '304.');
-        if ($pos !== false) {
-            if ($field == 'no-public-view')
-                continue;            
-        }
-    }
+    }    
     
     /* Entry Array */
     $entryArray = 
@@ -300,7 +300,7 @@ function buildMakerData($lead, $form_id) {
             'public_desc' => (isset($lead['16']) ? htmlentities($lead['16'], ENT_QUOTES) : ''),
             'project_photo' => $project_photo,            
             'main_category' => $main_category,    
-            'category' => $all_categories,            
+            'category'      => $all_categories,            
             'project_video' => (isset($lead['32']) ? $lead['32'] : ''),
             'inspiration'   => (isset($lead['287']) ? htmlentities($lead['287'], ENT_QUOTES) : ''),            
             'website'       => (isset($lead['27']) ? $lead['27'] : ''),
