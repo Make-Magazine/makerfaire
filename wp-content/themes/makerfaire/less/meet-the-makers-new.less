@@ -427,3 +427,41 @@
         padding-left: 10px;
     }
 }
+
+.eoy-results-cont {
+    .ng-scope { 
+        height: 400px !important;
+        .mtm-maker {
+            display: flex;
+            flex-direction: column;
+            .mtm-image {
+                height: 150px !important;
+            }
+            h4 {
+                word-break: break-word;
+                color: #0a0a0a;
+                font-weight: 600;
+                font-size: 1rem;
+                line-height: var(--lh);
+                position: relative;
+                padding-right: 15px;
+                display: -webkit-box;
+                -webkit-line-clamp: 1;
+                -webkit-box-orient: vertical;
+                overflow: hidden;
+            }
+            .mtm-description {
+                margin-top: 10px;
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical;
+                overflow: hidden;
+            }
+            .read-more-btn {
+                margin-top: auto;
+            }
+        }
+
+    }
+    
+}

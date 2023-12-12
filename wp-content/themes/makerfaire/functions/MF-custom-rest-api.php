@@ -205,11 +205,11 @@ function getMakerDirEntries($years) {
         $primeCat = htmlspecialchars_decode(get_CPT_name($result->main_category));
         if($primeCat!='')   $category[]=$primeCat;
               
-        $desc = substr(html_entity_decode($result->public_desc, ENT_QUOTES), 0, 60);
+        $desc = substr(html_entity_decode($result->public_desc, ENT_QUOTES), 0, 75);
         $data['entity'][] = array(
             'id' => $entry_id,
             'link' => $result->entry_link,
-            'name' => substr(html_entity_decode($result->title, ENT_QUOTES),0,25),
+            'name' => substr(html_entity_decode($result->title, ENT_QUOTES),0,35),
             'large_img_url' => $projPhoto,
             'categories' => $category,
             'description' => $desc,    
