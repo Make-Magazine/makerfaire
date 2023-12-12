@@ -121,12 +121,12 @@ if ($noMakerText == '')
             </div>
             <!-- Grid View -->
             <div ng-if="layout == 'grid'" class="mtm-results-cont">                
-                <div ng-repeat="maker in makers| filter : makerSearch | limitTo: limit" style="height:600px;">                
+                <div ng-repeat="maker in makers| filter : makerSearch | limitTo: limit" style="height:400px;">                
                     <a href="{{maker.link}}" target="_blank">
                         <article class="mtm-maker">
                             <h4>{{maker.name}}</h5>
                             <p>{{maker.faire_name}} - {{maker.faire_year}}</p>
-                            <div class="mtm-image" style="background-image:url({{maker.large_img_url}});"></div>
+                            <div class="mtm-image" style="background-image:url({{maker.large_img_url}}); max-height:150px;"></div>
                             <p>{{maker.description}}</p>
                             <div class="bottom-line">
                                 <div class="mtm-cat">{{maker.category_id_refs[0]}}</div>
