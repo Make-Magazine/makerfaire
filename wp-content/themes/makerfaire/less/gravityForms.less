@@ -101,36 +101,6 @@
         display: flex;
 		justify-content: space-evenly;
 		flex-wrap: wrap;
-        input[type=submit], .gform_previous_button, .gform_next_button, .button.gform_button.gform_last_page_button {
-            background: #005e9a;
-            box-shadow: none;
-            color: #fff;
-            display: inline-flex !important;
-            border: solid 1px #005e9a;
-            justify-content: center;
-            align-content: center;
-            align-items: center;
-            flex-direction: column;
-            border-radius: 2px;
-            -webkit-border-radius: 2px;
-            text-transform: uppercase;
-            font-size: 16px !important;
-            font-weight: 300;      
-            height: 49px;
-            border-radius: 5px;
-            margin-bottom: 0px !important;
-            padding: 10px 17px !important;
-            margin-bottom: 10px;
-            line-height: 1 !important;
-            &:focus, &:active, &:visited {
-                color: #fff;
-                text-decoration: none;
-            }
-            &:hover {
-                background: #fff;
-                color: #005e9a
-            }
-        }
 		@media screen and (max-width: 768px) {
 			.container-gnb, .container-gpb, input[type=submit] {
 				flex: 1;
@@ -197,7 +167,38 @@
             border-color: #005e9a;
         }
     }
+    input[type=submit], .gform_previous_button, .gform_next_button, .button.gform_button.gform_last_page_button {
+        background: #005e9a;
+        box-shadow: none;
+        color: #fff;
+        display: inline-flex !important;
+        border: solid 1px #005e9a;
+        justify-content: center;
+        align-content: center;
+        align-items: center;
+        flex-direction: column;
+        border-radius: 2px;
+        -webkit-border-radius: 2px;
+        text-transform: uppercase;
+        font-size: 16px !important;
+        font-weight: 300;      
+        height: 49px;
+        border-radius: 5px;
+        margin-bottom: 0px !important;
+        padding: 10px 17px !important;
+        margin-bottom: 10px;
+        line-height: 1 !important;
+        &:focus, &:active, &:visited {
+            color: #fff;
+            text-decoration: none;
+        }
+        &:hover {
+            background: #fff;
+            color: #005e9a
+        }
+    }
 }
+
 .gform_body{
     .description-header {
         text-align: center;
