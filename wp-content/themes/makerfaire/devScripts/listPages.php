@@ -13,7 +13,7 @@ function list_pages_with_status_and_hierarchy($parent_id = 0, $level = 0) {
         'posts_per_page' => -1,
         'post_parent'    => $parent_id,
         'order'          => 'ASC',
-        'orderby'        => 'menu_order'
+        'orderby'        => 'post_title'
     );
     if(isset($_GET['post_status'])){
         $args['post_status'] = $_GET['post_status'];
