@@ -1,10 +1,6 @@
 <?php
 include '../../../../wp-load.php'; 
 
-
-$expand=(isset($_GET['expand'])?TRUE:FALSE);
-
-
 $parsed_args = array(
     'depth'        => 0,
     'show_date'    => 'modified',
@@ -25,69 +21,44 @@ if(isset($_GET['post_status'])){
     $parsed_args['post_status'] = $_GET['post_status'];
 }
 
-$pages = get_pages( $parsed_args );
+list_pages_with_status_and_hierarchy();
 
-$page_array=array();
-$parent_array=array();
-foreach($pages as $page){
-    $page_data = array(
-        'ID' => $page->ID,
-        'post_author' => $page->post_author,
-        'post_date' => $page->post_date,
-        'post_title' => $page->post_title,
-        'post_status' => $page->post_status,
-        'post_modified' => $page->post_modified,
-        'post_parent' => $page->post_parent
+function list_pages_with_status_and_hierarchy($parent_id = 0, $level = 0) {
+    $expand=(isset($_GET['expand'])?TRUE:FALSE);
+
+    // Get all pages with the specified parent ID
+    $args = array(
+        'post_type'      => 'page',
+        'posts_per_page' => -1,
+        'post_parent'    => $parent_id,
+        'order'          => 'ASC',
+        'orderby'        => 'menu_order'
     );
 
-    if($page->post_parent !=0){
-        if(!isset($page_array[$page->post_parent])){
-            $parentData = get_post($page->post_parent);
-            $page_array[$page->post_parent] = array(
-                'ID' => $parentData->ID,
-                'post_author' => $parentData->post_author,
-                'post_date' => $parentData->post_date,
-                'post_title' => $parentData->post_title,
-                'post_status' => $parentData->post_status,
-                'post_modified' => $parentData->post_modified,
-                'post_parent' => $parentData->post_parent
-            );
-        }
-        $page_array[$page->post_parent]['children'][] = $page_data;
-    }else{
-        if(!isset($page_array[$page->ID]))  {
-            $page_array[$page->ID]=array();
-        }
-        $page_array[$page->ID] = $page_data;
-    }            
-    
-}
+    $pages = get_posts($args);
 
-//var_dump($page_array);
-echo '<ul>';
-foreach($page_array as $page){
-    echo '<li>';
-    $link = get_page_link( $page['ID'] );
-    echo '<a href="'.$link.'">'.$page["post_title"].'</a> ('.$page["post_status"]. ')';
-    if($expand)
-        echo ' Created->'.$page["post_date"].' Modified->'.$page["post_modified"]. ' Author ->'.get_the_author_meta('display_name', $page["post_author"]);
-    
-    //list child data
-    if(isset($page['children'])){
+    // Check if there are any pages
+    if ($pages) {
         echo '<ul>';
-        foreach($page['children'] as $child){
-            $childLink = get_page_link( $child['ID'] );
+
+        // Loop through each page
+        foreach ($pages as $page) {
+            $status = get_post_status($page->ID);
+            $link   = get_page_link($page->ID);            
+            $modified_date = get_post_field( 'post_modified', $page->ID );
+            
             echo '<li>';
-            echo '<a href="'.$childLink.'">'.$child["post_title"].'</a> ('.$child["post_status"]. ')';
-            if($expand)
-                echo ' Created->'.$child["post_date"].' Modified->'.$child["post_modified"]. ' Author ->'.get_the_author_meta('display_name', $child["post_author"]);
+            echo '<strong><a href="'.$link.'">' . esc_html($page->post_title) . '</a></strong> (' . esc_html($status).') '.$modified_date;
+            if($expand){
+                echo ' Created-> '. get_post_field( 'post_date', $page->ID );                
+                echo ' Author-> '. get_the_author_meta('display_name', $page->post_author);
+            }
             echo '</li>';
+
+            // Recursively call the function for child pages
+            list_pages_with_status_and_hierarchy($page->ID, $level + 1);
         }
+
         echo '</ul>';
     }
-
-    echo '</li>';
-    
-    
 }
-echo '</ul>';
