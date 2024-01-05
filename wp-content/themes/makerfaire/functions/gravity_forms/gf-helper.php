@@ -8,38 +8,6 @@
  * @param boolean $use_direct_access Default false
  */
 //add_filter( 'gravityview/datatables/direct-ajax', '__return_true' );
-
-/* Rewrite rules */
-function custom_rewrite_rule() {
-    add_rewrite_rule('^mf/([^/]*)/([^/]*)/?', 'index.php?pagename=maker-faire-gravity-forms-display-page&makerfaire=$matches[1]&entryid=$matches[2]', 'top');
-    add_rewrite_rule('^mfscheduler/([^/]*)/?', 'index.php?pagename=mfscheduler&faire_id=$matches[1]', 'top');
-    add_rewrite_rule('^mfscheduler-tasks/?', 'index.php?pagename=mfscheduler-tasks', 'top');
-    add_rewrite_rule('^mfarchives/([^/]*)/?', 'index.php?pagename=entry-archives&entryslug=$matches[1]', 'top');
-}
-
-add_action('init', 'custom_rewrite_rule', 10, 0);
-
-function custom_rewrite_tag() {
-    add_rewrite_tag('%faire_id%', '([^&]+)');
-    add_rewrite_tag('%entryid%', '([^&]+)');
-    add_rewrite_tag('%entryslug%', '([^&]+)');
-    add_rewrite_tag('%makerfaire%', '([^&]+)');
-}
-
-add_action('init', 'custom_rewrite_tag', 10, 0);
-
-/* Template Include */
-/* Query Vars */
-
-add_filter('query_vars', 'api_register_query_var');
-
-function api_register_query_var($vars) {
-    $vars[] = 'type';
-    $vars[] = 'api';
-    $vars[] = 'faire_id';
-    return $vars;
-}
-
 add_filter('template_include', 'api_include', 1, 1);
 
 function api_include($template) {
