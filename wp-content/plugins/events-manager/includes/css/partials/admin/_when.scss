@@ -1,0 +1,56 @@
+.event-form-when {
+	> * {
+		display: block;
+		margin-bottom: 15px !important;
+	}
+	> p {
+		margin-bottom: 20px !important;
+	}
+	.em-recurrence-pattern {
+		select, input[type="text"] {
+			width: auto !important;
+		}
+		select {
+			padding-right: 30px !important;
+		}
+		div.alternate-selector {
+			margin-top: 15px;
+		}
+	}
+
+	.alternate-selector.em-weekly-selector label {
+		width: auto !important;
+		display: inline-block !important;
+		padding-right: 10px !important;
+	}
+
+	.em-event-dates {
+		label {
+			width: 100%;
+			display:block;
+		}
+		.em-date-start-end {
+			width: 100% !important;
+			max-width: 500px !important;
+		}
+		&.em-datepicker-until .em-datepicker-until-fields {
+			display: grid;
+			grid-template-columns: minmax(100px, 150px) min-content minmax(100px, 150px);
+			grid-column-gap: 8px;
+			justify-items: center;
+			align-items: center;
+			margin-bottom:15px; // inherited from input margin bottom
+
+			> * {
+				margin-bottom: 0 !important;
+				width:100%;
+			}
+		}
+	}
+
+	.event-form-recurrence-when {
+		> * {
+			margin-bottom: 20px;
+		}
+	}
+}
