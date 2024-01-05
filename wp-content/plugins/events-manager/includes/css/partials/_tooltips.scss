@@ -1,0 +1,30 @@
+button.input.em-tooltip-ddm {
+	background-image: var(--icon-chevron-down) !important;
+	background-position: calc(100% - 15px) 50% !important;
+	background-repeat: no-repeat !important;
+	background-size: 15px !important;
+	padding-right: 40px !important;
+}
+button.input.em-tooltip-ddm[aria-expanded="true"] {
+	background-image: var(--icon-chevron-up) !important;
+}
+.em-tooltip-ddm-content {
+	@include screen-readers-only();
+}
+.em-tooltip-ddm-display {
+
+	top : -5px !important;
+	a {
+		padding: 5px;
+		display: block;
+	}
+	a:focus {
+		outline: 0;
+		box-shadow: none;
+	}
+	.tippy-box {
+		width : 100%;
+	}
+
+
+}
