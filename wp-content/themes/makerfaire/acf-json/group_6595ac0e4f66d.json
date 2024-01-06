@@ -151,6 +151,28 @@
                     "append": ""
                 },
                 {
+                    "key": "field_65988080c76c1",
+                    "label": "Number of Projects",
+                    "name": "number_of_projects",
+                    "aria-label": "",
+                    "type": "number",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "min": "",
+                    "max": "",
+                    "placeholder": "",
+                    "step": "",
+                    "prepend": "",
+                    "append": ""
+                },
+                {
                     "key": "field_6595bdc3b3c63",
                     "label": "Number of Attendees",
                     "name": "number_of_attendees",
@@ -489,5 +511,5 @@
     "active": true,
     "description": "",
     "show_in_rest": 0,
-    "modified": 1704479034
+    "modified": 1704493225
 }
