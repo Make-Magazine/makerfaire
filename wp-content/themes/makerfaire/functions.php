@@ -1,33 +1,41 @@
 <?php
+$templatePath=get_template_directory();
+
 // Register Custom Navigation Walker include custom menu widget to use walkerclass
-include_once TEMPLATEPATH . '/lib/wp_bootstrap_navwalker.php';
+include_once $templatePath . '/lib/wp_bootstrap_navwalker.php';
 
 // Load the settings field for the Applications API
-include_once dirname(__FILE__) . '/api/admin-settings.php';
+//include_once dirname(__FILE__) . '/api/admin-settings.php';
 
 // Load the functions for the Applications API
-include_once dirname(__FILE__) . '/api/v2/functions.php';
+//include_once dirname(__FILE__) . '/api/v2/functions.php';
 
-include_once TEMPLATEPATH . '/classes/makerfaire-helper.php';
-include_once TEMPLATEPATH . '/classes/gf-rmt-helper.php';
-include_once TEMPLATEPATH . '/classes/mf-sharing-cards.php';
-include_once TEMPLATEPATH . '/classes/ICS.php';
+include_once $templatePath . '/classes/makerfaire-helper.php';
+include_once $templatePath . '/classes/gf-rmt-helper.php';
+include_once $templatePath . '/classes/mf-sharing-cards.php';
+include_once $templatePath . '/classes/ICS.php';
 
 // Legacy Helper Functions replacing VIP Wordpress.com calls
-include_once TEMPLATEPATH . '/classes/legacy-helper.php';
+include_once $templatePath . '/classes/legacy-helper.php';
 
 //cron job
-include_once TEMPLATEPATH . '/classes/cronJob.php';
+include_once $templatePath . '/classes/cronJob.php';
 
 // Include all function files in the makerfaire/functions directory:
-foreach (glob(TEMPLATEPATH . '/functions/*.php') as $file) {
+foreach (glob($templatePath . '/functions/*.php') as $file) {
     include_once $file;
 }
 
 //include any subfolders like 'gravity_forms'
-foreach (glob(TEMPLATEPATH . '/functions/*/*.php') as $file) {
+foreach (glob($templatePath . '/functions/*/*.php') as $file) {
     include_once $file;
 }
+
+// Include all custom post type files in the /cpt directory:
+foreach (glob($templatePath . '/cpt/*.php') as $file) {
+    include_once $file;
+}
+
 // add post-thumbnails support to theme
 add_theme_support('post-thumbnails');
 add_image_size('schedule-thumb', 140, 140, true);

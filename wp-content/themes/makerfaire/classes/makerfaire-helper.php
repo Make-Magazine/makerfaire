@@ -373,7 +373,7 @@ function remove_admin_bar() {
 }
 
 /* Template Include */
-add_filter('template_include', 'onsitecheckin_include', 1, 1);
+//add_filter('template_include', 'onsitecheckin_include', 1, 1);
 function onsitecheckin_include($template)
 {
     global $wp_query; //Load $wp_query object
@@ -385,7 +385,7 @@ function onsitecheckin_include($template)
 
     return $template; //Load normal template when $page_value != "true" as a fallback
 }
-add_filter('template_include', 'processonsitecheckin_include', 1, 1);
+//add_filter('template_include', 'processonsitecheckin_include', 1, 1);
 function processonsitecheckin_include($template)
 {
     global $wp_query; //Load $wp_query object
@@ -397,7 +397,7 @@ function processonsitecheckin_include($template)
 
     return $template; //Load normal template when $page_value != "true" as a fallback
 }
-add_filter('template_include', 'onsitepinning_include', 1, 1);
+//add_filter('template_include', 'onsitepinning_include', 1, 1);
 function onsitepinning_include($template)
 {
     global $wp_query; //Load $wp_query object
@@ -409,7 +409,7 @@ function onsitepinning_include($template)
 
     return $template; //Load normal template when $page_value != "true" as a fallback
 }
-add_filter('template_include', 'processonsitepinning_include', 1, 1);
+//add_filter('template_include', 'processonsitepinning_include', 1, 1);
 function processonsitepinning_include($template)
 {
     global $wp_query; //Load $wp_query object
