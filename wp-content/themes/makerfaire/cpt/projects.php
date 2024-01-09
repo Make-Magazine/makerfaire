@@ -56,11 +56,7 @@ function register_cpt_projects() {
 		'can_export' => true,
 		'capability_type' => 'post',
 		'menu_position' => 40,
-		'rewrite' => false
-		/*'rewrite' => array(
-			'slug' => '%faire_year%/projects',
-			'with_front' => false
-		  )*/
+		'rewrite' => false	
 	);
 
 	register_post_type( 'projects', $args );
@@ -103,4 +99,37 @@ function register_taxonomy_mf_global_categories() {
 	);
 
 	register_taxonomy( 'mf-global-category', array('project'), $args );
+}
+
+//add columns to the list view
+add_filter( 'manage_projects_posts_columns', 'projects_posts_columns',999,1 );
+function projects_posts_columns( $columns ) {
+	$columns = array(
+		'cb' => $columns['cb'],
+		'title' => __( 'Title' ),
+		'exhibit_photo' => __( 'Photo', 'makerfaire' ),
+		'faire' => __( 'Faire', 'makerfaire' ),
+		'faire_year' => __( 'Faire Year', 'makerfaire' ),		
+	  );
+
+  return $columns;
+}
+
+add_action( 'manage_projects_posts_custom_column', 'projects_content_column', 10, 2);
+function projects_content_column( $column, $post_id ) {
+	$faireData = get_field("faire_information", $post_id);				
+    
+	// faire column
+	switch ($column){
+		case 'exhibit_photo':
+			echo get_the_post_thumbnail( $post_id, array(80, 80) );
+			break;
+		case 'faire':
+			echo $faireData["faire_name"];
+			break;
+		case 'faire_year':
+			echo $faireData["faire_year"];
+			break;	
+	}
+
 }
