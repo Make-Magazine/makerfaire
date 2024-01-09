@@ -1,14 +1,48 @@
 <?php
 include '../../../../wp-load.php'; 
-$args = array('show_date'=>'modified', 'title_li'     => __( 'Pages & Last Updated Date' ), 'sort_column'=> 'post_parent');
-if(isset($_GET['child_of'])){
-    $args['child_of'] = $_GET['child_of'];
-}
-//Default 'publish'
-if(isset($_GET['post_status'])){
-    $args['post_status'] = $_GET['post_status'];
-}
 
-$pages = wp_list_pages($args);
+list_pages_with_status_and_hierarchy();
 
-?>
+function list_pages_with_status_and_hierarchy($parent_id = 0, $level = 0) {
+    $post_status = (isset($_GET['post_status'])?$_GET['post_status']:'');
+    $expand=(isset($_GET['expand'])?TRUE:FALSE);
+
+    // Get all pages with the specified parent ID
+    $args = array(
+        'post_type'      => 'page',
+        'posts_per_page' => -1,
+        'post_parent'    => $parent_id,
+        'order'          => 'ASC',
+        'orderby'        => 'post_title'
+    );
+    if(isset($_GET['post_status'])){
+        $args['post_status'] = $_GET['post_status'];
+    }
+
+    $pages = get_posts($args);
+
+    // Check if there are any pages
+    if ($pages) {
+        echo '<ul>';
+
+        // Loop through each page
+        foreach ($pages as $page) {
+            $status = get_post_status($page->ID);
+            $link   = get_page_link($page->ID);            
+            $modified_date = get_post_field( 'post_modified', $page->ID );
+            
+            echo '<li>';
+            echo '<strong><a href="'.$link.'">' . esc_html($page->post_title) . '</a></strong> (' . esc_html($status).') '.(isset($page->post_password) && $page->post_password!=''?' Password='.$page->post_password:'').' '.$modified_date;
+            if($expand){
+                echo ' Created-> '. get_post_field( 'post_date', $page->ID );                
+                echo ' Author-> '. get_the_author_meta('display_name', $page->post_author);
+            }
+            echo '</li>';
+
+            // Recursively call the function for child pages
+            list_pages_with_status_and_hierarchy($page->ID, $level + 1);
+        }
+
+        echo '</ul>';
+    }
+}

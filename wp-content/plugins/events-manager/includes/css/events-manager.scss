@@ -1,0 +1,178 @@
+//@import "../../assets/css/include-media";
+@import "partials/mixins";
+
+.em {
+	@import "assets/pixelbones.vars";
+	@import "assets/pixelbones";
+
+	// counter settings (bubble showing applied advanced appearing next to trigger and headings)
+	--counter-background : #F36752;
+	--counter-color : #fff;
+	--counter-background-tentative : #ddd;
+	--counter-color-tentative : #888;
+
+	@import "partials";
+
+	/** The Triggers - Search and other parts triggering search **/
+	button.em-clickable {
+		cursor: pointer !important;
+		justify-self: start !important;
+		background-color: transparent;
+		margin: 0 !important;
+		padding: 0 !important;
+		border: 0 !important;
+		outline: none;
+		&:focus {
+			outline: none;
+		}
+	}
+	.hidden {
+		display:none;
+		visibility: hidden;
+	}
+
+	/* General Styles */
+	.em-datepicker {
+		.em-datepicker-data.hidden {
+			position:absolute !important;
+			left:-10000px !important;
+			top:auto !important;
+			width:1px !important;
+			height:1px !important;
+			overflow:hidden !important;
+			visibility : visible;
+			display: inherit;
+		}
+	}
+
+	/* Search Results & Event Views */
+	&.em-view-container {
+		position: relative;
+	}
+
+	.em-location-map-container{
+		aspect-ratio: 2/1;
+		width: 100%;
+		.em-loading-maps, .em-location-map-404 {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			justify-content: center;
+			height: 100%;
+			width: 100%;
+			border: 1px dashed #d0d0d0;
+			background-color: #fafafa;
+			color: #888;
+			font-size: 18px;
+			padding: 20px;
+			text-align: center;
+			svg {
+				width: 100px;
+				max-height: 100px;
+			}
+			span {
+				display:block;
+				margin-bottom:20px;
+				font-size:20px;
+				color: #aaa;
+			}
+		}
+		.em-loading {
+			background-position : 50% 10%;
+		}
+		.em-locations-map, .em-location-map, .em-location-map-content {
+			width: 100%;
+			height: 100%;
+		}
+	}
+
+	// General Styling
+	--font-size: 16px;
+	--line-height: 20px;
+	--default-color : #666666;
+	--default-border: #4b86b4;
+	/* #2a4d69 • #4b86b4 • #adcbe3 • #e7eff6 • #63ace5 */
+	--palette-1-bg : #03396c; /* for things like table headings or borders of tables */
+	--palette-1-color : #FFFFFF;
+	--meta-color : #787878;
+	--meta-bg : transparent;
+	--main-bg : #F5F5F5; // bookings
+	--main-h3-color : #777777; // bookings
+	--main-border-color : #cdcdcd; // bookings
+
+	.em-notice {
+		// Note that this is a span, allowing something like a DIV to enjoy JS functionality without the styling like in AJAXify
+		padding: 15px !important;
+		margin-bottom: 20px !important;
+		border: 1px solid #b6d4fe !important;
+		border-radius: 2.5px !important;
+		display: block !important;
+		color: #084298 !important;
+		background-color: #cfe2ff !important;
+
+		p { margin:10px 0 !important; padding:0; }
+
+		&.em-notice-error {
+			color: #842029 !important;
+			background-color: #f8d7da !important;
+			border-color: #f5c2c7 !important;
+		}
+
+		&.em-notice-success {
+			color: #0f5132 !important;
+			background-color: #d1e7dd !important;
+			border-color: #badbcc !important;
+		}
+		&.em-notice-warning {
+			color: #664d03;
+			background: #fff3cd;
+			border-color: #ffecb5;
+		}
+		&.em-notice-icon {
+			display:grid !important;
+			grid-template-columns : 25px auto;
+			grid-gap: 10px;
+
+			.em-icon {
+				align-self: center;
+			}
+		}
+		&.em-notice-thin {
+			padding: 10px 15px !important;
+		}
+	}
+
+	.iti, &.pixelbones .iti {
+
+		display: block;
+
+		.iti__selected-flag {
+			//height: calc(100% - 12px);
+		}
+
+		&.error {
+			input[type=tel] {
+				border-color: red !important;
+			}
+		}
+
+		input[type=tel], .iti--allow-dropdown input, .iti--allow-dropdown input[type=tel], .iti--allow-dropdown input[type=text], .iti--separate-dial-code input, .iti--separate-dial-code input[type=tel], .iti--separate-dial-code input[type=text] {
+			padding-right: 6px !important;
+			padding-left: 82px !important;
+			margin-left: 0 !important;
+		}
+		.iti__flag {background-image: url("../external/intl-tel-input/img/flags.png");}
+
+		@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+			.iti__flag {background-image: url("../external/intl-tel-input/img/flags@2x.png");}
+		}
+	}
+
+}
+/* Fix z-index issues for some 3rd party stuff */
+body .pac-container, .em .flatpickr-calendar {
+	z-index : 100000 !important;
+}
+
+@import 'events_manager';
+@import "partials/libraries";
