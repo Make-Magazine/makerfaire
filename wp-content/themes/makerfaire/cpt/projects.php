@@ -108,7 +108,7 @@ function projects_posts_columns( $columns ) {
 		'cb' => $columns['cb'],
 		'title' => __( 'Title' ),
 		'exhibit_photo' => __( 'Photo', 'makerfaire' ),
-		'faire' => __( 'Faire', 'makerfaire' ),
+		'faire_name' => __( 'Faire', 'makerfaire' ),
 		'faire_year' => __( 'Faire Year', 'makerfaire' ),		
 	  );
 
@@ -124,7 +124,7 @@ function projects_content_column( $column, $post_id ) {
 		case 'exhibit_photo':
 			echo get_the_post_thumbnail( $post_id, array(80, 80) );
 			break;
-		case 'faire':
+		case 'faire_name':
 			echo $faireData["faire_name"];
 			break;
 		case 'faire_year':
@@ -132,4 +132,30 @@ function projects_content_column( $column, $post_id ) {
 			break;	
 	}
 
+}
+
+//add columns to be sortable
+add_filter( 'manage_edit-projects_sortable_columns', 'projects_sortable_columns');
+function projects_sortable_columns( $columns ) {
+  $columns['faire_name'] = 'faire_name';
+  $columns['faire_year'] = 'faire_year';
+  return $columns;
+}
+
+//tell wordpress how to find the acf data
+add_action( 'pre_get_posts', 'smashing_posts_orderby' );
+function smashing_posts_orderby( $query ) {
+  if( ! is_admin() || ! $query->is_main_query() ) {
+    return;
+  }
+
+  if ( 'faire_name' === $query->get( 'orderby') ) {
+    $query->set( 'orderby', 'meta_value' );
+    $query->set( 'meta_key', 'faire_information_faire_name' );
+  }
+
+  if ( 'faire_year' === $query->get( 'orderby') ) {
+    $query->set( 'orderby', 'meta_value' );
+    $query->set( 'meta_key', 'faire_information_faire_year' );
+  }
 }
