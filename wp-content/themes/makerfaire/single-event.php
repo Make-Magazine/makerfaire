@@ -1,162 +1,99 @@
-<?php get_header(); ?>
+<?php get_header(); 
 
-<section class="wrapper">
+?>
 
 <main id="content">
-
-	<?php
-	while ( have_posts() ) : the_post(); ?>
-
-	<div class="breadcrumbs">
-	<?php esc_attr_e('You are here:', 'onecommunity'); ?> <a href="<?php echo home_url(); ?>"><?php esc_attr_e('Home', 'onecommunity'); ?></a>  /  <?php the_category(', ') ?>  /  <span class="current"><?php the_title(); ?></span>
-	</div>
-
-	<h1 class="single-post-title"><?php the_title(); ?></h1>
-
-	<div class="single-post-details">
-	<span class="single-post-category"><?php the_category(', ') ?></span>
-
-<!--	<span class="single-blog-comments"><?php comments_number('0', '1', '%'); ?></span>-->
-
-	<?php
-	if ( shortcode_exists( 'wp_ulike' ) ) {
-		echo do_shortcode('[wp_ulike]');
-	} 
-	?>
-
-	<span class="single-blog-time"><?php echo do_shortcode( '[event post_id="<?php $EM_Event->post_id; ?>"]#_EVENTDATES[/event]' ); ?></span>
-
-	<div class="clear"></div>
-
-	</div>
-
-	<?php
-		if (class_exists('ESSB_Plugin_Options')) {
-			$url = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
-			echo do_shortcode('[easy-social-share buttons="facebook,twitter,reddit,pinterest,love" animation="essb_icon_animation6" style="icon" fullwidth="yes" template="4" postid="' . get_the_ID() . '" url="' . $url . '" text="' . preg_replace('@\[.*?\]@', '', get_the_title()) . '"]');
-		}
-	?>
-
-	<div class="clear"></div>
-
-	<article>
-
-		<?php the_content( esc_attr__('Read more','onecommunity') );
-
-			wp_link_pages( array(
-				'before'      => '<div class="page-links"><span class="page-links-title">' . esc_attr__( 'Pages:', 'onecommunity' ) . '</span>',
-				'after'       => '</div>',
-				'link_before' => '<span>',
-				'link_after'  => '</span>',
-				'pagelink'    => '<span class="screen-reader-text">' . esc_attr__( 'Page', 'onecommunity' ) . ' </span>%',
-				'separator'   => '<span class="screen-reader-text">, </span>',
-			) );
-
-		?>
-
-    <div class="clear"></div>
-
- 		<?php
-
-			if ( is_singular( 'attachment' ) ) {
-				// Parent post navigation.
-				the_post_navigation( array(
-					'prev_text' => _x( '<span class="meta-nav">Published in</span><span class="post-title">%title</span>', 'Parent post link', 'onecommunity' ),
-				) );
-			} elseif ( is_singular( 'post' ) ) {
-				// Previous/next post navigation.
-				the_post_navigation( array(
-					'next_text' => '<span class="meta-nav" aria-hidden="true">' . esc_attr__( 'Next', 'onecommunity' ) . '</span> ' .
-						'<span class="screen-reader-text">' . esc_attr__( 'Next post:', 'onecommunity' ) . '</span> ' .
-						'<span class="post-title">%title</span>',
-					'prev_text' => '<span class="meta-nav" aria-hidden="true">' . esc_attr__( 'Previous', 'onecommunity' ) . '</span> ' .
-						'<span class="screen-reader-text">' . esc_attr__( 'Previous post:', 'onecommunity' ) . '</span> ' .
-						'<span class="post-title">%title</span>',
-				) );
-			}
-
-			// End of the loop.
-		endwhile;
-		?>
-
-    <div class="clear"></div>
 	
-	<footer>
-		<div class="author-bio">
-			<a href="<?php echo esc_url( get_author_posts_url( get_the_author_meta( 'ID' ) ) ); ?>" rel="author">
+	<?php
+	while ( have_posts() ) : the_post(); 
+		// ACF Data
+		$topSection = get_field('top_section');
+		  $hero_bg = $topSection['hero_image'];
+		  $faire_logo = $topSection['horizontal_faire_logo'];
+		$faireInfo = get_field('faire_info');
+		  $faire_video = $faireInfo['faire_video'];
+		  $faire_custom_image = $faireInfo['faire_custom_image'];
+		  $faire_num_makers = $faireInfo['number_of_makers'];
+		  $faire_num_attendees = $faireInfo['number_of_attendees'];
+		  $faire_num_projects = $faireInfo['number_of_projects'];
+		  $socialLinks = $faireInfo['social_links'];
+		  	$fb_link = $socialLinks['facebook'];
+		  	$twit_link = $socialLinks['twitter'];
+		  	$insta_link = $socialLinks['instagram'];
+		  	$ytube_link = $socialLinks['youtube'];
+		$producerSection = get_field('producer_section');
+		  $faire_graphic = $producerSection['faire_graphic'];
+		  $faire_badge = ($producerSection['circular_faire_logo']) ? $producerSection['circular_faire_logo']['url'] : '//' . $_SERVER['HTTP_HOST'] . "/wp-content/themes/makerfaire/images/default-badge.png";
+		  $producer_org = $producerSection['producer_or_org'];
+		  $contact_email = $producerSection['contact_email'];
+		  $faire_link = $producerSection['link_to_faire'];
+		$faire_year = date('Y', strtotime($EM_Event->event_start_date));
+		$faire_date = date("M jS, Y", strtotime($EM_Event->event_start_date));
+		if($EM_Event->event_start_date != $EM_Event->event_end_date) {
+			$faire_date .= " - " . date("M jS, Y", strtotime($EM_Event->event_end_date));
+		}
+		$faire_country = $EM_Event->location->location_country;
+
+	?>
+    <section id="eventHeader" style="background-image:url(<?php echo $hero_bg['url']; ?>">
+	    <div class="logo-wrapper">
+			<h1 class="single-post-title"><?php the_title(); ?></h1>
+			<img id="faireLogo" src="<?php echo $faire_logo['url']; ?>" />
+		</div>
+		<div class="breadcrumbs">
+			<a href="/yearbook/<?php echo $faire_year; ?>/faires">Home</a> / <a href="<?php echo '//' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']; ?>projects">Projects</a>
+		</div>
+	</section>
+
+	<section id="faireInfo">
+		<div class="faire_video">
 			<?php
-			echo get_avatar( get_the_author_meta( 'user_email' ), 100 );
+			if($faire_video && is_valid_video($faire_video)) {
+				global $wp_embed;
+				echo $wp_embed->run_shortcode('[embed]' . $faire_video . '[/embed]');
+			}
 			?>
-			</a>
-
-			<h6 class="author-bio-name"><?php echo get_the_author_meta('first_name'); ?>
-
-			<?php $last_name = get_the_author_meta('last_name');
-			if($last_name != '') { echo '<br>' . $last_name; } ?>
-
-			</h6>
-
-			<div class="author-bio-content">
-			<?php echo get_the_author_meta('description') ?>
+		</div>
+		<div class="faire_info_box">
+			<div class="striped_background"></div>
+			<h5 class="faire_date"><?php echo $faire_date; ?></h5>
+			<h4 class="faire_country"><?php echo getCountryName($faire_country) ?></h4>
+			<div class="spacer"></div>
+			<h3 class="faire_stat">Makers: <?php echo $faire_num_makers; ?></h3>
+			<h3 class="faire_stat">Projects: <?php echo $faire_num_projects; ?></h3>
+			<div class="social-links reversed">
+				<?php foreach ($socialLinks as $link) {
+					if($link) {
+						echo('<a class="link" href="' . $link . '"></a>');
+					}
+				} ?>
 			</div>
 		</div>
+	</section>
 
-		<div class="single-blog-post-tags">			
-		<?php
-		/* @var $EM_Event EM_Event */
-		$tags = get_the_terms($EM_Event->post_id, EM_TAXONOMY_TAG);
-		if( is_array($tags) && count($tags) > 0 ){
-			echo '<h6>'. esc_attr_e('Tags:', 'onecommunity').'</h6>';
-			$tags_list = array();
-			foreach($tags as $tag){
-				$link = get_term_link($tag->slug, EM_TAXONOMY_TAG);
-				if ( is_wp_error($link) ) $link = '';
-					$tags_list[] = '<a href="'. $link .'">'. $tag->name .'</a>';
-			}
-			echo implode('', $tags_list);
-		} ?>
+	<section id="faireProjects"></section>
 
+	<section id="producerInfo">
+		<div class="faire_custom_image">
+			<div class="striped_background"></div>
+			<img src="<?php echo $faire_graphic['url']; ?>" />
 		</div>
+		<div class="producer-details" style="background-image:url('<?php echo $faire_badge; ?>');">
+		  <div class="producer-details-overlay">
+			<div class="producer-details-inner-wrap">
+				<div class="producer-detail"><?php echo $producer_org; ?></div>
+				<div class="producer-detail"><a href="mailto:<?php echo $contact_email; ?>"><?php echo $contact_email; ?></a></div>
+		  		<div class="producer-detail"><a href="<?php echo $faire_link; ?>" target="_blank"><?php echo $faire_link; ?></a></div>
+			</div>
+			</div>
+		</div>
+	</section>
 
-	</footer>
-
-	</article>
-
-	<?php
-		// If comments are open or we have at least one comment, load up the comment template.
-		if ( comments_open() || get_comments_number() ) {
-			//comments_template();
-		}
-	?>
+	<section id="faireHighlights"></section>
+	
+	<?php // End of the loop.
+		endwhile; ?>
 
 </main><!-- content -->
-
-<div id="sidebar-spacer"></div>
-
-<aside id="sidebar" class="sidebar">
-
-	<?php
-	$transient = get_transient( 'onecommunity_sidebar_single' );
-	if ( false === $transient OR !get_theme_mod( 'onecommunity_transient_sidebar_single_enable', 0 ) == 1 ) {
-	ob_start();
-	if (function_exists('dynamic_sidebar') && dynamic_sidebar('sidebar-single')) : endif;
-
-	$sidebar = ob_get_clean();
-	print_r($sidebar);
-
-	if ( get_theme_mod( 'onecommunity_transient_sidebar_single_enable', 0 ) == 1 ) {
-		set_transient( 'onecommunity_sidebar_single', $sidebar, MINUTE_IN_SECONDS * get_theme_mod( 'onecommunity_transient_sidebar_pages_expiration', 20 ) );
-	}
-
-	} else {
-		echo '<!-- Transient onecommunity_sidebar_single ('.get_theme_mod( 'onecommunity_transient_sidebar_pages_expiration', 20 ).' min) -->';
-		print_r( $transient );
-	}
-	?>
-
-</aside><!--sidebar ends-->
-
-</section><!-- .wrapper -->
-
 
 <?php get_footer(); ?>

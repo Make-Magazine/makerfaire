@@ -44,3 +44,10 @@ function events_taxonomy_register(){
 if(post_type_exists('event')) {
     add_action('init','events_taxonomy_register',100);
 }
+
+function getCountryName($code) {
+    $json = file_get_contents("http://country.io/names.json");
+    $countries = json_decode($json, TRUE);
+
+    return array_key_exists($code,$countries) ? $countries[$code] : false;
+}

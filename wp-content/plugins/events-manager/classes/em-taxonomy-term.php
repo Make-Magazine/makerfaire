@@ -114,7 +114,7 @@ class EM_Taxonomy_Term extends EM_Object {
 	}
 	
 	public function get_color(){
-		if( empty($this->color) ){
+		if( empty($this->color) && !empty($this->term_id) ){
 			$color = wp_cache_get($this->term_id, 'em_'.$this->option_name.'_colors');
 			if( $color ){
 				$this->color = $color;
