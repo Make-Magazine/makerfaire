@@ -33,19 +33,6 @@ function modify_inline_display( $mode = '' ) {
   return 'inline';
 }
 
-/* add query var for MAT to edit the entry */
-add_filter( 'query_vars', 'mat_register_query_var' );
-function mat_register_query_var( $vars ) {
-    $vars[] = 'edit_slug';
-    return $vars;
-}
-
-/* makersign Rewrite Rules */
-add_action('init', 'makersign_rewrite_rules');
-function makersign_rewrite_rules() {
-  add_rewrite_rule( '^maker-sign/([^/]*)/([^/]*)$', '/wp-content/themes/makerfaire/fpdi/makersigns.php?eid=$matches[1]&faire=$matches[2]', 'top' );
-}
-
 //hide the Approve/Reject Entry column in entry list
 add_filter('gravityview/approve_entries/hide-if-no-connections', '__return_true');
 

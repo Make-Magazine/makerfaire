@@ -1,44 +1,4 @@
 <?php
-
-// BEGINING AMAZING HACKS
-function maker_url_vars($rules) {
-  $newrules = array();
-  $newrules['maker/entry/(\d*)/?(.*)$/?'] = 'index.php?post_type=page&pagename=entry-page-do-not-delete&e_id=$matches[1]&edit_slug=$matches[2]';
-  $newrules['([^\/]*)/meet-the-makers/topics/([^\/]*)/([0-9]{1,})/?$'] = 'index.php?post_type=page&pagename=listing-page-do-not-delete&f=$matches[1]&t_slug=$matches[2]&offset=$matches[3]';
-  $newrules['([^\/]*)/meet-the-makers/search/([0-9]{1,})/?$'] = 'index.php?post_type=page&pagename=search-results-page-do-not-delete&f=$matches[1]&offset=$matches[2]';
-  $newrules['([^\/]*)/meet-the-makers/topics/([^\/]*)/?$'] = 'index.php?offset=1&post_type=page&pagename=listing-page-do-not-delete&f=$matches[1]&t_slug=$matches[2]';
-  $newrules['([^\/]*)/meet-the-makers/search/?$'] = 'index.php?offset=1&post_type=page&pagename=search-results-page-do-not-delete&f=$matches[1]';
-  return $newrules + $rules;
-}
-
-add_filter('rewrite_rules_array', 'maker_url_vars');
-/*
-  add_action( 'wp_loaded','my_flush_rules' );
-
-  // flush_rules() if our rules are not yet included
-  function my_flush_rules(){
-  $rules = get_option( 'rewrite_rules' );
-
-  if ( ! isset( $rules['maker/entry/(\d*)/?'] ) || ! isset( $rules['([^/]*)/meet-the-makers/topics/([^/]*)/?'] )) {
-  global $wp_rewrite;
-  $wp_rewrite->flush_rules();
-  }
-
-  } */
-
-add_filter('query_vars', 'my_query_vars');
-
-function my_query_vars($query_vars) {
-  $query_vars[] = 'e_id';
-  $query_vars[] = 't_slug';
-  $query_vars[] = 's_keyword';
-  $query_vars[] = 'offset';
-  $query_vars[] = 'f';
-  return $query_vars;
-}
-
-// END AMAZING HACKS
-
 /**
  * The new and improved schedule by location shortcode.
  *
@@ -412,31 +372,8 @@ function remove_admin_bar() {
   }
 }
 
-/* Rewrite Rules */
-add_action('init', 'makerfaire_rewrite_rules');
-function makerfaire_rewrite_rules() {
-    add_rewrite_rule( 'onsitecheckin/?([^/]*)', 'index.php?onsitecheckin=true&token=$matches[1]', 'top' );
-    add_rewrite_rule( 'processonsitecheckin/?([^/]*)', 'index.php?processonsitecheckin=true&token=$matches[1]', 'top' );
-    add_rewrite_rule( 'onsitepinning/?([^/]*)', 'index.php?onsitepinning=true&token=$matches[1]', 'top' );
-    add_rewrite_rule( 'processonsitepinning/?([^/]*)', 'index.php?processpinning=true&token=$matches[1]', 'top' );
-    add_rewrite_rule( 'maker-sign/(\d*)/?(.*)$/?', 'index.php?makersign=true&eid=$matches[1]&faire=$matches[2]', 'top' );
-}
-/* Query Vars */
-add_filter( 'query_vars', 'makerfaire_register_query_var' );
-function makerfaire_register_query_var( $vars ) {
-    $vars[] = 'processonsitecheckin';
-    $vars[] = 'onsitecheckin';
-    $vars[] = 'processonsitepinning';
-    $vars[] = 'onsitepinning';
-    $vars[] = 'makersign';
-    $vars[] = 'faire';
-    $vars[] = 'eid';
-    $vars[] = 'makerid';
-    $vars[] = 'token';
-    return $vars;
-}
 /* Template Include */
-add_filter('template_include', 'onsitecheckin_include', 1, 1);
+//add_filter('template_include', 'onsitecheckin_include', 1, 1);
 function onsitecheckin_include($template)
 {
     global $wp_query; //Load $wp_query object
@@ -448,7 +385,7 @@ function onsitecheckin_include($template)
 
     return $template; //Load normal template when $page_value != "true" as a fallback
 }
-add_filter('template_include', 'processonsitecheckin_include', 1, 1);
+//add_filter('template_include', 'processonsitecheckin_include', 1, 1);
 function processonsitecheckin_include($template)
 {
     global $wp_query; //Load $wp_query object
@@ -460,7 +397,7 @@ function processonsitecheckin_include($template)
 
     return $template; //Load normal template when $page_value != "true" as a fallback
 }
-add_filter('template_include', 'onsitepinning_include', 1, 1);
+//add_filter('template_include', 'onsitepinning_include', 1, 1);
 function onsitepinning_include($template)
 {
     global $wp_query; //Load $wp_query object
@@ -472,7 +409,7 @@ function onsitepinning_include($template)
 
     return $template; //Load normal template when $page_value != "true" as a fallback
 }
-add_filter('template_include', 'processonsitepinning_include', 1, 1);
+//add_filter('template_include', 'processonsitepinning_include', 1, 1);
 function processonsitepinning_include($template)
 {
     global $wp_query; //Load $wp_query object

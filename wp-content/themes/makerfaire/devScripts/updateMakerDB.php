@@ -1,13 +1,14 @@
 <?php
-//include 'db_connect.php';
 include '../../../../wp-load.php';
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
-$form = (isset($_GET['form']) ? $_GET['form'] : '');
+
+$formFilter = (isset($_GET['form']) ? $_GET['form'] : '');
 $page = (isset($_GET['page']) ? $_GET['page'] : 1);
 $limit = (isset($_GET['limit']) ? $_GET['limit'] : 30);
 $offset = ($page != 1 ? (($page - 1) * $limit) : 0);
+$yearFilter = (isset($_GET['year']) ? $_GET['year'] : '');
 
 ?>
 
@@ -21,7 +22,7 @@ $offset = ($page != 1 ? (($page - 1) * $limit) : 0);
         <?php
         global $wpdb;        
        
-        $blog_id = 9999; //we will use blog id of 9999 for flagship    
+        $blogID = 9999; //we will use blog id of 9999 for flagship    
         $formtable = "wp_gf_form";
         $metatable = 'wp_gf_form_meta';
             
@@ -29,7 +30,7 @@ $offset = ($page != 1 ? (($page - 1) * $limit) : 0);
         $formSQL = "SELECT title, formtable.date_created, form_meta.display_meta, form_meta.form_id "
                 . " FROM ".$formtable. " formtable "
                 . " left outer join ".$metatable." form_meta on formtable.id=form_meta.form_id "
-                . " WHERE is_trash=0 " .($form!=''?' and id='.$form:'')
+                . " WHERE is_trash=0 " .($formFilter!=''?' and id='.$formFilter:'')
                 . " and id <> 252"
 
                 //. " WHERE is_trash=0 and year(date_created)>=2022"
@@ -84,9 +85,8 @@ $offset = ($page != 1 ? (($page - 1) * $limit) : 0);
                         $faire_year++;
                     }
 
-                    //only pull entries for 2023
-                    if($faire_year!='2023'){
-                        //echo 'entry date created is '.$entry['date_created'];
+                    //only pull entries for provided year
+                    if($yearFilter!='' && $faire_year!=$yearFilter){
                         //echo '$faire_year is '.$faire_year.'<Br/>';
                         continue;
                     }
@@ -94,17 +94,18 @@ $offset = ($page != 1 ? (($page - 1) * $limit) : 0);
                     //if status is not set, chances are this is not a valid cfm entry
                     if(isset($entry['303'])){
                         $count++;
-                        updateMakerTables((array) $entry, $form_id, $blog_id);
+                        updateMakerTables((array) $entry, $form_id, $blogID);
                     }
                                         
                 }
-                echo '&emsp;wrote '.count($entries).' entries<br/>';                  
+                echo '&emsp;wrote '.$count.' entries<br/>';                  
             
                 // die('check entries');
             }else{
                 //echo 'Invalid Form type. FormType = '.$form_type.'<br/>';
             }
-        }                            
+        }
+
         ?>
     </body>
 </html>
@@ -129,7 +130,11 @@ function updateMakerTables($entry, $form_id, $blog_id) {
     
     //build Maker and Entry Data Array
     $data = buildMakerData($entry, $form_id);
-
+    
+    //if this maker is marked as do not display, exit
+    if(!$data){
+        return;
+    }
     $makerData  = $data['maker'];
     $entryData  = $data['entry'];
     
@@ -240,7 +245,7 @@ function buildMakerData($lead, $form_id) {
     $entry_id = $lead['id'];
 
     /* set entry information */        
-    $main_category =  (isset($lead['320']) ? $lead['320'] : '');
+    $main_category =  (isset($lead['320']) ? get_CPT_name($lead['320']) : '');    
     $all_categories = array();
 
     //Categories (loop through all fields to find the categories)
@@ -249,9 +254,18 @@ function buildMakerData($lead, $form_id) {
             //4 additional categories
             $pos = strpos($leadKey, '321');
             if ($pos !== false) {
-                $all_categories[] = $leadValue;
+                $all_categories[] = get_CPT_name($leadValue);
             }
         }
+        $pos = strpos($leadKey, '304.');
+        if ($pos !== false) {
+            if ($leadValue == 'no-public-view')
+                return false;
+        }
+    }
+
+    if($main_category=='' && is_array($all_categories) && !empty($all_categories)) {            
+        $main_category = $all_categories[0];
     }
 
     //verify we only have unique categories
@@ -276,15 +290,7 @@ function buildMakerData($lead, $form_id) {
         if(is_array($project_gallery) && !empty($project_gallery)){
             $project_photo = $project_gallery[0];        
         }        
-    }
-    
-    foreach ($lead as $key => $field) {
-        $pos = strpos($key, '304.');
-        if ($pos !== false) {
-            if ($field == 'no-public-view')
-                continue;            
-        }
-    }
+    }    
     
     /* Entry Array */
     $entryArray = 
@@ -295,7 +301,7 @@ function buildMakerData($lead, $form_id) {
             'public_desc' => (isset($lead['16']) ? htmlentities($lead['16'], ENT_QUOTES) : ''),
             'project_photo' => $project_photo,            
             'main_category' => $main_category,    
-            'category' => $all_categories,            
+            'category'      => $all_categories,            
             'project_video' => (isset($lead['32']) ? $lead['32'] : ''),
             'inspiration'   => (isset($lead['287']) ? htmlentities($lead['287'], ENT_QUOTES) : ''),            
             'website'       => (isset($lead['27']) ? $lead['27'] : ''),
