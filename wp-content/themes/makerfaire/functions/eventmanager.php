@@ -79,7 +79,7 @@ function change_post_object_label() {
     $labels->name = 'Faires';
 	$labels->menu_name = 'Faires';
     $labels->singular_name = 'Faire';
-    $labels->add_new = 'Add Faire';
+    $labels->add_new = 'Add a Faire';
     $labels->add_new_item = 'Add Faire';
     $labels->edit_item = 'Edit Faire';
     $labels->new_item = 'Faire';

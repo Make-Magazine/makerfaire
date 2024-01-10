@@ -7,36 +7,45 @@
 	<?php
 	while ( have_posts() ) : the_post(); 
 		// ACF Data
+		//hero section
 		$topSection = get_field('top_section');
-		  $hero_bg = $topSection['hero_image'];
-		  $faire_logo = $topSection['horizontal_faire_logo'];
+		$hero_bg = $topSection['hero_image'];
+		$faire_logo = $topSection['horizontal_faire_logo'];
+		
+		//faire info
 		$faireInfo = get_field('faire_info');
-		  $faire_video = $faireInfo['faire_video'];
-		  $faire_custom_image = $faireInfo['faire_custom_image'];
-		  $faire_num_makers = $faireInfo['number_of_makers'];
-		  $faire_num_attendees = $faireInfo['number_of_attendees'];
-		  $faire_num_projects = $faireInfo['number_of_projects'];
-		  $socialLinks = $faireInfo['social_links'];
-		  	$fb_link = $socialLinks['facebook'];
-		  	$twit_link = $socialLinks['twitter'];
-		  	$insta_link = $socialLinks['instagram'];
-		  	$ytube_link = $socialLinks['youtube'];
-		$producerSection = get_field('producer_section');
-		  $faire_graphic = $producerSection['faire_graphic'];
-		  $faire_badge = ($producerSection['circular_faire_logo']) ? $producerSection['circular_faire_logo']['url'] : '//' . $_SERVER['HTTP_HOST'] . "/wp-content/themes/makerfaire/images/default-badge.png";
-		  $producer_org = $producerSection['producer_or_org'];
-		  $contact = $producerSection['contact_email'];
-		  if(str_contains($contact, "@")) {
-			$contact = "mailto:" . $contact;
-		  }
-		  $faire_link = $producerSection['link_to_faire'];
-		$highlightsSection = get_field("faire_highlights");
-		  $highlightImages = $highlightsSection['faire_images'];
-		  $highlightLink = $highlightsSection['faire_highlight_link'];
+		$faire_video = $faireInfo['faire_video'];
+		$faire_custom_image = $faireInfo['faire_custom_image'];
+		$faire_num_makers = $faireInfo['number_of_makers']; //this needs to be deleted
+		$faire_num_attendees = $faireInfo['number_of_attendees'];
+		$faire_num_projects = $faireInfo['number_of_projects'];
+
 		$faire_year = date('Y', strtotime($EM_Event->event_start_date));
 		$faire_date = date("F, Y", strtotime($EM_Event->event_start_date));
 		$faire_country = $EM_Event->location->location_country;
+
+		//social links 
+		$socialLinks = $faireInfo['social_links'];
+		$fb_link = $socialLinks['facebook'];
+		$twit_link = $socialLinks['twitter'];
+		$insta_link = $socialLinks['instagram'];
+		$ytube_link = $socialLinks['youtube'];
 		
+		//producer section	
+		$producerSection = get_field('producer_section');
+		$faire_graphic = $producerSection['faire_graphic'];
+		$faire_badge = ($producerSection['circular_faire_logo']) ? $producerSection['circular_faire_logo']['url'] : '//' . $_SERVER['HTTP_HOST'] . "/wp-content/themes/makerfaire/images/default-badge.png";
+		$producer_org = $producerSection['producer_or_org'];
+		$contact = $producerSection['contact_email'];
+		if(str_contains($contact, "@")) {
+		$contact = "mailto:" . $contact;
+		}
+		$faire_link = $producerSection['link_to_faire'];
+
+		//highlights section
+		$highlightsSection = get_field("faire_highlights");
+		$highlightImages = $highlightsSection['faire_images'];
+		$highlightLink = $highlightsSection['faire_highlight_link'];				
 
 	?>
     <section id="eventHeader" style="background-image:url(<?php echo $hero_bg['url']; ?>">
