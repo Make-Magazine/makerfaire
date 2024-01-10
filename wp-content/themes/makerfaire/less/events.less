@@ -58,12 +58,15 @@
          }
          .faire_country {
             font-size: 32px;
-            margin: 10px 0 30px;
+            margin: 0px 0 15px;
+         }
+         .spacer {
+            margin-bottom: 20px;
          }
          .faire_stat {
             font-size: 50px;
             font-family: "Roboto Bold";
-            margin-bottom: 0px;
+            margin: 0px;
          }
          .social-links.reversed {
             margin-top: auto;
@@ -73,7 +76,7 @@
       }
    }
    #faireProjects {
-      margin: 30px 0;
+      margin: 15px 0;
    }
    #producerInfo {
       .faire_custom_image {
@@ -101,6 +104,56 @@
             .producer-details-inner-wrap {
                background: #fff;
                padding: 15px 25px;
+               min-width: 350px;
+               min-height: 200px;
+               display: flex;
+               flex-direction: column;
+               justify-content: center;
+               h3 { margin-top: 0px; }
+            }
+         }
+      }
+   }
+   #faireHighlights {
+      background: #1F1A2C;
+      margin: 15px 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      h2 {
+         color: #fff;
+         font-size: 80px;
+         font-family: "Roboto Bold";
+      }
+      #highlightGallery {
+         display: flex;
+         flex-wrap: wrap;
+         gap: 10px;
+         max-width: 1120px;
+         margin: 30px 15px 50px;
+         .gallery-item {
+            width: calc(25% - 9px);
+            aspect-ratio: 16/9;
+            // Fallback
+            @supports not (aspect-ratio: auto) {
+               &::before {
+                  float: left;
+                  padding-top: 56.25%;
+                  content: "";
+               }
+               &::after {
+                  display: block;
+                  content: "";
+                  clear: both;
+               }
+            }
+            display: flex;
+            justify-content: center;
+            overflow: hidden;
+            img {
+               object-fit: cover;
+               min-width: 100%;
+               min-height: 100%
             }
          }
       }

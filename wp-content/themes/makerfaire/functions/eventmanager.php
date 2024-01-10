@@ -28,11 +28,13 @@ function register_taxonomy_regions() {
 		'public' => true,
 		'show_in_nav_menus' => true,
 		'show_ui' => true,
+		'show_in_quick_edit' => false,
+   		 'meta_box_cb' => false,
 		'show_tagcloud' => true,
 		'hierarchical' => true,
 		'rewrite' => array( 'slug' => 'regions', 'with_front' => false ),
 		'query_var' => true,
-		'show_in_rest' => true
+		'show_in_rest' => false
 	);
 
 	register_taxonomy( 'regions', array('event'), $args );

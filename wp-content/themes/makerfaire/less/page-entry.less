@@ -360,6 +360,7 @@
 		visibility: hidden;
 		width: 40px;
 		float: left;
+		text-decoration: none;;
 		&::before {
 			font-family: FontAwesome;
 			content: "\f0c1";
@@ -376,9 +377,13 @@
 		}
 		&[href*="twitter"] {
 			&::before {
-				font-family: FontAwesomeBrands;
-				content: "\f099";
+				content: url("https://make.co/wp-content/universal-assets/v2/images/twitter-x-logo.svg");
 				color: #1da1f2;
+				width: 40px;
+				height: 30px;
+				margin-top: 2px;
+				margin-left: -10px;
+				display: flex;
 			}
 		}
 		&[href*="instagram"] {
@@ -459,13 +464,21 @@
 			justify-content: center;
 			align-items: center;
 			aspect-ratio: 1;
+			text-decoration: none;
 			&::before {
 				color: #fff !important;
 			}
 			&[href*="facebook"] { background: #3b5998; }
-			&[href*="twitter"] { background: #1da1f2; }
+			&[href*="twitter"] { 
+				background: #1da1f2;
+				&:before { 
+					filter: invert(100%) sepia(0%) saturate(100%) hue-rotate(0deg) brightness(100%) contrast(100%);
+					margin: 0px;
+				}
+			}
 			&[href*="instagram"] { background: #e1306c; }
 			&[href*="youtube"] { background: #ff0000; }
+			&.fa-link { background: #333; }
 		}
 	}
 }	
@@ -559,7 +572,12 @@
 				&:before {
 					font-size: 30px;
 				}
+				&[href*="twitter"]:before { 
+					margin-top: 6px;
+					margin-left: -5px;
+				}
 			}
+			
 		 }
 	}
 	#entryFullWidth.sponsor-media {
