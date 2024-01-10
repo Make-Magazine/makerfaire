@@ -42,7 +42,7 @@ function register_cpt_projects() {
 		'labels' => $labels,
 		'hierarchical' => true,		
 		'supports' => array( 'title', 'editor', 'excerpt', 'author', 'thumbnail', 'trackbacks', 'custom-fields','page-attributes'),
-		'taxonomies' => array( 'mf-global-category'),
+		'taxonomies' => array( 'mf-project-cat','mf-year-cat'),
 		'public' => true,
 		'menu_icon' => "https:\/\/global.makerfaire.com\/favicon-16x16.png",
 		'show_ui' => true,
@@ -63,42 +63,57 @@ function register_cpt_projects() {
 
 }
 
-
-//Add the MF Global Categories taxonomy
-add_action( 'init', 'register_taxonomy_mf_global_categories' );
-function register_taxonomy_mf_global_categories() {
-
-	$labels = array(
-		'name' => __( 'MF Global Categories', 'makerfaire' ),
-		'singular_name' => __( 'MF Global Category', 'makerfaire' ),
-		'search_items' => __( 'MF Global Categories', 'makerfaire' ),
-		'popular_items' => __( 'MF Global Content Categories', 'makerfaire' ),
-		'all_items' => __( 'All MF Global Categories', 'makerfaire' ),
-		'parent_item' => __( 'Parent MF Global Category', 'makerfaire' ),
-		'parent_item_colon' => __( 'Parent MF Global Category:', 'makerfaire' ),
-		'edit_item' => __( 'Edit MF Global Category', 'makerfaire' ),
-		'update_item' => __( 'Update MF Global Category', 'makerfaire' ),
-		'add_new_item' => __( 'Add New MF Global Category', 'makerfaire' ),
-		'new_item_name' => __( 'New MF Global Category', 'makerfaire' ),
-		'separate_items_with_commas' => __( 'Separate MF Global categories with commas', 'makerfaire' ),
-		'add_or_remove_items' => __( 'Add or remove MF Global Categories', 'makerfaire' ),
-		'choose_from_most_used' => __( 'Choose from most used MF Global Categories', 'makerfaire' ),
-		'menu_name' => __( 'MF Global Categories', 'makerfaire' ),
+add_action( 'init', 'register_taxonomy_projects_cpt' );
+function register_taxonomy_projects_cpt() {
+	//Add the Project Category
+	register_taxonomy( 'mf-project-cat', array('projects'), 
+		array(
+			'labels' => array(
+				'name' => __( 'Category', 'makerfaire' ),
+				'singular_name' => __( 'Category', 'makerfaire' ),
+				'search_items' => __( 'Categories', 'makerfaire' ),		
+				'all_items' => __( 'All Categories', 'makerfaire' ),
+				'parent_item' => __( 'Parent Category', 'makerfaire' ),
+				'parent_item_colon' => __( 'Parent Category:', 'makerfaire' ),
+				'edit_item' => __( 'Edit Project Category', 'makerfaire' ),
+				'update_item' => __( 'Update Project Category', 'makerfaire' ),
+				'add_new_item' => __( 'Add New Project Category', 'makerfaire' ),
+				'new_item_name' => __( 'New Project Category', 'makerfaire' ),
+				'separate_items_with_commas' => __( 'Separate Project categories with commas', 'makerfaire' ),
+				'add_or_remove_items' => __( 'Add or remove Project Categories', 'makerfaire' ),
+				'choose_from_most_used' => __( 'Choose from most used Project Categories', 'makerfaire' ),
+				'menu_name' => __( 'Categories', 'makerfaire' ),
+			),
+			'public' => true,
+			'show_in_nav_menus' => true,			
+			'hierarchical' => true,
+			'rewrite' => array( 'slug' => 'categories', 'with_front' => false ),
+			'query_var' => true,
+			'show_in_rest' => true	
+			
+		)
 	);
 
-	$args = array(
-		'labels' => $labels,
-		'public' => true,
-		'show_in_nav_menus' => true,
-		'show_ui' => true,
-		'show_tagcloud' => true,
-		'hierarchical' => true,
-		'rewrite' => true,
-		'query_var' => true,
-		'show_in_rest' => true
-	);
-
-	register_taxonomy( 'mf-global-category', array('project'), $args );
+	//Faire Year 
+	register_taxonomy( 'mf-year-tax', array('projects'), 
+		array(
+			'labels' => array(
+				'name' => __( 'Faire Year', 'makerfaire' ),
+				'singular_name' => __( 'Faire Year', 'makerfaire' ),
+				'search_items' => __( 'Faire Years', 'makerfaire' ),		
+				'all_items' => __( 'All Faire Years', 'makerfaire' ),		
+				'edit_item' => __( 'Edit Faire Year', 'makerfaire' ),
+				'update_item' => __( 'Update Faire Year', 'makerfaire' ),
+				'add_new_item' => __( 'Add New Faire Year', 'makerfaire' ),
+				'new_item_name' => __( 'New Faire Year', 'makerfaire' ),		
+				'menu_name' => __( 'Years', 'makerfaire' )
+			),	
+			'public' => true,						
+			'hierarchical' => false,		
+			'query_var' => true, 						
+			'show_admin_column' => true			
+		)		
+	);	
 }
 
 //add columns to the list view
@@ -106,7 +121,7 @@ add_filter( 'manage_projects_posts_columns', 'projects_posts_columns',999,1 );
 function projects_posts_columns( $columns ) {
 	$columns = array(
 		'cb' => $columns['cb'],
-		'title' => __( 'Title' ),
+		'title' => __( 'Title' ),		
 		'exhibit_photo' => __( 'Photo', 'makerfaire' ),
 		'faire_name' => __( 'Faire', 'makerfaire' ),
 		'faire_year' => __( 'Faire Year', 'makerfaire' ),		
@@ -124,11 +139,14 @@ function projects_content_column( $column, $post_id ) {
 		case 'exhibit_photo':
 			echo get_the_post_thumbnail( $post_id, array(80, 80) );
 			break;
-		case 'faire_name':
-			echo $faireData["faire_name"];
+		case 'faire_name':			
+			$faire_name = (isset($faireData["faire_post"]->post_title)?$faireData["faire_post"]->post_title:'');			
+			echo $faire_name;
 			break;
-		case 'faire_year':
-			echo $faireData["faire_year"];
+		case 'faire_year':					
+			$faire_year = (isset($faireData["faire_year"]->name)?$faireData["faire_year"]->name:'');
+			echo $faire_year;
+			
 			break;	
 	}
 
@@ -142,16 +160,11 @@ function projects_sortable_columns( $columns ) {
   return $columns;
 }
 
-//tell wordpress how to find the acf data
-add_action( 'pre_get_posts', 'smashing_posts_orderby' );
-function smashing_posts_orderby( $query ) {
+//tell wordpress how to sort the acf data
+add_action( 'pre_get_posts', 'mf_projects_admin_orderby' );
+function mf_projects_admin_orderby( $query ) {
   if( ! is_admin() || ! $query->is_main_query() ) {
     return;
-  }
-
-  if ( 'faire_name' === $query->get( 'orderby') ) {
-    $query->set( 'orderby', 'meta_value' );
-    $query->set( 'meta_key', 'faire_information_faire_name' );
   }
 
   if ( 'faire_year' === $query->get( 'orderby') ) {
