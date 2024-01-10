@@ -23,6 +23,8 @@
 		$faire_year = date('Y', strtotime($EM_Event->event_start_date));
 		$faire_date = date("F, Y", strtotime($EM_Event->event_start_date));
 		$faire_country = $EM_Event->location->location_country;
+		
+		$country_array = em_get_countries();
 
 		//social links 
 		$socialLinks = $faireInfo['social_links'];
@@ -72,7 +74,7 @@
 		<div class="faire_info_box">
 			<div class="striped_background"></div>
 			<h5 class="faire_date"><?php echo $faire_date; ?></h5>
-			<h4 class="faire_country"><?php echo getCountryName($faire_country) ?></h4>
+			<h4 class="faire_country"><?php echo (isset($country_array[$faire_country])?$country_array[$faire_country]:''); ?></h4>
 			<div class="spacer"></div>
 			<h3 class="faire_stat">Makers: <?php echo $faire_num_makers; ?></h3>
 			<h3 class="faire_stat">Projects: <?php echo $faire_num_projects; ?></h3>

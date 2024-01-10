@@ -492,6 +492,29 @@
             "field_type": "select",
             "allow_null": 0,
             "multiple": 0
+        },
+        {
+            "key": "field_659f1488d3d46",
+            "label": "Country",
+            "name": "country",
+            "aria-label": "",
+            "type": "taxonomy",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "taxonomy": "countries",
+            "add_term": 0,
+            "save_terms": 0,
+            "load_terms": 0,
+            "return_format": "id",
+            "field_type": "select",
+            "allow_null": 0,
+            "multiple": 0
         }
     ],
     "location": [
@@ -512,5 +535,5 @@
     "active": true,
     "description": "",
     "show_in_rest": 0,
-    "modified": 1704847705
+    "modified": 1704924323
 }
