@@ -68,3 +68,25 @@ function change_media_label(){
 	}
   }
 }
+
+//change the Events CPT labels
+function change_post_object_label() {
+    global $wp_post_types;
+	
+	$event_cpt = &$wp_post_types['event'];
+	$event_cpt->menu_icon = "https:\/\/global.makerfaire.com\/favicon-16x16.png";
+    $labels = &$wp_post_types['event']->labels;
+    $labels->name = 'Faires';
+	$labels->menu_name = 'Faires';
+    $labels->singular_name = 'Faire';
+    $labels->add_new = 'Add Faire';
+    $labels->add_new_item = 'Add Faire';
+    $labels->edit_item = 'Edit Faire';
+    $labels->new_item = 'Faire';
+    $labels->all_items = 'All Faires';
+    $labels->view_item = 'View Faire';
+    $labels->search_items = 'Search Faire';
+    $labels->not_found = 'No Faire found';
+    $labels->not_found_in_trash = 'No Faire found in Trash';    
+}
+add_action( 'init', 'change_post_object_label', 999 );
