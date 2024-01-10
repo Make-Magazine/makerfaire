@@ -12,9 +12,12 @@
             $faireData = get_field("faire_information");
             $exhibit_photo = get_field("exhibit_photo");
             $exhibit_social = get_field("exhibit_social");
-            //var_dump($exhibit_social);
+            
+            $faire_name = (isset($faireData["faire_post"]->post_title)?$faireData["faire_post"]->post_title:'');
+            $faire_year = (isset($faireData["faire_year"]->name)?$faireData["faire_year"]->name:'');
+            
             ?>
-            <h3><?php echo $faireData["faire_name"] ." ".$faireData["faire_year"];?></h3>
+            <h3><?php echo $faire_name ." ".$faire_year;?></h3>
             
             <div style="float:left; width:50%">
                 <h2><?php echo get_field("title");?></h2>

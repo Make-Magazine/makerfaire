@@ -1,67 +1,7 @@
 {
     "key": "group_65971bca30e11",
-    "title": "Exhibit fields",
+    "title": "Project Fields",
     "fields": [
-        {
-            "key": "field_65971c1f37e2a",
-            "label": "Blog ID",
-            "name": "blog_id",
-            "aria-label": "",
-            "type": "text",
-            "instructions": "If this is from a global site, what is the blog id of that site",
-            "required": 0,
-            "conditional_logic": 0,
-            "wrapper": {
-                "width": "",
-                "class": "",
-                "id": ""
-            },
-            "default_value": "",
-            "maxlength": "",
-            "placeholder": "",
-            "prepend": "",
-            "append": ""
-        },
-        {
-            "key": "field_65971bcc37e29",
-            "label": "Entry ID",
-            "name": "entry_id",
-            "aria-label": "",
-            "type": "text",
-            "instructions": "If this is from a global site, what is the entry id on that site",
-            "required": 0,
-            "conditional_logic": 0,
-            "wrapper": {
-                "width": "",
-                "class": "",
-                "id": ""
-            },
-            "default_value": "",
-            "maxlength": "",
-            "placeholder": "",
-            "prepend": "",
-            "append": ""
-        },
-        {
-            "key": "field_65971c4237e2c",
-            "label": "Form ID",
-            "name": "form_id",
-            "aria-label": "",
-            "type": "text",
-            "instructions": "If this is from a global site, what is the form id that created this exhibit",
-            "required": 0,
-            "conditional_logic": 0,
-            "wrapper": {
-                "width": "",
-                "class": "",
-                "id": ""
-            },
-            "default_value": "",
-            "maxlength": "",
-            "placeholder": "",
-            "prepend": "",
-            "append": ""
-        },
         {
             "key": "field_65971c3f37e2b",
             "label": "Title",
@@ -101,31 +41,6 @@
             "rows": "",
             "placeholder": "",
             "new_lines": ""
-        },
-        {
-            "key": "field_65971c8637e2e",
-            "label": "Exhibit Photo",
-            "name": "exhibit_photo",
-            "aria-label": "",
-            "type": "image",
-            "instructions": "",
-            "required": 0,
-            "conditional_logic": 0,
-            "wrapper": {
-                "width": "",
-                "class": "",
-                "id": ""
-            },
-            "return_format": "url",
-            "library": "all",
-            "min_width": "",
-            "min_height": "",
-            "min_size": "",
-            "max_width": "",
-            "max_height": "",
-            "max_size": "",
-            "mime_types": "",
-            "preview_size": "medium"
         },
         {
             "key": "field_65971cbd37e2f",
@@ -222,46 +137,6 @@
                     "parent_repeater": "field_65971cff37e32"
                 }
             ]
-        },
-        {
-            "key": "field_65971d5137e36",
-            "label": "Entry Status",
-            "name": "entry_status",
-            "aria-label": "",
-            "type": "text",
-            "instructions": "",
-            "required": 0,
-            "conditional_logic": 0,
-            "wrapper": {
-                "width": "",
-                "class": "",
-                "id": ""
-            },
-            "default_value": "",
-            "maxlength": "",
-            "placeholder": "",
-            "prepend": "",
-            "append": ""
-        },
-        {
-            "key": "field_65971d5a37e37",
-            "label": "Entry Link",
-            "name": "entry_link",
-            "aria-label": "",
-            "type": "text",
-            "instructions": "",
-            "required": 0,
-            "conditional_logic": 0,
-            "wrapper": {
-                "width": "",
-                "class": "",
-                "id": ""
-            },
-            "default_value": "",
-            "maxlength": "",
-            "placeholder": "",
-            "prepend": "",
-            "append": ""
         },
         {
             "key": "field_65971d6537e38",
@@ -412,6 +287,7 @@
                     "collapsed": "",
                     "button_label": "Add Row",
                     "rows_per_page": 20,
+                    "parent_repeater": "field_65971d6537e38",
                     "sub_fields": [
                         {
                             "key": "field_65971e1b3a5c8",
@@ -431,8 +307,7 @@
                             "placeholder": "",
                             "parent_repeater": "field_65971dde3a5c7"
                         }
-                    ],
-                    "parent_repeater": "field_65971d6537e38"
+                    ]
                 }
             ]
         },
@@ -453,31 +328,11 @@
             "layout": "block",
             "sub_fields": [
                 {
-                    "key": "field_65971d3437e34",
-                    "label": "Faire Name",
-                    "name": "faire_name",
-                    "aria-label": "",
-                    "type": "text",
-                    "instructions": "",
-                    "required": 0,
-                    "conditional_logic": 0,
-                    "wrapper": {
-                        "width": "",
-                        "class": "",
-                        "id": ""
-                    },
-                    "default_value": "",
-                    "maxlength": "",
-                    "placeholder": "",
-                    "prepend": "",
-                    "append": ""
-                },
-                {
                     "key": "field_65971d4337e35",
                     "label": "Faire Year",
                     "name": "faire_year",
                     "aria-label": "",
-                    "type": "text",
+                    "type": "taxonomy",
                     "instructions": "",
                     "required": 0,
                     "conditional_logic": 0,
@@ -486,11 +341,14 @@
                         "class": "",
                         "id": ""
                     },
-                    "default_value": "",
-                    "maxlength": "",
-                    "placeholder": "",
-                    "prepend": "",
-                    "append": ""
+                    "taxonomy": "mf-year-tax",
+                    "add_term": 0,
+                    "save_terms": 0,
+                    "load_terms": 0,
+                    "return_format": "object",
+                    "field_type": "select",
+                    "allow_null": 0,
+                    "multiple": 0
                 },
                 {
                     "key": "field_65971e763a5ca",
@@ -506,7 +364,9 @@
                         "class": "",
                         "id": ""
                     },
-                    "post_type": "",
+                    "post_type": [
+                        "event"
+                    ],
                     "post_status": "",
                     "taxonomy": "",
                     "return_format": "object",
@@ -563,5 +423,5 @@
     "active": true,
     "description": "",
     "show_in_rest": 0,
-    "modified": 1704758690
+    "modified": 1704844267
 }

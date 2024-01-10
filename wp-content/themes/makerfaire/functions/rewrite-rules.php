@@ -38,12 +38,12 @@ $projects_structure = '%faire_year%/projects/%projects%';
 $wp_rewrite->add_rewrite_tag("%projects%", '([^/]+)', "project=");
 $wp_rewrite->add_permastruct('projects', $projects_structure, false);
 
-function so23698827_add_rewrite_rules( $rules ) {
+function mf_add_rewrite_rules( $rules ) {
   $new = array();
   $new['([^/]+)/projects/(.+)/?$'] = 'index.php?faire_year=$matches[1]&projects=$matches[2]';
   return array_merge( $new, $rules ); // Ensure our rules come first
 }
-add_filter( 'rewrite_rules_array', 'so23698827_add_rewrite_rules' );
+add_filter( 'rewrite_rules_array', 'mf_add_rewrite_rules' );
 
 /**
  * Handle the '%faire_year%' URL placeholder
@@ -52,14 +52,15 @@ add_filter( 'rewrite_rules_array', 'so23698827_add_rewrite_rules' );
  * @param WP_Post object $post The post object
  * @return str
  */
-function so23698827_filter_post_type_link( $link, $post ) {
+function mf_filter_post_type_link( $link, $post ) {
   if ( $post->post_type == 'projects' ) {
     $faireData = get_field("faire_information", $post->ID);				
-    $link = str_replace( '%faire_year%', $faireData["faire_year"], $link );    
+    $faire_year = (isset($faireData["faire_year"]->name)?$faireData["faire_year"]->name:'');
+    $link = str_replace( '%faire_year%', $faire_year, $link );    
   }
   return $link;
 }
-add_filter( 'post_type_link', 'so23698827_filter_post_type_link', 10, 2 );
+add_filter( 'post_type_link', 'mf_filter_post_type_link', 10, 2 );
 
 /* Rewrite Rules */
 //add_action('init', 'makerfaire_rewrite_rules');
