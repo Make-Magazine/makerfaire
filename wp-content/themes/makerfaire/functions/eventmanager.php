@@ -53,3 +53,18 @@ function getCountryName($code) {
 
     return array_key_exists($code,$countries) ? $countries[$code] : false;
 }
+
+//default Events menu item to go to all events (instead of defaulting to future)
+add_action( 'admin_menu', 'change_media_label' );
+function change_media_label(){
+  global $submenu;
+  if(isset($submenu["edit.php?post_type=event"])){	
+	foreach($submenu["edit.php?post_type=event"] as $subMenuKey=>$subMenuItem){
+		foreach($subMenuItem as $itemKey =>$subMenuLink){			
+			if($subMenuLink == 'edit.php?post_type=event'){				
+				$submenu["edit.php?post_type=event"][$subMenuKey][$itemKey] = $subMenuLink .'&scope=all';
+			}
+		}
+	}
+  }
+}
