@@ -8,11 +8,11 @@
 	while ( have_posts() ) : the_post(); 
 		// ACF Data
 		$topSection = get_field('top_section');
-		  $hero_bg = $topSection['hero_image'];
-		  $faire_logo = $topSection['horizontal_faire_logo'];
+		  $hero_bg = isset($topSection['hero_image']) ? $topSection['hero_image'] : ""; //default background image;
+		  $faire_logo = $topSection['horizontal_faire_logo']; 
 		$faireInfo = get_field('faire_info');
 		  $faire_video = $faireInfo['faire_video'];
-		  $faire_custom_image = $faireInfo['faire_custom_image'];
+		  //$faire_custom_image = $faireInfo['faire_custom_image']; this is the featured image
 		  $faire_num_makers = $faireInfo['number_of_makers'];
 		  $faire_num_attendees = $faireInfo['number_of_attendees'];
 		  $faire_num_projects = $faireInfo['number_of_projects'];
@@ -35,13 +35,14 @@
 		  $highlightLink = $highlightsSection['faire_highlight_link'];
 		$faire_year = date('Y', strtotime($EM_Event->event_start_date));
 		$faire_date = date("F, Y", strtotime($EM_Event->event_start_date));
+		$faire_countries = em_get_countries();
 		$faire_country = $EM_Event->location->location_country;
-		
 
 	?>
     <section id="eventHeader" style="background-image:url(<?php echo $hero_bg['url']; ?>">
 	    <div class="logo-wrapper">
 			<h1 class="single-post-title"><?php the_title(); ?></h1>
+			<?php // don't show image if it isn't there ?>
 			<img id="faireLogo" src="<?php echo $faire_logo['url']; ?>" />
 		</div>
 		<div class="breadcrumbs">
@@ -56,6 +57,7 @@
 				global $wp_embed;
 				echo $wp_embed->run_shortcode('[embed]' . $faire_video . '[/embed]');
 			} else { ?>
+			// this should be the featured image
 				<img src="<?php echo $faire_graphic['url']; ?>" alt="<?php the_title(); ?> Featured Image" />
 			<?php }
 			?>
@@ -63,17 +65,17 @@
 		<div class="faire_info_box">
 			<div class="striped_background"></div>
 			<h5 class="faire_date"><?php echo $faire_date; ?></h5>
-			<h4 class="faire_country"><?php echo getCountryName($faire_country) ?></h4>
+			<h4 class="faire_country"><?php echo $faire_countries[$faire_country]; ?></h4> <?php // this should be city state country (if no state, there should be no comma) ?>
 			<div class="spacer"></div>
-			<h3 class="faire_stat">Makers: <?php echo $faire_num_makers; ?></h3>
-			<h3 class="faire_stat">Projects: <?php echo $faire_num_projects; ?></h3>
+			<h3 class="faire_stat">Projects: <?php echo $faire_num_projects; ?></h3> <?php // don't show if there is no number ?>
+			<h3 class="faire_stat">Attendess: <?php echo $faire_num_attendees; ?></h3> <?php // don't show if there is no number ?>
 			<div class="social-links reversed">
 				<?php foreach ($socialLinks as $link) {
 					if($link) {
 						echo('<a class="link" href="' . $link . '"></a>');
 					}
 				} ?>
-				<a class="link fa fa-link" href="<?php echo $faire_link; ?>" target="_blank"></a>
+				<a class="link fa fa-link" href="<?php echo $faire_link; ?>" target="_blank"></a> <?php // // don't display if no faire_link ?>
 			</div>
 		</div>
 	</section>
@@ -83,7 +85,7 @@
 	<section id="producerInfo">
 		<div class="faire_custom_image">
 			<div class="striped_background"></div>
-			<img src="<?php echo $faire_graphic['url']; ?>" alt="<?php the_title(); ?> Custom Image"  />
+			<img src="<?php echo $faire_graphic['url']; ?>" alt="<?php the_title(); ?> Custom Image"  /> <?php // // pull the default image from 1920 image ?>
 		</div>
 		<div class="producer-details" style="background-image:url('<?php echo $faire_badge; ?>');">
 		  <div class="producer-details-overlay">
@@ -125,13 +127,13 @@
 jQuery(document).ready(function(){
 	var numImages = jQuery('#highlightGallery .gallery-item').length;
 	jQuery('#highlightGallery .gallery-item').on("click", function () {
-		//every time you click on an owl item, open a dialog modal to show the images
+		//every time you click on a gallery item, open a dialog modal to show the images
 		var galleryItem = jQuery(this);
 		jQuery('body').append('<div id="dialog"><img src="' + jQuery("img", this).attr('src') + '" width="100%" /></div>');
 		jQuery('#dialog').dialog({
 			dialogClass: "hide-heading",
 			modal: true,
-			// these buttons will go to the next image from the #projectGallery and replace the src of the image in the modal with the next or previous image in the gallery
+			// these buttons will go to the next image from the faireGallery and replace the src of the image in the modal with the next or previous image in the gallery
 			buttons: numImages <= 1 ? [] : [
 				{
 					"class": "dialog-nav-btn dialog-prev-btn",
