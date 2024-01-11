@@ -7,6 +7,7 @@
 	<?php
 	while ( have_posts() ) : the_post(); 
 		// ACF Data
+		//hero section
 		$topSection = get_field('top_section');
 		  $hero_bg = isset($topSection['hero_image']) ? $topSection['hero_image'] : ""; //default background image;
 		  $faire_logo = $topSection['horizontal_faire_logo']; 
@@ -65,7 +66,7 @@
 		<div class="faire_info_box">
 			<div class="striped_background"></div>
 			<h5 class="faire_date"><?php echo $faire_date; ?></h5>
-			<h4 class="faire_country"><?php echo $faire_countries[$faire_country]; ?></h4> <?php // this should be city state country (if no state, there should be no comma) ?>
+			<h4 class="faire_country"><?php echo (isset($country_array[$faire_country])?$country_array[$faire_country]:''); ?></h4>
 			<div class="spacer"></div>
 			<h3 class="faire_stat">Projects: <?php echo $faire_num_projects; ?></h3> <?php // don't show if there is no number ?>
 			<h3 class="faire_stat">Attendess: <?php echo $faire_num_attendees; ?></h3> <?php // don't show if there is no number ?>

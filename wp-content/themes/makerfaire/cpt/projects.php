@@ -10,7 +10,7 @@ function register_cpt_projects() {
 		'singular_name' => __('Project', 'makerfaire'),
 
 		"menu_name"=> __(  "Projects",  'makerfaire' ),
-		"all_items"=> __(  "All Projects", 'makerfaire' ),
+		"all_items"=> __(  "Projects", 'makerfaire' ),
 		"edit_item"=> __(  "Edit Project", 'makerfaire' ),
 		"view_item"=> __(  "View Project", 'makerfaire' ),
 		"view_items"=> __(  "View Projects", 'makerfaire' ),
@@ -46,7 +46,7 @@ function register_cpt_projects() {
 		'public' => true,
 		'menu_icon' => "https:\/\/global.makerfaire.com\/favicon-16x16.png",
 		'show_ui' => true,
-		'show_in_menu' => true,
+		'show_in_menu' => 'edit.php?post_type=event',
 		'show_in_nav_menus' => true,
 		'show_in_rest' => true,
 		'publicly_queryable' => true,

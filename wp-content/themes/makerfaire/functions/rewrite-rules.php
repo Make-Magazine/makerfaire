@@ -1,5 +1,4 @@
 <?php
-
 // BEGINING AMAZING HACKS
 function maker_url_vars($rules) {
   $newrules = array();
@@ -30,17 +29,9 @@ function maker_url_vars($rules) {
 
 add_filter('rewrite_rules_array', 'maker_url_vars');
 
-
-// rewrites custom post type name
-global $wp_rewrite;
-
-$projects_structure = '%faire_year%/projects/%projects%';
-$wp_rewrite->add_rewrite_tag("%projects%", '([^/]+)', "project=");
-$wp_rewrite->add_permastruct('projects', $projects_structure, false);
-
 function mf_add_rewrite_rules( $rules ) {
   $new = array();
-  $new['([^/]+)/projects/(.+)/?$'] = 'index.php?faire_year=$matches[1]&projects=$matches[2]';
+  $new['([^/]+)/projects/(.+)/?$'] = 'index.php?faire_year=$matches[1]&projects=$matches[2]';  
   return array_merge( $new, $rules ); // Ensure our rules come first
 }
 add_filter( 'rewrite_rules_array', 'mf_add_rewrite_rules' );
@@ -56,6 +47,10 @@ function mf_filter_post_type_link( $link, $post ) {
   if ( $post->post_type == 'projects' ) {
     $faireData = get_field("faire_information", $post->ID);				
     $faire_year = (isset($faireData["faire_year"]->name)?$faireData["faire_year"]->name:'');
+    $link = str_replace( '%faire_year%', $faire_year, $link );    
+  }elseif ( $post->post_type == 'event' ) {    
+    $event_start_date = get_post_meta( $post->ID, '_event_start_date', true );
+    $faire_year = date('Y', strtotime($event_start_date));            
     $link = str_replace( '%faire_year%', $faire_year, $link );    
   }
   return $link;
@@ -122,6 +117,14 @@ function makerfaire_register_query_var( $vars ) {
 }
 
 function custom_rewrite_tag() {
+  // rewrites custom post type name
+  global $wp_rewrite;
+
+  //change the CPT structure of projects cpt to include the faire year
+  $projects_structure = '%faire_year%/projects/%projects%';
+  $wp_rewrite->add_rewrite_tag("%projects%", '([^/]+)', "project=");
+  $wp_rewrite->add_permastruct('projects', $projects_structure, false);
+
   add_rewrite_tag('%faire_id%', '([^&]+)');  
   add_rewrite_tag('%entryslug%', '([^&]+)');  //page-entryarchives.php
   add_rewrite_tag('%entryid%', '([^&]+)');    //classes/mf-gf-exhibit-view.php
