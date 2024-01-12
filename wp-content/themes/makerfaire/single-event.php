@@ -9,46 +9,50 @@
 		// ACF Data
 		//hero section
 		$topSection 			= get_field('top_section');
-		$hero_bg 				= isset($topSection['hero_image']) ? $topSection['hero_image'] : get_template_directory() . "/images/eoy/YB_MF_23_1400_Default-1.png"; 
-		$faire_logo 			= $topSection['horizontal_faire_logo']; 
+		$hero_bg 				= isset($topSection['hero_image']['url']) 	         ? $topSection['hero_image']['url'] : get_stylesheet_directory_uri()."/images/faire-page-hero-img-default.png"; 				
+		$faire_logo 			= isset($topSection['horizontal_faire_logo']['url']) ? $topSection['horizontal_faire_logo']['url'] : ''; 
+		
 		// Faire Info Section
 		$faireInfo 				= get_field('faire_info');
 		$faire_video 			= $faireInfo['faire_video'];
-		//$faire_custom_image = $faireInfo['faire_custom_image']; this is the featured image
-		$faire_num_makers 		= $faireInfo['number_of_makers'];
+		
 		$faire_num_attendees 	= $faireInfo['number_of_attendees'];
 		$faire_num_projects 	= $faireInfo['number_of_projects'];
+
 		// Social Links
 		$socialLinks 			= $faireInfo['social_links'];
 		$fb_link 				= $socialLinks['facebook'];
 		$twit_link 				= $socialLinks['twitter'];
 		$insta_link 			= $socialLinks['instagram'];
 		$ytube_link 			= $socialLinks['youtube'];
+
 		// Producer Section
 		$producerSection 		= get_field('producer_section');
-		$faire_graphic 			= $producerSection['faire_graphic'];
-		$faire_badge 			= ($producerSection['circular_faire_logo']) ? $producerSection['circular_faire_logo']['url'] : '//' . $_SERVER['HTTP_HOST'] . "/wp-content/themes/makerfaire/images/default-badge.png";
+		$faire_graphic 			= isset($producerSection['faire_graphic']['url']) 		? $producerSection['faire_graphic']['url'] 	 	 : get_stylesheet_directory_uri()."/images/faire-page-faire-graphic.png";
+		$faire_badge 			= isset($producerSection['circular_faire_logo']['url']) ? $producerSection['circular_faire_logo']['url'] : get_stylesheet_directory_uri()."/images/default-badge.png";
+		
 		$producer_org 			= $producerSection['producer_or_org'];
 		$contact 				= $producerSection['contact_email'];
-		if(str_contains($contact, "@")) {
-			$contact 			= "mailto:" . $contact;
-		}
+		$contactLink			= (str_contains($contact, "@") ? "mailto:" . $contact : $contact);
+		
 		$faire_link 			= $producerSection['link_to_faire'];
+
 		// Highlights Section
 		$highlightsSection 		= get_field("faire_highlights");
-		$highlightImages 		= $highlightsSection['faire_images'];
-		$highlightLink 			= $highlightsSection['faire_highlight_link'];
+		$highlightImages 		= $highlightsSection['faire_images'];	
+		$photo_credit			= $highlightsSection['photo_credit'];		
+		
 		// Dates
 		$faire_year 			= date('Y', strtotime($EM_Event->event_start_date));
-		$faire_date 			= date("F, Y", strtotime($EM_Event->event_start_date));
+		$faire_date 			= date("F Y", strtotime($EM_Event->event_start_date));
 		$faire_countries 		= em_get_countries();
 		$faire_country 			= $EM_Event->location->location_country;
 	?>
-    <section id="eventHeader" style="background-image:url(<?php echo $hero_bg['url']; ?>">
+    <section id="eventHeader" style="background-image:url('<?php echo $hero_bg; ?>')">
 	    <div class="logo-wrapper">
 			<h1 class="single-post-title"><?php the_title(); ?></h1>
-			<?php if(!empty($faire_logo['url'])) { ?>
-				<img id="faireLogo" src="<?php echo $faire_logo['url']; ?>" />
+			<?php if(!empty($faire_logo)) { ?>
+				<img id="faireLogo" src="<?php echo $faire_logo; ?>" />
 			<?php } ?>
 		</div>
 		<div class="breadcrumbs">
@@ -62,26 +66,31 @@
 			if($faire_video && is_valid_video($faire_video)) {
 				global $wp_embed;
 				echo $wp_embed->run_shortcode('[embed]' . $faire_video . '[/embed]');
-			} else { ?>
-			// this should be the featured image
-				<img src="<?php echo $faire_graphic['url']; ?>" alt="<?php the_title(); ?> Featured Image" />
+			} else { ?>			
+				<?php echo get_the_post_thumbnail(); ?>
 			<?php }
 			?>
 		</div>
 		<div class="faire-info-box">
 			<div class="striped-background"></div>
-			<h5 class="faire-date"><?php echo $faire_date; ?></h5>
-			<h4 class="faire-country"><?php echo (isset($country_array[$faire_country])?$country_array[$faire_country]:''); ?></h4>
+			<h5 class="faire-date"><?php echo strtoupper($faire_date); ?></h5>
+			<h4 class="faire-country"><?php echo (isset($faire_countries[$faire_country])?$faire_countries[$faire_country]:''); ?></h4>
 			<div class="blue-spacer"></div>
-			<h3 class="faire-stat">Projects: <?php echo $faire_num_projects; ?></h3> <?php // don't show if there is no number ?>
-			<h3 class="faire-stat">Attendess: <?php echo $faire_num_attendees; ?></h3> <?php // don't show if there is no number ?>
+			<?php if($faire_num_projects != ''){?>
+				<h3 class="faire-stat">Projects: <?php echo $faire_num_projects; ?></h3>
+			<?php } ?>			
+			<?php if($faire_num_attendees != ''){?>
+				<h3 class="faire-stat">Attendees: <?php echo $faire_num_attendees; ?></h3>
+			<?php } ?>						
 			<div class="social-links reversed">
 				<?php foreach ($socialLinks as $link) {
 					if($link) {
 						echo('<a class="link" href="' . $link . '"></a>');
 					}
 				} ?>
-				<a class="link fa fa-link" href="<?php echo $faire_link; ?>" target="_blank"></a> <?php // // don't display if no faire_link ?>
+				<?php if($faire_link != ''){ ?>
+					<a class="link fa fa-link" href="<?php echo $faire_link; ?>" target="_blank"></a>
+				<?php } ?>				
 			</div>
 		</div>
 	</section>
@@ -91,37 +100,42 @@
 	<section id="producerInfo">
 		<div class="faire-custom-image">
 			<div class="striped-background"></div>
-			<img src="<?php echo $faire_graphic['url']; ?>" alt="<?php the_title(); ?> Custom Image"  /> <?php // // pull the default image from 1920 image ?>
+			<img src="<?php echo $faire_graphic; ?>" alt="<?php the_title(); ?> Custom Image"  /> <?php // // pull the default image from 1920 image ?>
 		</div>
 		<div class="producer-details" style="background-image:url('<?php echo $faire_badge; ?>');">
-		  <div class="producer-details-overlay">
-			<div class="producer-details-inner-wrap">
-				<h3>Producer Information</h3>
-				<?php if($producer_org) { ?>
-					<div class="producer-detail"><b>Producer:</b> <?php echo $producer_org; ?></div>
-				<?php } ?>
-				<?php if(!empty($contact)) { ?>
-					<div class="producer-detail"><b>Contact:</b> <a href="<?php echo $contact; ?>"><?php echo $contact; ?></a></div>
-				<?php } ?>
-				<?php if(!empty($faire_link)) { ?>
-		  			<div class="producer-detail"><b>Website:</b> <a href="<?php echo $faire_link; ?>" target="_blank"><?php echo $faire_link; ?></a></div>
-				<?php } ?>
-			</div>
-		  </div>
+			<?php if($producer_org || !empty($contact) || !empty($faire_link) ){ ?>
+				<div class="producer-details-overlay">
+					<div class="producer-details-inner-wrap">				
+						<h3>Producer Information</h3>
+						<?php if($producer_org) { ?>
+							<div class="producer-detail"><b>Producer:</b> <?php echo $producer_org; ?></div>
+						<?php } ?>
+						<?php if(!empty($contact)) { ?>
+							<div class="producer-detail"><b>Contact:</b> <a href="<?php echo $contactLink; ?>"><?php echo $contact; ?></a></div>
+						<?php } ?>
+						<?php if(!empty($faire_link)) { ?>
+							<div class="producer-detail"><b>Website:</b> <a href="<?php echo $faire_link; ?>" target="_blank"><?php echo $faire_link; ?></a></div>
+						<?php } ?>				
+					</div>
+				</div>
+			<?php } ?>				
 		</div>
 	</section>
 
 	<section id="faireHighlights">
 		<?php
-			if( $highlightImages ): ?>
+			if( $highlightImages ) { ?>
 			    <h2>Highlights</h2>
 				<div class="blue-spacer"></div>
 				<div id="highlightGallery">
-                <?php foreach($highlightImages as $image) { ?>
-                    <div class="gallery-item"><img alt="<?php echo $image['caption'];?>"  src='<?php echo $image['url']; ?>' /></div>
-                <?php } ?>
+					<?php foreach($highlightImages as $image) { ?>
+						<div class="gallery-item"><img alt="<?php echo $image['alt'];?>"  src='<?php echo $image['url']; ?>' /></div>
+					<?php } ?>
+					<?php if($photo_credit!=''){?>
+						<span>Photo Credit: <?php echo $photo_credit;?></span>
+					<?php } ?>
                 </div>
-			<?php endif; ?>
+			<?php } ?>
 	</section>
 	
 	<?php // End of the loop.
