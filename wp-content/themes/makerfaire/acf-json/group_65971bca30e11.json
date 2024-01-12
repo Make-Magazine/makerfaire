@@ -3,66 +3,6 @@
     "title": "Project Custom Fields",
     "fields": [
         {
-            "key": "field_65971c1f37e2a",
-            "label": "Blog ID",
-            "name": "blog_id",
-            "aria-label": "",
-            "type": "text",
-            "instructions": "If this is from a global site, what is the blog id of that site",
-            "required": 0,
-            "conditional_logic": 0,
-            "wrapper": {
-                "width": "",
-                "class": "",
-                "id": ""
-            },
-            "default_value": "",
-            "maxlength": "",
-            "placeholder": "",
-            "prepend": "",
-            "append": ""
-        },
-        {
-            "key": "field_65971bcc37e29",
-            "label": "Entry ID",
-            "name": "entry_id",
-            "aria-label": "",
-            "type": "text",
-            "instructions": "If this is from a global site, what is the entry id on that site",
-            "required": 0,
-            "conditional_logic": 0,
-            "wrapper": {
-                "width": "",
-                "class": "",
-                "id": ""
-            },
-            "default_value": "",
-            "maxlength": "",
-            "placeholder": "",
-            "prepend": "",
-            "append": ""
-        },
-        {
-            "key": "field_65971c4237e2c",
-            "label": "Form ID",
-            "name": "form_id",
-            "aria-label": "",
-            "type": "text",
-            "instructions": "If this is from a global site, what is the form id that created this exhibit",
-            "required": 0,
-            "conditional_logic": 0,
-            "wrapper": {
-                "width": "",
-                "class": "",
-                "id": ""
-            },
-            "default_value": "",
-            "maxlength": "",
-            "placeholder": "",
-            "prepend": "",
-            "append": ""
-        },
-        {
             "key": "field_65971c3f37e2b",
             "label": "Title",
             "name": "title",
@@ -84,7 +24,7 @@
         },
         {
             "key": "field_65971c7837e2d",
-            "label": "Exhibit Description",
+            "label": "Description",
             "name": "exhibit_description",
             "aria-label": "",
             "type": "textarea",
@@ -103,33 +43,8 @@
             "new_lines": ""
         },
         {
-            "key": "field_65971c8637e2e",
-            "label": "Exhibit Photo",
-            "name": "exhibit_photo",
-            "aria-label": "",
-            "type": "image",
-            "instructions": "",
-            "required": 0,
-            "conditional_logic": 0,
-            "wrapper": {
-                "width": "",
-                "class": "",
-                "id": ""
-            },
-            "return_format": "url",
-            "library": "all",
-            "min_width": "",
-            "min_height": "",
-            "min_size": "",
-            "max_width": "",
-            "max_height": "",
-            "max_size": "",
-            "mime_types": "",
-            "preview_size": "medium"
-        },
-        {
             "key": "field_65971cbd37e2f",
-            "label": "Exhibit Video Link",
+            "label": "Project Video Link",
             "name": "exhibit_video_link",
             "aria-label": "",
             "type": "url",
@@ -146,7 +61,7 @@
         },
         {
             "key": "field_65971cd737e30",
-            "label": "Exhibit Inspiration",
+            "label": "Project Inspiration",
             "name": "exhibit_inspiration",
             "aria-label": "",
             "type": "textarea",
@@ -166,7 +81,7 @@
         },
         {
             "key": "field_65971cf137e31",
-            "label": "Exhibit Website",
+            "label": "Project Website",
             "name": "exhibit_website",
             "aria-label": "",
             "type": "url",
@@ -183,7 +98,7 @@
         },
         {
             "key": "field_65971cff37e32",
-            "label": "Exhibit Social",
+            "label": "Project Social",
             "name": "exhibit_social",
             "aria-label": "",
             "type": "repeater",
@@ -224,46 +139,6 @@
             ]
         },
         {
-            "key": "field_65971d5137e36",
-            "label": "Entry Status",
-            "name": "entry_status",
-            "aria-label": "",
-            "type": "text",
-            "instructions": "",
-            "required": 0,
-            "conditional_logic": 0,
-            "wrapper": {
-                "width": "",
-                "class": "",
-                "id": ""
-            },
-            "default_value": "",
-            "maxlength": "",
-            "placeholder": "",
-            "prepend": "",
-            "append": ""
-        },
-        {
-            "key": "field_65971d5a37e37",
-            "label": "Entry Link",
-            "name": "entry_link",
-            "aria-label": "",
-            "type": "text",
-            "instructions": "",
-            "required": 0,
-            "conditional_logic": 0,
-            "wrapper": {
-                "width": "",
-                "class": "",
-                "id": ""
-            },
-            "default_value": "",
-            "maxlength": "",
-            "placeholder": "",
-            "prepend": "",
-            "append": ""
-        },
-        {
             "key": "field_65971d6537e38",
             "label": "Maker Data",
             "name": "maker_data",
@@ -277,12 +152,12 @@
                 "class": "",
                 "id": ""
             },
-            "layout": "table",
+            "layout": "block",
             "pagination": 0,
             "min": 0,
             "max": 0,
             "collapsed": "",
-            "button_label": "Add Row",
+            "button_label": "Add Maker",
             "rows_per_page": 20,
             "sub_fields": [
                 {
@@ -406,13 +281,11 @@
                         "id": ""
                     },
                     "layout": "table",
-                    "pagination": 0,
                     "min": 0,
                     "max": 0,
                     "collapsed": "",
-                    "button_label": "Add Row",
+                    "button_label": "Add Maker Social",
                     "rows_per_page": 20,
-                    "parent_repeater": "field_65971d6537e38",
                     "sub_fields": [
                         {
                             "key": "field_65971e1b3a5c8",
@@ -432,7 +305,8 @@
                             "placeholder": "",
                             "parent_repeater": "field_65971dde3a5c7"
                         }
-                    ]
+                    ],
+                    "parent_repeater": "field_65971d6537e38"
                 }
             ]
         },
@@ -452,26 +326,6 @@
             },
             "layout": "block",
             "sub_fields": [
-                {
-                    "key": "field_65971d3437e34",
-                    "label": "Faire Name",
-                    "name": "faire_name",
-                    "aria-label": "",
-                    "type": "text",
-                    "instructions": "",
-                    "required": 0,
-                    "conditional_logic": 0,
-                    "wrapper": {
-                        "width": "",
-                        "class": "",
-                        "id": ""
-                    },
-                    "default_value": "",
-                    "maxlength": "",
-                    "placeholder": "",
-                    "prepend": "",
-                    "append": ""
-                },
                 {
                     "key": "field_65971d4337e35",
                     "label": "Faire Year",
@@ -545,6 +399,64 @@
             "mime_types": "",
             "insert": "append",
             "preview_size": "medium"
+        },
+        {
+            "key": "field_65a17027e1bcd",
+            "label": "Project Location",
+            "name": "project_location",
+            "aria-label": "",
+            "type": "group",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "layout": "block",
+            "sub_fields": [
+                {
+                    "key": "field_65a1703ae1bce",
+                    "label": "State",
+                    "name": "state",
+                    "aria-label": "",
+                    "type": "text",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "maxlength": "",
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": ""
+                },
+                {
+                    "key": "field_65a17042e1bcf",
+                    "label": "Country",
+                    "name": "country",
+                    "aria-label": "",
+                    "type": "text",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "maxlength": "",
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": ""
+                }
+            ]
         }
     ],
     "location": [
@@ -565,5 +477,5 @@
     "active": true,
     "description": "",
     "show_in_rest": 0,
-    "modified": 1705076557
+    "modified": 1705082771
 }
