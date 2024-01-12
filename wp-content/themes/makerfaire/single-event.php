@@ -47,6 +47,21 @@
 		$faire_date 			= date("F Y", strtotime($EM_Event->event_start_date));
 		$faire_countries 		= em_get_countries();
 		$faire_country 			= $EM_Event->location->location_country;
+
+		//Projects Section
+		//find any projects associated with this faire
+		$args = array(
+			'posts_per_page'    => 3,
+			'post_type'     => 'projects',
+			'meta_key'      => 'faire_information_faire_post',
+			'meta_value'    =>  get_the_id(),
+			'orderby'        => 'rand'
+		);
+		
+		$project_query = new WP_Query( $args );				
+
+		//TBD add filter identifier by faire
+		$linkToProjects = (isset($project_query->posts) && !empty($project_query->posts) ? '/'.$faire_year.'/projects' : '');
 	?>
     <section id="eventHeader" style="background-image:url('<?php echo $hero_bg; ?>')">
 	    <div class="logo-wrapper">
@@ -55,8 +70,8 @@
 				<img id="faireLogo" src="<?php echo $faire_logo; ?>" />
 			<?php } ?>
 		</div>
-		<div class="breadcrumbs">
-			<a href="/yearbook/<?php echo $faire_year; ?>/faires">Home</a> / <a href="<?php echo '//' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']; ?>projects">Projects</a>
+		<div class="breadcrumbs">			
+			<a href="/<?php echo $faire_year; ?>/faires">Home</a> <?php if($linkToProjects !='') echo '/ <a href="'.$linkToProjects.'">Projects</a>';?>
 		</div>
 	</section>
 
@@ -95,8 +110,24 @@
 		</div>
 	</section>
 
-	<section id="faireProjects"></section>
-
+	<section id="faireProjects">
+		<?php if(isset($project_query->posts) && !empty($project_query->posts)) { ?>
+			<h2>Projects</h2>
+			<div class="blue-spacer"></div>
+			<?php foreach($project_query->posts as $project){ 
+				echo 'image:'.get_the_post_thumbnail($project->ID).'<br/>';
+				echo 'title:'.$project->post_title.'<br/>';
+				echo 'desc:'.$project->post_excerpt.'<br/>';
+				echo 'link:'.get_permalink($project->ID).'<br/>';
+				echo '<br/>';				 
+				?>
+				
+			<?php } ?>	
+			Link to more projects <?php echo $linkToProjects;?>
+		<?php } ?>
+		
+	</section>
+	
 	<section id="producerInfo">
 		<div class="faire-custom-image">
 			<div class="striped-background"></div>

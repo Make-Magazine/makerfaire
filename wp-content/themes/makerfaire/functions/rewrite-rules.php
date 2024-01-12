@@ -47,7 +47,7 @@ add_filter( 'rewrite_rules_array', 'mf_add_rewrite_rules' );
 function mf_filter_post_type_link( $link, $post ) {
   if ( $post->post_type == 'projects' ) {
     $faireData = get_field("faire_information", $post->ID);				
-    $faire_year = (isset($faireData["faire_year"]->name)?$faireData["faire_year"]->name:'');
+    $faire_year = (isset($faireData["faire_year"]) ? $faireData["faire_year"] : '');
     $link = str_replace( '%faire_year%', $faire_year, $link );    
   }elseif ( $post->post_type == 'event' ) {    
     $event_start_date = get_post_meta( $post->ID, '_event_start_date', true );
