@@ -24,7 +24,7 @@
         },
         {
             "key": "field_65971c7837e2d",
-            "label": "Exhibit Description",
+            "label": "Description",
             "name": "exhibit_description",
             "aria-label": "",
             "type": "textarea",
@@ -44,7 +44,7 @@
         },
         {
             "key": "field_65971cbd37e2f",
-            "label": "Exhibit Video Link",
+            "label": "Video Link",
             "name": "exhibit_video_link",
             "aria-label": "",
             "type": "url",
@@ -61,7 +61,7 @@
         },
         {
             "key": "field_65971cd737e30",
-            "label": "Exhibit Inspiration",
+            "label": "Inspiration",
             "name": "exhibit_inspiration",
             "aria-label": "",
             "type": "textarea",
@@ -81,7 +81,7 @@
         },
         {
             "key": "field_65971cf137e31",
-            "label": "Exhibit Website",
+            "label": "Project Website",
             "name": "exhibit_website",
             "aria-label": "",
             "type": "url",
@@ -98,7 +98,7 @@
         },
         {
             "key": "field_65971cff37e32",
-            "label": "Exhibit Social",
+            "label": "Project Social",
             "name": "exhibit_social",
             "aria-label": "",
             "type": "repeater",
@@ -403,6 +403,64 @@
             "mime_types": "",
             "insert": "append",
             "preview_size": "medium"
+        },
+        {
+            "key": "field_65a07494426dc",
+            "label": "Project Location",
+            "name": "project_location",
+            "aria-label": "",
+            "type": "group",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "layout": "block",
+            "sub_fields": [
+                {
+                    "key": "field_65a074c5426de",
+                    "label": "State",
+                    "name": "state",
+                    "aria-label": "",
+                    "type": "text",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "maxlength": "",
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": ""
+                },
+                {
+                    "key": "field_65a074cc426df",
+                    "label": "Country",
+                    "name": "country",
+                    "aria-label": "",
+                    "type": "text",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "maxlength": "",
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": ""
+                }
+            ]
         }
     ],
     "location": [
@@ -423,5 +481,5 @@
     "active": true,
     "description": "",
     "show_in_rest": 0,
-    "modified": 1704844267
+    "modified": 1705014863
 }
