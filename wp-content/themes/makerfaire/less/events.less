@@ -126,38 +126,6 @@
          font-size: 80px;
          font-family: "Roboto Bold";
       }
-      #highlightGallery {
-         display: flex;
-         flex-wrap: wrap;
-         gap: 10px;
-         max-width: 1120px;
-         margin: 30px 15px 50px;
-         .gallery-item {
-            width: calc(25% - 9px);
-            aspect-ratio: 16/9;
-            // Fallback
-            @supports not (aspect-ratio: auto) {
-               &::before {
-                  float: left;
-                  padding-top: 56.25%;
-                  content: "";
-               }
-               &::after {
-                  display: block;
-                  content: "";
-                  clear: both;
-               }
-            }
-            display: flex;
-            justify-content: center;
-            overflow: hidden;
-            img {
-               object-fit: cover;
-               min-width: 100%;
-               min-height: 100%
-            }
-         }
-      }
    }
 }
 
@@ -179,4 +147,37 @@
    height: 10px;
    background: #6EC1E4;
    width: 10%;
+}
+
+#highlightGallery {
+   display: flex;
+   flex-wrap: wrap;
+   gap: 10px;
+   max-width: 1120px;
+   margin: 30px 15px 50px;
+   .gallery-item {
+      width: calc(25% - 9px);
+      aspect-ratio: 16/9;
+      // Fallback
+      @supports not (aspect-ratio: auto) {
+         &::before {
+            float: left;
+            padding-top: 56.25%;
+            content: "";
+         }
+         &::after {
+            display: block;
+            content: "";
+            clear: both;
+         }
+      }
+      display: flex;
+      justify-content: center;
+      overflow: hidden;
+      img {
+         object-fit: cover;
+         min-width: 100%;
+         min-height: 100%
+      }
+   }
 }

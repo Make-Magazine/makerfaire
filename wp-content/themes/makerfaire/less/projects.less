@@ -1,6 +1,6 @@
 .single-projects {
 	h1, h2, h3, h4, h5 {
-		font-family: Montserrat, Helvetica, Arial, sans-serif;
+		//font-family: Montserrat, Helvetica, Arial, sans-serif;
 	}
 	#project-hero {
 		background-repeat: no-repeat;
@@ -46,9 +46,11 @@
 				h3 {
 					text-transform: uppercase;
 					font-size: 16px;
-					font-weight: 600;
+					font-weight: 400;
+					font-family: "Roboto Bold";
 				}
 				h1.project-title {
+					font-family: "Roboto Bold";
 					font-size: 28px;
 					font-weight: 300;
 				}
@@ -86,6 +88,16 @@
 				h3 {
 					text-transform: uppercase;
 				}
+			}
+		}
+		&#project-photos {
+			flex-direction: column;
+  			align-items: center;
+			#highlightGallery {
+				width: 100%;
+			}
+			.blue-spacer {
+				max-width: 120px;
 			}
 		}
 		&#project-makers {

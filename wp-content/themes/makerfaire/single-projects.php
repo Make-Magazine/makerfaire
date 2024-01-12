@@ -50,13 +50,15 @@ $maker_data = get_field("maker_data");
                  ?>
             </h4>
             <div class="blue-spacer"></div>
-            <p><?php echo get_field("exhibit_description");?></p>
+            <p><?php echo html_entity_decode(get_field("exhibit_description"));?></p>
             <div class="social-links reversed">
-				<?php foreach ($exhibit_social as $social) {                    
-					if($social['social_url']) {
-						echo('<a class="link" href="' . $social['social_url'] . '"></a>');
-					}
-				}
+				<?php if(!empty($exhibit_social)) {
+                        foreach ($exhibit_social as $social) {                    
+                            if($social['social_url']) {
+                                echo('<a class="link" href="' . $social['social_url'] . '"></a>');
+                            }
+				        }
+                    }
                 if(!empty($exhibit_website)) { ?>
 				    <a class="link fa fa-link" href="<?php echo $exhibit_website; ?>" target="_blank"></a>
                 <?php } ?>
@@ -77,17 +79,32 @@ $maker_data = get_field("maker_data");
                     ?>
                 </div>
             <?php } ?>
-            <div class="project-inspiration">
-                <?php
-                if($exhibit_inspiration!=''){
-                    echo '<h3>What Inspired You to Make This?</h3>';
-                    echo '<p>'.$exhibit_inspiration.'</p>';
-                }
-                ?>
-                <div class="blue-spacer"></div>
-            </div>
+            <?php if($exhibit_inspiration!=''){ ?>
+                <div class="project-inspiration">
+                    <?php
+                        echo '<h3>What Inspired You to Make This?</h3>';
+                        echo '<p>'.$exhibit_inspiration.'</p>';
+                    ?>
+                    <div class="blue-spacer"></div>
+                </div>
+            <?php } ?>
         </section>
     <?php } ?>
+
+    <section id="project-photos">
+		<?php
+			if( $exhibit_additional_images ) { ?>
+			    <h2>Additional Project Photos</h2>
+				<div id="highlightGallery">
+					<?php foreach($exhibit_additional_images as $image) { ?>
+						<div class="gallery-item"><img alt="<?php echo $image['alt'];?>"  src='<?php echo $image['url']; ?>' /></div>
+					<?php } ?>
+					<?php /* for later if($photo_credit!=''){?>
+						<span>Photo Credit: <?php echo $photo_credit;?></span>
+					<?php } */ ?>
+                </div>
+			<?php } ?>
+	</section>
     
     <section id="project-makers" class="container">
     
@@ -164,5 +181,51 @@ $maker_data = get_field("maker_data");
 
 
 </article><!--Container-->
-
+<script>
+jQuery(document).ready(function(){
+	var numImages = jQuery('#highlightGallery .gallery-item').length;
+	jQuery('#highlightGallery .gallery-item').on("click", function () {
+		//every time you click on a gallery item, open a dialog modal to show the images
+		var galleryItem = jQuery(this);
+		jQuery('body').append('<div id="dialog"><img src="' + jQuery("img", this).attr('src') + '" width="100%" /></div>');
+		jQuery('#dialog').dialog({
+			dialogClass: "hide-heading",
+			modal: true,
+			// these buttons will go to the next image from the faireGallery and replace the src of the image in the modal with the next or previous image in the gallery
+			buttons: numImages <= 1 ? [] : [
+				{
+					"class": "dialog-nav-btn dialog-prev-btn",
+					click: function() {
+						if(galleryItem.prev(".gallery-item").children("img").attr("src")) {
+							jQuery("#dialog img").attr("src", galleryItem.prev(".gallery-item").children("img").attr("src"));
+							galleryItem = galleryItem.prev();
+						} else {
+							jQuery("#dialog").dialog('close');
+						}
+					}
+				},
+				{
+					"class": "dialog-nav-btn dialog-next-btn",
+					click: function() {  
+						if(galleryItem.next(".gallery-item").children("img").attr("src")) {
+							jQuery("#dialog img").attr("src", galleryItem.next(".gallery-item").children("img").attr("src"));
+							galleryItem = galleryItem.next();
+						} else {
+							jQuery("#dialog").dialog('close');
+						}
+					}
+				}
+			],
+			close: function(event, ui) {
+				jQuery(this).remove();
+			},
+			open: function(event, ui) { 
+			jQuery('.ui-widget-overlay').bind('click', function(){ 
+				jQuery("#dialog").dialog('close');
+			}); 
+		}
+		});
+	});
+});
+</script>
 <?php get_footer(); ?>

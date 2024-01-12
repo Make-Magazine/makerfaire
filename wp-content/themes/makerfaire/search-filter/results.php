@@ -76,26 +76,16 @@ if ( $query->have_posts() ) {
 			}
 			if($postType == "projects") {
 				$makerData = get_field('maker_data');
-				$maker_name = $makerData[0]['maker_or_group_name'];
-				$faireInfo = get_field('faire_information');
-				$faireID = $faireInfo['faire_post']->ID;
-				$event_id = get_post_meta($faireID, '_event_id');
-				$EM_Event = new EM_Event( $event_id[0] );
-				$EM_Location = $EM_Event->get_location();
-				$faire_location = $EM_Location->location_town;
-				$faire_state = $EM_Location->location_state;
-				$faire_countries = em_get_countries();
-				$faire_country = $EM_Location->location_country;
-				if(!empty($faire_state) && $faire_country == "US") {
-					$faire_location .= ", " . $faire_state;
-				}
-				$faire_location .= ", " . $faire_countries[$faire_country];
+				$maker_name = isset($makerData[0]['maker_or_group_name']) ? $makerData[0]['maker_or_group_name'] : "";
+				$project_location = get_field('project_location');
+				$project_state = (isset($project_location['state']) ? $project_location['state']:'');
+				$project_country = (isset($project_location['country']) ? $project_location['country']:'');
 				$categories = strip_tags(get_the_term_list( get_the_ID(), "mf-project-cat", '', ', ' ));
 				$excerpt = get_field('exhibit_description');
 			}
 			
 			?>
-			<div class="result-item">
+			<div class="result-item <?php echo $postType; ?>">
 				<?php if ( has_post_thumbnail() ) { ?>
 						<div class="result-image"><a href="<?php the_permalink(); ?>">
 							<?php the_post_thumbnail("small"); ?>
@@ -104,27 +94,52 @@ if ( $query->have_posts() ) {
 				<div class="results-text" <?php echo $result_text_style; ?>>
 					<h2><a href="<?php the_permalink(); ?>"><?php echo $title; ?></a></h2>
 					<?php if($postType == "event" || $postType == "faire") { ?>
+						<?php if(!empty($faire_location)){ ?>
+							<div class="result-detail">
+								<i class="fa fa-map-marker-alt"></i><?php echo $faire_location; ?>
+							</div>
+						<?php } ?>
+						<?php if(!empty($faire_countries[$faire_country])){ ?>
+							<div class="result-detail">
+								<i class="fa fa-globe-africa"></i><?php echo $faire_countries[$faire_country]; ?>
+							</div>
+						<?php } ?>
 						<div class="result-detail">
-							<?php if(!empty($faire_location)){ ?><i class="fa fa-map-marker-alt"></i><?php echo $faire_location; } ?>
-						</div>
-						<div class="result-detail">
-							<?php if(!empty($faire_countries[$faire_country])){ ?><i class="fa fa-globe-africa"></i><?php echo $faire_countries[$faire_country]; } ?>
+							<a class="sf-learn-more" href="<?php the_permalink(); ?>">Learn More</a>
 						</div>
 					<?php } ?>
 					<?php if($postType == "projects") { ?>
-						<div class="result-detail">
-							<?php if(!empty($maker_name)){ ?><i class="fa fa-user"></i><?php echo $maker_name; } ?>
-						</div>
-						<div class="result-detail">
-							<?php if(!empty($faire_location)){ ?><i class="fa fa-map-marker-alt"></i><?php echo $faire_location; } ?>
-						</div>
-						<div class="result-detail">
-							<?php if(!empty($categories)){ ?><i class="fa fa-lightbulb"></i><?php echo $categories; } ?>
-						</div>
-						<div class="result-detail">
-							<?php if(!empty($excerpt)){ ?><i class="fa fa-info-circle"></i><span class="truncated"><?php echo $excerpt; ?></span> <?php } ?>
-						</div>
-						<div class="result-detail"><a href="<?php the_permalink(); ?>" style="margin-left:30px;">Learn More</a></div>
+						<?php if(!empty($maker_name)){ ?>
+							<div class="result-detail">
+								<i class="fa fa-user"></i><?php echo $maker_name; ?>
+							</div>
+						<?php } ?>
+						<?php if(!empty($project_location)){ ?>
+							<div class="result-detail">
+								<i class="fa fa-map-marker-alt"></i>
+								<span class="one-line">
+								<?php 
+									if(!empty($project_state)) {
+										echo $project_state . ", ";
+									}
+									if(!empty($project_country)) {
+										echo $project_country; 
+									}
+								?>
+								</span>
+							</div>
+						<?php } ?>
+						<?php if(!empty($categories)){ ?>
+							<div class="result-detail">
+								<i class="fa fa-lightbulb"></i><?php echo $categories; ?>
+							</div>
+						<?php } ?>
+						<?php if(!empty($excerpt)){ ?>
+							<div class="result-detail">
+								<i class="fa fa-info-circle"></i><span class="truncated"><?php echo strip_tags(html_entity_decode($excerpt)); ?></span>
+							</div>
+						<?php } ?>
+						<div class="result-detail"><a href="<?php the_permalink(); ?>" class="sf-learn-more">Learn More</a></div>
 					<?php } ?>
 				</div>
 			</div>
