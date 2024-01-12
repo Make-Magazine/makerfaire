@@ -144,7 +144,7 @@ function projects_content_column( $column, $post_id ) {
 			echo $faire_name;
 			break;
 		case 'faire_year':					
-			$faire_year = (isset($faireData["faire_year"]->name)?$faireData["faire_year"]->name:'');
+			$faire_year = (isset($faireData["faire_year"]) ? $faireData["faire_year"] : '');
 			echo $faire_year;
 			
 			break;	
