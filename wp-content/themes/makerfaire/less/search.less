@@ -12,13 +12,28 @@
 
 form.searchandfilter {
 	position: fixed;
-	left: 0px;
+	left: -10px;
 	background: #f1f1f1;
 	border: solid 1px #ccc;
 	border-radius: 4px;
 	padding-right: 30px;
 	ul {
 		margin-right: 15px;
+		li {
+			label { 
+				width: 100%;
+				select, input {
+					width: 100%;
+					background: #fff;
+					border-radius: 0px;
+					border: solid #ccc 1px;
+					min-height: 35px;
+				}
+				select {
+					padding-top: 7px;
+				}
+			}
+		}
 	}
 	.sf-field-reset {
 		position: absolute;
@@ -30,10 +45,12 @@ form.searchandfilter {
   			width: 30px;
 			rotate: 45deg;
 			font-size: 20px;
+			border: solid 1px #ccc;
+			background: #fff;
 		}
 	}
 	&.minimize {
-		width: 15px;
+		width: 45px;
 		ul li { 
 			visibility: hidden; 
 		}

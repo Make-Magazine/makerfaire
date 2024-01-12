@@ -9,7 +9,7 @@
 		// ACF Data
 		//hero section
 		$topSection 			= get_field('top_section');
-		$hero_bg 				= isset($topSection['hero_image']) ? $topSection['hero_image'] : ""; //default background image;
+		$hero_bg 				= isset($topSection['hero_image']) ? $topSection['hero_image'] : get_template_directory() . "/images/eoy/YB_MF_23_1400_Default-1.png"; 
 		$faire_logo 			= $topSection['horizontal_faire_logo']; 
 		// Faire Info Section
 		$faireInfo 				= get_field('faire_info');
@@ -47,8 +47,9 @@
     <section id="eventHeader" style="background-image:url(<?php echo $hero_bg['url']; ?>">
 	    <div class="logo-wrapper">
 			<h1 class="single-post-title"><?php the_title(); ?></h1>
-			<?php // don't show image if it isn't there ?>
-			<img id="faireLogo" src="<?php echo $faire_logo['url']; ?>" />
+			<?php if(!empty($faire_logo['url'])) { ?>
+				<img id="faireLogo" src="<?php echo $faire_logo['url']; ?>" />
+			<?php } ?>
 		</div>
 		<div class="breadcrumbs">
 			<a href="/yearbook/<?php echo $faire_year; ?>/faires">Home</a> / <a href="<?php echo '//' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']; ?>projects">Projects</a>
