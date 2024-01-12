@@ -112,10 +112,15 @@
 			}
 			.single-maker-bio {
 				width: 70%;
+				.maker-name {
+					font-family: "Roboto Bold";
+				}
 			}
 			h2 { 
 				width: 100%;
 				text-align: center;
+				font-family: "Roboto Bold";
+				margin-bottom: 15px;
 			}
 			.multiple-maker-wrapper {
 				display: flex;
@@ -123,10 +128,11 @@
 				gap: 25px;
 				width: 100%;
 				.maker-wrapper {
-					flex: calc(33.333% - 25px);
 					text-align: center;
 					display: flex;
 					flex-direction: column;
+					justify-content: center;
+					max-width: 250px;
 					.img-wrap { 
 						aspect-ratio: 1;
 						display: flex;
@@ -143,7 +149,6 @@
 						font-weight: 400;
 					}
 					.maker-bio {
-						padding: 10px;
 						display: -webkit-box;
 						-webkit-box-orient: vertical;
 						-webkit-line-clamp: 3;
@@ -151,6 +156,9 @@
 					}
 					.social-links {
 						margin-top: auto;
+						padding: 0px;
+						display: flex;
+  						justify-content: center;
 					}
 				}
 			}

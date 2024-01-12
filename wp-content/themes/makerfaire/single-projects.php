@@ -119,7 +119,7 @@ $maker_data = get_field("maker_data");
                 <?php } ?>
             </div>
             <div class="single-maker-bio">
-                <p><?php echo $maker_data[0]["maker_or_group_name"]; ?></p>
+                <p class="maker-name"><?php echo $maker_data[0]["maker_or_group_name"]; ?></p>
                 <p><?php echo $maker_data[0]["maker_bio"]?></p>
                 <div class="social-links reversed">
                     <?php
