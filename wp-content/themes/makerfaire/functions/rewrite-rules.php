@@ -32,6 +32,7 @@ add_filter('rewrite_rules_array', 'maker_url_vars');
 function mf_add_rewrite_rules( $rules ) {
   $new = array();
   $new['([^/]+)/projects/(.+)/?$'] = 'index.php?faire_year=$matches[1]&projects=$matches[2]';  
+  $new['([^/]+)/faires/(.+)/?$']   = 'index.php?faire_year=$matches[1]&event=$matches[2]';  
   return array_merge( $new, $rules ); // Ensure our rules come first
 }
 add_filter( 'rewrite_rules_array', 'mf_add_rewrite_rules' );
