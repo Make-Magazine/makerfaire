@@ -22,15 +22,41 @@ form.searchandfilter {
 		li {
 			label { 
 				width: 100%;
-				select, input {
+				select, input, .chosen-single {
 					width: 100%;
 					background: #fff;
-					border-radius: 0px;
+					border-radius: 3px;
 					border: solid #ccc 1px;
 					min-height: 35px;
 				}
+				input {
+					padding-left: 10px;
+					&::placeholder {
+						color: #999;
+						font-size: 16px;
+						font-weight: 300;
+						opacity: 1;
+					}
+				}
 				select {
 					padding-top: 7px;
+				}
+				.chosen-container {
+					width: 100% !important;
+					font-size: 16px;
+					.chosen-single {
+						background: #fff;
+						color: #999;
+						padding-top: 5px;
+						span { font-weight: 300; }
+						&> div {
+							padding-top: 5px;
+						}
+					}
+					.chosen-results .sf-item-0[data-option-array-index="0"], .chosen-search {
+						display: none;
+					}
+
 				}
 			}
 		}
