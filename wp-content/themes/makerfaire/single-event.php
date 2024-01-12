@@ -8,37 +8,41 @@
 	while ( have_posts() ) : the_post(); 
 		// ACF Data
 		//hero section
-		$topSection = get_field('top_section');
-		  $hero_bg = isset($topSection['hero_image']) ? $topSection['hero_image'] : ""; //default background image;
-		  $faire_logo = $topSection['horizontal_faire_logo']; 
-		$faireInfo = get_field('faire_info');
-		  $faire_video = $faireInfo['faire_video'];
-		  //$faire_custom_image = $faireInfo['faire_custom_image']; this is the featured image
-		  $faire_num_makers = $faireInfo['number_of_makers'];
-		  $faire_num_attendees = $faireInfo['number_of_attendees'];
-		  $faire_num_projects = $faireInfo['number_of_projects'];
-		  $socialLinks = $faireInfo['social_links'];
-		  	$fb_link = $socialLinks['facebook'];
-		  	$twit_link = $socialLinks['twitter'];
-		  	$insta_link = $socialLinks['instagram'];
-		  	$ytube_link = $socialLinks['youtube'];
-		$producerSection = get_field('producer_section');
-		  $faire_graphic = $producerSection['faire_graphic'];
-		  $faire_badge = ($producerSection['circular_faire_logo']) ? $producerSection['circular_faire_logo']['url'] : '//' . $_SERVER['HTTP_HOST'] . "/wp-content/themes/makerfaire/images/default-badge.png";
-		  $producer_org = $producerSection['producer_or_org'];
-		  $contact = $producerSection['contact_email'];
-		  if(str_contains($contact, "@")) {
-			$contact = "mailto:" . $contact;
-		  }
-		  $faire_link = $producerSection['link_to_faire'];
-		$highlightsSection = get_field("faire_highlights");
-		  $highlightImages = $highlightsSection['faire_images'];
-		  $highlightLink = $highlightsSection['faire_highlight_link'];
-		$faire_year = date('Y', strtotime($EM_Event->event_start_date));
-		$faire_date = date("F, Y", strtotime($EM_Event->event_start_date));
-		$faire_countries = em_get_countries();
-		$faire_country = $EM_Event->location->location_country;
-
+		$topSection 			= get_field('top_section');
+		$hero_bg 				= isset($topSection['hero_image']) ? $topSection['hero_image'] : ""; //default background image;
+		$faire_logo 			= $topSection['horizontal_faire_logo']; 
+		// Faire Info Section
+		$faireInfo 				= get_field('faire_info');
+		$faire_video 			= $faireInfo['faire_video'];
+		//$faire_custom_image = $faireInfo['faire_custom_image']; this is the featured image
+		$faire_num_makers 		= $faireInfo['number_of_makers'];
+		$faire_num_attendees 	= $faireInfo['number_of_attendees'];
+		$faire_num_projects 	= $faireInfo['number_of_projects'];
+		// Social Links
+		$socialLinks 			= $faireInfo['social_links'];
+		$fb_link 				= $socialLinks['facebook'];
+		$twit_link 				= $socialLinks['twitter'];
+		$insta_link 			= $socialLinks['instagram'];
+		$ytube_link 			= $socialLinks['youtube'];
+		// Producer Section
+		$producerSection 		= get_field('producer_section');
+		$faire_graphic 			= $producerSection['faire_graphic'];
+		$faire_badge 			= ($producerSection['circular_faire_logo']) ? $producerSection['circular_faire_logo']['url'] : '//' . $_SERVER['HTTP_HOST'] . "/wp-content/themes/makerfaire/images/default-badge.png";
+		$producer_org 			= $producerSection['producer_or_org'];
+		$contact 				= $producerSection['contact_email'];
+		if(str_contains($contact, "@")) {
+			$contact 			= "mailto:" . $contact;
+		}
+		$faire_link 			= $producerSection['link_to_faire'];
+		// Highlights Section
+		$highlightsSection 		= get_field("faire_highlights");
+		$highlightImages 		= $highlightsSection['faire_images'];
+		$highlightLink 			= $highlightsSection['faire_highlight_link'];
+		// Dates
+		$faire_year 			= date('Y', strtotime($EM_Event->event_start_date));
+		$faire_date 			= date("F, Y", strtotime($EM_Event->event_start_date));
+		$faire_countries 		= em_get_countries();
+		$faire_country 			= $EM_Event->location->location_country;
 	?>
     <section id="eventHeader" style="background-image:url(<?php echo $hero_bg['url']; ?>">
 	    <div class="logo-wrapper">
@@ -52,7 +56,7 @@
 	</section>
 
 	<section id="faireInfo">
-		<div class="faire_video">
+		<div class="faire-video">
 			<?php
 			if($faire_video && is_valid_video($faire_video)) {
 				global $wp_embed;
@@ -63,13 +67,13 @@
 			<?php }
 			?>
 		</div>
-		<div class="faire_info_box">
-			<div class="striped_background"></div>
-			<h5 class="faire_date"><?php echo $faire_date; ?></h5>
-			<h4 class="faire_country"><?php echo (isset($country_array[$faire_country])?$country_array[$faire_country]:''); ?></h4>
-			<div class="spacer"></div>
-			<h3 class="faire_stat">Projects: <?php echo $faire_num_projects; ?></h3> <?php // don't show if there is no number ?>
-			<h3 class="faire_stat">Attendess: <?php echo $faire_num_attendees; ?></h3> <?php // don't show if there is no number ?>
+		<div class="faire-info-box">
+			<div class="striped-background"></div>
+			<h5 class="faire-date"><?php echo $faire_date; ?></h5>
+			<h4 class="faire-country"><?php echo (isset($country_array[$faire_country])?$country_array[$faire_country]:''); ?></h4>
+			<div class="blue-spacer"></div>
+			<h3 class="faire-stat">Projects: <?php echo $faire_num_projects; ?></h3> <?php // don't show if there is no number ?>
+			<h3 class="faire-stat">Attendess: <?php echo $faire_num_attendees; ?></h3> <?php // don't show if there is no number ?>
 			<div class="social-links reversed">
 				<?php foreach ($socialLinks as $link) {
 					if($link) {
@@ -84,8 +88,8 @@
 	<section id="faireProjects"></section>
 
 	<section id="producerInfo">
-		<div class="faire_custom_image">
-			<div class="striped_background"></div>
+		<div class="faire-custom-image">
+			<div class="striped-background"></div>
 			<img src="<?php echo $faire_graphic['url']; ?>" alt="<?php the_title(); ?> Custom Image"  /> <?php // // pull the default image from 1920 image ?>
 		</div>
 		<div class="producer-details" style="background-image:url('<?php echo $faire_badge; ?>');">
@@ -110,7 +114,7 @@
 		<?php
 			if( $highlightImages ): ?>
 			    <h2>Highlights</h2>
-				<div class="spacer"></div>
+				<div class="blue-spacer"></div>
 				<div id="highlightGallery">
                 <?php foreach($highlightImages as $image) { ?>
                     <div class="gallery-item"><img alt="<?php echo $image['caption'];?>"  src='<?php echo $image['url']; ?>' /></div>
