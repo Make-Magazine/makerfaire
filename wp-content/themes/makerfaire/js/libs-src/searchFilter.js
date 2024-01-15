@@ -1,6 +1,11 @@
 jQuery(document).ready(function(){
 	jQuery(".search-filter-reset").on('click', function(){
-		jQuery("form.searchandfilter").toggleClass("minimize");
+		jQuery("form.searchandfilter").toggleClass("minimized");
+		if(jQuery(this).attr('value') == "+") {
+			jQuery(this).attr('value', " ");
+		} else {
+			jQuery(this).attr('value', "+");
+		}
 	});
 	jQuery(".sf-field-submit input").on('click', function(event){
 		event.preventDefault();
@@ -11,6 +16,14 @@ jQuery(document).ready(function(){
 		} else {
 			jQuery(this).attr('value', "List View");
 		}
+	});
+
+	jQuery(document).on("sf:ajaxfinish", ".searchandfilter", function(){
+		jQuery('.sf-field-sort_order select.sf-input-select').select2();
+	});
+
+	jQuery(document).ready(function(){
+		jQuery('.sf-field-sort_order select.sf-input-select').select2();
 	});
 });
 

@@ -2,7 +2,6 @@
 	.search-title {
 		margin-bottom:5px;
 	}
-
 	#faire-dropdown-search {
 		position:relative;
 		top:1px;
@@ -13,10 +12,10 @@
 form.searchandfilter {
 	position: fixed;
 	left: -10px;
+	margin-top: 5px;
 	background: #f1f1f1;
 	border: solid 1px #ccc;
 	border-radius: 4px;
-	padding-right: 30px;
 	ul {
 		margin-right: 15px;
 		li {
@@ -53,11 +52,43 @@ form.searchandfilter {
 							padding-top: 5px;
 						}
 					}
-					.chosen-results .sf-item-0[data-option-array-index="0"], .chosen-search {
+					.chosen-results .sf-item-0[data-option-array-index="0"] {
 						display: none;
 					}
-
+					.chosen-drop {
+						box-shadow: none;
+					}
 				}
+			}
+			&.sf-field-search {
+				position: relative;
+				.sf-input-text {
+					padding-left: 30px;
+				}
+				&:before {
+					position: absolute;;
+					font-family: "FontAwesome";
+					content: "\f002";
+					top: 15px;
+					left: 8px;
+					color: #999;
+				}
+			}
+		}
+	}
+	.select2-container {
+		width: 100% !important;
+		.select2-selection {
+			height: 35px;
+			display: flex;
+			align-items: center;
+			border: solid 1px #ccc;
+			.select2-selection__rendered {
+				color: #999;
+				font-weight: 400;
+			}
+			.select2-selection__arrow {
+				top: 5px;
 			}
 		}
 	}
@@ -84,15 +115,21 @@ form.searchandfilter {
 			height: 35px;
 		}
 	}
-	&.minimize {
+	&.minimized {
 		width: 45px;
 		ul li { 
 			visibility: hidden; 
 		}
 		.sf-field-reset {
 			visibility: visible;
-			input {
-				rotate: 0deg;
+			&:before {
+				font-family: "FontAwesome";
+				content: "\f002";
+				position: absolute;
+				z-index: 9;
+				top: 12px;
+				left: 6px;
+				pointer-events: none;
 			}
 		}
 	}
@@ -153,8 +190,7 @@ form.searchandfilter {
 					}
 				 }
 				img { 
-					object-fit: cover;
-					object-position: left bottom;
+					object-fit: contain;
 					width: 100%;
 					height: auto;
 				 }
