@@ -1,5 +1,5 @@
 jQuery(document).ready(function(){
-	jQuery(".search-filter-reset").on('click', function(){
+	jQuery('[data-sf-field-input-type="button"] .search-filter-reset').on('click', function(){
 		jQuery("form.searchandfilter").toggleClass("minimized");
 		if(jQuery(this).attr('value') == "+") {
 			jQuery(this).attr('value', " ");
