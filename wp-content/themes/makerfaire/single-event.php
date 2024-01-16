@@ -114,16 +114,17 @@
 		<?php if(isset($project_query->posts) && !empty($project_query->posts)) { ?>
 			<h2>Projects</h2>
 			<div class="blue-spacer"></div>
-			<?php foreach($project_query->posts as $project){ 
-				echo 'image:'.get_the_post_thumbnail($project->ID).'<br/>';
-				echo 'title:'.$project->post_title.'<br/>';
-				echo 'desc:'.$project->post_excerpt.'<br/>';
-				echo 'link:'.get_permalink($project->ID).'<br/>';
-				echo '<br/>';				 
-				?>
-				
-			<?php } ?>	
-			Link to more projects <?php echo $linkToProjects;?>
+			<div class="projects-wrapper">
+				<?php foreach($project_query->posts as $project){ ?>
+					<div class="faire-project">
+					  <a href="<?php echo get_permalink($project->ID); ?>">
+						<?php echo get_the_post_thumbnail($project->ID); ?>
+						<h4><?php echo $project->post_title; ?></h4>
+						<p><?php echo $project->post_excerpt; ?>
+					</div>
+				<?php } ?>	
+			</div>
+			<a href="<?php echo $linkToProjects;?>" class="btn universal-btn-red">All Projects</a>
 		<?php } ?>
 		
 	</section>
