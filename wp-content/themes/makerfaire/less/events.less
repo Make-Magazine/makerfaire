@@ -71,7 +71,7 @@
             font-size: 32px;
             margin: 0px 0 15px;
          }
-         .spacer {
+         .blue-spacer {
             margin-bottom: 20px;
          }
          .faire-stat {
@@ -85,9 +85,6 @@
             margin-bottom: 20px;
          }
       }
-   }
-   #faireProjects {
-      margin: 15px 0;
    }
    #producerInfo {
       .faire-custom-image {
@@ -126,6 +123,7 @@
       }
    }
    #faireProjects {
+      margin: 15px 0;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -135,12 +133,35 @@
          display: flex;
          gap: 15px;
          h2 { color: #000; }
-         
          .faire-project {
             width: calc(33% - 15px);
             a { 
                text-decoration: none;
                color: #000;
+               .project-image {
+                  aspect-ratio: 12 / 9;
+                  // Fallback
+                  @supports not (aspect-ratio: auto) {
+                     &::before {
+                        float: left;
+                        padding-top: 66.25%;
+                        content: "";
+                     }
+                     &::after {
+                        display: block;
+                        content: "";
+                        clear: both;
+                     }
+                  }
+                  display: flex;
+                  justify-content: center;
+                  overflow: hidden;
+                  img {
+                     object-fit: cover;
+                     width: 100%;
+                     height: 100%;
+                  }
+               }
                h4 {
                   text-align: center;
                   font-family: "Roboto Bold";

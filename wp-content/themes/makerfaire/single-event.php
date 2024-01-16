@@ -118,7 +118,9 @@
 				<?php foreach($project_query->posts as $project){ ?>
 					<div class="faire-project">
 					  <a href="<?php echo get_permalink($project->ID); ?>">
-						<?php echo get_the_post_thumbnail($project->ID); ?>
+					    <div class="project-image">
+							<?php echo get_the_post_thumbnail($project->ID); ?>
+						</div>
 						<h4><?php echo $project->post_title; ?></h4>
 						<p><?php echo $project->post_excerpt; ?>
 					</div>

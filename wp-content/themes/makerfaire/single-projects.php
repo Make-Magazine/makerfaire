@@ -111,33 +111,34 @@ $maker_data = get_field("maker_data");
     <!-- Maker Data -->
     <?php
     if(!empty($maker_data)) {
-        
-        if(count($maker_data) == 1) { ?>
+        // We have different layouts for single maker or multiple makers
+        if(count($maker_data) == 1) { 
+            $first_maker = $maker_data[0]; ?>
             <div class="single-maker-info">
-                <?php if(isset($maker_data[0]["maker_photo"]["url"])){ ?>
-                    <img src="<?php echo $maker_data[0]["maker_photo"]["url"]; ?>" alt="<?php echo $maker_data[0]["maker_or_group_name"]; ?> Maker Photo">
+                <?php if(isset($first_maker["maker_photo"]["url"])){ ?>
+                    <img src="<?php echo $first_maker["maker_photo"]["url"]; ?>" alt="<?php echo $first_maker["maker_or_group_name"]; ?> Maker Photo">
                 <?php } ?>
             </div>
             <div class="single-maker-bio">
-                <p class="maker-name"><?php echo $maker_data[0]["maker_or_group_name"]; ?></p>
-                <p><?php echo $maker_data[0]["maker_bio"]?></p>
+                <p class="maker-name"><?php echo $first_maker["maker_or_group_name"]; ?></p>
+                <p><?php echo $first_maker["maker_bio"]?></p>
                 <div class="social-links reversed">
                     <?php
                     
-                    if(!empty($maker_data[0]['maker_social'])) {
+                    if(!empty($first_maker['maker_social'])) {
                         
-                        foreach($maker_data[0]['maker_social'] as $link) {
+                        foreach($first_maker['maker_social'] as $link) {
                             if($link['maker_social_link']) {
                                 echo('<a class="link" href="' . $link['maker_social_link'] . '"></a>');
                             }
                         } 
                     }
-                    if(!empty($maker_data[0]["maker_website"])) { ?>
-                        <a class="link fa fa-link" href="<?php echo $maker_data[0]["maker_website"]; ?>" target="_blank"></a>
+                    if(!empty($first_maker["maker_website"])) { ?>
+                        <a class="link fa fa-link" href="<?php echo $first_maker["maker_website"]; ?>" target="_blank"></a>
                     <?php } ?>
                 </div>
             </div>
-        <?php } else { // we got a different layout for multiple makers ?>
+        <?php } else { // Multiple makers layout ?>
             <h2>Makers</h2>
             <div class="multiple-maker-wrapper">
             <?php foreach($maker_data as $maker){ ?>
