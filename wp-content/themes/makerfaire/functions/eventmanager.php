@@ -24,7 +24,7 @@ function register_taxonomy_regions() {
 	$args = array(
 		'labels' => $labels,
 		'public' => true,
-		'show_in_nav_menus' => false,		
+		'show_in_nav_menus' => true,		
 		'show_in_quick_edit' => false,
    		'meta_box_cb' => false,
 		'show_tagcloud' => false,
