@@ -42,11 +42,12 @@ function register_cpt_projects() {
 		'labels' => $labels,
 		'hierarchical' => true,		
 		'supports' => array( 'title', 'editor', 'excerpt', 'author', 'thumbnail', 'trackbacks', 'custom-fields','page-attributes'),
-		'taxonomies' => array( 'mf-project-cat','mf-year-cat'),
+		'taxonomies' => array( 'mf-project-cat','mf-year-cat', 'regions'),
 		'public' => true,
 		'menu_icon' => "https:\/\/global.makerfaire.com\/favicon-16x16.png",
 		'show_ui' => true,
-		'show_in_menu' => 'edit.php?post_type=event',
+		//'show_in_menu' => 'edit.php?post_type=event',
+		'show_in_menu' => true,
 		'show_in_nav_menus' => true,
 		'show_in_rest' => true,
 		'publicly_queryable' => true,
@@ -55,7 +56,7 @@ function register_cpt_projects() {
 		'query_var' => true,
 		'can_export' => true,
 		'capability_type' => 'post',
-		'menu_position' => 40,
+		'menu_position' => 25,
 		'rewrite' => false	
 	);
 
@@ -69,12 +70,12 @@ function register_taxonomy_projects_cpt() {
 	register_taxonomy( 'mf-project-cat', array('projects'), 
 		array(
 			'labels' => array(
-				'name' => __( 'Category', 'makerfaire' ),
-				'singular_name' => __( 'Category', 'makerfaire' ),
-				'search_items' => __( 'Categories', 'makerfaire' ),		
-				'all_items' => __( 'All Categories', 'makerfaire' ),
-				'parent_item' => __( 'Parent Category', 'makerfaire' ),
-				'parent_item_colon' => __( 'Parent Category:', 'makerfaire' ),
+				'name' => __( 'Project Category', 'makerfaire' ),
+				'singular_name' => __( 'Project Category', 'makerfaire' ),
+				'search_items' => __( 'Project Categories', 'makerfaire' ),		
+				'all_items' => __( 'All Project Categories', 'makerfaire' ),
+				'parent_item' => __( 'Parent Project Category', 'makerfaire' ),
+				'parent_item_colon' => __( 'Parent Project Category:', 'makerfaire' ),
 				'edit_item' => __( 'Edit Project Category', 'makerfaire' ),
 				'update_item' => __( 'Update Project Category', 'makerfaire' ),
 				'add_new_item' => __( 'Add New Project Category', 'makerfaire' ),
@@ -82,12 +83,13 @@ function register_taxonomy_projects_cpt() {
 				'separate_items_with_commas' => __( 'Separate Project categories with commas', 'makerfaire' ),
 				'add_or_remove_items' => __( 'Add or remove Project Categories', 'makerfaire' ),
 				'choose_from_most_used' => __( 'Choose from most used Project Categories', 'makerfaire' ),
-				'menu_name' => __( 'Categories', 'makerfaire' ),
+				'menu_name' => __( 'Project Categories', 'makerfaire' ),
 			),
 			'public' => true,
-			'show_in_nav_menus' => true,			
+			'show_in_nav_menus' => false,
+			'show_in_menu' => 'edit.php?post_type=event',			
 			'hierarchical' => true,
-			'rewrite' => array( 'slug' => 'categories', 'with_front' => false ),
+			//'rewrite' => array( 'slug' => 'project-categories', 'with_front' => false ),
 			'query_var' => true,
 			'show_in_rest' => true	
 			
@@ -109,7 +111,9 @@ function register_taxonomy_projects_cpt() {
 				'menu_name' => __( 'Years', 'makerfaire' )
 			),	
 			'public' => true,						
-			'hierarchical' => false,		
+			'hierarchical' => false,	
+			'show_in_nav_menus' => false,
+			'show_in_menu' => false,				
 			'query_var' => true, 						
 			'show_admin_column' => true			
 		)		
