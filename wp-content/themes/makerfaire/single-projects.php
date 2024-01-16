@@ -14,7 +14,7 @@ $faire_id        = $faireData["faire_post"]->ID;
 $faire_year      = (isset($faireData["faire_year"])?$faireData["faire_year"]:'');
 $producerInfo    = get_field("producer_section");
 $faire_badge     = isset($producerSection['circular_faire_logo']['url']) ? $producerSection['circular_faire_logo']['url'] : get_stylesheet_directory_uri()."/images/default-badge.png";
-$project_info_bg = isset($faire_badge) ? "background:url(" . $faire_badge . ");" : "";
+$project_info_bg = isset($faire_badge) ? "background-image:url(" . $faire_badge . ");" : "";
 
 //hero image
 $faireTopSection = get_field("top_section", $faire_id);
