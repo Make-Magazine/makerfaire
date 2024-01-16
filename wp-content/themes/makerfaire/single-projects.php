@@ -1,17 +1,20 @@
 <?php 
 //Project Information
-$exhibit_photo = wp_get_attachment_image_src( get_post_thumbnail_id(), 'full' )[0];
-$exhibit_video = get_field("exhibit_video_link");
-$exhibit_inspiration = get_field("exhibit_inspiration");
-$exhibit_additional_images = get_field("additional_exhibit_images");
-$exhibit_social = get_field("exhibit_social");
-$exhibit_website = get_field("exhibit_website");
+$exhibit_photo              = wp_get_attachment_image_src( get_post_thumbnail_id(), 'full' )[0];
+$exhibit_video              = get_field("exhibit_video_link");
+$exhibit_inspiration        = get_field("exhibit_inspiration");
+$exhibit_additional_images  = get_field("additional_exhibit_images");
+$exhibit_social             = get_field("exhibit_social");
+$exhibit_website            = get_field("exhibit_website");
 
 //faire information
-$faireData  = get_field("faire_information");
-$faire_name = (isset($faireData["faire_post"]->post_title)?$faireData["faire_post"]->post_title:'');
-$faire_id   = $faireData["faire_post"]->ID;
-$faire_year = (isset($faireData["faire_year"])?$faireData["faire_year"]:'');
+$faireData       = get_field("faire_information");
+$faire_name      = (isset($faireData["faire_post"]->post_title)?$faireData["faire_post"]->post_title:'');
+$faire_id        = $faireData["faire_post"]->ID;
+$faire_year      = (isset($faireData["faire_year"])?$faireData["faire_year"]:'');
+$producerInfo    = get_field("producer_section");
+$faire_badge     = isset($producerSection['circular_faire_logo']['url']) ? $producerSection['circular_faire_logo']['url'] : get_stylesheet_directory_uri()."/images/default-badge.png";
+$project_info_bg = isset($faire_badge) ? "background:url(" . $faire_badge . ");" : "";
 
 //hero image
 $faireTopSection = get_field("top_section", $faire_id);
@@ -32,15 +35,15 @@ $maker_data = get_field("maker_data");
     <header id="project-hero" style="background-image:url('<?php echo $hero_bg; ?>');">
         <div class="hero-overlay"></div>
         <div class="breadcrumbs">
-            <a href="/<?php echo $faire_year; ?>/faires">Home</a> / <a href="/<?php echo $faire_year; ?>/projects">Projects</a>
+            <a href="<?php echo get_permalink($faire_id); ?>">Home</a> / <a href="/yearbook/<?php echo $faire_year; ?>-projects">Projects</a>
         </div>
     </header>
     
     <section id="project-info-section" class="container">
-        <div class="project-info">
-            <h3 class="faire-details"><?php echo $faire_name ." ".$faire_year;?></h3>
+        <div class="project-info" style="<?php echo $project_info_bg; ?>">
+            <h3 class="faire-details"><a href="<?php echo get_permalink($faire_id); ?>"><?php echo $faire_name ." ".$faire_year;?></a></h3>
             <h1 class="project-title"><?php echo get_field("title");?></h1>
-            <h4><?php
+            <h4>Home: <?php
                 if(!empty($project_state)) {
                     echo $project_state . ", ";
                 }
@@ -59,37 +62,27 @@ $maker_data = get_field("maker_data");
                             }
 				        }
                     }
-                if(!empty($exhibit_website)) { ?>
-				    <a class="link fa fa-link" href="<?php echo $exhibit_website; ?>" target="_blank"></a>
-                <?php } ?>
-			</div>          
+                ?>
+			</div>  
+            <?php if(!empty($exhibit_website)) { ?>
+				    <a class="project-link" href="<?php echo $exhibit_website; ?>" target="_blank"><?php echo $exhibit_website; ?></a>
+            <?php } ?>        
         </div>
         <div class="project-picture">
             <img class="featured-image" src="<?php echo $exhibit_photo;?>" />
         </div>
     </section>
     
-    <?php if(!empty($exhibit_video) || !empty($exhibit_inspiration)){ ?>
-        <section id="project-highlights-section">
-            <span class="striped-background"></span>
-            <?php if($exhibit_video && is_valid_video($exhibit_video)) { ?>
-                <div class="project-video">            
-                    <?php                        
-                    echo $wp_embed->run_shortcode('[embed]' . $exhibit_video . '[/embed]');
-                    ?>
-                </div>
-            <?php } ?>
-            <?php if($exhibit_inspiration!=''){ ?>
-                <div class="project-inspiration">
-                    <?php
-                        echo '<h3>What Inspired You to Make This?</h3>';
-                        echo '<p>'.$exhibit_inspiration.'</p>';
-                    ?>
-                    <div class="blue-spacer"></div>
-                </div>
-            <?php } ?>
-        </section>
-    <?php } ?>
+    <section id="project-highlights-section">
+        <span class="striped-background"></span>
+        <?php if($exhibit_video && is_valid_video($exhibit_video)) { ?>
+            <div class="project-video">            
+                <?php                        
+                echo $wp_embed->run_shortcode('[embed]' . $exhibit_video . '[/embed]');
+                ?>
+            </div>
+        <?php } ?>
+    </section>
 
     <section id="project-photos">
 		<?php
@@ -110,77 +103,56 @@ $maker_data = get_field("maker_data");
     
     <!-- Maker Data -->
     <?php
-    if(!empty($maker_data)) {
-        // We have different layouts for single maker or multiple makers
-        if(count($maker_data) == 1) { 
-            $first_maker = $maker_data[0]; ?>
-            <div class="single-maker-info">
-                <?php if(isset($first_maker["maker_photo"]["url"])){ ?>
-                    <img src="<?php echo $first_maker["maker_photo"]["url"]; ?>" alt="<?php echo $first_maker["maker_or_group_name"]; ?> Maker Photo">
-                <?php } ?>
-            </div>
-            <div class="single-maker-bio">
-                <p class="maker-name"><?php echo $first_maker["maker_or_group_name"]; ?></p>
-                <p><?php echo $first_maker["maker_bio"]?></p>
+    if(!empty($maker_data)) { ?>
+        <h2>Makers</h2>
+        <div class="multiple-maker-wrapper">
+        <?php foreach($maker_data as $maker){ ?>
+            <div class="maker-wrapper">
+                <div class="img-wrap">                   
+                    <?php if(isset($maker["maker_photo"]["url"])){ ?>
+                        <img src="<?php echo $maker["maker_photo"]["url"]; ?>" alt="<?php echo $maker["maker_or_group_name"]; ?> Maker Photo">
+                    <?php } ?>
+                </div>
+                
+                <h4><?php echo $maker["maker_or_group_name"];?></h4>
+                <p class="maker-bio"><?php echo $maker["maker_bio"]?></p>
                 <div class="social-links reversed">
-                    <?php
-                    
-                    if(!empty($first_maker['maker_social'])) {
-                        
-                        foreach($first_maker['maker_social'] as $link) {
-                            if($link['maker_social_link']) {
+                    <?php 
+                    if(!empty($maker['maker_social'])) {
+                        foreach($maker['maker_social'] as $link) {
+                            if($link) {
                                 echo('<a class="link" href="' . $link['maker_social_link'] . '"></a>');
                             }
                         } 
                     }
-                    if(!empty($first_maker["maker_website"])) { ?>
-                        <a class="link fa fa-link" href="<?php echo $first_maker["maker_website"]; ?>" target="_blank"></a>
-                    <?php } ?>
+                    ?>
                 </div>
-            </div>
-        <?php } else { // Multiple makers layout ?>
-            <h2>Makers</h2>
-            <div class="multiple-maker-wrapper">
-            <?php foreach($maker_data as $maker){ ?>
-                <div class="maker-wrapper">
-                    <div class="img-wrap">                   
-                        <?php if(isset($maker["maker_photo"]["url"])){ ?>
-                            <img src="<?php echo $maker["maker_photo"]["url"]; ?>" alt="<?php echo $maker["maker_or_group_name"]; ?> Maker Photo">
-                        <?php } ?>
-                    </div>
-                    
-                    <h4><?php echo $maker["maker_or_group_name"];?></h4>
-                    <p class="maker-bio"><?php echo $maker["maker_bio"]?></p>
-                    <div class="social-links reversed">
-                        <?php 
-                        if(!empty($maker['maker_social'])) {
-                            foreach($maker['maker_social'] as $link) {
-                                if($link) {
-                                    echo('<a class="link" href="' . $link['maker_social_link'] . '"></a>');
-                                }
-                            } 
-                        }
-                        if(!empty($maker["maker_website"])) { ?>
-                            <a class="link fa fa-link" href="<?php echo $maker["maker_website"]; ?>" target="_blank"></a>
-                        <?php } ?>
-                    </div>
-                </div>
-                <?php
-            } ?>
+                <?php if(!empty($maker["maker_website"])) { ?>
+                    <a class="maker-link" href="<?php echo $maker["maker_website"]; ?>" target="_blank"><?php echo $maker["maker_website"]; ?></a>
+                <?php } ?>
             </div>
             <?php
-        }
-    }
-    
-    
-    
-    //echo '<div>'.$exhibit_social
-    
-        $faire = ( isset( $_GET['faire'] ) && ! empty( $_GET['faire'] ) ) ? sanitize_title( $_GET['faire'] ) : '';				
+        } ?>
+        </div>
+        <?php
+    }		
     ?>
     </section>
-
-
+    
+    <?php
+    if(!empty($exhibit_inspiration) ){ ?>
+        <section id="project-inspiration-section">
+            <span class="striped-background"></span>
+                <div class="project-inspiration">
+                    <?php
+                        echo '<h3>What Inspired You to Make This?</h3>';
+                        echo '<p>'.$exhibit_inspiration.'</p>';
+                    ?>
+                    <div class="blue-spacer"></div>
+                </div>
+        </section>
+    <?php } ?>
+    
 </article><!--Container-->
 <script>
 jQuery(document).ready(function(){

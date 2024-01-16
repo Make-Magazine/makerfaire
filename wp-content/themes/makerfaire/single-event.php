@@ -92,10 +92,10 @@
 			<h4 class="faire-country"><?php echo (isset($faire_countries[$faire_country])?$faire_countries[$faire_country]:''); ?></h4>
 			<div class="blue-spacer"></div>
 			<?php if($faire_num_projects != ''){?>
-				<h3 class="faire-stat">Projects: <?php echo $faire_num_projects; ?></h3>
+				<h3 class="faire-stat">Projects: <?php echo number_format($faire_num_projects); ?></h3>
 			<?php } ?>			
 			<?php if($faire_num_attendees != ''){?>
-				<h3 class="faire-stat">Attendees: <?php echo $faire_num_attendees; ?></h3>
+				<h3 class="faire-stat">Attendees: <?php echo number_format($faire_num_attendees); ?></h3>
 			<?php } ?>						
 			<div class="social-links reversed">
 				<?php foreach ($socialLinks as $link) {
@@ -158,21 +158,21 @@
 		</div>
 	</section>
 
-	<section id="faireHighlights">
-		<?php
-			if( $highlightImages ) { ?>
-			    <h2>Highlights</h2>
-				<div class="blue-spacer"></div>
-				<div id="highlightGallery">
-					<?php foreach($highlightImages as $image) { ?>
-						<div class="gallery-item"><img alt="<?php echo $image['alt'];?>"  src='<?php echo $image['url']; ?>' /></div>
-					<?php } ?>
-					<?php if($photo_credit!=''){?>
-						<span>Photo Credit: <?php echo $photo_credit;?></span>
-					<?php } ?>
-                </div>
-			<?php } ?>
-	</section>
+	<?php
+	if( $highlightImages ) { ?>
+		<section id="faireHighlights">
+			<h2>Highlights</h2>
+			<div class="blue-spacer"></div>
+			<div id="highlightGallery">
+				<?php foreach($highlightImages as $image) { ?>
+					<div class="gallery-item"><img alt="<?php echo $image['alt'];?>"  src='<?php echo $image['url']; ?>' /></div>
+				<?php } ?>
+				<?php if($photo_credit!=''){?>
+					<span>Photo Credit: <?php echo $photo_credit;?></span>
+				<?php } ?>
+			</div>
+		</section>
+	<?php } ?>
 	
 	<?php // End of the loop.
 		endwhile; ?>

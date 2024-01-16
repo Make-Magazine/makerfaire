@@ -88,6 +88,7 @@
       }
    }
    #producerInfo {
+      margin-bottom: 20px;
       .faire-custom-image {
          display: flex;
          justify-content: center;
@@ -152,6 +153,7 @@
                flex-direction: column;
                justify-content: center;
                align-items: center;
+               width: 100%;
                .project-image {
                   aspect-ratio: 12 / 9;
                   // Fallback
@@ -170,6 +172,7 @@
                   display: flex;
                   justify-content: center;
                   overflow: hidden;
+                  width: 100%;
                   img {
                      object-fit: cover;
                      width: 100%;
@@ -202,7 +205,7 @@
    }
    #faireHighlights {
       background: #1F1A2C;
-      margin: 10px 0;
+      margin-bottom: 20px;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -237,10 +240,10 @@
    flex-wrap: wrap;
    justify-content: center;
    gap: 10px;
-   max-width: 1120px;
    margin: 30px 15px 50px;
+   width: 100%;
    .gallery-item {
-      width: calc(25% - 9px);
+      width: calc(25% - 15px);
       aspect-ratio: 16/9;
       // Fallback
       @supports not (aspect-ratio: auto) {
