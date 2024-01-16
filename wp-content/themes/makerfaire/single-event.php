@@ -123,6 +123,8 @@
 						</div>
 						<h4><?php echo $project->post_title; ?></h4>
 						<p><?php echo $project->post_excerpt; ?>
+						<p class="universal-btn">More</p>
+					  </a>
 					</div>
 				<?php } ?>	
 			</div>
