@@ -61,7 +61,7 @@
 		$project_query = new WP_Query( $args );				
 
 		//TBD add filter identifier by faire
-		$linkToProjects = (isset($project_query->posts) && !empty($project_query->posts) ? '/'.$faire_year.'/projects' : '');
+		$linkToProjects = (isset($project_query->posts) && !empty($project_query->posts) ? '/yearbook/'.$faire_year.'-projects' : '');
 	?>
     <section id="eventHeader" style="background-image:url('<?php echo $hero_bg; ?>')">
 	    <div class="logo-wrapper">
