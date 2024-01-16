@@ -73,8 +73,14 @@ if ( $query->have_posts() ) {
 				}
 				$faire_countries = em_get_countries();
 				$faire_country = $EM_Location->location_country;
+				$faire_date = date("F Y", strtotime($EM_Event->event_start_date));
 			}
 			if($postType == "projects") {
+				$faire_info = get_field("faire_information");
+				$faire_id = $faire_info['faire_post']->ID;
+				$producerSection = get_field('producer_section', $faire_id);
+				$faire_badge = ($producerSection['circular_faire_logo']) ? $producerSection['circular_faire_logo']['url'] : '//' . $_SERVER['HTTP_HOST'] . "/wp-content/themes/makerfaire/images/default-badge.png";
+				$result_text_style = 'style="background-image:url(' . $faire_badge . ');"';
 				$makerData = get_field('maker_data');
 				$maker_name = isset($makerData[0]['maker_or_group_name']) ? $makerData[0]['maker_or_group_name'] : "";
 				$project_location = get_field('project_location');
@@ -85,39 +91,43 @@ if ( $query->have_posts() ) {
 			}
 			
 			?>
-			<div class="result-item <?php echo $postType; ?>">
+			<div class="result-item <?php echo $postType; ?>" onclick="javascript:location.href = '<?php echo get_the_permalink(); ?>';">
 				<?php if ( has_post_thumbnail() ) { ?>
-						<div class="result-image"><a href="<?php the_permalink(); ?>">
+						<div class="result-image">
 							<?php the_post_thumbnail("small"); ?>
-						</a></div>
+						</div>
 				<?php } ?>
 				<div class="results-text" <?php echo $result_text_style; ?>>
-					<h2><a href="<?php the_permalink(); ?>"><?php echo $title; ?></a></h2>
+					<h2><?php echo $title; ?></h2>
 					<?php if($postType == "event" || $postType == "faire") { ?>
 						<?php if(!empty($faire_location)){ ?>
 							<div class="result-detail">
-								<i class="fa fa-map-marker-alt"></i><?php echo $faire_location; ?>
+								<?php echo $faire_location; ?>
 							</div>
 						<?php } ?>
 						<?php if(!empty($faire_countries[$faire_country])){ ?>
 							<div class="result-detail">
-								<i class="fa fa-globe-africa"></i><?php echo $faire_countries[$faire_country]; ?>
+								<?php echo $faire_countries[$faire_country]; ?>
+							</div>
+						<?php } ?>
+						<?php if(!empty($faire_date)){ ?>
+							<div class="result-detail">
+								<?php echo $faire_date; ?>
 							</div>
 						<?php } ?>
 						<div class="result-detail">
-							<a class="sf-learn-more" href="<?php the_permalink(); ?>">Learn More</a>
+							<a class="sf-learn-more" href="<?php the_permalink(); ?>">More</a>
 						</div>
 					<?php } ?>
 					<?php if($postType == "projects") { ?>
 						<?php if(!empty($maker_name)){ ?>
 							<div class="result-detail">
-								<i class="fa fa-user"></i><?php echo $maker_name; ?>
+								Maker: <?php echo $maker_name; ?>
 							</div>
 						<?php } ?>
 						<?php if(!empty($project_location)){ ?>
 							<div class="result-detail">
-								<i class="fa fa-map-marker-alt"></i>
-								<span class="one-line">
+								<span class="one-line">Home: 
 								<?php 
 									if(!empty($project_state)) {
 										echo $project_state . ", ";
@@ -129,17 +139,17 @@ if ( $query->have_posts() ) {
 								</span>
 							</div>
 						<?php } ?>
-						<?php if(!empty($categories)){ ?>
+						<?php /* if(!empty($categories)){ ?>
 							<div class="result-detail">
-								<i class="fa fa-lightbulb"></i><?php echo $categories; ?>
+								<?php echo $categories; ?>
 							</div>
-						<?php } ?>
+						<?php } */ ?>
 						<?php if(!empty($excerpt)){ ?>
 							<div class="result-detail">
-								<i class="fa fa-info-circle"></i><span class="truncated"><?php echo strip_tags(html_entity_decode($excerpt)); ?></span>
+								<span class="truncated"><?php echo strip_tags(html_entity_decode($excerpt)); ?></span>
 							</div>
 						<?php } ?>
-						<div class="result-detail"><a href="<?php the_permalink(); ?>" class="sf-learn-more">Learn More</a></div>
+						<div class="result-detail"><a href="<?php the_permalink(); ?>" class="sf-learn-more">More</a></div>
 					<?php } ?>
 				</div>
 			</div>
