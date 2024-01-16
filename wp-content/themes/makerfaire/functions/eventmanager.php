@@ -131,7 +131,7 @@ add_filter( 'posts_orderby', 'randomise_with_pagination' );
 function randomise_with_pagination( $orderby ) {
 	$post = is_singular() ? get_queried_object() : false;
 	if ( ! empty($post) && is_a($post, 'WP_Post') ) {
-		if( is_page(661620)) ) { // Page 661620 is the faire grid page id
+		if( is_page(661620) ) { // Page 661620 is the faire grid page id
 		  	// Reset seed on load of initial archive page
 			if( ! get_query_var( 'paged' ) || get_query_var( 'paged' ) == 0 || get_query_var( 'paged' ) == 1 ) {
 				if( isset( $_SESSION['seed'] ) ) {
