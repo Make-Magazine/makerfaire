@@ -164,7 +164,6 @@ form.searchandfilter {
 			}
 			.result-image {
 				display: flex;
-				overflow: hidden;
 				img { 
 					object-fit: contain;
 					width: 100%;
@@ -182,6 +181,7 @@ form.searchandfilter {
 				.result-image {
 					aspect-ratio: 12/9;
 					max-height: 200px;
+					overflow: hidden;
 					// Fallback
 					@supports not (aspect-ratio: auto) {
 						&::before {
