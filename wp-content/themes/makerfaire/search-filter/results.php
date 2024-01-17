@@ -126,12 +126,12 @@ if ( $query->have_posts() ) {
 					<?php if($postType == "projects") { ?>
 						<?php if(!empty($maker_name)){ ?>
 							<div class="result-detail">
-								Maker: <?php echo $maker_name; ?>
+								<b>Maker:</b>&nbsp;<?php echo $maker_name; ?>
 							</div>
 						<?php } ?>
 						<?php if(!empty($project_location)){ ?>
 							<div class="result-detail">
-								<span class="one-line">Home: 
+								<span class="one-line"><b>Home:</b> 
 								<?php 
 									if(!empty($project_state)) {
 										echo $project_state . ", ";
@@ -149,7 +149,7 @@ if ( $query->have_posts() ) {
 							</div>
 						<?php } */ ?>
 						<?php if(!empty($excerpt)){ ?>
-							<div class="result-detail">
+							<div class="result-detail desc">
 								<span class="truncated"><?php echo strip_tags(html_entity_decode($excerpt)); ?></span>
 							</div>
 						<?php } ?>

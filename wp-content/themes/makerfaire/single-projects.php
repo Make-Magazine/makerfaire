@@ -12,9 +12,11 @@ $faireData       = get_field("faire_information");
 $faire_name      = (isset($faireData["faire_post"]->post_title)?$faireData["faire_post"]->post_title:'');
 $faire_id        = $faireData["faire_post"]->ID;
 $faire_year      = (isset($faireData["faire_year"])?$faireData["faire_year"]:'');
-$producerInfo    = get_field("producer_section");
+$producerInfo    = get_field("producer_section", $faire_id);
 $faire_badge     = isset($producerSection['circular_faire_logo']['url']) ? $producerSection['circular_faire_logo']['url'] : get_stylesheet_directory_uri()."/images/default-badge.png";
 $project_info_bg = isset($faire_badge) ? "background-image:url(" . $faire_badge . ");" : "";
+$topSection 	 = get_field('top_section', $faire_id);
+$faire_logo 	 = isset($topSection['horizontal_faire_logo']['url']) ? $topSection['horizontal_faire_logo']['url'] : ''; 
 
 //hero image
 $faireTopSection = get_field("top_section", $faire_id);
@@ -32,8 +34,13 @@ $maker_data = get_field("maker_data");
 <?php get_header(); ?>
 <article>
    
-    <header id="project-hero" style="background-image:url('<?php echo $hero_bg; ?>');">
+    <header id="project-hero" class="hero-header" style="background-image:url('<?php echo $hero_bg; ?>');">
         <div class="hero-overlay"></div>
+        <div class="logo-wrapper">
+			<?php if(!empty($faire_logo)) { ?>
+				<img id="faireLogo" src="<?php echo $faire_logo; ?>" alt="<?php echo get_the_title() . " Logo";?>" />
+			<?php } ?>
+		</div>
         <div class="breadcrumbs">
             <a href="<?php echo get_permalink($faire_id); ?>">Home</a> / <a href="/yearbook/<?php echo $faire_year; ?>-projects">Projects</a>
         </div>
