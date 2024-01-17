@@ -147,7 +147,7 @@
 							<div class="producer-detail"><b>Producer:</b> <?php echo $producer_org; ?></div>
 						<?php } ?>
 						<?php if(!empty($contact)) { ?>
-							<div class="producer-detail"><b>Contact:</b> <a href="<?php echo $contactLink; ?>" target="_blank">><?php echo $contact; ?></a></div>
+							<div class="producer-detail"><b>Contact:</b> <a href="<?php echo $contactLink; ?>" target="_blank"><?php echo $contact; ?></a></div>
 						<?php } ?>
 						<?php if(!empty($faire_link)) { ?>
 							<div class="producer-detail"><b>Website:</b> <a href="<?php echo $faire_link; ?>" target="_blank"><?php echo $faire_link; ?></a></div>
