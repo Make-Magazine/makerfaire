@@ -41,10 +41,11 @@ $maker_data = get_field("maker_data");
 				<img id="faireLogo" src="<?php echo $faire_logo; ?>" alt="<?php echo get_the_title() . " Logo";?>" />
 			<?php } ?>
 		</div>
-        <div class="breadcrumbs">
-            <a href="<?php echo get_permalink($faire_id); ?>">Home</a> / <a href="/yearbook/<?php echo $faire_year; ?>-projects">Projects</a>
-        </div>
     </header>
+
+    <nav class="eoy-breadcrumbs">
+        <a href="<?php echo get_permalink($faire_id); ?>">Home</a> / <a href="/yearbook/<?php echo $faire_year; ?>-projects?_sfm_faire_information_faire_post=<?php echo $faire_id; ?>">Projects</a>
+    </nav>
     
     <section id="project-info-section" class="container">
         <div class="project-info" style="<?php echo $project_info_bg; ?>">

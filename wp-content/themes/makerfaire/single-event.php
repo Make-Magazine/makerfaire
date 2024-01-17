@@ -60,8 +60,7 @@
 		
 		$project_query = new WP_Query( $args );				
 
-		//TBD add filter identifier by faire
-		$linkToProjects = (isset($project_query->posts) && !empty($project_query->posts) ? '/yearbook/'.$faire_year.'-projects' : '');
+		$linkToProjects = (isset($project_query->posts) && !empty($project_query->posts) ? '/yearbook/'.$faire_year.'-projects?_sfm_faire_information_faire_post='.get_the_ID() : '');
 	?>
     <section id="eventHeader" class="hero-header" style="background-image:url('<?php echo $hero_bg; ?>')">
 	    <div class="logo-wrapper">
@@ -70,10 +69,11 @@
 				<img id="faireLogo" src="<?php echo $faire_logo; ?>" alt="<?php echo get_the_title() . " Logo";?>" />
 			<?php } ?>
 		</div>
-		<div class="breadcrumbs">			
-			<a href="/yearbook/<?php echo $faire_year; ?>-faires">Home</a> <?php if($linkToProjects !='') echo '/ <a href="'.$linkToProjects.'" target="_blank">Projects</a>';?>
-		</div>
 	</section>
+
+	<nav class="eoy-breadcrumbs">			
+		<a href="/yearbook/<?php echo $faire_year; ?>-faires">Home</a> <?php if($linkToProjects !='') echo '/ <a href="'.$linkToProjects.'" target="_blank">Projects</a>';?>
+	</nav>
 
 	<section id="faireInfo">
 		<div class="faire-video">
