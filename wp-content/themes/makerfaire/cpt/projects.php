@@ -91,7 +91,8 @@ function register_taxonomy_projects_cpt() {
 			'hierarchical' => true,
 			//'rewrite' => array( 'slug' => 'project-categories', 'with_front' => false ),
 			'query_var' => true,
-			'show_in_rest' => true	
+			'show_in_rest' => true, 						
+			'show_admin_column' => true				
 			
 		)
 	);
@@ -127,8 +128,12 @@ function projects_posts_columns( $columns ) {
 		'cb' => $columns['cb'],
 		'title' => __( 'Title' ),		
 		'exhibit_photo' => __( 'Photo', 'makerfaire' ),
+		'taxonomy-mf-project-cat' => __( 'Project Categories', 'makerfaire' ),
 		'faire_name' => __( 'Faire', 'makerfaire' ),
-		'faire_year' => __( 'Faire Year', 'makerfaire' ),		
+		//'faire_year' => __( 'Faire Year', 'makerfaire' ),					
+		'faire_region'	 => __( 'Region', 'makerfaire' ),	
+		'faire_country'	 => __( 'Country', 'makerfaire' ),	
+		'first_maker_name'	 => __( 'Maker', 'makerfaire' ),	
 	  );
 
   return $columns;
@@ -136,7 +141,9 @@ function projects_posts_columns( $columns ) {
 
 add_action( 'manage_projects_posts_custom_column', 'projects_content_column', 10, 2);
 function projects_content_column( $column, $post_id ) {
-	$faireData = get_field("faire_information", $post_id);				
+	$faireData = get_field("faire_information", $post_id);
+	$project_location = get_field("project_location", $post_id);	
+	$maker_data = get_field("maker_data");			
     
 	// faire column
 	switch ($column){
@@ -144,12 +151,22 @@ function projects_content_column( $column, $post_id ) {
 			echo get_the_post_thumbnail( $post_id, array(80, 80) );
 			break;
 		case 'faire_name':			
-			$faire_name = (isset($faireData["faire_post"]->post_title)?$faireData["faire_post"]->post_title:'');			
-			echo $faire_name;
+			echo (isset($faireData["faire_post"]->post_title)?$faireData["faire_post"]->post_title:'');						
 			break;
 		case 'faire_year':					
-			$faire_year = (isset($faireData["faire_year"]) ? $faireData["faire_year"] : '');
-			echo $faire_year;
+			echo (isset($faireData["faire_year"]) ? $faireData["faire_year"] : '');			
+			break;	
+		case 'faire_country':					
+			echo (isset($project_location["country"]) ? $project_location["country"] : '');			
+			break;	
+		case 'first_maker_name':
+			//they only want the first maker name
+			echo (!empty($maker_data) && isset($maker_data[0]["maker_or_group_name"]) ? $maker_data[0]["maker_or_group_name"] : '');			
+			break;	
+		case 'faire_region':			
+			if($project_location["region"]){				
+				echo (isset($project_location["region"]->name)?$project_location["region"]->name:'');						
+			}
 			
 			break;	
 	}
@@ -159,8 +176,9 @@ function projects_content_column( $column, $post_id ) {
 //add columns to be sortable
 add_filter( 'manage_edit-projects_sortable_columns', 'projects_sortable_columns');
 function projects_sortable_columns( $columns ) {
-  $columns['faire_name'] = 'faire_name';
-  $columns['faire_year'] = 'faire_year';
+  $columns['faire_name'] 	= 'faire_name';  
+  $columns['faire_year'] 	= 'faire_year';
+  $columns['faire_country'] = 'faire_country';
   return $columns;
 }
 

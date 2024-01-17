@@ -286,6 +286,7 @@
                     "collapsed": "",
                     "button_label": "Add Maker Social",
                     "rows_per_page": 20,
+                    "parent_repeater": "field_65971d6537e38",
                     "sub_fields": [
                         {
                             "key": "field_65971e1b3a5c8",
@@ -305,8 +306,7 @@
                             "placeholder": "",
                             "parent_repeater": "field_65971dde3a5c7"
                         }
-                    ],
-                    "parent_repeater": "field_65971d6537e38"
+                    ]
                 }
             ]
         },
@@ -455,6 +455,29 @@
                     "placeholder": "",
                     "prepend": "",
                     "append": ""
+                },
+                {
+                    "key": "field_65a72246d98f4",
+                    "label": "Region",
+                    "name": "region",
+                    "aria-label": "",
+                    "type": "taxonomy",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "taxonomy": "regions",
+                    "add_term": 1,
+                    "save_terms": 0,
+                    "load_terms": 0,
+                    "return_format": "object",
+                    "field_type": "select",
+                    "allow_null": 0,
+                    "multiple": 0
                 }
             ]
         }
@@ -477,5 +500,5 @@
     "active": true,
     "description": "",
     "show_in_rest": 0,
-    "modified": 1705082771
+    "modified": 1705452522
 }
