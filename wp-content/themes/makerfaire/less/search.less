@@ -265,6 +265,7 @@ form.searchandfilter {
 		&:last-of-type {display: flex !important;}
 		.nav-previous, .nav-next {
 			padding: 10px;
+			order: 4;
 			a {
 				border: solid 1px #005e9a;
 				background: #005e9a;
@@ -273,7 +274,7 @@ form.searchandfilter {
     			visibility: hidden;
 				&::after {
 					visibility: visible;
-					content: 'More Results';
+					content: 'Next';
 					font-family: inherit;
 					text-indent: 0px;
 					height: 40px;
@@ -287,9 +288,12 @@ form.searchandfilter {
 				}
 			}
 		}
-		.nav-next a::after {
-			content: "Previous Results";
-		}
+		.nav-next {
+			order: 1;
+			a::after {
+				content: "Previous";
+			}
+		} 
 		&:first-of-type { display: none; }
 	}
 	&.listview {

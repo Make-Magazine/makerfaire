@@ -163,14 +163,7 @@ if ( $query->have_posts() ) {
 
 		<div class="nav-previous"><?php next_posts_link( 'Older posts', $query->max_num_pages ); ?></div>
 		<div class="nav-next"><?php previous_posts_link( 'Newer posts' ); ?></div>
-		<?php
-			/* example code for using the wp_pagenavi plugin */
-			if (function_exists('wp_pagenavi'))
-			{
-				echo "<br />";
-				wp_pagenavi( array( 'query' => $query ) );
-			}
-		?>
+
 	</div>
 	<?php
 } else {
