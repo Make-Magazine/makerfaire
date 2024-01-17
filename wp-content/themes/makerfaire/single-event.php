@@ -71,7 +71,7 @@
 			<?php } ?>
 		</div>
 		<div class="breadcrumbs">			
-			<a href="/yearbook/<?php echo $faire_year; ?>-faires">Home</a> <?php if($linkToProjects !='') echo '/ <a href="'.$linkToProjects.'">Projects</a>';?>
+			<a href="/yearbook/<?php echo $faire_year; ?>-faires">Home</a> <?php if($linkToProjects !='') echo '/ <a href="'.$linkToProjects.'" target="_blank">Projects</a>';?>
 		</div>
 	</section>
 

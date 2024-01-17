@@ -68,9 +68,13 @@ if ( $query->have_posts() ) {
 				$EM_Location = $EM_Event->get_location();
 				$faire_location = $EM_Location->location_town;
 				$faire_state = $EM_Location->location_state;
-				if(!empty($faire_state)) {
-					$faire_location .= ", " . $faire_state;
+				if(!empty($faire_location) && !empty($faire_state)) {
+					$faire_location .= ", ";
 				}
+				if(!empty($faire_state)) {
+					$faire_location .=  $faire_state;
+				}
+
 				$faire_countries = em_get_countries();
 				$faire_country = $EM_Location->location_country;
 				$faire_date = date("F Y", strtotime($EM_Event->event_start_date));
@@ -86,7 +90,7 @@ if ( $query->have_posts() ) {
 				$project_location = get_field('project_location');
 				$project_state = (isset($project_location['state']) ? $project_location['state']:'');
 				$project_country = (isset($project_location['country']) ? $project_location['country']:'');
-				$categories = strip_tags(get_the_term_list( get_the_ID(), "mf-project-cat", '', ', ' ));
+				//$categories = strip_tags(get_the_term_list( get_the_ID(), "mf-project-cat", '', ', ' ));
 				$excerpt = get_field('exhibit_description');
 			}
 			
