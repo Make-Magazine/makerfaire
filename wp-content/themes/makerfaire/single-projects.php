@@ -44,7 +44,7 @@ $maker_data = get_field("maker_data");
     </header>
 
     <nav class="eoy-breadcrumbs">
-        <a href="<?php echo get_permalink($faire_id); ?>">Home</a> / <a href="/yearbook/<?php echo $faire_year; ?>-projects?_sfm_faire_information_faire_post=<?php echo $faire_id; ?>">Projects</a>
+        <a href="<?php echo get_permalink($faire_id); ?>">Faire Home</a> / <a href="/yearbook/<?php echo $faire_year; ?>-projects?_sfm_faire_information_faire_post=<?php echo $faire_id; ?>">Faire Projects</a>
     </nav>
     
     <section id="project-info-section" class="container">
