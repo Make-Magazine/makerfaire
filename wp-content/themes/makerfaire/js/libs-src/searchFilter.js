@@ -1,5 +1,8 @@
 jQuery(document).ready(function(){
-	jQuery('[data-sf-field-input-type="button"] .search-filter-reset').on('click', function(){
+	// behold as I transform a reset button into a button of my own
+	jQuery('[data-sf-field-input-type="button"] input[name="_sf_reset"]').removeClass("search-filter-reset");
+	jQuery('[data-sf-field-input-type="button"] input[name="_sf_reset"]').attr("type", "button");
+	jQuery('[data-sf-field-input-type="button"] input[name="_sf_reset"]').on('click', function(event){
 		jQuery("form.searchandfilter").toggleClass("minimized");
 		if(jQuery(this).attr('value') == "+") {
 			jQuery(this).attr('value', " ");
