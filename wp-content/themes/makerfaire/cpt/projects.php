@@ -166,8 +166,7 @@ function projects_content_column( $column, $post_id ) {
 		case 'faire_region':			
 			if($project_location["region"]){				
 				echo (isset($project_location["region"]->name)?$project_location["region"]->name:'');						
-			}
-			
+			}			
 			break;	
 	}
 
@@ -179,6 +178,8 @@ function projects_sortable_columns( $columns ) {
   $columns['faire_name'] 	= 'faire_name';  
   $columns['faire_year'] 	= 'faire_year';
   $columns['faire_country'] = 'faire_country';
+  $columns['faire_region']	= 'faire_region';
+  $columns['first_maker_name'] = 'first_maker_name';
   return $columns;
 }
 
