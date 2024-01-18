@@ -60,27 +60,32 @@
 		
 		$project_query = new WP_Query( $args );				
 
-		//TBD add filter identifier by faire
-		$linkToProjects = (isset($project_query->posts) && !empty($project_query->posts) ? '/yearbook/'.$faire_year.'-projects' : '');
+		$linkToProjects = (isset($project_query->posts) && !empty($project_query->posts) ? '/yearbook/'.$faire_year.'-projects?_sfm_faire_information_faire_post='.get_the_ID() : '');
 	?>
-    <section id="eventHeader" style="background-image:url('<?php echo $hero_bg; ?>')">
+    <section id="eventHeader" class="hero-header" style="background-image:url('<?php echo $hero_bg; ?>')">
 	    <div class="logo-wrapper">
 			<h1 class="single-post-title"><?php the_title(); ?></h1>
 			<?php if(!empty($faire_logo)) { ?>
-				<img id="faireLogo" src="<?php echo $faire_logo; ?>" />
+				<img id="faireLogo" src="<?php echo $faire_logo; ?>" alt="<?php echo get_the_title() . " Logo";?>" />
 			<?php } ?>
 		</div>
-		<div class="breadcrumbs">			
-			<a href="/yearbook/<?php echo $faire_year; ?>-faires">Home</a> <?php if($linkToProjects !='') echo '/ <a href="'.$linkToProjects.'" target="_blank">Projects</a>';?>
-		</div>
 	</section>
+
+	<nav class="eoy-breadcrumbs">			
+		<a href="/yearbook/<?php echo $faire_year; ?>-faires">Home</a> <?php if($linkToProjects !='') echo '/ <a href="'.$linkToProjects.'" target="_blank">Projects</a>';?>
+	</nav>
 
 	<section id="faireInfo">
 		<div class="faire-video">
 			<?php
 			if($faire_video && is_valid_video($faire_video)) {
-				global $wp_embed;
-				echo $wp_embed->run_shortcode('[embed]' . $faire_video . '[/embed]');
+				//global $wp_embed;
+				//echo $wp_embed->run_shortcode('[embed]' . $faire_video . '[/embed]');
+				if(str_contains("vimeo.com", $faire_video)) {
+					echo do_shortcode("[vimeo " . $faire_video . "]");
+				} else { ?>
+					<iframe width="560" height="315" src="<?php echo getYoutubeEmbedUrl($faire_video) . "?autoplay=1&mute=1"; ?>" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+				<?php } 
 			} else { ?>			
 				<?php echo get_the_post_thumbnail(); ?>
 			<?php }
@@ -122,7 +127,7 @@
 							<?php echo get_the_post_thumbnail($project->ID); ?>
 						</div>
 						<h4><?php echo $project->post_title; ?></h4>
-						<p><?php echo $project->post_excerpt; ?>
+						<p><?php echo get_field('exhibit_description', $project->ID); ?>
 						<p class="universal-btn">More</p>
 					  </a>
 					</div>
@@ -147,7 +152,7 @@
 							<div class="producer-detail"><b>Producer:</b> <?php echo $producer_org; ?></div>
 						<?php } ?>
 						<?php if(!empty($contact)) { ?>
-							<div class="producer-detail"><b>Contact:</b> <a href="<?php echo $contactLink; ?>"><?php echo $contact; ?></a></div>
+							<div class="producer-detail"><b>Contact:</b> <a href="<?php echo $contactLink; ?>" target="_blank"><?php echo $contact; ?></a></div>
 						<?php } ?>
 						<?php if(!empty($faire_link)) { ?>
 							<div class="producer-detail"><b>Website:</b> <a href="<?php echo $faire_link; ?>" target="_blank"><?php echo $faire_link; ?></a></div>
