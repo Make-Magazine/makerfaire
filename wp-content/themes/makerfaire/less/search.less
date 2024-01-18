@@ -167,9 +167,9 @@ form.searchandfilter {
 			}
 			.result-image {
 				display: flex;
-				min-height: 300px;
+				min-height: 170px;
 				img { 
-					object-fit: cover;
+					object-fit: contain;
 					width: 100%;
 					height: auto;
 				}
@@ -250,6 +250,7 @@ form.searchandfilter {
 					.result-image {
 						aspect-ratio: 12/9;
 						max-height: 300px;
+						min-height: 300px;
 						overflow: hidden;
 						// Fallback
 						@supports not (aspect-ratio: auto) {
