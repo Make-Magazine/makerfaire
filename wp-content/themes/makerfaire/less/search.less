@@ -16,6 +16,13 @@ form.searchandfilter {
 	background: #f1f1f1;
 	border: solid 1px #ccc;
 	border-radius: 4px;
+	@media screen and (max-width: 768px) {
+		position: relative;
+		left: 0px;
+		[data-sf-field-input-type="button"] input[name="_sf_reset"] {
+			//display: none;
+		}
+	}
 	ul {
 		margin-right: 15px;
 		padding-left: 30px;
@@ -112,6 +119,9 @@ form.searchandfilter {
 			border-radius: 3px;
 			height: 35px;
 		}
+		@media screen and (max-width: 768px) {
+			display: none; // no need for list view when we are going this small
+		}
 	}
 	&.minimized {
 		width: 45px;
@@ -169,7 +179,7 @@ form.searchandfilter {
 				display: flex;
 				min-height: 170px;
 				img { 
-					object-fit: contain;
+					object-fit: cover;
 					width: 100%;
 					height: auto;
 				}
@@ -262,9 +272,6 @@ form.searchandfilter {
 						content: "";
 						clear: both;
 						}
-					}
-					img {
-						object-fit: cover;
 					}
 				}
 				.results-text {

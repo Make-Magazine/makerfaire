@@ -113,7 +113,7 @@ $maker_data = get_field("maker_data");
     <?php
     if(!empty($maker_data)) { ?>
         <h2>Makers</h2>
-        <div class="multiple-maker-wrapper">
+        <div class="makers-wrapper <?php if(count($maker_data) == 1) { echo "single-maker"; }?>">
         <?php foreach($maker_data as $maker){ ?>
             <div class="maker-wrapper">
                 <div class="img-wrap">                   
