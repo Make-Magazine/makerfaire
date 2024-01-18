@@ -79,8 +79,13 @@
 		<div class="faire-video">
 			<?php
 			if($faire_video && is_valid_video($faire_video)) {
-				global $wp_embed;
-				echo $wp_embed->run_shortcode('[embed]' . $faire_video . '[/embed]');
+				//global $wp_embed;
+				//echo $wp_embed->run_shortcode('[embed]' . $faire_video . '[/embed]');
+				if(str_contains("vimeo.com", $faire_video)) {
+					echo do_shortcode("[vimeo " . $faire_video . "]");
+				} else { ?>
+					<iframe width="560" height="315" src="<?php echo getYoutubeEmbedUrl($faire_video) . "?autoplay=1&mute=1"; ?>" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+				<?php } 
 			} else { ?>			
 				<?php echo get_the_post_thumbnail(); ?>
 			<?php }
