@@ -245,43 +245,41 @@ form.searchandfilter {
 				@media screen and (max-width: 600px) {
 					width: 100%;
 				}
-				.result-item {
-					display: block;
-					.result-image {
-						aspect-ratio: 12/9;
-						max-height: 300px;
-						min-height: 300px;
-						overflow: hidden;
-						// Fallback
-						@supports not (aspect-ratio: auto) {
-							&::before {
-							float: left;
-							padding-top: 66.25%;
-							content: "";
-							}
-							&::after {
-							display: block;
-							content: "";
-							clear: both;
-							}
+				display: block;
+				.result-image {
+					aspect-ratio: 12/9;
+					max-height: 300px;
+					min-height: 300px;
+					overflow: hidden;
+					// Fallback
+					@supports not (aspect-ratio: auto) {
+						&::before {
+						float: left;
+						padding-top: 66.25%;
+						content: "";
 						}
-						img {
-							object-fit: cover;
+						&::after {
+						display: block;
+						content: "";
+						clear: both;
 						}
 					}
-					.results-text {
-						h2 {
-							margin: 0px;
-							min-height: 2em;
+					img {
+						object-fit: cover;
+					}
+				}
+				.results-text {
+					h2 {
+						margin: 0px;
+						min-height: 2em;
+					}
+					.result-detail {
+						&:first-of-type {
+							margin-top: auto;
 						}
-						.result-detail {
-							&:first-of-type {
-								margin-top: auto;
-							}
-							&.desc {
-								min-height: 4.5em;
-								margin-bottom: 15px;
-							}
+						&.desc {
+							min-height: 4.5em;
+							margin-bottom: 15px;
 						}
 					}
 				}
