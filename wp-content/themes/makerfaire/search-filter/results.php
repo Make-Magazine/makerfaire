@@ -82,6 +82,7 @@ if ( $query->have_posts() ) {
 			if($postType == "projects") {
 				$faire_info = get_field("faire_information");
 				$faire_id = $faire_info['faire_post']->ID;
+				$faire_name = $faire_info['faire_post']->post_title;
 				$producerSection = get_field('producer_section', $faire_id);
 				$faire_badge = ($producerSection['circular_faire_logo']) ? $producerSection['circular_faire_logo']['url'] : '//' . $_SERVER['HTTP_HOST'] . "/wp-content/themes/makerfaire/images/default-badge.png";
 				$result_text_style = 'style="background-image:url(' . $faire_badge . ');"';
@@ -124,6 +125,11 @@ if ( $query->have_posts() ) {
 						</div>
 					<?php } ?>
 					<?php if($postType == "projects") { ?>
+						<?php if(!empty($faire_name)){ ?>
+							<div class="result-detail">
+								<b>Faire:</b>&nbsp;<?php echo $faire_name; ?>
+							</div>
+						<?php } ?>
 						<?php if(!empty($maker_name)){ ?>
 							<div class="result-detail">
 								<b>Maker:</b>&nbsp;<?php echo $maker_name; ?>
