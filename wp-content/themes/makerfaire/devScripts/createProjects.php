@@ -111,7 +111,7 @@ foreach ($entries as $entry) {
         $thumbnail_id = get_img_id(basename( $entry['project_photo'] ));
         if($thumbnail_id==0){
             echo 'error in adding '.$photo_url.' to media library for '.$entry['id'].'<br/>';
-            break;            
+            continue;            
         }
         set_post_thumbnail($post_id, $thumbnail_id);                        
                                 
