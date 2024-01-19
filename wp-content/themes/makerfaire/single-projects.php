@@ -1,6 +1,12 @@
 <?php 
 //Project Information
-$exhibit_photo              = wp_get_attachment_image_src( get_post_thumbnail_id(), 'full' )[0];
+$thumbnail_id               = get_post_thumbnail_id();
+
+//check if there is a featured image set
+if($thumbnail_id) {
+    $image_src = wp_get_attachment_image_src( $thumbnail_id, 'full' );
+}
+$exhibit_photo              = (isset($image_src[0])?$image_src[0]:'');
 $exhibit_video              = get_field("exhibit_video_link");
 $exhibit_inspiration        = get_field("exhibit_inspiration");
 $exhibit_additional_images  = get_field("additional_exhibit_images");
