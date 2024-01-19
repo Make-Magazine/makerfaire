@@ -147,9 +147,12 @@ form.searchandfilter {
 	min-height: 500px;
 	text-align: center;
 	.results-info {
-		display: flex;
 		justify-content: space-between;
 		margin-bottom: 10px;
+		display: none;
+		&:first-of-type {
+			display: flex;
+		}
 	}
 	.filter-reset { text-align: right; margin-bottom: 5px; }
 	hr { display: none;}

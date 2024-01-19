@@ -33,7 +33,6 @@ if ( $query->have_posts() ) {
 
 	<div class="results-info">
 		<span>Found <?php echo $query->found_posts; ?> Results</span>
-		<span>Page <?php echo $query->query['paged']; ?> of <?php echo $query->max_num_pages; ?></span>
 	</div>
 
 	<div class="pagination">
@@ -167,14 +166,14 @@ if ( $query->have_posts() ) {
 			<hr />
 	<?php } ?>
 	</div>
-	Page <?php echo $query->query['paged']; ?> of <?php echo $query->max_num_pages; ?><br />
+	<?php /*Page <?php echo $query->query['paged']; ?> of <?php echo $query->max_num_pages; ?><br /> 
 
 	<div class="pagination">
 
 		<div class="nav-previous"><?php next_posts_link( 'Older posts', $query->max_num_pages ); ?></div>
 		<div class="nav-next"><?php previous_posts_link( 'Newer posts' ); ?></div>
 
-	</div>
+	</div>*/ ?>
 	<?php
 } else {
 	echo "No Results Found";
