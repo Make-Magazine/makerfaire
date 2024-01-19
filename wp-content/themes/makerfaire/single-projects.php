@@ -119,12 +119,14 @@ $maker_data = get_field("maker_data");
     <?php
     if(!empty($maker_data)) { ?>
         <h2>Makers</h2>
-        <div class="multiple-maker-wrapper">
+        <div class="makers-wrapper <?php if(count($maker_data) == 1) { echo "single-maker"; }?>">
         <?php foreach($maker_data as $maker){ ?>
             <div class="maker-wrapper">
                 <div class="img-wrap">                   
                     <?php if(isset($maker["maker_photo"]["url"])){ ?>
-                        <img src="<?php echo $maker["maker_photo"]["url"]; ?>" alt="<?php echo $maker["maker_or_group_name"]; ?> Maker Photo">
+                        <img src="<?php echo $maker["maker_photo"]["url"]; ?>" alt="<?php echo $maker["maker_or_group_name"]; ?> Maker Photo" width="250px" height="250px" />
+                    <?php } else { ?>
+                        <img src="https://make.co/wp-content/universal-assets/v2/images/default-makey-bigger.png" alt="Default Maker Photo" width="250px" height="250px">
                     <?php } ?>
                 </div>
                 
