@@ -132,7 +132,7 @@ if ( $query->have_posts() ) {
 						<?php } ?>
 						<?php if(!empty($maker_name)){ ?>
 							<div class="result-detail">
-								<b>Maker:</b>&nbsp;<?php echo $maker_name; ?>
+								<b>Maker<span></span>:</b>&nbsp;<?php echo $maker_name; ?>
 							</div>
 						<?php } ?>
 						<?php if(!empty($project_location)){ ?>

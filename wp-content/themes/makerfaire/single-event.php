@@ -50,6 +50,7 @@
 
 		//Projects Section
 		//find any projects associated with this faire
+		
 		$args = array(
 			'posts_per_page'    => 3,
 			'post_type'     => 'projects',
