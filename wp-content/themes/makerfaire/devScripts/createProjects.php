@@ -6,7 +6,7 @@ error_reporting(E_ALL);
 
 $create = (isset($_GET['create']) ? $_GET['create'] : '');
 $page = (isset($_GET['page']) ? $_GET['page'] : 1);
-$limit = (isset($_GET['limit']) ? $_GET['limit'] : 200);
+$limit = (isset($_GET['limit']) ? $_GET['limit'] : 100);
 $offset = ($page != 1 ? (($page - 1) * $limit) : 0);
 
 if($create==''){
