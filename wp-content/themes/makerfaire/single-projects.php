@@ -91,8 +91,13 @@ $maker_data = get_field("maker_data");
         <span class="striped-background"></span>
         <?php if($exhibit_video && is_valid_video($exhibit_video)) { ?>
             <div class="project-video">            
-                <?php                        
-                echo $wp_embed->run_shortcode('[embed]' . $exhibit_video . '[/embed]');
+                <?php                     		
+				if(str_contains("vimeo.com", $exhibit_video)) {
+					echo do_shortcode("[vimeo " . $exhibit_video . "]");
+				} else { ?>
+					<iframe src="<?php echo getYoutubeEmbedUrl($exhibit_video) . "?autoplay=1&mute=1"; ?>" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+				<?php }                    
+                
                 ?>
             </div>
         <?php } ?>
@@ -118,7 +123,7 @@ $maker_data = get_field("maker_data");
     <!-- Maker Data -->
     <?php
     if(!empty($maker_data)) { ?>
-        <h2>Makers</h2>
+        <h2>Maker<?php echo (count($maker_data)>1?'s':'')?></h2>
         <div class="makers-wrapper <?php if(count($maker_data) == 1) { echo "single-maker"; }?>">
         <?php foreach($maker_data as $maker){ ?>
             <div class="maker-wrapper">
@@ -126,26 +131,27 @@ $maker_data = get_field("maker_data");
                     <?php if(isset($maker["maker_photo"]["url"])){ ?>
                         <img src="<?php echo $maker["maker_photo"]["url"]; ?>" alt="<?php echo $maker["maker_or_group_name"]; ?> Maker Photo" width="250px" height="250px" />
                     <?php } else { ?>
-                        <img src="https://make.co/wp-content/universal-assets/v2/images/default-makey-bigger.png" alt="Default Maker Photo" width="250px" height="250px">
+                        <img src="/wp-content/themes/makerfaire/images/default-makey.png" alt="Default Maker Photo" width="250px" height="250px">
                     <?php } ?>
                 </div>
-                
-                <h4><?php echo $maker["maker_or_group_name"];?></h4>
-                <p class="maker-bio"><?php echo $maker["maker_bio"]?></p>
-                <div class="social-links reversed">
-                    <?php 
-                    if(!empty($maker['maker_social'])) {
-                        foreach($maker['maker_social'] as $link) {
-                            if($link) {
-                                echo('<a class="link" href="' . $link['maker_social_link'] . '"></a>');
-                            }
-                        } 
-                    }
-                    ?>
-                </div>
-                <?php if(!empty($maker["maker_website"])) { ?>
-                    <a class="maker-link" href="<?php echo $maker["maker_website"]; ?>" target="_blank"><?php echo $maker["maker_website"]; ?></a>
-                <?php } ?>
+                <div class="maker-detail">
+                    <h4><?php echo $maker["maker_or_group_name"];?></h4>
+                    <p class="maker-bio"><?php echo $maker["maker_bio"]?></p>
+                    <div class="social-links reversed">
+                        <?php 
+                        if(!empty($maker['maker_social'])) {
+                            foreach($maker['maker_social'] as $link) {
+                                if($link) {
+                                    echo('<a class="link" href="' . $link['maker_social_link'] . '"></a>');
+                                }
+                            } 
+                        }
+                        ?>
+                    </div>
+                    <?php if(!empty($maker["maker_website"])) { ?>
+                        <a class="maker-link" href="<?php echo $maker["maker_website"]; ?>" target="_blank"><?php echo $maker["maker_website"]; ?></a>
+                    <?php } ?>
+                    </div>
             </div>
             <?php
         } ?>

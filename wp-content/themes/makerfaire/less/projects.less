@@ -21,11 +21,15 @@
 		}
 		&> div {
 		   width: 50%;
+		   
 		   position: relative;
 		   z-index: 99;
 		   @media screen and (max-width: 981px) {
 			  flex: 100%;
 		   }
+		}
+		.project-video {
+			width: 100%;
 		}
 		&#project-info-section {
 			padding-bottom: 30px;
@@ -114,12 +118,14 @@
 					flex-direction: column;
 					justify-content: center;
 					max-width: 250px;
+					
 					.img-wrap { 
 						aspect-ratio: 1;
 						display: flex;
 						justify-content: center;
 						overflow: hidden;
 						min-width: 250px;
+						min-height: 250px;
 						img { 
 							object-fit: cover;
 							width: 100%;
@@ -129,6 +135,9 @@
 					h4 {
 						font-size: 24px;
 						font-weight: 400;
+					}
+					.maker-detail {
+						height: 100%;
 					}
 					.maker-bio {
 						/*Alicia wants the whole thing
@@ -145,15 +154,20 @@
 					}
 					.maker-link {
 						margin-top: 10px;
+						overflow-wrap: anywhere;
 					}
 				}
 				&.single-maker {
+					justify-content: left;
 					.maker-wrapper {
-						max-width: 600px;
+						flex-direction: row;
+						max-width: 100%;
+						text-align: left;
+						gap: 20px;
 						.img-wrap { 
-							max-width: 250px;
-							min-width: 0px;
+							max-width: 250px;							
 							margin: 0 auto;
+							img {min-height: auto}
 						}
 					}
 				}
