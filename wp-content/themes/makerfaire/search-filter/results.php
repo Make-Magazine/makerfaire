@@ -176,6 +176,6 @@ if ( $query->have_posts() ) {
 	</div>*/ ?>
 	<?php
 } else {
-	echo "No Results Found";
+	echo "<span class='no-results'>No Results Found</span>";
 }
 ?>
