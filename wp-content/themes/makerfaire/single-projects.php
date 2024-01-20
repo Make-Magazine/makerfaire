@@ -91,8 +91,13 @@ $maker_data = get_field("maker_data");
         <span class="striped-background"></span>
         <?php if($exhibit_video && is_valid_video($exhibit_video)) { ?>
             <div class="project-video">            
-                <?php                        
-                echo $wp_embed->run_shortcode('[embed]' . $exhibit_video . '[/embed]');
+                <?php                     		
+				if(str_contains("vimeo.com", $exhibit_video)) {
+					echo do_shortcode("[vimeo " . $exhibit_video . "]");
+				} else { ?>
+					<iframe src="<?php echo getYoutubeEmbedUrl($exhibit_video) . "?autoplay=1&mute=1"; ?>" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+				<?php }                    
+                
                 ?>
             </div>
         <?php } ?>
