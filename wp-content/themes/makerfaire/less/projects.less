@@ -148,12 +148,16 @@
 					}
 				}
 				&.single-maker {
+					justify-content: left;
 					.maker-wrapper {
-						max-width: 600px;
+						flex-direction: row;
+						max-width: 100%;
+						text-align: left;
+						gap: 20px;
 						.img-wrap { 
-							max-width: 250px;
-							min-width: 0px;
+							max-width: 250px;							
 							margin: 0 auto;
+							img {min-height: auto}
 						}
 					}
 				}
