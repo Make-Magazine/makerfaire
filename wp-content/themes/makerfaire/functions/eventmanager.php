@@ -112,6 +112,7 @@ function register_taxonomy_countries() {
 }
 add_action( 'init', 'register_taxonomy_countries' );
 
+
 //populate the countries taxonomy
 add_action('init', 'add_countries', 100);
 
