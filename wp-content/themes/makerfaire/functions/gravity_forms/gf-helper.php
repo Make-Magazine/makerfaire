@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Instead of passing DataTables AJAX requests through admin-ajax.php, directly access the data
  *
