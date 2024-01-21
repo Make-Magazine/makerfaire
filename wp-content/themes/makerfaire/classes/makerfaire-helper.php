@@ -374,8 +374,7 @@ function remove_admin_bar() {
 
 /* Template Include */
 //add_filter('template_include', 'onsitecheckin_include', 1, 1);
-function onsitecheckin_include($template)
-{
+function onsitecheckin_include($template){
     global $wp_query; //Load $wp_query object
     $page_value = (isset($wp_query->query_vars['onsitecheckin'])?$wp_query->query_vars['onsitecheckin']:'');
 
@@ -386,8 +385,7 @@ function onsitecheckin_include($template)
     return $template; //Load normal template when $page_value != "true" as a fallback
 }
 //add_filter('template_include', 'processonsitecheckin_include', 1, 1);
-function processonsitecheckin_include($template)
-{
+function processonsitecheckin_include($template){
     global $wp_query; //Load $wp_query object
     $page_value = (isset($wp_query->query_vars['processonsitecheckin'])?$wp_query->query_vars['processonsitecheckin']:'');
 
@@ -398,8 +396,7 @@ function processonsitecheckin_include($template)
     return $template; //Load normal template when $page_value != "true" as a fallback
 }
 //add_filter('template_include', 'onsitepinning_include', 1, 1);
-function onsitepinning_include($template)
-{
+function onsitepinning_include($template){
     global $wp_query; //Load $wp_query object
     $page_value = (isset($wp_query->query_vars['onsitepinning'])?$wp_query->query_vars['onsitepinning']:'');
 
@@ -410,8 +407,7 @@ function onsitepinning_include($template)
     return $template; //Load normal template when $page_value != "true" as a fallback
 }
 //add_filter('template_include', 'processonsitepinning_include', 1, 1);
-function processonsitepinning_include($template)
-{
+function processonsitepinning_include($template){
     global $wp_query; //Load $wp_query object
     $page_value = (isset($wp_query->query_vars['processonsitepinning'])?$wp_query->query_vars['processonsitepinning']:'');
 
@@ -421,9 +417,9 @@ function processonsitepinning_include($template)
 
     return $template; //Load normal template when $page_value != "true" as a fallback
 }
+
 add_filter('template_include', 'makersign_include', 1, 1);
-function makersign_include($template)
-{
+function makersign_include($template){
     global $wp_query; //Load $wp_query object
     $page_value = (isset($wp_query->query_vars['makersign'])?$wp_query->query_vars['makersign']:'');
 
