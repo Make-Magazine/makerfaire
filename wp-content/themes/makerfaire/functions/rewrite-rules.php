@@ -31,8 +31,8 @@ add_filter('rewrite_rules_array', 'maker_url_vars');
 
 function mf_add_rewrite_rules( $rules ) {
   $new = array();
-  $new['([^/]+)/projects/(.+)/?$'] = 'index.php?faire_year=$matches[1]&projects=$matches[2]';  
-  $new['([^/]+)/faires/(.+)/?$']   = 'index.php?faire_year=$matches[1]&event=$matches[2]';  
+  $new['yearbook/([^/]+)-projects/(.+)/?$'] = 'index.php?faire_year=$matches[1]&projects=$matches[2]';  
+  $new['yearbook/([^/]+)-faires/(.+)/?$']   = 'index.php?faire_year=$matches[1]&event=$matches[2]';  
   return array_merge( $new, $rules ); // Ensure our rules come first
 }
 add_filter( 'rewrite_rules_array', 'mf_add_rewrite_rules' );
@@ -122,7 +122,7 @@ function custom_rewrite_tag() {
   global $wp_rewrite;
 
   //change the CPT structure of projects cpt to include the faire year
-  $projects_structure = '%faire_year%/projects/%projects%';
+  $projects_structure = 'yearbook/%faire_year%-projects/%projects%';
   $wp_rewrite->add_rewrite_tag("%projects%", '([^/]+)', "project=");
   $wp_rewrite->add_permastruct('projects', $projects_structure, false);
 
