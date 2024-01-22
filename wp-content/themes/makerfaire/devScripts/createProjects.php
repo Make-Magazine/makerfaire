@@ -99,7 +99,7 @@ foreach ($entries as $entry) {
         $photo_url = $entry['project_photo'];
         if($photo_url==''){                        
             $maker_photo    = explode('|', $entry['maker_photo']);            
-            $photo_url = (isset($maker_photo[0])?$maker_photo[0]:'');
+            $photo_url      = (isset($maker_photo[0])?$maker_photo[0]:'');
         }
 
         //if the project photo is STILL empty we have an issue, skip this project
@@ -108,7 +108,7 @@ foreach ($entries as $entry) {
             //continue;
         }
         
-        $thumbnail_id = get_img_id($entry['project_photo'] );
+        $thumbnail_id = get_img_id($entry['project_photo'], $post_id );
         if($thumbnail_id==0){
             echo 'error in adding '.$photo_url.' to media library for '.$entry['id'].'<br/>';
             //continue;            
@@ -200,7 +200,7 @@ foreach ($entries as $entry) {
                 }                 
             }        
             //maker photo
-            $thumbnail_id = get_img_id( $maker_photo[$key]);
+            $thumbnail_id = get_img_id( $maker_photo[$key], $post_id);
 
             $maker_array[] = array(
                 // field key => value pairs
@@ -234,7 +234,7 @@ foreach ($entries as $entry) {
             $gallery_array = array();
             if(is_array($project_gallery)){
                 foreach($project_gallery as $image){                    
-                    $thumbnail_id = get_img_id($maker_photo[$key]);
+                    $thumbnail_id = get_img_id($maker_photo[$key], $post_id);
                     if($thumbnail_id!='')
                         $gallery_array[] = $thumbnail_id;
                 }
@@ -277,7 +277,7 @@ foreach ($entries as $entry) {
 }    
 
 //check if image was previously uploaded to the media library, if it wasn't - add it
-function get_img_id($filename) {
+function get_img_id($filename, $post_id) {
     global $wpdb;
     
     $basename     = basename($filename);
@@ -285,7 +285,7 @@ function get_img_id($filename) {
 
     if($thumbnail_id==0){
         //image not found in media library, need to upload it.
-        $thumbnail_id = make_upload_file_by_url( $filename );
+        $thumbnail_id = upload_img_by_url( $filename, $post_id );
         
         //if we the upload of the photo failed abort
         if($thumbnail_id==0){
@@ -298,6 +298,15 @@ function get_img_id($filename) {
  /**
  * Upload image from URL 
  */
+function upload_img_by_url($url, $post_id){
+    $file = array();
+    $file['name'] = $url;
+    $file['tmp_name'] = download_url($url);
+    
+    $attachmentId = media_handle_sideload($file, $post_id);
+    return $attachmentId;
+}
+
 function make_upload_file_by_url( $image_url ) {
 
 	// it allows us to use download_url() and wp_handle_sideload() functions
