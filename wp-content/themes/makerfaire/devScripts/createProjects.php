@@ -124,6 +124,7 @@ foreach ($entries as $entry) {
         $categories = explode('|', $entry['category']);
         
         foreach($categories as $value){
+            if($value=='')  continue;
             $term = term_exists( $value, $taxonomy );
             
             // If the term doesn't exist, then we create it
