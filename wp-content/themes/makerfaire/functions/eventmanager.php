@@ -112,24 +112,6 @@ function register_taxonomy_countries() {
 }
 add_action( 'init', 'register_taxonomy_countries' );
 
-
-//populate the countries taxonomy
-add_action('init', 'add_countries', 100);
-
-//TBD not a big fan of this. This code happens on every init and seems like unnecessary overhead
-function add_countries() {
-	if(function_exists('em_get_countries')){
-		$country_array = em_get_countries();
-    
-		// Loop through array and insert terms
-		foreach($country_array as $abbr => $name){
-			if(!get_term_by('name', ucwords(strtolower($name)), 'countries'))
-				wp_insert_term(ucwords(strtolower($name)), 'countries');
-		}
-	}	
-}
-
-
 // make order of faire and project search and filters
 add_filter( 'posts_orderby', 'randomise_with_pagination' );
 function randomise_with_pagination( $orderby ) {
