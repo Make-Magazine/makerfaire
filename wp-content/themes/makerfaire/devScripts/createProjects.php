@@ -105,13 +105,13 @@ foreach ($entries as $entry) {
         //if the project photo is STILL empty we have an issue, skip this project
         if($photo_url==''){
             echo 'no project photo set for '.$entry['id'].'<br/>';
-            continue;
+            //continue;
         }
         
-        $thumbnail_id = get_img_id(basename( $entry['project_photo'] ));
+        $thumbnail_id = get_img_id($entry['project_photo'] );
         if($thumbnail_id==0){
             echo 'error in adding '.$photo_url.' to media library for '.$entry['id'].'<br/>';
-            continue;            
+            //continue;            
         }
         set_post_thumbnail($post_id, $thumbnail_id);                        
                                 
@@ -200,7 +200,7 @@ foreach ($entries as $entry) {
                 }                 
             }        
             //maker photo
-            $thumbnail_id = get_img_id(basename( $maker_photo[$key]));
+            $thumbnail_id = get_img_id( $maker_photo[$key]);
 
             $maker_array[] = array(
                 // field key => value pairs
@@ -234,7 +234,7 @@ foreach ($entries as $entry) {
             $gallery_array = array();
             if(is_array($project_gallery)){
                 foreach($project_gallery as $image){                    
-                    $thumbnail_id = get_img_id(basename( $maker_photo[$key]));
+                    $thumbnail_id = get_img_id($maker_photo[$key]);
                     if($thumbnail_id!='')
                         $gallery_array[] = $thumbnail_id;
                 }
