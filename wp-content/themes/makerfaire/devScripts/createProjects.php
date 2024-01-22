@@ -5,6 +5,7 @@ ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
 $create = (isset($_GET['create']) ? $_GET['create'] : '');
+$blog_id = (isset($_GET['blogid']) ? $_GET['blogid'] : '');
 $page = (isset($_GET['page']) ? $_GET['page'] : 1);
 $limit = (isset($_GET['limit']) ? $_GET['limit'] : 100);
 $offset = ($page != 1 ? (($page - 1) * $limit) : 0);
@@ -77,10 +78,11 @@ entry.faire_year, entry.faire_name as faire_post, entry.project_gallery,state, c
 entry.project_photo, entry.category, id, blog_id, entry_id, form_id
 
 FROM `wp_mf_dir_entry` entry 
-where status='Accepted'
-limit $limit offset $offset";
+where status='Accepted' ".
+($blog_id != ''?" and blog_id=".$blog_id." ":"").
+"limit $limit offset $offset";
 $entries = $wpdb->get_results($sql, ARRAY_A);
-
+echo $sql.'<br/>';
 $categories=array();
 //loop thru all categories
 foreach ($entries as $entry) {  
@@ -97,6 +99,8 @@ foreach ($entries as $entry) {
     if($post_id){        
         //featured image        
         $photo_url = $entry['project_photo'];
+
+        //if a project photo isn't set, maybe you could use maker 1 photo?
         if($photo_url==''){                        
             $maker_photo    = explode('|', $entry['maker_photo']);            
             $photo_url      = (isset($maker_photo[0])?$maker_photo[0]:'');
@@ -106,15 +110,14 @@ foreach ($entries as $entry) {
         if($photo_url==''){
             echo 'no project photo set for '.$entry['id'].'<br/>';
             //continue;
-        }
-        
-        $thumbnail_id = get_img_id($entry['project_photo'], $post_id );
-        if($thumbnail_id==0){
-            echo 'error in adding '.$photo_url.' to media library for '.$entry['id'].'<br/>';
-            //continue;            
-        }
-        set_post_thumbnail($post_id, $thumbnail_id);                        
-                                
+        }else{
+            $thumbnail_id = get_img_id($photo_url, $post_id );
+            if($thumbnail_id==0){
+                echo 'error in adding '.$photo_url.' to media library for '.$entry['id'].'<br/>';
+                //continue;            
+            }
+            set_post_thumbnail($post_id, $thumbnail_id);                        
+        }                                                
 
         //set post categories
         $taxonomy = 'mf-project-cat';
@@ -201,7 +204,7 @@ foreach ($entries as $entry) {
             }        
             //maker photo
             $thumbnail_id = get_img_id( $maker_photo[$key], $post_id);
-
+        
             $maker_array[] = array(
                 // field key => value pairs
                 'field_65971d8137e39' => (isset($maker_email[$key])?$maker_email[$key]:''),
@@ -234,7 +237,7 @@ foreach ($entries as $entry) {
             $gallery_array = array();
             if(is_array($project_gallery)){
                 foreach($project_gallery as $image){                    
-                    $thumbnail_id = get_img_id($maker_photo[$key], $post_id);
+                    $thumbnail_id = get_img_id($image, $post_id);
                     if($thumbnail_id!='')
                         $gallery_array[] = $thumbnail_id;
                 }
@@ -278,6 +281,7 @@ foreach ($entries as $entry) {
 
 //check if image was previously uploaded to the media library, if it wasn't - add it
 function get_img_id($filename, $post_id) {
+    //echo 'get img id for '.$filename.'- basename is: '.basename($filename).'<br/>';
     global $wpdb;
     
     $basename     = basename($filename);
@@ -300,70 +304,24 @@ function get_img_id($filename, $post_id) {
  */
 function upload_img_by_url($url, $post_id){
     require_once( ABSPATH . 'wp-admin/includes/file.php' );
-    
+    include_once( ABSPATH . 'wp-admin/includes/admin.php' );
+
     $file = array();
     $file['name'] = $url;
     $file['tmp_name'] = download_url($url);
-    
-    $attachmentId = media_handle_sideload($file, $post_id);
+    $attachmentId = '';
+
+    if (is_wp_error($file['tmp_name'])) {
+        @unlink($file['tmp_name']);
+        var_dump( $file['tmp_name']->get_error_messages( ) );
+    } else {
+        $attachmentId = media_handle_sideload($file, $post_id);
+         
+        if ( is_wp_error($attachmentId) ) {
+            @unlink($file['tmp_name']);
+            var_dump( $attachmentId->get_error_messages( ) );
+        } 
+    }
+
     return $attachmentId;
-}
-
-function make_upload_file_by_url( $image_url ) {
-
-	// it allows us to use download_url() and wp_handle_sideload() functions
-	require_once( ABSPATH . 'wp-admin/includes/file.php' );
-
-	// download to temp dir
-	$temp_file = download_url( $image_url );
-
-	if( is_wp_error( $temp_file ) ) {
-		return false;
-	}
-
-	// move the temp file into the uploads directory
-	$file = array(
-		'name'     => basename( $image_url ),
-		'type'     => mime_content_type( $temp_file ),
-		'tmp_name' => $temp_file,
-		'size'     => filesize( $temp_file ),
-	);
-	$sideload = wp_handle_sideload(
-		$file,
-		array(
-			'test_form'   => false // no needs to check 'action' parameter
-		)
-	);
-
-	if( ! empty( $sideload[ 'error' ] ) ) {
-		// you may return error message if you want
-		return false;
-	}
-
-	// it is time to add our uploaded image into WordPress media library
-	$attachment_id = wp_insert_attachment(
-		array(
-			'guid'           => $sideload[ 'url' ],
-			'post_mime_type' => $sideload[ 'type' ],
-			'post_title'     => basename( $sideload[ 'file' ] ),
-			'post_content'   => '',
-			'post_status'    => 'inherit',
-		),
-		$sideload[ 'file' ]
-	);
-
-	if( is_wp_error( $attachment_id ) || ! $attachment_id ) {
-		return false;
-	}
-
-	// update medatata, regenerate image sizes
-	require_once( ABSPATH . 'wp-admin/includes/image.php' );
-
-	wp_update_attachment_metadata(
-		$attachment_id,
-		wp_generate_attachment_metadata( $attachment_id, $sideload[ 'file' ] )
-	);
-
-	return $attachment_id;
-
 }
