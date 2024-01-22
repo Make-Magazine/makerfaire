@@ -82,7 +82,7 @@ where status='Accepted' ".
 ($blog_id != ''?" and blog_id=".$blog_id." ":"").
 "limit $limit offset $offset";
 $entries = $wpdb->get_results($sql, ARRAY_A);
-echo $sql.'<br/>';
+//echo $sql.'<br/>';
 $categories=array();
 //loop thru all categories
 foreach ($entries as $entry) {  
