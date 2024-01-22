@@ -32,8 +32,8 @@ function register_taxonomy_regions() {
 		'query_var' => true,
 		'show_in_rest' => false,
 		'show_admin_column' => true	,
-		'show_in_menu'=>false,
-		'show_ui'=>false
+		'show_in_menu'=> true,
+		'show_ui' => true
 	);
 
 	register_taxonomy( 'regions', array('event'), $args );
@@ -104,8 +104,8 @@ function register_taxonomy_countries() {
 		'hierarchical' => false,		
 		'query_var' => true, 						
 		'show_admin_column' => true	,
-		'show_in_menu'=>false,
-		'show_ui'=>false
+		'show_in_menu'=> true,
+		'show_ui' => true
 	);
 
 	register_taxonomy( 'countries', array('event'), $args );
