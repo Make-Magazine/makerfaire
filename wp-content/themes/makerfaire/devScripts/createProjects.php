@@ -299,6 +299,8 @@ function get_img_id($filename, $post_id) {
  * Upload image from URL 
  */
 function upload_img_by_url($url, $post_id){
+    require_once( ABSPATH . 'wp-admin/includes/file.php' );
+    
     $file = array();
     $file['name'] = $url;
     $file['tmp_name'] = download_url($url);
