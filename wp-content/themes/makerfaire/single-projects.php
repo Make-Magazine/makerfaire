@@ -88,7 +88,7 @@ $maker_data = get_field("maker_data");
                     <?php 
                     $referer = isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : "";
                     parse_str( parse_url($referer, PHP_URL_QUERY), $query_args);
-                    if($referer == "" || (str_contains($referer, "/yearbook/2023-projects/") && !str_contains($referer, "_sfm_faire_information_faire_post"))) {
+                    if($referer == "" || (str_contains($referer, "/yearbook/2023-projects") && !str_contains($referer, "_sfm_faire_information_faire_post"))) {
                         foreach($exhibit_cats as $category) { ?>
                             <a href="/yearbook/2023-projects/?_sft_mf-project-cat=<?php echo $category->slug;?>"><?php echo$category->name; ?></a><span>, </span>
                         <?php } 
