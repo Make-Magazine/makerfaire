@@ -13,14 +13,23 @@ $exhibit_additional_images  = get_field("additional_exhibit_images");
 $exhibit_social             = get_field("exhibit_social");
 $exhibit_website            = get_field("exhibit_website");
 
-//faire information
+//Pull faire specific information
 $faireData       = get_field("faire_information");
-$faire_name      = (isset($faireData["faire_post"]->post_title)?$faireData["faire_post"]->post_title:'');
-$faire_id        = $faireData["faire_post"]->ID;
 $faire_year      = (isset($faireData["faire_year"])?$faireData["faire_year"]:'');
+
+//Pull associated faire post
+if(isset($faireData["faire_post"])){
+    $faire_id   = $faireData["faire_post"];
+    $faire_name = get_the_title($faire_id);
+}else{
+    $faire_id   = '';
+    $faire_name = '';
+}
+
 $producerInfo    = get_field("producer_section", $faire_id);
 $faire_badge     = isset($producerInfo['circular_faire_logo']['url']) ? $producerInfo['circular_faire_logo']['url'] : get_stylesheet_directory_uri()."/images/default-badge.png";
 $project_info_bg = isset($faire_badge) ? "background-image:url(" . $faire_badge . ");" : "";
+
 $topSection 	 = get_field('top_section', $faire_id);
 $faire_logo 	 = isset($topSection['horizontal_faire_logo']['url']) ? $topSection['horizontal_faire_logo']['url'] : ''; 
 

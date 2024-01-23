@@ -80,16 +80,19 @@ if ( $query->have_posts() ) {
 			}
 			if($postType == "projects") {
 				$faire_info = get_field("faire_information");
-				$faire_id = $faire_info['faire_post']->ID;
-				$faire_name = $faire_info['faire_post']->post_title;
+				$faire_id = (isset($faire_info['faire_post'])?$faire_info['faire_post']:'');
+				$faire_name = ($faire_id!='' ? get_the_title($faire_id):'');
+				
 				$producerSection = get_field('producer_section', $faire_id);
-				$faire_badge = ($producerSection['circular_faire_logo']) ? $producerSection['circular_faire_logo']['url'] : '//' . $_SERVER['HTTP_HOST'] . "/wp-content/themes/makerfaire/images/default-badge.png";
+				$faire_badge = (isset($producerSection['circular_faire_logo']['url']) ? $producerSection['circular_faire_logo']['url'] : '//' . $_SERVER['HTTP_HOST'] . "/wp-content/themes/makerfaire/images/default-badge.png");
 				$result_text_style = 'style="background-image:url(' . $faire_badge . ');"';
+				
 				$makerData = get_field('maker_data');
 				$maker_name = isset($makerData[0]['maker_or_group_name']) ? $makerData[0]['maker_or_group_name'] : "";
+				
 				$project_location = get_field('project_location');
-				$project_state = (isset($project_location['state']) ? $project_location['state']:'');
-				$project_country = (isset($project_location['country']) ? $project_location['country']:'');
+				$project_state 	  = (isset($project_location['state']) ? $project_location['state']:'');
+				$project_country  = (isset($project_location['country']) ? $project_location['country']:'');
 				//$categories = strip_tags(get_the_term_list( get_the_ID(), "mf-project-cat", '', ', ' ));
 				$excerpt = get_field('exhibit_description');
 			}
