@@ -56,6 +56,9 @@ add_action("wp_default_styles", "my_wp_default_styles");
 /* Disable Conflicting Code using Filters */
 add_filter('jetpack_enable_opengraph', '__return_false', 99);
 
+// Turn off the WP_GOVERNOR, as it breaks S&F 
+define('WPE_GOVERNOR', false);
+
 /*
 *    Set some CONST for universal assets (nav and footer)
 enclosed in a function for safety
