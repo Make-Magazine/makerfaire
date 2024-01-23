@@ -1,6 +1,6 @@
 {
     "key": "group_65971bca30e11",
-    "title": "Project Custom Fields",
+    "title": "Yearbook - Project Fields",
     "fields": [
         {
             "key": "field_65971c3f37e2b",
@@ -500,5 +500,5 @@
     "active": true,
     "description": "",
     "show_in_rest": 0,
-    "modified": 1706040265
+    "modified": 1706050803
 }

@@ -1,6 +1,6 @@
 {
     "key": "group_6595ac0e4f66d",
-    "title": "Faire Custom Fields",
+    "title": "Yearbook - Faire Fields",
     "fields": [
         {
             "key": "field_6595bafdb3c5a",
@@ -491,5 +491,5 @@
     "active": true,
     "description": "",
     "show_in_rest": 0,
-    "modified": 1705075829
+    "modified": 1706050850
 }
