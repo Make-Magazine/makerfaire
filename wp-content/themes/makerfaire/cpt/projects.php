@@ -130,15 +130,15 @@ function register_taxonomy_projects_cpt()
 add_filter('manage_projects_posts_columns', 'projects_posts_columns', 999, 1);
 function projects_posts_columns($columns) {
 	$columns = array(
-		'cb' => $columns['cb'],
-		'title' => __('Title'),
-		'exhibit_photo' => __('Photo', 'makerfaire'),
+		'cb' 				=> $columns['cb'],
+		'title' 			=> __('Title'),
+		'exhibit_photo' 	=> __('Photo', 'makerfaire'),
 		'taxonomy-mf-project-cat' => __('Project Categories', 'makerfaire'),
-		'faire_name' => __('Faire', 'makerfaire'),
+		'faire_name' 		=> __('Faire', 'makerfaire'),
 		//'faire_year' => __( 'Faire Year', 'makerfaire' ),					
-		'faire_region'	 => __('Region', 'makerfaire'),
-		'faire_country'	 => __('Country', 'makerfaire'),
-		'first_maker_name'	 => __('Maker', 'makerfaire'),
+		'faire_region'	 	=> __('Maker Region', 'makerfaire'),
+		'faire_country'	 	=> __('Maker Country', 'makerfaire'),
+		'first_maker_name'	=> __('Maker', 'makerfaire'),
 	);
 
 	return $columns;
@@ -147,6 +147,7 @@ function projects_posts_columns($columns) {
 add_action('manage_projects_posts_custom_column', 'projects_content_column', 10, 2);
 function projects_content_column($column, $post_id) {
 	$faireData 			= get_field("faire_information", $post_id);
+	$faire_id 			= (isset($faireData['faire_post'])?$faireData['faire_post']:'');			
 	$project_location 	= get_field("project_location", $post_id);
 	$maker_data 		= get_field("maker_data");
 
@@ -156,8 +157,7 @@ function projects_content_column($column, $post_id) {
 		case 'exhibit_photo':
 			echo get_the_post_thumbnail($post_id, array(80, 80));
 			break;
-		case 'faire_name':
-			$faire_id = (isset($faireData['faire_post'])?$faireData['faire_post']:'');			
+		case 'faire_name':			
 			echo ($faire_id!='' ? get_the_title($faire_id):'');
 			break;
 		case 'faire_year':
@@ -210,11 +210,10 @@ if (is_admin()) {
 
 		$post_type = (isset($_GET['post_type'])) ? $_GET['post_type'] : 'post';
 
-		//only add filter to post type you want
-		if ($post_type == 'projects') {
-			
-			//query database to get a list of faires for the specific post type:
-			$values = array();
+		//only add filter to projects
+		if ($post_type == 'projects') {			
+			//query database to get a list of faires 
+			$faires = array();			
 			$query_faires = $wpdb->get_results("select distinct(meta_value) faire_id, ".
 				"(select post_title from wp_posts faire_post where faire_post.id=faire_id) as faire_name ".
 				"from wp_postmeta ".
@@ -226,10 +225,9 @@ if (is_admin()) {
 				"ORDER BY `faire_name` ASC");
 			
 			foreach ($query_faires as $data) {
-				$values[$data->faire_id] = $data->faire_name;
+				$faires[$data->faire_id] = $data->faire_name;				
 			}
-			
-			//give a unique name in the select field
+						
 			?>
 			<select name="admin_filter_faire">
 			<?php
@@ -237,17 +235,18 @@ if (is_admin()) {
 				<option value="" <?php echo ($current_v==''?' selected="selected"':'');?>>All Faires</option>
 
 				<?php				
-				foreach ($values as $value => $label) {
+				foreach ($faires as $value => $faire_name) {
 					printf(
 						'<option value="%s"%s>%s</option>',
 						$value,
 						$value == $current_v ? ' selected="selected"' : '',
-						$label
+						$faire_name
 					);
 				}
 				?>
 			</select>
-<?php
+		<?php
+
 		}
 	});
 
