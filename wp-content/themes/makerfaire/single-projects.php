@@ -19,7 +19,7 @@ $faire_name      = (isset($faireData["faire_post"]->post_title)?$faireData["fair
 $faire_id        = $faireData["faire_post"]->ID;
 $faire_year      = (isset($faireData["faire_year"])?$faireData["faire_year"]:'');
 $producerInfo    = get_field("producer_section", $faire_id);
-$faire_badge     = isset($producerSection['circular_faire_logo']['url']) ? $producerSection['circular_faire_logo']['url'] : get_stylesheet_directory_uri()."/images/default-badge.png";
+$faire_badge     = isset($producerInfo['circular_faire_logo']['url']) ? $producerInfo['circular_faire_logo']['url'] : get_stylesheet_directory_uri()."/images/default-badge.png";
 $project_info_bg = isset($faire_badge) ? "background-image:url(" . $faire_badge . ");" : "";
 $topSection 	 = get_field('top_section', $faire_id);
 $faire_logo 	 = isset($topSection['horizontal_faire_logo']['url']) ? $topSection['horizontal_faire_logo']['url'] : ''; 
@@ -50,7 +50,7 @@ $maker_data = get_field("maker_data");
     </header>
 
     <nav class="eoy-breadcrumbs">
-        <a href="<?php echo get_permalink($faire_id); ?>">Faire Home</a> / <a href="/yearbook/<?php echo $faire_year; ?>-projects?_sfm_faire_information_faire_post=<?php echo $faire_id; ?>">Faire Projects</a>
+    <a href="/yearbook/<?php echo $faire_year; ?>-faires">All Faires</a> / <a href="<?php echo get_permalink($faire_id); ?>">Faire Home</a> / <a href="/yearbook/<?php echo $faire_year; ?>-projects?_sfm_faire_information_faire_post=<?php echo $faire_id; ?>">Faire Projects</a>
     </nav>
     
     <section id="project-info-section" class="container">
