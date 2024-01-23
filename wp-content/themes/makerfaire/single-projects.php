@@ -6,12 +6,14 @@ $thumbnail_id               = get_post_thumbnail_id();
 if($thumbnail_id) {
     $image_src = wp_get_attachment_image_src( $thumbnail_id, 'full' );
 }
+$exhibit_id                 = get_the_ID();
 $exhibit_photo              = (isset($image_src[0])?$image_src[0]:'');
 $exhibit_video              = get_field("exhibit_video_link");
 $exhibit_inspiration        = get_field("exhibit_inspiration");
 $exhibit_additional_images  = get_field("additional_exhibit_images");
 $exhibit_social             = get_field("exhibit_social");
 $exhibit_website            = get_field("exhibit_website");
+$exhibit_cats               = wp_get_post_terms($exhibit_id, "mf-project-cat");
 
 //faire information
 $faireData       = get_field("faire_information");
@@ -80,7 +82,24 @@ $maker_data = get_field("maker_data");
 			</div>  
             <?php if(!empty($exhibit_website)) { ?>
 				    <a class="project-link" href="<?php echo $exhibit_website; ?>" target="_blank"><?php echo $exhibit_website; ?></a>
-            <?php } ?>        
+            <?php } ?>    
+            <?php if(!empty($exhibit_cats)) { ?>
+                <div class="project-categories"><b>Categories: </b>
+                    <?php 
+                    $referer = isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : "";
+                    parse_str( parse_url($referer, PHP_URL_QUERY), $query_args);
+                    if($referer == "" || (str_contains($referer, "/yearbook/2023-projects/") && !str_contains($referer, "_sfm_faire_information_faire_post"))) {
+                        foreach($exhibit_cats as $category) { ?>
+                            <a href="/yearbook/2023-projects/?_sft_mf-project-cat=<?php echo $category->slug;?>"><?php echo$category->name; ?></a><span>, </span>
+                        <?php } 
+                    } else {
+                        foreach($exhibit_cats as $category) { ?>
+                            <a href="/yearbook/2023-projects/?_sfm_faire_information_faire_post=<?php echo $query_args["_sfm_faire_information_faire_post"]; ?>&_sft_mf-project-cat=<?php echo $category->slug;?>"><?php echo$category->name; ?></a><span>, </span>
+                        <?php } 
+                    }
+                    ?>
+                </div>
+            <?php } ?>     
         </div>
         <div class="project-picture">
             <img class="featured-image" src="<?php echo $exhibit_photo;?>" />

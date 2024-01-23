@@ -50,14 +50,14 @@
 
 		//Projects Section
 		//find any projects associated with this faire
-		
 		$args = array(
-			'posts_per_page'    => 3,
-			'post_type'     => 'projects',
-			'meta_key'      => 'faire_information_faire_post',
-			'meta_value'    =>  get_the_id(),
-			'orderby'        => 'rand'
+			'posts_per_page' 	=> 3,
+			'post_type'    	 	=> 'projects',
+			'meta_key'			=> 'faire_information_faire_post',
+			'meta_value'    	=>  get_the_id(),
+			'orderby'        	=> 'rand'
 		);
+	
 		
 		$project_query = new WP_Query( $args );				
 
