@@ -164,7 +164,7 @@ $maker_data = get_field("maker_data");
                 </div>
                 <div class="maker-detail">
                     <h4><?php echo $maker["maker_or_group_name"];?></h4>
-                    <p class="maker-bio"><?php echo $maker["maker_bio"]?></p>
+                    <p class="maker-bio show-more-snippet"><?php echo $maker["maker_bio"]?></p>
                     <div class="social-links reversed">
                         <?php 
                         if(!empty($maker['maker_social'])) {

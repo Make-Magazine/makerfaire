@@ -83,4 +83,4 @@ jQuery(document).ready(function(){
           }
         });
     });
-});
+})
