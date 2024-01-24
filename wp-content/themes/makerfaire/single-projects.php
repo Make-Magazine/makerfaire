@@ -55,18 +55,18 @@ $maker_data = get_field("maker_data");
         <div class="hero-overlay"></div>
         <div class="logo-wrapper">
 			<?php if(!empty($faire_logo)) { ?>
-				<img id="faireLogo" src="<?php echo $faire_logo; ?>" alt="<?php echo get_the_title() . " Logo";?>" />
+				<img id="faireLogo" src="<?php echo $faire_logo; ?>" alt="Maker Faire <?php echo $faire_name; ?> Logo" />
 			<?php } ?>
 		</div>
     </header>
 
     <nav class="eoy-breadcrumbs">
-    <a href="/yearbook/<?php echo $faire_year; ?>-faires">All Faires</a> / <a href="<?php echo get_permalink($faire_id); ?>">Faire Home</a> / <a href="/yearbook/<?php echo $faire_year; ?>-projects?_sfm_faire_information_faire_post=<?php echo $faire_id; ?>">Faire Projects</a>
+        <a href="/yearbook/<?php echo $faire_year; ?>-faires">All Faires</a> / <a href="<?php echo get_permalink($faire_id); ?>">Faire Home</a> / <a href="/yearbook/<?php echo $faire_year; ?>-projects?_sfm_faire_information_faire_post=<?php echo $faire_id; ?>">Faire Projects</a>
     </nav>
     
     <section id="project-info-section" class="container">
         <div class="project-info" style="<?php echo $project_info_bg; ?>">
-            <h3 class="faire-details"><a href="<?php echo get_permalink($faire_id); ?>"><?php echo $faire_name ." ".$faire_year;?></a></h3>
+            <h3 class="faire-details"><a href="<?php echo get_permalink($faire_id); ?>">Maker Faire <?php echo $faire_name ." ".$faire_year;?></a></h3>
             <h1 class="project-title"><?php echo get_field("title");?></h1>
             <h4>Home: <?php
                 if(!empty($project_state)) {
@@ -96,14 +96,13 @@ $maker_data = get_field("maker_data");
                 <div class="project-categories"><b>Categories: </b>
                     <?php 
                     $referer = isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : "";
-                    parse_str( parse_url($referer, PHP_URL_QUERY), $query_args);
                     if($referer == "" || (str_contains($referer, "/yearbook/2023-projects") && !str_contains($referer, "_sfm_faire_information_faire_post"))) {
                         foreach($exhibit_cats as $category) { ?>
                             <a href="/yearbook/2023-projects/?_sft_mf-project-cat=<?php echo $category->slug;?>"><?php echo$category->name; ?></a><span>, </span>
                         <?php } 
                     } else {
                         foreach($exhibit_cats as $category) { ?>
-                            <a href="/yearbook/2023-projects/?_sfm_faire_information_faire_post=<?php echo $query_args["_sfm_faire_information_faire_post"]; ?>&_sft_mf-project-cat=<?php echo $category->slug;?>"><?php echo$category->name; ?></a><span>, </span>
+                            <a href="/yearbook/2023-projects/?_sfm_faire_information_faire_post=<?php echo $faire_id; ?>&_sft_mf-project-cat=<?php echo $category->slug;?>"><?php echo$category->name; ?></a><span>, </span>
                         <?php } 
                     }
                     ?>
@@ -111,7 +110,7 @@ $maker_data = get_field("maker_data");
             <?php } ?>     
         </div>
         <div class="project-picture">
-            <img class="featured-image" src="<?php echo $exhibit_photo;?>" />
+            <img class="featured-image" src="<?php echo $exhibit_photo;?>" alt="Maker Faire <?php echo $faire_name; ?> - <?php echo get_the_title(); ?> Featured Image" />
         </div>
     </section>
     
@@ -136,8 +135,9 @@ $maker_data = get_field("maker_data");
 			if( $exhibit_additional_images ) { ?>
 			    <h2>Additional Project Photos</h2>
 				<div id="highlightGallery">
-					<?php foreach($exhibit_additional_images as $image) { ?>
-						<div class="gallery-item"><img alt="<?php echo $image['alt'];?>"  src='<?php echo $image['url']; ?>' /></div>
+					<?php foreach($exhibit_additional_images as $image) { 
+                        $alt = ($image['alt'] != "") ? get_the_title() . " - " . $image['alt'] : get_the_title() . " - " . $image['title']; ?>
+                        <div class="gallery-item"><img alt="<?php echo $alt;?>"  src='<?php echo $image['url']; ?>' /></div>
 					<?php } ?>
 					<?php /* for later if($photo_credit!=''){?>
 						<span>Photo Credit: <?php echo $photo_credit;?></span>

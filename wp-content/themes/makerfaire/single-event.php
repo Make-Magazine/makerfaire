@@ -65,9 +65,9 @@
 	?>
     <section id="eventHeader" class="hero-header" style="background-image:url('<?php echo $hero_bg; ?>')">
 	    <div class="logo-wrapper">
-			<h1 class="single-post-title"><?php the_title(); ?></h1>
+			<h1 class="single-post-title">Maker Faire <?php the_title(); ?></h1>
 			<?php if(!empty($faire_logo)) { ?>
-				<img id="faireLogo" src="<?php echo $faire_logo; ?>" alt="<?php echo get_the_title() . " Logo";?>" />
+				<img id="faireLogo" src="<?php echo $faire_logo; ?>" alt="Maker Faire <?php echo get_the_title()?> Logo" />
 			<?php } ?>
 		</div>
 	</section>
@@ -88,7 +88,7 @@
 					<iframe width="560" height="315" src="<?php echo getYoutubeEmbedUrl($faire_video) . "?autoplay=1&mute=1"; ?>" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
 				<?php } 
 			} else { ?>			
-				<?php echo get_the_post_thumbnail(); ?>
+				<img src="<?php echo get_the_post_thumbnail_url(); ?>" alt="Maker Faire <?php echo get_the_title()?> Featured Image" />
 			<?php }
 			?>
 		</div>
@@ -125,7 +125,7 @@
 					<div class="faire-project">
 					  <a href="<?php echo get_permalink($project->ID); ?>">
 					    <div class="project-image">
-							<?php echo get_the_post_thumbnail($project->ID); ?>
+							<img src="<?php echo get_the_post_thumbnail_url($project->ID); ?>" alt="Maker Faire <?php echo get_the_title()?> - <?php echo $project->post_title;?> Featured Image" />
 						</div>
 						<h4><?php echo $project->post_title; ?></h4>
 						<p><?php echo get_field('exhibit_description', $project->ID); ?>
@@ -142,7 +142,7 @@
 	<section id="producerInfo">
 		<div class="faire-custom-image">
 			<div class="striped-background"></div>
-			<img src="<?php echo $faire_graphic; ?>" alt="<?php the_title(); ?> Custom Image"  /> <?php // // pull the default image from 1920 image ?>
+			<img src="<?php echo $faire_graphic; ?>" alt="Maker Faire <?php echo get_the_title(); ?> Custom Image"  /> <?php // // pull the default image from 1920 image ?>
 		</div>
 		<div class="producer-details" style="background-image:url('<?php echo $faire_badge; ?>');">
 			<?php if($producer_org || !empty($contact) || !empty($faire_link) ){ ?>
@@ -170,8 +170,9 @@
 			<h2>Highlights</h2>
 			<div class="blue-spacer"></div>
 			<div id="highlightGallery">
-				<?php foreach($highlightImages as $image) { ?>
-					<div class="gallery-item"><img alt="<?php echo $image['alt'];?>"  src='<?php echo $image['url']; ?>' /></div>
+				<?php foreach($highlightImages as $image) { 
+					$alt = ($image['alt'] != "") ? "Maker Faire " . get_the_title() . " - " . $image['alt'] : "Maker Faire " . get_the_title() . " - " . $image['title']; ?>
+					<div class="gallery-item"><img alt="<?php echo $alt;?>"  src='<?php echo $image['url']; ?>' /></div>
 				<?php } ?>
 				<?php if($photo_credit!=''){?>
 					<span>Photo Credit: <?php echo $photo_credit;?></span>
