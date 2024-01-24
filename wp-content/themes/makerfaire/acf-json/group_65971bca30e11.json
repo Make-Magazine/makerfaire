@@ -480,6 +480,23 @@
                     "multiple": 0
                 }
             ]
+        },
+        {
+            "key": "field_65b19afeb5a1f",
+            "label": "MF exhibit link",
+            "name": "mf_exhibit_link",
+            "aria-label": "",
+            "type": "url",
+            "instructions": "Link to makerfaire exhibit page if applicable (ie. makerfaire.com\/maker\/exhibit\/12345)",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "placeholder": ""
         }
     ],
     "location": [
@@ -500,5 +517,5 @@
     "active": true,
     "description": "",
     "show_in_rest": 0,
-    "modified": 1706050803
+    "modified": 1706138448
 }
