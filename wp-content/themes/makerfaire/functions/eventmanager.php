@@ -116,7 +116,8 @@ add_action( 'init', 'register_taxonomy_countries' );
 add_filter( 'posts_orderby', 'randomise_with_pagination' );
 function randomise_with_pagination( $orderby ) {
 	$post = is_singular() ? get_queried_object() : false;
-	if ( ! empty($post) && is_a($post, 'WP_Post') && ( !$_GET || $_GET['sort_order'] == "rand desc" ) ) {
+	$rand_query = isset($_GET['sort_order']) ? $_GET['sort_order'] : "";
+	if ( ! empty($post) && is_a($post, 'WP_Post') && ( !$_GET || $rand_query == "rand desc" ) ) {
 		if( $post->ID == 661623 || $post->ID == 661625 ) { // Page 661623 is the faire grid page id, 661625 is the projects grid page id
 		  	// Reset seed on load of initial archive page
 			if( ! get_query_var( 'paged' ) || get_query_var( 'paged' ) == 0 || get_query_var( 'paged' ) == 1 ) {
