@@ -55,7 +55,7 @@ $maker_data = get_field("maker_data");
         <div class="hero-overlay"></div>
         <div class="logo-wrapper">
 			<?php if(!empty($faire_logo)) { ?>
-				<img id="faireLogo" src="<?php echo $faire_logo; ?>" alt="Maker Faire <?php echo $faire_name; ?> Logo" />
+				<img id="faireLogo" src="<?php echo $faire_logo; ?>" alt="Maker Faire <?php echo $faire_year . " " . $faire_name; ?> Logo" />
 			<?php } ?>
 		</div>
     </header>
@@ -110,7 +110,7 @@ $maker_data = get_field("maker_data");
             <?php } ?>     
         </div>
         <div class="project-picture">
-            <img class="featured-image" src="<?php echo $exhibit_photo;?>" alt="Maker Faire <?php echo $faire_name; ?> - <?php echo get_the_title(); ?> Featured Image" />
+            <img class="featured-image" src="<?php echo $exhibit_photo;?>" alt="Maker Faire <?php echo $faire_year . " " . $faire_name; ?> - <?php echo get_the_title(); ?> Project Image" />
         </div>
     </section>
     
