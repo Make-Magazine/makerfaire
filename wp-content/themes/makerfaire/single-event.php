@@ -51,17 +51,20 @@
 		//Projects Section
 		//find any projects associated with this faire
 		$args = array(
-			'posts_per_page' 	=> 3,
+			'posts_per_page' 	=> 20,
 			'post_type'    	 	=> 'projects',
 			'meta_key'			=> 'faire_information_faire_post',
 			'meta_value'    	=>  get_the_id(),
 			'orderby'        	=> 'rand'
 		);
 	
-		
-		$project_query = new WP_Query( $args );				
+		$project_query = new WP_Query( $args );		
+		//var_dump($project_query->posts);
+		$projects = $project_query->posts;
+		shuffle($projects);
+		$projects = array_slice($projects, 0, 3);
 
-		$linkToProjects = (isset($project_query->posts) && !empty($project_query->posts) ? '/yearbook/'.$faire_year.'-projects?_sfm_faire_information_faire_post='.get_the_ID() : '');
+		$linkToProjects = (isset($projects) && !empty($projects) ? '/yearbook/'.$faire_year.'-projects?_sfm_faire_information_faire_post='.get_the_ID() : '');
 	?>
     <section id="eventHeader" class="hero-header" style="background-image:url('<?php echo $hero_bg; ?>')">
 	    <div class="logo-wrapper">
@@ -117,11 +120,11 @@
 	</section>
 
 	<section id="faireProjects">
-		<?php if(isset($project_query->posts) && !empty($project_query->posts)) { ?>
+		<?php if(isset($projects) && !empty($projects)) { ?>
 			<h2>Projects</h2>
 			<div class="blue-spacer"></div>
 			<div class="projects-wrapper">
-				<?php foreach($project_query->posts as $project){ ?>
+				<?php foreach($projects as $project){ ?>
 					<div class="faire-project">
 					  <a href="<?php echo get_permalink($project->ID); ?>">
 					    <div class="project-image">
