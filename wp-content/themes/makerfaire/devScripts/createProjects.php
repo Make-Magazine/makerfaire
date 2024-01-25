@@ -65,17 +65,24 @@ if($create==''){
         state                       field_65a1703ae1bce
         country                     field_65a17042e1bcf
         region                      field_65a72246d98f4
+    mf_exhibit_link                 field_65b19afeb5a1f
 */
-$sql = "select entry.title, entry.public_desc, entry.project_video, entry.inspiration, entry.website, entry_link,
-entry.social,
+
+$wpdb->query("SET session group_concat_max_len=15000");
+
+$sql = "select blog_id, entry_id, form_id, entry.title, entry.public_desc, 
+entry.project_photo, entry.category, entry.project_video, entry.inspiration, 
+entry.website, entry.social, entry.faire_name, entry.faire_id as faire_post, entry.faire_year, 
+entry_link,
+
 (select GROUP_CONCAT(email SEPARATOR '|') from wp_mf_dir_maker_to_entry m2e left outer join wp_mf_dir_maker maker on m2e.maker_id = maker.maker_id where m2e.maker_type <> 'contact' and m2e.entry_id=entry.entry_id and m2e.blog_id=entry.blog_id ) as maker_email, 
 (select GROUP_CONCAT(concat(first_name,' ', last_name) SEPARATOR '|') from wp_mf_dir_maker_to_entry m2e left outer join wp_mf_dir_maker maker on m2e.maker_id = maker.maker_id where m2e.maker_type <> 'contact' and m2e.entry_id=entry.entry_id and m2e.blog_id=entry.blog_id ) as maker_name, 
 (select GROUP_CONCAT(bio SEPARATOR '|') from wp_mf_dir_maker_to_entry m2e left outer join wp_mf_dir_maker maker on m2e.maker_id = maker.maker_id where m2e.maker_type <> 'contact' and m2e.entry_id=entry.entry_id and m2e.blog_id=entry.blog_id ) as maker_bio, 
+(select GROUP_CONCAT(social SEPARATOR '|') from wp_mf_dir_maker_to_entry m2e left outer join wp_mf_dir_maker maker on m2e.maker_id = maker.maker_id where m2e.maker_type <> 'contact' and m2e.entry_id=entry.entry_id and m2e.blog_id=entry.blog_id ) as maker_social, 
 (select GROUP_CONCAT(photo SEPARATOR '|') from wp_mf_dir_maker_to_entry m2e left outer join wp_mf_dir_maker maker on m2e.maker_id = maker.maker_id where m2e.maker_type <> 'contact' and m2e.entry_id=entry.entry_id and m2e.blog_id=entry.blog_id ) as maker_photo, 
 (select GROUP_CONCAT(website SEPARATOR '|') from wp_mf_dir_maker_to_entry m2e left outer join wp_mf_dir_maker maker on m2e.maker_id = maker.maker_id where m2e.maker_type <> 'contact' and m2e.entry_id=entry.entry_id and m2e.blog_id=entry.blog_id ) as maker_website,
-(select GROUP_CONCAT(social SEPARATOR '|') from wp_mf_dir_maker_to_entry m2e left outer join wp_mf_dir_maker maker on m2e.maker_id = maker.maker_id where m2e.maker_type <> 'contact' and m2e.entry_id=entry.entry_id and m2e.blog_id=entry.blog_id ) as maker_social, 
-entry.faire_year, entry.faire_name as faire_post, entry.project_gallery,state, country, region,
-entry.project_photo, entry.category, id, blog_id, entry_id, form_id
+
+entry.project_gallery, state, country, region, id
 
 FROM `wp_mf_dir_entry` entry 
 where status='Accepted' ".
@@ -83,8 +90,8 @@ where status='Accepted' ".
 "limit $limit offset $offset";
 $entries = $wpdb->get_results($sql, ARRAY_A);
 //echo $sql.'<br/>';
-$categories=array();
-//loop thru all categories
+
+//loop thru all entries
 foreach ($entries as $entry) {  
     $projects_post = array(
         'post_title' => $entry['title'],
@@ -96,9 +103,10 @@ foreach ($entries as $entry) {
         );
          
     $post_id = wp_insert_post( $projects_post );    
+    
     if($post_id){        
         //featured image        
-        $photo_url = $entry['project_photo'];
+        $photo_url = $entry['project_photo'];        
 
         //if a project photo isn't set, maybe you could use maker 1 photo?
         if($photo_url==''){                        
@@ -111,7 +119,7 @@ foreach ($entries as $entry) {
             echo 'no project photo set for '.$entry['id'].'<br/>';
             //continue;
         }else{
-            $thumbnail_id = get_img_id($photo_url, $post_id );
+            $thumbnail_id = get_img_id($photo_url, $post_id, $entry['title'], 'Project', $entry['faire_name'] );
             if($thumbnail_id==0){
                 echo 'error in adding '.$photo_url.' to media library for '.$entry['id'].'<br/>';
                 //continue;            
@@ -204,7 +212,7 @@ foreach ($entries as $entry) {
                 }                 
             }        
             //maker photo            
-            $thumbnail_id = ($maker_photo[$key]!=''?get_img_id( $maker_photo[$key], $post_id):0);
+            $thumbnail_id = ($maker_photo[$key]!=''?get_img_id( $maker_photo[$key], $post_id, (isset($maker_name[$key])?$maker_name[$key]:''), 'Maker'):0);
         
             $maker_array[] = array(
                 // field key => value pairs
@@ -233,13 +241,13 @@ foreach ($entries as $entry) {
                         
         //additional_exhibit_images gallery   
         $project_gallery = explode(',', $entry['project_gallery']);      
-        $project_gallery='';
-        if($project_gallery !=''){
+      
+        if($project_gallery !='' && !empty($project_gallery)){
             $gallery_array = array();
             if(is_array($project_gallery)){
                 foreach($project_gallery as $image){
                     if($image!=''){
-                        $thumbnail_id = get_img_id($image, $post_id);
+                        $thumbnail_id = get_img_id($image, $post_id, $entry['title'],'Additional Photo');
                         if($thumbnail_id!='')
                             $gallery_array[] = $thumbnail_id;
                     }                    
@@ -275,7 +283,7 @@ foreach ($entries as $entry) {
         update_field( 'field_65a17027e1bcd', $project_location, $post_id );           
 
         //mf exhibit link
-        update_field('mf_exhibit_link',$entry['entry_link'], $post_id);
+        update_field( 'field_65b19afeb5a1f', $entry['entry_link'], $post_id);
     }else{
         echo 'error adding post<br/>';
         var_dump($projects_post);
@@ -286,34 +294,43 @@ foreach ($entries as $entry) {
 }    
 
 //check if image was previously uploaded to the media library, if it wasn't - add it
-function get_img_id($filename, $post_id) {
-    //echo 'get img id for '.$filename.'- basename is: '.basename($filename).'<br/>';
+function get_img_id($url, $post_id, $name='', $type='', $faire_name='') {    
     global $wpdb;
+
+    //remove special charcters from the name
+    $name = remove_spec_chars($name);
+
+    //exit if name or type not set
+    if($name=='' or $type==''){
+        echo 'Error! name or type not sent to get_img_id';
+        return FALSE;
+    }
     
-    //$basename     = basename($filename);
-    //$thumbnail_id = intval( $wpdb->get_var( "SELECT ID FROM {$wpdb->posts} WHERE guid LIKE '%/$basename'" ) );
+    //ALT text 
+    //      Project: Artplots Drawing Robots - Maker Faire Rocklin
+    //      Maker:   Michael Morris Maker    - Maker Faire Yearbook Photo
+    $alt_text = $name.' - Maker Faire '.($type == 'Project'?$faire_name:'Yearbook Photo');
+    
+    //TITLE - 
+    //      Project - MFYB23 Rocklin Project - Artplots Drawing Robots
+    //      Maker   - MFYB23         Maker   - Michael Morris
+    $title    = 'MFYB23 ' . ($type == 'Project'?$faire_name:'').' '.$type.' - '.$name;
 
-    //if($thumbnail_id==0){
-        //image not found in media library, need to upload it.
-        $thumbnail_id = upload_img_by_url( $filename, $post_id );
-        
-        //if we the upload of the photo failed abort
-        if($thumbnail_id==0){
-            echo 'error in adding '.$filename.' to media library <br/>';
-        }
-    //}
-    return $thumbnail_id;
- }  
+    //FILE name
+    //      Project - Artplots-Drawing-Robots.png
+    $new_filename = clean($name); 
+    if($type=='Additional Photo'){
+        $new_filename = $new_filename.'-gallery';
+    }   
 
- /**
- * Upload image from URL 
- */
-function upload_img_by_url($url, $post_id){
+    //now let's upload the image
     require_once( ABSPATH . 'wp-admin/includes/file.php' );
     include_once( ABSPATH . 'wp-admin/includes/admin.php' );
 
     $file = array();
-    $file['name'] = basename($url);
+    //rename image
+    $file['name']     = ($new_filename!='' ? $new_filename.'.'.pathinfo($url, PATHINFO_EXTENSION):basename($url));
+
     $file['tmp_name'] = download_url($url);
     $attachmentId = '';
 
@@ -327,8 +344,44 @@ function upload_img_by_url($url, $post_id){
         if ( is_wp_error($attachmentId) ) {
             @unlink($file['tmp_name']);
             var_dump( $attachmentId->get_error_messages( ) );
+            echo 'file in error '.$url.'<br/>';
         } 
     }
 
+    //if the upload of the photo failed abort
+    if($attachmentId==0){
+        echo 'error in adding '.$url.' to media library <br/>';
+        return $attachmentId;
+    }
+
+    if($attachmentId!='') {
+        $image_meta = array(
+            'ID'       	 => $attachmentId,
+            'post_title' => $title
+        );
+
+        // Set the image Alt-Text
+        update_post_meta( $attachmentId, '_wp_attachment_image_alt', $alt_text);
+
+        // Set the image meta (e.g. Title, Excerpt, Content)
+        wp_update_post( $image_meta );					
+    }                
+
     return $attachmentId;
+ }  
+
+//remove all special chars but not spaces
+function remove_spec_chars($string){
+	return preg_replace('/[^A-Za-z0-9 ]/', '', $string);
+}
+
+function clean($string) {
+	//limit to first 4 words
+	$string_arr = explode(' ',$string);	
+	$string_arr = array_slice($string_arr, 0, 4);
+		
+	// Replaces all spaces with hyphens.
+	$string = implode('-',$string_arr);
+		
+   return $string;
 }
