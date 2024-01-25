@@ -1,10 +1,16 @@
 <?php 
+//Pull faire specific information
+$faireData       = get_field("faire_information");
+$faire_year      = (isset($faireData["faire_year"])?$faireData["faire_year"]:'');
+
 //Project Information
 $thumbnail_id               = get_post_thumbnail_id();
 
 //check if there is a featured image set
 if($thumbnail_id) {
     $image_src = wp_get_attachment_image_src( $thumbnail_id, 'full' );
+    $image_alt = get_post_meta ( $thumbnail_id, '_wp_attachment_image_alt', true );
+    $image_alt = !empty($image_alt) ? $image_alt : get_the_title() . " Project Image for " . "Maker Faire " . $faire_name . " " . $faire_year;;	
 }
 $exhibit_id                 = get_the_ID();
 $exhibit_photo              = (isset($image_src[0])?$image_src[0]:'');
@@ -14,10 +20,6 @@ $exhibit_additional_images  = get_field("additional_exhibit_images");
 $exhibit_social             = get_field("exhibit_social");
 $exhibit_website            = get_field("exhibit_website");
 $exhibit_cats               = wp_get_post_terms($exhibit_id, "mf-project-cat");
-
-//Pull faire specific information
-$faireData       = get_field("faire_information");
-$faire_year      = (isset($faireData["faire_year"])?$faireData["faire_year"]:'');
 
 //Pull associated faire post
 if(isset($faireData["faire_post"])){
@@ -34,6 +36,7 @@ $project_info_bg = isset($faire_badge) ? "background-image:url(" . $faire_badge 
 
 $topSection 	 = get_field('top_section', $faire_id);
 $faire_logo 	 = isset($topSection['horizontal_faire_logo']['url']) ? $topSection['horizontal_faire_logo']['url'] : ''; 
+$faire_logo_alt	 = !empty($topSection['horizontal_faire_logo']['alt']) ? $topSection['horizontal_faire_logo']['alt'] : "Maker Faire " . get_the_title() . " Logo"; 
 
 //hero image
 $faireTopSection = get_field("top_section", $faire_id);
@@ -55,7 +58,7 @@ $maker_data = get_field("maker_data");
         <div class="hero-overlay"></div>
         <div class="logo-wrapper">
 			<?php if(!empty($faire_logo)) { ?>
-				<img id="faireLogo" src="<?php echo $faire_logo; ?>" alt="Maker Faire <?php echo $faire_year . " " . $faire_name; ?> Logo" />
+				<img id="faireLogo" src="<?php echo $faire_logo; ?>" alt="<?php echo $faire_logo_alt; ?>" />
 			<?php } ?>
 		</div>
     </header>
@@ -110,7 +113,7 @@ $maker_data = get_field("maker_data");
             <?php } ?>     
         </div>
         <div class="project-picture">
-            <img class="featured-image" src="<?php echo $exhibit_photo;?>" alt="Maker Faire <?php echo $faire_year . " " . $faire_name; ?> - <?php echo get_the_title(); ?> Project Image" />
+            <img class="featured-image" src="<?php echo $exhibit_photo;?>" alt="<?php echo $image_alt; ?>" />
         </div>
     </section>
     
@@ -157,7 +160,7 @@ $maker_data = get_field("maker_data");
             <div class="maker-wrapper">
                 <div class="img-wrap">                   
                     <?php if(isset($maker["maker_photo"]["url"])){ ?>
-                        <img src="<?php echo $maker["maker_photo"]["url"]; ?>" alt="<?php echo $maker["maker_or_group_name"]; ?> Maker Photo" width="250px" height="250px" />
+                        <img src="<?php echo $maker["maker_photo"]["url"]; ?>" alt="<?php if(!empty($maker["maker_photo"]["alt"])) { echo $maker["maker_photo"]["alt"]; } else { echo $maker["maker_or_group_name"] . " Maker Photo"; } ?>" width="250px" height="250px" />
                     <?php } else { ?>
                         <img src="/wp-content/themes/makerfaire/images/default-makey.png" alt="Default Maker Photo" width="250px" height="250px">
                     <?php } ?>

@@ -69,7 +69,9 @@ if ( $query->have_posts() ) {
 				$EM_Location = $EM_Event->get_location();
 				$faire_location = $EM_Location->location_town;
 				$faire_state = $EM_Location->location_state;
-				$image_alt = "Maker Faire " . $title . " " . $faire_year;
+				$image_id = get_post_meta( '_thumbnail_id', true );
+				$image_alt	= get_post_meta ( $image_id, '_wp_attachment_image_alt', true );
+				$image_alt = !empty($image_alt) ? $image_alt : "Maker Faire " . $faire_year . " " . get_the_title() . " Featured Image";	
 				if(!empty($faire_location) && !empty($faire_state)) {
 					$faire_location .= ", ";
 				}
@@ -86,7 +88,9 @@ if ( $query->have_posts() ) {
 				$faire_id = (isset($faire_info['faire_post'])?$faire_info['faire_post']:'');
 				$faire_name = ($faire_id!='' ? get_the_title($faire_id):'');
 				$faire_year = (isset($faire_info["faire_year"])?$faire_info["faire_year"]:'');
-				$image_alt = "Maker Faire " . $faire_name . " " . $faire_year . " - " . $title;
+				$image_id = get_post_meta( '_thumbnail_id', true );
+				$image_alt	= get_post_meta ( $image_id, '_wp_attachment_image_alt', true );
+				$image_alt = !empty($image_alt) ? $image_alt : $title . " Project Image for " . "Maker Faire " . $faire_name . " " . $faire_year;	
 				
 				$producerSection = get_field('producer_section', $faire_id);
 				$faire_badge = (isset($producerSection['circular_faire_logo']['url']) ? $producerSection['circular_faire_logo']['url'] : '//' . $_SERVER['HTTP_HOST'] . "/wp-content/themes/makerfaire/images/default-badge.png");
