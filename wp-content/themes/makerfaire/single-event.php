@@ -39,7 +39,6 @@
 		$producerSection 		= get_field('producer_section');
 		$faire_graphic 			= isset($producerSection['faire_graphic']['url']) 		? $producerSection['faire_graphic']['url'] 	 	 : get_stylesheet_directory_uri()."/images/faire-page-faire-graphic.png";
 		$faire_graphic_alt		= !empty($producerSection['faire_graphic']['alt']) 		? $producerSection['faire_graphic']['alt'] 	 	 : "Maker Faire " . $faire_year . " " . get_the_title() . " Custom Image";
-		var_dump($faire_graphic_alt);
 		$faire_badge 			= isset($producerSection['circular_faire_logo']['url']) ? $producerSection['circular_faire_logo']['url'] : get_stylesheet_directory_uri()."/images/default-badge.png";
 		
 		$producer_org 			= $producerSection['producer_or_org'];
