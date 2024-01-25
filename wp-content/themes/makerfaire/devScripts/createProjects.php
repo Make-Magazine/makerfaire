@@ -66,7 +66,7 @@ if($create==''){
         country                     field_65a17042e1bcf
         region                      field_65a72246d98f4
 */
-$sql = "select entry.title, entry.public_desc, entry.project_video, entry.inspiration, entry.website, 
+$sql = "select entry.title, entry.public_desc, entry.project_video, entry.inspiration, entry.website, entry_link,
 entry.social,
 (select GROUP_CONCAT(email SEPARATOR '|') from wp_mf_dir_maker_to_entry m2e left outer join wp_mf_dir_maker maker on m2e.maker_id = maker.maker_id where m2e.maker_type <> 'contact' and m2e.entry_id=entry.entry_id and m2e.blog_id=entry.blog_id ) as maker_email, 
 (select GROUP_CONCAT(concat(first_name,' ', last_name) SEPARATOR '|') from wp_mf_dir_maker_to_entry m2e left outer join wp_mf_dir_maker maker on m2e.maker_id = maker.maker_id where m2e.maker_type <> 'contact' and m2e.entry_id=entry.entry_id and m2e.blog_id=entry.blog_id ) as maker_name, 
@@ -203,8 +203,8 @@ foreach ($entries as $entry) {
                     }
                 }                 
             }        
-            //maker photo
-            $thumbnail_id = get_img_id( $maker_photo[$key], $post_id);
+            //maker photo            
+            $thumbnail_id = ($maker_photo[$key]!=''?get_img_id( $maker_photo[$key], $post_id):0);
         
             $maker_array[] = array(
                 // field key => value pairs
@@ -237,10 +237,13 @@ foreach ($entries as $entry) {
         if($project_gallery !=''){
             $gallery_array = array();
             if(is_array($project_gallery)){
-                foreach($project_gallery as $image){                    
-                    $thumbnail_id = get_img_id($image, $post_id);
-                    if($thumbnail_id!='')
-                        $gallery_array[] = $thumbnail_id;
+                foreach($project_gallery as $image){
+                    if($image!=''){
+                        $thumbnail_id = get_img_id($image, $post_id);
+                        if($thumbnail_id!='')
+                            $gallery_array[] = $thumbnail_id;
+                    }                    
+                    
                 }
             }else{                
                 echo 'project gallery is not an array.';
@@ -271,6 +274,8 @@ foreach ($entries as $entry) {
 
         update_field( 'field_65a17027e1bcd', $project_location, $post_id );           
 
+        //mf exhibit link
+        update_field('mf_exhibit_link',$entry['entry_link'], $post_id);
     }else{
         echo 'error adding post<br/>';
         var_dump($projects_post);
@@ -285,10 +290,10 @@ function get_img_id($filename, $post_id) {
     //echo 'get img id for '.$filename.'- basename is: '.basename($filename).'<br/>';
     global $wpdb;
     
-    $basename     = basename($filename);
-    $thumbnail_id = intval( $wpdb->get_var( "SELECT ID FROM {$wpdb->posts} WHERE guid LIKE '%/$basename'" ) );
+    //$basename     = basename($filename);
+    //$thumbnail_id = intval( $wpdb->get_var( "SELECT ID FROM {$wpdb->posts} WHERE guid LIKE '%/$basename'" ) );
 
-    if($thumbnail_id==0){
+    //if($thumbnail_id==0){
         //image not found in media library, need to upload it.
         $thumbnail_id = upload_img_by_url( $filename, $post_id );
         
@@ -296,7 +301,7 @@ function get_img_id($filename, $post_id) {
         if($thumbnail_id==0){
             echo 'error in adding '.$filename.' to media library <br/>';
         }
-    }
+    //}
     return $thumbnail_id;
  }  
 
@@ -308,13 +313,14 @@ function upload_img_by_url($url, $post_id){
     include_once( ABSPATH . 'wp-admin/includes/admin.php' );
 
     $file = array();
-    $file['name'] = $url;
+    $file['name'] = basename($url);
     $file['tmp_name'] = download_url($url);
     $attachmentId = '';
 
     if (is_wp_error($file['tmp_name'])) {
         @unlink($file['tmp_name']);
         var_dump( $file['tmp_name']->get_error_messages( ) );
+        echo 'file in error '.$url.'<br/>';
     } else {
         $attachmentId = media_handle_sideload($file, $post_id);
          
