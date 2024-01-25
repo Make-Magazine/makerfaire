@@ -13,6 +13,10 @@ jQuery(document).ready(function(){
 	}
 
 	jQuery(document).on("sf:ajaxfinish", ".searchandfilter", function(){
+		var urlParams = new URLSearchParams(window.location.search);
+		if(urlParams.get('sort_order') == "rand desc") {
+			jQuery('.search-filter-results').load(document.URL +  ' .search-filter-results');
+		}
 		jQuery('.sf-field-sort_order select.sf-input-select').select2();
 		jQuery( ".sf-field-sort_order label .select2-selection" ).prop("title","Sort").tooltip();
 		// Listview button
