@@ -1,10 +1,16 @@
 <?php 
+//Pull faire specific information
+$faireData       = get_field("faire_information");
+$faire_year      = (isset($faireData["faire_year"])?$faireData["faire_year"]:'');
+
 //Project Information
 $thumbnail_id               = get_post_thumbnail_id();
 
 //check if there is a featured image set
 if($thumbnail_id) {
     $image_src = wp_get_attachment_image_src( $thumbnail_id, 'full' );
+    $image_alt = get_post_meta ( $thumbnail_id, '_wp_attachment_image_alt', true );
+    $image_alt = !empty($image_alt) ? $image_alt : get_the_title() . " Project Image for " . "Maker Faire " . $faire_name . " " . $faire_year;;	
 }
 $exhibit_id                 = get_the_ID();
 $exhibit_photo              = (isset($image_src[0])?$image_src[0]:'');
@@ -14,10 +20,6 @@ $exhibit_additional_images  = get_field("additional_exhibit_images");
 $exhibit_social             = get_field("exhibit_social");
 $exhibit_website            = get_field("exhibit_website");
 $exhibit_cats               = wp_get_post_terms($exhibit_id, "mf-project-cat");
-
-//Pull faire specific information
-$faireData       = get_field("faire_information");
-$faire_year      = (isset($faireData["faire_year"])?$faireData["faire_year"]:'');
 
 //Pull associated faire post
 if(isset($faireData["faire_post"])){
@@ -34,6 +36,7 @@ $project_info_bg = isset($faire_badge) ? "background-image:url(" . $faire_badge 
 
 $topSection 	 = get_field('top_section', $faire_id);
 $faire_logo 	 = isset($topSection['horizontal_faire_logo']['url']) ? $topSection['horizontal_faire_logo']['url'] : ''; 
+$faire_logo_alt	 = !empty($topSection['horizontal_faire_logo']['alt']) ? $topSection['horizontal_faire_logo']['alt'] : "Maker Faire " . get_the_title() . " Logo"; 
 
 //hero image
 $faireTopSection = get_field("top_section", $faire_id);
@@ -55,18 +58,18 @@ $maker_data = get_field("maker_data");
         <div class="hero-overlay"></div>
         <div class="logo-wrapper">
 			<?php if(!empty($faire_logo)) { ?>
-				<img id="faireLogo" src="<?php echo $faire_logo; ?>" alt="<?php echo get_the_title() . " Logo";?>" />
+				<img id="faireLogo" src="<?php echo $faire_logo; ?>" alt="<?php echo $faire_logo_alt; ?>" />
 			<?php } ?>
 		</div>
     </header>
 
     <nav class="eoy-breadcrumbs">
-    <a href="/yearbook/<?php echo $faire_year; ?>-faires">All Faires</a> / <a href="<?php echo get_permalink($faire_id); ?>">Faire Home</a> / <a href="/yearbook/<?php echo $faire_year; ?>-projects?_sfm_faire_information_faire_post=<?php echo $faire_id; ?>">Faire Projects</a>
+        <a href="/yearbook/<?php echo $faire_year; ?>-faires">All Faires</a> / <a href="<?php echo get_permalink($faire_id); ?>">Faire Home</a> / <a href="/yearbook/<?php echo $faire_year; ?>-projects?_sfm_faire_information_faire_post=<?php echo $faire_id; ?>">Faire Projects</a>
     </nav>
     
     <section id="project-info-section" class="container">
         <div class="project-info" style="<?php echo $project_info_bg; ?>">
-            <h3 class="faire-details"><a href="<?php echo get_permalink($faire_id); ?>"><?php echo $faire_name ." ".$faire_year;?></a></h3>
+            <h3 class="faire-details"><a href="<?php echo get_permalink($faire_id); ?>">Maker Faire <?php echo $faire_name ." ".$faire_year;?></a></h3>
             <h1 class="project-title"><?php echo get_field("title");?></h1>
             <h4>Home: <?php
                 if(!empty($project_state)) {
@@ -96,14 +99,13 @@ $maker_data = get_field("maker_data");
                 <div class="project-categories"><b>Categories: </b>
                     <?php 
                     $referer = isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : "";
-                    parse_str( parse_url($referer, PHP_URL_QUERY), $query_args);
                     if($referer == "" || (str_contains($referer, "/yearbook/2023-projects") && !str_contains($referer, "_sfm_faire_information_faire_post"))) {
                         foreach($exhibit_cats as $category) { ?>
                             <a href="/yearbook/2023-projects/?_sft_mf-project-cat=<?php echo $category->slug;?>"><?php echo$category->name; ?></a><span>, </span>
                         <?php } 
                     } else {
                         foreach($exhibit_cats as $category) { ?>
-                            <a href="/yearbook/2023-projects/?_sfm_faire_information_faire_post=<?php echo $query_args["_sfm_faire_information_faire_post"]; ?>&_sft_mf-project-cat=<?php echo $category->slug;?>"><?php echo$category->name; ?></a><span>, </span>
+                            <a href="/yearbook/2023-projects/?_sfm_faire_information_faire_post=<?php echo $faire_id; ?>&_sft_mf-project-cat=<?php echo $category->slug;?>"><?php echo$category->name; ?></a><span>, </span>
                         <?php } 
                     }
                     ?>
@@ -111,7 +113,7 @@ $maker_data = get_field("maker_data");
             <?php } ?>     
         </div>
         <div class="project-picture">
-            <img class="featured-image" src="<?php echo $exhibit_photo;?>" />
+            <img class="featured-image" src="<?php echo $exhibit_photo;?>" alt="<?php echo $image_alt; ?>" />
         </div>
     </section>
     
@@ -136,8 +138,9 @@ $maker_data = get_field("maker_data");
 			if( $exhibit_additional_images ) { ?>
 			    <h2>Additional Project Photos</h2>
 				<div id="highlightGallery">
-					<?php foreach($exhibit_additional_images as $image) { ?>
-						<div class="gallery-item"><img alt="<?php echo $image['alt'];?>"  src='<?php echo $image['url']; ?>' /></div>
+					<?php foreach($exhibit_additional_images as $image) { 
+                        $alt = ($image['alt'] != "") ? get_the_title() . " - " . $image['alt'] : get_the_title() . " - " . $image['title']; ?>
+                        <div class="gallery-item"><img alt="<?php echo $alt;?>"  src='<?php echo $image['url']; ?>' /></div>
 					<?php } ?>
 					<?php /* for later if($photo_credit!=''){?>
 						<span>Photo Credit: <?php echo $photo_credit;?></span>
@@ -157,14 +160,14 @@ $maker_data = get_field("maker_data");
             <div class="maker-wrapper">
                 <div class="img-wrap">                   
                     <?php if(isset($maker["maker_photo"]["url"])){ ?>
-                        <img src="<?php echo $maker["maker_photo"]["url"]; ?>" alt="<?php echo $maker["maker_or_group_name"]; ?> Maker Photo" width="250px" height="250px" />
+                        <img src="<?php echo $maker["maker_photo"]["url"]; ?>" alt="<?php if(!empty($maker["maker_photo"]["alt"])) { echo $maker["maker_photo"]["alt"]; } else { echo $maker["maker_or_group_name"] . " Maker Photo"; } ?>" width="250px" height="250px" />
                     <?php } else { ?>
                         <img src="/wp-content/themes/makerfaire/images/default-makey.png" alt="Default Maker Photo" width="250px" height="250px">
                     <?php } ?>
                 </div>
                 <div class="maker-detail">
                     <h4><?php echo $maker["maker_or_group_name"];?></h4>
-                    <p class="maker-bio"><?php echo $maker["maker_bio"]?></p>
+                    <p class="maker-bio show-more-snippet"><?php echo $maker["maker_bio"]?></p>
                     <div class="social-links reversed">
                         <?php 
                         if(!empty($maker['maker_social'])) {

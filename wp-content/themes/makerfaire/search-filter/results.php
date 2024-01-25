@@ -59,14 +59,19 @@ if ( $query->have_posts() ) {
 			$result_text_style = "";
 			if($postType == "event" || $postType == "faire") { 
 				$title = str_replace("Maker Faire", "", $title);
+				
 				$producerSection = get_field('producer_section');
 				$faire_badge = ($producerSection['circular_faire_logo']) ? $producerSection['circular_faire_logo']['url'] : '//' . $_SERVER['HTTP_HOST'] . "/wp-content/themes/makerfaire/images/default-badge.png";
 				$result_text_style = 'style="background-image:url(' . $faire_badge . ');"';
 				$event_id = get_post_meta(get_the_ID(), '_event_id');
 				$EM_Event = new EM_Event( $event_id[0] );
+				$faire_year = date('Y', strtotime($EM_Event->event_start_date));
 				$EM_Location = $EM_Event->get_location();
 				$faire_location = $EM_Location->location_town;
 				$faire_state = $EM_Location->location_state;
+				$image_id = get_post_meta( '_thumbnail_id', true );
+				$image_alt	= get_post_meta ( $image_id, '_wp_attachment_image_alt', true );
+				$image_alt = !empty($image_alt) ? $image_alt : "Maker Faire " . $faire_year . " " . get_the_title() . " Featured Image";	
 				if(!empty($faire_location) && !empty($faire_state)) {
 					$faire_location .= ", ";
 				}
@@ -82,6 +87,10 @@ if ( $query->have_posts() ) {
 				$faire_info = get_field("faire_information");
 				$faire_id = (isset($faire_info['faire_post'])?$faire_info['faire_post']:'');
 				$faire_name = ($faire_id!='' ? get_the_title($faire_id):'');
+				$faire_year = (isset($faire_info["faire_year"])?$faire_info["faire_year"]:'');
+				$image_id = get_post_meta( '_thumbnail_id', true );
+				$image_alt	= get_post_meta ( $image_id, '_wp_attachment_image_alt', true );
+				$image_alt = !empty($image_alt) ? $image_alt : $title . " Project Image for " . "Maker Faire " . $faire_name . " " . $faire_year;	
 				
 				$producerSection = get_field('producer_section', $faire_id);
 				$faire_badge = (isset($producerSection['circular_faire_logo']['url']) ? $producerSection['circular_faire_logo']['url'] : '//' . $_SERVER['HTTP_HOST'] . "/wp-content/themes/makerfaire/images/default-badge.png");
@@ -101,7 +110,7 @@ if ( $query->have_posts() ) {
 			<div class="result-item <?php echo $postType; ?>" onclick="javascript:location.href = '<?php echo get_the_permalink(); ?>';">
 				<?php if ( has_post_thumbnail() ) { ?>
 						<div class="result-image">
-							<?php the_post_thumbnail("small"); ?>
+							<?php the_post_thumbnail("small", [ 'alt' => esc_html ( $image_alt ) ]); ?>
 						</div>
 				<?php } ?>
 				<div class="results-text" <?php echo $result_text_style; ?>>
