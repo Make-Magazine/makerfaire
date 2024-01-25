@@ -9,7 +9,9 @@ jQuery(document).ready(function(){
 	jQuery( ".sf-field-submit" ).prop("title","Change View").tooltip();
 	// change the faireName id in the title to reflect the faire we are showing projects for
 	if(jQuery(".sf-field-post-meta-faire_information_faire_post .chosen-single span").text() != "All Faires" ) {
-		jQuery("#faireName h2").text(jQuery(".sf-field-post-meta-faire_information_faire_post .chosen-single span").text() + " Maker Faire Projects");
+		jQuery("#faireName").text(jQuery(".sf-field-post-meta-faire_information_faire_post .chosen-single span").text() + " Maker Faire ");
+	} else {
+		jQuery("#faireName").text("");
 	}
 
 	jQuery(document).on("sf:ajaxfinish", ".searchandfilter", function(){
@@ -26,7 +28,9 @@ jQuery(document).ready(function(){
 		});
 		// change the faireName id in the title to reflect the faire we are showing projects for
 		if(jQuery(".sf-field-post-meta-faire_information_faire_post .chosen-single span").text() != "All Faires" ) {
-			jQuery("#faireName h2").text(jQuery(".sf-field-post-meta-faire_information_faire_post .chosen-single span").text() + " Maker Faire Projects");
+		jQuery("#faireName").text(jQuery(".sf-field-post-meta-faire_information_faire_post .chosen-single span").text() + " Maker Faire ");
+		} else {
+			jQuery("#faireName").text("");
 		}
 	});
 	
