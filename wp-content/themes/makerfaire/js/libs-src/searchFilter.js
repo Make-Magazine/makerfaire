@@ -29,8 +29,8 @@ function sf_yearbook() {
 		jQuery("body").toggleClass("listview");
 	});
 	// change the faireName id in the title to reflect the faire we are showing projects for
-	if(jQuery(".sf-field-post-meta-faire_information_faire_post .chosen-single span").text() != "All Faires" ) {
-	jQuery("#faireName").text(jQuery(".sf-field-post-meta-faire_information_faire_post .chosen-single span").text() );
+	if(jQuery(".sf-field-post-meta-faire_information_faire_post select option.sf-option-active").text() != "All Faires" ) {
+		jQuery("#faireName").text(jQuery(".sf-field-post-meta-faire_information_faire_post select option.sf-option-active").text()  );
 	} else {
 		jQuery("#faireName").text("");
 	}
