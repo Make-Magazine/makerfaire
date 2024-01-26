@@ -128,11 +128,19 @@
 			<h2>Projects</h2>
 			<div class="blue-spacer"></div>
 			<div class="projects-wrapper">
-				<?php foreach($projects as $project){ ?>
+				<?php foreach($projects as $project){ 
+					$thumbnail_id  = get_post_thumbnail_id($project->ID);
+					//check if there is a featured image set
+					if($thumbnail_id) {
+						$image_src = wp_get_attachment_image_src( $thumbnail_id, 'full' );
+						$image_alt = get_post_meta ( $thumbnail_id, '_wp_attachment_image_alt', true );
+						$image_alt = !empty($image_alt) ? $image_alt : get_the_title() . " Project Image for " . "Maker Faire " . $faire_name . " " . $faire_year;;	
+					}
+					?>
 					<div class="faire-project">
 					  <a href="<?php echo get_permalink($project->ID); ?>">
 					    <div class="project-image">
-							<img src="<?php echo get_the_post_thumbnail_url($project->ID); ?>" alt="Maker Faire <?php echo  $faire_year . " " . get_the_title()?> - <?php echo $project->post_title;?> Featured Image" />
+							<img src="<?php echo $image_src[0] ?>" alt="<?php echo $image_alt; ?>" />
 						</div>
 						<h4><?php echo $project->post_title; ?></h4>
 						<p><?php echo get_field('exhibit_description', $project->ID); ?>
