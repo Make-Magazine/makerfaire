@@ -80,7 +80,7 @@
 	</section>
 
 	<nav class="eoy-breadcrumbs">			
-		<a href="/yearbook/<?php echo $faire_year; ?>-faires">All Faires</a> <?php if($linkToProjects !='') echo '/ <a href="'.$linkToProjects.'" target="_blank">Faire Projects</a>';?>
+		<a href="/yearbook/<?php echo $faire_year; ?>-faires">All Faires</a> <?php if($linkToProjects !='') echo '/ <a href="'.$linkToProjects.'">Faire Projects</a>';?>
 	</nav>
 
 	<section id="faireInfo">
