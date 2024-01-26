@@ -3,7 +3,6 @@ jQuery(document).ready(function(){
 	jQuery(document).on("sf:ajaxfinish", ".searchandfilter", function(){
 		sf_yearbook();
 	});
-	
 });
 
 // this function does all the things we want to have happen to the search and filter pages on load and ajax refresh
@@ -23,6 +22,7 @@ function sf_yearbook() {
 	}
 	// when sort order is selected, if the sort order is random, refresh the search results
 	jQuery('select[name="_sf_sort_order[]"]').on('change', function (e) {
+		e.preventDefault();
 		var valueSelected = this.value;
 		if(valueSelected == "rand+desc") {
 			jQuery('.search-filter-results').load(document.URL +  ' .search-filter-results');
