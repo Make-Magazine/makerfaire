@@ -6,6 +6,7 @@ error_reporting(E_ALL);
 
 $create = (isset($_GET['create']) ? $_GET['create'] : '');
 $blog_id = (isset($_GET['blogid']) ? $_GET['blogid'] : '');
+$entry_id = (isset($_GET['entry_id']) ? $_GET['entry_id'] : '');
 $page = (isset($_GET['page']) ? $_GET['page'] : 1);
 $limit = (isset($_GET['limit']) ? $_GET['limit'] : 100);
 $offset = ($page != 1 ? (($page - 1) * $limit) : 0);
@@ -87,6 +88,7 @@ entry.project_gallery, state, country, region, id
 FROM `wp_mf_dir_entry` entry 
 where status='Accepted' ".
 ($blog_id != ''?" and blog_id=".$blog_id." ":"").
+($entry_id != ''?" and entry_id=".$entry_id." ":"").
 "limit $limit offset $offset";
 $entries = $wpdb->get_results($sql, ARRAY_A);
 //echo $sql.'<br/>';
@@ -309,7 +311,14 @@ function get_img_id($url, $post_id, $name='', $type='', $faire_name='') {
     //ALT text 
     //      Project: Artplots Drawing Robots - Maker Faire Rocklin
     //      Maker:   Michael Morris Maker    - Maker Faire Yearbook Photo
-    $alt_text = $name.' - Maker Faire '.($type == 'Project'?$faire_name:'Yearbook Photo');
+    $alt_text = $name.' - Maker Faire ';
+    if($type == 'Project'){
+        $alt_text .= $faire_name;
+    }elseif($type=='Additional Photo'){
+        $alt_text .= 'Gallery';
+    }else{
+        $alt_text .= 'Yearbook Photo';
+    }
     
     //TITLE - 
     //      Project - MFYB23 Rocklin Project - Artplots Drawing Robots
