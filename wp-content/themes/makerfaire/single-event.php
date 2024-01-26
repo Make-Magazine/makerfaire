@@ -178,7 +178,7 @@
 			<div class="blue-spacer"></div>
 			<div id="highlightGallery">
 				<?php foreach($highlightImages as $image) { 
-					$alt = ($image['alt'] != "") ? "Maker Faire " . get_the_title() . " " . $faire_year . " - " . $image['alt'] : "Maker Faire " . get_the_title() . " " . $faire_year . " - " . $image['title']; ?>
+					$alt = ($image['alt'] != "") ? $image['alt'] : "Maker Faire " . get_the_title() . " " . $faire_year . " - " . $image['title']; ?>
 					<div class="gallery-item"><img alt="<?php echo $alt;?>"  src='<?php echo $image['url']; ?>' /></div>
 				<?php } ?>
 				<?php if($photo_credit!=''){?>

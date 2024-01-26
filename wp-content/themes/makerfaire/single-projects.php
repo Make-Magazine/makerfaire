@@ -139,7 +139,7 @@ $maker_data = get_field("maker_data");
 			    <h2>Additional Project Photos</h2>
 				<div id="highlightGallery">
 					<?php foreach($exhibit_additional_images as $image) { 
-                        $alt = ($image['alt'] != "") ? get_the_title() . " - " . $image['alt'] : get_the_title() . " - " . $image['title']; ?>
+                        $alt = ($image['alt'] != "") ? $image['alt'] : get_the_title() . " - " . $image['title']; ?>
                         <div class="gallery-item"><img alt="<?php echo $alt;?>"  src='<?php echo $image['url']; ?>' /></div>
 					<?php } ?>
 					<?php /* for later if($photo_credit!=''){?>
