@@ -1,10 +1,6 @@
 jQuery(document).ready(function(){
 	sf_yearbook();
 	jQuery(document).on("sf:ajaxfinish", ".searchandfilter", function(){
-		/*var urlParams = new URLSearchParams(window.location.search);
-		if(urlParams.get('sort_order') == "rand desc") {
-			jQuery('.search-filter-results').load(document.URL +  ' .search-filter-results');
-		}*/
 		sf_yearbook();
 	});
 	
@@ -25,4 +21,11 @@ function sf_yearbook() {
 	} else {
 		jQuery("#faireName").text("");
 	}
+	// when sort order is selected, if the sort order is random, refresh the search results
+	jQuery('select[name="_sf_sort_order[]"]').on('change', function (e) {
+		var valueSelected = this.value;
+		if(valueSelected == "rand+desc") {
+			jQuery('.search-filter-results').load(document.URL +  ' .search-filter-results');
+		}
+	});
 }
