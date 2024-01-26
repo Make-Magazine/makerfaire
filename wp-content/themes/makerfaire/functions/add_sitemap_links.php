@@ -8,7 +8,7 @@
 
 add_filter('wpseo_sitemap_index', 'add_entries_sitemap_to_index', 99);
 //add_action('init', 'add_entries_sitemap_to_wpseo');
-$form_types = array('Exhibit','Presentation','Performance','Startup Sponsor','Sponsor','Workshop');
+$form_types = array('Exhibit','Presentation','Performance','Startup Sponsor','Sponsor','Workshop','Master');
 $search_criteria['status'] = 'active';
 $search_criteria['field_filters'][] = array('key' => '303', 'value' => 'Accepted');
 
