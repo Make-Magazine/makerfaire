@@ -76,6 +76,14 @@ form.searchandfilter {
 			&.sf-field-sort_order {
 				max-width: 35px !important;
 				min-width: 35px !important;
+				@media screen and (max-width: 782px) {
+					display: block;
+					margin-left: 15px;
+					select {
+						-webkit-appearance: menulist-button;
+						height: 35px;
+					}
+				}
 				.select2-container {
 					max-width: 35px !important;
 					min-width: 35px !important;
