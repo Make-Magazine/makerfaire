@@ -41,6 +41,10 @@ form.searchandfilter {
 				}
 				select {
 					padding-top: 7px;
+					@media screen and (max-width: 600px) {
+						-webkit-appearance: menulist-button;
+						height: 35px;
+					}
 				}
 				.chosen-container {
 					width: 100% !important;
@@ -76,13 +80,9 @@ form.searchandfilter {
 			&.sf-field-sort_order {
 				max-width: 35px !important;
 				min-width: 35px !important;
-				@media screen and (max-width: 782px) {
+				@media screen and (max-width: 600px) {
 					display: block;
-					margin-left: 15px;
-					select {
-						-webkit-appearance: menulist-button;
-						height: 35px;
-					}
+					margin-left: 10px;
 				}
 				.select2-container {
 					max-width: 35px !important;
