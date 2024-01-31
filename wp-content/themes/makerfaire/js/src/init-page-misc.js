@@ -3,7 +3,6 @@ jQuery(function() {
   initPopups();
   initBackgroundResize();
   initTouchNav();
-  initSameHeight();
   initTabs();
   initOpenClose();
   initDropDownClasses();
@@ -32,15 +31,6 @@ function initTouchNav() {
     new TouchNav({
       navBlock: this
     });
-  });
-}
-// align blocks height
-function initSameHeight() {
-  setSameHeight({
-    holder: '.follow-wrap',
-    elements: '.social-holder',
-    flexible: true,
-    multiLine: true
   });
 }
 // content tabs init
