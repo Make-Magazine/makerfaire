@@ -17,8 +17,9 @@ if ( empty( $field_group['location'] ) ) {
 		),
 	);
 
-	$acf_use_post_type = acf_get_post_type_from_request_args( 'add-fields' );
-	$acf_use_taxonomy  = acf_get_taxonomy_from_request_args( 'add-fields' );
+	$acf_use_post_type    = acf_get_post_type_from_request_args( 'add-fields' );
+	$acf_use_taxonomy     = acf_get_taxonomy_from_request_args( 'add-fields' );
+	$acf_use_options_page = acf_get_ui_options_page_from_request_args( 'add-fields' );
 
 	if ( $acf_use_post_type && ! empty( $acf_use_post_type['post_type'] ) ) {
 		$field_group['location'] = array(
@@ -39,6 +40,18 @@ if ( empty( $field_group['location'] ) ) {
 					'param'    => 'taxonomy',
 					'operator' => '==',
 					'value'    => $acf_use_taxonomy['taxonomy'],
+				),
+			),
+		);
+	}
+
+	if ( $acf_use_options_page && ! empty( $acf_use_options_page['menu_slug'] ) ) {
+		$field_group['location'] = array(
+			array(
+				array(
+					'param'    => 'options_page',
+					'operator' => '==',
+					'value'    => $acf_use_options_page['menu_slug'],
 				),
 			),
 		);
@@ -86,7 +99,7 @@ foreach ( acf_get_combined_field_group_settings_tabs() as $tab_key => $tab_label
 			acf_render_field_wrap(
 				array(
 					'label'         => __( 'Position', 'acf' ),
-					'instructions'  => '',
+					'instructions'  => __( "'High' position not supported in the Block Editor", 'acf' ),
 					'type'          => 'button_group',
 					'name'          => 'position',
 					'prefix'        => 'acf_field_group',
@@ -97,7 +110,9 @@ foreach ( acf_get_combined_field_group_settings_tabs() as $tab_key => $tab_label
 						'side'            => __( 'Side', 'acf' ),
 					),
 					'default_value' => 'normal',
-				)
+				),
+				'div',
+				'field'
 			);
 
 

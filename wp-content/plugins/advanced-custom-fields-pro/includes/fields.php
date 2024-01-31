@@ -136,7 +136,6 @@ if ( ! class_exists( 'acf_fields' ) ) :
 
 	// initialize
 	acf()->fields = new acf_fields();
-
 endif; // class_exists check
 
 
@@ -320,6 +319,24 @@ function acf_get_field_type_label( $name = '' ) {
 	return $label ? $label : '<span class="acf-tooltip-js" title="' . __( 'Field type does not exist', 'acf' ) . '">' . __( 'Unknown', 'acf' ) . '</span>';
 }
 
+/**
+ * Returns the value of a field type "supports" property.
+ *
+ * @since 6.2.5
+ *
+ * @param string $name The name of the field type.
+ * @param string $prop The name of the supports property.
+ *
+ * @return mixed The value of the supports property which may be false, or false on failure.
+ */
+function acf_field_type_supports( $name = '', $prop = '' ) {
+	$supports = acf_get_field_type_prop( $name, 'supports' );
+	if ( ! is_array( $supports ) ) {
+		return false;
+	}
+	return isset( $supports[ $prop ] ) ? $supports[ $prop ] : false;
+}
+
 
 /*
 *  acf_field_type_exists (deprecated)
@@ -409,6 +426,7 @@ function acf_get_combined_field_type_settings_tabs() {
 		'validation'        => __( 'Validation', 'acf' ),
 		'presentation'      => __( 'Presentation', 'acf' ),
 		'conditional_logic' => __( 'Conditional Logic', 'acf' ),
+		'advanced'          => __( 'Advanced', 'acf' ),
 	);
 
 	$field_type_settings_tabs = (array) apply_filters( 'acf/field_group/additional_field_settings_tabs', array() );

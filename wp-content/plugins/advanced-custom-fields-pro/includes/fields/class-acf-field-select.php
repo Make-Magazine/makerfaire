@@ -41,7 +41,6 @@ if ( ! class_exists( 'acf_field_select' ) ) :
 			// ajax
 			add_action( 'wp_ajax_acf/fields/select/query', array( $this, 'ajax_query' ) );
 			add_action( 'wp_ajax_nopriv_acf/fields/select/query', array( $this, 'ajax_query' ) );
-
 		}
 
 
@@ -78,25 +77,20 @@ if ( ! class_exists( 'acf_field_select' ) ) :
 			// attempt to find 3rd party Select2 version
 			// - avoid including v3 CSS when v4 JS is already enququed
 			if ( isset( $wp_scripts->registered['select2'] ) ) {
-
 				$major = (int) $wp_scripts->registered['select2']->ver;
-
 			}
 
 			// v4
 			if ( $major == 4 ) {
-
 				$version = '4.0.13';
 				$script  = acf_get_url( "assets/inc/select2/4/select2.full{$min}.js" );
 				$style   = acf_get_url( "assets/inc/select2/4/select2{$min}.css" );
 
 				// v3
 			} else {
-
 				$version = '3.5.2';
 				$script  = acf_get_url( "assets/inc/select2/3/select2{$min}.js" );
 				$style   = acf_get_url( 'assets/inc/select2/3/select2.css' );
-
 			}
 
 			// enqueue
@@ -150,26 +144,18 @@ if ( ! class_exists( 'acf_field_select' ) ) :
 
 			// return
 			acf_send_ajax_results( $response );
-
 		}
 
 
-		/*
-		*  get_ajax_query
-		*
-		*  This function will return an array of data formatted for use in a select2 AJAX response
-		*
-		*  @type    function
-		*  @date    15/10/2014
-		*  @since   5.0.9
-		*
-		*  @param   $options (array)
-		*  @return  (array)
-		*/
-
-		function get_ajax_query( $options = array() ) {
-
-			// defaults
+		/**
+		 * This function will return an array of data formatted for use in a select2 AJAX response
+		 *
+		 * @since   5.0.9
+		 *
+		 * @param array $options An array of options.
+		 * @return array A select2 compatible array of options.
+		 */
+		public function get_ajax_query( $options = array() ) {
 			$options = acf_parse_args(
 				$options,
 				array(
@@ -180,58 +166,57 @@ if ( ! class_exists( 'acf_field_select' ) ) :
 				)
 			);
 
-			// load field
+			$shortcut = apply_filters( 'acf/fields/select/query', array(), $options );
+			$shortcut = apply_filters( 'acf/fields/select/query/key=' . $options['field_key'], $shortcut, $options );
+			if ( ! empty( $shortcut ) ) {
+				return $shortcut;
+			}
+
+			// load field.
 			$field = acf_get_field( $options['field_key'] );
 			if ( ! $field ) {
 				return false;
 			}
 
-			// get choices
+			// get choices.
 			$choices = acf_get_array( $field['choices'] );
 			if ( empty( $field['choices'] ) ) {
 				return false;
 			}
 
-			// vars
 			$results = array();
 			$s       = null;
 
-			// search
+			// search.
 			if ( $options['s'] !== '' ) {
 
 				// strip slashes (search may be integer)
 				$s = strval( $options['s'] );
 				$s = wp_unslash( $s );
-
 			}
 
-			// loop
 			foreach ( $field['choices'] as $k => $v ) {
 
-				// ensure $v is a string
+				// ensure $v is a string.
 				$v = strval( $v );
 
-				// if searching, but doesn't exist
+				// if searching, but doesn't exist.
 				if ( is_string( $s ) && stripos( $v, $s ) === false ) {
 					continue;
 				}
 
-				// append
+				// append results.
 				$results[] = array(
 					'id'   => $k,
 					'text' => $v,
 				);
-
 			}
 
-			// vars
 			$response = array(
 				'results' => $results,
 			);
 
-			// return
 			return $response;
-
 		}
 
 
@@ -293,13 +278,12 @@ if ( ! class_exists( 'acf_field_select' ) ) :
 				'data-allow_null'  => $field['allow_null'],
 			);
 
-			if ( $field['aria-label'] ) {
+			if ( ! empty( $field['aria-label'] ) ) {
 				$select['aria-label'] = $field['aria-label'];
 			}
 
 			// multiple
 			if ( $field['multiple'] ) {
-
 				$select['multiple'] = 'multiple';
 				$select['size']     = 5;
 				$select['name']    .= '[]';
@@ -345,7 +329,6 @@ if ( ! class_exists( 'acf_field_select' ) ) :
 
 			// render
 			acf_select_input( $select );
-
 		}
 
 
@@ -417,7 +400,6 @@ if ( ! class_exists( 'acf_field_select' ) ) :
 					'ui'           => 1,
 				)
 			);
-
 		}
 
 		/**
@@ -592,7 +574,6 @@ if ( ! class_exists( 'acf_field_select' ) ) :
 
 			// return
 			return $field;
-
 		}
 
 
@@ -640,22 +621,18 @@ if ( ! class_exists( 'acf_field_select' ) ) :
 
 				// label
 			} elseif ( $field['return_format'] == 'label' ) {
-
 				$value = $label;
 
 				// array
 			} elseif ( $field['return_format'] == 'array' ) {
-
 				$value = array(
 					'value' => $value,
 					'label' => $label,
 				);
-
 			}
 
 			// return
 			return $value;
-
 		}
 
 		/**
@@ -699,28 +676,52 @@ if ( ! class_exists( 'acf_field_select' ) ) :
 		}
 
 		/**
+		 * Formats the choices available for the REST API.
+		 *
+		 * @since 6.2
+		 *
+		 * @param array $choices The choices for the field.
+		 * @return array
+		 */
+		public function format_rest_choices( $choices ) {
+			$keys        = array_keys( $choices );
+			$values      = array_values( $choices );
+			$int_choices = array();
+
+			if ( array_diff( $keys, $values ) ) {
+				// User has specified custom keys.
+				$choices = $keys;
+			} else {
+				// Default keys, same as value.
+				$choices = $values;
+			}
+
+			// Assume everything is a string by default.
+			$choices = array_map( 'strval', $choices );
+
+			// Also allow integers if is_numeric().
+			foreach ( $choices as $choice ) {
+				if ( is_numeric( $choice ) ) {
+					$int_choices[] = (int) $choice;
+				}
+			}
+
+			return array_merge( $choices, $int_choices );
+		}
+
+		/**
 		 * Return the schema array for the REST API.
 		 *
-		 * @param array $field
+		 * @param array $field The main field array.
 		 * @return array
 		 */
 		public function get_rest_schema( array $field ) {
-			/**
-			 * If a user has defined keys for the select options,
-			 * we should use the keys for the available options to POST to,
-			 * since they are what is displayed in GET requests.
-			 */
-			$option_keys = array_diff(
-				array_keys( $field['choices'] ),
-				array_values( $field['choices'] )
-			);
-
 			$schema = array(
 				'type'     => array( 'string', 'array', 'int', 'null' ),
 				'required' => ! empty( $field['required'] ),
 				'items'    => array(
 					'type' => array( 'string', 'int' ),
-					'enum' => empty( $option_keys ) ? $field['choices'] : $option_keys,
+					'enum' => $this->format_rest_choices( $field['choices'] ),
 				),
 			);
 
@@ -738,13 +739,9 @@ if ( ! class_exists( 'acf_field_select' ) ) :
 
 			return $schema;
 		}
-
 	}
 
 
 	// initialize
 	acf_register_field_type( 'acf_field_select' );
-
 endif; // class_exists check
-
-

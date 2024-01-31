@@ -13,7 +13,6 @@ $prefix = 'acf_field_group[location][' . $rule['group'] . '][' . $rule['id'] . '
 
 		// array
 		if ( is_array( $choices ) ) {
-
 			acf_render_field(
 				array(
 					'type'    => 'select',
@@ -24,7 +23,6 @@ $prefix = 'acf_field_group[location][' . $rule['group'] . '][' . $rule['id'] . '
 					'class'   => 'refresh-location-rule',
 				)
 			);
-
 		}
 
 		?>
@@ -38,7 +36,6 @@ $prefix = 'acf_field_group[location][' . $rule['group'] . '][' . $rule['id'] . '
 
 		// array
 		if ( is_array( $choices ) ) {
-
 			acf_render_field(
 				array(
 					'type'    => 'select',
@@ -51,9 +48,7 @@ $prefix = 'acf_field_group[location][' . $rule['group'] . '][' . $rule['id'] . '
 
 			// custom
 		} else {
-
 			echo $choices;
-
 		}
 
 		?>
@@ -67,11 +62,11 @@ $prefix = 'acf_field_group[location][' . $rule['group'] . '][' . $rule['id'] . '
 
 		// array
 		if ( is_array( $choices ) ) {
-
 			acf_render_field(
 				array(
 					'type'    => 'select',
 					'name'    => 'value',
+					'class'   => 'location-rule-value',
 					'prefix'  => $prefix,
 					'value'   => $rule['value'],
 					'choices' => $choices,
@@ -80,9 +75,7 @@ $prefix = 'acf_field_group[location][' . $rule['group'] . '][' . $rule['id'] . '
 
 			// custom
 		} else {
-
 			echo $choices;
-
 		}
 
 		?>

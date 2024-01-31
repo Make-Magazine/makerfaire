@@ -445,7 +445,7 @@ if ( ! class_exists( 'ACF_Internal_Post_Type' ) ) {
 			if ( ! empty( $args['active'] ) ) {
 				$posts = array_filter(
 					$posts,
-					function( $post ) {
+					function ( $post ) {
 						return $post['active'];
 					}
 				);
@@ -483,7 +483,7 @@ if ( ! class_exists( 'ACF_Internal_Post_Type' ) ) {
 
 			// Make a backup of internal post type data and remove some args.
 			$_post = $post;
-			acf_extract_vars( $_post, array( 'ID', 'key', 'title', 'menu_order', 'fields', 'active', '_valid' ) );
+			acf_extract_vars( $_post, array( 'ID', 'key', 'title', 'menu_order', 'fields', 'active', '_valid', '_parent' ) );
 
 			// Create array of data to save.
 			$save = array(
@@ -497,6 +497,7 @@ if ( ! class_exists( 'ACF_Internal_Post_Type' ) ) {
 				'menu_order'     => $post['menu_order'],
 				'comment_status' => 'closed',
 				'ping_status'    => 'closed',
+				'post_parent'    => ! empty( $post['_parent'] ) ? (int) $post['_parent'] : 0,
 			);
 
 			// Unhook wp_targeted_link_rel() filter from WP 5.1 corrupting serialized data.
@@ -851,13 +852,14 @@ if ( ! class_exists( 'ACF_Internal_Post_Type' ) ) {
 				return '';
 			}
 
-			$str_replace  = array(
+			$str_replace = array(
 				'  '         => "\t",
-				"'!!__(!!\'" => "__('",
+				"'!!__(!!\'" => "__( '",
 				"!!\', !!\'" => "', '",
-				"!!\')!!'"   => "')",
+				"!!\')!!'"   => "' )",
 				'array ('    => 'array(',
 			);
+
 			$preg_replace = array(
 				'/([\t\r\n]+?)array/' => 'array',
 				'/[0-9]+ => array/'   => 'array',
@@ -925,7 +927,6 @@ if ( ! class_exists( 'ACF_Internal_Post_Type' ) ) {
 
 			return $post;
 		}
-
 	}
 
 }
