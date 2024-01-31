@@ -1,3 +1,7 @@
+### 1.7 | 2023-11-29
+- Updated the plugin for compatibility with Gravity Forms 2.8 by removing usages of the deprecated string.format() function.
+
+
 ### 1.6 | 2023-01-25
 - Updated the editor icon.
 - Updated the CSS to work with Orbital theme and Gravity Forms 2.7.

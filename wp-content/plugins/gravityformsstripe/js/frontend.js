@@ -126,13 +126,13 @@ gform.extensions.styles.gravityformsstripe = gform.extensions.styles.gravityform
 
 		this.hasPaymentIntent = false;
 
-		this.stripePaymentHandler = null;
+		this.stripePaymentHandlers = {};
 
 		this.cardStyle = this.cardStyle || {};
 
 		gform.extensions.styles.gravityformsstripe[this.formId] = gform.extensions.styles.gravityformsstripe[this.formId] || {};
 
-		const componentStyles = gform.extensions.styles.gravityformsstripe[this.formId][this.pageInstance] || {};
+		const componentStyles = Object.keys(this.cardStyle).length > 0 ? JSON.parse(JSON.stringify(this.cardStyle)) : gform.extensions.styles.gravityformsstripe[this.formId][this.pageInstance] || {};
 
 		this.setComponentStyleValue = function (key, value, themeFrameworkStyles, manualElement) {
 			let resolvedValue = '';
@@ -271,7 +271,7 @@ gform.extensions.styles.gravityformsstripe = gform.extensions.styles.gravityform
 						gformCalculateTotalPrice(formId);
 
 						if (GFStripeObj.stripe_payment == 'payment_element') {
-							GFStripeObj.stripePaymentHandler = new _payment_element_stripe_payments_handler__WEBPACK_IMPORTED_MODULE_0__["default"](apiKey, GFStripeObj);
+							GFStripeObj.stripePaymentHandlers[formId] = new _payment_element_stripe_payments_handler__WEBPACK_IMPORTED_MODULE_0__["default"](apiKey, GFStripeObj);
 						} else if (GFStripeObj.stripe_payment === 'elements') {
 							stripe = Stripe(apiKey);
 							elements = stripe.elements();
@@ -342,8 +342,8 @@ gform.extensions.styles.gravityformsstripe = gform.extensions.styles.gravityform
 							card.destroy();
 						}
 
-						if (GFStripeObj.stripePaymentHandler !== null) {
-							GFStripeObj.stripePaymentHandler.destroy();
+						if (GFStripeObj.isStripePaymentHandlerInitiated(formId)) {
+							GFStripeObj.stripePaymentHandlers[formId].destroy();
 						}
 
 						if (!GFStripeObj.GFCCField.next('.validation_message').length) {
@@ -363,8 +363,8 @@ gform.extensions.styles.gravityformsstripe = gform.extensions.styles.gravityform
 			// Set priority to 51 so it will be triggered after the coupons add-on
 			gform.addFilter('gform_product_total', function (total, formId) {
 
-				if (GFStripeObj.stripe_payment == 'payment_element' && GFStripeObj.stripePaymentHandler !== null) {
-					GFStripeObj.stripePaymentHandler.getOrderData(total, formId);
+				if (GFStripeObj.stripe_payment == 'payment_element' && GFStripeObj.isStripePaymentHandlerInitiated(formId)) {
+					GFStripeObj.stripePaymentHandlers[formId].getOrderData(total, formId);
 				}
 
 				if (!GFStripeObj.activeFeed) {
@@ -386,8 +386,8 @@ gform.extensions.styles.gravityformsstripe = gform.extensions.styles.gravityform
 				}
 
 				// Update elements payment amount if payment element is enabled.
-				if (GFStripeObj.stripe_payment == 'payment_element' && GFStripeObj.stripePaymentHandler !== null && GFStripeObj.stripePaymentHandler.elements !== null && gforms_stripe_frontend_strings.stripe_connect_enabled === "1") {
-					GFStripeObj.stripePaymentHandler.updatePaymentAmount(GFStripeObj.stripePaymentHandler.order.paymentAmount);
+				if (GFStripeObj.stripe_payment == 'payment_element' && GFStripeObj.isStripePaymentHandlerInitiated(formId) && GFStripeObj.stripePaymentHandlers[formId].elements !== null && gforms_stripe_frontend_strings.stripe_connect_enabled === "1") {
+					GFStripeObj.stripePaymentHandlers[formId].updatePaymentAmount(GFStripeObj.stripePaymentHandlers[formId].order.paymentAmount);
 				}
 
 				return total;
@@ -421,7 +421,7 @@ gform.extensions.styles.gravityformsstripe = gform.extensions.styles.gravityform
 					skipElementsHandler = true;
 				}
 
-				if (skipElementsHandler || !feedActivated || $(this).data('gfstripesubmitting') || $('#gform_save_' + GFStripeObj.formId).val() == 1 || !GFStripeObj.isLastPage() && 'elements' !== GFStripeObj.stripe_payment || gformIsHidden(GFStripeObj.GFCCField) || GFStripeObj.maybeHitRateLimits() || GFStripeObj.invisibleCaptchaPending() || 'payment_element' === GFStripeObj.stripe_payment && window['gform_stripe_amount_' + formId] === 0) {
+				if (skipElementsHandler || !feedActivated || $(this).data('gfstripesubmitting') || $('#gform_save_' + GFStripeObj.formId).val() == 1 || !GFStripeObj.isLastPage() && 'elements' !== GFStripeObj.stripe_payment || gformIsHidden(GFStripeObj.GFCCField) || GFStripeObj.maybeHitRateLimits() || GFStripeObj.invisibleCaptchaPending() || 'payment_element' === GFStripeObj.stripe_payment && window['gform_stripe_amount_' + GFStripeObj.formId] === 0) {
 					return;
 				} else {
 					event.preventDefault();
@@ -432,7 +432,7 @@ gform.extensions.styles.gravityformsstripe = gform.extensions.styles.gravityform
 				switch (GFStripeObj.stripe_payment) {
 					case 'payment_element':
 						GFStripeObj.injectHoneypot(event);
-						GFStripeObj.stripePaymentHandler.validate(event);
+						GFStripeObj.stripePaymentHandlers[GFStripeObj.formId].validate(event);
 						break;
 					case 'elements':
 						GFStripeObj.form = $(this);
@@ -683,8 +683,10 @@ gform.extensions.styles.gravityformsstripe = gform.extensions.styles.gravityform
 						if (result.paymentIntent.status === 'requires_action') {
 							stripe.handleCardPayment(response.client_secret).then(function (result) {
 								GFStripeObj.maybeAddSpinner();
+								// Enable the submit button, which was disabled before displaying the SCA warning message, so we can submit the form.
+								jQuery('#gform_submit_button_' + formId).prop('disabled', false);
 								$('#gform_' + formId).data('gfstripescaauth', false);
-								$('#gform_' + formId).data('gfstripesubmitting', true).submit();
+								$('#gform_' + formId).data('gfstripesubmitting', true).trigger('submit');
 							});
 						}
 					});
@@ -1012,6 +1014,16 @@ gform.extensions.styles.gravityformsstripe = gform.extensions.styles.gravityform
 		};
 
 		/**
+   * @function isStripePaymentHandlerInitiated.
+   * @description Checks if a Stripe payment handler has been initiated for a form.
+   *
+   * @since 5.4
+   */
+		this.isStripePaymentHandlerInitiated = function (formId) {
+			return formId in this.stripePaymentHandlers && this.stripePaymentHandlers[formId] !== null && this.stripePaymentHandlers[formId] !== undefined;
+		};
+
+		/**
    * End duplicated honeypot logic.
    */
 
@@ -1107,24 +1119,20 @@ class StripePaymentsHandler {
 			return;
 		}
 
-		// Create the elements and mount them.
-		this.link = this.elements.create("linkAuthentication");
+		// Create the payment element and mount it.
 		this.card = this.elements.create('payment');
 
+		// If an email field is mapped to link, bind it to initiate link on change.
 		if (GFStripeObj.activeFeed.link_email_field_id) {
-			this.mountLink();
+			const emailField = document.querySelector('#input_' + this.GFStripeObj.formId + '_' + this.GFStripeObj.activeFeed.link_email_field_id);
+			const email = emailField ? emailField.value : '';
+			this.handlelinkEmailFieldChange({ target: { value: email } });
 		} else {
 			this.link = null;
 		}
 
 		this.mountCard();
 		this.bindEvents();
-
-		// Trigger link if the email was filled before the payment element was mounted.
-		const emailField = document.querySelector('#input_' + this.GFStripeObj.formId + '_' + this.GFStripeObj.activeFeed.link_email_field_id);
-		if (emailField && emailField.value) {
-			this.handlelinkEmailFieldChange({ target: { value: emailField.value } });
-		}
 	}
 
 	/**
@@ -1296,6 +1304,7 @@ class StripePaymentsHandler {
 	async bindEvents() {
 		if (this.card) {
 			this.card.on('change', event => {
+				this.resetFormValidationErrors();
 				this.paymentMethod = event;
 			});
 		}
@@ -1333,17 +1342,14 @@ class StripePaymentsHandler {
 			return;
 		}
 
+		// If there is a Link instance, destroy it.
+		this.destroyLink();
+
 		const emailAddress = event.target.value;
-		if (this.link !== undefined && this.link !== null && 'destroy' in this.link) {
-			this.link.destroy();
-			jQuery('.gfield #stripe-payment-link').remove();
-		}
-		this.link = await this.elements.create("linkAuthentication", { defaultValues: { email: emailAddress } });
-		this.mountLink();
-		if (!emailAddress) {
-			jQuery('.gfield #stripe-payment-link').removeClass('visible');
-		} else {
-			jQuery('.gfield #stripe-payment-link').addClass('visible');
+		if (emailAddress) {
+			this.link = await this.elements.create("linkAuthentication", { defaultValues: { email: emailAddress } });
+			this.mountLink();
+			this.GFStripeObj.GFCCField.siblings('.gfield #stripe-payment-link').addClass('visible');
 		}
 	}
 	/**
@@ -1373,6 +1379,12 @@ class StripePaymentsHandler {
 		gformAddSpinner(this.GFStripeObj.formId);
 		const response = await Object(_request__WEBPACK_IMPORTED_MODULE_0__["default"])(this.getFormData(event.target));
 
+		if (response === -1) {
+			this.failWithMessage(gforms_stripe_frontend_strings.invalid_nonce, this.GFStripeObj.formId);
+
+			return false;
+		}
+
 		if ('success' in response && response.success === false) {
 			this.failWithMessage(gforms_stripe_frontend_strings.failed_to_confirm_intent, this.GFStripeObj.formId);
 
@@ -1398,7 +1410,7 @@ class StripePaymentsHandler {
 			}
 
 			// Confirm payment.
-			this.confirm(response.data.resume_token, response.data.intent.client_secret);
+			this.confirm(response.data);
 		} else {
 			// Form is not valid, do a normal submit to render the validation errors markup in backend.
 			event.target.submit();
@@ -1501,15 +1513,16 @@ class StripePaymentsHandler {
   * Calls stripe confirm payment or confirm setup to attempt capturing the payment after form validation passed.
   *
   * @since 5.0
+  * @since 5.4.0 Updated the method parameter, so it received the whole confirmData object instead of just the resume_token and client secret.
   *
-  * @param {String} resume_token The draft resume token.
-  * @param {String} clientSecret The payment intent client secret.
+  * @param {Object} confirmData The confirmData object that contains the resume_token, client secret and intent information.
   *
   * @return {Promise<void>}
   */
-	async confirm(resume_token, clientSecret, paymentMethod) {
-
+	async confirm(confirmData) {
 		// Prepare the return URL.
+		const resume_token = confirmData.resume_token;
+		const clientSecret = confirmData.intent.client_secret;
 		const redirect_url = new URL(window.location.href);
 		redirect_url.searchParams.append('resume_token', resume_token);
 		const isAjaxEmbed = this.isAjaxEmbed(this.GFStripeObj.formId);
@@ -1536,64 +1549,72 @@ class StripePaymentsHandler {
 					}
 				}
 			},
-			redirect: isAjaxEmbed ? 'if_required' : 'always'
+			// let Stripe handle redirection only if the payment method  requires redirection to a third party page,
+			// Otherwise, the add-on will handle the redirection.
+			redirect: 'if_required'
 		};
 
-		// Confirm payment or setup.
+		/**
+   * The promise that returns from calling stripe.confirmPayment or stripe.confirmSetup.
+   *
+   * If the payment method used requires redirecting the user to a third party page,
+   * this promise will never resolve, as confirmPayment or confirmSetup redirect the user to the third party page.
+   *
+   * @since 5.0.0
+   *
+   * @type {Promise}
+   */
 		let paymentResult = {};
-		if (this.GFStripeObj.activeFeed.initial_payment_information.amount === 0) {
-			try {
-				paymentResult = await this.stripe.confirmSetup(paymentData);
-			} catch (e) {
-				console.log(e);
-				this.failWithMessage(gforms_stripe_frontend_strings.failed_to_confirm_intent, this.GFStripeObj.formId);
-			}
-		} else {
-			try {
-				paymentResult = await this.stripe.confirmPayment(paymentData);
-			} catch (e) {
-				console.log(e);
-				this.failWithMessage(gforms_stripe_frontend_strings.failed_to_confirm_intent, this.GFStripeObj.formId);
-			}
+		let isSetupIntent = confirmData.intent.id.indexOf('seti_') === 0;
+		try {
+			paymentResult = isSetupIntent ? await this.stripe.confirmSetup(paymentData) : await this.stripe.confirmPayment(paymentData);
+		} catch (e) {
+			console.log(e);
+			this.failWithMessage(gforms_stripe_frontend_strings.failed_to_confirm_intent, this.GFStripeObj.formId);
 		}
 
-		// If we have a paymentIntent in the result, the process was successful.
-		if ('paymentIntent' in paymentResult) {
-			this.handlePayment(paymentResult, redirect_url);
+		// If we have a paymentIntent or a setupIntent in the result, the process was successful.
+		// Note that confirming could be successful but the intent status is still 'processing' or 'pending'.
+		if ('paymentIntent' in paymentResult || 'setupIntent' in paymentResult) {
+			this.handlePaymentRedirect(paymentResult, redirect_url);
 		} else {
 			await this.handleFailedPayment(paymentResult);
 		}
 	}
 
 	/**
-  * Perform any required actions before redirecting the user to the redirect URL after a successful payment.
+  * Redirects the user to the confirmation page after the payment intent is confirmed.
+  *
+  * This method will never be executed if the payment method used requires redirecting the user to a third party page.
   *
   * @since 5.0
   * @since 5.2 Added the redirect_url parameter.
+  * @since 5.4 Renamed the function from handlePayment to handlePaymentRedirect.
   *
-  * @param {Object}      paymentResult The result of confirming a payment intent or a setup intent.
-  * @param {null|string} redirect_url  If provided, The redirect URL the user will be taken to after confirmation, currently used only to be submitted in the AJAX IFrame.
+  * @param {Object} paymentResult The result of confirming a payment intent or a setup intent.
+  * @param {Object} redirect_url  The redirect URL the user will be taken to after confirmation.
   */
-	handlePayment(paymentResult, redirect_url) {
+	handlePaymentRedirect(paymentResult, redirect_url) {
+		const intent = paymentResult.paymentIntent ? paymentResult.paymentIntent : paymentResult.setupIntent;
+		// Add parameters required for entry processing in the backend.
+		const intentTypeString = intent.id.indexOf('seti_') === 0 ? 'setup' : 'payment';
+		redirect_url.searchParams.append(intentTypeString + '_intent', intent.id);
+		redirect_url.searchParams.append(intentTypeString + '_intent_client_secret', intent.client_secret);
+		redirect_url.searchParams.append('redirect_status', intent.status ? 'succeeded' : 'pending');
 
-		// If redirect_url is null, this means the user will be redirected to confirmation page as provided while calling confirmPayment().
-		// Halt redirect and do anything required before it here.
-
-		// If this is not an AJAX form, nothing to do here.
-		if (!this.isAjaxEmbed(this.GFStripeObj.formId) || !redirect_url) {
-			return;
+		// If this is not an AJAX embedded form, redirect the user to the confirmation page.
+		if (this.isAjaxEmbed(this.GFStripeObj.formId) === false) {
+			window.location.href = redirect_url.toString();
+		} else {
+			// AJAX embeds are handled differently, we need to update the form's action with the redirect URL, and submit it inside the AJAX IFrame.
+			jQuery('#gform_' + this.GFStripeObj.formId).attr('action', redirect_url.toString());
+			// Prevent running same logic again after submitting the form.
+			jQuery('#gform_' + this.GFStripeObj.formId).data('isAjaxSubmitting', true);
+			// Keeping this input makes the backend thinks it is not an ajax form, so we need to remove it.
+			jQuery('#gform_' + this.GFStripeObj.formId).find('[name="gform_submit"]').remove();
+			// Form will be submitted inside the IFrame, once IFrame content is updated, the form element will be replaced with the content of the IFrame.
+			jQuery('#gform_' + this.GFStripeObj.formId).submit();
 		}
-
-		// If this is an AJAX form, update its action and add the redirect args to the url that will be submitted in the AJAX IFrame.
-		redirect_url.searchParams.append('payment_intent', paymentResult.paymentIntent.id);
-		redirect_url.searchParams.append('payment_intent_client_secret', paymentResult.paymentIntent.client_secret);
-		redirect_url.searchParams.append('redirect_status', paymentResult.paymentIntent.status ? 'succeeded' : 'pending');
-		jQuery('#gform_' + this.GFStripeObj.formId).attr('action', redirect_url.toString());
-		// Prevent running same logic again after submitting the form.
-		jQuery('#gform_' + this.GFStripeObj.formId).data('isAjaxSubmitting', true);
-		// Keeping this input makes the backend thinks it is not an ajax form.
-		jQuery('#gform_' + this.GFStripeObj.formId).find('[name="gform_submit"]').remove();
-		jQuery('#gform_' + this.GFStripeObj.formId).submit();
 	}
 
 	/**
@@ -1628,9 +1649,20 @@ class StripePaymentsHandler {
 			this.card.destroy();
 		}
 
+		this.destroyLink();
+	}
+
+	/**
+  *  Destroys the Stripe payment link and removes any DOM nodes created while initializing it.
+  *
+  *  @since 5.4.0
+  */
+	destroyLink() {
 		if (this.link) {
 			this.link.destroy();
-			const linkContainer = document.querySelectorAll('.stripe-payment-link')[0];
+			this.link = null;
+
+			const linkContainer = this.GFStripeObj.GFCCField.siblings('.gfield #stripe-payment-link');
 			if (linkContainer) {
 				linkContainer.remove();
 			}
@@ -1712,7 +1744,7 @@ class StripePaymentsHandler {
   */
 	getOrderData(total, formId) {
 
-		if (!_gformPriceFields[formId]) {
+		if (!_gformPriceFields[formId] || this.GFStripeObj.activeFeed === null) {
 			return this.order;
 		}
 

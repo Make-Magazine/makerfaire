@@ -15,7 +15,7 @@
 }
 
 .gform-theme--framework .gpnf-nested-entries {
-	margin-bottom: var(--gform-theme-padding-block);
+	margin-bottom: var(--gf-padding-y, var(--gform-theme-padding-block));
 }
 
 .gpnf-nested-entries th,
@@ -37,8 +37,8 @@
 
 .gform-theme--framework .gpnf-nested-entries th,
 .gform-theme--framework .gpnf-nested-entries td {
-	font-size: var(--gform-theme-font-size-primary);
-	padding: var(--gform-theme-padding-block);
+	font-size: var(--gf-font-size-primary, var(--gform-theme-font-size-primary));
+	padding: var(--gf-padding-y, var(--gform-theme-padding-block));
 }
 
 .gpnf-no-entries td {
@@ -100,7 +100,7 @@
 }
 
 .gform-theme--framework .gpnf-add-entry-max {
-	margin: var(--gform-theme-padding-block);
+	margin: var(--gf-padding-y, var(--gform-theme-padding-block));
 }
 
 .gpnf-add-entry + .gfspinner {
@@ -117,7 +117,7 @@
  * Theme Framework integration
  */
 .gform-theme--framework table.gpnf-nested-entries {
-	border-radius: var(--gform-theme-control-border-radius);
+	border-radius: var(--gf-ctrl-radius, var(--gform-theme-control-border-radius));
 	border-collapse: separate;
 }
 
@@ -129,13 +129,13 @@
 
 /* High-specificity needed here */
 .gform-theme--framework .gpnf-row-actions ul li.delete .delete-button.gform-theme-button--simple {
-	color: var(--gform-theme-color-danger);
-	transition: all var(--gform-theme-local-transition), visibility 1ms;
+	color: var(--gf-color-danger, var(--gform-theme-color-danger));
+	transition: all var(--gf-local-transition, var(--gform-theme-local-transition)), visibility 1ms;
 }
 
 /* High-specificity needed here */
 .gform-theme--framework .gpnf-row-actions ul li.edit .edit-button.gform-theme-button--secondary {
-	transition: all var(--gform-theme-local-transition), visibility 1ms;
+	transition: all var(--gf-local-transition, var(--gform-theme-local-transition)), visibility 1ms;
 }
 
 .gform-theme--framework .gpnf-row-actions .delete-button:hover {
@@ -149,57 +149,57 @@
 
 .gform-theme--framework .gpnf-add-entry + .gfspinner {
 	display: inline-block;
-	margin-top: calc(var(--gform-theme-control-button-padding-inline-md) - 8px);
-	margin-left: var(--gform-theme-control-button-padding-inline-sm);
+	margin-top: calc(var(--gf-ctrl-btn-padding-x-md, var(--gform-theme-control-button-padding-inline-md)) - 8px);
+	margin-left: var(--gf-ctrl-btn-padding-x-sm, var(--gform-theme-control-button-padding-inline-sm));
 }
 
 @media only screen and (max-width: 760px), (min-device-width: 760px) and (max-device-width: 1024px) {
 
 	/* Force table to not be like tables anymore */
-	table.gpnf-nested-entries,
-	.gpnf-nested-entries thead,
-	.gpnf-nested-entries tbody,
-	.gpnf-nested-entries th,
-	.gpnf-nested-entries td,
-	.gpnf-nested-entries tr {
+	form:not(.gpnf-disable-responsive-table) .table.gpnf-nested-entries,
+	form:not(.gpnf-disable-responsive-table) .gpnf-nested-entries thead,
+	form:not(.gpnf-disable-responsive-table) .gpnf-nested-entries tbody,
+	form:not(.gpnf-disable-responsive-table) .gpnf-nested-entries th,
+	form:not(.gpnf-disable-responsive-table) .gpnf-nested-entries td,
+	form:not(.gpnf-disable-responsive-table) .gpnf-nested-entries tr {
 		display: block;
 	}
 
-	table.gpnf-nested-entries {
+	form:not(.gpnf-disable-responsive-table) table.gpnf-nested-entries {
 		width: 100%;
 		border: 0;
 	}
 
 	/* Hide table headers (but not display: none;, for accessibility) */
-	.gpnf-nested-entries thead tr {
+	form:not(.gpnf-disable-responsive-table) .gpnf-nested-entries thead tr {
 		position: absolute;
 		top: -9999px;
 		left: -9999px;
 	}
 
-	.gpnf-nested-entries tr {
+	form:not(.gpnf-disable-responsive-table) .gpnf-nested-entries tr {
 		border: 1px solid rgba( 0, 0, 0, 0.1 );
 		margin-bottom: 1rem;
 		border-radius: 3px;
 	}
 
-	.gpnf-nested-entries tbody tr:not(.gpnf-no-entries) td {
+	form:not(.gpnf-disable-responsive-table) .gpnf-nested-entries tbody tr:not(.gpnf-no-entries) td {
 		border: none;
 		border-bottom: 1px solid rgba( 0, 0, 0, 0.1 );
 		position: relative;
 		padding: 1rem 1rem 1rem 50%;
 	}
 
-	.gpnf-nested-entries:not(.gpnf-nested-entries-simple) tbody tr:last-child td {
+	form:not(.gpnf-disable-responsive-table) .gpnf-nested-entries:not(.gpnf-nested-entries-simple) tbody tr:last-child td {
 		border-bottom: 1px solid rgba( 0, 0, 0, 0.1 );
 	}
 
-	.gpnf-nested-entries tbody tr td:last-child,
-	.gpnf-nested-entries:not(.gpnf-nested-entries-simple) tbody tr:last-child td:last-child {
+	form:not(.gpnf-disable-responsive-table) .gpnf-nested-entries tbody tr td:last-child,
+	form:not(.gpnf-disable-responsive-table) .gpnf-nested-entries:not(.gpnf-nested-entries-simple) tbody tr:last-child td:last-child {
 		border: 0;
 	}
 
-	.gpnf-nested-entries td:before {
+	form:not(.gpnf-disable-responsive-table) .gpnf-nested-entries td:before {
 		content: attr(data-heading);
 		position: absolute;
 		width: calc( 50% - 2rem );
@@ -210,19 +210,19 @@
 		overflow: hidden;
 	}
 
-	.gpnf-nested-entries:not(.gpnf-nested-entries-simple) td:last-child {
+	form:not(.gpnf-disable-responsive-table) .gpnf-nested-entries:not(.gpnf-nested-entries-simple) td:last-child {
 		background-color: rgba( 0, 0, 0, 0.03 );
 	}
 
-	.gpnf-nested-entries:not(.gpnf-nested-entries-simple) tbody tr:not(.gpnf-no-entries) td:last-child {
+	form:not(.gpnf-disable-responsive-table) .gpnf-nested-entries:not(.gpnf-nested-entries-simple) tbody tr:not(.gpnf-no-entries) td:last-child {
 		padding-left: 0;
 	}
 
-	.gpnf-nested-entries td[data-value=""] {
+	form:not(.gpnf-disable-responsive-table) .gpnf-nested-entries td[data-value=""] {
 		display: none;
 	}
 
-	.gpnf-no-entries span {
+	form:not(.gpnf-disable-responsive-table) .gpnf-no-entries span {
 		display: inline !important;
 	}
 
@@ -230,17 +230,17 @@
 	 * Below styles assist with responsiveness for this snippet:
 	 * https://gist.github.com/spivurno/3a3b92bf32824a414c87c23bbf5ca335#file-z-gp-nested-forms-display-child-entries-table-format-all-child-fields-php
 	 */
-	.gpnf-row-actions:before {
+	form:not(.gpnf-disable-responsive-table) .gpnf-row-actions:before {
 		content: '' !important;
 	}
 
-	.gpnf-row-actions:empty {
+	form:not(.gpnf-disable-responsive-table) .gpnf-row-actions:empty {
 		display: none;
 	}
 
-	body .gform_wrapper div.gform_body ul.gform_fields li.gfield.gfield_html .gpnf-field ul,
-	body .gform_wrapper div.gform_body ul.gform_fields li.gfield.gfield_html .gpnf-field ul li,
-	body .gform_wrapper form div.gform_body ul.gform_fields li.gfield.gfield_html .gpnf-field ul li li {
+	body .gform_wrapper form:not(.gpnf-disable-responsive-table) div.gform_body ul.gform_fields li.gfield.gfield_html .gpnf-field ul,
+	body .gform_wrapper form:not(.gpnf-disable-responsive-table) div.gform_body ul.gform_fields li.gfield.gfield_html .gpnf-field ul li,
+	body .gform_wrapper form:not(.gpnf-disable-responsive-table) div.gform_body ul.gform_fields li.gfield.gfield_html .gpnf-field ul li li {
 		margin: 0 !important;
 		list-style: none !important;
 		overflow: visible;

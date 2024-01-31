@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by gravityview on 07-September-2023 using Strauss.
+ * Modified by gravityview on 08-December-2023 using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 
@@ -93,6 +93,7 @@ class Products extends AbstractCommand {
 	 * Install product(s).
 	 *
 	 * @since      1.2.0
+	 * @since      1.2.4 Added --all option.
 	 *
 	 * @param array $args
 	 * @param array $assoc_args
@@ -101,7 +102,10 @@ class Products extends AbstractCommand {
 	 *
 	 * ## OPTIONS
 	 *
-	 * <product-text-domain>,...
+	 * [<product-text-domain>,...]
+	 *
+	 * [--all]
+	 * : Install all available products.
 	 *
 	 * [--skip-dependency-check]
 	 * : Do not verify if product has unmet dependencies (system or plugin). Default: false.
@@ -113,13 +117,14 @@ class Products extends AbstractCommand {
 	 *
 	 *     wp gk products install gk-gravityview
 	 *     wp gk products install gk-gravityview,gk-gravitymigrate --activate --skip-dependency-check
+	 *     wp gk products install --all
 	 *
-	 * @synopsis <product-text-domain> [--activate] [--skip-dependency-check]
+	 * @synopsis [<product-text-domain>] [--all] [--activate] [--skip-dependency-check]
 	 *
 	 * @return void
 	 */
 	public function install( array $args, array $assoc_args ) {
-		if ( ! isset( $args[0] ) ) {
+		if ( ! isset( $assoc_args['all'] ) && ! isset( $args[0] ) ) {
 			WP_CLI::error( 'Please provide a product text domain.' );
 		}
 
@@ -127,36 +132,38 @@ class Products extends AbstractCommand {
 
 		$failed_products = [];
 
-		foreach ( $text_domains as $text_domain ) {
-			WP_CLI::line( "Installing ${text_domain}..." );
+		$products = $this->get_products_or_exit();
 
+		foreach ( $text_domains as $text_domain ) {
 			$found = false;
 
-			foreach ( $this->get_products_or_exit() as $product ) {
-				if ( $product['text_domain'] !== $text_domain ) {
+			foreach ( $products as $product ) {
+				if ( $product['text_domain'] !== $text_domain && ! isset( $assoc_args['all'] ) ) {
 					continue;
 				}
+
+				WP_CLI::line( "Installing {$product['name']}..." );
 
 				$found = true;
 
 				if ( $product['installed'] ) {
-					WP_CLI::warning( "${product['name']} is already installed.\n", false );
+					WP_CLI::warning( "{$product['name']} is already installed.\n", false );
 
 					continue;
 				}
 
 				if ( ! $product['free'] && empty( $product['licenses'] ) ) {
-					WP_CLI::warning( "${product['name']} is not licensed.\n", false );
+					WP_CLI::warning( "{$product['name']} is not licensed.\n", false );
 
 					continue;
 				}
 
 				if ( ! isset( $assoc_args['skip-dependency-check'] ) && ( ! empty( $product['checked_dependencies']['unmet']['system'] ) || ! empty( $product['checked_dependencies']['unmet']['plugin'] ) ) ) {
-					WP_CLI::error( "${product['name']} has unmet dependencies. Please resolve them first.\n", false );
+					WP_CLI::error( "{$product['name']} has unmet dependencies. Please resolve them first.\n", false );
 
 					$this->show_unmet_dependencies( $product['checked_dependencies']['unmet'] );
 
-					$failed_products[] = $text_domain;
+					$failed_products[] = $product['text_domain'];
 
 					continue;
 				}
@@ -164,24 +171,24 @@ class Products extends AbstractCommand {
 				try {
 					ProductManager::get_instance()->install_product( $product );
 
-					WP_CLI::success( "${product['name']} installed.\n" );
+					WP_CLI::success( "{$product['name']} installed.\n" );
 
 					if ( $assoc_args['activate'] ?? false ) {
 						ProductManager::get_instance()->activate_product( $product );
 
-						WP_CLI::success( "${product['name']} activated.\n" );
+						WP_CLI::success( "{$product['name']} activated.\n" );
 					}
 				} catch ( Exception $e ) {
 					WP_CLI::error( $e->getMessage() . "\n", false );
 
-					$failed_products[] = $text_domain;
+					$failed_products[] = $product['text_domain'];
 
 					continue;
 				}
 			}
 
-			if ( ! $found ) {
-				WP_CLI::error( "${text_domain} not found.\n", false );
+			if ( ! $found && ! empty( $failed_products ) ) {
+				WP_CLI::error( "{$text_domain} not found.\n", false );
 
 				$failed_products[] = $text_domain;
 			}
@@ -196,6 +203,7 @@ class Products extends AbstractCommand {
 	 * Updates product(s).
 	 *
 	 * @since      1.2.0
+	 * @since      1.2.4 Added --all option.
 	 *
 	 * @param array $args
 	 * @param array $assoc_args
@@ -204,7 +212,10 @@ class Products extends AbstractCommand {
 	 *
 	 * ## OPTIONS
 	 *
-	 * <product-text-domain>,...
+	 * [<product-text-domain>,...]
+	 *
+	 * [--all]
+	 * : Install all available updates.
 	 *
 	 * [--skip-dependency-check]
 	 * : Do not verify if product has unmet dependencies (system or plugin). Default: false.
@@ -216,13 +227,14 @@ class Products extends AbstractCommand {
 	 *
 	 *     wp gk products install gk-gravityview
 	 *     wp gk products install gk-gravityview,gk-gravitymigrate --skip-dependency-check
+	 *     wp gk products install --all
 	 *
-	 * @synopsis <product-text-domain> [--skip-dependency-check] [--skip-git-check]
+	 * @synopsis [<product-text-domain>] [--all] [--skip-dependency-check] [--skip-git-check]
 	 *
 	 * @return void
 	 */
 	public function update( array $args, array $assoc_args ) {
-		if ( ! isset( $args[0] ) ) {
+		if ( ! isset( $assoc_args['all'] ) && ! isset( $args[0] ) ) {
 			WP_CLI::error( 'Please provide a product text domain.' );
 		}
 
@@ -230,48 +242,54 @@ class Products extends AbstractCommand {
 
 		$failed_products = [];
 
-		foreach ( $text_domains as $text_domain ) {
-			WP_CLI::line( "Updating ${text_domain}..." );
+		$products = $this->get_products_or_exit();
 
+		foreach ( $text_domains as $text_domain ) {
 			$found = false;
 
-			foreach ( $this->get_products_or_exit() as $product ) {
-				if ( $product['text_domain'] !== $text_domain ) {
+			foreach ( $products as $product ) {
+				if ( ! $product['update_available'] ) {
 					continue;
 				}
+
+				if ( $product['text_domain'] !== $text_domain && ! isset( $assoc_args['all'] ) ) {
+					continue;
+				}
+
+				WP_CLI::line( "Updating {$product['name']}..." );
 
 				$found = true;
 
 				if ( ! $product['installed'] ) {
-					WP_CLI::warning( "${product['name']} is not installed.\n", false );
+					WP_CLI::warning( "{$product['name']} is not installed.\n", false );
 
 					continue;
 				}
 
 				if ( ! $product['free'] && empty( $product['licenses'] ) ) {
-					WP_CLI::warning( "${product['name']} is not licensed.\n", false );
+					WP_CLI::warning( "{$product['name']} is not licensed.\n", false );
 
 					continue;
 				}
 
 				if ( $product['has_git_folder'] && ! $assoc_args['skip-git-check'] ) {
-					WP_CLI::warning( "${product['name']} is installed from a Git repository.\n", false );
+					WP_CLI::warning( "{$product['name']} is installed from a Git repository.\n", false );
 
 					continue;
 				}
 
 				if ( ! $product['update_available'] ) {
-					WP_CLI::warning( "${product['name']} is up to date.\n", false );
+					WP_CLI::warning( "{$product['name']} is up to date.\n", false );
 
 					continue;
 				}
 
 				if ( ! isset( $assoc_args['skip-dependency-check'] ) && ( ! $product['checked_dependencies'][ $product['server_version'] ]['status'] ?? false ) ) {
-					WP_CLI::error( "${product['name']} has unmet dependencies. Please resolve them first.\n", false );
+					WP_CLI::error( "{$product['name']} has unmet dependencies. Please resolve them first.\n", false );
 
 					$this->show_unmet_dependencies( $product['checked_dependencies'][ $product['server_version'] ]['unmet'] );
 
-					$failed_products[] = $text_domain;
+					$failed_products[] = $product['text_domain'];
 
 					continue;
 				}
@@ -279,18 +297,18 @@ class Products extends AbstractCommand {
 				try {
 					ProductManager::get_instance()->update_product( $product );
 
-					WP_CLI::success( "${product['name']} updated.\n" );
+					WP_CLI::success( "{$product['name']} updated.\n" );
 				} catch ( Exception $e ) {
 					WP_CLI::error( $e->getMessage() . "\n", false );
 
-					$failed_products[] = $text_domain;
+					$failed_products[] = $product['text_domain'];
 
 					continue;
 				}
 			}
 
-			if ( ! $found ) {
-				WP_CLI::error( "${text_domain} not found.\n", false );
+			if ( ! $found && ! empty( $failed_products ) ) {
+				WP_CLI::error( "{$text_domain} not found.\n", false );
 
 				$failed_products[] = $text_domain;
 			}
@@ -305,6 +323,7 @@ class Products extends AbstractCommand {
 	 * Activate product(s).
 	 *
 	 * @since      1.2.0
+	 * @since      1.2.4 Added --all option.
 	 *
 	 * @param array $args
 	 * @param array $assoc_args
@@ -313,7 +332,10 @@ class Products extends AbstractCommand {
 	 *
 	 * ## OPTIONS
 	 *
-	 * <product-text-domain>,...
+	 * [<product-text-domain>...]
+	 *
+	 * [--all]
+	 * : Activate all inactive products.
 	 *
 	 * [--skip-dependency-check]
 	 * : Do not verify if product has unmet dependencies (system or plugin). Default: false.
@@ -322,13 +344,14 @@ class Products extends AbstractCommand {
 	 *
 	 *     wp gk products activate gk-gravityview
 	 *     wp gk products activate gk-gravityview,gk-gravitymigrate --skip-dependency-check
+	 *     wp gk products activate --all
 	 *
-	 * @synopsis <product-text-domain> [--skip-dependency-check]
+	 * @synopsis [<product-text-domain>] [--all] [--skip-dependency-check]
 	 *
 	 * @return void
 	 */
 	public function activate( array $args, array $assoc_args ) {
-		if ( ! isset( $args[0] ) ) {
+		if ( ! isset( $assoc_args['all'] ) && ! isset( $args[0] ) ) {
 			WP_CLI::error( 'Please provide a product text domain.' );
 		}
 
@@ -336,36 +359,32 @@ class Products extends AbstractCommand {
 
 		$failed_products = [];
 
-		foreach ( $text_domains as $text_domain ) {
-			WP_CLI::line( "Activating ${text_domain}..." );
+		$products = $this->get_products_or_exit();
 
+		foreach ( $text_domains as $text_domain ) {
 			$found = false;
 
-			foreach ( $this->get_products_or_exit() as $product ) {
-				if ( $product['text_domain'] !== $text_domain ) {
+			foreach ( $products as $product ) {
+				if ( $product['text_domain'] !== $text_domain && ! isset( $assoc_args['all'] ) ) {
 					continue;
 				}
+
+				WP_CLI::line( "Activating {$product['name']}..." );
 
 				$found = true;
 
 				if ( $product['active'] ) {
-					WP_CLI::warning( "${product['name']} is already active.\n", false );
-
-					continue;
-				}
-
-				if ( ! $product['free'] && empty( $product['licenses'] ) ) {
-					WP_CLI::warning( "${product['name']} is not licensed.\n", false );
+					WP_CLI::warning( "{$product['name']} is already active.\n", false );
 
 					continue;
 				}
 
 				if ( ! isset( $assoc_args['skip-dependency-check'] ) && ( ! $product['checked_dependencies'][ $product['server_version'] ]['status'] ?? false ) ) {
-					WP_CLI::error( "${product['name']} has unmet dependencies. Please resolve them first.\n", false );
+					WP_CLI::error( "{$product['name']} has unmet dependencies. Please resolve them first.\n", false );
 
 					$this->show_unmet_dependencies( $product['checked_dependencies'][ $product['server_version'] ]['unmet'] );
 
-					$failed_products[] = $text_domain;
+					$failed_products[] = $product['text_domain'];
 
 					continue;
 				}
@@ -373,18 +392,18 @@ class Products extends AbstractCommand {
 				try {
 					ProductManager::get_instance()->activate_product( $product );
 
-					WP_CLI::success( "${product['name']} activated.\n" );
+					WP_CLI::success( "{$product['name']} activated.\n" );
 				} catch ( Exception $e ) {
 					WP_CLI::error( $e->getMessage() . "\n", false );
 
-					$failed_products[] = $text_domain;
+					$failed_products[] = $product['text_domain'];
 
 					continue;
 				}
 			}
 
-			if ( ! $found ) {
-				WP_CLI::error( "${text_domain} not found.\n", false );
+			if ( ! $found && ! empty( $failed_products ) ) {
+				WP_CLI::error( "{$text_domain} not found.\n", false );
 
 				$failed_products[] = $text_domain;
 			}
@@ -399,6 +418,7 @@ class Products extends AbstractCommand {
 	 * Deactivate product(s).
 	 *
 	 * @since      1.2.0
+	 * @since      1.2.4 Added --all option.
 	 *
 	 * @param array $args
 	 * @param array $assoc_args
@@ -407,7 +427,10 @@ class Products extends AbstractCommand {
 	 *
 	 * ## OPTIONS
 	 *
-	 * <product-text-domain>,...
+	 * [<product-text-domain>,...]
+	 *
+	 * [--all]
+	 * : Deactivate all active products.
 	 *
 	 * [--skip-dependency-check]
 	 * : Do not verify if this product is required by other products to be active. Default: false.
@@ -416,13 +439,14 @@ class Products extends AbstractCommand {
 	 *
 	 *     wp gk products deactivate gk-gravityview
 	 *     wp gk products deactivate gk-gravityview,gk-gravitymigrate --skip-dependency-check
+	 *     wp gk products deactivate --all
 	 *
-	 * @synopsis <product-text-domain> [--skip-dependency-check]
+	 * @synopsis [<product-text-domain>] [--all] [--skip-dependency-check]
 	 *
 	 * @return void
 	 */
 	public function deactivate( array $args, array $assoc_args ) {
-		if ( ! isset( $args[0] ) ) {
+		if ( ! isset( $assoc_args['all'] ) && ! isset( $args[0] ) ) {
 			WP_CLI::error( 'Please provide a product text domain.' );
 		}
 
@@ -430,26 +454,28 @@ class Products extends AbstractCommand {
 
 		$failed_products = [];
 
-		foreach ( $text_domains as $text_domain ) {
-			WP_CLI::line( "Deactivating ${text_domain}..." );
+		$products = $this->get_products_or_exit();
 
+		foreach ( $text_domains as $text_domain ) {
 			$found = false;
 
-			foreach ( $this->get_products_or_exit() as $product ) {
-				if ( $product['text_domain'] !== $text_domain ) {
+			foreach ( $products as $product ) {
+				if ( $product['text_domain'] !== $text_domain && ! isset( $assoc_args['all'] ) ) {
 					continue;
 				}
+
+				WP_CLI::line( "Deactivating {$product['name']}..." );
 
 				$found = true;
 
 				if ( ! $product['active'] ) {
-					WP_CLI::warning( "${product['name']} is not active.\n", false );
+					WP_CLI::warning( "{$product['name']} is not active.\n", false );
 
 					continue;
 				}
 
 				if ( ! isset( $assoc_args['skip-dependency-check'] ) && ! empty( $product['required_by'] ) ) {
-					WP_CLI::error( "${product['name']} is required by other products. Please deactivate them first.\n", false );
+					WP_CLI::error( "{$product['name']} is required by other products. Please deactivate them first.\n", false );
 
 					foreach ( $product['required_by'] as &$required_by ) {
 						$required_by = [
@@ -460,7 +486,7 @@ class Products extends AbstractCommand {
 
 					format_items( self::DEFAULT_OUTPUT_FORMAT, $product['required_by'], [ 'Name', 'Text Domain' ] );
 
-					$failed_products[] = $text_domain;
+					$failed_products[] = $product['text_domain'];
 
 					continue;
 				}
@@ -468,18 +494,18 @@ class Products extends AbstractCommand {
 				try {
 					ProductManager::get_instance()->deactivate_product( $product );
 
-					WP_CLI::success( "${product['name']} deactivated.\n" );
+					WP_CLI::success( "{$product['name']} deactivated.\n" );
 				} catch ( Exception $e ) {
 					WP_CLI::error( $e->getMessage() . "\n", false );
 
-					$failed_products[] = $text_domain;
+					$failed_products[] = $product['text_domain'];
 
 					continue;
 				}
 			}
 
-			if ( ! $found ) {
-				WP_CLI::error( "${text_domain} not found.\n", false );
+			if ( ! $found && ! empty( $failed_products ) ) {
+				WP_CLI::error( "{$text_domain} not found.\n", false );
 
 				$failed_products[] = $text_domain;
 			}
@@ -494,6 +520,7 @@ class Products extends AbstractCommand {
 	 * Delete product(s).
 	 *
 	 * @since      1.2.0
+	 * @since      1.2.4 Added --all option.
 	 *
 	 * @param array $args
 	 * @param array $assoc_args
@@ -502,7 +529,10 @@ class Products extends AbstractCommand {
 	 *
 	 * ## OPTIONS
 	 *
-	 * <product-text-domain>,...
+	 * [<product-text-domain>,...]
+	 *
+	 * [--all]
+	 * : Delete all installed products.
 	 *
 	 * [--deactivate-before-deletion]
 	 * : Deactivate product before deleting it. Default: false.
@@ -511,13 +541,14 @@ class Products extends AbstractCommand {
 	 *
 	 *     wp gk products delete gk-gravityview
 	 *     wp gk products delete gk-gravityview,gk-gravitymigrate --deactivate-before-deletion
+	 *     wp gk products delete --all
 	 *
-	 * @synopsis <product-text-domain> [--deactivate-before-deletion]
+	 * @synopsis [<product-text-domain>] [--all] [--deactivate-before-deletion]
 	 *
 	 * @return void
 	 */
 	public function delete( array $args, array $assoc_args ) {
-		if ( ! isset( $args[0] ) ) {
+		if ( ! isset( $assoc_args['all'] ) && ! isset( $args[0] ) ) {
 			WP_CLI::error( 'Please provide a product text domain.' );
 		}
 
@@ -525,26 +556,28 @@ class Products extends AbstractCommand {
 
 		$failed_products = [];
 
-		foreach ( $text_domains as $text_domain ) {
-			WP_CLI::line( "Deleting ${text_domain}..." );
+		$products = $this->get_products_or_exit();
 
+		foreach ( $text_domains as $text_domain ) {
 			$found = false;
 
-			foreach ( $this->get_products_or_exit() as $product ) {
-				if ( $product['text_domain'] !== $text_domain ) {
+			foreach ( $products as $product ) {
+				if ( $product['text_domain'] !== $text_domain && ! isset( $assoc_args['all'] ) ) {
 					continue;
 				}
+
+				WP_CLI::line( "Deleting {$product['name']}..." );
 
 				$found = true;
 
 				if ( ! $product['installed'] ) {
-					WP_CLI::warning( "${product['name']} is not installed.\n", false );
+					WP_CLI::warning( "{$product['name']} is not installed.\n", false );
 
 					continue;
 				}
 
 				if ( $product['active'] && ! isset( $assoc_args['deactivate-before-deletion'] ) ) {
-					WP_CLI::warning( "${product['name']} is active and needs to be deactivated first.\n", false );
+					WP_CLI::warning( "{$product['name']} is active and needs to be deactivated first.\n", false );
 
 					continue;
 				} else if ( $product['active'] ) {
@@ -553,7 +586,7 @@ class Products extends AbstractCommand {
 					} catch ( Exception $e ) {
 						WP_CLI::error( $e->getMessage() . "\n", false );
 
-						$failed_products[] = $text_domain;
+						$failed_products[] = $product['text_domain'];
 
 						continue;
 					}
@@ -562,18 +595,18 @@ class Products extends AbstractCommand {
 				try {
 					ProductManager::get_instance()->delete_product( $product );
 
-					WP_CLI::success( "${product['name']} deleted.\n" );
+					WP_CLI::success( "{$product['name']} deleted.\n" );
 				} catch ( Exception $e ) {
 					WP_CLI::error( $e->getMessage() . "\n", false );
 
-					$failed_products[] = $text_domain;
+					$failed_products[] = $product['text_domain'];
 
 					continue;
 				}
 			}
 
-			if ( ! $found ) {
-				WP_CLI::error( "${text_domain} not found.\n", false );
+			if ( ! $found && ! empty( $failed_products ) ) {
+				WP_CLI::error( "{$text_domain} not found.\n", false );
 
 				$failed_products[] = $text_domain;
 			}
@@ -766,7 +799,7 @@ class Products extends AbstractCommand {
 			foreach ( $unmet_dependencies['system'] as &$dependency ) {
 				switch ( $dependency['reason'] ) {
 					case ProductDependencyChecker::FAILURE_OLDER_VERSION:
-						$dependency['reason'] = "Older version (${dependency['current_version']}) is installed";
+						$dependency['reason'] = "Older version ({$dependency['current_version']}) is installed";
 
 						break;
 				}
@@ -790,7 +823,7 @@ class Products extends AbstractCommand {
 			foreach ( $unmet_dependencies['plugin'] as &$dependency ) {
 				switch ( $dependency['reason'] ) {
 					case ProductDependencyChecker::FAILURE_OLDER_VERSION:
-						$dependency['reason'] = "Older version (${dependency['current_version']}) is installed";
+						$dependency['reason'] = "Older version ({$dependency['current_version']}) is installed";
 
 						break;
 					case ProductDependencyChecker::FAILURE_INACTIVE:

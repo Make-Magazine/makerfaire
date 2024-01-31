@@ -966,54 +966,6 @@ class GFCommon {
 		$class    = 'gform_merge_tags';
 		?>
 
-		<select data-js-reload="gforms-calculation-variables" id="<?php echo esc_attr( $element_id ); ?>_variable_select" onchange="<?php echo $onchange ?>" class="<?php echo esc_attr( $class ) ?>">
-			<option value=''><?php esc_html_e( 'Insert Merge Tag', 'gravityforms' ); ?></option>
-			<optgroup label="<?php esc_attr_e( 'Allowable form fields', 'gravityforms' ); ?>">
-
-				<?php
-				foreach ( $fields as $field ) {
-
-					if ( ! self::is_valid_for_calcuation( $field ) ) {
-						continue;
-					}
-
-					if ( RGFormsModel::get_input_type( $field ) == 'checkbox' ) {
-						foreach ( $field->inputs as $input ) {
-							?>
-							<option value='<?php echo esc_attr( '{' . esc_html( GFCommon::get_label( $field, $input['id'] ) ) . ':' . $input['id'] . '}' ); ?>'><?php echo esc_html( GFCommon::get_label( $field, $input['id'] ) ) ?></option>
-							<?php
-						}
-					} else {
-						self::insert_field_variable( $field, $max_label_size );
-					}
-				}
-				?>
-
-			</optgroup>
-
-			<?php
-			$form_id = isset( $fields[0] ) ? $fields[0]->formId : rgget( 'id' );
-			$form_id = absint( $form_id );
-
-			$custom_merge_tags = apply_filters( 'gform_custom_merge_tags', array(), $form_id, $fields, $element_id );
-
-			if ( is_array( $custom_merge_tags ) && ! empty( $custom_merge_tags ) ) {
-				?>
-
-				<optgroup label="<?php esc_attr_e( 'Custom', 'gravityforms' ); ?>">
-
-					<?php foreach ( $custom_merge_tags as $custom_merge_tag ) { ?>
-
-						<option value='<?php echo esc_attr( rgar( $custom_merge_tag, 'tag' ) ); ?>'><?php echo esc_html( rgar( $custom_merge_tag, 'label' ) ); ?></option>
-
-					<?php } ?>
-
-				</optgroup>
-
-			<?php } ?>
-
-		</select>
-
 		<?php
 	}
 
@@ -3826,9 +3778,7 @@ Content-Type: text/html;
 		switch ( $type ) {
 
 			case 'honeypot':
-				$autocomplete = RGFormsModel::is_html5_enabled() ? "autocomplete='new-password'" : '';
-
-				return "<div class='ginput_container'><input name='input_{$id}' id='{$field_id}' type='text' value='' {$autocomplete}/></div>";
+				return "<div class='ginput_container'><input name='input_{$id}' id='{$field_id}' type='text' value='' autocomplete='new-password'/></div>";
 				break;
 
 			case 'adminonly_hidden' :
@@ -3969,10 +3919,10 @@ Content-Type: text/html;
 				<a 
 					aria-label="%s" 
 					href="%s" 
-					class="%s" 
+					class="%s gform-button--icon-leading" 
 					target="%s" 
 					rel="noopener"
-				>%s</a>
+				><i class="gform-button__icon gform-common-icon gform-common-icon--eye"></i>%s</a>
 				',
 			esc_html__( 'Preview this form', 'gravityforms' ),
 			esc_url( $options['url'] ),

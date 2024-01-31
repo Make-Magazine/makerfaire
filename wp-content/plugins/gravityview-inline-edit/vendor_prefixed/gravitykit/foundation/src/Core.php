@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by __root__ on 07-September-2023 using Strauss.
+ * Modified by __root__ on 02-November-2023 using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 
@@ -42,7 +42,7 @@ use GravityKitFoundation;
  * @method static PluginActivationHandler plugin_activation_handler()
  */
 class Core {
-	const VERSION = '1.2.2';
+	const VERSION = '1.2.5';
 
 	const ID = 'gk_foundation';
 
@@ -755,19 +755,21 @@ HTML;
 	 * Gets the Foundation version included with a plugin.
 	 *
 	 * @since 1.2.0
+	 * @since 1.2.4 Added the $ignore_registered_plugins parameter.
 	 *
-	 * @param string $plugin_file Absolute path to the plugin file.
+	 * @param string $plugin_file               Absolute path to the plugin file.
+	 * @param bool   $ignore_registered_plugins Check the plugin file directly instead of the registered plugins.
 	 *
 	 * @return string|null
 	 */
-	public function get_plugin_foundation_version( $plugin_file ) {
+	public function get_plugin_foundation_version( $plugin_file, $ignore_registered_plugins = false ) {
 		// Try to get the version first from the registered plugins.
 		$plugin = Arr::first( $this->_registered_plugins, function ( $plugin ) use ( $plugin_file ) {
 			return $plugin['plugin_file'] === $plugin_file;
 		} );
 
 		// If the plugin is not registered, try to get the version from the plugin file.
-		if ( ! isset( $plugin['foundation_version'] ) ) {
+		if ( $ignore_registered_plugins || ! isset( $plugin['foundation_version'] ) ) {
 			$foundation_core = sprintf( '%s/vendor_prefixed/gravitykit/foundation/src/Core.php', dirname( $plugin_file ) );
 
 			if ( ! file_exists( $foundation_core ) ) {

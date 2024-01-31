@@ -3,7 +3,7 @@
  * related to it
  *
  * @license   GPL2+
- * @link      http://gravityview.co
+ * @link      http://www.gravitykit.com
  *
  * @since 1.0.0
  */
@@ -308,12 +308,12 @@
                         },
                     },
                 };
-    
+
                 editableOptions.tpl= '<select></select>';
                 editableOptions.ajaxOptions= {
                     type: 'POST'
                 };
-            
+
             }
 
 
@@ -337,13 +337,32 @@
             }
 
             $field.on( 'shown', self.inlineEditFieldsOnShown );
+            $field.on( 'save', self.inlineEditFieldsOnSave );
+        };
+
+        /**
+         * Runs after a field is updated.
+         */
+        self.inlineEditFieldsOnSave = function( e, params ) {
+
+            // Check if DataTables exists.
+            if ( $( this ).parents( '.gv-datatables' ).length === 0 ) {
+                return;
+            }
+
+            let table = $( this ).parents( '.gv-datatables' ).DataTable();
+
+            if ( table.responsive && this.closest( 'li' ) ) {
+                let cell_index = table.responsive.index( this.closest( 'li' ) );
+                table.cell( cell_index ).data( params.newValue );
+            }
         };
 
         /**
          * Runs after all inline edit fields are shown
          */
         self.inlineEditFieldsOnShown = function ( e, editable ) {
-            
+
             if($(editable.$element).hasClass('gv-inline-edit-user-select2')){
                 $(editable.input.$input).on('select2:select', function (e) {
                     var data = e.params.data;
@@ -366,7 +385,7 @@
             if ( 'number' === editable.input.type ) {
                 editable.input.$input.attr( 'step', 'any' );
             }
-  
+
             // Prevent column editing submitting at once.
             if(editable.input.$input.length > 0){
                 editable.input.$input[0].addEventListener("input", function() {

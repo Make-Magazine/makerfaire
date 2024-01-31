@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by __root__ on 07-September-2023 using Strauss.
+ * Modified by __root__ on 02-November-2023 using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 
@@ -228,7 +228,7 @@ class AdminMenu {
 document.addEventListener( 'DOMContentLoaded', () => {
 	const menuLinkEl = document.querySelector( 'a.toplevel_page__gk_admin_menu' );
 	const menuNameEl = menuLinkEl.querySelector( 'div.wp-menu-name' );
-	const menuActionEl = document.querySelector( '#${top_level_menu_action}-badge' )?.parentNode;
+	const menuActionEl = document.querySelector( '#{$top_level_menu_action}-badge' )?.parentNode;
 
 	if ( !menuLinkEl || !menuNameEl || !menuActionEl ) {
 		return;

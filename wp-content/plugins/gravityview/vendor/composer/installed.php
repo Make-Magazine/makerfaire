@@ -3,7 +3,7 @@
         'name' => 'gravityview/gravityview',
         'pretty_version' => 'dev-main',
         'version' => 'dev-main',
-        'reference' => 'eb7fa739b8ad2289e25f64cbd5c0f487430882d4',
+        'reference' => 'b946849be0b3b51f487cf5dcf14150b0dfa37f86',
         'type' => 'wordpress-plugin',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -40,7 +40,7 @@
         'gravitykit/foundation' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
-            'reference' => '77b662681223db0da43c5d4545de0e8f6d0ba17b',
+            'reference' => '82d4b8c6b2d3989b8b2dbf829be0c72f6aef2f8a',
             'type' => 'library',
             'install_path' => __DIR__ . '/../gravitykit/foundation',
             'aliases' => array(
@@ -51,7 +51,7 @@
         'gravityview/gravityview' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
-            'reference' => 'eb7fa739b8ad2289e25f64cbd5c0f487430882d4',
+            'reference' => 'b946849be0b3b51f487cf5dcf14150b0dfa37f86',
             'type' => 'wordpress-plugin',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
@@ -189,7 +189,7 @@
         'trustedlogin/client' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
-            'reference' => '3aecfa088ee2f864b516c1abef7229264a9e472a',
+            'reference' => '1c924f8dee1b10624223741b72e5ce83f1e45ce3',
             'type' => 'library',
             'install_path' => __DIR__ . '/../trustedlogin/client',
             'aliases' => array(

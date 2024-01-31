@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by __root__ on 07-September-2023 using Strauss.
+ * Modified by __root__ on 02-November-2023 using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 
@@ -74,7 +74,6 @@ class TrustedLogin {
 			return;
 		}
 
-		add_action( 'trustedlogin/' . self::ID . '/logging/log', [ $this, 'log' ], 10, 4 );
 		add_filter( 'gk/foundation/integrations/helpscout/configuration', [ $this, 'add_tl_key_to_helpscout_beacon' ] );
 	}
 
@@ -128,34 +127,6 @@ class TrustedLogin {
 	 * @return array
 	 */
 	public function get_config() {
-		/**
-		 * @filter `gk/foundation/integrations/trustedlogin/capabilities` Modifies the capabilities added/removed by TL.
-		 *
-		 * @since  1.0.0
-		 *
-		 * @param array $capabilities
-		 */
-		$capabilities = apply_filters( 'gk/foundation/integrations/trustedlogin/capabilities', [
-			'add'    => [
-				'gravityview_full_access' => esc_html__( 'We need access to Views to provide great support.', 'gk-gravityedit' ),
-				'gform_full_access'       => esc_html__( 'We will need to see and edit the forms, entries, and Gravity Forms settings to debug issues.', 'gk-gravityedit' ),
-				'install_plugins'         => esc_html__( 'We may need to manage plugins in order to debug conflicts on your site and add related GravityView functionality.', 'gk-gravityedit' ),
-				'update_plugins'          => '',
-				'deactivate_plugins'      => '',
-				'activate_plugins'        => '',
-			],
-			'remove' => [
-				'manage_woocommerce' => strtr(
-					esc_html_x( "We don't need to see your [plugin] details to provide support (if [plugin] is enabled).", 'Placeholders inside [] are not to be translated.', 'gk-gravityedit' ),
-					[ 'plugin' => 'WooCommerce' ]
-				),
-				'view_shop_reports'  => strtr(
-					esc_html_x( "We don't need to see your [plugin] details to provide support (if [plugin] is enabled).", 'Placeholders inside [] are not to be translated.', 'gk-gravityedit' ),
-					[ 'plugin' => 'Easy Digital Downloads' ]
-				),
-			],
-		] );
-
 		$config = [
 			'auth'            => [
 				'api_key' => self::TL_API_KEY,
@@ -164,10 +135,9 @@ class TrustedLogin {
 				'slug' => false, // Prevent TL from adding a menu item; we'll do it manually in the add_gk_submenu_item() method.
 			],
 			'role'            => 'administrator',
-			'caps'            => $capabilities,
+			'clone_role'      => false,
 			'logging'         => [
-				'enabled'   => true,
-				'threshold' => 'warning',
+				'enabled' => false,
 			],
 			'vendor'          => [
 				'namespace'    => self::ID,
@@ -200,24 +170,6 @@ class TrustedLogin {
 		}
 
 		return $config;
-	}
-
-	/**
-	 * Overrides TL's internal logging with Foundation's logging.
-	 *
-	 * @internal  Once we require PHP 7.1, this will be a private method, and we'll use Closure::fromCallable().
-	 *
-	 * @since     1.0.0
-	 *
-	 * @param string                     $message Message to log.
-	 * @param string                     $method  Method where the log was called.
-	 * @param string                     $level   PSR-3 log level {@see https://www.php-fig.org/psr/psr-3/#5-psrlogloglevel}.
-	 * @param \WP_Error|\Exception|mixed $data    (optional) Error data. Ignored if $message is WP_Error.
-	 *
-	 * @return void
-	 */
-	public function log( $message, $method = '', $level = 'debug', $data = [] ) {
-		LoggerFramework::get_instance()->{$level}( $message );
 	}
 
 	/**

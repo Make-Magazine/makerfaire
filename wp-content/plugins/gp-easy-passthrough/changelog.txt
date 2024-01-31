@@ -1,6 +1,23 @@
 
 # Changelog
 
+## 1.9.28
+
+	- Fixed issue where Easy Passthrough tokens were not generated if entries were created programmatically.
+
+## 1.9.27
+
+	- Fixed a potential PHP warning if customizing the cookie delimiter using the `gpep_cookie_delimiter` PHP filter hook.
+	- Fixed an issue with mapping generating values from other forms.
+
+## 1.9.26
+
+	- Added [`gpep_cookie_delimiter`](https://gravitywiz.com/documentation/gpep_cookie_delimiter/) filter hook to customize the cookie delimiter.
+
+## 1.9.25
+
+	- Fixed an issue with Stripe Credit Card fields erroneously showing as mappable fields.
+
 ## 1.9.24
 
 	- Improved compatibility with GravityView by creating new Easy Passthrough tokens for duplicated entries.

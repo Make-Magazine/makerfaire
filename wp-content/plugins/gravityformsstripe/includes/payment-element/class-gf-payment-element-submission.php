@@ -96,6 +96,9 @@ class GF_Payment_Element_Submission {
 	 * @return bool
 	 */
 	public function validate( $form_id ) {
+		// Modify the entry values as necessary before creating the draft.
+		add_filter( 'gform_save_field_value', array( $this, 'stripe_payment_element_save_draft_values' ), 10, 5 );
+
 		$result = GFAPI::validate_form( $form_id );
 		return rgar( $result, 'is_valid', false );
 	}
@@ -120,6 +123,17 @@ class GF_Payment_Element_Submission {
 		require_once GFCommon::get_base_path() . '/form_display.php';
 		$form  = GFFormDisplay::update_confirmation( $form, $lead, 'form_saved' );
 		$files = $this->handle_file_uploads( $form );
+
+		// Add the password to the draft entry if user registration is active and there's a password field.
+		if ( function_exists( 'gf_user_registration' ) ) {
+			$password_id = absint( rgars( gf_user_registration()->get_single_submission_feed( $lead, $form ), 'meta/password' ) );
+			if ( $password_id ) {
+				$password = rgpost( 'input_' . $password_id, false );
+				if ( $password ) {
+					$lead['ur_pass'] = wp_hash_password( $password );
+				}
+			}
+		}
 
 		$resume_token = GFFormsModel::save_draft_submission(
 			$form,
@@ -215,6 +229,8 @@ class GF_Payment_Element_Submission {
 		$this->payment_object_id = $intent->id;
 		$this->subscription_id   = $subscription_id;
 
+		$form = GFAPI::get_form( $this->form_id );
+
 		// Prepare the submission values from the draft created while validating the form.
 		$draft      = GFFormsModel::get_draft_submission_values( $this->draft_id );
 		$submission = json_decode( rgar( $draft, 'submission' ), true );
@@ -229,6 +245,11 @@ class GF_Payment_Element_Submission {
 
 		// This adds the entry, but doesn't run the complete form processing flow.
 		$this->entry_id = GFAPI::add_entry( $submission['partial_entry'] );
+
+		// If there is a user registration password in the partial entry, add it to the entry meta.
+		if ( ! empty( $submission['partial_entry']['ur_pass'] ) ) {
+			gform_update_meta( $this->entry_id, 'userregistration_password', $submission['partial_entry']['ur_pass'] );
+		}
 
 		if ( function_exists( 'gravity_flow' ) ) {
 			add_action( 'gform_post_add_entry', array( gravity_flow(), 'action_gform_post_add_entry' ), 10, 2 );
@@ -278,8 +299,17 @@ class GF_Payment_Element_Submission {
 			4
 		);
 
+		// The require login nonce was validated earlier by GF_Stripe_Payment_Element::start_checkout().
+		add_filter( "gform_require_login_{$this->form_id}", '__return_false', 99 );
+
 		// Run the complete form processing flow.
 		require_once GFCommon::get_base_path() . '/form_display.php';
+
+		// We need to use the POST to retrieve values since all relevant values won't be available in the draft entry.
+		if ( $form && GFFormDisplay::has_conditional_logic( $form ) ) {
+			add_filter( 'gform_use_post_value_for_conditional_logic_save_entry', '__return_true' );
+		}
+
 		GFFormDisplay::process_form( $this->form_id, GFFormDisplay::SUBMISSION_INITIATED_BY_WEBFORM );
 
 		// Delete the draft.
@@ -397,6 +427,9 @@ class GF_Payment_Element_Submission {
 		if ( rgars( $intent, 'charges/data/0/payment_method_details/card/brand' ) ) {
 			$_POST['stripe_credit_card_type']      = rgars( $intent, 'charges/data/0/payment_method_details/card/brand' );
 			$_POST['stripe_credit_card_last_four'] = 'XXXXXXXXXXXX' . rgars( $intent, 'charges/data/0/payment_method_details/card/last4' );
+		} elseif ( rgars( $intent, 'payment_method/card/brand' ) ) {
+			$_POST['stripe_credit_card_type']      = rgars( $intent, 'payment_method/card/brand' );
+			$_POST['stripe_credit_card_last_four'] = 'XXXXXXXXXXXX' . rgars( $intent, 'payment_method/card/last4' );
 		} else {
 			$payment_method_type = rgars( $intent, 'payment_method/type' );
 			$payment_method_data = rgars( $intent, 'payment_method/' . $payment_method_type );
@@ -475,5 +508,50 @@ class GF_Payment_Element_Submission {
 		}
 
 		return $result;
+	}
+
+	/**
+	 * Filter the values that get saved to the draft entry when using the Payment Element.
+	 *
+	 * @since 5.2
+	 *
+	 * @param string|array $value    The fields input value.
+	 * @param array        $lead     The current entry object.
+	 * @param GF_Field     $field    The current field object.
+	 * @param array        $form     The current form object.
+	 * @param string       $input_id The ID of the input being saved or the field ID for single input field types.
+	 *
+	 * @return string|array
+	 */
+	public function stripe_payment_element_save_draft_values( $value, $lead, $field, $form, $input_id ) {
+
+		// Only modify the values if this is the Stripe validation submission.
+		if ( rgpost( 'action' ) === 'gfstripe_validate_form' ) {
+
+			// Modify list field values to have the expected format.
+			if ( $field->type === 'list' ) {
+				$value = maybe_unserialize( $value );
+
+				if ( ! is_array( $value ) || ! $field->enableColumns ) {
+					return $value;
+				}
+
+				if ( ! is_array( $value[0] ) ) {
+					return $value;
+				}
+
+				$modified_value = array();
+				array_walk_recursive(
+					$value,
+					function( $val, $key ) use ( &$modified_value ) {
+						$modified_value = array_merge( $modified_value, is_array( $val ) ? array_values( $val ) : array( $val ) );
+					}
+				);
+
+				return $modified_value;
+			}
+		}
+
+		return $value;
 	}
 }

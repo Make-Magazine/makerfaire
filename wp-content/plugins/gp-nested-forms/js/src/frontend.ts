@@ -837,6 +837,7 @@ const ko = window.ko;
 				action: 'gpnf_delete_entry',
 				nonce:  GPNFData.nonces.deleteEntry,
 				gpnf_entry_id: item.id,
+				gpnf_nested_form_field_id: self.fieldId,
 				gpnf_context: self.ajaxContext
 				}, function( response ) {
 
@@ -1016,6 +1017,11 @@ const ko = window.ko;
 					return 0;
 				}
 
+				// If unable to fetch from the viewModel, fetch the child entries directly.
+				var childEntries = ( self.viewModel && typeof self.viewModel.entries === 'function' ) ?
+					self.viewModel.entries() :
+					self.entries;
+
 				/**
 				 * Filter the child entries used for Nested Forms' calculation merge tag modifiers such as :count, :sum,
 				 * and more. This is useful for conditionally including/excluding entries while calculating the results.
@@ -1029,7 +1035,7 @@ const ko = window.ko;
 				 * @param {GPNestedForms}   gpnf            Current instance of the GPNestedForms object.
 				 * @param {object}          formulaField    The formula field with the merge tag in it.
 				 */
-				var entries = window.gform.applyFilters( 'gpnf_calc_entries', self.viewModel.entries(), {
+				var entries = window.gform.applyFilters( 'gpnf_calc_entries', childEntries, {
 					search,
 					nestedFormFieldId,
 					func,

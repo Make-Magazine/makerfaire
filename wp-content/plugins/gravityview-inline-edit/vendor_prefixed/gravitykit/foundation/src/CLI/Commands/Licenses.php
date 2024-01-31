@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by __root__ on 07-September-2023 using Strauss.
+ * Modified by __root__ on 02-November-2023 using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 
@@ -156,7 +156,7 @@ class Licenses extends AbstractCommand {
 		$error = false;
 
 		foreach ( $keys as $key ) {
-			WP_CLI::line( "Activating ${key}…" );
+			WP_CLI::line( "Activating {$key}…" );
 
 			if ( isset( $licenses[ $key ] ) ) {
 				WP_CLI::warning( "License is already activate.\n", false );
@@ -226,7 +226,7 @@ class Licenses extends AbstractCommand {
 		$error = false;
 
 		foreach ( $keys as $key ) {
-			WP_CLI::line( "Deactivating ${key}…" );
+			WP_CLI::line( "Deactivating {$key}…" );
 
 			if ( ! isset( $licenses[ $key ] ) ) {
 				WP_CLI::warning( "License is not active.\n", false );

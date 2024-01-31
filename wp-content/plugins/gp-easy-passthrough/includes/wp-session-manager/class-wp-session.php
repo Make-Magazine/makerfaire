@@ -51,6 +51,13 @@ final class WP_Session extends Recursive_ArrayAccess {
 	private static $instance = false;
 
 	/**
+	 * The cookie delimiter
+	 *
+	 * @var string
+	 */
+	private $cookie_delimiter = '||';
+
+	/**
 	 * Retrieve the current session instance.
 	 *
 	 * @param bool $session_id Session ID from which to populate data.
@@ -87,11 +94,16 @@ final class WP_Session extends Recursive_ArrayAccess {
 		}
 		if ( isset( $_COOKIE[ GPEP_SESSION_COOKIE ] ) ) {
 			$cookie        = stripslashes( $_COOKIE[ GPEP_SESSION_COOKIE ] );
-			$cookie_crumbs = explode( '||', $cookie );
+			$cookie_crumbs = explode( $this->cookie_delimiter, $cookie );
 
 			$this->session_id  = preg_replace( '/[^A-Za-z0-9_]/', '', $cookie_crumbs[0] );
-			$this->expires     = absint( $cookie_crumbs[1] );
-			$this->exp_variant = absint( $cookie_crumbs[2] );
+			if ( count( $cookie_crumbs ) < 3) {
+				$this->expires     = 0;
+				$this->exp_variant = 0;
+			} else {
+				$this->expires     = absint( $cookie_crumbs[1] );
+				$this->exp_variant = absint( $cookie_crumbs[2] );
+			}
 
 			// Update the session expiration if we're past the variant time
 			if ( time() > $this->exp_variant ) {
@@ -161,8 +173,17 @@ final class WP_Session extends Recursive_ArrayAccess {
 		$secure = apply_filters( 'wp_session_cookie_secure', false );
 		$secure = $secure ? 'true' : 'false';
 
+		/**
+		 * Modify the cookie delimiter.
+		 *
+		 * @since 1.9.26
+		 *
+		 * @param string $cookie_delimiter The cookie delimiter, default is ||
+		 */
+		$this->cookie_delimiter = apply_filters( 'gpep_cookie_delimiter', $this->cookie_delimiter );
+
 		// Prepare cookie value.
-		$value = $this->session_id . '||' . $this->expires . '||' . $this->exp_variant;
+		$value = $this->session_id . $this->cookie_delimiter . $this->expires . $this->cookie_delimiter . $this->exp_variant;
 
 		/**
 		 * Modify the path used for the cookie.

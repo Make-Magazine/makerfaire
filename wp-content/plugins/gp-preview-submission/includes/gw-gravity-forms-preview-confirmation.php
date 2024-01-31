@@ -632,6 +632,12 @@ class GWPreviewConfirmation {
 			return $text;
 		}
 
+		// Let Populate Anything replace these merge tags on its own.
+		// Note: There are likely other scenarios where Preview Submission should not be replacing these merge tags.
+		if ( defined( 'DOING_AJAX' ) && $_REQUEST['action'] === 'gppa_get_batch_field_html' ) {
+			return $text;
+		}
+
 		$tags    = array( '{product_summary}', '{order_summary}' );
 		$has_tag = false;
 

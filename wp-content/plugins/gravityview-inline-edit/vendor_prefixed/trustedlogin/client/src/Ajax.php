@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by __root__ on 07-September-2023 using Strauss.
+ * Modified by __root__ on 02-November-2023 using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 
@@ -69,7 +69,6 @@ final class Ajax {
 	 * @return void Sends a JSON success or error message based on what happens
 	 */
 	public function ajax_generate_support() {
-
 		// Remove any fields that are not in the $ajax_fields array.
 		$posted_data = array_intersect_key( $_POST, array_flip( $this->generate_support_fields ) );
 
@@ -119,9 +118,9 @@ final class Ajax {
 		if ( is_wp_error( $response ) ) {
 
 			$error_data = $response->get_error_data();
-			$error_code = isset( $error_data['error_code'] ) ? $error_data['error_code'] : 500;
+			$status_code = isset( $error_data['status_code'] ) ? $error_data['status_code'] : 500;
 
-			wp_send_json_error( array( 'message' => $response->get_error_message() ), $error_code );
+			wp_send_json_error( array( 'message' => $response->get_error_message() ), $status_code );
 		}
 
 		wp_send_json_success( $response, 201 );

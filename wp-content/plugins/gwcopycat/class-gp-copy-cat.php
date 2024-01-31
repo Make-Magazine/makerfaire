@@ -135,21 +135,21 @@ class GP_Copy_Cat extends GWPerk {
 
 				if ( isset( $match[3] ) ) {
 					$if_condition_field_id = $match[3];
-				}
 
-				$if_condition_pieces = explode( '.', $if_condition_field_id );
-				if ( count( $if_condition_pieces ) == 3 && $source_field->get_input_type() != 'list' ) {
-					$if_condition_form_id  = array_shift( $if_condition_pieces );
-					$if_condition_field_id = $if_condition_pieces[1] == 0 ? $if_condition_pieces[0] : implode( '.', $if_condition_pieces );
-				}
-
-				$if_condition_field = null;
-				if ( ! empty( $if_condition_field_id ) ) {
-					$if_condition_field = GFFormsModel::get_field( $form, intval( $if_condition_field_id ) );
-				}
-
-				if ( empty( $if_condition_field ) ) {
-					$if_condition_field_id = null;
+					$if_condition_pieces = explode( '.', $if_condition_field_id );
+					if ( count( $if_condition_pieces ) == 3 && $source_field->get_input_type() != 'list' ) {
+						$if_condition_form_id  = array_shift( $if_condition_pieces );
+						$if_condition_field_id = $if_condition_pieces[1] == 0 ? $if_condition_pieces[0] : implode( '.', $if_condition_pieces );
+					}
+	
+					$if_condition_field = null;
+					if ( ! empty( $if_condition_field_id ) ) {
+						$if_condition_field = GFFormsModel::get_field( $form, intval( $if_condition_field_id ) );
+					}
+	
+					if ( empty( $if_condition_field ) ) {
+						$if_condition_field_id = null;
+					}
 				}
 
 				$copy_fields[ $field['id'] ][] = array(

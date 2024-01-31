@@ -1,3 +1,12 @@
+### 3.3.0 | 2023-11-16
+- Updated the theme framework variables to be compatible with Gravity Forms 2.8.
+- Fixed an issue where the datepicker doesn't appear when creating a coupon with no conflict mode enabled.
+
+### 3.2.0 | 2023-10-17
+- Updated a string constant causing deprecation notices for PHP 8.1.
+- Updated the placeholder and the validation message of the percentage coupon amount setting field to make it less confusing.
+- Fixed a UI issue where the coupon amount input is misaligned when using an RTL language.
+
 ### 3.1 | 2023-01-25
 - Added formId parameter to the JavaScript version of the gform_coupons_discount_amount filter.
 - Updated CSS so that it integrates with Gravity Forms 2.7 Theme Framework.

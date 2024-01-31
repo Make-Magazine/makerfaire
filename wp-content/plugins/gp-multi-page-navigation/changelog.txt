@@ -1,6 +1,14 @@
 
 # Changelog
 
+## 1.2.5
+
+	- Updated styles to work with GF 2.8 Theme Framework changes.
+
+## 1.2.4
+
+	- Fixed issue where steps would sometimes not be linked.
+
 ## 1.2.3
 
 	- Fixed minor visual compatibility issues between GP Page Transitions and GP Multi-page Navigation.

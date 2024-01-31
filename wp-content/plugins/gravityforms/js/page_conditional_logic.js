@@ -78,6 +78,8 @@ var GFPageConditionalLogic = function (args) {
 
         if (self.paginationType === 'percentage') {
             currentPage = self.options.pagination.display_progressbar_on_confirmation === true ? ( currentPage - 1 ) : currentPage;
+        } else {
+            currentPage = parseInt($(self.formWrapper + ' .gf_step_active .gf_step_number').text(), 10);
         }
 
         progress = Math.floor( currentPage / visibleStepNumber * 100 );
@@ -93,7 +95,7 @@ var GFPageConditionalLogic = function (args) {
         // Update the form button based on progress
         if ( progress === 100 ) {
             // Treat the current page as the last one.
-            self.updateButtonToSubmitText( self.originalCurrentPage - 1 );
+            self.updateButtonToSubmitText( self.originalCurrentPage - 1, isMatch );
         } else {
 	        // Update the button on the current page.
 	        $( '[id^=gform_next_button_' + self.options.formId + '_]' ).each( function ( e, element ) {
@@ -103,7 +105,7 @@ var GFPageConditionalLogic = function (args) {
 	        });
 
             // Update the button on the last page.
-            self.updateButtonToSubmitText();
+            self.updateButtonToSubmitText( undefined, isMatch );
         }
 
         /**
@@ -264,9 +266,10 @@ var GFPageConditionalLogic = function (args) {
 	 * @since Unknown
 	 *
 	 * @param {number|undefined} lastPageIndex The calculated last page of the form.
+	 * @param {boolean} isMatch Whether the current conditional logic condition has been met.
 	 * @return {void}
 	 */
-	self.updateButtonToSubmitText = function ( lastPageIndex ) {
+	self.updateButtonToSubmitText = function ( lastPageIndex, isMatch) {
 		var targetPageNumber = parseInt($('#gform_target_page_number_' + self.options.formId).val(), 10),
 			lastPageNumber = self.options.pages.length + 1;
 
@@ -298,6 +301,17 @@ var GFPageConditionalLogic = function (args) {
 		} else {
 			self.updateButtonToNextText( lastPageField );
 		}
+
+		// if actual submit button has conditional logic rules, apply them to the next button
+		if ( formButton.attr( 'data-conditional-logic' ) === 'hidden' ) {
+			var nextButton = $('#gform_next_button_' + self.options.formId + '_' + lastPageField.fieldId);
+			if( isMatch ) {
+				gf_show_button( nextButton );
+			} else {
+				gf_hide_button( nextButton );
+			}
+		}
+
     };
 
 	/**
@@ -326,6 +340,12 @@ var GFPageConditionalLogic = function (args) {
 		} else {
 			nextButton.attr('type', 'button').val(page.nextButton.text).addClass('button').removeClass('gform_image_button');
 		}
+
+		// formButton = $('#gform_submit_button_' + self.options.formId);
+		// if ( formButton.attr( 'data-conditional-logic' ) === 'visible' ) {
+		// 	var nextButton = $('#gform_next_button_' + self.options.formId + '_' + lastPageField.fieldId);
+		// 	gf_show_button( nextButton );
+		// }
 	}
 
     this.init();

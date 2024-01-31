@@ -1,10 +1,9 @@
 === GravityView - Advanced Filter Extension ===
-Tags: gravitykit
+Tags: GravityView, Gravity Forms, filtering, conditional logic
 Requires at least: 4.4
-Tested up to: 6.2
-Stable tag: trunk
-Contributors: The GravityKit Team
-License: GPL 3 or higher
+Tested up to: 6.4.2
+Contributors: GravityKit
+License: GPLv3 or later
 
 Filter which entries are shown in a View based on their values.
 
@@ -14,15 +13,61 @@ Filter which entries are shown in a View based on their values.
 2. Activate the plugin
 3. Follow the instructions
 
-**For Developers:**
-
-UI was written using [Svelte](https://svelte.dev/) and requires compilation. Make sure that you have [Node.js](https://nodejs.org/en/) and [Yarn](https://yarnpkg.com/) installed, then:
-
-1. Navigate to `[path to plugin]/assets/js/src`
-2. Install dependencies by running `yarn install`
-3. Compile assets by running `npm run build`
-
 == Changelog ==
+
+= 3.0.4 on January 29, 2024 =
+
+This update resolves an issue with the Merge Tag picker disappearing in the View editor, as well as several issues related to filter conditions.
+
+#### 🐛 Fixed
+* The Merge Tag picker in the View editor's field settings no longer disappears in the Edit Entry layout.
+* Filtering by progress now accurately interprets entry's '100%' completion rate as 'complete'.
+* Processing filters for non-date fields no longer results in errors.
+
+= 3.0.3 on January 24, 2024 =
+
+This release introduces support for the Gravity PDF shortcode in the Field Conditional Logic, and addresses a PHP 8.1+ deprecation notice.
+
+#### 🚀 Added
+* Added support for the Gravity PDF shortcode (`[gravitypdf]`) in the Empty Field Content area under Field Conditional Logic.
+
+#### 🐛 Fixed
+* A PHP 8.1+ deprecation notice.
+
+= 3.0.2 on January 11, 2024 =
+
+This release includes fixes for the View and field conditional logic.
+
+🐛 Fixed
+* "Form field ID #X is no longer available" error when adding conditional logic, despite the field existing.
+* "Created by Currently Logged-in User (Disabled for Administrators)" filter not functioning correctly with field conditional logic.
+* Incorrect results when filtering checkbox fields using the "is not" condition.
+
+= 3.0.1 on December 9, 2023 =
+
+* Fixed: Issue with setting relative dates (e.g., "today", "yesterday") in the date input field
+
+= 3.0.0 on December 7, 2023 =
+
+* Improved: The extension was refactored to facilitate future development and maintenance
+
+= 2.4.1 on September 29, 2023 =
+
+* Fixed: Regression introduced in 2.4 where the "is empty" and "is not empty" conditions would return incorrect results
+
+= 2.4 on September 21, 2023 =
+
+* Fixed: Incorrect results could be returned when the form has an upload field with the multiple files option enabled
+* Fixed: Filtering numeric fields (e.g., Number) with empty values using the "is empty" condition would return all entries
+
+= 2.3 on July 6, 2023 =
+
+* Added: Filters containing Merge Tags suffixed with `:disabled_admin` are ignored when the current user is an Admin. e.g. `{user:id:disabled_admin}` ([learn more about this modifier](https://docs.gravitykit.com/article/946-the-disabledadmin-merge-tag-modifier))
+* Improved: Choices filled by [GP Populate Anything](https://gravitywiz.com/documentation/gravity-forms-populate-anything/?ref=263) can now be selected
+
+__Developer Updates:__
+
+* Added: `gk/advanced-filter/disabled-filters` WordPress filter to modify Advanced Filtering filter groups and filters
 
 = 2.2 on March 22, 2023 =
 
@@ -132,13 +177,13 @@ UI was written using [Svelte](https://svelte.dev/) and requires compilation. Mak
 * Translations: Added Polish translation. Thank you, Dariusz Z!
 * Updated: Now requires GravityView 2.0 and WordPress 4.4
 * No longer works with the [Internet Explorer browser](https://www.microsoft.com/en-us/microsoft-365/windows/end-of-ie-support)
-* Developers: [Read what changed from 1.3 to 2.0](https://docs.gravityview.co/article/677-advanced-filters-upgrade)
+* Developers: [Read what changed from 1.3 to 2.0](https://docs.gravitykit.com/article/677-advanced-filters-upgrade)
 
 = 1.3 on July 11, 2018 =
 
 * Added: Filter entries by the role of the entry creator - big thanks to [Naomi C. Bush from gravity+](https://gravityplus.pro)!
 * Added: Filter by the roles of the currently logged-in user
-* Added: Filter by entry Approval Status without needing the Approval form field - [Learn how to filter by approval status](https://docs.gravityview.co/article/470-filtering-by-entry-approval-status)
+* Added: Filter by entry Approval Status without needing the Approval form field - [Learn how to filter by approval status](https://docs.gravitykit.com/article/470-filtering-by-entry-approval-status)
 
 = 1.2 on May 23, 2018 =
 
@@ -167,29 +212,35 @@ Fixed: With Gravity Forms 2.3, when using "Created By" filters, the search mode 
 * Fixed: Prevent accessing plugin file directly
 
 = 1.0.18 on December 14, 2016 =
+
 * Fixed: Issue with "Any form field" filters preventing access to single entries
 * New translations: Spanish translation by Joaquin Rodriguez, German translation by Hubert Test. Thank you!
 
 = 1.0.17 on June 20, 2016 =
+
 * __Important update__: Fixed security issue introduced in 1.0.16 where logged-in users can see all entries.
 * Changed "Created by (or admin)" filter to use `gravityview_edit_others_entries` capability instead of `gravityview_view_others_entries`
 
 = 1.0.16 on May 13, 2016 =
+
 * Fixed: If a View has an empty "Any field has" filter, it prevents accessing single entries
 * Updated: "Created by (or admin)" filter now also allows users with the `gravityview_view_others_entries` capability to see entries
 * Now requires GravityView 1.15 or newer
 * Added additional logging
 
 = 1.0.15 on May 7, 2016 =
+
 * Fixed: Allow comparing against empty field values
 * Fixed: Properly replace Merge Tags when using using "Any form field" filter
 * Added: Chinese translation (Thanks, Edi Weigh!)
 
 = 1.0.14 on February 27, 2016 =
+
 * Fixed: When saving a filter condition using a product field the operator "is" disappears
 * Fixed: When searching by an option field there were no results
 
 = 1.0.12 & 1.0.13 on January 21, 2016 =
+
 * Fixed: Post Category filters
     - Dropdown not populated with categories
     - Added "Is Not" option
@@ -198,57 +249,69 @@ Fixed: With Gravity Forms 2.3, when using "Created By" filters, the search mode 
 * Updated: Translation textdomain from `gravity-view-advanced-filter` to `gravityview-advanced-filter`
     - Included updater library in translation strings
 
-= 1.0.11 on November 13 =
+= 1.0.11 on November 13, 2015 =
+
 * New: Add "is not" option to GravityView Approval fields. Now you can show only unapproved entries.
 * Tweak: Make it clearer in the logs when the extension is preventing displaying results for security
 * Updated: Extension updater script
 
-= 1.0.10 on September 13 =
+= 1.0.10 on September 13, 2015 =
+
 * Fixed: Not able to enter relative dates (like `now` or `two weeks ago`) in date field filters
 * Updated: Extension updater script
 
-= 1.0.9 on August 4 =
+= 1.0.9 on August 4, 2015 =
+
 * Added: New filter to disable the entries' filter "created by the current logged-in user" when user is administrator
 * Updated: French translation
 
-= 1.0.8 on June 23 =
+= 1.0.8 on June 23, 2015 =
+
 * Fixed: Error on WordPress Dashboard preventing Gravity Forms widget from displaying
 
-= 1.0.7 on June 22 =
+= 1.0.7 on June 22, 2015 =
+
 * Fixed: Filtering by date fields when using PHP `strtotime()` values like `-3 days` or `+3 weeks`
 * Added: Prevent showing anything if the View ID isn't set when filtering results
 * Updated: Hungarian translation by [dbalage](https://www.transifex.com/accounts/profile/dbalage/) and Dutch translation by [@erikvanbeek](https://www.transifex.com/accounts/profile/erikvanbeek/)
 
-= 1.0.6 on December 22 =
+= 1.0.6 on December 22, 2014 =
+
 * Fixed: Entries were being shown for users who were not logged in
 
-= 1.0.5 on December 12 =
+= 1.0.5 on December 12, 2014 =
+
 * Fixed: not filtering if only one filter is defined.
 
-= 1.0.4 on December 11 =
+= 1.0.4 on December 11, 2014 =
+
 * Fixed: Do not show entries for non logged users when the 'Created By' field value is 'Logged-in user'
 * Tweak: Added `gravityview/adv_filter/view_filters` filter to allow modifying the filters generated by the Extension
 * Fixed: Auto-upgrade for Multisite sites
 * Added: Dutch translation (thanks, [@erikvanbeek](https://www.transifex.com/accounts/profile/erikvanbeek/)!)
 
-= 1.0.3 on November 7 =
+= 1.0.3 on November 7, 2014 =
+
 * Added: Support for relative dates ("now" or "-3 days") for date type fields
 * Added: Support Gravity Forms Merge Tags. Example: "`{user:display_name}` IS `Ellen Ripley`"
 * Fixed: Conflicts with non-Latin UTF-8 characters like "ß"
 * Added: Romanian translation (thanks, [@ArianServ](https://www.transifex.com/accounts/profile/ArianServ/)!) and Dutch translation (thanks, [@erikvanbeek](https://www.transifex.com/accounts/profile/erikvanbeek/)!)
 * Updated: Bengali, Turkish, and Spanish translations (thanks, [@tareqhi](https://www.transifex.com/accounts/profile/tareqhi/), [@suhakaralar](https://www.transifex.com/accounts/profile/suhakaralar/), and [@jorgepelaez](https://www.transifex.com/accounts/profile/jorgepelaez/))
 
-= 1.0.2 on September 9 =
+= 1.0.2 on September 9, 2014 =
+
 * Fixed: Conflict with other GravityView search parameters
 * Updated: Bengali, Turkish, and Spanish translations (thanks, [@tareqhi](https://www.transifex.com/accounts/profile/tareqhi/), [@suhakaralar](https://www.transifex.com/accounts/profile/suhakaralar/), and [@jorgepelaez](https://www.transifex.com/accounts/profile/jorgepelaez/))
 * Fixes fatal error on Views screen when deleting a View
 
-= 1.0.1 on August 5 =
+= 1.0.1 on August 5, 2014 =
+
 * Fixed: Scripts not being added in No-Conflict mode
 * Added: Romanian translation - thanks, [ArianServ](https://www.transifex.com/accounts/profile/ArianServ/)!
 
-= 1.0.0 on August 4 =
+= 1.0.0 on August 4, 2014 =
+
 * Liftoff!
 
 
-= 1686766503-4249 =
+= 1706734041-4249 =

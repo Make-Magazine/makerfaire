@@ -1,3 +1,54 @@
+### 2.8.2 | 2024-01-18
+- Added security enhancements.
+- Fixed an issue where the datepicker does not work in the repeater field.
+- Fixed an issue that sometimes causes extra spacers to be added to forms.
+- Fixed an issue where conditional logic rules based on anything but the first choice of a radio or checkbox field do not work in forms created in Gravity Forms 2.8.1.  Users will need to delete and re-create the conditional logic rules to fix the issue.
+- AF: Fixed an issue where the readonly attribute is not added to settings fields.
+
+### 2.8.1 | 2024-01-04
+- Added support for conditional logic rules based on Survey fields for confirmations, notifications, and feeds.
+- Fixed various warnings and notices in PHP 8.1 and 8.2.
+- Fixed an issue where address inputs are sometimes vertically mis-aligned in the Gravity Forms 2.5 theme.
+- Fixed display issues with the merge tag dropdown in Firefox.
+- Fixed the display of tooltips in the form editor in Safari.
+- Fixed an issue that prevents conditional logic from working on the submit button on multi-page forms if the last page is also hidden with conditional logic.
+- Fixed an issue that prevents the conditional logic UI from displaying on duplicates of the default confirmation.
+- Fixed an issue where it is difficult to access the field admin icons with the mouse in the form editor.
+- Fixed an issue where users without the `gravityforms_edit_entries` capability can mark entries as read/unread.
+- Fixed conditional logic on the product option field.
+- Updated the format of telemetry data.
+- AF: Added feed processing when entries are marked as "not spam".
+- Updated merge tag dropdown on number field to allow live preview before saving form.
+
+### 2.8.0 | 2023-12-07
+- Added a compact view to the form editor.
+- Added the default theme to the system report.
+- Added performance improvements by only enqueueing necessary styles on the front end.
+- Added support for field sidebar messages.
+- Added the `gform_display_disable_css_setting` filter to allow the display of the Output Default CSS setting.
+- Updated the telemetry background processor to log when it fails to send data.
+- Updated the field accordions in the form editor to all be open by default.
+- Updated the minimum WordPress version on the System Status page to 6.3.
+- Removed deprecated function `string.format()`.
+- Removed several unused images.
+- Removed the "Output Default CSS" setting from the settings page and replaced it with the [`gform_disable_css`](https://docs.gravityforms.com/gform_disable_css/) filter.
+- Removed the HTML5 setting from the settings page.
+- API: Removed the deprecated form Theme Framework global CSS API color system properties.
+- API: Updated and refactored the form Theme Framework CSS API to reduce stylesheet size for better performance.
+
+### 2.7.17 | 2023-11-09
+- Fixed an issue that prevents the post category selector from appearing correctly in WordPress 6.4.
+- Fixed an issue where multipage forms with conditional logic display the wrong text on the "next" button.
+
+### 2.7.16 | 2023-10-25
+- Updated the API endpoint for telemetry data.
+- Fixed a bug that causes values of checkbox fields to appear twice on the entry list page.
+- Fixed a bug that prevents form block style settings from being applied.
+- Fixed jQuery deprecation notices in the form preview for the following fields: email, product, total, and stripe fields, as well as some conditional logic.
+- Fixed "undefined index" errors that sometimes appear when a form is embedded with a shortcode.  Credit: The GravityKit team.
+- AF: Updated the background processor to include additional logging statements around batch processing.
+- API: Added a new JavaScript action hook [gform_post_set_field_property](https://docs.gravityforms.com/gform_post_set_field_property/) in the form editor to listen for field property changes.
+
 ### 2.7.15 | 2023-10-05
 - Added a new global setting to select the default form theme.  On new sites, "Orbital" will be the default theme.
 - Added a 'theme' parameter to the Gravity Forms shortcode.
@@ -13,8 +64,8 @@
 ### 2.7.14 | 2023-09-19
 - Added validation to name, post title, post body, single line text, paragraph text & address fields to prevent empty entries when fields are filled with text encoded with invalid charset for the database table.
 - Fixed an issue where editing an entry with a multifile upload field could result in broken links to files.
-
 - AF: Fixed the `strpos(): Passing null to parameter #1 ($haystack) of type string is deprecated` notice that can occur with PHP 8.1 when getting a setting value.
+
 ### 2.7.13 | 2023-08-23
 - Updated the minimum WordPress version on the System Status page to 6.2.
 - Updated product usage data so it is processed in the background.

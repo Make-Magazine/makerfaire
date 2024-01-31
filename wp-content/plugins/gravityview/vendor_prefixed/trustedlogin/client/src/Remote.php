@@ -7,7 +7,7 @@
  * @copyright 2021 Katz Web Services, Inc.
  *
  * @license GPL-2.0-or-later
- * Modified by gravityview on 07-September-2023 using Strauss.
+ * Modified by gravityview on 08-December-2023 using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 
@@ -322,7 +322,7 @@ final class Remote {
 		$response_json = json_decode( $response_body, true );
 
 		if ( empty( $response_json ) ) {
-			return new \WP_Error( 'invalid_response', esc_html__( 'Invalid response.', 'gk-gravityview' ), $response_body );
+			return new \WP_Error( 'invalid_response', esc_html__( 'Invalid response.', 'gk-gravityview' ), $api_response );
 		}
 
 		if ( isset( $response_json['errors'] ) ) {

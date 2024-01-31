@@ -7,7 +7,7 @@ For the Stripe Add-On
 https://www.gravityforms.com
 
 Gravity Forms is a Rocketgenius project
-copyright 2008-2022 Rocketgenius Inc.
+copyright 2008-2023 Rocketgenius Inc.
 https://www.rocketgenius.com
 this may not be re-distributed without the
 express written permission of the author.
@@ -65,8 +65,20 @@ AND ANY CHANGES MADE HERE WILL BE OVERWRITTEN.
 	width: 4rem;
 }
 
+#gform_setting_trialPeriod .gform-settings-input__container--invalid input {
+	flex: none;
+}
+
 .gform-stripe--disabled label.inline, .gform-stripe--disabled #field_multiple_payment_methods_description {
 		opacity: 0.6;
+	}
+
+.gform-compact-view .stripe-payment-element-container {
+		display: none !important;
+	}
+
+.gform-compact-view .gform_stripe_card_error {
+		display: none;
 	}
 
 /*# sourceMappingURL=admin.css.map */

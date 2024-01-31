@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by gravityview on 07-September-2023 using Strauss.
+ * Modified by gravityview on 08-December-2023 using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 
@@ -11,6 +11,7 @@ namespace GravityKit\GravityView\Foundation\Licenses;
 use Exception;
 use GravityKit\GravityView\Foundation\Core;
 use GravityKit\GravityView\Foundation\Helpers\Core as CoreHelpers;
+use GravityKit\GravityView\Foundation\Helpers\WP;
 use GravityKit\GravityView\Foundation\Logger\Framework as LoggerFramework;
 use GravityKit\GravityView\Foundation\Settings\Framework as SettingsFramework;
 use GravityKit\GravityView\Foundation\Encryption\Encryption;
@@ -168,9 +169,9 @@ class LicenseManager {
 
 		if ( ! empty( $licenses_data ) ) {
 			$licenses_data = json_decode( Encryption::get_instance()->decrypt( $licenses_data ) ?: '', true );
-		}
 
-		$this->is_decryptable = is_array( $licenses_data );
+			$this->is_decryptable = is_array( $licenses_data );
+		}
 
 		$this->licenses_data = $licenses_data ?: [];
 
@@ -694,15 +695,15 @@ class LicenseManager {
 
 		$cache_id      = Framework::ID . '/hardcoded-licenses-check';
 		$check_timeout = defined( 'GRAVITYKIT_HARDCODED_LICENSES_CHECK_TIMEOUT' ) ? GRAVITYKIT_HARDCODED_LICENSES_CHECK_TIMEOUT : 5 * MINUTE_IN_SECONDS;
-		$last_check    = get_site_transient( $cache_id );
+		$last_check    = WP::get_site_transient( $cache_id );
 
 		if ( $last_check ) {
 			return;
 		}
 
-		set_site_transient( $cache_id, current_time( 'timestamp' ), $check_timeout );
+		WP::set_site_transient( $cache_id, current_time( 'timestamp' ), $check_timeout );
 
-		LoggerFramework::get_instance()->notice( "Checking hardcoded licenses and pausing for ${check_timeout} seconds." );
+		LoggerFramework::get_instance()->notice( "Checking hardcoded licenses and pausing for {$check_timeout} seconds." );
 
 		try {
 			$checked_licenses = $this->check_licenses( $license_keys_to_check );
@@ -841,7 +842,7 @@ class LicenseManager {
 	public function recheck_all_licenses( $skip_cache = false ) {
 		$cache_id = Framework::ID . '/licenses';
 
-		$last_validation = get_site_transient( $cache_id );
+		$last_validation = WP::get_site_transient( $cache_id );
 
 		if ( $last_validation && ! $skip_cache ) {
 			return;
@@ -877,7 +878,7 @@ class LicenseManager {
 			LoggerFramework::get_instance()->error( "Failed to revalidate all licenses. {$e->getMessage()}." );
 		}
 
-		set_site_transient( $cache_id, current_time( 'timestamp' ), DAY_IN_SECONDS );
+		WP::set_site_transient( $cache_id, current_time( 'timestamp' ), DAY_IN_SECONDS );
 
 		if ( ! empty( $revalidated_licenses ) ) {
 			$this->save_licenses_data( $revalidated_licenses );

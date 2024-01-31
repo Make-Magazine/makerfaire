@@ -20,6 +20,15 @@ Inline Editing is a powerful way to quickly make changes to a form entry without
 
 == Changelog ==
 
+= 2.0.3 on October 31, 2023 =
+
+* Improved: Support for fields configured with the ["No Duplicates" field setting](https://docs.gravityforms.com/common-field-settings/#h-no-duplicates) in Gravity Forms
+* Fixed: Edits were not reflected in GravityView for Views using the DataTables layout with the "Responsive Tables" setting enabled
+* Fixed: Bug that prevented editing when more than one View was embedded on the same page
+* Fixed: After editing a checkbox field set to display the label, the value would be displayed
+* Fixed: An error occurring when saving a Number field configured in the form with a "," decimal separator
+* Updated: [Foundation](https://www.gravitykit.com/foundation/) to version 1.2.5
+
 = 2.0.2 on September 7, 2023 =
 
 * Improved: Support for RTL languages
@@ -320,4 +329,4 @@ __Developer Updates:__
 - Blastoff!
 
 
-= 1694710152-4249 =
+= 1706734024-4249 =

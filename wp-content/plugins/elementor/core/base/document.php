@@ -95,6 +95,42 @@ abstract class Document extends Controls_Stack {
 	protected $post;
 
 	/**
+	 * @param array $internal_elements
+	 *
+	 * @return array[]
+	 */
+	private function get_container_elements_data( array $internal_elements ): array {
+		return [
+			[
+				'id' => Utils::generate_random_string(),
+				'elType' => 'container',
+				'elements' => $internal_elements,
+			],
+		];
+	}
+
+	/**
+	 * @param array $internal_elements
+	 *
+	 * @return array[]
+	 */
+	private function get_sections_elements_data( array $internal_elements ): array {
+		return [
+			[
+				'id' => Utils::generate_random_string(),
+				'elType' => 'section',
+				'elements' => [
+					[
+						'id' => Utils::generate_random_string(),
+						'elType' => 'column',
+						'elements' => $internal_elements,
+					],
+				],
+			],
+		];
+	}
+
+	/**
 	 * @since 2.1.0
 	 * @access protected
 	 * @static
@@ -698,6 +734,14 @@ abstract class Document extends Controls_Stack {
 	 */
 	public function save( $data ) {
 		/**
+		 * Set locale to "C" to avoid issues with comma as decimal separator.
+		 *
+		 * @see https://github.com/elementor/elementor/issues/10992
+		 */
+		$original_lc = setlocale( LC_NUMERIC, 0 );
+		setlocale( LC_NUMERIC, 'C' );
+
+		/**
 		 * Document save data.
 		 *
 		 * Filter the document data before saving process starts.
@@ -777,6 +821,8 @@ abstract class Document extends Controls_Stack {
 		$this->set_is_saving( false );
 
 		$this->remove_handle_revisions_changed_filter();
+
+		setlocale( LC_NUMERIC, $original_lc );
 
 		return true;
 	}
@@ -1065,26 +1111,18 @@ abstract class Document extends Controls_Stack {
 		}
 
 		// TODO: Better coding to start template for editor
-		return [
+		$converted_blocks = [
 			[
 				'id' => Utils::generate_random_string(),
-				'elType' => 'section',
-				'elements' => [
-					[
-						'id' => Utils::generate_random_string(),
-						'elType' => 'column',
-						'elements' => [
-							[
-								'id' => Utils::generate_random_string(),
-								'elType' => $widget_type::get_type(),
-								'widgetType' => $widget_type->get_name(),
-								'settings' => $settings,
-							],
-						],
-					],
-				],
+				'elType' => $widget_type::get_type(),
+				'widgetType' => $widget_type->get_name(),
+				'settings' => $settings,
 			],
 		];
+
+		return Plugin::$instance->experiments->is_feature_active( 'container' )
+			? $this->get_container_elements_data( $converted_blocks )
+			: $this->get_sections_elements_data( $converted_blocks );
 	}
 
 	/**
@@ -1096,18 +1134,9 @@ abstract class Document extends Controls_Stack {
 			$elements_data = $this->get_elements_data();
 		}
 
-		$is_dom_optimization_active = Plugin::$instance->experiments->is_feature_active( 'e_dom_optimization' );
 		?>
 		<div <?php Utils::print_html_attributes( $this->get_container_attributes() ); ?>>
-			<?php if ( ! $is_dom_optimization_active ) : ?>
-			<div class="elementor-inner">
-				<div class="elementor-section-wrap">
-			<?php endif; ?>
 				<?php $this->print_elements( $elements_data ); ?>
-			<?php if ( ! $is_dom_optimization_active ) : ?>
-				</div>
-			</div>
-			<?php endif; ?>
 		</div>
 		<?php
 	}

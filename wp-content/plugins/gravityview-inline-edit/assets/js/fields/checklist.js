@@ -115,7 +115,14 @@
 
 			} else if ( checked.length ) {
 				$.each( checked, function ( i, v ) {
-					var text = escape ? $.fn.editableutils.escape( v.value ) : v.value;
+					var text = '';
+
+					if ( 'label' === choiceDisplay ){
+						text = escape ? $.fn.editableutils.escape( v.text ) : v.text;
+					} else {
+						text = escape ? $.fn.editableutils.escape( v.value ) : v.value;
+					}
+
 					if ( ! isEntryView ) {
 						html.push( '<li>' + text + '</li>' );
 					} else {

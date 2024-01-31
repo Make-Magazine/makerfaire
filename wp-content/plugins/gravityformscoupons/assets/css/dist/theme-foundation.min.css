@@ -1,1 +1,1 @@
-.gform-theme--foundation .gfield--type-coupon .ginput_container_coupon{align-items:center;display:flex;flex-wrap:wrap;gap:var(--gform-theme-field-col-gap)}
+.gform-theme--foundation .gfield--type-coupon .ginput_container_coupon{align-items:center;display:flex;flex-wrap:wrap;gap:var(--gform-theme-field-col-gap);gap:var(--gf-field-gap-x,var(--gform-theme-field-col-gap))}

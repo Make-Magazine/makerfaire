@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by gravityview on 07-September-2023 using Strauss.
+ * Modified by gravityview on 08-December-2023 using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 
@@ -11,6 +11,7 @@ namespace GravityKit\GravityView\Foundation\Licenses;
 use Exception;
 use GravityKit\GravityView\Foundation\Core;
 use GravityKit\GravityView\Foundation\Helpers\Arr;
+use GravityKit\GravityView\Foundation\Helpers\WP;
 use GravityKit\GravityView\Foundation\Logger\Framework as LoggerFramework;
 use GravityKit\GravityView\Foundation\Encryption\Encryption;
 use GravityKit\GravityView\Foundation\Helpers\Core as CoreHelpers;
@@ -217,7 +218,7 @@ class ProductManager {
 				try {
 					$license = $license_manager->check_license( $key );
 				} catch ( Exception $e ) {
-					LoggerFramework::get_instance()->warning( "Unable to verify license key ${key} when installing product ID ${product_id}: " . $e->getMessage() );
+					LoggerFramework::get_instance()->warning( "Unable to verify license key {$key} when installing product ID {$product_id}: " . $e->getMessage() );
 
 					continue;
 				}
@@ -295,7 +296,7 @@ class ProductManager {
 			$this->activate_product( $product );
 
 			// Check if the updated product comes with a newer version of the Foundation, which will be loaded if another Ajax request is made.
-			$product_foundation_version = Core::get_instance()->get_plugin_foundation_version( $product['plugin_file'] );
+			$product_foundation_version = Core::get_instance()->get_plugin_foundation_version( $product['plugin_file'], true );
 
 			$backend_foundation_version = version_compare(
 				Core::VERSION,
@@ -800,39 +801,59 @@ class ProductManager {
 			return 'text_domain' === $args['key_by'] ? $_cached_products_data : $this->key_products_by_property( $_cached_products_data, $args['key_by'] );
 		}
 
-		$products = ! $args['skip_remote_cache'] ? ( get_site_transient( self::PRODUCTS_DATA_CACHE_ID ) ?: null ) : null;
+		$products = ! $args['skip_remote_cache'] ? ( WP::get_transient( self::PRODUCTS_DATA_CACHE_ID ) ?: null ) : null;
 
-		if ( $products && ! is_array( $products ) ) { // Backward compatibility for serialized data (used in earlier Foundation versions).) {
+		if ( $products && ! is_array( $products ) ) { // Backward compatibility for serialized data (used in earlier Foundation versions).
 			$products = json_decode( $products, true );
 			$products = is_array( $products ) ? $products : null;
 		}
 
 		if ( is_null( $products ) ) {
-			$products = [];
+			$products = [
+				'raw'                    => [],
+				'normalized'             => [],
+				'installed_plugins_hash' => null,
+				'licenses_hash'          => null,
+			];
 
 			try {
-				$products = $this->get_remote_products();
+				$products['raw'] = $this->get_remote_products();
 			} catch ( Exception $e ) {
-				LoggerFramework::get_instance()->error( 'Unable to get products from the API. ' . $e->getMessage() );
+				LoggerFramework::get_instance()->error( 'Unable to get products from the API.' . $e->getMessage() );
 			}
 
-			set_site_transient( self::PRODUCTS_DATA_CACHE_ID, json_encode( $products ), self::PRODUCTS_DATA_CACHE_EXPIRATION );
+			WP::set_transient(
+				self::PRODUCTS_DATA_CACHE_ID,
+				json_encode( $products ),
+				self::PRODUCTS_DATA_CACHE_EXPIRATION
+			);
 		}
 
-		if ( empty( $products ) ) {
+		if ( empty( $products['raw'] ) ) {
 			$_cached_products_data = [];
 
 			return $_cached_products_data;
 		}
 
-		$product_license_map = LicenseManager::get_instance()->get_product_license_map();
+		$installed_plugins_hash = md5( json_encode( CoreHelpers::get_installed_plugins() ) );
+		$licenses_hash          = md5( json_encode( LicenseManager::get_instance()->get_licenses_data() ) );
 
-		$normalized_products = [];
+		// If the installed plugins haven't changed since the last request, return the cached products data to prevent re-validating dependencies, etc.
+		if ( $installed_plugins_hash === $products['installed_plugins_hash'] && $licenses_hash === $products['licenses_hash'] ) {
+			$_cached_products_data = $products['normalized'];
+
+			return $_cached_products_data;
+		} else {
+			$products['installed_plugins_hash'] = $installed_plugins_hash;
+			$products['licenses_hash']          = $licenses_hash;
+		}
+
+		$product_license_map = LicenseManager::get_instance()->get_product_license_map();
 
 		$products_history = ProductHistoryManager::get_instance()->get_products_history();
 
 		// Supplement API response with additional data that can change between or during requests (e.g., activation status, etc.).
-		foreach ( $products as $product ) {
+		foreach ( $products['raw'] as $product ) {
 			$installed_product = CoreHelpers::get_installed_plugin_by_text_domain( implode( '|', [ $product['text_domain'], $product['text_domain_legacy'] ] ) );
 
 			/**
@@ -860,7 +881,7 @@ class ProductManager {
 				'history'           => $products_history[ $product['text_domain'] ] ?? [],
 			] );
 
-			$normalized_products[ $normalized_product['text_domain'] ] = $normalized_product;
+			$products['normalized'][ $normalized_product['text_domain'] ] = $normalized_product;
 		}
 
 		/**
@@ -868,14 +889,14 @@ class ProductManager {
 		 *
 		 * @since  1.0.3
 		 *
-		 * @param array $normalized_products Products data.
-		 * @param array $args                Additional arguments passed to the get_products_data() method.
+		 * @param array $products Products data.
+		 * @param array $args     Additional arguments passed to the get_products_data() method.
 		 */
-		$normalized_products = apply_filters( 'gk/foundation/products/data', $normalized_products, $args );
+		$products['normalized'] = apply_filters( 'gk/foundation/products/data', $products['normalized'], $args );
 
-		$product_dependency_checker = new ProductDependencyChecker( $normalized_products );
+		$product_dependency_checker = new ProductDependencyChecker( $products['normalized'] );
 
-		foreach ( $normalized_products as &$product ) {
+		foreach ( $products['normalized'] as &$product ) {
 			$product['required_by'] = $product_dependency_checker->is_a_dependency_of_any_product( $product['text_domain'], true ) ?: [];
 
 			$product_versions_to_check = [];
@@ -909,11 +930,15 @@ class ProductManager {
 			}
 		}
 
-		if ( ! $args['skip_request_cache'] ) {
-			$_cached_products_data = $normalized_products;
-		}
+		$_cached_products_data = $products['normalized'];
 
-		return 'text_domain' === $args['key_by'] ? $normalized_products : $this->key_products_by_property( $normalized_products, $args['key_by'] );
+		WP::set_transient(
+			self::PRODUCTS_DATA_CACHE_ID,
+			json_encode( $products ),
+			self::PRODUCTS_DATA_CACHE_EXPIRATION
+		);
+
+		return 'text_domain' === $args['key_by'] ? $products['normalized'] : $this->key_products_by_property( $products['normalized'], $args['key_by'] );
 	}
 
 	/**

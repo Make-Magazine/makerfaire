@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by gravityview on 07-September-2023 using Strauss.
+ * Modified by gravityview on 08-December-2023 using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 
@@ -375,7 +375,7 @@ class ProductDependencyChecker {
 		$dependency_text_domain = $dependency_data['text_domain'];
 
 		// If there are multiple versions of the same dependency required by more than one product, use the highest version as the required version.
-		$highest_required_version = Arr::get( $unmet_dependencies, "${dependency_text_domain}.required_version" );
+		$highest_required_version = Arr::get( $unmet_dependencies, "{$dependency_text_domain}.required_version" );
 		$highest_required_version = version_compare( $highest_required_version ?? 0, $dependency_data['version'], '<' ) ? $dependency_data['version'] : $highest_required_version;
 
 		$unmet_dependency = [
@@ -388,7 +388,7 @@ class ProductDependencyChecker {
 			'server_version'    => $dependency_product['server_version'],
 			'required_version'  => $highest_required_version,
 			'required_by'       => array_merge(
-				Arr::get( $unmet_dependencies, "${dependency_text_domain}.required_by", [] ),
+				Arr::get( $unmet_dependencies, "{$dependency_text_domain}.required_by", [] ),
 				[ $required_by_product_text_domain => $dependency_data['version'] ]
 			),
 		];
@@ -483,7 +483,7 @@ class ProductDependencyChecker {
 		$dependency_name = $dependency_data['name'];
 
 		// If there are multiple versions of the same dependency required by more than one product, use the highest version as the required version.
-		$highest_required_version = Arr::get( $unmet_dependencies, "${dependency_name}.required_version" );
+		$highest_required_version = Arr::get( $unmet_dependencies, "{$dependency_name}.required_version" );
 		$highest_required_version = version_compare( $highest_required_version ?? 0, $dependency_data['version'], '<' ) ? $dependency_data['version'] : $highest_required_version;
 
 		$unmet_dependency = [
@@ -492,7 +492,7 @@ class ProductDependencyChecker {
 			'available_version' => null,
 			'required_version'  => $highest_required_version,
 			'required_by'       => array_merge(
-				Arr::get( $unmet_dependencies, "${dependency_name}.required_by", [] ),
+				Arr::get( $unmet_dependencies, "{$dependency_name}.required_by", [] ),
 				[ $required_by_product_text_domain => $dependency_data['version'] ]
 			),
 		];

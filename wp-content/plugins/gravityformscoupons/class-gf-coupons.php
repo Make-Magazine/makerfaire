@@ -103,6 +103,20 @@ class GFCoupons extends GFFeedAddOn {
 		return array_merge( parent::styles(), $styles );
 	}
 
+	/**
+	 * Add required scripts for to noconflict list.
+	 *
+	 * @since 3.3.0
+	 *
+	 * @param array $scripts The list of scripts to be added.
+	 *
+	 * @return mixed
+	 */
+	public function register_coupons_noconflict_scripts( $scripts ) {
+		$scripts[] = 'jquery-ui-datepicker';
+		return $scripts;
+	}
+
 
 	// # UPDATE PRODUCT INFO -------------------------------------------------------------------------------------------
 
@@ -131,6 +145,7 @@ class GFCoupons extends GFFeedAddOn {
 
 		parent::init();
 		add_filter( 'gform_product_info', array( $this, 'add_discounts' ), 5, 3 );
+		add_filter( 'gform_noconflict_scripts', array( $this, 'register_coupons_noconflict_scripts' ) );
 
 	}
 
@@ -477,8 +492,7 @@ class GFCoupons extends GFFeedAddOn {
 	 * @return bool
 	 */
 	public function is_feed_edit_page() {
-		$page   = filter_input( INPUT_GET, 'page', FILTER_SANITIZE_STRING );
-		$params = array_filter(
+        	$params = array_filter(
 			array(
 				'id'  => filter_input( INPUT_GET, 'id', FILTER_VALIDATE_INT ),
 				'fid' => filter_input( INPUT_GET, 'fid', FILTER_VALIDATE_INT ),
@@ -488,7 +502,7 @@ class GFCoupons extends GFFeedAddOn {
 			}
 		);
 
-		return $page === 'gravityformscoupons' && ! empty( $params );
+		return rgget( 'page' ) === 'gravityformscoupons' && ! empty( $params );
 	}
 
 	/**
@@ -907,9 +921,10 @@ class GFCoupons extends GFFeedAddOn {
 	public function settings_coupon_amount_type( $field, $echo = true ) {
 
 		require_once( GFCommon::get_base_path() . '/currency.php' );
-		$currency        = RGCurrency::get_currency( GFCommon::get_currency() );
-		$currency_symbol = ! empty( $currency['symbol_left'] ) ? $currency['symbol_left'] : $currency['symbol_right'];
-
+		$currency                         = RGCurrency::get_currency( GFCommon::get_currency() );
+		$currency_symbol                  = ! empty( $currency['symbol_left'] ) ? $currency['symbol_left'] : $currency['symbol_right'];
+		$percentage_placeholder           = esc_html__( 'Example: 1%', 'gravityformscoupons' );
+		$coupon_amount_validation_message = esc_html__( 'Please enter the coupon value', 'gravityformscoupons' );
 		wp_enqueue_script( array( 'jquery-ui-datepicker' ) );
 
 		$styles = '<style type="text/css">
@@ -935,7 +950,7 @@ class GFCoupons extends GFFeedAddOn {
 								var type = elem.val();
 								var formatClass = type == \'flat\' ? \'gf_format_money\' : \'gf_format_percentage\';
 								jQuery(\'#couponAmount\').removeClass(\'gf_format_money gf_format_percentage\').addClass(formatClass).trigger(\'change\');
-								var placeholderText = type == \'flat\' ? \'' . html_entity_decode( GFCommon::to_money( 1 ) ) . '\' : \'1%\';
+								var placeholderText = type == \'flat\' ? \'' . html_entity_decode( GFCommon::to_money( 1 ) ) . '\' : \'' . $percentage_placeholder . '\';
 								jQuery(\'#couponAmount\').attr("placeholder",placeholderText);
 							}
 
@@ -943,7 +958,7 @@ class GFCoupons extends GFFeedAddOn {
 								// Set placeholder text for initial load.
 								var $amountInput = jQuery( \'#couponAmount\' );
 								var type = jQuery( \'#couponAmountType\' ).val();
-								var placeholderText = type == \'flat\' ? \'' . html_entity_decode( GFCommon::to_money( 1 ) ) . '\' : \'1%\';
+								var placeholderText = type == \'flat\' ? \'' . html_entity_decode( GFCommon::to_money( 1 ) ) . '\' : \'' . $percentage_placeholder . '\';
 							
 								$amountInput.attr( "placeholder", placeholderText );
 							
@@ -965,6 +980,12 @@ class GFCoupons extends GFFeedAddOn {
 									}
 							
 									$amountInput.val( formattedAmount );
+								}
+								
+								const $amountErrorContainer = jQuery( \'#error-couponAmountType\' );
+								if ( $amountErrorContainer.length ) {
+									$amountErrorContainer.text( \' ' . $coupon_amount_validation_message . ' \' );
+									jQuery( \'#couponAmount\' ).parent().addClass( \'gform-settings-input__container--invalid\' );  
 								}
 								
 								jQuery( \'.datepicker\' ).each(

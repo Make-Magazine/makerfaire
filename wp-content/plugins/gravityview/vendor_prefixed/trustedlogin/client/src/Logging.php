@@ -7,7 +7,7 @@
  * @copyright 2021 Katz Web Services, Inc.
  *
  * @license GPL-2.0-or-later
- * Modified by gravityview on 07-September-2023 using Strauss.
+ * Modified by gravityview on 08-December-2023 using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 namespace GravityKit\GravityView\Foundation\ThirdParty\TrustedLogin;
@@ -26,6 +26,11 @@ class Logging {
 	private $ns;
 
 	/**
+	 * @var Config
+	 */
+	private $config = null;
+
+	/**
 	 * @var bool $logging_enabled
 	 */
 	private $logging_enabled = false;
@@ -40,11 +45,11 @@ class Logging {
 	 */
 	public function __construct( Config $config ) {
 
+		$this->config = $config;
+
 		$this->ns = $config->ns();
 
 		$this->logging_enabled = $config->get_setting( 'logging/enabled', false );
-
-		$this->klogger = $this->setup_klogger( $config );
 	}
 
 	/**
@@ -55,7 +60,6 @@ class Logging {
 	 * @return false|Logger
 	 */
 	private function setup_klogger( $config ) {
-
 
 		$logging_directory = null;
 
@@ -94,7 +98,7 @@ class Logging {
 			$default_options = array(
 				'extension'      => 'log',
 				'dateFormat'     => 'Y-m-d G:i:s.u',
-				'filename'       => sprintf( 'trustedlogin-client-debug-%s-%s', $DateTime->format( 'Y-m-d' ), \hash( 'sha256', $filename_hash_data ) ),
+				'filename'       => sprintf( 'client-%s-%s-%s', $this->ns, $DateTime->format( 'Y-m-d' ), \hash( 'sha256', $filename_hash_data ) ),
 				'flushFrequency' => false,
 				'logFormat'      => false,
 				'appendContext'  => true,
@@ -234,7 +238,7 @@ class Logging {
 			return false;
 		}
 
-		fwrite( $file, '<!-- Silence is golden. TrustedLogin is also pretty great. -->' );
+		fwrite( $file, '<!-- Silence is golden. TrustedLogin is also pretty great. Learn more: https://www.trustedlogin.com/about/easy-and-safe/ -->' );
 		fclose( $file );
 
 		return true;
@@ -317,7 +321,10 @@ class Logging {
 			return;
 		}
 
-		// The logger class didn't load for some reason
+		// Set up klogger, creating the logging file/directory if it doesn't already exist.
+		$this->klogger = $this->setup_klogger( $this->config );
+
+		// The logger class didn't load. Rely on WordPress logging, if enabled.
 		if ( ! $this->klogger ) {
 
 			$wp_debug = defined( 'WP_DEBUG' ) && WP_DEBUG;

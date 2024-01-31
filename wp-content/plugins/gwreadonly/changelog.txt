@@ -1,6 +1,15 @@
 
 # Changelog
 
+## 1.9.20
+
+	- Improved compatibility with version 5 and newer of the Stripe add-on.
+	- Fixed issue where Read Only Shipping fields would lose their value after submission.
+
+## 1.9.19
+
+	- Fixed an issue where read only Date dropdowns did not work as expected.
+
 ## 1.9.18
 
 	- Fixed issues with Read Only Multi Selects sometimes causing a validation error or submitting values with backslashes in them.

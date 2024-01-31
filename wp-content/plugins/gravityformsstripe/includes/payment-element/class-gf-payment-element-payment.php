@@ -276,6 +276,12 @@ class GF_Payment_Element_Payment {
 		// Run the subscription through the filters used by the Stripe Add-On.
 		$subscription_data = $this->addon->get_subscription_params( $subscription_data, $customer, $plan, $feed, $temp_entry, $form, $order_data['trial_days'] );
 
+		// If the trial period is different from the plan after filtering subscription data, don't use the plan's trial period.
+		$is_trial_filtered = isset( $subscription_data['trial_period_days'] );
+		if ( $is_trial_filtered ) {
+			$subscription_data['trial_from_plan'] = false;
+		}
+
 		return $api->create_subscription( $subscription_data );
 	}
 
@@ -358,6 +364,63 @@ class GF_Payment_Element_Payment {
 	}
 
 	/**
+	 * Retrieves the intent for the current subscription.
+	 *
+	 * This intent could be a payment intent, or a setup intent, depending on whether the subscription has a trial or not.
+	 *
+	 * @since 5.0.0
+	 *
+	 * @param $subscription \Stripe\Subscription The Stripe subscription object.
+	 * @param $feed         array                The current feed being processed.
+	 * @param $api          GF_Stripe_API        The stripe API instance used to communicate with the stripe API.
+	 *
+	 * @return \Stripe\Invoice|\Stripe\PaymentIntent|\Stripe\SetupIntent|WP_Error|null
+	 */
+	public function get_subscription_intent( $subscription, $feed, $api ) {
+		$intent_id       = null;
+		$subscription_id = $subscription->id;
+
+		if ( rgar( $subscription, 'collection_method' ) === 'send_invoice' ) {
+			return $this->get_subscription_invoice_intent( $subscription, $feed, $api );
+		}
+
+		if ( rgars( $subscription, 'latest_invoice/payment_intent/id' ) !== null ) {
+			$intent_id = $subscription->latest_invoice->payment_intent->id;
+		} else {
+			$intent_id = $subscription->pending_setup_intent;
+		}
+
+		return $this->get_stripe_payment_object( $feed, $intent_id, $api );
+
+	}
+
+	/**
+	 * Retrieves the intent for a subscription with `send-invoice` collection method.
+	 *
+	 * @since 5.4
+	 *
+	 * @param $subscription \Stripe\Subscription The Stripe subscription object.
+	 * @param $feed         array                The current feed being processed.
+	 * @param $api          GF_Stripe_API        The stripe API instance used to communicate with the stripe API.
+	 *
+	 * @return \Stripe\Invoice|WP_Error|null
+	 */
+	public function get_subscription_invoice_intent( $subscription, $feed, $api ) {
+		$invoice           = rgar( $subscription, 'latest_invoice' );
+		$finalized_invoice = $api->finalize_invoice( $invoice_id );
+
+		if ( is_wp_error( $finalized_invoice ) ) {
+			$this->log_debug( __METHOD__ . '(): Unable to finalize invoice; ' . $finalized_invoice->get_error_message() );
+
+			return $finalized_invoice;
+		}
+
+		$invoice_intent_id = rgobj( $finalized_invoice, 'payment_intent' );
+
+		return $invoice_intent_id ? $this->get_stripe_payment_object( $feed, $invoice_intent_id, $api ) : null;
+	}
+
+	/**
 	 * Retrieves a payment intent, a setup intent or an invoice for the current payment.
 	 *
 	 * @since 5.0
@@ -373,36 +436,10 @@ class GF_Payment_Element_Payment {
 			return $api->get_invoice( $id );
 		}
 
-		if ( rgars( $feed, 'meta/trial_enabled' ) && ! rgars( $feed, 'meta/setupFee_enabled' ) ) {
+		if ( strpos( $id, 'seti_' ) === 0 ) {
 			return $api->get_setup_intent( $id, array( 'expand' => array( 'payment_method' ) ) );
 		} else {
 			return $api->get_payment_intent( $id, array( 'expand' => array( 'payment_method', 'invoice' ) ) );
 		}
-	}
-
-	public function get_subscription_intent( $subscription, $feed, $api ) {
-		$intent_id       = null;
-		$subscription_id = $subscription->id;
-
-		if ( $subscription['collection_method'] === 'send_invoice' ) {
-			$invoice = $subscription->latest_invoice;
-			$invoice = $api->finalize_invoice( $invoice->id );
-
-			if ( ! rgars( $feed, 'meta/trial_enabled' ) || rgars( $feed, 'meta/setupFee_enabled' ) ) {
-				$intent = $this->get_stripe_payment_object( $feed, $invoice->payment_intent, $api );
-			} else {
-				return null;
-			}
-		} else {
-			if ( ! rgars( $feed, 'meta/trial_enabled' ) || rgars( $feed, 'meta/setupFee_enabled' ) ) {
-				$intent_id = $subscription->latest_invoice->payment_intent->id;
-			} else {
-				$intent_id = $subscription->pending_setup_intent;
-			}
-
-			$intent = $this->get_stripe_payment_object( $feed, $intent_id, $api );
-		}
-
-		return $intent;
 	}
 }

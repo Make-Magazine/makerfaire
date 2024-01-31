@@ -203,6 +203,8 @@ class GP_Easy_Passthrough extends GP_Feed_Plugin {
 		remove_filter( 'gform_entry_post_save', array( $this, 'maybe_process_feed' ) );
 		add_filter( 'gform_entry_post_save', array( $this, 'filter_gform_entry_post_save' ), 9, 1 );
 
+		add_action( 'gform_post_add_entry', array( $this, 'action_gform_post_add_entry' ), 9 );
+
 		add_action( 'gform_after_submission', array( $this, 'store_entry_id' ), 10, 2 );
 
 		add_filter( 'gform_pre_render', array( $this, 'populate_fields' ), 5 );
@@ -594,7 +596,7 @@ class GP_Easy_Passthrough extends GP_Feed_Plugin {
 			$inputs = $field->get_entry_inputs();
 
 			// If field has inputs, add each input to field map.
-			if ( $inputs ) {
+			if ( $inputs && $input_type != 'stripe_creditcard' ) {
 
 				// Add checkboxes to the field map.
 				if ( ! empty( $field->choices ) && $field->get_input_type() === 'checkbox' ) {
@@ -652,7 +654,7 @@ class GP_Easy_Passthrough extends GP_Feed_Plugin {
 					$column_index++;
 
 				}
-			} elseif ( ! in_array( $input_type, array( 'fileupload' ) ) ) {
+			} elseif ( ! in_array( $input_type, array( 'fileupload', 'stripe_creditcard' ) ) ) {
 
 				// Add field to field map.
 				$field_map[] = array(
@@ -1512,7 +1514,15 @@ class GP_Easy_Passthrough extends GP_Feed_Plugin {
 
 			// Get source entry.
 			$source_entry = GFAPI::get_entry( $source_entry_id );
-			if ( is_wp_error( $source_entry ) || $source_entry['status'] !== 'active' ) {
+
+			/**
+			 * Ensure that the entry exists, is active, and was submitted for the source form configured for the current feed.
+			 * If a token is passed, feeds that do not match the token-obtained source entry will be ignored. In all other
+			 * cases, we will populate fields from each feed's source entry.
+			 *
+			 * Note: The codebase is very ambiguous on how all of this should be handled so this documents how it currently works.
+			 */
+			if ( is_wp_error( $source_entry ) || $source_entry['status'] !== 'active' || (int) $source_entry['form_id'] !== (int) $source_form['id'] ) {
 				continue;
 			}
 
@@ -1882,6 +1892,13 @@ class GP_Easy_Passthrough extends GP_Feed_Plugin {
 
 		return $entry;
 
+	}
+
+	/**
+	 * Ensure tokens are generated if creating entries using GFAPI.
+	 */
+	public function action_gform_post_add_entry( $entry ) {
+		$this->get_entry_token( $entry );
 	}
 
 	/**

@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by gravityview on 07-September-2023 using Strauss.
+ * Modified by gravityview on 08-December-2023 using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 
@@ -255,6 +255,27 @@ class Core {
 		}
 
 		return get_plugin_data( $plugin_file, $markup, $translate );
+	}
+
+	/**
+	 * Returns the plugin slug from its text domain.
+	 *
+	 * @since 1.2.6
+	 *
+	 * @param string $text_domain Text domain.
+	 *
+	 * @return string|null
+	 */
+	public static function get_plugin_slug_from_text_domain( $text_domain ) {
+		$installed_plugins = self::get_installed_plugins();
+
+		foreach ( $installed_plugins as $plugin ) {
+			if ( $plugin['text_domain'] === $text_domain ) {
+				return dirname( plugin_basename( $plugin['plugin_file'] ) );
+			}
+		}
+
+		return null;
 	}
 
 	/**

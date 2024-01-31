@@ -151,13 +151,16 @@ final class GravityView_Inline_Edit_AJAX {
 
 		// Change upload path.
 		$gf_upload_path = GF_Field_FileUpload::get_upload_root_info( $form_id );
-		add_filter( 'upload_dir', function( $upload ) use ( $gf_upload_path ) {
+		add_filter(
+			'upload_dir',
+			function ( $upload ) use ( $gf_upload_path ) {
 
-			$upload['path'] = $gf_upload_path['path'];
-			$upload['url']  = $gf_upload_path['url'];
+				$upload['path'] = $gf_upload_path['path'];
+				$upload['url']  = $gf_upload_path['url'];
 
-			return $upload;
-		} );
+				return $upload;
+			}
+		);
 
 		$urls = array();
 		foreach ( $files as $file ) {
@@ -245,8 +248,8 @@ final class GravityView_Inline_Edit_AJAX {
 	 *
 	 * @since 2.0
 	 *
-	 * @param int  $entry_id
-	 * @param int  $field_id
+	 * @param int       $entry_id
+	 * @param int       $field_id
 	 * @param \GF_Field $gf_field
 	 *
 	 * @return void
@@ -307,7 +310,6 @@ final class GravityView_Inline_Edit_AJAX {
 		}
 
 		wp_send_json( $return );
-
 	}
 
 
@@ -428,7 +430,7 @@ final class GravityView_Inline_Edit_AJAX {
 					$choice_number = 1;
 					foreach ( $gf_field->choices as $i => $choice ) {
 						if ( $choice_number % 10 === 0 ) { // hack to skip numbers ending in 0. so that 5.1 doesn't conflict with 5.10
-							$choice_number ++;
+							++$choice_number;
 						}
 
 						$_id = $field_id . '.' . $choice_number;
@@ -441,7 +443,7 @@ final class GravityView_Inline_Edit_AJAX {
 							$values_to_update[ $_id ] = $choice['value'];
 						}
 
-						$choice_number ++;
+						++$choice_number;
 					}
 				}
 				$field_validate = $values_to_update;
@@ -494,7 +496,7 @@ final class GravityView_Inline_Edit_AJAX {
 				if ( 1 === count( $value ) ) {// Single field mode
 					$saved_time = isset( $entry[ $field_id ] ) ? $entry[ $field_id ] : '00:00 AM';
 					preg_match( '/^(\d*):(\d*) ?(.*)$/', $saved_time, $time_matches );
-					for ( $i = 0; $i <= 3; $i ++ ) {// From the values matched, populate the hh,mm and am/pm fields of $value
+					for ( $i = 0; $i <= 3; $i++ ) {// From the values matched, populate the hh,mm and am/pm fields of $value
 						if ( ! isset( $value[ $i ] ) ) {
 							$value[ $i ] = $time_matches[ $i ];
 						}
@@ -636,9 +638,28 @@ final class GravityView_Inline_Edit_AJAX {
 
 			if ( empty( array_filter( array_merge( $values, $field_value ) ) ) ) {
 				return new WP_Error( strtolower( $field_type ) . '_validation_failed', __( 'This field must have at least one checked option.', 'gk-gravityedit' ) );
-			};
+			}
 
 			return true;
+		}
+
+		// Bypass validation for decimal format.
+		if ( $gf_field instanceof \GF_Field_Number && 'decimal_comma' === $gf_field->numberFormat ) {
+			$gf_field->numberFormat = 'decimal_dot';
+		}
+
+		// No Duplicate.
+		$old_field_value = rgar( $entry, $gf_field->id );
+
+		if ( $gf_field->noDuplicates && $old_field_value !== $field_value && GFFormsModel::is_duplicate( $gf_field->formId, $gf_field, $field_value ) ) {
+			return new WP_Error(
+				strtolower( $field_type ) . '_validation_failed',
+				strtr(
+					_x( "This field requires a unique entry and '[value]' has already been used.", 'Placeholders inside [] are not to be translated.', 'gk-gravityedit' ),
+					[ '[value]' => $field_value ]
+				)
+			);
+
 		}
 
 		$gf_field->validate( $field_value, null );
@@ -651,7 +672,6 @@ final class GravityView_Inline_Edit_AJAX {
 
 		return true;
 	}
-
 }
 
 GravityView_Inline_Edit_AJAX::get_instance();

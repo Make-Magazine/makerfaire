@@ -8,6 +8,7 @@ use Elementor\Core\Files\File_Types\Json;
 use Elementor\Core\Files\File_Types\Svg;
 use Elementor\Core\Files\File_Types\Zip;
 use Elementor\Core\Utils\Exceptions;
+use Elementor\User;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -128,7 +129,7 @@ class Uploads_Manager extends Base_Object {
 		// If $file['fileData'] is set, it signals that the passed file is a Base64 string that needs to be decoded and
 		// saved to a temporary file.
 		if ( isset( $file['fileData'] ) ) {
-			$file = $this->save_base64_to_tmp_file( $file );
+			$file = $this->save_base64_to_tmp_file( $file, $allowed_file_extensions );
 		}
 
 		$validation_result = $this->validate_file( $file, $allowed_file_extensions );
@@ -149,7 +150,9 @@ class Uploads_Manager extends Base_Object {
 	 * @return bool
 	 */
 	final public static function are_unfiltered_uploads_enabled() {
-		$enabled = ! ! get_option( self::UNFILTERED_FILE_UPLOADS_KEY ) && Svg::file_sanitizer_can_run();
+		$enabled = ! ! get_option( self::UNFILTERED_FILE_UPLOADS_KEY )
+			&& Svg::file_sanitizer_can_run()
+			&& User::is_current_user_can_upload_json();
 
 		/**
 		 * Allow Unfiltered Files Upload.
@@ -275,6 +278,12 @@ class Uploads_Manager extends Base_Object {
 	 * @return string|\WP_Error
 	 */
 	public function create_temp_file( $file_content, $file_name ) {
+		$file_name = str_replace( ' ', '', sanitize_file_name( $file_name ) );
+
+		if ( empty( $file_name ) ) {
+			return new \WP_Error( 'invalid_file_name', esc_html__( 'Invalid file name.', 'elementor' ) );
+		}
+
 		$temp_filename = $this->create_unique_dir() . $file_name;
 
 		/**
@@ -483,9 +492,18 @@ class Uploads_Manager extends Base_Object {
 	 * @access private
 	 *
 	 * @param $file
+	 * @param array|null $allowed_file_extensions
+	 *
 	 * @return array|\WP_Error
 	 */
-	private function save_base64_to_tmp_file( $file ) {
+	private function save_base64_to_tmp_file( $file, $allowed_file_extensions = null ) {
+		$file_extension = pathinfo( $file['fileName'], PATHINFO_EXTENSION );
+		$is_file_type_allowed = $this->is_file_type_allowed( $file_extension, $allowed_file_extensions );
+
+		if ( is_wp_error( $is_file_type_allowed ) ) {
+			return $is_file_type_allowed;
+		}
+
 		$file_content = base64_decode( $file['fileData'] ); // phpcs:ignore
 
 		// If the decode fails
@@ -540,7 +558,10 @@ class Uploads_Manager extends Base_Object {
 		// If there is a File Type Handler for the uploaded file, it means it is a non-standard file type. In this case,
 		// we check if unfiltered file uploads are enabled or not before allowing it.
 		if ( ! self::are_unfiltered_uploads_enabled() ) {
-			return new \WP_Error( Exceptions::FORBIDDEN, esc_html__( 'This file is not allowed for security reasons.', 'elementor' ) );
+			$error = 'json' === $file_extension
+				? esc_html__( 'You don\'t have permission to upload JSON files. Contact the administrator.', 'elementor' )
+				: esc_html__( 'This file is not allowed for security reasons.', 'elementor' );
+			return new \WP_Error( Exceptions::FORBIDDEN, $error );
 		}
 
 		// Here is each file type handler's chance to run its own specific validations

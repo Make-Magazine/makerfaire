@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by gravityview on 07-September-2023 using Strauss.
+ * Modified by gravityview on 08-December-2023 using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 
@@ -201,15 +201,8 @@ JS;
 
 		if ( $product ) {
 			if ( ! $product['active'] ) {
-				// Modify Activate link for products that are unlicensed or have unmet dependencies.
-				if ( ! $product['free'] && empty( $product['licenses'] ) ) {
-					$links['activate'] = sprintf(
-						'<a href="%s" title="%s">%s</a>',
-						esc_url_raw( Framework::get_instance()->get_link_to_product_search( $product['id'] ) ),
-						esc_html__( 'This product requires a license key to be activated. Click this link to enter your license key.', 'gk-gravityview' ),
-						esc_html__( 'Activate…', 'gk-gravityview' )
-					);
-				} else if ( ! $product['checked_dependencies'][ $product['installed_version'] ]['status'] ?? false ) {
+				// Modify Activate link for products that have unmet dependencies.
+				if ( ! $product['checked_dependencies'][ $product['installed_version'] ]['status'] ?? false ) {
 					$links['activate'] = sprintf(
 						'<a href="%s" title="%s">%s</a>',
 						esc_url_raw( add_query_arg( [ 'action' => 'activate' ], Framework::get_instance()->get_link_to_product_search( $product['id'] ) ) ),
@@ -399,7 +392,7 @@ JS;
 			}
 
 			return [
-				'<a href="https://gravitykit.com">' . esc_html__( 'Visit GravityKit.com', 'gk-gravityview' ) . '</a>'
+				'<a href="https://www.gravitykit.com">' . esc_html__( 'Visit GravityKit.com', 'gk-gravityview' ) . '</a>'
 			];
 		}, 10, 4 );
 

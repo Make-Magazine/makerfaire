@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by __root__ on 07-September-2023 using Strauss.
+ * Modified by __root__ on 02-November-2023 using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 
@@ -217,7 +217,7 @@ class ProductManager {
 				try {
 					$license = $license_manager->check_license( $key );
 				} catch ( Exception $e ) {
-					LoggerFramework::get_instance()->warning( "Unable to verify license key ${key} when installing product ID ${product_id}: " . $e->getMessage() );
+					LoggerFramework::get_instance()->warning( "Unable to verify license key {$key} when installing product ID {$product_id}: " . $e->getMessage() );
 
 					continue;
 				}
@@ -295,7 +295,7 @@ class ProductManager {
 			$this->activate_product( $product );
 
 			// Check if the updated product comes with a newer version of the Foundation, which will be loaded if another Ajax request is made.
-			$product_foundation_version = Core::get_instance()->get_plugin_foundation_version( $product['plugin_file'] );
+			$product_foundation_version = Core::get_instance()->get_plugin_foundation_version( $product['plugin_file'], true );
 
 			$backend_foundation_version = version_compare(
 				Core::VERSION,

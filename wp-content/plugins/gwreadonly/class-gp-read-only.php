@@ -43,6 +43,22 @@ class GP_Read_Only extends GWPerk {
 			}, 5, 1 );
 		}
 
+		/**
+		 * Stripe Payment Elements compatibility
+		 *
+		 * This is a bizarre hook to use, but it's the only decent one I could find when the temporary lead is created
+		 * with GFFormsModel::create_lead().
+		 */
+		add_filter( 'gform_currency_pre_save_entry', function( $currency, $form ) {
+			if ( rgpost( 'action' ) !== 'gfstripe_validate_form' ) {
+				return $currency;
+			}
+
+			$this->process_hidden_captures( $form );
+
+			return $currency;
+		}, 10, 2 );
+
 	}
 
 	function enqueue_form_styles( $form ) {
@@ -422,7 +438,7 @@ class GP_Read_Only extends GWPerk {
 			// Only use hidden capture if $_POST does not already contain a value for this inputs;
 			// this allows support for checking/unchecking via JS (i.e. checkbox fields).
 			if ( empty( $_POST[ "input_{$full_input_id}" ] ) && $value ) {
-				if ( method_exists( 'GFCommon', 'is_json' ) ) {
+				if ( method_exists( 'GFCommon', 'is_json' ) && is_string( $value ) ) {
 					$stripped_slashes_value = stripslashes( $value );
 
 					if ( GFCommon::is_json( $stripped_slashes_value ) ) {
@@ -499,9 +515,7 @@ class GP_Read_Only extends GWPerk {
 
 				if ( rgar( $choice, 'isSelected' ) ) {
 					$full_input_id            = sprintf( '%d.%d', $field['id'], $index );
-					$price                    = rgempty( 'price', $choice ) ? 0 : GFCommon::to_number( rgar( $choice, 'price' ) );
-					$choice_value             = in_array( $field['type'], array( 'product', 'option' ) ) ? sprintf( '%s|%s', $choice['value'], $price ) : $choice['value'];
-					$values[ $full_input_id ] = $choice_value;
+					$values[ $full_input_id ] = $this->get_choice_value( $choice, $field );
 				}
 
 				$index++;
@@ -512,7 +526,9 @@ class GP_Read_Only extends GWPerk {
 
 			// if no choice is preselected and this is a select, get the first choice's value since it will be selected by default in the browser
 			if ( empty( $values ) && in_array( $input_type, array( 'select', 'workflow_user', 'workflow_role', 'workflow_assignee_select' ) ) ) {
-				$values[] = rgars( $choices, '0/value' );
+				$choice = reset( $choices );
+
+				$values[] = $this->get_choice_value( $choice, $field );
 			}
 
 			switch ( $input_type ) {
@@ -529,6 +545,12 @@ class GP_Read_Only extends GWPerk {
 		}
 
 		return $value;
+	}
+
+	public function get_choice_value( $choice, $field ) {
+		$price = rgempty( 'price', $choice ) ? 0 : GFCommon::to_number( rgar( $choice, 'price' ) );
+
+		return in_array( $field['type'], array( 'product', 'option', 'shipping' ) ) ? sprintf( '%s|%s', $choice['value'], $price ) : $choice['value'];
 	}
 
 	public function filter_rich_text_editor_options( $settings, $field ) {

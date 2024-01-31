@@ -30,7 +30,7 @@
 		form_id: null
 	};
 
-	multipartParams[ '_gform_file_upload_nonce_{0}'.format( form.id ) ] = window.gform_chainedselects_file_upload_nonce;
+	multipartParams[ `_gform_file_upload_nonce_${form.id}` ] = window.gform_chainedselects_file_upload_nonce;
 
 	var uploader = new plupload.Uploader( {
 		runtimes: 'html5,flash,silverlight,html4',
@@ -251,23 +251,22 @@
 			removeButton  = file.isFromFilter ? '' : '<span class="gfcs-remove"><i class="gficon-subtract"></i></span>',
 			sourceMessage = file.isFromFilter ? getFilteredFileMarkup( file ) : '';
 
-		return '\
-			<div id="{0}" class="{3}"> \
-				<span class="gfcs-file-icon"></span> {1} <span class="gfcs-file-size">{2}</span> <span class="gfcs-file-date"> | {4}</span> <b class="gfcs-file-percent"></b> \
-				<span class="gfcs-success"><i class="gficon-tick gf_valid"></i></span> \
-				{5} \
-				<span class="gfcs-processing"></span> \
-			</div> \
-			{6}'
-			.format( file.id, file.name, size, css, timeAgo( dateUploaded ), removeButton, sourceMessage );
+		return `
+			<div id="${file.id}" class="${css}">
+				<span class="gfcs-file-icon"></span> ${file.name} <span class="gfcs-file-size">${size}</span> <span class="gfcs-file-date"> | ${timeAgo( dateUploaded )}</span> <b class="gfcs-file-percent"></b>
+				<span class="gfcs-success"><i class="gficon-tick gf_valid"></i></span>
+				${removeButton}
+				<span class="gfcs-processing"></span>
+			</div>
+			${sourceMessage}`;
 	}
 
 	function getFilteredFileMarkup() {
-		return '<div class="gfcs-source-message gforms_help_alert"><i class="fa fa-warning"></i> {0}</div>'.format( gformChainedSelectData.strings.importedFilterFile );
+		return `<div class="gfcs-source-message gforms_help_alert"><i class="fa fa-warning"></i> ${gformChainedSelectData.strings.importedFilterFile}</div>`;
 	}
 
 	function getFilteredFileErrorMarkup() {
-		return '<div class="gfcs-source-message gforms_red_alert"><i class="fa fa-warning"></i> {0}</div>'.format( gformChainedSelectData.strings.errorImportingFilterFile );
+		return `<div class="gfcs-source-message gforms_red_alert"><i class="fa fa-warning"></i> ${gformChainedSelectData.strings.errorImportingFilterFile}</div>`;
 	}
 
 	function updateUploadedFilePreview( up, file ) {
@@ -334,7 +333,7 @@
 	}
 
 	function getStatusClass( file ) {
-		return 'gfcs-status-{0}'.format( getStatus( file ) );
+		return `gfcs-status-${getStatus( file )}`;
 	}
 
 	function getStatus( file ) {
@@ -360,7 +359,7 @@
 		delete window[ 'gfcsErrorTimeout' ];
 		$( '#gfcs-error' ).remove();
 
-		var $error = $( '<div id="gfcs-error" class="error" style="width:375px;padding:1px 12px;"><p>{0}</p></div>'.format( message ) );
+		var $error = $( `<div id="gfcs-error" class="error" style="width:375px;padding:1px 12px;"><p>${message}</p></div>` );
 
 		$( up.settings.progress ).html( $error );
 
@@ -394,10 +393,10 @@
 			if( key == 'hours' && count >= 24 ) {
 				break;
 			} else if( key == 'seconds' && count == 0 ) {
-				output = '{0} {1} ago'.format( 1, format.label.singular );
+				output = `${1} ${format.label.singular} ago`;
 			} else if( count > 0 ) {
 				var label = count > 1 ? format.label.plural : format.label.singular;
-				output = '{0} {1} ago'.format( count, label );
+				output = `${count} ${label} ago`;
 				break;
 			}
 
@@ -408,7 +407,7 @@
 			var date     = new Date( timestamp * 1000 ),
 				dateBits = date.toDateString().split( ' ' );
 
-			output = '{0} {1}, {2}'.format( dateBits[1], dateBits[2], dateBits[3] );
+			output = `${dateBits[1]} ${dateBits[2]}, ${dateBits[3]}`;
 
 		}
 

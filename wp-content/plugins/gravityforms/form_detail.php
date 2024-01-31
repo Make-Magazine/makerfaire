@@ -5,6 +5,7 @@ if ( ! class_exists( 'GFForms' ) ) {
 }
 
 
+use Gravity_Forms\Gravity_Forms\Editor_Button\GF_Editor_Service_Provider;
 use Gravity_Forms\Gravity_Forms\Save_Form\GF_Save_Form_Service_Provider;
 use Gravity_Forms\Gravity_Forms\Save_Form\GF_Form_CRUD_Handler;
 
@@ -254,6 +255,14 @@ class GFFormDetail {
 				$save_button = apply_filters( 'gform_save_form_button', $save_button );
 				echo $save_button;
 				?>
+				<?php
+				/**
+				 * Allow users to perform actions after toolbar buttons are displayed.
+				 *
+				 * @since 2.8
+				 */
+				do_action( 'gform_after_toolbar_buttons' );
+				?>
 				<span id="please_wait_container" style="display:none;"><i class='gficon-gravityforms-spinner-icon gficon-spin'></i></span>
 			</div>
 		</div>
@@ -282,7 +291,9 @@ class GFFormDetail {
 			$no_conflict_mode  = get_option( 'gform_enable_noconflict' );
 			$no_conflict_class = $no_conflict_mode ? ' form_editor_no_conflict' : '';
 			$no_fields_class   = empty( $form['fields'] ) ? ' form_editor_fields_no_fields' : '';
-			$form_editor_class = sprintf( 'form_editor_fields_container gform-show-if-not-ie%s%s', $no_fields_class, $no_conflict_class );
+			$compact_view_class = GF_Editor_Service_Provider::is_compact_view_enabled( get_current_user_id(), $form_id ) ? ' gform-compact-view' : '';
+			$compact_view_class .= GF_Editor_Service_Provider::is_field_id_enabled( get_current_user_id(), $form_id ) ? ' gform-compact-view--show-id' : '';
+			$form_editor_class = sprintf( 'form_editor_fields_container gform-show-if-not-ie%s%s%s', $no_fields_class, $no_conflict_class, $compact_view_class );
 		?>
 
 		<div
@@ -301,7 +312,7 @@ class GFFormDetail {
 			<div class="gform_wrapper gform_editor gravity-theme<?php echo GFCommon::is_legacy_markup_enabled( $form ) ? ' gform_legacy_markup' : ''; ?>">
 
 			<div id="gform_pagination" data-title="<?php esc_attr_e('Pagination Options', 'gravityforms');?>" data-description="<?php esc_attr_e('Manage pagination options', 'gravityforms');?>" class="selectable" style="display:<?php echo $has_pages ? 'block' : 'none' ?>;">
-				<div class="gf-pagebreak-first gf-pagebreak"><?php esc_html_e( 'START PAGING', 'gravityforms' ) ?></div>
+				<div class="gf-pagebreak-first gf-pagebreak"><?php esc_html_e( 'Start Paging', 'gravityforms' ) ?></div>
 			</div>
 
 				<<?php echo $wrapper_el; ?> id="gform_fields" class="<?php echo GFCommon::get_ul_classes( $form ) ?>">
@@ -311,9 +322,7 @@ class GFFormDetail {
 						require_once( GFCommon::get_base_path() . '/form_display.php' );
 						foreach ( $form['fields'] as $field ) {
 							echo GFFormDisplay::get_field( $field, '', true, $form );
-							if ( $field->layoutSpacerGridColumnSpan && ! GFCommon::is_legacy_markup_enabled( $form ) ) {
-								printf( '<div class="spacer gfield" style="grid-column: span %d;" data-groupId="%s"></div>', $field->layoutSpacerGridColumnSpan, $field->layoutGroupId );
-							}
+							echo GFFormDisplay::get_row_spacer( $field, $form );
 						}
 					}
 					?>
@@ -325,7 +334,7 @@ class GFFormDetail {
 				</div>
 
 				<div id="gform_last_page_settings" data-title="<?php esc_attr_e('Last page options', 'gravityforms');?>" data-description="<?php esc_attr_e('Manage last page options', 'gravityforms');?>" class="selectable" style="display:<?php echo $has_pages ? 'block' : 'none' ?>;">
-					<div class="gf-pagebreak-end gf-pagebreak"><?php esc_html_e( 'END PAGING', 'gravityforms' ) ?></div>
+					<div class="gf-pagebreak-end gf-pagebreak"><?php esc_html_e( 'End Paging', 'gravityforms' ) ?></div>
 				</div>
 			</div>
 
@@ -452,6 +461,19 @@ class GFFormDetail {
 							<div id="sidebar_field_text"></div>
 						</div>
 					</div>
+
+					<!-- Sidebar field message -->
+					<div class="panel-block panel-block--hidden" id="sidebar_field_message_container">
+						<div class="gform-alert gform-alert--theme-cosmos">
+							<span class="gform-icon gform-icon--preset-active gform-alert__icon"
+							aria-hidden="true"></span>
+							<div class="gform-alert__message-wrap">
+								<div class="gform-text gform-text--color-port gform-typography--size-text-md gform-typography--weight-regular gform-alert__message"></div>
+							</div>
+						</div>
+					</div>
+					<!-- End sidebar field message -->
+
 					<div class="panel-block panel-block-tabs panel-block--hidden field_settings" data-js="gform-simplebar" data-simplebar-delay="1000">
 						<button tabindex="0" id="general_tab_toggle" class="panel-block-tabs__toggle">
 							<?php esc_html_e( 'General', 'gravityforms' ); ?>
@@ -754,8 +776,7 @@ class GFFormDetail {
 
 								<div class="next_button_options" id="next_button_container">
 									<input type="radio" id="next_button_text" name="next_button" value="text" onclick="TogglePageButton('next'); SetPageButton('next');" onkeypress="TogglePageButton('next'); SetPageButton('next');"/>
-									<label for="next_button_text" class="inline"><?php esc_html_e( 'Default', 'gravityforms' ); ?><?php gform_tooltip( 'next_button_text' ); ?>
-									</label>
+									<label for="next_button_text" class="inline"><?php esc_html_e( 'Default', 'gravityforms' ); ?><?php gform_tooltip( 'next_button_text' ); ?></label>
 									&nbsp;&nbsp;
 									<input type="radio" id="next_button_image" name="next_button" value="image" onclick="TogglePageButton('next'); SetPageButton('next');" onkeypress="TogglePageButton('next'); SetPageButton('next');"/>
 									<label for="next_button_image" class="inline"><?php esc_html_e( 'Image', 'gravityforms' ); ?><?php gform_tooltip( 'next_button_image' ); ?></label>
@@ -1179,24 +1200,16 @@ class GFFormDetail {
 							<li class="post_image_setting field_setting">
 								<label class="section_label"><?php esc_html_e( 'Image Metadata', 'gravityforms' ); ?> <?php gform_tooltip( 'form_field_image_meta' ); ?></label>
 								<input type="checkbox" id="gfield_display_alt" onclick="SetPostImageMeta();" onkeypress="SetPostImageMeta();"/>
-								<label for="gfield_display_alt" class="inline">
-									<?php esc_html_e( 'Alternative Text', 'gravityforms' ); ?>
-								</label>
+								<label for="gfield_display_alt" class="inline"><?php esc_html_e( 'Alternative Text', 'gravityforms' ); ?></label>
 								<br/>
 								<input type="checkbox" id="gfield_display_title" onclick="SetPostImageMeta();" onkeypress="SetPostImageMeta();"/>
-								<label for="gfield_display_title" class="inline">
-									<?php esc_html_e( 'Title', 'gravityforms' ); ?>
-								</label>
+								<label for="gfield_display_title" class="inline"><?php esc_html_e( 'Title', 'gravityforms' ); ?></label>
 								<br/>
 								<input type="checkbox" id="gfield_display_caption" onclick="SetPostImageMeta();" onkeypress="SetPostImageMeta();"/>
-								<label for="gfield_display_caption" class="inline">
-									<?php esc_html_e( 'Caption', 'gravityforms' ); ?>
-								</label>
+								<label for="gfield_display_caption" class="inline"><?php esc_html_e( 'Caption', 'gravityforms' ); ?></label>
 								<br/>
 								<input type="checkbox" id="gfield_display_description" onclick="SetPostImageMeta();" onkeypress="SetPostImageMeta();"/>
-								<label for="gfield_display_description" class="inline">
-									<?php esc_html_e( 'Description', 'gravityforms' ); ?>
-								</label>
+								<label for="gfield_display_description" class="inline"><?php esc_html_e( 'Description', 'gravityforms' ); ?></label>
 							</li>
 
 							<?php
@@ -1525,7 +1538,6 @@ class GFFormDetail {
 								</button>
 							</li>
 							<li class="choices_setting field_setting" data-js="choices-ui-setting" data-type="main">
-
 								<div id="gfield_settings_choices_container">
 									<label class="gfield_choice_header_label" data-js="choices-ui-label"><?php esc_html_e( 'Label', 'gravityforms' ) ?></label>
 									<label class="gfield_choice_header_value" data-js="choices-ui-label"><?php esc_html_e( 'Value', 'gravityforms' ) ?></label>
@@ -1680,9 +1692,7 @@ class GFFormDetail {
 									onclick="var value = jQuery(this).is(':checked'); SetFieldProperty('enableSelectAll', value); RefreshSelectedFieldPreview();"
 									onkeypress="var value = jQuery(this).is(':checked'); SetFieldProperty('enableSelectAll', value); RefreshSelectedFieldPreview();"
 								/>
-								<label for="field_select_all_choices" class="inline">
-									<?php esc_html_e( 'Enable "Select All" choice', 'gravityforms' ); ?>
-								</label>
+								<label for="field_select_all_choices" class="inline"><?php esc_html_e( 'Enable "Select All" choice', 'gravityforms' ); ?></label>
 
 							</li>
 							<?php
@@ -1697,10 +1707,7 @@ class GFFormDetail {
 									onclick="var value = jQuery(this).is(':checked'); SetFieldProperty('enableOtherChoice', value); UpdateFieldChoices(GetInputType(field));"
 									onkeypress="var value = jQuery(this).is(':checked'); SetFieldProperty('enableOtherChoice', value); UpdateFieldChoices(GetInputType(field));"
 								/>
-								<label for="field_other_choice" class="inline">
-									<?php esc_html_e( 'Enable "other" choice', 'gravityforms' ); ?>
-									<?php gform_tooltip( 'form_field_other_choice' ); ?>
-								</label>
+								<label for="field_other_choice" class="inline"><?php esc_html_e( 'Enable "other" choice', 'gravityforms' ); ?><?php gform_tooltip( 'form_field_other_choice' ); ?></label>
 
 							</li>
 
@@ -1970,7 +1977,7 @@ class GFFormDetail {
 									</label>
 								</div>
 
-								<div id="calculation_options" style="display:none;margin-top:10px;">
+								<div id="calculation_options" style="display:none;margin-top:10px;position:relative;">
 
 									<label for="field_calculation_formula">
 										<?php esc_html_e( 'Formula', 'gravityforms' ); ?>
@@ -1985,7 +1992,7 @@ class GFFormDetail {
 											<?php } ?>
 										</div>
 									</div>
-									<textarea id="field_calculation_formula" fieldheight-2"></textarea>
+									<textarea id="field_calculation_formula" class="merge-tag-support mt-position-right mt-prepopulate merge-tag-calculation" fieldheight-2"></textarea>
 									<br/>
 									<a class="gf_calculation_trigger" href="javascript:void(0)" onclick="var field = GetSelectedField(); alert(IsValidFormula(field.calculationFormula) ? '<?php echo esc_js( __( 'The formula appears to be valid.', 'gravityforms' ) ); ?>' : '<?php echo esc_js( __( 'There appears to be a problem with the formula.', 'gravityforms' ) ); ?>');" onkeypress="var field = GetSelectedField(); alert(IsValidFormula(field.calculationFormula) ? '<?php echo esc_js( __( 'The formula appears to be valid.', 'gravityforms' ) ); ?>' : '<?php echo esc_js( __( 'There appears to be a problem with the formula.', 'gravityforms' ) ); ?>');"><?php esc_html_e( 'Validate Formula', 'gravityforms' ); ?></a>
 

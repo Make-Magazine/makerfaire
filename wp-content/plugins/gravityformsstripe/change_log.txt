@@ -1,5 +1,37 @@
-### 5.1.1
-- Fixed an issue where embedding forms with AJAX option has no effect.
+### 5.4.0 | 2023-12-07
+- Added a new [`gform_stripe_sca_success_pre_validation`](https://docs.gravityforms.com/gform_stripe_sca_success_pre_validation/) filter to modify the validation result for forms submitted by the SCA handler.
+- Fixed an issue where the password is not saved during user registration when using the Stripe Payment Element.
+- Fixed an issue where confirmations set to the Redirect type are not working as expected.
+- Fixed an issue where recaptcha and turnstile fields fail validation when using Stripe Elements with 3D Secure Authentication.
+- Fixed an issue where the credit card details are not being saved to the entry on subscription feeds with trial enabled.
+- Fixed an issue where a fatal error occurs when the Stripe field is missing from the form and the payment collection method is set to Stripe Field.
+- Fixed an issue where overriding a subscription's trial period days via a filter results in a validation error.
+- Fixed an issue where the total field shows an incorrect value when the stripe feed has conditional logic configured.
+- Fixed an issue where submission fails when a page contains more than one Stripe form.
+- Fixed an issue where the total amount is not calculated correctly when two Stripe forms are on the same page.
+- Fixed an issue where the trial amount field loses its styling when there is a validation error on the feed edit page.
+- Fixed an issue with Link that prevents a form submission without an email address being entered.
+- Fixed an issue where the subscription ID isn't displayed correctly on the entry page when Bank Transfer is used as a payment method.
+- Fixed an issue where validation errors are not being cleared when switching to a different payment method on the Stripe Payment Element.
+- Removed Cardholder Name as an option for merge tags.
+
+### 5.3.0 | 2023-11-22
+- Added compatibility with the upcoming Compact View feature of Gravity Forms, displaying field messages on the sidebar.
+- Updated the theme framework variables to be compatible with Gravity Forms 2.8.
+- Fixed an issue with the Stripe Card field that displays a "return_url must be specified" error message in certain situations.
+- Fixed an issue that causes 3DS transactions to fail if the associated feed is for Subscriptions.
+- Fixed an issue that halts form submissions on certain situations if 3DS validation is required.
+- Fixed an issue where using the Payment Element in conjunction with conditional logic can result in incomplete entry data.
+- Fixed an issue where a "The link you followed has expired" error occurs on submission when the "Require user to be logged in" form setting is enabled.
+
+### 5.2.0 | 2023-09-20
+- Added the [gform_stripe_payment_element_initial_payment_information](https://docs.gravityforms.com/gform_stripe_payment_element_initial_payment_information/) filter to override the initial payment information used to render the payment element.
+- Fixed an issue where a payment method can't be attached to a customer when the Payment Element is enabled.
+- Fixed an issue where the gform_stripe_elements_style filter is not being correctly applied.
+- Fixed an issue that prevents the gform_stripe_webhook filter from being fired in some cases.
+- Fixed an issue where using a list field with columns enabled on a form with the Stripe Payment Element can cause a fatal error.
+- Fixed an issue where list field values are not saved to the entry when the Payment Element is enabled.
+- Fixed an issue where the Payment Element doesn't work on ajax-enabled forms.
 
 
 ### 5.1.0 | 2023-08-02

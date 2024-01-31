@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by gravityview on 07-September-2023 using Strauss.
+ * Modified by gravityview on 08-December-2023 using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 
@@ -21,7 +21,7 @@ class Encryption {
 	 *
 	 * @var Encryption Class instance.
 	 */
-	private static $_instance;
+	private static $_instances;
 
 	/**
 	 * @since 1.0.0
@@ -58,7 +58,7 @@ class Encryption {
 	}
 
 	/**
-	 * Returns class instance.
+	 * Returns class instance based on the secret key.
 	 *
 	 * @since 1.0.0
 	 *
@@ -67,11 +67,11 @@ class Encryption {
 	 * @return Encryption
 	 */
 	public static function get_instance( $secret_key = '' ) {
-		if ( is_null( self::$_instance ) ) {
-			self::$_instance = new self( $secret_key );
+		if ( ! isset( self::$_instances[ $secret_key ] ) ) {
+			self::$_instances[ $secret_key ] = new self( $secret_key );
 		}
 
-		return self::$_instance;
+		return self::$_instances[ $secret_key ];
 	}
 
 	/**
@@ -144,6 +144,10 @@ class Encryption {
 			$decrypted = sodium_crypto_secretbox_open( $encrypted, $nonce, $this->_secret_key ) ?? null;
 		} catch ( Exception $e ) {
 			return null;
+		}
+
+		if ( $decrypted === false ) {
+			$decrypted = null;
 		}
 
 		return $decrypted;

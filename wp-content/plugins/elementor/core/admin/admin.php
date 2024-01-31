@@ -7,6 +7,7 @@ use Elementor\Core\Admin\Menu\Main as MainMenu;
 use Elementor\App\Modules\Onboarding\Module as Onboarding_Module;
 use Elementor\Core\Base\App;
 use Elementor\Core\Upgrade\Manager as Upgrade_Manager;
+use Elementor\Core\Utils\Assets_Config_Provider;
 use Elementor\Core\Utils\Collection;
 use Elementor\Plugin;
 use Elementor\Settings;
@@ -75,38 +76,25 @@ class Admin extends App {
 		exit;
 	}
 
-	private function get_package_config( $package_name ) {
-		$asset_file = ELEMENTOR_ASSETS_PATH . "js/packages/$package_name.asset.php";
-
-		if ( ! file_exists( $asset_file ) ) {
-			return [];
-		}
-
-		$data = require $asset_file;
-
-		return [
-			'handle' => $data['handle'],
-			'src' => $data['src'],
-			'deps' => $data['deps'],
-		];
-	}
-
 	private function register_packages() {
-		Collection::make( [ 'ui', 'icons' ] )
-			->map( function( $package_name ) {
-				return $this->get_package_config( $package_name );
-			} )
-			->filter( function( $package_config ) {
-				return ! empty( $package_config );
-			} )
-			->each( function( $package_config ) {
+		$assets_config_provider = ( new Assets_Config_Provider() )
+			->set_path_resolver( function ( $name ) {
+				return ELEMENTOR_ASSETS_PATH . "js/packages/{$name}/{$name}.asset.php";
+			} );
+
+		Collection::make( [ 'ui', 'icons', 'query' ] )
+			->each( function( $package ) use ( $assets_config_provider ) {
 				$suffix = Utils::is_script_debug() ? '' : '.min';
-				$src = str_replace( '{{MIN_SUFFIX}}', $suffix, $package_config['src'] );
+				$config = $assets_config_provider->load( $package )->get( $package );
+
+				if ( ! $config ) {
+					return;
+				}
 
 				wp_register_script(
-					$package_config['handle'],
-					$src,
-					$package_config['deps'],
+					$config['handle'],
+					ELEMENTOR_ASSETS_URL . "js/packages/{$package}/{$package}{$suffix}.js",
+					$config['deps'],
 					ELEMENTOR_VERSION,
 					true
 				);
@@ -140,8 +128,8 @@ class Admin extends App {
 			$this->get_js_assets_url( 'ai-admin' ),
 			[
 				'elementor-common',
-				'elementor-packages-ui',
-				'elementor-packages-icons',
+				'elementor-v2-ui',
+				'elementor-v2-icons',
 			],
 			ELEMENTOR_VERSION,
 			true
@@ -159,6 +147,8 @@ class Admin extends App {
 		);
 
 		wp_enqueue_script( 'elementor-admin' );
+
+		wp_set_script_translations( 'elementor-admin', 'elementor' );
 
 		$this->print_config();
 	}
@@ -535,7 +525,7 @@ class Admin extends App {
 						$date = date_i18n( _x( 'M jS', 'Dashboard Overview Widget Recently Date', 'elementor' ), get_the_modified_time( 'U' ) );
 						?>
 						<li class="e-overview__post">
-							<a href="<?php echo esc_attr( $document->get_edit_url() ); ?>" class="e-overview__post-link"><?php echo esc_html( get_the_title() ); ?>
+							<a href="<?php echo esc_url( $document->get_edit_url() ); ?>" class="e-overview__post-link"><?php echo esc_html( get_the_title() ); ?>
 								<span class="dashicons dashicons-edit"></span></a>
 							<span><?php echo $date; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>, <?php the_modified_time(); ?></span>
 						</li>
@@ -596,7 +586,7 @@ class Admin extends App {
 			<ul>
 				<?php foreach ( self::static_get_dashboard_overview_widget_footer_actions() as $action_id => $action ) { ?>
 					<li class="e-overview__<?php echo esc_attr( $action_id ); ?>">
-						<a href="<?php echo esc_attr( $action['link'] ); ?>" target="_blank"><?php echo esc_html( $action['title'] ); ?>
+						<a href="<?php echo esc_url( $action['link'] ); ?>" target="_blank"><?php echo esc_html( $action['title'] ); ?>
 							<span class="screen-reader-text"><?php echo esc_html__( '(opens in a new window)', 'elementor' ); ?></span>
 							<span aria-hidden="true" class="dashicons dashicons-external"></span></a>
 					</li>
@@ -626,17 +616,23 @@ class Admin extends App {
 			],
 		];
 
-		$additions_actions = [
-			'go-pro' => [
-				'title' => esc_html__( 'Upgrade', 'elementor' ),
-				'link' => 'https://go.elementor.com/go-pro-wp-overview-widget/',
-			],
-		];
+		$additions_actions = [];
 
-		// Visible to all core users when Elementor Pro is not installed.
-		$additions_actions['find_an_expert'] = [
-			'title' => esc_html__( 'Find an Expert', 'elementor' ),
-			'link' => 'https://go.elementor.com/go-pro-find-an-expert/',
+		if ( User::get_introduction_meta( 'ai_get_started' ) ) {
+			$additions_actions['ai-library'] = [
+				'title' => esc_html__( 'AI Prompts Library', 'elementor' ),
+				'link' => 'https://go.elementor.com/overview-ai-prompts-library/',
+			];
+		} else {
+			$additions_actions['ai'] = [
+				'title' => esc_html__( 'Build Smart with AI', 'elementor' ),
+				'link' => 'https://go.elementor.com/overview-widget-ai/',
+			];
+		}
+
+		$additions_actions['go-pro'] = [
+			'title' => esc_html__( 'Upgrade', 'elementor' ),
+			'link' => 'https://go.elementor.com/go-pro-wp-overview-widget/',
 		];
 
 		/**
@@ -748,6 +744,8 @@ class Admin extends App {
 			ELEMENTOR_VERSION,
 			true
 		);
+
+		wp_set_script_translations( 'elementor-new-template', 'elementor' );
 	}
 
 	/**
@@ -771,6 +769,8 @@ class Admin extends App {
 			ELEMENTOR_VERSION,
 			true
 		);
+
+		wp_set_script_translations( 'elementor-beta-tester', 'elementor' );
 	}
 
 	/**
@@ -891,6 +891,8 @@ class Admin extends App {
 			'settings_url' => Settings::get_url(),
 			'user' => [
 				'introduction' => User::get_introduction_meta(),
+				'restrictions' => Plugin::$instance->role_manager->get_user_restrictions_array(),
+				'is_administrator' => current_user_can( 'manage_options' ),
 			],
 			'beta_tester' => [
 				'beta_tester_signup' => Beta_Testers::BETA_TESTER_SIGNUP,

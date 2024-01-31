@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit88250c9ac33d0206b847cf85a5c7b820
+class ComposerStaticInit009510a0cb14a6de09e9782737046128
 {
     public static $files = array (
         '4ddff123f026bee5ee1f5c415e2d5eb3' => __DIR__ . '/../..' . '/functions.php',
@@ -86,12 +86,6 @@ class ComposerStaticInit88250c9ac33d0206b847cf85a5c7b820
         'WP_Auth0_ErrorLog' => __DIR__ . '/../..' . '/lib/WP_Auth0_ErrorLog.php',
         'WP_Auth0_IdTokenVerifier' => __DIR__ . '/../..' . '/lib/token-verifier/WP_Auth0_IdTokenVerifier.php',
         'WP_Auth0_Import_Settings' => __DIR__ . '/../..' . '/lib/WP_Auth0_Import_Settings.php',
-        'WP_Auth0_InitialSetup' => __DIR__ . '/../..' . '/lib/initial-setup/WP_Auth0_InitialSetup.php',
-        'WP_Auth0_InitialSetup_AdminUser' => __DIR__ . '/../..' . '/lib/initial-setup/WP_Auth0_InitialSetup_AdminUser.php',
-        'WP_Auth0_InitialSetup_ConnectionProfile' => __DIR__ . '/../..' . '/lib/initial-setup/WP_Auth0_InitialSetup_ConnectionProfile.php',
-        'WP_Auth0_InitialSetup_Connections' => __DIR__ . '/../..' . '/lib/initial-setup/WP_Auth0_InitialSetup_Connections.php',
-        'WP_Auth0_InitialSetup_Consent' => __DIR__ . '/../..' . '/lib/initial-setup/WP_Auth0_InitialSetup_Consent.php',
-        'WP_Auth0_InitialSetup_End' => __DIR__ . '/../..' . '/lib/initial-setup/WP_Auth0_InitialSetup_End.php',
         'WP_Auth0_InvalidIdTokenException' => __DIR__ . '/../..' . '/lib/exceptions/WP_Auth0_InvalidIdTokenException.php',
         'WP_Auth0_Ip_Check' => __DIR__ . '/../..' . '/lib/WP_Auth0_Ip_Check.php',
         'WP_Auth0_JwksFetcher' => __DIR__ . '/../..' . '/lib/token-verifier/WP_Auth0_JwksFetcher.php',
@@ -118,9 +112,9 @@ class ComposerStaticInit88250c9ac33d0206b847cf85a5c7b820
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit88250c9ac33d0206b847cf85a5c7b820::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInit88250c9ac33d0206b847cf85a5c7b820::$prefixDirsPsr4;
-            $loader->classMap = ComposerStaticInit88250c9ac33d0206b847cf85a5c7b820::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit009510a0cb14a6de09e9782737046128::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit009510a0cb14a6de09e9782737046128::$prefixDirsPsr4;
+            $loader->classMap = ComposerStaticInit009510a0cb14a6de09e9782737046128::$classMap;
 
         }, null, ClassLoader::class);
     }

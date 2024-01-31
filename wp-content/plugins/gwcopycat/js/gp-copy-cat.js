@@ -81,7 +81,7 @@
 				}
 			);
 
-			$formWrapper.find( '.gwcopy' ).find( 'input, textarea, select, button' ).each(
+			$formWrapper.find( '.gwcopy:not(.gfield--type-list)' ).find( 'input, textarea, select, button' ).each(
 				function () {
 					// `.gfield_chainedselect` as a parent indicates a GFCS field that should not be copied during init
 					// this is due to a race condition where we and GFCS may try to update the next dropdown field in the chain.
@@ -130,6 +130,18 @@
 					}
 				}
 			);
+
+			/*
+			 * Handle list fields separately as they can generate an astronomical amount of inputs that need handled.
+			 * This way, we handle them all at once rather than individually.
+			 */
+			$formWrapper
+				.find('.gfield--type-list.gwcopy')
+				.find('input')
+				.first()
+				.each(function () {
+					self.copyValues(this, self.overwriteOnInit);
+				});
 
 			gform.addAction(
 				'gform_list_post_item_delete',
@@ -305,9 +317,11 @@
 				// some options being over-written due to how GFCS implements its updates.
 				if (sourceGroup.parents( '.gfield_chainedselect' ).length) {
 					sourceGroup.each(function (index, el) {
-						if (elem.id === el.id) {
+						var inputId = el.name.split('_').pop();
+
+						if (inputId === field.source) {
 							var target   = targetGroup.get( index );
-							target.value = elem.value;
+							target.value = el.value;
 							$( target ).trigger( 'change' );
 						}
 					});
@@ -389,7 +403,7 @@
 						}
 
 						// if overwrite is false and a value exists (except for the select field), skip
-						if ( ! isOverwrite && hasValue && ! $( elem ).is( 'select' ) ) {
+						if ( ! isOverwrite && hasValue && ( ! $( elem ).is( 'select' ) || ! $targetElem.is( 'select' ) ) ) {
 							return true;
 						}
 
@@ -670,6 +684,16 @@
 				group       = $field.find( 'input[name^="input"]:not( :button ), select[name^="input"], textarea[name^="input"]' ),
 				isListField = self.isListField( group );
 
+			// Do not copy to conditionally hidden fields.
+			if ( groupType === 'target' ) {
+				var $input = $field.find( ':input:first' )
+				// Note: the second clause exempts Hidden fields as they do not support conditional logic but are hidden
+				// with `display: none` so `gformIsHidden` will always pop a false positive for them.
+				if ( gformIsHidden( $input ) && $input.prop( 'type' ) !== 'hidden' ) {
+					return $();
+				}
+			}
+
 			// Many 3rd parties add additional non-capturable inputs to the List field. Let's filter those out.
 			if (isListField) {
 				group = group.filter( '[name="input_{0}[]"]'.gformFormat( fieldId ) );
@@ -710,9 +734,11 @@
 				group = group.filter( ':checked' );
 			}
 
-			if (groupType == 'source' && group.is( 'select' ) && ! group.parents().hasClass('ginput_container_address')) {
+			// Handle multi-selects
+			if (groupType == 'source' && group.is( 'select' ) && group.attr( 'multiple' )) {
 				group = group.find( ':selected' );
 			}
+
 			/**
 			 * Add/remove inputs from the field group.
 			 *

@@ -16,6 +16,8 @@ class GP_Nested_Forms extends GP_Plugin {
 	public $parent_form_id = null;
 	public $field_type     = 'form';
 
+	private $shortcode_field_values = array();
+
 	public static $nested_forms_markup = array();
 
 	private static $instance = null;
@@ -132,6 +134,8 @@ class GP_Nested_Forms extends GP_Plugin {
 		add_action( 'wp', array( $this, 'handle_core_preview_ajax' ), 9 );
 		// Add support for filtering by Parent Entry ID in Entries List or and plugins like Gravity Flow Form Connector
 		add_filter( 'gform_field_filters', array( $this, 'add_parent_form_filter' ), 10, 2 );
+
+		add_filter( 'gform_form_theme_slug', array( $this, 'override_gf_theme_in_preview' ), 11, 2 );
 
 		// Integrations.
 		add_filter( 'gform_webhooks_request_data', array( $this, 'add_full_child_entry_data_for_webhooks' ), 10, 4 );
@@ -404,6 +408,10 @@ class GP_Nested_Forms extends GP_Plugin {
 			)
 		);
 
+		if ( ! is_array( rgar( $form, 'fields' ) ) ) {
+			return;
+		}
+
 		foreach ( $form['fields'] as $field ) {
 			if ( $field->get_input_type() === 'form' ) {
 				$nested_form = $this->get_nested_form( $field->gpnfForm );
@@ -647,7 +655,14 @@ class GP_Nested_Forms extends GP_Plugin {
 							continue;
 						}
 						?>
-						<option value="<?php echo $form->id; ?>"><?php echo $form->title; ?></option>
+						<option value="<?php echo $form->id; ?>">
+							<?php
+							echo $form->title;
+							if ( ! $form->is_active ) {
+								echo ' (' . __( 'Inactive', 'gp-nested-forms' ) . ')';
+							}
+							?>
+						</option>
 					<?php endforeach; ?>
 				</select>
 
@@ -1904,6 +1919,9 @@ class GP_Nested_Forms extends GP_Plugin {
 		} else {
 			if ( is_array( $product_value ) && ! $product_field->disableQuantity ) {
 				$quantity = rgar( $product_value, "{$product_field->id}.3" );
+			} elseif ( empty( array_filter( $product_value ) ) ) {
+				// product_value is made up of all empty values, it shouldn't be populated with a value of 1.
+				$quantity = 0;
 			} else {
 				$quantity = 1;
 			}
@@ -3016,7 +3034,12 @@ class GP_Nested_Forms extends GP_Plugin {
 				continue;
 			}
 
-			$field      = GFFormsModel::get_field( $form, $input_id );
+			$field = GFFormsModel::get_field( $form, $input_id );
+			// If the Input ID doesn't point to a field on the form, skip it.
+			if ( ! $field ) {
+				continue;
+			}
+
 			$input_name = "input_{$field['id']}";
 
 			if ( $field->get_input_type() != 'fileupload' ) {
@@ -3447,6 +3470,36 @@ class GP_Nested_Forms extends GP_Plugin {
 		}
 
 		return $this->get_index_of_child_entry( $entry ) + 1;
+	}
+
+	/**
+	 * Callback to override the Gravity Forms theme when in the GF preview.
+	 *
+	 * This is needed as GFCommon::is_preview() does not account for the AJAX requests to get the child form markup.
+	 */
+	public function override_gf_theme_in_preview( $slug, $form ) {
+		/*
+		 * If the slug is already gravity-theme, we don't need to change it. We're also only here to change the slug
+		 * in AJAX contexts.
+		 */
+		if ( $slug === 'gravity-theme' || ! wp_doing_ajax() ) {
+			return $slug;
+		}
+
+		// Get the referring URL for the AJAX request to determine if it's a GF preview.
+		$referrer = wp_get_referer();
+
+		// If the referrer is not set, we can't determine if it's a GF preview.
+		if ( ! $referrer ) {
+			return $slug;
+		}
+
+		// If the referrer is not a GF preview, we don't need to change the slug.
+		if ( strpos( $referrer, 'gf_page=preview' ) === false ) {
+			return $slug;
+		}
+
+		return 'gravity-theme';
 	}
 
 }

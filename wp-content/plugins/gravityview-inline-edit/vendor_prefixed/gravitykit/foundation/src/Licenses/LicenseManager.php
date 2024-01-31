@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by __root__ on 07-September-2023 using Strauss.
+ * Modified by __root__ on 02-November-2023 using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 
@@ -168,9 +168,9 @@ class LicenseManager {
 
 		if ( ! empty( $licenses_data ) ) {
 			$licenses_data = json_decode( Encryption::get_instance()->decrypt( $licenses_data ) ?: '', true );
-		}
 
-		$this->is_decryptable = is_array( $licenses_data );
+			$this->is_decryptable = is_array( $licenses_data );
+		}
 
 		$this->licenses_data = $licenses_data ?: [];
 
@@ -702,7 +702,7 @@ class LicenseManager {
 
 		set_site_transient( $cache_id, current_time( 'timestamp' ), $check_timeout );
 
-		LoggerFramework::get_instance()->notice( "Checking hardcoded licenses and pausing for ${check_timeout} seconds." );
+		LoggerFramework::get_instance()->notice( "Checking hardcoded licenses and pausing for {$check_timeout} seconds." );
 
 		try {
 			$checked_licenses = $this->check_licenses( $license_keys_to_check );

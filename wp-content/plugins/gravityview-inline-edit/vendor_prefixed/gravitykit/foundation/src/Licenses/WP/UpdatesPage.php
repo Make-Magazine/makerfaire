@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by __root__ on 07-September-2023 using Strauss.
+ * Modified by __root__ on 02-November-2023 using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 
@@ -99,9 +99,9 @@ class UpdatesPage {
 	<td class="check-column"></td>
 	<td class="plugin-title">
 		<p>
-			<img src="${product['icon']}" alt="${$product_logo_text}">
-			<strong>${product['name']}</strong>
-			${update_description_text}
+			<img src="{$product['icon']}" alt="{$$product_logo_text}">
+			<strong>{$product['name']}</strong>
+			{$update_description_text}
 		</p>
 	</td>
 </tr>
@@ -114,7 +114,7 @@ HTML;
 		add_filter( 'gk/foundation/inline-scripts', function ( $scripts ) use ( $product_html_markup ) {
 			$scripts[]['script'] = <<<JS
 document.addEventListener( 'DOMContentLoaded', function () {
-	const product_rows = ${product_html_markup};
+	const product_rows = {$product_html_markup};
 
 	document.querySelectorAll( '#update-plugins-table td.check-column input' ).forEach( input => {
 		if ( product_rows[ input.value ] === undefined ) {

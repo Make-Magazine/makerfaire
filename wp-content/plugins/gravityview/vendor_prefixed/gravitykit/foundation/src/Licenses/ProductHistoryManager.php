@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by gravityview on 07-September-2023 using Strauss.
+ * Modified by gravityview on 08-December-2023 using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 
@@ -206,6 +206,10 @@ class ProductHistoryManager {
 		] );
 
 		$product = Arr::first( $products, function ( $product ) use ( $data ) {
+			if ( ! isset( $product['path'] ) || ! isset( $product['plugin'] ) ) {
+				return false;
+			}
+
 			return $product['path'] === $data['plugin'];
 		} );
 

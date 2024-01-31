@@ -86,7 +86,7 @@ class GF_Stripe_Payment_Element {
 	 * @since 5.1
 	 *
 	 * @param array $feed The current feed object being processed.
-	 * @param arrar $form  The current form object being processed.
+	 * @param arrar $form The current form object being processed.
 	 *
 	 * @return \Stripe\SetupIntent|\Stripe\PaymentIntent|WP_Error
 	 */
@@ -115,6 +115,17 @@ class GF_Stripe_Payment_Element {
 			$intent_information['capture_method'] = $this->addon->get_payment_element_capture_method( $form, $feed );
 		}
 
+		/**
+		 * Allow the initial payment information used to render the payment element to be overridden.
+		 *
+		 * @param array $intent_information The initial payment information.
+		 * @param array $feed               The feed object currently being processed.
+		 * @param array $form               The form object currently being processed.
+		 *
+		 * @since 5.2
+		 */
+		$intent_information = apply_filters( 'gform_stripe_payment_element_initial_payment_information', $intent_information, $feed, $form );
+
 		return $intent_information;
 	}
 
@@ -132,6 +143,34 @@ class GF_Stripe_Payment_Element {
 	}
 
 	/**
+	 * Validates the nonce for the "Require user to be logged in" form setting.
+	 *
+	 * The check performed by GFFormDisplay::process_form() is disabled via filter in GF_Payment_Element_Submission::process_submission().
+	 *
+	 * @since 5.3
+	 *
+	 * @param int $form_id The ID of the form being processed.
+	 *
+	 * @return void
+	 */
+	private function check_form_requires_login_nonce( $form_id ) {
+		if ( ! method_exists( 'GFCommon', 'form_requires_login' ) ) {
+			return;
+		}
+
+		$form = GFAPI::get_form( $form_id );
+		if ( ! $form || ! GFCommon::form_requires_login( $form ) ) {
+			return;
+		}
+
+		if ( ! is_user_logged_in() ) {
+			wp_die( -1, 401 );
+		}
+
+		check_ajax_referer( "gform_submit_{$form_id}", "_gform_submit_nonce_{$form_id}" );
+	}
+
+	/**
 	 * Handles the AJAX call that starts the payment element checkout process.
 	 *
 	 * This function will validate the submission, create a draft entry and update the payment intent if submission is valid.
@@ -142,17 +181,21 @@ class GF_Stripe_Payment_Element {
 
 		check_ajax_referer( 'gfstripe_validate_form', 'nonce' );
 
-		$form_id        = absint( rgpost( 'form_id' ) );
-		$feed_id        = absint( rgpost( 'feed_id' ) );
-		$payment_method = sanitize_text_field( rgpost( 'payment_method' ) );
-		$payment_method = $payment_method === 'google_pay' || $payment_method === 'apple_pay' ? 'card' : $payment_method;
+		$form_id = absint( rgpost( 'form_id' ) );
+		$feed_id = absint( rgpost( 'feed_id' ) );
+
 		if ( empty( $form_id ) || empty( $feed_id ) ) {
 			wp_send_json_error( 'missing required parameters', 400 );
 		}
 
+		$this->check_form_requires_login_nonce( $form_id );
+
 		if ( ! $this->submission->validate( $form_id ) ) {
 			wp_send_json_success( array( 'is_valid' => false ) );
 		}
+
+		$payment_method = sanitize_text_field( rgpost( 'payment_method' ) );
+		$payment_method = $payment_method === 'google_pay' || $payment_method === 'apple_pay' ? 'card' : $payment_method;
 
 		$order_data                   = $this->submission->extract_order_from_submission( $feed_id, $form_id );
 		$order_data['payment_method'] = $payment_method;
@@ -180,7 +223,7 @@ class GF_Stripe_Payment_Element {
 		$client_secret = null;
 		$invoice_id    = null;
 
-		// If this is a `send_invoice` subscription, we need an invoice and not an intent.
+		// If this is a `send_invoice` subscription, we need an invoice instead of an intent.
 		if ( $subscription && $intent === null ) {
 			$this->payment->invoice_id = $subscription->latest_invoice->id;
 		} else {
@@ -443,7 +486,7 @@ class GF_Stripe_Payment_Element {
 			);
 		}
 
-		$action             = array_merge_recursive( $action, $subscription_data );
+		$action             = array_merge( $action, $subscription_data );
 		$action['entry_id'] = $entry['id'];
 		$action['type']     = $subscription_data['is_success'] ? 'create_subscription' : 'fail_subscription_payment';
 
@@ -511,18 +554,15 @@ class GF_Stripe_Payment_Element {
 		$invoice_id                = rgar( $parameters, 'invoice_id' );
 		$this->payment->intent_id  = $intent_id;
 		$this->payment->invoice_id = $invoice_id;
-		$secret_param              = '';
-
+		$request_client_secret     = '';
 		if ( empty( $intent_id ) && ! empty( $invoice_id ) ) {
-			$secret_param = $invoice_id;
-
 			return $api->get_invoice( $invoice_id );
 		} elseif ( strpos( $intent_id, 'seti' ) === 0 ) {
-			$secret_param = 'setup_intent_client_secret';
-			$intent       = $api->get_setup_intent( $intent_id, array( 'expand' => array( 'payment_method' ) ) );
+			$intent = $api->get_setup_intent( $intent_id, array( 'expand' => array( 'payment_method' ) ) );
+			$request_client_secret = rgget( 'setup_intent_client_secret' );
 		} elseif ( strpos( $intent_id, 'pi' ) === 0 ) {
-			$intent       = $api->get_payment_intent( $intent_id, array( 'expand' => array( 'payment_method' ) ) );
-			$secret_param = 'payment_intent_client_secret';
+			$intent = $api->get_payment_intent( $intent_id, array( 'expand' => array( 'payment_method' ) ) );
+			$request_client_secret = rgget( 'payment_intent_client_secret' );
 		} else {
 			gf_stripe()->log_debug( __METHOD__ . '() - Invalid intent id. Aborting' );
 
@@ -537,7 +577,7 @@ class GF_Stripe_Payment_Element {
 		}
 
 		if (
-			$intent->client_secret !== rgget( $secret_param ) ||
+			$intent->client_secret !== $request_client_secret ||
 			! in_array( $intent->status, array( 'succeeded', 'processing', 'requires_capture' ) )
 		) {
 			gf_stripe()->log_debug( __METHOD__ . '() - Invalid intent client secret or status. Aborting' );

@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by gravityview on 07-September-2023 using Strauss.
+ * Modified by gravityview on 08-December-2023 using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 
@@ -125,14 +125,13 @@ class Framework {
 			return;
 		}
 
-		if ( ! is_admin() ) {
+		if ( ! CoreHelpers::is_cli() && ! is_admin() && ( ! defined( 'DOING_AJAX' ) || ! DOING_AJAX ) ) {
 			return;
 		}
 
 		if ( ! $this->current_user_can( 'view_licenses' ) && ! $this->current_user_can( 'view_products' ) ) {
 			return;
 		}
-
 
 		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_assets' ] );
 

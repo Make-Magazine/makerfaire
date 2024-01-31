@@ -316,7 +316,7 @@ class GPNF_Entry {
 		 * With Partial Entries, child entries are adopted prior to parent form submission. In this case, we associate the
 		 * child entries with the current session via the session hash saved to the parent entry.
 		 */
-		elseif ( gform_get_meta( $parent_entry_id, GPNF_Session::SESSION_HASH_META_KEY ) == $hash ) {
+		elseif ( $hash && gform_get_meta( $parent_entry_id, GPNF_Session::SESSION_HASH_META_KEY ) == $hash ) {
 			$can_user_edit_entry = true;
 		}
 

@@ -66,8 +66,9 @@ class GPNF_Export {
 				 * @param array     $form        The current form object.
 				 * @param \GF_Field $field       The current Nested Form field.
 				 * @param \GF_Field $child_field The current child field.
+				 * @param array     $input       The current input object, if exporting a specific input.
 				 */
-				$header = gf_apply_filters( array( 'gpnf_export_child_field_header', $form['id'], $field->id ), $header, $form, $field, $child_field );
+				$header = gf_apply_filters( array( 'gpnf_export_child_field_header', $form['id'], $field->id ), $header, $form, $field, $child_field, null );
 				$header = array(
 					'id'    => sprintf( '%d.%d', $field->id, $child_field->id ),
 					'label' => $header,
@@ -76,7 +77,24 @@ class GPNF_Export {
 				$headers[] = $header;
 
 				add_filter( "gform_entries_field_header_pre_export_{$form['id']}_{$header['id']}", array( $this, 'set_export_header_label' ), 10, 3 );
+				if ( $child_field->get_entry_inputs() ) {
 
+					$field_label = $header['label'];
+
+					foreach ( $child_field->get_entry_inputs() as $input ) {
+						$header = sprintf( '%s (%s)', $field_label, $input['label'] );
+						$header = gf_apply_filters( array( 'gpnf_export_child_field_header', $form['id'], $field->id, $input['id'] ), $header, $form, $field, $child_field, $input );
+						$header = array(
+							'id'    => sprintf( '%d.%s', $field->id, $input['id'] ),
+							'label' => $header,
+						);
+
+						$headers[] = $header;
+
+						add_filter( "gform_entries_field_header_pre_export_{$form['id']}_{$header['id']}", array( $this, 'set_export_header_label' ), 10, 3 );
+
+					}
+				}
 			}
 
 			array_splice( $form['fields'], $i + 1, 0, $headers );
@@ -126,9 +144,10 @@ class GPNF_Export {
 
 				foreach ( $columns as $column ) {
 					if ( intval( $column ) == $nested_form_field->id && $column != $nested_form_field->id ) {
-						$has_child_field     = true;
-						$id_bits             = explode( '.', $column );
-						$child_form_field_id = array_pop( $id_bits );
+						$has_child_field = true;
+						$id_bits         = explode( '.', $column );
+						// Check for input-specific fields.
+						$child_form_field_id = count( $id_bits ) === 3 ? join( '.', array_slice( $id_bits, -2, 2 ) ) : array_pop( $id_bits );
 						$value               = self::get_nested_field_value( $nested_form_field->gpnfForm, $child_entry, $child_form_field_id );
 						$_line[]             = self::escape_value( $value );
 					} elseif ( ! is_numeric( $column ) ) {
@@ -146,8 +165,21 @@ class GPNF_Export {
 						$_line[] = $value;
 					} else {
 						if ( $export_parent ) {
-							$field   = GFAPI::get_field( $form, $column );
-							$_line[] = self::escape_value( $field->get_value_export( $entry, $column, false, true ) );
+							$field = GFAPI::get_field( $form, $column );
+							$value = $field->get_value_export( $entry, $column, false, true );
+
+							/*
+							 * If the field is a List field and has multiple columns, we will need to take the multi-
+							 * dimensional array into account and push each row into the $_line array which will then
+							 * get imploded using a pipe separator.
+							 */
+							if ( $field->get_input_type() === 'list' && is_array( $value ) && is_array( rgar( $value, 0 ) ) ) {
+								foreach ( $value as $row ) {
+									$_line[] = self::escape_value( $row );
+								}
+							} else {
+								$_line[] = self::escape_value( $value );
+							}
 						} else {
 							$counter = rgar( $field_rows, $column, 1 );
 							while ( $counter > 0 ) {
@@ -235,9 +267,12 @@ class GPNF_Export {
 
 		$value = str_replace( '"', '""', $value );
 
-		if ( strpos( $value, '=' ) === 0 ) {
+		if ( is_string( $value ) && strpos( $value, '=' ) === 0 ) {
 			// Prevent Excel formulas
 			$value = "'" . $value;
+		} elseif ( is_array( $value ) ) {
+			// Convert array to a pipe-separated string
+			$value = implode( '|', $value );
 		}
 
 		return '"' . $value . '"';

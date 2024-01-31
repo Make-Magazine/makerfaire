@@ -317,7 +317,7 @@ class GPNF_Session {
 			return $path;
 		}
 
-		$url = wp_parse_url( $_SERVER['REQUEST_URI'] );
+		$url  = wp_parse_url( $_SERVER['REQUEST_URI'] );
 		$path = $url['path'];
 
 		if ( ! isset( $url['query'] ) ) {

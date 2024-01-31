@@ -1,6 +1,34 @@
 
 # Changelog
 
+## 1.4.74
+
+	- Fixed regression where Copy Cat did not work as expected with [Gravity Forms Chain Selects](https://www.gravityforms.com/add-ons/chained-selects/).
+
+## 1.4.73
+
+	- Fixed an issue where Time fields would not copy correctly.
+
+## 1.4.72
+
+	- Fixed a PHP 8.1 warning.
+
+## 1.4.71
+
+	- Fixed issue with the Name field where if the Prefix input is present, only the Prefix would be copied.
+
+## 1.4.70
+
+	- Fixed an issue where Copy Cat could change user-entered values back to the copied value when navigating pages.
+
+## 1.4.69
+
+	- Fixed issue where Copy Cat would copy to conditionally hidden fields.
+
+## 1.4.68
+
+	- Improved performance of List field copying.
+
 ## 1.4.67
 
 	- Fixed an issue with Address fields not copying correctly.

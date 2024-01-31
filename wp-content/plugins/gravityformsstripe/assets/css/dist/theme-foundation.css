@@ -14,7 +14,7 @@ Theme dependencies:
 - Gravity Forms Theme Foundation: gravity-forms-theme-foundation.css
 
 Gravity Forms is a Rocketgenius project
-copyright 2008-2022 Rocketgenius Inc.
+copyright 2008-2023 Rocketgenius Inc.
 https://www.rocketgenius.com
 this may not be re-distributed without the
 express written permission of the author.
@@ -24,6 +24,17 @@ THIS FILE IS REPLACED DURING AUTO UPGRADE
 AND ANY CHANGES MADE HERE WILL BE OVERWRITTEN.
 
 ----------------------------------------------------------------
+*/
+
+/*
+NOTE:
+Within the var() functions below, when two custom properties are specified, the first
+value is the updated Theme Framework CSS API property and the second value is the
+deprecated CSS API property.
+
+Deprecated version (core): 2.8
+End of support version (core): 2.9
+Deprecated version (stripe): 5.2.2
 */
 
 /* Stripe Card Element */
@@ -46,6 +57,8 @@ AND ANY CHANGES MADE HERE WILL BE OVERWRITTEN.
 .gform-theme--foundation .gfield--type-stripe_creditcard-payment-element .StripeElement--link {
 			-webkit-margin-after: var(--gform-theme-field-row-gap);
 			        margin-block-end: var(--gform-theme-field-row-gap);
+			-webkit-margin-after: var(--gf-field-gap-y, var(--gform-theme-field-row-gap));
+			        margin-block-end: var(--gf-field-gap-y, var(--gform-theme-field-row-gap));
 		}
 
 .gform-theme--foundation .gfield--type-stripe_creditcard-payment-element #stripe-payment-link:not(.visible) {

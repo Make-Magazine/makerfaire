@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by gravityview on 07-September-2023 using Strauss.
+ * Modified by gravityview on 08-December-2023 using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 
@@ -177,7 +177,7 @@ class Framework {
 		}
 
 		foreach ( Arr::pluck( $plugins_settings_data, 'id' ) as $plugin_id ) {
-			$filter = "gk/foundation/settings/${plugin_id}/settings-url";
+			$filter = "gk/foundation/settings/{$plugin_id}/settings-url";
 
 			if ( has_filter( $filter ) ) {
 				continue;
@@ -338,7 +338,7 @@ class Framework {
 		 *
 		 * @param array $settings Plugin settings.
 		 */
-		$settings_data[ $plugin ] = apply_filters( "gk/foundation/settings/${plugin}/save/before", $settings_data[ $plugin ] );
+		$settings_data[ $plugin ] = apply_filters( "gk/foundation/settings/{$plugin}/save/before", $settings_data[ $plugin ] );
 
 		return $this->save_all_settings( $settings_data, $site_id );
 	}
@@ -596,24 +596,24 @@ class Framework {
 			}
 
 			/**
-			 * @filter `gk/foundation/settings/${plugin}/validation/before` Modifies plugin settings object before validation.
+			 * @filter `gk/foundation/settings/{$plugin}/validation/before` Modifies plugin settings object before validation.
 			 *
 			 * @since  1.0.0
 			 *
 			 * @param array $ui_settings Settings.
 			 */
-			$ui_settings = apply_filters( "gk/foundation/settings/${plugin_id}/validation/before", $ui_settings );
+			$ui_settings = apply_filters( "gk/foundation/settings/{$plugin_id}/validation/before", $ui_settings );
 
 			$this->_validator->validate( $plugin_id, $plugin_settings, $ui_settings );
 
 			/**
-			 * @filter `gk/foundation/settings/${plugin}/validation/after` Modifies plugin settings object after validation.
+			 * @filter `gk/foundation/settings/{$plugin}/validation/after` Modifies plugin settings object after validation.
 			 *
 			 * @since  1.0.0
 			 *
 			 * @param array $ui_settings Settings.
 			 */
-			$ui_settings = apply_filters( "gk/foundation/settings/${plugin_id}/validation/after", $ui_settings );
+			$ui_settings = apply_filters( "gk/foundation/settings/{$plugin_id}/validation/after", $ui_settings );
 
 			$this->save_plugin_settings( $plugin_id, $ui_settings );
 

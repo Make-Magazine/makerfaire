@@ -18,7 +18,7 @@
  * @copyright 2023 Katz Web Services, Inc.
  *
  * @license GPL-2.0-or-later
- * Modified by gravityview on 07-September-2023 using Strauss.
+ * Modified by gravityview on 08-December-2023 using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 
@@ -41,7 +41,7 @@ final class Client {
 	 * @var string The current SDK version.
 	 * @since 1.0.0
 	 */
-	const VERSION = '1.6.0';
+	const VERSION = '1.6.1';
 
 	/**
 	 * @var Config
@@ -354,7 +354,10 @@ final class Client {
 
 		if ( is_wp_error( $created ) ) {
 
-			$this->logging->log( sprintf( 'There was an issue creating access (%s): %s', $created->get_error_code(), $created->get_error_message() ), __METHOD__, 'error' );
+			// get_all_error_data() is only available in WP 5.6+
+			$error_data = is_callable( array( $created, 'get_all_error_data' ) ) ? $created->get_all_error_data() : $created->get_error_data();
+
+			$this->logging->log( sprintf( 'There was an issue creating access (%s): %s', $created->get_error_code(), $created->get_error_message() ), __METHOD__, 'error', $error_data );
 
 			$created->add_data( array( 'status_code' => 503 ) );
 

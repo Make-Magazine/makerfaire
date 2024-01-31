@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by __root__ on 07-September-2023 using Strauss.
+ * Modified by __root__ on 02-November-2023 using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 
@@ -125,14 +125,9 @@ class Framework {
 			return;
 		}
 
-		if ( ! is_admin() ) {
-			return;
-		}
-
 		if ( ! $this->current_user_can( 'view_licenses' ) && ! $this->current_user_can( 'view_products' ) ) {
 			return;
 		}
-
 
 		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_assets' ] );
 

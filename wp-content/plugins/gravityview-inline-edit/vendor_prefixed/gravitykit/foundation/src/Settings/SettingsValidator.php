@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by __root__ on 07-September-2023 using Strauss.
+ * Modified by __root__ on 02-November-2023 using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 
@@ -170,7 +170,7 @@ class SettingsValidator {
 				 * @param array  $setting           Original setting.
 				 * @param string $value_to_validate Value to validate.
 				 */
-				do_action( "gk/foundation/settings/${plugin}/validation/${setting['id']}", $setting, $value_to_validate );
+				do_action( "gk/foundation/settings/{$plugin}/validation/{$setting['id']}", $setting, $value_to_validate );
 
 				$validated_settings[ $setting['id'] ] = $value_to_validate;
 

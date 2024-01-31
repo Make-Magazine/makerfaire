@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by gravityview on 07-September-2023 using Strauss.
+ * Modified by gravityview on 08-December-2023 using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 
@@ -34,6 +34,6 @@ class QueryMonitorHandler extends AbstractProcessingHandler {
 	protected function write( array $record ) {
 		$level = strtolower( $record['level_name'] );
 
-		do_action( "qm/${level}", $record['formatted'] );
+		do_action( "qm/{$level}", $record['formatted'] );
 	}
 }

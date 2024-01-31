@@ -9,7 +9,7 @@ class GravityView_Inline_Edit_Field_Number extends GravityView_Inline_Edit_Field
 
 	var $gv_field_name = 'number';
 
-	var $inline_edit_type = 'number';
+	var $inline_edit_type = 'text';
 
 	var $set_value = true;
 

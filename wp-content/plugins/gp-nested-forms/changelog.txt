@@ -1,6 +1,64 @@
 
 # Changelog
 
+## 1.1.48
+
+	- Fixed conditionally hidden product fields in Nested Form field summaries showing `, Qty: 1`.
+
+## 1.1.47
+
+	- Fixed PHP 8.2 deprecation notice.
+
+## 1.1.46
+
+	- Added `$input` as a fifth parameter for the `gpnf_export_child_field_header` to support input-sepcific columns.
+	- Added support for exporting specific inputs.
+
+## 1.1.45
+
+	- Fixed issue where the `gpnf_export_parent_entry_data_on_child_entry_rows` filter would not work if the parent form contains a multi-column List field.
+
+## 1.1.44
+
+	- Updated theme framework styling to work with Gravity Forms 2.8.
+	- Updated remaining references to `String.prototype.format()` to use `String.prototype.gformFormat()` as the former is removed in Gravity Forms 2.8.
+
+## 1.1.43
+
+	- Fixed an issue where notifications were not sent for child forms that have Dropbox feeds.
+
+## 1.1.42
+
+	- Fixed an issue with List field data not exporting if using the `gpnf_export_parent_entry_data_on_child_entry_rows` hook and setting it to `true`.
+
+## 1.1.41
+
+	- Fixed issue where child forms could be unstyled if the default theme is set to Orbital and the form is being previewed with the Gravity Forms preview functionality.
+	- Updated the CSS for Tingle.js to v0.16.0.
+
+## 1.1.40
+
+	- Fixed a PHP 8 warning.
+
+## 1.1.39
+
+	- Updated the "Nested Form" drop down in the form editor to show if forms are inactive.
+	- Fixed issue where deleting child entries when using an Easy Passthrough token would not work in some cases.
+
+## 1.1.38
+
+	- Fixed potential PHP error upon submission of a child form if a submitted input references a field that does not exist.
+	- Fixed an issue where calculations using GPNF merge tags such as `{Field:1:total}` could sometimes trigger a JavaScript error.
+
+## 1.1.37
+
+	- Updated the class name to disable responsive table styling. It is now `gpnf-disable-responsive-table` rather than `gpnf-disable-table` as the latter did not make sense. 😄
+
+## 1.1.36
+
+	- Added ability to disable responsive table styling by adding `gpnf-disable-table` as a class to parent forms.
+	- Fixed potential PHP warning.
+
 ## 1.1.35
 
 	- Updated sessions to be page-specific.
