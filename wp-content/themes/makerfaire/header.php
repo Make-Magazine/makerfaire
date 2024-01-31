@@ -162,6 +162,8 @@
                 $parent_slug = $post_data->post_name;
                 if($parent_slug=='bay-area'){
                     $secondary_nav='bay_area_secondary_nav';
+                }elseif($parent_slug=='yearbook'){
+                    $secondary_nav='yearbook_secondary_nav';
                 }
             } 
 
