@@ -4,7 +4,6 @@ jQuery(document).ready(function () {
   var currentDate = new Date();
   var oneYearAgo = new Date(new Date().setFullYear(new Date().getFullYear() - 1));
   var firstLoaded = true; // we only want to sort by date on the first load, otherwise keep their selected sorting order
-
   var typeFilters = ["Featured", "Flagship", "Mini", "School"];
   Vue.use(VueTables.ClientTable);
   Vue.use(VueTables.Event);
@@ -26,11 +25,9 @@ jQuery(document).ready(function () {
         templates: {
           venue_address_city: function venue_address_city(h, row, index) {
             var text = row.venue_address_city;
-
             if (row.venue_address_state) {
               text += ', ' + row.venue_address_state;
             }
-
             return text;
           }
         },
@@ -100,25 +97,19 @@ jQuery(document).ready(function () {
     },
     created: function created() {
       var _self = this;
-
       axios.get('/query/?type=map').then(function (response) {
         _self.$refs.loadingIndicator.classList.add("hidden");
-
-        _self.outputData = response.data.Locations; // convert start dt to numeric string for ease of ordering
-
+        _self.outputData = response.data.Locations;
+        // convert start dt to numeric string for ease of ordering
         Object.keys(_self.outputData).forEach(function (key) {
           _self.outputData[key].event_start_dt = Date.parse(_self.outputData[key].event_start_dt);
         });
-
-        _self.detectBrowser(); // _self.getLocation();
-
-
+        _self.detectBrowser();
+        // _self.getLocation();
         _self.initMap();
       })["catch"](function (error) {
         console.log(error);
-
         _self.$refs.loadingIndicator.classList.add("hidden");
-
         _self.$refs.errorIndicator.classList.remove("hidden");
       });
     },
@@ -128,8 +119,7 @@ jQuery(document).ready(function () {
     methods: {
       detectBrowser: function detectBrowser() {
         var useragent = navigator.userAgent,
-            mapdiv = this.$refs.map;
-
+          mapdiv = this.$refs.map;
         if (useragent.indexOf('iPhone') != -1 || useragent.indexOf('Android') != -1) {
           mapdiv.style.width = '100%';
           mapdiv.style.height = '300px';
@@ -139,23 +129,21 @@ jQuery(document).ready(function () {
         }
       },
       initMap: function initMap() {
-        this.$refs.mapTableWrapper.classList.remove("map-table-hidden"); // on the first load, by date, otherwise, remember user choices
-
+        this.$refs.mapTableWrapper.classList.remove("map-table-hidden");
+        // on the first load, by date, otherwise, remember user choices
         if (firstLoaded == true) {
           this.$refs.directoryGrid.setOrder('event_start_dt', 'asc');
-        } // filter out the past faires
-
-
+        }
+        // filter out the past faires
         this.tableData = this.outputData.filter(function (values) {
           var endDate = new Date(values.event_end_dt);
           endDate.setDate(endDate.getDate() + 1);
-
           if (endDate > currentDate) {
             return values;
           }
-        }); // this.filteredData = this.tableData; // filtered Data is used to draw the map
+        });
+        // this.filteredData = this.tableData; // filtered Data is used to draw the map
         // Run the type filter at the start
-
         this.filteredData = this.tableData.filter(function (values) {
           if (typeFilters.includes(values.category)) {
             return values;
@@ -288,8 +276,8 @@ jQuery(document).ready(function () {
           }
         };
         this.map = new google.maps.Map(element, options);
-        this.geocoder = new google.maps.Geocoder(); // this.map.addListener('zoom_changed', function(){ // this is how to add an event listener });
-
+        this.geocoder = new google.maps.Geocoder();
+        // this.map.addListener('zoom_changed', function(){ // this is how to add an event listener });
         this.map.mapTypes.set('styled_map', styledMapType);
         this.map.setMapTypeId('styled_map');
         this.addMarkers();
@@ -302,20 +290,17 @@ jQuery(document).ready(function () {
             return values;
           }
         });
-        this.addMarkers(); // now get zooming on our location
-
+        this.addMarkers();
+        // now get zooming on our location
         var infoWindow = new google.maps.InfoWindow(),
-            _self = this;
-
+          _self = this;
         if (navigator.geolocation) {
           navigator.geolocation.getCurrentPosition(function (position) {
             var pos = {
               lat: position.coords.latitude,
               lng: position.coords.longitude
             };
-
             _self.map.setCenter(pos);
-
             _self.map.setZoom(8);
           }, function () {
             _self.handleLocationError(true, infoWindow, _self.map.getCenter());
@@ -328,44 +313,38 @@ jQuery(document).ready(function () {
       codeAddress: function codeAddress(code) {
         // let's get zooming
         var _self = this;
-
         this.geocoder.geocode({
           'address': code
         }, function (results, status) {
           if (results.length) {
             // check's if the zipcode is valid, otherwise there's nothing to do here
             _self.map.setCenter(results[0].geometry.location);
-
             _self.map.setZoom(7);
-
             if (_self.filteredData.length <= 0) {
               // if there's no results but it's a valid zipcode, show what's around
               _self.filteredData = _self.tableData.filter(function (values) {
                 console.log(values.category);
-
                 if (typeFilters.includes(values.category)) {
                   return values;
                 }
               });
-
               _self.addMarkers();
             }
           }
         });
       },
       handleLocationError: function handleLocationError(browserHasGeolocation, infoWindow, pos) {
-        console.error('User location check failed'); // infoWindow.setPosition(pos);
+        console.error('User location check failed');
+        // infoWindow.setPosition(pos);
         // infoWindow.setContent(browserHasGeolocation ? 'Error: The Geolocation service failed.' : 'Error: Your browser doesn\'t support geolocation.');
         // infoWindow.open(this.map);
       },
       // search filter
       searchFilter: function searchFilter(data) {
         var searchString = this.filterVal.toLowerCase();
-
         if (validateZipCode(searchString) == true) {
           this.codeAddress(searchString);
         }
-
         this.filteredData = this.tableData.filter(function (values) {
           // when search filter is set off, also update the map locations here
           if (values.faire_name.toLowerCase().indexOf(searchString) !== -1 || values.venue_address_city.toLowerCase().indexOf(searchString) !== -1 || values.venue_address_country.toLowerCase().indexOf(searchString) !== -1 || values.venue_address_state.toLowerCase().indexOf(searchString) !== -1 || values.venue_address_postal_code.toLowerCase().indexOf(searchString) !== -1 || values.event_dt.toLowerCase().indexOf(searchString) !== -1) {
@@ -380,13 +359,11 @@ jQuery(document).ready(function () {
       // past faires filter
       psFilter: function psFilter(data) {
         var searchString = this.filterVal.toLowerCase(); // remember the search string
-
         if (this.pastFaires == true) {
           this.buttonMessage = "Show Past Faires";
           this.tableData = this.outputData.filter(function (values) {
             var endDate = new Date(values.event_end_dt);
             endDate.setDate(endDate.getDate() + 1);
-
             if (endDate > currentDate) {
               return values;
             }
@@ -396,15 +373,13 @@ jQuery(document).ready(function () {
           this.tableData = this.outputData.filter(function (values) {
             var endDate = new Date(values.event_end_dt);
             endDate.setDate(endDate.getDate() + 1);
-
             if (endDate > oneYearAgo) {
               // this shows 365 days of faires, to show more just return all values
               return values;
             }
           });
-        } // there's gotta be a better way than just filtering by type and search terms again
-
-
+        }
+        // there's gotta be a better way than just filtering by type and search terms again
         this.filteredData = this.tableData.filter(function (values) {
           if (values.faire_name.toLowerCase().indexOf(searchString) !== -1 || values.venue_address_city.toLowerCase().indexOf(searchString) !== -1 || values.venue_address_country.toLowerCase().indexOf(searchString) !== -1 || values.venue_address_state.toLowerCase().indexOf(searchString) !== -1 || values.venue_address_postal_code.toLowerCase().indexOf(searchString) !== -1 || values.event_dt.toLowerCase().indexOf(searchString) !== -1) {
             if (typeFilters.includes(values.category)) {
@@ -418,13 +393,11 @@ jQuery(document).ready(function () {
       typeFilter: function typeFilter(data) {
         var searchString = this.filterVal.toLowerCase(); // always remember the search string
         // add to type filter array if checked on click, remove if unchecked
-
         if ("undefined" === typeof data.originalTarget) {
           // for webkit
           if (data.srcElement.checked == true) {
             typeFilters.push(data.srcElement._value);
           }
-
           if (data.srcElement.checked == false) {
             var index = typeFilters.indexOf(data.srcElement._value);
             if (index !== -1) typeFilters.splice(index, 1);
@@ -434,14 +407,12 @@ jQuery(document).ready(function () {
           if (data.originalTarget.checked == true) {
             typeFilters.push(data.originalTarget._value);
           }
-
           if (data.originalTarget.checked == false) {
             ;
             var index = typeFilters.indexOf(data.originalTarget._value);
             if (index !== -1) typeFilters.splice(index, 1);
           }
         }
-
         this.filteredData = this.tableData.filter(function (values) {
           // soo.... we really shouldn't have to match both filters each time we run one...
           if (values.faire_name.toLowerCase().indexOf(searchString) !== -1 || values.venue_address_city.toLowerCase().indexOf(searchString) !== -1 || values.venue_address_country.toLowerCase().indexOf(searchString) !== -1 || values.venue_address_state.toLowerCase().indexOf(searchString) !== -1 || values.venue_address_postal_code.toLowerCase().indexOf(searchString) !== -1 || values.event_dt.toLowerCase().indexOf(searchString) !== -1) {
@@ -450,11 +421,9 @@ jQuery(document).ready(function () {
             }
           }
         });
-
         if (validateZipCode(searchString) == true) {
           this.codeAddress(searchString);
         }
-
         this.addMarkers();
       },
       filterOverride: function filterOverride(data) {
@@ -474,13 +443,10 @@ jQuery(document).ready(function () {
         for (var i = 0; i < this.markers.length; i++) {
           this.markers[i].setMap(null);
         }
-
         this.markers = new Array();
-
         if (this.markerCluster) {
           this.markerCluster.clearMarkers();
         }
-
         var gMarkerIcon = {
           path: google.maps.SymbolPath.CIRCLE,
           scale: 6,
@@ -493,20 +459,16 @@ jQuery(document).ready(function () {
             case 'Flagship':
               gMarkerIcon.fillColor = '#F5A623';
               break;
-
             case 'Featured':
               gMarkerIcon.fillColor = '#D42410';
               break;
-
             case 'School':
               gMarkerIcon.fillColor = '#005e9a';
               break;
-
             default:
               gMarkerIcon.fillColor = '#67D0F7';
-          } //this math random business keeps faires that were in the same location year after year from being on top of each other and not individually clickable
-
-
+          }
+          //this math random business keeps faires that were in the same location year after year from being on top of each other and not individually clickable
           var latLng = {
             lat: parseFloat(location.lat) + Math.random() / 1000,
             lng: parseFloat(location.lng) + Math.random() / 1000
@@ -524,8 +486,8 @@ jQuery(document).ready(function () {
             myWindow.open(this.map, marker);
           });
           return marker;
-        }); //Add a marker clusterer to manage the markers.
-
+        });
+        //Add a marker clusterer to manage the markers.
         this.markerCluster = new MarkerClusterer(this.map, this.markers, {
           imagePath: '/wp-content/themes/makerfaire/js/mf-map/markers/m',
           gridSize: 40
@@ -534,8 +496,8 @@ jQuery(document).ready(function () {
     }
   });
   jQuery("label[for=Mini] span").html("Community");
-  jQuery("label[for=Flagship] span").html("Global"); //jQuery("input#School").click(); // uncheck Schools to start with
-
+  jQuery("label[for=Flagship] span").html("Global");
+  //jQuery("input#School").click(); // uncheck Schools to start with
   jQuery("#pastFaires").on("click", function () {
     jQuery('html, body').animate({
       scrollTop: 0
@@ -555,7 +517,6 @@ function formatDate(date) {
   var year = theDate.getFullYear();
   return monthNames[monthIndex] + ', ' + day + ' ' + year;
 }
-
 function validateZipCode(elementValue) {
   var zipCodePattern = /^\d{5}$|^\d{5}-\d{4}$/;
   return zipCodePattern.test(elementValue);

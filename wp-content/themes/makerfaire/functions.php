@@ -258,9 +258,7 @@ function angular_scripts() {
         is_page_template('page-maker-directory.php')) {
         $my_theme = wp_get_theme();
         $my_version = $my_theme->get('Version');
-
         wp_enqueue_script('angularjs', get_stylesheet_directory_uri() . '/js/built-angular-libs.min.js', array('built-libs'), $my_version, true);
-
         if (is_page('ribbons')) {
             wp_enqueue_script('angular-scripts', get_stylesheet_directory_uri() . '/js/angular/ribbonApp.js', array('angularjs'), $my_version, true);
             //localize
@@ -272,8 +270,6 @@ function angular_scripts() {
         } elseif (is_page_template('page-meet-the-makers.php') || is_page_template('page-maker-directory.php')) {
             //angular ui-bootstrap style
             wp_enqueue_style('ui-bootstrap', get_stylesheet_directory_uri() . '/css/angular/angular-ui-bootstrap/ui-bootstrap-csp.css', array(), null, 'all');
-            wp_enqueue_style('owl-carousel', get_template_directory_uri() . '/css/owl.carousel.css', array(), null, 'all');
-            wp_enqueue_script('carousel', get_stylesheet_directory_uri() . '/js/scripts/owl.carousel.js', array(), false, true);
         }
     }
 }
