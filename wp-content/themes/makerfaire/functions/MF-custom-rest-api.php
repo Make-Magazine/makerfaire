@@ -230,11 +230,23 @@ function getMakerDirEntries($years) {
 
 function getMTMentries($formIDs = '', $faireID='', $years='') {        
     global $wpdb;
-    
+    $data['entity'] = array();  
+
     $formIDarr = array_map('intval', explode("-", $formIDs));
     
-    $data['entity'] = array();    
+    //find if the show location switch is turned on
+    $showLoc = false;
+
+    /*  For Bay Area 23 we forced everyone to not show location
     
+    $query = "select show_sched from wp_mf_faire where faire = '" . $faireID . "'";
+
+    $show_sched = $wpdb->get_var($query);
+    
+    //var_dump($result);
+    if ($show_sched === "1")
+        $showLoc = true;
+      */
     //find all active entries for selected forms
     $query = "SELECT  entry.id                         AS entry_id, 
                      (SELECT meta_value FROM   wp_gf_entry_meta WHERE  meta_key = '303' AND entry_id = entry.id) AS entry_status, 
@@ -339,6 +351,7 @@ function getMTMentries($formIDs = '', $faireID='', $years='') {
             }                             
 
             //don't return location information if the show location isn't set
+
             //$location = ($showLoc?($result->area==NULL?'':$result->area):'');
             $locations = array();
             if ($showLoc && $result->area != NULL) {
@@ -350,6 +363,7 @@ function getMTMentries($formIDs = '', $faireID='', $years='') {
 
             if($locations==NULL)
                 $locations = '';
+
             $data['entity'][] = array(
                 'id' => $result->entry_id,
                 'link' => '/maker/entry/'.$result->entry_id,
