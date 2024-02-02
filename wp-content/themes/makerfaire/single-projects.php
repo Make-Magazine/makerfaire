@@ -32,7 +32,8 @@ if(isset($faireData["faire_post"])){
 
 $producerInfo    = get_field("producer_section", $faire_id);
 $faire_badge     = isset($producerInfo['circular_faire_logo']['url']) ? $producerInfo['circular_faire_logo']['url'] : get_stylesheet_directory_uri()."/images/default-badge.png";
-$project_info_bg = isset($faire_badge) ? "background-image:url(" . $faire_badge . ");" : "";
+//$project_info_bg = isset($faire_badge) ? "background-image:url(" . $faire_badge . ");" : "";
+$project_info_bg = '';
 
 $topSection 	 = get_field('top_section', $faire_id);
 $faire_logo 	 = isset($topSection['horizontal_faire_logo']['url']) ? $topSection['horizontal_faire_logo']['url'] : ''; 
