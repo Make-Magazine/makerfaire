@@ -19,7 +19,7 @@ function make_modal_builder( $atts, $content = null ) {
 
   $number = mt_rand();
   $output = '<a class="btn  ' . esc_attr( $btn_class ) . '" data-toggle="modal" href="#modal-' . $number . '">' . esc_html( $launch ) . '</a>';
-  $output .= '<div id="modal-' . $number . '" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">';
+  $output .= '<div id="modal-' . $number . '" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">';
   $output .= '  <div class="modal-header">';
   $output .= '    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>';
   $output .= '    <h3>' . esc_html( $title ) . '</h3>';

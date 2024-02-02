@@ -55,7 +55,7 @@ function do_featured_presenter_grid($args) {
     // $content .= '<div class="row">';
     // $content .= '<div class="col-xs-12 grid-inner">';
     foreach ($args as $key => $value) {
-        $content .= '<div class="grid-item" style="background:url(' . $value['pres_image'] . ');">';
+        $content .= '<div class="grid-item" style="background-image:url(' . $value['pres_image'] . ');">';
 
         $content .= '  <div class="grid-item-title-block">';
         $content .= '     <h3>' . $value['pres_name'] . '</h3>';

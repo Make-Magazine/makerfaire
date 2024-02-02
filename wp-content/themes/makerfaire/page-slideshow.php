@@ -75,43 +75,24 @@ $slug = $par_post->post_name;
 									<h1>Maker Faire Sponsors</h1>
 								</div>
 							</div>
-							<div class="col-xs-12 col-sm-4">
-								<div class="open-close">
-									<a class="opener" href="#"><span class="selected">Silversmith</span><i class="icon-arrow-right"></i></a>
-									<div class="slide">
-										<ul class="tabset">
-			                                <li class="active"><a href="#tab2">Goldsmith</a></li>
-											<li><a href="#tab1">Silversmith</a></li>
-											<li><a href="#tab3">Coppersmith</a></li>
-			                                <!-- <li><a href="#tab4">Media</a></li>
-			                                <li><a href="#tab4">Presenting</a></li> -->
-										</ul>
-									</div>
-								</div>
+							<div class="col-xs-12 col-sm-4 sponsor-select-wrapper">
+								<select name="sponsorLevel" id="sponsorLevel">
+									<option value="0" selected="selected">Goldsmith</option>
+									<option value="1">Silversmith</option>
+									<option value="2">Coppersmith</option>
+								</select>
 							</div>
 						</div>
 					</div>
-					<div class="sponsor-carousel">
-						<div class="mask">
-							<div class="slideset">
-	                            <div class="slide">
-	                                <?php echo mf_sponsor_list('Goldsmith Sponsor',$slug) ?>
-	                            </div>
-							    <div class="slide">
-	                                    <?php echo mf_sponsor_list('Silversmith Sponsor',$slug) ?>
-						        </div>
-							    <div class="slide">
-						              <?php echo mf_sponsor_list('Coppersmith Sponsor',$slug) ?>	
-							    </div>
-	                            <!--
-	                            <div class="slide">
-						              <?php // echo mf_sponsor_list('Media Sponsor') ?>
-							    </div>
-	                            <div class="slide">
-						              <?php // echo mf_sponsor_list('Presenting Sponsor') ?>
-							    </div>
-							    -->
-							</div>
+					<div class="owl-carousel">
+						<div class="item" data-level="Goldsmith">
+							<?php echo mf_sponsor_list('Goldsmith Sponsor',$slug) ?>
+						</div>
+						<div class="item" data-level="Silversmith">
+							<?php echo mf_sponsor_list('Silversmith Sponsor',$slug) ?>
+						</div>
+						<div class="item" data-level="Coppersmith">
+							<?php echo mf_sponsor_list('Coppersmith Sponsor',$slug) ?>	
 						</div>
 					</div>
 					<div class"col-xs-12 visible-xs-12">
@@ -171,8 +152,30 @@ $slug = $par_post->post_name;
 	<!--Container-->
 	
 <script type="text/javascript">
-	$('.carousel').carousel({
-	  interval: 5000
-	})
+jQuery(document).ready(function() { 
+	var owl = jQuery('.owl-carousel');
+	jQuery("#sponsorLevel").select2({
+		minimumResultsForSearch: -1,
+	});
+	jQuery('#sponsorLevel').on('select2:select', function (e) {
+		var data = e.params.data;
+		owl.trigger('to.owl.carousel', data.id)
+	});
+	owl.owlCarousel({
+		items: 1,
+		loop:true,
+		autoplay: true,
+		autoplayTimeout: 6000,  
+		slideSpeed: 600,
+    	paginationSpeed: 500,
+		margin:0,
+		nav:false,
+		dots:false,
+		autoHeight: true,
+		onTranslated: function(e) {
+			jQuery("#select2-sponsorLevel-container").text(jQuery(".owl-item.active .item").attr("data-level"));
+		},
+	});
+});
 </script>
 <?php get_footer(); ?>
