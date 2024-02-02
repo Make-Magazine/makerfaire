@@ -374,3 +374,46 @@
     font-size: 16px;
   }
 }
+
+.sponsor-select-wrapper {
+  .select2-container {
+    width: 200px !important;
+    .select2-selection {
+      border: solid 1px transparent;
+      width: 200px;
+      height: 32px;
+      &[aria-owns="select2-sponsorLevel-results"] {
+        border: solid 1px #ccc;
+      }
+      #select2-sponsorLevel-container {
+        border: 0px;
+        color: #1989c7;
+        font-size: 24px;
+        &:hover {
+          color: #01afee;
+        }
+      }
+    }
+  }
+  .select2-container--default.select2-container--open .select2-selection--single .select2-selection__arrow b {
+    border-color: transparent transparent #1989c7;
+  }
+  .select2-container--default .select2-selection--single .select2-selection__arrow b {
+    border-color: #1989c7 transparent transparent;
+  }
+  
+  
+}
+
+.owl-carousel {
+  ul {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 10px;
+    li {
+      max-width: 175px;
+    }
+  }
+}
