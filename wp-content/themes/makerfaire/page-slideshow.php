@@ -166,7 +166,6 @@ jQuery(document).ready(function() {
 		loop:true,
 		autoplay: true,
 		autoplayTimeout: 6000,  
-    	animateIn: 'flipInX',
 		slideSpeed: 600,
     	paginationSpeed: 500,
 		margin:0,
