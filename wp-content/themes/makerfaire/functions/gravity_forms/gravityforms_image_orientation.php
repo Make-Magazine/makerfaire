@@ -29,7 +29,7 @@ function fix_image_orientation( $entry, $form ) {
       if(isset($entry[$field['id']])) {
         $image = $entry[$field['id']];
 
-        $exif = @read_exif_data( $image );
+        $exif = @exif_read_data( $image );
 
         //if image is jpg, check the image orientation and correct if necessary
         if ($exif && isset($exif['MimeType']) && $exif['MimeType'] == 'image/jpeg' ) {
