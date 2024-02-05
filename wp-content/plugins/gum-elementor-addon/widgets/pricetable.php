@@ -141,6 +141,9 @@ class Month_Anual_Pricetable_Regular_Widget extends Widget_Base {
       [
         'label' => esc_html__( 'Title', 'gum-elementor-addon' ),
         'type' => Controls_Manager::TEXT,
+        'ai' => [
+          'active' => false,
+        ],
         'placeholder' => esc_html__( 'Enter package name', 'gum-elementor-addon' ),
       ]
     );
@@ -194,6 +197,9 @@ class Month_Anual_Pricetable_Regular_Widget extends Widget_Base {
       [
         'label' => esc_html__( 'Badge', 'gum-elementor-addon' ),
         'type' => Controls_Manager::TEXT,
+        'ai' => [
+          'active' => false,
+        ],
         'description' => esc_html__( 'Add badge on table. Leave blank if not use it.', 'gum-elementor-addon' ),
       ]
     );
@@ -288,6 +294,9 @@ class Month_Anual_Pricetable_Regular_Widget extends Widget_Base {
         'condition' => [
           'period' => 'yes',
         ],
+        'ai' => [
+          'active' => false,
+        ],
       ]
     );
 
@@ -312,6 +321,9 @@ class Month_Anual_Pricetable_Regular_Widget extends Widget_Base {
         'label' => esc_html__( 'Period', 'gum-elementor-addon' ),
         'type' => Controls_Manager::TEXT,
         'default' => esc_html__( 'Yearly', 'gum-elementor-addon' ),
+        'ai' => [
+          'active' => false,
+        ],
         'condition' => [
           'period' => 'yes',
           'double_period' => 'yes'
@@ -368,12 +380,22 @@ class Month_Anual_Pricetable_Regular_Widget extends Widget_Base {
       ]
     );
 
-
+    $this->add_control(
+      'show_list',
+      [
+        'label' => esc_html__( 'Price Items', 'gum-elementor-addon' ),
+        'type' => Controls_Manager::SWITCHER,
+        'label_off' => esc_html__( 'Hide', 'gum-elementor-addon' ),
+        'label_on' => esc_html__( 'Show', 'gum-elementor-addon' ),
+        'default' => 'yes',
+        'style_transfer' => true,
+      ]
+    );
 
     $this->add_control(
       'lists',
       [
-        'label' => esc_html__( 'Price Items', 'gum-elementor-addon' ),
+        'label' => esc_html__( 'Items', 'gum-elementor-addon' ),
         'type' => Controls_Manager::REPEATER,
         'fields' => $repeater->get_controls(),
         'default' => [
@@ -388,6 +410,7 @@ class Month_Anual_Pricetable_Regular_Widget extends Widget_Base {
           ],
         ],
         'title_field' => '{{{ list_content }}}',
+        'condition' => ['show_list[value]' => 'yes'],
       ]
     );
 
@@ -436,6 +459,9 @@ class Month_Anual_Pricetable_Regular_Widget extends Widget_Base {
         'type' => Controls_Manager::TEXT,
         'dynamic' => [
           'active' => true,
+        ],
+        'ai' => [
+          'active' => false,
         ],
         'default' => esc_html__( 'Click here', 'gum-elementor-addon' ),
         'condition' => ['show_button[value]' => 'yes']
@@ -1172,8 +1198,18 @@ class Month_Anual_Pricetable_Regular_Widget extends Widget_Base {
       [
         'label' => esc_html__( 'Price Items', 'gum-elementor-addon' ),
         'tab'   => Controls_Manager::TAB_STYLE,
+        'condition' => ['show_list[value]' => 'yes'],
       ]
     );    
+
+
+    $this->add_group_control(
+      Group_Control_Typography::get_type(),
+      [
+        'name' => 'typography_list_title',
+        'selector' => '{{WRAPPER}} .price-features li',
+      ]
+    );
 
 
     $this->add_control(
@@ -1201,19 +1237,7 @@ class Month_Anual_Pricetable_Regular_Widget extends Widget_Base {
         ],
       ]
     );
-
-    $this->add_responsive_control(
-      'table_list_padding',
-      [
-        'label' => esc_html__( 'Padding', 'gum-elementor-addon' ),
-        'type' => Controls_Manager::DIMENSIONS,
-        'size_units' => [ 'px', 'em', '%' ],
-        'selectors' => [
-          '{{WRAPPER}} .price-block-inner .price-features' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
-        ],
-      ]
-    );
-
+    
     $this->add_responsive_control(
       'table_list_align',
       [
@@ -1265,14 +1289,38 @@ class Month_Anual_Pricetable_Regular_Widget extends Widget_Base {
       ]
     );
 
-    $this->add_group_control(
-      Group_Control_Typography::get_type(),
+
+    $this->add_responsive_control(
+      'table_list_padding',
       [
-        'name' => 'typography_list_title',
-        'selector' => '{{WRAPPER}} .price-features li',
+        'label' => esc_html__( 'Padding', 'gum-elementor-addon' ),
+        'type' => Controls_Manager::DIMENSIONS,
+        'size_units' => [ 'px', 'em', '%' ],
+        'selectors' => [
+          '{{WRAPPER}} .price-block-inner .price-features' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+        ],
       ]
     );
 
+    $this->add_group_control(
+      Group_Control_Border::get_type(),
+      [
+        'name' => 'table_list_border',
+        'selector' => '{{WRAPPER}} .price-block-inner .features',
+      ]
+    );
+
+    $this->add_control(
+      'table_list_radius',
+      [
+        'label' => esc_html__( 'Border Radius', 'month-annual-pricetable-elementor' ),
+        'type' => Controls_Manager::DIMENSIONS,
+        'size_units' => [ 'px', '%' ],
+        'selectors' => [
+          '{{WRAPPER}} .price-block-inner .features' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+        ]
+      ]
+    );
 
 
     $this->start_controls_tabs( 'table_list_styles' );
@@ -1310,6 +1358,29 @@ class Month_Anual_Pricetable_Regular_Widget extends Widget_Base {
       ]
     );
 
+    $this->add_control(
+      'list_odd_bgcolor',
+      [
+        'label' => esc_html__( 'Odd Row Background', 'gum-elementor-addon' ),
+        'type' =>  Controls_Manager::COLOR,
+        'default' => '',
+        'selectors' => [
+          '{{WRAPPER}} .price-features li:nth-child(2n)' => 'background-color: {{VALUE}};',
+        ]
+      ]
+    );
+
+    $this->add_control(
+      'list_even_bgcolor',
+      [
+        'label' => esc_html__( 'Even Row Background', 'gum-elementor-addon' ),
+        'type' =>  Controls_Manager::COLOR,
+        'default' => '',
+        'selectors' => [
+          '{{WRAPPER}} .price-features li:nth-child(2n+1)' => 'background-color: {{VALUE}};',
+        ]
+      ]
+    );
 
     $this->end_controls_tab();
     $this->start_controls_tab(
@@ -1334,6 +1405,19 @@ class Month_Anual_Pricetable_Regular_Widget extends Widget_Base {
 
 
     $this->add_control(
+      'list_hover_icon_color',
+      [
+        'label' => esc_html__( 'Icon Color', 'gum-elementor-addon' ),
+        'type' =>  Controls_Manager::COLOR,
+        'default' => '',
+        'selectors' => [
+          '{{WRAPPER}} .price-block-inner:hover .price-features li i' => 'color: {{VALUE}};',
+        ]
+      ]
+    );
+
+
+    $this->add_control(
       'list_hover_bgcolor',
       [
         'label' => esc_html__( 'Background', 'gum-elementor-addon' ),
@@ -1345,14 +1429,27 @@ class Month_Anual_Pricetable_Regular_Widget extends Widget_Base {
       ]
     );
 
+
     $this->add_control(
-      'list_hover_icon_color',
+      'list_odd_hover_bgcolor',
       [
-        'label' => esc_html__( 'Icon Color', 'gum-elementor-addon' ),
+        'label' => esc_html__( 'Odd Row Background', 'gum-elementor-addon' ),
         'type' =>  Controls_Manager::COLOR,
         'default' => '',
         'selectors' => [
-          '{{WRAPPER}} .price-block-inner:hover .price-features li i' => 'color: {{VALUE}};',
+          '{{WRAPPER}} .price-block-inner:hover .price-features li:nth-child(2n)' => 'background-color: {{VALUE}};',
+        ]
+      ]
+    );
+
+    $this->add_control(
+      'list_even_hover_bgcolor',
+      [
+        'label' => esc_html__( 'Even Row Background', 'gum-elementor-addon' ),
+        'type' =>  Controls_Manager::COLOR,
+        'default' => '',
+        'selectors' => [
+          '{{WRAPPER}} .price-block-inner:hover .price-features li:nth-child(2n+1)' => 'background-color: {{VALUE}};',
         ]
       ]
     );
@@ -1503,11 +1600,11 @@ class Month_Anual_Pricetable_Regular_Widget extends Widget_Base {
           ],
         ],
         'default' => [
-          'size' => 10,
+          'size' => 15,
           'unit' => 'px'
         ],
         'selectors' => [
-          '{{WRAPPER}} .price-block-inner .price-features > li' => 'padding-left: {{SIZE}}{{UNIT}};padding-right: {{SIZE}}{{UNIT}};',
+          '{{WRAPPER}} .price-block-inner .price-features > li' => 'margin-left: {{SIZE}}{{UNIT}};margin-right: {{SIZE}}{{UNIT}};',
         ],
       ]
     );
@@ -1806,8 +1903,6 @@ class Month_Anual_Pricetable_Regular_Widget extends Widget_Base {
 
     extract( $settings );
 
-    if(!count($lists)) return;
-
       $allowed_tags = array('h1','h2','h3','h4','h5','h6','div');
       $tag_title = (in_array( $tag, $allowed_tags )) ? trim( $tag ): 'h3';
 
@@ -1896,6 +1991,9 @@ class Month_Anual_Pricetable_Regular_Widget extends Widget_Base {
 
 
     $compile .= '</div>';
+
+    if( isset($lists) && count($lists) && $show_list =='yes'){
+
     $compile .= '<ul class="price-features">';
 
     foreach ($lists as $index => $list) {
@@ -1916,6 +2014,8 @@ class Month_Anual_Pricetable_Regular_Widget extends Widget_Base {
     }
 
     $compile .= '</ul>';
+
+    }
 
     if($show_footer=='yes'){
 
@@ -2071,9 +2171,10 @@ class Month_Anual_Pricetable_Regular_Widget extends Widget_Base {
       {{{ price_html }}}
     <# } #>
       </div>
+    <# 
+    if ( settings.lists && settings.show_list == 'yes') { #>
       <ul class="price-features">
     <# 
-    if ( settings.lists ) {
 
     _.each( settings.lists, function( list, index) {
 
@@ -2088,10 +2189,10 @@ class Month_Anual_Pricetable_Regular_Widget extends Widget_Base {
                    <#}
           } #>
           <span {{{ view.getRenderAttributeString( repeater_setting_key ) }}}>{{{ list.list_content }}}</span></li>
-    <# });
-    }
-    #>
+    <# }); #>
       </ul>
+    <# }
+    #>
     <# if ( settings.show_footer =='yes' ){
 
         var button_html = '';

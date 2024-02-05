@@ -110,6 +110,14 @@ class ESSB_Site_Share_Information {
             $title = get_bloginfo('name');
         }
         
+        if (essb_option_bool_value('customshare')) {
+            $custom_global_share_title = essb_option_value('customshare_text');
+            
+            if ($custom_global_share_title != '') {
+                $title = $custom_global_share_title;
+            }
+        }
+        
         /**
          * @since 7.7.5
          */
@@ -149,6 +157,13 @@ class ESSB_Site_Share_Information {
             $description = get_bloginfo('description');
         }
         
+        if (essb_option_bool_value('customshare')) {
+            $custom_description = essb_option_value('customshare_description');
+            if ($custom_description != '') {
+                $description = $custom_description;
+            }
+        }
+        
         /**
          * @since 7.7.5
          */
@@ -173,6 +188,12 @@ class ESSB_Site_Share_Information {
                 if ($custom != '') {
                     $image = $custom;
                 }
+            }
+        }
+        
+        if (essb_option_bool_value('customshare')) {
+            if (essb_option_value('customshare_image') != '') {
+                $image = essb_option_value('customshare_image');
             }
         }
         
@@ -228,6 +249,13 @@ class ESSB_Site_Share_Information {
         }
         else if ($type != 'single') {
             $url = get_bloginfo('url');
+        }
+        
+        // apply custom share options
+        if (essb_option_bool_value('customshare')) {
+            if (essb_option_value('customshare_url') != '') {
+                $url = essb_option_value('customshare_url');
+            }
         }
         
         /**

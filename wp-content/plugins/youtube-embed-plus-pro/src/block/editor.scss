@@ -70,3 +70,15 @@
         }
     }
 }
+
+.epyt-do-live-fallback {
+    display: block;
+    &::after {
+        content: "This area will be blank on you website, because this live stream embed has no upcoming or current streams, and the Fallback Content feature is off.";
+        display: block;
+        background-color: #eeeeee;
+        color: #555555;
+        padding: 5px 10px;
+        border: 1px dashed #888888;
+    }    
+}

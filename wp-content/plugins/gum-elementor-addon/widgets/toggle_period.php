@@ -131,6 +131,9 @@ class Month_Anual_Pricetable_TogglePeriod_Regular_Widget extends Widget_Base {
         'dynamic' => [
           'active' => false,
         ],
+        'ai' => [
+          'active' => false,
+        ],
         'default' => esc_html__( 'Monthly', 'gum-elementor-addon' ),
       ]
     );
@@ -142,6 +145,9 @@ class Month_Anual_Pricetable_TogglePeriod_Regular_Widget extends Widget_Base {
         'type' => Controls_Manager::TEXT,
         'label_block' => true,
         'dynamic' => [
+          'active' => false,
+        ],
+        'ai' => [
           'active' => false,
         ],
         'default' => esc_html__( 'Yearly', 'gum-elementor-addon' ),
@@ -181,6 +187,9 @@ class Month_Anual_Pricetable_TogglePeriod_Regular_Widget extends Widget_Base {
       [
         'label' => esc_html__( 'Section Price CSS ID (optional)', 'gum-elementor-addon' ),
         'type' => Controls_Manager::TEXT,
+        'ai' => [
+          'active' => false,
+        ],
         'default' => '',
         'title' => esc_html__( 'CSS ID from price table section NOT this widget ID. You can founded on target section settings: Advanced > CSS ID', 'gum-elementor-addon' ),
         'description' => esc_html__( 'Please make sure the ID is unique and not used elsewhere on the page this form is displayed. This field allows <code>A-z 0-9</code> & underscore chars without spaces.', 'gum-elementor-addon' ),
@@ -231,10 +240,33 @@ class Month_Anual_Pricetable_TogglePeriod_Regular_Widget extends Widget_Base {
     );
 
 
+    $this->add_control(
+      'period_border_radius',
+      [
+        'label' => esc_html__( 'Border Radius', 'gum-elementor-addon' ),
+        'type' => Controls_Manager::DIMENSIONS,
+        'size_units' => [ 'px', '%' ],
+        'selectors' => [
+          '{{WRAPPER}} .price-period-switch .period.regular-period' => 'border-radius: {{TOP}}{{UNIT}} 0px 0px {{LEFT}}{{UNIT}};',
+          '{{WRAPPER}} .price-period-switch .period.anual-period' => 'border-radius: 0px {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} 0px;',
+        ]
+      ]
+    );
+
+
+    $this->add_control(
+      'mainperiod',
+      [
+        'label' => esc_html__( '1st Period', 'gum-elementor-addon' ),
+        'type' => Controls_Manager::HEADING,
+        'separator' => 'before'
+      ]
+    );
+
     $this->add_responsive_control(
       'main_padding',
       [
-        'label' => esc_html__( '1st Period Padding', 'gum-elementor-addon' ),
+        'label' => esc_html__( 'Padding', 'gum-elementor-addon' ),
         'type' => Controls_Manager::DIMENSIONS,
         'size_units' => [ 'px', 'em', '%' ],
         'allowed_dimensions' => 'horizontal',
@@ -251,11 +283,32 @@ class Month_Anual_Pricetable_TogglePeriod_Regular_Widget extends Widget_Base {
     );
 
 
+    $this->add_control(
+      'mainperiod_radius',
+      [
+        'label' => esc_html__( 'Border Radius', 'gum-elementor-addon' ),
+        'type' => Controls_Manager::DIMENSIONS,
+        'size_units' => [ 'px', '%' ],
+        'description' => esc_html__( 'Warning: This style will remove next version. Please use radius on each period style', 'gum-elementor-addon' ),
+        'selectors' => [
+          '{{WRAPPER}} .price-period-switch .period.regular-period' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{LEFT}}{{UNIT}} {{LEFT}}{{UNIT}};',
+        ]
+      ]
+    );
 
+    $this->add_control(
+      'anualperiod',
+      [
+        'label' => esc_html__( '2nd Period', 'gum-elementor-addon' ),
+        'type' => Controls_Manager::HEADING,
+        'separator' => 'before'
+      ]
+    );
+    
     $this->add_responsive_control(
       'anual_padding',
       [
-        'label' => esc_html__( '2nd Period Padding', 'gum-elementor-addon' ),
+        'label' => esc_html__( 'Padding', 'gum-elementor-addon' ),
         'type' => Controls_Manager::DIMENSIONS,
         'size_units' => [ 'px', 'em', '%' ],
         'allowed_dimensions' => 'horizontal',
@@ -273,21 +326,20 @@ class Month_Anual_Pricetable_TogglePeriod_Regular_Widget extends Widget_Base {
 
 
     $this->add_control(
-      'period_border_radius',
+      'anualperiod_radius',
       [
         'label' => esc_html__( 'Border Radius', 'gum-elementor-addon' ),
         'type' => Controls_Manager::DIMENSIONS,
         'size_units' => [ 'px', '%' ],
         'selectors' => [
-          '{{WRAPPER}} .price-period-switch .period.regular-period' => 'border-radius: {{TOP}}{{UNIT}} 0px 0px {{LEFT}}{{UNIT}};',
-          '{{WRAPPER}} .price-period-switch .period.anual-period' => 'border-radius: 0px {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} 0px;',
+          '{{WRAPPER}} .price-period-switch .period.anual-period' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{LEFT}}{{UNIT}} {{LEFT}}{{UNIT}};',
         ]
       ]
     );
 
 
 
-    $this->start_controls_tabs( 'period_styles' );
+    $this->start_controls_tabs( 'period_styles',['separator' => 'before'] );
 
     $this->start_controls_tab(
       'period_style',

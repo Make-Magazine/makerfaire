@@ -240,7 +240,10 @@ function essb_mytemplatebuilder_generate_css() {
 			$network_text_color = $mytemplate_default_textcolor_custom;
 		}
 		
-		$snippet .= '.essb_links.'.$template_class.' li.essb_link_'.esc_attr($key).' a { background-color: '.esc_attr($network_color).'!important; color:'.esc_attr($network_text_color).'!important;}';
+		$snippet_key = $key;
+		if ($key == 'share') { $snippet_key = 'sharebtn'; }
+		
+		$snippet .= '.essb_links.'.$template_class.' li.essb_link_'.esc_attr($snippet_key).' a { background-color: '.esc_attr($network_color).'!important; color:'.esc_attr($network_text_color).'!important;}';
 		
 		if ($mytemplate_default_outlinesize != '') {
 			$network_outline_color = $stored_network_color;

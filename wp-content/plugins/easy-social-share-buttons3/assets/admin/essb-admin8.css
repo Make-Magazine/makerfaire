@@ -358,6 +358,10 @@
 	min-height: 128px;
  }
  
+ .essb-options select.input-element {
+	max-width: 100%;
+ }
+ 
  .essb-options .input-element.input_icon_right,
  .advancedoptions-tile.advancedoptions-panel .advancedoptions-tile-control .input60.input_icon_right {
 	width: 90px;

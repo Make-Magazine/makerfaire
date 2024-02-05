@@ -19,13 +19,17 @@ class Gum_Elementor_Section_Widget{
         add_action( 'elementor/element/section/section_advanced/after_section_end', array( $this, 'register_section_controls') , 999 );
         add_action( 'elementor/element/column/_section_responsive/after_section_end', array( $this, 'register_advanced_column_controls') , 999 );
         add_action( 'elementor/element/column/section_background_overlay/after_section_end', array( $this, 'register_column_controls') , 999 );
-
         add_action( 'elementor/element/heading/section_title_style/after_section_end', array( $this, 'register_widget_heading_style_controls') , 999 );
         add_action( 'elementor/element/image/section_style_image/after_section_end', array( $this, 'register_widget_image_style_controls') , 999 );
 
+
+        /* since 1.3.0 */
+        add_action( 'elementor/element/container/section_background_overlay/after_section_end', array( $this, 'register_container_controls') , 999 );
+
+
   }
 
-  public function register_column_controls( Controls_Stack $element ) {
+  public function register_container_controls( Controls_Stack $element ) {
 
 
     /**
@@ -34,6 +38,201 @@ class Gum_Elementor_Section_Widget{
     * 
     */
 
+
+    $element->update_control(
+      'background_color_stop',
+      [
+        'label' => esc_html__( 'Location', 'elementor' ),
+        'type' => Controls_Manager::SLIDER,
+        'size_units' => [ '%', 'custom' ],
+        'default' => [
+          'unit' => '%',
+          'size' => 0,
+        ],
+        'range' => [
+          '%' => [
+            'min' => -100,
+            'max' => 200,
+          ],
+        ],
+        'render_type' => 'ui',
+        'condition' => [
+          'background_background' => [ 'gradient' ],
+        ],
+        'of_type' => 'gradient',
+      ]
+    );
+
+    $element->update_control(
+      'background_color_b_stop',
+      [
+        'label' => esc_html__( 'Location', 'elementor' ),
+        'type' => Controls_Manager::SLIDER,
+        'size_units' => [ '%', 'custom' ],
+        'default' => [
+          'unit' => '%',
+          'size' => 100,
+        ],
+        'range' => [
+          '%' => [
+            'min' => -100,
+            'max' => 200,
+          ],
+        ],
+        'render_type' => 'ui',
+        'condition' => [
+          'background_background' => [ 'gradient' ],
+        ],
+        'of_type' => 'gradient',
+      ]
+    );
+
+
+    $element->update_control(
+      'background_hover_color_stop',
+      [
+        'label' => esc_html__( 'Location', 'elementor' ),
+        'type' => Controls_Manager::SLIDER,
+        'size_units' => [ '%', 'custom' ],
+        'default' => [
+          'unit' => '%',
+          'size' => 0,
+        ],
+        'range' => [
+          '%' => [
+            'min' => -100,
+            'max' => 200,
+          ],
+        ],
+        'render_type' => 'ui',
+        'condition' => [
+          'background_hover_background' => [ 'gradient' ],
+        ],
+        'of_type' => 'gradient',
+      ]
+    );
+
+    $element->update_control(
+      'background_hover_color_b_stop',
+      [
+        'label' => esc_html__( 'Location', 'elementor' ),
+        'type' => Controls_Manager::SLIDER,
+        'size_units' => [ '%', 'custom' ],
+        'default' => [
+          'unit' => '%',
+          'size' => 100,
+        ],
+        'range' => [
+          '%' => [
+            'min' => -100,
+            'max' => 200,
+          ],
+        ],
+        'render_type' => 'ui',
+        'condition' => [
+          'background_hover_background' => [ 'gradient' ],
+        ],
+        'of_type' => 'gradient',
+      ]
+    );
+
+    $element->update_control(
+      'background_overlay_color_stop',
+      [
+        'label' => esc_html__( 'Location', 'elementor' ),
+        'type' => Controls_Manager::SLIDER,
+        'size_units' => [ '%', 'custom' ],
+        'default' => [
+          'unit' => '%',
+          'size' => 0,
+        ],
+        'range' => [
+          '%' => [
+            'min' => -100,
+            'max' => 200,
+          ],
+        ],
+        'render_type' => 'ui',
+        'condition' => [
+          'background_overlay_background' => [ 'gradient' ],
+        ],
+        'of_type' => 'gradient',
+      ]
+    );
+
+
+    $element->update_control(
+      'background_overlay_color_b_stop',
+      [
+        'label' => esc_html__( 'Location', 'elementor' ),
+        'type' => Controls_Manager::SLIDER,
+        'size_units' => [ '%', 'custom' ],
+        'default' => [
+          'unit' => '%',
+          'size' => 100,
+        ],
+        'range' => [
+          '%' => [
+            'min' => -100,
+            'max' => 200,
+          ],
+        ],
+        'render_type' => 'ui',
+        'condition' => [
+          'background_overlay_background' => [ 'gradient' ],
+        ],
+        'of_type' => 'gradient',
+      ]
+    );
+
+
+    $element->update_control(
+      'background_overlay_hover_color_stop',
+      [
+        'label' => esc_html__( 'Location', 'elementor' ),
+        'type' => Controls_Manager::SLIDER,
+        'size_units' => [ '%', 'custom' ],
+        'default' => [
+          'unit' => '%',
+          'size' => 0,
+        ],
+        'range' => [
+          '%' => [
+            'min' => -100,
+            'max' => 200,
+          ],
+        ],
+        'render_type' => 'ui',
+        'condition' => [
+          'background_overlay_hover_background' => [ 'gradient' ],
+        ],
+        'of_type' => 'gradient',
+      ]
+    );
+
+    $element->update_control(
+      'background_overlay_hover_color_b_stop',
+      [
+        'label' => esc_html__( 'Location', 'elementor' ),
+        'type' => Controls_Manager::SLIDER,
+        'size_units' => [ '%', 'custom' ],
+        'default' => [
+          'unit' => '%',
+          'size' => 100,
+        ],
+        'range' => [
+          '%' => [
+            'min' => -100,
+            'max' => 200,
+          ],
+        ],
+        'render_type' => 'ui',
+        'condition' => [
+          'background_overlay_hover_background' => [ 'gradient' ],
+        ],
+        'of_type' => 'gradient',
+      ]
+    );
     $element->start_injection( [
       'of' => 'overlay_blend_mode',
     ] );
@@ -48,7 +247,333 @@ class Gum_Elementor_Section_Widget{
         'render_type' => 'ui',
         'condition' => [
           'background_overlay_background' => [ 'classic', 'gradient' ],
+        ],
+      ]
+    );
+
+    $element->add_control(
+      'background_overlay_maskimage',
+      [
+        'label' => esc_html__( 'Image Mask', 'gum-elementor-addon' ),
+        'type' => Controls_Manager::MEDIA,
+        'media_type' => 'image',
+        'should_include_svg_inline_option' => true,
+        'library_type' => 'image/svg+xml',
+        'dynamic' => [
+          'active' => true,
+        ],
+        'selectors' => [ '{{WRAPPER}}::before' => '-webkit-mask-image: url("{{URL}}");',
+        ],
+        'render_type' => 'template',
+        'condition' => [
+          'background_overlay_background' => [ 'classic', 'gradient' ],
+        ],
+      ]
+    );
+
+
+    $element->add_responsive_control(
+      'overlay_mask_size',
+      [
+        'label' => esc_html__( 'Mask Size', 'gum-elementor-addon' ),
+        'type' => Controls_Manager::SELECT,
+        'options' => [
+          'contain' => esc_html__( 'Fit', 'elementor' ),
+          'cover' => esc_html__( 'Fill', 'elementor' ),
+          'custom' => esc_html__( 'Custom', 'elementor' ),
+        ],
+        'default' => 'contain',
+        'selectors' => [ '{{WRAPPER}}::before' => '-webkit-mask-size: {{VALUE}};' ],
+        'condition' => [
           'background_overlay_maskimage[url]!' => '',
+        ],
+      ]
+    );
+
+    $element->add_responsive_control(
+      'overlay_mask_size_scale',
+      [
+        'label' => esc_html__( 'Mask Scale', 'gum-elementor-addon' ),
+        'type' => Controls_Manager::SLIDER,
+        'size_units' => [ 'px', 'em', '%', 'vw' ],
+        'range' => [
+          'px' => [
+            'min' => 0,
+            'max' => 500,
+          ],
+          'em' => [
+            'min' => 0,
+            'max' => 100,
+          ],
+          '%' => [
+            'min' => 0,
+            'max' => 200,
+          ],
+          'vw' => [
+            'min' => 0,
+            'max' => 100,
+          ],
+        ],
+        'default' => [
+          'unit' => '%',
+          'size' => 100,
+        ],
+        'selectors' => [ '{{WRAPPER}}::before' => '-webkit-mask-size: {{SIZE}}{{UNIT}};' ],
+        'condition' => [
+          'background_overlay_maskimage[url]!' => '',
+          'overlay_mask_size' => 'custom',
+        ],
+      ]
+    );
+
+
+    $element->add_responsive_control(
+      'overlay_mask_position',
+      [
+        'label' => esc_html__( 'Mask Position', 'gum-elementor-addon' ),
+        'type' => Controls_Manager::SELECT,
+        'options' => [
+          'center center' => esc_html__( 'Center Center', 'elementor' ),
+          'center left' => esc_html__( 'Center Left', 'elementor' ),
+          'center right' => esc_html__( 'Center Right', 'elementor' ),
+          'top center' => esc_html__( 'Top Center', 'elementor' ),
+          'top left' => esc_html__( 'Top Left', 'elementor' ),
+          'top right' => esc_html__( 'Top Right', 'elementor' ),
+          'bottom center' => esc_html__( 'Bottom Center', 'elementor' ),
+          'bottom left' => esc_html__( 'Bottom Left', 'elementor' ),
+          'bottom right' => esc_html__( 'Bottom Right', 'elementor' ),
+          'custom' => esc_html__( 'Custom', 'elementor' ),
+        ],
+        'default' => 'center center',
+        'selectors' => [ '{{WRAPPER}}::before' =>  '-webkit-mask-position: {{VALUE}};' ],
+        'condition' => [
+          'background_overlay_maskimage[url]!' => '',
+        ],
+      ]
+    );
+
+
+    $element->add_responsive_control(
+      'overlay_mask_position_x',
+      [
+        'label' => esc_html__( 'Mask X Position', 'gum-elementor-addon' ),
+        'type' => Controls_Manager::SLIDER,
+        'size_units' => [ 'px', 'em', '%', 'vw' ],
+        'range' => [
+          'px' => [
+            'min' => -500,
+            'max' => 500,
+          ],
+          'em' => [
+            'min' => -100,
+            'max' => 100,
+          ],
+          '%' => [
+            'min' => -100,
+            'max' => 100,
+          ],
+          'vw' => [
+            'min' => -100,
+            'max' => 100,
+          ],
+        ],
+        'default' => [
+          'unit' => '%',
+          'size' => 0,
+        ],
+        'selectors' => [ '{{WRAPPER}}::before' =>  '-webkit-mask-position-x: {{SIZE}}{{UNIT}};' ],
+        'condition' => [
+          'background_overlay_maskimage[url]!' => '',
+          'overlay_mask_position' => 'custom',
+        ],
+      ]
+    );
+
+    $element->add_responsive_control(
+      'overlay_mask_position_y',
+      [
+        'label' => esc_html__( 'Mask Y Position', 'gum-elementor-addon' ),
+        'type' => Controls_Manager::SLIDER,
+        'size_units' => [ 'px', 'em', '%', 'vw' ],
+        'range' => [
+          'px' => [
+            'min' => -500,
+            'max' => 500,
+          ],
+          'em' => [
+            'min' => -100,
+            'max' => 100,
+          ],
+          '%' => [
+            'min' => -100,
+            'max' => 100,
+          ],
+          'vw' => [
+            'min' => -100,
+            'max' => 100,
+          ],
+        ],
+        'default' => [
+          'unit' => '%',
+          'size' => 0,
+        ],
+        'selectors' => [ '{{WRAPPER}}::before' =>  '-webkit-mask-position-y: {{SIZE}}{{UNIT}};' ],
+        'condition' => [
+          'background_overlay_maskimage[url]!' => '',
+          'overlay_mask_position' => 'custom',
+        ],
+      ]
+    );
+
+
+    $element->add_responsive_control(
+      'overlay_mask_repeat',
+      [
+        'label' => esc_html__( 'Mask Repeat', 'gum-elementor-addon' ),
+        'type' => Controls_Manager::SELECT,
+        'options' => [
+          'no-repeat' => esc_html__( 'No-Repeat', 'elementor' ),
+          'repeat' => esc_html__( 'Repeat', 'elementor' ),
+          'repeat-x' => esc_html__( 'Repeat-X', 'elementor' ),
+          'repeat-Y' => esc_html__( 'Repeat-Y', 'elementor' ),
+          'round' => esc_html__( 'Round', 'elementor' ),
+          'space' => esc_html__( 'Space', 'elementor' ),
+        ],
+        'default' => 'no-repeat',
+        'selectors' => [ '{{WRAPPER}}::before' => '-webkit-mask-repeat: {{VALUE}};' ],
+        'condition' => [
+          'background_overlay_maskimage[url]!' => '',
+          'overlay_mask_size!' => 'cover',
+        ],
+      ]
+    );
+
+    $element->end_injection();
+    
+
+  }
+
+  public function register_column_controls( Controls_Stack $element ) {
+
+
+    /**
+    * - Adding image mask background
+    * @since 1.2.11
+    * 
+    */
+
+
+    $element->update_control(
+      'background_color_stop',
+      [
+        'label' => esc_html__( 'Location', 'elementor' ),
+        'type' => Controls_Manager::SLIDER,
+        'size_units' => [ '%', 'custom' ],
+        'default' => [
+          'unit' => '%',
+          'size' => 0,
+        ],
+        'range' => [
+          '%' => [
+            'min' => -100,
+            'max' => 200,
+          ],
+        ],
+        'render_type' => 'ui',
+        'condition' => [
+          'background_background' => [ 'gradient' ],
+        ],
+        'of_type' => 'gradient',
+      ]
+    );
+
+    $element->update_control(
+      'background_color_b_stop',
+      [
+        'label' => esc_html__( 'Location', 'elementor' ),
+        'type' => Controls_Manager::SLIDER,
+        'size_units' => [ '%', 'custom' ],
+        'default' => [
+          'unit' => '%',
+          'size' => 100,
+        ],
+        'range' => [
+          '%' => [
+            'min' => -100,
+            'max' => 200,
+          ],
+        ],
+        'render_type' => 'ui',
+        'condition' => [
+          'background_background' => [ 'gradient' ],
+        ],
+        'of_type' => 'gradient',
+      ]
+    );
+
+
+    $element->update_control(
+      'background_hover_color_stop',
+      [
+        'label' => esc_html__( 'Location', 'elementor' ),
+        'type' => Controls_Manager::SLIDER,
+        'size_units' => [ '%', 'custom' ],
+        'default' => [
+          'unit' => '%',
+          'size' => 0,
+        ],
+        'range' => [
+          '%' => [
+            'min' => -100,
+            'max' => 200,
+          ],
+        ],
+        'render_type' => 'ui',
+        'condition' => [
+          'background_hover_background' => [ 'gradient' ],
+        ],
+        'of_type' => 'gradient',
+      ]
+    );
+
+    $element->update_control(
+      'background_hover_color_b_stop',
+      [
+        'label' => esc_html__( 'Location', 'elementor' ),
+        'type' => Controls_Manager::SLIDER,
+        'size_units' => [ '%', 'custom' ],
+        'default' => [
+          'unit' => '%',
+          'size' => 100,
+        ],
+        'range' => [
+          '%' => [
+            'min' => -100,
+            'max' => 200,
+          ],
+        ],
+        'render_type' => 'ui',
+        'condition' => [
+          'background_hover_background' => [ 'gradient' ],
+        ],
+        'of_type' => 'gradient',
+      ]
+    );
+    
+    $element->start_injection( [
+      'of' => 'overlay_blend_mode',
+    ] );
+
+
+    $element->add_control(
+      '_overlay_maskimage_description',
+      [
+        'raw' => '<strong>' . esc_html__( 'Please note!', 'elementor' ) . '</strong> ' . esc_html__( 'Image mask only actived when overlay color background not empty.', 'gum-elementor-addon' ),
+        'type' => Controls_Manager::RAW_HTML,
+        'content_classes' => 'elementor-panel-alert elementor-panel-alert-warning',
+        'render_type' => 'ui',
+        'condition' => [
+          'background_overlay_background' => [ 'classic', 'gradient' ],
         ],
       ]
     );
@@ -266,6 +791,102 @@ class Gum_Elementor_Section_Widget{
     * - position option like common widget
     */
 
+    $element->update_control(
+      'background_color_stop',
+      [
+        'label' => esc_html__( 'Location', 'elementor' ),
+        'type' => Controls_Manager::SLIDER,
+        'size_units' => [ '%', 'custom' ],
+        'default' => [
+          'unit' => '%',
+          'size' => 0,
+        ],
+        'range' => [
+          '%' => [
+            'min' => -100,
+            'max' => 200,
+          ],
+        ],
+        'render_type' => 'ui',
+        'condition' => [
+          'background_background' => [ 'gradient' ],
+        ],
+        'of_type' => 'gradient',
+      ]
+    );
+
+    $element->update_control(
+      'background_color_b_stop',
+      [
+        'label' => esc_html__( 'Location', 'elementor' ),
+        'type' => Controls_Manager::SLIDER,
+        'size_units' => [ '%', 'custom' ],
+        'default' => [
+          'unit' => '%',
+          'size' => 100,
+        ],
+        'range' => [
+          '%' => [
+            'min' => -100,
+            'max' => 200,
+          ],
+        ],
+        'render_type' => 'ui',
+        'condition' => [
+          'background_background' => [ 'gradient' ],
+        ],
+        'of_type' => 'gradient',
+      ]
+    );
+
+
+    $element->update_control(
+      'background_hover_color_stop',
+      [
+        'label' => esc_html__( 'Location', 'elementor' ),
+        'type' => Controls_Manager::SLIDER,
+        'size_units' => [ '%', 'custom' ],
+        'default' => [
+          'unit' => '%',
+          'size' => 0,
+        ],
+        'range' => [
+          '%' => [
+            'min' => -100,
+            'max' => 200,
+          ],
+        ],
+        'render_type' => 'ui',
+        'condition' => [
+          'background_hover_background' => [ 'gradient' ],
+        ],
+        'of_type' => 'gradient',
+      ]
+    );
+
+    $element->update_control(
+      'background_hover_color_b_stop',
+      [
+        'label' => esc_html__( 'Location', 'elementor' ),
+        'type' => Controls_Manager::SLIDER,
+        'size_units' => [ '%', 'custom' ],
+        'default' => [
+          'unit' => '%',
+          'size' => 100,
+        ],
+        'range' => [
+          '%' => [
+            'min' => -100,
+            'max' => 200,
+          ],
+        ],
+        'render_type' => 'ui',
+        'condition' => [
+          'background_hover_background' => [ 'gradient' ],
+        ],
+        'of_type' => 'gradient',
+      ]
+    );
 
     $element->update_responsive_control(
       'custom_height_inner',
@@ -622,7 +1243,6 @@ class Gum_Elementor_Section_Widget{
 
     $element->end_controls_section();
 
-
     $element->start_controls_section(
       '_section_transform',
       [
@@ -925,7 +1545,6 @@ class Gum_Elementor_Section_Widget{
         'render_type' => 'ui',
         'condition' => [
           'background_overlay_background' => [ 'classic', 'gradient' ],
-          'background_overlay_maskimage!' => '',
         ],
       ]
     );

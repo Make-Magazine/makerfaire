@@ -49,6 +49,9 @@ class Gum_Elementor_Widget_Accordion{
         'dynamic' => [
           'active' => true,
         ],
+        'ai' => [
+          'active' => false,
+        ],
         'label_block' => true,
       ]
     );

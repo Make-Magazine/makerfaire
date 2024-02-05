@@ -151,6 +151,33 @@ class Gum_Elementor_Widget_Icon_List{
   function register_section_text_style_controls( Controls_Stack $element ) {
 
 
+    $element->update_responsive_control(
+      'icon_align',
+      [
+        'label' => esc_html__( 'Alignment', 'elementor' ),
+        'type' => Controls_Manager::CHOOSE,
+        'options' => [
+          'left' => [
+            'title' => esc_html__( 'Left', 'elementor' ),
+            'icon' => 'eicon-h-align-left',
+          ],
+          'center' => [
+            'title' => esc_html__( 'Center', 'elementor' ),
+            'icon' => 'eicon-h-align-center',
+          ],
+          'justify' => [
+            'title' => esc_html__( 'Justify', 'elementor' ),
+            'icon' => 'eicon-h-align-stretch',
+          ],
+          'right' => [
+            'title' => esc_html__( 'Right', 'elementor' ),
+            'icon' => 'eicon-h-align-right',
+          ],
+        ],
+        'prefix_class' => 'elementor%s-align-',
+      ]
+    );
+
     $element->update_control(
       'text_indent',
       [
@@ -209,19 +236,54 @@ class Gum_Elementor_Widget_Icon_List{
           '{{WRAPPER}} .elementor-icon-box-title' => 'margin-bottom: {{SIZE}}{{UNIT}};margin-top: 0;',
           '{{WRAPPER}} .elementor-image-box-title' => 'margin-bottom: {{SIZE}}{{UNIT}};margin-top: 0;',
         ],
+        'condition' => [
+          'title_inline[value]!' => 'inline',
+        ],
       ]
     );
+
+    $element->start_injection( [
+      'of' => 'title_bottom_space',
+    ] );
+
+    $element->add_responsive_control(
+      'title_right_space',
+      [
+        'label' => esc_html__( 'Spacing', 'gum-elementor-addon' ),
+        'type' => Controls_Manager::SLIDER,
+        'range' => [
+          'px' => [
+            'min' => 0,
+            'max' => 100,
+          ],
+          'em' => [
+            'min' => 0,
+            'max' => 10,
+          ],
+        ],
+        'selectors' => [
+          '{{WRAPPER}} .elementor-icon-box-title' => 'margin-right: {{SIZE}}{{UNIT}};margin-top: 0;',
+          '{{WRAPPER}} .elementor-image-box-title' => 'margin-right: {{SIZE}}{{UNIT}};margin-top: 0;',
+        ],
+        'size_units' => [ 'px' ,'em' ],
+        'default'=>['size'=>'0.5','unit'=>'em'],
+        'condition' => [
+           'title_inline[value]' => 'inline',
+        ],
+      ]
+    );
+
+    $element->end_injection();
 
 
     $element->start_injection( [
       'of' => 'title_color',
     ] );
 
-
     $element->add_control(
       'title_hover_color',
       [
-        'label' => esc_html__( 'Hover', 'gum-elementor-addon' ),
+        'label' => esc_html__( 'Hover Color', 'gum-elementor-addon' ),
         'type' => Controls_Manager::COLOR,
         'default' => '',
         'selectors' => [
@@ -392,12 +454,28 @@ class Gum_Elementor_Widget_Icon_List{
     ] );
 
     $element->add_control(
+      'title_inline',
+      [
+        'label' => esc_html__( 'Title Display', 'gum-elementor-addon' ),
+        'type' => Controls_Manager::SELECT,
+        'options' => [
+          '' => esc_html__( 'Default', 'gum-elementor-addon' ),
+          'inline' => esc_html__( 'Inline', 'gum-elementor-addon' ),
+        ],
+        'selectors' => [
+          '{{WRAPPER}} .elementor-icon-box-title,{{WRAPPER}} .elementor-image-box-title' => 'display: {{VALUE}}',
+          '{{WRAPPER}} .elementor-icon-box-description,{{WRAPPER}} .elementor-image-box-description' => 'display: {{VALUE}}',
+        ],
+      ]
+    );
+
+    $element->add_control(
       'box_strech',
       [
         'label' => esc_html__( 'Stretch Box', 'gum-elementor-addon' ),
         'type' => Controls_Manager::SWITCHER,
-        'label_on' => esc_html__( 'No', 'gum-elementor-addon' ),
-        'label_off' => esc_html__( 'Yes', 'gum-elementor-addon' ),
+        'label_on' => esc_html__( 'Yes', 'gum-elementor-addon' ),
+        'label_off' => esc_html__( 'No', 'gum-elementor-addon' ),
         'default' => '',
         'prefix_class' => 'elementor-boxstretch-',
       ]

@@ -4,7 +4,7 @@ namespace Elementor;
  * @package     WordPress
  * @subpackage  Gum Elementor Addon
  * @author      support@themegum.com
- * @since       1.2.0
+ * @since       1.2.0h
 */
 defined('ABSPATH') or die();
 
@@ -13,6 +13,8 @@ use Elementor\Controls_Manager;
 use Elementor\Group_Control_Border;
 use Elementor\Group_Control_Typography;
 use Elementor\Group_Control_Box_Shadow;
+use Elementor\Group_Control_Background;
+
 use WP_Query;
 use Gum_Elementor_Helper;
 
@@ -114,12 +116,10 @@ class Gum_Elementor_Widget_blog_grid extends Widget_Base {
 
   protected function _register_controls() {
 
-
-
     $this->start_controls_section(
       'section_title',
       [
-        'label' => esc_html__( 'Layout', 'elementor' ),
+        'label' => esc_html__( 'Layout', 'gum-elementor-addon' ),
       ]
     );
 
@@ -256,6 +256,9 @@ class Gum_Elementor_Widget_blog_grid extends Widget_Base {
       'label'     => esc_html__( 'Suffix', 'gum-elementor-addon' ),
       'type'      => Controls_Manager::TEXT,
       'default'   => '',
+      'ai' => [
+        'active' => false,
+      ],
       'condition' => [
         'post_title_word!' => ''
       ],
@@ -292,6 +295,9 @@ class Gum_Elementor_Widget_blog_grid extends Widget_Base {
         'label'     => esc_html__( 'Suffix', 'gum-elementor-addon' ),
         'type'      => Controls_Manager::TEXT,
         'default'   => '',
+        'ai' => [
+          'active' => false,
+        ],
         'condition' => [
           'show_excerpt' => 'yes',
           'post_content_word!' => ''
@@ -318,6 +324,9 @@ class Gum_Elementor_Widget_blog_grid extends Widget_Base {
         'type' => Controls_Manager::TEXT,
         'default' => esc_html__( 'Readmore', 'gum-elementor-addon' ),
         'label_block' => true,
+        'ai' => [
+          'active' => false,
+        ],
         'condition' => [
           'show_readmore' => 'yes',
         ],
@@ -459,6 +468,9 @@ class Gum_Elementor_Widget_blog_grid extends Widget_Base {
           'show_meta!' => ''
         ],
         'default' => '-',
+        'ai' => [
+          'active' => false,
+        ],
         'dynamic' => [
           'active' => false,
         ],
@@ -506,7 +518,6 @@ class Gum_Elementor_Widget_blog_grid extends Widget_Base {
         'default' => ''
       ]
     );
-
 
 
     $categories_options = array(
@@ -588,6 +599,9 @@ class Gum_Elementor_Widget_blog_grid extends Widget_Base {
         'default' => '',
         'description' => esc_html__( 'Type post IDs. Seperated by comma', 'gum-elementor-addon' ),
         'label_block' => true,
+        'ai' => [
+          'active' => false,
+        ],
         'condition' => [
           'filter_by' => 'ids'
         ],
@@ -617,6 +631,16 @@ class Gum_Elementor_Widget_blog_grid extends Widget_Base {
         'max' => 1000,
         'step' => 1,
         'default'=> 0
+      ]
+    );
+
+
+    $this->add_control(
+      'source_filter_heading',
+      [
+        'label' => esc_html__( 'Filter', 'gum-elementor-addon' ),
+        'type' => Controls_Manager::HEADING,
+        'separator' => 'before'
       ]
     );
 
@@ -667,7 +691,6 @@ class Gum_Elementor_Widget_blog_grid extends Widget_Base {
       ]
     );
 
-
     $this->add_control(
       'show_pagination',
       [
@@ -676,6 +699,35 @@ class Gum_Elementor_Widget_blog_grid extends Widget_Base {
         'label_off' => esc_html__( 'No', 'gum-elementor-addon' ),
         'label_on' => esc_html__( 'Yes', 'gum-elementor-addon' ),
         'default' => 'yes',
+      ]
+    );
+
+    $this->add_control(
+      'pagination_align',
+      [
+        'label' => esc_html__( 'Align', 'gum-elementor-addon' ),
+        'type' => Controls_Manager::CHOOSE,
+        'options' => [
+          'left' => [
+            'title' => esc_html__( 'Left', 'gum-elementor-addon' ),
+            'icon' => 'eicon-h-align-left',
+          ],
+          'center' => [
+            'title' => esc_html__( 'Center', 'gum-elementor-addon' ),
+            'icon' => 'eicon-h-align-center',
+          ],
+          'justify' => [
+            'title' => esc_html__( 'Full Width', 'gum-elementor-addon' ),
+            'icon' => 'eicon-h-align-stretch',
+          ],
+          'right' => [
+            'title' => esc_html__( 'Right', 'gum-elementor-addon' ),
+            'icon' => 'eicon-h-align-right',
+          ],
+        ],
+        'default' => 'center',
+        'prefix_class' => 'pagination-',
+        'condition' => ['show_pagination!' => '']
       ]
     );
 
@@ -777,7 +829,7 @@ class Gum_Elementor_Widget_blog_grid extends Widget_Base {
     $this->add_responsive_control(
       'post_grid_gutter',
       [
-        'label' => esc_html__( 'Gutter Size', 'gum-elementor-addon' ),
+        'label' => esc_html__( 'Horizontal Gutter', 'gum-elementor-addon' ),
         'type' => Controls_Manager::SLIDER,
         'range' => [
          'px' => [
@@ -792,6 +844,27 @@ class Gum_Elementor_Widget_blog_grid extends Widget_Base {
         ]
        ]
     );
+
+
+    $this->add_responsive_control(
+      'post_grid_vgutter',
+      [
+        'label' => esc_html__( 'Vertical Gutter', 'gum-elementor-addon' ),
+        'type' => Controls_Manager::SLIDER,
+        'range' => [
+         'px' => [
+            'max' => 1000,
+          ],
+        ],  
+        'default'=>  array(),
+        'size_units' => [ 'px' ],
+        'selectors' => [
+          '{{WRAPPER}} .grid-posts .grid-post' => 'padding-bottom: {{SIZE}}{{UNIT}};',
+          '{{WRAPPER}} .grid-posts' => 'margin-bottom: -{{SIZE}}{{UNIT}};',
+        ]
+       ]
+    );
+
 
     $this->add_responsive_control(
       'post_grid_padding',
@@ -814,23 +887,6 @@ class Gum_Elementor_Widget_blog_grid extends Widget_Base {
       ]
     );
 
-
-    $this->add_control(
-      'post_grid_bdhover',
-      [
-        'label' => esc_html__( 'Hover Color', 'gum-elementor-addon' ),
-        'type' =>  Controls_Manager::COLOR,
-        'default' => '',
-        'selectors' => [
-          '{{WRAPPER}} .grid-posts .grid-post article:hover' => 'border-color: {{VALUE}};',
-        ],
-        'condition' => [
-          'post_grid_border_border!' => ''
-        ],
-      ]
-    );
-
-
     $this->add_control(
       'post_grid_radius',
       [
@@ -843,149 +899,386 @@ class Gum_Elementor_Widget_blog_grid extends Widget_Base {
       ]
     );
 
+   $this->start_controls_tabs( 'post_grid_tabs', [] );
+
+   $this->start_controls_tab(
+       'post_grid_tab_normal',
+       [
+           'label' =>esc_html__( 'Normal', 'gum-elementor-addon' ),
+       ]
+   );
+
+
+    $background_options =  $this->grid_background_types();
 
     $this->add_control(
-      'post_grid_bgcolor',
+      'post_grid_background_type',
       [
-        'label' => esc_html__( 'Background', 'elementor' ),
+        'label' => esc_html__( 'Background Type', 'elementor' ),
+        'type' => Controls_Manager::CHOOSE,
+        'render_type' => 'ui',
+        'options'=> $background_options,
+        'default' => 'classic',
+      ]
+    );
+
+    $this->add_control(
+      'post_grid_background',
+      [
+        'label' => esc_html__( 'Color', 'gum-elementor-addon' ),
         'type' =>  Controls_Manager::COLOR,
         'default' => '',
         'selectors' => [
           '{{WRAPPER}} .grid-posts .grid-post article' => 'background-color: {{VALUE}};',
-        ]
+        ],
+        'condition' => [
+          'post_grid_background_type!' => '',
+        ],
+      ]
+    );
+
+    $this->add_control(
+      'post_grid_color_stop',
+      [
+        'label' => esc_html__( 'Location', 'elementor' ),
+        'type' => Controls_Manager::SLIDER,
+        'size_units' => [ '%', 'custom' ],
+        'default' => [
+          'unit' => '%',
+          'size' => 0,
+        ],
+        'range' => [
+          '%' => [
+            'min' => -100,
+            'max' => 200,
+          ],
+        ],
+        'render_type' => 'ui',
+        'condition' => [
+          'post_grid_background_type' => [ 'gradient' ],
+        ],
+        'of_type' => 'gradient',
+      ]
+    );
+
+    $this->add_control(
+      'post_grid_color_b',
+      [
+        'label' => esc_html__( 'Second Color', 'elementor' ),
+        'type' => Controls_Manager::COLOR,
+        'default' => '#f2295b',
+        'render_type' => 'ui',
+        'condition' => [
+          'post_grid_background_type' => [ 'gradient' ],
+        ],
+        'of_type' => 'gradient',
+      ]
+    );
+
+    $this->add_control(
+      'post_grid_color_b_stop',
+      [
+        'label' => esc_html__( 'Location', 'elementor' ),
+        'type' => Controls_Manager::SLIDER,
+        'size_units' => [ '%', 'custom' ],
+        'default' => [
+          'unit' => '%',
+          'size' => 100,
+        ],
+        'range' => [
+          '%' => [
+            'min' => -100,
+            'max' => 200,
+          ],
+        ],
+        'render_type' => 'ui',
+        'condition' => [
+          'post_grid_background_type' => [ 'gradient' ],
+        ],
+        'of_type' => 'gradient',
+      ]
+    );
+
+    $this->add_control(
+      'post_grid_gradient_type',
+      [
+        'label' => esc_html__( 'Type', 'elementor' ),
+        'type' => Controls_Manager::SELECT,
+        'options' => [
+          'linear' => esc_html__( 'Linear', 'elementor' ),
+          'radial' => esc_html__( 'Radial', 'elementor' ),
+        ],
+        'default' => 'linear',
+        'render_type' => 'ui',
+        'condition' => [
+          'post_grid_background_type' => [ 'gradient' ],
+        ],
+        'of_type' => 'gradient',
+      ]
+    );
+
+    $this->add_control(
+      'post_grid_gradient_angle',
+      [
+        'label' => esc_html__( 'Angle', 'elementor' ),
+        'type' => Controls_Manager::SLIDER,
+        'size_units' => [ 'deg', 'grad', 'rad', 'turn', 'custom' ],
+        'default' => [
+          'unit' => 'deg',
+          'size' => 180,
+        ],
+        'selectors' => [
+          '{{WRAPPER}} .grid-posts .grid-post article' => 'background-color: transparent; background-image: linear-gradient({{SIZE}}{{UNIT}}, {{post_grid_background.VALUE}} {{post_grid_color_stop.SIZE}}{{post_grid_color_stop.UNIT}}, {{post_grid_color_b.VALUE}} {{post_grid_color_b_stop.SIZE}}{{post_grid_color_b_stop.UNIT}})',
+        ],
+        'condition' => [
+          'post_grid_background_type' => [ 'gradient' ],
+          'post_grid_gradient_type' => 'linear',
+        ],
+        'of_type' => 'gradient',
+      ]
+    );
+
+    $this->add_control(
+      'post_grid_gradient_position',
+      [
+        'label' => esc_html__( 'Position', 'elementor' ),
+        'type' => Controls_Manager::SELECT,
+        'options' => [
+          'center center' => esc_html__( 'Center Center', 'elementor' ),
+          'center left' => esc_html__( 'Center Left', 'elementor' ),
+          'center right' => esc_html__( 'Center Right', 'elementor' ),
+          'top center' => esc_html__( 'Top Center', 'elementor' ),
+          'top left' => esc_html__( 'Top Left', 'elementor' ),
+          'top right' => esc_html__( 'Top Right', 'elementor' ),
+          'bottom center' => esc_html__( 'Bottom Center', 'elementor' ),
+          'bottom left' => esc_html__( 'Bottom Left', 'elementor' ),
+          'bottom right' => esc_html__( 'Bottom Right', 'elementor' ),
+        ],
+        'default' => 'center center',
+        'selectors' => [
+          '{{WRAPPER}} .grid-posts .grid-post article' => 'background-color: transparent; background-image: radial-gradient(at {{VALUE}}, {{post_grid_background.VALUE}} {{post_grid_color_stop.SIZE}}{{post_grid_color_stop.UNIT}}, {{post_grid_color_b.VALUE}} {{post_grid_color_b_stop.SIZE}}{{post_grid_color_b_stop.UNIT}})',
+        ],
+        'condition' => [
+          'post_grid_background_type' => [ 'gradient' ],
+          'post_grid_gradient_type' => 'radial',
+        ],
+        'of_type' => 'gradient',
+      ]
+    );
+
+
+   $this->end_controls_tab();
+
+   $this->start_controls_tab(
+       'post_grid_tab_hover',
+       [
+           'label' => esc_html__( 'Hover', 'gum-elementor-addon' ),
+       ]
+   );
+
+    $this->add_control(
+      'post_grid_bdhover',
+      [
+        'label' => esc_html__( 'Border Color', 'gum-elementor-addon' ),
+        'type' =>  Controls_Manager::COLOR,
+        'default' => '',
+        'selectors' => [
+          '{{WRAPPER}} .grid-posts .grid-post article:hover' => 'border-color: {{VALUE}};',
+        ],
+        'condition' => [
+          'post_grid_border_border!' => ''
+        ],
+      ]
+    );
+
+    $this->add_control(
+      'post_grid_bghover_type',
+      [
+        'label' => esc_html__( 'Background Type', 'elementor' ),
+        'type' => Controls_Manager::CHOOSE,
+        'render_type' => 'ui',
+        'options'=> $background_options,
+        'default' => 'classic',
       ]
     );
 
     $this->add_control(
       'post_grid_bghover',
       [
-        'label' => esc_html__( 'Hover Background', 'gum-elementor-addon' ),
+        'label' => esc_html__( 'Color', 'gum-elementor-addon' ),
         'type' =>  Controls_Manager::COLOR,
         'default' => '',
         'selectors' => [
-          '{{WRAPPER}} .grid-posts .grid-post article:hover' => 'background-color: {{VALUE}};',
-        ]
-      ]
-    );
-
-    $this->add_control(
-      'grid_content_heading',
-      [
-        'label' => esc_html__( 'Content Box', 'gum-elementor-addon' ),
-        'type' => Controls_Manager::HEADING,
-        'separator' => 'before',
-      ]
-    );
-
-
-    $this->add_responsive_control(
-      'grid_content_align',
-      [
-        'label' => esc_html__( 'Content Align', 'gum-elementor-addon' ),
-        'type' => Controls_Manager::CHOOSE,
-        'options' => [
-              'left' => [
-                'title' => esc_html__( 'Left', 'gum-elementor-addon' ),
-                'icon' => 'eicon-text-align-left',
-              ],
-              'center' => [
-                'title' => esc_html__( 'Center', 'gum-elementor-addon' ),
-                'icon' => 'eicon-text-align-center',
-              ],
-              'right' => [
-                'title' => esc_html__( 'Right', 'gum-elementor-addon' ),
-                'icon' => 'eicon-text-align-right',
-              ],
-              'justify' => [
-                'title' => esc_html__( 'Justify', 'gum-elementor-addon' ),
-                'icon' => 'eicon-text-align-justify',
-              ]
-        ],
-        'default' => '',
-        'selectors' => [
-          '{{WRAPPER}} article .post-content' => 'text-align: {{VALUE}};',
-        ],
-      ]
-    );
-
-    $this->add_responsive_control(
-      'grid_content_padding',
-      [
-          'label' => esc_html__( 'Padding', 'gum-elementor-addon' ),
-          'type' => Controls_Manager::DIMENSIONS,
-          'size_units' => [ 'px', '%', 'em' ],
-          'selectors' => [
-              '{{WRAPPER}} article .post-content' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
-          ],
-      ]
-    );
-
-    $this->add_control(
-      'grid_content_radius',
-      [
-        'label' => esc_html__( 'Border Radius', 'gum-elementor-addon' ),
-        'type' => Controls_Manager::DIMENSIONS,
-        'size_units' => [ 'px', '%' ],
-        'selectors' => [
-          '{{WRAPPER}} article .post-content' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
-        ],
-      ]
-    );
-
-
-    $this->add_group_control(
-     Group_Control_Border::get_type(),
-      [
-        'name' => 'grid_content_border',
-        'selector' => '{{WRAPPER}} article .post-content',
-      ]
-    );
-
-    $this->add_control(
-      'grid_content_bdhover',
-      [
-        'label' => esc_html__( 'Hover Color', 'gum-elementor-addon' ),
-        'type' =>  Controls_Manager::COLOR,
-        'default' => '',
-        'selectors' => [
-          '{{WRAPPER}} article:hover .post-content' => 'border-color: {{VALUE}};',
+          '{{WRAPPER}} .grid-posts .grid-post article:hover' => 'background-color: {{VALUE}};background-image: none;',
         ],
         'condition' => [
-          'grid_content_border_border!' => ''
+          'post_grid_bghover_type!' => '',
         ],
       ]
     );
 
-    $this->add_control(
-      'grid_content_bgcolor',
+   $this->add_control(
+      'post_grid_bghover_stop',
       [
-        'label' => esc_html__( 'Background', 'elementor' ),
-        'type' =>  Controls_Manager::COLOR,
-        'default' => '',
-        'selectors' => [
-          '{{WRAPPER}} article .post-content' => 'background-color: {{VALUE}};',
-        ]
+        'label' => esc_html__( 'Location', 'elementor' ),
+        'type' => Controls_Manager::SLIDER,
+        'size_units' => [ '%', 'custom' ],
+        'default' => [
+          'unit' => '%',
+          'size' => 0,
+        ],
+        'range' => [
+          '%' => [
+            'min' => -100,
+            'max' => 200,
+          ],
+        ],
+        'render_type' => 'ui',
+        'condition' => [
+          'post_grid_bghover_type' => [ 'gradient' ],
+        ],
+        'of_type' => 'gradient',
       ]
     );
 
     $this->add_control(
-      'grid_content_bghover',
+      'post_grid_bghover_color_b',
       [
-        'label' => esc_html__( 'Hover Background', 'gum-elementor-addon' ),
-        'type' =>  Controls_Manager::COLOR,
-        'default' => '',
-        'selectors' => [
-          '{{WRAPPER}} article:hover .post-content' => 'background-color: {{VALUE}};',
-        ]
+        'label' => esc_html__( 'Second Color', 'elementor' ),
+        'type' => Controls_Manager::COLOR,
+        'default' => '#f2295b',
+        'render_type' => 'ui',
+        'condition' => [
+          'post_grid_bghover_type' => [ 'gradient' ],
+        ],
+        'of_type' => 'gradient',
       ]
     );
+
+    $this->add_control(
+      'post_grid_bghover_b_stop',
+      [
+        'label' => esc_html__( 'Location', 'elementor' ),
+        'type' => Controls_Manager::SLIDER,
+        'size_units' => [ '%', 'custom' ],
+        'default' => [
+          'unit' => '%',
+          'size' => 100,
+        ],
+        'range' => [
+          '%' => [
+            'min' => -100,
+            'max' => 200,
+          ],
+        ],
+        'render_type' => 'ui',
+        'condition' => [
+          'post_grid_bghover_type' => [ 'gradient' ],
+        ],
+        'of_type' => 'gradient',
+      ]
+    );
+
+    $this->add_control(
+      'post_grid_bghover_gradient_type',
+      [
+        'label' => esc_html__( 'Type', 'elementor' ),
+        'type' => Controls_Manager::SELECT,
+        'options' => [
+          'linear' => esc_html__( 'Linear', 'elementor' ),
+          'radial' => esc_html__( 'Radial', 'elementor' ),
+        ],
+        'default' => 'linear',
+        'render_type' => 'ui',
+        'condition' => [
+          'post_grid_bghover_type' => [ 'gradient' ],
+        ],
+        'of_type' => 'gradient',
+      ]
+    );
+
+    $this->add_control(
+      'post_grid_bghover_gradient_angle',
+      [
+        'label' => esc_html__( 'Angle', 'elementor' ),
+        'type' => Controls_Manager::SLIDER,
+        'size_units' => [ 'deg', 'grad', 'rad', 'turn', 'custom' ],
+        'default' => [
+          'unit' => 'deg',
+          'size' => 180,
+        ],
+        'selectors' => [
+          '{{WRAPPER}} .grid-posts .grid-post article:hover' => 'background-color: transparent; background-image: linear-gradient({{SIZE}}{{UNIT}}, {{post_grid_bghover.VALUE}} {{post_grid_bghover_stop.SIZE}}{{post_grid_bghover_stop.UNIT}}, {{post_grid_bghover_color_b.VALUE}} {{post_grid_bghover_b_stop.SIZE}}{{post_grid_bghover_b_stop.UNIT}});',
+        ],
+        'condition' => [
+          'post_grid_bghover_type' => [ 'gradient' ],
+          'post_grid_bghover_gradient_type' => 'linear',
+        ],
+        'of_type' => 'gradient',
+      ]
+    );
+
+    $this->add_control(
+      'post_grid_bghover_gradient_position',
+      [
+        'label' => esc_html__( 'Position', 'elementor' ),
+        'type' => Controls_Manager::SELECT,
+        'options' => [
+          'center center' => esc_html__( 'Center Center', 'elementor' ),
+          'center left' => esc_html__( 'Center Left', 'elementor' ),
+          'center right' => esc_html__( 'Center Right', 'elementor' ),
+          'top center' => esc_html__( 'Top Center', 'elementor' ),
+          'top left' => esc_html__( 'Top Left', 'elementor' ),
+          'top right' => esc_html__( 'Top Right', 'elementor' ),
+          'bottom center' => esc_html__( 'Bottom Center', 'elementor' ),
+          'bottom left' => esc_html__( 'Bottom Left', 'elementor' ),
+          'bottom right' => esc_html__( 'Bottom Right', 'elementor' ),
+        ],
+        'default' => 'center center',
+        'selectors' => [
+          '{{WRAPPER}} .grid-posts .grid-post article:hover' => 'background-color: transparent; background-image: radial-gradient(at {{VALUE}}, {{post_grid_bghover.VALUE}} {{post_grid_bghover_stop.SIZE}}{{post_grid_bghover_stop.UNIT}}, {{post_grid_bghover_color_b.VALUE}} {{post_grid_bghover_b_stop.SIZE}}{{post_grid_bghover_b_stop.UNIT}})',
+        ],
+        'condition' => [
+          'post_grid_bghover_type' => [ 'gradient' ],
+          'post_grid_bghover_gradient_type' => 'radial',
+        ],
+        'of_type' => 'gradient',
+      ]
+    );
+
+
+    $this->add_control(
+      'post_grid_hover_transition',
+      [
+        'label' => esc_html__( 'Transition Duration', 'elementor' ),
+        'type' => Controls_Manager::SLIDER,
+        'default' => [
+          'size' => 0.3,
+        ],
+        'range' => [
+          'px' => [
+            'max' => 3,
+            'step' => 0.1,
+          ],
+        ],
+        'render_type' => 'ui',
+        'separator' => 'before',
+        'selectors' => [
+          '{{WRAPPER}} .grid-posts .grid-post article' => 'transition: background {{SIZE}}s'
+        ],
+      ]
+    );
+
+   $this->end_controls_tab();
+   $this->end_controls_tabs();
+
 
     $this->end_controls_section();
 
     $this->start_controls_section(
       'post_list_image',
       [
-        'label' => esc_html__( 'Featured Image', 'gum-elementor-addon' ),
+        'label' => esc_html__( 'Image Box', 'gum-elementor-addon' ),
         'tab'   => Controls_Manager::TAB_STYLE,
         'condition' => [
           'show_image' => 'yes',
@@ -1156,6 +1449,451 @@ class Gum_Elementor_Widget_blog_grid extends Widget_Base {
     $this->end_controls_section();
 
     $this->start_controls_section(
+      'grid_content_heading',
+      [
+        'label' => esc_html__( 'Content Box', 'gum-elementor-addon' ),
+        'tab'   => Controls_Manager::TAB_STYLE,
+      ]
+    );    
+
+    $this->add_responsive_control(
+      'grid_content_align',
+      [
+        'label' => esc_html__( 'Content Align', 'gum-elementor-addon' ),
+        'type' => Controls_Manager::CHOOSE,
+        'options' => [
+              'left' => [
+                'title' => esc_html__( 'Left', 'gum-elementor-addon' ),
+                'icon' => 'eicon-text-align-left',
+              ],
+              'center' => [
+                'title' => esc_html__( 'Center', 'gum-elementor-addon' ),
+                'icon' => 'eicon-text-align-center',
+              ],
+              'right' => [
+                'title' => esc_html__( 'Right', 'gum-elementor-addon' ),
+                'icon' => 'eicon-text-align-right',
+              ],
+              'justify' => [
+                'title' => esc_html__( 'Justify', 'gum-elementor-addon' ),
+                'icon' => 'eicon-text-align-justify',
+              ]
+        ],
+        'default' => '',
+        'selectors' => [
+          '{{WRAPPER}} article .post-content' => 'text-align: {{VALUE}};',
+        ],
+      ]
+    );
+
+    $this->add_responsive_control(
+      'grid_content_padding',
+      [
+          'label' => esc_html__( 'Padding', 'gum-elementor-addon' ),
+          'type' => Controls_Manager::DIMENSIONS,
+          'size_units' => [ 'px', '%', 'em' ],
+          'selectors' => [
+              '{{WRAPPER}} article .post-content' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+          ],
+      ]
+    );
+
+    $this->add_control(
+      'grid_content_radius',
+      [
+        'label' => esc_html__( 'Border Radius', 'gum-elementor-addon' ),
+        'type' => Controls_Manager::DIMENSIONS,
+        'size_units' => [ 'px', '%' ],
+        'selectors' => [
+          '{{WRAPPER}} article .post-content' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+        ],
+      ]
+    );
+
+
+    $this->add_group_control(
+     Group_Control_Border::get_type(),
+      [
+        'name' => 'grid_content_border',
+        'selector' => '{{WRAPPER}} article .post-content',
+      ]
+    );
+
+   $this->start_controls_tabs( 'grid_content_tabs', [] );
+
+   $this->start_controls_tab(
+       'grid_content_normal',
+       [
+           'label' =>esc_html__( 'Normal', 'gum-elementor-addon' ),
+       ]
+   );
+
+    $this->add_control(
+      'grid_content_bgcolor_type',
+      [
+        'label' => esc_html_x( 'Background Type', 'Background Control', 'elementor' ),
+        'type' => Controls_Manager::CHOOSE,
+        'render_type' => 'ui',
+        'options'=> $background_options,
+        'default' => 'classic',
+      ]
+    );
+
+    $this->add_control(
+      'grid_content_bgcolor',
+      [
+        'label' => esc_html__( 'Background Color', 'gum-elementor-addon' ),
+        'type' =>  Controls_Manager::COLOR,
+        'default' => '',
+        'selectors' => [
+          '{{WRAPPER}} article .post-content' => 'background-color: {{VALUE}};',
+        ],
+        'condition' => [
+          'grid_content_bgcolor_type!' => '',
+        ],
+      ]
+    );
+
+    $this->add_control(
+      'grid_content_bgcolor_stop',
+      [
+        'label' => esc_html__( 'Location', 'elementor' ),
+        'type' => Controls_Manager::SLIDER,
+        'size_units' => [ '%', 'custom' ],
+        'default' => [
+          'unit' => '%',
+          'size' => 0,
+        ],
+        'range' => [
+          '%' => [
+            'min' => -100,
+            'max' => 200,
+          ],
+        ],
+        'render_type' => 'ui',
+        'condition' => [
+          'grid_content_bgcolor_type' => [ 'gradient' ],
+        ],
+        'of_type' => 'gradient',
+      ]
+    );
+
+    $this->add_control(
+      'grid_content_bgcolor_b',
+      [
+        'label' => esc_html__( 'Second Color', 'elementor' ),
+        'type' => Controls_Manager::COLOR,
+        'default' => '#f2295b',
+        'render_type' => 'ui',
+        'condition' => [
+          'grid_content_bgcolor_type' => [ 'gradient' ],
+        ],
+        'of_type' => 'gradient',
+      ]
+    );
+
+    $this->add_control(
+      'grid_content_bgcolor_b_stop',
+      [
+        'label' => esc_html__( 'Location', 'elementor' ),
+        'type' => Controls_Manager::SLIDER,
+        'size_units' => [ '%', 'custom' ],
+        'default' => [
+          'unit' => '%',
+          'size' => 100,
+        ],
+        'range' => [
+          '%' => [
+            'min' => -100,
+            'max' => 200,
+          ],
+        ],
+        'render_type' => 'ui',
+        'condition' => [
+          'grid_content_bgcolor_type' => [ 'gradient' ],
+        ],
+        'of_type' => 'gradient',
+      ]
+    );
+
+    $this->add_control(
+      'grid_content_bgcolor_gradient_type',
+      [
+        'label' => esc_html__( 'Type', 'elementor' ),
+        'type' => Controls_Manager::SELECT,
+        'options' => [
+          'linear' => esc_html__( 'Linear', 'elementor' ),
+          'radial' => esc_html__( 'Radial', 'elementor' ),
+        ],
+        'default' => 'linear',
+        'render_type' => 'ui',
+        'condition' => [
+          'grid_content_bgcolor_type' => [ 'gradient' ],
+        ],
+        'of_type' => 'gradient',
+      ]
+    );
+
+    $this->add_control(
+      'grid_content_bgcolor_gradient_angle',
+      [
+        'label' => esc_html__( 'Angle', 'elementor' ),
+        'type' => Controls_Manager::SLIDER,
+        'size_units' => [ 'deg', 'grad', 'rad', 'turn', 'custom' ],
+        'default' => [
+          'unit' => 'deg',
+          'size' => 180,
+        ],
+        'selectors' => [
+          '{{WRAPPER}} article .post-content' => 'background-color: transparent; background-image: linear-gradient({{SIZE}}{{UNIT}}, {{grid_content_bgcolor.VALUE}} {{grid_content_bgcolor_stop.SIZE}}{{grid_content_bgcolor_stop.UNIT}}, {{grid_content_bgcolor_b.VALUE}} {{grid_content_bgcolor_b_stop.SIZE}}{{grid_content_bgcolor_b_stop.UNIT}})',
+        ],
+        'condition' => [
+          'grid_content_bgcolor_type' => [ 'gradient' ],
+          'grid_content_bgcolor_gradient_type' => 'linear',
+        ],
+        'of_type' => 'gradient',
+      ]
+    );
+
+    $this->add_control(
+      'grid_content_bgcolor_gradient_position',
+      [
+        'label' => esc_html__( 'Position', 'elementor' ),
+        'type' => Controls_Manager::SELECT,
+        'options' => [
+          'center center' => esc_html__( 'Center Center', 'elementor' ),
+          'center left' => esc_html__( 'Center Left', 'elementor' ),
+          'center right' => esc_html__( 'Center Right', 'elementor' ),
+          'top center' => esc_html__( 'Top Center', 'elementor' ),
+          'top left' => esc_html__( 'Top Left', 'elementor' ),
+          'top right' => esc_html__( 'Top Right', 'elementor' ),
+          'bottom center' => esc_html__( 'Bottom Center', 'elementor' ),
+          'bottom left' => esc_html__( 'Bottom Left', 'elementor' ),
+          'bottom right' => esc_html__( 'Bottom Right', 'elementor' ),
+        ],
+        'default' => 'center center',
+        'selectors' => [
+          '{{WRAPPER}} article .post-content' => 'background-color: transparent; background-image: radial-gradient(at {{VALUE}}, {{grid_content_bgcolor.VALUE}} {{grid_content_bgcolor_stop.SIZE}}{{grid_content_bgcolor_stop.UNIT}}, {{grid_content_bgcolor_b.VALUE}} {{grid_content_bgcolor_b_stop.SIZE}}{{grid_content_bgcolor_b_stop.UNIT}})',
+        ],
+        'condition' => [
+          'grid_content_bgcolor_type' => [ 'gradient' ],
+          'grid_content_bgcolor_gradient_type' => 'radial',
+        ],
+        'of_type' => 'gradient',
+      ]
+    );
+
+
+   $this->end_controls_tab();
+
+   $this->start_controls_tab(
+       'grid_content_hover',
+       [
+           'label' => esc_html__( 'Hover', 'gum-elementor-addon' ),
+       ]
+   );
+
+    $this->add_control(
+      'grid_content_bdhover',
+      [
+        'label' => esc_html__( 'Border Color', 'gum-elementor-addon' ),
+        'type' =>  Controls_Manager::COLOR,
+        'default' => '',
+        'selectors' => [
+          '{{WRAPPER}} article:hover .post-content' => 'border-color: {{VALUE}};',
+        ],
+        'condition' => [
+          'grid_content_border_border!' => ''
+        ],
+      ]
+    );
+
+    $this->add_control(
+      'grid_content_bghover_type',
+      [
+        'label' => esc_html_x( 'Background Type', 'Background Control', 'elementor' ),
+        'type' => Controls_Manager::CHOOSE,
+        'render_type' => 'ui',
+        'options'=> $background_options,
+        'default' => 'classic',
+      ]
+    );
+
+
+    $this->add_control(
+      'grid_content_bghover',
+      [
+        'label' => esc_html__( 'Background Color', 'gum-elementor-addon' ),
+        'type' =>  Controls_Manager::COLOR,
+        'default' => '',
+        'selectors' => [
+          '{{WRAPPER}} article:hover .post-content' => 'background-color: {{VALUE}};background-image: none;',
+        ],
+        'condition' => [
+          'grid_content_bghover_type!' => '',
+        ],
+      ]
+    );
+
+
+   $this->add_control(
+      'grid_content_bghover_stop',
+      [
+        'label' => esc_html__( 'Location', 'elementor' ),
+        'type' => Controls_Manager::SLIDER,
+        'size_units' => [ '%', 'custom' ],
+        'default' => [
+          'unit' => '%',
+          'size' => 0,
+        ],
+        'range' => [
+          '%' => [
+            'min' => -100,
+            'max' => 200,
+          ],
+        ],
+        'render_type' => 'ui',
+        'condition' => [
+          'grid_content_bghover_type' => [ 'gradient' ],
+        ],
+        'of_type' => 'gradient',
+      ]
+    );
+
+    $this->add_control(
+      'grid_content_bghover_b',
+      [
+        'label' => esc_html__( 'Second Color', 'elementor' ),
+        'type' => Controls_Manager::COLOR,
+        'default' => '#f2295b',
+        'render_type' => 'ui',
+        'condition' => [
+          'grid_content_bghover_type' => [ 'gradient' ],
+        ],
+        'of_type' => 'gradient',
+      ]
+    );
+
+    $this->add_control(
+      'grid_content_bghover_b_stop',
+      [
+        'label' => esc_html__( 'Location', 'elementor' ),
+        'type' => Controls_Manager::SLIDER,
+        'size_units' => [ '%', 'custom' ],
+        'default' => [
+          'unit' => '%',
+          'size' => 100,
+        ],
+        'range' => [
+          '%' => [
+            'min' => -100,
+            'max' => 200,
+          ],
+        ],
+        'render_type' => 'ui',
+        'condition' => [
+          'grid_content_bghover_type' => [ 'gradient' ],
+        ],
+        'of_type' => 'gradient',
+      ]
+    );
+
+    $this->add_control(
+      'grid_content_bghover_gradient_type',
+      [
+        'label' => esc_html__( 'Type', 'elementor' ),
+        'type' => Controls_Manager::SELECT,
+        'options' => [
+          'linear' => esc_html__( 'Linear', 'elementor' ),
+          'radial' => esc_html__( 'Radial', 'elementor' ),
+        ],
+        'default' => 'linear',
+        'render_type' => 'ui',
+        'condition' => [
+          'grid_content_bghover_type' => [ 'gradient' ],
+        ],
+        'of_type' => 'gradient',
+      ]
+    );
+
+    $this->add_control(
+      'grid_content_bghover_gradient_angle',
+      [
+        'label' => esc_html__( 'Angle', 'elementor' ),
+        'type' => Controls_Manager::SLIDER,
+        'size_units' => [ 'deg', 'grad', 'rad', 'turn', 'custom' ],
+        'default' => [
+          'unit' => 'deg',
+          'size' => 180,
+        ],
+        'selectors' => [
+          '{{WRAPPER}} article:hover .post-content' => 'background-color: transparent; background-image: linear-gradient({{SIZE}}{{UNIT}}, {{grid_content_bghover.VALUE}} {{grid_content_bghover_stop.SIZE}}{{grid_content_bghover_stop.UNIT}}, {{grid_content_bghover_b.VALUE}} {{grid_content_bghover_b_stop.SIZE}}{{grid_content_bghover_b_stop.UNIT}})',
+        ],
+        'condition' => [
+          'grid_content_bghover_type' => [ 'gradient' ],
+          'grid_content_bghover_gradient_type' => 'linear',
+        ],
+        'of_type' => 'gradient',
+      ]
+    );
+
+    $this->add_control(
+      'grid_content_bghover_gradient_position',
+      [
+        'label' => esc_html__( 'Position', 'elementor' ),
+        'type' => Controls_Manager::SELECT,
+        'options' => [
+          'center center' => esc_html__( 'Center Center', 'elementor' ),
+          'center left' => esc_html__( 'Center Left', 'elementor' ),
+          'center right' => esc_html__( 'Center Right', 'elementor' ),
+          'top center' => esc_html__( 'Top Center', 'elementor' ),
+          'top left' => esc_html__( 'Top Left', 'elementor' ),
+          'top right' => esc_html__( 'Top Right', 'elementor' ),
+          'bottom center' => esc_html__( 'Bottom Center', 'elementor' ),
+          'bottom left' => esc_html__( 'Bottom Left', 'elementor' ),
+          'bottom right' => esc_html__( 'Bottom Right', 'elementor' ),
+        ],
+        'default' => 'center center',
+        'selectors' => [
+          '{{WRAPPER}} article:hover .post-content' => 'background-color: transparent; background-image: radial-gradient(at {{VALUE}}, {{grid_content_bghover.VALUE}} {{grid_content_bghover_stop.SIZE}}{{grid_content_bghover_stop.UNIT}}, {{grid_content_bghover_b.VALUE}} {{grid_content_bghover_b_stop.SIZE}}{{grid_content_bghover_b_stop.UNIT}})',
+        ],
+        'condition' => [
+          'grid_content_bghover_type' => [ 'gradient' ],
+          'grid_content_bghover_gradient_type' => 'radial',
+        ],
+        'of_type' => 'gradient',
+      ]
+    );
+
+    $this->add_control(
+      'grid_content_hover_transition',
+      [
+        'label' => esc_html__( 'Transition Duration', 'elementor' ),
+        'type' => Controls_Manager::SLIDER,
+        'default' => [
+          'size' => 0.3,
+        ],
+        'range' => [
+          'px' => [
+            'max' => 3,
+            'step' => 0.1,
+          ],
+        ],
+        'render_type' => 'ui',
+        'separator' => 'before',
+        'selectors' => [
+          '{{WRAPPER}} article .post-content' => 'transition: background {{SIZE}}s'
+        ],
+      ]
+    );
+
+   $this->end_controls_tab();
+   $this->end_controls_tabs();
+
+
+    $this->end_controls_section();
+
+    $this->start_controls_section(
       'post_title_heading',
       [
         'label' => esc_html__( 'Post Title', 'gum-elementor-addon' ),
@@ -1174,7 +1912,7 @@ class Gum_Elementor_Widget_blog_grid extends Widget_Base {
     $this->add_control(
       'post_title_color',
       [
-        'label' => esc_html__( 'Color', 'elementor' ),
+        'label' => esc_html__( 'Color', 'gum-elementor-addon' ),
         'type' =>  Controls_Manager::COLOR,
         'default' => '',
         'selectors' => [
@@ -1236,7 +1974,7 @@ class Gum_Elementor_Widget_blog_grid extends Widget_Base {
     $this->add_control(
       'post_content_color',
       [
-        'label' => esc_html__( 'Color', 'elementor' ),
+        'label' => esc_html__( 'Color', 'gum-elementor-addon' ),
         'type' =>  Controls_Manager::COLOR,
         'default' => '',
         'selectors' => [
@@ -1378,7 +2116,7 @@ class Gum_Elementor_Widget_blog_grid extends Widget_Base {
    $this->start_controls_tab(
        'meta_title_normal',
        [
-           'label' =>esc_html__( 'Normal', 'elementor' ),
+           'label' =>esc_html__( 'Normal', 'gum-elementor-addon' ),
        ]
    );
 
@@ -1386,7 +2124,7 @@ class Gum_Elementor_Widget_blog_grid extends Widget_Base {
     $this->add_control(
       'meta_title_color',
       [
-        'label' => esc_html__( 'Color', 'elementor' ),
+        'label' => esc_html__( 'Color', 'gum-elementor-addon' ),
         'type' =>  Controls_Manager::COLOR,
         'default' => '',
         'selectors' => [
@@ -1399,7 +2137,7 @@ class Gum_Elementor_Widget_blog_grid extends Widget_Base {
     $this->add_control(
       'meta_list_bgcolor',
       [
-        'label' => esc_html__( 'Background', 'elementor' ),
+        'label' => esc_html__( 'Background', 'gum-elementor-addon' ),
         'type' =>  Controls_Manager::COLOR,
         'default' => '',
         'selectors' => [
@@ -1413,7 +2151,7 @@ class Gum_Elementor_Widget_blog_grid extends Widget_Base {
    $this->start_controls_tab(
        'meta_title_hover',
        [
-           'label' =>esc_html__( 'Hover', 'elementor' ),
+           'label' =>esc_html__( 'Hover', 'gum-elementor-addon' ),
        ]
    );
 
@@ -1421,7 +2159,7 @@ class Gum_Elementor_Widget_blog_grid extends Widget_Base {
     $this->add_control(
       'meta_title_hcolor',
       [
-        'label' => esc_html__( 'Color', 'elementor' ),
+        'label' => esc_html__( 'Color', 'gum-elementor-addon' ),
         'type' =>  Controls_Manager::COLOR,
         'default' => '',
         'selectors' => [
@@ -1434,7 +2172,7 @@ class Gum_Elementor_Widget_blog_grid extends Widget_Base {
     $this->add_control(
       'meta_list_bghover',
       [
-        'label' => esc_html__( 'Background', 'elementor' ),
+        'label' => esc_html__( 'Background', 'gum-elementor-addon' ),
         'type' =>  Controls_Manager::COLOR,
         'default' => '',
         'selectors' => [
@@ -1463,6 +2201,24 @@ class Gum_Elementor_Widget_blog_grid extends Widget_Base {
    $this->end_controls_tab();
    $this->end_controls_tabs();
 
+
+    $this->add_responsive_control(
+        'meta_list_margin',
+        [
+            'label' => esc_html__( 'Margin', 'gum-elementor-addon' ),
+            'type' => Controls_Manager::DIMENSIONS,
+            'size_units' => [ 'px', '%', 'em' ],
+            'placeholder' => [
+              'top' => '',
+              'right' => '',
+              'bottom' => '',
+              'left' => '',
+            ],
+            'selectors' => [
+                '{{WRAPPER}} .posts-meta' => 'margin: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+            ],
+        ]
+    );
 
     $this->add_responsive_control(
         'meta_list_padding',
@@ -1538,7 +2294,7 @@ class Gum_Elementor_Widget_blog_grid extends Widget_Base {
     $this->add_control(
       'divider_color',
       [
-        'label' => esc_html__( 'Color', 'elementor' ),
+        'label' => esc_html__( 'Color', 'gum-elementor-addon' ),
         'type' =>  Controls_Manager::COLOR,
         'default' => '',
         'selectors' => [
@@ -1581,11 +2337,57 @@ class Gum_Elementor_Widget_blog_grid extends Widget_Base {
       ]
     );  
 
+    $this->add_control(
+      'date_meta_icon',
+      [
+        'label' => esc_html__( 'Icon', 'gum-elementor-addon' ),
+        'type' => Controls_Manager::ICONS,
+        'fa4compatibility' => 'icon',
+      ]
+    );
+
+    $this->add_control(
+      'date_icon_size',
+      [
+        'label' => esc_html__( 'Icon Size', 'gum-elementor-addon' ),
+        'type' => Controls_Manager::SLIDER,
+        'range' => [
+          'px' => [
+            'max' => 100,
+          ],
+        ],
+        'default' =>['value'=>'', 'unit'=>'px'],
+        'selectors' => [
+          '{{WRAPPER}} .list-meta.date_meta i' => 'font-size: {{SIZE}}{{UNIT}};',
+          '{{WRAPPER}} .list-meta.date_meta svg' => 'height: {{SIZE}}%;width: {{SIZE}}%;'
+        ],
+        'condition' => ['date_meta_icon[value]!' => ''],
+      ]
+    );
+
+    $this->add_control(
+      'date_icon_indent',
+      [
+        'label' => esc_html__( 'Spacing', 'gum-elementor-addon' ),
+        'type' => Controls_Manager::SLIDER,
+        'range' => [
+          'px' => [
+            'max' => 100,
+          ],
+        ],
+        'default' =>['value'=>'10', 'unit'=>'px'],
+        'selectors' => [
+          '{{WRAPPER}} .list-meta.date_meta .meta-text' => 'padding-left: {{SIZE}}{{UNIT}};',
+        ],
+        'condition' => ['date_meta_icon[value]!' => ''],
+      ]
+    );
 
     $this->add_group_control(
       Group_Control_Typography::get_type(),
       [
         'name' => 'typography_datemeta',
+        'label' =>'Typography',
         'selector' => '{{WRAPPER}} .list-meta.date_meta a,{{WRAPPER}} .list-meta.date_meta .meta-text',
       ]
     );
@@ -1595,15 +2397,14 @@ class Gum_Elementor_Widget_blog_grid extends Widget_Base {
    $this->start_controls_tab(
        'datemeta_normal',
        [
-           'label' =>esc_html__( 'Normal', 'elementor' ),
+           'label' =>esc_html__( 'Normal', 'gum-elementor-addon' ),
        ]
    );
 
-
     $this->add_control(
-      'datemeta_color',
+      'date_meta_color',
       [
-        'label' => esc_html__( 'Color', 'elementor' ),
+        'label' => esc_html__( 'Color', 'gum-elementor-addon' ),
         'type' =>  Controls_Manager::COLOR,
         'default' => '',
         'selectors' => [
@@ -1614,9 +2415,22 @@ class Gum_Elementor_Widget_blog_grid extends Widget_Base {
 
 
     $this->add_control(
+      'date_icon_color',
+      [
+        'label' => esc_html__( 'Icon Color', 'gum-elementor-addon' ),
+        'type' => Controls_Manager::COLOR,
+        'default' => '',
+        'selectors' => [
+          '{{WRAPPER}} .list-meta.date_meta i, {{WRAPPER}} .list-meta.date_meta path' => 'fill: {{VALUE}}; color: {{VALUE}};',
+        ],
+      ]
+    );
+
+
+    $this->add_control(
       'datemeta_bgcolor',
       [
-        'label' => esc_html__( 'Background', 'elementor' ),
+        'label' => esc_html__( 'Background', 'gum-elementor-addon' ),
         'type' =>  Controls_Manager::COLOR,
         'default' => '',
         'selectors' => [
@@ -1630,7 +2444,7 @@ class Gum_Elementor_Widget_blog_grid extends Widget_Base {
    $this->start_controls_tab(
        'datemeta_hover',
        [
-           'label' =>esc_html__( 'Hover', 'elementor' ),
+           'label' =>esc_html__( 'Hover', 'gum-elementor-addon' ),
        ]
    );
 
@@ -1638,7 +2452,7 @@ class Gum_Elementor_Widget_blog_grid extends Widget_Base {
     $this->add_control(
       'datemeta_hcolor',
       [
-        'label' => esc_html__( 'Color', 'elementor' ),
+        'label' => esc_html__( 'Color', 'gum-elementor-addon' ),
         'type' =>  Controls_Manager::COLOR,
         'default' => '',
         'selectors' => [
@@ -1649,9 +2463,21 @@ class Gum_Elementor_Widget_blog_grid extends Widget_Base {
 
 
     $this->add_control(
+      'date_icon_hcolor',
+      [
+        'label' => esc_html__( 'Icon Color', 'gum-elementor-addon' ),
+        'type' => Controls_Manager::COLOR,
+        'default' => '',
+        'selectors' => [
+          '{{WRAPPER}} .list-meta.date_meta:hover i, {{WRAPPER}} .list-meta.date_meta:hover path' => 'fill: {{VALUE}}; color: {{VALUE}};',
+        ],
+      ]
+    );
+
+    $this->add_control(
       'datemeta_bghover',
       [
-        'label' => esc_html__( 'Background', 'elementor' ),
+        'label' => esc_html__( 'Background', 'gum-elementor-addon' ),
         'type' =>  Controls_Manager::COLOR,
         'default' => '',
         'selectors' => [
@@ -1746,6 +2572,53 @@ class Gum_Elementor_Widget_blog_grid extends Widget_Base {
       ]
     );  
 
+    $this->add_control(
+      'author_meta_icon',
+      [
+        'label' => esc_html__( 'Icon', 'gum-elementor-addon' ),
+        'type' => Controls_Manager::ICONS,
+        'fa4compatibility' => 'icon',
+      ]
+    );
+
+    $this->add_control(
+      'author_icon_size',
+      [
+        'label' => esc_html__( 'Icon Size', 'gum-elementor-addon' ),
+        'type' => Controls_Manager::SLIDER,
+        'range' => [
+          'px' => [
+            'max' => 100,
+          ],
+        ],
+        'default' =>['value'=>'', 'unit'=>'px'],
+        'selectors' => [
+          '{{WRAPPER}} .list-meta.author_meta i' => 'font-size: {{SIZE}}{{UNIT}};',
+          '{{WRAPPER}} .list-meta.author_meta svg' => 'height: {{SIZE}}%;width: {{SIZE}}%;'
+        ],
+        'condition' => ['author_meta_icon[value]!' => ''],
+      ]
+    );
+
+    $this->add_control(
+      'author_icon_indent',
+      [
+        'label' => esc_html__( 'Spacing', 'gum-elementor-addon' ),
+        'type' => Controls_Manager::SLIDER,
+        'range' => [
+          'px' => [
+            'max' => 100,
+          ],
+        ],
+        'default' =>['value'=>'10', 'unit'=>'px'],
+        'selectors' => [
+          '{{WRAPPER}} .list-meta.author_meta .meta-text' => 'padding-left: {{SIZE}}{{UNIT}};',
+        ],
+        'condition' => ['author_meta_icon[value]!' => ''],
+      ]
+    );
+
+
     $this->add_group_control(
       Group_Control_Typography::get_type(),
       [
@@ -1758,14 +2631,14 @@ class Gum_Elementor_Widget_blog_grid extends Widget_Base {
    $this->start_controls_tab(
        'authormeta_normal',
        [
-           'label' =>esc_html__( 'Normal', 'elementor' ),
+           'label' =>esc_html__( 'Normal', 'gum-elementor-addon' ),
        ]
    );
 
     $this->add_control(
       'authormeta_color',
       [
-        'label' => esc_html__( 'Color', 'elementor' ),
+        'label' => esc_html__( 'Color', 'gum-elementor-addon' ),
         'type' =>  Controls_Manager::COLOR,
         'default' => '',
         'selectors' => [
@@ -1776,9 +2649,22 @@ class Gum_Elementor_Widget_blog_grid extends Widget_Base {
 
 
     $this->add_control(
+      'author_icon_color',
+      [
+        'label' => esc_html__( 'Icon Color', 'gum-elementor-addon' ),
+        'type' => Controls_Manager::COLOR,
+        'default' => '',
+        'selectors' => [
+          '{{WRAPPER}} .list-meta.author_meta i, {{WRAPPER}} .list-meta.author_meta path' => 'fill: {{VALUE}}; color: {{VALUE}};',
+        ],
+      ]
+    );
+
+
+    $this->add_control(
       'authormeta_bgcolor',
       [
-        'label' => esc_html__( 'Background', 'elementor' ),
+        'label' => esc_html__( 'Background', 'gum-elementor-addon' ),
         'type' =>  Controls_Manager::COLOR,
         'default' => '',
         'selectors' => [
@@ -1792,14 +2678,14 @@ class Gum_Elementor_Widget_blog_grid extends Widget_Base {
    $this->start_controls_tab(
        'authormeta_hover',
        [
-           'label' =>esc_html__( 'Hover', 'elementor' ),
+           'label' =>esc_html__( 'Hover', 'gum-elementor-addon' ),
        ]
    );
 
     $this->add_control(
       'authormeta_hcolor',
       [
-        'label' => esc_html__( 'Color', 'elementor' ),
+        'label' => esc_html__( 'Color', 'gum-elementor-addon' ),
         'type' =>  Controls_Manager::COLOR,
         'default' => '',
         'selectors' => [
@@ -1808,11 +2694,22 @@ class Gum_Elementor_Widget_blog_grid extends Widget_Base {
       ]
     );
 
+    $this->add_control(
+      'author_icon_hcolor',
+      [
+        'label' => esc_html__( 'Icon Color', 'gum-elementor-addon' ),
+        'type' => Controls_Manager::COLOR,
+        'default' => '',
+        'selectors' => [
+          '{{WRAPPER}} .list-meta.author_meta:hover i, {{WRAPPER}} .list-meta.author_meta:hover path' => 'fill: {{VALUE}}; color: {{VALUE}};',
+        ],
+      ]
+    );
 
     $this->add_control(
       'authormeta_bghover',
       [
-        'label' => esc_html__( 'Background', 'elementor' ),
+        'label' => esc_html__( 'Background', 'gum-elementor-addon' ),
         'type' =>  Controls_Manager::COLOR,
         'default' => '',
         'selectors' => [
@@ -1905,6 +2802,54 @@ class Gum_Elementor_Widget_blog_grid extends Widget_Base {
       ]
     );  
 
+    $this->add_control(
+      'category_meta_icon',
+      [
+        'label' => esc_html__( 'Icon', 'gum-elementor-addon' ),
+        'type' => Controls_Manager::ICONS,
+        'fa4compatibility' => 'icon',
+      ]
+    );
+
+
+    $this->add_control(
+      'category_icon_size',
+      [
+        'label' => esc_html__( 'Icon Size', 'gum-elementor-addon' ),
+        'type' => Controls_Manager::SLIDER,
+        'range' => [
+          'px' => [
+            'max' => 100,
+          ],
+        ],
+        'default' =>['value'=>'', 'unit'=>'px'],
+        'selectors' => [
+          '{{WRAPPER}} .list-meta.category_meta i' => 'font-size: {{SIZE}}{{UNIT}};',
+          '{{WRAPPER}} .list-meta.category_meta svg' => 'height: {{SIZE}}%;width: {{SIZE}}%;'
+        ],
+        'condition' => ['category_meta_icon[value]!' => ''],
+      ]
+    );
+
+    $this->add_control(
+      'category_icon_indent',
+      [
+        'label' => esc_html__( 'Spacing', 'gum-elementor-addon' ),
+        'type' => Controls_Manager::SLIDER,
+        'range' => [
+          'px' => [
+            'max' => 100,
+          ],
+        ],
+        'default' =>['value'=>'10', 'unit'=>'px'],
+        'selectors' => [
+          '{{WRAPPER}} .list-meta.category_meta .meta-text' => 'padding-left: {{SIZE}}{{UNIT}};',
+        ],
+        'condition' => ['category_meta_icon[value]!' => ''],
+      ]
+    );
+
+
     $this->add_group_control(
       Group_Control_Typography::get_type(),
       [
@@ -1918,15 +2863,14 @@ class Gum_Elementor_Widget_blog_grid extends Widget_Base {
    $this->start_controls_tab(
        'categorymeta_normal',
        [
-           'label' =>esc_html__( 'Normal', 'elementor' ),
+           'label' =>esc_html__( 'Normal', 'gum-elementor-addon' ),
        ]
    );
-
 
     $this->add_control(
       'categorymeta_color',
       [
-        'label' => esc_html__( 'Color', 'elementor' ),
+        'label' => esc_html__( 'Color', 'gum-elementor-addon' ),
         'type' =>  Controls_Manager::COLOR,
         'default' => '',
         'selectors' => [
@@ -1936,9 +2880,21 @@ class Gum_Elementor_Widget_blog_grid extends Widget_Base {
     );
 
     $this->add_control(
+      'category_icon_color',
+      [
+        'label' => esc_html__( 'Icon Color', 'gum-elementor-addon' ),
+        'type' => Controls_Manager::COLOR,
+        'default' => '',
+        'selectors' => [
+          '{{WRAPPER}} .list-meta.category_meta i, {{WRAPPER}} .list-meta.category_meta path' => 'fill: {{VALUE}}; color: {{VALUE}};',
+        ],
+      ]
+    );
+
+    $this->add_control(
       'categorymeta_bgcolor',
       [
-        'label' => esc_html__( 'Background', 'elementor' ),
+        'label' => esc_html__( 'Background', 'gum-elementor-addon' ),
         'type' =>  Controls_Manager::COLOR,
         'default' => '',
         'selectors' => [
@@ -1952,7 +2908,7 @@ class Gum_Elementor_Widget_blog_grid extends Widget_Base {
    $this->start_controls_tab(
        'categorymeta_hover',
        [
-           'label' =>esc_html__( 'Hover', 'elementor' ),
+           'label' =>esc_html__( 'Hover', 'gum-elementor-addon' ),
        ]
    );
 
@@ -1960,7 +2916,7 @@ class Gum_Elementor_Widget_blog_grid extends Widget_Base {
     $this->add_control(
       'categorymeta_hcolor',
       [
-        'label' => esc_html__( 'Color', 'elementor' ),
+        'label' => esc_html__( 'Color', 'gum-elementor-addon' ),
         'type' =>  Controls_Manager::COLOR,
         'default' => '',
         'selectors' => [
@@ -1969,11 +2925,22 @@ class Gum_Elementor_Widget_blog_grid extends Widget_Base {
       ]
     );
 
+    $this->add_control(
+      'category_icon_hcolor',
+      [
+        'label' => esc_html__( 'Icon Color', 'gum-elementor-addon' ),
+        'type' => Controls_Manager::COLOR,
+        'default' => '',
+        'selectors' => [
+          '{{WRAPPER}} .list-meta.category_meta:hover i, {{WRAPPER}} .list-meta.category_meta:hover path' => 'fill: {{VALUE}}; color: {{VALUE}};',
+        ],
+      ]
+    );
 
     $this->add_control(
       'categorymeta_bghover',
       [
-        'label' => esc_html__( 'Background', 'elementor' ),
+        'label' => esc_html__( 'Background', 'gum-elementor-addon' ),
         'type' =>  Controls_Manager::COLOR,
         'default' => '',
         'selectors' => [
@@ -2073,23 +3040,23 @@ class Gum_Elementor_Widget_blog_grid extends Widget_Base {
         'options' => [
           'left' => [
             'title' => esc_html__( 'Left', 'gum-elementor-addon' ),
-            'icon' => 'eicon-text-align-left',
+            'icon' => 'eicon-h-align-left',
           ],
           'center' => [
             'title' => esc_html__( 'Center', 'gum-elementor-addon' ),
-            'icon' => 'eicon-text-align-center',
-          ],
-          'right' => [
-            'title' => esc_html__( 'Right', 'gum-elementor-addon' ),
-            'icon' => 'eicon-text-align-right',
+            'icon' => 'eicon-h-align-center',
           ],
           'full' => [
             'title' => esc_html__( 'Full Width', 'gum-elementor-addon' ),
-            'icon' => 'eicon-text-align-justify',
-          ]
+            'icon' => 'eicon-h-align-stretch',
+          ],
+          'right' => [
+            'title' => esc_html__( 'Right', 'gum-elementor-addon' ),
+            'icon' => 'eicon-h-align-right',
+          ],
         ],
         'default' => '',
-        'condition' => ['show_readmore[value]' => 'yes']
+        'condition' => ['show_readmore!' => '']
       ]
     );
 
@@ -2314,7 +3281,7 @@ class Gum_Elementor_Widget_blog_grid extends Widget_Base {
       ]
     );
 
-    $this->start_controls_tabs( '_tabs_readmore_icon_style' );
+    $this->start_controls_tabs( '_tabs_readmore_icon_style',['condition' => ['show_readmore!' => '','readmore_icon[value]!' => '']] );
 
     $this->start_controls_tab(
       '_tab_readmore_icon_normal',
@@ -2353,7 +3320,7 @@ class Gum_Elementor_Widget_blog_grid extends Widget_Base {
     $this->add_control(
       'readmore_icon_rotate',
       [
-        'label' => esc_html__( 'Rotate', 'elementor' ),
+        'label' => esc_html__( 'Rotate', 'gum-elementor-addon' ),
         'type' => Controls_Manager::SLIDER,
         'size_units' => [ 'deg' ],
         'default' => [
@@ -2418,7 +3385,7 @@ class Gum_Elementor_Widget_blog_grid extends Widget_Base {
     $this->add_control(
       'readmore_icon_hover_rotate',
       [
-        'label' => esc_html__( 'Rotate', 'elementor' ),
+        'label' => esc_html__( 'Rotate', 'gum-elementor-addon' ),
         'type' => Controls_Manager::SLIDER,
         'size_units' => [ 'deg' ],
         'default' => [
@@ -2434,7 +3401,7 @@ class Gum_Elementor_Widget_blog_grid extends Widget_Base {
     $this->add_control(
       'readmore_icon_transform_transition_hover',
       [
-        'label' => esc_html__( 'Transition Duration (ms)', 'elementor' ),
+        'label' => esc_html__( 'Transition Duration (ms)', 'gum-elementor-addon' ),
         'type' => Controls_Manager::SLIDER,
         'range' => [
           'px' => [
@@ -2466,34 +3433,6 @@ class Gum_Elementor_Widget_blog_grid extends Widget_Base {
     );  
 
 
-    $this->add_control(
-      'pagination_align',
-      [
-        'label' => esc_html__( 'Align', 'gum-elementor-addon' ),
-        'type' => Controls_Manager::CHOOSE,
-        'options' => [
-          'left' => [
-            'title' => esc_html__( 'Left', 'gum-elementor-addon' ),
-            'icon' => 'eicon-text-align-left',
-          ],
-          'center' => [
-            'title' => esc_html__( 'Center', 'gum-elementor-addon' ),
-            'icon' => 'eicon-text-align-center',
-          ],
-          'right' => [
-            'title' => esc_html__( 'Right', 'gum-elementor-addon' ),
-            'icon' => 'eicon-text-align-right',
-          ],
-          'justify' => [
-            'title' => esc_html__( 'Full Width', 'gum-elementor-addon' ),
-            'icon' => 'eicon-text-align-justify',
-          ]
-        ],
-        'default' => '',
-        'prefix_class' => 'pagination-',
-        'condition' => ['show_pagination!' => '']
-      ]
-    );
 
     $this->add_responsive_control(
       'pagination_margin',
@@ -2722,6 +3661,19 @@ class Gum_Elementor_Widget_blog_grid extends Widget_Base {
 
     $this->end_controls_section();
 
+  }
+
+  private static function grid_background_types() {
+    return [
+      'classic' => [
+        'title' => esc_html_x( 'Classic', 'Background Control', 'elementor' ),
+        'icon' => 'eicon-paint-brush',
+      ],
+      'gradient' => [
+        'title' => esc_html_x( 'Gradient', 'Background Control', 'elementor' ),
+        'icon' => 'eicon-barcode',
+      ],
+    ];
   }
 
   protected function render() {
@@ -3008,6 +3960,7 @@ class Gum_Elementor_Widget_blog_grid extends Widget_Base {
 
         $meta_url = '';
         $meta_type = '';
+        $meta_icon_html = $this->get_meta_icon( $settings[ $meta.'_icon']);
 
 
         switch ($meta) {
@@ -3037,7 +3990,7 @@ class Gum_Elementor_Widget_blog_grid extends Widget_Base {
         }
 
         if($meta_type!=''){
-            $rows_html[] = '<li class="list-meta '.$meta.'">'. ( $meta_url !='' ? sprintf('<a href="%s"><span class="meta-text">%s</span></a>', $meta_url, $meta_type) : sprintf('<span class="meta-text">%s</span>',$meta_type) ).'</li>';
+            $rows_html[] = '<li class="list-meta '.$meta.'">'.$meta_icon_html. ( $meta_url !='' ? sprintf('<a href="%s"><span class="meta-text">%s</span></a>', $meta_url, $meta_type) : sprintf('<span class="meta-text">%s</span>',$meta_type) ).'</li>';
         }
 
       }
@@ -3075,7 +4028,9 @@ class Gum_Elementor_Widget_blog_grid extends Widget_Base {
     $this->add_render_attribute( $index , 'class', 'elementor-button-text' );
     $this->add_inline_editing_attributes( $index, 'none' );
 
-    ?><div class="elementor-button-wrap<?php print ' button-align-'.$settings['readmore_button_align'] ;?>"><a <?php echo $this->get_render_attribute_string( 'button-'.$index ); ?>>
+    $readmore_button_align = isset( $settings['readmore_button_align'] ) ? $settings['readmore_button_align'] : '';
+
+    ?><div class="elementor-button-wrap<?php print ' button-align-'.$readmore_button_align ;?>"><a <?php echo $this->get_render_attribute_string( 'button-'.$index ); ?>>
           <span class="elementor-button-content-wrapper">
       <?php if ( ! empty( $settings['readmore_icon']['value'] ) ) : ?>
       <span <?php echo $this->get_render_attribute_string( 'readmore_icon_align' ); ?>>
@@ -3085,6 +4040,18 @@ class Gum_Elementor_Widget_blog_grid extends Widget_Base {
       <span <?php echo $this->get_render_attribute_string( $index );?>><?php echo $settings['readmore_label']; ?></span>
     </span>
   </a></div><?php
+
+  }
+
+  protected function get_meta_icon( $meta_icon ) {
+
+    if( empty($meta_icon['value'] )) return '';
+
+     if ( 'svg' === $meta_icon['library'] ) {
+        return Icons_Manager::render_uploaded_svg_icon( $meta_icon['value'] );
+      } else {
+        return Icons_Manager::render_font_icon( $meta_icon, [ 'aria-hidden' => 'true' ], 'i' );
+      }
 
   }
 

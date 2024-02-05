@@ -155,7 +155,7 @@ ESSBOptionsStructureHelper::field_component('social', $share_networks_tag, 'essb
 
 
 ESSBOptionsStructureHelper::help('social', $share_networks_advanced, esc_html__('How to select social share buttons for your website – global share buttons, per position share buttons, etc.', 'essb'), '', array('Help with Style Settings' => 'https://docs.socialsharingplugin.com/knowledgebase/additional-network-options/'));
-ESSBOptionsStructureHelper::hint('social', $share_networks_advanced, '', esc_html__('A few of the networks that are available on your site contain additional settings. With the help of those settings, you can change the work of the listed networks (example: configure additional Twitter settings).', 'essb'));
+ESSBOptionsStructureHelper::hint('social', $share_networks_advanced, '', esc_html__('A few of the networks that are available on your site contain additional settings. With the help of those settings, you can change the work of the listed networks (example: configure additional X (formerly Twitter) settings).', 'essb'));
 
 if (essb_is_active_social_network('pinterest')) {
     ESSBControlCenter::register_help_link('pinterest_sniff_disable', 'https://docs.socialsharingplugin.com/knowledgebase/pinterest-share-button-modes-what-is-the-difference-and-which-of-them-to-use-on-site/');
@@ -170,8 +170,9 @@ if (essb_is_active_social_network('pinterest')) {
 }
 
 if (essb_is_active_social_network('twitter')) {
-	ESSBOptionsStructureHelper::panel_start('social', $share_networks_advanced, esc_html__('Twitter', 'essb'), '', 'fa21 essb_icon_twitter', array("mode" => "toggle", 'state' => 'closed'));
-	ESSBOptionsStructureHelper::field_textbox_stretched('social', $share_networks_advanced, 'twitteruser', esc_html__('Username', 'essb'), esc_html__('Enter your Twitter username. This is used for Twitter share functionality (via @username).', 'essb'));
+	ESSBOptionsStructureHelper::panel_start('social', $share_networks_advanced, esc_html__('X (formerly Twitter)', 'essb'), '', 'fa21 essb_icon_twitter', array("mode" => "toggle", 'state' => 'closed'));
+	ESSBOptionsStructureHelper::field_select('social', $share_networks_advanced, 'share_twitter_icon_type', esc_html__('X (formerly Twitter) icon and color scheme', 'essb'), '', array('' => 'Twitter', 'x' => 'X'));
+	ESSBOptionsStructureHelper::field_textbox_stretched('social', $share_networks_advanced, 'twitteruser', esc_html__('Username', 'essb'), esc_html__('Enter your X (formerly Twitter) username. This is used for X (formerly Twitter) share functionality (via @username).', 'essb'));
 	ESSBOptionsStructureHelper::field_textbox_stretched('social', $share_networks_advanced, 'twitterhashtags', esc_html__('Hashtags', 'essb'), esc_html__('Enter default hashtags for each Tweet. You can set one or multiple separated with comma (example: tag1,tag2,tag3).', 'essb'));
 	ESSBOptionsStructureHelper::field_switch('social', $share_networks_advanced, 'twitter_message_tags_to_hashtags', esc_html__('Generate hashtags from post tags', 'essb'), esc_html__('Automatically transform post tags into hashtags in the Tweet. Use this with caution due to the character limitation in the Tweet.', 'essb'), '', esc_html__('Yes', 'essb'), esc_html__('No', 'essb'));
 
@@ -322,7 +323,7 @@ if (essb_is_active_social_network('print')) {
 
 if (essb_is_active_social_network('buffer')) {
 	ESSBOptionsStructureHelper::panel_start('social', $share_networks_advanced, esc_html__('Buffer', 'essb'), '', 'fa21 essb_icon_buffer', array("mode" => "toggle", 'state' => 'closed'));
-	ESSBOptionsStructureHelper::field_switch('social', $share_networks_advanced, 'buffer_twitter_user', esc_html__('Add Twitter username to buffer shares', 'essb'), esc_html__('Append also Twitter username into Buffer shares', 'essb'), '', esc_html__('Yes', 'essb'), esc_html__('No', 'essb'));
+	ESSBOptionsStructureHelper::field_switch('social', $share_networks_advanced, 'buffer_twitter_user', esc_html__('Add X (formerly Twitter) username to buffer shares', 'essb'), esc_html__('Append also X (formerly Twitter) username into Buffer shares', 'essb'), '', esc_html__('Yes', 'essb'), esc_html__('No', 'essb'));
 	ESSBOptionsStructureHelper::panel_end('social', $share_networks_advanced);
 }
 
@@ -684,10 +685,10 @@ if (!essb_option_bool_value('deactivate_module_shareoptimize')) {
 	ESSBOptionsStructureHelper::field_image('social', 'optimize', 'sso_default_image', esc_html__('Default share image', 'essb'), esc_html__('The default share image is the one that will be used on entire site when there is no post or page featured image added (or personal social media optimization image)', 'essb'), '', 'vertical1');
 	ESSBOptionsStructureHelper::panel_end('social', 'optimize');
 	
-	ESSBOptionsStructureHelper::panel_start('social', 'optimize', esc_html__('Enable Twitter Cards', 'essb'), '', 'fa21 fa fa-twitter', array("mode" => "switch", 'switch_id' => 'twitter_card', 'switch_on' => esc_html__('Yes', 'essb'), 'switch_off' => esc_html__('No', 'essb')));
-	ESSBOptionsStructureHelper::field_textbox('social', 'optimize', 'twitter_card_user', esc_html__('Twitter Site Username', 'essb'), esc_html__('Enter your Twitter site username.', 'essb'));
+	ESSBOptionsStructureHelper::panel_start('social', 'optimize', esc_html__('Enable X (formerly Twitter) Cards', 'essb'), '', 'fa21 fa fa-twitter', array("mode" => "switch", 'switch_id' => 'twitter_card', 'switch_on' => esc_html__('Yes', 'essb'), 'switch_off' => esc_html__('No', 'essb')));
+	ESSBOptionsStructureHelper::field_textbox('social', 'optimize', 'twitter_card_user', esc_html__('X (formerly Twitter) Site Username', 'essb'), esc_html__('Enter your X (formerly Twitter) site username.', 'essb'));
 	$listOfOptions = array ("summary" => "Summary", "summaryimage" => "Summary with image" );
-	ESSBOptionsStructureHelper::field_select('social', 'optimize', 'twitter_card_type', esc_html__('Twitter Card Type', 'essb'), esc_html__('Choose the default card type that should be generated.', 'essb'), $listOfOptions);
+	ESSBOptionsStructureHelper::field_select('social', 'optimize', 'twitter_card_type', esc_html__('X (formerly Twitter) Card Type', 'essb'), esc_html__('Choose the default card type that should be generated.', 'essb'), $listOfOptions);
 	ESSBOptionsStructureHelper::panel_end('social', 'optimize');
 
 	ESSBOptionsStructureHelper::field_component('social', 'optimize', 'essb5_advanced_sso_deactivate_options', 'false');	
@@ -699,7 +700,7 @@ if (!essb_option_bool_value('deactivate_module_shorturl')) {
 	
 	ESSBOptionsStructureHelper::panel_start('social', 'shorturl', esc_html__('Enable link shortening', 'essb'), '', 'fa21 fa fa-cogs', array("mode" => "switch", 'switch_id' => 'shorturl_activate', 'switch_on' => esc_html__('Yes', 'essb'), 'switch_off' => esc_html__('No', 'essb')));
 	
-	ESSBOptionsStructureHelper::field_select('social', 'shorturl', 'twitter_shareshort', esc_html__('Generate short URLs for', 'essb'), '', array( "true" => "Recommended social networks only (Twitter, Mobile Messengers)", "false" => "All social networks"));
+	ESSBOptionsStructureHelper::field_select('social', 'shorturl', 'twitter_shareshort', esc_html__('Generate short URLs for', 'essb'), '', array( "true" => "Recommended social networks only (X (formerly Twitter), Mobile Messengers)", "false" => "All social networks"));
 	
 	$listOfOptions = array("wp" => "Build in WordPress function wp_get_shortlink()", "goo.gl" => "goo.gl", "bit.ly" => "bit.ly", 'rebrand.ly' => 'Rebrandly', 'po.st' => 'po.st');
 	if (defined('ESSB3_SSU_VERSION')) {
@@ -789,7 +790,7 @@ if (!essb_options_bool_value('deactivate_module_aftershare')) {
 		ESSBOptionsStructureHelper::field_select('social', 'after-share', 'afterclose_like_cols', esc_html__('Display social profile in the following number of columns', 'essb'), esc_html__('Choose the number of columns that social profiles will appear. Please note that using greater value may require increase the pop up window width.', 'essb'), $col_values);
 		ESSBOptionsStructureHelper::field_textbox_stretched('social', 'after-share', 'afterclose_like_fb_like_url', esc_html__('Include Facebook Like Button for the following url', 'essb'), esc_html__('Provide url address users to like. This can be you Facebook fan page, additional page or any other page you wish users to like.', 'essb'));
 		ESSBOptionsStructureHelper::field_textbox_stretched('social', 'after-share', 'afterclose_like_fb_follow_url', esc_html__('Include Facebook Follow Profile button', 'essb'), esc_html__('Provide url address of profile users to follow.', 'essb'));
-		ESSBOptionsStructureHelper::field_textbox('social', 'after-share', 'afterclose_like_twitter_profile', esc_html__('Include Twitter Follow Button', 'essb'), esc_html__('Provide Twitter username people to follow (without @)', 'essb'));
+		ESSBOptionsStructureHelper::field_textbox('social', 'after-share', 'afterclose_like_twitter_profile', esc_html__('Include X (formerly Twitter) Follow Button', 'essb'), esc_html__('Provide X (formerly Twitter) username people to follow (without @)', 'essb'));
 		ESSBOptionsStructureHelper::field_textbox_stretched('social', 'after-share', 'afterclose_like_pin_follow_url', esc_html__('Include Pinterest Follow Profile button', 'essb'), esc_html__('Provide url address to a Pinterest profile.', 'essb'));
 		ESSBOptionsStructureHelper::field_textbox('social', 'after-share', 'afterclose_like_youtube_channel', esc_html__('Include Youtube Subscribe Channel button', 'essb'), esc_html__('Provide your Youtube Channel ID.', 'essb'));
 		ESSBOptionsStructureHelper::field_textbox('social', 'after-share', 'afterclose_like_youtube_user', esc_html__('Include Youtube Subscribe User button', 'essb'), esc_html__('Provide your Youtube Channel Username.', 'essb'));
@@ -1127,7 +1128,7 @@ function essb5_live_preview() {
 	$r = array();
 	if (!is_array($active_networks)) {
 		$r[] = array('key' => 'facebook', 'name' => 'Facebook');
-		$r[] = array('key' => 'twitter', 'name' => 'Twitter');
+		$r[] = array('key' => 'twitter', 'name' => 'X (formerly Twitter)');
 		$r[] = array('key' => 'pinterest', 'name' => 'Pinterest');
 		$r[] = array('key' => 'linkedin', 'name' => 'LinkedIn');
 	}
@@ -1232,7 +1233,7 @@ function essb5_additional_counter_options_only() {
     
     echo essb5_generate_code_advanced_settings_panel(
         esc_html__('Share Counter Update Setup', 'essb'),
-        esc_html__('Configure global options related to the update of the share counters on your website (Facebook, Twitter, LinkedIn, AddThis).', 'essb'),
+        esc_html__('Configure global options related to the update of the share counters on your website (Facebook, X (formerly Twitter), LinkedIn, AddThis).', 'essb'),
         'update-counter', '', esc_html__('Configure', 'essb'), 'ti-settings', 'no', '500');
         
     echo essb5_generate_code_advanced_settings_panel(
@@ -1495,6 +1496,8 @@ function essb_create_custombuttons($options = array()) {
 	    echo '<a href="#" class="ao-new-subscribe-design ao-import-sharecustom-button" data-title="'.esc_html__('Import Custom Button', 'essb').'"><span class="essb_icon fa fa-cloud-upload"></span><span>'.esc_html__('Import', 'essb').'</span></a>';
 	}
 	echo '<a href="#" class="ao-new-subscribe-design ao-deleteall-sharecustom-button" data-title="'.esc_html__('Delete All', 'essb').'"><span class="essb_icon fa fa-close"></span><span>'.esc_html__('Remove All', 'essb').'</span></a>';
+	
+	echo '<a href="https://socialsharingplugin.com/library/" target="_blank" class="ao-new-subscribe-design ao-hub-followcustom-button" data-title="'.esc_html__('Go to HUB', 'essb').'"><span class="essb_icon fa fa-database"></span><span>'.esc_html__('Get more networks', 'essb').'</span></a>';
 	
 	echo '</div>';
 	

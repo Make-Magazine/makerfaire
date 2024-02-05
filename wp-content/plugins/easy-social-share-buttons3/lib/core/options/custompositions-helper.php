@@ -180,7 +180,26 @@ if (!function_exists('essb_custom_position_draw')) {
 	 * @param string $position
 	 */
 
-	function essb_custom_position_draw($position = '', $force = false, $archive = false, $custom_share = array()) {
+	function essb_custom_position_draw($position = '', $force = false, $archive = false, $custom_share = array(), $loop = false) {
+	    
+	    if ($loop) {
+	        $post_id = get_the_ID();
+	        $post_data = ESSB_Runtime_Cache::get_post_sharing_data($post_id);
+	        $share_object = $post_data->compile_share_object();
+	        
+	        $custom = true;
+	        $custom_share['custom'] = true;
+	        $custom_share['url'] = $share_object['url'];
+	        $custom_share['message'] = $share_object['title'];
+	        $custom_share['title'] = $share_object['title'];
+	        $custom_share['image'] = $share_object['image'];
+	        $custom_share['description'] = $share_object['description'];
+	        $custom_share['twitter_user'] = $share_object['twitter_user'];
+	        $custom_share['twitter_hashtags'] = $share_object['twitter_hashtags'];
+	        $custom_share['twitter_tweet'] = $share_object['twitter_tweet'];
+	        $custom_share['force_set_post_id'] = $post_id;
+	    }
+	    
 	    echo essb_custom_position_generate($position, $force, $archive, $custom_share);
 	}
 }
@@ -260,14 +279,22 @@ function essb_shortcode_show_custom_position($atts = array()) {
 	$message = isset($atts['message']) ? $atts['message'] : '';
 	$image = isset($atts['image']) ? $atts['image'] : '';
 	
+	$post_id = isset($atts['post_id']) ? $atts['post_id'] : '';
+	
+	
 	/**
 	 * @since 8.2 Integration with JetEngine Listing templates
 	 * @var Ambiguous $jetengine
 	 */
 	$jetengine = isset($atts['jetengine']) ? $atts['jetengine'] : '';
 	
-	$custom_options = array();
+	/**
+	 * @since 9.3 Integration with Elementor Loop Grid in arhive template
+	 */
+	$loop_archive = isset($atts['looparchive']) ? $atts['looparchive'] : '';
 	
+	$custom_options = array();
+		
 	if ($custom == 'true') {
 	    if (essb_option_bool_value('affwp_active_shortcode')) {
 	        essb_helper_maybe_load_feature('integration-affiliatewp');
@@ -281,6 +308,30 @@ function essb_shortcode_show_custom_position($atts = array()) {
 	    $custom_options['image'] = $image;
 	    
 	    $custom_options['twitter_tweet'] = isset($atts['tweet']) ? $atts['tweet'] : '';
+	    
+	    /**
+	     * @since 9.1.4
+	     */
+	    if (!empty($post_id)) {
+	        $custom_options['force_set_post_id'] = $post_id;
+	    }
+	}
+	
+	if ($loop_archive == 'true') {
+	    $post_id = get_the_ID();
+	    $post_data = ESSB_Runtime_Cache::get_post_sharing_data($post_id);
+	    $share_object = $post_data->compile_share_object();
+	    
+	    $custom_options['custom'] = true;
+	    $custom_options['url'] = $share_object['url'];
+	    $custom_options['message'] = $share_object['title'];
+	    $custom_options['title'] = $share_object['title'];
+	    $custom_options['image'] = $share_object['image'];
+	    $custom_options['description'] = $share_object['description'];
+	    $custom_options['twitter_user'] = $share_object['twitter_user'];
+	    $custom_options['twitter_hashtags'] = $share_object['twitter_hashtags'];
+	    $custom_options['twitter_tweet'] = $share_object['twitter_tweet'];
+	    $custom_options['force_set_post_id'] = $post_id;
 	}
 	
 	if ($jetengine == 'true' && function_exists('jet_engine')) {

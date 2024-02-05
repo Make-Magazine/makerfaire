@@ -1,6 +1,11 @@
 
 # Changelog
 
+## 1.1.49
+
+	- Fixed issue with passing child entry IDs to Nested Form fields using a query string.
+	- Fixed PHP 8.2 deprecation notice.
+
 ## 1.1.48
 
 	- Fixed conditionally hidden product fields in Nested Form field summaries showing `, Qty: 1`.

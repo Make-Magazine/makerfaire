@@ -1,5 +1,4 @@
-/*! elementor-pro - v3.14.0 - 26-06-2023 */
-"use strict";
+/*! elementor-pro - v3.19.0 - 05-02-2024 */
 (self["webpackChunkelementor_pro"] = self["webpackChunkelementor_pro"] || []).push([["preloaded-elements-handlers"],{
 
 /***/ "../assets/dev/js/frontend/preloaded-elements-handlers.js":
@@ -8,6 +7,7 @@
   \****************************************************************/
 /***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
 
+"use strict";
 
 
 var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
@@ -31,6 +31,7 @@ var _frontendLegacy17 = _interopRequireDefault(__webpack_require__(/*! modules/w
 var _frontendLegacy18 = _interopRequireDefault(__webpack_require__(/*! modules/loop-builder/assets/js/frontend/frontend-legacy */ "../modules/loop-builder/assets/js/frontend/frontend-legacy.js"));
 var _frontendLegacy19 = _interopRequireDefault(__webpack_require__(/*! modules/mega-menu/assets/js/frontend/frontend-legacy */ "../modules/mega-menu/assets/js/frontend/frontend-legacy.js"));
 var _frontendLegacy20 = _interopRequireDefault(__webpack_require__(/*! modules/nested-carousel/assets/js/frontend/frontend-legacy */ "../modules/nested-carousel/assets/js/frontend/frontend-legacy.js"));
+var _frontendLegacy21 = _interopRequireDefault(__webpack_require__(/*! modules/loop-filter/assets/js/frontend/frontend-legacy */ "../modules/loop-filter/assets/js/frontend/frontend-legacy.js"));
 const extendDefaultHandlers = defaultHandlers => {
   const handlers = {
     animatedText: _frontendLegacy.default,
@@ -52,7 +53,8 @@ const extendDefaultHandlers = defaultHandlers => {
     tableOfContents: _frontendLegacy14.default,
     loopBuilder: _frontendLegacy18.default,
     megaMenu: _frontendLegacy19.default,
-    nestedCarousel: _frontendLegacy20.default
+    nestedCarousel: _frontendLegacy20.default,
+    taxonomyFilter: _frontendLegacy21.default
   };
   return {
     ...defaultHandlers,
@@ -65,12 +67,46 @@ elementorProFrontend.on('elementor-pro/modules/init:before', () => {
 
 /***/ }),
 
+/***/ "../assets/dev/js/frontend/utils/ajax-helper.js":
+/*!******************************************************!*\
+  !*** ../assets/dev/js/frontend/utils/ajax-helper.js ***!
+  \******************************************************/
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports["default"] = void 0;
+class AjaxHelper {
+  addLoadingAnimationOverlay(elementId) {
+    const widget = document.querySelector(`.elementor-element-${elementId}`);
+    if (!widget) {
+      return;
+    }
+    widget.classList.add('e-loading-overlay');
+  }
+  removeLoadingAnimationOverlay(elementId) {
+    const widget = document.querySelector(`.elementor-element-${elementId}`);
+    if (!widget) {
+      return;
+    }
+    widget.classList.remove('e-loading-overlay');
+  }
+}
+exports["default"] = AjaxHelper;
+
+/***/ }),
+
 /***/ "../assets/dev/js/frontend/utils/anchor-link.js":
 /*!******************************************************!*\
   !*** ../assets/dev/js/frontend/utils/anchor-link.js ***!
   \******************************************************/
 /***/ ((__unused_webpack_module, exports) => {
 
+"use strict";
 
 
 Object.defineProperty(exports, "__esModule", ({
@@ -135,12 +171,145 @@ exports["default"] = AnchorLinks;
 
 /***/ }),
 
+/***/ "../assets/dev/js/frontend/utils/flex-horizontal-scroll.js":
+/*!*****************************************************************!*\
+  !*** ../assets/dev/js/frontend/utils/flex-horizontal-scroll.js ***!
+  \*****************************************************************/
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports.changeScrollStatus = changeScrollStatus;
+exports.setHorizontalScrollAlignment = setHorizontalScrollAlignment;
+exports.setHorizontalTitleScrollValues = setHorizontalTitleScrollValues;
+function changeScrollStatus(element, event) {
+  if ('mousedown' === event.type) {
+    element.classList.add('e-scroll');
+    element.dataset.pageX = event.pageX;
+  } else {
+    element.classList.remove('e-scroll', 'e-scroll-active');
+    element.dataset.pageX = '';
+  }
+}
+
+// This function was written using this example https://codepen.io/thenutz/pen/VwYeYEE.
+function setHorizontalTitleScrollValues(element, horizontalScrollStatus, event) {
+  const isActiveScroll = element.classList.contains('e-scroll'),
+    isHorizontalScrollActive = 'enable' === horizontalScrollStatus,
+    headingContentIsWiderThanWrapper = element.scrollWidth > element.clientWidth;
+  if (!isActiveScroll || !isHorizontalScrollActive || !headingContentIsWiderThanWrapper) {
+    return;
+  }
+  event.preventDefault();
+  const previousPositionX = parseFloat(element.dataset.pageX),
+    mouseMoveX = event.pageX - previousPositionX,
+    maximumScrollValue = 5,
+    stepLimit = 20;
+  let toScrollDistanceX = 0;
+  if (stepLimit < mouseMoveX) {
+    toScrollDistanceX = maximumScrollValue;
+  } else if (stepLimit * -1 > mouseMoveX) {
+    toScrollDistanceX = -1 * maximumScrollValue;
+  } else {
+    toScrollDistanceX = mouseMoveX;
+  }
+  element.scrollLeft = element.scrollLeft - toScrollDistanceX;
+  element.classList.add('e-scroll-active');
+}
+function setHorizontalScrollAlignment(_ref) {
+  let {
+    element,
+    direction,
+    justifyCSSVariable,
+    horizontalScrollStatus
+  } = _ref;
+  if (!element) {
+    return;
+  }
+  if (isHorizontalScroll(element, horizontalScrollStatus)) {
+    initialScrollPosition(element, direction, justifyCSSVariable);
+  } else {
+    element.style.setProperty(justifyCSSVariable, '');
+  }
+}
+function isHorizontalScroll(element, horizontalScrollStatus) {
+  return element.clientWidth < getChildrenWidth(element.children) && 'enable' === horizontalScrollStatus;
+}
+function getChildrenWidth(children) {
+  let totalWidth = 0;
+  const parentContainer = children[0].parentNode,
+    computedStyles = getComputedStyle(parentContainer),
+    gap = parseFloat(computedStyles.gap) || 0; // Get the gap value or default to 0 if it's not specified
+
+  for (let i = 0; i < children.length; i++) {
+    totalWidth += children[i].offsetWidth + gap;
+  }
+  return totalWidth;
+}
+function initialScrollPosition(element, direction, justifyCSSVariable) {
+  const isRTL = elementorFrontend.config.is_rtl;
+  switch (direction) {
+    case 'end':
+      element.style.setProperty(justifyCSSVariable, 'start');
+      element.scrollLeft = isRTL ? -1 * getChildrenWidth(element.children) : getChildrenWidth(element.children);
+      break;
+    default:
+      element.style.setProperty(justifyCSSVariable, 'start');
+      element.scrollLeft = 0;
+  }
+}
+
+/***/ }),
+
+/***/ "../assets/dev/js/frontend/utils/handle-parameter-pollution.js":
+/*!*********************************************************************!*\
+  !*** ../assets/dev/js/frontend/utils/handle-parameter-pollution.js ***!
+  \*********************************************************************/
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports["default"] = handleParameterPollution;
+function handleParameterPollution(inputURL) {
+  const urlObject = new URL(inputURL),
+    mainDomain = urlObject.hostname,
+    params = new URLSearchParams(urlObject.search),
+    paramKeysToCheck = ['u']; // Can add more items if we find more problems with other social networks.
+
+  paramKeysToCheck.forEach(key => {
+    const paramValue = params.get(key);
+    if (paramValue) {
+      try {
+        const paramDomain = new URL(paramValue).hostname;
+        if (paramDomain !== mainDomain) {
+          params.delete(key);
+        }
+      } catch (error) {
+        params.delete(key);
+      }
+    }
+  });
+  urlObject.search = params.toString();
+  return urlObject.toString();
+}
+
+/***/ }),
+
 /***/ "../assets/dev/js/frontend/utils/icons/e-icons.js":
 /*!********************************************************!*\
   !*** ../assets/dev/js/frontend/utils/icons/e-icons.js ***!
   \********************************************************/
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
+"use strict";
 
 
 var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
@@ -152,7 +321,7 @@ var _manager = _interopRequireDefault(__webpack_require__(/*! ./manager */ "../a
 // This file is automatically generated, please don't change anything in this file.
 
 const iconsManager = new _manager.default('eicon');
-const close = {
+const close = exports.close = {
   get element() {
     const svgData = {
       path: 'M742 167L500 408 258 167C246 154 233 150 217 150 196 150 179 158 167 167 154 179 150 196 150 212 150 229 154 242 171 254L408 500 167 742C138 771 138 800 167 829 196 858 225 858 254 829L496 587 738 829C750 842 767 846 783 846 800 846 817 842 829 829 842 817 846 804 846 783 846 767 842 750 829 737L588 500 833 258C863 229 863 200 833 171 804 137 775 137 742 167Z',
@@ -162,7 +331,6 @@ const close = {
     return iconsManager.createSvgElement('close', svgData);
   }
 };
-exports.close = close;
 
 /***/ }),
 
@@ -172,6 +340,7 @@ exports.close = close;
   \********************************************************/
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
+"use strict";
 
 
 var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
@@ -232,6 +401,7 @@ exports["default"] = IconsManager;
   \***************************************************************/
 /***/ ((__unused_webpack_module, exports) => {
 
+"use strict";
 
 
 Object.defineProperty(exports, "__esModule", ({
@@ -250,6 +420,7 @@ function runElementHandlers(elements) {
   \*************************************************/
 /***/ ((__unused_webpack_module, exports) => {
 
+"use strict";
 
 
 Object.defineProperty(exports, "__esModule", ({
@@ -259,8 +430,7 @@ exports["default"] = void 0;
 if (window.elementorCommon) {
   window.elementorCommon.helpers.softDeprecated('Scroll util from "/dev/js/frontend/utils/scroll"', '3.1.0', 'elementorModules.utils.Scroll');
 }
-var _default = elementorModules.utils.Scroll;
-exports["default"] = _default;
+var _default = exports["default"] = elementorModules.utils.Scroll;
 
 /***/ }),
 
@@ -270,6 +440,7 @@ exports["default"] = _default;
   \*********************************************************/
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
+"use strict";
 /* provided dependency */ var __ = __webpack_require__(/*! @wordpress/i18n */ "@wordpress/i18n")["__"];
 
 
@@ -281,10 +452,9 @@ exports.createElement = createElement;
 exports["default"] = addDocumentHandle;
 const EDIT_HANDLE_CLASS_NAME = 'elementor-document-handle';
 const EDIT_MODE_CLASS_NAME = 'elementor-edit-mode';
-const EDIT_CONTEXT = 'edit';
-exports.EDIT_CONTEXT = EDIT_CONTEXT;
+const EDIT_CONTEXT = exports.EDIT_CONTEXT = 'edit';
 const SAVE_HANDLE_CLASS_NAME = 'elementor-document-save-back-handle';
-const SAVE_CONTEXT = 'save';
+const SAVE_CONTEXT = exports.SAVE_CONTEXT = 'save';
 
 /**
  * @param {Object}        handleTarget
@@ -295,7 +465,6 @@ const SAVE_CONTEXT = 'save';
  * @param {Function|null} onCloseDocument      - Callback to run when outgoing document is closed.
  * @param {string}        selector
  */
-exports.SAVE_CONTEXT = SAVE_CONTEXT;
 function addDocumentHandle(_ref) {
   let {
     element,
@@ -448,6 +617,7 @@ async function onDocumentClick(id, context) {
   \**************************************************************************/
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
+"use strict";
 
 
 var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
@@ -472,6 +642,7 @@ exports["default"] = _default;
   \**************************************************************************************/
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
+"use strict";
 
 
 var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
@@ -480,7 +651,7 @@ Object.defineProperty(exports, "__esModule", ({
 }));
 exports["default"] = void 0;
 var _scroll = _interopRequireDefault(__webpack_require__(/*! elementor-pro/frontend/utils/scroll */ "../assets/dev/js/frontend/utils/scroll.js"));
-var _default = elementorModules.frontend.handlers.Base.extend({
+var _default = exports["default"] = elementorModules.frontend.handlers.Base.extend({
   svgPaths: {
     circle: ['M325,18C228.7-8.3,118.5,8.3,78,21C22.4,38.4,4.6,54.6,5.6,77.6c1.4,32.4,52.2,54,142.6,63.7 c66.2,7.1,212.2,7.5,273.5-8.3c64.4-16.6,104.3-57.6,33.8-98.2C386.7-4.9,179.4-1.4,126.3,20.7'],
     underline_zigzag: ['M9.3,127.3c49.3-3,150.7-7.6,199.7-7.4c121.9,0.4,189.9,0.4,282.3,7.2C380.1,129.6,181.2,130.6,70,139 c82.6-2.9,254.2-1,335.9,1.3c-56,1.4-137.2-0.3-197.1,9'],
@@ -749,7 +920,6 @@ var _default = elementorModules.frontend.handlers.Base.extend({
     this.activateScrollListener();
   }
 });
-exports["default"] = _default;
 
 /***/ }),
 
@@ -759,6 +929,7 @@ exports["default"] = _default;
   \*****************************************************************/
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
+"use strict";
 
 
 var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
@@ -786,6 +957,7 @@ exports["default"] = _default;
   \***************************************************************/
 /***/ ((__unused_webpack_module, exports) => {
 
+"use strict";
 
 
 Object.defineProperty(exports, "__esModule", ({
@@ -1038,6 +1210,7 @@ exports["default"] = CarouselBase;
   \*************************************************************************/
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
+"use strict";
 
 
 var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
@@ -1166,6 +1339,7 @@ exports["default"] = MediaCarousel;
   \*******************************************************************************/
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
+"use strict";
 
 
 var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
@@ -1202,6 +1376,7 @@ exports["default"] = TestimonialCarousel;
   \******************************************************************/
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
+"use strict";
 
 
 var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
@@ -1226,13 +1401,14 @@ exports["default"] = _default;
   \*********************************************************************/
 /***/ ((__unused_webpack_module, exports) => {
 
+"use strict";
 
 
 Object.defineProperty(exports, "__esModule", ({
   value: true
 }));
 exports["default"] = void 0;
-var _default = elementorModules.frontend.handlers.Base.extend({
+var _default = exports["default"] = elementorModules.frontend.handlers.Base.extend({
   cache: null,
   cacheElements() {
     const $countDown = this.$element.find('.elementor-countdown-wrapper');
@@ -1302,7 +1478,7 @@ var _default = elementorModules.frontend.handlers.Base.extend({
           self.cache.$countDown.hide();
           break;
         case 'redirect':
-          if (action.redirect_url) {
+          if (action.redirect_url && action.redirect_url.startsWith('http')) {
             window.location.href = action.redirect_url;
           }
           break;
@@ -1359,7 +1535,6 @@ var _default = elementorModules.frontend.handlers.Base.extend({
     }
   }
 });
-exports["default"] = _default;
 
 /***/ }),
 
@@ -1369,6 +1544,7 @@ exports["default"] = _default;
   \**************************************************************/
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
+"use strict";
 
 
 var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
@@ -1400,6 +1576,7 @@ exports["default"] = _default;
   \***********************************************************************************/
 /***/ ((__unused_webpack_module, exports) => {
 
+"use strict";
 
 
 Object.defineProperty(exports, "__esModule", ({
@@ -1450,6 +1627,7 @@ exports["default"] = DataTimeFieldBase;
   \*******************************************************************/
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
+"use strict";
 
 
 var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
@@ -1481,6 +1659,7 @@ exports["default"] = DateField;
   \*******************************************************************/
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
+"use strict";
 
 
 var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
@@ -1511,13 +1690,14 @@ exports["default"] = TimeField;
   \*********************************************************************/
 /***/ ((__unused_webpack_module, exports) => {
 
+"use strict";
 
 
 Object.defineProperty(exports, "__esModule", ({
   value: true
 }));
 exports["default"] = void 0;
-var _default = elementorModules.frontend.handlers.Base.extend({
+var _default = exports["default"] = elementorModules.frontend.handlers.Base.extend({
   getDefaultSettings() {
     return {
       selectors: {
@@ -1540,7 +1720,6 @@ var _default = elementorModules.frontend.handlers.Base.extend({
     }
   }
 });
-exports["default"] = _default;
 
 /***/ }),
 
@@ -1550,13 +1729,14 @@ exports["default"] = _default;
   \*******************************************************************/
 /***/ ((__unused_webpack_module, exports) => {
 
+"use strict";
 
 
 Object.defineProperty(exports, "__esModule", ({
   value: true
 }));
 exports["default"] = void 0;
-var _default = elementorModules.frontend.handlers.Base.extend({
+var _default = exports["default"] = elementorModules.frontend.handlers.Base.extend({
   getDefaultSettings() {
     return {
       selectors: {
@@ -1667,7 +1847,6 @@ var _default = elementorModules.frontend.handlers.Base.extend({
     });
   }
 });
-exports["default"] = _default;
 
 /***/ }),
 
@@ -1677,6 +1856,7 @@ exports["default"] = _default;
   \******************************************************************/
 /***/ ((__unused_webpack_module, exports) => {
 
+"use strict";
 
 
 Object.defineProperty(exports, "__esModule", ({
@@ -2244,6 +2424,7 @@ exports["default"] = FormSteps;
   \*****************************************************************/
 /***/ ((__unused_webpack_module, exports) => {
 
+"use strict";
 
 
 Object.defineProperty(exports, "__esModule", ({
@@ -2341,6 +2522,7 @@ exports["default"] = Recaptcha;
   \****************************************************************/
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
+"use strict";
 
 
 var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
@@ -2365,6 +2547,7 @@ exports["default"] = _default;
   \********************************************************/
 /***/ ((__unused_webpack_module, exports) => {
 
+"use strict";
 
 
 Object.defineProperty(exports, "__esModule", ({
@@ -2588,6 +2771,7 @@ exports["default"] = galleryHandler;
   \****************************************************************/
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
+"use strict";
 
 
 var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
@@ -2612,6 +2796,7 @@ exports["default"] = _default;
   \*****************************************************************/
 /***/ ((__unused_webpack_module, exports) => {
 
+"use strict";
 
 
 Object.defineProperty(exports, "__esModule", ({
@@ -2727,6 +2912,7 @@ exports["default"] = Hotspot;
   \*********************************************************************/
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
+"use strict";
 
 
 var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
@@ -2737,6 +2923,7 @@ exports["default"] = void 0;
 var _loop = _interopRequireDefault(__webpack_require__(/*! ./handlers/loop */ "../modules/loop-builder/assets/js/frontend/handlers/loop.js"));
 var _loadMore = _interopRequireDefault(__webpack_require__(/*! ./handlers/load-more */ "../modules/loop-builder/assets/js/frontend/handlers/load-more.js"));
 var _loopCarousel = _interopRequireDefault(__webpack_require__(/*! ./handlers/loop-carousel */ "../modules/loop-builder/assets/js/frontend/handlers/loop-carousel.js"));
+var _ajaxPagination = _interopRequireDefault(__webpack_require__(/*! ./handlers/ajax-pagination */ "../modules/loop-builder/assets/js/frontend/handlers/ajax-pagination.js"));
 class _default extends elementorModules.Module {
   constructor() {
     super();
@@ -2745,10 +2932,152 @@ class _default extends elementorModules.Module {
       elementorFrontend.elementsHandler.attachHandler('loop-grid', _loop.default, skinName);
       elementorFrontend.elementsHandler.attachHandler('loop-carousel', _loop.default, skinName);
       elementorFrontend.elementsHandler.attachHandler('loop-carousel', _loopCarousel.default, skinName);
+      elementorFrontend.elementsHandler.attachHandler('loop-grid', _ajaxPagination.default, skinName);
     });
   }
 }
 exports["default"] = _default;
+
+/***/ }),
+
+/***/ "../modules/loop-builder/assets/js/frontend/handlers/ajax-pagination.js":
+/*!******************************************************************************!*\
+  !*** ../modules/loop-builder/assets/js/frontend/handlers/ajax-pagination.js ***!
+  \******************************************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports["default"] = void 0;
+var _ajaxHelper = _interopRequireDefault(__webpack_require__(/*! elementor-pro/frontend/utils/ajax-helper */ "../assets/dev/js/frontend/utils/ajax-helper.js"));
+var _runElementHandlers = _interopRequireDefault(__webpack_require__(/*! elementor-pro/frontend/utils/run-element-handlers */ "../assets/dev/js/frontend/utils/run-element-handlers.js"));
+class AjaxPagination extends elementorModules.frontend.handlers.Base {
+  getDefaultSettings() {
+    return {
+      selectors: {
+        links: 'a.page-numbers:not(.current)',
+        widgetContainer: '.elementor-widget-container',
+        postWrapperTag: '.e-loop-item'
+      }
+    };
+  }
+  getDefaultElements() {
+    const selectors = this.getSettings('selectors');
+    return {
+      links: this.$element[0].querySelectorAll(selectors.links),
+      widgetContainer: this.$element[0].querySelector(selectors.widgetContainer)
+    };
+  }
+  bindEvents() {
+    super.bindEvents();
+    this.linksEventListeners();
+  }
+  linksEventListeners() {
+    if (!this.elements.links.length) {
+      return;
+    }
+    if ('ajax' !== this.getElementSettings('pagination_load_type')) {
+      return;
+    }
+    this.elements.links.forEach(link => {
+      link.addEventListener('click', event => {
+        this.handleLinkClick(event);
+      });
+    });
+  }
+  handleLinkClick(event) {
+    event.preventDefault();
+    if (this.isLoading) {
+      return;
+    }
+    this.removeLinksListeners();
+    this.handleUiBeforeLoading();
+    const nextPageUrl = event?.target.getAttribute('href');
+    this.updateURLQueryString(nextPageUrl);
+    return fetch(nextPageUrl).then(response => response.text()).then(html => {
+      // Convert the HTML string into a document object
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(html, 'text/html');
+      this.handleSuccessFetch(doc);
+    });
+  }
+  removeLinksListeners() {
+    if (!this.elements.links.length) {
+      return;
+    }
+    this.elements.links.forEach(link => {
+      link.removeEventListener('click', this.handleLinkClick);
+    });
+  }
+  updateURLQueryString(nextPageUrl) {
+    const currentUrl = new URL(window.location.href);
+    const currentParams = currentUrl.searchParams;
+    const targetUrl = new URL(nextPageUrl);
+    const targetParams = targetUrl.searchParams;
+    targetParams.forEach((value, key) => {
+      currentParams.set(key, value);
+    });
+
+    // Clicked on page 1.
+    if (!targetParams.has('e-page-' + this.elementId)) {
+      currentParams.delete('e-page-' + this.elementId);
+    }
+    history.pushState(null, '', currentUrl.href);
+  }
+  handleUiBeforeLoading() {
+    this.setLoading(true);
+    this.ajaxHelper.addLoadingAnimationOverlay(this.elementId);
+    this.maybeScrollToTop();
+  }
+  setLoading(loadng) {
+    this.isLoading = loadng;
+  }
+  maybeScrollToTop() {
+    if ('yes' !== this.getElementSettings('auto_scroll')) {
+      return;
+    }
+    const widget = document.querySelector(`.elementor-element-${this.elementId}`);
+    if (!widget) {
+      return;
+    }
+    widget.scrollIntoView({
+      behavior: 'smooth'
+    });
+  }
+  handleUiAfterLoading() {
+    this.setLoading(false);
+    this.ajaxHelper.removeLoadingAnimationOverlay(this.elementId);
+  }
+  handleSuccessFetch(result) {
+    this.handleUiAfterLoading();
+    const selectors = this.getSettings('selectors');
+    const newWidgetContainer = result.querySelector(`[data-id="${this.elementId}"] ${selectors.widgetContainer}`);
+    const existingWidgetContainer = this.elements.widgetContainer;
+    this.$element[0].replaceChild(newWidgetContainer, existingWidgetContainer);
+    this.afterInsertPosts();
+  }
+  afterInsertPosts() {
+    const selectors = this.getSettings('selectors'),
+      postsElements = document.querySelectorAll(`[data-id="${this.elementId}"] ${selectors.postWrapperTag}`);
+    elementorFrontend.elementsHandler.runReadyTrigger(this.$element[0]);
+    (0, _runElementHandlers.default)(postsElements);
+    if (elementorFrontend.config.experimentalFeatures.e_lazyload) {
+      document.dispatchEvent(new Event('elementor/lazyload/observe'));
+    }
+  }
+  onInit() {
+    super.onInit();
+    this.setLoading(false);
+    this.elementId = this.getID();
+    this.ajaxHelper = new _ajaxHelper.default();
+  }
+}
+exports["default"] = AjaxPagination;
 
 /***/ }),
 
@@ -2758,6 +3087,7 @@ exports["default"] = _default;
   \************************************************************************/
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
+"use strict";
 
 
 var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
@@ -2779,21 +3109,10 @@ class LoopLoadMore extends _loadMore.default {
   afterInsertPosts(postsElements, result) {
     super.afterInsertPosts(postsElements);
     if (elementorFrontend.config.experimentalFeatures.e_lazyload) {
-      this.handleLazyloadBackgroundElements();
+      document.dispatchEvent(new Event('elementor/lazyload/observe'));
     }
     this.handleDynamicStyleElements(result);
     (0, _runElementHandlers.default)(postsElements);
-  }
-
-  /**
-   * Handle Lazyload Background Elements.
-   *
-   * Add's the `lazyload` class to the newly added dom elements that use the Lazyload Background feature.
-   */
-  handleLazyloadBackgroundElements() {
-    document.querySelectorAll(`[data-id="${this.elementId}"] [data-e-bg-lazyload]:not(.lazyloaded)`).forEach(element => {
-      element.classList.add('lazyloaded');
-    });
   }
 
   /**
@@ -2820,6 +3139,7 @@ exports["default"] = LoopLoadMore;
   \****************************************************************************/
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
+"use strict";
 /* provided dependency */ var __ = __webpack_require__(/*! @wordpress/i18n */ "@wordpress/i18n")["__"];
 
 
@@ -2828,9 +3148,8 @@ Object.defineProperty(exports, "__esModule", ({
   value: true
 }));
 exports["default"] = void 0;
-var _imageCarousel = _interopRequireDefault(__webpack_require__(/*! elementor/assets/dev/js/frontend/handlers/image-carousel */ "../../elementor/assets/dev/js/frontend/handlers/image-carousel.js"));
 var _runElementHandlers = _interopRequireDefault(__webpack_require__(/*! elementor-pro/frontend/utils/run-element-handlers */ "../assets/dev/js/frontend/utils/run-element-handlers.js"));
-class LoopCarousel extends _imageCarousel.default {
+class LoopCarousel extends elementorModules.frontend.handlers.CarouselBase {
   getDefaultSettings() {
     const defaultSettings = super.getDefaultSettings();
     defaultSettings.selectors.carousel = '.elementor-loop-container';
@@ -2881,6 +3200,7 @@ exports["default"] = LoopCarousel;
   \*******************************************************************/
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
+"use strict";
 /* provided dependency */ var __ = __webpack_require__(/*! @wordpress/i18n */ "@wordpress/i18n")["__"];
 
 
@@ -2891,8 +3211,8 @@ Object.defineProperty(exports, "__esModule", ({
 exports["default"] = void 0;
 var _posts = _interopRequireDefault(__webpack_require__(/*! modules/posts/assets/js/frontend/handlers/posts */ "../modules/posts/assets/js/frontend/handlers/posts.js"));
 var _documentHandle = _interopRequireWildcard(__webpack_require__(/*! elementor-pro/preview/utils/document-handle */ "../assets/dev/js/preview/utils/document-handle.js"));
-function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function (nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
-function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
+function _getRequireWildcardCache(e) { if ("function" != typeof WeakMap) return null; var r = new WeakMap(), t = new WeakMap(); return (_getRequireWildcardCache = function (e) { return e ? t : r; })(e); }
+function _interopRequireWildcard(e, r) { if (!r && e && e.__esModule) return e; if (null === e || "object" != typeof e && "function" != typeof e) return { default: e }; var t = _getRequireWildcardCache(r); if (t && t.has(e)) return t.get(e); var n = { __proto__: null }, a = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var u in e) if ("default" !== u && Object.prototype.hasOwnProperty.call(e, u)) { var i = a ? Object.getOwnPropertyDescriptor(e, u) : null; i && (i.get || i.set) ? Object.defineProperty(n, u, i) : n[u] = e[u]; } return n.default = e, t && t.set(e, n), n; }
 class Loop extends _posts.default {
   getSkinPrefix() {
     return '';
@@ -3001,12 +3321,870 @@ exports["default"] = Loop;
 
 /***/ }),
 
+/***/ "../modules/loop-filter/assets/js/frontend/frontend-legacy.js":
+/*!********************************************************************!*\
+  !*** ../modules/loop-filter/assets/js/frontend/frontend-legacy.js ***!
+  \********************************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports["default"] = void 0;
+var _taxonomyFilter = _interopRequireDefault(__webpack_require__(/*! ./handlers/taxonomy-filter */ "../modules/loop-filter/assets/js/frontend/handlers/taxonomy-filter.js"));
+var _frontendModuleBase = _interopRequireDefault(__webpack_require__(/*! ./frontend-module-base */ "../modules/loop-filter/assets/js/frontend/frontend-module-base.js"));
+class LoopFilter extends _frontendModuleBase.default {
+  constructor() {
+    super();
+    elementorFrontend.elementsHandler.attachHandler('taxonomy-filter', _taxonomyFilter.default);
+  }
+}
+exports["default"] = LoopFilter;
+
+/***/ }),
+
+/***/ "../modules/loop-filter/assets/js/frontend/frontend-module-base.js":
+/*!*************************************************************************!*\
+  !*** ../modules/loop-filter/assets/js/frontend/frontend-module-base.js ***!
+  \*************************************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports["default"] = void 0;
+var _runElementHandlers = _interopRequireDefault(__webpack_require__(/*! elementor-pro/frontend/utils/run-element-handlers */ "../assets/dev/js/frontend/utils/run-element-handlers.js"));
+var _ajaxHelper = _interopRequireDefault(__webpack_require__(/*! elementor-pro/frontend/utils/ajax-helper */ "../assets/dev/js/frontend/utils/ajax-helper.js"));
+var _loopWidgetsStore = _interopRequireDefault(__webpack_require__(/*! ./loop-widgets-store */ "../modules/loop-filter/assets/js/frontend/loop-widgets-store.js"));
+var _queryConstants = __webpack_require__(/*! ../query-constants */ "../modules/loop-filter/assets/js/query-constants.js");
+class BaseFilterFrontendModule extends elementorModules.Module {
+  constructor() {
+    super();
+    this.loopWidgetsStore = new _loopWidgetsStore.default();
+  }
+
+  /**
+   * Removes selected filter term from the filter array
+   *
+   * @param {string} widgetId
+   * @param {string} filterId
+   * @param {string} filterTerm
+   * @param {string} defaultFilter
+   */
+  removeFilterFromLoopWidget(widgetId, filterId) {
+    let filterTerm = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : '';
+    let defaultFilter = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : '';
+    if (!this.loopWidgetsStore.getWidget(widgetId)) {
+      this.loopWidgetsStore.addWidget(widgetId);
+      this.refreshLoopWidget(widgetId, filterId);
+      return;
+    }
+    if (filterTerm === defaultFilter) {
+      this.loopWidgetsStore.unsetFilter(widgetId, filterId);
+    }
+    if (filterTerm !== defaultFilter) {
+      const filters = this.loopWidgetsStore.getFilterTerms(widgetId, filterId),
+        newTerms = filters.filter(function (e) {
+          return e !== filterTerm;
+        });
+      this.loopWidgetsStore.setFilterTerms(widgetId, filterId, newTerms);
+    }
+    this.refreshLoopWidget(widgetId, filterId);
+  }
+
+  /**
+   * Sets the filter data for a loop widget.
+   *
+   * This function should trigger the following sequence:
+   * 1. Update the filter data for the passed ID in the loopElements object by adding new filters to the loopWidgetsStore filters array.
+   * 2. Trigger a rerender of the loop widget if refresh is true.
+   * 3  Trigger a consolidation of all filters belonging to the passed loop widget ID if refresh is false.
+   *   - This should create an object with filter type keys, and for each type, an object of filter IDs, which contain the filter values.
+   *   - This should also remove duplicates.
+   *
+   * @param {string}  widgetId
+   * @param {string}  filterId
+   * @param {Object}  filter                     new data for this filterId in loopWidgetsStore
+   * @param {boolean} refresh
+   * @param {string}  multipleFiltersLogicalJoin AND / OR / 'DISABLED' for single filter (default)
+   */
+  setFilterDataForLoopWidget(widgetId, filterId, filter) {
+    let refresh = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : true;
+    let multipleFiltersLogicalJoin = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : 'DISABLED';
+    this.loopWidgetsStore.maybeInitializeWidget(widgetId);
+    this.loopWidgetsStore.maybeInitializeFilter(widgetId, filterId);
+    const logicalJoin = this.validateMultipleFilterOperator(multipleFiltersLogicalJoin);
+    if ('DISABLED' !== logicalJoin) {
+      const existingTerms = this.loopWidgetsStore.getFilterTerms(widgetId, filterId) ?? [],
+        newTerms = filter.filterData.terms;
+      filter.filterData.terms = [...new Set([...existingTerms, ...newTerms])];
+      filter.filterData.logicalJoin = logicalJoin;
+    }
+    this.loopWidgetsStore.setFilter(widgetId, filterId, filter);
+    if (refresh) {
+      this.refreshLoopWidget(widgetId, filterId);
+      return;
+    }
+    this.loopWidgetsStore.consolidateFilters(widgetId);
+  }
+
+  /**
+   * Validates the operator values for wp_query.
+   * @param {string} operator
+   * @return {*|string} 'AND' | 'OR' | 'DISABLED'
+   */
+  validateMultipleFilterOperator(operator) {
+    if (!operator || !['AND', 'OR'].includes(operator)) {
+      return 'DISABLED';
+    }
+    return operator;
+  }
+
+  /**
+   *
+   * @return {{}} Query string in object form.
+   */
+  getQueryStringInObjectForm() {
+    const queryString = {};
+    for (const widgetId in this.loopWidgetsStore.get()) {
+      const loopWidget = this.loopWidgetsStore.getWidget(widgetId);
+      for (const filterType in loopWidget.consolidatedFilters) {
+        const filterData = loopWidget.consolidatedFilters[filterType];
+        for (const filterName in filterData) {
+          const separator = _queryConstants.queryConstants[filterData[filterName].logicalJoin ?? 'AND'].separator.decoded;
+
+          // Add an `e-` prefix to the key to avoid clashes with other query strings.
+          // Filter values are arrays, to support multiple select.
+          queryString[`e-filter-${widgetId}-${filterName}`] = Object.values(filterData[filterName].terms).join(separator);
+        }
+      }
+    }
+    return queryString;
+  }
+
+  /**
+   * Updates the URL query string with the current filter values.
+   *
+   * @param {string} widgetId
+   * @param {string} filterId
+   */
+  updateURLQueryString(widgetId, filterId) {
+    const currentUrl = new URL(window.location.href),
+      existingQueryString = currentUrl.searchParams,
+      queryStringObject = this.getQueryStringInObjectForm(),
+      updatedParams = new URLSearchParams();
+    existingQueryString.forEach((value, key) => {
+      if (!key.startsWith('e-filter')) {
+        updatedParams.append(key, value);
+      }
+      if (key.startsWith('e-page-' + widgetId)) {
+        updatedParams.delete(key);
+      }
+    });
+    for (const key in queryStringObject) {
+      updatedParams.set(key, queryStringObject[key]);
+    }
+    let queryString = updatedParams.toString();
+    queryString = queryString.replace(new RegExp(`${_queryConstants.queryConstants.AND.separator.encoded}`, 'g'), _queryConstants.queryConstants.AND.separator.decoded);
+    queryString = queryString.replace(new RegExp(`${_queryConstants.queryConstants.OR.separator.encoded}`, 'g'), _queryConstants.queryConstants.OR.separator.decoded);
+    const helpers = this.getFilterHelperAttributes(filterId);
+    if (helpers.pageNum > 1) {
+      queryString = queryString ? this.formatQueryString(helpers.baseUrl, queryString) : helpers.baseUrl;
+    } else {
+      queryString = queryString ? `?${queryString}` : location.pathname;
+    }
+    history.pushState(null, null, queryString);
+  }
+
+  /**
+   * Formats the query string to remove any duplicate parameters.
+   *
+   * @param {string} baseURL
+   * @param {string} queryString
+   * @return {*} deduplicated query string
+   */
+  formatQueryString(baseURL, queryString) {
+    const baseURLParams = baseURL.includes('?') ? new URLSearchParams(baseURL.split('?')[1]) : new URLSearchParams(),
+      inputParams = new URLSearchParams(queryString);
+    for (const param of baseURLParams.keys()) {
+      if (inputParams.has(param)) {
+        inputParams.delete(param);
+      }
+    }
+    const excludedVariables = ['page', 'paged'];
+    for (const excludedVar of excludedVariables) {
+      baseURLParams.delete(excludedVar);
+      inputParams.delete(excludedVar);
+    }
+    const mergedParams = new URLSearchParams(baseURLParams.toString());
+    for (const [param, value] of inputParams.entries()) {
+      mergedParams.append(param, value);
+    }
+    const baseURLString = baseURL.split('?')[0],
+      mergedParamsString = mergedParams.toString() ? `?${mergedParams.toString()}` : '';
+    return baseURLString + mergedParamsString;
+  }
+
+  /**
+   *
+   * @param {string} filterId
+   * @return {{baseUrl: string, pageNum: number}|*|DOMStringMap} Base URL and page number for the loop widget.
+   */
+  getFilterHelperAttributes(filterId) {
+    const filterWidget = document.querySelector('[data-id="' + filterId + '"]');
+    if (!filterWidget) {
+      return {
+        baseUrl: location.href,
+        pageNum: 1
+      };
+    }
+    const filterBar = filterWidget.querySelector('.e-filter');
+    return filterBar.dataset;
+  }
+
+  /**
+   * Prepares the data to be sent to the server for the loop widget update.
+   *
+   * @param {string} widgetId
+   * @param {string} filterId
+   * @return {{post_id: (*|number), widget_id, pagination_base_url: string, widget_filters: *}} data for loop update
+   */
+  prepareLoopUpdateRequestData(widgetId, filterId) {
+    const widgetFilters = this.loopWidgetsStore.getConsolidatedFilters(widgetId),
+      helpers = this.getFilterHelperAttributes(filterId);
+    const data = {
+      post_id: elementorFrontend.config.post.id || this.getClosestDataElementorId(document.querySelector(`.elementor-element-${widgetId}`)),
+      widget_filters: widgetFilters,
+      widget_id: widgetId,
+      pagination_base_url: helpers.baseUrl
+    };
+    if (elementorFrontend.isEditMode()) {
+      // In the editor, we have to support loop widgets that have been created but not saved to the database yet.
+      const widgetContainer = window.top.$e.components.get('document').utils.findContainerById(widgetId);
+      data.widget_model = widgetContainer.model.toJSON({
+        remove: ['default', 'editSettings', 'defaultEditSettings']
+      });
+      data.is_edit_mode = true;
+    }
+    return data;
+  }
+
+  /**
+   * Returns the closest data-elementor-id attribute value.
+   *
+   * @param {Object} element
+   * @return {string} elementor id of parent
+   */
+  getClosestDataElementorId(element) {
+    const closestParent = element.closest('[data-elementor-id]');
+    return closestParent ? closestParent.getAttribute('data-elementor-id') : 0;
+  }
+
+  /**
+   *
+   * @param {string} widgetId
+   * @param {string} filterId
+   * @return {{headers: {"Content-Type": string}, method: string, body: string}} Fetch arguments for loop Widget update
+   */
+  getFetchArgumentsForLoopUpdate(widgetId, filterId) {
+    const data = this.prepareLoopUpdateRequestData(widgetId, filterId);
+    const args = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(data)
+    };
+    if (elementorFrontend.isEditMode() && !!elementorPro.config.loopFilter?.nonce) {
+      args.headers['X-WP-Nonce'] = elementorPro.config.loopFilter?.nonce;
+    }
+    return args;
+  }
+
+  /**
+   * Fetches the updated loop widget markup from the server.
+   *
+   * @param {string} widgetId
+   * @param {string} filterId
+   * @return {Promise<Response>} Promise for the fetch request.
+   */
+  fetchUpdatedLoopWidgetMarkup(widgetId, filterId) {
+    return fetch(`${elementorProFrontend.config.urls.rest}elementor-pro/v1/refresh-loop`, this.getFetchArgumentsForLoopUpdate(widgetId, filterId));
+  }
+  createElementFromHTMLString(widgetContainerHTMLString) {
+    const div = document.createElement('div');
+    if (!widgetContainerHTMLString) {
+      div.classList.add('elementor-widget-container');
+      return div;
+    }
+    div.innerHTML = widgetContainerHTMLString.trim();
+    return div.firstElementChild;
+  }
+  refreshLoopWidget(widgetId, filterId) {
+    this.loopWidgetsStore.consolidateFilters(widgetId);
+    this.updateURLQueryString(widgetId, filterId);
+    const widget = document.querySelector(`.elementor-element-${widgetId}`);
+    if (!widget) {
+      return;
+    }
+    if (!this.ajaxHelper) {
+      this.ajaxHelper = new _ajaxHelper.default();
+    }
+    this.ajaxHelper.addLoadingAnimationOverlay(widgetId);
+    const fetchUpdatedLoopWidgetMarkup = this.fetchUpdatedLoopWidgetMarkup(widgetId, filterId).then(response => {
+      if (!(response instanceof Response) || !response?.ok || 400 <= response?.status) {
+        return {};
+      }
+      return response.json();
+    })
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    .catch(error => {
+      return {};
+    }).then(response => {
+      if (!response?.data && '' !== response?.data) {
+        return;
+      }
+      const existingWidgetContainer = widget.querySelector('.elementor-widget-container'),
+        newWidgetContainer = this.createElementFromHTMLString(response.data);
+      widget.replaceChild(newWidgetContainer, existingWidgetContainer);
+      this.handleElementHandlers(newWidgetContainer);
+      if (elementorFrontend.config.experimentalFeatures.e_lazyload) {
+        document.dispatchEvent(new Event('elementor/lazyload/observe'));
+      }
+      elementorFrontend.elementsHandler.runReadyTrigger(document.querySelector(`.elementor-element-${widgetId}`));
+      widget.classList.remove('e-loading');
+    }).finally(() => {
+      this.ajaxHelper.removeLoadingAnimationOverlay(widgetId);
+    });
+    return fetchUpdatedLoopWidgetMarkup;
+
+    // TODO: Deal with pagination. Do we need to manually add the query string to the pagination links?
+  }
+
+  handleElementHandlers(newWidgetMarkup) {
+    const loopItems = newWidgetMarkup.querySelectorAll('.e-loop-item');
+    (0, _runElementHandlers.default)(loopItems);
+  }
+}
+exports["default"] = BaseFilterFrontendModule;
+
+/***/ }),
+
+/***/ "../modules/loop-filter/assets/js/frontend/handlers/taxonomy-filter.js":
+/*!*****************************************************************************!*\
+  !*** ../modules/loop-filter/assets/js/frontend/handlers/taxonomy-filter.js ***!
+  \*****************************************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports["default"] = void 0;
+var _flexHorizontalScroll = __webpack_require__(/*! elementor-pro/frontend/utils/flex-horizontal-scroll */ "../assets/dev/js/frontend/utils/flex-horizontal-scroll.js");
+var _queryConstants = __webpack_require__(/*! ../../query-constants */ "../modules/loop-filter/assets/js/query-constants.js");
+class TaxonomyFilter extends elementorModules.frontend.handlers.Base {
+  constructor() {
+    super(...arguments);
+    this.resizeListenerNestedTabs = null;
+  }
+
+  /**
+   *
+   * @return {{filterValues: {default: string}, selectors: {container: string, item: string}}} Default Settings
+   */
+  getDefaultSettings() {
+    return {
+      selectors: {
+        item: '.e-filter-item',
+        container: '.e-filter'
+      },
+      filterValues: {
+        default: '__all'
+      }
+    };
+  }
+
+  /**
+   *
+   * @return {{$filterButtons: *, $container: *}} Default Elements
+   */
+  getDefaultElements() {
+    return {
+      $filterButtons: this.$element.find(this.getSettings('selectors.item')),
+      $container: this.$element.find(this.getSettings('selectors.container'))
+    };
+  }
+  getHeadingEvents() {
+    const container = this.elements.$container[0];
+    return {
+      mousedown: _flexHorizontalScroll.changeScrollStatus.bind(this, container),
+      mouseup: _flexHorizontalScroll.changeScrollStatus.bind(this, container),
+      mouseleave: _flexHorizontalScroll.changeScrollStatus.bind(this, container),
+      mousemove: _flexHorizontalScroll.setHorizontalTitleScrollValues.bind(this, container, this.getHorizontalScrollSetting())
+    };
+  }
+  bindEvents() {
+    this.elements.$filterButtons.on('click', this.onFilterButtonClick.bind(this));
+    this.elements.$container.on(this.getHeadingEvents());
+    const settingsObject = {
+      element: this.elements.$container[0],
+      direction: this.getItemsAlignment(),
+      justifyCSSVariable: '--e-filter-justify-content',
+      horizontalScrollStatus: this.getHorizontalScrollSetting()
+    };
+    this.resizeListenerNestedTabs = _flexHorizontalScroll.setHorizontalScrollAlignment.bind(this, settingsObject);
+    elementorFrontend.elements.$window.on('resize', this.resizeListenerNestedTabs);
+  }
+
+  /**
+   *
+   * @param {string} propertyName
+   */
+  onElementChange(propertyName) {
+    if (this.checkSliderPropsToWatch(propertyName)) {
+      const settingsObject = {
+        element: this.elements.$container[0],
+        direction: this.getItemsAlignment(),
+        justifyCSSVariable: '--e-filter-justify-content',
+        horizontalScrollStatus: this.getHorizontalScrollSetting()
+      };
+      (0, _flexHorizontalScroll.setHorizontalScrollAlignment)(settingsObject);
+    }
+  }
+
+  /**
+   *
+   * @param {string} propertyName
+   * @return {boolean} Is slider property
+   */
+  checkSliderPropsToWatch(propertyName) {
+    return 0 === propertyName.indexOf('horizontal_scroll') || 0 === propertyName.indexOf('item_alignment_horizontal');
+  }
+
+  /**
+   * Get the filter buttons elements.
+   *
+   * If the filter buttons weren't rendered when the handler was initialized, this method will cache the filter
+   * button elements and add the necessary event listeners.
+   *
+   * @return {*} jQuery collection of filter button elements. Might be empty.
+   */
+  getFilterButtonElements() {
+    if (this.elements?.$filterButtons.length) {
+      return this.elements.$filterButtons;
+    }
+    this.elements = this.getDefaultElements();
+    this.bindEvents();
+    return this.elements.$filterButtons;
+  }
+
+  /**
+   * Get the active filter buttons elements.
+   *
+   * @return {*} jQuery collection of the active filter button elements. Might be empty.
+   */
+  getActiveFilterButtonElements() {
+    return this.getFilterButtonElements().filter('[aria-pressed="true"]');
+  }
+
+  /**
+   *
+   * @param {string} selectedTermSlug
+   */
+  activateFilterButton(selectedTermSlug) {
+    const $filterButtons = this.getFilterButtonElements(),
+      multipleSelectionActive = 'yes' === this.getElementSettings('multiple_selection');
+    if (!$filterButtons.length) {
+      return;
+    }
+    const defaultFilter = this.getSettings('filterValues.default');
+    if (!multipleSelectionActive || defaultFilter === selectedTermSlug) {
+      $filterButtons.attr('aria-pressed', false);
+    }
+    const $activeButton = $filterButtons.filter('[data-filter="' + selectedTermSlug + '"]');
+    $activeButton.attr('aria-pressed', true);
+    const activeFiltersButtons = this.getCurrentlyActiveFilter();
+    if (activeFiltersButtons && activeFiltersButtons.includes(defaultFilter) && defaultFilter !== selectedTermSlug) {
+      this.deactivateDefaultFilterButton($filterButtons);
+    }
+  }
+
+  /**
+   *
+   * @param {string} clickedFilter
+   */
+  deactivateFilterButton(clickedFilter) {
+    const $filterButtons = this.getFilterButtonElements(),
+      multipleSelectionActive = 'yes' === this.getElementSettings('multiple_selection');
+    if (!$filterButtons.length) {
+      return;
+    }
+    const $activeButton = $filterButtons.filter('[data-filter="' + clickedFilter + '"]'),
+      defaultFilter = this.getSettings('filterValues.default'),
+      currentlyActiveButtons = this.getCurrentlyActiveFilter(),
+      isActivateDefaultFilterButtonNeeded = !multipleSelectionActive || !currentlyActiveButtons.includes(defaultFilter) && 1 === currentlyActiveButtons.length;
+    $activeButton.attr('aria-pressed', false);
+    if (isActivateDefaultFilterButtonNeeded) {
+      this.activateDefaultFilterButton();
+    }
+    elementorProFrontend.modules.taxonomyFilter.removeFilterFromLoopWidget(this.getElementSettings('selected_element'), this.getID(), clickedFilter, defaultFilter);
+  }
+  activateDefaultFilterButton() {
+    const $filterButtons = this.getFilterButtonElements(),
+      $defaultButton = $filterButtons.filter('[data-filter="' + this.getSettings('filterValues.default') + '"]');
+    $filterButtons.attr('aria-pressed', false);
+    $defaultButton.attr('aria-pressed', true);
+  }
+  deactivateDefaultFilterButton() {
+    const $filterButtons = this.getFilterButtonElements();
+    const $defaultButton = $filterButtons.filter('[data-filter="' + this.getSettings('filterValues.default') + '"]');
+    $defaultButton.attr('aria-pressed', false);
+  }
+
+  /**
+   * Gets the currently active buttons independent of URL params.
+   * @return {Array} Currently active filter(s).
+   */
+  getCurrentlyActiveFilter() {
+    const $activeFilterButtons = this.getActiveFilterButtonElements(),
+      currentlyActiveFilterButtons = [];
+    for (let i = 0; i < $activeFilterButtons.length; i++) {
+      currentlyActiveFilterButtons.push($activeFilterButtons[i].dataset.filter);
+    }
+    return currentlyActiveFilterButtons;
+  }
+
+  /**
+   * Get the filter operator for WP_Query. OR is translated IN.
+   * @return {string} 'IN' or 'AND' for WP_Query or DISABLED for single selection.
+   */
+  getFilterOperator() {
+    const elementSettings = this.getElementSettings(),
+      multipleSelection = elementSettings.multiple_selection;
+    if (!multipleSelection || !['AND', 'OR'].includes(elementSettings.logical_combination)) {
+      return 'DISABLED';
+    }
+    return elementSettings.logical_combination;
+  }
+
+  /**
+   *
+   * @param {string} selectedTermSlug - Slug of currently selected term relating to last clicked button
+   */
+  filterItems(selectedTermSlug) {
+    const elementSettings = this.getElementSettings(),
+      defaultFilterValue = this.getSettings('filterValues.default');
+    if (defaultFilterValue === selectedTermSlug) {
+      elementorProFrontend.modules.taxonomyFilter.removeFilterFromLoopWidget(elementSettings.selected_element, this.getID(), selectedTermSlug, defaultFilterValue);
+      return;
+    }
+    const multipleSelectionLogicalJoin = this.getFilterOperator();
+    elementorProFrontend.modules.taxonomyFilter.setFilterDataForLoopWidget(elementSettings.selected_element, this.getID(), {
+      filterType: 'taxonomy',
+      filterData: {
+        selectedTaxonomy: elementSettings.taxonomy,
+        terms: [selectedTermSlug]
+      }
+    }, true, multipleSelectionLogicalJoin);
+  }
+
+  /**
+   *
+   * @param {string} filter
+   */
+  setFilter() {
+    let filter = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : this.getSettings('filterValues.default');
+    this.filterItems(filter);
+    this.activateFilterButton(filter);
+  }
+  onFilterButtonClick(event) {
+    this.removePaginationHiddenClassOnLoopWidgetContainer();
+    const currentlyActiveFilterButtons = this.getCurrentlyActiveFilter(),
+      clickedFilter = event.currentTarget?.dataset?.filter;
+    if (this.userClickedOnAllWhileItWasActive(clickedFilter, currentlyActiveFilterButtons)) {
+      return;
+    }
+    if (currentlyActiveFilterButtons.includes(clickedFilter)) {
+      this.deactivateFilterButton(clickedFilter);
+      return;
+    }
+    this.setFilter(clickedFilter);
+  }
+  removePaginationHiddenClassOnLoopWidgetContainer() {
+    const elementSettings = this.getElementSettings(),
+      loopWidget = document.querySelector('.elementor-element-' + elementSettings.selected_element);
+    if (loopWidget) {
+      loopWidget.classList.remove('e-load-more-pagination-end');
+    }
+  }
+
+  /**
+   *
+   * @param {string} clickedFilter
+   * @param {Array}  currentlyActiveFilter
+   * @return {boolean} User clicked on all while it was active.
+   */
+  userClickedOnAllWhileItWasActive(clickedFilter, currentlyActiveFilter) {
+    return currentlyActiveFilter.includes(clickedFilter) && clickedFilter === this.getSettings('filterValues.default');
+  }
+  onDestroy() {
+    const selectedElementId = this.getElementSettings('selected_element'),
+      selectedTaxonomy = this.getElementSettings('taxonomy'),
+      filterId = this.getID();
+    if (selectedElementId && selectedTaxonomy) {
+      elementorProFrontend.modules.taxonomyFilter.removeFilterFromLoopWidget(selectedElementId, filterId, '');
+    }
+    super.onDestroy();
+  }
+  populateLoopWidgetsStoreOnInitialPageLoad() {
+    const elementSettings = this.getElementSettings(),
+      urlParams = new URLSearchParams(window.location.search);
+    let selectedTermSlugs = urlParams.get('e-filter-' + elementSettings.selected_element + '-' + elementSettings.taxonomy);
+    if (selectedTermSlugs) {
+      // Avoid null values in elementSettings.taxonomy when multiple taxonomies deselected to trigger all (Default) state.
+      selectedTermSlugs = this.getTermsFromParams(selectedTermSlugs);
+      const multipleSelectionLogicalJoin = this.getFilterOperator();
+      elementorProFrontend.modules.taxonomyFilter.setFilterDataForLoopWidget(elementSettings.selected_element, this.getID(), {
+        filterType: 'taxonomy',
+        filterData: {
+          selectedTaxonomy: elementSettings.taxonomy,
+          terms: selectedTermSlugs
+        }
+      }, false, multipleSelectionLogicalJoin);
+    }
+  }
+  getTermsFromParams(params) {
+    let separator = _queryConstants.queryConstants.AND.separator.fromBrowser; // The web browser automatically replaces the plus sign with a space character before sending the data to the server.
+
+    if (params.includes(_queryConstants.queryConstants.OR.separator.fromBrowser)) {
+      separator = _queryConstants.queryConstants.OR.separator.fromBrowser;
+    }
+    return params.split(separator);
+  }
+  onInit() {
+    super.onInit();
+    this.populateLoopWidgetsStoreOnInitialPageLoad();
+    const settingsObject = {
+      element: this.elements.$container[0],
+      direction: this.getItemsAlignment(),
+      justifyCSSVariable: '--e-filter-justify-content',
+      horizontalScrollStatus: this.getHorizontalScrollSetting()
+    };
+    (0, _flexHorizontalScroll.setHorizontalScrollAlignment)(settingsObject);
+  }
+  getHorizontalScrollSetting() {
+    const currentDevice = elementorFrontend.getCurrentDeviceMode();
+    return elementorFrontend.utils.controls.getResponsiveControlValue(this.getElementSettings(), 'horizontal_scroll', '', currentDevice);
+  }
+  getItemsAlignment() {
+    const currentDevice = elementorFrontend.getCurrentDeviceMode();
+    return elementorFrontend.utils.controls.getResponsiveControlValue(this.getElementSettings(), 'item_alignment_horizontal', '', currentDevice);
+  }
+}
+exports["default"] = TaxonomyFilter;
+
+/***/ }),
+
+/***/ "../modules/loop-filter/assets/js/frontend/loop-widgets-store.js":
+/*!***********************************************************************!*\
+  !*** ../modules/loop-filter/assets/js/frontend/loop-widgets-store.js ***!
+  \***********************************************************************/
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports["default"] = void 0;
+class LoopWidgetsStore {
+  constructor() {
+    this.widgets = {};
+  }
+  get() {
+    return this.widgets;
+  }
+  getWidget(widgetId) {
+    return this.widgets[widgetId];
+  }
+  setWidget(widgetId, widget) {
+    this.widgets[widgetId] = widget;
+  }
+  unsetWidget(widgetId) {
+    delete this.widgets[widgetId];
+  }
+  getFilters(widgetId) {
+    return this.getWidget(widgetId).filters;
+  }
+  getFilter(widgetId, filterId) {
+    return this.getWidget(widgetId).filters[filterId];
+  }
+  setFilter(widgetId, filterId, filterData) {
+    this.getWidget(widgetId).filters[filterId] = filterData;
+  }
+  unsetFilter(widgetId, filterId) {
+    delete this.getWidget(widgetId).filters[filterId];
+  }
+  getFilterTerms(widgetId, filterId) {
+    return this.getFilter(widgetId, filterId).filterData.terms ?? [];
+  }
+  setFilterTerms(widgetId, filterId, termData) {
+    this.getFilter(widgetId, filterId).filterData.terms = termData;
+  }
+  getConsolidatedFilters(widgetId) {
+    return this.getWidget(widgetId).consolidatedFilters;
+  }
+  setConsolidatedFilters(widgetId, consolidatedFilters) {
+    this.getWidget(widgetId).consolidatedFilters = consolidatedFilters;
+  }
+
+  /**
+   *
+   * @param {string} widgetId
+   */
+  addWidget(widgetId) {
+    const newWidget = {
+      filters: {},
+      consolidatedFilters: {}
+    };
+    this.setWidget(widgetId, newWidget);
+  }
+  maybeInitializeWidget(widgetId) {
+    if (!!this.getWidget(widgetId)) {
+      return;
+    }
+    this.addWidget(widgetId);
+  }
+  maybeInitializeFilter(widgetId, filterId) {
+    if (!!this.getFilter(widgetId, filterId)) {
+      return;
+    }
+    const newFilter = {
+      filterData: {
+        terms: []
+      }
+    };
+    this.setFilter(widgetId, filterId, newFilter);
+  }
+
+  /**
+   * Consolidates all filters for a loop widget.
+   *
+   * filters: {
+   * 	filter1: { filterType: 'type1', filterData: { selectedTaxonomy: 'taxonomy1', terms: [ 'term1', 'term2' ] } },
+   * 	filter2: { filterType: 'type1', filterData: { selectedTaxonomy: 'taxonomy1', terms: [ 'term2' ] } },
+   * },
+   * consolidatedFilters: {},
+   *
+   * @param {string} widgetId
+   */
+  consolidateFilters(widgetId) {
+    const loopWidgetFilters = this.getFilters(widgetId),
+      consolidatedFilters = {};
+    for (const filterId in loopWidgetFilters) {
+      const filter = loopWidgetFilters[filterId],
+        filterType = filter.filterType,
+        filterData = filter.filterData;
+      if (0 === filterData.terms.length) {
+        continue;
+      }
+
+      // This part is non-generic. To expand this functionality to other filter types, we'll need to refactor and
+      // generalize this part.
+      if (!consolidatedFilters[filterType]) {
+        consolidatedFilters[filterType] = {};
+      }
+      if (!consolidatedFilters[filterType][filterData.selectedTaxonomy]) {
+        consolidatedFilters[filterType][filterData.selectedTaxonomy] = [];
+      }
+      if (filterData.terms && (!consolidatedFilters[filterType][filterData.selectedTaxonomy].terms || !consolidatedFilters[filterType][filterData.selectedTaxonomy].terms.includes(filterData.terms))) {
+        consolidatedFilters[filterType][filterData.selectedTaxonomy] = {
+          terms: filterData.terms === typeof 'string' ? [filterData.terms] : filterData.terms
+        };
+      }
+      if (filterData.logicalJoin && !consolidatedFilters[filterType][filterData.selectedTaxonomy].logicalJoin) {
+        consolidatedFilters[filterType][filterData.selectedTaxonomy] = {
+          ...(consolidatedFilters[filterType][filterData.selectedTaxonomy] || {}),
+          // Check for undefined
+          logicalJoin: filterData.logicalJoin ?? 'AND'
+        };
+      }
+    }
+    this.setConsolidatedFilters(widgetId, consolidatedFilters);
+  }
+}
+exports["default"] = LoopWidgetsStore;
+
+/***/ }),
+
+/***/ "../modules/loop-filter/assets/js/query-constants.js":
+/*!***********************************************************!*\
+  !*** ../modules/loop-filter/assets/js/query-constants.js ***!
+  \***********************************************************/
+/***/ ((module) => {
+
+"use strict";
+
+
+const queryConstants = {
+  AND: {
+    separator: {
+      decoded: '+',
+      fromBrowser: ' ',
+      encoded: '%2B'
+    },
+    operator: 'AND'
+  },
+  OR: {
+    separator: {
+      decoded: '~',
+      fromBrowser: '~',
+      encoded: '%7C'
+    },
+    operator: 'IN'
+  },
+  NOT: {
+    separator: {
+      decoded: '!',
+      fromBrowser: '!',
+      encoded: '%21'
+    },
+    operator: 'NOT IN'
+  },
+  DISABLED: {
+    separator: {
+      decoded: '',
+      fromBrowser: '',
+      encoded: ''
+    },
+    operator: 'AND'
+  }
+};
+module.exports = {
+  queryConstants
+};
+
+/***/ }),
+
 /***/ "../modules/lottie/assets/js/frontend/frontend-legacy.js":
 /*!***************************************************************!*\
   !*** ../modules/lottie/assets/js/frontend/frontend-legacy.js ***!
   \***************************************************************/
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
+"use strict";
 
 
 var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
@@ -3031,6 +4209,7 @@ exports["default"] = _default;
   \*******************************************************/
 /***/ ((__unused_webpack_module, exports) => {
 
+"use strict";
 
 
 Object.defineProperty(exports, "__esModule", ({
@@ -3062,7 +4241,8 @@ class lottieHandler extends elementorModules.frontend.handlers.Base {
       $animation: this.$element.find(selectors.animation),
       $caption: this.$element.find(selectors.caption),
       $sectionParent: this.$element.closest('.elementor-section'),
-      $columnParent: this.$element.closest('.elementor-column')
+      $columnParent: this.$element.closest('.elementor-column'),
+      $containerParent: this.$element.closest('.e-con')
     };
   }
   onInit() {
@@ -3453,10 +4633,13 @@ class lottieHandler extends elementorModules.frontend.handlers.Base {
   }
   getHoverAreaElement() {
     const lottieSettings = this.getLottieSettings();
-    if ('section' === lottieSettings.hover_area) {
-      return this.elements.$sectionParent;
-    } else if ('column' === lottieSettings.hover_area) {
-      return this.elements.$columnParent;
+    switch (lottieSettings.hover_area) {
+      case 'section':
+        return this.elements.$sectionParent;
+      case 'column':
+        return this.elements.$columnParent;
+      case 'container':
+        return this.elements.$containerParent;
     }
     return this.elements.$container;
   }
@@ -3683,6 +4866,7 @@ exports["default"] = lottieHandler;
   \******************************************************************/
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
+"use strict";
 
 
 var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
@@ -3692,10 +4876,11 @@ Object.defineProperty(exports, "__esModule", ({
 exports["default"] = void 0;
 var _megaMenu = _interopRequireDefault(__webpack_require__(/*! ./handlers/mega-menu */ "../modules/mega-menu/assets/js/frontend/handlers/mega-menu.js"));
 var _stretchMenuItemContent = _interopRequireDefault(__webpack_require__(/*! ./handlers/stretch-menu-item-content */ "../modules/mega-menu/assets/js/frontend/handlers/stretch-menu-item-content.js"));
+var _menuTitleKeyboardHandler = _interopRequireDefault(__webpack_require__(/*! ./handlers/menu-title-keyboard-handler */ "../modules/mega-menu/assets/js/frontend/handlers/menu-title-keyboard-handler.js"));
 class _default extends elementorModules.Module {
   constructor() {
     super();
-    elementorFrontend.elementsHandler.attachHandler('mega-menu', [_megaMenu.default, _stretchMenuItemContent.default]);
+    elementorFrontend.elementsHandler.attachHandler('mega-menu', [_megaMenu.default, _stretchMenuItemContent.default, _menuTitleKeyboardHandler.default]);
   }
 }
 exports["default"] = _default;
@@ -3708,6 +4893,7 @@ exports["default"] = _default;
   \*********************************************************************/
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
+"use strict";
 
 
 var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
@@ -3717,6 +4903,7 @@ Object.defineProperty(exports, "__esModule", ({
 exports["default"] = void 0;
 var _utils = __webpack_require__(/*! ../utils */ "../modules/mega-menu/assets/js/frontend/utils.js");
 var _anchorLink = _interopRequireDefault(__webpack_require__(/*! ../../../../../../assets/dev/js/frontend/utils/anchor-link */ "../assets/dev/js/frontend/utils/anchor-link.js"));
+var _flexHorizontalScroll = __webpack_require__(/*! elementor-pro/frontend/utils/flex-horizontal-scroll */ "../assets/dev/js/frontend/utils/flex-horizontal-scroll.js");
 class MegaMenu extends elementorModules.frontend.handlers.NestedTabs {
   constructor() {
     super(...arguments);
@@ -3724,34 +4911,37 @@ class MegaMenu extends elementorModules.frontend.handlers.NestedTabs {
       this.lifecycleChangeListener = null;
     }
     this.resizeListener = null;
+    this.prevMouseY = null;
   }
   getDefaultSettings() {
     const settings = super.getDefaultSettings();
-    settings.selectors.menuContainer = '.e-n-menu';
-    settings.selectors.tabTitle = '.e-n-menu-item-title';
-    settings.selectors.desktopTabTitle = '.e-n-menu-items-heading .e-n-menu-item-title';
-    settings.selectors.mobileTabTitle = '.e-n-menu-items-content .e-n-menu-item-title';
-    settings.selectors.headingContainer = '.e-n-menu-items-heading';
-    settings.autoExpand = false;
-    settings.autoFocus = false;
+    settings.selectors.widgetContainer = '.e-n-menu';
     settings.selectors.dropdownMenuToggle = '.e-n-menu-toggle';
-    settings.selectors.menuContent = '.e-n-menu-items-content';
-    settings.selectors.contentContainer = '.e-n-menu-items-content .e-con';
+    settings.selectors.menuWrapper = '.e-n-menu-wrapper';
+    settings.selectors.headingContainer = '.e-n-menu-heading';
+    settings.selectors.tabTitle = '.e-n-menu-title';
+    settings.selectors.tabDropdown = '.e-n-menu-dropdown-icon';
+    settings.selectors.menuContent = '.e-n-menu-content';
+    settings.selectors.tabContent = '.e-n-menu-content > .e-con';
     settings.selectors.anchorLink = '.e-anchor a';
     settings.classes.anchorItem = 'e-anchor';
     settings.classes.activeAnchorItem = 'e-current';
+    settings.autoExpand = false;
+    settings.autoFocus = false;
+    settings.ariaAttributes.titleStateAttribute = 'aria-expanded';
+    settings.ariaAttributes.activeTitleSelector = '[aria-expanded="true"]';
     return settings;
   }
   getDefaultElements() {
     const elements = super.getDefaultElements(),
       selectors = this.getSettings('selectors');
-    elements.$menuContainer = this.$element.find(selectors.menuContainer);
+    elements.$widgetContainer = this.$element.find(selectors.widgetContainer);
     elements.$dropdownMenuToggle = this.$element.find(selectors.dropdownMenuToggle);
+    elements.$menuWrapper = this.$element.find(selectors.menuWrapper);
     elements.$menuContent = this.$element.find(selectors.menuContent);
     elements.$headingContainer = this.$element.find(selectors.headingContainer);
-    elements.$desktopTabTitles = this.$element.find(selectors.desktopTabTitle);
-    elements.$mobileTabTitles = this.$element.find(selectors.mobileTabTitle);
-    elements.$contentContainers = this.$element.find(selectors.contentContainer);
+    elements.$tabTitles = this.$element.find(selectors.tabTitle);
+    elements.$tabDropdowns = this.$element.find(selectors.tabDropdown);
     elements.$anchorLink = this.$element.find(selectors.anchorLink);
     return elements;
   }
@@ -3760,11 +4950,11 @@ class MegaMenu extends elementorModules.frontend.handlers.NestedTabs {
     return {
       elements: {
         $element: this.$element,
-        $dropdownMenuContainer: this.$element.find(selectors.menuContent),
+        $dropdownMenuContainer: this.$element.find(selectors.menuWrapper),
         $menuToggle: this.$element.find(selectors.dropdownMenuToggle)
       },
-      classes: {
-        menuToggleActiveClass: 'e-active'
+      attributes: {
+        menuToggleState: 'aria-expanded'
       },
       settings: {
         dropdownMenuContainerMaxHeight: 'auto',
@@ -3777,7 +4967,9 @@ class MegaMenu extends elementorModules.frontend.handlers.NestedTabs {
     this.resetContentContainersPosition();
 
     // If no container is passed as an argument, check if there is an active container.
-    $contentContainer = $contentContainer || this.elements.$contentContainers.filter('.e-active');
+    const activeTitleSelector = this.getSettings('ariaAttributes').activeTitleSelector,
+      tabIndex = this.elements.$tabDropdowns.filter(activeTitleSelector)?.attr('data-tab-index');
+    $contentContainer = $contentContainer || this.elements.$tabContents.filter(this.getTabContentFilterSelector(tabIndex));
     if (!$contentContainer.length) {
       return;
     }
@@ -3801,13 +4993,14 @@ class MegaMenu extends elementorModules.frontend.handlers.NestedTabs {
         width: isFitToContent ? 'max-content' : '',
         'max-width': contentContainerBoundingBox.width
       });
-      this.elements.$menuContent.addClass('content-above');
+      this.elements.$widgetContainer.addClass('content-above');
     }
   }
   getMenuItemContainerAbsolutePosition($contentContainer) {
-    const tabIndex = $contentContainer.data('content'),
-      $titleEl = this.elements.$tabTitles.filter(this.getTabTitleFilterSelector(tabIndex))[0],
-      titleBoundingBox = $titleEl.getBoundingClientRect(),
+    const tabIndex = $contentContainer.data('tab-index'),
+      $activeDropdown = this.elements.$tabDropdowns.filter(this.getTabTitleFilterSelector(tabIndex))[0],
+      $titleElement = $activeDropdown.closest(this.getSettings('selectors').tabTitle),
+      titleBoundingBox = $titleElement.getBoundingClientRect(),
       contentContainerWidth = $contentContainer[0].clientWidth;
     let menuItemContainerOffset = null;
     switch (this.getElementSettings('content_horizontal_position')) {
@@ -3890,7 +5083,7 @@ class MegaMenu extends elementorModules.frontend.handlers.NestedTabs {
     return offset;
   }
   getMenuContainerOffset() {
-    const menuContainerBoundingBox = this.elements.$menuContainer[0].getBoundingClientRect();
+    const menuContainerBoundingBox = this.elements.$widgetContainer[0].getBoundingClientRect();
     return elementorFrontend.config.is_rtl ? this.getMenuContainerOffsetRtl(menuContainerBoundingBox) : menuContainerBoundingBox.left;
   }
   getMenuContainerOffsetRtl(menuContainerBoundingBox) {
@@ -3904,7 +5097,7 @@ class MegaMenu extends elementorModules.frontend.handlers.NestedTabs {
     return menuContainerOffset;
   }
   resetContentContainersPosition() {
-    this.elements.$contentContainers.css({
+    this.elements.$tabContents.css({
       left: '',
       right: '',
       bottom: '',
@@ -3912,40 +5105,73 @@ class MegaMenu extends elementorModules.frontend.handlers.NestedTabs {
       'max-width': '',
       width: 'var(--width)'
     });
-    this.elements.$menuContent.removeClass('content-above');
+    this.elements.$widgetContainer.removeClass('content-above');
   }
   getTabContentFilterSelector(tabIndex) {
-    return `[data-content="${tabIndex}"]`;
+    return `[data-tab-index="${tabIndex}"]`;
+  }
+  isActiveTab(tabIndex) {
+    return 'true' === this.elements.$tabDropdowns.filter('[data-tab-index="' + tabIndex + '"]').attr(this.getSettings('ariaAttributes').titleStateAttribute);
   }
   activateTab(tabIndex) {
     const settings = this.getSettings(),
       activeClass = settings.classes.active,
-      containerClass = settings.selectors.tabContent,
-      $requestedTitle = this.elements.$tabTitles.filter(this.getTabTitleFilterSelector(tabIndex)),
+      childMenuDropdownSelector = `.elementor-element-${this.getID()} .e-n-menu .e-n-menu .e-n-menu-dropdown-icon`,
+      childMenuContentSelector = `.elementor-element-${this.getID()} .e-n-menu .e-n-menu .e-n-menu-content > .e-con`,
+      $requestedTitle = this.elements.$tabDropdowns.filter(this.getTabTitleFilterSelector(tabIndex)).not(childMenuDropdownSelector),
       animationDuration = 'show' === settings.showTabFn ? 0 : 400,
-      $requestedContent = this.elements.$tabContents.filter(this.getTabContentFilterSelector(tabIndex));
+      $requestedContent = this.elements.$tabContents.filter(this.getTabContentFilterSelector(tabIndex)).not(childMenuContentSelector),
+      $menuContent = this.elements.$menuContent;
     this.addAnimationToContentIfNeeded(tabIndex);
-    if ($requestedContent.hasClass(containerClass.replace('.', ''))) {
-      $requestedContent[settings.showTabFn](animationDuration, () => this.onShowTabContent($requestedContent));
-      $requestedTitle.add($requestedContent).addClass(activeClass);
-      $requestedContent.css({
-        display: 'var(--display)'
-      });
-      $requestedContent.removeAttr('hidden display');
-      if (elementorFrontend.isEditMode()) {
-        this.activeContainerWidthListener($requestedContent);
-      }
+    $requestedContent[settings.showTabFn](animationDuration, () => this.onShowTabContent($requestedContent));
+    $requestedTitle.attr(this.getTitleActivationAttributes());
+    $requestedTitle.prev('.e-n-menu-title-container').find('a').attr(this.getTitleActivationAttributes('link'));
+    $requestedContent.addClass(activeClass);
+    $requestedContent.css({
+      display: 'var(--display)'
+    });
+    $requestedContent.removeAttr('display');
+    $menuContent.addClass(activeClass);
+    if (elementorFrontend.isEditMode() && !!$requestedContent.length) {
+      this.activeContainerWidthListener($requestedContent);
     }
+    this.menuHeightController.reassignMenuHeight($requestedContent);
   }
-  deactivateActiveTab(tabIndex) {
+  deactivateActiveTab(newTabIndex) {
     const settings = this.getSettings(),
       activeClass = settings.classes.active,
-      activeContentFilter = tabIndex ? this.getTabContentFilterSelector(tabIndex) : '.' + activeClass,
-      $activeContent = this.elements.$tabContents.filter(activeContentFilter);
-    super.deactivateActiveTab(tabIndex);
+      activeTitleFilter = settings.ariaAttributes.activeTitleSelector,
+      activeContentFilter = '.' + activeClass,
+      $activeTitle = this.elements.$tabDropdowns.filter(activeTitleFilter),
+      $activeContent = this.elements.$tabContents.filter(activeContentFilter),
+      $menuContent = this.elements.$menuContent;
+    this.setTabDeactivationAttributes($activeTitle, newTabIndex);
+    $activeContent.removeClass(activeClass);
+    $activeContent[settings.hideTabFn](0, () => this.onHideTabContent($activeContent));
     this.removeAnimationFromContentIfNeeded();
+    $menuContent.removeClass(activeClass);
     if (elementorFrontend.isEditMode() && !!$activeContent.length) {
       this.observedContainer?.unobserve($activeContent[0]);
+    }
+    this.menuHeightController.resetMenuHeight($activeContent);
+  }
+  getTitleActivationAttributes() {
+    let elementType = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'tab';
+    const titleAttributes = {
+      tabindex: '0'
+    };
+    if ('tab' === elementType) {
+      titleAttributes['aria-expanded'] = 'true';
+    }
+    return titleAttributes;
+  }
+  setTabDeactivationAttributes($activeTitle, newTabIndex) {
+    const isActiveTab = this.isActiveTab(newTabIndex),
+      titleStateAttribute = this.getSettings('ariaAttributes').titleStateAttribute;
+    $activeTitle.attr(`${titleStateAttribute}`, 'false');
+    if (!!newTabIndex && !isActiveTab) {
+      this.elements.$tabDropdowns.attr('tabindex', '-1');
+      this.elements.$tabDropdowns.prev('.e-n-menu-title-container').find('a').attr('tabindex', '-1');
     }
   }
   shouldPositionContentAbove($contentContainer) {
@@ -3964,37 +5190,89 @@ class MegaMenu extends elementorModules.frontend.handlers.NestedTabs {
     super.onShowTabContent($requestedContent);
   }
   onHideTabContent() {
-    if (this.elements.$menuContent.hasClass('content-above')) {
+    if (this.elements.$widgetContainer.hasClass('content-above')) {
       this.resetContentContainersPosition();
     }
   }
   changeActiveTab(tabIndex) {
     let fromUser = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
     const isActiveTab = this.isActiveTab(tabIndex);
-    this.deactivateActiveTab();
+    this.deactivateActiveTab(tabIndex);
     if (!isActiveTab || isActiveTab && !fromUser) {
       this.activateTab(tabIndex);
     }
   }
-  onTabClick(event) {
-    if (event.currentTarget.classList.contains('link-only')) {
+  changeActiveTabByKeyboard(event, settings) {
+    if (settings.widgetId.toString() !== this.getID().toString()) {
       return;
     }
-    this.changeActiveTab(event.currentTarget.getAttribute('data-tab'), true);
+    if (!settings.titleIndex) {
+      this.changeActiveTab('', true);
+      return;
+    }
+    const $focusableElement = this.$element.find(`[data-focus-index="${settings.titleIndex}"]`),
+      isLinkElement = 'a' === $focusableElement[0].tagName.toLowerCase(),
+      dropdownSelector = this.getSettings('selectors.tabDropdown'),
+      $tabDropdown = isLinkElement ? $focusableElement.next(dropdownSelector) : $focusableElement,
+      tabIndex = this.getTabIndex($tabDropdown[0]);
+    this.changeActiveTab(tabIndex, true);
+    event.stopPropagation();
+  }
+  onTabClick(event) {
+    if (event?.currentTarget?.classList?.contains('link-only')) {
+      return;
+    }
+    const getClickedMenuId = event?.target?.closest('.elementor-widget-n-menu')?.getAttribute('data-id'),
+      getWidgetId = this.getID().toString();
+    if (getClickedMenuId !== getWidgetId) {
+      return;
+    }
+    const selectors = this.getSettings('selectors'),
+      clickedElement = event?.currentTarget,
+      dropdownElement = clickedElement?.querySelector(selectors.tabDropdown),
+      tabIndex = this.getTabIndex(dropdownElement);
+    this.changeActiveTab(tabIndex, true);
   }
   bindEvents() {
-    this.elements.$desktopTabTitles.on(this.getDesktopTabEvents());
-    this.elements.$mobileTabTitles.on(this.getTabEvents());
+    this.elements.$tabTitles.on(this.getTabEvents());
     this.elements.$dropdownMenuToggle.on('click', this.onClickToggleDropdownMenu.bind(this));
     this.elements.$tabContents.on(this.getContentEvents());
     this.elements.$menuContent.on(this.getContentEvents());
+    this.elements.$headingContainer.on(this.getHeadingEvents());
     elementorFrontend.addListenerOnce(this.getModelCID(), 'scroll', elementorFrontend.debounce(this.menuHeightController.reassignMobileMenuHeight.bind(this.menuHeightController), 250));
     elementorFrontend.elements.$window.on('elementor/nested-tabs/activate', this.reInitSwipers);
-    this.resizeListener = this.handleContentContainerPosition.bind(this);
-    elementorFrontend.elements.$window.on('resize', this.resizeListener);
+    elementorFrontend.elements.$window.on('elementor/nested-elements/activate-by-keyboard', this.changeActiveTabByKeyboard.bind(this));
+    elementorFrontend.elements.$window.on('elementor/mega-menu/dropdown-toggle-by-keyboard', this.onClickToggleDropdownMenuByKeyboard.bind(this));
+    elementorFrontend.elements.$window.on('resize', this.resizeEventHandler.bind(this));
     if (elementorFrontend.isEditMode()) {
       this.addChildLifeCycleEventListeners();
     }
+  }
+  unbindEvents() {
+    this.elements.$tabTitles.off();
+    this.elements.$menuContent.off();
+    this.elements.$tabContents.off();
+    this.elements.$headingContainer.off();
+    elementorFrontend.elements.$window.off('resize');
+    if (elementorFrontend.isEditMode()) {
+      this.removeChildLifeCycleEventListeners();
+    }
+    elementorFrontend.elements.$window.off('elementor/nested-tabs/activate');
+    elementorFrontend.elements.$window.off('elementor/nested-elements/activate-by-keyboard');
+    elementorFrontend.elements.$window.off('elementor/mega-menu/dropdown-toggle-by-keyboard');
+  }
+  resizeEventHandler() {
+    this.resizeListener = this.handleContentContainerPosition();
+    this.setLayoutType();
+    this.setTouchMode();
+    this.menuHeightController.reassignMobileMenuHeight();
+    this.setScrollPosition();
+    const activeTitleSelector = this.getSettings('ariaAttributes').activeTitleSelector,
+      tabIndex = this.elements.$tabDropdowns.filter(activeTitleSelector)?.attr('data-tab-index'),
+      childMenuContentSelector = `.elementor-element-${this.getID()} .e-n-menu .e-n-menu .e-n-menu-content > .e-con`,
+      $requestedContent = this.elements.$tabContents.filter(this.getTabContentFilterSelector(tabIndex)).not(childMenuContentSelector);
+    this.menuHeightController.resetMenuHeight($requestedContent);
+    this.menuHeightController.reassignMenuHeight($requestedContent);
   }
 
   /**
@@ -4002,7 +5280,7 @@ class MegaMenu extends elementorModules.frontend.handlers.NestedTabs {
    *
    * This method adds event listeners for the elementor/editor/element-rendered and elementor/editor/element-destroyed
    * events. These events are fired when an element is rendered or destroyed in the editor. The callback functions
-   * check if the rendered/destroyed element is nested in this mega-menu instance, and if it is, triggeres the
+   * check if the rendered/destroyed element is nested in this mega-menu instance, and if it is, triggers the
    * recalculation of the mega-menu's content containers position.
    */
   addChildLifeCycleEventListeners() {
@@ -4013,16 +5291,6 @@ class MegaMenu extends elementorModules.frontend.handlers.NestedTabs {
   removeChildLifeCycleEventListeners() {
     window.removeEventListener('elementor/editor/element-rendered', this.lifecycleChangeListener);
     window.removeEventListener('elementor/editor/element-destroyed', this.lifecycleChangeListener);
-  }
-  unbindEvents() {
-    this.elements.$desktopTabTitles.off();
-    this.elements.$mobileTabTitles.off();
-    this.elements.$menuContent.off();
-    this.elements.$tabContents.off();
-    elementorFrontend.elements.$window.off('resize', this.resizeListener);
-    if (elementorFrontend.isEditMode()) {
-      this.removeChildLifeCycleEventListeners();
-    }
   }
   handleContentContainerChildrenChanges(event) {
     if (!this.isNestedElementRenderedInContentContainer(event.detail.elementView)) {
@@ -4036,15 +5304,16 @@ class MegaMenu extends elementorModules.frontend.handlers.NestedTabs {
       return false;
     }
     const elementAncestors = elementContainer.getParentAncestry();
-    return elementAncestors.some(parent => this.getID() === parent.model.get('id'));
+    return elementAncestors.some(parent => this.getID().toString() === parent.model.get('id').toString());
   }
-  getDesktopTabEvents() {
-    const tabEvents = this.getTabEvents();
+  getTabEvents() {
+    const tabEvents = super.getTabEvents();
     return this.isNeedToOpenOnClick() ? tabEvents : this.replaceClickWithHover(tabEvents);
   }
   getContentEvents() {
     return this.isNeedToOpenOnClick() ? {} : {
-      mouseleave: this.onMouseLeave.bind(this)
+      mouseleave: this.onMouseLeave.bind(this),
+      mousemove: this.trackMousePosition.bind(this)
     };
   }
   isNeedToOpenOnClick() {
@@ -4063,23 +5332,61 @@ class MegaMenu extends elementorModules.frontend.handlers.NestedTabs {
   }
   onMouseTitleEnter(event) {
     event.preventDefault();
-    const isActiveTabTitle = event.currentTarget.classList.contains(this.getActiveClass());
+    const settings = this.getSettings(),
+      titleStateAttribute = settings.ariaAttributes.titleStateAttribute,
+      dropdownSelector = settings.selectors.tabDropdown,
+      activeDropdownElement = event?.currentTarget?.querySelector(dropdownSelector),
+      isActiveTabTitle = 'true' === activeDropdownElement?.getAttribute(titleStateAttribute);
     if (isActiveTabTitle) {
       return;
     }
-    this.changeActiveTab(event.currentTarget.getAttribute('data-tab'), true);
+    const tabIndex = activeDropdownElement?.getAttribute('data-tab-index');
+    this.resetTabindexAttributes();
+    this.changeActiveTab(tabIndex, true);
   }
   onClickToggleDropdownMenu(show) {
+    this.elements.$widgetContainer.attr('data-layout', 'dropdown');
     const settings = this.getSettings(),
       activeClass = settings.classes.active,
-      isDropdownVisible = this.elements.$dropdownMenuToggle.hasClass(activeClass);
+      titleStateAttribute = this.getSettings('ariaAttributes').titleStateAttribute,
+      isDropdownVisible = 'true' === this.elements.$dropdownMenuToggle.attr(titleStateAttribute);
     if ('boolean' !== typeof show) {
       show = !isDropdownVisible;
     }
-    this.elements.$dropdownMenuToggle.toggleClass(activeClass, show);
+    const activeTabTitleValue = show ? 'true' : 'false';
+    this.elements.$dropdownMenuToggle.attr(titleStateAttribute, activeTabTitleValue);
     this.elements.$menuContent.toggleClass(activeClass, show);
     elementorFrontend.utils.events.dispatch(window, 'elementor-pro/mega-menu/dropdown-open');
     this.menuHeightController.reassignMobileMenuHeight();
+  }
+  onClickOutsideDropdownMenu(event) {
+    if (!this.isNeedToOpenOnClick()) {
+      return;
+    }
+    const settings = this.getSettings(),
+      selectors = settings.selectors,
+      widgetWrapper = `.elementor-element-${this.getID()}`,
+      activeClass = settings.classes.active,
+      activeContentFilter = `> .e-con.${activeClass}`,
+      $activeContent = this.elements.$menuContent.find(activeContentFilter),
+      isMenuDropdownsClosed = 0 === $activeContent.length,
+      isElementRemovedFromDOM = elementorFrontend.isEditMode() && !document.body.contains(event?.target),
+      isClickedInsideCurrentMenu = !!event?.target?.closest(`${widgetWrapper} ${selectors.widgetContainer}`),
+      isMenuContentWrapperClicked = event?.target?.classList?.contains(selectors.menuContent.replace('.', ''));
+    if (isMenuContentWrapperClicked) {
+      this.deactivateActiveTab();
+      return;
+    }
+    if (isMenuDropdownsClosed || isClickedInsideCurrentMenu || isElementRemovedFromDOM) {
+      return;
+    }
+    this.deactivateActiveTab();
+  }
+  onClickToggleDropdownMenuByKeyboard(event, settings) {
+    if (settings.widgetId.toString() !== this.getID().toString()) {
+      return;
+    }
+    this.onClickToggleDropdownMenu(settings.show);
   }
   addAnimationToContentIfNeeded(tabIndex) {
     const openAnimation = this.getElementSettings('open_animation');
@@ -4096,42 +5403,65 @@ class MegaMenu extends elementorModules.frontend.handlers.NestedTabs {
     }
     this.elements.$tabContents.removeClass(`animated ${openAnimation}`);
   }
-  isHoveredDropdownMenu(isMouseLeavingTabContent) {
-    const settings = this.getSettings(),
-      $widget = this.$element,
-      isMenuContentHover = 0 < $widget.find(`${settings.selectors.menuContent}:hover`).length,
-      isTabContentHover = 0 < $widget.find(`${settings.selectors.tabContent}:hover`).length;
-    return isTabContentHover || !isMouseLeavingTabContent && isMenuContentHover;
+
+  /**
+   * Store the current Y-coordinate of the mouse cursor.
+   *
+   * @param {Event} event - The mouse event object.
+   */
+  trackMousePosition(event) {
+    this.prevMouseY = event?.clientY;
   }
+
+  /**
+   * Check if the menu content is currently hovered.
+   *
+   * @return {boolean} - True if menu content is hovered, otherwise false.
+   */
+  isMenuContentHovered() {
+    const settings = this.getSettings(),
+      $widget = this.$element;
+    return $widget.find(`${settings.selectors.menuContent}:hover`).length > 0;
+  }
+
+  /**
+   * Determines whether the cursor moved sideways or downwards.
+   *
+   * @param {Event} event - The mouse event object.
+   * @return {boolean} - True if the cursor moved sideways or downwards, otherwise false.
+   */
+  didCursorMoveSidewaysOrDown(event) {
+    // Detects if the Y-coordinate of the mouse has not decreased (i.e., either remained the same or increased).
+    return this.prevMouseY !== null && event?.clientY >= this.prevMouseY;
+  }
+
+  /**
+   * Check whether the dropdown menu should remain open based on hover and cursor movement.
+   *
+   * @param {boolean} isMouseLeavingTabContent - True if the mouse is leaving the tab content.
+   * @param {Event}   event                    - The mouse event object.
+   * @return {boolean} - True if dropdown should be considered as hovered, otherwise false.
+   */
+  isHoveredDropdownMenu(isMouseLeavingTabContent, event) {
+    // If the mouse is leaving the tab content and it moved sideways or downwards, close the dropdown.
+    if (isMouseLeavingTabContent && this.didCursorMoveSidewaysOrDown(event)) {
+      return false;
+    }
+
+    // Otherwise, return true if the menu content is hovered.
+    return this.isMenuContentHovered();
+  }
+
+  /**
+   * Handle the event when the mouse leaves the dropdown.
+   *
+   * @param {Event} event - The mouse event object.
+   */
   onMouseLeave(event) {
     event.preventDefault();
-    const isMouseLeavingTabContent = event.currentTarget.classList.contains('e-con');
-    if (this.isHoveredDropdownMenu(isMouseLeavingTabContent)) {
-      return;
-    }
-    this.deactivateActiveTab();
-  }
-  createMobileTabs() {
-    const settings = this.getSettings();
-    if (elementorFrontend.isEditMode()) {
-      let index = 1;
-      const $widget = this.$element,
-        $contentAreaContainer = this.findElement('.e-n-menu-items-content');
-      this.findElement('.e-n-menu-items-heading > .e-n-menu-item-title').each(function () {
-        const $desktopTabTitle = $widget.find(`${settings.selectors.headingContainer} > *:nth-child( ${index})`).clone(),
-          $mobileTitleHTML = $desktopTabTitle.removeClass('e-normal').addClass('e-collapse');
-
-        // Avoid any possible duplication.
-        if ($widget.find(`#${$mobileTitleHTML[0].id}.e-collapse`).length > 0) {
-          return;
-        }
-        $contentAreaContainer.append($mobileTitleHTML);
-        const $currentContainer = $widget.find(`.e-con[data-content="${index}"]`);
-        if ($currentContainer[0]) {
-          $currentContainer.insertAfter($widget.find(`.e-n-menu-items-content > .e-collapse[data-tab="${index}"]`));
-        }
-        index++;
-      });
+    const isMouseLeavingTabContent = event?.currentTarget?.classList?.contains('e-con');
+    if (!this.isHoveredDropdownMenu(isMouseLeavingTabContent, event)) {
+      this.deactivateActiveTab('', 'mouseLeave');
     }
   }
   onInit() {
@@ -4142,6 +5472,22 @@ class MegaMenu extends elementorModules.frontend.handlers.NestedTabs {
       this.anchorLinks = new _anchorLink.default();
       this.anchorLinks.followMenuAnchors(this.elements.$anchorLink, classes);
     }
+    this.menuToggleVisibilityListener(this.elements.$dropdownMenuToggle);
+    this.setScrollPosition();
+    this.onClickOutsideDropdownMenu = this.onClickOutsideDropdownMenu.bind(this);
+    document.addEventListener('click', this.onClickOutsideDropdownMenu);
+  }
+  onDestroy() {
+    document.removeEventListener('click', this.onClickOutsideDropdownMenu);
+  }
+  setScrollPosition() {
+    const settingsObject = {
+      element: this.elements.$headingContainer[0],
+      direction: this.getItemPosition(),
+      justifyCSSVariable: '--n-menu-heading-justify-content',
+      horizontalScrollStatus: this.getHorizontalScrollSetting()
+    };
+    (0, _flexHorizontalScroll.setHorizontalScrollAlignment)(settingsObject);
   }
   getPropsThatTriggerContentPositionCalculations() {
     return ['content_horizontal_position', 'content_position', 'item_position_horizontal', 'content_width', 'item_layout'];
@@ -4159,19 +5505,182 @@ class MegaMenu extends elementorModules.frontend.handlers.NestedTabs {
     });
     this.observedContainer.observe($activeContainer[0]);
   }
+  menuToggleVisibilityListener($menuToggle) {
+    let previousWidth;
+    this.observedContainer = new ResizeObserver(menuToggle => {
+      const currentWidth = menuToggle[0].borderBoxSize?.[0].inlineSize;
+      if (currentWidth !== previousWidth) {
+        previousWidth = currentWidth;
+        this.setLayoutType();
+      }
+    });
+    this.observedContainer.observe($menuToggle[0]);
+  }
   onElementChange(propertyName) {
     if (this.getPropsThatTriggerContentPositionCalculations().includes(propertyName)) {
       this.handleContentContainerPosition();
     }
+    this.setLayoutType();
   }
   onEditSettingsChange(propertyName, value) {
     const settings = this.getSettings();
     if (settings.autoFocus) {
       super.onEditSettingsChange(propertyName, value);
     }
+    this.setLayoutType();
+  }
+  resetTabindexAttributes() {
+    this.elements.$tabDropdowns.attr('tabindex', '-1');
+  }
+
+  /**
+   * Sets the layout type as a data attribute, so that it can be use for the responsive or dropdown menu styling.
+   *
+   * Originally this styling was handled by the distinction between the heading and the content styling elements.
+   * Since we removed the title duplication, we needed another way to distinguish between the horizontal and the dropdown styling.
+   */
+  setLayoutType() {
+    const layoutType = 'flex' === this.elements.$headingContainer.css('display') ? 'horizontal' : 'dropdown';
+    this.elements.$widgetContainer.attr('data-layout', layoutType);
+  }
+  getHeadingEvents() {
+    const navigationWrapper = this.elements.$headingContainer[0];
+    return {
+      mousedown: this.changeScrollStatusAndDispatch.bind(this, navigationWrapper),
+      mouseup: this.changeScrollStatusAndDispatch.bind(this, navigationWrapper),
+      mouseleave: this.changeScrollStatusAndDispatch.bind(this, navigationWrapper),
+      mousemove: this.setHorizontalTitleScrollValuesAndDispatch.bind(this, navigationWrapper)
+    };
+  }
+  getHorizontalScrollSetting() {
+    const currentDevice = elementorFrontend.getCurrentDeviceMode();
+    return elementorFrontend.utils.controls.getResponsiveControlValue(this.getElementSettings(), 'horizontal_scroll', '', currentDevice);
+  }
+  getItemPosition() {
+    const currentDevice = elementorFrontend.getCurrentDeviceMode();
+    return elementorFrontend.utils.controls.getResponsiveControlValue(this.getElementSettings(), 'item_position_horizontal', '', currentDevice);
+  }
+  changeScrollStatusAndDispatch(navigationWrapper, event) {
+    (0, _flexHorizontalScroll.changeScrollStatus)(navigationWrapper, event);
+    elementorFrontend.elements.$window.trigger('elementor-pro/mega-menu/heading-mouse-event');
+  }
+  setHorizontalTitleScrollValuesAndDispatch(navigationWrapper, event) {
+    (0, _flexHorizontalScroll.setHorizontalTitleScrollValues)(navigationWrapper, this.getHorizontalScrollSetting(), event);
+    elementorFrontend.elements.$window.trigger('elementor-pro/mega-menu/heading-mouse-event');
   }
 }
 exports["default"] = MegaMenu;
+
+/***/ }),
+
+/***/ "../modules/mega-menu/assets/js/frontend/handlers/menu-title-keyboard-handler.js":
+/*!***************************************************************************************!*\
+  !*** ../modules/mega-menu/assets/js/frontend/handlers/menu-title-keyboard-handler.js ***!
+  \***************************************************************************************/
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports["default"] = void 0;
+class MenuTitleKeyboardHandler extends elementorModules.frontend.handlers.NestedTitleKeyboardHandler {
+  __construct() {
+    super.__construct(...arguments);
+    this.handleMenuToggleKeydown = this.handleMenuToggleKeydown.bind(this);
+  }
+  getDefaultSettings() {
+    const settings = super.getDefaultSettings();
+    settings.selectors.widgetInnerWrapper = '.e-n-menu';
+    settings.selectors.menuToggle = '.e-n-menu-toggle';
+    settings.selectors.itemTitle = '.e-focus';
+    settings.selectors.itemContainer = '.e-n-menu-content > .e-con';
+    settings.ariaAttributes.titleStateAttribute = 'aria-expanded';
+    settings.ariaAttributes.activeTitleSelector = '[aria-expanded="true"]';
+    settings.datasets.titleIndex = 'data-focus-index';
+    return settings;
+  }
+  getDefaultElements() {
+    const elements = super.getDefaultElements(),
+      selectors = this.getSettings('selectors');
+    elements.$menuToggle = this.findElement(selectors.menuToggle);
+    return elements;
+  }
+  bindEvents() {
+    super.bindEvents();
+    this.elements.$menuToggle.on('keydown', this.handleMenuToggleKeydown);
+  }
+  unbindEvents() {
+    super.unbindEvents();
+    this.elements.$menuToggle.off('keydown', this.handleMenuToggleKeydown);
+  }
+  onInit() {
+    super.onInit(...arguments);
+    let focusTitleCount = 1;
+    this.elements.$itemTitles.each((index, title) => {
+      title.setAttribute(this.getSettings('datasets').titleIndex, focusTitleCount++);
+    });
+  }
+  setTitleTabindex(titleIndex) {
+    this.elements.$itemTitles.attr('tabindex', '-1');
+    const $newTitle = this.elements.$itemTitles.filter(this.getTitleFilterSelector(titleIndex));
+    $newTitle.attr('tabindex', '0');
+    $newTitle.closest('.e-n-menu-title-container').next('.e-n-menu-dropdown-icon').attr('tabindex', '0');
+    $newTitle.prev('.e-n-menu-title-container').find('a').attr('tabindex', '0');
+  }
+  handleMenuToggleKeydown(event) {
+    if ('Escape' !== event.key) {
+      return;
+    }
+    event.preventDefault();
+    event.stopPropagation();
+    elementorFrontend.elements.$window.trigger('elementor/mega-menu/dropdown-toggle-by-keyboard', {
+      widgetId: this.getID(),
+      show: false
+    });
+  }
+  handleTitleEscapeKeyEvents(event) {
+    event.preventDefault();
+    event.stopPropagation();
+    const selectors = this.getSettings('selectors'),
+      isDropdownLayout = 'dropdown' === this.$element.find(selectors.widgetInnerWrapper).data('layout');
+    if (isDropdownLayout) {
+      elementorFrontend.elements.$window.trigger('elementor/mega-menu/dropdown-toggle-by-keyboard', {
+        widgetId: this.getID()
+      });
+      this.$element.find(selectors.menuToggle).trigger('focus');
+    }
+    elementorFrontend.elements.$window.trigger('elementor/nested-elements/activate-by-keyboard', {
+      widgetId: this.getID()
+    });
+  }
+  handleContentElementEscapeEvents() {
+    this.getActiveTitleElement().trigger('focus');
+    elementorFrontend.elements.$window.trigger('elementor/nested-elements/activate-by-keyboard', {
+      widgetId: this.getID()
+    });
+  }
+  handleContentElementTabEvents(event) {
+    const $currentElement = jQuery(event.currentTarget),
+      containerSelector = this.getSettings('selectors').itemContainer,
+      $focusableContainerElements = this.getFocusableElements($currentElement.closest(containerSelector)),
+      $lastFocusableElement = $focusableContainerElements.last(),
+      isCurrentElementLastFocusableElement = $currentElement.is($lastFocusableElement);
+    if (!isCurrentElementLastFocusableElement) {
+      return;
+    }
+    event.preventDefault();
+    const $activeTitle = this.getActiveTitleElement(),
+      activeTitleIndex = parseInt(this.getTitleIndex($activeTitle[0]));
+    elementorFrontend.elements.$window.trigger('elementor/nested-elements/activate-by-keyboard', {
+      widgetId: this.getID()
+    });
+    this.changeTitleFocus(activeTitleIndex);
+  }
+}
+exports["default"] = MenuTitleKeyboardHandler;
 
 /***/ }),
 
@@ -4181,6 +5690,7 @@ exports["default"] = MegaMenu;
   \*************************************************************************************/
 /***/ ((__unused_webpack_module, exports) => {
 
+"use strict";
 
 
 Object.defineProperty(exports, "__esModule", ({
@@ -4192,15 +5702,22 @@ class StretchedMenuItemContent extends elementorModules.frontend.handlers.Stretc
     return 'elementor-widget-n-menu';
   }
   getStretchElementForConfig() {
-    return this.$element.find('.e-n-menu-items-content');
+    return this.$element.find('.e-n-menu-wrapper');
+  }
+  getStretchElementConfig() {
+    const elementConfig = super.getStretchElementConfig();
+    elementConfig.cssOutput = 'variables';
+    return elementConfig;
   }
   bindEvents() {
     super.bindEvents();
     elementorFrontend.addListenerOnce(this.getUniqueHandlerID(), 'elementor-pro/mega-menu/dropdown-open', this.stretch);
+    elementorFrontend.elements.$window.on('elementor-pro/mega-menu/heading-mouse-event', this.stretch);
   }
   unbindEvents() {
     super.unbindEvents();
     elementorFrontend.removeListeners(this.getUniqueHandlerID(), 'elementor-pro/mega-menu/dropdown-open', this.stretch);
+    elementorFrontend.elements.$window.off('elementor-pro/mega-menu/heading-mouse-event', this.stretch);
   }
   isStretchSettingEnabled() {
     return true;
@@ -4219,6 +5736,7 @@ exports["default"] = StretchedMenuItemContent;
   \********************************************************/
 /***/ ((__unused_webpack_module, exports) => {
 
+"use strict";
 
 
 Object.defineProperty(exports, "__esModule", ({
@@ -4245,6 +5763,7 @@ function isMenuInDropdownMode(elementSettings) {
   \*****************************************************************/
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
+"use strict";
 
 
 var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
@@ -4278,6 +5797,7 @@ exports["default"] = _default;
   \*******************************************************************/
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
+"use strict";
 
 
 var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
@@ -4286,7 +5806,7 @@ Object.defineProperty(exports, "__esModule", ({
 }));
 exports["default"] = void 0;
 var _anchorLink = _interopRequireDefault(__webpack_require__(/*! ../../../../../../assets/dev/js/frontend/utils/anchor-link */ "../assets/dev/js/frontend/utils/anchor-link.js"));
-var _default = elementorModules.frontend.handlers.Base.extend({
+var _default = exports["default"] = elementorModules.frontend.handlers.Base.extend({
   stretchElement: null,
   getDefaultSettings() {
     return {
@@ -4321,8 +5841,8 @@ var _default = elementorModules.frontend.handlers.Base.extend({
         $dropdownMenuContainer: this.$element.find(selectors.dropdownMenu),
         $menuToggle: this.$element.find(selectors.menuToggle)
       },
-      classes: {
-        menuToggleActiveClass: 'elementor-active'
+      attributes: {
+        menuToggleState: 'aria-expanded'
       },
       settings: {
         dropdownMenuContainerMaxHeight: '1000vmax',
@@ -4417,7 +5937,6 @@ var _default = elementorModules.frontend.handlers.Base.extend({
     }
   }
 });
-exports["default"] = _default;
 
 /***/ }),
 
@@ -4427,6 +5946,7 @@ exports["default"] = _default;
   \************************************************************************/
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
+"use strict";
 
 
 var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
@@ -4451,6 +5971,7 @@ exports["default"] = _default;
   \*********************************************************************************/
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
+"use strict";
 
 
 var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
@@ -4488,6 +6009,9 @@ class NestedCarousel extends elementorModules.frontend.handlers.CarouselBase {
   async onInit() {
     this.wrapSlideContent();
     super.onInit(...arguments);
+    if (!elementorFrontend.config.experimentalFeatures.e_swiper_latest) {
+      this.reInitBackgroundSlideshow();
+    }
     this.ranElementHandlers = false;
   }
   handleElementHandlers() {
@@ -4541,6 +6065,16 @@ class NestedCarousel extends elementorModules.frontend.handlers.CarouselBase {
   isTouchDevice() {
     return elementorFrontend.utils.environment.isTouchDevice;
   }
+  reInitBackgroundSlideshow() {
+    const slideshows = this.elements.$swiperContainer.find('.elementor-background-slideshow');
+    for (const element of slideshows) {
+      if (!element.swiper) {
+        return;
+      }
+      element.swiper.initialized = false;
+      element.swiper.init();
+    }
+  }
 }
 exports["default"] = NestedCarousel;
 
@@ -4552,6 +6086,7 @@ exports["default"] = NestedCarousel;
   \*******************************************************/
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
+"use strict";
 
 
 var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
@@ -4768,7 +6303,7 @@ class _default extends elementorModules.frontend.Document {
     const modal = this.getModal(),
       closeButtonPosition = this.getDocumentSettings('close_button_position'),
       $closeButton = modal.getElements('closeButton');
-    $closeButton.appendTo(modal.getElements('outside' === closeButtonPosition ? 'widget' : 'widgetContent'));
+    $closeButton.prependTo(modal.getElements('outside' === closeButtonPosition ? 'widget' : 'widgetContent'));
   }
   disable() {
     this.setStorage('disable', true);
@@ -4830,6 +6365,7 @@ exports["default"] = _default;
   \**************************************************************/
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
+"use strict";
 
 
 var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
@@ -4904,13 +6440,14 @@ exports["default"] = _default;
   \********************************************************************/
 /***/ ((__unused_webpack_module, exports) => {
 
+"use strict";
 
 
 Object.defineProperty(exports, "__esModule", ({
   value: true
 }));
 exports["default"] = void 0;
-var _default = elementorModules.frontend.handlers.Base.extend({
+var _default = exports["default"] = elementorModules.frontend.handlers.Base.extend({
   getDefaultSettings() {
     return {
       selectors: {
@@ -4940,7 +6477,6 @@ var _default = elementorModules.frontend.handlers.Base.extend({
     }, 1000);
   }
 });
-exports["default"] = _default;
 
 /***/ }),
 
@@ -4950,6 +6486,7 @@ exports["default"] = _default;
   \*****************************************************/
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
+"use strict";
 
 
 var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
@@ -5007,6 +6544,7 @@ exports["default"] = _default;
   \**********************************************************/
 /***/ ((__unused_webpack_module, exports) => {
 
+"use strict";
 
 
 Object.defineProperty(exports, "__esModule", ({
@@ -5032,6 +6570,7 @@ exports["default"] = _default;
   \**************************************************************/
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
+"use strict";
 
 
 var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
@@ -5063,6 +6602,7 @@ exports["default"] = _default;
   \*************************************************************/
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
+"use strict";
 
 
 var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
@@ -5089,6 +6629,7 @@ exports["default"] = _default;
   \***************************************************************/
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
+"use strict";
 
 
 var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
@@ -5123,6 +6664,7 @@ exports["default"] = _default;
   \****************************************************************/
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
+"use strict";
 
 
 var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
@@ -5156,6 +6698,7 @@ exports["default"] = _default;
   \********************************************************************/
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
+"use strict";
 
 
 var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
@@ -5196,6 +6739,7 @@ exports["default"] = ScheduleUtils;
   \**************************************************************/
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
+"use strict";
 
 
 var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
@@ -5241,6 +6785,7 @@ exports["default"] = _default;
   \**************************************************************/
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
+"use strict";
 
 
 var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
@@ -5274,6 +6819,7 @@ exports["default"] = _default;
   \*************************************************************/
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
+"use strict";
 
 
 var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
@@ -5315,6 +6861,7 @@ exports["default"] = _default;
   \*****************************************************************/
 /***/ ((__unused_webpack_module, exports) => {
 
+"use strict";
 
 
 Object.defineProperty(exports, "__esModule", ({
@@ -5402,6 +6949,7 @@ exports["default"] = TimesUtils;
   \***********************************************************/
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
+"use strict";
 
 
 var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
@@ -5474,6 +7022,7 @@ exports["default"] = _default;
   \*********************************************************/
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
+"use strict";
 
 
 var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
@@ -5512,6 +7061,7 @@ exports["default"] = _default;
   \*******************************************************/
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
+"use strict";
 
 
 var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
@@ -5570,6 +7120,7 @@ exports["default"] = _default;
   \************************************************************/
 /***/ ((__unused_webpack_module, exports) => {
 
+"use strict";
 
 
 Object.defineProperty(exports, "__esModule", ({
@@ -5595,6 +7146,7 @@ exports["default"] = _default;
   \*************************************************************/
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
+"use strict";
 
 
 var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
@@ -5635,6 +7187,7 @@ exports["default"] = _default;
   \*******************************************************************/
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
+"use strict";
 
 
 var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
@@ -5673,6 +7226,7 @@ exports["default"] = _default;
   \******************************************************************/
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
+"use strict";
 
 
 var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
@@ -5718,6 +7272,7 @@ exports["default"] = _default;
   \*****************************************************************/
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
+"use strict";
 
 
 var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
@@ -5747,6 +7302,7 @@ exports["default"] = _default;
   \********************************************************************/
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
+"use strict";
 
 
 var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
@@ -5784,6 +7340,7 @@ exports["default"] = _default;
   \*****************************************************************/
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
+"use strict";
 
 
 var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
@@ -5835,6 +7392,7 @@ exports["default"] = _default;
   \**************************************************************/
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
+"use strict";
 
 
 var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
@@ -5868,6 +7426,7 @@ exports["default"] = _default;
   \*************************************************************/
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
+"use strict";
 
 
 var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
@@ -5876,12 +7435,11 @@ Object.defineProperty(exports, "__esModule", ({
 }));
 exports["default"] = void 0;
 var _posts = _interopRequireDefault(__webpack_require__(/*! ./posts */ "../modules/posts/assets/js/frontend/handlers/posts.js"));
-var _default = _posts.default.extend({
+var _default = exports["default"] = _posts.default.extend({
   getSkinPrefix() {
     return 'cards_';
   }
 });
-exports["default"] = _default;
 
 /***/ }),
 
@@ -5891,6 +7449,7 @@ exports["default"] = _default;
   \*****************************************************************/
 /***/ ((__unused_webpack_module, exports) => {
 
+"use strict";
 
 
 Object.defineProperty(exports, "__esModule", ({
@@ -6030,7 +7589,7 @@ class LoadMore extends elementorModules.frontend.handlers.Base {
 
     // Grabbing only the new articles from the response without the existing ones (prevent posts duplication).
     const postsElements = result.querySelectorAll(`[data-id="${this.elementId}"] ${selectors.postsContainer} > ${selectors.postWrapperTag}`);
-    const nextPageUrl = result.querySelector('.e-load-more-anchor').getAttribute('data-next-page');
+    const nextPageUrl = result.querySelector(`[data-id="${this.elementId}"] .e-load-more-anchor`).getAttribute('data-next-page');
     postsElements.forEach(element => this.elements.postsContainer.append(element));
     this.elements.loadMoreAnchor.setAttribute('data-page', this.currentPage);
     this.elements.loadMoreAnchor.setAttribute('data-next-page', nextPageUrl);
@@ -6061,6 +7620,7 @@ exports["default"] = LoadMore;
   \*****************************************************************/
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
+"use strict";
 
 
 var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
@@ -6069,7 +7629,7 @@ Object.defineProperty(exports, "__esModule", ({
 }));
 exports["default"] = void 0;
 var _posts = _interopRequireDefault(__webpack_require__(/*! ./posts */ "../modules/posts/assets/js/frontend/handlers/posts.js"));
-var _default = _posts.default.extend({
+var _default = exports["default"] = _posts.default.extend({
   isActive(settings) {
     return settings.$element.find('.elementor-portfolio').length;
   },
@@ -6262,7 +7822,6 @@ var _default = _posts.default.extend({
     }
   }
 });
-exports["default"] = _default;
 
 /***/ }),
 
@@ -6272,13 +7831,14 @@ exports["default"] = _default;
   \*************************************************************/
 /***/ ((__unused_webpack_module, exports) => {
 
+"use strict";
 
 
 Object.defineProperty(exports, "__esModule", ({
   value: true
 }));
 exports["default"] = void 0;
-var _default = elementorModules.frontend.handlers.Base.extend({
+var _default = exports["default"] = elementorModules.frontend.handlers.Base.extend({
   getSkinPrefix() {
     return 'classic_';
   },
@@ -6405,7 +7965,6 @@ var _default = elementorModules.frontend.handlers.Base.extend({
     setTimeout(this.runMasonry);
   }
 });
-exports["default"] = _default;
 
 /***/ }),
 
@@ -6415,6 +7974,7 @@ exports["default"] = _default;
   \**********************************************************************/
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
+"use strict";
 
 
 var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
@@ -6437,15 +7997,18 @@ exports["default"] = _default;
 /*!*****************************************************************************!*\
   !*** ../modules/share-buttons/assets/js/frontend/handlers/share-buttons.js ***!
   \*****************************************************************************/
-/***/ ((__unused_webpack_module, exports) => {
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
 
 
-
+var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
 Object.defineProperty(exports, "__esModule", ({
   value: true
 }));
 exports["default"] = void 0;
-var _default = elementorModules.frontend.handlers.Base.extend({
+var _handleParameterPollution = _interopRequireDefault(__webpack_require__(/*! elementor-pro/frontend/utils/handle-parameter-pollution */ "../assets/dev/js/frontend/utils/handle-parameter-pollution.js"));
+var _default = exports["default"] = elementorModules.frontend.handlers.Base.extend({
   async onInit() {
     if (!this.isActive()) {
       return;
@@ -6460,7 +8023,7 @@ var _default = elementorModules.frontend.handlers.Base.extend({
     if (isCustomURL) {
       shareLinkSettings.url = elementSettings.share_url.url;
     } else {
-      shareLinkSettings.url = location.href;
+      shareLinkSettings.url = (0, _handleParameterPollution.default)(location.href);
       shareLinkSettings.title = elementorFrontend.config.post.title;
       shareLinkSettings.text = elementorFrontend.config.post.excerpt;
       shareLinkSettings.image = elementorFrontend.config.post.featuredImage;
@@ -6503,7 +8066,6 @@ var _default = elementorModules.frontend.handlers.Base.extend({
     return !elementorFrontend.isEditMode();
   }
 });
-exports["default"] = _default;
 
 /***/ }),
 
@@ -6513,6 +8075,7 @@ exports["default"] = _default;
   \***************************************************************/
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
+"use strict";
 
 
 var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
@@ -6537,6 +8100,7 @@ exports["default"] = _default;
   \***************************************************************/
 /***/ ((__unused_webpack_module, exports) => {
 
+"use strict";
 
 
 Object.defineProperty(exports, "__esModule", ({
@@ -6754,6 +8318,7 @@ exports["default"] = SlidesHandler;
   \***************************************************************/
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
+"use strict";
 
 
 var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
@@ -6781,6 +8346,7 @@ exports["default"] = _default;
   \*****************************************************************/
 /***/ ((__unused_webpack_module, exports) => {
 
+"use strict";
 
 
 Object.defineProperty(exports, "__esModule", ({
@@ -6843,6 +8409,7 @@ exports["default"] = FacebookHandler;
   \**************************************************************************/
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
+"use strict";
 
 
 var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
@@ -6867,13 +8434,16 @@ exports["default"] = _default;
   \*************************************************************************************/
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
+"use strict";
 /* provided dependency */ var __ = __webpack_require__(/*! @wordpress/i18n */ "@wordpress/i18n")["__"];
 
 
+var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
 Object.defineProperty(exports, "__esModule", ({
   value: true
 }));
 exports["default"] = void 0;
+var _dompurify = _interopRequireDefault(__webpack_require__(/*! dompurify */ "../node_modules/dompurify/dist/purify.js"));
 class TOCHandler extends elementorModules.frontend.handlers.Base {
   getDefaultSettings() {
     const elementSettings = this.getElementSettings(),
@@ -6917,7 +8487,7 @@ class TOCHandler extends elementorModules.frontend.handlers.Base {
 
     // If there is a custom container defined by the user, use it as the headings-scan container
     if (elementSettings.container) {
-      return jQuery(elementSettings.container);
+      return jQuery(_dompurify.default.sanitize(elementSettings.container));
     }
 
     // Get the document wrapper element in which the TOC is located
@@ -7087,9 +8657,9 @@ class TOCHandler extends elementorModules.frontend.handlers.Base {
       // We generate the icon markup in PHP and make it available via get_frontend_settings(). As a result, the
       // rendered icon is not available in the editor, so in the editor we use the regular <i> tag.
       if (elementorFrontend.config.experimentalFeatures.e_font_icon_svg && !elementorFrontend.isEditMode()) {
-        renderedIcon = icon.rendered_tag;
+        renderedIcon = typeof icon.rendered_tag !== 'undefined' ? icon.rendered_tag : '';
       } else {
-        renderedIcon = `<i class="${icon.value}"></i>`;
+        renderedIcon = icon.value ? `<i class="${icon.value}"></i>` : '';
       }
     }
 
@@ -7116,6 +8686,7 @@ class TOCHandler extends elementorModules.frontend.handlers.Base {
         if ('bullets' === elementSettings.marker_view && icon) {
           liContent = `${renderedIcon}${liContent}`;
         }
+        liContent = _dompurify.default.sanitize(liContent);
         html += liContent;
         html += '</div>';
         this.listItemPointer++;
@@ -7208,7 +8779,9 @@ class TOCHandler extends elementorModules.frontend.handlers.Base {
     let changeFocus = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
     const boxHeight = this.getCurrentDeviceSetting('min_height');
     this.$element.removeClass(this.getSettings('classes.collapsed'));
-    this.elements.$tocBody.attr('aria-expanded', 'true').slideDown();
+    this.elements.$tocBody.slideDown();
+    this.elements.$expandButton.attr('aria-expanded', 'true');
+    this.elements.$collapseButton.attr('aria-expanded', 'true');
 
     // Return container to the full height in case a min-height is defined by the user
     this.elements.$widgetContainer.css('min-height', boxHeight.size + boxHeight.unit);
@@ -7219,7 +8792,9 @@ class TOCHandler extends elementorModules.frontend.handlers.Base {
   collapseBox() {
     let changeFocus = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
     this.$element.addClass(this.getSettings('classes.collapsed'));
-    this.elements.$tocBody.attr('aria-expanded', 'false').slideUp();
+    this.elements.$tocBody.slideUp();
+    this.elements.$expandButton.attr('aria-expanded', 'false');
+    this.elements.$collapseButton.attr('aria-expanded', 'false');
 
     // Close container in case a min-height is defined by the user
     this.elements.$widgetContainer.css('min-height', '0px');
@@ -7268,6 +8843,7 @@ exports["default"] = TOCHandler;
   \**********************************************************************/
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
+"use strict";
 
 
 var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
@@ -7309,6 +8885,7 @@ exports["default"] = _default;
   \***************************************************************************************/
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
+"use strict";
 
 
 var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
@@ -7328,6 +8905,7 @@ exports["default"] = ArchivePostsLoadMore;
   \****************************************************************************************/
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
+"use strict";
 
 
 var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
@@ -7336,12 +8914,11 @@ Object.defineProperty(exports, "__esModule", ({
 }));
 exports["default"] = void 0;
 var _cards = _interopRequireDefault(__webpack_require__(/*! ../../../../../posts/assets/js/frontend/handlers/cards */ "../modules/posts/assets/js/frontend/handlers/cards.js"));
-var _default = _cards.default.extend({
+var _default = exports["default"] = _cards.default.extend({
   getSkinPrefix() {
     return 'archive_cards_';
   }
 });
-exports["default"] = _default;
 
 /***/ }),
 
@@ -7351,6 +8928,7 @@ exports["default"] = _default;
   \******************************************************************************************/
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
+"use strict";
 
 
 var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
@@ -7359,12 +8937,11 @@ Object.defineProperty(exports, "__esModule", ({
 }));
 exports["default"] = void 0;
 var _posts = _interopRequireDefault(__webpack_require__(/*! modules/posts/assets/js/frontend/handlers/posts */ "../modules/posts/assets/js/frontend/handlers/posts.js"));
-var _default = _posts.default.extend({
+var _default = exports["default"] = _posts.default.extend({
   getSkinPrefix() {
     return 'archive_classic_';
   }
 });
-exports["default"] = _default;
 
 /***/ }),
 
@@ -7374,6 +8951,7 @@ exports["default"] = _default;
   \***********************************************************************/
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
+"use strict";
 
 
 var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
@@ -7398,13 +8976,14 @@ exports["default"] = _default;
   \****************************************************************************/
 /***/ ((__unused_webpack_module, exports) => {
 
+"use strict";
 
 
 Object.defineProperty(exports, "__esModule", ({
   value: true
 }));
 exports["default"] = void 0;
-var _default = elementorModules.frontend.handlers.Base.extend({
+var _default = exports["default"] = elementorModules.frontend.handlers.Base.extend({
   getDefaultSettings() {
     return {
       selectors: {
@@ -7504,7 +9083,6 @@ var _default = elementorModules.frontend.handlers.Base.extend({
     }
   }
 });
-exports["default"] = _default;
 
 /***/ }),
 
@@ -7514,6 +9092,7 @@ exports["default"] = _default;
   \********************************************************************/
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
+"use strict";
 
 
 var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
@@ -7564,6 +9143,7 @@ exports["default"] = _default;
   \******************************************************************/
 /***/ ((__unused_webpack_module, exports) => {
 
+"use strict";
 
 
 Object.defineProperty(exports, "__esModule", ({
@@ -7697,6 +9277,7 @@ exports["default"] = Base;
   \******************************************************************/
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
+"use strict";
 
 
 var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
@@ -7841,6 +9422,7 @@ exports["default"] = Cart;
   \***************************************************************************/
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
+"use strict";
 
 
 var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
@@ -8029,6 +9611,7 @@ exports["default"] = Checkout;
   \***********************************************************************/
 /***/ ((__unused_webpack_module, exports) => {
 
+"use strict";
 
 
 Object.defineProperty(exports, "__esModule", ({
@@ -8259,6 +9842,7 @@ exports["default"] = _default;
   \************************************************************************/
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
+"use strict";
 
 
 var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
@@ -8411,6 +9995,7 @@ exports["default"] = MyAccountHandler;
   \*********************************************************************/
 /***/ ((__unused_webpack_module, exports) => {
 
+"use strict";
 
 
 Object.defineProperty(exports, "__esModule", ({
@@ -8421,7 +10006,7 @@ class _default extends elementorModules.frontend.handlers.Base {
   getDefaultSettings() {
     return {
       selectors: {
-        woocommerceNotices: '.woocommerce-NoticeGroup, :not(.woocommerce-NoticeGroup) .woocommerce-error, :not(.woocommerce-NoticeGroup) .woocommerce-message, :not(.woocommerce-NoticeGroup) .woocommerce-info',
+        woocommerceNotices: ':not(.woocommerce-NoticeGroup) .wc-block-components-notice-banner, .woocommerce-NoticeGroup, :not(.woocommerce-NoticeGroup) .woocommerce-error, :not(.woocommerce-NoticeGroup) .woocommerce-message, :not(.woocommerce-NoticeGroup) .woocommerce-info',
         noticesWrapper: '.e-woocommerce-notices-wrapper'
       }
     };
@@ -8481,6 +10066,7 @@ exports["default"] = _default;
   \*********************************************************************************/
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
+"use strict";
 
 
 var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
@@ -8538,6 +10124,7 @@ exports["default"] = ProductAddToCart;
   \******************************************************************************/
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
+"use strict";
 
 
 var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
@@ -8595,26 +10182,1645 @@ exports["default"] = PurchaseSummaryHandler;
 
 /***/ }),
 
-/***/ "../../elementor/assets/dev/js/frontend/handlers/image-carousel.js":
-/*!*************************************************************************!*\
-  !*** ../../elementor/assets/dev/js/frontend/handlers/image-carousel.js ***!
-  \*************************************************************************/
-/***/ ((__unused_webpack_module, exports) => {
+/***/ "../node_modules/dompurify/dist/purify.js":
+/*!************************************************!*\
+  !*** ../node_modules/dompurify/dist/purify.js ***!
+  \************************************************/
+/***/ (function(module) {
 
+/*! @license DOMPurify 3.0.3 | (c) Cure53 and other contributors | Released under the Apache license 2.0 and Mozilla Public License 2.0 | github.com/cure53/DOMPurify/blob/3.0.3/LICENSE */
 
+(function (global, factory) {
+   true ? module.exports = factory() :
+  0;
+})(this, (function () { 'use strict';
 
-Object.defineProperty(exports, "__esModule", ({
-  value: true
-}));
-exports["default"] = void 0;
-class ImageCarousel extends elementorModules.frontend.handlers.CarouselBase {
-  getDefaultSettings() {
-    const settings = super.getDefaultSettings();
-    settings.selectors.carousel = '.elementor-image-carousel-wrapper';
-    return settings;
+  const {
+    entries,
+    setPrototypeOf,
+    isFrozen,
+    getPrototypeOf,
+    getOwnPropertyDescriptor
+  } = Object;
+  let {
+    freeze,
+    seal,
+    create
+  } = Object; // eslint-disable-line import/no-mutable-exports
+
+  let {
+    apply,
+    construct
+  } = typeof Reflect !== 'undefined' && Reflect;
+
+  if (!apply) {
+    apply = function apply(fun, thisValue, args) {
+      return fun.apply(thisValue, args);
+    };
   }
-}
-exports["default"] = ImageCarousel;
+
+  if (!freeze) {
+    freeze = function freeze(x) {
+      return x;
+    };
+  }
+
+  if (!seal) {
+    seal = function seal(x) {
+      return x;
+    };
+  }
+
+  if (!construct) {
+    construct = function construct(Func, args) {
+      return new Func(...args);
+    };
+  }
+
+  const arrayForEach = unapply(Array.prototype.forEach);
+  const arrayPop = unapply(Array.prototype.pop);
+  const arrayPush = unapply(Array.prototype.push);
+  const stringToLowerCase = unapply(String.prototype.toLowerCase);
+  const stringToString = unapply(String.prototype.toString);
+  const stringMatch = unapply(String.prototype.match);
+  const stringReplace = unapply(String.prototype.replace);
+  const stringIndexOf = unapply(String.prototype.indexOf);
+  const stringTrim = unapply(String.prototype.trim);
+  const regExpTest = unapply(RegExp.prototype.test);
+  const typeErrorCreate = unconstruct(TypeError);
+  function unapply(func) {
+    return function (thisArg) {
+      for (var _len = arguments.length, args = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+        args[_key - 1] = arguments[_key];
+      }
+
+      return apply(func, thisArg, args);
+    };
+  }
+  function unconstruct(func) {
+    return function () {
+      for (var _len2 = arguments.length, args = new Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+        args[_key2] = arguments[_key2];
+      }
+
+      return construct(func, args);
+    };
+  }
+  /* Add properties to a lookup table */
+
+  function addToSet(set, array, transformCaseFunc) {
+    var _transformCaseFunc;
+
+    transformCaseFunc = (_transformCaseFunc = transformCaseFunc) !== null && _transformCaseFunc !== void 0 ? _transformCaseFunc : stringToLowerCase;
+
+    if (setPrototypeOf) {
+      // Make 'in' and truthy checks like Boolean(set.constructor)
+      // independent of any properties defined on Object.prototype.
+      // Prevent prototype setters from intercepting set as a this value.
+      setPrototypeOf(set, null);
+    }
+
+    let l = array.length;
+
+    while (l--) {
+      let element = array[l];
+
+      if (typeof element === 'string') {
+        const lcElement = transformCaseFunc(element);
+
+        if (lcElement !== element) {
+          // Config presets (e.g. tags.js, attrs.js) are immutable.
+          if (!isFrozen(array)) {
+            array[l] = lcElement;
+          }
+
+          element = lcElement;
+        }
+      }
+
+      set[element] = true;
+    }
+
+    return set;
+  }
+  /* Shallow clone an object */
+
+  function clone(object) {
+    const newObject = create(null);
+
+    for (const [property, value] of entries(object)) {
+      newObject[property] = value;
+    }
+
+    return newObject;
+  }
+  /* This method automatically checks if the prop is function
+   * or getter and behaves accordingly. */
+
+  function lookupGetter(object, prop) {
+    while (object !== null) {
+      const desc = getOwnPropertyDescriptor(object, prop);
+
+      if (desc) {
+        if (desc.get) {
+          return unapply(desc.get);
+        }
+
+        if (typeof desc.value === 'function') {
+          return unapply(desc.value);
+        }
+      }
+
+      object = getPrototypeOf(object);
+    }
+
+    function fallbackValue(element) {
+      console.warn('fallback value for', element);
+      return null;
+    }
+
+    return fallbackValue;
+  }
+
+  const html$1 = freeze(['a', 'abbr', 'acronym', 'address', 'area', 'article', 'aside', 'audio', 'b', 'bdi', 'bdo', 'big', 'blink', 'blockquote', 'body', 'br', 'button', 'canvas', 'caption', 'center', 'cite', 'code', 'col', 'colgroup', 'content', 'data', 'datalist', 'dd', 'decorator', 'del', 'details', 'dfn', 'dialog', 'dir', 'div', 'dl', 'dt', 'element', 'em', 'fieldset', 'figcaption', 'figure', 'font', 'footer', 'form', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'head', 'header', 'hgroup', 'hr', 'html', 'i', 'img', 'input', 'ins', 'kbd', 'label', 'legend', 'li', 'main', 'map', 'mark', 'marquee', 'menu', 'menuitem', 'meter', 'nav', 'nobr', 'ol', 'optgroup', 'option', 'output', 'p', 'picture', 'pre', 'progress', 'q', 'rp', 'rt', 'ruby', 's', 'samp', 'section', 'select', 'shadow', 'small', 'source', 'spacer', 'span', 'strike', 'strong', 'style', 'sub', 'summary', 'sup', 'table', 'tbody', 'td', 'template', 'textarea', 'tfoot', 'th', 'thead', 'time', 'tr', 'track', 'tt', 'u', 'ul', 'var', 'video', 'wbr']); // SVG
+
+  const svg$1 = freeze(['svg', 'a', 'altglyph', 'altglyphdef', 'altglyphitem', 'animatecolor', 'animatemotion', 'animatetransform', 'circle', 'clippath', 'defs', 'desc', 'ellipse', 'filter', 'font', 'g', 'glyph', 'glyphref', 'hkern', 'image', 'line', 'lineargradient', 'marker', 'mask', 'metadata', 'mpath', 'path', 'pattern', 'polygon', 'polyline', 'radialgradient', 'rect', 'stop', 'style', 'switch', 'symbol', 'text', 'textpath', 'title', 'tref', 'tspan', 'view', 'vkern']);
+  const svgFilters = freeze(['feBlend', 'feColorMatrix', 'feComponentTransfer', 'feComposite', 'feConvolveMatrix', 'feDiffuseLighting', 'feDisplacementMap', 'feDistantLight', 'feDropShadow', 'feFlood', 'feFuncA', 'feFuncB', 'feFuncG', 'feFuncR', 'feGaussianBlur', 'feImage', 'feMerge', 'feMergeNode', 'feMorphology', 'feOffset', 'fePointLight', 'feSpecularLighting', 'feSpotLight', 'feTile', 'feTurbulence']); // List of SVG elements that are disallowed by default.
+  // We still need to know them so that we can do namespace
+  // checks properly in case one wants to add them to
+  // allow-list.
+
+  const svgDisallowed = freeze(['animate', 'color-profile', 'cursor', 'discard', 'font-face', 'font-face-format', 'font-face-name', 'font-face-src', 'font-face-uri', 'foreignobject', 'hatch', 'hatchpath', 'mesh', 'meshgradient', 'meshpatch', 'meshrow', 'missing-glyph', 'script', 'set', 'solidcolor', 'unknown', 'use']);
+  const mathMl$1 = freeze(['math', 'menclose', 'merror', 'mfenced', 'mfrac', 'mglyph', 'mi', 'mlabeledtr', 'mmultiscripts', 'mn', 'mo', 'mover', 'mpadded', 'mphantom', 'mroot', 'mrow', 'ms', 'mspace', 'msqrt', 'mstyle', 'msub', 'msup', 'msubsup', 'mtable', 'mtd', 'mtext', 'mtr', 'munder', 'munderover', 'mprescripts']); // Similarly to SVG, we want to know all MathML elements,
+  // even those that we disallow by default.
+
+  const mathMlDisallowed = freeze(['maction', 'maligngroup', 'malignmark', 'mlongdiv', 'mscarries', 'mscarry', 'msgroup', 'mstack', 'msline', 'msrow', 'semantics', 'annotation', 'annotation-xml', 'mprescripts', 'none']);
+  const text = freeze(['#text']);
+
+  const html = freeze(['accept', 'action', 'align', 'alt', 'autocapitalize', 'autocomplete', 'autopictureinpicture', 'autoplay', 'background', 'bgcolor', 'border', 'capture', 'cellpadding', 'cellspacing', 'checked', 'cite', 'class', 'clear', 'color', 'cols', 'colspan', 'controls', 'controlslist', 'coords', 'crossorigin', 'datetime', 'decoding', 'default', 'dir', 'disabled', 'disablepictureinpicture', 'disableremoteplayback', 'download', 'draggable', 'enctype', 'enterkeyhint', 'face', 'for', 'headers', 'height', 'hidden', 'high', 'href', 'hreflang', 'id', 'inputmode', 'integrity', 'ismap', 'kind', 'label', 'lang', 'list', 'loading', 'loop', 'low', 'max', 'maxlength', 'media', 'method', 'min', 'minlength', 'multiple', 'muted', 'name', 'nonce', 'noshade', 'novalidate', 'nowrap', 'open', 'optimum', 'pattern', 'placeholder', 'playsinline', 'poster', 'preload', 'pubdate', 'radiogroup', 'readonly', 'rel', 'required', 'rev', 'reversed', 'role', 'rows', 'rowspan', 'spellcheck', 'scope', 'selected', 'shape', 'size', 'sizes', 'span', 'srclang', 'start', 'src', 'srcset', 'step', 'style', 'summary', 'tabindex', 'title', 'translate', 'type', 'usemap', 'valign', 'value', 'width', 'xmlns', 'slot']);
+  const svg = freeze(['accent-height', 'accumulate', 'additive', 'alignment-baseline', 'ascent', 'attributename', 'attributetype', 'azimuth', 'basefrequency', 'baseline-shift', 'begin', 'bias', 'by', 'class', 'clip', 'clippathunits', 'clip-path', 'clip-rule', 'color', 'color-interpolation', 'color-interpolation-filters', 'color-profile', 'color-rendering', 'cx', 'cy', 'd', 'dx', 'dy', 'diffuseconstant', 'direction', 'display', 'divisor', 'dur', 'edgemode', 'elevation', 'end', 'fill', 'fill-opacity', 'fill-rule', 'filter', 'filterunits', 'flood-color', 'flood-opacity', 'font-family', 'font-size', 'font-size-adjust', 'font-stretch', 'font-style', 'font-variant', 'font-weight', 'fx', 'fy', 'g1', 'g2', 'glyph-name', 'glyphref', 'gradientunits', 'gradienttransform', 'height', 'href', 'id', 'image-rendering', 'in', 'in2', 'k', 'k1', 'k2', 'k3', 'k4', 'kerning', 'keypoints', 'keysplines', 'keytimes', 'lang', 'lengthadjust', 'letter-spacing', 'kernelmatrix', 'kernelunitlength', 'lighting-color', 'local', 'marker-end', 'marker-mid', 'marker-start', 'markerheight', 'markerunits', 'markerwidth', 'maskcontentunits', 'maskunits', 'max', 'mask', 'media', 'method', 'mode', 'min', 'name', 'numoctaves', 'offset', 'operator', 'opacity', 'order', 'orient', 'orientation', 'origin', 'overflow', 'paint-order', 'path', 'pathlength', 'patterncontentunits', 'patterntransform', 'patternunits', 'points', 'preservealpha', 'preserveaspectratio', 'primitiveunits', 'r', 'rx', 'ry', 'radius', 'refx', 'refy', 'repeatcount', 'repeatdur', 'restart', 'result', 'rotate', 'scale', 'seed', 'shape-rendering', 'specularconstant', 'specularexponent', 'spreadmethod', 'startoffset', 'stddeviation', 'stitchtiles', 'stop-color', 'stop-opacity', 'stroke-dasharray', 'stroke-dashoffset', 'stroke-linecap', 'stroke-linejoin', 'stroke-miterlimit', 'stroke-opacity', 'stroke', 'stroke-width', 'style', 'surfacescale', 'systemlanguage', 'tabindex', 'targetx', 'targety', 'transform', 'transform-origin', 'text-anchor', 'text-decoration', 'text-rendering', 'textlength', 'type', 'u1', 'u2', 'unicode', 'values', 'viewbox', 'visibility', 'version', 'vert-adv-y', 'vert-origin-x', 'vert-origin-y', 'width', 'word-spacing', 'wrap', 'writing-mode', 'xchannelselector', 'ychannelselector', 'x', 'x1', 'x2', 'xmlns', 'y', 'y1', 'y2', 'z', 'zoomandpan']);
+  const mathMl = freeze(['accent', 'accentunder', 'align', 'bevelled', 'close', 'columnsalign', 'columnlines', 'columnspan', 'denomalign', 'depth', 'dir', 'display', 'displaystyle', 'encoding', 'fence', 'frame', 'height', 'href', 'id', 'largeop', 'length', 'linethickness', 'lspace', 'lquote', 'mathbackground', 'mathcolor', 'mathsize', 'mathvariant', 'maxsize', 'minsize', 'movablelimits', 'notation', 'numalign', 'open', 'rowalign', 'rowlines', 'rowspacing', 'rowspan', 'rspace', 'rquote', 'scriptlevel', 'scriptminsize', 'scriptsizemultiplier', 'selection', 'separator', 'separators', 'stretchy', 'subscriptshift', 'supscriptshift', 'symmetric', 'voffset', 'width', 'xmlns']);
+  const xml = freeze(['xlink:href', 'xml:id', 'xlink:title', 'xml:space', 'xmlns:xlink']);
+
+  const MUSTACHE_EXPR = seal(/\{\{[\w\W]*|[\w\W]*\}\}/gm); // Specify template detection regex for SAFE_FOR_TEMPLATES mode
+
+  const ERB_EXPR = seal(/<%[\w\W]*|[\w\W]*%>/gm);
+  const TMPLIT_EXPR = seal(/\${[\w\W]*}/gm);
+  const DATA_ATTR = seal(/^data-[\-\w.\u00B7-\uFFFF]/); // eslint-disable-line no-useless-escape
+
+  const ARIA_ATTR = seal(/^aria-[\-\w]+$/); // eslint-disable-line no-useless-escape
+
+  const IS_ALLOWED_URI = seal(/^(?:(?:(?:f|ht)tps?|mailto|tel|callto|sms|cid|xmpp):|[^a-z]|[a-z+.\-]+(?:[^a-z+.\-:]|$))/i // eslint-disable-line no-useless-escape
+  );
+  const IS_SCRIPT_OR_DATA = seal(/^(?:\w+script|data):/i);
+  const ATTR_WHITESPACE = seal(/[\u0000-\u0020\u00A0\u1680\u180E\u2000-\u2029\u205F\u3000]/g // eslint-disable-line no-control-regex
+  );
+  const DOCTYPE_NAME = seal(/^html$/i);
+
+  var EXPRESSIONS = /*#__PURE__*/Object.freeze({
+    __proto__: null,
+    MUSTACHE_EXPR: MUSTACHE_EXPR,
+    ERB_EXPR: ERB_EXPR,
+    TMPLIT_EXPR: TMPLIT_EXPR,
+    DATA_ATTR: DATA_ATTR,
+    ARIA_ATTR: ARIA_ATTR,
+    IS_ALLOWED_URI: IS_ALLOWED_URI,
+    IS_SCRIPT_OR_DATA: IS_SCRIPT_OR_DATA,
+    ATTR_WHITESPACE: ATTR_WHITESPACE,
+    DOCTYPE_NAME: DOCTYPE_NAME
+  });
+
+  const getGlobal = () => typeof window === 'undefined' ? null : window;
+  /**
+   * Creates a no-op policy for internal use only.
+   * Don't export this function outside this module!
+   * @param {?TrustedTypePolicyFactory} trustedTypes The policy factory.
+   * @param {HTMLScriptElement} purifyHostElement The Script element used to load DOMPurify (to determine policy name suffix).
+   * @return {?TrustedTypePolicy} The policy created (or null, if Trusted Types
+   * are not supported or creating the policy failed).
+   */
+
+
+  const _createTrustedTypesPolicy = function _createTrustedTypesPolicy(trustedTypes, purifyHostElement) {
+    if (typeof trustedTypes !== 'object' || typeof trustedTypes.createPolicy !== 'function') {
+      return null;
+    } // Allow the callers to control the unique policy name
+    // by adding a data-tt-policy-suffix to the script element with the DOMPurify.
+    // Policy creation with duplicate names throws in Trusted Types.
+
+
+    let suffix = null;
+    const ATTR_NAME = 'data-tt-policy-suffix';
+
+    if (purifyHostElement && purifyHostElement.hasAttribute(ATTR_NAME)) {
+      suffix = purifyHostElement.getAttribute(ATTR_NAME);
+    }
+
+    const policyName = 'dompurify' + (suffix ? '#' + suffix : '');
+
+    try {
+      return trustedTypes.createPolicy(policyName, {
+        createHTML(html) {
+          return html;
+        },
+
+        createScriptURL(scriptUrl) {
+          return scriptUrl;
+        }
+
+      });
+    } catch (_) {
+      // Policy creation failed (most likely another DOMPurify script has
+      // already run). Skip creating the policy, as this will only cause errors
+      // if TT are enforced.
+      console.warn('TrustedTypes policy ' + policyName + ' could not be created.');
+      return null;
+    }
+  };
+
+  function createDOMPurify() {
+    let window = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : getGlobal();
+
+    const DOMPurify = root => createDOMPurify(root);
+    /**
+     * Version label, exposed for easier checks
+     * if DOMPurify is up to date or not
+     */
+
+
+    DOMPurify.version = '3.0.3';
+    /**
+     * Array of elements that DOMPurify removed during sanitation.
+     * Empty if nothing was removed.
+     */
+
+    DOMPurify.removed = [];
+
+    if (!window || !window.document || window.document.nodeType !== 9) {
+      // Not running in a browser, provide a factory function
+      // so that you can pass your own Window
+      DOMPurify.isSupported = false;
+      return DOMPurify;
+    }
+
+    const originalDocument = window.document;
+    const currentScript = originalDocument.currentScript;
+    let {
+      document
+    } = window;
+    const {
+      DocumentFragment,
+      HTMLTemplateElement,
+      Node,
+      Element,
+      NodeFilter,
+      NamedNodeMap = window.NamedNodeMap || window.MozNamedAttrMap,
+      HTMLFormElement,
+      DOMParser,
+      trustedTypes
+    } = window;
+    const ElementPrototype = Element.prototype;
+    const cloneNode = lookupGetter(ElementPrototype, 'cloneNode');
+    const getNextSibling = lookupGetter(ElementPrototype, 'nextSibling');
+    const getChildNodes = lookupGetter(ElementPrototype, 'childNodes');
+    const getParentNode = lookupGetter(ElementPrototype, 'parentNode'); // As per issue #47, the web-components registry is inherited by a
+    // new document created via createHTMLDocument. As per the spec
+    // (http://w3c.github.io/webcomponents/spec/custom/#creating-and-passing-registries)
+    // a new empty registry is used when creating a template contents owner
+    // document, so we use that as our parent document to ensure nothing
+    // is inherited.
+
+    if (typeof HTMLTemplateElement === 'function') {
+      const template = document.createElement('template');
+
+      if (template.content && template.content.ownerDocument) {
+        document = template.content.ownerDocument;
+      }
+    }
+
+    let trustedTypesPolicy;
+    let emptyHTML = '';
+    const {
+      implementation,
+      createNodeIterator,
+      createDocumentFragment,
+      getElementsByTagName
+    } = document;
+    const {
+      importNode
+    } = originalDocument;
+    let hooks = {};
+    /**
+     * Expose whether this browser supports running the full DOMPurify.
+     */
+
+    DOMPurify.isSupported = typeof entries === 'function' && typeof getParentNode === 'function' && implementation && implementation.createHTMLDocument !== undefined;
+    const {
+      MUSTACHE_EXPR,
+      ERB_EXPR,
+      TMPLIT_EXPR,
+      DATA_ATTR,
+      ARIA_ATTR,
+      IS_SCRIPT_OR_DATA,
+      ATTR_WHITESPACE
+    } = EXPRESSIONS;
+    let {
+      IS_ALLOWED_URI: IS_ALLOWED_URI$1
+    } = EXPRESSIONS;
+    /**
+     * We consider the elements and attributes below to be safe. Ideally
+     * don't add any new ones but feel free to remove unwanted ones.
+     */
+
+    /* allowed element names */
+
+    let ALLOWED_TAGS = null;
+    const DEFAULT_ALLOWED_TAGS = addToSet({}, [...html$1, ...svg$1, ...svgFilters, ...mathMl$1, ...text]);
+    /* Allowed attribute names */
+
+    let ALLOWED_ATTR = null;
+    const DEFAULT_ALLOWED_ATTR = addToSet({}, [...html, ...svg, ...mathMl, ...xml]);
+    /*
+     * Configure how DOMPUrify should handle custom elements and their attributes as well as customized built-in elements.
+     * @property {RegExp|Function|null} tagNameCheck one of [null, regexPattern, predicate]. Default: `null` (disallow any custom elements)
+     * @property {RegExp|Function|null} attributeNameCheck one of [null, regexPattern, predicate]. Default: `null` (disallow any attributes not on the allow list)
+     * @property {boolean} allowCustomizedBuiltInElements allow custom elements derived from built-ins if they pass CUSTOM_ELEMENT_HANDLING.tagNameCheck. Default: `false`.
+     */
+
+    let CUSTOM_ELEMENT_HANDLING = Object.seal(Object.create(null, {
+      tagNameCheck: {
+        writable: true,
+        configurable: false,
+        enumerable: true,
+        value: null
+      },
+      attributeNameCheck: {
+        writable: true,
+        configurable: false,
+        enumerable: true,
+        value: null
+      },
+      allowCustomizedBuiltInElements: {
+        writable: true,
+        configurable: false,
+        enumerable: true,
+        value: false
+      }
+    }));
+    /* Explicitly forbidden tags (overrides ALLOWED_TAGS/ADD_TAGS) */
+
+    let FORBID_TAGS = null;
+    /* Explicitly forbidden attributes (overrides ALLOWED_ATTR/ADD_ATTR) */
+
+    let FORBID_ATTR = null;
+    /* Decide if ARIA attributes are okay */
+
+    let ALLOW_ARIA_ATTR = true;
+    /* Decide if custom data attributes are okay */
+
+    let ALLOW_DATA_ATTR = true;
+    /* Decide if unknown protocols are okay */
+
+    let ALLOW_UNKNOWN_PROTOCOLS = false;
+    /* Decide if self-closing tags in attributes are allowed.
+     * Usually removed due to a mXSS issue in jQuery 3.0 */
+
+    let ALLOW_SELF_CLOSE_IN_ATTR = true;
+    /* Output should be safe for common template engines.
+     * This means, DOMPurify removes data attributes, mustaches and ERB
+     */
+
+    let SAFE_FOR_TEMPLATES = false;
+    /* Decide if document with <html>... should be returned */
+
+    let WHOLE_DOCUMENT = false;
+    /* Track whether config is already set on this instance of DOMPurify. */
+
+    let SET_CONFIG = false;
+    /* Decide if all elements (e.g. style, script) must be children of
+     * document.body. By default, browsers might move them to document.head */
+
+    let FORCE_BODY = false;
+    /* Decide if a DOM `HTMLBodyElement` should be returned, instead of a html
+     * string (or a TrustedHTML object if Trusted Types are supported).
+     * If `WHOLE_DOCUMENT` is enabled a `HTMLHtmlElement` will be returned instead
+     */
+
+    let RETURN_DOM = false;
+    /* Decide if a DOM `DocumentFragment` should be returned, instead of a html
+     * string  (or a TrustedHTML object if Trusted Types are supported) */
+
+    let RETURN_DOM_FRAGMENT = false;
+    /* Try to return a Trusted Type object instead of a string, return a string in
+     * case Trusted Types are not supported  */
+
+    let RETURN_TRUSTED_TYPE = false;
+    /* Output should be free from DOM clobbering attacks?
+     * This sanitizes markups named with colliding, clobberable built-in DOM APIs.
+     */
+
+    let SANITIZE_DOM = true;
+    /* Achieve full DOM Clobbering protection by isolating the namespace of named
+     * properties and JS variables, mitigating attacks that abuse the HTML/DOM spec rules.
+     *
+     * HTML/DOM spec rules that enable DOM Clobbering:
+     *   - Named Access on Window (§7.3.3)
+     *   - DOM Tree Accessors (§3.1.5)
+     *   - Form Element Parent-Child Relations (§4.10.3)
+     *   - Iframe srcdoc / Nested WindowProxies (§4.8.5)
+     *   - HTMLCollection (§4.2.10.2)
+     *
+     * Namespace isolation is implemented by prefixing `id` and `name` attributes
+     * with a constant string, i.e., `user-content-`
+     */
+
+    let SANITIZE_NAMED_PROPS = false;
+    const SANITIZE_NAMED_PROPS_PREFIX = 'user-content-';
+    /* Keep element content when removing element? */
+
+    let KEEP_CONTENT = true;
+    /* If a `Node` is passed to sanitize(), then performs sanitization in-place instead
+     * of importing it into a new Document and returning a sanitized copy */
+
+    let IN_PLACE = false;
+    /* Allow usage of profiles like html, svg and mathMl */
+
+    let USE_PROFILES = {};
+    /* Tags to ignore content of when KEEP_CONTENT is true */
+
+    let FORBID_CONTENTS = null;
+    const DEFAULT_FORBID_CONTENTS = addToSet({}, ['annotation-xml', 'audio', 'colgroup', 'desc', 'foreignobject', 'head', 'iframe', 'math', 'mi', 'mn', 'mo', 'ms', 'mtext', 'noembed', 'noframes', 'noscript', 'plaintext', 'script', 'style', 'svg', 'template', 'thead', 'title', 'video', 'xmp']);
+    /* Tags that are safe for data: URIs */
+
+    let DATA_URI_TAGS = null;
+    const DEFAULT_DATA_URI_TAGS = addToSet({}, ['audio', 'video', 'img', 'source', 'image', 'track']);
+    /* Attributes safe for values like "javascript:" */
+
+    let URI_SAFE_ATTRIBUTES = null;
+    const DEFAULT_URI_SAFE_ATTRIBUTES = addToSet({}, ['alt', 'class', 'for', 'id', 'label', 'name', 'pattern', 'placeholder', 'role', 'summary', 'title', 'value', 'style', 'xmlns']);
+    const MATHML_NAMESPACE = 'http://www.w3.org/1998/Math/MathML';
+    const SVG_NAMESPACE = 'http://www.w3.org/2000/svg';
+    const HTML_NAMESPACE = 'http://www.w3.org/1999/xhtml';
+    /* Document namespace */
+
+    let NAMESPACE = HTML_NAMESPACE;
+    let IS_EMPTY_INPUT = false;
+    /* Allowed XHTML+XML namespaces */
+
+    let ALLOWED_NAMESPACES = null;
+    const DEFAULT_ALLOWED_NAMESPACES = addToSet({}, [MATHML_NAMESPACE, SVG_NAMESPACE, HTML_NAMESPACE], stringToString);
+    /* Parsing of strict XHTML documents */
+
+    let PARSER_MEDIA_TYPE;
+    const SUPPORTED_PARSER_MEDIA_TYPES = ['application/xhtml+xml', 'text/html'];
+    const DEFAULT_PARSER_MEDIA_TYPE = 'text/html';
+    let transformCaseFunc;
+    /* Keep a reference to config to pass to hooks */
+
+    let CONFIG = null;
+    /* Ideally, do not touch anything below this line */
+
+    /* ______________________________________________ */
+
+    const formElement = document.createElement('form');
+
+    const isRegexOrFunction = function isRegexOrFunction(testValue) {
+      return testValue instanceof RegExp || testValue instanceof Function;
+    };
+    /**
+     * _parseConfig
+     *
+     * @param  {Object} cfg optional config literal
+     */
+    // eslint-disable-next-line complexity
+
+
+    const _parseConfig = function _parseConfig(cfg) {
+      if (CONFIG && CONFIG === cfg) {
+        return;
+      }
+      /* Shield configuration object from tampering */
+
+
+      if (!cfg || typeof cfg !== 'object') {
+        cfg = {};
+      }
+      /* Shield configuration object from prototype pollution */
+
+
+      cfg = clone(cfg);
+      PARSER_MEDIA_TYPE = // eslint-disable-next-line unicorn/prefer-includes
+      SUPPORTED_PARSER_MEDIA_TYPES.indexOf(cfg.PARSER_MEDIA_TYPE) === -1 ? PARSER_MEDIA_TYPE = DEFAULT_PARSER_MEDIA_TYPE : PARSER_MEDIA_TYPE = cfg.PARSER_MEDIA_TYPE; // HTML tags and attributes are not case-sensitive, converting to lowercase. Keeping XHTML as is.
+
+      transformCaseFunc = PARSER_MEDIA_TYPE === 'application/xhtml+xml' ? stringToString : stringToLowerCase;
+      /* Set configuration parameters */
+
+      ALLOWED_TAGS = 'ALLOWED_TAGS' in cfg ? addToSet({}, cfg.ALLOWED_TAGS, transformCaseFunc) : DEFAULT_ALLOWED_TAGS;
+      ALLOWED_ATTR = 'ALLOWED_ATTR' in cfg ? addToSet({}, cfg.ALLOWED_ATTR, transformCaseFunc) : DEFAULT_ALLOWED_ATTR;
+      ALLOWED_NAMESPACES = 'ALLOWED_NAMESPACES' in cfg ? addToSet({}, cfg.ALLOWED_NAMESPACES, stringToString) : DEFAULT_ALLOWED_NAMESPACES;
+      URI_SAFE_ATTRIBUTES = 'ADD_URI_SAFE_ATTR' in cfg ? addToSet(clone(DEFAULT_URI_SAFE_ATTRIBUTES), // eslint-disable-line indent
+      cfg.ADD_URI_SAFE_ATTR, // eslint-disable-line indent
+      transformCaseFunc // eslint-disable-line indent
+      ) // eslint-disable-line indent
+      : DEFAULT_URI_SAFE_ATTRIBUTES;
+      DATA_URI_TAGS = 'ADD_DATA_URI_TAGS' in cfg ? addToSet(clone(DEFAULT_DATA_URI_TAGS), // eslint-disable-line indent
+      cfg.ADD_DATA_URI_TAGS, // eslint-disable-line indent
+      transformCaseFunc // eslint-disable-line indent
+      ) // eslint-disable-line indent
+      : DEFAULT_DATA_URI_TAGS;
+      FORBID_CONTENTS = 'FORBID_CONTENTS' in cfg ? addToSet({}, cfg.FORBID_CONTENTS, transformCaseFunc) : DEFAULT_FORBID_CONTENTS;
+      FORBID_TAGS = 'FORBID_TAGS' in cfg ? addToSet({}, cfg.FORBID_TAGS, transformCaseFunc) : {};
+      FORBID_ATTR = 'FORBID_ATTR' in cfg ? addToSet({}, cfg.FORBID_ATTR, transformCaseFunc) : {};
+      USE_PROFILES = 'USE_PROFILES' in cfg ? cfg.USE_PROFILES : false;
+      ALLOW_ARIA_ATTR = cfg.ALLOW_ARIA_ATTR !== false; // Default true
+
+      ALLOW_DATA_ATTR = cfg.ALLOW_DATA_ATTR !== false; // Default true
+
+      ALLOW_UNKNOWN_PROTOCOLS = cfg.ALLOW_UNKNOWN_PROTOCOLS || false; // Default false
+
+      ALLOW_SELF_CLOSE_IN_ATTR = cfg.ALLOW_SELF_CLOSE_IN_ATTR !== false; // Default true
+
+      SAFE_FOR_TEMPLATES = cfg.SAFE_FOR_TEMPLATES || false; // Default false
+
+      WHOLE_DOCUMENT = cfg.WHOLE_DOCUMENT || false; // Default false
+
+      RETURN_DOM = cfg.RETURN_DOM || false; // Default false
+
+      RETURN_DOM_FRAGMENT = cfg.RETURN_DOM_FRAGMENT || false; // Default false
+
+      RETURN_TRUSTED_TYPE = cfg.RETURN_TRUSTED_TYPE || false; // Default false
+
+      FORCE_BODY = cfg.FORCE_BODY || false; // Default false
+
+      SANITIZE_DOM = cfg.SANITIZE_DOM !== false; // Default true
+
+      SANITIZE_NAMED_PROPS = cfg.SANITIZE_NAMED_PROPS || false; // Default false
+
+      KEEP_CONTENT = cfg.KEEP_CONTENT !== false; // Default true
+
+      IN_PLACE = cfg.IN_PLACE || false; // Default false
+
+      IS_ALLOWED_URI$1 = cfg.ALLOWED_URI_REGEXP || IS_ALLOWED_URI;
+      NAMESPACE = cfg.NAMESPACE || HTML_NAMESPACE;
+      CUSTOM_ELEMENT_HANDLING = cfg.CUSTOM_ELEMENT_HANDLING || {};
+
+      if (cfg.CUSTOM_ELEMENT_HANDLING && isRegexOrFunction(cfg.CUSTOM_ELEMENT_HANDLING.tagNameCheck)) {
+        CUSTOM_ELEMENT_HANDLING.tagNameCheck = cfg.CUSTOM_ELEMENT_HANDLING.tagNameCheck;
+      }
+
+      if (cfg.CUSTOM_ELEMENT_HANDLING && isRegexOrFunction(cfg.CUSTOM_ELEMENT_HANDLING.attributeNameCheck)) {
+        CUSTOM_ELEMENT_HANDLING.attributeNameCheck = cfg.CUSTOM_ELEMENT_HANDLING.attributeNameCheck;
+      }
+
+      if (cfg.CUSTOM_ELEMENT_HANDLING && typeof cfg.CUSTOM_ELEMENT_HANDLING.allowCustomizedBuiltInElements === 'boolean') {
+        CUSTOM_ELEMENT_HANDLING.allowCustomizedBuiltInElements = cfg.CUSTOM_ELEMENT_HANDLING.allowCustomizedBuiltInElements;
+      }
+
+      if (SAFE_FOR_TEMPLATES) {
+        ALLOW_DATA_ATTR = false;
+      }
+
+      if (RETURN_DOM_FRAGMENT) {
+        RETURN_DOM = true;
+      }
+      /* Parse profile info */
+
+
+      if (USE_PROFILES) {
+        ALLOWED_TAGS = addToSet({}, [...text]);
+        ALLOWED_ATTR = [];
+
+        if (USE_PROFILES.html === true) {
+          addToSet(ALLOWED_TAGS, html$1);
+          addToSet(ALLOWED_ATTR, html);
+        }
+
+        if (USE_PROFILES.svg === true) {
+          addToSet(ALLOWED_TAGS, svg$1);
+          addToSet(ALLOWED_ATTR, svg);
+          addToSet(ALLOWED_ATTR, xml);
+        }
+
+        if (USE_PROFILES.svgFilters === true) {
+          addToSet(ALLOWED_TAGS, svgFilters);
+          addToSet(ALLOWED_ATTR, svg);
+          addToSet(ALLOWED_ATTR, xml);
+        }
+
+        if (USE_PROFILES.mathMl === true) {
+          addToSet(ALLOWED_TAGS, mathMl$1);
+          addToSet(ALLOWED_ATTR, mathMl);
+          addToSet(ALLOWED_ATTR, xml);
+        }
+      }
+      /* Merge configuration parameters */
+
+
+      if (cfg.ADD_TAGS) {
+        if (ALLOWED_TAGS === DEFAULT_ALLOWED_TAGS) {
+          ALLOWED_TAGS = clone(ALLOWED_TAGS);
+        }
+
+        addToSet(ALLOWED_TAGS, cfg.ADD_TAGS, transformCaseFunc);
+      }
+
+      if (cfg.ADD_ATTR) {
+        if (ALLOWED_ATTR === DEFAULT_ALLOWED_ATTR) {
+          ALLOWED_ATTR = clone(ALLOWED_ATTR);
+        }
+
+        addToSet(ALLOWED_ATTR, cfg.ADD_ATTR, transformCaseFunc);
+      }
+
+      if (cfg.ADD_URI_SAFE_ATTR) {
+        addToSet(URI_SAFE_ATTRIBUTES, cfg.ADD_URI_SAFE_ATTR, transformCaseFunc);
+      }
+
+      if (cfg.FORBID_CONTENTS) {
+        if (FORBID_CONTENTS === DEFAULT_FORBID_CONTENTS) {
+          FORBID_CONTENTS = clone(FORBID_CONTENTS);
+        }
+
+        addToSet(FORBID_CONTENTS, cfg.FORBID_CONTENTS, transformCaseFunc);
+      }
+      /* Add #text in case KEEP_CONTENT is set to true */
+
+
+      if (KEEP_CONTENT) {
+        ALLOWED_TAGS['#text'] = true;
+      }
+      /* Add html, head and body to ALLOWED_TAGS in case WHOLE_DOCUMENT is true */
+
+
+      if (WHOLE_DOCUMENT) {
+        addToSet(ALLOWED_TAGS, ['html', 'head', 'body']);
+      }
+      /* Add tbody to ALLOWED_TAGS in case tables are permitted, see #286, #365 */
+
+
+      if (ALLOWED_TAGS.table) {
+        addToSet(ALLOWED_TAGS, ['tbody']);
+        delete FORBID_TAGS.tbody;
+      }
+
+      if (cfg.TRUSTED_TYPES_POLICY) {
+        if (typeof cfg.TRUSTED_TYPES_POLICY.createHTML !== 'function') {
+          throw typeErrorCreate('TRUSTED_TYPES_POLICY configuration option must provide a "createHTML" hook.');
+        }
+
+        if (typeof cfg.TRUSTED_TYPES_POLICY.createScriptURL !== 'function') {
+          throw typeErrorCreate('TRUSTED_TYPES_POLICY configuration option must provide a "createScriptURL" hook.');
+        } // Overwrite existing TrustedTypes policy.
+
+
+        trustedTypesPolicy = cfg.TRUSTED_TYPES_POLICY; // Sign local variables required by `sanitize`.
+
+        emptyHTML = trustedTypesPolicy.createHTML('');
+      } else {
+        // Uninitialized policy, attempt to initialize the internal dompurify policy.
+        if (trustedTypesPolicy === undefined) {
+          trustedTypesPolicy = _createTrustedTypesPolicy(trustedTypes, currentScript);
+        } // If creating the internal policy succeeded sign internal variables.
+
+
+        if (trustedTypesPolicy !== null && typeof emptyHTML === 'string') {
+          emptyHTML = trustedTypesPolicy.createHTML('');
+        }
+      } // Prevent further manipulation of configuration.
+      // Not available in IE8, Safari 5, etc.
+
+
+      if (freeze) {
+        freeze(cfg);
+      }
+
+      CONFIG = cfg;
+    };
+
+    const MATHML_TEXT_INTEGRATION_POINTS = addToSet({}, ['mi', 'mo', 'mn', 'ms', 'mtext']);
+    const HTML_INTEGRATION_POINTS = addToSet({}, ['foreignobject', 'desc', 'title', 'annotation-xml']); // Certain elements are allowed in both SVG and HTML
+    // namespace. We need to specify them explicitly
+    // so that they don't get erroneously deleted from
+    // HTML namespace.
+
+    const COMMON_SVG_AND_HTML_ELEMENTS = addToSet({}, ['title', 'style', 'font', 'a', 'script']);
+    /* Keep track of all possible SVG and MathML tags
+     * so that we can perform the namespace checks
+     * correctly. */
+
+    const ALL_SVG_TAGS = addToSet({}, svg$1);
+    addToSet(ALL_SVG_TAGS, svgFilters);
+    addToSet(ALL_SVG_TAGS, svgDisallowed);
+    const ALL_MATHML_TAGS = addToSet({}, mathMl$1);
+    addToSet(ALL_MATHML_TAGS, mathMlDisallowed);
+    /**
+     *
+     *
+     * @param  {Element} element a DOM element whose namespace is being checked
+     * @returns {boolean} Return false if the element has a
+     *  namespace that a spec-compliant parser would never
+     *  return. Return true otherwise.
+     */
+
+    const _checkValidNamespace = function _checkValidNamespace(element) {
+      let parent = getParentNode(element); // In JSDOM, if we're inside shadow DOM, then parentNode
+      // can be null. We just simulate parent in this case.
+
+      if (!parent || !parent.tagName) {
+        parent = {
+          namespaceURI: NAMESPACE,
+          tagName: 'template'
+        };
+      }
+
+      const tagName = stringToLowerCase(element.tagName);
+      const parentTagName = stringToLowerCase(parent.tagName);
+
+      if (!ALLOWED_NAMESPACES[element.namespaceURI]) {
+        return false;
+      }
+
+      if (element.namespaceURI === SVG_NAMESPACE) {
+        // The only way to switch from HTML namespace to SVG
+        // is via <svg>. If it happens via any other tag, then
+        // it should be killed.
+        if (parent.namespaceURI === HTML_NAMESPACE) {
+          return tagName === 'svg';
+        } // The only way to switch from MathML to SVG is via`
+        // svg if parent is either <annotation-xml> or MathML
+        // text integration points.
+
+
+        if (parent.namespaceURI === MATHML_NAMESPACE) {
+          return tagName === 'svg' && (parentTagName === 'annotation-xml' || MATHML_TEXT_INTEGRATION_POINTS[parentTagName]);
+        } // We only allow elements that are defined in SVG
+        // spec. All others are disallowed in SVG namespace.
+
+
+        return Boolean(ALL_SVG_TAGS[tagName]);
+      }
+
+      if (element.namespaceURI === MATHML_NAMESPACE) {
+        // The only way to switch from HTML namespace to MathML
+        // is via <math>. If it happens via any other tag, then
+        // it should be killed.
+        if (parent.namespaceURI === HTML_NAMESPACE) {
+          return tagName === 'math';
+        } // The only way to switch from SVG to MathML is via
+        // <math> and HTML integration points
+
+
+        if (parent.namespaceURI === SVG_NAMESPACE) {
+          return tagName === 'math' && HTML_INTEGRATION_POINTS[parentTagName];
+        } // We only allow elements that are defined in MathML
+        // spec. All others are disallowed in MathML namespace.
+
+
+        return Boolean(ALL_MATHML_TAGS[tagName]);
+      }
+
+      if (element.namespaceURI === HTML_NAMESPACE) {
+        // The only way to switch from SVG to HTML is via
+        // HTML integration points, and from MathML to HTML
+        // is via MathML text integration points
+        if (parent.namespaceURI === SVG_NAMESPACE && !HTML_INTEGRATION_POINTS[parentTagName]) {
+          return false;
+        }
+
+        if (parent.namespaceURI === MATHML_NAMESPACE && !MATHML_TEXT_INTEGRATION_POINTS[parentTagName]) {
+          return false;
+        } // We disallow tags that are specific for MathML
+        // or SVG and should never appear in HTML namespace
+
+
+        return !ALL_MATHML_TAGS[tagName] && (COMMON_SVG_AND_HTML_ELEMENTS[tagName] || !ALL_SVG_TAGS[tagName]);
+      } // For XHTML and XML documents that support custom namespaces
+
+
+      if (PARSER_MEDIA_TYPE === 'application/xhtml+xml' && ALLOWED_NAMESPACES[element.namespaceURI]) {
+        return true;
+      } // The code should never reach this place (this means
+      // that the element somehow got namespace that is not
+      // HTML, SVG, MathML or allowed via ALLOWED_NAMESPACES).
+      // Return false just in case.
+
+
+      return false;
+    };
+    /**
+     * _forceRemove
+     *
+     * @param  {Node} node a DOM node
+     */
+
+
+    const _forceRemove = function _forceRemove(node) {
+      arrayPush(DOMPurify.removed, {
+        element: node
+      });
+
+      try {
+        // eslint-disable-next-line unicorn/prefer-dom-node-remove
+        node.parentNode.removeChild(node);
+      } catch (_) {
+        node.remove();
+      }
+    };
+    /**
+     * _removeAttribute
+     *
+     * @param  {String} name an Attribute name
+     * @param  {Node} node a DOM node
+     */
+
+
+    const _removeAttribute = function _removeAttribute(name, node) {
+      try {
+        arrayPush(DOMPurify.removed, {
+          attribute: node.getAttributeNode(name),
+          from: node
+        });
+      } catch (_) {
+        arrayPush(DOMPurify.removed, {
+          attribute: null,
+          from: node
+        });
+      }
+
+      node.removeAttribute(name); // We void attribute values for unremovable "is"" attributes
+
+      if (name === 'is' && !ALLOWED_ATTR[name]) {
+        if (RETURN_DOM || RETURN_DOM_FRAGMENT) {
+          try {
+            _forceRemove(node);
+          } catch (_) {}
+        } else {
+          try {
+            node.setAttribute(name, '');
+          } catch (_) {}
+        }
+      }
+    };
+    /**
+     * _initDocument
+     *
+     * @param  {String} dirty a string of dirty markup
+     * @return {Document} a DOM, filled with the dirty markup
+     */
+
+
+    const _initDocument = function _initDocument(dirty) {
+      /* Create a HTML document */
+      let doc;
+      let leadingWhitespace;
+
+      if (FORCE_BODY) {
+        dirty = '<remove></remove>' + dirty;
+      } else {
+        /* If FORCE_BODY isn't used, leading whitespace needs to be preserved manually */
+        const matches = stringMatch(dirty, /^[\r\n\t ]+/);
+        leadingWhitespace = matches && matches[0];
+      }
+
+      if (PARSER_MEDIA_TYPE === 'application/xhtml+xml' && NAMESPACE === HTML_NAMESPACE) {
+        // Root of XHTML doc must contain xmlns declaration (see https://www.w3.org/TR/xhtml1/normative.html#strict)
+        dirty = '<html xmlns="http://www.w3.org/1999/xhtml"><head></head><body>' + dirty + '</body></html>';
+      }
+
+      const dirtyPayload = trustedTypesPolicy ? trustedTypesPolicy.createHTML(dirty) : dirty;
+      /*
+       * Use the DOMParser API by default, fallback later if needs be
+       * DOMParser not work for svg when has multiple root element.
+       */
+
+      if (NAMESPACE === HTML_NAMESPACE) {
+        try {
+          doc = new DOMParser().parseFromString(dirtyPayload, PARSER_MEDIA_TYPE);
+        } catch (_) {}
+      }
+      /* Use createHTMLDocument in case DOMParser is not available */
+
+
+      if (!doc || !doc.documentElement) {
+        doc = implementation.createDocument(NAMESPACE, 'template', null);
+
+        try {
+          doc.documentElement.innerHTML = IS_EMPTY_INPUT ? emptyHTML : dirtyPayload;
+        } catch (_) {// Syntax error if dirtyPayload is invalid xml
+        }
+      }
+
+      const body = doc.body || doc.documentElement;
+
+      if (dirty && leadingWhitespace) {
+        body.insertBefore(document.createTextNode(leadingWhitespace), body.childNodes[0] || null);
+      }
+      /* Work on whole document or just its body */
+
+
+      if (NAMESPACE === HTML_NAMESPACE) {
+        return getElementsByTagName.call(doc, WHOLE_DOCUMENT ? 'html' : 'body')[0];
+      }
+
+      return WHOLE_DOCUMENT ? doc.documentElement : body;
+    };
+    /**
+     * _createIterator
+     *
+     * @param  {Document} root document/fragment to create iterator for
+     * @return {Iterator} iterator instance
+     */
+
+
+    const _createIterator = function _createIterator(root) {
+      return createNodeIterator.call(root.ownerDocument || root, root, // eslint-disable-next-line no-bitwise
+      NodeFilter.SHOW_ELEMENT | NodeFilter.SHOW_COMMENT | NodeFilter.SHOW_TEXT, null, false);
+    };
+    /**
+     * _isClobbered
+     *
+     * @param  {Node} elm element to check for clobbering attacks
+     * @return {Boolean} true if clobbered, false if safe
+     */
+
+
+    const _isClobbered = function _isClobbered(elm) {
+      return elm instanceof HTMLFormElement && (typeof elm.nodeName !== 'string' || typeof elm.textContent !== 'string' || typeof elm.removeChild !== 'function' || !(elm.attributes instanceof NamedNodeMap) || typeof elm.removeAttribute !== 'function' || typeof elm.setAttribute !== 'function' || typeof elm.namespaceURI !== 'string' || typeof elm.insertBefore !== 'function' || typeof elm.hasChildNodes !== 'function');
+    };
+    /**
+     * _isNode
+     *
+     * @param  {Node} obj object to check whether it's a DOM node
+     * @return {Boolean} true is object is a DOM node
+     */
+
+
+    const _isNode = function _isNode(object) {
+      return typeof Node === 'object' ? object instanceof Node : object && typeof object === 'object' && typeof object.nodeType === 'number' && typeof object.nodeName === 'string';
+    };
+    /**
+     * _executeHook
+     * Execute user configurable hooks
+     *
+     * @param  {String} entryPoint  Name of the hook's entry point
+     * @param  {Node} currentNode node to work on with the hook
+     * @param  {Object} data additional hook parameters
+     */
+
+
+    const _executeHook = function _executeHook(entryPoint, currentNode, data) {
+      if (!hooks[entryPoint]) {
+        return;
+      }
+
+      arrayForEach(hooks[entryPoint], hook => {
+        hook.call(DOMPurify, currentNode, data, CONFIG);
+      });
+    };
+    /**
+     * _sanitizeElements
+     *
+     * @protect nodeName
+     * @protect textContent
+     * @protect removeChild
+     *
+     * @param   {Node} currentNode to check for permission to exist
+     * @return  {Boolean} true if node was killed, false if left alive
+     */
+
+
+    const _sanitizeElements = function _sanitizeElements(currentNode) {
+      let content;
+      /* Execute a hook if present */
+
+      _executeHook('beforeSanitizeElements', currentNode, null);
+      /* Check if element is clobbered or can clobber */
+
+
+      if (_isClobbered(currentNode)) {
+        _forceRemove(currentNode);
+
+        return true;
+      }
+      /* Now let's check the element's type and name */
+
+
+      const tagName = transformCaseFunc(currentNode.nodeName);
+      /* Execute a hook if present */
+
+      _executeHook('uponSanitizeElement', currentNode, {
+        tagName,
+        allowedTags: ALLOWED_TAGS
+      });
+      /* Detect mXSS attempts abusing namespace confusion */
+
+
+      if (currentNode.hasChildNodes() && !_isNode(currentNode.firstElementChild) && (!_isNode(currentNode.content) || !_isNode(currentNode.content.firstElementChild)) && regExpTest(/<[/\w]/g, currentNode.innerHTML) && regExpTest(/<[/\w]/g, currentNode.textContent)) {
+        _forceRemove(currentNode);
+
+        return true;
+      }
+      /* Remove element if anything forbids its presence */
+
+
+      if (!ALLOWED_TAGS[tagName] || FORBID_TAGS[tagName]) {
+        /* Check if we have a custom element to handle */
+        if (!FORBID_TAGS[tagName] && _basicCustomElementTest(tagName)) {
+          if (CUSTOM_ELEMENT_HANDLING.tagNameCheck instanceof RegExp && regExpTest(CUSTOM_ELEMENT_HANDLING.tagNameCheck, tagName)) return false;
+          if (CUSTOM_ELEMENT_HANDLING.tagNameCheck instanceof Function && CUSTOM_ELEMENT_HANDLING.tagNameCheck(tagName)) return false;
+        }
+        /* Keep content except for bad-listed elements */
+
+
+        if (KEEP_CONTENT && !FORBID_CONTENTS[tagName]) {
+          const parentNode = getParentNode(currentNode) || currentNode.parentNode;
+          const childNodes = getChildNodes(currentNode) || currentNode.childNodes;
+
+          if (childNodes && parentNode) {
+            const childCount = childNodes.length;
+
+            for (let i = childCount - 1; i >= 0; --i) {
+              parentNode.insertBefore(cloneNode(childNodes[i], true), getNextSibling(currentNode));
+            }
+          }
+        }
+
+        _forceRemove(currentNode);
+
+        return true;
+      }
+      /* Check whether element has a valid namespace */
+
+
+      if (currentNode instanceof Element && !_checkValidNamespace(currentNode)) {
+        _forceRemove(currentNode);
+
+        return true;
+      }
+      /* Make sure that older browsers don't get noscript mXSS */
+
+
+      if ((tagName === 'noscript' || tagName === 'noembed') && regExpTest(/<\/no(script|embed)/i, currentNode.innerHTML)) {
+        _forceRemove(currentNode);
+
+        return true;
+      }
+      /* Sanitize element content to be template-safe */
+
+
+      if (SAFE_FOR_TEMPLATES && currentNode.nodeType === 3) {
+        /* Get the element's text content */
+        content = currentNode.textContent;
+        content = stringReplace(content, MUSTACHE_EXPR, ' ');
+        content = stringReplace(content, ERB_EXPR, ' ');
+        content = stringReplace(content, TMPLIT_EXPR, ' ');
+
+        if (currentNode.textContent !== content) {
+          arrayPush(DOMPurify.removed, {
+            element: currentNode.cloneNode()
+          });
+          currentNode.textContent = content;
+        }
+      }
+      /* Execute a hook if present */
+
+
+      _executeHook('afterSanitizeElements', currentNode, null);
+
+      return false;
+    };
+    /**
+     * _isValidAttribute
+     *
+     * @param  {string} lcTag Lowercase tag name of containing element.
+     * @param  {string} lcName Lowercase attribute name.
+     * @param  {string} value Attribute value.
+     * @return {Boolean} Returns true if `value` is valid, otherwise false.
+     */
+    // eslint-disable-next-line complexity
+
+
+    const _isValidAttribute = function _isValidAttribute(lcTag, lcName, value) {
+      /* Make sure attribute cannot clobber */
+      if (SANITIZE_DOM && (lcName === 'id' || lcName === 'name') && (value in document || value in formElement)) {
+        return false;
+      }
+      /* Allow valid data-* attributes: At least one character after "-"
+          (https://html.spec.whatwg.org/multipage/dom.html#embedding-custom-non-visible-data-with-the-data-*-attributes)
+          XML-compatible (https://html.spec.whatwg.org/multipage/infrastructure.html#xml-compatible and http://www.w3.org/TR/xml/#d0e804)
+          We don't need to check the value; it's always URI safe. */
+
+
+      if (ALLOW_DATA_ATTR && !FORBID_ATTR[lcName] && regExpTest(DATA_ATTR, lcName)) ; else if (ALLOW_ARIA_ATTR && regExpTest(ARIA_ATTR, lcName)) ; else if (!ALLOWED_ATTR[lcName] || FORBID_ATTR[lcName]) {
+        if ( // First condition does a very basic check if a) it's basically a valid custom element tagname AND
+        // b) if the tagName passes whatever the user has configured for CUSTOM_ELEMENT_HANDLING.tagNameCheck
+        // and c) if the attribute name passes whatever the user has configured for CUSTOM_ELEMENT_HANDLING.attributeNameCheck
+        _basicCustomElementTest(lcTag) && (CUSTOM_ELEMENT_HANDLING.tagNameCheck instanceof RegExp && regExpTest(CUSTOM_ELEMENT_HANDLING.tagNameCheck, lcTag) || CUSTOM_ELEMENT_HANDLING.tagNameCheck instanceof Function && CUSTOM_ELEMENT_HANDLING.tagNameCheck(lcTag)) && (CUSTOM_ELEMENT_HANDLING.attributeNameCheck instanceof RegExp && regExpTest(CUSTOM_ELEMENT_HANDLING.attributeNameCheck, lcName) || CUSTOM_ELEMENT_HANDLING.attributeNameCheck instanceof Function && CUSTOM_ELEMENT_HANDLING.attributeNameCheck(lcName)) || // Alternative, second condition checks if it's an `is`-attribute, AND
+        // the value passes whatever the user has configured for CUSTOM_ELEMENT_HANDLING.tagNameCheck
+        lcName === 'is' && CUSTOM_ELEMENT_HANDLING.allowCustomizedBuiltInElements && (CUSTOM_ELEMENT_HANDLING.tagNameCheck instanceof RegExp && regExpTest(CUSTOM_ELEMENT_HANDLING.tagNameCheck, value) || CUSTOM_ELEMENT_HANDLING.tagNameCheck instanceof Function && CUSTOM_ELEMENT_HANDLING.tagNameCheck(value))) ; else {
+          return false;
+        }
+        /* Check value is safe. First, is attr inert? If so, is safe */
+
+      } else if (URI_SAFE_ATTRIBUTES[lcName]) ; else if (regExpTest(IS_ALLOWED_URI$1, stringReplace(value, ATTR_WHITESPACE, ''))) ; else if ((lcName === 'src' || lcName === 'xlink:href' || lcName === 'href') && lcTag !== 'script' && stringIndexOf(value, 'data:') === 0 && DATA_URI_TAGS[lcTag]) ; else if (ALLOW_UNKNOWN_PROTOCOLS && !regExpTest(IS_SCRIPT_OR_DATA, stringReplace(value, ATTR_WHITESPACE, ''))) ; else if (value) {
+        return false;
+      } else ;
+
+      return true;
+    };
+    /**
+     * _basicCustomElementCheck
+     * checks if at least one dash is included in tagName, and it's not the first char
+     * for more sophisticated checking see https://github.com/sindresorhus/validate-element-name
+     * @param {string} tagName name of the tag of the node to sanitize
+     */
+
+
+    const _basicCustomElementTest = function _basicCustomElementTest(tagName) {
+      return tagName.indexOf('-') > 0;
+    };
+    /**
+     * _sanitizeAttributes
+     *
+     * @protect attributes
+     * @protect nodeName
+     * @protect removeAttribute
+     * @protect setAttribute
+     *
+     * @param  {Node} currentNode to sanitize
+     */
+
+
+    const _sanitizeAttributes = function _sanitizeAttributes(currentNode) {
+      let attr;
+      let value;
+      let lcName;
+      let l;
+      /* Execute a hook if present */
+
+      _executeHook('beforeSanitizeAttributes', currentNode, null);
+
+      const {
+        attributes
+      } = currentNode;
+      /* Check if we have attributes; if not we might have a text node */
+
+      if (!attributes) {
+        return;
+      }
+
+      const hookEvent = {
+        attrName: '',
+        attrValue: '',
+        keepAttr: true,
+        allowedAttributes: ALLOWED_ATTR
+      };
+      l = attributes.length;
+      /* Go backwards over all attributes; safely remove bad ones */
+
+      while (l--) {
+        attr = attributes[l];
+        const {
+          name,
+          namespaceURI
+        } = attr;
+        value = name === 'value' ? attr.value : stringTrim(attr.value);
+        lcName = transformCaseFunc(name);
+        /* Execute a hook if present */
+
+        hookEvent.attrName = lcName;
+        hookEvent.attrValue = value;
+        hookEvent.keepAttr = true;
+        hookEvent.forceKeepAttr = undefined; // Allows developers to see this is a property they can set
+
+        _executeHook('uponSanitizeAttribute', currentNode, hookEvent);
+
+        value = hookEvent.attrValue;
+        /* Did the hooks approve of the attribute? */
+
+        if (hookEvent.forceKeepAttr) {
+          continue;
+        }
+        /* Remove attribute */
+
+
+        _removeAttribute(name, currentNode);
+        /* Did the hooks approve of the attribute? */
+
+
+        if (!hookEvent.keepAttr) {
+          continue;
+        }
+        /* Work around a security issue in jQuery 3.0 */
+
+
+        if (!ALLOW_SELF_CLOSE_IN_ATTR && regExpTest(/\/>/i, value)) {
+          _removeAttribute(name, currentNode);
+
+          continue;
+        }
+        /* Sanitize attribute content to be template-safe */
+
+
+        if (SAFE_FOR_TEMPLATES) {
+          value = stringReplace(value, MUSTACHE_EXPR, ' ');
+          value = stringReplace(value, ERB_EXPR, ' ');
+          value = stringReplace(value, TMPLIT_EXPR, ' ');
+        }
+        /* Is `value` valid for this attribute? */
+
+
+        const lcTag = transformCaseFunc(currentNode.nodeName);
+
+        if (!_isValidAttribute(lcTag, lcName, value)) {
+          continue;
+        }
+        /* Full DOM Clobbering protection via namespace isolation,
+         * Prefix id and name attributes with `user-content-`
+         */
+
+
+        if (SANITIZE_NAMED_PROPS && (lcName === 'id' || lcName === 'name')) {
+          // Remove the attribute with this value
+          _removeAttribute(name, currentNode); // Prefix the value and later re-create the attribute with the sanitized value
+
+
+          value = SANITIZE_NAMED_PROPS_PREFIX + value;
+        }
+        /* Handle attributes that require Trusted Types */
+
+
+        if (trustedTypesPolicy && typeof trustedTypes === 'object' && typeof trustedTypes.getAttributeType === 'function') {
+          if (namespaceURI) ; else {
+            switch (trustedTypes.getAttributeType(lcTag, lcName)) {
+              case 'TrustedHTML':
+                {
+                  value = trustedTypesPolicy.createHTML(value);
+                  break;
+                }
+
+              case 'TrustedScriptURL':
+                {
+                  value = trustedTypesPolicy.createScriptURL(value);
+                  break;
+                }
+            }
+          }
+        }
+        /* Handle invalid data-* attribute set by try-catching it */
+
+
+        try {
+          if (namespaceURI) {
+            currentNode.setAttributeNS(namespaceURI, name, value);
+          } else {
+            /* Fallback to setAttribute() for browser-unrecognized namespaces e.g. "x-schema". */
+            currentNode.setAttribute(name, value);
+          }
+
+          arrayPop(DOMPurify.removed);
+        } catch (_) {}
+      }
+      /* Execute a hook if present */
+
+
+      _executeHook('afterSanitizeAttributes', currentNode, null);
+    };
+    /**
+     * _sanitizeShadowDOM
+     *
+     * @param  {DocumentFragment} fragment to iterate over recursively
+     */
+
+
+    const _sanitizeShadowDOM = function _sanitizeShadowDOM(fragment) {
+      let shadowNode;
+
+      const shadowIterator = _createIterator(fragment);
+      /* Execute a hook if present */
+
+
+      _executeHook('beforeSanitizeShadowDOM', fragment, null);
+
+      while (shadowNode = shadowIterator.nextNode()) {
+        /* Execute a hook if present */
+        _executeHook('uponSanitizeShadowNode', shadowNode, null);
+        /* Sanitize tags and elements */
+
+
+        if (_sanitizeElements(shadowNode)) {
+          continue;
+        }
+        /* Deep shadow DOM detected */
+
+
+        if (shadowNode.content instanceof DocumentFragment) {
+          _sanitizeShadowDOM(shadowNode.content);
+        }
+        /* Check attributes, sanitize if necessary */
+
+
+        _sanitizeAttributes(shadowNode);
+      }
+      /* Execute a hook if present */
+
+
+      _executeHook('afterSanitizeShadowDOM', fragment, null);
+    };
+    /**
+     * Sanitize
+     * Public method providing core sanitation functionality
+     *
+     * @param {String|Node} dirty string or DOM node
+     * @param {Object} configuration object
+     */
+    // eslint-disable-next-line complexity
+
+
+    DOMPurify.sanitize = function (dirty) {
+      let cfg = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+      let body;
+      let importedNode;
+      let currentNode;
+      let returnNode;
+      /* Make sure we have a string to sanitize.
+        DO NOT return early, as this will return the wrong type if
+        the user has requested a DOM object rather than a string */
+
+      IS_EMPTY_INPUT = !dirty;
+
+      if (IS_EMPTY_INPUT) {
+        dirty = '<!-->';
+      }
+      /* Stringify, in case dirty is an object */
+
+
+      if (typeof dirty !== 'string' && !_isNode(dirty)) {
+        if (typeof dirty.toString === 'function') {
+          dirty = dirty.toString();
+
+          if (typeof dirty !== 'string') {
+            throw typeErrorCreate('dirty is not a string, aborting');
+          }
+        } else {
+          throw typeErrorCreate('toString is not a function');
+        }
+      }
+      /* Return dirty HTML if DOMPurify cannot run */
+
+
+      if (!DOMPurify.isSupported) {
+        return dirty;
+      }
+      /* Assign config vars */
+
+
+      if (!SET_CONFIG) {
+        _parseConfig(cfg);
+      }
+      /* Clean up removed elements */
+
+
+      DOMPurify.removed = [];
+      /* Check if dirty is correctly typed for IN_PLACE */
+
+      if (typeof dirty === 'string') {
+        IN_PLACE = false;
+      }
+
+      if (IN_PLACE) {
+        /* Do some early pre-sanitization to avoid unsafe root nodes */
+        if (dirty.nodeName) {
+          const tagName = transformCaseFunc(dirty.nodeName);
+
+          if (!ALLOWED_TAGS[tagName] || FORBID_TAGS[tagName]) {
+            throw typeErrorCreate('root node is forbidden and cannot be sanitized in-place');
+          }
+        }
+      } else if (dirty instanceof Node) {
+        /* If dirty is a DOM element, append to an empty document to avoid
+           elements being stripped by the parser */
+        body = _initDocument('<!---->');
+        importedNode = body.ownerDocument.importNode(dirty, true);
+
+        if (importedNode.nodeType === 1 && importedNode.nodeName === 'BODY') {
+          /* Node is already a body, use as is */
+          body = importedNode;
+        } else if (importedNode.nodeName === 'HTML') {
+          body = importedNode;
+        } else {
+          // eslint-disable-next-line unicorn/prefer-dom-node-append
+          body.appendChild(importedNode);
+        }
+      } else {
+        /* Exit directly if we have nothing to do */
+        if (!RETURN_DOM && !SAFE_FOR_TEMPLATES && !WHOLE_DOCUMENT && // eslint-disable-next-line unicorn/prefer-includes
+        dirty.indexOf('<') === -1) {
+          return trustedTypesPolicy && RETURN_TRUSTED_TYPE ? trustedTypesPolicy.createHTML(dirty) : dirty;
+        }
+        /* Initialize the document to work on */
+
+
+        body = _initDocument(dirty);
+        /* Check we have a DOM node from the data */
+
+        if (!body) {
+          return RETURN_DOM ? null : RETURN_TRUSTED_TYPE ? emptyHTML : '';
+        }
+      }
+      /* Remove first element node (ours) if FORCE_BODY is set */
+
+
+      if (body && FORCE_BODY) {
+        _forceRemove(body.firstChild);
+      }
+      /* Get node iterator */
+
+
+      const nodeIterator = _createIterator(IN_PLACE ? dirty : body);
+      /* Now start iterating over the created document */
+
+
+      while (currentNode = nodeIterator.nextNode()) {
+        /* Sanitize tags and elements */
+        if (_sanitizeElements(currentNode)) {
+          continue;
+        }
+        /* Shadow DOM detected, sanitize it */
+
+
+        if (currentNode.content instanceof DocumentFragment) {
+          _sanitizeShadowDOM(currentNode.content);
+        }
+        /* Check attributes, sanitize if necessary */
+
+
+        _sanitizeAttributes(currentNode);
+      }
+      /* If we sanitized `dirty` in-place, return it. */
+
+
+      if (IN_PLACE) {
+        return dirty;
+      }
+      /* Return sanitized string or DOM */
+
+
+      if (RETURN_DOM) {
+        if (RETURN_DOM_FRAGMENT) {
+          returnNode = createDocumentFragment.call(body.ownerDocument);
+
+          while (body.firstChild) {
+            // eslint-disable-next-line unicorn/prefer-dom-node-append
+            returnNode.appendChild(body.firstChild);
+          }
+        } else {
+          returnNode = body;
+        }
+
+        if (ALLOWED_ATTR.shadowroot || ALLOWED_ATTR.shadowrootmod) {
+          /*
+            AdoptNode() is not used because internal state is not reset
+            (e.g. the past names map of a HTMLFormElement), this is safe
+            in theory but we would rather not risk another attack vector.
+            The state that is cloned by importNode() is explicitly defined
+            by the specs.
+          */
+          returnNode = importNode.call(originalDocument, returnNode, true);
+        }
+
+        return returnNode;
+      }
+
+      let serializedHTML = WHOLE_DOCUMENT ? body.outerHTML : body.innerHTML;
+      /* Serialize doctype if allowed */
+
+      if (WHOLE_DOCUMENT && ALLOWED_TAGS['!doctype'] && body.ownerDocument && body.ownerDocument.doctype && body.ownerDocument.doctype.name && regExpTest(DOCTYPE_NAME, body.ownerDocument.doctype.name)) {
+        serializedHTML = '<!DOCTYPE ' + body.ownerDocument.doctype.name + '>\n' + serializedHTML;
+      }
+      /* Sanitize final string template-safe */
+
+
+      if (SAFE_FOR_TEMPLATES) {
+        serializedHTML = stringReplace(serializedHTML, MUSTACHE_EXPR, ' ');
+        serializedHTML = stringReplace(serializedHTML, ERB_EXPR, ' ');
+        serializedHTML = stringReplace(serializedHTML, TMPLIT_EXPR, ' ');
+      }
+
+      return trustedTypesPolicy && RETURN_TRUSTED_TYPE ? trustedTypesPolicy.createHTML(serializedHTML) : serializedHTML;
+    };
+    /**
+     * Public method to set the configuration once
+     * setConfig
+     *
+     * @param {Object} cfg configuration object
+     */
+
+
+    DOMPurify.setConfig = function (cfg) {
+      _parseConfig(cfg);
+
+      SET_CONFIG = true;
+    };
+    /**
+     * Public method to remove the configuration
+     * clearConfig
+     *
+     */
+
+
+    DOMPurify.clearConfig = function () {
+      CONFIG = null;
+      SET_CONFIG = false;
+    };
+    /**
+     * Public method to check if an attribute value is valid.
+     * Uses last set config, if any. Otherwise, uses config defaults.
+     * isValidAttribute
+     *
+     * @param  {string} tag Tag name of containing element.
+     * @param  {string} attr Attribute name.
+     * @param  {string} value Attribute value.
+     * @return {Boolean} Returns true if `value` is valid. Otherwise, returns false.
+     */
+
+
+    DOMPurify.isValidAttribute = function (tag, attr, value) {
+      /* Initialize shared config vars if necessary. */
+      if (!CONFIG) {
+        _parseConfig({});
+      }
+
+      const lcTag = transformCaseFunc(tag);
+      const lcName = transformCaseFunc(attr);
+      return _isValidAttribute(lcTag, lcName, value);
+    };
+    /**
+     * AddHook
+     * Public method to add DOMPurify hooks
+     *
+     * @param {String} entryPoint entry point for the hook to add
+     * @param {Function} hookFunction function to execute
+     */
+
+
+    DOMPurify.addHook = function (entryPoint, hookFunction) {
+      if (typeof hookFunction !== 'function') {
+        return;
+      }
+
+      hooks[entryPoint] = hooks[entryPoint] || [];
+      arrayPush(hooks[entryPoint], hookFunction);
+    };
+    /**
+     * RemoveHook
+     * Public method to remove a DOMPurify hook at a given entryPoint
+     * (pops it from the stack of hooks if more are present)
+     *
+     * @param {String} entryPoint entry point for the hook to remove
+     * @return {Function} removed(popped) hook
+     */
+
+
+    DOMPurify.removeHook = function (entryPoint) {
+      if (hooks[entryPoint]) {
+        return arrayPop(hooks[entryPoint]);
+      }
+    };
+    /**
+     * RemoveHooks
+     * Public method to remove all DOMPurify hooks at a given entryPoint
+     *
+     * @param  {String} entryPoint entry point for the hooks to remove
+     */
+
+
+    DOMPurify.removeHooks = function (entryPoint) {
+      if (hooks[entryPoint]) {
+        hooks[entryPoint] = [];
+      }
+    };
+    /**
+     * RemoveAllHooks
+     * Public method to remove all DOMPurify hooks
+     *
+     */
+
+
+    DOMPurify.removeAllHooks = function () {
+      hooks = {};
+    };
+
+    return DOMPurify;
+  }
+
+  var purify = createDOMPurify();
+
+  return purify;
+
+}));
+//# sourceMappingURL=purify.js.map
+
 
 /***/ }),
 
@@ -8624,6 +11830,7 @@ exports["default"] = ImageCarousel;
   \**************************/
 /***/ ((module) => {
 
+"use strict";
 module.exports = wp.i18n;
 
 /***/ })

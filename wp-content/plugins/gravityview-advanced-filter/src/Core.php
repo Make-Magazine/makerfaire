@@ -3,6 +3,7 @@
 namespace GravityKit\AdvancedFilter;
 
 use GF_Query_Condition;
+use GFAPI;
 use GFCommon;
 use GravityKit\AdvancedFilter\QueryFilters\Filter\Visitor\ProcessMergeTagsVisitor;
 use GravityKit\AdvancedFilter\QueryFilters\QueryFilters;
@@ -109,6 +110,8 @@ class Core extends GravityView_Extension {
 		add_filter( 'gravityview/template/field/output', [ $this, 'conditionally_display_field_output' ], 10, 2 );
 
 		add_filter( 'gk/query-filters/admin-capabilities', [ $this, 'add_admin_capabilities' ] );
+
+		add_filter( 'admin_head', [ $this, 'fix_duplicate_page_conflict' ], 20 );
 	}
 
 	/**
@@ -332,6 +335,12 @@ HTML;
 
 		$form_id = gravityview_get_form_id( $post->ID );
 
+		$form = ( new GFAPI() )->get_form( $form_id );
+
+		if ( ! $form ) {
+			return;
+		}
+
 		$filter_settings = self::get_field_filters( $post->ID );
 
 		if ( $form_id && empty( $filter_settings['field_filters_complete'] ) ) {
@@ -342,7 +351,7 @@ HTML;
 
 		QueryFilters::enqueue_styles();
 		QueryFilters::create()
-		            ->with_form( \GFAPI::get_form( $form_id ) )
+		            ->with_form( $form )
 		            ->enqueue_scripts( [
 			            'fields'                  => rgar( $filter_settings, 'field_filters_complete', [] ),
 			            'conditions'              => rgar( $filter_settings, 'init_filter_vars', [] ),
@@ -360,6 +369,27 @@ HTML;
 				'nonce'  => wp_create_nonce( 'gravityview-advanced-filter' ),
 			],
 		] );
+	}
+
+	/**
+	 * Resolves conflicts with the Duplicate Page plugin in the View editor.
+	 *
+	 * This method prevents the Duplicate Page plugin from enqueuing scripts
+	 * in the View editor, which were causing JavaScript errors due to React
+	 * not being loaded on the page.
+	 *
+	 * @since 3.0.5
+	 */
+	public function fix_duplicate_page_conflict() : void {
+		global $post;
+
+		// Don't dequeue any scripts below here if it's not a GravityView page.
+		if ( empty( $post->ID ) || 'gravityview' !== $post->post_type ) {
+			return;
+		}
+
+		// Dequeue the Duplicate Page plugin's scripts.
+		wp_dequeue_script( 'dt_duplicate_post_script' );
 	}
 
 	/**
@@ -387,10 +417,16 @@ HTML;
 
 		$filters = get_post_meta( $post_id, '_gravityview_filters', true );
 
+		$form = ( new GFAPI() )->get_form( $form_id );
+
+		if ( ! $form ) {
+			return [];
+		}
+
 		try {
 			$query_filters = ( new QueryFilters() )
 				->with_filters( (array) $filters )
-				->with_form( ( new \GFAPI() )->get_form( $form_id ) );
+				->with_form( $form );
 		} catch ( \Exception $e ) {
 			return [];
 		}

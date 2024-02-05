@@ -181,10 +181,23 @@ if (!essb_option_bool_value('deactivate_module_facebookchat')) {
 	else {
 		ESSBOptionsStructureHelper::panel_start('chat', 'facebookchat', esc_html__('Enbable display of Facebook Messenger Live chat', 'essb'), '', 'fa21 fa fa-cogs', array("mode" => "switch", 'switch_id' => 'fbmessenger_active', 'switch_on' => esc_html__('Yes', 'essb'), 'switch_off' => esc_html__('No', 'essb')));
 	
-		essb_heading_with_related_section_open('chat', 'facebookchat', esc_html__('Appearance', 'essb'), '<i class="fa fa-sitemap"></i>');		
-		ESSBOptionsStructureHelper::field_select('chat', 'facebookchat', 'fbmessenger_posttypes', esc_html__('Post types', 'essb'), esc_html__('Choose post types or leave blank to show on the entire website', 'essb'), ESSB_Plugin_Loader::supported_post_types(false, false), '', '', 'true');
+		essb_heading_with_related_section_open('chat', 'facebookchat', esc_html__('Appearance', 'essb'), '<i class="fa fa-sitemap"></i>');
+		$dialog_options = array(
+		    'auto' => 'Automatically on the website based on the conditions in this section',
+		    'shortcode' => 'Manually with shortcode only'
+		);
+		
+		ESSBOptionsStructureHelper::field_select('chat', 'facebookchat', 'fbmessenger_display_method', esc_html__('Appearance', 'essb'), '', $dialog_options);
+		ESSBOptionsStructureHelper::holder_start('chat', 'facebookchat', 'essb-facebookchat-auto', 'essb-facebookchat-auto');
+		ESSBOptionsStructureHelper::field_select('chat', 'facebookchat', 'fbmessenger_posttypes', esc_html__('Post types', 'essb'), esc_html__('Choose post types or leave blank to show on the entire website', 'essb'), 'list_all_posttype', '', '', 'true');
 		ESSBOptionsStructureHelper::field_switch('chat', 'facebookchat', 'fbmessenger_deactivate_homepage', esc_html__('Deactivate display on homepage', 'essb'), '', '', esc_html__('Yes', 'essb'), esc_html__('No', 'essb'));
-		ESSBOptionsStructureHelper::field_textbox_stretched('chat', 'facebookchat', 'fbmessenger_exclude', esc_html__('Exclude display on', 'essb'), esc_html__('Exclude appearance on posts/pages with these IDs. Comma separated: "11, 15, 125".', 'essb'), '');		
+		ESSBOptionsStructureHelper::field_textbox_stretched('chat', 'facebookchat', 'fbmessenger_exclude', esc_html__('Exclude display on', 'essb'), esc_html__('Exclude appearance on posts/pages with these IDs. Comma separated: "11, 15, 125".', 'essb'), '');
+		ESSBOptionsStructureHelper::holder_end('chat', 'facebookchat');
+		
+		ESSBOptionsStructureHelper::holder_start('chat', 'facebookchat', 'essb-facebookchat-shortcode', 'essb-facebookchat-shortcode');
+		ESSBOptionsStructureHelper::hint('chat', 'facebookchat', '', 'Place the shortcode <strong>[facebook-messenger-chat]</strong> on the pages where you wish to show the chat.', '', 'glowhelp');		
+		ESSBOptionsStructureHelper::holder_end('chat', 'facebookchat');
+		
 		essb_heading_with_related_section_close('chat', 'facebookchat');
 		
 		essb_heading_with_related_section_open('chat', 'facebookchat', esc_html__('Settings', 'essb'), '<i class="fa fa-facebook"></i>', '', true);
@@ -278,7 +291,7 @@ if (!essb_option_bool_value('deactivate_module_natives')) {
 		ESSBOptionsStructureHelper::field_textbox_stretched('natives', 'native-1', 'custom_url_like_address', esc_html__('Custom Facebook like button address', 'essb'), esc_html__('Provide custom address in case you wish likes to be added to that page - example fan page. Otherwise likes will be counted to page where button is displayed.', 'essb'));
 		ESSBOptionsStructureHelper::panel_end('natives', 'native-1');
 				
-		ESSBOptionsStructureHelper::panel_start('natives', 'native-1', esc_html__('Twitter button', 'essb'), esc_html__('Include Twitter native button in your site', 'essb'), 'fa21 fa fa-cogs', array("mode" => "toggle", "state" => "closed"));
+		ESSBOptionsStructureHelper::panel_start('natives', 'native-1', esc_html__('X (formerly Twitter) button', 'essb'), esc_html__('Include X (formerly Twitter) native button in your site', 'essb'), 'fa21 fa fa-cogs', array("mode" => "toggle", "state" => "closed"));
 		ESSBOptionsStructureHelper::field_switch('natives', 'native-1', 'twitterfollow', esc_html__('Twitter Tweet/Follow Button', 'essb'), '', '', esc_html__('Yes', 'essb'), esc_html__('No', 'essb'));
 		$listOfOptions = array ("follow" => "Follow user", "tweet" => "Tweet" );
 		ESSBOptionsStructureHelper::field_select('natives', 'native-1', 'twitter_tweet', esc_html__('Button type', 'essb'), esc_html__('Choose button type you wish to use.', 'essb'), $listOfOptions);
@@ -359,12 +372,15 @@ if (!essb_option_bool_value('deactivate_module_followers')) {
 		ESSBOptionsStructureHelper::field_select('follow', 'follow-1', 'essb3fans_format', esc_html__('Number format', 'essb'), '', ESSBSocialFollowersCounterHelper::available_number_formats());
 		ESSBOptionsStructureHelper::field_switch('follow', 'follow-1', 'follow_alt_text', esc_html__('Include alternative text to the profile links', 'essb'), esc_html__('Recommended if you optimize your website for accessibility. It will add an alternative text showing the name of the social network.', 'essb'), '', esc_html__('Yes', 'essb'), esc_html__('No', 'essb'));
 		ESSBOptionsStructureHelper::field_switch('follow', 'follow-1', 'fanscounter_clear_on_save', esc_html__('Clear stored values on settings update', 'essb') . essb_generate_expert_badge(), esc_html__('This will remove all stored followers\' counter values when you save plugin settings. ', 'essb'), '', esc_html__('Yes', 'essb'), esc_html__('No', 'essb'));
+		ESSBOptionsStructureHelper::field_switch('follow', 'follow-1', 'fanscounter_disable_cache', esc_html__('Disable values\' protection', 'essb') . essb_generate_expert_badge(), esc_html__('The plugin does not store the followers\' value if it is lower than the last one. Enabling this option will disable this protection.', 'essb'), '', esc_html__('Yes', 'essb'), esc_html__('No', 'essb'));
 		ESSBOptionsStructureHelper::field_switch('follow', 'follow-1', 'followers_log_update', esc_html__('Log counter update requests', 'essb') . essb_generate_expert_badge(), esc_html__('Save information for the last 99 requests for a counter update. That helps to detect potential configuration or connection problems.', 'essb'), '', esc_html__('Yes', 'essb'), esc_html__('No', 'essb'));
 		
 		ESSBOptionsStructureHelper::field_heading('follow', 'follow-1', 'heading7', esc_html__('Social Networks', 'essb'), '', 'pb0', '<i class="ti-widget-alt"></i>');
 		ESSBOptionsStructureHelper::holder_start('follow', 'follow-1', 'essb-related-heading7', '');
 		
 		ESSBOptionsStructureHelper::field_checkbox_list_sortable('follow', 'follow-1', 'essb3fans_networks', esc_html__('Select and order the social networks you will use on your website', 'essb'), '', ESSBSocialFollowersCounterHelper::available_social_networks(false));
+		ESSBOptionsStructureHelper::field_select('follow', 'follow-1', 'follow_twitter_icon_type', esc_html__('X (formerly Twitter) icon and color scheme', 'essb'), '', array('' => 'Twitter', 'x' => 'X'));
+		
 		ESSBOptionsStructureHelper::holder_end('follow', 'follow-1');
 
 		ESSBOptionsStructureHelper::panel_end('follow', 'follow-1');
@@ -471,6 +487,7 @@ if (!essb_option_bool_value('deactivate_module_profiles')) {
 	    	    			
 		ESSBOptionsStructureHelper::field_checkbox_list_sortable('profiles', 'profiles-1', 'profile_networks', esc_html__('Select and order the social networks you will use on your website', 'essb'), esc_html__('Enable and order the global social profiles you will use on your site. Later you can automatically use them in shortcodes, widgets or automated displays. There are also shortcode & widgets that you can use to add other profiles (not listed in the settings).', 'essb'), ESSBSocialProfilesHelper::available_social_networks());
 		ESSBOptionsStructureHelper::field_switch('profiles', 'profiles-1', 'profiles_alt_text', esc_html__('Include alternative text to the profile links', 'essb'), esc_html__('Recommended if you optimize your website for accessibility. It will add an alternative text of all social profile links showing the name of the social network.', 'essb'), '', esc_html__('Yes', 'essb'), esc_html__('No', 'essb'));
+		ESSBOptionsStructureHelper::field_select('profiles', 'profiles-1', 'profiles_twitter_icon_type', esc_html__('X (formerly Twitter) icon and color scheme', 'essb'), '', array('' => 'Twitter', 'x' => 'X'));
 		ESSBOptionsStructureHelper::panel_end('profiles', 'profiles-1');
 		
 		ESSBOptionsStructureHelper::field_component('profiles', 'profiles-1', 'essb_profiles_shortcode_generator', 'false');		

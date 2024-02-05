@@ -23,7 +23,7 @@ class Admin {
 	const LICENSE_DATA_FALLBACK_OPTION_NAME = self::LICENSE_DATA_OPTION_NAME . '_fallback';
 
 	/**
-	 * @deprecated 3.6.0 Use Plugin::instance()->updater instead
+	 * @deprecated 3.6.0 Use `Plugin::instance()->updater` instead.
 	 */
 	public static $updater = null;
 
@@ -85,7 +85,7 @@ class Admin {
 	}
 
 	/**
-	 * @deprecated 3.6.0 Use Plugin::instance()->updater instead
+	 * @deprecated 3.6.0 Use `Plugin::instance()->updater` instead.
 	 *
 	 * @return \ElementorPro\License\Updater
 	 */
@@ -175,6 +175,16 @@ class Admin {
 				'elementor_pro_renew_license_menu_link'
 			);
 		}
+
+		if ( ! API::is_license_expired() && API::is_need_to_show_upgrade_promotion() ) {
+			add_submenu_page(
+				Settings::PAGE_ID,
+				'',
+				esc_html__( 'Upgrade', 'elementor-pro' ),
+				'manage_options',
+				'elementor_pro_upgrade_license_menu_link'
+			);
+		}
 	}
 
 	public static function get_url() {
@@ -227,7 +237,7 @@ class Admin {
 						<small>
 							<?php // Fake link to make the user think something is going on. In fact, every refresh of this page will re-check the license status. ?>
 							<a class="button" href="<?php echo esc_url( static::get_url() . '&check-license=1' ); ?>">
-								<i class="eicon-sync"></i>
+								<i class="eicon-sync" aria-hidden="true"></i>
 								<?php echo esc_html__( 'Check license status', 'elementor-pro' ); ?>
 							</a>
 						</small>
@@ -542,19 +552,22 @@ class Admin {
 		} );
 
 		add_filter( 'elementor/admin/dashboard_overview_widget/footer_actions', function( $additions_actions ) {
+
 			unset( $additions_actions['go-pro'] );
 
-			// Keep Visible to administrator role or for the Pro license owner, remove for non-owner lower-level user types.
-			if ( ! current_user_can( 'manage_options' ) && isset( $additions_actions['find_an_expert'] ) ) {
-				unset( $additions_actions['find_an_expert'] );
-			}
-
-			if ( current_user_can( 'manage_options' ) && API::is_license_expired() ) {
+			if ( current_user_can( 'manage_options' ) ) {
 				// Using 'go-pro' key to style the 'renew' button as the 'go-pro' button
-				$additions_actions['go-pro'] = [
-					'title' => esc_html__( 'Renew Now', 'elementor-pro' ),
-					'link' => 'https://go.elementor.com/overview-widget-renew/',
-				];
+				if ( API::is_license_expired() ) {
+					$additions_actions['go-pro'] = [
+						'title' => esc_html__( 'Renew Now', 'elementor-pro' ),
+						'link' => 'https://go.elementor.com/overview-widget-renew/',
+					];
+				} elseif ( API::is_need_to_show_upgrade_promotion() ) {
+					$additions_actions['go-pro'] = [
+						'title' => esc_html__( 'Upgrade', 'elementor-pro' ),
+						'link' => 'https://go.elementor.com/go-pro-advanced-wordpress-elementor-overview/',
+					];
+				}
 			}
 
 			return $additions_actions;

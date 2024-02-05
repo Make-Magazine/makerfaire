@@ -1,6 +1,10 @@
 
 # Changelog
 
+## 1.4.75
+
+	- Fixed an issue where copying List fields in a multi-page form could result in List field values reverting.
+
 ## 1.4.74
 
 	- Fixed regression where Copy Cat did not work as expected with [Gravity Forms Chain Selects](https://www.gravityforms.com/add-ons/chained-selects/).

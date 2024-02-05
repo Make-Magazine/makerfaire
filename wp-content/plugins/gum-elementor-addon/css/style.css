@@ -286,6 +286,10 @@ ul.gum-menu{
   .gum-superslide .wrap-caption .excerpt {font-size: 1em;}
 }
 
+/* progressbar widget */
+
+.e-con.e-con>.e-con-inner>.elementor-widget.elementor-widget-progress, .elementor.elementor .e-con>.elementor-widget.elementor-widget-progress { max-width: inherit; }
+
 /* pricing table widget */
 
 .elementor-widget-temegum_pricetable .elementor-widget-container{ overflow: hidden; }
@@ -354,6 +358,23 @@ ul.gum-menu{
 /* accordion widget */
 .elementor-widget-accordion .elementor-accordion-title{ display: -webkit-box;display: -ms-flexbox;display: flex; align-items: center; }
 .elementor-widget-accordion .elementor-accordion-title i,.elementor-widget-accordion .elementor-accordion-title svg{ margin-right: 1em; order: -1;}
+
+/* counter widget */
+.elementor-widget-counter.counter-align_left .elementor-counter-number-prefix,
+.elementor-widget-counter.counter-align_right .elementor-counter-number-suffix,
+[data-elementor-device-mode=mobile] .elementor-widget-counter.counter-mobile-align_left .elementor-counter-number-prefix,
+[data-elementor-device-mode=tablet] .elementor-widget-counter.counter-tablet-align_left .elementor-counter-number-prefix,
+[data-elementor-device-mode=mobile] .elementor-widget-counter.counter-mobile-align_right .elementor-counter-number-suffix,
+[data-elementor-device-mode=tablet] .elementor-widget-counter.counter-tablet-align_right .elementor-counter-number-suffix{ flex-grow:0;}
+[data-elementor-device-mode=mobile] .elementor-widget-counter.counter-mobile-align_center .elementor-counter-number-suffix,
+[data-elementor-device-mode=tablet] .elementor-widget-counter.counter-tablet-align_center .elementor-counter-number-suffix,
+[data-elementor-device-mode=mobile] .elementor-widget-counter.counter-mobile-align_left .elementor-counter-number-suffix,
+[data-elementor-device-mode=tablet] .elementor-widget-counter.counter-tablet-align_left .elementor-counter-number-suffix,
+[data-elementor-device-mode=mobile] .elementor-widget-counter.counter-mobile-align_center .elementor-counter-number-prefix,
+[data-elementor-device-mode=tablet] .elementor-widget-counter.counter-tablet-align_center .elementor-counter-number-prefix,
+[data-elementor-device-mode=mobile] .elementor-widget-counter.counter-mobile-align_right .elementor-counter-number-prefix,
+[data-elementor-device-mode=tablet] .elementor-widget-counter.counter-tablet-align_right .elementor-counter-number-prefix{ flex-grow:1;}
+
 
 /* headig widget */
 .elementor-widget-gum_heading .section-main-title{ position: relative;z-index: 1;}
@@ -424,8 +445,10 @@ ul.gum-menu{
 .elementor-widget-gum_posts_list .posts-list{ margin: 0; padding: 0; list-style: none;}
 .elementor-widget-gum_posts_list .post-item .post-title,
 .elementor-widget-gum_posts_list .post-item .post-metas,
+.elementor-widget-gum_posts_list .post-item .post-author,
 .elementor-widget-gum_posts_list .post-item .post-date{display: block;}
 .elementor-widget-gum_posts_list .post-item .post-metas .post-date,
+.elementor-widget-gum_posts_list .post-item .post-metas .post-author,
 .elementor-widget-gum_posts_list .post-item .post-metas .post-category{display: inline-block;}
 .elementor-widget-gum_posts_list .post-item .post-metas .post-date + .post-category,
 .elementor-widget-gum_posts_list .post-item .post-metas .post-category + .post-date{ margin-left: 0.5em;}
@@ -445,6 +468,7 @@ ul.gum-menu{
 [data-elementor-device-mode=mobile] .elementor-widget-gum_posts_list.post-divider-yes.divider-mobile-position-center .post-divider hr{ margin-left: auto; margin-right: auto; }
 
 /* icon list */
+.elementor-widget.elementor-align-justify .elementor-icon-list-item{ justify-content: space-between; }
 [data-elementor-device-mode=tablet] .elementor-icon-list-text--tablet-hidden-yes .elementor-icon-list-text,
 [data-elementor-device-mode=mobile] .elementor-icon-list-text--mobile-hidden-yes .elementor-icon-list-text{ display: none;}
 
@@ -551,10 +575,17 @@ article .posts-meta{
 .grid-imboxs .grid-box .blog-featureimage{ height: 300px; }
 */
 
+.related-posts .elementor-button-wrap.button-align-full .elementor-button,
+.grid-posts article .elementor-button-wrap.button-align-full .elementor-button,
 .grid-posts article .elementor-button-wrap.button-align-justify .elementor-button{ display: block;}
+.related-posts .elementor-button-wrap.button-align-full .elementor-button .elementor-button-text,
+.grid-posts article .elementor-button-wrap.button-align-full .elementor-button .elementor-button-text,
 .grid-posts article .elementor-button-wrap.button-align-justify .elementor-button .elementor-button-text{ -webkit-box-flex: 0; -ms-flex-positive: 0; flex-grow: 0;}
+.related-posts .elementor-button-wrap.button-align-right,
 .grid-posts article .elementor-button-wrap.button-align-right{ text-align: right;}
+.related-posts .elementor-button-wrap.button-align-left,
 .grid-posts article .elementor-button-wrap.button-align-left{ text-align: left;}
+.related-posts .elementor-button-wrap.button-align-center,
 .grid-posts article .elementor-button-wrap.button-align-center{ text-align: center;}
 
 .grid-posts .grid-post article .blog-image img{ width: 100%;}

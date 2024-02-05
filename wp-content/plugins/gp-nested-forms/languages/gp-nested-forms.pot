@@ -2,14 +2,14 @@
 # This file is distributed under the GPL2.
 msgid ""
 msgstr ""
-"Project-Id-Version: GP Nested Forms 1.1.48\n"
-"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/cloned-perk-2qd4CSy67\n"
+"Project-Id-Version: GP Nested Forms 1.1.49\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/cloned-perk-b7vYBr2ER\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2024-01-24T23:11:02+00:00\n"
+"POT-Creation-Date: 2024-02-01T11:04:33+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.7.1\n"
 "X-Domain: gp-nested-forms\n"
@@ -212,39 +212,39 @@ msgstr ""
 #. Translators: %s is replaced by singular item label.
 #. translators: placeholder is a singular item label such as "Item" or "Player"
 #. translators: placeholder is a singlular item label such as "Item" or "Player"
-#: class-gp-nested-forms.php:2260
-#: class-gp-nested-forms.php:2284
-#: class-gp-nested-forms.php:2297
+#: class-gp-nested-forms.php:2261
+#: class-gp-nested-forms.php:2285
+#: class-gp-nested-forms.php:2298
 #: includes/class-gp-field-nested-form.php:100
 msgid "Add %s"
 msgstr ""
 
 #. Translators: %s is replaced by singular item label.
 #. translators: placeholder is a singular item label such as "Item" or "Player"
-#: class-gp-nested-forms.php:2262
-#: class-gp-nested-forms.php:2286
-#: class-gp-nested-forms.php:2303
+#: class-gp-nested-forms.php:2263
+#: class-gp-nested-forms.php:2287
+#: class-gp-nested-forms.php:2304
 msgid "Edit %s"
 msgstr ""
 
-#: class-gp-nested-forms.php:2265
+#: class-gp-nested-forms.php:2266
 msgid "Cancel"
 msgstr ""
 
-#: class-gp-nested-forms.php:2266
+#: class-gp-nested-forms.php:2267
 #: includes/class-gp-field-nested-form.php:132
 msgid "Delete"
 msgstr ""
 
-#: class-gp-nested-forms.php:2267
+#: class-gp-nested-forms.php:2268
 msgid "Are you sure?"
 msgstr ""
 
-#: class-gp-nested-forms.php:2268
+#: class-gp-nested-forms.php:2269
 msgid "Close"
 msgstr ""
 
-#: class-gp-nested-forms.php:3416
+#: class-gp-nested-forms.php:3417
 msgid "Row ID"
 msgstr ""
 

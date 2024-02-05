@@ -66,8 +66,8 @@ if (!function_exists('essb_click2chat_register')) {
 		     */
 		    if (class_exists('ESSB_Module_Assets')) {
 		        if (!ESSB_Module_Assets::is_registered('click2chat-css')) {
-		            ESSB_Module_Assets::load_css_resource('click2chat-cond-css', ESSB_Module_Assets::get_modules_base_folder() . 'click-to-chat' . ESSB_Module_Assets::is_optimized('css') . '.css', 'css');
-		            ESSB_Module_Assets::load_js_resource('click2chat-cond-js', ESSB_Module_Assets::get_modules_base_folder() . 'click-to-chat' . ESSB_Module_Assets::is_optimized('js') . '.js', 'js');
+		            ESSB_Module_Assets::load_css_resource('click2chat-css', ESSB_Module_Assets::get_modules_base_folder() . 'click-to-chat' . ESSB_Module_Assets::is_optimized('css') . '.css', 'css');
+		            ESSB_Module_Assets::load_js_resource('click2chat-js', ESSB_Module_Assets::get_modules_base_folder() . 'click-to-chat' . ESSB_Module_Assets::is_optimized('js') . '.js', 'js');
 		        }		        
 		    }
 		    		    

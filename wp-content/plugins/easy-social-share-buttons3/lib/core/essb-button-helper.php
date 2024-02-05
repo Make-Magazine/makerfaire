@@ -329,6 +329,11 @@ function essb_draw_share_buttons($share = array(), $style = array(), $networks =
 				$icon = 'facebook';
 				$additional_icon = 'facebook-official';
 			}
+			
+			// Twitter X integration
+			if ($single == 'twitter' && essb_option_value('share_twitter_icon_type') == 'x') {
+			    $additional_icon = 'twitter_x';
+			}
 
 			$use_button_style = $style['button_style'];
 			if ($single == 'share' && $share_button_style != '') {
@@ -408,9 +413,24 @@ function essb_draw_share_buttons($share = array(), $style = array(), $networks =
 			    // @param $additional_a_class defines the additional link class
 			}
 			
+			/**
+			 * @since 9.2 Twitter X
+			 */
+			if ($additional_icon == 'twitter_x') {
+			    if (!class_exists('ESSB_SVG_Icons')) {
+			        include_once (ESSB3_CLASS_PATH . 'assets/class-svg-icons.php');
+			    }
+			    
+			    $custom_svg_icon = ESSB_SVG_Icons::get_icon($additional_icon);
+			    
+			    $more_after_class .= ' essb_link_twitter_x';
+
+			}
+			
 			if (has_filter("essb_network_svg_icon_{$single}")) {
 				$custom_svg_icon = apply_filters("essb_network_svg_icon_{$single}", $custom_svg_icon);
 			}
+						
 			
 			/**
 			 * @since 8.3 Include an extra class specify that button has an SVG icon
@@ -446,6 +466,7 @@ function essb_draw_share_buttons($share = array(), $style = array(), $networks =
 			if (!empty($additional_a_class)) {
 			    $additional_a_class = ' ' . $additional_a_class;
 			}
+			
 			
 			/**
 			 * @since 8.3 Include an extra class for the icon
@@ -794,7 +815,7 @@ function essb_get_share_address($network, $share = array(), $salt = '', $amp_end
 			$url = sprintf ( 'http://digg.com/submit?url=%1$s&amp;title=%2$s', $share ['url'], essb_core_helper_textencode($share ['title']) );
 			break;
 		case 'reddit' :
-			$url = sprintf ( 'http://reddit.com/submit?url=%1$s&amp;title=%2$s', $share ['url'], $share ['title'] );
+			$url = sprintf ( 'https://reddit.com/submit?url=%1$s&amp;title=%2$s', $share ['url'], $share ['title'] );
 			break;
 		case 'del' :
 			$url = sprintf ( 'https://del.icio.us/login?log=out&provider=essb&title=%2$s&url=%1$s&v=5', $share ['url'], $share ['title'] );
@@ -920,7 +941,7 @@ function essb_get_share_address($network, $share = array(), $salt = '', $amp_end
 			break;
 
 		case 'gmail' :
-			$url = sprintf ( 'https://mail.google.com/mail/u/0/?view=cm&fs=1&su=%2$s&body=%1$s&ui=2&tf=1', $share ['url'], essb_core_helper_textencode($share ['title']) );
+		    $url = sprintf ( 'https://mail.google.com/mail/u/0/?view=cm&fs=1&su=%2$s&body=%1$s&ui=2&tf=1', essb_core_helper_textencode($share ['description']) . ' ' . $share ['url'], essb_core_helper_textencode($share ['title']) );
 			break;
 
 		case 'aol' :

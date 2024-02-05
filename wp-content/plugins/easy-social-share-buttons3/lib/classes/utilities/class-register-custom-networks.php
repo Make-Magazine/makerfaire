@@ -124,6 +124,7 @@ class ESSB_Register_Custom_Networks {
 					$url = str_replace('%%permalink%%', $share['url'], $url);
 					$url = str_replace('%%image%%', $share['image'], $url);
 					$url = str_replace('%%title%%', $share['title'], $url);
+					$url = str_replace('%%title_plain%%', $share['title_plain'], $url);
 					$url = str_replace('%%description%%', $share['description'], $url);
 				}
 			}

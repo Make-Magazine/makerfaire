@@ -1,9 +1,9 @@
 <?php
 /*
-  Plugin Name: Embed Plus YouTube WordPress Plugin Pro
+  Plugin Name: YouTube WordPress Plugin Pro by Embed Plus
   Plugin URI: https://www.embedplus.com/dashboard/pro-easy-video-analytics.aspx
   Description: YouTube Embed Plugin. Embed a YouTube channel gallery, playlist gallery, YouTube live stream. Lite embeds with defer JavaScript and facade options
-  Version: 14.1.6.3
+  Version: 14.2.1.1
   Author: Embed Plus for YouTube Team
   Author URI: https://www.embedplus.com
   Requires at least: 4.5
@@ -22,7 +22,7 @@ class YouTubePrefsPro
 
     public static $folder_name = 'youtube-embed-plus-pro';
     public static $curltimeout = 30;
-    public static $version = '14.1.6.3';
+    public static $version = '14.2.1.1';
     public static $opt_version = 'version';
     public static $opt_free_migrated = 'free_migrated';
     public static $optembedwidth = null;
@@ -121,6 +121,7 @@ class YouTubePrefsPro
     public static $opt_gallery_disptype = 'gallery_disptype';
     public static $opt_not_live_content = 'not_live_content';
     public static $opt_not_live_on = 'not_live_on';
+    public static $opt_not_live_showtime = 'not_live_showtime';
     public static $opt_not_live_on_channel = 'not_live_on_channel';
     public static $opt_live_chat = 'live_chat';
     public static $opt_admin_off_scripts = 'admin_off_scripts';
@@ -156,6 +157,7 @@ class YouTubePrefsPro
     public static $get_api_key_msg = '';
     public static $boilerplate_api_error_message = '';
     public static $dft_gdpr_consent_message = '';
+    public static $no_streams = 'NO STREAMS';
     ///////////////////////////////////////////////////////////////////////////////////////////////////
     public static $vi_default_date = ''; // date('Y-m-d H:i:s', strtotime('2000-01-01'));
     public static $vi_last_category_update_interval = '1 hour';
@@ -319,6 +321,8 @@ class YouTubePrefsPro
             {
                 add_action("wp_ajax_my_embedplus_yt_dash", array(get_class(), 'my_embedplus_yt_dash'));
                 add_action("wp_ajax_nopriv_my_embedplus_yt_dash", array(get_class(), 'my_embedplus_yt_dash'));
+                add_action("wp_ajax_my_embedplus_realtimeLiveCheck", array(get_class(), 'realtimeLiveCheck'));
+                add_action("wp_ajax_nopriv_my_embedplus_realtimeLiveCheck", array(get_class(), 'realtimeLiveCheck'));
             }
 
             if (!empty(self::$alloptions[self::$opt_not_live_on_channel]))
@@ -1178,12 +1182,6 @@ class YouTubePrefsPro
                                         <span class="copycode">[embedyt] https://www.youtube.com/embed/live_stream?channel=<?php echo esc_attr($thechannelid) ?>[/embedyt]</span>
                                         <div class="clearboth" style="height: 10px;">
                                         </div>
-                                        <p>
-                                            <?php _e('If you see a black/empty YouTube player, then it likely means that you do not have any currently running or future live streams that are scheduled in your channel, so the plugin isn\'t getting any data from the YouTube API to show.  If you want to continue to use the channel based live stream embedding method, we suggest regularly scheduling one or more live streams, or using the live stream fallback content feature, so the player is not black/empty.', 'text_domain'); ?>
-                                        </p>
-                                        <div class="ep-wizard-preview-video-wrapper">
-                                            <iframe src="https://www.youtube.com/embed/live_stream?channel=<?php echo esc_attr($thechannelid) ?>" allowfullscreen="" frameborder="0"></iframe>
-                                        </div>
                                     </div>
                                     <?php
                                 }
@@ -1464,10 +1462,7 @@ class YouTubePrefsPro
                                             <input name="txtUrlLiveChannel" maxlength="200" id="txtUrlLiveChannel" class="ui-widget ui-widget-content ui-corner-all" placeholder="<?php _e('Paste channel link here', 'text_domain'); ?>" type="text"> <button name="wizform_submit" class="ui-button ui-widget ui-corner-all" type="submit" value="step1_livechannel"><?php _e('Get Channel', 'text_domain'); ?></button>
                                         </div>                                        
                                     </form>
-                                    <?php echo $step1_livechannel_errors ? '<p class="orange bold">' . $step1_livechannel_errors . '</p>' : ''; ?>
-                                    <p class="smallnote">
-                                        <?php _e('<strong class="orange">New</strong>: The "Not Live" fallback content feature is now available for channel-based embeds! <a href="' . admin_url('admin.php?page=youtube-my-preferences') . '#not_live_content_scroll" target="_blank">Try it out here</a>.', 'text_domain'); ?>
-                                    </p>
+                                    <?php echo $step1_livechannel_errors ? '<p class="orange bold">' . $step1_livechannel_errors . '</p>' : ''; ?>                                    
                                 </div>
                             </div>
 
@@ -2159,6 +2154,7 @@ class YouTubePrefsPro
                     pause_others: <?php echo self::$alloptions[self::$opt_pause_others] == '1' ? 'true' : 'false' ?>,
                     facade_mode: <?php echo self::$alloptions[self::$opt_facade_mode] == '1' ? 'true' : 'false' ?>,
                     not_live_on_channel: <?php echo self::$alloptions[self::$opt_not_live_on_channel] == '1' ? 'true' : 'false' ?>,
+                    not_live_showtime: <?php echo intval(self::$alloptions[self::$opt_not_live_showtime]) ?>,
             <?php
             if (isset(self::$alloptions[self::$opt_pro]) && strlen(trim(self::$alloptions[self::$opt_pro])) > 8 && isset(self::$alloptions[self::$opt_dashpre]) && self::$alloptions[self::$opt_dashpre] == '1')
             {
@@ -2276,6 +2272,7 @@ class YouTubePrefsPro
         $_gallery_disptype = 'default';
         $_not_live_content = '';
         $_not_live_on = 0;
+        $_not_live_showtime = 180;
         $_not_live_on_channel = 0;
         $_live_chat = 0;
         $_debugmode = 0;
@@ -2422,6 +2419,7 @@ class YouTubePrefsPro
             $_not_live_content = self::tryget($arroptions, self::$opt_not_live_content, $_not_live_content);
             $_not_live_content = empty($_not_live_content) ? $_not_live_content : trim($_not_live_content);
             $_not_live_on = self::tryget($arroptions, self::$opt_not_live_on, empty($_not_live_content) ? 0 : $_not_live_on);
+            $_not_live_showtime = self::tryget($arroptions, self::$opt_not_live_showtime, $_not_live_showtime);
             $_not_live_on_channel = self::tryget($arroptions, self::$opt_not_live_on_channel, $_not_live_on_channel);
             $_live_chat = self::tryget($arroptions, self::$opt_live_chat, $_live_chat);
             $_admin_off_scripts = self::tryget($arroptions, self::$opt_admin_off_scripts, $_admin_off_scripts);
@@ -2538,6 +2536,7 @@ class YouTubePrefsPro
             self::$opt_gallery_length_dsc => $_gallery_length_dsc,
             self::$opt_not_live_content => $_not_live_content,
             self::$opt_not_live_on => $_not_live_on,
+            self::$opt_not_live_showtime => $_not_live_showtime,
             self::$opt_not_live_on_channel => $_not_live_on_channel,
             self::$opt_live_chat => $_live_chat,
             self::$opt_debugmode => $_debugmode,
@@ -3091,6 +3090,160 @@ class YouTubePrefsPro
             die();
         }
     }
+    
+    public static function get_video_details($video_id_list, $api_parts, $use_cache = true)
+    {
+        $error = null;
+        try
+        {
+            $video_id_list_concat = implode(',', $video_id_list);
+            $api_endpoint = 'https://www.googleapis.com/youtube/v3/videos?maxResults=50&safeSearch=none&videoEmbeddable=true&part=' . $api_parts . '&id=' . $video_id_list_concat . '&key=' . self::$alloptions[self::$opt_apikey];
+
+            $cache_key = self::$spdcprefix . '_' . md5($api_endpoint);
+
+            if ($use_cache)
+            {
+                $cache_val = get_transient($cache_key);
+                if (!empty($cache_val))
+                {
+                    return $cache_val;
+                }
+            }
+
+            $api_response = wp_remote_get($api_endpoint, array('timeout' => self::$curltimeout, 'headers' => array('referer' => site_url())));
+            if (!is_wp_error($api_response))
+            {
+                $raw = wp_remote_retrieve_body($api_response);
+                if (!empty($raw))
+                {
+                    $json = json_decode($raw, true);
+                    if (!isset($json['error']) && is_array($json))
+                    {
+                        $cache_lifetime = 2 * MINUTE_IN_SECONDS;
+                        $items = $json['items'];
+                        if (!empty($json['items']) && count($json['items']))
+                        {
+                            usort($items, array(get_class(), 'compare_scheduled_date'));
+                            
+//                            for ($i = 0; $i < count($items); $i++)
+//                            {
+//                                $recentSoon = abs();
+//                                if ($recentSoon < $cache_lifetime)
+//                                {
+//                                    $cache_lifetime = MINUTE_IN_SECONDS / 2.0;
+//                                    break;
+//                                }
+//                            }
+                        }
+                        else
+                        {
+                            $items = self::$no_streams;
+                        }
+                        set_transient($cache_key, $items, $cache_lifetime);
+                        self::save_cache_key($cache_key);
+                        return $items;
+                    }
+                    else if (isset($json['error']))
+                    {
+                        $error = new WP_Error('ytapi', $json['error']['message'], $json);
+                    }
+                }
+            }
+            else
+            {
+                $error = $api_response;
+            }
+        }
+        catch (Exception $ex)
+        {
+            $error = new WP_Error('ytapi', $ex->getMessage(), $ex);
+        }
+        return $error;
+    }
+
+    public static function compare_scheduled_date($a, $b)
+    {
+        if ($a['liveStreamingDetails']['scheduledStartTime'] == $b['liveStreamingDetails']['scheduledStartTime'])
+        {
+            return 0;
+        }
+        return ($a['liveStreamingDetails']['scheduledStartTime'] < $b['liveStreamingDetails']['scheduledStartTime']) ? -1 : 1;
+    }
+
+    public static function save_cache_key($cache_key)
+    {
+        $allk = get_option(self::$spdcall, array());
+        $allk[] = $cache_key;
+        update_option(self::$spdcall, $allk);
+    }
+
+    public static function get_channel_streams($channel_id, $event_type, $use_cache = true)
+    {
+        $error = null;
+        try
+        {
+            $api_endpoint = 'https://www.googleapis.com/youtube/v3/search?order=date&maxResults=50&type=video&safeSearch=none&videoEmbeddable=true&part=snippet'
+                    . '&channelId=' . $channel_id
+                    . '&eventType=' . $event_type
+                    . '&key=' . self::$alloptions[self::$opt_apikey];
+
+            $cache_key = self::$spdcprefix . '_' . md5($api_endpoint);
+            $items_search = null;
+            $items_details = null;
+
+            if ($use_cache)
+            {
+                $items_search = get_transient($cache_key);
+            }
+            if (empty($items_search))
+            {
+                $api_response = wp_remote_get($api_endpoint, array('timeout' => self::$curltimeout, 'headers' => array('referer' => site_url())));
+                if (!is_wp_error($api_response))
+                {
+                    $raw = wp_remote_retrieve_body($api_response);
+                    $json = json_decode($raw, true);
+                    if (!isset($json['error']) && is_array($json))
+                    {
+                        $items_search = $json['items'];
+                        if (empty($items_search))
+                        {
+                            $items_search = self::$no_streams;
+                        }
+                        set_transient($cache_key, $items_search, 3 * HOUR_IN_SECONDS);
+                        self::save_cache_key($cache_key);
+                    }
+                    else if (isset($json['error']))
+                    {
+                        return new WP_Error('ytapi', $json['error']['message'], $json);
+                    }
+                }
+                else
+                {
+                    $error = $api_response;
+                    return $error;
+                }                    
+            }
+            
+            
+
+            if (!empty($items_search) && $items_search != self::$no_streams && is_array($items_search))
+            {
+                $item_ids = array();
+                for ($i = 0; $i < count($items_search); $i++)
+                {
+                    $item_ids[] = $items_search[$i]['id']['videoId'];
+                }
+                $items_details = self::get_video_details($item_ids, 'snippet,liveStreamingDetails');
+            }
+
+            return $items_details;
+        }
+        catch (Exception $ex)
+        {
+            $error = new WP_Error('ytapi', $ex->getMessage(), $ex);
+        }
+        return $error;
+    }
 
     public static function get_html($m, $iscontent, $isoverride)
     {
@@ -3117,6 +3270,7 @@ class YouTubePrefsPro
             $live_error_msg = __(' To embed live videos, please make sure you performed the <a href="https://www.youtube.com/watch?v=ZCfrNvu6nMc" target="_blank">steps in this video</a> to create and save a proper server API key.', 'text_domain');
             if (isset(self::$alloptions[self::$opt_apikey]))
             {
+                // old channel method
                 if (isset($linkparams['channel']))
                 {
                     $linkparams['live_stream'] = 1;
@@ -3204,6 +3358,60 @@ class YouTubePrefsPro
         if (stripos($linkparamstemp[0], 'live_stream') !== false)
         {
             $linkparams['live_stream'] = 1;
+
+            $channel_streams_now = self::get_channel_streams($linkparams['channel'], 'live');
+            if (is_wp_error($channel_streams_now))
+            {
+                return self::clean_api_error_html($channel_streams_now->get_error_message(), true);
+            }            
+            $channel_streams_upcoming = self::get_channel_streams($linkparams['channel'], 'upcoming');
+            if (is_wp_error($channel_streams_upcoming))
+            {
+                return self::clean_api_error_html($channel_streams_upcoming->get_error_message(), true);
+            }                       
+            
+            $channel_streams_data = array();
+            
+            if (!empty($channel_streams_now) && $channel_streams_now != self::$no_streams)
+            {
+                //$now_utc = str_replace('+00:00', 'Z', date('c'));
+                for ($i = 0; $i < count($channel_streams_now); $i++)
+                {
+                    $this_stream = new stdClass();
+                    $this_stream->id = $channel_streams_now[$i]["id"];
+                    $this_stream->start = isset($channel_streams_now[$i]['liveStreamingDetails']['scheduledStartTime']) ? $channel_streams_now[$i]['liveStreamingDetails']['scheduledStartTime']: null;
+                    $this_stream->end = isset($channel_streams_now[$i]['liveStreamingDetails']['scheduledEndTime']) ? $channel_streams_now[$i]['liveStreamingDetails']['scheduledEndTime']: null;
+                    $this_stream->actualStart = isset($channel_streams_now[$i]['liveStreamingDetails']['actualStartTime']) ? $channel_streams_now[$i]['liveStreamingDetails']['actualStartTime'] : null;
+                    $this_stream->actualEnd = isset($channel_streams_now[$i]['liveStreamingDetails']['actualEndTime']) ? $channel_streams_now[$i]['liveStreamingDetails']['actualEndTime'] : null;
+                    $this_stream->liveBroadcastContent = isset($channel_streams_now[$i]['snippet']['liveBroadcastContent']) ? $channel_streams_now[$i]['snippet']['liveBroadcastContent'] : null;
+                    $channel_streams_data[] = $this_stream;
+                }
+            }
+            if (!empty($channel_streams_upcoming) && $channel_streams_upcoming != self::$no_streams)
+            {
+                //$now_utc = str_replace('+00:00', 'Z', date('c'));
+                for ($i = 0; $i < count($channel_streams_upcoming); $i++)
+                {
+                    $this_stream = new stdClass();
+                    $this_stream->id = $channel_streams_upcoming[$i]["id"];
+                    $this_stream->start = isset($channel_streams_upcoming[$i]['liveStreamingDetails']['scheduledStartTime']) ? $channel_streams_upcoming[$i]['liveStreamingDetails']['scheduledStartTime']: null;
+                    $this_stream->end = isset($channel_streams_upcoming[$i]['liveStreamingDetails']['scheduledEndTime']) ? $channel_streams_upcoming[$i]['liveStreamingDetails']['scheduledEndTime'] : null; 
+                    $this_stream->actualStart = isset($channel_streams_upcoming[$i]['liveStreamingDetails']['actualStartTime']) ? $channel_streams_upcoming[$i]['liveStreamingDetails']['actualStartTime'] : null;
+                    $this_stream->actualEnd = isset($channel_streams_upcoming[$i]['liveStreamingDetails']['actualEndTime']) ? $channel_streams_upcoming[$i]['liveStreamingDetails']['actualEndTime']: null;
+                    $this_stream->liveBroadcastContent = isset($channel_streams_upcoming[$i]['snippet']['liveBroadcastContent']) ? $channel_streams_upcoming[$i]['snippet']['liveBroadcastContent']: null;
+                    $channel_streams_data[] = $this_stream;
+                }
+            }
+            
+            if (empty($channel_streams_data))
+            {
+                return '<div class="epyt-video-wrapper epyt-do-live-fallback" data-channel="' . esc_attr($linkparams['channel']) . '"></div>';
+            }
+            else
+            {
+                $linkparams['live'] = '1';
+                $linkparams['streams'] = base64_encode(json_encode($channel_streams_data, JSON_PRETTY_PRINT));
+            }
         }
 
         $youtubebaseurl = 'youtube';
@@ -3511,17 +3719,17 @@ class YouTubePrefsPro
             $facade_autoplay = $finalparams[self::$opt_facade_autoplay] == 1 ? ' data-epautoplay="1" ' : '';
             $code_iframe1 = '<div ' . $dyntype . $centercode . ' id="_ytid_' . $iframe_id . '" ' . $dim_attrs . ' data-origwidth="' . self::$defaultwidth . '" data-origheight="' . self::$defaultheight . '" ' . $relstop .
                     'data-facadesrc="https://www.' . $youtubebaseurl . '.com/embed/' . $videoidoutput . '?';
-            $code_iframe2 = '" class="__youtube_prefs__ epyt-facade ' . (!empty($finalparams['live_stream']) ? ' epyt-live-channel ' : '') . ($iscontent ? '' : ' __youtube_prefs_widget__ ') . ($isoverride ? ' epyt-is-override ' : '') . $disptypeif . ' no-lazyload"' .
-                    $voloutput . $galleryid_ifm_data . $facade_autoplay . '><img data-spai-excluded="true" class="epyt-facade-poster skip-lazy" loading="lazy" ' . $acctitle . $facade_img_src . ' />' .
+            $code_iframe2 = '" class="__youtube_prefs__ epyt-facade ' . (!empty($finalparams['live_stream']) || !empty($finalparams['streams']) ? ' epyt-live-channel ' : '') . ($iscontent ? '' : ' __youtube_prefs_widget__ ') . ($isoverride ? ' epyt-is-override ' : '') . $disptypeif . ' no-lazyload"' .
+                    $voloutput . $galleryid_ifm_data . $facade_autoplay . (!empty($finalparams['streams']) ? ' data-streams="' . $finalparams['streams'] . '" ' : '') . '><img data-spai-excluded="true" class="epyt-facade-poster skip-lazy" loading="lazy" ' . $acctitle . $facade_img_src . ' />' .
                     '<button class="epyt-facade-play" aria-label="Play"><svg data-no-lazy="1" height="100%" version="1.1" viewBox="0 0 68 48" width="100%"><path class="ytp-large-play-button-bg" d="M66.52,7.74c-0.78-2.93-2.49-5.41-5.42-6.19C55.79,.13,34,0,34,0S12.21,.13,6.9,1.55 C3.97,2.33,2.27,4.81,1.48,7.74C0.06,13.05,0,24,0,24s0.06,10.95,1.48,16.26c0.78,2.93,2.49,5.41,5.42,6.19 C12.21,47.87,34,48,34,48s21.79-0.13,27.1-1.55c2.93-0.78,4.64-3.26,5.42-6.19C67.94,34.95,68,24,68,24S67.94,13.05,66.52,7.74z" fill="#f00"></path><path d="M 45,24 27,14 27,34" fill="#fff"></path></svg></button>' .
                     '</div>';
         }
         else
         {
             $code_iframe1 = '<iframe ' . $dyntype . $centercode . ' id="_ytid_' . $iframe_id . '" ' . $dim_attrs . ' data-origwidth="' . self::$defaultwidth . '" data-origheight="' . self::$defaultheight . '" ' . $relstop .
-                    $dynsrc . 'src="https://www.' . $youtubebaseurl . '.com/embed/' . $videoidoutput . '?';
-            $code_iframe2 = '" class="__youtube_prefs__ ' . (!empty($finalparams['live_stream']) ? ' epyt-live-channel ' : '') . ($iscontent ? '' : ' __youtube_prefs_widget__ ') . ($isoverride ? ' epyt-is-override ' : '') . $disptypeif . ' no-lazyload"' .
-                    $voloutput . $acctitle . $galleryid_ifm_data . ' allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen data-no-lazy="1" data-skipgform_ajax_framebjll=""></iframe>';
+                    (!empty($finalparams['streams']) ? 'data-' : $dynsrc) . 'src="https://www.' . $youtubebaseurl . '.com/embed/' . $videoidoutput . '?';
+            $code_iframe2 = '" class="__youtube_prefs__ ' . (!empty($finalparams['live_stream']) || !empty($finalparams['streams']) ? ' epyt-live-channel ' : '') . ($iscontent ? '' : ' __youtube_prefs_widget__ ') . ($isoverride ? ' epyt-is-override ' : '') . $disptypeif . ' no-lazyload"' .
+                    $voloutput . $acctitle . $galleryid_ifm_data . (!empty($finalparams['streams']) ? ' data-streams="' . $finalparams['streams'] . '" ' : '') . ' allow="fullscreen; accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen data-no-lazy="1" data-skipgform_ajax_framebjll=""></iframe>';
         }
 
         $code2 = $end_responsive . $end_live_chat_video . $begin_live_chat_box . $end_live_chat_box . $end_live_chat . $endlb . $end_gb_wrapper . $schemaorgoutput;
@@ -4349,6 +4557,91 @@ class YouTubePrefsPro
         }
         die();
     }
+    
+    public static function rss_lifetime($lifetime, $filename)
+    {
+        if (preg_match("/.+[.]local$/i", site_url()))
+        {
+            return 1;
+        }
+        return 10;
+    }
+
+    public static function realtimeLiveCheck()
+    {
+        $result = array();
+        if (self::is_ajax())
+        {
+            try
+            {
+                $channelId = $_POST["channelId"];
+                add_filter( 'wp_feed_cache_transient_lifetime' , array(get_class(), 'rss_lifetime'), 10, 2);
+                $rss = fetch_feed("https://www.youtube.com/feeds/videos.xml?channel_id=" . $channelId . '&rand=' . time());
+                remove_filter( 'wp_feed_cache_transient_lifetime' , array(get_class(), 'rss_lifetime'));
+                if ($rss && !is_wp_error($rss))
+                {
+                    $streams = $_POST['streams'];
+                    $rss_items = $rss->get_items();
+                    $recently_updated = array();
+                    
+                    foreach ($rss_items as $item)
+                    {
+                        $last_updated = $item->get_item_tags('http://www.w3.org/2005/Atom', 'updated')[0]["data"];
+                        $videoId = $item->get_item_tags('http://www.youtube.com/xml/schemas/2015', 'videoId')[0]['data'];
+                        $now = new DateTime("UTC");
+                        $last_updated_date = new DateTime($last_updated, new DateTimeZone("UTC"));
+                        $diff = $now->getTimestamp() - $last_updated_date->getTimestamp();
+                        $threeHours = 3 * HOUR_IN_SECONDS;
+                        if ($diff < $threeHours)
+                        {
+                            $recently_updated[] = $videoId;
+                        }
+                    }
+                    if (!empty($recently_updated))
+                    {
+                        $possible_streams = self::get_video_details($recently_updated, 'snippet,liveStreamingDetails');
+                        $fresh_live = array();
+                        foreach ($possible_streams as $ps)
+                        {
+                            if (!empty($ps['snippet']['liveBroadcastContent']) && $ps['snippet']['liveBroadcastContent'] == 'live' && self::is_fresh_live($streams, $ps))
+                            {
+                                $fresh_live[] = $ps;
+                            }
+                        }
+                        if (!empty($fresh_live))
+                        {
+                            self::spdcpurge();
+                            $result['fresh_live'] = $fresh_live;
+                        }
+                    }
+                }
+                $result['type'] = 'success';
+            }
+            catch (Exception $ex)
+            {
+                $result['type'] = 'error';
+            }
+            echo json_encode($result);
+        }
+        else
+        {
+            $result['type'] = 'error';
+            header("Location: " . $_SERVER["HTTP_REFERER"]);
+        }
+        die();
+    }
+    
+    public static function is_fresh_live($known_streams, $possible_live)
+    {
+        foreach ($known_streams as $known)
+        {
+            if ($possible_live['id'] == $known['id'])
+            {
+                return false;
+            }
+        }
+        return true;
+    }
 
     public static function custom_admin_pointers_check()
     {
@@ -4470,7 +4763,7 @@ class YouTubePrefsPro
         $new_pointer_content = '<h3>' . __('New Update') . '</h3>'; // ooopointer
 
         $new_pointer_content .= '<p>'; // ooopointer
-        $new_pointer_content .= "This update fixes a compatibility issue with Contact Forms 7 for both free and Pro versions.";
+        $new_pointer_content .= "This update fixes issues some users have with the channel-based automatic live stream detection/loading feature for Pro users.";
         if (self::vi_logged_in())
         {
             $new_pointer_content .= "<br><br><strong>Note:</strong> You are currently logged into the vi intelligence feature. vi support is being deprecated in the next version, so we recommend taking the vi ads down from your site. Please contact ext@embedplus.com for questions.";
@@ -5305,11 +5598,23 @@ class YouTubePrefsPro
                                 <label for="<?php echo self::$opt_vi_hide_monetize_tab; ?>"><b class="chktitle">Hide "Monetize" Feature:</b> (deprecated) Hide the tab(s) for the deprecated video intelligence feature.</label>
                             </p>
                             <div id="not_live_content_scroll" class="p">
+                                <br>
+                                <h3>Live Stream Options <sup class="orange">new</sup></h3>
+                                <div class="clear-live-cache">
+                                    <p>
+                                        <strong>Note:</strong> Live streaming uses caching to help preserve your API quota. If you are having issues with your stream starting on time, <input type="button" class="button button-primary btn-clear-live-cache" value="click here to clear your live stream cache"/>.
+                                    </p>
+                                    <p>
+                                        <span style="display: none;" class="orange bold clearspdcloading">Clearing...</span>
+                                        <span  class="orange bold clearspdcsuccess" style="display: none;">Finished clearing live stream cache.</span>
+                                        <span class="orange bold clearspdcfailed" style="display: none;">Sorry, there seemed to be a problem clearing the cache.</span>
+                                    </p>
+                                </div>
                                 <p>
                                     <b class="chktitle">Use "Not Live" Fallback Content For Live Streams:</b> (<a href="<?php echo self::$epbase ?>/how-to-embed-a-youtube-livestream-in-wordpress.aspx" target="_blank">More info here</a>)
-                                    This feature lets you display alternate content if your live stream is not currently active. There are 2 flavors of this feature: one that affects <strong>direct link</strong> live streams, and 
+                                    This feature lets you display alternate content if your live stream is not currently active. There are two flavors of this feature: one that affects <strong>direct link</strong> live streams, and 
                                     one that affects <strong>channel</strong> live streams. Each are explained below. They work a little differently, but both use the same "Not Live" Fallback Content that you can edit below.
-                                    <strong>Note: This feature does not currently work for premieres, but we are hoping the YouTube API will support it in the future.</strong>
+                                    <strong>Note: This feature does not always work for premieres, but we are hoping the YouTube API will support it in the future.</strong> Also, in a future update, these 2 flavors will merge into one to keep things simple.
                                 </p>
                                 <div class="ytindent chx">
                                     <input name="<?php echo self::$opt_not_live_on; ?>" id="<?php echo self::$opt_not_live_on; ?>" <?php checked($all[self::$opt_not_live_on], 1); ?> type="checkbox" class="checkbox">
@@ -5324,13 +5629,13 @@ class YouTubePrefsPro
                                     <br>
                                     <br>
                                     <input name="<?php echo self::$opt_not_live_on_channel; ?>" id="<?php echo self::$opt_not_live_on_channel; ?>" <?php checked($all[self::$opt_not_live_on_channel], 1); ?> type="checkbox" class="checkbox">
-                                    <label for="<?php echo self::$opt_not_live_on_channel; ?>"><span class="chktitle">Turn on for <b>channel</b> live streams: <sup class="orange">beta</sup></span> 
+                                    <label for="<?php echo self::$opt_not_live_on_channel; ?>"><span class="chktitle">Turn on for <b>channel</b> live streams:</span> 
                                         If your live stream embed is channel-based, YouTube might show an error message if there is no upcoming or currently streaming video from your channel. 
-                                        Instead of showing an error, you can display some "coming soon" content in that space for your visitors to see until you've scheduled a live stream
-                                        (Once you've scheduled something, YouTube will display the usual countdown until the stream happens). 
+                                        Instead of showing that player, you can display some "coming soon" content in that space for your visitors to see until your video begins to live stream. 
+                                        The plugin will automatically switch to your video's live stream once it's active.
                                         In the <em>"Not Live" Fallback Content</em> box below, enter what you would like to appear when nothing is playing or scheduled to play yet on your channel.
                                         You can even insert shortcodes from our plugin into the box below (shortcodes from other plugins may or may not work correctly).
-                                        <strong>NOTE: This feature for channel live streams is experimental, but it will preserve your API quota. We recommend trying this instead of the direct-link option, to see if it works for your site. We hope to improve this feature over time. If you chose to use this feature, do <u>not</u> put another live stream embed below.</strong>
+                                        <strong>NOTE: We recommend trying this instead of the direct-link option, to see if it works for your site. We hope to improve this feature over time. If you chose to use this feature, do <u>not</u> put another live stream embed below.</strong>
                                     </label>
                                     <div class="p not-live-content">
                                         <p>                                            
@@ -5340,6 +5645,12 @@ class YouTubePrefsPro
                                         wp_editor(wp_kses_post($all[self::$opt_not_live_content]), self::$opt_not_live_content, array('textarea_rows' => 7));
                                         ?> 
                                     </div>
+                                     <p class="not-live-content">
+                                        <label for="<?php echo self::$opt_not_live_showtime; ?>"><b class="chktitle">Reveal Video Countdown Before Start Time: <sup class="orange">new</sup></b></label>
+                                        <input name="<?php echo self::$opt_not_live_showtime; ?>" min="1" id="<?php echo self::$opt_not_live_showtime; ?>" type="number" class="textinput" style="width: 60px;" value="<?php echo esc_attr(trim($all[self::$opt_not_live_showtime])); ?>">
+                                        Enter how many minutes before the scheduled livestream that you would like to hide the above content and reveal the video embed's countdown. This will give your visitors time to watch the countdown and view your livestream start naturally, instead of needing to refresh the page at precisely the right start time.
+                                        NOTE: For now, this feature only works with channel-based live streams.
+                                    </p>                                    
                                 </div>
                             </div>
                         </div>
@@ -5863,9 +6174,9 @@ class YouTubePrefsPro
 
                                         <div class="pad10">
                                             <input type="button" class="button button-primary" value="Click to clear YouTube cache"/>
-                                            <span style="display: none;" id="clearspdcloading" class="orange bold">Clearing...</span>
-                                            <span  class="orange bold" style="display: none;" id="clearspdcsuccess">Finished clearing YouTube cache.</span>
-                                            <span class="orange bold" style="display: none;" id="clearspdcfailed">Sorry, there seemed to be a problem clearing the cache.</span>
+                                            <span style="display: none;" class="orange bold clearspdcloading">Clearing...</span>
+                                            <span  class="orange bold clearspdcsuccess" style="display: none;">Finished clearing YouTube cache.</span>
+                                            <span class="orange bold clearspdcfailed" style="display: none;">Sorry, there seemed to be a problem clearing the cache.</span>
                                         </div>
                                         <label>
                                             <b class="chktitle">Cache Lifetime (hours): </b>
@@ -6764,11 +7075,11 @@ class YouTubePrefsPro
                     }
 
 
-                    jQuery('#boxspdc input.button').on('click', function ()
+                    jQuery('#boxspdc input.button, .clear-live-cache input.button').on('click', function ()
                     {
-                        jQuery('#clearspdcloading').show();
-                        jQuery('#clearspdcfailed').hide();
-                        jQuery('#clearspdcsuccess').hide();
+                        jQuery('.clearspdcloading').show();
+                        jQuery('.clearspdcfailed').hide();
+                        jQuery('.clearspdcsuccess').hide();
                         $clearbutton = jQuery(this);
                         $clearbutton.prop('disabled', true);
                         jQuery.ajax({
@@ -6781,20 +7092,20 @@ class YouTubePrefsPro
                             {
                                 if (response.type == "success")
                                 {
-                                    jQuery("#clearspdcsuccess").show();
+                                    jQuery(".clearspdcsuccess").show();
                                 }
                                 else
                                 {
-                                    jQuery("#clearspdcfailed").show();
+                                    jQuery(".clearspdcfailed").show();
                                 }
                             },
                             error: function (xhr, ajaxOptions, thrownError)
                             {
-                                jQuery("#clearspdcfailed").show();
+                                jQuery(".clearspdcfailed").show();
                             },
                             complete: function ()
                             {
-                                jQuery('#clearspdcloading').hide();
+                                jQuery('.clearspdcloading').hide();
                                 $clearbutton.prop('disabled', false);
                             }
 
@@ -6994,6 +7305,16 @@ class YouTubePrefsPro
         $new_options[self::$opt_vi_hide_monetize_tab] = self::postchecked(self::$opt_vi_hide_monetize_tab) ? 1 : 0;
 
         $new_options[self::$opt_cc_lang_pref] = sanitize_title($_POST[self::$opt_cc_lang_pref]);
+
+        $_not_live_showtime = 180;
+        try
+        {
+            $_not_live_showtime = is_numeric(trim($_POST[self::$opt_not_live_showtime])) ? intval(trim($_POST[self::$opt_not_live_showtime])) : $_not_live_showtime;
+        }
+        catch (Exception $ex)
+        {            
+        }
+        $new_options[self::$opt_not_live_showtime] = $_not_live_showtime;
 
         $_rel = 0;
         try
@@ -7966,6 +8287,7 @@ class YouTubePrefsPro
                     'stopMobileBuffer' => self::$alloptions[self::$opt_stop_mobile_buffer] == '1' ? true : false,
                     'facade_mode' => self::$alloptions[self::$opt_facade_mode] == '1' ? true : false,
                     'not_live_on_channel' => self::$alloptions[self::$opt_not_live_on_channel] == '1' ? true : false,
+                    'not_live_showtime' => intval(self::$alloptions[self::$opt_not_live_showtime]),
                     'vi_active' => false, //self::$alloptions[self::$opt_vi_active] == '1' ? true : false,
                     'vi_js_posttypes' => array() // self::$alloptions[self::$opt_vi_js_posttypes]
                 );

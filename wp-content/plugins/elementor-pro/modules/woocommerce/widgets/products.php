@@ -307,11 +307,15 @@ class Products extends Products_Base {
 				'size_units' => [ 'px', 'em', 'rem', 'custom' ],
 				'range' => [
 					'px' => [
-						'min' => 0,
 						'max' => 100,
 					],
+					'em' => [
+						'max' => 10,
+					],
+					'rem' => [
+						'max' => 10,
+					],
 				],
-				'default' => [ 'px' => 0 ],
 				'selectors' => [
 					'{{WRAPPER}}' => '--products-title-spacing: {{SIZE}}{{UNIT}};',
 				],

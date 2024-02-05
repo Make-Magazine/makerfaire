@@ -444,6 +444,7 @@ class Gum_Elementor_Widget_Heading extends Widget_Base {
       ]
     );
 
+
     $this->add_responsive_control(
       'main_title_padding',
       [
@@ -451,7 +452,7 @@ class Gum_Elementor_Widget_Heading extends Widget_Base {
         'type' => Controls_Manager::DIMENSIONS,
         'size_units' => [ 'px', 'em', '%' ],
         'selectors' => [
-          '{{WRAPPER}} .section-main-title span.maintitle' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+          '{{WRAPPER}} .section-main-title span.maintitle' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}}; margin: 0 0.33em;',
         ],
         'conditions' => [
           'relation' => 'or',
@@ -470,7 +471,6 @@ class Gum_Elementor_Widget_Heading extends Widget_Base {
         ],
       ]
     ); 
-
 
     $this->add_control(
       'main_title_radius',

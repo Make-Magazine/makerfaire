@@ -18,7 +18,7 @@ class Gum_Elementor_Widget_Icon_Button{
 
       add_action( 'elementor/element/button/section_style/after_section_end', array( $this, 'register_section_icon_style_controls') , 999 );
       add_action( 'elementor/element/before_section_start', [ $this, 'enqueue_script' ] );
-      add_action( 'elementor/element/video/section_video_style/after_section_end', array( $this, 'register_section_play_icon_controls') , 999 );
+      add_action( 'elementor/element/video/section_image_overlay_style/after_section_end', array( $this, 'register_section_play_icon_controls') , 999 );
 
   }
 
@@ -255,6 +255,7 @@ class Gum_Elementor_Widget_Icon_Button{
       ]
     );
 
+ 
     $element->add_control(
       'play_icon_radius',
       [
@@ -438,6 +439,7 @@ class Gum_Elementor_Widget_Icon_Button{
     $element->end_controls_tabs();
 
     $element->end_injection();
+
   }
 
 

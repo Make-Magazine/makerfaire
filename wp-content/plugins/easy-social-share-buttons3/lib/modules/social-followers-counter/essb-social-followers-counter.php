@@ -464,6 +464,17 @@ class ESSBSocialFollowersCounter {
 			// apply additional check for previously cached counters for blanked values
 			$cached_counters = get_option ( $this->essb3_cache_option_name );
 			
+			/**
+			 * @since 9.3 Disable the internal cache
+			 */
+			if (essb_option_bool_value('fanscounter_disable_cache')) {
+			    $cached_counters = array();
+			}
+			
+			if (has_filter('essb_followers_counter_reading_cached_values')) {
+			    $cached_counters = apply_filters('essb_followers_counter_reading_cached_values', $cached_counters);
+			}
+			
 			foreach ( $this->active_social_networks() as $social ) {
 				$prev_value = isset($cached_counters[$social]) ? $cached_counters[$social] : 0;
 				$new_value = isset($counters[$social]) ? $counters[$social] : 0;

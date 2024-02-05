@@ -31,6 +31,10 @@ if (!function_exists('essb_generate_morebutton_code')) {
 			$user_title = esc_html__('Share via', 'essb');
 		}
 		
+		if (has_filter('essb_morepopup_title')) {
+		    $user_title = apply_filters('essb_morepopup_title', $user_title);
+		}
+		
 		// correcting mobile popup style of mobile share buttons - it should be default classic style
 		if ($position == 'sharebottom' || $position == 'sharebar' || $position == 'sharepoint') {
 			$user_set_style_ofpop = '';

@@ -95,13 +95,18 @@ class Admin extends App {
 
 	private function get_rollback_versions() {
 		$rollback_versions = get_transient( 'elementor_pro_rollback_versions_' . ELEMENTOR_PRO_VERSION );
+
 		if ( false === $rollback_versions ) {
 			$max_versions = 30;
 
-			$versions = API::get_previous_versions();
+			$versions = apply_filters( 'elementor-pro/settings/rollback/versions', [] );
 
-			if ( is_wp_error( $versions ) ) {
-				return [];
+			if ( empty( $versions ) ) {
+				$versions = API::get_previous_versions();
+
+				if ( is_wp_error( $versions ) ) {
+					return [];
+				}
 			}
 
 			$rollback_versions = [];
@@ -192,19 +197,31 @@ class Admin extends App {
 			wp_die( esc_html__( 'Error occurred, The version selected is invalid. Try selecting different version.', 'elementor-pro' ) );
 		}
 
-		$package_url = API::get_plugin_package_url( $version );
-		if ( is_wp_error( $package_url ) ) {
-			wp_die( $package_url ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+		/**
+		 * Filter to allow override the rollback process.
+		 * Should return an instance of `Rollback` class.
+		 *
+		 * @since 3.16.0
+		 *
+		 * @param Rollback|null $rollback The rollback instance.
+		 * @param string        $version  The version to roll back to.
+		 */
+		$rollback = apply_filters( 'elementor-pro/settings/rollback', null, $version );
+
+		if ( ! ( $rollback instanceof Rollback ) ) {
+			$package_url = API::get_plugin_package_url( $version );
+
+			if ( is_wp_error( $package_url ) ) {
+				wp_die( $package_url ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+			}
+
+			$rollback = new Rollback( [
+				'version' => $version,
+				'plugin_name' => ELEMENTOR_PRO_PLUGIN_BASE,
+				'plugin_slug' => basename( ELEMENTOR_PRO__FILE__, '.php' ),
+				'package_url' => $package_url,
+			] );
 		}
-
-		$plugin_slug = basename( ELEMENTOR_PRO__FILE__, '.php' );
-
-		$rollback = new Rollback( [
-			'version' => $version,
-			'plugin_name' => ELEMENTOR_PRO_PLUGIN_BASE,
-			'plugin_slug' => $plugin_slug,
-			'package_url' => $package_url,
-		] );
 
 		$rollback->run();
 
@@ -219,17 +236,7 @@ class Admin extends App {
 
 	public function plugin_row_meta( $plugin_meta, $plugin_file ) {
 		if ( ELEMENTOR_PRO_PLUGIN_BASE === $plugin_file ) {
-			$plugin_slug = basename( ELEMENTOR_PRO__FILE__, '.php' );
-			$plugin_name = esc_html__( 'Elementor Pro', 'elementor-pro' );
-
 			$row_meta = [
-				'view-details' => sprintf( '<a href="%s" class="thickbox open-plugin-details-modal" aria-label="%s" data-title="%s">%s</a>',
-					esc_url( network_admin_url( 'plugin-install.php?tab=plugin-information&plugin=' . $plugin_slug . '&TB_iframe=true&width=600&height=550' ) ),
-					/* translators: %s: Plugin name - Elementor Pro. */
-					esc_attr( sprintf( esc_html__( 'More information about %s', 'elementor-pro' ), $plugin_name ) ),
-					esc_attr( $plugin_name ),
-					__( 'View details', 'elementor-pro' )
-				),
 				'changelog' => '<a href="https://go.elementor.com/pro-changelog/" title="' . esc_attr( esc_html__( 'View Elementor Pro Changelog', 'elementor-pro' ) ) . '" target="_blank">' . esc_html__( 'Changelog', 'elementor-pro' ) . '</a>',
 			];
 

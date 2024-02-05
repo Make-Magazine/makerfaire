@@ -201,6 +201,9 @@ class Gum_Elementor_Widget_Post_list extends Widget_Base {
         'label'     => esc_html__( 'Suffix', 'gum-elementor-addon' ),
         'type'      => Controls_Manager::TEXT,
         'default'   => '',
+        'ai' => [
+          'active' => false,
+        ],
         'condition' => [
           'show_excerpt' => 'yes',
           'post_content_word!' => ''
@@ -224,13 +227,15 @@ class Gum_Elementor_Widget_Post_list extends Widget_Base {
       ]
     );
 
-
    $this->add_control(
       'post_category_prefix',
       [
         'label'     => esc_html__( 'Category prefix', 'gum-elementor-addon' ),
         'type'      => Controls_Manager::TEXT,
         'default'   => '',
+        'ai' => [
+          'active' => false,
+        ],
         'condition' => [
           'show_category!' => ''
         ],
@@ -260,6 +265,9 @@ class Gum_Elementor_Widget_Post_list extends Widget_Base {
         'label'     => esc_html__( 'Date Prefix', 'gum-elementor-addon' ),
         'type'      => Controls_Manager::TEXT,
         'default'   => '',
+        'ai' => [
+          'active' => false,
+        ],
         'condition' => [
           'show_date!' => ''
         ],
@@ -267,12 +275,132 @@ class Gum_Elementor_Widget_Post_list extends Widget_Base {
     );   
 
 
+    $this->add_control(
+      'show_author',
+      [
+        'label' => esc_html__( 'Display post author?', 'gum-elementor-addon' ),
+        'type' => Controls_Manager::SELECT,
+        'options' => [
+          '' => esc_html__( 'None', 'gum-elementor-addon' ),
+          'top' => esc_html__( 'Before Title', 'gum-elementor-addon' ),
+          'mid' => esc_html__( 'After Title', 'gum-elementor-addon' ),
+          'bottom' => esc_html__( 'After Content', 'gum-elementor-addon' ),
+          'beforecat' => esc_html__( 'Before Category', 'gum-elementor-addon' ),
+          'aftercat' => esc_html__( 'After Category', 'gum-elementor-addon' ),
+          'beforedate' => esc_html__( 'Before Date', 'gum-elementor-addon' ),
+          'afterdate' => esc_html__( 'After Date', 'gum-elementor-addon' ),
+        ],
+        'default' => ''
+      ]
+    );
+
+   $this->add_control(
+      'post_author_prefix',
+      [
+        'label'     => esc_html__( 'Author Prefix', 'gum-elementor-addon' ),
+        'type'      => Controls_Manager::TEXT,
+        'default'   => '',
+        'ai' => [
+          'active' => false,
+        ],
+        'condition' => [
+          'show_author!' => ''
+        ],
+      ]
+    );   
+
     $this->end_controls_section();
 
     $this->start_controls_section(
       'section_data',
       [
         'label' => esc_html__( 'Query', 'gum-elementor-addon' ),
+      ]
+    );
+
+
+    $this->add_control(
+      'filter_by',
+      [
+        'label' => esc_html__( 'Selection', 'gum-elementor-addon' ),
+        'type' => Controls_Manager::SELECT,
+        'options' => [
+          '' => esc_html__( 'Select All', 'gum-elementor-addon' ),
+          'category' => esc_html__( 'By Category', 'gum-elementor-addon' ),
+          'tag' => esc_html__( 'By Tag', 'gum-elementor-addon' ),
+        ],
+        'default' => ''
+      ]
+    );
+
+
+    $categories_options = array(
+       'only'=> esc_html__( 'Same as Post', 'gum-elementor-addon' )
+     );
+
+    $categories_args = array(
+          'orderby' => 'name',
+          'show_count' => 0,
+          'pad_counts' => 0,
+          'hierarchical' => 0,
+    );
+
+    $categories=get_categories($categories_args);
+
+  if(count($categories)){
+
+      foreach ( $categories as $category ) {
+        $categories_options[$category->term_id] = $category->name;
+      }
+
+   }
+
+    $this->add_control(
+      'cat_ids',
+      [
+        'label' => esc_html__( 'By Category', 'gum-elementor-addon' ),
+        'type' => Controls_Manager::SELECT,
+        'options' => $categories_options,
+        'default' => 'all',
+        'condition' => [
+          'filter_by' => 'category'
+        ],
+      ]
+    );
+
+
+    $tags_options = array(
+       'only'=> esc_html__( 'Same as Post', 'gum-elementor-addon' )
+     );
+
+   $tags_args = array(
+            'orderby' => 'name',
+            'show_count' => 0,
+            'pad_counts' => 0,
+            'hierarchical' => 0,
+    );
+
+
+    $tags=get_tags($tags_args);
+
+    if(count($tags)){
+
+        foreach ( $tags as $term ) {
+          $tags_options[$term->term_id] = $term->name;
+        }
+
+     }
+
+    $this->add_control(
+      'tags_ids',
+      [
+        'label' => esc_html__( 'By Tags', 'gum-elementor-addon' ),
+        'type' => Controls_Manager::SELECT,
+        'options' => $tags_options,
+        'default' => '',
+        'condition' => [
+          'filter_by' => 'tag'
+        ],
       ]
     );
 
@@ -301,7 +429,6 @@ class Gum_Elementor_Widget_Post_list extends Widget_Base {
         'default'=>3
       ]
     );
-
 
     $this->add_control(
       'source_filter_heading',
@@ -336,37 +463,18 @@ class Gum_Elementor_Widget_Post_list extends Widget_Base {
     );
 
 
-    $categories_options = array(
-       'all'=> esc_html__( 'All Category', 'gum-elementor-addon' ),
-       'only'=> esc_html__( 'Same This Post', 'gum-elementor-addon' )
-     );
-
-    $categories_args = array(
-          'orderby' => 'name',
-          'show_count' => 0,
-          'pad_counts' => 0,
-          'hierarchical' => 0,
-    );
-
-    $categories=get_categories($categories_args);
-
-  if(count($categories)){
-
-      foreach ( $categories as $category ) {
-        $categories_options[$category->term_id] = $category->name;
-      }
-
-   }
-
     $this->add_control(
-      'cat_ids',
+      'skip_previous',
       [
-        'label' => esc_html__( 'By Category', 'gum-elementor-addon' ),
-        'type' => Controls_Manager::SELECT,
-        'options' => $categories_options,
-        'default' => 'all',
+        'label' => esc_html__( 'Exclude Previous Post', 'gum-elementor-addon' ),
+        'type' => Controls_Manager::SWITCHER,
+        'label_off' => esc_html__( 'No', 'gum-elementor-addon' ),
+        'label_on' => esc_html__( 'Yes', 'gum-elementor-addon' ),
+        'default' => '',
+        'description' => esc_html__( 'Exclude post from previous module', 'gum-elementor-addon' ),
       ]
     );
+
 
 
 
@@ -713,19 +821,10 @@ class Gum_Elementor_Widget_Post_list extends Widget_Base {
     $this->start_controls_section(
       'post_title_style',
       [
-        'label' => esc_html__( 'Content', 'gum-elementor-addon' ),
+        'label' => esc_html__( 'Post Title', 'gum-elementor-addon' ),
         'tab'   => Controls_Manager::TAB_STYLE,
       ]
     );    
-
-
-    $this->add_control(
-      'post_title_heading',
-      [
-        'label' => esc_html__( 'Post Title', 'gum-elementor-addon' ),
-        'type' => Controls_Manager::HEADING,
-      ]
-    );
 
    $this->add_control(
         'post_title_word',
@@ -771,9 +870,30 @@ class Gum_Elementor_Widget_Post_list extends Widget_Base {
     );
 
     $this->add_responsive_control(
+      'post_title_topmargin',
+      [
+        'label' => esc_html__( 'Top Spacing', 'gum-elementor-addon' ),
+        'type' => Controls_Manager::SLIDER,
+        'range' => [
+          'em' => [
+            'max' => 10,
+          ],
+          'px' => [
+            'max' => 2000,
+          ],
+        ],  
+        'default'=>[],
+        'size_units' => [ 'px', 'em' ],
+        'selectors' => [
+          '{{WRAPPER}} li .post-title' => 'margin-top: {{SIZE}}{{UNIT}};',
+        ],
+      ]
+    );
+
+    $this->add_responsive_control(
       'post_title_margin',
       [
-        'label' => esc_html__( 'Spacing', 'gum-elementor-addon' ),
+        'label' => esc_html__( 'Bottom Spacing', 'gum-elementor-addon' ),
         'type' => Controls_Manager::SLIDER,
         'range' => [
           'em' => [
@@ -791,20 +911,18 @@ class Gum_Elementor_Widget_Post_list extends Widget_Base {
       ]
     );
 
+    $this->end_controls_section();
 
-
-    $this->add_control(
-      'post_content_heading',
+    $this->start_controls_section(
+      'post_content_style',
       [
         'label' => esc_html__( 'Post Excerpt', 'gum-elementor-addon' ),
-        'type' => Controls_Manager::HEADING,
-        'separator' => 'before',
+        'tab'   => Controls_Manager::TAB_STYLE,
         'condition' => [
           'show_excerpt' => 'yes',
         ],
       ]
-    );
-
+    );    
 
     $this->add_group_control(
       Group_Control_Typography::get_type(),
@@ -833,9 +951,34 @@ class Gum_Elementor_Widget_Post_list extends Widget_Base {
     );
 
     $this->add_responsive_control(
+      'post_content_topmargin',
+      [
+        'label' => esc_html__( 'Top Spacing', 'gum-elementor-addon' ),
+        'type' => Controls_Manager::SLIDER,
+        'range' => [
+          'em' => [
+            'max' => 10,
+          ],
+          'px' => [
+            'max' => 2000,
+          ],
+        ],  
+        'default'=>[],
+        'size_units' => [ 'px', 'em' ],
+        'selectors' => [
+          '{{WRAPPER}} li .post-excerpt' => 'margin-top: {{SIZE}}{{UNIT}};',
+        ],
+        'condition' => [
+          'show_excerpt' => 'yes',
+        ],
+      ]
+    );
+
+
+    $this->add_responsive_control(
       'post_content_margin',
       [
-        'label' => esc_html__( 'Spacing', 'gum-elementor-addon' ),
+        'label' => esc_html__( 'Bottom Spacing', 'gum-elementor-addon' ),
         'type' => Controls_Manager::SLIDER,
         'range' => [
           'em' => [
@@ -855,6 +998,17 @@ class Gum_Elementor_Widget_Post_list extends Widget_Base {
         ],
       ]
     );
+
+
+    $this->end_controls_section();
+
+    $this->start_controls_section(
+      'post_meta_style',
+      [
+        'label' => esc_html__( 'Post Meta', 'gum-elementor-addon' ),
+        'tab'   => Controls_Manager::TAB_STYLE,
+      ]
+    );    
 
 
     $this->add_control(
@@ -899,7 +1053,7 @@ class Gum_Elementor_Widget_Post_list extends Widget_Base {
       Group_Control_Typography::get_type(),
       [
         'name' => 'typography_post_category',
-        'selector' => '{{WRAPPER}} .post-category',
+        'selector' => '{{WRAPPER}} .post-category,{{WRAPPER}} .post-category a',
         'condition' => [
           'show_category!' => ''
         ],
@@ -913,7 +1067,7 @@ class Gum_Elementor_Widget_Post_list extends Widget_Base {
         'type' =>  Controls_Manager::COLOR,
         'default' => '',
         'selectors' => [
-          '{{WRAPPER}} .post-category' => 'color: {{VALUE}};',
+          '{{WRAPPER}} .post-category,{{WRAPPER}} .post-category a' => 'color: {{VALUE}};',
         ],
         'condition' => [
           'show_category!' => ''
@@ -932,6 +1086,7 @@ class Gum_Elementor_Widget_Post_list extends Widget_Base {
         ],
         'selectors' => [
           '{{WRAPPER}} .post-category:hover,{{WRAPPER}} .post-category:focus' => 'color: {{VALUE}};',
+          '{{WRAPPER}} .post-category a:hover,{{WRAPPER}} .post-category a:focus' => 'color: {{VALUE}};',
         ]
       ]
     );
@@ -1001,6 +1156,71 @@ class Gum_Elementor_Widget_Post_list extends Widget_Base {
       ]
     );
 
+
+    $this->add_control(
+      'post_author_heading',
+      [
+        'label' => esc_html__( 'Post Author', 'gum-elementor-addon' ),
+        'type' => Controls_Manager::HEADING,
+        'separator' => 'before',
+        'condition' => [
+          'show_author!' => ''
+        ],
+      ]
+    );
+
+    $this->add_responsive_control(
+      'post_author_space',
+      [
+        'label' => esc_html__( 'Spacing', 'gum-elementor-addon' ),
+        'type' => Controls_Manager::SLIDER,
+        'range' => [
+          'em' => [
+            'max' => 10,
+          ],
+          'px' => [
+            'max' => 2000,
+          ],
+        ],  
+        'default'=>['size'=>1,'unit'=>'em'],
+        'size_units' => [ 'px', 'em' ],
+        'selectors' => [
+          '{{WRAPPER}} .post-item .post-title ~ .post-author' => 'margin-top: {{SIZE}}{{UNIT}};',
+          '{{WRAPPER}} .post-item .post-author + .post-title' => 'margin-top: {{SIZE}}{{UNIT}};',
+          '{{WRAPPER}} .post-item .post-metas .post-author' => 'margin-left: {{SIZE}}{{UNIT}};',
+        ],
+        'condition' => [
+          'show_author!' => ''
+        ],
+      ]
+    );
+
+    $this->add_group_control(
+      Group_Control_Typography::get_type(),
+      [
+        'name' => 'typography_post_author',
+        'selector' => '{{WRAPPER}} .post-author',
+        'condition' => [
+          'show_author!' => ''
+        ],
+      ]
+    );
+
+    $this->add_control(
+      'post_author_color',
+      [
+        'label' => esc_html__( 'Color', 'elementor' ),
+        'type' =>  Controls_Manager::COLOR,
+        'default' => '',
+        'selectors' => [
+          '{{WRAPPER}} .post-author' => 'color: {{VALUE}};',
+        ],
+        'condition' => [
+          'show_author!' => ''
+        ],
+      ]
+    );
+
     $this->end_controls_section();
 
   }
@@ -1035,30 +1255,105 @@ class Gum_Elementor_Widget_Post_list extends Widget_Base {
     $post_not_ids[] = $post_id = get_the_ID();
   }
 
-  if($cat_ids && $cat_ids!='all'){
-
-    if($cat_ids == 'only'){
-      $post_id =  isset($post_id) ? $post_id : get_the_ID(); 
-
-      $cat_options= [];
-
-      if( $categories= get_the_category($post_id)){
-
-
-        foreach ($categories as $category) {
-          $cat_options[]= $category->term_id;
-        }
-
-      }
-
-      $query_params['cat'] = $cat_options;
-
-    }
-    else{
-      $query_params['cat']= trim($cat_ids);
-    }    
+  if( $skip_previous && $skip_previous == 'yes'){
+    $excludes =  $this->get_previous_blog();
+    $post_not_ids = array_merge($post_not_ids, $excludes );
   }
+
+
+  switch ($filter_by) {
+    case 'category':
+
+            if($cat_ids == 'only'){
+              $post_id =  isset($post_id) ? $post_id : get_the_ID(); 
+
+              $cat_options= [];
+
+              if( $categories= get_the_category($post_id)){
+
+                foreach ($categories as $category) {
+                  $cat_options[]= $category->term_id;
+                }
+
+              }
+
+              $query_params['cat'] = $cat_options;
+
+            }
+            else{
+              $query_params['cat']= trim($cat_ids);
+            }    
+      break;      
+    case 'tag':
+
+          if($tags_ids ==' only' ){
+              $post_id =  isset($post_id) ? $post_id : get_the_ID(); 
+
+              $tag_options= [];
+
+              if( $tags= get_the_tags($post_id)){
+
+                foreach ($tags as $tag) {
+                  $tag_options[]= $tag->term_id;
+                }
+
+              }
+
+            $query_params['tax_query'] = array(
+              array(
+                'taxonomy' => 'post_tag',
+                'field' => 'id',
+                'terms' => array( $tag_options ),
+                'operator' => 'IN'
+              )
+            );
+
+          }
+          else{
+
+            $query_params['tax_query'] = array(
+              array(
+                'taxonomy' => 'post_tag',
+                'field' => 'id',
+                'terms' => array( $tags_ids ),
+                'operator' => 'IN'
+              )
+            );
+          }
+      break;
+    default:
+          if($cat_ids && $cat_ids!='all'){
+
+            if($cat_ids == 'only'){
+              $post_id =  isset($post_id) ? $post_id : get_the_ID(); 
+
+              $cat_options= [];
+
+              if( $categories= get_the_category($post_id)){
+
+
+                foreach ($categories as $category) {
+                  $cat_options[]= $category->term_id;
+                }
+
+              }
+
+              $query_params['cat'] = $cat_options;
+
+            }
+            else{
+              $query_params['cat']= trim($cat_ids);
+            }    
+          }
+
+
+      break;
+  }
+
+
+
  
+
   if($source_orderby=='view'){
       if(!isset($meta_query['relation'])) $meta_query['relation'] = 'AND';
       $meta_query[]=array(
@@ -1105,7 +1400,7 @@ class Gum_Elementor_Widget_Post_list extends Widget_Base {
         $post_title = wp_trim_words($post_title ,  absint($post_title_word) );
       }
 
-      $post_content = $post_date = $post_category = '';
+      $post_content = $post_date = $post_category = $post_author = '';
 
       if( $show_excerpt =='yes'){
 
@@ -1149,24 +1444,55 @@ class Gum_Elementor_Widget_Post_list extends Widget_Base {
 
       }
 
+      $cat_group = array($post_category);
+
+      if( $show_author !=''){
+
+        $post_author_prefix = isset($post_author_prefix) ? esc_html($post_author_prefix) : "";
+
+        $author_id = get_post_field( 'post_author', $post_id );
+        $meta_type = get_the_author_meta('nickname', $author_id);
+        $meta_url = get_the_author_meta('url',$author_id);
+
+        $post_author = sprintf('<span class="post-author">%1s%2s</span>', $post_author_prefix, $meta_type );
+
+      }
+
 
       if( $show_date !=''){
 
         $post_date_prefix = isset($post_date_prefix) ? esc_html($post_date_prefix) : "";
         $post_date = sprintf('<span class="post-date">%1s%2s</span>', $post_date_prefix, get_the_date("d M Y", $post_id));
+        $date_group = array($post_date);
 
-        if( $show_date == 'beforecat' ){ $post_category = '<div class="post-metas">'.$post_date.$post_category."</div>"; $post_date = "";}elseif( $show_date == 'aftercat' ){ $post_category = '<div class="post-metas">'.$post_category.$post_date."</div>"; $post_date = ""; }
+
+        if( $show_author == 'beforedate' ){ array_push($date_group, $post_author );  $date_group = array_reverse ( $date_group ); $post_author = "";}elseif( $show_author == 'afterdate' ){ array_push($date_group, $post_author ); $post_author = ""; }
+          elseif( $show_author == 'aftercat' ){ array_push($cat_group, $post_author ); $post_author = ""; }elseif( $show_author == 'beforecat' ){ array_push($cat_group, $post_author ); $cat_group = array_reverse ( $cat_group ); $post_author = ""; }
+
+
+        if( $show_date == 'beforecat' ){ array_push($cat_group, join($date_group) ); $cat_group = array_reverse ( $cat_group ); $post_date = ""; }elseif( $show_date == 'aftercat' ){ array_push($cat_group, join($date_group) ); $post_date = ""; }else{ if( count($date_group) > 1 ){
+          $post_date = '<div class="post-metas">'.join($date_group)."</div>";
+
+        } }
+ 
+      }
+
+      if( count($cat_group) > 1 ){
+        $post_category = '<div class="post-metas">'.join($cat_group)."</div>";
       }
 
       ?>
       <li class="post-item"><div class="item-wrap"><?php if( $show_image==='yes' && $image_html){ echo '<a class="post-thumbnail" href="'.esc_url($post_url).'">'.$image_html.'</a>'; } ?>
         <div class="post-item-content">
+          <?php if($show_author==='top'){ print $post_author; }?>
           <?php if($show_date==='top'){ print $post_date; }?>
           <?php if($show_category==='top'){ print $post_category; }?>
           <a class="post-title" href="<?php print esc_url($post_url);?>"><?php esc_html_e($post_title);?></a>
+          <?php if($show_author==='mid'){ print $post_author; }?>
           <?php if($show_date==='mid'){ print $post_date; }?>
           <?php if($show_category==='mid'){ print $post_category; }?>
           <?php if($show_excerpt == 'yes'){ printf( '<div class="post-excerpt">%s</div>', $post_content); } ?>
+          <?php if($show_author==='bottom'){ print $post_author; }?>
           <?php if($show_date==='bottom'){ print $post_date; }?>
           <?php if($show_category==='bottom'){ print $post_category; }?>
         </div>
@@ -1180,6 +1506,36 @@ class Gum_Elementor_Widget_Post_list extends Widget_Base {
     $this->add_render_attribute( 'list_wrapper', 'class', 'posts-list');
 
     echo '<ul '.$this->get_render_attribute_string( 'list_wrapper' ).'>'.join('<li class="post-divider" style="display:none;"><hr/></li>',$rows_html).'</ul>';
+
+  }
+
+  public function get_previous_blog(  ) {
+
+    global $gum_helper;
+
+    if(!isset($gum_helper) || !isset( $gum_helper['blog_ids'] )){
+      $gum_helper['blog_ids'] = array();
+    }
+
+    return $gum_helper['blog_ids'];
+
+  } 
+
+
+  public function add_toprevious_blog( $ids ) {
+
+    global $gum_helper;
+
+    $previous_blog = $this->get_previous_blog();
+
+    if( is_array($ids) ){
+      $previous_blog = array_merge( $previous_blog, $ids );
+    }
+    else{
+      array_push($previous_blog, $ids );
+    }
+
+    $gum_helper['blog_ids'] = array_unique( $previous_blog );
 
   }
 

@@ -571,6 +571,10 @@ body .epyt-gallery-img-gdpr {
     bottom: 0;
 }
 
+.epyt-do-live-fallback {
+    display: none;
+}
+
 /********* facade */
 
 .epyt-facade {
