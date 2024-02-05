@@ -10,7 +10,7 @@ $thumbnail_id               = get_post_thumbnail_id();
 if($thumbnail_id) {
     $image_src = wp_get_attachment_image_src( $thumbnail_id, 'full' );
     $image_alt = get_post_meta ( $thumbnail_id, '_wp_attachment_image_alt', true );
-    $image_alt = !empty($image_alt) ? $image_alt : get_the_title() . " Project Image for " . "Maker Faire " . $faire_name . " " . $faire_year;;	
+    $image_alt = !empty($image_alt) ? $image_alt : get_the_title() . " Project Image for " . "Maker Faire " . $faire_name . " " . $faire_year;
 }
 $exhibit_id                 = get_the_ID();
 $exhibit_photo              = (isset($image_src[0])?$image_src[0]:'');
@@ -114,7 +114,9 @@ $maker_data = get_field("maker_data");
             <?php } ?>     
         </div>
         <div class="project-picture">
-            <img class="featured-image" src="<?php echo $exhibit_photo;?>" alt="<?php echo $image_alt; ?>" />
+            <?php if($thumbnail_id) { ?>
+                <img class="featured-image" src="<?php echo $exhibit_photo;?>" alt="<?php echo $image_alt; ?>" />
+            <?php } ?>
         </div>
     </section>
     
