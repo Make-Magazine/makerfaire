@@ -811,7 +811,7 @@ function set_final_weekend($lead,$form){
 	}
 }
 
-function setLocChgRpt($subarea, $locCode='', $entry, $type='add'){
+function setLocChgRpt($subarea, $locCode='', $entry=array(), $type='add'){
   global $wpdb;
   $sql = "SELECT area, subarea "
             . "FROM `wp_mf_faire_subarea` "

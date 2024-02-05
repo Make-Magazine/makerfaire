@@ -15,7 +15,7 @@ build_wp_mf_maker(); //for testing*/
  */
 //add_action('cron_update_mfTables', 'update_mfTables',10,3);
 
-function update_mfTables($form,$limit=0,$start){
+function update_mfTables($form,$limit=0,$start=0){
   error_log('updating maker tables for form '. $form.' ('.$start.', '.$limit.')');
 
   global $wpdb;
