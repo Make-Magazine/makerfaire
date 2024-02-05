@@ -16,7 +16,7 @@ defined( 'ABSPATH' ) or die( 'This file cannot be called directly!' );
 $type = ( ! empty( $_REQUEST['type'] ) ? sanitize_text_field( $_REQUEST['type'] ) : null );
 $upcoming = ( ! empty( $_REQUEST['upcoming'] ) ? sanitize_text_field( $_REQUEST['upcoming'] ) : false );
 $number = ( ! empty( $_REQUEST['number'] ) ? sanitize_text_field( $_REQUEST['number'] ) : null );
-$categories = ( ! empty( $_REQUEST['categories'] ) ? sanitize_text_field( $_REQUEST['categories'] ) : null );
+$categories = ( ! empty( $_REQUEST['categories'] ) ? sanitize_text_field( $_REQUEST['categories'] ) : '' );
 // add quotes around each faire type in the $categories string so that it will work with a mySQL IN statement
 $categories = str_replace(' ', '', $categories);
 $categories_string = '"' . str_replace(',', '","', $categories) . '"';
@@ -101,8 +101,8 @@ if ( $type == 'map' ) {
     $point['event_type']                = html_entity_decode(trim( (string) $row['event_type'] ));
     $point['event_dt']                  = html_entity_decode(trim( (string) $row['event_dt'] ));
 
-    $point['event_start_dt']            = date('m/d/Y h:i:s a', strtotime($row['event_start_dt']));
-    $point['event_end_dt']              = date('m/d/Y h:i:s a', strtotime($row['event_end_dt']));
+    $point['event_start_dt']            = date('m/d/Y h:i:s a', strtotime( (string) $row['event_start_dt']));
+    $point['event_end_dt']              = date('m/d/Y h:i:s a', strtotime( (string) $row['event_end_dt']));
     $point['cfm_start_dt']              = html_entity_decode(trim( (string) $row['cfm_start_dt'] ));
     $point['cfm_end_dt']                = html_entity_decode(trim( (string) $row['cfm_end_dt'] ));
     $point['cfm_url']                   = html_entity_decode(trim( (string) $row['cfm_url'] ));
@@ -111,7 +111,7 @@ if ( $type == 'map' ) {
     $point['free_event']                = html_entity_decode(trim( (string) $row['free_event'] ));
     $point['venue_address_street']      = html_entity_decode(trim( (string) $row['venue_address_street'] ));
     $point['venue_address_city']        = html_entity_decode(trim( (string) $row['venue_address_city'] ));
-    $point['venue_address_state']       = ($row['state']!=NULL ? html_entity_decode(trim( $row['state'] )): html_entity_decode(trim( $row['venue_address_state'] )));
+    $point['venue_address_state']       = ($row['state']!=NULL ? html_entity_decode(trim( (string) $row['state'] )): html_entity_decode(trim( $row['venue_address_state'] )));
     $point['venue_address_country']     = html_entity_decode(trim( (string) $row['venue_address_country'] ));
     $point['venue_address_postal_code'] = html_entity_decode(trim( (string) $row['venue_address_postal_code'] ));
     $point['venue_address_region']      = html_entity_decode(trim( (string) $row['venue_address_region'] ));
