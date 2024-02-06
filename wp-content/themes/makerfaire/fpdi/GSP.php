@@ -134,7 +134,7 @@ function output_data($pdf, $lead = array(), $form = array(), $fieldData = array(
          $display_value = '';
       }
       $display_value = str_replace('<br />', "\n", $display_value);
-      $display_value = htmlspecialchars_decode($display_value, ENT_QUOTES);
+      $display_value = htmlspecialchars_decode( (string) $display_value, ENT_QUOTES);
 
       $pdf->MultiCell(0, $lineheight, $data[0] . ': ');
       $pdf->MultiCell(0, $lineheight, $display_value, 0, 'L', true);

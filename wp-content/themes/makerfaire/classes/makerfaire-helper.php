@@ -143,7 +143,7 @@ function mf_display_schedule_by_area_old($atts) {
   // Get the faire date array. If the
   $faire = $atts['faire'];
   $area = $atts['area'];
-  $subarea = htmlspecialchars_decode($atts['subarea']);
+  $subarea = htmlspecialchars_decode( (string) $atts['subarea']);
 
   $subarea_clean_name = strtolower(str_replace('&', '', (str_replace(' ', '', str_replace(':', '', $subarea)))));
   // Make sure we actually passed a valid faire...

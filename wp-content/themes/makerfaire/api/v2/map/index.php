@@ -138,10 +138,10 @@ if ( $type == 'map' ) {
 function JSdate($in,$type){
     if($type=='date'){
         //Dates are patterned 'yyyy-MM-dd'
-        preg_match('/(\d{4})-(\d{2})-(\d{2})/', $in, $match);
+        preg_match('/(\d{4})-(\d{2})-(\d{2})/', (string) $in, $match);
     } elseif($type=='datetime'){
         //Datetimes are patterned 'yyyy-MM-dd hh:mm:ss'
-        preg_match('/(\d{4})-(\d{2})-(\d{2})\s(\d{2}):(\d{2}):(\d{2})/', $in, $match);
+        preg_match('/(\d{4})-(\d{2})-(\d{2})\s(\d{2}):(\d{2}):(\d{2})/', (string) $in, $match);
     }
 
     $year = (int) $match[1];
