@@ -7,7 +7,7 @@ add_filter('gform_notification', 'change_email_to', 10, 3);
 function change_email_to($notification, $form, $entry) {
    $homeurl = get_home_url();
    // Check for our stage and dev sites	
-   if ($homeurl === "https://stage.makerfaire.com" || $homeurl === "https://dev.makerfaire.com" || $homeurl === "https://makerfaire.staging.wpengine.com" || $homeurl === "https://mfairestaging.wpengine.com") {
+   if (strpos($homeurl, '.wpengine.com') !== false 	|| $homeurl === "https://stage.makerfaire.com" || $homeurl === "https://dev.makerfaire.com" ) {
    	  	$notification['to'] = 'webmaster@make.co,siana@make.co';
    	  	$notification['from'] = 'webmaster@make.co';
 		$notification['cc'] = '';
