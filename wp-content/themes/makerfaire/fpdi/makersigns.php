@@ -62,7 +62,7 @@ try {
    $pdf->AddFont('Benton Sans', '', 'bentonsans-regular-webfont.php');
    $pdf->AddPage('P', array(381, 381));
    $pdf->SetFont('Benton Sans', '', 12);
-   $pdf->Image(TEMPLATEPATH.'/fpdi/signBackground2023.png', 0, 0, 381, 381); // background image
+   $pdf->Image(get_template_directory().'/fpdi/signBackground2023.png', 0, 0, 381, 381); // background image
    
    $pdf->SetMargins(20,139,22); //left, top, right
    
@@ -92,8 +92,8 @@ try {
             ob_clean();
          $pdf->Output($entryid . '.pdf', 'D');
       } elseif (isset($_GET['type']) && $_GET['type'] == 'save') {
-         $validFile = TEMPLATEPATH . '/signs/' . $faire . '/maker/' . $entryid . '.pdf';
-         $errorFile = TEMPLATEPATH . '/signs/' . $faire . '/maker/error/' . $entryid . '.pdf';
+         $validFile = get_template_directory() . '/signs/' . $faire . '/maker/' . $entryid . '.pdf';
+         $errorFile = get_template_directory() . '/signs/' . $faire . '/maker/error/' . $entryid . '.pdf';
 
          if ($resizeImage) {
             $filename = $validFile;
@@ -179,14 +179,14 @@ function createOutput($entry_id, $pdf) {
       $imgSize = getimagesize($project_photo);
       if(!$imgSize){
          error_log('error in getimagesize for '.$project_photo.' for '.$entry_id);         
-         $project_photo  = TEMPLATEPATH.'/fpdi/BA23_Badge.png';//fpdf does not support 16 bit png images      
+         $project_photo  = get_template_directory().'/fpdi/BA23_Badge.png';//fpdf does not support 16 bit png images      
       }elseif($imgSize['mime']!= 'image/jpeg' && $imgSize['mime']!= 'image/png'){
          error_log('mime type is '.$imgSize['mime'].' for '.$project_photo.' for '.$entry_id);         
-         $project_photo  = TEMPLATEPATH.'/fpdi/BA23_Badge.png';//fpdf does not support 16 bit png images      
+         $project_photo  = get_template_directory().'/fpdi/BA23_Badge.png';//fpdf does not support 16 bit png images      
          
       }elseif(isset($imgSize["bits"]) && $imgSize["bits"]==16){
          error_log("16bit depth image for $entry_id");
-         $project_photo  = TEMPLATEPATH.'/fpdi/BA23_Badge.png';//fpdf does not support 16 bit png images      
+         $project_photo  = get_template_directory().'/fpdi/BA23_Badge.png';//fpdf does not support 16 bit png images      
       }
    }   
 

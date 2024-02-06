@@ -208,6 +208,8 @@ jQuery(document).ready(function($){
 			left = (screen.width/2)-(Number(w)/2),
 			top = (screen.height/2)-(Number(h)/2);
 
+		if (typeof essbShareWindowURLFilter != 'undefined') 
+			url = essbShareWindowURLFilter(service, url, instance_post_id, instance_position);
 
 		if (!trackingOnly)
 			wnd = window.open( url, keyWin, "height="+(service == 'twitter' ? '500' : '500')+",width="+(service == 'twitter' ? '500' : '800')+",resizable=1,scrollbars=yes,top="+top+",left="+left );

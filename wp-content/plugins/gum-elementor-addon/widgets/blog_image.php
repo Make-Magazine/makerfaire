@@ -14,6 +14,7 @@ use Elementor\Group_Control_Border;
 use Elementor\Group_Control_Typography;
 use Elementor\Group_Control_Text_Shadow;
 use Elementor\Group_Control_Box_Shadow;
+use Elementor\Group_Control_Css_Filter;
 
 class Gum_Elementor_Widget_blog_featured_image extends Widget_Base {
 
@@ -216,7 +217,7 @@ class Gum_Elementor_Widget_blog_featured_image extends Widget_Base {
       ]
     );
 
-    $this->add_control(
+    $this->add_responsive_control(
       'image_position',
       [
         'label' => esc_html__( 'Image Fit', 'gum-elementor-addon' ),
@@ -230,16 +231,138 @@ class Gum_Elementor_Widget_blog_featured_image extends Widget_Base {
         'selectors' => [
           '{{WRAPPER}} .blog-featureimage' => 'background-size: {{VALUE}};',
         ],
-        'condition' => [ 'image_height!' => ''],
+        'condition' => [ 'image_height[size]!' => ''],
 
       ]
     );
+
+
+    $this->add_responsive_control(
+      'background_position',
+      [
+        'label' => esc_html__( 'Image Position', 'gum-elementor-addon' ),
+        'type' => Controls_Manager::SELECT,
+        'options' => [
+          'center' => esc_html__( 'Center', 'gum-elementor-addon' ),
+          'left' => esc_html__( 'Left', 'gum-elementor-addon' ),
+          'right' => esc_html__( 'Right', 'gum-elementor-addon' ),
+          'top' => esc_html__( 'Top', 'gum-elementor-addon' ),
+          'bottom' => esc_html__( 'Bottom', 'gum-elementor-addon' ),
+        ],
+        'default' => 'center',
+        'selectors' => [
+          '{{WRAPPER}} .blog-featureimage' => 'background-position: {{VALUE}};',
+        ],
+        'condition' => [ 'image_height[size]!' => ''],
+      ]
+    );
+
+    $this->add_control(
+      'separator_panel_style',
+      [
+        'type' => Controls_Manager::DIVIDER,
+        'style' => 'thick',
+      ]
+    );
+
+    $this->start_controls_tabs( 'image_effects' );
+
+    $this->start_controls_tab( 'image_effect_normal',
+      [
+        'label' => esc_html__( 'Normal', 'elementor' ),
+      ]
+    );
+
+    $this->add_control(
+      'background_opacity',
+      [
+        'label' => esc_html__( 'Opacity', 'elementor' ),
+        'type' => Controls_Manager::SLIDER,
+        'range' => [
+          'px' => [
+            'max' => 1,
+            'min' => 0.10,
+            'step' => 0.01,
+          ],
+        ],
+        'selectors' => [
+          '{{WRAPPER}} .blog-featureimage' => 'opacity: {{SIZE}};',
+        ],
+      ]
+    );
+
+    $this->add_group_control(
+      Group_Control_Css_Filter::get_type(),
+      [
+        'name' => 'imag_filters',
+        'selector' => '{{WRAPPER}} .blog-featureimage',
+      ]
+    );
+
+    $this->end_controls_tab();
+
+    $this->start_controls_tab( 'image_effect_hover',
+      [
+        'label' => esc_html__( 'Hover', 'elementor' ),
+      ]
+    );
+
+
+    $this->add_control(
+      'background_hoveropacity',
+      [
+        'label' => esc_html__( 'Opacity', 'elementor' ),
+        'type' => Controls_Manager::SLIDER,
+        'range' => [
+          'px' => [
+            'max' => 1,
+            'min' => 0.10,
+            'step' => 0.01,
+          ],
+        ],
+        'selectors' => [
+          '{{WRAPPER}} .blog-featureimage:hover' => 'opacity: {{SIZE}};',
+        ],
+      ]
+    );
+
+    $this->add_group_control(
+      Group_Control_Css_Filter::get_type(),
+      [
+        'name' => 'imag_filters_hover',
+        'selector' => '{{WRAPPER}} .blog-featureimage:hover',
+      ]
+    );
+
+
+    $this->add_control(
+      'background_hovertransition',
+      [
+        'label' => esc_html__( 'Transition Duration', 'elementor' ),
+        'type' => Controls_Manager::SLIDER,
+        'range' => [
+          'px' => [
+            'max' => 3,
+            'step' => 0.1,
+          ],
+        ],
+        'selectors' => [
+          '{{WRAPPER}} .blog-featureimage' => 'transition-duration: {{SIZE}}s',
+        ],
+      ]
+    );    
+
+    $this->end_controls_tab();
+
+    $this->end_controls_tabs();
+
 
     $this->add_group_control(
       Group_Control_Border::get_type(),
       [
         'name' => 'image_border',
         'selector' => '{{WRAPPER}} .blog-featureimage',
+        'separator' => 'before',
       ]
     );
 
@@ -267,10 +390,11 @@ class Gum_Elementor_Widget_blog_featured_image extends Widget_Base {
     extract( $settings );
 
     $post = get_post();
-    if( empty( $post ) || $post->post_type !='post') return '';
-
+    if( empty( $post )) return '';
 
     $thumb_id = get_post_thumbnail_id( $post->ID );
+    if(!$thumb_id) return '';
+
     $image = ['id' => $thumb_id ];
     $settings['thumbnail'] = $image;
 

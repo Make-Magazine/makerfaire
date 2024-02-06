@@ -6,6 +6,7 @@ class GPNF_Session {
 	const SESSION_HASH_META_KEY = 'gpnf_session_hash';
 
 	private $_form_id;
+	private $_context;
 	private $_cookie;
 	private $_hashcode;
 

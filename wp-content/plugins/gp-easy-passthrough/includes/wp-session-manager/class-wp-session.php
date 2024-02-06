@@ -195,7 +195,7 @@ final class WP_Session extends Recursive_ArrayAccess {
 		$path = apply_filters( 'gpep_cookie_path', COOKIEPATH );
 
 		// Prepare expire date.
-		$expires = (int) apply_filters( 'wp_session_expiration', 30 * 60 ) * 1000;
+		$expires = (int) apply_filters( 'gpep_expiration', 30 * 60 ) * 1000;
 		$expires = 'new Date( new Date().getTime() + ' . $expires . ' )';
 
 		// Prepare cookie attributes.

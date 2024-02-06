@@ -1667,6 +1667,15 @@ jQuery(document).ready(function($){
 			});
 		}, 1);
 	});
+	
+	$('#essb_options_fbmessenger_display_method').on('change', function(e){
+		let value = $(this).val();
+		$('#essb-facebookchat-auto').hide();
+		$('#essb-facebookchat-shortcode').hide();
+		
+		if (value == 'shortcode') $('#essb-facebookchat-shortcode').show();
+		else $('#essb-facebookchat-auto').show();
+	});
 
 	$('#essb_options_shorturl_type').on('change', function(e){
 		var value = $(this).val();
@@ -2057,6 +2066,9 @@ jQuery(document).ready(function($){
 
 	if ($('#essb_options_shorturl_type').length)
 		$('#essb_options_shorturl_type').trigger('change');
+	
+	if ($('#essb_options_fbmessenger_display_method').length)
+		$('#essb_options_fbmessenger_display_method').trigger('change');
 	
 	if ($('#essb_options_afterclose_type').length) $('#essb_options_afterclose_type').trigger('change');
 

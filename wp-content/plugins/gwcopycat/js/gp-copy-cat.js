@@ -329,7 +329,10 @@
 				}
 				// Add new rows for List field - if - we have more than one value to populate - and - our target is a List field.
 				if (self.isListField( targetGroup )) {
-
+					// Bail out to avoid a repeated copy - Relevant in multi-page scenarios where List fields on previous pages may get copied over again.
+					if ( ! isOverwrite ) {
+						return;
+					}
 					var targetRowCount = targetGroup.parents( '.ginput_list' ).find( '.gfield_list_group' ).length/* : targetGroup.length*/,
 						sourceRowCount = self.isListField( sourceGroup ) ? sourceGroup.parents( '.ginput_list' ).find( '.gfield_list_group' ).length : sourceGroup.length,
 						//targetInputIndex = self.getListInputIndex( targetFieldId, true ),

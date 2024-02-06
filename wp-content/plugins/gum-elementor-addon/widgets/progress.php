@@ -15,15 +15,20 @@ class Gum_Elementor_Widget_ProgressAddon{
 
   public function __construct( ) {
 
+
         add_action( 'elementor/element/progress/section_progress_style/after_section_end', array( $this, 'register_section_progress_style_controls') , 999 );
+
+        add_action( 'elementor/element/progress/section_title/after_section_end', array( $this, 'register_section_title_controls') , 999 );
+
+        add_action( 'elementor/element/before_section_start', [ $this, 'enqueue_script' ] );
   }
+
 
   public function register_section_progress_style_controls( Controls_Stack $element ) {
 
    $element->start_injection( [
       'of' => 'bar_border_radius',
     ] );
-
 
     $element->add_control(
       'bartip_border_radius',
@@ -41,7 +46,7 @@ class Gum_Elementor_Widget_ProgressAddon{
 
 
    $element->start_injection( [
-      'of' => 'inner_text_heading',
+      'of' => 'bar_inline_color',
     ] );
 
 
@@ -86,7 +91,35 @@ class Gum_Elementor_Widget_ProgressAddon{
 
     $element->end_injection();
 
+  }
 
+  public function register_section_title_controls( Controls_Stack $element ) {
+
+
+   $element->start_injection( [
+      'of' => 'section_title',
+    ] );
+
+    $element->add_responsive_control(
+      'section_title_padding',
+      [
+        'label' => esc_html__( 'Spacing', 'gum-elementor-addon' ),
+        'type' => Controls_Manager::SLIDER,
+        'size_units' => [ 'px', 'em' ],
+        'selectors' => [
+          '{{WRAPPER}} .elementor-title' => 'margin-bottom: {{SIZE}}{{UNIT}}; display: block;',
+        ]
+      ]
+    );
+
+    $element->end_injection();
+
+  }
+
+
+  public function enqueue_script( ) {
+
+    wp_enqueue_style( 'gum-elementor-addon',GUM_ELEMENTOR_URL."css/style.css",array());
   }
 
 }

@@ -215,6 +215,9 @@ class Gum_Elementor_Widget_post_slider extends Widget_Base {
         'label'     => esc_html__( 'Suffix', 'gum-elementor-addon' ),
         'type'      => Controls_Manager::TEXT,
         'default'   => '',
+        'ai' => [
+          'active' => false,
+        ],
         'condition' => [
           'show_excerpt' => 'yes',
           'post_content_word!' => ''
@@ -241,6 +244,9 @@ class Gum_Elementor_Widget_post_slider extends Widget_Base {
         'type' => Controls_Manager::TEXT,
         'default' => esc_html__( 'Readmore', 'gum-elementor-addon' ),
         'label_block' => true,
+        'ai' => [
+          'active' => false,
+        ],
         'condition' => [
           'show_readmore' => 'yes',
         ],
@@ -381,6 +387,9 @@ class Gum_Elementor_Widget_post_slider extends Widget_Base {
           'meta_divider' => 'text',
           'show_meta!' => ''
         ],
+        'ai' => [
+          'active' => false,
+        ],
         'default' => '-',
         'dynamic' => [
           'active' => false,
@@ -509,6 +518,9 @@ class Gum_Elementor_Widget_post_slider extends Widget_Base {
         'label' => esc_html__( 'Post ID', 'gum-elementor-addon' ),
         'type' => Controls_Manager::TEXT,
         'default' => '',
+        'ai' => [
+          'active' => false,
+        ],
         'description' => esc_html__( 'Type post IDs. Seperated by comma', 'gum-elementor-addon' ),
         'label_block' => true,
         'condition' => [

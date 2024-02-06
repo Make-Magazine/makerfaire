@@ -7,8 +7,9 @@
  */
 .essb-social-followers-variables {
 	--essb-sf-color-instagram: #3f729b;
-	--essb-sf-color-facebook: #3B5998;
+	--essb-sf-color-facebook: #0866FF;
 	--essb-sf-color-twitter: #4099FF;
+	--essb-sf-color-twitter-x: #0f1419;
 	--essb-sf-color-pinterest: #cb2027;
 	--essb-sf-color-linkedin: #007bb6;
 	--essb-sf-color-github: #171515;
@@ -634,9 +635,23 @@
      color: var( --essb-sf-color-twitter );
      fill: var( --essb-sf-color-twitter );
 }
- .essb-fc-border-twitter, .essb-fc-hborder-twitter:hover{
+.essb-fc-border-twitter, .essb-fc-hborder-twitter:hover{
      border-color: var( --essb-sf-color-twitter );
 }
+
+.essb-fc-bg-twitter-x, .essb-fc-hbg-twitter-x:hover{
+     background-color: var( --essb-sf-color-twitter-x );
+}
+ .essb-fc-c-twitter-x, .essb-fc-hc-twitter-x:hover {
+     color: var( --essb-sf-color-twitter-x );
+     fill: var( --essb-sf-color-twitter-x );
+}
+
+.essb-fc-border-twitter-x, .essb-fc-hborder-twitter-x:hover{
+     border-color: var( --essb-sf-color-twitter-x );
+}
+
+ 
  .essb-fc-bg-pinterest, .essb-fc-hbg-pinterest:hover{
      background-color: var( --essb-sf-color-pinterest );
 }

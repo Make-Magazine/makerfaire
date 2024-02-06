@@ -330,6 +330,11 @@ class ESSBSocialProfiles {
 	            $social_display = "instagram";
 	        }
 	        
+	        
+	        if ($social_display == 'twitter' && essb_option_value('profiles_twitter_icon_type') == 'x') {
+	            $social_display = 'twitter-x';
+	        }
+	        
 	        if ($create_alt_tag) {
 	            $alt_text = ' alt="'.(isset($available_networks[$social]) ? $available_networks[$social] : $social).'"';
 	            /**

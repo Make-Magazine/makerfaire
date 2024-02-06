@@ -753,10 +753,11 @@
 	border-color: var(--essb-network) !important;
 }
 
-.essb_links .essb_link_facebook { --essb-network:#3a579a; }
-.essb_links .essb_link_facebook_like { --essb-network:#3a579a; }
+.essb_links .essb_link_facebook { --essb-network: #0866FF; }
+.essb_links .essb_link_facebook_like { --essb-network:#0866FF; }
 .essb_links .essb_link_del { --essb-network: #3398fc; }
 .essb_links .essb_link_twitter { --essb-network:#00abf0; }
+.essb_links .essb_link_twitter_x { --essb-network: #0f1419; }
 .essb_links .essb_link_pinterest { --essb-network:#cd1c1f; }
 .essb_links .essb_link_linkedin { --essb-network:#007bb6; }
 .essb_links .essb_link_digg { --essb-network:#1b5791; }

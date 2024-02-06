@@ -1668,6 +1668,10 @@ class ESSBOptionsFramework {
 		
 		$multiple = isset($element_options['multiple']) ? $element_options['multiple'] : '';
 		
+		if ($listOfValues == 'list_all_posttype') {
+		    $listOfValues = ESSB_Plugin_Loader::supported_post_types(false, false);
+		}
+		
 		if ($multiple == 'true') {
 			if (!is_array($value)) {
 				$value = array();

@@ -75,6 +75,20 @@ class Author_Box extends Base {
 			]
 		);
 
+		// Used by the WordPress `get_avatar_url()` function to set the image size.
+		$this->add_control(
+			'avatar_size',
+			[
+				'label' => esc_html__( 'Picture Size', 'elementor-pro' ),
+				'type' => Controls_Manager::NUMBER,
+				'default' => 300,
+				'condition' => [
+					'source!' => 'custom',
+					'show_avatar' => 'yes',
+				],
+			]
+		);
+
 		//This controls for custom source
 		$this->add_control(
 			'author_avatar',
@@ -125,6 +139,9 @@ class Author_Box extends Base {
 				'separator' => 'before',
 				'dynamic' => [
 					'active' => true,
+				],
+				'ai' => [
+					'active' => false,
 				],
 			]
 		);
@@ -196,6 +213,7 @@ class Author_Box extends Base {
 					'source!' => 'custom',
 				],
 				'render_type' => 'template',
+				'separator' => 'before',
 			]
 		);
 
@@ -252,6 +270,9 @@ class Author_Box extends Base {
 				'default' => esc_html__( 'All Posts', 'elementor-pro' ),
 				'dynamic' => [
 					'active' => true,
+				],
+				'ai' => [
+					'active' => false,
 				],
 			]
 		);
@@ -343,8 +364,13 @@ class Author_Box extends Base {
 				'size_units' => [ 'px', 'em', 'rem', 'custom' ],
 				'range' => [
 					'px' => [
-						'min' => 0,
 						'max' => 200,
+					],
+					'em' => [
+						'max' => 20,
+					],
+					'rem' => [
+						'max' => 20,
 					],
 				],
 				'selectors' => [
@@ -361,8 +387,13 @@ class Author_Box extends Base {
 				'size_units' => [ 'px', 'em', 'rem', 'custom' ],
 				'range' => [
 					'px' => [
-						'min' => 0,
 						'max' => 100,
+					],
+					'em' => [
+						'max' => 10,
+					],
+					'rem' => [
+						'max' => 10,
 					],
 				],
 				'selectors' => [
@@ -414,6 +445,9 @@ class Author_Box extends Base {
 						'max' => 20,
 					],
 					'em' => [
+						'max' => 2,
+					],
+					'rem' => [
 						'max' => 2,
 					],
 				],
@@ -503,8 +537,13 @@ class Author_Box extends Base {
 				'size_units' => [ 'px', 'em', 'rem', 'custom' ],
 				'range' => [
 					'px' => [
-						'min' => 0,
 						'max' => 100,
+					],
+					'em' => [
+						'max' => 10,
+					],
+					'rem' => [
+						'max' => 10,
 					],
 				],
 				'selectors' => [
@@ -555,8 +594,13 @@ class Author_Box extends Base {
 				'size_units' => [ 'px', 'em', 'rem', 'custom' ],
 				'range' => [
 					'px' => [
-						'min' => 0,
 						'max' => 100,
+					],
+					'em' => [
+						'max' => 10,
+					],
+					'rem' => [
+						'max' => 10,
 					],
 				],
 				'selectors' => [
@@ -680,6 +724,9 @@ class Author_Box extends Base {
 					'em' => [
 						'max' => 2,
 					],
+					'rem' => [
+						'max' => 2,
+					],
 				],
 				'selectors' => [
 					'{{WRAPPER}} .elementor-author-box__button' => 'border-width: {{SIZE}}{{UNIT}};',
@@ -699,8 +746,13 @@ class Author_Box extends Base {
 				'size_units' => [ 'px', '%', 'em', 'rem', 'custom' ],
 				'range' => [
 					'px' => [
-						'min' => 0,
 						'max' => 100,
+					],
+					'em' => [
+						'max' => 10,
+					],
+					'rem' => [
+						'max' => 10,
 					],
 				],
 				'selectors' => [
@@ -741,7 +793,7 @@ class Author_Box extends Base {
 
 		if ( 'current' === $settings['source'] ) {
 
-			$avatar_args['size'] = 300;
+			$avatar_args['size'] = $settings['avatar_size'];
 
 			$user_id = get_the_author_meta( 'ID' );
 			$author['avatar'] = get_avatar_url( $user_id, $avatar_args );

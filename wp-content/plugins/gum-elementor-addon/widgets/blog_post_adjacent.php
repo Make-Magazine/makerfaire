@@ -161,6 +161,9 @@ class Gum_Elementor_Widget_Post_adjacent extends Widget_Base {
         'dynamic' => [
           'active' => false,
         ],
+        'ai' => [
+          'active' => false,
+        ],
         'default' => esc_html__( 'Next Post', 'gum-elementor-addon' ),
         'condition' => [
           'post_label[value]' => 'custom'

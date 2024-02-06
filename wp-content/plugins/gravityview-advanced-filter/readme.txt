@@ -15,6 +15,14 @@ Filter which entries are shown in a View based on their values.
 
 == Changelog ==
 
+= 3.0.5 on February 1, 2024 =
+
+This release fixes a critical error in the View editor and resolves a problem where the Duplicate Page plugin was causing the Advanced Filter's functionality to break.
+
+#### 🐛 Fixed
+* JavaScript errors in the View editor caused by the Duplicate Page plugin.
+* Fatal error when opening a previously saved View with no data source configured.
+
 = 3.0.4 on January 29, 2024 =
 
 This update resolves an issue with the Merge Tag picker disappearing in the View editor, as well as several issues related to filter conditions.
@@ -314,4 +322,4 @@ Fixed: With Gravity Forms 2.3, when using "Created By" filters, the search mode 
 * Liftoff!
 
 
-= 1706734041-4249 =
+= 1706917292-4249 =

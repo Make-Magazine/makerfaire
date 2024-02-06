@@ -140,6 +140,9 @@ class Popover_Regular_Btn_Widget extends Widget_Base {
         'dynamic' => [
           'active' => true,
         ],
+        'ai' => [
+          'active' => false,
+        ],
         'default' => esc_html__( 'Click here', 'gum-elementor-addon' ),
       ]
     );
@@ -270,6 +273,9 @@ class Popover_Regular_Btn_Widget extends Widget_Base {
         'type' => Controls_Manager::TEXT,
         'dynamic' => [
           'active' => true,
+        ],
+        'ai' => [
+          'active' => false,
         ],
         'default' => '',
         'placeholder' => esc_html__( 'Enter your title', 'gum-elementor-addon' ),

@@ -3,13 +3,11 @@ Contributors: celomitan
 Donate link: https://wordpressfoundation.org/donate/
 Tags: elementor, blog, slideshow, slider, popover, pricing, table, spot, post meta, post related, menu
 Requires at least: 3.7
-Tested up to: 6.1.1
+Tested up to: 6.3.1
 Requires PHP: 5.0
 Stable tag: 4.4
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
-
-Addon widget for Elementor. Slideshow, pricing table, popover and special option.
 
 == Description ==
 
@@ -69,17 +67,46 @@ Not yet
 4. Accordion with icon inside accordion title
 5. Three colors heading
 
-
 == Changelog ==
+= 1.3.2 =
+* Tweak:  Progress bar widget open custom width
+
+= 1.3.1 =
+* Bug Fixing:  Progress bar widget 
+
+= 1.3.0 =
+* Improvement: Compatible with flex container widget 
+
+= 1.2.27 =
+* Improvement: Adding title vertical margin ( native progress bar widget )
+* Improvement: Adding counter align option ( native counter widget )
+
+= 1.2.26 =
+* Bug Fixing:  Related post widget 
+* Improvement: Adding grid item vertical margin ( blog grid widget )
+* Improvement: Featured image position ( image post widget )
+
+= 1.2.25 =
+* Improvement: Adding gradient background styles ( blog post widget )
+* Improvement: Adding padding price items ( pricing table widget )
+* Improvement: Adding selected tag query ( recent posts widget )
+
+= 1.2.24 =
+* Bug Fixing:  error native video widget 
+
+= 1.2.23 =
+* Bug Fixing:  ( imBox widget carousel )
+
+
 = 1.2.22 =
-* Bux Fixing: Button icon style ( imBox widget, imBox widget carousel )
+* Bug Fixing: Button icon style ( imBox widget, imBox widget carousel )
 * Improvement: Adding icon styles ( native icon list widget )
 * Improvement: Video play icon styles ( native video widget )
 * Improvement: Adding word background ( gum heading widget )
 * Improvement: Button icon background style ( imBox widget, imBox widget carousel )
 
 = 1.2.21 =
-* Bux Fixing: Column reverse ordering ( Native section widget )
+* Bug Fixing: Column reverse ordering ( Native section widget )
 * Improvement: Button icon style ( imBox widget, imBox widget carousel )
 * Improvement: Readmore button icon style ( blog grid widget )
 * Improvement: Adding icon border style ( native icon list widget )
@@ -91,8 +118,8 @@ Not yet
 * Improvement: Adding title hover background color ( Native accordion widget )
 
 = 1.2.19 =
-* Bux Fixing: Blog grid pagination margin ( blog grid widget )
-* Bux Fixing: Title missing text shadow and stroke ( gum heading widget )
+* Bug Fixing: Blog grid pagination margin ( blog grid widget )
+* Bug Fixing: Title missing text shadow and stroke ( gum heading widget )
 
 = 1.2.18 =
 * Improvement: Adding counter title spacing ( native counter box widget )
@@ -132,8 +159,8 @@ Not yet
 * Improvement: Adding meta custom style ( Blog grid widget )
 
 = 1.2.9 =
-* Bux Fixing: Blog pagination error when null ( Blog grid widget )
-* Bux Fixing: Periode toggle switch  ( Price table widget )
+* Bug Fixing: Blog pagination error when null ( Blog grid widget )
+* Bug Fixing: Periode toggle switch  ( Price table widget )
 * Improvement: Feature align option ( Price table widget )
 * Improvement: Adding blog title placement ( Blog grid widget )
 
@@ -141,34 +168,34 @@ Not yet
 * Improvement: replace deprecated function method
 
 = 1.2.7 =
-* Bux Fixing: Post term vertical spacing
+* Bug Fixing: Post term vertical spacing
 * Improvement: Adding counter text stroke style
 * Improvement: Adding heading widget with two colors style
 
 = 1.2.6 =
-* Bux Fixing: Accordion FAQ scheme error
+* Bug Fixing: Accordion FAQ scheme error
 * Improvement: Adding accordion title margin and active color
 
 = 1.2.5 =
-* Bux Fixing: grid gutter for one column layout ( blog grid widget )
-* Bux Fixing: featured image height
+* Bug Fixing: grid gutter for one column layout ( blog grid widget )
+* Bug Fixing: featured image height
 
 = 1.2.4 =
-* Bux Fixing: post slider image layout on mobile view
-* Bux Fixing: post meta link error
+* Bug Fixing: post slider image layout on mobile view
+* Bug Fixing: post meta link error
 * Improvement: Adding layout for image box widget
 * Improvement: Adding tag option for post title
 
 = 1.2.3 =
-* Bux Fixing: recent post divider line thickness
+* Bug Fixing: recent post divider line thickness
 * Improvement: Adding image box widget
 
 = 1.2.2 =
-* Bux Fixing: recent post layout on mobile view
+* Bug Fixing: recent post layout on mobile view
 * Improvement: Adding image box carousel widget
 
 = 1.2.1 =
-* Bux Fixing: blog grid on mobile view and disabling carousel when no article
+* Bug Fixing: blog grid on mobile view and disabling carousel when no article
 * Improvement: Adding toTop button widget
 
 = 1.2.0 =

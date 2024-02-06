@@ -7,6 +7,8 @@ use Elementor\TemplateLibrary\Source_Local;
 use ElementorPro\Base\Module_Base;
 use ElementorPro\Modules\GlobalWidget\Documents\Widget;
 use ElementorPro\Plugin;
+use ElementorPro\License\API;
+use ElementorPro\Modules\Tiers\Module as Tiers;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -20,6 +22,12 @@ class Module extends Module_Base {
 
 	const INCLUDED_POSTS_LIST_META_KEY = '_elementor_global_widget_included_posts';
 
+	const WIDGET_NAME_CLASS_NAME_MAP = [
+		'global-widget' => 'Global_Widget',
+	];
+
+	const LICENSE_FEATURE_NAME = 'global-widget';
+
 	public function __construct() {
 		parent::__construct();
 
@@ -29,9 +37,7 @@ class Module extends Module_Base {
 	}
 
 	public function get_widgets() {
-		return [
-			'Global_Widget',
-		];
+		return API::filter_active_features( static::WIDGET_NAME_CLASS_NAME_MAP );
 	}
 
 	public function get_name() {
@@ -68,6 +74,7 @@ class Module extends Module_Base {
 
 		$settings = array_replace_recursive( $settings, [
 			'widget_templates' => $widget_templates_content,
+			'should_show_promotion' => ! API::is_licence_has_feature( static::LICENSE_FEATURE_NAME, API::BC_VALIDATION_CALLBACK ),
 		] );
 
 		return $settings;
@@ -140,7 +147,7 @@ class Module extends Module_Base {
 	 * @param array $args    Optional parameters passed to has_cap(), typically object ID.
 	 *
 	 * @return array
-	 * @deprecated 3.1.0
+	 * @deprecated 3.1.0 Use `Plugin::elementor()->documents->remove_user_edit_cap()` instead.
 	 */
 	public function remove_user_edit_cap( $allcaps, $caps, $args ) {
 		Plugin::elementor()->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.1.0', 'Plugin::elementor()->documents->remove_user_edit_cap()' );
@@ -196,6 +203,20 @@ class Module extends Module_Base {
 	}
 
 	public function on_elementor_editor_init() {
+		if ( ! API::is_licence_has_feature( static::LICENSE_FEATURE_NAME, API::BC_VALIDATION_CALLBACK ) ) {
+			$promotion = Tiers::get_promotion_template( [
+				'title' => esc_html__( 'Meet Our Global Widget', 'elementor-pro' ),
+				'messages' => [
+					esc_html__( 'Create Global Widgets. Modify the content, style and setting of any widget and reuse it across your website to accelerate your workflow and stay consistent.', 'elementor-pro' ),
+				],
+				'link' => 'https://go.elementor.com/go-pro-advanced-global-widget/',
+			], true );
+
+			Plugin::elementor()->common->add_template( $promotion, 'text' );
+
+			return;
+		}
+
 		Plugin::elementor()->common->add_template( __DIR__ . '/views/panel-template.php' );
 	}
 

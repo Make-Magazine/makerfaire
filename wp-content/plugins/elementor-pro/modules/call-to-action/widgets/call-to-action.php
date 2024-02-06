@@ -243,21 +243,6 @@ class Call_To_Action extends Base_Widget {
 		);
 
 		$this->add_control(
-			'description',
-			[
-				'label' => esc_html__( 'Description', 'elementor-pro' ),
-				'type' => Controls_Manager::TEXTAREA,
-				'dynamic' => [
-					'active' => true,
-				],
-				'default' => esc_html__( 'Lorem ipsum dolor sit amet consectetur adipiscing elit dolor', 'elementor-pro' ),
-				'placeholder' => esc_html__( 'Enter your description', 'elementor-pro' ),
-				'separator' => 'none',
-				'rows' => 5,
-			]
-		);
-
-		$this->add_control(
 			'title_tag',
 			[
 				'label' => esc_html__( 'Title HTML Tag', 'elementor-pro' ),
@@ -275,6 +260,43 @@ class Call_To_Action extends Base_Widget {
 				'default' => 'h2',
 				'condition' => [
 					'title!' => '',
+				],
+			]
+		);
+
+		$this->add_control(
+			'description',
+			[
+				'label' => esc_html__( 'Description', 'elementor-pro' ),
+				'type' => Controls_Manager::TEXTAREA,
+				'dynamic' => [
+					'active' => true,
+				],
+				'default' => esc_html__( 'Lorem ipsum dolor sit amet consectetur adipiscing elit dolor', 'elementor-pro' ),
+				'placeholder' => esc_html__( 'Enter your description', 'elementor-pro' ),
+				'separator' => 'before',
+				'rows' => 5,
+			]
+		);
+
+		$this->add_control(
+			'description_tag',
+			[
+				'label' => esc_html__( 'Description HTML Tag', 'elementor-pro' ),
+				'type' => Controls_Manager::SELECT,
+				'options' => [
+					'h1' => 'H1',
+					'h2' => 'H2',
+					'h3' => 'H3',
+					'h4' => 'H4',
+					'h5' => 'H5',
+					'h6' => 'H6',
+					'div' => 'div',
+					'span' => 'span',
+				],
+				'default' => 'div',
+				'condition' => [
+					'description!' => '',
 				],
 			]
 		);
@@ -384,6 +406,14 @@ class Call_To_Action extends Base_Widget {
 						'min' => 100,
 						'max' => 1000,
 					],
+					'em' => [
+						'min' => 10,
+						'max' => 100,
+					],
+					'rem' => [
+						'min' => 10,
+						'max' => 100,
+					],
 					'vh' => [
 						'min' => 10,
 						'max' => 100,
@@ -478,12 +508,13 @@ class Call_To_Action extends Base_Widget {
 				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 				'range' => [
 					'px' => [
-						'min' => 0,
 						'max' => 500,
 					],
-					'%' => [
-						'min' => 0,
-						'max' => 100,
+					'em' => [
+						'max' => 50,
+					],
+					'rem' => [
+						'max' => 50,
 					],
 				],
 				'selectors' => [
@@ -504,12 +535,13 @@ class Call_To_Action extends Base_Widget {
 				'size_units' => [ 'px', 'em', 'rem', 'vh', 'custom' ],
 				'range' => [
 					'px' => [
-						'min' => 0,
 						'max' => 500,
 					],
-					'vh' => [
-						'min' => 0,
-						'max' => 100,
+					'em' => [
+						'max' => 50,
+					],
+					'rem' => [
+						'max' => 50,
 					],
 				],
 				'selectors' => [
@@ -545,8 +577,13 @@ class Call_To_Action extends Base_Widget {
 				'size_units' => [ 'px', 'em', 'rem', 'custom' ],
 				'range' => [
 					'px' => [
-						'min' => 0,
 						'max' => 100,
+					],
+					'em' => [
+						'max' => 10,
+					],
+					'rem' => [
+						'max' => 10,
 					],
 				],
 				'selectors' => [
@@ -601,8 +638,13 @@ class Call_To_Action extends Base_Widget {
 				'size_units' => [ 'px', '%', 'em', 'rem', 'custom' ],
 				'range' => [
 					'px' => [
-						'min' => 0,
 						'max' => 200,
+					],
+					'em' => [
+						'max' => 20,
+					],
+					'rem' => [
+						'max' => 20,
 					],
 				],
 				'selectors' => [
@@ -622,8 +664,13 @@ class Call_To_Action extends Base_Widget {
 				'size_units' => [ 'px', 'em', 'rem', 'custom' ],
 				'range' => [
 					'px' => [
-						'min' => 0,
 						'max' => 100,
+					],
+					'em' => [
+						'max' => 10,
+					],
+					'rem' => [
+						'max' => 10,
 					],
 				],
 				'selectors' => [
@@ -683,6 +730,14 @@ class Call_To_Action extends Base_Widget {
 						'min' => 6,
 						'max' => 300,
 					],
+					'em' => [
+						'min' => 0.6,
+						'max' => 30,
+					],
+					'rem' => [
+						'min' => 0.6,
+						'max' => 30,
+					],
 				],
 				'selectors' => [
 					'{{WRAPPER}} .elementor-icon' => 'font-size: {{SIZE}}{{UNIT}};',
@@ -703,7 +758,14 @@ class Call_To_Action extends Base_Widget {
 					'{{WRAPPER}} .elementor-icon' => 'padding: {{SIZE}}{{UNIT}};',
 				],
 				'range' => [
+					'px' => [
+						'max' => 50,
+					],
 					'em' => [
+						'min' => 0,
+						'max' => 5,
+					],
+					'rem' => [
 						'min' => 0,
 						'max' => 5,
 					],
@@ -726,6 +788,9 @@ class Call_To_Action extends Base_Widget {
 						'max' => 20,
 					],
 					'em' => [
+						'max' => 2,
+					],
+					'rem' => [
 						'max' => 2,
 					],
 				],
@@ -1159,6 +1224,9 @@ class Call_To_Action extends Base_Widget {
 					'em' => [
 						'max' => 2,
 					],
+					'rem' => [
+						'max' => 2,
+					],
 				],
 				'selectors' => [
 					'{{WRAPPER}} .elementor-cta__button' => 'border-width: {{SIZE}}{{UNIT}};',
@@ -1175,8 +1243,13 @@ class Call_To_Action extends Base_Widget {
 				'size_units' => [ 'px', '%', 'em', 'rem', 'custom' ],
 				'range' => [
 					'px' => [
-						'min' => 0,
 						'max' => 100,
+					],
+					'em' => [
+						'max' => 10,
+					],
+					'rem' => [
+						'max' => 10,
 					],
 				],
 				'selectors' => [
@@ -1255,8 +1328,13 @@ class Call_To_Action extends Base_Widget {
 				'size_units' => [ 'px', 'em', 'rem', 'custom' ],
 				'range' => [
 					'px' => [
-						'min' => 0,
 						'max' => 50,
+					],
+					'em' => [
+						'max' => 5,
+					],
+					'em' => [
+						'max' => 5,
 					],
 				],
 				'selectors' => [
@@ -1391,6 +1469,7 @@ class Call_To_Action extends Base_Widget {
 					'px' => [
 						'min' => 0,
 						'max' => 3000,
+						'step' => 100,
 					],
 				],
 				'selectors' => [
@@ -1537,7 +1616,7 @@ class Call_To_Action extends Base_Widget {
 		$this->add_control(
 			'effect_duration',
 			[
-				'label' => esc_html__( 'Transition Duration', 'elementor-pro' ),
+				'label' => esc_html__( 'Transition Duration', 'elementor-pro' ) . ' (ms)',
 				'type' => Controls_Manager::SLIDER,
 				'render_type' => 'template',
 				'default' => [
@@ -1547,6 +1626,7 @@ class Call_To_Action extends Base_Widget {
 					'px' => [
 						'min' => 0,
 						'max' => 3000,
+						'step' => 100,
 					],
 				],
 				'selectors' => [
@@ -1568,6 +1648,8 @@ class Call_To_Action extends Base_Widget {
 
 		$wrapper_tag = 'div';
 		$button_tag = 'a';
+		$title_tag = Utils::validate_html_tag( $settings['title_tag'] );
+		$description_tag = Utils::validate_html_tag( $settings['description_tag'] );
 		$bg_image = '';
 		$content_animation = $settings['content_animation'];
 		$animation_class = '';
@@ -1715,20 +1797,16 @@ class Call_To_Action extends Base_Widget {
 					</div>
 				<?php endif; ?>
 
-				<?php
-				if ( ! empty( $settings['title'] ) ) :
-					$title_tag = Utils::validate_html_tag( $settings['title_tag'] );
-
-					echo '<' . $title_tag . ' ' . $this->get_render_attribute_string( 'title' ) . '>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-					$this->print_unescaped_setting( 'title' );
-					echo '</' . $title_tag . '>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-				endif;
-				?>
+				<?php if ( ! empty( $settings['title'] ) ) : ?>
+					<<?php Utils::print_validated_html_tag( $title_tag ); ?> <?php $this->print_render_attribute_string( 'title' ); ?>>
+						<?php $this->print_unescaped_setting( 'title' ); ?>
+					</<?php Utils::print_validated_html_tag( $title_tag ); ?>>
+				<?php endif; ?>
 
 				<?php if ( ! empty( $settings['description'] ) ) : ?>
-					<div <?php $this->print_render_attribute_string( 'description' ); ?>>
+					<<?php Utils::print_validated_html_tag( $description_tag ); ?> <?php $this->print_render_attribute_string( 'description' ); ?>>
 						<?php $this->print_unescaped_setting( 'description' ); ?>
-					</div>
+					</<?php Utils::print_validated_html_tag( $description_tag ); ?>>
 				<?php endif; ?>
 
 				<?php if ( ! empty( $settings['button'] ) ) : ?>
@@ -1769,6 +1847,8 @@ class Call_To_Action extends Base_Widget {
 		<#
 			var wrapperTag = 'div',
 				buttonTag = 'a',
+				titleTag = elementor.helpers.validateHTMLTag( settings.title_tag ),
+				descriptionTag = elementor.helpers.validateHTMLTag( settings.description_tag ),
 				contentAnimation = settings.content_animation,
 				animationClass,
 				btnSizeClass = 'elementor-size-' + settings.button_size,
@@ -1881,12 +1961,11 @@ class Call_To_Action extends Base_Widget {
 					</div>
 				<# } #>
 				<# if ( settings.title ) { #>
-					<# var titleTag = elementor.helpers.validateHTMLTag( settings.title_tag ) #>
 					<{{ titleTag }} {{{ view.getRenderAttributeString( 'title' ) }}}>{{{ settings.title }}}</{{ titleTag }}>
 				<# } #>
 
 				<# if ( settings.description ) { #>
-					<div {{{ view.getRenderAttributeString( 'description' ) }}}>{{{ settings.description }}}</div>
+					<{{ descriptionTag }} {{{ view.getRenderAttributeString( 'description' ) }}}>{{{ settings.description }}}</{{ descriptionTag }}>
 				<# } #>
 
 				<# if ( settings.button ) { #>

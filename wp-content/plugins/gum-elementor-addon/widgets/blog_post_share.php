@@ -186,6 +186,9 @@ class Gum_Elementor_Widget_Post_share extends Widget_Base {
         'dynamic' => [
           'active' => true,
         ],
+        'ai' => [
+          'active' => false,
+        ],
         'default' => '',
       ]
     );

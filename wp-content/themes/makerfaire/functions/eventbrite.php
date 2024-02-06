@@ -37,7 +37,7 @@ function genEBtickets($entryID ){
 
   global $wpdb;
   if (!class_exists('eventbrite')) {
-    require_once(TEMPLATEPATH.'/classes/eventbrite.php');
+    require_once(get_template_directory().'/classes/eventbrite.php');
   }
 
   $token = OAUTH_TOKEN;

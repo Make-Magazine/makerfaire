@@ -637,6 +637,7 @@ class Gum_Elementor_Widget_Post_meta extends Widget_Base {
           'text' => esc_html__( 'Text', 'gum-elementor-addon' ),
           'author' => esc_html__( 'Post Author', 'gum-elementor-addon' ),
           'date' => esc_html__( 'Post Date', 'gum-elementor-addon' ),
+          'comment' => esc_html__( 'Post Comments', 'gum-elementor-addon' ),
           'category' => esc_html__( 'Post Category', 'gum-elementor-addon' )
         ],
         'default' => 'text',
@@ -667,6 +668,9 @@ class Gum_Elementor_Widget_Post_meta extends Widget_Base {
         'dynamic' => [
           'active' => false,
         ],
+        'ai' => [
+          'active' => false,
+        ],
         'default' => '',
       ]
     );
@@ -682,6 +686,9 @@ class Gum_Elementor_Widget_Post_meta extends Widget_Base {
         'label_off' => esc_html__( 'No', 'gum-elementor-addon' ),
         'default' => '',
         'separator' => 'before',
+        'condition' => [
+          'meta_type[value]' => array('category','date','author','text')
+        ],
       ]
     );
 
@@ -852,7 +859,7 @@ class Gum_Elementor_Widget_Post_meta extends Widget_Base {
     $this->add_responsive_control(
       'meta_list_space',
       [
-        'label' => esc_html__( 'Spacing', 'gum-elementor-addon' ),
+        'label' => esc_html__( 'Horizontal Spacing', 'gum-elementor-addon' ),
         'type' => Controls_Manager::SLIDER,
         'range' => [
           'em' => [
@@ -872,6 +879,30 @@ class Gum_Elementor_Widget_Post_meta extends Widget_Base {
       ]
     );
 
+
+    $this->add_responsive_control(
+      'meta_list_vspace',
+      [
+        'label' => esc_html__( 'Vertical Spacing', 'gum-elementor-addon' ),
+        'type' => Controls_Manager::SLIDER,
+        'range' => [
+          'em' => [
+            'max' => 10,
+            'step'=> 1,
+          ],
+          'px' => [
+            'max' => 2000,
+            'step'=> 1,
+          ],
+        ],  
+        'default'=>[],
+        'size_units' => [ 'px', 'em' ],
+        'selectors' => [
+          '{{WRAPPER}} .list-meta' => 'margin-bottom: {{SIZE}}{{UNIT}};',
+          '{{WRAPPER}} .posts-meta' => 'margin-bottom: -{{SIZE}}{{UNIT}};',
+        ],
+      ]
+    );
 
     $this->add_group_control(
       Group_Control_Typography::get_type(),
@@ -1105,12 +1136,16 @@ class Gum_Elementor_Widget_Post_meta extends Widget_Base {
       $meta_type = '';
 
       switch ($list['meta_type']) {
+        case 'comment':
+          $meta_type = get_comments_number_text( __('0 comment'), __('1 comment'),__('% comments'));
+          break;
         case 'date':
           $meta_type = get_the_date();
+          $meta_url = $meta_linked=='yes' ? get_day_link(get_post_time('Y'), get_post_time('m'), get_post_time('j')) : '' ;
           break;
         case 'author':
           $meta_type = get_the_author_meta('nickname', $author_id);
-          $meta_url = get_the_author_meta('url',$author_id);
+          $meta_url = $meta_linked=='yes' ? get_the_author_meta('url',$author_id) : '';
 
           break;
         case 'category':
@@ -1118,7 +1153,6 @@ class Gum_Elementor_Widget_Post_meta extends Widget_Base {
 
           if($categories){
             $category = $categories[0];
-
             $meta_type = $category->name;
             $meta_url = get_category_link( $category->term_id );
           }
@@ -1153,7 +1187,9 @@ class Gum_Elementor_Widget_Post_meta extends Widget_Base {
 
     $this->add_render_attribute( 'list_wrapper', 'class', 'posts-meta');
 
-    echo '<ul '.$this->get_render_attribute_string( 'list_wrapper' ).'>'.join('<li class="meta-divider">'.$divider.'</li>',$rows_html).'</ul>';
+    if(count($rows_html)){
+      echo '<ul '.$this->get_render_attribute_string( 'list_wrapper' ).'>'.join('<li class="meta-divider">'.$divider.'</li>',$rows_html).'</ul>';
+    }
 
   }
 

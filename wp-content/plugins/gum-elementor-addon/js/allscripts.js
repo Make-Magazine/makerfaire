@@ -95,5 +95,4 @@ jQuery(document).ready(function($){
      });
     }
 
-
 });

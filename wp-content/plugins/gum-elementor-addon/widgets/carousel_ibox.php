@@ -154,6 +154,9 @@ class Gum_Elementor_Widget_imagebox_carousel extends Widget_Base {
         'type' => Controls_Manager::TEXT,
         'default' => esc_html__( 'Button', 'gum-elementor-addon' ),
         'label_block' => true,
+        'ai' => [
+          'active' => false,
+        ],
       ]
     );
 
@@ -188,6 +191,9 @@ class Gum_Elementor_Widget_imagebox_carousel extends Widget_Base {
         'dynamic' => [
           'active' => true,
         ],
+        'ai' => [
+          'active' => false,
+        ],
         'default' => '',
         'placeholder' => esc_html__( 'Enter your title', 'gum-elementor-addon' ),
         'label_block' => true,
@@ -219,26 +225,26 @@ class Gum_Elementor_Widget_imagebox_carousel extends Widget_Base {
           [
             'image'=>'',
             'button_label' => esc_html__( 'Button #1', 'gum-elementor-addon' ),
-            'content_title' =>'',
+            'content_title' => esc_html__( 'Slide #1', 'gum-elementor-addon' ),
             'content_text' =>'',
             'selected_icon' => esc_html__( 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo.', 'gum-elementor-addon' ),
           ],
           [
             'image'=>'',
             'button_label' => esc_html__( 'Button #2', 'gum-elementor-addon' ),
-            'content_title' =>'',
+            'content_title' => esc_html__( 'Slide #2', 'gum-elementor-addon' ),
             'content_text' =>'',
             'selected_icon' => esc_html__( 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo.', 'gum-elementor-addon' ),
           ],
           [
             'image'=>'',
             'button_label' => esc_html__( 'Button #3', 'gum-elementor-addon' ),
-            'content_title' =>'',
+            'content_title' => esc_html__( 'Slide #3', 'gum-elementor-addon' ),
             'content_text' =>'',
             'selected_icon' => esc_html__( 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo.', 'gum-elementor-addon' ),
           ],
         ],
-        'title_field' => '{{{ button_label }}}'
+        'title_field' => '{{{ content_title }}}'
       ]
     );
 

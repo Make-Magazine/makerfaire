@@ -1,6 +1,10 @@
 
 # Changelog
 
+## 1.9.29
+
+	- Fixed issue where providing a value of more than 30 minutes with the `gpep_expiration` filter hook would not work as expected.
+
 ## 1.9.28
 
 	- Fixed issue where Easy Passthrough tokens were not generated if entries were created programmatically.

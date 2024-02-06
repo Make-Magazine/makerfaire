@@ -191,7 +191,7 @@ function the_mf_content() {
 	}
 }
 
-function mf_get_terms ($term_types = array('category', 'post_tag'), $atts) {
+function mf_get_terms ($term_types = array('category', 'post_tag'), $atts=array()) {
     $faire = ((isset($atts['faire'])) && ($atts['faire'] != '')) ? $atts['faire'] : '';
     $args = array(
 			'hide_empty' => true, //unreliable

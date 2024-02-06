@@ -1,16 +1,10 @@
 <?php
-// BEGINING AMAZING HACKS
+/* Rewrite Rules */
 function maker_url_vars($rules) {
   $newrules = array();
 
   //classic entry page for flagship faires
   $newrules['maker/entry/(\d*)/?(.*)$/?'] = 'index.php?post_type=page&pagename=entry-page-do-not-delete&e_id=$matches[1]&edit_slug=$matches[2]';
-  
-  //old meet the makers page - page are marked private and don't work
-  //$newrules['([^\/]*)/meet-the-makers/topics/([^\/]*)/([0-9]{1,})/?$'] = 'index.php?post_type=page&pagename=listing-page-do-not-delete&f=$matches[1]&t_slug=$matches[2]&offset=$matches[3]';
-  //$newrules['([^\/]*)/meet-the-makers/topics/([^\/]*)/?$'] = 'index.php?offset=1&post_type=page&pagename=listing-page-do-not-delete&f=$matches[1]&t_slug=$matches[2]';
-  //$newrules['([^\/]*)/meet-the-makers/search/([0-9]{1,})/?$'] = 'index.php?post_type=page&pagename=search-results-page-do-not-delete&f=$matches[1]&offset=$matches[2]';  
-  //$newrules['([^\/]*)/meet-the-makers/search/?$'] = 'index.php?offset=1&post_type=page&pagename=search-results-page-do-not-delete&f=$matches[1]';
   
   //classic schedule page
   $newrules['([^\/]*)/schedule/([^/]+)/?$'] = 'index.php?pagename=$matches[1]/schedule&sched_dow=$matches[2]';
@@ -58,21 +52,6 @@ function mf_filter_post_type_link( $link, $post ) {
 }
 add_filter( 'post_type_link', 'mf_filter_post_type_link', 10, 2 );
 
-/* Rewrite Rules */
-//add_action('init', 'makerfaire_rewrite_rules');
-function makerfaire_rewrite_rules() {
-  //old makerfaire check in process
-  //add_rewrite_rule( 'onsitecheckin/?([^/]*)', 'index.php?onsitecheckin=true&token=$matches[1]', 'top' );
-  //add_rewrite_rule( 'processonsitecheckin/?([^/]*)', 'index.php?processonsitecheckin=true&token=$matches[1]', 'top' );
-  //add_rewrite_rule( 'onsitepinning/?([^/]*)', 'index.php?onsitepinning=true&token=$matches[1]', 'top' );
-  //add_rewrite_rule( 'processonsitepinning/?([^/]*)', 'index.php?processpinning=true&token=$matches[1]', 'top' );
-  
-  //page does not exist
-  //add_rewrite_rule('^mf/([^/]*)/([^/]*)/?', 'index.php?pagename=maker-faire-gravity-forms-display-page&makerfaire=$matches[1]&entryid=$matches[2]', 'top');
-  //old faire pages - linked only from ribbons.php - page is marked as private
-  //add_rewrite_rule('^mfarchives/([^/]*)/?', 'index.php?pagename=entry-archives&entryslug=$matches[1]', 'top');    
-}
-
 /*
   add_action( 'wp_loaded','my_flush_rules' );
 
@@ -86,39 +65,26 @@ function makerfaire_rewrite_rules() {
   }
 
   } */
-// END AMAZING HACKS
 
 
 /* Query Vars */
 add_filter( 'query_vars', 'makerfaire_register_query_var' );
 function makerfaire_register_query_var( $vars ) {
-    //$vars[] = 'processonsitecheckin'; //classes/makerfaire-helper.php
-    //$vars[] = 'onsitecheckin';        //classes/makerfaire-helper.php
-    //$vars[] = 'processonsitepinning'; //classes/makerfaire-helper.php
-    //$vars[] = 'onsitepinning';        //classes/makerfaire-helper.php
-    //$vars[] = 'makerid';
-    //$vars[] = "sched_dow";    
-    //$vars[] = 'api';
-    //$vars[] = 's_keyword'; //page-makers-bykeyword.php    
-    //$vars[] = 't_slug';     //page-makers-bytopic.php
-    //$vars[] = 'offset';     //page-makers-bykeyword.php, page-makers-bytopic.php
-    //$vars[] = 'f';          //page-makers-bykeyword.php, page-makers-bytopic.php
-
     $vars[] = 'type';       //page-api.php, page-mfapi.php
     $vars[] = 'e_id';       //page-entry.php
     $vars[] = 'edit_slug';  //page-entry.php    
     $vars[] = 'faire_id';   //page-mfscheduler.php
     $vars[] = 'token';      //page-maker-checkin.php, page-mfscheduler.php, page-onsite-checkin.php, page-onsite-pinning.php
-    $vars[] = 'makersign'; //classes/makerfaire-helper.php
-    $vars[] = 'faire';  //fpdi/makersigns.php
-    $vars[] = 'eid';    //fpdi/makersigns.php
+    $vars[] = 'makersign';  //classes/makerfaire-helper.php
+    $vars[] = 'faire';      //fpdi/makersigns.php
+    $vars[] = 'eid';        //fpdi/makersigns.php
     $vars[] = "sched_type"; //page-schedule.php
         
     return $vars;
 }
 
+//rewrite yearbook projects CPT
 function custom_rewrite_tag() {
-  // rewrites custom post type name
   global $wp_rewrite;
 
   //change the CPT structure of projects cpt to include the faire year

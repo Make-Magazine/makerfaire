@@ -2,7 +2,7 @@
 /* Displays faire sign code */
 
 function build_faire_signs() {
-    require_once (TEMPLATEPATH . '/adminPages/faire_signs.php');
+    require_once (get_template_directory() . '/adminPages/faire_signs.php');
 }
 
 /* This is for the Export all Fields button in the Entry Summary */
@@ -438,10 +438,10 @@ function massGenerateSigns($entList, $type, $faire) {
     $path = ($type === 'signs' ? 'maker' : ($type === 'presenter' ? 'presenter' : 'tabletags'));
     
     //if directory does note exist, create it
-    if (!file_exists( TEMPLATEPATH . '/signs/' . $faire . '/' . $path)) {
-    	mkdir( TEMPLATEPATH . '/signs/' . $faire . '/' . $path, 0777, true);
+    if (!file_exists( get_template_directory() . '/signs/' . $faire . '/' . $path)) {
+    	mkdir( get_template_directory() . '/signs/' . $faire . '/' . $path, 0777, true);
     }
-    $fileName = TEMPLATEPATH . '/signs/' . $faire . '/' . $path . '/lastrun.txt';
+    $fileName = get_template_directory() . '/signs/' . $faire . '/' . $path . '/lastrun.txt';
 
     $content = date('m-d-y  h:i:s A T');
     $fp = fopen($fileName, "wb");

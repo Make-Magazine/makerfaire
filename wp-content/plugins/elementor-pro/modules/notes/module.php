@@ -28,26 +28,22 @@ class Module extends App {
 	const TABLE_NOTES_USERS_RELATIONS = 'e_notes_users_relations';
 
 	/**
-	 * Add to the experiments
-	 *
-	 * @return array
+	 * Registers the experiment if license allows it
 	 */
-	public static function get_experimental_data() {
-		return [
+	private function register_notes_experiment() {
+		if ( ! API::is_licence_has_feature( static::LICENSE_FEATURE_NAME, API::BC_VALIDATION_CALLBACK ) ) {
+			return;
+		}
+
+		Plugin::elementor()->experiments->add_feature( [
 			'name' => static::NAME,
 			'title' => esc_html__( 'Notes', 'elementor-pro' ),
 			'description' => esc_html__( 'Creates a dedicated workspace for your team and other stakeholders to leave comments and replies on your website while it\'s in progress. Notifications for mentions, replies, etc. are sent by email, and all notes are stored in your site\'s database.', 'elementor-pro' ),
-			'release_status' => Manager::RELEASE_STATUS_STABLE,
 			'default' => Manager::STATE_ACTIVE,
-		];
+			'release_status' => Manager::RELEASE_STATUS_STABLE,
+		] );
 	}
 
-	/**
-	 * @return bool
-	 */
-	public static function is_active() {
-		return API::is_license_active() && API::is_licence_has_feature( static::LICENSE_FEATURE_NAME );
-	}
 
 	/**
 	 * @return string
@@ -185,11 +181,14 @@ class Module extends App {
 		}
 	}
 
-	/**
-	 * Component constructor.
-	 */
-	public function __construct() {
-		parent::__construct();
+	private function on_elementor_pro_init() {
+		$is_active = Plugin::elementor()->experiments->is_feature_active( static::NAME ) &&
+			API::is_license_active() &&
+			API::is_licence_has_feature( static::LICENSE_FEATURE_NAME );
+
+		if ( ! $is_active ) {
+			return;
+		}
 
 		// Things that should be happened if the feature is active (not depends on the current user)
 		$this->define_tables();
@@ -232,6 +231,22 @@ class Module extends App {
 			add_action( 'elementor/editor/before_enqueue_scripts', function () {
 				$this->enqueue_main_scripts();
 			} );
+
+			add_filter( 'elementor-pro/editor/v2/packages', function ( $packages ) {
+				$packages[] = 'editor-notes';
+
+				return $packages;
+			} );
 		}
+	}
+
+	public function __construct() {
+		parent::__construct();
+
+		$this->register_notes_experiment();
+
+		add_action( 'elementor_pro/init', function() {
+			$this->on_elementor_pro_init();
+		} );
 	}
 }

@@ -72,6 +72,9 @@ class Convertkit extends Integration_Base {
 				'condition' => [
 					'convertkit_api_key_source' => 'custom',
 				],
+				'ai' => [
+					'active' => false,
+				],
 			]
 		);
 
@@ -225,6 +228,11 @@ class Convertkit extends Integration_Base {
 		if ( ! isset( $_POST['api_key'] ) ) {
 			wp_send_json_error();
 		}
+
+		if ( ! current_user_can( 'manage_options' ) ) {
+			wp_send_json_error( 'Permission denied' );
+		}
+
 		try {
 			new Convertkit_Handler( $_POST['api_key'] ); // phpcs:ignore -- No need to sanitize to support special characters.
 		} catch ( \Exception $exception ) {

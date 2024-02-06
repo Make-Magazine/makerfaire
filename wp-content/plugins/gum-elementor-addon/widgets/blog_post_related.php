@@ -118,11 +118,206 @@ class Gum_Elementor_Widget_Post_related extends Widget_Base {
   protected function _register_controls() {
 
 
+    $this->start_controls_section(
+      'section_layout',
+      [
+        'label' => esc_html__( 'Layout', 'gum-elementor-addon' ),
+      ]
+    );
+
+
+    $this->add_responsive_control(
+      'post_list_wide',
+      [
+        'label' => esc_html__( 'Grid Wide', 'gum-elementor-addon' ),
+        'type' => Controls_Manager::SLIDER,
+        'range' => [
+          '%' => [
+            'min' => 10,
+            'max' => 100,
+            'step' => 0.1
+          ],
+        ],  
+        'default'=>['size'=>33.33,'unit'=>'%'],
+        'size_units' => [ '%' ],
+        'style_transfer' => true,
+        'selectors' => [
+          '{{WRAPPER}} .related-post-container' => 'width: {{SIZE}}%;',
+        ],
+      ]
+    );
+
+    $this->add_control(
+      'show_image',
+      [
+        'label' => esc_html__( 'Show Image', 'gum-elementor-addon' ),
+        'type' => Controls_Manager::SWITCHER,
+        'label_on' => esc_html__( 'Yes', 'gum-elementor-addon' ),
+        'label_off' => esc_html__( 'No', 'gum-elementor-addon' ),
+        'default' => 'yes',
+      ]
+    );
+
+
+    $this->add_group_control(
+      Group_Control_Image_Size::get_type(),
+      [
+        'name' => 'thumbnail', 
+        'default' => 'medium',
+        'condition' => [
+          'show_image[value]' => 'yes'
+        ],
+      ]
+    );
+
+    $this->add_control(
+      'show_content',
+      [
+        'label' => esc_html__( 'Show Content', 'gum-elementor-addon' ),
+        'type' => Controls_Manager::SWITCHER,
+        'label_on' => esc_html__( 'Yes', 'gum-elementor-addon' ),
+        'label_off' => esc_html__( 'No', 'gum-elementor-addon' ),
+        'default' => 'yes',
+      ]
+    );
+
+   $this->add_control(
+      'post_content_word',
+      [
+        'label'     => esc_html__( 'Word Count', 'gum-elementor-addon' ),
+        'type'      => Controls_Manager::NUMBER,
+        'default'   => '',
+        'condition' => [
+          'show_content[value]' => 'yes'
+        ],
+      ]
+    );
+
+   $this->add_control(
+      'post_content_sufix',
+      [
+        'label'     => esc_html__( 'Suffix', 'gum-elementor-addon' ),
+        'type'      => Controls_Manager::TEXT,
+        'default'   => '',
+        'ai' => [
+          'active' => false,
+        ],
+        'condition' => [
+          'show_content[value]' => 'yes',
+          'post_content_word!' => ''
+        ],
+      ]
+    );   
+
+    $this->add_control(
+      'show_meta',
+      [
+        'label' => esc_html__( 'Display post date?', 'gum-elementor-addon' ),
+        'type' => Controls_Manager::SWITCHER,
+        'label_off' => esc_html__( 'No', 'gum-elementor-addon' ),
+        'label_on' => esc_html__( 'Yes', 'gum-elementor-addon' ),
+        'default' => 'yes',
+      ]
+    );
+
+
+    $this->add_control(
+      'date_meta_position',
+      [
+        'label' => esc_html__( 'Position', 'gum-elementor-addon' ),
+        'type' => Controls_Manager::SELECT,
+        'options' => [
+          'top' => esc_html__( 'Before Title', 'gum-elementor-addon' ),
+          'mid' => esc_html__( 'After Title', 'gum-elementor-addon' ),
+          'bottom' => esc_html__( 'After Content', 'gum-elementor-addon' ),
+        ],
+        'condition' => [
+          'show_meta[value]' => 'yes'
+        ],
+        'default' => 'bottom'
+      ]
+    );
+
+
+    $this->add_control(
+      'meta_icon',
+      [
+        'label' => esc_html__( 'Icon', 'gum-elementor-addon' ),
+        'type' => Controls_Manager::ICONS,
+        'fa4compatibility' => 'icon',
+        'condition' => [
+          'show_meta[value]' => 'yes'
+        ],
+      ]
+    );
+
+
+    $this->add_control(
+      'show_readmore',
+      [
+        'label' => esc_html__( 'Show Readmore', 'gum-elementor-addon' ),
+        'type' => Controls_Manager::SWITCHER,
+        'label_off' => esc_html__( 'No', 'gum-elementor-addon' ),
+        'label_on' => esc_html__( 'Yes', 'gum-elementor-addon' ),
+        'default' => 'no',
+      ]
+    );
+
+
+    $this->add_control(
+      'readmore_label',
+      [
+        'label' => esc_html__( 'Label', 'gum-elementor-addon' ),
+        'type' => Controls_Manager::TEXT,
+        'default' => esc_html__( 'Readmore', 'gum-elementor-addon' ),
+        'label_block' => true,
+        'ai' => [
+          'active' => false,
+        ],
+        'condition' => [
+          'show_readmore[value]' => 'yes',
+        ],
+
+      ]
+    );
+
+    $this->add_control(
+      'readmore_icon',
+      [
+        'label' => esc_html__( 'Icon', 'gum-elementor-addon' ),
+        'type' => Controls_Manager::ICONS,
+        'fa4compatibility' => 'icon',
+        'condition' => [
+          'show_readmore[value]' => 'yes',
+        ],
+
+      ]
+    );
+
+
+    $this->add_control(
+      'readmore_icon_align',
+      [
+        'label' => esc_html__( 'Icon Position', 'gum-elementor-addon' ),
+        'type' => Controls_Manager::SELECT,
+        'default' => 'left',
+        'options' => [
+          'left' => esc_html__( 'Before', 'gum-elementor-addon' ),
+          'right' => esc_html__( 'After', 'gum-elementor-addon' ),
+        ],
+        'condition' => [
+          'show_readmore[value]' => 'yes',
+          'readmore_icon[value]!' => '',
+        ],
+      ]
+    );
+
+    $this->end_controls_section();
 
     $this->start_controls_section(
       'section_title',
       [
-        'label' => esc_html__( 'Data', 'gum-elementor-addon' ),
+        'label' => esc_html__( 'Query', 'gum-elementor-addon' ),
       ]
     );
 
@@ -166,84 +361,6 @@ class Gum_Elementor_Widget_Post_related extends Widget_Base {
     $this->end_controls_section();
 
 
-    $this->start_controls_section(
-      'section_layout',
-      [
-        'label' => esc_html__( 'Layout', 'gum-elementor-addon' ),
-      ]
-    );
-
-    $this->add_control(
-      'show_image',
-      [
-        'label' => esc_html__( 'Featured Image', 'gum-elementor-addon' ),
-        'type' => Controls_Manager::SWITCHER,
-        'label_on' => esc_html__( 'Yes', 'gum-elementor-addon' ),
-        'label_off' => esc_html__( 'No', 'gum-elementor-addon' ),
-        'default' => 'yes',
-      ]
-    );
-
-
-    $this->add_group_control(
-      Group_Control_Image_Size::get_type(),
-      [
-        'name' => 'thumbnail', 
-        'default' => 'medium',
-        'condition' => [
-          'show_image[value]' => 'yes'
-        ],
-      ]
-    );
-
-    $this->add_control(
-      'show_content',
-      [
-        'label' => esc_html__( 'Show Content', 'gum-elementor-addon' ),
-        'type' => Controls_Manager::SWITCHER,
-        'label_on' => esc_html__( 'Yes', 'gum-elementor-addon' ),
-        'label_off' => esc_html__( 'No', 'gum-elementor-addon' ),
-        'default' => 'yes',
-      ]
-    );
-
-   $this->add_control(
-      'post_content_word',
-      [
-        'label'     => esc_html__( 'Word Count', 'gum-elementor-addon' ),
-        'type'      => Controls_Manager::NUMBER,
-        'default'   => '',
-        'condition' => [
-          'show_content[value]' => 'yes'
-        ],
-      ]
-    );
-
-    $this->add_control(
-      'show_meta',
-      [
-        'label' => esc_html__( 'Display post meta?', 'gum-elementor-addon' ),
-        'type' => Controls_Manager::SWITCHER,
-        'label_off' => esc_html__( 'No', 'gum-elementor-addon' ),
-        'label_on' => esc_html__( 'Yes', 'gum-elementor-addon' ),
-        'default' => 'yes',
-      ]
-    );
-
-    $this->add_control(
-      'meta_icon',
-      [
-        'label' => esc_html__( 'Icon', 'gum-elementor-addon' ),
-        'type' => Controls_Manager::ICONS,
-        'fa4compatibility' => 'icon',
-        'condition' => [
-          'show_meta[value]' => 'yes'
-        ],
-      ]
-    );
-
-    $this->end_controls_section();
-
 /*
  * style params
  */
@@ -252,31 +369,12 @@ class Gum_Elementor_Widget_Post_related extends Widget_Base {
     $this->start_controls_section(
       'post_list_style',
       [
-        'label' => esc_html__( 'Box Style', 'gum-elementor-addon' ),
+        'label' => esc_html__( 'Box Styles', 'gum-elementor-addon' ),
         'tab'   => Controls_Manager::TAB_STYLE,
       ]
     );    
 
 
-    $this->add_responsive_control(
-      'post_list_wide',
-      [
-        'label' => esc_html__( 'Wide', 'gum-elementor-addon' ),
-        'type' => Controls_Manager::SLIDER,
-        'range' => [
-          '%' => [
-            'min' => 10,
-            'max' => 100,
-            'step' => 0.1
-          ],
-        ],  
-        'default'=>['size'=>33.33,'unit'=>'%'],
-        'size_units' => [ '%' ],
-        'selectors' => [
-          '{{WRAPPER}} .related-post-container' => 'width: {{SIZE}}%;',
-        ],
-      ]
-    );
 
     $this->add_responsive_control(
       'post_list_space',
@@ -548,14 +646,13 @@ class Gum_Elementor_Widget_Post_related extends Widget_Base {
 
     $this->end_controls_section();
 
-
     $this->start_controls_section(
       'post_image_style',
       [
         'label' => esc_html__( 'Featured Image', 'gum-elementor-addon' ),
         'tab'   => Controls_Manager::TAB_STYLE,
         'condition' => [
-          'show_meta!' => ''
+          'show_image[value]' => 'yes'
         ],
       ]
     );    
@@ -752,7 +849,7 @@ class Gum_Elementor_Widget_Post_related extends Widget_Base {
         'label' => esc_html__( 'Post Content', 'gum-elementor-addon' ),
         'tab'   => Controls_Manager::TAB_STYLE,
         'condition' => [
-          'show_content!' => ''
+          'show_content[value]' => 'yes'
         ],
       ]
     );    
@@ -831,10 +928,10 @@ class Gum_Elementor_Widget_Post_related extends Widget_Base {
     $this->start_controls_section(
       'post_meta_style',
       [
-        'label' => esc_html__( 'Post Meta', 'gum-elementor-addon' ),
+        'label' => esc_html__( 'Post Date', 'gum-elementor-addon' ),
         'tab'   => Controls_Manager::TAB_STYLE,
         'condition' => [
-          'show_meta!' => ''
+          'show_meta[value]' => 'yes'
         ],
       ]
     );    
@@ -972,6 +1069,406 @@ class Gum_Elementor_Widget_Post_related extends Widget_Base {
 
     $this->end_controls_section();
 
+
+    $this->start_controls_section(
+      'post_readmore_style',
+      [
+        'label' => esc_html__( 'Readmore', 'gum-elementor-addon' ),
+        'tab'   => Controls_Manager::TAB_STYLE,
+        'condition' => [
+          'show_readmore[value]' => 'yes'
+        ],
+      ]
+    );  
+
+    $this->add_control(
+      'readmore_button_align',
+      [
+        'label' => esc_html__( 'Align', 'gum-elementor-addon' ),
+        'type' => Controls_Manager::CHOOSE,
+        'options' => [
+          'left' => [
+            'title' => esc_html__( 'Left', 'gum-elementor-addon' ),
+            'icon' => 'eicon-h-align-left',
+          ],
+          'center' => [
+            'title' => esc_html__( 'Center', 'gum-elementor-addon' ),
+            'icon' => 'eicon-h-align-center',
+          ],
+          'full' => [
+            'title' => esc_html__( 'Full Width', 'gum-elementor-addon' ),
+            'icon' => 'eicon-h-align-stretch',
+          ],
+          'right' => [
+            'title' => esc_html__( 'Right', 'gum-elementor-addon' ),
+            'icon' => 'eicon-h-align-right',
+          ],
+        ],
+        'default' => '',
+        'condition' => ['show_readmore[value]' => 'yes']
+      ]
+    );
+
+
+    $this->add_group_control(
+      Group_Control_Typography::get_type(),
+      [
+        'name' => 'typography_readmore_button',
+        'selector' => '{{WRAPPER}} .elementor-button',
+      ]
+    );
+
+    $this->add_responsive_control(
+      'readmore_button_margin',
+      [
+          'label' => esc_html__( 'Margin', 'gum-elementor-addon' ),
+          'type' => Controls_Manager::DIMENSIONS,
+          'size_units' => [ 'px', '%', 'em' ],
+          'selectors' => [
+              '{{WRAPPER}} .elementor-button' => 'margin: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+          ],
+      ]
+    );
+
+
+    $this->add_responsive_control(
+      'readmore_button_padding',
+      [
+        'label' => esc_html__( 'Padding', 'gum-elementor-addon' ),
+        'type' => Controls_Manager::DIMENSIONS,
+        'size_units' => [ 'px', 'em', '%' ],
+        'selectors' => [
+          '{{WRAPPER}} .elementor-button' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+        ]
+      ]
+    );
+    
+    $this->add_control(
+      'readmore_button_radius',
+      [
+        'label' => esc_html__( 'Border Radius', 'gum-elementor-addon' ),
+        'type' => Controls_Manager::DIMENSIONS,
+        'size_units' => [ 'px', '%' ],
+        'selectors' => [
+          '{{WRAPPER}} .elementor-button' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+        ]
+      ]
+    );
+
+    $this->add_group_control(
+      Group_Control_Border::get_type(),
+      [
+        'name' => 'readmore_button_border',
+        'selector' => '{{WRAPPER}} article .elementor-button',
+        'separator' => 'before',
+      ]
+    );
+
+
+    $this->start_controls_tabs( 'tabs_readmore_button_style' );
+
+    $this->start_controls_tab(
+      'tab_readmore_button_normal',
+      [
+        'label' => esc_html__( 'Normal', 'gum-elementor-addon' ),
+      ]
+    );
+
+    $this->add_control(
+      'readmore_button_color',
+      [
+        'label' => esc_html__( 'Color', 'gum-elementor-addon' ),
+        'type' => Controls_Manager::COLOR,
+        'default' => '',
+        'selectors' => [
+          '{{WRAPPER}} .elementor-button' => 'fill: {{VALUE}}; color: {{VALUE}};',
+        ],
+      ]
+    );
+
+    $this->add_control(
+      'readmore_button_background',
+      [
+        'label' => esc_html__( 'Background', 'gum-elementor-addon' ),
+        'type' => Controls_Manager::COLOR,
+        'selectors' => [
+          '{{WRAPPER}} .elementor-button' => 'background-color: {{VALUE}};',
+        ],
+      ]
+    );
+
+    $this->end_controls_tab();
+
+    $this->start_controls_tab(
+      'tab_readmore_button_hover',
+      [
+        'label' => esc_html__( 'Hover', 'gum-elementor-addon' ),
+      ]
+    );
+
+    $this->add_control(
+      'readmore_button_hover_color',
+      [
+        'label' => esc_html__( 'Color', 'gum-elementor-addon' ),
+        'type' => Controls_Manager::COLOR,
+        'selectors' => [
+          '{{WRAPPER}} .elementor-button:hover, {{WRAPPER}} .elementor-button:focus' => 'color: {{VALUE}}!important;',
+          '{{WRAPPER}} .elementor-button:hover svg, {{WRAPPER}} .elementor-button:focus svg' => 'fill: {{VALUE}}!important;',
+        ],
+      ]
+    );
+
+    $this->add_control(
+      'readmore_button_background_hover_color',
+      [
+        'label' => esc_html__( 'Background', 'gum-elementor-addon' ),
+        'type' => Controls_Manager::COLOR,
+        'selectors' => [
+          '{{WRAPPER}} .elementor-button:hover, {{WRAPPER}} .elementor-button:focus' => 'background-color: {{VALUE}};',
+        ],
+      ]
+    );
+
+    $this->add_control(
+      'readmore_button_hover_border_color',
+      [
+        'label' => esc_html__( 'Border', 'gum-elementor-addon' ),
+        'type' => Controls_Manager::COLOR,
+        'condition' => [
+          'readmore_button_border_border!' => '',
+        ],
+        'selectors' => [
+          '{{WRAPPER}} .elementor-button:hover, {{WRAPPER}} .elementor-button:focus' => 'border-color: {{VALUE}};',
+        ],
+      ]
+    );
+
+    $this->end_controls_tab();
+    $this->end_controls_tabs();
+
+    $this->add_control(
+      'readmore_icon_heading',
+      [
+        'label' => esc_html__( 'Icon', 'gum-elementor-addon' ),
+        'type' => Controls_Manager::HEADING,
+        'separator' => 'before',
+        'condition' => ['show_readmore[value]' => 'yes','readmore_icon[value]!' => ''],
+      ]
+    );
+
+    $this->add_control(
+      'readmore_icon_indent',
+      [
+        'label' => esc_html__( 'Spacing', 'gum-elementor-addon' ),
+        'type' => Controls_Manager::SLIDER,
+        'range' => [
+          'px' => [
+            'max' => 100,
+          ],
+        ],
+        'default' =>['value'=>5, 'unit'=>'px'],
+        'selectors' => [
+          '{{WRAPPER}} .elementor-button .elementor-align-icon-right' => 'margin-left: {{SIZE}}{{UNIT}};',
+          '{{WRAPPER}} .elementor-button .elementor-align-icon-left' => 'margin-right: {{SIZE}}{{UNIT}};',
+        ],
+        'condition' => ['show_readmore[value]' => 'yes','readmore_label!' => '','readmore_icon[value]!' => ''],
+      ]
+    );
+
+
+    $this->add_control(
+      'readmore_icon_size',
+      [
+        'label' => esc_html__( 'Size', 'gum-elementor-addon' ),
+        'type' => Controls_Manager::SLIDER,
+        'range' => [
+          'px' => [
+            'max' => 100,
+          ],
+        ],
+        'default' =>['value'=>'', 'unit'=>'px'],
+        'selectors' => [
+          '{{WRAPPER}} .elementor-button .elementor-button-icon' => 'font-size: {{SIZE}}{{UNIT}};',
+        ],
+        'condition' => ['show_readmore[value]' => 'yes','readmore_icon[value]!' => ''],
+      ]
+    );
+
+
+    $this->add_group_control(
+     Group_Control_Border::get_type(),
+      [
+        'name' => 'readmore_icon_border',
+        'selector' => '{{WRAPPER}} .elementor-button .elementor-button-icon',
+        'condition' => ['show_readmore[value]' => 'yes','readmore_icon[value]!' => ''],
+      ]
+    );
+
+    $this->add_responsive_control(
+        'readmore_icon_padding',
+        [
+            'label' => esc_html__( 'Padding', 'gum-elementor-addon' ),
+            'type' => Controls_Manager::DIMENSIONS,
+            'size_units' => [ 'px', '%', 'em' ],
+            'selectors' => [
+                '{{WRAPPER}} .elementor-button .elementor-button-icon' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+            ],
+            'condition' => ['show_readmore[value]' => 'yes','readmore_icon[value]!' => '','readmore_icon_border_border!' => ''],
+        ]
+    );
+
+    $this->add_control(
+      'readmore_icon_radius',
+      [
+        'label' => esc_html__( 'Border Radius', 'gum-elementor-addon' ),
+        'type' => Controls_Manager::DIMENSIONS,
+        'size_units' => [ 'px', '%' ],
+        'selectors' => [
+          '{{WRAPPER}} .elementor-button .elementor-button-icon' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+        ],
+        'condition' => ['show_readmore[value]' => 'yes','readmore_icon[value]!' => '','readmore_icon_border_border!'=>''],
+      ]
+    );
+
+    $this->start_controls_tabs( '_tabs_readmore_icon_style',['condition' => ['show_readmore[value]' => 'yes','readmore_icon[value]!' => '']] );
+
+    $this->start_controls_tab(
+      '_tab_readmore_icon_normal',
+      [
+        'label' => esc_html__( 'Normal', 'gum-elementor-addon' ),
+      ]
+    );
+
+
+    $this->add_control(
+      'readmore_icon_color',
+      [
+        'label' => esc_html__( 'Color', 'gum-elementor-addon' ),
+        'type' => Controls_Manager::COLOR,
+        'selectors' => [
+          '{{WRAPPER}} .elementor-button .elementor-button-icon i,{{WRAPPER}} .elementor-button .elementor-button-icon svg' => 'color: {{VALUE}}!important,fill: {{VALUE}}!important;',
+        ],
+        'condition' => ['show_readmore[value]' => 'yes','readmore_icon[value]!' => ''],
+      ]
+    );
+
+
+    $this->add_control(
+      'readmore_icon_background',
+      [
+        'label' => esc_html__( 'Background', 'gum-elementor-addon' ),
+        'type' => Controls_Manager::COLOR,
+        'default' => '',
+        'selectors' => [
+          '{{WRAPPER}} .elementor-button .elementor-button-icon' => 'background: {{VALUE}};',
+        ],
+        'condition' => ['readmore_icon_border_border!' => ''],
+      ]
+    );
+
+    $this->add_control(
+      'readmore_icon_rotate',
+      [
+        'label' => esc_html__( 'Rotate', 'gum-elementor-addon' ),
+        'type' => Controls_Manager::SLIDER,
+        'size_units' => [ 'deg' ],
+        'default' => [
+          'size' => 0,
+          'unit' => 'deg',
+        ],
+        'selectors' => [
+          '{{WRAPPER}} .elementor-button .elementor-button-icon i, {{WRAPPER}} .elementor-button .elementor-button-icon svg' => 'transform: rotate({{SIZE}}{{UNIT}});',
+        ],
+        'condition' => ['show_readmore[value]' => 'yes','readmore_icon[value]!' => ''],
+
+      ]
+    );
+
+    $this->end_controls_tab();
+    $this->start_controls_tab(
+      '_tab_readmore_icon_hover',
+      [
+        'label' => esc_html__( 'Hover', 'gum-elementor-addon' ),
+      ]
+    );
+
+    $this->add_control(
+      'readmore_icon_hover_color',
+      [
+        'label' => esc_html__( 'Color', 'gum-elementor-addon' ),
+        'type' => Controls_Manager::COLOR,
+        'selectors' => [
+          '{{WRAPPER}} .elementor-button:hover .elementor-button-icon i,{{WRAPPER}} .elementor-button:hover .elementor-button-icon svg' => 'color: {{VALUE}}!important,fill: {{VALUE}}!important;',
+        ],
+        'condition' => ['show_readmore[value]' => 'yes','readmore_icon[value]!' => ''],
+      ]
+    );
+
+    $this->add_control(
+      'readmore_icon_hover_background',
+      [
+        'label' => esc_html__( 'Background', 'gum-elementor-addon' ),
+        'type' => Controls_Manager::COLOR,
+        'default' => '',
+        'selectors' => [
+          '{{WRAPPER}} .elementor-button:hover .elementor-button-icon' => 'background: {{VALUE}};',
+        ],
+        'condition' => ['readmore_icon_border_border!' => ''],
+      ]
+    );
+
+    $this->add_control(
+      'readmore_icon_border_hover_color',
+      [
+        'label' => esc_html__( 'Border', 'gum-elementor-addon' ),
+        'type' => Controls_Manager::COLOR,
+        'selectors' => [
+          '{{WRAPPER}} .elementor-button:hover .elementor-button-icon' => 'border-color: {{VALUE}}!important;',
+        ],
+        'condition' => ['show_readmore!' => '','readmore_icon[value]!' => '','readmore_icon_border_border!'=>''],
+      ]
+    );
+
+
+    $this->add_control(
+      'readmore_icon_hover_rotate',
+      [
+        'label' => esc_html__( 'Rotate', 'gum-elementor-addon' ),
+        'type' => Controls_Manager::SLIDER,
+        'size_units' => [ 'deg' ],
+        'default' => [
+          'size' => '',
+          'unit' => 'deg',
+        ],
+        'selectors' => [
+          '{{WRAPPER}} .elementor-button:hover .elementor-button-icon i, {{WRAPPER}} .elementor-button:hover .elementor-button-icon svg' => 'transform: rotate({{SIZE}}{{UNIT}});',
+        ],
+      ]
+    );
+
+    $this->add_control(
+      'readmore_icon_transform_transition_hover',
+      [
+        'label' => esc_html__( 'Transition Duration (ms)', 'gum-elementor-addon' ),
+        'type' => Controls_Manager::SLIDER,
+        'range' => [
+          'px' => [
+            'min' => 100,
+            'max' => 10000,
+          ],
+        ],
+        'selectors' => [
+          '{{WRAPPER}} .elementor-button-content-wrapper' => '--e-button-transition-duration: {{SIZE}}ms',
+        ],
+      ]
+    );
+
+
+    $this->end_controls_tab();
+    $this->end_controls_tabs();
+
+    $this->end_controls_section();
+
   }
 
   protected function render() {
@@ -1008,7 +1505,6 @@ class Gum_Elementor_Widget_Post_related extends Widget_Base {
         $meta_icon_html = Icons_Manager::render_font_icon( $meta_icon, [ 'aria-hidden' => 'true' ], 'i' );
       }
     }
-
 
     if($post_type =='cat'){
 
@@ -1101,6 +1597,7 @@ class Gum_Elementor_Widget_Post_related extends Widget_Base {
       $post_url = get_the_permalink();
       $image_url = null;
       $text_content = '';
+      $settings['post_url'] = $post_url;
 
       if($show_image =='yes'){
 
@@ -1112,7 +1609,7 @@ class Gum_Elementor_Widget_Post_related extends Widget_Base {
         $text_content = get_the_excerpt();
 
         if($post_content_word > 0){
-          $text_content = wp_trim_words($text_content ,  absint($post_content_word) ,'' );
+          $text_content = wp_trim_words($text_content ,  absint($post_content_word) , $post_content_sufix );
         }
       }
 
@@ -1127,15 +1624,28 @@ class Gum_Elementor_Widget_Post_related extends Widget_Base {
           </a>
         <?php } ?>
         <div class="related-post-content">       
+        <?php if( $show_meta == 'yes' && $date_meta_position == 'top'){ ?>
+        <div class="post-metainfo">
+          <?php if( !empty($meta_icon['value'])){ ?><span class="date-meta"><?php print Utils::print_unescaped_internal_string( $meta_icon_html ); ?></span><?php } the_date();?>
+        </div>
+        <?php } ?>
         <a class="related-post-title" href="<?php print esc_url($post_url);?>"><?php print $post_title; ?></a>
+         <?php if( $show_meta == 'yes' && $date_meta_position == 'mid'){ ?>
+        <div class="post-metainfo">
+          <?php if( !empty($meta_icon['value'])){ ?><span class="date-meta"><?php print Utils::print_unescaped_internal_string( $meta_icon_html ); ?></span><?php } the_date();?>
+        </div>
+        <?php } ?>
         <?php if($show_content == 'yes' && $text_content !=''){?>
         <div class="related-post-description"><?php print esc_html($text_content); ?></div>
         <?php }
-        if( $show_meta == 'yes'){ ?>
+        if( $show_meta == 'yes' && $date_meta_position == 'bottom'){ ?>
         <div class="post-metainfo">
-          <?php if( !empty($meta_icon_html['value'])){ ?><span class="date-meta"><?php print Utils::print_unescaped_internal_string( $meta_icon_html ); ?></span><?php } the_date();?>
+          <?php if( !empty($meta_icon['value'])){ ?><span class="date-meta"><?php print Utils::print_unescaped_internal_string( $meta_icon_html ); ?></span><?php } the_date();?>
         </div>
         <?php } ?>
+        <?php if( $show_readmore == 'yes'){ 
+          $this->get_readmore_button( 'post-'.$post_id,  $settings ); 
+        } ?>
         </div>
       </div>
     </div>
@@ -1147,10 +1657,51 @@ class Gum_Elementor_Widget_Post_related extends Widget_Base {
 
     $this->add_render_attribute( 'related_wrapper', 'class', 'related-posts');
 
-    echo '<div '.$this->get_render_attribute_string( 'related_wrapper' ).'>'.join('',$rows_html).'</div>';
+    echo '<div '.$this->get_render_attribute_string( 'related_wrapper' ).'>'.join('',$rows_html).'</div><div class="not-empty">&nbsp;</div>';
 
   }
 
+
+  protected function get_readmore_button( $index, $settings = array() ) {
+
+     if(!isset($settings['show_readmore']) || $settings['show_readmore']!='yes' ) return '';
+
+    $this->add_render_attribute( 'button-'.$index ,
+      [
+        'class' => ['elementor-button', 'readmore-button' ],
+        'role' => 'button'
+      ]
+    );
+
+    $this->add_link_attributes( 'button-'.$index, array('url' => $settings['post_url']) );
+    $this->add_render_attribute( 'button-'.$index, 'class', 'elementor-button-link' );
+
+    $this->add_render_attribute( [
+      'readmore_icon_align' => [
+        'class' => [
+          'elementor-button-icon',
+          'elementor-align-icon-' . $settings['readmore_icon_align'],
+        ],
+      ],
+    ] );
+
+    $this->add_render_attribute( $index , 'class', 'elementor-button-text' );
+    $this->add_inline_editing_attributes( $index, 'none' );
+
+    $readmore_button_align = isset( $settings['readmore_button_align'] ) ? $settings['readmore_button_align'] : '';
+
+    ?><div class="elementor-button-wrap<?php print ' button-align-'.$readmore_button_align ;?>"><a <?php echo $this->get_render_attribute_string( 'button-'.$index ); ?>>
+          <span class="elementor-button-content-wrapper">
+      <?php if ( ! empty( $settings['readmore_icon']['value'] ) ) : ?>
+      <span <?php echo $this->get_render_attribute_string( 'readmore_icon_align' ); ?>>
+          <?php Icons_Manager::render_icon( $settings['readmore_icon'], [ 'aria-hidden' => 'true' ] ); ?>
+      </span>
+      <?php endif; ?>
+      <span <?php echo $this->get_render_attribute_string( $index );?>><?php echo $settings['readmore_label']; ?></span>
+    </span>
+  </a></div><?php
+
+  }
   protected function content_template() {
 
   }

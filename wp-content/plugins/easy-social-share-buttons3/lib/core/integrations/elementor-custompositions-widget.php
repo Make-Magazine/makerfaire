@@ -51,6 +51,13 @@ class ESSB_Elementor_Custom_Positions_Widget extends Widget_Base {
             'default' => 'no' 
         ]);
         
+        $this->add_control('looparchive', [
+            'label' => esc_html__('Used in a Loop element within an archive template', 'essb'),
+            'type' => Controls_Manager::SWITCHER, 
+            'label_off' => esc_html__('No', 'essb'), 'label_on' => esc_html__('Yes', 'essb'),
+            'default' => 'no'
+        ]);
+        
         $this->add_control('colors_warning', [ 
             'type' => Controls_Manager::RAW_HTML, 'raw' => esc_html__('Note: If you need to add additional displays you can do this from Where to Display -> Custom Position/Displays', 'essb'), 'content_classes' => 'elementor-descriptor' 
         ]);
@@ -65,11 +72,13 @@ class ESSB_Elementor_Custom_Positions_Widget extends Widget_Base {
         $force = ! empty($settings['force']) ? $settings['force'] : '';
         $archive = ! empty($settings['archive']) ? $settings['archive'] : '';
         $display = ! empty($settings['display']) ? $settings['display'] : '';
+        $looparchive = ! empty($settings['looparchive']) ? $settings['looparchive'] : '';
         
         $force = ($force == 'yes') ? true : false;
         $archive = ($archive == 'yes') ? true : false;
+        $looparchive = ($looparchive == 'yes') ? true : false;
         
-        essb_custom_position_draw($display, $force, $archive);
+        essb_custom_position_draw($display, $force, $archive, array(), $looparchive);
     }
 
     protected function content_template () {}

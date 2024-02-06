@@ -45,7 +45,7 @@ if (isset($_GET['eid']) && $_GET['eid'] != '') {
          ob_clean();
       $pdf->Output($entryid . '.pdf', 'D');
    } elseif (isset($_GET['type']) && $_GET['type'] == 'save') {
-      $filename = TEMPLATEPATH . '/signs/' . $faire . '/presenter/' . $entryid . '.pdf';
+      $filename = get_template_directory() . '/signs/' . $faire . '/presenter/' . $entryid . '.pdf';
       $dirname = dirname($filename);
       if (!is_dir($dirname)) {
          mkdir($dirname, 0755, true);

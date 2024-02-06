@@ -13,7 +13,7 @@ jQuery(document).ready(function($){
 	 */
 	if ($('.essb-click2chat').length) {
 		$('.essb-click2chat').on('click', function(event) {
-			event.preventDefault();
+			event.preventDefault();			
 
 			$('.essb-click2chat-window').toggleClass('active');
 		});

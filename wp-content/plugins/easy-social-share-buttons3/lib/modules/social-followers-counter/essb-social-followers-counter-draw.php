@@ -594,6 +594,10 @@ class ESSBSocialFollowersCounterDraw {
 	            $social_display = "instagram";
 	        }
 	        
+	        if ($social_display == 'twitter' && essb_option_value('follow_twitter_icon_type') == 'x') {
+	            $social_display = 'twitter-x';
+	        }
+	        
 	        $social_icon = ESSB_SVG_Icons::get_icon($social_display);
 	        
 	        $opts = array(

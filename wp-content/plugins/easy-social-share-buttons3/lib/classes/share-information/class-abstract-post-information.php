@@ -247,6 +247,11 @@ abstract class ESSB_Post_Information {
             $title = trim( essb_core_convert_smart_quotes( htmlspecialchars_decode($title)));;
         }
         
+        /**
+         * @since 9.2 Support for additional variables
+         */
+        $title = $this->apply_additional_variables($title);
+        
         return $title;
     }
     
@@ -262,6 +267,10 @@ abstract class ESSB_Post_Information {
         
         if (essb_option_bool_value('customshare')) {
             $custom_global_share_title = essb_option_value('customshare_text');
+            
+            if ($custom_global_share_title != '') {
+                $title = $custom_global_share_title;
+            }
         }
         
         $post_essb_post_share_text = get_post_meta($post_id, 'essb_post_share_text', true);
@@ -729,5 +738,16 @@ abstract class ESSB_Post_Information {
      */
     public function wpseo_detected () {
         return defined('WPSEO_VERSION') ? true: false;
+    }
+    
+    public function apply_additional_variables($text = '') {
+        
+        $text = str_replace('%currentyear%', date("Y"), $text);
+        
+        if (has_filter("essb_single_post_share_information_variables")) {
+            $text = apply_filters("essb_single_post_share_information_variables", $text);
+        }
+        
+        return $text;
     }
 }

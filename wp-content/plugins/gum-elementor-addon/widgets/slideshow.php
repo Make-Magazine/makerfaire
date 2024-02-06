@@ -136,6 +136,9 @@ class Elementor_Petro_Slides_Widget extends Widget_Base {
         'default' => esc_html__( 'Slide Title Text', 'gum-elementor-addon' ),
         'description' => esc_html__( 'Title text can contain allowed with tag: strong, b.', 'gum-elementor-addon' ),
         'label_block' => true,
+        'ai' => [
+          'active' => false,
+        ],
       ]
     );
 
@@ -146,6 +149,9 @@ class Elementor_Petro_Slides_Widget extends Widget_Base {
         'type' => Controls_Manager::TEXT,
         'default' => '',
         'label_block' => true,
+        'ai' => [
+          'active' => false,
+        ],
       ]
     );
 
@@ -219,6 +225,9 @@ class Elementor_Petro_Slides_Widget extends Widget_Base {
       [
         'label' => esc_html__( 'Link', 'gum-elementor-addon' ),
         'type' => Controls_Manager::TEXT,
+        'ai' => [
+          'active' => false,
+        ],
         'label_block' => true,
       ]
     );
@@ -239,6 +248,9 @@ class Elementor_Petro_Slides_Widget extends Widget_Base {
         'type' => Controls_Manager::TEXT,
         'default' => esc_html__( 'Right Button', 'gum-elementor-addon' ),
         'label_block' => true,
+        'ai' => [
+          'active' => false,
+        ],
       ]
     );
 
@@ -274,6 +286,9 @@ class Elementor_Petro_Slides_Widget extends Widget_Base {
         'label' => esc_html__( 'Link', 'gum-elementor-addon' ),
         'type' => Controls_Manager::TEXT,
         'label_block' => true,
+        'ai' => [
+          'active' => false,
+        ],
       ]
     );
 

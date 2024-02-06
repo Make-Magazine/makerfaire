@@ -16,6 +16,7 @@
         pause_others: false,
         facade_mode: false,
         not_live_on_channel: false,
+        not_live_showtime: 180,
         maxres_facade: 'eager'
     };
 
@@ -245,7 +246,7 @@
                             return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)
                         }).join(''))
                     },
-                    doLiveFallback: function (playerIframe)
+                    findSwapBlock: function (playerIframe)
                     {
                         var $swapBlock = $(playerIframe).closest('.wp-block-embed');
                         if (!$swapBlock.length)
@@ -260,6 +261,11 @@
                         {
                             $swapBlock = $(playerIframe);
                         }
+                        return $swapBlock;
+                    },
+                    doLiveFallback: function (playerIframe)
+                    {
+                        var $swapBlock = _EPADashboard_.findSwapBlock(playerIframe);
 
                         if ($swapBlock.length)
                         {
@@ -365,9 +371,9 @@
                             }
                         }
                     },
-                    justid: function (s)
+                    justid: function (s, queryParam = 'v')
                     {
-                        return new RegExp("[\\?&]v=([^&#]*)").exec(s)[1];
+                        return new RegExp("[\\?&]" + queryParam + "=([^&#]*)").exec(s)[1];
                     },
                     setupevents: function (iframeid)
                     {
@@ -507,6 +513,7 @@
                             $iframe.get(0).epytsetupdone = false;
                             window._EPADashboard_.setupevents($iframe.attr('id'));
                         }
+                        $iframe.css('opacity', '1');
                     },
                     cleanSrc: function (srcInput)
                     {
@@ -588,24 +595,247 @@
 
                         }
                     },
+                    dateDiffInMinutes: function (a, b)
+                    {
+                        var x = a;
+                        var y = b;
+                        if (typeof (a) === 'string')
+                        {
+                            x = new Date(a);
+                        }
+                        if (typeof (b) === 'string')
+                        {
+                            y = new Date(b);
+                        }
+
+                        var diff = y - x;
+                        return Math.floor(diff / (1000 * 60));
+                    },
+                    realtimeLiveCheck: function (channelId, streams)
+                    {
+                        var ajaxData = {
+                            action: 'my_embedplus_realtimeLiveCheck',
+                            security: _EPYT_.security,
+                            channelId: channelId,
+                            streams: streams
+                        };
+
+                        $.post(_EPYT_.ajaxurl, ajaxData, function (response)
+                        {
+                            var responseJSON = response;
+                            if (typeof response === 'string')
+                            {
+                                responseJSON = JSON.parse(response);
+
+                            }
+                            if (responseJSON.fresh_live && confirm("The live stream may have started. Click OK to refresh the page."))
+                            {
+                                window.location.reload();
+                            }
+                        });
+
+                    },
                     pageReady: function ()
                     {
-                        if (window._EPYT_.not_live_on_channel && window._EPYT_.ytapi_load !== 'never')
+                        var $channelStreams = $('.epyt-live-channel, .epyt-do-live-fallback');
+                        if ((window._EPYT_.not_live_on_channel || $channelStreams.length) && window._EPYT_.ytapi_load !== 'never')
                         {
-                            $('.epyt-live-channel').each(function ()
+                            $channelStreams.each(function ()
                             {
                                 var $ch = $(this);
-                                if (!$ch.data('eypt-fallback'))
+                                if (!$ch.data('eypt-live-processed'))
                                 {
-                                    $ch.data('eypt-fallback', true);
+                                    $ch.data('eypt-live-processed', true);
                                     $ch.css('opacity', 0);
                                     setTimeout(function ()
                                     {
                                         $ch.css('opacity', 1);
                                     }, 4000);
+
+                                    var allStreamsAttr = $ch.data('streams');
+                                    var allStreamsList = allStreamsAttr ? JSON.parse(atob(allStreamsAttr)) : [];
+                                    var embedStream = null;
+                                    var isActiveStream = false;
+                                    var found = false;
+                                    var foundIdx = 0;
+                                    var passNum = 0;
+                                    var channelId = $ch.data('channel') || window._EPADashboard_.justid($ch.data('src'), 'channel');
+
+                                    if (!window._EPYT_.alreadyCheckingRealtimeLivestreams)
+                                    {
+                                        window._EPYT_.alreadyCheckingRealtimeLivestreams = 1;
+                                        window._EPADashboard_.realtimeLiveCheck(channelId, allStreamsList);
+                                        window._EPYT_.realtimeLivestreamCheckInterval = setInterval(function ()
+                                        {
+                                            window._EPYT_.alreadyCheckingRealtimeLivestreams++;
+                                            window._EPADashboard_.realtimeLiveCheck(channelId, allStreamsList);
+                                            if (window._EPYT_.alreadyCheckingRealtimeLivestreams >= 30)
+                                            {
+                                                clearInterval(window._EPYT_.realtimeLivestreamCheckInterval);
+                                            }
+                                        }, 30000);
+                                    }
+
+                                    if (allStreamsList.length)
+                                    {
+                                        var now = new Date().toISOString();
+                                        var lateGracePeriodMinutes = 180;
+
+                                        // Filter out 'upcoming' streams that are over lateGracePeriodMinutes late according to their schedule, and still haven't actually started yet.
+                                        // Also filter out any that have actually ended.
+                                        allStreamsList = allStreamsList.filter(function (val)
+                                        {
+                                            if ((val.liveBroadcastContent === 'upcoming'
+                                                    && !val.actualStart
+                                                    && val.start < now
+                                                    && _EPADashboard_.dateDiffInMinutes(val.start, now) > lateGracePeriodMinutes)
+                                                    || val.actualEnd)
+                                            {
+                                                return false;
+                                            }
+                                            return true;
+                                        });
+
+                                        allStreamsList.sort((a, b) => {
+                                            if (a.start < b.start)
+                                            {
+                                                return -1;
+                                            }
+                                            if (a.start > b.start)
+                                            {
+                                                return 1;
+                                            }
+                                            return 0;
+                                        });
+
+                                        //window._EPADashboard_.log(allStreamsList);
+
+                                        // find active stream: strict
+                                        while (foundIdx < allStreamsList.length)
+                                        {
+                                            embedStream = allStreamsList[foundIdx];
+                                            if (embedStream.actualStart && now > embedStream.actualStart && embedStream.actualEnd == null && embedStream.liveBroadcastContent === 'live')
+                                            {
+                                                found = true;
+                                                isActiveStream = true;
+                                                passNum = 1;
+                                                break;
+                                            }
+                                            foundIdx++;
+                                        }
+
+                                        // otherwise, find active stream: loose
+                                        if (!found)
+                                        {
+                                            foundIdx = 0;
+                                            while (foundIdx < allStreamsList.length)
+                                            {
+                                                embedStream = allStreamsList[foundIdx];
+                                                if (embedStream.actualStart && now > embedStream.actualStart && (embedStream.actualEnd == null || now < embedStream.actualEnd))
+                                                {
+                                                    found = true;
+                                                    isActiveStream = true;
+                                                    passNum = 2;
+
+                                                    break;
+                                                }
+                                                foundIdx++;
+                                            }
+                                        }
+
+                                        // otherwise, find soonest stream that's scheduled to start in the future
+                                        if (!found)
+                                        {
+                                            foundIdx = 0;
+                                            while (foundIdx < allStreamsList.length)
+                                            {
+                                                embedStream = allStreamsList[foundIdx];
+                                                if (embedStream.start && now < embedStream.start)
+                                                {
+                                                    found = true;
+                                                    passNum = 3;
+
+                                                    break;
+                                                }
+                                                foundIdx++;
+                                            }
+                                        }
+
+                                        // otherwise, find past stream that was scheduled to start most recently
+                                        if (!found)
+                                        {
+                                            foundIdx = allStreamsList.length - 1;
+                                            while (foundIdx >= 0)
+                                            {
+                                                embedStream = allStreamsList[foundIdx];
+                                                if (embedStream.start && now > embedStream.start)
+                                                {
+                                                    found = true;
+                                                    passNum = 4;
+
+                                                    break;
+                                                }
+                                                foundIdx--;
+                                            }
+                                        }
+
+                                        if (found && embedStream)
+                                        {
+                                            // if live fallback feature is on and it's not countdown showtime yet, do live fallback
+                                            if (window._EPYT_.not_live_on_channel &&
+                                                    (window._EPADashboard_.dateDiffInMinutes(now, embedStream.start) > parseInt(window._EPYT_.not_live_showtime)
+                                                            || (embedStream.actualStart && window._EPADashboard_.dateDiffInMinutes(now, embedStream.actualStart) > parseInt(window._EPYT_.not_live_showtime)))
+                                                    )
+                                            {
+                                                window._EPADashboard_.doLiveFallback($ch.get(0));
+                                            }
+                                            else
+                                            {
+                                                var liveSrc = $ch.data('src').replace('live_stream', embedStream.id);
+                                                //window._EPADashboard_.log('Pass ' + passNum + ' #' + $ch.attr('id') + ' ' + liveSrc);
+
+                                                // if it's definitely actively streaming now, embed it right away
+                                                if (isActiveStream)
+                                                {
+                                                    window._EPADashboard_.setVidSrc($ch, liveSrc);
+                                                }
+                                                // or if it just started late
+                                                else if (window._EPADashboard_.dateDiffInMinutes(embedStream.start, now) < lateGracePeriodMinutes)
+                                                {
+                                                    window._EPADashboard_.setVidSrc($ch, liveSrc);
+                                                }
+                                                // otherwise, it's valid but probably just not streaming yet.
+                                                // At this point either the fallback feature is off, or it's on but we're within the showtime window, so embed the default countdown embed
+                                                else
+                                                {
+                                                    window._EPADashboard_.setVidSrc($ch, liveSrc);
+                                                }
+                                            }
+                                        }
+                                    }
+
+                                    if (!embedStream)
+                                    {
+                                        if (window._EPYT_.not_live_on_channel)
+                                        {
+                                            window._EPADashboard_.doLiveFallback($ch.get(0));
+                                        }
+                                        else
+                                        {
+                                            var $swapBlock = window._EPADashboard_.findSwapBlock($ch.get(0));
+                                            $swapBlock.replaceWith($('<div class="epyt-video-wrapper epyt-do-live-fallback"></div>').attr('data-channel', channelId));
+
+                                        }
+                                    }
                                 }
                             });
+
+//                            $('.epyt-do-live-fallback').each(function ()
+//                            {
+//                                window._EPADashboard_.doLiveFallback(this);
+//                            });
                         }
+
                         $('.epyt-gallery').each(function ()
                         {
                             var $container = $(this);

@@ -30,6 +30,10 @@ if (!function_exists('essb_register_messenger')) {
 			}
 		}
 		
+		if (essb_option_value('fbmessenger_display_method') == 'shortcode') {
+		    $is_deactivated = true;
+		}
+		
 		/**
 		 * Changing the check for post types as of options interface change (fbmessenger_posttypes is removed)
 		 */
@@ -99,6 +103,63 @@ if (!function_exists('essb_register_messenger')) {
 	
 	add_action('wp_enqueue_scripts', 'essb_register_messenger_styles', 1 );
 	add_action('wp_footer', 'essb_register_messenger');
+	
+	add_shortcode('facebook-messenger-chat', 'essb_facebook_messenger_chat');
+	
+	function essb_facebook_messenger_chat($atts = array()) {
+	    $fbmessenger_logged_greeting = stripslashes(essb_option_value('fbmessenger_logged_greeting'));
+	    $fbmessenger_loggedout_greeting = stripslashes(essb_option_value('fbmessenger_loggedout_greeting'));
+	    $fbmessenger_color = essb_option_value('fbmessenger_color');
+	    
+	    $fbmessenger_language = essb_sanitize_option_value('fbmessenger_language');
+	    if ($fbmessenger_language == '') {
+	        $fbmessenger_language = 'en_US';
+	    }
+	    
+	    $extra_options = '';
+	    
+	    if ($fbmessenger_color != '') {
+	        $extra_options .= ' theme_color="'.esc_attr($fbmessenger_color).'"';
+	    }
+	    if ($fbmessenger_logged_greeting != '') {
+	        $extra_options .= ' logged_in_greeting="'.esc_attr($fbmessenger_logged_greeting).'"';
+	    }
+	    if ($fbmessenger_loggedout_greeting != '') {
+	        $extra_options .= ' logged_out_greeting="'.esc_attr($fbmessenger_loggedout_greeting).'"';
+	    }
+	    
+	    /**
+	     * @since 8.3
+	     */
+	    $fbmessenger_greeting_dialog = essb_sanitize_option_value('fbmessenger_greeting_dialog');
+	    if (!empty($fbmessenger_greeting_dialog)) {
+	        $extra_options .= ' greeting_dialog_display="'.$fbmessenger_greeting_dialog.'"';
+	    }
+	    
+	    $fbmessenger_greeting_dialog_delay = essb_sanitize_option_value('fbmessenger_greeting_dialog_delay');
+	    if (!empty($fbmessenger_greeting_dialog_delay)) {
+	        $extra_options .= ' greeting_dialog_delay="'.$fbmessenger_greeting_dialog_delay.'"';
+	    }
+	    
+	    $minimized_state = essb_option_bool_value('fbmessenger_minimized');
+	    $output = '';
+	    $output .= '<div class="fb-customerchat" page_id="'.esc_attr(essb_option_value('fbmessenger_pageid')).'" '.($minimized_state ? 'minimized="true"' : '').$extra_options.'></div>';
+	    
+	    /**
+	     * Loading Facebook API required to run the chat app
+	     */
+	    $output .= '
+		<script type="text/javascript">
+		(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "https://connect.facebook.net/'.esc_attr($fbmessenger_language).'/sdk/xfbml.customerchat.js#xfbml=1&version=v2.12&autoLogAppEvents=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, \'script\', \'facebook-jssdk\'));</script>';
+	    
+	    return $output;
+	}
 	
 	function essb_register_messenger_styles() {
 		if (essb_option_bool_value('fbmessenger_left')) {

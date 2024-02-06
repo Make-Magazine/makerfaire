@@ -4,14 +4,14 @@ defined('ABSPATH') or die();
  * Plugin Name: Gum Elementor Addon
  * Plugin URI: http://themegum.com/
  * Description: Addon widget for Elementor. Slideshow, pricing table, icon list, recent post, blog term, post term, post share, post meta, post related, post adjacent, blog grid, post slider,navigation menu, image box, popover and to top button
- * Version: 1.2.22
+ * Version: 1.3.2
  * Author: TemeGUM
  * Author URI: http://themegum.com
  * Domain Path: /languages/
  * Text Domain: gum-elementor-addon
  * Requires at least: 3.7
- * Tested up to: 6.1.1
- * Elementor tested up to: 3.8.1
+ * Tested up to: 6.3.1
+ * Elementor tested up to: 3.18.3
  */
 
 require_once plugin_dir_path(__FILE__). '/helper.php';
