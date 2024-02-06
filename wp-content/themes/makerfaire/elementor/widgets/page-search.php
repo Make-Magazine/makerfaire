@@ -73,6 +73,9 @@ class Page_Search extends Widget_Base {
 				border: solid 1px #ccc;
 				border-radius: 5px;
 			}
+			.make-searchbar img {
+				filter: brightness(0) invert(1);
+			}
 			@media screen and (max-width: 768px) {
 				.make-searchbar {
 					top: auto;
@@ -182,7 +185,7 @@ class Page_Search extends Widget_Base {
 		});
 		</script>
 		<div id="searchbar" class="make-searchbar">
-			<?php if(isset($settings['title'])) { echo("<h4>" . $settings['title'] . "</h4>"); } ?>
+			<?php if(!empty($settings['title'])) { echo("<h4>" . $settings['title'] . "</h4>"); } ?>
 			<input type="search" placeholder="<?php echo $settings['placeholder']; ?>">
 			<button data-search="next">↓</button>
 			<button data-search="prev">↑</button>
