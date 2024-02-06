@@ -1,193 +1,79 @@
-.quora {
-  .instagram-link {
-    color: #fff;
-  }
-  .instagram-link:hover {
-    color: #fff;
-    text-decoration: none;
-  }
-  .insta-caption {
-    background-color: rgba(0, 0, 0, 0.5);
-    position: relative;
-    padding: 3px !important;
-    margin: 4px;
-    height: 55px;
-    text-overflow: ellipsis;
-    overflow: hidden;
-    color: #fff !important;
-    margin-top: -60px;
-    a {
-      color: #fff;
-    }
-  }
-  .follow-wrap .social-holder {
-    border-left: 1px dashed #ccc;
-    padding: 0 0 0 20px;
-    &.instagram {
-      border-right: 1px dashed #ccc;
-      .follow {
-        margin: 32px 0 0 42px;
-      }
-      .title {
-        padding: 10px 0 18px 60px;
-      }
-    }
-    .img-list {
-      margin: 0 0 10px;
-      text-align: center;
-      li {
-        float: none;
-        padding: 0;
-      }
-    }
-    &.twitter p {
-      margin: 0 0 42px;
-    }
-    &.timer-box {
-      padding: 0 0 0 40px;
-      h1 {
-        font-size: 35px;
-        line-height: 37px;
-        font-weight: 300;
-        margin: 0 0 10px;
-        strong {
-          font-size: 35px;
-          line-height: 37px;
-          font-weight: 700;
-          display: block;
-        }
-      }
-      .title {
-        padding: 20px 0 65px 100px;
-        h2 {
-          font-size: 15px;
-          line-height: 20px;
-          font-weight: 700;
-          text-transform: uppercase;
-        }
-      }
-      .title:after {
-        background: url(../images/img25.png) no-repeat;
-        width: 91px;
-        height: 92px;
-        content: "";
-        position: absolute;
-        top: 0;
-        left: 0;
-      }
-    }
-  }
-
-
-  .social-holder {
-    overflow: hidden;
-    margin: 30px 0 60px;
-    .title {
-      padding: 18px 0 44px 60px;
-      position: relative;
-      h1 {
-        font-size: 25px;
-        line-height: 30px;
-        font-weight: 300;
-        margin: 0;
-      }
-    }
-    &.twitter {
-      font-size: 18px;
-      line-height: 20px;
+// SOCIAL MEDIA ROUND ICONS
+.social-network-container {
+  margin-top: 0;
+  ul.social-network {
+      float: left;
+      list-style: none;
+      display: inline;
+      margin-left:0 !important;
+      margin-bottom: 0;
       padding: 0;
-      margin: 30px auto !important;
-      .title {
-        padding: 18px 0 44px 60px;
-      }
-      a {
-        color: #333;
-      }
-      a:hover {
-        text-decoration: none;
-        color: #67bde1;
-      }
-      p {
-        margin: 0 0 34px;
-      }
-      .title:after {
-        content: "";
-        position: absolute;
-        top: 10px;
-        left: 0;
-        background: url(../images/twitter-icon.png) no-repeat;
-        width: 49px;
-        height: 50px;
-      }
-    }
 
-    h2 {
-      font-size: 12px;
-      line-height: 18px;
-      font-weight: 300;
-      margin: 0 0 12px;
-    }
-    h2 strong {
-      font-weight: 700;
-      display: block;
-      font-size: 14px;
-    }
-    &.instagram {
-      border-left: 1px dashed #ccc;
-      padding: 0 0 0 35px;
-    }
-    &.instagram a {
-      color: #333;
-    }
-    &.instagram a:hover {
-      text-decoration: none;
-      color: #67bde1;
-    }
-    &.instagram .title:after {
-      content: "";
-      position: absolute;
-      top: 5px;
-      left: 0;
-      background: url(../images/instagram-icon.png) no-repeat;
-      width: 45px;
-      height: 46px;
-    }
-    .img-list {
-      overflow: hidden;
-      margin: 0;
       li {
-        padding: 0 10px 10px 0;
-        img {
-          vertical-align: top;
-        }
+          display: inline;
+          margin: 0 5px;
       }
-    }
-    .follow {
-      display: inline-block;
-      font-size: 12px;
-      line-height: 16px;
-      font-weight: 700;
-      color: #333;
-    }
-    .follow:hover {
-      text-decoration: none;
-      color: #67bde1;
-    }
-  }
-}
+      li:first-child {
+          margin-left: 0;
+      }
+      a.icoRss:hover {
+          background-color: #F56505;
+      }
+      a.icoFacebook:hover {
+          background-color:#3B5998;
+      }
+      a.icoTwitter:hover {
+          background-color:#33ccff;
+      }
+      a.icoInstagram:hover {
+          background-color:#3f729b;
+      }
+      a.icoGoogle-plus:hover {
+        background-color:#DC4E41;
+      }
+      a.icoPinterest:hover {
+          background-color:#cc2127;
+      }
+      a.icoLinkedin:hover {
+          background-color:#007bb7;
+      }
+      a.icoYoutube:hover {
+        background-color: #bb0000;
+      }
+      a.icoInstagram:hover i, 
+      a.icoFacebook:hover i, 
+      a.icoTwitter:hover i,
+      a.icoPinterest:hover i, 
+      a.icoVimeo:hover i, 
+      a.icoLinkedin:hover i {
+          color:#fff;
+      }
+      a.socialIcon:hover, .socialHoverClass {
+          color:#44BCDD;
+      }
 
+      &.social-circle i {
+          color: #fff;
+          margin:0;
+          line-height:30px;
+          text-align: center;
+      }
 
-@media(max-width:767px) {
-  .quora {
-    .social-holder.instagram {
-      border-left: none;
-      padding: 0 5%;
-    }
-    .social-holder.twitter {
-      padding: 0 5%;
-    }
-    .social-holder .img-list li {
-      padding: 0 10px 15px 0;
-    }
+      &.social-circle li a {
+          display:inline-block;
+          position:relative;
+          margin:0 auto 0 auto;
+          border-radius:50%;
+          text-align:center;
+          width: 30px;
+          height: 30px;
+          font-size:20px;
+          background-color: #D3D3D3;
+          transition: all 0.2s;
+      }
+
+      &.social-circle li a:hover {
+          transition: all 0.2s;
+      }
   }
 }

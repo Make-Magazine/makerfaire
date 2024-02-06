@@ -93,7 +93,7 @@ function makerfaire_meet_the_makers_shortcode($atts, $content = null) {
 add_shortcode( 'mmakers', 'makerfaire_meet_the_makers_shortcode' );
 
 
-/**
+/** DELETE THIS (find on old pages first)
  * 3 arbitrarily tagged posts from Makezine - for homepage, but also available as generic shortcode
  */
 
