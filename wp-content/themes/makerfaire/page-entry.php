@@ -355,13 +355,13 @@ if (!$displayMakers) {
     if ($validEntry) {
         //display the normal entry public information page
         if($formType == "Sponsor") {
-            include TEMPLATEPATH . '/pages/page-entry-sponsor-view.php';
+            include get_template_directory() . '/pages/page-entry-sponsor-view.php';
         } else {
-            include TEMPLATEPATH . '/pages/page-entry-view.php';
+            include get_template_directory() . '/pages/page-entry-view.php';
         }
         if ($makerEdit) {
             //use the edit entry public info page
-            include TEMPLATEPATH . '/pages/page-entry-edit.php';
+            include get_template_directory() . '/pages/page-entry-edit.php';
         }
     } else { //entry is not active
         echo '<div class="container"><h2>Invalid entry</h2></div>';

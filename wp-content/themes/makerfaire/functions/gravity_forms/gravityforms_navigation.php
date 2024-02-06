@@ -323,7 +323,7 @@ function mf_tasks_settings_menu_item($menu_items) {
 add_action('gform_form_settings_page_mf_tasks_settings_page', 'mf_tasks_settings_page');
 
 function mf_tasks_settings_page() {
-    require_once( TEMPLATEPATH . '/classes/GFTask.php' );
+    require_once( get_template_directory() . '/classes/GFTask.php' );
     //page header loaded in below function because admin messages were not yet available to the header to display
     GFTask::task_page();
 }
@@ -331,5 +331,5 @@ function mf_tasks_settings_page() {
 /* Displays faire sign code */
 
 function build_fsp_gsp() {
-    require_once( TEMPLATEPATH . '/adminPages/other_form_download.php' );
+    require_once( get_template_directory() . '/adminPages/other_form_download.php' );
 }

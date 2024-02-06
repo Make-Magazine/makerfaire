@@ -39,7 +39,7 @@ $type = '';
                            <span class="signs pdfEntList"></span>
                         </div>
                         <?php
-                        $filename = TEMPLATEPATH . '/signs/' . $row->faire . '/maker/lastrun.txt';
+                        $filename = get_template_directory() . '/signs/' . $row->faire . '/maker/lastrun.txt';
                         $lastCreated = (file_exists($filename) ? file_get_contents($filename) : '');
                         ?>
                         <div class="pull-left" style="margin-left: 20px;"><p><br><br><Br>Last created on: <?php echo $lastCreated; ?></p></div>
@@ -119,7 +119,7 @@ $type = '';
 
                         </div>
                         <?php
-                        $filename = TEMPLATEPATH . '/signs/' . $row->faire . '/presenter/lastrun.txt';
+                        $filename = get_template_directory() . '/signs/' . $row->faire . '/presenter/lastrun.txt';
                         $lastCreated = (file_exists($filename) ? file_get_contents($filename) : '');
                         ?>
                         <div class="pull-left" style="margin-left: 20px;"><p><br><br><Br>Last created on: <?php echo $lastCreated; ?></p></div>                        
@@ -182,7 +182,7 @@ $type = '';
 
                         </div>
                         <?php
-                        $filename = TEMPLATEPATH . '/signs/' . $row->faire . '/tabletags/lastrun.txt';
+                        $filename = get_template_directory() . '/signs/' . $row->faire . '/tabletags/lastrun.txt';
                         $lastCreated = (file_exists($filename) ? file_get_contents($filename) : '');
                         ?>
                         <div class="pull-left" style="margin-left: 20px;"><p><br><br><Br>Last created on: <?php echo $lastCreated; ?></p></div>                        
