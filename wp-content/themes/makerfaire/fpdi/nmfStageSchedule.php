@@ -52,7 +52,7 @@ if (isset($_GET['stage']) && $_GET['stage'] != '') {
       ob_clean();
     $pdf->Output($stage . '.pdf', 'D');
   }elseif (isset($_GET['type']) && $_GET['type'] == 'save') {
-    $filename = TEMPLATEPATH . '/signs/' . $faire . '/' . $stage .'-'.$stageday. '.pdf';
+    $filename = get_template_directory() . '/signs/' . $faire . '/' . $stage .'-'.$stageday. '.pdf';
     $dirname = dirname($filename);
     if (!is_dir($dirname)) {
       mkdir($dirname, 0755, true);
