@@ -3,19 +3,8 @@
 * Template name: Sponsors Landing Page
 */
 get_header(); 
-$displayNav = get_field('display_left_nav');          
-if($displayNav){
+
 ?>
-<div class="page-leftnav">
-  <div class="row">
-    <div class="left-hand-nav col-md-3">
-      <?php
-          $template_to_display = get_field('template_to_display');               
-          wp_nav_menu( array( 'theme_location' => $template_to_display ) );
-      ?>
-    </div>
-    <div class="content col-md-9">
-<?php } ?>
 
 <div class="sponsors-landing">
   <div class="row padbottom">

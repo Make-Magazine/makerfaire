@@ -10,18 +10,7 @@ get_header(); ?>
 </div><!-- .post-thumbnail -->
 <div class="page-leftnav container-fluid<?php if( have_rows('content_panels')) { echo(" customPanels" ); } ?>">
 	<div class="row">
-      <div class="left-hand-nav col-md-3">
-         <?php    
-         //display left hand nav?
-            $displayNav = get_field('display_left_nav');
-            
-            if($displayNav){
-               $template_to_display = get_field('template_to_display');               
-               wp_nav_menu( array( 'theme_location' => $template_to_display ) );
-            }
-         ?>
-      </div>
-		<div class="content col-md-9">			
+		<div class="content col-md-12">			
          <?php if ( have_posts() ) : while ( have_posts() ) : the_post(); ?>
 				<article <?php post_class(); ?>>
 					<?php the_content(); ?>
