@@ -1633,6 +1633,9 @@
 		}
 	}
 	.owl-carousel {
+      .owl-stage {
+         display: flex;
+      }
 		.item.slide {
 			.slide-image-section {
 				width: 100%;
@@ -1643,6 +1646,7 @@
 				display: flex;
 				align-items: center;
 				justify-content: center;
+            aspect-ratio: 1.5 / 1;
 				.slide-title, a {
 					position: absolute;
 				}
@@ -1995,4 +1999,18 @@ ul.community-cfm-list {
 		-moz-column-count: 1;
 		column-count: 1;
 	}
+}
+
+.faire-backlink {
+   position: relative;
+   top: 30px;
+   margin-bottom: 20px;
+   @media screen and (max-width: 992px) {
+      text-align: center;
+   }
+   i {
+      font-family: FontAwesome;
+      color: #1989C7;
+      font-size: .8em;
+   }
 }
