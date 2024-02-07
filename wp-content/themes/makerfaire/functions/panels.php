@@ -1484,7 +1484,7 @@ function get_faire_backlink() {
     $back_link_html = '';
     if ($back_link_url != '' && $back_link_text != '') {
         $back_link_html = '<div class="faire-backlink">
-         <i class="far fa-chevron-left"></i>
+         <i class="fas fa-chevron-left"></i>
          <a href="' . $back_link_url . '">' . $back_link_text . '</a>
       </div>';
     }

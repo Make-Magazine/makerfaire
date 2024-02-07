@@ -1,6 +1,4 @@
-
 .page-template-page-press-center-leftnav {
-   // See also styles for left nav inversion in navigation.less (involves .top-bar etc.)
    .top-bar {
       border-bottom: 1px solid #979797;
    }
@@ -18,8 +16,6 @@
          float: right;
          p {
             font-family: "Roboto Light", sans-serif;
-            margin: 0;
-            padding: 0;
          }
       }
    }
@@ -152,8 +148,13 @@
          }
       }
    }
-
    @media screen and (max-width: 767px) {
+       .left-hand-nav {
+         &.press-nav a {
+           font-size: 18px;
+           max-width: 100%;
+         }
+       }
       .content {
          &.photo-video {
             .col-sm-4 {
