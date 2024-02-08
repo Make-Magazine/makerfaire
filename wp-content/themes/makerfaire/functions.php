@@ -118,7 +118,7 @@ function load_scripts() {
 
     // Localize
     $translation_array = array('templateUrl' => get_stylesheet_directory_uri(), 'ajaxurl' => admin_url('admin-ajax.php'));
-    wp_localize_script('built', 'object_name', $translation_array);
+    wp_localize_script('make-js', 'object_name', $translation_array);
     $user = wp_get_current_user();
     $auth0_user_data = null;
     // if user is logged in 
@@ -132,7 +132,7 @@ function load_scripts() {
         }
     } 
     wp_localize_script(
-        'built-libs',
+        'make-js',
         'ajax_object',
         array(
                 'ajax_url' => admin_url('admin-ajax.php'),
@@ -168,17 +168,15 @@ function remove_unnecessary_styles() {
 }
 add_action( 'wp_print_styles', 'remove_unnecessary_styles', PHP_INT_MAX ); // we want this to happen absolutely last
 
-
-//Load custom gravity forms js and css for all forms
-
+// Load custom gravity forms js and css for all forms
 function gravity_scripts($form, $is_ajax) {
     $my_theme = wp_get_theme();
     $my_version = $my_theme->get('Version');
-    wp_enqueue_script('make-gravityformsallforms', get_stylesheet_directory_uri() . '/js/libs/gravityformsallforms.js', array('jquery'), $my_version);
+    wp_enqueue_script('make-gravityformsallforms', get_stylesheet_directory_uri() . '/js/standalone/gravityformsallforms.js', array('jquery'), $my_version);
     wp_enqueue_style('gravity-styles', get_stylesheet_directory_uri() . '/css/gravity-style.min.css', array(), $my_version);
     wp_enqueue_style('make-gravityforms', get_stylesheet_directory_uri() . '/css/gravityforms.css');
     wp_enqueue_style('jquery-datetimepicker-css', get_stylesheet_directory_uri() . '/css/jquery.datetimepicker.css', '', '', true);
-    wp_enqueue_script('jquery-datetimepicker', get_stylesheet_directory_uri() . '/js/libs/jquery.datetimepicker.js', array('jquery'), '', true);
+    wp_enqueue_script('jquery-datetimepicker', get_stylesheet_directory_uri() . '/js/standalone/jquery.datetimepicker.js', array('jquery'), '', true);
 }
 
 add_action('gform_enqueue_scripts', 'gravity_scripts', 10, 2);
@@ -188,9 +186,9 @@ function load_admin_scripts() {
     $my_theme = wp_get_theme();
     $my_version = $my_theme->get('Version');
     //scripts
-    wp_enqueue_script('make-gravityforms-admin', get_stylesheet_directory_uri() . '/js/libs/gravityformsadmin.js', array('jquery', 'jquery-ui-tabs'), $my_version);
-    wp_enqueue_script('make-fairesigns-admin', get_stylesheet_directory_uri() . '/js/libs/mf_fairesigns.js', array('jquery'), $my_version);
-    wp_enqueue_script('jquery-datetimepicker', get_stylesheet_directory_uri() . '/js/libs/jquery.datetimepicker.js', array('jquery'), null);
+    wp_enqueue_script('make-gravityforms-admin', get_stylesheet_directory_uri() . '/js/standalone/gravityformsadmin.js', array('jquery', 'jquery-ui-tabs'), $my_version);
+    wp_enqueue_script('make-fairesigns-admin', get_stylesheet_directory_uri() . '/js/standalone/mf_fairesigns.js', array('jquery'), $my_version);
+    wp_enqueue_script('jquery-datetimepicker', get_stylesheet_directory_uri() . '/js/standalone/jquery.datetimepicker.js', array('jquery'), null);
 
     //wp_enqueue_script('make-bootstrap', get_stylesheet_directory_uri() . '/js/built-libs.min.js', array('jquery'));
     wp_enqueue_script('fontawesome5-js', 'https://kit.fontawesome.com/7c927d1b5e.js', array(), '', true);
@@ -230,7 +228,7 @@ function angular_scripts() {
     if (is_page('ribbons') || is_page_template('page-schedule.php') || is_page_template('page-meet-the-makers.php')) {
         $my_theme = wp_get_theme();
         $my_version = $my_theme->get('Version');
-        wp_enqueue_script('angularjs', get_stylesheet_directory_uri() . '/js/built-angular-libs.min.js', array('built-libs'), $my_version, true);
+        wp_enqueue_script('angularjs', get_stylesheet_directory_uri() . '/js/built-angular-libs.min.js', array('make-js'), $my_version, true);
         if (is_page('ribbons')) {
             wp_enqueue_script('angular-scripts', get_stylesheet_directory_uri() . '/js/angular/ribbonApp.js', array('angularjs'), $my_version, true);
             //localize
@@ -249,7 +247,6 @@ function angular_scripts() {
 add_action('wp_enqueue_scripts', 'angular_scripts');
 
 add_filter('gform_enable_field_label_visibility_settings', '__return_true');
-
 
 // Making error logs for ajax to call
 add_action('wp_ajax_make_error_log', 'make_error_log');
