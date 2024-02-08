@@ -70,16 +70,3 @@ function wd_gravity_image_thumb_upload() {
     }
 
 add_action('wp_head','wd_gravity_image_thumb_upload');
-
-// conditional to check whether Gravity Forms or Gravity View shortcode is on a page
-function has_gf() {
-    global $post;
-    $all_content = get_the_content();
-    if (strpos($all_content,'[gravityform') !== false || strpos($all_content,'wp:gravityforms/form') !== false) {
-        return "gf";
-    } else if(strpos($all_content,'[gravityview') !== false) {
-        return "gv";
-    } else {
-        return false;
-    }
-}

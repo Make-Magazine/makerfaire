@@ -8,7 +8,7 @@ get_header(); ?>
 <div class="post-thumbnail">
 		<?php the_post_thumbnail(); ?>
 </div><!-- .post-thumbnail -->
-<div class="page-leftnav container-fluid">
+<div class="page-leftnav container-fluid" style="margin-bottom: 30px;">
 	<div class="row">
 		<div class="content col-md-12">			
          <?php if ( have_posts() ) : while ( have_posts() ) : the_post(); ?>

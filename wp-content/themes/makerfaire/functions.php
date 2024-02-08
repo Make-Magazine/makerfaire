@@ -92,10 +92,6 @@ function load_scripts() {
     $my_version = $my_theme->get('Version');
 
     // Styles
-    if(has_gf()) {
-        wp_enqueue_style('gravity-styles', get_stylesheet_directory_uri() . '/css/gravity-style.min.css');
-        wp_enqueue_style('make-gravityforms', get_stylesheet_directory_uri() . '/css/gravityforms.css');
-    }
     wp_enqueue_style('make-bootstrap', get_stylesheet_directory_uri() . '/css/bootstrap.min.css');
     wp_enqueue_style('make-bootstrapdialog', get_stylesheet_directory_uri() . '/css/bootstrap-dialog.min.css', true);
     wp_enqueue_style('make-styles', get_stylesheet_directory_uri() . '/css/style.min.css', array(), $my_version);
@@ -167,6 +163,14 @@ function load_scripts() {
 }
 
 add_action('wp_enqueue_scripts', 'load_scripts');
+
+function load_gf_scripts() {
+    $my_theme = wp_get_theme();
+    $my_version = $my_theme->get('Version');
+    wp_enqueue_style('gravity-styles', get_stylesheet_directory_uri() . '/css/gravity-style.min.css', array(), $my_version);
+    wp_enqueue_style('make-gravityforms', get_stylesheet_directory_uri() . '/css/gravityforms.css');
+}
+add_action( 'gform_enqueue_scripts', 'load_gf_scripts', 10, 2 );
 
 function remove_unnecessary_scripts() {
     if (is_admin()) {
