@@ -1,6 +1,6 @@
 <?php
 /*
-Template name: Wide Template w/Left Nav
+Template name: Wide Template (old left nav template)
 */
 get_header(); ?>
 
