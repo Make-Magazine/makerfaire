@@ -95,15 +95,12 @@ function load_scripts() {
     wp_enqueue_style('make-bootstrap', get_stylesheet_directory_uri() . '/css/bootstrap.min.css');
     wp_enqueue_style('make-bootstrapdialog', get_stylesheet_directory_uri() . '/css/bootstrap-dialog.min.css', true);
     wp_enqueue_style('make-styles', get_stylesheet_directory_uri() . '/css/style.min.css', array(), $my_version);
-
-    wp_enqueue_style('jquery-datetimepicker-css', get_stylesheet_directory_uri() . '/css/jquery.datetimepicker.css', '', '', true);
     if (is_admin()) {
         wp_enqueue_style('mf-datatables', get_stylesheet_directory_uri() . '/css/mf-datatables.css', '', '', true);
     }
     wp_enqueue_style('fancybox', '//cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.6/css/jquery.fancybox.min.css', '', 'all');
     wp_enqueue_style('universal-firstload.css', UNIVERSAL_MAKEHUB_ASSET_URL_PREFIX . '/wp-content/universal-assets/v2/css/universal-firstload.min.css', array(), $my_version);
     wp_enqueue_style('universal.css', UNIVERSAL_MAKEHUB_ASSET_URL_PREFIX . '/wp-content/universal-assets/v2/css/universal.min.css', array(), $my_version);
-
     //auth0
     wp_enqueue_script('auth0', 'https://cdn.auth0.com/js/auth0/9.6.1/auth0.min.js', array(), false, true);
     // space time for timezone hijinks
@@ -112,16 +109,10 @@ function load_scripts() {
     wp_enqueue_script('select2', UNIVERSAL_MAKEHUB_ASSET_URL_PREFIX . '/wp-content/plugins/search-filter-pro/public/assets/js/select2.min.js', array(), false, true);
 
     // Libraries concatenated by our npm build
-    wp_enqueue_script('built-libs', get_stylesheet_directory_uri() . '/js/built-libs.min.js', array('jquery'), $my_version, true);
-    // Other libraries:
-    wp_enqueue_script('jquery-datetimepicker', get_stylesheet_directory_uri() . '/js/libs/jquery.datetimepicker.js', array('jquery'), '', true);
+    wp_enqueue_script('make-js', get_stylesheet_directory_uri() . '/js/built.min.js', array('jquery'), $my_version, true);
+    // Universasl libraries:
     wp_enqueue_script('universal-auth0', UNIVERSAL_MAKEHUB_ASSET_URL_PREFIX . '/wp-content/universal-assets/v2/js/min/universal-auth0.min.js', array(), $my_version, true);
     wp_enqueue_script('universal', UNIVERSAL_MAKEHUB_ASSET_URL_PREFIX . '/wp-content/universal-assets/v2/js/min/universal.min.js', array(), $my_version, true);
-
-    wp_enqueue_script('thickbox', null);
-
-    // Scripts
-    wp_enqueue_script('built', get_stylesheet_directory_uri() . '/js/built.min.js', array('jquery'), $my_version, true);
 
     // Localize
     $translation_array = array('templateUrl' => get_stylesheet_directory_uri(), 'ajaxurl' => admin_url('admin-ajax.php'));
@@ -151,26 +142,9 @@ function load_scripts() {
                 'wp_user_memlevel' => isset($auth0_user_data->membership_level) ? $auth0_user_data->membership_level : "",
             )
     );
-
-    /* jQuery can't be moved to footer as too many inline js rely on jquery without a on load event :(
-      remove_action('wp_head', 'wp_print_scripts');
-      remove_action('wp_head', 'wp_print_head_scripts', 9);
-      remove_action('wp_head', 'wp_enqueue_scripts', 1);
-
-      add_action('wp_footer', 'wp_print_scripts', 1);
-      add_action('wp_footer', 'wp_enqueue_scripts', 0);
-      add_action('wp_footer', 'wp_print_head_scripts', 5); */
 }
 
 add_action('wp_enqueue_scripts', 'load_scripts');
-
-function load_gf_scripts() {
-    $my_theme = wp_get_theme();
-    $my_version = $my_theme->get('Version');
-    wp_enqueue_style('gravity-styles', get_stylesheet_directory_uri() . '/css/gravity-style.min.css', array(), $my_version);
-    wp_enqueue_style('make-gravityforms', get_stylesheet_directory_uri() . '/css/gravityforms.css');
-}
-add_action( 'gform_enqueue_scripts', 'load_gf_scripts', 10, 2 );
 
 function remove_unnecessary_scripts() {
     if (is_admin()) {
@@ -192,26 +166,20 @@ function remove_unnecessary_styles() {
 }
 add_action( 'wp_print_styles', 'remove_unnecessary_styles', PHP_INT_MAX ); // we want this to happen absolutely last
 
-//Load custom gravity forms js for barnes and noble forms
-//Change the formid below to load for barnes and noble
 
-function enqueue_custom_barnesandnoble_script($form, $is_ajax) {
-    $my_theme = wp_get_theme();
-    $my_version = $my_theme->get('Version');
-    wp_enqueue_script('make-gravityformsbarnesandnoble', get_stylesheet_directory_uri() . '/js/libs/gravityformsbarnesandnoble.js', array('jquery'), $my_version);
-}
+//Load custom gravity forms js and css for all forms
 
-add_action('gform_enqueue_scripts_108', 'enqueue_custom_barnesandnoble_script', 10, 2);
-
-//Load custom gravity forms js for all forms
-
-function enqueue_custom_allforms_script($form, $is_ajax) {
+function gravity_scripts($form, $is_ajax) {
     $my_theme = wp_get_theme();
     $my_version = $my_theme->get('Version');
     wp_enqueue_script('make-gravityformsallforms', get_stylesheet_directory_uri() . '/js/libs/gravityformsallforms.js', array('jquery'), $my_version);
+    wp_enqueue_style('gravity-styles', get_stylesheet_directory_uri() . '/css/gravity-style.min.css', array(), $my_version);
+    wp_enqueue_style('make-gravityforms', get_stylesheet_directory_uri() . '/css/gravityforms.css');
+    wp_enqueue_style('jquery-datetimepicker-css', get_stylesheet_directory_uri() . '/css/jquery.datetimepicker.css', '', '', true);
+    wp_enqueue_script('jquery-datetimepicker', get_stylesheet_directory_uri() . '/js/libs/jquery.datetimepicker.js', array('jquery'), '', true);
 }
 
-add_action('gform_enqueue_scripts', 'enqueue_custom_allforms_script', 10, 2);
+add_action('gform_enqueue_scripts', 'gravity_scripts', 10, 2);
 
 
 function load_admin_scripts() {
@@ -232,6 +200,7 @@ function load_admin_scripts() {
     wp_enqueue_style('mf-admin-style', get_stylesheet_directory_uri() . '/css/mf-admin-style.min.css', array(), $my_version);
 
     wp_enqueue_script('sack');    
+    wp_enqueue_script('thickbox', null);
 }
 
 add_action('admin_enqueue_scripts', 'load_admin_scripts');
@@ -350,35 +319,6 @@ function ACF_flexible_content_collapse() {
 
 add_action('acf/input/admin_head', 'ACF_flexible_content_collapse');
 
-function custom_acf_repeater_colors() {
-    echo '<style type="text/css">
-        /* nth field background */
-        .acf-repeater.-row .acf-row:nth-of-type(2n) .acf-table {
-            background:#fafafa;
-        }
-        /* left field label td */
-        .acf-repeater.-row .acf-row:nth-of-type(2n) td.acf-label {
-            background:#eee;
-            border-color:#ddd;
-        }
-        /* field td */
-        .acf-repeater.-row .acf-row:nth-of-type(2n) td.acf-input {
-            border-color:#ddd;
-        }
-        /* left and right side - order and delete td */
-        .acf-repeater.-row .acf-row:nth-of-type(2n) td.order,
-        .acf-repeater.-row .acf-row:nth-of-type(2n) td.remove {
-            background:#e3e3e3;
-        }
-        /* space between row - only border works */
-        .acf-repeater.-row > tbody > tr > td {
-            border:0;
-            border-bottom:3px solid #DFDFDF;
-        }
-         </style>';
-}
-
-add_action('admin_head', 'custom_acf_repeater_colors');
 
 function shapeSpace_remove_toolbar_node($wp_admin_bar) {
     // replace 'updraft_admin_node' with your node id
