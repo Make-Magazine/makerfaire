@@ -94,8 +94,6 @@ function custom_rewrite_tag() {
 
   add_rewrite_tag('%faire_id%', '([^&]+)');  
   add_rewrite_tag('%entryslug%', '([^&]+)');  //page-entryarchives.php
-  add_rewrite_tag('%entryid%', '([^&]+)');    //classes/mf-gf-exhibit-view.php
-  add_rewrite_tag('%makerfaire%', '([^&]+)'); //classes/mf-gf-exhibit-view.php
 }
 
 add_action('init', 'custom_rewrite_tag', 10, 0);
