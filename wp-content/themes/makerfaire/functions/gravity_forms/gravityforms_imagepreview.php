@@ -75,7 +75,7 @@ add_action('wp_head','wd_gravity_image_thumb_upload');
 function has_gf() {
     global $post;
     $all_content = get_the_content();
-    if (strpos($all_content,'[gravityform') !== false) {
+    if (strpos($all_content,'[gravityform') !== false || strpos($all_content,'wp:gravityforms/form') !== false) {
         return "gf";
     } else if(strpos($all_content,'[gravityview') !== false) {
         return "gv";
