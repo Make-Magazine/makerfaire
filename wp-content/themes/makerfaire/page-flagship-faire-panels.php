@@ -11,23 +11,7 @@ get_header(); ?>
 
     <!-- <div class="container"> -->
    
-      <?php the_content(); ?>
-<!--
-      <div class="mf-full-hero" style="background-image: url('../wp-content/themes/makerfaire/images/ba19-banner-image-lrg.jpg');">
-         <div class="mf-left-text">
-            <div class="mf-title-text">
-               <h1>Maker Faire Bay Area 2019 <span>May 17-19</span></h1>
-            </div>
-            <div class="mf-notched-banner-outer">
-               <div class="mf-notched-banner-inner">
-                  <h2>Join Us Friday, Saturday &amp; Sunday <span>San Mateo County Event Center <a class="location" target="_blank" href="https://goo.gl/maps/96pnEnkopwwezaWs8"><i class="fas fa-map-marker-alt" aria-hidden="true"></i></a></span></h2>
-               </div>
-            </div>
-         </div>
-      </div>-->
-
-    <!-- </div> -->
-    <?php
+      <?php the_content(); 
 
     // check if the flexible content field has rows of data
     if( have_rows('content_panels')) {

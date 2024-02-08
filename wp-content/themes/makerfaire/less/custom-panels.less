@@ -9,7 +9,7 @@
 }
 
 .customPanels, .elementor-section {
-   font-family: "Roboto-Light";
+   font-family: "Roboto Light";
    overflow: hidden;
 	// color background options for all panels
 	.white-bg {
@@ -1161,7 +1161,7 @@
       border-bottom: 2px solid #F5A623;
    }
    .featured-faire {
-      font-family: "Roboto-Light";
+      font-family: "Roboto Light";
    }
    .hero-panel {
       .panel_title {
@@ -1381,20 +1381,6 @@
    flex-wrap: wrap;
 }
 
-// Adjustments for the custom panels that are required by the page-wide-left-nav template
-.page-leftnav.customPanels {
-	&.container-fluid {
-		padding: 0px;
-	}
-	.container { width: 100%; }
-	.row { margin: 0px; }
-	.content-panel.six-column .image-grid-row, .container, .container-fluid { padding: 0px; }
-	.featured-maker-panel #performers .thumbnail { width: auto; } // I think this won't be necessary once the featured maker panel is a grid rather than bootstrap
-	.slider-panel { padding-bottom: 50px; }
-	.content { padding: 0px; }
-	.six-column { padding: 0px 15px; }
-}
-
 .blue-box {
 	flex-grow: 1;
 	flex-shrink: 1;
@@ -1503,7 +1489,6 @@
 		position: absolute;
 		left: 50%;
 		top: -50px;
-		-webkit-transform: translateX(-50%) translateY(0);
 		-ms-transform: translateX(-50%) translateY(0);
 		transform: translateX(-50%) translateY(0);
 	}
@@ -1570,13 +1555,13 @@
 	height: 42px;
 	background-color: #005980;
 	margin-top: 70px;
-    margin-bottom: 25px;
-    width: 100vw;
-    position: relative;
-    left: 50%;
-    right: 50%;
-    margin-left: -50vw;
-    margin-right: -50vw;
+   margin-bottom: 25px;
+   width: 100vw;
+   position: relative;
+   left: 50%;
+   right: 50%;
+   margin-left: -50vw;
+   margin-right: -50vw;
 	.makey-divider-triangle {
 		height: 35px;
 		width: 35px;
@@ -1587,9 +1572,6 @@
 		margin-left: auto;
 		margin-right: auto;
 		margin-top: -17px;
-		-webkit-transform: rotate(45deg);
-		-moz-transform: rotate(45deg);
-		-o-transform: rotate(45deg);
 		-ms-transform: rotate(45deg);
 		transform: rotate(45deg);
 	}
@@ -1672,7 +1654,6 @@
 					left: 50%;
 					text-transform: uppercase;
 					transform: translateX(-50%);
-					-webkit-transform: translateX(-50%);
 				}
 			}
 		}

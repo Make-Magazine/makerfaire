@@ -93,11 +93,11 @@ function load_scripts() {
 
     // Styles
     if(has_gf()) {
+        wp_enqueue_style('gravity-styles', get_stylesheet_directory_uri() . '/css/gravity-style.min.css');
         wp_enqueue_style('make-gravityforms', get_stylesheet_directory_uri() . '/css/gravityforms.css');
     }
     wp_enqueue_style('make-bootstrap', get_stylesheet_directory_uri() . '/css/bootstrap.min.css');
     wp_enqueue_style('make-bootstrapdialog', get_stylesheet_directory_uri() . '/css/bootstrap-dialog.min.css', true);
-    // wp_enqueue_style('wpb-google-fonts', 'https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,900|Roboto+Condensed:400', false);
     wp_enqueue_style('make-styles', get_stylesheet_directory_uri() . '/css/style.min.css', array(), $my_version);
 
     wp_enqueue_style('jquery-datetimepicker-css', get_stylesheet_directory_uri() . '/css/jquery.datetimepicker.css', '', '', true);

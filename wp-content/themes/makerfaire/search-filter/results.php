@@ -110,7 +110,7 @@ if ( $query->have_posts() ) {
 			<div class="result-item <?php echo $postType; ?>" onclick="javascript:location.href = '<?php echo get_the_permalink(); ?>';">
 				<?php if ( has_post_thumbnail() ) { ?>
 						<div class="result-image">
-							<?php the_post_thumbnail("small", [ 'alt' => esc_html ( $image_alt ) ]); ?>
+							<?php the_post_thumbnail("medium", [ 'alt' => esc_html ( $image_alt ) ]); ?>
 						</div>
 				<?php } ?>
 				<div class="results-text" <?php echo $result_text_style; ?>>
