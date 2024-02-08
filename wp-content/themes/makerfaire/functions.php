@@ -39,6 +39,8 @@ foreach (glob($templatePath . '/cpt/*.php') as $file) {
 // add post-thumbnails support to theme
 add_theme_support('post-thumbnails');
 add_image_size('schedule-thumb', 140, 140, true);
+
+//turn off wordpress feature that replaces double line breaks with paragraph elements.
 remove_filter('the_content', 'wpautop');
 
 /* Turn off secure file download. This was conflicting with LargeFS on wpengine */
@@ -255,7 +257,7 @@ add_action('wp_ajax_nopriv_make_error_log', 'make_error_log');
 
 // Write to the php error log by request
 function make_error_log() {
-    $error = filter_input(INPUT_POST, 'make_error', FILTER_SANITIZE_STRING);
+    $error = filter_input(INPUT_POST, 'make_error', FILTER_SANITIZE_SPECIAL_CHARS);
     error_log(print_r($error, true));
 }
 
@@ -320,8 +322,9 @@ function ACF_flexible_content_collapse() {
 add_action('acf/input/admin_head', 'ACF_flexible_content_collapse');
 
 
-function shapeSpace_remove_toolbar_node($wp_admin_bar) {
-    // replace 'updraft_admin_node' with your node id
+/* Remove items from the top black nav bar in admin
+ */
+function mf_remove_toolbar_node($wp_admin_bar) {
     $wp_admin_bar->remove_node('wp-logo');
     $wp_admin_bar->remove_node('customize');
     $wp_admin_bar->remove_node('updates');
@@ -331,7 +334,7 @@ function shapeSpace_remove_toolbar_node($wp_admin_bar) {
     $wp_admin_bar->remove_node('stats');
 }
 
-add_action('admin_bar_menu', 'shapeSpace_remove_toolbar_node', 999);
+add_action('admin_bar_menu', 'mf_remove_toolbar_node', 999);
 
 // keep the old style widget page
 function switch_widget_editor() {
@@ -415,7 +418,7 @@ function basicCurl($url) {
 
 function smartTruncate($string, $limit, $break = ".", $pad = "...") {
     // return with no change if string is shorter than $limit
-if (strlen($string) <= $limit) {
+    if (strlen($string) <= $limit) {
         return $string;
     }
     // is $break present between $limit and the end of the string?
@@ -440,24 +443,6 @@ function validate_url($url) {
 
     return true;
 }
-
-/*
-add_filter( 'manage_pages_columns', 'codismo_table_columns', 10, 1 );
-add_action( 'manage_pages_custom_column', 'codismo_table_column', 10, 2 );
-function codismo_table_columns( $columns ) {
-    $custom_columns = array(
-        'codismo_template' => 'Template'
-    );
-    $columns = array_merge( $columns, $custom_columns );
-    return $columns;
-
-}
-function codismo_table_column( $column, $post_id ) {
-    if ( $column == 'codismo_template' ) {
-        echo basename( get_page_template() );
-    }
-}
-*/
 
 //pull in custom elementor widgets
 require_once('elementor/make-widgets.php');
