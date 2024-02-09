@@ -14,27 +14,6 @@ function mf_convert_newlines( $str, $replace = '<br />' ) {
 	return str_replace($s, $replace, $str);
 }
 
-/**
- * Loop through the locations, and build the breadcrumb navigation for locations.
- */
-function mf_location( $id ) {
-	$locs = get_the_terms( $id, 'location' );
-	$booth = get_post_meta( $id, 'booth');
-	if ( !empty($locs) ) {
-		$output = '<ul class="breadcrumb">';
-		foreach ($locs as $loc) {
-			$output .= '<li><strong>Located in</strong>&nbsp;</li>';
-			$parent = get_term($loc->parent, 'location');
-			$output .= ( !is_wp_error( $parent ) ) ? '<li>' . $parent->name . '</li><span class="divider">/</span>' : '' ;
-			$output .= '<li>' . $loc->name . '</li>';
-			$output .= ( !empty( $booth[0] ) ) ? '<span class="divider">/</span><li>Booth: ' . esc_html( $booth[0] ) . '</li>' : '' ;
-
-		}
-		$output .= '</ul>';
-	}
-	return $output;
-}
-
 add_filter('get_avatar','mf_change_avatar_css');
 
 function mf_change_avatar_css( $class ) {
@@ -338,3 +317,4 @@ function make_video_photo_gallery( $attr ) {
 }
 
 add_shortcode( 'video_gallery', 'make_video_photo_gallery' );
+

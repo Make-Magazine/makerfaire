@@ -1,41 +1,4 @@
 <?php
-
-//Remove edit forms
-add_action('admin_menu', 'national_remove_admin_submenus', 999);
-
-function national_remove_admin_submenus() {
-    $user = wp_get_current_user();
-    $is_national = ( in_array('national', (array) $user->roles) );
-    if ($is_national) {
-        remove_menu_page('gf_edit_forms');
-    }
-}
-
-//Remove edit forms
-add_action('admin_menu', 'barnesandnoble_remove_admin_submenus', 999);
-
-function barnesandnoble_remove_admin_submenus() {
-    $user = wp_get_current_user();
-    $is_barnesandnoble = ( in_array('barnes__noble', (array) $user->roles) );
-    if ($is_barnesandnoble) {
-        remove_menu_page('gf_edit_forms');
-        remove_menu_page('index.php');
-        remove_menu_page('profile.php');
-    }
-}
-
-function remove_admin_bar_links() {
-    global $wp_admin_bar;
-    $user = wp_get_current_user();
-    $is_barnesandnoble = ( in_array('barnes__noble', (array) $user->roles) );
-    if ($is_barnesandnoble) {
-        $wp_admin_bar->remove_menu('wp-logo');
-        $wp_admin_bar->remove_menu('my-account');       // Remove the user details tab
-        $wp_admin_bar->remove_menu('comments');         // Remove the comments link
-        $wp_admin_bar->remove_menu('notes');         // Remove the comments link
-    }
-}
-
 add_action('wp_before_admin_bar_render', 'remove_admin_bar_links');
 
 /**
@@ -79,8 +42,7 @@ add_action('admin_bar_menu', 'toolbar_link_to_mypage', 50);
 function toolbar_link_to_mypage($wp_admin_bar) {
 
     $user = wp_get_current_user();
-    $is_national = ( in_array('national', (array) $user->roles) );
-    $is_barnesandnoble = ( in_array('barnes__noble', (array) $user->roles) );
+        
     $locations = get_registered_nav_menus();
     $menus = wp_get_nav_menus();
     $menu_locations = get_nav_menu_locations();
@@ -97,7 +59,7 @@ function toolbar_link_to_mypage($wp_admin_bar) {
         buildFaireDrop($wp_admin_bar);
         $faire = '';
         //add custom menu items
-        $locations = array('mf-admin-bayarea-register-menu', 'mf-admin-newyork-register-menu', 'mf-admin-chicago-register-menu');
+        $locations = array('mf-admin-bayarea-register-menu', 'mf-admin-newyork-register-menu');
         foreach ($locations as $location_id) {
             //is this a navigation menu?
             if (isset($menu_locations[$location_id])) {
