@@ -111,7 +111,7 @@ if ( $query->have_posts() ) {
                 <?php if ( has_post_thumbnail() ) { ?>
                         <div class="result-image">
 							<a href="<?php the_permalink(); ?>">
-								<img src="<?php echo legacy_get_resized_remote_image_url(get_the_post_thumbnail_url(), 400, 300); ?>" srcset="<?php echo legacy_get_resized_remote_image_url(get_the_post_thumbnail_url(), 400, 300); ?> 400w, <?php echo legacy_get_resized_remote_image_url(get_the_post_thumbnail_url(), 600, 400); ?> 800w" sizes="(max-width: 600px) 400px, 800px" alt="<?php echo $image_alt; ?>" />
+								<img srcset="<?php echo legacy_get_resized_remote_image_url(get_the_post_thumbnail_url(), 400, 300); ?> 400w, <?php echo legacy_get_resized_remote_image_url(get_the_post_thumbnail_url(), 600, 400); ?> 1199w, <?php echo legacy_get_resized_remote_image_url(get_the_post_thumbnail_url(), 400, 300); ?>" sizes="(max-width: 400px) 400px, (max-width: 1199px) 1199px, 1200px" src="<?php echo legacy_get_resized_remote_image_url(get_the_post_thumbnail_url(), 400, 300); ?>" alt="<?php echo $image_alt; ?>" />
 							</a>
                         </div>
                 <?php } ?>
