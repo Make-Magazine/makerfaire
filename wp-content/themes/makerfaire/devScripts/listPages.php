@@ -1,48 +1,71 @@
 <?php
 include '../../../../wp-load.php'; 
 
-list_pages_with_status_and_hierarchy();
+$count=0;
+$status = (isset($_GET['status'])?$_GET['status']:'publish');
+$sql = 'SELECT ID, post_date, post_title, post_status,post_password, post_parent,post_type, post_modified '.
+        'FROM `wp_posts` '.
+        'where post_type="page" and post_status in("'.$status.'") '.
+        'order by post_parent ASC, post_title ASC;';
+        
+$results = $wpdb->get_results($sql, ARRAY_A);
 
-function list_pages_with_status_and_hierarchy($parent_id = 0, $level = 0) {
-    $post_status = (isset($_GET['post_status'])?$_GET['post_status']:'');
-    $expand=(isset($_GET['expand'])?TRUE:FALSE);
-
-    // Get all pages with the specified parent ID
-    $args = array(
-        'post_type'      => 'page',
-        'posts_per_page' => -1,
-        'post_parent'    => $parent_id,
-        'order'          => 'ASC',
-        'orderby'        => 'post_title'
-    );
-    if(isset($_GET['post_status'])){
-        $args['post_status'] = $_GET['post_status'];
+echo '<h2>List of pages with a status of '.$status.'</h2> <h3>Found '.count($results).' records</h3>';
+$post_array=array();
+foreach($results as $row) {
+    $post_array[$row['ID']]=$row;
+    $parent_id = $row['post_parent'];
+     
+    if(!isset($post_array[$parent_id] ) ){
+        $post_array[$parent_id] = array();
     }
-
-    $pages = get_posts($args);
-
-    // Check if there are any pages
-    if ($pages) {
-        echo '<ul>';
-
-        // Loop through each page
-        foreach ($pages as $page) {
-            $status = get_post_status($page->ID);
-            $link   = get_page_link($page->ID);            
-            $modified_date = get_post_field( 'post_modified', $page->ID );
-            
-            echo '<li>';
-            echo '<strong><a href="'.$link.'">' . esc_html($page->post_title) . '</a></strong> (' . esc_html($status).') '.(isset($page->post_password) && $page->post_password!=''?' Password='.$page->post_password:'').' '.$modified_date;
-            if($expand){
-                echo ' Created-> '. get_post_field( 'post_date', $page->ID );                
-                echo ' Author-> '. get_the_author_meta('display_name', $page->post_author);
-            }
-            echo '</li>';
-
-            // Recursively call the function for child pages
-            list_pages_with_status_and_hierarchy($page->ID, $level + 1);
-        }
-
-        echo '</ul>';
-    }
+    //set as a child row of the parent//set post data                
+    $post_array[ $parent_id ]['child'][]=$row['ID'];
+        
 }
+
+echo '<ul>';            
+foreach($post_array[0]['child'] as $page_ID){
+    list_pages($page_ID);    
+}
+echo '</ul>';    
+
+
+//now find orphaned pages
+unset($post_array['0']); 
+echo '<h2>Orphaned Pages</h2><ul>';
+foreach($post_array as $key=>$page){    
+    if(!isset($page['ID']) && isset($page['child'])){
+        foreach($page['child'] as $page_ID){            
+            list_pages($page_ID);    
+        }
+    }
+    
+}
+echo '</ul>';
+
+echo 'Wrote '. $count.' records';
+
+//var_dump($post_array);
+function list_pages($page_ID){
+    global $count;
+    ++$count;
+    global $post_array;
+    $page = $post_array[$page_ID];
+    $status = esc_html($page['post_status']);
+    echo '<li>';
+        echo    '<strong>'.
+                '<a href="'.get_page_link($page['ID']).'">' . ($page['post_title']!==''?esc_html($page['post_title']):'{{No Title Set}}') . '</a>'.
+                '</strong> (' . $status .') '.
+                (isset($page['post_password']) && $page['post_password']!=''?' Password='.$page['post_password']:'').
+                ' '.$page['post_modified'];
+        if(isset($page['child'])){
+            echo '<ul>';
+            
+            foreach($page['child'] as $child_ID){
+                list_pages($child_ID);
+            }
+            echo '</ul>';
+        }        
+    echo '</li>';
+}   
