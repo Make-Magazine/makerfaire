@@ -1,6 +1,4 @@
 <?php
-add_action('wp_before_admin_bar_render', 'remove_admin_bar_links');
-
 /**
  * Redirect old custom gravity form admin pages to the correct path
  */
