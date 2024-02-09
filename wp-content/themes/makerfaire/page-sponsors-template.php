@@ -238,13 +238,4 @@ get_header();
 
 </div>
 
-<!--LeftNav Containers-->
-<?php           
-  if($displayNav){
-?>
-  </div>
- </div>
-</div>
-<?php } ?>
-
 <?php get_footer(); ?>
