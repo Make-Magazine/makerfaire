@@ -117,8 +117,6 @@ function load_scripts() {
     wp_enqueue_script('universal', UNIVERSAL_MAKEHUB_ASSET_URL_PREFIX . '/wp-content/universal-assets/v2/js/min/universal.min.js', array(), $my_version, true);
 
     // Localize
-    $translation_array = array('templateUrl' => get_stylesheet_directory_uri(), 'ajaxurl' => admin_url('admin-ajax.php'));
-    wp_localize_script('make-js', 'object_name', $translation_array);
     $user = wp_get_current_user();
     $auth0_user_data = null;
     // if user is logged in 
@@ -135,6 +133,7 @@ function load_scripts() {
         'make-js',
         'ajax_object',
         array(
+                'templateUrl' => get_stylesheet_directory_uri(),
                 'ajax_url' => admin_url('admin-ajax.php'),
                 'home_url' => get_home_url(),
                 'logout_nonce' => wp_create_nonce('ajax-logout-nonce'),

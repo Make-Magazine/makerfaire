@@ -8,6 +8,42 @@ function random_pic($dir = '/uploads'){
 	}
 }
 
+/*function resizeImage($imagePath, $width, $height, $filterType, $blur, $bestFit, $cropZoom) {
+    //The blur factor where > 1 is blurry, < 1 is sharp.
+	if (@getimagesize($imagePath) && class_exists( 'Imagick' ) ) {
+		$image = parse_url($imagePath, PHP_URL_PATH);
+		//To get the dir, use: dirname($path)
+		$img_path = $_SERVER['DOCUMENT_ROOT'] . $image;
+		error_log($img_path);
+		$imagick = new \Imagick();
+		$imagick->readImage( $img_path );
+		error_log($imagick);
+		$imagick->resizeImage($width, $height, $filterType, $blur, $bestFit);
+		$cropWidth = $imagick->getImageWidth();
+		$cropHeight = $imagick->getImageHeight();
+		if ($cropZoom) {
+			$newWidth = $cropWidth / 2;
+			$newHeight = $cropHeight / 2;
+			$imagick->cropimage(
+				$newWidth,
+				$newHeight,
+				($cropWidth - $newWidth) / 2,
+				($cropHeight - $newHeight) / 2
+			);
+
+			$imagick->scaleimage(
+				$imagick->getImageWidth() * 4,
+				$imagick->getImageHeight() * 4
+			);
+		}
+
+		$imagePath = $imagick->getImageBlob();
+	} 
+	error_log($imagePath);
+	return $imagePath;
+}*/
+
+
 
 function skip_photon_lazy_images( $blocked_classes ) {
     $blocked_classes[] = 'wp-image-643979';
