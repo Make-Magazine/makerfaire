@@ -2,7 +2,8 @@
 
 /*
  * Used to fix orientation issues on iphone and android images
- */
+
+ As most images taken on phones that have the wrong orientation were probably originally taken that way by a phone camera, we're thinking this function might unintentionally 'fix' images by switching them back to their original orientation even after a user has corrected the orientation
 
 add_action( 'gform_post_submission', 'fix_image_orientation', 10, 2 );
 add_action( 'cron_fix_image_orientation', 'fix_image_orientation', 10, 2 );
@@ -88,3 +89,4 @@ function rotateImage($image,$rotateImage) {
     do_action( 'imf_fixed', $img_path, $rotateImage );
   }
 }
+ */
