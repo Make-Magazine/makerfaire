@@ -74,13 +74,10 @@ $maker_data = get_field("maker_data");
             <h1 class="project-title"><?php echo get_field("title");?></h1>
             <?php if(!empty($project_state) || !empty($project_country)){?> 
             <h4>Home: <?php
-                if(!empty($project_state)) {
-                    echo $project_state . ", ";
-                }
-                if(!empty($project_country)) {
-                    echo $project_country; 
-                }
-                 ?>
+                echo (!empty($project_state) ? $project_state : "");                
+                echo (!empty($project_state) && !empty($project_country) ? ', ':'');
+                echo (!empty($project_country) ? $project_country : "");                
+                ?>
             </h4>
             <?php } ?>
             <div class="blue-spacer"></div>
