@@ -368,7 +368,8 @@
                     "return_format": "id",
                     "multiple": 0,
                     "allow_null": 0,
-                    "ui": 1
+                    "ui": 1,
+                    "bidirectional_target": []
                 }
             ]
         },
@@ -402,7 +403,7 @@
         },
         {
             "key": "field_65a17027e1bcd",
-            "label": "Project Location",
+            "label": "Maker Location",
             "name": "project_location",
             "aria-label": "",
             "type": "group",
@@ -476,8 +477,10 @@
                     "load_terms": 0,
                     "return_format": "object",
                     "field_type": "select",
-                    "allow_null": 0,
-                    "multiple": 0
+                    "allow_null": 1,
+                    "bidirectional": 0,
+                    "multiple": 0,
+                    "bidirectional_target": []
                 }
             ]
         },
@@ -517,5 +520,5 @@
     "active": true,
     "description": "",
     "show_in_rest": 0,
-    "modified": 1706138448
+    "modified": 1707850519
 }
