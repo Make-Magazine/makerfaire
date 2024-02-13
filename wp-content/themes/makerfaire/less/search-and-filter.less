@@ -91,6 +91,8 @@ form.searchandfilter {
                 width: 100%;
                 text-align: right;
                 padding-top: 0px;
+                position: relative;
+                z-index: 9;   
             }
         }
     }
@@ -340,7 +342,7 @@ form.searchandfilter {
 						-webkit-box-orient: vertical;
 						-webkit-line-clamp: 2;
 						overflow: hidden;
-						font-size: 26px;
+						font-size: 24px;
 						font-family: "Roboto Bold";
 						text-transform: capitalize;
 						color: #333;
@@ -431,12 +433,15 @@ form.searchandfilter {
         }
     }
     .pagination {
-        display: none;
-        justify-content: center;
+        justify-content: space-between;
+        display: flex;
+        flex-wrap: wrap;;
         &:last-of-type {display: flex !important;}
-        .nav-previous, .nav-next {
+        .nav-previous, .nav-next, .nav-count {
             padding: 10px;
-            order: 4;
+            order: 5;
+            max-height: 50px;
+            display: flex;
             a {
                 border: solid 1px #005e9a;
                 background: #005e9a;
@@ -459,8 +464,20 @@ form.searchandfilter {
                 }
             }
         }
+        .nav-count { 
+            order: 4;
+            display: flex;
+            align-items: center;
+            @media screen and (max-width: 700px) {
+                order: 2;
+                width: 100%;
+                flex: 1 auto;
+                display: flex;
+                justify-content: center;
+            }
+         }
         .nav-next {
-            order: 1;
+            order: 3;
             a::after {
                 content: "Previous";
             }

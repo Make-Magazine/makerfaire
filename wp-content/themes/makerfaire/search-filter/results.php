@@ -38,15 +38,9 @@ if ( $query->have_posts() ) {
     <div class="pagination">
 
         <div class="nav-previous"><?php next_posts_link( 'Older posts', $query->max_num_pages ); ?></div>
+        <div class="nav-count">Page <?php echo $query->query['paged']; ?> of <?php echo $query->max_num_pages; ?></div>
         <div class="nav-next"><?php previous_posts_link( 'Newer posts' ); ?></div>
-        <?php
-            /* example code for using the wp_pagenavi plugin */
-            if (function_exists('wp_pagenavi'))
-            {
-                echo "<br />";
-                wp_pagenavi( array( 'query' => $query ) );
-            }
-        ?>
+
     </div>
 
     <div class="result-items">
@@ -180,14 +174,15 @@ if ( $query->have_posts() ) {
             <hr />
     <?php } ?>
     </div>
-    <?php /*Page <?php echo $query->query['paged']; ?> of <?php echo $query->max_num_pages; ?><br /> 
+   
 
     <div class="pagination">
 
         <div class="nav-previous"><?php next_posts_link( 'Older posts', $query->max_num_pages ); ?></div>
+        <div class="nav-count">Page <?php echo $query->query['paged']; ?> of <?php echo $query->max_num_pages; ?></div>
         <div class="nav-next"><?php previous_posts_link( 'Newer posts' ); ?></div>
 
-    </div>*/ ?>
+    </div>
     <?php
 } else {
     echo "<span class='no-results'>No Results Found</span>";
