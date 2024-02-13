@@ -113,10 +113,10 @@ function register_taxonomy_countries() {
 add_action( 'init', 'register_taxonomy_countries' );
 
 function search_and_filter_random_order( $query_args, $sfid ) {
-	if(($sfid==661619 || $sfid==661622) && !empty($_GET['sort_order'])) {
+	if(($sfid==661619 || $sfid==661622) && empty($_GET['sort_order'])) {
 		session_start();
 		// Detect first page and reset seed
-		if( !empty($_GET['sf_paged']) || $_GET['sf_paged'] == 0 || $_GET['sf_paged'] == 1 ) {
+		if( empty($_GET['sf_paged']) || $_GET['sf_paged'] == 0 || $_GET['sf_paged'] == 1 ) {
 			if( isset( $_SESSION['seed'] ) ) {
 				unset( $_SESSION['seed'] );
 			}
