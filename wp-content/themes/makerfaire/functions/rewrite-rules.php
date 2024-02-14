@@ -12,7 +12,7 @@ function maker_url_vars($rules) {
   
   //create maker signs
   $newrules['maker-sign/(\d*)/?(.*)$/?'] = 'index.php?makersign=true&eid=$matches[1]&faire=$matches[2]';
-  $newrules['^maker-sign/([^/]*)/([^/]*)$'] = '/wp-content/themes/makerfaire/fpdi/makersigns.php?eid=$matches[1]&faire=$matches[2]';        
+  $newrules['^maker-sign/([^/]*)/([^/]*)$'] = '/wp-content/themes/makerfaire/generate_pdf/makersigns.php?eid=$matches[1]&faire=$matches[2]';        
 
   //kendo scheduler - page-mfscheduler.php
   $newrules['^mfscheduler/([^/]*)/?'] = 'index.php?pagename=mfscheduler&faire_id=$matches[1]';
@@ -76,8 +76,8 @@ function makerfaire_register_query_var( $vars ) {
     $vars[] = 'faire_id';   //page-mfscheduler.php
     $vars[] = 'token';      //page-maker-checkin.php, page-mfscheduler.php, page-onsite-checkin.php, page-onsite-pinning.php
     $vars[] = 'makersign';  //classes/makerfaire-helper.php
-    $vars[] = 'faire';      //fpdi/makersigns.php
-    $vars[] = 'eid';        //fpdi/makersigns.php
+    $vars[] = 'faire';      //generate_pdf/makersigns.php
+    $vars[] = 'eid';        //generate_pdf/makersigns.php
     $vars[] = "sched_type"; //page-schedule.php
         
     return $vars;

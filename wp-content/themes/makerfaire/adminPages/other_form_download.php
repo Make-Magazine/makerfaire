@@ -58,7 +58,7 @@ $results = $wpdb->get_results($sql);
     if(form_id=='') {
       alert ('Please enter the FSP form ID for the faire you selected.');
     } else {
-      var url = '<?php echo get_template_directory_uri();?>/fpdi/FSP.php?faire='+faire+'&form='+form_id;
+      var url = '<?php echo get_template_directory_uri();?>/generate_pdf/FSP.php?faire='+faire+'&form='+form_id;
 
       var link = document.createElement('a');
       link.href = url;
@@ -73,7 +73,7 @@ $results = $wpdb->get_results($sql);
     if(form_id=='') {
       alert ('Please enter the GSP form ID for the faire you selected.');
     } else {
-      var url = '<?php echo get_template_directory_uri();?>/fpdi/GSP.php?faire='+faire+'&form='+form_id;
+      var url = '<?php echo get_template_directory_uri();?>/generate_pdf/GSP.php?faire='+faire+'&form='+form_id;
 
       var link = document.createElement('a');
       link.href = url;

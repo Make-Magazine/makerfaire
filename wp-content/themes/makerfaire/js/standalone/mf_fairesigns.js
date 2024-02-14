@@ -1,11 +1,11 @@
   function printSigns(type,faire){
     jQuery('#processButton').val("Creating PDF's. . . ");
     if(type=='signs'){
-      fpdiLink = 'makersigns';
+      pdfLink = 'makersigns';
     }else if(type=='presenter'){
-      fpdiLink = 'presenterSigns';
+      pdfLink = 'presenterSigns';
     }else{
-      fpdiLink = 'tabletag';
+      pdfLink = 'tabletag';
     }
     var folder = type;
     if(type=='signs') folder = 'maker';
@@ -15,7 +15,7 @@
 
       jQuery.ajax({
         type: "GET",
-        url: "/wp-content/themes/makerfaire/fpdi/"+fpdiLink+".php",
+        url: "/wp-content/themes/makerfaire/generate_pdf/"+pdfLink+".php",
         data: { eid: jQuery(this).attr('id'), type: 'save', faire: faire },
       }).done(function(data) {
         jQuery('#'+data).html(data);

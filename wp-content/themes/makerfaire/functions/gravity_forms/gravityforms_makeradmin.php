@@ -42,7 +42,7 @@ function gv_faire_name($display_value, $field, $entry, $form){
     }elseif($field["type"]=='delete_entry'){
         $display_value = '<a href="#deleteEntry" data-toggle="modal" data-projName="'.$entry['151'].'" data-entry-id="'.$entry['id'].'">Delete</a>';
     }elseif($field["type"]=='maker_sign_link'){
-      ///wp-content/themes/makerfaire/fpdi/makersigns.php?eid=$entry['id']&faire=BA16
+      ///wp-content/themes/makerfaire/generate_pdf/makersigns.php?eid=$entry['id']&faire=BA16
       $faireVar = ($faire_id!=''? '&faire='.$faire_id:'');
       $display_value = '<a href="/maker-sign/'.$entry['id'].'/'.$faireVar.'" target="_blank">Faire Sign</a>';
     }

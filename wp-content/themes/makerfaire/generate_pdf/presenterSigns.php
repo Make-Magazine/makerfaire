@@ -18,7 +18,7 @@ class PDF extends FPDF {
    // Page header
    function Header() {
       global $root;
-      $image = $root . '/wp-content/themes/makerfaire/fpdi/pdf/speaker_sign_layout.jpg';
+      $image = $root . '/wp-content/themes/makerfaire/generate_pdf/pdf_layouts/speaker_sign_layout.jpg';
       // Logo
       $this->Image($image, 0, 0, $this->w, $this->h);
       // Arial bold 15

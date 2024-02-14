@@ -1,8 +1,6 @@
 <?php
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * Create Maker sign of submitted entry
  */
 
 // set up database
@@ -62,7 +60,7 @@ try {
    $pdf->AddFont('Benton Sans', '', 'bentonsans-regular-webfont.php');
    $pdf->AddPage('P', array(381, 381));
    $pdf->SetFont('Benton Sans', '', 12);
-   $pdf->Image(get_template_directory().'/fpdi/signBackground2023.png', 0, 0, 381, 381); // background image
+   $pdf->Image(get_template_directory().'/generate_pdf/pdf_layouts/signBackground2023.png', 0, 0, 381, 381); // background image
    
    $pdf->SetMargins(20,139,22); //left, top, right
    
@@ -177,16 +175,18 @@ function createOutput($entry_id, $pdf) {
    if($project_photo !=''){
       $project_photo= stripslashes($project_photo);      
       $imgSize = getimagesize($project_photo);
+      $error_photo = get_template_directory().'/generate_pdf/pdf_layouts/BA23_Badge.png';
+      
       if(!$imgSize){
          error_log('error in getimagesize for '.$project_photo.' for '.$entry_id);         
-         $project_photo  = get_template_directory().'/fpdi/BA23_Badge.png';//fpdf does not support 16 bit png images      
+         $project_photo  = $error_photo;//fpdf does not support 16 bit png images      
       }elseif($imgSize['mime']!= 'image/jpeg' && $imgSize['mime']!= 'image/png'){
          error_log('mime type is '.$imgSize['mime'].' for '.$project_photo.' for '.$entry_id);         
-         $project_photo  = get_template_directory().'/fpdi/BA23_Badge.png';//fpdf does not support 16 bit png images      
+         $project_photo  = $error_photo;//fpdf does not support 16 bit png images      
          
       }elseif(isset($imgSize["bits"]) && $imgSize["bits"]==16){
          error_log("16bit depth image for $entry_id");
-         $project_photo  = get_template_directory().'/fpdi/BA23_Badge.png';//fpdf does not support 16 bit png images      
+         $project_photo  = $error_photo;//fpdf does not support 16 bit png images      
       }
    }   
 
@@ -437,41 +437,3 @@ function resizeToFit($imgFilename) {
        round(pixelsToMM($scale * $height))
    );
 }
-
-function get_png_imageinfo($file) {
-	if (empty($file)) return false;
-
-	$info = unpack('A8sig/Nchunksize/A4chunktype/Nwidth/Nheight/Cbit-depth/'.
-        'Ccolor/Ccompression/Cfilter/Cinterface', 
-		file_get_contents($file,0,null,0,29))
-		;
-
-	if (empty($info)) return false;
-echo 'get_png_imageinfo1';
-	if ("\x89\x50\x4E\x47\x0D\x0A\x1A\x0A"!=array_shift($info))
-		return false; // no PNG signature.
-      echo 'get_png_imageinfo2';
-	if (13 != array_shift($info))
-		return false; // wrong length for IHDR chunk.
-      echo 'get_png_imageinfo3';
-	if ('IHDR'!==array_shift($info))
-		return false; // a non-IHDR chunk singals invalid data.
-      echo 'get_png_imageinfo4';
-	$color = $info['color'];
-
-	$type = array(0=>'Greyscale', 2=>'Truecolour', 3=>'Indexed-colour',
-	4=>'Greyscale with alpha', 6=>'Truecolour with alpha');
-
-	if (empty($type[$color]))
-		return false; // invalid color value
-
-	$info['color-type'] = $type[$color];
-
-	$samples = ((($color%4)%3)?3:1)+($color>3);
-
-	$info['channels'] = $samples;
-	$info['bits'] = $info['bit-depth'];
-
-	return $info;
-}
-?>
