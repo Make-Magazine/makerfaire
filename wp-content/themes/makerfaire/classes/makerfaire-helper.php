@@ -424,7 +424,7 @@ function makersign_include($template){
     $page_value = (isset($wp_query->query_vars['makersign'])?$wp_query->query_vars['makersign']:'');
 
     if ($page_value && $page_value == "true") { //Verify "blah" exists and value is "true".
-        return $_SERVER['DOCUMENT_ROOT'].'/wp-content/themes/makerfaire/fpdi/makersigns.php'; //Load your template or file
+        return $_SERVER['DOCUMENT_ROOT'].'/wp-content/themes/makerfaire/generate_pdf/makersigns.php'; //Load your template or file
     }
     return $template; //Load normal template when $page_value != "true" as a fallback
 }

@@ -70,7 +70,7 @@ function change_post_object_label() {
 	$event_cpt->menu_icon = "https:\/\/global.makerfaire.com\/favicon-16x16.png";
     $labels = &$wp_post_types['event']->labels;
     $labels->name = 'Faires';
-	$labels->menu_name = 'Faires';
+	$labels->menu_name = 'Yearbook Faires';
     $labels->singular_name = 'Faire';
     $labels->add_new = 'Add a Faire';
     $labels->add_new_item = 'Add Faire';

@@ -55,8 +55,6 @@ echo 'faire'.$faire;
 
 }*/
 
-
-
 //returns array of area/subarea by faire
 function retSubAreaByFaire($faire) {
   global $wpdb;
@@ -134,3 +132,23 @@ function retResByEntry($entry_id) {
 }
 
 
+// alphabetize menu items
+function sort_admin_menu() {
+	if(is_admin()) {
+	    global $menu;
+	    // alphabetize submenu items
+		if($menu) {
+		    usort( $menu, function ( $a, $b ) {
+		        if(isset($a['5']) && $a[5]!='menu-dashboard'){
+		          // format of a submenu item is [ 'My Item', 'read', 'manage-my-items', 'My Item' ]
+		          return strcasecmp( strip_tags($a[0]), strip_tags($b[0]) );
+		        }
+		    } );
+		    //remove separators
+		    $menu = array_filter($menu, function($item) {
+		        return $item[0] != '';
+		    });
+		}
+	}
+}
+add_action('admin_init','sort_admin_menu');

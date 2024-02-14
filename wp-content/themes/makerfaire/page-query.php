@@ -35,7 +35,6 @@ $allowed_types = array(
 	'location_category',
 	'maker',
 	'schedule',
-	'venue',
 	'sponsor',
 	'maker_export'
 );

@@ -10,7 +10,7 @@ function register_cpt_projects()
 		"name" => __("Projects",  'makerfaire'),
 		'singular_name' => __('Project', 'makerfaire'),
 
-		"menu_name" => __("Projects",  'makerfaire'),
+		"menu_name" => __("Yearbook Projects",  'makerfaire'),
 		"all_items" => __("Projects", 'makerfaire'),
 		"edit_item" => __("Edit Project", 'makerfaire'),
 		"view_item" => __("View Project", 'makerfaire'),

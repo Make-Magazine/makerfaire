@@ -121,7 +121,7 @@ function genTableTags($faire) {
                 ?>
                 <div class="col-md-2">
                     <a class="fairsign" target="_blank" id="<?php echo $entry_id; ?>"
-                       href="/wp-content/themes/makerfaire/fpdi/tabletag.php?eid=<?php echo $entry_id; ?>&faire=<?php echo $faire; ?>"><?php echo $entry_id; ?></a>
+                       href="/wp-content/themes/makerfaire/generate_pdf/tabletag.php?eid=<?php echo $entry_id; ?>&faire=<?php echo $faire; ?>"><?php echo $entry_id; ?></a>
                 </div>
                 <?php
             }
@@ -405,14 +405,14 @@ function massGenerateSigns($entList, $type, $faire) {
     error_log('Start mass generate signs for ' . $faire . ' - ' . $type.'('.count($entList).' igns to generate)');
     //$response['entList'] = 'Process Submitted. Please check back for an update';
     //wp_send_json($response);
-    $fpdiLink = ($type === 'signs' ? 'makersigns' : ($type === 'presenter' ? 'presenterSigns' : 'tabletag'));
+    $pdfLink = ($type === 'signs' ? 'makersigns' : ($type === 'presenter' ? 'presenterSigns' : 'tabletag'));
 
         $result = array();
 
         //submit each url individually
         foreach ($entList as $i => $entryID) {
             // URL from which data will be fetched      
-            $fetchURL = get_template_directory_uri() . '/fpdi/' . $fpdiLink . '.php?eid=' . $entryID . '&type=save&faire=' . $faire;
+            $fetchURL = get_template_directory_uri() . '/generate_pdf/' . $pdfLink . '.php?eid=' . $entryID . '&type=save&faire=' . $faire;
             
             $ch = curl_init();
             
