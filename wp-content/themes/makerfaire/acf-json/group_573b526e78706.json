@@ -6,6 +6,7 @@
             "key": "field_573b53999849d",
             "label": "Content Panels",
             "name": "content_panels",
+            "aria-label": "",
             "type": "flexible_content",
             "instructions": "Add panels here by clicking the \"Add New Panel\" button at the bottom right side. Panel order can be changed by dragging each up or down.",
             "required": 0,
@@ -26,6 +27,7 @@
                             "key": "field_57196b4abc502",
                             "label": "Active\/Inactive",
                             "name": "activeinactive",
+                            "aria-label": "",
                             "type": "radio",
                             "instructions": "This adds a floating banner to buy tickets.",
                             "required": 0,
@@ -50,6 +52,7 @@
                             "key": "field_57196b4abc503",
                             "label": "Buy Ticket URL",
                             "name": "buy_ticket_url",
+                            "aria-label": "",
                             "type": "url",
                             "instructions": "Required. Enter the URL to the ticket purchasing page for this faire.",
                             "required": 1,
@@ -66,6 +69,7 @@
                             "key": "field_57196b4abc504",
                             "label": "Buy Ticket Text",
                             "name": "buy_ticket_text",
+                            "aria-label": "",
                             "type": "text",
                             "instructions": "Please enter the text displayed in the 'Buy Ticket' Flag.<br\/>20 character limit.",
                             "required": 1,
@@ -97,6 +101,7 @@
                             "key": "field_572d8358ky7e2",
                             "label": "Active\/Inactive",
                             "name": "activeinactive",
+                            "aria-label": "",
                             "type": "radio",
                             "instructions": "This adds a flag banner that can be used to separate panels.",
                             "required": 0,
@@ -131,6 +136,7 @@
                             "key": "field_572d8358fe8e2",
                             "label": "Active\/Inactive",
                             "name": "activeinactive",
+                            "aria-label": "",
                             "type": "radio",
                             "instructions": "This adds an email sign up form for newsletter subscriptions.",
                             "required": 0,
@@ -155,6 +161,7 @@
                             "key": "field_572d8358fe8e3",
                             "label": "Newsletter Text",
                             "name": "newsletter_panel_text",
+                            "aria-label": "",
                             "type": "text",
                             "instructions": "Please enter the text displayed on the left side of the panel.<br\/>100 character limit.",
                             "required": 1,
@@ -186,6 +193,7 @@
                             "key": "field_572bac2b2d757e",
                             "label": "CTA Button URL",
                             "name": "cta_button_url",
+                            "aria-label": "",
                             "type": "url",
                             "instructions": "",
                             "required": 0,
@@ -202,6 +210,7 @@
                             "key": "field_572bac2b2d757b",
                             "label": "Title",
                             "name": "title",
+                            "aria-label": "",
                             "type": "text",
                             "instructions": "",
                             "required": 0,
@@ -223,6 +232,7 @@
                             "key": "field_572bac2b2d757c",
                             "label": "Content",
                             "name": "column_1",
+                            "aria-label": "",
                             "type": "wysiwyg",
                             "instructions": "Use the editor to style this content block however you like.",
                             "required": 1,
@@ -242,6 +252,7 @@
                             "key": "field_572bac2b2d757a",
                             "label": "Active\/Inactive",
                             "name": "activeinactive",
+                            "aria-label": "",
                             "type": "radio",
                             "instructions": "Activate or Inactivate this panel",
                             "required": 0,
@@ -266,6 +277,7 @@
                             "key": "field_572bac2b2d757d",
                             "label": "CTA Button Text",
                             "name": "cta_button",
+                            "aria-label": "",
                             "type": "text",
                             "instructions": "Optional Call To Action button to add underneath the content. i.e. \"Learn More\" or \"Buy Now\". Leave blank to hide.",
                             "required": 0,
@@ -297,6 +309,7 @@
                             "key": "field_5d9f7d71873e7",
                             "label": "Columns",
                             "name": "columns",
+                            "aria-label": "",
                             "type": "repeater",
                             "instructions": "",
                             "required": 0,
@@ -310,12 +323,13 @@
                             "min": 2,
                             "max": 2,
                             "layout": "row",
-                            "button_label": "",
+                            "button_label": "Add Row",
                             "sub_fields": [
                                 {
                                     "key": "field_5d9f7d99873e8",
                                     "label": "CTA Button Text",
                                     "name": "cta_button",
+                                    "aria-label": "",
                                     "type": "text",
                                     "instructions": "Optional Call To Action button to add underneath the content. i.e. \"Learn More\" or \"Buy Now\". Leave blank to hide.",
                                     "required": 0,
@@ -329,12 +343,14 @@
                                     "placeholder": "",
                                     "prepend": "",
                                     "append": "",
-                                    "maxlength": ""
+                                    "maxlength": "",
+                                    "parent_repeater": "field_5d9f7d71873e7"
                                 },
                                 {
                                     "key": "field_5d9f7dc1873e9",
                                     "label": "CTA Button URL",
                                     "name": "cta_button_url",
+                                    "aria-label": "",
                                     "type": "url",
                                     "instructions": "",
                                     "required": 0,
@@ -345,12 +361,14 @@
                                         "id": ""
                                     },
                                     "default_value": "",
-                                    "placeholder": ""
+                                    "placeholder": "",
+                                    "parent_repeater": "field_5d9f7d71873e7"
                                 },
                                 {
                                     "key": "field_5d9f7e09873ea",
                                     "label": "Title",
                                     "name": "title",
+                                    "aria-label": "",
                                     "type": "text",
                                     "instructions": "",
                                     "required": 0,
@@ -364,12 +382,14 @@
                                     "placeholder": "",
                                     "prepend": "",
                                     "append": "",
-                                    "maxlength": ""
+                                    "maxlength": "",
+                                    "parent_repeater": "field_5d9f7d71873e7"
                                 },
                                 {
                                     "key": "field_5d9f7e10873eb",
                                     "label": "Content",
                                     "name": "column",
+                                    "aria-label": "",
                                     "type": "wysiwyg",
                                     "instructions": "",
                                     "required": 0,
@@ -383,14 +403,17 @@
                                     "tabs": "all",
                                     "toolbar": "full",
                                     "media_upload": 1,
-                                    "delay": 0
+                                    "delay": 0,
+                                    "parent_repeater": "field_5d9f7d71873e7"
                                 }
-                            ]
+                            ],
+                            "rows_per_page": 20
                         },
                         {
                             "key": "field_5d9f7e57873ec",
                             "label": "Active\/Inactive",
                             "name": "activeinactive",
+                            "aria-label": "",
                             "type": "radio",
                             "instructions": "Activate or Inactivate this panel",
                             "required": 0,
@@ -425,6 +448,7 @@
                             "key": "field_56fc6fc3dc4a3",
                             "label": "Featured Items",
                             "name": "featured_makers",
+                            "aria-label": "",
                             "type": "repeater",
                             "instructions": "Adds a panel for 1-3 rows of featured items. Each item features an image, name, and short description. Start by clicking the \"Add New Item\" button for each featured item to show in this panel.",
                             "required": 1,
@@ -444,6 +468,7 @@
                                     "key": "field_56fc70e8dc4a4",
                                     "label": "Image",
                                     "name": "maker_image",
+                                    "aria-label": "",
                                     "type": "image",
                                     "instructions": "Images are best when square sizes around 500px x 500px.",
                                     "required": 1,
@@ -462,12 +487,14 @@
                                     "max_width": "",
                                     "max_height": "",
                                     "max_size": "",
-                                    "mime_types": ""
+                                    "mime_types": "",
+                                    "parent_repeater": "field_56fc6fc3dc4a3"
                                 },
                                 {
                                     "key": "field_56fc7172dc4a5",
                                     "label": "Name",
                                     "name": "maker_name",
+                                    "aria-label": "",
                                     "type": "text",
                                     "instructions": "Optional field. 40 character limit.",
                                     "required": 0,
@@ -481,12 +508,14 @@
                                     "placeholder": "",
                                     "prepend": "",
                                     "append": "",
-                                    "maxlength": 40
+                                    "maxlength": 40,
+                                    "parent_repeater": "field_56fc6fc3dc4a3"
                                 },
                                 {
                                     "key": "field_56fc71a0dc4a6",
                                     "label": "Short Description",
                                     "name": "maker_short_description",
+                                    "aria-label": "",
                                     "type": "textarea",
                                     "instructions": "Optional field. 300 character limit.",
                                     "required": 0,
@@ -504,12 +533,14 @@
                                     "readonly": 0,
                                     "disabled": 0,
                                     "new_lines": "",
-                                    "rows": ""
+                                    "rows": "",
+                                    "parent_repeater": "field_56fc6fc3dc4a3"
                                 },
                                 {
                                     "key": "field_56fc71a0dc4a7",
                                     "label": "More Info URL",
                                     "name": "more_info_url",
+                                    "aria-label": "",
                                     "type": "url",
                                     "instructions": "Optional link to more information. Leave URL field blank to hide.",
                                     "required": 0,
@@ -520,14 +551,17 @@
                                         "id": ""
                                     },
                                     "default_value": "",
-                                    "placeholder": ""
+                                    "placeholder": "",
+                                    "parent_repeater": "field_56fc6fc3dc4a3"
                                 }
-                            ]
+                            ],
+                            "rows_per_page": 20
                         },
                         {
                             "key": "field_571ab19c2e7ec",
                             "label": "Text",
                             "name": "cta_text",
+                            "aria-label": "",
                             "type": "text",
                             "instructions": "Type the CTA link text here. 30 character limit.",
                             "required": 0,
@@ -549,6 +583,7 @@
                             "key": "field_571ab19c2e7ed",
                             "label": "CTA Link",
                             "name": "cta_url",
+                            "aria-label": "",
                             "type": "url",
                             "instructions": "Optional button to link to a page with more items. Leave URL field blank to hide.",
                             "required": 0,
@@ -565,6 +600,7 @@
                             "key": "field_5727eedc044ee",
                             "label": "Background Color",
                             "name": "background_color",
+                            "aria-label": "",
                             "type": "select",
                             "instructions": "Background color of this panel. Choose White, Blue, Dark Blue, Grey or Dark Grey",
                             "required": 0,
@@ -593,6 +629,7 @@
                             "key": "field_5719832407ae9",
                             "label": "Amount of Items to show",
                             "name": "makers_to_show",
+                            "aria-label": "",
                             "type": "radio",
                             "instructions": "Show 3, 6, or 9 featured items",
                             "required": 0,
@@ -618,6 +655,7 @@
                             "key": "field_5727a9191b209",
                             "label": "Active\/Inactive",
                             "name": "activeinactive",
+                            "aria-label": "",
                             "type": "radio",
                             "instructions": "Activate or Inactivate this panel",
                             "required": 0,
@@ -642,6 +680,7 @@
                             "key": "field_56fcb5958152f",
                             "label": "Panel Title",
                             "name": "title",
+                            "aria-label": "",
                             "type": "text",
                             "instructions": "i.e. \"Featured Items\"",
                             "required": 0,
@@ -671,6 +710,7 @@
                             "key": "field_579924c93b1bc",
                             "label": "Number of Makers to show",
                             "name": "makers_to_show",
+                            "aria-label": "",
                             "type": "radio",
                             "instructions": "Show 3, 6, or 9 Makers",
                             "required": 0,
@@ -696,6 +736,7 @@
                             "key": "field_579924c93b1bd",
                             "label": "Text",
                             "name": "cta_text",
+                            "aria-label": "",
                             "type": "text",
                             "instructions": "Type the CTA link text here. 50 character limit.",
                             "required": 0,
@@ -717,6 +758,7 @@
                             "key": "field_579924c93b1c2",
                             "label": "CTA Link",
                             "name": "cta_url",
+                            "aria-label": "",
                             "type": "url",
                             "instructions": "Optional button to link to a page with more makers. Leave URL field blank to hide.",
                             "required": 0,
@@ -733,6 +775,7 @@
                             "key": "field_579924c93b1c3",
                             "label": "Background Color",
                             "name": "background_color",
+                            "aria-label": "",
                             "type": "select",
                             "instructions": "Background color of this panel. Choose White, Blue, Dark Blue, Grey or Dark Grey",
                             "required": 0,
@@ -761,6 +804,7 @@
                             "key": "field_579925463b1d9",
                             "label": "Enter formid here",
                             "name": "enter_formid_here",
+                            "aria-label": "",
                             "type": "number",
                             "instructions": "Enter the form to pull featured individuals from. They must have the 'Featured Maker' flag set to be pulled in.",
                             "required": 1,
@@ -784,6 +828,7 @@
                             "key": "field_579924c93b1ba",
                             "label": "Active\/Inactive",
                             "name": "activeinactive",
+                            "aria-label": "",
                             "type": "radio",
                             "instructions": "Activate or Inactivate this panel",
                             "required": 0,
@@ -808,6 +853,7 @@
                             "key": "field_579924c93b1bb",
                             "label": "Panel Title",
                             "name": "title",
+                            "aria-label": "",
                             "type": "text",
                             "instructions": "i.e. \"Featured Makers\"",
                             "required": 0,
@@ -837,6 +883,7 @@
                             "key": "field_5727a9d21b20d",
                             "label": "Text",
                             "name": "sponsors_page_year",
+                            "aria-label": "",
                             "type": "text",
                             "instructions": "Type the 4 digit year of the faire here. 4 character limit.",
                             "required": 1,
@@ -858,6 +905,7 @@
                             "key": "field_5727a9d21b20b",
                             "label": "Active\/Inactive",
                             "name": "activeinactive",
+                            "aria-label": "",
                             "type": "radio",
                             "instructions": "Activate or Inactivate this panel",
                             "required": 0,
@@ -882,6 +930,7 @@
                             "key": "field_5727a9d21b20c",
                             "label": "Sponsors Page URL",
                             "name": "sponsors_page_url",
+                            "aria-label": "",
                             "type": "url",
                             "instructions": "This is used for pulling in the sponsor data for this faire.",
                             "required": 0,
@@ -908,6 +957,7 @@
                             "key": "field_571e86b7082c3",
                             "label": "Text",
                             "name": "text",
+                            "aria-label": "",
                             "type": "text",
                             "instructions": "Type the CTA message here. 50 character limit.",
                             "required": 1,
@@ -929,6 +979,7 @@
                             "key": "field_571e86fa082c4",
                             "label": "URL",
                             "name": "url",
+                            "aria-label": "",
                             "type": "url",
                             "instructions": "",
                             "required": 1,
@@ -945,6 +996,7 @@
                             "key": "field_5727aa011b20c",
                             "label": "Active\/Inactive",
                             "name": "activeinactive",
+                            "aria-label": "",
                             "type": "radio",
                             "instructions": "Activate or Inactivate this panel",
                             "required": 0,
@@ -969,6 +1021,7 @@
                             "key": "field_5775a4459a43g",
                             "label": "Background Color",
                             "name": "background_color",
+                            "aria-label": "",
                             "type": "radio",
                             "instructions": "Background color of this panel. Choose blue, light blue, red or orange.",
                             "required": 0,
@@ -1007,6 +1060,7 @@
                             "key": "field_57f8dfh89hsndjn",
                             "label": "Active\/Inactive",
                             "name": "activeinactive",
+                            "aria-label": "",
                             "type": "radio",
                             "instructions": "Activate or Inactivate this panel",
                             "required": 0,
@@ -1031,6 +1085,7 @@
                             "key": "field_577sda89s8hiuhi87d",
                             "label": "Background Color",
                             "name": "background_color",
+                            "aria-label": "",
                             "type": "radio",
                             "instructions": "Background color of this panel. Choose blue, light blue, red or orange.",
                             "required": 0,
@@ -1067,6 +1122,7 @@
                             "key": "field_572bad2b2d751",
                             "label": "Hero image Repeater",
                             "name": "hero_image_repeater",
+                            "aria-label": "",
                             "type": "repeater",
                             "instructions": "Upload 1-10 images for use as the hero image on the page. The displayed image will be randomly selected from these.<br\/>Optimal size is 1920 x 490",
                             "required": 0,
@@ -1080,12 +1136,13 @@
                             "min": 1,
                             "max": 10,
                             "layout": "table",
-                            "button_label": "",
+                            "button_label": "Add Row",
                             "sub_fields": [
                                 {
                                     "key": "field_572bad2b2d752",
                                     "label": "Hero image",
                                     "name": "hero_image_random",
+                                    "aria-label": "",
                                     "type": "image",
                                     "instructions": "",
                                     "required": 0,
@@ -1104,12 +1161,14 @@
                                     "max_width": "",
                                     "max_height": "",
                                     "max_size": "",
-                                    "mime_types": ""
+                                    "mime_types": "",
+                                    "parent_repeater": "field_572bad2b2d751"
                                 },
                                 {
                                     "key": "field_5b4e6672c7h98",
                                     "label": "Image Link",
                                     "name": "image_cta",
+                                    "aria-label": "",
                                     "type": "url",
                                     "instructions": "Optional - If supplied, this will make the image a clickable link.",
                                     "required": 0,
@@ -1128,14 +1187,17 @@
                                         "id": ""
                                     },
                                     "default_value": "",
-                                    "placeholder": ""
+                                    "placeholder": "",
+                                    "parent_repeater": "field_572bad2b2d751"
                                 }
-                            ]
+                            ],
+                            "rows_per_page": 20
                         },
                         {
                             "key": "field_572bad2b2d758",
                             "label": "Active\/Inactive",
                             "name": "activeinactive",
+                            "aria-label": "",
                             "type": "radio",
                             "instructions": "Activate or Inactivate this panel",
                             "required": 0,
@@ -1160,6 +1222,7 @@
                             "key": "field_572bad2b2d757",
                             "label": "Hero Title",
                             "name": "column_title",
+                            "aria-label": "",
                             "type": "wysiwyg",
                             "instructions": "This title is displayed over the content with a semi transparent white background",
                             "required": 0,
@@ -1191,6 +1254,7 @@
                             "key": "field_5b4e5bec567f5",
                             "label": "Columns",
                             "name": "column",
+                            "aria-label": "",
                             "type": "repeater",
                             "instructions": "",
                             "required": 0,
@@ -1204,12 +1268,13 @@
                             "min": 3,
                             "max": 3,
                             "layout": "table",
-                            "button_label": "",
+                            "button_label": "Add Row",
                             "sub_fields": [
                                 {
                                     "key": "field_5b4e5177fec84",
                                     "label": "Type",
                                     "name": "column_type",
+                                    "aria-label": "",
                                     "type": "radio",
                                     "instructions": "",
                                     "required": 1,
@@ -1229,12 +1294,14 @@
                                     "save_other_choice": 0,
                                     "default_value": "image",
                                     "layout": "vertical",
-                                    "return_format": "value"
+                                    "return_format": "value",
+                                    "parent_repeater": "field_5b4e5bec567f5"
                                 },
                                 {
                                     "key": "field_5b4e645f30c5e",
                                     "label": "Data",
                                     "name": "data",
+                                    "aria-label": "",
                                     "type": "group",
                                     "instructions": "",
                                     "required": 0,
@@ -1250,6 +1317,7 @@
                                             "key": "field_5b4e54c9fec85",
                                             "label": "Image",
                                             "name": "column_image_field",
+                                            "aria-label": "",
                                             "type": "image",
                                             "instructions": "Upload an image",
                                             "required": 1,
@@ -1282,6 +1350,7 @@
                                             "key": "field_5b4e6672c7f98",
                                             "label": "Image Link",
                                             "name": "image_cta",
+                                            "aria-label": "",
                                             "type": "url",
                                             "instructions": "Optional - If supplied, this will make the image a clickable link.",
                                             "required": 0,
@@ -1306,6 +1375,7 @@
                                             "key": "field_5b4e66a4c7f99",
                                             "label": "Link Text",
                                             "name": "image_cta_text",
+                                            "aria-label": "",
                                             "type": "text",
                                             "instructions": "Optional - If supplied, an additional link is displayed below the image using this text.",
                                             "required": 0,
@@ -1333,6 +1403,7 @@
                                             "key": "field_5b4e66a4c7f90",
                                             "label": "Alignment",
                                             "name": "column_list_alignment",
+                                            "aria-label": "",
                                             "type": "radio",
                                             "instructions": "",
                                             "required": 0,
@@ -1366,6 +1437,7 @@
                                             "key": "field_5b4e54fdfec86",
                                             "label": "Paragraph",
                                             "name": "column_paragraph",
+                                            "aria-label": "",
                                             "type": "textarea",
                                             "instructions": "Character limit is 350",
                                             "required": 1,
@@ -1393,6 +1465,7 @@
                                             "key": "field_5b4e61ffa92ef",
                                             "label": "List Title",
                                             "name": "list_title",
+                                            "aria-label": "",
                                             "type": "text",
                                             "instructions": "",
                                             "required": 0,
@@ -1420,6 +1493,7 @@
                                             "key": "field_5b4e55f4fec87",
                                             "label": "List fields",
                                             "name": "column_list_fields",
+                                            "aria-label": "",
                                             "type": "repeater",
                                             "instructions": "Enter in your list items and (if appropriate) their urls (maximum of 5)",
                                             "required": 0,
@@ -1441,12 +1515,13 @@
                                             "min": 1,
                                             "max": 5,
                                             "layout": "table",
-                                            "button_label": "",
+                                            "button_label": "Add Row",
                                             "sub_fields": [
                                                 {
                                                     "key": "field_5b4e561bfec88",
                                                     "label": "Label",
                                                     "name": "list_text",
+                                                    "aria-label": "",
                                                     "type": "text",
                                                     "instructions": "",
                                                     "required": 1,
@@ -1460,12 +1535,14 @@
                                                     "placeholder": "",
                                                     "prepend": "",
                                                     "append": "",
-                                                    "maxlength": ""
+                                                    "maxlength": "",
+                                                    "parent_repeater": "field_5b4e55f4fec87"
                                                 },
                                                 {
                                                     "key": "field_5b4e562bfec89",
                                                     "label": "Link",
                                                     "name": "list_link",
+                                                    "aria-label": "",
                                                     "type": "url",
                                                     "instructions": "",
                                                     "required": 0,
@@ -1476,18 +1553,23 @@
                                                         "id": ""
                                                     },
                                                     "default_value": "",
-                                                    "placeholder": ""
+                                                    "placeholder": "",
+                                                    "parent_repeater": "field_5b4e55f4fec87"
                                                 }
-                                            ]
+                                            ],
+                                            "rows_per_page": 20
                                         }
-                                    ]
+                                    ],
+                                    "parent_repeater": "field_5b4e5bec567f5"
                                 }
-                            ]
+                            ],
+                            "rows_per_page": 20
                         },
                         {
                             "key": "field_5b4e70db5d7d7",
                             "label": "Active\/Inactive",
                             "name": "activeinactive",
+                            "aria-label": "",
                             "type": "radio",
                             "instructions": "",
                             "required": 0,
@@ -1512,6 +1594,7 @@
                             "key": "field_5b4e70905d7d6",
                             "label": "Panel Title",
                             "name": "panel_title",
+                            "aria-label": "",
                             "type": "text",
                             "instructions": "Optional: 50 character limit.",
                             "required": 0,
@@ -1541,6 +1624,7 @@
                             "key": "field_5b4e70cd5d7d8",
                             "label": "Active\/Inactive",
                             "name": "activeinactive",
+                            "aria-label": "",
                             "type": "radio",
                             "instructions": "",
                             "required": 0,
@@ -1565,6 +1649,7 @@
                             "key": "field_5b4e70cd5d7d9",
                             "label": "Panel Title",
                             "name": "panel_title",
+                            "aria-label": "",
                             "type": "text",
                             "instructions": "Optional: 50 character limit.",
                             "required": 0,
@@ -1584,6 +1669,7 @@
                             "key": "field_5e74f1633d641",
                             "label": "Padding",
                             "name": "padding",
+                            "aria-label": "",
                             "type": "true_false",
                             "instructions": "Whether the columns should have padding",
                             "required": 0,
@@ -1603,6 +1689,7 @@
                             "key": "field_5e74f17c3d642",
                             "label": "Image Height",
                             "name": "image_height",
+                            "aria-label": "",
                             "type": "select",
                             "instructions": "Default height of container image will be fit into",
                             "required": 0,
@@ -1629,6 +1716,7 @@
                             "key": "field_5e74f1e43d643",
                             "label": "Link Position",
                             "name": "link_position",
+                            "aria-label": "",
                             "type": "select",
                             "instructions": "Whether the link text should appear above or below the image",
                             "required": 0,
@@ -1654,6 +1742,7 @@
                             "key": "field_5b4e70cd5d7d0",
                             "label": "Columns",
                             "name": "column",
+                            "aria-label": "",
                             "type": "repeater",
                             "instructions": "",
                             "required": 0,
@@ -1667,12 +1756,13 @@
                             "min": 2,
                             "max": 6,
                             "layout": "table",
-                            "button_label": "",
+                            "button_label": "Add Row",
                             "sub_fields": [
                                 {
                                     "key": "field_5b4e70cd5d7d2",
                                     "label": "Data",
                                     "name": "data",
+                                    "aria-label": "",
                                     "type": "group",
                                     "instructions": "",
                                     "required": 0,
@@ -1688,6 +1778,7 @@
                                             "key": "field_5b4e70cd5d7d3",
                                             "label": "Image",
                                             "name": "column_image_field",
+                                            "aria-label": "",
                                             "type": "image",
                                             "instructions": "Upload an image; will be cropped to center",
                                             "required": 0,
@@ -1712,6 +1803,7 @@
                                             "key": "field_5b4e70cd5d7d4",
                                             "label": "Image Link",
                                             "name": "image_cta",
+                                            "aria-label": "",
                                             "type": "url",
                                             "instructions": "Optional - If supplied, this will make the image a clickable link.",
                                             "required": 0,
@@ -1728,6 +1820,7 @@
                                             "key": "field_5b4e70cd5d7d5",
                                             "label": "Link Text",
                                             "name": "image_cta_text",
+                                            "aria-label": "",
                                             "type": "text",
                                             "instructions": "Optional - If supplied, an additional link is displayed below the image using this text.",
                                             "required": 0,
@@ -1747,6 +1840,7 @@
                                             "key": "field_5cb0c96b6fb35",
                                             "label": "Button Color",
                                             "name": "button_color",
+                                            "aria-label": "",
                                             "type": "select",
                                             "instructions": "Select the color of the button (default is blue)",
                                             "required": 0,
@@ -1775,6 +1869,7 @@
                                             "key": "field_5da8c7759cb52",
                                             "label": "Open link in new tab?",
                                             "name": "open_link_in_new_tab",
+                                            "aria-label": "",
                                             "type": "true_false",
                                             "instructions": "Check to open link in new tab, uncheck to stay within same tab",
                                             "required": 0,
@@ -1790,100 +1885,11 @@
                                             "ui_on_text": "",
                                             "ui_off_text": ""
                                         }
-                                    ]
+                                    ],
+                                    "parent_repeater": "field_5b4e70cd5d7d0"
                                 }
-                            ]
-                        }
-                    ],
-                    "min": "",
-                    "max": ""
-                },
-                "layout_5c93e6cfaf465": {
-                    "key": "layout_5c93e6cfaf465",
-                    "name": "tint_social_block_panel",
-                    "label": "Tint Social Block Panel",
-                    "display": "block",
-                    "sub_fields": [
-                        {
-                            "key": "field_5c93e75baf469",
-                            "label": "Hashtags",
-                            "name": "hashtags",
-                            "type": "text",
-                            "instructions": "Add one or more comma-separated hashtags, e.g. #makerfaire - Defaults to #makerfaire",
-                            "required": 0,
-                            "conditional_logic": 0,
-                            "wrapper": {
-                                "width": "",
-                                "class": "",
-                                "id": ""
-                            },
-                            "default_value": "",
-                            "placeholder": "",
-                            "prepend": "",
-                            "append": "",
-                            "maxlength": ""
-                        },
-                        {
-                            "key": "field_5c93e743af468",
-                            "label": "Personalization ID",
-                            "name": "personalization_id",
-                            "type": "text",
-                            "instructions": "Defaults to \"764268\" when nothing entered.",
-                            "required": 0,
-                            "conditional_logic": 0,
-                            "wrapper": {
-                                "width": "",
-                                "class": "",
-                                "id": ""
-                            },
-                            "default_value": "",
-                            "placeholder": "",
-                            "prepend": "",
-                            "append": "",
-                            "maxlength": ""
-                        },
-                        {
-                            "key": "field_5c93e6e4af466",
-                            "label": "Active\/Inactive",
-                            "name": "activeinactive",
-                            "type": "radio",
-                            "instructions": "Activate or Inactivate this panel",
-                            "required": 0,
-                            "conditional_logic": 0,
-                            "wrapper": {
-                                "width": "",
-                                "class": "",
-                                "id": ""
-                            },
-                            "choices": {
-                                "Active": "Active",
-                                "Inactive": "Inactive"
-                            },
-                            "allow_null": 0,
-                            "other_choice": 0,
-                            "default_value": "",
-                            "layout": "horizontal",
-                            "return_format": "value",
-                            "save_other_choice": 0
-                        },
-                        {
-                            "key": "field_5c93e72eaf467",
-                            "label": "Title",
-                            "name": "title",
-                            "type": "text",
-                            "instructions": "Defaults to \"Share Your Maker Faire Experience\"",
-                            "required": 0,
-                            "conditional_logic": 0,
-                            "wrapper": {
-                                "width": "",
-                                "class": "",
-                                "id": ""
-                            },
-                            "default_value": "",
-                            "placeholder": "",
-                            "prepend": "",
-                            "append": "",
-                            "maxlength": ""
+                            ],
+                            "rows_per_page": 20
                         }
                     ],
                     "min": "",
@@ -1899,6 +1905,7 @@
                             "key": "field_5cb8e4a1f339b",
                             "label": "Background Color",
                             "name": "background_color",
+                            "aria-label": "",
                             "type": "select",
                             "instructions": "Select a color for the banner ba",
                             "required": 0,
@@ -1927,6 +1934,7 @@
                             "key": "field_5c9c0534aafe0",
                             "label": "Title \/ Link Text",
                             "name": "title_link_text",
+                            "aria-label": "",
                             "type": "text",
                             "instructions": "",
                             "required": 0,
@@ -1946,6 +1954,7 @@
                             "key": "field_5c9c0500aafdf",
                             "label": "Active\/Inactive",
                             "name": "activeinactive",
+                            "aria-label": "",
                             "type": "radio",
                             "instructions": "",
                             "required": 0,
@@ -1970,6 +1979,7 @@
                             "key": "field_5c9c0560aafe2",
                             "label": "Link URL",
                             "name": "link_url",
+                            "aria-label": "",
                             "type": "text",
                             "instructions": "The link URL. For example, \"\/map\/\"",
                             "required": 0,
@@ -1999,6 +2009,7 @@
                             "key": "field_5c9c04bb25737",
                             "label": "Active\/Inactive",
                             "name": "activeinactive",
+                            "aria-label": "",
                             "type": "radio",
                             "instructions": "Activate or Inactivate this panel",
                             "required": 0,
@@ -2023,6 +2034,7 @@
                             "key": "field_5c9c050725738",
                             "label": "Video Row",
                             "name": "video_row",
+                            "aria-label": "",
                             "type": "repeater",
                             "instructions": "",
                             "required": 0,
@@ -2036,12 +2048,13 @@
                             "min": 0,
                             "max": 0,
                             "layout": "table",
-                            "button_label": "",
+                            "button_label": "Add Row",
                             "sub_fields": [
                                 {
                                     "key": "field_5c9c051925739",
                                     "label": "Video Title",
                                     "name": "video_title",
+                                    "aria-label": "",
                                     "type": "text",
                                     "instructions": "Title that appears on the text side",
                                     "required": 0,
@@ -2055,12 +2068,14 @@
                                     "placeholder": "",
                                     "prepend": "",
                                     "append": "",
-                                    "maxlength": ""
+                                    "maxlength": "",
+                                    "parent_repeater": "field_5c9c050725738"
                                 },
                                 {
                                     "key": "field_5c9c05342573a",
                                     "label": "Video Text",
                                     "name": "video_text",
+                                    "aria-label": "",
                                     "type": "text",
                                     "instructions": "Text appears under title",
                                     "required": 0,
@@ -2074,12 +2089,14 @@
                                     "placeholder": "",
                                     "prepend": "",
                                     "append": "",
-                                    "maxlength": ""
+                                    "maxlength": "",
+                                    "parent_repeater": "field_5c9c050725738"
                                 },
                                 {
                                     "key": "field_5c9c053d2573b",
                                     "label": "Video Button Link",
                                     "name": "video_button_link",
+                                    "aria-label": "",
                                     "type": "url",
                                     "instructions": "Link under text",
                                     "required": 0,
@@ -2090,12 +2107,14 @@
                                         "id": ""
                                     },
                                     "default_value": "",
-                                    "placeholder": ""
+                                    "placeholder": "",
+                                    "parent_repeater": "field_5c9c050725738"
                                 },
                                 {
                                     "key": "field_5c9c05542573c",
                                     "label": "Video Button Text",
                                     "name": "video_button_text",
+                                    "aria-label": "",
                                     "type": "text",
                                     "instructions": "The text for the link",
                                     "required": 0,
@@ -2109,12 +2128,14 @@
                                     "placeholder": "",
                                     "prepend": "",
                                     "append": "",
-                                    "maxlength": ""
+                                    "maxlength": "",
+                                    "parent_repeater": "field_5c9c050725738"
                                 },
                                 {
                                     "key": "field_5c9c055e2573d",
                                     "label": "Video Code",
                                     "name": "video_code",
+                                    "aria-label": "",
                                     "type": "text",
                                     "instructions": "Youtube video code determines what video to show",
                                     "required": 0,
@@ -2128,9 +2149,11 @@
                                     "placeholder": "",
                                     "prepend": "",
                                     "append": "",
-                                    "maxlength": ""
+                                    "maxlength": "",
+                                    "parent_repeater": "field_5c9c050725738"
                                 }
-                            ]
+                            ],
+                            "rows_per_page": 20
                         }
                     ],
                     "min": "",
@@ -2146,6 +2169,7 @@
                             "key": "field_5c9d3b2985ad1",
                             "label": "Active\/Inactive",
                             "name": "activeinactive",
+                            "aria-label": "",
                             "type": "radio",
                             "instructions": "Activate or Inactivate this panel",
                             "required": 0,
@@ -2170,6 +2194,7 @@
                             "key": "field_5c9d3b9485ad2",
                             "label": "Image Row",
                             "name": "image_row",
+                            "aria-label": "",
                             "type": "repeater",
                             "instructions": "",
                             "required": 0,
@@ -2183,12 +2208,13 @@
                             "min": 0,
                             "max": 0,
                             "layout": "row",
-                            "button_label": "",
+                            "button_label": "Add Row",
                             "sub_fields": [
                                 {
                                     "key": "field_5c9d3bb685ad4",
                                     "label": "Image Title",
                                     "name": "image_title",
+                                    "aria-label": "",
                                     "type": "text",
                                     "instructions": "",
                                     "required": 0,
@@ -2202,12 +2228,14 @@
                                     "placeholder": "",
                                     "prepend": "",
                                     "append": "",
-                                    "maxlength": 50
+                                    "maxlength": 50,
+                                    "parent_repeater": "field_5c9d3b9485ad2"
                                 },
                                 {
                                     "key": "field_5c9d3bcb85ad5",
                                     "label": "Image Text",
                                     "name": "image_text",
+                                    "aria-label": "",
                                     "type": "text",
                                     "instructions": "",
                                     "required": 0,
@@ -2221,12 +2249,14 @@
                                     "placeholder": "",
                                     "prepend": "",
                                     "append": "",
-                                    "maxlength": 220
+                                    "maxlength": 220,
+                                    "parent_repeater": "field_5c9d3b9485ad2"
                                 },
                                 {
                                     "key": "field_5ca24a628d013",
                                     "label": "Image Links",
                                     "name": "image_links",
+                                    "aria-label": "",
                                     "type": "repeater",
                                     "instructions": "Optional links that will appear under the text to the side of the image",
                                     "required": 0,
@@ -2240,12 +2270,13 @@
                                     "min": 0,
                                     "max": 0,
                                     "layout": "table",
-                                    "button_label": "",
+                                    "button_label": "Add Row",
                                     "sub_fields": [
                                         {
                                             "key": "field_5c9d3bd385ad6",
                                             "label": "Image Link Text",
                                             "name": "image_link_text",
+                                            "aria-label": "",
                                             "type": "text",
                                             "instructions": "",
                                             "required": 0,
@@ -2259,12 +2290,14 @@
                                             "placeholder": "",
                                             "prepend": "",
                                             "append": "",
-                                            "maxlength": 50
+                                            "maxlength": 50,
+                                            "parent_repeater": "field_5ca24a628d013"
                                         },
                                         {
                                             "key": "field_5c9d3be785ad7",
                                             "label": "Image Link URL",
                                             "name": "image_link_url",
+                                            "aria-label": "",
                                             "type": "url",
                                             "instructions": "",
                                             "required": 0,
@@ -2275,14 +2308,18 @@
                                                 "id": ""
                                             },
                                             "default_value": "",
-                                            "placeholder": ""
+                                            "placeholder": "",
+                                            "parent_repeater": "field_5ca24a628d013"
                                         }
-                                    ]
+                                    ],
+                                    "rows_per_page": 20,
+                                    "parent_repeater": "field_5c9d3b9485ad2"
                                 },
                                 {
                                     "key": "field_5c9d3c1085ad8",
                                     "label": "Image",
                                     "name": "image",
+                                    "aria-label": "",
                                     "type": "image",
                                     "instructions": "Images MUST be at least 1240px wide, no more than 650px tall",
                                     "required": 0,
@@ -2301,12 +2338,14 @@
                                     "max_width": "",
                                     "max_height": "",
                                     "max_size": "",
-                                    "mime_types": ""
+                                    "mime_types": "",
+                                    "parent_repeater": "field_5c9d3b9485ad2"
                                 },
                                 {
                                     "key": "field_5ca23aea630b0",
                                     "label": "Image Overlay",
                                     "name": "image_overlay",
+                                    "aria-label": "",
                                     "type": "group",
                                     "instructions": "Totally optional, if link is provided and not text, link will be for the image itself",
                                     "required": 0,
@@ -2322,6 +2361,7 @@
                                             "key": "field_5c9d3cd585ad9",
                                             "label": "Image Overlay Text",
                                             "name": "image_overlay_text",
+                                            "aria-label": "",
                                             "type": "text",
                                             "instructions": "",
                                             "required": 0,
@@ -2341,6 +2381,7 @@
                                             "key": "field_5ca23ad1630af",
                                             "label": "Image Overlay Link",
                                             "name": "image_overlay_link",
+                                            "aria-label": "",
                                             "type": "url",
                                             "instructions": "",
                                             "required": 0,
@@ -2353,12 +2394,14 @@
                                             "default_value": "",
                                             "placeholder": ""
                                         }
-                                    ]
+                                    ],
+                                    "parent_repeater": "field_5c9d3b9485ad2"
                                 },
                                 {
                                     "key": "field_5c9d3d1285adb",
                                     "label": "Background Color",
                                     "name": "background_color",
+                                    "aria-label": "",
                                     "type": "select",
                                     "instructions": "The color of the background of this row",
                                     "required": 0,
@@ -2381,9 +2424,11 @@
                                     "ui": 0,
                                     "return_format": "value",
                                     "ajax": 0,
-                                    "placeholder": ""
+                                    "placeholder": "",
+                                    "parent_repeater": "field_5c9d3b9485ad2"
                                 }
-                            ]
+                            ],
+                            "rows_per_page": 20
                         }
                     ],
                     "min": "",
@@ -2399,6 +2444,7 @@
                             "key": "field_5cb505f11189f",
                             "label": "Slideshow Name",
                             "name": "slideshow_name",
+                            "aria-label": "",
                             "type": "text",
                             "instructions": "Unique Identifier for the slideshow (don't use any spaces)",
                             "required": 0,
@@ -2418,6 +2464,7 @@
                             "key": "field_5cb4dfcb70105",
                             "label": "Slide",
                             "name": "slide",
+                            "aria-label": "",
                             "type": "repeater",
                             "instructions": "Add as many slides as you want",
                             "required": 0,
@@ -2431,12 +2478,13 @@
                             "min": 0,
                             "max": 0,
                             "layout": "table",
-                            "button_label": "",
+                            "button_label": "Add Row",
                             "sub_fields": [
                                 {
                                     "key": "field_5cb4e02570106",
                                     "label": "Image",
                                     "name": "image",
+                                    "aria-label": "",
                                     "type": "image",
                                     "instructions": "Background Image for the entire slide",
                                     "required": 0,
@@ -2455,12 +2503,14 @@
                                     "max_width": "",
                                     "max_height": "",
                                     "max_size": "",
-                                    "mime_types": ""
+                                    "mime_types": "",
+                                    "parent_repeater": "field_5cb4dfcb70105"
                                 },
                                 {
                                     "key": "field_5cb4e05070107",
                                     "label": "Slide Title",
                                     "name": "slide_title",
+                                    "aria-label": "",
                                     "type": "text",
                                     "instructions": "",
                                     "required": 0,
@@ -2474,12 +2524,14 @@
                                     "placeholder": "",
                                     "prepend": "",
                                     "append": "",
-                                    "maxlength": ""
+                                    "maxlength": "",
+                                    "parent_repeater": "field_5cb4dfcb70105"
                                 },
                                 {
                                     "key": "field_5cb4e05a70108",
                                     "label": "Slide Link",
                                     "name": "slide_link",
+                                    "aria-label": "",
                                     "type": "url",
                                     "instructions": "Link can be applied to body of slide or just to button",
                                     "required": 0,
@@ -2490,12 +2542,14 @@
                                         "id": ""
                                     },
                                     "default_value": "",
-                                    "placeholder": ""
+                                    "placeholder": "",
+                                    "parent_repeater": "field_5cb4dfcb70105"
                                 },
                                 {
                                     "key": "field_5cb4e09170109",
                                     "label": "Slide Button Text",
                                     "name": "slide_button_text",
+                                    "aria-label": "",
                                     "type": "text",
                                     "instructions": "",
                                     "required": 0,
@@ -2509,12 +2563,14 @@
                                     "placeholder": "",
                                     "prepend": "",
                                     "append": "",
-                                    "maxlength": ""
+                                    "maxlength": "",
+                                    "parent_repeater": "field_5cb4dfcb70105"
                                 },
                                 {
                                     "key": "field_5cb4e09c7010a",
                                     "label": "Slide Button Color",
                                     "name": "slide_button_color",
+                                    "aria-label": "",
                                     "type": "select",
                                     "instructions": "Select the color of the button (default is blue)",
                                     "required": 0,
@@ -2536,12 +2592,14 @@
                                     "ui": 0,
                                     "return_format": "value",
                                     "ajax": 0,
-                                    "placeholder": ""
+                                    "placeholder": "",
+                                    "parent_repeater": "field_5cb4dfcb70105"
                                 },
                                 {
                                     "key": "field_5cb76f4871865",
                                     "label": "Slide Text",
                                     "name": "slide_text",
+                                    "aria-label": "",
                                     "type": "text",
                                     "instructions": "Optional slide text to show up for one column slides",
                                     "required": 0,
@@ -2555,14 +2613,17 @@
                                     "placeholder": "",
                                     "prepend": "",
                                     "append": "",
-                                    "maxlength": ""
+                                    "maxlength": "",
+                                    "parent_repeater": "field_5cb4dfcb70105"
                                 }
-                            ]
+                            ],
+                            "rows_per_page": 20
                         },
                         {
                             "key": "field_5cb61f1ec1761",
                             "label": "Background Color",
                             "name": "background_color",
+                            "aria-label": "",
                             "type": "select",
                             "instructions": "Select the background color for behind the slideshow",
                             "required": 0,
@@ -2591,6 +2652,7 @@
                             "key": "field_5cc0b170b11bb",
                             "label": "Text Position",
                             "name": "text_position",
+                            "aria-label": "",
                             "type": "select",
                             "instructions": "Choose where the name of the slide appears (top, bottom or center)",
                             "required": 0,
@@ -2617,6 +2679,7 @@
                             "key": "field_5cb5057d1189e",
                             "label": "Column Number",
                             "name": "column_number",
+                            "aria-label": "",
                             "type": "number",
                             "instructions": "Choose a number of columns to show up in this slide show (max 4)",
                             "required": 0,
@@ -2638,6 +2701,7 @@
                             "key": "field_5cb4df1270104",
                             "label": "Active\/Inactive",
                             "name": "activeinactive",
+                            "aria-label": "",
                             "type": "radio",
                             "instructions": "Activate or Inactivate this panel",
                             "required": 0,
@@ -2662,6 +2726,7 @@
                             "key": "field_5cb5092dc6d4d",
                             "label": "Slideshow Title",
                             "name": "slideshow_title",
+                            "aria-label": "",
                             "type": "text",
                             "instructions": "Optional header to appear above Slideshow",
                             "required": 0,
@@ -2691,6 +2756,7 @@
                             "key": "field_5fe11b108bb6c",
                             "label": "Active\/Inactive",
                             "name": "activeinactive",
+                            "aria-label": "",
                             "type": "radio",
                             "instructions": "Activate or Inactivate this panel",
                             "required": 0,
@@ -2715,6 +2781,7 @@
                             "key": "field_5fe11b308bb6d",
                             "label": "Title",
                             "name": "title",
+                            "aria-label": "",
                             "type": "text",
                             "instructions": "",
                             "required": 0,
@@ -2734,6 +2801,7 @@
                             "key": "field_5fe11b3c8bb6e",
                             "label": "Feed Tag",
                             "name": "feed_tag",
+                            "aria-label": "",
                             "type": "text",
                             "instructions": "Tag of the makezine feed to pull from. Leave blank to pull from all recent makezine articles.",
                             "required": 0,
@@ -2753,6 +2821,7 @@
                             "key": "field_5fe11b628bb6f",
                             "label": "More Link",
                             "name": "more_link",
+                            "aria-label": "",
                             "type": "url",
                             "instructions": "Optional more link (if blank no button will appear under the feed)",
                             "required": 0,
@@ -2769,6 +2838,7 @@
                             "key": "field_5fe11b788bb70",
                             "label": "Number",
                             "name": "number",
+                            "aria-label": "",
                             "type": "number",
                             "instructions": "Number of feed items to show (defaults to 6)",
                             "required": 0,
@@ -2800,6 +2870,7 @@
                             "key": "field_618302d898dff",
                             "label": "Active\/Inactive",
                             "name": "activeinactive",
+                            "aria-label": "",
                             "type": "radio",
                             "instructions": "Activate or Inactivate this panel",
                             "required": 0,
@@ -2824,6 +2895,7 @@
                             "key": "field_6182fe906ed14",
                             "label": "Shortcode",
                             "name": "shortcode",
+                            "aria-label": "",
                             "type": "textarea",
                             "instructions": "",
                             "required": 0,
@@ -2844,9 +2916,9 @@
                     "max": ""
                 }
             },
-            "button_label": "Add New Panel",
             "min": "",
-            "max": ""
+            "max": "",
+            "button_label": "Add New Panel"
         }
     ],
     "location": [
@@ -2878,7 +2950,7 @@
             {
                 "param": "page_template",
                 "operator": "==",
-                "value": "front-page.php"
+                "value": "default"
             }
         ],
         [
@@ -2902,5 +2974,6 @@
     "hide_on_screen": "",
     "active": true,
     "description": "",
-    "modified": 1635975935
+    "show_in_rest": 0,
+    "modified": 1707954231
 }

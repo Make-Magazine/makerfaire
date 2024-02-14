@@ -39,10 +39,7 @@ function dispLayout($row_layout) {
             case 'call_to_action_panel':  // CTA PANEL
             case 'call_to_action':  // CTA PANEL
                 $return = getCTApanel();
-                break;
-            case 'tint_social_block_panel':  // NEWS BLOCK PANEL
-                $return = getTintSocialBlockpanel();
-                break;
+                break;            
             case 'ribbon_separator_panel':  // CTA PANEL
                 $return = getRibbonSeparatorpanel();
                 break;
@@ -839,21 +836,6 @@ function getRibbonSeparatorpanel() {
             . '   <div class="arrow-right-sm"></div>';
     $return .= '</section>';
     return $return;
-}
-
-/* * *************************************************** */
-/* Function to return Tint Social Block panel           */
-/* * *************************************************** */
-
-function getTintSocialBlockpanel() {
-    GLOBAL $acf_blocks;
-    $args = [
-        'personalization_id' => ($acf_blocks ? get_field('personalization_id') : get_sub_field('personalization_id')),
-        'title' => ($acf_blocks ? get_field('title') : get_sub_field('title')),
-        'hashtags' => ($acf_blocks ? get_field('hashtags') : get_sub_field('hashtags'))
-    ];
-    require_once 'MF-Social-Block.php';
-    return do_social_block($args);
 }
 
 /* * *************************************************** */
