@@ -142,7 +142,7 @@ jQuery(document).ready(function () {
         }).filter(function (value, index, self) {
           return self.indexOf(value) === index;
         });
-        this.years.reverse();
+        this.years = numRevSort(this.years);
 
         // filter out the past faires
         this.tableData = this.outputData.filter(function (values) {
@@ -557,4 +557,10 @@ function formatDate(date) {
 function validateZipCode(elementValue) {
   var zipCodePattern = /^\d{5}$|^\d{5}-\d{4}$/;
   return zipCodePattern.test(elementValue);
+}
+function numRevSort(arr) {
+  arr.sort(function (a, b) {
+    return b - a;
+  });
+  return arr;
 }
