@@ -72,15 +72,14 @@ $maker_data = get_field("maker_data");
         <div class="project-info" style="<?php echo $project_info_bg; ?>">
             <h3 class="faire-details"><a href="<?php echo get_permalink($faire_id); ?>">Maker Faire <?php echo $faire_name ." ".$faire_year;?></a></h3>
             <h1 class="project-title"><?php echo get_field("title");?></h1>
+            <?php if(!empty($project_state) || !empty($project_country)){?> 
             <h4>Home: <?php
-                if(!empty($project_state)) {
-                    echo $project_state . ", ";
-                }
-                if(!empty($project_country)) {
-                    echo $project_country; 
-                }
-                 ?>
+                echo (!empty($project_state) ? $project_state : "");                
+                echo (!empty($project_state) && !empty($project_country) ? ', ':'');
+                echo (!empty($project_country) ? $project_country : "");                
+                ?>
             </h4>
+            <?php } ?>
             <div class="blue-spacer"></div>
             <p><?php echo html_entity_decode(get_field("exhibit_description"));?></p>
             <div class="social-links reversed">

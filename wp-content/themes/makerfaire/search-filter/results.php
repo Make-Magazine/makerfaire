@@ -144,15 +144,13 @@ if ( $query->have_posts() ) {
                         <?php } ?>
                         <?php if(!empty($project_location)){ ?>
                             <div class="result-detail">
-                                <span class="one-line"><b>Home:</b> 
-                                <?php 
-                                    if(!empty($project_state)) {
-                                        echo $project_state . ", ";
-                                    }
-                                    if(!empty($project_country)) {
-                                        echo $project_country; 
-                                    }
-                                ?>
+                                <span class="one-line">
+                                    <?php
+                                    echo  (empty($project_state) && empty($project_country) ? '&nbsp;':'<b>Home: </b>');
+                                    echo (!empty($project_state) ? $project_state : "");                
+                                    echo (!empty($project_state) && !empty($project_country) ? ', ':'');
+                                    echo (!empty($project_country) ? $project_country : "");                
+                                    ?>
                                 </span>
                             </div>
                         <?php } ?>
