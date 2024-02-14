@@ -15,6 +15,7 @@ jQuery(document).ready(function () {
       // this keeps the whole table
       filteredData: [],
       // this is the tableData with the filters applied
+      years: [],
       options: {
         headings: {
           faire_name: 'Name',
@@ -134,6 +135,15 @@ jQuery(document).ready(function () {
         if (firstLoaded == true) {
           this.$refs.directoryGrid.setOrder('event_start_dt', 'asc');
         }
+
+        //set the years drop down
+        this.years = this.outputData.map(function (item) {
+          return item.faire_year;
+        }).filter(function (value, index, self) {
+          return self.indexOf(value) === index;
+        });
+        this.years.reverse();
+
         // filter out the past faires
         this.tableData = this.outputData.filter(function (values) {
           var endDate = new Date(values.event_end_dt);
@@ -323,7 +333,7 @@ jQuery(document).ready(function () {
             if (_self.filteredData.length <= 0) {
               // if there's no results but it's a valid zipcode, show what's around
               _self.filteredData = _self.tableData.filter(function (values) {
-                console.log(values.category);
+                //console.log(values.category);
                 if (typeFilters.includes(values.category)) {
                   return values;
                 }
@@ -359,7 +369,10 @@ jQuery(document).ready(function () {
       // past faires filter
       psFilter: function psFilter(data) {
         var searchString = this.filterVal.toLowerCase(); // remember the search string
+
+        //This indicator is backwards, when it's true you don't show past faires
         if (this.pastFaires == true) {
+          //show current faires										
           this.buttonMessage = "Show Past Faires";
           this.tableData = this.outputData.filter(function (values) {
             var endDate = new Date(values.event_end_dt);
@@ -369,6 +382,7 @@ jQuery(document).ready(function () {
             }
           });
         } else {
+          //show past faires										
           this.buttonMessage = "Show Upcoming Faires";
           this.tableData = this.outputData.filter(function (values) {
             var endDate = new Date(values.event_end_dt);
@@ -415,6 +429,29 @@ jQuery(document).ready(function () {
         }
         this.filteredData = this.tableData.filter(function (values) {
           // soo.... we really shouldn't have to match both filters each time we run one...
+          if (values.faire_name.toLowerCase().indexOf(searchString) !== -1 || values.venue_address_city.toLowerCase().indexOf(searchString) !== -1 || values.venue_address_country.toLowerCase().indexOf(searchString) !== -1 || values.venue_address_state.toLowerCase().indexOf(searchString) !== -1 || values.venue_address_postal_code.toLowerCase().indexOf(searchString) !== -1 || values.event_dt.toLowerCase().indexOf(searchString) !== -1) {
+            if (typeFilters.includes(values.category)) {
+              return values;
+            }
+          }
+        });
+        if (validateZipCode(searchString) == true) {
+          this.codeAddress(searchString);
+        }
+        this.addMarkers();
+      },
+      // year of faire filter
+      yearFilter: function yearFilter(data) {
+        var searchString = this.filterVal.toLowerCase(); // always remember the search string				
+        var selectedYear = data.target.value;
+        this.tableData = this.outputData.filter(function (values) {
+          if (selectedYear == values.faire_year) {
+            return values;
+          }
+        });
+
+        // there's gotta be a better way than just filtering by type and search terms again
+        this.filteredData = this.tableData.filter(function (values) {
           if (values.faire_name.toLowerCase().indexOf(searchString) !== -1 || values.venue_address_city.toLowerCase().indexOf(searchString) !== -1 || values.venue_address_country.toLowerCase().indexOf(searchString) !== -1 || values.venue_address_state.toLowerCase().indexOf(searchString) !== -1 || values.venue_address_postal_code.toLowerCase().indexOf(searchString) !== -1 || values.event_dt.toLowerCase().indexOf(searchString) !== -1) {
             if (typeFilters.includes(values.category)) {
               return values;

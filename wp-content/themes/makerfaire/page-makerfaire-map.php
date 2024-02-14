@@ -47,8 +47,16 @@ get_header();
                <div class="map-filters-wrp">
                   <form action="" class="" @submit="filterOverride">
 							<label for="filter">Explore Faires</label>
-							<input class="form-control input-sm" type="search" id="filter" name="filter" ref="filterField" v-model="filterVal" @input="searchFilter" placeholder="Search by Name, Date or Location">
-                  </form>
+							<input class="form-control input-sm" type="search" id="filter" name="filter" ref="filterField" v-model="filterVal" @input="searchFilter" placeholder="Search by Name, Date or Location">                     
+                     <div style="float:right">
+                        <label>Faire Year</label>
+                        <select name="year" id="year" v-on:change="yearFilter" style="height:40px">                                                                           
+                           <option v-for="year in years" :value="year">                           
+                              <span>{{year}}</span>                              
+                           </option>
+                        </select>
+                     </div>
+                  </form>                                                                           
                </div>
             </div>
          </div>
@@ -72,9 +80,12 @@ get_header();
                </v-client-table>
             </div>
          </div>
-         <div id="past-faires-btn">
+
+         <!--
+         <div id="past-faires-btn">  
+                                      
 				<label><input class="form-control input-sm" type="checkbox" id="pastFaires" name="pastFaires" ref="filterField" v-model="pastFaires" @input="psFilter"><span>{{buttonMessage}}</span></label>
-			</div>
+			</div>-->
       </div>  <!-- end map-table-wrapper -->
 
    </div>
