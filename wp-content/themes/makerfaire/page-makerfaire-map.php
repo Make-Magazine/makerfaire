@@ -50,7 +50,7 @@ get_header();
 							<input class="form-control input-sm" type="search" id="filter" name="filter" ref="filterField" v-model="filterVal" @input="searchFilter" placeholder="Search by Name, Date or Location">                     
                      <div style="float:right">
                         <label>Faire Year</label>
-                        <select name="year" id="year" v-on:change="yearFilter" style="height:40px">                                                                           
+                        <select name="year" id="year" v-on:change="yearFilter">
                            <option v-for="year in years" :value="year">                           
                               <span>{{year}}</span>                              
                            </option>
