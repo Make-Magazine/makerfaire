@@ -1,15 +1,12 @@
 <?php
 function isc_register_menus() {
    register_nav_menus(
-      array('header-menu' => __( 'Header Menu' ),
-      //'footer' => __( 'footer' ),
-      'mf-admin-bayarea-register-menu' => __( 'MF BayArea Admin Bar' ),
-      'mf-admin-newyork-register-menu' => __( 'MF NewYork Admin Bar' ),
-      
-      //'mobile-nav' => __( 'Mobile Navigation' ),
-      'NY-left-hand-nav' => __( 'NY Left Hand Page Navigation' ),
-      'BA-left-hand-nav' => __( 'BA Left Hand Page Navigation' ),
-      'press-center-left-hand-nav' => __( 'Press Center Left Hand Page Navigation' ))
+      array(
+         'secondary_universal_menu' => __( 'secondary_universal_menu' ),
+         'bay_area_secondary_nav' => __( 'bay_area_secondary_navn' ),
+         'yearbook_secondary_nav' => __( 'yearbook_secondary_nav' ),
+         'press-center-left-hand-nav' => __( 'Press Center Left Hand Page Navigation' )
+      )
    );
 }
 
