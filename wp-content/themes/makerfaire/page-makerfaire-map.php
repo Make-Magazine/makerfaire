@@ -48,7 +48,7 @@ get_header();
                   <form action="" class="" @submit="filterOverride">
 							<label for="filter">Explore Faires</label>
 							<input class="form-control input-sm" type="search" id="filter" name="filter" ref="filterField" v-model="filterVal" @input="searchFilter" placeholder="Search by Name, Date or Location">                     
-                     <div style="float:right">
+                     <div id="faire-filter">
                         <label>Faire Year</label>
                         <select name="year" id="year" v-on:change="yearFilter">
                            <option v-for="year in years" :value="year">                           

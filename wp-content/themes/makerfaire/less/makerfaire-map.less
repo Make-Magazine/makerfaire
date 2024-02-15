@@ -3,7 +3,20 @@
    to {transform:rotate(360deg);}
 }
 
-.directory-container {
+.directory-container {	
+	h1 {
+		@media all and (max-width: 767px) {
+			font-size: 40px;
+    		text-align: center;
+		}
+	}
+	#faire-filter {
+		float: right;
+		@media all and (max-width: 767px) {
+			float: none;
+			padding-top: 15px;
+		}	
+	}
 	.map-table-hidden {
 		display: none;
 	}
