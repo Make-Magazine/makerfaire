@@ -14,23 +14,7 @@ if (!function_exists('add_action')) {
 }
 $acf_blocks = FALSE;
 
-// Include all function files in the functions directory:
-foreach (glob(plugin_dir_path(__FILE__) . '/functions/*.php') as $file) {
-    include_once $file;
-}
-
-add_action('wp_enqueue_scripts', 'makegblocks_enqueue_scripts');
-
-function makegblocks_enqueue_scripts() {
-    //add scripts here
-}
-
-add_action('wp_enqueue_scripts', 'makegblocks_enqueue_styles');
-
-function makegblocks_enqueue_styles() {
-    //$my_version = '1.0.24';
-    //wp_enqueue_style('makehub-style', plugins_url( '/css/style.min.css', __FILE__ ), array(), $my_version );
-}
+include_once(plugin_dir_path(__FILE__) . '/functions/register-ACF-blocks.php');
 
 // Plugin styles, add bootstrap and panels.less for easy previewing
 function wpdocs_enqueue_custom_admin_styles() {

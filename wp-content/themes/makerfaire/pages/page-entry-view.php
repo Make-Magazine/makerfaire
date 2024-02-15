@@ -174,9 +174,6 @@
             if (!empty($project_website)) { ?> 
                 <a href="<?php echo $project_website; ?>" class="btn universal-btn entry-website"target="_blank" ><?php if($formType !='Sponsor') echo 'Project';?> Website</a><?php
             }
-            
-            //$url = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
-            //echo do_shortcode('[easy-social-share buttons="facebook,pinterest,reddit,twitter,linkedin,love,more" morebutton_icon="dots" morebutton="2" counters="yes" counter_pos="after" total_counter_pos="hidden" animation="essb_icon_animation6" style="icon" fullwidth="yes" template="6" postid="' . $entryId . '" url="' . $url . '" text="' . $project_title . '"]');
             ?>
         </div>
     </div>
