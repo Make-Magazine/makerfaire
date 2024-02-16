@@ -4,11 +4,13 @@
 
 function copyMe(element) {  
   // Copy the html inside the field
-  var copyHTML = jQuery('#'+element).html();
-
-  //TBD replace &lt; with < and &gt; with > also, get this to work in Chrome
-  navigator.clipboard.writeText(copyHTML);
-  
+  var copyHTML = decodeHtml(jQuery('#'+element).html());
+  navigator.clipboard.write(copyHTML);
   alert('Image HTML copied to clipboard.');
-  
+}
+
+function decodeHtml(html) {
+  var txt = document.createElement("textarea");
+  txt.innerHTML = html;
+  return txt.value;
 }
