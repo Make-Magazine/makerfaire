@@ -5,8 +5,9 @@
 function copyMe(element) {  
   // Copy the html inside the field
   var copyHTML = decodeHtml(jQuery('#'+element).html());
-  navigator.clipboard.writeText(copyHTML);
-  alert('Image HTML copied to clipboard.');
+  navigator.clipboard.writeText(copyHTML).then(function(x) {
+    alert('Image HTML copied to clipboard.');
+  });
 }
 
 function decodeHtml(html) {
