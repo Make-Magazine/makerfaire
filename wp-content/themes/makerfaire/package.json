@@ -1,6 +1,6 @@
 {
    "name": "makerfaire",
-   "version": "4.33.666",
+   "version": "4.33.667",
    "description": "Maker Faire",
    "main": "",
    "private": true,
@@ -42,7 +42,7 @@
       "onchange:less:mf": "onchange 'less/*.less' -- npm run less:mf:compile",
       "onchange:less:ar": "onchange '../../../resource-mgmt/css/main.css' 'less/angular-reporting-style.less' -- npm run less:ar:compile",
       "onchange:less:mfadmin": "onchange 'less/admin-styles/*.less' 'less/admin-styles/mf-admin-style.less' -- npm run less:mfadmin:compile",
-      "onchange:js": "onchange 'js/allsite/*.js' -- npm run js:uglify",
+      "onchange:js:allsite": "onchange 'js/allsite/*.js' -- npm run js:uglify",
       "onchange:js:nglibs": "onchange 'js/angular/*.js' -- npm run js:nglibs:uglify",
       "onchange:js:admin": "onchange 'js/admin/*.js' -- npm run js:admin:uglify",
       "js:transpile:map": "babel js/mf-map/mf-map-src.js -d js/mf-map/mf-map-src-es5 --presets=@babel/env",
