@@ -6,6 +6,7 @@
             "key": "field_5c7724f10d26a",
             "label": "Image Grid",
             "name": "image_grid",
+            "aria-label": "",
             "type": "repeater",
             "instructions": "",
             "required": 0,
@@ -19,12 +20,13 @@
             "min": 0,
             "max": 0,
             "layout": "table",
-            "button_label": "",
+            "button_label": "Add Row",
             "sub_fields": [
                 {
                     "key": "field_5c7725140d26b",
                     "label": "Title",
                     "name": "title",
+                    "aria-label": "",
                     "type": "text",
                     "instructions": "This is a title used to describe the group of images",
                     "required": 0,
@@ -38,12 +40,14 @@
                     "placeholder": "",
                     "prepend": "",
                     "append": "",
-                    "maxlength": ""
+                    "maxlength": "",
+                    "parent_repeater": "field_5c7724f10d26a"
                 },
                 {
                     "key": "field_5c77252f0d26c",
                     "label": "Image section",
                     "name": "image_section",
+                    "aria-label": "",
                     "type": "repeater",
                     "instructions": "",
                     "required": 0,
@@ -57,12 +61,13 @@
                     "min": 0,
                     "max": 0,
                     "layout": "table",
-                    "button_label": "",
+                    "button_label": "Add Row",
                     "sub_fields": [
                         {
                             "key": "field_5c7725410d26d",
                             "label": "Image Name",
                             "name": "image_name",
+                            "aria-label": "",
                             "type": "text",
                             "instructions": "",
                             "required": 0,
@@ -76,12 +81,14 @@
                             "placeholder": "",
                             "prepend": "",
                             "append": "",
-                            "maxlength": ""
+                            "maxlength": "",
+                            "parent_repeater": "field_5c77252f0d26c"
                         },
                         {
                             "key": "field_5c7725540d26f",
                             "label": "Grid Image",
                             "name": "grid_image",
+                            "aria-label": "",
                             "type": "image",
                             "instructions": "",
                             "required": 0,
@@ -100,11 +107,35 @@
                             "max_width": "",
                             "max_height": "",
                             "max_size": "",
-                            "mime_types": ""
+                            "mime_types": "",
+                            "parent_repeater": "field_5c77252f0d26c"
                         }
-                    ]
+                    ],
+                    "rows_per_page": 20,
+                    "parent_repeater": "field_5c7724f10d26a"
                 }
-            ]
+            ],
+            "rows_per_page": 20
+        },
+        {
+            "key": "field_65ce8af08a5b5",
+            "label": "Promote Link",
+            "name": "promote_link",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "What link should these images send people to?",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "https:\/\/makerfaire.com\/bay-area",
+            "maxlength": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": ""
         }
     ],
     "location": [
@@ -119,7 +150,28 @@
             {
                 "param": "page",
                 "operator": "==",
-                "value": "479941"
+                "value": "479623"
+            }
+        ],
+        [
+            {
+                "param": "page",
+                "operator": "==",
+                "value": "640134"
+            }
+        ],
+        [
+            {
+                "param": "page",
+                "operator": "==",
+                "value": "640134"
+            }
+        ],
+        [
+            {
+                "param": "page",
+                "operator": "==",
+                "value": "642174"
             }
         ]
     ],
@@ -129,7 +181,8 @@
     "label_placement": "top",
     "instruction_placement": "label",
     "hide_on_screen": "",
-    "active": 1,
+    "active": true,
     "description": "",
-    "modified": 1553621843
+    "show_in_rest": 0,
+    "modified": 1708035068
 }

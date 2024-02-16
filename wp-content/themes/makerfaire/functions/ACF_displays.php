@@ -1,11 +1,14 @@
 <?php
 
-function do_image_grid($args) {
+function do_image_grid($args){
     // echo '<pre style="display: none;">';
     // var_dump($args);
     // echo '</pre>';
     $return = '';
-
+    $promote_url = get_field('promote_link');
+    if($promote_url=='')
+       $promote_url = 'https://makerfaire.com/bay-area'; 
+    
     // Image Grid
     if (have_rows('image_grid')) {
         // loop through the rows of data
@@ -17,22 +20,23 @@ function do_image_grid($args) {
             if (have_rows('image_section')) {
                 // loop through the rows of data
                 $return .= '<div class="row">';
+
                 while (have_rows('image_section')) {
                     the_row();
-                    $return .= '<div class="col-xs-4 col-sm-3 col-md-2 grid-padding">';
-                    $imageArr = get_sub_field('grid_image');
-
-                    $image_url = $imageArr['url'];
-                    $return .= '<a target="_blank" href="' . $image_url . '"><div class="grid-image" style="background-image:url(' . $image_url . ');"></div></a>';
-
-                    $return .= '<div class="img-size">' . $imageArr['width'] . ' x ' . $imageArr['height'] . '</div>';
-                    $return .= '<button class="btn universal-btn btn-info btn-copy-html" onclick="copyMe(\'img_' . $imageArr['id'] . '\')">COPY HTML</button>';
-                    $return .= '<div class="copyDiv" id="img_' . $imageArr['id'] . '"><a href="https://makerfaire.com/bay-area/"><img src="' . $imageArr['url'] . '" alt="' . $imageArr['title'] . '" width="' . $imageArr['width'] . '" height="' . $imageArr['height'] . '" border="0" /></a></div>';
+                    $imageArr  = get_sub_field('grid_image');                    
+                    $image_url = $imageArr['sizes']['thumbnail'];
+                    $return .= '<div class="col-xs-4 col-sm-3 col-md-2 grid-padding">';                    
+                    $return .= '    <a target="_blank" href="' . $image_url . '"><div class="grid-image" style="background-image:url(' . $image_url . ');"></div></a>';
+                    $return .= '    <div class="img-size">' . $imageArr['width'] . ' x ' . $imageArr['height'] . '</div>';
+                    $return .= '    <button class="btn universal-btn btn-info btn-copy-html" onclick="copyMe(\'img_' . $imageArr['id'] . '\')">COPY HTML</button>';
+                    $return .= '    <div class="copyDiv" id="img_' . $imageArr['id'] . '">';
+                    $return .= '        <a href="'.$promote_url.'">&lt;img src="' .$imageArr['url'] . '" alt="' . $imageArr['title'] . '" width="' . $imageArr['width'] . '" height="' . $imageArr['height'] . '" border="0" /&gt;</a>';
+                    $return .= '    </div>';
                     
-                    if( class_exists( 'Jetpack' ) && in_array( 'photon', Jetpack::get_active_modules() ) ) {
+                    if (class_exists('Jetpack') && in_array('photon', Jetpack::get_active_modules())) {
                         $image_components = parse_url($image_url);
                         $image_path = $image_components['path'];
-                        $return .= '<a target="_blank" class="download_btn" href="https:/' . $image_path . '" download="' . strtok(basename($image_url), '.') .'">Download</a>';
+                        $return .= '<a target="_blank" class="download_btn" href="https:/' . $image_path . '" download="' . strtok(basename($image_url), '.') . '">Download</a>';
                     }
 
                     $return .= '</div>';
@@ -95,7 +99,6 @@ function do_featured_presenter_grid($args) {
 					</mask>';
 
     $content .= '<script type="text/javascript">
-
 						function fitTextToBox(){
 							jQuery(".grid-item").each(function() {
 							    var availableHeight = jQuery(this).innerHeight() - 30;
