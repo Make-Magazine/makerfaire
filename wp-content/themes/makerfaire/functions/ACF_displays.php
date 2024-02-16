@@ -31,7 +31,7 @@ function do_image_grid($args){
                     $return .= '    <button class="btn universal-btn btn-info btn-copy-html" onclick="copyMe(\'img_' . $imageArr['id'] . '\')">COPY HTML</button>';
                     $return .= '    <div class="copyDiv" id="img_' . $imageArr['id'] . '">';
                     $return .=         '<a href="'.$promote_url.'">&lt;img src="' .$imageArr['url'] . '" alt="' . $imageArr['title'] . '" width="' . $imageArr['width'] . '" height="' . $imageArr['height'] . '" border="0" /&gt;</a>';
-                    $return .= '    </div>';
+                    $return .=     '</div>';
                     
                     if (class_exists('Jetpack') && in_array('photon', Jetpack::get_active_modules())) {
                         $image_components = parse_url($image_url);
