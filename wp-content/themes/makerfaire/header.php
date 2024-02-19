@@ -65,7 +65,7 @@
         <?php
         // Tracking pixels users can turn off through the cookie law checkbox -- defaults to yes
         if (!isset($_COOKIE['cookielawinfo-checkbox-non-necessary']) || $_COOKIE['cookielawinfo-checkbox-non-necessary'] == "yes") {
-            get_template_part('dfp');
+            //get_template_part('dfp');
             ?>
 			<!-- Data layer Object -->
 			<script type="text/javascript">
