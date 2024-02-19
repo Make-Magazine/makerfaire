@@ -1,0 +1,127 @@
+.mpf-p-popup-holder .mpfy-p-social {
+	width: 48px;
+	background: transparent;
+	border-radius: 5px;
+	position: fixed;
+	left: 0;
+	top: 50%;
+	transform: translate(0, -60%);
+	z-index: 999999;
+}
+.mpf-p-popup-holder .mpfy-p-social:before {
+	content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: 48px;
+    box-shadow: #aba8a8 0px 0px 10px;
+	border-radius: 5px;
+    z-index: -999;
+}
+
+.mpf-p-popup-holder .mpfy-p-social .mpfy-social-btn {
+	width: 48px;
+    height: 48px;
+	cursor: pointer;
+	transition: 0.3s;
+	background-size: 24px 24px;
+	background-repeat: no-repeat;
+	background-position: 12px center;
+	overflow: hidden;
+}
+
+.mpf-p-popup-holder .mpfy-p-social .mpfy-social-btn span {
+	color: #ffffff;
+    height: 48px;
+    line-height: 48px;
+    font-size: 16px;
+    margin-left: 60px;
+}
+
+.mpf-p-popup-holder .mpfy-p-social .mpfy-social-btn:first-child {
+	border-top-right-radius: 5px;
+}
+
+.mpf-p-popup-holder .mpfy-p-social .mpfy-social-btn:last-child {
+	border-bottom-right-radius: 5px;
+}
+
+.mpf-p-popup-holder .mpfy-p-social .mpfy-social-btn:hover {
+	width: 130px;
+	border-top-right-radius: 5px;
+	border-bottom-right-radius: 5px;
+	background-position: 20px center;
+}
+
+.mpf-p-popup-holder .mpfy-p-social .mpfy-social-btn.facebook {
+	background-color: #4267B2;
+	background-image: url('images/facebook.svg');	
+}
+
+.mpf-p-popup-holder .mpfy-p-social .mpfy-social-btn.twitter {
+	background-color: #55acee;
+	background-image: url('images/twitter.svg');	
+}
+
+.mpf-p-popup-holder .mpfy-p-social .mpfy-social-btn.email {
+	background-color: #404040;
+	background-image: url('images/email.svg');	
+}
+
+.mpf-p-popup-holder .mpfy-p-social .mpfy-social-btn.whatsapp {
+	background-color: #25d366;
+	background-image: url('images/whatsapp.svg');	
+}
+
+.mpf-p-popup-holder .mpfy-p-social .mpfy-social-btn.linkedin {
+	background-color: #0077b5;
+	background-image: url('images/linkedin.svg');	
+}
+
+.mpf-p-popup-holder .mpfy-p-social .mpfy-social-btn.pinterest {
+	background-color: #CB2027;
+	background-image: url('images/pinterest.svg');	
+}
+
+@media only screen and (max-width: 1023px) {
+	.mpf-p-popup-holder .mpfy-p-social {
+		position: fixed;
+		top: auto;
+		bottom: 0;
+		left: 0;
+		width: 100%;
+		border-radius: 0;
+		display: flex;
+		transform: translate(0, 0);		
+	}
+
+	.mpf-p-popup-holder .mpfy-p-social:before {
+		box-shadow: none;
+	}
+	
+	.mpf-p-popup-holder .mpfy-p-social .mpfy-social-btn {
+		background-position: center center;
+		flex-grow: 1;
+		width: auto;
+	}
+	
+	.mpf-p-popup-holder .mpfy-p-social .mpfy-social-btn span {
+		display: none;
+	}
+
+	.mpf-p-popup-holder .mpfy-p-social .mpfy-social-btn:first-child {
+		border-top-right-radius: 0;
+	}
+	
+	.mpf-p-popup-holder .mpfy-p-social .mpfy-social-btn:last-child {
+		border-bottom-right-radius: 0;
+	}
+
+	.mpf-p-popup-holder .mpfy-p-social .mpfy-social-btn:hover {
+		width: auto;
+		border-top-right-radius: 0;
+		border-bottom-right-radius: 0;
+		background-position: center center;
+	}
+}

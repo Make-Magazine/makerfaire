@@ -1,0 +1,57 @@
+<?php
+register_post_type('route', array(
+	'labels' => array(
+		'name' => 'Routes',
+		'singular_name' => 'Route',
+		'add_new' => __( 'Add New' ),
+		'add_new_item' => __( 'Add new Route' ),
+		'view_item' => 'View Route',
+		'edit_item' => 'Edit Route',
+	    'new_item' => __('New Route'),
+	    'view_item' => __('View Route'),
+	    'search_items' => __('Search Routes'),
+	    'not_found' =>  __('No Routes found'),
+	    'not_found_in_trash' => __('No Routes found in Trash'),
+	    'menu_name' => 'MapifyRoutes',
+	),
+	'public' => false,
+	'exclude_from_search' => true,
+	'show_ui' => true,
+	'capability_type' => 'post',
+	'hierarchical' => true,
+	'_edit_link' =>  'post.php?post=%d',
+	'rewrite' => false,
+	'query_var' => true,
+	'supports' => array('title'),
+	'taxonomies' => array( 'location-tag' ),
+	'menu_icon' => 'dashicons-location',
+	'menu_position' => 34
+));
+
+register_post_type('route_map', array(
+	'labels' => array(
+		'name'	 => 'Route-only Maps (Legacy)',
+		'singular_name' => 'Route Map',
+		'add_new' => __( 'Add New' ),
+		'add_new_item' => __( 'Add new Route Map' ),
+		'view_item' => 'View Route Map',
+		'edit_item' => 'Edit Route Map',
+	    'new_item' => __('New Route Map'),
+	    'view_item' => __('View Route Map'),
+	    'search_items' => __('Search Route Maps'),
+	    'not_found' =>  __('No Route Maps found'),
+	    'not_found_in_trash' => __('No Route Maps found in Trash'),
+		'all_items'	=> mpfy_get_icon( 'route-map' ) .  'Route-only Maps',
+	),
+	'public' => false,
+	'exclude_from_search' => true,
+	'show_ui' => true,
+	'capability_type' => 'post',
+	'hierarchical' => true,
+	'_edit_link' =>  'post.php?post=%d',
+	'rewrite' => false,
+	'query_var' => true,
+	'supports' => array('title'),
+	'show_in_menu' => 'edit.php?post_type=route',
+));
+?>

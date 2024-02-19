@@ -1,0 +1,229 @@
+/* Hide ACF waypoints repeater handler */
+.acf-field[data-name="acf_prettyroutes_waypoints"] .acf-repeater .acf-table .acf-row > .acf-row-handle.remove,
+.acf-field[data-name="acf_prettyroutes_waypoints"] .acf-repeater > .acf-actions,
+.acf-field[data-name="acf_prettyroutes_waypoints"] > .acf-label {
+	display: none !important;
+}
+.acf-field[data-name="acf_prettyroutes_waypoints"] .acf-repeater > .acf-table {	
+	margin-bottom: 0px !important;
+	border: 0px;
+}
+.acf-field[data-name="acf_prettyroutes_waypoints"] .acf-repeater > .acf-table .acf-row > .acf-row-handle {
+	border-left: #ccd0d4 solid 1px;
+    border-top: #ccd0d4 solid 1px;
+	border-bottom: #ccd0d4 solid 1px;
+}
+.acf-field[data-name="acf_prettyroutes_waypoints"] .acf-repeater > .acf-table .acf-row > .acf-fields {
+	border-top: #ccd0d4 solid 1px;
+	border-right: #ccd0d4 solid 1px;
+	border-bottom: #ccd0d4 solid 1px;
+}
+.acf-field[data-name="acf_prettyroutes_waypoints"] .acf-repeater > .acf-table .acf-row + .acf-row > .acf-row-handle,
+.acf-field[data-name="acf_prettyroutes_waypoints"] .acf-repeater > .acf-table .acf-row + .acf-row > .acf-fields {
+	border-top: 0;
+}
+
+/* Make waypoints field larger */
+.acf-field[data-name="acf_prettyroutes_waypoints"]:before {
+	background: #FFFFFF !important;
+    border-color: #FFFFFF !important;
+}
+.acf-field[data-name="acf_prettyroutes_waypoints"] > .acf-input {
+	width: 100% !important;
+}
+
+/* Waypoints description */
+.acf-field[data-name="acf_prettyroutes_waypoints"] .description {
+	margin-top: 0px !important;
+}
+
+/* Map routes field */
+.acf-prettyroutes-route-field > input,
+.acf-prettyroutes-map-location-field > input {
+	display: none;
+}
+.acf-prettyroutes-route-field .leaflet-routing-geocoders { 
+	border: 0;
+}
+.acf-prettyroutes-route-field .leaflet-routing-geocoders input { 
+	border-radius: 3px;
+    padding-left: 5px;
+    color: #333;
+}
+.acf-prettyroutes-route-field .leaflet-routing-alternatives-container { 
+	display: none; 
+}
+.acf-prettyroutes-route-field .leaflet-routing-remove-waypoint:after { 
+	right: 2px; 
+}
+.acf-prettyroutes-route-field .acf-map-canvas,
+.acf-prettyroutes-map-location-field .acf-map-canvas {
+	height: 500px;
+	padding: 2px;
+	border: none;
+}
+
+/* map route status */
+.acf-prettyroutes-map-status {
+	width: 100%;
+}
+.acf-prettyroutes-map-status:after {
+	display: block;
+    clear: both;
+    content: "";
+}
+.acf-prettyroutes-map-status > div {
+	box-sizing: border-box;
+	padding: 20px;
+	border: 1px solid #dddddd;
+    padding: 15px;
+	float: left;
+    height: 90px;
+}
+.acf-prettyroutes-map-status > div + div {
+    border-left: 0px;
+}
+.acf-prettyroutes-map-status > .acf-osm-map-id-information {
+	width: 30%;
+}
+.acf-prettyroutes-map-status > .acf-osm-map-shortcode-information {
+	width: 70%;
+}
+.acf-prettyroutes-map-status > div > label {
+	font-weight: 600;
+	margin-bottom: 10px;
+	display: block;
+}
+
+/* map location search */
+.acf-osm-search {
+	position: relative;
+	margin-bottom: 15px;
+}
+.acf-osm-search .acf-osm-search-input {
+	margin-right: 130px;
+} 	
+.acf-osm-search .acf-osm-search-button {
+	width: 120px;
+	position: absolute;
+	right: 0;
+	top: 0;
+}
+.acf-osm-search .acf-osm-search-button button {
+	width: 120px;
+}
+
+/* _route_map field re-styling */
+.acf-field-relationship[data-name="_route_map"] .filters {
+	display: flex;
+}
+.acf-field-relationship[data-name="_route_map"] .filters .filter.-post_type {
+	width: 160px;
+	padding: 7px 0 7px 7px;
+	order: 0;
+}
+.acf-field-relationship[data-name="_route_map"] .filters .filter.-search {
+	width: auto;
+	flex-grow: 1;
+	order: 1;
+}
+
+/* acf-osm-map-search-results */
+#acf-osm-map-search-results p {
+	font-weight: 600;
+	margin-bottom: 10px;
+}
+#acf-osm-map-search-results > ul {
+	margin-top: 0px;
+	margin-bottom: 20px;
+}
+
+/* Styling the bottom map route counter bar and buttons */
+.prettyroutes-waypoints-counter {
+	position: relative;
+	margin-right: 300px;
+	margin-top: -3px;
+	z-index: 999;
+}
+.prettyroutes-waypoints-counter::before {
+	content: '';
+	background-color: #dddddd;
+	width: 100%;
+	height: 3px;
+	display: block;
+	position: absolute;
+	z-index: 0;
+}
+.prettyroutes-waypoints-counter .button {
+	margin-top: 15px !important;
+	margin-right: 8px;
+}
+.prettyroutes-create-connected-route-button {
+	display: none;
+}
+.prettyroutes-bottom-bar-counter {
+    width: 0px;
+    height: 3px;
+    background-color: #2271b1; /* blue */
+	transition: 0.4s linear;
+	z-index: 1;
+    position: absolute;
+	margin-top: 0px;
+    z-index: 9999;
+}
+.prettyroutes-bottom-bar-counter.overloaded {
+	background-color: #b12222; /* red */
+}
+
+/* Styling the left route list */
+.acf-map-canvas .leaflet-control-container .leaflet-top.leaflet-right .leaflet-routing-container {
+	margin-right: 0;
+	margin-top: 0;
+	border: none;
+	border-radius: 0;
+	width: 300px;
+	padding-top: 0;
+	position: relative;
+}
+.acf-map-canvas .leaflet-control-container .leaflet-top.leaflet-right .leaflet-routing-container .leaflet-routing-geocoders {
+	height: 464px;
+    max-height: 464px;
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0 0 40px;
+	border-width: 1px 1px 0 0;
+    border-color: #dddddd;
+    border-style: solid;
+}
+.acf-map-canvas .leaflet-control-container .leaflet-top.leaflet-right .leaflet-routing-container .leaflet-routing-geocoders .leaflet-routing-geocoder input,
+.acf-map-canvas .leaflet-control-container .leaflet-top.leaflet-right .leaflet-routing-container .leaflet-routing-geocoders .leaflet-routing-geocoder input:focus-visible {
+	border: none;
+	outline: none;
+	color: #626262;
+}
+.acf-map-canvas .leaflet-control-container .leaflet-top.leaflet-right .leaflet-routing-container .leaflet-routing-geocoders .leaflet-routing-geocoder {
+	border-bottom: 1px solid #dddddd;
+	padding: 5px 0;
+}
+.acf-map-canvas .leaflet-control-container .leaflet-top.leaflet-right .leaflet-routing-container .leaflet-routing-geocoders .leaflet-routing-geocoder .leaflet-routing-remove-waypoint:after {
+	top: 6px;
+    padding-right: 0;
+    padding-left: 5px;
+}
+.acf-map-canvas .leaflet-control-container .leaflet-top.leaflet-right .leaflet-routing-container .leaflet-routing-geocoders .leaflet-routing-geocoder .leaflet-routing-remove-waypoint:hover:after {
+	color: #9c9c9c;
+}
+.acf-map-canvas .leaflet-control-container .leaflet-top.leaflet-right .leaflet-routing-container .leaflet-routing-geocoders .leaflet-routing-add-waypoint {
+	border: none;
+    width: 100%;
+    height: 40px;
+    border-radius: 0;
+    margin: 0;
+    position: absolute;
+	color: #ffffff;
+	bottom: 0;
+	background-color: #408bc9;
+}
+.acf-map-canvas .leaflet-control-container .leaflet-top.leaflet-right .leaflet-routing-container .leaflet-routing-geocoders .leaflet-routing-add-waypoint:hover {
+	background-color: #2271b1;
+}

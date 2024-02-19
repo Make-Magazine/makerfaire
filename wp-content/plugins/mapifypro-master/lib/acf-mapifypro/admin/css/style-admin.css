@@ -1,0 +1,246 @@
+body.post-type-map .acf-repeater > .acf-actions,
+body.post-type-map-location .acf-repeater > .acf-actions {
+	text-align: left;
+}
+
+body.post-type-map .inside.acf-fields.-left .acf-label > label,
+body.post-type-map-location .inside.acf-fields.-left .acf-label > label {
+	font-weight: 600;
+}
+
+/* acf-mapifypro-maps-tags */
+#acf-mapifypro-maps-tags .acf-label {
+	margin-top: 10px;
+	margin-bottom: 0px;
+}
+#acf-mapifypro-maps-tags p {
+	display: block;
+	margin-top: 10px;
+	margin-bottom: 0px;
+}
+#acf-mapifypro-maps-tags a + a {
+	padding-left: 5px;
+}
+
+/* generate shorcode button on multi-map option page */
+#linkmpfymultimap .inside, 
+#poststuff #mpfymultimap .inside {
+    margin: 0;
+    padding: 0;
+}
+#linkmpfymultimap .inside #minor-publishing, 
+#poststuff #mpfymultimap .inside #minor-publishing {
+    padding: 10px 12px;
+}
+#mpfy-multi-map-shortcode-modal .table-content,
+#mpfy-multi-map-shortcode-modal .table-content td textarea {
+    width: 100%;	
+}
+#mpfy-multi-map-shortcode-modal .table-content td label {
+    font-size: 12px;
+}
+
+/* ACF Mapifypro Repeater Field */
+.acf-field-mapify-repeater .acf-repeater {
+	/* table */
+}
+.acf-field-mapify-repeater .acf-repeater > table {
+	margin: 0 0 8px;
+	background: #F9F9F9;
+	/* row handle (add/remove) */
+}
+.acf-field-mapify-repeater .acf-repeater .acf-row-handle {
+	width: 16px;
+	text-align: center !important;
+	vertical-align: middle !important;
+	position: relative;
+	/* icons */
+}
+.acf-field-mapify-repeater .acf-repeater .acf-row-handle .acf-icon {
+	display: none;
+	position: absolute;
+	top: 0;
+	margin: -8px 0 0 -2px;
+	/* minus icon */
+}
+.acf-field-mapify-repeater .acf-repeater .acf-row-handle .acf-icon.-minus {
+	top: 50%;
+	/* ie fix */
+}
+body.browser-msie .acf-field-mapify-repeater .acf-repeater .acf-row-handle .acf-icon.-minus {
+	top: 25px;
+	/* .order */
+}
+.acf-field-mapify-repeater .acf-repeater .acf-row-handle.order {
+	background: #f4f4f4;
+	cursor: move;
+	color: #aaa;
+	text-shadow: #fff 0 1px 0;
+}
+.acf-field-mapify-repeater .acf-repeater .acf-row-handle.order:hover {
+	color: #666;
+}
+.acf-field-mapify-repeater .acf-repeater .acf-row-handle.order + td {
+	border-left-color: #DFDFDF;
+	/* remove */
+}
+.acf-field-mapify-repeater .acf-repeater .acf-row-handle.remove {
+	background: #F9F9F9;
+	border-left-color: #DFDFDF;
+	/* add in spacer to th (force correct width) */
+}
+.acf-field-mapify-repeater .acf-repeater th.acf-row-handle:before {
+	content: "";
+	width: 16px;
+	display: block;
+	height: 1px;
+	/* row */
+}
+.acf-field-mapify-repeater .acf-repeater .acf-row {
+	/* hide clone */
+}
+.acf-field-mapify-repeater .acf-repeater .acf-row.acf-clone {
+	display: none !important;
+	/* hover */
+}
+.acf-field-mapify-repeater .acf-repeater .acf-row:hover, .acf-field-mapify-repeater .acf-repeater .acf-row.-hover {
+	/* icons */
+}
+.acf-field-mapify-repeater .acf-repeater .acf-row:hover > .acf-row-handle .acf-icon, .acf-field-mapify-repeater .acf-repeater .acf-row.-hover > .acf-row-handle .acf-icon {
+	display: block;
+}
+.acf-field-mapify-repeater .acf-repeater .acf-row:hover > .acf-row-handle .acf-icon.show-on-shift, .acf-field-mapify-repeater .acf-repeater .acf-row.-hover > .acf-row-handle .acf-icon.show-on-shift {
+	display: none;
+}
+body.acf-keydown-shift .acf-field-mapify-repeater .acf-repeater .acf-row:hover > .acf-row-handle .acf-icon.show-on-shift, body.acf-keydown-shift .acf-field-mapify-repeater .acf-repeater .acf-row.-hover > .acf-row-handle .acf-icon.show-on-shift {
+	display: block;
+}
+body.acf-keydown-shift .acf-field-mapify-repeater .acf-repeater .acf-row:hover > .acf-row-handle .acf-icon.hide-on-shift, body.acf-keydown-shift .acf-field-mapify-repeater .acf-repeater .acf-row.-hover > .acf-row-handle .acf-icon.hide-on-shift {
+	display: none;
+	/* sortable */
+}
+.acf-field-mapify-repeater .acf-repeater > table > tbody > tr.ui-sortable-helper {
+	box-shadow: 0 1px 5px rgba(0, 0, 0, 0.2);
+}
+.acf-field-mapify-repeater .acf-repeater > table > tbody > tr.ui-sortable-placeholder {
+	visibility: visible !important;
+}
+.acf-field-mapify-repeater .acf-repeater > table > tbody > tr.ui-sortable-placeholder td {
+	background: #F9F9F9;
+	/* layouts */
+	/*
+	&.-row > table > tbody > tr:before,
+	&.-block > table > tbody > tr:before {
+	content: "";
+	display: table-row;
+	height: 2px;
+	background: #f00;
+	}
+	*/
+}
+.acf-field-mapify-repeater .acf-repeater.-row > table > tbody > tr > td, .acf-field-mapify-repeater .acf-repeater.-block > table > tbody > tr > td {
+	border-top-color: #E1E1E1;
+	/* empty */
+}
+.acf-field-mapify-repeater .acf-repeater.-empty > table > thead > tr > th {
+	border-bottom: 0 none;
+}
+.acf-field-mapify-repeater .acf-repeater.-empty.-row > table, .acf-field-mapify-repeater .acf-repeater.-empty.-block > table {
+	display: none;
+	/* collapsed */
+}
+.acf-field-mapify-repeater .acf-repeater .acf-row.-collapsed > .acf-field {
+	display: none !important;
+}
+.acf-field-mapify-repeater .acf-repeater .acf-row.-collapsed > td.acf-field.-collapsed-target {
+	display: table-cell !important;
+	/* collapsed (block layout) */
+}
+.acf-field-mapify-repeater .acf-repeater .acf-row.-collapsed > .acf-fields > * {
+	display: none !important;
+}
+.acf-field-mapify-repeater .acf-repeater .acf-row.-collapsed > .acf-fields > .acf-field.-collapsed-target {
+	display: block !important;
+}
+.acf-field-mapify-repeater .acf-repeater .acf-row.-collapsed > .acf-fields > .acf-field.-collapsed-target[data-width] {
+	float: none !important;
+	width: auto !important;
+	/* collapsed (table layout) */
+}
+.acf-field-mapify-repeater .acf-repeater.-table .acf-row.-collapsed .acf-field.-collapsed-target {
+	border-left-color: #dfdfdf;
+}
+.acf-field-mapify-repeater .acf-repeater.-max .acf-icon[data-event="add-row"] {
+	display: none !important;
+}
+
+/* map-locations field re-styling */
+.acf-field[data-type="mapify_map_locations_relationship"] .filters {
+	display: flex;
+}
+.acf-field[data-type="mapify_map_locations_relationship"] .filters .filter.-post_type {
+	width: 175px;
+	padding: 7px 0 7px 7px;
+	order: 0;
+}
+.acf-field[data-type="mapify_map_locations_relationship"] .filters .filter.-search {
+	width: auto;
+	flex-grow: 1;
+	order: 1;
+}
+
+/* mpfy-copy-click */
+.mpfy-copy-click {
+	position: relative;
+	padding-bottom: 2px;
+	text-decoration: none;
+	cursor: pointer;
+	color: #484848;
+	border-bottom: 1px dashed #767676;
+	transition: background-color calc(var(--duration) * 2) var(--ease);
+}
+.mpfy-copy-click:after {
+	content: attr(data-tooltip-text);
+	position: absolute;
+	bottom: calc(100% + 6px);
+	left: 50%;
+	padding: 8px 16px;
+	white-space: nowrap;
+	background-color: rgb(0, 0, 0);
+	color: #ffffff;
+	border-radius: 4px;
+	box-shadow: 0 0 0 -12px rgba(0, 0, 0, 0);
+	pointer-events: none;
+	-webkit-backface-visibility: hidden;
+			backface-visibility: hidden;
+	opacity: 0;
+	transform: translate(-50%, 12px);
+	transition: box-shadow calc(var(--duration) / 1.5) var(--bounce), opacity calc(var(--duration) / 1.5) var(--bounce), transform calc(var(--duration) / 1.5) var(--bounce);
+}
+.mpfy-copy-click.is-hovered:after {
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+	opacity: 1;
+	transform: translate(-50%, 0);
+	transition-timing-function: var(--ease);
+}
+.mpfy-copy-click.is-copied {
+	background-color: #2271b1;
+	color: #ffffff;
+}
+.mpfy-copy-click.is-copied:after {
+	content: attr(data-tooltip-text-copied);
+}
+
+/* mpfy-shorcode */
+.mpfy-shortcode {
+	padding: 3px 5px 5px;
+    margin: 0 1px;
+    background: #000000;
+    color: #ffffff;
+    font-size: 13px;
+    border: none;
+    border-radius: 3px;
+}
+.mpfy-shortcode:hover {
+	color: #ffffff;
+}

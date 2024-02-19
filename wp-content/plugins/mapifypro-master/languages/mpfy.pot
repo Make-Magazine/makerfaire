@@ -1,0 +1,162 @@
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: MapifyPro\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2021-10-30 07:08+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: \n"
+"Language: \n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Loco https://localise.biz/\n"
+"X-Loco-Version: 2.5.5; wp-5.8.1\n"
+"X-Domain: mpfy"
+
+#: options/post-types.php:8 options/post-types.php:38
+msgid "Add New"
+msgstr ""
+
+#: options/post-types.php:39
+msgid "Add new Map"
+msgstr ""
+
+#: options/post-types.php:9
+msgid "Add new Map Location"
+msgstr ""
+
+#: options/post-types.php:64 options/post-types.php:65
+#: options/post-types.php:68
+msgid "Draw New Area"
+msgstr ""
+
+#: options/post-types.php:67
+msgid "Edit Area"
+msgstr ""
+
+#: options/post-types.php:41
+msgid "Edit Map"
+msgstr ""
+
+#: options/post-types.php:11
+msgid "Edit Map Location"
+msgstr ""
+
+#. URI of the plugin
+#. Author URI of the plugin
+msgid "https://mapifypro.com/"
+msgstr ""
+
+#: options/post-types.php:37
+msgid "Map"
+msgstr ""
+
+#: options/post-types.php:63
+msgid "Map Area"
+msgstr ""
+
+#: options/post-types.php:62
+msgid "Map Areas"
+msgstr ""
+
+#: options/post-types.php:7
+msgid "Map Location"
+msgstr ""
+
+#: options/post-types.php:6
+msgid "Map Locations"
+msgstr ""
+
+#. Author of the plugin
+msgid "Mapify LLC"
+msgstr ""
+
+#. Name of the plugin
+msgid "MapifyPro"
+msgstr ""
+
+#. Description of the plugin
+msgid ""
+"MapifyPro is an elite plugin for WordPress that implements fully-customized "
+"maps on your site."
+msgstr ""
+
+#: options/post-types.php:36
+msgid "Maps"
+msgstr ""
+
+#: options/post-types.php:42
+msgid "New Map"
+msgstr ""
+
+#: options/post-types.php:12
+msgid "New Map Location"
+msgstr ""
+
+#: modules/map-location-list/templates/list.php:61
+msgid "Next"
+msgstr ""
+
+#: options/post-types.php:15
+msgid "No Map Locations found"
+msgstr ""
+
+#: options/post-types.php:16
+msgid "No Map Locations found in Trash"
+msgstr ""
+
+#: options/post-types.php:45 options/post-types.php:71
+msgid "No Maps found"
+msgstr ""
+
+#: options/post-types.php:46 options/post-types.php:72
+msgid "No Maps found in Trash"
+msgstr ""
+
+#: modules/map-location-list/templates/list.php:62
+#, php-format
+msgid "Page %1$s of %2$s"
+msgstr ""
+
+#: modules/map-location-list/templates/list.php:60
+msgid "Previous"
+msgstr ""
+
+#: templates/map.html.php:78
+msgid "Search"
+msgstr ""
+
+#: options/post-types.php:70
+msgid "Search Areas"
+msgstr ""
+
+#: options/post-types.php:14
+msgid "Search Map Locations"
+msgstr ""
+
+#: options/post-types.php:44
+msgid "Search Maps"
+msgstr ""
+
+#: templates/map.html.php:128
+msgid "Show My Location"
+msgstr ""
+
+#: options/post-types.php:66 options/post-types.php:69
+msgid "View Area"
+msgstr ""
+
+#: options/post-types.php:40 options/post-types.php:43
+msgid "View Map"
+msgstr ""
+
+#: options/post-types.php:10 options/post-types.php:13
+msgid "View Map Location"
+msgstr ""
+
+#: modules/search-radius/search-radius.php:11
+msgid "Within"
+msgstr ""

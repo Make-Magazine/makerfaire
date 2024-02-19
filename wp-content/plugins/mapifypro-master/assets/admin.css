@@ -1,0 +1,146 @@
+#wpwrap,
+#wpwrap .wrap > .nav-tab-wrapper > .nav-tab-active,
+#wpcontent #wpbody #wpbody-content .wrap .wp-editor-tools {
+	background-color: hsl(185 30% 94% / 1);
+}
+
+body.edit-php #wpcontent #wpbody #wpbody-content .wrap,
+body.mapifypro_page_crowd-inbox #wpcontent #wpbody #wpbody-content .wrap {
+	margin: 30px 100px 50px; 
+}
+
+body.post-php #wpcontent #wpbody #wpbody-content .wrap,
+body.post-new-php #wpcontent #wpbody #wpbody-content .wrap {
+	margin-top: 25px; 
+}
+
+#wpcontent #wpbody #wpbody-content .wrap #posts-filter .tablenav .actions select {
+	display: none;
+}
+
+#wpcontent #wpbody #wpbody-content .wrap #posts-filter .tablenav .actions select#bulk-action-selector-top,
+#wpcontent #wpbody #wpbody-content .wrap #posts-filter .tablenav .actions select#bulk-action-selector-bottom,
+#wpcontent #wpbody #wpbody-content .wrap #posts-filter .tablenav .actions select#filter-by-date,
+#wpcontent #wpbody #wpbody-content .wrap #posts-filter .tablenav .actions select#cat {
+	display: block;
+}
+
+#wpcontent #wpbody #wpbody-content .wrap #posts-filter .tablenav.top {
+	padding: 20px 0 15px;
+}
+
+#wpcontent #wpbody #wpbody-content .wrap #posts-filter .tablenav.bottom {
+	padding: 15px 0;
+}
+
+#wpcontent #wpbody #wpbody-content .wrap h1.wp-heading-inline {
+	font-weight: 600;
+    margin-right: 13px;
+    margin-bottom: 10px;	
+}
+
+#wpcontent #wpbody #wpbody-content .wrap .notice {
+	margin-bottom: 20px !important;
+}
+
+#wpcontent #wpbody .alternate, 
+#wpcontent #wpbody .striped>tbody>:nth-child(odd), 
+#wpcontent #wpbody ul.striped>:nth-child(odd) {
+    background-color: hsl(185 76% 98% / 1)
+}
+
+#wpcontent #wpbody .wrap .add-new-h2, 
+#wpcontent #wpbody .wrap .add-new-h2:active, 
+#wpcontent #wpbody .wrap .page-title-action, 
+#wpcontent #wpbody .wrap .page-title-action:active {
+	background: hsl(185deg 65.35% 36.92%);
+    border-color: hsl(185deg 65.35% 36.92%);
+    color: #fff;
+    padding: 8px 15px;
+    border-radius: 3px;
+    font-size: 14px;
+	-webkit-transition: .35s; /* For Safari */
+    transition: .35s; /* For modern browsers */
+}
+
+#wpcontent #wpbody .wrap .add-new-h2:hover, 
+#wpcontent #wpbody .wrap .page-title-action:hover {
+	background: hsl(185deg 65.35% 36.92% / 83%);
+    border-color: hsl(185deg 65.35% 36.92% / 83%);
+}
+
+#wpcontent #wpbody .wrap .button {
+	background: #ffffff;
+	border-color: hsl(185deg 65.35% 36.92%);
+} 
+
+#wpcontent #wpbody .wrap .button-primary {
+	background: hsl(185deg 65.35% 36.92%);
+}
+
+#wpcontent .mapifypro-admin-header {
+    margin-left: -20px;
+    background: hsl(185deg 65.35% 36.92%);
+    color: #ffffff;    
+    box-sizing: border-box;
+	box-shadow: 0px -20px 50px hsl(185deg 65.35% 36.92%);
+	padding: 10px 20px 10px 25px;
+}
+
+body.edit-php #wpcontent .mapifypro-admin-header,
+body.mapifypro_page_crowd-inbox #wpcontent .mapifypro-admin-header {
+	padding: 22px 100px 22px 120px;
+}
+
+#wpcontent .mapifypro-admin-header svg {	
+    fill: hsl(185 30% 94% / 1);
+	height: 25px;
+}
+
+body.edit-php #wpcontent .mapifypro-admin-header svg,
+body.mapifypro_page_crowd-inbox #wpcontent .mapifypro-admin-header svg {
+	height: 40px;
+}
+
+/* Header title */
+#wpcontent .mapifypro-admin-header .mapifypro-admin-main-title {
+	display: inline-block;
+    vertical-align: top;        
+    color: hsl(185 30% 94% / 1);    
+    font-weight: 600;
+    letter-spacing: 2px;
+	height: 25px;
+	line-height: 25px;
+	font-size: 23px;
+	margin: 0 0 0 8px;
+}
+body.edit-php #wpcontent .mapifypro-admin-header .mapifypro-admin-main-title,
+body.mapifypro_page_crowd-inbox #wpcontent .mapifypro-admin-header .mapifypro-admin-main-title {
+	height: 40px;
+	line-height: 40px;
+	font-size: 28px;
+	margin: 0 0 0 13px;
+}
+
+/* Metaboxes */
+#wpcontent #wpbody #wpbody-content .wrap #poststuff .postbox {
+	border-top: 3px solid hsl(185deg 65.35% 36.92%);
+    border-left: 0;
+    border-right: 0;
+    border-bottom: 0;
+	margin-bottom: 35px;
+}
+#wpcontent #wpbody #wpbody-content .wrap #poststuff #post-body-content {
+	margin-bottom: 30px;
+}
+#wpcontent #wpbody #wpbody-content .wrap #poststuff #major-publishing-actions {
+	background: none;
+}
+#wpcontent #wpbody #wpbody-content .wrap #poststuff .postbox .postbox-header {
+    border-bottom: 0;
+}
+
+/* Hide unwanted admin notices */
+#wpcontent #wpbody .notice:not(.mapifypro-notice, .updated, .acf-admin-notice) {
+	display: none;
+}
