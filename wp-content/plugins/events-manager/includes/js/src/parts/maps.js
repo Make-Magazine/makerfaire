@@ -154,7 +154,7 @@ function em_maps() {
 				map.setCenter(position);
 				map.panBy(40,-55);
 				infoWindow.setContent(
-					'<div id="location-balloon-content"><strong>' + mapTitle + '</strong><br>alicia' +
+					'<div id="location-balloon-content"><strong>' + mapTitle + '</strong><br>' +
 					em_esc_attr(jQuery('#location-address').val()) +
 					'<br>' + em_esc_attr(jQuery('#location-town').val()) +
 					'</div>'

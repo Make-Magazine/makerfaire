@@ -11,7 +11,6 @@ function em_init_actions_start() {
 	if( !empty($_REQUEST['em_ajax']) || !empty($_REQUEST['em_ajax_action']) ){
 		if(isset($_REQUEST['em_ajax_action']) && $_REQUEST['em_ajax_action'] == 'get_location') {
 			if(isset($_REQUEST['id'])){
-				error_log('i am here');
 				$EM_Location = new EM_Location( absint($_REQUEST['id']), 'location_id' );				
 				$location_array = $EM_Location->to_array();
 				$location_array['location_balloon'] = $EM_Location->output( get_option('dbem_location_baloon_format') );				
