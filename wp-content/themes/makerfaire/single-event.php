@@ -1,5 +1,6 @@
-<?php get_header(); 
-
+<?php 
+/*  Page layout for the Yearbook Individual Faire Pages */
+get_header(); 
 ?>
 
 <main id="content">

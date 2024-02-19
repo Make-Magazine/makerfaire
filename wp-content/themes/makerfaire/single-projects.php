@@ -1,4 +1,6 @@
 <?php 
+/*  Page layout for the Yearbook Individual Project Pages */
+
 //Pull faire specific information
 $faireData       = get_field("faire_information");
 $faire_year      = (isset($faireData["faire_year"])?$faireData["faire_year"]:'');
