@@ -71,7 +71,7 @@ function set_universal_asset_constants() {
     // Assume that we're in prod; only change if we are definitively in another
     $universal_makehub_asset_env = 'make.co';
     $universal_asset_proto = 'https://';
-    $host = $_SERVER['HTTP_HOST'];
+    $host = get_site_url();
     // dev environments
     if (strpos($host, 'dev.') === 0 || strpos($host, 'mfairedev.') === 0) {
         $universal_makehub_asset_env = 'devmakehub.wpengine.com';
