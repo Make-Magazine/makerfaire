@@ -7,13 +7,14 @@ function em_init_actions_start() {
 	if( defined('DOING_AJAX') && DOING_AJAX ) $_REQUEST['em_ajax'] = true;
 	
 	//NOTE - No EM objects are globalized at this point, as we're hitting early init mode.
-	//TODO Clean this up.... use a uniformed way of calling EM Ajax actions
+	//TODO Clean this up.... use a uniformed way of calling EM Ajax actions	
 	if( !empty($_REQUEST['em_ajax']) || !empty($_REQUEST['em_ajax_action']) ){
 		if(isset($_REQUEST['em_ajax_action']) && $_REQUEST['em_ajax_action'] == 'get_location') {
 			if(isset($_REQUEST['id'])){
-				$EM_Location = new EM_Location( absint($_REQUEST['id']), 'location_id' );
+				error_log('i am here');
+				$EM_Location = new EM_Location( absint($_REQUEST['id']), 'location_id' );				
 				$location_array = $EM_Location->to_array();
-				$location_array['location_balloon'] = $EM_Location->output( get_option('dbem_location_baloon_format') );
+				$location_array['location_balloon'] = $EM_Location->output( get_option('dbem_location_baloon_format') );				
 		     	echo EM_Object::json_encode($location_array);
 			}
 			die();

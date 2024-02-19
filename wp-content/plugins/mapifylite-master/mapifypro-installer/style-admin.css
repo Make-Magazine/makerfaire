@@ -1,0 +1,139 @@
+#mapifypro-installer {
+    max-width: 800px;
+    margin: 25px 20px 0 2px;
+}
+
+#mapifypro-installer .hndle {
+    font-size: 21px;
+    padding: 8px 12px;
+    margin: 0;
+    line-height: 1.4;
+    font-weight: 600;
+    cursor: default;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    border-bottom: 1px solid #c3c4c7;
+}
+
+#mapifypro-installer .hndle .sub {
+    font-size: 16px;
+    color: #9f9f9f;
+}
+
+#mapifypro-installer .postbox {
+    margin-top: 0px;
+}
+
+#mapifypro-installer .postbox .inside {
+    margin: 12px 0;
+    padding: 0;
+}
+
+#mapifypro-installer .postbox input[type="submit"] {
+    margin: 0px 12px 0;
+}
+
+#mapifypro-installer .postbox .field-group {
+    margin-bottom: 12px;
+    border-bottom: 1px solid #eee;
+    padding: 0 12px 15px;
+}
+
+#mapifypro-installer .postbox .field-group:last-child {
+    padding-bottom: 0px;
+    border-bottom: none;
+}
+
+#mapifypro-installer .postbox .field-section-title {
+    padding: 0 12px;
+    background: #f3f3f3;
+    margin-top: -12px;
+    border-bottom: 1px solid #eee;
+    margin-bottom: 16px;
+    font-size: 14px;
+    font-weight: 600;
+    height: 40px;
+    line-height: 40px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+#mapifypro-installer .postbox .field-group > label {
+    display: block;
+    font-weight: 600;
+    padding: 0 0 7px;
+    font-size: 14px;
+    cursor: default;
+}
+
+#mapifypro-installer .postbox .field-group > span {
+    color: #333;
+    font-size: 12px;
+    display: block;
+    margin: 7px 0 0;
+}
+
+#mapifypro-installer .postbox .field-group > input,
+#mapifypro-installer .postbox .field-group > select,
+#mapifypro-installer .postbox .field-group > textarea {
+	width: 100%;
+}
+
+#mapifypro-installer .postbox .field-group > .spinner {
+	float: none;
+    display: inline-block;
+    height: 30px;
+    margin: 0 0 0 5px;
+    background-position: center;
+}
+
+#mapifypro-installer.loading .postbox .field-group > .spinner,
+#mapifypro-installer.loading-once .postbox .field-group > .spinner {
+	visibility: visible;
+}
+
+#mapifypro-installer-output {
+    overflow-x: auto;
+    margin-top: 5px;
+    height: 300px;
+    border: 1px solid #333;
+    padding: 10px;
+    background: #333;
+    color: #fff;
+	line-height: 24px;
+}
+
+#mapifypro-installer-output a {
+	color: #ffffff;
+    font-weight: bold;
+}
+
+#mapifypro-installer-output .button {
+	background: #525151;
+    border-color: #ffffff;
+	margin: 10px 10px 0 0;
+	font-weight: normal;
+}
+
+#mapifypro-installer-output .button:hover {
+	background: #5c5c5c;
+    border-color: #ffffff;
+	color: #ffffff;
+}
+
+#mapifypro-installer-output a:hover {
+	color: #2196f3;
+}
+
+#mapifypro-installer-output table {
+    border: 1px solid #cbcbcb;
+    border-collapse: collapse;
+    border-spacing: 0;
+    margin-top: 10px;
+}
+
+#mapifypro-installer-output table td {
+    padding: 0.5em 1em;
+    border-left: 1px solid #cbcbcb;
+    border-bottom: 1px solid #cbcbcb;
+}

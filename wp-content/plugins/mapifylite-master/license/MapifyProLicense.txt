@@ -1,0 +1,30 @@
+MapifyPro Usage License
+
+MapifyPro is Copyright (C) 2015-2016 PaperTelevision LLC  
+
+USE 
+
+You may not resell this software, or any piece of this software, ever. This is a license to use the software in a site, and does not grant ownership of the software in any way. ownership of MapifyPro remains firmly to PaperTelevision LLC.
+
+You may not use this software to build other software that will be sold. However, you may alter it to fit your needs within the given parameters of your website. 
+
+ALTERATIONS
+
+Altering the code in any way will prevent us from offering proper support. While allowed, it is not suggested and will void your support plan (though don’t worry, we will still try to help troubleshoot).
+
+SUPPORT
+
+While we strive to offer the best support possible, we in no way guarantee support in any manner. Due to the unlimited nature of unique builds and custom setups, it is impossible for us to guarantee that this software will work with every users installation, as is the nature of all plugins. However, MapifyPro is thoroughly tested to the highest standards, and is designed to be compatible with as many setups as possible. 
+
+Support will be offered to professional, polite inquiries. Rude inquiries will potentially be ignored as we insist on a positive work environment for our tech support agents and all staff. Please allow up to 48 hours for a response.
+
+SUBSCRIPTION
+
+This software uses a subscription model that allows you to update to the latest security fixes, free features, and other updates. Subscription length is for 1 year. Note that this in no way affects the functionality of the plugin itself, it is a subscription for tech support, updates, and the free features we release on a regular basis. You may use your copy of MapifyPro indefinitely, though we encourage you to maintain a subscription for the latest updates and security fixes.
+
+
+WARRANTY
+
+1. BECAUSE THE PROGRAM IS LICENSED, THERE IS NO WARRANTY FOR THE PROGRAM, TO THE EXTENT PERMITTED BY APPLICABLE LAW. EXCEPT WHEN OTHERWISE STATED IN WRITING THE COPYRIGHT HOLDERS AND/OR OTHER PARTIES PROVIDE THE PROGRAM "AS IS" WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE ENTIRE RISK AS TO THE QUALITY AND PERFORMANCE OF THE PROGRAM IS WITH YOU. SHOULD THE PROGRAM PROVE DEFECTIVE, YOU ASSUME THE COST OF ALL NECESSARY SERVICING, REPAIR OR CORRECTION.
+
+12. IN NO EVENT UNLESS REQUIRED BY APPLICABLE LAW OR AGREED TO IN WRITING WILL ANY COPYRIGHT HOLDER, OR ANY OTHER PARTY WHO MAY MODIFY AND/OR REDISTRIBUTE THE PROGRAM AS PERMITTED ABOVE, BE LIABLE TO YOU FOR DAMAGES, INCLUDING ANY GENERAL, SPECIAL, INCIDENTAL OR CONSEQUENTIAL DAMAGES ARISING OUT OF THE USE OR INABILITY TO USE THE PROGRAM (INCLUDING BUT NOT LIMITED TO LOSS OF DATA OR DATA BEING RENDERED INACCURATE OR LOSSES SUSTAINED BY YOU OR THIRD PARTIES OR A FAILURE OF THE PROGRAM TO OPERATE WITH ANY OTHER PROGRAMS), EVEN IF SUCH HOLDER OR OTHER PARTY HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.

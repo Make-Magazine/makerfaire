@@ -1,0 +1,127 @@
+/* ------------------------------------------------------------ *\ 
+	Fonts
+\* ------------------------------------------------------------ */
+
+@font-face {
+    font-family: 'museo-sans-rounded';
+    src: url('fonts/museosans_500-webfont.eot');
+    src: url('fonts/museosans_500-webfont.eot?#iefix') format('embedded-opentype'),
+         url('fonts/museosans_500-webfont.svg#museo-sans-rounded') format('svg'),
+         url('fonts/museosans_500-webfont.woff') format('woff'),
+         url('fonts/museosans_500-webfont.ttf') format('truetype');
+    font-weight: 500;
+    font-style: normal;
+
+}
+
+@font-face {
+    font-family: 'museo-sans-rounded';
+    src: url('fonts/museosans-100-webfont.eot');
+    src: url('fonts/museosans-100-webfont.eot?#iefix') format('embedded-opentype'),
+         url('fonts/museosans-100-webfont.svg#museo-sans-rounded') format('svg'),
+         url('fonts/museosans-100-webfont.woff') format('woff'),
+         url('fonts/museosans-100-webfont.ttf') format('truetype');
+    font-weight: 100;
+    font-style: normal;
+
+}
+
+@font-face {
+    font-family: 'museo-sans-rounded';
+    src: url('fonts/museosans-300-webfont.eot');
+    src: url('fonts/museosans-300-webfont.eot?#iefix') format('embedded-opentype'),
+         url('fonts/museosans-300-webfont.svg#museo-sans-rounded') format('svg'),
+         url('fonts/museosans-300-webfont.woff') format('woff'),
+         url('fonts/museosans-300-webfont.ttf') format('truetype');
+    font-weight: 300;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'museo-sans-rounded';
+    src: url('fonts/museosans_700-webfont.eot');
+    src: url('fonts/museosans_700-webfont.eot?#iefix') format('embedded-opentype'),
+         url('fonts/museosans_700-webfont.svg#museo-sans-rounded') format('svg'),
+         url('fonts/museosans_700-webfont.woff') format('woff'),
+         url('fonts/museosans_700-webfont.ttf') format('truetype');
+    font-weight: 700;
+    font-style: normal;
+}
+
+/* ------------------------------------------------------------ *\ 
+	Pop Ups
+\* ------------------------------------------------------------ */
+
+	/* -- Primary */
+
+.mpfy-upsell-popup-primary { font-family: 'museo-sans-rounded', Arial, sans-serif; font-weight: 300;  font-size: 15px; line-height: 1.33; color: #555; position: relative; border-left-color: #d5e8f9; padding-top: 10px; padding-bottom: 10px; }
+.mpfy-upsell-popup-primary h6 { font-size: 15px; line-height: 1.33; font-weight: 700; margin: 0 0 4px 0; }
+.mpfy-upsell-popup-primary h6 strong { color: #ff0000; font-weight: 700; }
+.mpfy-upsell-popup-primary p { font-size: 15px; line-height: 1.33; margin: 0; padding-bottom: 8px; }
+.mpfy-upsell-popup-primary p:last-child { padding-bottom: 0; }
+.mpfy-upsell-popup-primary blockquote { margin: 0; position: relative; overflow: hidden; }
+.mpfy-upsell-popup-primary blockquote p { float: left; color: #3e3e3e; padding: 0; }
+.mpfy-upsell-popup-primary blockquote p ~ p { margin-left: 14px;  }
+.mpfy-upsell-popup-primary blockquote p:first-child { padding-top: 10px; }
+.mpfy-upsell-popup-primary blockquote p span { font-weight: 700; }
+
+	/* -- Secondary */
+
+.mpfy-upsell-popup-secondary { font-family: 'museo-sans-rounded', Arial, sans-serif; font-weight: 300;  font-size: 15px; line-height: 1.53; color: #434343; position: relative; max-width: 870px; padding: 5px 2px 5px 2px; border-left-color: #12afd0; }
+.mpfy-upsell-popup-secondary h4 { font-size: 27px; line-height: 1.04; margin: 0; }
+.mpfy-upsell-popup-secondary p { font-size: 15px; line-height: 1.53; margin: 0; padding-bottom: 6px; }
+.mpfy-upsell-popup-secondary p:last-child { padding-bottom: 0; }
+.mpfy-upsell-popup-secondary strong { font-weight: 700; }
+.mpfy-upsell-popup-secondary .mpfy-upsell-popup-cols ol { list-style: none; margin: 0; }
+.mpfy-upsell-popup-secondary .mpfy-upsell-popup-cols ol li { margin: 0; }
+.mpfy-upsell-popup-secondary .mpfy-upsell-popup-cols ol a { color: #d16200; }
+.mpfy-upsell-popup-secondary .mpfy-upsell-popup-cols ol a:hover { text-decoration: none; }
+.mpfy-upsell-popup-secondary .mpfy-upsell-popup-cols ul { list-style: none; margin-bottom: 9px; }
+.mpfy-upsell-popup-secondary .mpfy-upsell-popup-cols ul li { position: relative; padding-left: 14px; margin-bottom: 0; }
+.mpfy-upsell-popup-secondary .mpfy-upsell-popup-cols ul li:before { content: ' '; position: absolute; left: 0; top: 7px; width: 6px; height: 6px; border-radius: 50%; background-color: #12afd0; }
+
+	/* -- Cols */
+
+.mpfy-upsell-popup-cols { list-style: none; position: relative; overflow: hidden; }
+.mpfy-upsell-popup-cols:before { content: ' '; position: absolute; left: 50%; top: 10px; bottom: 10px; width: 1px; background-color: #c2c2c2; }
+.mpfy-upsell-popup-cols > li { float: left; width: 50%; padding: 0 30px; -webkit-box-sizing: border-box; box-sizing: border-box; }
+
+/* ------------------------------------------------------------ *\ 
+	Buttons
+\* ------------------------------------------------------------ */
+
+	/* -- Base */
+
+.mpfy-upsell-btn { border: 1px solid #dad1da; border-radius: 3px; background-color: #f1f1f1; display: inline-block; vertical-align: top; color: #3e3e3e; font-size: 15px; line-height: 34px; padding: 0 16px; text-decoration: none; text-align: center; min-width: 100px; }
+.mpfy-upsell-btn:hover { border-color: #a8a3a8; color: #3e3e3e; }
+
+	/* -- Colors */
+
+.mpfy-upsell-btn-blue { background-color: #12afd0; border-color: #12afd0; color: #fff; padding: 0 22px; font-weight: 700; }
+.mpfy-upsell-btn-blue:hover { color: #fff; border-color: #1299b5; background-color: #1299b5; }
+
+/* ------------------------------------------------------------ *\ 
+	Responsive
+\* ------------------------------------------------------------ */
+
+@media only screen and (max-width: 767px) {
+
+	/* ------------------------------------------------------------ *\ 
+		Pop Ups
+	\* ------------------------------------------------------------ */	
+		
+		/* -- Secondary */
+
+	.mpfy-upsell-popup-primary blockquote p { float: none; padding-bottom: 8px; }
+	.mpfy-upsell-popup-primary blockquote p ~ p { margin-left: 0; }
+	.mpfy-upsell-popup-primary blockquote p:last-child { padding-bottom: 0; }
+	.mpfy-upsell-popup-primary blockquote .mpfy-upsell-btn { display: block;  }
+	.mpfy-upsell-popup-primary blockquote .mpfy-upsell-btn ~ .mpfy-upsell-btn { margin-top: 5px; }
+
+		/* -- Cols */
+
+	.mpfy-upsell-popup-cols:before { display: none; }	
+	.mpfy-upsell-popup-cols > li { float: none; width: 100%; padding: 0 20px 10px 20px;  }	
+	.mpfy-upsell-popup-cols > li ~ li { padding-top: 20px; border-top: 1px solid #c2c2c2; }	
+	.mpfy-upsell-popup-cols > li:last-child { padding-bottom: 0; }	
+}

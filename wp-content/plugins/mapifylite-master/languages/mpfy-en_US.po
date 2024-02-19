@@ -1,0 +1,223 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"POT-Creation-Date: 2016-03-23 09:35+0200\n"
+"PO-Revision-Date: 2016-03-23 09:36+0200\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: en_US\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.8.7\n"
+"X-Poedit-Basepath: D:/Server/josh_sears/mapifystorelocator/wordpress/wp-"
+"content/plugins/mapify_pro\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Poedit-KeywordsList: __\n"
+"X-Poedit-SearchPath-0: .\n"
+"X-Poedit-SearchPathExcluded-0: documentation\n"
+"X-Poedit-SearchPathExcluded-1: languages\n"
+"X-Poedit-SearchPathExcluded-2: lib\n"
+"X-Poedit-SearchPathExcluded-3: am\n"
+
+#: core.php:71
+msgid "No locations were found."
+msgstr ""
+
+#: core.php:71
+msgid "Please search again."
+msgstr ""
+
+#: core.php:72
+msgid ""
+"No locations were found within your search criteria. Please search again."
+msgstr ""
+
+#: core.php:72
+msgid "Or ..."
+msgstr ""
+
+#: core.php:72
+msgid "See the Closest Location"
+msgstr ""
+
+#: core.php:73
+msgid "Could not find the entered address."
+msgstr ""
+
+#: core.php:73
+msgid "Please check your spelling and try again."
+msgstr ""
+
+#: mapify_pro.php:36
+#, php-format
+msgid "The %s plugin will be inactive until you deactivate the %s plugin."
+msgstr ""
+
+#: mapify_pro.php:38
+#, php-format
+msgid "The %s plugin will be inactive as there is a conflicting plugin."
+msgstr ""
+
+#: modules/map-location-list/templates/list.php:41
+msgid "More Details"
+msgstr ""
+
+#: modules/map-location-list/templates/list.php:45
+msgid "Get Directions"
+msgstr ""
+
+#: modules/map-location-list/templates/list.php:53
+msgid "Previous"
+msgstr ""
+
+#: modules/map-location-list/templates/list.php:54
+msgid "Next"
+msgstr ""
+
+#: modules/map-location-list/templates/list.php:55
+#, php-format
+msgid "Page %1$s of %2$s"
+msgstr ""
+
+#: modules/map-tags/map-tags.php:11
+msgid "Search Location Tags"
+msgstr ""
+
+#: modules/map-tags/map-tags.php:12
+msgid "Popular Location Tags"
+msgstr ""
+
+#: modules/map-tags/map-tags.php:13
+msgid "All Location Tags"
+msgstr ""
+
+#: modules/map-tags/map-tags.php:16
+msgid "Edit Location Tag"
+msgstr ""
+
+#: modules/map-tags/map-tags.php:17
+msgid "Update Location Tag"
+msgstr ""
+
+#: modules/map-tags/map-tags.php:18
+msgid "Add New Location Tag"
+msgstr ""
+
+#: modules/map-tags/map-tags.php:19
+msgid "New Location Tag Name"
+msgstr ""
+
+#: modules/map-tags/map-tags.php:20
+msgid "Separate Location Tags with commas"
+msgstr ""
+
+#: modules/map-tags/map-tags.php:21
+msgid "Add or remove Location Tags"
+msgstr ""
+
+#: modules/map-tags/map-tags.php:22
+msgid "Choose from the most used Location Tags"
+msgstr ""
+
+#: modules/map-tags/map-tags.php:23
+msgid "No Location Tags found."
+msgstr ""
+
+#: modules/map-tags/map-tags.php:24
+msgid "Location Tags"
+msgstr ""
+
+#: modules/popup-location-details.php:82
+msgid "Directions to this location"
+msgstr ""
+
+#: modules/popup-location-details.php:88
+msgid "Location information"
+msgstr ""
+
+#: modules/search-radius/search-radius.php:23
+msgid "Within"
+msgstr ""
+
+#: options/field_image_list.php:9
+#, php-format
+msgid "There are no %s yet. Click <a href=\"#\">here</a> to add one."
+msgstr ""
+
+#: options/field_image_list.php:229 options/field_image_list.php:240
+#, php-format
+msgid "Add %s"
+msgstr ""
+
+#: options/post-types.php:6 options/post-types.php:35
+msgid "Add New"
+msgstr ""
+
+#: options/post-types.php:7
+msgid "Add new Map Location"
+msgstr ""
+
+#: options/post-types.php:10
+msgid "New Map Location"
+msgstr ""
+
+#: options/post-types.php:11
+msgid "View Map Location"
+msgstr ""
+
+#: options/post-types.php:12
+msgid "Search Map Locations"
+msgstr ""
+
+#: options/post-types.php:13
+msgid "No Map Locations found"
+msgstr ""
+
+#: options/post-types.php:14
+msgid "No Map Locations found in Trash"
+msgstr ""
+
+#: options/post-types.php:36
+msgid "Add new Map"
+msgstr ""
+
+#: options/post-types.php:39
+msgid "New Map"
+msgstr ""
+
+#: options/post-types.php:40
+msgid "View Map"
+msgstr ""
+
+#: options/post-types.php:41
+msgid "Search Maps"
+msgstr ""
+
+#: options/post-types.php:42
+msgid "No Maps found"
+msgstr ""
+
+#: options/post-types.php:43
+msgid "No Maps found in Trash"
+msgstr ""
+
+#: templates/comments.php:35 templates/comments.php:53
+msgid "&larr; Older Comments"
+msgstr ""
+
+#: templates/comments.php:36 templates/comments.php:54
+msgid "Newer Comments &rarr;"
+msgstr ""
+
+#: templates/map.html.php:28
+msgid "Enter city or zip code"
+msgstr ""
+
+#: templates/map.html.php:32
+msgid "Search"
+msgstr ""
+
+#: templates/map.html.php:38 templates/map.html.php:91
+msgid "Default View"
+msgstr ""

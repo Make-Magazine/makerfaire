@@ -1,0 +1,66 @@
+.mpfy-admin-shell .cl { display: block; float: none; height: 0px; font-size: 0px; line-height: 0px; text-indent: -4000px; clear: both; }
+
+.mpfy-admin-shell form table td,
+.mpfy-admin-shell form table th { text-align: left; vertical-align: top; }
+
+.mpfy-admin-shell form table .mpfy-label { width: 220px; }
+
+.mpfy-admin-shell form table .mpfy-field input { width: 200px; }
+.mpfy-admin-loading { display: inline-block; width: 32px; height: 32px; background: url(images/ajax-loader.gif) no-repeat 0 0; }
+
+.mpfy-progressbar { position: relative; height: 20px; border: 1px solid #23282d; border-radius: 3px; }
+.mpfy-progressbar .mpfy-progressbar-progress {
+	display: block;
+	height: 20px;
+	width: 0%;
+	transition: width 0.4s;
+
+	background: #23282d; /* Old browsers */
+	background: -moz-linear-gradient(top,  #565656 0%, #23282d 100%); /* FF3.6-15 */
+	background: -webkit-linear-gradient(top,  #565656 0%,#23282d 100%); /* Chrome10-25,Safari5.1-6 */
+	background: linear-gradient(to bottom,  #565656 0%,#23282d 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#565656', endColorstr='#23282d',GradientType=0 ); /* IE6-9 */
+}
+.mpfy-progressbar .mpfy-progressbar-label { position: absolute; left: 0px; top: 0px; right: 0px; bottom: 0px; color: #FFFFFF; text-shadow: 1px 1px #000000; font-size: 14px; line-height: 20px; text-indent: 5px; }
+
+.postbox-container .carbon-container.Carbon_Container_CustomFields th { padding: 20px 0; }
+.postbox-container .carbon-container.Carbon_Container_CustomFields td { padding: 14px 15px 17px 15px; }
+.carbon-container td label em { font-weight: normal; display: inline; }
+.carbon-container td label { padding-bottom: 5px; }
+
+.mpfy-flex,
+.mpfy-flex * { -webkit-box-sizing: border-box; -moz-box-sizing: border-box; box-sizing: border-box; }
+
+.mpfy-flex { display: flex; justify-content: space-between; }
+.mpfy-flex .mpfy-flex-column { border: 1px solid #dddddd; border-radius: 3px; padding: 15px; }
+
+.carbon-map-mpfy .carbon-map-canvas { width: auto; max-width: none; }
+
+.address-search-btn { display: none!important; }
+
+.notice-info-mapifylite {
+	border-left-color: #12afd0;
+	max-width: 850px;
+}
+
+.notice-info-mapifylite ul {
+	margin-bottom: 0px;
+}
+
+.notice-info-mapifylite ul li a,
+.notice-info-mapifylite ul li span {
+	line-height: 23px;
+}
+
+.notice-info-mapifylite ul li a {
+	margin-left: 5px;
+}
+
+.notice-info-mapifylite ul li span.dashicons-no {
+	line-height: 25px;
+    font-size: 21px;
+}
+
+.mpfy-hidden {
+	display: none;
+}
