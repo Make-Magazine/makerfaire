@@ -210,7 +210,7 @@ function buildFaireDrop(&$wp_admin_bar, $faire_id = null) {
 
             //add BA23 Main Entry View link
             if ((isset($faire) && $faire=='BA23')) {
-                array_push($args, array(
+                array_unshift($args, array(
                     'id' => 'mf_admin_main_gv_review',
                     'title' => 'Main Entry View',
                     'href' => 'https://makerfaire.com/bay-area/main-entry-view-ba23/',
@@ -220,7 +220,7 @@ function buildFaireDrop(&$wp_admin_bar, $faire_id = null) {
 
             //add BA23 interest form admin review link
             if ((isset($faire) && $faire=='BA23')) {
-                array_push($args, array(
+                array_unshift($args, array(
                     'id' => 'mf_admin_child_gv_review',
                     'title' => 'Interest Form Entry Review',
                     'href' => 'https://makerfaire.com/ba23-admin-view/',

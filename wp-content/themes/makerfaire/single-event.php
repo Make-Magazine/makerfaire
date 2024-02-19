@@ -11,7 +11,7 @@ get_header();
 		$faire_year 			= date('Y', strtotime($EM_Event->event_start_date));
 		$faire_date 			= date("F Y", strtotime($EM_Event->event_start_date));
 		$faire_countries 		= em_get_countries();
-		$faire_country 			= $EM_Event->location->location_country;
+		$faire_country 			= (isset($EM_Event->location->location_country)?$EM_Event->location->location_country:'');
 
 		// ACF Data
 		//hero section
