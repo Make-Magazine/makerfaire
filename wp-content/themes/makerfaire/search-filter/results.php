@@ -52,7 +52,7 @@ if ( $query->have_posts() ) {
             $image_alt      = get_post_meta( get_post_thumbnail_id(), '_wp_attachment_image_alt', true );   
             $thumbail_url   = get_the_post_thumbnail_url();         
             $featured_image_400_300 = legacy_get_resized_remote_image_url($thumbail_url, 400, 300);
-            $featured_image_600_400 = legacy_get_resized_remote_image_url($thumbail_url, 400, 300);
+            $featured_image_600_400 = legacy_get_resized_remote_image_url($thumbail_url, 600, 400);
 
             //permalink
             $permalink = get_permalink();
