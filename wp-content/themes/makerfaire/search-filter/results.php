@@ -1,25 +1,6 @@
 <?php
 /**
- * Search & Filter Pro
- *
- * Sample Results Template
- *
- * @package   Search_Filter
- * @author    Ross Morsali
- * @link      https://searchandfilter.com
- * @copyright 2018 Search & Filter
- *
- * Note: these templates are not full page templates, rather
- * just an encaspulation of the your results loop which should
- * be inserted in to other pages by using a shortcode - think
- * of it as a template part
- *
- * This template is an absolute base example showing you what
- * you can do, for more customisation see the WordPress docs
- * and using template tags -
- *
- * http://codex.wordpress.org/Template_Tags
- *
+ * Search & Filter Pro Results template
  */
 
 // If this file is called directly, abort.
@@ -48,51 +29,58 @@ if ( $query->have_posts() ) {
 
         while ($query->have_posts()) {
             $post = $query->the_post();
-            $post_id = get_the_ID();
+            $faire_id = get_the_ID();
             $postType = get_post_type($query->post_type);
-            $title = get_the_title();
+            
             $result_text_style = "";
-            if($postType == "event" || $postType == "faire") { 
-                $title = str_replace("Maker Faire", "", $title);
-                $producerSection = get_field('producer_section');
-                
-                //Faire Badge                
-                $faire_badge = ($producerSection['circular_faire_logo'] ? $producerSection['circular_faire_logo']["sizes"]["thumbnail"]: "/wp-content/themes/makerfaire/images/default-badge-thumb.png");
-                    
-                $result_text_style = 'style="background-image:url(' . $faire_badge . ');"';
-                $event_id = get_post_meta($post_id, '_event_id');
-                $EM_Event = new EM_Event( $event_id[0] );
-                $faire_year = date('Y', strtotime($EM_Event->event_start_date));
-                $EM_Location = $EM_Event->get_location();
-                $faire_location = $EM_Location->location_town;
-                $faire_state = $EM_Location->location_state;
-                $image_id = get_post_meta( $post_id, '_thumbnail_id', true );
-                $image_alt  = get_post_meta ( $image_id, '_wp_attachment_image_alt', true );
-                $image_alt = !empty($image_alt) ? $image_alt : "Maker Faire " . $faire_year . " " . get_the_title() . " Featured Image";    
-                if(!empty($faire_location) && !empty($faire_state)) {
-                    $faire_location .= ", ";
-                }
-                if(!empty($faire_state)) {
-                    $faire_location .=  $faire_state;
-                }
-
-                $faire_countries = em_get_countries();
-                $faire_country = $EM_Location->location_country;
-                $faire_date = date("F Y", strtotime($EM_Event->event_start_date));
-            }
             if($postType == "projects") {
                 $faire_info = get_field("faire_information");
-                $faire_id   = (isset($faire_info['faire_post'])?$faire_info['faire_post']:'');
-                $faire_name = ($faire_id!='' ? get_the_title($faire_id):'');
-                $faire_year = (isset($faire_info["faire_year"])?$faire_info["faire_year"]:'');
-                $image_id   = get_post_meta( $post_id, '_thumbnail_id', true );
-                $image_alt  = get_post_meta ( $image_id, '_wp_attachment_image_alt', true );
-                $image_alt  = !empty($image_alt) ? $image_alt : $title . " Project Image for " . "Maker Faire " . $faire_name . " " . $faire_year;  
-                
-                $producerSection = get_field('producer_section', $faire_id);
-                $faire_badge = (isset($producerSection['circular_faire_logo']['url']) ? $producerSection['circular_faire_logo']['url'] : '//' . $_SERVER['HTTP_HOST'] . "/wp-content/themes/makerfaire/images/default-badge.png");
-                $result_text_style = 'style="background-image:url(' . $faire_badge . ');"';
-                
+                $faire_id   = (isset($faire_info['faire_post'])?$faire_info['faire_post']:'');                
+            }
+
+            //get the faire name
+            $title = get_the_title($faire_id);
+
+            //find producer information
+            $producerSection = get_field('producer_section', $faire_id);
+
+            //Faire Badge                
+            $faire_badge       = ($producerSection['circular_faire_logo'] ? $producerSection['circular_faire_logo']["sizes"]["thumbnail"]: "/wp-content/themes/makerfaire/images/default-badge-thumb.png");                    
+            $result_text_style = 'style="background-image:url(' . $faire_badge . ');"';
+
+            //featured image            
+            $image_alt      = get_post_meta( get_post_thumbnail_id(), '_wp_attachment_image_alt', true );   
+            $thumbail_url   = get_the_post_thumbnail_url();         
+            $featured_image_400_300 = legacy_get_resized_remote_image_url($thumbail_url, 400, 300);
+            $featured_image_600_400 = legacy_get_resized_remote_image_url($thumbail_url, 400, 300);
+
+            //permalink
+            $permalink = the_permalink();
+            
+            if($postType == "event" || $postType == "faire") {                                                 
+                //set faire year
+                $event_id = get_post_meta($faire_id, '_event_id');                
+                $EM_Event = new EM_Event( $event_id[0] );
+                $faire_year = date('Y', strtotime($EM_Event->event_start_date));
+                $faire_date = date("F Y", strtotime($EM_Event->event_start_date));
+
+                //set faire location information
+                $EM_Location = $EM_Event->get_location();
+                $faire_city  = $EM_Location->location_town;
+                $faire_state = $EM_Location->location_state;                                
+                               
+                //populate faire location with city and state
+                $faire_location  = ''; 
+                $faire_location .= (!empty($faire_city) ? $faire_city : "");                
+                $faire_location .= (!empty($faire_city) && !empty($faire_state) ? ', ':'');
+                $faire_location .= (!empty($faire_state) ? $faire_state : "");                   
+
+                $faire_countries = em_get_countries();
+                $faire_country = $EM_Location->location_country;                
+
+                //set default alt tag text if none is set
+                $image_alt = !empty($image_alt) ? $image_alt : "Maker Faire " . $faire_year . " " . get_the_title() . " Featured Image";        
+            }elseif($postType == "projects") {                                                                
                 $makerData = get_field('maker_data');
                 $maker_name = isset($makerData[0]['maker_or_group_name']) ? $makerData[0]['maker_or_group_name'] : "";
                 
@@ -101,19 +89,22 @@ if ( $query->have_posts() ) {
                 $project_country  = (isset($project_location['country']) ? $project_location['country']:'');
                 //$categories = strip_tags(get_the_term_list( get_the_ID(), "mf-project-cat", '', ', ' ));
                 $excerpt = get_field('exhibit_description');
+
+                //set default alt tag text if none is set
+                $image_alt  = !empty($image_alt) ? $image_alt : $title . " Project Image for " . "Maker Faire " . $faire_name . " " . $faire_year;
             }
-            
+                        
             ?>
             <div class="result-item <?php echo $postType; ?>">
                 <?php if ( has_post_thumbnail() ) { ?>
                         <div class="result-image">
-							<a href="<?php the_permalink(); ?>">
-								<img srcset="<?php echo legacy_get_resized_remote_image_url(get_the_post_thumbnail_url(), 400, 300); ?> 400w, <?php echo legacy_get_resized_remote_image_url(get_the_post_thumbnail_url(), 600, 400); ?> 1199w, <?php echo legacy_get_resized_remote_image_url(get_the_post_thumbnail_url(), 400, 300); ?>" sizes="(max-width: 400px) 400px, (max-width: 1199px) 1199px, 1200px" src="<?php echo legacy_get_resized_remote_image_url(get_the_post_thumbnail_url(), 400, 300); ?>" alt="<?php echo $image_alt; ?>" />
+							<a href="<?php $permalink; ?>">
+								<img srcset="<?php echo $featured_image_400_300; ?> 400w, <?php echo $featured_image_600_400; ?> 1199w, <?php echo $featured_image_400_300; ?>" sizes="(max-width: 400px) 400px, (max-width: 1199px) 1199px, 1200px" src="<?php echo $featured_image_400_300; ?>" alt="<?php echo $image_alt; ?>" />
 							</a>
                         </div>
                 <?php } ?>
                 <div class="results-text" <?php echo $result_text_style; ?>>
-                    <h2><a href="<?php the_permalink(); ?>"><?php echo $title; ?></a></h2>
+                    <h2><a href="<?php $permalink; ?>"><?php echo $title; ?></a></h2>
                     <?php if($postType == "event" || $postType == "faire") { ?>
                         <?php if(!empty($faire_location)){ ?>
                             <div class="result-detail">
@@ -131,7 +122,7 @@ if ( $query->have_posts() ) {
                             </div>
                         <?php } ?>
                         <div class="result-detail">
-                            <a class="sf-learn-more" href="<?php the_permalink(); ?>">More</a>
+                            <a class="sf-learn-more" href="<?php $permalink; ?>">More</a>
                         </div>
                     <?php } ?>
                     <?php if($postType == "projects") { ?>
@@ -149,7 +140,7 @@ if ( $query->have_posts() ) {
                             <div class="result-detail">
                                 <span class="one-line">
                                     <?php
-                                    echo  (empty($project_state) && empty($project_country) ? '&nbsp;':'<b>Home: </b>');
+                                    echo (empty($project_state) && empty($project_country) ? '&nbsp;':'<b>Home: </b>');
                                     echo (!empty($project_state) ? $project_state : "");                
                                     echo (!empty($project_state) && !empty($project_country) ? ', ':'');
                                     echo (!empty($project_country) ? $project_country : "");                
@@ -167,7 +158,7 @@ if ( $query->have_posts() ) {
                                 <span class="truncated"><?php echo strip_tags(html_entity_decode($excerpt)); ?></span>
                             </div>
                         <?php } ?>
-                        <div class="result-detail"><a href="<?php the_permalink(); ?>" class="sf-learn-more">More</a></div>
+                        <div class="result-detail"><a href="<?php $permalink; ?>" class="sf-learn-more">More</a></div>
                     <?php } ?>
                 </div>
             </div>
