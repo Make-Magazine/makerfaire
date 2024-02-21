@@ -145,7 +145,7 @@ $maker_data = get_field("maker_data");
 			    <h2>Additional Project Photos</h2>
 				<div id="highlightGallery">
 					<?php foreach($exhibit_additional_images as $image) { 
-                        if($image){
+                        if(isset($image['url'])){
                             $alt = ($image['alt'] != "") ? $image['alt'] : $project_title . " - " . $image['title']; ?>
                             <div class="gallery-item"><img alt="<?php echo $alt;?>"  src='<?php echo $image['sizes']['medium_large']; ?>' /></div>
                             <?php

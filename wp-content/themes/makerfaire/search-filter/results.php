@@ -45,11 +45,12 @@ if ( $query->have_posts() ) {
             $producerSection = get_field('producer_section', $faire_id);
 
             //Faire Badge                
-            $faire_badge       = ($producerSection['circular_faire_logo'] ? $producerSection['circular_faire_logo']["sizes"]["thumbnail"]: "/wp-content/themes/makerfaire/images/default-badge-thumb.png");                    
+            $faire_badge       = ($producerSection['circular_faire_logo']['url'] ? $producerSection['circular_faire_logo']["sizes"]["thumbnail"]: "/wp-content/themes/makerfaire/images/default-badge-thumb.png");                    
             $result_text_style = 'style="background-image:url(' . $faire_badge . ');"';
 
             //featured image            
             $image_alt      = get_post_meta( get_post_thumbnail_id(), '_wp_attachment_image_alt', true );   
+            
             $thumbnail_url  = get_the_post_thumbnail_url();         
             $featured_image_400_300 = legacy_get_resized_remote_image_url($thumbnail_url, 400, 300);
             $featured_image_600_400 = legacy_get_resized_remote_image_url($thumbnail_url, 600, 400);
