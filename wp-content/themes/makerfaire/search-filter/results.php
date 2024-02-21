@@ -27,9 +27,9 @@ if ( $query->have_posts() ) {
     <div class="result-items">
     <?php
 
-        while ($query->have_posts()) {
-            $post = $query->the_post();
-            $faire_id = get_the_ID();
+        while ($query->have_posts()) {         
+            $query->the_post();   
+            $faire_id = $post_id = get_the_ID();
             $postType = get_post_type($query->post_type);
             
             $result_text_style = "";
@@ -50,12 +50,12 @@ if ( $query->have_posts() ) {
 
             //featured image            
             $image_alt      = get_post_meta( get_post_thumbnail_id(), '_wp_attachment_image_alt', true );   
-            $thumbail_url   = get_the_post_thumbnail_url();         
-            $featured_image_400_300 = legacy_get_resized_remote_image_url($thumbail_url, 400, 300);
-            $featured_image_600_400 = legacy_get_resized_remote_image_url($thumbail_url, 600, 400);
+            $thumbnail_url  = get_the_post_thumbnail_url();         
+            $featured_image_400_300 = legacy_get_resized_remote_image_url($thumbnail_url, 400, 300);
+            $featured_image_600_400 = legacy_get_resized_remote_image_url($thumbnail_url, 600, 400);
 
             //permalink
-            $permalink = get_permalink();
+            $permalink = get_permalink($post_id);
             
             if($postType == "event" || $postType == "faire") {                                                 
                 //set faire year
@@ -98,13 +98,13 @@ if ( $query->have_posts() ) {
             <div class="result-item <?php echo $postType; ?>">
                 <?php if ( has_post_thumbnail() ) { ?>
                         <div class="result-image">
-							<a href="<?php $permalink; ?>">
+							<a href="<?php echo $permalink; ?>">
 								<img srcset="<?php echo $featured_image_400_300; ?> 400w, <?php echo $featured_image_600_400; ?> 1199w, <?php echo $featured_image_400_300; ?>" sizes="(max-width: 400px) 400px, (max-width: 1199px) 1199px, 1200px" src="<?php echo $featured_image_400_300; ?>" alt="<?php echo $image_alt; ?>" />
 							</a>
                         </div>
                 <?php } ?>
                 <div class="results-text" <?php echo $result_text_style; ?>>
-                    <h2><a href="<?php $permalink; ?>"><?php echo $title; ?></a></h2>
+                    <h2><a href="<?php echo $permalink; ?>"><?php echo $title; ?></a></h2>
                     <?php if($postType == "event" || $postType == "faire") { ?>
                         <?php if(!empty($faire_location)){ ?>
                             <div class="result-detail">
@@ -122,7 +122,7 @@ if ( $query->have_posts() ) {
                             </div>
                         <?php } ?>
                         <div class="result-detail">
-                            <a class="sf-learn-more" href="<?php $permalink; ?>">More</a>
+                            <a class="sf-learn-more" href="<?php echo $permalink; ?>">More</a>
                         </div>
                     <?php } ?>
                     <?php if($postType == "projects") { ?>
@@ -158,7 +158,7 @@ if ( $query->have_posts() ) {
                                 <span class="truncated"><?php echo strip_tags(html_entity_decode($excerpt)); ?></span>
                             </div>
                         <?php } ?>
-                        <div class="result-detail"><a href="<?php $permalink; ?>" class="sf-learn-more">More</a></div>
+                        <div class="result-detail"><a href="<?php echo $permalink; ?>" class="sf-learn-more">More</a></div>
                     <?php } ?>
                 </div>
             </div>
