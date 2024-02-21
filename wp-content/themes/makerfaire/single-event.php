@@ -7,9 +7,9 @@ get_header();
 	
 	<?php	
 	while ( have_posts() ) : the_post(); 
-		$faire_id = get_the_ID();
-		
-		$EM_Event = em_get_event($faire_id, 'post_id');
+		$faire_id 	= get_the_ID();
+		$faire_name = get_the_title();
+		$EM_Event 	= em_get_event($faire_id, 'post_id');
 						
 		// Dates
 		$faire_year 			= date('Y', strtotime($EM_Event->event_start_date));
@@ -20,20 +20,18 @@ get_header();
 		$faire_countries 		= em_get_countries();
 		$faire_country 			= (isset($event_location->location_country)?$event_location->location_country:'');
 	
-	
 		// ACF Data
 		//hero section
 		$topSection 			= get_field('top_section');
-		$hero_bg 				= isset($topSection['hero_image']['url']) 	         ? $topSection['hero_image']['url'] : get_stylesheet_directory_uri()."/images/faire-page-hero-img-default.png"; 				
-		$faire_logo 			= isset($topSection['horizontal_faire_logo']['url']) ? $topSection['horizontal_faire_logo']['url'] : ''; 
-		$faire_logo_alt			= !empty($topSection['horizontal_faire_logo']['alt']) ? $topSection['horizontal_faire_logo']['alt'] : "Maker Faire " . get_the_title() . " Logo"; 
+		$hero_bg 				= isset($topSection['hero_image']['url']) 	          ? $topSection['hero_image']['url'] : get_stylesheet_directory_uri()."/images/faire-page-hero-img-default.png"; 				
+		
+		$faire_logo 	 		= isset($topSection['horizontal_faire_logo']['url'])  ? $topSection['horizontal_faire_logo']['sizes']['medium_large'] : ''; 
+		$faire_logo_alt			= !empty($topSection['horizontal_faire_logo']['alt']) ? $topSection['horizontal_faire_logo']['alt'] : "Maker Faire " . $faire_name . " Logo"; 
 		
 		// Faire Info Section
 		$faireInfo 				= get_field('faire_info');
 		$faire_video 			= $faireInfo['faire_video'];
-		$featured_image_id 		= get_post_meta( $post->ID, '_thumbnail_id', true );
-		$featured_image_alt		= get_post_meta ( $featured_image_id, '_wp_attachment_image_alt', true );
-		$featured_image_alt 	= !empty($featured_image_alt) ? $featured_image_alt : "Maker Faire " . $faire_year . " " . get_the_title() . " Featured Image";	
+		
 		$faire_num_attendees 	= $faireInfo['number_of_attendees'];
 		$faire_num_projects 	= $faireInfo['number_of_projects'];
 
@@ -46,9 +44,10 @@ get_header();
 
 		// Producer Section
 		$producerSection 		= get_field('producer_section');
-		$faire_graphic 			= isset($producerSection['faire_graphic']['url']) 		? $producerSection['faire_graphic']['url'] 	 	 : get_stylesheet_directory_uri()."/images/faire-page-faire-graphic.png";
-		$faire_graphic_alt		= !empty($producerSection['faire_graphic']['alt']) 		? $producerSection['faire_graphic']['alt'] 	 	 : "Maker Faire " . $faire_year . " " . get_the_title() . " Custom Image";
-		$faire_badge 			= isset($producerSection['circular_faire_logo']['url']) ? $producerSection['circular_faire_logo']['url'] : get_stylesheet_directory_uri()."/images/default-badge.png";
+		
+		$faire_graphic 			= isset($producerSection['faire_graphic']['url']) 			? $producerSection['faire_graphic']['sizes']['medium_large'] 	: get_stylesheet_directory_uri()."/images/faire-page-faire-graphic.png";
+		$faire_graphic_alt		= !empty($producerSection['faire_graphic']['alt']) 			? $producerSection['faire_graphic']['alt'] 	 	 		     	: "Maker Faire " . $faire_year . " " . $faire_name . " Custom Image";
+		$faire_badge 			= isset($producerSection['circular_faire_logo']['url']) 	? $producerSection['circular_faire_logo']['sizes']['thumbnail']	: get_stylesheet_directory_uri()."/images/default-badge.png";
 		
 		$producer_org 			= $producerSection['producer_or_org'];
 		$contact 				= $producerSection['contact_email'];
@@ -67,7 +66,7 @@ get_header();
 			'posts_per_page' 	=> 20,
 			'post_type'    	 	=> 'projects',
 			'meta_key'			=> 'faire_information_faire_post',
-			'meta_value'    	=>  get_the_id(),
+			'meta_value'    	=>  $faire_id,
 			'orderby'        	=> 'rand'
 		);
 	
@@ -77,13 +76,14 @@ get_header();
 		shuffle($projects);
 		$projects = array_slice($projects, 0, 3);
 
-		$linkToProjects = (isset($projects) && !empty($projects) ? '/yearbook/'.$faire_year.'-projects?_sfm_faire_information_faire_post='.get_the_ID() : '');
+		$linkToProjects = (isset($projects) && !empty($projects) ? '/yearbook/'.$faire_year.'-projects?_sfm_faire_information_faire_post='.$faire_id : '');
 	?>
     <section id="eventHeader" class="hero-header" style="background-image:url('<?php echo $hero_bg; ?>')">
-	    <div class="logo-wrapper">
-			<h1 class="single-post-title">Maker Faire <?php the_title(); ?></h1>
+	    <div class="logo-wrapper">			
 			<?php if(!empty($faire_logo)) { ?>
 				<img id="faireLogo" src="<?php echo $faire_logo; ?>" alt="<?php echo $faire_logo_alt; ?>" />
+			<?php } else {	?>
+				<h1 class="single-post-title">Maker Faire <?php the_title(); ?></h1>
 			<?php } ?>
 		</div>
 	</section>
@@ -104,7 +104,7 @@ get_header();
 					<iframe width="560" height="315" src="<?php echo getYoutubeEmbedUrl($faire_video) . "?autoplay=1&mute=1"; ?>" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
 				<?php } 
 			} else { ?>			
-				<img src="<?php echo get_the_post_thumbnail_url(); ?>" alt="Maker Faire <?php echo $faire_year . " " . get_the_title()?> Featured Image" />
+				<img src="<?php echo get_the_post_thumbnail_url('full'); ?>" alt="Maker Faire <?php echo $faire_year . " " . $faire_name?> Featured Image" />
 			<?php }
 			?>
 		</div>
@@ -143,7 +143,7 @@ get_header();
 					if($thumbnail_id) {
 						$image_src = wp_get_attachment_image_src( $thumbnail_id, 'full' );
 						$image_alt = get_post_meta ( $thumbnail_id, '_wp_attachment_image_alt', true );
-						$image_alt = !empty($image_alt) ? $image_alt : get_the_title() . " Project Image for " . "Maker Faire " . $faire_name . " " . $faire_year;;	
+						$image_alt = !empty($image_alt) ? $image_alt : $faire_name . " Project Image for " . "Maker Faire " . $faire_name . " " . $faire_year;;	
 					}
 					?>
 					<div class="faire-project">
@@ -195,8 +195,10 @@ get_header();
 			<div class="blue-spacer"></div>
 			<div id="highlightGallery">
 				<?php foreach($highlightImages as $image) { 
-					$alt = ($image['alt'] != "") ? $image['alt'] : "Maker Faire " . get_the_title() . " " . $faire_year . " - " . $image['title']; ?>
-					<div class="gallery-item"><img alt="<?php echo $alt;?>"  src='<?php echo $image['url']; ?>' /></div>
+					if(isset($image['url'])){
+					$alt = ($image['alt'] != "") ? $image['alt'] : "Maker Faire " . $faire_name . " " . $faire_year . " - " . $image['title']; ?>
+					<div class="gallery-item"><img alt="<?php echo $alt;?>"  src='<?php echo $image['sizes']['medium_large']; ?>' /></div>
+					<?php } ?>
 				<?php } ?>
 				<?php if($photo_credit!=''){?>
 					<span>Photo Credit: <?php echo $photo_credit;?></span>
