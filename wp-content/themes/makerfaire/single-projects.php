@@ -35,12 +35,12 @@ if(isset($faireData["faire_post"])){
 }
 
 $producerInfo    = get_field("producer_section", $faire_id);
-//$faire_badge     = isset($producerSection['circular_faire_logo']) ? $producerSection['circular_faire_logo']["sizes"]["thumbnail"]: "/wp-content/themes/makerfaire/images/default-badge-thumb.png";                    
+//$faire_badge     = isset($producerSection['circular_faire_logo']['url']) ? $producerSection['circular_faire_logo']["sizes"]["thumbnail"]: "/wp-content/themes/makerfaire/images/default-badge-thumb.png";                    
 //$project_info_bg = isset($faire_badge) ? "background-image:url(" . $faire_badge . ");" : "";
 $project_info_bg = '';
 
 $topSection 	 = get_field('top_section', $faire_id);
-$faire_logo 	 = isset($topSection['horizontal_faire_logo']) ? $topSection['horizontal_faire_logo']['sizes']['medium_large'] : ''; 
+$faire_logo 	 = isset($topSection['horizontal_faire_logo']['url']) ? $topSection['horizontal_faire_logo']['sizes']['medium_large'] : ''; 
 $faire_logo_alt	 = !empty($topSection['horizontal_faire_logo']['alt']) ? $topSection['horizontal_faire_logo']['alt'] : "Maker Faire " . $faire_name . " Logo"; 
 
 //hero image
@@ -168,7 +168,7 @@ $maker_data = get_field("maker_data");
         <?php foreach($maker_data as $maker){ ?>
             <div class="maker-wrapper">
                 <div class="img-wrap">                           
-                    <?php if(isset($maker["maker_photo"]["sizes"]["medium"])){ ?>
+                    <?php if(isset($maker["maker_photo"]["url"])){ ?>
                         <img src="<?php echo $maker["maker_photo"]["sizes"]["medium"]; ?>" alt="<?php if(!empty($maker["maker_photo"]["alt"])) { echo $maker["maker_photo"]["alt"]; } else { echo $maker["maker_or_group_name"] . " Maker Photo"; } ?>" width="250px" height="250px" />
                     <?php } else { ?>
                         <img src="/wp-content/themes/makerfaire/images/default-makey.png" alt="Default Maker Photo" width="250px" height="250px">
