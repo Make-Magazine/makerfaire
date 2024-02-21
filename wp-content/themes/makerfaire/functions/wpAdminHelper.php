@@ -1,59 +1,31 @@
 <?php
-/*
-add_filter('acf/load_field/name=stage_list', 'acf_load_stage_choices');
-// used to set the drop down for sponsor per stage
-function acf_load_stage_choices( $value) {
+function make_remove_dashboard_widgets() {
+  // Remove Quick Press Widget (Also known as Quick Draft)
+  remove_meta_box( 'dashboard_quick_press', 'dashboard', 'side' );
+  // Remove WordPress Blog Widget
+  remove_meta_box( 'dashboard_primary', 'dashboard', 'side' );
+  // Remove Other WordPress News Widget
+  remove_meta_box( 'dashboard_secondary', 'dashboard', 'side' );
+  //Elementor Widget
+  remove_meta_box( 'e-dashboard-overview', 'dashboard', 'normal' );
+  //site health
+  remove_meta_box( 'dashboard_site_health', 'dashboard', 'normal' );
+  //at a glance
+  remove_meta_box( 'dashboard_right_now', 'dashboard', 'normal' );
+  
+  // Remove WP Activity Widget
+  remove_meta_box( 'dashboard_activity', 'dashboard', 'normal' );
+  //Jetpack
+  remove_meta_box( 'jetpack_summary_widget', 'dashboard', 'normal' );
+  //event manager
+  remove_meta_box( 'em_booking_stats', 'dashboard', 'normal' );
+  
+  //yoast
+  remove_meta_box( 'wpseo-dashboard-overview', 'dashboard', 'normal' );
+  remove_meta_box( 'wpseo-wincher-dashboard-overview', 'dashboard', 'normal' );
 
-  echo 'chcking now';
-
-while( have_rows('stage_sponsor_rep',479338)){
-$faire = get_sub_field('faire');
-echo 'faire'.$faire;
 }
-  /*
-  if(have_rows('field_5732654df7547','option')){
-    echo 'hello';
-  }*/
-
-  //$faire = get_sub_field('faire');
-  //echo 'faire is '.$faire.'<br/><br/> ';
-  //var_dump($field);
-  /*
-  if(get_field('stage_sponsor')){
-  //if( have_rows('stage_sponsor')) {
-    echo 'yes there are rows<br/>';
-    // while has rows
-    while(has_sub_field('stage_sponsor')){
-    //while( have_rows('stage_sponsor') ) {
-      echo 'in the while loop<br/>';
-        // instantiate row
-        the_row();
-        // vars
-        $faire = get_sub_field('faire');
-        echo $faire.'<br/>';
-        $field['choices'] = array();
-        if($faire!=''){
-          $choices = retSubAreaByFaire($faire);
-        }else{
-          $choices = array('Please set the faire and save and refresh the page to see the stage choices');
-        }
-
-
-        // loop through array and add to field 'choices'
-         if( is_array($choices) ) {
-           foreach( $choices as $key=>$choice ) {
-             $field['choices'][ $key ] = $choice;
-           }
-         }
-         die('end while');
-      }
-
-    }*/
-/*
-  // return the field
-  return $value;
-
-}*/
+add_action('wp_dashboard_setup', 'make_remove_dashboard_widgets' );
 
 //returns array of area/subarea by faire
 function retSubAreaByFaire($faire) {
