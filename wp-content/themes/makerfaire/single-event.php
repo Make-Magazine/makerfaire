@@ -143,7 +143,7 @@ get_header();
 					if($thumbnail_id) {
 						$image_src = wp_get_attachment_image_src( $thumbnail_id, 'full' );
 						$image_alt = get_post_meta ( $thumbnail_id, '_wp_attachment_image_alt', true );
-						$image_alt = !empty($image_alt) ? $image_alt : $faire_name . " Project Image for " . "Maker Faire " . $faire_name . " " . $faire_year;;	
+						$image_alt = !empty($image_alt) ? $image_alt : get_the_title($project->ID) . " Project Image for Maker Faire " . $faire_name . " " . $faire_year;;	
 					}
 					?>
 					<div class="faire-project">

@@ -45,7 +45,7 @@ if ( $query->have_posts() ) {
             $producerSection = get_field('producer_section', $faire_id);
 
             //Faire Badge                
-            $faire_badge       = ($producerSection['circular_faire_logo']['url'] ? $producerSection['circular_faire_logo']["sizes"]["thumbnail"]: "/wp-content/themes/makerfaire/images/default-badge-thumb.png");                    
+            $faire_badge       = (isset($producerSection['circular_faire_logo']['url']) ? $producerSection['circular_faire_logo']["sizes"]["thumbnail"]: "/wp-content/themes/makerfaire/images/default-badge-thumb.png");                    
             $result_text_style = 'style="background-image:url(' . $faire_badge . ');"';
 
             //featured image            
