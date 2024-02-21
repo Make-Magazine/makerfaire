@@ -5,8 +5,12 @@ get_header();
 
 <main id="content">
 	
-	<?php
+	<?php	
 	while ( have_posts() ) : the_post(); 
+		$faire_id = get_the_ID();
+		$event_id = get_post_meta($faire_id, '_event_id');                
+        $EM_Event = new EM_Event( $event_id[0] );
+						
 		// Dates
 		$faire_year 			= date('Y', strtotime($EM_Event->event_start_date));
 		$faire_date 			= date("F Y", strtotime($EM_Event->event_start_date));
