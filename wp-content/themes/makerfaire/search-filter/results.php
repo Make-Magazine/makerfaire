@@ -55,7 +55,10 @@ if ( $query->have_posts() ) {
             if($postType == "event" || $postType == "faire") { 
                 $title = str_replace("Maker Faire", "", $title);
                 $producerSection = get_field('producer_section');
-                $faire_badge = ($producerSection['circular_faire_logo']) ? $producerSection['circular_faire_logo']['url'] : '//' . $_SERVER['HTTP_HOST'] . "/wp-content/themes/makerfaire/images/default-badge.png";
+                
+                //Faire Badge                
+                $faire_badge = ($producerSection['circular_faire_logo'] ? $producerSection['circular_faire_logo']["sizes"]["thumbnail"]: "/wp-content/themes/makerfaire/images/default-badge-thumb.png");
+                    
                 $result_text_style = 'style="background-image:url(' . $faire_badge . ');"';
                 $event_id = get_post_meta($post_id, '_event_id');
                 $EM_Event = new EM_Event( $event_id[0] );
