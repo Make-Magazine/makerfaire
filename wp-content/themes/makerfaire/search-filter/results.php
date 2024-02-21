@@ -162,8 +162,6 @@ if ( $query->have_posts() ) {
                     <?php } ?>
                 </div>
             </div>
-
-            <hr />
     <?php } ?>
     </div>
    
