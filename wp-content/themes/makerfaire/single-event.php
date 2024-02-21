@@ -8,15 +8,19 @@ get_header();
 	<?php	
 	while ( have_posts() ) : the_post(); 
 		$faire_id = get_the_ID();
-		$event_id = get_post_meta($faire_id, '_event_id');                
-        $EM_Event = new EM_Event( $event_id[0] );
+		
+		$EM_Event = em_get_event($faire_id, 'post_id');
 						
 		// Dates
 		$faire_year 			= date('Y', strtotime($EM_Event->event_start_date));
 		$faire_date 			= date("F Y", strtotime($EM_Event->event_start_date));
-		$faire_countries 		= em_get_countries();
-		$faire_country 			= (isset($EM_Event->location->location_country)?$EM_Event->location->location_country:'');
 
+		//faire location
+		$event_location 		= $EM_Event->get_location();
+		$faire_countries 		= em_get_countries();
+		$faire_country 			= (isset($event_location->location_country)?$event_location->location_country:'');
+	
+	
 		// ACF Data
 		//hero section
 		$topSection 			= get_field('top_section');
