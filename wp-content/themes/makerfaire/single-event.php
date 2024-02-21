@@ -149,7 +149,9 @@ get_header();
 					<div class="faire-project">
 					  <a href="<?php echo get_permalink($project->ID); ?>">
 					    <div class="project-image">
-							<img src="<?php echo $image_src[0] ?>" alt="<?php echo $image_alt; ?>" />
+							<?php if($image_src){ ?>
+								<img src="<?php echo $image_src[0] ?>" alt="<?php echo $image_alt; ?>" />
+							<?php } ?>
 						</div>
 						<h4><?php echo $project->post_title; ?></h4>
 						<p><?php echo get_field('exhibit_description', $project->ID); ?>
