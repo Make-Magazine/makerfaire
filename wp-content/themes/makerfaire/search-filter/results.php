@@ -55,7 +55,7 @@ if ( $query->have_posts() ) {
             $featured_image_600_400 = legacy_get_resized_remote_image_url($thumbail_url, 400, 300);
 
             //permalink
-            $permalink = the_permalink();
+            $permalink = get_permalink();
             
             if($postType == "event" || $postType == "faire") {                                                 
                 //set faire year
