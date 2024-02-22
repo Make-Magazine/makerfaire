@@ -10,14 +10,12 @@ $project_title   = get_the_title();
 $thumbnail_id    = get_post_thumbnail_id();
 
 //check if there is a featured image set
-if($thumbnail_id) {
-    $image_src = wp_get_attachment_image_src( $thumbnail_id, 'large' );
+if($thumbnail_id) {    
     $image_alt = get_post_meta ( $thumbnail_id, '_wp_attachment_image_alt', true );
     $image_alt = !empty($image_alt) ? $image_alt : $project_title . " Project Image for Maker Faire " . $faire_name . " " . $faire_year;
 }
 
 $exhibit_id                 = get_the_ID();
-$exhibit_photo              = (isset($image_src[0])?$image_src[0]:'');
 $exhibit_video              = get_field("exhibit_video_link");
 $exhibit_inspiration        = get_field("exhibit_inspiration");
 $exhibit_additional_images  = get_field("additional_exhibit_images");
@@ -118,7 +116,7 @@ $maker_data = get_field("maker_data");
         </div>
         <div class="project-picture">
             <?php if($thumbnail_id) { ?>
-                <img class="featured-image" src="<?php echo $exhibit_photo;?>" alt="<?php echo $image_alt; ?>" />
+                <?php the_post_thumbnail("medium_large", [ 'alt' => esc_html ( $image_alt ) ]);?>                
             <?php } ?>
         </div>
     </section>

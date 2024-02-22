@@ -51,10 +51,6 @@ if ( $query->have_posts() ) {
             //featured image            
             $image_alt      = get_post_meta( get_post_thumbnail_id(), '_wp_attachment_image_alt', true );   
             
-            $thumbnail_url  = get_the_post_thumbnail_url();         
-            $featured_image_400_300 = legacy_get_resized_remote_image_url($thumbnail_url, 400, 300);
-            $featured_image_600_400 = legacy_get_resized_remote_image_url($thumbnail_url, 600, 400);
-
             //permalink
             $permalink = get_permalink($post_id);
             
@@ -99,8 +95,8 @@ if ( $query->have_posts() ) {
             <div class="result-item <?php echo $postType; ?>">
                 <?php if ( has_post_thumbnail() ) { ?>
                         <div class="result-image">
-							<a href="<?php echo $permalink; ?>">
-                                <?php the_post_thumbnail('medium_large'); ?>								
+							<a href="<?php echo $permalink; ?>">                                	
+                                <?php the_post_thumbnail("medium_large", [ 'alt' => esc_html ( $image_alt ) ]); ?>						
 							</a>
                         </div>
                 <?php } ?>

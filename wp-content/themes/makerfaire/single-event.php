@@ -1,10 +1,6 @@
 <?php 
 /*  Page layout for the Yearbook Individual Faire Pages */
 get_header(); 
-global $_wp_additional_image_sizes; 
-print '<pre>'; 
-print_r( $_wp_additional_image_sizes ); 
-print '</pre>';
 ?>
 
 <main id="content">
@@ -149,11 +145,10 @@ print '</pre>';
 							<?php 
 							$thumbnail_id  = get_post_thumbnail_id($project->ID);
 							//check if there is a featured image set
-							if($thumbnail_id) {
-								$image_src = wp_get_attachment_image_src( $thumbnail_id, 'full' );
+							if($thumbnail_id) {								
 								$image_alt = get_post_meta ( $thumbnail_id, '_wp_attachment_image_alt', true );
-								$image_alt = !empty($image_alt) ? $image_alt : get_the_title($project->ID) . " Project Image for Maker Faire " . $faire_name . " " . $faire_year;;	
-								?><img src="<?php echo $image_src[0] ?>" alt="<?php echo $image_alt; ?>" /><?php
+								$image_alt = !empty($image_alt) ? $image_alt : get_the_title($project->ID) . " Project Image for Maker Faire " . $faire_name . " " . $faire_year;
+								the_post_thumbnail("medium_large", [ 'alt' => esc_html ( $image_alt ) ]);							
 							}
 							?>	
 							
