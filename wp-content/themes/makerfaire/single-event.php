@@ -1,10 +1,6 @@
 <?php 
 /*  Page layout for the Yearbook Individual Faire Pages */
 get_header(); 
-global $_wp_additional_image_sizes; 
-print '<pre>'; 
-print_r( $_wp_additional_image_sizes ); 
-print '</pre>';
 ?>
 
 <main id="content">
