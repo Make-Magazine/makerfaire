@@ -31,7 +31,6 @@ function projects_rss_random_sort( $query ) {
 }
 add_filter( 'pre_get_posts', 'projects_rss_random_sort',10 );
 
-
 //add the featured image to the RSS feed
 function featuredtoRSS($content) {
     global $post;
@@ -47,3 +46,10 @@ function featuredtoRSS($content) {
 }
 add_filter('the_excerpt_rss', 'featuredtoRSS', 20, 1);
 add_filter('the_content_feed', 'featuredtoRSS', 20, 1);
+
+//set the RSS cache to reset every 24 hours
+function custom_change_feed_cache_transient_lifetime( $time, $url ) {
+	$time = 24 * HOUR_IN_SECONDS;
+	return 120;
+}
+add_filter( 'wp_feed_cache_transient_lifetime', 'custom_change_feed_cache_transient_lifetime', 24);
