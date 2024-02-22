@@ -150,7 +150,7 @@ get_header();
 							if($thumbnail_id) {																
 								$image_alt = get_post_meta ( $thumbnail_id, '_wp_attachment_image_alt', true );
 								$image_alt = !empty($image_alt) ? $image_alt : $project_name . " Project Image for Maker Faire " . $faire_name . " " . $faire_year;
-								?><img src="<?php echo get_the_post_thumbnail_url($project->ID, 'medium-large'); ?>" alt="<?php echo $image_alt; ?>" /><?php						
+								?><img src="<?php echo get_the_post_thumbnail_url($project->ID, 'medium_large'); ?>" alt="<?php echo $image_alt; ?>" /><?php						
 							}
 							?>								
 						</div>
