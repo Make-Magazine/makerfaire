@@ -105,7 +105,7 @@ get_header();
 				<?php } 
 			} else { ?>			
 
-				<img src="<?php echo get_the_post_thumbnail_url($faire_id, 'medium-large'); ?>" alt="Maker Faire <?php echo $faire_year . " " . $faire_name?> Featured Image" />
+				<img src="<?php echo get_the_post_thumbnail_url($faire_id, 'medium_large'); ?>" alt="Maker Faire <?php echo $faire_year . " " . $faire_name?> Featured Image" />
 			<?php }
 			?>
 		</div>
