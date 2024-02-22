@@ -100,7 +100,7 @@ if ( $query->have_posts() ) {
                 <?php if ( has_post_thumbnail() ) { ?>
                         <div class="result-image">
 							<a href="<?php echo $permalink; ?>">
-								<img srcset="<?php echo $featured_image_400_300; ?> 400w, <?php echo $featured_image_600_400; ?> 1199w, <?php echo $featured_image_400_300; ?>" sizes="(max-width: 400px) 400px, (max-width: 1199px) 1199px, 1200px" src="<?php echo $featured_image_400_300; ?>" alt="<?php echo $image_alt; ?>" />
+                                <?php the_post_thumbnail('medium_large'); ?>								
 							</a>
                         </div>
                 <?php } ?>
