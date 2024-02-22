@@ -104,7 +104,8 @@ get_header();
 					<iframe width="560" height="315" src="<?php echo getYoutubeEmbedUrl($faire_video) . "?autoplay=1&mute=1"; ?>" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
 				<?php } 
 			} else { ?>			
-				<img src="<?php echo get_the_post_thumbnail_url('medium_large'); ?>" alt="Maker Faire <?php echo $faire_year . " " . $faire_name?> Featured Image" />
+
+				<img src="<?php echo get_the_post_thumbnail_url($faire_id, 'medium-large'); ?>" alt="Maker Faire <?php echo $faire_year . " " . $faire_name?> Featured Image" />
 			<?php }
 			?>
 		</div>
@@ -138,22 +139,22 @@ get_header();
 			<div class="blue-spacer"></div>
 			<div class="projects-wrapper">
 				<?php foreach($projects as $project){ 
+					$project_name = $project->post_title;
 					?>
 					<div class="faire-project">
 					  <a href="<?php echo get_permalink($project->ID); ?>">
 					    <div class="project-image">
-							<?php 
-							$image_src = wp_get_attachment_image_src( $thumbnail_id, 'medium-large' );
+							<?php 							
 							$thumbnail_id  = get_post_thumbnail_id($project->ID);
 							//check if there is a featured image set
-							if($thumbnail_id) {								
+							if($thumbnail_id) {																
 								$image_alt = get_post_meta ( $thumbnail_id, '_wp_attachment_image_alt', true );
-								$image_alt = !empty($image_alt) ? $image_alt : get_the_title($project->ID) . " Project Image for Maker Faire " . $faire_name . " " . $faire_year;
-								?><img src="<?php echo $image_src[0] ?>" alt="<?php echo $image_alt; ?>" /><?php						
+								$image_alt = !empty($image_alt) ? $image_alt : $project_name . " Project Image for Maker Faire " . $faire_name . " " . $faire_year;
+								?><img src="<?php echo get_the_post_thumbnail_url($project->ID, 'medium-large'); ?>" alt="<?php echo $image_alt; ?>" /><?php						
 							}
 							?>								
 						</div>
-						<h4><?php echo $project->post_title; ?></h4>
+						<h4><?php echo $project_name; ?></h4>
 						<p><?php echo get_field('exhibit_description', $project->ID); ?>
 						<p class="universal-btn">More</p>
 					  </a>
