@@ -98,7 +98,7 @@ function mf_add_custom_types( $query ) {
 		return $query;
 	}
 }
-add_filter( 'pre_get_posts', 'mf_add_custom_types' );
+//add_filter( 'pre_get_posts', 'mf_add_custom_types' );
 
 function mf_the_maker_image( $json ) {
 	if (!empty($json->presentation_photo)) {
