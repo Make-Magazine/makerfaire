@@ -39,12 +39,14 @@ function featuredtoRSS($content) {
     if ($post_type == "projects") {
         if (has_post_thumbnail($post->ID)) {
             $content  = '<div>' . get_the_post_thumbnail($post->ID, 'thumbnail', array('style' => 'margin-bottom: 15px;')) . '</div>';                     
-            //return the first 100 characeters of the exhibit description
-            $content .= substr(html_entity_decode(get_field("exhibit_description", $post->ID), ENT_QUOTES, get_bloginfo("")),0,100);
+            
+            //return the first 500 characeters of the exhibit description
+            $content .= substr(html_entity_decode(get_field("exhibit_description", $post->ID), ENT_QUOTES, get_bloginfo("")),0,500);
             
             //add faire name initalics
             $faireData  = get_field("faire_information");            
-            $content .= (isset($faireData["faire_post"]) ? '&lt;br/&rt;&lt;i&rt;' . get_the_title($faireData["faire_post"]).'&lt;/i&rt;':'');
+            $content .= (isset($faireData["faire_post"]) ? '<br/><i>' . get_the_title($faireData["faire_post"]).'</i>':'');
+            
         }        
     }    
     
