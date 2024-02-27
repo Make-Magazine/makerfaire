@@ -41,11 +41,7 @@ function featuredtoRSS($content) {
             $content  = '<div>' . get_the_post_thumbnail($post->ID, 'thumbnail', array('style' => 'margin-bottom: 15px;')) . '</div>';                     
             
             //return the first 500 characeters of the exhibit description
-            $content .= substr(html_entity_decode(get_field("exhibit_description", $post->ID), ENT_QUOTES, get_bloginfo("")),0,500);
-            
-            //add faire name initalics
-            $faireData  = get_field("faire_information");            
-            $content .= (isset($faireData["faire_post"]) ? '<br/><i>' . get_the_title($faireData["faire_post"]).'</i>':'');
+            $content .= substr(html_entity_decode(get_field("exhibit_description", $post->ID), ENT_QUOTES, get_bloginfo("")),0,500);                        
             
         }        
     }    
@@ -54,3 +50,17 @@ function featuredtoRSS($content) {
 }
 add_filter('the_excerpt_rss', 'featuredtoRSS', 20, 1);
 add_filter('the_content_feed', 'featuredtoRSS', 20, 1);
+
+function modify_rss_feed() { 
+    add_action('rss2_item', 'add_rss_tags'); 
+} 
+add_action('init', 'modify_rss_feed'); 
+ 
+function add_rss_tags() { 
+    global $post; 
+    //add faire name initalics
+    $faireData  = get_field("faire_information", $post->ID);                        
+    if(isset($faireData["faire_post"]) && $faireData["faire_post"]!='') {
+        echo '<faire_name>' . get_the_title($faireData["faire_post"]).'</faire_name>';
+    }    
+} 
