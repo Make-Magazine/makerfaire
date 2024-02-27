@@ -44,7 +44,7 @@ function featuredtoRSS($content) {
             
             //add faire name initalics
             $faireData  = get_field("faire_information");            
-            $content .= (isset($faireData["faire_post"]) ? '<br/><i>' . get_the_title($faireData["faire_post"]).'</i>':'');
+            $content .= (isset($faireData["faire_post"]) ? '&lt;br/&rt;&lt;i&rt;' . get_the_title($faireData["faire_post"]).'&lt;/i&rt;':'');
         }        
     }    
     
