@@ -9,7 +9,7 @@
 $form_types = array('Exhibit', 'Presentation', 'Performance', 'Startup Sponsor', 'Sponsor', 'Workshop', 'Master');
 
 //for testing ONLY
-add_filter("wpseo_enable_xml_sitemap_transient_caching", "__return_false");
+//add_filter("wpseo_enable_xml_sitemap_transient_caching", "__return_false");
 
 /**
  * When the sitemap_index.xml page is accessed, add links to form sitemaps
