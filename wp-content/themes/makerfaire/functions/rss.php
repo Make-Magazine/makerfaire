@@ -7,7 +7,7 @@ function projects_rss_random_sort( $query ) {
 	}
 
     //randomly return projects and only return 1
-    if(isset($query->query['post_type']) && 'projects' === $query->query['post_type']){
+    if('projects' === $query->query['post_type']){
         $query->set('posts_per_page', 3); //only return 5 projects
         $query->set('orderby', 'rand'); //return projects randomly        
         
