@@ -50,11 +50,16 @@ function register_entries_sitemap() {
    global $wpseo_sitemaps; global $form_types;
    if ($wpseo_sitemaps && is_array($form_types)) {
       //generate a sitemap for each exhibit form
-      $forms = GFAPI::get_forms(true, false);
-      
-      foreach ($forms as $form) {
+      //$forms = GFAPI::get_forms(true, false);
+      global $wpdb;
+      $sql = "SELECT wp_gf_form.id as formID, display_meta FROM `wp_gf_form` left outer join wp_gf_form_meta on wp_gf_form.id=wp_gf_form_meta.form_id;";
+      $results = $wpdb->get_results($sql, ARRAY_A);
+
+      foreach ($results as $result) {
+         $form = json_decode($result['display_meta'],TRUE);        
          if (isset($form['form_type']) && in_array($form['form_type'],$form_types)) {
-            $formId = $form['fields'][0]['formId'];
+            error_log('adding sitemap for '.$result['formID']);
+            $formId = $result['formID'];
             $wpseo_sitemaps->register_sitemap("form-$formId-entries", 'faire_entries_sitemap_generate');
          }
       }      
