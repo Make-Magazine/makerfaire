@@ -1,120 +1,83 @@
 <?php
+//new methods for generating faire exhibit sitemap
+/**
+ * Add faire-entries-sitemap.xml to Yoast sitemap index
+ */
+function faire_entries_sitemap_index($sitemap_index) {
+   global $wpseo_sitemaps;
+   $sitemap_url = home_url("faire_entries-sitemap.xml");
+   $sitemap_date = date(DATE_W3C);  # Current date and time in sitemap format.
+   $faire_entries = <<<SITEMAP_INDEX_ENTRY
+<sitemap>
+   <loc>%s</loc>
+   <lastmod>%s</lastmod>
+</sitemap>
+SITEMAP_INDEX_ENTRY;
+   $sitemap_index .= sprintf($faire_entries, $sitemap_url, $sitemap_date);
+   return $sitemap_index;
+}
+add_filter("wpseo_sitemap_index", "faire_entries_sitemap_index");
 
 /**
- *  Creates a new custom yoast seo sitemap based on maker entry
+ * Register faire_entries sitemap with Yoast
  */
-// only use this during development to disable sitemap caching :
-// add_filter( 'wpseo_enable_xml_sitemap_transient_caching', '__return_false');
+function faire_entries_sitemap_register() {
+   global $wpseo_sitemaps;
+   if (isset($wpseo_sitemaps) && !empty($wpseo_sitemaps)) {
+      $wpseo_sitemaps->register_sitemap("faire_entries", "faire_entries_sitemap_generate");
+   }
+}
+add_action("init", "faire_entries_sitemap_register");
 
-add_filter('wpseo_sitemap_index', 'add_entries_sitemap_to_index', 99);
-//add_action('init', 'add_entries_sitemap_to_wpseo');
-$form_types = array('Exhibit','Presentation','Performance','Startup Sponsor','Sponsor','Workshop','Master');
-$search_criteria['status'] = 'active';
-$search_criteria['field_filters'][] = array('key' => '303', 'value' => 'Accepted');
+/**
+ * Generate faire_entries sitemap XML body
+ */
+function faire_entries_sitemap_generate() {
+   global $wpseo_sitemaps;
+   global $form_types;
+   global $search_criteria;
 
-
-// Add custom index
-function add_entries_sitemap_to_index($smp) {
-   global $form_types; global $search_criteria;
+   $form_types = array('Exhibit', 'Presentation', 'Performance', 'Startup Sponsor', 'Sponsor', 'Workshop', 'Master');
+   $search_criteria['status'] = 'active';
+   $search_criteria['field_filters'][] = array('key' => '303', 'value' => 'Accepted');
    
    //generate a sitemap for each exhibit form
    $forms = GFAPI::get_forms(true, false);
-   
+
+   $urls = array();
    foreach ($forms as $form) {
-   	if (isset($form['form_type']) && in_array($form['form_type'],$form_types)) {         
-         
-         $formId = $form['fields'][0]['formId'];     
+      if (isset($form['form_type']) && in_array($form['form_type'], $form_types)) {
+         $formId = $form['fields'][0]['formId'];
+         //error_log('adding form id '.$formId);
          //see if there are any entries that match search criteria
-         $entries = GFAPI::get_entries((int)$formId, $search_criteria, null, array('offset' => 0, 'page_size' => 1));
-         if(!empty($entries)){
-            $smp .= '<sitemap>' . PHP_EOL;
-            $smp .= '<loc>' . site_url() . "/form-$formId-entries-sitemap.xml</loc>" . PHP_EOL;   
-            $smp .= '</sitemap>' . PHP_EOL;
-         }
-      }
-   }
-   
-   
-
-   return $smp;
+         $entries = GFAPI::get_entries((int)$formId, $search_criteria, null, array('offset' => 0, 'page_size' => 999));
+         if (!empty($entries)) {
+            foreach ($entries as $entry) {
+               //error_log('adding entry '.$entry['id']);
+               $urls[] = $wpseo_sitemaps->renderer->sitemap_url(array(
+                  "mod" => $entry['date_updated'],  # <lastmod></lastmod>
+                  "loc" => site_url() . '/maker/entry/' . $entry['id'] . '/',  # <loc></loc>
+                  "images" => array(
+                     array(  # <image:image></image:image>
+                        "src" => (isset($entry['22'])?$entry['22']:''),  # <image:loc></image:loc>
+                        "title" => (isset($entry['151'])?$entry['151']:''),  # <image:title></image:title>
+                        "alt" => (isset($entry['151'])?$entry['151']:''),  # <image:caption></image:caption>
+                     ),
+                  ),
+               ));
+            }
+            $sitemap_body = <<<SITEMAP_BODY
+            <urlset
+                xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"
+                xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd http://www.google.com/schemas/sitemap-image/1.1 http://www.google.com/schemas/sitemap-image/1.1/sitemap-image.xsd"
+                xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+            %s
+            </urlset>
+            SITEMAP_BODY;
+            $sitemap = sprintf($sitemap_body, implode("\n", $urls));
+            $wpseo_sitemaps->set_sitemap($sitemap);
+         } //end check if entries
+      } //end check form type
+   } //end foreach forms
 }
-
-function add_entries_sitemap_to_wpseo() {   
-   add_action("wpseo_do_sitemap_BA19-entries", 'generate_entries_sitemap');
-}
-
-function generate_entries_sitemap($args) {
-   global $wp;
-   $current_slug = add_query_arg( array(), $wp->request );
-   //get form id from current sitemap name ie) form-43-entries-sitemap.xml
-   $form_id = str_replace('-entries-sitemap.xml','',$current_slug);
-   $form_id = str_replace('form-','',$current_slug);
-   
-   global $wpseo_sitemaps;   
-   global $search_criteria;
-   
-   //retrieve list of entries   
-   $entries = GFAPI::get_entries((int)$form_id, $search_criteria, null, array('offset' => 0, 'page_size' => 999));
-
-   $output = '';
-
-   $chf = 'weekly';
-   $pri = 1.0;
-
-   foreach ($entries as $entry) {
-      $url = array();
-      $url['mod'] = $entry['date_updated'];
-      $url['loc'] = site_url() . '/maker/entry/' . $entry['id'].'/';
-      $url['chf'] = $chf;
-      $url['pri'] = $pri;
-      /*$image = [];
-      if ($entry[22]) {
-         $image["src"] = [22];
-         $image["title"] = $entry[151];
-      }
-      $url['images'] = [$image];*/
-      $output .= $wpseo_sitemaps->renderer->sitemap_url($url);
-   }
-
-
-   //Build the full sitemap
-   $sitemap = '<urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd http://www.google.com/schemas/sitemap-image/1.1 http://www.google.com/schemas/sitemap-image/1.1/sitemap-image.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' . PHP_EOL;
-   $sitemap .= $output . '</urlset>';
-
-   $wpseo_sitemaps->set_sitemap($sitemap);
-}
-
-/* * *******************************************************
- *  OR we can use $wpseo_sitemaps->register_sitemap( 'entry', 'METHOD' );
- * ****************************************************** */
-
-add_action('init', 'register_entries_sitemap', 99);
-
-/**
- * On init, run the function that will register our new sitemap as well
- * as the function that will be used to generate the XML. This creates an
- * action that we can hook into built around the new
- * sitemap name - 'wp_seo_do_sitemap_*'
- */
-function register_entries_sitemap() {
-   global $wpseo_sitemaps; global $form_types;
-   if ($wpseo_sitemaps && is_array($form_types)) {
-      //generate a sitemap for each exhibit form
-      $forms = GFAPI::get_forms(true, false);
-      
-      foreach ($forms as $form) {
-         if (isset($form['form_type']) && in_array($form['form_type'],$form_types)) {
-            $formId = $form['fields'][0]['formId'];
-            $wpseo_sitemaps->register_sitemap("form-$formId-entries", 'generate_entries_sitemap');
-         }
-      }      
-   }
-}
-/*
-add_action('init', 'init_do_sitemap_actions');
-
-function init_do_sitemap_actions() {
-   add_action('wp_seo_do_sitemap_entries', 'generate_entries_sitemap');
-}
- * 
- */
