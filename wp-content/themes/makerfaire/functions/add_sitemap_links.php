@@ -56,20 +56,23 @@ add_action('init', 'register_entries_sitemap', 99);
 /**
  * On init, run the function that will register sitemaps for all gravity forms that match the defined form types
  */
-function register_entries_sitemap() {
+function register_entries_sitemap() {   
    global $wpseo_sitemaps;
    global $form_types;
-   if ($wpseo_sitemaps && is_array($form_types)) {
-   
-      //generate a sitemap for each exhibit form
-      $forms = GFAPI::get_forms(true, false);
-
-      foreach ($forms as $form) {
-         if (isset($form['form_type']) && in_array($form['form_type'], $form_types)) {
-            $formId = $form['id'];                     
-            $wpseo_sitemaps->register_sitemap("form-$formId-entries", 'faire_entries_sitemap_generate');
+   global $wpdb;
+   if ($wpseo_sitemaps && is_array($form_types)) {      
+      $formResults = $wpdb->get_results('select display_meta, form_id from wp_gf_form_meta', ARRAY_A);
+      foreach ($formResults as $formrow) {
+         $form_id = $formrow['form_id'];         
+                  
+         $json = json_decode($formrow['display_meta']);
+         $form_type = (isset($json->form_type) ? $json->form_type : '');
+         //error_log('form_id '.$form_id.' has form type '.$form_type);
+         if (in_array($form_type,$form_types)){               
+            $wpseo_sitemaps->register_sitemap('form-'.$form_id.'-entries', 'faire_entries_sitemap_generate');
+           // error_log('registered sitemap form-'.$form_id.'-entries');
          }
-      }
+      }         
    }
 }
 
