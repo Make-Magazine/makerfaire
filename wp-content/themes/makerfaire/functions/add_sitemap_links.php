@@ -60,12 +60,13 @@ function register_entries_sitemap() {
    global $wpseo_sitemaps;
    global $form_types;
    if ($wpseo_sitemaps && is_array($form_types)) {
+   
       //generate a sitemap for each exhibit form
       $forms = GFAPI::get_forms(true, false);
 
       foreach ($forms as $form) {
          if (isset($form['form_type']) && in_array($form['form_type'], $form_types)) {
-            $formId = $form['id'];
+            $formId = $form['id'];                     
             $wpseo_sitemaps->register_sitemap("form-$formId-entries", 'faire_entries_sitemap_generate');
          }
       }
@@ -77,6 +78,7 @@ function register_entries_sitemap() {
  * This is triggered when the specific form sitemap is accessed
  */
 function faire_entries_sitemap_generate() {
+   error_log('i am here');
    global $wpseo_sitemaps;
    global $search_criteria;
 
@@ -84,7 +86,7 @@ function faire_entries_sitemap_generate() {
    global $wp;
    $current_slug = add_query_arg(array(), $wp->request);
 
-   //get form id from current sitemap name ie) form-43-entries-sitemap.xml
+   //get form id from current sitemap name ie) form43-entries-sitemap.xml
    $form_id = str_replace('-entries-sitemap.xml', '', $current_slug);
    $form_id = str_replace('form-', '', $current_slug);
 
