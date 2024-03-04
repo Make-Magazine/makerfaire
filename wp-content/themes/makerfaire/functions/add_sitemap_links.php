@@ -78,7 +78,7 @@ function register_entries_sitemap() {
  * This is triggered when the specific form sitemap is accessed
  */
 function faire_entries_sitemap_generate() {
-   error_log('i am here');
+   //error_log('i am here');
    global $wpseo_sitemaps;
    global $search_criteria;
 
