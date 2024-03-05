@@ -61,37 +61,6 @@ add_filter('jetpack_enable_opengraph', '__return_false', 99);
 // Turn off the WP_GOVERNOR, as it breaks S&F 
 define('WPE_GOVERNOR', false);
 
-/*
-*    Set some CONST for universal assets (nav and footer)
-enclosed in a function for safety
-  this needs to appear before the scripts/styles are enqueued
- */
-
-function set_universal_asset_constants() {
-    if(is_admin()){
-        return;
-    }
-    // Assume that we're in prod; only change if we are definitively in another
-    $universal_makehub_asset_env = 'make.co';
-    $universal_asset_proto = 'https://';
-    $host = get_site_url();
-    
-    // dev environments
-    if (strpos($host, 'dev.') === 0 || strpos($host, 'mfairedev.') === 0) {
-        $universal_makehub_asset_env = 'devmakehub.wpengine.com';
-    } elseif (strpos($host, 'stage.') === 0 || strpos($host, 'mfairestage.') === 0) { // stage environments
-        $universal_makehub_asset_env = 'stagemakehub.wpengine.com';
-    } elseif (strpos($host, '.staging.wpengine.com') > -1) { // legacy staging environments
-        $universal_makehub_asset_env = 'makehub.staging.wpengine.com';
-    } elseif (strpos($host, '.local') > -1  || strpos($host, '.test') > -1) { // wpengine local environments        
-        $universal_makehub_asset_env = 'www.makehub.local';
-    }
-    // Set the important bits as CONSTANTS that can easily be used elsewhere
-    define('UNIVERSAL_MAKEHUB_ASSET_URL_PREFIX', $universal_asset_proto . $universal_makehub_asset_env);
-}
-
-set_universal_asset_constants();
-
 function load_scripts() {
     wp_enqueue_script("jquery");
     $my_theme = wp_get_theme();
