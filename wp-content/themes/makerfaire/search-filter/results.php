@@ -35,7 +35,9 @@ if ( $query->have_posts() ) {
             $result_text_style = "";
             if($postType == "projects") {
                 $faire_info = get_field("faire_information");
-                $faire_id   = (isset($faire_info['faire_post'])?$faire_info['faire_post']:'');                
+                $faire_id   = (isset($faire_info['faire_post'])?$faire_info['faire_post']:'');
+                $faire_name = get_the_title($faire_id);             
+                $faire_year = (isset($faire_info["faire_year"])?$faire_info["faire_year"]:'');   
             }
 
             //get the faire name
