@@ -92,7 +92,7 @@ if (isset($entry->errors)) {
     $categories = array();    
 
     if (isset($entry['320']) && $entry['320']!='') {
-        $mainCategory = get_term($entry['320'])->name;
+        $mainCategory = (isset(get_term($entry['320'])->name)?get_term($entry['320'])->name:'');
         $categories[] = $mainCategory;
     }
 
