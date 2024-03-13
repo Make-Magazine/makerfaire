@@ -74,20 +74,20 @@ function load_scripts() {
         wp_enqueue_style('mf-datatables', get_stylesheet_directory_uri() . '/css/mf-datatables.css', '', '', true);
     }
     wp_enqueue_style('fancybox', '//cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.6/css/jquery.fancybox.min.css', '', 'all');
-    wp_enqueue_style('universal-firstload.css', UNIVERSAL_MAKEHUB_ASSET_URL_PREFIX . '/wp-content/universal-assets/v2/css/universal-firstload.min.css', array(), $my_version);
-    wp_enqueue_style('universal.css', UNIVERSAL_MAKEHUB_ASSET_URL_PREFIX . '/wp-content/universal-assets/v2/css/universal.min.css', array(), $my_version);
+    wp_enqueue_style('universal-firstload.css', UNIVERSAL_MAKEHUB_ASSET_URL_PREFIX . 'wp-content/universal-assets/v2/css/universal-firstload.min.css', array(), $my_version);
+    wp_enqueue_style('universal.css', UNIVERSAL_MAKEHUB_ASSET_URL_PREFIX . 'wp-content/universal-assets/v2/css/universal.min.css', array(), $my_version);
     //auth0
     wp_enqueue_script('auth0', 'https://cdn.auth0.com/js/auth0/9.6.1/auth0.min.js', array(), false, true);
     // space time for timezone hijinks
     wp_enqueue_script('spacetime', 'https://unpkg.com/spacetime', array(), false, true);
     // select 2 for styling select
-    wp_enqueue_script('select2', UNIVERSAL_MAKEHUB_ASSET_URL_PREFIX . '/wp-content/plugins/search-filter-pro/public/assets/js/select2.min.js', array(), false, true);
+    wp_enqueue_script('select2', WP_PLUGIN_URL . '/search-filter-pro/public/assets/js/select2.min.js', array(), false, true);
 
     // Libraries concatenated by our npm build
     wp_enqueue_script('make-js', get_stylesheet_directory_uri() . '/js/built.min.js', array('jquery'), $my_version, true);
     // Universasl libraries:
-    wp_enqueue_script('universal-auth0', UNIVERSAL_MAKEHUB_ASSET_URL_PREFIX . '/wp-content/universal-assets/v2/js/min/universal-auth0.min.js', array(), $my_version, true);
-    wp_enqueue_script('universal', UNIVERSAL_MAKEHUB_ASSET_URL_PREFIX . '/wp-content/universal-assets/v2/js/min/universal.min.js', array(), $my_version, true);
+    wp_enqueue_script('universal-auth0', UNIVERSAL_MAKEHUB_ASSET_URL_PREFIX . 'wp-content/universal-assets/v2/js/min/universal-auth0.min.js', array(), $my_version, true);
+    wp_enqueue_script('universal', UNIVERSAL_MAKEHUB_ASSET_URL_PREFIX . 'wp-content/universal-assets/v2/js/min/universal.min.js', array(), $my_version, true);
 
     // Localize
     $user = wp_get_current_user();
