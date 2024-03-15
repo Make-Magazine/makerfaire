@@ -112,6 +112,7 @@ function register_taxonomy_countries() {
 }
 add_action( 'init', 'register_taxonomy_countries' );
 
+/* This isn't necessary if we have site rand() on
 function search_and_filter_random_order( $query_args, $sfid ) {
 	if(($sfid==661619 || $sfid==661622) && empty($_GET['sort_order'])) {
 		session_start();
@@ -137,3 +138,4 @@ function search_and_filter_random_order( $query_args, $sfid ) {
 	return $query_args;
 }
 add_filter( 'sf_edit_query_args', 'search_and_filter_random_order', 20, 2 );
+*/
