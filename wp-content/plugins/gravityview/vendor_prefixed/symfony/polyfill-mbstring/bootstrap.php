@@ -8,8 +8,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * Modified by gravityview on 08-December-2023 using Strauss.
- * @see https://github.com/BrianHenryIE/strauss
+ * Modified by gravityview on 19-March-2024 using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 use GravityKit\GravityView\Symfony\Polyfill\Mbstring as p;
@@ -133,6 +132,10 @@ if (!function_exists('mb_scrub')) {
 }
 if (!function_exists('mb_str_split')) {
     function mb_str_split($string, $length = 1, $encoding = null) { return p\Mbstring::mb_str_split($string, $length, $encoding); }
+}
+
+if (!function_exists('mb_str_pad')) {
+    function mb_str_pad(string $string, int $length, string $pad_string = ' ', int $pad_type = STR_PAD_RIGHT, ?string $encoding = null): string { return p\Mbstring::mb_str_pad($string, $length, $pad_string, $pad_type, $encoding); }
 }
 
 if (extension_loaded('mbstring')) {

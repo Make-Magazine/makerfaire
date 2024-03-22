@@ -20,7 +20,7 @@ class GV_Extension_DataTables_Search extends GV_DataTables_Extension {
 	 *
 	 * @return array The modified options.
 	 */
-	public function maybe_add_config( $dt_config, $view_id, $post  ) {
+	public function maybe_add_config( $dt_config, $view_id, $post, $object ) {
 	    $dt_config['searching'] = true;
 
 		$view = gravityview()->views->get( $view_id );

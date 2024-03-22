@@ -2,8 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by gravityview on 08-December-2023 using Strauss.
- * @see https://github.com/BrianHenryIE/strauss
+ * Modified by gravityview on 19-March-2024 using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\GravityView\Foundation\WP;
@@ -19,16 +18,20 @@ class AdminMenu {
 	const WP_ADMIN_MENU_SLUG = '_gk_admin_menu';
 
 	/**
+	 * {@AdminMenu} class instance.
+	 *
 	 * @since 1.0.0
 	 *
-	 * @var AdminMenu Class instance.
+	 * @var AdminMenu
 	 */
 	private static $_instance;
 
 	/**
+	 * Submenus of the top menu.
+	 *
 	 * @since 1.0.0
 	 *
-	 * @var array Submenus of the top menu.
+	 * @var array
 	 */
 	private static $_submenus = [
 		'top'    => [],
@@ -85,7 +88,7 @@ class AdminMenu {
 		global $menu, $submenu;
 
 		// Make sure we're not adding a duplicate top-level menu.
-		if ( strpos( json_encode( $menu ?: [] ), self::WP_ADMIN_MENU_SLUG ) !== false ) {
+		if ( strpos( wp_json_encode( $menu ?: [] ), self::WP_ADMIN_MENU_SLUG ) !== false ) {
 			return;
 		}
 
@@ -113,7 +116,9 @@ class AdminMenu {
 				}
 
 				/**
-				 * @filter `gk/foundation/admin-menu/submenu/{$submenu_id}/counter` Displays counter next to the submenu title.
+				 * Displays counter next to the submenu title.
+				 *
+				 * @filter `gk/foundation/admin-menu/submenu/{$submenu_id}/counter`
 				 *
 				 * @since  1.0.0
 				 *
@@ -142,7 +147,7 @@ class AdminMenu {
 					'hide_admin_notices' => Arr::get( $submenu_item, 'hide_admin_notices' ),
 				];
 
-				if ( $index === count( $submenu_data ) - 1 ) {
+				if ( ( count( $submenu_data ) - 1 ) === $index ) {
 					$filtered_submenu['divider'] = $_get_divider();
 				}
 
@@ -175,12 +180,14 @@ class AdminMenu {
 			$user_first_met_capability, // Use the first submenu capability that the user has met to display the main GravityKit menu.
 			self::WP_ADMIN_MENU_SLUG,
 			null,
-			'data:image/svg+xml;base64,' . base64_encode( '<svg id="Artwork" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><path fill="#a7aaad" class="st0" d="M128 0C57.3 0 0 57.3 0 128s57.3 128 128 128 128-57.3 128-128S198.7 0 128 0zm0 243.2c-63.6 0-115.2-51.6-115.2-115.2S64.4 12.8 128 12.8 243.2 64.4 243.2 128 191.6 243.2 128 243.2zm7.9-172.5c-.8.1-1.4-.5-1.5-1.3V57.7c-.1-.9.4-1.8 1.3-2.1 7.8-4.2 10.6-13.9 6.4-21.7-4.2-7.8-13.9-10.6-21.7-6.4-7.8 4.2-10.6 13.9-6.4 21.7 1.5 2.7 3.7 4.9 6.4 6.4.8.3 1.4 1.2 1.3 2.1v11.4c.1.8-.4 1.5-1.2 1.6h-.3c-41 3-68.9 29.6-68.9 66.9 0 39.6 31.5 67.2 76.8 67.2s76.8-27.6 76.8-67.2c-.1-37.3-28-63.9-69-66.9zM128 182.4c-35.9 0-60.8-18.4-60.8-44.8S92.1 92.8 128 92.8s60.8 18.4 60.8 44.8-24.9 44.8-60.8 44.8zm53.8-44.8c0 22.3-22.1 37.8-53.8 37.8-5.1 0-10.2-.4-15.2-1.3-6.8-1.2-9.4-3.2-12-9.6-3.1-7.5-4.8-16.6-4.8-26.9s1.7-19.4 4.8-26.9c2.7-6.4 5.2-8.4 12-9.6 5-.9 10.1-1.3 15.2-1.3 31.7 0 53.8 15.5 53.8 37.8z"/></svg>' ),
+			'data:image/svg+xml;base64,' . base64_encode( '<svg id="Artwork" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><path fill="#a7aaad" class="st0" d="M128 0C57.3 0 0 57.3 0 128s57.3 128 128 128 128-57.3 128-128S198.7 0 128 0zm0 243.2c-63.6 0-115.2-51.6-115.2-115.2S64.4 12.8 128 12.8 243.2 64.4 243.2 128 191.6 243.2 128 243.2zm7.9-172.5c-.8.1-1.4-.5-1.5-1.3V57.7c-.1-.9.4-1.8 1.3-2.1 7.8-4.2 10.6-13.9 6.4-21.7-4.2-7.8-13.9-10.6-21.7-6.4-7.8 4.2-10.6 13.9-6.4 21.7 1.5 2.7 3.7 4.9 6.4 6.4.8.3 1.4 1.2 1.3 2.1v11.4c.1.8-.4 1.5-1.2 1.6h-.3c-41 3-68.9 29.6-68.9 66.9 0 39.6 31.5 67.2 76.8 67.2s76.8-27.6 76.8-67.2c-.1-37.3-28-63.9-69-66.9zM128 182.4c-35.9 0-60.8-18.4-60.8-44.8S92.1 92.8 128 92.8s60.8 18.4 60.8 44.8-24.9 44.8-60.8 44.8zm53.8-44.8c0 22.3-22.1 37.8-53.8 37.8-5.1 0-10.2-.4-15.2-1.3-6.8-1.2-9.4-3.2-12-9.6-3.1-7.5-4.8-16.6-4.8-26.9s1.7-19.4 4.8-26.9c2.7-6.4 5.2-8.4 12-9.6 5-.9 10.1-1.3 15.2-1.3 31.7 0 53.8 15.5 53.8 37.8z"/></svg>' ), // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode
 			$menu_position
 		);
 
 		/**
-		 * @filter `gk/foundation/admin-menu/counter` Displays counter next to the top-menu title.
+		 * Displays counter next to the top-menu title.
+		 *
+		 * @filter `gk/foundation/admin-menu/counter`
 		 *
 		 * @since  1.0.0
 		 *
@@ -189,18 +196,21 @@ class AdminMenu {
 		$total_badge_count = (int) apply_filters( 'gk/foundation/admin-menu/counter', $total_badge_count );
 
 		foreach ( $menu as &$menu_item ) {
-			if ( $menu_item[2] === self::WP_ADMIN_MENU_SLUG ) {
+			if ( self::WP_ADMIN_MENU_SLUG === $menu_item[2] ) {
 				$menu_item[0] .= $this->get_badge_counter_markup( self::WP_ADMIN_MENU_SLUG, $total_badge_count );
 			}
 		}
 
 		$top_level_menu_action = SettingsFramework::get_instance()->get_plugin_setting( Core::ID, 'top_level_menu_action', 'submenu' );
 
-		$top_level_menu_action_submenu = Arr::first( $filtered_submenus, function ( $submenu ) use ( $top_level_menu_action ) {
-			return $submenu['id'] === $top_level_menu_action;
-		} );
+		$top_level_menu_action_submenu = Arr::first(
+			$filtered_submenus,
+			function ( $submenu ) use ( $top_level_menu_action ) {
+				return $submenu['id'] === $top_level_menu_action;
+			}
+		);
 
-		if ( $top_level_menu_action_submenu && $top_level_menu_action !== Arr::get( $filtered_submenus, '0.id' ) ) {
+		if ( $top_level_menu_action_submenu && Arr::get( $filtered_submenus, '0.id' ) !== $top_level_menu_action ) {
 			// Add and hide a first submenu item that will be used as an action for the top-level menu GravityKit menu.
 			// An alternative is to use the `parent_file` filter, but that would still show the first submenu item's ID in the URL.
 			add_submenu_page(
@@ -211,20 +221,26 @@ class AdminMenu {
 				$top_level_menu_action
 			);
 
-			add_filter( 'gk/foundation/inline-styles', function ( $styles ) {
-				$styles[] = [
-					'style' => '#toplevel_page_' . self::WP_ADMIN_MENU_SLUG . ' ul.wp-submenu li:nth-child(2) {
+			add_filter(
+				'gk/foundation/inline-styles',
+				function ( $styles ) {
+					$styles[] = [
+						'style' => '#toplevel_page_' . self::WP_ADMIN_MENU_SLUG . ' ul.wp-submenu li:nth-child(2) {
 						display: none;
 					}',
-				];
+					];
 
-				return $styles;
-			} );
+					return $styles;
+				}
+			);
 
 			// When the user hovers over the top-level menu item, replace the menu title with the first submenu item's title.
-			add_filter( 'gk/foundation/inline-scripts', function ( $styles ) use ( $top_level_menu_action ) {
-				$styles[] = [
-					'script' => <<<JS
+			// phpcs:disable PHPCompatibility.Syntax.NewFlexibleHeredocNowdoc.ClosingMarkerNoNewLine, WordPress.Arrays.CommaAfterArrayItem.NoComma
+			add_filter(
+				'gk/foundation/inline-scripts',
+				function ( $styles ) use ( $top_level_menu_action ) {
+					$styles[] = [
+						'script' => <<<JS
 document.addEventListener( 'DOMContentLoaded', () => {
 	const menuLinkEl = document.querySelector( 'a.toplevel_page__gk_admin_menu' );
 	const menuNameEl = menuLinkEl.querySelector( 'div.wp-menu-name' );
@@ -250,11 +266,12 @@ document.addEventListener( 'DOMContentLoaded', () => {
 	menuLinkEl.addEventListener( 'blur', restoreOriginalContent );
 } );
 JS
-				];
+					];
 
-				return $styles;
-			} );
-		}
+					return $styles;
+				}
+			);
+		} // phpcs:enable PHPCompatibility.Syntax.NewFlexibleHeredocNowdoc.ClosingMarkerNoNewLine, WordPress.Arrays.CommaAfterArrayItem.NoComma
 
 		// Add submenus.
 		foreach ( $filtered_submenus as $index => $filtered_submenu ) {
@@ -268,62 +285,69 @@ JS
 			);
 
 			if ( isset( $filtered_submenu['hide_admin_notices'] ) ) {
-				add_action( 'in_admin_header', function () use ( $filtered_submenu ) {
-					if ( $filtered_submenu['id'] !== Arr::get( $_REQUEST, 'page' ) ) {
-						return;
-					}
+				add_action(
+					'in_admin_header',
+					function () use ( $filtered_submenu ) {
+						if ( Arr::get( $_REQUEST, 'page' ) !== $filtered_submenu['id'] ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+							return;
+						}
 
-					remove_all_actions( 'user_admin_notices' );
-					remove_all_actions( 'admin_notices' );
-				}, 999 );
+						remove_all_actions( 'user_admin_notices' );
+						remove_all_actions( 'admin_notices' );
+					},
+					999
+				);
 			}
 
 			// Add divider unless it's the last submenu item that we've added.
-			if ( ! isset( $filtered_submenu['divider'] ) || $index === count( $filtered_submenus ) - 1 ) {
+			if ( ! isset( $filtered_submenu['divider'] ) || ( count( $filtered_submenus ) - 1 ) === $index ) {
 				continue;
 			}
 
-			$added_submenu_to_update    = array_pop( $submenu[ self::WP_ADMIN_MENU_SLUG ] );
+			$added_submenu_to_update     = array_pop( $submenu[ self::WP_ADMIN_MENU_SLUG ] );
 			$added_submenu_to_update[0] .= $filtered_submenu['divider'];
 
-			$submenu[ self::WP_ADMIN_MENU_SLUG ][] = $added_submenu_to_update;
+			$submenu[ self::WP_ADMIN_MENU_SLUG ][] = $added_submenu_to_update; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 		}
 
 		// On a multisite the first submenu item equals the top-level menu.
 		// Let's indiscriminately remove all submenu items that have the top-level menu's slug.
 		foreach ( $submenu[ self::WP_ADMIN_MENU_SLUG ] as $key => $submenu_item ) {
-			if ( $submenu_item[2] === self::WP_ADMIN_MENU_SLUG ) {
+			if ( self::WP_ADMIN_MENU_SLUG === $submenu_item[2] ) {
 				unset( $submenu[ self::WP_ADMIN_MENU_SLUG ][ $key ] );
 			}
 		}
 
-		add_filter( 'gk/foundation/inline-styles', function ( $styles ) use ( $filtered_submenus ) {
-			// Top-level menu item SVG icon style.
-			$styles[] = [
-				'style' => '#toplevel_page_' . self::WP_ADMIN_MENU_SLUG . ' div.wp-menu-image.svg { background-size: 1.5em auto; }',
-			];
+		add_filter(
+			'gk/foundation/inline-styles',
+			function ( $styles ) use ( $filtered_submenus ) {
+				// Top-level menu item SVG icon style.
+				$styles[] = [
+					'style' => '#toplevel_page_' . self::WP_ADMIN_MENU_SLUG . ' div.wp-menu-image.svg { background-size: 1.5em auto; }',
+				];
 
-			// Styles for submenus that should be hidden.
-			$hide_styles = [];
+				// Styles for submenus that should be hidden.
+				$hide_styles = [];
 
-			foreach ( $filtered_submenus as $submenu ) {
-				if ( isset( $submenu['top_level_menu_action'] ) ) {
-					$hide_styles[] = '#toplevel_page_' . self::WP_ADMIN_MENU_SLUG . ' ul.wp-submenu li:nth-child(2)';
+				foreach ( $filtered_submenus as $submenu ) {
+					if ( isset( $submenu['top_level_menu_action'] ) ) {
+						$hide_styles[] = '#toplevel_page_' . self::WP_ADMIN_MENU_SLUG . ' ul.wp-submenu li:nth-child(2)';
+					}
+
+					if ( $submenu['hide'] ) {
+						$hide_styles[] = '#toplevel_page_' . self::WP_ADMIN_MENU_SLUG . ' ul.wp-submenu li a[href*="' . $submenu['id'] . '"]';
+					}
 				}
 
-				if ( $submenu['hide'] ) {
-					$hide_styles[] = '#toplevel_page_' . self::WP_ADMIN_MENU_SLUG . ' ul.wp-submenu li a[href*="' . $submenu['id'] . '"]';
+				if ( empty( $hide_styles ) ) {
+					return $styles;
 				}
-			}
 
-			if ( empty( $hide_styles ) ) {
+				$styles[] = [ 'style' => join( ',', $hide_styles ) . ' { display: none !important; }' ];
+
 				return $styles;
 			}
-
-			$styles[] = [ 'style' => join( ',', $hide_styles ) . ' { display: none !important; }' ];
-
-			return $styles;
-		} );
+		);
 	}
 
 	/**
@@ -336,7 +360,7 @@ JS
 	 *
 	 * @retun void
 	 */
-	static function add_submenu_item( $submenu, $position = 'top' ) {
+	public static function add_submenu_item( $submenu, $position = 'top' ) {
 		if ( ! isset( $submenu['id'] ) ) {
 			return;
 		}
@@ -371,9 +395,11 @@ JS
 	 *
 	 * @return array
 	 */
-	static function get_submenus() {
+	public static function get_submenus() {
 		/**
-		 * @filter `gk/foundation/admin-menu/submenus` Modifies the submenus object.
+		 * Modifies the submenus object.
+		 *
+		 * @filter `gk/foundation/admin-menu/submenus`
 		 *
 		 * @since  1.0.0
 		 *
@@ -389,9 +415,11 @@ JS
 	 *
 	 * @global array $submenu
 	 *
+	 * @param string $id The submenu ID.
+	 *
 	 * @retun void
 	 */
-	static function remove_submenu_item( $id ) {
+	public static function remove_submenu_item( $id ) {
 		global $submenu;
 
 		if ( ! isset( $submenu[ self::WP_ADMIN_MENU_SLUG ] ) ) {
@@ -420,11 +448,11 @@ JS
 	 *
 	 * @retun void
 	 */
-	static function remove_admin_menu() {
+	public static function remove_admin_menu() {
 		global $menu;
 
 		foreach ( $menu as $index => $menu_item ) {
-			if ( $menu_item[2] === self::WP_ADMIN_MENU_SLUG ) {
+			if ( self::WP_ADMIN_MENU_SLUG === $menu_item[2] ) {
 				unset( $menu[ $index ] );
 			}
 		}
@@ -435,8 +463,8 @@ JS
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param string     $menu_id
-	 * @param int|string $badge_count
+	 * @param string     $menu_id     Menu ID.
+	 * @param int|string $badge_count Badge count.
 	 *
 	 * @return string
 	 */

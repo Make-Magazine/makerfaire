@@ -91,7 +91,15 @@ class GPNF_Session {
 	}
 
 	public function make_hashcode() {
-		return substr( md5( uniqid( rand(), true ) ), 0, 12 );
+
+		$hash = substr( md5( uniqid( rand(), true ) ), 0, 12 );
+
+		// Ensure that the hash is never all numbers so it cannot be confused with (or faked as) an entry ID.
+		if ( is_numeric( $hash ) ) {
+			$hash = $this->make_hashcode();
+		}
+
+		return $hash;
 	}
 
 	/**

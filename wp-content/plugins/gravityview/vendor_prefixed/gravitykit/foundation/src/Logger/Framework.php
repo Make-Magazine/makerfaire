@@ -2,8 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by gravityview on 08-December-2023 using Strauss.
- * @see https://github.com/BrianHenryIE/strauss
+ * Modified by gravityview on 19-March-2024 using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\GravityView\Foundation\Logger;
@@ -24,16 +23,18 @@ use GravityKit\GravityView\Foundation\ThirdParty\Psr\Log\LoggerTrait;
  * Logging framework for GravityKit.
  */
 class Framework implements LoggerInterface {
-    use LoggerTrait;
+	use LoggerTrait;
 
 	const DEFAULT_LOGGER_ID = 'gravitykit';
 
 	const DEFAULT_LOGGER_TITLE = 'GravityKit';
 
 	/**
+	 * Instances of the logger class instantiated by various plugins.
+	 *
 	 * @since 1.0.0
 	 *
-	 * @var array Instances of the logger class instantiated by various plugins.
+	 * @var array
 	 */
 	private static $_instances = [];
 
@@ -42,7 +43,7 @@ class Framework implements LoggerInterface {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @var SettingsFramework Settings framework instance.
+	 * @var SettingsFramework
 	 */
 	private $_settings;
 
@@ -56,23 +57,29 @@ class Framework implements LoggerInterface {
 	private $_logger;
 
 	/**
+	 * Unique logger ID.
+	 *
 	 * @since 1.0.0
 	 *
-	 * @var string Unique logger ID.
+	 * @var string
 	 */
 	private $_logger_id;
 
 	/**
+	 * Logger title.
+	 *
 	 * @since 1.0.0
 	 *
-	 * @var string Logger title.
+	 * @var string
 	 */
 	private $_logger_title;
 
 	/**
+	 * Location where logs are stored relative to WP_CONTENT_DIR.
+	 *
 	 * @since 1.0.0
 	 *
-	 * @var string Location where logs are stored relative to WP_CONTENT_DIR.
+	 * @var string
 	 */
 	private $_log_path = 'logs';
 
@@ -100,7 +107,9 @@ class Framework implements LoggerInterface {
 		$this->_logger_title = $logger_title;
 
 		/**
-		 * @filter `gk/foundation/logger/log-path` Changes path where logs are stored.
+		 * Changes path where logs are stored.
+		 *
+		 * @filter `gk/foundation/logger/log-path`
 		 *
 		 * @since  1.0.0
 		 *
@@ -163,7 +172,7 @@ class Framework implements LoggerInterface {
 				try {
 					return new StreamHandler( $this->get_log_file() );
 				} catch ( Exception $e ) {
-					error_log( 'Could not initialize file logging for GravityKit:' . $e->getMessage() );
+					error_log( 'Could not initialize file logging for GravityKit:' . $e->getMessage() ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
 
 					return;
 				}
@@ -203,8 +212,10 @@ class Framework implements LoggerInterface {
 		$logger      = Arr::get( $saved_gk_settings_values, 'logger', $default_logger_settings['logger'] );
 		$logger_type = Arr::get( $saved_gk_settings_values, 'logger_type', $default_logger_settings['logger_type'] );
 
-		add_filter( 'gk/foundation/inline-styles', function ( $styles ) {
-			$css      = <<<CSS
+		add_filter(
+			'gk/foundation/inline-styles',
+			function ( $styles ) {
+				$css      = <<<CSS
 .bg-yellow-50 {
     --tw-bg-opacity: 1;
     background-color: rgba(255, 251, 235, var(--tw-bg-opacity))
@@ -245,12 +256,13 @@ class Framework implements LoggerInterface {
     color: rgba(37, 99, 235, var(--tw-text-opacity))
 }
 CSS;
-			$styles[] = [
-				'style' => $css,
-			];
+				$styles[] = [
+					'style' => $css,
+				];
 
-			return $styles;
-		} );
+				return $styles;
+			}
+		);
 
 		$query_monitor_notice = strtr(
 			esc_html_x( 'You must install [link]Query Monitor[/link] WordPress plugin to use this option.', 'Placeholders inside [] are not to be translated.', 'gk-gravityview' ),
@@ -307,26 +319,37 @@ HTML;
 
 		$_update_gk_settings = function () use ( &$logger_settings, &$gk_settings, $default_logger_settings ) {
 			// Add logging settings under the Technical section in GravityKit settings.
-			Arr::set( $gk_settings, 'gk_foundation.sections.2.settings', array_merge(
-				Arr::get( $gk_settings, 'gk_foundation.sections.2.settings' ),
-				$logger_settings
-			) );
+			Arr::set(
+				$gk_settings,
+				'gk_foundation.sections.2.settings',
+				array_merge(
+					Arr::get( $gk_settings, 'gk_foundation.sections.2.settings' ),
+					$logger_settings
+				)
+			);
 
 			// Update defaults.
-			Arr::set( $gk_settings, 'gk_foundation.defaults', array_merge(
-				Arr::get( $gk_settings, 'gk_foundation.defaults' ),
-				$default_logger_settings
-			) );
+			Arr::set(
+				$gk_settings,
+				'gk_foundation.defaults',
+				array_merge(
+					Arr::get( $gk_settings, 'gk_foundation.defaults' ),
+					$default_logger_settings
+				)
+			);
 		};
 
 		if ( ! $logger && class_exists( 'GFLogging' ) && get_option( 'gform_enable_logging' ) ) {
 			$logger_settings[] = [
 				'id'       => 'gravity_forms_logger_tip',
-				'html'     => strtr( $notice_template, [
-					'%color%'  => 'yellow',
-					'%icon%'   => $info_icon,
-					'%notice%' => $gravity_forms_logger_tip
-				] ),
+				'html'     => strtr(
+					$notice_template,
+					[
+						'%color%'  => 'yellow',
+						'%icon%'   => $info_icon,
+						'%notice%' => $gravity_forms_logger_tip,
+					]
+				),
 				'requires' => [
 					'id'       => 'logger',
 					'operator' => '!=',
@@ -335,63 +358,72 @@ HTML;
 			];
 		}
 
-		$logger_settings = array_merge( $logger_settings, [
+		$logger_settings = array_merge(
+			$logger_settings,
 			[
-				'id'    => 'logger',
-				'type'  => 'checkbox',
-				'title' => esc_html__( 'Enable Logging', 'gk-gravityview' ),
-				'value' => $logger,
-			],
-			[
-				'id'          => 'logger_type',
-				'type'        => 'select',
-				'title'       => esc_html__( 'Log Type', 'gk-gravityview' ),
-				'description' => esc_html__( 'Where to store log output.', 'gk-gravityview' ),
-				'value'       => $logger_type,
-				'choices'     => [
-					[
-						'title' => esc_html__( 'File', 'gk-gravityview' ),
-						'value' => 'file',
+				[
+					'id'    => 'logger',
+					'type'  => 'checkbox',
+					'title' => esc_html__( 'Enable Logging', 'gk-gravityview' ),
+					'value' => $logger,
+				],
+				[
+					'id'          => 'logger_type',
+					'type'        => 'select',
+					'title'       => esc_html__( 'Log Type', 'gk-gravityview' ),
+					'description' => esc_html__( 'Where to store log output.', 'gk-gravityview' ),
+					'value'       => $logger_type,
+					'choices'     => [
+						[
+							'title' => esc_html__( 'File', 'gk-gravityview' ),
+							'value' => 'file',
+						],
+						[
+							'title' => esc_html__( 'Query Monitor', 'gk-gravityview' ),
+							'value' => 'query_monitor',
+						],
+						[
+							'title' => esc_html__( 'Chrome Logger', 'gk-gravityview' ),
+							'value' => 'chrome_logger',
+						],
 					],
-					[
-						'title' => esc_html__( 'Query Monitor', 'gk-gravityview' ),
-						'value' => 'query_monitor',
-					],
-					[
-						'title' => esc_html__( 'Chrome Logger', 'gk-gravityview' ),
-						'value' => 'chrome_logger',
+					'requires'    => [
+						'id'       => 'logger',
+						'operator' => '=',
+						'value'    => '1',
 					],
 				],
-				'requires'    => [
-					'id'       => 'logger',
-					'operator' => '=',
-					'value'    => '1',
+				[
+					'id'              => 'chrome_logger_tip',
+					'html'            => strtr(
+						$notice_template,
+						[
+							'%color%'  => 'yellow',
+							'%icon%'   => $info_icon,
+							'%notice%' => $chrome_logger_tip,
+						]
+					),
+					'requires'        => [
+						'id'       => 'logger_type',
+						'operator' => '=',
+						'value'    => 'chrome_logger',
+					],
+					'excludeFromSave' => true,
 				],
-			],
-			[
-				'id'              => 'chrome_logger_tip',
-				'html'            => strtr( $notice_template, [
-					'%color%'  => 'yellow',
-					'%icon%'   => $info_icon,
-					'%notice%' => $chrome_logger_tip
-				] ),
-				'requires'        => [
-					'id'       => 'logger_type',
-					'operator' => '=',
-					'value'    => 'chrome_logger',
-				],
-				'excludeFromSave' => true,
-			],
-		] );
+			]
+		);
 
 		if ( ! class_exists( 'QueryMonitor' ) ) {
 			$logger_settings[] = [
 				'id'              => 'query_monitor_notice',
-				'html'            => strtr( $notice_template, [
-					'%color%'  => 'yellow',
-					'%icon%'   => $info_icon,
-					'%notice%' => $query_monitor_notice
-				] ),
+				'html'            => strtr(
+					$notice_template,
+					[
+						'%color%'  => 'yellow',
+						'%icon%'   => $info_icon,
+						'%notice%' => $query_monitor_notice,
+					]
+				),
 				'requires'        => [
 					'id'       => 'logger_type',
 					'operator' => '=',
@@ -407,7 +439,8 @@ HTML;
 			return $gk_settings;
 		}
 
-		$download_link = sprintf( '%s/%s/%s',
+		$download_link = sprintf(
+			'%s/%s/%s',
 			content_url(),
 			$this->_log_path,
 			basename( $log_file )
@@ -425,11 +458,14 @@ HTML;
 
 		$logger_settings[] = [
 			'id'       => 'log_file',
-			'html'     => strtr( $notice_template, [
-				'%color%'  => 'blue',
-				'%icon%'   => $checkmark_icon,
-				'%notice%' => $download_notice
-			] ),
+			'html'     => strtr(
+				$notice_template,
+				[
+					'%color%'  => 'blue',
+					'%icon%'   => $checkmark_icon,
+					'%notice%' => $download_notice,
+				]
+			),
 			'requires' => [
 				'id'       => 'logger_type',
 				'operator' => '=',
@@ -447,7 +483,9 @@ HTML;
 	 *
 	 * @since 1.0.0
 	 *
-	 * @return void
+	 * @param array $new_settings Settings to save.
+	 *
+	 * @return array
 	 */
 	public function save_settings( $new_settings ) {
 		$current_settings = $this->_settings->get_plugin_settings( FoundationCore::ID );
@@ -494,7 +532,9 @@ HTML;
 		}
 
 		/**
-		 * @filter `gk/foundation/logger/allow-heartbeat-requests` Allows logging of WP heartbeat requests.
+		 * Allows logging of WP heartbeat requests.
+		 *
+		 * @filter `gk/foundation/logger/allow-heartbeat-requests`
 		 *
 		 * @since  1.0.0
 		 *
@@ -502,7 +542,7 @@ HTML;
 		 */
 		$log_heartbeat = apply_filters( 'gk/foundation/logger/allow-heartbeat-requests', false );
 
-		if ( isset( $_REQUEST['action'] ) && 'heartbeat' == $_REQUEST['action'] && ! $log_heartbeat ) {
+		if ( isset( $_REQUEST['action'] ) && 'heartbeat' === $_REQUEST['action'] && ! $log_heartbeat ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			return;
 		}
 
@@ -511,12 +551,18 @@ HTML;
 		}
 	}
 
-    /**
-     * @inheritDoc
-     * @since 1.0.0
-     */
-    public function log($level, $message, array $context = array())
-    {
-        $this->__call($level, [$message, $context]);
-    }
+	/**
+	 * Logs with an arbitrary level.
+	 *
+	 * @inheritDoc
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param mixed   $level   Log level.
+	 * @param string  $message Log message.
+	 * @param mixed[] $context Log context.
+	 */
+	public function log( $level, $message, array $context = [] ) {
+		$this->__call( $level, [ $message, $context ] );
+	}
 }

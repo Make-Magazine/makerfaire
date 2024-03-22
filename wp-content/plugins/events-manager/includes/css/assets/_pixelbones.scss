@@ -217,9 +217,11 @@
 	    input[type="number"],
 	    input[type="search"],
 	    input[type="text"],
+		input[type="select-one"],
 	    input[type="tel"],
 	    input[type="url"],
 	    input[type="password"],
+		input[type="select-type"],
 	    textarea,
 	    select:not([multiple]) {
 	        width: 100% !important;
@@ -258,6 +260,7 @@
 	    input[type="number"],
 	    input[type="search"],
 	    input[type="text"],
+		input[type="select-one"],
 	    input[type="tel"],
 	    input[type="url"],
 	    input[type="password"],
@@ -280,6 +283,7 @@
 	    input[type="number"]:focus,
 	    input[type="search"]:focus,
 	    input[type="text"]:focus,
+		input[type="select-one"]:focus,
 	    input[type="tel"]:focus,
 	    input[type="url"]:focus,
 	    input[type="password"]:focus,

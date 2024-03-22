@@ -424,36 +424,6 @@ jQuery(document).ready( function($){
 		}
 		$(document).on('click', '.em-bookings-table-export input[name=show_tickets]', check_tickets_columns_export);
 
-		// Sortables - selectize and sorting
-		$(document).on('em_selectize_loaded', function( e, container ){
-			container.find('.em-bookings-table-modal .em-bookings-table-cols').each( function(){
-				let parent = $(this);
-				let sortables = $(this).find('.em-bookings-cols-sortable');
-				container.find('.em-selectize.always-open').each( function() {
-					//extra behaviour for selectize column picker
-					if ('selectize' in this) {
-						let selectize = this.selectize;
-						// add event listener to fix remove button issues due to above hacks
-						selectize.on('item_add', function (value, item) {
-							let col = item.clone();
-							let option  = selectize.getOption(value);
-							let type = option.attr('data-type');
-							col.appendTo(sortables);
-							col.attr('data-type', type);
-							$('<input type="hidden" name="cols[' + value + ']" value="1">').appendTo(col);
-						});
-						selectize.on('item_remove', function (value) {
-							parent.find('.item[data-value="'+ value +'"]').remove();
-						});
-						parent.on('click', '.em-bookings-cols-selected .item .remove', function(){
-							let value = this.parentElement.getAttribute('data-value');
-							selectize.removeItem(value, true);
-						});
-					}
-				});
-			});
-		});
-
 		$(document).on('keypress', '.em-bookings-table .tablenav .actions input[type="text"]', function(e){
 			let keycode = (e.keyCode ? e.keyCode : e.which);
 			if( keycode === 13 ){
@@ -520,10 +490,13 @@ jQuery(document).ready( function($){
 			//ajax call
 			$.post( EM.ajaxurl, el.serializeArray(), function(data){
 				let $data = $(data);
-				root.find('.em-bookings-table-trigger').each( function(){
-					let modal = $(this.getAttribute('rel'));
-					modal.remove();
-				});
+				if( !root.hasClass('frontend') ) {
+					// remove modals as they are supplied again on the backend
+					root.find('.em-bookings-table-trigger').each( function(){
+						let modal = $(this.getAttribute('rel'));
+						modal.remove();
+					});
+				}
 				root.replaceWith($data);
 				// re-setup bookings table
 				setup_bookings_table($data);
@@ -805,7 +778,7 @@ jQuery(document).ready( function($){
 			diacritics : true,
 			render: {
 				item: function (item, escape) {
-					return "<div>" + item.label + "</div>";
+					return "<div>" + escape(item.label) + "</div>";
 				},
 				option: function (item, escape) {
 					let meta = '';
@@ -871,7 +844,9 @@ jQuery(document).ready( function($){
 				this.disable();
 				this.$control.blur();
 				jQuery('div.em-location-data [class^="em-selectize"]').each( function(){
-					this.selectize.disable();
+					if( 'selectize' in this ) {
+						this.selectize.disable();
+					}
 				})
 				// trigger hook
 				jQuery(document).triggerHandler('em_locations_autocomplete_selected', [event, option]);
@@ -922,10 +897,29 @@ jQuery(document).ready( function($){
 	}
 
 	// trigger selectize loader
-	em_setup_selectize(document);
+	em_setup_ui_elements(document);
 
-	/* Local JS Timezone related placeholders */
-	/* Moment JS Timzeone PH */
+	/* Done! */
+	$(document).triggerHandler('em_javascript_loaded');
+});
+
+/**
+ * Sets up external UI libraries and adds them to elements within the supplied container. This can be a jQuery or DOM element, subfunctions will either handle accordingly or this function will ensure it's the right one to pass on..
+ * @param container
+ */
+function em_setup_ui_elements ( container ) {
+	// Selectize
+	em_setup_selectize( container );
+	// Tippy
+	em_setup_tippy( container );
+	// Moment JS
+	em_setup_moment_times( container );
+}
+
+/* Local JS Timezone related placeholders */
+/* Moment JS Timzeone PH */
+function em_setup_moment_times( container_element ) {
+	container = jQuery(container_element);
 	if( window.moment ){
 		var replace_specials = function( day, string ){
 			// replace things not supported by moment
@@ -936,9 +930,9 @@ jQuery(document).ready( function($){
 			string = string.replace(/#t/g, day.daysInMonth());
 			return string;
 		};
-		$('.em-date-momentjs').each( function(){
+		container.find('.em-date-momentjs').each( function(){
 			// Start Date
-			var el = $(this);
+			var el = jQuery(this);
 			var day_start = moment.unix(el.data('date-start'));
 			var date_start_string = replace_specials(day_start, day_start.format(el.data('date-format')));
 			if( el.data('date-start') !== el.data('date-end') ){
@@ -968,8 +962,8 @@ jQuery(document).ready( function($){
 				return hours + ':' + minutes + ' ' + ampm;
 			}
 		}
-		$('.em-time-localjs').each( function(){
-			var el = $(this);
+		container.find('.em-time-localjs').each( function(){
+			var el = jQuery(this);
 			var strTime = get_date_string( el.data('time'), el.data('time-format') );
 			if( el.data('time-end') ){
 				var separator = el.data('time-separator') ? el.data('time-separator') : ' - ';
@@ -978,13 +972,7 @@ jQuery(document).ready( function($){
 			el.text(strTime);
 		});
 	}
-	// Set up Tippy generic
-	let $document = jQuery(document);
-	em_setup_tippy($document);
-
-	/* Done! */
-	$document.triggerHandler('em_javascript_loaded');
-});
+};
 
 function em_load_jquery_css( wrapper = false ){
 	if( EM.ui_css && jQuery('link#jquery-ui-em-css').length == 0 ){

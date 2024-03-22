@@ -2,8 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by gravityview on 08-December-2023 using Strauss.
- * @see https://github.com/BrianHenryIE/strauss
+ * Modified by gravityview on 19-March-2024 using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\GravityView\Foundation\Translations;
@@ -124,10 +123,10 @@ class TranslationsPress_Updater {
 	 *
 	 * @param array $options Upgrader options.
 	 *
-	 * @return void
+	 * @return array
 	 */
 	public function modify_upgrader_package_options( $options ) {
-		if ( 'plugin' !== ( $options['hook_extra']['language_update']->type ?? '' ) && $this->_slug !== ( $options['hook_extra']['language_update']->slug ?? '' ) ) {
+		if ( 'plugin' !== ( $options['hook_extra']['language_update']->type ?? '' ) && ( $options['hook_extra']['language_update']->slug ?? '' ) !== $this->_slug ) {
 			return $options;
 		}
 
@@ -246,9 +245,12 @@ class TranslationsPress_Updater {
 	 * @return array
 	 */
 	public function get_remote_translations_data() {
-		$request = wp_remote_get( self::T15S_API_LANGUAGE_PACKAGES_URL, [
-			'timeout' => 3
-		] );
+		$request = wp_remote_get(
+			self::T15S_API_LANGUAGE_PACKAGES_URL,
+			[
+				'timeout' => 3,
+			]
+		);
 
 		if ( is_wp_error( $request ) ) {
 			throw new Exception(
@@ -418,13 +420,14 @@ class TranslationsPress_Updater {
 	 *
 	 * @since 1.2.6
 	 *
-	 * @param string $language
+	 * @param string $language Language for which to download the PO file.
 	 *
 	 * @throws Exception
 	 *
 	 * @return void
 	 */
 	public function get_and_process_unmodified_po_file( $language ): void {
+		// phpcs:disable WordPress.NamingConventions.ValidVariableName.VariableNotSnakeCase
 		global $wp_filesystem;
 
 		$T15S_language_slug = $this->get_slug_from_locale( $language );
@@ -435,13 +438,15 @@ class TranslationsPress_Updater {
 			return;
 		}
 
-		$temp_po_file = download_url( strtr(
-			self::T15S_API_TRANSLATIONS_EXPORT_URL,
-			[
-				'{plugin_text_domain}' => $this->_text_domain,
-				'{language_slug}'      => $T15S_language_slug
-			]
-		) );
+		$temp_po_file = download_url(
+			strtr(
+				self::T15S_API_TRANSLATIONS_EXPORT_URL,
+				[
+					'{plugin_text_domain}' => $this->_text_domain,
+					'{language_slug}'      => $T15S_language_slug,
+				]
+			)
+		);
 
 		if ( is_wp_error( $temp_po_file ) ) {
 			throw new Exception(
@@ -454,6 +459,7 @@ class TranslationsPress_Updater {
 		$this->convert_po_to_json( $temp_po_file, $json_file );
 
 		$wp_filesystem->delete( $temp_po_file );
+		// phpcs:enable WordPress.NamingConventions.ValidVariableName.VariableNotSnakeCase
 	}
 
 	/**
@@ -469,7 +475,7 @@ class TranslationsPress_Updater {
 	 *
 	 * @return void
 	 */
-	function convert_po_to_json( $po_file, $json_file ) {
+	public function convert_po_to_json( $po_file, $json_file ) {
 		if ( ! file_exists( $po_file ) ) {
 			throw new Exception(
 				$this->get_exception( 'PO file %s does not exist. Code: %s; Message %s.', __METHOD__, $po_file )
@@ -482,7 +488,7 @@ class TranslationsPress_Updater {
 
 		foreach ( $original_translations as $original_translation ) {
 			// Get translations only for files with .js (or .js.php) extensions and only where translated data exists.
-			if ( strpos( json_encode( $original_translation->getReferences() ), '.js' ) === false || ! $original_translation->getTranslation() ) {
+			if ( strpos( wp_json_encode( $original_translation->getReferences() ), '.js' ) === false || ! $original_translation->getTranslation() ) {
 				continue;
 			}
 
@@ -506,10 +512,10 @@ class TranslationsPress_Updater {
 		$converted_translations = [
 			'translation-revision-date' => $converted_translations->getHeader( 'PO-Revision-Date' ),
 			'generator'                 => 'GravityKit Translations',
-			'locale_data'               => json_decode( $converted_translations->toJedString(), true )
+			'locale_data'               => json_decode( $converted_translations->toJedString(), true ),
 		];
 
-		if ( ! file_put_contents( $json_file, json_encode( $converted_translations ) ) ) {
+		if ( ! file_put_contents( $json_file, wp_json_encode( $converted_translations ) ) ) {
 			throw new Exception(
 				$this->get_exception( 'Unable to save JSON file %s.', __METHOD__, $json_file )
 			);
@@ -603,11 +609,13 @@ class TranslationsPress_Updater {
 	 * @return array
 	 */
 	public function get_installed_translations( $return_files = false ) {
-		$files = glob( sprintf(
-			'%s/%s-*.mo',
-			Framework::get_path_to_translations_folder(),
-			$this->_text_domain
-		) );
+		$files = glob(
+			sprintf(
+				'%s/%s-*.mo',
+				Framework::get_path_to_translations_folder(),
+				$this->_text_domain
+			)
+		);
 
 		if ( empty( $files ) ) {
 			return [];
@@ -627,9 +635,9 @@ class TranslationsPress_Updater {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param string $message  Exception message with placeholders for sprintf() replacement.
-	 * @param string $method   Method throwing the exception.
-	 * @param mixed  $args,... Variable-length argument lists for sprintf() replacement.
+	 * @param string $message Exception message with placeholders for sprintf() replacement.
+	 * @param string $method  Method throwing the exception.
+	 * @param mixed  ...$args Variable-length argument lists for sprintf() replacement.
 	 *
 	 * @return string
 	 */
@@ -654,7 +662,7 @@ class TranslationsPress_Updater {
 	 * @return string|null T15S slug.
 	 */
 	public function get_slug_from_locale( $locale ) {
-		// Taken from GlotPress that powers T15S: https://github.com/GlotPress/GlotPress/blob/a4436a6169d9f6cba5bc0ed62abe31e4f3ef15b4/locales/locales.php
+		// Taken from GlotPress that powers T15S: https://github.com/GlotPress/GlotPress/blob/a4436a6169d9f6cba5bc0ed62abe31e4f3ef15b4/locales/locales.php.
 		$slug_to_locale_map = [
 			'az'          => 'az',
 			'azb'         => 'azb',
@@ -852,7 +860,7 @@ class TranslationsPress_Updater {
 			'zh_HK'       => 'zh-hk',
 			'zh_SG'       => 'zh-sg',
 			'zh_TW'       => 'zh-tw',
-			'zul'         => 'zul'
+			'zul'         => 'zul',
 		];
 
 		return $slug_to_locale_map[ $locale ] ?? null;

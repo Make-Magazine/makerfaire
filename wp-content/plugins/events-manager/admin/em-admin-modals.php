@@ -8,13 +8,8 @@ class EM_Admin_Modals {
 		add_filter('admin_enqueue_scripts', 'EM_Admin_Modals::admin_enqueue_scripts', 100);
 		add_filter('wp_ajax_em-admin-popup-modal', 'EM_Admin_Modals::ajax');
 		add_filter('em_admin_notice_review-nudge_message', 'EM_Admin_Modals::review_notice');
-		/*
-		if( time() < 1699682400 ) {
+		if( time() < 1711962000 ) {
 			add_filter( 'em_admin_notice_promo-popup_message', 'EM_Admin_Modals::promo_notice' );
-		}
-		*/
-		if( time() < 1701388800 ) {
-			add_filter( 'em_admin_notice_expired-promo_message', 'EM_Admin_Modals::expired_promo_notice' );
 		}
 		add_filter( 'em_admin_notice_expired-reminder_message', 'EM_Admin_Modals::expired_reminder_notice' );
 		add_filter( 'em_admin_notice_expiry-reminder_message', 'EM_Admin_Modals::expiry_reminder_notice' );
@@ -60,7 +55,8 @@ class EM_Admin_Modals {
 				$key = get_option('dbem_pro_api_key');
 				$pro_license_active = !(empty($key['until']) || $key['until'] > strtotime('+10 months'));
 			}
-			if( time() < 1699682400 && !empty($data['admin-modals']['promo-popup']) && !$pro_license_active) {
+			*/
+			if( time() < 1711962000 && !empty($data['admin-modals']['promo-popup']) /*&& !$pro_license_active*/) {
 				if( $data['admin-modals']['promo-popup'] == 1 || ($data['admin-modals']['promo-popup'] == 2 && ($show_plugin_pages || $show_network_admin) ) ) {
 					// enqueue script and load popup action
 					if( empty($data['admin-modals']['promo-popup-count']) ){
@@ -82,12 +78,11 @@ class EM_Admin_Modals {
 					}
 				}
 			}
-			*/
 		}
 		
 		// EM Pro License Expired Promo & Reminder
 		$pro_license_active = defined('EMP_VERSION');
-		$promo_time = 1701388800;
+		$promo_time = 1711962000;
 		if( $pro_license_active ){
 			$key = get_option('dbem_pro_api_key');
 			// add a promo for license
@@ -217,16 +212,17 @@ class EM_Admin_Modals {
 			<div class="em-modal-popup">
 				<header>
 					<a class="em-close-modal dismiss-modal" href="#"></a><!-- close modal -->
-					<div class="em-modal-title">Events Manager Pro - Flash Sale, 42% Off!</div>
+					<div class="em-modal-title">Events Manager Pro - Upcoming Price Plan Changes, 30% Off Now!</div>
 				</header>
 				<div class="em-modal-content has-image" style="--font-size:16px;">
 					<div>
-						<p>Pardon the interruption.... we'd like to make sure you're aware of our limited time deal. Purchase a license, renew or upgrade and get up to 42% off!</p>
+						<p>Pardon the interruption.... we'd like to make sure you're aware of some upcoming price plan changes, <a href="https://em.cm/promo2024-02">see our announcement</a>.</p>
+						<p>We are introducing a new add-on soon, and will soon be selling some of our upcoming add-ons separately. We will be introducing a new all-inclusive plan, which you can get now at up to 25% discount.</p>
 						<p>We hope you're enjoying the plugin and if you're at all considering going Pro, you still have time to make the best of this limited opportunity!</p>
 					</div>
 					<div class="image">
 						<img src="<?php echo EM_DIR_URI . '/includes/images/events-manager.svg'; ?>">
-						<a href="https://eventsmanagerpro.com/gopro/?utm_source=events-manager&utm_medium=plugin-popup&utm_campaign=plugins" class="button button-primary input" target="_blank" style="margin:10px auto; --accent-color:#429543; --accent-color-hover:#429543;">Go Pro!</a>
+						<a href="https://em.cm/promo2024-02-gopro" class="button button-primary input" target="_blank" style="margin:10px auto; --accent-color:#429543; --accent-color-hover:#429543;">Go Pro!</a>
 					</div>
 				</div><!-- content -->
 				<footer class="em-submit-section input">
@@ -250,28 +246,11 @@ class EM_Admin_Modals {
 				<img src="<?php echo EM_DIR_URI . '/includes/images/events-manager.svg'; ?>" style="width: 100%;">
 			</div>
 			<div>
-				<h3>Events Manager Pro - Flash Sale, 42% Off!</h3>
-				<p>Pardon the interruption.... we'd like to make sure you're aware of our limited time deal. Purchase a license, renew or upgrade and get up to 42% off!</p>
+				<h3>Events Manager Pro - Upcoming Price Plan Changes, 30% Off Now!</h3>
+				<p>Pardon the interruption.... we'd like to make sure you're aware of some upcoming price plan changes, <a href="https://em.cm/promo2024-02">see our announcement</a>.</p>
+				<p>We are introducing a new add-on soon, and will soon be selling some of our upcoming add-ons separately. We will be introducing a new all-inclusive plan, which you can get now at up to 25% discount.</p>
 				<p>We hope you're enjoying the plugin and if you're at all considering going Pro, you still have time to make the best of this limited opportunity!</p>
-				<a href="https://eventsmanagerpro.com/gopro/?utm_source=events-manager&utm_medium=plugin-notice&utm_campaign=plugins" class="button button-primary input" target="_blank" style="margin-right:10px; --accent-color:#429543; --accent-color-hover:#429543;">Go Pro!</a>
-			</div>
-		</div><!-- content -->
-		<?php
-		return ob_get_clean();
-	}
-	
-	public static function expired_promo_notice(){
-		ob_start();
-		?>
-		<div style="display: grid; grid-template-columns: 80px auto; grid-gap: 20px;">
-			<div style="text-align: center; padding-left: 10px; padding-top:10px;">
-				<img src="<?php echo EM_DIR_URI . '/includes/images/events-manager.svg'; ?>" style="width: 100%;">
-			</div>
-			<div>
-				<h3>Events Manager Pro - Up to 25% Off Limited-Time Renewal!</h3>
-				<p>Your Pro license is <strong>currently expired</strong>, meaning you do not have access to our latest updates and Pro support. Renew now and get up to <strong>%25 off your renewal price</strong>, for a limited time!</p>
-				<p>We hope you're enjoying the plugin and if you're at all considering renewing your license, you still have time to make the best of this limited opportunity!</p>
-				<a href="https://eventsmanagerpro.com/gopro/?utm_source=events-manager&utm_medium=plugin-notice&utm_campaign=plugins" class="button button-primary input" target="_blank" style="margin-right:10px; --accent-color:#429543; --accent-color-hover:#429543;">Renew Now!</a>
+				<a href="https://em.cm/promo2024-02-gopro-n" class="button button-primary input" target="_blank" style="margin-right:10px; --accent-color:#429543; --accent-color-hover:#429543;">Go Pro!</a>
 			</div>
 		</div><!-- content -->
 		<?php

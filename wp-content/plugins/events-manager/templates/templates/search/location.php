@@ -2,9 +2,9 @@
 <div class="em-search-location" <?php if( !empty($args['search_geo']) && !empty($args['geo']) && !empty($args['near']) ): ?>style="display:none;"<?php endif; /* show location fields if no geo search is made */ ?>>
 	<?php
 	//figure out if we have a default country or one submitted via search
-	if( !empty($args['search_countries']) ){
+	if ( !empty($args['search_countries']) ) {
 		em_locate_template('templates/search/location-countries.php',true,array('args'=>$args));
-	}else{
+	} else {
 		?><input type="hidden" name="country" value="<?php echo esc_attr($args['country']); ?>" ><?php
 	}
 	?>

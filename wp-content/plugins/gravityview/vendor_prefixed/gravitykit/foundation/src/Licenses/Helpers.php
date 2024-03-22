@@ -2,8 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by gravityview on 08-December-2023 using Strauss.
- * @see https://github.com/BrianHenryIE/strauss
+ * Modified by gravityview on 19-March-2024 using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\GravityView\Foundation\Licenses;
@@ -16,14 +15,14 @@ class Helpers {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param string $url
-	 * @param array  $args
+	 * @param string $url API URL.
+	 * @param array  $args Request arguments.
 	 *
 	 * @throws Exception
 	 *
 	 * @return array|null Response body.
 	 */
-	static function query_api( $url, array $args = [] ) {
+	public static function query_api( $url, array $args = [] ) {
 		$request_parameters = [
 			'timeout'   => 15,
 			'sslverify' => false,

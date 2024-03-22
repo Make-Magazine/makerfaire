@@ -7,7 +7,12 @@
 <div class="em-search-tag em-search-field">
 	<label for="em-search-tag-<?php echo absint($args['id']) ?>" class="screen-reader-text"><?php echo esc_html($args['tag_label']); ?></label>
 
-	<select name="tag[]" class="em-search-tag em-selectize always-open checkboxes" id="em-search-tag-<?php echo absint($args['id']) ?>" multiple size="10" placeholder="<?php echo esc_html($args['tags_placeholder']); ?>">
+	<select name="tag[]" class="em-search-tag em-selectize checkboxes <?php echo $args['search_multiselect_style']; ?>" id="em-search-tag-<?php echo absint($args['id']) ?>" multiple size="10"
+            data-default="<?php echo $args['tags_label']; ?>"
+            data-label="<?php echo $args['tag_label']; ?>"
+            data-clear-text="<?php echo esc_attr($args['tags_clear_text']); ?>"
+            data-count-text="<?php echo esc_attr($args['tags_count_text']); ?>"
+            placeholder="<?php echo esc_html($args['tags_placeholder']); ?>">
 		<?php
 		$args_em = apply_filters('em_advanced_search_tags_args', array('orderby'=>'name','hide_empty'=>0, 'include' => $include, 'exclude' => $exclude ));
 		$tags = EM_Tags::get($args_em);

@@ -195,7 +195,7 @@ class GV_Extension_DataTables_RowGroup extends GV_DataTables_Extension {
 	 * @inheritDoc
 	 * @return array DataTables configuration array with `rowgroup` key set to value as microseconds.
 	 */
-	function add_config( $dt_config, $view_id, $post ) {
+	function add_config( $dt_config, $view_id, $post, $object ) {
 
 		// If this has already been set, the settings have been overridden.
 		if ( isset( $dt_config['rowgroup'] ) ) {

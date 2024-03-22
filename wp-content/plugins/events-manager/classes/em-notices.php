@@ -21,6 +21,14 @@
 	        	if( !empty($_COOKIE['em_notices']) ) {
 	        	    $notices = json_decode(base64_decode($_COOKIE['em_notices']), true);
 	        	    if( is_array($notices) ){
+						foreach( $notices as $type => $notice ) {
+							// sanitize string and title indexes with esc_html
+							foreach ( array('string', 'title') as $index ) {
+								if ( !empty($notice[$index]) ) {
+									$notices[$type][$index] = esc_html($notice[$index]);
+								}
+							}
+						}
 		        		$this->notices = $notices;
 		        		setcookie('em_notices', '', time() - 3600, COOKIEPATH, COOKIE_DOMAIN, is_ssl(), true); //unset the cookie
 	        	    }

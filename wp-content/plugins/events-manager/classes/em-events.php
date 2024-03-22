@@ -315,7 +315,7 @@ $limit $offset";
 		$output = "";
 		
 		if ( $events_count > 0 ) {
-			$events = apply_filters('em_events_output_events', $events);
+			$events = apply_filters('em_events_output_events', $events, $events_count, $args);
 			foreach ( $events as $EM_Event ) {
 				$output .= $EM_Event->output($format);
 			} 
@@ -340,7 +340,7 @@ $limit $offset";
 		
 		//TODO check if reference is ok when restoring object, due to changes in php5 v 4
 		$EM_Event = $EM_Event_old;
-		$output = apply_filters('em_events_output', $output, $events, $args);
+		$output = apply_filters('em_events_output', $output, $events, $args, $events_count);
 		return $output;		
 	}
 	
@@ -482,7 +482,7 @@ $limit $offset";
 		}elseif( $args['no_results_msg'] !== false ){
 			echo !empty($args['no_results_msg']) ? $args['no_results_msg'] : get_option('dbem_no_events_message');
 		}
-		return apply_filters('em_events_output_grouped', ob_get_clean(), $EM_Events, $args);
+		return apply_filters('em_events_output_grouped', ob_get_clean(), $EM_Events, $args, $events_count);
 	}
 	
 	public static function get_pagination_links($args, $count, $search_action = 'search_events', $default_args = array()){

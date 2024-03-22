@@ -2,8 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by gravityview on 08-December-2023 using Strauss.
- * @see https://github.com/BrianHenryIE/strauss
+ * Modified by gravityview on 19-March-2024 using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\GravityView\Foundation\Licenses;
@@ -33,24 +32,30 @@ class LicenseManager {
 	const HARDCODED_LICENSE_CONSTANTS = [ 'GRAVITYVIEW_LICENSE_KEY', 'GRAVITYKIT_LICENSES' ];
 
 	/**
+	 * {@LicenseManager} class instance.
+	 *
 	 * @since 1.0.0
 	 *
-	 * @var LicenseManager Class instance.
+	 * @var LicenseManager
 	 */
 	private static $_instance;
 
 	/**
+	 * Cached licenses data object.
+	 *
 	 * @since 1.0.0
 	 * @since 1.2.0 Renamed to $licenses_data.
 	 *
-	 * @var array Cached licenses data object.
+	 * @var array
 	 */
 	public $licenses_data;
 
 	/**
+	 * Whether license data exists but can't be decrypted.
+	 *
 	 * @since 1.2.0
 	 *
-	 * @var bool Whether license data exists but can't be decrypted.
+	 * @var bool
 	 */
 	public $is_decryptable = true;
 
@@ -110,11 +115,14 @@ class LicenseManager {
 	 * @return array
 	 */
 	public function configure_ajax_routes( array $routes ) {
-		return array_merge( $routes, [
-			'get_licenses'       => [ $this, 'ajax_get_licenses_data' ],
-			'activate_license'   => [ $this, 'ajax_activate_license' ],
-			'deactivate_license' => [ $this, 'ajax_deactivate_license' ],
-		] );
+		return array_merge(
+			$routes,
+			[
+				'get_licenses'       => [ $this, 'ajax_get_licenses_data' ],
+				'activate_license'   => [ $this, 'ajax_activate_license' ],
+				'deactivate_license' => [ $this, 'ajax_deactivate_license' ],
+			]
+		);
 	}
 
 	/**
@@ -122,7 +130,7 @@ class LicenseManager {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param array $payload
+	 * @param array $payload Ajax request payload.
 	 *
 	 * @throws Exception
 	 *
@@ -133,9 +141,12 @@ class LicenseManager {
 			throw new Exception( esc_html__( 'You do not have a permission to perform this action.', 'gk-gravityview' ) );
 		}
 
-		$payload = wp_parse_args( $payload, [
-			'skip_cache' => false,
-		] );
+		$payload = wp_parse_args(
+			$payload,
+			[
+				'skip_cache' => false,
+			]
+		);
 
 		$this->migrate_legacy_licenses( $payload['skip_cache'] );
 
@@ -183,7 +194,7 @@ class LicenseManager {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param array $licenses_data
+	 * @param array $licenses_data Licenses data.
 	 *
 	 * @return bool
 	 */
@@ -195,7 +206,7 @@ class LicenseManager {
 		$this->licenses_data = $licenses_data;
 
 		try {
-			$licenses_data = Encryption::get_instance()->encrypt( json_encode( $licenses_data ) );
+			$licenses_data = Encryption::get_instance()->encrypt( wp_json_encode( $licenses_data ) );
 		} catch ( Exception $e ) {
 			LoggerFramework::get_instance()->error( 'Failed to encrypt licenses data: ' . $e->getMessage() );
 
@@ -234,7 +245,6 @@ class LicenseManager {
 						$key = $product_data['text_domain'];
 						break;
 				}
-
 
 				if ( empty( $product_license_map[ $key ] ) ) {
 					$product_license_map[ $key ] = [];
@@ -283,8 +293,8 @@ class LicenseManager {
 	 *
 	 * @sice 1.0
 	 *
-	 * @param string|array $license
-	 * @param string       $edd_action
+	 * @param string|array $license    License key or array of license keys.
+	 * @param string       $edd_action EDD action.
 	 *
 	 * @throws Exception
 	 *
@@ -297,7 +307,7 @@ class LicenseManager {
 			'edd_action'  => $edd_action,
 			'url'         => is_multisite() ? network_home_url() : home_url(),
 			'api_version' => self::EDD_LICENSES_API_VERSION,
-			'license'     => $license
+			'license'     => $license,
 		];
 
 		if ( self::EDD_ACTION_CHECK_LICENSE === $edd_action ) {
@@ -341,7 +351,7 @@ class LicenseManager {
 			if ( ! $data['success'] && empty( $data['expires'] ) ) {
 				$expiry = null;
 			} else {
-				$expiry = ! empty( $data['expires'] ) ? strtotime( $data['expires'], current_time( 'timestamp' ) ) : null;
+				$expiry = ! empty( $data['expires'] ) ? strtotime( $data['expires'], current_time( 'timestamp' ) ) : null; // phpcs:ignore WordPress.DateTime.CurrentTimeTimestamp
 				$expiry = $expiry ?: $data['expires'];
 			}
 
@@ -367,7 +377,7 @@ class LicenseManager {
 					$normalized_license_data['products'][ $product['id'] ] = [
 						'id'          => $product['id'],
 						'text_domain' => $product['text_domain'],
-						'download'    => $product['files'][0]['file']
+						'download'    => $product['files'][0]['file'],
 					];
 				}
 			}
@@ -387,7 +397,7 @@ class LicenseManager {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param string $license_key
+	 * @param string $license_key License key.
 	 *
 	 * @throws Exception
 	 *
@@ -406,7 +416,7 @@ class LicenseManager {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param array $license_keys
+	 * @param array $license_keys License keys.
 	 *
 	 * @throws Exception
 	 *
@@ -425,7 +435,7 @@ class LicenseManager {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param array $payload
+	 * @param array $payload Ajax request payload.
 	 *
 	 * @throws Exception
 	 *
@@ -450,7 +460,7 @@ class LicenseManager {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param string $license_key license_key
+	 * @param string $license_key License key.
 	 *
 	 * @throws Exception
 	 *
@@ -497,17 +507,20 @@ class LicenseManager {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param array $payload
+	 * @param array $payload Ajax request payload.
 	 *
 	 * @throws Exception
 	 *
 	 * @return array{products:array,licenses:array}
 	 */
 	public function ajax_deactivate_license( array $payload ) {
-		$payload = wp_parse_args( $payload, [
-			'key'           => false,
-			'force_removal' => false,
-		] );
+		$payload = wp_parse_args(
+			$payload,
+			[
+				'key'           => false,
+				'force_removal' => false,
+			]
+		);
 
 		if ( ! $payload['key'] ) {
 			throw new Exception( esc_html__( 'Missing license key.', 'gk-gravityview' ) );
@@ -532,7 +545,7 @@ class LicenseManager {
 	 * @since 1.0.0
 	 * @since 1.0.7 Added $force_removal parameter.
 	 *
-	 * @param string $license_key
+	 * @param string $license_key   License key.
 	 * @param bool   $force_removal (optional) Forces removal of license from the local licenses object even if deactivation request fails. Default: false.
 	 *
 	 * @throws Exception
@@ -577,7 +590,7 @@ class LicenseManager {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param array $license
+	 * @param array $license License data.
 	 *
 	 * @return array
 	 */
@@ -589,7 +602,7 @@ class LicenseManager {
 			$expired = $this->is_expired_license( $expiry );
 
 			$expiry = $expired
-				? human_time_diff( $expiry, current_time( 'timestamp' ) ) . ' ' . esc_html_x( 'ago', 'Indicates "time ago"', 'gk-gravityview' )
+				? human_time_diff( $expiry, current_time( 'timestamp' ) ) . ' ' . esc_html_x( 'ago', 'Indicates "time ago"', 'gk-gravityview' ) // phpcs:ignore WordPress.DateTime.CurrentTimeTimestamp
 				: date_i18n( get_option( 'date_format' ), $expiry );
 		}
 
@@ -602,7 +615,9 @@ class LicenseManager {
 		}
 
 		/**
-		 * @filter `gk/foundation/licenses/hide-personal-information` Hides the license holder's name/email.
+		 * Hides the license holder's name/email.
+		 *
+		 * @filter `gk/foundation/licenses/hide-personal-information`
 		 *
 		 * @since  1.2.0
 		 *
@@ -611,15 +626,19 @@ class LicenseManager {
 		$hide_personal_information = apply_filters( 'gk/foundation/licenses/hide-personal-information', false );
 
 		if ( $hide_personal_information ) {
-			$license['name'] = $license['email'] = '✽✽✽';
+			$license['name']  = '✽✽✽';
+			$license['email'] = $license['name'];
 		}
 
-		return array_merge( $license, [
-			'expiry'     => $expiry,
-			'expired'    => $expired,
-			'key'        => $encrypted_key,
-			'masked_key' => $this->mask_license_key( $license['key'] )
-		] );
+		return array_merge(
+			$license,
+			[
+				'expiry'     => $expiry,
+				'expired'    => $expired,
+				'key'        => $encrypted_key,
+				'masked_key' => $this->mask_license_key( $license['key'] ),
+			]
+		);
 	}
 
 	/**
@@ -627,7 +646,7 @@ class LicenseManager {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param string $license_key
+	 * @param string $license_key License key.
 	 *
 	 * @return string
 	 */
@@ -636,7 +655,8 @@ class LicenseManager {
 		$visible_count = (int) round( $length / 8 );
 		$hidden_count  = $length - ( $visible_count * 4 );
 
-		return sprintf( '%s%s%s',
+		return sprintf(
+			'%s%s%s',
 			substr( $license_key, 0, $visible_count ),
 			str_repeat( '✽', $hidden_count ),
 			substr( $license_key, ( $visible_count * -1 ), $visible_count )
@@ -701,7 +721,7 @@ class LicenseManager {
 			return;
 		}
 
-		WP::set_site_transient( $cache_id, current_time( 'timestamp' ), $check_timeout );
+		WP::set_site_transient( $cache_id, current_time( 'timestamp' ), $check_timeout ); // phpcs:ignore WordPress.DateTime.CurrentTimeTimestamp
 
 		LoggerFramework::get_instance()->notice( "Checking hardcoded licenses and pausing for {$check_timeout} seconds." );
 
@@ -755,7 +775,7 @@ class LicenseManager {
 		$migration_status_id = Framework::ID . '/legacy-licenses-migrated';
 
 		$save_migration_status_in_db = function () use ( $migration_status_id ) {
-			update_site_option( $migration_status_id, current_time( 'timestamp' ) );
+			update_site_option( $migration_status_id, current_time( 'timestamp' ) ); // phpcs:ignore WordPress.DateTime.CurrentTimeTimestamp
 		};
 
 		if ( get_site_option( $migration_status_id ) && ! $force_migration ) {
@@ -878,7 +898,7 @@ class LicenseManager {
 			LoggerFramework::get_instance()->error( "Failed to revalidate all licenses. {$e->getMessage()}." );
 		}
 
-		WP::set_site_transient( $cache_id, current_time( 'timestamp' ), DAY_IN_SECONDS );
+		WP::set_site_transient( $cache_id, current_time( 'timestamp' ), DAY_IN_SECONDS ); // phpcs:ignore WordPress.DateTime.CurrentTimeTimestamp
 
 		if ( ! empty( $revalidated_licenses ) ) {
 			$this->save_licenses_data( $revalidated_licenses );
@@ -898,7 +918,7 @@ class LicenseManager {
 		$data = [];
 
 		$theme_data = wp_get_theme();
-		$theme      = $theme_data->Name . ' ' . $theme_data->Version;
+		$theme      = $theme_data->Name . ' ' . $theme_data->Version; // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
 
 		$data['php_version']   = PHP_VERSION;
 		$data['wp_version']    = get_bloginfo( 'version' );
@@ -934,10 +954,13 @@ class LicenseManager {
 			$first  = get_posts( 'numberposts=1&post_type=gravityview&post_status=publish&order=ASC' );
 			$latest = get_posts( 'numberposts=1&post_type=gravityview&post_status=publish&order=DESC' );
 
-			if ( $first = array_shift( $first ) ) {
+			$first = array_shift( $first );
+			if ( $first ) {
 				$data['view_first'] = $first->post_date;
 			}
-			if ( $latest = array_pop( $latest ) ) {
+
+			$latest = array_pop( $latest );
+			if ( $latest ) {
 				$data['view_latest'] = $latest->post_date;
 			}
 		}
@@ -955,7 +978,7 @@ class LicenseManager {
 		$plugins = CoreHelpers::get_installed_plugins();
 		foreach ( $plugins as &$plugin ) {
 			$plugin = Arr::only( $plugin, [ 'name', 'version', 'active', 'network_activated' ] );
-			$plugin = array_filter( $plugin ); // Don't include active/network activated if false
+			$plugin = array_filter( $plugin ); // Don't include active/network activated if false.
 		}
 
 		$data['plugins'] = $plugins;
@@ -1000,9 +1023,12 @@ class LicenseManager {
 			return;
 		}
 
-		add_filter( 'gk/foundation/admin-menu/submenu/' . Framework::ID . '/counter', function ( $count ) use ( $update_count ) {
-			return (int) $count + $update_count;
-		} );
+		add_filter(
+			'gk/foundation/admin-menu/submenu/' . Framework::ID . '/counter',
+			function ( $count ) use ( $update_count ) {
+				return (int) $count + $update_count;
+			}
+		);
 	}
 
 	/**
@@ -1019,6 +1045,6 @@ class LicenseManager {
 			return false;
 		}
 
-		return $expiry < current_time( 'timestamp' );
+		return $expiry < current_time( 'timestamp' ); // phpcs:ignore WordPress.DateTime.CurrentTimeTimestamp
 	}
 }

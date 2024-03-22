@@ -22,12 +22,28 @@
 		//check if we're outputting an ical feed
 		if( !empty($wp_query) && $wp_query->get('ical') ){
 			$filename = 'events';
-			$args = array('scope' => 'all');
+			$args = array('scope' => 'all', 'status' => 1);
 			//single event
 			if( $wp_query->get(EM_POST_TYPE_EVENT) ){
-				$event_id = $wpdb->get_var('SELECT event_id FROM '.EM_EVENTS_TABLE." WHERE event_slug='".$wp_query->get(EM_POST_TYPE_EVENT)."' AND event_status=1 LIMIT 1");
+				$path = $wp_query->get(EM_POST_TYPE_EVENT);
+				if( preg_match('/\//', $path) ) {
+					$post_id = em_get_page_by_path_for_ical( $wp_query->get( EM_POST_TYPE_EVENT ), OBJECT, array(EM_POST_TYPE_EVENT) );
+					// get event by slug via WP, to account for complex permalink structures
+					if ( $post_id ) {
+						$EM_Event = em_get_event( $post_id, 'post_id' );
+						$event_id = $EM_Event->event_id;
+						$event_slug = $EM_Event->event_slug;
+					}
+				} else {
+					// try to get event by slug directly from EM tables
+					$event = $wpdb->get_row('SELECT event_id, event_slug FROM '.EM_EVENTS_TABLE." WHERE event_slug='".$wp_query->get(EM_POST_TYPE_EVENT)."' AND event_status=1 LIMIT 1");
+					if ( $event ) {
+						$event_id = $event->event_id;
+						$event_slug = $event->event_slug;
+					}
+				}
 				if( !empty($event_id) ){
-					$filename = $wp_query->get(EM_POST_TYPE_EVENT);
+					$filename = $event_slug;
 					$args['event'] = $event_id;
 				}
 			//single location
@@ -84,5 +100,72 @@
 			return $return;
 		}
 		return wordwrap($string, 75, "\r\n ", true);
+	}
+
+	/**
+	 * Modified version of get_page_by_path() so that first found path is provided, allowing for easy retrieval of complex permalink structures like dates.
+	 * The main differences are the cached ID is changed, the foreach loop gets the first result, and only the post id is returned
+	 *
+	 * @param $page_path
+	 * @param $output
+	 * @param $post_type
+	 *
+	 * @return array|int|mixed|void|WP_Post|null
+	 */
+	function em_get_page_by_path_for_ical( $page_path, $output = OBJECT, $post_type = array('event') ) {
+		global $wpdb;
+
+		$last_changed = wp_cache_get_last_changed( 'posts' );
+
+		$hash      = md5( $page_path . serialize( $post_type ) );
+		$cache_key = "get_event_ical_page_by_path:$hash:$last_changed";
+		$cached    = wp_cache_get( $cache_key, 'events' );
+		if ( false !== $cached ) {
+			// Special case: '0' is a bad `$page_path`.
+			if ( '0' === $cached || 0 === $cached ) {
+				return;
+			} else {
+				return $cached; // just return the ID
+			}
+		}
+
+		$page_path     = rawurlencode( urldecode( $page_path ) );
+		$page_path     = str_replace( '%2F', '/', $page_path );
+		$page_path     = str_replace( '%20', ' ', $page_path );
+		$parts         = explode( '/', trim( $page_path, '/' ) );
+		$parts         = array_map( 'sanitize_title_for_query', $parts );
+		$escaped_parts = esc_sql( $parts );
+
+		$in_string = "'" . implode( "','", $escaped_parts ) . "'";
+
+		if ( is_array( $post_type ) ) {
+			$post_types = $post_type;
+		} else {
+			$post_types = array( $post_type, 'attachment' );
+		}
+
+		$post_types          = esc_sql( $post_types );
+		$post_type_in_string = "'" . implode( "','", $post_types ) . "'";
+		$sql                 = "
+			SELECT ID, post_name, post_parent, post_type
+			FROM $wpdb->posts
+			WHERE post_name IN ($in_string)
+			AND post_type IN ($post_type_in_string)
+		";
+
+		$pages = $wpdb->get_results( $sql, OBJECT_K );
+
+		$revparts = array_reverse( $parts );
+
+		$foundid = 0;
+		foreach ( (array) $pages as $page ) {
+			$foundid = $page->ID;
+			break;
+		}
+
+		// We cache misses as well as hits.
+		wp_cache_set( $cache_key, $foundid, 'events' );
+
+		return $foundid;
 	}
 ?>

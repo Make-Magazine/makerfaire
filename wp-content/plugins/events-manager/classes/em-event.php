@@ -1757,7 +1757,7 @@ class EM_Event extends EM_Object{
 				$this->event_status = null;
 				break;
 		}
-		return $status;
+		return apply_filters('em_event_get_status', $status, $this);
 	}
 	
 	function get_previous_status( $force = false ){

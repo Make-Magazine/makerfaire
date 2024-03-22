@@ -3,7 +3,6 @@
 
 .gv-datatables-container {
 
-
 	// nowrap used on the table when Responsive extension is enabled
 	table.nowrap {
 		table-layout: auto; // forces the cell content to set the column width (enables good responsive calculation)
@@ -31,10 +30,6 @@
 		}
 	}
 
-	.gv-dt-field-filter {
-		display: block;
-	}
-
 	// When Scroller is active, hide the page length selector
 	//div.DTS .dataTables_length{
 	//	display: none;
@@ -50,6 +45,17 @@
 		margin-bottom: -.2em;
 	}
 
+	.date-input-wrapper.gv-dt-field-filter {
+		display: flex;
+		justify-content: start;
+		gap: 10px;
+  }
+
+	.gv-dt-field-filter {
+		display: block;
+		width: 100%;
+		min-width: 4em;
+	}
 }
 
 html[dir="rtl"] .gv-datatables-container {
@@ -70,20 +76,28 @@ html[dir="rtl"] .gv-datatables-container {
 	max-height: 200px;
 	margin-right: 1em;
 }
-
 .gv-table-view {
-	width: 100%;
+  table-layout: fixed;
+  width: 100%;
+}
 
-	th,
-	td {
-		padding: .3em;
-	}
+.gv-table-view th,
+.gv-table-view td {
+  padding: .3em;
+}
 
-	th {
-		width: 35%;
-		vertical-align: top;
-	}
+.gv-table-view-content {
+  table-layout: fixed;
 
+  // The single entry view left column
+  > tbody > tr > th {
+    width: 35%;
+    vertical-align: top;
+  }
+
+  & th.gsurvey-likert-choice-label {
+    border: inherit;
+  }
 }
 
 .DTTT_print_info {

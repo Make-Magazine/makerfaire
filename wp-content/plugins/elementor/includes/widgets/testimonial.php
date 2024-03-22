@@ -73,10 +73,24 @@ class Widget_Testimonial extends Widget_Base {
 		return [ 'testimonial', 'blockquote' ];
 	}
 
+	/**
+	 * Get widget upsale data.
+	 *
+	 * Retrieve the widget promotion data.
+	 *
+	 * @since 3.18.0
+	 * @access protected
+	 *
+	 * @return array Widget promotion data.
+	 */
 	protected function get_upsale_data() {
 		return [
+			'condition' => ! Utils::has_pro(),
+			'image' => esc_url( ELEMENTOR_ASSETS_URL . 'images/go-pro.svg' ),
+			'image_alt' => esc_attr__( 'Upgrade', 'elementor' ),
 			'description' => esc_html__( 'Use interesting masonry layouts and other overlay features with Elementor\'s Pro Gallery widget.', 'elementor' ),
-			'upgrade_url' => 'https://go.elementor.com/go-pro-testimonial-widget/',
+			'upgrade_url' => esc_url( 'https://go.elementor.com/go-pro-testimonial-widget/' ),
+			'upgrade_text' => esc_html__( 'Upgrade Now', 'elementor' ),
 		];
 	}
 
@@ -128,7 +142,6 @@ class Widget_Testimonial extends Widget_Base {
 			[
 				'name' => 'testimonial_image', // Usage: `{name}_size` and `{name}_custom_dimension`, in this case `testimonial_image_size` and `testimonial_image_custom_dimension`.
 				'default' => 'full',
-				'separator' => 'none',
 			]
 		);
 

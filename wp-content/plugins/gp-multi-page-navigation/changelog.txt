@@ -1,6 +1,18 @@
 
 # Changelog
 
+## 1.2.8
+
+	- Fixed an issue where completed steps could generate multiple links when used along with Page Transitions.
+
+## 1.2.7
+
+	- Fixed a compatibility issue with Gravity Flow.
+
+## 1.2.6
+
+	- Added support for using page names in the `gpmpn_page` query parameter. Previously, it only supported page numbers.
+
 ## 1.2.5
 
 	- Updated styles to work with GF 2.8 Theme Framework changes.

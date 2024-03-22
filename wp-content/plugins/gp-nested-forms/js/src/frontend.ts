@@ -276,6 +276,16 @@ const ko = window.ko;
 			self.viewModel = new EntriesModel(self.prepareEntriesForKnockout(self.entries), self);
 			self.addRowIdComputedToEntries( self.viewModel.entries );
 
+			/**
+			 * Filter the Knockout view model for the Nested Form field.
+			 *
+			 * @param {object} 			viewModel 	The Knockout view model for the Nested Form field.
+			 * @param {GPNestedForms} 	gpnf      	Current instance of the GPNestedForms object.
+			 *
+			 * @since 1.1.51
+			 */
+			self.viewModel = gform.applyFilters( 'gpnf_view_model', self.viewModel, self );
+
 			ko.applyBindings(self.viewModel, self.$fieldContainer[0]);
 		};
 

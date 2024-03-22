@@ -749,7 +749,8 @@ class EM_Ticket extends EM_Object{
 	 */
 	function get_spaces_options($zero_value = true, $default_value = 0){
 		$available_spaces = $this->get_available_spaces();
-		if( EM_Bookings::$disable_restrictions ) $available_spaces = get_option('dbem_bookings_form_max');
+		$max_spaces = get_option('dbem_bookings_form_max');
+		if( EM_Bookings::$disable_restrictions && $max_spaces > $available_spaces ) $available_spaces = $max_spaces;
 		if( $this->is_available() ) {
 		    $min_spaces = $this->get_spaces_minimum();
 		    if( $default_value > 0 ){
@@ -762,7 +763,7 @@ class EM_Ticket extends EM_Object{
 			<select name="em_tickets[<?php echo $this->ticket_id ?>][spaces]" class="em-ticket-select" id="em-ticket-spaces-<?php echo $this->ticket_id ?>" data-ticket-id="<?php echo esc_attr($this->ticket_id); ?>">
 				<?php 
 					$min = ($this->ticket_min > 0) ? $this->ticket_min:1;
-					$max = ($this->ticket_max > 0) ? $this->ticket_max:get_option('dbem_bookings_form_max');
+					$max = ($this->ticket_max > 0) ? $this->ticket_max:$max_spaces;
 					if( $this->get_event()->event_rsvp_spaces > 0 && $this->get_event()->event_rsvp_spaces < $max ) $max = $this->get_event()->event_rsvp_spaces;
 				?>
 				<?php if($zero_value && !$this->is_required()) : ?><option>0</option><?php endif; ?>

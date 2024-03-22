@@ -1314,15 +1314,12 @@ class GFFormDetail {
 							<li class="name_setting field_setting">
 								<div class="custom_inputs_setting gfield_sub_setting">
 									<label for="field_name_fields" class="section_label inline">
-										<?php esc_html_e( 'Name Fields', 'gravityforms' ); ?>
-										<?php gform_tooltip( 'form_field_name_fields' ); ?>
-									</label>
-
+									    <?php esc_html_e( 'Name Fields', 'gravityforms' ); ?><?php gform_tooltip( 'form_field_name_fields' ); ?>
+                                    					</label>
 									<div id="field_name_fields_container" style="padding-top:10px;">
 										<!-- content dynamically created from js.php -->
 									</div>
 								</div>
-
 							</li>
 							<?php
 							do_action( 'gform_field_standard_settings', 1150, $form_id );
@@ -1985,7 +1982,6 @@ class GFFormDetail {
 									</label>
 
 									<div>
-										<?php GFCommon::insert_calculation_variables( $form['fields'], 'field_calculation_formula', '', 'FormulaContentCallback', 40 ); ?>
 										<div class="gf_calculation_buttons">
 											<?php foreach ( array( '+', '-', '/', '*', '(', ')', '.' ) as $button ) { ?>
 											<input type="button" value="<?php echo in_array( $button, array( '.' ) ) ? $button : " $button "; ?>" onclick="InsertVariable('field_calculation_formula', 'FormulaContentCallback', this.value);" onkeypress="InsertVariable('field_calculation_formula', 'FormulaContentCallback', this.value);"/>

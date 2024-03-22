@@ -42,7 +42,7 @@ class GV_Extension_DataTables_Scroller extends GV_DataTables_Extension {
 								'tooltip' => true,
                                 'article' => array(
 	                                'id' => '5ea73c1a04286364bc9914c0',
-                                    'url' => 'https://docs.gravityview.co/article/711-datatables-scroller',
+                                    'url' => 'https://docs.gravitykit.com/article/711-datatables-scroller',
                                 ),
 							), $ds['scroller'] );
 					?>
@@ -143,8 +143,9 @@ class GV_Extension_DataTables_Scroller extends GV_DataTables_Extension {
 	/**
 	 * Scroller add specific config data based on admin settings
 	 *
+     * @inheritDoc
 	 */
-	function add_config( $dt_config, $view_id, $post  ) {
+	function add_config( $dt_config, $view_id, $post, $object ) {
 
 		// Enable scroller
 		$dt_config['scroller'] = array(

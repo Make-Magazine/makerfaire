@@ -300,9 +300,14 @@ class GPNF_Entry {
 		$session = new GPNF_Session( $parent_form_id );
 		$hash    = $session->get( 'hash' );
 
+		// Don't allow hashes to be numeric, otherwise they could be faked as valid parent entry IDs.
+		if ( is_numeric( $hash ) ) {
+			$hash = null;
+		}
+
 		$save_and_continue_entry_ids = gp_nested_forms()->get_save_and_continue_child_entry_ids( $parent_form_id, $parent_form_field_id );
 
-		if ( $parent_entry_id == $hash ) {
+		if ( $parent_entry_id && $hash && $parent_entry_id == $hash ) {
 			$can_user_edit_entry = true;
 		}
 		/**

@@ -52,6 +52,9 @@ class GFFormDisplay {
 			GFCommon::log_debug( __METHOD__ . '(): Completed gform_pre_process.' );
 		}
 
+		// Set files that have been uploaded to temp folder
+		$files = GFFormsModel::set_uploaded_files( $form_id );
+
 		//reading form metadata
 		$form = self::maybe_add_review_page( $form );
 
@@ -92,9 +95,6 @@ class GFFormDisplay {
 		$target_page        = self::get_target_page( $form, $page_number, $field_values );
 
 		GFCommon::log_debug( "GFFormDisplay::process_form(): Source page number: {$source_page_number}. Target page number: {$target_page}." );
-
-		// Set files that have been uploaded to temp folder
-		$files = GFFormsModel::set_uploaded_files( $form_id );
 
 		$saving_for_later = rgpost( 'gform_save' ) ? true : false;
 
@@ -848,6 +848,89 @@ class GFFormDisplay {
 	}
 
 	/**
+	 * Fire the post render events for a form instance when the form is visible on the page.
+	 *
+	 * @since 2.8.4
+	 *
+	 * @param $form_id
+	 * @param $current_page
+	 *
+	 * @return string
+	 */
+	public static function post_render_script( $form_id, $current_page = 'current_page' ) {
+		$post_render_script = '
+			jQuery(document).trigger("gform_pre_post_render", [{ formId: "' . $form_id . '", currentPage: "' . $current_page . '", abort: function() { this.preventDefault(); } }]);
+	        
+	        if (event.defaultPrevented) {
+            	    return; 
+        	}
+	        const gformWrapperDiv = document.getElementById( "gform_wrapper_' . $form_id . '" );
+	        if ( gformWrapperDiv ) {
+	            const visibilitySpan = document.createElement( "span" );
+	            visibilitySpan.id = "gform_visibility_test_' . $form_id . '";
+	            gformWrapperDiv.insertAdjacentElement( "afterend", visibilitySpan );
+	        }
+	        const visibilityTestDiv = document.getElementById( "gform_visibility_test_' . $form_id . '" );
+	        let postRenderFired = false;
+	        
+	        function triggerPostRender() {
+	            if ( postRenderFired ) {
+	                return;
+	            }
+	            postRenderFired = true;
+	            jQuery( document ).trigger( \'gform_post_render\', [' . $form_id . ', ' . $current_page . '] );
+	            gform.utils.trigger( { event: \'gform/postRender\', native: false, data: { formId: ' . $form_id . ', currentPage: ' . $current_page . ' } } );
+	            if ( visibilityTestDiv ) {
+	                visibilityTestDiv.parentNode.removeChild( visibilityTestDiv );
+	            }
+	        }
+	
+	        function debounce( func, wait, immediate ) {
+	            var timeout;
+	            return function() {
+	                var context = this, args = arguments;
+	                var later = function() {
+	                    timeout = null;
+	                    if ( !immediate ) func.apply( context, args );
+	                };
+	                var callNow = immediate && !timeout;
+	                clearTimeout( timeout );
+	                timeout = setTimeout( later, wait );
+	                if ( callNow ) func.apply( context, args );
+	            };
+	        }
+	
+	        const debouncedTriggerPostRender = debounce( function() {
+	            triggerPostRender();
+	        }, 200 );
+	
+	        if ( visibilityTestDiv && visibilityTestDiv.offsetParent === null ) {
+	            const observer = new MutationObserver( ( mutations ) => {
+	                mutations.forEach( ( mutation ) => {
+	                    if ( mutation.type === \'attributes\' && visibilityTestDiv.offsetParent !== null ) {
+	                        debouncedTriggerPostRender();
+	                        observer.disconnect();
+	                    }
+	                });
+	            });
+	            observer.observe( document.body, {
+	                attributes: true,
+	                childList: false,
+	                subtree: true,
+	                attributeFilter: [ \'style\', \'class\' ],
+	            });
+	        } else {
+	            triggerPostRender();
+	        }
+	    ';
+
+		$post_render_script = gf_apply_filters( array( 'gform_post_render_script', $form_id ), $post_render_script, $form_id, $current_page );
+
+		return str_replace( [ "\t", "\n", "\r" ], '', $post_render_script );
+	}
+
+
+	/**
 	 * Get a form for display.
 	 *
 	 * @since unknown
@@ -1117,10 +1200,10 @@ class GFFormDisplay {
 			}
 
 			$page_instance = isset( $form['page_instance'] ) ? "data-form-index='{$form['page_instance']}'" : null;
-			$form_theme    = "data-form-theme='" . GFFormDisplay::get_form_theme_slug( $form ) . "'";
+			$form_theme    = GFFormDisplay::get_form_theme_slug( $form );
 
 			$form_string .= "
-                <div class='{$wrapper_css_class}{$custom_wrapper_css_class}' {$form_theme} {$page_instance} id='gform_wrapper_$form_id' " . $style . '>';
+                <div class='{$wrapper_css_class}{$custom_wrapper_css_class}' data-form-theme='{$form_theme}' {$page_instance} id='gform_wrapper_$form_id' " . $style . '>';
 
 			/**
 			 * Allows markup to be added directly after the opening form wrapper.
@@ -1173,12 +1256,13 @@ class GFFormDisplay {
 					 * @since 2.5
 					 *
 					 * @param string $message The required indicator legend.
-					 * @param array  $form    The current Form object.
+					 * @param array  $form    The current Form.
 					 */
 					$required_legend = gf_apply_filters(
 						array( 'gform_required_legend', $form['id'] ),
 						/* Translators: the text or symbol that indicates a field is required */
-						sprintf( esc_html__( '"%s" indicates required fields', 'gravityforms' ), GFFormsModel::get_required_indicator( $form_id ) )
+						sprintf( esc_html__( '"%s" indicates required fields', 'gravityforms' ), GFFormsModel::get_required_indicator( $form_id ) ),
+						$form
 					);
 					$form_string .= "
 							<p class='gform_required_legend'>{$required_legend}</p>";
@@ -1397,8 +1481,7 @@ class GFFormDisplay {
 						"jQuery('#gform_{$form_id}').append(contents);" .
 						"if(window['gformRedirect']) {gformRedirect();}" .
 						'}' .
-						"jQuery(document).trigger('gform_post_render', [{$form_id}, current_page]);" .
-						"gform.utils.trigger({ event: 'gform/postRender', native: false, data: { formId: {$form_id}, currentPage: current_page } });" .
+						self::post_render_script( $form_id ) .
 						'} );' .
 						'} );';
 
@@ -1442,8 +1525,7 @@ class GFFormDisplay {
 				} else {
 					$form_string      .= self::get_form_init_scripts( $form );
 					$init_script_body = 'gform.initializeOnLoaded( function() {' .
-						"jQuery(document).trigger('gform_post_render', [{$form_id}, {$current_page}]);" .
-						"gform.utils.trigger({ event: 'gform/postRender', native: false, data: { formId: {$form_id}, currentPage: {$current_page} } });" .
+						self::post_render_script( $form_id, $current_page ) .
 					'} );';
 					$form_string      .= GFCommon::get_inline_script_tag( $init_script_body );
 				}
@@ -1516,10 +1598,7 @@ class GFFormDisplay {
 		$form               = RGFormsModel::get_form_meta( $form_id );
 		$form_string        = self::get_form_init_scripts( $form );
 		$current_page       = self::get_current_page( $form_id );
-		$footer_script_body = 'gform.initializeOnLoaded( function() {' .
-			"jQuery(document).trigger('gform_post_render', [{$form_id}, {$current_page}]);" .
-			"gform.utils.trigger({ event: 'gform/postRender', native: false, data: { formId: {$form_id}, currentPage: {$current_page} } });" .
-		'} );';
+		$footer_script_body = 'gform.initializeOnLoaded( function() {' . self::post_render_script( $form_id, $current_page ) . '} );';
 		$form_string        .= GFCommon::get_inline_script_tag( $footer_script_body );
 
 		/**
@@ -5025,7 +5104,7 @@ class GFFormDisplay {
 		if ( gf_upgrade()->get_submissions_block() ) {
 			$validation_message_markup = "<h2 class='gf_submission_limit_message'>" . esc_html__( 'Your form was not submitted. Please try again in a few minutes.', 'gravityforms' ) . '</h2>';
 		} else {
-			$validation_message_markup = "<h2 class='gform_submission_error{$hide_summary_class}'><span class='gform-icon gform-icon--close'></span>" . esc_html__( 'There was a problem with your submission.', 'gravityforms' ) . ' ' . esc_html__( 'Please review the fields below.', 'gravityforms' ) . '</h2>';
+			$validation_message_markup = "<h2 class='gform_submission_error{$hide_summary_class}'><span class='gform-icon gform-icon--circle-error'></span>" . esc_html__( 'There was a problem with your submission.', 'gravityforms' ) . ' ' . esc_html__( 'Please review the fields below.', 'gravityforms' ) . '</h2>';
 			// Generate validation errors summary if required.
 			if ( $show_summary ) {
 				$errors = self::get_validation_errors( $form, $values );

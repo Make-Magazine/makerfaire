@@ -37,7 +37,7 @@ class GV_Extension_DataTables_Buttons extends GV_DataTables_Extension {
                                 'tooltip' => true,
                                 'article' => array(
                                     'id' => '5ea73bab04286364bc9914ba',
-                                    'url' => 'https://docs.gravityview.co/article/710-datatables-buttons',
+                                    'url' => 'https://docs.gravitykit.com/article/710-datatables-buttons',
                                 ),
 							), $ds['buttons'] );
 					?>
@@ -188,7 +188,7 @@ class GV_Extension_DataTables_Buttons extends GV_DataTables_Extension {
 	/**
 	 * Buttons add specific config data based on admin settings
 	 */
-	function add_config( $dt_config, $view_id, $post  ) {
+	function add_config( $dt_config, $view_id, $post, $object ) {
 
 		// init Buttons
 		$dt_config['dom'] = empty( $dt_config['dom'] ) ? 'Blfrtip' : 'B' . $dt_config['dom'];

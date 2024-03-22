@@ -627,23 +627,33 @@ window.addEventListener('load', function(){
 				input.name = name + '_intl';
 				alt.name = name;
 			}
-			input.classList.add('em-intl-tel')
-			alt.classList.add('em-intl-tel-full')
+			input.classList.add('em-intl-tel');
+			// copy all classes and remove ones we know we don't want
+			alt.setAttribute('class', input.getAttribute('class') + ' em-intl-tel-full');
+			alt.classList.remove('em-intl-tel');
 			alt.type = 'hidden';
 			if( input.id ) {
 				alt.id = input.id + '-full'
 			}
 			alt.value = input.value;
+			// add data-name to the full input if it exists, for use in dynamic input forms for JS submission within forms
+			if( input.getAttribute('data-name') ) {
+				alt.setAttribute('data-name', input.getAttribute('data-name'));
+				input.removeAttribute('data-name');
+			}
 			input.after(alt);
 
-			let options = {
+			let options = Object.assign({
 				utilsScript: EM.url + '/includes/external/intl-tel-input/js/utils.js',
 				separateDialCode : true,
-			}
+			}, EM.phone.options);
+
 			if( EM.phone.detectJS ) {
 				let country = getCountry();
 				if( country ) {
 					options.initialCountry = country;
+				} else if ( EM.phone.initialCountry ) {
+					options.initialCountry = EM.phone.initialCountry;
 				}
 			} else if ( EM.phone.initialCountry ) {
 				options.initialCountry = EM.phone.initialCountry;
@@ -655,12 +665,12 @@ window.addEventListener('load', function(){
 				if ( input.value.trim() ) {
 					let wrapper = input.closest('.iti')
 					if ( iti.isPossibleNumber() ) {
-						wrapper.classList.remove("error");
+						wrapper.classList.remove("invalid-number");
 						if ( wrapper.nextElementSibling && wrapper.nextElementSibling.classList.contains('em-inline-error') ) {
 							wrapper.nextElementSibling.remove();
 						}
 					} else {
-						wrapper.classList.add("error");
+						wrapper.classList.add("invalid-number");
 						const errorCode = iti.getValidationError();
 						let errorMsg;
 						if( !(wrapper.nextElementSibling && wrapper.nextElementSibling.classList.contains('em-inline-error')) ) {

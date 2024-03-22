@@ -1,0 +1,241 @@
+#fegallery-image-container {
+    margin: 0 -5px -5px -5px;
+    font-size: 0;
+}
+
+#fegallery-image-container input[type="hiddden"] {
+    display: none;
+}
+
+#fegallery-image-container .fegallery-image-item,
+#fegallery-image-container .fegallery-sortable-placeholder {
+    display: inline-block;
+    padding: 7px;
+    border: 1px solid #cccccc;
+    margin: 5px;
+    line-height: 0;
+    background: #f5f5f5;
+    position: relative;
+    vertical-align: top;
+}
+
+#fegallery-image-container .fegallery-image-item img {
+    width: auto;
+    height: 150px;
+}
+
+#fegallery-image-container .fegallery-sortable-placeholder {
+    width: 150px;
+    height: 150px;
+    background: none;
+    padding: 5px;
+    border: 3px dashed #dcdcdc;
+}
+
+/* close item */
+#fegallery-image-container .fegallery-image-item .fegallery-close-item {
+    position: absolute;
+	top: 2px;
+	right: 7px;
+	color: #c92424;
+	text-decoration: none;
+	display: none;
+}
+#fegallery-image-container .fegallery-image-item .fegallery-close-item span {
+    display: block;
+    height: 32px;
+    width: 32px;
+    font-size: 32px;
+    text-shadow: 0px 0px 2px #ffffff;
+    color: #f61919;
+}
+
+/* edit item */
+#fegallery-image-container .fegallery-image-item .fegallery-edit-item {
+    position: absolute;
+	top: 4px;
+	right: 40px;
+	color: #c92424;
+	text-decoration: none;
+	display: none;
+}
+#fegallery-image-container .fegallery-image-item .fegallery-edit-item span {
+    display: block;
+    height: 28px;
+    width: 28px;
+    font-size: 28px;
+    text-shadow: 0px 0px 2px #ffffff;
+    color: #222222;
+}
+
+/* on hover image item */
+#fegallery-image-container .fegallery-image-item:hover .fegallery-close-item,
+#fegallery-image-container .fegallery-image-item:hover .fegallery-edit-item {
+    display: block;
+}
+
+#fegallery-image-container span {
+    padding: 5px 0 5px 5px;
+    display: block;
+    font-size: 14px;
+    color: #606060;
+}
+
+#fegallery-button-container {
+    margin-top: 12px;
+}
+
+#fegallery-button-container a {
+    margin: 0 5px 10px 0;
+}
+
+#fegallery-button-container a .dashicons {
+    padding: 4px 3px 0 0;
+}
+
+/* Settings Page */
+
+#fegallery-settings {
+    max-width: 800px;   
+    margin: 25px 20px 0 2px;
+}
+
+#fegallery-settings .hndle {
+    font-size: 21px;
+    padding: 8px 12px;
+    margin: 0;
+    line-height: 1.4;
+    font-weight: 600;
+    cursor: default;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+}
+
+#fegallery-settings .hndle .sub {
+    font-size: 16px;
+    color: #9f9f9f;   
+}
+
+#fegallery-settings .postbox {
+    margin-top: 0px;
+}
+
+#fegallery-settings .postbox .inside {
+    margin: 12px 0;
+    padding: 0; 
+}
+
+#fegallery-settings .postbox input[type="submit"] {
+    margin: 0px 12px 0;
+}
+
+#fegallery-settings .postbox .field-group {
+    margin-bottom: 12px;
+    border-bottom: 1px solid #eee;
+    padding: 0 12px 15px;
+}
+
+#fegallery-settings .postbox .field-group:last-child {
+    padding-bottom: 0px;
+    border-bottom: none;
+}
+
+#fegallery-settings .postbox .field-section-title {
+    padding: 0 12px;
+    background: #f3f3f3;
+    margin-top: -12px;
+    border-bottom: 1px solid #eee;
+    margin-bottom: 16px;
+    font-size: 14px;
+    font-weight: 600;
+    height: 40px;
+    line-height: 40px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+#fegallery-settings .postbox .field-group > label {
+    display: block;
+    font-weight: 600;
+    padding: 0 0 7px;
+    font-size: 14px;
+    cursor: default;
+}
+
+#fegallery-settings .postbox .field-group > span {
+    color: #333;
+    font-size: 12px;
+    display: block;
+    margin: 7px 0 0;
+}
+
+#fegallery-settings .postbox .field-group > input,
+#fegallery-settings .postbox .field-group > select,
+#fegallery-settings .postbox .field-group > textarea {
+    width: 100%;
+}
+
+#fegallery-settings-modal .table-content {
+    width: 100%;
+}
+
+#fegallery-settings-modal .table-content th {
+    text-align: left;
+    font-size: 14px;
+    vertical-align: top;
+    padding: 10px 18px 0px 0px;
+    width: 150px;
+}
+
+#fegallery-settings-modal .table-content th.button-th {
+    text-align: right;
+    padding-right: 3px;
+}
+
+#fegallery-settings-modal .table-content td {
+    padding: 5px;
+}
+
+#fegallery-settings-modal .table-content td input[type='text'],
+#fegallery-settings-modal .table-content td input[type='number'],
+#fegallery-settings-modal .table-content td select {
+    width: 100%
+}
+
+#fegallery-settings-modal .table-content td label {
+    font-size: 12px;
+}
+
+
+
+
+#fegallery-edit-modal .table-content {
+    width: 100%;
+}
+
+#fegallery-edit-modal .table-content th {
+    text-align: left;
+    font-size: 14px;
+    vertical-align: top;
+    padding: 10px 18px 0px 0px;
+    width: 150px;
+}
+
+#fegallery-edit-modal .table-content th.button-th {
+    text-align: right;
+    padding-right: 3px;
+}
+
+#fegallery-edit-modal .table-content td {
+    padding: 5px;
+}
+
+#fegallery-edit-modal .table-content td input[type='text'],
+#fegallery-edit-modal .table-content td input[type='number'],
+#fegallery-edit-modal .table-content td select {
+    width: 100%
+}
+
+#fegallery-edit-modal .table-content td label {
+    font-size: 12px;
+}

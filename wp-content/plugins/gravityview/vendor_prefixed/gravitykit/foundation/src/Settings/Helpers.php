@@ -2,8 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by gravityview on 08-December-2023 using Strauss.
- * @see https://github.com/BrianHenryIE/strauss
+ * Modified by gravityview on 19-March-2024 using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\GravityView\Foundation\Settings;
@@ -14,13 +13,14 @@ class Helpers {
 	 *
 	 * @see UI/src/lib/validation.js
 	 *
-	 * @param string $first
-	 * @param string $second
-	 * @param string $op
+	 * @param string $first  First value.
+	 * @param string $second Second value.
+	 * @param string $op     Operator.
 	 *
 	 * @return bool
 	 */
-	static function compare_values( $first, $second, $op ) {
+	public static function compare_values( $first, $second, $op ) {
+		// phpcs:disable WordPress.PHP.StrictComparisons.LooseComparison
 		switch ( $op ) {
 			case '!=':
 				return $first != $second;
@@ -34,5 +34,6 @@ class Helpers {
 			default:
 				return $first == $second;
 		}
+		// phpcs:enable WordPress.PHP.StrictComparisons.LooseComparison
 	}
 }

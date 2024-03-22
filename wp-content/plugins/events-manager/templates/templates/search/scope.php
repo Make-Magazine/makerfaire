@@ -1,8 +1,11 @@
 <?php
 /* @var $args array */
+$classes = array();
+if( get_option('dbem_search_form_dates_hide_m') ) $classes[] = 'hide-medium';
+if( get_option('dbem_search_form_dates_hide_s') ) $classes[] = 'hide-small';
 ?>
 <!-- START Date Search -->
-<div class="em-search-scope em-search-field em-datepicker em-datepicker-range input" data-separator="<?php echo esc_attr($args['scope_seperator']); ?>"  data-format="<?php echo esc_attr($args['scope_format']); ?>">
+<div class="em-search-scope em-search-field em-datepicker em-datepicker-range input <?php echo implode(' ', $classes); ?>" data-separator="<?php echo esc_attr($args['scope_seperator']); ?>"  data-format="<?php echo esc_attr($args['scope_format']); ?>">
 	<label for="em-search-scope-<?php echo absint($args['id']) ?>" class="screen-reader-text"><?php echo esc_html($args['scope_label']); ?></label>
 	<input id="em-search-scope-<?php echo absint($args['id']) ?>" type="hidden" class="em-date-input em-search-scope" aria-hidden="true" placeholder="<?php echo esc_html($args['scope_label']); ?>">
 	<div class="em-datepicker-data">

@@ -57,7 +57,7 @@ class GV_Extension_DataTables_Responsive extends GV_DataTables_Extension {
 								'tooltip' => true,
                                 'article' => array(
                                     'id' => '5ea744fd2c7d3a7e9aebb7ab',
-                                    'url' => 'https://docs.gravityview.co/article/712-responsive-datatables',
+                                    'url' => 'https://docs.gravitykit.com/article/712-responsive-datatables',
                                 ),
 							), $ds['responsive'] );
 					?>

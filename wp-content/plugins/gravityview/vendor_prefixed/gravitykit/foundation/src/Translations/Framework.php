@@ -2,8 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by gravityview on 08-December-2023 using Strauss.
- * @see https://github.com/BrianHenryIE/strauss
+ * Modified by gravityview on 19-March-2024 using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\GravityView\Foundation\Translations;
@@ -37,9 +36,11 @@ class Framework {
 	private $_logger;
 
 	/**
+	 * Text domain for which translations are fetched.
+	 *
 	 * @since 1.0.0
 	 *
-	 * @var array Text domain for which translations are fetched.
+	 * @var array
 	 */
 	private $_text_domains = [];
 
@@ -67,7 +68,7 @@ class Framework {
 	 *
 	 * @return TranslationsPress_Updater
 	 */
-	public function get_T15s_updater( $text_domain ) {
+	public function get_T15s_updater( $text_domain ) { // phpcs:ignore WordPress.NamingConventions.ValidFunctionName.MethodNameInvalid
 		return TranslationsPress_Updater::get_instance( $text_domain );
 	}
 
@@ -96,7 +97,9 @@ class Framework {
 				}
 
 				/**
-				 * @filter `gk/foundation/translations/disable-download` Disables downloading translations.
+				 * Disables downloading translations.
+				 *
+				 * @filter `gk/foundation/translations/disable-download`
 				 *
 				 * @since  1.2.6
 				 *
@@ -113,25 +116,32 @@ class Framework {
 				} else {
 					// If translations can't be installed due to permisisons but were previously installed,
 					// remap the location of the .mo file as it is stored in a folder suffixed with the blog ID.
-					add_filter( 'load_textdomain_mofile', function ( $mo_file, $text_domain ) use ( $plugin_data ) {
-						/**
-						 * @filter `gk/foundation/translations/<text-domain>/mo-file` Specifies the location of the .mo file.
-						 *
-						 * @since  1.2.6
-						 *
-						 * @param string $remapped_mo_file
-						 */
-						$remapped_mo_file = apply_filters(
-							"gk/foundation/translations/{$plugin_data['TextDomain']}/mo-file",
-							self::get_translation_file_name( $plugin_data['TextDomain'], get_locale() )
-						);
+					add_filter(
+                        'load_textdomain_mofile',
+                        function ( $mo_file, $text_domain ) use ( $plugin_data ) {
+							/**
+							 * Specifies the location of the .mo file.
+							 *
+							 * @filter `gk/foundation/translations/<text-domain>/mo-file`
+							 *
+							 * @since  1.2.6
+							 *
+							 * @param string $remapped_mo_file
+							 */
+							$remapped_mo_file = apply_filters(
+                                "gk/foundation/translations/{$plugin_data['TextDomain']}/mo-file",
+                                self::get_translation_file_name( $plugin_data['TextDomain'], get_locale() )
+							);
 
-						if ( $plugin_data['TextDomain'] === $text_domain && file_exists( $remapped_mo_file ) ) {
-							return $remapped_mo_file;
-						}
+							if ( $plugin_data['TextDomain'] === $text_domain && file_exists( $remapped_mo_file ) ) {
+								return $remapped_mo_file;
+							}
 
-						return $mo_file;
-					}, 10, 2 );
+							return $mo_file;
+						},
+                        10,
+                        2
+                    );
 				}
 			}
 		}
@@ -143,7 +153,9 @@ class Framework {
 		add_action( 'gk/foundation/plugin-deactivated', [ $this, 'on_plugin_deactivation' ] );
 
 		/**
-		 * @action `gk/foundation/translations/initialized` Fires when the class has finished initializing.
+		 * Fires when the class has finished initializing.
+		 *
+		 * @action `gk/foundation/translations/initialized`
 		 *
 		 * @since  1.0.0
 		 *
@@ -165,7 +177,9 @@ class Framework {
 		}
 
 		/**
-		 * @filter `gk/foundation/translations/permissions/can-install-languages` Sets permission to install languages.
+		 * Sets permission to install languages.
+		 *
+		 * @filter `gk/foundation/translations/permissions/can-install-languages`
 		 *
 		 * @since  1.0.0
 		 *
@@ -198,6 +212,7 @@ class Framework {
 		}
 
 		try {
+			// phpcs:disable WordPress.NamingConventions.ValidVariableName.VariableNotSnakeCase
 			$T15s_updater = $this->get_T15s_updater( $text_domain );
 
 			$T15s_updater->install( $language );
@@ -207,6 +222,7 @@ class Framework {
 			if ( isset( $translations[ $language ] ) ) {
 				$this->load_backend_translations( $text_domain, $language );
 			}
+			// phpcs:enable WordPress.NamingConventions.ValidVariableName.VariableNotSnakeCase
 		} catch ( Exception $e ) {
 			$this->_logger->error( $e->getMessage() );
 		}
@@ -237,7 +253,7 @@ class Framework {
 	 *
 	 * @return void
 	 */
-	function load_backend_translations( $text_domain, $language = '' ) {
+	public function load_backend_translations( $text_domain, $language = '' ) {
 		if ( ! $language ) {
 			$language = get_locale();
 		}
@@ -270,7 +286,7 @@ class Framework {
 	 *
 	 * @return void
 	 */
-	function load_frontend_translations( $text_domain, $language = '', $frontend_text_domain = '' ) {
+	public function load_frontend_translations( $text_domain, $language = '', $frontend_text_domain = '' ) {
 		if ( ! $language ) {
 			$language = get_locale();
 		}
@@ -298,8 +314,10 @@ class Framework {
 		// Optionally override text domain if UI expects a different one.
 		$text_domain = $frontend_text_domain ?: $text_domain;
 
-		add_filter( 'gk/foundation/inline-scripts', function ( $scripts ) use ( $text_domain, $json_translations ) {
-			$js = <<<JS
+		add_filter(
+            'gk/foundation/inline-scripts',
+            function ( $scripts ) use ( $text_domain, $json_translations ) {
+				$js = <<<JS
 ( function( domain, translations ) {
 	var localeData = translations.locale_data[ domain ] || translations.locale_data.messages;
 	localeData[""].domain = domain;
@@ -307,13 +325,14 @@ class Framework {
 } )( '{$text_domain}', {$json_translations});
 JS;
 
-			$scripts[] = [
-				'script'       => $js,
-				'dependencies' => [ 'wp-i18n' ],
-			];
+				$scripts[] = [
+					'script'       => $js,
+					'dependencies' => [ 'wp-i18n' ],
+				];
 
-			return $scripts;
-		} );
+				return $scripts;
+			}
+        );
 	}
 
 	/**
@@ -361,7 +380,7 @@ JS;
 	 */
 	public function on_plugin_deactivation( $plugin_file ) {
 		if ( ! function_exists( 'get_plugin_data' ) ) {
-			require_once( ABSPATH . 'wp-admin/includes/plugin.php' );
+			require_once ABSPATH . 'wp-admin/includes/plugin.php';
 		}
 
 		$plugin_data = get_plugin_data( $plugin_file );
@@ -370,11 +389,13 @@ JS;
 			return;
 		}
 
-		$files = glob( sprintf(
-			'%s/%s-*',
-			self::get_path_to_translations_folder(),
-			$plugin_data['TextDomain']
-		) );
+		$files = glob(
+            sprintf(
+                '%s/%s-*',
+                self::get_path_to_translations_folder(),
+                $plugin_data['TextDomain']
+            )
+        );
 
 		if ( empty( $files ) ) {
 			return;

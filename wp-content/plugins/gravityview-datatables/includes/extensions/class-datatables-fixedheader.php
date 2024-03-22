@@ -112,7 +112,7 @@ class GV_Extension_DataTables_FixedHeader extends GV_DataTables_Extension {
 	/**
 	 * FixedColumns add specific config data based on admin settings
 	 */
-	function add_config( $dt_config, $view_id, $post  ) {
+	function add_config( $dt_config, $view_id, $post, $object ) {
 
 		// FixedColumns need scrollX to be set
 		$dt_config['scrollX'] = true;

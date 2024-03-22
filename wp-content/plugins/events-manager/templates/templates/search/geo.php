@@ -1,6 +1,11 @@
-<?php /* @var array $args */ ?>
+<?php
+/* @var array $args */
+$classes = array();
+if( get_option('dbem_search_form_geo_hide_m') ) $classes[] = 'hide-medium';
+if( get_option('dbem_search_form_geo_hide_s') ) $classes[] = 'hide-small';
+?>
 <!-- START GeoLocation Search -->
-<div class="em-search-geo em-search-field input">
+<div class="em-search-geo em-search-field input <?php echo implode(' ', $classes); ?>">
 	<label for="em-search-geo-<?php echo absint($args['id']) ?>" class="screen-reader-text">
 		<?php echo esc_html($args['geo_label']); ?>
 	</label>

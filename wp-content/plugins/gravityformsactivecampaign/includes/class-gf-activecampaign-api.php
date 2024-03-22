@@ -2,6 +2,24 @@
 
 class GF_ActiveCampaign_API {
 
+	/**
+	 * ActiveCampaign API URL.
+	 *
+	 * @since  unknown
+	 * @access protected
+	 * @var    string $api_url ActiveCampaign API URL.
+	 */
+	protected $api_url;
+
+	/**
+	 * ActiveCampaign API Key.
+	 *
+	 * @since  unkown
+	 * @access protected
+	 * @var    string $api_key ActiveCampaign API Key.
+	 */
+	protected $api_key;
+
 	function __construct( $api_url, $api_key = null ) {
 
 		$this->api_url = $api_url;

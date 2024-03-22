@@ -15,7 +15,7 @@ jQuery(document).ready( function($){
 	$(document).trigger('em-tippy-vars',[tooltip_vars]);
 
 	// sync main search texts to advanced search
-	let search_forms = $('.em-search');
+	let search_forms = $('.em-search:not(.em-search-advanced)');
 	search_forms.each( function(){
 		/*
 		 * Important references we'll reuse in scope
@@ -166,6 +166,10 @@ jQuery(document).ready( function($){
 				}
 			});
 
+			search[0].addEventListener('change', function(){
+				update_submit_buttons(true);
+			});
+
 			search.on('keydown click', '.em-search-views-options input', function( e ){
 				// get relevant vars
 				if( e.type === 'keydown' && e.which !== 13 ){
@@ -224,7 +228,7 @@ jQuery(document).ready( function($){
 		});
 
 		// add trigger logic for advanced popup modal
-		let search_advanced_trigger_click = function(){
+		let search_advanced_trigger_click = function( e ){
 			if( search.hasClass('advanced-mode-inline') ){
 				// inline
 				if( !search_advanced.hasClass('visible') ){
@@ -254,7 +258,7 @@ jQuery(document).ready( function($){
 				}
 			}
 		};
-		search.on('click', 'button.em-search-advanced-trigger', search_advanced_trigger_click);
+		search.on('click', 'button.em-search-advanced-trigger:not([data-search-advanced-id],[data-parent-trigger])', search_advanced_trigger_click);
 		search_form.on('search_advanced_trigger', search_advanced_trigger_click);
 
 		search_advanced.on('em_modal_close', function(){
@@ -295,42 +299,55 @@ jQuery(document).ready( function($){
 		search.on('change input', '.em-search-main-bar input.em-search-text', function( e ){
 			// sync advanced input field with same text
 			let advanced_search_input = search_advanced.find('input.em-search-text');
-			advanced_search_input.val( this.value );
-			// recalculate totals from here
-			search_form_advanced_calculate_totals_inputs(advanced_search_input[0]);
-			// any change without advanced form should show the search form
-			if ( search_advanced.length === 0 ) {
-				update_submit_buttons( true);
+			if ( advanced_search_input.length === 0 ) {
+				search_form_advanced_calculate_totals_inputs(this);
+			} else {
+				advanced_search_input.val( this.value );
+				// recalculate totals from here
+				search_form_advanced_calculate_totals_inputs(advanced_search_input[0]);
 			}
+			// any change without advanced form should show the search form still
+			update_submit_buttons( true);
 		});
 		search.on('change', '.em-search-main-bar input.em-search-geo-coords', function(){
 			let el = $(this);
 			let advanced_geo = search_advanced.find('div.em-search-geo');
 			// copy over value and class names
 			let advanced_geo_coords = advanced_geo.find('input.em-search-geo-coords');
-			advanced_geo_coords.val( el.val() ).attr('class', el.attr('class'));
-			let geo_text = el.siblings('input.em-search-geo').first();
-			advanced_geo.find('input.em-search-geo').val(geo_text.val()).attr('class', geo_text.attr('class'));
-			// calculate totals from here
-			search_form_advanced_calculate_totals_inputs(advanced_geo_coords);
-			// any change without advanced form should show the search form
-			if ( search_advanced.length === 0 ) {
-				update_submit_buttons( true );
+			if( advanced_geo_coords.length > 0 ) {
+				advanced_geo_coords.val(el.val()).attr('class', el.attr('class'));
+				let geo_text = el.siblings('input.em-search-geo').first();
+				advanced_geo.find('input.em-search-geo').val(geo_text.val()).attr('class', geo_text.attr('class'));
+				// calculate totals from here
+				search_form_advanced_calculate_totals_inputs(advanced_geo_coords);
+			} else {
+				// calculate totals from here
+				search_form_advanced_calculate_totals_inputs(this);
 			}
 		});
 		search.find('.em-search-main-bar .em-datepicker input.em-search-scope.flatpickr-input').each( function(){
 			if( !('_flatpickr' in this) ) return;
 			this._flatpickr.config.onClose.push( function( selectedDates, dateStr, instance ) {
 				// any change without advanced form should show the search form
-				if ( search_advanced.length === 0 ) {
-					update_submit_buttons( true );
+				let advanced_datepicker = search_advanced.find('.em-datepicker input.em-search-scope.flatpickr-input');
+				if( advanced_datepicker.length === 0 ) {
+					// update counter
+					let qty = dateStr ? 1:0;
+					update_input_count(instance.input, qty);
 				} else {
 					// update advanced search form datepicker values, trigger a close for it to handle the rest
-					let advanced_datepicker = search_advanced.find('.em-datepicker input.em-search-scope.flatpickr-input');
 					advanced_datepicker[0]._flatpickr.setDate( selectedDates, true );
 					advanced_datepicker[0]._flatpickr.close();
 				}
 			});
+		});
+
+		search.find('select.em-selectize').each(function () {
+			if( 'selectize' in this ) {
+				this.selectize.on('change', function () {
+					search_advanced_selectize_change(this);
+				});
+			}
 		});
 
 		/*
@@ -357,6 +374,14 @@ jQuery(document).ready( function($){
 				main.find('input.em-search-geo').val(geo_text.val()).attr('class', geo_text.attr('class'));
 			}
 		});
+		search_advanced.on('clear_search', function(){
+			let text = $(this).find('input.em-search-text');
+			if( text.length === 0 ) {
+				// select geo from main if it exists, so we keep counts synced
+				text = search.find('input.em-search-text');
+			}
+			text.val('').trigger('change');
+		});
 		/* Not sure we should be calculating this... since it's always set to something.
 		search_advanced.on('change', 'select.em-search-geo-unit, select.em-search-geo-distance', function( e ){
 			// combine both values into parent, if value set then it's a toggle
@@ -366,19 +391,26 @@ jQuery(document).ready( function($){
 			update_search_totals();
 		});
 		 */
-		search_advanced.on('change', 'input.em-search-eventful', function( e ){
+		search_advanced.on('change', 'input[type="checkbox"]', function( e ){
 			let el = $(this);
 			let qty = el.prop('checked') ? 1:0;
 			update_input_count( el, qty );
 		});
 		search_advanced.on('calculate_totals', function(){
-			$(this).find('input.em-search-text, input.em-search-geo-coords').each( function(){
+			search_advanced.find('input.em-search-text, input.em-search-geo-coords').each( function(){
 				search_form_advanced_calculate_totals_inputs(this);
 			});
-			$(this).find('input.em-search-eventful').trigger('change');
+			search_advanced.find('input[type="checkbox"]').trigger('change');
 		});
 		search_advanced.on('clear_search', function(){
-			$(this).find('input.em-search-geo').removeClass('off').removeClass('on').val('');
+			let geo = $(this).find('input.em-search-geo');
+			if( geo.length === 0 ) {
+				// select geo from main if it exists, so we keep counts synced
+				geo = search.find('input.em-search-geo');
+			}
+			geo.removeClass('off').removeClass('on').val('');
+			geo.siblings('input.em-search-geo-coords').val('').trigger('change');
+			search_advanced.find('input[type="checkbox"]').prop("checked", false).trigger('change').prop("checked", false); // set checked after trigger because something seems to be checking during event
 		});
 
 		// datepicker advanced logic
@@ -408,7 +440,12 @@ jQuery(document).ready( function($){
 			});
 		});
 		search_advanced.on('clear_search', function(){
-			search_advanced.find('.em-datepicker input.em-search-scope.flatpickr-input').each( function() {
+			let datepickers = search_advanced.find('.em-datepicker input.em-search-scope.flatpickr-input');
+			if( datepickers.length === 0 ) {
+				// find datepickers on main form so syncing is sent up
+				datepickers = search.find('.em-datepicker input.em-search-scope.flatpickr-input');
+			}
+			datepickers.each(function () {
 				this._flatpickr.clear();
 				update_input_count(this, 0);
 			});
@@ -429,12 +466,33 @@ jQuery(document).ready( function($){
 		$(document).on('em_search_loaded', scope_calendar_check);
 		scope_calendar_check();
 
-
 		// selectize advanced
+		let search_advanced_selectize_change = function( selectize ){
+			let qty = selectize.items.length;
+			// handle 'all' default values
+			if( qty == 1 && !selectize.items[0] ){
+				qty = 0;
+			}
+			if ( selectize.$input.closest('.em-search-advanced').length === 0 ) {
+				// sync advanced input field with same text
+				let classSearch = '.' + selectize.$input.attr('class').replaceAll(' ', '.').trim();
+				let advanced_search_input = search_advanced.find( classSearch );
+				if ( advanced_search_input.length > 0 ) {
+					// copy over values
+					advanced_search_input[0].selectize.setValue( selectize.items );
+					// recalculate totals from here
+					search_advanced_selectize_change(advanced_search_input[0].selectize);
+				}
+			}
+			update_input_count( selectize.$input, qty );
+		};
+
 		search_advanced.find('select.em-selectize').each(function () {
-			this.selectize.on('change', function(){
-				search_advanced_selectize_change(this);
-			});
+			if( 'selectize' in this ) {
+				this.selectize.on('change', function () {
+					search_advanced_selectize_change(this);
+				});
+			}
 		});
 		search_advanced.on('calculate_totals', function(){
 			$(this).find('select.em-selectize').each( function(){
@@ -442,25 +500,15 @@ jQuery(document).ready( function($){
 			});
 		});
 		search_advanced.on('clear_search', function(){
-			search_advanced.find('select.em-selectize').each( function(){
+			let clearSearch = function(){
 				this.selectize.clear();
 				this.selectize.refreshItems();
-				this.selectize.refreshOptions();
-				if( !this.classList.contains('always-open') ){
-					this.selectize.close();
-					this.selectize.$dropdown.hide();
-				}
-			});
+				this.selectize.refreshOptions(false);
+				this.selectize.blur();
+			};
+			search_advanced.find('select.em-selectize').each( clearSearch );
+			search.find('.em-search-main-bar select.em-selectize').each( clearSearch );
 		});
-
-		let search_advanced_selectize_change = function( selectize ){
-			let qty = selectize.items.length;
-			// handle 'all' default values
-			if( qty == 1 && !selectize.items[0] ){
-				qty = 0;
-			}
-			update_input_count( selectize.$input, qty );
-		};
 
 		// location-specific stuff for dropdowns (powered by selectize)
 		let locations_selectize_load_complete = function(){
@@ -552,7 +600,10 @@ jQuery(document).ready( function($){
 			search_advanced.trigger('clear_search');
 			// remove counters, set data counters to 0, hide section and submit form without search settings
 			update_search_totals(true); // in theory, this is 0 and removes everything
-			search_advanced.find('.em-search-advanced-section').removeClass('active').children('.em-search-section-content').slideUp();
+			if( search_advanced.hasClass('em-modal') ) {
+				search_advanced_trigger_click();
+			}
+			search_advanced.append('<input name="clear_search" type="hidden" value="1">');
 			search_advanced.find('button[type="submit"]').trigger('forceclick');
 			update_clear_button_count();
 		}).each( function(){
@@ -632,6 +683,7 @@ jQuery(document).ready( function($){
 						search.attr('data-advanced-previous-total', search.attr('data-advanced-total')); // so we know if filters were used in previous search
 						update_submit_buttons(false);
 						custom_view_data_container.remove(); // remove data so it's reloaded again later
+						search.find('input[name="clear_search"]').remove();
 					}
 				});
 			}
@@ -643,7 +695,7 @@ jQuery(document).ready( function($){
 	});
 
 	// handle external triggers, e.g. a calendar shortcut for a hidden search form
-	$(document).on('click', '.em-search-advanced-trigger[data-search-advanced-id]', function(){
+	$(document).on('click', '.em-search-advanced-trigger[data-search-advanced-id], .em-search-advanced-trigger[data-parent-trigger]', function(){
 		if( this.getAttribute('data-search-advanced-id') ){
 			// trigger the search form by parent
 			let search_advanced_form = document.getElementById( this.getAttribute('data-search-advanced-id') );
@@ -671,7 +723,8 @@ jQuery(document).ready( function($){
 		//add data-em-ajax att if it exists
 		let data = a.closest('.em-pagination').attr('data-em-ajax');
 		if( data ){
-			href += '&' + data;
+			href += href.includes('?') ? '&' : '?';
+			href += data;
 		}
 		// build querystring from url
 		let url_params = new URL(href, window.location.origin).searchParams;
@@ -690,6 +743,7 @@ jQuery(document).ready( function($){
 					paginationObserver.observe(this);
 				});
 				jQuery(document).triggerHandler('em_page_loaded', [view]);
+				view[0].scrollIntoView({ behavior: "smooth" });
 			}
 		});
 		e.preventDefault();

@@ -676,6 +676,16 @@ class Gum_Elementor_Widget_Post_meta extends Widget_Base {
     );
 
 
+    $repeater->add_control(
+      'meta_icon',
+      [
+        'label' => esc_html__( 'Icon', 'gum-elementor-addon' ),
+        'type' => Controls_Manager::ICONS,
+        'fa4compatibility' => 'icon',
+      ]
+    );
+
+
 
     $repeater->add_control(
       'meta_linked',
@@ -737,6 +747,7 @@ class Gum_Elementor_Widget_Post_meta extends Widget_Base {
             'meta_url' => '',
             'meta_text' => '',
             'meta_prefix' => '',
+            'meta_icon' => '',
             'meta_linked' => 'yes'
           ],
           [
@@ -744,6 +755,7 @@ class Gum_Elementor_Widget_Post_meta extends Widget_Base {
             'meta_url' => '',
             'meta_text' => '',
             'meta_prefix' => '',
+            'meta_icon' => '',
             'meta_linked' => 'yes'
           ],
           [
@@ -751,6 +763,7 @@ class Gum_Elementor_Widget_Post_meta extends Widget_Base {
             'meta_url' => '',
             'meta_text' => '',
             'meta_prefix' => '',
+            'meta_icon' => '',
             'meta_linked' => 'yes'
           ],
         ]
@@ -969,7 +982,6 @@ class Gum_Elementor_Widget_Post_meta extends Widget_Base {
       ]
     );
 
-
     $this->add_control(
       'meta_list_bghover',
       [
@@ -982,6 +994,18 @@ class Gum_Elementor_Widget_Post_meta extends Widget_Base {
       ]
     );
 
+
+    $this->add_control(
+      'icon_hover_color',
+      [
+        'label' => esc_html__( 'Icon Color', 'gum-elementor-addon' ),
+        'type' => Controls_Manager::COLOR,
+        'default' => '',
+        'selectors' => [
+          '{{WRAPPER}} .list-meta:hover i, {{WRAPPER}} .list-meta:hover path' => 'fill: {{VALUE}}; color: {{VALUE}};',
+        ],
+      ]
+    );
 
     $this->add_control(
       'meta_list_bdhover',
@@ -1031,6 +1055,63 @@ class Gum_Elementor_Widget_Post_meta extends Widget_Base {
         'size_units' => [ 'px', '%' ],
         'selectors' => [
           '{{WRAPPER}} .list-meta' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+        ],
+      ]
+    );
+
+
+    $this->add_control(
+      'icon_style_heading',
+      [
+        'label' => esc_html__( 'Icon', 'gum-elementor-addon' ),
+        'type' => Controls_Manager::HEADING,
+        'separator' => 'after'
+      ]
+    );
+
+    $this->add_control(
+      'icon_color',
+      [
+        'label' => esc_html__( 'Color', 'gum-elementor-addon' ),
+        'type' => Controls_Manager::COLOR,
+        'default' => '',
+        'selectors' => [
+          '{{WRAPPER}} .list-meta i, {{WRAPPER}} .list-meta path' => 'fill: {{VALUE}}; color: {{VALUE}};',
+        ],
+      ]
+    );
+
+    $this->add_control(
+      'icon_size',
+      [
+        'label' => esc_html__( 'Icon Size', 'gum-elementor-addon' ),
+        'type' => Controls_Manager::SLIDER,
+        'range' => [
+          'px' => [
+            'max' => 100,
+          ],
+        ],
+        'default' =>['value'=>'', 'unit'=>'px'],
+        'selectors' => [
+          '{{WRAPPER}} .list-meta i' => 'font-size: {{SIZE}}{{UNIT}};',
+          '{{WRAPPER}} .list-meta svg' => 'height: {{SIZE}}%;width: {{SIZE}}%;'
+        ],
+      ]
+    );
+
+    $this->add_control(
+      'icon_indent',
+      [
+        'label' => esc_html__( 'Text Indent', 'gum-elementor-addon' ),
+        'type' => Controls_Manager::SLIDER,
+        'range' => [
+          'px' => [
+            'max' => 100,
+          ],
+        ],
+        'default' =>['value'=>'', 'unit'=>'px'],
+        'selectors' => [
+          '{{WRAPPER}} .list-meta .meta-text' => 'padding-left: {{SIZE}}{{UNIT}};',
         ],
       ]
     );
@@ -1133,7 +1214,7 @@ class Gum_Elementor_Widget_Post_meta extends Widget_Base {
 
       $meta_linked = $list['meta_linked'];
       $meta_url = isset($list['meta_url']['url']) ? $list['meta_url']['url'] : '';
-      $meta_type = '';
+      $meta_type = $meta_icon_html = '';
 
       switch ($list['meta_type']) {
         case 'comment':
@@ -1163,12 +1244,21 @@ class Gum_Elementor_Widget_Post_meta extends Widget_Base {
           break;
       }
 
+      if( isset($list['meta_icon'] ) ){
+
+        if ( 'svg' === $list['meta_icon']['library'] ) {
+          $meta_icon_html = Icons_Manager::render_uploaded_svg_icon( $list['meta_icon']['value'] );
+        } else {
+          $meta_icon_html = Icons_Manager::render_font_icon( $list['meta_icon'], [ 'aria-hidden' => 'true' ], 'i' );
+        }
+      }
+
       if( $list['meta_prefix']!=''){
         $meta_type = $list['meta_prefix'].' '.$meta_type;
       } 
 
       if($meta_type!=''){
-          $rows_html[] = '<li class="list-meta">'. ( $meta_linked=='yes' ? sprintf('<a href="%s"><span class="meta-text">%s</span></a>', $meta_url, $meta_type) : sprintf('<span class="meta-text">%s</span>',$meta_type) ).'</li>';
+          $rows_html[] = '<li class="list-meta">'. ( $meta_linked=='yes' ? sprintf('<a href="%s">'.$meta_icon_html.'<span class="meta-text">%s</span></a>', esc_url($meta_url), $meta_type) : sprintf( $meta_icon_html.'<span class="meta-text">%s</span>',$meta_type) ).'</li>';
       }
      
     }

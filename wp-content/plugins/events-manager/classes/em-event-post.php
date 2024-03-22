@@ -265,6 +265,10 @@ class EM_Event_Post {
 		        $term = get_term_by('id', $wp_query->query_vars[EM_TAXONOMY_CATEGORY], EM_TAXONOMY_CATEGORY);
 		        $wp_query->query_vars[EM_TAXONOMY_CATEGORY] = ( $term !== false && !is_wp_error($term) )? $term->slug:0;
 		    }
+			// if we have a fake future status, make sure we don't actually look for this status
+			if ( !empty($_REQUEST['post_status']) && $_REQUEST['post_status'] === 'future' ) {
+				$wp_query->query_vars['post_status'] = 'any';
+			}
 		}
 		//Scoping
 		if( !empty($wp_query->query_vars['post_type']) && ($wp_query->query_vars['post_type'] == EM_POST_TYPE_EVENT || $wp_query->query_vars['post_type'] == 'event-recurring') && (empty($wp_query->query_vars['post_status']) || !in_array($wp_query->query_vars['post_status'],array('trash','pending','draft'))) ) {

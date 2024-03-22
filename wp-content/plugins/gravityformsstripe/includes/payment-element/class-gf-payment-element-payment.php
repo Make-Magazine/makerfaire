@@ -242,15 +242,14 @@ class GF_Payment_Element_Payment {
 			'expand'           => array( 'latest_invoice.payment_intent' ),
 		);
 
-		$coupon_field_id = rgar( $feed['meta'], 'customerInformation_coupon' );
-		$coupon          = $this->addon->maybe_override_field_value( rgar( $temp_entry, $coupon_field_id ), $form, $temp_entry, $coupon_field_id );
-		if ( $coupon ) {
-			$stripe_coupon = $api->get_coupon( $coupon );
-			if ( ! is_wp_error( $stripe_coupon ) ) {
-				$subscription_data['coupon'] = $coupon;
-			} else {
-				$this->addon->log_error( __METHOD__ . '(): Unable to add the coupon to the customer; ' . $stripe_coupon->get_error_message() );
-			}
+		$coupon_field_id   = rgar( $feed['meta'], 'customerInformation_coupon' );
+		$coupon            = $this->addon->maybe_override_field_value( rgar( $temp_entry, $coupon_field_id ), $form, $temp_entry, $coupon_field_id );
+		$coupon_field_type = $this->get_coupon_field_type( $form, $coupon_field_id );
+
+		if ( $coupon_field_type === 'coupon' ) {
+			$subscription_data['coupon'] = strtoupper( $coupon );
+		} else {
+			$subscription_data['coupon'] = $coupon;
 		}
 
 		// Some payment methods work by sending an invoice to the customer and not charging automatically.
@@ -441,5 +440,24 @@ class GF_Payment_Element_Payment {
 		} else {
 			return $api->get_payment_intent( $id, array( 'expand' => array( 'payment_method', 'invoice' ) ) );
 		}
+	}
+
+	/**
+	 * Determines if the mapped coupon is a coupon field or a text field.
+	 *
+	 * @since 5.5.0
+	 *
+	 * @param array $form            The current form object.
+	 * @param int   $coupon_field_id The id of the coupon field.
+	 *
+	 * @return string The type of the coupon field.
+	 */
+	public function get_coupon_field_type( $form, $coupon_field_id ) {
+		$field = GFFormsModel::get_field( $form, $coupon_field_id );
+		if ( $field ) {
+			return $field->type;
+		}
+
+		return '';
 	}
 }

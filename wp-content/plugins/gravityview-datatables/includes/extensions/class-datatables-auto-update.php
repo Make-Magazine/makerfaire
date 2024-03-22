@@ -52,7 +52,7 @@ class GV_Extension_DataTables_Auto_Update extends GV_DataTables_Extension {
 							'desc'    => esc_html__( 'Automatically refresh the table every number of minutes without refreshing the page.', 'gv-datatables' ),
 							'article' => array(
 								'id'  => '61c2875e28e2785c351f4eae',
-								'url' => 'https://docs.gravityview.co/article/821-enable-auto-update-datatables-setting',
+								'url' => 'https://docs.gravitykit.com/article/821-enable-auto-update-datatables-setting',
 							),
 						),
 						rgar( $ds, 'auto_update', 0 )
@@ -82,7 +82,7 @@ class GV_Extension_DataTables_Auto_Update extends GV_DataTables_Extension {
 	 * @inheritDoc
 	 * @return array DataTables configuration array with `updateInterval` key set to value as microseconds.
 	 */
-	function add_config( $dt_config, $view_id, $post ) {
+	function add_config( $dt_config, $view_id, $post, $object ) {
 
 		$update_interval = $this->get_setting( $view_id, 'update_interval', self::DEFAULT_INTERVAL_MINUTES );
 

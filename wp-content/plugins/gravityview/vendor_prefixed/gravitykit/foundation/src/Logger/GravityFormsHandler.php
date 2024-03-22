@@ -2,8 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by gravityview on 08-December-2023 using Strauss.
- * @see https://github.com/BrianHenryIE/strauss
+ * Modified by gravityview on 19-March-2024 using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\GravityView\Foundation\Logger;
@@ -19,16 +18,20 @@ use GFAddOn;
  */
 class GravityFormsHandler extends AbstractProcessingHandler {
 	/**
+	 * Unique logger ID.
+	 *
 	 * @since 1.0.0
 	 *
-	 * @var string Logger unique ID.
+	 * @var string
 	 */
 	protected $_logger_id;
 
 	/**
+	 * Logger title.
+	 *
 	 * @since 1.0.0
 	 *
-	 * @var string Logger title.
+	 * @var string
 	 */
 	protected $_logger_title;
 
@@ -63,6 +66,12 @@ class GravityFormsHandler extends AbstractProcessingHandler {
 
 	/**
 	 * {@inheritdoc}
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param array $record The record to process.
+	 *
+	 * @return void
 	 */
 	protected function write( array $record ) {
 		$monolog_to_klogger_log_level_map = [
@@ -80,6 +89,7 @@ class GravityFormsHandler extends AbstractProcessingHandler {
 	}
 }
 
+// phpcs:disable Squiz.Commenting.VariableComment.MissingVar, Squiz.Commenting.FunctionComment.MissingParamTag, Generic.Files.OneObjectStructurePerFile.MultipleFound
 class MockGFAddon extends GFAddOn {
 	/**
 	 * {@inheritdoc}
@@ -115,3 +125,4 @@ class MockGFAddon extends GFAddOn {
 		parent::__construct();
 	}
 }
+// phpcs:enable Squiz.Commenting.VariableComment.MissingVar, Squiz.Commenting.FunctionComment.MissingParamTag, Generic.Files.OneObjectStructurePerFile.MultipleFound

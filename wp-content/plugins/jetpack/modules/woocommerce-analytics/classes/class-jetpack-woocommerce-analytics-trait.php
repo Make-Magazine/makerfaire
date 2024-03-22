@@ -68,7 +68,13 @@ trait Jetpack_WooCommerce_Analytics_Trait {
 			} else {
 				$product = $item['data'];
 			}
+
+			if ( ! $product || ! $product instanceof WC_Product ) {
+				continue;
+			}
+
 			$data = $this->get_product_details( $product );
+
 			if ( $item instanceof WC_Order_Item_Product ) {
 				$data['pq'] = $item->get_quantity();
 			} else {
@@ -107,14 +113,14 @@ trait Jetpack_WooCommerce_Analytics_Trait {
 		);
 
 		$enabled_payment_options = array_keys( $enabled_payment_options );
-
-		$shared_data = array(
+		$cart_total              = wc_prices_include_tax() ? $cart->get_cart_contents_total() + $cart->get_cart_contents_tax() : $cart->get_cart_contents_total();
+		$shared_data             = array(
 			'products'               => $this->format_items_to_json( $cart->get_cart() ),
 			'create_account'         => $create_account,
 			'guest_checkout'         => $guest_checkout,
 			'express_checkout'       => 'null', // TODO: not solved yet.
 			'products_count'         => $cart->get_cart_contents_count(),
-			'order_value'            => $cart->get_cart_total(),
+			'order_value'            => $cart_total,
 			'shipping_options_count' => 'null', // TODO: not solved yet.
 			'coupon_used'            => $coupon_used,
 			'payment_options'        => $enabled_payment_options,
@@ -262,7 +268,7 @@ trait Jetpack_WooCommerce_Analytics_Trait {
 			'ui'                                 => $this->get_user_id(),
 			'url'                                => home_url(),
 			'woo_version'                        => WC()->version,
-			'store_admin'                        => in_array( 'administrator', wp_get_current_user()->roles, true ) ? 1 : 0,
+			'store_admin'                        => in_array( array( 'administrator', 'shop_manager' ), wp_get_current_user()->roles, true ) ? 1 : 0,
 			'device'                             => wp_is_mobile() ? 'mobile' : 'desktop',
 			'template_used'                      => $this->cart_checkout_templates_in_use ? '1' : '0',
 			'additional_blocks_on_cart_page'     => $this->additional_blocks_on_cart_page,
@@ -381,8 +387,8 @@ trait Jetpack_WooCommerce_Analytics_Trait {
 		$all_props = apply_filters(
 			'jetpack_woocommerce_analytics_event_props',
 			array_merge(
-				$properties,
-				$this->get_common_properties()
+				$this->get_common_properties(), // We put this here to allow override of common props.
+				$properties
 			)
 		);
 

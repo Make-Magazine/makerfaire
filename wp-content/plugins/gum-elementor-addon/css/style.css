@@ -377,7 +377,7 @@ ul.gum-menu{
 
 
 /* headig widget */
-.elementor-widget-gum_heading .section-main-title{ position: relative;z-index: 1;}
+.elementor-widget-gum_heading .section-main-title{ position: relative;z-index: 1; margin: 0; padding: 0;}
 .elementor-widget-gum_heading .section-main-title a{ text-decoration: none; font-family: inherit; font-size: inherit; font-weight: inherit; line-height: inherit; word-spacing: inherit;}
 .elementor-widget-gum_heading .section-main-title.size-xlarge{ font-size: 4em; }
 .elementor-widget-gum_heading .section-main-title.size-large{ font-size: 2.5em; }

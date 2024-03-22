@@ -1,4 +1,4 @@
-/*! elementor - v3.19.0 - 05-02-2024 */
+/*! elementor - v3.20.0 - 20-03-2024 */
 @charset "UTF-8";
 .dialog-widget-content {
   background-color: var(--e-a-bg-default);
@@ -5054,6 +5054,9 @@ body.elementor-page .elementor-widget-menu-anchor {
 .elementor-social-icon-telegram {
   background-color: #2CA5E0;
 }
+.elementor-social-icon-threads {
+  background-color: #000000;
+}
 .elementor-social-icon-thumb-tack {
   background-color: #1aa1d8;
 }
@@ -5089,6 +5092,9 @@ body.elementor-page .elementor-widget-menu-anchor {
 }
 .elementor-social-icon-wordpress {
   background-color: #21759b;
+}
+.elementor-social-icon-x-twitter {
+  background-color: #000000;
 }
 .elementor-social-icon-xing {
   background-color: #026466;

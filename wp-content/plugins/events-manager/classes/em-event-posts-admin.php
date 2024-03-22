@@ -160,9 +160,15 @@ class EM_Event_Posts_Admin{
 			}
             if( !empty($_REQUEST['author']) ){
             	?>
-            	<input type="hidden" name="author" value="<?php echo esc_attr($_REQUEST['author']); ?>" />
+            	<input type="hidden" name="author" value="<?php echo esc_attr($_REQUEST['author']); ?>" >
             	<?php            	
             }
+			// overwrite post status search if using custom stati
+			if( !empty($_REQUEST['post_status']) && ($_REQUEST['post_status'] === 'past' || $_REQUEST['post_status'] === 'future') ){
+				?>
+				<input type="hidden" name="post_status" value="all" >
+				<?php
+			}
 		}
 	}
 	

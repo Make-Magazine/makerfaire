@@ -21,6 +21,7 @@ function em_options_save(){
 					$EM_Notices->add_error( sprintf(esc_html_x('Colors must be in a valid %s format, such as #FF00EE.', 'hex format', 'events-manager'), '<a href="http://en.wikipedia.org/wiki/Web_colors">hex</a>').' '. esc_html__('This setting was not changed.', 'events-manager'), true);					
 				}elseif( $postKey == 'dbem_oauth' && is_array($postValue) ){
 					foreach($postValue as $postValue_key=>$postValue_val){
+						$postValue_val = em_options_save_kses_deep( $postValue_val );
 						EM_Options::set($postValue_key, wp_unslash($postValue_val), 'dbem_oauth');
 					}
 				}else{
@@ -30,6 +31,7 @@ function em_options_save(){
 					}else{
 					    $postValue = wp_unslash($postValue);
 					}
+					$postValue = em_options_save_kses_deep( $postValue );
 					update_option($postKey, $postValue);
 				}
 			}elseif( $postKey == 'dbem_data' && is_array($postValue) ){
@@ -40,6 +42,7 @@ function em_options_save(){
 					}else{
 						$postV = wp_unslash($postV);
 					}
+					$postV = em_options_save_kses_deep( $postV );
 					EM_Options::set( $postK, $postV );
 				}
 			}
@@ -195,6 +198,7 @@ function em_options_save(){
 	//Force Update Recheck - Workaround for now
 	if( !empty($_REQUEST['action']) && $_REQUEST['action'] == 'recheck_updates' && check_admin_referer('em_recheck_updates_'.get_current_user_id().'_wpnonce') && em_wp_is_super_admin() ){
 		//force recheck of plugin updates, to refresh dl links
+		remove_all_actions('pre_set_site_transient_update_plugins');
 		delete_transient('update_plugins');
 		delete_site_transient('update_plugins');
 		$EM_Notices->add_confirm(__('If there are any new updates, you should now see them in your Plugins or Updates admin pages.','events-manager'), true);
@@ -346,6 +350,23 @@ function em_options_save(){
 	}
 }
 add_action('admin_init', 'em_options_save');
+
+/**
+ * Runs wp_kses on string or recursviely into array.
+ * @param array|string $string
+ *
+ * @return mixed
+ */
+function em_options_save_kses_deep( $string ) {
+	if( is_array($string) ) {
+		foreach ( $string as $k => $v ) {
+			$string[$k] = em_options_save_kses_deep( $v );
+		}
+	} else {
+		$string = wp_kses_post( $string );
+	}
+	return $string;
+}
 
 function em_admin_email_test_ajax(){
     if( wp_verify_nonce($_REQUEST['_check_email_nonce'],'check_email') && current_user_can('activate_plugins') ){

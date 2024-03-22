@@ -6,8 +6,8 @@ License URI: http://www.gnu.org/licenses/gpl.html
 Tags: slider, image slider, wordpress slider, video slider, best slider plugin, slideshow, swipe, touch slider, content slider, SEO, vertical slider, HTML5 slider, hardware accelerate, animation, mobile slider, iOS, android, youtube slider, horizontal slider, responsive slider, fullscreen slider, post slider, photo slider, online album, mobile slider, WordPress slider,wpml, ,ultisite, wistia, woocommerce, product slider, woocommerce slider, portfolio, gallery, lightweight slider
 Requires PHP: 5.4
 Requires at least: 5.0
-Tested up to: 6.4.1
-Stable tag: 3.9.5
+Tested up to: 6.4.2
+Stable tag: 3.9.7
 
 Build SEO friendly sliders fast and easy with Master Slider. The most advanced responsive HTML5 WordPress slider plugin, with touch swipe navigation that works smoothly on desktop and devices.
 
@@ -236,6 +236,10 @@ Bugs can be reported in our [support forums](http://wordpress.org/tags/master-sl
 
 
 == Changelog ==
+
+= 3.9.7 =
+= Version 3.9.7/ (09.02.2024) =
+- [Improvement]: Security improvement applied.
 
 = 3.9.5 =
 = Version 3.9.5/ (25.11.2023) =
@@ -519,6 +523,3 @@ Bugs can be reported in our [support forums](http://wordpress.org/tags/master-sl
 
 
 == Upgrade Notice ==
-
-= Version 3.9.1/ (12.06.2023) =
-- [Fixed]: Minor bugs fixed.

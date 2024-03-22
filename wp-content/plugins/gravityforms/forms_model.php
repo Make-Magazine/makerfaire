@@ -3435,20 +3435,45 @@ class GFFormsModel {
 				}
 				break;
 
-			case 'fileupload' :
+			case 'fileupload':
+				$tmp_path = GFFormsModel::get_upload_path( $form['id'] ) . '/tmp/';
+				$tmp_url  = GFFormsModel::get_upload_url( $form['id'] ) . '/tmp/';
+				$value    = array(); // Initialize as empty array to store file info
+				// Check if it's a multiple file upload field
 				if ( $field->multipleFiles ) {
-					if ( ! empty( $value ) ) {
-						$value = json_encode( $value );
+					$temp_files = rgars( GFFormsModel::$uploaded_files, $form['id'] . '/' . $input_name );
+
+					if ( ! empty( $temp_files ) && is_array( $temp_files ) ) {
+						foreach ( $temp_files as $temp_file ) {
+							if ( rgar( $temp_file, 'temp_filename' ) ) {
+								$value[] = array(
+									'tmp_path'      => $tmp_path . $temp_file['temp_filename'],
+									'tmp_url'       => $tmp_url . $temp_file['temp_filename'],
+									'tmp_name'      => $temp_file['temp_filename'],
+									'uploaded_name' => rgar( $temp_file, 'uploaded_filename' ),
+								);
+							}
+						}
 					}
 				} else {
+					// Handle single file upload scenario
 					$file_info = self::get_temp_filename( $form['id'], $input_name );
-					if ( ! empty( $file_info ) ) {
-						$file_path = self::get_file_upload_path( $form['id'], $file_info['uploaded_filename'] );
-						$value     = $file_path['url'];
+					if ( ! empty( $file_info ) && isset( $file_info['temp_filename'] ) ) {
+						$value[] = array(
+							'tmp_path'      => $tmp_path . $file_info['temp_filename'],
+							'tmp_url'       => $tmp_url . $file_info['temp_filename'],
+							'tmp_name'      => $file_info['temp_filename'],
+							'uploaded_name' => rgar( $file_info, 'uploaded_filename' ),
+						);
 					}
 				}
 
+				if ( ! empty( $value ) ) {
+					$value = json_encode( $value ); // Encode the array of temp URLs as JSON string
+				}
+
 				break;
+
 
 			default:
 
@@ -6740,15 +6765,15 @@ class GFFormsModel {
 			return null;
 		}
 
-		if ( is_numeric( $field_id ) ) {
-			// Removing floating part of field (i.e 1.3 -> 1) to return field by input id.
+		if ( is_numeric( $field_id ) || preg_match( '/^\d+\.\w+$/', $field_id ) ) {
+			// Removing the input-specific segment from the field ID (i.e 1.3 or 1.something -> 1).
 			$field_id = intval( $field_id );
 		}
 
 		global $_fields;
 		$key = $form['id'] . '_' . $field_id;
 		$return = null;
-		if (isset( $_fields[ $key ] ) ) {
+		if ( isset( $_fields[ $key ] ) ) {
 			return $_fields[ $key ];
 		}
 

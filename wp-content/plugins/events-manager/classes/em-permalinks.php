@@ -201,7 +201,7 @@ if( !class_exists('EM_Permalinks') ){
 				}					
 			}
 			//add ical CPT endpoints
-			$em_rules[EM_POST_TYPE_EVENT_SLUG."/([^/]+)/ical/?$"] = 'index.php?'.EM_POST_TYPE_EVENT.'=$matches[1]&ical=1';
+			$em_rules[EM_POST_TYPE_EVENT_SLUG."/(.+)/ical/?$"] = 'index.php?'.EM_POST_TYPE_EVENT.'=$matches[1]&ical=1';
 			if( get_option('dbem_locations_enabled') ){
 				$em_rules[EM_POST_TYPE_LOCATION_SLUG."/([^/]+)/ical/?$"] = 'index.php?'.EM_POST_TYPE_LOCATION.'=$matches[1]&ical=1';
 			}

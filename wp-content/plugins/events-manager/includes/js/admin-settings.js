@@ -84,6 +84,13 @@ jQuery(document).ready(function($){
 			$('tbody.em-location-archive-sub-options').hide();
 		}
 	}).trigger('change');
+	$('select[name="dbem_search_form_advanced_mode"]').on('change', function(){ //location archives
+		if( $(this).val() === 'modal' ){
+			$('tbody.em-search-form-advanced-hidden').hide().find('#dbem_search_form_advanced_trigger_yes').prop('checked', true);
+		}else{
+			$('tbody.em-search-form-advanced-hidden').show();
+		}
+	}).trigger('change');
 
 	//For rewrite titles
 	$('input:radio[name=dbem_disable_title_rewrites]').on('change',function(){

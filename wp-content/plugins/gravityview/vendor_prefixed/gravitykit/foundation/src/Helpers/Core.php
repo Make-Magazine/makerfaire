@@ -2,8 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by gravityview on 08-December-2023 using Strauss.
- * @see https://github.com/BrianHenryIE/strauss
+ * Modified by gravityview on 19-March-2024 using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\GravityView\Foundation\Helpers;
@@ -30,9 +29,9 @@ class Core {
 			$buffer = ob_get_clean();
 
 			if ( $buffer ) {
-				error_log( "[GravityKit] Buffer output before returning Ajax response: {$buffer}" );
+				error_log( "[GravityKit] Buffer output before returning Ajax response: {$buffer}" ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
 
-				header( 'GravityKit: ' . json_encode( $buffer ) );
+				header( 'GravityKit: ' . wp_json_encode( $buffer ) );
 			}
 
 			if ( $is_error ) {
@@ -162,7 +161,7 @@ class Core {
 				continue;
 			}
 
-			$plugins[ $plugin['TextDomain'] ] = array(
+			$plugins[ $plugin['TextDomain'] ] = [
 				'name'              => $plugin['Name'],
 				'path'              => $path,
 				'plugin_file'       => file_exists( WP_PLUGIN_DIR . DIRECTORY_SEPARATOR . $path ) ? WP_PLUGIN_DIR . DIRECTORY_SEPARATOR . $path : null,
@@ -175,13 +174,13 @@ class Core {
 				'free'              => true, // @TODO: possibly handle this differently.
 				'has_update'        => false, // @TODO: detect if there's an update available.
 				'download_link'     => null, // @TODO: get the download link if there's an update available.
-			);
+			];
 
 			$dependencies = [
 				'0.0.1' => [
 					'system' => [],
 					'plugin' => [],
-				]
+				],
 			];
 
 			$required_php_version = $plugin['RequiresPHP'] ?? null;
@@ -194,7 +193,6 @@ class Core {
 					'icon'    => 'https://www.gravitykit.com/wp-content/uploads/2023/08/wordpress-alt.svg',
 				];
 			}
-
 
 			if ( $required_wp_version ) {
 				$dependencies['0.0.1']['system'][] = [

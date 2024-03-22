@@ -20,6 +20,7 @@ class GPNF_GravityFlow {
 
 		add_filter( 'gpnf_can_user_edit_entry', array( $this, 'can_user_edit_entry' ), 10, 3 );
 		add_filter( 'gpnf_submitted_entry_ids', array( $this, 'get_submitted_entry_ids' ), 10, 3 );
+		add_filter( 'gravityflow_permission_granted_entry_detail', array( $this, 'can_user_view_child_entry' ), 10, 4 );
 
 	}
 
@@ -163,6 +164,42 @@ class GPNF_GravityFlow {
 		}
 
 		return array_unique( array_merge( $entry_ids, $flow_child_entries[ $field->id ] ) );
+	}
+
+	/**
+	 * Check if we are testing on a child entry which already has permission for its parent.
+	 *
+	 * @param array                 $entry_ids Entry IDs to populate the field with.
+	 * @param array                 $form      Current form object.
+	 * @param \GP_Nested_Form_Field $field     Current field object.
+	 *
+	 * @return array
+	 */
+	public function can_user_view_child_entry( $permission_granted, $entry, $form, $current_step ) {
+
+		// If permission granted is already true, return.
+		if ( $permission_granted ) {
+			return $permission_granted;
+		}
+
+		$parent_entry_id = rgar( $entry, 'gpnf_entry_parent' );
+
+		// Not a child entry, return back with original permission status
+		if ( empty( $parent_entry_id ) ) {
+			return $permission_granted;
+		}
+
+		// Get the parent entry, form, and step.
+		$parent_entry     = GFAPI::get_entry( $parent_entry_id );
+		$parent_form      = GFAPI::get_form( $parent_entry['form_id'] );
+		$gravity_flow_api = new Gravity_Flow_API( $parent_form['id'] );
+		$parent_step      = $gravity_flow_api->get_current_step( $parent_entry );
+
+		// Check if the parent entry was granted the "view" permission.
+		$permission_granted = Gravity_Flow_Entry_Detail::is_permission_granted( $parent_entry, $parent_form, $parent_step );
+
+		// If parent was granted "view" permission, child is also granted it.
+		return $permission_granted;
 	}
 
 }

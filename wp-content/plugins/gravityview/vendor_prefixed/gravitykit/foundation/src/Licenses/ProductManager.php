@@ -2,8 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by gravityview on 08-December-2023 using Strauss.
- * @see https://github.com/BrianHenryIE/strauss
+ * Modified by gravityview on 19-March-2024 using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\GravityView\Foundation\Licenses;
@@ -32,9 +31,11 @@ class ProductManager {
 	const PRODUCTS_DATA_CACHE_EXPIRATION = 86400; // 24 hours in seconds.
 
 	/**
+	 * {@ProductManager} class instance.
+	 *
 	 * @since 1.0.0
 	 *
-	 * @var ProductManager Class instance.
+	 * @var ProductManager
 	 */
 	private static $_instance;
 
@@ -71,6 +72,8 @@ class ProductManager {
 
 		add_action( 'gk/foundation/ajax/after', [ $this, 'on_ajax_completion' ], 10, 3 );
 
+		add_action( 'gk/foundation/plugin-activated', [ $this, 'cleanup_products_data' ] );
+
 		$this->update_manage_your_kit_submenu_badge_count();
 
 		$initialized = true;
@@ -88,14 +91,17 @@ class ProductManager {
 	 * @return array
 	 */
 	public function configure_ajax_routes( array $routes ) {
-		return array_merge( $routes, [
-			'install_product'    => [ $this, 'ajax_install_product' ],
-			'update_product'     => [ $this, 'ajax_update_product' ],
-			'delete_product'     => [ $this, 'ajax_delete_product' ],
-			'activate_product'   => [ $this, 'ajax_activate_product' ],
-			'deactivate_product' => [ $this, 'ajax_deactivate_product' ],
-			'get_products'       => [ $this, 'ajax_get_products_data' ],
-		] );
+		return array_merge(
+			$routes,
+			[
+				'install_product'    => [ $this, 'ajax_install_product' ],
+				'update_product'     => [ $this, 'ajax_update_product' ],
+				'delete_product'     => [ $this, 'ajax_delete_product' ],
+				'activate_product'   => [ $this, 'ajax_activate_product' ],
+				'deactivate_product' => [ $this, 'ajax_deactivate_product' ],
+				'get_products'       => [ $this, 'ajax_get_products_data' ],
+			]
+		);
 	}
 
 	/**
@@ -114,7 +120,7 @@ class ProductManager {
 			return;
 		}
 
-		if ( in_array( $route, [ 'install_product', 'activate_product', 'update_product' ] ) && isset( $payload['pause_after_completion'] ) ) {
+		if ( in_array( $route, [ 'install_product', 'activate_product', 'update_product' ], true ) && isset( $payload['pause_after_completion'] ) ) {
 			sleep( (int) $payload['pause_after_completion'] );
 		}
 	}
@@ -124,17 +130,21 @@ class ProductManager {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param array $payload
+	 * @param array $payload Ajax request payload.
 	 *
 	 * @throws Exception
 	 *
 	 * @return array{products: array, activation_error: null|string}
 	 */
 	public function ajax_install_product( array $payload ): array {
-		$payload = wp_parse_args( $payload, [
-			'text_domain' => null,
-			'activate'    => false,
-		] );
+		$payload = wp_parse_args(
+			$payload,
+			[
+				'text_domain'                 => null,
+				'activate'                    => false,
+				'frontend_foundation_version' => 0,
+			]
+		);
 
 		if ( ! Framework::get_instance()->current_user_can( 'install_products' ) ) {
 			throw new Exception( esc_html__( 'You do not have a permission to perform this action.', 'gk-gravityview' ) );
@@ -177,9 +187,11 @@ class ProductManager {
 		}
 
 		return [
-			'products'                 => $this->ajax_get_products_data(),
-			'activation_error'         => $activation_error,
-			'backendFoundationVersion' => $backend_foundation_version,
+			'products'         => $this->ajax_get_products_data(),
+			'activation_error' => $activation_error,
+            'ui_action'        => [
+                'reload' => version_compare( $backend_foundation_version, $payload['frontend_foundation_version'], '<>' ) || $product['has_admin_menu'],
+            ],
 		];
 	}
 
@@ -188,8 +200,7 @@ class ProductManager {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param array $product
-	 * @param bool  $activate
+	 * @param array $product Product data.
 	 *
 	 * @throws Exception
 	 *
@@ -200,7 +211,7 @@ class ProductManager {
 			throw new Exception( esc_html__( 'Unable to load core WordPress files required to install the product.', 'gk-gravityview' ) );
 		}
 
-		include_once( ABSPATH . 'wp-admin/includes/class-wp-upgrader.php' );
+		include_once ABSPATH . 'wp-admin/includes/class-wp-upgrader.php';
 
 		$product_id            = $product['id'];
 		$product_download_link = $product['download_link'];
@@ -242,10 +253,13 @@ class ProductManager {
 		try {
 			$installer->install( $product_download_link, [ 'overwrite_package' => true ] );
 		} catch ( Exception $e ) {
-			$error = join( ' ', [
-				esc_html__( 'Installation failed.', 'gk-gravityview' ),
-				$e->getMessage()
-			] );
+			$error = join(
+				' ',
+				[
+					esc_html__( 'Installation failed.', 'gk-gravityview' ),
+					$e->getMessage(),
+				]
+			);
 
 			throw new Exception( $error );
 		}
@@ -260,16 +274,20 @@ class ProductManager {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param array $payload
+	 * @param array $payload Ajax request payload.
 	 *
 	 * @throws Exception
 	 *
 	 * @return array{products: array, activation_error: null|string}
 	 */
 	public function ajax_update_product( array $payload ): array {
-		$payload = wp_parse_args( $payload, [
-			'text_domain' => null,
-		] );
+		$payload = wp_parse_args(
+			$payload,
+			[
+				'text_domain'                 => null,
+				'frontend_foundation_version' => 0,
+			]
+		);
 
 		if ( ! Framework::get_instance()->current_user_can( 'update_products' ) ) {
 			throw new Exception( esc_html__( 'You do not have a permission to perform this action.', 'gk-gravityview' ) );
@@ -292,26 +310,31 @@ class ProductManager {
 
 		$activation_error = null;
 
-		try {
-			$this->activate_product( $product );
+		// After an update, the product is deactivated and needs to be reactivated. Activate it if it was active before the update.
+		if ( $product['active'] ) {
+			try {
+				$this->activate_product( $product );
 
-			// Check if the updated product comes with a newer version of the Foundation, which will be loaded if another Ajax request is made.
-			$product_foundation_version = Core::get_instance()->get_plugin_foundation_version( $product['plugin_file'], true );
+				// Check if the updated product comes with a newer version of the Foundation, which will be loaded if another Ajax request is made.
+				$product_foundation_version = Core::get_instance()->get_plugin_foundation_version( $product['plugin_file'], true );
 
-			$backend_foundation_version = version_compare(
-				Core::VERSION,
-				$product_foundation_version,
-				'<'
-			) ? $product_foundation_version : Core::VERSION;
-		} catch ( Exception $e ) {
-			$activation_error = $e->getMessage();
+				$backend_foundation_version = version_compare(
+					Core::VERSION,
+					$product_foundation_version,
+					'<'
+				) ? $product_foundation_version : Core::VERSION;
+			} catch ( Exception $e ) {
+				$activation_error = $e->getMessage();
+			}
 		}
 
-		return [
-			'products'                 => $this->ajax_get_products_data(),
-			'activation_error'         => $activation_error,
-			'backendFoundationVersion' => $backend_foundation_version,
-		];
+        return [
+            'products'         => $this->ajax_get_products_data(),
+            'activation_error' => $activation_error,
+            'ui_action'        => [
+                'reload' => version_compare( $backend_foundation_version, $payload['frontend_foundation_version'], '<>' ) || ( $product['has_admin_menu'] && $product['active'] && ! $activation_error ),
+            ],
+        ];
 	}
 
 	/**
@@ -320,7 +343,7 @@ class ProductManager {
 	 * @since 1.0.0
 	 * @since 1.2.0 Made the $product parameter an array of product data.
 	 *
-	 * @param array $product
+	 * @param array $product Product data.
 	 *
 	 * @throws Exception
 	 *
@@ -331,7 +354,7 @@ class ProductManager {
 			throw new Exception( esc_html__( 'Unable to load core WordPress files required to install the product.', 'gk-gravityview' ) );
 		}
 
-		include_once( ABSPATH . 'wp-admin/includes/class-wp-upgrader.php' );
+		include_once ABSPATH . 'wp-admin/includes/class-wp-upgrader.php';
 
 		// This is an edge case when for some reason the update_plugins transient is not set or the product is not marked as needing an update.
 		$update_plugins_transient_filter = function () {
@@ -358,10 +381,13 @@ class ProductManager {
 			remove_filter( 'pre_site_transient_update_plugins', $update_plugins_transient_filter );
 			remove_filter( 'http_request_args', $lock_user_agent_header, 100 );
 		} catch ( Exception $e ) {
-			$error = join( ' ', [
-				esc_html__( 'Update failed.', 'gk-gravityview' ),
-				$updater->strings[ $e->getMessage() ] ?? $e->getMessage(),
-			] );
+			$error = join(
+				' ',
+				[
+					esc_html__( 'Update failed.', 'gk-gravityview' ),
+					$updater->strings[ $e->getMessage() ] ?? $e->getMessage(),
+				]
+			);
 
 			throw new Exception( $error );
 		}
@@ -376,16 +402,19 @@ class ProductManager {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param array $payload
+	 * @param array $payload Ajax request payload.
 	 *
 	 * @throws Exception
 	 *
 	 * @return array{products: array}
 	 */
 	public function ajax_delete_product( array $payload ): array {
-		$payload = wp_parse_args( $payload, [
-			'text_domain' => null,
-		] );
+		$payload = wp_parse_args(
+			$payload,
+			[
+				'text_domain' => null,
+			]
+		);
 
 		if ( ! Framework::get_instance()->current_user_can( 'delete_products' ) ) {
 			throw new Exception( esc_html__( 'You do not have a permission to perform this action.', 'gk-gravityview' ) );
@@ -404,14 +433,14 @@ class ProductManager {
 
 		if ( $product['active'] ) {
 			throw new Exception(
-				esc_html__( "Product must be deactivation before it can be deleted.", 'gk-gravityview' )
+				esc_html__( 'Product must be deactivated before it can be deleted.', 'gk-gravityview' )
 			);
 		}
 
 		$this->delete_product( $product );
 
 		return [
-			'products' => $this->ajax_get_products_data()
+			'products' => $this->ajax_get_products_data(),
 		];
 	}
 
@@ -420,7 +449,7 @@ class ProductManager {
 	 *
 	 * @since 1.2.0
 	 *
-	 * @param array $product
+	 * @param array $product Product data.
 	 *
 	 * @throws Exception
 	 *
@@ -455,16 +484,20 @@ class ProductManager {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param array $payload
+	 * @param array $payload Ajax request payload.
 	 *
 	 * @throws Exception
 	 *
 	 * @return array{products: array}
 	 */
 	public function ajax_activate_product( array $payload ): array {
-		$payload = wp_parse_args( $payload, [
-			'text_domain' => null,
-		] );
+		$payload = wp_parse_args(
+			$payload,
+			[
+				'text_domain'                 => null,
+				'frontend_foundation_version' => 0,
+			]
+		);
 
 		if ( ! Framework::get_instance()->current_user_can( 'activate_products' ) ) {
 			throw new Exception( esc_html__( 'You do not have a permission to perform this action.', 'gk-gravityview' ) );
@@ -492,10 +525,12 @@ class ProductManager {
 			'<'
 		) ? $product_foundation_version : Core::VERSION;
 
-		return [
-			'products'                 => $this->ajax_get_products_data(),
-			'backendFoundationVersion' => $backend_foundation_version,
-		];
+        return [
+            'products'  => $this->ajax_get_products_data(),
+            'ui_action' => [
+                'reload' => version_compare( $backend_foundation_version, $payload['frontend_foundation_version'], '<>' ) || $product['has_admin_menu'],
+            ],
+        ];
 	}
 
 	/**
@@ -504,7 +539,7 @@ class ProductManager {
 	 * @since 1.0.0
 	 * @since 1.2.0 Made the $product parameter an array of product data.
 	 *
-	 * @param array $product
+	 * @param array $product Product data.
 	 *
 	 * @throws Exception
 	 *
@@ -532,16 +567,20 @@ class ProductManager {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param array $payload
+	 * @param array $payload Ajax request payload.
 	 *
 	 * @throws Exception
 	 *
 	 * @return array{products: array}
 	 */
 	public function ajax_deactivate_product( array $payload ): array {
-		$payload = wp_parse_args( $payload, [
-			'text_domain' => null,
-		] );
+		$payload = wp_parse_args(
+			$payload,
+			[
+				'text_domain'                 => null,
+				'frontend_foundation_version' => 0,
+			]
+		);
 
 		if ( ! Framework::get_instance()->current_user_can( 'deactivate_products' ) ) {
 			throw new Exception( esc_html__( 'You do not have a permission to perform this action.', 'gk-gravityview' ) );
@@ -560,10 +599,19 @@ class ProductManager {
 
 		$this->deactivate_product( $product );
 
-		return [
-			'products'                 => $this->ajax_get_products_data(),
-			'backendFoundationVersion' => Core::get_instance()->get_latest_foundation_version_from_registered_plugins( $product['text_domain'] ),
-		];
+		$backend_foundation_version = Core::get_instance()->get_latest_foundation_version_from_registered_plugins( $product['text_domain'] );
+
+        return [
+            'products'  => $this->ajax_get_products_data(),
+            'ui_action' => [
+                'reload'   => version_compare( $backend_foundation_version, $payload['frontend_foundation_version'], '<>' ) || $product['has_admin_menu'],
+                'redirect' => ! $backend_foundation_version ? [
+                    'url'            => CoreHelpers::is_network_admin() ? network_admin_url( 'plugins.php' ) : admin_url( 'plugins.php' ),
+                    'loader_title'   => esc_html__( 'Redirecting to the Plugins page…', 'gk-gravityview' ),
+                    'loader_message' => esc_html__( 'Manage Your Kit functionality is no longer available.', 'gk-gravityview' ),
+                ] : false,
+            ],
+        ];
 	}
 
 	/**
@@ -572,7 +620,7 @@ class ProductManager {
 	 * @since 1.0.0
 	 * @since 1.2.0 Made the $product parameter an array of product data.
 	 *
-	 * @param array $product
+	 * @param array $product Product data.
 	 *
 	 * @throws Exception
 	 *
@@ -625,9 +673,7 @@ class ProductManager {
 
 		foreach ( $products as $product ) {
 			$product_id = Arr::get( $product, 'info.id' );
-			$icons      = unserialize( Arr::get( $product, 'readme.icons', '' ) );
-			$banners    = unserialize( Arr::get( $product, 'readme.banners', '' ) );
-			$sections   = unserialize( Arr::get( $product, 'readme.sections', '' ) );
+			$sections   = unserialize( Arr::get( $product, 'readme.sections', '' ) ); // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.serialize_unserialize
 
 			if ( ! Arr::get( $product, 'info.category_slug' ) || 'bundles' === Arr::get( $product, 'info.category_slug' ) ) {
 				continue;
@@ -635,44 +681,47 @@ class ProductManager {
 
 			$product_schema = $this->get_product_schema();
 
-			$normalized_products[ $product_id ] = $this->normalize_product_data( [
-				'id'                 => $product_id,
-				'slug'               => Arr::get( $product, 'info.slug', $product_schema['slug'] ),
-				'category_name'      => Arr::get( $product, 'info.category_name', $product_schema['category_name'] ),
-				'category_slug'      => Arr::get( $product, 'info.category_slug', $product_schema['category_slug'] ),
-				'category_order'     => Arr::get( $product, 'info.category_order', $product_schema['category_order'] ),
-				'text_domain'        => Arr::get( $product, 'info.text_domain', $product_schema['text_domain'] ),
-				'text_domain_legacy' => Arr::get( $product, 'info.text_domain_legacy', $product_schema['text_domain_legacy'] ),
-				'hidden'             => Arr::get( $product, 'info.hidden', $product_schema['hidden'] ),
-				'free'               => Arr::get( $product, 'info.free', $product_schema['free'] ),
-				'third_party'        => Arr::get( $product, 'info.third_party', $product_schema['third_party'] ),
-				'coming_soon'        => Arr::get( $product, 'info.coming_soon', $product_schema['coming_soon'] ),
-				'name'               => Arr::get( $product, 'info.title', $product_schema['name'] ),
-				'excerpt'            => Arr::get( $product, 'info.excerpt', $product_schema['excerpt'] ),
-				'buy_link'           => esc_url_raw( $product['info']['buy_url'] ?? $product_schema['buy_link'] ),
-				'link'               => esc_url_raw( $product['info']['link'] ?? $product_schema['link'] ),
-				'download_link'      => esc_url_raw( $product['info']['download_link'] ?? $product_schema['download_link'] ),
-				'icon'               => esc_url_raw( $product['info']['icon'] ?? $product_schema['icon'] ),
-				'icons'              => [
-					'1x' => esc_url_raw( $product['icons']['1x'] ?? $product_schema['icons']['1x'] ),
-					'2x' => esc_url_raw( $product['icons']['2x'] ?? $product_schema['icons']['2x'] ),
-				],
-				'banners'            => [
-					'low'  => esc_url_raw( $product['banners']['low'] ?? $product_schema['banners']['low'] ),
-					'high' => esc_url_raw( $product['banners']['high'] ?? $product_schema['banners']['low'] ),
-				],
-				'sections'           => [
-					'description' => Arr::get( $sections, 'description', $product_schema['sections']['description'] ),
-					'changelog'   => $this->truncate_product_changelog(
-						Arr::get( $sections, 'changelog', $product_schema['sections']['changelog'] ),
-						esc_url_raw( $product['info']['link'] ?? $product_schema['link'] )
-					),
-				],
-				'server_version'     => Arr::get( $product, 'licensing.version', $product_schema['server_version'] ),
-				'modified_date'      => Arr::get( $product, 'info.modified_date', $product_schema['modified_date'] ),
-				'docs'               => esc_url_raw( $product['info']['docs_url'] ?? $product_schema['docs'] ),
-				'dependencies'       => Arr::get( $product, 'dependencies', $product_schema['dependencies'] ),
-			] );
+			$normalized_products[ $product_id ] = $this->normalize_product_data(
+				[
+					'id'                 => $product_id,
+					'slug'               => Arr::get( $product, 'info.slug', $product_schema['slug'] ),
+					'category_name'      => Arr::get( $product, 'info.category_name', $product_schema['category_name'] ),
+					'category_slug'      => Arr::get( $product, 'info.category_slug', $product_schema['category_slug'] ),
+					'category_order'     => Arr::get( $product, 'info.category_order', $product_schema['category_order'] ),
+					'text_domain'        => Arr::get( $product, 'info.text_domain', $product_schema['text_domain'] ),
+					'text_domain_legacy' => Arr::get( $product, 'info.text_domain_legacy', $product_schema['text_domain_legacy'] ),
+					'has_admin_menu'     => Arr::get( $product, 'info.has_admin_menu', $product_schema['has_admin_menu'] ),
+					'hidden'             => Arr::get( $product, 'info.hidden', $product_schema['hidden'] ),
+					'free'               => Arr::get( $product, 'info.free', $product_schema['free'] ),
+					'third_party'        => Arr::get( $product, 'info.third_party', $product_schema['third_party'] ),
+					'coming_soon'        => Arr::get( $product, 'info.coming_soon', $product_schema['coming_soon'] ),
+					'name'               => Arr::get( $product, 'info.title', $product_schema['name'] ),
+					'excerpt'            => Arr::get( $product, 'info.excerpt', $product_schema['excerpt'] ),
+					'buy_link'           => esc_url_raw( $product['info']['buy_url'] ?? $product_schema['buy_link'] ),
+					'link'               => esc_url_raw( $product['info']['link'] ?? $product_schema['link'] ),
+					'download_link'      => esc_url_raw( $product['info']['download_link'] ?? $product_schema['download_link'] ),
+					'icon'               => esc_url_raw( $product['info']['icon'] ?? $product_schema['icon'] ),
+					'icons'              => [
+						'1x' => esc_url_raw( $product['icons']['1x'] ?? $product_schema['icons']['1x'] ),
+						'2x' => esc_url_raw( $product['icons']['2x'] ?? $product_schema['icons']['2x'] ),
+					],
+					'banners'            => [
+						'low'  => esc_url_raw( $product['banners']['low'] ?? $product_schema['banners']['low'] ),
+						'high' => esc_url_raw( $product['banners']['high'] ?? $product_schema['banners']['low'] ),
+					],
+					'sections'           => [
+						'description' => Arr::get( $sections, 'description', $product_schema['sections']['description'] ),
+						'changelog'   => $this->truncate_product_changelog(
+							Arr::get( $sections, 'changelog', $product_schema['sections']['changelog'] ),
+							esc_url_raw( $product['info']['link'] ?? $product_schema['link'] )
+						),
+					],
+					'server_version'     => Arr::get( $product, 'licensing.version', $product_schema['server_version'] ),
+					'modified_date'      => Arr::get( $product, 'info.modified_date', $product_schema['modified_date'] ),
+					'docs'               => esc_url_raw( $product['info']['docs_url'] ?? $product_schema['docs'] ),
+					'dependencies'       => Arr::get( $product, 'dependencies', $product_schema['dependencies'] ),
+				]
+			);
 		}
 
 		return $normalized_products;
@@ -683,8 +732,8 @@ class ProductManager {
 	 *
 	 * @since 1.0.11
 	 *
-	 * @param string $changelog
-	 * @param string $product_url
+	 * @param string $changelog              Product changelog.
+	 * @param string $product_url            Product URL.
 	 * @param int    $max_changelog_entries  (optional) Number of entries to display. Default: 3.
 	 * @param bool   $link_to_full_changelog (optional) Display a link to the full changelog on GravityKit's website. Default: true.
 	 *
@@ -715,7 +764,7 @@ class ProductManager {
 			$modified_changelog_entry = $changelog_entry;
 			$modified_changelog_entry = preg_replace( '~<p><strong>(\d+.*?on.*?)</strong></p>~s', '<h4>$1</h4>', $modified_changelog_entry, 1 );
 			$modified_changelog_entry = preg_replace( '~<a~s', '<a class="gk-link"', $modified_changelog_entry );
-			$changelog                .= $modified_changelog_entry;
+			$changelog               .= $modified_changelog_entry;
 		}
 
 		return $changelog;
@@ -726,7 +775,7 @@ class ProductManager {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param array $payload
+	 * @param array $payload Ajax request payload.
 	 *
 	 * @throws Exception
 	 *
@@ -737,10 +786,13 @@ class ProductManager {
 			throw new Exception( esc_html__( 'You do not have a permission to perform this action.', 'gk-gravityview' ) );
 		}
 
-		$payload = wp_parse_args( $payload, [
-			'skip_remote_cache'  => false,
-			'skip_request_cache' => true,
-		] );
+		$payload = wp_parse_args(
+			$payload,
+			[
+				'skip_remote_cache'  => false,
+				'skip_request_cache' => true,
+			]
+		);
 
 		$products = $this->get_products_data( $payload );
 
@@ -751,7 +803,7 @@ class ProductManager {
 			'text_domain_legacy',
 			'modified_date',
 			'icons',
-			'banners'
+			'banners',
 		];
 
 		foreach ( $products as $key => &$product ) {
@@ -770,9 +822,12 @@ class ProductManager {
 			}
 
 			// Encrypt license keys.
-			$product['licenses'] = array_map( function ( $key ) {
-				return Encryption::get_instance()->encrypt( $key, false, Core::get_request_unique_string() );
-			}, $product['licenses'] );
+			$product['licenses'] = array_map(
+				function ( $key ) {
+					return Encryption::get_instance()->encrypt( $key, false, Core::get_request_unique_string() );
+				},
+				$product['licenses']
+			);
 		}
 
 		return array_values( $products );
@@ -791,11 +846,14 @@ class ProductManager {
 	public function get_products_data( array $args = [] ) {
 		static $_cached_products_data;
 
-		$args = wp_parse_args( $args, [
-			'skip_remote_cache'  => false, // If true, products will be fetched from the API even if they are cached locally.
-			'skip_request_cache' => false, // If true, products data will be updated with the most recent changes during the same request.
-			'key_by'             => 'text_domain',
-		] );
+		$args = wp_parse_args(
+			$args,
+			[
+				'skip_remote_cache'  => false, // If true, products will be fetched from the API even if they are cached locally.
+				'skip_request_cache' => false, // If true, products data will be updated with the most recent changes during the same request.
+				'key_by'             => 'text_domain',
+			]
+		);
 
 		if ( ! $args['skip_remote_cache'] && ! $args['skip_request_cache'] && $_cached_products_data ) {
 			return 'text_domain' === $args['key_by'] ? $_cached_products_data : $this->key_products_by_property( $_cached_products_data, $args['key_by'] );
@@ -824,7 +882,7 @@ class ProductManager {
 
 			WP::set_transient(
 				self::PRODUCTS_DATA_CACHE_ID,
-				json_encode( $products ),
+				wp_json_encode( $products ),
 				self::PRODUCTS_DATA_CACHE_EXPIRATION
 			);
 		}
@@ -835,8 +893,8 @@ class ProductManager {
 			return $_cached_products_data;
 		}
 
-		$installed_plugins_hash = md5( json_encode( CoreHelpers::get_installed_plugins() ) );
-		$licenses_hash          = md5( json_encode( LicenseManager::get_instance()->get_licenses_data() ) );
+		$installed_plugins_hash = md5( wp_json_encode( CoreHelpers::get_installed_plugins() ) );
+		$licenses_hash          = md5( wp_json_encode( LicenseManager::get_instance()->get_licenses_data() ) );
 
 		// If the installed plugins haven't changed since the last request, return the cached products data to prevent re-validating dependencies, etc.
 		if ( $installed_plugins_hash === $products['installed_plugins_hash'] && $licenses_hash === $products['licenses_hash'] ) {
@@ -854,10 +912,18 @@ class ProductManager {
 
 		// Supplement API response with additional data that can change between or during requests (e.g., activation status, etc.).
 		foreach ( $products['raw'] as $product ) {
+			if ( ! isset( $product['text_domain'] ) ) {
+				LoggerFramework::get_instance()->warning( "Unable to get text domain for {$product['name']}: " . wp_json_encode( $product ) );
+
+				continue;
+			}
+
 			$installed_product = CoreHelpers::get_installed_plugin_by_text_domain( implode( '|', [ $product['text_domain'], $product['text_domain_legacy'] ] ) );
 
 			/**
-			 * @filter `gk/foundation/settings/{$product_slug}/settings-url` Sets link to the product settings page.
+			 * Sets link to the product settings page.
+			 *
+			 * @filter `gk/foundation/settings/{$product_slug}/settings-url`
 			 *
 			 * @since  1.0.3
 			 *
@@ -865,27 +931,32 @@ class ProductManager {
 			 */
 			$product_settings_url = apply_filters( "gk/foundation/settings/{$product['slug']}/settings-url", '' );
 
-			$normalized_product = array_merge( $product, [
-				'id'                => $product['id'],
-				'text_domain'       => $installed_product['text_domain'] ?? $product['text_domain'],
-				'installed'         => ! is_null( $installed_product ),
-				'installed_version' => $installed_product['version'] ?? $product['installed_version'],
-				'active'            => $installed_product['active'] ?? $product['active'],
-				'update_available'  => $installed_product && version_compare( $installed_product['version'], $product['server_version'], '<' ),
-				'path'              => $installed_product['path'] ?? $product['path'],
-				'plugin_file'       => $installed_product['plugin_file'] ?? $product['plugin_file'],
-				'network_activated' => $installed_product['network_activated'] ?? $product['network_activated'],
-				'licenses'          => $product_license_map[ $product['id'] ] ?? $product['licenses'],
-				'settings'          => esc_url_raw( $product_settings_url ),
-				'has_git_folder'    => $installed_product && file_exists( dirname( $installed_product['plugin_file'] ) . '/.git' ),
-				'history'           => $products_history[ $product['text_domain'] ] ?? [],
-			] );
+			$normalized_product = array_merge(
+				$product,
+				[
+					'id'                => $product['id'],
+					'text_domain'       => $installed_product['text_domain'] ?? $product['text_domain'],
+					'installed'         => ! is_null( $installed_product ),
+					'installed_version' => $installed_product['version'] ?? $product['installed_version'],
+					'active'            => $installed_product['active'] ?? $product['active'],
+					'update_available'  => $installed_product && version_compare( $installed_product['version'], $product['server_version'], '<' ),
+					'path'              => $installed_product['path'] ?? $product['path'],
+					'plugin_file'       => $installed_product['plugin_file'] ?? $product['plugin_file'],
+					'network_activated' => $installed_product['network_activated'] ?? $product['network_activated'],
+					'licenses'          => $product_license_map[ $product['id'] ] ?? $product['licenses'],
+					'settings'          => esc_url_raw( $product_settings_url ),
+					'has_git_folder'    => $installed_product && file_exists( dirname( $installed_product['plugin_file'] ) . '/.git' ),
+					'history'           => $products_history[ $product['text_domain'] ] ?? [],
+				]
+			);
 
 			$products['normalized'][ $normalized_product['text_domain'] ] = $normalized_product;
 		}
 
 		/**
-		 * @filter `gk/foundation/products/data` Modifies products data object.
+		 * Modifies products data object.
+		 *
+		 * @filter `gk/foundation/products/data`
 		 *
 		 * @since  1.0.3
 		 *
@@ -923,7 +994,7 @@ class ProductManager {
 				if ( empty( $result['unmet']['system'] ) ) {
 					try {
 						$product['checked_dependencies'][ $version ]['resolution_sequence'] = $product_dependency_checker->get_product_dependency_resolution_sequence( $product['text_domain'], $version );
-					} catch ( Exception $e ) {
+					} catch ( Exception $e ) { // phpcs:ignore Generic.CodeAnalysis.EmptyStatement.DetectedCatch
 						// No need to do anything here since dependencies can't be satisfied.
 					}
 				}
@@ -934,7 +1005,7 @@ class ProductManager {
 
 		WP::set_transient(
 			self::PRODUCTS_DATA_CACHE_ID,
-			json_encode( $products ),
+			wp_json_encode( $products ),
 			self::PRODUCTS_DATA_CACHE_EXPIRATION
 		);
 
@@ -946,8 +1017,8 @@ class ProductManager {
 	 *
 	 * @since 1.2.0
 	 *
-	 * @param array  $products
-	 * @param string $key_by
+	 * @param array  $products Products data.
+	 * @param string $key_by   Property to key the return object by.
 	 *
 	 * @return array
 	 */
@@ -960,6 +1031,8 @@ class ProductManager {
 			}
 		}
 
+		unset( $keyed_products[''] );
+
 		return $keyed_products;
 	}
 
@@ -967,6 +1040,8 @@ class ProductManager {
 	 * Checks if plugin is activated in the current context (network or site).
 	 *
 	 * @since 1.0.0
+	 *
+	 * @param string $plugin_path Plugin path.
 	 *
 	 * @return bool
 	 */
@@ -1009,9 +1084,12 @@ class ProductManager {
 			return;
 		}
 
-		add_filter( 'gk/foundation/admin-menu/submenu/' . Framework::ID . '/counter', function ( $count ) use ( $update_count ) {
-			return (int) $count + $update_count;
-		} );
+		add_filter(
+			'gk/foundation/admin-menu/submenu/' . Framework::ID . '/counter',
+			function ( $count ) use ( $update_count ) {
+				return (int) $count + $update_count;
+			}
+		);
 	}
 
 	/**
@@ -1023,14 +1101,16 @@ class ProductManager {
 	 */
 	public function get_product_schema() {
 		return [
+			// phpcs:disable Squiz.PHP.CommentedOutCode.Found
 			// EDD API properties.
 			'id'                   => null,        // Integer. Product ID: $product['info']['id'].
 			'slug'                 => '',          // String. Product slug: $product['info']['slug'].
 			'category_name'        => '',          // String. Product category name: $product['info']['category_name'].
 			'category_slug'        => '',          // String. Product category slug: $product['info']['category_slug'].
-			'category_order'       => '',         // String. Product category slug: $product['info']['category_order'].
+			'category_order'       => '',          // String. Product category slug: $product['info']['category_order'].
 			'text_domain'          => '',          // String. Product text domain: $product['info']['text_domain'].
 			'text_domain_legacy'   => '',          // String. Product legacy text domain(s) separated by a pipe: $product['info']['text_domain_legacy'].
+			'has_admin_menu'       => false,       // Boolean. Whether the product has an admin menu: $product['info']['has_admin_menu'].
 			'hidden'               => false,       // Boolean. Whether the product should be hidden from the UI: $product['info']['hidden'].
 			'free'                 => false,       // Boolean. Whether the product is free: $product['info']['free'].
 			'third_party'          => false,       // Boolean. Whether is not a GravityKit product: $product['info']['third_party'].
@@ -1059,10 +1139,10 @@ class ProductManager {
 			'dependencies'         => [            // Array. Product dependencies: $product['dependencies'].
 				[
 					'0.0.1' => [
-						'system' => [],            // array{'PHP': array{'name': string, 'version': string}, 'WordPress': array{'name': string, 'version': string}}
-						'plugin' => [],            // array{'product_text_domain': array{'name': string, 'text_domain': string, 'version': string}}
-					]
-				]
+						'system' => [],            // array{'PHP': array{'name': string, 'version': string}, 'WordPress': array{'name': string, 'version': string}}.
+						'plugin' => [],            // array{'product_text_domain': array{'name': string, 'text_domain': string, 'version': string}}.
+					],
+				],
 			],
 			// Custom properties.
 			'licenses'             => [],          // Array. License keys associated with the product.
@@ -1078,7 +1158,7 @@ class ProductManager {
 			'checked_dependencies' => [],          // Array. Version-specific product dependencies check results. See ProductManager::get_products_data() for structure.
 			'required_by'          => [],          // Array. Products that depend on this product. See ProductDependencyChecker::is_a_dependency_of_any_product() for structure.
 			'history'              => [],          // Array. Product history. See ProductHistoryTracker class for structure.
-		];
+		]; // phpcs:enable Squiz.PHP.CommentedOutCode.Found
 	}
 
 	/**
@@ -1106,5 +1186,33 @@ class ProductManager {
 		$normalized_data['licenses']             = $product['licenses'] ?? $this->get_product_schema()['licenses'];
 
 		return $normalized_data;
+	}
+
+	/**
+	 * Removes older products data from the database. This method is called when activating a product.
+	 *
+	 * @interal TODO: Move this to a separate class that will handle cleanup tasks.
+	 *
+	 * @since 1.2.11
+	 *
+	 * @return void
+	 */
+	public function cleanup_products_data() {
+		global $wpdb;
+
+		$products_data_cache_key       = self::PRODUCTS_DATA_CACHE_ID;
+		$older_products_data_cache_key = substr( $products_data_cache_key, 0, strrpos( $products_data_cache_key, '/' ) );
+
+		if ( '' === $products_data_cache_key || '' === $older_products_data_cache_key ) {
+			return;
+		}
+
+		$wpdb->query(
+            $wpdb->prepare(
+                "DELETE FROM {$wpdb->options} WHERE option_name LIKE %s AND option_name != %s",
+                $older_products_data_cache_key . '%',
+                $products_data_cache_key
+            )
+        );
 	}
 }

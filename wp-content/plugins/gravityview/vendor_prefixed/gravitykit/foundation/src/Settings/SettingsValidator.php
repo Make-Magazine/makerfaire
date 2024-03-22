@@ -2,8 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by gravityview on 08-December-2023 using Strauss.
- * @see https://github.com/BrianHenryIE/strauss
+ * Modified by gravityview on 19-March-2024 using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\GravityView\Foundation\Settings;
@@ -14,37 +13,51 @@ use GravityKit\GravityView\Foundation\ThirdParty\Illuminate\Filesystem;
 use GravityKit\GravityView\Foundation\ThirdParty\Illuminate\Translation;
 use Exception;
 
+// phpcs:disable Generic.Files.OneObjectStructurePerFile.MultipleFound
 class ValidatorException extends Exception { }
 
 class SettingsValidator {
 	/**
+	 * Required dependency for Illuminate\Validation.
+	 *
 	 * @since 1.0.0
 	 *
-	 * @var Filesystem\Filesystem Required dependency for Illuminate\Validation.
+	 * @var Filesystem\Filesystem
 	 */
 	private $filesystem;
 
 	/**
+	 * Required dependency for Illuminate\Validation.
+	 *
 	 * @since 1.0.0
 	 *
-	 * @var Translation\FileLoader Required dependency for Illuminate\Validation.
+	 * @var Translation\FileLoader
 	 */
 	private $file_loader;
 
 	/**
+	 * Required dependency for Illuminate\Validation.
+	 *
 	 * @since 1.0.0
 	 *
-	 * @var Translation\Translator Required dependency for Illuminate\Validation.
+	 * @var Translation\Translator
 	 */
 	private $translator;
 
 	/**
+	 * Validator instance.
+	 *
 	 * @since 1.0.0
 	 *
-	 * @var Validation\Factory Validator instance.
+	 * @var Validation\Factory
 	 */
 	private $validator_factory;
 
+	/**
+	 * Initializes the class.
+	 *
+	 * @since 1.0.0
+	 */
 	public function __construct() {
 		$this->filesystem        = new Filesystem\Filesystem();
 		$this->file_loader       = new Translation\FileLoader( $this->filesystem, '' );
@@ -59,42 +72,52 @@ class SettingsValidator {
 	 *
 	 * @since 1.0.0
 	 * @see   `UI/src/lib/validation.js`
-	 *
 	 */
 	private function add_custom_validation_rules() {
-		$this->validator_factory->extend( 'is', function ( $attribute, $value, $parameters ) {
-			if ( ! is_array( $parameters ) ) {
-				return false;
+		$this->validator_factory->extend(
+			'is',
+			function ( $attribute, $value, $parameters ) {
+				if ( ! is_array( $parameters ) ) {
+					return false;
+				}
+
+				return $value === $parameters[0];
 			}
+		);
 
-			return $value === $parameters[0];
-		} );
+		$this->validator_factory->extend(
+			'isNot',
+			function ( $attribute, $value, $parameters ) {
+				if ( ! is_array( $parameters ) ) {
+					return false;
+				}
 
-		$this->validator_factory->extend( 'isNot', function ( $attribute, $value, $parameters ) {
-			if ( ! is_array( $parameters ) ) {
-				return false;
+				return $value !== $parameters[0];
 			}
-
-			return $value !== $parameters[0];
-		} );
+		);
 
 		// Works for array or `multiple_checkboxes` type.
-		$this->validator_factory->extend( 'has', function ( $attribute, $value, $parameters ) {
-			if ( ! is_array( $parameters ) ) {
-				return false;
+		$this->validator_factory->extend(
+			'has',
+			function ( $attribute, $value, $parameters ) {
+				if ( ! is_array( $parameters ) ) {
+					return false;
+				}
+
+				return in_array( $parameters[0], $value, true );
 			}
+		);
 
+		$this->validator_factory->extend(
+			'matches',
+			function ( $attribute, $value, $parameters ) {
+				if ( ! is_array( $parameters ) ) {
+					return false;
+				}
 
-			return in_array( $parameters[0], $value );
-		} );
-
-		$this->validator_factory->extend( 'matches', function ( $attribute, $value, $parameters ) {
-			if ( ! is_array( $parameters ) ) {
-				return false;
+				return preg_match( '/' . $parameters[0] . '/', $value );
 			}
-
-			return preg_match( '/' . $parameters[0] . '/', $value );
-		} );
+		);
 	}
 
 	/**
@@ -117,7 +140,7 @@ class SettingsValidator {
 		);
 
 		try {
-			if ( ! $validator->fails() ) {
+			if ( $validator->passes() ) {
 				return true;
 			}
 		} catch ( Exception $e ) {
@@ -146,9 +169,12 @@ class SettingsValidator {
 		$missing_settings = array_keys( array_diff_key( $original_settings, $settings_to_validate ) );
 
 		if ( $missing_settings ) {
-			$missing_settings_title = array_map( function ( $setting ) use ( $original_settings ) {
-				return $original_settings[ $setting ]['title'];
-			}, $missing_settings );
+			$missing_settings_title = array_map(
+				function ( $setting ) use ( $original_settings ) {
+					return $original_settings[ $setting ]['title'];
+				},
+				$missing_settings
+			);
 
 			throw new ValidatorException(
 				strtr(
@@ -163,7 +189,9 @@ class SettingsValidator {
 
 			if ( empty( $setting['validation'] ) ) {
 				/**
-				 * @action `gk/foundation/settings/{plugin}/validation/{setting_id}` Runs when validation rules are not specified and before the setting is marked as validated.
+				 * Runs when validation rules are not specified and before the setting is marked as validated.
+				 *
+				 * @action `gk/foundation/settings/{plugin}/validation/{setting_id}`
 				 *
 				 * @since  1.0.0
 				 *
@@ -196,7 +224,6 @@ class SettingsValidator {
 						strtr(
 							esc_html_x( 'Validation rule for setting [setting] is missing.', 'Placeholders inside [] are not to be translated.', 'gk-gravityview' ),
 							[ '[setting]' => $setting['id'] ]
-
 						)
 					);
 				}
@@ -213,7 +240,7 @@ class SettingsValidator {
 							esc_html_x( 'Validation for setting [setting] failed: [reason].', 'Placeholders inside [] are not to be translated.', 'gk-gravityview' ),
 							[
 								'[setting]' => $setting['id'],
-								'[reason]'  => $e->getMessage()
+								'[reason]'  => $e->getMessage(),
 							]
 						)
 					);
@@ -239,3 +266,4 @@ class SettingsValidator {
 		return true;
 	}
 }
+// phpcs:enable Generic.Files.OneObjectStructurePerFile.MultipleFound

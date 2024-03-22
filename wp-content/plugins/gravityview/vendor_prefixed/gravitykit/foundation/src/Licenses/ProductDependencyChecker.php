@@ -2,8 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by gravityview on 08-December-2023 using Strauss.
- * @see https://github.com/BrianHenryIE/strauss
+ * Modified by gravityview on 19-March-2024 using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\GravityView\Foundation\Licenses;
@@ -106,6 +105,10 @@ class ProductDependencyChecker {
 		$products = [];
 
 		foreach ( $this->products as $product ) {
+			if ( ! $dependency_text_domain && ! $product['text_domain'] ) {
+				continue;
+			}
+
 			$required_by = $this->is_a_dependency_of_product( $dependency_text_domain, $product['text_domain'], $active_products_only );
 
 			if ( $required_by ) {
@@ -256,7 +259,7 @@ class ProductDependencyChecker {
 			if ( ! $product_version ) {
 				if ( ! empty( $product['installed_version'] ) ) {
 					$product_version = $product['installed_version'];
-				} else if ( ! empty( $product['server_version'] ) ) {
+				} elseif ( ! empty( $product['server_version'] ) ) {
 					$product_version = $product['server_version'];
 				}
 
@@ -430,12 +433,15 @@ class ProductDependencyChecker {
 
 		if ( $dependency_product['installed'] ) {
 			switch ( true ) {
-				// Unlicensed product.
-				case empty( $dependency_product['licenses'] ) && ! $dependency_product['free']:
-					$unmet_dependency['reason']     = self::FAILURE_UNLICENSED;
-					$unmet_dependency['resolvable'] = false;
+				/* phpcs:ignore Squiz.PHP.CommentedOutCode.Found
+				    // In the future, we might want to check if the product is licensed and if the license is valid. This was removed in 4fdd142.
+					// Unlicensed product.
+					case empty( $dependency_product['licenses'] ) && ! $dependency_product['free']:
+						$unmet_dependency['reason']     = self::FAILURE_UNLICENSED;
+						$unmet_dependency['resolvable'] = false;
 
-					break;
+						break;
+				*/
 				// Low version and no update available OR Update available but low version.
 				case ! $dependency_product['update_available'] && version_compare( $dependency_product['installed_version'] ?? 0, $highest_required_version, '<' ):
 				case $dependency_product['update_available'] && version_compare( $dependency_product['server_version'] ?? 0, $highest_required_version, '<' ):
@@ -570,8 +576,8 @@ class ProductDependencyChecker {
 	 *
 	 * @since 1.2.0
 	 *
-	 * @param string|null $product_version
-	 * @param array        $dependencies
+	 * @param string|null $product_version The product version.
+	 * @param array       $dependencies    The dependencies data.
 	 *
 	 * @return mixed|null
 	 */
@@ -582,10 +588,12 @@ class ProductDependencyChecker {
 			return null;
 		}
 
-		$compatible_version = array_filter( $dependencies_versions, function ( $dependency_version ) use ( $product_version ) {
-			return version_compare( $dependency_version, $product_version, '<=' );
-		} );
-
+		$compatible_version = array_filter(
+			$dependencies_versions,
+			function ( $dependency_version ) use ( $product_version ) {
+				return version_compare( $dependency_version, $product_version, '<=' );
+			}
+		);
 
 		if ( empty( $compatible_version ) ) {
 			return null;

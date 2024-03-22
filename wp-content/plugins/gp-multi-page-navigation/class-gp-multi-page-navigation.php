@@ -67,7 +67,19 @@ class GP_Multi_Page_Navigation extends GWPerk {
 
 		// If page is set at all, we will check for the query parameter to allow overriding.
 		if ( $page && rgget( 'gpmpn_page' ) ) {
-			$page = (int) rgget( 'gpmpn_page' );
+			$page = rgget( 'gpmpn_page' );
+		}
+
+		// If page exists and a page name is provided, look up page number by label.
+		if ( $page && ! is_numeric( $page ) ) {
+			foreach ( rgars( $form, 'pagination/pages', array() ) as $page_index => $page_name ) {
+				if ( strtolower( $page_name ) === strtolower( $page ) ) {
+					$page = $page_index + 1;
+					break;
+				}
+			}
+			// Make sure the number is an integer and not less than 1.
+			$page = (int) max( $page, 1 );
 		}
 
 		/**

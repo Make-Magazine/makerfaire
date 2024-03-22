@@ -2,8 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by gravityview on 08-December-2023 using Strauss.
- * @see https://github.com/BrianHenryIE/strauss
+ * Modified by gravityview on 19-March-2024 using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\GravityView\Foundation\Encryption;
@@ -17,16 +16,20 @@ class Encryption {
 	const DEFAULT_NONCE = 'bc5d92ffc6c54ff8d865a1e6f3361f48d0a84a2b145be34e'; // 24-bit value stored as a hex string
 
 	/**
+	 * Class instance.
+	 *
 	 * @since 1.0.0
 	 *
-	 * @var Encryption Class instance.
+	 * @var Encryption
 	 */
 	private static $_instances;
 
 	/**
+	 * Secret key used to encrypt license key.
+	 *
 	 * @since 1.0.0
 	 *
-	 * @var string Secret key used to encrypt license key.
+	 * @var string
 	 */
 	private $_secret_key;
 
@@ -146,7 +149,7 @@ class Encryption {
 			return null;
 		}
 
-		if ( $decrypted === false ) {
+		if ( false === $decrypted ) {
 			$decrypted = null;
 		}
 

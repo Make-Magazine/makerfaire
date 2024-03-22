@@ -138,40 +138,27 @@ function em_admin_warnings() {
 	$dismiss_link_joiner = ( count($_GET) > 0 ) ? '&amp;':'?';
 	
 	if( current_user_can('activate_plugins') ){
-		//New User Intro
-		if (isset ( $_GET ['disable_hello_to_user'] ) && $_GET ['disable_hello_to_user'] == 'true'){
-			// Disable Hello to new user if requested
-			update_option('dbem_hello_to_user',0);
-		}elseif ( get_option ( 'dbem_hello_to_user' ) ) {
-			//FIXME update welcome msg with good links
-			$advice = sprintf( __("<p>Events Manager is ready to go! It is highly recommended you read the <a href='%s'>Getting Started</a> guide on our site, as well as checking out the <a href='%s'>Settings Page</a>. <a href='%s' title='Don't show this advice again'>Dismiss</a></p>", 'events-manager'), 'http://wp-events-plugin.com/documentation/getting-started-guide/?utm_source=em&utm_medium=plugin&utm_content=installationlink&utm_campaign=plugin_links', EM_ADMIN_URL .'&amp;page=events-manager-options', esc_url($_SERVER['REQUEST_URI'].$dismiss_link_joiner.'disable_hello_to_user=true'));
-			?>
-			<div id="message" class="updated">
-				<?php echo $advice; ?>
-			</div>
-			<?php
-		}
-	
+		
 		//If events page couldn't be created or is missing
-		if( !empty($_GET['em_dismiss_events_page']) ){
+		if( !empty($_GET['em_dismiss_events_page']) && wp_verify_nonce($_GET['em_dismiss_events_page'], 'em_dismiss_notice') ){
 			update_option('dbem_dismiss_events_page',1);
 		}else{
 			if ( !get_page($events_page_id) && !get_option('dbem_dismiss_events_page') ){
 				?>
 				<div id="em_page_error" class="updated">
-					<p><?php echo sprintf ( __( 'Uh Oh! For some reason WordPress could not create an events page for you (or you just deleted it). Not to worry though, all you have to do is create an empty page, name it whatever you want, and select it as your events page in your <a href="%s">settings page</a>. Sorry for the extra step! If you know what you are doing, you may have done this on purpose, if so <a href="%s">ignore this message</a>', 'events-manager'), EM_ADMIN_URL .'&amp;page=events-manager-options', esc_url($_SERVER['REQUEST_URI'].$dismiss_link_joiner.'em_dismiss_events_page=1') ); ?></p>
+					<p><?php echo sprintf ( __( 'Uh Oh! For some reason WordPress could not create an events page for you (or you just deleted it). Not to worry though, all you have to do is create an empty page, name it whatever you want, and select it as your events page in your <a href="%s">settings page</a>. Sorry for the extra step! If you know what you are doing, you may have done this on purpose, if so <a href="%s">ignore this message</a>', 'events-manager'), EM_ADMIN_URL .'&amp;page=events-manager-options', esc_url($_SERVER['REQUEST_URI'].$dismiss_link_joiner.'em_dismiss_events_page='.wp_create_nonce('em_dismiss_notice')) ); ?></p>
 				</div>
 				<?php
 			}
 		}
 	
 		if( is_multisite() && !empty($_REQUEST['page']) && $_REQUEST['page']=='events-manager-options' && em_wp_is_super_admin() && get_option('dbem_ms_update_nag') ){
-			if( !empty($_GET['disable_dbem_ms_update_nag']) ){
+			if( !empty($_GET['disable_dbem_ms_update_nag'])  && wp_verify_nonce($_GET['disable_dbem_ms_update_nag'], 'em_dismiss_notice') ){
 				delete_site_option('dbem_ms_update_nag');
 			}else{
 				?>
 				<div id="em_page_error" class="updated">
-					<p><?php echo sprintf(__('MultiSite options have moved <a href="%s">here</a>. <a href="%s">Dismiss message</a>','events-manager'),admin_url().'network/admin.php?page=events-manager-options', esc_url($_SERVER['REQUEST_URI'].'&amp;disable_dbem_ms_update_nag=1')); ?></p>
+					<p><?php echo sprintf(__('MultiSite options have moved <a href="%s">here</a>. <a href="%s">Dismiss message</a>','events-manager'),admin_url().'network/admin.php?page=events-manager-options', esc_url($_SERVER['REQUEST_URI'].'&amp;disable_dbem_ms_update_nag='.wp_create_nonce('em_dismiss_notice'))); ?></p>
 				</div>
 				<?php
 			}
@@ -184,26 +171,15 @@ function em_admin_warnings() {
 			<?php
 		}
 		if( class_exists('SitePress') && !class_exists('EM_WPML') && !get_site_option('disable_em_wpml_warning') ){
-			if( !empty($_REQUEST['disable_em_wpml_warning']) ){
+			if( !empty($_REQUEST['disable_em_wpml_warning']) && wp_verify_nonce($_GET['disable_em_wpml_warning'], 'em_dismiss_notice') ){
 				update_site_option('disable_em_wpml_warning',1);
 			}else{
 				?>
 				<div id="message" class="updated">
-					<p><?php echo sprintf(__('It looks like you have WPML enabled on your site. We advise you also install our extra <a href="%s">Events Manager WPML Connector</a> plugin which helps the two work better together. <a href="%s">Dismiss message</a>','events-manager'),'http://wordpress.org/extend/plugins/events-manager-wpml/', esc_url(add_query_arg(array('disable_em_wpml_warning'=>1)))); ?></p>
+					<p><?php echo sprintf(__('It looks like you have WPML enabled on your site. We advise you also install our extra <a href="%s">Events Manager WPML Connector</a> plugin which helps the two work better together. <a href="%s">Dismiss message</a>','events-manager'),'http://wordpress.org/extend/plugins/events-manager-wpml/', esc_url(add_query_arg(array('disable_em_wpml_warning'=>wp_create_nonce('em_dismiss_notice'))))); ?></p>
 				</div>
 				<?php
 			}
-		}
-		if( array_key_exists('dbem_disable_timthumb', wp_load_alloptions()) ){
-			if( !empty($_REQUEST['dbem_disable_timthumb']) ){
-				delete_option('dbem_disable_timthumb',1);
-			}else{
-				?>
-				<div id="message" class="updated">
-					<p>We have stopped using TimThumb for thumbnails in Events Manager, <a href="http://wp-events-plugin.com/blog/2014/12/05/bye-timthumb/">please see this post</a> for more information on how this may affect you and what options are available to you. <a href="<?php echo esc_url(add_query_arg(array('dbem_disable_timthumb'=>1))); ?>">Dismiss</a></p>
-				</div>
-				<?php
-			}		    
 		}
 	}
 	//Warn about EM page edit

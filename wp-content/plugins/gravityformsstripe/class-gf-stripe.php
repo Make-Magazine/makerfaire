@@ -363,6 +363,7 @@ class GFStripe extends GFPaymentAddOn {
 					'requires_action'                 => wp_strip_all_tags( __( 'Please follow the instructions on the screen to validate your card.', 'gravityformsstripe' ) ),
 					'create_payment_intent_nonce'     => wp_create_nonce( 'gf_stripe_create_payment_intent' ),
 					'ajaxurl'                         => admin_url( 'admin-ajax.php' ),
+					'is_preview'                      => $this->is_preview(),
 					'payment_incomplete'              => wp_strip_all_tags( __( 'Please enter all required payment information.', 'gravityformsstripe' ) ),
 					'failed_to_create_draft'          => wp_strip_all_tags( __( 'We could not process your request at the moment.', 'gravityformsstripe' ) ),
 					'failed_to_create_initial_intent' => wp_strip_all_tags( __( 'Payment information field failed to be displayed, please contact support.', 'gravityformsstripe' ) ),
@@ -1271,7 +1272,7 @@ class GFStripe extends GFPaymentAddOn {
 
 		// Load the Stripe API library.
 		if ( ! class_exists( 'GF_Stripe_API' ) ) {
-			require_once 'includes/class-gf-stripe-api.php';
+			require_once 'includes/api/class-gf-stripe-api.php';
 		}
 
 		$stripe = new GF_Stripe_API( rgpost( 'key' ) );
@@ -2362,7 +2363,7 @@ class GFStripe extends GFPaymentAddOn {
 					'name'       => 'coupon',
 					'label'      => esc_html__( 'Coupon', 'gravityformsstripe' ),
 					'required'   => false,
-					'field_type' => array( 'text' ),
+					'field_type' => array( 'text', 'coupon' ),
 					'tooltip'    => '<h6>' . esc_html__( 'Coupon', 'gravityformsstripe' ) . '</h6><p>' . esc_html__( 'Select which field contains the coupon code to be applied to the recurring charge(s). The coupon must also exist in your Stripe Dashboard.', 'gravityformsstripe' ) . '</p><p>' . esc_html__( 'If you use Stripe Checkout, the coupon won\'t be applied to your first invoice.', 'gravityformsstripe' ) . '</p>',
 				),
 			),
@@ -3029,6 +3030,8 @@ class GFStripe extends GFPaymentAddOn {
 
 		// Return Stripe notification events.
 		return array(
+			'add_pending_payment'       => esc_html__( 'Payment Pending', 'gravityformsstripe' ),
+			'authorized_payment'        => esc_html__( 'Payment Authorized', 'gravityformsstripe' ),
 			'complete_payment'          => esc_html__( 'Payment Completed', 'gravityformsstripe' ),
 			'refund_payment'            => esc_html__( 'Payment Refunded', 'gravityformsstripe' ),
 			'fail_payment'              => esc_html__( 'Payment Failed', 'gravityformsstripe' ),
@@ -4245,8 +4248,13 @@ class GFStripe extends GFPaymentAddOn {
 			gform_update_meta( $entry['id'], 'payment_element_subscription_id', $this->get_payment_element_handler()->get_subscription_id() );
 
 			$action['payment_status'] = 'Processing';
+			$action['type'] = 'add_pending_payment';
 			$this->post_payment_action( $entry, $action );
 			return true;
+		}
+
+		if ( empty( rgar( $action, 'captured_payment' ) ) && rgar( $action, 'is_authorized' ) ) {
+			$action['type'] = 'authorized_payment';
 		}
 
 		return parent::complete_authorization( $entry, $action );
@@ -4356,7 +4364,8 @@ class GFStripe extends GFPaymentAddOn {
 
 			// If payment element is enabled, then the payment was validated in the front end.
 			if ( rgobj( $credit_card_field, 'enableMultiplePaymentMethods' ) ) {
-				return true;
+				$validation_result['is_valid'] = true;
+				return $validation_result;
 			}
 
 			return $this->get_credit_card_field_validation_result(
@@ -4965,6 +4974,9 @@ class GFStripe extends GFPaymentAddOn {
 
 						return $this->authorization_error( $result->get_error_message() );
 					} else {
+						// Clear out the Stripe response so we can trigger the SCA modal again.
+						$_POST['stripe_response'] = '';
+
 						return $this->authorization_error( esc_html__( 'Your payment attempt has failed. Please enter your card details and try again.', 'gravityformsstripe' ) );
 					}
 				}
@@ -5130,17 +5142,17 @@ class GFStripe extends GFPaymentAddOn {
 	 * @return bool Returns True if checkout session should be completed. False if not.
 	 */
 	private function should_complete_checkout_session( $session, $entry ) {
-		$subscription_id = rgar( $session, 'subscription' );
-		$is_session_paid = rgar( $session, 'payment_status' ) === 'paid';
-		if ( ! empty( $subscription_id ) ) {
-			$is_checkout_session_completed = $is_session_paid && $entry['payment_status'] === 'Active';
-		} else {
-			$is_checkout_session_completed = $is_session_paid && ( $entry['payment_status'] === 'Paid' || $entry['payment_status'] === 'Authorized' );
+
+		$is_payment_complete         = rgar( $session, 'payment_status' ) === 'paid';
+		$is_entry_marked_as_complete = in_array( $entry['payment_status'], array( 'Active', 'Paid' ) );
+
+		// Payment is complete in Stripe, but entry is not marked as complete.
+		if ( $is_payment_complete && ! $is_entry_marked_as_complete ) {
+			$this->log_debug( __METHOD__ . '(): Stripe checkout session should be completed.' );
+			return true;
 		}
 
-		$capture_method = 'automatic';
-		$intent_status  = '';
-		if ( ! $subscription_id ) {
+		if ( ! rgar( $session, 'subscription' ) ) {
 			$intent = $this->api->get_payment_intent( $session['payment_intent'] );
 
 			if ( is_wp_error( $intent ) ) {
@@ -5148,21 +5160,18 @@ class GFStripe extends GFPaymentAddOn {
 				return false;
 			}
 
-			$capture_method = $intent->capture_method;
-			$intent_status  = $intent->status;
+			$is_authorize_only = $intent->capture_method == 'manual' && $intent->status == 'requires_capture';
+			if ( $is_authorize_only && $entry['payment_status'] !== 'Authorized' ) {
+				$this->log_debug( __METHOD__ . '(): Stripe checkout session should be completed. Authorization only' );
+				return true;
+			}
 		}
 
-		$this->log_debug( __METHOD__ . '(): Stripe payment status: ' . $session['payment_status'] . '. Entry payment status: ' . $entry['payment_status'] );
-		if ( ! $is_checkout_session_completed || ( $capture_method === 'manual' && $intent_status === 'requires_capture' ) ) {
-			$this->log_debug( __METHOD__ . '(): Stripe checkout session should be completed.' );
+		$this->log_debug( __METHOD__ . '(): Stripe checkout session should NOT be completed.' );
 
-			return true;
-		} else {
-			$this->log_debug( __METHOD__ . '(): Stripe checkout session should NOT be completed.' );
-
-			return false;
-		}
+		return false;
 	}
+
 	/**
 	 * Complete payments or subscriptions when redirect back from Stripe Checkout or checkout.session.completed event
 	 * triggered.
@@ -5285,7 +5294,7 @@ class GFStripe extends GFPaymentAddOn {
 			if ( $payment_status !== 'Paid' ) {
 				$submission_data       = gform_get_meta( $entry['id'], 'submission_data' );
 				$payment_intent        = rgar( $session, 'payment_intent' );
-				$payment_intent_object = $this->api->get_payment_intent( $payment_intent );
+				$payment_intent_object = $this->api->get_payment_intent( $payment_intent, array( 'expand' => array( 'latest_charge' ) ) );
 
 				if ( is_wp_error( $payment_intent_object ) ) {
 					$this->log_error( __METHOD__ . '(): A Stripe API error occurs; ' . $payment_intent_object->get_error_message() );
@@ -5308,7 +5317,7 @@ class GFStripe extends GFPaymentAddOn {
 				// if authorization_only = true, status will be 'requires_capture',
 				// so if the payment intent status is succeeded, we can mark the entry as Paid.
 				if ( rgars( $payment_intent_object, 'status' ) === 'succeeded' ) {
-					$payment_method = rgars( $payment_intent_object, 'charges/data/0/payment_method_details/card/brand' );
+					$payment_method = rgars( $payment_intent_object, 'latest_charge/payment_method_details/card/brand' );
 
 					$authorization['captured_payment'] = array(
 						'is_success'     => true,
@@ -6044,7 +6053,7 @@ class GFStripe extends GFPaymentAddOn {
 
 		// Load the Stripe API library.
 		if ( ! class_exists( 'GF_Stripe_API' ) ) {
-			require_once 'includes/class-gf-stripe-api.php';
+			require_once 'includes/api/class-gf-stripe-api.php';
 		}
 
 		$this->log_debug( sprintf( '%s(): Initializing Stripe API for %s mode.', __METHOD__, $mode ) );
@@ -7991,13 +8000,13 @@ class GFStripe extends GFPaymentAddOn {
 		$payment_method = rgpost( 'payment_method' );
 
 		$data = array(
-            'payment_method'       => rgar( $payment_method, 'id' ),
-            'payment_method_types' => array( 'card' ),
-            'amount'               => intval( rgpost( 'amount' ) ),
-            'currency'             => sanitize_text_field( rgpost( 'currency' ) ),
-            'capture_method'       => 'manual', // Use manual capture by default, because we cannot update the capture_method after the payment intent crated.
-            'confirmation_method'  => 'manual',
-            'confirm'              => false,
+			'payment_method'       => rgar( $payment_method, 'id' ),
+			'payment_method_types' => array( 'card' ),
+			'amount'               => intval( rgpost( 'amount' ) ),
+			'currency'             => sanitize_text_field( rgpost( 'currency' ) ),
+			'capture_method'       => 'manual', // Use manual capture by default, because we cannot update the capture_method after the payment intent crated.
+			'confirmation_method'  => 'manual',
+			'confirm'              => 'false',
 		);
 
 		/**

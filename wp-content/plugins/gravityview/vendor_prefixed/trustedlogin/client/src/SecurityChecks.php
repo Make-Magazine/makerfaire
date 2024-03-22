@@ -7,8 +7,7 @@
  * @copyright 2021 Katz Web Services, Inc.
  *
  * @license GPL-2.0-or-later
- * Modified by gravityview on 08-December-2023 using Strauss.
- * @see https://github.com/BrianHenryIE/strauss
+ * Modified by gravityview on 19-March-2024 using {@see https://github.com/BrianHenryIE/strauss}.
  */
 namespace GravityKit\GravityView\Foundation\ThirdParty\TrustedLogin;
 
@@ -166,14 +165,14 @@ final class SecurityChecks {
 	 */
 	private function maybe_add_used_accesskey( $user_identifier = '' ) {
 
-		$used_accesskeys = (array) get_site_transient( $this->used_accesskey_transient );
+		$used_accesskeys = (array) Utils::get_transient( $this->used_accesskey_transient );
 
 		// This is a new access key
 		if ( ! in_array( $user_identifier, $used_accesskeys, true ) ) {
 
 			$used_accesskeys[] = $user_identifier;
 
-			$transient_set = set_site_transient( $this->used_accesskey_transient, $used_accesskeys, self::ACCESSKEY_LIMIT_EXPIRY );
+			$transient_set = Utils::set_transient( $this->used_accesskey_transient, $used_accesskeys, self::ACCESSKEY_LIMIT_EXPIRY );
 
 			if ( ! $transient_set ) {
 				$this->logging->log( 'Used access key transient not properly set/updated.', __METHOD__, 'error' );
@@ -295,7 +294,7 @@ final class SecurityChecks {
 
 		$this->logging->log( 'Brute force is detected; starting lockdown.', __METHOD__, 'emergency' );
 
-		$transient_set = set_site_transient( $this->in_lockdown_transient, time(), self::LOCKDOWN_EXPIRY );
+		$transient_set = Utils::set_transient( $this->in_lockdown_transient, time(), self::LOCKDOWN_EXPIRY );
 
 		if ( ! $transient_set ) {
 			$this->logging->log( 'Could not set the "in lockdown" transient.', __METHOD__, 'alert' );
@@ -308,7 +307,7 @@ final class SecurityChecks {
 		}
 
 		/**
-		 * Runs after the site is locked down to access from the Vendor
+		 * Runs after the site is locked down to access from the Vendor.
 		 */
 		do_action( 'trustedlogin/' . $this->config->ns() . '/lockdown/after' );
 	}
@@ -362,7 +361,7 @@ final class SecurityChecks {
 			return false;
 		}
 
-		return get_site_transient( $this->in_lockdown_transient );
+		return Utils::get_transient( $this->in_lockdown_transient );
 	}
 
 }

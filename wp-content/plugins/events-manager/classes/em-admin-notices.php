@@ -164,7 +164,7 @@ class EM_Admin_Notices {
 	 */
 	public static function dismiss_admin_notice(){
 		if( empty($_REQUEST['notice']) ) return;
-		if( empty($_REQUEST['nonce']) || !wp_verify_nonce($_REQUEST['nonce'], $_REQUEST['action'].$_REQUEST['notice'] ) ) die('Invalid Nonce');
+		if( empty($_REQUEST['nonce']) || !wp_verify_nonce($_REQUEST['nonce'], $_REQUEST['action'].$_REQUEST['notice'].get_current_user_id() ) ) die('Invalid Nonce');
 		$key = $_REQUEST['notice'];
 		$network = $_REQUEST['action'] == 'em_dismiss_network_admin_notice';
 		//get the notice

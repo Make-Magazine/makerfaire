@@ -4,12 +4,16 @@
  *
  * @since     1.0.4
  * @license   GPL2+
- * @author    GravityView <hello@gravityview.co>
- * @link      http://gravityview.co
+ * @author    GravityKit <hello@gravitykit.com>
+ * @link      https://www.gravitykit.com
  * @copyright Copyright 2014, Katz Web Services, Inc.
  *
  * @package   GravityView
  */
+
+use GV\Entry_Collection;
+use GV\Template_Context;
+use GV\View;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	return;
@@ -48,7 +52,6 @@ class GV_Extension_DataTables_Data {
 	 *
 	 * @since      1.3
 	 * @deprecated Remove direct access altogether.
-	 *
 	 */
 	function maybe_bootstrap_wp() {
 
@@ -60,7 +63,6 @@ class GV_Extension_DataTables_Data {
 	 *
 	 * @since      1.3
 	 * @deprecated Remove direct access altogether.
-	 *
 	 */
 	function bootstrap_setup_globals() {
 
@@ -72,7 +74,6 @@ class GV_Extension_DataTables_Data {
 	 *
 	 * @since      1.3
 	 * @deprecated Remove direct access altogether.
-	 *
 	 */
 	function bootstrap_gv() {
 
@@ -86,7 +87,6 @@ class GV_Extension_DataTables_Data {
 	 *
 	 * @since      1.3
 	 * @deprecated Remove direct access altogether.
-	 *
 	 */
 	function bootstrap_wp_for_direct_access() {
 
@@ -123,7 +123,6 @@ class GV_Extension_DataTables_Data {
 		add_action( 'gravityview/template/after', array( $this, 'extend_view' ) );
 
 		add_filter( 'gravityview-inline-edit/js-settings', array( $this, 'maybe_modify_inline_edit_settings' ), 10, 2 );
-
 	}
 
 	/**
@@ -217,12 +216,12 @@ class GV_Extension_DataTables_Data {
 			@header( 'Cache-Control: public, store, post-check=10000000, pre-check=100000;' );
 			@header( 'Expires: Thu, 15 Apr 2030 20:00:00 GMT;' );
 			@header( 'Vary: Accept-Encoding' );
-			@header( "Last-Modified: " . gmdate( "D, d M Y H:i:s", strtotime( '-2 months' ) ) . " GMT" );
+			@header( 'Last-Modified: ' . gmdate( 'D, d M Y H:i:s', strtotime( '-2 months' ) ) . ' GMT' );
 
 		} else {
 
 			if ( ! defined( 'DONOTCACHEPAGE' ) ) {
-				define( "DONOTCACHEPAGE", "true" );
+				define( 'DONOTCACHEPAGE', 'true' );
 			}
 
 			@nocache_headers();
@@ -293,15 +292,22 @@ class GV_Extension_DataTables_Data {
 		$atts = array();
 		if ( $view = $view_collection->get( $view_id ) ) {
 			$atts = $view->settings->as_atts();
-			gravityview()->log->debug( 'View #{view_id} found in $post View Collection', array(
-				'view_id' => $view_id,
-				'data'    => $atts,
-			) );
-		} elseif ( ! $view = \GV\View::by_id( $view_id ) ) {
+			gravityview()->log->debug(
+				'View #{view_id} found in $post View Collection',
+				array(
+					'view_id' => $view_id,
+					'data'    => $atts,
+				)
+			);
+		} elseif ( ! $view = View::by_id( $view_id ) ) {
 			gravityview()->log->error( 'View #{view_id} not found', array( 'view_id' => $view_id ) );
 
 			return $this->exit_or_return( false );
 		}
+
+		$dt_settings = get_post_meta( $view->ID, '_gravityview_datatables_settings', true );
+
+		$is_server_side = 'serverSide' === \GV\Utils::get( $dt_settings, 'processing_mode', 'serverSide' );
 
 		// check for order/sorting
 		$atts['sort_field']     = array();
@@ -331,7 +337,7 @@ class GV_Extension_DataTables_Data {
 		$offset = isset( $_POST['start'] ) ? intval( $_POST['start'] ) : 0;
 
 		// check if someone requested the full filtered data (eg. TableTools print button)
-		if ( $atts['page_size'] == '-1' ) {
+		if ( $atts['page_size'] == '-1' || ! $is_server_side ) {
 			$mode              = 'all';
 			$atts['page_size'] = PHP_INT_MAX;
 		} else {
@@ -358,108 +364,72 @@ class GV_Extension_DataTables_Data {
 
 		gravityview()->log->debug( 'DataTables final $atts', $atts );
 
-		if ( class_exists( 'GravityView_Cache' ) ) {
+		// "Created By" field can be configured to display values other than the user ID,
+		// in which case we need to fetch all entries and filter them manually after the fact.
+		$created_by_field_columns = [];
 
-			$form_id = $view->form ? $view->form->ID : null;
+		if ( ! empty( $_POST['columns'] ) ) {
+			foreach ( $_POST['columns'] as &$column ) {
+				if ( $column['name'] === 'gv_created_by' && '' !== $column['search']['value'] ) {
+					$created_by_field_columns[] = $column; // Save column data for later filtering.
 
-			// We need to fetch the search criteria and pass it to the Cache so that the search is used when generating the cache transient key.
-			$search_criteria = GravityView_frontend::get_search_criteria( $atts, $form_id );
+					$column['search']['value'] = ''; // Clear the search value to prevent it from being used in the DB query.
 
-			// make sure to allow late filter ( used on Advanced Filter extension )
-			$criteria = apply_filters( 'gravityview_search_criteria', array( 'search_criteria' => $search_criteria ), $form_id, $_POST['view_id'] );
-
-			$atts['search_criteria'] = $criteria['search_criteria'];
-
-			// Cache key should also depend on the View assigned fields
-			$atts['directory_table-columns'] = $view->fields->by_position( 'directory_table-columns' )->as_configuration();
-
-			// cache depends on user session
-			$atts['user_session'] = $this->get_user_session();
-
-			// cache depends on offset
-			$atts['offset'] = $offset;
-
-			// cache depends on offset
-			// TODO: Verify the $_GET variables are related to valid field searches
-			$atts['getData'] = (array) $_GET;
-
-			$atts['columns'] = \GV\Utils::_POST( 'columns', array() );
-
-			$Cache = new GravityView_Cache( $form_id, $atts );
-
-			if ( $output = $Cache->get() ) {
-
-				gravityview()->log->debug( '[DataTables] Cached output found; using cache with key ' . $Cache->get_key() );
-
-				// update DRAW (mr DataTables is very sensitive!)
-				$temp         = json_decode( $output, true );
-				$temp['draw'] = intval( ( isset( $_POST['draw'] ) && is_numeric( $_POST['draw'] ) ) ? $_POST['draw'] : - 1 );
-				$output       = function_exists( 'wp_json_encode' ) ? wp_json_encode( $temp ) : json_encode( $temp );
-
-				if ( $has_content_length ) {
-					$strlen = function_exists( 'mb_strlen' ) ? mb_strlen( $output ) : strlen( $output );
-					// Fix strange characters before JSON response because of "Transfer-Encoding: chunked" header
-					@header( 'Content-Length: ' . $strlen );
+					// Unset the page size since we need to fetch all entries.
+					$view->settings->set( 'page_size', PHP_INT_MAX );
 				}
-
-				ob_end_clean();
-
-				return $this->exit_or_return( $output );
 			}
 		}
 
 		$page = ( ( $offset - ( $view->settings->get( 'offset', 0 ) ?: 0 ) ) / ( $view->settings->get( 'page_size', 20 ) ?: 20 ) ) + 1;
 
-		if ( gravityview()->plugin->supports( \GV\Plugin::FEATURE_GFQUERY ) ) {
+		add_action(
+			'gravityview/view/query',
+			$callback = function ( $query ) use ( $page, $view ) {
 
-		    add_action( 'gravityview/view/query', $callback = function ( $query ) use ( $page, $view ) {
-
-		        /** @var GF_Query $query */
+				/** @var GF_Query $query */
 				$query->page( $page );
 
 				// Get an array of configured field IDs to make sure searches ONLY search available fields
-			    $configured_fields = $view->fields->by_visible()->as_configuration();
-			    $configured_field_ids = wp_list_pluck( $configured_fields['directory_table-columns'], 'id' );
+				$configured_fields    = $view->fields->by_visible()->as_configuration();
+				$configured_field_ids = wp_list_pluck( $configured_fields['directory_table-columns'], 'id' );
 
-			    foreach ( \GV\Utils::_POST( 'columns', array() ) as $dt_column ) {
+				foreach ( \GV\Utils::_POST( 'columns', array() ) as $dt_column ) {
+					if ( empty( $dt_column['searchable'] ) || ! isset( $dt_column['search']['value'] ) ) {
+						continue;
+					}
 
-				    if ( empty( $dt_column['searchable'] ) || ! isset( $dt_column['search']['value'] ) ) {
-					    continue;
-				    }
+					if ( '' === $dt_column['search']['value'] ) {
+						continue;
+					}
 
-				    if ( '' === $dt_column['search']['value'] ) {
-					    continue;
-				    }
+					$field_id_or_meta_name = str_replace( 'gv_', '', sanitize_text_field( $dt_column['name'] ) );
 
-				    $field_id_or_meta_name = str_replace( 'gv_', '', sanitize_text_field( $dt_column['name'] ) );
+					// Field doesn't exist in View configuration; bail!
+					if ( ! in_array( $field_id_or_meta_name, $configured_field_ids, true ) ) {
+						continue;
+					}
 
-				    // Field doesn't exist in View configuration; bail!
-				    if ( ! in_array( $field_id_or_meta_name, $configured_field_ids, true ) ) {
-					    continue;
-				    }
+					if ( 'gv_entry_approval' === $dt_column['name'] ) {
+						$field_id_or_meta_name = 'is_approved';
+					}
 
-				    #ray( [ $dt_column, $field_id_or_meta_name ] );
+					$condition = new \GF_Query_Condition(
+						new \GF_Query_Column( $field_id_or_meta_name ),
+						\GF_Query_Condition::LIKE,
+						new \GF_Query_Literal( '%' . sanitize_text_field( $dt_column['search']['value'] ) . '%' )
+					);
 
-				    $condition = new \GF_Query_Condition(
-					    new \GF_Query_Column( $field_id_or_meta_name ),
-					    \GF_Query_Condition::LIKE,
-					    new \GF_Query_Literal( '%' . sanitize_text_field( $dt_column['search']['value'] ) . '%' )
-				    );
+					$q = $query->_introspect();
 
-				    $q = $query->_introspect();
+					$query->where( \GF_Query_Condition::_and( $q['where'], $condition ) );
+				}
+			}
+		);
 
-				    $query->where( \GF_Query_Condition::_and( $q['where'], $condition ) );
-			    }
-			} );
+		$entries = $view->get_entries( gravityview()->request );
 
-			$entries = $view->get_entries( gravityview()->request );
-
-			remove_action( 'gravityview/view/query', $callback );
-
-		} else {
-			$entries = $view->get_entries( gravityview()->request );
-			$entries = $entries->page( $page );
-		}
+		remove_action( 'gravityview/view/query', $callback );
 
 		// wrap all
 		$output = array(
@@ -469,13 +439,17 @@ class GV_Extension_DataTables_Data {
 			'data'            => $this->get_output_data( $entries, $view, $post ),
 		);
 
+		if ( ! empty( $created_by_field_columns ) ) {
+			$output = $this->filter_created_by_fields( $output, $created_by_field_columns );
+		}
+
 		/**
 		 * @filter `gravityview/datatables/output` Filter the output returned from the AJAX request
 		 * @since  2.3
 		 *
 		 * @param array                $output
-		 * @param \GV\View             $view
-		 * @param \GV\Entry_Collection $entries
+		 * @param View             $view
+		 * @param Entry_Collection $entries
 		 */
 		$output = apply_filters( 'gravityview/datatables/output', $output, $view, $entries );
 
@@ -484,15 +458,6 @@ class GV_Extension_DataTables_Data {
 		gravityview()->log->debug( '[DataTables] Ajax request answer', array( 'data' => $output ) );
 
 		$json = function_exists( 'wp_json_encode' ) ? wp_json_encode( $output ) : json_encode( $output );
-
-		if ( class_exists( 'GravityView_Cache' ) ) {
-
-			gravityview()->log->debug( '[DataTables] Setting cache', array( 'data' => $json ) );
-
-			// Cache results
-			$Cache->set( $json, 'datatables_output' );
-
-		}
 
 		// End prevent error output
 		$errors = ob_get_clean();
@@ -508,6 +473,53 @@ class GV_Extension_DataTables_Data {
 		}
 
 		return $this->exit_or_return( $json );
+	}
+
+	/**
+	 * Filter output by "Created By" field columns' search values.
+	 *
+	 * @param array $output
+	 * @param array $created_by_field_columns
+	 *
+	 * @return array
+	 */
+	private function filter_created_by_fields( $output, $created_by_field_columns ) {
+		if ( empty( $created_by_field_columns ) || empty( $output['data'] ) ) {
+			return $output;
+		}
+
+		$filtered_data = $output['data'];
+
+		foreach ( $created_by_field_columns as $column ) {
+			$created_by_id = intval( $column['data'] );
+			$search_value  = strtolower( $column['search']['value'] );
+
+			if ( '' === $search_value ) {
+				continue;
+			}
+
+			foreach ( $output['data'] as $key => $data ) {
+				$column_value = strtolower( wp_strip_all_tags( $data[ $created_by_id ] ) );
+
+				if ( ! preg_match( "/{$search_value}/i", $column_value ) ) {
+					unset( $filtered_data[ $key ] );
+				}
+			}
+		}
+
+
+		$start  = isset( $_POST['start'] ) && is_numeric( $_POST['start'] ) ? (int) $_POST['start'] : 0;
+		$length = isset( $_POST['length'] ) && is_numeric( $_POST['length'] ) ? (int) $_POST['length'] : 0;
+
+		if ( $length === -1 ) {
+			$length = null;
+		}
+
+		$output['data']            = array_slice( array_values( $filtered_data ), $start, $length );
+		$output['recordsFiltered'] = count( $filtered_data );
+		$output['recordsTotal']    = count( $filtered_data );
+
+		return $output;
 	}
 
 	/**
@@ -586,22 +598,37 @@ class GV_Extension_DataTables_Data {
 	 *
 	 * @since 1.3
 	 *
-	 * @param \GV\Entry_Collection $entries The collection of entries for the current search
-	 * @param \GV\View             $view    The view
-	 * @param \WP_Post
+	 * @param Entry_Collection $entries The collection of entries for the current search.
+	 * @param View             $view    The View.
+	 * @param WP_Post          $post    Current View or post/page where View is embedded.
 	 *
 	 * @return array
 	 */
-	function get_output_data( $entries, $view, $post = null ) {
+	public function get_output_data( $entries, $view, $post = null ) {
+		/**
+		 * Runs before generating the output data.
+		 *
+		 * This is helpful for adding filters that will modify the output downstream.
+		 * For example, this is used by the GravityView LifterLMS integration.
+		 *
+		 * @action `gk/gravityview/datatables/output/before`
+		 *
+		 * @since TODO
+		 *
+		 * @param Entry_Collection $entries The collection of entries for the current search.
+		 * @param View             $view    The View.
+		 * @param WP_Post          $post    The post.
+		 */
+		do_action( 'gk/gravityview/datatables/output/before', $entries, $view, $post );
 
-		if ( ! $view instanceof \GV\View ) {
-			gravityview()->log->notice( '\GV_Extension_DataTables_Data::get_output_data now requires a \GV\View and \GV\Entry_Collection object parameters.' );
+		if ( ! $view instanceof View ) {
+			gravityview()->log->notice( '\GV_Extension_DataTables_Data::get_output_data now requires \GV\Entry_Collection and \GV\View object parameters.' );
 
 			return array();
 		}
 
 		// build output data
-		$data = array();
+		$data  = array();
 		$_POST = isset( $_POST ) ? (array) $_POST : array();
 		if ( $entries->total() ) {
 
@@ -613,7 +640,13 @@ class GV_Extension_DataTables_Data {
 			foreach ( $entries->all() as $entry ) {
 				$temp = array();
 
-				\GV\Mocks\Legacy_Context::push( array( 'view' => $view, 'entry' => $entry, 'post' => $post ) );
+				\GV\Mocks\Legacy_Context::push(
+					array(
+						'view'  => $view,
+						'entry' => $entry,
+						'post'  => $post,
+					)
+				);
 
 				// Loop through each column and set the value of the column to the field value
 				foreach ( $fields as $field ) {
@@ -634,7 +667,7 @@ class GV_Extension_DataTables_Data {
 				 * @since  2.3.1
 				 *
 				 * @param array    $temp  Array of values for the entry, one item per field being rendered by \GV\Field_Renderer()
-				 * @param \GV\View $view  Current View being processed
+				 * @param View $view  Current View being processed
 				 * @param array    $entry Current Gravity Forms entry array
 				 */
 				$temp = apply_filters( 'gravityview/datatables/output/entry', $temp, $view, $entry );
@@ -643,7 +676,6 @@ class GV_Extension_DataTables_Data {
 				$data[] = $temp;
 
 			}
-
 		}
 
 		return $data;
@@ -692,14 +724,13 @@ class GV_Extension_DataTables_Data {
 		$token  = ! empty( $cookie['token'] ) ? $cookie['token'] : '';
 
 		return get_current_user_id() . '_' . $token;
-
 	}
 
 	/**
 	 * Override the template class to the correct one.
 	 *
 	 * @param string   $class The class to use as the template class.
-	 * @param \GV\View $view  The View we're looking at.
+	 * @param View $view  The View we're looking at.
 	 *
 	 * @return string The class
 	 */
@@ -717,7 +748,7 @@ class GV_Extension_DataTables_Data {
 	 *
 	 * @param string    $class The class to use as the template class.
 	 * @param \GV\Entry $entry The Entry we're looking at.
-	 * @param \GV\View  $view  The View we're looking at.
+	 * @param View  $view  The View we're looking at.
 	 *
 	 * @return string The class
 	 */
@@ -739,7 +770,7 @@ class GV_Extension_DataTables_Data {
 
 		// Index 100 is the default GravityView template path.
 		// Find an empty spot afterwards and avoid overwriting other registered spots
-		for ( $i = 101; ; $i ++ ) {
+		for ( $i = 101; ; $i++ ) {
 			if ( ! empty( $file_paths[ $i ] ) ) {
 				continue;
 			}
@@ -755,15 +786,15 @@ class GV_Extension_DataTables_Data {
 	 *
 	 * @filter  gravityview_datatables_lengthmenu Modify the values shown in the page length menu. Key is the # of results, value is the label for the results.
 	 *
-	 * @param \GV\View $view The View
+	 * @param View $view The View
 	 *
 	 * @return array            2D array formatted for DataTables
 	 */
 	function get_length_menu( $view ) {
 
 		$page_size = 25;
-		if ( ! $view instanceof \GV\View ) {
-			if ( $view = \GV\View::by_id( $view['id'] ) ) {
+		if ( ! $view instanceof View ) {
+			if ( $view = View::by_id( $view['id'] ) ) {
 				$page_size = $view->settings->get( 'page_size' );
 			}
 		} else {
@@ -785,8 +816,18 @@ class GV_Extension_DataTables_Data {
 		ksort( $values );
 
 		// Add the "All" option after the rest of them have been sorted by value
-		$values[ - 1 ] = _x( 'All', 'Menu label to show all results in DataTables template.', 'gv-datatables' );
+		$values[- 1] = _x( 'All', 'Menu label to show all results in DataTables template.', 'gv-datatables' );
 
+		/**
+		 * Modifies the values shown in the page length menu.
+		 *
+		 * Key is the # of results, value is the label for the results.
+		 *
+		 * @since 3.3.5
+		 *
+		 * @param array $values Array of values and labels for the page length menu.
+		 * @param array $view_data The View data as an array {@see \GV\View::as_data()}.
+		 */
 		$values = apply_filters( 'gravityview_datatables_lengthmenu', $values, $view->as_data() );
 
 		/**
@@ -808,7 +849,7 @@ class GV_Extension_DataTables_Data {
 	 * @since 1.2.3
 	 * @since 2.4.4 Added $view parameter; made private
 	 *
-	 * @param \GV\View $view The View
+	 * @param View $view The View
 	 *
 	 * @return array Array of strings, as used by the DataTables extension's `language` setting
 	 */
@@ -819,7 +860,7 @@ class GV_Extension_DataTables_Data {
 		$locale = get_locale();
 
 		/**
-		 * Change the locale used to fetch translations
+		 * Change the locale used to fetch translations.
 		 *
 		 * @since 1.2.3
 		 */
@@ -845,9 +886,7 @@ class GV_Extension_DataTables_Data {
 				if ( ! empty( $json_array ) ) {
 					$language = $json_array;
 				}
-
 			}
-
 		} else {
 
 			$no_entries_text = $view->settings->get( 'no_results_text', __( 'No entries match your request.', 'gv-datatables' ) );
@@ -856,14 +895,14 @@ class GV_Extension_DataTables_Data {
 			$no_results_text = $view->settings->get( 'no_search_results_text', __( 'This search returned no results.', 'gv-datatables' ) );
 			$no_results_text = ! $no_results_text ? __( 'This search returned no results.', 'gv-datatables' ) : $no_results_text;
 
-            /**
-             * @filter `gravityview_datatables_loading_text` Modify the text shown when DataTables is loaded
-             *
-             * @since  2.5 Added $view parameter
-             *
-             * @param string $loading_text Default: Loading data…
-             * @param \GV\View $view The View
-             */
+			/**
+			 * @filter `gravityview_datatables_loading_text` Modify the text shown when DataTables is loaded
+			 *
+			 * @since  2.5 Added $view parameter
+			 *
+			 * @param string $loading_text Default: Loading data…
+			 * @param View $view The View
+			 */
 			$loading_text = apply_filters( 'gravityview_datatables_loading_text', esc_html__( 'Loading data&hellip;', 'gv-datatables' ), $view );
 			$loading_text = $loading_text ? '<div class="dataTables_processing_text">' . $loading_text . '</div>' : null;
 
@@ -871,7 +910,7 @@ class GV_Extension_DataTables_Data {
 			$language = array(
 				'processing'  => $loading_text,
 				'zeroRecords' => esc_html( $no_entries_text ),
-				'emptyTable' => esc_html( $no_results_text ),
+				'emptyTable'  => esc_html( $no_results_text ),
 			);
 
 		}
@@ -1001,7 +1040,6 @@ class GV_Extension_DataTables_Data {
 	 * @return string If direct access, it's this file. otherwise, admin-ajax.php
 	 */
 	function get_ajax_url() {
-
 		return admin_url( 'admin-ajax.php' );
 	}
 
@@ -1011,7 +1049,7 @@ class GV_Extension_DataTables_Data {
 	 * @since 1.3.3
 	 *
 	 * @param WP_Post  $post Current View or post/page where View is embedded
-	 * @param \GV\View $view The View
+	 * @param View $view The View
 	 *
 	 * @return array Array of settings formatted as DataTables options array. {@see https://datatables.net/reference/option/}
 	 */
@@ -1075,11 +1113,18 @@ class GV_Extension_DataTables_Data {
 
 			$field_config = $field->as_configuration();
 
+			$field_type = $field->type;
+
+			if ( in_array( $field_id, [ 'date_created', 'date_updated', 'payment_date' ] ) ) {
+				$field_type = 'date';
+			}
+
 			$field_column = array(
-				'name'  => 'gv_' . $field_id,
-				'width' => $this->get_column_width( $field_config ),
-				'form_id' => rgar( $field_config, 'form_id' ),
+				'name'      => 'gv_' . $field_id,
+				'width'     => $this->get_column_width( $field_config ),
+				'form_id'   => rgar( $field_config, 'form_id' ),
 				'className' => gravityview_sanitize_html_class( \GV\Utils::get( $field_config, 'custom_class', '' ) ),
+				'type'      => $field_type,
 			);
 
 			/**
@@ -1122,11 +1167,14 @@ class GV_Extension_DataTables_Data {
 		 * @filter `gravityview_datatables_js_options` Modify the settings used to render DataTables
 		 * @see    https://datatables.net/reference/option/
 		 *
+		 * @since 3.3 Added $this parameter.
+		 *
 		 * @param array   $dt_config The configuration for the current View
 		 * @param int     $view_id   The ID of the View being configured
 		 * @param WP_Post $post      Current View or post/page where View is embedded
+		 * @param GV_Extension_DataTables_Data $this The current instance of the class.
 		 */
-		$dt_config = apply_filters( 'gravityview_datatables_js_options', $dt_config, $view->ID, $post );
+		$dt_config = apply_filters( 'gravityview_datatables_js_options', $dt_config, $view->ID, $post, $this );
 
 		return $dt_config;
 	}
@@ -1135,20 +1183,20 @@ class GV_Extension_DataTables_Data {
 	 * Enqueue Scripts and Styles for DataTable View Type
 	 *
 	 * @filter gravityview_datatables_loading_text Modify the text shown while the DataTable is loading
-     *
-     * @since 2.5 Added $gravityview parameter
-     *
-     * @param \GV\Template_Context $gravityview The $gravityview object available in templates.
+	 *
+	 * @since 2.5 Added $gravityview parameter
+	 *
+	 * @param Template_Context $gravityview The $gravityview object available in templates.
 	 */
 	public function add_scripts_and_styles( $gravityview ) {
 
-        if ( empty( $gravityview ) || ! $gravityview instanceof \GV\Template_Context ) {
-            return;
-        }
+		if ( empty( $gravityview ) || ! $gravityview instanceof Template_Context ) {
+			return;
+		}
 
-        if( ! $gravityview->template instanceof \GV\View_DataTable_Template ) {
-            return;
-        }
+		if ( ! $gravityview->template instanceof \GV\View_DataTable_Template ) {
+			return;
+		}
 
 		$post = get_post();
 
@@ -1157,6 +1205,20 @@ class GV_Extension_DataTables_Data {
 		}
 
 		$script_debug = ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? '' : '.min';
+
+		// Conditionally enqueue Entry Notes scripts.
+		if ( $gravityview instanceof Template_Context && $gravityview->view instanceof View ) {
+			foreach ( $gravityview->view->fields->by_position( 'directory_table-columns' )->by_visible()->all() as $field ) {
+				if ( 'notes' !== $field->type ) {
+					continue;
+				}
+
+				( new GravityView_Field_Notes )->register_scripts();
+				( new GravityView_Field_Notes )->enqueue_scripts();
+
+				break;
+			}
+		}
 
 		/**
 		 * @filter `gravityview_datatables_script_src` Modify the DataTables core script used
@@ -1169,7 +1231,7 @@ class GV_Extension_DataTables_Data {
 				'gravityview_datatables_script_src',
 				plugins_url( 'assets/js/third-party/datatables/jquery.dataTables' . $script_debug . '.js', GV_DT_FILE )
 			),
-			array( 'jquery' ),
+			array( 'jquery', 'wp-hooks' ),
 			GV_Extension_DataTables::version,
 			true
 		);
@@ -1193,7 +1255,6 @@ class GV_Extension_DataTables_Data {
 		 * @deprecated Will no longer give the views on the page.
 		 */
 		do_action( 'gravityview_datatables_scripts_styles', array(), array(), $post );
-
 	}
 
 	/**
@@ -1210,7 +1271,7 @@ class GV_Extension_DataTables_Data {
 	 *
 	 * @since 2.3 Renamed from output_dt_config() to extend_view()
 	 *
-	 * @param \GV\Template_Context $gravityview The template $gravityview object.
+	 * @param Template_Context $gravityview The template $gravityview object.
 	 *
 	 * @return void
 	 * @internal
@@ -1244,13 +1305,13 @@ class GV_Extension_DataTables_Data {
 			return;
 		}
 		?>
-        <script type="text/javascript">
+		<script type="text/javascript">
 					if ( ! window.gvDTglobals ) {
 						window.gvDTglobals = [];
 					}
 
 					window.gvDTglobals.push(<?php echo $script_config_json; ?>);
-        </script>
+		</script>
 		<?php
 
 		$_printed_scripts[ $hash_of_config ] = true;
@@ -1279,7 +1340,7 @@ class GV_Extension_DataTables_Data {
 			return $settings;
 		}
 
-		if ( ! $view = \GV\View::by_id( $view_id ) ) {
+		if ( ! $view = View::by_id( $view_id ) ) {
 			return $settings;
 		}
 
@@ -1291,7 +1352,6 @@ class GV_Extension_DataTables_Data {
 
 		return $settings;
 	}
-
 }
 
-new GV_Extension_DataTables_Data;
+new GV_Extension_DataTables_Data();

@@ -3,7 +3,7 @@ Contributors: celomitan
 Donate link: https://wordpressfoundation.org/donate/
 Tags: elementor, blog, slideshow, slider, popover, pricing, table, spot, post meta, post related, menu
 Requires at least: 3.7
-Tested up to: 6.3.1
+Tested up to: 6.4.3
 Requires PHP: 5.0
 Stable tag: 4.4
 License: GPLv3 or later
@@ -68,6 +68,12 @@ Not yet
 5. Three colors heading
 
 == Changelog ==
+= 1.3.4 =
+* Improvement: Adding icon ( post meta widget )
+
+= 1.3.3 =
+* Security issue fixing
+
 = 1.3.2 =
 * Tweak:  Progress bar widget open custom width
 

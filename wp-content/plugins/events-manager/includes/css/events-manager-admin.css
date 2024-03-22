@@ -13,7 +13,9 @@
   /* Time Picker */
   /* Flatpickr */
   /*! Tippy.js v6.3.7 - https://unpkg.com/tippy.js@6.3.7/themes/light-border.css */
-  /* selectize bootstrap5 theme */
+  /**
+   * Selectize (v0.15.2) bootstrap5 - https://selectize.dev
+   */
   /*!
    * International Telephone Input v18.2.1
    * https://github.com/jackocnr/intl-tel-input.git
@@ -2020,14 +2022,6 @@
   width: 16px;
   height: 6px;
 }
-@keyframes lds-dual-ring {
-  0% {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
 .wp-admin .selectize-control.plugin-drag_drop.multi > .selectize-input.dragging {
   overflow: visible;
 }
@@ -2035,7 +2029,7 @@
   visibility: visible !important;
   background: #f2f2f2 !important;
   background: rgba(0, 0, 0, 0.06) !important;
-  border: 0 !important;
+  border: 0 none !important;
   box-shadow: inset 0 0 12px 4px #fff;
 }
 .wp-admin .selectize-control.plugin-drag_drop .ui-sortable-placeholder::after {
@@ -2045,14 +2039,14 @@
 .wp-admin .selectize-control.plugin-drag_drop .ui-sortable-helper {
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
-.wp-admin .selectize-control .dropdown-header {
+.wp-admin .selectize-dropdown.plugin-dropdown_header .selectize-dropdown-header {
   position: relative;
   padding: 6px 0.75rem;
   border-bottom: 1px solid #d0d0d0;
   background: #f8f8f8;
-  border-radius: 0.25rem 0.25rem 0 0;
+  border-radius: 0.375rem 0.375rem 0 0;
 }
-.wp-admin .selectize-control .dropdown-header-close {
+.wp-admin .selectize-dropdown.plugin-dropdown_header .selectize-dropdown-header-close {
   position: absolute;
   right: 0.75rem;
   top: 50%;
@@ -2061,9 +2055,10 @@
   margin-top: -12px;
   line-height: 20px;
   font-size: 20px !important;
+  text-decoration: none;
 }
-.wp-admin .selectize-control .dropdown-header-close:hover {
-  color: #000;
+.wp-admin .selectize-dropdown.plugin-dropdown_header .selectize-dropdown-header-close:hover {
+  color: black;
 }
 .wp-admin .selectize-dropdown.plugin-optgroup_columns .selectize-dropdown-content {
   display: flex;
@@ -2104,19 +2099,51 @@
   background: rgba(0, 0, 0, 0.05);
 }
 .wp-admin .selectize-control.plugin-remove_button .item.active .remove {
-  border-left-color: transparent;
+  border-left-color: rgba(0, 0, 0, 0);
 }
 .wp-admin .selectize-control.plugin-remove_button .disabled .item .remove:hover {
-  background: 0 0;
+  background: 0;
 }
 .wp-admin .selectize-control.plugin-remove_button .disabled .item .remove {
-  border-left-color: #fff;
+  border-left-color: white;
 }
-.wp-admin .selectize-control.plugin-remove_button .remove-single {
+.wp-admin .selectize-control.plugin-clear_button .clear {
+  text-decoration: none;
+  display: flex;
   position: absolute;
-  right: 0;
+  height: 100%;
+  width: 25px;
   top: 0;
-  font-size: 23px;
+  right: calc(0.75rem - 5px);
+  color: #000;
+  opacity: 0.4;
+  font-weight: bold;
+  border: 0;
+  cursor: pointer;
+  z-index: 1;
+  font-size: 21px;
+  justify-content: center;
+  align-items: center;
+}
+.wp-admin .selectize-control.plugin-clear_button .clear:hover {
+  opacity: 1;
+}
+.wp-admin .selectize-control.plugin-clear_button.single .clear {
+  right: calc(0.75rem - 5px + 1.5rem);
+}
+.wp-admin .selectize-dropdown.plugin-auto_position.selectize-position-top {
+  border-top: 1px solid #d0d0d0;
+  border-bottom: 0 none;
+  border-radius: 3px 3px 0 0;
+  box-shadow: 0 -6px 12px rgba(0, 0, 0, 0.18);
+}
+.wp-admin .selectize-control.plugin-auto_position .selectize-input.selectize-position-top.dropdown-active {
+  border-radius: 0 0 3px 3px;
+  border-top: 0 none;
+}
+.wp-admin .selectize-control.plugin-auto_position .selectize-input.selectize-position-top.dropdown-active::before {
+  top: 0;
+  bottom: unset;
 }
 .wp-admin .selectize-control {
   position: relative;
@@ -2128,20 +2155,21 @@
   line-height: 1.5;
   font-smoothing: inherit;
 }
-.wp-admin .selectize-input {
+.wp-admin .selectize-input, .wp-admin .selectize-control.single .selectize-input.input-active {
+  background: #fff;
   cursor: text;
+  display: inline-block;
+}
+.wp-admin .selectize-input {
   border: 1px solid #ced4da;
   padding: 0.375rem 0.75rem;
+  display: inline-block;
   width: 100%;
   position: relative;
   z-index: 1;
   box-sizing: border-box;
   box-shadow: none;
-  border-radius: 0.25rem;
-}
-.wp-admin .selectize-control.single .selectize-input.input-active, .wp-admin .selectize-input {
-  background: #fff;
-  display: inline-block;
+  border-radius: 0.375rem;
 }
 .wp-admin .selectize-control.multi .selectize-input.has-items {
   padding: calc(0.375rem - 1px - 0px) 0.75rem calc(0.375rem - 1px - 3px - 0px);
@@ -2155,6 +2183,9 @@
 .wp-admin .selectize-input.focus {
   box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.15);
 }
+.wp-admin .selectize-input.dropdown-active {
+  border-radius: 0.375rem 0.375rem 0 0;
+}
 .wp-admin .selectize-input > * {
   vertical-align: baseline;
   display: inline-block;
@@ -2167,17 +2198,16 @@
   background: #efefef;
   color: #343a40;
   border: 0 solid #dee2e6;
-  border-radius: calc(0.25rem - 1px);
 }
 .wp-admin .selectize-control.multi .selectize-input > div.active {
   background: #0d6efd;
   color: #fff;
-  border: 0 solid transparent;
+  border: 0 solid rgba(0, 0, 0, 0);
 }
 .wp-admin .selectize-control.multi .selectize-input.disabled > div, .wp-admin .selectize-control.multi .selectize-input.disabled > div.active {
   color: #878787;
-  background: #fff;
-  border: 0 solid #fff;
+  background: white;
+  border: 0 solid white;
 }
 .wp-admin .selectize-input > input {
   display: inline-block !important;
@@ -2187,8 +2217,8 @@
   max-width: 100% !important;
   margin: 0 !important;
   text-indent: 0 !important;
-  border: 0 !important;
-  background: 0 0 !important;
+  border: 0 none !important;
+  background: none !important;
   line-height: inherit !important;
   user-select: auto !important;
   box-shadow: none !important;
@@ -2197,13 +2227,13 @@
   display: none;
 }
 .wp-admin .selectize-input > input:focus {
-  outline: 0 !important;
+  outline: none !important;
 }
 .wp-admin .selectize-input > input[placeholder] {
   box-sizing: initial;
 }
 .wp-admin .selectize-input.has-items > input {
-  margin: 0 !important;
+  margin: 0 0 !important;
 }
 .wp-admin .selectize-input::after {
   content: " ";
@@ -2212,8 +2242,9 @@
 }
 .wp-admin .selectize-input.dropdown-active::before {
   content: " ";
+  display: block;
   position: absolute;
-  background: #fff;
+  background: #d8dde1;
   height: 1px;
   bottom: 0;
   left: 0;
@@ -2224,9 +2255,14 @@
   top: 100%;
   left: 0;
   width: 100%;
+  z-index: 10;
   border: 1px solid #d0d0d0;
+  background: #fff;
+  margin: -1px 0 0 0;
   border-top: 0 none;
   box-sizing: border-box;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border-radius: 0 0 0.375rem 0.375rem;
 }
 .wp-admin .selectize-dropdown [data-selectable] {
   cursor: pointer;
@@ -2236,7 +2272,7 @@
   background: rgba(255, 237, 40, 0.4);
   border-radius: 1px;
 }
-.wp-admin .selectize-dropdown .create, .wp-admin .selectize-dropdown .no-results, .wp-admin .selectize-dropdown .optgroup-header, .wp-admin .selectize-dropdown .option {
+.wp-admin .selectize-dropdown .option, .wp-admin .selectize-dropdown .optgroup-header, .wp-admin .selectize-dropdown .no-results, .wp-admin .selectize-dropdown .create {
   padding: 3px 0.75rem;
 }
 .wp-admin .selectize-dropdown .option, .wp-admin .selectize-dropdown [data-disabled], .wp-admin .selectize-dropdown [data-disabled] [data-selectable].option {
@@ -2256,20 +2292,31 @@
   cursor: default;
 }
 .wp-admin .selectize-dropdown .active {
-  background-color: #e9ecef;
-  color: #1e2125;
+  background-color: #0d6efd;
+  color: #fff;
 }
 .wp-admin .selectize-dropdown .active.create {
   color: #1e2125;
 }
+.wp-admin .selectize-dropdown .selected {
+  background-color: #0d6efd;
+  color: #fff;
+}
 .wp-admin .selectize-dropdown .create {
   color: rgba(52, 58, 64, 0.5);
+}
+.wp-admin .selectize-dropdown .active:not(.selected) {
+  background: #e9ecef;
+  color: #1e2125;
 }
 .wp-admin .selectize-dropdown-content {
   overflow-y: auto;
   overflow-x: hidden;
   max-height: 200px;
   overflow-scrolling: touch;
+}
+.wp-admin .selectize-dropdown-emptyoptionlabel {
+  text-align: center;
 }
 .wp-admin .selectize-dropdown .spinner {
   display: inline-block;
@@ -2285,13 +2332,21 @@
   margin: 3px;
   border-radius: 50%;
   border: 5px solid #d0d0d0;
-  border-color: #d0d0d0 transparent;
+  border-color: #d0d0d0 transparent #d0d0d0 transparent;
   animation: lds-dual-ring 1.2s linear infinite;
+}
+@keyframes lds-dual-ring {
+  0% {
+    transform: rotate(0);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 .wp-admin .selectize-control.single .selectize-input, .wp-admin .selectize-control.single .selectize-input input {
   cursor: pointer;
 }
-.wp-admin .selectize-control.single .selectize-input.input-active, .wp-admin .selectize-control.single .selectize-input.input-active input {
+.wp-admin .selectize-control.single .selectize-input.input-active, .wp-admin .selectize-control.single .selectize-input.input-active input:not(:read-only) {
   cursor: text;
 }
 .wp-admin .selectize-control.single .selectize-input:after {
@@ -2304,13 +2359,13 @@
   width: 0;
   height: 0;
   border-style: solid;
-  border-width: 5px 5px 0;
-  border-color: #343a40 transparent transparent;
+  border-width: 5px 5px 0 5px;
+  border-color: #343a40 transparent transparent transparent;
 }
 .wp-admin .selectize-control.single .selectize-input.dropdown-active:after {
   margin-top: -4px;
-  border-width: 0 5px 5px;
-  border-color: transparent transparent #343a40;
+  border-width: 0 5px 5px 5px;
+  border-color: transparent transparent #343a40 transparent;
 }
 .wp-admin .selectize-control.rtl {
   text-align: right;
@@ -2329,11 +2384,11 @@
 .wp-admin .selectize-dropdown, .wp-admin .selectize-dropdown.form-control {
   height: auto;
   padding: 0;
-  margin: 2px 0 0;
+  margin: 2px 0 0 0;
   z-index: 1000;
   background: #fff;
-  border: 1px solid rgba(0, 0, 0, 0.15);
-  border-radius: 0.25rem;
+  border: 1px solid var(--bs-border-color-translucent);
+  border-radius: 0.375rem;
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
 }
 .wp-admin .selectize-dropdown .optgroup-header {
@@ -2349,7 +2404,7 @@
   height: 0;
   margin: 0.5rem 0;
   overflow: hidden;
-  border-top: 1px solid rgba(0, 0, 0, 0.15);
+  border-top: 1px solid var(--bs-border-color-translucent);
   margin-left: -0.75rem;
   margin-right: -0.75rem;
 }
@@ -2372,7 +2427,7 @@
   }
 }
 .wp-admin .selectize-input.dropdown-active {
-  border-radius: 0.25rem;
+  border-radius: 0.375rem;
 }
 .wp-admin .selectize-input.dropdown-active::before {
   display: none;
@@ -2390,29 +2445,178 @@
   border-color: #bd2130;
   box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px #eb8c95;
 }
-.wp-admin .selectize-control.form-control-sm .selectize-input.has-items {
+.wp-admin .selectize-control.form-control-sm .selectize-input {
   min-height: calc(1.5em + 0.5rem + 2px) !important;
   height: calc(1.5em + 0.5rem + 2px);
   padding: 0.25rem 0.5rem !important;
   font-size: 0.875rem;
   line-height: 1.25;
 }
-.wp-admin .selectize-control.multi .selectize-input.has-items {
+.wp-admin .selectize-control.multi .selectize-input {
   height: auto;
   padding-left: calc(0.75rem - 5px);
   padding-right: calc(0.75rem - 5px);
 }
-.wp-admin .form-control.selectize-control {
+.wp-admin .selectize-control.multi .selectize-input > div {
+  border-radius: calc(0.375rem - 1px);
+}
+.wp-admin .form-select.selectize-control, .wp-admin .form-control.selectize-control {
   padding: 0;
   height: auto;
   border: 0;
-  background: 0 0;
+  background: 0;
   box-shadow: none;
   border-radius: 0;
 }
-.wp-admin .input-group .selectize-input {
+.wp-admin .input-group > .input-group-append > .btn, .wp-admin .input-group > .form-control:not(:first-child) {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+.wp-admin .input-group > .input-group-prepend > .btn {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+.wp-admin .input-group .selectize-control:not(:last-child) .selectize-input {
   overflow: unset;
-  border-radius: 0 0.25rem 0.25rem 0;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+.wp-admin .input-group .selectize-control:not(:first-child) .selectize-input {
+  overflow: unset;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+.wp-admin .selectize-dropdown.plugin-auto_position.selectize-position-top {
+  border-top: 1px solid #ced4da !important;
+  border-bottom: 1px solid #ced4da !important;
+  border-radius: 0.375rem !important;
+}
+.wp-admin .selectize-control.plugin-auto_position .selectize-input.selectize-position-top.dropdown-active {
+  border-radius: 0.375rem !important;
+  border-top: 1px solid #ced4da !important;
+}
+.wp-admin .selectize-dropdown.plugin-auto_position.selectize-position-top {
+  border-top: 1px solid #d0d0d0;
+  border-bottom: 0 none;
+  border-radius: 3px 3px 0 0;
+  box-shadow: 0 -6px 12px rgba(0, 0, 0, 0.18);
+}
+.wp-admin .selectize-control.plugin-auto_position .selectize-input.selectize-position-top.dropdown-active {
+  border-radius: 0 0 3px 3px;
+  border-top: 0 none;
+}
+.wp-admin .selectize-control.plugin-auto_position .selectize-input.selectize-position-top.dropdown-active::before {
+  top: 0;
+  bottom: unset;
+}
+.wp-admin .selectize-control.plugin-clear_button .clear {
+  text-decoration: none;
+  display: flex;
+  position: absolute;
+  height: 100%;
+  width: 25px;
+  top: 0;
+  right: calc(0.75rem - 5px);
+  color: #000;
+  opacity: 0.4;
+  font-weight: bold;
+  border: 0;
+  cursor: pointer;
+  z-index: 1;
+  font-size: 21px;
+  justify-content: center;
+  align-items: center;
+}
+.wp-admin .selectize-control.plugin-clear_button .clear:hover {
+  opacity: 1;
+}
+.wp-admin .selectize-control.plugin-clear_button.single .clear {
+  right: calc(0.75rem - 5px + 1.5rem);
+}
+.wp-admin .selectize-control.plugin-drag_drop.multi > .selectize-input.dragging {
+  overflow: visible;
+}
+.wp-admin .selectize-control.plugin-drag_drop.multi > .selectize-input > div.ui-sortable-placeholder {
+  visibility: visible !important;
+  background: #f2f2f2 !important;
+  background: rgba(0, 0, 0, 0.06) !important;
+  border: 0 none !important;
+  box-shadow: inset 0 0 12px 4px #fff;
+}
+.wp-admin .selectize-control.plugin-drag_drop .ui-sortable-placeholder::after {
+  content: "!";
+  visibility: hidden;
+}
+.wp-admin .selectize-control.plugin-drag_drop .ui-sortable-helper {
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+.wp-admin .selectize-dropdown.plugin-dropdown_header .selectize-dropdown-header {
+  position: relative;
+  padding: 6px 0.75rem;
+  border-bottom: 1px solid #d0d0d0;
+  background: #f8f8f8;
+  border-radius: 0.375rem 0.375rem 0 0;
+}
+.wp-admin .selectize-dropdown.plugin-dropdown_header .selectize-dropdown-header-close {
+  position: absolute;
+  right: 0.75rem;
+  top: 50%;
+  color: #343a40;
+  opacity: 0.4;
+  margin-top: -12px;
+  line-height: 20px;
+  font-size: 20px !important;
+  text-decoration: none;
+}
+.wp-admin .selectize-dropdown.plugin-dropdown_header .selectize-dropdown-header-close:hover {
+  color: black;
+}
+.wp-admin .selectize-dropdown.plugin-optgroup_columns .selectize-dropdown-content {
+  display: flex;
+}
+.wp-admin .selectize-dropdown.plugin-optgroup_columns .optgroup {
+  border-right: 1px solid #f2f2f2;
+  border-top: 0 none;
+  flex-grow: 1;
+  flex-basis: 0;
+  min-width: 0;
+}
+.wp-admin .selectize-dropdown.plugin-optgroup_columns .optgroup:last-child {
+  border-right: 0 none;
+}
+.wp-admin .selectize-dropdown.plugin-optgroup_columns .optgroup:before {
+  display: none;
+}
+.wp-admin .selectize-dropdown.plugin-optgroup_columns .optgroup-header {
+  border-top: 0 none;
+}
+.wp-admin .selectize-control.plugin-remove_button .item {
+  display: inline-flex;
+  align-items: center;
+  padding-right: 0 !important;
+}
+.wp-admin .selectize-control.plugin-remove_button .item .remove {
+  color: inherit;
+  text-decoration: none;
+  vertical-align: middle;
+  display: inline-block;
+  padding: 1px 5px;
+  border-left: 1px solid #dee2e6;
+  border-radius: 0 2px 2px 0;
+  box-sizing: border-box;
+  margin-left: 5px;
+}
+.wp-admin .selectize-control.plugin-remove_button .item .remove:hover {
+  background: rgba(0, 0, 0, 0.05);
+}
+.wp-admin .selectize-control.plugin-remove_button .item.active .remove {
+  border-left-color: rgba(0, 0, 0, 0);
+}
+.wp-admin .selectize-control.plugin-remove_button .disabled .item .remove:hover {
+  background: 0;
+}
+.wp-admin .selectize-control.plugin-remove_button .disabled .item .remove {
+  border-left-color: white;
 }
 .wp-admin .iti {
   position: relative;
@@ -3721,7 +3925,10 @@
   display: none;
   visibility: hidden;
 }
-.wp-admin .selectize-control.em-selectize:not(.always-open) input[type=text], .wp-admin .selectize-control.em-selectize:not(.always-open) input[type=text]:focus, .wp-admin .selectize-control.em-selectize:not(.always-open) input[type=text]:focus, .wp-admin .selectize-control.em-selectize-autocomplete:not(.always-open) input[type=text], .wp-admin .selectize-control.em-selectize-autocomplete:not(.always-open) input[type=text]:focus, .wp-admin .selectize-control.em-selectize-autocomplete:not(.always-open) input[type=text]:focus {
+.wp-admin .selectize-control {
+  --border-radius: 4px;
+}
+.wp-admin .selectize-control.em-selectize:not(.always-open, .multidropdown) input, .wp-admin .selectize-control.em-selectize:not(.always-open, .multidropdown) input:focus, .wp-admin .selectize-control.em-selectize:not(.always-open, .multidropdown) input:focus, .wp-admin .selectize-control.em-selectize-autocomplete:not(.always-open, .multidropdown) input, .wp-admin .selectize-control.em-selectize-autocomplete:not(.always-open, .multidropdown) input:focus, .wp-admin .selectize-control.em-selectize-autocomplete:not(.always-open, .multidropdown) input:focus {
   width: auto !important;
   border: 0 !important;
   outline: 0 !important;
@@ -3731,18 +3938,14 @@
   border-radius: 0 !important;
   background: none !important;
 }
-.wp-admin .selectize-control.em-selectize:not(.always-open) .selectize-input, .wp-admin .selectize-control.em-selectize-autocomplete:not(.always-open) .selectize-input {
-  border-radius: 4px !important;
+.wp-admin .selectize-control.em-selectize:not(.always-open, .multidropdown) .selectize-input, .wp-admin .selectize-control.em-selectize-autocomplete:not(.always-open, .multidropdown) .selectize-input {
+  border-radius: var(--border-radius) !important;
   width: 100% !important;
   min-height: 38px !important;
   padding: 6px 30px 6px 10px !important;
   /* The 6px vertically centers text on FF, ignored by Webkit */
 }
-.wp-admin .selectize-control.em-selectize:not(.always-open) .selectize-input.focus, .wp-admin .selectize-control.em-selectize-autocomplete:not(.always-open) .selectize-input.focus {
-  border: 1px solid var(--accent-color) !important;
-  box-shadow: none !important;
-}
-.wp-admin .selectize-control.em-selectize:not(.always-open) .selectize-input:after, .wp-admin .selectize-control.em-selectize-autocomplete:not(.always-open) .selectize-input:after {
+.wp-admin .selectize-control.em-selectize:not(.always-open, .multidropdown) .selectize-input:after, .wp-admin .selectize-control.em-selectize-autocomplete:not(.always-open, .multidropdown) .selectize-input:after {
   display: inline-flex !important;
   content: "";
   position: absolute;
@@ -3755,14 +3958,24 @@
   right: 8px;
   top: 50%;
 }
-.wp-admin .selectize-control.em-selectize:not(.always-open) .selectize-input.dropdown-active:after, .wp-admin .selectize-control.em-selectize-autocomplete:not(.always-open) .selectize-input.dropdown-active:after {
+.wp-admin .selectize-control.em-selectize:not(.always-open, .multidropdown) .selectize-input.focus:not(:focus), .wp-admin .selectize-control.em-selectize-autocomplete:not(.always-open, .multidropdown) .selectize-input.focus:not(:focus) {
+  border: 1px solid var(--border-color-softer) !important;
+  box-shadow: none !important;
+}
+.wp-admin .selectize-control.em-selectize:not(.always-open, .multidropdown) .selectize-input.focus.dropdown-active, .wp-admin .selectize-control.em-selectize-autocomplete:not(.always-open, .multidropdown) .selectize-input.focus.dropdown-active {
+  border: 1px solid var(--accent-color) !important;
+  box-shadow: none !important;
+  border-bottom: 0 !important;
+  border-radius: var(--border-radius) var(--border-radius) 0 0 !important;
+}
+.wp-admin .selectize-control.em-selectize:not(.always-open, .multidropdown) .selectize-input.focus.dropdown-active:after, .wp-admin .selectize-control.em-selectize-autocomplete:not(.always-open, .multidropdown) .selectize-input.focus.dropdown-active:after {
   margin-top: -8px;
   transform: rotate(180deg);
 }
-.wp-admin .selectize-control.em-selectize:not(.always-open) .selectize-input:not(.has-items) input[type=text], .wp-admin .selectize-control.em-selectize-autocomplete:not(.always-open) .selectize-input:not(.has-items) input[type=text] {
+.wp-admin .selectize-control.em-selectize:not(.always-open, .multidropdown) .selectize-input:not(.has-items) input, .wp-admin .selectize-control.em-selectize-autocomplete:not(.always-open, .multidropdown) .selectize-input:not(.has-items) input {
   width: calc(100% - 40px) !important;
 }
-.wp-admin .selectize-control.em-selectize:not(.always-open).selectize-control, .wp-admin .selectize-control.em-selectize-autocomplete:not(.always-open).selectize-control {
+.wp-admin .selectize-control.em-selectize:not(.always-open, .multidropdown).selectize-control, .wp-admin .selectize-control.em-selectize-autocomplete:not(.always-open, .multidropdown).selectize-control {
   margin-bottom: 15px !important;
 }
 .wp-admin .selectize-control.em-selectize.multi.plugin-remove_button .item, .wp-admin .selectize-control.em-selectize-autocomplete.multi.plugin-remove_button .item {
@@ -3774,6 +3987,23 @@
 .wp-admin .selectize-control.em-selectize.multi.plugin-remove_button .item a.remove, .wp-admin .selectize-control.em-selectize-autocomplete.multi.plugin-remove_button .item a.remove {
   color: inherit !important;
   background-color: inherit !important;
+}
+.wp-admin .selectize-control.em-selectize .selectize-dropdown, .wp-admin .selectize-control.em-selectize-autocomplete .selectize-dropdown {
+  width: 100% !important;
+  left: 0 !important;
+  top: calc(100% - 3px) !important;
+  border-radius: 0 0 var(--border-radius) var(--border-radius);
+  border: 1px solid var(--accent-color) !important;
+  border-top: 0 !important;
+  background-color: var(--background-color-inputs) !important;
+  box-shadow: none !important;
+  margin-bottom: 0 !important;
+  border-top: 0 !important;
+}
+.wp-admin .selectize-control.no-search .selectize-input {
+  position: absolute !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
 }
 .wp-admin .selectize-control.em-selectize-autocomplete .selectize-input:after {
   display: none !important;
@@ -3794,17 +4024,19 @@
 .wp-admin .selectize-control.em-selectize-autocomplete .selectize-dropdown-content > div {
   padding: 3px 0.75rem;
 }
-.wp-admin .selectize-control.em-selectize.always-open .selectize-input {
+.wp-admin .selectize-control.em-selectize.always-open .selectize-input, .wp-admin .selectize-control.em-selectize.multidropdown .selectize-input {
   border: 0 !important;
-  width: 100% !important;
   padding: 0 !important;
-  margin: 0 !important;
 }
-.wp-admin .selectize-control.em-selectize.always-open .selectize-input.focus {
+.wp-admin .selectize-control.em-selectize.always-open .selectize-input.focus, .wp-admin .selectize-control.em-selectize.multidropdown .selectize-input.focus {
   border: 0 !important;
   box-shadow: none !important;
 }
-.wp-admin .selectize-control.em-selectize.always-open .selectize-input input[type=text] {
+.wp-admin .selectize-control.em-selectize.always-open .selectize-input input, .wp-admin .selectize-control.em-selectize.multidropdown .selectize-input input {
+  border: 1px solid #cdcdcd !important;
+  border-radius: var(--border-radius);
+  padding: 5px;
+  width: 100%;
   background: var(--icon-magnifying-glass) 8px 50% no-repeat !important;
   background-size: 18px !important;
   padding-left: 36px !important;
@@ -3812,22 +4044,152 @@
   opacity: 1 !important;
   position: static !important;
 }
-.wp-admin .selectize-control.em-selectize.always-open .selectize-input input[type=text]:focus {
+.wp-admin .selectize-control.em-selectize.always-open .selectize-input input:focus, .wp-admin .selectize-control.em-selectize.multidropdown .selectize-input input:focus {
   border: 1px solid #cdcdcd !important;
 }
-.wp-admin .selectize-control.em-selectize.always-open .selectize-dropdown {
-  display: block !important;
-  visibility: visible !important;
-  position: static !important;
+.wp-admin .selectize-control.em-selectize.always-open .selectize-input:after, .wp-admin .selectize-control.em-selectize.multidropdown .selectize-input:after {
+  display: none !important;
+}
+.wp-admin .selectize-control.em-selectize.always-open .selectize-input {
   width: 100% !important;
-  border: 0 !important;
-  box-shadow: none !important;
-  margin-bottom: 0 !important;
+  margin: 0 !important;
+}
+.wp-admin .selectize-control.em-selectize.always-open .selectize-dropdown {
+  width: 100% !important;
+  position: static !important;
+}
+.wp-admin .selectize-control.em-selectize.always-open .selectize-dropdown {
+  border: none !important;
 }
 .wp-admin .selectize-control.em-selectize.always-open .selectize-dropdown .selectize-dropdown-content {
   overflow-y: visible;
   overflow-x: visible;
   max-height: none;
+}
+.wp-admin .selectize-control.em-selectize.multidropdown {
+  width: 100%;
+  border: 1px solid var(--border-color-softer) !important;
+  background-color: var(--background-color-inputs) !important;
+  border-radius: 4px !important;
+  cursor: pointer;
+  max-height: 40px;
+  overflow: visible;
+  /* allow tabability of control input which resides in the dropdown for multidropdown, to prevent jarring of content below on open/close */
+}
+.wp-admin .selectize-control.em-selectize.multidropdown.dropdown-active {
+  height: 100px;
+}
+.wp-admin .selectize-control.em-selectize.multidropdown .selectize-dropdown {
+  width: calc(100% + 2px) !important;
+  left: -1px !important;
+}
+.wp-admin .selectize-control.em-selectize.multidropdown .selectize-dropdown .selectize-dropdown-content {
+  overflow-y: scroll;
+  overflow-x: visible;
+  max-height: 500px;
+}
+.wp-admin .selectize-control.em-selectize.multidropdown .em-selectize-placeholder {
+  display: block;
+  width: 100%;
+  height: 38px;
+  font-size: 16px;
+  color: #888;
+  padding: 8px 30px 8px 10px;
+}
+.wp-admin .selectize-control.em-selectize.multidropdown .em-selectize-placeholder:after {
+  display: inline-flex !important;
+  content: "";
+  position: absolute;
+  border: 0 !important;
+  background-image: var(--icon-chevron-down);
+  background-size: 16px 16px;
+  height: 16px;
+  width: 16px;
+  margin-top: calc( 16px/2 * -1 );
+  right: 8px;
+  top: 50%;
+}
+.wp-admin .selectize-control.em-selectize.multidropdown .em-selectize-placeholder:after {
+  top: 20px !important;
+}
+.wp-admin .selectize-control.em-selectize.multidropdown .em-selectize-placeholder span.placeholder-count {
+  border-radius: 5px;
+  color: #fff;
+  background: #999;
+  font-size: 14px;
+  padding: 2px 6px;
+  margin: 0px 10px 0px 0;
+  display: inline-block;
+  text-align: center;
+}
+.wp-admin .selectize-control.em-selectize.multidropdown .em-selectize-placeholder span.placeholder-count span {
+  display: inline-block;
+}
+.wp-admin .selectize-control.em-selectize.multidropdown .em-selectize-placeholder span.placeholder-count span.clear-selection {
+  display: none;
+  visibility: hidden;
+}
+.wp-admin .selectize-control.em-selectize.multidropdown .em-selectize-placeholder span.placeholder-count a.remove {
+  color: inherit !important;
+  background-color: inherit !important;
+  border-right: 1px solid #ccc;
+  display: inline-block;
+  padding: 0 5px 0 2px;
+  margin-right: 5px;
+  font-size: 12px;
+  text-decoration: none;
+}
+.wp-admin .selectize-control.em-selectize.multidropdown .em-selectize-placeholder span.placeholder-count a.remove:hover {
+  text-decoration: none;
+}
+.wp-admin .selectize-control.em-selectize.multidropdown .em-selectize-placeholder span.placeholder-count:hover > span:not(.clear) {
+  display: none;
+  visibility: hidden;
+}
+.wp-admin .selectize-control.em-selectize.multidropdown .em-selectize-placeholder span.placeholder-count:hover > span.clear-selection {
+  display: inline-block;
+  visibility: visible;
+}
+.wp-admin .selectize-control.em-selectize.multidropdown.dropdown-active {
+  border: 1px solid var(--accent-color) !important;
+  border-radius: 4px 4px 0 0 !important;
+}
+.wp-admin .selectize-control.em-selectize.multidropdown.dropdown-active .em-selectize-placeholder:after {
+  margin-top: -8px;
+  transform: rotate(180deg);
+}
+.wp-admin .selectize-control.em-selectize.multidropdown.dropdown-active.no-options {
+  border-radius: var(--border-radius) !important;
+}
+.wp-admin .selectize-control.em-selectize.multidropdown.dropdown-active.no-options .selectize-dropdown {
+  display: block !important;
+}
+.wp-admin .selectize-control.em-selectize.multidropdown.dropdown-active .selectize-dropdown {
+  opacity: 1;
+  pointer-events: all;
+}
+.wp-admin .selectize-control.em-selectize.multidropdown .selectize-dropdown {
+  display: block !important;
+  opacity: 0;
+  pointer-events: none;
+}
+.wp-admin .selectize-control.em-selectize.multidropdown:not(.dropdown-active) > .selectize-input {
+  opacity: 0;
+  position: absolute;
+  z-index: -1;
+  pointer-events: none;
+}
+.wp-admin .selectize-control.em-selectize.multidropdown .selectize-input {
+  width: calc(100% - 20px) !important;
+  margin: 0 10px 5px !important;
+}
+.wp-admin .selectize-control.em-selectize.multidropdown .selectize-input .item {
+  display: none;
+  visibility: hidden;
+}
+.wp-admin .selectize-control.em-selectize.always-open .selectize-dropdown {
+  display: block !important;
+  visibility: visible !important;
 }
 .wp-admin .selectize-control.em-selectize.checkboxes .selectize-dropdown div.option > span:first-child {
   display: inline-block;
@@ -3840,6 +4202,10 @@
 }
 .wp-admin .selectize-control.em-selectize.checkboxes .selectize-dropdown div.option.selected {
   color: #0095c3;
+  background-color: transparent;
+}
+.wp-admin .selectize-control.em-selectize.checkboxes .selectize-dropdown div.option.selected.active {
+  background-color: #e9ecef;
 }
 .wp-admin .selectize-control.em-selectize.checkboxes .selectize-dropdown div.option.selected > span:first-child {
   background: var(--icon-checkmark) 50% 50% white no-repeat;
@@ -4633,18 +4999,22 @@
 .wp-admin .em.pixelbones .input input[type=number],
 .wp-admin .em.pixelbones .input input[type=search],
 .wp-admin .em.pixelbones .input input[type=text],
+.wp-admin .em.pixelbones .input input[type=select-one],
 .wp-admin .em.pixelbones .input input[type=tel],
 .wp-admin .em.pixelbones .input input[type=url],
 .wp-admin .em.pixelbones .input input[type=password],
+.wp-admin .em.pixelbones .input input[type=select-type],
 .wp-admin .em.pixelbones .input textarea,
 .wp-admin .em.pixelbones .input select:not([multiple]), .wp-admin .em.pixelbones.input div.input-wrap,
 .wp-admin .em.pixelbones.input input[type=email],
 .wp-admin .em.pixelbones.input input[type=number],
 .wp-admin .em.pixelbones.input input[type=search],
 .wp-admin .em.pixelbones.input input[type=text],
+.wp-admin .em.pixelbones.input input[type=select-one],
 .wp-admin .em.pixelbones.input input[type=tel],
 .wp-admin .em.pixelbones.input input[type=url],
 .wp-admin .em.pixelbones.input input[type=password],
+.wp-admin .em.pixelbones.input input[type=select-type],
 .wp-admin .em.pixelbones.input textarea,
 .wp-admin .em.pixelbones.input select:not([multiple]) {
   width: 100% !important;
@@ -4662,18 +5032,22 @@
 .wp-admin .em.pixelbones .input input[type=number].inline,
 .wp-admin .em.pixelbones .input input[type=search].inline,
 .wp-admin .em.pixelbones .input input[type=text].inline,
+.wp-admin .em.pixelbones .input input[type=select-one].inline,
 .wp-admin .em.pixelbones .input input[type=tel].inline,
 .wp-admin .em.pixelbones .input input[type=url].inline,
 .wp-admin .em.pixelbones .input input[type=password].inline,
+.wp-admin .em.pixelbones .input input[type=select-type].inline,
 .wp-admin .em.pixelbones .input textarea.inline,
 .wp-admin .em.pixelbones .input select:not([multiple]).inline, .wp-admin .em.pixelbones.input div.input-wrap.inline,
 .wp-admin .em.pixelbones.input input[type=email].inline,
 .wp-admin .em.pixelbones.input input[type=number].inline,
 .wp-admin .em.pixelbones.input input[type=search].inline,
 .wp-admin .em.pixelbones.input input[type=text].inline,
+.wp-admin .em.pixelbones.input input[type=select-one].inline,
 .wp-admin .em.pixelbones.input input[type=tel].inline,
 .wp-admin .em.pixelbones.input input[type=url].inline,
 .wp-admin .em.pixelbones.input input[type=password].inline,
+.wp-admin .em.pixelbones.input input[type=select-type].inline,
 .wp-admin .em.pixelbones.input textarea.inline,
 .wp-admin .em.pixelbones.input select:not([multiple]).inline {
   width: auto !important;
@@ -4699,6 +5073,7 @@
 .wp-admin .em.pixelbones .input input[type=number],
 .wp-admin .em.pixelbones .input input[type=search],
 .wp-admin .em.pixelbones .input input[type=text],
+.wp-admin .em.pixelbones .input input[type=select-one],
 .wp-admin .em.pixelbones .input input[type=tel],
 .wp-admin .em.pixelbones .input input[type=url],
 .wp-admin .em.pixelbones .input input[type=password],
@@ -4708,6 +5083,7 @@
 .wp-admin .em.pixelbones.input input[type=number],
 .wp-admin .em.pixelbones.input input[type=search],
 .wp-admin .em.pixelbones.input input[type=text],
+.wp-admin .em.pixelbones.input input[type=select-one],
 .wp-admin .em.pixelbones.input input[type=tel],
 .wp-admin .em.pixelbones.input input[type=url],
 .wp-admin .em.pixelbones.input input[type=password],
@@ -4728,6 +5104,7 @@
 .wp-admin .em.pixelbones .input input[type=number]:focus,
 .wp-admin .em.pixelbones .input input[type=search]:focus,
 .wp-admin .em.pixelbones .input input[type=text]:focus,
+.wp-admin .em.pixelbones .input input[type=select-one]:focus,
 .wp-admin .em.pixelbones .input input[type=tel]:focus,
 .wp-admin .em.pixelbones .input input[type=url]:focus,
 .wp-admin .em.pixelbones .input input[type=password]:focus,
@@ -4737,6 +5114,7 @@
 .wp-admin .em.pixelbones.input input[type=number]:focus,
 .wp-admin .em.pixelbones.input input[type=search]:focus,
 .wp-admin .em.pixelbones.input input[type=text]:focus,
+.wp-admin .em.pixelbones.input input[type=select-one]:focus,
 .wp-admin .em.pixelbones.input input[type=tel]:focus,
 .wp-admin .em.pixelbones.input input[type=url]:focus,
 .wp-admin .em.pixelbones.input input[type=password]:focus,
@@ -5852,6 +6230,35 @@
 @media only screen and (max-width: 380px) {
   .wp-admin .em .em-bookings-cols-selected .item {
     display: block;
+  }
+}
+.wp-admin .em .iti.phone-error {
+  border-color: red;
+}
+.wp-admin .em .iti, .wp-admin .em.pixelbones.input .iti {
+  display: block;
+}
+.wp-admin .em .iti ul, .wp-admin .em.pixelbones.input .iti ul {
+  list-style: none !important;
+}
+.wp-admin .em .iti.invalid-number input[type=tel], .wp-admin .em.pixelbones.input .iti.invalid-number input[type=tel] {
+  border-color: darkred !important;
+}
+.wp-admin .em .iti + .lwa-inline-error, .wp-admin .em.pixelbones.input .iti + .lwa-inline-error {
+  margin: 10px 0;
+  color: darkred;
+}
+.wp-admin .em .iti input[type=tel], .wp-admin .em .iti .iti--allow-dropdown input, .wp-admin .em .iti .iti--allow-dropdown input[type=tel], .wp-admin .em .iti .iti--allow-dropdown input[type=text], .wp-admin .em .iti .iti--separate-dial-code input, .wp-admin .em .iti .iti--separate-dial-code input[type=tel], .wp-admin .em .iti .iti--separate-dial-code input[type=text], .wp-admin .em.pixelbones.input .iti input[type=tel], .wp-admin .em.pixelbones.input .iti .iti--allow-dropdown input, .wp-admin .em.pixelbones.input .iti .iti--allow-dropdown input[type=tel], .wp-admin .em.pixelbones.input .iti .iti--allow-dropdown input[type=text], .wp-admin .em.pixelbones.input .iti .iti--separate-dial-code input, .wp-admin .em.pixelbones.input .iti .iti--separate-dial-code input[type=tel], .wp-admin .em.pixelbones.input .iti .iti--separate-dial-code input[type=text] {
+  padding-right: 6px !important;
+  padding-left: 92px !important;
+  margin-left: 0 !important;
+}
+.wp-admin .em .iti .iti__flag, .wp-admin .em.pixelbones.input .iti .iti__flag {
+  background-image: url("../external/intl-tel-input/img/flags.png");
+}
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .wp-admin .em .iti .iti__flag, .wp-admin .em.pixelbones.input .iti .iti__flag {
+    background-image: url("../external/intl-tel-input/img/flags@2x.png");
   }
 }
 .wp-admin button.input.em-tooltip-ddm {

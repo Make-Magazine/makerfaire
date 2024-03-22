@@ -454,7 +454,8 @@ class GF_Stripe_Billing_Portal {
 			$stripe_subscription = $this->get_stripe_subscription_for_entry( $entry );
 
 			if (
-				is_wp_error( $stripe_subscription )
+				! $stripe_subscription
+				|| is_wp_error( $stripe_subscription )
 				|| ( $this->show_inactive !== true && $stripe_subscription->status === 'canceled' )
 			) {
 				continue;

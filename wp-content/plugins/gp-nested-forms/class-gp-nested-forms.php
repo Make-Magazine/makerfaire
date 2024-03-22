@@ -356,6 +356,16 @@ class GP_Nested_Forms extends GP_Plugin {
 	}
 
 	public function should_enqueue_frontend_script( $form ) {
+		// Do not enqueue if we're inside the Elementor editor. For some reason with the add-on framework, our scripts
+		// are getting enqueued while gform_gravityforms is not.
+		if (
+			class_exists( '\Elementor\Plugin' )
+			// @phpstan-ignore-next-line
+			&& method_exists( '\Elementor\Plugin', 'instance' )
+			&& \Elementor\Plugin::$instance->editor->is_edit_mode()
+		) {
+			return false;
+		}
 		return ! GFForms::get_page() && ! rgempty( GFFormsModel::get_fields_by_type( $form, array( 'form' ) ) );
 	}
 
@@ -2122,6 +2132,16 @@ class GP_Nested_Forms extends GP_Plugin {
 		// .bind was switch to .on in the following PR: https://github.com/gravityforms/gravityforms/pull/1779
 		$form_html = preg_replace( '/on\([ ]*[\'"]gform_post_render[\'"]/', "on('gform_post_render.gpnf'", $form_html );
 
+		/*
+		 * https://github.com/gravityforms/gravityforms/pull/2762 introduced more complex logic for handling hidden forms.
+		 *
+		 * This logic isn't needed for GPNF as we move all events to gpnf_post_render and call it ourselves. If we keep it
+		 * it causes multiple inits to happen and breaks perks such as GPFUP or GPLD's Inline Date Pickers.
+		 *
+		 * TODO, do we need to handle `gform.utils.trigger( { event: 'gform/postRender' } );`?
+		 */
+		$form_html = str_replace( 'function triggerPostRender() {', 'function triggerPostRender() { return false;', $form_html );
+
 		if ( ! $this->use_jquery_ui_dialog() ) {
 			$form_html = preg_replace( '/<script.*gformInitSpinner.*?<\/script>/', '<!-- GPNF removes GF\'s default <iframe> script; replacing it with its own in gp-nested-form.js. -->', $form_html );
 		}
@@ -3069,6 +3089,10 @@ class GP_Nested_Forms extends GP_Plugin {
 			// Handle single file uploads.
 			elseif ( self::is_prepopulated_file_upload( $form['id'], $input_name ) ) {
 				$_gf_uploaded_files[ $input_name ] = $value;
+				// Not sure why but this is needed only required for Gravity Flow. Otherwise, the file uploaded value gets lost.
+				if ( rgget( 'page' ) == 'gravityflow-inbox' ) {
+					$_FILES[ $input_name ]['name'] = $value;
+				}
 			}
 		}
 

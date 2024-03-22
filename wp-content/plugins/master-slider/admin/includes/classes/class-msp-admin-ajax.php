@@ -79,7 +79,7 @@ class MSP_Admin_Ajax {
     $slider_type  = isset( $_REQUEST['slider_type']   ) ? sanitize_key( $_REQUEST['slider_type'] ) : 'custom';
 
     // get panel data
-    $msp_data   = isset( $_REQUEST['msp_data']  ) ? $_REQUEST['msp_data']  : NULL;
+    $msp_data   = isset( $_REQUEST['msp_data']  ) ? msp_sanitize_input( $_REQUEST['msp_data'] )  : NULL;
 
 
     // get parse and database tools

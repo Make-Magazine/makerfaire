@@ -75,17 +75,17 @@
         },
         {
             "name": "gettext/gettext",
-            "version": "v4.8.8",
-            "version_normalized": "4.8.8.0",
+            "version": "v4.8.11",
+            "version_normalized": "4.8.11.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-gettext/Gettext.git",
-                "reference": "302a00aa9d6762c92c884d879c15d3ed05d6a37d"
+                "reference": "b632aaf5e4579d0b2ae8bc61785e238bff4c5156"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-gettext/Gettext/zipball/302a00aa9d6762c92c884d879c15d3ed05d6a37d",
-                "reference": "302a00aa9d6762c92c884d879c15d3ed05d6a37d",
+                "url": "https://api.github.com/repos/php-gettext/Gettext/zipball/b632aaf5e4579d0b2ae8bc61785e238bff4c5156",
+                "reference": "b632aaf5e4579d0b2ae8bc61785e238bff4c5156",
                 "shasum": ""
             },
             "require": {
@@ -106,7 +106,7 @@
                 "twig/extensions": "Is necessary if you want to use the Twig extractor",
                 "twig/twig": "Is necessary if you want to use the Twig extractor"
             },
-            "time": "2022-12-08T11:59:50+00:00",
+            "time": "2023-08-14T15:15:05+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -139,7 +139,7 @@
             "support": {
                 "email": "oom@oscarotero.com",
                 "issues": "https://github.com/oscarotero/Gettext/issues",
-                "source": "https://github.com/php-gettext/Gettext/tree/v4.8.8"
+                "source": "https://github.com/php-gettext/Gettext/tree/v4.8.11"
             },
             "funding": [
                 {
@@ -241,12 +241,12 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:GravityKit/Foundation.git",
-                "reference": "82d4b8c6b2d3989b8b2dbf829be0c72f6aef2f8a"
+                "reference": "fdd6fb9097a2c36424cd2d24a548e5c2fff8400c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/GravityKit/Foundation/zipball/82d4b8c6b2d3989b8b2dbf829be0c72f6aef2f8a",
-                "reference": "82d4b8c6b2d3989b8b2dbf829be0c72f6aef2f8a",
+                "url": "https://api.github.com/repos/GravityKit/Foundation/zipball/fdd6fb9097a2c36424cd2d24a548e5c2fff8400c",
+                "reference": "fdd6fb9097a2c36424cd2d24a548e5c2fff8400c",
                 "shasum": ""
             },
             "require": {
@@ -258,7 +258,7 @@
                 "monolog/monolog": "1.*",
                 "php": ">=7.2.0",
                 "psr/log": "^1.1",
-                "trustedlogin/client": "dev-main"
+                "trustedlogin/client": "^1.7"
             },
             "require-dev": {
                 "dealerdirect/phpcodesniffer-composer-installer": "^0.7",
@@ -266,7 +266,7 @@
                 "phpcompatibility/phpcompatibility-wp": "*",
                 "wp-coding-standards/wpcs": "^2.3"
             },
-            "time": "2023-12-07T15:17:04+00:00",
+            "time": "2024-03-05T23:11:10+00:00",
             "default-branch": true,
             "type": "library",
             "extra": {
@@ -302,7 +302,7 @@
             },
             "scripts": {
                 "prefix_vendor": [
-                    "@php strauss.phar"
+                    "@php tools/strauss.phar"
                 ],
                 "post_update_install": [
                     "./composer_post_update_install.sh"
@@ -328,7 +328,7 @@
                 }
             ],
             "support": {
-                "source": "https://github.com/GravityKit/Foundation/tree/v1.2.6",
+                "source": "https://github.com/GravityKit/Foundation/tree/v1.2.11",
                 "issues": "https://github.com/GravityKit/Foundation/issues"
             },
             "install-path": "../gravitykit/foundation"
@@ -996,17 +996,17 @@
         },
         {
             "name": "symfony/polyfill-mbstring",
-            "version": "v1.27.0",
-            "version_normalized": "1.27.0.0",
+            "version": "v1.29.0",
+            "version_normalized": "1.29.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/polyfill-mbstring.git",
-                "reference": "8ad114f6b39e2c98a8b0e3bd907732c207c2b534"
+                "reference": "9773676c8a1bb1f8d4340a62efe641cf76eda7ec"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/polyfill-mbstring/zipball/8ad114f6b39e2c98a8b0e3bd907732c207c2b534",
-                "reference": "8ad114f6b39e2c98a8b0e3bd907732c207c2b534",
+                "url": "https://api.github.com/repos/symfony/polyfill-mbstring/zipball/9773676c8a1bb1f8d4340a62efe641cf76eda7ec",
+                "reference": "9773676c8a1bb1f8d4340a62efe641cf76eda7ec",
                 "shasum": ""
             },
             "require": {
@@ -1018,12 +1018,9 @@
             "suggest": {
                 "ext-mbstring": "For best performance"
             },
-            "time": "2022-11-03T14:55:06+00:00",
+            "time": "2024-01-29T20:11:03+00:00",
             "type": "library",
             "extra": {
-                "branch-alias": {
-                    "dev-main": "1.27-dev"
-                },
                 "thanks": {
                     "name": "symfony/polyfill",
                     "url": "https://github.com/symfony/polyfill"
@@ -1062,7 +1059,7 @@
                 "shim"
             ],
             "support": {
-                "source": "https://github.com/symfony/polyfill-mbstring/tree/v1.27.0"
+                "source": "https://github.com/symfony/polyfill-mbstring/tree/v1.29.0"
             },
             "funding": [
                 {
@@ -1152,27 +1149,27 @@
         },
         {
             "name": "trustedlogin/client",
-            "version": "dev-main",
-            "version_normalized": "dev-main",
+            "version": "v1.7.0",
+            "version_normalized": "1.7.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/trustedlogin/client.git",
-                "reference": "1c924f8dee1b10624223741b72e5ce83f1e45ce3"
+                "reference": "35938a4bd9749f475518b88d4ce593d27970024c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/trustedlogin/client/zipball/1c924f8dee1b10624223741b72e5ce83f1e45ce3",
-                "reference": "1c924f8dee1b10624223741b72e5ce83f1e45ce3",
+                "url": "https://api.github.com/repos/trustedlogin/client/zipball/35938a4bd9749f475518b88d4ce593d27970024c",
+                "reference": "35938a4bd9749f475518b88d4ce593d27970024c",
                 "shasum": ""
             },
             "require-dev": {
                 "ext-curl": "*",
                 "ext-json": "*",
                 "php": ">=5.3.0",
-                "yoast/phpunit-polyfills": "^1.0"
+                "spatie/phpunit-watcher": "^1.23",
+                "yoast/phpunit-polyfills": "^1.1.0"
             },
-            "time": "2023-09-22T17:54:18+00:00",
-            "default-branch": true,
+            "time": "2024-01-29T20:51:28+00:00",
             "bin": [
                 "bin/build-sass"
             ],
@@ -1203,7 +1200,7 @@
             ],
             "support": {
                 "issues": "https://github.com/trustedlogin/client/issues",
-                "source": "https://github.com/trustedlogin/client/tree/v1.6.1"
+                "source": "https://github.com/trustedlogin/client/tree/v1.7.0"
             },
             "install-path": "../trustedlogin/client"
         }

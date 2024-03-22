@@ -1,26 +1,26 @@
-# Copyright (C) 2023 GravityKit
+# Copyright (C) 2024 GravityKit
 # This file is distributed under the GPLv2 or later
 msgid ""
 msgstr ""
-"Project-Id-Version: GravityView - DataTables Extension 3.2\n"
+"Project-Id-Version: GravityView - DataTables Layout 3.3.6\n"
 "Report-Msgid-Bugs-To: https://www.gravitykit.com/support\n"
 "Last-Translator: GravityKit <support@gravitykit.com>\n"
 "Language-Team: GravityKit <support@gravitykit.com>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2023-06-29T20:05:43+00:00\n"
+"POT-Creation-Date: 2024-03-19T17:52:57+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"X-Generator: WP-CLI 2.7.1\n"
+"X-Generator: WP-CLI 2.9.0\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Domain: gv-datatables\n"
 
 #. Plugin Name of the plugin
-msgid "GravityView - DataTables Extension"
+msgid "GravityView - DataTables Layout"
 msgstr ""
 
 #. Plugin URI of the plugin
-msgid "https://www.gravitykit.com/extensions/datatables/"
+msgid "https://www.gravitykit.com/products/datatables/"
 msgstr ""
 
 #. Description of the plugin
@@ -35,77 +35,141 @@ msgstr ""
 msgid "https://www.gravitykit.com"
 msgstr ""
 
-#: includes/class-admin-datatables.php:41
+#: includes/class-admin-datatables.php:40
 msgid "DataTables"
 msgstr ""
 
-#: includes/class-datatables-data.php:788
+#: includes/class-datatables-data.php:819
 msgctxt "Menu label to show all results in DataTables template."
 msgid "All"
 msgstr ""
 
-#: includes/class-datatables-data.php:853
-#: includes/class-datatables-data.php:854
+#: includes/class-datatables-data.php:892
+#: includes/class-datatables-data.php:893
 msgid "No entries match your request."
 msgstr ""
 
-#: includes/class-datatables-data.php:856
-#: includes/class-datatables-data.php:857
+#: includes/class-datatables-data.php:895
+#: includes/class-datatables-data.php:896
 msgid "This search returned no results."
 msgstr ""
 
-#: includes/class-datatables-data.php:867
+#: includes/class-datatables-data.php:906
 msgid "Loading data&hellip;"
 msgstr ""
 
-#: includes/class-datatables-field-filters.php:36
+#: includes/class-datatables-field-filters.php:50
+msgid "All Fields"
+msgstr ""
+
+#: includes/class-datatables-field-filters.php:64
 msgid "Field Filters"
 msgstr ""
 
-#: includes/class-datatables-field-filters.php:41
+#: includes/class-datatables-field-filters.php:69
 msgid "Enable Field Filters"
 msgstr ""
 
-#: includes/class-datatables-field-filters.php:42
+#: includes/class-datatables-field-filters.php:70
 msgid "Display search fields in the table footer to filter results by each field."
 msgstr ""
 
-#: includes/class-datatables-field-filters.php:57
+#: includes/class-datatables-field-filters.php:85
+#: includes/class-datatables-field-filters.php:131
 msgid "Input Location"
 msgstr ""
 
-#: includes/class-datatables-field-filters.php:61
+#: includes/class-datatables-field-filters.php:89
 msgctxt "The footer of an HTML table"
 msgid "Footer"
 msgstr ""
 
-#: includes/class-datatables-field-filters.php:62
+#: includes/class-datatables-field-filters.php:90
 msgctxt "The header of an HTML table"
 msgid "Header"
 msgstr ""
 
-#: includes/class-datatables-field-filters.php:63
+#: includes/class-datatables-field-filters.php:91
 msgctxt "Both options"
 msgid "Both"
 msgstr ""
 
-#: includes/class-datatables-field-filters.php:65
+#: includes/class-datatables-field-filters.php:93
 #: includes/extensions/class-datatables-fixedheader.php:48
 msgid "Fix the first column in place while horizontally scrolling a table. The first column and its contents will remain visible at all times."
 msgstr ""
 
+#: includes/class-datatables-field-filters.php:102
+msgid "Fields With Filter"
+msgstr ""
+
+#: includes/class-datatables-field-filters.php:106
+msgid "Select one or more fields for which filtering will be enabled."
+msgstr ""
+
+#: includes/class-datatables-field-filters.php:115
+msgid "Date Filter Type"
+msgstr ""
+
+#: includes/class-datatables-field-filters.php:119
+msgid "Single Date Input"
+msgstr ""
+
+#: includes/class-datatables-field-filters.php:120
+msgid "Date Range"
+msgstr ""
+
+#: includes/class-datatables-field-filters.php:122
+msgid "Select how to apply date filters for column values. Choose Single Date Input to specify a filter for a specific day, or select Date Range to define a \"From\" and \"To\" date range for filtering values within a specific period. Date Range is only available with client-side processing."
+msgstr ""
+
 #. translators: %s is replaced by the field label
-#: includes/class-datatables-field-filters.php:134
+#: includes/class-datatables-field-filters.php:205
 msgctxt "%s is replaced by the field label"
 msgid "Filter by %s"
 msgstr ""
 
-#: includes/class-datatables-field-filters.php:193
+#: includes/class-datatables-field-filters.php:252
+msgctxt "Placeholders inside [] are not to be translated."
+msgid "Start date to filter the [field name] field"
+msgstr ""
+
+#: includes/class-datatables-field-filters.php:257
+msgctxt "Placeholders inside [] are not to be translated."
+msgid "End date to filter the [field name] field"
+msgstr ""
+
+#: includes/class-datatables-field-filters.php:262
+msgctxt "Placeholders inside [] are not to be translated."
+msgid "Date to filter the [field name] field"
+msgstr ""
+
+#: includes/class-datatables-field-filters.php:311
 msgid "Is Starred"
 msgstr ""
 
-#: includes/class-datatables-field-filters.php:197
+#: includes/class-datatables-field-filters.php:315
 msgid "Not Starred"
+msgstr ""
+
+#: includes/class-datatables-processing-mode.php:40
+msgid "Data Processing Mode"
+msgstr ""
+
+#: includes/class-datatables-processing-mode.php:47
+msgid "Processing Mode"
+msgstr ""
+
+#: includes/class-datatables-processing-mode.php:51
+msgid "Ajax (Server-side)"
+msgstr ""
+
+#: includes/class-datatables-processing-mode.php:52
+msgid "Preloaded (Client-side)"
+msgstr ""
+
+#: includes/class-datatables-processing-mode.php:55
+msgid "Server-side processing calls the website every time there is a change in search, sorting, or paging. Client-side pre-loads all the data so the View will take longer to load initially, but then navigating data will be instantaneous."
 msgstr ""
 
 #: includes/class-datatables-template.php:31

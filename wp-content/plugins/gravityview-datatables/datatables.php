@@ -1,6 +1,6 @@
 <?php
 /**
- * The GravityView DataTables Extension plugin
+ * The GravityView DataTables Layout
  *
  * Display entries in a dynamic table powered by DataTables & GravityView.
  *
@@ -11,10 +11,10 @@
  * @copyright Copyright 2021, Katz Web Services, Inc.
  *
  * @wordpress-plugin
- * Plugin Name: GravityView - DataTables Extension
- * Plugin URI: https://www.gravitykit.com/extensions/datatables/
+ * Plugin Name: GravityView - DataTables Layout
+ * Plugin URI: https://www.gravitykit.com/products/datatables/
  * Description: Display entries in a dynamic table powered by DataTables & GravityView.
- * Version: 3.2
+ * Version: 3.3.6
  * Author: The GravityKit Team
  * Author URI:  https://www.gravitykit.com
  * Text Domain: gv-datatables
@@ -26,7 +26,7 @@ if ( ! defined( 'WPINC' ) ) {
 	die;
 }
 
-define( 'GV_DT_VERSION', '3.2' );
+define( 'GV_DT_VERSION', '3.3.6' );
 
 /** @define "GV_DT_FILE" "./" */
 define( 'GV_DT_FILE', __FILE__ );
@@ -92,7 +92,15 @@ function gv_extension_datatables_load() {
 			include_once GV_DT_DIR . 'includes/class-datatables-data.php';
 
 			include_once GV_DT_DIR . 'includes/extensions/class-datatables-extension.php';
+
+			/**
+			 * These extend the DataTables extension class but are not "DataTables Extensions", so they are not in
+			 * that directory.
+			 * @see https://datatables.net/extensions/index These are actual extensions.
+			 */
 			include_once GV_DT_DIR . 'includes/class-datatables-field-filters.php';
+			include_once GV_DT_DIR . 'includes/class-datatables-processing-mode.php';
+
 			include_once GV_DT_DIR . 'includes/extensions/class-datatables-search.php';
 			include_once GV_DT_DIR . 'includes/extensions/class-datatables-buttons.php';
 			include_once GV_DT_DIR . 'includes/extensions/class-datatables-scroller.php';

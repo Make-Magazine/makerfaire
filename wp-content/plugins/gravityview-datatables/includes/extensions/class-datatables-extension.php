@@ -27,11 +27,11 @@ abstract class GV_DataTables_Extension {
 
 		add_action( 'gravityview_datatables_scripts_styles', array( $this, 'add_scripts' ), 10, 3 );
 
-		add_filter( 'gravityview_datatables_js_options', array( $this, 'maybe_add_config' ), 10, 3 );
+		add_filter( 'gravityview_datatables_js_options', array( $this, 'maybe_add_config' ), 10, 4 );
 
 		add_filter( 'gravityview_datatables_table_class', array( $this, 'add_html_class') );
 
-		add_action( 'gravityview_datatables_settings_row', array( $this, 'settings_row' ) );
+		add_action( 'gravityview_datatables_settings_row', array( $this, 'settings_row' ), 10, 2 );
 
 		add_filter( 'gravityview_dt_default_settings', array( $this, 'defaults') );
 
@@ -181,30 +181,32 @@ abstract class GV_DataTables_Extension {
 	 * @param array $dt_config The configuration for the current View
 	 * @param int $view_id The ID of the View being configured
 	 * @param WP_Post $post Current View or post/page where View is embedded
+	 * @param GV_Extension_DataTables_Data $object The current instance of the GV_Extension_DataTables_Data class.
 	 *
 	 * @return array Possibly-modified DataTables configuration array
 	 */
-	public function maybe_add_config( $dt_config, $view_id, $post ) {
+	public function maybe_add_config( $dt_config, $view_id, $post, $object ) {
 
 		if( $this->is_enabled( $view_id ) ) {
-			$dt_config = $this->add_config( $dt_config, $view_id, $post );
+			$dt_config = $this->add_config( $dt_config, $view_id, $post, $object );
 		}
 
 		return $dt_config;
 	}
 
 	/**
-	 * Add Javascript specific config data based on admin settings
+	 * Add JavaScript-specific config data based on admin settings
 	 *
 	 * @see https://datatables.net/reference/option/
 	 *
 	 * @param array $dt_config The configuration for the current View
 	 * @param int $view_id The ID of the View being configured
 	 * @param WP_Post $post Current View or post/page where View is embedded
+	 * @param GV_Extension_DataTables_Data $object The current instance of the GV_Extension_DataTables_Data class.
 	 *
 	 * @return array Modified DataTables configuration array
 	 */
-	protected function add_config( $dt_config, $view_id, $post  ) {
+	protected function add_config( $dt_config, $view_id, $post, $object ) {
 		return $dt_config;
 	}
 

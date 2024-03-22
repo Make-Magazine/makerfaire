@@ -43,8 +43,8 @@ class Editor extends App {
 		add_filter( 'elementor/editor/panel/get_pro_details', function( $get_pro_details ) {
 			if ( defined( '\Elementor\Modules\Apps\Module::PAGE_ID' ) ) {
 				$get_pro_details['link'] = admin_url( 'admin.php?page=' . \Elementor\Modules\Apps\Module::PAGE_ID );
-				$get_pro_details['message'] = __( 'Extend Elementor With Apps', 'elementor-pro' );
-				$get_pro_details['button_text'] = __( 'Explore Apps', 'elementor-pro' );
+				$get_pro_details['message'] = __( 'Extend Elementor With Add-ons', 'elementor-pro' );
+				$get_pro_details['button_text'] = __( 'Explore Add-ons', 'elementor-pro' );
 			}
 
 			return $get_pro_details;

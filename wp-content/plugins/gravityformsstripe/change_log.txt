@@ -1,3 +1,20 @@
+### 5.5.0 | 2024-02-22
+- Added a Stripe API wrapper and deprecated the use of the Stripe PHP SDK.
+- Added new notification events for pending and authorized payment states.
+- Added the ability to map a Gravity Forms coupon field in a Stripe subscription feed which was removed in a previous release.
+- Updated the Stripe API version to the latest: "2023-10-16".
+- Fixed an issue where the form gets stuck in loading state when using a testing card number in live mode.
+- Fixed an issue where a fatal error can occur when using the Payment Element on a form with reCAPTCHA v3 using version 1.5.0 or later of the reCAPTCHA Add-On.
+- Fixed an issue where the post image file was not uploaded when additional payment methods option is enabled.
+- Fixed an issue where forms using the Stripe Payment Element do not display the correct confirmation when embedded with AJAX enabled.
+- Fixed an issue where validation errors are displayed momentarily, but then are automatically hidden when the Payment Element is used.
+- Fixed a Javascript error that is displayed when the form is submitted using the Payment Element field.
+- Fixed an issue where reCaptcha fails validation because it is being validated twice when using the Stripe Payment Element.
+- Fixed an issue with the upcoming version of reCaptcha that causes entries to be marked as spam when using Stripe Payment Elements.
+- Fixed an issue where after a validation error occurs, the SCA modal is not triggered on the next form submission when using Stripe Elements with a subscription feed.
+- Fixed an issue with bank transfers via Stripe Checkout where the entry pages show the payment as "Authorized" instead of "Paid".
+- Fixed an issue where repeater field data is not being saved to the entry when payment is done via the Stripe Payment Element field.
+
 ### 5.4.0 | 2023-12-07
 - Added a new [`gform_stripe_sca_success_pre_validation`](https://docs.gravityforms.com/gform_stripe_sca_success_pre_validation/) filter to modify the validation result for forms submitted by the SCA handler.
 - Fixed an issue where the password is not saved during user registration when using the Stripe Payment Element.

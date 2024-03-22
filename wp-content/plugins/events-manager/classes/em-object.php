@@ -1097,7 +1097,7 @@ class EM_Object {
 		}
 		//go through default arguments (if defined) and build a list of unique non-default arguments that should go into the querystring
 		$unique_args = array(); //this is the set of unique arguments we'll add to the querystring
-		$ignored_args = array('offset', 'ajax', 'array', 'pagination','format','format_header','format_footer'); 
+		$ignored_args = array('offset', 'ajax', 'array', 'pagination','format','format_header','format_footer','page');
 		foreach( $default_args as $arg_key => $arg_default_val){
 			if( array_key_exists($arg_key, $args) && !in_array($arg_key, $ignored_args) ){
 				//if array exists, implode it in case one value is already imploded for matching purposes
@@ -1121,8 +1121,12 @@ class EM_Object {
 		//if we're in an ajax call, make sure we aren't calling admin-ajax.php
 		if( defined('DOING_AJAX') ) $page_url = em_wp_get_referer();
 		//finally, glue the url with querystring and pass onto pagination function
-		$page_link_template = em_add_get_params($page_url, $pag_args, false); //don't html encode, so em_paginate does its thing;
-		if( empty($args['ajax']) || defined('DOING_AJAX') ) $unique_args = array(); //don't use data method if ajax is disabled or if we're already in an ajax request (SERP irrelevenat)
+		$page_args_escaped = array();
+		foreach( $pag_args as $key => $val ){
+			$page_args_escaped[$key] = $val && is_string($val) ? urlencode($val) : $val;
+		}
+		$page_link_template = em_add_get_params($page_url, $page_args_escaped, false); //don't html encode, so em_paginate does its thing;
+		//if( empty($args['ajax']) || defined('DOING_AJAX') ) $unique_args = array(); //don't use data method if ajax is disabled or if we're already in an ajax request (SERP irrelevenat)
 		$return = apply_filters('em_object_get_pagination_links', em_paginate( $page_link_template, $count, $limit, $page, $unique_args, !empty($args['ajax']) ), $page_link_template, $count, $limit, $page);
 		//if PHP is 5.3 or later, you can specifically filter by class e.g. em_events_output_pagination - this replaces the old filter originally located in the actual child classes
 		if( function_exists('get_called_class') ){
@@ -1442,7 +1446,28 @@ class EM_Object {
 			}
 		}
 		return (!in_array(false, $results) && count($results) > 0);
-	}	
+	}
+
+	/**
+	 * Checks and returns a sanitized array of integer numbers
+	 * @param $array
+	 *
+	 * @return array
+	 */
+	public static function sanitize_numeric_array( $array ) {
+		$sanitized_array = array();
+		if ( !is_array( $array ) ) {
+			$array = explode( ',', $array );
+		}
+		if( static::array_is_numeric( $array ) ) {
+			foreach ( $array as $key => $value ) {
+				if ( is_numeric( $value ) ) {
+					$sanitized_array[ $key ] = intval($value);
+				}
+			}
+		}
+		return $sanitized_array;
+	}
 	
 	/**
 	 * Returns an array of errors in this object

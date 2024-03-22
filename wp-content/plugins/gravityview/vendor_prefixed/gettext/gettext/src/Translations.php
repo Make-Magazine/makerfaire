@@ -2,8 +2,7 @@
 /**
  * @license MIT
  *
- * Modified by gravityview on 08-December-2023 using Strauss.
- * @see https://github.com/BrianHenryIE/strauss
+ * Modified by gravityview on 19-March-2024 using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\GravityView\Foundation\ThirdParty\Gettext;
@@ -181,7 +180,7 @@ class Translations extends ArrayObject
         }
 
         if ($matches[1] === 'addFrom') {
-            $extractor = 'GravityKit\GravityView\Foundation\ThirdParty\Gettext\\Extractors\\'.$matches[2].'::from'.$matches[3];
+            $extractor = 'GravityKit\\GravityView\\Foundation\\ThirdParty\\Gettext\\Extractors\\'.$matches[2].'::from'.$matches[3];
             $source = array_shift($arguments);
             $options = array_shift($arguments) ?: [];
 
@@ -190,7 +189,7 @@ class Translations extends ArrayObject
             return $this;
         }
 
-        $generator = 'GravityKit\GravityView\Foundation\ThirdParty\Gettext\\Generators\\'.$matches[2].'::to'.$matches[3];
+        $generator = 'GravityKit\\GravityView\\Foundation\\ThirdParty\\Gettext\\Generators\\'.$matches[2].'::to'.$matches[3];
 
         array_unshift($arguments, $this);
 
@@ -288,7 +287,7 @@ class Translations extends ArrayObject
     public function setHeader($name, $value)
     {
         $name = trim($name);
-        $this->headers[$name] = trim($value);
+        $this->headers[$name] = trim(isset($value) ? $value : '');
 
         return $this;
     }

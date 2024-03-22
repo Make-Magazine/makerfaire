@@ -29,7 +29,7 @@ if (get_option('dbem_gmap_is_active') == '1') {
 					</rect>
 				</svg>
 			</div>
-		</div>		
+		</div>
 		<div class='em-locations-map-coords' id='em-locations-map-coords-<?php echo $args['id']; ?>' style="display:none; visibility:hidden;"><?php echo EM_Object::json_encode($args); ?></div>
 		<?php if( !empty($map_json_style) ): ?>
 		<script type="text/javascript">

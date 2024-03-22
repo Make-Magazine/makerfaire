@@ -2,8 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by gravityview on 08-December-2023 using Strauss.
- * @see https://github.com/BrianHenryIE/strauss
+ * Modified by gravityview on 19-March-2024 using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\GravityView\Foundation\Integrations;
@@ -20,12 +19,21 @@ class HelpScout {
 	const HASH_KEY = 't4MTtLRuIH74gBuQ/2OVpj0NscYAjdg9nY1rw67PiT8=';
 
 	/**
+	 * Class instance.
+	 *
 	 * @since 1.0.0
 	 *
-	 * @var TrustedLogin Class instance.
+	 * @var TrustedLogin
 	 */
 	private static $_instance;
 
+	/**
+	 * Class constructor.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return void
+	 */
 	private function __construct() {
 		add_filter( 'gk/foundation/inline-scripts', [ $this, 'enqueue_beacon_script' ] );
 	}
@@ -50,7 +58,7 @@ class HelpScout {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param array $scripts
+	 * @param array $scripts Scripts to be enqueued.
 	 *
 	 * @return array
 	 */
@@ -59,7 +67,7 @@ class HelpScout {
 			return $scripts;
 		}
 
-		$beacon_configuration = json_encode( $this->get_beacon_configuration() );
+		$beacon_configuration = wp_json_encode( $this->get_beacon_configuration() );
 
 		$js = <<<JS
 !function(e,t,n){function a(){var e=t.getElementsByTagName('script')[0],n=t.createElement('script');n.type='text/javascript',n.async=!0,n.src='https://beacon-v2.helpscout.net',e.parentNode.insertBefore(n,e)}if(e.Beacon=n=function(t,n,a){e.Beacon.readyQueue.push({method:t,options:n,data:a})},n.readyQueue=[],'complete'===t.readyState)return a();e.attachEvent?e.attachEvent('onload',a):e.addEventListener('load',a,!1)}(window,document,window.Beacon||function(){});
@@ -88,7 +96,9 @@ JS;
 		}
 
 		/**
-		 * @TODO: Possibly implement additional checks as it's done in GravityView:
+		 * Possibly implement additional checks as it's done in GravityView:
+		 *
+		 * @TODO
 		 *
 		 * If the user doesn't have the `gravityview_support_port` capability, returns false; then
 		 * If global setting is "hide", returns false; then
@@ -96,8 +106,8 @@ JS;
 		 * If user preference is set, return that setting.
 		 */
 
-		$page      = Arr::get( $_REQUEST, 'page' );
-		$post_type = Arr::get( $_REQUEST, 'post_type' );
+		$page      = Arr::get( $_REQUEST, 'page' ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$post_type = Arr::get( $_REQUEST, 'post_type' ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 
 		$display_beacon = false;
 
@@ -106,7 +116,9 @@ JS;
 		}
 
 		/**
-		 * @filter `gk/foundation/integrations/helpscout/display` Toggles whether HS beacon should be displayed. Return "true" to short-circuit all other checks.
+		 * Toggles whether HS beacon should be displayed. Return "true" to short-circuit all other checks.
+		 *
+		 * @filter `gk/foundation/integrations/helpscout/display`
 		 *
 		 * @since  1.0.0
 		 *
@@ -166,13 +178,15 @@ JS;
 				'gravityview_version'   => mb_substr( class_exists( '\GV\Plugin' ) ? \GV\Plugin::$version : 'Not Installed', 0, 255 ),
 				'gravity_forms_version' => mb_substr( class_exists( '\GFForms' ) ? \GFForms::$version : 'Not Installed', 0, 255 ),
 				'locale'                => get_user_locale(),
-				'is_support_contact'    => ( $current_user->user_email === Arr::get( $foundation_settings, 'support_email' ) ),
+				'is_support_contact'    => ( Arr::get( $foundation_settings, 'support_email' ) === $current_user->user_email ),
 			],
 			'suggest'      => [],
 		];
 
 		/**
-		 * @filter `gk/foundation/integrations/helpscout/configuration` Modified HS beacon configuration.
+		 * Modifies HS beacon configuration.
+		 *
+		 * @filter `gk/foundation/integrations/helpscout/configuration`
 		 *
 		 * @since  1.0.0
 		 *
@@ -193,7 +207,7 @@ JS;
 	 */
 	public function get_beacon_label_translations() {
 		$translations = [
-			// Answers
+			// Answers.
 			'suggestedForYou'                 => __( 'Instant Answers', 'gk-gravityview' ),
 			'getInTouch'                      => __( 'Get in touch', 'gk-gravityview' ),
 			'searchLabel'                     => __( 'Search GravityKit Docs', 'gk-gravityview' ),
@@ -202,7 +216,7 @@ JS;
 			'beaconButtonClose'               => __( 'Close', 'gk-gravityview' ),
 			'beaconButtonChatMinimize'        => __( 'Minimize chat', 'gk-gravityview' ),
 			'beaconButtonChatOpen'            => __( 'Open chat', 'gk-gravityview' ),
-			// Ask
+			// Ask.
 			'answer'                          => __( 'Answer', 'gk-gravityview' ),
 			'ask'                             => __( 'Ask', 'gk-gravityview' ),
 			'messageButtonLabel'              => __( 'Email', 'gk-gravityview' ),
@@ -212,7 +226,7 @@ JS;
 			'wereHereToHelp'                  => __( 'Start a conversation', 'gk-gravityview' ),
 			'whatMethodWorks'                 => __( 'What channel do you prefer?', 'gk-gravityview' ),
 			'previousMessages '               => __( 'Previous Conversations', 'gk-gravityview' ),
-			// Search Results
+			// Search Results.
 			'cantFindAnswer'                  => __( 'Can\'t find the answer?', 'gk-gravityview' ),
 			'relatedArticles'                 => __( 'Related Articles', 'gk-gravityview' ),
 			'nothingFound'                    => __( 'Hmm…', 'gk-gravityview' ),
@@ -229,7 +243,7 @@ JS;
 			'escalationTalkTitle'             => __( 'Talk to us', 'gk-gravityview' ),
 			'escalationThanksFeedback'        => __( 'Thanks for the feedback', 'gk-gravityview' ),
 			'escalationWhatNext'              => __( 'What next?', 'gk-gravityview' ),
-			// Send A Message
+			// Send A Message.
 			'sendAMessage'                    => __( 'Send a message', 'gk-gravityview' ),
 			'firstAFewQuestions'              => __( 'Let\'s begin with a few questions', 'gk-gravityview' ),
 			'howCanWeHelp'                    => __( 'How can we help?', 'gk-gravityview' ),
@@ -257,7 +271,7 @@ JS;
 				_x( 'The maximum file size is [size]', 'Placeholders inside [] are not to be translated.', 'gk-gravityview' ),
 				[ '[size]' => size_format( 10485760 ) ] // 10MB in bytes.
 			),
-			//Previous messages
+			// Previous messages.
 			'addReply'                        => __( 'Add a reply', 'gk-gravityview' ),
 			'addYourMessageHere'              => __( 'Add your message here…', 'gk-gravityview' ),
 			'sendMessage'                     => __( 'Send message', 'gk-gravityview' ),
@@ -265,7 +279,7 @@ JS;
 			'waitingForAnAnswer'              => __( 'Waiting for an answer', 'gk-gravityview' ),
 			'previousMessageErrorText'        => __( 'There was a problem retrieving your previous messages. Please double-check your Internet connection and try again.', 'gk-gravityview' ),
 			'justNow'                         => __( 'Just Now', 'gk-gravityview' ),
-			// Chat
+			// Chat.
 			'chatHeadingTitle'                => __( 'Chat with our team', 'gk-gravityview' ),
 			'chatHeadingSublabel'             => __( 'We\'ll be with you soon', 'gk-gravityview' ),
 			'chatEndCalloutHeading'           => __( 'All done!', 'gk-gravityview' ),
@@ -297,7 +311,7 @@ JS;
 				[ '[name]' => '' ] // HS has a blank space before the translation.
 			),
 			'chatAvailabilityChangeMessage'   => __( 'Our team\'s availability has changed and there\'s no longer anyone available to chat. Send us a message instead and we\'ll get back to you.', 'gk-gravityview' ),
-			// Transcript Email
+			// Transcript Email.
 			'emailHeading'                    => strtr(
 				_x( 'Today\'s chat with [name]', 'Placeholders inside [] are not to be translated.', 'gk-gravityview' ),
 				[ '[name]' => '' ] // HS has a blank space after the translation.
@@ -308,7 +322,8 @@ JS;
 			),
 			'emailCopyOfDiscussion'           => __( 'Here\'s a copy of your discussion', 'gk-gravityview' ),
 			'emailContinueConversation'       => __( 'If you\'ve got any other questions, feel free to hit reply and continue the conversation.', 'gk-gravityview' ),
-			'emailJoinedLineItem'             => strtr( _x( '[name] joined the chat', 'Placeholders inside [] are not to be translated.', 'gk-gravityview' ),
+			'emailJoinedLineItem'             => strtr(
+                _x( '[name] joined the chat', 'Placeholders inside [] are not to be translated.', 'gk-gravityview' ),
 				[ '[name]' => '' ] // HS has a blank space before the translation.
 			),
 			'emailEndedLineItem'              => strtr(

@@ -376,6 +376,19 @@ class Gum_Elementor_Widget_blog_grid extends Widget_Base {
       ]
     );
 
+   $this->end_controls_section();
+
+    $this->start_controls_section(
+      'meta_layout',
+      [
+        'label' => esc_html__( 'Meta', 'gum-elementor-addon' ),
+        'condition' => [
+          'show_meta!' => ''
+        ],
+      ]
+    );    
+
+
     $this->add_control(
       'date_meta',
       [
@@ -387,12 +400,23 @@ class Gum_Elementor_Widget_blog_grid extends Widget_Base {
           'mid' => esc_html__( 'After Title', 'gum-elementor-addon' ),
           'bottom' => esc_html__( 'Bottom', 'gum-elementor-addon' ),
         ],
-        'condition' => [
-          'show_meta!' => ''
-        ],
         'default' => 'mid'
       ]
     );
+
+    $this->add_control(
+      'date_meta_icon',
+      [
+        'label' => esc_html__( 'Icon', 'gum-elementor-addon' ),
+        'type' => Controls_Manager::ICONS,
+        'fa4compatibility' => 'icon',
+        'condition' => [
+          'date_meta!' => ''
+        ],
+
+      ]
+    );
+
 
     $this->add_control(
       'author_meta',
@@ -405,12 +429,23 @@ class Gum_Elementor_Widget_blog_grid extends Widget_Base {
           'mid' => esc_html__( 'After Title', 'gum-elementor-addon' ),
           'bottom' => esc_html__( 'Bottom', 'gum-elementor-addon' ),
         ],
-        'condition' => [
-          'show_meta!' => ''
-        ],
         'default' => 'mid'
       ]
     );
+
+
+    $this->add_control(
+      'author_meta_icon',
+      [
+        'label' => esc_html__( 'Icon', 'gum-elementor-addon' ),
+        'type' => Controls_Manager::ICONS,
+        'fa4compatibility' => 'icon',
+        'condition' => [
+          'author_meta!' => ''
+        ],
+      ]
+    );
+
 
     $this->add_control(
       'category_meta',
@@ -423,10 +458,20 @@ class Gum_Elementor_Widget_blog_grid extends Widget_Base {
           'mid' => esc_html__( 'After Title', 'gum-elementor-addon' ),
           'bottom' => esc_html__( 'Bottom', 'gum-elementor-addon' ),
         ],
-        'condition' => [
-          'show_meta!' => ''
-        ],
         'default' => 'top'
+      ]
+    );
+
+
+    $this->add_control(
+      'category_meta_icon',
+      [
+        'label' => esc_html__( 'Icon', 'gum-elementor-addon' ),
+        'type' => Controls_Manager::ICONS,
+        'fa4compatibility' => 'icon',
+        'condition' => [
+          'category_meta!' => ''
+        ],
       ]
     );
 
@@ -452,9 +497,7 @@ class Gum_Elementor_Widget_blog_grid extends Widget_Base {
         ],
         'prefix_class' => 'elementor-post-meta-divider-',
         'toggle' => false,
-        'condition' => [
-          'show_meta!' => ''
-        ],
+        'separator' => 'before'
       ]
     );
 
@@ -465,7 +508,6 @@ class Gum_Elementor_Widget_blog_grid extends Widget_Base {
         'type' => Controls_Manager::TEXT,
         'condition' => [
           'meta_divider' => 'text',
-          'show_meta!' => ''
         ],
         'default' => '-',
         'ai' => [
@@ -489,7 +531,6 @@ class Gum_Elementor_Widget_blog_grid extends Widget_Base {
         ],
         'condition' => [
           'meta_divider' => 'icon',
-          'show_meta!' => ''
         ],
       ]
     );
@@ -899,6 +940,9 @@ class Gum_Elementor_Widget_blog_grid extends Widget_Base {
       ]
     );
 
+
+
+
    $this->start_controls_tabs( 'post_grid_tabs', [] );
 
    $this->start_controls_tab(
@@ -1063,6 +1107,14 @@ class Gum_Elementor_Widget_blog_grid extends Widget_Base {
           'post_grid_gradient_type' => 'radial',
         ],
         'of_type' => 'gradient',
+      ]
+    );
+
+    $this->add_group_control(
+      Group_Control_Box_Shadow::get_type(),
+      [
+        'name' => 'post_grid_shadow',
+        'selector' => '{{WRAPPER}} .grid-posts .grid-post article',
       ]
     );
 
@@ -1243,6 +1295,14 @@ class Gum_Elementor_Widget_blog_grid extends Widget_Base {
           'post_grid_bghover_gradient_type' => 'radial',
         ],
         'of_type' => 'gradient',
+      ]
+    );
+
+    $this->add_group_control(
+      Group_Control_Box_Shadow::get_type(),
+      [
+        'name' => 'post_grid_hover_shadow',
+        'selector' => '{{WRAPPER}}:hover .grid-posts .grid-post article',
       ]
     );
 
@@ -2111,6 +2171,42 @@ class Gum_Elementor_Widget_blog_grid extends Widget_Base {
     );
 
 
+    $this->add_control(
+      'general_icon_size',
+      [
+        'label' => esc_html__( 'Icon Size', 'gum-elementor-addon' ),
+        'type' => Controls_Manager::SLIDER,
+        'range' => [
+          'px' => [
+            'max' => 100,
+          ],
+        ],
+        'default' =>['value'=>'', 'unit'=>'px'],
+        'selectors' => [
+          '{{WRAPPER}} .list-meta i' => 'font-size: {{SIZE}}{{UNIT}};',
+          '{{WRAPPER}} .list-meta svg' => 'height: {{SIZE}}%;width: {{SIZE}}%;'
+        ],
+      ]
+    );
+
+    $this->add_control(
+      'general_icon_indent',
+      [
+        'label' => esc_html__( 'Text Indent', 'gum-elementor-addon' ),
+        'type' => Controls_Manager::SLIDER,
+        'range' => [
+          'px' => [
+            'max' => 100,
+          ],
+        ],
+        'default' =>['value'=>'10', 'unit'=>'px'],
+        'selectors' => [
+          '{{WRAPPER}} .list-meta i + .meta-text,{{WRAPPER}} .list-meta i + a .meta-text' => 'padding-left: {{SIZE}}{{UNIT}};',
+        ],
+      ]
+    );
+
+
    $this->start_controls_tabs( 'meta_title_tabs', [] );
 
    $this->start_controls_tab(
@@ -2130,6 +2226,19 @@ class Gum_Elementor_Widget_blog_grid extends Widget_Base {
         'selectors' => [
           '{{WRAPPER}} .list-meta a,{{WRAPPER}} .list-meta .meta-text' => 'color: {{VALUE}};',
         ]
+      ]
+    );
+
+
+    $this->add_control(
+      'general_icon_color',
+      [
+        'label' => esc_html__( 'Icon Color', 'gum-elementor-addon' ),
+        'type' => Controls_Manager::COLOR,
+        'default' => '',
+        'selectors' => [
+          '{{WRAPPER}} .list-meta i, {{WRAPPER}} .list-meta path' => 'fill: {{VALUE}}; color: {{VALUE}};',
+        ],
       ]
     );
 
@@ -2165,6 +2274,19 @@ class Gum_Elementor_Widget_blog_grid extends Widget_Base {
         'selectors' => [
           '{{WRAPPER}} .list-meta:hover a,{{WRAPPER}} .list-meta:hover .meta-text' => 'color: {{VALUE}};',
         ]
+      ]
+    );
+
+
+    $this->add_control(
+      'general_icon_hcolor',
+      [
+        'label' => esc_html__( 'Icon Color', 'gum-elementor-addon' ),
+        'type' => Controls_Manager::COLOR,
+        'default' => '',
+        'selectors' => [
+          '{{WRAPPER}} .list-meta:hover i, {{WRAPPER}} .list-meta:hover path' => 'fill: {{VALUE}}; color: {{VALUE}};',
+        ],
       ]
     );
 
@@ -2332,19 +2454,11 @@ class Gum_Elementor_Widget_blog_grid extends Widget_Base {
         'tab'   => Controls_Manager::TAB_STYLE,
         'condition' => [
           'date_meta_style' => 'yes',
-          'date_meta!' => ''
+          'date_meta!' => '',
+          'show_meta!' => ''
         ],
       ]
     );  
-
-    $this->add_control(
-      'date_meta_icon',
-      [
-        'label' => esc_html__( 'Icon', 'gum-elementor-addon' ),
-        'type' => Controls_Manager::ICONS,
-        'fa4compatibility' => 'icon',
-      ]
-    );
 
     $this->add_control(
       'date_icon_size',
@@ -2567,19 +2681,11 @@ class Gum_Elementor_Widget_blog_grid extends Widget_Base {
         'tab'   => Controls_Manager::TAB_STYLE,
         'condition' => [
           'author_meta_style' => 'yes',
+          'show_meta!' => '',
           'author_meta!' => ''
         ],
       ]
     );  
-
-    $this->add_control(
-      'author_meta_icon',
-      [
-        'label' => esc_html__( 'Icon', 'gum-elementor-addon' ),
-        'type' => Controls_Manager::ICONS,
-        'fa4compatibility' => 'icon',
-      ]
-    );
 
     $this->add_control(
       'author_icon_size',
@@ -2797,20 +2903,11 @@ class Gum_Elementor_Widget_blog_grid extends Widget_Base {
         'tab'   => Controls_Manager::TAB_STYLE,
         'condition' => [
           'category_meta_style' => 'yes',
+          'show_meta!' => '',
           'category_meta!' => ''
         ],
       ]
     );  
-
-    $this->add_control(
-      'category_meta_icon',
-      [
-        'label' => esc_html__( 'Icon', 'gum-elementor-addon' ),
-        'type' => Controls_Manager::ICONS,
-        'fa4compatibility' => 'icon',
-      ]
-    );
-
 
     $this->add_control(
       'category_icon_size',

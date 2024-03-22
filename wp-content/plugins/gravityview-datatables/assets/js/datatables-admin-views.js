@@ -3,8 +3,8 @@
  *
  * @package   GravityView
  * @license   GPL2+
- * @author    GravityView <hello@gravityview.co>
- * @link      http://gravityview.co
+ * @author    GravityKit <hello@gravitykit.com>
+ * @link      https://www.gravitykit.com
  * @copyright Copyright 2014, Katz Web Services, Inc.
  *
  * @global {object} GV_DataTables_Admin
@@ -29,15 +29,63 @@
 				.on( 'change', gvDataTablesExt.showGroupOptions )
 				.trigger('change');
 
-			$('#datatables_settingsscroller')
-				.on( 'change', gvDataTablesExt.toggleNonCompatible )
-				.trigger('change');
-
-			$('body')
+			$( 'body' )
 				.on( 'gravityview/settings/tab/enable', gvDataTablesExt.showMetabox )
 				.on( 'gravityview/settings/tab/disable', gvDataTablesExt.hideMetabox )
 				.on( 'gravityview/field-added', load_row_group_with_fields )
-				.on( 'sortupdate', '#directory-active-fields .active-drop', load_row_group_with_fields );
+				.on( 'sortupdate', '#directory-active-fields .active-drop', load_row_group_with_fields )
+				.on( 'gravityview/field-added', gvDataTablesExt.setFilterFields )
+				.on( 'gravityview/field-removed', gvDataTablesExt.setFilterFields )
+				.on( 'gravityview/all-fields-removed', gvDataTablesExt.setFilterFields )
+				.on( 'gravityview/view-config-updated', gvDataTablesExt.setFilterFields )
+				.on( 'gravityview/dialog-closed', gvDataTablesExt.setFilterFields );
+		},
+
+		// Automagically manage the list of fields with filters by updating the select element under DataTables settings.
+		setFilterFields: function () {
+			const fieldUIDtoLabelMap = {};
+
+			$( '#directory-active-fields .active-drop > div.gv-fields' ).each( function () {
+				const $fieldLabelEl = $( this ).find( '.field-label' );
+
+				if ( !$fieldLabelEl.length ) {
+					return;
+				}
+				const nameAttrValue = $fieldLabelEl.attr( 'name' ).match( /\[directory_table-columns\]\[(.*?)\]/ );
+
+				if ( !nameAttrValue || !nameAttrValue[ 1 ] ) {
+					return;
+				}
+
+				fieldUIDtoLabelMap[ nameAttrValue[ 1 ].replace( /[^a-z\d]/, '' ) ] = $( this ).find( '.gv-field-label-text-container' ).text();
+			} );
+
+			const $fieldsWithFilterSettingsEl = $( '#datatables_settingsfields_with_filter' );
+
+			const previouslySelectedFields = $fieldsWithFilterSettingsEl.val();
+
+			if ( $.isEmptyObject( fieldUIDtoLabelMap ) ) {
+				$fieldsWithFilterSettingsEl.empty();
+
+				$fieldsWithFilterSettingsEl.parents( 'tr' ).hide();
+			} else {
+				// Retrieve all option values that are available in the select element.
+				const existingOptions = $fieldsWithFilterSettingsEl.find( 'option' ).map( function () { return this.value; } ).get();
+
+				// Convert to a set to simplify lookup later.
+				const previouslySelectedFieldsSet = new Set( previouslySelectedFields );
+
+				$fieldsWithFilterSettingsEl.empty();
+
+				$.each( fieldUIDtoLabelMap, function ( key, value ) {
+					// If the field was previously selected or didn't exist, then it should be selected.
+					const isSelected = previouslySelectedFieldsSet.has( key ) || !existingOptions.includes( key );
+
+					$fieldsWithFilterSettingsEl.append( $( '<option>', { value: key, text: value } ).prop( 'selected', isSelected ) );
+				} );
+
+				$fieldsWithFilterSettingsEl.parents( 'tr' ).show();
+			}
 		},
 
 		toggleMetaboxAndRowGroup: function() {
@@ -83,19 +131,6 @@
 				_this.parents('tr').siblings().fadeOut( 100 );
 			}
 		},
-
-		toggleNonCompatible: function() {
-			var _this = $(this),
-				fixedCB = $('#datatables_settingsfixedheader, #datatables_settingsfixedcolumns');
-
-
-			if( _this.is(':checked') ) {
-				fixedCB.prop( 'checked', null ).parents('table').hide();
-			} else {
-				fixedCB.parents('table').fadeIn();
-			}
-		}
-
 	};
 
 	/**
@@ -144,6 +179,5 @@
 	$(document).ready( function() {
 		gvDataTablesExt.init();
 	});
-
 }(jQuery));
 

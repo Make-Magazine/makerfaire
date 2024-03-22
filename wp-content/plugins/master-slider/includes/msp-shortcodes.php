@@ -550,40 +550,40 @@ function msp_masterslider_wrapper_shortcode( $atts, $content = null ) {
 
 				<?php
                 if( ! empty( $on_init ) )
-                    printf( "$instance_name.api.addEventListener(MSSliderEvent.INIT, %s );\n"        , msp_maybe_base64_decode( $on_init ) ) ;
+                    printf( "$instance_name.api.addEventListener(MSSliderEvent.INIT, %s );\n"        , esc_html( msp_maybe_base64_decode( $on_init ) ) ) ;
 
 				if( ! empty( $on_change_start ) )
-					printf( "$instance_name.api.addEventListener(MSSliderEvent.CHANGE_START, %s );\n"		  , msp_maybe_base64_decode( $on_change_start ) ) ;
+					printf( "$instance_name.api.addEventListener(MSSliderEvent.CHANGE_START, %s );\n"		  , esc_html( msp_maybe_base64_decode( $on_change_start ) ) ) ;
 
 				if( ! empty( $on_change_end ) )
-					printf( "\t\t\t\t$instance_name.api.addEventListener(MSSliderEvent.CHANGE_END, %s );\n"  , msp_maybe_base64_decode( $on_change_end ) ) ;
+					printf( "\t\t\t\t$instance_name.api.addEventListener(MSSliderEvent.CHANGE_END, %s );\n"  , esc_html( msp_maybe_base64_decode( $on_change_end ) ) ) ;
 
 				if( ! empty( $on_waiting ) )
-					printf( "\t\t\t\t$instance_name.api.addEventListener(MSSliderEvent.WAITING, %s );\n"     , msp_maybe_base64_decode( $on_waiting ) ) ;
+					printf( "\t\t\t\t$instance_name.api.addEventListener(MSSliderEvent.WAITING, %s );\n"     , esc_html( msp_maybe_base64_decode( $on_waiting ) ) ) ;
 
 				if( ! empty( $on_resize ) )
-					printf( "\t\t\t\t$instance_name.api.addEventListener(MSSliderEvent.RESIZE, %s );\n"      , msp_maybe_base64_decode( $on_resize ) ) ;
+					printf( "\t\t\t\t$instance_name.api.addEventListener(MSSliderEvent.RESIZE, %s );\n"      , esc_html( msp_maybe_base64_decode( $on_resize ) ) ) ;
 
 				if( ! empty( $on_video_play ) )
-					printf( "\t\t\t\t$instance_name.api.addEventListener(MSSliderEvent.VIDEO_PLAY, %s );\n"  , msp_maybe_base64_decode( $on_video_play ) ) ;
+					printf( "\t\t\t\t$instance_name.api.addEventListener(MSSliderEvent.VIDEO_PLAY, %s );\n"  , esc_html( msp_maybe_base64_decode( $on_video_play ) ) ) ;
 
 				if( ! empty( $on_video_close ) )
-					printf( "\t\t\t\t$instance_name.api.addEventListener(MSSliderEvent.VIDEO_CLOSE, %s );\n" , msp_maybe_base64_decode( $on_video_close ) ) ;
+					printf( "\t\t\t\t$instance_name.api.addEventListener(MSSliderEvent.VIDEO_CLOSE, %s );\n" , esc_html( msp_maybe_base64_decode( $on_video_close ) ) ) ;
 
 				if( $on_swipe_start || $on_swipe_move || $on_swipe_end ){
 
                     echo "\t\t\t$instance_name.api.addEventListener(MSSliderEvent.INIT, function(){\n";
 
                     if( ! empty( $on_swipe_start ) ){
-                        printf( "\t\t\t\t$instance_name.api.view.addEventListener(MSViewEvents.SWIPE_START, %s );\n" , msp_maybe_base64_decode( $on_swipe_start ) ) ;
+                        printf( "\t\t\t\t$instance_name.api.view.addEventListener(MSViewEvents.SWIPE_START, %s );\n" , esc_html( msp_maybe_base64_decode( $on_swipe_start ) ) ) ;
                     }
 
                     if( ! empty( $on_swipe_move ) ){
-                        printf( "\t\t\t\t$instance_name.api.view.addEventListener(MSViewEvents.SWIPE_MOVE, %s );\n"  , msp_maybe_base64_decode( $on_swipe_move ) ) ;
+                        printf( "\t\t\t\t$instance_name.api.view.addEventListener(MSViewEvents.SWIPE_MOVE, %s );\n"  , esc_html( msp_maybe_base64_decode( $on_swipe_move ) ) ) ;
                     }
 
                     if( ! empty( $on_swipe_end ) ){
-                        printf( "\t\t\t\t$instance_name.api.view.addEventListener(MSViewEvents.SWIPE_END, %s );\n"   , msp_maybe_base64_decode( $on_swipe_end ) ) ;
+                        printf( "\t\t\t\t$instance_name.api.view.addEventListener(MSViewEvents.SWIPE_END, %s );\n"   , esc_html( msp_maybe_base64_decode( $on_swipe_end ) ) ) ;
                     }
 
                     echo "\t\t\t});\n";

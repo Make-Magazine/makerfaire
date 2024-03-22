@@ -1,7 +1,7 @@
 === GravityView ===
 Tags: gravity forms, directory, gravity forms directory
 Requires at least: 4.7
-Tested up to: 6.4.2
+Tested up to: 6.4.3
 Requires PHP: 7.2.0
 Stable tag: trunk
 Contributors: The GravityKit Team
@@ -20,6 +20,102 @@ Beautifully display your Gravity Forms entries. Learn more on [gravitykit.com](h
 3. Follow the instructions
 
 == Changelog ==
+
+= 2.21 on March 18, 2024 =
+
+This release enhances security, introduces support for LifterLMS, adds a new CSV/TSV export widget to the View editor along with the option to add Gravity Flow fields to the Search Bar, addresses PHP 8.2 deprecation notices, fixes a conflict with BuddyBoss Platform, and improves performance with updates to essential components.
+
+#### 🚀 Added
+* A View editor widget to export entries in CSV or TSV formats.
+* Support for SVG images.
+* Support for Gravity Flow's "Workflow User" and "Workflow Multi-User" fields inside the Search Bar.
+* Integration with LifterLMS that allows embedding Views inside Student Dashboards.
+* Notice to inform administrators that an embedded View was moved to "trash" and an option to restore it.
+* Click-to-copy shortcode functionality in the View editor and when listing existing Views.
+
+#### 🐛 Fixed
+* PHP 8.2 deprecation notices.
+* Fields linked to single entry layouts are now exported as plain text values, not hyperlinks, in CSV/TSV files.
+* Issue preventing the saving of pages/posts with GravityView Gutenberg blocks when BuddyBoss Platform is active.
+
+#### 🔐 Security
+* Enhanced security by adding a `secret` attribute to shortcodes and blocks connected to Views.
+
+#### 🔧 Updated
+* [Foundation](https://www.gravitykit.com/foundation/) to version 1.2.11.
+  - GravityKit product updates are now showing on the Plugins page.
+  - Database options that are no longer used are now automatically removed.
+
+__Developer Updates:__
+
+* Added: `gk/gravityview/widget/search/clear-button/params` filter to modify the parameters of the Clear button in the search widget.
+
+= 2.20.2 on March 4, 2024 =
+
+This release enhances performance by optimizing caching and managing transients more effectively.
+
+#### ✨ Improved
+* Enhanced detection of duplicate queries, resulting in fewer cache records stored in the database.
+
+#### 🔧 Updated
+* Updated [Foundation](https://www.gravitykit.com/foundation/) to version 1.2.10.
+  - Transients are no longer autoloaded.
+
+= 2.20.1 on February 29, 2024 =
+
+This release fixes an issue with View caching and improves compatibility with the Advanced Custom Fields plugin.
+
+#### 🐛 Fixed
+* Disappearing pagination and incorrect entry count when View caching is enabled.
+* Potential timeout issue when embedding GravityView shortcodes with Advanced Custom Fields plugin.
+* PHP 8.1+ deprecation notice.
+
+= 2.20 on February 22, 2024 =
+
+This release introduces new settings for better control over View caching, adds support for the Advanced Post Creation Add-On when editing entries, fixes a fatal error when exporting entries to CSV, and updates internal components for better performance and compatibility.
+
+#### 🚀 Added
+* Global and View-specific settings to control caching of View entries. [Learn more about GravityView caching](https://docs.gravitykit.com/article/58-about-gravityview-caching).
+* Support for the [Advanced Post Creation Add-On](https://www.gravityforms.com/add-ons/advanced-post-creation/) when editing entries in GravityView's Edit Entry mode.
+
+#### ✨ Improved
+* If Gravity Forms is not installed and/or activated, a notice is displayed to alert users when creating new or listing existing Views.
+
+#### 🐛 Fixed
+* Deprecation notice in PHP 8.1+ when displaying a View with file upload fields.
+* Fatal error when exporting entries to CSV.
+
+#### 🔧 Updated
+* [Foundation](https://www.gravitykit.com/foundation/) to version 1.2.9.
+  - GravityKit products that are already installed can now be activated without a valid license.
+  - Fixed PHP warning messages that appeared when deactivating the last active product with Foundation installed.
+
+#### 🐛 Fixed
+* The GravityView capabilities for a specific role were overwritten on every admin request.
+
+= 2.19.6 on February 7, 2024 =
+
+This update introduces the ability to send notifications using Gravity Forms when an entry is deleted, improves sorting and survey field ratings, and updates key components for better performance and compatibility.
+
+#### 🚀 Added
+* Ability to send notifications using Gravity Forms when an entry is deleted by selecting the "GravityView - Entry is deleted" event from the event dropdown in Gravity Forms notifications settings.
+
+#### 🐛 Fixed
+* Sorting the View by entry ID in ascending and descending order would yield the same result.
+* Survey fields without a rating would show a 1-star rating.
+* Editing Gravity Forms [Custom Post Fields](https://docs.gravityforms.com/post-custom/#h-general-settings) with a Field Type set to "File Uploads" inside in Edit Entry.
+
+#### 🔧 Updated
+* [Foundation](https://www.gravitykit.com/foundation/) and [TrustedLogin](https://www.trustedlogin.com/) to versions 1.2.8 and 1.7.0, respectively.
+  - Transients are now set and retrieved correctly when using object cache plugins.
+  - Fixed a JavaScript warning that occurred when deactivating license keys and when viewing products without the necessary permissions.
+  - Resolved PHP warning messages on the Plugins page.
+
+__Developer Updates:__
+
+* Added: `GravityView_Notifications` class as a wrapper for Gravity Forms notifications.
+* Modified: Added the current `\GV\View` object as a second parameter for the `gravityview/search-all-split-words` and `gravityview/search-trim-input` filters.
+* Modified: Attach listeners in the View editor to `$( document.body )` instead of `$('body')` for speed improvements.
 
 = 2.19.5 on December 7, 2023 =
 
@@ -2950,4 +3046,4 @@ We're just getting started with what can be done with DataTables. We'll have muc
 * Liftoff!
 
 
-= 1706734031-4249 =
+= 1711122978-4249 =

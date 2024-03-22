@@ -54,6 +54,27 @@ class GF_Stripe_Payment_Element {
 		$this->payment    = new GF_Payment_Element_Payment( $addon );
 		$this->submission = new GF_Payment_Element_Submission( $addon );
 
+		// Disable recaptcha v3 if an older version of the recaptcha add-on is installed.
+		add_filter( 'gform_form_post_get_meta', array( $this, 'maybe_disable_recaptcha_v3' ), 10 );
+	}
+
+	/**
+	 * Disable recaptcha v3 if an older version of the recaptcha add-on is installed (which isn't compatible with this version of Stripe)
+	 *
+	 * @since 5.5
+	 *
+	 * @filter gform_validation
+	 *
+	 * @param array $form The form object.
+	 *
+	 * @return array Returns the submission data, with the form object updated to disable recaptcha v3 if needed.
+	 */
+	public function maybe_disable_recaptcha_v3( $form ) {
+		$is_older_recaptcha = function_exists( 'gf_recaptcha' ) && version_compare( gf_recaptcha()->get_version(), '1.3.2', '<' );
+		if ( $is_older_recaptcha ) {
+			$form['gravityformsrecaptcha'] = array( 'disable-recaptchav3' => '1' );
+		}
+		return $form;
 	}
 
 	/**
@@ -186,18 +207,26 @@ class GF_Stripe_Payment_Element {
 
 		if ( empty( $form_id ) || empty( $feed_id ) ) {
 			wp_send_json_error( 'missing required parameters', 400 );
+			return;
 		}
 
 		$this->check_form_requires_login_nonce( $form_id );
 
-		if ( ! $this->submission->validate( $form_id ) ) {
+		$validation_result = $this->submission->validate( $form_id );
+		$is_spam           = rgar( $validation_result, 'is_spam', false );
+		$is_valid          = rgar( $validation_result, 'is_valid' );
+		$payment_method    = sanitize_text_field( rgpost( 'payment_method' ) );
+		$payment_method    = $payment_method === 'google_pay' || $payment_method === 'apple_pay' ? 'card' : $payment_method;
+		$order_data        = $this->submission->extract_order_from_submission( $feed_id, $form_id );
+
+		if ( ! $is_valid ) {
 			wp_send_json_success( array( 'is_valid' => false ) );
+			return;
+		} elseif ( $is_spam ) {
+			$this->create_draft_and_send_json_success( $form_id, $feed_id, '', '', '', true, '', $order_data['total'], null );
+			return;
 		}
 
-		$payment_method = sanitize_text_field( rgpost( 'payment_method' ) );
-		$payment_method = $payment_method === 'google_pay' || $payment_method === 'apple_pay' ? 'card' : $payment_method;
-
-		$order_data                   = $this->submission->extract_order_from_submission( $feed_id, $form_id );
 		$order_data['payment_method'] = $payment_method;
 		$feed                         = $this->addon->get_feed( $feed_id );
 		$subscription_id              = null;
@@ -208,6 +237,7 @@ class GF_Stripe_Payment_Element {
 			$subscription = $this->payment->create_subscription( $order_data, $feed_id, $form_id, $api );
 			if ( is_wp_error( $subscription ) ) {
 				wp_send_json_error( $subscription->get_error_message(), 400 );
+				return;
 			}
 			$intent          = $this->payment->get_subscription_intent( $subscription, $feed, $api );
 			$subscription_id = $subscription->id;
@@ -218,6 +248,7 @@ class GF_Stripe_Payment_Element {
 
 		if ( is_wp_error( $intent ) ) {
 			wp_send_json_error( $intent );
+			return;
 		}
 
 		$client_secret = null;
@@ -225,13 +256,14 @@ class GF_Stripe_Payment_Element {
 
 		// If this is a `send_invoice` subscription, we need an invoice instead of an intent.
 		if ( $subscription && $intent === null ) {
-			$this->payment->invoice_id = $subscription->latest_invoice->id;
+			$invoice_id                = $subscription->latest_invoice->id;
+			$this->payment->invoice_id = $invoice_id;
 		} else {
 			$this->payment->intent_id = $intent->id;
 			$client_secret            = $intent->client_secret;
 		}
 
-		if ( $subscription ) {
+		if ( $subscription && $intent ) {
 			// Set the created intent's future usage to off_session, since the intent is created automatically while creating the subscription, we can't set this before this point.
 			$api->update_payment_intent(
 				$intent->id,
@@ -241,31 +273,7 @@ class GF_Stripe_Payment_Element {
 			);
 		}
 
-		$stripe_encrypted_params = $this->get_encrypted_return_params(
-			$form_id,
-			$feed_id,
-			$client_secret,
-			$subscription_id,
-			$this->payment->invoice_id
-		);
-
-		$resume_token = $this->submission->create_draft_submission( $form_id, $stripe_encrypted_params );
-
-		$confirm_data = array(
-			'is_valid'       => true,
-			'resume_token'   => $resume_token,
-			'payment_method' => $payment_method,
-		);
-
-		if ( $client_secret === null && $invoice_id ) {
-			$confirm_data['invoice_id'] = $this->payment->invoice_id;
-			$confirm_data['total']      = $order_data['total'];
-		} else {
-			$confirm_data['intent'] = $intent;
-			$confirm_data['total']  = rgar( $intent, 'amount' ) ? $this->addon->get_amount_import( $intent->amount ) : $order_data['total'];
-		}
-
-		wp_send_json_success( $confirm_data );
+		$this->create_draft_and_send_json_success( $form_id, $feed_id, $client_secret, $subscription_id, $invoice_id, $is_spam, $payment_method, $order_data['total'], $intent );
 	}
 
 	/**
@@ -299,12 +307,9 @@ class GF_Stripe_Payment_Element {
 		$feed_id = rgar( $params, 'feed_id' );
 		gf_stripe()->log_debug( __METHOD__ . '() - Stripe encrypted params: ' . print_r( $params, true ) );
 		$intent = $this->validate_redirect_intent( $params, $this->get_api_for_feed( $feed_id ) );
-		if ( ! $intent ) {
-			gf_stripe()->log_debug( __METHOD__ . '() - No payment intent. Aborting.' );
-			return false;
+		if ( $intent ) {
+			$this->maybe_set_link_cookie( $intent );
 		}
-
-		$this->maybe_set_link_cookie( $intent );
 
 		add_filter( 'gform_entry_id_pre_save_lead', array( $this->submission, 'get_pending_entry_id' ), 10, 2 );
 		add_filter( 'gform_field_validation', array( $this->submission, 'maybe_skip_field_validation' ), 10, 4 );
@@ -736,6 +741,54 @@ class GF_Stripe_Payment_Element {
 		}
 
 		return $customer_info_field;
+	}
+
+
+	/**
+	 * Creates the draft submission and sends the json success result.
+	 *
+	 * @since 5.5
+	 *
+	 * @param int    $form_id         The form ID.
+	 * @param int    $feed_id         The feed ID.
+	 * @param string $client_secret   The intent's client secret.
+	 * @param string $subscription_id The Stripe's subscription ID (if this is a subscription feed)
+	 * @param string $invoice_id      The Stripe's subscription invoice ID.
+	 * @param bool   $is_spam         Whether the submission is spam or not.
+	 * @param string $payment_method  The payment method.
+	 * @param float  $total           The payment amount.
+	 * @param object $intent          The Stripe's payment itent.
+	 *
+	 * @return void
+	 */
+	private function create_draft_and_send_json_success( $form_id, $feed_id, $client_secret, $subscription_id, $invoice_id, $is_spam, $payment_method, $total, $intent ) {
+
+		$stripe_encrypted_params = $this->get_encrypted_return_params(
+			$form_id,
+			$feed_id,
+			$client_secret,
+			$subscription_id,
+			$invoice_id
+		);
+
+		$resume_token = $this->submission->create_draft_submission( $form_id, $stripe_encrypted_params );
+
+		$confirm_data = array(
+			'is_valid'       => true,
+			'is_spam'        => $is_spam,
+			'resume_token'   => $resume_token,
+			'payment_method' => $payment_method,
+		);
+
+		if ( $client_secret === null && $invoice_id ) {
+			$confirm_data['invoice_id'] = $invoice_id;
+			$confirm_data['total']      = $total;
+		} else {
+			$confirm_data['intent'] = $intent;
+			$confirm_data['total']  = rgar( $intent, 'amount' ) ? $this->addon->get_amount_import( $intent->amount ) : $total;
+		}
+
+		wp_send_json_success( $confirm_data );
 	}
 
 }

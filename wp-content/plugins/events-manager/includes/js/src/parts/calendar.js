@@ -260,6 +260,7 @@ let EM_View_Updater = function( element, html ){
 			element.replaceWith(view);
 		}
 	}
+	em_setup_ui_elements( view );
 	return view;
 }
 

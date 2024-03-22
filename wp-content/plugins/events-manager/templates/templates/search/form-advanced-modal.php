@@ -18,13 +18,17 @@ $id = esc_attr($args['id']);
 		<div class="em-modal-content em-search-sections input">
 			<?php em_locate_template( 'templates/search/form-advanced.php', true, array('args' => $args) ); ?>
 		</div><!-- content -->
-		<footer class="em-submit-section input">
+		<?php do_action('em_search_form_advanced_footer_before', $args); // do not remove ?>
+		<footer class="em-submit-section em-search-submit input">
+			<?php do_action('em_search_form_advanced_footer_top', $args); // do not remove ?>
 			<div>
 				<button type="reset" class="button button-secondary"><?php esc_html_e('Clear All', 'events-manager'); ?></button>
 			</div>
 			<div>
-				<button type="submit" class="button button-primary"><?php echo esc_html($args['search_button']); ?></button>
+				<button type="submit" class="em-search-submit button button-primary"><?php echo esc_html($args['search_button']); ?></button>
 			</div>
+			<?php do_action('em_search_form_advanced_footer_bottom', $args); // do not remove ?>
 		</footer>
+		<?php do_action('em_search_form_advanced_footer_after', $args); // do not remove ?>
 	</div><!-- modal -->
 </div>

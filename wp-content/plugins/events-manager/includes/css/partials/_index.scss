@@ -14,3 +14,19 @@
 @import "buttons";
 @import "list-tables";
 @import "charts";
+@import "phone";
+
+.em {
+	.em-inline-error {
+		color: red;
+		display: block;
+		width: 100%;
+		margin: 8px 0 0;
+
+		.em-icon {
+			background-color: red;
+			-webkit-mask-image: var(--icon-cross-circle);
+			mask-image: var(--icon-cross-circle);
+		}
+	}
+}

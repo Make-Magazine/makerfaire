@@ -191,7 +191,7 @@ class MSP_Importer {
 
         if( check_admin_referer('import-msp-sliders') ) {
 
-          $step = isset( $_REQUEST['step'] ) && ! empty( $_REQUEST['step'] ) ? (int)$_REQUEST['step'] : 0;
+          $step = isset( $_REQUEST['step'] ) && ! empty( $_REQUEST['step'] ) ? (int) sanitize_text_field( $_REQUEST['step'] ) : 0;
 
           if( 2 == $step ){
 
@@ -248,7 +248,7 @@ class MSP_Importer {
 
         if( check_admin_referer('export-msp-sliders') ) {
 
-          $sliders    = isset( $_POST['msp-export-sliders']      ) ?  $_POST['msp-export-sliders'] : '';
+          $sliders    = isset( $_POST['msp-export-sliders']      ) ?  msp_sanitize_input( $_POST['msp-export-sliders'] ) : '';
 
           if( ! empty( $sliders ) || ! empty( $args ) ) {
             $this->export_slider_data_in_file( $sliders, $args );

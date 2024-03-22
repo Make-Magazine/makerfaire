@@ -1,7 +1,7 @@
 <?php
 	/* @var array $args */
 	$id =  esc_attr( $args['id'] );
-	if( empty($args['order']) && !in_array($args['order'], array('ASC', 'DESC')) ) {
+	if( empty($args['order']) || !in_array($args['order'], array('ASC', 'DESC')) ) {
 		$args['order'] = get_option('dbem_events_default_order') === 'ASC' ? 'ASC' : 'DESC';
 	}
 ?>

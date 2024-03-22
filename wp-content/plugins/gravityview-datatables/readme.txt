@@ -1,7 +1,7 @@
-=== GravityView - DataTables Extension ===
+=== GravityView - DataTables Layout ===
 Tags: gravityview
 Requires at least: 4.4
-Tested up to: 6.2
+Tested up to: 6.4.3
 Stable tag: trunk
 Contributors: The GravityKit Team
 License: GPL 3 or higher
@@ -15,6 +15,77 @@ Display entries in a dynamic table powered by DataTables & GravityView.
 3. Follow the instructions
 
 == Changelog ==
+
+= 3.3.6 on March 19, 2024 =
+
+This update makes the Scroller extension work with the FixedColumns and FixedHeader extensions, and fixes the preview of GravityView's Gutenberg blocks that use the DataTables layout.
+
+#### 🐛 Fixed
+- Scroller extension can now be used with the FixedColumns and FixedHeader extensions.
+- Resolved an issue preventing GravityView's Gutenberg blocks for Views from previewing when using the DataTables layout.
+
+__Developer Updates:__
+
+* Added: `gk/gravityview/datatables/output/before` action hook that runs before generating the output data.
+
+= 3.3.5 on March 7, 2024 =
+
+This update fixes an issue with exporting, printing, or copying table data in responsive mode, enhancing your data management capabilities.
+
+#### 🐛 Fixed
+- Table data grouped under a single column in responsive mode now exports, prints, and copies as expected.
+
+= 3.3.4 on March 4, 2024 =
+
+This release fixes issues related to pagination, auto-update functionality, entry note submission, and more.
+
+#### 🐛 Fixed
+- Pagination is no longer limited to a single page when the View includes a "Created By" field.
+- Auto-update functionality is now working.
+- Entry note submission is now working as expected.
+- Resolved an issue with text escaping when there are no entries or search results.
+- Hidden columns are now excluded when exporting, printing, or copying table data.
+
+= 3.3.3 on February 29, 2024 =
+
+This release fixes issues with date sorting, search bar operability in multi-View setups, and "Created By" field filtering.
+
+#### Fixed 🐛
+- Incorrect results when sorting by date with client-side processing enabled and field filters disabled.
+- Search bar of a non-DataTables View not working when  placed on the same page with the DataTables View.
+- "Created By" field filtering issue when the field is configured to display values other than the user's ID.
+
+This release ensures that the "number of entries per page" setting is respected for existing Views prior to updating to version 3.3, and improves the styling of field filters.
+
+#### 🐛 Fixed
+- Number of entries per page setting not being respected for existing Views after updating to version 3.3.
+
+#### ✨ Improved
+- Styling of field filters.
+
+= 3.3.1 on February 16, 2024 =
+
+This release addresses minor issues in client-side processing mode introduced in version 3.3.
+
+#### 🐛 Fixed
+- Field filters now trigger only a single Ajax request when client-side processing is enabled.
+- Disabling DataTables' [search filter](https://docs.gravitykit.com/article/201-how-to-disable-the-datatables-search-filter) no longer disables field filtering if client-side processing is enabled.
+
+= 3.3 on February 14, 2024 =
+
+💌 This lovely release introduces client-side processing for DataTables, offering instant filtering, sorting, and pagination directly in your browser. Enjoy powerful new filtering options and enhanced compatibility with GravityWiz's Populate Anything Add-On.
+
+#### 🚀 Added
+- Support for client-side processing in DataTables, enabling instant filtering, sorting, and pagination without server interaction.
+  - This major update makes working with your data faster and more efficient.
+  - [Learn more about the new client-side processing feature](https://www.gravitykit.com/announcing-datatables-3-3/).
+- The ability to configure per-column filtering in the View settings.
+- Support for GravityWiz's Populate Anything Add-On in field filters that use the "Select" input type.
+
+#### 🐛 Fixed
+- A JavaScript error occurring when attempting to group rows by field values containing certain characters.
+- The appearance of HTML tables nested within View fields.
+- The footer calculation result not being hidden when the associated column was hidden.
 
 = 3.2 on June 29, 2023 =
 
@@ -406,4 +477,4 @@ __Developer Notes:__
 
 
 
-= 1688664044-4249 =
+= 1711122992-4249 =

@@ -1,6 +1,24 @@
 
 # Changelog
 
+## 1.1.53
+
+	- Fixed an issue with Gravity Flow where child entries would not be editable in some situations due to a permissions check.
+
+## 1.1.52
+
+	- Fixed security issue.
+
+## 1.1.51
+
+	- Added new [`gpnf_view_model`](https://gravitywiz.com/documentation/gpnf_view_model) JavaScript filter hook.
+	- Fixed issue where Nested Forms would double initialize if using Gravity Forms 2.8.4 or newer.
+	- Fixed issue where Nested Forms could conflict with the Elementor editor.
+
+## 1.1.50
+
+	- Fixed an issue where data from the single file upload field on a child form was not retained when using the Gravity Flow User Input Workflow Step.
+
 ## 1.1.49
 
 	- Fixed issue with passing child entry IDs to Nested Form fields using a query string.

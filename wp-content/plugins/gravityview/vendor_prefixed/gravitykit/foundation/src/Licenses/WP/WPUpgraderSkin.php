@@ -2,8 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by gravityview on 08-December-2023 using Strauss.
- * @see https://github.com/BrianHenryIE/strauss
+ * Modified by gravityview on 19-March-2024 using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\GravityView\Foundation\Licenses\WP;
@@ -14,14 +13,15 @@ use Exception;
 /**
  * This is class is used to catch errors and suppress output during product installation/update.
  *
- *
  * @since 1.0.0
  *
  * @see   WP_Upgrader_Skin
  */
 class WPUpgraderSkin extends WP_Upgrader_Skin {
 	/**
-	 * @inheritDoc Silences header display.
+	 * Silences header display.
+	 *
+	 * @inheritDoc
 	 *
 	 * @since      1.0.0
 	 *
@@ -31,8 +31,9 @@ class WPUpgraderSkin extends WP_Upgrader_Skin {
 	}
 
 	/**
-	 * @inheritDoc Silences footer display.
+	 * Silences footer display.
 	 *
+	 * @inheritDoc
 	 *
 	 * @since      1.0.0
 	 *
@@ -42,9 +43,14 @@ class WPUpgraderSkin extends WP_Upgrader_Skin {
 	}
 
 	/**
-	 * @inheritDoc Silences results.
+	 * Silences results.
+	 *
+	 * @inheritDoc
 	 *
 	 * @since      1.0.0
+	 *
+	 * @param string $feedback Message data.
+	 * @param mixed  ...$args  Optional text replacements.
 	 *
 	 * @return void
 	 */
@@ -55,6 +61,8 @@ class WPUpgraderSkin extends WP_Upgrader_Skin {
 	 * Throws an error when one (or multiple) is encountered.
 	 *
 	 * @since 1.0.0
+	 *
+	 * @param string|WP_Error $errors Errors.
 	 *
 	 * @throws Exception
 	 *

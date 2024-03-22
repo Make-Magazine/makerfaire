@@ -18,7 +18,7 @@ use const Automattic\Jetpack\Extensions\Subscriptions\META_NAME_FOR_POST_TIER_ID
  */
 abstract class Abstract_Token_Subscription_Service implements Subscription_Service {
 
-	const JWT_AUTH_TOKEN_COOKIE_NAME                   = 'jp-premium-content-session';
+	const JWT_AUTH_TOKEN_COOKIE_NAME                   = 'wp-jp-premium-content-session'; // wp prefix helps with skipping batcache
 	const DECODE_EXCEPTION_FEATURE                     = 'memberships';
 	const DECODE_EXCEPTION_MESSAGE                     = 'Problem decoding provided token';
 	const REST_URL_ORIGIN                              = 'https://subscribe.wordpress.com/';
@@ -449,6 +449,22 @@ abstract class Abstract_Token_Subscription_Service implements Subscription_Servi
 	}
 
 	/**
+	 * Clear the auth cookie.
+	 *
+	 * @return void
+	 */
+	public static function clear_token_cookie() {
+		if ( defined( 'TESTING_IN_JETPACK' ) && TESTING_IN_JETPACK ) {
+			return;
+		}
+
+		if ( self::has_token_from_cookie() ) {
+			unset( $_COOKIE[ self::JWT_AUTH_TOKEN_COOKIE_NAME ] );
+			setcookie( self::JWT_AUTH_TOKEN_COOKIE_NAME, '', time() - DAY_IN_SECONDS, '/', COOKIE_DOMAIN, is_ssl(), true );
+		}
+	}
+
+	/**
 	 * Get the token if present in the current request.
 	 *
 	 * @return ?string
@@ -456,7 +472,7 @@ abstract class Abstract_Token_Subscription_Service implements Subscription_Servi
 	private function token_from_request() {
 		$token = null;
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		if ( isset( $_GET['token'] ) ) {
+		if ( isset( $_GET['token'] ) && is_string( $_GET['token'] ) ) {
 			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.MissingUnslash, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.NonceVerification.Recommended
 			if ( preg_match( '/^[a-zA-Z0-9\-_]+?\.[a-zA-Z0-9\-_]+?\.([a-zA-Z0-9\-_]+)?$/', $_GET['token'], $matches ) ) {
 				// token matches a valid JWT token pattern.

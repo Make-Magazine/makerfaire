@@ -1,3 +1,10 @@
+### 2.1.0 | 2024-02-28
+- Added support for async (background) feed processing to improve form submission performance.
+- Updated the custom contact fields settings on the feed configuration page to use the generic_map type field instead of the deprecated dynamic_field_map type field.
+- Updated the minimum Gravity Forms version to 2.5.
+- Fixed a PHP 8.1 deprecation notice that occurs when saving the add-on settings on a new installation.
+- Fixed PHP 8.2 deprecation notices that occur when saving add-on settings.
+
 ### 2.0 | 2022-02-16
 - Updated links to documentation.
 - Fixed an issue where the add-on log uses the "Invalid API URL" message for request failures of any kind.

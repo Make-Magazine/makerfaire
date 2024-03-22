@@ -170,7 +170,7 @@ class EM_Admin_Notice {
 	public function output(){
 		if( empty($this->message) ) return false;
 		$action = $this->network ? 'em_dismiss_network_admin_notice':'em_dismiss_admin_notice';
-		$url = add_query_arg( array('action' => $action, 'notice' => $this->name, 'nonce' => wp_create_nonce($action.$this->name) ), admin_url('admin-ajax.php') );
+		$url = add_query_arg( array('action' => $action, 'notice' => $this->name, 'nonce' => wp_create_nonce($action.$this->name.get_current_user_id()) ), admin_url('admin-ajax.php') );
 		?>
 		<div class="em-admin-notice notice notice-<?php echo esc_attr($this->what); ?> <?php if($this->dismissible) echo 'is-dismissible'?>" id="notice-<?php echo esc_attr($this->name); ?>" data-url="<?php echo esc_url($url); ?>">
 			<p><?php echo $this->message; ?></p>

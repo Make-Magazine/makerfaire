@@ -142,32 +142,6 @@
 		}
 	}
 
-	.iti, &.pixelbones .iti {
-
-		display: block;
-
-		.iti__selected-flag {
-			//height: calc(100% - 12px);
-		}
-
-		&.error {
-			input[type=tel] {
-				border-color: red !important;
-			}
-		}
-
-		input[type=tel], .iti--allow-dropdown input, .iti--allow-dropdown input[type=tel], .iti--allow-dropdown input[type=text], .iti--separate-dial-code input, .iti--separate-dial-code input[type=tel], .iti--separate-dial-code input[type=text] {
-			padding-right: 6px !important;
-			padding-left: 82px !important;
-			margin-left: 0 !important;
-		}
-		.iti__flag {background-image: url("../external/intl-tel-input/img/flags.png");}
-
-		@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
-			.iti__flag {background-image: url("../external/intl-tel-input/img/flags@2x.png");}
-		}
-	}
-
 }
 /* Fix z-index issues for some 3rd party stuff */
 body .pac-container, .em .flatpickr-calendar {

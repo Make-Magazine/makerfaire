@@ -2,8 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by gravityview on 08-December-2023 using Strauss.
- * @see https://github.com/BrianHenryIE/strauss
+ * Modified by gravityview on 19-March-2024 using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\GravityView\Foundation\Licenses;
@@ -14,9 +13,11 @@ use Exception;
 
 class EDD {
 	/**
+	 * Class instance.
+	 *
 	 * @since 1.0.0
 	 *
-	 * @var EDD Class instance.
+	 * @var EDD
 	 */
 	private static $_instance;
 
@@ -102,8 +103,8 @@ class EDD {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param object $transient_data
-	 * @param bool   $skip_cache (optional) Whether to skip cache when getting products data. Default: false.
+	 * @param object $transient_data Transient data.
+	 * @param bool   $skip_cache     (optional) Whether to skip cache when getting products data. Default: false.
 	 *
 	 * @return object
 	 */
@@ -114,12 +115,17 @@ class EDD {
 			$transient_data = new \stdClass();
 		}
 
-		if ( ! $checked && ! $skip_cache && Arr::get( $_GET, 'force-check', false ) ) {
+		if ( ! $checked && ! $skip_cache && Arr::get( $_GET, 'force-check', false ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			$skip_cache = true;
 		}
 
 		try {
-			$products_data = ProductManager::get_instance()->get_products_data( [ 'skip_request_cache' => true, 'skip_remote_cache' => $skip_cache ] );
+			$products_data = ProductManager::get_instance()->get_products_data(
+				[
+					'skip_request_cache' => true,
+					'skip_remote_cache'  => $skip_cache,
+				]
+			);
 		} catch ( Exception $e ) {
 			LoggerFramework::get_instance()->error( "Can't get products data when checking for updated versions: " . $e->getMessage() );
 
@@ -234,9 +240,12 @@ class EDD {
 			return $result;
 		}
 
-		$product = Arr::first( $products, function ( $product ) use ( $args ) {
-			return $product['slug'] === $args->slug;
-		} );
+		$product = Arr::first(
+			$products,
+			function ( $product ) use ( $args ) {
+				return $product['slug'] === $args->slug;
+			}
+		);
 
 		if ( ! $product ) {
 			return $result;

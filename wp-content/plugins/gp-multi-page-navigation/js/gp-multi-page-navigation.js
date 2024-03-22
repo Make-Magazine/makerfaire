@@ -71,7 +71,7 @@
 
 				if ( stepNumber != self.getCurrentPage() ) {
 					var existingLink = $( 'a[href="#' + stepNumber + '"]' );
-					if ( !existingLink.length || !existingLink.hasClass( 'gpmpn-step-linked' ) ) {
+					if ( !existingLink.length || !$(this).hasClass( 'gpmpn-step-linked' ) ) {
 						$( this ).html( self.getPageLinkMarkup( stepNumber, $( this ).html() ) ).addClass( 'gpmpn-step-linked' );
 					}
 				} else {

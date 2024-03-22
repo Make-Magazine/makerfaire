@@ -523,21 +523,22 @@ class EM_Bookings_Table extends EM\List_Table {
 		<div class='<?php echo $id; ?> em_obj frontend' id="<?php echo $id; ?>">
 			<form class='bookings-filter' method='post' action='' id="<?php echo $uid; ?>-form">
 				<?php if( $EM_Event !== false ): ?>
-				<input type="hidden" name="event_id" value='<?php echo esc_attr($EM_Event->event_id); ?>' />
+				<input type="hidden" name="event_id" value='<?php echo esc_attr($EM_Event->event_id); ?>' >
 				<?php endif; ?>
 				<?php if( $EM_Ticket !== false ): ?>
-				<input type="hidden" name="ticket_id" value='<?php echo esc_attr($EM_Ticket->ticket_id); ?>' />
+				<input type="hidden" name="ticket_id" value='<?php echo esc_attr($EM_Ticket->ticket_id); ?>' >
 				<?php endif; ?>
 				<?php if( $EM_Person !== false ): ?>
-				<input type="hidden" name="person_id" value='<?php echo esc_attr($EM_Person->ID); ?>' />
+				<input type="hidden" name="person_id" value='<?php echo esc_attr($EM_Person->ID); ?>' >
 				<?php endif; ?>
-				<input type="hidden" name="is_public" value="<?php echo ( !empty($_REQUEST['is_public']) || !is_admin() ) ? 1:0; ?>" />
-				<input type="hidden" name="pno" value='<?php echo esc_attr($this->page); ?>' />
-				<input type="hidden" name="order" value='<?php echo esc_attr($this->order); ?>' />
-				<input type="hidden" name="orderby" value='<?php echo esc_attr($this->orderby); ?>' />
-				<input type="hidden" name="_wpnonce" value="<?php echo ( !empty($_REQUEST['_wpnonce']) ) ? esc_attr($_REQUEST['_wpnonce']):wp_create_nonce('em_bookings_table'); ?>" />
-				<input type="hidden" name="action" value="em_bookings_table" />
-				<input type="hidden" name="cols" value="<?php echo esc_attr(implode(',', $this->cols)); ?>" />
+				<input type="hidden" name="is_public" value="<?php echo ( !empty($_REQUEST['is_public']) || !is_admin() ) ? 1:0; ?>" >
+				<input type="hidden" name="pno" value='<?php echo esc_attr($this->page); ?>' >
+				<input type="hidden" name="order" value='<?php echo esc_attr($this->order); ?>' >
+				<input type="hidden" name="orderby" value='<?php echo esc_attr($this->orderby); ?>' >
+				<input type="hidden" name="_wpnonce" value="<?php echo ( !empty($_REQUEST['_wpnonce']) ) ? esc_attr($_REQUEST['_wpnonce']):wp_create_nonce('em_bookings_table'); ?>" >
+				<input type="hidden" name="action" value="em_bookings_table" >
+				<input type="hidden" name="cols" value="<?php echo esc_attr(implode(',', $this->cols)); ?>" >
+				<input type="hidden" name="table_id" value="<?php echo absint( str_replace($this->id . '-', '', $this->uid) ); ?>">
 				
 				<div class='tablenav'>
 					<?php
@@ -709,25 +710,25 @@ class EM_Bookings_Table extends EM\List_Table {
 			case 0: //pending
 				if( get_option('dbem_bookings_approval') ){
 					$booking_actions = array(
-						'approve' => '<a class="em-bookings-approve em-bookings-approve-'. $s .'" href="'.em_add_get_params($url, array('action'=>'bookings_approve', 'booking_id'=>$EM_Booking->booking_id)).'">'.__('Approve','events-manager').'</a>',
-						'reject' => '<a class="em-bookings-reject em-bookings-reject-'. $s .'" href="'.em_add_get_params($url, array('action'=>'bookings_reject', 'booking_id'=>$EM_Booking->booking_id)).'">'.__('Reject','events-manager').'</a>',
-						'delete' => '<span class="trash"><a class="em-bookings-delete em-bookings-delete-'. $s .'" href="'.em_add_get_params($url, array('action'=>'bookings_delete', 'booking_id'=>$EM_Booking->booking_id)).'">'.__('Delete','events-manager').'</a></span>',
+						'approve' => '<a class="em-bookings-approve em-bookings-approve-'. $s .'" href="'.em_add_get_params($url, array('action'=>'bookings_approve',  'nonce' => wp_create_nonce('bookings_approve'), 'booking_id'=>$EM_Booking->booking_id)).'">'.__('Approve','events-manager').'</a>',
+						'reject' => '<a class="em-bookings-reject em-bookings-reject-'. $s .'" href="'.em_add_get_params($url, array('action'=>'bookings_reject',  'nonce' => wp_create_nonce('bookings_reject'), 'booking_id'=>$EM_Booking->booking_id)).'">'.__('Reject','events-manager').'</a>',
+						'delete' => '<span class="trash"><a class="em-bookings-delete em-bookings-delete-'. $s .'" href="'.em_add_get_params($url, array('action'=>'bookings_delete',  'nonce' => wp_create_nonce('bookings_delete'), 'booking_id'=>$EM_Booking->booking_id)).'">'.__('Delete','events-manager').'</a></span>',
 						'edit' => '<a class="em-bookings-edit em-bookings-edit-'. $s .'" href="'.em_add_get_params($EM_Booking->get_event()->get_bookings_url(), array('booking_id'=>$EM_Booking->booking_id, 'em_ajax'=>null, 'em_obj'=>null)).'">'.__('Edit/View','events-manager').'</a>',
 					);
 					break;
 				}//if approvals are off, treat as a 1
 			case 1: //approved
 				$booking_actions = array(
-					'unapprove' => '<a class="em-bookings-unapprove" href="'.em_add_get_params($url, array('action'=>'bookings_unapprove', 'booking_id'=>$EM_Booking->booking_id)).'">'.__('Unapprove','events-manager').'</a>',
-					'reject' => '<a class="em-bookings-reject em-bookings-reject-'. $s .'" href="'.em_add_get_params($url, array('action'=>'bookings_reject', 'booking_id'=>$EM_Booking->booking_id)).'">'.__('Reject','events-manager').'</a>',
-					'delete' => '<span class="trash"><a class="em-bookings-delete em-bookings-delete-'. $s .'" href="'.em_add_get_params($url, array('action'=>'bookings_delete', 'booking_id'=>$EM_Booking->booking_id)).'">'.__('Delete','events-manager').'</a></span>',
+					'unapprove' => '<a class="em-bookings-unapprove" href="'.em_add_get_params($url, array('action'=>'bookings_unapprove',  'nonce' => wp_create_nonce('bookings_unapprove'), 'booking_id'=>$EM_Booking->booking_id)).'">'.__('Unapprove','events-manager').'</a>',
+					'reject' => '<a class="em-bookings-reject em-bookings-reject-'. $s .'" href="'.em_add_get_params($url, array('action'=>'bookings_reject',  'nonce' => wp_create_nonce('bookings_reject'), 'booking_id'=>$EM_Booking->booking_id)).'">'.__('Reject','events-manager').'</a>',
+					'delete' => '<span class="trash"><a class="em-bookings-delete em-bookings-delete-'. $s .'" href="'.em_add_get_params($url, array('action'=>'bookings_delete',  'nonce' => wp_create_nonce('bookings_delete'), 'booking_id'=>$EM_Booking->booking_id)).'">'.__('Delete','events-manager').'</a></span>',
 					'edit' => '<a class="em-bookings-edit em-bookings-edit-'. $s .'" href="'.em_add_get_params($EM_Booking->get_event()->get_bookings_url(), array('booking_id'=>$EM_Booking->booking_id, 'em_ajax'=>null, 'em_obj'=>null)).'">'.__('Edit/View','events-manager').'</a>',
 				);
 				break;
 			case 2: //rejected
 				$booking_actions = array(
-					'approve' => '<a class="em-bookings-approve em-bookings-approve-'. $s .'" href="'.em_add_get_params($url, array('action'=>'bookings_approve', 'booking_id'=>$EM_Booking->booking_id)).'">'.__('Approve','events-manager').'</a>',
-					'delete' => '<span class="trash"><a class="em-bookings-delete em-bookings-delete-'. $s .'" href="'.em_add_get_params($url, array('action'=>'bookings_delete', 'booking_id'=>$EM_Booking->booking_id)).'">'.__('Delete','events-manager').'</a></span>',
+					'approve' => '<a class="em-bookings-approve em-bookings-approve-'. $s .'" href="'.em_add_get_params($url, array('action'=>'bookings_approve',  'nonce' => wp_create_nonce('bookings_approve'), 'booking_id'=>$EM_Booking->booking_id)).'">'.__('Approve','events-manager').'</a>',
+					'delete' => '<span class="trash"><a class="em-bookings-delete em-bookings-delete-'. $s .'" href="'.em_add_get_params($url, array('action'=>'bookings_delete',  'nonce' => wp_create_nonce('bookings_delete'), 'booking_id'=>$EM_Booking->booking_id)).'">'.__('Delete','events-manager').'</a></span>',
 					'edit' => '<a class="em-bookings-edit em-bookings-edit-'. $s .'" href="'.em_add_get_params($EM_Booking->get_event()->get_bookings_url(), array('booking_id'=>$EM_Booking->booking_id, 'em_ajax'=>null, 'em_obj'=>null)).'">'.__('Edit/View','events-manager').'</a>',
 				);
 				break;
@@ -735,9 +736,9 @@ class EM_Bookings_Table extends EM\List_Table {
 			case 4: //awaiting online payment - similar to pending but always needs approval in EM Free
 			case 5: //awaiting payment - similar to pending but always needs approval in EM Free
 				$booking_actions = array(
-					'approve' => '<a class="em-bookings-approve em-bookings-approve-'. $s .'" href="'.em_add_get_params($url, array('action'=>'bookings_approve', 'booking_id'=>$EM_Booking->booking_id)).'">'.__('Approve','events-manager').'</a>',
-					'reject' => '<a class="em-bookings-reject em-bookings-reject-'. $s .'" href="'.em_add_get_params($url, array('action'=>'bookings_reject', 'booking_id'=>$EM_Booking->booking_id)).'">'.__('Reject','events-manager').'</a>',
-					'delete' => '<span class="trash"><a class="em-bookings-delete em-bookings-delete-'. $s .'" href="'.em_add_get_params($url, array('action'=>'bookings_delete', 'booking_id'=>$EM_Booking->booking_id)).'">'.__('Delete','events-manager').'</a></span>',
+					'approve' => '<a class="em-bookings-approve em-bookings-approve-'. $s .'" href="'.em_add_get_params($url, array('action'=>'bookings_approve',  'nonce' => wp_create_nonce('bookings_approve'), 'booking_id'=>$EM_Booking->booking_id)).'">'.__('Approve','events-manager').'</a>',
+					'reject' => '<a class="em-bookings-reject em-bookings-reject-'. $s .'" href="'.em_add_get_params($url, array('action'=>'bookings_reject',  'nonce' => wp_create_nonce('bookings_reject'), 'booking_id'=>$EM_Booking->booking_id)).'">'.__('Reject','events-manager').'</a>',
+					'delete' => '<span class="trash"><a class="em-bookings-delete em-bookings-delete-'. $s .'" href="'.em_add_get_params($url, array('action'=>'bookings_delete',  'nonce' => wp_create_nonce('bookings_delete'), 'booking_id'=>$EM_Booking->booking_id)).'">'.__('Delete','events-manager').'</a></span>',
 					'edit' => '<a class="em-bookings-edit em-bookings-edit-'. $s .'" href="'.em_add_get_params($EM_Booking->get_event()->get_bookings_url(), array('booking_id'=>$EM_Booking->booking_id, 'em_ajax'=>null, 'em_obj'=>null)).'">'.__('Edit/View','events-manager').'</a>',
 				);
 				break;

@@ -194,7 +194,6 @@ class Media_Carousel extends Base {
 					'type' => 'image',
 					'image_link_to_type' => 'custom',
 				],
-				'separator' => 'none',
 				'show_label' => false,
 			]
 		);

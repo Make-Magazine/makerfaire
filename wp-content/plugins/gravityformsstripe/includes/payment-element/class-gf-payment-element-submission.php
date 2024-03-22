@@ -93,14 +93,13 @@ class GF_Payment_Element_Submission {
 	 *
 	 * @param int $form_id The ID of the form being validated.
 	 *
-	 * @return bool
+	 * @return array The validation result.
 	 */
 	public function validate( $form_id ) {
 		// Modify the entry values as necessary before creating the draft.
 		add_filter( 'gform_save_field_value', array( $this, 'stripe_payment_element_save_draft_values' ), 10, 5 );
 
-		$result = GFAPI::validate_form( $form_id );
-		return rgar( $result, 'is_valid', false );
+		return GFAPI::validate_form( $form_id );
 	}
 
 	/**
@@ -125,15 +124,17 @@ class GF_Payment_Element_Submission {
 		$files = $this->handle_file_uploads( $form );
 
 		// Add the password to the draft entry if user registration is active and there's a password field.
-		if ( function_exists( 'gf_user_registration' ) ) {
-			$password_id = absint( rgars( gf_user_registration()->get_single_submission_feed( $lead, $form ), 'meta/password' ) );
-			if ( $password_id ) {
-				$password = rgpost( 'input_' . $password_id, false );
-				if ( $password ) {
-					$lead['ur_pass'] = wp_hash_password( $password );
-				}
+		$password_id = $this->get_ur_password_id( $lead, $form );
+		if ( $password_id ) {
+			$password = rgpost( 'input_' . $password_id, false );
+			if ( $password ) {
+				$lead['ur_pass'] = wp_hash_password( $password );
 			}
 		}
+
+
+		// Adding $_POST and removing User Registration passwords from submitted values.
+		add_filter( 'gform_submission_values_pre_save', array( $this, 'filter_draft_submission_values' ), 10, 2 );
 
 		$resume_token = GFFormsModel::save_draft_submission(
 			$form,
@@ -151,6 +152,55 @@ class GF_Payment_Element_Submission {
 	}
 
 	/**
+	 * Adds the _POST array and removes the User Registration password from the draft submission values.
+	 *
+	 * @since 5.5
+	 *
+	 * @param $submitted_values
+	 * @param $form
+	 * @return array The filtered submission values with the _POST array added and the password field data removed.
+	 */
+	public function filter_draft_submission_values( $submitted_values, $form ) {
+		$submitted_values['_POST'] = $_POST;
+
+		// Remove the validation action from the submitted values.
+		if ( isset( $submitted_values['_POST']['action'] ) ) {
+			unset( $submitted_values['_POST']['action'] );
+		}
+
+		// Remove the User Registration password from the submitted values array because it has already been hashed and saved into a different key.
+		$password_id = $this->get_ur_password_id( $submitted_values, $form );
+		if ( $password_id ) {
+			unset( $submitted_values[ $password_id ] );
+			unset( $submitted_values['_POST'][ 'input_' . $password_id ] );
+			if ( isset( $submitted_values['_POST'][ 'input_' . $password_id . '_2' ] ) ) {
+				unset( $submitted_values['_POST'][ 'input_' . $password_id . '_2' ] );
+			}
+		}
+
+		return $submitted_values;
+	}
+
+	/**
+	 * Gets the id of the password field associated with a User Registration feed (if any).
+	 *
+	 * @since 5.5
+	 *
+	 * @param $entry The entry being processed.
+	 * @param $form  The form being processed.
+	 *
+	 * @return false|int Returns the id of the password field if found, false otherwise.
+	 */
+	private function get_ur_password_id( $entry, $form ) {
+		if ( ! function_exists( 'gf_user_registration' ) ) {
+			return false;
+		}
+
+		$password_id = absint( rgars( gf_user_registration()->get_single_submission_feed( $entry, $form ), 'meta/password' ) );
+
+		return $password_id ? $password_id : false;
+	}
+	/**
 	 * Handles uploading the files in the submission.
 	 *
 	 * @since 5.0
@@ -160,14 +210,15 @@ class GF_Payment_Element_Submission {
 	 * @return array
 	 */
 	public function handle_file_uploads( $form ) {
+		$file_upload_types = array( 'fileupload', 'post_image' );
 		$files = array();
 		// Handle single file uploads.
 		foreach ( $form['fields'] as $field ) {
-			if ( $field->type === 'fileupload' && ! $field->multipleFiles && isset( $_FILES[ 'input_' . $field->id ] ) && ! empty( $_FILES[ 'input_' . $field->id ]['name'] ) ) {
+			if ( is_a( $field, 'GF_Field_Fileupload') && ! $field->multipleFiles && isset( $_FILES[ 'input_' . $field->id ] ) && ! empty( $_FILES[ 'input_' . $field->id ]['name'] ) ) {
 				// File exists in $_FILES and is a single file, just upload it.
 				$files[ 'input_' . $field->id ] = $field->upload_file( $form['id'], wp_unslash( $_FILES[ 'input_' . $field->id ] ) );
 			} elseif (
-				$field->type === 'fileupload'
+				is_a( $field, 'GF_Field_Fileupload')
 				&& ! $field->multipleFiles
 				&& empty( $_POST[ 'input_' . $field->id ] )
 				&& ! empty( $_POST['gform_uploaded_files'] )
@@ -193,7 +244,7 @@ class GF_Payment_Element_Submission {
 		$multi_file_uploads      = json_decode( $multi_file_uploads_json, true );
 		if ( ! empty( $multi_file_uploads ) ) {
 			foreach ( $form['fields'] as $field ) {
-				if ( $field->type === 'fileupload' && $field->multipleFiles && isset( $multi_file_uploads[ 'input_' . $field->id ] ) ) {
+				if ( is_a( $field, 'GF_Field_Fileupload') && $field->multipleFiles && isset( $multi_file_uploads[ 'input_' . $field->id ] ) ) {
 					$files[ 'input_' . $field->id ] = array();
 					foreach ( $multi_file_uploads[ 'input_' . $field->id ] as $file_upload_info ) {
 						$files[ 'input_' . $field->id ][] = $field->move_temp_file( $form['id'], $file_upload_info );
@@ -226,7 +277,7 @@ class GF_Payment_Element_Submission {
 		$this->draft_id          = $draft_id;
 		$this->form_id           = $form_id;
 		$this->feed_id           = $feed_id;
-		$this->payment_object_id = $intent->id;
+		$this->payment_object_id = $intent ? $intent->id : null;
 		$this->subscription_id   = $subscription_id;
 
 		$form = GFAPI::get_form( $this->form_id );
@@ -254,9 +305,10 @@ class GF_Payment_Element_Submission {
 		if ( function_exists( 'gravity_flow' ) ) {
 			add_action( 'gform_post_add_entry', array( gravity_flow(), 'action_gform_post_add_entry' ), 10, 2 );
 		}
-
+		global $_gf_uploaded_files;
+		$_gf_uploaded_files = $submission['files'];
 		// Populate $_POST from the submission values and the intent values.
-		$this->prepare_post_values( $submission, $intent );
+		$this->prepare_post_values( $submission, $intent, $form );
 
 		// `GFFormsModel::$uploaded_files` is wiped out during `GFFormDisplay::process_form()`
 		// So setting it before processing the submission will not work
@@ -275,9 +327,12 @@ class GF_Payment_Element_Submission {
 					return $value;
 				}
 
-				if ( $field->type === 'fileupload' ) {
+				if ( in_array( $field->type, array( 'fileupload', 'post_image' ) ) ) {
 
 					GFFormsModel::$uploaded_files[ $form['id'] ] = array( 'input_' . $input_id => $input_post_value );
+					if ( $field->type ===  'post_image' ) {
+						return $field->get_value_save_entry( $value, $form, 'input_' . $input_id, $entry['id'], $entry );
+					}
 
 					return $input_post_value;
 				}
@@ -299,6 +354,17 @@ class GF_Payment_Element_Submission {
 			4
 		);
 
+		// At this point validation has already been run and passed, so we will bypass the second validation that would occur during GFFormDisplay::process_form() to avoid inconsistent behavior.
+		add_filter(
+			'gform_validation',
+			function( $validation_result, $form ) {
+				$validation_result['is_valid'] = true;
+				return $validation_result;
+			},
+			1000,
+			2
+		);
+
 		// The require login nonce was validated earlier by GF_Stripe_Payment_Element::start_checkout().
 		add_filter( "gform_require_login_{$this->form_id}", '__return_false', 99 );
 
@@ -310,15 +376,16 @@ class GF_Payment_Element_Submission {
 			add_filter( 'gform_use_post_value_for_conditional_logic_save_entry', '__return_true' );
 		}
 
-		GFFormDisplay::process_form( $this->form_id, GFFormDisplay::SUBMISSION_INITIATED_BY_WEBFORM );
-
 		// Delete the draft.
 		GFFormsModel::delete_draft_submission( $this->draft_id );
+
+		// Process the form
+		GFFormDisplay::process_form( $this->form_id, GFFormDisplay::SUBMISSION_INITIATED_BY_WEBFORM );
 
 		// Get the entry and form to handle confirmation.
 		$entry        = GFAPI::get_entry( $this->entry_id );
 		$form         = GFAPI::get_form( $this->form_id );
-		$confirmation = GFFormDisplay::handle_confirmation( $form, $entry, false );
+		$confirmation = GFFormDisplay::handle_confirmation( $form, $entry, isset( $_POST['gform_ajax'] ) );
 
 		if ( is_array( $confirmation ) && isset( $confirmation['redirect'] ) ) {
 			header( "Location: {$confirmation['redirect']}" );
@@ -352,7 +419,7 @@ class GF_Payment_Element_Submission {
 		$form            = GFAPI::get_form( $form_id );
 		$form_meta       = GFFormsModel::get_form_meta( $form['id'] );
 		$temp_lead       = $entry === null ? GFFormsModel::create_lead( $form_meta ) : $entry;
-		$submission_data = $this->addon->get_order_data( $feed, $form, $temp_lead );
+		$submission_data = $this->addon->get_submission_data( $feed, $form, $temp_lead );
 		$line_items      = array();
 		$item_total      = 0;
 		$shipping        = 0;
@@ -398,29 +465,50 @@ class GF_Payment_Element_Submission {
 	 * Populate POST values from the intent and submission data before simulating form processing.
 	 *
 	 * @since 5.0
+	 * @since 5.2 Added the form parameter.
 	 *
 	 * @param array                 $submission             The submission data.
-	 * @param \Stripe\PaymentIntent $intent The payment intent.
+	 * @param \Stripe\PaymentIntent $intent                 The payment intent.
+	 * @param array                 $form                   The form being processed.
 	 *
 	 * @return void
 	 */
-	private function prepare_post_values( $submission, $intent ) {
-		foreach ( $submission['partial_entry'] as $key => $value ) {
-			if ( is_numeric( $key ) ) {
-				$_POST[ 'input_' . str_replace( '.', '_', $key ) ] = $value;
-			} else {
-				$_POST[ $key ] = $value;
+	private function prepare_post_values( $submission, $intent, $form ) {
+
+		$_POST = $submission['submitted_values']['_POST'];
+
+		// Resetting gform_ajax if this is an AJAX form.
+		if ( ! rgempty( 'gform_ajax--stripe-temp', $_POST ) ) {
+			$_POST['gform_ajax'] = $_POST['gform_ajax--stripe-temp'];
+
+			// Setting is_submit_{form_id} because that is needed to process an AJAX form.
+			parse_str( rgpost( 'gform_ajax' ), $args );
+			$form_id                          = isset( $args['form_id'] ) ? absint( $args['form_id'] ) : 0;
+			$_POST[ 'is_submit_' . $form_id ] = '1';
+
+			// Sets gform_field_values to an empty string when it is set to an empty array.
+			// Gets around an issue with GF core that sets gform_field_values to an empty array instead of an empty string, causing a PHP notice.
+			$field_values = rgpost( 'gform_field_values' );
+			if ( is_array( $field_values ) && empty( $field_values ) ) {
+				$_POST['gform_field_values'] = '';
 			}
 		}
-		$_POST[ 'is_submit_' . $this->form_id ] = '1';
-		$_POST[ 'state_' . $this->form_id ]     = '1';
-		$_POST['gform_submit']                  = $this->form_id;
-		$_POST['version_hash']                  = $submission['partial_entry']['version_hash'];
 
 		$files = rgar( $submission, 'files' );
 		if ( ! empty( $files ) ) {
 			foreach ( $files as $input_id => $file_data ) {
 				$_POST[ $input_id ] = $file_data;
+			}
+		}
+
+		$post_images = \GFAPI::get_fields_by_type( $form, 'post_image', true );
+		foreach ( $post_images as $field ) {
+			if ( ! isset( $submission['submitted_values'][ $field->id ] ) ) {
+				continue;
+			}
+
+			foreach ( $submission['submitted_values'][ $field->id ] as $key => $value ) {
+				$_POST[ 'input_' . str_replace( '.', '_', $key ) ] = $value;
 			}
 		}
 

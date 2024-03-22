@@ -2,8 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by gravityview on 08-December-2023 using Strauss.
- * @see https://github.com/BrianHenryIE/strauss
+ * Modified by gravityview on 19-March-2024 using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\GravityView\Foundation\Integrations;
@@ -14,12 +13,21 @@ use GravityKit\GravityView\Foundation\Helpers\Core as CoreHelpers;
 
 class GravityForms {
 	/**
+	 * Class instance.
+	 *
 	 * @since 1.0.3
 	 *
-	 * @var GravityForms Class instance.
+	 * @var GravityForms
 	 */
 	private static $_instance;
 
+	/**
+	 * Class constructor.
+	 *
+	 * @since 1.0.3
+	 *
+	 * @return void
+	 */
 	private function __construct() {
 		add_filter( 'gform_system_report', [ $this, 'modify_system_report' ] );
 	}
@@ -44,7 +52,7 @@ class GravityForms {
 	 *
 	 * @since 1.0.3
 	 *
-	 * @param array $system_report
+	 * @param array $system_report System report data.
 	 *
 	 * @return array
 	 */

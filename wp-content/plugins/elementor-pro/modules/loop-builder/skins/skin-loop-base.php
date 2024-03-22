@@ -13,6 +13,7 @@ use ElementorPro\Plugin;
 use ElementorPro\Modules\LoopBuilder\Files\Css\Loop_Dynamic_CSS;
 use ElementorPro\Modules\LoopBuilder\Traits\Alternate_Templates_Trait;
 use Elementor\Utils;
+use Elementor\Core\Files\CSS\Post as Post_CSS;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -86,6 +87,10 @@ class Skin_Loop_Base extends Skin_Base {
 	 * @return void
 	 */
 	protected function enqueue_loop_document_css_meta( $post_id ) {
+		if ( $this->post_meta_css_exists( $post_id ) ) {
+			return;
+		}
+
 		if ( wp_is_post_autosave( $post_id ) ) {
 			$css_file = Loop_Preview::create( $post_id );
 		} else {
@@ -93,7 +98,11 @@ class Skin_Loop_Base extends Skin_Base {
 		}
 
 		/** @var Loop|Loop_Preview $css_file */
-		$css_file->enqueue();
+		$css_file->update();
+	}
+
+	private function post_meta_css_exists( $post_id ) {
+		return ! empty( get_post_meta( $post_id, Post_CSS::META_KEY ) );
 	}
 
 	public function render() {

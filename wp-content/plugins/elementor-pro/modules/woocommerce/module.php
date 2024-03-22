@@ -17,6 +17,7 @@ use Elementor\Settings;
 use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 use ElementorPro\Modules\Woocommerce\Classes\Products_Renderer;
 use ElementorPro\Modules\Woocommerce\Widgets\Products as Products_Widget;
+use ElementorPro\Modules\Woocommerce\Data\Controller as WoocommerceDataController;
 use Elementor\Icons_Manager;
 use ElementorPro\Modules\LoopBuilder\Module as LoopBuilderModule;
 use ElementorPro\License\API;
@@ -623,14 +624,16 @@ class Module extends Module_Base {
 				$wp_http_referer = wp_unslash( $post_data['_wp_http_referer'] );
 
 				$wp_http_referer_query_string = wp_parse_url( $wp_http_referer, PHP_URL_QUERY );
-				parse_str( $wp_http_referer_query_string, $wp_http_referer_query_string );
+				if ( ! empty( $wp_http_referer_query_string ) ) {
+					parse_str( $wp_http_referer_query_string, $wp_http_referer_query_string );
 
-				if ( isset( $wp_http_referer_query_string['elementorPageId'] ) ) {
-					$page_id = $wp_http_referer_query_string['elementorPageId'];
-				}
+					if ( isset( $wp_http_referer_query_string['elementorPageId'] ) ) {
+						$page_id = $wp_http_referer_query_string['elementorPageId'];
+					}
 
-				if ( isset( $wp_http_referer_query_string['elementorWidgetId'] ) ) {
-					$widget_id = $wp_http_referer_query_string['elementorWidgetId'];
+					if ( isset( $wp_http_referer_query_string['elementorWidgetId'] ) ) {
+						$widget_id = $wp_http_referer_query_string['elementorWidgetId'];
+					}
 				}
 			}
 		}
@@ -964,6 +967,20 @@ class Module extends Module_Base {
 		}
 
 		return ! empty( $this->woocommerce_notices_elements ) ? $this->woocommerce_notices_elements : [];
+	}
+
+	public function custom_gutenberg_woocommerce_notice() {
+		$min_suffix = Utils::is_script_debug() ? '' : '.min';
+
+		wp_enqueue_script(
+			'elementor-gutenberg-woocommerce-notice',
+			ELEMENTOR_PRO_URL . '/assets/js/gutenberg-woocommerce-notice' . $min_suffix . '.js',
+			[ 'wp-blocks' ],
+			ELEMENTOR_PRO_VERSION,
+			false
+		);
+
+		wp_set_script_translations( 'elementor-gutenberg-woocommerce-notice', 'elementor-pro' );
 	}
 
 	public function e_notices_css() {
@@ -1337,6 +1354,8 @@ class Module extends Module_Base {
 	public function __construct() {
 		parent::__construct();
 
+		new WoocommerceDataController();
+
 		add_action( 'elementor/kit/register_tabs', [ $this, 'init_site_settings' ], 1, 40 );
 		$this->add_update_kit_settings_hooks();
 
@@ -1448,6 +1467,7 @@ class Module extends Module_Base {
 		// WooCommerce Notice Site Settings
 		add_filter( 'body_class', [ $this, 'e_notices_body_classes' ] );
 		add_filter( 'wp_enqueue_scripts', [ $this, 'e_notices_css' ] );
+		add_action( 'enqueue_block_editor_assets', [ $this, 'custom_gutenberg_woocommerce_notice' ] );
 
 		add_filter( 'elementor/query/query_args', function( $query_args, $widget ) {
 			return $this->loop_query( $query_args, $widget );

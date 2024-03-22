@@ -421,7 +421,7 @@ gform.extensions.styles.gravityformsstripe = gform.extensions.styles.gravityform
 					skipElementsHandler = true;
 				}
 
-				if (skipElementsHandler || !feedActivated || $(this).data('gfstripesubmitting') || $('#gform_save_' + GFStripeObj.formId).val() == 1 || !GFStripeObj.isLastPage() && 'elements' !== GFStripeObj.stripe_payment || gformIsHidden(GFStripeObj.GFCCField) || GFStripeObj.maybeHitRateLimits() || GFStripeObj.invisibleCaptchaPending() || 'payment_element' === GFStripeObj.stripe_payment && window['gform_stripe_amount_' + GFStripeObj.formId] === 0) {
+				if (skipElementsHandler || !feedActivated || $(this).data('gfstripesubmitting') || $('#gform_save_' + GFStripeObj.formId).val() == 1 || !GFStripeObj.isLastPage() && 'elements' !== GFStripeObj.stripe_payment || gformIsHidden(GFStripeObj.GFCCField) || GFStripeObj.maybeHitRateLimits() || GFStripeObj.invisibleCaptchaPending() || GFStripeObj.recaptchav3Pending() || 'payment_element' === GFStripeObj.stripe_payment && window['gform_stripe_amount_' + GFStripeObj.formId] === 0) {
 					return;
 				} else {
 					event.preventDefault();
@@ -908,6 +908,24 @@ gform.extensions.styles.gravityformsstripe = gform.extensions.styles.gravityform
 		};
 
 		/**
+   * @function recaptchav3Pending
+   * @description Check if recaptcha v3 is enabled and pending a response.
+   *
+   * @since 5.5.0
+   */
+		this.recaptchav3Pending = function () {
+			const form = this.form;
+			const recaptchaField = form.find('.ginput_recaptchav3');
+			if (!recaptchaField.length) {
+				return false;
+			}
+
+			const recaptchaResponse = recaptchaField.find('.gfield_recaptcha_response');
+
+			return !(recaptchaResponse && recaptchaResponse.val());
+		};
+
+		/**
    * This is duplicated honeypot logic from core that can be removed once Stripe can consume the core honeypot js.
    */
 
@@ -1043,8 +1061,17 @@ gform.extensions.styles.gravityformsstripe = gform.extensions.styles.gravityform
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 const request = async (data, isJson = false, action = false, nonce = false) => {
-	// Remove the ajax input to prevent Gravity Forms ajax submission handler from handling the submission in the backend.
-	data.delete('gform_ajax');
+
+	// Delete gform_ajax if it exists in the FormData object
+	if (typeof data.has === 'function' && data.has('gform_ajax')) {
+
+		// Saves a temp gform_ajax so that it can be reset later during form processing.
+		data.set('gform_ajax--stripe-temp', data.get('gform_ajax'));
+
+		// Remove the ajax input to prevent Gravity Forms ajax submission handler from handling the submission in the backend during Stripe's validation.
+		data.delete('gform_ajax');
+	}
+
 	const options = {
 		method: 'POST',
 		credentials: 'same-origin',
@@ -1065,7 +1092,10 @@ const request = async (data, isJson = false, action = false, nonce = false) => {
 		url.searchParams.set('nonce', nonce);
 	}
 
-	console.log(url.toString());
+	if (gforms_stripe_frontend_strings.is_preview) {
+		url.searchParams.set('preview', '1');
+	}
+
 	return await fetch(url.toString(), options).then(response => response.json());
 };
 
@@ -1140,11 +1170,16 @@ class StripePaymentsHandler {
   * @description Retrieves the cached coupon associated with the entered coupon code.
   *
   * @since 5.1
-  * @returns {object} Returns the cached coupon object or null if the coupon is not found.
+  * @returns {object} Returns the cached coupon object or undefined if the coupon is not found.
   */
 	getStripeCoupon() {
-		var coupons = window.stripeCoupons || {};
-		return coupons[this.getStripeCouponCode()];
+		const coupons = window.stripeCoupons || {};
+		const currentCoupon = this.getStripeCouponCode();
+		const foundCoupon = Object.keys(coupons).find(coupon => {
+			return coupon.localeCompare(currentCoupon, undefined, { sensitivity: 'accent' }) === 0;
+		});
+
+		return foundCoupon ? coupons[foundCoupon] : undefined;
 	}
 
 	/**
@@ -1156,7 +1191,8 @@ class StripePaymentsHandler {
   * @returns {HTMLInputElement} Returns the coupon input or null if the coupon input is not found.
   */
 	getStripeCouponInput() {
-		return document.querySelector('#input_' + this.GFStripeObj.formId + '_' + this.GFStripeObj.activeFeed.coupon);
+		const couponField = document.querySelector('#field_' + this.GFStripeObj.formId + '_' + this.GFStripeObj.activeFeed.coupon);
+		return couponField ? couponField.querySelector('input') : null;
 	}
 
 	/**
@@ -1169,6 +1205,13 @@ class StripePaymentsHandler {
   */
 	getStripeCouponCode() {
 		const couponInput = this.getStripeCouponInput();
+		if (!couponInput) {
+			return '';
+		}
+		if (couponInput.className === 'gf_coupon_code') {
+			const couponCode = couponInput ? document.querySelector('#gf_coupon_codes_' + this.GFStripeObj.formId).value : null;
+			return couponCode;
+		}
 
 		return couponInput ? couponInput.value : '';
 	}
@@ -1204,6 +1247,10 @@ class StripePaymentsHandler {
 
 		if (this.getStripeCouponInput() !== event.target) {
 			return;
+		}
+
+		if (event.target.classList.contains('gf_coupon_code')) {
+			event.target.value = event.target.value.toUpperCase();
 		}
 
 		await this.updateStripeCoupon(event.target.value);
@@ -1304,7 +1351,9 @@ class StripePaymentsHandler {
 	async bindEvents() {
 		if (this.card) {
 			this.card.on('change', event => {
-				this.resetFormValidationErrors();
+				if (this.paymentMethod !== null) {
+					this.clearErrors();
+				}
 				this.paymentMethod = event;
 			});
 		}
@@ -1392,13 +1441,25 @@ class StripePaymentsHandler {
 		}
 
 		// Invoice for trials are automatically paid.
-		if (response.data.intent === null) {
+		if ('invoice_id' in response.data && response.data.invoice_id !== null && 'resume_token' in response.data) {
 			const redirect_url = new URL(window.location.href);
 			redirect_url.searchParams.append('resume_token', response.data.resume_token);
 			window.location.href = redirect_url.href;
 		}
 
-		if ('data' in response && 'is_valid' in response.data && response.data.is_valid && 'resume_token' in response.data && 'intent' in response.data && 'client_secret' in response.data.intent) {
+		const is_valid_intent = 'intent' in response.data && response.data.intent !== false && response.data.intent != null && 'client_secret' in response.data.intent;
+
+		const is_valid_submission = 'data' in response && 'is_valid' in response.data && response.data.is_valid && 'resume_token' in response.data;
+
+		const is_spam = 'is_spam' in response.data && response.data.is_spam;
+
+		if (!is_valid_intent && !is_spam && is_valid_submission) {
+			this.failWithMessage(gforms_stripe_frontend_strings.failed_to_confirm_intent, this.GFStripeObj.formId);
+			return false;
+		}
+
+		if (is_valid_submission) {
+
 			// Reset any errors.
 			this.resetFormValidationErrors();
 			this.draftId = response.data.resume_token;
@@ -1409,8 +1470,14 @@ class StripePaymentsHandler {
 				return false;
 			}
 
-			// Confirm payment.
-			this.confirm(response.data);
+			// Do not confirm payment if this is a spam submission.
+			if (is_spam) {
+				// For spam submissions, redirect to the confirmation page without confirming the payment. This will process the submission as a spam entry without capturing the payment.
+				this.handleRedirect(this.getRedirectUrl(response.data.resume_token));
+			} else {
+				// For non-spam submissions, confirm the payment and redirect to the confirmation page.
+				this.confirm(response.data);
+			}
 		} else {
 			// Form is not valid, do a normal submit to render the validation errors markup in backend.
 			event.target.submit();
@@ -1520,12 +1587,10 @@ class StripePaymentsHandler {
   * @return {Promise<void>}
   */
 	async confirm(confirmData) {
+
 		// Prepare the return URL.
-		const resume_token = confirmData.resume_token;
-		const clientSecret = confirmData.intent.client_secret;
-		const redirect_url = new URL(window.location.href);
-		redirect_url.searchParams.append('resume_token', resume_token);
-		const isAjaxEmbed = this.isAjaxEmbed(this.GFStripeObj.formId);
+		const redirect_url = this.getRedirectUrl(confirmData.resume_token);
+
 		const { error: submitError } = await this.elements.submit();
 		if (submitError) {
 			this.failWithMessage(submitError.message, this.GFStripeObj.formId);
@@ -1534,7 +1599,7 @@ class StripePaymentsHandler {
 		// Gather the payment data.
 		const paymentData = {
 			elements: this.elements,
-			clientSecret,
+			clientSecret: confirmData.intent.client_secret,
 			confirmParams: {
 				return_url: redirect_url.toString(),
 				payment_method_data: {
@@ -1592,7 +1657,7 @@ class StripePaymentsHandler {
   * @since 5.4 Renamed the function from handlePayment to handlePaymentRedirect.
   *
   * @param {Object} paymentResult The result of confirming a payment intent or a setup intent.
-  * @param {Object} redirect_url  The redirect URL the user will be taken to after confirmation.
+  * @param {URL} redirect_url  The redirect URL the user will be taken to after confirmation.
   */
 	handlePaymentRedirect(paymentResult, redirect_url) {
 		const intent = paymentResult.paymentIntent ? paymentResult.paymentIntent : paymentResult.setupIntent;
@@ -1602,8 +1667,20 @@ class StripePaymentsHandler {
 		redirect_url.searchParams.append(intentTypeString + '_intent_client_secret', intent.client_secret);
 		redirect_url.searchParams.append('redirect_status', intent.status ? 'succeeded' : 'pending');
 
+		this.handleRedirect(redirect_url);
+	}
+
+	/**
+  * Redirects the user to the confirmation page.
+  *
+  * @since 5.4.1
+  *
+  * @param {URL} redirect_url  The redirect URL the user will be taken to after confirmation.
+  */
+	handleRedirect(redirect_url) {
+
 		// If this is not an AJAX embedded form, redirect the user to the confirmation page.
-		if (this.isAjaxEmbed(this.GFStripeObj.formId) === false) {
+		if (!this.isAjaxEmbed(this.GFStripeObj.formId)) {
 			window.location.href = redirect_url.toString();
 		} else {
 			// AJAX embeds are handled differently, we need to update the form's action with the redirect URL, and submit it inside the AJAX IFrame.
@@ -1615,6 +1692,21 @@ class StripePaymentsHandler {
 			// Form will be submitted inside the IFrame, once IFrame content is updated, the form element will be replaced with the content of the IFrame.
 			jQuery('#gform_' + this.GFStripeObj.formId).submit();
 		}
+	}
+
+	/**
+  * Returns the URL with the resume token appended to it.
+  *
+  * @since 5.4.1
+  *
+  * @param resume_token The resume token to append to the URL.
+  *
+  * @returns {URL} The URL with the resume token appended to it.
+  */
+	getRedirectUrl(resume_token) {
+		const redirect_url = new URL(window.location.href);
+		redirect_url.searchParams.append('resume_token', resume_token);
+		return redirect_url;
 	}
 
 	/**
@@ -1763,11 +1855,13 @@ class StripePaymentsHandler {
 
 		if (this.GFStripeObj.activeFeed.paymentAmount === 'form_total') {
 			this.order.recurringAmount = total;
+			if (this.isTextCoupon()) {
+				this.order.recurringAmount = this.applyStripeCoupon(this.order.recurringAmount);
+			}
 		} else {
 			this.order.recurringAmount = gformCalculateProductPrice(formId, this.GFStripeObj.activeFeed.paymentAmount);
+			this.order.recurringAmount = this.applyStripeCoupon(this.order.recurringAmount);
 		}
-
-		this.order.recurringAmount = this.applyStripeCoupon(this.order.recurringAmount);
 
 		if (isTrial === '1') {
 			this.order.paymentAmount = setupFee;
@@ -1776,6 +1870,15 @@ class StripePaymentsHandler {
 		}
 
 		return this.order;
+	}
+
+	isTextCoupon() {
+		const coupon = this.getStripeCouponInput();
+		if (!coupon) {
+			return false;
+		}
+
+		return !coupon.classList.contains('gf_coupon_code');
 	}
 
 	/**

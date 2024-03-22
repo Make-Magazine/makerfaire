@@ -1,4 +1,4 @@
-/*! elementor - v3.19.0 - 05-02-2024 */
+/*! elementor - v3.20.0 - 20-03-2024 */
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
@@ -11611,49 +11611,49 @@ function PluginsTable(_ref) {
     initialSelected = _ref.initialSelected,
     initialDisabled = _ref.initialDisabled;
   var CellText = function CellText(cellTextProps) {
-      return /*#__PURE__*/_react.default.createElement(_text.default, {
-        className: "e-app-import-export-plugins-table__cell-content"
-      }, cellTextProps.text);
-    },
-    CellLink = function CellLink(cellLinkProps) {
-      return /*#__PURE__*/_react.default.createElement(_inlineLink.default, {
-        url: cellLinkProps.url,
-        underline: "none"
-      }, "".concat(__('Version'), " ").concat(cellLinkProps.text), " ", /*#__PURE__*/_react.default.createElement(_icon.default, {
-        className: "eicon-editor-external-link"
+    return /*#__PURE__*/_react.default.createElement(_text.default, {
+      className: "e-app-import-export-plugins-table__cell-content"
+    }, cellTextProps.text);
+  };
+  var CellLink = function CellLink(cellLinkProps) {
+    return /*#__PURE__*/_react.default.createElement(_inlineLink.default, {
+      url: cellLinkProps.url,
+      underline: "none"
+    }, "".concat(__('Version'), " ").concat(cellLinkProps.text), " ", /*#__PURE__*/_react.default.createElement(_icon.default, {
+      className: "eicon-editor-external-link"
+    }));
+  };
+  var getHeaders = function getHeaders() {
+    if (!withHeader) {
+      return [];
+    }
+    var headers = ['Plugin Name', 'Version'];
+    if (withStatus) {
+      headers.splice(1, 0, 'Status');
+    }
+    return headers;
+  };
+  var rows = plugins.map(function (_ref2) {
+    var name = _ref2.name,
+      status = _ref2.status,
+      version = _ref2.version,
+      pluginUrl = _ref2.plugin_uri;
+    var row = [/*#__PURE__*/_react.default.createElement(CellText, {
+      text: name,
+      key: name
+    }), /*#__PURE__*/_react.default.createElement(CellLink, {
+      text: version,
+      url: pluginUrl,
+      key: name
+    })];
+    if (withStatus) {
+      row.splice(1, 0, /*#__PURE__*/_react.default.createElement(CellText, {
+        text: status,
+        key: name
       }));
-    },
-    getHeaders = function getHeaders() {
-      if (!withHeader) {
-        return [];
-      }
-      var headers = ['Plugin Name', 'Version'];
-      if (withStatus) {
-        headers.splice(1, 0, 'Status');
-      }
-      return headers;
-    },
-    rows = plugins.map(function (_ref2) {
-      var name = _ref2.name,
-        status = _ref2.status,
-        version = _ref2.version,
-        pluginUrl = _ref2.plugin_uri;
-      var row = [/*#__PURE__*/_react.default.createElement(CellText, {
-        text: name,
-        key: name
-      }), /*#__PURE__*/_react.default.createElement(CellLink, {
-        text: version,
-        url: pluginUrl,
-        key: name
-      })];
-      if (withStatus) {
-        row.splice(1, 0, /*#__PURE__*/_react.default.createElement(CellText, {
-          text: status,
-          key: name
-        }));
-      }
-      return row;
-    });
+    }
+    return row;
+  });
   return /*#__PURE__*/_react.default.createElement(_dataTable.default, {
     selection: true,
     headers: getHeaders(),
@@ -16018,17 +16018,17 @@ module.exports = _toConsumableArray, module.exports.__esModule = true, module.ex
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 var _typeof = (__webpack_require__(/*! ./typeof.js */ "../node_modules/@babel/runtime/helpers/typeof.js")["default"]);
-function _toPrimitive(input, hint) {
-  if (_typeof(input) !== "object" || input === null) return input;
-  var prim = input[Symbol.toPrimitive];
-  if (prim !== undefined) {
-    var res = prim.call(input, hint || "default");
-    if (_typeof(res) !== "object") return res;
+function toPrimitive(t, r) {
+  if ("object" != _typeof(t) || !t) return t;
+  var e = t[Symbol.toPrimitive];
+  if (void 0 !== e) {
+    var i = e.call(t, r || "default");
+    if ("object" != _typeof(i)) return i;
     throw new TypeError("@@toPrimitive must return a primitive value.");
   }
-  return (hint === "string" ? String : Number)(input);
+  return ("string" === r ? String : Number)(t);
 }
-module.exports = _toPrimitive, module.exports.__esModule = true, module.exports["default"] = module.exports;
+module.exports = toPrimitive, module.exports.__esModule = true, module.exports["default"] = module.exports;
 
 /***/ }),
 
@@ -16040,11 +16040,11 @@ module.exports = _toPrimitive, module.exports.__esModule = true, module.exports[
 
 var _typeof = (__webpack_require__(/*! ./typeof.js */ "../node_modules/@babel/runtime/helpers/typeof.js")["default"]);
 var toPrimitive = __webpack_require__(/*! ./toPrimitive.js */ "../node_modules/@babel/runtime/helpers/toPrimitive.js");
-function _toPropertyKey(arg) {
-  var key = toPrimitive(arg, "string");
-  return _typeof(key) === "symbol" ? key : String(key);
+function toPropertyKey(t) {
+  var i = toPrimitive(t, "string");
+  return "symbol" == _typeof(i) ? i : String(i);
 }
-module.exports = _toPropertyKey, module.exports.__esModule = true, module.exports["default"] = module.exports;
+module.exports = toPropertyKey, module.exports.__esModule = true, module.exports["default"] = module.exports;
 
 /***/ }),
 
@@ -16184,7 +16184,7 @@ try {
 /******/ 		__webpack_require__.u = (chunkId) => {
 /******/ 			// return url for filenames not based on template
 /******/ 			if (chunkId === "vendors-node_modules_react-query_devtools_index_js") return "a730ee9caa710006b307.bundle.js";
-/******/ 			if (chunkId === "kit-library") return "" + chunkId + ".f07b34b5f8e5950b1f5f.bundle.js";
+/******/ 			if (chunkId === "kit-library") return "" + chunkId + ".ac1a4cd5deae5526ce49.bundle.js";
 /******/ 			if (chunkId === "onboarding") return "" + chunkId + ".f2f8af9f7327abc100f1.bundle.js";
 /******/ 			// return url for filenames based on template
 /******/ 			return undefined;

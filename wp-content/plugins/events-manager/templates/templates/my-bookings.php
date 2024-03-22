@@ -94,23 +94,25 @@
 											}
 										}
 										$action_links = apply_filters('em_my_bookings_booking_action_links', $cancel_links, $EM_Booking, $cancel_links);
-										$cancel_link_text = implode( '<br>', $action_links );
-										// @deprecated - stop using this and use em_my_bookings_booking_action_links above
-										$actions_text =	apply_filters('em_my_bookings_booking_actions', $cancel_link_text, $EM_Booking, $cancel_links);
-										if( strstr( $actions_text, $cancel_link_text ) ) {
-											// remove the links created here, put them in a button, and output whatever else is in the filtered text var
-											$actions_text = str_replace( $cancel_link_text, $actions_text, '' );
-											?>
-											<button type="button" class="em-tooltip-ddm em-clickable input button-secondary" data-button-width="match" data-tooltip-class="em-my-bookings-actions-tooltip"><?php esc_html_e('Actions', 'events-manager-pro'); ?></button>
-											<div class="em-tooltip-ddm-content em-my-bookings-actions-content">
-												<?php foreach( $action_links as $link ): ?>
-													<?php echo $link; ?>
-												<?php endforeach; ?>
-											</div>
-											<?php
+										$action_text = '';
+										if( !empty($action_links) ) {
+											if (is_array($action_links) ) {
+												?>
+												<button type="button" class="em-tooltip-ddm em-clickable input button-secondary" data-button-width="match" data-tooltip-class="em-my-bookings-actions-tooltip"><?php esc_html_e('Actions', 'events-manager-pro'); ?></button>
+												<div class="em-tooltip-ddm-content em-my-bookings-actions-content">
+													<?php foreach( $action_links as $link ): ?>
+														<?php echo $link; ?>
+													<?php endforeach; ?>
+												</div>
+												<?php
+											} else {
+												// if something messed up the em_my_bookings_booking_action_links filter, just output the links as text further down
+												$action_text = $action_links;
+											}
 										}
 										// if we have legacy stuff running, just output links as probably expected
-										echo $actions_text;
+										// @deprecated - stop using this and use em_my_bookings_booking_action_links above
+										echo apply_filters('em_my_bookings_booking_actions', $action_text, $EM_Booking, $cancel_links);
 										do_action( 'em_my_bookings_booking_actions_bottom', $EM_Booking );
 										?>
 									</td>

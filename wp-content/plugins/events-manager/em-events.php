@@ -54,6 +54,9 @@ function em_content($page_content) {
 						//Intercept search request, if defined
 						if( !empty($_REQUEST['action']) && ($_REQUEST['action'] == 'search_events' || $_REQUEST['action'] == 'search_events_grouped') ){
 							$args = EM_Events::get_post_search( array_merge($args, $_REQUEST) );
+						} elseif( !empty($_COOKIE['em_search_events']) ) {
+							$cookie_args = json_decode(base64_decode($_COOKIE['em_search_events']), true);
+							$args = array_merge($args, $cookie_args);
 						}
 						$args['id'] = 1; // for easier reference in customizations
 						if( empty($args['scope']) ){

@@ -4,8 +4,8 @@
  *
  * @package   GravityView
  * @license   GPL2+
- * @author    GravityView <hello@gravityview.co>
- * @link      http://gravityview.co
+ * @author    GravityKit <hello@gravitykit.com>
+ * @link      https://www.gravitykit.com
  * @copyright Copyright 2014, Katz Web Services, Inc.
  *
  * @since 1.0.6
@@ -28,11 +28,10 @@ class GV_Extension_DataTables_Admin {
 		add_action( 'admin_enqueue_scripts', array( $this, 'add_scripts_and_styles' ), 999 );
 		add_filter( 'gravityview_noconflict_scripts', array( $this, 'register_no_conflict') );
 		add_filter( 'gravityview_noconflict_styles', array( $this, 'register_no_conflict') );
-
 	}
 
 	/**
-	 * Add DataTables Extension settings
+	 * Add DataTables settings
 	 */
 	function register_metabox() {
 
@@ -98,7 +97,7 @@ class GV_Extension_DataTables_Admin {
 		 * @hooked GV_DataTables_Extension::settings_row - 10
 		 * @param array $ds DataTables settings stored in `_gravityview_datatables_settings` postmeta
 		 */
-		do_action( 'gravityview_datatables_settings_row', $ds );
+		do_action( 'gravityview_datatables_settings_row', $ds, $post );
 	}
 
 	/**

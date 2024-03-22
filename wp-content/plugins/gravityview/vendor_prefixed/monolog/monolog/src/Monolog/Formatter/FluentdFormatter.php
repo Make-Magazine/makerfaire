@@ -8,8 +8,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * Modified by gravityview on 08-December-2023 using Strauss.
- * @see https://github.com/BrianHenryIE/strauss
+ * Modified by gravityview on 19-March-2024 using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\GravityView\Foundation\ThirdParty\Monolog\Formatter;
@@ -30,9 +29,9 @@ use GravityKit\GravityView\Foundation\ThirdParty\Monolog\Utils;
  *
  * Monolog setup:
  *
- * $logger = new GravityKit\GravityView\Foundation\ThirdParty\Monolog\Logger('fluent.tag');
- * $fluentHandler = new GravityKit\GravityView\Foundation\ThirdParty\Monolog\Handler\SocketHandler('unix:///var/run/td-agent/td-agent.sock');
- * $fluentHandler->setFormatter(new GravityKit\GravityView\Foundation\ThirdParty\Monolog\Formatter\FluentdFormatter());
+ * $logger = new \GravityKit\GravityView\Foundation\ThirdParty\Monolog\Logger('fluent.tag');
+ * $fluentHandler = new \GravityKit\GravityView\Foundation\ThirdParty\Monolog\Handler\SocketHandler('unix:///var/run/td-agent/td-agent.sock');
+ * $fluentHandler->setFormatter(new \GravityKit\GravityView\Foundation\ThirdParty\Monolog\Formatter\FluentdFormatter());
  * $logger->pushHandler($fluentHandler);
  *
  * @author Andrius Putna <fordnox@gmail.com>

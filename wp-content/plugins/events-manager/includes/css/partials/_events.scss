@@ -69,12 +69,13 @@ button.input.em-event-add-to-calendar {
 	}
 }
 .em-add-to-calendar-tooltip {
-	margin-top: -9px !important; //tippy fix
+
+	margin-top: -5px !important; //tippy fix
 }
 .em-event-add-to-calendar-content {
 	a {
 		display: inline-block;
-		width: 100%;
+		width: calc(100% - 18px );
 		padding: 8px 10px 5px 35px !important;
 		color: var(--default-color) !important;
 		text-decoration: none !important;
