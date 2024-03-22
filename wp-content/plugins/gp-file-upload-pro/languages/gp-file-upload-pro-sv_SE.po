@@ -1,0 +1,235 @@
+﻿# Copyright (C) 2022 Gravity Wiz
+# This file is distributed under the GPL2.
+msgid ""
+msgstr ""
+"Project-Id-Version: GP File Upload Pro 1.3.2\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/cloned-perk-If-"
+"r_biA_\n"
+"POT-Creation-Date: 2022-06-21T20:57:30+00:00\n"
+"PO-Revision-Date: 2022-08-07 21:00+0200\n"
+"Last-Translator: Karl Emil Nikka <ke.nikka@nikkasystems.com>\n"
+"Language-Team: \n"
+"Language: sv_SE\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 3.1.1\n"
+"X-Domain: gp-file-upload-pro\n"
+
+#. Plugin Name of the plugin
+msgid "GP File Upload Pro"
+msgstr "GF File Upload Pro"
+
+#. Plugin URI of the plugin
+msgid "https://gravitywiz.com/documentation/gravity-forms-file-upload-pro/"
+msgstr "https://gravitywiz.com/documentation/gravity-forms-file-upload-pro/"
+
+#. Description of the plugin
+msgid "A professional file and image uploader that feels like magic."
+msgstr "En professionell fil- och bilduppladdare som känns magisk."
+
+#. Author of the plugin
+msgid "Gravity Wiz"
+msgstr "Gravity Wiz"
+
+#. Author URI of the plugin
+msgid "https://gravitywiz.com/"
+msgstr "https://gravitywiz.com/"
+
+#: class-gp-file-upload-pro.php:369
+msgid "select files"
+msgstr "välj filer"
+
+#: class-gp-file-upload-pro.php:370
+msgid "Drop files here"
+msgstr "Släpp filer här"
+
+#: class-gp-file-upload-pro.php:371
+msgid "or"
+msgstr "eller"
+
+#: class-gp-file-upload-pro.php:372
+msgid "Cancel"
+msgstr "Avbryt"
+
+#: class-gp-file-upload-pro.php:373
+msgid "Crop"
+msgstr "Beskär"
+
+#: class-gp-file-upload-pro.php:374
+msgid "Cropping"
+msgstr "Beskärning"
+
+#: class-gp-file-upload-pro.php:375
+msgid "of"
+msgstr "av"
+
+#: class-gp-file-upload-pro.php:376
+msgid ""
+"This image does not meet the minimum dimensions: {minWidth}x{minHeight}px."
+msgstr ""
+"Denna bild mäter inte kraven på minsta dimensioner, {minWidth} x {minHeight} "
+"px."
+
+#: class-gp-file-upload-pro.php:377
+msgid "This image does not meet the minimum width: {minWidth}px."
+msgstr "Denna bild mäter inte kraven på minsta bredd, {minWidth} px."
+
+#: class-gp-file-upload-pro.php:378
+msgid "This image does not meet the minimum height: {minHeight}px."
+msgstr "Denna bild mäter inte kraven på minsta bredd, {minHeight} px."
+
+#: class-gp-file-upload-pro.php:389 class-gp-file-upload-pro.php:413
+msgid "Enable Cropping"
+msgstr "Aktivera beskärning"
+
+#: class-gp-file-upload-pro.php:390 class-gp-file-upload-pro.php:418
+msgid "Enable Sorting"
+msgstr "Aktivera sortering"
+
+#: class-gp-file-upload-pro.php:391
+msgid "Enable File Upload Pro"
+msgstr "Aktivera File Upload Pro"
+
+#: class-gp-file-upload-pro.php:392
+msgid ""
+"You are about to enable File Upload Pro on a Single File Upload field.\n"
+"\n"
+"Completing this action will convert this field to a Multi-file Upload field. "
+"Entry data associated with this field will be converted into the multi-file "
+"upload format when the form is saved. This conversion cannot be undone.\n"
+"\n"
+"Would you like to enable File Upload Pro on this field?"
+msgstr ""
+"Du håller på att aktivera File Upload Pro för ett filuppladdningsfält för "
+"enstaka filer.\n"
+"\r\n"
+"\n"
+"\r\n"
+"Detta kommer att omvandla fältet till ett filuppladdningsfält för flera "
+"filer. All inläggsdata som är kopplad till detta fält kommer att omvandlas "
+"till flerfiluppladdningsformatet när formulärinställningarna sparas. Denna "
+"omvandling kan inte ångras.\n"
+"\r\n"
+"\n"
+"\r\n"
+"Vill du aktivera File Upload Pro för detta fält?"
+
+#: class-gp-file-upload-pro.php:393
+msgid "Require Crop"
+msgstr "Kräv beskärning"
+
+#: class-gp-file-upload-pro.php:394
+msgid "Constraints"
+msgstr "Begränsningar"
+
+#: class-gp-file-upload-pro.php:395 class-gp-file-upload-pro.php:443
+msgid "Aspect Ratio"
+msgstr "Proportioner"
+
+#: class-gp-file-upload-pro.php:396
+msgid "Max Dimensions"
+msgstr "Maxdimensioner"
+
+#: class-gp-file-upload-pro.php:397
+msgid "Min Dimensions"
+msgstr "Minimidimensioner"
+
+#: class-gp-file-upload-pro.php:398 class-gp-file-upload-pro.php:428
+msgid "Exact Dimensions"
+msgstr "Exakta dimensioner"
+
+#: class-gp-file-upload-pro.php:399
+msgid "Width"
+msgstr "Bredd"
+
+#: class-gp-file-upload-pro.php:400
+msgid "Height"
+msgstr "Höjd"
+
+#. translators: placeholder is URL to File Upload Pro FAQ
+#: class-gp-file-upload-pro.php:403
+msgid ""
+"This setting is required when File Upload Pro is enabled. <a href=\"%s\" "
+"target=\"_blank\">Learn more.</a>"
+msgstr ""
+"Denna inställning är obligatorisk när File Upload Pro är aktiverat. <a href="
+"\"%s\" target=\"_blank\">Mer information.</a>"
+
+#: class-gp-file-upload-pro.php:408
+msgid "File Upload Pro"
+msgstr "File Upload Pro"
+
+#: class-gp-file-upload-pro.php:409
+msgid ""
+"Greatly improve the uploading experience for your Gravity Forms File Upload "
+"fields."
+msgstr ""
+"Förbättra uppladdningsupplevelsen för dina Gravity Forms-filuppladdningsfält."
+
+#: class-gp-file-upload-pro.php:414
+msgid ""
+"Automatically crop images according to the specified constraints. Users may "
+"re-crop the image by clicking on the image thumbnail. Use the Require Crop "
+"setting to require the user to manually crop the image."
+msgstr ""
+"Beskär automatiskt bilden enligt de specificerade begränsningarna. Användare "
+"kan ombeskära bilden genom att klicka på bildens tumnagel. Använd Krav beskärning "
+"beskärning-inställningen för att kräva att användaren beskär bilden manuellt."
+
+#: class-gp-file-upload-pro.php:419
+msgid ""
+"Allow the order of files to be modified using drag-and-drop sorting in the "
+"uploader area."
+msgstr ""
+"Låt ordningen på filer ändras med hjälp av dra-och-släpp-sortering i "
+"uppladdningsfältet."
+
+#: class-gp-file-upload-pro.php:423
+msgid "Require Crop on Upload"
+msgstr "Kräv beskärning vid uppladdning"
+
+#: class-gp-file-upload-pro.php:424
+msgid ""
+"Require that images be cropped on upload by automatically opening the "
+"cropper. If the crop is canceled, the files are not uploaded."
+msgstr ""
+"Kräv att bilder beskärs vid uppladdning genom att automatiskt öppna "
+"beskäraren. Ifall beskärningen avbryt laddas inte filerna upp."
+
+#: class-gp-file-upload-pro.php:429
+msgid ""
+"Require file to be upload with exact dimensions. These dimensions will be "
+"used as the minimum dimensions in the cropper and an aspect ratio will be "
+"derived from the dimensions. If an image exceeds the exact dimensions after "
+"cropping, it will be downscaled."
+msgstr ""
+"Kräv att en fil laddas upp med exakta dimensioner. Dessa dimensioner kommer "
+"att användas som minimidimensioner i beskäraren, och proportionerna kommer "
+"att härledas från dimensionerna. Ifall en bild överskrider de exakta "
+"dimensionerna efter beskärningen kommer den att skalas ner."
+
+#: class-gp-file-upload-pro.php:433
+msgid "Minimum Dimensions"
+msgstr "Minimidimensioner"
+
+#: class-gp-file-upload-pro.php:434
+msgid ""
+"Require cropper to meet the minimum dimensions. If cropper is not used, file "
+"dimensions will be validated prior to upload."
+msgstr ""
+"Kräv att beskäraren uppfyller minimidimensionerna. Ifall beskäraren inte "
+"används kommer dimensionerna att valideras före uppladdning."
+
+#: class-gp-file-upload-pro.php:438
+msgid "Maximum Dimensions"
+msgstr "Maxdimensioner"
+
+#: class-gp-file-upload-pro.php:439
+msgid "Images will be downscaled to the maximum dimensions set below."
+msgstr "Bilder kommer att skalas ner till dimensionernas som anges nedan."
+
+#: class-gp-file-upload-pro.php:444
+msgid "Restrict cropper to aspect ratio."
+msgstr "Lås beskäraren till proportioner."
