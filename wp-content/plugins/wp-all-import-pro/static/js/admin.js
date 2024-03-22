@@ -358,6 +358,11 @@
 			$('input[name=taxonomy_type]').val(selectedData.selectedData.value);
 		}
 	});
+	
+	$('#taxonomy_to_import li').each(function() {
+        var toolTipText = $(this).find('.dd-option-value').val();
+        $(this).attr('title', toolTipText);
+    });
 
 	// enter-submit form on step 1
 	$('.wpallimport-step-1').each(function(){

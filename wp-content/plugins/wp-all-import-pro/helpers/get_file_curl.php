@@ -74,34 +74,31 @@ if ( ! function_exists('get_file_curl') ):
 endif;
 
 if ( ! function_exists('pmxi_curl_download') ) {
-
-	function pmxi_curl_download($url, $fullpath, $to_variable){
-
+	function pmxi_curl_download($url, $fullpath, $to_variable) {
 		if ( ! function_exists('curl_version') ) return false;
-		
-		$ch = curl_init($url);
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-		$rawdata = curl_exec_follow($ch);	    	    
 
-	    $result = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-	    
-		curl_close ($ch);
+		$ch = curl_init( $url );
+		curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
+		$rawdata = curl_exec_follow( $ch );
+		$result  = curl_getinfo( $ch, CURLINFO_HTTP_CODE );
+		curl_close( $ch );
 
-		if ( empty($rawdata) ) return false;
-
-		if (!@file_put_contents($fullpath, $rawdata)){
-			$fp = fopen($fullpath,'w');	    
-		    fwrite($fp, $rawdata);
-		    fclose($fp);			
+		if ( empty( $rawdata ) ) {
+			return false;
 		}
 
-        if ( preg_match('%\W(jpg|jpeg|gif|png|webp)$%i', basename($fullpath)) and ( ! ($image_info = apply_filters('pmxi_getimagesize', @getimagesize($fullpath), $fullpath)) or ! in_array($image_info[2], wp_all_import_supported_image_types()))) {
-            return false;
-        }
+		$fp = fopen( $fullpath, 'w' );
+		if ( false !== $fp ) {
+			fwrite( $fp, $rawdata );
+			fclose( $fp );
+		}
 
-	    return ($result == 200) ? (($to_variable) ? $rawdata : true) : false;
+		if (preg_match('%\W(jpg|jpeg|gif|png|webp)$%i', basename($fullpath)) && (!($image_info = apply_filters('pmxi_getimagesize', @getimagesize($fullpath), $fullpath)) || !in_array($image_info[2], wp_all_import_supported_image_types()))) {
+			return false;
+		}
+
+		return ($result == 200) ? (($to_variable) ? $rawdata : true) : false;
 	}
-
 }
 
 if ( ! function_exists('curl_exec_follow') ):

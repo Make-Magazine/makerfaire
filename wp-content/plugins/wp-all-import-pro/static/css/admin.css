@@ -1192,6 +1192,7 @@ body.wpallimport-plugin {
 }
 .wpallimport-plugin input[type="radio"]{
 	margin-left: 4px;
+	margin-top: -3px;
 }
 
 .wpallimport-plugin .wpallimport-wrapper{
@@ -2931,7 +2932,7 @@ body.wpallimport-plugin {
 	overflow: hidden;
 }
 .wpallimport-plugin form.edit{
-	overflow: hidden;
+	/* overflow: hidden; */
 }
 .wpallimport-plugin .switcher-target-is_keep_former_posts{
 	padding-left: 25px;

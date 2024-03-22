@@ -49,6 +49,9 @@ if ( ! function_exists('wp_all_import_get_feed_type')){
 	   		}
 	   		if ( ! empty($headers['Content-Disposition'])){
 	   			foreach ($extensions as $ext) {
+					if(is_array($headers['Content-Disposition'])){
+						$headers['Content-Disposition'] = array_pop($headers['Content-Disposition']);
+					}
 					if (strpos($headers['Content-Disposition'], $ext) !== false) {
 						$type = $ext;
 	   					break;

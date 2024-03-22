@@ -111,6 +111,9 @@ class RemoteFilesystem {
 			switch ( $type ) {
 
 				case 'ftp':
+					if(!defined('FTP_BINARY')){
+						throw new Exception('PHP FTP support is not enabled on your site. FTP connections will fail.');
+					}
 					$this->filesystem = new Filesystem( new FtpAdapter( $this->options ) );
 					break;
 				case 'sftp':
@@ -118,7 +121,7 @@ class RemoteFilesystem {
 					break;
 			}
 
-		} catch ( \Exception $e ) {
+		} catch ( \Throwable $e ) {
 			$this->error = $e->getMessage();
 
 		}
@@ -133,7 +136,7 @@ class RemoteFilesystem {
 			// Filter the contents.
 			$this->filter_contents();
 
-		} catch ( \Exception $e ) {
+		} catch ( \Throwable $e ) {
 
 			$this->error = $e->getMessage();
 
@@ -247,7 +250,7 @@ class RemoteFilesystem {
 			if ( $result ) {
 				return [ $destination . '/' . basename( $this->options['dir'] ) ];
 			}
-		} catch ( \Exception $e ) {
+		} catch ( \Throwable $e ) {
 			$this->error = $e->getMessage();
 
 
@@ -272,7 +275,7 @@ class RemoteFilesystem {
 					if ( ( is_file( $filename ) ) && ( 0 !== filesize( $filename ) ) ) {
 						return [ $filename ];
 					}
-				} catch ( \Exception $e ) {
+				} catch ( \Throwable $e ) {
 					$this->error = $e->getMessage();
 
 					return false;
@@ -393,7 +396,7 @@ class RemoteFilesystem {
 						break;
 				}
 			}
-		} catch ( \Exception $e ) {
+		} catch ( \Throwable $e ) {
 			$this->error = $e->getMessage();
 
 		}

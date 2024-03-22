@@ -419,7 +419,7 @@
                                     </select>
 									<div class="taxonomy_to_import_wrapper">
 										<input type="hidden" name="taxonomy_type" value="<?php echo $post['taxonomy_type'];?>">
-										<h2 style="margin: 30px 0 -10px 0;"><?php _e('Select taxonomy to import into...');?></h2>
+										<h2 style="margin: 30px 0 -10px 0;"><?php _e('Select taxonomy to import into...');?> <a class="wpallimport-help" href="#help" style="position: relative; top: -2px;" title="Hover over each entry to view the taxonomy slug.">?</a></h2>
 										<select id="taxonomy_to_import">
 											<option value=""><?php _e('Select Taxonomy', 'wp_all_export_plugin'); ?></option>
 											<?php $options = wp_all_import_get_taxonomies(); ?>

@@ -777,7 +777,7 @@ class PMXI_Admin_Import extends PMXI_Controller_Admin {
                 $history_file->getBy( array('import_id' => PMXI_Plugin::$session->update_previous), 'id DESC' );
                 $local_paths = ( ! $history_file->isEmpty() ) ? array(wp_all_import_get_absolute_path($history_file->path)) : array();
             } else {
-                $local_paths = ( ! empty(PMXI_Plugin::$session->local_paths) ) ? PMXI_Plugin::$session->local_paths : array(PMXI_Plugin::$session->filePath);
+                $local_paths = ( ! empty(PMXI_Plugin::$session->local_paths) && isset(PMXI_Plugin::$session->local_paths[0]) && file_exists(PMXI_Plugin::$session->local_paths[0])) ? PMXI_Plugin::$session->local_paths : array(PMXI_Plugin::$session->filePath);
             }
             $local_paths = array_filter($local_paths);
 			PMXI_Plugin::$session->set('local_paths', $local_paths);
@@ -1983,6 +1983,7 @@ class PMXI_Admin_Import extends PMXI_Controller_Admin {
 			elseif ($post['update_custom_fields_logic'] == 'all_except' and ! empty($post['custom_fields_except_list']) ){
 				$post['custom_fields_list'] = explode(",", $post['custom_fields_except_list']);
 			}
+
 
 			$upload_result = false;
 

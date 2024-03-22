@@ -2,7 +2,7 @@
 /**
  * @license MIT
  *
- * Modified by gravityview on 19-March-2024 using {@see https://github.com/BrianHenryIE/strauss}.
+ * Modified by gravityview on 22-March-2024 using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\GravityView\Foundation\ThirdParty\Illuminate\Contracts\Console;

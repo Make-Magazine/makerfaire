@@ -73,7 +73,9 @@ class SftpAdapter extends AbstractFtpAdapter
 		if(is_resource($this->stream)){
 			fclose($this->stream);
 		}
-		@unlink($this->stream_filename);
+		if(!is_null($this->stream_filename) && file_exists($this->stream_filename) && is_writable($this->stream_filename)){
+			unlink($this->stream_filename);
+		}
 	}
 
     /**

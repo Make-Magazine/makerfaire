@@ -1,0 +1,22 @@
+<?php
+
+// TODO: Replace this with the real addon manager
+
+namespace Wpai\AddonAPI;
+
+class PMXI_Addon_Manager {
+    use Singleton;
+
+    /**
+     * @return PMXI_Addon_Base[]
+     */
+    public static function get_addons() {
+        return apply_filters( 'pmxi_new_addons', [] );
+    }
+
+    public static function get_addon( $addon ) {
+        $addons = self::get_addons();
+
+        return $addons[ $addon ];
+    }
+}

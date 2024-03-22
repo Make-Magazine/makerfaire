@@ -13,6 +13,11 @@ function pmxi_findDuplicates( $articleData, $custom_duplicate_name = '', $custom
 
 		// Custom wc order handling logic.
 		if ( $is_wc_order ) {
+			if( empty($custom_duplicate_value) || empty($custom_duplicate_name) ){
+				// Only try to match existing orders if the necessary values are set.
+				// Literal 0 hasn't been accounted for as it's unlikely to be used.
+				return false;
+			}
 			return \wc_get_orders(
 				array(
 					'meta_key'     => $custom_duplicate_name,

@@ -88,7 +88,11 @@ function pmxi_pmxi_after_xml_import( $import_id, $import )
     }
 
     // Add removed action during import.
+	// This entire section is most likely unnecessary, but it will require a bit of testing to be certain we don't break something.
     add_action( 'transition_post_status', '_update_term_count_on_transition_post_status', 10, 3 );
-    add_action( 'transition_post_status', '_update_posts_count_on_transition_post_status', 10, 3 );
+	// This action's function is only available on multisite and throws an error in PHP8.2+
+	if ( is_multisite() ) {
+        add_action( 'transition_post_status', '_update_posts_count_on_transition_post_status', 10, 3 );
+	}
     add_action( 'post_updated', 'wp_save_post_revision', 10, 1 );
 }

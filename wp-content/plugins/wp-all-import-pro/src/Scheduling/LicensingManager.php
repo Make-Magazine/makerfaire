@@ -20,7 +20,10 @@ class LicensingManager
      */
     public function checkLicense($licenseKey, $productName)
     {
-
+		// Short-circuit check if recently validated.
+		if ( get_transient( 'wpai_wpae_scheduling_license_verified' ) ) {
+			return true;
+		}
         if ($productName !== false) {
             // data to send in our API request
             $api_params = array(
@@ -51,6 +54,8 @@ class LicensingManager
             if(is_null($responseData)) {
                 return false;
             } else {
+				// Set transient so we only recheck successful licenses once every ten minutes.
+	            set_transient('wpai_wpae_scheduling_license_verified', true, 600);
                 return $responseData['success'];
             }
         } else {
