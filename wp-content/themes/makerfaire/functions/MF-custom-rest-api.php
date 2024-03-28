@@ -731,8 +731,9 @@ function getAllEntries($formID = '', $page = '', $years = '') {
                 'Maker Info'    => $return['maker_info'],
                 'Photos'        => $return['photos'],
                 'Safety Forms'  => $return['safety_forms'],
+                'expand_view'   => $return['expand_view'],
             ),
-            'expand_view'   => $return['expand_view'],
+            
             'project_name'  => $entry['151'],
             'project_id'    => $entry['id'],
             'status'        => $entry['303'],
