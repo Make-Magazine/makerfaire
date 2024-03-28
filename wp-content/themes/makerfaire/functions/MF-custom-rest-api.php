@@ -574,7 +574,7 @@ function getAllEntries($formID = '', $page = '', $years = '') {
     //define tab fields
     $tab_array = array(
         'basic_info'    => array(
-            'col_1' => array(22, 'date_created', 'reviewed', 'placed'),
+            'col_1' => array(22, 'date_created', 'reviewed', 'final_location'),
             'col_2' => array(16, 320),
             'col_3' => array(96, 168, 55, 339, 884, 1, 92, 91)
         ),
@@ -588,10 +588,9 @@ function getAllEntries($formID = '', $page = '', $years = '') {
         ),
         'logistics'     => array(
             'col_1' => array(
-                74, 72, 71, 62, 77, 76, 75, 73, 886, 348, 347, 'rmt', 69, 68, 64, 345, 344, 61, 60, 'area', 'subarea', 'location'
+                74, 72, 71, 62, 77, 76, 75, 73, 886, 348, 347, 'rmt', 69, 68, 64, 345, 344, 61, 60, 'final_location'
             ),
-            'col_2' => array(65, 879, 806, 805, 803, 758, 307, 302, 99),
-            'col_3' => array(90, 89, 85, 84, 83, 81, 79, 78, 318, 317, 144, 44, 1, 2),
+            'col_2' => array(65, 879, 806, 805, 803, 758, 307, 302, 99, 90, 89, 85, 84, 83, 81, 79, 78, 318, 317, 144, 44, 1, 2),
         ),
         'maker_info'    => array(
             'col_1' => array(217, 111, 109, 98, 209, 112),
@@ -618,7 +617,6 @@ function getAllEntries($formID = '', $page = '', $years = '') {
     $entries         = GFAPI::get_entries($formID, $search_criteria, $sorting, $paging, $total_count);
     $form            = GFAPI::get_form($formID);
 
-
     //convert this into a usable array
     $field_array = array();
     foreach ($form['fields'] as $field) {
@@ -629,7 +627,12 @@ function getAllEntries($formID = '', $page = '', $years = '') {
 
     //build entry array    
     foreach ($entries as $entry) {
+        //pull entry notes
         $entry['notes'] = GFAPI::get_notes(array('entry_id' => $entry['id'], 'note_type' => 'user'));
+        $entry['final_location'] = display_schedule($formID, $entry, 'summary');
+        $entry['rmt'] = entryResources($entry,FALSE);
+
+        //build tab info
         foreach ($tab_array as $tab_name => $tab) {
             $return[$tab_name] = array();
             foreach ($tab as $column_name => $column) {
@@ -709,12 +712,28 @@ function getAllEntries($formID = '', $page = '', $years = '') {
                                 break;
                         }
                     } else {
-                        if ($fieldID == 'notes') {
-                            $type  = 'notes';
-                            $label = 'Notes';
+                        switch ($fieldID) {
+                            case 'notes':
+                                $type  = 'notes';
+                                $label = 'Notes';
+                                break;
+                            case 'final_location':
+                                $type  = 'html';
+                                $label = 'Final Location';
+                                break;
+                            case 'rmt':
+                                $type  = 'listRepeat';
+                                $label = 'Resources';
+                                break;    
+                            case 'date_created':
+                                $type  = 'text';
+                                $date  = date_create($entry[$fieldID]);
+                                $value = date_format($date,"m/d/Y");
+                                $label = 'Created';
+                                break;        
                         }
+                        
                     }
-
 
                     $column_data[] = array('label' => $label, 'type' => $type, 'value' => $value);
                 }

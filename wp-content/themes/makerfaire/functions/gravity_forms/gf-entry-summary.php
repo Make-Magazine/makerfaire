@@ -722,8 +722,11 @@ function mf_get_form_meta($meta_key, $meta_value) {
 }
 
 //retrieves resource and attribute information for the entry
-function entryResources($lead) {
+function entryResources($lead, $html=TRUE) {
     global $wpdb;
+
+    $return_array = array();
+
     //create JS array for item drop down and type drop down
     $sql = "SELECT * FROM `wp_rmt_resource_categories` order by category ASC";
     $results = $wpdb->get_results($sql);
@@ -775,7 +778,7 @@ function entryResources($lead) {
         }
 
         $update_stamp = esc_html(GFCommon::format_date($result->dateUpdated, false, 'm/d/y h:i a'));
-
+        $return_array['resources'][] =array('item'=>$result->item,'type'=>$result->type,'qty'=>$result->qty,'comments'=>$result->comment,'user'=>$dispUser,'last_updated'=>$update_stamp);
         $resourceDisp .= '<tr id="resRow' . $result->ID . '">'
                 . ' <td class="lock"><span class="lockIcon" onclick="resAttLock(\'#resRow' . $result->ID . '\',' . $result->lockBit . ')">' . ($result->lockBit == 1 ? '<i class="fa fa-lock fa-lg"></i>' : '<i class="fa fa-unlock-alt fa-lg"></i>') . '</span></td>'
                 . ' <td id="resitem_' . $result->ID . '" data-itemID="' . $result->item_id . '">' . $result->item . '</td>'
@@ -817,6 +820,7 @@ function entryResources($lead) {
             $dispUser = $userInfo->display_name;
         }
         $update_stamp = esc_html(GFCommon::format_date($result->dateUpdated, false, 'm/d/y h:i a'));
+        $return_array['attributes'][] =array('attribute'=>$result->category,'value'=>$result->value,'comment'=>$result->comment,'user'=>$dispUser,'last_updated'=>$update_stamp);
         $attDisp .= '<tr id="attRow' . $result->ID . '">'
                 . ' <td class="lock">'
                 . '   <span class="lockIcon" onclick="resAttLock(\'#attRow' . $result->ID . '\',' . $result->lockBit . ')">'
@@ -865,6 +869,7 @@ function entryResources($lead) {
             $dispUser = $userInfo->display_name;
         }
         $update_stamp = esc_html(GFCommon::format_date($result->dateUpdated, false, 'm/d/y h:i a'));
+        $return_array['attention'][] =array('attention'=>$result->value,'comment'=>$result->comment,'user'=>$dispUser,'last_updated'=>$update_stamp);
         $attnDisp .= '<tr id="attnRow' . $result->ID . '">'
                 . ' <td id="attnvalue_' . $result->ID . '">' . $result->value . '</td>'
                 . ' <td id="attncomment_' . $result->ID . '" class="editable textAreaEdit">' . $result->comment . '</td>'
@@ -926,6 +931,10 @@ function entryResources($lead) {
       </div>
     </div>
   </div>';
+
+  if(!$html){
+    return $return_array;
+  }
     return $return;
 }
 
