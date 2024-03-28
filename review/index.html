@@ -28,6 +28,7 @@
         img {
             max-width: 100%
         }
+        img.multiImage {min-width: 200px}
         .card {margin: 20px 0;}
     </style>
 </head>
@@ -54,12 +55,18 @@
                                             <div v-if="field.type === 'fileupload'">
                                                 <b-img thumbnail fluid :src="field.value" :alt="field.label"></b-img>
                                             </div>
-                                            <span v-else-if="field.type === 'multipleFiles'">
-                                                <b-img :key="maker_id+'-img-' + image_id" v-for="(image,image_id) in field.value" thumbnail fluid :src="image"
-                                                    :alt="field.label"></b-img>
+                                            <span v-else-if="field.type === 'multipleFiles'">                                            
+                                                    <b-container class="p-4 bg-dark">
+                                                        <b-row>
+                                                          <b-col fluid="sm" :key="maker_id+'-img-' + image_id" v-for="(image,image_id) in field.value">
+                                                            <b-img thumbnail fluid :src="image"
+                                                    :alt="field.label" class="multiImage"></b-img>
+                                                          </b-col>                                                          
+                                                        </b-row>
+                                                      </b-container>    
                                             </span>
                                             <span v-else-if="field.type === 'website'">
-                                                <a :href="field.value" target="_blank">{{field.value}}</a>
+                                                <b-link :href="field.value" target="_blank">{{field.value}}</b-link>                                                
                                             </span>
                                             <span v-else-if="field.type === 'video'">
                                                 <b-embed type="iframe" aspect="16by9" :src="field.value"
