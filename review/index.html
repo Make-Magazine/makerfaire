@@ -125,7 +125,7 @@
             },
             mounted() {
                 axios
-                    .get('https://makerfaire.local/wp-json/makerfaire/v2/fairedata/entryReview/260/BA23')
+                    .get('/wp-json/makerfaire/v2/fairedata/entryReview/260/BA23')
                     .then(response => (this.makers = response.data.makers))
             }
         })
