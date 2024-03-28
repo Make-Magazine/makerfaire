@@ -617,7 +617,6 @@ function getAllEntries($formID = '', $page = '', $years = '') {
     $entries         = GFAPI::get_entries($formID, $search_criteria, $sorting, $paging, $total_count);
     $form            = GFAPI::get_form($formID);
 
-
     //convert this into a usable array
     $field_array = array();
     foreach ($form['fields'] as $field) {
@@ -726,6 +725,12 @@ function getAllEntries($formID = '', $page = '', $years = '') {
                                 $type  = 'listRepeat';
                                 $label = 'Resources';
                                 break;    
+                            case 'date_created':
+                                $type  = 'text';
+                                $date  = date_create($entry[$fieldID]);
+                                $value = date_format($date,"m/d/Y");
+                                $label = 'Created';
+                                break;        
                         }
                         
                     }
