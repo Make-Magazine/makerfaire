@@ -9,39 +9,20 @@
 
     <title>My first BootstrapVue app</title>
 
-    <!-- Required Stylesheets -->
-    <link type="text/css" rel="stylesheet" href="https://unpkg.com/bootstrap/dist/css/bootstrap.min.css" />
     <link type="text/css" rel="stylesheet" href="https://unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.css" />
 
-    <!-- Load polyfills to support older browsers -->
-    <script src="https://polyfill.io/v3/polyfill.min.js?features=es2015%2CIntersectionObserver"></script>
-
-    <!-- Required scripts -->
-    <script src="https://mfairestage.wpengine.com/review/node_modules/vue/dist/vue.js"></script>
-    <script src="https://mfairestage.wpengine.com/review/node_modules/bootstrap-vue/dist/bootstrap-vue.js"></script>
-    <script src="https://mfairestage.wpengine.com/review/node_modules/axios/dist/axios.js"></script>
-    <style id='admin-bar-inline-css' type='text/css'>
-        label {
-            font-weight: 900;
-        }
-
-        img {
-            max-width: 100%
-        }
-        img.multiImage {min-width: 200px}
-        .card {margin: 20px 0;}
-    </style>
 </head>
 
 <body>
     <h2>Maker Faire Admin Review</h2>
+    
     <!-- Our application root element -->
     <div id="review" style="width:90%; margin:0 auto;">
         <b-card no-body v-for="(maker, maker_id) in makers" :key="'maker-'+maker.project_id">             
-            <b-row>
+            <b-row class="header">
                 <b-col>{{maker.status}}</b-col>                
                 <b-col cols="10"><h3>{{maker.project_name}}</h3></b-col>
-                <b-col cols="1">{{maker.project_id}}</b-col>
+                <b-col cols="1" style="color: #ccc;">{{maker.project_id}}</b-col>
             </b-row>
             <b-tabs card>
                 <b-tab v-for="(columns, tab) in maker.tabs" :key="'dyn-tab-' + tab" :title="tab">
@@ -113,7 +94,12 @@
             </b-tabs>
         </b-card>
     </div>
-
+    <div id="loader">  <!-- must be directly after your v-cloak element -->
+        <img src="/review/img/loading.gif" />
+    </div>
+ 
+    <!-- Required scripts -->
+    <script src="/review/js/min/review.min.js"></script>
     <!-- Start running your app -->
     <script>
         window.app = new Vue({
@@ -131,6 +117,56 @@
         })
 
     </script>
+    
 </body>
+     <!-- Required Stylesheets -->
+     <link type="text/css" rel="stylesheet" href="https://unpkg.com/bootstrap/dist/css/bootstrap.min.css" />
 
+ 
+     <!-- Load polyfills to support older browsers -->
+     <script src="https://polyfill.io/v3/polyfill.min.js?features=es2015%2CIntersectionObserver"></script>
+
+     <style id='admin-bar-inline-css' type='text/css'>
+        label {
+            font-weight: 900;
+        }
+
+        img {
+            max-width: 100%
+        }
+        img.multiImage {min-width: 200px}
+        .card {margin: 20px 0;}
+        .header > div {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        h3 {
+            padding: 0px;
+        }
+        #loader { 
+            display: none;
+            text-align: center;
+            margin-top: 50px;
+        }
+        #loader img { width: 30px; }
+        #review:empty + #loader {
+            display: block;
+        }
+        .bv-example-row {
+            margin-bottom: 20px;
+        }
+        ul.card-header-tabs li:last-of-type {
+            position: absolute;
+            bottom: 0px;
+        }
+        ul.card-header-tabs li:last-of-type .nav-link {
+            border: 0px !important;
+            background: transparent !important;
+            outline: none !important;
+        }
+        ul.card-header-tabs li:last-of-type .nav-link.active {
+            display: none;
+        }
+    </style>
 </html>
