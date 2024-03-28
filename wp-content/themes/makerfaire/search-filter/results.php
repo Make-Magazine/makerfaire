@@ -41,7 +41,8 @@ if ( $query->have_posts() ) {
             }
 
             //get the faire name
-            $title = get_the_title($faire_id);
+            $title = get_the_title();
+
 
             //find producer information
             $producerSection = get_field('producer_section', $faire_id);
