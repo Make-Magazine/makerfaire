@@ -144,168 +144,18 @@
         <img src="/review/img/loading.gif" />
     </div>
 
-    <!-- Required scripts -->
+    <!-- Required scripts, vue loads first -->
+    <script src="/review/js/min/vue.min.js"></script>
     <script src="/review/js/min/review.min.js"></script>
-    <!-- Start running your app -->
-    <script>
-        window.app = new Vue({
-            el: '#review',
-            data() {
-                return {
-                    makers: null,
-                    currentView: "grid",
-                    expandToggle: "0"
-                }
-            },
-            methods: {
-                switchToListView: function(ev){
-                    this.currentView = 'list';
-                },
-                switchToGridView: function(ev){
-                    this.currentView = 'grid';
-                },
-                expand: function(event) {
-                    console.log(this.expandToggle);
-                    if(this.expandToggle == 0) {
-                        event.target.innerHTML = "Shrink";
-                        event.target.parentElement.querySelector('.tabs').innerHTML += event.target.parentElement.querySelector('.tab-content .card-body:last-of-type').innerHTML;
-                        this.expandToggle = 1;
-                        event.target.remove();
-                    } 
-                    if(this.expandToggle == 1) {
-                        event.target.innerHtml = "Expand";
-                        this.expandToggle = 0;
-                    }
-                }
-            },
-            mounted() {
-                axios
-                    .get('/wp-json/makerfaire/v2/fairedata/entryReview/260/BA23')
-                    .then(response => (this.makers = response.data.makers))
-            }
-        })
-        
-    </script>
+
 
 </body>
 <footer>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <!-- Required Stylesheets -->
-    <link type="text/css" rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css" />
-    <link type="text/css" rel="stylesheet" href="node_modules/bootstrap-vue/dist/bootstrap-vue.css" />
+    <link type="text/css" rel="stylesheet" href="css/style.min.css" />
     <!-- Load polyfills to support older browsers -->
     <script src="https://polyfill.io/v3/polyfill.min.js?features=es2015%2CIntersectionObserver"></script>
-
-    <style id='admin-bar-inline-css' type='text/css'>
-        label {
-            font-weight: 900;
-        }
-
-        img {
-            max-width: 100%
-        }
-
-        img.multiImage {
-            min-width: 200px
-        }
-
-        .card {
-            margin: 20px 0;
-        }
-        .card-header:has(> .img-thumbnail), .card-header .img-thumbnail {
-            padding: 0px;
-        }
-        .card-header:has(> .img-thumbnail) {
-            aspect-ratio: 3 / 2;
-            @supports not (aspect-ratio: 3 / 2) {
-                &::before {
-                    float: left;
-                    padding-top: 66.666%;
-                    content: "";
-                }
-            
-                &::after {
-                    display: block;
-                    content: "";
-                    clear: both;
-                }
-            }
-            overflow: hidden;
-        }
-        .card-header .img-thumbnail {
-            object-fit: cover;
-            min-height: 100%;
-        }
-        .card-title {
-            display: -webkit-box;
-            -webkit-box-orient: vertical;
-            -webkit-line-clamp: 3;
-            overflow: hidden;
-            min-height: 88px;
-        }
-        .card-text {
-            display: -webkit-box;
-            -webkit-box-orient: vertical;
-            -webkit-line-clamp: 5;
-            overflow: hidden;
-        }
-
-        .header>div {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        h3 {
-            padding: 0px;
-        }
-
-        #loader {
-            text-align: center;
-            margin-top: 50px;
-        }
-
-        #loader img {
-            width: 30px;
-        }
-
-        .bv-example-row {
-            margin-bottom: 20px;
-        }
-
-        ul.card-header-tabs li {
-            padding: 0px 5px;
-        }
-        ul.card-header-tabs li:last-of-type {
-            position: absolute;
-            bottom: 0px;
-            z-index: 999;
-            display: none;
-        }
-        ul.card-header-tabs li .nav-link {
-            background-color: #f1f1f1;
-        }
-        ul.card-header-tabs li .nav-link:hover {
-            background-color: #ddd;
-        }
-
-        ul.card-header-tabs li:last-of-type .nav-link {
-            border: 0px !important;
-            background: transparent !important;
-            outline: none !important;
-        }
-
-        ul.card-header-tabs li:last-of-type .nav-link.active {
-            display: none;
-        }
-
-        .card-deck .card {
-            min-width: 250px;
-        }
-        .card .bv-example-row .list-group, .card .bv-example-row .img-thumbnail {
-            margin-bottom: 10px;
-        }
-    </style>
 </footer>
 
 </html>
