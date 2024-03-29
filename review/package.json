@@ -8,8 +8,8 @@
     "cachebust:update": "npm version patch",
     "postcachebust:update": "npm run replace:version",
     "replace:version": "replace-in-file '/Version\\: [0-9]\\.{0,1}[0-9]*\\.{0,1}[0-9]*/' 'Version: '\"$npm_package_version\" style.css --isRegex",
-    "onchange:js:vue": "onchange 'js/*.js' -- npm run js:fe:uglify",
-    "js:vue:uglify": "uglifyjs node_modules/vue/dist/vue.js node_modules/bootstrap-vue/dist/bootstrap-vue.js node_modules/axios/dist/axios.js -o js/min/review.min.js -c -m --source-map \"root='../', url='review.min.js.map'\"",
+    "onchange:js:vue": "onchange 'js/*.js' -- npm run js:vue:uglify",
+    "js:vue:uglify": "uglifyjs js/*.js node_modules/vue/dist/vue.js node_modules/bootstrap-vue/dist/bootstrap-vue.js node_modules/axios/dist/axios.js -o js/min/review.min.js -c -m --source-map \"root='../', url='review.min.js.map'\"",
     "build": "npm-run-all js:**:uglify",
     "build:cachebust": "npm-run-all cachebust:update js:**:uglify",
     "dev": "npm-run-all build -p onchange:js:**"

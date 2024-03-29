@@ -21,12 +21,12 @@
         <div class="listGrid-toolbar">
 			<span class="listGrid-caption">{{caption}}</span>
 			<span class="listGrid-switch-iconGroup">
-				<i class="fa fa-list listGrid-switch-icon" 
+				<i class="bi bi-list listGrid-switch-icon" 
 					v-bind:class="{ active: currentView=='list'}" 
 					aria-hidden="true"
 					:title="currentView=='grid' ? 'switch to List View': 'List View'"
 					 v-on:click="switchToListView"></i>
-				<i class="fa fa-th listGrid-switch-icon" 
+                <i class="bi bi-grid listGrid-switch-icon" 
 					v-bind:class="{ active: currentView=='grid'}" 
 					:title="currentView=='list' ? 'switch to Grid View': 'Grid View'"
 					aria-hidden="true" v-on:click="switchToGridView"></i>				
@@ -34,8 +34,10 @@
 		</div>
         <div v-if="currentView=='grid'" >
             <b-card-group deck>
-                <b-card v-for="(maker, maker_id) in makers" :title="maker.project_name" :img-src="maker.photo"
-                    img-alt="Image" img-top :key="'maker-'+maker.project_id">
+                <b-card v-for="(maker, maker_id) in makers" :title="maker.project_name" img-top :key="'maker-'+maker.project_id">
+                    <template #header>
+                        <b-img thumbnail fluid :alt="maker.project_name" :src="maker.photo" />
+                    </template>
                     <b-card-text>
                         {{maker.description}}
                     </b-card-text>
@@ -57,7 +59,7 @@
                 <b-tabs card>
                     <b-tab v-for="(columns, tab) in maker.tabs" :key="'dyn-tab-' + tab" :title="tab">
                         <b-card-text>
-                            <b-container class="bv-example-row">
+                            <b-container-fluid class="bv-example-row">
                                 <b-row>
                                     <b-col v-for="(fields, column) in columns" :key="'dyn-column-' + column">
                                         <div v-for="(field, field_id) in fields" :key="maker_id-'field-' + field_id">
@@ -175,9 +177,7 @@
 
 </body>
 <footer>
-    <link rel='stylesheet' id='fontawesome-css'
-        href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.9.0/css/fontawesome.min.css' type='text/css'
-        media='all' />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <!-- Required Stylesheets -->
     <link type="text/css" rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css" />
 
@@ -201,6 +201,43 @@
         .card {
             margin: 20px 0;
         }
+        .card-header:has(> .img-thumbnail), .card-header .img-thumbnail {
+            padding: 0px;
+        }
+        .card-header:has(> .img-thumbnail) {
+            aspect-ratio: 3 / 2;
+            @supports not (aspect-ratio: 3 / 2) {
+                &::before {
+                    float: left;
+                    padding-top: 66.666%;
+                    content: "";
+                }
+            
+                &::after {
+                    display: block;
+                    content: "";
+                    clear: both;
+                }
+            }
+            overflow: hidden;
+        }
+        .card-header .img-thumbnail {
+            object-fit: cover;
+            min-height: 100%;
+        }
+        .card-title {
+            display: -webkit-box;
+            -webkit-box-orient: vertical;
+            -webkit-line-clamp: 3;
+            overflow: hidden;
+            min-height: 88px;
+        }
+        .card-text {
+            display: -webkit-box;
+            -webkit-box-orient: vertical;
+            -webkit-line-clamp: 5;
+            overflow: hidden;
+        }
 
         .header>div {
             display: flex;
@@ -213,7 +250,6 @@
         }
 
         #loader {
-            display: none;
             text-align: center;
             margin-top: 50px;
         }
@@ -222,17 +258,22 @@
             width: 30px;
         }
 
-        #review:empty+#loader {
-            display: block;
-        }
-
         .bv-example-row {
             margin-bottom: 20px;
         }
 
+        ul.card-header-tabs li {
+            padding: 0px 5px;
+        }
         ul.card-header-tabs li:last-of-type {
             position: absolute;
             bottom: 0px;
+        }
+        ul.card-header-tabs li .nav-link {
+            background-color: #f1f1f1;
+        }
+        ul.card-header-tabs li .nav-link:hover {
+            background-color: #ddd;
         }
 
         ul.card-header-tabs li:last-of-type .nav-link {
@@ -247,6 +288,9 @@
 
         .card-deck .card {
             min-width: 250px;
+        }
+        .card .bv-example-row .list-group, .card .bv-example-row .img-thumbnail {
+            margin-bottom: 10px;
         }
     </style>
 </footer>
