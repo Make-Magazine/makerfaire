@@ -735,7 +735,7 @@ function getAllEntries($formID = '', $page = '', $years = '') {
                         
                     }
 
-                    $column_data[] = array('label' => $label, 'type' => $type, 'value' => $value);
+                    $column_data[$fieldID] = array('label' => $label, 'type' => $type, 'value' => $value);
                 }
                 $return[$tab_name][$column_name] = $column_data;
             }
@@ -756,6 +756,8 @@ function getAllEntries($formID = '', $page = '', $years = '') {
             'project_name'  => $entry['151'],
             'project_id'    => $entry['id'],
             'status'        => $entry['303'],
+            'description'   => $entry['16'],
+            'photo'         => $entry['22'],     
 
         );
     }
