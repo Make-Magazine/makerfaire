@@ -11,7 +11,9 @@
 
     <!-- Required Stylesheets -->
     <link type="text/css" rel="stylesheet" href="https://unpkg.com/bootstrap/dist/css/bootstrap.min.css" />
-    <link type="text/css" rel="stylesheet" href="https://unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.css" />
+    <link type="text/css" rel="stylesheet" href="https://unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.css" />   
+    <link type="text/css" rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.css" />    
+    <link type="text/css" rel="stylesheet" href="node_modules/bootstrap-vue/dist/bootstrap-vue.css" />    
 
     <!-- Load polyfills to support older browsers -->
     <script src="https://polyfill.io/v3/polyfill.min.js?features=es2015%2CIntersectionObserver"></script>
@@ -20,7 +22,7 @@
     <script src="node_modules/vue/dist/vue.js"></script>
     <script src="node_modules/bootstrap-vue/dist/bootstrap-vue.js"></script>
     <script src="node_modules/axios/dist/axios.js"></script>
-    
+
     <style id='admin-bar-inline-css' type='text/css'>
         label {
             font-weight: 900;
@@ -36,14 +38,28 @@
 
         .card {
             margin: 20px 0;
-        }        
+        }
+
     </style>
 </head>
 
 <body>
     <h2>Maker Faire Admin Review</h2>
     <!-- Our application root element -->
-    <div id="review" style="width:90%; margin:0 auto;">
+    <div id="review" style="width:90%; margin:0 auto;">    
+<div>
+    <b-card-group deck>      
+      <b-card v-for="(maker, maker_id) in makers" :title="maker.project_name" :img-src="maker.photo" img-alt="Image" img-top>
+        <b-card-text>
+            {{maker.description}}
+        </b-card-text>
+        <template #footer>
+          <small class="text-muted">{{maker.status}}</small>
+        </template>
+      </b-card>      
+    </b-card-group>
+  </div>
+
         <b-card no-body v-for="(maker, maker_id) in makers" :key="'maker-'+maker.project_id">
             <b-row>
                 <b-col>{{maker.status}}</b-col>
@@ -103,10 +119,10 @@
                                                 </b-list-group>
                                             </span>
                                             <span v-else-if="field.type === 'listRepeat'">
-                                                <div  v-for="(value,i) in field.value">
+                                                <div v-for="(value,i) in field.value">
                                                     <b-table striped hover :items="value"></b-table>
                                                 </div>
-                                                
+
                                             </span>
                                             <span v-else-if="field.type === 'list'">
                                                 <b-table striped hover :items="field.value"></b-table>
