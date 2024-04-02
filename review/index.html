@@ -9,8 +9,6 @@
 
     <title>My first BootstrapVue app</title>
 
-    <link type="text/css" rel="stylesheet" href="node_modules/bootstrap-vue/dist/bootstrap-vue.css" />
-
 </head>
 
 <body>
@@ -21,12 +19,12 @@
         <div class="listGrid-toolbar">
 			<span class="listGrid-caption">{{caption}}</span>
 			<span class="listGrid-switch-iconGroup">
-				<i class="fa fa-list listGrid-switch-icon" 
+				<i class="bi bi-list listGrid-switch-icon" 
 					v-bind:class="{ active: currentView=='list'}" 
 					aria-hidden="true"
 					:title="currentView=='grid' ? 'switch to List View': 'List View'"
 					 v-on:click="switchToListView"></i>
-				<i class="fa fa-th listGrid-switch-icon" 
+                <i class="bi bi-grid listGrid-switch-icon" 
 					v-bind:class="{ active: currentView=='grid'}" 
 					:title="currentView=='list' ? 'switch to Grid View': 'Grid View'"
 					aria-hidden="true" v-on:click="switchToGridView"></i>				
@@ -34,8 +32,10 @@
 		</div>
         <div v-if="currentView=='grid'" >
             <b-card-group deck>
-                <b-card v-for="(maker, maker_id) in makers" :title="maker.project_name" :img-src="maker.photo"
-                    img-alt="Image" img-top :key="'maker-'+maker.project_id">
+                <b-card v-for="(maker, maker_id) in makers" :title="maker.project_name" img-top :key="'maker-'+maker.project_id">
+                    <template #header>
+                        <b-img thumbnail fluid :alt="maker.project_name" :src="maker.photo" />
+                    </template>
                     <b-card-text>
                         {{maker.description}}
                     </b-card-text>
@@ -57,7 +57,7 @@
                 <b-tabs card>
                     <b-tab v-for="(columns, tab) in maker.tabs" :key="'dyn-tab-' + tab" :title="tab">
                         <b-card-text>
-                            <b-container class="bv-example-row">
+                            <b-container-fluid class="bv-example-row">
                                 <b-row>
                                     <b-col v-for="(fields, column) in columns" :key="'dyn-column-' + column">
                                         <div v-for="(field, field_id) in fields" :key="maker_id-'field-' + field_id">
@@ -133,7 +133,9 @@
                         </b-card-text>
                     </b-tab>
                 </b-tabs>
-    
+                <button @click="expand($event)">
+                    Expand
+                </button>
             </b-card>
         </div>
 
@@ -142,113 +144,18 @@
         <img src="/review/img/loading.gif" />
     </div>
 
-    <!-- Required scripts -->
+    <!-- Required scripts, vue loads first -->
+    <script src="/review/js/min/vue.min.js"></script>
     <script src="/review/js/min/review.min.js"></script>
-    <!-- Start running your app -->
-    <script>
-        window.app = new Vue({
-            el: '#review',
-            data() {
-                return {
-                    makers: null,
-                    currentView: "grid"
-                }
-            },
-            methods: {
-			switchToListView: function(ev)
-			{
-				this.currentView = 'list';
-			},
-			switchToGridView: function(ev)
-			{
-				this.currentView = 'grid';
-			}
-		},
-            mounted() {
-                axios
-                    .get('/wp-json/makerfaire/v2/fairedata/entryReview/260/BA23')
-                    .then(response => (this.makers = response.data.makers))
-            }
-        })
 
-    </script>
 
 </body>
 <footer>
-    <link rel='stylesheet' id='fontawesome-css'
-        href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.9.0/css/fontawesome.min.css' type='text/css'
-        media='all' />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <!-- Required Stylesheets -->
-    <link type="text/css" rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css" />
-
-
+    <link type="text/css" rel="stylesheet" href="css/style.min.css" />
     <!-- Load polyfills to support older browsers -->
     <script src="https://polyfill.io/v3/polyfill.min.js?features=es2015%2CIntersectionObserver"></script>
-
-    <style id='admin-bar-inline-css' type='text/css'>
-        label {
-            font-weight: 900;
-        }
-
-        img {
-            max-width: 100%
-        }
-
-        img.multiImage {
-            min-width: 200px
-        }
-
-        .card {
-            margin: 20px 0;
-        }
-
-        .header>div {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        h3 {
-            padding: 0px;
-        }
-
-        #loader {
-            display: none;
-            text-align: center;
-            margin-top: 50px;
-        }
-
-        #loader img {
-            width: 30px;
-        }
-
-        #review:empty+#loader {
-            display: block;
-        }
-
-        .bv-example-row {
-            margin-bottom: 20px;
-        }
-
-        ul.card-header-tabs li:last-of-type {
-            position: absolute;
-            bottom: 0px;
-        }
-
-        ul.card-header-tabs li:last-of-type .nav-link {
-            border: 0px !important;
-            background: transparent !important;
-            outline: none !important;
-        }
-
-        ul.card-header-tabs li:last-of-type .nav-link.active {
-            display: none;
-        }
-
-        .card-deck .card {
-            min-width: 250px;
-        }
-    </style>
 </footer>
 
 </html>
