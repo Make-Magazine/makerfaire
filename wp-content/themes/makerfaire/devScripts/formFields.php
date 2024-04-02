@@ -8,7 +8,8 @@ include 'db_connect.php';
 
 $sql = 'select display_meta from wp_gf_form_meta where form_id!=1 and form_id!=24';
 if(isset($_GET['formID'])) $sql.= ' and form_id='.$_GET['formID'];
-
+$sort = (isset( $_GET['sort'])?$_GET['sort']:'');
+$showAll = (isset( $_GET['showAll'])?TRUE:FALSE);
 $mysqli->query("SET NAMES 'utf8'");
 $result = $mysqli->query($sql) or trigger_error($mysqli->error."[$sql]");
 
@@ -107,12 +108,18 @@ $publicFields = array(109,11,110,105,151,22,16,27,32,151,160,234,217,158,258,224
         $array = (array) $array;
       }
 
-      //usort($jsonArray, "cmp");
-      //   var_dump($jsonArray);
+      if($sort=='id'){
+        usort($jsonArray, "cmp");
+      }
+      
+         //var_dump($jsonArray);
       foreach($jsonArray as $field){
-        if($field['type'] != 'html' && $field['type'] != 'section' && $field['type'] != 'page'){
+        if(
+          ($field['type'] != 'html' && $field['type'] != 'section' && $field['type'] != 'page') ||
+           ($showAll)
+        ){
           //var_dump($field);
-          $label = (isset($field['adminLabel']) && trim($field['adminLabel']) != '' ? $field['adminLabel'] : $field['label']);
+          $label   = (isset($field['adminLabel']) && trim($field['adminLabel']) != '' ? $field['adminLabel'] : $field['label']);
           $paramName=(isset($field['inputName'])?$field['inputName']:'');          
           switch($field['type']) {
             //parameter name is stored in a different place
