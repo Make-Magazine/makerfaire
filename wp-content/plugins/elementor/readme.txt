@@ -4,7 +4,7 @@ Tags: page builder, editor, landing page, drag-and-drop, elementor,
 Requires at least: 6.0
 Tested up to: 6.4
 Requires PHP: 7.4
-Stable tag: 3.20.2
+Stable tag: 3.20.3
 Beta tag: 3.20.0-beta4
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -250,6 +250,11 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 6. **Motion Effects** - Add entrance animations and transitions to any element in your website to captivate visitors.
 
 == Changelog ==
+
+= 3.20.3 - 2024-03-26 =
+
+* Fix: Edit with Elementor button is missing for pages that had been previously edited with Elementor when using WordPress 6.5 ([#25495](https://github.com/elementor/elementor/issues/25495), [#25496](https://github.com/elementor/elementor/issues/25496))
+* Security Fix: Improved code security enforcement in Text Path Widget
 
 = 3.20.2 - 2024-03-20 =
 

@@ -442,7 +442,7 @@ class GPPA_Object_Type_GF_Entry extends GPPA_Object_Type {
 				 */
 				if ( is_array( $filter_value ) ) {
 					if ( isset( $filter_value_field ) && rgar( $filter_value_field, 'dateType' ) === 'datedropdown' && count( $filter_value ) === 3 ) {
-						$format = rgar( $filter_value_field, 'dateFormat' );
+						$format      = rgar( $filter_value_field, 'dateFormat' );
 						$parsed_date = GFCommon::parse_date( array_values( $filter_value ), $format );
 
 						if ( count( array_filter( $parsed_date ) ) === 3 ) {

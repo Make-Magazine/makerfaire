@@ -227,6 +227,19 @@ abstract class GPPA_Object_Type {
 			}
 		}
 
+		/**
+		 * If the value is an array with two values, let's check if is an email field with confirmation enabled in
+		 * which case we'll return the first value.
+		 */
+		if ( is_array( $value ) && count( $value ) === 2 ) {
+			$field = GFAPI::get_field( rgar( $field, 'formId' ), $input_id );
+
+			if ( $field && $field->type === 'email' && rgar( $field, 'emailConfirmEnabled' ) ) {
+				$value = array_values( $value );
+				$value = $value[0];
+			}
+		}
+
 		return $value === '' ? null : $value;
 
 	}

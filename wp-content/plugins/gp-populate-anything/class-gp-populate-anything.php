@@ -805,6 +805,46 @@ class GP_Populate_Anything extends GP_Plugin {
 			'SHOW_ADMIN_FIELDS_IN_AJAX' => $show_admin_fields_in_ajax ? wp_create_nonce( 'show_admin_fields_in_ajax_' . $form['id'] ) : '',
 		) );
 
+		/**
+		 * Build a list of fields that are dynamically populated and belong to pages that are conditionally hidden,
+		 * so we can trigger a re-population of those fields when the page is made visible.
+		 */
+		$page_conditional_logic_field_map = array();
+		$pages_with_cl                    = array();
+
+		foreach ( $form_fields as $field ) {
+			if ( $field->type !== 'page' ) {
+				continue;
+			}
+
+			if ( ! is_array( rgar( $field, 'conditionalLogic' ) ) ) {
+				continue;
+			}
+
+			$pages_with_cl[ $field->pageNumber ] = $field->pageNumber;
+		}
+
+		foreach ( $form_fields as $field ) {
+			if (
+				! $this->is_field_dynamically_populated( $field )
+				&& ! ( is_string( $field->defaultValue ) && $this->live_merge_tags->has_live_merge_tag( $field->defaultValue ) )
+			) {
+				continue;
+			}
+
+			if ( ! in_array( $field->pageNumber, $pages_with_cl ) ) {
+				continue;
+			}
+
+			if ( ! isset( $page_conditional_logic_field_map[ $field->pageNumber ] ) ) {
+				$page_conditional_logic_field_map[ $field->pageNumber ] = array();
+			}
+
+			$page_conditional_logic_field_map[ $field->pageNumber ][] = $field->id;
+		}
+
+		$this->add_js_variable( "GPPA_PAGE_CONDITIONAL_LOGIC_MAP_{$form['id']}", $page_conditional_logic_field_map );
+
 		return $form;
 
 	}

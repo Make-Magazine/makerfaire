@@ -1,5 +1,13 @@
 # Elementor Pro - by Elementor.com
 
+#### 3.20.2 - 2024-03-26
+
+* Security Fix: Improved code security enforcement in Media Carousel widget
+* Security Fix: Improved code security enforcement in Form widget
+* Security Fix: Improved code security enforcement in Post Navigation widget
+* Security Fix: Improved code security enforcement in Gallery widget
+* Security Fix: Improved code security enforcement in Video Playlist widget
+
 #### 3.20.1 - 2024-03-20
 
 * Fix: Strengthened code integrity in deprecated Woo Single Element widget

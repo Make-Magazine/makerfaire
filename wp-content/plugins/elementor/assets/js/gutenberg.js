@@ -1,4 +1,4 @@
-/*! elementor - v3.20.0 - 20-03-2024 */
+/*! elementor - v3.20.0 - 26-03-2024 */
 /******/ (() => { // webpackBootstrap
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
@@ -79,7 +79,11 @@ var __webpack_exports__ = {};
       }
       if (!$('#elementor-editor').length) {
         self.cache.$editorPanel = $($('#elementor-gutenberg-panel').html());
-        self.cache.$gurenbergBlockList = self.cache.$gutenberg.find('.is-desktop-preview');
+        var editorButtonParent = self.cache.$gutenberg.find('.block-editor-writing-flow');
+        if (!editorButtonParent.length) {
+          editorButtonParent = self.cache.$gutenberg.find('.is-desktop-preview');
+        }
+        self.cache.$gurenbergBlockList = editorButtonParent;
         self.cache.$gurenbergBlockList.append(self.cache.$editorPanel);
         self.cache.$editorPanelButton = self.cache.$editorPanel.find('#elementor-go-to-edit-page-link');
         self.cache.$editorPanelButton.on('click', function (event) {

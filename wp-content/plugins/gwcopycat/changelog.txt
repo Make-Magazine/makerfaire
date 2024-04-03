@@ -1,6 +1,10 @@
 
 # Changelog
 
+## 1.4.76
+
+	- Fixed issue where copying values from Total fields could inadvertently remove decimals.
+
 ## 1.4.75
 
 	- Fixed an issue where copying List fields in a multi-page form could result in List field values reverting.

@@ -2,14 +2,14 @@
 # This file is distributed under the GPL2.
 msgid ""
 msgstr ""
-"Project-Id-Version: GP Populate Anything 2.0.35\n"
-"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/cloned-perk-Oq68Xx4e7\n"
+"Project-Id-Version: GP Populate Anything 2.0.36\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/cloned-perk-dtgOYIPHy\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2024-03-20T14:48:53+00:00\n"
+"POT-Creation-Date: 2024-03-28T14:01:10+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.10.0\n"
 "X-Domain: gp-populate-anything\n"
@@ -250,17 +250,17 @@ msgstr ""
 msgid "Too many values to display."
 msgstr ""
 
-#: class-gp-populate-anything.php:1789
-#: class-gp-populate-anything.php:4645
+#: class-gp-populate-anything.php:1829
+#: class-gp-populate-anything.php:4685
 #: includes/class-live-merge-tags.php:1296
 msgid "Fill Out Other Fields"
 msgstr ""
 
-#: class-gp-populate-anything.php:1810
+#: class-gp-populate-anything.php:1850
 msgid "No Results"
 msgstr ""
 
-#: class-gp-populate-anything.php:3227
+#: class-gp-populate-anything.php:3267
 msgid "Please fill out other fields."
 msgstr ""
 
@@ -428,26 +428,26 @@ msgstr ""
 msgid "BuddyPress Extended Profile"
 msgstr ""
 
-#: includes/class-object-type-user.php:262
+#: includes/class-object-type-user.php:260
 msgid "Display Name"
 msgstr ""
 
-#: includes/class-object-type-user.php:270
+#: includes/class-object-type-user.php:268
 msgid "User ID"
 msgstr ""
 
-#: includes/class-object-type-user.php:278
+#: includes/class-object-type-user.php:276
 msgid "Username"
 msgstr ""
 
-#: includes/class-object-type-user.php:286
+#: includes/class-object-type-user.php:284
 msgid "User Email"
 msgstr ""
 
-#: includes/class-object-type-user.php:294
+#: includes/class-object-type-user.php:292
 msgid "User URL"
 msgstr ""
 
-#: includes/class-object-type-user.php:302
+#: includes/class-object-type-user.php:300
 msgid "Role"
 msgstr ""

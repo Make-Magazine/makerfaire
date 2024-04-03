@@ -1,4 +1,4 @@
-/*! elementor - v3.20.0 - 20-03-2024 */
+/*! elementor - v3.20.0 - 26-03-2024 */
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
@@ -153,6 +153,7 @@ var _possibleConstructorReturn2 = _interopRequireDefault(__webpack_require__(/*!
 var _getPrototypeOf2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "../node_modules/@babel/runtime/helpers/getPrototypeOf.js"));
 var _app = _interopRequireDefault(__webpack_require__(/*! ./app */ "../modules/ai/assets/js/editor/app.js"));
 var _i18n = __webpack_require__(/*! @wordpress/i18n */ "@wordpress/i18n");
+var _aiPromotionInfotipWrapper = _interopRequireDefault(__webpack_require__(/*! ./components/ai-promotion-infotip-wrapper */ "../modules/ai/assets/js/editor/components/ai-promotion-infotip-wrapper.js"));
 function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = (0, _getPrototypeOf2.default)(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = (0, _getPrototypeOf2.default)(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return (0, _possibleConstructorReturn2.default)(this, result); }; }
 function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
 var AiBehavior = /*#__PURE__*/function (_Marionette$Behavior) {
@@ -224,6 +225,29 @@ var AiBehavior = /*#__PURE__*/function (_Marionette$Behavior) {
       return isDefaultValue ? this.getOption('buttonLabel') : this.getOption('editButtonLabel');
     }
   }, {
+    key: "getPromotionTexts",
+    value: function getPromotionTexts(controlType) {
+      switch (controlType) {
+        case 'textarea':
+          return {
+            header: (0, _i18n.__)("Writer's block? Never again!", 'elementor'),
+            contentText: (0, _i18n.__)('Elementor AI can draft your initial content and help you beat the blank page.', 'elementor')
+          };
+        case 'media':
+          return {
+            header: (0, _i18n.__)('Unleash your creativity.', 'elementor'),
+            contentText: (0, _i18n.__)('With Elementor AI, you can generate any image you would like for your website.', 'elementor')
+          };
+        case 'code':
+          return {
+            header: (0, _i18n.__)('Let the elves take care of it.', 'elementor'),
+            contentText: (0, _i18n.__)('Elementor AI can help you write code faster and more efficiently.', 'elementor')
+          };
+        default:
+          return null;
+      }
+    }
+  }, {
     key: "onRender",
     value: function onRender() {
       var isPromotion = !this.config.is_get_started;
@@ -250,6 +274,38 @@ var AiBehavior = /*#__PURE__*/function (_Marionette$Behavior) {
         $wrap = this.$el.find('.elementor-control-title');
       }
       $wrap.after($button);
+      var controlType = this.view.model.get('type');
+      var promotionTexts = this.getPromotionTexts(controlType);
+      if (!promotionTexts) {
+        return;
+      }
+      var editorSessionValue = sessionStorage.getItem('ai_promotion_introduction_editor_session_key');
+      if (!editorSessionValue || editorSessionValue !== EDITOR_SESSION_ID) {
+        sessionStorage.setItem('ai_promotion_introduction_editor_session_key', EDITOR_SESSION_ID);
+      } else {
+        return;
+      }
+      setTimeout(function () {
+        var _elementor2, _elementor2$getPrefer;
+        var rootBox = $button[0].getBoundingClientRect();
+        if (!rootBox || 0 === rootBox.width || 0 === rootBox.height) {
+          return;
+        }
+        var rootElement = document.createElement('div');
+        document.body.append(rootElement);
+        var _ReactUtils$render = ReactUtils.render( /*#__PURE__*/_react.default.createElement(_aiPromotionInfotipWrapper.default, {
+            anchor: $button[0],
+            header: promotionTexts.header,
+            contentText: promotionTexts.contentText,
+            controlType: controlType,
+            unmountAction: function unmountAction() {
+              unmount();
+            },
+            colorScheme: ((_elementor2 = elementor) === null || _elementor2 === void 0 ? void 0 : (_elementor2$getPrefer = _elementor2.getPreferences) === null || _elementor2$getPrefer === void 0 ? void 0 : _elementor2$getPrefer.call(_elementor2, 'ui_theme')) || 'auto',
+            isRTL: elementorCommon.config.isRTL
+          }), rootElement),
+          unmount = _ReactUtils$render.unmount;
+      }, 1000);
     }
   }]);
   return AiBehavior;
@@ -490,6 +546,256 @@ App.propTypes = {
 };
 var _default = App;
 exports["default"] = _default;
+
+/***/ }),
+
+/***/ "../modules/ai/assets/js/editor/components/ai-promotion-infotip-content.js":
+/*!*********************************************************************************!*\
+  !*** ../modules/ai/assets/js/editor/components/ai-promotion-infotip-content.js ***!
+  \*********************************************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+/* provided dependency */ var PropTypes = __webpack_require__(/*! prop-types */ "../node_modules/prop-types/index.js");
+
+
+var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports["default"] = void 0;
+var _react = _interopRequireDefault(__webpack_require__(/*! react */ "react"));
+var _ui = __webpack_require__(/*! @elementor/ui */ "@elementor/ui");
+var _i18n = __webpack_require__(/*! @wordpress/i18n */ "@wordpress/i18n");
+var AiPromotionInfotipContent = function AiPromotionInfotipContent(props) {
+  return /*#__PURE__*/_react.default.createElement(_ui.Card, {
+    sx: {
+      width: 300
+    },
+    elevation: 0
+  }, /*#__PURE__*/_react.default.createElement(_ui.CardHeader, {
+    subheader: "ELEMENTOR AI"
+  }), /*#__PURE__*/_react.default.createElement(_ui.CardContent, null, /*#__PURE__*/_react.default.createElement(_ui.Typography, {
+    variant: "subtitle2",
+    color: "text.secondary"
+  }, props.header), /*#__PURE__*/_react.default.createElement(_ui.Typography, {
+    color: "text.secondary"
+  }, props.contentText)), /*#__PURE__*/_react.default.createElement(_ui.CardActions, {
+    disableSpacing: true,
+    sx: {
+      justifyContent: 'flex-end',
+      gap: 1
+    }
+  }, /*#__PURE__*/_react.default.createElement(_ui.Button, {
+    onClick: function onClick() {
+      return props.onClose();
+    },
+    color: "secondary"
+  }, (0, _i18n.__)('Not Now', 'elementor')), /*#__PURE__*/_react.default.createElement(_ui.Button, {
+    onClick: function onClick() {
+      return props.onClick();
+    },
+    variant: "contained"
+  }, (0, _i18n.__)('Try it now', 'elementor'))));
+};
+AiPromotionInfotipContent.propTypes = {
+  header: PropTypes.string,
+  contentText: PropTypes.string,
+  onClick: PropTypes.func,
+  onClose: PropTypes.func
+};
+var _default = AiPromotionInfotipContent;
+exports["default"] = _default;
+
+/***/ }),
+
+/***/ "../modules/ai/assets/js/editor/components/ai-promotion-infotip-wrapper.js":
+/*!*********************************************************************************!*\
+  !*** ../modules/ai/assets/js/editor/components/ai-promotion-infotip-wrapper.js ***!
+  \*********************************************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+/* provided dependency */ var PropTypes = __webpack_require__(/*! prop-types */ "../node_modules/prop-types/index.js");
+
+
+var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports["default"] = void 0;
+var _react = _interopRequireDefault(__webpack_require__(/*! react */ "react"));
+var _aiPromotionInfotip = _interopRequireDefault(__webpack_require__(/*! ./ai-promotion-infotip */ "../modules/ai/assets/js/editor/components/ai-promotion-infotip.js"));
+var _aiPromotionInfotipContent = _interopRequireDefault(__webpack_require__(/*! ./ai-promotion-infotip-content */ "../modules/ai/assets/js/editor/components/ai-promotion-infotip-content.js"));
+var _ui = __webpack_require__(/*! @elementor/ui */ "@elementor/ui");
+var _useIntroduction2 = _interopRequireDefault(__webpack_require__(/*! ../hooks/use-introduction */ "../modules/ai/assets/js/editor/hooks/use-introduction.js"));
+var _focusOutListener = __webpack_require__(/*! ../helpers/focus-out-listener */ "../modules/ai/assets/js/editor/helpers/focus-out-listener.js");
+var AiPromotionInfotipWrapper = function AiPromotionInfotipWrapper(_ref) {
+  var anchor = _ref.anchor,
+    header = _ref.header,
+    contentText = _ref.contentText,
+    controlType = _ref.controlType,
+    unmountAction = _ref.unmountAction,
+    colorScheme = _ref.colorScheme,
+    isRTL = _ref.isRTL;
+  var focusOutListener = (0, _focusOutListener.useFocusOutListener)();
+  var _useIntroduction = (0, _useIntroduction2.default)("ai_promotion_introduction_".concat(controlType)),
+    isViewed = _useIntroduction.isViewed,
+    markAsViewed = _useIntroduction.markAsViewed;
+  if (isViewed) {
+    return;
+  }
+  return /*#__PURE__*/_react.default.createElement(_ui.DirectionProvider, {
+    rtl: isRTL
+  }, /*#__PURE__*/_react.default.createElement(_ui.ThemeProvider, {
+    colorScheme: colorScheme
+  }, /*#__PURE__*/_react.default.createElement(_focusOutListener.FocusOutListener, {
+    listener: focusOutListener,
+    onFocusOut: function onFocusOut() {
+      return unmountAction();
+    }
+  }, /*#__PURE__*/_react.default.createElement(_aiPromotionInfotip.default, {
+    anchor: anchor,
+    focusOutListener: focusOutListener,
+    content: /*#__PURE__*/_react.default.createElement(_aiPromotionInfotipContent.default, {
+      focusOutListener: focusOutListener,
+      header: header,
+      contentText: contentText,
+      onClose: function onClose() {
+        markAsViewed();
+        focusOutListener.remove();
+        unmountAction();
+      },
+      onClick: function onClick() {
+        markAsViewed();
+        focusOutListener.remove();
+        unmountAction();
+        anchor.click();
+      }
+    })
+  }))));
+};
+AiPromotionInfotipWrapper.propTypes = {
+  anchor: PropTypes.object,
+  header: PropTypes.string,
+  contentText: PropTypes.string,
+  controlType: PropTypes.string,
+  unmountAction: PropTypes.func,
+  colorScheme: PropTypes.string,
+  isRTL: PropTypes.bool
+};
+var _default = AiPromotionInfotipWrapper;
+exports["default"] = _default;
+
+/***/ }),
+
+/***/ "../modules/ai/assets/js/editor/components/ai-promotion-infotip.js":
+/*!*************************************************************************!*\
+  !*** ../modules/ai/assets/js/editor/components/ai-promotion-infotip.js ***!
+  \*************************************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+/* provided dependency */ var PropTypes = __webpack_require__(/*! prop-types */ "../node_modules/prop-types/index.js");
+
+
+var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports["default"] = AiPromotionInfotip;
+var _react = _interopRequireDefault(__webpack_require__(/*! react */ "react"));
+var _ui = __webpack_require__(/*! @elementor/ui */ "@elementor/ui");
+var StyledPopper = (0, _ui.styled)(_ui.Popper)(function (_ref) {
+  var theme = _ref.theme;
+  return {
+    '& .MuiTooltip-tooltip': {
+      width: 500,
+      minHeight: 50,
+      padding: 0,
+      backgroundColor: theme.palette.background.paper,
+      color: theme.palette.text.primary,
+      // The shadow angle should guarantee that the arrow is visible clearly.
+      boxShadow: '0px -6px 10px 2px rgba(0,0,0,0.025),6px 0px 10px 2px rgba(0,0,0,0.025),-6px 0px 10px 2px rgba(0,0,0,0.025),0px 6px 10px 2px rgba(0,0,0,0.025)'
+    },
+    '& .MuiTooltip-arrow': {
+      color: theme.palette.background.paper,
+      // Arrow size.
+      fontSize: '1.2rem'
+    },
+    '&.MuiTooltip-popper .MuiTooltip-tooltip.MuiTooltip-tooltipPlacementBottom': {
+      marginTop: theme.spacing(2)
+    },
+    '&.MuiTooltip-popper .MuiTooltip-tooltip.MuiTooltip-tooltipPlacementRight': {
+      marginLeft: theme.spacing(2)
+    },
+    '&.MuiTooltip-popper .MuiTooltip-tooltip.MuiTooltip-tooltipPlacementLeft': {
+      marginRight: theme.spacing(2)
+    },
+    '&.MuiTooltip-popper .MuiTooltip-tooltip.MuiTooltip-tooltipPlacementTop': {
+      marginBottom: theme.spacing(2)
+    }
+  };
+});
+function AiPromotionInfotip(_ref2) {
+  var anchor = _ref2.anchor,
+    content = _ref2.content,
+    focusOutListener = _ref2.focusOutListener;
+  var positionRef = _react.default.useRef({
+    x: 0,
+    y: 0,
+    width: 0,
+    height: 0
+  });
+  var popperRef = _react.default.useRef(null);
+  var showTooltip = function showTooltip() {
+    var _anchor$getBoundingCl = anchor.getBoundingClientRect(),
+      x = _anchor$getBoundingCl.x,
+      y = _anchor$getBoundingCl.y,
+      width = _anchor$getBoundingCl.width,
+      height = _anchor$getBoundingCl.height;
+    positionRef.current = {
+      x: x,
+      y: y,
+      width: width,
+      height: height
+    };
+    if (null === popperRef.current) {
+      return;
+    }
+    popperRef.current.update();
+  };
+  _react.default.useEffect(function () {
+    showTooltip();
+  }, []);
+  return /*#__PURE__*/_react.default.createElement(_ui.Tooltip, {
+    arrow: true,
+    open: true,
+    title: content,
+    placement: "right",
+    PopperComponent: StyledPopper,
+    PopperProps: {
+      onClick: function onClick() {
+        return focusOutListener.reset();
+      },
+      popperRef: popperRef,
+      anchorEl: {
+        getBoundingClientRect: function getBoundingClientRect() {
+          return new DOMRect(positionRef.current.x, positionRef.current.y, positionRef.current.width, positionRef.current.height);
+        }
+      }
+    }
+  }, /*#__PURE__*/_react.default.createElement("div", {
+    style: {
+      display: 'none'
+    }
+  }));
+}
+AiPromotionInfotip.propTypes = {
+  anchor: PropTypes.element.isRequired,
+  content: PropTypes.object.isRequired,
+  focusOutListener: PropTypes.object.isRequired
+};
 
 /***/ }),
 
@@ -933,9 +1239,9 @@ var PromptErrorMessage = function PromptErrorMessage(_ref) {
       };
     }
     return {
-      text: /*#__PURE__*/_react.default.createElement(_ui.AlertTitle, null, (0, _i18n.__)('Your free trial is up!', 'elementor')),
       // Translators: %s is the feature name.
-      description: sprintf((0, _i18n.__)('Upgrade now to keep using %s', 'elementor'), featureName),
+      text: /*#__PURE__*/_react.default.createElement(_ui.AlertTitle, null, sprintf((0, _i18n.__)('You\'ve used all AI credits for %s.', 'elementor'), featureName.toLowerCase())),
+      description: (0, _i18n.__)('Upgrade now to keep using this feature. You still have credits for other AI features (Text, Code, Images, Containers, etc.)', 'elementor'),
       buttonText: (0, _i18n.__)('Upgrade now', 'elementor'),
       buttonAction: function buttonAction() {
         return window.open('https://go.elementor.com/ai-popup-purchase-limit-reached/', '_blank');
@@ -3095,20 +3401,26 @@ var _extends2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/he
 var _defineProperty2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/defineProperty */ "../node_modules/@babel/runtime/helpers/defineProperty.js"));
 var _ui = __webpack_require__(/*! @elementor/ui */ "@elementor/ui");
 var _excluded = ["onClose", "usagePercentage", "hasSubscription"];
-var _title, _description, _url, _title2, _description2, _url2;
+var _title, _description, _url, _title2, _description2, _url2, _title3, _description3, _url3;
 var KEY_SUBSCRIPTION = 'subscription';
 var KEY_NO_SUBSCRIPTION = 'noSubscription';
 var alertConfigs = [{
   threshold: 95,
-  title: (_title = {}, (0, _defineProperty2.default)(_title, KEY_SUBSCRIPTION, __('You’ve used over 95% of your Elementor AI plan.', 'elementor')), (0, _defineProperty2.default)(_title, KEY_NO_SUBSCRIPTION, __('You’ve used over 95% of the free trial.', 'elementor')), _title),
-  description: (_description = {}, (0, _defineProperty2.default)(_description, KEY_SUBSCRIPTION, __('Get maximum access.', 'elementor')), (0, _defineProperty2.default)(_description, KEY_NO_SUBSCRIPTION, __('Upgrade now to keep using this feature, you can still use other AI features.', 'elementor')), _description),
+  title: (_title = {}, (0, _defineProperty2.default)(_title, KEY_SUBSCRIPTION, __('You’ve used over 95% of your Elementor AI plan.', 'elementor')), (0, _defineProperty2.default)(_title, KEY_NO_SUBSCRIPTION, __('You’ve used 95% of credits for this AI feature.', 'elementor')), _title),
+  description: (_description = {}, (0, _defineProperty2.default)(_description, KEY_SUBSCRIPTION, __('Get maximum access.', 'elementor')), (0, _defineProperty2.default)(_description, KEY_NO_SUBSCRIPTION, __('Upgrade now to keep using this feature. You still have credits for other AI features (Text, Code, Images, Containers, etc.)', 'elementor')), _description),
   url: (_url = {}, (0, _defineProperty2.default)(_url, KEY_SUBSCRIPTION, 'https://go.elementor.com/ai-banner-paid-95-limit-reach/'), (0, _defineProperty2.default)(_url, KEY_NO_SUBSCRIPTION, 'https://go.elementor.com/ai-banner-free-95-limit-reach/'), _url),
   color: 'error'
 }, {
   threshold: 80,
-  title: (_title2 = {}, (0, _defineProperty2.default)(_title2, KEY_SUBSCRIPTION, __('You’ve used over 80% of your Elementor AI plan.', 'elementor')), (0, _defineProperty2.default)(_title2, KEY_NO_SUBSCRIPTION, __('You’ve used over 80% of the free trial.', 'elementor')), _title2),
-  description: (_description2 = {}, (0, _defineProperty2.default)(_description2, KEY_SUBSCRIPTION, __('Get maximum access.', 'elementor')), (0, _defineProperty2.default)(_description2, KEY_NO_SUBSCRIPTION, __('Upgrade now to keep using this feature, you can still use other AI features.', 'elementor')), _description2),
+  title: (_title2 = {}, (0, _defineProperty2.default)(_title2, KEY_SUBSCRIPTION, __('You’ve used over 80% of your Elementor AI plan.', 'elementor')), (0, _defineProperty2.default)(_title2, KEY_NO_SUBSCRIPTION, __('You’ve used 80% of credits for this AI feature.', 'elementor')), _title2),
+  description: (_description2 = {}, (0, _defineProperty2.default)(_description2, KEY_SUBSCRIPTION, __('Get maximum access.', 'elementor')), (0, _defineProperty2.default)(_description2, KEY_NO_SUBSCRIPTION, __('Upgrade now to keep using this feature. You still have credits for other AI features (Text, Code, Images, Containers, etc.)', 'elementor')), _description2),
   url: (_url2 = {}, (0, _defineProperty2.default)(_url2, KEY_SUBSCRIPTION, 'https://go.elementor.com/ai-banner-paid-80-limit-reach/'), (0, _defineProperty2.default)(_url2, KEY_NO_SUBSCRIPTION, 'https://go.elementor.com/ai-banner-free-80-limit-reach/'), _url2),
+  color: 'warning'
+}, {
+  threshold: 75,
+  title: (_title3 = {}, (0, _defineProperty2.default)(_title3, KEY_SUBSCRIPTION, __('You’ve used over 75% of your Elementor AI plan.', 'elementor')), (0, _defineProperty2.default)(_title3, KEY_NO_SUBSCRIPTION, __(' You’ve used 75% of credits for this AI feature.', 'elementor')), _title3),
+  description: (_description3 = {}, (0, _defineProperty2.default)(_description3, KEY_SUBSCRIPTION, __('Get maximum access.', 'elementor')), (0, _defineProperty2.default)(_description3, KEY_NO_SUBSCRIPTION, __('Upgrade now to keep using this feature. You still have credits for other AI features (Text, Code, Images, Containers, etc.)', 'elementor')), _description3),
+  url: (_url3 = {}, (0, _defineProperty2.default)(_url3, KEY_SUBSCRIPTION, 'https://go.elementor.com/ai-banner-paid-80-limit-reach/'), (0, _defineProperty2.default)(_url3, KEY_NO_SUBSCRIPTION, 'https://go.elementor.com/ai-banner-free-80-limit-reach/'), _url3),
   color: 'warning'
 }];
 var UpgradeButton = function UpgradeButton(props) {
@@ -3462,6 +3774,83 @@ var daysDiff = function daysDiff(firstDate, secondDate) {
   return Math.floor((secondUTC - firstUTC) / MS_PER_DAY);
 };
 exports.daysDiff = daysDiff;
+
+/***/ }),
+
+/***/ "../modules/ai/assets/js/editor/helpers/focus-out-listener.js":
+/*!********************************************************************!*\
+  !*** ../modules/ai/assets/js/editor/helpers/focus-out-listener.js ***!
+  \********************************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+/* provided dependency */ var PropTypes = __webpack_require__(/*! prop-types */ "../node_modules/prop-types/index.js");
+
+
+var _typeof = __webpack_require__(/*! @babel/runtime/helpers/typeof */ "../node_modules/@babel/runtime/helpers/typeof.js");
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports.FocusOutListener = FocusOutListener;
+exports.useFocusOutListener = useFocusOutListener;
+var React = _interopRequireWildcard(__webpack_require__(/*! react */ "react"));
+function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function _getRequireWildcardCache(nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
+function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || _typeof(obj) !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
+function FocusOutListener(_ref) {
+  var children = _ref.children,
+    listener = _ref.listener,
+    onFocusOut = _ref.onFocusOut;
+  var indicatorRef = listener.indicatorRef,
+    reset = listener.reset,
+    remove = listener.remove,
+    runAction = listener.runAction;
+  React.useEffect(function () {
+    reset();
+    return remove();
+  }, []);
+  return /*#__PURE__*/React.createElement(React.Fragment, null, children, /*#__PURE__*/React.createElement("input", {
+    style: {
+      width: 0,
+      height: 0,
+      padding: 0,
+      margin: 0,
+      outline: 0,
+      border: 0,
+      opacity: 0,
+      position: 'fixed'
+    },
+    onFocus: remove,
+    onBlur: function onBlur() {
+      return runAction(onFocusOut);
+    },
+    ref: indicatorRef
+  }));
+}
+function useFocusOutListener() {
+  var focusOutTimeout = React.useRef(null);
+  var indicatorRef = React.useRef(null);
+  var reset = function reset() {
+    var _indicatorRef$current;
+    return (_indicatorRef$current = indicatorRef.current) === null || _indicatorRef$current === void 0 ? void 0 : _indicatorRef$current.focus();
+  };
+  var remove = function remove() {
+    return clearTimeout(focusOutTimeout.current);
+  };
+  var runAction = function runAction(callback) {
+    focusOutTimeout.current = setTimeout(callback, 250);
+  };
+  return {
+    indicatorRef: indicatorRef,
+    reset: reset,
+    remove: remove,
+    runAction: runAction
+  };
+}
+FocusOutListener.propTypes = {
+  children: PropTypes.node,
+  listener: PropTypes.object,
+  onFocusOut: PropTypes.func
+};
 
 /***/ }),
 

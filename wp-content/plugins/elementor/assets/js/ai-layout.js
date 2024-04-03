@@ -1,4 +1,4 @@
-/*! elementor - v3.20.0 - 20-03-2024 */
+/*! elementor - v3.20.0 - 26-03-2024 */
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
@@ -1343,9 +1343,9 @@ var PromptErrorMessage = function PromptErrorMessage(_ref) {
       };
     }
     return {
-      text: /*#__PURE__*/_react.default.createElement(_ui.AlertTitle, null, (0, _i18n.__)('Your free trial is up!', 'elementor')),
       // Translators: %s is the feature name.
-      description: sprintf((0, _i18n.__)('Upgrade now to keep using %s', 'elementor'), featureName),
+      text: /*#__PURE__*/_react.default.createElement(_ui.AlertTitle, null, sprintf((0, _i18n.__)('You\'ve used all AI credits for %s.', 'elementor'), featureName.toLowerCase())),
+      description: (0, _i18n.__)('Upgrade now to keep using this feature. You still have credits for other AI features (Text, Code, Images, Containers, etc.)', 'elementor'),
       buttonText: (0, _i18n.__)('Upgrade now', 'elementor'),
       buttonAction: function buttonAction() {
         return window.open('https://go.elementor.com/ai-popup-purchase-limit-reached/', '_blank');
@@ -5105,7 +5105,7 @@ var useScreenshot = function useScreenshot(type, onData) {
         return _ref.apply(this, arguments);
       };
     }()).catch(function (err) {
-      setError(err.message || err);
+      setError(err.extra_data ? err : err.message || err);
       throw err;
     }).finally(function () {
       return setIsLoading(false);
