@@ -3,8 +3,7 @@
 	[tab_content]
 		[block]
 			[column]
-                [embed]{Primary Project Photo:22:thumbnail}[/embed]
-				
+                {Primary Project Photo:22}
 				{Project Website:27}
 
 				{date_created}
@@ -14,7 +13,7 @@
 				{Description:16}
 			[/column]
 			[column]
-				{:339}
+				{:339:label}
 				{:55}
 				{:320}
 				{:67}
@@ -71,6 +70,23 @@
                 {:117}
                 {:67}
                 {:122}
+			[/column]			
+		[/block]
+	[/tab_content]	
+[/tab]
+[tab]
+	[title]Flags and Notes[/title]
+	[tab_content]
+		[block]
+			[column]
+				{:442}
+				{:304}
+				{:302}
+				{:879}
+			[/column]
+			[column]
+				Notes:
+				{workflow_note}
 			[/column]			
 		[/block]
 	[/tab_content]	

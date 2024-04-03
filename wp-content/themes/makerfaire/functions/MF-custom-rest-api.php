@@ -108,7 +108,7 @@ function mf_mfapi(WP_REST_Request $request) {
     //print_r($api_path);
     //return;
     // Load the file and process everything
-    include_once( $api_path );
+    include_once($api_path);
 }
 
 function mf_ribbons(WP_REST_Request $request) {
@@ -134,40 +134,43 @@ function mf_updateEntry(WP_REST_Request $request) {
 }
 
 function mf_fairedata(WP_REST_Request $request) {
-    $type = $request['type'];    
+    $type = $request['type'];
     $dataids = $request['dataids'];
     $faireID = $request['faireid'];
 
     if ($type != '' && $dataids != '') {
         $data = array();
         switch ($type) {
-            case 'mtm':                
+            case 'mtm':
                 $data = getMTMentries($dataids, $faireID);
                 break;
             case 'makerDir':
                 $data = getMakerDirEntries($dataids);
-                break;    
+                break;
             case 'categories':
                 $data = getCategories($dataids);
                 break;
             case 'schedule':
                 $data = getSchedule($dataids, $faireID);
                 break;
+            case 'entryReview':
+                $data = getAllEntries($dataids, $faireID);
+                break;
         }
-    }else{
+    } else {
         $data['error'] = 'Error: Type or data ids not submitted';
     }
 
     wp_send_json($data);
     exit;
 }
-function getMakerDirEntries($years) {            
+function getMakerDirEntries($years) {
     $data['entity'] = array();
     $yearsArr = array_map('intval', explode("-", $years));
 
     global $wpdb;
     // Data to return title, public_desc, project_photo, main_category, faire_name, faire_year, maker_list
-        //find all active entries for selected years
+    //find all active entries for selected years
     $query = "select blog_id, entry_id, title, public_desc, project_photo, main_category, category, faire_name, faire_year,
                 (select concat(first_name, ' ', last_name)
                     from wp_mf_dir_maker_to_entry maker2entry 
@@ -177,13 +180,13 @@ function getMakerDirEntries($years) {
                     and maker2entry.maker_type <> 'contact'
                 order by maker_type limit 1) as maker, entry_link
                 from wp_mf_dir_entry where faire_year in(" . implode(",", $yearsArr) . ") and LOWER(status)='accepted'";
-    
+
     $results = $wpdb->get_results($query);
 
     //build entry array
     $entries = array();
-    foreach ($results as $result) {        
-        $entry_id = $result->entry_id;    
+    foreach ($results as $result) {
+        $entry_id = $result->entry_id;
         $makerList = $result->maker;
 
         //project photo
@@ -196,29 +199,28 @@ function getMakerDirEntries($years) {
 
         //get array of categories. set name based on category id
         $category = array();
-        
+
         $leadCategory = explode(',', $result->category);
         foreach ($leadCategory as $leadCat) {
             $value = html_entity_decode($leadCat, ENT_QUOTES);
-            if($value!='') $category[] = $value;    
+            if ($value != '') $category[] = $value;
         }
         $primeCat = html_entity_decode($result->main_category, ENT_QUOTES);
-        if($primeCat!='')   $category[]=$primeCat;
-              
+        if ($primeCat != '')   $category[] = $primeCat;
+
         $desc = substr(html_entity_decode($result->public_desc, ENT_QUOTES), 0, 75);
         $data['entity'][] = array(
             'id' => $entry_id,
             'link' => $result->entry_link,
-            'name' => substr(html_entity_decode($result->title, ENT_QUOTES),0,35),
+            'name' => substr(html_entity_decode($result->title, ENT_QUOTES), 0, 35),
             'large_img_url' => $projPhoto,
             'categories' => (array) $primeCat,
-            'description' => $desc,    
-            'faire_year' => $result->faire_year,    
-            'faire_name' => trim($result->faire_name),    
-            'blog_id' =>    $result->blog_id,    
-            'makerList' => $makerList              
+            'description' => $desc,
+            'faire_year' => $result->faire_year,
+            'faire_name' => trim($result->faire_name),
+            'blog_id' =>    $result->blog_id,
+            'makerList' => $makerList
         );
-        
     }
 
     //randomly order entries
@@ -228,12 +230,12 @@ function getMakerDirEntries($years) {
 }
 //end getMakerDirEntries
 
-function getMTMentries($formIDs = '', $faireID='', $years='') {        
+function getMTMentries($formIDs = '', $faireID = '', $years = '') {
     global $wpdb;
-    $data['entity'] = array();  
+    $data['entity'] = array();
 
     $formIDarr = array_map('intval', explode("-", $formIDs));
-    
+
     //find if the show location switch is turned on
     $showLoc = false;
 
@@ -272,7 +274,7 @@ function getMTMentries($formIDs = '', $faireID='', $years='') {
               FROM   wp_gf_entry AS entry 
               WHERE  entry.status = 'active' 
                      AND entry.form_id IN(" . implode(",", $formIDarr) . ")";
-                     
+
     //legacy faires have location set, virtual faires do not. 
     if ($faireID == 'VMF2020') {
         $query = "SELECT  entry.id                         AS entry_id, 
@@ -288,7 +290,7 @@ function getMTMentries($formIDs = '', $faireID='', $years='') {
               WHERE  entry.status = 'active' 
                      AND entry.form_id IN(" . implode(",", $formIDarr) . ")";
     }
-    
+
     $results = $wpdb->get_results($query);
 
     //build entry array
@@ -310,11 +312,11 @@ function getMTMentries($formIDs = '', $faireID='', $years='') {
             $overrideImg = findOverride($result->entry_id, 'mtm');
             if ($overrideImg != '')
                 $projPhoto = $overrideImg;
-            
+
             //if the main project photo isn't set but the photo gallery is, use the first image in the photo gallery            
-            $project_gallery = (isset($result->proj_photo_gallery) ? explode(",", str_replace(array( '[', ']', '"' ), '', $result->proj_photo_gallery)) : '');
-            if($projPhoto=='' && is_array($project_gallery)){                
-                $projPhoto = $project_gallery[0];                                
+            $project_gallery = (isset($result->proj_photo_gallery) ? explode(",", str_replace(array('[', ']', '"'), '', $result->proj_photo_gallery)) : '');
+            if ($projPhoto == '' && is_array($project_gallery)) {
+                $projPhoto = $project_gallery[0];
             }
 
             $fitPhoto = legacy_get_resized_remote_image_url($projPhoto, 350, 350);
@@ -322,33 +324,33 @@ function getMTMentries($formIDs = '', $faireID='', $years='') {
             // Check to see if the fit photo returned an image
             if ($fitPhoto == NULL)
                 $fitPhoto = $projPhoto;
-                
+
             $makerList = getMakerList($result->entry_id, $faireID);
 
             //get array of categories. set name based on category id
             $category = array();
-            
+
             $leadCategory = explode(',', $result->second_cat);
             foreach ($leadCategory as $leadCat) {
                 $value = htmlspecialchars_decode(get_CPT_name($leadCat));
-                if($value!='') $category[] = $value;    
+                if ($value != '') $category[] = $value;
             }
             $primeCat = htmlspecialchars_decode(get_CPT_name($result->prime_cat));
-            if($primeCat!='')   $category[]=$primeCat;
-              
+            if ($primeCat != '')   $category[] = $primeCat;
+
             //weekends               
-            if(isset($result->weekends)){
+            if (isset($result->weekends)) {
                 $weekends = explode(',', $result->weekends);
-                foreach ($weekends as &$weekend){
-                    if($weekend=='Wk1' || $weekend=='Fri1'){
-                        $weekend='First Weekend';
-                    }elseif($weekend=='Wk2' || $weekend=='Fri2'){
-                        $weekend='Second Weekend';
+                foreach ($weekends as &$weekend) {
+                    if ($weekend == 'Wk1' || $weekend == 'Fri1') {
+                        $weekend = 'First Weekend';
+                    } elseif ($weekend == 'Wk2' || $weekend == 'Fri2') {
+                        $weekend = 'Second Weekend';
                     }
                 }
-            }    else{
-                $weekends='';
-            }                             
+            } else {
+                $weekends = '';
+            }
 
             //don't return location information if the show location isn't set
 
@@ -361,12 +363,12 @@ function getMTMentries($formIDs = '', $faireID='', $years='') {
                 $locations = array(html_entity_decode(get_CPT_name($result->area)));
             }
 
-            if($locations==NULL)
+            if ($locations == NULL)
                 $locations = '';
 
             $data['entity'][] = array(
                 'id' => $result->entry_id,
-                'link' => '/maker/entry/'.$result->entry_id,
+                'link' => '/maker/entry/' . $result->entry_id,
                 'name' => $result->proj_name,
                 'large_img_url' => $projPhoto,
                 'categories' => $category,
@@ -439,14 +441,14 @@ function getSchedule($formIDs, $faireID) {
                left outer join wp_gf_entry as entry on schedule.entry_id = entry.id
                left outer join wp_gf_entry_meta as lead_detail on schedule.entry_id = lead_detail.entry_id and lead_detail.meta_key = '303'
                where entry.status = 'active' and lead_detail.meta_value='Accepted' "
-            . " and lead_detail.form_id in(" . implode(",", $formIDarr) . ") "
-            /* code to hide scheduled items as they occur */
-                //. " and schedule.end_dt >= now()+ INTERVAL -4 HOUR  " //eastern time
-               // . " and schedule.end_dt >= now()+ INTERVAL -7 HOUR  " //Bay Area time
-            . "order by subarea.sort_order";
+        . " and lead_detail.form_id in(" . implode(",", $formIDarr) . ") "
+        /* code to hide scheduled items as they occur */
+        //. " and schedule.end_dt >= now()+ INTERVAL -4 HOUR  " //eastern time
+        // . " and schedule.end_dt >= now()+ INTERVAL -7 HOUR  " //Bay Area time
+        . "order by subarea.sort_order";
     //TBD check if faire end date is beyond today. if it is hide this code, otherwise show it
     // " and schedule.end_dt >= now()+ INTERVAL -7 HOUR  " 
-    
+
     $schedule = $wpdb->get_results($query);
 
     //retrieve project name, img (22), maker list, topics
@@ -480,15 +482,15 @@ function getSchedule($formIDs, $faireID) {
             $projPhoto = $overrideImg;
 
         //if the main project photo isn't set but the photo gallery is, use the first image in the photo gallery            
-        $project_gallery = (isset($row->proj_photo_gallery) ? explode(",", str_replace(array( '[', ']', '"' ), '', $row->proj_photo_gallery)) : '');
-        if($projPhoto=='' && is_array($project_gallery)){                
-            $projPhoto = $project_gallery[0];                                
+        $project_gallery = (isset($row->proj_photo_gallery) ? explode(",", str_replace(array('[', ']', '"'), '', $row->proj_photo_gallery)) : '');
+        if ($projPhoto == '' && is_array($project_gallery)) {
+            $projPhoto = $project_gallery[0];
         }
 
         $fitPhoto = legacy_get_resized_remote_image_url($projPhoto, 200, 200);
         if ($fitPhoto == NULL)
             $fitPhoto = $projPhoto;
-        
+
         //format start and end date
         $startDay = date_create($row->time_start);
         $startDate = date_format($startDay, 'Y-m-d') . 'T' . date_format($startDay, 'H:i:s');
@@ -568,6 +570,201 @@ function getSchedule($formIDs, $faireID) {
     return $data;
 }
 
+function getAllEntries($formID = '', $page = '', $years = '') {
+    //define tab fields
+    $tab_array = array(
+        'basic_info'    => array(
+            'col_1' => array(22, 'date_created', 'reviewed', 'final_location'),
+            'col_2' => array(16, 320),
+            'col_3' => array(96, 168, 55, 339, 884, 1, 92, 91)
+        ),
+        'addl_info'     => array(
+            'col_1' => array(2732, 321, 287, 134, 133, 127),
+            'col_2' => array(45, 66, 295, 117, 67, 127)
+        ),
+        'flags_notes'   => array(
+            'col_1' => array(304, 302, 442, 879),
+            'col_2' => array('notes')
+        ),
+        'logistics'     => array(
+            'col_1' => array(
+                74, 72, 71, 62, 77, 76, 75, 73, 886, 348, 347, 'rmt', 69, 68, 64, 345, 344, 61, 60, 'final_location'
+            ),
+            'col_2' => array(65, 879, 806, 805, 803, 758, 307, 302, 99, 90, 89, 85, 84, 83, 81, 79, 78, 318, 317, 144, 44, 1, 2),
+        ),
+        'maker_info'    => array(
+            'col_1' => array(217, 111, 109, 98, 209, 112),
+            'col_2' => array(234, 110),
+            'col_3' => array(828, 821, 101)
+        ),
+        'photos'        => array(
+            'col_1' => array(878),
+        ),
+        'safety_forms'  => array(
+            'col_1' => array(305, 306),
+        ),
+        'expand_view'   => array(
+            'col_1' => array(878, 98, 101, 209, 821, 217, 234),
+            'col_2' => array(109, 111, 110, 112, 828, 134, 295),
+            'col_3' => array(130, 287, 27, 32, 66, 67, 321)
+        )
+    );
+
+    $search_criteria = array('status' => 'active');
+    $sorting         = array();
+    $paging          = array('offset' => 0, 'page_size' => 25);
+    $total_count     = 0;
+    $entries         = GFAPI::get_entries($formID, $search_criteria, $sorting, $paging, $total_count);
+    $form            = GFAPI::get_form($formID);
+
+    //convert this into a usable array
+    $field_array = array();
+    foreach ($form['fields'] as $field) {
+        $field_array[$field['id']] = $field;
+    }
+
+    $data = array();
+
+    //build entry array    
+    foreach ($entries as $entry) {
+        //pull entry notes
+        $entry['notes'] = GFAPI::get_notes(array('entry_id' => $entry['id'], 'note_type' => 'user'));
+        $entry['final_location'] = display_schedule($formID, $entry, 'summary');
+        $entry['rmt'] = entryResources($entry,FALSE);
+
+        //build tab info
+        foreach ($tab_array as $tab_name => $tab) {
+            $return[$tab_name] = array();
+            foreach ($tab as $column_name => $column) {
+                $column_data = array();
+                foreach ($column as $fieldID) {
+                    $label = $fieldID;
+                    $value = (isset($entry[$fieldID]) ? $entry[$fieldID] : '');
+                    $type  = 'text';
+
+                    //find this field in the form object                
+                    if (isset($field_array[$fieldID])) {
+                        $field_data = $field_array[$fieldID];
+                        $label = ($field_data['adminLabel'] != '' ? $field_data['adminLabel'] : $field_data['label']);
+                        $type = $field_data['type'];
+                        switch ($field_data['type']) {
+                            case 'website':
+                                if ($fieldID == 32) {
+                                    $type = 'video';
+                                }
+                            case 'fileupload':
+                                if ($field_data['multipleFiles']) {
+                                    $type = 'multipleFiles';
+                                    $value = json_decode($value);
+
+                                    //if the array is empty, set this back to blank
+                                    if (empty($value))   $value = '';
+                                }
+                                break;
+
+                            case 'address':
+                                $value = array();
+
+                                foreach ($field_data['inputs'] as $input) {
+                                    if (isset($entry[$input['id']]) && $entry[$input['id']] != '') {
+                                        $input = array('label' => $input['label'], 'value' => $entry[$input['id']]);
+                                        $value[] = $input;
+                                    }
+                                }
+
+                                //if the array is empty, set this back to blank
+                                if (empty($value))   $value = '';
+                                break;
+                            case 'name':
+                                $fnameID = $fieldID . '.3';
+                                $lnameID = $fieldID . '.6';
+                                $value = $entry[$fnameID] . ' ' . $entry[$lnameID];
+                                break;
+                            case 'checkbox':
+                                $value = array();
+                                foreach ($field_data['inputs'] as $input) {
+                                    if (isset($entry[$input['id']]) && $entry[$input['id']] != '') {
+                                        //field 321 is stored as category number, use cross reference to find text value
+                                        if ($fieldID == '321') {
+                                            $input = html_entity_decode(get_CPT_name($entry[$input['id']]));
+                                        } else {
+                                            $input = $entry[$input['id']];
+                                        }
+                                        $value[] = $input;
+                                    }
+                                }
+
+                                //if the array is empty, set this back to blank
+                                if (empty($value))   $value = '';
+                                break;
+                            case 'list':
+                                $value = unserialize($value);             
+                                break;
+                            default:
+                                if (isset($entry[$fieldID])) {
+                                    //field 320 and 321 is stored as category number, use cross reference to find text value
+                                    if ($fieldID == '320') {
+                                        $value = html_entity_decode(get_CPT_name($entry[$fieldID]));
+                                    } else {
+                                        $value = $entry[$fieldID];
+                                    }
+                                }
+                                break;
+                        }
+                    } else {
+                        switch ($fieldID) {
+                            case 'notes':
+                                $type  = 'notes';
+                                $label = 'Notes';
+                                break;
+                            case 'final_location':
+                                $type  = 'html';
+                                $label = 'Final Location';
+                                break;
+                            case 'rmt':
+                                $type  = 'listRepeat';
+                                $label = 'Resources';
+                                break;    
+                            case 'date_created':
+                                $type  = 'text';
+                                $date  = date_create($entry[$fieldID]);
+                                $value = date_format($date,"m/d/Y");
+                                $label = 'Created';
+                                break;        
+                        }
+                        
+                    }
+
+                    $column_data[$fieldID] = array('label' => $label, 'type' => $type, 'value' => $value);
+                }
+                $return[$tab_name][$column_name] = $column_data;
+            }
+        }
+
+        $data['makers'][] = array(
+            'tabs' => array(
+                'Basic Info'    => $return['basic_info'],
+                'Addl Info'     => $return['addl_info'],
+                'Flags/Notes'   => $return['flags_notes'],
+                'Logistics'     => $return['logistics'],
+                'Maker Info'    => $return['maker_info'],
+                'Photos'        => $return['photos'],
+                'Safety Forms'  => $return['safety_forms'],
+                'expand_view'   => $return['expand_view'],
+            ),
+            
+            'project_name'  => $entry['151'],
+            'project_id'    => $entry['id'],
+            'status'        => $entry['303'],
+            'description'   => $entry['16'],
+            'photo'         => $entry['22'],     
+
+        );
+    }
+    
+    return $data;
+}
+
 function getMakerList($entryID, $faireID) {
     $makerList = '';
     $data = array();
@@ -615,8 +812,8 @@ function getMakerList($entryID, $faireID) {
         $query = "SELECT *
               FROM wp_gf_entry_meta as lead_detail
               where lead_detail.entry_id = $entryID "
-                . "and cast(meta_key as char) in('160.3', '160.6', '158.3', '158.6', '155.3', '155.6', "
-                . "'156.3', '156.6', '157.3', '157.6', '159.3', '159.6', '154.3', '154.6', '109', '105')";
+            . "and cast(meta_key as char) in('160.3', '160.6', '158.3', '158.6', '155.3', '155.6', "
+            . "'156.3', '156.6', '157.3', '157.6', '159.3', '159.6', '154.3', '154.6', '109', '105')";
         $entryData = $wpdb->get_results($query);
         //field 105 - who would you like listed
         //    one maker, a group or association, a list of makers
