@@ -4,7 +4,8 @@ window.app = new Vue({
         return {
             makers: null,
             currentView: "grid",
-            expandToggle: "0"
+            expandToggle: "0",
+            searchQuery: ''
         }
     },
     methods: {
@@ -15,7 +16,6 @@ window.app = new Vue({
             this.currentView = 'grid';
         },
         expand: function(event) {
-            console.log(this.expandToggle);
             if(this.expandToggle == 0) {
                 event.target.innerHTML = "Shrink";
                 event.target.parentElement.querySelector('.tabs').innerHTML += event.target.parentElement.querySelector('.tab-content .card-body:last-of-type').innerHTML;
@@ -31,6 +31,19 @@ window.app = new Vue({
     mounted() {
         axios
             .get('/wp-json/makerfaire/v2/fairedata/entryReview/260/BA23')
-            .then(response => (this.makers = response.data.makers))
-    }
+            .then(response => (this.makers = response.data.makers));
+    },
+    computed: {
+        filterBy(){
+          if(this.searchQuery){
+            var value = this.searchQuery;
+            return this.makers.filter(function(maker){
+                return maker.project_name.toLowerCase().indexOf(value) > -1 ||
+                       maker.description.toLowerCase().indexOf(value) > -1 
+            })
+          }else{
+            return this.makers;
+          }
+        }
+    }    
 })

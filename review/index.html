@@ -16,8 +16,11 @@
 
     <!-- Our application root element -->
     <div id="review" style="width:95%; margin:0 auto;">
+
+        <input type="text" v-model="searchQuery" placeholder="Search..." />
+
         <div class="listGrid-toolbar">
-			<span class="listGrid-caption">{{caption}}</span>
+			<!-- <span class="listGrid-caption">{{caption}}</span> -->
 			<span class="listGrid-switch-iconGroup">
 				<i class="bi bi-list listGrid-switch-icon" 
 					v-bind:class="{ active: currentView=='list'}" 
@@ -32,7 +35,7 @@
 		</div>
         <div v-if="currentView=='grid'" >
             <b-card-group deck>
-                <b-card v-for="(maker, maker_id) in makers" :title="maker.project_name" img-top :key="'maker-'+maker.project_id">
+                <b-card v-for="(maker, maker_id) in filterBy" :title="maker.project_name" img-top :key="'maker-'+maker.project_id">
                     <template #header>
                         <b-img thumbnail fluid :alt="maker.project_name" :src="maker.photo" />
                     </template>
@@ -46,7 +49,7 @@
             </b-card-group>
         </div>
         <div  v-if="currentView=='list'">
-            <b-card no-body v-for="(maker, maker_id) in makers" :key="'maker-'+maker.project_id">
+            <b-card no-body v-for="(maker, maker_id) in filterBy" :key="'maker-'+maker.project_id">
                 <b-row class="header">
                     <b-col>{{maker.status}}</b-col>
                     <b-col cols="10">

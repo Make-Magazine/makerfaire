@@ -4,11 +4,6 @@ echo '  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-responsive-tabs@2.0.3/dist/css/bootstrap-responsive-tabs.min.css">
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-Fy6S3B9q64WdZWQUiU+q4/2Lc9npb8tCaSX9FK7E8HnRr0Jz8D6OP9dO5Vg3Q9ct" crossorigin="anonymous"></script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap-responsive-tabs@2.0.3/dist/js/jquery.bootstrap-responsive-tabs.min.js"></script>';
-        echo "  <style type='text/css'>
-            .nav-level-2 #menu-secondary_universal_menu {
-                flex-direction: row;
-            }
-        </style>";
 /**
  * @package GravityView-DIY
  * @subpackage GravityView-DIY/templates
