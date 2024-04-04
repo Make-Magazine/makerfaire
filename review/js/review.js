@@ -4,7 +4,6 @@ window.app = new Vue({
         return {
             makers: null,
             currentView: "grid",
-            expandToggle: "0",
             searchQuery: ''
         }
     },
@@ -14,18 +13,6 @@ window.app = new Vue({
         },
         switchToGridView: function(ev){
             this.currentView = 'grid';
-        },
-        expand: function(event) {
-            if(this.expandToggle == 0) {
-                event.target.innerHTML = "Shrink";
-                event.target.parentElement.querySelector('.tabs').innerHTML += event.target.parentElement.querySelector('.tab-content .card-body:last-of-type').innerHTML;
-                this.expandToggle = 1;
-                event.target.remove();
-            } 
-            if(this.expandToggle == 1) {
-                event.target.innerHtml = "Expand";
-                this.expandToggle = 0;
-            }
         }
     },
     mounted() {
