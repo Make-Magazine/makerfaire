@@ -16,23 +16,34 @@
 
     <!-- Our application root element -->
     <div id="review" style="width:95%; margin:0 auto;">
-        <!-- Search box -->
-        <input type="text" v-model="searchQuery" placeholder="Search..." />
+        <b-container fluid class="filter-options">
+            <input type="text" v-model="searchQuery" placeholder="Search..." />
+            <div class="select-wrapper">
+                <label>Status</label>
+                <select v-model="selectedStatus">
+                    <option type="select" value="">All</option>
+                    <template v-for="status in filteredStatus">
+                        <option type="select" :id="status" :name="status" :value="status">{{status}}</option>
+                    </template>
+                </select>
+            </div>
 
-        <!-- Toggle to switch between list and grid view -->
-        <div class="listGrid-toolbar">
-            <span class="listGrid-switch-iconGroup">
-                <i class="bi bi-list listGrid-switch-icon" v-bind:class="{ active: currentView=='list'}"
-                    aria-hidden="true" :title="currentView=='grid' ? 'switch to List View': 'List View'"
-                    v-on:click="switchToListView"></i>
-                <i class="bi bi-grid listGrid-switch-icon" v-bind:class="{ active: currentView=='grid'}"
-                    :title="currentView=='list' ? 'switch to Grid View': 'Grid View'" aria-hidden="true"
-                    v-on:click="switchToGridView"></i>
-            </span>
-        </div>
-
-        <!-- Grid View -->
-        <div v-if="currentView=='grid'">
+            <div class="listGrid-toolbar">
+                <!-- <span class="listGrid-caption">{{caption}}</span> -->
+                <span class="listGrid-switch-iconGroup">
+                    <i class="bi bi-list listGrid-switch-icon" 
+                        v-bind:class="{ active: currentView=='list'}" 
+                        aria-hidden="true"
+                        :title="currentView=='grid' ? 'switch to List View': 'List View'"
+                        v-on:click="switchToListView"></i>
+                    <i class="bi bi-grid listGrid-switch-icon" 
+                        v-bind:class="{ active: currentView=='grid'}" 
+                        :title="currentView=='list' ? 'switch to Grid View': 'Grid View'"
+                        aria-hidden="true" v-on:click="switchToGridView"></i>				
+                </span>
+            </div>
+        </b-container>
+        <div v-if="currentView=='grid'" >
             <b-card-group deck>
                 <b-card v-for="(maker, maker_id) in filterBy" :title="maker.project_name" img-top
                     :key="'maker-'+maker.project_id">

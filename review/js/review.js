@@ -1,9 +1,11 @@
-new Vue({
+var urlParams = new URLSearchParams(window.location.search);
+
+window.app = new Vue({    
     el: '#review',
     data() {
         return {
             makers: null,
-            currentView: "grid",
+            currentView: urlParams.get('layout') ? urlParams.get('layout') : "grid",
             searchQuery: '',
             selectedStatus: '',
         }
@@ -26,11 +28,11 @@ new Vue({
           if(this.searchQuery || this.selectedStatus){
             var searchValue = this.searchQuery;
             var statusFilter = this.selectedStatus;
-            console.log(statusFilter);
             return this.makers.filter(function(maker){
-                return maker.project_name.toLowerCase().indexOf(searchValue) > -1 ||
-                       maker.description.toLowerCase().indexOf(searchValue) > -1 ||
-                       maker.status == statusFilter
+                return (maker.project_name.toLowerCase().indexOf(searchValue) > -1 ||
+                       maker.project_id.toLowerCase().indexOf(searchValue) > -1 ||
+                       maker.description.toLowerCase().indexOf(searchValue) > -1) &&
+                       maker.status.indexOf(statusFilter) > -1
             })
           }else{
             return this.makers;

@@ -19,6 +19,12 @@ h3 {
     padding: 0px;
 }
 
+.filter-options {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
 .card {
     margin: 20px 0;
     ul.card-header-tabs li {
