@@ -20,8 +20,9 @@
         <b-container fluid class="filter-options">
             <input type="text" v-model="searchQuery" placeholder="Search..." />
             <div class="select-wrapper">
-                <label :for="status">Status</label>
+                <label>Status</label>
                 <select v-model="selectedStatus">
+                    <option type="select" value="">All</option>
                     <template v-for="status in filteredStatus">
                         <option type="select" :id="status" :name="status" :value="status">{{status}}</option>
                     </template>
