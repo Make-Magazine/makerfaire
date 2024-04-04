@@ -670,7 +670,7 @@
 				 *
 				 * To get around this, we call gformCleanNumber ourselves.
 				 */
-				var currency = new Currency(gf_global.gf_currency_config);
+				var currency = gf_global.gf_currency_config;
 
 				value = gformCleanNumber(value, currency['symbol_right'], currency['symbol_left'], currency['decimal_separator']);
 			}

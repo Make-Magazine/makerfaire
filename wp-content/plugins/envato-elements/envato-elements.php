@@ -4,11 +4,11 @@
  * Description: Access beautifully designed Template Kits + Photos from Envato Elements.
  * Author: Envato
  * Author URI: https://elements.envato.com/extensions/wordpress/?utm_source=extensions&utm_medium=referral&utm_campaign=elements_extensions_wpplugins
- * Version: 2.0.12
+ * Version: 2.0.13
  * License: GPLv3 or later
  * License URI: https://www.gnu.org/licenses/gpl-3.0.html
- * Elementor tested up to: 3.12.1
- * Elementor Pro tested up to: 3.12.1
+ * Elementor tested up to: 3.20.3
+ * Elementor Pro tested up to: 3.20.3
  *
  * Text Domain: envato-elements
  *
@@ -30,7 +30,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 define( 'ENVATO_ELEMENTS_SLUG', 'envato-elements' );
-define( 'ENVATO_ELEMENTS_VER', '2.0.12' );
+define( 'ENVATO_ELEMENTS_VER', '2.0.13' );
 define( 'ENVATO_ELEMENTS_FILE', __FILE__ );
 define( 'ENVATO_ELEMENTS_DIR', plugin_dir_path( ENVATO_ELEMENTS_FILE ) );
 define( 'ENVATO_ELEMENTS_URI', plugins_url( '/', ENVATO_ELEMENTS_FILE ) );

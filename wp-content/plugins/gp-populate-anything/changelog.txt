@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.0.36
+
+	- Fixed how we handle filter values with Email fields with confirmation enabled. This fixes some conflicts with other array-based fields such as Multi Selects.
+	- Improved support for Page Conditional Logic by refreshing dynamically populated fields in a conditionally hidden page when it becomes visible.
+	- Removed compatibility layer with GP Advanced Phone Field. Instead, the compatibility will be handled in GP Advanced Phone Field.
+
 ## 2.0.35
 
 	- Updated `GPPA_Object_Type::query_cache_hash()` to not use `null` as a default value to improve support for custom object types.

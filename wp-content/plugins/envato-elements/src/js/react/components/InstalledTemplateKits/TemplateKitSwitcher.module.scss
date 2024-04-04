@@ -33,10 +33,7 @@
       content: '';
       position: absolute;
       display: block;
-      left: 0;
-      right: 0;
-      bottom: -40px;
-      top: 100%;
+      inset: 100% 0 -40px;
       background: transparent;
     }
 
@@ -50,7 +47,7 @@
   background: #fff;
   border: 1px solid #e0e5e9;
   border-radius: 4px;
-  box-shadow: 0 10px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 10px 10px rgb(0 0 0 / 10%);
   display: none;
   line-height: 30px;
   min-width: 170px;

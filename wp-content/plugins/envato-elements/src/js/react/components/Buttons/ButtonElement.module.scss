@@ -18,7 +18,7 @@
     cursor: not-allowed;
   }
 
-  @media screen and (min-width: 1281px) {
+  @media screen and (width >= 1281px) {
     font-size: 14px;
     padding: 0 16px;
   }
@@ -26,6 +26,7 @@
 
 .ghost {
   @extend .button;
+
   background: #fff;
   border: 1px solid #81b441;
   color: #81b441;
@@ -41,6 +42,7 @@
 
 .primary {
   @extend .button;
+
   background: #81b441;
   border: 1px solid #81b441;
   color: #fff;
@@ -56,6 +58,7 @@
 
 .secondary {
   @extend .button;
+
   background: #fff;
   border: 1px solid #979797;
   color: #979797;
@@ -70,6 +73,7 @@
 
 .warning {
   @extend .button;
+
   background: #fff;
   border: 1px solid #ef3962;
   color: #ef3962;
@@ -84,6 +88,7 @@
 
 .attention {
   @extend .button;
+
   background: #fff;
   border: 1px solid #ef8539;
   color: #ef8539;

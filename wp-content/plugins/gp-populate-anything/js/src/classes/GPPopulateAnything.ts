@@ -41,6 +41,8 @@ export default class GPPopulateAnything {
 	public currentPage = 1;
 	public populatedFields: fieldID[] = [];
 	public postedValues: { [input: string]: string } = {};
+	public pageConditionalLogicMap: { [pageId: number]: fieldID[] } = {};
+	public gfPageConditionalLogic: any;
 	public gravityViewMeta?: gravityViewMeta;
 	private triggerChangeAfterCalculate: boolean = false;
 	private triggerChangeExecuted: boolean = false;
@@ -60,6 +62,12 @@ export default class GPPopulateAnything {
 	constructor(public formId: formID, public fieldMap: fieldMap) {
 		if ('GPPA_POSTED_VALUES_' + formId in window) {
 			this.postedValues = (window as any)['GPPA_POSTED_VALUES_' + formId];
+		}
+
+		if ('GPPA_PAGE_CONDITIONAL_LOGIC_MAP_' + formId in window) {
+			this.pageConditionalLogicMap = (window as any)[
+				'GPPA_PAGE_CONDITIONAL_LOGIC_MAP_' + formId
+			];
 		}
 
 		if ('GPPA_GRAVITYVIEW_META_' + formId in window) {
@@ -413,6 +421,7 @@ export default class GPPopulateAnything {
 
 		this.bindNestedForms();
 		this.bindConditionalLogicPricing();
+		this.bindPageConditionalLogic();
 
 		// Trigger change event on calculated fields only once on initial load
 		if (this.triggerChangeAfterCalculate && !this.triggerChangeExecuted) {
@@ -512,7 +521,7 @@ export default class GPPopulateAnything {
 				field: fieldID;
 				filters?: fieldMapFilter[];
 			}[],
-			triggerInputIds: fieldID[]
+			triggerInputIds: fieldID[] = []
 		): JQueryPromise<JQueryXHR> => {
 			const $form: JQuery = this.getFormElement();
 
@@ -556,6 +565,58 @@ export default class GPPopulateAnything {
 				// When GPCP is initalized there is no trigger field.
 				if (triggerFieldId) {
 					this.onChange(triggerFieldId);
+				}
+			}
+		);
+	}
+
+	bindPageConditionalLogic() {
+		window.gform.addAction(
+			'gform_frontend_pages_evaluated',
+			(pages: any, formId: number, self: any) => {
+				// eslint-disable-next-line eqeqeq
+				if (formId == this.formId) {
+					this.gfPageConditionalLogic = self;
+				}
+			}
+		);
+
+		window.gform.addAction(
+			'gform_frontend_page_visible',
+			(
+				page: {
+					conditionalLogic: any;
+					fieldId: number;
+					isUpdated: boolean;
+					isVisible: boolean;
+					nextButton: any;
+				},
+				formId: number
+			) => {
+				// eslint-disable-next-line eqeqeq
+				if (formId != this.formId || !this.gfPageConditionalLogic) {
+					return;
+				}
+
+				// Get the page number from the page field ID from this.gfPageConditionalLogic.options.pages
+				let pageNumber = 1; // Start at 1 since the first page of the form is not a "page"
+
+				for (const page of this.gfPageConditionalLogic.options.pages) {
+					pageNumber++;
+
+					if (page.fieldId === page.fieldId) {
+						break;
+					}
+				}
+
+				if (this.pageConditionalLogicMap[pageNumber]) {
+					this.bulkBatchedAjax(
+						this.pageConditionalLogicMap[pageNumber].map(
+							(field) => ({
+								field,
+							})
+						)
+					);
 				}
 			}
 		);
@@ -879,21 +940,7 @@ export default class GPPopulateAnything {
 							$fieldContainer = $gravityflowVacationContainer;
 						}
 
-						// Advanced phone field
-						if ($fieldContainer.find('.iti').length) {
-							const inputValue = $(
-								$.parseHTML(response.fields[fieldID])
-							)
-								.find('input')
-								.val();
-							window[
-								('gp_advanced_phone_field_{0}_{1}' as any).gformFormat(
-									this.formId,
-									fieldID
-								)
-							].iti.setNumber(inputValue);
-							$fieldContainer.removeClass('gppa-loading');
-						} else if (this.isGravityView()) {
+						if (this.isGravityView()) {
 							const $results = $(response.fields[fieldID]);
 
 							$fieldContainer = $results

@@ -89,7 +89,7 @@ class Settings extends API {
 			$limits['memory_limit'] = [
 				'title'   => 'PHP Memory Limit',
 				'ok'      => $memory_limit_ok,
-				'message' => $memory_limit_ok ? "is ok at ${memory_limit_in_mb}." : "${memory_limit_in_mb} is too small. Please set your PHP memory limit to at least 256MB - or ask your hosting provider to do this if you're unsure."
+				'message' => $memory_limit_ok ? "is ok at {$memory_limit_in_mb}." : "{$memory_limit_in_mb} is too small. Please set your PHP memory limit to at least 256MB - or ask your hosting provider to do this if you're unsure."
 			];
 		} catch ( \Exception $e ) {
 			$limits['memory_limit'] = [
@@ -110,7 +110,7 @@ class Settings extends API {
 			$limits['upload'] = [
 				'ok'      => $upload_max_filesize_ok,
 				'title'   => 'PHP Upload Limits',
-				'message' => $upload_max_filesize_ok ? "is ok at '$upload_max_filesize_in_mb'." : "$upload_max_filesize_in_mb is too small. Please set your PHP upload limits to at least ${upload_size_desired}M - or ask your hosting provider to do this if you're unsure.",
+				'message' => $upload_max_filesize_ok ? "is ok at '$upload_max_filesize_in_mb'." : "$upload_max_filesize_in_mb is too small. Please set your PHP upload limits to at least {$upload_size_desired}M - or ask your hosting provider to do this if you're unsure.",
 			];
 		} catch ( \Exception $e ) {
 			$limits['upload'] = [
@@ -148,7 +148,7 @@ class Settings extends API {
 			$limits['max_execution_time'] = [
 				'ok'      => $max_execution_time_ok,
 				'title'   => 'PHP Execution Time',
-				'message' => $max_execution_time_ok ? "PHP execution time limit is ok at ${max_execution_time}." : "$max_execution_time is too small. Please set your PHP max execution time to at least $max_execution_time_desired - or ask your hosting provider to do this if you're unsure.",
+				'message' => $max_execution_time_ok ? "PHP execution time limit is ok at {$max_execution_time}." : "$max_execution_time is too small. Please set your PHP max execution time to at least $max_execution_time_desired - or ask your hosting provider to do this if you're unsure.",
 			];
 		} catch ( \Exception $e ) {
 			$limits['max_execution_time'] = [

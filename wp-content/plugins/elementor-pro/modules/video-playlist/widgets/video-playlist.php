@@ -2075,7 +2075,7 @@ class Video_Playlist extends Base_Widget {
 					case 'hosted':
 						playlistItemObject.type = playlistItem.type;
 						playlistItemObject.videoTitle = playlistItem.title;
-						playlistItemObject.videoHtmlTag = playlistItem.video_html_tag;
+						playlistItemObject.videoHtmlTag = elementor.helpers.validateHTMLTag( playlistItem.video_html_tag );
 
 						if ( playlistItem.youtube_url && 'youtube' === playlistItem.type ) {
 							playlistItemObject.videoUrl = playlistItem.youtube_url;
@@ -2120,7 +2120,7 @@ class Video_Playlist extends Base_Widget {
 					case 'section':
 						playlistItemObject.type = playlistItem.type;
 						playlistItemObject.sectionTitle = playlistItem.title;
-						playlistItemObject.sectionHtmlTag = playlistItem.section_html_tag;
+						playlistItemObject.sectionHtmlTag = elementor.helpers.validateHTMLTag( playlistItem.section_html_tag );
 						playlistItemObject.isInnerTabsVisible = false;
 					break;
 				}

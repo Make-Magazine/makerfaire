@@ -1,4 +1,4 @@
-# Copyright (C) 2023 envato-elements
+# Copyright (C) 2024 envato-elements
 # This file is distributed under the same license as the envato-elements package.
 msgid ""
 msgstr ""

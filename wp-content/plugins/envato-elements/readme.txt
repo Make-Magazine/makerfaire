@@ -2,9 +2,9 @@
 Contributors: envato
 Tags: elementor, elements, templates, template kit
 Requires at least: 4.6
-Tested up to: 6.2
+Tested up to: 6.4
 Requires PHP: 5.6
-Stable tag: 2.0.12
+Stable tag: 2.0.13
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -78,6 +78,10 @@ If you have any questions or feedback for the team, please send an email to exte
 
 
 == Changelog ==
+
+= 2.0.13 - 2024-03-27 =
+* Updated compatibility tags for WordPress and Elementor
+* Added extra permission checks for installing Template Kits
 
 = 2.0.12 - 2023-04-17 =
 * Fix: Improved error message around missing ZipArchive extension

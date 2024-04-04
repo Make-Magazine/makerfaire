@@ -1071,11 +1071,11 @@ function msp_masterslider_slide_info_shortcode( $atts, $content = null ) {
      if( is_array( $css_class ) ){
         $css_class = join( ' ' , $css_class );
      } else {
-        $css_class = empty( $css_class ) ? '' : esc_attr( ' '.$css_class );
+        $css_class = empty( $css_class ) ? '' : ' '.$css_class;
      }
 
 	 // create slide info markup
-	 $output = sprintf( '<%1$s class="ms-info%2$s">%3$s</%1$s>', $tag_name, $css_class, do_shortcode( wp_unslash( $content ) ) )."\n";
+	 $output = sprintf( '<%1$s class="ms-info%2$s">%3$s</%1$s>', $tag_name, esc_attr( $css_class ), do_shortcode( wp_unslash( $content ) ) )."\n";
 
 	 return apply_filters( 'masterslider_slide_info_shortcode', "\t\t\t\t\t".$output, $args );
 }

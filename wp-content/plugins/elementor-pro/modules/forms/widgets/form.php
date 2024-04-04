@@ -2532,7 +2532,7 @@ class Form extends Form_Base {
 										multiple = '[]';
 									}
 
-									inputField = '<div class="elementor-field-subgroup ' + itemClasses + ' ' + item.inline_list + '">';
+									inputField = '<div class="elementor-field-subgroup ' + itemClasses + ' ' + _.escape( item.inline_list ) + '">';
 
 									for ( var x in options ) {
 										var option_value = options[ x ];

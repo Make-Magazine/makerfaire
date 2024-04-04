@@ -96,6 +96,9 @@ class GPPA_Object_Type_User extends GPPA_Object_Type {
 		$filter = null;
 
 		/** @var array */
+		$field = null;
+
+		/** @var array */
 		$filter_group = null;
 
 		/** @var int */
@@ -109,11 +112,6 @@ class GPPA_Object_Type_User extends GPPA_Object_Type {
 
 		// phpcs:ignore WordPress.PHP.DontExtract.extract_extract
 		extract( $args );
-
-		// When checking for user email, with Email Confirmation enabled on field (filter value will be array). We just use the first value.
-		if ( rgar( $property, 'value' ) === 'user_email' && is_array( $filter_value ) ) {
-			$filter_value = array_keys( $filter_value )[0];
-		}
 
 		$query_builder_args['where'][ $filter_group_index ][] = $this->build_where_clause( $wpdb->users, rgar( $property, 'value' ), $filter['operator'], $filter_value );
 

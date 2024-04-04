@@ -31,8 +31,8 @@ const NavigationBar = () => {
                   className={`${styles.menuLink} ${useRouteMatch({
                     path: '/template-kits/premium-kits*'
                   })
-? styles.menuLinkActive
-: ''}`}
+                    ? styles.menuLinkActive
+                    : ''}`}
                 >
                   Premium Kits
                 </Link>
@@ -43,8 +43,8 @@ const NavigationBar = () => {
                   className={`${styles.menuLink} ${useRouteMatch({
                     path: '/template-kits/free-kits*'
                   })
-? styles.menuLinkActive
-: ''}`}
+                    ? styles.menuLinkActive
+                    : ''}`}
                 >
                   Free Kits
                 </Link>
@@ -55,8 +55,8 @@ const NavigationBar = () => {
                   className={`${styles.menuLink} ${useRouteMatch({
                     path: '/template-kits/free-blocks*'
                   })
-? styles.menuLinkActive
-: ''}`}
+                    ? styles.menuLinkActive
+                    : ''}`}
                 >
                   Free Blocks
                 </Link>
@@ -67,21 +67,48 @@ const NavigationBar = () => {
                   className={`${styles.menuLink} ${useRouteMatch({
                     path: '/template-kits/installed-kits*'
                   })
-? styles.menuLinkActive
-: ''}`}
+                    ? styles.menuLinkActive
+                    : ''}`}
                 >
                   Installed Kits
                 </Link>
               </li>
             </ul>
           </li>
-          <li className={styles.menuItem}>
+          <li
+            className={`${styles.menuItem} ${styles.menuItemHasChild}`}
+          >
             <Link
               to='/photos'
               className={`${styles.menuLink} ${useRouteMatch({ path: '/photos' }) ? styles.menuLinkActive : ''}`}
             >
               Photos
             </Link>
+            <ul className={styles.subNavWrap}>
+              <li className={styles.subNavItem}>
+                <Link
+                  to='/photos'
+                  className={`${styles.menuLink} ${useRouteMatch({
+                    path: '/photos*'
+                  })
+                    ? styles.menuLinkActive
+                    : ''}`}
+                >
+                  Stock Photos
+                </Link>
+              </li>
+              <li className={styles.subNavItem}>
+                <a
+                  href='https://labs.envato.com/?utm_source=extensions&utm_medium=referral&utm_campaign=wp-elements-nav'
+                  target='_blank'
+                  rel='noopener noreferrer'
+                  className={styles.menuLink}
+                >
+                  AI Image Gen
+                  <span className='dashicons dashicons-external' />
+                </a>
+              </li>
+            </ul>
           </li>
         </ul>
 

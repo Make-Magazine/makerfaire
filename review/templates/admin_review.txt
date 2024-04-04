@@ -1,0 +1,93 @@
+[tab]
+	[title]Basic Info[/title]
+	[tab_content]
+		[block]
+			[column]
+                {Primary Project Photo:22}
+				{Project Website:27}
+
+				{date_created}
+				Placed Y/N
+			[/column]
+			[column]
+				{Description:16}
+			[/column]
+			[column]
+				{:339:label}
+				{:55}
+				{:320}
+				{:67}
+				{:287}
+			[/column]
+		[/block]
+	[/tab_content]
+	[expand]
+		[block]
+			[column]
+                [gvlogic if="{Issue Status:105}" contains="Group"]
+                    {:111}
+                    {:109}
+                    {:112}
+                    {:828}                
+                [else]
+                    {:217}
+                    {:96}
+                    {:209}
+                    {:821}                
+                [/gvlogic] 				
+				{:101}				
+			[/column]
+			[column]
+                [gvlogic if="{Issue Status:105}" contains="Group"]
+                    {:110}
+                [else]
+                    {:234}
+                [/gvlogic]                
+			[/column]
+		[/block]
+		[block]
+			[column]
+				{:32}
+				{:878}
+			[/column]
+		[/block]
+	[/expand]
+[/tab]
+[tab]
+	[title]Addl Info[/title]
+	[tab_content]
+		[block]
+			[column]
+                {:32}
+                {:321}
+                {:287}
+                {:134}
+                {:127}
+			[/column]
+			[column]
+                {:66}
+                {:295}
+                {:117}
+                {:67}
+                {:122}
+			[/column]			
+		[/block]
+	[/tab_content]	
+[/tab]
+[tab]
+	[title]Flags and Notes[/title]
+	[tab_content]
+		[block]
+			[column]
+				{:442}
+				{:304}
+				{:302}
+				{:879}
+			[/column]
+			[column]
+				Notes:
+				{workflow_note}
+			[/column]			
+		[/block]
+	[/tab_content]	
+[/tab]

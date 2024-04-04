@@ -90,6 +90,17 @@ const APIErrorMessage = () => {
             </ModalWrapper>
           )
         }
+        if (error.code === 'missing_permissions') {
+          return (
+            <ModalWrapper key={error.code} isOpen onCloseCallback={() => { removeError(error) }}>
+              <MainHeading title='Error' />
+              <p className={styles.copy}>
+                {error.message}
+              </p>
+              <APIErrorDebugInformation error={error} />
+            </ModalWrapper>
+          )
+        }
         if (error.code === 'generic_api_error') {
           return (
             <ModalWrapper key={error.code} isOpen onCloseCallback={() => { removeError(error) }}>

@@ -403,7 +403,7 @@ class GWPreviewConfirmation {
 
 		if ( is_array( $existing_files ) ) {
 			foreach ( $existing_files as $existing_file ) {
-				$existing_file_pathinfo = pathinfo( $existing_file );
+				$existing_file_pathinfo = is_array( $existing_file ) ? pathinfo( $existing_file['uploaded_name'] ) : pathinfo( $existing_file );
 
 				if ( $uploaded_filename === $existing_file_pathinfo['basename'] ) {
 					return $existing_file;

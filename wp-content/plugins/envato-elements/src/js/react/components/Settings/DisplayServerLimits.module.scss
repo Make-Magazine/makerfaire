@@ -4,7 +4,7 @@
   @include copy;
 }
 
-.limitListItem {
+%limitListItem {
   padding: 0 0 14px 25px;
   position: relative;
 
@@ -19,7 +19,7 @@
 }
 
 .limitOk {
-  @extend .limitListItem;
+  @extend %limitListItem;
 
   &::before {
     content: '\f12a';
@@ -28,7 +28,7 @@
 }
 
 .limitError {
-  @extend .limitListItem;
+  @extend %limitListItem;
 
   &::before {
     content: '\f153';
