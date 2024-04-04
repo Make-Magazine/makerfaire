@@ -28,9 +28,9 @@ window.app = new Vue({
             var statusFilter = this.selectedStatus;
             console.log(statusFilter);
             return this.makers.filter(function(maker){
-                return maker.project_name.toLowerCase().indexOf(searchValue) > -1 ||
-                       maker.description.toLowerCase().indexOf(searchValue) > -1 ||
-                       maker.status == statusFilter
+                return (maker.project_name.toLowerCase().indexOf(searchValue) > -1 ||
+                       maker.description.toLowerCase().indexOf(searchValue) > -1) &&
+                       maker.status === statusFilter
             })
           }else{
             return this.makers;
