@@ -42,8 +42,7 @@
         </b-container>
         <div v-if="currentView=='grid'">
             <b-card-group deck>
-                <b-card v-for="(maker, maker_id) in filterBy" :title="maker.project_name" img-top
-                    :key="'maker-'+maker.project_id">
+                <b-card v-for="(maker, maker_id) in filterBy" :title="maker.project_name" img-top :key="'maker-'+maker.project_id" @click="expandCard(maker.project_id)">
                     <template #header>
                         <b-img thumbnail fluid :alt="maker.project_name" :src="maker.photo" />
                     </template>

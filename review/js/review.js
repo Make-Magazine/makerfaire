@@ -1,12 +1,13 @@
 var urlParams = new URLSearchParams(window.location.search);
+var router = new VueRouter();
 
-window.app = new Vue({    
+window.app = new Vue({
     el: '#review',
     data() {
         return {
             makers: null,
             currentView: urlParams.get('layout') ? urlParams.get('layout') : "grid",
-            searchQuery: '',
+            searchQuery: urlParams.get('search') ? urlParams.get('search') : "",
             selectedStatus: '',
         }
     },
@@ -16,6 +17,11 @@ window.app = new Vue({
         },
         switchToGridView: function(ev){
             this.currentView = 'grid';
+        },
+        expandCard: function(projectID){
+            this.currentView = 'list';
+            this.searchQuery = projectID;
+            router.push({ path: '', query: { search: projectID }});
         }
     },
     mounted() {

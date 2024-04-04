@@ -12,7 +12,7 @@
     "scss:css:compile": "sass scss/style.scss css/style.min.css --style compressed",
     "onchange:js:vue-libs": "onchange 'js/*.js' -- npm run js:vue:uglify",
     "onchange:js:vue": "onchange 'js/*.js' -- npm run js:vue:uglify",
-    "js:vue-libs:uglify": "uglifyjs node_modules/vue/dist/vue.js node_modules/bootstrap-vue/dist/bootstrap-vue.js node_modules/axios/dist/axios.js -o js/min/vue.min.js -c -m --source-map \"root='../', url='vue.min.js.map'\"",
+    "js:vue-libs:uglify": "uglifyjs node_modules/vue/dist/vue.js node_modules/bootstrap-vue/dist/bootstrap-vue.js node_modules/vue-router/dist/vue-router.js node_modules/axios/dist/axios.js -o js/min/vue.min.js -c -m --source-map \"root='../', url='vue.min.js.map'\"",
     "js:vue:uglify": "uglifyjs js/*.js -o js/min/review.min.js -c -m --source-map \"root='../', url='review.min.js.map'\"",
     "build": "npm-run-all js:**:uglify",
     "build:cachebust": "npm-run-all cachebust:update js:**:uglify scss:**:compile",
@@ -28,6 +28,7 @@
     "replace-in-file": "^3.4.4",
     "sass": "^1.37.5",
     "uglify-js": "^3.7.1",
-    "vue": "~2.6.12"
+    "vue": "~2.6.12",
+    "vue-router": "^3.6.5"
   }
 }
