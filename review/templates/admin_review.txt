@@ -3,52 +3,50 @@
 	[tab_content]
 		[block]
 			[column]
-                {Primary Project Photo:22}
-				{Project Website:27}
-
-				{date_created}
-				Placed Y/N
+                [field]22[/field]				
+				[field]<br/>[/field]
+				[field]date_created[/field]
+				[field]Placed Y/N[/field]
 			[/column]
 			[column]
-				{Description:16}
+				[field]16[/field]
 			[/column]
 			[column]
-				{:339:label}
-				{:55}
-				{:320}
-				{:67}
-				{:287}
+				[field]339[/field]
+				[field]55[/field]
+				[field]320[/field]
+				[field]67[/field]
+				[field]287[/field]
 			[/column]
 		[/block]
 	[/tab_content]
 	[expand]
 		[block]
 			[column]
-                [gvlogic if="{Issue Status:105}" contains="Group"]
-                    {:111}
-                    {:109}
-                    {:112}
-                    {:828}                
-                [else]
-                    {:217}
-                    {:96}
-                    {:209}
-                    {:821}                
-                [/gvlogic] 				
-				{:101}				
+                [field]Group[/field]
+                    [field]111[/field]
+                    [field]109[/field]
+                    [field]112[/field]
+                    [field]828[/field]                
+                [field]Maker Info[/field]
+                    [field]217[/field]
+                    [field]96[/field]
+                    [field]209[/field]
+                    [field]821[/field]                                	
+				[field]101[/field]				
 			[/column]
 			[column]
-                [gvlogic if="{Issue Status:105}" contains="Group"]
-                    {:110}
-                [else]
-                    {:234}
-                [/gvlogic]                
+                [field]Group[/field]
+                    [field]110[/field]
+                [field]Maker Info[/field]
+                    [field]234[/field]
+                 
 			[/column]
 		[/block]
 		[block]
 			[column]
-				{:32}
-				{:878}
+				[field]32[/field]
+				[field]878[/field]
 			[/column]
 		[/block]
 	[/expand]
@@ -58,18 +56,18 @@
 	[tab_content]
 		[block]
 			[column]
-                {:32}
-                {:321}
-                {:287}
-                {:134}
-                {:127}
+                [field]32[/field]
+                [field]321[/field]
+                [field]287[/field]
+                [field]134[/field]
+                [field]127[/field]
 			[/column]
 			[column]
-                {:66}
-                {:295}
-                {:117}
-                {:67}
-                {:122}
+                [field]66[/field]
+                [field]295[/field]
+                [field]117[/field]
+                [field]67[/field]
+                [field]122[/field]
 			[/column]			
 		[/block]
 	[/tab_content]	
@@ -79,14 +77,14 @@
 	[tab_content]
 		[block]
 			[column]
-				{:442}
-				{:304}
-				{:302}
-				{:879}
+				[field]442[/field]
+				[field]304[/field]
+				[field]302[/field]
+				[field]879[/field]
 			[/column]
 			[column]
-				Notes:
-				{workflow_note}
+				[field]Notes:[/field]
+				[field]workflow_note[/field]
 			[/column]			
 		[/block]
 	[/tab_content]	
