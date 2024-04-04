@@ -1,5 +1,4 @@
 <?php
-
 /* adds a custom REST API endpoint of makerfaire */
 add_action('rest_api_init', function () {
     //get faire data such as Meet the Makers and Schedule information based on form id(s) or faire year
@@ -570,201 +569,6 @@ function getSchedule($formIDs, $faireID) {
     return $data;
 }
 
-function getAllEntries($formID = '', $page = '', $years = '') {
-    //define tab fields
-    $tab_array = array(
-        'basic_info'    => array(
-            'col_1' => array(22, 'date_created', 'reviewed', 'final_location'),
-            'col_2' => array(16, 320),
-            'col_3' => array(96, 168, 55, 339, 884, 1, 92, 91)
-        ),
-        'addl_info'     => array(
-            'col_1' => array(2732, 321, 287, 134, 133, 127),
-            'col_2' => array(45, 66, 295, 117, 67, 127)
-        ),
-        'flags_notes'   => array(
-            'col_1' => array(304, 302, 442, 879),
-            'col_2' => array('notes')
-        ),
-        'logistics'     => array(
-            'col_1' => array(
-                74, 72, 71, 62, 77, 76, 75, 73, 886, 348, 347, 'rmt', 69, 68, 64, 345, 344, 61, 60, 'final_location'
-            ),
-            'col_2' => array(65, 879, 806, 805, 803, 758, 307, 302, 99, 90, 89, 85, 84, 83, 81, 79, 78, 318, 317, 144, 44, 1, 2),
-        ),
-        'maker_info'    => array(
-            'col_1' => array(217, 111, 109, 98, 209, 112),
-            'col_2' => array(234, 110),
-            'col_3' => array(828, 821, 101)
-        ),
-        'photos'        => array(
-            'col_1' => array(878),
-        ),
-        'safety_forms'  => array(
-            'col_1' => array(305, 306),
-        ),
-        'expand_view'   => array(
-            'col_1' => array(878, 98, 101, 209, 821, 217, 234),
-            'col_2' => array(109, 111, 110, 112, 828, 134, 295),
-            'col_3' => array(130, 287, 27, 32, 66, 67, 321)
-        )
-    );
-
-    $search_criteria = array('status' => 'active');
-    $sorting         = array();
-    $paging          = array('offset' => 0, 'page_size' => 25);
-    $total_count     = 0;
-    $entries         = GFAPI::get_entries($formID, $search_criteria, $sorting, $paging, $total_count);
-    $form            = GFAPI::get_form($formID);
-
-    //convert this into a usable array
-    $field_array = array();
-    foreach ($form['fields'] as $field) {
-        $field_array[$field['id']] = $field;
-    }
-
-    $data = array();
-
-    //build entry array    
-    foreach ($entries as $entry) {
-        //pull entry notes
-        $entry['notes'] = GFAPI::get_notes(array('entry_id' => $entry['id'], 'note_type' => 'user'));
-        $entry['final_location'] = display_schedule($formID, $entry, 'summary');
-        $entry['rmt'] = entryResources($entry,FALSE);
-
-        //build tab info
-        foreach ($tab_array as $tab_name => $tab) {
-            $return[$tab_name] = array();
-            foreach ($tab as $column_name => $column) {
-                $column_data = array();
-                foreach ($column as $fieldID) {
-                    $label = $fieldID;
-                    $value = (isset($entry[$fieldID]) ? $entry[$fieldID] : '');
-                    $type  = 'text';
-
-                    //find this field in the form object                
-                    if (isset($field_array[$fieldID])) {
-                        $field_data = $field_array[$fieldID];
-                        $label = ($field_data['adminLabel'] != '' ? $field_data['adminLabel'] : $field_data['label']);
-                        $type = $field_data['type'];
-                        switch ($field_data['type']) {
-                            case 'website':
-                                if ($fieldID == 32) {
-                                    $type = 'video';
-                                }
-                            case 'fileupload':
-                                if ($field_data['multipleFiles']) {
-                                    $type = 'multipleFiles';
-                                    $value = json_decode($value);
-
-                                    //if the array is empty, set this back to blank
-                                    if (empty($value))   $value = '';
-                                }
-                                break;
-
-                            case 'address':
-                                $value = array();
-
-                                foreach ($field_data['inputs'] as $input) {
-                                    if (isset($entry[$input['id']]) && $entry[$input['id']] != '') {
-                                        $input = array('label' => $input['label'], 'value' => $entry[$input['id']]);
-                                        $value[] = $input;
-                                    }
-                                }
-
-                                //if the array is empty, set this back to blank
-                                if (empty($value))   $value = '';
-                                break;
-                            case 'name':
-                                $fnameID = $fieldID . '.3';
-                                $lnameID = $fieldID . '.6';
-                                $value = $entry[$fnameID] . ' ' . $entry[$lnameID];
-                                break;
-                            case 'checkbox':
-                                $value = array();
-                                foreach ($field_data['inputs'] as $input) {
-                                    if (isset($entry[$input['id']]) && $entry[$input['id']] != '') {
-                                        //field 321 is stored as category number, use cross reference to find text value
-                                        if ($fieldID == '321') {
-                                            $input = html_entity_decode(get_CPT_name($entry[$input['id']]));
-                                        } else {
-                                            $input = $entry[$input['id']];
-                                        }
-                                        $value[] = $input;
-                                    }
-                                }
-
-                                //if the array is empty, set this back to blank
-                                if (empty($value))   $value = '';
-                                break;
-                            case 'list':
-                                $value = unserialize($value);             
-                                break;
-                            default:
-                                if (isset($entry[$fieldID])) {
-                                    //field 320 and 321 is stored as category number, use cross reference to find text value
-                                    if ($fieldID == '320') {
-                                        $value = html_entity_decode(get_CPT_name($entry[$fieldID]));
-                                    } else {
-                                        $value = $entry[$fieldID];
-                                    }
-                                }
-                                break;
-                        }
-                    } else {
-                        switch ($fieldID) {
-                            case 'notes':
-                                $type  = 'notes';
-                                $label = 'Notes';
-                                break;
-                            case 'final_location':
-                                $type  = 'html';
-                                $label = 'Final Location';
-                                break;
-                            case 'rmt':
-                                $type  = 'listRepeat';
-                                $label = 'Resources';
-                                break;    
-                            case 'date_created':
-                                $type  = 'text';
-                                $date  = date_create($entry[$fieldID]);
-                                $value = date_format($date,"m/d/Y");
-                                $label = 'Created';
-                                break;        
-                        }
-                        
-                    }
-
-                    $column_data[$fieldID] = array('label' => $label, 'type' => $type, 'value' => $value);
-                }
-                $return[$tab_name][$column_name] = $column_data;
-            }
-        }
-
-        $data['makers'][] = array(
-            'tabs' => array(
-                'Basic Info'    => $return['basic_info'],
-                'Addl Info'     => $return['addl_info'],
-                'Flags/Notes'   => $return['flags_notes'],
-                'Logistics'     => $return['logistics'],
-                'Maker Info'    => $return['maker_info'],
-                'Photos'        => $return['photos'],
-                'Safety Forms'  => $return['safety_forms'],
-                'expand_view'   => $return['expand_view'],
-            ),
-            
-            'project_name'  => $entry['151'],
-            'project_id'    => $entry['id'],
-            'status'        => $entry['303'],
-            'description'   => $entry['16'],
-            'photo'         => $entry['22'],     
-
-        );
-    }
-    
-    return $data;
-}
-
 function getMakerList($entryID, $faireID) {
     $makerList = '';
     $data = array();
@@ -859,4 +663,237 @@ function getMakerList($entryID, $faireID) {
     }
 
     return $makerList;
+}
+
+function getAllEntries($formID = '', $page = '', $years = '') {
+    $return = array();
+
+    $search_criteria = array('status' => 'active');
+    $sorting         = array();
+    $paging          = array('offset' => 0, 'page_size' => 999);
+    $total_count     = 0;
+    $entries         = GFAPI::get_entries($formID, $search_criteria, $sorting, $paging, $total_count);
+    $form            = GFAPI::get_form($formID);
+
+    //convert this into a usable array
+    $field_array = array();
+    foreach ($form['fields'] as $field) {
+        $field_array[$field['id']] = $field;
+    }
+
+    $data = array();
+    
+    //pull admin review layout file
+    $file = file_get_contents(ABSPATH . "/review/templates/admin_review.txt");
+
+    //build the output layout
+    preg_match_all("/\[tab\]\s*(.[\S\s]*?)\s*\[\/tab\]/", $file, $tabs);
+    $tabArr = array();
+    foreach ($tabs[1] as $key => $tab) {
+        //find the title
+        preg_match_all("/\[title\]\s*(.[\S\s]*?)\s*\[\/title\]/", $tab, $title_array);
+        $title = (!empty($title_array[1][0]) ? $title_array[1][0] : 'tab-' . $key);
+        $tab_name = strtolower(str_replace(' ', '-', $title));
+
+        //build the tab content
+        preg_match_all("/\[tab_content\]\s*(.[\S\s]*?)\s*\[\/tab_content\]/", $tab, $tab_content_arr);
+        $tab_return = array();
+        //there should only be 1 tab content per tab
+        if ($tab_content_arr)
+            $tab_return['blocks'] = retrieve_blocks($tab_content_arr[1][0]);
+
+        //build the expand section
+        preg_match_all("/\[expand\]\s*(.[\S\s]*?)\s*\[\/expand\]/", $tab, $expand_content_arr);
+
+        $expand_return = array();
+        //there should only be 1 tab content per tab
+        if ($expand_content_arr && isset($expand_content_arr[1][0]))
+            $expand_return['blocks'] = retrieve_blocks($expand_content_arr[1][0]);
+
+        $tabArr[$tab_name] = array(
+            'title'         => $title,
+            'tab_content' => array(
+                'initial'   => $tab_return,
+                'expand'   => $expand_return
+            )
+        );
+    }
+
+    foreach ($entries as $entry) {
+        $tabData = array();
+        
+        foreach ($tabArr as $tabkey => $tab) {
+            //default the tabData            
+            $tabData[$tabkey] = $tab;
+
+            $tabContent = (array) $tab['tab_content'];            
+            //loop through tab content - initial and expand section(if set)
+            foreach($tabContent as $dataKey=>$dataType){
+                $blockData = array();                
+                $blocks = (array) $dataType['blocks'];    
+                
+                //loop through blocks            
+                foreach($blocks as $blockKey=>$block){
+                    $columnData = array();
+                    $columns = (array) $block['columns'];
+
+                    //loop through columns
+                    foreach ($columns as $columnKey => $column) {   
+                        $fieldData = array();
+                        
+                        //find fields   
+                        preg_match_all("/\[field\]\s*(.[\S\s]*?)\s*\[\/field\]/", (string)$column, $fields);
+
+                        //loop through fields
+                        foreach ($fields[1] as $field_id) {
+                            $fieldData['field-'.$field_id] = fieldOutput($field_id, $entry, $field_array);
+                        }                           
+                        $columnData[$columnKey] = $fieldData; //write field data to columns
+                    }
+                    $blockData[$blockKey] = array('columns'=>$columnData); //write column data to blocks
+                }
+                $tabData[$tabkey]['tab_content'][$dataKey] = array('blocks'=>$blockData); //write block data to tabs                                
+            }            
+        }
+
+        $return['makers'][] = array(
+            'tabs'          => $tabData,
+            'project_name'  => $entry['151'],
+            'project_id'    => $entry['id'],
+            'status'        => $entry['303'],
+            'description'   => $entry['16'],
+            'photo'         => $entry['22'],
+
+        );
+    }
+
+    return $return;
+}
+
+function retrieve_blocks($content = '') {
+    if (empty($content)) {
+        return 'no content submitted';
+    }
+
+    $return = array();
+    //find all blocks
+    preg_match_all("/\[block\]\s*(.[\S\s]*?)\s*\[\/block\]/", $content, $blocks);
+    foreach ($blocks[1] as $block) {
+        $columnArr = array();
+        preg_match_all("/\[column\]\s*(.[\S\s]*?)\s*\[\/column\]/", $block, $columns);
+        foreach ($columns[1] as $column) {
+            $columnArr[] = $column;
+        }
+        $return[]['columns'] = $columnArr;
+    }
+
+    return $return;
+}
+
+function fieldOutput($fieldID, $entry, $field_array) {
+    $formID = $entry['form_id'];
+
+    //pull entry notes
+    $entry['notes'] = GFAPI::get_notes(array('entry_id' => $entry['id'], 'note_type' => 'user'));
+    //$entry['final_location'] = display_schedule($formID, $entry, 'summary');
+    //$entry['rmt'] = entryResources($entry, FALSE);
+
+    //set default values
+    $label = $fieldID;
+    $value = (isset($entry[$fieldID]) ? $entry[$fieldID] : '');
+    $type  = 'text';
+
+    //find this field in the form object                
+    if (isset($field_array[$fieldID])) {
+        $field_data = $field_array[$fieldID];
+        $label = ($field_data['adminLabel'] != '' ? $field_data['adminLabel'] : $field_data['label']);
+        $type = $field_data['type'];
+        switch ($field_data['type']) {
+            case 'website':
+                if ($fieldID == 32) {
+                    $type = 'video';
+                }
+            case 'fileupload':
+                if ($field_data['multipleFiles']) {
+                    $type = 'multipleFiles';
+                    $value = json_decode($value);
+
+                    //if the array is empty, set this back to blank
+                    if (empty($value))   $value = '';
+                }
+                break;
+
+            case 'address':
+                $value = array();
+
+                foreach ($field_data['inputs'] as $input) {
+                    if (isset($entry[$input['id']]) && $entry[$input['id']] != '') {
+                        $input = array('label' => $input['label'], 'value' => $entry[$input['id']]);
+                        $value[] = $input;
+                    }
+                }
+
+                //if the array is empty, set this back to blank
+                if (empty($value))   $value = '';
+                break;
+            case 'name':
+                $fnameID = $fieldID . '.3';
+                $lnameID = $fieldID . '.6';
+                $value = $entry[$fnameID] . ' ' . $entry[$lnameID];
+                break;
+            case 'checkbox':
+                $value = array();
+                foreach ($field_data['inputs'] as $input) {
+                    if (isset($entry[$input['id']]) && $entry[$input['id']] != '') {
+                        //field 321 is stored as category number, use cross reference to find text value
+                        if ($fieldID == '321') {
+                            $input = html_entity_decode(get_CPT_name($entry[$input['id']]));
+                        } else {
+                            $input = $entry[$input['id']];
+                        }
+                        $value[] = $input;
+                    }
+                }
+
+                //if the array is empty, set this back to blank
+                if (empty($value))   $value = '';
+                break;
+            case 'list':
+                $value = unserialize($value);
+                break;
+            default:
+                if (isset($entry[$fieldID])) {
+                    //field 320 and 321 is stored as category number, use cross reference to find text value
+                    if ($fieldID == '320') {
+                        $value = html_entity_decode(get_CPT_name($entry[$fieldID]));
+                    } else {
+                        $value = $entry[$fieldID];
+                    }
+                }
+                break;
+        }
+    } else {
+        switch ($fieldID) {
+            case 'notes':
+                $type  = 'notes';
+                $label = 'Notes';
+                break;
+            case 'final_location':
+                $type  = 'html';
+                $label = 'Final Location';
+                break;
+            case 'rmt':
+                $type  = 'listRepeat';
+                $label = 'Resources';
+                break;
+            case 'date_created':
+                $type  = 'text';
+                $date  = date_create($entry[$fieldID]);
+                $value = date_format($date, "m/d/Y");
+                $label = 'Created';
+                break;
+        }
+    }
+
+    return array('label' => $label, 'type' => $type, 'value' => $value);
 }

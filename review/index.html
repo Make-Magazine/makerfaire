@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 
-    <title>My first BootstrapVue app</title>
+    <title>Maker Faire Admin Review</title>
 
 </head>
 
@@ -16,7 +16,6 @@
 
     <!-- Our application root element -->
     <div id="review" style="width:95%; margin:0 auto;">
-
         <b-container fluid class="filter-options">
             <input type="text" v-model="searchQuery" placeholder="Search..." />
             <div class="select-wrapper">
@@ -59,7 +58,8 @@
                 </b-card>
             </b-card-group>
         </div>
-        <div  v-if="currentView=='list'">
+
+        <div v-if="currentView=='list'">
             <b-card no-body v-for="(maker, maker_id) in filterBy" :key="'maker-'+maker.project_id">
                 <b-row class="header">
                     <b-col>{{maker.status}}</b-col>
@@ -68,17 +68,21 @@
                     </b-col>
                     <b-col cols="1" style="color: #ccc;">{{maker.project_id}}</b-col>
                 </b-row>
-                <b-tabs card>
-                    <b-tab v-for="(columns, tab) in maker.tabs" :key="'dyn-tab-' + tab" :title="tab">
+                <b-tabs card v-bind:id=maker.project_id>
+                    <b-tab v-for="(tab,tabKey) in maker.tabs" :key="tabKey+'-'+maker_id" :title="tab.title">                        
                         <b-card-text>
-                            <b-container fluid class="bv-example-row">
-                                <b-row>
-                                    <b-col v-for="(fields, column) in columns" :key="'dyn-column-' + column">
+                            <b-container v-for="(blocks,section_id) in tab.tab_content.expand" :key="block_id" fluid
+                                class="bv-example-row">                    
+                                              blocks - {{section_id}} - {{blocks}}
+                                <b-row  v-for="(columns,block_id) in blocks" :key="block_id">                                    
+                                    <b-col v-for="(fields, column_id) in columns" :key="'dyn-column-' + column_id">                                                   
                                         <div v-for="(field, field_id) in fields" :key="maker_id-'field-' + field_id">
+                                            field_id: {{field_id}} - {{field}}
                                             <div v-if="field.value">
                                                 <label>{{ field.label }}</label>
                                                 <div v-if="field.type === 'fileupload'">
-                                                    <b-img thumbnail fluid :src="field.value" :alt="field.label"></b-img>
+                                                    <b-img thumbnail fluid :src="field.value"
+                                                        :alt="field.label"></b-img>
                                                 </div>
                                                 <span v-else-if="field.type === 'multipleFiles'">
                                                     <b-container class="p-4 bg-dark">
@@ -122,7 +126,7 @@
                                                     <div v-for="(value,i) in field.value">
                                                         <b-table striped hover :items="value"></b-table>
                                                     </div>
-    
+
                                                 </span>
                                                 <span v-else-if="field.type === 'list'">
                                                     <b-table striped hover :items="field.value"></b-table>
@@ -144,6 +148,13 @@
                                     </b-col>
                                 </b-row>
                             </b-container>
+                            <!--
+                                }elseif content_type='expand'{
+                                    <b-collapse>
+                                        <block></block>
+                                    </b-collapse>
+                                }-->
+
                         </b-card-text>
                     </b-tab>
                 </b-tabs>
