@@ -697,25 +697,26 @@ function getAllEntries($formID = '', $page = '', $years = '') {
 
         //build the tab content
         preg_match_all("/\[tab_content\]\s*(.[\S\s]*?)\s*\[\/tab_content\]/", $tab, $tab_content_arr);
-        $tab_return = array();
+        $tab_content = array();
         //there should only be 1 tab content per tab
         if ($tab_content_arr)
-            $tab_return['blocks'] = retrieve_blocks($tab_content_arr[1][0]);
+            $tab_content['initial']['blocks'] =  retrieve_blocks($tab_content_arr[1][0]);
 
         //build the expand section
         preg_match_all("/\[expand\]\s*(.[\S\s]*?)\s*\[\/expand\]/", $tab, $expand_content_arr);
 
         $expand_return = array();
         //there should only be 1 tab content per tab
-        if ($expand_content_arr && isset($expand_content_arr[1][0]))
-            $expand_return['blocks'] = retrieve_blocks($expand_content_arr[1][0]);
+        if ($expand_content_arr && isset($expand_content_arr[1][0])){
+            $blocks = retrieve_blocks($expand_content_arr[1][0]);
+            if(!empty($blocks)){
+                $tab_content['expand']['blocks'] = $blocks;
+            }            
+        }
 
         $tabArr[$tab_name] = array(
-            'title'         => $title,
-            'tab_content' => array(
-                'initial'   => $tab_return,
-                'expand'   => $expand_return
-            )
+            'title'       => $title,
+            'tab_content' => $tab_content
         );
     }
 

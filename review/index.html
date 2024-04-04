@@ -146,7 +146,7 @@
                                 </b-row>
 
                                 <!-- Expand Section -->
-                                <div v-if="tab.tab_content.expand.blocks">
+                                <div v-if="tab.tab_content.expand">
                                     <b-button v-b-toggle="'collapse-'+tabKey+maker.project_id" variant="primary">Toggle
                                         Collapse</b-button>
                                     <b-collapse :id="'collapse-'+tabKey+maker.project_id" class="mt-2">
