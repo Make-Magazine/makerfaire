@@ -18,6 +18,11 @@
     <div id="review" style="width:95%; margin:0 auto;">
 
         <input type="text" v-model="searchQuery" placeholder="Search..." />
+        <template v-for="status in filteredStatus">
+            <label :for="status">
+                <input type="radio" :id="status" :name="status" :value="status" v-model="selectedStatus">{{status}}
+            </label>
+        </template>
 
         <div class="listGrid-toolbar">
 			<!-- <span class="listGrid-caption">{{caption}}</span> -->
@@ -60,7 +65,7 @@
                 <b-tabs card>
                     <b-tab v-for="(columns, tab) in maker.tabs" :key="'dyn-tab-' + tab" :title="tab">
                         <b-card-text>
-                            <b-container-fluid class="bv-example-row">
+                            <b-container fluid class="bv-example-row">
                                 <b-row>
                                     <b-col v-for="(fields, column) in columns" :key="'dyn-column-' + column">
                                         <div v-for="(field, field_id) in fields" :key="maker_id-'field-' + field_id">

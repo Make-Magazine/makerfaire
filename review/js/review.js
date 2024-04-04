@@ -4,7 +4,8 @@ window.app = new Vue({
         return {
             makers: null,
             currentView: "grid",
-            searchQuery: ''
+            searchQuery: '',
+            selectedStatus: '',
         }
     },
     methods: {
@@ -22,15 +23,24 @@ window.app = new Vue({
     },
     computed: {
         filterBy(){
-          if(this.searchQuery){
-            var value = this.searchQuery;
+          if(this.searchQuery || this.selectedStatus){
+            var searchValue = this.searchQuery;
+            var statusFilter = this.selectedStatus;
+            console.log(statusFilter);
             return this.makers.filter(function(maker){
-                return maker.project_name.toLowerCase().indexOf(value) > -1 ||
-                       maker.description.toLowerCase().indexOf(value) > -1 
+                return maker.project_name.toLowerCase().indexOf(searchValue) > -1 ||
+                       maker.description.toLowerCase().indexOf(searchValue) > -1 ||
+                       maker.status == statusFilter
             })
           }else{
             return this.makers;
           }
+        },
+        filteredStatus() {
+            if(this.makers) {
+                var filteredStatus = Array.from(new Set(this.makers.map(maker => maker.status)));
+                return filteredStatus;
+            }
         }
     }    
 })
