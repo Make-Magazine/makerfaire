@@ -682,11 +682,11 @@ function getAllEntries($formID = '', $page = '', $years = '') {
     }
 
     $data = array();
+    
     //pull admin review layout file
     $file = file_get_contents(ABSPATH . "/review/templates/admin_review.txt");
 
-
-    //find all tabs
+    //build the output layout
     preg_match_all("/\[tab\]\s*(.[\S\s]*?)\s*\[\/tab\]/", $file, $tabs);
     $tabArr = array();
     foreach ($tabs[1] as $key => $tab) {
@@ -712,25 +712,48 @@ function getAllEntries($formID = '', $page = '', $years = '') {
 
         $tabArr[$tab_name] = array(
             'title'         => $title,
-            'tab_content'   => $tab_return,
-            'expand'        => $expand_return
+            'tab_content' => array(
+                'initial'   => $tab_return,
+                'expand'   => $expand_return
+            )
         );
     }
 
     foreach ($entries as $entry) {
         $tabData = array();
+        
         foreach ($tabArr as $tabkey => $tab) {
-            foreach ($tab['tab_content']['blocks'] as $blockkey => $columns) {
-                foreach ($columns['columns'] as $columnKey => $columnData) {                                        
-                    //find fields   
-                    preg_match_all("/\[field\]\s*(.[\S\s]*?)\s*\[\/field\]/", (string)$columnData, $fields);
-                    $fieldArr = array();
-                    foreach ($fields[1] as $field_id) {
-                        $fieldArr['field-'.$field_id] = fieldOutput($field_id, $entry, $field_array);
+            //default the tabData            
+            $tabData[$tabkey] = $tab;
+
+            $tabContent = (array) $tab['tab_content'];            
+            //loop through tab content - initial and expand section(if set)
+            foreach($tabContent as $dataKey=>$dataType){
+                $blockData = array();                
+                $blocks = (array) $dataType['blocks'];    
+                
+                //loop through blocks            
+                foreach($blocks as $blockKey=>$block){
+                    $columnData = array();
+                    $columns = (array) $block['columns'];
+
+                    //loop through columns
+                    foreach ($columns as $columnKey => $column) {   
+                        $fieldData = array();
+                        
+                        //find fields   
+                        preg_match_all("/\[field\]\s*(.[\S\s]*?)\s*\[\/field\]/", (string)$column, $fields);
+
+                        //loop through fields
+                        foreach ($fields[1] as $field_id) {
+                            $fieldData['field-'.$field_id] = fieldOutput($field_id, $entry, $field_array);
+                        }                           
+                        $columnData[$columnKey] = $fieldData; //write field data to columns
                     }
-                    $tabData[$tabkey]['tab_content']['blocks'][$blockkey]['columns'][$columnKey] =  $fieldArr;
+                    $blockData[$blockKey] = array('columns'=>$columnData); //write column data to blocks
                 }
-            }
+                $tabData[$tabkey]['tab_content'][$dataKey] = array('blocks'=>$blockData); //write block data to tabs                                
+            }            
         }
 
         $return['makers'][] = array(
