@@ -1,6 +1,4 @@
 var urlParams = new URLSearchParams(window.location.search);
-var router = new VueRouter();
-
 window.app = new Vue({
     el: '#review',
     data() {
@@ -21,7 +19,6 @@ window.app = new Vue({
         expandCard: function(projectID){
             this.currentView = 'list';
             this.searchQuery = projectID;
-            router.push({ path: '', query: { search: projectID }});
         }
     },
     mounted() {
