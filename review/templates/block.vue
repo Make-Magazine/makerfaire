@@ -1,12 +1,15 @@
 <!--template file-->
 <template>
-    content block pulled in     
+    content block pulled in
 </template>
-<!--<b-row v-for="(block, block_id) in content.blocks" :key="block_id">
-    block content is - {{block}}
-        <b-col v-for="(fields, column) in block.columns" :key="'dyn-column-' + column">                        
-            <div v-for="(field, field_id) in fields"
-                :key="maker_id-'field-' + field_id">
+<!--
+<template>    
+    <b-row  v-for="(block,block_id) in tab.tab_content.expand.blocks" :key="block_id" >                                                    
+                    
+        <b-col v-for="(fields, column_id) in block.columns" :key="'dyn-column-' + column_id">                                                   
+                    
+            <div v-for="(field, field_id) in fields" :key="maker_id-'field-' + field_id">
+                
                 <div v-if="field.value">
                     <label>{{ field.label }}</label>
                     <div v-if="field.type === 'fileupload'">
@@ -18,15 +21,14 @@
                             <b-row>
                                 <b-col fluid="sm" :key="maker_id+'-img-' + image_id"
                                     v-for="(image,image_id) in field.value">
-                                    <b-img thumbnail fluid :src="image"
-                                        :alt="field.label" class="multiImage"></b-img>
+                                    <b-img thumbnail fluid :src="image" :alt="field.label"
+                                        class="multiImage"></b-img>
                                 </b-col>
                             </b-row>
                         </b-container>
                     </span>
                     <span v-else-if="field.type === 'website'">
-                        <b-link :href="field.value"
-                            target="_blank">{{field.value}}</b-link>
+                        <b-link :href="field.value" target="_blank">{{field.value}}</b-link>
                     </span>
                     <span v-else-if="field.type === 'video'">
                         <b-embed type="iframe" aspect="16by9" :src="field.value"
@@ -77,4 +79,5 @@
             </div>
         </b-col>
     </b-row>
+</template>    
 -->
