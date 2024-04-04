@@ -26,7 +26,6 @@ window.app = new Vue({
           if(this.searchQuery || this.selectedStatus){
             var searchValue = this.searchQuery;
             var statusFilter = this.selectedStatus;
-            console.log(statusFilter);
             return this.makers.filter(function(maker){
                 return (maker.project_name.toLowerCase().indexOf(searchValue) > -1 ||
                        maker.description.toLowerCase().indexOf(searchValue) > -1) &&
