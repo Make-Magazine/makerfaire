@@ -29,9 +29,6 @@ h3 {
                 background-color: #ddd;
             }
         }
-        &:last-of-type {
-            display: none;
-        }
     }
     .card-header:has(> .img-thumbnail), .card-header .img-thumbnail {
         padding: 0px;

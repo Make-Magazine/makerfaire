@@ -16,8 +16,11 @@
 
     <!-- Our application root element -->
     <div id="review" style="width:95%; margin:0 auto;">
-        <div class="listGrid-toolbar">
-            <span class="listGrid-caption">{{caption}}</span>
+        <!-- Search box -->
+        <input type="text" v-model="searchQuery" placeholder="Search..." />
+
+        <!-- Toggle to switch between list and grid view -->
+        <div class="listGrid-toolbar">            
             <span class="listGrid-switch-iconGroup">
                 <i class="bi bi-list listGrid-switch-icon" v-bind:class="{ active: currentView=='list'}"
                     aria-hidden="true" :title="currentView=='grid' ? 'switch to List View': 'List View'"
@@ -27,10 +30,11 @@
                     v-on:click="switchToGridView"></i>
             </span>
         </div>
-        <div v-if="currentView=='grid'">
+
+        <!-- Grid View -->
+        <div v-if="currentView=='grid'" >
             <b-card-group deck>
-                <b-card v-for="(maker, maker_id) in makers" :title="maker.project_name" img-top
-                    :key="'maker-'+maker.project_id">
+                <b-card v-for="(maker, maker_id) in filterBy" :title="maker.project_name" img-top :key="'maker-'+maker.project_id">
                     <template #header>
                         <b-img thumbnail fluid :alt="maker.project_name" :src="maker.photo" />
                     </template>
@@ -43,8 +47,9 @@
                 </b-card>
             </b-card-group>
         </div>
-        <div v-if="currentView=='list'">
-            <b-card no-body v-for="(maker, maker_id) in makers" :key="'maker-'+maker.project_id">
+
+        <div  v-if="currentView=='list'">
+            <b-card no-body v-for="(maker, maker_id) in filterBy" :key="'maker-'+maker.project_id">
                 <b-row class="header">
                     <b-col>{{maker.status}}</b-col>
                     <b-col cols="10">
@@ -138,9 +143,6 @@
                         </b-card-text>
                     </b-tab>
                 </b-tabs>
-                <button @click="expand($event)">
-                    Expand
-                </button>
             </b-card>
         </div>
 
