@@ -26,6 +26,11 @@ window.app = new Vue({
         expandCard: function(projectID){
             this.currentView = 'list';
             this.searchQuery = projectID;
+        },
+        switchDateOrder: function(ev) {
+            console.log(ev.target.innerHTML);
+            ev.target.innerHTML = (ev.target.innerHTML == "See Oldest") ? "See Newest" : "See Oldest";
+            this.makers.reverse();
         }
     },
     mounted() {
@@ -43,7 +48,8 @@ window.app = new Vue({
             return this.makers.filter(function(maker){
                 return (maker.project_name.toLowerCase().indexOf(searchValue) > -1 ||
                        maker.project_id.toLowerCase().indexOf(searchValue) > -1 ||
-                       maker.description.toLowerCase().indexOf(searchValue) > -1) &&
+                       maker.description.toLowerCase().indexOf(searchValue) > -1 ||
+                       maker.maker_name.toLowerCase().indexOf(searchValue) > -1) &&
                        maker.status.indexOf(statusFilter) > -1
             })
           }else{
@@ -55,10 +61,7 @@ window.app = new Vue({
                 var filteredStatus = Array.from(new Set(this.makers.map(maker => maker.status)));
                 return filteredStatus;
             }
-        },
-        countItems () {
-            console.log(this.makers.length);
-        },
+        }
     },
     filters: {
         count: function (res) {
