@@ -92,7 +92,7 @@ h3 {
 }
 
 // Loader
-.entry-wrapper:empty + #loader {
+.preload #loader {
     display: block;
 }
 #loader {

@@ -26,10 +26,11 @@ window.app = new Vue({
     mounted() {
         axios
             .get('/query/?type=entries&form=260')
-            .then(response => (this.makers = response.data.makers));
-        console.log(this.makers);
+            .then(response => (this.makers = response.data.makers))
+            .then((data) => this.$el.classList.remove("preload"));
         // vue loads later, we don't know what we clicking, this function is in review.js
         document.addEventListener( "click", clickListener );
+       
     },
     computed: {
         filterBy(){
