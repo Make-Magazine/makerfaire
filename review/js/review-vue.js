@@ -3,12 +3,17 @@ window.app = new Vue({
     el: '#review',
     data() {
         return {
-            makers: null,
+            makers: [],
             currentView: urlParams.get('layout') ? urlParams.get('layout') : "grid",
             searchQuery: urlParams.get('search') ? urlParams.get('search') : "",
             selectedStatus: '',
-            perPage: 8,
+            perPage: 20,
             currentPage: 1,
+        }
+    },
+    watch: {
+        // when makers data has fully loaded from the axios call, this will run
+        makers: function (makersLoaded, makersEmpty) {
         }
     },
     methods: {
@@ -26,11 +31,9 @@ window.app = new Vue({
     mounted() {
         axios
             .get('/query/?type=entries&form=260')
-            .then(response => (this.makers = response.data.makers))
-            .then((data) => this.$el.classList.remove("preload"));
+            .then(response => (this.makers = response.data.makers));
         // vue loads later, we don't know what we clicking, this function is in review.js
         document.addEventListener( "click", clickListener );
-       
     },
     computed: {
         filterBy(){
@@ -52,6 +55,16 @@ window.app = new Vue({
                 var filteredStatus = Array.from(new Set(this.makers.map(maker => maker.status)));
                 return filteredStatus;
             }
+        },
+        countItems () {
+            console.log(this.makers.length);
+        },
+    },
+    filters: {
+        count: function (res) {
+          var res = this.makers.length;
+          console.log(res);
+          return res;
         }
-    }    
+    }  
 })

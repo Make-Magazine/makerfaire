@@ -11,7 +11,7 @@ document.querySelector(".modal").addEventListener("click", function (e) {
 function clickListener(event) {
     var element = event.target;
     // do the image modal
-    if(element.tagName == 'IMG') {
+    if(element.tagName == 'IMG' && !element.classList.contains("grid-image")) {
         var image = document.querySelector("#imagemodal #imagepreview");
         image.src = element.src;
         modal.classList.add("show")

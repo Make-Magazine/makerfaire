@@ -42,9 +42,9 @@
         </b-container>
         <div class="entry-wrapper" v-if="currentView=='grid'">
             <b-card-group deck>
-                <b-card v-for="(maker, maker_id) in filterBy" :title="maker.project_name" img-top :key="'maker-'+maker.project_id" @click="expandCard(maker.project_id)">
+                <b-card v-for="(maker, maker_id) in filterBy.slice((currentPage-1)*perPage,(currentPage-1)*perPage+perPage)" :title="maker.project_name" img-top :key="'maker-'+maker.project_id" @click="expandCard(maker.project_id)">
                     <template #header>
-                        <b-img thumbnail fluid :alt="maker.project_name" :src="maker.photo" />
+                        <b-img thumbnail fluid class="grid-image" :alt="maker.project_name" :src="maker.photo" />
                     </template>
                     <b-card-text>
                         {{maker.description}}
@@ -53,17 +53,22 @@
                         <small class="text-muted">{{maker.status}}</small>
                     </template>
                 </b-card>
+                <b-pagination
+                    v-if="makers.length>0"
+                    v-model="currentPage"
+                    :total-rows="makers.length"
+                    :per-page="perPage"
+                    first-text="First" 
+                    prev-text="Prev" 
+                    next-text="Next" 
+                    last-text="Last"
+                    aria-controls="Grid">
+                </b-pagination>
             </b-card-group>
         </div>
 
         <div class="entry-wrapper" v-if="currentView=='list'">
-            <!--<b-pagination
-                v-model="currentPage"
-                :total-rows="makers.length"
-                :per-page="perPage"
-                aria-controls="listView">
-            </b-pagination>-->
-            <b-card id="listView" no-body v-for="(maker, maker_id) in filterBy" v-model="currentPage" :key="'maker-'+maker.project_id">
+            <b-card id="listView" no-body v-for="(maker, maker_id) in filterBy.slice((currentPage-1)*perPage,(currentPage-1)*perPage+perPage)" v-model="currentPage" :key="'maker-'+maker.project_id">
                 <b-row class="header">
                     <b-col cols="2">{{maker.status}}</b-col>
                     <b-col cols="9">
@@ -244,8 +249,19 @@
                     </b-tab>
                 </b-tabs>
             </b-card>
+            <b-pagination
+                v-if="makers.length>0"
+                v-model="currentPage"
+                :total-rows="makers.length"
+                :per-page="perPage"
+                first-text="First" 
+                prev-text="Prev" 
+                next-text="Next" 
+                last-text="Last"
+                aria-controls="listView">
+            </b-pagination>
         </div>
-        <div id="loader"> <!-- must be directly after your v-cloak element -->
+        <div id="loader" v-if="makers.length==0">
             <img src="/review/img/loading.gif" />
         </div>
     </div>
