@@ -23,7 +23,7 @@ window.app = new Vue({
     },
     mounted() {
         axios
-            .get('/wp-json/makerfaire/v2/fairedata/entryReview/260/BA23')
+            .get('/query/?type=entries&form=260')
             .then(response => (this.makers = response.data.makers));
     },
     computed: {
