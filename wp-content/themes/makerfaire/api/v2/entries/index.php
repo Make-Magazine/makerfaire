@@ -214,6 +214,7 @@ function fieldOutput2($fieldID, $entry, $field_array) {
                   //if the array is empty, set this back to blank
                   if (empty($value))   $value = '';
               }
+              $value = str_replace('http://', 'https://',$value);
               break;
 
           case 'address':
