@@ -40,7 +40,7 @@
                 </span>
             </div>
         </b-container>
-        <div v-if="currentView=='grid'">
+        <div class="entry-wrapper" v-if="currentView=='grid'">
             <b-card-group deck>
                 <b-card v-for="(maker, maker_id) in filterBy" :title="maker.project_name" img-top :key="'maker-'+maker.project_id" @click="expandCard(maker.project_id)">
                     <template #header>
@@ -56,8 +56,14 @@
             </b-card-group>
         </div>
 
-        <div v-if="currentView=='list'">
-            <b-card no-body v-for="(maker, maker_id) in filterBy" :key="'maker-'+maker.project_id">
+        <div class="entry-wrapper" v-if="currentView=='list'">
+            <!--<b-pagination
+                v-model="currentPage"
+                :total-rows="makers.length"
+                :per-page="perPage"
+                aria-controls="listView">
+            </b-pagination>-->
+            <b-card id="listView" no-body v-for="(maker, maker_id) in filterBy" v-model="currentPage" :key="'maker-'+maker.project_id">
                 <b-row class="header">
                     <b-col cols="2">{{maker.status}}</b-col>
                     <b-col cols="9">
@@ -239,11 +245,25 @@
                 </b-tabs>
             </b-card>
         </div>
+        <div id="loader"> <!-- must be directly after your v-cloak element -->
+            <img src="/review/img/loading.gif" />
+        </div>
+    </div>
 
+    <!-- bootstrap modal where the image will appear -->
+    <div class="modal fade" id="imagemodal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <img src="" id="imagepreview" >
+                </div>
+            </div>
+        </div>
     </div>
-    <div id="loader"> <!-- must be directly after your v-cloak element -->
-        <img src="/review/img/loading.gif" />
-    </div>
+    
 
     <!-- Required scripts, vue loads first -->
     <script src="/review/js/min/vue.min.js"></script>

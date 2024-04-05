@@ -17,6 +17,7 @@ img {
 
 h3 {
     padding: 0px;
+    margin: 10px 0px;
 }
 
 .filter-options {
@@ -90,10 +91,31 @@ h3 {
     min-width: 250px;
 }
 
+// Loader
+.entry-wrapper:empty + #loader {
+    display: block;
+}
 #loader {
+    display: none;
     text-align: center;
     margin-top: 50px;
     img {
         width: 30px;
     }
 }
+
+.modal.show { 
+    display: block;
+    background: rgba(0, 0, 0, .8);
+    .modal-dialog {
+        max-width: fit-content;
+        .modal-content {
+            display: flex;
+            justify-content: center;
+            img {
+                max-height: 80vh;
+                max-width: 90vw;
+            }
+        }
+    }
+ }

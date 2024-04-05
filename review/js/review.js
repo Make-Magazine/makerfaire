@@ -1,51 +1,19 @@
-var urlParams = new URLSearchParams(window.location.search);
-window.app = new Vue({
-    el: '#review',
-    data() {
-        return {
-            makers: null,
-            currentView: urlParams.get('layout') ? urlParams.get('layout') : "grid",
-            searchQuery: urlParams.get('search') ? urlParams.get('search') : "",
-            selectedStatus: '',
-        }
-    },
-    methods: {
-        switchToListView: function(ev){
-            this.currentView = 'list';
-        },
-        switchToGridView: function(ev){
-            this.currentView = 'grid';
-        },
-        expandCard: function(projectID){
-            this.currentView = 'list';
-            this.searchQuery = projectID;
-        }
-    },
-    mounted() {
-        axios
-            .get('/query/?type=entries&form=260')
-            .then(response => (this.makers = response.data.makers));
-    },
-    computed: {
-        filterBy(){
-          if(this.searchQuery || this.selectedStatus){
-            var searchValue = this.searchQuery;
-            var statusFilter = this.selectedStatus;
-            return this.makers.filter(function(maker){
-                return (maker.project_name.toLowerCase().indexOf(searchValue) > -1 ||
-                       maker.project_id.toLowerCase().indexOf(searchValue) > -1 ||
-                       maker.description.toLowerCase().indexOf(searchValue) > -1) &&
-                       maker.status.indexOf(statusFilter) > -1
-            })
-          }else{
-            return this.makers;
-          }
-        },
-        filteredStatus() {
-            if(this.makers) {
-                var filteredStatus = Array.from(new Set(this.makers.map(maker => maker.status)));
-                return filteredStatus;
-            }
-        }
-    }    
-})
+// here is our lightbox code
+var modal = document.querySelector(".modal");
+document.querySelector(".modal").addEventListener("click", function (e) {
+    if ((e.target !== modal ) && e.target !== modal.querySelector(".close")) {
+        return;    
+    } else { 
+        modal.classList.remove("show");
+    }
+});
+// this clickListener can handle all elements, even if they haven't loaded on the page yet
+function clickListener(event) {
+    var element = event.target;
+    // do the image modal
+    if(element.tagName == 'IMG') {
+        var image = document.querySelector("#imagemodal #imagepreview");
+        image.src = element.src;
+        modal.classList.add("show")
+    }
+}
