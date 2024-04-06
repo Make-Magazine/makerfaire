@@ -559,7 +559,7 @@ function display_schedule($form_id,$lead,$section='sidebar'){
   }
 
   //make sure there is data to display
-  if($wpdb->num_rows !=0){
+  if(!empty($scheduleArr)) {
     $output = '<div id="locationList">';
     //let's loop thru the schedule array now
     foreach($schedules as $data){
