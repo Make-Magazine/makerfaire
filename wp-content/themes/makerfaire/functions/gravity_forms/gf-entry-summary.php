@@ -751,7 +751,7 @@ function entryResources($lead, $html=TRUE) {
             . "FROM `wp_rmt_entry_resources` er, wp_rmt_resources, wp_rmt_resource_categories "
             . "where er.resource_id = wp_rmt_resources.ID "
             . "and resource_category_id = wp_rmt_resource_categories.ID  "
-            . "and er.entry_id = " . $entry_id = $lead['id'] . " order by item ASC, type ASC";
+            . "and er.entry_id = " . $lead['id'] . " order by item ASC, type ASC";
 
     $results = $wpdb->get_results($sql);
     $resourceDisp = '<table id="resTable"><thead>'
