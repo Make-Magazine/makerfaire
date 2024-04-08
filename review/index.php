@@ -39,10 +39,11 @@ if (!is_user_logged_in())
                 </select>
             </div>
 
-            <b-button v-if="makers.length>0" @click="switchDateOrder">See Oldest</b-button>
+            
 
             <div class="listGrid-toolbar">
                 <!-- <span class="listGrid-caption">{{caption}}</span> -->
+                <i class="bi bi-arrow-down-up" v-if="makers.length>0" @click="switchDateOrder" title="See Oldest" style="margin-right:5px;"></i>
                 <span class="listGrid-switch-iconGroup">
                     <i class="bi bi-list listGrid-switch-icon" v-bind:class="{ active: currentView=='list'}"
                         aria-hidden="true" :title="currentView=='grid' ? 'switch to List View': 'List View'"

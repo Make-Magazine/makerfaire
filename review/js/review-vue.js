@@ -28,8 +28,7 @@ window.app = new Vue({
             this.searchQuery = projectID;
         },
         switchDateOrder: function(ev) {
-            console.log(ev.target.innerHTML);
-            ev.target.innerHTML = (ev.target.innerHTML == "See Oldest") ? "See Newest" : "See Oldest";
+            ev.target.title = (ev.target.title == "See Oldest") ? "See Newest" : "See Oldest";
             this.makers.reverse();
         },
     },
