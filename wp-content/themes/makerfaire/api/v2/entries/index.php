@@ -198,6 +198,7 @@ function retrieve_blocks2($content = '') {
 }
 
 function fieldOutput2($fieldID, $entry, $field_array) {
+  global $form;
   $formID = $entry['form_id'];
   //set default values
   $label = $fieldID;
@@ -281,8 +282,7 @@ function fieldOutput2($fieldID, $entry, $field_array) {
       case 'rmt':
         $type  = 'html';
         $label = 'Assigned Resources';
-        //$value = entryResources($entry, TRUE);
-        
+        //$value = entryResources($entry, TRUE);        
         break;
       case 'final_location':
         $type  = 'html';
@@ -294,6 +294,13 @@ function fieldOutput2($fieldID, $entry, $field_array) {
         $label = 'Notes';
         $value = GFAPI::get_notes(array('entry_id' => $entry['id'], 'note_type' => 'user'));
         break;
+      case 'flags':
+        $type = 'html';
+        $label = 'Flags/Preliminary Location';
+                
+        $value      = display_flags_prelim_locs($form, $entry);
+        break;
+      
       case 'notes_table':
         $type  = 'html';
         $label = '';
