@@ -47,6 +47,7 @@
                 <b-card v-for="(maker, maker_id) in filterBy.slice((currentPage-1)*perPage,(currentPage-1)*perPage+perPage)" :title="maker.project_name" img-top :key="'maker-'+maker.project_id" @click="expandCard(maker.project_id)">
                     <template #header>
                         <b-img thumbnail fluid class="grid-image" :alt="maker.project_name" :src="maker.photo" />
+                        <h5 class="hidden">{{maker.maker_name}}</h5>
                     </template>
                     <b-card-text>
                         {{maker.description}}

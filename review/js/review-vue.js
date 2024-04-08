@@ -31,7 +31,7 @@ window.app = new Vue({
             console.log(ev.target.innerHTML);
             ev.target.innerHTML = (ev.target.innerHTML == "See Oldest") ? "See Newest" : "See Oldest";
             this.makers.reverse();
-        }
+        },
     },
     mounted() {
         axios
