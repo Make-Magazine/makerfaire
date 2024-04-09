@@ -1,5 +1,6 @@
 label {
     font-weight: 900;
+    display: block;
 }
 
 img {
@@ -126,8 +127,4 @@ h3 {
             }
         }
     }
- }
-
- #flags {
-    h2, .handle-actions { display: none; }
  }
