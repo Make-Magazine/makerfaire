@@ -1,5 +1,6 @@
 // here is our lightbox code
 var modal = document.querySelector(".modal");
+/*
 document.querySelector(".modal").addEventListener("click", function (e) {
     if ((e.target !== modal ) && e.target !== modal.querySelector(".close")) {
         return;    
@@ -8,6 +9,7 @@ document.querySelector(".modal").addEventListener("click", function (e) {
     }
 });
 // this clickListener can handle all elements, even if they haven't loaded on the page yet
+
 function clickListener(event) {
     var element = event.target;
     // do the image modal
@@ -16,4 +18,4 @@ function clickListener(event) {
         image.src = element.src;
         modal.classList.add("show")
     }
-}
+}*/

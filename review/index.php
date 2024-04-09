@@ -111,6 +111,7 @@ foreach ($forms as $form) {
                                                         <b-row>
                                                             <b-col fluid="sm" :key="maker_id+'-img-' + image_id" v-for="(image,image_id) in field.value">
                                                                 <b-img thumbnail fluid :src="image" :alt="field.label" class="multiImage"></b-img>
+                                                                
                                                             </b-col>
                                                         </b-row>
                                                     </b-container>
@@ -247,22 +248,21 @@ foreach ($forms as $form) {
                     </b-tab>
                 </b-tabs>
             </b-card>
-            <b-pagination
-                v-if="makers.length>0"
-                v-model="currentPage"
-                :total-rows="makers.length"
-                :per-page="perPage"
-                first-text="First" 
-                prev-text="Prev" 
-                next-text="Next" 
-                last-text="Last"
-                aria-controls="listView">
+            <b-pagination v-if="makers.length>0" v-model="currentPage" :total-rows="makers.length" :per-page="perPage" first-text="First" prev-text="Prev" next-text="Next" last-text="Last" aria-controls="listView">
             </b-pagination>
         </div>
         <div id="loader" v-if="makers.length==0">
             <img src="/review/img/loading.gif" />
         </div>
 
+        <div id="image-modal" v-if="modalShow" class="modal" tabindex="-1" role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-body">
+                        <img :src='selectedImgPath' />
+                    </div>
+                </div>
+            </div>
         </div>
 
     </div>

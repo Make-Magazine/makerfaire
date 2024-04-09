@@ -1,4 +1,6 @@
 var urlParams = new URLSearchParams(window.location.search);
+var formID    = document.getElementById("form_select").value; 
+
 window.app = new Vue({
     el: '#review',
     data() {
@@ -9,6 +11,9 @@ window.app = new Vue({
             selectedStatus: '',
             perPage: 20,
             currentPage: 1,
+            modalShow: false,
+            selectedImgPath: ''
+
         }
     },
     watch: {
@@ -31,13 +36,23 @@ window.app = new Vue({
             ev.target.title = (ev.target.title == "See Oldest") ? "See Newest" : "See Oldest";
             this.makers.reverse();
         },
+        updateForm: function(event) {
+            var formID = event.target.value;
+            console.log(formID);
+            axios
+            .get('/query/?type=entries&form='+formID)
+            .then(response => (this.makers = response.data.makers));
+        },
+        showModal(imgPath) {
+            alert(imagePath);
+            this.selectedImgPath = imgPath
+            this.modalShow = true
+        }
     },
     mounted() {
         axios
-            .get('/query/?type=entries&form=260')
+            .get('/query/?type=entries&form='+formID)
             .then(response => (this.makers = response.data.makers));
-        // vue loads later, we don't know what we clicking, this function is in review.js
-        document.addEventListener( "click", clickListener );
     },
     computed: {
         filterBy(){
