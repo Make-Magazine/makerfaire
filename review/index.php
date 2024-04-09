@@ -65,9 +65,10 @@ foreach ($forms as $form) {
         </b-container>
         <div v-if="currentView=='grid'">
             <b-card-group deck>
-                <b-card v-for="(maker, maker_id) in filterBy" :title="maker.project_name" img-top :key="'maker-'+maker.project_id" @click="expandCard(maker.project_id)">
+                <b-card v-for="(maker, maker_id) in filterBy.slice((currentPage-1)*perPage,(currentPage-1)*perPage+perPage)" :title="maker.project_name" img-top :key="'maker-'+maker.project_id" @click="expandCard(maker.project_id)">
                     <template #header>
-                        <b-img thumbnail fluid :alt="maker.project_name" :src="maker.photo" />
+                        <b-img thumbnail fluid class="grid-image" :alt="maker.project_name" :src="maker.photo" />
+                        <h5 class="hidden">{{maker.maker_name}}</h5>
                     </template>
                     <b-card-text>
                         {{maker.description}}
@@ -76,11 +77,14 @@ foreach ($forms as $form) {
                         <small class="text-muted">{{maker.status}}</small>
                     </template>
                 </b-card>
+                <b-pagination v-if="makers.length>0" v-model="currentPage" :total-rows="makers.length" :per-page="perPage" first-text="First" prev-text="Prev" next-text="Next" last-text="Last" aria-controls="Grid">
+                </b-pagination>
+
             </b-card-group>
         </div>
 
         <div v-if="currentView=='list'">
-            <b-card no-body v-for="(maker, maker_id) in filterBy" :key="'maker-'+maker.project_id">
+            <b-card id="listView" no-body v-for="(maker, maker_id) in filterBy.slice((currentPage-1)*perPage,(currentPage-1)*perPage+perPage)" v-model="currentPage" :key="'maker-'+maker.project_id">
                 <input type="hidden" name="entry_info_entry_id" :value=maker.project_id />
                 <b-row class="header">
                     <b-col cols="2">{{maker.status}}</b-col>
@@ -100,18 +104,13 @@ foreach ($forms as $form) {
                                             <div v-if="field.value">
                                                 <label>{{ field.label }}</label>
                                                 <div v-if="field.type === 'fileupload'">
-                                                    <b-img thumbnail fluid :src="field.value" :alt="field.label" @click="lightbox"></b-img>
+                                                    <b-img thumbnail fluid :src="field.value" :alt="field.label"></b-img>
                                                 </div>
                                                 <span v-else-if="field.type === 'multipleFiles'">
                                                     <b-container class="p-4 bg-dark">
                                                         <b-row>
                                                             <b-col fluid="sm" :key="maker_id+'-img-' + image_id" v-for="(image,image_id) in field.value">
                                                                 <b-img thumbnail fluid :src="image" :alt="field.label" class="multiImage"></b-img>
-                                                                <b-button id="show-btn" @click="$bvModal.show('{{maker_id}}-modal')">Launch demo modal</b-button>
-                                                                 <!-- bootstrap modal where the image will appear -->
-                                                                <b-modal :id="maker_id+'-modal'" hide-footer>
-                                                                    <b-img  fluid :src="image" :alt="field.label" class="multiImage"></b-img>
-                                                                </b-modal>
                                                             </b-col>
                                                         </b-row>
                                                     </b-container>
@@ -248,6 +247,22 @@ foreach ($forms as $form) {
                     </b-tab>
                 </b-tabs>
             </b-card>
+            <b-pagination
+                v-if="makers.length>0"
+                v-model="currentPage"
+                :total-rows="makers.length"
+                :per-page="perPage"
+                first-text="First" 
+                prev-text="Prev" 
+                next-text="Next" 
+                last-text="Last"
+                aria-controls="listView">
+            </b-pagination>
+        </div>
+        <div id="loader" v-if="makers.length==0">
+            <img src="/review/img/loading.gif" />
+        </div>
+
         </div>
 
     </div>
@@ -261,8 +276,6 @@ foreach ($forms as $form) {
     <script src="/review/js/min/vue.min.js"></script>
     <script src="/review/js/min/review.min.js"></script>
     <script src="/wp-includes/js/jquery/jquery.min.js" id="jquery-core-js"></script>
-
-    <script src="/review/js/gravityforms.js"></script>
 
 </body>
 <footer>
