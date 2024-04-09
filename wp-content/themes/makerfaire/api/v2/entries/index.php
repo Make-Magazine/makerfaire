@@ -20,7 +20,7 @@ $form = (!empty($_REQUEST['form']) ? sanitize_text_field($_REQUEST['form']) : fa
 
 // Double check again we have requested this file
 if ($type == 'entries') {
-  $data = getAllEntries2($form);
+  $data = getAllEntries($form);
 
   // Output the JSON
   echo json_encode($data);
@@ -28,7 +28,7 @@ if ($type == 'entries') {
   exit;
 }
 
-function getAllEntries2($formID = '', $page = '', $years = '') {
+function getAllEntries($formID = '', $page = '', $years = '') {
   $return = array();
 
   $search_criteria = array('status' => 'active');
@@ -63,7 +63,7 @@ function getAllEntries2($formID = '', $page = '', $years = '') {
     $tab_content = array();
     //there should only be 1 tab content per tab
     if ($tab_content_arr)
-      $tab_content['initial']['blocks'] =  retrieve_blocks2($tab_content_arr[1][0]);
+      $tab_content['initial']['blocks'] =  retrieve_blocks($tab_content_arr[1][0]);
 
     //build the expand section
     preg_match_all("/\[expand\]\s*(.[\S\s]*?)\s*\[\/expand\]/", $tab, $expand_content_arr);
@@ -71,7 +71,7 @@ function getAllEntries2($formID = '', $page = '', $years = '') {
     $expand_return = array();
     //there should only be 1 tab content per tab
     if ($expand_content_arr && isset($expand_content_arr[1][0])) {
-      $blocks = retrieve_blocks2($expand_content_arr[1][0]);
+      $blocks = retrieve_blocks($expand_content_arr[1][0]);
       if (!empty($blocks)) {
         $tab_content['expand']['blocks'] = $blocks;
       }
@@ -106,8 +106,15 @@ function getAllEntries2($formID = '', $page = '', $years = '') {
             $fieldData = array();
             
             //loop through fields
-            foreach ($column as $field_id) {                            
-              $fieldData['field-' . $field_id] = fieldOutput2($field_id, $entry, $field_array,$form);
+            foreach ($column as $field_id) {  
+              $arg = '';           
+              //check if an argument was passed
+              if (strpos($field_id, ':') !== false) {                
+                $arg = str_replace(':','',strstr($field_id, ':'));                
+                $field_id = substr($field_id, 0, strpos($field_id, ":"));                
+              }         
+            
+              $fieldData['field-' . $field_id] = fieldOutput($field_id, $entry, $field_array, $form, $arg);
             }
             
             $columnData[$columnKey] = $fieldData; //write field data to columns
@@ -143,7 +150,7 @@ function getAllEntries2($formID = '', $page = '', $years = '') {
   return $return;
 }
 
-function retrieve_blocks2($content = '') {
+function retrieve_blocks($content = '') {
   if (empty($content)) {
     return 'no content submitted';
   }
@@ -172,7 +179,7 @@ function retrieve_blocks2($content = '') {
   return $return;
 }
 
-function fieldOutput2($fieldID, $entry, $field_array, $form) {  
+function fieldOutput($fieldID, $entry, $field_array, $form, $arg='') {  
   //set default values
   $label = $fieldID;
 
@@ -311,6 +318,6 @@ function fieldOutput2($fieldID, $entry, $field_array, $form) {
         break;
     }
   }
-
+  if($arg=='no_label')  $label='';
   return array('label' => $label, 'type' => $type, 'value' => $value);
 }
