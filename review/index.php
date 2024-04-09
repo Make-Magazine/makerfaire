@@ -1,12 +1,20 @@
 <?php
-if ( ! defined( 'WP_ADMIN' ) ) {
-	define( 'WP_ADMIN', false );
+if (!defined('WP_ADMIN')) {
+    define('WP_ADMIN', false);
 }
 
 require_once '../wp-load.php';
 
 if (!is_user_logged_in())
     auth_redirect();
+
+$form_list = array();
+$forms = GFAPI::get_forms(true, false, 'id', 'DESC');
+foreach ($forms as $form) {
+    if (isset($form['form_type']) && $form['form_type'] == 'Master') {
+        $form_list[$form['id']] = $form['title'];
+    }
+}
 
 ?>
 <!DOCTYPE html>
@@ -27,6 +35,13 @@ if (!is_user_logged_in())
 
     <!-- Our application root element -->
     <div id="review" style="width:95%; margin:0 auto;">
+        <select id="form_select" v-on:change="updateForm">
+            <?php
+            foreach ($form_list as $form_key => $form) {
+                echo '<option value="' . $form_key . '">' . $form . '</option>';
+            }
+            ?>
+        </select>
         <b-container fluid class="filter-options">
             <input type="text" v-model="searchQuery" placeholder="Search..." />
             <div class="select-wrapper">
@@ -39,27 +54,20 @@ if (!is_user_logged_in())
                 </select>
             </div>
 
-            
-
             <div class="listGrid-toolbar">
                 <!-- <span class="listGrid-caption">{{caption}}</span> -->
                 <i class="bi bi-arrow-down-up" v-if="makers.length>0" @click="switchDateOrder" title="See Oldest" style="margin-right:5px;"></i>
                 <span class="listGrid-switch-iconGroup">
-                    <i class="bi bi-list listGrid-switch-icon" v-bind:class="{ active: currentView=='list'}"
-                        aria-hidden="true" :title="currentView=='grid' ? 'switch to List View': 'List View'"
-                        v-on:click="switchToListView"></i>
-                    <i class="bi bi-grid listGrid-switch-icon" v-bind:class="{ active: currentView=='grid'}"
-                        :title="currentView=='list' ? 'switch to Grid View': 'Grid View'" aria-hidden="true"
-                        v-on:click="switchToGridView"></i>
+                    <i class="bi bi-list listGrid-switch-icon" v-bind:class="{ active: currentView=='list'}" aria-hidden="true" :title="currentView=='grid' ? 'switch to List View': 'List View'" v-on:click="switchToListView"></i>
+                    <i class="bi bi-grid listGrid-switch-icon" v-bind:class="{ active: currentView=='grid'}" :title="currentView=='list' ? 'switch to Grid View': 'Grid View'" aria-hidden="true" v-on:click="switchToGridView"></i>
                 </span>
             </div>
         </b-container>
         <div v-if="currentView=='grid'">
             <b-card-group deck>
-                <b-card v-for="(maker, maker_id) in filterBy.slice((currentPage-1)*perPage,(currentPage-1)*perPage+perPage)" :title="maker.project_name" img-top :key="'maker-'+maker.project_id" @click="expandCard(maker.project_id)">
+                <b-card v-for="(maker, maker_id) in filterBy" :title="maker.project_name" img-top :key="'maker-'+maker.project_id" @click="expandCard(maker.project_id)">
                     <template #header>
-                        <b-img thumbnail fluid class="grid-image" :alt="maker.project_name" :src="maker.photo" />
-                        <h5 class="hidden">{{maker.maker_name}}</h5>
+                        <b-img thumbnail fluid :alt="maker.project_name" :src="maker.photo" />
                     </template>
                     <b-card-text>
                         {{maker.description}}
@@ -68,22 +76,11 @@ if (!is_user_logged_in())
                         <small class="text-muted">{{maker.status}}</small>
                     </template>
                 </b-card>
-                <b-pagination
-                    v-if="makers.length>0"
-                    v-model="currentPage"
-                    :total-rows="makers.length"
-                    :per-page="perPage"
-                    first-text="First" 
-                    prev-text="Prev" 
-                    next-text="Next" 
-                    last-text="Last"
-                    aria-controls="Grid">
-                </b-pagination>
             </b-card-group>
         </div>
 
         <div v-if="currentView=='list'">
-            <b-card id="listView" no-body v-for="(maker, maker_id) in filterBy.slice((currentPage-1)*perPage,(currentPage-1)*perPage+perPage)" v-model="currentPage" :key="'maker-'+maker.project_id">
+            <b-card no-body v-for="(maker, maker_id) in filterBy" :key="'maker-'+maker.project_id">
                 <input type="hidden" name="entry_info_entry_id" :value=maker.project_id />
                 <b-row class="header">
                     <b-col cols="2">{{maker.status}}</b-col>
@@ -98,22 +95,23 @@ if (!is_user_logged_in())
                             <b-container fluid class="bv-example-row">
                                 <!-- Initial section-->
                                 <b-row v-for="(block,block_id) in tab.tab_content.initial.blocks" :key="block_id">
-                                    <b-col v-for="(fields, column_id) in block.columns"
-                                        :key="'dyn-column-' + column_id">
+                                    <b-col v-for="(fields, column_id) in block.columns" :key="'dyn-column-' + column_id">
                                         <div v-for="(field, field_id) in fields" :key="maker_id-'field-' + field_id">
                                             <div v-if="field.value">
                                                 <label>{{ field.label }}</label>
                                                 <div v-if="field.type === 'fileupload'">
-                                                    <b-img thumbnail fluid :src="field.value"
-                                                        :alt="field.label"></b-img>
+                                                    <b-img thumbnail fluid :src="field.value" :alt="field.label" @click="lightbox"></b-img>
                                                 </div>
                                                 <span v-else-if="field.type === 'multipleFiles'">
                                                     <b-container class="p-4 bg-dark">
                                                         <b-row>
-                                                            <b-col fluid="sm" :key="maker_id+'-img-' + image_id"
-                                                                v-for="(image,image_id) in field.value">
-                                                                <b-img thumbnail fluid :src="image" :alt="field.label"
-                                                                    class="multiImage"></b-img>
+                                                            <b-col fluid="sm" :key="maker_id+'-img-' + image_id" v-for="(image,image_id) in field.value">
+                                                                <b-img thumbnail fluid :src="image" :alt="field.label" class="multiImage"></b-img>
+                                                                <b-button id="show-btn" @click="$bvModal.show('{{maker_id}}-modal')">Launch demo modal</b-button>
+                                                                 <!-- bootstrap modal where the image will appear -->
+                                                                <b-modal :id="maker_id+'-modal'" hide-footer>
+                                                                    <b-img  fluid :src="image" :alt="field.label" class="multiImage"></b-img>
+                                                                </b-modal>
                                                             </b-col>
                                                         </b-row>
                                                     </b-container>
@@ -128,8 +126,7 @@ if (!is_user_logged_in())
                                                 </span>-->
                                                 <span v-else-if="field.type === 'notes'">
                                                     <b-list-group>
-                                                        <b-list-group-item v-for="(note,i) in field.value"
-                                                            :key="maker_id+'-note-' + i">
+                                                        <b-list-group-item v-for="(note,i) in field.value" :key="maker_id+'-note-' + i">
                                                             <b-row>
                                                                 <b-col>{{note.date_created}}</b-col>
                                                                 <b-col>{{note.user_name}}</b-col>
@@ -140,8 +137,7 @@ if (!is_user_logged_in())
                                                 </span>
                                                 <span v-else-if="field.type === 'checkbox'">
                                                     <b-list-group>
-                                                        <b-list-group-item v-for="(value,i) in field.value"
-                                                            :key="maker_id+'-list-' + i">
+                                                        <b-list-group-item v-for="(value,i) in field.value" :key="maker_id+'-list-' + i">
                                                             {{value}}
                                                         </b-list-group-item>
                                                     </b-list-group>
@@ -157,8 +153,7 @@ if (!is_user_logged_in())
                                                 </span>
                                                 <span v-else-if="field.type === 'address'">
                                                     <b-list-group>
-                                                        <b-list-group-item v-for="(value,i) in field.value"
-                                                            :key="maker_id+'-address-' + i">
+                                                        <b-list-group-item v-for="(value,i) in field.value" :key="maker_id+'-address-' + i">
                                                             {{value.label}} - {{value.value}}
                                                         </b-list-group-item>
                                                     </b-list-group>
@@ -178,33 +173,25 @@ if (!is_user_logged_in())
                                         Collapse</b-button>
                                     <b-collapse :id="'collapse-'+tabKey+maker.project_id" class="mt-2">
 
-                                        <b-row v-for="(block,block_id) in tab.tab_content.expand.blocks"
-                                            :key="block_id">
-                                            <b-col v-for="(fields, column_id) in block.columns"
-                                                :key="'dyn-column-' + column_id">
-                                                <div v-for="(field, field_id) in fields"
-                                                    :key="maker_id-'field-' + field_id">
+                                        <b-row v-for="(block,block_id) in tab.tab_content.expand.blocks" :key="block_id">
+                                            <b-col v-for="(fields, column_id) in block.columns" :key="'dyn-column-' + column_id">
+                                                <div v-for="(field, field_id) in fields" :key="maker_id-'field-' + field_id">
                                                     <div v-if="field.value">
                                                         <label>{{ field.label }}</label>
                                                         <div v-if="field.type === 'fileupload'">
-                                                            <b-img thumbnail fluid :src="field.value"
-                                                                :alt="field.label"></b-img>
+                                                            <b-img thumbnail fluid :src="field.value" :alt="field.label"></b-img>
                                                         </div>
                                                         <span v-else-if="field.type === 'multipleFiles'">
                                                             <b-container class="p-4 bg-dark">
                                                                 <b-row>
-                                                                    <b-col fluid="sm" :key="maker_id+'-img-' + image_id"
-                                                                        v-for="(image,image_id) in field.value">
-                                                                        <b-img thumbnail fluid :src="image"
-                                                                            :alt="field.label"
-                                                                            class="multiImage"></b-img>
+                                                                    <b-col fluid="sm" :key="maker_id+'-img-' + image_id" v-for="(image,image_id) in field.value">
+                                                                        <b-img thumbnail fluid :src="image" :alt="field.label" class="multiImage"></b-img>
                                                                     </b-col>
                                                                 </b-row>
                                                             </b-container>
                                                         </span>
                                                         <span v-else-if="field.type === 'website'">
-                                                            <b-link :href="field.value"
-                                                                target="_blank">{{field.value}}</b-link>
+                                                            <b-link :href="field.value" target="_blank">{{field.value}}</b-link>
                                                         </span>
                                                         <!--
                                                 <span v-else-if="field.type === 'video'">
@@ -213,8 +200,7 @@ if (!is_user_logged_in())
                                                 </span>-->
                                                         <span v-else-if="field.type === 'notes'">
                                                             <b-list-group>
-                                                                <b-list-group-item v-for="(note,i) in field.value"
-                                                                    :key="maker_id+'-note-' + i">
+                                                                <b-list-group-item v-for="(note,i) in field.value" :key="maker_id+'-note-' + i">
                                                                     <b-row>
                                                                         <b-col>{{note.date_created}}</b-col>
                                                                         <b-col>{{note.user_name}}</b-col>
@@ -225,8 +211,7 @@ if (!is_user_logged_in())
                                                         </span>
                                                         <span v-else-if="field.type === 'checkbox'">
                                                             <b-list-group>
-                                                                <b-list-group-item v-for="(value,i) in field.value"
-                                                                    :key="maker_id+'-list-' + i">
+                                                                <b-list-group-item v-for="(value,i) in field.value" :key="maker_id+'-list-' + i">
                                                                     {{value}}
                                                                 </b-list-group-item>
                                                             </b-list-group>
@@ -242,14 +227,12 @@ if (!is_user_logged_in())
                                                         </span>
                                                         <span v-else-if="field.type === 'address'">
                                                             <b-list-group>
-                                                                <b-list-group-item v-for="(value,i) in field.value"
-                                                                    :key="maker_id+'-address-' + i">
+                                                                <b-list-group-item v-for="(value,i) in field.value" :key="maker_id+'-address-' + i">
                                                                     {{value.label}} - {{value.value}}
                                                                 </b-list-group-item>
                                                             </b-list-group>
                                                         </span>
-                                                        <span v-else-if="field.type === 'html'"
-                                                            v-html="field.value"></span>
+                                                        <span v-else-if="field.type === 'html'" v-html="field.value"></span>
                                                         <span v-else>
                                                             {{field.value}}
                                                         </span>
@@ -265,43 +248,22 @@ if (!is_user_logged_in())
                     </b-tab>
                 </b-tabs>
             </b-card>
-            <b-pagination
-                v-if="makers.length>0"
-                v-model="currentPage"
-                :total-rows="makers.length"
-                :per-page="perPage"
-                first-text="First" 
-                prev-text="Prev" 
-                next-text="Next" 
-                last-text="Last"
-                aria-controls="listView">
-            </b-pagination>
         </div>
-        <div id="loader" v-if="makers.length==0">
-            <img src="/review/img/loading.gif" />
-        </div>
+
+    </div>
+    <div id="loader"> <!-- must be directly after your v-cloak element -->
+        <img src="/review/img/loading.gif" />
     </div>
 
-    <!-- bootstrap modal where the image will appear -->
-    <div class="modal fade" id="imagemodal" tabindex="-1" role="dialog" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                </div>
-                <div class="modal-body">
-                    <img src="" id="imagepreview" >
-                </div>
-            </div>
-        </div>
-    </div>
+
 
     <!-- Required scripts, vue loads first -->
-    <script src="/wp-includes/js/jquery/jquery.min.js" id="jquery-core-js"></script>
     <script src="/review/js/min/vue.min.js"></script>
     <script src="/review/js/min/review.min.js"></script>
+    <script src="/wp-includes/js/jquery/jquery.min.js" id="jquery-core-js"></script>
 
-    
+    <script src="/review/js/gravityforms.js"></script>
+
 </body>
 <footer>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">

@@ -1,5 +1,4 @@
 <?php
-
 /**
  * v2 of the Maker Faire API - MAP
  *
@@ -199,7 +198,7 @@ function retrieve_blocks2($content = '') {
 
 function fieldOutput2($fieldID, $entry, $field_array) {
   global $form;
-  $formID = $entry['form_id'];
+  
   //set default values
   $label = $fieldID;
 
@@ -296,18 +295,31 @@ function fieldOutput2($fieldID, $entry, $field_array) {
         break;
       case 'flags':
         $type = 'html';
-        $label = 'Flags/Preliminary Location';
-                
-        $value      = display_flags_prelim_locs($form, $entry);
+        $label = 'Flags';
+      
+        //flags        
+        $value     = field_display($entry, $form, '304', 'entry_flags_'.$entry['id']);
+        $value    .= '<input type="button" id="updFlags'.$entry['id'].'" value="Update Flags" class="button" style="width:auto;padding-bottom:2px;" onclick="updateMgmt(\'update_flags\', \''.$entry['id'].'\');"/>';
+        $value    .= '<span class="updMsg" id="updFlagsMSG'.$entry['id'].'"></span>';
+        break;
+      case 'prelim_loc':  
+        $type = 'html';
+        $label = 'Preliminary Location';
+      
+        //preliminary locations
+        $value     = field_display($entry, $form, '302', 'entry_prelim_loc_'.$entry['id']);
+        $value    .= '<input type="button" id="updPrelimLoc'.$entry['id'].'" value="Update Preliminary Location" class="button" style="width:auto;padding-bottom:2px;" onclick="updateMgmt(\'update_prelim_loc\', \''.$entry['id'].'\');"/>';
+        $value    .= '<span class="updMsg" id="updPrelimLocMSG'.$entry['id'].'"></span>';
+        
         break;
       
       case 'notes_table':
         $type  = 'html';
         $label = '';
-        $value = '<p>Enter Email: <input type="email" placeholder="example@make.co" name="otherEmail" size="40" /></p>' .
-          ' <textarea	name="new_note_sidebar"	style="width: 90%; height: 240px;" cols=""	rows=""></textarea>' .
-          ' <input type="button" name="add_note_sidebar" value="Add Note" class="button" style="width:auto;padding-bottom:2px;" onclick="updateMgmt(\'add_note_sidebar\');"/>' .
-          ' <span class="updMsg add_note_sidebarMsg"></span>';
+        $value = '<p>Enter Email: <input type="email" placeholder="example@make.co" id="toEmail'.$entry['id'].'" size="40" /></p>' .
+          ' <textarea	id="new_note_'.$entry['id'].'"	style="width: 90%; height: 240px;" cols=""	rows=""></textarea>' .
+          ' <input type="button" value="Add Note" class="button" style="width:auto;padding-bottom:2px;" onclick="updateMgmt(\'add_note_sidebar\',\''.$entry['id'].'\');"/>' .
+          ' <span class="updMsg" id="add_noteMSG_'.$entry['id'].'"></span>';
         break;
       case 'final_location':
         $type  = 'html';

@@ -227,7 +227,7 @@ function mf_admin_MFupdate_entry(){
     switch ($mfAction ) {
       // Entry Management Update
       case 'update_entry_management' :
-        set_entry_status_content($lead,$form);
+        upd_flags_prelim_loc($lead,$form);
         break;
       case 'update_entry_status' :
         set_entry_status($lead,$form,$entry_id);
@@ -282,6 +282,7 @@ function mf_admin_MFupdate_entry(){
         break;          
       default:
         $response['result'] = 'Error: Invalid Action Passed';
+        return;
         break;
     }
 
@@ -426,8 +427,8 @@ function mf_add_note($leadid,$notetext){
 	RGFormsModel::add_note( $leadid, $current_user->ID, $user_data->display_name, $notetext );
 }
 
-/* Modify Set Entry Status */
-function set_entry_status_content($lead,$form){
+/* Update flags and Preliminary Location */
+function upd_flags_prelim_loc($lead,$form){
   $entry_id = $lead['id'];
 	$location_change          = (isset($_POST['entry_info_location_change'])?$_POST['entry_info_location_change']:'');
 	$flags_change             = (isset($_POST['entry_info_flags_change'])?$_POST['entry_info_flags_change']:'');
