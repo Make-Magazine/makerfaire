@@ -37,35 +37,7 @@ function getAllEntries2($formID = '', $page = '', $years = '') {
   $total_count     = 0;
   $entries         = GFAPI::get_entries($formID, $search_criteria, $sorting, $paging, $total_count);
   $form            = GFAPI::get_form($formID);
-  /*
-  global $wpdb;
-  $query =  "SELECT meta.meta_key as field_id, meta.meta_value as value, entry.id as entry_id, ".
-              "entry.form_id, entry.date_created, entry.date_updated ".
-          "FROM       wp_gf_entry_meta meta ".
-          "inner join wp_gf_entry entry ".
-          "on         meta.entry_id = entry.id ".
-          "where      entry.form_id=260 and entry.status='active'
-          ORDER BY    entry_id DESC, meta_key ASC";
-  $results = $wpdb->get_results($query,ARRAY_A);
-
-  //build entry array
-  $entries = array();
   
-  foreach ($results as $result) {        
-      $entry_id = $result['entry_id'];
-      if(empty($entries[$entry_id])){
-          $entries[$entry_id] = array(
-              'entry_id'      =>$entry_id,
-              'form_id'=>$result['form_id'],
-              'date_created'=>$result['date_created'],
-              'date_updated'=>$result['date_updated']);
-      }
-
-      $field_id = $result['field_id'];
-      $value = $result['value'];        
-      $entries[$entry_id][$field_id]=$value;                
-  }    
-*/
   //convert this into a usable array
   $field_array = array();
   foreach ($form['fields'] as $field) {
@@ -110,7 +82,7 @@ function getAllEntries2($formID = '', $page = '', $years = '') {
       'tab_content' => $tab_content
     );
   }
-
+  
   foreach ($entries as $entry) {
     $tabData = array();
 
@@ -132,11 +104,12 @@ function getAllEntries2($formID = '', $page = '', $years = '') {
           //loop through columns
           foreach ($columns as $columnKey => $column) {
             $fieldData = array();
-
+            
             //loop through fields
-            foreach ($column as $field_id) {
-              $fieldData['field-' . $field_id] = fieldOutput2($field_id, $entry, $field_array);
+            foreach ($column as $field_id) {                            
+              $fieldData['field-' . $field_id] = fieldOutput2($field_id, $entry, $field_array,$form);
             }
+            
             $columnData[$columnKey] = $fieldData; //write field data to columns
           }
           $blockData[$blockKey] = array('columns' => $columnData); //write column data to blocks
@@ -153,13 +126,16 @@ function getAllEntries2($formID = '', $page = '', $years = '') {
         (isset($entry['96.6']) ? $entry['96.6'] : '');
     }
 
+    //for BA24, the single photo was changed to a multi image which messed things up a bit
+    $maker_photo = (!is_string($entry['22'])?$entry['22']:json_decode($entry['22'])[0]); 
+    
     $return['makers'][] = array(
       'tabs'          => $tabData,
       'project_name'  => $entry['151'],
       'project_id'    => $entry['id'],
       'status'        => $entry['303'],
       'description'   => $entry['16'],
-      'photo'         => $entry['22'],
+      'photo'         => $maker_photo,
       'maker_name'    => $maker_name
     );
   }
@@ -196,9 +172,7 @@ function retrieve_blocks2($content = '') {
   return $return;
 }
 
-function fieldOutput2($fieldID, $entry, $field_array) {
-  global $form;
-  
+function fieldOutput2($fieldID, $entry, $field_array, $form) {  
   //set default values
   $label = $fieldID;
 

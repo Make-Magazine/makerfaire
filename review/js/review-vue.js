@@ -13,7 +13,6 @@ window.app = new Vue({
             currentPage: 1,
             modalShow: false,
             selectedImgPath: ''
-
         }
     },
     watch: {
@@ -44,7 +43,7 @@ window.app = new Vue({
             .then(response => (this.makers = response.data.makers));
         },
         showModal(imgPath) {
-            alert(imagePath);
+            alert(imgPath);
             this.selectedImgPath = imgPath
             this.modalShow = true
         }
