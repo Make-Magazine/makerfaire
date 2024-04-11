@@ -298,7 +298,7 @@ function fieldOutput($fieldID, $entry, $field_array, $form, $arg = '') {
         $label = 'Flags';
 
         //flags        
-        $value     = field_display($entry, $form, '304', 'entry_flags_' . $entry['id']);
+        $value     = field_display($entry, $form, '304', 'entry_flags_' . $entry['id']);        
         $value    .= '<input type="button" id="updFlags' . $entry['id'] . '" value="Update Flags" class="button" style="width:auto;padding-bottom:2px;" onclick="updateMgmt(\'update_flags\', \'' . $entry['id'] . '\');"/>';
         $value    .= '<span class="updMsg" id="updFlagsMSG' . $entry['id'] . '"></span>';
         break;
@@ -308,6 +308,7 @@ function fieldOutput($fieldID, $entry, $field_array, $form, $arg = '') {
 
         //preliminary locations
         $value     = field_display($entry, $form, '302', 'entry_prelim_loc_' . $entry['id']);
+        $value    .= '<textarea id="entry_location_comment">'.(isset($entry['307'])?$entry['307']:'').'</textarea>';
         $value    .= '<input type="button" id="updPrelimLoc' . $entry['id'] . '" value="Update Preliminary Location" class="button" style="width:auto;padding-bottom:2px;" onclick="updateMgmt(\'update_prelim_loc\', \'' . $entry['id'] . '\');"/>';
         $value    .= '<span class="updMsg" id="updPrelimLocMSG' . $entry['id'] . '"></span>';
         break;

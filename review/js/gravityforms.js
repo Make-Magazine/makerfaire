@@ -37,8 +37,7 @@ function updateMgmt(action, entryID) {
 			gentry_email_notes_to_sidebar.push(toEmail);
 		}
 		data.gentry_email_notes_to_sidebar = gentry_email_notes_to_sidebar;
-    } else if (action == 'update_flags') {
-        data.mfAction = 'update_entry_management';
+    } else if (action === 'update_flags') {        
         var updMsgBox  = 'updFlagsMSG'+entryID;
         document.getElementById(updMsgBox).textContent="Updating . . . ";
 
@@ -52,8 +51,7 @@ function updateMgmt(action, entryID) {
             }
         }        
         data.entry_info_flags_change = entry_info_flags_change;
-    } else if (action == 'update_prelim_loc') {
-        data.mfAction = 'update_entry_management';
+    } else if (action == 'update_prelim_loc') {        
         var updMsgBox  = 'updPrelimLocMSG'+entryID;
         document.getElementById(updMsgBox).textContent="Updating . . . ";
 
@@ -67,32 +65,9 @@ function updateMgmt(action, entryID) {
             }
         }        
         data.entry_info_location_change = entry_prelim_loc_change;    
-        
-        /*
-        //flags
-		var entry_info_flags_change = [];
-		jQuery("[name='entry_info_flags_change[]']:checked").each(function() {
-			// push all checked locations to array
-			entry_info_flags_change.push(jQuery(this).val());
-		});
-		data.entry_info_flags_change = entry_info_flags_change;
-
-
-		//set processing icon on the screen
-		jQuery(".upd_mgmt_msg").html(processing_icon);
-		//preliminary location
-		var entry_info_location_change = [];
-		jQuery("[name='entry_info_location_change[]']:checked").each(function() {
-			// push all checked locations to array
-			entry_info_location_change.push(jQuery(this).val());
-		});
-		data.entry_info_location_change = entry_info_location_change;
-
-		
 
 		//location comment
-		data.entry_location_comment = jQuery("textarea[name=entry_location_comment]").val();
-*/
+		data.entry_location_comment = document.getElementById("entry_location_comment").value;     
 	}
 
 	jQuery.post(ajaxurl, data, function(r) {

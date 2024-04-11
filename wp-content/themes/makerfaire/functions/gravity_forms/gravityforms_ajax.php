@@ -226,9 +226,15 @@ function mf_admin_MFupdate_entry(){
 
     switch ($mfAction ) {
       // Entry Management Update
+      case 'update_flags':
+        upd_flags_prelim_loc($lead,$form,'flags');
+        break;        
+      case 'update_prelim_loc':
+        upd_flags_prelim_loc($lead,$form,'prelim_loc');
+        break;   
       case 'update_entry_management' :
         upd_flags_prelim_loc($lead,$form);
-        break;
+        break;        
       case 'update_entry_status' :
         set_entry_status($lead,$form,$entry_id);
         break;
@@ -428,38 +434,49 @@ function mf_add_note($leadid,$notetext){
 }
 
 /* Update flags and Preliminary Location */
-function upd_flags_prelim_loc($lead,$form){
+function upd_flags_prelim_loc($lead,$form,$type='both'){
   $entry_id = $lead['id'];
-	$location_change          = (isset($_POST['entry_info_location_change'])?$_POST['entry_info_location_change']:'');
-	$flags_change             = (isset($_POST['entry_info_flags_change'])?$_POST['entry_info_flags_change']:'');
+	
+  $location_change          = (isset($_POST['entry_info_location_change'])?$_POST['entry_info_location_change']:array());  
+	$flags_change             = (isset($_POST['entry_info_flags_change'])?$_POST['entry_info_flags_change']:array());  
 	$location_comment_change  = (isset($_POST['entry_location_comment'])?$_POST['entry_location_comment']:'');
 
-	$field302 = RGFormsModel::get_field($form,'302');
+  //Preliminary Location  
+  $field302 = RGFormsModel::get_field($form,'302');
+  //Flags  
 	$field304 = RGFormsModel::get_field($form,'304');
 
 	if (!empty($entry_id)){
-		/* Clear out old choices */
-		foreach(   $field304['inputs'] as $choice){
-			mf_update_entry_field($entry_id,$choice['id'],'');
-		}
-		foreach(   $field302['inputs'] as $choice){
-			mf_update_entry_field($entry_id,$choice['id'],'');
-		}
-		/* Save entries */
-		if (!empty($location_change)){
-			foreach($location_change as $location_entry){
-				$exploded_location_entry=explode("_",$location_entry);
-				$entry_info_entry[$exploded_location_entry[0]] = $exploded_location_entry[1];
-				mf_update_entry_field($entry_id,$exploded_location_entry[0],$exploded_location_entry[1]);
-			}
-		}
-		if (!empty($flags_change)){
-			foreach($flags_change as $flags_entry){
-				$exploded_flags_entry=explode("_",$flags_entry);
-				$entry_info_entry[$exploded_flags_entry[0]] = $exploded_flags_entry[1];
-				mf_update_entry_field($entry_id,$exploded_flags_entry[0],$exploded_flags_entry[1]);
-			}
-		}
+		/* Determine which fields are being updated */
+    if($type==='both' || $type==='flags'){
+      //first clear out all choices
+      foreach(   $field304['inputs'] as $choice){
+        mf_update_entry_field($entry_id,$choice['id'],'');
+      }
+      //now go in and set the ones that are checked
+      if (!empty($flags_change)){
+        foreach($flags_change as $flags_entry){
+          $exploded_flags_entry=explode("_",$flags_entry);
+          $entry_info_entry[$exploded_flags_entry[0]] = $exploded_flags_entry[1];
+          mf_update_entry_field($entry_id,$exploded_flags_entry[0],$exploded_flags_entry[1]);
+        }
+      }
+    }
+
+    if($type==='both' || $type==='prelim_loc'){
+      //first clear out all choices
+      foreach(   $field302['inputs'] as $choice){
+        mf_update_entry_field($entry_id,$choice['id'],'');
+      }
+      //now go in and set the ones that are checked
+      if (!empty($location_change)){
+        foreach($location_change as $location_entry){
+          $exploded_location_entry=explode("_",$location_entry);
+          $entry_info_entry[$exploded_location_entry[0]] = $exploded_location_entry[1];
+          mf_update_entry_field($entry_id,$exploded_location_entry[0],$exploded_location_entry[1]);
+        }
+      }
+    }
 
 		if($location_comment_change!=''){
       $entry_info_entry['307'] = $location_comment_change;
