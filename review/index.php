@@ -77,14 +77,16 @@ foreach ($forms as $form) {
                         <small class="text-muted">{{maker.status}}</small>
                     </template>
                 </b-card>
+                <!--
                 <b-pagination v-if="makers.length>0" v-model="currentPage" :total-rows="makers.length" :per-page="perPage" first-text="First" prev-text="Prev" next-text="Next" last-text="Last" aria-controls="Grid">
-                </b-pagination>
+                </b-pagination>-->
 
             </b-card-group>
         </div>
 
         <div v-if="currentView=='list'">
-            <b-card id="listView" no-body v-for="(maker, maker_id) in filterBy.slice((currentPage-1)*perPage,(currentPage-1)*perPage+perPage)" v-model="currentPage" :key="'maker-'+maker.project_id">
+            <!--<b-card id="listView" no-body v-for="(maker, maker_id) in filterBy.slice((currentPage-1)*perPage,(currentPage-1)*perPage+perPage)" v-model="currentPage" :key="'maker-'+maker.project_id">-->
+            <b-card id="listView" no-body v-for="(maker, maker_id) in filterBy" :key="'maker-'+maker.project_id">
                 <input type="hidden" name="entry_info_entry_id" :value=maker.project_id />
                 <b-row class="header">
                     <b-col cols="2">{{maker.status}}</b-col>
@@ -111,7 +113,7 @@ foreach ($forms as $form) {
                                                         <b-row>
                                                             <b-col fluid="sm" :key="maker_id+'-img-' + image_id" v-for="(image,image_id) in field.value">
                                                                 <b-img thumbnail fluid :src="image" :alt="field.label" class="multiImage"></b-img>
-                                                                
+
                                                             </b-col>
                                                         </b-row>
                                                     </b-container>
@@ -136,11 +138,11 @@ foreach ($forms as $form) {
                                                     </b-list-group>
                                                 </span>
                                                 <span v-else-if="field.type === 'checkbox'">
-                                                    <b-list-group>
-                                                        <b-list-group-item v-for="(value,i) in field.value" :key="maker_id+'-list-' + i">
+                                                    <ul>
+                                                        <li v-for="(value,i) in field.value" :key="maker_id+'-list-' + i">
                                                             {{value}}
-                                                        </b-list-group-item>
-                                                    </b-list-group>
+                                                        </li>
+                                                    </ul>
                                                 </span>
                                                 <span v-else-if="field.type === 'listRepeat'">
                                                     <div v-for="(value,i) in field.value">
@@ -169,8 +171,7 @@ foreach ($forms as $form) {
 
                                 <!-- Expand Section -->
                                 <div v-if="tab.tab_content.expand">
-                                    <b-button v-b-toggle="'collapse-'+tabKey+maker.project_id" variant="primary">Toggle
-                                        Collapse</b-button>
+                                    <b-button v-b-toggle="'collapse-'+tabKey+maker.project_id" variant="primary">More Info +</b-button>
                                     <b-collapse :id="'collapse-'+tabKey+maker.project_id" class="mt-2">
 
                                         <b-row v-for="(block,block_id) in tab.tab_content.expand.blocks" :key="block_id">
@@ -210,11 +211,11 @@ foreach ($forms as $form) {
                                                             </b-list-group>
                                                         </span>
                                                         <span v-else-if="field.type === 'checkbox'">
-                                                            <b-list-group>
-                                                                <b-list-group-item v-for="(value,i) in field.value" :key="maker_id+'-list-' + i">
+                                                            <ul>
+                                                                <li v-for="(value,i) in field.value" :key="maker_id+'-list-' + i">
                                                                     {{value}}
-                                                                </b-list-group-item>
-                                                            </b-list-group>
+                                                                </li>
+                                                            </ul>
                                                         </span>
                                                         <span v-else-if="field.type === 'listRepeat'">
                                                             <div v-for="(value,i) in field.value">
@@ -248,8 +249,9 @@ foreach ($forms as $form) {
                     </b-tab>
                 </b-tabs>
             </b-card>
+            <!--
             <b-pagination v-if="makers.length>0" v-model="currentPage" :total-rows="makers.length" :per-page="perPage" first-text="First" prev-text="Prev" next-text="Next" last-text="Last" aria-controls="listView">
-            </b-pagination>
+            </b-pagination>-->
         </div>
         <div id="loader" v-if="makers.length==0">
             <img src="/review/img/loading.gif" />
