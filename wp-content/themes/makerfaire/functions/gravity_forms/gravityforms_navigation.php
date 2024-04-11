@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Redirect old custom gravity form admin pages to the correct path
  */
@@ -40,81 +41,81 @@ add_action('admin_bar_menu', 'toolbar_link_to_mypage', 50);
 function toolbar_link_to_mypage($wp_admin_bar) {
 
     $user = wp_get_current_user();
-        
+
     $locations = get_registered_nav_menus();
     $menus = wp_get_nav_menus();
     $menu_locations = get_nav_menu_locations();
 
-    
-        //create MF admin with information from the faire table
-        $args = array(
-            'id' => 'mf_admin_parent',
-            'title' => 'MF Admin',
-            'meta' => array('class' => 'my-toolbar-page'),
-        );
 
-        $wp_admin_bar->add_node($args);
-        buildFaireDrop($wp_admin_bar);
-        $faire = '';
-        //add custom menu items
-        $locations = array('mf-admin-bayarea-register-menu', 'mf-admin-newyork-register-menu');
-        foreach ($locations as $location_id) {
-            //is this a navigation menu?
-            if (isset($menu_locations[$location_id])) {
-                foreach ($menus as $menu) {
-                    // If the ID of this menu is the ID associated with the location we're searching for
-                    if ($menu->term_id == $menu_locations[$location_id]) {
-                        // This is the correct menu
-                        $menu_items = wp_get_nav_menu_items($menu);
-                        //build faire specific admin
-                        foreach ((array) $menu_items as $key => $menu_item) {
+    //create MF admin with information from the faire table
+    $args = array(
+        'id' => 'mf_admin_parent',
+        'title' => 'MF Admin',
+        'meta' => array('class' => 'my-toolbar-page'),
+    );
 
-                            if ($menu_item->menu_item_parent == 0) {
-                                // each MF Admin menu has a parent item set that will tell us which faire to add these menu item's too
-                                $faire = $menu_item->attr_title;
-                            } else {
-								$faire = $menu_item->menu_item_parent;
-                                $args = array(
-                                    'id' => $menu_item->object_id,
-                                    'title' => $menu_item->title,
-                                    'href' => $menu_item->url,
-                                    'meta' => array('class' => 'my-toolbar-page'),
-                                    'parent' => 'mf_admin_parent_' . $faire
-                                );
-								//error_log(print_r($args,TRUE));
-                                $wp_admin_bar->add_node($args);
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        //faire setup
-        $location_id = 'mf-admin-fairesetup-register-menu';
-
+    $wp_admin_bar->add_node($args);
+    buildFaireDrop($wp_admin_bar);
+    $faire = '';
+    //add custom menu items
+    $locations = array('mf-admin-bayarea-register-menu', 'mf-admin-newyork-register-menu');
+    foreach ($locations as $location_id) {
+        //is this a navigation menu?
         if (isset($menu_locations[$location_id])) {
             foreach ($menus as $menu) {
                 // If the ID of this menu is the ID associated with the location we're searching for
                 if ($menu->term_id == $menu_locations[$location_id]) {
                     // This is the correct menu
                     $menu_items = wp_get_nav_menu_items($menu);
+                    //build faire specific admin
                     foreach ((array) $menu_items as $key => $menu_item) {
 
-                        $args = array(
-                            'id' => $menu_item->object_id,
-                            'title' => $menu_item->title,
-                            'href' => $menu_item->url,
-                            'meta' => array('class' => 'my-toolbar-page'),
-                            'parent' => 'mf_admin_parent_fairesetup'
-                        );
-
-                        $wp_admin_bar->add_node($args);
+                        if ($menu_item->menu_item_parent == 0) {
+                            // each MF Admin menu has a parent item set that will tell us which faire to add these menu item's too
+                            $faire = $menu_item->attr_title;
+                        } else {
+                            $faire = $menu_item->menu_item_parent;
+                            $args = array(
+                                'id' => $menu_item->object_id,
+                                'title' => $menu_item->title,
+                                'href' => $menu_item->url,
+                                'meta' => array('class' => 'my-toolbar-page'),
+                                'parent' => 'mf_admin_parent_' . $faire
+                            );
+                            //error_log(print_r($args,TRUE));
+                            $wp_admin_bar->add_node($args);
+                        }
                     }
                 }
             }
         }
-    
+    }
+
+    //faire setup
+    $location_id = 'mf-admin-fairesetup-register-menu';
+
+    if (isset($menu_locations[$location_id])) {
+        foreach ($menus as $menu) {
+            // If the ID of this menu is the ID associated with the location we're searching for
+            if ($menu->term_id == $menu_locations[$location_id]) {
+                // This is the correct menu
+                $menu_items = wp_get_nav_menu_items($menu);
+                foreach ((array) $menu_items as $key => $menu_item) {
+
+                    $args = array(
+                        'id' => $menu_item->object_id,
+                        'title' => $menu_item->title,
+                        'href' => $menu_item->url,
+                        'meta' => array('class' => 'my-toolbar-page'),
+                        'parent' => 'mf_admin_parent_fairesetup'
+                    );
+
+                    $wp_admin_bar->add_node($args);
+                }
+            }
+        }
+    }
+
 
     //add new navigation node
     $args = [
@@ -137,7 +138,7 @@ function buildFaireDrop(&$wp_admin_bar, $faire_id = null) {
                         wp_gf_entry.status = 'active' and faire='$faire_id'
                 group by wp_mf_faire.faire
                 ORDER BY `wp_mf_faire`.`start_dt` DESC" :
-            "select *, count(*) as count from wp_mf_faire, wp_gf_entry
+        "select *, count(*) as count from wp_mf_faire, wp_gf_entry
                 where FIND_IN_SET (wp_gf_entry.form_id,wp_mf_faire.form_ids)> 0 and
                         wp_gf_entry.status = 'active'
                 group by wp_mf_faire.faire
@@ -189,14 +190,15 @@ function buildFaireDrop(&$wp_admin_bar, $faire_id = null) {
                     'title' => $formRow->title . ' (' . $formRow->count . ')',
                     'href' => $adminURL,
                     'meta' => array('class' => 'my-toolbar-page'),
-                    'parent' => 'mf_admin_parent_' . $faire));
+                    'parent' => 'mf_admin_parent_' . $faire
+                ));
 
                 //Level 4 - entry status
                 $statusSql = "SELECT wp_gf_entry_meta.id, meta_value, count(*) as count "
-                        . " FROM `wp_gf_entry_meta` "
-                        . " JOIN wp_gf_entry on wp_gf_entry.id = wp_gf_entry_meta.entry_id "
-                        . "WHERE wp_gf_entry.form_id = " . $formRow->form_id
-                        . "  AND wp_gf_entry_meta.meta_key = '303' and status = 'active' group by meta_value";
+                    . " FROM `wp_gf_entry_meta` "
+                    . " JOIN wp_gf_entry on wp_gf_entry.id = wp_gf_entry_meta.entry_id "
+                    . "WHERE wp_gf_entry.form_id = " . $formRow->form_id
+                    . "  AND wp_gf_entry_meta.meta_key = '303' and status = 'active' group by meta_value";
 
                 foreach ($wpdb->get_results($statusSql) as $statusRow) {
                     array_push($args, array(
@@ -204,37 +206,51 @@ function buildFaireDrop(&$wp_admin_bar, $faire_id = null) {
                         'title' => $statusRow->meta_value . ' (' . $statusRow->count . ')',
                         'href' => $adminURL . '&sort=0&dir=DESC&' . urlencode('filterField[]') . '=303|is|' . str_replace(' ', '+', $statusRow->meta_value),
                         'meta' => array('class' => 'my-toolbar-page'),
-                        'parent' => 'mf_admin_child_' . $formRow->form_id));
-                }            
+                        'parent' => 'mf_admin_child_' . $formRow->form_id
+                    ));
+                }
             }
 
+            //add BA24 Admin ReView link            
+            if ((isset($faire) && $faire == 'BA24')) {
+                array_unshift($args, array(
+                    'id' => 'mf_admin_main_gv_review',
+                    'title' => 'Admin Review',
+                    'href' => 'https://makerfaire.com/review/index.php/',
+                    'meta' => array('class' => 'my-toolbar-page'),
+                    'parent' => 'mf_admin_parent_' . $faire
+                ));
+            }
             //add BA23 Main Entry View link
-            if ((isset($faire) && $faire=='BA23')) {
+            if ((isset($faire) && $faire == 'BA23')) {
                 array_unshift($args, array(
                     'id' => 'mf_admin_main_gv_review',
                     'title' => 'Main Entry View',
                     'href' => 'https://makerfaire.com/bay-area/main-entry-view-ba23/',
                     'meta' => array('class' => 'my-toolbar-page'),
-                    'parent' => 'mf_admin_parent_' . $faire));                    
+                    'parent' => 'mf_admin_parent_' . $faire
+                ));
             }
 
             //add BA23 interest form admin review link
-            if ((isset($faire) && $faire=='BA23')) {
+            if ((isset($faire) && $faire == 'BA23')) {
                 array_unshift($args, array(
                     'id' => 'mf_admin_child_gv_review',
                     'title' => 'Interest Form Entry Review',
                     'href' => 'https://makerfaire.com/ba23-admin-view/',
                     'meta' => array('class' => 'my-toolbar-page'),
-                    'parent' => 'mf_admin_parent_' . $faire));                    
+                    'parent' => 'mf_admin_parent_' . $faire
+                ));
             }
             //add BA23 interest form admin review link
-            if ((isset($faire) && $faire=='BA23')) {
+            if ((isset($faire) && $faire == 'BA23')) {
                 array_push($args, array(
                     'id' => 'mf_admin_child_gv_review',
                     'title' => 'Interest Form Entry Review',
                     'href' => 'https://makerfaire.com/ba23-admin-view/',
                     'meta' => array('class' => 'my-toolbar-page'),
-                    'parent' => 'mf_admin_parent_' . $faire));                    
+                    'parent' => 'mf_admin_parent_' . $faire
+                ));
             }
 
             //add scheduling link
@@ -244,7 +260,8 @@ function buildFaireDrop(&$wp_admin_bar, $faire_id = null) {
                     'title' => 'Scheduling',
                     'href' => '/mfscheduler/' . $faire,
                     'meta' => array('class' => 'my-toolbar-page'),
-                    'parent' => 'mf_admin_parent_' . $faire);
+                    'parent' => 'mf_admin_parent_' . $faire
+                );
             }
         }
     }
@@ -283,7 +300,7 @@ function mf_tasks_settings_menu_item($menu_items) {
 add_action('gform_form_settings_page_mf_tasks_settings_page', 'mf_tasks_settings_page');
 
 function mf_tasks_settings_page() {
-    require_once( get_template_directory() . '/classes/GFTask.php' );
+    require_once(get_template_directory() . '/classes/GFTask.php');
     //page header loaded in below function because admin messages were not yet available to the header to display
     GFTask::task_page();
 }
@@ -291,5 +308,5 @@ function mf_tasks_settings_page() {
 /* Displays faire sign code */
 
 function build_fsp_gsp() {
-    require_once( get_template_directory() . '/adminPages/other_form_download.php' );
+    require_once(get_template_directory() . '/adminPages/other_form_download.php');
 }
