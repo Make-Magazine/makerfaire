@@ -266,11 +266,6 @@ foreach ($forms as $form) {
         </div>
 
     </div>
-    <div id="loader"> <!-- must be directly after your v-cloak element -->
-        <img src="/review/img/loading.gif" />
-    </div>
-
-
 
     <!-- Required scripts, vue loads first -->
     <script src="/review/js/min/vue.min.js"></script>

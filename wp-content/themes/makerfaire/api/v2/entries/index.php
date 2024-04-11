@@ -134,7 +134,13 @@ function getAllEntries($formID = '', $page = '', $years = '') {
     }
 
     //for BA24, the single photo was changed to a multi image which messed things up a bit
-    $maker_photo = (!is_string($entry['22'])?$entry['22']:json_decode($entry['22'])[0]); 
+    $maker_photo = $entry['22'];  
+    if(!is_string($entry['22'])){
+      $photo = json_decode($entry['22']); 
+      if(is_array($photo)){
+        $maker_photo = $photo[0];
+      }      
+    }
     
     $return['makers'][] = array(
       'tabs'          => $tabData,
@@ -264,11 +270,6 @@ function fieldOutput($fieldID, $entry, $field_array, $form, $arg='') {
         $label = 'Assigned Resources';
         //$value = entryResources($entry, TRUE);        
         break;
-      case 'final_location':
-        $type  = 'html';
-        $label = 'Final Location';
-        //$value = display_schedule($formID, $entry, 'summary');;        
-        break;
       case 'notes':
         $type  = 'notes';
         $label = 'Notes';
@@ -290,8 +291,7 @@ function fieldOutput($fieldID, $entry, $field_array, $form, $arg='') {
         //preliminary locations
         $value     = field_display($entry, $form, '302', 'entry_prelim_loc_'.$entry['id']);
         $value    .= '<input type="button" id="updPrelimLoc'.$entry['id'].'" value="Update Preliminary Location" class="button" style="width:auto;padding-bottom:2px;" onclick="updateMgmt(\'update_prelim_loc\', \''.$entry['id'].'\');"/>';
-        $value    .= '<span class="updMsg" id="updPrelimLocMSG'.$entry['id'].'"></span>';
-        
+        $value    .= '<span class="updMsg" id="updPrelimLocMSG'.$entry['id'].'"></span>';        
         break;
       
       case 'notes_table':
@@ -305,6 +305,7 @@ function fieldOutput($fieldID, $entry, $field_array, $form, $arg='') {
       case 'final_location':
         $type  = 'html';
         $label = 'Final Location';
+        //$value= 'final location is'.display_schedule($form['id'],$entry,$section='sidebar');
         break;
       case 'rmt':
         $type  = 'listRepeat';

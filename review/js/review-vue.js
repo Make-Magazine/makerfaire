@@ -36,8 +36,9 @@ window.app = new Vue({
             this.makers.reverse();
         },
         updateForm: function(event) {
+            this.makers = [];
             var formID = event.target.value;
-            console.log(formID);
+            
             axios
             .get('/query/?type=entries&form='+formID)
             .then(response => (this.makers = response.data.makers));
