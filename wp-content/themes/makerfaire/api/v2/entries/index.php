@@ -136,12 +136,12 @@ function getAllEntries($formID = '', $page = '', $years = '') {
 
     //for BA24, the single photo was changed to a multi image which messed things up a bit
     $maker_photo = $entry['22'];
-    if (!is_string($entry['22'])) {
+    //if (!is_string($entry['22'])) {
       $photo = json_decode($entry['22']);
       if (is_array($photo)) {
         $maker_photo = $photo[0];
       }
-    }
+    //}
 
     $return['makers'][] = array(
       'tabs'          => $tabData,
