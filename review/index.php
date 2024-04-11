@@ -195,7 +195,7 @@ foreach ($forms as $form) {
                                                         </span>
                                                         
                                                 <span v-else-if="field.type === 'video'">
-                                                    <b-embed type="embed" aspect="16by9" :src="field.value"
+                                                    <b-embed type="iframe" aspect="16by9" :src="field.value"
                                                         allowfullscreen></b-embed>
                                                 </span>
                                                         <span v-else-if="field.type === 'notes'">
