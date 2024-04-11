@@ -63,8 +63,12 @@ function getAllEntries($formID = '', $page = '', $years = '') {
     preg_match_all("/\[tab_content\]\s*(.[\S\s]*?)\s*\[\/tab_content\]/", $tab, $tab_content_arr);
     $tab_content = array();
     //there should only be 1 tab content per tab
-    if ($tab_content_arr)
-      $tab_content['initial']['blocks'] =  retrieve_blocks($tab_content_arr[1][0]);
+    if ($tab_content_arr){      
+      $blocks = retrieve_blocks($tab_content_arr[1][0]);
+      if (!empty($blocks)) {
+        $tab_content['initial']['blocks'] = $blocks;
+      }
+    }      
 
     //build the expand section
     preg_match_all("/\[expand\]\s*(.[\S\s]*?)\s*\[\/expand\]/", $tab, $expand_content_arr);
@@ -114,17 +118,28 @@ function getAllEntries($formID = '', $page = '', $years = '') {
                 $arg = str_replace(':', '', strstr($field_id, ':'));
                 $field_id = substr($field_id, 0, strpos($field_id, ":"));
               }
-
-              $fieldData['field-' . $field_id] = fieldOutput($field_id, $entry, $field_array, $form, $arg);
+              $fieldOutput = fieldOutput($field_id, $entry, $field_array, $form, $arg);
+              if(!empty($fieldOutput))
+                $fieldData['field-' . $field_id] = $fieldOutput;
             }
-
-            $columnData[$columnKey] = $fieldData; //write field data to columns
+            if(!empty($fieldData))
+              $columnData[$columnKey] = $fieldData; //write field data to columns
           }
-          $blockData[$blockKey] = array('columns' => $columnData); //write column data to blocks
+          if(!empty($columnData))
+            $blockData[$blockKey] = array('columns' => $columnData); //write column data to blocks
         }
-        $tabData[$tabkey]['tab_content'][$dataKey] = array('blocks' => $blockData); //write block data to tabs                                
+        if(!empty($blockData)){
+          $tabData[$tabkey]['tab_content'][$dataKey] = array('blocks' => $blockData); //write block data to tabs
+        }else{
+          //since there is no data in the initial or expanded section, remove it
+          unset($tabData[$tabkey]['tab_content'][$dataKey]);          
+        }                         
       }
+      //if there is no data in the tab, remove it
+      if(empty($tabData[$tabkey]['tab_content']))
+        unset($tabData[$tabkey]);    
     }
+
     //if group, use the group name, else use the main contact name
     if (strpos($entry['105'], 'group')  !== false) {
       $maker_name = (isset($entry['109']) ? $entry['109'] : '');
@@ -180,9 +195,11 @@ function retrieve_blocks($content = '') {
       }
       $columnArr[] = $fieldData; //write field data to columns        
     }
-    $return[]['columns'] = $columnArr;
+    if(!empty($columnArr)){
+      $return[]['columns'] = $columnArr;
+    }    
   }
-
+  
   return $return;
 }
 
@@ -326,6 +343,7 @@ function fieldOutput($fieldID, $entry, $field_array, $form, $arg = '') {
     }
   }
   if ($arg == 'no_label')  $label = '';
+  if($value=='')  return array();
   return array('label' => $label, 'type' => $type, 'value' => $value);
 }
 
