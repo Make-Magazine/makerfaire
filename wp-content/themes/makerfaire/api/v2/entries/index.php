@@ -1,4 +1,5 @@
 <?php
+
 /**
  * v2 of the Maker Faire API - MAP
  *
@@ -37,7 +38,7 @@ function getAllEntries($formID = '', $page = '', $years = '') {
   $total_count     = 0;
   $entries         = GFAPI::get_entries($formID, $search_criteria, $sorting, $paging, $total_count);
   $form            = GFAPI::get_form($formID);
-  
+
   //convert this into a usable array
   $field_array = array();
   foreach ($form['fields'] as $field) {
@@ -82,7 +83,7 @@ function getAllEntries($formID = '', $page = '', $years = '') {
       'tab_content' => $tab_content
     );
   }
-  
+
   foreach ($entries as $entry) {
     $tabData = array();
 
@@ -104,19 +105,19 @@ function getAllEntries($formID = '', $page = '', $years = '') {
           //loop through columns
           foreach ($columns as $columnKey => $column) {
             $fieldData = array();
-            
+
             //loop through fields
-            foreach ($column as $field_id) {  
-              $arg = '';           
+            foreach ($column as $field_id) {
+              $arg = '';
               //check if an argument was passed
-              if (strpos($field_id, ':') !== false) {                
-                $arg = str_replace(':','',strstr($field_id, ':'));                
-                $field_id = substr($field_id, 0, strpos($field_id, ":"));                
-              }         
-            
+              if (strpos($field_id, ':') !== false) {
+                $arg = str_replace(':', '', strstr($field_id, ':'));
+                $field_id = substr($field_id, 0, strpos($field_id, ":"));
+              }
+
               $fieldData['field-' . $field_id] = fieldOutput($field_id, $entry, $field_array, $form, $arg);
             }
-            
+
             $columnData[$columnKey] = $fieldData; //write field data to columns
           }
           $blockData[$blockKey] = array('columns' => $columnData); //write column data to blocks
@@ -134,14 +135,14 @@ function getAllEntries($formID = '', $page = '', $years = '') {
     }
 
     //for BA24, the single photo was changed to a multi image which messed things up a bit
-    $maker_photo = $entry['22'];  
-    if(!is_string($entry['22'])){
-      $photo = json_decode($entry['22']); 
-      if(is_array($photo)){
+    $maker_photo = $entry['22'];
+    if (!is_string($entry['22'])) {
+      $photo = json_decode($entry['22']);
+      if (is_array($photo)) {
         $maker_photo = $photo[0];
-      }      
+      }
     }
-    
+
     $return['makers'][] = array(
       'tabs'          => $tabData,
       'project_name'  => $entry['151'],
@@ -185,7 +186,7 @@ function retrieve_blocks($content = '') {
   return $return;
 }
 
-function fieldOutput($fieldID, $entry, $field_array, $form, $arg='') {  
+function fieldOutput($fieldID, $entry, $field_array, $form, $arg = '') {
   //set default values
   $label = $fieldID;
 
@@ -262,7 +263,7 @@ function fieldOutput($fieldID, $entry, $field_array, $form, $arg='') {
         }
         break;
     }
-  } else {    
+  } else {
     //$entry['rmt'] = 
     switch ($fieldID) {
       case 'rmt':
@@ -278,29 +279,29 @@ function fieldOutput($fieldID, $entry, $field_array, $form, $arg='') {
       case 'flags':
         $type = 'html';
         $label = 'Flags';
-      
+
         //flags        
-        $value     = field_display($entry, $form, '304', 'entry_flags_'.$entry['id']);
-        $value    .= '<input type="button" id="updFlags'.$entry['id'].'" value="Update Flags" class="button" style="width:auto;padding-bottom:2px;" onclick="updateMgmt(\'update_flags\', \''.$entry['id'].'\');"/>';
-        $value    .= '<span class="updMsg" id="updFlagsMSG'.$entry['id'].'"></span>';
+        $value     = field_display($entry, $form, '304', 'entry_flags_' . $entry['id']);
+        $value    .= '<input type="button" id="updFlags' . $entry['id'] . '" value="Update Flags" class="button" style="width:auto;padding-bottom:2px;" onclick="updateMgmt(\'update_flags\', \'' . $entry['id'] . '\');"/>';
+        $value    .= '<span class="updMsg" id="updFlagsMSG' . $entry['id'] . '"></span>';
         break;
-      case 'prelim_loc':  
+      case 'prelim_loc':
         $type = 'html';
         $label = 'Preliminary Location';
-      
+
         //preliminary locations
-        $value     = field_display($entry, $form, '302', 'entry_prelim_loc_'.$entry['id']);
-        $value    .= '<input type="button" id="updPrelimLoc'.$entry['id'].'" value="Update Preliminary Location" class="button" style="width:auto;padding-bottom:2px;" onclick="updateMgmt(\'update_prelim_loc\', \''.$entry['id'].'\');"/>';
-        $value    .= '<span class="updMsg" id="updPrelimLocMSG'.$entry['id'].'"></span>';        
+        $value     = field_display($entry, $form, '302', 'entry_prelim_loc_' . $entry['id']);
+        $value    .= '<input type="button" id="updPrelimLoc' . $entry['id'] . '" value="Update Preliminary Location" class="button" style="width:auto;padding-bottom:2px;" onclick="updateMgmt(\'update_prelim_loc\', \'' . $entry['id'] . '\');"/>';
+        $value    .= '<span class="updMsg" id="updPrelimLocMSG' . $entry['id'] . '"></span>';
         break;
-      
+
       case 'notes_table':
         $type  = 'html';
         $label = '';
-        $value = '<p>Enter Email: <input type="email" placeholder="example@make.co" id="toEmail'.$entry['id'].'" size="40" /></p>' .
-          ' <textarea	id="new_note_'.$entry['id'].'"	style="width: 90%; height: 240px;" cols=""	rows=""></textarea>' .
-          ' <input type="button" value="Add Note" class="button" style="width:auto;padding-bottom:2px;" onclick="updateMgmt(\'add_note_sidebar\',\''.$entry['id'].'\');"/>' .
-          ' <span class="updMsg" id="add_noteMSG_'.$entry['id'].'"></span>';
+        $value = '<p>Enter Email: <input type="email" placeholder="example@make.co" id="toEmail' . $entry['id'] . '" size="40" /></p>' .
+          ' <textarea	id="new_note_' . $entry['id'] . '"	style="width: 90%; height: 240px;" cols=""	rows=""></textarea>' .
+          ' <input type="button" value="Add Note" class="button" style="width:auto;padding-bottom:2px;" onclick="updateMgmt(\'add_note_sidebar\',\'' . $entry['id'] . '\');"/>' .
+          ' <span class="updMsg" id="add_noteMSG_' . $entry['id'] . '"></span>';
         break;
       case 'final_location':
         $type  = 'html';
@@ -315,10 +316,69 @@ function fieldOutput($fieldID, $entry, $field_array, $form, $arg='') {
         $type  = 'text';
         $date  = date_create($entry[$fieldID]);
         $value = date_format($date, "m/d/Y");
-        $label = 'Created';
+        $label = 'Submitted On';
         break;
+      case 'other_entries':
+        $type = 'html';
+        $label = '';
+        $value = '';
+        //$value = getAddEntries($entry[98], $entry['id']);
     }
   }
-  if($arg=='no_label')  $label='';
+  if ($arg == 'no_label')  $label = '';
   return array('label' => $label, 'type' => $type, 'value' => $value);
+}
+
+function getAddEntries($email, $currEntryID) {
+  global $wpdb;
+
+  $addEntriesCnt = 0;
+  //additional Entries
+  $addEntries = '<table width="100%">
+  <thead>
+    <tr>      
+      <th>Record ID   </th>
+      <th>Project Name</th>
+      <th>Form Name   </th>
+      <th>Status      </th>
+    </tr>
+  </thead>';
+
+  $addEntriesCnt = 0;
+
+  $results = $wpdb->get_results('SELECT  *,
+                                    (SELECT meta_value FROM wp_gf_entry_meta detail2 WHERE detail2.entry_id = wp_gf_entry_meta.entry_id AND meta_key = 151 ) as projectName,
+                                    (SELECT meta_value FROM wp_gf_entry_meta detail2 WHERE detail2.entry_id = wp_gf_entry_meta.entry_id AND meta_key = 303 ) as status,
+                                    (SELECT status FROM wp_gf_entry WHERE wp_gf_entry.id = wp_gf_entry_meta.entry_id) as lead_status
+                              FROM wp_gf_entry_meta
+                              JOIN wp_gf_form on wp_gf_form.id = wp_gf_entry_meta.form_id
+                             WHERE meta_value = "' . $email . '"' .
+    '  AND entry_id != ' . $currEntryID . '
+                          GROUP BY entry_id
+                          ORDER BY entry_id');
+/*echo 'SELECT  *,
+(SELECT meta_value FROM wp_gf_entry_meta detail2 WHERE detail2.entry_id = wp_gf_entry_meta.entry_id AND meta_key = 151 ) as projectName,
+(SELECT meta_value FROM wp_gf_entry_meta detail2 WHERE detail2.entry_id = wp_gf_entry_meta.entry_id AND meta_key = 303 ) as status,
+(SELECT status FROM wp_gf_entry WHERE wp_gf_entry.id = wp_gf_entry_meta.entry_id) as lead_status
+FROM wp_gf_entry_meta
+JOIN wp_gf_form on wp_gf_form.id = wp_gf_entry_meta.form_id
+WHERE meta_value = "' . $email . '"' .
+'  AND entry_id != ' . $currEntryID . '
+GROUP BY entry_id
+ORDER BY entry_id';
+die();*/
+  foreach ($results as $addData) {
+    $outputURL = admin_url('admin.php') . "?page=gf_entries&view=entry&id=" . $addData->form_id . '&lid=' . $addData->entry_id;
+    $addEntriesCnt++;
+    $addEntries .= '<tr>';
+        
+    $addEntries .= '<td><a target="_blank" href="' . $outputURL . '">' . $addData->entry_id . '</a></td>'
+      . '<td>' . $addData->projectName . '</td>'
+      . '<td>' . $addData->title . '</td>'
+      . '<td>' . ($addData->lead_status == 'active' ? $addData->status : ucwords($addData->lead_status)) . '</td>'
+      . '</tr>';
+  }
+
+  $addEntries .= '</table>';
+  return $addEntries;
 }
