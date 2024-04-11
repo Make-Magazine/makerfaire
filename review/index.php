@@ -103,7 +103,7 @@ foreach ($forms as $form) {
                                         <div v-for="(field, field_id) in fields" :key="maker_id-'field-' + field_id">
                                             <div v-if="field.value">
                                                 <label>{{ field.label }}</label>
-                                                <div v-if="field.type === 'fileupload'">
+                                                <div class="image-wrapper" v-if="field.type === 'fileupload'">
                                                     <b-img thumbnail fluid :src="field.value" :alt="field.label"></b-img>
                                                 </div>
                                                 <span v-else-if="field.type === 'multipleFiles'">
