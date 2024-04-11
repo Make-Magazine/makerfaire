@@ -306,9 +306,9 @@ function display_flags_prelim_locs($form, $lead) {
   }
 }
 
-function field_display($lead,$form,$field_id,$fieldName) {  
+function field_display($lead,$form,$field_id,$fieldName) {
   $return    = '';
-  
+
   $form_id = $form['id'];
   $field     = RGFormsModel::get_field($form,$field_id);
 
@@ -317,7 +317,6 @@ function field_display($lead,$form,$field_id,$fieldName) {
     $value   = RGFormsModel::get_lead_field_value( $lead, $field );
     $return  = mf_checkbox_display($field, $value, $form_id, $fieldName, $field_id);
   }
-  
   return $return;
 }
 
@@ -519,84 +518,48 @@ function mf_sidebar_entry_schedule($form_id, $lead) {
 
 function display_schedule($form_id,$lead,$section='sidebar'){
   global $wpdb;
-  $mysqli = new mysqli(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME);
-  if ($mysqli->connect_errno) {
-    echo "Failed to connect to MySQL: (" . $mysqli->connect_errno . ") " . $mysqli->connect_error;
-  }
-
   //first, let's display any schedules already entered for this entry
   $entry_id = $lead['id'];
   $sql = "select `wp_mf_schedule`.`ID` as schedule_id, `wp_mf_schedule`.`entry_id`,  `wp_mf_schedule`.type,
                   location.ID as location_id, location.location,
                   area.area, subarea.subarea,
-                 `wp_mf_schedule`.`start_dt`, `wp_mf_schedule`.`end_dt`, `wp_mf_schedule`.`day`,  
+                  `wp_mf_faire`.`faire`, `wp_mf_schedule`.`start_dt`, `wp_mf_schedule`.`end_dt`, `wp_mf_schedule`.`day`, wp_mf_faire.time_zone,
                   subarea.ID as subarea_id
 
           from wp_mf_location location
           left outer join wp_mf_schedule on `wp_mf_schedule`.`entry_id` = ".$entry_id." and wp_mf_schedule.location_id = location.ID,
-                          wp_mf_faire_subarea subarea, wp_mf_faire_area area
+                          wp_mf_faire_subarea subarea, wp_mf_faire_area area,wp_mf_faire
 
           where location.entry_id=".$entry_id."
-          
+            and FIND_IN_SET(".$form_id.",wp_mf_faire.form_ids)
             and location.subarea_id = subarea.ID
             and subarea.area_id = area.ID
-          order by area ASC, subarea ASC, start_dt ASC";          
+          order by area ASC, subarea ASC, start_dt ASC";
 
-  $schedules   = array();
-    
-  if($wpdb->num_rows ==0){
-    return;
-  }
-
-  $output = '<div id="locationList">';
-  $results = $wpdb->get_results($sql,ARRAY_A);
-  // Loop through the posts  
-  foreach($results as $row){
+  $scheduleArr = array();
+  foreach($wpdb->get_results($sql,ARRAY_A) as $row){
     //order entries by subarea(stage), then date
-    $stage        = ($row['subarea'] != NULL ? $row['area'].' - '.$row['subarea']: '');
-    if($row['location']!='') {
-      $stage .= ' ('.$row['location'].')';
-    }     
-      
-    $start_dt     = ($row['start_dt'] != NULL ? strtotime($row['start_dt'])  : '');
-    $end_dt       = ($row['end_dt']   != NULL ? strtotime($row['end_dt'])    : '');
-    $schedule_id  = ($row['schedule_id'] != NULL ? (int) $row['schedule_id'] : '');
-    $date         = ($start_dt != '' ? date("n/j/y",$start_dt) : '');
-    $timeZone     = $row['time_zone'];
-    $subarea_id   = $row['subarea_id'];
-    $type         = $row['type'];
+    $stage = ($row['subarea'] != NULL ? $row['area'].' - '.$row['subarea']: '');
+    if($row['location']!='')    $stage .= ' ('.$row['location'].')';
+    $start_dt = ($row['start_dt'] != NULL ? strtotime($row['start_dt'])  : '');
+    $end_dt   = ($row['end_dt']   != NULL ? strtotime($row['end_dt'])    : '');
+    $schedule_id = ($row['schedule_id'] != NULL ? (int) $row['schedule_id'] : '');
+    $date     = ($start_dt != '' ? date("n/j/y",$start_dt) : '');
+    $timeZone   = $row['time_zone'];
+    $subarea_id = $row['subarea_id'];
+    $type       = $row['type'];
 
     //build array
     $schedules[$subarea_id]['location'] = $row['location_id'];
     $schedules[$subarea_id]['stage']    = $stage;
-        
-    //build output     
-    $output .= '<div class="stageName">'.$stage.'</div>';    
-    if($date != ''){
-      $output .= '<div>'.
-                    '<span class="schedDate">'.date('l n/j/y',strtotime($date)).'</span>';
-      $output .=    '<div class="schedOuter">';
-      
-      //build inner section               
-      if($section!='summary'){
-        $output .=    '<input type="checkbox" value="'.$schedule_id.'" name="delete_schedule_id[]"></input>';
-      }
-      $output .=      '<div class="schedInfo">';
-      $output .=        '<span>'.date("g:i A",$start_dt).' - '.date("g:i A",$end_dt).' ('.$timeZone.')</span>';
-      $output .=        '<div class="innerInfo">Type: '.$type.'</div>';
-      $output .=      '</div>';
-      
-      $output .=      '<div class="clear"></div>';
-      $output .=    '</div>';
-      $output .= '</div>';      
+
+    if($date!=''){
+      $schedules[$subarea_id]['schedule'][$date][$schedule_id] = array('start_dt' => $start_dt, 'end_dt' => $end_dt, 'timeZone'=>$timeZone, 'type'=>$type);
     }
   }
 
-  $output = '</div>';    //end div #locationList
-
   //make sure there is data to display
-  /*
-  if(!empty($schedules)) {
+  if($wpdb->num_rows !=0){
     $output = '<div id="locationList">';
     //let's loop thru the schedule array now
     foreach($schedules as $data){
@@ -605,7 +568,6 @@ function display_schedule($form_id,$lead,$section='sidebar'){
       $output     .= '<div class="stageName">'.$stage.'</div>';
 
       $scheduleArr = (isset($data['schedule'])?$data['schedule']:'');
-      
       if(is_array($scheduleArr)){
         foreach($scheduleArr as $date=>$schedule){
           if($date!=''){
@@ -618,7 +580,7 @@ function display_schedule($form_id,$lead,$section='sidebar'){
 
               //set time zone for faire
               $dateTime = new DateTime();
-             // $dateTime->setTimeZone(new DateTimeZone($db_tz));
+              $dateTime->setTimeZone(new DateTimeZone($db_tz));
               $timeZone = $dateTime->format('T');
               if($section!='summary'){
                 $output .= '<input type="checkbox" value="'.$schedule_id.'" name="delete_schedule_id[]"></input>';
@@ -638,7 +600,7 @@ function display_schedule($form_id,$lead,$section='sidebar'){
                   .  '<span class="schedDate">Remove Location</span>';
         }
         $output .= '<div class="clear"></div>';
-      } 
+      }
       $output .= '<br/>';
     }
 
@@ -650,10 +612,9 @@ function display_schedule($form_id,$lead,$section='sidebar'){
       $output .= $entry_delete_button.$updMsg;
     }
     $output .= '<br/>';
-    $output .= '</div>';    
-  }*/
-  die('stop');
-  return $output;
+    $output .= '</div>';
+    return $output;
+  }
 }
 
 function sortFlagsByLabel($a,$b) {
