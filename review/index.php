@@ -120,12 +120,11 @@ foreach ($forms as $form) {
                                                 </span>
                                                 <span v-else-if="field.type === 'website'">
                                                     <b-link :href="field.value" target="_blank">{{field.value}}</b-link>
-                                                </span>
-                                                <!--
+                                                </span>                                                
                                                 <span v-else-if="field.type === 'video'">
                                                     <b-embed type="iframe" aspect="16by9" :src="field.value"
                                                         allowfullscreen></b-embed>
-                                                </span>-->
+                                                </span>
                                                 <span v-else-if="field.type === 'notes'">
                                                     <b-list-group>
                                                         <b-list-group-item v-for="(note,i) in field.value" :key="maker_id+'-note-' + i">
@@ -194,11 +193,11 @@ foreach ($forms as $form) {
                                                         <span v-else-if="field.type === 'website'">
                                                             <b-link :href="field.value" target="_blank">{{field.value}}</b-link>
                                                         </span>
-                                                        <!--
+                                                        
                                                 <span v-else-if="field.type === 'video'">
-                                                    <b-embed type="iframe" aspect="16by9" :src="field.value"
+                                                    <b-embed type="embed" aspect="16by9" :src="field.value"
                                                         allowfullscreen></b-embed>
-                                                </span>-->
+                                                </span>
                                                         <span v-else-if="field.type === 'notes'">
                                                             <b-list-group>
                                                                 <b-list-group-item v-for="(note,i) in field.value" :key="maker_id+'-note-' + i">
