@@ -10,7 +10,7 @@
 				[field]16:no_label[/field]
 			[/column]
 			[column]
-				[field]339[/field]
+				[field]896[/field]
 				[field]55[/field]
 				[field]884[/field]
 				[field]320[/field]
