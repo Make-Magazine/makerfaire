@@ -342,8 +342,16 @@ function fieldOutput($fieldID, $entry, $field_array, $form, $arg = '') {
         $label = 'Entry Type';
         
         $value     = field_display($entry,$form,'339','admin_exhibit_type_' . $entry['id']);
-        $value .= '<input type="button" name="updExhibitType' . $entry['id'] . '" value="Update Exhibit Type" class="button" onclick="updateMgmt(\'update_exhibit_type\', \'' . $entry['id'] . '\');"/>';
+        $value .= '<input type="button" name="updExhibitType' . $entry['id'] . '" value="Update Entry Type" class="button" onclick="updateMgmt(\'update_exhibit_type\', \'' . $entry['id'] . '\');"/>';
         $value .= '<span class="updMsg" id="updExhibitTypeMsg' . $entry['id'] . '"></span>';
+        break;
+      case 'fee_mgmt':
+        $type = 'html';
+        $label = 'Fee Management';
+        
+        $value     = field_display($entry,$form,'442','info_fee_mgmt_' . $entry['id']);
+        $value .= '<input type="button" name="updFeeMgmt' . $entry['id'] . '" value="Update Fee Management" class="button" onclick="updateMgmt(\'update_fee_mgmt\', \'' . $entry['id'] . '\');"/>';
+        $value .= '<span class="updMsg" id="updFeeMgmtMsg' . $entry['id'] . '"></span>';  
         break;
       case 'other_entries':
         $type = 'html';

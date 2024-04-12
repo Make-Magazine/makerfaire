@@ -69,8 +69,7 @@ function updateMgmt(action, entryID) {
 		//location comment
 		data.entry_location_comment = document.getElementById("location_comment_"+entryID).value;     
 	} else if (action == 'update_exhibit_type') {
-		var updMsgBox  = 'updExhibitTypeMsg'+entryID;
-		alert('you are here '+updMsgBox);
+		var updMsgBox  = 'updExhibitTypeMsg'+entryID;		
         document.getElementById(updMsgBox).innerHTML=processing_icon;
 						
 		//find all checked flags
@@ -83,6 +82,20 @@ function updateMgmt(action, entryID) {
             }
         }        
 		data.entry_exhibit_type = entry_exhibit_type;	
+	} else if (action == 'update_fee_mgmt') {
+		var updMsgBox  = 'updFeeMgmtMsg'+entryID;		
+        document.getElementById(updMsgBox).innerHTML=processing_icon;
+						
+		//find all checked flags
+        let checkboxes = document.getElementsByName("info_fee_mgmt_"+entryID+'[]');        
+        var entry_info_fee_mgmt = [];
+        for (var i = 0; i < checkboxes.length; i++) {
+            if (checkboxes[i].checked) {
+                // push all checked locations to array
+			    entry_info_fee_mgmt.push(checkboxes[i].value);    
+            }
+        }        
+		data.entry_info_fee_mgmt = entry_info_fee_mgmt;		
 	}
 
 	jQuery.post(ajaxurl, data, function(r) {
