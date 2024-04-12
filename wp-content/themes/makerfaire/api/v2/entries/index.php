@@ -299,7 +299,7 @@ function fieldOutput($fieldID, $entry, $field_array, $form, $arg = '') {
           $label = 'Notes';
           $value = '<p>Enter Email: <input type="email" placeholder="example@make.co" id="toEmail' . $entry['id'] . '" size="40" /></p>' .
             ' <textarea	id="new_note_' . $entry['id'] . '"	style="width: 90%; height: 240px;" cols=""	rows=""></textarea>' .
-            ' <input type="button" value="Add Note" class="button" style="width:auto;padding-bottom:2px;" onclick="updateMgmt(\'add_note_sidebar\',\'' . $entry['id'] . '\');"/>' .
+            ' <input type="button" value="Add Note" class="button updButton" style="width:auto;padding-bottom:2px;" onclick="updateMgmt(\'add_note_sidebar\',\'' . $entry['id'] . '\');"/>' .
             ' <span class="updMsg" id="add_noteMSG_' . $entry['id'] . '"></span>';
           break;  
       case 'flags':
@@ -308,7 +308,7 @@ function fieldOutput($fieldID, $entry, $field_array, $form, $arg = '') {
 
         //flags        
         $value     = field_display($entry, $form, '304', 'entry_flags_' . $entry['id']);        
-        $value    .= '<input type="button" id="updFlags' . $entry['id'] . '" value="Update Flags" class="button" style="width:auto;padding-bottom:2px;" onclick="updateMgmt(\'update_flags\', \'' . $entry['id'] . '\');"/>';
+        $value    .= '<input type="button" id="updFlags' . $entry['id'] . '" value="Update Flags" class="button updButton" style="width:auto;padding-bottom:2px;" onclick="updateMgmt(\'update_flags\', \'' . $entry['id'] . '\');"/>';
         $value    .= '<span class="updMsg" id="updFlagsMSG' . $entry['id'] . '"></span>';
         break;
       case 'prelim_loc':
@@ -318,7 +318,7 @@ function fieldOutput($fieldID, $entry, $field_array, $form, $arg = '') {
         //preliminary locations
         $value     = field_display($entry, $form, '302', 'entry_prelim_loc_' . $entry['id']);
         $value    .= '<textarea id="location_comment_' . $entry['id'].'">'.(isset($entry['307'])?$entry['307']:'').'</textarea>';
-        $value    .= '<input type="button" id="updPrelimLoc' . $entry['id'] . '" value="Update Preliminary Location" class="button" onclick="updateMgmt(\'update_prelim_loc\', \'' . $entry['id'] . '\');"/>';
+        $value    .= '<input type="button" id="updPrelimLoc' . $entry['id'] . '" value="Update Preliminary Location" class="button updButton" onclick="updateMgmt(\'update_prelim_loc\', \'' . $entry['id'] . '\');"/>';
         $value    .= '<span class="updMsg" id="updPrelimLocMSG' . $entry['id'] . '"></span>';
         break;
 
@@ -343,7 +343,7 @@ function fieldOutput($fieldID, $entry, $field_array, $form, $arg = '') {
         $label = 'Entry Type';
         
         $value     = field_display($entry,$form,'339','admin_exhibit_type_' . $entry['id']);
-        $value .= '<input type="button" name="updExhibitType' . $entry['id'] . '" value="Update Entry Type" class="button" onclick="updateMgmt(\'update_exhibit_type\', \'' . $entry['id'] . '\');"/>';
+        $value .= '<input type="button" name="updExhibitType' . $entry['id'] . '" value="Update Entry Type" class="button updButton" onclick="updateMgmt(\'update_exhibit_type\', \'' . $entry['id'] . '\');"/>';
         $value .= '<span class="updMsg" id="updExhibitTypeMsg' . $entry['id'] . '"></span>';
         break;
       case 'fee_mgmt':
@@ -351,7 +351,7 @@ function fieldOutput($fieldID, $entry, $field_array, $form, $arg = '') {
         $label = 'Fee Management';
         
         $value     = field_display($entry,$form,'442','info_fee_mgmt_' . $entry['id']);
-        $value .= '<input type="button" name="updFeeMgmt' . $entry['id'] . '" value="Update Fee Management" class="button" onclick="updateMgmt(\'update_fee_mgmt\', \'' . $entry['id'] . '\');"/>';
+        $value .= '<input type="button" name="updFeeMgmt' . $entry['id'] . '" value="Update Fee Management" class="button updButton" onclick="updateMgmt(\'update_fee_mgmt\', \'' . $entry['id'] . '\');"/>';
         $value .= '<span class="updMsg" id="updFeeMgmtMsg' . $entry['id'] . '"></span>';  
         break;
       case 'other_entries':

@@ -9,7 +9,7 @@ img {
         min-width: 200px
     }
 }
-button, [type=button] {
+.expand, .updButton {
     margin: 20px 0;
 }
 .collapsed > .when-opened,
@@ -110,7 +110,25 @@ h3 {
 
 // grid view only
 .card-deck .card {
-    min-width: 250px;
+    min-width: calc(20% - 30px);
+    max-width: calc(20% - 30px);
+    @media screen and (max-width: 1200px) {
+        min-width: calc(25% - 30px);
+        max-width: calc(25% - 30px);
+    }
+    @media screen and (max-width: 980px) {
+        min-width: calc(33.333% - 30px);
+        max-width: calc(33.333% - 30px);
+    }
+    @media screen and (max-width: 768px) {
+        min-width: calc(50% - 30px);
+        max-width: calc(50% - 30px);
+    }
+    @media screen and (max-width: 600px) {
+        min-width: 100%;
+        max-width: 100%;
+    }
+
 }
 
 // Loader

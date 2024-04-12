@@ -1,4 +1,4 @@
-<?php
+    <?php
 if (!defined('WP_ADMIN')) {
     define('WP_ADMIN', false);
 }
@@ -76,8 +76,8 @@ foreach ($forms as $form) {
             </div>
         </b-container>
         <div v-if="currentView=='grid'">
-            <b-card-group deck>
-                <b-card v-for="(maker, maker_id) in filterBy.slice((currentPage-1)*perPage,(currentPage-1)*perPage+perPage)" :title="maker.project_name" img-top :key="'maker-'+maker.project_id" @click="expandCard(maker.project_id)">
+            <b-card-group deck>            
+                <b-card v-for="(maker, maker_id) in filterBy.slice((currentPage-1)*perPage,(currentPage-1)*perPage+perPage)" :title="maker.project_name" img-top :key="'grid-'+maker.project_id" @click="expandCard(maker.project_id)">
                     <template #header>
                         <b-img thumbnail fluid class="grid-image" :alt="maker.project_name" :src="maker.photo" />
                         <h5 class="hidden">{{maker.maker_name}}</h5>
@@ -89,16 +89,16 @@ foreach ($forms as $form) {
                         <small class="text-muted">{{maker.status}}</small>
                     </template>
                 </b-card>
-                <!--
-                <b-pagination v-if="makers.length>0" v-model="currentPage" :total-rows="makers.length" :per-page="perPage" first-text="First" prev-text="Prev" next-text="Next" last-text="Last" aria-controls="Grid">
-                </b-pagination>-->
+
+                <b-pagination v-if="filterBy.length>0" v-model="currentPage" :total-rows="filterBy.length" :per-page="perPage" first-text="First" prev-text="Prev" next-text="Next" last-text="Last" aria-controls="Grid">                
+                </b-pagination>
 
             </b-card-group>
         </div>
 
         <div v-if="currentView=='list'">
-            <!--<b-card id="listView" no-body v-for="(maker, maker_id) in filterBy.slice((currentPage-1)*perPage,(currentPage-1)*perPage+perPage)" v-model="currentPage" :key="'maker-'+maker.project_id">-->
-            <b-card id="listView" no-body v-for="(maker, maker_id) in filterBy" :key="'maker-'+maker.project_id">
+            <b-pagination v-if="filterBy.length>0" v-model="currentPage" :total-rows="filterBy.length" :per-page="perPage" first-text="First" prev-text="Prev" next-text="Next" last-text="Last"></b-pagination>
+            <b-card :id="'listView-' + maker.project_id" v-for="(maker, maker_id) in filterBy.slice((currentPage-1)*perPage,(currentPage-1)*perPage+perPage)" :key="'list-' + maker.project_id">                
                 <input type="hidden" name="entry_info_entry_id" :value=maker.project_id />
                 <b-row class="header">
                     <b-col cols="9">
@@ -183,7 +183,7 @@ foreach ($forms as $form) {
 
                                 <!-- Expand Section -->
                                 <div v-if="tab.tab_content.expand">
-                                    <b-button v-b-toggle="'collapse-'+tabKey+maker.project_id" variant="primary">
+                                    <b-button class="expand" v-b-toggle="'collapse-'+tabKey+maker.project_id" variant="primary">
                                         <span class="when-opened">
                                             Less Info -
                                         </span>
@@ -268,10 +268,11 @@ foreach ($forms as $form) {
                     </b-tab>
                 </b-tabs>
             </b-card>
-            <!--
-            <b-pagination v-if="makers.length>0" v-model="currentPage" :total-rows="makers.length" :per-page="perPage" first-text="First" prev-text="Prev" next-text="Next" last-text="Last" aria-controls="listView">
-            </b-pagination>-->
+
+            <b-pagination v-if="filterBy.length>0" v-model="currentPage" :total-rows="filterBy.length" :per-page="perPage" first-text="First" prev-text="Prev" next-text="Next" last-text="Last">
+            </b-pagination>
         </div>
+        <div class="no-results" v-if="!filterBy.length && makers.length">No Results to Show</div>
         <div id="loader" v-if="makers.length==0">
             <img src="/review/img/loading.gif" />
         </div>
