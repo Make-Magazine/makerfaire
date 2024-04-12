@@ -5,21 +5,25 @@ label {
 
 img {
     max-width: 100%;
+
     &.multiImage {
         min-width: 200px
     }
 }
-.expand, .updButton {
+
+.expand,
+.updButton {
     margin: 20px 0;
 }
-.collapsed > .when-opened,
-    :not(.collapsed) > .when-closed {
-        display: none;
+
+.collapsed>.when-opened,
+:not(.collapsed)>.when-closed {
+    display: none;
 }
 
 .header>div {
     display: flex;
-    
+
     align-items: center;
 }
 
@@ -27,6 +31,7 @@ h2 {
     width: 95%;
     margin: 15px auto;
 }
+
 h3 {
     padding: 0px;
     margin: 10px 0px;
@@ -41,43 +46,54 @@ h3 {
 
 .card {
     margin: 20px 0;
+
     .row.header {
         flex-wrap: nowrap;
         margin: 0px;
     }
+
     ul.card-header-tabs li {
         padding: 0px 5px;
+
         &.nav-link {
             background-color: #f1f1f1;
+
             &:hover {
                 background-color: #ddd;
             }
         }
     }
-    .card-header:has(> .img-thumbnail), .card-header .img-thumbnail {
+
+    .card-header:has(> .img-thumbnail),
+    .card-header .img-thumbnail {
         padding: 0px;
     }
+
     .card-header:has(> .img-thumbnail) {
         aspect-ratio: 3 / 2;
+
         @supports not (aspect-ratio: 3 / 2) {
             &::before {
                 float: left;
                 padding-top: 66.666%;
                 content: "";
             }
-        
+
             &::after {
                 display: block;
                 content: "";
                 clear: both;
             }
         }
+
         overflow: hidden;
+
         .img-thumbnail {
             object-fit: cover;
             min-height: 100%;
         }
     }
+
     .card-title {
         display: -webkit-box;
         -webkit-box-orient: vertical;
@@ -85,20 +101,26 @@ h3 {
         overflow: hidden;
         min-height: 88px;
     }
+
     .card-text {
         display: -webkit-box;
         -webkit-box-orient: vertical;
         -webkit-line-clamp: 5;
         overflow: hidden;
+
         .bv-example-row {
             margin-bottom: 20px;
-            .list-group, .img-thumbnail {
+
+            .list-group,
+            .img-thumbnail {
                 margin-bottom: 10px;
             }
         }
     }
+
     .image-wrapper {
         aspect-ratio: 3 / 2;
+
         img {
             object-fit: cover;
             object-position: top center;
@@ -112,18 +134,22 @@ h3 {
 .card-deck .card {
     min-width: calc(20% - 30px);
     max-width: calc(20% - 30px);
+
     @media screen and (max-width: 1200px) {
         min-width: calc(25% - 30px);
         max-width: calc(25% - 30px);
     }
+
     @media screen and (max-width: 980px) {
         min-width: calc(33.333% - 30px);
         max-width: calc(33.333% - 30px);
     }
+
     @media screen and (max-width: 768px) {
         min-width: calc(50% - 30px);
         max-width: calc(50% - 30px);
     }
+
     @media screen and (max-width: 600px) {
         min-width: 100%;
         max-width: 100%;
@@ -135,6 +161,7 @@ h3 {
 #loader {
     text-align: center;
     margin-top: 50px;
+
     img {
         width: 30px;
     }
@@ -147,18 +174,7 @@ h3 {
     margin: 20px 0px;
 }
 
-.modal.show { 
-    display: block;
-    background: rgba(0, 0, 0, .8);
-    .modal-dialog {
-        max-width: fit-content;
-        .modal-content {
-            display: flex;
-            justify-content: center;
-            img {
-                max-height: 80vh;
-                max-width: 90vw;
-            }
-        }
-    }
- }
+.fieldLabel {
+    margin-top: 10px;
+    margin-bottom: 0px;
+}

@@ -1,5 +1,5 @@
 var urlParams = new URLSearchParams(window.location.search);
-var formID    = document.getElementById("form_select").value; 
+var formID = document.getElementById("form_select").value;
 
 window.app = new Vue({
     el: '#review',
@@ -22,65 +22,64 @@ window.app = new Vue({
         }
     },
     methods: {
-        switchToListView: function(ev){
+        switchToListView: function (ev) {
             this.currentView = 'list';
         },
-        switchToGridView: function(ev){
+        switchToGridView: function (ev) {
             this.currentView = 'grid';
         },
-        expandCard: function(projectID){
+        expandCard: function (projectID) {
             this.currentView = 'list';
             this.searchQuery = projectID;
         },
-        switchDateOrder: function(ev) {
+        switchDateOrder: function (ev) {
             ev.target.title = (ev.target.title == "See Oldest") ? "See Newest" : "See Oldest";
             this.makers.reverse();
         },
-        updateForm: function(event) {
+        updateForm: function (event) {
             this.makers = [];
             var formID = event.target.value;
-            
+
             axios
-            .get('/query/?type=entries&form='+formID)
-            .then(response => (this.makers = response.data.makers));
+                .get('/query/?type=entries&form=' + formID)
+                .then(response => (this.makers = response.data.makers));
         },
-        showModal(imgPath) {
-            alert(imgPath);
-            this.selectedImgPath = imgPath
-            this.modalShow = true
-        }
+        showModal(imgPath) {            
+            this.selectedImgPath = imgPath;            
+            this.$bvModal.show('image-modal');
+        },        
     },
     mounted() {
         axios
-            .get('/query/?type=entries&form='+formID)
+            .get('/query/?type=entries&form=' + formID)
             .then(response => (this.makers = response.data.makers));
     },
     computed: {
-        filterBy(){
-          if(this.searchQuery || this.selectedStatus || this.selectedPrimeCat){
-            var searchValue     = this.searchQuery;
-            var statusFilter    = this.selectedStatus;
-            var primeCatFilter  = this.selectedPrimeCat;
-            return this.makers.filter(function(maker){
-                return (maker.project_name.toLowerCase().indexOf(searchValue) > -1 ||
-                       maker.project_id.toLowerCase().indexOf(searchValue) > -1 ||
-                       maker.description.toLowerCase().indexOf(searchValue) > -1 ||
-                       maker.maker_name.toLowerCase().indexOf(searchValue) > -1) &&
-                       maker.status.indexOf(statusFilter) > -1 &&
-                       maker.prime_cat.indexOf(primeCatFilter) > -1
-            })
-          }else{
-            return this.makers;
-          }
+        filterBy() {
+            if (this.searchQuery || this.selectedStatus || this.selectedPrimeCat) {
+                var searchValue = this.searchQuery;
+                var statusFilter = this.selectedStatus;
+                var primeCatFilter = this.selectedPrimeCat;
+                return this.makers.filter(function (maker) {
+                    return (maker.project_name.toLowerCase().indexOf(searchValue) > -1 ||
+                        maker.project_id.toLowerCase().indexOf(searchValue) > -1 ||
+                        maker.description.toLowerCase().indexOf(searchValue) > -1 ||
+                        maker.maker_name.toLowerCase().indexOf(searchValue) > -1) &&
+                        maker.status.indexOf(statusFilter) > -1 &&
+                        maker.prime_cat.indexOf(primeCatFilter) > -1
+                })
+            } else {
+                return this.makers;
+            }
         },
         filteredStatus() {
-            if(this.makers) {
+            if (this.makers) {
                 var filteredStatus = Array.from(new Set(this.makers.map(maker => maker.status)));
                 return filteredStatus;
             }
         },
         filteredPrimeCat() {
-            if(this.makers) {
+            if (this.makers) {
                 var filteredPrimeCat = Array.from(new Set(this.makers.map(maker => maker.prime_cat)));
                 return filteredPrimeCat;
             }
@@ -88,9 +87,9 @@ window.app = new Vue({
     },
     filters: {
         count: function (res) {
-          var res = this.makers.length;
-          //console.log(res);
-          return res;
+            var res = this.makers.length;
+            //console.log(res);
+            return res;
         }
-    }  
+    }
 });
