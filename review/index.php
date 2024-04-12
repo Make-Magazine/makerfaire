@@ -53,7 +53,7 @@ foreach ($forms as $form) {
                     </template>
                 </select>
             </div>
-
+            {{ filterBy.length }} results
             <div class="listGrid-toolbar">
                 <!-- <span class="listGrid-caption">{{caption}}</span> -->
                 <i class="bi bi-arrow-down-up" v-if="makers.length>0" @click="switchDateOrder" title="See Oldest" style="margin-right:5px;"></i>
@@ -61,6 +61,9 @@ foreach ($forms as $form) {
                     <i class="bi bi-list listGrid-switch-icon" v-bind:class="{ active: currentView=='list'}" aria-hidden="true" :title="currentView=='grid' ? 'switch to List View': 'List View'" v-on:click="switchToListView"></i>
                     <i class="bi bi-grid listGrid-switch-icon" v-bind:class="{ active: currentView=='grid'}" :title="currentView=='list' ? 'switch to Grid View': 'Grid View'" aria-hidden="true" v-on:click="switchToGridView"></i>
                 </span>
+            </div>
+            <div>
+
             </div>
         </b-container>
         <div v-if="currentView=='grid'">
@@ -92,7 +95,7 @@ foreach ($forms as $form) {
                     <b-col cols="9">
                         <h3>{{maker.project_name}}</h3>
                     </b-col>
-                    <b-col cols="2">{{maker.status}}</b-col>                    
+                    <b-col cols="2">{{maker.status}}</b-col>
                     <b-col cols="1" style="color: #ccc;">{{maker.project_id}}</b-col>
                 </b-row>
                 <b-tabs card v-bind:id=maker.project_id>
@@ -120,7 +123,7 @@ foreach ($forms as $form) {
                                                 </span>
                                                 <span v-else-if="field.type === 'website'">
                                                     <b-link :href="field.value" target="_blank">{{field.value}}</b-link>
-                                                </span>   
+                                                </span>
                                                 <!--                                             
                                                 <span v-else-if="field.type === 'video'">
                                                     <b-embed type="iframe" aspect="16by9" :src="field.value"
@@ -171,7 +174,14 @@ foreach ($forms as $form) {
 
                                 <!-- Expand Section -->
                                 <div v-if="tab.tab_content.expand">
-                                    <b-button v-b-toggle="'collapse-'+tabKey+maker.project_id" variant="primary">More Info +</b-button>
+                                    <b-button v-b-toggle="'collapse-'+tabKey+maker.project_id" variant="primary">
+                                        <span class="when-opened">
+                                            Less Info -
+                                        </span>
+                                        <span class="when-closed">
+                                            More Info +
+                                        </span>
+                                    </b-button>
                                     <b-collapse :id="'collapse-'+tabKey+maker.project_id" class="mt-2">
 
                                         <b-row v-for="(block,block_id) in tab.tab_content.expand.blocks" :key="block_id">

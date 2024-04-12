@@ -12,6 +12,11 @@ img {
 button, [type=button] {
     margin: 20px 0;
 }
+.collapsed > .when-opened,
+    :not(.collapsed) > .when-closed {
+        display: none;
+}
+
 .header>div {
     display: flex;
     
