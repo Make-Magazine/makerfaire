@@ -53,6 +53,15 @@ foreach ($forms as $form) {
                     </template>
                 </select>
             </div>
+            <div class="select-wrapper">
+                <label>Primary Category</label>
+                <select v-model="selectedPrimeCat">
+                    <option type="select" value="">All</option>
+                    <template v-for="prime_cat in filteredPrimeCat">
+                        <option type="select" :id="prime_cat" :name="prime_cat" :value="prime_cat">{{prime_cat}}</option>
+                    </template>
+                </select>
+            </div>
             {{ filterBy.length }} results
             <div class="listGrid-toolbar">
                 <!-- <span class="listGrid-caption">{{caption}}</span> -->

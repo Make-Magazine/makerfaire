@@ -163,9 +163,10 @@ function getAllEntries($formID = '', $page = '', $years = '') {
       'project_name'  => $entry['151'],
       'project_id'    => $entry['id'],
       'status'        => $entry['303'],
-      'description'   => $entry['16'],
+      'description'   => $entry['16'],      
       'photo'         => $maker_photo,
-      'maker_name'    => $maker_name
+      'maker_name'    => $maker_name,
+      'prime_cat'     => html_entity_decode(get_CPT_name($entry['320']))
     );
   }
 

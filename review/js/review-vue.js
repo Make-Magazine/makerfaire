@@ -9,6 +9,7 @@ window.app = new Vue({
             currentView: urlParams.get('layout') ? urlParams.get('layout') : "grid",
             searchQuery: urlParams.get('search') ? urlParams.get('search') : "",
             selectedStatus: '',
+            selectedPrimeCat: '',
             perPage: 20,
             currentPage: 1,
             modalShow: false,
@@ -56,15 +57,17 @@ window.app = new Vue({
     },
     computed: {
         filterBy(){
-          if(this.searchQuery || this.selectedStatus){
-            var searchValue = this.searchQuery;
-            var statusFilter = this.selectedStatus;
+          if(this.searchQuery || this.selectedStatus || this.selectedPrimeCat){
+            var searchValue     = this.searchQuery;
+            var statusFilter    = this.selectedStatus;
+            var primeCatFilter  = this.selectedPrimeCat;
             return this.makers.filter(function(maker){
                 return (maker.project_name.toLowerCase().indexOf(searchValue) > -1 ||
                        maker.project_id.toLowerCase().indexOf(searchValue) > -1 ||
                        maker.description.toLowerCase().indexOf(searchValue) > -1 ||
                        maker.maker_name.toLowerCase().indexOf(searchValue) > -1) &&
-                       maker.status.indexOf(statusFilter) > -1
+                       maker.status.indexOf(statusFilter) > -1 &&
+                       maker.prime_cat.indexOf(primeCatFilter) > -1
             })
           }else{
             return this.makers;
@@ -75,12 +78,18 @@ window.app = new Vue({
                 var filteredStatus = Array.from(new Set(this.makers.map(maker => maker.status)));
                 return filteredStatus;
             }
+        },
+        filteredPrimeCat() {
+            if(this.makers) {
+                var filteredPrimeCat = Array.from(new Set(this.makers.map(maker => maker.prime_cat)));
+                return filteredPrimeCat;
+            }
         }
     },
     filters: {
         count: function (res) {
           var res = this.makers.length;
-          console.log(res);
+          //console.log(res);
           return res;
         }
     }  
