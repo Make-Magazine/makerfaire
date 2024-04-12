@@ -84,6 +84,4 @@ window.app = new Vue({
           return res;
         }
     }  
-})
-Vue.config.devtools = false;
-Vue.config.productionTip = false;
+});
