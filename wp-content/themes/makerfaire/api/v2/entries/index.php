@@ -290,9 +290,17 @@ function fieldOutput($fieldID, $entry, $field_array, $form, $arg = '') {
         break;
       case 'notes':
         $type  = 'notes';
-        $label = 'Notes';
+        $label = '';
         $value = GFAPI::get_notes(array('entry_id' => $entry['id'], 'note_type' => 'user'));
         break;
+        case 'notes_table':
+          $type  = 'html';
+          $label = 'Notes';
+          $value = '<p>Enter Email: <input type="email" placeholder="example@make.co" id="toEmail' . $entry['id'] . '" size="40" /></p>' .
+            ' <textarea	id="new_note_' . $entry['id'] . '"	style="width: 90%; height: 240px;" cols=""	rows=""></textarea>' .
+            ' <input type="button" value="Add Note" class="button" style="width:auto;padding-bottom:2px;" onclick="updateMgmt(\'add_note_sidebar\',\'' . $entry['id'] . '\');"/>' .
+            ' <span class="updMsg" id="add_noteMSG_' . $entry['id'] . '"></span>';
+          break;  
       case 'flags':
         $type = 'html';
         $label = 'Flags';
@@ -308,19 +316,12 @@ function fieldOutput($fieldID, $entry, $field_array, $form, $arg = '') {
 
         //preliminary locations
         $value     = field_display($entry, $form, '302', 'entry_prelim_loc_' . $entry['id']);
-        $value    .= '<textarea id="entry_location_comment">'.(isset($entry['307'])?$entry['307']:'').'</textarea>';
-        $value    .= '<input type="button" id="updPrelimLoc' . $entry['id'] . '" value="Update Preliminary Location" class="button" style="width:auto;padding-bottom:2px;" onclick="updateMgmt(\'update_prelim_loc\', \'' . $entry['id'] . '\');"/>';
+        $value    .= '<textarea id="location_comment_' . $entry['id'].'">'.(isset($entry['307'])?$entry['307']:'').'</textarea>';
+        $value    .= '<input type="button" id="updPrelimLoc' . $entry['id'] . '" value="Update Preliminary Location" class="button" onclick="updateMgmt(\'update_prelim_loc\', \'' . $entry['id'] . '\');"/>';
         $value    .= '<span class="updMsg" id="updPrelimLocMSG' . $entry['id'] . '"></span>';
         break;
 
-      case 'notes_table':
-        $type  = 'html';
-        $label = '';
-        $value = '<p>Enter Email: <input type="email" placeholder="example@make.co" id="toEmail' . $entry['id'] . '" size="40" /></p>' .
-          ' <textarea	id="new_note_' . $entry['id'] . '"	style="width: 90%; height: 240px;" cols=""	rows=""></textarea>' .
-          ' <input type="button" value="Add Note" class="button" style="width:auto;padding-bottom:2px;" onclick="updateMgmt(\'add_note_sidebar\',\'' . $entry['id'] . '\');"/>' .
-          ' <span class="updMsg" id="add_noteMSG_' . $entry['id'] . '"></span>';
-        break;
+      
       case 'final_location':
         $type  = 'html';
         $label = 'Final Location';
@@ -335,6 +336,14 @@ function fieldOutput($fieldID, $entry, $field_array, $form, $arg = '') {
         $date  = date_create($entry[$fieldID]);
         $value = date_format($date, "m/d/Y");
         $label = 'Submitted On';
+        break;
+      case 'exhibit_type':
+        $type = 'html';
+        $label = 'Entry Type';
+        
+        $value     = field_display($entry,$form,'339','admin_exhibit_type_' . $entry['id']);
+        $value .= '<input type="button" name="updExhibitType' . $entry['id'] . '" value="Update Exhibit Type" class="button" onclick="updateMgmt(\'update_exhibit_type\', \'' . $entry['id'] . '\');"/>';
+        $value .= '<span class="updMsg" id="updExhibitTypeMsg' . $entry['id'] . '"></span>';
         break;
       case 'other_entries':
         $type = 'html';
