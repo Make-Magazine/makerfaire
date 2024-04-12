@@ -21,7 +21,16 @@ function add_main_text_before($form, $lead) {
 function gf_summary_metabox($form, $lead) {
 
     $entry_id = $lead['id'];
+
+    //find primary photo
     $photo = (isset($lead['22']) ? $lead['22'] : '');
+    //starting with ba24, the photo field was set as a multi image
+    $photoField = gfapi::get_field($form, '22');    
+    if($photoField->multipleFiles) {
+      $photoField = json_decode(stripslashes($photo), true);
+      $photo = $photoField[0];
+    }
+    
     $short_description = (isset($lead['16']) ? $lead['16'] : '');
     $long_description = (isset($lead['21']) ? $lead['21'] : '');
     $project_name = (isset($lead['151']) ? $lead['151'] : '');
@@ -734,8 +743,8 @@ function entryResources($lead, $html=TRUE) {
     $itemDD = 'var itemDrop=[];';
     foreach ($results as $result) {
         $itemDD .= 'itemDrop[' . $result->ID . ']="' . addslashes($result->category) . '";';
-    }
 
+    }
     //build Item to type drop down array
     $sql = "SELECT wp_rmt_resource_categories.ID as item_id, wp_rmt_resource_categories.category as item, wp_rmt_resources.ID as type_id, wp_rmt_resources.type FROM `wp_rmt_resource_categories` right outer join wp_rmt_resources on wp_rmt_resource_categories.ID= wp_rmt_resources.resource_category_id ORDER BY `wp_rmt_resource_categories`.`category` ASC, type ASC";
     $results = $wpdb->get_results($sql);

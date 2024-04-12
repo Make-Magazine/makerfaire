@@ -99,6 +99,11 @@ function modify_field_display_values($value, $form_id, $field_id, $lead) {
          }
       } elseif ($input_type == 'fileupload') {
          $file_path = $lead[$field_id];
+         //if this is a multi file upload, show the first image
+         if($field->multipleFiles) {
+            $photoField = json_decode(stripslashes($file_path), true);
+            $file_path = $photoField[0];
+          }         
 
          if (!empty($file_path)) {
             //displaying thumbnail (if file is an image) or an icon based on the extension
