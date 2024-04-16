@@ -89,6 +89,7 @@
 				[field]127[/field]	
 			[/column]	
 			[column]	
+				[field]66[/field]		
 				[field]67[/field]		
 				[field]295[/field]		
 				[field]117[/field]		
