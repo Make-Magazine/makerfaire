@@ -151,19 +151,22 @@ function getAllEntries($formID = '', $page = '', $years = '') {
 
     //for BA24, the single photo was changed to a multi image which messed things up a bit
     $maker_photo = $entry['22'];
-    //if (!is_string($entry['22'])) {
-      $photo = json_decode($entry['22']);
-      if (is_array($photo)) {
-        $maker_photo = $photo[0];
-      }
-    //}
+    
+    $photo = json_decode($entry['22']);
+    if (is_array($photo)) {
+      $maker_photo = $photo[0];
+    }
+    
+    $fieldArr = fieldOutput(339, $entry, $field_array, $form);
+    $exhibit_types = implode(", ",$fieldArr['value']);
 
     $return['makers'][] = array(
       'tabs'          => $tabData,
       'project_name'  => $entry['151'],
       'project_id'    => $entry['id'],
       'status'        => $entry['303'],
-      'description'   => $entry['16'],      
+      'description'   => $entry['16'],
+      'entry_type'    => $exhibit_types,      
       'photo'         => $maker_photo,
       'maker_name'    => $maker_name,
       'prime_cat'     => html_entity_decode(get_CPT_name($entry['320']))

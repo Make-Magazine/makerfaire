@@ -102,9 +102,10 @@
                 <b-card no-body :id="'listView-' + maker.project_id" v-for="(maker, maker_id) in filterBy.slice((currentPage-1)*perPage,(currentPage-1)*perPage+perPage)" :key="'list-' + maker.project_id">
                     <input type="hidden" name="entry_info_entry_id" :value=maker.project_id />
                     <b-row class="header">
-                        <b-col cols="9">
+                        <b-col cols="8">
                             <h3>{{maker.project_name}}</h3>
                         </b-col>
+                        <b-col cols="1">{{maker.entry_type}}</b-col>                        
                         <b-col cols="2"><span :class="'status_'+maker.project_id">{{maker.status}}</span></b-col>
                         <b-col cols="1" style="color: #ccc;">{{maker.project_id}}</b-col>
                     </b-row>
