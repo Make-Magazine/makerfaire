@@ -88,8 +88,7 @@ function updateMgmt(action, entryID) {
             }
         }
         data.entry_info_fee_mgmt = entry_info_fee_mgmt;
-    } else if (action == 'update_entry_status') {
-        alert(document.getElementById("entryStatus_"+entryID).value);
+    } else if (action == 'update_entry_status') {        
 		data.entry_info_status_change = document.getElementById("entryStatus_"+entryID).value;
         var updMsgBox = 'updStatusMsg' + entryID;                
     }
