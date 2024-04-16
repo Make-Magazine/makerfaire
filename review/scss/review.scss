@@ -183,3 +183,8 @@ h3 {
     flex-direction: column;
     display: flex;
 }
+
+.notes .list-group {
+    max-height: 300px;
+    overflow: scroll;
+}

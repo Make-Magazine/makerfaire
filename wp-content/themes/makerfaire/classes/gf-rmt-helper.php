@@ -450,7 +450,7 @@ class GFRMTHELPER {
                     . '                         inspiration         = "'.$entityData['inspiration']             . '", '
                     . '                         last_change_date    = now()';
     $wpdb->get_results($wp_mf_entitysql);
-
+    
     /*  Update Maker Table - wp_mf_maker table
      *    $makerData types - contact, presenter, presenter2-7
      */
@@ -844,6 +844,18 @@ class GFRMTHELPER {
     
     //default project photo to field 22. 
     $project_photo = (isset($lead['22']) ? $lead['22'] : '');
+    //for BA24, the primary photo was changed to a multi image to allow cropping.
+    $field = gfapi::get_field( $form_id, 22);
+    if ($field['multipleFiles']) {      
+      $value = json_decode($project_photo);
+
+      //if the array is empty, set this back to blank
+      if (is_array($value) && !empty($value)){
+        $project_photo = $value[0];
+      } else {
+        $project_photo = '';
+      }  
+    }
     
     //if this is a Presentation Form AND the presenter photo is set, override
     if($form_type == 'Presentation' && isset($makerArray['presenter']['photo']) && $makerArray['presenter']['photo']) {

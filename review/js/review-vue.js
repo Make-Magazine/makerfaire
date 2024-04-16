@@ -17,11 +17,12 @@ window.app = new Vue({
             toggler: false            
         }
     },
+    /*
     watch: {
         // when makers data has fully loaded from the axios call, this will run
         makers: function (makersLoaded, makersEmpty) {
         }
-    },
+    },*/
     methods: {
         switchToListView: function (ev) {
             this.currentView = 'list';

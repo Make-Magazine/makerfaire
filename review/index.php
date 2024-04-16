@@ -87,7 +87,7 @@
                             {{maker.description}}
                         </b-card-text>
                         <template #footer>
-                            <small class="text-muted">{{maker.status}}</small>
+                            <small class="text-muted"><span :class="'status_'+maker.project_id">{{maker.status}}</span></small>
                         </template>
                     </b-card>
 
@@ -105,7 +105,7 @@
                         <b-col cols="9">
                             <h3>{{maker.project_name}}</h3>
                         </b-col>
-                        <b-col cols="2">{{maker.status}}</b-col>
+                        <b-col cols="2"><span :class="'status_'+maker.project_id">{{maker.status}}</span></b-col>
                         <b-col cols="1" style="color: #ccc;">{{maker.project_id}}</b-col>
                     </b-row>
                     <b-tabs card v-bind:id=maker.project_id>
@@ -140,7 +140,7 @@
                                                             {{field.value}}
                                                         </a>
                                                     </span>
-                                                    <span v-else-if="field.type === 'notes'">
+                                                    <span v-else-if="field.type === 'notes'" class="notes">
                                                         <b-list-group>
                                                             <b-list-group-item v-for="(note,i) in field.value" :key="maker_id+'-note-' + i">
                                                                 <b-row>
@@ -223,7 +223,7 @@
                                                                 </a>                                                               
                                                             </span>
 
-                                                            <span v-else-if="field.type === 'notes'">
+                                                            <span v-else-if="field.type === 'notes'" class="notes" >
                                                                 <b-list-group>
                                                                     <b-list-group-item v-for="(note,i) in field.value" :key="maker_id+'-note-' + i">
                                                                         <b-row>

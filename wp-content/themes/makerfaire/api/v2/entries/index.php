@@ -292,7 +292,7 @@ function fieldOutput($fieldID, $entry, $field_array, $form, $arg = '') {
       case 'notes':
         $type  = 'notes';
         $label = '';
-        $value = GFAPI::get_notes(array('entry_id' => $entry['id'], 'note_type' => 'user'));
+        $value = GFAPI::get_notes(array('entry_id' => $entry['id'], 'note_type' => 'user'), array( 'key' => 'id', 'direction' => 'DESC' ));
         break;
         case 'notes_table':
           $type  = 'html';
