@@ -2,7 +2,7 @@ var urlParams = new URLSearchParams(window.location.search);
 var formID = document.getElementById("form_select").value;
 
 window.app = new Vue({
-    el: '#review',
+    el: '#review',    
     data() {
         return {
             makers: [],
@@ -13,7 +13,8 @@ window.app = new Vue({
             perPage: 20,
             currentPage: 1,
             modalShow: false,
-            selectedImgPath: ''
+            CustomSource: '',
+            toggler: false            
         }
     },
     watch: {
@@ -36,7 +37,7 @@ window.app = new Vue({
             ev.target.title = (ev.target.title == "See Oldest") ? "See Newest" : "See Oldest";
             this.makers.reverse();
         },
-        updateForm: function (event) {
+        updateForm: function (event) {            
             this.makers = [];
             var formID = event.target.value;
 
@@ -44,10 +45,11 @@ window.app = new Vue({
                 .get('/query/?type=entries&form=' + formID)
                 .then(response => (this.makers = response.data.makers));
         },
-        showModal(imgPath) {            
-            this.selectedImgPath = imgPath;            
-            this.$bvModal.show('image-modal');
-        },        
+        showModal: function(img_class, event){            
+            setLightBox(img_class);
+            //get event and turn off anchor on click
+            event.target.disabled = true;
+        }        
     },
     mounted() {
         axios

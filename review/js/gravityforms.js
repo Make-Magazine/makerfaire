@@ -3,108 +3,135 @@
  */
 function updateMgmt(action, entryID) {
     var ajaxurl = '/wp-admin/admin-ajax.php';
-	//set the processing icon
-	jQuery("span." + action + 'Msg').html('<i class="fas fa-spinner fa-spin"></i>');
 
-	var entry_id = jQuery("input[name=entry_info_entry_id]").val();
-	var data = {
-		'action': 'mf-update-entry',
-		'mfAction': action,
-		'entry_id': entry_id
-	};
+    var data = {
+        'action': 'mf-update-entry',
+        'mfAction': action,
+        'entry_id': entryID
+    };
 
-	var processing_icon = '<div class="spinner-border" role="status"><span class="sr-only">Loading...</span></div>';
-	//add additional data for each action
-	if (action == 'add_note_sidebar') {        
-        var note_text  = document.getElementById("new_note_"+entryID).value; 
-        var toEmail    = document.getElementById("toEmail"+entryID).value; 
-        var updMsgBox  = 'add_noteMSG_'+entryID;
-        if(toEmail==''){
-            document.getElementById(updMsgBox).textContent="Please enter a to Email";    
+    var processing_icon = '<div class="spinner-border" role="status"><span class="sr-only">Loading...</span></div>';
+    //add additional data for each action
+    if (action == 'add_note_sidebar') {
+        var note_text = document.getElementById("new_note_" + entryID).value;
+        var toEmail = document.getElementById("toEmail" + entryID).value;
+        var updMsgBox = 'add_noteMSG_' + entryID;
+        if (toEmail == '') {
+            document.getElementById(updMsgBox).textContent = "Please enter a to Email";
             return;
-        }else if(note_text==''){
-            document.getElementById(updMsgBox).textContent="Please enter a message";    
+        } else if (note_text == '') {
+            document.getElementById(updMsgBox).textContent = "Please enter a message";
             return;
-        }else {
-            document.getElementById(updMsgBox).innerHTML=processing_icon;
-        }		
+        } else {
+            document.getElementById(updMsgBox).innerHTML = processing_icon;
+        }
 
         //set text
         data.new_note_sidebar = note_text;
-		//email note to
-		var gentry_email_notes_to_sidebar = [];		
-		if (toEmail !== '') {
-			gentry_email_notes_to_sidebar.push(toEmail);
-		}
-		data.gentry_email_notes_to_sidebar = gentry_email_notes_to_sidebar;
-    } else if (action === 'update_flags') {        
-        var updMsgBox  = 'updFlagsMSG'+entryID;
-        document.getElementById(updMsgBox).innerHTML=processing_icon;
+        //email note to
+        var gentry_email_notes_to_sidebar = [];
+        if (toEmail !== '') {
+            gentry_email_notes_to_sidebar.push(toEmail);
+        }
+        data.gentry_email_notes_to_sidebar = gentry_email_notes_to_sidebar;
+    } else if (action === 'update_flags') {
+        var updMsgBox = 'updFlagsMSG' + entryID;
+        document.getElementById(updMsgBox).innerHTML = processing_icon;
 
         //find all checked flags
-        let checkboxes = document.getElementsByName("entry_flags_"+entryID+'[]');        
+        let checkboxes = document.getElementsByName("entry_flags_" + entryID + '[]');
         var entry_info_flags_change = [];
         for (var i = 0; i < checkboxes.length; i++) {
             if (checkboxes[i].checked) {
                 // push all checked locations to array
-			    entry_info_flags_change.push(checkboxes[i].value);    
+                entry_info_flags_change.push(checkboxes[i].value);
             }
-        }        
+        }
         data.entry_info_flags_change = entry_info_flags_change;
-    } else if (action == 'update_prelim_loc') {        
-        var updMsgBox  = 'updPrelimLocMSG'+entryID;
-        document.getElementById(updMsgBox).innerHTML=processing_icon;
+    } else if (action == 'update_prelim_loc') {
+        var updMsgBox = 'updPrelimLocMSG' + entryID;
+        document.getElementById(updMsgBox).innerHTML = processing_icon;
 
         //find all checked flags
-        let checkboxes = document.getElementsByName("entry_prelim_loc_"+entryID+'[]');        
+        let checkboxes = document.getElementsByName("entry_prelim_loc_" + entryID + '[]');
         var entry_prelim_loc_change = [];
         for (var i = 0; i < checkboxes.length; i++) {
             if (checkboxes[i].checked) {
                 // push all checked locations to array
-			    entry_prelim_loc_change.push(checkboxes[i].value);    
+                entry_prelim_loc_change.push(checkboxes[i].value);
             }
-        }        
-        data.entry_info_location_change = entry_prelim_loc_change;    
+        }
+        data.entry_info_location_change = entry_prelim_loc_change;
 
-		//location comment
-		data.entry_location_comment = document.getElementById("location_comment_"+entryID).value;     
-	} else if (action == 'update_exhibit_type') {
-		var updMsgBox  = 'updExhibitTypeMsg'+entryID;		
-        document.getElementById(updMsgBox).innerHTML=processing_icon;
-						
-		//find all checked flags
-        let checkboxes = document.getElementsByName("admin_exhibit_type_"+entryID+'[]');        
+        //location comment
+        data.entry_location_comment = document.getElementById("location_comment_" + entryID).value;
+    } else if (action == 'update_exhibit_type') {
+        var updMsgBox = 'updExhibitTypeMsg' + entryID;
+        document.getElementById(updMsgBox).innerHTML = processing_icon;
+
+        //find all checked flags
+        let checkboxes = document.getElementsByName("admin_exhibit_type_" + entryID + '[]');
         var entry_exhibit_type = [];
         for (var i = 0; i < checkboxes.length; i++) {
             if (checkboxes[i].checked) {
                 // push all checked locations to array
-			    entry_exhibit_type.push(checkboxes[i].value);    
+                entry_exhibit_type.push(checkboxes[i].value);
             }
-        }        
-		data.entry_exhibit_type = entry_exhibit_type;	
-	} else if (action == 'update_fee_mgmt') {
-		var updMsgBox  = 'updFeeMgmtMsg'+entryID;		
-        document.getElementById(updMsgBox).innerHTML=processing_icon;
-						
-		//find all checked flags
-        let checkboxes = document.getElementsByName("info_fee_mgmt_"+entryID+'[]');        
+        }
+        data.entry_exhibit_type = entry_exhibit_type;
+    } else if (action == 'update_fee_mgmt') {
+        var updMsgBox = 'updFeeMgmtMsg' + entryID;
+        document.getElementById(updMsgBox).innerHTML = processing_icon;
+
+        //find all checked flags
+        let checkboxes = document.getElementsByName("info_fee_mgmt_" + entryID + '[]');
         var entry_info_fee_mgmt = [];
         for (var i = 0; i < checkboxes.length; i++) {
             if (checkboxes[i].checked) {
                 // push all checked locations to array
-			    entry_info_fee_mgmt.push(checkboxes[i].value);    
+                entry_info_fee_mgmt.push(checkboxes[i].value);
             }
-        }        
-		data.entry_info_fee_mgmt = entry_info_fee_mgmt;		
-	}
+        }
+        data.entry_info_fee_mgmt = entry_info_fee_mgmt;
+    }
 
-	jQuery.post(ajaxurl, data, function(r) {
-		if (r.result === 'updated') {
-			//after update - set meta field status to success
-			jQuery('#'+updMsgBox).html('<i style="color:green" class="fas fa-check"></i>Updated');
-		} else {
-			//after update - set meta field status to failed
-			jQuery('#'+updMsgBox).html('<i style="color:red" class="fas fa-times"></i>Error in Update');
-		}		
-	});
+    const xhr = new XMLHttpRequest();
+    xhr.open("POST", ajaxurl);
+    xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    xhr.send(new URLSearchParams(data));
+
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState == XMLHttpRequest.DONE) {
+            response = JSON.parse(xhr.response);
+                                    
+            if (response.result === 'updated') {
+                //after update - set meta field status to success
+                document.getElementById(updMsgBox).innerHTML = '<span style="color:green"><i class="bi bi-check2"></i>Updated</span>';
+            } else {
+                //after update - set meta field status to failed            
+                document.getElementById(updMsgBox).innerHTML = '<span style="color:red"><i class="bi bi-x"></i>Error in Update</span>';
+            }    
+        }
+    }
+}
+
+function setLightBox(className) {
+    var lightbox = new FsLightbox();
+    let images = document.getElementsByClassName(className);
+    var imgArr = [];
+    var captionsArr = [];
+    for (var i = 0; i < images.length; i++) {
+        if (images[i].tagName == 'IMG') {
+            imgArr.push(images[i].src);
+            captionsArr.push(images[i].alt);
+        } else if (images[i].tagName == 'A') {
+            imgArr.push(images[i].href);
+            captionsArr.push('video');
+        }
+
+    }
+    lightbox.props.sources = imgArr;
+    lightbox.props.captions = captionsArr;
+
+    lightbox.open();
 }
