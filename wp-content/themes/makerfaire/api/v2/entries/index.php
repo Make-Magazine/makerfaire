@@ -346,6 +346,15 @@ function fieldOutput($fieldID, $entry, $field_array, $form, $arg = '') {
         $value .= '<input type="button" name="updExhibitType' . $entry['id'] . '" value="Update Entry Type" class="button updButton" onclick="updateMgmt(\'update_exhibit_type\', \'' . $entry['id'] . '\');"/>';
         $value .= '<span class="updMsg" id="updExhibitTypeMsg' . $entry['id'] . '"></span>';
         break;
+      case 'edit_status':
+        $type = 'html';
+        $label = '';
+        $value = 
+        '<table width="100%" class="entry-status">'.  
+           mf_sidebar_entry_status( $form, $entry ) .
+           '<tr><td colspan="2"><hr /></td></tr>'.
+        '</table>';
+        break;  
       case 'fee_mgmt':
         $type = 'html';
         $label = 'Fee Management';

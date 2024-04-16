@@ -178,3 +178,8 @@ h3 {
     margin-top: 10px;
     margin-bottom: 0px;
 }
+
+.entry-status tr {
+    flex-direction: column;
+    display: flex;
+}

@@ -734,7 +734,7 @@ function mf_sidebar_entry_status($form, $lead) {
     $field303 = RGFormsModel::get_field($form,'303');
     $output .= '  <td>';
     //$output .= '    <select name="entry_info_status_change" onchange="updateMgmt(\'update_entry_status\');">';
-    $output .= '    <select name="entry_info_status_change">';
+    $output .= '    <select id="entryStatus_'.$lead['id'].'" name="entry_info_status_change">';
     if(isset($field303['choices'])){
       foreach($field303['choices'] as $choice ){
         $selected = '';
@@ -744,8 +744,8 @@ function mf_sidebar_entry_status($form, $lead) {
     }
     $output .= '    </select></td>'
             . '</tr><tr><td>&nbsp;</td>';
-    $output .= '<td><input type="button" name="update_management" value="Save Status" class="btn btn-danger" onclick="updateMgmt(\'update_entry_status\');" /></td>';
-    $output .= '<td><span class="updMsg update_entry_statusMsg"></span></td>';
+    $output .= '<td><input type="button" name="update_management" value="Save Status" class="btn btn-danger" onclick="updateMgmt(\'update_entry_status\', '.$lead['id'].');" /></td>';
+    $output .= '<td><span class="updMsg update_entry_statusMsg" id="updStatusMsg' . $lead['id'].'"></span></td>';
   }else{
     $output .= '<td><label class="detail-label" for="entry_info_status_change">Status:&nbsp;</label></td>';
     $output .= '<td>'.$lead[303].'</td>';

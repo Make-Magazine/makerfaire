@@ -16,15 +16,14 @@ function updateMgmt(action, entryID) {
         var note_text = document.getElementById("new_note_" + entryID).value;
         var toEmail = document.getElementById("toEmail" + entryID).value;
         var updMsgBox = 'add_noteMSG_' + entryID;
+
         if (toEmail == '') {
             document.getElementById(updMsgBox).textContent = "Please enter a to Email";
             return;
         } else if (note_text == '') {
             document.getElementById(updMsgBox).textContent = "Please enter a message";
             return;
-        } else {
-            document.getElementById(updMsgBox).innerHTML = processing_icon;
-        }
+        } 
 
         //set text
         data.new_note_sidebar = note_text;
@@ -36,7 +35,6 @@ function updateMgmt(action, entryID) {
         data.gentry_email_notes_to_sidebar = gentry_email_notes_to_sidebar;
     } else if (action === 'update_flags') {
         var updMsgBox = 'updFlagsMSG' + entryID;
-        document.getElementById(updMsgBox).innerHTML = processing_icon;
 
         //find all checked flags
         let checkboxes = document.getElementsByName("entry_flags_" + entryID + '[]');
@@ -50,7 +48,6 @@ function updateMgmt(action, entryID) {
         data.entry_info_flags_change = entry_info_flags_change;
     } else if (action == 'update_prelim_loc') {
         var updMsgBox = 'updPrelimLocMSG' + entryID;
-        document.getElementById(updMsgBox).innerHTML = processing_icon;
 
         //find all checked flags
         let checkboxes = document.getElementsByName("entry_prelim_loc_" + entryID + '[]');
@@ -67,7 +64,6 @@ function updateMgmt(action, entryID) {
         data.entry_location_comment = document.getElementById("location_comment_" + entryID).value;
     } else if (action == 'update_exhibit_type') {
         var updMsgBox = 'updExhibitTypeMsg' + entryID;
-        document.getElementById(updMsgBox).innerHTML = processing_icon;
 
         //find all checked flags
         let checkboxes = document.getElementsByName("admin_exhibit_type_" + entryID + '[]');
@@ -80,8 +76,7 @@ function updateMgmt(action, entryID) {
         }
         data.entry_exhibit_type = entry_exhibit_type;
     } else if (action == 'update_fee_mgmt') {
-        var updMsgBox = 'updFeeMgmtMsg' + entryID;
-        document.getElementById(updMsgBox).innerHTML = processing_icon;
+        var updMsgBox = 'updFeeMgmtMsg' + entryID;        
 
         //find all checked flags
         let checkboxes = document.getElementsByName("info_fee_mgmt_" + entryID + '[]');
@@ -93,7 +88,14 @@ function updateMgmt(action, entryID) {
             }
         }
         data.entry_info_fee_mgmt = entry_info_fee_mgmt;
+    } else if (action == 'update_entry_status') {
+        alert(document.getElementById("entryStatus_"+entryID).value);
+		data.entry_info_status_change = document.getElementById("entryStatus_"+entryID).value;
+        var updMsgBox = 'updStatusMsg' + entryID;                
     }
+
+    //set message box to the processing icon
+    document.getElementById(updMsgBox).innerHTML = processing_icon;
 
     const xhr = new XMLHttpRequest();
     xhr.open("POST", ajaxurl);
