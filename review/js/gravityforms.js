@@ -131,7 +131,7 @@ function updateMgmt(action, entryID) {
     }
 }
 
-function setLightBox(className) {
+function setLightBox(className, image_id) {
     var lightbox = new FsLightbox();
     var images = document.getElementsByClassName(className);
     var imgArr = [];
@@ -149,5 +149,5 @@ function setLightBox(className) {
     lightbox.props.sources = imgArr;
     lightbox.props.captions = captionsArr;
 
-    lightbox.open();
+    lightbox.open(image_id);
 }

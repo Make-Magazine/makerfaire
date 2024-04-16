@@ -125,7 +125,7 @@
                                                         <b-container class="p-4 bg-dark">
                                                             <b-row>
                                                                 <b-col fluid="sm" v-for="(image,image_id) in field.value">
-                                                                    <img :class="maker.project_id+'-img'" :id="maker.project_id+'-img-' + image_id" :src="image" alt="Image" @click="showModal(maker.project_id+'-img', $event)">
+                                                                    <img :class="maker.project_id+'-img'+field_id" :id="maker.project_id+'-img-' + image_id" :src="image" alt="Image" @click="showModal(maker.project_id+'-img'+field_id, image_id)">
                                                                 </b-col>
 
                                                             </b-row>
@@ -136,10 +136,10 @@
                                                     </span>
 
                                                     <span v-else-if="field.type === 'video'">
-                                                        <a :class="maker.project_id+'-img'" :href="field.value" @click.prevent="showModal(maker.project_id+'-img', $event)">
-                                                            See Video in Gallery
-                                                        </a>
+                                                        <b-button @click="showModal(maker.project_id+'-video-initial', 0)" variant="outline-primary">Show in Modal</b-button>
+                                                        <div><a :class="maker.project_id+'-video-initial'" :href="field.value" target="_blank">{{field.value}}</a></div>
                                                     </span>
+
                                                     <span v-else-if="field.type === 'notes'" class="notes">
                                                         <b-list-group>
                                                             <b-list-group-item v-for="(note,i) in field.value" :key="maker_id+'-note-' + i">
@@ -207,7 +207,7 @@
                                                                 <b-container class="p-4 bg-dark">
                                                                     <b-row>
                                                                         <b-col fluid="sm" :key="maker.project_id+'-img-' + image_id" :id="maker.project_id+'-img-' + image_id" v-for="(image,image_id) in field.value">
-                                                                            <img :class="maker.project_id+'-img'" :id="maker.project_id+'-img-' + image_id" :src="image" alt="Image" @click="showModal(maker.project_id+'-img', $event)">
+                                                                            <img :class="maker.project_id+'-img'+field_id" :id="maker.project_id+'-img-' + image_id" :src="image" alt="Image" @click="showModal(maker.project_id+'-img'+field_id, image_id)">
                                                                         </b-col>
                                                                     </b-row>
                                                                 </b-container>
@@ -217,13 +217,11 @@
                                                             </span>
 
                                                             <span v-else-if="field.type === 'video'">
-
-                                                                <a :class="maker.project_id+'-img'" :href="field.value" @click.prevent="showModal(maker.project_id+'-img', $event)">
-                                                                    See Video in Gallery
-                                                                </a>                                                               
+                                                                <b-button @click="showModal(maker.project_id+'-video-expand', 0)" variant="outline-primary">Show in Modal</b-button>
+                                                                <div><a :class="maker.project_id+'-video-expand'" :href="field.value" target="_blank">{{field.value}}</a></div>
                                                             </span>
 
-                                                            <span v-else-if="field.type === 'notes'" class="notes" >
+                                                            <span v-else-if="field.type === 'notes'" class="notes">
                                                                 <b-list-group>
                                                                     <b-list-group-item v-for="(note,i) in field.value" :key="maker_id+'-note-' + i">
                                                                         <b-row>
@@ -280,12 +278,12 @@
             <div class="no-results" v-if="!filterBy.length && makers.length">No Results to Show</div>
             <div id="loader" v-if="makers.length==0">
                 <img src="/review/img/loading.gif" />
-            </div>            
+            </div>
         </div>
 
         <!-- Required scripts, vue loads first -->
-        <script src="/review/js/min/vue.min.js"></script>        
-        <script src="/review/js/min/review.min.js"></script>        
+        <script src="/review/js/min/vue.min.js"></script>
+        <script src="/review/js/min/review.min.js"></script>
 
     </body>
     <footer>

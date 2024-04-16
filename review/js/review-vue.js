@@ -46,10 +46,8 @@ window.app = new Vue({
                 .get('/query/?type=entries&form=' + formID)
                 .then(response => (this.makers = response.data.makers));
         },
-        showModal: function(img_class, event){            
-            setLightBox(img_class);
-            //get event and turn off anchor on click
-            event.target.disabled = true;
+        showModal: function(img_class, image_id){            
+            setLightBox(img_class, image_id);
         }        
     },
     mounted() {
