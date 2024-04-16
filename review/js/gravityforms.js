@@ -120,7 +120,7 @@ function updateMgmt(action, entryID) {
                     //find all checked flags
                     var displayStatus = document.getElementsByClassName("status_"+entryID);                    
                     for (var i = 0; i < displayStatus.length; i++) {
-                        displayStatus[i].innerHTML(data.entry_info_status_change);                       
+                        displayStatus[i].innerHTML = data.entry_info_status_change;                       
                     }                    
                 }
             } else {
