@@ -137,7 +137,7 @@
 
                                                     <span v-else-if="field.type === 'video'">
                                                         <a :class="maker.project_id+'-img'" :href="field.value" @click.prevent="showModal(maker.project_id+'-img', $event)">
-                                                            {{field.value}}
+                                                            See Video in Gallery
                                                         </a>
                                                     </span>
                                                     <span v-else-if="field.type === 'notes'" class="notes">
@@ -219,7 +219,7 @@
                                                             <span v-else-if="field.type === 'video'">
 
                                                                 <a :class="maker.project_id+'-img'" :href="field.value" @click.prevent="showModal(maker.project_id+'-img', $event)">
-                                                                    {{field.value}}
+                                                                    See Video in Gallery
                                                                 </a>                                                               
                                                             </span>
 
