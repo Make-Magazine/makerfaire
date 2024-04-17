@@ -14,21 +14,18 @@ function updateMgmt(action, entryID) {
     var processing_icon = '<div class="spinner-border" role="status"><span class="sr-only">Loading...</span></div>';
     //add additional data for each action
     if (action == 'add_note_sidebar') {
-        var note_text = document.getElementById("new_note_" + entryID).value;
-        var toEmail = document.getElementById("toEmail" + entryID).value;
-        var updMsgBox = 'add_noteMSG_' + entryID;
+        var note_text   = document.getElementById("new_note_" + entryID).value;
+        var toEmail     = document.getElementById("toEmail" + entryID).value;
+        var updMsgBox   = 'add_noteMSG_' + entryID;
 
-        if (toEmail == '') {
-            document.getElementById(updMsgBox).textContent = "Please enter a to Email";
-            return;
-        } else if (note_text == '') {
+        if (note_text == '') {
             document.getElementById(updMsgBox).textContent = "Please enter a message";
             return;
         }
 
         //set text        
         data.append('new_note_sidebar',note_text);
-        
+
         //email note to
         var gentry_email_notes_to_sidebar = [];
         if (toEmail !== '') {

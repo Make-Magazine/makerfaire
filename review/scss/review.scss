@@ -45,11 +45,12 @@ h3 {
 }
 
 .card {
-    margin: 20px 0;
+    margin: 50px 0;
 
     .row.header {
         flex-wrap: nowrap;
         margin: 0px;
+        background-color: rgba(0, 0, 0, 0.03);
     }
 
     ul.card-header-tabs li {
