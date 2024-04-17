@@ -271,7 +271,12 @@ function fieldOutput($fieldID, $entry, $field_array, $form, $arg = '') {
         if (empty($value))   $value = '';
         break;
       case 'list':
-        $value = unserialize($value);
+        $list = unserialize($value);
+        foreach($list as $list_key=>$item){
+          $list[$list_key]["Your Link"] = ($item["Your Link"]!=''?'<a href="'.$item["Your Link"] .'" target="_blank">'.$item["Your Link"].'</a>':''); 
+        }
+        $value = $list;
+        
         break;
       default:
         if (isset($entry[$fieldID])) {
