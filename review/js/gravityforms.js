@@ -26,14 +26,16 @@ function updateMgmt(action, entryID) {
             return;
         }
 
-        //set text
-        //data.new_note_sidebar = note_text;
+        //set text        
+        data.append('new_note_sidebar',note_text);
+        
         //email note to
         var gentry_email_notes_to_sidebar = [];
         if (toEmail !== '') {
             gentry_email_notes_to_sidebar.push(toEmail);
         }
-        //data.gentry_email_notes_to_sidebar = gentry_email_notes_to_sidebar;
+        
+        data.append('gentry_email_notes_to_sidebar',gentry_email_notes_to_sidebar);
     } else if (action === 'update_flags') {
         var updMsgBox = 'updFlagsMSG' + entryID;
 
