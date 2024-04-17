@@ -19,11 +19,13 @@
 
     include 'header.php';
     ?>
-    <h2 style="margin-top: 35px;">Maker Faire Admin Review</h2>
-
     <!-- Our application root element -->
-    <div id="review" style="width:95%; margin:0 auto;">
-        <b-row align-h="start">
+    <div id="review" style="width:95%; margin: 35px auto;">
+        <button-counter></button-counter>
+        <b-row>
+            <b-col align-self="center" cols="9">
+                <h2>Maker Faire Admin Review</h2>
+            </b-col>
             <b-col align-self="center" cols="3">
                 <select id="form_select" v-on:change="updateForm">
                     <?php
@@ -32,18 +34,21 @@
                     }
                     ?>
                 </select>
+                <b-button @click="updateForm" variant="outline-primary">Refresh Data</b-button>    
             </b-col>
-            <b-col align-self="center"  cols="2"><b-button @click="updateForm" variant="outline-primary">Refresh Data</b-button></b-col>
         </b-row>
+                    <hr/>
 
+        
         <b-row align-h="between">
             <b-col align-self="center"><input type="text" v-model="searchQuery" placeholder="Search..." /></b-col>
-            <!--<b-col>
-                    <b-form-group label="Admin Entry Type" v-slot="{ ariaDescribedby }">
-                        <b-form-checkbox-group id="entryTypeFilter" v-model="selectedEntryType" :aria-describedby="ariaDescribedby" name="entryTypeFil">
-                            <b-form-checkbox v-for="type in filteredEntryType" :value="type">{{type}}</b-form-checkbox>
-                        </b-form-checkbox-group>
-                    </b-form-group></b-col>-->
+            <b-col>
+                <label>Admin Entry Type</label>
+                <b-form-group label="" v-slot="{ ariaDescribedby }">
+                    <b-form-checkbox-group id="entryTypeFilter" v-model="selectedEntryType" :aria-describedby="ariaDescribedby" name="entryTypeFil">
+                        <b-form-checkbox v-for="type in filteredEntryType" :value="type">{{type}}</b-form-checkbox>
+                    </b-form-checkbox-group>
+                </b-form-group></b-col>
 
 
             <b-col align-self="center">
@@ -72,7 +77,7 @@
             <b-col align-self="center" cols="2"><b-button @click="resetFilters" variant="outline-primary">Reset Filters</b-button></b-col>
         </b-row>
 
-
+        <hr/>
         <b-row align-h="between">
             <b-col>
                 Found {{filterBy.length.toLocaleString()}} Results
@@ -179,9 +184,7 @@
 
                                                 </span>
                                                 <span v-else-if="field.type === 'list'">
-
                                                     <b-table-simple striped responsive>
-
                                                         <b-thead>
                                                             <b-tr>
                                                                 <b-th v-for="(listItem,label) in field.value[0]"><span v-html="label"></b-th>
@@ -192,9 +195,7 @@
                                                                 <b-td v-for="listItem in list"><span v-html="listItem"></b-td>
                                                             </b-tr>
                                                         </b-tbody>
-
                                                     </b-table-simple>
-
                                                 </span>
                                                 <span v-else-if="field.type === 'address'">
                                                     <b-list-group>
@@ -275,7 +276,18 @@
 
                                                         </span>
                                                         <span v-else-if="field.type === 'list'">
-                                                            <b-table striped hover :items="field.value"></b-table>
+                                                            <b-table-simple striped responsive>
+                                                                <b-thead>
+                                                                    <b-tr>
+                                                                        <b-th v-for="(listItem,label) in field.value[0]"><span v-html="label"></b-th>
+                                                                    </b-tr>
+                                                                </b-thead>
+                                                                <b-tbody>
+                                                                    <b-tr v-for="list in field.value">
+                                                                        <b-td v-for="listItem in list"><span v-html="listItem"></b-td>
+                                                                    </b-tr>
+                                                                </b-tbody>
+                                                            </b-table-simple>
                                                         </span>
                                                         <span v-else-if="field.type === 'address'">
                                                             <b-list-group>

@@ -1,8 +1,8 @@
 var urlParams = new URLSearchParams(window.location.search);
 var formID = document.getElementById("form_select").value;
 
-window.app = new Vue({
-    el: '#review',    
+new Vue({
+    el: '#review',        
     data() {
         return {
             makers: [],
@@ -65,20 +65,34 @@ window.app = new Vue({
     computed: {
         filterBy() {
             if (this.searchQuery || this.selectedStatus || this.selectedPrimeCat || this.selectedEntryType) {
-                var searchValue = this.searchQuery;
-                var statusFilter = this.selectedStatus;
-                var primeCatFilter = this.selectedPrimeCat;
-                var entryTypeFilter = this.selectedEntryType;                
-                //console.log(entryTypeFilter);
-                
-                return this.makers.filter(function (maker) {
+                var searchValue     = this.searchQuery;
+                var statusFilter    = this.selectedStatus;
+                var primeCatFilter  = this.selectedPrimeCat;
+                var entryTypeFilter = this.selectedEntryType;                                
+                var passEntryType   = true;
+
+                return this.makers.filter(function (maker) {                       
+                    if(entryTypeFilter!=''){
+                        passEntryType   = false;
+                        //breakup the entry types into an array
+                        entryTypeArr = maker.entry_type.split(", ")
+
+                        //loop through entry types set
+                        entryTypeArr.forEach((entry_type) => {
+                            if(entryTypeFilter.includes(entry_type)){
+                                passEntryType = true;
+                            }                                                                              
+                        });
+                    }                 
+                                   
+                    
                     return (maker.project_name.toLowerCase().indexOf(searchValue) > -1 ||
-                        maker.project_id.toLowerCase().indexOf(searchValue) > -1 ||
+                        maker.project_id.toLowerCase().indexOf(searchValue) > -1  ||
                         maker.description.toLowerCase().indexOf(searchValue) > -1 ||
-                        maker.maker_name.toLowerCase().indexOf(searchValue) > -1) &&
-                        maker.status.indexOf(statusFilter) > -1 &&
-                        maker.prime_cat.indexOf(primeCatFilter) > -1;
-                         //&& entryTypeFilter.includes(maker.entry_type);
+                        maker.maker_name.toLowerCase().indexOf(searchValue) > -1)       &&
+                        maker.status.indexOf(statusFilter) > -1                         &&
+                        maker.prime_cat.indexOf(primeCatFilter) > -1                    &&
+                        passEntryType;                         
                 })
             } else {
                 return this.makers;
