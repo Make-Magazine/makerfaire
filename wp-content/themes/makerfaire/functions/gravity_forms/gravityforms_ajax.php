@@ -734,24 +734,35 @@ function add_note_sidebar($lead, $form){
 	$user_data = get_userdata( $current_user->ID );
 	$project_name = $lead['151'];
 	$email_to     = $_POST['gentry_email_notes_to_sidebar'];
-   
+  if(is_array($email_to)){
+    $email_to = implode(', ', $email_to);
+  }
 	$email_note_info = '';
 
 	//emailing notes if configured
 	if ( !empty($email_to) ) {
 		GFCommon::log_debug( 'GFEntryDetail::lead_detail_page(): Preparing to email entry notes.' );
-		//$email_to      = $_POST['gentry_email_notes_to_sidebar'];
+		
+    //$email_to      = $_POST['gentry_email_notes_to_sidebar'];    
 		$email_from    = $current_user->user_email;
 		$email_subject = stripslashes( 'Entry Note: '.$project_name.' '.$lead['id']);
-		$entry_url = get_bloginfo( 'wpurl' ) . '/wp-admin/admin.php?page=gf_entries&view=entry&id=' . $form['id'] . '&lid=' . rgar( $lead, 'id' );
-		$body = stripslashes( $_POST['new_note_sidebar'] ). '<br /><br />Please reply in entry:<a href="'.$entry_url.'">'.$entry_url.'</a>';
+		$entry_url = get_bloginfo( 'wpurl' ) . '/review/index.php?layout=list&search=' .rgar( $lead, 'id' );
+		
+    $body = stripslashes( $_POST['new_note_sidebar'] ). '<br /><br />'.
+    'Please reply in entry:<a href="'.$entry_url.'">'.$entry_url.'</a>';
 		$headers = "From: \"$email_from\" <$email_from> \r\n";
-		//Enable HTML Email Formatting in the body
+		
+    //Enable HTML Email Formatting in the body
 		add_filter( 'wp_mail_content_type','wpse27856_set_content_type' );
+    error_log( 'email to '.$email_to);
+    error_log('$email_subject'.$email_subject);
+    error_log('$body-'.$body);
+    error_log('$headers-'.$headers);
 		$result  = wp_mail( $email_to, $email_subject, $body, $headers );
+
 		//Remove HTML Email Formatting
 		remove_filter( 'wp_mail_content_type','wpse27856_set_content_type' );
-		$email_note_info = '<br /><br />:SENT TO:['.implode(",", $email_to).']';
+		$email_note_info = '<br /><br />:SENT TO:['.$email_to.']';
 	}
 
 	mf_add_note( $lead['id'],  nl2br(stripslashes($_POST['new_note_sidebar'].$email_note_info)));

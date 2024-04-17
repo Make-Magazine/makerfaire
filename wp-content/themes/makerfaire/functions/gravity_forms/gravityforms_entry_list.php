@@ -102,7 +102,7 @@ function modify_field_display_values($value, $form_id, $field_id, $lead) {
          //if this is a multi file upload, show the first image
          if($field->multipleFiles) {
             $photoField = json_decode(stripslashes($file_path), true);
-            $file_path = $photoField[0];
+            $file_path = (is_array($photoField) && !empty($photoField) ? $photoField[0]:'');
           }         
 
          if (!empty($file_path)) {

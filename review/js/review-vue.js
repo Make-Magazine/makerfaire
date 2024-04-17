@@ -40,7 +40,7 @@ window.app = new Vue({
         },
         updateForm: function (event) {            
             this.makers = [];
-            var formID = event.target.value;
+            var formID = document.getElementById("form_select").value;
 
             axios
                 .get('/query/?type=entries&form=' + formID)
