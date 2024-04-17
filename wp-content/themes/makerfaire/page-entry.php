@@ -481,7 +481,7 @@ function display_entry_schedule($entry) {
     $return = '';
 
     //don't show weekend or location if a booth isn't set
-    if(in_array('Maker',$exhibit_type))   {
+    if(in_array('Exhibit',$exhibit_type) || in_array('Maker',$exhibit_type))   {
         //weekend and base location
         $return .= '<div class="entry-weekend">                    
                         '.($weekend!=''?'<h4>Exhibiting on:</h4>'.$weekend:'').

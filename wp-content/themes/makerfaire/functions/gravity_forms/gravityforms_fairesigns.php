@@ -370,7 +370,7 @@ function createEntList($faire, $type) {
 
                 foreach ($results as $entry) {
                     $exhibitType = explode(",",$entry->exhibit_type);
-                    if(in_array('Maker',$exhibitType) || in_array('Sponsor',$exhibitType) || in_array('Startup Sponsor',$exhibitType)){
+                    if(in_array('Exhibit',$exhibitType) || in_array('Sponsor',$exhibitType) || in_array('Startup Sponsor',$exhibitType)){
                         $entry_id = $entry->lead_id;
                         $entList[] = $entry_id;
                     }   else{
