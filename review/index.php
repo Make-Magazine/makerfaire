@@ -23,8 +23,8 @@
 
     <!-- Our application root element -->
     <div id="review" style="width:95%; margin:0 auto;">
-        <b-row align-h="between">
-            <b-col>
+        <b-row align-h="start">
+            <b-col align-self="center" cols="3">
                 <select id="form_select" v-on:change="updateForm">
                     <?php
                     foreach ($form_list as $form_key => $form) {
@@ -33,48 +33,58 @@
                     ?>
                 </select>
             </b-col>
-            <b-col cols="2"><b-button @click="updateForm" variant="outline-primary">Refresh Data</b-button></b-col>
+            <b-col align-self="center"  cols="2"><b-button @click="updateForm" variant="outline-primary">Refresh Data</b-button></b-col>
         </b-row>
-        <b-container fluid class="filter-options">
-            <input type="text" v-model="searchQuery" placeholder="Search..." />
-            <!--<b-form-group v-model="selectedEntryType" label="Admin Entry Type" v-slot="{ ariaDescribedby }">
-                <b-form-checkbox-group id="checkbox-group-2" v-model="selected" :aria-describedby="ariaDescribedby" name="flavour-2">
-                    <b-form-checkbox  v-for="type in filteredEntryType" value="type">type</b-form-checkbox>                    
-                </b-form-checkbox-group>
-            </b-form-group>-->
-            <div class="select-wrapper">
-                <label>Status</label>
-                <select v-model="selectedStatus">
-                    <option type="select" value="">All</option>
-                    <template v-for="status in filteredStatus">
-                        <option type="select" :id="status" :name="status" :value="status">{{status}}</option>
-                    </template>
-                </select>
-            </div>
-            <div class="select-wrapper">
-                <label>Primary Category</label>
-                <select v-model="selectedPrimeCat">
-                    <option type="select" value="">All</option>
-                    <template v-for="prime_cat in filteredPrimeCat">
-                        <option type="select" :id="prime_cat" :name="prime_cat" :value="prime_cat">{{prime_cat}}</option>
-                    </template>
-                </select>
-            </div>
-            <div class="listGrid-toolbar">
-                <!-- <span class="listGrid-caption">{{caption}}</span> -->
-                <i class="bi bi-arrow-down-up" v-if="makers.length>0" @click="switchDateOrder" title="See Oldest" style="margin-right:5px;"></i>
-                <span class="listGrid-switch-iconGroup">
-                    <i class="bi bi-list listGrid-switch-icon" v-bind:class="{ active: currentView=='list'}" aria-hidden="true" :title="currentView=='grid' ? 'switch to List View': 'List View'" v-on:click="switchToListView"></i>
-                    <i class="bi bi-grid listGrid-switch-icon" v-bind:class="{ active: currentView=='grid'}" :title="currentView=='list' ? 'switch to Grid View': 'Grid View'" aria-hidden="true" v-on:click="switchToGridView"></i>
-                </span>
-            </div>
-            <div>
 
-            </div>
-        </b-container>
+        <b-row align-h="between">
+            <b-col align-self="center"><input type="text" v-model="searchQuery" placeholder="Search..." /></b-col>
+            <!--<b-col>
+                    <b-form-group label="Admin Entry Type" v-slot="{ ariaDescribedby }">
+                        <b-form-checkbox-group id="entryTypeFilter" v-model="selectedEntryType" :aria-describedby="ariaDescribedby" name="entryTypeFil">
+                            <b-form-checkbox v-for="type in filteredEntryType" :value="type">{{type}}</b-form-checkbox>
+                        </b-form-checkbox-group>
+                    </b-form-group></b-col>-->
+
+
+            <b-col align-self="center">
+                <div class="select-wrapper">
+                    <label>Status</label>
+                    <select v-model="selectedStatus">
+                        <option type="select" value="">All</option>
+                        <template v-for="status in filteredStatus">
+                            <option type="select" :id="status" :name="status" :value="status">{{status}}</option>
+                        </template>
+                    </select>
+                </div>
+            </b-col>
+
+            <b-col align-self="center">
+                <div class="select-wrapper">
+                    <label>Primary Category</label>
+                    <select v-model="selectedPrimeCat">
+                        <option type="select" value="">All</option>
+                        <template v-for="prime_cat in filteredPrimeCat">
+                            <option type="select" :id="prime_cat" :name="prime_cat" :value="prime_cat">{{prime_cat}}</option>
+                        </template>
+                    </select>
+                </div>
+            </b-col>
+            <b-col align-self="center" cols="2"><b-button @click="resetFilters" variant="outline-primary">Reset Filters</b-button></b-col>
+        </b-row>
+
+
         <b-row align-h="between">
             <b-col>
                 Found {{filterBy.length.toLocaleString()}} Results
+            </b-col>
+            <b-col cols="2">
+                <div class="listGrid-toolbar">
+                    <i class="bi bi-arrow-down-up" v-if="makers.length>0" @click="switchDateOrder" title="See Oldest" style="margin-right:5px;"></i>
+                    <span class="listGrid-switch-iconGroup">
+                        <i class="bi bi-list listGrid-switch-icon" v-bind:class="{ active: currentView=='list'}" aria-hidden="true" :title="currentView=='grid' ? 'switch to List View': 'List View'" v-on:click="switchToListView"></i>
+                        <i class="bi bi-grid listGrid-switch-icon" v-bind:class="{ active: currentView=='grid'}" :title="currentView=='list' ? 'switch to Grid View': 'Grid View'" aria-hidden="true" v-on:click="switchToGridView"></i>
+                    </span>
+                </div>
             </b-col>
         </b-row>
 
@@ -169,7 +179,22 @@
 
                                                 </span>
                                                 <span v-else-if="field.type === 'list'">
-                                                    <b-table striped hover :items="field.value"></b-table>
+
+                                                    <b-table-simple striped responsive>
+
+                                                        <b-thead>
+                                                            <b-tr>
+                                                                <b-th v-for="(listItem,label) in field.value[0]"><span v-html="label"></b-th>
+                                                            </b-tr>
+                                                        </b-thead>
+                                                        <b-tbody>
+                                                            <b-tr v-for="list in field.value">
+                                                                <b-td v-for="listItem in list"><span v-html="listItem"></b-td>
+                                                            </b-tr>
+                                                        </b-tbody>
+
+                                                    </b-table-simple>
+
                                                 </span>
                                                 <span v-else-if="field.type === 'address'">
                                                     <b-list-group>
