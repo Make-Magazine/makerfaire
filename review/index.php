@@ -23,15 +23,25 @@
 
     <!-- Our application root element -->
     <div id="review" style="width:95%; margin:0 auto;">
-        <select id="form_select" v-on:change="updateForm">
-            <?php
-            foreach ($form_list as $form_key => $form) {
-                echo '<option value="' . $form_key . '">' . $form . '</option>';
-            }
-            ?>
-        </select>
+        <b-row align-h="between">
+            <b-col>
+                <select id="form_select" v-on:change="updateForm">
+                    <?php
+                    foreach ($form_list as $form_key => $form) {
+                        echo '<option value="' . $form_key . '">' . $form . '</option>';
+                    }
+                    ?>
+                </select>
+            </b-col>
+            <b-col cols="2"><b-button @click="updateForm" variant="outline-primary">Refresh Data</b-button></b-col>
+        </b-row>
         <b-container fluid class="filter-options">
             <input type="text" v-model="searchQuery" placeholder="Search..." />
+            <!--<b-form-group v-model="selectedEntryType" label="Admin Entry Type" v-slot="{ ariaDescribedby }">
+                <b-form-checkbox-group id="checkbox-group-2" v-model="selected" :aria-describedby="ariaDescribedby" name="flavour-2">
+                    <b-form-checkbox  v-for="type in filteredEntryType" value="type">type</b-form-checkbox>                    
+                </b-form-checkbox-group>
+            </b-form-group>-->
             <div class="select-wrapper">
                 <label>Status</label>
                 <select v-model="selectedStatus">
@@ -49,7 +59,7 @@
                         <option type="select" :id="prime_cat" :name="prime_cat" :value="prime_cat">{{prime_cat}}</option>
                     </template>
                 </select>
-            </div>            
+            </div>
             <div class="listGrid-toolbar">
                 <!-- <span class="listGrid-caption">{{caption}}</span> -->
                 <i class="bi bi-arrow-down-up" v-if="makers.length>0" @click="switchDateOrder" title="See Oldest" style="margin-right:5px;"></i>
@@ -66,10 +76,9 @@
             <b-col>
                 Found {{filterBy.length.toLocaleString()}} Results
             </b-col>
-            <b-col cols="2"><b-button @click="updateForm" variant="outline-primary">Refresh Data</b-button></b-col>            
         </b-row>
-        
-        
+
+
         <div v-if="currentView=='grid'">
             <b-card-group deck>
                 <b-card no-body v-for="(maker, maker_id) in filterBy.slice((currentPage-1)*perPage,(currentPage-1)*perPage+perPage)" :title="maker.project_name" img-top :key="'grid-'+maker.project_id" @click="expandCard(maker.project_id)">
