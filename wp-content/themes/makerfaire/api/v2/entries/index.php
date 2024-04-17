@@ -272,10 +272,13 @@ function fieldOutput($fieldID, $entry, $field_array, $form, $arg = '') {
         break;
       case 'list':
         $list = unserialize($value);
-        foreach($list as $list_key=>$item){
-          $list[$list_key]["Your Link"] = ($item["Your Link"]!=''?'<a href="'.$item["Your Link"] .'" target="_blank">'.$item["Your Link"].'</a>':''); 
+        if(is_array($list)){
+          foreach($list as $list_key=>$item){
+            $list[$list_key]["Your Link"] = ($item["Your Link"]!=''?'<a href="'.$item["Your Link"] .'" target="_blank">'.$item["Your Link"].'</a>':''); 
+          }
+          $value = $list;        
         }
-        $value = $list;
+        
         
         break;
       default:
