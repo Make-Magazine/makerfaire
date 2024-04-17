@@ -754,10 +754,7 @@ function add_note_sidebar($lead, $form){
 		
     //Enable HTML Email Formatting in the body
 		add_filter( 'wp_mail_content_type','wpse27856_set_content_type' );
-    error_log( 'email to '.$email_to);
-    error_log('$email_subject'.$email_subject);
-    error_log('$body-'.$body);
-    error_log('$headers-'.$headers);
+   
 		$result  = wp_mail( $email_to, $email_subject, $body, $headers );
 
 		//Remove HTML Email Formatting
