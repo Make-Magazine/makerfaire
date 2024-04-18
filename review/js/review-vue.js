@@ -71,19 +71,23 @@ new Vue({
                 this.selectedPrimeCat || this.selectedEntryType ||
                 this.selectedFlag
             ) {
-                var searchValue = this.searchQuery;
-                var statusFilter = this.selectedStatus;
-                var primeCatFilter = this.selectedPrimeCat;
+                var searchValue     = this.searchQuery;
+                var statusFilter    = this.selectedStatus;
+                var primeCatFilter  = this.selectedPrimeCat;
                 var entryTypeFilter = this.selectedEntryType;
-                var flagFilter = this.selectedFlag;
-                var passEntryType = true;
-                var passFlag = true;
+                var flagFilter      = this.selectedFlag;
+                var prelimLocFilter = this.selectedPrelimLoc;
+
+                var passEntryType   = true;
+                var passFlag        = true;
+                var passPrelimLoc   = true;
 
                 return this.makers.filter(function (maker) {
+                    //Entry Type
                     if (entryTypeFilter != '') {
                         passEntryType = false;
                         //breakup the entry types into an array
-                        entryTypeArr = maker.entry_type.split(", ")
+                        entryTypeArr = maker.entry_type.split(", ");
 
                         //loop through entry types set
                         entryTypeArr.forEach((entry_type) => {
@@ -92,6 +96,7 @@ new Vue({
                             }
                         });
                     }
+
                     //Flag Filter           
                     if (flagFilter != '') {
                         passFlag = false;
@@ -106,13 +111,26 @@ new Vue({
                         });
                     }
 
+                    //Preliminary location
+                    if (flagFilter != '') {
+                        passPrelimLoc = false;
+                        //breakup the entry types into an array
+                        prelimLocArr = maker.prelim_loc.split(", ")
+
+                        //loop through entry types set
+                        prelimLocArr.forEach((prelim_loc) => {
+                            if (prelimLocFilter.includes(prelim_loc)) {
+                                passPrelimLoc = true;
+                            }
+                        });
+                    }
                     return (maker.project_name.toLowerCase().indexOf(searchValue) > -1 ||
                         maker.project_id.toLowerCase().indexOf(searchValue) > -1 ||
                         maker.description.toLowerCase().indexOf(searchValue) > -1 ||
                         maker.maker_name.toLowerCase().indexOf(searchValue) > -1) &&
                         maker.status.indexOf(statusFilter) > -1 &&
                         maker.prime_cat.indexOf(primeCatFilter) > -1 &&
-                        passEntryType && passFlag;
+                        passEntryType && passFlag && passPrelimLoc;
                 })
             } else {
                 return this.makers;
@@ -155,11 +173,12 @@ new Vue({
             return res;
         }
     }
+    //method to do function
 });
 
 function filterCommaList(field, makers){    
     filteredList = [];
-    makers.forEach((maker) => {        
+    makers.forEach((maker) => {                
         if (maker[field] != '') {               
             //breakup the comma separated string into an array
             entryFieldArr = maker[field].split(", ");
