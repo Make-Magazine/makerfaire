@@ -59,6 +59,26 @@ new Vue({
             this.selectedEntryType = [];
             this.selectedFlag = [];
         },
+        filterCommaList: function(field){                
+            filteredList = [];
+            
+            this.makers.forEach((maker) => {                
+                if (maker[field] != '') {               
+                    //breakup the comma separated string into an array
+                    entryFieldArr = maker[field].split(", ");
+            
+                    //loop through values set
+                    entryFieldArr.forEach((filter) => {                                                  
+                        //only set unique values
+                        if (filter != 'gppa-unchecked') {  
+                            filteredList.indexOf(filter) === -1 ? filteredList.push(filter) : '';
+                        }
+                    });            
+                }
+            });
+        
+            return filteredList;
+        }      
     },
     mounted() {
         axios
@@ -149,22 +169,13 @@ new Vue({
             }
         },
         filteredEntryType() {
-            if (this.makers) {                
-                filteredEntryType = filterCommaList('entry_type', this.makers);                           
-                return filteredEntryType;
-            }
+            if (this.makers) return this.filterCommaList('entry_type');                                           
         },
         filteredFlag() {
-            if (this.makers) {
-                filteredFlag = filterCommaList('flags', this.makers);                
-                return filteredFlag;
-            }
+            if (this.makers) return this.filterCommaList('flags');                                
         },
         filteredPrelimLoc() {
-            if (this.makers) {
-                filteredPrelimLoc = filterCommaList('prelim_loc', this.makers);                                
-                return filteredPrelimLoc;
-            }
+            if (this.makers) return this.filterCommaList('prelim_loc');                                                
         },
     },
     filters: {
@@ -173,25 +184,4 @@ new Vue({
             return res;
         }
     }
-    //method to do function
-});
-
-function filterCommaList(field, makers){    
-    filteredList = [];
-    makers.forEach((maker) => {                
-        if (maker[field] != '') {               
-            //breakup the comma separated string into an array
-            entryFieldArr = maker[field].split(", ");
-    
-            //loop through values set
-            entryFieldArr.forEach((filter) => {                                                  
-                //only set unique values
-                if (filter != 'gppa-unchecked') {  
-                    filteredList.indexOf(filter) === -1 ? filteredList.push(filter) : '';
-                }
-            });            
-        }
-    });
-
-    return filteredList;
-}        
+});  
