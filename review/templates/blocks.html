@@ -71,7 +71,12 @@
             </span>
             <span v-else-if="field.type === 'html'" v-html="field.value"></span>
             <span v-else>
-                {{field.value}}
+                <span
+                    v-for="(line,lineNumber) of field.value.split('\n')" 
+                    v-bind:key="lineNumber" >
+                    {{ line }}<br/>
+                    </span>
+                
             </span>
         </div>
     </div>

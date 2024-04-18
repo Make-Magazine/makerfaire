@@ -5,7 +5,11 @@
             <h5 class="hidden">{{maker.maker_name}}</h5>
         </template>
         <b-card-text>
-            {{maker.description}}
+            <span
+                    v-for="(line,lineNumber) of maker.description.split('\n')" 
+                    v-bind:key="lineNumber" >
+                    {{ line }}<br/>
+                    </span>
         </b-card-text>
         <template #footer>
             <small class="text-muted"><span :class="'status_'+maker.project_id">{{maker.status}}</span></small>
