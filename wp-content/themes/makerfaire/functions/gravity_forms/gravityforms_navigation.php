@@ -130,6 +130,16 @@ function toolbar_link_to_mypage($wp_admin_bar) {
 
 function buildFaireDrop(&$wp_admin_bar, $faire_id = null) {
     $args = array();
+
+    //add link to admin review
+    $args[] = array(
+        'id' => 'mf_admin_entry_review',
+        'title' => 'Admin Entry Review',
+        'href' => '/admin-review/',
+        'meta' => array('class' => 'my-toolbar-page'),
+        'target' => '_blank',
+        'parent' => 'mf_admin_parent'
+    );
     //build faire drop downs
     global $wpdb;
 
@@ -211,16 +221,6 @@ function buildFaireDrop(&$wp_admin_bar, $faire_id = null) {
                 }
             }
 
-            //add BA24 Admin ReView link            
-            if ((isset($faire) && $faire == 'BA24')) {
-                array_unshift($args, array(
-                    'id' => 'mf_admin_main_gv_review',
-                    'title' => 'Admin Review',
-                    'href' => 'https://makerfaire.com/review/index.php/',
-                    'meta' => array('class' => 'my-toolbar-page'),
-                    'parent' => 'mf_admin_parent_' . $faire
-                ));
-            }
             //add BA23 Main Entry View link
             if ((isset($faire) && $faire == 'BA23')) {
                 array_unshift($args, array(
