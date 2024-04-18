@@ -1,40 +1,27 @@
-<b-button v-b-toggle.collapse-1 variant="primary">Show/Hide Filters and Search</b-button>
+<b-row align-h="between">
+    <b-col align-self="center" cols="11">
+        <b-input-group prepend="Search" class="mt-3">
+            <b-form-input v-model="searchQuery" placeholder="Search..."></b-form-input>
+            <b-input-group-append>
+                <b-button @click="resetFilters" variant="outline-primary">Reset All Filters</b-button>
+            </b-input-group-append>
+        </b-input-group>
+    </b-col>
+    <b-col align-self="center">
+        <b-button v-b-toggle.collapse-1 variant="outline-primary">
+            <span class="when-opened">
+                Hide Filters
+            </span>
+            <span class="when-closed">
+                Show Filters
+            </span>
+        </b-button>
+    </b-col>
+</b-row>
 <b-collapse id="collapse-1" class="mt-2">
     <b-card class="filterSection">
         <b-row align-h="between">
-            <b-col align-self="center">
-                <input type="text" v-model="searchQuery" placeholder="Search..." />
-            </b-col>
-            <b-col>
-                <label>Flags</label>
-                <b-form-group label="" v-slot="{ ariaDescribedby }">
-                    <b-form-checkbox-group id="flagFilter" v-model="selectedFlag" :aria-describedby="ariaDescribedby"
-                        name="flagFilter">
-                        <b-form-checkbox v-for="type in filteredFlag" :value="type">{{type}}</b-form-checkbox>
-                    </b-form-checkbox-group>
-                </b-form-group>
-            </b-col>
-
-            <b-col>
-                <label>Entry Type</label>
-                <b-form-group label="" v-slot="{ ariaDescribedby }">
-                    <b-form-checkbox-group id="entryTypeFilter" v-model="selectedEntryType"
-                        :aria-describedby="ariaDescribedby" name="entryTypeFil">
-                        <b-form-checkbox v-for="type in filteredEntryType" :value="type">{{type}}</b-form-checkbox>
-                    </b-form-checkbox-group>
-                </b-form-group>
-            </b-col>
-
-            <b-col>
-                <label>Preliminary Location</label>
-                <b-form-group label="" v-slot="{ ariaDescribedby }">
-                    <b-form-checkbox-group id="prelimLocFilter" v-model="selectedPrelimLoc"
-                        :aria-describedby="ariaDescribedby" name="prelimLocFilter">
-                        <b-form-checkbox v-for="type in filteredPrelimLoc" :value="type">{{type}}</b-form-checkbox>
-                    </b-form-checkbox-group>
-                </b-form-group>
-            </b-col>
-
+            <!--Status Filter-->
             <b-col align-self="center">
                 <div class="select-wrapper">
                     <label>Status</label>
@@ -47,22 +34,55 @@
                 </div>
             </b-col>
 
+            <!-- Entry Type Filter-->
+            <b-col align-self="center">
+                <label>Entry Type</label>
+                <b-form-group label="" v-slot="{ ariaDescribedby }">
+                    <b-form-checkbox-group id="entryTypeFilter" v-model="selectedEntryType"
+                        :aria-describedby="ariaDescribedby" name="entryTypeFil">
+                        <b-form-checkbox v-for="cType in filteredEntryType" :value="cType">
+                            {{cType}}
+                        </b-form-checkbox>
+                    </b-form-checkbox-group>
+                </b-form-group>
+            </b-col>
+
+            <!-- Primary Category Filter-->
             <b-col align-self="center">
                 <div class="select-wrapper">
                     <label>Primary Category</label>
                     <select v-model="selectedPrimeCat">
                         <option type="select" value="">All</option>
                         <template v-for="prime_cat in filteredPrimeCat">
-                            <option type="select" :id="prime_cat" :name="prime_cat" :value="prime_cat">{{prime_cat}}</option>
+                            <option type="select" :id="prime_cat" :name="prime_cat" :value="prime_cat">{{prime_cat}}
+                            </option>
                         </template>
                     </select>
                 </div>
             </b-col>
-            <b-col align-self="center">
-                <b-button @click="resetFilters" variant="outline-primary">Reset Filters</b-button
+
+            <!-- Primary Category Filter -->
+            <b-col>
+                <label>Flags</label>
+                <b-form-group label="" v-slot="{ ariaDescribedby }">
+                    <b-form-checkbox-group id="flagFilter" v-model="selectedFlag" :aria-describedby="ariaDescribedby"
+                        name="flagFilter">
+                        <b-form-checkbox v-for="fType in filteredFlag" :value="fType">{{fType}}</b-form-checkbox>
+                    </b-form-checkbox-group>
+                </b-form-group>
+            </b-col>
+
+            <!-- Preliminary Location Filter -->
+            <b-col>
+                <label>Preliminary Location</label>
+                <b-form-group label="" v-slot="{ ariaDescribedby }">
+                    <b-form-checkbox-group id="prelimLocFilter" v-model="selectedPrelimLoc"
+                        :aria-describedby="ariaDescribedby" name="prelimLocFilter">
+                        <b-form-checkbox v-for="plType in filteredPrelimLoc"
+                            :value="plType">{{plType}}</b-form-checkbox>
+                    </b-form-checkbox-group>
+                </b-form-group>
             </b-col>
         </b-row>
-
-        </p>
     </b-card>
 </b-collapse>

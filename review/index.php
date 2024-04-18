@@ -23,10 +23,10 @@
     <div id="review" style="width:95%; margin: 35px auto;">
         <button-counter></button-counter>
         <b-row>
-            <b-col align-self="center" cols="9">
+            <b-col align-self="center" cols="8">
                 <h2>Maker Faire Admin Review</h2>
             </b-col>
-            <b-col align-self="center" cols="3">
+            <b-col align-self="center" cols="4">
                 <select id="form_select" v-on:change="updateForm">
                     <?php
                     foreach ($form_list as $form_key => $form) {
@@ -64,7 +64,7 @@
         <div v-if="currentView=='list'">
             <?php  include('templates/list.php'); ?>
         </div>
-        
+
         <div class="no-results" v-if="!filterBy.length && makers.length">No Results to Show</div>
         <div id="loader" v-if="makers.length==0">
             <img src="/review/img/loading.gif" />
