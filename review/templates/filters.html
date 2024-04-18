@@ -1,0 +1,58 @@
+<b-row align-h="between">
+    <b-col align-self="center"><input type="text" v-model="searchQuery" placeholder="Search..." /></b-col>
+    <b-col>
+        <label>Flags</label>
+        <b-form-group label="" v-slot="{ ariaDescribedby }">
+            <b-form-checkbox-group id="flagFilter" v-model="selectedFlag" :aria-describedby="ariaDescribedby"
+                name="flagFilter">
+                <b-form-checkbox v-for="type in filteredFlag" :value="type">{{type}}</b-form-checkbox>
+            </b-form-checkbox-group>
+        </b-form-group>
+    </b-col>
+
+    <b-col>
+        <label>Entry Type</label>
+        <b-form-group label="" v-slot="{ ariaDescribedby }">
+            <b-form-checkbox-group id="entryTypeFilter" v-model="selectedEntryType" :aria-describedby="ariaDescribedby"
+                name="entryTypeFil">
+                <b-form-checkbox v-for="type in filteredEntryType" :value="type">{{type}}</b-form-checkbox>
+            </b-form-checkbox-group>
+        </b-form-group>
+    </b-col>
+
+    <b-col>
+        <label>Preliminary Location</label>
+        <b-form-group label="" v-slot="{ ariaDescribedby }">
+            <b-form-checkbox-group id="prelimLocFilter" v-model="selectedPrelimLoc" :aria-describedby="ariaDescribedby"
+                name="prelimLocFilter">
+                <b-form-checkbox v-for="type in filteredPrelimLoc" :value="type">{{type}}</b-form-checkbox>
+            </b-form-checkbox-group>
+        </b-form-group>
+    </b-col>
+
+    <b-col align-self="center">
+        <div class="select-wrapper">
+            <label>Status</label>
+            <select v-model="selectedStatus">
+                <option type="select" value="">All</option>
+                <template v-for="status in filteredStatus">
+                    <option type="select" :id="status" :name="status" :value="status">{{status}}</option>
+                </template>
+            </select>
+        </div>
+    </b-col>
+
+    <b-col align-self="center">
+        <div class="select-wrapper">
+            <label>Primary Category</label>
+            <select v-model="selectedPrimeCat">
+                <option type="select" value="">All</option>
+                <template v-for="prime_cat in filteredPrimeCat">
+                    <option type="select" :id="prime_cat" :name="prime_cat" :value="prime_cat">{{prime_cat}}</option>
+                </template>
+            </select>
+        </div>
+    </b-col>
+    <b-col align-self="center" cols="2"><b-button @click="resetFilters" variant="outline-primary">Reset
+            Filters</b-button></b-col>
+</b-row>

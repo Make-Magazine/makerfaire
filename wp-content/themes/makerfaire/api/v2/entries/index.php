@@ -157,8 +157,17 @@ function getAllEntries($formID = '', $page = '', $years = '') {
       $maker_photo = $photo[0];
     }
     
+    //put exhibit type in a comma separated array
     $fieldArr = fieldOutput(339, $entry, $field_array, $form);
     $exhibit_types = implode(", ",$fieldArr['value']);
+    
+    //flags
+    $fieldArr = fieldOutput(304, $entry, $field_array, $form);
+    $flags    = ($fieldArr['value']!=''? implode(", ",$fieldArr['value']):'');
+
+    //prelimLoc
+    $fieldArr = fieldOutput(302, $entry, $field_array, $form);
+    $prelim_loc    = ($fieldArr['value']!=''? implode(", ",$fieldArr['value']):'');
 
     $return['makers'][] = array(
       'tabs'          => $tabData,
@@ -166,9 +175,11 @@ function getAllEntries($formID = '', $page = '', $years = '') {
       'project_id'    => $entry['id'],
       'status'        => $entry['303'],
       'description'   => $entry['16'],
+      'flags'         => $flags,
       'entry_type'    => $exhibit_types,      
       'photo'         => $maker_photo,
       'maker_name'    => $maker_name,
+      'prelim_loc'    => $prelim_loc,
       'prime_cat'     => html_entity_decode(get_CPT_name($entry['320']))
     );
   }
