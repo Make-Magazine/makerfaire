@@ -12,7 +12,12 @@
         </template>
     </b-card>
 
-    <b-pagination v-if="filterBy.length>0" v-model="currentPage" :total-rows="filterBy.length" :per-page="perPage" first-text="First" prev-text="Prev" next-text="Next" last-text="Last" aria-controls="Grid">
+    <b-pagination v-if="filterBy.length>0" v-model="currentPage" 
+        :total-rows="filterBy.length" 
+        :per-page="perPage" 
+        prev-text="Prev" 
+        next-text="Next" 
+        aria-controls="Grid">
     </b-pagination>
 
 </b-card-group>
