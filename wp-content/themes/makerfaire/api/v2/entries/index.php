@@ -159,15 +159,15 @@ function getAllEntries($formID = '', $page = '', $years = '') {
     
     //put exhibit type in a comma separated array
     $fieldArr = fieldOutput(339, $entry, $field_array, $form);
-    $exhibit_types = implode(", ",$fieldArr['value']);
+    $exhibit_types = (isset($fieldArr['value']) && $fieldArr['value']!=''? implode(", ",$fieldArr['value']):'');
     
     //flags
     $fieldArr = fieldOutput(304, $entry, $field_array, $form);
-    $flags    = ($fieldArr['value']!=''? implode(", ",$fieldArr['value']):'');
+    $flags    = (isset($fieldArr['value']) && $fieldArr['value']!=''? implode(", ",$fieldArr['value']):'');
 
     //prelimLoc
     $fieldArr = fieldOutput(302, $entry, $field_array, $form);
-    $prelim_loc    = ($fieldArr['value']!=''? implode(", ",$fieldArr['value']):'');
+    $prelim_loc    = (isset($fieldArr['value']) && $fieldArr['value']!=''? implode(", ",$fieldArr['value']):'');
 
     $return['makers'][] = array(
       'tabs'          => $tabData,

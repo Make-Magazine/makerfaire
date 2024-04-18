@@ -159,23 +159,23 @@ new Vue({
         filteredStatus() {
             if (this.makers) {
                 var filteredStatus = Array.from(new Set(this.makers.map(maker => maker.status)));
-                return filteredStatus;
+                return filteredStatus.sort();
             }
         },
         filteredPrimeCat() {
             if (this.makers) {
                 filteredPrimeCat = Array.from(new Set(this.makers.map(maker => maker.prime_cat)));
-                return filteredPrimeCat;
+                return filteredPrimeCat.sort();
             }
         },
         filteredEntryType() {
-            if (this.makers) return this.filterCommaList('entry_type');                                           
+            if (this.makers) return this.filterCommaList('entry_type').sort();                                           
         },
         filteredFlag() {
-            if (this.makers) return this.filterCommaList('flags');                                
+            if (this.makers) return this.filterCommaList('flags').sort();                                
         },
         filteredPrelimLoc() {
-            if (this.makers) return this.filterCommaList('prelim_loc');                                                
+            if (this.makers) return this.filterCommaList('prelim_loc').sort();                                                
         },
     },
     filters: {
