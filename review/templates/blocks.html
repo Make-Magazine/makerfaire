@@ -9,7 +9,12 @@
                 <b-container class="p-4 bg-dark">
                     <b-row>
                         <b-col fluid="sm" v-for="(image,image_id) in field.value">
-                            <img :class="maker.project_id+'-img'+field_id" :id="maker.project_id+'-img-' + image_id" :src="image" alt="Image" @click="showModal(maker.project_id+'-img'+field_id, image_id)">
+                            <img :class="maker.project_id+'-img'+tabKey+field_id" 
+                                @click="showModal(maker.project_id+'-img'+tabKey+field_id, image_id)"
+                                :id="maker.project_id+'-img-' +tabKey+field_id" 
+                                :src="image" 
+                                alt="Image" 
+                                >
                         </b-col>
 
                     </b-row>
@@ -20,8 +25,8 @@
             </span>
 
             <span v-else-if="field.type === 'video'">
-                <b-button @click="showModal(maker.project_id+'-video-initial', 0)" variant="outline-primary">Show in Modal</b-button>
-                <div><a :class="maker.project_id+'-video-initial'" :href="field.value" target="_blank">{{field.value}}</a></div>
+                <b-button @click="showModal(maker.project_id+'-video-'+tabKey, 0)" variant="outline-primary">Show in Modal</b-button>
+                <div><a :class="maker.project_id+'-video-'+tabKey" :href="field.value" target="_blank">{{field.value}}</a></div>
             </span>
 
             <span v-else-if="field.type === 'notes'" class="notes">
