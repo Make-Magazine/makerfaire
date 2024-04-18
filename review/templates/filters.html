@@ -23,65 +23,32 @@
         <b-row align-h="between">
             <!--Status Filter-->
             <b-col align-self="center">
-                <div class="select-wrapper">
-                    <label>Status</label>
-                    <select v-model="selectedStatus">
-                        <option type="select" value="">All</option>
-                        <template v-for="status in filteredStatus">
-                            <option type="select" :id="status" :name="status" :value="status">{{status}}</option>
-                        </template>
-                    </select>
-                </div>
+                <label>Status</label>
+                <b-form-select v-model="selectedStatus" :options="filteredStatus" multiple :select-size="4"></b-form-select>                                                
             </b-col>
 
             <!-- Entry Type Filter-->
             <b-col align-self="center">
                 <label>Entry Type</label>
-                <b-form-group label="" v-slot="{ ariaDescribedby }">
-                    <b-form-checkbox-group id="entryTypeFilter" v-model="selectedEntryType"
-                        :aria-describedby="ariaDescribedby" name="entryTypeFil">
-                        <b-form-checkbox v-for="cType in filteredEntryType" :value="cType">
-                            {{cType}}
-                        </b-form-checkbox>
-                    </b-form-checkbox-group>
-                </b-form-group>
+                <b-form-select v-model="selectedEntryType" :options="filteredEntryType" multiple :select-size="4"></b-form-select>                                
             </b-col>
 
             <!-- Primary Category Filter-->
-            <b-col align-self="center">
-                <div class="select-wrapper">
-                    <label>Primary Category</label>
-                    <select v-model="selectedPrimeCat">
-                        <option type="select" value="">All</option>
-                        <template v-for="prime_cat in filteredPrimeCat">
-                            <option type="select" :id="prime_cat" :name="prime_cat" :value="prime_cat">{{prime_cat}}
-                            </option>
-                        </template>
-                    </select>
-                </div>
+            <b-col align-self="center">                
+                <label>Primary Category</label>
+                <b-form-select v-model="selectedPrimeCat" :options="filteredPrimeCat" multiple :select-size="4"></b-form-select>                                    
             </b-col>
 
-            <!-- Primary Category Filter -->
+            <!-- Flat Filter -->
             <b-col>
                 <label>Flags</label>
-                <b-form-group label="" v-slot="{ ariaDescribedby }">
-                    <b-form-checkbox-group id="flagFilter" v-model="selectedFlag" :aria-describedby="ariaDescribedby"
-                        name="flagFilter">
-                        <b-form-checkbox v-for="fType in filteredFlag" :value="fType">{{fType}}</b-form-checkbox>
-                    </b-form-checkbox-group>
-                </b-form-group>
+                <b-form-select v-model="selectedFlag" :options="filteredFlag" multiple :select-size="4"></b-form-select>                
             </b-col>
 
             <!-- Preliminary Location Filter -->
             <b-col>
                 <label>Preliminary Location</label>
-                <b-form-group label="" v-slot="{ ariaDescribedby }">
-                    <b-form-checkbox-group id="prelimLocFilter" v-model="selectedPrelimLoc"
-                        :aria-describedby="ariaDescribedby" name="prelimLocFilter">
-                        <b-form-checkbox v-for="plType in filteredPrelimLoc"
-                            :value="plType">{{plType}}</b-form-checkbox>
-                    </b-form-checkbox-group>
-                </b-form-group>
+                <b-form-select v-model="selectedPrelimLoc" :options="filteredPrelimLoc" multiple :select-size="4"></b-form-select>                
             </b-col>
         </b-row>
     </b-card>
