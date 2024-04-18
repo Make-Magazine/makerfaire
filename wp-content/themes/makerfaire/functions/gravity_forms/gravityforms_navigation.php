@@ -135,7 +135,7 @@ function buildFaireDrop(&$wp_admin_bar, $faire_id = null) {
     $args[] = array(
         'id' => 'mf_admin_entry_review',
         'title' => 'Admin Entry Review',
-        'href' => '/admin-review/',
+        'href' => '/review/index.php/',
         'meta' => array('class' => 'my-toolbar-page'),
         'target' => '_blank',
         'parent' => 'mf_admin_parent'
