@@ -112,7 +112,7 @@ new Vue({
                     }
 
                     //Preliminary location
-                    if (flagFilter != '') {
+                    if (prelimLocFilter != '') {
                         passPrelimLoc = false;
                         //breakup the entry types into an array
                         prelimLocArr = maker.prelim_loc.split(", ")
