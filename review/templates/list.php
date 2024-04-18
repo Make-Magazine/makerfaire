@@ -5,8 +5,8 @@
         <b-col cols="8">
             <h3>{{maker.project_name}}</h3>
         </b-col>
-        <b-col cols="1">{{maker.entry_type}}</b-col>
-        <b-col cols="2"><span :class="'status_'+maker.project_id">{{maker.status}}</span></b-col>
+        <b-col cols="2">{{maker.entry_type}}</b-col>
+        <b-col cols="1"><span :class="'status_'+maker.project_id">{{maker.status}}</span></b-col>
         <b-col cols="1" style="color: #ccc;">{{maker.project_id}}</b-col>
     </b-row>
     <b-tabs card v-bind:id=maker.project_id>
