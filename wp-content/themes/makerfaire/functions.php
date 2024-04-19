@@ -463,3 +463,33 @@ add_action('init', function () {
         remove_action('admin_bar_menu', 'wp_admin_bar_comments_menu', 60);
     }
 });
+
+
+function child_remove_page_templates( $page_templates ) {        
+    unset( $page_templates['page-manage-entries.php'] );
+    unset( $page_templates['page-entry.php'] );
+
+    unset( $page_templates['404.php'] );
+    unset( $page_templates['flagship-faire-landing-page.php'] );
+    
+    unset( $page_templates['page-press-center-leftnav.php'] );
+    unset( $page_templates['page-mfscheduler.php'] );
+    unset( $page_templates['page-mfscheduler-tasks.php'] );
+    unset( $page_templates['page-video-ba15.php'] );
+    unset( $page_templates['page-white-house.php'] );
+    unset( $page_templates['signage-detail.php'] );
+    unset( $page_templates['signage-list.php'] );
+    unset( $page_templates['page-query.php'] );
+    
+    unset( $page_templates['page-wide-leftnav.php'] );
+    unset( $page_templates['page-wide-image-grid-leftnav.php'] );
+    unset( $page_templates['page-wide.php'] );
+    unset( $page_templates['page-api.php'] );
+    unset( $page_templates['MTM-page-template.php'] );
+    unset( $page_templates['page-topics.php'] );
+    unset( $page_templates['pages/page-maker-week.php'] );
+
+    return $page_templates;
+  }
+  add_filter( 'theme_page_templates', 'child_remove_page_templates' );
+  add_filter( 'theme_post_templates', 'child_remove_page_templates' );

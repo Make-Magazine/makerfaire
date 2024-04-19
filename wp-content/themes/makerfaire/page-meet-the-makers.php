@@ -1,6 +1,6 @@
 <?php
 /*
- * Template name: Meet the Makers New
+ * Template name: Meet the Makers
  */
 get_header();
 
