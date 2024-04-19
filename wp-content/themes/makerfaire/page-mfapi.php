@@ -1,6 +1,6 @@
 <?php
 /*
- * Template Name: API
+ * 
  *
  * v2 of the Maker Faire API
  *
