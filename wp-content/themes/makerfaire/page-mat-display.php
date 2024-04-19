@@ -1,6 +1,6 @@
 <?php
 /**
- * Template Name: MAT - display maker entries
+ * 
  *
  * @version 1.0
  */
