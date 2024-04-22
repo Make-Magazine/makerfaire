@@ -122,7 +122,7 @@
                 $displayGroup  = display_group($entryId);
                 $groupEntries  = display_groupEntries($entryId);
 
-                if( $entrySchedule != ''    || 
+                if( trim($entrySchedule) != ''    || 
                     !empty($registerLink)   ||
                     !empty($viewNow)        ||
                     $displayGroup!=''       ||

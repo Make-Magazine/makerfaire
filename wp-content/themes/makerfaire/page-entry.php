@@ -497,15 +497,22 @@ function display_entry_schedule($entry) {
     $return = '';
 
     //don't show weekend or location if a booth isn't set
-    if(in_array('Exhibit',$exhibit_type) || in_array('Maker',$exhibit_type))   {
+    if(
+        (in_array('Exhibit',$exhibit_type) || in_array('Maker',$exhibit_type)) &&
+        (trim($weekend) != '' || trim($location) !='')
+        ){
         //weekend and base location
-        $return .= '<div class="entry-weekend">                    
+            $return .= '<div class="entry-weekend">                    
                         '.($weekend!=''?'<h4>Exhibiting on:</h4>'.$weekend:'').
                          $location.
-                   '</div>';
+                        '</div>';        
+        
     }else{
-        if(in_array('Sponsor',$exhibit_type) || in_array('Startup Sponsor',$exhibit_type)){
-                    //weekend and base location
+        if(
+            (in_array('Sponsor',$exhibit_type) || in_array('Startup Sponsor',$exhibit_type)) &&
+            ($location!='')
+        ){
+            //weekend and base location
             $return .= '<div class="entry-weekend">                                        
                         Located '.$location.
                         '</div>';
