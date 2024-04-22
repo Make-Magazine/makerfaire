@@ -67,7 +67,7 @@ if (isset($entry->errors)) {
     $faire = $show_sched = $faireShort = $faire_end = '';
     if ($form_id != '') {
         $formSQL = "select faire_name as pretty_faire_name, replace(lower(faire_name),' ','-') as faire_name,  faire_location, faire, id,show_sched,start_dt, end_dt, url_path, faire_map, program_guide, time_zone "
-                . " from wp_mf_faire where FIND_IN_SET ($form_id, wp_mf_faire.form_ids)> 0";
+                . " from wp_mf_faire where FIND_IN_SET ($form_id, wp_mf_faire.form_ids)> 0 order by ID DESC limit 1";
 
         $results = $wpdb->get_row($formSQL);
         if ($wpdb->num_rows > 0) {
@@ -109,22 +109,38 @@ if (isset($entry->errors)) {
     //get makers info
     $makers = getMakerInfo($entry);
 
-    //BA23 - we are only using field 217 for both the maker photo and the group photo    
-    $groupphoto = (isset($entry['217']) ? $entry['217'] : '');
+    //For BA23, a change was made to only use field 217. 
+    //If 111, group photo is set, use that. Else if 217, Maker Photo is set, use that
+    $groupphoto = '';
+    if(isset($entry['111']) && $entry['111'] != ''){
+        $groupphoto = $entry['111'];        
+    }elseif(isset($entry['217']) && $entry['217'] != ''){
+        $groupphoto = $entry['217'];        
+    }    
 
+    //for BA24, the single photo was changed to a multi image which messed things up a bit
+    $photo = json_decode($groupphoto);
+    if (is_array($photo)) {
+      $groupphoto = $photo[0];
+    }
 
     $project_name = (isset($entry['151']) ? $entry['151'] : '');  //Change Project Name
+    
     $project_photo = (isset($entry['22']) ? $entry['22'] : '');
+    //for BA24, the single photo was changed to a multi image which messed things up a bit
+    $photo = json_decode($entry['22']);
+    if (is_array($photo)) {
+      $project_photo = $photo[0];
+    }
 
     // this returns an array of image urls from the additional images field
-    $project_gallery = (isset($entry['878']) ? explode(",", str_replace(array( '[', ']', '"' ), '', $entry['878'])) : '');
+    $project_gallery = (isset($entry['878']) ? json_decode($entry['878']):'');
 
     //if the main project photo isn't set but the photo gallery is, use the first image in the photo gallery
     if($project_photo=='' && is_array($project_gallery)){
         $project_photo = $project_gallery[0];
     }
-    
-    
+        
     $project_short = (isset($entry['16']) ? $entry['16'] : '');    // Description
     $presentation_title  = (isset($entry['880']) ? $entry['880'] : ''); 
     $presentation_description = (isset($entry['882']) ? $entry['882'] : '');
@@ -624,7 +640,7 @@ function getMakerInfoLegacy($entry) {
     $displayType = (isset($entry['105']) ? $entry['105'] : '');
 
     $isGroup = false;
-    $isGroup = (stripos($displayType, 'group') !== false);
+    $isGroup = (stripos($displayType, 'group') !== false || stripos($displayType, 'team') !== false);
 
     $makers = array();
     //set maker information

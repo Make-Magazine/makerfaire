@@ -42,6 +42,7 @@
             <div class="sidebar-type"> <!-- Maker/Group/Worskhop etc -->
                 <?php if ($dispMakerInfo) { ?>
                     <?php
+                    global $isGroup;
                     if ($isGroup) {
                         ?>
                         <div class="entry-header"><h2>GROUP</h2></div>
@@ -70,7 +71,7 @@
                         </div>
                         <?php
                     } else {                        
-                        echo '<div class="entry-header"><h2>MAKER'.(count($makers) != 1?'S':'').'</h2></div>';                        
+                        echo '<div class="entry-header"><h2>MAKER'.(count($makers) > 1?'S':'').'</h2></div>';                        
                         foreach ($makers as $key => $maker) {
                             if (isset($maker['firstname']) && $maker['firstname'] != '') {
                                 ?>
@@ -116,34 +117,45 @@
                         }
                     }
                 }
-                ?>
                 
-                <div class="entryInfo">
-                    <?php
-                    //display schedule/location information if there is any
-                    echo display_entry_schedule($entry); 
-                    if (!empty($registerLink)) {
-                        ?>
-                        <a href="<?php echo $registerLink; ?>" class="btn universal-btn-red" style="margin-top:10px;">Register Here</a>
-                        <?php
-                    }
-                    if (!empty($viewNow)) {
-                        ?>
-                        <a href="<?php echo $viewNow; ?>" class="btn universal-btn-red" style="margin-top:10px;">Watch Live</a>
-                    <?php 
-                    }                        
+                $entrySchedule = display_entry_schedule($entry);
+                $displayGroup  = display_group($entryId);
+                $groupEntries  = display_groupEntries($entryId);
 
-                    $displayGroup = display_group($entryId);
-                    if ($displayGroup!='') { ?>
-                        <div class="group-entry"><?php echo $displayGroup; ?></div><?php
-                    }
-
-                    $groupEntries = display_groupEntries($entryId);
-                    if ($groupEntries) { ?>
-                        <div class="group-entries"><?php echo $groupEntries; ?></div><?php 
-                    }
+                if( $entrySchedule != ''    || 
+                    !empty($registerLink)   ||
+                    !empty($viewNow)        ||
+                    $displayGroup!=''       ||
+                    $groupEntries) {
                     ?>
-                </div>                
+                    <div class="entryInfo">
+                        <?php
+                        //display schedule/location information if there is any
+                        echo $entrySchedule; 
+                        if (!empty($registerLink)) {
+                            ?>
+                            <a href="<?php echo $registerLink; ?>" class="btn universal-btn-red" style="margin-top:10px;">Register Here</a>
+                            <?php
+                        }
+                        if (!empty($viewNow)) {
+                            ?>
+                            <a href="<?php echo $viewNow; ?>" class="btn universal-btn-red" style="margin-top:10px;">Watch Live</a>
+                        <?php 
+                        }                        
+
+                        if ($displayGroup!='') { ?>
+                            <div class="group-entry"><?php echo $displayGroup; ?></div><?php
+                        }
+                        
+                        if ($groupEntries) { ?>
+                            <div class="group-entries"><?php echo $groupEntries; ?></div><?php 
+                        }
+                        ?>
+                    </div>  
+                    <?php
+                }
+                ?>                
+                              
             </div>
         </div>  <!-- END SIDEBAR -->
     </div>

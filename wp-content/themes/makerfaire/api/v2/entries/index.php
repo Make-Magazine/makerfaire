@@ -390,6 +390,12 @@ function fieldOutput($fieldID, $entry, $field_array, $form, $arg = '') {
         $label = '';
         $value = '';
         //$value = getAddEntries($entry[98], $entry['id']);
+        break;
+      case 'public_entry_page':
+        $type   = 'html';
+        $label  = '';
+        $value  = '<a href="/maker/entry/'.$entry['id'].'" target="_none">Public Entry Page</a>';
+        break;
     }
   }
   if ($arg == 'no_label')  $label = '';
@@ -424,17 +430,7 @@ function getAddEntries($email, $currEntryID) {
     '  AND entry_id != ' . $currEntryID . '
                           GROUP BY entry_id
                           ORDER BY entry_id');
-/*echo 'SELECT  *,
-(SELECT meta_value FROM wp_gf_entry_meta detail2 WHERE detail2.entry_id = wp_gf_entry_meta.entry_id AND meta_key = 151 ) as projectName,
-(SELECT meta_value FROM wp_gf_entry_meta detail2 WHERE detail2.entry_id = wp_gf_entry_meta.entry_id AND meta_key = 303 ) as status,
-(SELECT status FROM wp_gf_entry WHERE wp_gf_entry.id = wp_gf_entry_meta.entry_id) as lead_status
-FROM wp_gf_entry_meta
-JOIN wp_gf_form on wp_gf_form.id = wp_gf_entry_meta.form_id
-WHERE meta_value = "' . $email . '"' .
-'  AND entry_id != ' . $currEntryID . '
-GROUP BY entry_id
-ORDER BY entry_id';
-die();*/
+                          
   foreach ($results as $addData) {
     $outputURL = admin_url('admin.php') . "?page=gf_entries&view=entry&id=" . $addData->form_id . '&lid=' . $addData->entry_id;
     $addEntriesCnt++;
