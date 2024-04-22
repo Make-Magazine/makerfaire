@@ -331,8 +331,8 @@ function buildMakerData($lead, $form_id) {
         'role' => 'contact'
     );
 
-    // First Check if this is a group or one or more makers    
-    $isGroup = (isset($lead['105']) && strpos($lead['105'], 'group') !== false ? true : false);                        
+    // First Check if this is a group or one or more makers        
+    $isGroup = (stripos($lead['105'], 'group') !== false || stripos($lead['105'], 'team') !== false?true:false);                     
 
     if($isGroup){
         $makerArray[] = array(

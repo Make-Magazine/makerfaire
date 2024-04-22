@@ -627,9 +627,8 @@ function getMakerList($entryID, $faireID) {
         }
 
         if (isset($fieldData['105'])) {
-            $whoListed = strtolower($fieldData['105']);
-            $isGroup = false;
-            $isGroup = (strpos($whoListed, 'group') !== false);
+            $whoListed = strtolower($fieldData['105']);                        
+            $isGroup = (stripos($whoListed, 'group') !== false || stripos($whoListed, 'team') !== false?true:false);
             $isOneMaker = false;
             $isOneMaker = (strpos($whoListed, 'one') !== false);
 

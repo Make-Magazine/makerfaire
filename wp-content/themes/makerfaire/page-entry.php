@@ -647,7 +647,7 @@ function getMakerInfoLegacy($entry) {
     $displayType = (isset($entry['105']) ? $entry['105'] : '');
 
     $isGroup = false;
-    $isGroup = (stripos($displayType, 'group') !== false || stripos($displayType, 'team') !== false);
+    $isGroup = (stripos($displayType, 'group') !== false || stripos($displayType, 'team') !== false?true:false);
 
     $makers = array();
     //set maker information
