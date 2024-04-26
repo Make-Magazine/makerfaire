@@ -307,7 +307,7 @@ class GFRMTHELPER {
      *    R E P O R T
      *
      */
-    //Write to the change report if this is a payment form or if this is an update thru MAT or admin resources tab
+    //Write to the change report if this is a payment form or if this is an update thru maker Portal or admin resources tab
     if($type=='update' || $form_type == 'Payment'){
       if(!empty($chgRPTins))  updateChangeRPT($chgRPTins);
     }
@@ -540,7 +540,7 @@ class GFRMTHELPER {
     $isGroup    = false; //default to false
     $isOneMaker = true;
     if(isset($lead['105'])  && $lead['105']!= ''){
-      $isGroup    = (strpos($lead['105'], 'group')  !== false ? true:false);
+      $isGroup = (stripos($lead['105'], 'group') !== false || stripos($lead['105'], 'team') !== false?true:false);
       $isOneMaker = (strpos($lead['105'], 'One')    !== false ? true:false);
     }
 

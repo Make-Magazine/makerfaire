@@ -81,8 +81,8 @@ if ($type == 'project') {
     $app = array();
     // check the project type (field 105 - Who would you like listed as the maker of the project?).
     $isGroup    = false; //default to false
-    if(isset($row['projType'])  && $row['projType']!= ''){
-      $isGroup    = (strpos($row['projType'], 'group')  !== false ? true:false);
+    if(isset($row['projType'])  && $row['projType']!= ''){      
+      $isGroup = (stripos($row['projType'], 'group') !== false || stripos($row['projType'], 'team') !== false?true:false);
     }
 
     // if the project is marked as 'A group or association', do not pass this to makershare
