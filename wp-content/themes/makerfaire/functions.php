@@ -116,6 +116,25 @@ function load_scripts() {
                 'wp_user_memlevel' => isset($auth0_user_data->membership_level) ? $auth0_user_data->membership_level : "",
             )
     );
+    //VUE files for Maker Portal
+    if (is_page('maker-portal')) {           
+        //the rest of the site uses bootstrap 3, for this page to work we need bootstrap 4
+        wp_dequeue_style('make-bootstrap');
+        wp_dequeue_style('make-bootstrapdialog');        
+
+        //<!-- Load required Bootstrap and BootstrapVue CSS -->
+        wp_enqueue_style('vue-style', "https://unpkg.com/bootstrap/dist/css/bootstrap.min.css");
+        wp_enqueue_style('bs-vue-style', "https://unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.min.css");
+
+        //<!-- Load polyfills to support older browsers -->
+        wp_enqueue_script('polyfill', "https://polyfill.io/v3/polyfill.min.js?features=es2015%2CIntersectionObserver");
+
+        //<!-- Load Vue followed by BootstrapVue -->
+        wp_enqueue_script('vue-js', "https://unpkg.com/vue@2.6.12/dist/vue.min.js", array(),'',true);
+        wp_enqueue_script('bs-vue-js', "https://unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.min.js", array('vue-js'),'',true);
+        wp_enqueue_script('axios', "https://unpkg.com/axios@1.6.8/dist/axios.min.js",array('vue-js'),'',true);
+        wp_enqueue_script('maker-portal', get_stylesheet_directory_uri() . "/js/min/maker-portal.min.js", array('axios'),'',true);
+    }
 }
 
 add_action('wp_enqueue_scripts', 'load_scripts');
@@ -466,7 +485,7 @@ add_action('init', function () {
 
 
 function child_remove_page_templates( $page_templates ) {        
-    unset( $page_templates['page-manage-entries.php'] );
+    unset( $page_templates['page-maker-portal.php'] );
     unset( $page_templates['page-entry.php'] );
 
     unset( $page_templates['404.php'] );

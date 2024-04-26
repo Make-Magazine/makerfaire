@@ -1,6 +1,6 @@
 {
    "name": "makerfaire",
-   "version": "4.33.670",
+   "version": "4.33.674",
    "description": "Maker Faire",
    "main": "",
    "private": true,
@@ -49,6 +49,8 @@
       "postjs:transpile:map": "npm run js:map:uglify",
       "js:map:uglify": "uglifyjs js/mf-map/mf-map-src-es5/mf-map-src.js -o js/mf-map/min/mf-map.min.js -c -m --source-map \"root='../../../', url='mf-map.min.js.map'\"",
       "onchange:vue:map": "onchange './js/mf-map/mf-map-src.js' -- npm run js:transpile:map",
+      "onchange:js:vue": "onchange 'js/vue/*.js' -- npm run js:vue:uglify",
+      "js:vue:uglify": "uglifyjs js/vue/*.js -o js/min/maker-portal.min.js -c -m --source-map \"root='../../', url='vue.min.js.map'\"",
       "build": "npm-run-all js:**:uglify js:transpile:map less:**:compile concat:**:css",
       "build:cachebust": "npm-run-all cachebust:update js:**:uglify js:transpile:map less:**:compile concat:**:css",
       "dev": "npm-run-all build -p onchange:js:** onchange:vue:map onchange:less:**"

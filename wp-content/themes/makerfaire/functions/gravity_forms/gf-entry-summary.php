@@ -949,8 +949,9 @@ function entryResources($lead, $html=TRUE) {
 
 function entryTicketing($lead, $format = 'admin') {
     global $wpdb;
-    $return = 0;
+    $return = '';
     $entry_id = $lead['id'];
+    
     $sql = 'select eb_entry_access_code.*, eb_eventToTicket.title, eb_eventToTicket.subtitle,'
             . ' (SELECT EB_event_id FROM `eb_event` where eb_event.ID = eb_eventToTicket.eventID) as event_id'
             . ' from eb_entry_access_code,eb_eventToTicket'

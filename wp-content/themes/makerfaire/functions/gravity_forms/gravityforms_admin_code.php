@@ -37,7 +37,7 @@ function my_custom_form_setting($settings, $form) {
       </td>
     </tr>';
 
-   // Add MAT message
+   // Add Maker Portal message
    $mat_message = rgar($form, 'mat_message');
    $mat_array['mat_message'] = '
     <tr><th>Messaging</th>
@@ -67,7 +67,7 @@ function my_custom_form_setting($settings, $form) {
 
    //place MAT section after Form Basics
    $newSettings = array_slice($settings, 0, 1, true) +
-           array("MAT" => $mat_array) +
+           array("Maker Portal" => $mat_array) +
            array_slice($settings, 1, count($settings) - 1, true);
    return $newSettings;
 }

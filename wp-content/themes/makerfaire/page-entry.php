@@ -195,7 +195,7 @@ $sharing_cards->canonical_url = $canonical_url;
 $sharing_cards->set_values();
 get_header();
 
-/* Lets check if we are coming from the MAT tool -
+/* Lets check if we are coming from the Maker Portal -
  * if we are, and user is logged in and has access to this record
  *   Display edit functionality
  */
@@ -885,13 +885,13 @@ function displayEntryFooter() {
         $backlink = ($mtmPage && isset($mtmPage->ID) ? get_permalink($mtmPage->ID) : '');
         $backMsg = 'See all ' . $faire_year . ' makers';
 
-        //overwrite the backlink to send makers back to MAT if $makerEdit = true
+        //overwrite the backlink to send makers back to the Maker Portal if $makerEdit = true
         if ($makerEdit) {
-            $backlink = "/manage-entries/";
+            $backlink = "/maker-portal/";
             $backMsg = 'Back to Your Maker Faire Portal';
         }    
         
-        if (($mtmPage && isset($mtmPage->post_status) && $mtmPage->post_status == 'publish') || $backlink == "/manage-entries/") {
+        if (($mtmPage && isset($mtmPage->post_status) && $mtmPage->post_status == 'publish') || $backlink == "/maker-portal/") {
             $return .= '<div class="faireAction-box">
 		            		<a class="btn universal-btn" href="' . $backlink . '"><h4>' . $backMsg . '</h4></a>
 						</div>';
