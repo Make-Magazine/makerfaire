@@ -119,8 +119,8 @@ function load_scripts() {
     //VUE files for Maker Portal
     if (is_page('maker-portal')) {           
         //the rest of the site uses bootstrap 3, for this page to work we need bootstrap 4
-        wp_dequeue_style('make-bootstrap');
-        wp_dequeue_style('make-bootstrapdialog');        
+        //wp_dequeue_style('make-bootstrap');
+        //wp_dequeue_style('make-bootstrapdialog');                
 
         //<!-- Load required Bootstrap and BootstrapVue CSS -->
         wp_enqueue_style('vue-style', "https://unpkg.com/bootstrap/dist/css/bootstrap.min.css");
@@ -130,8 +130,9 @@ function load_scripts() {
         wp_enqueue_script('polyfill', "https://polyfill.io/v3/polyfill.min.js?features=es2015%2CIntersectionObserver");
 
         //<!-- Load Vue followed by BootstrapVue -->
+        wp_enqueue_script('bootstrap',"https://unpkg.com/bootstrap@4.6.1/dist/js/bootstrap.min.js", array(),'',true);
         wp_enqueue_script('vue-js', "https://unpkg.com/vue@2.6.12/dist/vue.min.js", array(),'',true);
-        wp_enqueue_script('bs-vue-js', "https://unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.min.js", array('vue-js'),'',true);
+        wp_enqueue_script('bs-vue-js', "https://unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.min.js", array('vue-js','bootstrap'),'',true);
         wp_enqueue_script('axios', "https://unpkg.com/axios@1.6.8/dist/axios.min.js",array('vue-js'),'',true);
         wp_enqueue_script('maker-portal', get_stylesheet_directory_uri() . "/js/min/maker-portal.min.js", array('axios'),'',true);
     }

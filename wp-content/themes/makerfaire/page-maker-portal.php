@@ -21,8 +21,10 @@ get_header();
   .card {
     box-shadow: 0 10px 20px -5px rgba(0, 0, 0, .5);
   }
+
+  .card-body {max-width:100%}
 </style>
-<div id="manageEntries" style="width:95%; margin: 35px auto;">
+<div id="manageEntries" style="width:95%; margin: 35px auto;" class="maker-portal">
   <input type="hidden" id="user_email" value="<?php echo $current_user->user_email; ?>" />
   <div class="row">
     <h1 style="text-align:center">Hello <?php echo $current_user->user_email; ?></h1>
@@ -30,18 +32,19 @@ get_header();
     <h4 id="loadingMsg">Please wait while we retrieve your submitted entries.</h4>
     <div v-for="(faire, faire_name) in entries" style="margin-bottom:50px">
       <h2>{{faire_name}} Entries</h2>
+
       <b-card :id="entry.project_id" v-for="entry in faire.entries" :key="entry.project_id" style="margin-bottom:50px;">
         <input type="hidden" name="entry_info_entry_id" :value=entry.project_id />
         <b-row fluid>
           <b-col md="3" sm="12">
             <b-img-lazy thumbnail fluid :src="entry.photo" :alt="entry.project_name"></b-img>
           </b-col>
-          <b-col md="9" sm="12" style="display:flex; flex-direction:column">
-            <b-row>
+          <b-col md="9" sm="12">
+            <b-row align-v="baseline" align-h="between">
               <b-col md="8" sm="12">
                 <h3>{{entry.project_name}}</h3>
               </b-col>
-              <b-col md="2" sm="5"><span :class="'status_'+entry.project_id">{{entry.status}}</span></b-col>
+              <b-col><span :class="'status_'+entry.project_id">{{entry.status}}</span></b-col>
               <b-col md="2" sm="5" style="color: #ccc;">{{entry.project_id}}</b-col>
             </b-row>
             <b-row> <!-- Link Row -->
@@ -66,64 +69,27 @@ get_header();
               </b-col>
 
             </b-row>
-            <b-row style="padding-top:20px"><!-- MAT messaging -->
-              <b-col sm="11" style="border: thin solid grey; padding: 10px">
-                
-                  <div style="text-align:center" v-html='faire.maker_messaging'></div>
-                
+            <b-row style="padding:20px 10px;"><!-- MAT messaging -->
+              <b-col sm="12" style="border: thin solid grey; padding: 10px">
+                <div style="text-align:center" v-html='faire.maker_messaging'></div>
               </b-col>
             </b-row>
 
             <div style="margin-top: auto; padding-top: 15px; font-size: 20px">
-              <hr />
-              <b-row><!-- Tickets/Tasks/Manage-->
-                <b-col lg="4" md="6" sm="12"><!-- Tasks - This should only show for current faire -->
+              <b-row align-h="between"><!-- Tickets/Tasks/Manage-->
+                <b-col><!-- Tasks - This should only show for current faire -->
                   <span v-if="entry.tasks.toDo.length || entry.tasks.done.length">
-                  <b-button :id="'entry-tasks-'+entry.project_id" variant="primary">Using slots</b-button>
-                  <b-popover :target="'entry-tasks-'+entry.project_id" triggers="click">
-                    tasks here
-                  </b-popover>
-                  <!--
-                    <button type="button" 
-                      class="btn btn-default btn-no-border notifications-button toggle-popover" 
-                      onclick="showPopover()">
-                      TASKS
+                    <b-button v-b-tooltip.hover title="My Tasks" :id="'entry-tasks-'+entry.project_id" variant="primary" class="notifications-button">
+                      <i class="fas fa-tasks"></i>
                       <div class="notification-counter toggle-popover" data-toggle="popover" :data-count="entry.tasks.toDo.length">{{entry.tasks.toDo.length}}</div>
-                    </button>
-                    <div class="popover-content hidden">
-                      <div class="manage-entry-popover row">
-                        Task data here
-                        
-                        <b-row v-for="toDo in entry.tasks.toDo">
-                          <b-col>
-                            <div class="manage-links">
-                              <a target="_blank" :href="toDo.action_url">{{toDo.description}}</a>
-                            </div>
-                          </b-col>
-                          <b-col>
-                            <span class="todoTasks" style="color:red">
-                              <i class="fas fa-arrow-right" aria-hidden="true"></i>To Do
-                            </span>
-                          </b-col>
-                        </b-row>
-                        <b-row v-for="done in entry.tasks.done">
-                          <b-col>{{done.description}}</b-col>
-                          <b-col>
-                            <span class="doneTasks" style="color:green">
-                              <i class="fa fa-check" aria-hidden="true"></i>Done
-                            </span>
-                          </b-col>
-                        </b-row>
-                        
-                    <b-button v-b-toggle="'entry-tasks-'+entry.project_id" variant="outline-primary">
-                      My Tasks <span class="notification-counter" style="color: #fff; background-color: red; width: 1.5em; border-radius: 50%; height: 1.5em; display: inline-block; line-height: 1.5em;">{{entry.tasks.toDo.length}}</span>
                     </b-button>
 
-                    <b-collapse :id="'entry-tasks-'+entry.project_id" class="mt-2">
-                      <template #title>Tasks</template>
+                    <b-popover ref="popover" :target="'entry-tasks-'+entry.project_id" title="My Tasks">
                       <b-row v-for="toDo in entry.tasks.toDo">
                         <b-col>
-                          <a target="_blank" :href="toDo.action_url">{{toDo.description}}</a>
+                          <div class="manage-links">
+                            <a target="_blank" :href="toDo.action_url">{{toDo.description}}</a>
+                          </div>
                         </b-col>
                         <b-col>
                           <span class="todoTasks" style="color:red">
@@ -139,19 +105,19 @@ get_header();
                           </span>
                         </b-col>
                       </b-row>
-
-                    </b-collapse>
-                      </div>
-                    </div>
-                  </span>-->
-
+                    </b-popover>
+                  </span>
                 </b-col>
-                <b-col lg="6" md="6" sm="12"><!-- tickets - This should only show for current faire -->
+
+                <b-col><!-- tickets - This should only show for current faire -->
                   <span v-if="entry.tickets.length">
-                    <div v-b-tooltip.hover title="Get My Entry Passes" v-b-toggle="'entry-tickets-'+entry.project_id">
+                    <b-button v-b-tooltip.hover title="Get My Tickets" :id="'entry-tickets-'+entry.project_id" variant="primary" class="notifications-button">
                       <i class="fas fa-ticket"></i>
-                    </div>
-                    <b-collapse :id="'entry-tickets-'+entry.project_id" class="mt-2">
+                    </b-button>
+
+                    <b-popover ref="popover" :target="'entry-tickets-'+entry.project_id" title="My Tickets">
+
+                      <!--<b-collapse :id="'entry-tickets-'+entry.project_id" class="mt-2">-->
 
                       <b-row v-for="ticket in entry.tickets">
                         <b-col cols="10">
@@ -167,20 +133,24 @@ get_header();
                         </b-col>
                       </b-row>
 
-                    </b-collapse>
+                      <!--</b-collapse>-->
+                    </b-popover>
                 </b-col>
-                <b-col md="12" lg="2"><!-- Manage Entry-->
-                  <div v-b-tooltip.hover title="Manage My Entry" v-b-toggle="'entry-manage-'+entry.project_id">
+                <b-col cols="1" align-self="end"><!-- Manage Entry-->
+                  <b-button v-b-tooltip.hover title="Manage My Entry" :id="'entry-manage-'+entry.project_id" variant="primary" class="notifications-button">
                     <i class="fas fa-cog"></i>
-                  </div>
+                  </b-button>
 
-                  <b-collapse :id="'entry-manage-'+entry.project_id" class="mt-2">
-                    Cancel My Entry
-                    <b-col md="auto" sm="12"><a target="_blank" :href="entry.gv_edit_link"><i class="fas fa-edit" aria-hidden="true"></i>Edit Submitted Info</a></b-col>
+                  <!--<b-collapse :id="'entry-manage-'+entry.project_id" class="mt-2">-->
+                  <b-popover ref="popover" :target="'entry-manage-'+entry.project_id" title="Manage My Entry">              
+                    <span style="color:red">X</span> <a href="#cancelEntry" data-toggle="modal" :data-entry-id="entry.project_id" :data-projName="entry.project_name">Cancel Entry</a>
+                    <br/>
+                    <a target="_blank" :href="entry.gv_edit_link"><i class="fas fa-edit" aria-hidden="true"></i>Edit Submitted Info</a>
 
-                    <b-col md="auto" sm="12"><a href="/bay-area/logistics-information/?ep_token="><i class="fas fa-edit" aria-hidden="true"></i>Manage Logistics Info</a></b-col>
-                    <b-col md="auto" sm="12"><a href="/bay-area/public-information/?ep_token="><i class="fas fa-edit" aria-hidden="true"></i>Manage Public Info</a></b-col>
-                  </b-collapse>
+                    <!--<b-col md="auto" sm="12"><a href="/bay-area/logistics-information/?ep_token="><i class="fas fa-edit" aria-hidden="true"></i>Manage Logistics Info</a></b-col>
+                    <b-col md="auto" sm="12"><a href="/bay-area/public-information/?ep_token="><i class="fas fa-edit" aria-hidden="true"></i>Manage Public Info</a></b-col>-->
+                    <!--</b-collapse>-->
+                  </b-popover>
 
                 </b-col>
 
@@ -205,4 +175,27 @@ get_header();
     </div>
   </div>
 </div>
+<!-- Modal to cancel entry -->
+<div class="modal" id="cancelEntry">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        <h4 class="modal-title">Cancel <span id="projName"></span>, Exhibit ID: <span id="cancelEntryID" name="entryID"></span></h4>
+      </div>
+      <div class="modal-body">
+        <div id="cancelText">
+          <p>Sorry you can't make it. Why are you canceling?</p><br />
+          <textarea rows="4" cols="50" name="cancelReason"></textarea>
+        </div>
+        <span id="cancelResponse"></span><br />
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" id="submitCancel">Submit</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <?php get_footer(); ?>

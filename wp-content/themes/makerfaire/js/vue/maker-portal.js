@@ -21,11 +21,10 @@ new Vue({
             document.getElementById("loadingMsg").innerHTML = $loadingMsg;
         }
     },
-    methods: {
-        onOpen(e) {
-            this.id = e.target.id;
-            this.$root.$emit('bv::show::popover',e.target.id);
-          },
+    methods: {        
+        showDialog: function () {
+            openDialog();
+        },
     },
     mounted() {
         axios
