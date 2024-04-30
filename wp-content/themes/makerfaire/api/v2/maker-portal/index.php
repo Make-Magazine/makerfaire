@@ -68,9 +68,7 @@ function getAllEntries($email, $formID = '', $page = '', $years = '') {
     //Maker Portal messaging    
     $text = GFCommon::replace_variables(rgar($form, 'mat_message'), $form, array(), false, false);
     $text = do_shortcode($text); //process any conditional logic  
-
-    $return['data'][$faire_name] = array('faire_end_dt' => $faire_end_dt, 'maker_messaging' => $text);
-
+    
     //get entry information
     $entries         = GFAPI::get_entries($formID, $search_criteria, $sorting, $paging, $total_count);
 
@@ -80,6 +78,7 @@ function getAllEntries($email, $formID = '', $page = '', $years = '') {
       $field_array[$field['id']] = $field;
     }
 
+    $return_entries = array();
     foreach ($entries as $entry) {
       //if group, use the group name, else use the main contact name
       if (strpos($entry['105'], 'group')  !== false) {
@@ -114,7 +113,7 @@ function getAllEntries($email, $formID = '', $page = '', $years = '') {
       $GVeditLink = do_shortcode('[gv_entry_link action="edit" return="url" view_id="687824" entry_id="'.$entry['id'].'"]');
       //$GVeditLink = str_replace('/view/', '/', $GVeditLink);  //remove view slug from URL
 
-      $return['data'][$faire_name]['entries'][] = array(
+      $return_entries[] = array(
         'project_name'  => $entry['151'],
         'project_id'    => $entry['id'],
         'status'        => $entry['303'],
@@ -128,9 +127,18 @@ function getAllEntries($email, $formID = '', $page = '', $years = '') {
         'prime_cat'     => html_entity_decode(get_CPT_name($entry['320'])),
         'tasks'         => $maker->get_tasks_by_entry($entry['id']),
         'tickets'       => entryTicketing($entry, 'MAT'),
-        'gv_edit_link'  => $GVeditLink
+        'gv_edit_link'  => $GVeditLink,
+        'ep_token'      => (isset($entry['fg_easypassthrough_token'])?$entry['fg_easypassthrough_token']:'')
       );
     }
+
+    //set return data if there are entries found
+    if(!empty($return_entries)){
+      $return['data'][$faire_name] = 
+        array('faire_end_dt'    => $faire_end_dt, 
+              'maker_messaging' => $text,
+              'entries'         => $return_entries);    
+    }        
   }
   return $return;
 }

@@ -23,6 +23,9 @@ get_header();
   }
 
   .card-body {max-width:100%}
+  .tooltip {
+    top: -32px !important;
+  }
 </style>
 <div id="manageEntries" style="width:95%; margin: 35px auto;" class="maker-portal">
   <input type="hidden" id="user_email" value="<?php echo $current_user->user_email; ?>" />
@@ -30,7 +33,7 @@ get_header();
     <h1 style="text-align:center">Hello <?php echo $current_user->user_email; ?></h1>
 
     <h4 id="loadingMsg">Please wait while we retrieve your submitted entries.</h4>
-    <div v-for="(faire, faire_name) in entries" style="margin-bottom:50px">
+    <div v-for="(faire, faire_name) in faire_entries" style="margin-bottom:50px">
       <h2>{{faire_name}} Entries</h2>
 
       <b-card :id="entry.project_id" v-for="entry in faire.entries" :key="entry.project_id" style="margin-bottom:50px;">
@@ -146,8 +149,12 @@ get_header();
                     <span style="color:red">X</span> <a href="#cancelEntry" data-toggle="modal" :data-entry-id="entry.project_id" :data-projName="entry.project_name">Cancel Entry</a>
                     <br/>
                     <a target="_blank" :href="entry.gv_edit_link"><i class="fas fa-edit" aria-hidden="true"></i>Edit Submitted Info</a>
-
-                    <!--<b-col md="auto" sm="12"><a href="/bay-area/logistics-information/?ep_token="><i class="fas fa-edit" aria-hidden="true"></i>Manage Logistics Info</a></b-col>
+                    <span v-if="entry.ep_token!=''"> 
+                      <div>
+                      <a target="_blank" :href="'/bay-area/logistics-information/?ep_token='+entry.ep_token"><i class="fas fa-edit" aria-hidden="true"></i>Manage Logistics Info</a>
+                      </div>
+                    </span>  
+                    <!--<b-col md="auto" sm="12"></b-col>
                     <b-col md="auto" sm="12"><a href="/bay-area/public-information/?ep_token="><i class="fas fa-edit" aria-hidden="true"></i>Manage Public Info</a></b-col>-->
                     <!--</b-collapse>-->
                   </b-popover>

@@ -5,15 +5,15 @@ new Vue({
     el: '#manageEntries',
     data() {
         return {
-            entries: [],
+            faire_entries: [],
             pop2: false
         }
     },
     watch: {
         // when makers data has fully loaded from the axios call, this will run
-        entries: function () {
+        faire_entries: function () {
             //if no data was found for this user, prompt them to apply
-            if (this.entries.length === 0) {
+            if (this.faire_entries.length === 0) {
                 $loadingMsg = "I'm sorry. We could not find any entries for your email (" + email + ").<br/>Please submit one <a href='https://makerfaire.com/bay-area/apply'>HERE</a>";
             } else {
                 $loadingMsg = '';
@@ -29,7 +29,7 @@ new Vue({
     mounted() {
         axios
             .get('/query/?type=maker-portal&email=' + email)
-            .then(response => (this.entries = response.data.data));      
+            .then(response => (this.faire_entries = response.data.data));      
     },
     computed: {
 
@@ -37,7 +37,7 @@ new Vue({
     },
     filters: {
         count: function (res) {
-            var res = this.entries.length;
+            var res = this.faire_entries.length;
             return res;
         }
     }
