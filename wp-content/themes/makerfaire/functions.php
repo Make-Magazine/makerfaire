@@ -119,8 +119,8 @@ function load_scripts() {
     //VUE files for Maker Portal
     if (is_page('maker-portal')) {           
         //the rest of the site uses bootstrap 3, for this page to work we need bootstrap 4
-        //wp_dequeue_style('make-bootstrap');
-        //wp_dequeue_style('make-bootstrapdialog');                
+        wp_dequeue_style('make-bootstrap');
+        wp_dequeue_style('make-bootstrapdialog');                
 
         //<!-- Load required Bootstrap and BootstrapVue CSS -->
         wp_enqueue_style('vue-style', "https://unpkg.com/bootstrap/dist/css/bootstrap.min.css");
@@ -135,6 +135,7 @@ function load_scripts() {
         wp_enqueue_script('bs-vue-js', "https://unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.min.js", array('vue-js','bootstrap'),'',true);
         wp_enqueue_script('axios', "https://unpkg.com/axios@1.6.8/dist/axios.min.js",array('vue-js'),'',true);
         wp_enqueue_script('maker-portal', get_stylesheet_directory_uri() . "/js/min/maker-portal.min.js", array('axios'),'',true);
+        wp_localize_script('maker-portal', 'vueAjax', array('ajaxurl' => admin_url('admin-ajax.php')));
     }
 }
 

@@ -19,6 +19,7 @@ jQuery(document).ready(function() {
   });
 
   jQuery('#submitCancel').click(function() {
+    alert('click');
     //disable the submit button
     jQuery('#submitCancel').hide();
     //submit the cancellation via ajax

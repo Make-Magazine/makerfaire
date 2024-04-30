@@ -110,8 +110,7 @@ function getAllEntries($email, $formID = '', $page = '', $years = '') {
       $prelim_loc    = (isset($fieldArr['value']) && $fieldArr['value'] != '' ? implode(", ", $fieldArr['value']) : '');
 
       //GV edit link
-      $GVeditLink = do_shortcode('[gv_entry_link action="edit" return="url" view_id="687824" entry_id="'.$entry['id'].'"]');
-      //$GVeditLink = str_replace('/view/', '/', $GVeditLink);  //remove view slug from URL
+      $GVeditLink = do_shortcode('[gv_entry_link action="edit" return="url" view_id="687928" entry_id="'.$entry['id'].'"]');
 
       $return_entries[] = array(
         'project_name'  => $entry['151'],
@@ -131,14 +130,11 @@ function getAllEntries($email, $formID = '', $page = '', $years = '') {
         'ep_token'      => (isset($entry['fg_easypassthrough_token'])?$entry['fg_easypassthrough_token']:'')
       );
     }
-
-    //set return data if there are entries found
-    if(!empty($return_entries)){
-      $return['data'][$faire_name] = 
-        array('faire_end_dt'    => $faire_end_dt, 
-              'maker_messaging' => $text,
-              'entries'         => $return_entries);    
-    }        
+    
+    $return['data'][$faire_name] = 
+      array('faire_end_dt'    => $faire_end_dt, 
+            'maker_messaging' => $text,
+            'entries'         => $return_entries);    
   }
   return $return;
 }

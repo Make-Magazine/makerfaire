@@ -22,9 +22,20 @@ get_header();
     box-shadow: 0 10px 20px -5px rgba(0, 0, 0, .5);
   }
 
-  .card-body {max-width:100%}
+  .card-body {
+    max-width: 100%
+  }
+
   .tooltip {
     top: -32px !important;
+  }
+
+  .modal-title {
+    width: 100%;
+  }
+
+  #cancelText textarea {
+    width: 100%;
   }
 </style>
 <div id="manageEntries" style="width:95%; margin: 35px auto;" class="maker-portal">
@@ -33,9 +44,12 @@ get_header();
     <h1 style="text-align:center">Hello <?php echo $current_user->user_email; ?></h1>
 
     <h4 id="loadingMsg">Please wait while we retrieve your submitted entries.</h4>
-    <div v-for="(faire, faire_name) in faire_entries" style="margin-bottom:50px">
-      <h2>{{faire_name}} Entries</h2>
-
+    <div v-for="(faire, faire_name) in faire_entries" style="margin-bottom:50px">            
+      <h2 v-if="Date.now() < new Date(faire.faire_end_dt) || faire.entries.length!=0">{{faire_name}} Entries</h2>
+      <span v-if="Date.now() < new Date(faire.faire_end_dt) && faire.entries.length==0">
+        No projects found
+      </span>
+      
       <b-card :id="entry.project_id" v-for="entry in faire.entries" :key="entry.project_id" style="margin-bottom:50px;">
         <input type="hidden" name="entry_info_entry_id" :value=entry.project_id />
         <b-row fluid>
@@ -60,17 +74,16 @@ get_header();
                   <b>Programmed Entry Type(s):</b> {{entry.entry_type}}
                 </span>
               </b-col>
+
               <b-col>
-                <span class="editLink">
+                <span class="editLink" v-if="entry.status!='Cancelled'">
                   <a :href="'/maker/entry/'+entry.project_id">
                     <i class="fa fa-eye" aria-hidden="true"></i>
                     <span v-if="entry.status=='Accepted'">View My Public Page</span>
-                    <span v-else>Preview My Maker Page</span>
+                    <span v-else>Preview My Public Page</span>
                   </a>
                 </span>
-
               </b-col>
-
             </b-row>
             <b-row style="padding:20px 10px;"><!-- MAT messaging -->
               <b-col sm="12" style="border: thin solid grey; padding: 10px">
@@ -79,7 +92,7 @@ get_header();
             </b-row>
 
             <div style="margin-top: auto; padding-top: 15px; font-size: 20px">
-              <b-row align-h="between"><!-- Tickets/Tasks/Manage-->
+              <b-row align-h="between" v-if="entry.status!='Cancelled'"><!-- Tickets/Tasks/Manage Section-->
                 <b-col><!-- Tasks - This should only show for current faire -->
                   <span v-if="entry.tasks.toDo.length || entry.tasks.done.length">
                     <b-button v-b-tooltip.hover title="My Tasks" :id="'entry-tasks-'+entry.project_id" variant="primary" class="notifications-button">
@@ -144,23 +157,48 @@ get_header();
                     <i class="fas fa-cog"></i>
                   </b-button>
 
-                  <!--<b-collapse :id="'entry-manage-'+entry.project_id" class="mt-2">-->
-                  <b-popover ref="popover" :target="'entry-manage-'+entry.project_id" title="Manage My Entry">              
-                    <span style="color:red">X</span> <a href="#cancelEntry" data-toggle="modal" :data-entry-id="entry.project_id" :data-projName="entry.project_name">Cancel Entry</a>
-                    <br/>
-                    <a target="_blank" :href="entry.gv_edit_link"><i class="fas fa-edit" aria-hidden="true"></i>Edit Submitted Info</a>
-                    <span v-if="entry.ep_token!=''"> 
+                  <b-popover ref="popover" :target="'entry-manage-'+entry.project_id" title="Manage My Entry">
+                    <span v-if="entry.status !='Cancelled' && entry.status!='Rejected'">
+                      <p>
+                        <a href="#" v-b-modal="'cancelModal'+entry.project_id">
+                          <span style="color:red">
+                            <i class="fas fa-times"></i> Cancel Entry
+                          </span>
+                        </a>
+                      </p>
+                    </span>
+
+                    <p><a target="_blank" :href="entry.gv_edit_link"><i class="fas fa-edit" aria-hidden="true"></i>Edit Submitted Info</a></p>
+
+                    <!--<span v-if="entry.ep_token!=''"> 
                       <div>
                       <a target="_blank" :href="'/bay-area/logistics-information/?ep_token='+entry.ep_token"><i class="fas fa-edit" aria-hidden="true"></i>Manage Logistics Info</a>
                       </div>
-                    </span>  
+                    </span>  -->
                     <!--<b-col md="auto" sm="12"></b-col>
                     <b-col md="auto" sm="12"><a href="/bay-area/public-information/?ep_token="><i class="fas fa-edit" aria-hidden="true"></i>Manage Public Info</a></b-col>-->
-                    <!--</b-collapse>-->
                   </b-popover>
 
-                </b-col>
+                  <b-modal :id="'cancelModal'+entry.project_id" size="lg" :title="'Cancel '+entry.project_name+', Entry ID:'+entry.project_id">
+                    <template #modal-header="{ close }">
+                      <h5>"<span id="projName">{{entry.project_name}}</span>" Exhibit ID: <span id="cancelEntryID" name="entryID">{{entry.project_id}}</span></h5>
+                    </template>
 
+                    <div id="cancelText">
+                      <p>Are you sure you want to cancel?</p><br />
+                      <textarea rows="4" cols="50" name="cancelReason" placeholder="Please let us know why you are cancelling your Maker Faire entry"></textarea>
+                    </div>
+                    <span id="cancelResponse"></span><br />
+                    <template #modal-footer="{ ok, cancel }">
+                      <b-button size="sm" variant="outline" @click="cancel()">
+                        No, go back.
+                      </b-button>
+                      <b-button size="sm" variant="danger" @click="submitCancel('+entry.project_id+')">
+                        Yes, Cancel.
+                      </b-button>
+                    </template>
+                  </b-modal>
+                </b-col>
               </b-row>
             </div>
 
@@ -182,8 +220,9 @@ get_header();
     </div>
   </div>
 </div>
+
 <!-- Modal to cancel entry -->
-<div class="modal" id="cancelEntry">
+<!--<div class="modal" id="cancelEntry">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
@@ -203,6 +242,6 @@ get_header();
       </div>
     </div>
   </div>
-</div>
+</div>-->
 
 <?php get_footer(); ?>
