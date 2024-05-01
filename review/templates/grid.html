@@ -19,8 +19,8 @@
     <b-pagination v-if="filterBy.length>0" v-model="currentPage" 
         :total-rows="filterBy.length" 
         :per-page="perPage" 
-        prev-text="Prev" 
-        next-text="Next" 
+        prev-text="<" 
+        next-text=">" 
         aria-controls="Grid">
     </b-pagination>
 

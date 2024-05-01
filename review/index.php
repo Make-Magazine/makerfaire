@@ -21,20 +21,20 @@
     ?>
     <!-- Our application root element -->
     <div id="review" style="width:95%; margin: 35px auto;">
-        <button-counter></button-counter>
+        <!--<button-counter></button-counter>-->
         <b-row>
             <b-col align-self="center" cols="8">
                 <h2>Maker Faire Admin Review</h2>
             </b-col>
-            <b-col align-self="center" cols="4">
-                <select id="form_select" v-on:change="updateForm">
+            <b-col align-self="center" cols="4" class="text-right">
+                <select id="form_select" v-on:change="updateForm" text-right>
                     <?php
                     foreach ($form_list as $form_key => $form) {
                         echo '<option value="' . $form_key . '">' . $form . '</option>';
                     }
                     ?>
                 </select>
-                <b-button @click="updateForm" variant="outline-primary">Refresh Data</b-button>    
+                <b-button @click="updateForm" variant="outline-primary"><img src="/review/img/refresh-icon.png" title="Refresh Data" /></b-button>    
             </b-col>
         </b-row>
         
@@ -43,11 +43,20 @@
 
         <hr/>
         <b-row align-h="between">
+            <b-col cols="2">
+                {{filterBy.length.toLocaleString()}} Entries
+            </b-col>
             <b-col>
-                Found {{filterBy.length.toLocaleString()}} Results
+                <b-pagination v-if="filterBy.length>0" v-model="currentPage" 
+                    :total-rows="filterBy.length" 
+                    :per-page="perPage" 
+                    prev-text="<" 
+                    next-text=">" 
+                    aria-controls="Grid">
+                </b-pagination>
             </b-col>
             <b-col cols="2">
-                <div class="listGrid-toolbar">
+                <div class="listGrid-toolbar text-right">
                     <i class="bi bi-arrow-down-up" v-if="makers.length>0" @click="switchDateOrder" title="See Oldest" style="margin-right:5px;"></i>
                     <span class="listGrid-switch-iconGroup">
                         <i class="bi bi-list listGrid-switch-icon" v-bind:class="{ active: currentView=='list'}" aria-hidden="true" :title="currentView=='grid' ? 'switch to List View': 'List View'" v-on:click="switchToListView"></i>

@@ -1,4 +1,3 @@
-<b-pagination v-if="filterBy.length>0" v-model="currentPage" :total-rows="filterBy.length" :per-page="perPage" prev-text="Prev" next-text="Next"></b-pagination>
 <b-card no-body :id="'listView-' + maker.project_id" v-for="(maker, maker_id) in filterBy.slice((currentPage-1)*perPage,(currentPage-1)*perPage+perPage)" :key="'list-' + maker.project_id">
     <input type="hidden" name="entry_info_entry_id" :value=maker.project_id />
     <b-row class="header">
@@ -41,5 +40,5 @@
     </b-tabs>
 </b-card>
 
-<b-pagination v-if="filterBy.length>0" v-model="currentPage" :total-rows="filterBy.length" :per-page="perPage" prev-text="Prev" next-text="Next">
+<b-pagination v-if="filterBy.length>0" v-model="currentPage" :total-rows="filterBy.length" :per-page="perPage" prev-text="<" next-text=">">
 </b-pagination>
