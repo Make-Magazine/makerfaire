@@ -87,7 +87,8 @@ function updateMgmt(action, entryID) {
             }
         }
     } else if (action == 'update_entry_status') {
-        //data.entry_info_status_change = document.getElementById("entryStatus_" + entryID).value;
+        var updateStatus = document.getElementById("entryStatus_" + entryID).value;
+        data.append('entry_info_status_change', document.getElementById("entryStatus_" + entryID).value);
         var updMsgBox = 'updStatusMsg' + entryID;
     }
 
@@ -118,7 +119,7 @@ function updateMgmt(action, entryID) {
                     //find all checked flags
                     var displayStatus = document.getElementsByClassName("status_"+entryID);                    
                     for (var i = 0; i < displayStatus.length; i++) {
-                        displayStatus[i].innerHTML = data.entry_info_status_change;                       
+                        displayStatus[i].innerHTML = updateStatus;                       
                     }                    
                 }
             } else {
