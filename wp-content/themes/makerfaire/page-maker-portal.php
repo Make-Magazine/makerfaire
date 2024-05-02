@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Template Name: Maker Portal
  *
@@ -80,7 +79,7 @@ get_header();
                   <a :href="'/maker/entry/'+entry.project_id">
                     <i class="fa fa-eye" aria-hidden="true"></i>
                     <span v-if="entry.status=='Accepted'">View My Public Page</span>
-                    <span v-else>Preview My Public Page</span>
+                    <!--<span v-else>Preview My Public Page</span>-->
                   </a>
                 </span>
               </b-col>
@@ -220,28 +219,5 @@ get_header();
     </div>
   </div>
 </div>
-
-<!-- Modal to cancel entry -->
-<!--<div class="modal" id="cancelEntry">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-        <h4 class="modal-title">Cancel <span id="projName"></span>, Exhibit ID: <span id="cancelEntryID" name="entryID"></span></h4>
-      </div>
-      <div class="modal-body">
-        <div id="cancelText">
-          <p>Sorry you can't make it. Why are you canceling?</p><br />
-          <textarea rows="4" cols="50" name="cancelReason"></textarea>
-        </div>
-        <span id="cancelResponse"></span><br />
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default" id="submitCancel">Submit</button>
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-      </div>
-    </div>
-  </div>
-</div>-->
 
 <?php get_footer(); ?>
