@@ -174,7 +174,7 @@ get_header();
                       </p>
                     </span>
 
-                    <p><a target="_blank" :href="entry.gv_edit_link"><i class="fas fa-edit" aria-hidden="true"></i>Edit Submitted Info</a></p>
+                    <p><a :href="entry.gv_edit_link"><i class="fas fa-edit" aria-hidden="true"></i>Edit Submitted Info</a></p>
 
                     <!--<span v-if="entry.ep_token!=''"> 
                       <div>
