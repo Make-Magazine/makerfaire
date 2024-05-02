@@ -36,7 +36,22 @@ h3 {
     padding: 0px;
     margin: 10px 0px;
 }
-
+#wpadminbar {
+    z-index: 999 !important;
+}
+.form-select {
+    align-items: center;
+    display: flex;
+    justify-content: end;
+    gap: 10px;
+    #form_select {
+        height: 38px;
+    }
+}
+.filter-expand-wrap {
+    display: flex;
+    justify-content: end;
+}
 .filter-options {
     display: flex;
     justify-content: space-between;
@@ -168,11 +183,19 @@ h3 {
     }
 }
 
+.bi-arrow-repeat:before {
+    font-weight: 900 !important;
+}
 .pagination {
     display: flex;
     justify-content: center;
     width: 100%;
     padding: 0px;
+    .page-item:not(.active) {
+        button[role="menuitemradio"] {
+            display: none;
+        }
+    }
 }
 .card-deck .pagination {
     margin-top: 20px;

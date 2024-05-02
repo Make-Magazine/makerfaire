@@ -26,7 +26,7 @@
             <b-col align-self="center" cols="8">
                 <h2>Maker Faire Admin Review</h2>
             </b-col>
-            <b-col align-self="center" cols="4" class="text-right">
+            <b-col align-self="center" cols="4" class="text-right form-select">
                 <select id="form_select" v-on:change="updateForm" text-right>
                     <?php
                     foreach ($form_list as $form_key => $form) {
@@ -34,7 +34,7 @@
                     }
                     ?>
                 </select>
-                <b-button @click="updateForm" variant="outline-primary"><img src="/review/img/refresh-icon.png" title="Refresh Data" /></b-button>    
+                <b-button @click="updateForm" variant="outline-primary" v-b-tooltip.hover title="Refresh Data"><i class="bi bi-arrow-repeat"></i></b-button>    
             </b-col>
         </b-row>
         
