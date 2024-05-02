@@ -36,6 +36,12 @@ get_header();
   #cancelText textarea {
     width: 100%;
   }
+
+  #cancelText ::placeholder { 
+    color: #848484;  
+    font-style: italic;
+  }
+
 </style>
 <div id="manageEntries" style="width:95%; margin: 35px auto;" class="maker-portal">
   <input type="hidden" id="user_email" value="<?php echo $current_user->user_email; ?>" />
@@ -75,11 +81,12 @@ get_header();
               </b-col>
 
               <b-col>
-                <span class="editLink" v-if="entry.status=='Accepted'">
-                  <a target="_blank" :href="'/maker/entry/'+entry.project_id">
+                <span class="editLink" v-if="entry.status =='Accepted'">
+                <!--<span class="editLink" v-if="entry.status !='Cancelled' && entry.status!='Rejected'">-->
+                  <a target="_blank" :href="'/maker/entry/'+entry.project_id+'/edit/'">
                     <i class="fa fa-eye" aria-hidden="true"></i>
                     <span v-if="entry.status=='Accepted'">View My Public Page</span>
-                    <!--<span v-else>Preview My Public Page</span>-->
+                    <span v-else>Preview My Public Page</span>
                   </a>
                 </span>
               </b-col>
