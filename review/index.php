@@ -57,14 +57,24 @@
             </b-col>
             <b-col cols="2">
                 <div class="listGrid-toolbar text-right">
-                    <i class="bi bi-arrow-down-up" v-if="makers.length>0" @click="switchDateOrder" title="See Oldest" style="margin-right:5px;"></i>
+                    <i class="bi bi-arrow-down-up" v-if="makers.length>0" @click="switchDateOrder" v-b-tooltip.hover title="See Oldest" style="margin-right:5px;"></i>
                     <span class="listGrid-switch-iconGroup">
-                        <i class="bi bi-list listGrid-switch-icon" v-bind:class="{ active: currentView=='list'}" aria-hidden="true" :title="currentView=='grid' ? 'switch to List View': 'List View'" v-on:click="switchToListView"></i>
-                        <i class="bi bi-grid listGrid-switch-icon" v-bind:class="{ active: currentView=='grid'}" :title="currentView=='list' ? 'switch to Grid View': 'Grid View'" aria-hidden="true" v-on:click="switchToGridView"></i>
+                        <i class="bi bi-list listGrid-switch-icon"  v-b-tooltip.hover v-bind:class="{ active: currentView=='list'}" aria-hidden="true" :title="currentView=='grid' ? 'Switch to List View': 'List View'" v-on:click="switchToListView"></i>
+                        <i class="bi bi-grid listGrid-switch-icon"  v-b-tooltip.hover v-bind:class="{ active: currentView=='grid'}" :title="currentView=='list' ? 'Switch to Grid View': 'Grid View'" aria-hidden="true" v-on:click="switchToGridView"></i>
                     </span>
                 </div>
             </b-col>
         </b-row>
+        <b-row align-h="between" v-if="selectedStatus!='' || selectedEntryType!='' || selectedPrimeCat!='' || selectedFlag!='' || selectedPrelimLoc!=''">
+            <b-col cols="12">Filters: 
+                <b-badge pill variant="primary" v-if="selectedStatus">{{selectedStatus.toString().trim()}}</b-badge>
+                <b-badge pill variant="primary" v-if="selectedEntryType">{{selectedEntryType.toString().trim()}}</b-badge>
+                <b-badge pill variant="primary" v-if="selectedPrimeCat">{{selectedPrimeCat.toString().trim()}}</b-badge>
+                <b-badge pill variant="primary" v-if="selectedFlag">{{selectedFlag.toString().trim()}}</b-badge>
+                <b-badge pill variant="primary" v-if="selectedPrelimLoc">{{selectedPrelimLoc.toString().trim()}}</b-badge>
+            </b-col>
+        </b-row>
+
 
         <div v-if="currentView=='grid'">
             <?php  include('templates/grid.html'); ?>

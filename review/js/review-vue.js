@@ -20,12 +20,13 @@ new Vue({
             toggler: false
         }
     },
-    /*
+    
     watch: {
         // when makers data has fully loaded from the axios call, this will run
         makers: function (makersLoaded, makersEmpty) {
+            instgrm.Embeds.process()
         }
-    },*/
+    },
     methods: {
         switchToListView: function (ev) {
             this.currentView = 'list';
@@ -51,6 +52,12 @@ new Vue({
         },
         showModal: function (img_class, image_id) {
             setLightBox(img_class, image_id);
+        },
+        processVimeo: function(url) {
+            var vimeoRegex = /(?:vimeo)\.com.*(?:videos|video|channels|)\/([\d]+)/i;
+            var parsed = url.match(vimeoRegex);
+
+            return "//player.vimeo.com/video/" + parsed[1];    
         },
         resetFilters: function () {
             this.searchQuery = "";
