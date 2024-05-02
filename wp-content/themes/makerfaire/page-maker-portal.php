@@ -47,7 +47,7 @@ get_header();
     <div v-for="(faire, faire_name) in faire_entries" style="margin-bottom:50px">            
       <h2 v-if="Date.now() < new Date(faire.faire_end_dt) || faire.entries.length!=0">{{faire_name}} Entries</h2>
       <span v-if="Date.now() < new Date(faire.faire_end_dt) && faire.entries.length==0">
-        No projects found
+        I'm sorry. We could not find any entries for your email.<br/>Please submit one <a href='https://makerfaire.com/bay-area/apply'>HERE</a>
       </span>
       
       <b-card :id="entry.project_id" v-for="entry in faire.entries" :key="entry.project_id" style="margin-bottom:50px;">
