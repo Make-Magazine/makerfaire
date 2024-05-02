@@ -8,8 +8,8 @@ new Vue({
             makers: [],
             currentView: urlParams.get('layout') ? urlParams.get('layout') : "grid",
             searchQuery: urlParams.get('search') ? urlParams.get('search') : "",
-            selectedStatus: '',
-            selectedPrimeCat: '',
+            selectedStatus: [],
+            selectedPrimeCat: [],
             selectedEntryType: [],
             selectedFlag: [],
             selectedPrelimLoc: [],
@@ -56,7 +56,6 @@ new Vue({
         processVimeo: function(url) {
             var vimeoRegex = /(?:vimeo)\.com.*(?:videos|video|channels|)\/([\d]+)/i;
             var parsed = url.match(vimeoRegex);
-
             return "//player.vimeo.com/video/" + parsed[1];    
         },
         resetFilters: function () {
