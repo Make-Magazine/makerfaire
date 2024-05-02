@@ -42,7 +42,7 @@
         <?php  include('templates/filters.html'); ?>        
 
         <hr/>
-        <b-row align-h="between">
+        <b-row align-h="between" class="admin-actions">
             <b-col cols="2">
                 {{filterBy.length.toLocaleString()}} Entries
             </b-col>
