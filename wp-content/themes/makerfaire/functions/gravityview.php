@@ -45,7 +45,7 @@ function gk_change_edit_entry_title( $previous_text = 'Edit Entry', $GV_object =
     return $previous_text;
   }
 }
-add_action('gravityview/template/before', 'set_gravityview_inline_edit_cookies');
+//add_action('gravityview/template/before', 'set_gravityview_inline_edit_cookies');
 
 /**
  * Set cookies toggling Inline Edit to on by default. Requires GravityView 2.0.
