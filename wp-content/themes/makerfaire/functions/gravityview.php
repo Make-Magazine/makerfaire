@@ -72,7 +72,3 @@ function set_gravityview_inline_edit_cookies( \GV\Template_Context $gravityview 
 	</script>
 <?php
 }
-// Prevent hidden fields from being output in HTML at all
-add_filter( 'gravityview/edit_entry/render_hidden_field', '__return_false' );
-// Prevent admin only fields from being output in HTML at all
-add_filter( 'gravityview/edit_entry/use_gf_admin_only_setting', TRUE );
