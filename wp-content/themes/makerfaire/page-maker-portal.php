@@ -75,8 +75,8 @@ get_header();
               </b-col>
 
               <b-col>
-                <span class="editLink" v-if="entry.status!='Cancelled'">
-                  <a :href="'/maker/entry/'+entry.project_id">
+                <span class="editLink" v-if="entry.status=='Accepted'">
+                  <a target="_blank" :href="'/maker/entry/'+entry.project_id">
                     <i class="fa fa-eye" aria-hidden="true"></i>
                     <span v-if="entry.status=='Accepted'">View My Public Page</span>
                     <!--<span v-else>Preview My Public Page</span>-->
