@@ -3,7 +3,7 @@
 /* Changes to gravity view for maker admin tool */
 
 //Maker Admin - add new fields in gravity view
-add_filter('gravityview_additional_fields','gv_add_faire',10,2);
+//add_filter('gravityview_additional_fields','gv_add_faire',10,2);
 function gv_add_faire($additional_fields){
   $additional_fields[] = array("label_text" => "Faire",        "desc"          => "Display Faire Name",
                                "field_id"   => "faire_name",   "label_type"    => "field",
@@ -24,7 +24,7 @@ function gv_add_faire($additional_fields){
 }
 
 //Maker Admin - populate new fields in gravity view
-add_filter('gform_entry_field_value','gv_faire_name',10,4);
+//add_filter('gform_entry_field_value','gv_faire_name',10,4);
 function gv_faire_name($display_value, $field, $entry, $form){
     global $wpdb;
 
@@ -70,7 +70,7 @@ function gv_my_update_message( $message, $view_id, $entry, $back_link ) {
 
     return $return;
 }
-add_filter( 'gravityview/edit_entry/success', 'gv_my_update_message', 10, 4 );
+//add_filter( 'gravityview/edit_entry/success', 'gv_my_update_message', 10, 4 );
 
 /* Maker Admin -
  * Customise the cancel(back) button link
@@ -92,7 +92,7 @@ function gv_my_edit_cancel_link( $back_link, $form, $entry, $view_id ) {
 
   return $return;   return str_replace( 'entry/'.$entry['id'].'/', '', $back_link );
 }
-add_filter( 'gravityview/edit_entry/cancel_link', 'gv_my_edit_cancel_link', 10, 4 );
+//add_filter( 'gravityview/edit_entry/cancel_link', 'gv_my_edit_cancel_link', 10, 4 );
 
 /* Used in maker portal, this function is called by ajax to allow a user to cancel
  * an entry and to send a notification */
