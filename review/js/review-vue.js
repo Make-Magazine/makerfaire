@@ -91,7 +91,7 @@ new Vue({
                 this.selectedPrimeCat || this.selectedEntryType ||
                 this.selectedFlag
             ) {
-                var searchValue     = this.searchQuery;
+                var searchValue     = this.searchQuery.toLowerCase();
                 var statusFilter    = this.selectedStatus;
                 var primeCatFilter  = this.selectedPrimeCat;
                 var entryTypeFilter = this.selectedEntryType;

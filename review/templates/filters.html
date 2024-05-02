@@ -1,20 +1,21 @@
 <b-row align-h="between">
-    <b-col align-self="center" cols="11">
+    <b-col cols="11">
         <b-input-group prepend="Search" class="mt-3">
             <b-form-input v-model="searchQuery" placeholder="Search..."></b-form-input>
             <b-input-group-append>
-                <b-button @click="resetFilters" variant="outline-primary">Reset All Filters</b-button>
+                <b-button @click="resetFilters" variant="outline-primary" v-b-tooltip.hover title="Reset Filters"><i class="bi bi-arrow-repeat font-bold"></i></b-button>
             </b-input-group-append>
         </b-input-group>
     </b-col>
-    <b-col align-self="center">
-        <b-button v-b-toggle.collapse-1 variant="outline-primary">
-            <span class="when-opened">
+    <b-col class="filter-expand-wrap">
+        <b-button v-b-toggle.collapse-1 variant="outline-primary" class="mt-3" v-b-tooltip.hover title="Expand Filter Menu">
+            <i class="bi bi-sliders"></i>
+            <!--<span class="when-opened">
                 Hide Filters
             </span>
             <span class="when-closed">
                 Show Filters
-            </span>
+            </span>-->
         </b-button>
     </b-col>
 </b-row>
