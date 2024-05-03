@@ -3,13 +3,15 @@
         <div v-if="field.value">
             <label class="fieldLabel">{{ field.label }}</label>
             <div class="image-wrapper" v-if="field.type === 'fileupload'">
-                <b-img-lazy thumbnail fluid :src="field.value" :alt="field.label"></b-img>
+                <embed v-if="field.value.includes('.pdf')" :src="field.value" width="600" height="500" alt="pdf" pluginspage="http://www.adobe.com/products/acrobat/readstep2.html">
+                <b-img-lazy v-else thumbnail fluid :src="field.value" :alt="field.label"></b-img>
             </div>
             <span v-else-if="field.type === 'multipleFiles'">
                 <b-container class="p-0">
                     <b-row>
                         <b-col fluid="sm" v-for="(image,image_id) in field.value">
-                            <img :class="maker.project_id+'-img'+tabKey+field_id" 
+                            <embed v-if="image.includes('.pdf')" :src="image" width="600" height="500" alt="pdf" pluginspage="http://www.adobe.com/products/acrobat/readstep2.html">
+                            <img v-else :class="maker.project_id+'-img'+tabKey+field_id" 
                                 @click="showModal(maker.project_id+'-img'+tabKey+field_id, image_id)"
                                 :id="maker.project_id+'-img-' +tabKey+field_id" 
                                 :src="image" 
