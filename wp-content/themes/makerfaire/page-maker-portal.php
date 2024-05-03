@@ -49,7 +49,7 @@ get_header();
     <h1 style="text-align:center">Hello <?php echo $current_user->user_email; ?></h1>
 
     <h4 id="loadingMsg">Please wait while we retrieve your submitted entries.</h4>
-    <div v-for="(faire, faire_name) in faire_entries" style="margin-bottom:50px">            
+    <div v-if="showData" v-for="(faire, faire_name) in faire_entries" style="margin-bottom:50px">            
       <h2 v-if="Date.now() < new Date(faire.faire_end_dt) || faire.entries.length!=0">{{faire_name}} Entries</h2>
       <span v-if="Date.now() < new Date(faire.faire_end_dt) && faire.entries.length==0">
         I'm sorry. We could not find any entries for your email.<br/>Please submit one <a href='https://makerfaire.com/bay-area/apply'>HERE</a>
@@ -106,7 +106,7 @@ get_header();
                       <div class="notification-counter toggle-popover" data-toggle="popover" :data-count="entry.tasks.toDo.length">{{entry.tasks.toDo.length}}</div>
                     </b-button>
 
-                    <b-popover ref="popover" :target="'entry-tasks-'+entry.project_id" title="My Tasks">
+                    <b-popover ref="popover" :target="'entry-tasks-'+entry.project_id" :id="'entry-tasks-'+entry.project_id" title="My Tasks">
                       <b-row v-for="toDo in entry.tasks.toDo">
                         <b-col>
                           <div class="manage-links">
@@ -163,10 +163,10 @@ get_header();
                     <i class="fas fa-cog"></i>
                   </b-button>
 
-                  <b-popover ref="popover" :target="'entry-manage-'+entry.project_id" title="Manage My Entry">
+                  <b-popover ref="popover" :target="'entry-manage-'+entry.project_id" :id="'manage-popover-'+entry.project_id" title="Manage My Entry">
                     <span v-if="entry.status !='Cancelled' && entry.status!='Rejected'">
                       <p>
-                        <a href="#" v-b-modal="'cancelModal'+entry.project_id">
+                        <a href="#" @click="cancelModal('cancelModal'+entry.project_id, 'manage-popover-'+entry.project_id)">
                           <span style="color:red">
                             <i class="fas fa-times"></i> Cancel Entry
                           </span>
@@ -193,13 +193,13 @@ get_header();
                     <div id="cancelText">
                       <p>Are you sure you want to cancel?</p><br />
                       <textarea rows="4" cols="50" name="cancelReason" placeholder="Please let us know why you are cancelling your Maker Faire entry"></textarea>
-                    </div>
-                    <span id="cancelResponse"></span><br />
+                    </div>                    
                     <template #modal-footer="{ ok, cancel }">
-                      <b-button size="sm" variant="outline" @click="cancel()">
+                      <span id="cancelResponse"></span><br />
+                      <b-button id="cancelButton" size="sm" variant="outline" @click="cancel()">
                         No, go back.
                       </b-button>
-                      <b-button size="sm" variant="danger" @click="submitCancel('+entry.project_id+')">
+                      <b-button id="submitButton" size="sm" variant="danger" @click="submitCancel(entry.project_id)">
                         Yes, Cancel.
                       </b-button>
                     </template>
@@ -211,17 +211,7 @@ get_header();
 
           </b-col>
         </b-row>
-        <!--
-        <b-row>
-          <b-col v-if="Date.now() < new Date(entry.faire_end_dt)">
-            <b-row>
-              <b-col>Current Faire</b-col>
-            </b-row>
-          </b-col>
-          <b-col v-if="Date.now() > new Date(entry.faire_end_dt)">
-            Past Faire
-          </b-col>
-        </b-row>              -->
+        
       </b-card>
     </div>
   </div>
