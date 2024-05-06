@@ -124,6 +124,7 @@
 			[/column]
 			[column]
 				[field]edit_status[/field]																		
+				[field]update_admin_button[/field]
 			[/column]
 		[/block]		
 		[block]
