@@ -315,6 +315,7 @@ function fieldOutput($fieldID, $entry, $field_array, $form, $arg = '') {
         $type  = 'notes';
         $label = '';
         $value = GFAPI::get_notes(array('entry_id' => $entry['id'], 'note_type' => 'user'), array( 'key' => 'id', 'direction' => 'DESC' ));
+        if($value=='') $value='&nbsp;';
         break;
         case 'notes_table':
           $type  = 'html';
