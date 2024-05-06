@@ -1,6 +1,17 @@
 var urlParams = new URLSearchParams(window.location.search);
 var formID = document.getElementById("form_select").value;
 
+/* Vue.use(VueRouter);
+const routes = [
+    { path: '/review'  }
+];
+const router = new VueRouter({
+    mode: 'history',
+    routes
+});
+router.replace({ path: '/review', redirect: '/review' })
+*/
+
 new Vue({
     el: '#review',
     data() {
@@ -17,7 +28,8 @@ new Vue({
             currentPage: 1,
             modalShow: false,
             CustomSource: '',
-            toggler: false
+            toggler: false,
+            //router: router
         }
     },
     
@@ -60,10 +72,11 @@ new Vue({
         },
         resetFilters: function () {
             this.searchQuery = "";
-            this.selectedStatus = '';
-            this.selectedPrimeCat = '';
+            this.selectedStatus = [];
+            this.selectedPrimeCat = [];
             this.selectedEntryType = [];
             this.selectedFlag = [];
+            this.selectedPrelimLoc = [];
         },
         filterCommaList: function(field){                
             filteredList = [];
@@ -107,6 +120,8 @@ new Vue({
                 var passEntryType   = true;
                 var passFlag        = true;
                 var passPrelimLoc   = true;
+
+                //this.router.push(searchValue).catch(()=>{});
 
                 return this.makers.filter(function (maker) {
                     //Entry Type

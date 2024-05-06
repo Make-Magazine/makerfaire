@@ -39,7 +39,10 @@
             </span>
 
             <span v-else-if="field.type === 'notes'" class="notes">
-                <b-list-group>
+                <div v-if="field.value='&nbsp;'">
+                    No Notes
+                </div>
+                <b-list-group v-else>
                     <b-list-group-item v-for="(note,i) in field.value" :key="maker_id+'-note-' + i">
                         <b-row>
                             <b-col cols="4">{{note.date_created}}</b-col>
