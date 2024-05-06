@@ -72,3 +72,33 @@ function set_gravityview_inline_edit_cookies( \GV\Template_Context $gravityview 
 	</script>
 <?php
 }
+
+add_filter( 'gravityview/edit_entry/form_fields', function ( $fields ) {
+	$view_id = GravityView_View::getInstance()->getViewId();
+
+	if ( $view_id !== 687928 ) { 
+		return $fields;
+	}
+
+	foreach ( $fields as &$field ) {
+		if ( 'email' === $field->type && $field->emailConfirmEnabled ) {
+			$field->emailConfirmEnabled = false;
+		}
+	}
+
+	return $fields;
+} );
+
+add_filter( 'gravityview/edit_entry/field_value', function ( $value, $field ) {
+	$view_id = GravityView_View::getInstance()->getViewId();
+
+	if ( $view_id !== 687928 ) { 
+		return $value;
+	}
+
+	if ( 'email' === $field->type && is_array( $value ) ) {
+		$value = implode( '', $value );
+	}
+
+	return $value;
+}, 10, 2 );
