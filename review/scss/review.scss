@@ -199,11 +199,7 @@ h3 {
     width: 100%;
     padding: 0px;
     margin-bottom: 0px;
-    .page-item:not(.active) {
-        button[role="menuitemradio"] {
-            display: none;
-        }
-    }
+
 }
 .card-deck .pagination {
     margin-top: 20px;
