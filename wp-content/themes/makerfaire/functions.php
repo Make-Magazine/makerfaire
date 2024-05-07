@@ -519,28 +519,3 @@ function child_remove_page_templates($page_templates) {
     return $page_templates;
 }
 add_filter('theme_page_templates', 'child_remove_page_templates');
-
-add_action( 'init', function() {
-	if ( ! class_exists( 'GFForms' ) ) {
-		return;
-	}
-	if ( GFForms::get_page() === 'form_list' ) {
-        error_log('sorting form list');
-		$params = array();
-
-		if ( ! isset( $_GET['sort'] ) ) {
-			$params = array(
-				'sort'    => 'id',
-				'dir'     => 'desc',
-				'orderby' => 'id',
-				'order'   => 'desc',
-			);
-		}		
-
-		if ( ! empty( $params ) ) {
-			wp_redirect( add_query_arg( $params ) );
-			exit;
-		}
-	}
-
-} );
