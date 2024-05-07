@@ -426,8 +426,7 @@ function getAddEntries($email, $currEntryID) {
     <tr>      
       <th>Record ID</th>
       <th>Project Name</th>
-      <th>Form Name</th>
-      <th>Form Type</th>
+      <th>Form Name</th>      
       <th>Status</th>
     </tr>
   </thead>';
@@ -458,8 +457,7 @@ function getAddEntries($email, $currEntryID) {
   
       $addEntries .= '<td><a target="_blank" href="' . $outputURL . '">' . $addData->entry_id . '</a></td>'
         . '<td>' . $addData->projectName . '</td>'
-        . '<td>'.$form['title'].'</td>'
-        . '<td>'.$form['form_type'].'</td>'
+        . '<td>'.$form['title'].'</td>'        
         . '<td>' . ($addData->lead_status == 'active' ? $addData->status : ucwords($addData->lead_status)) . '</td>'
         . '</tr>';
     }
