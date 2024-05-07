@@ -397,6 +397,13 @@ function fieldOutput($fieldID, $entry, $field_array, $form, $arg = '') {
         $label  = '';
         $value  = '<a href="/maker/entry/' . $entry['id'] . '" target="_none">Public Entry Page</a>';
         break;
+      case 'notifications_sent':
+        $type = 'notes';
+        $label = 'Notifications Sent';
+        $value = GFAPI::get_notes(array('entry_id' => $entry['id'], 'note_type' => 'notification'), array('key' => 'id', 'direction' => 'DESC'));
+        
+        break;
+
     }
   }
   if ($arg == 'no_label')  $label = '';
