@@ -63,12 +63,12 @@ function getAllEntries($formID = '', $page = '', $years = '') {
     preg_match_all("/\[tab_content\]\s*(.[\S\s]*?)\s*\[\/tab_content\]/", $tab, $tab_content_arr);
     $tab_content = array();
     //there should only be 1 tab content per tab
-    if ($tab_content_arr){      
+    if ($tab_content_arr) {
       $blocks = retrieve_blocks($tab_content_arr[1][0]);
       if (!empty($blocks)) {
         $tab_content['initial']['blocks'] = $blocks;
       }
-    }      
+    }
 
     //build the expand section
     preg_match_all("/\[expand\]\s*(.[\S\s]*?)\s*\[\/expand\]/", $tab, $expand_content_arr);
@@ -119,25 +119,25 @@ function getAllEntries($formID = '', $page = '', $years = '') {
                 $field_id = substr($field_id, 0, strpos($field_id, ":"));
               }
               $fieldOutput = fieldOutput($field_id, $entry, $field_array, $form, $arg);
-              if(!empty($fieldOutput))
+              if (!empty($fieldOutput))
                 $fieldData['field-' . $field_id] = $fieldOutput;
             }
-            if(!empty($fieldData))
+            if (!empty($fieldData))
               $columnData[$columnKey] = $fieldData; //write field data to columns
           }
-          if(!empty($columnData))
+          if (!empty($columnData))
             $blockData[$blockKey] = array('columns' => $columnData); //write column data to blocks
         }
-        if(!empty($blockData)){
+        if (!empty($blockData)) {
           $tabData[$tabkey]['tab_content'][$dataKey] = array('blocks' => $blockData); //write block data to tabs
-        }else{
+        } else {
           //since there is no data in the initial or expanded section, remove it
-          unset($tabData[$tabkey]['tab_content'][$dataKey]);          
-        }                         
+          unset($tabData[$tabkey]['tab_content'][$dataKey]);
+        }
       }
       //if there is no data in the tab, remove it
-      if(empty($tabData[$tabkey]['tab_content']))
-        unset($tabData[$tabkey]);    
+      if (empty($tabData[$tabkey]['tab_content']))
+        unset($tabData[$tabkey]);
     }
 
     //if group, use the group name, else use the main contact name
@@ -151,23 +151,23 @@ function getAllEntries($formID = '', $page = '', $years = '') {
 
     //for BA24, the single photo was changed to a multi image which messed things up a bit
     $maker_photo = $entry['22'];
-    
+
     $photo = json_decode($entry['22']);
     if (is_array($photo)) {
       $maker_photo = $photo[0];
     }
-    
+
     //put exhibit type in a comma separated array
     $fieldArr = fieldOutput(339, $entry, $field_array, $form);
-    $exhibit_types = (isset($fieldArr['value']) && $fieldArr['value']!=''? implode(", ",$fieldArr['value']):'');
-    
+    $exhibit_types = (isset($fieldArr['value']) && $fieldArr['value'] != '' ? implode(", ", $fieldArr['value']) : '');
+
     //flags
     $fieldArr = fieldOutput(304, $entry, $field_array, $form);
-    $flags    = (isset($fieldArr['value']) && $fieldArr['value']!=''? implode(", ",$fieldArr['value']):'');
+    $flags    = (isset($fieldArr['value']) && $fieldArr['value'] != '' ? implode(", ", $fieldArr['value']) : '');
 
     //prelimLoc
     $fieldArr = fieldOutput(302, $entry, $field_array, $form);
-    $prelim_loc    = (isset($fieldArr['value']) && $fieldArr['value']!=''? implode(", ",$fieldArr['value']):'');
+    $prelim_loc    = (isset($fieldArr['value']) && $fieldArr['value'] != '' ? implode(", ", $fieldArr['value']) : '');
 
     $return['makers'][] = array(
       'tabs'          => $tabData,
@@ -176,7 +176,7 @@ function getAllEntries($formID = '', $page = '', $years = '') {
       'status'        => $entry['303'],
       'description'   => $entry['16'],
       'flags'         => $flags,
-      'entry_type'    => $exhibit_types,      
+      'entry_type'    => $exhibit_types,
       'photo'         => $maker_photo,
       'maker_name'    => $maker_name,
       'prelim_loc'    => $prelim_loc,
@@ -210,11 +210,11 @@ function retrieve_blocks($content = '') {
       }
       $columnArr[] = $fieldData; //write field data to columns        
     }
-    if(!empty($columnArr)){
+    if (!empty($columnArr)) {
       $return[]['columns'] = $columnArr;
-    }    
+    }
   }
-  
+
   return $return;
 }
 
@@ -283,14 +283,14 @@ function fieldOutput($fieldID, $entry, $field_array, $form, $arg = '') {
         break;
       case 'list':
         $list = unserialize($value);
-        if(is_array($list)){
-          foreach($list as $list_key=>$item){
-            $list[$list_key]["Your Link"] = ($item["Your Link"]!=''?'<a href="'.$item["Your Link"] .'" target="_blank">'.$item["Your Link"].'</a>':''); 
+        if (is_array($list)) {
+          foreach ($list as $list_key => $item) {
+            $list[$list_key]["Your Link"] = ($item["Your Link"] != '' ? '<a href="' . $item["Your Link"] . '" target="_blank">' . $item["Your Link"] . '</a>' : '');
           }
-          $value = $list;        
+          $value = $list;
         }
-        
-        
+
+
         break;
       default:
         if (isset($entry[$fieldID])) {
@@ -314,38 +314,68 @@ function fieldOutput($fieldID, $entry, $field_array, $form, $arg = '') {
       case 'notes':
         $type  = 'notes';
         $label = '';
-        $value = GFAPI::get_notes(array('entry_id' => $entry['id'], 'note_type' => 'user'), array( 'key' => 'id', 'direction' => 'DESC' ));
-        if($value=='') $value='&nbsp;';
+        $value = GFAPI::get_notes(array('entry_id' => $entry['id'], 'note_type' => 'user'), array('key' => 'id', 'direction' => 'DESC'));
+        if ($value == '') $value = '&nbsp;';
         break;
-        case 'notes_table':
-          $type  = 'html';
-          $label = 'Notes';
-          $value = '<p>Enter Email: <input type="email" placeholder="example@make.co" id="toEmail' . $entry['id'] . '" size="40" /></p>' .
-            ' <textarea	id="new_note_' . $entry['id'] . '"	style="width: 90%; height: 240px;" cols=""	rows=""></textarea>' .
-            ' <input type="button" value="Add Note" class="button updButton" style="width:auto;padding-bottom:2px;" onclick="updateMgmt(\'add_note_sidebar\',\'' . $entry['id'] . '\');"/>' .
-            ' <span class="updMsg" id="add_noteMSG_' . $entry['id'] . '"></span>';
-          break;  
+      case 'notes_table':
+        $type  = 'html';
+        $label = 'Notes';
+        $value = '<p>Enter Email: <input type="email" placeholder="example@make.co" id="toEmail' . $entry['id'] . '" size="40" /></p>' .
+          ' <textarea	id="new_note_' . $entry['id'] . '"	style="width: 90%; height: 240px;" cols=""	rows=""></textarea>' .
+          ' <input type="button" value="Add Note" class="button updButton" style="width:auto;padding-bottom:2px;" onclick="updateMgmt(\'add_note_sidebar\',\'' . $entry['id'] . '\');"/>' .
+          ' <span class="updMsg" id="add_noteMSG_' . $entry['id'] . '"></span>';
+        break;
       case 'flags':
         $type = 'html';
         $label = 'Flags';
 
         //flags        
-        $value     = field_display($entry, $form, '304', 'entry_flags_' . $entry['id']);        
-        $value    .= '<input type="button" id="updFlags' . $entry['id'] . '" value="Update Flags" class="button updButton" style="width:auto;padding-bottom:2px;" onclick="updateMgmt(\'update_flags\', \'' . $entry['id'] . '\');"/>';
-        $value    .= '<span class="updMsg" id="updFlagsMSG' . $entry['id'] . '"></span>';
+        $value     = field_display($entry, $form, '304', 'entry_flags_' . $entry['id']);
+
         break;
       case 'prelim_loc':
         $type = 'html';
         $label = 'Preliminary Location';
 
-        //preliminary locations
+        //preliminary locations        
         $value     = field_display($entry, $form, '302', 'entry_prelim_loc_' . $entry['id']);
-        $value    .= '<textarea id="location_comment_' . $entry['id'].'">'.(isset($entry['307'])?$entry['307']:'').'</textarea>';
-        $value    .= '<input type="button" id="updPrelimLoc' . $entry['id'] . '" value="Update Preliminary Location" class="button updButton" onclick="updateMgmt(\'update_prelim_loc\', \'' . $entry['id'] . '\');"/>';
-        $value    .= '<span class="updMsg" id="updPrelimLocMSG' . $entry['id'] . '"></span>';
+        $value    .= '<textarea id="location_comment_' . $entry['id'] . '">' . (isset($entry['307']) ? $entry['307'] : '') . '</textarea>';
         break;
+      case 'exhibit_type':
+        $type = 'html';
+        $label = 'Entry Type';
+        $value     = field_display($entry, $form, '339', 'admin_exhibit_type_' . $entry['id']);
 
-      
+        break;
+      case 'edit_status':
+        $type = 'html';
+        $label = 'Status';
+        $field303 = RGFormsModel::get_field($form, '303');
+        $value = '    <select id="entryStatus_' . $entry['id'] . '" name="entry_info_status_change">';
+        if (isset($field303['choices'])) {
+          foreach ($field303['choices'] as $choice) {
+            $selected = '';
+            if ($entry[$field303['id']] == $choice['text']) $selected = ' selected ';
+            $value .= '<option ' . $selected . ' value="' . $choice['text'] . '">' . $choice['text'] . '</option>';
+          }
+        }
+        break;
+      case 'fee_mgmt':
+        $type = 'html';
+        $label = 'Fee Management';
+        $value     = field_display($entry, $form, '442', 'info_fee_mgmt_' . $entry['id']);
+        break;
+      case 'schedule_loc':
+        $type = 'html';
+        $label = 'Schedule/Location';
+        $value = mf_sidebar_entry_schedule( $form['id'], $entry );
+        break;  
+      case 'update_admin_button':
+        $type  = 'html';
+        $label = '';
+        $value = '<p><input type="button" id="updAdmin' . $entry['id'] . '" value="Update Admin" class="button updButton" style="width:auto;padding-bottom:2px;" onclick="updateMgmt(\'update_admin\', \'' . $entry['id'] . '\');"/></p>
+                  <p><span class="updMsg" id="updAdminMSG' . $entry['id'] . '"></span></p>';
+        break;
       case 'final_location':
         $type  = 'html';
         $label = 'Final Location';
@@ -361,46 +391,28 @@ function fieldOutput($fieldID, $entry, $field_array, $form, $arg = '') {
         $value = date_format($date, "m/d/Y");
         $label = 'Submitted On';
         break;
-      case 'exhibit_type':
-        $type = 'html';
-        $label = 'Entry Type';
-        
-        $value     = field_display($entry,$form,'339','admin_exhibit_type_' . $entry['id']);
-        $value .= '<input type="button" name="updExhibitType' . $entry['id'] . '" value="Update Entry Type" class="button updButton" onclick="updateMgmt(\'update_exhibit_type\', \'' . $entry['id'] . '\');"/>';
-        $value .= '<span class="updMsg" id="updExhibitTypeMsg' . $entry['id'] . '"></span>';
-        break;
-      case 'edit_status':
-        $type = 'html';
-        $label = '';
-        $value = 
-        '<table width="100%" class="entry-status">'.  
-           mf_sidebar_entry_status( $form, $entry ) .
-           '<tr><td colspan="2"><hr /></td></tr>'.
-        '</table>';
-        break;  
-      case 'fee_mgmt':
-        $type = 'html';
-        $label = 'Fee Management';
-        
-        $value     = field_display($entry,$form,'442','info_fee_mgmt_' . $entry['id']);
-        $value .= '<input type="button" name="updFeeMgmt' . $entry['id'] . '" value="Update Fee Management" class="button updButton" onclick="updateMgmt(\'update_fee_mgmt\', \'' . $entry['id'] . '\');"/>';
-        $value .= '<span class="updMsg" id="updFeeMgmtMsg' . $entry['id'] . '"></span>';  
-        break;
       case 'other_entries':
         $type = 'html';
         $label = '';
         $value = '';
-        //$value = getAddEntries($entry[98], $entry['id']);
+        $value = getAddEntries($entry[98], $entry['id']);
         break;
       case 'public_entry_page':
         $type   = 'html';
         $label  = '';
-        $value  = '<a href="/maker/entry/'.$entry['id'].'" target="_none">Public Entry Page</a>';
+        $value  = '<a href="/maker/entry/' . $entry['id'] . '" target="_none">Public Entry Page</a>';
         break;
+      case 'notifications_sent':
+        $type = 'notes';
+        $label = 'Notifications Sent';
+        $value = GFAPI::get_notes(array('entry_id' => $entry['id'], 'note_type' => 'notification'), array('key' => 'id', 'direction' => 'DESC'));
+        
+        break;
+
     }
   }
   if ($arg == 'no_label')  $label = '';
-  if($value=='')  return array();
+  if ($value == '')  return array();
   return array('label' => $label, 'type' => $type, 'value' => $value);
 }
 
@@ -412,38 +424,48 @@ function getAddEntries($email, $currEntryID) {
   $addEntries = '<table width="100%">
   <thead>
     <tr>      
-      <th>Record ID   </th>
+      <th>Record ID</th>
       <th>Project Name</th>
-      <th>Form Name   </th>
-      <th>Status      </th>
+      <th>Form Name</th>      
+      <th>Status</th>
     </tr>
   </thead>';
 
   $addEntriesCnt = 0;
+  $sql = 'SELECT  distinct(entry_id), form_id, '.
+  ' (SELECT meta_value FROM wp_gf_entry_meta detail2 WHERE detail2.entry_id = wp_gf_entry_meta.entry_id AND meta_key = 151 ) as projectName, '.
+  ' (SELECT meta_value FROM wp_gf_entry_meta detail2 WHERE detail2.entry_id = wp_gf_entry_meta.entry_id AND meta_key = 303 ) as status, '.
+  ' (SELECT status FROM wp_gf_entry WHERE wp_gf_entry.id = wp_gf_entry_meta.entry_id) as lead_status '.
+  'FROM wp_gf_entry_meta '.
+  'JOIN wp_gf_form on wp_gf_form.id = wp_gf_entry_meta.form_id '.
+  'WHERE meta_value = "' . $email . '" ' .
+  'AND entry_id != ' . $currEntryID .' '. 
+  'AND is_trash != 1 '.
+  'ORDER BY entry_id DESC';
 
-  $results = $wpdb->get_results('SELECT  *,
-                                    (SELECT meta_value FROM wp_gf_entry_meta detail2 WHERE detail2.entry_id = wp_gf_entry_meta.entry_id AND meta_key = 151 ) as projectName,
-                                    (SELECT meta_value FROM wp_gf_entry_meta detail2 WHERE detail2.entry_id = wp_gf_entry_meta.entry_id AND meta_key = 303 ) as status,
-                                    (SELECT status FROM wp_gf_entry WHERE wp_gf_entry.id = wp_gf_entry_meta.entry_id) as lead_status
-                              FROM wp_gf_entry_meta
-                              JOIN wp_gf_form on wp_gf_form.id = wp_gf_entry_meta.form_id
-                             WHERE meta_value = "' . $email . '"' .
-    '  AND entry_id != ' . $currEntryID . '
-                          GROUP BY entry_id
-                          ORDER BY entry_id');
-                          
+  $results = $wpdb->get_results($sql);
+  $exclude_type = array('Attendee', 'Invoice', 'Default');
+  
   foreach ($results as $addData) {
-    $outputURL = admin_url('admin.php') . "?page=gf_entries&view=entry&id=" . $addData->form_id . '&lid=' . $addData->entry_id;
-    $addEntriesCnt++;
-    $addEntries .= '<tr>';
-        
-    $addEntries .= '<td><a target="_blank" href="' . $outputURL . '">' . $addData->entry_id . '</a></td>'
-      . '<td>' . $addData->projectName . '</td>'
-      . '<td>' . $addData->title . '</td>'
-      . '<td>' . ($addData->lead_status == 'active' ? $addData->status : ucwords($addData->lead_status)) . '</td>'
-      . '</tr>';
+    $form = GFAPI::get_form($addData->form_id);
+
+    //exclude certain form types
+    if(isset($form['form_type']) && !in_array($form['form_type'],$exclude_type)){
+      $outputURL = admin_url('admin.php') . "?page=gf_entries&view=entry&id=" . $addData->form_id . '&lid=' . $addData->entry_id;
+      $addEntriesCnt++;
+      $addEntries .= '<tr>';
+  
+      $addEntries .= '<td><a target="_blank" href="' . $outputURL . '">' . $addData->entry_id . '</a></td>'
+        . '<td>' . $addData->projectName . '</td>'
+        . '<td>'.$form['title'].'</td>'        
+        . '<td>' . ($addData->lead_status == 'active' ? $addData->status : ucwords($addData->lead_status)) . '</td>'
+        . '</tr>';
+    }
   }
 
   $addEntries .= '</table>';
+
+  //don't return an empty table 
+  if($addEntriesCnt == 0) $addEntries = '';
   return $addEntries;
 }

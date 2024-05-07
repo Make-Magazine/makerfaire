@@ -33,9 +33,7 @@ function updateMgmt(action, entryID) {
         }
         
         data.append('gentry_email_notes_to_sidebar',gentry_email_notes_to_sidebar);
-    } else if (action === 'update_flags') {
-        var updMsgBox = 'updFlagsMSG' + entryID;
-
+    } else if(action === 'update_admin') {
         //find all checked flags
         var checkboxes = document.getElementsByName("entry_flags_" + entryID + '[]');
         
@@ -46,26 +44,21 @@ function updateMgmt(action, entryID) {
             }
         }
         
-    } else if (action == 'update_prelim_loc') {
-        var updMsgBox = 'updPrelimLocMSG' + entryID;
-
-        //find all checked
+        //Preliminary Location        
         var checkboxes = document.getElementsByName("entry_prelim_loc_" + entryID + '[]');        
-        
+        console.log('preliminary location');
+        console.log(checkboxes);
         for (var i = 0; i < checkboxes.length; i++) {
             if (checkboxes[i].checked) {                
                  // push all checked
                  data.append('entry_info_location_change[]',checkboxes[i].value);
             }
-        }       
+        }
 
         //location comment
-        data.append('entry_location_comment',document.getElementById("location_comment_" + entryID).value);
-       
-    } else if (action == 'update_exhibit_type') {
-        var updMsgBox = 'updExhibitTypeMsg' + entryID;
+        data.append('entry_location_comment',document.getElementById("location_comment_" + entryID).value);   
 
-        //find all checked
+        //Entry Type
         var checkboxes = document.getElementsByName("admin_exhibit_type_" + entryID + '[]');
         
         for (var i = 0; i < checkboxes.length; i++) {
@@ -73,11 +66,9 @@ function updateMgmt(action, entryID) {
                 // push all checked entry types
                 data.append('entry_exhibit_type[]',checkboxes[i].value);
             }
-        }        
-    } else if (action == 'update_fee_mgmt') {
-        var updMsgBox = 'updFeeMgmtMsg' + entryID;
+        } 
 
-        //find all checked
+        //Fee Management
         var checkboxes = document.getElementsByName("info_fee_mgmt_" + entryID + '[]');        
         
         for (var i = 0; i < checkboxes.length; i++) {
@@ -86,10 +77,13 @@ function updateMgmt(action, entryID) {
                 data.append('entry_info_fee_mgmt[]',checkboxes[i].value);
             }
         }
-    } else if (action == 'update_entry_status') {
+
+        //Entry Status
         var updateStatus = document.getElementById("entryStatus_" + entryID).value;
         data.append('entry_info_status_change', document.getElementById("entryStatus_" + entryID).value);
-        var updMsgBox = 'updStatusMsg' + entryID;
+
+        //Message Box
+        var updMsgBox = 'updAdminMSG' + entryID;
     }
 
     //set message box to the processing icon

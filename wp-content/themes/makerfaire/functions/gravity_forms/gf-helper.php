@@ -318,3 +318,20 @@ function wpm_load_script_for_template( $template ){
 }
 
 add_filter('template_include', 'wpm_load_script_for_template', 1000);
+
+//copy field 896 into 339
+add_action( 'gform_pre_submission', 'populate_exhibit_type');
+function populate_exhibit_type( $form ) {
+    if($form['form_type'] == 'Master'){
+        $field_896 = $_POST['input_896'];                
+        $field_339 = GFAPI::get_field( $form, 339 );
+        
+        foreach($field_339['inputs'] as $input){
+            if($input['label']==$field_896){                
+                error_log('339 input found');
+                $field_id = 'input_'.str_replace('.','_',$input['id']); //translate 339.4 into input_339_4
+                $_POST[$field_id] = $field_896;
+            }
+        }
+    }
+}

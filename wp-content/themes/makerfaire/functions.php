@@ -1,5 +1,5 @@
 <?php
-$templatePath=get_template_directory();
+$templatePath = get_template_directory();
 
 // Register Custom Navigation Walker include custom menu widget to use walkerclass
 include_once $templatePath . '/lib/wp_bootstrap_navwalker.php';
@@ -44,7 +44,7 @@ add_image_size('schedule-thumb', 140, 140, true);
 remove_filter('the_content', 'wpautop');
 
 /* Turn off secure file download. This was conflicting with LargeFS on wpengine */
-add_filter( 'gform_secure_file_download_location', '__return_false' );
+add_filter('gform_secure_file_download_location', '__return_false');
 
 // Define our current Version number using the stylesheet version
 function my_wp_default_styles($styles) {
@@ -93,34 +93,34 @@ function load_scripts() {
     $user = wp_get_current_user();
     $auth0_user_data = null;
     // if user is logged in 
-    if( isset($user->ID) && $user->ID != 0 ) {
+    if (isset($user->ID) && $user->ID != 0) {
         $user_meta = get_user_meta($user->ID);
         // wp_auth0_obj stores auth0 data for user in a json string. Not all users have user_metadata set in this string on first login, so let's test for that before setting auth0_user_data
-        if(isset($user_meta['wp_auth0_obj'])) {
-            if(str_contains($user_meta['wp_auth0_obj'][0], "user_metadata")) {
+        if (isset($user_meta['wp_auth0_obj'])) {
+            if (str_contains($user_meta['wp_auth0_obj'][0], "user_metadata")) {
                 $auth0_user_data = json_decode($user_meta['wp_auth0_obj'][0])->user_metadata;
             }
         }
-    } 
+    }
     wp_localize_script(
         'make-js',
         'ajax_object',
         array(
-                'templateUrl' => get_stylesheet_directory_uri(),
-                'ajax_url' => admin_url('admin-ajax.php'),
-                'home_url' => get_home_url(),
-                'logout_nonce' => wp_create_nonce('ajax-logout-nonce'),
-                'wp_user_email' => $user->user_email,
-                'wp_user_nicename' => isset($auth0_user_data->first_name) && isset($auth0_user_data->last_name) ? $auth0_user_data->first_name . " " . $auth0_user_data->last_name : $user->display_name,
-                'wp_user_avatar' => isset($auth0_user_data->picture) ? $auth0_user_data->picture : esc_url( get_avatar_url( $user->user_email ) ),
-                'wp_user_memlevel' => isset($auth0_user_data->membership_level) ? $auth0_user_data->membership_level : "",
-            )
+            'templateUrl' => get_stylesheet_directory_uri(),
+            'ajax_url' => admin_url('admin-ajax.php'),
+            'home_url' => get_home_url(),
+            'logout_nonce' => wp_create_nonce('ajax-logout-nonce'),
+            'wp_user_email' => $user->user_email,
+            'wp_user_nicename' => isset($auth0_user_data->first_name) && isset($auth0_user_data->last_name) ? $auth0_user_data->first_name . " " . $auth0_user_data->last_name : $user->display_name,
+            'wp_user_avatar' => isset($auth0_user_data->picture) ? $auth0_user_data->picture : esc_url(get_avatar_url($user->user_email)),
+            'wp_user_memlevel' => isset($auth0_user_data->membership_level) ? $auth0_user_data->membership_level : "",
+        )
     );
     //VUE files for Maker Portal
-    if (is_page('maker-portal')) {           
+    if (is_page('maker-portal')) {
         //the rest of the site uses bootstrap 3, for this page to work we need bootstrap 4
         wp_dequeue_style('make-bootstrap');
-        wp_dequeue_style('make-bootstrapdialog');                
+        wp_dequeue_style('make-bootstrapdialog');
 
         //<!-- Load required Bootstrap and BootstrapVue CSS -->
         wp_enqueue_style('vue-style', "https://unpkg.com/bootstrap/dist/css/bootstrap.min.css");
@@ -130,11 +130,11 @@ function load_scripts() {
         wp_enqueue_script('polyfill', "https://polyfill.io/v3/polyfill.min.js?features=es2015%2CIntersectionObserver");
 
         //<!-- Load Vue followed by BootstrapVue -->
-        wp_enqueue_script('bootstrap',"https://unpkg.com/bootstrap@4.6.1/dist/js/bootstrap.min.js", array(),'',true);
-        wp_enqueue_script('vue-js', "https://unpkg.com/vue@2.6.12/dist/vue.min.js", array(),'',true);
-        wp_enqueue_script('bs-vue-js', "https://unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.min.js", array('vue-js','bootstrap'),'',true);
-        wp_enqueue_script('axios', "https://unpkg.com/axios@1.6.8/dist/axios.min.js",array('vue-js'),'',true);
-        wp_enqueue_script('maker-portal', get_stylesheet_directory_uri() . "/js/min/maker-portal.min.js", array('axios'),'',true);
+        wp_enqueue_script('bootstrap', "https://unpkg.com/bootstrap@4.6.1/dist/js/bootstrap.min.js", array(), '', true);
+        wp_enqueue_script('vue-js', "https://unpkg.com/vue@2.6.12/dist/vue.min.js", array(), '', true);
+        wp_enqueue_script('bs-vue-js', "https://unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.min.js", array('vue-js', 'bootstrap'), '', true);
+        wp_enqueue_script('axios', "https://unpkg.com/axios@1.6.8/dist/axios.min.js", array('vue-js'), '', true);
+        wp_enqueue_script('maker-portal', get_stylesheet_directory_uri() . "/js/min/maker-portal.min.js", array('axios'), '', true);
         wp_localize_script('maker-portal', 'vueAjax', array('ajaxurl' => admin_url('admin-ajax.php')));
     }
 }
@@ -143,23 +143,23 @@ add_action('wp_enqueue_scripts', 'load_scripts');
 
 function remove_unnecessary_scripts() {
     if (is_admin()) {
-		if (is_plugin_active( 'elementor/elementor.php' )) {
-            wp_deregister_script( 'elementor-ai' );
-			wp_dequeue_script( 'elementor-ai' );
-		}
-    } 
+        if (is_plugin_active('elementor/elementor.php')) {
+            wp_deregister_script('elementor-ai');
+            wp_dequeue_script('elementor-ai');
+        }
+    }
 }
-add_action( 'wp_print_scripts', 'remove_unnecessary_scripts', PHP_INT_MAX ); // we want this to happen absolutely last
+add_action('wp_print_scripts', 'remove_unnecessary_scripts', PHP_INT_MAX); // we want this to happen absolutely last
 
 function remove_unnecessary_styles() {
-    wp_dequeue_style( 'font-awesome' );
-	wp_dequeue_style( 'essb-fontawsome' );
+    wp_dequeue_style('font-awesome');
+    wp_dequeue_style('essb-fontawsome');
     if (is_admin()) {
-		wp_deregister_style( 'elementor-ai' );
-		wp_dequeue_style( 'elementor-ai' );
-	} 
+        wp_deregister_style('elementor-ai');
+        wp_dequeue_style('elementor-ai');
+    }
 }
-add_action( 'wp_print_styles', 'remove_unnecessary_styles', PHP_INT_MAX ); // we want this to happen absolutely last
+add_action('wp_print_styles', 'remove_unnecessary_styles', PHP_INT_MAX); // we want this to happen absolutely last
 
 // Load custom gravity forms js and css for all forms
 function gravity_scripts($form, $is_ajax) {
@@ -192,7 +192,7 @@ function load_admin_scripts() {
     wp_enqueue_style('jquery-datetimepicker-css', get_stylesheet_directory_uri() . '/css/jquery.datetimepicker.css');
     wp_enqueue_style('mf-admin-style', get_stylesheet_directory_uri() . '/css/mf-admin-style.min.css', array(), $my_version);
 
-    wp_enqueue_script('sack');    
+    wp_enqueue_script('sack');
     wp_enqueue_script('thickbox', null);
 }
 
@@ -296,15 +296,19 @@ add_filter('acf/fields/flexible_content/layout_title', 'my_acf_flexible_content_
 // set the fields that should cause the flexible content fields to collapse
 function ACF_flexible_content_collapse() {
     if (get_field('sections')) { // Maker toolkit
-        ?>
-        <style id="acf-flexible-content-collapse">.acf-flexible-content .acf-fields { display: none; }</style>
+?>
+        <style id="acf-flexible-content-collapse">
+            .acf-flexible-content .acf-fields {
+                display: none;
+            }
+        </style>
         <script type="text/javascript">
-            jQuery(function ($) {
+            jQuery(function($) {
                 $('.acf-flexible-content .layout').addClass('-collapsed');
                 $('#acf-flexible-content-collapse').detach();
             });
         </script>
-        <?php
+<?php
 
     }
 }
@@ -347,7 +351,8 @@ function keep_incomplete_submissions($expiration_days) {
 
 function select_Timezone($selected = '') {
     //$selected = "US/Pacific";
-    $timeZone = array('Africa/Cairo' => 'Africa/Cairo',
+    $timeZone = array(
+        'Africa/Cairo' => 'Africa/Cairo',
         'America/Argentina/Buenos_Aires' => 'America/Buenos_Aires',
         'America/Caracas' => 'America/Caracas',
         'Asia/Almaty' => 'Asia/Almaty',
@@ -378,9 +383,10 @@ function select_Timezone($selected = '') {
         'America/New_York' => 'US/Eastern',
         'Pacific/Honolulu' => 'US/Hawaii',
         'America/Denver' => 'US/Mountain',
-        'America/Los_Angeles' => 'US/Pacific',);
+        'America/Los_Angeles' => 'US/Pacific',
+    );
     $select = '<select class="timeZoneSelect">';
-    foreach ($timeZone as $key=>$row) {
+    foreach ($timeZone as $key => $row) {
         $select .= '<option value="' . $key . '"';
         $select .= ($key === $selected ? ' selected' : '');
         $select .= '>' . $row . '</option>';
@@ -397,8 +403,8 @@ function basicCurl($url) {
     //for local server only!
     $host = $_SERVER['HTTP_HOST'];
     if (strpos($host, '.local') > -1  || strpos($host, '.test') > -1) { // wpengine local environments
-      curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
-      curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
     }
 
     $data = curl_exec($ch);
@@ -421,7 +427,7 @@ function smartTruncate($string, $limit, $break = ".", $pad = "...") {
 }
 
 function validate_url($url) {
-    if (preg_match('/^(http|https):\\/\\/[a-z0-9_]+([\\-\\.]{1}[a-z_0-9]+)*\\.[_a-z]{2,5}'.'((:[0-9]{1,5})?\\/.*)?$/i', $url)) {
+    if (preg_match('/^(http|https):\\/\\/[a-z0-9_]+([\\-\\.]{1}[a-z_0-9]+)*\\.[_a-z]{2,5}' . '((:[0-9]{1,5})?\\/.*)?$/i', $url)) {
         $path = parse_url($url, PHP_URL_PATH);
         $encoded_path = array_map('urlencode', explode('/', $path));
         $url = str_replace($path, implode('/', $encoded_path), $url);
@@ -438,25 +444,25 @@ function validate_url($url) {
 require_once('elementor/make-widgets.php');
 
 //extend wp login to 90 days
-add_filter( 'auth_cookie_expiration', 'extend_login_session' );
+add_filter('auth_cookie_expiration', 'extend_login_session');
 
-function extend_login_session( $expire ) {
-  return 7776000; // seconds for 90 day time period
+function extend_login_session($expire) {
+    return 7776000; // seconds for 90 day time period
 }
 
 //kill comments completely on the site
 add_action('admin_init', function () {
     // Redirect any user trying to access comments page
     global $pagenow;
-     
+
     if ($pagenow === 'edit-comments.php') {
         wp_safe_redirect(admin_url());
         exit;
     }
- 
+
     // Remove comments metabox from dashboard
     remove_meta_box('dashboard_recent_comments', 'dashboard', 'normal');
- 
+
     // Disable support for comments and trackbacks in post types
     foreach (get_post_types() as $post_type) {
         if (post_type_supports($post_type, 'comments')) {
@@ -465,19 +471,19 @@ add_action('admin_init', function () {
         }
     }
 });
- 
+
 // Close comments on the front-end
 add_filter('comments_open', '__return_false', 20, 2);
 add_filter('pings_open', '__return_false', 20, 2);
- 
+
 // Hide existing comments
 add_filter('comments_array', '__return_empty_array', 10, 2);
- 
+
 // Remove comments page in menu
 add_action('admin_menu', function () {
     remove_menu_page('edit-comments.php');
 });
- 
+
 // Remove comments links from admin bar
 add_action('init', function () {
     if (is_admin_bar_showing()) {
@@ -486,31 +492,30 @@ add_action('init', function () {
 });
 
 
-function child_remove_page_templates( $page_templates ) {        
-    unset( $page_templates['page-maker-portal.php'] );
-    unset( $page_templates['page-entry.php'] );
+function child_remove_page_templates($page_templates) {
+    unset($page_templates['page-maker-portal.php']);
+    unset($page_templates['page-entry.php']);
 
-    unset( $page_templates['404.php'] );
-    unset( $page_templates['flagship-faire-landing-page.php'] );
-    
-    unset( $page_templates['page-press-center-leftnav.php'] );
-    unset( $page_templates['page-mfscheduler.php'] );
-    unset( $page_templates['page-mfscheduler-tasks.php'] );
-    unset( $page_templates['page-video-ba15.php'] );
-    unset( $page_templates['page-white-house.php'] );
-    unset( $page_templates['signage-detail.php'] );
-    unset( $page_templates['signage-list.php'] );
-    unset( $page_templates['page-query.php'] );
-    
-    unset( $page_templates['page-wide-leftnav.php'] );
-    unset( $page_templates['page-wide-image-grid-leftnav.php'] );
-    unset( $page_templates['page-wide.php'] );
-    unset( $page_templates['page-api.php'] );
-    unset( $page_templates['MTM-page-template.php'] );
-    unset( $page_templates['page-topics.php'] );
-    unset( $page_templates['pages/page-maker-week.php'] );
+    unset($page_templates['404.php']);
+    unset($page_templates['flagship-faire-landing-page.php']);
+
+    unset($page_templates['page-press-center-leftnav.php']);
+    unset($page_templates['page-mfscheduler.php']);
+    unset($page_templates['page-mfscheduler-tasks.php']);
+    unset($page_templates['page-video-ba15.php']);
+    unset($page_templates['page-white-house.php']);
+    unset($page_templates['signage-detail.php']);
+    unset($page_templates['signage-list.php']);
+    unset($page_templates['page-query.php']);
+
+    unset($page_templates['page-wide-leftnav.php']);
+    unset($page_templates['page-wide-image-grid-leftnav.php']);
+    unset($page_templates['page-wide.php']);
+    unset($page_templates['page-api.php']);
+    unset($page_templates['MTM-page-template.php']);
+    unset($page_templates['page-topics.php']);
+    unset($page_templates['pages/page-maker-week.php']);
 
     return $page_templates;
-  }
-  add_filter( 'theme_page_templates', 'child_remove_page_templates' );
-  add_filter( 'theme_post_templates', 'child_remove_page_templates' );
+}
+add_filter('theme_page_templates', 'child_remove_page_templates');
