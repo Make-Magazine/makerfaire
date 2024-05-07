@@ -349,7 +349,7 @@ function fieldOutput($fieldID, $entry, $field_array, $form, $arg = '') {
         break;
       case 'edit_status':
         $type = 'html';
-        $label = '';
+        $label = 'Status';
         $field303 = RGFormsModel::get_field($form, '303');
         $value = '    <select id="entryStatus_' . $entry['id'] . '" name="entry_info_status_change">';
         if (isset($field303['choices'])) {
@@ -365,6 +365,11 @@ function fieldOutput($fieldID, $entry, $field_array, $form, $arg = '') {
         $label = 'Fee Management';
         $value     = field_display($entry, $form, '442', 'info_fee_mgmt_' . $entry['id']);
         break;
+      case 'schedule_loc':
+        $type = 'html';
+        $label = 'Schedule/Location';
+        $value = mf_sidebar_entry_schedule( $form['id'], $entry );
+        break;  
       case 'update_admin_button':
         $type  = 'html';
         $label = '';
@@ -440,7 +445,7 @@ function getAddEntries($email, $currEntryID) {
   'ORDER BY entry_id DESC';
 
   $results = $wpdb->get_results($sql);
-  $exclude_type = array('Payment', 'Other', 'Attendee', 'Invoice', 'Default');
+  $exclude_type = array('Attendee', 'Invoice', 'Default');
   
   foreach ($results as $addData) {
     $form = GFAPI::get_form($addData->form_id);
