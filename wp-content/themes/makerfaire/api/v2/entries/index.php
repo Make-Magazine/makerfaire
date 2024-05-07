@@ -434,6 +434,7 @@ function getAddEntries($email, $currEntryID) {
 
   $results = $wpdb->get_results($sql);
   $exclude_type = array('Payment', 'Other', 'Attendee', 'Invoice', 'Default');
+  
   foreach ($results as $addData) {
     $form = GFAPI::get_form($addData->form_id);
 
@@ -453,5 +454,8 @@ function getAddEntries($email, $currEntryID) {
   }
 
   $addEntries .= '</table>';
+
+  //don't return an empty table 
+  if($addEntriesCnt == 0) $addEntries = '';
   return $addEntries;
 }
