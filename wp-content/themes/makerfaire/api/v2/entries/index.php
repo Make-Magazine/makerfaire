@@ -390,7 +390,7 @@ function fieldOutput($fieldID, $entry, $field_array, $form, $arg = '') {
         $type = 'html';
         $label = '';
         $value = '';
-        //$value = getAddEntries($entry[98], $entry['id']);
+        $value = getAddEntries($entry[98], $entry['id']);
         break;
       case 'public_entry_page':
         $type   = 'html';
@@ -412,36 +412,44 @@ function getAddEntries($email, $currEntryID) {
   $addEntries = '<table width="100%">
   <thead>
     <tr>      
-      <th>Record ID   </th>
+      <th>Record ID</th>
       <th>Project Name</th>
-      <th>Form Name   </th>
-      <th>Status      </th>
+      <th>Form Name</th>
+      <th>Form Type</th>
+      <th>Status</th>
     </tr>
   </thead>';
 
   $addEntriesCnt = 0;
+  $sql = 'SELECT  distinct(entry_id), form_id, '.
+  ' (SELECT meta_value FROM wp_gf_entry_meta detail2 WHERE detail2.entry_id = wp_gf_entry_meta.entry_id AND meta_key = 151 ) as projectName, '.
+  ' (SELECT meta_value FROM wp_gf_entry_meta detail2 WHERE detail2.entry_id = wp_gf_entry_meta.entry_id AND meta_key = 303 ) as status, '.
+  ' (SELECT status FROM wp_gf_entry WHERE wp_gf_entry.id = wp_gf_entry_meta.entry_id) as lead_status '.
+  'FROM wp_gf_entry_meta '.
+  'JOIN wp_gf_form on wp_gf_form.id = wp_gf_entry_meta.form_id '.
+  'WHERE meta_value = "' . $email . '" ' .
+  'AND entry_id != ' . $currEntryID .' '. 
+  'AND is_trash != 1 '.
+  'ORDER BY entry_id DESC';
 
-  $results = $wpdb->get_results('SELECT  *,
-                                    (SELECT meta_value FROM wp_gf_entry_meta detail2 WHERE detail2.entry_id = wp_gf_entry_meta.entry_id AND meta_key = 151 ) as projectName,
-                                    (SELECT meta_value FROM wp_gf_entry_meta detail2 WHERE detail2.entry_id = wp_gf_entry_meta.entry_id AND meta_key = 303 ) as status,
-                                    (SELECT status FROM wp_gf_entry WHERE wp_gf_entry.id = wp_gf_entry_meta.entry_id) as lead_status
-                              FROM wp_gf_entry_meta
-                              JOIN wp_gf_form on wp_gf_form.id = wp_gf_entry_meta.form_id
-                             WHERE meta_value = "' . $email . '"' .
-    '  AND entry_id != ' . $currEntryID . '
-                          GROUP BY entry_id
-                          ORDER BY entry_id');
-
+  $results = $wpdb->get_results($sql);
+  $exclude_type = array('Payment', 'Other', 'Attendee', 'Invoice', 'Default');
   foreach ($results as $addData) {
-    $outputURL = admin_url('admin.php') . "?page=gf_entries&view=entry&id=" . $addData->form_id . '&lid=' . $addData->entry_id;
-    $addEntriesCnt++;
-    $addEntries .= '<tr>';
+    $form = GFAPI::get_form($addData->form_id);
 
-    $addEntries .= '<td><a target="_blank" href="' . $outputURL . '">' . $addData->entry_id . '</a></td>'
-      . '<td>' . $addData->projectName . '</td>'
-      . '<td>' . $addData->title . '</td>'
-      . '<td>' . ($addData->lead_status == 'active' ? $addData->status : ucwords($addData->lead_status)) . '</td>'
-      . '</tr>';
+    //exclude certain form types
+    if(isset($form['form_type']) && !in_array($form['form_type'],$exclude_type)){
+      $outputURL = admin_url('admin.php') . "?page=gf_entries&view=entry&id=" . $addData->form_id . '&lid=' . $addData->entry_id;
+      $addEntriesCnt++;
+      $addEntries .= '<tr>';
+  
+      $addEntries .= '<td><a target="_blank" href="' . $outputURL . '">' . $addData->entry_id . '</a></td>'
+        . '<td>' . $addData->projectName . '</td>'
+        . '<td>'.$form['title'].'</td>'
+        . '<td>'.$form['form_type'].'</td>'
+        . '<td>' . ($addData->lead_status == 'active' ? $addData->status : ucwords($addData->lead_status)) . '</td>'
+        . '</tr>';
+    }
   }
 
   $addEntries .= '</table>';
