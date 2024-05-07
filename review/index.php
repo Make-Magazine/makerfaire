@@ -20,8 +20,7 @@
     include 'templates/header.php';
     ?>
     <!-- Our application root element -->
-    <div id="review" style="width:95%; margin: 35px auto;">
-        <!--<button-counter></button-counter>-->
+    <div id="review" style="width:95%; margin: 35px auto;">            
         <b-row>
             <b-col align-self="center" cols="8">
                 <h2>Maker Faire Admin Review</h2>
