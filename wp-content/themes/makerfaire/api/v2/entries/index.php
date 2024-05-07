@@ -366,9 +366,9 @@ function fieldOutput($fieldID, $entry, $field_array, $form, $arg = '') {
         $value     = field_display($entry, $form, '442', 'info_fee_mgmt_' . $entry['id']);
         break;
       case 'schedule_loc':
-        $type = 'html';
-        $label = 'Schedule/Location';
-        $value = mf_sidebar_entry_schedule( $form['id'], $entry );
+        //$type = 'html';
+        //$label = 'Schedule/Location';
+        //$value = mf_sidebar_entry_schedule( $form['id'], $entry );
         break;  
       case 'update_admin_button':
         $type  = 'html';
@@ -426,7 +426,8 @@ function getAddEntries($email, $currEntryID) {
     <tr>      
       <th>Record ID</th>
       <th>Project Name</th>
-      <th>Form Name</th>      
+      <th>Form Name</th>
+      <th>Date Submitted</th>      
       <th>Status</th>
     </tr>
   </thead>';
@@ -435,7 +436,8 @@ function getAddEntries($email, $currEntryID) {
   $sql = 'SELECT  distinct(entry_id), form_id, '.
   ' (SELECT meta_value FROM wp_gf_entry_meta detail2 WHERE detail2.entry_id = wp_gf_entry_meta.entry_id AND meta_key = 151 ) as projectName, '.
   ' (SELECT meta_value FROM wp_gf_entry_meta detail2 WHERE detail2.entry_id = wp_gf_entry_meta.entry_id AND meta_key = 303 ) as status, '.
-  ' (SELECT status FROM wp_gf_entry WHERE wp_gf_entry.id = wp_gf_entry_meta.entry_id) as lead_status '.
+  ' (SELECT status FROM wp_gf_entry WHERE wp_gf_entry.id = wp_gf_entry_meta.entry_id) as lead_status, '.
+  ' (SELECT date_created FROM wp_gf_entry WHERE wp_gf_entry.id = wp_gf_entry_meta.entry_id) as date_created '.
   'FROM wp_gf_entry_meta '.
   'JOIN wp_gf_form on wp_gf_form.id = wp_gf_entry_meta.form_id '.
   'WHERE meta_value = "' . $email . '" ' .
@@ -457,7 +459,8 @@ function getAddEntries($email, $currEntryID) {
   
       $addEntries .= '<td><a target="_blank" href="' . $outputURL . '">' . $addData->entry_id . '</a></td>'
         . '<td>' . $addData->projectName . '</td>'
-        . '<td>'.$form['title'].'</td>'        
+        . '<td>' . $form['title'] . '</td>'
+        . '<td>' . $addData->date_created . '</td>'        
         . '<td>' . ($addData->lead_status == 'active' ? $addData->status : ucwords($addData->lead_status)) . '</td>'
         . '</tr>';
     }
