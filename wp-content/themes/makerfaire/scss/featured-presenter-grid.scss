@@ -1,9 +1,9 @@
 
 // A couple of vars for these styles
 
-@feat_img_touch_lg_breakpoint: 960px;
-@feat_img_touch_sm_breakpoint: 768px;
-@feat_img_mobile_breakpoint: 560px;
+$feat_img_touch_lg_breakpoint: 960px;
+$feat_img_touch_sm_breakpoint: 768px;
+$feat_img_mobile_breakpoint: 560px;
 .featured-item-panel {
 	.panel-title {
 		display: flex;
@@ -19,7 +19,7 @@
    margin-bottom: 24px;
    max-width: 1170px;
    margin: 0 auto 30px;
-   @media screen and (max-width: @feat_img_touch_lg_breakpoint) {
+   @media screen and (max-width: $feat_img_touch_lg_breakpoint) {
       display: block;
    }
    .grid-item {
@@ -41,7 +41,7 @@
             transition: transform 0.25s ease-in-out;
          }
       }
-      @media screen and (max-width: @feat_img_touch_lg_breakpoint) {
+      @media screen and (max-width: $feat_img_touch_lg_breakpoint) {
          width: 50%;
          overflow: visible;
          margin-bottom: 24px;
@@ -55,7 +55,7 @@
          }
       }
 
-      @media screen and (max-width: @feat_img_mobile_breakpoint) {
+      @media screen and (max-width: $feat_img_mobile_breakpoint) {
          width: auto;
          padding-top: 75%;
          height: auto;
@@ -101,13 +101,13 @@
 		}
 		p {margin-top: 6px;}
 
-		@media screen and (max-width: @feat_img_touch_lg_breakpoint) {
+		@media screen and (max-width: $feat_img_touch_lg_breakpoint) {
 			position: absolute;
 			bottom: 0;
 			width: 100%;
 		}
 
-		@media screen and (max-width: @feat_img_touch_sm_breakpoint) {
+		@media screen and (max-width: $feat_img_touch_sm_breakpoint) {
 			background-color: #333;
 			position: relative;
 			bottom: auto;
@@ -134,7 +134,7 @@
       transition: transform 0.25s ease-in-out;
       overflow: hidden;
       text-decoration: none;
-      @media screen and (max-width: @feat_img_touch_lg_breakpoint) {
+      @media screen and (max-width: $feat_img_touch_lg_breakpoint) {
          position: absolute;
          transform: translateX(100%);
          overflow: visible;
@@ -143,7 +143,7 @@
       h4 {
          margin: 0;
       }
-      @media screen and (max-width: @feat_img_touch_sm_breakpoint) {
+      @media screen and (max-width: $feat_img_touch_sm_breakpoint) {
          position: relative;
          display: flex;
          background-color: #333;
@@ -157,10 +157,10 @@
             overflow: hidden;
          }
       }
-		@media screen and (max-width: @feat_img_touch_sm_breakpoint) and (min-width: @feat_img_mobile_breakpoint) {
+		@media screen and (max-width: $feat_img_touch_sm_breakpoint) and (min-width: $feat_img_mobile_breakpoint) {
 			height: 71%;
 		}
-      @media screen and (max-width: @feat_img_mobile_breakpoint) {
+      @media screen and (max-width: $feat_img_mobile_breakpoint) {
          .desc-body {
             height: auto;
             overflow: visible;
@@ -178,7 +178,7 @@
          &:hover {
             background-color: #fff;
          }
-         @media screen and (max-width: @feat_img_touch_sm_breakpoint) {
+         @media screen and (max-width: $feat_img_touch_sm_breakpoint) {
             align-self: flex-end;
          }
       }
