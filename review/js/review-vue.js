@@ -82,6 +82,8 @@ new Vue({
             this.selectedEntryType = [];
             this.selectedFlag = [];
             this.selectedPrelimLoc = [];
+            query = {};
+            this.router.push({ path: 'review', query: query }).catch(()=>{});
         },
         filterCommaList: function(field){                
             filteredList = [];
