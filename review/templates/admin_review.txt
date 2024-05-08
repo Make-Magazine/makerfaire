@@ -153,6 +153,7 @@
 				[field]347[/field]
 				[field]348[/field]
 				[field]68[/field]
+				[field]64[/field]
 			[/column]	
 			[column]	column 2
 				[field]803[/field]
