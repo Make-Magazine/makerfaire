@@ -243,7 +243,10 @@ function fieldOutput($fieldID, $entry, $field_array, $form, $arg = '') {
           //if the array is empty, set this back to blank
           if (empty($value))   $value = '';
         }
-        $value = str_replace('http://', 'https://', $value);
+        if(is_string($value)){
+          $value = str_replace('http://', 'https://', $value);  
+        }
+        
         break;
 
       case 'address':
@@ -408,11 +411,13 @@ function fieldOutput($fieldID, $entry, $field_array, $form, $arg = '') {
         $value = GFAPI::get_notes(array('entry_id' => $entry['id'], 'note_type' => 'notification'), array('key' => 'id', 'direction' => 'DESC'));
 
         break;
+        /*
       case 'send_notifications':
-       // $type = 'html';
-        //$label = 'Send Notifications';
-        //$value = get_form_notifications($form, $entry['id']);
+        $type = 'html';
+        $label = 'Send Notifications';
+        $value = get_form_notifications($form, $entry['id']);
         break;
+        */
     }
   }
   if ($arg == 'no_label')  $label = '';
@@ -497,7 +502,7 @@ function get_form_notifications($form, $entryID) {
     }
     $return  .= '</select>';
 
-    $return .= '<div id="notifications_override_settings" style="display:none;">
+    $return .= '<div id="notifications_override_settings">
                   <p class="description" style="padding-top:0; margin-top:0; width:99%;">You may override the default notification settings
                     by entering a comma delimited list of emails to which the selected notifications should be sent.</p>
                   <label for="notification_override_email">' . esc_html__('Send To', 'gravityforms') . ' ' . '</label>
