@@ -369,7 +369,7 @@ function fieldOutput($fieldID, $entry, $field_array, $form, $arg = '') {
         //$type = 'html';
         //$label = 'Schedule/Location';
         //$value = mf_sidebar_entry_schedule( $form['id'], $entry );
-        break;  
+        break;
       case 'update_admin_button':
         $type  = 'html';
         $label = '';
@@ -406,9 +406,13 @@ function fieldOutput($fieldID, $entry, $field_array, $form, $arg = '') {
         $type = 'notes';
         $label = 'Notifications Sent';
         $value = GFAPI::get_notes(array('entry_id' => $entry['id'], 'note_type' => 'notification'), array('key' => 'id', 'direction' => 'DESC'));
-        
-        break;
 
+        break;
+      case 'send_notifications':
+       // $type = 'html';
+        //$label = 'Send Notifications';
+        //$value = get_form_notifications($form, $entry['id']);
+        break;
     }
   }
   if ($arg == 'no_label')  $label = '';
@@ -433,34 +437,35 @@ function getAddEntries($email, $currEntryID) {
   </thead>';
 
   $addEntriesCnt = 0;
-  $sql = 'SELECT  distinct(entry_id), form_id, '.
-  ' (SELECT meta_value FROM wp_gf_entry_meta detail2 WHERE detail2.entry_id = wp_gf_entry_meta.entry_id AND meta_key = 151 ) as projectName, '.
-  ' (SELECT meta_value FROM wp_gf_entry_meta detail2 WHERE detail2.entry_id = wp_gf_entry_meta.entry_id AND meta_key = 303 ) as status, '.
-  ' (SELECT status FROM wp_gf_entry WHERE wp_gf_entry.id = wp_gf_entry_meta.entry_id) as lead_status, '.
-  ' (SELECT date_created FROM wp_gf_entry WHERE wp_gf_entry.id = wp_gf_entry_meta.entry_id) as date_created '.
-  'FROM wp_gf_entry_meta '.
-  'JOIN wp_gf_form on wp_gf_form.id = wp_gf_entry_meta.form_id '.
-  'WHERE meta_value = "' . $email . '" ' .
-  'AND entry_id != ' . $currEntryID .' '. 
-  'AND is_trash != 1 '.
-  'ORDER BY entry_id DESC';
+  $sql = 'SELECT  distinct(entry_id), form_id, ' .
+    ' (SELECT meta_value FROM wp_gf_entry_meta detail2 WHERE detail2.entry_id = wp_gf_entry_meta.entry_id AND meta_key = 151 ) as projectName, ' .
+    ' (SELECT meta_value FROM wp_gf_entry_meta detail2 WHERE detail2.entry_id = wp_gf_entry_meta.entry_id AND meta_key = 303 ) as status, ' .
+    ' (SELECT status FROM wp_gf_entry WHERE wp_gf_entry.id = wp_gf_entry_meta.entry_id) as lead_status, ' .
+    ' (SELECT date_created FROM wp_gf_entry WHERE wp_gf_entry.id = wp_gf_entry_meta.entry_id) as date_created ' .
+    'FROM wp_gf_entry_meta ' .
+    'JOIN wp_gf_form on wp_gf_form.id = wp_gf_entry_meta.form_id ' .
+    'WHERE meta_value = "' . $email . '" ' .
+    'AND entry_id != ' . $currEntryID . ' ' .
+    'AND is_trash != 1 ' .
+    'ORDER BY entry_id DESC';
 
   $results = $wpdb->get_results($sql);
   $exclude_type = array('Attendee', 'Invoice', 'Default');
-  
+
   foreach ($results as $addData) {
     $form = GFAPI::get_form($addData->form_id);
 
     //exclude certain form types
-    if(isset($form['form_type']) && !in_array($form['form_type'],$exclude_type)){
+    if (isset($form['form_type']) && !in_array($form['form_type'], $exclude_type)) {
       $outputURL = admin_url('admin.php') . "?page=gf_entries&view=entry&id=" . $addData->form_id . '&lid=' . $addData->entry_id;
       $addEntriesCnt++;
       $addEntries .= '<tr>';
-  
+      $date=date_create($addData->date_created);
+      
       $addEntries .= '<td><a target="_blank" href="' . $outputURL . '">' . $addData->entry_id . '</a></td>'
         . '<td>' . $addData->projectName . '</td>'
         . '<td>' . $form['title'] . '</td>'
-        . '<td>' . $addData->date_created . '</td>'        
+        . '<td>' . date_format($date,"m-d-Y") . '</td>'
         . '<td>' . ($addData->lead_status == 'active' ? $addData->status : ucwords($addData->lead_status)) . '</td>'
         . '</tr>';
     }
@@ -469,6 +474,43 @@ function getAddEntries($email, $currEntryID) {
   $addEntries .= '</table>';
 
   //don't return an empty table 
-  if($addEntriesCnt == 0) $addEntries = '';
+  if ($addEntriesCnt == 0) $addEntries = '';
   return $addEntries;
+}
+
+//create a dropdown list of available notifications for this form
+function get_form_notifications($form, $entryID) {
+  $form_id = $form['id'];
+  $return  =
+    '<div id="sendNotifications'.$entryID.'>'.
+      '<div class="message" style="display:none;"></div>' . 
+      '<input type="hidden" id="gfnonce_'.$entryID.'" value="'.wp_create_nonce( 'gf_resend_notifications' ).'" />';
+  $notifications = GFCommon::get_notifications('resend_notifications', $form);
+
+  if (!is_array($notifications) || count($form['notifications']) <= 0) {
+    $return .= '<p class="description">' . esc_html_e('You cannot resend notifications for this entry because this form does not currently have any notifications configured.', 'gravityforms') . '</p>';
+    $return .= '<a href="' . admin_url("admin.php?page=gf_edit_forms&view=settings&subview=notification&id={$form_id}") . '" class="button">' . esc_html_e('Configure Notifications', 'gravityforms') . '</a>';
+  } else {
+    $return  .= '<select id="gform_notifications_'.$entryID.'">';
+    foreach ($notifications as $notification) {
+      $return .= '<option class="gform_notifications" value="' . esc_attr($notification['id']) . '" id="notification_' . esc_attr($notification['id']) . '" onclick="toggleNotificationOverride();">'.esc_html($notification['name']) . '</option>';      
+    }
+    $return  .= '</select>';
+
+    $return .= '<div id="notifications_override_settings" style="display:none;">
+                  <p class="description" style="padding-top:0; margin-top:0; width:99%;">You may override the default notification settings
+                    by entering a comma delimited list of emails to which the selected notifications should be sent.</p>
+                  <label for="notification_override_email">' . esc_html__('Send To', 'gravityforms') . ' ' . '</label>
+                  <input type="text" name="notification_override_email" id="notification_override_email_'.$entryID.'" style="width:99%;" />
+                  <br /><br />
+                </div>';
+
+    $return .=  '<input type="button" name="notification_resend" value="' . esc_attr('Resend', 'gravityforms') . '" class="button" style="" onclick="ResendNotifications('.$entryID.','.$form_id.');" />' .
+                '<span id="please_wait_container" style="display:none; margin-left: 5px;">' .
+                ' <i class="gficon-gravityforms-spinner-icon gficon-spin"></i> ' . esc_html__('Resending...', 'gravityforms') .
+                '</span>';
+  }
+  $return .= '</div>';
+
+  return $return;
 }
