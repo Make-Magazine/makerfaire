@@ -235,6 +235,7 @@ function fieldOutput($fieldID, $entry, $field_array, $form, $arg = '') {
         if ($fieldID == 32) {
           $type = 'video';
         }
+        break;
       case 'fileupload':
         if ($field_data['multipleFiles']) {
           $type = 'multipleFiles';
@@ -242,10 +243,7 @@ function fieldOutput($fieldID, $entry, $field_array, $form, $arg = '') {
 
           //if the array is empty, set this back to blank
           if (empty($value))   $value = '';
-        }
-        if(is_string($value)){
-          $value = str_replace('http://', 'https://', $value);  
-        }
+        }        
         
         break;
 
