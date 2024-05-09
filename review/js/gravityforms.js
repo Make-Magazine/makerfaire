@@ -46,8 +46,7 @@ function updateMgmt(action, entryID) {
         
         //Preliminary Location        
         var checkboxes = document.getElementsByName("entry_prelim_loc_" + entryID + '[]');        
-        console.log('preliminary location');
-        console.log(checkboxes);
+        
         for (var i = 0; i < checkboxes.length; i++) {
             if (checkboxes[i].checked) {                
                  // push all checked
@@ -143,4 +142,52 @@ function setLightBox(className, image_id) {
     lightbox.props.captions = captionsArr;
 
     lightbox.open(image_id);
+}
+
+//this is a copy of the function from the gravityforms plugin
+// original function can be found at makerfaire/wp-content/plugins/gravityforms/entry_detail.php
+function ResendNotifications(entry_id, form_id) {
+    var notification = document.getElementById('gform_notifications_'+entry_id).value;    
+    
+    var selectedNotifications = new Array();
+    var selectedNotifications = [notification];
+
+    var sendTo = document.getElementById('notification_override_email_'+entry_id).value;    
+    var nonce  = document.getElementById('gfnonce_'+entry_id).value;    
+
+    if (selectedNotifications.length <= 0) {
+        alert( 'You must select at least one type of notification to resend.');
+        return;
+    }
+
+    document.getElementById('please_wait_container').style.display = 'block';    
+    var data = {
+        'action'                 : "gf_resend_notifications",
+        'gf_resend_notifications': nonce,
+        'notifications'          : JSON.stringify(selectedNotifications),
+        'sendTo'                 : sendTo,
+        'leadIds'                : entry_id,
+        'formId'                 : form_id
+    }
+
+    var ajaxurl = '/wp-admin/admin-ajax.php';
+    var xhr = new XMLHttpRequest();
+    xhr.open("POST", ajaxurl);
+    xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    xhr.send(new URLSearchParams(data));
+    
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState == XMLHttpRequest.DONE) {
+            try {
+                //response = JSON.parse(xhr.response);
+                if(xhr.response){
+                    document.getElementById('please_wait_container').innerHTML = '<span style="color:red"><i class="bi bi-x"></i>Error in Update'+xhr.response+'</span>';
+                }                                
+                document.getElementById('please_wait_container').innerHTML = '<span style="color:green"><i class="bi bi-check2"></i>Notification Sent</span>';
+            } catch (e) {                
+                document.getElementById('please_wait_container').innerHTML = '<span style="color:red"><i class="bi bi-x"></i>Error in Update</span>';                
+            }
+           
+        };    
+    }
 }
