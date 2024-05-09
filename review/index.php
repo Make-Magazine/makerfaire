@@ -20,7 +20,7 @@
     include 'templates/header.php';
     ?>
     <!-- Our application root element -->
-    <div id="review" style="width:95%; margin: 35px auto;">            
+    <div id="review" style="width:95%; margin: 35px auto;display:none;">            
         <b-row>
             <b-col align-self="center" cols="8">
                 <h2>Maker Faire Admin Review</h2>
@@ -46,7 +46,7 @@
                 {{filterBy.length.toLocaleString()}} Entries
             </b-col>
             <b-col>
-                <b-pagination v-if="filterBy.length>0" v-model="currentPage" 
+                <b-pagination v-if="filterBy.length>0" v-model="currentPage" @page-click="pagClick(event, currentPage)"
                     :total-rows="filterBy.length" 
                     :per-page="perPage" 
                     prev-text="<" 

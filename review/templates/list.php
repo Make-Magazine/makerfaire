@@ -7,6 +7,7 @@
         <b-col cols="2">{{maker.entry_type}}</b-col>
         <b-col cols="1"><span :class="'status_'+maker.project_id">{{maker.status}}</span></b-col>
         <b-col cols="1" style="color: #ccc;">{{maker.project_id}}</b-col>
+        <b-button v-if="entryIDQuery" @click="backToGrid(maker.project_id)" variant="outline-primary" v-b-tooltip.hover title="Back to Grid"><i class="bi bi-arrow-return-left"></i><i aria-hidden="true" class="bi bi-grid"></i></b-button>
     </b-row>
     <b-tabs card v-bind:id=maker.project_id>
         <b-tab v-for="(tab,tabKey) in maker.tabs" :key="tabKey+'-'+maker_id" :title="tab.title">
@@ -38,6 +39,7 @@
             </b-card-text>
         </b-tab>
     </b-tabs>
+
 </b-card>
 
 <b-pagination v-if="filterBy.length>0" v-model="currentPage" :total-rows="filterBy.length" :per-page="perPage" prev-text="<" next-text=">">
