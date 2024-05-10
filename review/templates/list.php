@@ -14,7 +14,7 @@
             <b-card-text>
                 <b-container fluid class="bv-example-row">
                     <!-- Initial section-->
-                    <b-row v-for="(block,block_id) in tab.tab_content.initial.blocks" :key="block_id">
+                    <b-row class="blocks" v-for="(block,block_id) in tab.tab_content.initial.blocks" :key="block_id">
                         <?php  include('templates/blocks.html'); ?>      
                     </b-row>
 

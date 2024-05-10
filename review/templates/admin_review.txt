@@ -235,8 +235,6 @@
 		[block]		
 			[column]	
 				[field]notifications_sent[/field]						
-			[/column]	
-			[column]	
 				[field]send_notifications[/field]						
 			[/column]	
 		[/block]

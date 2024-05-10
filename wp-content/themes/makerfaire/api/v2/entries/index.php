@@ -327,7 +327,7 @@ function fieldOutput($fieldID, $entry, $field_array, $form, $arg = '') {
           ' <span class="updMsg" id="add_noteMSG_' . $entry['id'] . '"></span>';
         break;
       case 'flags':
-        $type = 'html';
+        $type  = 'html';
         $label = 'Flags';
 
         //flags        
@@ -335,21 +335,21 @@ function fieldOutput($fieldID, $entry, $field_array, $form, $arg = '') {
 
         break;
       case 'prelim_loc':
-        $type = 'html';
+        $type  = 'html';
         $label = 'Preliminary Location';
 
         //preliminary locations        
-        $value     = field_display($entry, $form, '302', 'entry_prelim_loc_' . $entry['id']);
-        $value    .= '<textarea id="location_comment_' . $entry['id'] . '">' . (isset($entry['307']) ? $entry['307'] : '') . '</textarea>';
+        $value  = field_display($entry, $form, '302', 'entry_prelim_loc_' . $entry['id']);
+        $value .= '<textarea id="location_comment_' . $entry['id'] . '">' . (isset($entry['307']) ? $entry['307'] : '') . '</textarea>';
         break;
       case 'exhibit_type':
-        $type = 'html';
+        $type  = 'html';
         $label = 'Entry Type';
-        $value     = field_display($entry, $form, '339', 'admin_exhibit_type_' . $entry['id']);
+        $value = field_display($entry, $form, '339', 'admin_exhibit_type_' . $entry['id']);
 
         break;
       case 'edit_status':
-        $type = 'html';
+        $type  = 'html';
         $label = 'Status';
         $field303 = RGFormsModel::get_field($form, '303');
         $value = '    <select id="entryStatus_' . $entry['id'] . '" name="entry_info_status_change">';
@@ -362,9 +362,9 @@ function fieldOutput($fieldID, $entry, $field_array, $form, $arg = '') {
         }
         break;
       case 'fee_mgmt':
-        $type = 'html';
+        $type  = 'html';
         $label = 'Fee Management';
-        $value     = field_display($entry, $form, '442', 'info_fee_mgmt_' . $entry['id']);
+        $value = field_display($entry, $form, '442', 'info_fee_mgmt_' . $entry['id']);
         break;
       case 'schedule_loc':
         //$type = 'html';
@@ -393,29 +393,27 @@ function fieldOutput($fieldID, $entry, $field_array, $form, $arg = '') {
         $label = 'Submitted On';
         break;
       case 'other_entries':
-        $type = 'html';
+        $type  = 'html';
         $label = '';
         $value = '';
         $value = getAddEntries($entry[98], $entry['id']);
         break;
       case 'public_entry_page':
-        $type   = 'html';
-        $label  = '';
-        $value  = '<a href="/maker/entry/' . $entry['id'] . '" target="_none">Public Entry Page</a>';
+        $type  = 'html';
+        $label = '';
+        $value = '<a href="/maker/entry/' . $entry['id'] . '" target="_none">Public Entry Page</a>';
         break;
       case 'notifications_sent':
-        $type = 'notes';
+        $type  = 'notes';
         $label = 'Notifications Sent';
         $value = GFAPI::get_notes(array('entry_id' => $entry['id'], 'note_type' => 'notification'), array('key' => 'id', 'direction' => 'DESC'));
 
-        break;
-        /*
+        break;        
       case 'send_notifications':
-        $type = 'html';
+        $type  = 'html';
         $label = 'Send Notifications';
         $value = get_form_notifications($form, $entry['id']);
-        break;
-        */
+        break;        
     }
   }
   if ($arg == 'no_label')  $label = '';
@@ -489,6 +487,8 @@ function get_form_notifications($form, $entryID) {
       '<div class="message" style="display:none;"></div>' . 
       '<input type="hidden" id="gfnonce_'.$entryID.'" value="'.wp_create_nonce( 'gf_resend_notifications' ).'" />';
   $notifications = GFCommon::get_notifications('resend_notifications', $form);
+  $key_values  = array_column($notifications, 'name');
+  array_multisort($key_values, SORT_ASC, $notifications);
 
   if (!is_array($notifications) || count($form['notifications']) <= 0) {
     $return .= '<p class="description">' . esc_html_e('You cannot resend notifications for this entry because this form does not currently have any notifications configured.', 'gravityforms') . '</p>';
@@ -496,7 +496,12 @@ function get_form_notifications($form, $entryID) {
   } else {
     $return  .= '<select id="gform_notifications_'.$entryID.'">';
     foreach ($notifications as $notification) {
+      //the isActive only gets set when a notification is deactivated, and even then it's usually a space
+      if(isset($notification['isActive']) && (!$notification['isActive'] || $notification['isActive']=='')){
+        continue;
+      }
       $return .= '<option class="gform_notifications" value="' . esc_attr($notification['id']) . '" id="notification_' . esc_attr($notification['id']) . '" onclick="toggleNotificationOverride();">'.esc_html($notification['name']) . '</option>';      
+            
     }
     $return  .= '</select>';
 

@@ -229,3 +229,8 @@ h3 {
     max-height: 300px;
     overflow: scroll;
 }
+
+.blocks:not(:first-of-type) {
+    border-top: 1px solid rgba(0, 0, 0, 0.125);
+    margin-top: 10px;
+}

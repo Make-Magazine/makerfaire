@@ -7,7 +7,13 @@ add_filter('gform_notification', 'change_email_to', 10, 3);
 function change_email_to($notification, $form, $entry) {
    $homeurl = get_home_url();
    // Check for our stage and dev sites	
-   if (strpos($homeurl, '.wpengine.com') !== false 	|| $homeurl === "https://stage.makerfaire.com" || $homeurl === "https://dev.makerfaire.com" ) {
+   if (strpos($homeurl, '.wpengine.com') !== false 	|| 
+		$homeurl === "https://stage.makerfaire.com" || 
+		$homeurl === "https://dev.makerfaire.com" ) {
+		//if we are in the testing env, and the to email is one of our own, let it through
+		if(strpos($$notification['to'], '@make.co') !== false){
+			return $notification;
+		}
    	  	$notification['to'] = 'webmaster@make.co,siana@make.co';
    	  	$notification['from'] = 'webmaster@make.co';
 		$notification['cc'] = '';
@@ -18,7 +24,8 @@ function change_email_to($notification, $form, $entry) {
       // Check for local sites
       if (defined('MF_OVERRITE_EMAIL')) {
          $notification['toType'] = 'email';
-         $notification['to'] = 'alicia@make.co';
+         $notification['to'] = MF_OVERRITE_EMAIL;
+		 $notification['cc'] = '';
          if (isset($notification['bcc'])) $notification['bcc'] = '';
       }else{
       	//$notification = array();
