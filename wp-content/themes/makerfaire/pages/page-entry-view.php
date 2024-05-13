@@ -172,7 +172,8 @@
                 <?php } ?>
             </div>
             <!-- Presentation information (if provided) -->
-            <?php 
+            <?php
+            /* 
             if($presentation_title!=''){
                 ?>
                 <div id="project_short" class="lead">
@@ -181,7 +182,7 @@
                     <p><?php echo nl2br($presentation_description); ?></p>                
                 </div>
                 <?php
-            }
+            }*/
             
             if (!empty($project_website)) { ?> 
                 <a href="<?php echo $project_website; ?>" class="btn universal-btn entry-website"target="_blank" ><?php if($formType !='Sponsor') echo 'Project';?> Website</a><?php

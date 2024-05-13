@@ -6,6 +6,8 @@
                 <b-button @click="resetFilters" variant="outline-primary" v-b-tooltip.hover title="Reset Filters"><i class="bi bi-arrow-repeat font-bold"></i></b-button>
             </b-input-group-append>
         </b-input-group>
+        <input type="hidden" name="entryID" v-model="entryIDQuery" />
+        <input type="hidden" name="page" v-model="lastPage" />
     </b-col>
     <b-col class="filter-expand-wrap">
         <b-button v-b-toggle.collapse-1 variant="outline-primary" class="mt-3" v-b-tooltip.hover title="Expand Filter Menu">
