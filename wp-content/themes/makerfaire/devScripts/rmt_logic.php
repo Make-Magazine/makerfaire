@@ -202,7 +202,7 @@ while ($row = $result->fetch_array(MYSQLI_ASSOC)) {
                     } else {
                         //if the value of this res/att is set by a field, return the field name
                         if(isset($field_array[$logic['field_number']] )){
-                            $fieldNumber = $field_array[$logic['field_number']]['label'].' {'.$logic['field_number'].'}';
+                            $fieldNumber = $field_array[$logic['field_number']]['label'].' ['.$logic['field_number'].']';
                         }else{
                             $fieldNumber =  $logic['field_number'];                        
                         }
