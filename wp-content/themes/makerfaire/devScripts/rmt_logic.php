@@ -212,7 +212,7 @@ while ($row = $result->fetch_array(MYSQLI_ASSOC)) {
                             '<tr>' .
                             '   <td style="width: 45%">' . $fieldNumber              . '</td>' .
                             '   <td style="width: 10%">' . $logic['operator']        . '</td>' .
-                            '   <td style="width: 45%">' . $logic['field_value']     . '</td>' .
+                            '   <td style="width: 45%">' . ($logic['field_value']!=''?$logic['field_value']:'blank') . '</td>' .
                             '</tr>';
                     }
                 }
