@@ -77,7 +77,7 @@ function mf_display_schedule_by_area($atts) {
       $navTabs .= '<li class="' . ($day == 'saturday' ? 'active' : '') . '"><a class="text-capitalize" href="#' . $dayhref . '" data-toggle="tab">' . esc_attr($day) . '</a></li>';
       // Start the day's schedule
       $scheduleData .= '<div id="' . $dayhref . '" class="tab-pane fade in ' . ($day == 'saturday' ? 'active' : '') . '">';
-      $scheduleData .= '<table id="' . esc_attr($day) . '" class="table table-bordered table-schedule">';
+      $scheduleData .= '<table id="' . esc_attr($day) . '" class="table table-schedule">';
       if (isset($dayData['entries'])) {
         foreach ($dayData['entries'] as $entry) {
           $scheduleData .= buildScheduleData($entry);

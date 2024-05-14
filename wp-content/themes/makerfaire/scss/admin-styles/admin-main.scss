@@ -166,3 +166,13 @@ ul#input_321 li {
 .metabox-prefs .hidden {
     display: block !important;
 }
+
+
+.btn-info { 
+  background-color: #397b98;
+  border-color: #326c85;
+  &:hover {
+    background-color: #2b5d73;
+    border-color: #214859;
+  }
+}
