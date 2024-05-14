@@ -519,3 +519,41 @@ function child_remove_page_templates($page_templates) {
     return $page_templates;
 }
 add_filter('theme_page_templates', 'child_remove_page_templates');
+
+
+
+add_action('members_register_caps', 'th_register_caps');
+function th_register_caps() {
+    members_register_cap('admin_review', array('label' => __('Admin Review', 'makerfaire'), 'group' => 'makerfaire'));
+    
+    //notes
+    members_register_cap('notes_view', array('label' => __('View Notes', 'makerfaire'), 'group' => 'makerfaire'));
+    members_register_cap('notes_send', array('label' => __('Send Notes', 'makerfaire'), 'group' => 'makerfaire'));
+    
+    //notifications
+    members_register_cap('view_notifications', array('label' => __('View Sent Notifications', 'makerfaire'), 'group' => 'makerfaire'));    
+    members_register_cap('notifications_resend', array('label' => __('Resend Notifications', 'makerfaire'), 'group' => 'makerfaire'));    
+    
+    //manage tab
+    members_register_cap('edit_flags', array('label' => __('Edit Flags', 'makerfaire'), 'group' => 'makerfaire'));
+    members_register_cap('edit_prelim_loc', array('label' => __('Edit Preliminary Location', 'makerfaire'), 'group' => 'makerfaire'));
+    members_register_cap('edit_entry_type', array('label' => __('Edit Entry Type', 'makerfaire'), 'group' => 'makerfaire'));
+    members_register_cap('edit_fee_mgmt', array('label' => __('Edit Fee Management', 'makerfaire'), 'group' => 'makerfaire'));
+    members_register_cap('edit_status', array('label' => __('Edit Status', 'makerfaire'), 'group' => 'makerfaire'));
+    
+    //other
+    members_register_cap('edit_rmt', array('label' => __('Edit RMT', 'makerfaire'), 'group' => 'makerfaire'));
+    members_register_cap('edit_public_info', array('label' => __('Edit Public Info', 'makerfaire'), 'group' => 'makerfaire'));
+}
+add_action('members_register_cap_groups', 'th_register_cap_groups');
+function th_register_cap_groups() {
+    members_register_cap_group(
+        'makerfaire',
+        array(
+            'label' => __('Makerfaire', 'makerfaire'),
+            'caps' => array(),
+            'icon' => 'dashicons-admin-generic',
+            'priority' => 10
+        )
+    );
+}

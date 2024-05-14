@@ -7,7 +7,11 @@
 
     if (!is_user_logged_in())
         auth_redirect();
-
+    
+    if ( !current_user_can( 'admin_review' ) ) {
+        echo 'The current user can not access this page.';
+        die();
+    }
 
     $form_list = array();
     $forms = GFAPI::get_forms(true, false, 'id', 'DESC');
@@ -18,6 +22,7 @@
     }
 
     include 'templates/header.php';
+    
     ?>
     <!-- Our application root element -->
     <div id="review" style="width:95%; margin: 35px auto;">            
