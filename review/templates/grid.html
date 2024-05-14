@@ -1,5 +1,5 @@
 <b-card-group deck>
-    <b-card v-for="(maker, maker_id) in filterBy.slice((currentPage-1)*perPage,(currentPage-1)*perPage+perPage)" :title="maker.project_name" img-top :key="'grid-'+maker.project_id" @click="expandCard(maker.project_id)">
+    <b-card v-for="(maker, maker_id) in filterBy.slice((currentPage-1)*perPage,(currentPage-1)*perPage+perPage)" :title="maker.project_name" img-top :key="'grid-'+maker.project_id" @click="expandCard(maker.project_id)" :id="maker.project_id">
         <template #header>            
             <b-img-lazy thumbnail fluid class="grid-image" :alt="maker.project_name" :src="maker.photo" />
             <h5 class="hidden">{{maker.maker_name}}</h5>

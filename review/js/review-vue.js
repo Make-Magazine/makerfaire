@@ -20,6 +20,8 @@ new Vue({
             makers: [],
             currentView: urlParams.get('layout') ? urlParams.get('layout') : "grid",
             searchQuery: urlParams.get('search') ? urlParams.get('search') : "",
+            entryIDQuery: "",
+            layoutQuery: urlParams.get('layout') ? urlParams.get('layout') : "",
             // the splits here will both make sure these are arrays, and select all options in the multiselect
             selectedStatus: urlParams.get('status') ? urlParams.get('status').split(",") : [],
             selectedPrimeCat: urlParams.get('category') ? urlParams.get('category').split(",") : [],
@@ -28,6 +30,7 @@ new Vue({
             selectedPrelimLoc: urlParams.get('location') ? urlParams.get('location').split(",") : [],
             perPage: 20,
             currentPage: 1,
+            lastPage: 1, // this will store the last page accessed for getting back to with the back button
             modalShow: false,
             CustomSource: '',
             toggler: false,
@@ -43,18 +46,35 @@ new Vue({
     },
     methods: {
         switchToListView: function (ev) {
-            this.currentView = 'list';
-            query.layout = 'list';
+            this.currentView = layoutQuery = query.layout = 'list';
             this.router.push({ path: 'review', query: query }).catch(()=>{});
         },
         switchToGridView: function (ev) {
-            this.currentView = 'grid';
-            query.layout = 'grid';
+            this.currentView = layoutQuery = query.layout = 'grid';
             this.router.push({ path: 'review', query: query }).catch(()=>{});
+            this.entryIDQuery = "";
         },
         expandCard: function (projectID) {
-            this.currentView = 'list';
-            this.searchQuery = projectID;
+            this.currentView = layoutQuery = query.layout =  'list';
+            this.entryIDQuery = projectID;
+        },
+        backToGrid: function (anchor) {
+            this.currentView = layoutQuery = query.layout = 'grid';
+            var page = this.currentPage = this.lastPage;
+            this.entryIDQuery = "";
+            // because the pagination grid doesn't stay current with the page it's actually on, we will clear the active class and assign it back to the right pager later
+            document.querySelector(".pagination .page-item.active").classList.remove('active');
+            setTimeout(function(){
+                window.location.hash=anchor;
+                document.querySelector(".pagination .page-item button[aria-posinset='" + page + "']").parentNode.classList.add("active");
+            },200);
+        },
+        pagClick(ev) { // store the last page a user actually navigated to
+            var page = this.lastPage;
+            if(document.querySelector(".pagination .page-item button[aria-posinset='" + page + "']")) {
+                document.querySelector(".pagination .page-item button[aria-posinset='" + page + "']").parentNode.classList.remove("active");
+            }
+            this.lastPage = ev.target.ariaPosInSet;
         },
         switchDateOrder: function (ev) {
             ev.target.title = (ev.target.title == "See Oldest") ? "See Newest" : "See Oldest";
@@ -82,6 +102,7 @@ new Vue({
             this.selectedEntryType = [];
             this.selectedFlag = [];
             this.selectedPrelimLoc = [];
+            this.entryIDQuery = "";
             query = {};
             this.router.push({ path: 'review', query: query }).catch(()=>{});
         },
@@ -110,14 +131,17 @@ new Vue({
         axios
             .get('/query/?type=entries&form=' + formID)
             .then(response => (this.makers = response.data.makers));
+        document.getElementById("review").style.display = "block";
     },
     computed: {
         filterBy() {
             if (this.searchQuery || this.selectedStatus ||
                 this.selectedPrimeCat || this.selectedEntryType ||
-                this.selectedFlag || this.selectedPrelimLoc
+                this.selectedFlag || this.selectedPrelimLoc || this.entryIDQuery
             ) {
                 var searchValue     = this.searchQuery.toLowerCase();
+                var entryIDValue    = this.entryIDQuery;
+                var layoutValue     = this.layoutQuery;
                 var statusFilter    = this.selectedStatus;
                 var primeCatFilter  = this.selectedPrimeCat;
                 var entryTypeFilter = this.selectedEntryType;
@@ -132,6 +156,7 @@ new Vue({
 
                 // here we build the queryString based on the filters and add it to our route
                 if(searchValue) { query.search = searchValue; }
+                if(layoutValue) { query.layout = layoutValue; }
                 if(statusFilter.toString() != "") { query.status = statusFilter.toString(); }
                 if(primeCatFilter.toString() != "") { query.category = primeCatFilter.toString(); }
                 if(entryTypeFilter.toString() != "") { query.type = entryTypeFilter.toString(); }
@@ -211,6 +236,7 @@ new Vue({
                         maker.project_id.toLowerCase().indexOf(searchValue) > -1 ||
                         maker.description.toLowerCase().indexOf(searchValue) > -1 ||
                         maker.maker_name.toLowerCase().indexOf(searchValue) > -1) &&
+                        maker.project_id.indexOf(entryIDValue) > -1 &&
                         passEntryType && passFlag && passPrelimLoc && passPrimeCat && passStatus;
                 })
             } else {
