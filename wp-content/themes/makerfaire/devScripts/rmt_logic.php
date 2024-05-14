@@ -5,6 +5,15 @@
  * and open the template in the editor.
  */
 include 'db_connect.php';
+$form_id = (isset($_GET['form']) ? $_GET['form'] : '');
+$form    = ($form_id != '' ? gfapi::get_form($form_id) : '');
+//convert this into a usable array
+$field_array = array();
+if(isset($form['fields'] )){
+    foreach ($form['fields'] as $field) {
+        $field_array[$field['id']] = $field;
+      }
+}
 
 $sql = 'SELECT wp_rmt_rules.id as rule, wp_mf_form_types.form_type, rmt_field, wp_rmt_resources.type , wp_rmt_rules.value, field_number, operator, wp_rmt_rules_logic.value as field_value FROM `wp_rmt_rules` left outer join wp_rmt_resources on wp_rmt_rules.rmt_field=wp_rmt_resources.id left outer join wp_rmt_rules_logic on wp_rmt_rules_logic.rule_id = wp_rmt_rules.id left outer join wp_mf_form_types on wp_mf_form_types.id = wp_rmt_rules.form_type ORDER BY `rule` ASC';
 
@@ -16,7 +25,6 @@ $result = $mysqli->query($sql) or trigger_error($mysqli->error . "[$sql]");
 <html lang="en">
 
 <head>
-
     <style>
         h1,
         .h1,
@@ -91,14 +99,19 @@ $result = $mysqli->query($sql) or trigger_error($mysqli->error . "[$sql]");
 <body>
     <div class="container" style="width:100%; line-height: 1.3em">
         <div style="clear:both"></div>
+        <div style="text-align: center">
+            <div style="font-size: 12px;line-height: 12px;">
+            <i>add ?form=xxx to the end of the URL to specify a specific form - ie: makerfaire.com/wp-content/themes/makerfaire/devScripts/rmt_logic.php?form=9</i>
+            </div>
+        </div>
         <table style="margin: 10px 0;">
             <thead>
                 <tr id="headerRow">
                     <td style="width:  3%">Rule #</td>                                    
-                    <td>Field #</td>
+                    <td>If Field</td>
                     <td>Operator</td>
                     <td>Value</td>
-                    <td>Resource</td>
+                    <td>Resource Set</td>
                     <td>Resource Value</td>
                 </tr>
             </thead>
@@ -114,7 +127,15 @@ $result = $mysqli->query($sql) or trigger_error($mysqli->error . "[$sql]");
             ?>
                 <tr class="detailRow <?php echo $row_color;?>">
                     <td class="tcenter"><?php echo $row['rule']; ?></td>                                        
-                    <td><?php echo $row['field_number']; ?></td>
+                    <td>
+                        <?php 
+                        if(isset($field_array[$row['field_number']] )){
+                            echo $field_array[$row['field_number']]['label'];
+                        }else{
+                            echo $row['field_number'];                        
+                        } 
+                        ?>
+                    </td>
                     <td><?php echo $row['operator']; ?></td>
                     <td><?php echo $row['field_value']; ?></td>
                     <td><?php echo $row['type']; ?></td>
