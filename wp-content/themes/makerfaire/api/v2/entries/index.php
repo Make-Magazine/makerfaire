@@ -228,8 +228,9 @@ function fieldOutput($fieldID, $entry, $field_array, $form, $arg = '') {
   //find this field in the form object                
   if (isset($field_array[$fieldID])) {
     $field_data = $field_array[$fieldID];
-    $label = ($field_data['adminLabel'] != '' ? $field_data['adminLabel'] : $field_data['label']);
-    $type = $field_data['type'];
+    $label      = ($field_data['adminLabel'] != '' ? $field_data['adminLabel'] : $field_data['label']);
+    $type       = $field_data['type'];
+
     switch ($field_data['type']) {
       case 'website':
         if ($fieldID == 32) {
@@ -291,7 +292,6 @@ function fieldOutput($fieldID, $entry, $field_array, $form, $arg = '') {
           $value = $list;
         }
 
-
         break;
       default:
         if (isset($entry[$fieldID])) {
@@ -304,14 +304,26 @@ function fieldOutput($fieldID, $entry, $field_array, $form, $arg = '') {
         }
         break;
     }
-  } else {
-    //$entry['rmt'] = 
+  } else {    
     switch ($fieldID) {
-      case 'rmt':
-        $type  = 'html';
+      case 'rmt_resources':
+        $type  = 'list';
         $label = 'Assigned Resources';
-        //$value = entryResources($entry, TRUE);        
+        $rmt  = entryResources($entry, false);       
+        $value = (isset($rmt['resources'])?$rmt['resources']:'');
+        break;        
+      case 'rmt_attributes':
+        $type  = 'list';
+        $label = 'Assigned Attributes';
+        $rmt  = entryResources($entry, false);
+        $value = (isset($rmt['attributes'])?$rmt['attributes']:'');
         break;
+      case 'rmt_attention':  
+        $type  = 'list';
+        $label = 'Attention';
+        $rmt   = entryResources($entry, false);
+        $value = (isset($rmt['attention'])?$rmt['attention']:'');
+        break;        
       case 'notes':
         if (current_user_can('notes_view')) {
           $type  = 'notes';
@@ -411,11 +423,7 @@ function fieldOutput($fieldID, $entry, $field_array, $form, $arg = '') {
         $type  = 'html';
         $label = 'Final Location';
         //$value= 'final location is'.display_schedule($form['id'],$entry,$section='sidebar');
-        break;
-      case 'rmt':
-        $type  = 'listRepeat';
-        $label = 'Resources';
-        break;
+        break;      
       case 'date_created':
         $type  = 'text';
         $date  = date_create($entry[$fieldID]);
@@ -547,7 +555,7 @@ function get_form_notifications($form, $entryID) {
                   <p class="description" style="padding-top:0; margin-top:0; width:99%;">You may override the default notification settings
                     by entering a comma delimited list of emails to which the selected notifications should be sent.</p>
                   <label for="notification_override_email">' . esc_html__('Send To', 'gravityforms') . ' ' . '</label>
-                  <input type="text" name="notification_override_email" id="notification_override_email_' . $entryID . '" style="width:99%;" />
+                  <input type="text" name="notification_override_email" id="notification_override_email_' . $entryID . '" style="width:50%;" />
                   <br /><br />
                 </div>';
 

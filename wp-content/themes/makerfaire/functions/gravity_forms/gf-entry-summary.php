@@ -745,6 +745,7 @@ function entryResources($lead, $html=TRUE) {
         $itemDD .= 'itemDrop[' . $result->ID . ']="' . addslashes($result->category) . '";';
 
     }
+
     //build Item to type drop down array
     $sql = "SELECT wp_rmt_resource_categories.ID as item_id, wp_rmt_resource_categories.category as item, wp_rmt_resources.ID as type_id, wp_rmt_resources.type FROM `wp_rmt_resource_categories` right outer join wp_rmt_resources on wp_rmt_resource_categories.ID= wp_rmt_resources.resource_category_id ORDER BY `wp_rmt_resource_categories`.`category` ASC, type ASC";
     $results = $wpdb->get_results($sql);
@@ -940,7 +941,7 @@ function entryResources($lead, $html=TRUE) {
       </div>
     </div>
   </div>';
-
+  
   if(!$html){
     return $return_array;
   }
