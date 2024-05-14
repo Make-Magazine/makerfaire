@@ -243,8 +243,8 @@ function fieldOutput($fieldID, $entry, $field_array, $form, $arg = '') {
 
           //if the array is empty, set this back to blank
           if (empty($value))   $value = '';
-        }        
-        
+        }
+
         break;
 
       case 'address':
@@ -313,18 +313,28 @@ function fieldOutput($fieldID, $entry, $field_array, $form, $arg = '') {
         //$value = entryResources($entry, TRUE);        
         break;
       case 'notes':
-        $type  = 'notes';
-        $label = '';
-        $value = GFAPI::get_notes(array('entry_id' => $entry['id'], 'note_type' => 'user'), array('key' => 'id', 'direction' => 'DESC'));
-        if ($value == '') $value = '&nbsp;';
+        if (current_user_can('notes_view')) {
+          $type  = 'notes';
+          $label = '';
+          $value = GFAPI::get_notes(array('entry_id' => $entry['id'], 'note_type' => 'user'), array('key' => 'id', 'direction' => 'DESC'));
+          if ($value == '') $value = '&nbsp;';
+        } else {
+          $type  = $label = $value = '';
+        }
+        
         break;
       case 'notes_table':
-        $type  = 'html';
-        $label = 'Notes';
-        $value = '<p>Enter Email: <input type="email" placeholder="example@make.co" id="toEmail' . $entry['id'] . '" size="40" /></p>' .
-          ' <textarea	id="new_note_' . $entry['id'] . '"	style="width: 90%; height: 240px;" cols=""	rows=""></textarea>' .
-          ' <input type="button" value="Add Note" class="button updButton" style="width:auto;padding-bottom:2px;" onclick="updateMgmt(\'add_note_sidebar\',\'' . $entry['id'] . '\');"/>' .
-          ' <span class="updMsg" id="add_noteMSG_' . $entry['id'] . '"></span>';
+        if (current_user_can('notes_send')) {
+          $type  = 'html';
+          $label = 'Notes';
+          $value = '<p>Enter Email: <input type="email" placeholder="example@make.co" id="toEmail' . $entry['id'] . '" size="40" /></p>' .
+            ' <textarea	id="new_note_' . $entry['id'] . '"	style="width: 90%; height: 240px;" cols=""	rows=""></textarea>' .
+            ' <input type="button" value="Add Note" class="button updButton" style="width:auto;padding-bottom:2px;" onclick="updateMgmt(\'add_note_sidebar\',\'' . $entry['id'] . '\');"/>' .
+            ' <span class="updMsg" id="add_noteMSG_' . $entry['id'] . '"></span>';
+        } else {
+          $type  = $label = $value = '';
+        }
+
         break;
       case 'flags':
         $type  = 'html';
@@ -340,7 +350,10 @@ function fieldOutput($fieldID, $entry, $field_array, $form, $arg = '') {
 
         //preliminary locations        
         $value  = field_display($entry, $form, '302', 'entry_prelim_loc_' . $entry['id']);
-        $value .= '<textarea id="location_comment_' . $entry['id'] . '">' . (isset($entry['307']) ? $entry['307'] : '') . '</textarea>';
+        if (current_user_can('edit_prelim_loc')) {
+          $value .= '<textarea id="location_comment_' . $entry['id'] . '">' . (isset($entry['307']) ? $entry['307'] : '') . '</textarea>';
+        }
+
         break;
       case 'exhibit_type':
         $type  = 'html';
@@ -352,14 +365,20 @@ function fieldOutput($fieldID, $entry, $field_array, $form, $arg = '') {
         $type  = 'html';
         $label = 'Status';
         $field303 = RGFormsModel::get_field($form, '303');
-        $value = '    <select id="entryStatus_' . $entry['id'] . '" name="entry_info_status_change">';
-        if (isset($field303['choices'])) {
-          foreach ($field303['choices'] as $choice) {
-            $selected = '';
-            if ($entry[$field303['id']] == $choice['text']) $selected = ' selected ';
-            $value .= '<option ' . $selected . ' value="' . $choice['text'] . '">' . $choice['text'] . '</option>';
+
+        if (current_user_can('edit_status')) {
+          $value = '    <select id="entryStatus_' . $entry['id'] . '" name="entry_info_status_change">';
+          if (isset($field303['choices'])) {
+            foreach ($field303['choices'] as $choice) {
+              $selected = '';
+              if ($entry[$field303['id']] == $choice['text']) $selected = ' selected ';
+              $value .= '<option ' . $selected . ' value="' . $choice['text'] . '">' . $choice['text'] . '</option>';
+            }
           }
+        } else {
+          $value = $entry[$field303['id']];
         }
+
         break;
       case 'fee_mgmt':
         $type  = 'html';
@@ -374,8 +393,19 @@ function fieldOutput($fieldID, $entry, $field_array, $form, $arg = '') {
       case 'update_admin_button':
         $type  = 'html';
         $label = '';
-        $value = '<p><input type="button" id="updAdmin' . $entry['id'] . '" value="Update Admin" class="button updButton" style="width:auto;padding-bottom:2px;" onclick="updateMgmt(\'update_admin\', \'' . $entry['id'] . '\');"/></p>
+
+        //only display the update admin button if the user can actually edit something
+        if (
+          current_user_can('edit_flags') ||
+          current_user_can('edit_prelim_loc') ||
+          current_user_can('edit_entry_type') ||
+          current_user_can('edit_fee_mgmt') ||
+          current_user_can('edit_status')
+        ) {
+
+          $value = '<p><input type="button" id="updAdmin' . $entry['id'] . '" value="Update Admin" class="button updButton" style="width:auto;padding-bottom:2px;" onclick="updateMgmt(\'update_admin\', \'' . $entry['id'] . '\');"/></p>
                   <p><span class="updMsg" id="updAdminMSG' . $entry['id'] . '"></span></p>';
+        }
         break;
       case 'final_location':
         $type  = 'html';
@@ -404,16 +434,25 @@ function fieldOutput($fieldID, $entry, $field_array, $form, $arg = '') {
         $value = '<a href="/maker/entry/' . $entry['id'] . '" target="_none">Public Entry Page</a>';
         break;
       case 'notifications_sent':
-        $type  = 'notes';
-        $label = 'Notifications Sent';
-        $value = GFAPI::get_notes(array('entry_id' => $entry['id'], 'note_type' => 'notification'), array('key' => 'id', 'direction' => 'DESC'));
+        if (current_user_can('view_notifications')) {
+          $type  = 'notes';
+          $label = 'Notifications Sent';
+          $value = GFAPI::get_notes(array('entry_id' => $entry['id'], 'note_type' => 'notification'), array('key' => 'id', 'direction' => 'DESC'));
+        } else {
+          $type  = $label = $value = '';
+        }
 
-        break;        
+        break;
       case 'send_notifications':
-        $type  = 'html';
-        $label = 'Send Notifications';
-        $value = get_form_notifications($form, $entry['id']);
-        break;        
+        if (current_user_can('notifications_resend')) {
+          $type  = 'html';
+          $label = 'Send Notifications';
+          $value = get_form_notifications($form, $entry['id']);
+        } else {
+          $type  = $label = $value = '';
+        }
+
+        break;
     }
   }
   if ($arg == 'no_label')  $label = '';
@@ -461,12 +500,12 @@ function getAddEntries($email, $currEntryID) {
       $outputURL = admin_url('admin.php') . "?page=gf_entries&view=entry&id=" . $addData->form_id . '&lid=' . $addData->entry_id;
       $addEntriesCnt++;
       $addEntries .= '<tr>';
-      $date=date_create($addData->date_created);
-      
+      $date = date_create($addData->date_created);
+
       $addEntries .= '<td><a target="_blank" href="' . $outputURL . '">' . $addData->entry_id . '</a></td>'
         . '<td>' . $addData->projectName . '</td>'
         . '<td>' . $form['title'] . '</td>'
-        . '<td>' . date_format($date,"m-d-Y") . '</td>'
+        . '<td>' . date_format($date, "m-d-Y") . '</td>'
         . '<td>' . ($addData->lead_status == 'active' ? $addData->status : ucwords($addData->lead_status)) . '</td>'
         . '</tr>';
     }
@@ -483,9 +522,9 @@ function getAddEntries($email, $currEntryID) {
 function get_form_notifications($form, $entryID) {
   $form_id = $form['id'];
   $return  =
-    '<div id="sendNotifications'.$entryID.'>'.
-      '<div class="message" style="display:none;"></div>' . 
-      '<input type="hidden" id="gfnonce_'.$entryID.'" value="'.wp_create_nonce( 'gf_resend_notifications' ).'" />';
+    '<div id="sendNotifications' . $entryID . '>' .
+    '<div class="message" style="display:none;"></div>' .
+    '<input type="hidden" id="gfnonce_' . $entryID . '" value="' . wp_create_nonce('gf_resend_notifications') . '" />';
   $notifications = GFCommon::get_notifications('resend_notifications', $form);
   $key_values  = array_column($notifications, 'name');
   array_multisort($key_values, SORT_ASC, $notifications);
@@ -494,14 +533,13 @@ function get_form_notifications($form, $entryID) {
     $return .= '<p class="description">' . esc_html_e('You cannot resend notifications for this entry because this form does not currently have any notifications configured.', 'gravityforms') . '</p>';
     $return .= '<a href="' . admin_url("admin.php?page=gf_edit_forms&view=settings&subview=notification&id={$form_id}") . '" class="button">' . esc_html_e('Configure Notifications', 'gravityforms') . '</a>';
   } else {
-    $return  .= '<select id="gform_notifications_'.$entryID.'">';
+    $return  .= '<select id="gform_notifications_' . $entryID . '">';
     foreach ($notifications as $notification) {
       //the isActive only gets set when a notification is deactivated, and even then it's usually a space
-      if(isset($notification['isActive']) && (!$notification['isActive'] || $notification['isActive']=='')){
+      if (isset($notification['isActive']) && (!$notification['isActive'] || $notification['isActive'] == '')) {
         continue;
       }
-      $return .= '<option class="gform_notifications" value="' . esc_attr($notification['id']) . '" id="notification_' . esc_attr($notification['id']) . '" onclick="toggleNotificationOverride();">'.esc_html($notification['name']) . '</option>';      
-            
+      $return .= '<option class="gform_notifications" value="' . esc_attr($notification['id']) . '" id="notification_' . esc_attr($notification['id']) . '" onclick="toggleNotificationOverride();">' . esc_html($notification['name']) . '</option>';
     }
     $return  .= '</select>';
 
@@ -509,14 +547,14 @@ function get_form_notifications($form, $entryID) {
                   <p class="description" style="padding-top:0; margin-top:0; width:99%;">You may override the default notification settings
                     by entering a comma delimited list of emails to which the selected notifications should be sent.</p>
                   <label for="notification_override_email">' . esc_html__('Send To', 'gravityforms') . ' ' . '</label>
-                  <input type="text" name="notification_override_email" id="notification_override_email_'.$entryID.'" style="width:99%;" />
+                  <input type="text" name="notification_override_email" id="notification_override_email_' . $entryID . '" style="width:99%;" />
                   <br /><br />
                 </div>';
 
-    $return .=  '<input type="button" name="notification_resend" value="' . esc_attr('Resend', 'gravityforms') . '" class="button" style="" onclick="ResendNotifications('.$entryID.','.$form_id.');" />' .
-                '<span id="please_wait_container" style="display:none; margin-left: 5px;">' .
-                ' <i class="gficon-gravityforms-spinner-icon gficon-spin"></i> ' . esc_html__('Resending...', 'gravityforms') .
-                '</span>';
+    $return .=  '<input type="button" name="notification_resend" value="' . esc_attr('Resend', 'gravityforms') . '" class="button" style="" onclick="ResendNotifications(' . $entryID . ',' . $form_id . ');" />' .
+      '<span id="please_wait_container" style="display:none; margin-left: 5px;">' .
+      ' <i class="gficon-gravityforms-spinner-icon gficon-spin"></i> ' . esc_html__('Resending...', 'gravityforms') .
+      '</span>';
   }
   $return .= '</div>';
 

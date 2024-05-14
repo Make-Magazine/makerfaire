@@ -42,5 +42,5 @@
 
 </b-card>
 
-<b-pagination v-if="filterBy.length>0" v-model="currentPage" :total-rows="filterBy.length" :per-page="perPage" prev-text="<" next-text=">">
+<b-pagination v-if="filterBy.length>0" v-model="currentPage" :total-rows="filterBy.length" :per-page="perPage" prev-text="<" next-text=">" @page-click="pagClick(event, currentPage)">
 </b-pagination>
