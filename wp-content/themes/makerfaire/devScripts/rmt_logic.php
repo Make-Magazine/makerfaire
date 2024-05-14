@@ -15,7 +15,15 @@ if(isset($form['fields'] )){
       }
 }
 
-$sql = 'SELECT wp_rmt_rules.id as rule, wp_mf_form_types.form_type, rmt_field, wp_rmt_resources.type , wp_rmt_rules.value, field_number, operator, wp_rmt_rules_logic.value as field_value FROM `wp_rmt_rules` left outer join wp_rmt_resources on wp_rmt_rules.rmt_field=wp_rmt_resources.id left outer join wp_rmt_rules_logic on wp_rmt_rules_logic.rule_id = wp_rmt_rules.id left outer join wp_mf_form_types on wp_mf_form_types.id = wp_rmt_rules.form_type ORDER BY `rule` ASC';
+$sql =  'SELECT wp_rmt_rules.id as rule, wp_mf_form_types.form_type, rmt_field, rmt_type, '.
+        'if(rmt_type="resource", wp_rmt_resources.type,wp_rmt_entry_att_categories.category) as rmt_field_text, '.
+        'wp_rmt_rules.value, field_number, operator, wp_rmt_rules_logic.value as field_value '.
+        'FROM `wp_rmt_rules` '.
+        'LEFT OUTER JOIN wp_rmt_resources on wp_rmt_rules.rmt_field=wp_rmt_resources.id '.
+        'LEFT OUTER JOIN wp_rmt_entry_att_categories on wp_rmt_rules.rmt_field=wp_rmt_entry_att_categories.ID '.
+        'LEFT OUTER JOIN wp_rmt_rules_logic on wp_rmt_rules_logic.rule_id = wp_rmt_rules.id '.
+        'LEFT OUTER JOIN wp_mf_form_types on wp_mf_form_types.id = wp_rmt_rules.form_type '.
+        'ORDER BY rule ASC';
 
 $mysqli->query("SET NAMES 'utf8'");
 $result = $mysqli->query($sql) or trigger_error($mysqli->error . "[$sql]");
@@ -111,6 +119,7 @@ $result = $mysqli->query($sql) or trigger_error($mysqli->error . "[$sql]");
                     <td>If Field</td>
                     <td>Operator</td>
                     <td>Value</td>
+                    <td>Type</td>
                     <td>Resource Set</td>
                     <td>Resource Value</td>
                 </tr>
@@ -138,7 +147,8 @@ $result = $mysqli->query($sql) or trigger_error($mysqli->error . "[$sql]");
                     </td>
                     <td><?php echo $row['operator']; ?></td>
                     <td><?php echo $row['field_value']; ?></td>
-                    <td><?php echo $row['type']; ?></td>
+                    <td><?php echo $row['rmt_type']; ?></td>
+                    <td><?php echo $row['rmt_field_text']; ?></td>
                     <td><?php echo $row['value']; ?></td>
                 </tr>
             <?php
