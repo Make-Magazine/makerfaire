@@ -307,22 +307,28 @@ function fieldOutput($fieldID, $entry, $field_array, $form, $arg = '') {
   } else {    
     switch ($fieldID) {
       case 'rmt_resources':
-        $type  = 'list';
-        $label = 'Assigned Resources';
-        $rmt  = entryResources($entry, false);       
-        $value = (isset($rmt['resources'])?$rmt['resources']:'');
+        if (current_user_can('view_rmt')) {
+          $type  = 'list';
+          $label = 'Assigned Resources';
+          $rmt  = entryResources($entry, false);       
+          $value = (isset($rmt['resources'])?$rmt['resources']:'');
+        }
         break;        
       case 'rmt_attributes':
-        $type  = 'list';
-        $label = 'Assigned Attributes';
-        $rmt  = entryResources($entry, false);
-        $value = (isset($rmt['attributes'])?$rmt['attributes']:'');
+        if (current_user_can('view_rmt')) {
+          $type  = 'list';
+          $label = 'Assigned Attributes';
+          $rmt  = entryResources($entry, false);
+          $value = (isset($rmt['attributes'])?$rmt['attributes']:'');
+        }
         break;
       case 'rmt_attention':  
-        $type  = 'list';
-        $label = 'Attention';
-        $rmt   = entryResources($entry, false);
-        $value = (isset($rmt['attention'])?$rmt['attention']:'');
+        if (current_user_can('view_rmt')) {          
+          $type  = 'list';
+          $label = 'Attention';
+          $rmt   = entryResources($entry, false);
+          $value = (isset($rmt['attention'])?$rmt['attention']:'');
+        }
         break;        
       case 'notes':
         if (current_user_can('notes_view')) {
