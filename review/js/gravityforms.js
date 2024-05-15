@@ -1,9 +1,9 @@
+var ajaxurl = '/wp-admin/admin-ajax.php';
+
 /*
  * Triggers an AJAX update of the entry detail
  */
 function updateMgmt(action, entryID) {
-    var ajaxurl = '/wp-admin/admin-ajax.php';
-
     var data = {
         'action': 'mf-update-entry',
         'mfAction': action,
@@ -49,7 +49,7 @@ function updateMgmt(action, entryID) {
         //Preliminary Location        
         var prelim_loc = document.getElementsByName("entry_prelim_loc_" + entryID + '[]');
 
-        if (prelim_loc.length != 0) {            
+        if (prelim_loc.length != 0) {
             for (var i = 0; i < prelim_loc.length; i++) {
                 if (prelim_loc[i].checked) {
                     // push all checked
@@ -59,7 +59,7 @@ function updateMgmt(action, entryID) {
 
             //location comment
             data.append('entry_location_comment', document.getElementById("location_comment_" + entryID).value);
-        }        
+        }
 
         //Entry Type
         var entry_type = document.getElementsByName("admin_exhibit_type_" + entryID + '[]');
@@ -83,7 +83,7 @@ function updateMgmt(action, entryID) {
                 }
             }
         }
-        
+
         //Entry Status
         var updateStatus = document.getElementById("entryStatus_" + entryID);
         if (typeof (updateStatus) != 'undefined' && updateStatus != null) {
@@ -179,7 +179,6 @@ function ResendNotifications(entry_id, form_id) {
         'formId': form_id
     }
 
-    var ajaxurl = '/wp-admin/admin-ajax.php';
     var xhr = new XMLHttpRequest();
     xhr.open("POST", ajaxurl);
     xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
@@ -199,4 +198,114 @@ function ResendNotifications(entry_id, form_id) {
 
         };
     }
+}
+
+//RMT delete assigned rmt values
+function resAttDelete(currentEle, entryID) {
+    var r = confirm("Are you sure want to delete this row (this cannot be undone)!");
+    if (r == true) {
+        //delete the row
+		const element = document.getElementById(currentEle);
+		element.remove();
+        
+        var fieldData = breakDownEle(currentEle);
+        var rowID = currentEle.replace("Row", "");
+        var rowID = rowID.replace("attn", "");
+        var rowID = rowID.replace("att", "");
+        var rowID = rowID.replace("res", "");
+
+        //send delete
+        var data = {
+            'action': 'delete-entry-resAtt',
+            'ID': rowID,
+			'entry_id': entryID,            
+            'table': fieldData['table']
+        };
+        
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", ajaxurl);
+        xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+        xhr.send(new URLSearchParams(data));
+
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState == XMLHttpRequest.DONE) {
+                try {
+                    //response = JSON.parse(xhr.response);
+                } catch (e) {
+
+                }
+            }
+        }
+    }
+}
+
+function resAttLock(currentEle, lock) {
+    var lockBit = 0;
+    if (lock == 0) {
+        lockBit = 1;
+    }
+
+    var newLock = '<i class="bi bi-unlock-fill"></i>';
+    if (lock == 0) {
+        newLock = '<i class="bi bi-lock-fill"></i>';
+    }
+    
+    var lockHtml = '<span class="lockIcon" onclick="resAttLock(\'' + currentEle + '\',' + lockBit + ')">' + newLock + '</span>';    
+
+    document.getElementById(currentEle + '_lock').innerHTML = lockHtml;
+    
+    var fieldData = breakDownEle(currentEle);
+    var rowID = currentEle.replace("Row", "");
+    var rowID = rowID.replace("attn", "");
+    var rowID = rowID.replace("att", "");
+    var rowID = rowID.replace("res", "");
+    //send delete
+    var data = {
+        'action': 'update-lock-resAtt',
+        'ID': rowID,
+        'lock': lock,
+        'table': fieldData['table']
+    };
+    
+    var xhr = new XMLHttpRequest();
+        xhr.open("POST", ajaxurl);
+        xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+        xhr.send(new URLSearchParams(data));
+
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState == XMLHttpRequest.DONE) {
+                try {
+                    //response = JSON.parse(xhr.response);
+                } catch (e) {
+
+                }
+            }
+        }
+}
+
+/* input - fieldID
+ *      format - typeFieldName_dataID
+ * outuput - fieldData
+ *      format - array(db table name, section type (res or att),field name, data id )
+ */
+function breakDownEle(currentEle) {
+    var fieldData = [];
+    if (currentEle.indexOf("res") != -1) { //resource table
+        fieldData['table'] = 'wp_rmt_entry_resources';
+        var type = 'res';
+    } else if (currentEle.indexOf("attn") != -1) { //resource table
+        fieldData['table'] = 'wp_rmt_entry_attn';
+        var type = 'attn';
+    } else if (currentEle.indexOf("att") != -1) { //attribute table
+        fieldData['table'] = 'wp_rmt_entry_attributes';
+        var type = 'att';
+    }
+    fieldData['type'] = type;
+    //remove the type from the field
+    currentEle = currentEle.replace(type, "");
+    //get field name (data prior to the _)
+    fieldData['fieldName'] = currentEle.substr(0, currentEle.indexOf('_'));
+    //get data ID  (data after the _)
+    fieldData['ID'] = currentEle.substr(currentEle.indexOf("_") + 1);
+    return fieldData;
 }

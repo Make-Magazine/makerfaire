@@ -63,18 +63,17 @@
                 <div v-for="(value,i) in field.value">
                     <b-table striped hover :items="value"></b-table>
                 </div>
-
             </span>
             <span v-else-if="field.type === 'list'">
-                <b-table-simple striped responsive>
+                <b-table-simple striped responsive id="list" primary-key="listkey" >
                     <b-thead>
                         <b-tr>
-                            <b-th v-for="(listItem,label) in field.value[0]"><span v-html="label"></b-th>
+                            <b-th v-for="(listItem,label) in field.value[0]"><span class="text-capitalize"  v-html="label"></b-th>
                         </b-tr>
                     </b-thead>
                     <b-tbody>
-                        <b-tr v-for="list in field.value">
-                            <b-td v-for="listItem in list"><span v-html="listItem"></b-td>
+                        <b-tr :id="listkey" v-for="(list,listkey) in field.value">                            
+                            <b-td v-for="(listItem,label) in list" :id="listkey+'_'+label" ><span v-html="listItem"></b-td>
                         </b-tr>
                     </b-tbody>
                 </b-table-simple>
