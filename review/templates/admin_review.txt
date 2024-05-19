@@ -1,12 +1,6 @@
 [tab]
 	[title]Basic[/title]
-	[tab_content]
-		[block]
-				[column]
-					[field]rmt[/field]
-				[/column]	
-		[/block]		
-	
+	[tab_content]	
 		[block]
 			[column]
                 [field]22:no_label[/field]												
