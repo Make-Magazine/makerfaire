@@ -92,6 +92,7 @@
         <div id="loader" v-if="makers.length==0">
             <img src="/review/img/loading.gif" />
         </div>
+        
     </div>
     <?php
     include 'templates/footer.php';

@@ -251,15 +251,21 @@ i.bi {
     text-align: center;
     font-size: 20px;
 }
-
+i.bi-check, i.bi-check2 {
+    font-size:22px;
+}
 i.bi-unlock, i.bi-unlock-fill, i.bi-lock, i.bi-lock-fill {
     color: #0085ba;
 }
 
-i.bi-dash-circle, i.bi-dash-circle-fill {
+i.bi-dash-circle, i.bi-dash-circle-fill, i.bi-ban {
     color: #FF0000;
 }
 
-i.bi-plus-circle, i.bi-plus-circle-fill {
+i.bi-plus-circle, i.bi-plus-circle-fill, i.bi-check-circle, i.bi-check2 {
     color: #4CAF50;
+}
+
+.hideFirst td:first-child, .hideFirst th:first-child {
+    display: none;
 }

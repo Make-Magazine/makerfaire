@@ -59,9 +59,28 @@
                     </li>
                 </ul>
             </span>
-            <span v-else-if="field.type === 'listRepeat'">
-                <div v-for="(value,i) in field.value">
-                    <b-table striped hover :items="value"></b-table>
+            <span v-else-if="field.type === 'rmt'">
+                <div v-for="(vtable,type) in field.value">                    
+                    <div v-if="vtable" :class="field.class">                        
+                        <label class="text-capitalize fieldLabel">{{ vtable.table_label }}</label>
+
+                        <b-table-simple striped responsive :id="type+'_'+maker.project_id">
+                            <b-thead>
+                                <b-tr>                                    
+                                    <b-th v-for="item_label in vtable.col_labels">                                        
+                                        <span v-html="item_label">
+                                    </b-th>
+                                </b-tr>
+                            </b-thead>                            
+                            <b-tbody>
+                                <b-tr :id="list.id" v-for="(list,listkey) in vtable.data">                            
+                                    <b-td v-for="(listItem,item_label) in list" :id="list.id+'_'+item_label" >
+                                        <span v-html="listItem">                                            
+                                    </b-td>
+                                </b-tr>
+                            </b-tbody>
+                        </b-table-simple>
+                    </div>                            
                 </div>
             </span>
             <span v-else-if="field.type === 'list'">
@@ -72,8 +91,8 @@
                         </b-tr>
                     </b-thead>
                     <b-tbody>
-                        <b-tr :id="listkey" v-for="(list,listkey) in field.value">                            
-                            <b-td v-for="(listItem,label) in list" :id="listkey+'_'+label" ><span v-html="listItem"></b-td>
+                        <b-tr :id="list.id" v-for="(list,listkey) in field.value">                            
+                            <b-td v-for="(listItem,label) in list" :id="list.id+'_'+label" ><span v-html="listItem"></b-td>
                         </b-tr>
                     </b-tbody>
                 </b-table-simple>

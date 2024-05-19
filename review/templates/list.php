@@ -29,7 +29,7 @@
                                 </span>
                             </b-button>
                             <b-collapse :id="'collapse-'+tabKey+maker.project_id" class="mt-2">
-                                <b-row v-for="(block,block_id) in tab_content.blocks" :key="block_id">
+                                <b-row class="blocks"  v-for="(block,block_id) in tab_content.blocks" :key="block_id">
                                     <?php  include('templates/blocks.html'); ?>   
                                 </b-row>
                     
