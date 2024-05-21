@@ -7,24 +7,26 @@ function projects_rss_random_sort( $query ) {
 	}
 
     //randomly return projects and only return 1
-    if('projects' === $query->query['post_type']){
-        $query->set('posts_per_page', 3); //only return 5 projects
-        $query->set('orderby', 'rand'); //return projects randomly        
-        
-        //only return projects where project description is set                
-        $exhibit_query = array(             
-                'relation'      => 'AND',
-                array(
-                    'key'       => 'exhibit_description',                    
-                    'compare'   => 'EXISTS',
-                ),
-                array(
-                    'key'       => 'exhibit_description',
-                    'value'     => '',
-                    'compare'   => '!=',
-                ),
-        );            
-       $query->set('meta_query', $exhibit_query);
+    if( isset( $query->query_vars['post_type'] ) ) {
+        if('projects' === $query->query['post_type']){
+            $query->set('posts_per_page', 3); //only return 5 projects
+            $query->set('orderby', 'rand'); //return projects randomly        
+            
+            //only return projects where project description is set                
+            $exhibit_query = array(             
+                    'relation'      => 'AND',
+                    array(
+                        'key'       => 'exhibit_description',                    
+                        'compare'   => 'EXISTS',
+                    ),
+                    array(
+                        'key'       => 'exhibit_description',
+                        'value'     => '',
+                        'compare'   => '!=',
+                    ),
+            );            
+        $query->set('meta_query', $exhibit_query);
+        }
     }
     
     return $query;
