@@ -22,6 +22,14 @@ $form = (!empty($_REQUEST['form']) ? sanitize_text_field($_REQUEST['form']) : fa
 // Double check again we have requested this file
 if ($type == 'entries') {
   $data = getAllEntries($form);
+  //RMT values for adding new resources, attributes, and attention items
+  $all_rmt = getAllRMT();
+  $data['rmt'] = array(
+    'res_items'       => $all_rmt['resItems'],
+    'res_types'       => $all_rmt['resTypes'],
+    'att_items'       => $all_rmt['attItems'],
+    'attn_items'      => $all_rmt['attnItems']
+  );  
 
   // Output the JSON
   echo json_encode($data);
@@ -167,20 +175,20 @@ function getAllEntries($formID = '', $page = '', $years = '') {
 
     //prelimLoc
     $fieldArr = fieldOutput(302, $entry, $field_array, $form);
-    $prelim_loc    = (isset($fieldArr['value']) && $fieldArr['value'] != '' ? implode(", ", $fieldArr['value']) : '');
-
-    $return['makers'][] = array(
-      'tabs'          => $tabData,
-      'project_name'  => $entry['151'],
-      'project_id'    => $entry['id'],
-      'status'        => $entry['303'],
-      'description'   => $entry['16'],
-      'flags'         => $flags,
-      'entry_type'    => $exhibit_types,
-      'photo'         => $maker_photo,
-      'maker_name'    => $maker_name,
-      'prelim_loc'    => $prelim_loc,
-      'prime_cat'     => html_entity_decode(get_CPT_name($entry['320']))
+    $prelim_loc    = (isset($fieldArr['value']) && $fieldArr['value'] != '' ? implode(", ", $fieldArr['value']) : '');    
+    
+    $return['makers'][] = array(      
+      'tabs'            => $tabData,
+      'project_name'    => $entry['151'],
+      'project_id'      => $entry['id'],
+      'status'          => $entry['303'],
+      'description'     => $entry['16'],
+      'flags'           => $flags,
+      'entry_type'      => $exhibit_types,
+      'photo'           => $maker_photo,
+      'maker_name'      => $maker_name,
+      'prelim_loc'      => $prelim_loc,
+      'prime_cat'       => html_entity_decode(get_CPT_name($entry['320']))      
     );
   }
 
@@ -224,12 +232,14 @@ function fieldOutput($fieldID, $entry, $field_array, $form, $arg = '') {
 
   $value = (isset($entry[$fieldID]) ? $entry[$fieldID] : '');
   $type  = 'text';
+  $class = '';
 
   //find this field in the form object                
   if (isset($field_array[$fieldID])) {
     $field_data = $field_array[$fieldID];
-    $label = ($field_data['adminLabel'] != '' ? $field_data['adminLabel'] : $field_data['label']);
-    $type = $field_data['type'];
+    $label      = ($field_data['adminLabel'] != '' ? $field_data['adminLabel'] : $field_data['label']);
+    $type       = $field_data['type'];
+
     switch ($field_data['type']) {
       case 'website':
         if ($fieldID == 32) {
@@ -291,7 +301,6 @@ function fieldOutput($fieldID, $entry, $field_array, $form, $arg = '') {
           $value = $list;
         }
 
-
         break;
       default:
         if (isset($entry[$fieldID])) {
@@ -305,13 +314,31 @@ function fieldOutput($fieldID, $entry, $field_array, $form, $arg = '') {
         break;
     }
   } else {
-    //$entry['rmt'] = 
     switch ($fieldID) {
       case 'rmt':
-        $type  = 'html';
-        $label = 'Assigned Resources';
-        //$value = entryResources($entry, TRUE);        
-        break;
+        if (current_user_can('view_rmt')) {
+          $type  = 'rmt';
+          $label = '';
+          $class = 'hideFirst';
+          $rmt   = entryResources($entry, false); 
+          $value = array('resource' => array(
+                            'table_label' => 'Assigned Resources',
+                            'col_labels'  => array('id', 'Lock', 'Item', 'Type', 'Qty', 'Comments', 'User', 'Last Updated', '<span class="addIcon" onclick="addRow(\'resource\','.$entry['id'].')"><i class="bi bi-plus-circle"></i></span>'),
+                            'data'        => $rmt['resources']
+                          ),
+                        'attribute' => array(
+                            'table_label' => 'Assigned Attributes',
+                            'col_labels'  => array('id', 'Attribute', 'Value', 'Comment', 'User', 'Last Updated','<span class="addIcon" onclick="addRow(\'attribute\','.$entry['id'].')"><i class="bi bi-plus-circle"></i></span>'),
+                            'data'        => $rmt['attributes']
+                          ),
+                        'attention'  => array(
+                            'table_label' => 'Attention',
+                            'col_labels'  => array('id', 'Attention', 'Comment', 'User', 'Last Updated', '<span class="addIcon" onclick="addRow(\'attention\','.$entry['id'].')"><i class="bi bi-plus-circle"></i></span>'),
+                            'data'        => $rmt['attention']
+                          )
+                        );
+        }  
+        break;          
       case 'notes':
         if (current_user_can('notes_view')) {
           $type  = 'notes';
@@ -321,7 +348,7 @@ function fieldOutput($fieldID, $entry, $field_array, $form, $arg = '') {
         } else {
           $type  = $label = $value = '';
         }
-        
+
         break;
       case 'notes_table':
         if (current_user_can('notes_send')) {
@@ -412,10 +439,6 @@ function fieldOutput($fieldID, $entry, $field_array, $form, $arg = '') {
         $label = 'Final Location';
         //$value= 'final location is'.display_schedule($form['id'],$entry,$section='sidebar');
         break;
-      case 'rmt':
-        $type  = 'listRepeat';
-        $label = 'Resources';
-        break;
       case 'date_created':
         $type  = 'text';
         $date  = date_create($entry[$fieldID]);
@@ -457,7 +480,7 @@ function fieldOutput($fieldID, $entry, $field_array, $form, $arg = '') {
   }
   if ($arg == 'no_label')  $label = '';
   if ($value == '')  return array();
-  return array('label' => $label, 'type' => $type, 'value' => $value);
+  return array('label' => $label, 'type' => $type, 'value' => $value, 'class' => $class);
 }
 
 function getAddEntries($email, $currEntryID) {
@@ -547,7 +570,7 @@ function get_form_notifications($form, $entryID) {
                   <p class="description" style="padding-top:0; margin-top:0; width:99%;">You may override the default notification settings
                     by entering a comma delimited list of emails to which the selected notifications should be sent.</p>
                   <label for="notification_override_email">' . esc_html__('Send To', 'gravityforms') . ' ' . '</label>
-                  <input type="text" name="notification_override_email" id="notification_override_email_' . $entryID . '" style="width:99%;" />
+                  <input type="text" name="notification_override_email" id="notification_override_email_' . $entryID . '" style="width:50%;" />
                   <br /><br />
                 </div>';
 
@@ -557,6 +580,53 @@ function get_form_notifications($form, $entryID) {
       '</span>';
   }
   $return .= '</div>';
+
+  return $return;
+}
+
+//in order to add resources, attributes and attention - we need to populate the dropdowns
+function getAllRMT() {
+  global $wpdb;
+  $return  = array();
+  $itemArr = array();
+  $typeArr = array();
+
+  //build Item to type drop down array
+  $sql = "SELECT wp_rmt_resource_categories.ID as item_id, wp_rmt_resource_categories.category as item, wp_rmt_resources.ID as type_id, wp_rmt_resources.type FROM `wp_rmt_resource_categories` right outer join wp_rmt_resources on wp_rmt_resource_categories.ID= wp_rmt_resources.resource_category_id ORDER BY `wp_rmt_resource_categories`.`category` ASC, type ASC";
+  $results = $wpdb->get_results($sql);
+  $itemArr = array();
+  foreach ($results as $result) {
+    if (!isset($itemArr[$result->item_id])) {
+      $itemArr[$result->item_id] = $result->item;
+    }
+    if (!isset($typeArr[$result->item_id][$result->type_id])) {
+      $typeArr[$result->item_id][$result->type_id] = $result->type;
+    }
+  }
+  $return['resItems'] = $itemArr;
+  $return['resTypes'] = $typeArr;
+
+  //Build Attribute type array
+  $attArr = array();
+
+  $sql = "SELECT ID, category FROM wp_rmt_entry_att_categories";
+  $results = $wpdb->get_results($sql);
+  
+  foreach ($results as $result) {
+    $attArr[$result->ID] = $result->category;
+  }
+  $return['attItems'] = $attArr;  
+
+  //build attention drop down values
+  $attnArr = array();
+
+  $sql = "SELECT ID, value FROM wp_rmt_attn";
+  $results = $wpdb->get_results($sql);
+  
+  foreach ($results as $result) {
+      $attnArr[$result->ID] = $result->value;
+  }
+  $return['attnItems'] = $attnArr;
 
   return $return;
 }

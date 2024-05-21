@@ -735,7 +735,7 @@ function entryResources($lead, $html=TRUE) {
     global $wpdb;
 
     $return_array = array();
-
+    
     //create JS array for item drop down and type drop down
     $sql = "SELECT * FROM `wp_rmt_resource_categories` order by category ASC";
     $results = $wpdb->get_results($sql);
@@ -745,6 +745,7 @@ function entryResources($lead, $html=TRUE) {
         $itemDD .= 'itemDrop[' . $result->ID . ']="' . addslashes($result->category) . '";';
 
     }
+
     //build Item to type drop down array
     $sql = "SELECT wp_rmt_resource_categories.ID as item_id, wp_rmt_resource_categories.category as item, wp_rmt_resources.ID as type_id, wp_rmt_resources.type FROM `wp_rmt_resource_categories` right outer join wp_rmt_resources on wp_rmt_resource_categories.ID= wp_rmt_resources.resource_category_id ORDER BY `wp_rmt_resource_categories`.`category` ASC, type ASC";
     $results = $wpdb->get_results($sql);
@@ -753,7 +754,7 @@ function entryResources($lead, $html=TRUE) {
         $itemArr[$result->item_id] = $result->item;
         $typeArr[$result->item_id][$result->type_id] = $result->type;
     }
-
+    
     //gather resource data
     $sql = "SELECT er.*, type, wp_rmt_resource_categories.category as item, wp_rmt_resource_categories.ID as item_id,"
             . "er.update_Stamp as dateUpdated "
@@ -787,7 +788,18 @@ function entryResources($lead, $html=TRUE) {
         }
 
         $update_stamp = esc_html(GFCommon::format_date($result->dateUpdated, false, 'm/d/y h:i a'));
-        $return_array['resources'][] =array('item'=>$result->item,'type'=>$result->type,'qty'=>$result->qty,'comments'=>$result->comment,'user'=>$dispUser,'last_updated'=>$update_stamp);
+        $return_array['resources'][] = array(
+          'id'            => 'resRow'.$result->ID,
+          'lock'          => '<span class="lockIcon" onclick="resAttLock(\'resRow' . $result->ID . '\',' . $result->lockBit . ')">' 
+                                . ($result->lockBit == 1 ? '<i class="bi bi-lock-fill"></i>' : '<i class="bi bi-unlock-fill"></i>') 
+                            . '</span>',
+          'item'          => $result->item,
+          'type'          => $result->type,'qty'=>$result->qty,
+          'comments'      => $result->comment,
+          'user'          => $dispUser,
+          'last updated'  => $update_stamp,
+          'update'        => '<span onclick="resAttDelete(\'resRow' . $result->ID . '\','.$lead['id'].')"><i class="bi bi-dash-circle""></i></span>'          
+        );
         $resourceDisp .= '<tr id="resRow' . $result->ID . '">'
                 . ' <td class="lock"><span class="lockIcon" onclick="resAttLock(\'#resRow' . $result->ID . '\',' . $result->lockBit . ')">' . ($result->lockBit == 1 ? '<i class="fa fa-lock fa-lg"></i>' : '<i class="fa fa-unlock-alt fa-lg"></i>') . '</span></td>'
                 . ' <td id="resitem_' . $result->ID . '" data-itemID="' . $result->item_id . '">' . $result->item . '</td>'
@@ -810,8 +822,7 @@ function entryResources($lead, $html=TRUE) {
           and entry_id = " . $entry_id = $lead['id'] . " order by category";
 
     $results = $wpdb->get_results($sql);
-    $attDisp = '<table id="attTable"><thead><tr>'
-            . ' <th>Lock</th>'
+    $attDisp = '<table id="attTable"><thead><tr>'            
             . ' <th>Attribute</th>'
             . ' <th>Value</th>'
             . ' <th>Comment</th>'
@@ -829,13 +840,16 @@ function entryResources($lead, $html=TRUE) {
             $dispUser = $userInfo->display_name;
         }
         $update_stamp = esc_html(GFCommon::format_date($result->dateUpdated, false, 'm/d/y h:i a'));
-        $return_array['attributes'][] =array('attribute'=>$result->category,'value'=>$result->value,'comment'=>$result->comment,'user'=>$dispUser,'last_updated'=>$update_stamp);
-        $attDisp .= '<tr id="attRow' . $result->ID . '">'
-                . ' <td class="lock">'
-                . '   <span class="lockIcon" onclick="resAttLock(\'#attRow' . $result->ID . '\',' . $result->lockBit . ')">'
-                . ($result->lockBit == 1 ? '<i class="fa fa-lock fa-lg"></i>' : '<i class="fa fa-unlock-alt fa-lg"></i>')
-                . '   </span>'
-                . ' </td>'
+        $return_array['attributes'][] =array(        
+            'id'          => 'attRow' . $result->ID,    
+            'attribute'   => $result->category,
+            'value'       => $result->value,
+            'comment'     => $result->comment,
+            'user'        => $dispUser,
+            'last updated'=> $update_stamp,
+            'delete'      => '<span onclick="resAttDelete(\'attRow' . $result->ID . '\','.$lead['id'].')"><i class="bi bi-dash-circle""></i></span>'
+          );
+        $attDisp .= '<tr id="attRow' . $result->ID . '">'             
                 . ' <td id="attcategory_' . $result->ID . '">' . $result->category . '</td>'
                 . ' <td id="attvalue_' . $result->ID . '" class="editable textAreaEdit">' . $result->value . '</td>'
                 . ' <td id="attcomment_' . $result->ID . '" class="editable textAreaEdit">' . $result->comment . '</td>'
@@ -858,9 +872,9 @@ function entryResources($lead, $html=TRUE) {
     //build attention section
     $attnDisp = '';
     $sql = "SELECT wp_rmt_entry_attn.*, wp_rmt_attn.value, wp_rmt_entry_attn.update_Stamp as dateUpdated 
-          FROM `wp_rmt_entry_attn`, wp_rmt_attn
-          where wp_rmt_entry_attn.attn_id = wp_rmt_attn.ID
-          and entry_id = " . $entry_id = $lead['id'] . " order by wp_rmt_attn.value";
+            FROM `wp_rmt_entry_attn`, wp_rmt_attn
+            where wp_rmt_entry_attn.attn_id = wp_rmt_attn.ID
+            and entry_id = " . $lead['id'] . " order by wp_rmt_attn.value";
 
     $results = $wpdb->get_results($sql);
     $attnDisp = '<table id="attnTable"><thead><tr>'
@@ -878,7 +892,14 @@ function entryResources($lead, $html=TRUE) {
             $dispUser = $userInfo->display_name;
         }
         $update_stamp = esc_html(GFCommon::format_date($result->dateUpdated, false, 'm/d/y h:i a'));
-        $return_array['attention'][] =array('attention'=>$result->value,'comment'=>$result->comment,'user'=>$dispUser,'last_updated'=>$update_stamp);
+        $return_array['attention'][] =array(     
+            'id'          => 'attnRow' . $result->ID,       
+            'attention'   => $result->value,
+            'comment'     => $result->comment,
+            'user'        => $dispUser,
+            'last_updated'=> $update_stamp,
+            'delete'      => '<span onclick="resAttDelete(\'attnRow' . $result->ID . '\','.$lead['id'].')"><i class="bi bi-dash-circle""></i></span>'
+          );            
         $attnDisp .= '<tr id="attnRow' . $result->ID . '">'
                 . ' <td id="attnvalue_' . $result->ID . '">' . $result->value . '</td>'
                 . ' <td id="attncomment_' . $result->ID . '" class="editable textAreaEdit">' . $result->comment . '</td>'
@@ -940,7 +961,7 @@ function entryResources($lead, $html=TRUE) {
       </div>
     </div>
   </div>';
-
+  
   if(!$html){
     return $return_array;
   }

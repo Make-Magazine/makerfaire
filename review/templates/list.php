@@ -12,29 +12,42 @@
     <b-tabs card v-bind:id=maker.project_id>
         <b-tab v-for="(tab,tabKey) in maker.tabs" :key="tabKey+'-'+maker_id" :title="tab.title">
             <b-card-text>
-                <b-container fluid class="bv-example-row">
-                    <!-- Initial section-->
-                    <b-row class="blocks" v-for="(block,block_id) in tab.tab_content.initial.blocks" :key="block_id">
-                        <?php  include('templates/blocks.html'); ?>      
-                    </b-row>
+                <b-container fluid class="bv-example-row">                    
+                    <div v-for="(tab_content,tab_type) in tab.tab_content" :key="tabKey+'-'+maker_id">                        
+                        <!-- Initial section-->
+                        <b-row v-if="tab_type=='initial'" class="blocks" v-for="(block,block_id) in tab_content.blocks" :key="block_id">
+                            <?php  include('templates/blocks.html'); ?>      
+                        </b-row>
+                        <!-- Expand Section -->
+                        <div v-if="tab_type=='expand'">
+                            <b-button class="expand" v-b-toggle="'collapse-'+tabKey+maker.project_id" variant="primary">
+                                <span class="when-opened">
+                                    Less Info -
+                                </span>
+                                <span class="when-closed">
+                                    More Info +
+                                </span>
+                            </b-button>
+                            <b-collapse :id="'collapse-'+tabKey+maker.project_id" class="mt-2">
+                                <b-row class="blocks"  v-for="(block,block_id) in tab_content.blocks" :key="block_id">
+                                    <?php  include('templates/blocks.html'); ?>   
+                                </b-row>
+                    
+                            </b-collapse>
+                        </div>
 
-                    <!-- Expand Section -->
-                    <div v-if="tab.tab_content.expand">
-                        <b-button class="expand" v-b-toggle="'collapse-'+tabKey+maker.project_id" variant="primary">
-                            <span class="when-opened">
-                                Less Info -
-                            </span>
-                            <span class="when-closed">
-                                More Info +
-                            </span>
-                        </b-button>
-                        <b-collapse :id="'collapse-'+tabKey+maker.project_id" class="mt-2">
-                            <b-row v-for="(block,block_id) in tab.tab_content.expand.blocks" :key="block_id">
-                                <?php  include('templates/blocks.html'); ?>   
-                            </b-row>
-
-                        </b-collapse>
+                    </div>    
+                    <!--
+                    <div v-if="tab.tab_content.initial && tab.tab_content.initial > 0">
+                        initial content
+                        {{tab.tab_content.initial}}
                     </div>
+                    <div v-if="tab.tab_content.expand && tab.tab_content.expand > 0">
+                        {{tab.tab_content.expand}}
+                    </div>-->
+                    
+
+                  
                 </b-container>
             </b-card-text>
         </b-tab>

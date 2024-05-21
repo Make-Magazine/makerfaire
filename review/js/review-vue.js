@@ -13,11 +13,12 @@ const router = new VueRouter({
 });
 router.replace({ path: '/review', redirect: '/review' });
 
-new Vue({
+var review = new Vue({
     el: '#review',
     data() {
         return {
             makers: [],
+            rmt: [],
             currentView: urlParams.get('layout') ? urlParams.get('layout') : "grid",
             searchQuery: urlParams.get('search') ? urlParams.get('search') : "",
             entryIDQuery: "",
@@ -130,7 +131,14 @@ new Vue({
     mounted() {
         axios
             .get('/query/?type=entries&form=' + formID)
-            .then(response => (this.makers = response.data.makers));
+            .then((response) => {
+                this.makers = response.data.makers
+                return response;
+              })
+            .then((response) => {
+                this.rmt = response.data.rmt               
+            });            
+            
         document.getElementById("review").style.display = "block";
     },
     computed: {
