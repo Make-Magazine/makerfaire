@@ -153,7 +153,6 @@ add_action('wp_print_scripts', 'remove_unnecessary_scripts', PHP_INT_MAX); // we
 
 function remove_unnecessary_styles() {
     wp_dequeue_style('font-awesome');
-    wp_dequeue_style('essb-fontawsome');
     if (is_admin()) {
         wp_deregister_style('elementor-ai');
         wp_dequeue_style('elementor-ai');
@@ -323,7 +322,6 @@ function mf_remove_toolbar_node($wp_admin_bar) {
     $wp_admin_bar->remove_node('customize');
     $wp_admin_bar->remove_node('updates');
     $wp_admin_bar->remove_node('comments');
-    $wp_admin_bar->remove_node('essb');
     $wp_admin_bar->remove_node('autoptimize');
     $wp_admin_bar->remove_node('stats');
 }

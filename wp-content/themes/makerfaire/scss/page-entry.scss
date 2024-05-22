@@ -56,31 +56,6 @@
 			font-size: 20px;
 		}
 	}
-	.essb_links {
-		@media screen and (max-width: 768px) {
-			display: none;
-		}
-		.essb_item {
-			margin-bottom: 0px;
-			margin-right: 5px !important;
-			&:last-of-type {
-				margin-right: 0px !important;
-				width: calc(14% - 18px) !important;
-				a { background: #1052BA !important; }
-			}
-			a { 
-				height: 50px;
-				text-align: center;
-				.essb_network_name {
-					margin-top: -10px;
-					margin-bottom: 0px;
-				}
-				.essb_counter_bottom {
-					font-size: 10px;
-				}
-			}
-		}
-	}
 	.entry-weekend{		
 		padding-bottom:20px;
 		display:inline-block;
