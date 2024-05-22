@@ -328,7 +328,6 @@ function populate_exhibit_type( $form ) {
         
         foreach($field_339['inputs'] as $input){
             if($input['label']==$field_896){                
-                error_log('339 input found');
                 $field_id = 'input_'.str_replace('.','_',$input['id']); //translate 339.4 into input_339_4
                 $_POST[$field_id] = $field_896;
             }
