@@ -120,7 +120,6 @@ class mf_sharing_cards {
 //        $text = $project_short;
 //        return $text;
 //    }
-//    add_filter( 'essb_opengraph_desc', 'change_wpseo_metadesc' );
 // 
 //    //Website
 //    global $project_website;
