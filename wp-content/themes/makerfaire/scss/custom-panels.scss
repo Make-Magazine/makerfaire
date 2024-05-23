@@ -8,7 +8,7 @@
    }
 }
 
-.customPanels, .elementor-section {
+.customPanels, .elementor-section, .elementor-widget-container {
    font-family: "Roboto Light";
    overflow: hidden;
 	// color background options for all panels
@@ -366,17 +366,17 @@
 
    .featured-maker-panel {
 		padding-bottom: 30px;
-      	.panel-title {
-	        margin-top: 15px;
-			display: table;
-			margin: 0 auto;
-			padding-top: 10px;
-	    }
-      	.title-w-border-y {
-        	margin-bottom: 15px;
-      	}
+      .panel-title {
+         margin-top: 15px;
+         display: table;
+         margin: 0 auto;
+         padding-top: 10px;
+      }
+      .title-w-border-y {
+         margin-bottom: 15px;
+      }
 
-		// we're borrowing a lot from featured-presenter-grid.less, this is where it's different
+		// we're borrowing a lot from featured-presenter-grid.scss, this is where it's different
 		.featured-image-grid {
 			max-width: 1170px;
 			margin: 0 auto 30px;

@@ -30,14 +30,14 @@ get_header();
          </div>
       </div>
       <div class="message-container">
-         <div class="loading-indicator" ref="loadingIndicator">Loading... <i class="fas fa-spinner"></i></div>
+         <div class="loading-indicator" ref="loadingIndicator"><b>Loading...</b><br /><br /><img src="https://make.co/wp-content/universal-assets/v2/images/makey-spinner.gif" /></div>
          <div class="error-indicator hidden text-danger" ref="errorIndicator">Sorry! We couldn't load the map... please try again later. <i class="fas fa-exclamation-triangle"></i></div>
       </div>
-      <div class="map-table-hidden" ref="mapTableWrapper" >
+      <div class="map-table-hidden" ref="mapTableWrapper">
 
          <div class="row">
             <div class="col-md-12">
-               <div id="map" ref="map" style="height: 40px;"></div>
+               <div id="map" ref="map" style="height: 400px;"></div>
             </div>
          </div>
 

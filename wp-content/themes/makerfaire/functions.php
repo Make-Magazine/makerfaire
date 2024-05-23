@@ -76,8 +76,7 @@ function load_scripts() {
     wp_enqueue_style('fancybox', '//cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.6/css/jquery.fancybox.min.css', '', 'all');
     wp_enqueue_style('universal-firstload.css', UNIVERSAL_MAKEHUB_ASSET_URL_PREFIX . 'wp-content/universal-assets/v2/css/universal-firstload.min.css', array(), $my_version);
     wp_enqueue_style('universal.css', UNIVERSAL_MAKEHUB_ASSET_URL_PREFIX . 'wp-content/universal-assets/v2/css/universal.min.css', array(), $my_version);
-    //auth0
-    wp_enqueue_script('auth0', 'https://cdn.auth0.com/js/auth0/9.6.1/auth0.min.js', array(), false, true);
+
     // space time for timezone hijinks
     wp_enqueue_script('spacetime', 'https://unpkg.com/spacetime', array(), false, true);
     // select 2 for styling select
