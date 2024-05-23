@@ -24,10 +24,8 @@
 		text-align: center;
 		.loading-indicator,
 		.error-indictor {
-			height: 40px;
-			.fa-spinner {
-				animation: GGSpinLoader 0.85s linear infinite;
-			}
+			padding-top: 20px;
+			height: 400px;
 		}
 	}
 	.no-results-modal {
