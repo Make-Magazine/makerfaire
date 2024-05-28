@@ -844,6 +844,7 @@ class GFRMTHELPER {
     
     //default project photo to field 22. 
     $project_photo = (isset($lead['22']) ? $lead['22'] : '');
+    
     //for BA24, the primary photo was changed to a multi image to allow cropping.
     $field = gfapi::get_field( $form_id, 22);
     if ($field['multipleFiles']) {      
@@ -856,6 +857,16 @@ class GFRMTHELPER {
         $project_photo = '';
       }  
     }
+    
+    //if the main project photo isn't set but the photo gallery is, use the first image in the photo gallery
+    if($project_photo==''){
+      // this returns an array of image urls from the additional images field
+      $project_gallery = (isset($lead['878']) ? json_decode($lead['878']):'');
+      if(is_array($project_gallery)){
+        $project_photo = $project_gallery[0];
+      }
+    } 
+  
     
     //if this is a Presentation Form AND the presenter photo is set, override
     if($form_type == 'Presentation' && isset($makerArray['presenter']['photo']) && $makerArray['presenter']['photo']) {
