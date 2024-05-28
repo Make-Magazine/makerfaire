@@ -16,7 +16,7 @@ $condLog = TRUE; //for now let's always display the conditional logic
 $mysqli->query("SET NAMES 'utf8'");
 $result   = $mysqli->query($sql) or trigger_error($mysqli->error."[$sql]");
 
-$publicFields = array(109,11,110,105,151,22,16,27,32,151,160,234,217,158,258,224,155,259,223,156,260,222,157,261,220,159,262,221,154,263,219);
+$publicFields = array(109,11,110,105,151,22,16,27,32,151,160,234,217,158,258,224,155,259,223,156,260,222,157,261,220,159,262,221,154,263,219,878,906,320,321,287,209,821,168,111,112,828);
 ?>
 <!doctype html>
 
