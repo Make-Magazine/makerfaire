@@ -12,6 +12,7 @@
 			[column]
 				[field]896[/field]
 				[field]55[/field]
+				[field]915[/field]
 				[field]884[/field]
 				[field]320[/field]				
 				[field]date_created[/field]
