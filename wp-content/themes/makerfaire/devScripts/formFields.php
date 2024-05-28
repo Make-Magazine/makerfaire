@@ -8,10 +8,13 @@ include 'db_connect.php';
 
 $sql = 'select display_meta from wp_gf_form_meta where form_id!=1 and form_id!=24';
 if(isset($_GET['formID'])) $sql.= ' and form_id='.$_GET['formID'];
-$sort = (isset( $_GET['sort'])?$_GET['sort']:'');
-$showAll = (isset( $_GET['showAll'])?TRUE:FALSE);
+$sort     = (isset( $_GET['sort'])    ? $_GET['sort'] : '');
+$showAll  = (isset( $_GET['showAll']) ? TRUE : FALSE);
+//$condLog  = (isset( $_GET['condLog']) ? TRUE : FALSE);
+$condLog = TRUE; //for now let's always display the conditional logic
+
 $mysqli->query("SET NAMES 'utf8'");
-$result = $mysqli->query($sql) or trigger_error($mysqli->error."[$sql]");
+$result   = $mysqli->query($sql) or trigger_error($mysqli->error."[$sql]");
 
 $publicFields = array(109,11,110,105,151,22,16,27,32,151,160,234,217,158,258,224,155,259,223,156,260,222,157,261,220,159,262,221,154,263,219);
 ?>
@@ -80,9 +83,15 @@ $publicFields = array(109,11,110,105,151,22,16,27,32,151,160,234,217,158,258,224
       echo '<h3 style="float:left">Form '.$json->id.' - '.$json->title.'</h3>';
       echo '<span style="float:right; margin-top: 15px;"><i>Form Type = '.$form_type.'</i></span>';?>
       <div style="clear:both"></div>
-      <div style="text-align: center">
-        <div style="font-size: 12px;line-height: 12px;">
-          <i>add ?formID=xxx to the end of the URL to specify a specific form - ie: makerfaire.com/wp-content/themes/makerfaire/devScripts/formFields.php?formID=77</i>
+      <div>
+        <div style="font-size: 12px;line-height: 12px;">          
+          <ul>
+            <li>to show a specific form -  add ?formID=xxx</li>
+            <li>to sort by ID - add '&sort=id'</li>
+            <li>to show all fields (including HTML, Section and Page) - add  &showAll=true</li>
+            <!--<li>to show conditional logic for the field - add &condLog=true</li>-->
+          </ul>
+          
         </div>
       </div>
 
@@ -98,6 +107,9 @@ $publicFields = array(109,11,110,105,151,22,16,27,32,151,160,234,217,158,258,224
             <td style="width:  1%">Admin Only</td>
             <td style="width:  1%">Req</td>
             <td style="width:  1%">Public</td>
+            <?php if($condLog){ ?>
+              <td style="width:  1%">Conditional Logic</td>
+            <?php } ?>
           </tr>
         </thead>
       <?php
@@ -114,6 +126,16 @@ $publicFields = array(109,11,110,105,151,22,16,27,32,151,160,234,217,158,258,224
       
          //var_dump($jsonArray);
       foreach($jsonArray as $field){
+        $condDisp = '';
+        if(isset($field['conditionalLogic']) && $field['conditionalLogic']!=''){
+          $condLogic = $field['conditionalLogic'];          
+          if(isset($condLogic->enabled)&&$condLogic->enabled){
+            $condDisp = '<b>'.$condLogic->actionType .'</b> if <b>'.$condLogic->logicType .'</b>:<br/>';
+            foreach($condLogic->rules as $rule){
+              $condDisp .= 'Field '. $rule->fieldId .' '. $rule->operator.' '.$rule->value.'<br/>';
+            }
+          }          
+        }
         if(
           ($field['type'] != 'html' && $field['type'] != 'section' && $field['type'] != 'page') ||
            ($showAll)
@@ -170,8 +192,10 @@ $publicFields = array(109,11,110,105,151,22,16,27,32,151,160,234,217,158,258,224
             <td><?php echo $paramName;?></td>
             <td class="tcenter"><?php echo (isset($field['visibility']) && $field['visibility']=='administrative'?'X':'');?></td>
             <td class="tcenter"><?php echo ($field['isRequired']?'X':'');?></td>
-            <td class="tcenter"><?php echo (in_array($field['id'],$publicFields)?'X':'');?></td>            
-
+            <td class="tcenter"><?php echo (in_array($field['id'],$publicFields)?'X':'');?></td>
+            <?php if($condLog){ ?>
+              <td class="tcenter"><?php echo $condDisp; ?></td>
+            <?php } ?>  
           </tr>
           <?php
         }
