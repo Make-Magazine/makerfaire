@@ -194,7 +194,7 @@ function load_admin_scripts() {
     wp_enqueue_script('thickbox', null);
 }
 
-add_action('admin_enqueue_scripts', 'load_admin_scripts');
+add_action('admin_enqueue_scripts', 'load_admin_scripts', 999);
 
 
 //this function is used to enqueue the VUE map
