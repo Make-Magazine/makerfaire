@@ -576,8 +576,8 @@ class GFRMTHELPER {
       /*
        * if this isn't a group we need to have a valid email for the presenter(maker 1) record.
        *    if it is not set, use contact email
-       */
-      $email = (isset($lead['161'])&&$lead['161']!='' ? $lead['161']:$entry_id.'-presenter1@makermedia.com');
+       */    
+      $email = (isset($lead['161'])&&$lead['161']!='' ? $lead['161']:$lead['98']);
       $makerArray['presenter'] = array(
           'first_name'  => (isset($lead['160.3']) ? $lead['160.3']:''),
           'last_name'   => (isset($lead['160.6']) ? $lead['160.6']:''),
