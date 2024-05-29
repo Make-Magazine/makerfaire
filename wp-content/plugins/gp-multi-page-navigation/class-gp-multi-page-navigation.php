@@ -135,7 +135,7 @@ class GP_Multi_Page_Navigation extends GWPerk {
 					<div id="<?php echo $this->key( 'indicator_message' ); ?>" class="gws-setting-row">
 						<div class="gws-setting-message">
 							Page navigation will automatically work with the "Steps" progress indicator. When enabled with the "Progress Bar" or no progress indicator,
-								you must create custom page links to navigate between pages. <a href="http://gravitywiz.com/gravity-forms-multi-page-form-navigation/#custom-page-links">Learn More</a>
+								you must create custom page links to navigate between pages. <a href="http://gravitywiz.com/documentation/gravity-forms-multi-page-form-navigation/#custom-page-links">Learn More</a>
 						</div>
 					</div>
 

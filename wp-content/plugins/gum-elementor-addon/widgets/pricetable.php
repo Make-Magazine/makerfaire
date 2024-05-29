@@ -2010,7 +2010,7 @@ class Month_Anual_Pricetable_Regular_Widget extends Widget_Base {
                 $list_iconHTML = ob_get_clean();
             }
 
-           $compile.='<li class="elementor-repeater-item-'.$list['_id'].'">'.$list_iconHTML.'<span '.$this->get_render_attribute_string( $repeater_setting_key ).'>'.esc_html($list['list_content']).'</span></li>';
+           $compile.='<li class="elementor-repeater-item-'.esc_attr($list['_id']).'">'.$list_iconHTML.'<span '.$this->get_render_attribute_string( $repeater_setting_key ).'>'.esc_html($list['list_content']).'</span></li>';
     }
 
     $compile .= '</ul>';

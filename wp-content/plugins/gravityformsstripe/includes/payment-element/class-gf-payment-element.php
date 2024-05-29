@@ -204,14 +204,17 @@ class GF_Stripe_Payment_Element {
 
 		$form_id = absint( rgpost( 'form_id' ) );
 		$feed_id = absint( rgpost( 'feed_id' ) );
-
+		$feed    = $this->addon->get_feed( $feed_id );
+		$form    = GFAPI::get_form( $form_id );
 		if ( empty( $form_id ) || empty( $feed_id ) ) {
 			wp_send_json_error( 'missing required parameters', 400 );
 			return;
 		}
 
-		$this->check_form_requires_login_nonce( $form_id );
+		$this->addon->log_debug( __METHOD__ . '() - Starting checkout for form : "' . rgar( $form, 'title' ) . '" (id: ' . rgar( $form, 'id' ) . ') , feed : "' . rgars( $feed, 'meta/feedName' ) . '" (id: ' . rgar( $feed, 'id' ) . '), tracking id: ' . rgpost( 'tracking_id' ) );
 
+		$this->check_form_requires_login_nonce( $form_id );
+		GFCommon::log_debug( __METHOD__ . '() - Validating form: ' . rgar( $form, 'title' ) . ' and feed: ' . rgars( $feed, 'meta/feedName' ) . ',  tracking id: ' . rgpost( 'tracking_id' ) );
 		$validation_result = $this->submission->validate( $form_id );
 		$is_spam           = rgar( $validation_result, 'is_spam', false );
 		$is_valid          = rgar( $validation_result, 'is_valid' );
@@ -220,6 +223,7 @@ class GF_Stripe_Payment_Element {
 		$order_data        = $this->submission->extract_order_from_submission( $feed_id, $form_id );
 
 		if ( ! $is_valid ) {
+			$this->addon->log_debug( __METHOD__ . '() - Submission is not valid, aborting submission for form : "' . rgar( $form, 'title' ) . '" (id: ' . rgar( $form, 'id' ) . ') , feed : "' . rgars( $feed, 'meta/feedName' ) . '" (id: ' . rgar( $feed, 'id' ) . '), tracking id: ' . rgpost( 'tracking_id' ) );
 			wp_send_json_success( array( 'is_valid' => false ) );
 			return;
 		} elseif ( $is_spam ) {
@@ -228,7 +232,6 @@ class GF_Stripe_Payment_Element {
 		}
 
 		$order_data['payment_method'] = $payment_method;
-		$feed                         = $this->addon->get_feed( $feed_id );
 		$subscription_id              = null;
 		$api                          = $this->get_api_for_feed( $feed_id );
 		$subscription                 = null;
@@ -236,6 +239,7 @@ class GF_Stripe_Payment_Element {
 		if ( rgars( $feed, 'meta/transactionType' ) === 'subscription' ) {
 			$subscription = $this->payment->create_subscription( $order_data, $feed_id, $form_id, $api );
 			if ( is_wp_error( $subscription ) ) {
+				$this->addon->log_debug( __METHOD__ . '() - Could not create subscription, aborting submission for form : "' . rgar( $form, 'title' ) . '" (id: ' . rgar( $form, 'id' ) . ') , feed : "' . rgars( $feed, 'meta/feedName' ) . '" (id: ' . rgar( $feed, 'id' ) . '), tracking id: ' . rgpost( 'tracking_id' ) );
 				wp_send_json_error( $subscription->get_error_message(), 400 );
 				return;
 			}
@@ -247,6 +251,7 @@ class GF_Stripe_Payment_Element {
 		}
 
 		if ( is_wp_error( $intent ) ) {
+				$this->addon->log_debug( __METHOD__ . '() - Could not create payment intent, aborting submission for form : "' . rgar( $form, 'title' ) . '" (id: ' . rgar( $form, 'id' ) . ') , feed : "' . rgars( $feed, 'meta/feedName' ) . '" (id: ' . rgar( $feed, 'id' ) . '), tracking id: ' . rgpost( 'tracking_id' ) );
 			wp_send_json_error( $intent );
 			return;
 		}
@@ -288,34 +293,42 @@ class GF_Stripe_Payment_Element {
 	public function handle_redirect() {
 		$source_redirect = rgget( 'source_redirect_slug' );
 
+		$tracking_id = rgget( 'tracking_id' );
+		$form_id     = rgget( 'form_id' );
+		$feed_id     = rgget( 'feed_id' );
+		$form        = GFAPI::get_form( $form_id );
+		$feed        = $this->addon->get_feed( $feed_id );
+
+		$this->addon->log_debug( __METHOD__ . '() - Handling redirect for form : "' . rgar( $form, 'title' ) . '" (id: ' . rgar( $form, 'id' ) . ') , feed : "' . rgars( $feed, 'meta/feedName' ) . '" (id: ' . rgar( $feed, 'id' ) . '), tracking id: ' . $tracking_id );
+
 		if ( ! empty( $source_redirect ) ) {
-			gf_stripe()->log_debug( __METHOD__ . '() - Request is a redirect from SCA. Ignore.' );
+			gf_stripe()->log_debug( __METHOD__ . '() - Request is a redirect from SCA. Ignore submission for form : "' . rgar( $form, 'title' ) . '" (id: ' . rgar( $form, 'id' ) . ') , feed : "' . rgars( $feed, 'meta/feedName' ) . '" (id: ' . rgar( $feed, 'id' ) . '), tracking id: ' . $tracking_id );
 			return false;
 		}
 
 		$resume_token = rgget( 'resume_token' );
-		$draft        = GFFormsModel::get_draft_submission_values( $resume_token );
-		$submission   = json_decode( rgar( $draft, 'submission' ), true );
-		gf_stripe()->log_debug( __METHOD__ . "() - resume_token: {$resume_token}, draft: " . print_r( $draft, true ) );
+		GFCommon::log_debug( __METHOD__ . '() - Getting draft for form : "' . rgar( $form, 'title' ) . '" (id: ' . rgar( $form, 'id' ) . ') , feed : "' . rgars( $feed, 'meta/feedName' ) . '" (id: ' . rgar( $feed, 'id' ) . '), tracking id: ' . $tracking_id . ', resume token: ' . $resume_token );
+		$draft      = GFFormsModel::get_draft_submission_values( $resume_token );
+		$submission = json_decode( rgar( $draft, 'submission' ), true );
 
 		if ( ! $submission ) {
-			gf_stripe()->log_debug( __METHOD__ . '() - No submission. Aborting' );
+			gf_stripe()->log_debug( __METHOD__ . '() - No submission found for resume token: ' . $resume_token . ', aborting submission for form : "' . rgar( $form, 'title' ) . '" (id: ' . rgar( $form, 'id' ) . ') , feed : "' . rgars( $feed, 'meta/feedName' ) . '" (id: ' . rgar( $feed, 'id' ) . '), tracking id: ' . $tracking_id );
 			return false;
 		}
 		$params = $this->decrypt_return_params( rgars( $submission, 'partial_entry/stripe_encrypted_params' ) );
 
-		$feed_id = rgar( $params, 'feed_id' );
-		gf_stripe()->log_debug( __METHOD__ . '() - Stripe encrypted params: ' . print_r( $params, true ) );
+		gf_stripe()->log_debug( __METHOD__ . '() - Stripe encrypted params for form : "' . rgar( $form, 'title' ) . '" (id: ' . rgar( $form, 'id' ) . ') , feed : "' . rgars( $feed, 'meta/feedName' ) . '" (id: ' . rgar( $feed, 'id' ) . '), tracking id: ' . $tracking_id . ' :- ' . print_r( $params, true ) );
 		$intent = $this->validate_redirect_intent( $params, $this->get_api_for_feed( $feed_id ) );
 		if ( $intent ) {
 			$this->maybe_set_link_cookie( $intent );
+		} elseif ( $intent === false ) {
+			return;
 		}
 
 		add_filter( 'gform_entry_id_pre_save_lead', array( $this->submission, 'get_pending_entry_id' ), 10, 2 );
 		add_filter( 'gform_field_validation', array( $this->submission, 'maybe_skip_field_validation' ), 10, 4 );
 
-		$form_id = rgar( $params, 'form_id' );
-		gf_stripe()->log_debug( __METHOD__ . '() - Processing submission' );
+		gf_stripe()->log_debug( __METHOD__ . '() - Processing submission for form : "' . rgar( $form, 'title' ) . '" (id: ' . rgar( $form, 'id' ) . ') , feed : "' . rgars( $feed, 'meta/feedName' ) . '" (id: ' . rgar( $feed, 'id' ) . '), tracking id: ' . $tracking_id );
 		// Remove this action to prevent processing the submission twice.
 		remove_action( 'wp', array( 'GFForms', 'maybe_process_form' ), 9 );
 		// Simulate the submission.
@@ -373,7 +386,7 @@ class GF_Stripe_Payment_Element {
 		$subscription = $api->get_subscription( $this->get_subscription_id() );
 
 		// If the subscription is using `send_invoice` and has a trial, the intent will be null because there wasn't anything paid until this point.
-		if ( $intent === null || $intent->status === 'processing' ) {
+		if ( $intent === null || rgobj( $intent, 'status' ) === 'processing' ) {
 			return array(
 				'is_success'      => true,
 				'subscription_id' => $subscription->id,
@@ -384,7 +397,7 @@ class GF_Stripe_Payment_Element {
 			);
 		}
 
-		if ( ! is_wp_error( $subscription ) ) {
+		if ( $subscription && ! is_wp_error( $subscription ) ) {
 
 			$subscription_data = array(
 				'is_success'      => true,
@@ -444,7 +457,7 @@ class GF_Stripe_Payment_Element {
 	 * @return array
 	 */
 	public function complete_single_purchase( $entry, $feed, $action, $event ) {
-
+		$this->addon->log_debug( __METHOD__ . '() - Completing single purchase for entry ID: ' . $entry['id'] . ' and feed ID: ' . $feed['id'] );
 		$action['entry_id']       = $entry['id'];
 		$action['type']           = 'complete_payment';
 		$action['amount']         = $this->addon->get_amount_import( rgars( $event, 'data/object/amount' ), $entry['currency'] );
@@ -466,6 +479,7 @@ class GF_Stripe_Payment_Element {
 	 * @return array
 	 */
 	public function complete_subscription( $entry, $feed, $action, $event ) {
+		$this->addon->log_debug( __METHOD__ . '() - Completing subscription for entry ID: ' . $entry['id'] . ' and feed ID: ' . $feed['id'] );
 		$api    = $this->get_api_for_feed( $feed['id'] );
 		$intent = $this->payment->get_stripe_payment_object(
 			$feed,
@@ -555,6 +569,10 @@ class GF_Stripe_Payment_Element {
 	 */
 	public function validate_redirect_intent( $parameters, $api ) {
 
+		$form_id                   = rgar( $parameters, 'form_id' );
+		$feed_id                   = rgar( $parameters, 'feed_id' );
+		$form                      = GFAPI::get_form( $form_id );
+		$feed                      = $this->addon->get_feed( $feed_id );
 		$intent_id                 = rgar( $parameters, 'intent_id' );
 		$invoice_id                = rgar( $parameters, 'invoice_id' );
 		$this->payment->intent_id  = $intent_id;
@@ -569,7 +587,7 @@ class GF_Stripe_Payment_Element {
 			$intent = $api->get_payment_intent( $intent_id, array( 'expand' => array( 'payment_method' ) ) );
 			$request_client_secret = rgget( 'payment_intent_client_secret' );
 		} else {
-			gf_stripe()->log_debug( __METHOD__ . '() - Invalid intent id. Aborting' );
+			gf_stripe()->log_debug( __METHOD__ . '() - Invalid intent id. Aborting tracking id:' . rgget( 'tracking_id' ) . ', for form : "' . rgar( $form, 'title' ) . '" (id: ' . rgar( $form, 'id' ) . ') , feed : "' . rgars( $feed, 'meta/feedName' ) . '" (id: ' . rgar( $feed, 'id' ) . ')' );
 
 			return false;
 		}
@@ -577,6 +595,8 @@ class GF_Stripe_Payment_Element {
 		// This happens when a payment method that has an intermediate step fails.
 		if ( $intent->status === 'requires_payment_method' ) {
 			gf_stripe()->log_debug( __METHOD__ . '() - Payment method failed after going to intermediate step, intent: ' . print_r( $intent, true ) );
+			gf_stripe()->log_debug( __METHOD__ . '() - Aborting tracking id:' . rgget( 'tracking_id' ) . ', for form : "' . rgar( $form, 'title' ) . '" (id: ' . rgar( $form, 'id' ) . ') , feed : "' . rgars( $feed, 'meta/feedName' ) . '" (id: ' . rgar( $feed, 'id' ) . ')' );
+
 			GFCache::set( 'payment_element_intent_failure', true );
 			return false;
 		}
@@ -585,12 +605,10 @@ class GF_Stripe_Payment_Element {
 			$intent->client_secret !== $request_client_secret ||
 			! in_array( $intent->status, array( 'succeeded', 'processing', 'requires_capture' ) )
 		) {
-			gf_stripe()->log_debug( __METHOD__ . '() - Invalid intent client secret or status. Aborting' );
+			gf_stripe()->log_debug( __METHOD__ . '() - Invalid intent client secret or status, Aborting tracking id:' . rgget( 'tracking_id' ) . ', for form : "' . rgar( $form, 'title' ) . '" (id: ' . rgar( $form, 'id' ) . ') , feed : "' . rgars( $feed, 'meta/feedName' ) . '" (id: ' . rgar( $feed, 'id' ) . ')' );
 
 			return false;
 		}
-
-		gf_stripe()->log_debug( __METHOD__ . '() - Intent is valid' );
 
 		return $intent;
 	}
@@ -778,6 +796,7 @@ class GF_Stripe_Payment_Element {
 			'is_spam'        => $is_spam,
 			'resume_token'   => $resume_token,
 			'payment_method' => $payment_method,
+			'tracking_id'    => rgpost( 'tracking_id' ),
 		);
 
 		if ( $client_secret === null && $invoice_id ) {

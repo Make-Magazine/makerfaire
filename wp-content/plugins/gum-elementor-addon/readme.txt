@@ -68,6 +68,9 @@ Not yet
 5. Three colors heading
 
 == Changelog ==
+= 1.3.5 =
+* Security issue fixing
+
 = 1.3.4 =
 * Improvement: Adding icon ( post meta widget )
 

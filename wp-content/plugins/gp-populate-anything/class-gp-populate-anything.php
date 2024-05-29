@@ -396,13 +396,14 @@ class GP_Populate_Anything extends GP_Plugin {
 	}
 
 	public function scripts() {
+		$form_settings_asset_file = include( plugin_dir_path( __FILE__ ) . 'js/built/gp-populate-anything-admin.asset.php' );
 
 		$scripts = array(
 			array(
 				'handle'    => 'gp-populate-anything-admin',
 				'src'       => $this->get_base_url() . '/js/built/gp-populate-anything-admin.js',
-				'version'   => $this->_version,
-				'deps'      => array( 'jquery' ),
+				'version'   => $form_settings_asset_file['version'],
+				'deps'      => $form_settings_asset_file['dependencies'],
 				'in_footer' => true,
 				'enqueue'   => array(
 					array( 'admin_page' => array( 'form_editor' ) ),
@@ -568,45 +569,45 @@ class GP_Populate_Anything extends GP_Plugin {
 		return apply_filters(
 			'gppa_strings',
 			array(
-				'populateChoices'                   => esc_html__( 'Populate choices dynamically', 'gp-populate-anything' ),
-				'populateValues'                    => esc_html__( 'Populate value dynamically', 'gp-populate-anything' ),
-				'or'                                => esc_html__( 'Or', 'gp-populate-anything' ),
-				'and'                               => esc_html__( 'And', 'gp-populate-anything' ),
-				'filterAriaLabel'                   => esc_html__( 'Filter {0}', 'gp-populate-anything' ),
-				'filterGroupAriaLabel'              => esc_html__( 'Filter Group {0}', 'gp-populate-anything' ),
-				'filterGroups'                      => esc_html__( 'Filter Groups', 'gp-populate-anything' ),
-				'addFilter'                         => esc_html__( 'Add Filter', 'gp-populate-anything' ),
-				'addFilterGroup'                    => esc_html__( 'Add Filter Group', 'gp-populate-anything' ),
-				'removeFilter'                      => esc_html__( 'Remove Filter', 'gp-populate-anything' ),
-				'removeFilterAriaLabel'             => esc_html__( 'Remove Filter {0}', 'gp-populate-anything' ),
-				'label'                             => esc_html__( 'Label', 'gp-populate-anything' ),
-				'value'                             => esc_html__( 'Value', 'gp-populate-anything' ),
-				'price'                             => esc_html__( 'Price', 'gp-populate-anything' ),
-				'image'                             => esc_html__( 'Image', 'gp-populate-anything' ),
-				'loadingEllipsis'                   => esc_html__( 'Loading...', 'gp-populate-anything' ),
+				'populateChoices'                   => __( 'Populate choices dynamically', 'gp-populate-anything' ),
+				'populateValues'                    => __( 'Populate value dynamically', 'gp-populate-anything' ),
+				'or'                                => __( 'Or', 'gp-populate-anything' ),
+				'and'                               => __( 'And', 'gp-populate-anything' ),
+				'filterAriaLabel'                   => __( 'Filter {0}', 'gp-populate-anything' ),
+				'filterGroupAriaLabel'              => __( 'Filter Group {0}', 'gp-populate-anything' ),
+				'filterGroups'                      => __( 'Filter Groups', 'gp-populate-anything' ),
+				'addFilter'                         => __( 'Add Filter', 'gp-populate-anything' ),
+				'addFilterGroup'                    => __( 'Add Filter Group', 'gp-populate-anything' ),
+				'removeFilter'                      => __( 'Remove Filter', 'gp-populate-anything' ),
+				'removeFilterAriaLabel'             => __( 'Remove Filter {0}', 'gp-populate-anything' ),
+				'label'                             => __( 'Label', 'gp-populate-anything' ),
+				'value'                             => __( 'Value', 'gp-populate-anything' ),
+				'price'                             => __( 'Price', 'gp-populate-anything' ),
+				'image'                             => __( 'Image', 'gp-populate-anything' ),
+				'loadingEllipsis'                   => __( 'Loading...', 'gp-populate-anything' ),
 				/**
 				 * Using HTML entity (&#9998;) does not work with esc_html__ so the pencil has been pasted in directly.
 				 */
-				'addCustomValue'                    => esc_html__( '✎ Custom Value', 'gp-populate-anything' ),
-				'standardValues'                    => esc_html__( 'Standard Values', 'gp-populate-anything' ),
-				'formFieldValues'                   => esc_html__( 'Form Field Values', 'gp-populate-anything' ),
-				'specialValues'                     => esc_html__( 'Special Values', 'gp-populate-anything' ),
-				'valueBoolTrue'                     => esc_html__( '(boolean) true', 'gp-populate-anything' ),
-				'valueBoolFalse'                    => esc_html__( '(boolean) false', 'gp-populate-anything' ),
-				'valueNull'                         => esc_html__( '(null) NULL', 'gp-populate-anything' ),
+				'addCustomValue'                    => __( '✎ Custom Value', 'gp-populate-anything' ),
+				'standardValues'                    => __( 'Standard Values', 'gp-populate-anything' ),
+				'formFieldValues'                   => __( 'Form Field Values', 'gp-populate-anything' ),
+				'specialValues'                     => __( 'Special Values', 'gp-populate-anything' ),
+				'valueBoolTrue'                     => __( '(boolean) true', 'gp-populate-anything' ),
+				'valueBoolFalse'                    => __( '(boolean) false', 'gp-populate-anything' ),
+				'valueNull'                         => __( '(null) NULL', 'gp-populate-anything' ),
 				// translators: placeholder is the primary property to be selected such as a Form or Database Table
-				'selectAnItem'                      => esc_html__( 'Select a %s', 'gp-populate-anything' ),
-				'unique'                            => esc_html__( 'Only Show Unique Results', 'gp-populate-anything' ),
-				'reset'                             => esc_html__( 'Reset', 'gp-populate-anything' ),
-				'type'                              => esc_html__( 'Type', 'gp-populate-anything' ),
-				'objectType'                        => esc_html__( 'Object Type', 'gp-populate-anything' ),
-				'filters'                           => esc_html__( 'Filters', 'gp-populate-anything' ),
-				'ordering'                          => esc_html__( 'Ordering', 'gp-populate-anything' ),
-				'ascending'                         => esc_html__( 'Ascending', 'gp-populate-anything' ),
-				'descending'                        => esc_html__( 'Descending', 'gp-populate-anything' ),
-				'random'                            => esc_html__( 'Random', 'gp-populate-anything' ),
-				'choiceTemplate'                    => esc_html__( 'Choice Template', 'gp-populate-anything' ),
-				'valueTemplates'                    => esc_html__( 'Value Templates', 'gp-populate-anything' ),
+				'selectAnItem'                      => __( 'Select a %s', 'gp-populate-anything' ),
+				'unique'                            => __( 'Only Show Unique Results', 'gp-populate-anything' ),
+				'reset'                             => __( 'Reset', 'gp-populate-anything' ),
+				'type'                              => __( 'Type', 'gp-populate-anything' ),
+				'objectType'                        => __( 'Object Type', 'gp-populate-anything' ),
+				'filters'                           => __( 'Filters', 'gp-populate-anything' ),
+				'ordering'                          => __( 'Ordering', 'gp-populate-anything' ),
+				'ascending'                         => __( 'Ascending', 'gp-populate-anything' ),
+				'descending'                        => __( 'Descending', 'gp-populate-anything' ),
+				'random'                            => __( 'Random', 'gp-populate-anything' ),
+				'choiceTemplate'                    => __( 'Choice Template', 'gp-populate-anything' ),
+				'valueTemplates'                    => __( 'Value Templates', 'gp-populate-anything' ),
 				'operators'                         => array(
 					'is'               => __( 'is', 'gp-populate-anything' ),
 					'isnot'            => __( 'is not', 'gp-populate-anything' ),
@@ -623,9 +624,9 @@ class GP_Populate_Anything extends GP_Plugin {
 					'is_not_in'        => __( 'is not in', 'gp-populate-anything' ),
 				),
 				'chosen_no_results'                 => esc_attr( gf_apply_filters( array( 'gform_dropdown_no_results_text', 0 ), __( 'No results matched', 'gp-populate-anything' ), 0 ) ),
-				'restrictedObjectTypeNonPrivileged' => esc_html__( 'This field is configured to an object type for which you do not have permission to edit.', 'gp-populate-anything' ),
-				'restrictedObjectTypePrivileged'    => esc_html__( 'The selected Object Type is restricted. Non-super admins will not be able to edit this field\'s GPPA settings.', 'gp-populate-anything' ),
-				'tooManyPropertyValues'             => esc_html__( 'Too many values to display.', 'gp-populate-anything' ),
+				'restrictedObjectTypeNonPrivileged' => __( 'This field is configured to an object type for which you do not have permission to edit.', 'gp-populate-anything' ),
+				'restrictedObjectTypePrivileged'    => __( 'The selected Object Type is restricted. Non-super admins will not be able to edit this field\'s GPPA settings.', 'gp-populate-anything' ),
+				'tooManyPropertyValues'             => __( 'Too many values to display.', 'gp-populate-anything' ),
 			)
 		);
 
@@ -1452,7 +1453,15 @@ class GP_Populate_Anything extends GP_Plugin {
 		if ( $field ) {
 			// JSON encode $array_value for file uploads. This fixes a PHP warning (see HS#25675)
 			// Encoding all fields causes the default value of name fields to be comma separated (see HS#25880)
-			$value_export = $field['type'] === 'fileupload' ? $field->get_value_export( json_encode( $array_value ) ) : $field->get_value_export( $array_value );
+			if ( $field['type'] === 'fileupload' ) {
+				$value_export = $field->get_value_export( json_encode( $array_value ) );
+			} elseif ( $field['type'] === 'multiselect' ) {
+				// For 'multiselect', use the text value without any change as the value is already an array
+				$value_export = $text_value;
+			} else {
+				// For any other field types, get the exported value using the array value directly.
+				$value_export = $field->get_value_export( $array_value );
+			}
 		} else {
 			$value_export = '';
 		}
@@ -2319,18 +2328,18 @@ class GP_Populate_Anything extends GP_Plugin {
 
 		$objects = $this->get_field_objects( $field, $field_values, 'values' );
 
-		if ( count( $objects ) === 0 ) {
-			if ( $lead ) {
-				$value = RGFormsModel::get_lead_field_value( $lead, $field );
+		if ( $lead ) {
+			$value = RGFormsModel::get_lead_field_value( $lead, $field );
 
-				// If the value template is for an input, we need to get that from $value if it's an array.
-				if ( is_array( $value ) && strpos( $template, '.' ) !== false && is_numeric( $template ) ) {
-					return rgar( $value, $template );
-				}
-
-				return $value;
+			// If the value template is for an input, we need to get that from $value if it's an array.
+			if ( is_array( $value ) && strpos( $template, '.' ) !== false && is_numeric( $template ) ) {
+				return rgar( $value, $template );
 			}
 
+			return $value;
+		}
+
+		if ( count( $objects ) === 0 ) {
 			/**
 			 * Modify the value of an input when no object results have been found. Note, the field's Default Value will
 			 * be used if field dependencies have not been filled in.
@@ -4534,8 +4543,7 @@ class GP_Populate_Anything extends GP_Plugin {
 		 * Additionally, it needs to be an <li>, have the class to protect as the first class, and also have the field_setting class.
 		 */
 		?>
-		<!-- Populated with Vue -->
-		<li id="gppa" class="gppa field_setting" ></li>
+		<li id="gppa" class="gppa field_setting"></li>
 		<?php
 	}
 

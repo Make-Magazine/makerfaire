@@ -490,7 +490,7 @@ class EM_Calendar extends EM_Object {
 				$custom_args = array('global' => array(), 'search' => array(), 'calendar' => array());
 				foreach( $args as $name => $value ){
 					if( in_array($name, $ignore_keys) ) continue;
-					if( $name === 'scope' ) $value = $value['name'];
+					if( $name === 'scope' && !empty($value['name']) ) $value = $value['name'];
 					if( is_array($value) ) $value = implode(',', $value);
 					if( $value === true || $value === false ) $value = $value ? 1:0; // make sure we get a 1 or 0
 					if( in_array($name, $global_args_keys) ){

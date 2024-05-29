@@ -28,6 +28,15 @@ class Base implements \ArrayAccess {
 	private $original_values = array();
 
 	/**
+	 * Initialize properties that will be used throughout this class, all subclasses, and link to the Stripe API.
+	 *
+	 * @since 5.5.2
+	 */
+	public $id;
+	public $object;
+	public $created;
+
+	/**
 	 * Instantiates the object.
 	 *
 	 * @since 5.5.0
@@ -178,6 +187,7 @@ class Base implements \ArrayAccess {
 	 *
 	 * @return void
 	 */
+	#[\ReturnTypeWillChange]
 	public function offsetSet( $offset, $value ) {
 		$this->{$offset} = $value;
 	}
@@ -191,6 +201,7 @@ class Base implements \ArrayAccess {
 	 *
 	 * @return bool Returns true if the offset exists, false otherwise.
 	 */
+	#[\ReturnTypeWillChange]
 	public function offsetExists( $offset ) {
 		return isset( $this->{$offset} );
 	}
@@ -204,6 +215,7 @@ class Base implements \ArrayAccess {
 	 *
 	 * @return void
 	 */
+	#[\ReturnTypeWillChange]
 	public function offsetUnset( $offset ) {
 		unset( $this->{$offset} );
 	}
@@ -217,6 +229,7 @@ class Base implements \ArrayAccess {
 	 *
 	 * @return mixed Returns the value at the specified offset, or null if it doesn't exist.
 	 */
+	#[\ReturnTypeWillChange]
 	public function offsetGet( $offset ) {
 		return isset( $this->{$offset} ) ? $this->{$offset} : null;
 	}

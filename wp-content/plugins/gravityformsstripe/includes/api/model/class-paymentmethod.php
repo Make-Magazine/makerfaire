@@ -12,6 +12,18 @@ require_once( 'class-base.php' );
 class PaymentMethod extends Base {
 
 	/**
+	 * Initialize properties that will be used throughout this class and link to the Stripe API.
+	 *
+	 * @since 5.5.2
+	 */
+	public $card;
+	public $customer;
+	public $livemode;
+	public $metadata;
+	public $type;
+	public $billing_details;
+
+	/**
 	 * Returns the API endpoint for this object.
 	 *
 	 * @since 5.5.0

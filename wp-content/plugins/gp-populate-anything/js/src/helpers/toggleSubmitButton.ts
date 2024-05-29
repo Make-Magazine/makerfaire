@@ -1,6 +1,6 @@
 const getSubmitButton = ($form: JQuery): JQuery => {
 	const $submitButton = $form
-		.find('.gform_footer, .gform_page_footer')
+		.find('.gform_footer, .gform_page_footer, .gfield--type-submit')
 		.find('input[type="submit"], input[type="button"]');
 
 	/**

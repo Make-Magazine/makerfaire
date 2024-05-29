@@ -1,7 +1,17 @@
 export default function truncateStringMiddle(str: string) {
-	const maxLength = 50;
+	/**
+	 * Filter the max string length used in the Form Editor.
+	 *
+	 * @param int maxLength The max length of the string.
+	 *
+	 * @since 2.0.37
+	 */
+	const maxLength = window.gform.applyFilters(
+		'gppa_form_editor_max_string_length',
+		50
+	);
 
-	if (!str) {
+	if (!str || !maxLength) {
 		return str;
 	}
 

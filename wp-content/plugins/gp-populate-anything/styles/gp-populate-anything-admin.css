@@ -135,7 +135,7 @@
 	margin: 0 !important;
 	height: 100%;
 	width: 100%;
-	padding-right: 30px;
+	padding-right: 30px !important;
 	flex: 1;
 }
 

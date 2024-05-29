@@ -28,17 +28,17 @@ class GPNF_Parent_Merge_Tag {
 	}
 
 	public function parse_parent_merge_tag( $text, $form, $entry, $url_encode, $esc_html, $nl2br, $format ) {
+		$parent_form_id = rgar( $entry, 'gpnf_entry_parent_form' );
+		$parent_form    = GFAPI::get_form( $parent_form_id );
+
 		/*
 		 * Parse regular {Parent} merge tags along with "complicated"/escaped merge tags which may exist in
 		 * a notification object.
 		 */
 		preg_match_all( '/\{\%?(?:GPNF:)?Parent:(.*?)\%?\}/', $text, $parent_matches, PREG_SET_ORDER );
 
-		if ( ! empty( $parent_matches ) ) {
-
-			$parent_form_id = rgar( $entry, 'gpnf_entry_parent_form' );
-			$parent_form    = GFAPI::get_form( $parent_form_id );
-			$parent_entry   = GFAPI::get_entry( rgar( $entry, 'gpnf_entry_parent' ) );
+		if ( ! empty( $parent_matches ) && $parent_form ) {
+			$parent_entry = GFAPI::get_entry( rgar( $entry, 'gpnf_entry_parent' ) );
 
 			/*
 			 * In some cases (child notifications, Gravity Flow), the {Parent} merge tag can be called before the parent

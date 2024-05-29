@@ -194,27 +194,72 @@ class StripeObject implements \ArrayAccess, \Countable, \JsonSerializable
     }
 
     // ArrayAccess methods
+
+    /**
+     * Sets an offset.
+     *
+     * @since 5.5.2
+     *
+     * @param mixed $offset
+     *
+     * @return mixed
+     */
+    #[\ReturnTypeWillChange]
     public function offsetSet($k, $v)
     {
         $this->{$k} = $v;
     }
 
+    /**
+     * Checks if an offset exists.r
+     *
+     * @since 5.5.2
+     *
+     * @param mixed $offset
+     *
+     * @return bool
+     */
+    #[\ReturnTypeWillChange]
     public function offsetExists($k)
     {
         return \array_key_exists($k, $this->_values);
     }
 
+    /**
+     * Unsets an offset.
+     *
+     * @since 5.5.2
+     *
+     * @param mixed $offset
+     */
+    #[\ReturnTypeWillChange]
     public function offsetUnset($k)
     {
         unset($this->{$k});
     }
 
+    /**
+     * Gets an offset.
+     *
+     * @since 5.5.2
+     *
+     * @param mixed $offset
+     *
+     * @return mixed
+     */
+    #[\ReturnTypeWillChange]
     public function offsetGet($k)
     {
         return \array_key_exists($k, $this->_values) ? $this->_values[$k] : null;
     }
 
     // Countable method
+    /**
+     * Counts the number of elements in the object.
+     *
+     * @since 5.5.2
+     */
+    #[\ReturnTypeWillChange]
     public function count()
     {
         return \count($this->_values);
@@ -421,6 +466,12 @@ class StripeObject implements \ArrayAccess, \Countable, \JsonSerializable
         }
     }
 
+    /**
+     * Applying json Serialize to the object.
+     *
+     * @since 5.5.2
+     */
+    #[\ReturnTypeWillChange]
     public function jsonSerialize()
     {
         return $this->toArray();

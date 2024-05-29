@@ -8,8 +8,8 @@ Author URI: https://www.videousermanuals.com/?utm_campaign=wlcms&utm_medium=plug
 Author:  Video User Manuals
 Requires at least: 3.3 
 Requires PHP: 5.4
-Tested up to: 6.4.3
-Stable tag: 2.7.3
+Tested up to: 6.5.2
+Stable tag: 2.7.4
 
 Customise dashboard panels and branding, hide menus plus lots more.
 
@@ -66,8 +66,8 @@ There is so much that you can do with White Label CMS, but we want the experienc
 
 == Changelog ==
 
-= 2.7.3 =
-* Bug fix
+= 2.7.4 =
+* Improved: Plugin security. Thanks to Krzysztof Zając and Wordfence
 
 == Frequently Asked Questions ==
 = Who is this plugin for?=

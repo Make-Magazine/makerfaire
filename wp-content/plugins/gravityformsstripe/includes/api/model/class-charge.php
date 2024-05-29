@@ -15,6 +15,51 @@ require_once( 'class-customerbalancetransaction.php' );
 class Charge extends Base {
 
 	/**
+	 * Initialize properties that will be used throughout this class and link to the Stripe API.
+	 *
+	 * @since 5.5.2
+	 */
+	public $amount;
+	public $application;
+	public $balance_transaction;
+	public $captured;
+	public $currency;
+	public $customer;
+	public $description;
+	public $disputed;
+	public $livemode;
+	public $metadata;
+	public $outcome;
+	public $paid;
+	public $payment_intent;
+	public $payment_method;
+	public $receipt_number;
+	public $refunded;
+	public $review;
+	public $shipping;
+	public $statement_descriptor;
+	public $status;
+	public $transfer;
+	public $amount_captured;
+	public $amount_refunded;
+	public $application_fee;
+	public $application_fee_amount;
+	public $billing_details;
+	public $calculated_statement_descriptor;
+	public $failure_balance_transaction;
+	public $failure_code;
+	public $failure_message;
+	public $fraud_details;
+	public $on_behalf_of;
+	public $payment_method_details;
+	public $receipt_email;
+	public $reciept_url;
+	public $source_transfer;
+	public $statement_descriptor_suffix;
+	public $transfer_data;
+	public $transfer_group;
+
+	/**
 	 * Returns the API endpoint for this object.
 	 *
 	 * @since 5.5.0

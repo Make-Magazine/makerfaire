@@ -1,7 +1,7 @@
 === GravityView - DataTables Layout ===
 Tags: gravityview
 Requires at least: 4.4
-Tested up to: 6.4.3
+Tested up to: 6.5
 Stable tag: trunk
 Contributors: The GravityKit Team
 License: GPL 3 or higher
@@ -15,6 +15,17 @@ Display entries in a dynamic table powered by DataTables & GravityView.
 3. Follow the instructions
 
 == Changelog ==
+
+= 3.3.7 on May 15, 2024 =
+
+This release addresses issues with date range filtering and field dropdowns while adding support for future GravityView functionality.
+
+#### 🚀 Added
+- Support for a future GravityView ability to define a different layout for Single Entry screens.
+
+#### 🐛 Fixed
+- Date range filtering not working with Gravity Forms Date fields.
+- Row Group field dropdown not reflecting the current setting when the selected field uses a custom label.
 
 = 3.3.6 on March 19, 2024 =
 
@@ -476,5 +487,4 @@ __Developer Notes:__
 * Liftoff!
 
 
-
-= 1711122992-4249 =
+= 1717000852-4249 =

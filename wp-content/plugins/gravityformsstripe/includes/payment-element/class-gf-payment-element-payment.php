@@ -93,7 +93,7 @@ class GF_Payment_Element_Payment {
 		$methods = apply_filters( 'gform_stripe_payment_element_payment_methods', array(), $feed, $form );
 
 		if ( ! empty( $methods ) ) {
-			$this->addon->log_debug( __METHOD__ . '() - Payment methods filter is being used, feed type is: ' . $feed['meta']['transactionType'] . ',  payment methods: ' . print_r( $methods, true ) );
+			$this->addon->log_debug( __METHOD__ . '() - Payment methods filter is being used for submission with form_id: ' . rgar( $form, 'id' ) . ' and feed_id: ' . rgar( $feed, 'id' ) . ', feed type is: ' . $feed['meta']['transactionType'] . ',  payment methods: ' . json_encode( $methods ) . ',  tracking id: ' . rgpost( 'tracking_id' ) );
 		}
 
 		return $methods;
@@ -194,7 +194,9 @@ class GF_Payment_Element_Payment {
 			);
 		}
 
-		$this->addon->log_debug( __METHOD__ . '(): Creating intent with meta: ' . print_r( $intent_meta, true ) );
+
+		$this->addon->log_debug( __METHOD__ . '(): Creating intent for form : "' . rgar( $form, 'title' ) . '" (id: ' . rgar( $form, 'id' ) . ') , feed : "' . rgars( $feed, 'meta/feedName' ) . '" (id: ' . rgar( $feed, 'id' ) . '), tracking id: ' . rgpost( 'tracking_id' ) );
+		$this->addon->log_debug( __METHOD__ . '(): Intent meta to be created: ' . print_r( $intent_meta, true ) );
 
 		return $api->create_payment_intent( $intent_meta );
 	}
@@ -407,9 +409,10 @@ class GF_Payment_Element_Payment {
 	public function get_subscription_invoice_intent( $subscription, $feed, $api ) {
 		$invoice           = rgar( $subscription, 'latest_invoice' );
 		$finalized_invoice = $api->finalize_invoice( $invoice_id );
+		$form_id           = rgpost( 'form_id' );
 
 		if ( is_wp_error( $finalized_invoice ) ) {
-			$this->log_debug( __METHOD__ . '(): Unable to finalize invoice; ' . $finalized_invoice->get_error_message() );
+			$this->log_debug( __METHOD__ . '(): Unable to finalize invoice; ' . $finalized_invoice->get_error_message() . ',  tracking id: ' . rgpost( 'tracking_id' ) );
 
 			return $finalized_invoice;
 		}

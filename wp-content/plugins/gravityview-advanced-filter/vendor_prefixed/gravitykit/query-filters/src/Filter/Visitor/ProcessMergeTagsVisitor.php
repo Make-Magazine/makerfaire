@@ -2,8 +2,7 @@
 /**
  * @license MIT
  *
- * Modified by gravitykit on 01-February-2024 using Strauss.
- * @see https://github.com/BrianHenryIE/strauss
+ * Modified by gravitykit on 16-April-2024 using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\AdvancedFilter\QueryFilters\Filter\Visitor;
@@ -46,7 +45,7 @@ final class ProcessMergeTagsVisitor implements FilterVisitor {
 	 * @since 2.0.0
 	 */
 	public function visit_filter( Filter $filter, string $level = '0' ) {
-		if ( $filter->is_logic() ) {
+		if ( $filter->is_logic() || ! is_string( $filter->value() ) ) {
 			return;
 		}
 
@@ -84,9 +83,9 @@ final class ProcessMergeTagsVisitor implements FilterVisitor {
 	 *
 	 * @since 2.0.0
 	 *
+	 * @param string|null $filter_value Filter value text
 	 * @param array       $form         GF Form array
 	 * @param array       $entry        GF Entry array
-	 * @param string|null $filter_value Filter value text
 	 *
 	 * @return string|null
 	 */

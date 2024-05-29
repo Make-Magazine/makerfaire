@@ -1125,7 +1125,7 @@ class EM_Object {
 		foreach( $pag_args as $key => $val ){
 			$page_args_escaped[$key] = $val && is_string($val) ? urlencode($val) : $val;
 		}
-		$page_link_template = em_add_get_params($page_url, $page_args_escaped, false); //don't html encode, so em_paginate does its thing;
+		$page_link_template = em_add_get_params($page_url, $page_args_escaped, false, false); //don't html encode, so em_paginate does its thing;
 		//if( empty($args['ajax']) || defined('DOING_AJAX') ) $unique_args = array(); //don't use data method if ajax is disabled or if we're already in an ajax request (SERP irrelevenat)
 		$return = apply_filters('em_object_get_pagination_links', em_paginate( $page_link_template, $count, $limit, $page, $unique_args, !empty($args['ajax']) ), $page_link_template, $count, $limit, $page);
 		//if PHP is 5.3 or later, you can specifically filter by class e.g. em_events_output_pagination - this replaces the old filter originally located in the actual child classes

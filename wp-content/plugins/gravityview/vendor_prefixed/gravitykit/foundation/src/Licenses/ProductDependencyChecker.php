@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by gravityview on 28-March-2024 using {@see https://github.com/BrianHenryIE/strauss}.
+ * Modified by gravityview on 29-May-2024 using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\GravityView\Foundation\Licenses;
@@ -301,7 +301,10 @@ class ProductDependencyChecker {
 			foreach ( ( $dependencies['plugin'] ?? [] ) as $dependency_data ) {
 				$dependency_text_domain = $dependency_data['text_domain'];
 
-				$dependency_product = $this->get_product( ( implode( '|', [ $dependency_text_domain, $dependency_data['text_domain_legacy'] ?? '' ] ) ) );
+				$dependency_product = $this->get_product(
+					( implode( '|', [ $dependency_text_domain, $dependency_data['text_domain_legacy'] ?? '' ] ) ),
+					$dependency_data['author'] ?? ''
+				);
 
 				if ( ! $dependency_product ) {
 					$checked_dependencies[ $dependency_text_domain ] = true;
@@ -540,15 +543,21 @@ class ProductDependencyChecker {
 	 * If the product is not GK (as returned by our EDD API) product, it will be searched in the installed plugins.
 	 *
 	 * @since 1.2.0
+	 * @since 1.2.12 Added $author_str parameter.
 	 *
-	 * @param string|null $text_domain_str Text domain(s). Optionally pipe-separated (e.g. 'gravityview|gk-gravtiyview').
+	 * @param string $text_domain_str Text domain(s). Optionally pipe-separated (e.g. 'gravityview|gk-gravityview').
+	 * @param string $author_str (optional) Product author(s). Optionally pipe-separated (e.g. 'GravityView|GravityKit|Katz Web Services, Inc.').
 	 *
 	 * @return array|null
 	 */
-	private function get_product( $text_domain_str = '' ): ?array {
-		$text_domains_arr = explode( '|', $text_domain_str );
+	private function get_product( $text_domain_str = '', $author_str = '' ): ?array {
+		if ( '' === $text_domain_str ) {
+			return null;
+		}
 
-		foreach ( $text_domains_arr as $text_domain ) {
+		$text_domains = explode( '|', $text_domain_str );
+
+		foreach ( $text_domains as $text_domain ) {
 			$gk_product = Arr::first(
 				$this->products,
 				function ( $product ) use ( $text_domain ) {
@@ -561,7 +570,7 @@ class ProductDependencyChecker {
 			}
 		}
 
-		$non_gk_product = CoreHelpers::get_installed_plugin_by_text_domain( $text_domain_str );
+		$non_gk_product = CoreHelpers::get_installed_plugin_by_text_domain( $text_domain_str, false, $author_str );
 
 		if ( $non_gk_product ) {
 			$non_gk_product = ProductManager::get_instance()->normalize_product_data( $non_gk_product );

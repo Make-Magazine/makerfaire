@@ -8,6 +8,8 @@ use Elementor\Controls_Manager;
 use ElementorPro\Core\Utils;
 use ElementorPro\Modules\Posts\Traits\Button_Widget_Trait;
 use ElementorPro\Modules\Posts\Traits\Pagination_Trait;
+use ElementorPro\Modules\LoopBuilder\Module as LoopBuilderModule;
+use ElementorPro\Modules\Woocommerce\Module as WoocommerceModule;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -162,6 +164,12 @@ abstract class Posts_Base extends Base_Widget {
 			'section_pagination',
 			[
 				'label' => esc_html__( 'Pagination', 'elementor-pro' ),
+				'condition' => [
+					'_skin!' => [
+						LoopBuilderModule::LOOP_POST_TAXONOMY_SKIN_ID,
+						WoocommerceModule::LOOP_PRODUCT_TAXONOMY_SKIN_ID,
+					],
+				],
 			]
 		);
 
@@ -723,7 +731,7 @@ abstract class Posts_Base extends Base_Widget {
 			$url = $this->get_wp_link_page_url_for_normal_page_load( $url );
 		}
 
-		return $url;
+		return esc_url( $url );
 	}
 
 	public function is_allow_to_use_custom_page_option() {

@@ -1091,6 +1091,8 @@ export default class GPPopulateAnything {
 					$(document).trigger('gppa_updated_batch_fields', [
 						this.formId,
 						updatedFieldIDs,
+						triggerInputId,
+						this,
 					]);
 				}
 

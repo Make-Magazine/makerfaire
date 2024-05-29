@@ -13,6 +13,29 @@ require_once( 'class-product.php' );
 class Plan extends Base {
 
 	/**
+	 * Initialize properties that will be used throughout this class and link to the Stripe API.
+	 *
+	 * @since 5.5.2
+	 */
+	public $active;
+	public $amount;
+	public $currency;
+	public $interval;
+	public $livemode;
+	public $metadata;
+	public $nickname;
+	public $product;
+	public $aggregate_usage;
+	public $amount_decimal;
+	public $billing_scheme;
+	public $interval_count;
+	public $tiers;
+	public $tiers_mode;
+	public $transform_usage;
+	public $trial_period_days;
+	public $usage_type;
+
+	/**
 	 * Returns the API endpoint for this object.
 	 *
 	 * @since 5.5.0

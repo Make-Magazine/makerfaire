@@ -98,7 +98,7 @@ class GF_Payment_Element_Submission {
 	public function validate( $form_id ) {
 		// Modify the entry values as necessary before creating the draft.
 		add_filter( 'gform_save_field_value', array( $this, 'stripe_payment_element_save_draft_values' ), 10, 5 );
-
+		GFCommon::log_debug( __METHOD__ . '(): Validating form: ' . $form_id );
 		return GFAPI::validate_form( $form_id );
 	}
 
@@ -115,6 +115,8 @@ class GF_Payment_Element_Submission {
 
 		$files                           = array();
 		$form                            = GFAPI::get_form( $form_id );
+		$feed                            = $this->addon->get_feed( rgpost( 'feed_id' ) );
+		$tracking_id                     = rgget( 'tracking_id' );
 		$field_values                    = RGForms::post( 'gform_field_values' );
 		$lead                            = GFFormsModel::get_current_lead();
 		$lead['stripe_encrypted_params'] = $stripe_encrypted_params;
@@ -135,7 +137,7 @@ class GF_Payment_Element_Submission {
 
 		// Adding $_POST and removing User Registration passwords from submitted values.
 		add_filter( 'gform_submission_values_pre_save', array( $this, 'filter_draft_submission_values' ), 10, 2 );
-
+		GFCommon::log_debug( __METHOD__ . '(): Creating draft submission for form : "' . rgar( $form, 'title' ) . '" (id: ' . rgar( $form, 'id' ) . ') , feed : "' . rgars( $feed, 'meta/feedName' ) . '" (id: ' . rgar( $feed, 'id' ) . '), tracking id: ' . $tracking_id );
 		$resume_token = GFFormsModel::save_draft_submission(
 			$form,
 			$lead,
@@ -280,12 +282,15 @@ class GF_Payment_Element_Submission {
 		$this->payment_object_id = $intent ? $intent->id : null;
 		$this->subscription_id   = $subscription_id;
 
-		$form = GFAPI::get_form( $this->form_id );
+		$form        = GFAPI::get_form( $this->form_id );
+		$feed        = $this->addon->get_feed( $feed_id );
+		$tracking_id = rgget( 'tracking_id' );
 
 		// Prepare the submission values from the draft created while validating the form.
 		$draft      = GFFormsModel::get_draft_submission_values( $this->draft_id );
 		$submission = json_decode( rgar( $draft, 'submission' ), true );
 		if ( ! $submission ) {
+			$this->addon->log_debug( __METHOD__ . '(): Aborting Submission for form : "' . rgar( $form, 'title' ) . '" (id: ' . rgar( $form, 'id' ) . ') , feed : "' . rgars( $feed, 'meta/feedName' ) . '" (id: ' . rgar( $feed, 'id' ) . '), Unable to retrieve the submission values from the draft' . ',  tracking id: ' . $tracking_id );
 			return false;
 		}
 
@@ -295,8 +300,9 @@ class GF_Payment_Element_Submission {
 		}
 
 		// This adds the entry, but doesn't run the complete form processing flow.
+		GFCommon::log_debug( __METHOD__ . '(): Creating entry for form : "' . rgar( $form, 'title' ) . '" (id: ' . rgar( $form, 'id' ) . ') , feed : "' . rgars( $feed, 'meta/feedName' ) . '" (id: ' . rgar( $feed, 'id' ) . '), tracking id: ' . $tracking_id );
 		$this->entry_id = GFAPI::add_entry( $submission['partial_entry'] );
-
+		$this->addon->log_debug( __METHOD__ . '(): Entry with Id ' . $this->entry_id . ' created for form : "' . rgar( $form, 'title' ) . '" (id: ' . rgar( $form, 'id' ) . ') , feed : "' . rgars( $feed, 'meta/feedName' ) . '" (id: ' . rgar( $feed, 'id' ) . '), tracking id:' . $tracking_id );
 		// If there is a user registration password in the partial entry, add it to the entry meta.
 		if ( ! empty( $submission['partial_entry']['ur_pass'] ) ) {
 			gform_update_meta( $this->entry_id, 'userregistration_password', $submission['partial_entry']['ur_pass'] );
@@ -380,13 +386,16 @@ class GF_Payment_Element_Submission {
 		GFFormsModel::delete_draft_submission( $this->draft_id );
 
 		// Process the form
+		GFCommon::log_debug( __METHOD__ . '(): Processing submission for form : "' . rgar( $form, 'title' ) . '" (id: ' . rgar( $form, 'id' ) . ') , feed : "' . rgars( $feed, 'meta/feedName' ) . '" (id: ' . rgar( $feed, 'id' ) . '), tracking id: ' . $tracking_id );
 		GFFormDisplay::process_form( $this->form_id, GFFormDisplay::SUBMISSION_INITIATED_BY_WEBFORM );
 
 		// Get the entry and form to handle confirmation.
-		$entry        = GFAPI::get_entry( $this->entry_id );
-		$form         = GFAPI::get_form( $this->form_id );
+		$entry = GFAPI::get_entry( $this->entry_id );
+		$form  = GFAPI::get_form( $this->form_id );
+		GFCommon::log_debug( __METHOD__ . '(): handling confirmation for form : "' . rgar( $form, 'title' ) . '" (id: ' . rgar( $form, 'id' ) . ') , feed : "' . rgars( $feed, 'meta/feedName' ) . '" (id: ' . rgar( $feed, 'id' ) . '), tracking id: ' . $tracking_id );
 		$confirmation = GFFormDisplay::handle_confirmation( $form, $entry, isset( $_POST['gform_ajax'] ) );
 
+		$this->addon->log_debug( __METHOD__ . '(): Submission Confirmation for form : "' . rgar( $form, 'title' ) . '" (id: ' . rgar( $form, 'id' ) . ') , feed : "' . rgars( $feed, 'meta/feedName' ) . '" (id: ' . rgar( $feed, 'id' ) . '), tracking id: ' . $tracking_id . ' :- ' . print_r( $confirmation, true ) );
 		if ( is_array( $confirmation ) && isset( $confirmation['redirect'] ) ) {
 			header( "Location: {$confirmation['redirect']}" );
 			exit;

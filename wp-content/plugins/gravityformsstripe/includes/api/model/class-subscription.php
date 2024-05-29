@@ -15,6 +15,57 @@ require_once( 'class-plan.php' );
 class Subscription extends Base {
 
 	/**
+	 * Initialize properties that will be used throughout this class and link to the Stripe API.
+	 *
+	 * @since 5.5.2
+	 */
+	public $application;
+
+	public $cancel_at_period_end;
+	public $currency;
+	public $customer;
+	public $discount;
+	public $discounts;
+	public $items;
+	public $livemode;
+	public $metadata;
+	public $quantity;
+	public $schedule;
+	public $start_date;
+	public $status;
+	public $application_fee_percent;
+	public $automatic_tax;
+	public $billing_cycle_anchor_confiig;
+	public $billing_cycle_anchor;
+	public $billing_thresholds;
+	public $cancel_at;
+	public $canceled_at;
+	public $cancellation_details;
+	public $collection_method;
+	public $current_period_end;
+	public $current_period_start;
+	public $days_until_due;
+	public $default_payment_method;
+	public $default_source;
+	public $default_tax_rates;
+	public $ended_at;
+	public $invoice_settings;
+	public $latest_invoice;
+	public $on_behalf_of;
+	public $next_pending_invoice_item_invoice;
+	public $pause_collection;
+	public $payment_settings;
+	public $pending_invoice_item_interval;
+	public $pending_setup_intent;
+	public $pending_update;
+	public $test_clock;
+	public $transfer_data;
+	public $trial_end;
+	public $trial_start;
+	public $trial_settings;
+
+
+	/**
 	 * Returns the API endpoint for this object.
 	 *
 	 * @since 5.5.0

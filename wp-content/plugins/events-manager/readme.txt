@@ -4,8 +4,8 @@ Donate link: https://wp-events-plugin.com
 Tags: events, calendar, tickets, bookings, appointments
 Text Domain: events-manager
 Requires at least: 5.2
-Tested up to: 6.4.3
-Stable tag: 6.4.7.2
+Tested up to: 6.5
+Stable tag: 6.4.7.3
 Requires PHP: 5.3
 
 Fully featured events calendar, booking registration (RSVP), recurring events, locations management, Google Maps
@@ -162,6 +162,11 @@ See our [FAQ](http://wp-events-plugin.com/documentation/faq/) page for helps wit
 18. Grid view for displaying your upcoming events at a glance
 
 == Changelog ==
+= 6.4.7.3 =
+* fixed pagination issues in non-event lists where PAGE is double url-encoded
+* fixed array to string conversion PHP warning in calendars
+* changed default event templates to be in a page format rather than post
+
 = 6.4.7.2 =
 * fixed buddypress menu issue introduced in 6.4.7 by re-adding commented-out line
 * fixed advanced search options not showing up in some inline setting combinations

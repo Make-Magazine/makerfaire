@@ -8,6 +8,7 @@ use GFCommon;
 use GravityKit\AdvancedFilter\QueryFilters\Filter\Visitor\ProcessMergeTagsVisitor;
 use GravityKit\AdvancedFilter\QueryFilters\QueryFilters;
 use GravityView_Extension;
+use GravityView_Render_Settings;
 use GV\Core as GravityViewCore;
 use GV\Template_Context;
 use GV\Utils;
@@ -110,6 +111,9 @@ class Core extends GravityView_Extension {
 		add_filter( 'gravityview/template/field/output', [ $this, 'conditionally_display_field_output' ], 10, 2 );
 
 		add_filter( 'gk/query-filters/admin-capabilities', [ $this, 'add_admin_capabilities' ] );
+
+		add_filter( 'gravityview/view/settings/defaults', [ $this, 'add_view_settings' ] );
+		add_filter( 'gravityview_admin_directory_settings', [ $this, 'display_view_settings' ] );
 
 		add_filter( 'admin_head', [ $this, 'fix_duplicate_page_conflict' ], 20 );
 	}
@@ -237,7 +241,7 @@ HTML;
 	 * Drop-in for the legacy flat filters when \GF_Query is available.
 	 *
 	 * @param \GF_Query $query The current query object reference
-	 * @param View      $view  The current view object
+	 * @param View      $view  The current View object
 	 */
 	public function gf_query_filter( $query, $view ): void {
 		$filters = get_post_meta( $view->ID, '_gravityview_filters', true );
@@ -357,12 +361,12 @@ HTML;
 			            'conditions'              => rgar( $filter_settings, 'init_filter_vars', [] ),
 			            'target_element_selector' => '#entry_filters',
 			            'variable_name'           => 'gkQueryFilters_advanced_filters',
+			            'max_nesting_level'       => apply_filters( 'gk/advanced-filters/max-nesting-level', 3, $form ),
 		            ] );
 
 		wp_enqueue_script( 'gravityview_adv_filter_admin', plugins_url( 'assets/js/advanced-filter.js', GRAVITYKIT_ADVANCED_FILTER_PLUGIN_FILE ), [ 'jquery' ], $this->_version );
 
 		wp_localize_script( 'gravityview_adv_filter_admin', 'gkAdvancedFilter', [
-			'fields_conditional_logic' => rgar( $filter_settings, 'field_filters_conditional_logic', [] ),
 			'conditions'               => rgar( $filter_settings, 'init_filter_vars', [] ),
 			'fetchFields'              => [
 				'action' => self::AJAX_ACTION_GET_FIELD_FILTERS,
@@ -439,33 +443,8 @@ HTML;
 		);
 		$init_filter_vars = $query_filters->get_filters( true )->to_array();
 
-		// For field conditional logic we use only default meta/properties and form fields
-		$field_filters_conditional_logic = [];
-		$_meta_and_properties_to_keep    = [
-			'ip',
-			'is_approved',
-			'source_url',
-			'date_created',
-			'date_updated',
-			'is_starred',
-			'payment_status',
-			'payment_date',
-			'payment_amount',
-			'transaction_id',
-			'created_by',
-		];
-
-		foreach ( $field_filters as $filter ) {
-			if ( ! in_array( $filter['key'], $_meta_and_properties_to_keep, true ) && ! is_numeric( $filter['key'] ) ) {
-				continue;
-			}
-
-			$field_filters_conditional_logic[] = $filter;
-		}
-
 		return [
 			'field_filters_complete'          => $field_filters,
-			'field_filters_conditional_logic' => $field_filters_conditional_logic,
 			'init_filter_vars'                => $init_filter_vars,
 		];
 	}
@@ -500,7 +479,6 @@ HTML;
 			wp_send_json_success(
 				[
 					'fields_complete'          => rgar( $filters, 'field_filters_complete', [] ),
-					'fields_conditional_logic' => rgar( $filters, 'field_filters_conditional_logic', [] ),
 				]
 			);
 		} else {
@@ -584,7 +562,7 @@ HTML;
 	 *
 	 * @since 3.0.0
 	 *
-	 * @param View|null $view The view.
+	 * @param View|null $view The View.
 	 *
 	 */
 	private function register_deprecated_filters( ?View $view ): void {
@@ -648,5 +626,38 @@ HTML;
 		remove_filter( 'gfpdf_gravityforms_shortcode_attributes', $callback );
 
 		return $content;
+	}
+
+	/**
+	 * Adds the extra "View settings".
+	 *
+	 * @since 4.0.0
+	 *
+	 * @param array $current_settings The registered View settings.
+	 *
+	 * @return array The updated View settings.
+	 */
+	public function add_view_settings( array $current_settings ) : array {
+		$current_settings['show_only_entries_by_current_user'] = [
+			'label'             => esc_html__( 'Show only entries created by the currently logged-in user', 'gravityview-advanced-filter' ),
+			'desc'              => esc_html__( 'This setting serves as a shortcut for adding a new Advanced Filter condition in the Filter & Sort tab.', 'gravityview-advanced-filter' ),
+			'type'              => 'checkbox',
+			'group'             => 'default',
+			'value'             => 0,
+			'show_in_shortcode' => false,
+		];
+
+		return $current_settings;
+	}
+
+	/**
+	 * Display the extra "View settings".
+	 *
+	 * @param array $current_settings The registered View settings.
+	 *
+	 * @since 4.0.0
+	 */
+	public function display_view_settings(array $current_settings ): void {
+		GravityView_Render_Settings::render_setting_row( 'show_only_entries_by_current_user', $current_settings, null, '%s' );
 	}
 }

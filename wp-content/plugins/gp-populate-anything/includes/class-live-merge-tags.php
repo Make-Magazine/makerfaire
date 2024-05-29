@@ -1336,7 +1336,7 @@ class GP_Populate_Anything_Live_Merge_Tags {
 		$form_for_lmts = wp_doing_ajax() ? GFAPI::get_form( $form['id'] ) : $form;
 
 		/** @var \GF_Field $field */
-		foreach ( $form['fields'] as &$field ) {
+		foreach ( $form_for_lmts['fields'] as &$field ) {
 			if ( ! in_array( $field->get_input_type(), $this->checkable_input_types, true ) ) {
 				continue;
 			}

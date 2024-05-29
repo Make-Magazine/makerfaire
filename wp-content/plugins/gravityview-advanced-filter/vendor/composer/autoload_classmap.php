@@ -16,6 +16,7 @@ return array(
     'GravityKit\\AdvancedFilter\\QueryFilters\\Filter\\FilterFactory' => $baseDir . '/vendor_prefixed/gravitykit/query-filters/src/Filter/FilterFactory.php',
     'GravityKit\\AdvancedFilter\\QueryFilters\\Filter\\FilterIdGenerator' => $baseDir . '/vendor_prefixed/gravitykit/query-filters/src/Filter/FilterIdGenerator.php',
     'GravityKit\\AdvancedFilter\\QueryFilters\\Filter\\RandomFilterIdGenerator' => $baseDir . '/vendor_prefixed/gravitykit/query-filters/src/Filter/RandomFilterIdGenerator.php',
+    'GravityKit\\AdvancedFilter\\QueryFilters\\Filter\\Visitor\\CurrentUserVisitor' => $baseDir . '/vendor_prefixed/gravitykit/query-filters/src/Filter/Visitor/CurrentUserVisitor.php',
     'GravityKit\\AdvancedFilter\\QueryFilters\\Filter\\Visitor\\DisableAdminVisitor' => $baseDir . '/vendor_prefixed/gravitykit/query-filters/src/Filter/Visitor/DisableAdminVisitor.php',
     'GravityKit\\AdvancedFilter\\QueryFilters\\Filter\\Visitor\\DisableFiltersVisitor' => $baseDir . '/vendor_prefixed/gravitykit/query-filters/src/Filter/Visitor/DisableFiltersVisitor.php',
     'GravityKit\\AdvancedFilter\\QueryFilters\\Filter\\Visitor\\FilterVisitor' => $baseDir . '/vendor_prefixed/gravitykit/query-filters/src/Filter/Visitor/FilterVisitor.php',

@@ -3,7 +3,7 @@
         'name' => 'gravityview/gravityview',
         'pretty_version' => 'dev-main',
         'version' => 'dev-main',
-        'reference' => '2be1965c0d49c3450a50dddce24b7b0388ebb4ab',
+        'reference' => '2799124dde03a90a703dd47548b50903c1b09a17',
         'type' => 'wordpress-plugin',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -20,9 +20,9 @@
             'dev_requirement' => false,
         ),
         'gettext/gettext' => array(
-            'pretty_version' => 'v4.8.11',
-            'version' => '4.8.11.0',
-            'reference' => 'b632aaf5e4579d0b2ae8bc61785e238bff4c5156',
+            'pretty_version' => 'v4.8.12',
+            'version' => '4.8.12.0',
+            'reference' => '11af89ee6c087db3cf09ce2111a150bca5c46e12',
             'type' => 'library',
             'install_path' => __DIR__ . '/../gettext/gettext',
             'aliases' => array(),
@@ -40,7 +40,7 @@
         'gravitykit/foundation' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
-            'reference' => 'fdd6fb9097a2c36424cd2d24a548e5c2fff8400c',
+            'reference' => '836e3240bb0190923ddd65517f9872d1bc8d3969',
             'type' => 'library',
             'install_path' => __DIR__ . '/../gravitykit/foundation',
             'aliases' => array(
@@ -51,7 +51,7 @@
         'gravityview/gravityview' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
-            'reference' => '2be1965c0d49c3450a50dddce24b7b0388ebb4ab',
+            'reference' => '2799124dde03a90a703dd47548b50903c1b09a17',
             'type' => 'wordpress-plugin',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
@@ -176,7 +176,7 @@
             'version' => '1.20.0.0',
             'reference' => '5f03a781d984aae42cebd18e7912fa80f02ee644',
             'type' => 'metapackage',
-            'install_path' => NULL,
+            'install_path' => null,
             'aliases' => array(),
             'dev_requirement' => false,
         ),

@@ -451,13 +451,13 @@ function msp_masterslider_wrapper_shortcode( $atts, $content = null ) {
 									msp_is_true( $thumbs_arrows ),
 									msp_is_true( $thumbs_hoverchange ),
 									$thumbs_custom_class,
-									$thumbs_align,
-									$thumbs_type,
+									esc_attr( $thumbs_align ),
+									esc_attr( $thumbs_type ),
 									(int)$thumbs_margin,
 									(int)$thumbs_width,
 									(int)$thumbs_height,
 									(int)$thumbs_space,
-									$thumbs_fillmode,
+									esc_attr( $thumbs_fillmode ),
 									$thumbs_hideunder
 								);
 
@@ -550,40 +550,39 @@ function msp_masterslider_wrapper_shortcode( $atts, $content = null ) {
 
 				<?php
                 if( ! empty( $on_init ) )
-                    printf( "$instance_name.api.addEventListener(MSSliderEvent.INIT, %s );\n"        , esc_html( msp_maybe_base64_decode( $on_init ) ) ) ;
+                    printf( "$instance_name.api.addEventListener(MSSliderEvent.INIT, %s );\n"        , msp_masterslider_prevent_closing_script_tag( msp_maybe_base64_decode( $on_init ) ) ) ;
 
 				if( ! empty( $on_change_start ) )
-					printf( "$instance_name.api.addEventListener(MSSliderEvent.CHANGE_START, %s );\n"		  , esc_html( msp_maybe_base64_decode( $on_change_start ) ) ) ;
+					printf( "$instance_name.api.addEventListener(MSSliderEvent.CHANGE_START, %s );\n"		  , msp_masterslider_prevent_closing_script_tag( msp_maybe_base64_decode( $on_change_start ) ) ) ;
 
 				if( ! empty( $on_change_end ) )
-					printf( "\t\t\t\t$instance_name.api.addEventListener(MSSliderEvent.CHANGE_END, %s );\n"  , esc_html( msp_maybe_base64_decode( $on_change_end ) ) ) ;
+					printf( "\t\t\t\t$instance_name.api.addEventListener(MSSliderEvent.CHANGE_END, %s );\n"  , msp_masterslider_prevent_closing_script_tag( msp_maybe_base64_decode( $on_change_end ) ) ) ;
 
 				if( ! empty( $on_waiting ) )
-					printf( "\t\t\t\t$instance_name.api.addEventListener(MSSliderEvent.WAITING, %s );\n"     , esc_html( msp_maybe_base64_decode( $on_waiting ) ) ) ;
+					printf( "\t\t\t\t$instance_name.api.addEventListener(MSSliderEvent.WAITING, %s );\n"     , msp_masterslider_prevent_closing_script_tag( msp_maybe_base64_decode( $on_waiting ) ) ) ;
 
 				if( ! empty( $on_resize ) )
-					printf( "\t\t\t\t$instance_name.api.addEventListener(MSSliderEvent.RESIZE, %s );\n"      , esc_html( msp_maybe_base64_decode( $on_resize ) ) ) ;
+					printf( "\t\t\t\t$instance_name.api.addEventListener(MSSliderEvent.RESIZE, %s );\n"      , msp_masterslider_prevent_closing_script_tag( msp_maybe_base64_decode( $on_resize ) ) ) ;
 
 				if( ! empty( $on_video_play ) )
-					printf( "\t\t\t\t$instance_name.api.addEventListener(MSSliderEvent.VIDEO_PLAY, %s );\n"  , esc_html( msp_maybe_base64_decode( $on_video_play ) ) ) ;
-
+					printf( "\t\t\t\t$instance_name.api.addEventListener(MSSliderEvent.VIDEO_PLAY, %s );\n"  , msp_masterslider_prevent_closing_script_tag( msp_maybe_base64_decode( $on_video_play ) ) ) ;
 				if( ! empty( $on_video_close ) )
-					printf( "\t\t\t\t$instance_name.api.addEventListener(MSSliderEvent.VIDEO_CLOSE, %s );\n" , esc_html( msp_maybe_base64_decode( $on_video_close ) ) ) ;
+					printf( "\t\t\t\t$instance_name.api.addEventListener(MSSliderEvent.VIDEO_CLOSE, %s );\n" , msp_masterslider_prevent_closing_script_tag( msp_maybe_base64_decode( $on_video_close ) ) ) ;
 
 				if( $on_swipe_start || $on_swipe_move || $on_swipe_end ){
 
                     echo "\t\t\t$instance_name.api.addEventListener(MSSliderEvent.INIT, function(){\n";
 
                     if( ! empty( $on_swipe_start ) ){
-                        printf( "\t\t\t\t$instance_name.api.view.addEventListener(MSViewEvents.SWIPE_START, %s );\n" , esc_html( msp_maybe_base64_decode( $on_swipe_start ) ) ) ;
+                        printf( "\t\t\t\t$instance_name.api.view.addEventListener(MSViewEvents.SWIPE_START, %s );\n" , msp_masterslider_prevent_closing_script_tag( msp_maybe_base64_decode( $on_swipe_start ) ) ) ;
                     }
 
                     if( ! empty( $on_swipe_move ) ){
-                        printf( "\t\t\t\t$instance_name.api.view.addEventListener(MSViewEvents.SWIPE_MOVE, %s );\n"  , esc_html( msp_maybe_base64_decode( $on_swipe_move ) ) ) ;
+                        printf( "\t\t\t\t$instance_name.api.view.addEventListener(MSViewEvents.SWIPE_MOVE, %s );\n"  , msp_masterslider_prevent_closing_script_tag( msp_maybe_base64_decode( $on_swipe_move ) ) ) ;
                     }
 
                     if( ! empty( $on_swipe_end ) ){
-                        printf( "\t\t\t\t$instance_name.api.view.addEventListener(MSViewEvents.SWIPE_END, %s );\n"   , esc_html( msp_maybe_base64_decode( $on_swipe_end ) ) ) ;
+                        printf( "\t\t\t\t$instance_name.api.view.addEventListener(MSViewEvents.SWIPE_END, %s );\n"   , msp_masterslider_prevent_closing_script_tag( msp_maybe_base64_decode( $on_swipe_end ) ) ) ;
                     }
 
                     echo "\t\t\t});\n";
@@ -697,7 +696,7 @@ function msp_masterslider_slide_shortcode( $atts, $content = null ) {
 	$data_align = empty( $bgalign )?'':'data-fill-mode="'. $bgalign .'"';
 
 	// add slide starter tag
-	$slide_start_tag = sprintf( '<div %s class="ms-slide%s" %s %s %s >', $css_id, $css_class, $data_delay, $data_align, $style_attr )."\n";
+	$slide_start_tag = sprintf( '<div %s class="ms-slide%s" %s %s %s >', $css_id, esc_attr( $css_class ), $data_delay, $data_align, $style_attr )."\n";
 
 	// making start tag filterable for extend purposes
 	$slide_start_tag = apply_filters( 'msp_masterslider_slide_start_tag', "\t\t\t\t".$slide_start_tag, $atts );
@@ -1075,7 +1074,7 @@ function msp_masterslider_slide_info_shortcode( $atts, $content = null ) {
      }
 
 	 // create slide info markup
-	 $output = sprintf( '<%1$s class="ms-info%2$s">%3$s</%1$s>', $tag_name, esc_attr( $css_class ), do_shortcode( wp_unslash( $content ) ) )."\n";
+	 $output = sprintf( '<%1$s class="ms-info%2$s">%3$s</%1$s>', tag_escape( $tag_name ), esc_attr( $css_class ), do_shortcode( wp_unslash( $content ) ) )."\n";
 
 	 return apply_filters( 'masterslider_slide_info_shortcode', "\t\t\t\t\t".$output, $args );
 }
@@ -1095,11 +1094,21 @@ function msp_masterslider_slide_flickr_shortcode( $atts, $content = null ) {
 
 	extract( $args );
 
-	$output = sprintf( '<img src="%s" data-src="{{image}}" alt="{{title}}"/>', $src_blank ) . "\n";
+	$output = sprintf( '<img src="%s" data-src="{{image}}" alt="{{title}}"/>', esc_attr( $src_blank ) ) . "\n";
 
 	if( 'yes' == $thumb )
 		$output .= "\t\t\t\t" . '<img class="ms-thumb" src="{{thumb}}" alt="{{title}}"/>';
 
 
 	return apply_filters( 'masterslider_slide_flickr_shortcode', "\t\t\t\t".$output, $args );
+}
+
+/**
+ * prevent closing script tag
+ *
+ * @param string $data
+ * @return string
+ */
+function msp_masterslider_prevent_closing_script_tag( $data ) {
+	return str_replace('</', '<\\/', $data);
 }

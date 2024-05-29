@@ -82,7 +82,7 @@ class GPPA_Compatibility_GravityView {
 		}
 
 		$gv_entry = GravityView_frontend::getInstance()->getEntry();
-		if ( $gv_entry ) {
+		if ( $gv_entry && $form['id'] == $gv_entry['form_id'] ) {
 			return $gv_entry;
 		}
 

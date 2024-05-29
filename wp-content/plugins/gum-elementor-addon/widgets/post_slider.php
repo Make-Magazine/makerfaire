@@ -2350,14 +2350,14 @@ class Gum_Elementor_Widget_post_slider extends Widget_Base {
     $this->add_render_attribute( $index , 'class', 'elementor-button-text' );
     $this->add_inline_editing_attributes( $index, 'none' );
 
-    ?><div class="elementor-button-wrap<?php print ' button-align-'.$settings['readmore_button_align'] ;?>"><a <?php echo $this->get_render_attribute_string( 'button-'.$index ); ?>>
+    ?><div class="elementor-button-wrap<?php print ' button-align-'.esc_attr($settings['readmore_button_align']);?>"><a <?php echo $this->get_render_attribute_string( 'button-'.$index ); ?>>
           <span class="elementor-button-content-wrapper">
       <?php if ( ! empty( $settings['readmore_icon']['value'] ) ) : ?>
       <span <?php echo $this->get_render_attribute_string( 'readmore_icon_align' ); ?>>
           <?php Icons_Manager::render_icon( $settings['readmore_icon'], [ 'aria-hidden' => 'true' ] ); ?>
       </span>
       <?php endif; ?>
-      <span <?php echo $this->get_render_attribute_string( $index );?>><?php echo $settings['readmore_label']; ?></span>
+      <span <?php echo $this->get_render_attribute_string( $index );?>><?php echo esc_html($settings['readmore_label']); ?></span>
     </span>
   </a></div><?php
 

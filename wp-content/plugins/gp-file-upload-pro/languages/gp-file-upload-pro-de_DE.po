@@ -1,0 +1,218 @@
+# Copyright (C) 2024 Gravity Wiz
+# This file is distributed under the GPL2.
+msgid ""
+msgstr ""
+"Project-Id-Version: GP File Upload Pro 1.3.14\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/cloned-perk-"
+"yq26YWBS-\n"
+"Last-Translator: Florian Rinnhofer\n"
+"Language-Team: Deutsch\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2024-01-18T11:23:38+00:00\n"
+"PO-Revision-Date: 2024-01-26 17:07+0000\n"
+"X-Generator: Loco https://localise.biz/\n"
+"X-Domain: gp-file-upload-pro\n"
+"Language: de-DE\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Loco-Version: 2.6.6; wp-6.4.2"
+
+#. Plugin Name of the plugin
+msgid "GP File Upload Pro"
+msgstr "GP File Upload Pro"
+
+#. Plugin URI of the plugin
+msgid "https://gravitywiz.com/documentation/gravity-forms-file-upload-pro/"
+msgstr "https://gravitywiz.com/documentation/gravity-forms-file-upload-pro/"
+
+#. Description of the plugin
+msgid "A professional file and image uploader that feels like magic."
+msgstr "Bilder automatisch gemäß den festgelegten Einschränkungen zuschneiden. Benutzer können das Bild durch Klicken auf das Miniaturbild erneut zuschneiden. Verwenden Sie die Einstellung \"Erfordere Zuschneiden\", um den Benutzer dazu zu zwingen, das Bild manuell zu zuschneiden."
+
+#. Author of the plugin
+msgid "Gravity Wiz"
+msgstr "Gravity Wiz"
+
+#. Author URI of the plugin
+msgid "https://gravitywiz.com/"
+msgstr "https://gravitywiz.com/"
+
+#: class-gp-file-upload-pro.php:403
+msgid "select files"
+msgstr "Dateien wählen"
+
+#: class-gp-file-upload-pro.php:404
+msgid "Drop files here"
+msgstr "Dateien hier herziehen"
+
+#: class-gp-file-upload-pro.php:405
+msgid "or"
+msgstr "oder"
+
+#: class-gp-file-upload-pro.php:406
+msgid "Cancel"
+msgstr "Schließen"
+
+#: class-gp-file-upload-pro.php:407
+msgid "Crop"
+msgstr "Zuschneiden"
+
+#: class-gp-file-upload-pro.php:408
+msgid "Cropping"
+msgstr "wird zugeschnitten"
+
+#: class-gp-file-upload-pro.php:409
+msgid "of"
+msgstr "von"
+
+#: class-gp-file-upload-pro.php:410
+msgid ""
+"This image does not meet the minimum dimensions: {minWidth}x{minHeight}px."
+msgstr ""
+"Dieses Bild erfüllt nicht die Mindestabmessungen: {minWidth}x{minHeight}px."
+
+#: class-gp-file-upload-pro.php:411
+msgid "This image does not meet the minimum width: {minWidth}px."
+msgstr "Dieses Bild erfüllt nicht die Mindestbreite: {minWidth}px."
+
+#: class-gp-file-upload-pro.php:412
+msgid "This image does not meet the minimum height: {minHeight}px."
+msgstr "Dieses Bild erfüllt nicht die Mindesthöhe: {minHeight}px."
+
+#: class-gp-file-upload-pro.php:423 class-gp-file-upload-pro.php:447
+msgid "Enable Cropping"
+msgstr "Zuschneiden aktivieren"
+
+#: class-gp-file-upload-pro.php:424 class-gp-file-upload-pro.php:452
+msgid "Enable Sorting"
+msgstr "Sortieren aktivieren"
+
+#: class-gp-file-upload-pro.php:425
+msgid "Enable File Upload Pro"
+msgstr "File Upload Pro aktivieren"
+
+#: class-gp-file-upload-pro.php:426
+msgid ""
+"You are about to enable File Upload Pro on a Single File Upload field.\n"
+"\n"
+"Completing this action will convert this field to a Multi-file Upload field. "
+"Entry data associated with this field will be converted into the multi-file "
+"upload format when the form is saved. This conversion cannot be undone.\n"
+"\n"
+"Would you like to enable File Upload Pro on this field?"
+msgstr ""
+"Du bist dabei, \"File Upload Pro\" für ein Einzel-Datei-Upload-Feld zu aktivieren.\n"
+"\n"
+"Diese Aktion wird das Feld in ein Multi-Datei-Upload-Feld umwandeln. Die mit diesem Feld verbundenen Eintragsdaten werden im Multi-Datei-Upload-Format gespeichert, wenn das Formular gespeichert wird. Diese Umwandlung kann nicht rückgängig gemacht werden.\n"
+"\n"
+"Möchtest du \"File Upload Pro\" für dieses Feld aktivieren?"
+
+#: class-gp-file-upload-pro.php:427
+msgid "Require Crop"
+msgstr "Zuschneiden erfordern"
+
+#: class-gp-file-upload-pro.php:428
+msgid "Constraints"
+msgstr "Einschränkungen"
+
+#: class-gp-file-upload-pro.php:429 class-gp-file-upload-pro.php:477
+msgid "Aspect Ratio"
+msgstr "Seitenverhältnis"
+
+#: class-gp-file-upload-pro.php:430
+msgid "Max Dimensions"
+msgstr "Max Abmessungen"
+
+#: class-gp-file-upload-pro.php:431
+msgid "Min Dimensions"
+msgstr "Min Abmessungen"
+
+#: class-gp-file-upload-pro.php:432 class-gp-file-upload-pro.php:462
+msgid "Exact Dimensions"
+msgstr "Exakte Dimensionen"
+
+#: class-gp-file-upload-pro.php:433
+msgid "Width"
+msgstr "Breite"
+
+#: class-gp-file-upload-pro.php:434
+msgid "Height"
+msgstr "Höhe"
+
+#. translators: placeholder is URL to File Upload Pro FAQ
+#: class-gp-file-upload-pro.php:437
+msgid ""
+"This setting is required when File Upload Pro is enabled. <a href=\"%s\" "
+"target=\"_blank\">Learn more.</a>"
+msgstr ""
+"Diese Einstellung ist erforderlich, wenn File Upload Pro aktiviert ist. <a href=\"%s\" target=\"_blank\">Mehr erfahren.</a>"
+
+#: class-gp-file-upload-pro.php:442
+msgid "File Upload Pro"
+msgstr "File Upload Pro"
+
+#: class-gp-file-upload-pro.php:443
+msgid ""
+"Greatly improve the uploading experience for your Gravity Forms File Upload "
+"fields."
+msgstr ""
+"Verbessere die Benutzerfreundlichkeit der Datei-Upload-Felder in Gravity Forms erheblich."
+
+#: class-gp-file-upload-pro.php:448
+msgid ""
+"Automatically crop images according to the specified constraints. Users may "
+"re-crop the image by clicking on the image thumbnail. Use the Require Crop "
+"setting to require the user to manually crop the image."
+msgstr ""
+"Bilder automatisch gemäß den festgelegten Einschränkungen zuschneiden. Benutzer können das Bild durch Klicken auf das Miniaturbild erneut zuschneiden. Verwenden Sie die Option \"Erfordere Zuschneiden\", um den Benutzer dazu zu verpflichten, das Bild manuell zu zuschneiden."
+
+#: class-gp-file-upload-pro.php:453
+msgid ""
+"Allow the order of files to be modified using drag-and-drop sorting in the "
+"uploader area."
+msgstr ""
+"Erlaube die Änderung der Reihenfolge von Dateien durch Ziehen und Ablegen im Bereich des Hochladens."
+
+#: class-gp-file-upload-pro.php:457
+msgid "Require Crop on Upload"
+msgstr "Zuschneiden beim Upload erfordern"
+
+#: class-gp-file-upload-pro.php:458
+msgid ""
+"Require that images be cropped on upload by automatically opening the "
+"cropper. If the crop is canceled, the files are not uploaded."
+msgstr ""
+"Erfordert, dass Bilder beim Hochladen automatisch zugeschnitten werden, indem das Zuschnitt-Tool automatisch geöffnet wird. Wenn der Zuschnitt abgebrochen wird, werden die Dateien nicht hochgeladen."
+
+#: class-gp-file-upload-pro.php:463
+msgid ""
+"Require file to be upload with exact dimensions. These dimensions will be "
+"used as the minimum dimensions in the cropper and an aspect ratio will be "
+"derived from the dimensions. If an image exceeds the exact dimensions after "
+"cropping, it will be downscaled."
+msgstr ""
+"Erfordert, dass Dateien mit genau festgelegten Abmessungen hochgeladen werden. Diese Abmessungen werden als Mindestabmessungen im Zuschnitt-Tool verwendet und ein Seitenverhältnis wird aus den Abmessungen abgeleitet. Wenn ein Bild die exakten Abmessungen nach dem Zuschneiden überschreitet, wird es verkleinert."
+
+#: class-gp-file-upload-pro.php:467
+msgid "Minimum Dimensions"
+msgstr "Minimale Abmessungen"
+
+#: class-gp-file-upload-pro.php:468
+msgid ""
+"Require cropper to meet the minimum dimensions. If cropper is not used, file "
+"dimensions will be validated prior to upload."
+msgstr ""
+"Erfordern, dass das Zuschnitt-Tool die Mindestabmessungen erfüllt. Falls das Zuschnitt-Tool nicht verwendet wird, werden die Dateiabmessungen vor dem Hochladen überprüft."
+
+#: class-gp-file-upload-pro.php:472
+msgid "Maximum Dimensions"
+msgstr "Maximale Abmessungen"
+
+#: class-gp-file-upload-pro.php:473
+msgid "Images will be downscaled to the maximum dimensions set below."
+msgstr "Bilder werden auf die maximalen unten festgelegten Abmessungen verkleinert."
+
+#: class-gp-file-upload-pro.php:478
+msgid "Restrict cropper to aspect ratio."
+msgstr "Zuschnitt-Tool auf Seitenverhältnis beschränken."

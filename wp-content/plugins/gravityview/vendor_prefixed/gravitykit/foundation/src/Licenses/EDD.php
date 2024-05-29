@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by gravityview on 28-March-2024 using {@see https://github.com/BrianHenryIE/strauss}.
+ * Modified by gravityview on 29-May-2024 using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\GravityView\Foundation\Licenses;
@@ -44,7 +44,7 @@ class EDD {
 	 * @return void
 	 */
 	public function init() {
-		add_filter( 'pre_set_site_transient_update_plugins', [ $this, 'check_for_product_updates' ] );
+		add_filter( 'pre_set_site_transient_update_plugins', [ $this, 'check_for_product_updates' ], 999 );
 		add_filter( 'plugins_api', [ $this, 'display_product_information' ], 999, 3 );
 		add_filter( 'admin_init', [ $this, 'disable_legacy_edd_updater' ], 999 );
 	}
@@ -111,8 +111,8 @@ class EDD {
 	public function check_for_product_updates( $transient_data, $skip_cache = false ) {
 		static $checked;
 
-		if ( ! is_object( $transient_data ) ) {
-			$transient_data = new \stdClass();
+		if ( ! is_object( $transient_data ) || empty( $transient_data->checked ) ) {
+			return $transient_data;
 		}
 
 		if ( ! $checked && ! $skip_cache && Arr::get( $_GET, 'force-check', false ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
@@ -143,14 +143,8 @@ class EDD {
 
 			if ( $product['update_available'] ) {
 				$transient_data->response[ $product_path ] = $wp_product_data;
-			} else {
-				$transient_data->no_update[ $product_path ] = $wp_product_data;
 			}
-
-			$transient_data->checked[ $product_path ] = $product['installed_version'];
 		}
-
-		$transient_data->last_checked = time();
 
 		$checked = true;
 

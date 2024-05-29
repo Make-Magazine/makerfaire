@@ -2,35 +2,40 @@
 # This file is distributed under the GPLv2.
 msgid ""
 msgstr ""
-"Project-Id-Version: GP Multi-page Navigation 1.2.8\n"
-"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/cloned-perk-MD8EZuNwv\n"
+"Project-Id-Version: GP Multi-page Navigation 1.2.9\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/cloned-perk-70pX0Fa2H\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2024-03-07T10:25:50+00:00\n"
+"POT-Creation-Date: 2024-05-23T01:50:58+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"X-Generator: WP-CLI 2.7.1\n"
+"X-Generator: WP-CLI 2.10.0\n"
 "X-Domain: gp-multi-page-navigation\n"
 
 #. Plugin Name of the plugin
+#: gp-multi-page-navigation.php
 msgid "GP Multi-page Navigation"
 msgstr ""
 
 #. Plugin URI of the plugin
+#: gp-multi-page-navigation.php
 msgid "https://gravitywiz.com/documentation/gravity-forms-multi-page-navigation/"
 msgstr ""
 
 #. Description of the plugin
+#: gp-multi-page-navigation.php
 msgid "Navigate between form pages quickly by converting the page steps into page links or creating your own custom page links."
 msgstr ""
 
 #. Author of the plugin
+#: gp-multi-page-navigation.php
 msgid "Gravity Wiz"
 msgstr ""
 
 #. Author URI of the plugin
+#: gp-multi-page-navigation.php
 msgid "http://gravitywiz.com"
 msgstr ""
 

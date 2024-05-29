@@ -521,38 +521,48 @@ export default class GPFUPField {
 						 */
 						if (this.enableCrop) {
 							let meetsMinimum = true;
+							let code;
+							let message;
 
 							if (
 								(this.minWidth && this.minHeight) &&
 								(this.minWidth > imageSize.width || this.minHeight > imageSize.height)
 							) {
-								this.handleFileError(up, file, {
-									code: 'does_not_meet_minimum_dimensions',
-									message: this.strings.does_not_meet_minimum_dimensions
-										.replace('{minWidth}', this.minWidth.toString())
-										.replace('{minHeight}', this.minHeight.toString()),
-								});
-
 								meetsMinimum = false;
+								code = 'does_not_meet_minimum_dimensions';
+								message = this.strings.does_not_meet_minimum_dimensions
+									.replace('{minWidth}', this.minWidth.toString())
+									.replace('{minHeight}', this.minHeight.toString());
+
 							} else if (this.minWidth && this.minWidth > imageSize.width) {
-								this.handleFileError(up, file, {
-									code: 'does_not_meet_minimum_width',
-									message: this.strings.does_not_meet_minimum_width
-										.replace('{minWidth}', this.minWidth.toString()),
-								});
-
 								meetsMinimum = false;
+								code = 'does_not_meet_minimum_width';
+								message = this.strings.does_not_meet_minimum_width
+									.replace('{minWidth}', this.minWidth.toString());
+
 							}  else if (this.minHeight && this.minHeight > imageSize.height) {
-								this.handleFileError(up, file, {
-									code: 'does_not_meet_minimum_height',
-									message: this.strings.does_not_meet_minimum_height
-										.replace('{minHeight}', this.minHeight.toString()),
-								});
-
 								meetsMinimum = false;
+								code = 'does_not_meet_minimum_height';
+								message = this.strings.does_not_meet_minimum_height
+									.replace('{minHeight}', this.minHeight.toString());
 							}
 
+							/**
+							 * Filter whether or not image meets minimum size requirement.
+							 *
+							 * @since 1.3.17
+							 *
+							 * @param boolean 		meetsMinimum      Whether or not image meets minimun size requirement
+							 * @param object          	imageSize 		The current image size object
+							 * @param int           	formId 			The current form ID
+							 * @param int             	fieldId   		The current uploader field ID
+							 * @param {GPFUPField}	gpfupInstance 	Current File Upload Pro class instance
+							 */
+							meetsMinimum = window.gform.applyFilters('gpfup_meets_minimum_requirement', meetsMinimum, imageSize, this.formId, this.fieldId, this);
+
 							if (!meetsMinimum) {
+								this.handleFileError(up, file, { code, message });
+
 								/**
 								 * When returning out and stopping an upload in some situations, the uploader can get into
 								 * an odd state and not process subsequent uploads.
@@ -579,6 +589,8 @@ export default class GPFUPField {
 							crop: undefined,
 						};
 
+						// Check for automatically scaling down the image for iOS devices, because of the canvas area max limit of 16,777,216 pixels.
+						const iPhoneMaxCanvas = navigator.userAgent.match(/iPhone|iPad|iPod/i) && (imageSize.width * imageSize.height > 16777216);
 						if (this.enableCrop) {
 							imageLoaderOptions = {
 								maxWidth: (this.exactWidth || this.maxWidth) ?? undefined,
@@ -589,7 +601,7 @@ export default class GPFUPField {
 								 * If aspectRatio is used, it takes precedence over max widht/height
 								 */
 								aspectRatio: (!this.exactWidth && !this.exactHeight ? this.aspectRatio : undefined) ?? undefined,
-								crop: (this.enableCrop && !file.cropped) ? true : undefined,
+								crop: (this.enableCrop && !file.cropped && !iPhoneMaxCanvas) ? true : undefined,
 							};
 						}
 

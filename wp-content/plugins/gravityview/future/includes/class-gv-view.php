@@ -813,8 +813,9 @@ class View implements \ArrayAccess {
 		/** View configuration. */
 		$view->settings->update( gravityview_get_template_settings( $view->ID ) );
 
-		/** Add the template name into the settings. */
-		$view->settings->update( array( 'template' => gravityview_get_template_id( $view->ID ) ) );
+		/** Add the template names into the settings. */
+		$view->settings->update( array( 'template' => gravityview_get_directory_entries_template_id( $view->ID ) ) );
+		$view->settings->update( array( 'template_single_entry' => gravityview_get_single_entry_template_id( $view->ID ) ) );
 
 		/** View basics. */
 		$view->settings->update(
@@ -1467,7 +1468,13 @@ class View implements \ArrayAccess {
 
 		$atts['query_hash'] = $query_hash;
 
-		$long_lived_cache = new GravityView_Cache( $this->form->ID, $atts );
+		$form_ids = [ $this->form->ID];
+
+		foreach ( $this->joins as $join ) {
+			$form_ids[] = $join->join_on->ID;
+		}
+
+		$long_lived_cache = new GravityView_Cache( $form_ids, $atts );
 
 		if ( $long_lived_cache->use_cache() ) {
 			$cached_entries = $long_lived_cache->get();
@@ -1827,11 +1834,11 @@ class View implements \ArrayAccess {
 	}
 
 	/**
-	 * Calculates and returns the view's validation secret.
+	 * Calculates and returns the View's validation secret.
 	 *
 	 * @since 2.21
 	 *
-	 * @return string|null The view's secret.
+	 * @return string|null The View's secret.
 	 */
 	final public function get_validation_secret( bool $is_forced = false ): ?string {
 		// Cannot use the setting variable because it can be overwritten from the short code.
@@ -1850,7 +1857,7 @@ class View implements \ArrayAccess {
 	}
 
 	/**
-	 * Returns whether the provided secret validates for this view.
+	 * Returns whether the provided secret validates for this View.
 	 *
 	 * @since 2.21
 	 *
@@ -1868,18 +1875,30 @@ class View implements \ArrayAccess {
 	}
 
 	/**
-	 * Returns the shortcode for this view.
+	 * Returns the shortcode for this View.
 	 *
 	 * @since 2.21
+	 * @since 2.22 Added `$atts` parameter.
+	 *
+	 * @param array $atts Additional attributes for the shortcode.
+	 *
 	 * @return string
 	 */
-	final public function get_shortcode(): string {
+	final public function get_shortcode( array $atts = [] ): string {
 		$secret = $this->get_validation_secret();
-		$atts   = [ sprintf( 'id="%d"', $this->post->ID ) ];
+
+		// ID & secret can't be overwritten from the View.
+		$atts['id'] = $this->post->ID;
+
 		if ( $secret ) {
-			$atts[] = sprintf( 'secret="%s"', $secret );
+			$atts['secret'] = $secret;
 		}
 
-		return sprintf( '[gravityview %s]', implode( ' ', $atts ) );
+		$options = [];
+		foreach ( $atts as $key => $value ) {
+			$options[] = sprintf( '%s="%s"', esc_attr( $key ), esc_attr( $value ) );
+		}
+
+		return sprintf( '[gravityview %s]', implode( ' ', $options ) );
 	}
 }

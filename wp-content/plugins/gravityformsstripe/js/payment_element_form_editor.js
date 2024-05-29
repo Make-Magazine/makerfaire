@@ -93,6 +93,7 @@
 /*! no static exports found */
 /***/ (function(module, exports) {
 
+
 /**
  * Mounts the card element into the container.
  *
@@ -267,15 +268,23 @@ const bindEvents = () => {
 			setFieldError('enable_multiple_payment_methods_setting', 'below', gform_stripe_payment_element_form_editor_strings.payment_element_disabled_message);
 		}
 
-		const $linkEmailSelector = jQuery('#link_email_field');
-		const $linkEmailSelectedId = $linkEmailSelector.val();
-		$linkEmailSelector.empty();
+		const linkEmailSelect = gform.utils.getNode('#link_email_field', document, true);
+		const linkEmailSelectedId = linkEmailSelect.value;
+		const optionNodes = gform.utils.getNodes('gform-stripe-link-email-ids');
+		optionNodes.forEach(option => {
+			option.remove();
+		});
 		form.fields.forEach((field, index) => {
 			if (field.type === 'email') {
-				$linkEmailSelector.append(jQuery('<option value="' + field.id + '">' + field.label + ' - Field ID:' + field.id + '</option>'));
+				const option = document.createElement('option');
+				option.value = field.id;
+				option.setAttribute('data-js', 'gform-stripe-link-email-ids');
+				option.textContent = `${field.label} - ${gform_stripe_payment_element_form_editor_strings.email_field_id_text}: ${field.id}`;
+				linkEmailSelect.appendChild(option);
 			}
 		});
-		$linkEmailSelector.val($linkEmailSelectedId);
+
+		linkEmailSelect.value = linkEmailSelectedId;
 
 		jQuery('#field_enable_multiple_payment_methods').prop('checked', field.enableMultiplePaymentMethods ? true : false);
 		jQuery('#link_email_field').val(`linkEmailFieldId` in field ? field.linkEmailFieldId : 0);

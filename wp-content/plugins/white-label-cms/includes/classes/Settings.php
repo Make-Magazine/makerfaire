@@ -8,7 +8,8 @@ class WLCMS_Settings
     {
         $this->init_settings();
         add_filter('wp_kses_allowed_html', array($this, 'kses_allowed_html'), 10, 2);
-        add_action('init', array($this, 'init'));
+        add_action('admin_init', array($this, 'init'));
+        add_filter('plugin_action_links', array($this, 'plugin_settings'), 10, 2);
         add_action('wlcms_after_body', array($this, 'add_import_html'));
     }
 
@@ -27,6 +28,16 @@ class WLCMS_Settings
         // check or initiate export
         $this->export();
 
+    }
+    public function plugin_settings($links, $file) 
+    {
+        if (WLCMS_BASENAME == $file) {
+            // Add your custom link
+            $custom_link = '<a href="' . admin_url('options-general.php?page=wlcms-plugin.php&wlcms-action=reset&_wlcms_anonce='. wp_create_nonce( 'wlcms-action-nonce' )). '"onclick="return confirm(\'Are you sure you want to reset?\')">Reset</a>';
+            // Insert the custom link at the beginning of the array
+            array_unshift($links, $custom_link);
+        }
+        return $links;
     }
 
     public function kses_allowed_html($tags, $context)
@@ -158,6 +169,10 @@ class WLCMS_Settings
 
     public function import()
     {
+        if(!is_wlcms_super_admin()) {
+            return;
+        }
+
         if (!isset($_POST['wlcms-settings_nonce'])) return;
 
         if (!is_admin() && !current_user_can('manage_options')) {
@@ -224,6 +239,16 @@ class WLCMS_Settings
 
     public function export()
     {
+        if(!is_wlcms_super_admin()) {
+            return;
+        }
+
+        if (!wp_verify_nonce($_REQUEST['_wlcms_anonce'], 'wlcms-action-nonce')) {
+
+            WLCMS_Queue('Sorry, your nonce did not verify.', 'error');
+            wp_redirect(wlcms()->admin_url());
+            exit;
+        }
         if (!isset($_GET['wlcms-action']) || (isset($_GET['wlcms-action']) && $_GET['wlcms-action'] != 'export')) {
             return;
         }
@@ -245,6 +270,16 @@ class WLCMS_Settings
     public function reset_plugin()
     {
         global $wpdb;
+        if( ! current_user_can( 'install_plugins' ) ) {
+            return false;
+        }
+
+        if (!wp_verify_nonce($_REQUEST['_wlcms_anonce'], 'wlcms-action-nonce')) {
+
+            WLCMS_Queue('Sorry, your nonce did not verify.', 'error');
+            wp_redirect(admin_url());
+            exit;
+        }
 
         if ($_GET['wlcms-action'] != 'reset') {
             return;

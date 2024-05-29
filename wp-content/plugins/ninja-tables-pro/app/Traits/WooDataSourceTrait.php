@@ -259,7 +259,7 @@ trait WooDataSourceTrait
         foreach ($default_variations as $key => $default_variation) {
             $values = array_values($variations_attributes)[$index];
 
-            if (in_array('', $values)) {
+            if (in_array('', (array)$values)) {
                 $values = $default_variation;
             }
 

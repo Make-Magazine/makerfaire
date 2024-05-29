@@ -8,7 +8,7 @@ class EM_Admin_Modals {
 		add_filter('admin_enqueue_scripts', 'EM_Admin_Modals::admin_enqueue_scripts', 100);
 		add_filter('wp_ajax_em-admin-popup-modal', 'EM_Admin_Modals::ajax');
 		add_filter('em_admin_notice_review-nudge_message', 'EM_Admin_Modals::review_notice');
-		if( time() < 1711962000 ) {
+		if( time() < 1713949200 ) {
 			add_filter( 'em_admin_notice_promo-popup_message', 'EM_Admin_Modals::promo_notice' );
 		}
 		add_filter( 'em_admin_notice_expired-reminder_message', 'EM_Admin_Modals::expired_reminder_notice' );
@@ -56,7 +56,7 @@ class EM_Admin_Modals {
 				$pro_license_active = !(empty($key['until']) || $key['until'] > strtotime('+10 months'));
 			}
 			*/
-			if( time() < 1711962000 && !empty($data['admin-modals']['promo-popup']) /*&& !$pro_license_active*/) {
+			if( time() < 1713949200 && !empty($data['admin-modals']['promo-popup']) /*&& !$pro_license_active*/) {
 				if( $data['admin-modals']['promo-popup'] == 1 || ($data['admin-modals']['promo-popup'] == 2 && ($show_plugin_pages || $show_network_admin) ) ) {
 					// enqueue script and load popup action
 					if( empty($data['admin-modals']['promo-popup-count']) ){
@@ -82,7 +82,7 @@ class EM_Admin_Modals {
 		
 		// EM Pro License Expired Promo & Reminder
 		$pro_license_active = defined('EMP_VERSION');
-		$promo_time = 1711962000;
+		$promo_time = 1713949200;
 		if( $pro_license_active ){
 			$key = get_option('dbem_pro_api_key');
 			// add a promo for license

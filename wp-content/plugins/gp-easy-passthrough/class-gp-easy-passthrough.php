@@ -464,11 +464,7 @@ class GP_Easy_Passthrough extends GP_Feed_Plugin {
 						'instructions'   => esc_html__( 'Passthrough form entry if', 'gp-easy-passthrough' ),
 					),
 					array(
-						'type'     => 'save',
-						'messages' => array(
-							'error'   => esc_html__( 'There was an error while saving the Easy Passthrough settings. Please review the errors below and try again.', 'gp-easy-passthrough' ),
-							'success' => esc_html__( 'Entry Passthrough settings updated.', 'gp-easy-passthrough' ),
-						),
+						'type' => 'save',
 					),
 				),
 			),

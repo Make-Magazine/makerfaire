@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by gravityview on 28-March-2024 using {@see https://github.com/BrianHenryIE/strauss}.
+ * Modified by gravityview on 29-May-2024 using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\GravityView\Foundation\Licenses\WP;
@@ -144,19 +144,28 @@ JS;
 	 * Optionally prevents updating a product if it has unmet dependencies.
 	 * While we prevent that from the Plugins and Updates pages, let's take a step further and prevent it in the backend when WP is about to install the product.
 	 *
+	 * @since 1.2.0
+	 *
 	 * @param bool|WP_Error $response Update response.
 	 * @param array         $args     Extra arguments passed to hooked filters.
 	 *
 	 * @return bool|WP_Error
 	 */
 	public function prevent_update( $response, $args ) {
-		if ( is_wp_error( $response ) || ! isset( $args['plugin'] ) || ! isset( $products[ $args['plugin'] ] ) ) {
+		if ( is_wp_error( $response ) || ! isset( $args['plugin'] ) ) {
 			return $response;
 		}
 
-		$product = $products[ $args['plugin'] ];
+		$products = array_filter(
+			ProductManager::get_instance()->get_products_data( [ 'key_by' => 'path' ] ),
+			function ( $product ) {
+				return ! $product['third_party'] && $product['update_available'];
+			}
+		);
 
-		if ( $product['checked_dependencies'][ $product['server_version'] ]['status'] ?? false ) {
+		$product = $products[ $args['plugin'] ] ?? null;
+
+		if ( ! $product || ( $product['checked_dependencies'][ $product['server_version'] ]['status'] ?? false ) ) {
 			return $response;
 		}
 

@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by gravityview on 28-March-2024 using {@see https://github.com/BrianHenryIE/strauss}.
+ * Modified by gravityview on 29-May-2024 using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\GravityView\Foundation\Licenses;
@@ -16,6 +16,7 @@ use GravityKit\GravityView\Foundation\Encryption\Encryption;
 use GravityKit\GravityView\Foundation\Helpers\Core as CoreHelpers;
 use GravityKit\GravityView\Foundation\Licenses\WP\WPUpgraderSkin;
 use Plugin_Upgrader;
+use stdClass;
 
 class ProductManager {
 	const EDD_PRODUCTS_API_ENDPOINT = 'https://www.gravitykit.com/edd-api/products/';
@@ -126,6 +127,32 @@ class ProductManager {
 	}
 
 	/**
+	 * Returns the first product found based on an Ajax router request payload.
+	 *
+	 * @since $ver$
+	 *
+	 * @param array $payload The payload.
+	 *
+	 * @return array|null The product object.
+	 */
+	private function get_first_project_by_payload( array $payload ): ?array {
+		$text_domains = explode( '|', $payload['text_domain'] ?? '' );
+
+		if ( ! $text_domains ) {
+			return null;
+		}
+
+		$product = Arr::first(
+            $this->get_products_data(),
+            static function ( array $product ) use ( $text_domains ) {
+				return in_array( $product['text_domain'], $text_domains, true );
+			}
+        );
+
+		return $product;
+	}
+
+	/**
 	 * Ajax request wrapper for the install_product() method.
 	 *
 	 * @since 1.0.0
@@ -150,7 +177,7 @@ class ProductManager {
 			throw new Exception( esc_html__( 'You do not have a permission to perform this action.', 'gk-gravityview' ) );
 		}
 
-		$product = Arr::get( $this->get_products_data(), $payload['text_domain'] );
+		$product = $this->get_first_project_by_payload( $payload );
 
 		if ( ! $product ) {
 			throw new Exception(
@@ -293,7 +320,7 @@ class ProductManager {
 			throw new Exception( esc_html__( 'You do not have a permission to perform this action.', 'gk-gravityview' ) );
 		}
 
-		$product = Arr::get( $this->get_products_data(), $payload['text_domain'] );
+		$product = $this->get_first_project_by_payload( $payload );
 
 		if ( ! $product ) {
 			throw new Exception(
@@ -357,8 +384,13 @@ class ProductManager {
 		include_once ABSPATH . 'wp-admin/includes/class-wp-upgrader.php';
 
 		// This is an edge case when for some reason the update_plugins transient is not set or the product is not marked as needing an update.
-		$update_plugins_transient_filter = function () {
-			return EDD::get_instance()->check_for_product_updates( new \stdClass() );
+		$update_plugins_transient_filter = function ( $transient_data ) use ( $product ) {
+			if ( ! $transient_data ) {
+				$transient_data          = new stdClass();
+				$transient_data->checked = [ $product['path'] => $product['installed_version'] ];
+			}
+
+			return EDD::get_instance()->check_for_product_updates( $transient_data );
 		};
 
 		// Tampering with the user-agent header (e.g., done by the WordPress Classifieds Plugin) breaks the update process.
@@ -420,7 +452,7 @@ class ProductManager {
 			throw new Exception( esc_html__( 'You do not have a permission to perform this action.', 'gk-gravityview' ) );
 		}
 
-		$product = Arr::get( $this->get_products_data(), $payload['text_domain'] );
+		$product = $this->get_first_project_by_payload( $payload );
 
 		if ( ! $product ) {
 			throw new Exception(
@@ -503,7 +535,7 @@ class ProductManager {
 			throw new Exception( esc_html__( 'You do not have a permission to perform this action.', 'gk-gravityview' ) );
 		}
 
-		$product = Arr::get( $this->get_products_data(), $payload['text_domain'] ) ?? CoreHelpers::get_installed_plugin_by_text_domain( $payload['text_domain'] );
+		$product = $this->get_first_project_by_payload( $payload ) ?? CoreHelpers::get_installed_plugin_by_text_domain( $payload['text_domain'] );
 
 		if ( ! $product ) {
 			throw new Exception(
@@ -586,7 +618,7 @@ class ProductManager {
 			throw new Exception( esc_html__( 'You do not have a permission to perform this action.', 'gk-gravityview' ) );
 		}
 
-		$product = Arr::get( $this->get_products_data(), $payload['text_domain'] );
+		$product = $this->get_first_project_by_payload( $payload );
 
 		if ( ! $product ) {
 			throw new Exception(
@@ -1140,7 +1172,7 @@ class ProductManager {
 				[
 					'0.0.1' => [
 						'system' => [],            // array{'PHP': array{'name': string, 'version': string}, 'WordPress': array{'name': string, 'version': string}}.
-						'plugin' => [],            // array{'product_text_domain': array{'name': string, 'text_domain': string, 'version': string}}.
+						'plugin' => [],            // array{'text_domain': array{'name': string, 'text_domain': string, 'author': string, 'version': string}}.
 					],
 				],
 			],

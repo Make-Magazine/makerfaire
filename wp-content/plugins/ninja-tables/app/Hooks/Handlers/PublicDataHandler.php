@@ -234,6 +234,8 @@ class PublicDataHandler
      */
     public function preRenderTableAssets($tableId)
     {
+        if (isset(NinjaFooTable::$tableCssStatuses[$tableId])) return;
+
         $tableId = intval($tableId);
 
         $atts = [

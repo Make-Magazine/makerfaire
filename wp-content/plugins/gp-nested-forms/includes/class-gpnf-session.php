@@ -41,6 +41,11 @@ class GPNF_Session {
 
 	public function add_child_entry( $child_entry_id ) {
 
+		// If session is disabled (see snippet: https://github.com/gravitywiz/snippet-library/blob/master/gp-nested-forms/gpnf-disable-sessions.php),
+		// don't add the child entry to the session.
+		if ( ! $this->_cookie ) {
+			return;
+		}
 		// @todo review
 		$nested_form_field_key = gform_get_meta( $child_entry_id, GPNF_Entry::ENTRY_NESTED_FORM_FIELD_KEY );
 

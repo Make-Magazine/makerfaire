@@ -2,7 +2,7 @@
 /**
  * @license MIT
  *
- * Modified by gravityview on 28-March-2024 using {@see https://github.com/BrianHenryIE/strauss}.
+ * Modified by gravityview on 29-May-2024 using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\GravityView\Foundation\ThirdParty\Gettext\Extractors;
@@ -33,6 +33,10 @@ class Po extends Extractor implements ExtractorInterface
         for ($n = count($lines); $i < $n; ++$i) {
             $line = trim($lines[$i]);
             $line = static::fixMultiLines($line, $lines, $i);
+
+            if ($line === "#") {
+                $line = "";
+            }
 
             if ($line === '') {
                 if ($translation->is('', '')) {
