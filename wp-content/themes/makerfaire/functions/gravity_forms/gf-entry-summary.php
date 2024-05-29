@@ -734,7 +734,7 @@ function mf_get_form_meta($meta_key, $meta_value) {
 function entryResources($lead, $html=TRUE) {
     global $wpdb;
 
-    $return_array = array();
+    $return_array = array('attributes' => array(), 'resources' => array(), 'attention' => array());
     
     //create JS array for item drop down and type drop down
     $sql = "SELECT * FROM `wp_rmt_resource_categories` order by category ASC";

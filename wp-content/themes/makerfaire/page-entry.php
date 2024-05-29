@@ -120,7 +120,7 @@ if (isset($entry->errors)) {
 
     //for BA24, the single photo was changed to a multi image which messed things up a bit
     $photo = json_decode($groupphoto);
-    if (is_array($photo)) {
+    if (is_array($photo) && !empty($photo)) {
       $groupphoto = $photo[0];
     }
 
