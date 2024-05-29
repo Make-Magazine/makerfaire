@@ -1933,8 +1933,9 @@
 		a:hover { text-decoration: none;}
 		.uf-date-row {
 			display: flex;
-			justify-self: space-between;
+			justify-content: space-between;
 			position: relative;
+         .uf-country { color: #999; }
 		}
 		.uf-flag {
 			position: absolute;

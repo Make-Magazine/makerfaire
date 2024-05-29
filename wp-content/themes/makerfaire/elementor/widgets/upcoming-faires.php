@@ -164,7 +164,7 @@ class Upcoming_Faires extends Widget_Base {
 			[
 				'name' => 'country_typography',
 				'label' => __( 'Faire Country Typography', 'makerfaire' ),
-				'selector' => '{{WRAPPER}} .uf-date',
+				'selector' => '{{WRAPPER}} .uf-country',
 				'condition' => [
 					'show_country' => 'true',
 				],
@@ -282,15 +282,16 @@ class Upcoming_Faires extends Widget_Base {
 				}
 				$return .= 		"<div class='uf-date-row'>";
 				$return .=      	"<p class='uf-date'>$row->event_dt</p>";
+				if($settings['show_country'] == 'true') {
+					$return .=  "<p class='uf-country'>$row->venue_address_country</p>";
+				}
 				if($settings['show_type_flag'] == 'true') {
 					$return .=  	"<div class='uf-flag type-$row->event_type'>$event_type</div>";
 				}
 				$return .= 		"</div>";
 				$return .=      "<h3 class='uf-title'>$name</h3>";
 				$return .=		"<hr>";
-				if($settings['show_country'] == 'true') {
-					$return .=  "<h4 class='uf-country'>$row->venue_address_country</h4>";
-				}
+				
 				$return .= "</a></li>";
 				if (++$i == $limit) break;
 			}
