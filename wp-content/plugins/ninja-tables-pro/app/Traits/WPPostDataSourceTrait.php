@@ -309,13 +309,21 @@ trait WPPostDataSourceTrait
         }
 
         // Check if linkable
-        if ($column['permalinked'] == 'yes') {
+        $isPermaLink = Arr::get($column, 'permalinked', 'no') === 'yes';
+
+        if ($isPermaLink) {
             $atts = '';
             if ($column['permalink_target'] == '_blank') {
                 $atts = 'target="_blank"';
             }
 
-            return '<a ' . $atts . ' title="' . $post->post_title . '" class="ninja_table_permalink" href="' . get_the_permalink($post) . '">' . $value . '</a>';
+            $dataType = Arr::get($column, 'column_settings.data_type');
+
+            if ($dataType === 'button' && $post && $isPermaLink) {
+                return get_the_permalink($post);
+            } else {
+                return '<a ' . $atts . ' title="' . $post->post_title . '" class="ninja_table_permalink" href="' . get_the_permalink($post) . '">' . $value . '</a>';
+            }
         }
 
         return $value;

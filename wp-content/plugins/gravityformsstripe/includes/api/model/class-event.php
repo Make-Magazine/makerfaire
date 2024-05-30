@@ -13,6 +13,19 @@ require_once( 'class-eventdata.php' );
 class Event extends Base {
 
 	/**
+	 * Initialize properties that will be used throughout this class and link to the Stripe API.
+	 *
+	 * @since 5.5.2
+	 */
+	public $account;
+	public $api_version;
+	public $data;
+	public $livemode;
+	public $request;
+	public $type;
+	public $pending_webhooks;
+
+	/**
 	 * This method is not supported by this object
 	 *
 	 * @since 5.5.0
@@ -58,8 +71,8 @@ class Event extends Base {
 
 		try {
 			self::verify_header( $payload, $sig_header, $secret, $tolerance );
-		} catch ( Exception $e ) {
-			return new WP_Error( $e->getMessage() );
+		} catch ( \Exception $e ) {
+			return new \WP_Error( $e->getMessage() );
 		}
 
 		$data       = \json_decode( $payload, true );
@@ -67,7 +80,7 @@ class Event extends Base {
 		if ( null === $data && \JSON_ERROR_NONE !== $json_error ) {
 			$msg = "Invalid payload: {$payload} " . "(json_last_error() was {$json_error})";
 
-			return new WP_Error( $msg );
+			return new \WP_Error( $msg );
 		}
 
 		return new Event( $data, $api );
@@ -82,7 +95,7 @@ class Event extends Base {
 	 * @param string $secret secret used to generate the signature
 	 * @param int $tolerance maximum difference allowed between the header's timestamp and the current time
 	 *
-	 * @throws Exception if the verification fails
+	 * @throws \Exception if the verification fails
 	 *
 	 * @return bool
 	 */
@@ -91,10 +104,10 @@ class Event extends Base {
 		$timestamp  = self::get_timestamp( $header );
 		$signatures = self::get_signatures( $header, self::EXPECTED_SCHEME );
 		if ( -1 === $timestamp ) {
-			throw \Exception( 'Unable to extract timestamp and signatures from header' );
+			throw new \Exception( 'Unable to extract timestamp and signatures from header' );
 		}
 		if ( empty( $signatures ) ) {
-			throw \Exception( 'No signatures found with expected scheme' );
+			throw new \Exception( 'No signatures found with expected scheme' );
 		}
 
 		// Check if expected signature is found in list of signatures from

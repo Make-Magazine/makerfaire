@@ -142,6 +142,7 @@ const ko = window.ko;
 		self.initSession = function() {
 			if (typeof window['gpnfSessionPromise_' + self.formId] === 'undefined') {
 				self.sessionData.gpnf_context = self.ajaxContext;
+
 				window['gpnfSessionPromise_' + self.formId] = $.post( self.ajaxUrl, self.sessionData, function( response ) {
 					/**
 					 * Do something after the Nested Forms session has been initialized.
@@ -779,7 +780,7 @@ const ko = window.ko;
 				nonce: GPNFData.nonces.refreshMarkup,
 				gpnf_parent_form_id: self.formId,
 				gpnf_nested_form_field_id: self.fieldId,
-				gpnf_context: self.ajaxContext
+				gpnf_context: self.ajaxContext,
 			}, function( response ) {
 				self.formHtml = response.formHtml;
 			} );

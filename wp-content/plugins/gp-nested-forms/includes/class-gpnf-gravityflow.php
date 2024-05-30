@@ -21,6 +21,7 @@ class GPNF_GravityFlow {
 		add_filter( 'gpnf_can_user_edit_entry', array( $this, 'can_user_edit_entry' ), 10, 3 );
 		add_filter( 'gpnf_submitted_entry_ids', array( $this, 'get_submitted_entry_ids' ), 10, 3 );
 		add_filter( 'gravityflow_permission_granted_entry_detail', array( $this, 'can_user_view_child_entry' ), 10, 4 );
+		add_filter( 'gform_field_input', array( $this, 'enable_editing_pricing_field' ), 10, 5 );
 
 	}
 
@@ -200,6 +201,35 @@ class GPNF_GravityFlow {
 
 		// If parent was granted "view" permission, child is also granted it.
 		return $permission_granted;
+	}
+
+	/**
+	 * Force pricing fields to show in child forms when editing on Gravity Flow pages.
+	 *
+	 * If `$_GET['view'] == 'entry'`, Gravity Forms will show "Pricing fields are not editable."
+	 *
+	 * @param string                $input    Input tag string.
+	 * @param \GP_Nested_Form_Field $field    Current field object.
+	 * @param string                $value    Pre-populated value.
+	 * @param int                   $entry_id Current entry id.
+	 * @param int                   $form_id  Current form id.
+	 *
+	 * @return string
+	 */
+	public function enable_editing_pricing_field( $input, $field, $value, $entry_id, $form_id ) {
+
+		if ( ! empty( $input ) || rgget( 'view' ) !== 'entry' ) {
+			return $input;
+		}
+
+		// Gravity Forms by default displays "Pricing fields are not editable" which can be overriden if we provide the field input for it.
+		if ( GFCommon::is_pricing_field( $field->type ) && wp_verify_nonce( rgpost( 'gpnf_edit_entry_submission' ), 'gpnf_edit_entry_submission_' . $form_id ) ) {
+			$form  = GFAPI::get_form( $form_id );
+			$entry = GFAPI::get_entry( $entry_id );
+			return $field->get_field_input( $form, $value, $entry );
+		}
+
+		return $input;
 	}
 
 }

@@ -2,13 +2,42 @@ import GPPALiveMergeTags from "../classes/GPPALiveMergeTags";
 import GPPopulateAnything from "../classes/GPPopulateAnything";
 
 declare global {
+	type GPPAPopulate = 'choices' | 'values';
+
+	type GPPAProperty = {
+		value: string
+		label: string
+		orderby?: boolean
+		group?: string
+		operators?: string[]
+	}
+
+	type GPPAFilter = {
+		property: string
+		operator: string
+		value: string
+	}
+
+	interface String {
+		gformFormat: (...args: any[]) => string
+	}
+
 	interface GPPAObjectType {
 		id: string
 		label: string
 		properties: any
-		groups: any
+		groups: {
+			[key: string]: {
+				label: string
+				operators?: string[]
+			}
+		}
 		templates: any
 		restricted: boolean
+		'primary-property'?: {
+			label: string
+		}
+		supportsNullFilterValue?: boolean
 	}
 
 	interface Window {

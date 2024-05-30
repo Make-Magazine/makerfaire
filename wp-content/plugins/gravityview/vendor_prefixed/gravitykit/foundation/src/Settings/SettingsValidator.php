@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by gravityview on 28-March-2024 using {@see https://github.com/BrianHenryIE/strauss}.
+ * Modified by gravityview on 29-May-2024 using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\GravityView\Foundation\Settings;
@@ -205,15 +205,6 @@ class SettingsValidator {
 				continue;
 			}
 
-			// Validation can be a callback.
-			if ( CoreHelpers::is_callable_function( $setting['validation'] ) ) {
-				call_user_func( $setting['validation'], $setting, $value_to_validate );
-
-				$validated_settings[ $setting['id'] ] = $value_to_validate;
-
-				continue;
-			}
-
 			// Convert validation object to a multidimensional array.
 			$validation_rules = empty( $setting['validation'][0] ) ? [ $setting['validation'] ] : $setting['validation'];
 
@@ -226,6 +217,15 @@ class SettingsValidator {
 							[ '[setting]' => $setting['id'] ]
 						)
 					);
+				}
+
+				// Validation can be a callback.
+				if ( CoreHelpers::is_callable_function( $validation_rule['rule'] ) ) {
+					if ( ! call_user_func( $validation_rule['rule'], $setting, $value_to_validate ) ) {
+						$is_valid = false;
+					}
+
+					break;
 				}
 
 				try {

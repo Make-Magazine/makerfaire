@@ -1,3 +1,13 @@
+### 5.6.0 | 2024-04-29
+- Added a new [`gform_stripe_payment_element_updated_payment_information`](https://docs.gravityforms.com/gform_stripe_payment_element_updated_payment_information/) JavaScript filter to allow modifying the payment element payment information when the form total changes.
+- Updated logging to decrease the log file size and make it easier to track issues.
+- Fixed a fatal error that occurs when the customer is redirected back after a no-cost checkout order payment.
+- Fixed PHP 8.1+ deprecation notices displaying on the settings page.
+- Fixed a fatal error that occurs when the webhooks signing secret is invalid.
+- Fixed an issue where the loading spinner is not hidden after the form fails validation.
+- Fixed a fatal error that can occur when the Stripe field is hidden by conditional logic.
+- Fixed an issue where the Link option for the Stripe Payment Element can not be disabled once an email field is selected.
+
 ### 5.5.0 | 2024-02-22
 - Added a Stripe API wrapper and deprecated the use of the Stripe PHP SDK.
 - Added new notification events for pending and authorized payment states.

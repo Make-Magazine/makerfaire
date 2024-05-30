@@ -12,6 +12,27 @@ require_once( 'class-base.php' );
 class Product extends Base {
 
 	/**
+	 * Initialize properties that will be used throughout this class and link to the Stripe API.
+	 *
+	 * @since 5.5.2
+	 */
+	public $active;
+	public $description;
+	public $features;
+	public $images;
+	public $livemode;
+	public $metadata;
+	public $name;
+	public $statement_descriptor;
+	public $updated;
+	public $url;
+	public $default_price;
+	public $package_dimensions;
+	public $shippable;
+	public $tax_code;
+	public $unit_label;
+
+	/**
 	 * Returns the API endpoint for this object.
 	 *
 	 * @since 5.5.0

@@ -2,11 +2,12 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by gravityview on 28-March-2024 using {@see https://github.com/BrianHenryIE/strauss}.
+ * Modified by gravityview on 29-May-2024 using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\GravityView\Foundation;
 
+use GravityKit\GravityView\Foundation\Components\NewsletterSignup;
 use GravityKit\GravityView\Foundation\Integrations\GravityForms;
 use GravityKit\GravityView\Foundation\Integrations\HelpScout;
 use GravityKit\GravityView\Foundation\Integrations\TrustedLogin;
@@ -41,7 +42,7 @@ use GravityKitFoundation;
  * @method static PluginActivationHandler plugin_activation_handler()
  */
 class Core {
-	const VERSION = '1.2.11';
+	const VERSION = '1.2.15';
 
 	const ID = 'gk_foundation';
 
@@ -276,6 +277,7 @@ class Core {
 		}
 
 		$this->_components = [
+			'newsletter'      => NewsletterSignup::get_instance(),
 			'settings'        => SettingsFramework::get_instance(),
 			'licenses'        => LicensesFramework::get_instance(),
 			'translations'    => TranslationsFramework::get_instance(),
@@ -342,13 +344,14 @@ class Core {
 				}
 
 				$default_settings = [
-					'group_gk_products'     => 0,
-					'top_level_menu_action' => $this->licenses()::ID,
-					'support_email'         => get_bloginfo( 'admin_email' ),
-					'support_port'          => 1,
-					'no_conflict_mode'      => 1,
-					'powered_by'            => 0,
-					'beta'                  => 0,
+					'group_gk_products'       => 0,
+					'top_level_menu_action'   => $this->licenses()::ID,
+					'top_level_menu_position' => 'gf_edit_forms',
+					'support_email'           => get_bloginfo( 'admin_email' ),
+					'support_port'            => 1,
+					'no_conflict_mode'        => 1,
+					'powered_by'              => 0,
+					'beta'                    => 0,
 				];
 
 				$admin_menu_items = Arr::flatten( $this->admin_menu()->get_submenus(), 1 );
@@ -413,6 +416,15 @@ HTML;
 					];
 				}
 
+				$gravitykit_menu_position_choices = [];
+
+				foreach ( AdminMenu::get_menus() as $menu ) {
+					$gravitykit_menu_position_choices[] = [
+						'title' => $menu['title'],
+						'value' => $menu['id'],
+					];
+				}
+
 				$general_settings = array_merge(
 					$general_settings,
 					[
@@ -425,12 +437,20 @@ HTML;
 							'description' => esc_html__( 'Aggregate all GravityKit products into a single entry on the Plugins page for a cleaner view and easier management.', 'gk-gravityview' ),
 						],
 						[
+							'id'          => 'top_level_menu_position',
+							'type'        => 'select',
+							'title'       => esc_html__( 'GravityKit Menu Position', 'gk-gravityview' ),
+							'description' => esc_html__( 'Select the menu below which to place the GravityKit menu.', 'gk-gravityview' ),
+							'value'       => Arr::get( $gk_settings, 'top_level_menu_position', $default_settings['top_level_menu_position'] ),
+							'choices'     => $gravitykit_menu_position_choices,
+						],
+						[
 							'id'          => 'top_level_menu_action',
 							'type'        => 'select',
 							'value'       => $top_level_menu_action_value,
 							'choices'     => $top_level_menu_action_choices,
-							'title'       => esc_html__( 'GravityKit Menu Item Action', 'gk-gravityview' ),
-							'description' => esc_html__( 'Open the selected page when clicking the GravityKit menu item.', 'gk-gravityview' ),
+							'title'       => esc_html__( 'GravityKit Menu Action', 'gk-gravityview' ),
+							'description' => esc_html__( 'Select the page to open when clicking the GravityKit menu.', 'gk-gravityview' ),
 						],
 						[
 							'id'          => 'powered_by',
@@ -816,13 +836,13 @@ HTML;
 			);
 		}
 
-        $foundation_versions = array_map(
-            function ( $plugin ) {
-                return $plugin['foundation_version'] ?? '0';
-            },
-            $registered_plugins
-        ) ?: [ '0' ];
+		$foundation_versions = array_map(
+			function ( $plugin ) {
+				return $plugin['foundation_version'] ?? '0';
+			},
+			$registered_plugins
+		) ?: [ '0' ];
 
-        return max( $foundation_versions );
+		return max( $foundation_versions );
 	}
 }

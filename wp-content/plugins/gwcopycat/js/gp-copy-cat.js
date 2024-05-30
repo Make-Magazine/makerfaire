@@ -154,74 +154,74 @@
 			);
 
 			/**
-			 * Keep track of trigger IDs that have been processed in `gform_post_conditional_logic_field_action` to prevent recursion.
+			 * Keep track of trigger IDs that have been processed in `gform_post_conditional_logic` to prevent recursion.
 			 *
-			 * We then clear it out in the action below set to a later priority which will run after gform_post_conditional_logic_field_action.
+			 * We then clear it out at the end of our `gform_post_conditional_logic` callback.
 			 */
 			var triggerIds = [];
 
-			gform.addAction('gform_input_change', function() {
-				triggerIds = [];
-			}, 15);
+			/**
+			 * We use `gform_post_conditional_logic` instead of `gform_post_conditional_logic_field_action` as the
+			 * latter runs too early as fields getting shown will still evaluate as hidden using gformIsHidden().
+			 */
+			$(document).on('gform_post_conditional_logic', function ( event, formId, fields, isInit ) {
 
-			gform.addAction('gform_post_conditional_logic_field_action', function ( formId, action, targetId, defaultValues, isInit ) {
-
-				if ( action === 'hide' ) {
-					// @todo Pending a customer report, there is a good chance we should be resseting target fields if
-					//       their source field is hidden via conditional logic.
+				if ( ! Array.isArray( fields ) ) {
 					return;
 				}
 
-				var fieldId       = gf_get_input_id_by_html_id( targetId );
-				var fieldSettings = self.getFieldSettings( fieldId );
+				fields.forEach( function ( fieldId ) {
+					var fieldSettings = self.getFieldSettings( fieldId );
 
-				if ( ! fieldSettings ) {
-					return;
-				}
-
-				for ( var i = 0; i < fieldSettings.length; i++ ) {
-
-					if ( $.inArray( fieldSettings[i].trigger, triggerIds ) !== -1 ) {
-						continue;
+					if ( ! fieldSettings ) {
+						return;
 					}
 
-					triggerIds.push( fieldSettings[i].trigger );
-
-					var $trigger = $( '#field_{0}_{1}'.gformFormat( formId, fieldSettings[i].trigger ) ).find( 'input, textarea, select' );
-
-					/**
-					 * This resolves an issue where copied values that were edited were overwritten unexpectedly when
-					 * the form was reloaded (e.g. navigating pages, validation errors).
-					 *
-					 * The logic here is that we should only overwrite values if the conditional logic action was
-					 * triggered by a field value change rather than GF's default evaluation of conditional logic that
-					 * occurs any time the form is rendered.
-					 *
-					 * Not overwriting on init also matches the default behavior of Copy Cat though I'm uncertain if we
-					 * should be honoring the self.overwriteOnInit property here...
-					 *
-					 * @type {boolean}
-					 */
-					var shouldOverwrite = ! isInit;
-
-					if ( $trigger.is( ':checkbox' ) ) {
-						if ( $trigger.filter( ':checked' ).length ) {
-							self.copyValues( $trigger[0], shouldOverwrite );
-						} else {
-							/**
-							 * We shouldn't need to clear values as inputs hidden via conditional logic already have their
-							 * value reset. It looks like this was added preemptively without any specific real world use-case
-							 * and it can can cause an infinite loop (see HS#34808). As such, let's remove it for now and
-							 * revisit if a customer presents a need.
-							 */
-							// self.clearValues( $trigger[0] );
+					for ( var i = 0; i < fieldSettings.length; i++ ) {
+						if ( $.inArray( fieldSettings[i].trigger, triggerIds ) !== -1 ) {
+							continue;
 						}
-					}
-					else {
-						self.copyValues( $trigger[0], shouldOverwrite );
-					}
 
-				}
+						triggerIds.push( fieldSettings[i].trigger );
+
+						var $trigger = $( '#field_{0}_{1}'.gformFormat( formId, fieldSettings[i].trigger ) ).find( 'input, textarea, select' );
+
+						/**
+						 * This resolves an issue where copied values that were edited were overwritten unexpectedly when
+						 * the form was reloaded (e.g. navigating pages, validation errors).
+						 *
+						 * The logic here is that we should only overwrite values if the conditional logic action was
+						 * triggered by a field value change rather than GF's default evaluation of conditional logic that
+						 * occurs any time the form is rendered.
+						 *
+						 * Not overwriting on init also matches the default behavior of Copy Cat though I'm uncertain if we
+						 * should be honoring the self.overwriteOnInit property here...
+						 *
+						 * @type {boolean}
+						 */
+						var shouldOverwrite = ! isInit;
+
+						if ( $trigger.is( ':checkbox' ) ) {
+							if ( $trigger.filter( ':checked' ).length ) {
+								self.copyValues( $trigger[0], shouldOverwrite );
+							} else {
+								/**
+								 * We shouldn't need to clear values as inputs hidden via conditional logic already have their
+								 * value reset. It looks like this was added preemptively without any specific real world use-case
+								 * and it can can cause an infinite loop (see HS#34808). As such, let's remove it for now and
+								 * revisit if a customer presents a need.
+								 */
+								// self.clearValues( $trigger[0] );
+							}
+						}
+						else {
+							self.copyValues( $trigger[0], shouldOverwrite );
+						}
+
+					}
+				});
+
+				triggerIds = [];
 
 			} );
 
@@ -260,8 +260,7 @@
 			var fieldId = gf_get_input_id_by_html_id( $( elem ).parents( '.gfield' ).attr( 'id' ) ),
 				fields  = self.getFieldSettings( fieldId );
 
-			isOverwrite    = typeof isOverwrite !== 'undefined' ? isOverwrite : self.overwrite;
-			forceEmptyCopy = typeof forceEmptyCopy !== 'undefined' ? forceEmptyCopy : isOverwrite;
+			isOverwriteOrig    = typeof isOverwrite !== 'undefined' ? isOverwrite : self.overwrite;
 
 			for (var i = 0, max = fields.length; i < max; i++) {
 				var field         = fields[i],
@@ -285,6 +284,22 @@
 						targetInputId: targetFieldId
 						}
 					);
+
+				/**
+				 * Filter to allow overriding the overwrite setting.
+				 *
+				 * @param bool   isOverwrite    The current overwrite setting.
+				 * @param object elem           The element that triggered the copy.
+				 * @param object field          The current field settings.
+				 * @param object targetGroup    The target group of elements.
+				 * @param object sourceGroup    The source group of elements.
+				 * @param array  sourceValues   The values of the source group.
+				 *
+				 * @since 1.4.79
+				 */
+				isOverwrite = gform.applyFilters( 'gpcc_is_overwrite', isOverwriteOrig, elem, field, targetGroup, sourceGroup, sourceValues );
+
+				forceEmptyCopy = typeof forceEmptyCopy !== 'undefined' ? forceEmptyCopy : isOverwrite;
 
 				/**
 				 * Handle checking for a "copy condition" and skip copying if the conditional field has no value.
@@ -327,12 +342,17 @@
 					});
 					continue;
 				}
+
 				// Add new rows for List field - if - we have more than one value to populate - and - our target is a List field.
 				if (self.isListField( targetGroup )) {
-					// Bail out to avoid a repeated copy - Relevant in multi-page scenarios where List fields on previous pages may get copied over again.
-					if ( ! isOverwrite ) {
+					var listHasValue = targetGroup.filter( function() {
+						return this.value !== '';
+					} ).length > 0;
+
+					if (! isOverwrite && listHasValue) {
 						return;
 					}
+
 					var targetRowCount = targetGroup.parents( '.ginput_list' ).find( '.gfield_list_group' ).length/* : targetGroup.length*/,
 						sourceRowCount = self.isListField( sourceGroup ) ? sourceGroup.parents( '.ginput_list' ).find( '.gfield_list_group' ).length : sourceGroup.length,
 						//targetInputIndex = self.getListInputIndex( targetFieldId, true ),

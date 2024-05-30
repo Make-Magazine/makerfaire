@@ -36,6 +36,11 @@ class WLCMS_Admin_Core
     public function load()
     {
 
+        if(!is_wlcms_super_admin()) {
+            wp_redirect(admin_url());
+            exit;
+        }
+
         do_action("wlcms_load-page");
 
         // Check if initial setup

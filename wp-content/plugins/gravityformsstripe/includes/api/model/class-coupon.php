@@ -12,6 +12,26 @@ require_once( 'class-base.php' );
 class Coupon extends Base {
 
 	/**
+	 * Initialize properties that will be used throughout this class and link to the Stripe API.
+	 *
+	 * @since 5.5.2
+	 */
+	public $amount_off;
+	public $currency;
+	public $duration;
+	public $livemode;
+	public $metadata;
+	public $name;
+	public $percent_off;
+	public $valid;
+	public $applies_to;
+	public $currency_options;
+	public $duration_in_months;
+	public $max_redemptions;
+	public $redeem_by;
+	public $times_redeemed;
+
+	/**
 	 * Returns the API endpoint for this object.
 	 *
 	 * @since 5.5.0

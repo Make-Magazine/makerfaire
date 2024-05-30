@@ -184,7 +184,7 @@ class TableHandler
     {
         wp_enqueue_script('formula-parser',
             NINJAPROPLUGIN_URL . "assets/libs/formula/formula-parser.min.js",
-            array('jquery'), '3.0.1', true
+            array('jquery'), '3.0.1', false
         );
     }
 

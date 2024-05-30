@@ -12,6 +12,37 @@ require_once( 'class-base.php' );
 class Customer extends Base {
 
 	/**
+	 * Initialize properties that will be used throughout this class and link to the Stripe API.
+	 *
+	 * @since 5.5.2
+	 */
+	public $address;
+	public $balance;
+	public $currency;
+	public $description;
+	public $discount;
+	public $email;
+	public $livemode;
+	public $metadata;
+	public $name;
+	public $phone;
+	public $shipping;
+	public $sources;
+	public $subscriptions;
+	public $tax;
+	public $tax_ids;
+	public $cash_balance;
+	public $default_source;
+	public $delinquent;
+	public $invoice_credit_balance;
+	public $invoice_prefix;
+	public $invoice_settings;
+	public $next_invoice_sequence;
+	public $preferred_locales;
+	public $tax_exempt;
+	public $test_clock;
+
+	/**
 	 * Gets the supported parameters for the update endpoint.
 	 *
 	 * @since 5.5.0

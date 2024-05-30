@@ -3,7 +3,7 @@
   Plugin Name: YouTube WordPress Plugin Pro by Embed Plus
   Plugin URI: https://www.embedplus.com/dashboard/pro-easy-video-analytics.aspx
   Description: YouTube Embed Plugin. Embed a YouTube channel gallery, playlist gallery, YouTube live stream. Lite embeds with defer JavaScript and facade options
-  Version: 14.2.1.1
+  Version: 14.2.1.2
   Author: Embed Plus for YouTube Team
   Author URI: https://www.embedplus.com
   Requires at least: 4.5
@@ -22,7 +22,7 @@ class YouTubePrefsPro
 
     public static $folder_name = 'youtube-embed-plus-pro';
     public static $curltimeout = 30;
-    public static $version = '14.2.1.1';
+    public static $version = '14.2.1.2';
     public static $opt_version = 'version';
     public static $opt_free_migrated = 'free_migrated';
     public static $optembedwidth = null;
@@ -218,9 +218,9 @@ class YouTubePrefsPro
         self::$dft_gdpr_consent_message = __('<p><strong>Please accept YouTube cookies to play this video.</strong> By accepting you will be accessing content from YouTube, a service provided by an external third party.</p><p><a href="https://policies.google.com/privacy" target="_blank">YouTube privacy policy</a></p><p>If you accept this notice, your choice will be saved and the page will refresh.</p>', 'text_domain');
 
         self::$vi_default_date = date('Y-m-d H:i:s', strtotime('2000-01-01'));
-        register_deactivation_hook(__FILE__, array(get_class(), 'on_deactivation'));
-        add_action('admin_init', array(get_class(), 'check_double_plugin_warning'));
-        add_action('admin_notices', array(get_class(), 'check_free_version'));
+        register_deactivation_hook(__FILE__, array(self::class, 'on_deactivation'));
+        add_action('admin_init', array(self::class, 'check_double_plugin_warning'));
+        add_action('admin_notices', array(self::class, 'check_free_version'));
 
         $active_plugins = get_option('active_plugins', array());
         if (!in_array('youtube-embed-plus/youtube.php', $active_plugins))
@@ -268,71 +268,137 @@ class YouTubePrefsPro
                 'channel'
             );
 
-            add_action('media_buttons', array(get_class(), 'media_button_wizard'), 11);
+            add_action('media_buttons', array(self::class, 'media_button_wizard'), 11);
 
 
             self::do_ytprefs();
-            add_action('admin_menu', array(get_class(), 'ytprefs_plugin_menu'));
-            add_filter('plugin_action_links_' . plugin_basename(__FILE__), array(get_class(), 'my_plugin_action_links'));
+            add_action('admin_menu', array(self::class, 'ytprefs_plugin_menu'));
+            add_filter('plugin_action_links_' . plugin_basename(__FILE__), array(self::class, 'my_plugin_action_links'));
 
             if (self::$alloptions[self::$opt_pro] && strlen(trim(self::$alloptions[self::$opt_pro])) > 8)
             {
-                add_action('admin_bar_menu', array(get_class(), 'ytprefs_admin_bar'), 100);
-                add_action('wp_enqueue_scripts', array(get_class(), 'ytprefs_admin_bar_scripts'));
-                add_action('admin_enqueue_scripts', array(get_class(), 'ytprefs_admin_bar_scripts'));
+                add_action('admin_bar_menu', array(self::class, 'ytprefs_admin_bar'), 100);
+                add_action('wp_enqueue_scripts', array(self::class, 'ytprefs_admin_bar_scripts'));
+                add_action('admin_enqueue_scripts', array(self::class, 'ytprefs_admin_bar_scripts'));
             }
 
 
             if (!is_admin())
             {
-
-
                 if (self::$alloptions[self::$opt_old_script_method] == 1)
                 {
-                    add_action('wp_print_scripts', array(get_class(), 'jsvars'));
-                    add_action('wp_enqueue_scripts', array(get_class(), 'jsvars'));
+                    add_action('wp_print_scripts', array(self::class, 'jsvars'));
+                    add_action('wp_enqueue_scripts', array(self::class, 'jsvars'));
                 }
 
-                add_action('wp_enqueue_scripts', array(get_class(), 'ytprefsscript'), 100);
-                add_action('wp_enqueue_scripts', array(get_class(), 'fitvids'), 101);
+                add_action('wp_enqueue_scripts', array(self::class, 'ytprefsscript'), 100);
+                add_action('wp_enqueue_scripts', array(self::class, 'fitvids'), 101);
 
                 if (self::$alloptions[self::$opt_pro] && strlen(trim(self::$alloptions[self::$opt_pro])) > 0 && self::$alloptions[self::$opt_ogvideo] == 1)
                 {
-                    add_action('wp_head', array(get_class(), 'do_ogvideo'));
+                    add_action('wp_head', array(self::class, 'do_ogvideo'));
                 }
+                add_filter('body_class', array(self::class, 'body_class'));
             }
 
-            add_filter('ytprefs_filter_the_content_light', array(get_class(), 'filter_the_content_light'));
+            add_filter('ytprefs_filter_the_content_light', array(self::class, 'filter_the_content_light'));
 
-            add_action("wp_ajax_my_embedplus_onboarding_save_ajax", array(get_class(), 'onboarding_save_ajax'));
-            add_action("wp_ajax_my_embedplus_settings_save_ajax", array(get_class(), 'settings_save_ajax'));
-            add_action("wp_ajax_my_embedplus_onboarding_save_apikey_ajax", array(get_class(), 'onboarding_save_apikey_ajax'));
-            add_action("wp_ajax_my_embedplus_pro_record", array(get_class(), 'my_embedplus_pro_record'));
-            add_action("wp_ajax_my_embedplus_dashpre", array(get_class(), 'my_embedplus_dashpre'));
-            add_action("wp_ajax_my_embedplus_clearspdc", array(get_class(), 'my_embedplus_clearspdc'));
-            add_action("wp_ajax_my_embedplus_glance_vids", array(get_class(), 'my_embedplus_glance_vids'));
-            add_action("wp_ajax_my_embedplus_glance_count", array(get_class(), 'my_embedplus_glance_count'));
-            add_action("wp_ajax_my_embedplus_dismiss_double_plugin_warning", array(get_class(), 'my_embedplus_dismiss_double_plugin_warning'));
-            add_action("wp_ajax_my_embedplus_gallery_page", array(get_class(), 'my_embedplus_gallery_page'));
-            add_action("wp_ajax_nopriv_my_embedplus_gallery_page", array(get_class(), 'my_embedplus_gallery_page'));
-            add_action('admin_enqueue_scripts', array(get_class(), 'admin_enqueue_scripts'), 10, 1);
+            add_action("wp_ajax_my_embedplus_onboarding_save_ajax", array(self::class, 'onboarding_save_ajax'));
+            add_action("wp_ajax_my_embedplus_settings_save_ajax", array(self::class, 'settings_save_ajax'));
+            add_action("wp_ajax_my_embedplus_onboarding_save_apikey_ajax", array(self::class, 'onboarding_save_apikey_ajax'));
+            add_action("wp_ajax_my_embedplus_pro_record", array(self::class, 'my_embedplus_pro_record'));
+            add_action("wp_ajax_my_embedplus_dashpre", array(self::class, 'my_embedplus_dashpre'));
+            add_action("wp_ajax_my_embedplus_clearspdc", array(self::class, 'my_embedplus_clearspdc'));
+            add_action("wp_ajax_my_embedplus_glance_vids", array(self::class, 'my_embedplus_glance_vids'));
+            add_action("wp_ajax_my_embedplus_glance_count", array(self::class, 'my_embedplus_glance_count'));
+            add_action("wp_ajax_my_embedplus_dismiss_double_plugin_warning", array(self::class, 'my_embedplus_dismiss_double_plugin_warning'));
+            add_action("wp_ajax_my_embedplus_gallery_page", array(self::class, 'my_embedplus_gallery_page'));
+            add_action("wp_ajax_nopriv_my_embedplus_gallery_page", array(self::class, 'my_embedplus_gallery_page'));
+            add_action('admin_enqueue_scripts', array(self::class, 'admin_enqueue_scripts'), 10, 1);
 
-            if (isset(self::$alloptions[self::$opt_pro]) && strlen(trim(self::$alloptions[self::$opt_pro])) > 8 && isset(self::$alloptions[self::$opt_dashpre]) && self::$alloptions[self::$opt_dashpre] == '1')
+            if (isset(self::$alloptions[self::$opt_pro]) && strlen(trim(self::$alloptions[self::$opt_pro])) > 8)
             {
-                add_action("wp_ajax_my_embedplus_yt_dash", array(get_class(), 'my_embedplus_yt_dash'));
-                add_action("wp_ajax_nopriv_my_embedplus_yt_dash", array(get_class(), 'my_embedplus_yt_dash'));
-                add_action("wp_ajax_my_embedplus_realtimeLiveCheck", array(get_class(), 'realtimeLiveCheck'));
-                add_action("wp_ajax_nopriv_my_embedplus_realtimeLiveCheck", array(get_class(), 'realtimeLiveCheck'));
+                add_action("wp_ajax_my_embedplus_realtimeLiveCheck", array(self::class, 'realtimeLiveCheck'));
+                add_action("wp_ajax_nopriv_my_embedplus_realtimeLiveCheck", array(self::class, 'realtimeLiveCheck'));
+                add_action("wp_ajax_my_embedplus_livestream_advice_close", array(self::class, 'livestream_advice_close'));
+                
+                if (isset(self::$alloptions[self::$opt_dashpre]) && self::$alloptions[self::$opt_dashpre] == '1')
+                {
+                    add_action("wp_ajax_my_embedplus_yt_dash", array(self::class, 'my_embedplus_yt_dash'));
+                    add_action("wp_ajax_nopriv_my_embedplus_yt_dash", array(self::class, 'my_embedplus_yt_dash'));                    
+                }
             }
 
             if (!empty(self::$alloptions[self::$opt_not_live_on_channel]))
             {
-                add_action("wp_footer", array(get_class(), 'live_fallback_template'));
+                add_action("wp_footer", array(self::class, 'live_fallback_template'));
             }
+            
+            add_action("wp_footer", array(self::class, 'livestream_advice_template'));
+            
             /////////////////////////////////////
             include_once(EPYTVI_INCLUDES_PATH . 'vi_actions.php');
             include_once(EPYTGB_INCLUDES_PATH . 'gutenberg_hooks.php');
         }
+    }
+    
+    public static function body_class($classes)
+    {
+        if (current_user_can('edit_posts'))
+        {
+            $classes[] = 'epyt-edit-posts';
+        }        
+        return $classes;
+    }
+    
+    public static function livestream_advice_template()
+    {
+        if (current_user_can('edit_posts') && get_user_meta(get_current_user_id(), 'embedplus_livestream_advice_close', true) != 1)
+        {
+            echo '<script type="text/x-template" id="epyt-livestream-advice-template">' . base64_encode(self::livestream_advice(true)) . '</script>';
+        }
+    }
+    
+    public static function livestream_advice($is_embed)
+    {
+        ob_start(); ?>
+        <div class="epyt-livestream-advice">
+            <div class="epyt-livestream-advice-close">&times;</div>
+            <p>
+                <strong>Live stream not starting on time?</strong> Note the following:
+            </p>
+            <ul class="reglist">
+                <li>Google has unfortunately disabled the ability to instantly show the stream as soon as it starts. This plugin uses caching as a workaround, and will show the stream at a delay of at most 10-15 minutes. So, we recommend starting your stream 15 minutes ahead of schedule to ensure your visitors will see this stream come up at the expected time (feel free to just show your logo or even a blank/muted screen for these initial few minutes while visitors gather to watch).</li>
+                <li>If you have any additional caching plugins installed, you may also need to exclude <?php echo $is_embed ? 'this page' : 'the page the embed is on' ?> from their caching. Caching plugins sometimes prevent fresh livestream data from loading.</li>
+            </ul>
+            <?php if ($is_embed)
+            {
+                ?>
+                <p>(Note: this message is only visible while you are logged in)</p>
+                <?php
+            }
+        ?>            
+        </div>
+        <?php $content = ob_get_clean();
+        return $content;
+    }
+    
+    public static function livestream_advice_close()
+    {
+        $result = array();
+        if (self::is_ajax())
+        {
+            $user_id = get_current_user_id();
+            update_user_meta($user_id, 'embedplus_livestream_advice_close', 1);
+            $result['type'] = 'success';
+            echo json_encode($result);
+        }
+        else
+        {
+            $result['type'] = 'error';
+            header("Location: " . $_SERVER["HTTP_REFERER"]);
+        }
+        die();
     }
 
     public static function live_fallback_template()
@@ -1462,7 +1528,8 @@ class YouTubePrefsPro
                                             <input name="txtUrlLiveChannel" maxlength="200" id="txtUrlLiveChannel" class="ui-widget ui-widget-content ui-corner-all" placeholder="<?php _e('Paste channel link here', 'text_domain'); ?>" type="text"> <button name="wizform_submit" class="ui-button ui-widget ui-corner-all" type="submit" value="step1_livechannel"><?php _e('Get Channel', 'text_domain'); ?></button>
                                         </div>                                        
                                     </form>
-                                    <?php echo $step1_livechannel_errors ? '<p class="orange bold">' . $step1_livechannel_errors . '</p>' : ''; ?>                                    
+                                    <?php echo $step1_livechannel_errors ? '<p class="orange bold">' . $step1_livechannel_errors . '</p>' : ''; ?>
+                                    <?php echo self::livestream_advice(true); ?>
                                 </div>
                             </div>
 
@@ -2039,7 +2106,7 @@ class YouTubePrefsPro
     {
         if (is_plugin_active('embedplus-for-wordpress/embedplus.php'))
         {
-            add_action('admin_notices', array(get_class(), "double_plugin_warning"));
+            add_action('admin_notices', array(self::class, "double_plugin_warning"));
         }
     }
 
@@ -2591,7 +2658,7 @@ class YouTubePrefsPro
                 }
                 else
                 {
-                    add_action('admin_init', array(get_class(), 'remove_stats_validation'), 10, 0);
+                    add_action('admin_init', array(self::class, 'remove_stats_validation'), 10, 0);
                 }
             }
         }
@@ -2618,41 +2685,41 @@ class YouTubePrefsPro
 
     public static function do_ytprefs()
     {
-        //add_filter('autoptimize_filter_js_exclude', array(get_class(), 'ao_override_jsexclude'), 10, 1);
+        //add_filter('autoptimize_filter_js_exclude', array(self::class, 'ao_override_jsexclude'), 10, 1);
         if (
                 !is_admin() || (self::$alloptions[self::$opt_frontend_only] != 1)
         //|| (function_exists('wp_doing_ajax') && wp_doing_ajax())
         )
         {
-            add_filter('the_content', array(get_class(), 'apply_prefs_content'), 1);
-            add_filter('widget_text', array(get_class(), 'apply_prefs_widget'), 1);
-            //add_filter('bjll/skip_classes', array(get_class(), 'bjll_skip_classes'), 10, 2);
+            add_filter('the_content', array(self::class, 'apply_prefs_content'), 1);
+            add_filter('widget_text', array(self::class, 'apply_prefs_widget'), 1);
+            //add_filter('bjll/skip_classes', array(self::class, 'bjll_skip_classes'), 10, 2);
 
-            add_filter('sgo_lazy_load_exclude_classes', array(get_class(), 'exclude_lazy_sgo'));
+            add_filter('sgo_lazy_load_exclude_classes', array(self::class, 'exclude_lazy_sgo'));
 
-            add_shortcode('embedyt', array(get_class(), 'apply_prefs_shortcode'));
+            add_shortcode('embedyt', array(self::class, 'apply_prefs_shortcode'));
             if (self::$alloptions[self::$opt_migrate] == 1)
             {
                 if (self::$alloptions[self::$opt_migrate_youtube] == 1)
                 {
-                    add_shortcode('youtube', array(get_class(), 'apply_prefs_shortcode_youtube'));
-                    add_shortcode('youtube_video', array(get_class(), 'apply_prefs_shortcode_youtube'));
+                    add_shortcode('youtube', array(self::class, 'apply_prefs_shortcode_youtube'));
+                    add_shortcode('youtube_video', array(self::class, 'apply_prefs_shortcode_youtube'));
                 }
                 if (self::$alloptions[self::$opt_migrate_embedplusvideo] == 1)
                 {
-                    add_shortcode('embedplusvideo', array(get_class(), 'apply_prefs_shortcode_embedplusvideo'));
+                    add_shortcode('embedplusvideo', array(self::class, 'apply_prefs_shortcode_embedplusvideo'));
                 }
             }
         }
         if (self::$alloptions[self::$opt_ftpostimg] == 1 && self::$alloptions[self::$opt_pro] && strlen(trim(self::$alloptions[self::$opt_pro])) > 0)
         {
-            //add_action('save_post', array(get_class(), 'doftpostimg'), 110, 3);
-            add_action('transition_post_status', array(get_class(), 'doftpostimg'), 110, 3);
+            //add_action('save_post', array(self::class, 'doftpostimg'), 110, 3);
+            add_action('transition_post_status', array(self::class, 'doftpostimg'), 110, 3);
         }
 
         if (self::$alloptions[self::$opt_defer_js] == 1)
         {
-            add_filter('script_loader_tag', array(get_class(), 'defer_scripts'), 10, 3);
+            add_filter('script_loader_tag', array(self::class, 'defer_scripts'), 10, 3);
         }
     }
 
@@ -2729,13 +2796,13 @@ class YouTubePrefsPro
 
     public static function apply_prefs_content($content)
     {
-        $content = preg_replace_callback(self::$ytregex, array(get_class(), "get_html_content"), $content);
+        $content = preg_replace_callback(self::$ytregex, array(self::class, "get_html_content"), $content);
         return $content;
     }
 
     public static function apply_prefs_widget($content)
     {
-        $content = preg_replace_callback(self::$ytregex, array(get_class(), "get_html_widget"), $content);
+        $content = preg_replace_callback(self::$ytregex, array(self::class, "get_html_widget"), $content);
         return $content;
     }
 
@@ -2878,7 +2945,7 @@ class YouTubePrefsPro
             if (strpos($options->playlistId, 'UU') === 0)
             {
                 // sort only channels
-                usort($jsonResult->items, array(get_class(), 'compare_vid_date')); // sorts in place                
+                usort($jsonResult->items, array(self::class, 'compare_vid_date')); // sorts in place                
             }
 
             $options->pageSizeReal = count($jsonResult->items);
@@ -3123,7 +3190,7 @@ class YouTubePrefsPro
                         $items = $json['items'];
                         if (!empty($json['items']) && count($json['items']))
                         {
-                            usort($items, array(get_class(), 'compare_scheduled_date'));
+                            usort($items, array(self::class, 'compare_scheduled_date'));
                             
 //                            for ($i = 0; $i < count($items); $i++)
 //                            {
@@ -4298,20 +4365,20 @@ class YouTubePrefsPro
     {
         if (self::$alloptions[self::$opt_pro] && strlen(trim(self::$alloptions[self::$opt_pro])) > 0)
         {
-            self::$admin_page_hooks[] = add_menu_page(__('YouTube Settings', 'text_domain'), __('YouTube PRO', 'text_domain'), 'manage_options', 'youtube-my-preferences', array(get_class(), 'ytprefs_show_options'), 'dashicons-video-alt3', '10.000392854349');
-            self::$admin_page_hooks[] = add_submenu_page('youtube-my-preferences', '', '', 'manage_options', 'youtube-my-preferences', array(get_class(), 'ytprefs_show_options'));
-            self::$admin_page_hooks[] = add_submenu_page('youtube-my-preferences', __('YouTube Analytics Dashboard', 'text_domain'), '<span class="wp-menu-image dashicons-before dashicons-chart-line"></span> ' . __('PRO Analytics', 'text_domain'), 'manage_options', 'youtube-ep-analytics-dashboard', array(get_class(), 'epstats_show_options'));
+            self::$admin_page_hooks[] = add_menu_page(__('YouTube Settings', 'text_domain'), __('YouTube PRO', 'text_domain'), 'manage_options', 'youtube-my-preferences', array(self::class, 'ytprefs_show_options'), 'dashicons-video-alt3', '10.000392854349');
+            self::$admin_page_hooks[] = add_submenu_page('youtube-my-preferences', '', '', 'manage_options', 'youtube-my-preferences', array(self::class, 'ytprefs_show_options'));
+            self::$admin_page_hooks[] = add_submenu_page('youtube-my-preferences', __('YouTube Analytics Dashboard', 'text_domain'), '<span class="wp-menu-image dashicons-before dashicons-chart-line"></span> ' . __('PRO Analytics', 'text_domain'), 'manage_options', 'youtube-ep-analytics-dashboard', array(self::class, 'epstats_show_options'));
 
             include_once(EPYTVI_INCLUDES_PATH . 'vi_admin_menu.php');
         }
         else
         {
-            self::$admin_page_hooks[] = add_menu_page(__('YouTube Settings', 'text_domain'), __('YouTube', 'text_domain'), 'manage_options', 'youtube-my-preferences', array(get_class(), 'ytprefs_show_options'), 'dashicons-video-alt3', '10.000392854349');
-            self::$admin_page_hooks[] = add_submenu_page('youtube-my-preferences', '', '', 'manage_options', 'youtube-my-preferences', array(get_class(), 'ytprefs_show_options'));
+            self::$admin_page_hooks[] = add_menu_page(__('YouTube Settings', 'text_domain'), __('YouTube', 'text_domain'), 'manage_options', 'youtube-my-preferences', array(self::class, 'ytprefs_show_options'), 'dashicons-video-alt3', '10.000392854349');
+            self::$admin_page_hooks[] = add_submenu_page('youtube-my-preferences', '', '', 'manage_options', 'youtube-my-preferences', array(self::class, 'ytprefs_show_options'));
         }
-        self::$admin_page_hooks[] = add_submenu_page('youtube-my-preferences_nomenu', __('YouTube Posts', 'text_domain'), __('YouTube Posts', 'text_domain'), 'manage_options', 'youtube-ep-glance', array(get_class(), 'glance_page'));
-        self::$admin_page_hooks[] = self::$wizard_hook = add_submenu_page('youtube-my-preferences_nomenu', __('YouTube Wizard', 'text_domain'), __('YouTube Wizard', 'text_domain'), 'edit_posts', 'youtube-ep-wizard', array(get_class(), 'wizard'));
-        self::$admin_page_hooks[] = self::$onboarding_hook = add_submenu_page('youtube-my-preferences_nomenu', __('YouTube Setup', 'text_domain'), __('YouTube Setup', 'text_domain'), 'manage_options', 'youtube-ep-onboarding', array(get_class(), 'ytprefs_show_onboarding'));
+        self::$admin_page_hooks[] = add_submenu_page('youtube-my-preferences_nomenu', __('YouTube Posts', 'text_domain'), __('YouTube Posts', 'text_domain'), 'manage_options', 'youtube-ep-glance', array(self::class, 'glance_page'));
+        self::$admin_page_hooks[] = self::$wizard_hook = add_submenu_page('youtube-my-preferences_nomenu', __('YouTube Wizard', 'text_domain'), __('YouTube Wizard', 'text_domain'), 'edit_posts', 'youtube-ep-wizard', array(self::class, 'wizard'));
+        self::$admin_page_hooks[] = self::$onboarding_hook = add_submenu_page('youtube-my-preferences_nomenu', __('YouTube Setup', 'text_domain'), __('YouTube Setup', 'text_domain'), 'manage_options', 'youtube-ep-onboarding', array(self::class, 'ytprefs_show_onboarding'));
     }
 
     public static function remove_stats_validation()
@@ -4575,9 +4642,9 @@ class YouTubePrefsPro
             try
             {
                 $channelId = $_POST["channelId"];
-                add_filter( 'wp_feed_cache_transient_lifetime' , array(get_class(), 'rss_lifetime'), 10, 2);
+                add_filter( 'wp_feed_cache_transient_lifetime' , array(self::class, 'rss_lifetime'), 10, 2);
                 $rss = fetch_feed("https://www.youtube.com/feeds/videos.xml?channel_id=" . $channelId . '&rand=' . time());
-                remove_filter( 'wp_feed_cache_transient_lifetime' , array(get_class(), 'rss_lifetime'));
+                remove_filter( 'wp_feed_cache_transient_lifetime' , array(self::class, 'rss_lifetime'));
                 if ($rss && !is_wp_error($rss))
                 {
                     $streams = $_POST['streams'];
@@ -4763,7 +4830,7 @@ class YouTubePrefsPro
         $new_pointer_content = '<h3>' . __('New Update') . '</h3>'; // ooopointer
 
         $new_pointer_content .= '<p>'; // ooopointer
-        $new_pointer_content .= "This update fixes issues some users have with the channel-based automatic live stream detection/loading feature for Pro users.";
+        $new_pointer_content .= "This update addresses issues with the channel-based automatic live stream detection/loading feature for the Pro version, and provides better compatibility with PHP 8.3+ for both Free and Pro versions.";
         if (self::vi_logged_in())
         {
             $new_pointer_content .= "<br><br><strong>Note:</strong> You are currently logged into the vi intelligence feature. vi support is being deprecated in the next version, so we recommend taking the vi ads down from your site. Please contact ext@embedplus.com for questions.";
@@ -4873,7 +4940,8 @@ class YouTubePrefsPro
             .orange {color: #f85d00;}
             .bold {font-weight: bold;}
             .grey{color: #888888;}
-            #goprobox {border-radius: 15px; padding: 10px 15px 15px 15px; border: 3px solid #CCE5EC; position: relative;}
+            .epyt-notice-info {border-radius: 15px; padding: 10px 15px 15px 15px; border: 3px solid #CCE5EC; position: relative;}
+            .epyt-notice-info .epyt-livestream-advice-close { display: none;}
             .pronon {font-weight: bold; color: #f85d00;}
             ul.reglist li {margin-left: 30px; list-style: disc outside none;}
             .procol {width: 475px; float: left;}
@@ -5102,7 +5170,7 @@ class YouTubePrefsPro
             <div class="ytindent">
                 <section class="pattern" id="jumppro">
                     <h2>Pro Key</h2>
-                    <div id="goprobox">
+                    <div id="goprobox" class="epyt-notice-info">
 
                         <?php
                         if (isset($all[self::$opt_pro]) && strlen(trim($all[self::$opt_pro])) > 0)
@@ -5600,16 +5668,19 @@ class YouTubePrefsPro
                             <div id="not_live_content_scroll" class="p">
                                 <br>
                                 <h3>Live Stream Options <sup class="orange">new</sup></h3>
-                                <div class="clear-live-cache">
-                                    <p>
-                                        <strong>Note:</strong> Live streaming uses caching to help preserve your API quota. If you are having issues with your stream starting on time, <input type="button" class="button button-primary btn-clear-live-cache" value="click here to clear your live stream cache"/>.
-                                    </p>
-                                    <p>
-                                        <span style="display: none;" class="orange bold clearspdcloading">Clearing...</span>
-                                        <span  class="orange bold clearspdcsuccess" style="display: none;">Finished clearing live stream cache.</span>
-                                        <span class="orange bold clearspdcfailed" style="display: none;">Sorry, there seemed to be a problem clearing the cache.</span>
-                                    </p>
-                                </div>
+                                <div class="epyt-notice-info">
+                                    <?php echo self::livestream_advice(false); ?>
+                                    <div class="clear-live-cache">
+                                        <p>
+                                            <strong>Note:</strong> As mentioned above, live streaming uses caching to help preserve your API quota. If you are still having issues with your stream starting on time, <input type="button" class="button button-primary btn-clear-live-cache" value="click here to clear your live stream cache"/>.
+                                        </p>
+                                        <p>
+                                            <span style="display: none;" class="orange bold clearspdcloading">Clearing...</span>
+                                            <span  class="orange bold clearspdcsuccess" style="display: none;">Finished clearing live stream cache.</span>
+                                            <span class="orange bold clearspdcfailed" style="display: none;">Sorry, there seemed to be a problem clearing the cache.</span>
+                                        </p>
+                                    </div>
+                                </div>                                
                                 <p>
                                     <b class="chktitle">Use "Not Live" Fallback Content For Live Streams:</b> (<a href="<?php echo self::$epbase ?>/how-to-embed-a-youtube-livestream-in-wordpress.aspx" target="_blank">More info here</a>)
                                     This feature lets you display alternate content if your live stream is not currently active. There are two flavors of this feature: one that affects <strong>direct link</strong> live streams, and 
@@ -8305,7 +8376,7 @@ class YouTubePrefsPro
             }
 
             ////////////////////// cloudflare accomodation
-            //add_filter('script_loader_tag', array(get_class(), 'set_cfasync'), 10, 3);
+            //add_filter('script_loader_tag', array(self::class, 'set_cfasync'), 10, 3);
 
             if ((self::$alloptions[self::$opt_pro] && strlen(trim(self::$alloptions[self::$opt_pro])) > 0) && self::$alloptions[self::$opt_dynload] == 1)
             {
@@ -8402,7 +8473,7 @@ class YouTubePrefsPro
 
         if ((get_bloginfo('version') >= '3.3') && self::custom_admin_pointers_check())
         {
-            add_action('admin_print_footer_scripts', array(get_class(), 'custom_admin_pointers_footer'));
+            add_action('admin_print_footer_scripts', array(self::class, 'custom_admin_pointers_footer'));
 
             wp_enqueue_script('wp-pointer');
             wp_enqueue_style('wp-pointer');
@@ -8410,7 +8481,7 @@ class YouTubePrefsPro
 
         if (self::$alloptions['glance'] == 1)
         {
-            add_action('admin_print_footer_scripts', array(get_class(), 'glance_script'));
+            add_action('admin_print_footer_scripts', array(self::class, 'glance_script'));
         }
 
         if ($hook == self::$wizard_hook)
@@ -8987,7 +9058,7 @@ class YouTubePrefsPro
                 else if ($current_adstxt !== $user_adstxt)
                 {
                     $current_adstxt_lines = preg_split('/\r\n|\r|\n/', $current_adstxt);
-                    $current_adstxt_lines = array_filter($current_adstxt_lines, array(get_class(), 'vi_not_vi_adstxt_line'));
+                    $current_adstxt_lines = array_filter($current_adstxt_lines, array(self::class, 'vi_not_vi_adstxt_line'));
                     $former_adstxt = implode(PHP_EOL, $current_adstxt_lines);
 
                     $new_adstxt = $former_adstxt . (strlen($former_adstxt) > 0 ? PHP_EOL : '') . $user_adstxt;
@@ -9212,7 +9283,7 @@ class YouTubePrefsPro
             $current_adstxt = file_exists($adstxt_file) ? file_get_contents($adstxt_file) : '';
 
             $current_adstxt_lines = preg_split('/\r\n|\r|\n/', $current_adstxt);
-            $current_adstxt_lines = array_filter($current_adstxt_lines, array(get_class(), 'vi_not_vi_adstxt_line'));
+            $current_adstxt_lines = array_filter($current_adstxt_lines, array(self::class, 'vi_not_vi_adstxt_line'));
             $former_adstxt = implode(PHP_EOL, $current_adstxt_lines);
 
             $new_adstxt = $former_adstxt . (strlen($former_adstxt) > 0 ? PHP_EOL : '') . ($user_adstxt === false ? '' : $user_adstxt);
@@ -10687,9 +10758,9 @@ margin: 0 auto;
     {
         if ((bool) self::$alloptions[self::$opt_vi_show_gdpr_authorization] || defined('VI_EU_TEST'))
         {
-            add_action('init', array(get_class(), 'wp_insert_vi_gdpr_data_init'));
-            add_action('wp_enqueue_scripts', array(get_class(), 'wp_insert_vi_gdpr_popup_wp_enqueue'));
-            add_action('wp_footer', array(get_class(), 'wp_insert_vi_gdpr_popup_wp_footer'));
+            add_action('init', array(self::class, 'wp_insert_vi_gdpr_data_init'));
+            add_action('wp_enqueue_scripts', array(self::class, 'wp_insert_vi_gdpr_popup_wp_enqueue'));
+            add_action('wp_footer', array(self::class, 'wp_insert_vi_gdpr_popup_wp_footer'));
         }
     }
 
@@ -10923,8 +10994,11 @@ margin: 0 auto;
         self::fitvids();
         if (!empty(self::$alloptions[self::$opt_not_live_on_channel]))
         {
-            add_action("admin_print_footer_scripts", array(get_class(), 'live_fallback_template'));
+            add_action("admin_print_footer_scripts", array(self::class, 'live_fallback_template'));
         }
+        
+        add_action("admin_print_footer_scripts", array(self::class, 'livestream_advice_template'));
+        
 
         if (!self::is_restrict_wizard() && current_user_can('edit_posts'))
         {
@@ -10955,8 +11029,8 @@ margin: 0 auto;
         if (!self::is_restrict_wizard() && current_user_can('edit_posts'))
         {
             add_thickbox();
-            add_filter("mce_external_plugins", array(get_class(), "gb_add_tinymce_plugin"));
-            add_filter('mce_buttons_2', array(get_class(), 'gb_register_tinymce_button'));
+            add_filter("mce_external_plugins", array(self::class, "gb_add_tinymce_plugin"));
+            add_filter('mce_buttons_2', array(self::class, 'gb_register_tinymce_button'));
         }
     }
 
@@ -10990,7 +11064,7 @@ margin: 0 auto;
                         'type' => 'string'
                     )
                 ),
-                'render_callback' => array(get_class(), 'gb_render_callback_youtube'),
+                'render_callback' => array(self::class, 'gb_render_callback_youtube'),
                     )
             );
         }

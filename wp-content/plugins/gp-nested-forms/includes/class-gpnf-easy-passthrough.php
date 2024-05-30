@@ -34,21 +34,17 @@ class GPNF_Easy_Passthrough {
 			return $can_user_edit_entry;
 		}
 
-		$session = new GPNF_Session( $entry[ GPNF_Entry::ENTRY_PARENT_FORM_KEY ] );
-
-		$cookie = $session->get_cookie();
-		if ( ! $cookie ) {
-			return $can_user_edit_entry;
-		}
-
-		$ep_token = rgars( $cookie, 'request/ep_token' );
-
-		if ( $ep_token ) {
-			$ep_entry             = gp_easy_passthrough()->get_entry_for_token( $ep_token );
-			$nested_form_field_id = gp_nested_forms()->get_posted_nested_form_field_id();
-			$child_entry_ids      = gp_nested_forms()->get_child_entry_ids_from_value( rgar( $ep_entry, $nested_form_field_id ) );
-			if ( in_array( $entry['id'], $child_entry_ids ) ) {
-				$can_user_edit_entry = true;
+		$parent_entry_id = gform_get_meta( $entry['id'], GPNF_Entry::ENTRY_PARENT_KEY );
+		if ( $parent_entry_id ) {
+			$parent_entry = GFAPI::get_entry( $parent_entry_id );
+			if ( ! is_wp_error( $parent_entry ) ) {
+				$gpep_session = gp_easy_passthrough()->session_manager();
+				if ( ! is_wp_error( $gpep_session ) ) {
+					$gpep_entry_id = $gpep_session[ gp_easy_passthrough()->get_slug() . '_' . $parent_entry['form_id'] ];
+					if ( $gpep_entry_id == $parent_entry_id ) {
+						return true;
+					}
+				}
 			}
 		}
 

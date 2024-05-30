@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by gravityview on 28-March-2024 using {@see https://github.com/BrianHenryIE/strauss}.
+ * Modified by gravityview on 29-May-2024 using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\GravityView\Foundation\Licenses\WP;
@@ -551,14 +551,6 @@ JS;
 							esc_attr__( 'This product has unmet dependencies. Click this link to see see what they are.', 'gk-gravityview' )
 						),
 						'[/link]'   => '</a>',
-					]
-				);
-			} else {
-				$notice = strtr(
-					esc_html__( 'There is a new version [version] of [product] available.', 'gk-gravityview' ),
-					[
-						'[product]' => $product['name'],
-						'[version]' => $product['server_version'],
 					]
 				);
 			}

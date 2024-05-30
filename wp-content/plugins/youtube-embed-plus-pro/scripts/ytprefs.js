@@ -392,7 +392,8 @@
                                     },
                                     host: (thisvid.src || '').indexOf('nocookie') > 0 ? 'https://www.youtube-nocookie.com' : 'https://www.youtube.com'
                                 };
-                                return new window.YT.Player(iframeid, ytOptions);
+                                var thePlayer = new window.YT.Player(iframeid, ytOptions);
+                                return thePlayer;
                             }
                         }
                     },
@@ -659,7 +660,8 @@
                                     var found = false;
                                     var foundIdx = 0;
                                     var passNum = 0;
-                                    var channelId = $ch.data('channel') || window._EPADashboard_.justid($ch.data('src'), 'channel');
+                                    var channelId = $ch.data('channel');
+                                    if (!channelId) channelId = $ch.data('src') ? window._EPADashboard_.justid($ch.data('src'), 'channel') : window._EPADashboard_.justid($ch.attr('src'), 'channel');
 
                                     if (!window._EPYT_.alreadyCheckingRealtimeLivestreams)
                                     {
@@ -782,9 +784,9 @@
                                         if (found && embedStream)
                                         {
                                             // if live fallback feature is on and it's not countdown showtime yet, do live fallback
-                                            if (window._EPYT_.not_live_on_channel &&
-                                                    (window._EPADashboard_.dateDiffInMinutes(now, embedStream.start) > parseInt(window._EPYT_.not_live_showtime)
-                                                            || (embedStream.actualStart && window._EPADashboard_.dateDiffInMinutes(now, embedStream.actualStart) > parseInt(window._EPYT_.not_live_showtime)))
+                                            if (window._EPYT_.not_live_on_channel
+                                                    && (window._EPADashboard_.dateDiffInMinutes(now, embedStream.start) > parseInt(window._EPYT_.not_live_showtime) // scheduled start is still far enough in the future
+                                                            && (!embedStream.actualStart || window._EPADashboard_.dateDiffInMinutes(now, embedStream.actualStart) > parseInt(window._EPYT_.not_live_showtime))) // and either actual start is null, or it is also far enough in the future
                                                     )
                                             {
                                                 window._EPADashboard_.doLiveFallback($ch.get(0));
@@ -827,13 +829,40 @@
 
                                         }
                                     }
+
+                                    if ($('body.wp-admin, body.logged-in.epyt-edit-posts').length)
+                                    {
+                                        var $livestreamAdvice = $('#epyt-livestream-advice-template');
+                                        if ($livestreamAdvice.length)
+                                        {
+                                            var adviceHtml = '';
+                                            try
+                                            {
+                                                adviceHtml = window._EPADashboard_.base64DecodeUnicode($livestreamAdvice.get(0).innerHTML);
+                                                $ch.closest('.epyt-video-wrapper').before(adviceHtml);
+                                            }
+                                            catch (e)
+                                            {
+                                            }
+                                        }
+                                    }
                                 }
                             });
+                        }
 
-//                            $('.epyt-do-live-fallback').each(function ()
-//                            {
-//                                window._EPADashboard_.doLiveFallback(this);
-//                            });
+                        if ($('body.wp-admin, body.logged-in.epyt-edit-posts').length)
+                        {
+                            $(document).on('click.epytLivestreamAdvice', '.epyt-livestream-advice-close', function ()
+                            {
+                                $.post(_EPYT_.ajaxurl, {
+                                    action: 'my_embedplus_livestream_advice_close',
+                                    security: _EPYT_.security
+                                });
+                                $('.epyt-livestream-advice-close').each(function ()
+                                {
+                                    $(this).closest('.epyt-livestream-advice').remove();
+                                });
+                            });
                         }
 
                         $('.epyt-gallery').each(function ()

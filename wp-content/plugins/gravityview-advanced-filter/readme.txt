@@ -1,7 +1,7 @@
 === GravityView - Advanced Filter Extension ===
 Tags: GravityView, Gravity Forms, filtering, conditional logic
 Requires at least: 4.4
-Tested up to: 6.4.2
+Tested up to: 6.5.0
 Contributors: GravityKit
 License: GPLv3 or later
 
@@ -14,6 +14,27 @@ Filter which entries are shown in a View based on their values.
 3. Follow the instructions
 
 == Changelog ==
+
+= 4.0.1 on April 16, 2024 =
+
+This release resolves the issue where the "Add Condition" button would disappear when configuring View filters or field conditional logic.
+
+#### 🐛 Fixed
+* "Add Condition" button disappearing when configuring View filters or field conditional logic.
+
+= 4.0.0 on April 4, 2024 =
+
+This major update introduces nested groups of conditions with selectable AND/OR logic, role-based filtering, and a new View setting for displaying entries by the logged-in user. [Read the announcement](https://www.gravitykit.com/advanced-filtering-4-0/) for more details.
+
+#### 🚀 Added
+* Ability to create nested condition groups.
+* Option to toggle the logical operator (AND/OR) for conditions and condition groups.
+* Filtering based on the current user role(s).
+* View setting to display entries created by the currently logged-in user, serving as a shortcut for the "Created By" filter.
+
+__Developer Updates:__
+
+* Added the `gk/advanced-filters/max-nesting-level` filter to modify the maximum nesting depth for condition groups, with a default setting allowing for nesting up to 3 levels deep.
 
 = 3.0.5 on February 1, 2024 =
 
@@ -34,10 +55,10 @@ This update resolves an issue with the Merge Tag picker disappearing in the View
 
 = 3.0.3 on January 24, 2024 =
 
-This release introduces support for the Gravity PDF shortcode in the Field Conditional Logic, and addresses a PHP 8.1+ deprecation notice.
+This release introduces support for the Gravity PDF shortcode in the field conditional Logic, and addresses a PHP 8.1+ deprecation notice.
 
 #### 🚀 Added
-* Added support for the Gravity PDF shortcode (`[gravitypdf]`) in the Empty Field Content area under Field Conditional Logic.
+* Added support for the Gravity PDF shortcode (`[gravitypdf]`) in the Empty Field Content area under field conditional Logic.
 
 #### 🐛 Fixed
 * A PHP 8.1+ deprecation notice.
@@ -113,7 +134,7 @@ __Developer Updates:__
 
 = 2.1.8 on April 12, 2021 =
 
-* Fixed: Field Conditional Logic did not work with multiple-input field types (e.g. Address, Name, etc.)
+* Fixed: Field conditional logic did not work with multiple-input field types (e.g. Address, Name, etc.)
 
 = 2.1.7 on March 3, 2021 =
 
@@ -322,4 +343,4 @@ Fixed: With Gravity Forms 2.3, when using "Created By" filters, the search mode 
 * Liftoff!
 
 
-= 1706917292-4249 =
+= 1717000843-4249 =

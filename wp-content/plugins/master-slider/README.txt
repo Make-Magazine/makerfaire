@@ -3,13 +3,13 @@ Contributors: averta, averta_support
 Donate link: https://averta.net/
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl.html
-Tags: slider, image slider, wordpress slider, video slider, best slider plugin, slideshow, swipe, touch slider, content slider, SEO, vertical slider, HTML5 slider, hardware accelerate, animation, mobile slider, iOS, android, youtube slider, horizontal slider, responsive slider, fullscreen slider, post slider, photo slider, online album, mobile slider, WordPress slider,wpml, ,ultisite, wistia, woocommerce, product slider, woocommerce slider, portfolio, gallery, lightweight slider
+Tags: slider, image slider, wordpress slider, video slider
 Requires PHP: 5.4
 Requires at least: 5.0
-Tested up to: 6.4
-Stable tag: 3.9.8
+Tested up to: 6.5.2
+Stable tag: 3.9.10
 
-Build SEO friendly sliders fast and easy with Master Slider. The most advanced responsive HTML5 WordPress slider plugin, with touch swipe navigation that works smoothly on desktop and devices.
+Build SEO friendly sliders fast and easy with touch swipe navigation that works smoothly across all devices.
 
 == Description ==
 
@@ -237,9 +237,13 @@ Bugs can be reported in our [support forums](http://wordpress.org/tags/master-sl
 
 == Changelog ==
 
+= 3.9.10 =
+= Version 3.9.8/ (11.05.2024) =
+- [Improvement]: Minor security vulnerability fixed.
+
 = 3.9.8 =
 = Version 3.9.8/ (28.03.2024) =
-- [Improvement]: Security improvement applied.
+- [Improvement]: Compatibility improvements applied.
 
 = 3.9.5 =
 = Version 3.9.5/ (25.11.2023) =

@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by gravityview on 28-March-2024 using {@see https://github.com/BrianHenryIE/strauss}.
+ * Modified by gravityview on 29-May-2024 using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\GravityView\Foundation\WP;
@@ -68,8 +68,8 @@ class AdminMenu {
 			return;
 		}
 
-		add_action( 'admin_menu', [ $this, 'add_admin_menu' ] );
-		add_action( 'network_admin_menu', [ $this, 'add_admin_menu' ] );
+		add_action( 'admin_menu', [ $this, 'add_admin_menu' ], 100 );
+		add_action( 'network_admin_menu', [ $this, 'add_admin_menu' ], 100 );
 
 		$initialized = true;
 	}
@@ -160,19 +160,24 @@ class AdminMenu {
 		}
 
 		// Add top-level menu.
-		$page_title = esc_html__( 'GravityKit', 'gk-gravityview' );
-		$menu_title = esc_html__( 'GravityKit', 'gk-gravityview' );
+		$page_title         = esc_html__( 'GravityKit', 'gk-gravityview' );
+		$menu_title         = esc_html__( 'GravityKit', 'gk-gravityview' );
+		$menu_temp_position = base_convert( substr( md5( self::WP_ADMIN_MENU_SLUG ), -4 ), 16, 10 ) * 0.00001; // Taken from WP's add_menu_page() code.
+		$gk_settings        = SettingsFramework::get_instance()->get_plugin_settings( Core::ID );
 
 		/**
-		 * Controls the position of the top-level GravityKit admin menu.
+		 * Controls the position after which the top-level GravityKit admin menu will be added.
 		 *
 		 * @filter gk/foundation/admin-menu/position
 		 *
 		 * @since  1.0.0
 		 *
-		 * @param float $menu_position Default: value of `gform_menu_position` filter +  0.001.
+		 * @param float|int $menu_position Default: position of the Gravity Forms menu (16.9) or Dashboard (2).
 		 */
-		$menu_position = apply_filters( 'gk/foundation/admin-menu/position', (float) apply_filters( 'gform_menu_position', '16.9' ) + .0001 );
+		$menu_position = apply_filters(
+			'gk/foundation/admin-menu/position',
+			self::get_menu_position_by_id( $gk_settings['top_level_menu_position'] ?? '' ) ?? self::get_menu_position_by_id( 'index.php' )
+		);
 
 		add_menu_page(
 			$page_title,
@@ -181,8 +186,14 @@ class AdminMenu {
 			self::WP_ADMIN_MENU_SLUG,
 			null,
 			'data:image/svg+xml;base64,' . base64_encode( '<svg id="Artwork" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><path fill="#a7aaad" class="st0" d="M128 0C57.3 0 0 57.3 0 128s57.3 128 128 128 128-57.3 128-128S198.7 0 128 0zm0 243.2c-63.6 0-115.2-51.6-115.2-115.2S64.4 12.8 128 12.8 243.2 64.4 243.2 128 191.6 243.2 128 243.2zm7.9-172.5c-.8.1-1.4-.5-1.5-1.3V57.7c-.1-.9.4-1.8 1.3-2.1 7.8-4.2 10.6-13.9 6.4-21.7-4.2-7.8-13.9-10.6-21.7-6.4-7.8 4.2-10.6 13.9-6.4 21.7 1.5 2.7 3.7 4.9 6.4 6.4.8.3 1.4 1.2 1.3 2.1v11.4c.1.8-.4 1.5-1.2 1.6h-.3c-41 3-68.9 29.6-68.9 66.9 0 39.6 31.5 67.2 76.8 67.2s76.8-27.6 76.8-67.2c-.1-37.3-28-63.9-69-66.9zM128 182.4c-35.9 0-60.8-18.4-60.8-44.8S92.1 92.8 128 92.8s60.8 18.4 60.8 44.8-24.9 44.8-60.8 44.8zm53.8-44.8c0 22.3-22.1 37.8-53.8 37.8-5.1 0-10.2-.4-15.2-1.3-6.8-1.2-9.4-3.2-12-9.6-3.1-7.5-4.8-16.6-4.8-26.9s1.7-19.4 4.8-26.9c2.7-6.4 5.2-8.4 12-9.6 5-.9 10.1-1.3 15.2-1.3 31.7 0 53.8 15.5 53.8 37.8z"/></svg>' ), // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode
-			$menu_position
+			$menu_temp_position
 		);
+
+		$menu_item = $menu[ (string) $menu_temp_position ];
+
+		unset( $menu[ (string) $menu_temp_position ] );
+
+		$menu = $this->insert_menu_item_after_position( $menu, $menu_item, $menu_position ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 
 		/**
 		 * Displays counter next to the top-menu title.
@@ -266,6 +277,7 @@ document.addEventListener( 'DOMContentLoaded', () => {
 	menuLinkEl.addEventListener( 'blur', restoreOriginalContent );
 } );
 JS
+                ,
 					];
 
 					return $styles;
@@ -472,5 +484,129 @@ JS
 		$badge_count = (int) $badge_count;
 
 		return '<span id="' . $menu_id . '-badge" style="margin-left: 5px;" class="update-plugins count-' . $badge_count . '"><span class="plugin-count">' . number_format_i18n( $badge_count ) . '</span></span>';
+	}
+
+	/**
+	 * Returns WP admin menu items sorted alphabetically.
+	 *
+	 * @since 1.2.14
+	 *
+	 * @return array
+	 */
+	public static function get_menus() {
+		global $menu;
+
+		$menu_items = [];
+
+		if ( empty( $menu ) ) {
+			return $menu_items;
+		}
+
+		foreach ( $menu as $position => $item ) {
+			if ( empty( $item[0] ) || strpos( $item[2], self::WP_ADMIN_MENU_SLUG ) !== false ) {
+				continue;
+			}
+
+			$menu_items[] = [
+				'id'             => $item[2],
+				'title'          => preg_match( '/^(.*?)(?=<(?:a|b|code|div|em|h[1-6]|i|p|span|ul))/i', $item[0], $matches ) ? trim( $matches[1] ) : $item[0], // Titles can contain HTML markup with update count/etc., so this is a crude way of removing everything up to first most probable tag.
+				'title_original' => $item[0],
+				'position'       => $position,
+			];
+		}
+
+		usort(
+			$menu_items,
+			function ( $a, $b ) {
+				return strcasecmp( $a['title'], $b['title'] );
+			}
+		);
+
+		return $menu_items;
+	}
+
+	/**
+	 * Returns the position of a WP admin menu item by its ID.
+	 *
+	 * @since 1.2.14
+	 *
+	 * @param string $id The menu item ID.
+	 *
+	 * @return int|string|null
+	 */
+	public static function get_menu_position_by_id( $id ) {
+		global $menu;
+
+		foreach ( $menu as $position => $menu_item ) {
+			if ( ( $menu_item[2] ?? '' ) === $id ) {
+				return $position;
+			}
+		}
+
+		return null;
+	}
+
+	/**
+	 * Inserts a new menu item after a specified position:
+	 * - If the position doesn't exist, the new menu item is added at the end.
+	 * - If the position is an integer, a new float is created.
+	 * - If the position is a float, the new menu item is added after it and subsequent floats are renumbered.
+	 *
+	 * The renumbering logic is not aggressive and only renumbers floats that are directly after the specified position, or creates a new float if the position is an integer.
+	 *
+	 * @since 1.2.14
+	 *
+	 * @param array      $menus          The menu items.
+	 * @param mixed      $new_menu       The new menu item.
+	 * @param int|string $after_position The position after which the new menu item should be inserted.
+	 *
+	 * @return array|mixed The updated menu items.
+	 */
+	public function insert_menu_item_after_position( array $menus, $new_menu, $after_position ) {
+		uksort( $menus, 'strnatcmp' );
+
+		if ( ! isset( $menus[ (string) $after_position ] ) ) {
+			$menus[ (string) $after_position ] = $new_menu;
+
+			return $menus;
+		}
+
+		$positions_to_renumber = array_filter(
+			$menus,
+			function ( $key ) use ( $after_position ) {
+				return preg_match( '/^' . (int) $after_position . '(\..*)?$/', $key );
+			},
+			ARRAY_FILTER_USE_KEY
+		);
+
+		$menus = array_diff_key( $menus, $positions_to_renumber );
+
+		$index = 0;
+
+		foreach ( $positions_to_renumber as $current_position => $value ) {
+			if ( version_compare( $after_position, $current_position ) === 0 ) {
+				$menus[ (string) $current_position ] = $value;
+
+				$new_key = array_keys( $positions_to_renumber )[ $index + 1 ] ?? $current_position + 0.01;
+
+				$menus[ (string) $new_key ] = $new_menu;
+
+				continue;
+			}
+
+			if ( ! preg_match( '/\./', $current_position ) ) {
+				$current_position = (int) $current_position;
+			} elseif ( version_compare( $after_position, $current_position ) < 0 ) {
+				$current_position = $current_position + 0.01;
+			}
+
+			$menus[ (string) $current_position ] = $value;
+
+			$index++;
+		}
+
+		uksort( $menus, 'strnatcmp' );
+
+		return $menus;
 	}
 }

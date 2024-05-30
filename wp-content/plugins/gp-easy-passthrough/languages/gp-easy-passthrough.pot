@@ -2,35 +2,40 @@
 # This file is distributed under the same license as the GP Easy Passthrough plugin.
 msgid ""
 msgstr ""
-"Project-Id-Version: GP Easy Passthrough 1.9.29\n"
-"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/cloned-perk-WlQGtBj8x\n"
+"Project-Id-Version: GP Easy Passthrough 1.9.30\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/cloned-perk-74Z55dorC\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2024-02-01T11:02:36+00:00\n"
+"POT-Creation-Date: 2024-05-23T01:47:27+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"X-Generator: WP-CLI 2.7.1\n"
+"X-Generator: WP-CLI 2.10.0\n"
 "X-Domain: gp-easy-passthrough\n"
 
 #. Plugin Name of the plugin
+#: gp-easy-passthrough.php
 msgid "GP Easy Passthrough"
 msgstr ""
 
 #. Plugin URI of the plugin
+#: gp-easy-passthrough.php
 msgid "https://gravitywiz.com/documentation/gravity-forms-easy-passthrough/"
 msgstr ""
 
 #. Description of the plugin
+#: gp-easy-passthrough.php
 msgid "Easily transfer entry values from one Gravity Forms form to another."
 msgstr ""
 
 #. Author of the plugin
+#: gp-easy-passthrough.php
 msgid "Gravity Wiz"
 msgstr ""
 
 #. Author URI of the plugin
+#: gp-easy-passthrough.php
 msgid "http://gravitywiz.com/"
 msgstr ""
 
@@ -45,7 +50,7 @@ msgstr ""
 
 #: class-gp-easy-passthrough.php:383
 #: class-gp-easy-passthrough.php:390
-#: class-gp-easy-passthrough.php:927
+#: class-gp-easy-passthrough.php:923
 msgid "Source Form"
 msgstr ""
 
@@ -105,120 +110,112 @@ msgstr ""
 msgid "Passthrough form entry if"
 msgstr ""
 
-#: class-gp-easy-passthrough.php:469
-msgid "There was an error while saving the Easy Passthrough settings. Please review the errors below and try again."
-msgstr ""
-
-#: class-gp-easy-passthrough.php:470
-msgid "Entry Passthrough settings updated."
-msgstr ""
-
-#: class-gp-easy-passthrough.php:489
+#: class-gp-easy-passthrough.php:485
 msgid "Easy Passthrough Settings"
 msgstr ""
 
-#: class-gp-easy-passthrough.php:509
+#: class-gp-easy-passthrough.php:505
 msgid "Select a Form"
 msgstr ""
 
-#: class-gp-easy-passthrough.php:712
+#: class-gp-easy-passthrough.php:708
 msgid "Select a Meta Key"
 msgstr ""
 
-#: class-gp-easy-passthrough.php:716
+#: class-gp-easy-passthrough.php:712
 msgid "Entry ID"
 msgstr ""
 
-#: class-gp-easy-passthrough.php:720
+#: class-gp-easy-passthrough.php:716
 msgid "Entry Date"
 msgstr ""
 
-#: class-gp-easy-passthrough.php:724
+#: class-gp-easy-passthrough.php:720
 msgid "User IP"
 msgstr ""
 
-#: class-gp-easy-passthrough.php:728
+#: class-gp-easy-passthrough.php:724
 msgid "Source Url"
 msgstr ""
 
-#: class-gp-easy-passthrough.php:732
+#: class-gp-easy-passthrough.php:728
 msgid "Form Title"
 msgstr ""
 
-#: class-gp-easy-passthrough.php:735
+#: class-gp-easy-passthrough.php:731
 msgid "Payment Meta"
 msgstr ""
 
-#: class-gp-easy-passthrough.php:739
+#: class-gp-easy-passthrough.php:735
 msgid "Payment Status"
 msgstr ""
 
-#: class-gp-easy-passthrough.php:743
+#: class-gp-easy-passthrough.php:739
 msgid "Transaction Id"
 msgstr ""
 
-#: class-gp-easy-passthrough.php:747
+#: class-gp-easy-passthrough.php:743
 msgid "Payment Date"
 msgstr ""
 
+#: class-gp-easy-passthrough.php:747
 #: class-gp-easy-passthrough.php:751
-#: class-gp-easy-passthrough.php:755
 msgid "Payment Amount"
 msgstr ""
 
-#: class-gp-easy-passthrough.php:790
+#: class-gp-easy-passthrough.php:786
 msgid "Source Form Field"
 msgstr ""
 
-#: class-gp-easy-passthrough.php:791
+#: class-gp-easy-passthrough.php:787
 msgid "Target Form Field"
 msgstr ""
 
-#: class-gp-easy-passthrough.php:885
-#: class-gp-easy-passthrough.php:891
+#: class-gp-easy-passthrough.php:881
+#: class-gp-easy-passthrough.php:887
 msgid "%s Configurations"
 msgstr ""
 
-#: class-gp-easy-passthrough.php:1773
+#: class-gp-easy-passthrough.php:1769
 msgid "Easy Passthrough"
 msgstr ""
 
-#: class-gp-easy-passthrough.php:1777
+#: class-gp-easy-passthrough.php:1773
 msgid "Easy Passthrough Token"
 msgstr ""
 
-#: class-gp-easy-passthrough.php:2211
+#: class-gp-easy-passthrough.php:2207
 msgid "Manage Settings"
 msgstr ""
 
-#: class-gp-easy-passthrough.php:2212
+#: class-gp-easy-passthrough.php:2208
 msgid "Uninstall"
 msgstr ""
 
-#: class-gp-easy-passthrough.php:2246
+#: class-gp-easy-passthrough.php:2242
 msgid "Heads up! It looks like you’re using the <em>Easy Passthrough for Gravity Forms</em> plugin or have used it in the past."
 msgstr ""
 
-#: class-gp-easy-passthrough.php:2250
+#: class-gp-easy-passthrough.php:2246
 msgid "This plugin is not compatible with the new <em>GP Easy Passthrough</em> plugin that is part of the Gravity Perks suite. For the best experience, we will need to:"
 msgstr ""
 
-#: class-gp-easy-passthrough.php:2254
+#: class-gp-easy-passthrough.php:2250
 msgid "Migrate <em>Easy Passthrough for Gravity Forms</em> data to <em>GP Easy Passthrough</em>."
 msgstr ""
 
-#: class-gp-easy-passthrough.php:2255
+#: class-gp-easy-passthrough.php:2251
 msgid "Deactivate the <em>Easy Passthrough for Gravity Forms</em> plugin."
 msgstr ""
 
-#: class-gp-easy-passthrough.php:2259
+#: class-gp-easy-passthrough.php:2255
 msgid "All passthrough functionality will continue to function after the upgrade has been completed."
 msgstr ""
 
-#: class-gp-easy-passthrough.php:2320
+#: class-gp-easy-passthrough.php:2316
 msgid "Upgrade Successful!"
 msgstr ""
 
-#: class-gp-easy-passthrough.php:2324
+#: class-gp-easy-passthrough.php:2320
 msgid "<em>Easy Passthrough for Gravity Forms</em> has been deactivated and its data has been successfully migrated to <em>GP Easy Passthrough</em>."
 msgstr ""

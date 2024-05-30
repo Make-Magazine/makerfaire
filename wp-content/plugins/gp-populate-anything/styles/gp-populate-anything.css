@@ -71,6 +71,10 @@
 	cursor: wait;
 }
 
+/*
+ * The Theme Framework makes field labels flex. This causes span's to have a gap applied to them which can create
+ * some bizarre spacing issues. This rule makes the span display as if it were inline text.
+ */
 .gform-theme--foundation .gform-field-label span[data-gppa-live-merge-tag] {
-	margin-inline-end: calc( var(--gf-label-req-gap, var(--gform-theme-label-required-gap)) * -1 );
+	display: contents;
 }

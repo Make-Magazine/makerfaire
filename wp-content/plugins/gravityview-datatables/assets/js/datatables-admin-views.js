@@ -140,7 +140,7 @@
 	function load_row_group_with_fields() {
 		var active_fields = $( '#directory-active-fields .active-drop > div.gv-fields' );
 		var settings_field = $( '#datatables_settingsrowgroup_field' );
-		var selected_value = settings_field.find( ':selected' ).text();
+		var selected_value = settings_field.find( ':selected' ).index();
 		var options = [];
 
 		active_fields.each(function (i, elem) {
@@ -170,7 +170,7 @@
 			settings_field.append( $( '<option>', {
 				value: i,
 				text: val,
-				selected: val === selected_value
+				selected: i === selected_value
 			} ) );
 		} );
 	}

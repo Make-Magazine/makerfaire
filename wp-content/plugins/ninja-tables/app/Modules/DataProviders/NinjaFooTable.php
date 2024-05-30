@@ -102,7 +102,8 @@ class NinjaFooTable
             $tableId = $tableArray['table_id'];
             add_action('ninja_tables_after_table_print', function () use ($css, $tableId) {
                 ?>
-                <style type="text/css" id='ninja_table_custom_css_<?php echo esc_attr($tableId); ?>'>
+                <style type="text/css" id='ninja_table_custom_css_<?php
+                echo esc_attr($tableId); ?>'>
                     <?php echo ninjaTablesEscCss($css); ?>
                 </style>
                 <?php
@@ -519,7 +520,8 @@ class NinjaFooTable
 
         // We have to check if these css already rendered
         if ( ! isset(static::$tableCssStatuses[$tableArray['table_id']])) {
-            $columnContentCss = static::getColumnsCss($tableArray['table_id'], $columns);
+            static::$tableCssStatuses[$tableArray['table_id']] = true;
+            $columnContentCss           = static::getColumnsCss($tableArray['table_id'], $columns);
 
             static::addCustomColorCSS($tableArray, $columnContentCss);
         }

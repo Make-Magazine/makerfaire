@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by gravityview on 28-March-2024 using {@see https://github.com/BrianHenryIE/strauss}.
+ * Modified by gravityview on 29-May-2024 using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\GravityView\Foundation\Translations;
@@ -117,7 +117,7 @@ class TranslationsPress_Updater {
 	}
 
 	/**
-	 * Callback for the `upgrader_package_options` filter to modify the destination folder where WP installs translations.
+	 * Callback for the `upgrader_package_options` filter to modify the destination folder where WP installs translations for GravityKit products.
 	 *
 	 * @since 1.2.6
 	 *
@@ -126,7 +126,7 @@ class TranslationsPress_Updater {
 	 * @return array
 	 */
 	public function modify_upgrader_package_options( $options ) {
-		if ( 'plugin' !== ( $options['hook_extra']['language_update']->type ?? '' ) && ( $options['hook_extra']['language_update']->slug ?? '' ) !== $this->_slug ) {
+		if ( ! is_object( $options['hook_extra']['language_update'] ?? '' ) || 'plugin' !== ( $options['hook_extra']['language_update']->type ?? '' ) || ( $options['hook_extra']['language_update']->slug ?? '' ) !== $this->_slug ) {
 			return $options;
 		}
 

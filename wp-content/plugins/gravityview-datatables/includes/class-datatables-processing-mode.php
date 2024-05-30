@@ -147,7 +147,7 @@ class GV_Extension_DataTables_Processing_Mode extends GV_DataTables_Extension {
 	public function update_config_with_shadow_data( $dt_config, $view, $entries ) {
 		$fields = $view->fields->by_position( 'directory_table-columns' )->by_visible()->all();
 
-		$date_fields                         = [ 'date_created', 'date_updated', 'payment_date' ];
+		$date_fields                         = [ 'date', 'date_created', 'date_updated', 'payment_date' ];
 		$field_types_with_special_processing = array_merge( $date_fields, [ 'email' ] );
 		$columns_to_process                  = [];
 		$shadow_data                         = [];

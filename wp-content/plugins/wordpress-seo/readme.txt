@@ -5,7 +5,7 @@ License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl.html
 Tags: SEO, XML sitemap, Content analysis, Readability, Schema
 Tested up to: 6.5
-Stable tag: 22.4
+Stable tag: 22.8
 Requires PHP: 7.2.5
 
 Improve your WordPress SEO: Write better content and have a fully optimized WordPress site using the Yoast SEO plugin.
@@ -315,49 +315,53 @@ Your question has most likely been answered on our help center: [yoast.com/help/
 
 == Changelog ==
 
-= 22.4 =
+= 22.8 =
 
-Release date: 2024-04-03
+Release date: 2024-05-28
 
-Yoast SEO 22.4 brings optimizations and bug fixes. Our customers who use Elementor can wave goodbye to that unnecessary redirect when saving a post for the first time. Find more about Yoast SEO 22.4 in [our release post](https://yoa.st/release-3-4-24)!
-
-#### Enhancements
-
-* Removes a duplicated database query on author pages with internal images.
-* Removes two unnecessary database queries on pages where external images are of SEO interest, like author pages with Gravatar author images.
-
-#### Bugfixes
-
-* Fixes a bug where an unneeded redirect would be created when a post was first published in Elementor.
-
-#### Other
-
-* Deprecates the slug of the `_dependencies` property of the private `$plugins` property in the `WPSEO_Plugin_Availability` class.
-* Fixes the width of the `Page type` dropdown field in the `Settings` page.
-* Replaces `.substr()` with `.substring()` in JS files since it's deprecated.
-* Stops showing deprecation warnings when retrieving data for paid add-ons goes wrong.
-* Stops showing notifications about incompatibility with the WooCommerce's new beta product editor, after WooCommerce is deactivated.
-* Stops showing a notification prompting to install Yoast Woo SEO, after WooCommerce is deactivated.
-
-= 22.3 =
-
-Release date: 2024-03-19
-
-Yoast SEO 22.3 is out today. In this release, you’ll find various fixes and improvements for a better user experience. Find out more about what's new in Yoast SEO 22.3 in [our release post](https://yoa.st/release-19-3-24)!
+Yoast SEO 22.8 brings enhancements and bugfixes. [Find more information about our software releases and updates here](https://yoa.st/release-28-5-24).
 
 #### Enhancements
 
-* Removes an unnecessary query relating to breadcrumb schema generation on the homepage.
+* Converts the Yoast _Breadcrumbs_ block to use the Blocks V3 API.
 
 #### Bugfixes
 
-* Adds `x.com` as a possible domain for the Twitter validation in our first time configuration social profiles settings.
-* Fixes a bug where the `Or go to your SEO dashboard` link in the final step of our first time configuration would not be focusable using tab.
+* Fixes a bug preventing multiple _FAQ_ blocks from being added to a post/page.
+* Fixes a bug where a class was missing in the output of the _FAQ_ and _How-To_ blocks.
+* Fixes a bug where a "Failed to retrieve media" error could prevent selecting a different image or removing the current selection.
+* Fixes a bug where our modals would not open when visiting our sidebar in Elementor for the second time.
+* Fixes a bug where some Yoast SEO settings could not be imported correctly.
 
 #### Other
 
-* Removes the autofill for taxonomy keyphrases.
-* Sets the WordPress tested up to version to 6.5.
+* Removes the fixed date and separator snippet variables from the meta description text field.
+* Removes the Yoast SEO Breadcrumbs panel from the Customizer to improve compatibility with block-based themes. Users can always change the options for the breadcrumbs under Yoast SEO > Settings > Advanced > Breadcrumbs.
+* Deprecates the `WPSEO_Customizer` class.
+
+= 22.7 =
+
+Release date: 2024-05-14
+
+Yoast SEO 22.7 converts selected blocks to the Blocks V3 API and brings multiple bugfixes. [Find more information about our software releases and updates here](https://yoa.st/release-14-5-24).
+
+#### Enhancements
+
+* Converts the Yoast _How-to_ and _FAQ_ blocks to use the Blocks V3 API.
+* Introduces a `date` and a `separator` snippet variable to the meta description text field, to make clear that both the date and a separator are automatically added to the character count of the meta description. Hovering over the variables reveals a tooltip with more explanation.
+
+#### Bugfixes
+
+* Fixes a bug where a PHP deprecation error would be thrown when trying to convert a relative URL to an absolute one, with the provided value being `null`.
+* Fixes a bug where the character count of the meta description field would not include the automatically added date and separator when no additional content was provided.
+* Fixes a bug where the elements in the Yoast sidebar and metabox are displayed in an incorrect order if Yoast SEO Premium is activated.
+
+#### Other
+
+* Deprecates `\Yoast\WP\SEO\Integrations\Blocks\Structured_Data_Blocks::enqueue_block_editor_assets()`.
+* Properly escapes tags in the Enhanced Slack Sharing presenter to prevent incorrect rendering and unwanted, potentially malicious behavior. Props to @rob006.
+* Removes the `yoast-components-package` script.
+* Sets the minimum supported WordPress version to 6.4.
 
 = Earlier versions =
 For the changelog of earlier versions, please refer to [the changelog on yoast.com](https://yoa.st/yoast-seo-changelog).

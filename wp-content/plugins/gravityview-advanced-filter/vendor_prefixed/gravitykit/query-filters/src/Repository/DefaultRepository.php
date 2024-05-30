@@ -2,8 +2,7 @@
 /**
  * @license MIT
  *
- * Modified by gravitykit on 01-February-2024 using Strauss.
- * @see https://github.com/BrianHenryIE/strauss
+ * Modified by gravitykit on 16-April-2024 using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\AdvancedFilter\QueryFilters\Repository;
@@ -29,6 +28,25 @@ final class DefaultRepository implements FormRepository, UserRepository {
 	 * @var array<int, array>
 	 */
 	private $forms = [];
+
+	/**
+	 * Adds current user's role filter.
+	 * @since 2.1.0
+	 *
+	 * @param array $field_filters The current filters.
+	 *
+	 * @return array The new filters.
+	 */
+	private static function add_current_user_roles_filter( array $field_filters ): array {
+		$field_filters[] = [
+			'key'       => 'current_user_role',
+			'text'      => __( 'Current User Role', 'gravityview-advanced-filter' ),
+			'operators' => [ 'has_any', 'has_all' ],
+			'values'    => self::get_user_role_choices( true ),
+		];
+
+		return $field_filters;
+	}
 
 	/**
 	 * @inheritDoc
@@ -264,8 +282,10 @@ final class DefaultRepository implements FormRepository, UserRepository {
 				$filter['operators'] = self::add_proxy_operators( $filter['operators'], $filter['key'] );
 			}
 		}
+		unset( $filter );
 
 		$field_filters = self::add_approval_status_filter( $field_filters );
+		$field_filters = self::add_current_user_roles_filter( $field_filters );
 
 		usort( $field_filters, function ( $a, $b ) {
 			return strcmp( $a['text'], $b['text'] );
@@ -275,9 +295,9 @@ final class DefaultRepository implements FormRepository, UserRepository {
 		 * @filter `gk/query-filters/field-filters` Modify available field filters.
 		 *
 		 * @param array $field_filters configured filters
-		 * @param int $form_id The form ID.
+		 * @param int   $form_id       The form ID.
 		 *
-		 * @since 2.0.0
+		 * @since  2.0.0
 		 */
 		return apply_filters( 'gk/query-filters/field-filters', $field_filters, $form_id );
 	}
@@ -285,15 +305,20 @@ final class DefaultRepository implements FormRepository, UserRepository {
 	/**
 	 * Get user role choices formatted in a way used by GravityView and Gravity Forms input choices
 	 *
+	 * @param bool $exclude_any_role Whether to exclude the "any role" option.
+	 *
 	 * @return array Multidimensional array with `text` (Role Name) and `value` (Role ID) keys.
 	 * @since 2.0.0
 	 */
-	private function get_user_role_choices(): array {
+	private static function get_user_role_choices( bool $exclude_any_role = false ): array {
 		$user_role_choices              = [];
 		$editable_roles                 = get_editable_roles();
-		$editable_roles['current_user'] = [
-			'name' => esc_html__( 'Any Role of Current User', 'gravityview-advanced-filter' ),
-		];
+
+		if ( ! $exclude_any_role ) {
+			$editable_roles['current_user'] = [
+				'name' => esc_html__( 'Any Role of Current User', 'gravityview-advanced-filter' ),
+			];
+		}
 
 		$editable_roles = array_reverse( $editable_roles );
 
@@ -312,7 +337,7 @@ final class DefaultRepository implements FormRepository, UserRepository {
 	 *
 	 * Let's add these 2 proxy operators for a better UX. Exclusions: Entry ID and fields with predefined values (e.g., Payment Status).
 	 *
-	 * @param array $operators The operators.
+	 * @param array  $operators  The operators.
 	 * @param string $filter_key The filter key.
 	 *
 	 * @since 2.0.0
@@ -381,7 +406,7 @@ final class DefaultRepository implements FormRepository, UserRepository {
 		 * @filter `gk/query-filters/admin-capabilities` Customise the capabilities that define an Administrator able to view entries in frontend when filtered by "Created By".
 		 *
 		 * @param array $capabilities List of admin capabilities.
-		 * @param array $form GF form.
+		 * @param array $form         GF form.
 		 *
 		 * @since  1.0
 		 */

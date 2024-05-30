@@ -12,6 +12,7 @@
  */
 
 use GV\Entry_Collection;
+use GV\Entry_DataTable_Template;
 use GV\Template_Context;
 use GV\View;
 
@@ -615,9 +616,9 @@ class GV_Extension_DataTables_Data {
 		 *
 		 * @since TODO
 		 *
-		 * @param Entry_Collection $entries The collection of entries for the current search.
-		 * @param View             $view    The View.
-		 * @param WP_Post          $post    The post.
+		 * @param \GV\Entry_Collection $entries The collection of entries for the current search.
+		 * @param View $view The View.
+		 * @param \WP_Post $post The current View or post/page where View is embedded.
 		 */
 		do_action( 'gk/gravityview/datatables/output/before', $entries, $view, $post );
 
@@ -744,7 +745,7 @@ class GV_Extension_DataTables_Data {
 	}
 
 	/**
-	 * Override the template class to the correct one.
+	 * Override the template class to use the correct one.
 	 *
 	 * @param string    $class The class to use as the template class.
 	 * @param \GV\Entry $entry The Entry we're looking at.
@@ -754,8 +755,13 @@ class GV_Extension_DataTables_Data {
 	 */
 	public function set_entry_template_class( $class, $entry, $view ) {
 
-		if ( $view->settings->get( 'template' ) == 'datatables_table' ) {
-			return '\GV\Entry_DataTable_Template';
+		$template = $view->settings->get( 'template' );
+
+		// Get the single entry template, with a fallback to the regular template for older versions of GravityView.
+		$template = $view->settings->get( 'template_single_entry', $template );
+
+		if ( 'datatables_table' === $template ) {
+			return Entry_DataTable_Template::class;
 		}
 
 		return $class;

@@ -761,7 +761,10 @@ gform.extensions.styles.gravityformsstripe = gform.extensions.styles.gravityform
 		this.resetStripeStatus = function (form, formId, isLastPage) {
 			$('#gf_stripe_response, #gf_stripe_credit_card_last_four, #stripe_credit_card_type').remove();
 			form.data('gfstripesubmitting', false);
-			$('#gform_ajax_spinner_' + formId).remove();
+			const spinnerNodes = document.querySelectorAll('#gform_ajax_spinner_' + formId);
+			spinnerNodes.forEach(function (node) {
+				node.remove();
+			});
 			// must do this or the form cannot be submitted again
 			if (isLastPage) {
 				window["gf_submitting_" + formId] = false;
@@ -1444,6 +1447,7 @@ class StripePaymentsHandler {
 		if ('invoice_id' in response.data && response.data.invoice_id !== null && 'resume_token' in response.data) {
 			const redirect_url = new URL(window.location.href);
 			redirect_url.searchParams.append('resume_token', response.data.resume_token);
+			redirect_url.searchParams.append('tracking_id', response.data.tracking_id);
 			window.location.href = redirect_url.href;
 		}
 
@@ -1521,6 +1525,7 @@ class StripePaymentsHandler {
 			'action': 'gfstripe_validate_form',
 			'feed_id': this.GFStripeObj.activeFeed.feedId,
 			'form_id': this.GFStripeObj.formId,
+			'tracking_id': Math.random().toString(36).slice(2, 10),
 			'payment_method': this.paymentMethod.value.type,
 			'nonce': gforms_stripe_frontend_strings.validate_form_nonce
 		};
@@ -1536,6 +1541,7 @@ class StripePaymentsHandler {
   * Updates the payment information amount.
   *
   * @since 5.1
+  * @since 5.3 Added the updatedPaymentInformation filter.
   *
   * @param {Double} newAmount The updated amount.
   */
@@ -1548,7 +1554,25 @@ class StripePaymentsHandler {
 		// Round total to two decimal places.
 		total = Math.round(total * 100) / 100;
 
-		this.elements.update({ amount: total });
+		let updatedPaymentInformation = {
+			amount: total
+		};
+
+		/**
+   * Filters the payment information before updating it.
+   *
+   * @since 5.3
+   *
+   * @param {Object} updatedPaymentInformation The object that contains the updated payment information, for possible values, @see https://docs.stripe.com/js/elements_object/update#elements_update-options
+   * @param {Object} initialPaymentInformation The initial payment information.
+   * @param {int} feedId The feed ID.
+   * @param {int} formId The form ID.
+   *
+   * @return {Object} The updated payment information.
+   */
+		updatedPaymentInformation = window.gform.applyFilters('gform_stripe_payment_element_updated_payment_information', updatedPaymentInformation, this.GFStripeObj.activeFeed.initial_payment_information, this.GFStripeObj.activeFeed.feedId, this.GFStripeObj.formId);
+
+		this.elements.update(updatedPaymentInformation);
 	}
 
 	/**
@@ -1590,6 +1614,7 @@ class StripePaymentsHandler {
 
 		// Prepare the return URL.
 		const redirect_url = this.getRedirectUrl(confirmData.resume_token);
+		redirect_url.searchParams.append('tracking_id', confirmData.tracking_id);
 
 		const { error: submitError } = await this.elements.submit();
 		if (submitError) {
@@ -1706,6 +1731,8 @@ class StripePaymentsHandler {
 	getRedirectUrl(resume_token) {
 		const redirect_url = new URL(window.location.href);
 		redirect_url.searchParams.append('resume_token', resume_token);
+		redirect_url.searchParams.append('feed_id', this.GFStripeObj.activeFeed.feedId);
+		redirect_url.searchParams.append('form_id', this.GFStripeObj.formId);
 		return redirect_url;
 	}
 

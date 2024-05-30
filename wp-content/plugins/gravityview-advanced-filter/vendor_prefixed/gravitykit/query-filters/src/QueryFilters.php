@@ -2,8 +2,7 @@
 /**
  * @license MIT
  *
- * Modified by gravitykit on 01-February-2024 using Strauss.
- * @see https://github.com/BrianHenryIE/strauss
+ * Modified by gravitykit on 16-April-2024 using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\AdvancedFilter\QueryFilters;
@@ -15,6 +14,7 @@ use GravityKit\AdvancedFilter\QueryFilters\Filter\EntryFilterService;
 use GravityKit\AdvancedFilter\QueryFilters\Filter\Filter;
 use GravityKit\AdvancedFilter\QueryFilters\Filter\FilterFactory;
 use GravityKit\AdvancedFilter\QueryFilters\Filter\RandomFilterIdGenerator;
+use GravityKit\AdvancedFilter\QueryFilters\Filter\Visitor\CurrentUserVisitor;
 use GravityKit\AdvancedFilter\QueryFilters\Filter\Visitor\DisableAdminVisitor;
 use GravityKit\AdvancedFilter\QueryFilters\Filter\Visitor\DisableFiltersVisitor;
 use GravityKit\AdvancedFilter\QueryFilters\Filter\Visitor\FilterVisitor;
@@ -182,11 +182,12 @@ class QueryFilters {
 	 * The filter visitors that finalize abstract filters.
 	 * @return FilterVisitor[] The visitors.
 	 * @filter `gk/query-filters/filter/visitors` The filters to be applied to the query.
-	 * @since 2.0.0
+	 * @since  2.0.0
 	 */
 	private function get_filter_visitors(): array {
 		$visitors = [
 			new DisableFiltersVisitor(),
+			new CurrentUserVisitor( $this->repository ),
 			new DisableAdminVisitor( $this->repository, $this->form ),
 			new ProcessMergeTagsVisitor( $this->repository, $this->form ),
 			new UserIdVisitor( $this->repository, $this->form ),
@@ -274,40 +275,54 @@ class QueryFilters {
 		 *
 		 */
 		$translations = apply_filters( 'gk/query-filters/translations', [
-			'internet_explorer_notice' => esc_html__(
+			'internet_explorer_notice'      => esc_html__(
 				'Internet Explorer is not supported. Please upgrade to another browser.',
 				'gravityview-advanced-filter'
 			),
-			'fields_not_available'     => esc_html__(
+			'fields_not_available'          => esc_html__(
 				'Form fields are not available. Please try refreshing the page.',
 				'gravityview-advanced-filter'
 			),
-			'add_condition'            => esc_html__( 'Add Condition', 'gravityview-advanced-filter' ),
-			'join_and'                 => esc_html_x( 'and', 'Join using "and" operator', 'gravityview-advanced-filter' ),
-			'join_or'                  => esc_html_x( 'or', 'Join using "or" operator', 'gravityview-advanced-filter' ),
-			'is'                       => esc_html_x( 'is', 'Filter operator (e.g., A is TRUE)', 'gravityview-advanced-filter' ),
-			'isnot'                    => esc_html_x( 'is not', 'Filter operator (e.g., A is not TRUE)', 'gravityview-advanced-filter' ),
-			'>'                        => esc_html_x( 'greater than', 'Filter operator (e.g., A is greater than B)', 'gravityview-advanced-filter' ),
-			'<'                        => esc_html_x( 'less than', 'Filter operator (e.g., A is less than B)', 'gravityview-advanced-filter' ),
-			'contains'                 => esc_html_x( 'contains', 'Filter operator (e.g., AB contains B)', 'gravityview-advanced-filter' ),
-			'ncontains'                => esc_html_x( 'does not contain', 'Filter operator (e.g., AB contains B)', 'gravityview-advanced-filter' ),
-			'starts_with'              => esc_html_x( 'starts with', 'Filter operator (e.g., AB starts with A)', 'gravityview-advanced-filter' ),
-			'ends_with'                => esc_html_x( 'ends with', 'Filter operator (e.g., AB ends with B)', 'gravityview-advanced-filter' ),
-			'isbefore'                 => esc_html_x( 'is before', 'Filter operator (e.g., A is before date B)', 'gravityview-advanced-filter' ),
-			'isafter'                  => esc_html_x( 'is after', 'Filter operator (e.g., A is after date B)', 'gravityview-advanced-filter' ),
-			'ison'                     => esc_html_x( 'is on', 'Filter operator (e.g., A is on date B)', 'gravityview-advanced-filter' ),
-			'isnoton'                  => esc_html_x( 'is not on', 'Filter operator (e.g., A is not on date B)', 'gravityview-advanced-filter' ),
-			'isempty'                  => esc_html_x( 'is empty', 'Filter operator (e.g., A is empty)', 'gravityview-advanced-filter' ),
-			'isnotempty'               => esc_html_x( 'is not empty', 'Filter operator (e.g., A is not empty)', 'gravityview-advanced-filter' ),
-			'remove_field'             => esc_html__( 'Remove Field', 'gravityview-advanced-filter' ),
-			'available_choices'        => esc_html__( 'Return to Field Choices', 'gravityview-advanced-filter' ),
-			'available_choices_label'  => esc_html__(
+			'confirm_remove_group'          => esc_html__(
+				'This action will delete the entire group of conditions. Do you want to continue?',
+				'gravityview-advanced-filter'
+			),
+			'toggle_group_mode'             => esc_html__( 'Click to Toggle the Group Mode', 'gravityview-advanced-filter' ),
+			'add_group_label'               => esc_html__( 'Add a New Condition Group', 'gravityview-advanced-filter' ),
+			'add_condition_label'           => esc_html__( 'Add a New Condition', 'gravityview-advanced-filter' ),
+			'has_any'                       => esc_html__( 'has ANY of', 'gravityview-advanced-filter' ),
+			'has_all'                       => esc_html__( 'has ALL of', 'gravityview-advanced-filter' ),
+			'add_condition'                 => esc_html__( 'Add Condition', 'gravityview-advanced-filter' ),
+			'add_created_by_user_condition' => esc_html__( 'Current User Condition', 'gravityview-advanced-filter' ),
+			'condition'                     => esc_html__( 'Condition', 'gravityview-advanced-filter' ),
+			'group'                         => esc_html__( 'Group ', 'gravityview-advanced-filter' ),
+			'condition_join_operator'       => esc_html__( 'Condition Join Operator', 'gravityview-advanced-filter' ),
+			'join_and'                      => esc_html_x( 'and', 'Join using "and" operator', 'gravityview-advanced-filter' ),
+			'join_or'                       => esc_html_x( 'or', 'Join using "or" operator', 'gravityview-advanced-filter' ),
+			'is'                            => esc_html_x( 'is', 'Filter operator (e.g., A is TRUE)', 'gravityview-advanced-filter' ),
+			'isnot'                         => esc_html_x( 'is not', 'Filter operator (e.g., A is not TRUE)', 'gravityview-advanced-filter' ),
+			'>'                             => esc_html_x( 'greater than', 'Filter operator (e.g., A is greater than B)', 'gravityview-advanced-filter' ),
+			'<'                             => esc_html_x( 'less than', 'Filter operator (e.g., A is less than B)', 'gravityview-advanced-filter' ),
+			'contains'                      => esc_html_x( 'contains', 'Filter operator (e.g., AB contains B)', 'gravityview-advanced-filter' ),
+			'ncontains'                     => esc_html_x( 'does not contain', 'Filter operator (e.g., AB contains B)', 'gravityview-advanced-filter' ),
+			'starts_with'                   => esc_html_x( 'starts with', 'Filter operator (e.g., AB starts with A)', 'gravityview-advanced-filter' ),
+			'ends_with'                     => esc_html_x( 'ends with', 'Filter operator (e.g., AB ends with B)', 'gravityview-advanced-filter' ),
+			'isbefore'                      => esc_html_x( 'is before', 'Filter operator (e.g., A is before date B)', 'gravityview-advanced-filter' ),
+			'isafter'                       => esc_html_x( 'is after', 'Filter operator (e.g., A is after date B)', 'gravityview-advanced-filter' ),
+			'ison'                          => esc_html_x( 'is on', 'Filter operator (e.g., A is on date B)', 'gravityview-advanced-filter' ),
+			'isnoton'                       => esc_html_x( 'is not on', 'Filter operator (e.g., A is not on date B)', 'gravityview-advanced-filter' ),
+			'isempty'                       => esc_html_x( 'is empty', 'Filter operator (e.g., A is empty)', 'gravityview-advanced-filter' ),
+			'isnotempty'                    => esc_html_x( 'is not empty', 'Filter operator (e.g., A is not empty)', 'gravityview-advanced-filter' ),
+			'remove_condition'              => esc_html__( 'Remove Condition', 'gravityview-advanced-filter' ),
+			'remove_group'                  => esc_html__( 'Remove Group', 'gravityview-advanced-filter' ),
+			'available_choices'             => esc_html__( 'Return to Field Choices', 'gravityview-advanced-filter' ),
+			'available_choices_label'       => esc_html__(
 				'Return to the list of choices defined by the field.',
 				'gravityview-advanced-filter'
 			),
-			'custom_is_operator_input' => esc_html__( 'Custom Choice', 'gravityview-advanced-filter' ),
-			'untitled'                 => esc_html__( 'Untitled', 'gravityview-advanced-filter' ),
-			'field_not_available'      => esc_html__(
+			'custom_is_operator_input'      => esc_html__( 'Custom Choice', 'gravityview-advanced-filter' ),
+			'untitled'                      => esc_html__( 'Untitled', 'gravityview-advanced-filter' ),
+			'field_not_available'           => esc_html__(
 				'Form field ID #%d is no longer available. Please remove this condition.',
 				'gravityview-advanced-filter'
 			),
@@ -339,12 +354,13 @@ class QueryFilters {
 			$handle,
 			$variable_name,
 			[
-				'fields'                    => $meta['fields'] ??  $this->get_field_filters() ,
-				'conditions'                => $meta['conditions'] ??  [] ,
-				'targetElementSelector'     => $meta['target_element_selector'] ??  '#gk-query-filters' ,
-				'autoscrollElementSelector' => $meta['autoscroll_element_selector'] ??  '' ,
-				'inputElementName'          => $meta['input_element_name'] ??  'gk-query-filters' ,
-				'translations'              => $meta['translations'] ??  $this->get_translations() ,
+				'fields'                    => $meta['fields'] ?? $this->get_field_filters(),
+				'conditions'                => $meta['conditions'] ?? [],
+				'targetElementSelector'     => $meta['target_element_selector'] ?? '#gk-query-filters',
+				'autoscrollElementSelector' => $meta['autoscroll_element_selector'] ?? '',
+				'inputElementName'          => $meta['input_element_name'] ?? 'gk-query-filters',
+				'translations'              => $meta['translations'] ?? $this->get_translations(),
+				'maxNestingLevel'           => (int) ( $meta['max_nesting_level'] ?? 2 ),
 			]
 		);
 	}
@@ -360,10 +376,10 @@ class QueryFilters {
 	 */
 	public static function enqueue_styles( array $meta = [] ) {
 		$style  = 'assets/css/query-filters.css';
-		$handle = $meta['handle'] ??  self::ASSETS_HANDLE ;
-		$ver    = $meta['ver'] ??  filemtime( plugin_dir_path( __DIR__ ) . $style ) ;
-		$src    = $meta['src'] ??  plugins_url( $style, __DIR__ ) ;
-		$deps   = $meta['deps'] ??  [] ;
+		$handle = $meta['handle'] ?? self::ASSETS_HANDLE;
+		$ver    = $meta['ver'] ?? filemtime( plugin_dir_path( __DIR__ ) . $style );
+		$src    = $meta['src'] ?? plugins_url( $style, __DIR__ );
+		$deps   = $meta['deps'] ?? [];
 
 		wp_enqueue_style( $handle, $src, $deps, $ver );
 	}

@@ -474,7 +474,9 @@ class GWAPI {
 			$product->version = $product->legacy_version;
 		}
 
-		$product->sections['changelog'] = GWPerks::format_changelog( $product->sections['changelog'], $product );
+		if ( rgar( $product->sections, 'changelog' ) ) {
+			$product->sections['changelog'] = GWPerks::format_changelog( $product->sections['changelog'], $product );
+		}
 
 		GravityPerks::log_debug( 'Ok! Everything looks good. Let\'s build the response needed for WordPress.' );
 

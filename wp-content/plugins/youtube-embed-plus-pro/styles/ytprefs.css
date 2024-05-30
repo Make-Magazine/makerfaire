@@ -1,5 +1,8 @@
 .epyt-debug {
-    cursor: pointer; text-align: left; background-color: #dddddd; color: #000000;
+    cursor: pointer;
+    text-align: left;
+    background-color: #dddddd;
+    color: #000000;
 }
 
 iframe.__youtube_prefs__
@@ -450,12 +453,12 @@ Carousel
 .epyt-gallery-subscribe a.epyt-gallery-subbutton img {
     width: 20px !important;
     height: auto  !important;
-    vertical-align: middle  !important;   
+    vertical-align: middle  !important;
     padding: 0 6px 3px 0;
     display: inline-block;
     background: transparent;
     -webkit-box-shadow: none;
-    box-shadow: none;    
+    box-shadow: none;
     margin: 0;
 }
 
@@ -497,7 +500,7 @@ body div.__youtube_prefs__.__youtube_prefs_gdpr__ button.__youtube_prefs_gdpr__,
 body div.__youtube_prefs__.__youtube_prefs_gdpr__ button.__youtube_prefs_gdpr__ img {
     width: 20px !important;
     height: auto  !important;
-    vertical-align: middle  !important;   
+    vertical-align: middle  !important;
     padding: 0 6px 3px 0;
     display: inline-block;
     background: transparent;
@@ -509,14 +512,14 @@ body div.__youtube_prefs__.__youtube_prefs_gdpr__ button.__youtube_prefs_gdpr__ 
 body .epyt-gallery-img-gdpr {
     background-color: #000;
     background-image: -webkit-linear-gradient(top, #000, #444);
-    background-image: linear-gradient(to bottom, #000, #444);    
+    background-image: linear-gradient(to bottom, #000, #444);
 }
 
 /********* live chat */
 
 .epyt-live-chat-wrapper {
     display: block;
-    padding: 0;    
+    padding: 0;
 }
 .epyt-live-chat-wrapper .epyt-live-chat-video,
 .epyt-live-chat-wrapper .epyt-live-chat-box {
@@ -585,7 +588,7 @@ body .epyt-gallery-img-gdpr {
     max-width: 100%;
     -webkit-transition: 0.4s all;
     -moz-transition: 0.4s all;
-    transition: 0.4s all;    
+    transition: 0.4s all;
 }
 
 .epyt-facade:hover {
@@ -682,6 +685,32 @@ body .epyt-gallery-img-gdpr {
     right: unset;
     bottom: unset;
     left: unset;
+}
+
+.epyt-livestream-advice {
+    display: none !important;
+}
+
+body.logged-in.epyt-edit-posts .epyt-livestream-advice {
+    display: block !important;
+    background-color: #eeeeee;
+    color: #555555;
+    padding: 5px 10px;
+    border: 1px dashed #888888;
+    font-size: 85%;
+    position: relative;
+}
+
+body.logged-in.epyt-edit-posts .epyt-livestream-advice .epyt-livestream-advice-close {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    color: #000000;
+    padding: 0px 10px;
+    font-size: 22px;
+    cursor: pointer;
+    font-family: sans-serif;
+    display: block;
 }
 
 /********* YTVI */

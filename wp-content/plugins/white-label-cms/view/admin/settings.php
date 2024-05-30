@@ -6,6 +6,7 @@ $views = array(
         "menus" => __('Menus'),
         "settings" => __('Settings')
     );
+$wlcms_anonce = wp_create_nonce( 'wlcms-action-nonce' );
 ?>
 <div class="wlcms_wrapper">
     <div class="wlcms_messages">
@@ -55,8 +56,8 @@ $views = array(
         <div class="wlcms-navigation">
             <ul>
                 <li><a href="#tab-import-settings" data-tab="tab-import-settings" id="wlcms_tab_import-settings"><?php _e('Import Settings')?></a></li>
-                <li><a href="<?php echo admin_url('options-general.php?page=wlcms&wlcms-action=export') ?>" class="wlcms-ignore"><?php _e('Export Settings') ?></a></li>
-                <li><a href="<?php echo admin_url('options-general.php?page=wlcms&wlcms-action=reset') ?>" class="wlcms-ignore reset-confirm"><?php _e('Reset Plugin')?></a></li>
+                <li><a href="<?php echo admin_url('options-general.php?page=wlcms-plugin.php&wlcms-action=export&_wlcms_anonce='. $wlcms_anonce) ?>" class="wlcms-ignore"><?php _e('Export Settings') ?></a></li>
+                <li><a href="<?php echo admin_url('options-general.php?page=wlcms-plugin.php&wlcms-action=reset&_wlcms_anonce='. $wlcms_anonce) ?>" class="wlcms-ignore reset-confirm"><?php _e('Reset Plugin')?></a></li>
             </ul>
         </div>
     </div>

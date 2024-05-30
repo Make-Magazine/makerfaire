@@ -12,6 +12,35 @@ require_once( 'class-base.php' );
 class InvoiceItem extends Base {
 
 	/**
+	 * Initialize properties that will be used throughout this class and link to the Stripe API.
+	 *
+	 * @since 5.5.2
+	 */
+	public $amount;
+	public $currency;
+	public $customer;
+	public $date;
+	public $description;
+	public $discounts;
+	public $invoice;
+	public $livemode;
+	public $metadata;
+	public $period;
+	public $plan;
+	public $price;
+	public $quantity;
+	public $subscription;
+	public $unit_amount;
+	public $discountable;
+	public $proration;
+	public $subscription_item;
+	public $tax_rates;
+	public $test_clock;
+	public $unit_amount_decimal;
+
+
+
+	/**
 	 * Returns the API endpoint for this object.
 	 *
 	 * @since 5.5.0

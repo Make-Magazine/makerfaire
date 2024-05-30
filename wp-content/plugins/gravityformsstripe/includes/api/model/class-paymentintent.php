@@ -16,6 +16,50 @@ class PaymentIntent extends Base {
 	const OBJECT_NAME = 'payment_intent';
 
 	/**
+	 * Initialize properties that will be used throughout this class and link to the Stripe API.
+	 *
+	 * @since 5.5.2
+	 */
+	public $amount;
+	public $application;
+	public $capture_method;
+	public $client_secret;
+	public $currency;
+	public $customer;
+	public $description;
+	public $invoice;
+	public $livemode;
+	public $metadata;
+	public $payment_method;
+	public $payment_method_types;
+	public $processing;
+	public $review;
+	public $shipping;
+	public $source;
+	public $statement_descriptor;
+	public $status;
+	public $amount_capturable;
+	public $amount_details;
+	public $amount_received;
+	public $application_fee_amount;
+	public $automatic_payment_methods;
+	public $canceled_at;
+	public $cancellation_reason;
+	public $confirmation_method;
+	public $last_payment_error;
+	public $latest_charge;
+	public $next_action;
+	public $on_behalf_of;
+	public $payment_method_configuration_details;
+	public $payment_method_options;
+	public $receipt_email;
+	public $setup_future_usage;
+	public $statement_descriptor_suffix;
+	public $transfer_data;
+	public $transfer_group;
+
+
+	/**
 	 * Returns the API endpoint for this object.
 	 *
 	 * @since 5.5.0

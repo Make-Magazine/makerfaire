@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by gravityview on 28-March-2024 using {@see https://github.com/BrianHenryIE/strauss}.
+ * Modified by gravityview on 29-May-2024 using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\GravityView\Foundation\WP;
@@ -59,14 +59,18 @@ class AjaxRouter {
 	 * @return array
 	 */
 	public static function get_ajax_params( $router ) {
-		return [
+		$router = $router ?: self::AJAX_ROUTER;
+
+		$params = [
 			'_wpNonce'      => wp_create_nonce( self::WP_AJAX_ACTION ),
 			'_wpRestUrl'    => get_rest_url(),
 			'_wpRestNonce'  => wp_create_nonce( 'wp_rest' ),
 			'_wpAjaxUrl'    => admin_url( 'admin-ajax.php' ),
 			'_wpAjaxAction' => self::WP_AJAX_ACTION,
-			'ajaxRouter'    => $router ?: self::AJAX_ROUTER,
+			'ajaxRouter'    => $router,
 		];
+
+		return apply_filters( "gk/foundation/ajax/{$router}/params", $params, $router );
 	}
 
 	/**
@@ -92,7 +96,7 @@ class AjaxRouter {
 		list ( $nonce, $payload, $router, $route ) = array_values( $request );
 
 		if ( ! is_array( $payload ) ) {
-			$payload = json_decode( stripslashes_deep( $payload ), true );
+			$payload = json_decode( stripslashes_deep( $payload ), true ) ?? [];
 		}
 
 		$is_valid_nonce = wp_verify_nonce( $nonce, self::WP_AJAX_ACTION );

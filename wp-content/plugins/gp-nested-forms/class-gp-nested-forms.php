@@ -122,6 +122,8 @@ class GP_Nested_Forms extends GP_Plugin {
 		add_action( 'gform_entry_id_pre_save_lead', array( $this, 'maybe_edit_entry' ), 10, 2 );
 		add_action( 'gform_entry_post_save', array( $this, 'add_child_entry_meta' ), 10, 2 );
 		add_filter( 'gform_get_field_value', array( $this, 'row_id_field_value' ), 11, 3 );
+		add_filter( 'gform_form_args', array( $this, 'force_display_expired_nested_form' ), 10, 1 );
+		add_filter( 'gform_pre_validation', array( $this, 'skip_expired_nested_form_schedule_validation' ), 10, 1 );
 
 		// Administrative hooks.
 		// Trash child entries when a parent entry is trashed or deleted.
@@ -601,12 +603,6 @@ class GP_Nested_Forms extends GP_Plugin {
 		return $args;
 	}
 
-	public function output_session_scripts() {
-		foreach ( $this->_session_queue as $form_id ) {
-			echo GPNF_Session::get_session_script( $form_id );
-		}
-	}
-
 	public function child_entry_trash_manage( $entry_id, $new_status, $old_status ) {
 
 		$entry = new GPNF_Entry( $entry_id );
@@ -878,10 +874,18 @@ class GP_Nested_Forms extends GP_Plugin {
 					 * @since 1.0-beta-9.4
 					 */
 					if ( gf_apply_filters( array( 'gpnf_preload_form', $form['id'] ), true, $form ) ) {
+						// Store hooks_js_printed, so we can know if this child form impacts the state of the variable.
+						// Needed after GF 2.8.9.1
+						$hooks_js_printed = GFFormDisplay::$hooks_js_printed;
+
 						add_filter( 'gform_init_scripts_footer', '__return_false', 123 );
 						/* Ensure that the last param ($echo) is false so it does not get rendered out. */
 						gravity_form( $nested_form_id, false, true, $this->is_preview(), $this->get_stashed_shortcode_field_values( $form['id'] ), true, $this->get_tabindex(), false );
 						remove_filter( 'gform_init_scripts_footer', '__return_false', 123 );
+
+						if ( $hooks_js_printed !== GFFormDisplay::$hooks_js_printed ) {
+							GFFormDisplay::$hooks_js_printed = $hooks_js_printed;
+						}
 					}
 
 					echo '<!-- Loaded dynamically via AJAX -->';
@@ -1214,9 +1218,7 @@ class GP_Nested_Forms extends GP_Plugin {
 		add_filter( 'gform_form_tag', array( $this, 'set_edit_form_action' ) );
 		add_filter( 'gform_field_value', array( $this, 'populate_field_from_session_cookie' ), 10, 3 );
 
-		// Get the stashed field values from the session.
-		$session      = new GPNF_Session( rgar( $_REQUEST, 'gpnf_parent_form_id' ) );
-		$field_values = rgars( $session->get_cookie(), 'field_values' );
+		$field_values = rgars( $_REQUEST, 'gpnf_context/field_values' );
 
 		// Clear the post so Gravity Forms will use isSelected property on choice-based fields and not try to determine
 		// isSelected based on posted values. I'm betting this will resolve many other unknown issues as well.
@@ -2265,8 +2267,9 @@ class GP_Nested_Forms extends GP_Plugin {
 			$primary_color  = $field->gpnfModalHeaderColor ? $field->gpnfModalHeaderColor : '#3498db';
 
 			$ajax_context = array(
-				'post_id' => get_queried_object_id(),
-				'path'    => GPNF_Session::get_session_path(),
+				'post_id'      => get_queried_object_id(),
+				'path'         => GPNF_Session::get_session_path(),
+				'field_values' => $this->get_stashed_shortcode_field_values( $form['id'] ),
 			);
 
 			$args = array(
@@ -2298,7 +2301,7 @@ class GP_Nested_Forms extends GP_Plugin {
 				'modalStickyFooter'   => true,
 				'entryLimitMin'       => $field->gpnfEntryLimitMin,
 				'entryLimitMax'       => $field->gpnfEntryLimitMax,
-				'sessionData'         => GPNF_Session::get_default_session_data( $field->formId, $this->get_stashed_shortcode_field_values( $form['id'] ) ),
+				'sessionData'         => GPNF_Session::get_default_session_data( $field->formId ),
 				'spinnerUrl'          => gf_apply_filters( array( 'gform_ajax_spinner_url', $field->formId ), GFCommon::get_base_url() . '/images/spinner' . ( $this->is_gf_version_gte( '2.5-beta-1' ) ? '.svg' : '.gif' ), $form ),
 				/* @deprecated options below */
 				// translators: placeholder is a singular item label such as "Item" or "Player"
@@ -2955,6 +2958,12 @@ class GP_Nested_Forms extends GP_Plugin {
 		$is_valid  = ! isset( GFFormDisplay::$submission[ $form['id'] ] ) || rgar( GFFormDisplay::$submission[ $form['id'] ], 'is_valid' );
 		$form_tag .= '<input type="' . $type . '" value="' . esc_attr( $is_valid ) . '" id="' . esc_attr( 'gpnf_is_valid_' . $form['id'] ) . '" />';
 
+		$entry = GFAPI::get_entry( $entry_id );
+
+		if ( wp_verify_nonce( rgpost( 'nonce' ), 'gpnf_edit_entry' ) && rgar( $entry, 'gpnf_entry_parent_form' ) == rgpost( 'gpnf_parent_form_id' ) ) {
+			$form_tag .= '<input type="hidden" value="' . esc_attr( wp_create_nonce( 'gpnf_edit_entry_submission_' . $form['id'] ) ) . '" name="gpnf_edit_entry_submission" />';
+		}
+
 		return $form_tag;
 	}
 
@@ -3495,6 +3504,38 @@ class GP_Nested_Forms extends GP_Plugin {
 		}
 
 		return $this->get_index_of_child_entry( $entry ) + 1;
+	}
+
+	/*
+	 * Force Nested Forms to be displayed if the nonce is passed or if we're in a GravityView Edit context.
+	 *
+	 * We need this for obvious reasons when the nonce is passed for the Edit modal so the form can actually be rendered.
+	 *
+	 * The reason for the GravityView edit context is not as straight-forward. That's needed so the assets for the
+	 * child form can get enqueued, such as for Rich Text Editors, etc.
+	 */
+	public function force_display_expired_nested_form( $form_args ) {
+		$is_gravityview_edit = function_exists( 'gravityview' ) && gravityview()->request->is_edit_entry();
+		$form_id             = rgar( $form_args, 'form_id' );
+		$nested_form         = $this->get_nested_form( $form_id );
+
+		if ( wp_verify_nonce( rgpost( 'nonce' ), 'gpnf_edit_entry' ) || ( $is_gravityview_edit && $nested_form ) ) {
+			$form_args['force_display'] = true;
+		}
+
+		return $form_args;
+	}
+
+	/*
+	 * If the nonce is passed when submitting an edited entry, we need to ensure that we clear out any form scheduling
+	 * so that the submission is accepted.
+	 */
+	public function skip_expired_nested_form_schedule_validation( $form ) {
+		if ( wp_verify_nonce( rgpost( 'gpnf_edit_entry_submission' ), 'gpnf_edit_entry_submission_' . $form['id'] ) ) {
+			$form['scheduleForm'] = false;
+		}
+
+		return $form;
 	}
 
 	/**
