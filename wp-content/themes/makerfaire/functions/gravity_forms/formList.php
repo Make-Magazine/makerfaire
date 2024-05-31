@@ -18,8 +18,7 @@ add_action( 'init', function() {
 	if ( ! class_exists( 'GFForms' ) ) {
 		return;
 	}
-	if ( GFForms::get_page() === 'form_list' ) {
-        error_log('sorting form list');
+	if ( GFForms::get_page() === 'form_list' ) {        
 		$params = array();
 
 		if ( ! isset( $_GET['sort'] ) ) {
