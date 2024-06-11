@@ -18,8 +18,7 @@ add_action( 'init', function() {
 	if ( ! class_exists( 'GFForms' ) ) {
 		return;
 	}
-	if ( GFForms::get_page() === 'form_list' ) {
-        error_log('sorting form list');
+	if ( GFForms::get_page() === 'form_list' ) {        
 		$params = array();
 
 		if ( ! isset( $_GET['sort'] ) ) {
@@ -38,3 +37,12 @@ add_action( 'init', function() {
 	}
 
 } );
+
+//sort form dropdown by newest first
+add_filter( 'gform_form_switcher_forms', 'sort_form_switcher_forms', 10, 1 );
+function sort_form_switcher_forms( $forms ) {	
+	$key_values = array_column($forms, 'id'); 
+	array_multisort($key_values, SORT_DESC, $forms);
+	
+	return $forms;
+}
