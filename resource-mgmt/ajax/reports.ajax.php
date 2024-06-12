@@ -61,7 +61,7 @@ function cannedRpt() {
    $faire         = (isset($obj->faire) ? $obj->faire : '');
 
    $dispFormID    = (isset($obj->dispFormID) ? $obj->dispFormID : false);
-   $dispFormType  = (isset($obj->dispFormType) ? $obj->dispFormType : false);
+   $dispFormType  = (isset($obj->dispFormType) ? $obj->dispFormType : true);
    $formTypeLabel = (isset($obj->formTypeLabel) ? $obj->formTypeLabel : ($useFormSC ? "TYPE" : 'Form Type'));
    $entryIDLabel  = (isset($obj->entryIDLabel) ? $obj->entryIDLabel : ($useFormSC ? 'ENTRY ID' : 'Entry Id'));
    
@@ -144,7 +144,7 @@ function cannedRpt() {
          if ($selFields->choices == 'all' && $selFields->type == 'checkbox') {
             $fieldQuery[] = " meta_key like '" . $selFieldsID . ".%' ";
             $fieldIDArr[$selFieldsID] = $selFields; //search for all values
-         } elseif ($selFields->choices !== '' && $selFields->type == 'checkbox') {
+         } elseif ($selFields->choices !== 'all' && $selFields->choices !== '' && $selFields->type == 'checkbox') { //searching for specific choices
             $fieldQuery[] = " (meta_key like '" . $selFieldsID . ".%' and meta_value like '" . $selFields->choices . "') ";
             $fieldIDArr[$selFieldsID] = $selFields; //search for all values            
          } else {
@@ -159,21 +159,21 @@ function cannedRpt() {
 
       if ($selFieldsID == '151' && !isset($selFields->order))
          $selFields->order = 25;
-      //add requested field to columns
-      if (isset($selFields->hide) && $selFields->hide == true) {
-         //don't add this field to display
-         $data['columnDefs'][$selFieldsID] = array(
-            'field' => 'field_' . str_replace('.', '_', $selFieldsID),
-            'displayName' => $selFields->label, 'type' => 'string', 'visible' => false,
-            'displayOrder' => (isset($selFields->order) ? $selFields->order : 9999)
-         );
-      } else {
-         $data['columnDefs'][$selFieldsID] = array(
-            'field' => 'field_' . str_replace('.', '_', $selFieldsID),
-            'displayName' => $selFields->label, 'type' => 'string',
-            'displayOrder' => (isset($selFields->order) ? $selFields->order : 9999)
-         );
+
+      //determine field visibility      
+      if (isset($selFields->hide) && $selFields->hide == true) {         
+         $visible = false; //don't add this field to display
+      }else{
+         $visible = true;
       }
+      
+      //add requested field to columns
+      $data['columnDefs'][$selFieldsID] = array(
+         'field' => 'field_' . str_replace('.', '_', $selFieldsID),
+         'displayName' => $selFields->label, 'type' => 'string', 'visible' => $visible,
+         'displayOrder' => (isset($selFields->order) ? $selFields->order : 9999)
+      );
+     
 
       if (isset($selFields->exact) && $selFields->exact) {
          $exactCriteria[$selFieldsID] = $selFields->choices;
@@ -271,7 +271,7 @@ function cannedRpt() {
                   }
                }
                if (isset($fieldCritArr->type) && isset($fieldCritArr->choices)) {
-                  if ($fieldCritArr->type === 'checkbox' && $fieldCritArr->choices !== 'all') {
+                  if ($fieldCritArr->type === 'checkbox' && $fieldCritArr->choices !== '') {
                      $fieldID = $basefieldID;
                      // echo 'field key is '.$fieldKey;
                   }

@@ -332,21 +332,21 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
               "formType":["Master","Exhibit","Performance","Startup Sponsor","Sponsor","Show Management"],
               "faire": faire,
               "dispFormID":false,
+              "dispFormType":false,
               "useFormSC": true,
-              "entryIDorder": 200,
-              "locationOrder": 300,
-              "formTypeorder":400,
-              "CMOrder": 700,
-              "selectedFields":[
-                {"id":151,"label":"Exhibit","choices":"","type":"text","inputs":"", "order":250},
-                {"id":303,"label":"Status","choices":"Accepted","type":"radio","exact":true,"hide":true, "order":600},
-                {"id":879,"label":"Weekend","choices":"all","type":"checkbox"},
-                {"id":339,"label":"Exhibit Type","choices":"all","type":"checkbox"},
+              "entryIDorder": 120,
+              "locationOrder": 30,              
+              
+              "selectedFields":[                
+                {"id":879,"label":"Fri / Weekend","choices":"all","type":"checkbox", "order":80},
+                {"id":339,"label":"Exhibit Type","choices":"all","type":"checkbox", "order":90},
+                {"id":303,"label":"Status","choices":"Accepted","type":"radio","exact":true,"hide":true, "order":100},
+                {"id":151,"label":"Exhibit","choices":"","type":"text","inputs":"", "order":110},                
               ],
               "rmtData":{
                 "resource":[
-                  {"id":"2","value":"Tables","checked":true,"aggregated":false,"order":2000},
-                  {"id":"3","value":"Chairs","checked":true,"aggregated":false,"order":3000}
+                  {"id":"2","value":"Tables","checked":true,"aggregated":false,"order":40,"columns":true},
+                  {"id":"3","value":"Chairs","checked":true,"aggregated":false,"order":50,"columns":true}
                 ],
                 "attribute":[],"attention":[],"meta":[]
               },
@@ -383,6 +383,7 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
               "formType":["Master","Exhibit","Performance","Startup Sponsor","Sponsor","Show Management"],
               "faire": faire,
               "dispFormID":false,
+              "dispFormType":false,
               "useFormSC": false,
               "entryIDorder": 150,
               "selectedFields":[
