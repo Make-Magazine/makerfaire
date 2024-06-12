@@ -588,12 +588,7 @@ b, strong {
 		margin: 0 30px;
 	}
 }
-// stop elementor full width from breaking containers
-.page-template-elementor_header_footer:not(.home) {
-  .e-con, .e-con > .e-con-inner {
-    display: block;
-  }
-}
+
 
 // hide the logout for admins
 #wp-admin-bar-top-secondary #wp-admin-bar-my-account {
