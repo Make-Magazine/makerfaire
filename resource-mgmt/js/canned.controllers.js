@@ -383,17 +383,19 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
               "formType":["Master","Exhibit","Performance","Startup Sponsor","Sponsor","Show Management"],
               "faire": faire,
               "dispFormID":false,
-              "useFormSC": true,
+              "useFormSC": false,
+              "entryIDorder": 150,
               "selectedFields":[
-                {"id":151,"label":"EXHIBIT","choices":"","type":"text","inputs":"", "order":25},
-                {"id":303,"label":"Status","choices":"Accepted","type":"radio","exact":true,"hide":true},
-                {"id":879,"label":"Weekend","choices":"all","type":"checkbox"},
-                {"id":339,"label":"Exhibit Type","choices":"all","type":"checkbox"},
+                {"id":74,"label":"What are you powering","choices":"","type":"text", "order":120},                 
+                {"id":302,"label":"Fri Only?","choices":"FridaysOnly","type":"checkbox", "order":130},
+                {"id":339,"label":"Exhibit Type","choices":"all","type":"checkbox", "order":140},                
+                {"id":151,"label":"EXHIBIT","choices":"","type":"text","inputs":"", "order":160}, 
+                {"id":303,"label":"Status","choices":"Accepted","type":"radio","exact":true,"hide":true, "order":170},                                
               ],
               "rmtData":{
                 "resource":[
-                  {"id":"9","value":"Electrical 120V","checked":true,"aggregated":true},
-                  {"id":"10","value":"Electrical 220V","checked":true,"aggregated":true}
+                  {"id":"9","value":"Electrical 120V","checked":true,"aggregated":false,  "comments":true, "columns":true},
+                  {"id":"10","value":"Electrical 220V","checked":true,"aggregated":false, "comments":true, "columns":true}
                 ],
                 "attribute":[],"attention":[],"meta":[]},
               "type":"customRpt",
