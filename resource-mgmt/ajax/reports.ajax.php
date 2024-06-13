@@ -13,6 +13,7 @@ $type = (isset($obj->type) ? $obj->type : '');
 $table = (isset($obj->table) ? $obj->table : '');
 $formSelect = (isset($obj->formSelect) ? $obj->formSelect : '');
 $formType = (isset($obj->formType) ? $obj->formType : '');
+
 $selectedFields = (isset($obj->selectedFields) ? $obj->selectedFields : '');
 $rmtData = (isset($obj->rmtData) ? $obj->rmtData : '');
 $location = (isset($obj->location) ? $obj->location : false);
@@ -23,7 +24,11 @@ $status = (isset($obj->status) ? $obj->status : '');
 if ($type != '') {
    if ($type == "tableData") {
       if ($table == 'formData') {
-         getBuildRptData();
+         if($formSelect != ''){
+            getBuildRptFields($formSelect);
+         }else{
+            getBuildRptForms();
+         }         
       } elseif ($table == 'wp_mf_entity_tasks') {
          pullEntityTasks($formSelect);
       } else {
@@ -271,7 +276,7 @@ function cannedRpt() {
                   }
                }
                if (isset($fieldCritArr->type) && isset($fieldCritArr->choices)) {
-                  if ($fieldCritArr->type === 'checkbox' && $fieldCritArr->choices !== '') {
+                  if ($fieldCritArr->type === 'checkbox' && $fieldCritArr->choices === 'all') {
                      $fieldID = $basefieldID;
                      // echo 'field key is '.$fieldKey;
                   }
@@ -1026,9 +1031,9 @@ function cmpEntryID($a, $b) {
    return $b['entry_id'] - $a['entry_id'];
 }
 
-function getBuildRptData() {
-   global $mysqli;
+function getBuildRptForms() {
    $data = array();
+
    //return form data
    $formReturn = array();
    $forms = RGFormsModel::get_forms(null, 'title');
@@ -1038,11 +1043,18 @@ function getBuildRptData() {
          $formReturn[] = array('id' => absint($form->id), 'name' => htmlspecialchars_decode($form->title));
       }
    }
-   $form = RGFormsModel::get_form_meta(9);
 
-   //field list (from form 9)
+   $data['forms'] = $formReturn;   
+   echo json_encode($data);
+   exit;
+}   
+function getBuildRptFields($formID) {
+   global $mysqli;
+   $data = array();      
+
+   //field list (from selected form)
    $fieldReturn = array();
-   $sql = 'select display_meta from wp_gf_form_meta where form_id=9';
+   $sql = 'select display_meta from wp_gf_form_meta where form_id='.$formID;
    $result = $mysqli->query($sql) or trigger_error($mysqli->error . "[$sql]");
    while ($row = $result->fetch_array(MYSQLI_ASSOC)) {
       $json = json_decode($row['display_meta']);
