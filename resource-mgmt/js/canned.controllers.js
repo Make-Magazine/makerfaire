@@ -142,8 +142,10 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
 
   if($routeParams){
     if(typeof $routeParams.sub !== 'undefined' && $routeParams.sub !== 'undefined'){
-      //hide the sidebar
-      $("#menu-toggle").click();
+      if(!jQuery("#wrapper").hasClass("toggled")){
+        //hide the sidebar
+        $("#menu-toggle").click();
+      }
     }
     $scope.reports.subRoute = $routeParams.sub;
     $scope.reports.selFaire = $routeParams.faire;
