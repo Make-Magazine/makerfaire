@@ -141,7 +141,7 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
   };
 
   if($routeParams){
-    if($routeParams.sub!=''){
+    if(typeof $routeParams.sub !== 'undefined' && $routeParams.sub !== 'undefined'){
       //hide the sidebar
       $("#menu-toggle").click();
     }
