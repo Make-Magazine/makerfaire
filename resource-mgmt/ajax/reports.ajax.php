@@ -55,7 +55,6 @@ if ($type != '') {
 }
 
 /* Build your own report function */
-
 function cannedRpt() {
    global $wpdb;
    global $obj;
@@ -438,8 +437,7 @@ function pullRmtData($rmtData, $entryID, $useFormSC) {
 
    $colDefs2Sort = array();
    $incComments = false; //display comments in a separate field (set at individual
-   $aggregated = false; //aggregate comments with value;
-   $comments = (isset($rmtData->comments) ? $rmtData->comments : false); //display comments in a separate field (set overall for all RMT data)
+   $aggregated = false; //aggregate comments with value;   
 
    /*
     * Process the requested resources
@@ -508,7 +506,8 @@ function pullRmtData($rmtData, $entryID, $useFormSC) {
                      array(
                         'field' => 'res_' . str_replace('.', '_', $resource['resource_id']),
                         'displayName' => $resource['token'],
-                        'displayOrder' => $displayOrder
+                        'displayOrder' => $displayOrder,
+                        'aggregationType' => 'uiGridConstants.aggregationTypes.sum'
                      );
    
                   $return['data']['res_' . $resource['resource_id']] = $value;
@@ -1128,8 +1127,7 @@ function getBuildRptFields($formID) {
    $data['rmt']['meta'][] = array('id' => 'res_assign', 'type' => 'meta', 'value' => 'Resource Assign To');
    //$data['rmt']['meta'][]=array('id'=>$row['entryRating'],'type'=>'meta','value'=>'Entry Rating');
    //$data['rmt']['meta'][]=array('id'=>$row['entry_id'],'type'=>'meta','value'=>'Linked to Entry');
-
-   $data['forms'] = $formReturn;
+   
    $data['fields'] = $fieldReturn;
    echo json_encode($data);
    exit;

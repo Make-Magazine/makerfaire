@@ -140,9 +140,6 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
     });
   };
 
-//default
-  var tablename = 'wp_rmt_entry_resources';
-
   if($routeParams){
     if($routeParams.sub!=''){
       //hide the sidebar
@@ -414,8 +411,8 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
               ],
               "rmtData":{
                 "resource":[
-                  {"id":"9","value":"Electrical 120V","checked":true,"aggregated":false,  "comments":true, "columns":true},
-                  {"id":"10","value":"Electrical 220V","checked":true,"aggregated":false, "comments":true, "columns":true}
+                  {"id":"9","value":"Electrical 120V","checked":true,"aggregated":false,  "comments":true, "columns":true, "totals":true},
+                  {"id":"10","value":"Electrical 220V","checked":true,"aggregated":false, "comments":true, "columns":true, "totals":true}
                 ],
                 "attribute":[],"attention":[],"meta":[]},
               "type":"customRpt",
