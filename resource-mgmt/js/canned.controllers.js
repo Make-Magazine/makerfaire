@@ -7,6 +7,21 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
   $scope.reports.selFaire  = '';
   $scope.data     = [];
   $scope.msg = {};
+  $scope.canned_rpt = [];
+
+  
+  $scope.handleSelect = function() {
+    if($scope.reports.selFaire!==''){
+      $scope.reports.showLinks = true;      
+    }else{
+      return;
+    }
+
+    if($scope.reports.subRoute!=''){
+      //redirect to the correct canned report based on selection 
+      window.location = '#canned/'+ $scope.reports.subRoute+'/'+$scope.reports.selFaire;
+    }        
+  };
 
   //faire dropdown
   $scope.retrieveData = function(type) {
@@ -129,11 +144,15 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
   var tablename = 'wp_rmt_entry_resources';
 
   if($routeParams){
+    if($routeParams.sub!=''){
+      //hide the sidebar
+      $("#menu-toggle").click();
+    }
     $scope.reports.subRoute = $routeParams.sub;
+    $scope.reports.selFaire = $routeParams.faire;
 
     if("faire" in $routeParams){
-      var faire = $routeParams.faire;
-      $scope.reports.selFaire = $routeParams.faire;
+      var faire = $routeParams.faire;      
       $scope.reports.showLinks = true;
     }else{
       $scope.reports.selFaire = '';

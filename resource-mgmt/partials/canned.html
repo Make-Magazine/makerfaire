@@ -1,71 +1,46 @@
 <div ng-init="retrieveData('faires')">
   <h3>Select a Faire</h3>
-  <select ng-model="reports.selFaire" ng-change="reports.showLinks = true" name="faireSelect">
+
+  <select ng-model="reports.selFaire" ng-change="handleSelect()" name="faireSelect">
     <option value="">Please select a Faire</option>
     <option ng-repeat="(key, faire) in data.faires" value="{{faire.ID}}">{{faire.faire_name}}</option>
   </select>
+
+  <span ng-if="reports.showLinks" class="reportsView animated fadeInUp cannedLinks">
+    <select ng-model="reports.subRoute" name="canned_rpt" id="canned_rpt" ng-change="handleSelect()">
+      <option value="">Please select a Report</option>
+      <option value="am_summary">AM Summary</option>
+      <option value="zoho">Zoho</option>
+      <option value="am_tcp">AM TCP</option>
+      <option value="cm_pymt">Exhibit Payment(s)</option>
+      <option value="sponsor_pymt">Sponsor Payment(s)</option>
+      <option value="table_chairs">Table/Chairs</option>
+      <option value="barr_fence">Barr/Fence</option>
+      <option value="electrical">Electrical</option>
+      <option value="guest_seat">Guest Seating</option>
+      <option value="wb_stools">WB/Stools</option>
+      <option value="label">Label Placement</option>
+      <option value="spdist">Sponsor Distribution</option>
+      <option value="spint">Sponsor Internet</option>
+    </select>
+  </span>
+  
 </div>
 
-<div ng-if="reports.showLinks" class="reportsView animated fadeInUp cannedLinks">
-  <div class="row">
-    <div class="col-sm-2">
-      <a href="#canned/am_summary/{{reports.selFaire}}" class="btn btn-success"  role="button">AM Summary</a>
-    </div>
-    <div class="col-sm-2">
-      <a href="#canned/zoho/{{reports.selFaire}}" class="btn btn-success"  role="button">Zoho</a>
-    </div>
-    <div class="col-sm-2">
-      <a href="#canned/am_tcp/{{reports.selFaire}}" class="btn btn-success"  role="button">AM TCP</a>
-    </div>
-    <div class="col-sm-2">
-      <a href="#canned/cm_pymt/{{reports.selFaire}}" class="btn btn-success"  role="button">Exhibit Payment(s)</a>
-    </div>
-    <div class="col-sm-2">
-      <a href="#canned/sponsor_pymt/{{reports.selFaire}}" class="btn btn-success"  role="button">Sponsor Payment(s)</a>
-    </div>
-    <!--
-    <div class="col-sm-2">
-      <a href="#canned/nonprofit_pymt/{{reports.selFaire}}" class="btn btn-success"  role="button">Nonprofit Payment(s)</a>
-    </div>-->
-    <div class="col-sm-2">
-      <a href="#canned/table_chairs/{{reports.selFaire}}" class="btn btn-success"  role="button">Table/Chairs</a>
-    </div>
-    <div class="col-sm-2">
-      <a href="#canned/barr_fence/{{reports.selFaire}}" class="btn btn-success"  role="button">Barr/Fence</a>
-    </div>
-    <div class="col-sm-2">
-      <a href="#canned/electrical/{{reports.selFaire}}" class="btn btn-success"  role="button">Electrical</a>
-    </div>
-    <div class="col-sm-2">
-      <a href="#canned/guest_seat/{{reports.selFaire}}" class="btn btn-success"  role="button">Guest Seating</a>
-    </div>
-    <div class="col-sm-2">
-      <a href="#canned/wb_stools/{{reports.selFaire}}" class="btn btn-success"  role="button">WB/Stools</a>
-    </div>
-    <div class="col-sm-2">
-      <a href="#canned/label/{{reports.selFaire}}" class="btn btn-success" role="button">Label Placement</a>
-    </div>
-    <div class="col-sm-2">
-      <a href="#canned/spdist/{{reports.selFaire}}" class="btn btn-success" role="button">Sponsor Distribution</a>
-    </div>
-    <div class="col-sm-2">
-      <a href="#canned/spint/{{reports.selFaire}}" class="btn btn-success" role="button">Sponsor Internet</a>
-    </div>
-  </div>
-</div>
 
-<br/><br/>
+
+<br /><br />
 <div ng-if="reports.showGrid" class="reportsView animated fadeInUp">
-    <div class="table-responsive">
-      <div ui-grid="gridOptions" ui-grid-exporter  ui-grid-resize-columns ui-grid-auto-resize class="grid">
-        <div class="grid-msg-overlay" ng-hide="!reports.loading">
-          <div class="msg">
-            <span>
-              Loading Data...
-              <i class="fa fa-spinner fa-spin"></i>
-            </span>
-          </div>
+  <div class="table-responsive">
+    <div ui-grid="gridOptions" ui-grid-exporter ui-grid-resize-columns ui-grid-auto-resize class="grid">
+      <div class="grid-msg-overlay" ng-hide="!reports.loading">
+        <div class="msg">
+          <span>
+            Loading Data...
+            <i class="fa fa-spinner fa-spin"></i>
+          </span>
         </div>
       </div>
     </div>
   </div>
+</div>
