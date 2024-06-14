@@ -351,7 +351,7 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
               "faire": faire,
               "dispFormID":false,
               "dispFormType":false,
-              "useFormSC": true,
+              "useFormSC": false,
               "entryIDorder": 120,
               "locationOrder": 30,              
               
@@ -446,17 +446,20 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
       vars = {"formSelect":[],
               "formType":["Master","Exhibit","Performance","Startup Sponsor","Sponsor","Show Management"],
               "faire": faire,
+              "dispFormID":false,
+              "dispFormType":false,
+              "useFormSC": false,
+              "entryIDorder": 180,
+              "locationOrder": 10,
               "selectedFields":[
-                {"id":151,"label":"Record Name","choices":"","type":"text","inputs":"", "order":25},
-                {"id":303,"label":"Status","choices":"Proposed","type":"radio"},
-                {"id":303,"label":"Status","choices":"Accepted","type":"radio"},
-                {"id":879,"label":"Weekend","choices":"all","type":"checkbox"},
-                {"id":339,"label":"Exhibit Type","choices":"all","type":"checkbox"},
+                {"id":151,"label":"Record Name","choices":"","type":"text","inputs":"", "order":110},                
+                {"id":303,"label":"Status","choices":"Accepted","type":"radio", "order":120},                
+                {"id":339,"label":"Exhibit Type","choices":"all","type":"checkbox", "order":140},
               ],
               "rmtData":{
                 "resource":[
-                  {"id":"41","value":"Work Bench","checked":true,"aggregated":true},
-                  {"id":"42","value":"Stools","checked":true,"aggregated":true}
+                  {"id":"41","value":"Work Bench","checked":true,"aggregated":false, "order":40, "columns":true, "totals":true},
+                  {"id":"42","value":"Stools","checked":true,"aggregated":false,"order":50, "columns":true, "totals":true}
                 ],
                 "attribute":[],"attention":[],"meta":[]},
               "type":"customRpt",
