@@ -202,43 +202,44 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
               "formType":["Master","Exhibit","Performance","Startup Sponsor","Sponsor","Show Management"],
               "faire": faire,
               "useFormSC": true,
-              "entryIDorder": 200,
-              "locationOrder": 300,
+              "entryIDorder": 50,
+              "locationOrder": 10,
               "formTypeorder":400,
               "selectedFields":[
-                {"id":16, "label":"EXHIBIT SUMMARY", "choices":"", "type":"textarea", "inputs":"", "order":1700},
+                {"id":16, "label":"EXHIBIT SUMMARY", "choices":"", "type":"textarea", "inputs":"", "order":280},
                 {"id":96, "label":"MAKER NAME", "choices":"", "type":"name",
                  "inputs":[{"id":"96.3","label":"First","name":""},{"id":"96.6","label":"Last","name":""}], 
-                 "order":700
+                 "order":250
                 },
-                {"id":98,"label":"Contact Email","choices":"","type":"email","inputs":"", "order":800},
-                {"id":99,"label":"PHONE","choices":"","type":"phone","inputs":"", "order":900},
-                {"id":151,"label":"EXHIBIT","choices":"","type":"text","inputs":"", "order":100},
-                {"id":303,"label":"Status","choices":"Proposed","type":"radio"},
-                {"id":303,"label":"Status","choices":"Accepted","type":"radio"},
-                {"id":303,"label":"Status","choices":"Rejected","type":"radio"},
-                {"id":303,"label":"Status","choices":"Wait List","type":"radio"},
-                {"id":303,"label":"Status","choices":"Cancelled","type":"radio"},
-                {"id":879,"label":"Weekend","choices":"all","type":"checkbox"},
-                {"id":339,"label":"Exhibit Type","choices":"all","type":"checkbox"}
+                {"id":98,"label":"Contact Email","choices":"","type":"email","inputs":"", "order":260},
+                {"id":99,"label":"PHONE","choices":"","type":"phone","inputs":"", "order":270},
+                {"id":151,"label":"EXHIBIT","choices":"","type":"text","inputs":"", "order":40},                
+                {"id":303,"label":"Status","choices":"Accepted","type":"radio", "order": 240},                
+                {"id":879,"label":"Weekend","choices":"all","type":"checkbox","order":220},
+                {"id":339,"label":"Exhibit Type","choices":"all","type":"checkbox", "order":230}
              ],
              "rmtData":{
                 "resource":[
-                  {"id":"all","value":"ALL RESOURCES","checked":true, "order":1800},
-                  {"id":"2","value":"TABLE","checked":true, "order":1100},
-                  {"id":"3","value":"CHAIR","checked":true, "order":1200},
-                  {"id":"9","value":"ELEC","checked":true, "order":1300}
+                  {"id":"all","value":"ALL RESOURCES","checked":true, "order":60},
+                  {"id":"47","value":"Storage","checked":true, "order":110},
+                  {"id":"35","value":"Heavy Equipment","checked":true, "order":120},
+                  {"id":"19","value":"Barricade","checked":true, "order":130},
+                  {"id":"15","value":"Water","checked":true, "order":130},
+                  {"id":"2","value":"TABLE","checked":true, "order":160},
+                  {"id":"3","value":"CHAIR","checked":true, "order":170},
+                  {"id":"9","value":"ELEC","checked":true, "order":180}
                 ],
                 "attribute":[
-                  {"id":"2",  "value":"SIZE","checked":true, "order":1000},
-                  {"id":"4",  "value":"IN/OUT","checked":true, "order":1600},
-                  {"id":"9",  "value":"NZ","checked":true, "order":1500},
-                  {"id":"11", "value":"INT","checked":true, "order":1400}
+                  {"id":"2",  "value":"Final Space Size","checked":true, "order":70},
+                  {"id":"19",  "value":"Space Size: Requested","checked":true, "order":150},
+                  {"id":"4",  "value":"IN/OUT","checked":true, "order":210},
+                  {"id":"9",  "value":"NZ","checked":true, "order":200},
+                  {"id":"11", "value":"INT","checked":true, "order":190}
                 ],
                 "attention":[
-                  {"id":"9","value":"Area Manager Notes","checked":true, "order":1900},
-                  {"id":"10","value":"Early Setup","checked":true},
-                  {"id":"11","value":"No Friday","checked":true}
+                  {"id":"9","value":"Area Manager Notes","checked":true, "order":100},
+                  {"id":"10","value":"Early Setup","checked":true, "order":90},
+                  {"id":"11","value":"No Friday","checked":true, "order":80}
                 ],
                 "meta":[]
               },
