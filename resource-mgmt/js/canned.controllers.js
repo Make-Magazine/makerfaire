@@ -459,7 +459,8 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
               ],
               "rmtData":{
                 "resource":[
-                  {"id":"41","value":"Work Bench","checked":true,"aggregated":false, "order":40, "columns":true, "totals":true},
+                  {"id":"11","value":"Bench","checked":true,"aggregated":false, "order":40, "columns":true, "totals":true},
+                  {"id":"41","value":"Work Bench","checked":true,"aggregated":false, "order":45, "columns":true, "totals":true},
                   {"id":"42","value":"Stools","checked":true,"aggregated":false,"order":50, "columns":true, "totals":true}
                 ],
                 "attribute":[],"attention":[],"meta":[]},
