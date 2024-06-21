@@ -29,7 +29,8 @@
                     </div>
                     <p class="project-description"><?php echo nl2br($project_short); ?></p>
                 </div>
-                <?php if( $entry_shows_schedule ){ ?>
+                <?php $scheduleBlock = schedule_block($entry); 
+                if( $scheduleBlock != '' && $show_sched ) { ?>
                     <div class="entry-box">
                         <?php echo schedule_block($entry); ?>
                     </div>
@@ -64,10 +65,10 @@
                         <?php echo $maker['social']; ?>
                     </div>
                 <?php }
-            } else { 
+            } else if($makers) { 
                 $maker = current($makers);
-                $small_photo = legacy_get_resized_remote_image_url($maker['photo'], 400, 400);
-                $large_photo = legacy_get_resized_remote_image_url($maker['photo'], 720, 720);
+                $small_photo = isset($maker['photo']) ? legacy_get_resized_remote_image_url($maker['photo'], 400, 400) : "";
+                $large_photo = isset($maker['photo']) ? legacy_get_resized_remote_image_url($maker['photo'], 400, 400) : "";
             ?>
                 <div class="small-column">
                     <picture>

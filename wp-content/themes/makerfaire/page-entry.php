@@ -51,11 +51,6 @@ if (isset($entry->errors)) {
         }        
     }    
 
-    $entry_shows_schedule = false;
-    if( in_array('Workshop', $exhibit_type) || in_array('Perfomer', $exhibit_type) || in_array('Demo', $exhibit_type) || in_array('Presenter', $exhibit_type) ) {
-        $entry_shows_schedule = true;
-    }
-
     //build an array of field information for updating fields
     foreach ($form['fields'] as $field) {
         $fieldID = $field->id;
@@ -441,11 +436,8 @@ function entry_location($entry) {
 
 // adapt this to only get the schedule
 function schedule_block($entry) {    
-    global $wpdb;
-    global $show_sched;  
-    global $fieldData;    
+    global $wpdb; 
     global $exhibit_type;
-    global $entry_shows_schedule;
 
     //set entry id
     $entry_id=$entry['id'];
@@ -462,9 +454,6 @@ function schedule_block($entry) {
             . " group by area, subarea, location, schedule.start_dt"
             . " order by schedule.start_dt";
     $results = $wpdb->get_results($sql);
-        
-    $schedule = '';    
-    $location = '';
 
     $return = "<h2>" . implode(", ", $exhibit_type) . " Schedule</h2><div class='schedule-items'>";
 
@@ -525,6 +514,7 @@ function schedule_block($entry) {
     return $return;
 }
 
+// this is the older version of above that included the location next to the dates (and had start and end dates), keeping it for reference and because it has more complete data then what we went with
 function display_entry_schedule($entry) {    
     global $wpdb;
     global $faire;
