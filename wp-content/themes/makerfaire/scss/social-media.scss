@@ -12,14 +12,14 @@
 			visibility: visible;
 			font-size: 25px;
 		}
-		&[href*="facebook"] {
+		&[href*="facebook" i] {
 			&::before {
 				font-family: FontAwesomeBrands;
 				content: "\f09a";
 				color: #3b5998;
 			}
 		}
-		&[href*="twitter"] {
+		&[href*="twitter" i], &[href*="x.com" i] {
 			&::before {
 				content: url("https://make.co/wp-content/universal-assets/v2/images/twitter-x-logo.svg");
 				color: #1da1f2;
@@ -30,72 +30,130 @@
 				display: flex;
 			}
 		}
-		&[href*="instagram"] {
+		&[href*="://user?username"], &[href*="threads.net" i] {
+			&::before {
+				content: url("https://make.co/wp-content/universal-assets/v2/images/social-icons/threads-logo.svg");
+				color: #000000;
+				width: 25px;
+				height: 28px;
+				margin-top: 2px;
+				margin-left: -10px;
+				display: flex;
+			}
+		}
+		&[href*="nextdoor" i] {
+			&::before {
+				content: url("https://make.co/wp-content/universal-assets/v2/images/social-icons/nextdoor-logo.svg");
+				color: #000000;
+				height: 25px;
+				width: 30px;
+				margin-top: 2px;
+				margin-left: -10px;
+				display: flex;
+			}
+		}
+		&[href*="instagram" i] {
 			&::before {
 				font-family: FontAwesomeBrands;
 				content: "\f16d";
 				color: #e1306c;
 			}
 		}
-		&[href*="youtube"] {
+		&[href*="youtube" i] {
 			&::before {
 				font-family: FontAwesomeBrands;
 				content: "\f167";
 				color: #ff0000;
 			}
 		}
-		&[href*="linkedin"] {
+		&[href*="linkedin" i] {
 			&::before {
 				font-family: FontAwesomeBrands;
 				content: "\f08c";
-				color: #0077b5;
+				color: #0a66c2;
 			}
 		}
-		&[href*="snapchat"] {
+		&[href*="pinterest" i] {
+			&::before {
+				font-family: FontAwesomeBrands;
+				content: "\f0d2";
+				color: #c8232c;
+			}
+		}
+		&[href*="telegram" i], &[href*="t.me"] {
+			&::before {
+				font-family: FontAwesomeBrands;
+				content: "\f2c6";
+				color: #0088cc;
+			}
+		}
+		&[href*="github" i] {
+			&::before {
+				font-family: FontAwesomeBrands;
+				content: "\f09b";
+				color: #4078c0;
+			}
+		}
+		&[href*="discord" i] {
+			&::before {
+				font-family: FontAwesomeBrands;
+				content: "\f392";
+				color: #7289da;
+			}
+		}
+		&[href*="mastodon" i], &[href*=".social"] {
+			&::before {
+				font-family: FontAwesomeBrands;
+				content: "\f4f6";
+				color: #6364FF;
+			}
+		}
+		&[href*="tiktok" i] {
+			&::before {
+				font-family: FontAwesomeBrands;
+				content: "\e07b";
+				color: #ff0050;
+			}
+		}
+		&[href*="snapchat" i] {
 			&::before {
 				font-family: FontAwesomeBrands;
 				content: "\f2ab";
 				color: #fffc00;
 			}
 		}
-		//wechat
-		&[href*="weixin"] {
+		&[href*="whatsapp" i] {
 			&::before {
 				font-family: FontAwesomeBrands;
-				content: "\f1d7";
-				color: #7BB32E;
+				content: "\f2ab";
+				color: #075e54;
 			}
 		}
-		//wechat
-		&[href*="wechat"] {
+		&[href*="wiki" i] {
 			&::before {
 				font-family: FontAwesomeBrands;
-				content: "\f1d7";
-				color: #7BB32E;
+				content: "\f266";
+				color: #000;
 			}
 		}
-		// whatsapp
-		&[href*="whatsapp"] {
+		&[href*="medium.com" i] {
 			&::before {
 				font-family: FontAwesomeBrands;
-				content: "\f232";
-				color: #075E54;
+				content: "\f367";
+				color: #00ab6c;
 			}
 		}
-		// tiktok
-		&[href*="tiktok"] {
+		&[href*="meetup.com" i] {
 			&::before {
 				font-family: FontAwesomeBrands;
-				content: "\e07b";
-				color: #00f2ea;
+				content: "\f2e0";
+				color: #e51937;
 			}
 		}
-		// discord
-		&[href*="discord"] {
+		&[href^="mailto:"] {
 			&::before {
-				font-family: FontAwesomeBrands;
-				content: "\f392";
-				color: #5865F2;
+				content: "\f0e0";
+				color: red;
 			}
 		}
 	}
@@ -108,13 +166,15 @@
 			justify-content: center;
 			align-items: center;
 			aspect-ratio: 1;
+			min-height: 40px;
 			text-decoration: none;
 			background: #666;
 			&::before {
 				color: #fff !important;
 			}
-			&[href*="facebook"] { background: #3b5998; }
-			&[href*="twitter"] { 
+			span { visibility: hidden; width: 0px; }
+			&[href*="facebook" i] { background: #3b5998; }
+			&[href*="twitter" i], &[href*="x.com" i] { 
 				background: #1da1f2;
 				&:before { 
 					filter: invert(100%) sepia(0%) saturate(100%) hue-rotate(0deg) brightness(100%) contrast(100%);
@@ -122,9 +182,41 @@
 					display: block;
 				}
 			}
-			&[href*="instagram"] { background: #e1306c; }
-			&[href*="youtube"] { background: #ff0000; }
+			&[href*="://user?username"], &[href*="threads.net" i] {
+				background: #000;
+				&::before {
+					filter: brightness(0) invert(1);
+					margin: 0px;
+					display: block;
+				}
+			}
+			&[href*="nextdoor" i] {
+				background: #02b341;
+				&::before {
+					filter: brightness(0) invert(1);
+					margin: 0px;
+					display: block;
+				}
+			}
+			&[href*="instagram" i] { background: #e1306c; }
+			&[href*="youtube" i] { background: #ff0000; }
+			&[href*="linkedin" i] { background: #0a66c2; }
+			&[href*="pinterest" i] { background: #c8232c; }
+			&[href*="discord" i] { background: #7289da; }
+			&[href*="mastodon" i], &[href*=".social"] { background: #6364FF; }
+			&[href*="tiktok" i] { background: #ff0050; }
+			&[href*="snapchat" i] { background: #fffc00; }
+			&[href*="github" i] { background: #4078c0; }
+			&[href*="telegram" i], &[href*="t.me"] { background: #0088cc; }
+			&[href*="whatsapp" i] { background: #075e54; }
+			&[href*="medium.com" i] { background: #00ab6c; }
+			&[href*="wiki" i] { background: #000; }
+			&[href*="meetup" i] { background: #e51937; }
 			&.fa-link { background: #666; }
+			&[href^="mailto:"] { background: red }
+			&:hover {
+				opacity: .7;
+			}
 		}
 	}
 }	

@@ -151,7 +151,6 @@ function remove_unnecessary_scripts() {
 add_action('wp_print_scripts', 'remove_unnecessary_scripts', PHP_INT_MAX); // we want this to happen absolutely last
 
 function remove_unnecessary_styles() {
-    wp_dequeue_style('font-awesome');
     if (is_admin()) {
         wp_deregister_style('elementor-ai');
         wp_dequeue_style('elementor-ai');

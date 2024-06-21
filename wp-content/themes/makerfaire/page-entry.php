@@ -51,6 +51,11 @@ if (isset($entry->errors)) {
         }        
     }    
 
+    $entry_shows_schedule = false;
+    if( in_array('Workshop', $exhibit_type) || in_array('Perfomer', $exhibit_type) || in_array('Demo', $exhibit_type)  || in_array('Presenter', $exhibit_type) ) {
+        $entry_shows_schedule = true;
+    }
+
     //build an array of field information for updating fields
     foreach ($form['fields'] as $field) {
         $fieldID = $field->id;
@@ -66,10 +71,11 @@ if (isset($entry->errors)) {
 
     $faire = $show_sched = $faireShort = $faire_end = '';
     if ($form_id != '') {
-        $formSQL = "select faire_name as pretty_faire_name, replace(lower(faire_name),' ','-') as faire_name,  faire_location, faire, id,show_sched,start_dt, end_dt, url_path, faire_map, program_guide, time_zone "
+        $formSQL = "select faire_name as pretty_faire_name, replace(lower(faire_name),' ','-') as faire_name, faire_location, faire, id,show_sched,start_dt, end_dt, url_path, faire_map, program_guide, time_zone "
                 . " from wp_mf_faire where FIND_IN_SET ($form_id, wp_mf_faire.form_ids)> 0 order by ID DESC limit 1";
 
         $results = $wpdb->get_row($formSQL);
+        
         if ($wpdb->num_rows > 0) {
             $faire = $results->faire_name;
             $faire_name = $results->pretty_faire_name;
@@ -96,6 +102,7 @@ if (isset($entry->errors)) {
         $categories[] = $mainCategory;
     }
 
+    // get terms from secondary catetgories
     foreach ($entry as $key => $value) {
         if (strpos($key, '321.') !== false && $value != null) {
             if (get_term($value)->name != $mainCategory) {
@@ -140,6 +147,9 @@ if (isset($entry->errors)) {
     if($project_photo=='' && is_array($project_gallery)){
         $project_photo = $project_gallery[0];
     }
+    $project_photo_large  = legacy_get_resized_remote_image_url($project_photo, 1050, 700);
+    $project_photo_medium = legacy_get_resized_remote_image_url($project_photo, 765, 510);
+    $project_photo_small  = legacy_get_resized_remote_image_url($project_photo, 420, 280);
         
     $project_short = (isset($entry['16']) ? $entry['16'] : '');    // Description
     $presentation_title  = (isset($entry['880']) ? $entry['880'] : ''); 
@@ -169,14 +179,18 @@ if (isset($entry->errors)) {
         }
     }
 
+    $friday = (isset($entry['879.3']) && !empty($entry['879.3'])  ? 1 : 0); // is it on friday
+    $location = entry_location($entry);
+
     $project_website = (isset($entry['27']) ? $entry['27'] : '');  //Website
+    $project_social = getSocial(isset($entry['906']) ? $entry['906'] : '');
     $project_video = (isset($entry['32']) ? $entry['32'] : '');     //Video
     $project_video2 = (isset($entry['386']) ? $entry['386'] : '');     //Video2
     $project_title = (isset($entry['151']) ? esc_html($entry['151']) : ''); //Title
     $project_title = preg_replace('/\v+|\\\[rn]/', '<br/>', $project_title);
 }
 
-//set sharing card data
+//set sharing card data (do we need this? can we remove)
 if ((is_array($entry) && isset($entry['status']) && $entry['status'] == 'active' && isset($entry[303]) && $entry[303] == 'Accepted') || $adminView == true) {
     $sharing_cards->project_short = $project_short;
     $sharing_cards->project_photo = $project_photo;
@@ -253,9 +267,11 @@ if (array_intersect(array('administrator', 'editor'), $user->roles)) {
 $validEntry = false;
 if (is_array($entry) && !empty($entry)) { //is this a valid entry?
     if (isset($entry[151]) && $entry[151] != '') {
+        // if 
         if ((isset($entry['status']) && $entry['status'] === 'active' && //is the entry not trashed
                 isset($entry[303]) && $entry[303] == 'Accepted') || //is the entry accepted?
                 $adminView == true) {                                         // OR, if user is an administrator or editor they can see it all
+
             $validEntry = true; //display the entry
         }
     }
@@ -284,24 +300,34 @@ $video = '';
 if (!empty($project_video) && validate_url($project_video)) {        
     global $wp_embed;
     // We want only youtube or vimeo videos to display,
-    if($project_video != '' && is_valid_video($project_video) ){
-        $video = '<div class="entry-video">
-                <div class="embed-youtube">';
-        $video .=  $wp_embed->run_shortcode('[embed]' . $project_video. '[/embed]');
-        $video .= '</div>
-                </div>';
-    }    
+    if($project_video != '') {
+        if( is_valid_video($project_video) ){
+            $video = '<div class="entry-video">
+                    <div class="embed-youtube">';
+            $video .=  $wp_embed->run_shortcode('[embed]' . $project_video. '[/embed]');
+            $video .= '</div>
+                    </div>';
+        } else if(str_contains(strtolower($project_video), 'instagram.com')) {
+            $video = '<blockquote class="instagram-media" data-instgrm-captioned data-instgrm-permalink="' . $project_video . '?utm_source=ig_embed&amp;utm_campaign=loading" data-instgrm-version="14" style=" background:#FFF; border:0; border-radius:3px; box-shadow:0 0 1px 0 rgba(0,0,0,0.5),0 1px 10px 0 rgba(0,0,0,0.15); margin: 1px; max-width:540px; min-width:326px; padding:0; width:99.375%; width:-webkit-calc(100% - 2px); width:calc(100% - 2px);"><div style="padding:16px;"> <a href="https://www.instagram.com/reel/C8FdRHfOY1r/?utm_source=ig_embed&amp;utm_campaign=loading" style=" background:#FFFFFF; line-height:0; padding:0 0; text-align:center; text-decoration:none; width:100%;" target="_blank"> <div style=" display: flex; flex-direction: row; align-items: center;"> <div style="background-color: #F4F4F4; border-radius: 50%; flex-grow: 0; height: 40px; margin-right: 14px; width: 40px;"></div> <div style="display: flex; flex-direction: column; flex-grow: 1; justify-content: center;"> <div style=" background-color: #F4F4F4; border-radius: 4px; flex-grow: 0; height: 14px; margin-bottom: 6px; width: 100px;"></div> <div style=" background-color: #F4F4F4; border-radius: 4px; flex-grow: 0; height: 14px; width: 60px;"></div></div></div><div style="padding: 19% 0;"></div> <div style="display:block; height:50px; margin:0 auto 12px; width:50px;"><svg width="50px" height="50px" viewBox="0 0 60 60" version="1.1" xmlns="https://www.w3.org/2000/svg" xmlns:xlink="https://www.w3.org/1999/xlink"><g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"><g transform="translate(-511.000000, -20.000000)" fill="#000000"><g><path d="M556.869,30.41 C554.814,30.41 553.148,32.076 553.148,34.131 C553.148,36.186 554.814,37.852 556.869,37.852 C558.924,37.852 560.59,36.186 560.59,34.131 C560.59,32.076 558.924,30.41 556.869,30.41 M541,60.657 C535.114,60.657 530.342,55.887 530.342,50 C530.342,44.114 535.114,39.342 541,39.342 C546.887,39.342 551.658,44.114 551.658,50 C551.658,55.887 546.887,60.657 541,60.657 M541,33.886 C532.1,33.886 524.886,41.1 524.886,50 C524.886,58.899 532.1,66.113 541,66.113 C549.9,66.113 557.115,58.899 557.115,50 C557.115,41.1 549.9,33.886 541,33.886 M565.378,62.101 C565.244,65.022 564.756,66.606 564.346,67.663 C563.803,69.06 563.154,70.057 562.106,71.106 C561.058,72.155 560.06,72.803 558.662,73.347 C557.607,73.757 556.021,74.244 553.102,74.378 C549.944,74.521 548.997,74.552 541,74.552 C533.003,74.552 532.056,74.521 528.898,74.378 C525.979,74.244 524.393,73.757 523.338,73.347 C521.94,72.803 520.942,72.155 519.894,71.106 C518.846,70.057 518.197,69.06 517.654,67.663 C517.244,66.606 516.755,65.022 516.623,62.101 C516.479,58.943 516.448,57.996 516.448,50 C516.448,42.003 516.479,41.056 516.623,37.899 C516.755,34.978 517.244,33.391 517.654,32.338 C518.197,30.938 518.846,29.942 519.894,28.894 C520.942,27.846 521.94,27.196 523.338,26.654 C524.393,26.244 525.979,25.756 528.898,25.623 C532.057,25.479 533.004,25.448 541,25.448 C548.997,25.448 549.943,25.479 553.102,25.623 C556.021,25.756 557.607,26.244 558.662,26.654 C560.06,27.196 561.058,27.846 562.106,28.894 C563.154,29.942 563.803,30.938 564.346,32.338 C564.756,33.391 565.244,34.978 565.378,37.899 C565.522,41.056 565.552,42.003 565.552,50 C565.552,57.996 565.522,58.943 565.378,62.101 M570.82,37.631 C570.674,34.438 570.167,32.258 569.425,30.349 C568.659,28.377 567.633,26.702 565.965,25.035 C564.297,23.368 562.623,22.342 560.652,21.575 C558.743,20.834 556.562,20.326 553.369,20.18 C550.169,20.033 549.148,20 541,20 C532.853,20 531.831,20.033 528.631,20.18 C525.438,20.326 523.257,20.834 521.349,21.575 C519.376,22.342 517.703,23.368 516.035,25.035 C514.368,26.702 513.342,28.377 512.574,30.349 C511.834,32.258 511.326,34.438 511.181,37.631 C511.035,40.831 511,41.851 511,50 C511,58.147 511.035,59.17 511.181,62.369 C511.326,65.562 511.834,67.743 512.574,69.651 C513.342,71.625 514.368,73.296 516.035,74.965 C517.703,76.634 519.376,77.658 521.349,78.425 C523.257,79.167 525.438,79.673 528.631,79.82 C531.831,79.965 532.853,80.001 541,80.001 C549.148,80.001 550.169,79.965 553.369,79.82 C556.562,79.673 558.743,79.167 560.652,78.425 C562.623,77.658 564.297,76.634 565.965,74.965 C567.633,73.296 568.659,71.625 569.425,69.651 C570.167,67.743 570.674,65.562 570.82,62.369 C570.966,59.17 571,58.147 571,50 C571,41.851 570.966,40.831 570.82,37.631"></path></g></g></g></svg></div><div style="padding-top: 8px;"> <div style=" color:#3897f0; font-family:Arial,sans-serif; font-size:14px; font-style:normal; font-weight:550; line-height:18px;">View this post on Instagram</div></div><div style="padding: 12.5% 0;"></div> <div style="display: flex; flex-direction: row; margin-bottom: 14px; align-items: center;"><div> <div style="background-color: #F4F4F4; border-radius: 50%; height: 12.5px; width: 12.5px; transform: translateX(0px) translateY(7px);"></div> <div style="background-color: #F4F4F4; height: 12.5px; transform: rotate(-45deg) translateX(3px) translateY(1px); width: 12.5px; flex-grow: 0; margin-right: 14px; margin-left: 2px;"></div> <div style="background-color: #F4F4F4; border-radius: 50%; height: 12.5px; width: 12.5px; transform: translateX(9px) translateY(-18px);"></div></div><div style="margin-left: 8px;"> <div style=" background-color: #F4F4F4; border-radius: 50%; flex-grow: 0; height: 20px; width: 20px;"></div> <div style=" width: 0; height: 0; border-top: 2px solid transparent; border-left: 6px solid #f4f4f4; border-bottom: 2px solid transparent; transform: translateX(16px) translateY(-4px) rotate(30deg)"></div></div><div style="margin-left: auto;"> <div style=" width: 0px; border-top: 8px solid #F4F4F4; border-right: 8px solid transparent; transform: translateY(16px);"></div> <div style=" background-color: #F4F4F4; flex-grow: 0; height: 12px; width: 16px; transform: translateY(-4px);"></div> <div style=" width: 0; height: 0; border-top: 8px solid #F4F4F4; border-left: 8px solid transparent; transform: translateY(-4px) translateX(8px);"></div></div></div> <div style="display: flex; flex-direction: column; flex-grow: 1; justify-content: center; margin-bottom: 24px;"> <div style=" background-color: #F4F4F4; border-radius: 4px; flex-grow: 0; height: 14px; margin-bottom: 6px; width: 224px;"></div> <div style=" background-color: #F4F4F4; border-radius: 4px; flex-grow: 0; height: 14px; width: 144px;"></div></div></a><p style=" color:#c9c8cd; font-family:Arial,sans-serif; font-size:14px; line-height:17px; margin-bottom:0; margin-top:8px; overflow:hidden; padding:8px 0 7px; text-align:center; text-overflow:ellipsis; white-space:nowrap;"><a href="https://www.instagram.com/reel/C8FdRHfOY1r/?utm_source=ig_embed&amp;utm_campaign=loading" style=" color:#c9c8cd; font-family:Arial,sans-serif; font-size:14px; font-style:normal; font-weight:normal; line-height:17px; text-decoration:none;" target="_blank">A post shared by Chris Stanley (@stanchris)</a></p></div></blockquote>
+                        <script async src="//www.instagram.com/embed.js"></script>';
+        }
+    }
 }
 
 $video2 = '';
 if (!empty($project_video2) && validate_url($project_video2)) {
     global $wp_embed;
-    if($project_video2 != '' && is_valid_video($project_video2) ){
-        $video2 = '<div class="entry-video">
-                <div class="embed-youtube">';
-        $video2 .=  $wp_embed->run_shortcode('[embed]' . $project_video2. '[/embed]');
-        $video2 .= '</div>
-                </div>';
+    if($project_video != '') {
+        if( is_valid_video($project_video) ){
+            $video2 = '<div class="entry-video">
+                    <div class="embed-youtube">';
+            $video2 .=  $wp_embed->run_shortcode('[embed]' . $project_video2 . '[/embed]');
+            $video2 .= '</div>
+                    </div>';
+        } else if(str_contains(strtolower($project_video2), 'instagram.com')) {
+            $video = '<blockquote class="instagram-media" data-instgrm-captioned data-instgrm-permalink="' . $project_video2 . '?utm_source=ig_embed&amp;utm_campaign=loading" data-instgrm-version="14" style=" background:#FFF; border:0; border-radius:3px; box-shadow:0 0 1px 0 rgba(0,0,0,0.5),0 1px 10px 0 rgba(0,0,0,0.15); margin: 1px; max-width:540px; min-width:326px; padding:0; width:99.375%; width:-webkit-calc(100% - 2px); width:calc(100% - 2px);"><div style="padding:16px;"> <a href="https://www.instagram.com/reel/C8FdRHfOY1r/?utm_source=ig_embed&amp;utm_campaign=loading" style=" background:#FFFFFF; line-height:0; padding:0 0; text-align:center; text-decoration:none; width:100%;" target="_blank"> <div style=" display: flex; flex-direction: row; align-items: center;"> <div style="background-color: #F4F4F4; border-radius: 50%; flex-grow: 0; height: 40px; margin-right: 14px; width: 40px;"></div> <div style="display: flex; flex-direction: column; flex-grow: 1; justify-content: center;"> <div style=" background-color: #F4F4F4; border-radius: 4px; flex-grow: 0; height: 14px; margin-bottom: 6px; width: 100px;"></div> <div style=" background-color: #F4F4F4; border-radius: 4px; flex-grow: 0; height: 14px; width: 60px;"></div></div></div><div style="padding: 19% 0;"></div> <div style="display:block; height:50px; margin:0 auto 12px; width:50px;"><svg width="50px" height="50px" viewBox="0 0 60 60" version="1.1" xmlns="https://www.w3.org/2000/svg" xmlns:xlink="https://www.w3.org/1999/xlink"><g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"><g transform="translate(-511.000000, -20.000000)" fill="#000000"><g><path d="M556.869,30.41 C554.814,30.41 553.148,32.076 553.148,34.131 C553.148,36.186 554.814,37.852 556.869,37.852 C558.924,37.852 560.59,36.186 560.59,34.131 C560.59,32.076 558.924,30.41 556.869,30.41 M541,60.657 C535.114,60.657 530.342,55.887 530.342,50 C530.342,44.114 535.114,39.342 541,39.342 C546.887,39.342 551.658,44.114 551.658,50 C551.658,55.887 546.887,60.657 541,60.657 M541,33.886 C532.1,33.886 524.886,41.1 524.886,50 C524.886,58.899 532.1,66.113 541,66.113 C549.9,66.113 557.115,58.899 557.115,50 C557.115,41.1 549.9,33.886 541,33.886 M565.378,62.101 C565.244,65.022 564.756,66.606 564.346,67.663 C563.803,69.06 563.154,70.057 562.106,71.106 C561.058,72.155 560.06,72.803 558.662,73.347 C557.607,73.757 556.021,74.244 553.102,74.378 C549.944,74.521 548.997,74.552 541,74.552 C533.003,74.552 532.056,74.521 528.898,74.378 C525.979,74.244 524.393,73.757 523.338,73.347 C521.94,72.803 520.942,72.155 519.894,71.106 C518.846,70.057 518.197,69.06 517.654,67.663 C517.244,66.606 516.755,65.022 516.623,62.101 C516.479,58.943 516.448,57.996 516.448,50 C516.448,42.003 516.479,41.056 516.623,37.899 C516.755,34.978 517.244,33.391 517.654,32.338 C518.197,30.938 518.846,29.942 519.894,28.894 C520.942,27.846 521.94,27.196 523.338,26.654 C524.393,26.244 525.979,25.756 528.898,25.623 C532.057,25.479 533.004,25.448 541,25.448 C548.997,25.448 549.943,25.479 553.102,25.623 C556.021,25.756 557.607,26.244 558.662,26.654 C560.06,27.196 561.058,27.846 562.106,28.894 C563.154,29.942 563.803,30.938 564.346,32.338 C564.756,33.391 565.244,34.978 565.378,37.899 C565.522,41.056 565.552,42.003 565.552,50 C565.552,57.996 565.522,58.943 565.378,62.101 M570.82,37.631 C570.674,34.438 570.167,32.258 569.425,30.349 C568.659,28.377 567.633,26.702 565.965,25.035 C564.297,23.368 562.623,22.342 560.652,21.575 C558.743,20.834 556.562,20.326 553.369,20.18 C550.169,20.033 549.148,20 541,20 C532.853,20 531.831,20.033 528.631,20.18 C525.438,20.326 523.257,20.834 521.349,21.575 C519.376,22.342 517.703,23.368 516.035,25.035 C514.368,26.702 513.342,28.377 512.574,30.349 C511.834,32.258 511.326,34.438 511.181,37.631 C511.035,40.831 511,41.851 511,50 C511,58.147 511.035,59.17 511.181,62.369 C511.326,65.562 511.834,67.743 512.574,69.651 C513.342,71.625 514.368,73.296 516.035,74.965 C517.703,76.634 519.376,77.658 521.349,78.425 C523.257,79.167 525.438,79.673 528.631,79.82 C531.831,79.965 532.853,80.001 541,80.001 C549.148,80.001 550.169,79.965 553.369,79.82 C556.562,79.673 558.743,79.167 560.652,78.425 C562.623,77.658 564.297,76.634 565.965,74.965 C567.633,73.296 568.659,71.625 569.425,69.651 C570.167,67.743 570.674,65.562 570.82,62.369 C570.966,59.17 571,58.147 571,50 C571,41.851 570.966,40.831 570.82,37.631"></path></g></g></g></svg></div><div style="padding-top: 8px;"> <div style=" color:#3897f0; font-family:Arial,sans-serif; font-size:14px; font-style:normal; font-weight:550; line-height:18px;">View this post on Instagram</div></div><div style="padding: 12.5% 0;"></div> <div style="display: flex; flex-direction: row; margin-bottom: 14px; align-items: center;"><div> <div style="background-color: #F4F4F4; border-radius: 50%; height: 12.5px; width: 12.5px; transform: translateX(0px) translateY(7px);"></div> <div style="background-color: #F4F4F4; height: 12.5px; transform: rotate(-45deg) translateX(3px) translateY(1px); width: 12.5px; flex-grow: 0; margin-right: 14px; margin-left: 2px;"></div> <div style="background-color: #F4F4F4; border-radius: 50%; height: 12.5px; width: 12.5px; transform: translateX(9px) translateY(-18px);"></div></div><div style="margin-left: 8px;"> <div style=" background-color: #F4F4F4; border-radius: 50%; flex-grow: 0; height: 20px; width: 20px;"></div> <div style=" width: 0; height: 0; border-top: 2px solid transparent; border-left: 6px solid #f4f4f4; border-bottom: 2px solid transparent; transform: translateX(16px) translateY(-4px) rotate(30deg)"></div></div><div style="margin-left: auto;"> <div style=" width: 0px; border-top: 8px solid #F4F4F4; border-right: 8px solid transparent; transform: translateY(16px);"></div> <div style=" background-color: #F4F4F4; flex-grow: 0; height: 12px; width: 16px; transform: translateY(-4px);"></div> <div style=" width: 0; height: 0; border-top: 8px solid #F4F4F4; border-left: 8px solid transparent; transform: translateY(-4px) translateX(8px);"></div></div></div> <div style="display: flex; flex-direction: column; flex-grow: 1; justify-content: center; margin-bottom: 24px;"> <div style=" background-color: #F4F4F4; border-radius: 4px; flex-grow: 0; height: 14px; margin-bottom: 6px; width: 224px;"></div> <div style=" background-color: #F4F4F4; border-radius: 4px; flex-grow: 0; height: 14px; width: 144px;"></div></div></a><p style=" color:#c9c8cd; font-family:Arial,sans-serif; font-size:14px; line-height:17px; margin-bottom:0; margin-top:8px; overflow:hidden; padding:8px 0 7px; text-align:center; text-overflow:ellipsis; white-space:nowrap;"><a href="https://www.instagram.com/reel/C8FdRHfOY1r/?utm_source=ig_embed&amp;utm_campaign=loading" style=" color:#c9c8cd; font-family:Arial,sans-serif; font-size:14px; font-style:normal; font-weight:normal; line-height:17px; text-decoration:none;" target="_blank">A post shared by Chris Stanley (@stanchris)</a></p></div></blockquote>
+                        <script async src="//www.instagram.com/embed.js"></script>';
+        }
     }    
 }
 
@@ -370,11 +396,11 @@ if (!$displayMakers) {
 
     if ($validEntry) {
         //display the normal entry public information page
-        if($formType == "Sponsor") {
+        /*if($formType == "Sponsor") {
             include get_template_directory() . '/pages/page-entry-sponsor-view.php';
-        } else {
+        } else {*/
             include get_template_directory() . '/pages/page-entry-view.php';
-        }
+        //}
         if ($makerEdit) {
             //use the edit entry public info page
             include get_template_directory() . '/pages/page-entry-edit.php';
@@ -388,6 +414,116 @@ if (!$displayMakers) {
 
 <?php
 get_footer();
+
+function entry_location($entry) {
+    global $wpdb;
+    $entry_id=$entry['id'];
+    $sql = "select location.entry_id, area.area, subarea.subarea, subarea.nicename, location.location
+            from  wp_mf_location location
+            join  wp_mf_faire_subarea subarea
+                            ON  location.subarea_id = subarea.ID
+            join wp_mf_faire_area area
+                            ON subarea.area_id = area.ID
+             where location.entry_id=" . $entry_id . " 
+             group by area, subarea, location";
+    $results = $wpdb->get_results($sql);
+    
+    $location = "";
+    // how do we handle multiple locations????
+    foreach($results as $result){
+        // so this was because there was a workshop that also had a normal location
+        if($result->subarea != "Workshop") {
+            $location = $result->nicename;
+        }
+    }
+    return $location;
+}
+
+// adapt this to only get the schedule
+function schedule_block($entry) {    
+    global $wpdb;
+    global $show_sched;  
+    global $fieldData;    
+    global $exhibit_type;
+    global $entry_shows_schedule;
+
+    //set entry id
+    $entry_id=$entry['id'];
+
+    $sql = "select location.entry_id, area.area, subarea.subarea, subarea.nicename, location.location, schedule.start_dt, schedule.end_dt
+            from  wp_mf_location location
+            join  wp_mf_faire_subarea subarea
+                            ON  location.subarea_id = subarea.ID
+            join wp_mf_faire_area area
+                            ON subarea.area_id = area.ID
+            left join wp_mf_schedule schedule
+                    on location.ID = schedule.location_id
+             where location.entry_id=$entry_id"
+            . " group by area, subarea, location, schedule.start_dt"
+            . " order by schedule.start_dt";
+    $results = $wpdb->get_results($sql);
+        
+    $schedule = '';    
+    $location = '';
+
+    $return = "<h2>" . implode(", ", $exhibit_type) . " Schedule</h2><div class='schedule-items'>";
+
+    // this object has all the schedule details for each day
+    $daysObj = new stdClass();
+
+    if ($wpdb->num_rows > 0) {              
+        foreach ($results as $row) {   
+            //schedule data     
+            if (!is_null($row->start_dt)) {
+                $start_dt = strtotime($row->start_dt);
+                $date_key = date('D-d', $start_dt);
+                if(!property_exists($daysObj, $date_key)) {
+                    $dayObj = new stdClass;
+                    $dayObj->date = date('D d Y', $start_dt);
+                    $dayObj->dow = date('D', $start_dt);
+                    $dayObj->day = date('d', $start_dt);
+                    $dayObj->location = $row->nicename;
+                    $dayObj->times[] = date('g:i a', $start_dt);
+                    // assign our dynamic object to the daysObj
+                    $daysObj->$date_key = $dayObj;
+                } else {
+                    array_push($daysObj->$date_key->times, date('g:i a', $start_dt));
+                }
+            }
+        } //end for each loop  
+        
+        foreach($daysObj as $key => $value) {
+            $time_list = '';
+            if(count($value->times) > 2) {
+                $last = array_pop($value->times);
+                $time_list = implode(', ', $value->times);
+                if ($time_list) {
+                    $time_list .= ', & ';
+                }
+                $time_list .= $last;
+            } else {
+                $time_list = implode(' & ', $value->times);
+            }
+            $return .= "<div class='schedule-item'>
+                            <div class='schedule-calendar'>
+                                <span class='schedule-dow'>" . $value->dow . "</span>
+                                <span class='schedule-day'>" . $value->day . "</span>
+                                <img src='/wp-content/themes/makerfaire/images/calendar-blank.svg' width='65' height='72' alt='" . $dayObj->date . "' title='" . $dayObj->date . "' />
+                            </div>
+                            <div class='schedule-details'>
+                            <div class='location'>" . $value->location  . "</div>
+                                <div class='schedule-start'>" . $time_list . "</div>
+                            </div>
+                        </div>";   
+        }
+
+    } //end if location data found
+
+    //var_dump($daysObj);
+
+    $return .= "</div>";
+    return $return;
+}
 
 function display_entry_schedule($entry) {    
     global $wpdb;
@@ -531,7 +667,8 @@ function display_entry_schedule($entry) {
 }
 
 function display_group($entryID) {
-    global $wpdb;    
+    global $wpdb;
+    global $groupphoto;  
     
     $return = '';
 
@@ -545,16 +682,29 @@ function display_group($entryID) {
     if ($wpdb->num_rows > 0) {
         if ($results[0]->parentID != $entryID) {            
             $type = 'child';
-            $return .= '<div class="group-list">';
+            $return .= '<section class="group-list entry-box">';
             foreach ($results as $row) {
                 $link_entryID = ($type == 'parent' ? $row->childID : $row->parentID);
                 $entry = GFAPI::get_entry($link_entryID);
                 //Title
                 $project_title = esc_html($entry['151']);
                 $project_title = preg_replace('/\v+|\\\[rn]/', '<br/>', $project_title);
-                $return .= '<span>Part of: <a href="/maker/entry/' . $link_entryID . '">' . $project_title . '</a></span>';
+                $project_photo = $entry['22'];
+                $project_bio = $entry['110'];
+                //$return .= '<span>Part of: <a href="/maker/entry/' . $link_entryID . '">' . $project_title . '</a></span>';
+                $return .= '<div class="group-wrapper">
+                                <div>
+                                   <picture>
+                                      <img src="' . legacy_get_resized_remote_image_url($project_photo, 215, 215) . '" alt="' . $project_title . '" />
+                                   </picture>
+                                </div>
+                                <div>
+                                    <h2>' . $project_title . ' Showcase Maker</h2>
+                                    <p>' . $project_bio . '</p>
+                                </div>
+                            </div>';
             }
-            return $return .= "</div>";
+            return $return .= "</section>";
         }
     }
 }
@@ -640,6 +790,7 @@ function getMakerInfoLegacy($entry) {
     $groupphoto = (isset($entry['111']) ? $entry['111'] : '');
     $groupbio = (isset($entry['110']) ? $entry['110'] : '');
     $groupsocial = getSocial(isset($entry['828']) ? $entry['828'] : '');
+    $groupwebsite = isset($entry['112']) ? $entry['112'] : '';
 
     // One maker
     // A list of makers (7 max)
@@ -700,6 +851,17 @@ function getMakerInfoLegacy($entry) {
             'social' => getSocial(isset($entry['827']) ? $entry['827'] : ''),
             'website' => (isset($entry['212']) ? $entry['212'] : '')
         );
+    // rather than have the page entry view have to do something different for groups, let's just put it at the front of the maker array
+    if($isGroup) {
+        array_unshift($makers, array(
+            'firstname' => $groupname, 'lastname' => null,
+            'bio' => $groupbio,
+            'photo' => $groupphoto,
+            'social' => $groupsocial,
+            'website' => $groupwebsite
+            )
+        );
+    }
     return $makers;
 }
 
@@ -719,7 +881,7 @@ function getSocial($entrySocial) {
 		$entrySocial = (string) $entrySocial;
 		$socialArray = (is_serialized($entrySocial)?unserialize($entrySocial):array());
 
-		$socialBlock = '<span class="social-links">';
+		$socialBlock = '<span class="social-links reversed">';
 
 		//only show the first 3 social links entered
 		foreach ($socialArray as $link) {
@@ -732,7 +894,7 @@ function getSocial($entrySocial) {
 					$platform = $link['Plateform'];
 				}
 				//$platform = (isset($link['Platform'])?$link['Platform']:isset($link['Plateform'])?$link['Plateform']:'');
-				$socialBlock .= '<a target="_blank" href="' . $link['Your Link'] . '">'.$platform.'</a>';
+				$socialBlock .= '<a target="_blank" href="' . $link['Your Link'] . '" aria-label="Share to '.$platform.'" title="Share to '.$platform.'"><span>'.$platform.'</span></a>';
 			}
 		}
 		$socialBlock .= '</span>';

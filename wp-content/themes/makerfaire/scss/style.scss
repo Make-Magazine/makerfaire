@@ -1,4 +1,11 @@
-// style.less
+// style.scss
+$color-red: 		#ea002a;
+$color-blue: 		#005E9A;
+$color-light-blue: 	#3fafed;
+$color-navy: 		#151733;
+$color-grey: 		#333;
+$color-light-grey: 	#f1f1f1;
+
 @import "global";
 @import "makerfaire-map";
 @import "yearbook-events"; //for yearbook
@@ -10,7 +17,7 @@
 @import "maker-week-page";
 @import "meet-the-makers";
 @import "navigation";
-@import "page-entry";
+@import "entry";
 @import "custom-panels";
 @import "press-center";
 @import "quora";
