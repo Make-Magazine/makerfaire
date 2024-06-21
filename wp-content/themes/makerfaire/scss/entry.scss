@@ -37,9 +37,16 @@
 				@media screen and (min-width: 800px) {
 					width: calc(40% - (1 - 2/5)*15px);
 				}
-				display: flex;
-				flex-direction: column;
-				gap: 15px;
+				.small-column-wrapper {
+					display: flex;
+					flex-direction: column;
+					gap: 15px;
+					position: sticky;
+					top: 125px;
+				}
+				.embed-youtube, .embed-vimeo {
+					margin-bottom: 0px;
+				}
 			}
 		}
 		picture {
@@ -108,8 +115,6 @@
 			align-self: stretch;
 			gap: 25px; 
 			background: #fff;
-			position: sticky;
-			top: 125px;
 			.entry-box-items {
 				.entry-box-item {
 					font-family: "Roboto Regular", Sans-serif;

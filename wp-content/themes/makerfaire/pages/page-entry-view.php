@@ -16,36 +16,38 @@
             </picture>
         </div>
         <div class="small-column">
-            <div class="entry-box">
-                <h1 class="project-title"><?php echo $project_title; ?></h1>
-                <h3 class="faireName"><a href="/<?php echo $url_sub_path; ?>"><?php echo ucwords(str_replace('-', ' ', $faire));?></a></h3>
-                <div class="entry-box-items">
-                    <?php if(isset($location) && trim($location) != '') { ?><span class="entry-box-item"><i class="fa fa-map-signs"></i><?php echo $location; ?></span><?php } ?>
-                    <?php if(isset($friday) && $friday == 1) { ?><span class="entry-box-item"><i class="fa fa-calendar"></i>Friday Only</span><?php } ?>
-                    <?php if(!empty($exhibit_type)) { ?><span class="entry-box-item"><i class="fa fa-check"></i><?php echo implode(" & ",$exhibit_type); ?></span><?php } ?>
-                    <?php if(isset($mainCategory ) && $mainCategory  != '') { ?><span class="entry-box-item"><i class="fa fa-rocket"></i><?php echo $mainCategory ; ?></span><?php } ?>
-                    <?php if(!empty($ribbons)) { ?><span class="entry-box-item"><i class="fa fa-award"></i>Ribbon Recipient</span><?php } ?>
-                </div>
-                <p class="project-description"><?php echo nl2br($project_short); ?></p>
-            </div>
-            <?php if( $entry_shows_schedule ){ ?>
+            <div class="small-column-wrapper">
                 <div class="entry-box">
-                    <?php echo schedule_block($entry); ?>
+                    <h1 class="project-title"><?php echo $project_title; ?></h1>
+                    <h3 class="faireName"><a href="/<?php echo $url_sub_path; ?>"><?php echo ucwords(str_replace('-', ' ', $faire));?></a></h3>
+                    <div class="entry-box-items">
+                        <?php if(isset($location) && trim($location) != '') { ?><span class="entry-box-item"><i class="fa fa-map-signs"></i><?php echo $location; ?></span><?php } ?>
+                        <?php if(isset($friday) && $friday == 1) { ?><span class="entry-box-item"><i class="fa fa-calendar"></i>Friday Only</span><?php } ?>
+                        <?php if(!empty($exhibit_type)) { ?><span class="entry-box-item"><i class="fa fa-check"></i><?php echo implode(" & ",$exhibit_type); ?></span><?php } ?>
+                        <?php if(isset($mainCategory ) && $mainCategory  != '') { ?><span class="entry-box-item"><i class="fa fa-rocket"></i><?php echo $mainCategory ; ?></span><?php } ?>
+                        <?php if(!empty($ribbons)) { ?><span class="entry-box-item"><i class="fa fa-award"></i>Ribbon Recipient</span><?php } ?>
+                    </div>
+                    <p class="project-description"><?php echo nl2br($project_short); ?></p>
                 </div>
-            <?php
-                  }   
-                echo $video;  //project Video
-                echo $video2; //field386
-            ?>
-            <?php if(isset($project_gallery) && !empty($project_gallery)) { ?>
-                <div id="projectGallery" class="owl-carousel">
-                <?php foreach($project_gallery as $key=>$image) { 
-                        if($image!=''){?>
-                            <div class="gallery-item"><img alt="<?php echo $project_title;?> - exhibit detail <?php echo $key;?>"  src='<?php echo legacy_get_fit_remote_image_url($image, 750, 500); ?>' /></div>
-                        <?php } ?>
+                <?php if( $entry_shows_schedule ){ ?>
+                    <div class="entry-box">
+                        <?php echo schedule_block($entry); ?>
+                    </div>
+                <?php
+                    }   
+                    echo $video;  //project Video
+                    echo $video2; //field386
+                ?>
+                <?php if(isset($project_gallery) && !empty($project_gallery)) { ?>
+                    <div id="projectGallery" class="owl-carousel">
+                    <?php foreach($project_gallery as $key=>$image) { 
+                            if($image!=''){?>
+                                <div class="gallery-item"><img alt="<?php echo $project_title;?> - exhibit detail <?php echo $key;?>"  src='<?php echo legacy_get_fit_remote_image_url($image, 750, 500); ?>' /></div>
+                            <?php } ?>
+                    <?php } ?>
+                    </div>
                 <?php } ?>
-                </div>
-            <?php } ?>
+            </div>
         </div>
     </section>
     <?php if ($dispMakerInfo) { ?>
