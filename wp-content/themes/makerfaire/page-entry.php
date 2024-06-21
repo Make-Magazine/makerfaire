@@ -52,7 +52,7 @@ if (isset($entry->errors)) {
     }    
 
     $entry_shows_schedule = false;
-    if( in_array('Workshop', $exhibit_type) || in_array('Perfomer', $exhibit_type) || in_array('Demo', $exhibit_type)  || in_array('Presenter', $exhibit_type) ) {
+    if( in_array('Workshop', $exhibit_type) || in_array('Perfomer', $exhibit_type) || in_array('Demo', $exhibit_type) || in_array('Presenter', $exhibit_type) ) {
         $entry_shows_schedule = true;
     }
 

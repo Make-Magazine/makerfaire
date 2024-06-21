@@ -92,8 +92,8 @@
     ?>
 
     <section id="bottomSection">
-        <?php if(count($makers) == 1) { 
-                $maker = current($makers); ?>
+        <?php if(count($makers) == 1 && !empty($maker['website']) && !empty($maker['social'])) { 
+            $maker = current($makers); ?>
             <div class="entry-box">
                 <h4>More Maker Info</h4>
                 <?php if(!empty($maker['website'])) { ?>
