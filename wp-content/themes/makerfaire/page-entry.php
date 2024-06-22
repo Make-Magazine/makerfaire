@@ -884,7 +884,7 @@ function getSocial($entrySocial) {
 					$platform = $link['Plateform'];
 				}
 				//$platform = (isset($link['Platform'])?$link['Platform']:isset($link['Plateform'])?$link['Plateform']:'');
-				$socialBlock .= '<a target="_blank" href="' . $link['Your Link'] . '" aria-label="Share to '.$platform.'" title="Share to '.$platform.'"><span>'.$platform.'</span></a>';
+				$socialBlock .= '<a target="_blank" href="' . $link['Your Link'] . '" aria-label="Check them out on '.$platform.'" title="Check them out on '.$platform.'"><span>'.$platform.'</span></a>';
 			}
 		}
 		$socialBlock .= '</span>';
