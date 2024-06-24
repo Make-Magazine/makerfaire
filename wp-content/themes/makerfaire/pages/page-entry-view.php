@@ -61,7 +61,7 @@
                             onerror="this.onerror=null;this.src='/wp-content/themes/makerfaire/images/makey-profile-default.png';this.srcset=''" />
                         <h3><?php echo($maker['firstname'] . " " . $maker['lastname']); ?></h3>
                         <p class="maker-description"><?php echo($maker['bio']); ?></p>
-                        <a class="maker-website" href="<?php echo($maker['website']); ?>"><?php echo($maker['website']); ?></a>
+                        <a class="maker-website" href="<?php echo($maker['website']); ?>" target="_blank"><?php echo($maker['website']); ?></a>
                         <?php echo $maker['social']; ?>
                     </div>
                 <?php }
@@ -100,7 +100,7 @@
             <div class="entry-box">
                 <h4>More Maker Info</h4>
                 <?php if(!empty($maker['website'])) { ?>
-                    <a class="maker-website" href="<?php echo($maker['website']); ?>"><?php echo($maker['website']); ?></a>
+                    <a class="maker-website" href="<?php echo($maker['website']); ?>" target="_blank"><?php echo($maker['website']); ?></a>
                 <?php } ?>  
                 <?php echo $maker['social']; ?>
             </div>
@@ -118,7 +118,7 @@
         <div class="entry-box">
                 <h4>More Project Info</h4>
                 <?php if(!empty($project_website)) { ?>
-                    <a class="maker-website" href="<?php echo($project_website); ?>"><?php echo($project_website); ?></a>
+                    <a class="maker-website" href="<?php echo($project_website); ?>" target="_blank"><?php echo($project_website); ?></a>
                 <?php } ?>  
                 <?php echo $project_social; ?>
             </div>
