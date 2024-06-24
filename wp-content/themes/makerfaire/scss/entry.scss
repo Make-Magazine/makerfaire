@@ -93,16 +93,27 @@
 				object-position: top;
 				width: 100%;
 			}
+			&.small-picture {
+				justify-content: center;
+				align-items: center;
+				img {
+					width: auto;
+				}
+			}
 		}
 		.owl-carousel {
 			.owl-stage {
 				display: flex;
 				flex-direction: column;
 				gap: 10px;
+				margin-bottom: -10px;
 				width: 100% !important;
 			}
 			.owl-item {
 				width: 100% !important;
+			}
+			.owl-dots {
+				display: none;
 			}
 		}
 		.entry-box {

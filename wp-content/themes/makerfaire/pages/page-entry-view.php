@@ -8,12 +8,22 @@
 <main class="wrapper-fluid">
     <section id="topSection">
         <div class="big-column">
-            <picture class="exhibit-picture">
-                <img srcset="<?php echo $project_photo_small; ?> 420w, <?php echo $project_photo_medium; ?> 760w,<?php echo $project_photo_large; ?> 1199w, <?php echo $project_photo_small; ?>" 
-                     sizes="(max-width: 420px) 420px, (max-width: 760px) 760px, (max-width: 1199px) 1199px, 1200px" 
-                     src="<?php echo $project_photo_small; ?>" alt="<?php echo $project_title; ?> project image" 
-                     onerror="this.onerror=null;this.src='/wp-content/themes/makerfaire/images/default-featured-image.jpg';this.srcset=''" />
-            </picture>
+            <?php if($proj_photo_size[0] > 900 ) { ?>
+                <picture class="exhibit-picture">
+                    <img srcset="<?php echo $project_photo_small; ?> 420w, <?php echo $project_photo_medium; ?> 760w,<?php echo $project_photo_large; ?> 1199w, <?php echo $project_photo_small; ?>" 
+                        sizes="(max-width: 420px) 420px, (max-width: 760px) 760px, (max-width: 1199px) 1199px, 1200px" 
+                        src="<?php echo $project_photo_small; ?>" alt="<?php echo $project_title; ?> project image" 
+                        onerror="this.onerror=null;this.src='/wp-content/themes/makerfaire/images/default-featured-image.jpg';this.srcset=''" />
+                </picture>
+            <?php } else { ?>
+                <picture class="exhibit-picture small-picture">
+                    <img class="small-image" width="<?php echo $proj_photo_size[0]; ?>" height="<?php echo $proj_photo_size[1]; ?>"
+                        srcset="<?php echo $project_photo_small; ?> 420w, <?php echo $project_photo_medium; ?> 760w, <?php echo $project_photo_small; ?>" 
+                        sizes="(max-width: 420px) 420px, (max-width: 760px) 760px, 761px" 
+                        src="<?php echo $project_photo_small; ?>" alt="<?php echo $project_title; ?> project image" 
+                        onerror="this.onerror=null;this.src='/wp-content/themes/makerfaire/images/default-featured-image.jpg';this.srcset=''" />
+                </picture>
+            <?php } ?>
         </div>
         <div class="small-column">
             <div class="small-column-wrapper">
@@ -21,8 +31,8 @@
                     <h1 class="project-title"><?php echo $project_title; ?></h1>
                     <h3 class="faireName"><a href="/<?php echo $url_sub_path; ?>"><?php echo ucwords(str_replace('-', ' ', $faire));?></a></h3>
                     <div class="entry-box-items">
-                        <?php if(isset($location) && trim($location) != '') { ?><span class="entry-box-item"><i class="fa fa-map-signs"></i><?php echo $location; ?></span><?php } ?>
-                        <?php if(isset($friday) && $friday == 1) { ?><span class="entry-box-item"><i class="fa fa-calendar"></i>Friday Only</span><?php } ?>
+                        <?php if(isset($location) && trim($location) != '' && count(array_intersect($exhibit_type, array("Exhibit", "Sponsor", "Startup Sponsor"))) > 0) { ?><span class="entry-box-item"><i class="fa fa-map-signs"></i><?php echo $location; ?></span><?php } ?>
+                        <?php if(isset($friday) && $friday == 1 && count(array_intersect($exhibit_type, array("Exhibit", "Sponsor", "Startup Sponsor"))) > 0) { ?><span class="entry-box-item"><i class="fa fa-calendar"></i>Friday Only</span><?php } ?>
                         <?php if(!empty($exhibit_type)) { ?><span class="entry-box-item"><i class="fa fa-check"></i><?php echo implode(" & ",$exhibit_type); ?></span><?php } ?>
                         <?php if(isset($mainCategory ) && $mainCategory  != '') { ?><span class="entry-box-item"><i class="fa fa-rocket"></i><?php echo $mainCategory ; ?></span><?php } ?>
                         <?php if(!empty($ribbons)) { ?><span class="entry-box-item"><i class="fa fa-award"></i>Ribbon Recipient</span><?php } ?>
@@ -76,7 +86,7 @@
                             sizes="(max-width: 420px) 420px, (max-width: 760px) 760px, 1200px" 
                             src="<?php echo $large_photo ?>" 
                             alt="<?php echo $maker['firstname'].' '.$maker['lastname']; ?>"
-                            onerror="this.onerror=null;this.src='/wp-content/themes/makerfaire/images/default-makey-large.jpg';this.srcset=''" />
+                            onerror="this.onerror=null;this.src='/wp-content/themes/makerfaire/images/default-makey-large.png';this.srcset=''" />
                     </picture>
                 </div>
                 <div class="big-column">

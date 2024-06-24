@@ -37,9 +37,8 @@ if (isset($entry->errors)) {
     //check exhibit type (formerly known as form type)
     $exhibit_type = array();
     $formType = $form['form_type'];
-    if ($formType == "Sponsor") {
-        $sponsorshipLevel = (isset($entry["442.3"])?$entry["442.3"]:'');
-    }elseif ($formType == "Master") {                    
+
+    if ($formType == "Master") {                    
         foreach ($entry as $key => $value) {
             if (strpos($key, '339.') === 0) {         
                 if($value!='') $exhibit_type[$key] = $value;       
@@ -49,7 +48,12 @@ if (isset($entry->errors)) {
                 }                                             
             }          
         }        
-    }    
+    } else { // otherwise the exhibit type is just the form type
+        $exhibit_type[] = $formType;
+        if ($formType == "Sponsor") {
+            $sponsorshipLevel = (isset($entry["442.3"])?$entry["442.3"]:'');
+        }
+    }
 
     //build an array of field information for updating fields
     foreach ($form['fields'] as $field) {
@@ -146,6 +150,10 @@ if (isset($entry->errors)) {
     if($project_photo=='' && is_array($project_gallery)){
         $project_photo = $project_gallery[0];
     }
+    // check if project photo is too small to treat normally
+    $proj_photo_size = getimagesize( $project_photo );
+
+    // here is where we would want to check the size of the image
     $project_photo_large  = legacy_get_resized_remote_image_url($project_photo, 1050, 700);
     $project_photo_medium = legacy_get_resized_remote_image_url($project_photo, 765, 510);
     $project_photo_small  = legacy_get_resized_remote_image_url($project_photo, 420, 280);
@@ -442,6 +450,7 @@ function entry_location($entry) {
 function schedule_block($entry) {    
     global $wpdb; 
     global $exhibit_type;
+    global $location;
 
     //set entry id
     $entry_id=$entry['id'];
@@ -482,6 +491,9 @@ function schedule_block($entry) {
                 } else {
                     array_push($daysObj->$date_key->times, date('g:i a', $start_dt));
                 }
+            } else {
+                //set primary location
+                $location = $row->area . ' - ' . ($row->nicename != '' ? $row->nicename : $row->subarea);
             }
         } //end for each loop  
         
@@ -577,7 +589,7 @@ function display_entry_schedule($entry) {
         //split the results into base location and schedule        
         foreach ($results as $row) {       
             //schedule data     
-            if (!is_null($row->start_dt)) {
+            if (!is_null($row->start_dt)) { // if there is no start date, it's a base location
                 $start_dt = strtotime($row->start_dt);
                 $end_dt   = strtotime($row->end_dt);
                 $current_start_dt = date("l, F j", $start_dt);
