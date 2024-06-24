@@ -105,6 +105,10 @@ if (isset($entry->errors)) {
             }
         }
     }
+    // if main category is not set, grab the first category that is
+    if($mainCategory == '') {
+        $mainCategory = $categories[0];
+    }
     
     $categoryDisplay = (!empty($categories)?display_categories($categories):'');
 
