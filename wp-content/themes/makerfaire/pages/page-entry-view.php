@@ -10,7 +10,7 @@
         <div class="big-column">
             <?php if($proj_photo_size[0] > 900 ) { ?>
                 <picture class="exhibit-picture">
-                    <img srcset="<?php echo $project_photo_small; ?> 420w, <?php echo $project_photo_medium; ?> 760w,<?php echo $project_photo_large; ?> 1199w, <?php echo $project_photo_small; ?>" 
+                    <img srcset="<?php echo $project_photo_small; ?> 420w, <?php echo $project_photo_medium; ?> 760w, <?php echo $project_photo_large; ?> 1199w" 
                         sizes="(max-width: 420px) 420px, (max-width: 760px) 760px, (max-width: 1199px) 1199px, 1200px" 
                         src="<?php echo $project_photo_small; ?>" alt="<?php echo $project_title; ?> project image" 
                         onerror="this.onerror=null;this.src='/wp-content/themes/makerfaire/images/default-featured-image.jpg';this.srcset=''" />
@@ -18,7 +18,7 @@
             <?php } else { ?>
                 <picture class="exhibit-picture small-picture">
                     <img class="small-image" width="<?php echo $proj_photo_size[0]; ?>" height="<?php echo $proj_photo_size[1]; ?>"
-                        srcset="<?php echo $project_photo_small; ?> 420w, <?php echo $project_photo_medium; ?> 760w, <?php echo $project_photo_small; ?>" 
+                        srcset="<?php echo $project_photo_small; ?> 420w, <?php echo $project_photo_medium; ?> 760w" 
                         sizes="(max-width: 420px) 420px, (max-width: 760px) 760px, 761px" 
                         src="<?php echo $project_photo_small; ?>" alt="<?php echo $project_title; ?> project image" 
                         onerror="this.onerror=null;this.src='/wp-content/themes/makerfaire/images/default-featured-image.jpg';this.srcset=''" />
