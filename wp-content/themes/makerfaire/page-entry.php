@@ -106,7 +106,7 @@ if (isset($entry->errors)) {
         }
     }
     // if main category is not set, grab the first category that is
-    if($mainCategory == '') {
+    if($mainCategory == '' && isset($categories[0])) {
         $mainCategory = $categories[0];
     }
     
@@ -405,7 +405,7 @@ if (!$displayMakers) {
             include get_template_directory() . '/pages/page-entry-edit.php';
         }
     } else { //entry is not active
-        echo '<div class="container"><h2>Invalid entry</h2></div>';
+        echo '<div class="container invalid"><h2>Invalid entry</h2></div>';
         echo '<div class="entry-footer">' . displayEntryFooter() . '</div>';
     }
     ?>
@@ -509,12 +509,17 @@ function schedule_block($entry) {
                             </div>
                         </div>";   
         }
-
-    } //end if location data found
-
+        $return .= "</div>";
+    } else { //end if location data found 
+        // otherwise don't return anything
+        $return = "";
+    }
+    // also, if the schedule object is empty, don't show the block
+    if(empty((array) $daysObj)) {
+        $return = "";
+    }
     //var_dump($daysObj);
 
-    $return .= "</div>";
     return $return;
 }
 

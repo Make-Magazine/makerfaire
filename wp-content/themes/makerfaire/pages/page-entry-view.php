@@ -58,7 +58,7 @@
                     <div class='entry-box'>
                         <img src='<?php echo(legacy_get_resized_remote_image_url($maker['photo'], 300, 300)); ?>' 
                             alt='<?php echo $maker['firstname'].' '.$maker['lastname']; ?>'
-                            onerror="this.onerror=null;this.src='/wp-content/themes/makerfaire/images/makey-profile-default.png';this.srcset=''" />
+                            onerror="this.onerror=null;this.src='/wp-content/themes/makerfaire/images/default-makey-large.jpg';this.srcset=''" />
                         <h3><?php echo($maker['firstname'] . " " . $maker['lastname']); ?></h3>
                         <p class="maker-description"><?php echo($maker['bio']); ?></p>
                         <a class="maker-website" href="<?php echo($maker['website']); ?>" target="_blank"><?php echo($maker['website']); ?></a>

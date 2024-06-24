@@ -268,3 +268,89 @@
 	}
 }
 
+.dialog-nav-btn {
+	position: absolute;
+	top: 50%;
+	background: rgba(255, 255, 255, .8);
+	border: none;
+	border-radius: 50px;
+	width: 50px;
+	height: 50px;
+	font-size: 32px;
+	font-weight: bold;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	&:before {
+		font-family: FontAwesome;
+	}
+}
+.dialog-nav-btn.dialog-prev-btn {
+	left: -10px;
+	&:before {
+		content: "\f100";
+	}
+}
+.dialog-nav-btn.dialog-next-btn {
+	right: -10px;
+	&:before {
+		content: "\f101";
+	}
+}
+
+// Invalid page
+.invalid h2 {
+	color: #333 !important;
+  	margin: 30px auto !important;
+}
+
+// the little blue footer
+.entry-footer {
+	background: #D0EAFC;
+	height: 111px;
+	.faireActions {
+		display: flex;
+	    justify-content: center;
+		align-items: center;
+		height: 100%;
+		flex-wrap: nowrap;
+		.faireAction-box {
+			min-width: 25%;
+			justify-content: center;
+			align-items: center;
+			border-left: solid 1px #979797;
+			padding: 10px 30px;
+			&:first-of-type {
+				border-left: none;
+			}
+			a {
+				width: 100%;
+				h4 {
+					font-size: 16px;
+					color: #fff;
+				}
+			}
+		}
+	}
+	@media screen and (min-width: 768px) and (max-width: 987px) {
+		.faireActions {
+			.faireAction-box {
+				padding: 10px 15px;
+				&:first-of-type { padding-left: 0px; }
+				&:last-of-type { padding-right: 0px; }
+			}
+		}
+	}
+	@media screen and (max-width: 767px) {
+		height: 100%;
+		.faireActions {
+			flex-direction: column;
+			.faireAction-box { 
+				width: 100%;
+				border: none; 
+				padding: 20px 0px 0px;
+				&:last-of-type { padding-bottom: 20px; }
+			}
+		}
+	}
+}
