@@ -46,7 +46,7 @@ if (isset($entry->errors)) {
                     $formType = "Sponsor";
                     $sponsorshipLevel = $value;                    
                 }                                             
-            }          
+            }    
         }        
     } else { // otherwise the exhibit type is just the form type
         $exhibit_type[] = $formType;
@@ -54,7 +54,7 @@ if (isset($entry->errors)) {
             $sponsorshipLevel = (isset($entry["442.3"])?$entry["442.3"]:'');
         }
     }
-
+    
     //build an array of field information for updating fields
     foreach ($form['fields'] as $field) {
         $fieldID = $field->id;
@@ -151,7 +151,7 @@ if (isset($entry->errors)) {
         $project_photo = $project_gallery[0];
     }
     // check if project photo is too small to treat normally
-    $proj_photo_size = getimagesize( $project_photo );
+    $proj_photo_size = !empty($project_photo) ? getimagesize( $project_photo ) : array(750, 500);;
 
     // here is where we would want to check the size of the image
     $project_photo_large  = legacy_get_resized_remote_image_url($project_photo, 1050, 700);
@@ -282,6 +282,11 @@ if (is_array($entry) && !empty($entry)) { //is this a valid entry?
             $validEntry = true; //display the entry
         }
     }
+    // is this a show management or not sure in exhibit type?
+    if( isset($exhibit_type['339.6']) || isset($exhibit_type['339.8']) ) {
+        $validEntry = false;
+    }
+
 }
 
 //check flags
@@ -468,7 +473,7 @@ function schedule_block($entry) {
             . " order by schedule.start_dt";
     $results = $wpdb->get_results($sql);
 
-    $return = "<h2>" . implode(", ", $exhibit_type) . " Schedule</h2><div class='schedule-items'>";
+    $return = "<h2>Schedule</h2><div class='schedule-items'>";
 
     // this object has all the schedule details for each day
     $daysObj = new stdClass();

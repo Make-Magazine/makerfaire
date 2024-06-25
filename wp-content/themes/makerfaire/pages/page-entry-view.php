@@ -74,11 +74,12 @@
                         <a class="maker-website" href="<?php echo($maker['website']); ?>" target="_blank"><?php echo($maker['website']); ?></a>
                         <?php echo $maker['social']; ?>
                     </div>
-                <?php }
-            } else if( $makers && $makers[0]['firstname'] != '' && $makers[0]['photo'] != '' ) { 
+                <?php } 
+            } else if( $makers  ) { 
                 $maker = current($makers);
                 $small_photo = isset($maker['photo']) ? legacy_get_resized_remote_image_url($maker['photo'], 400, 400) : "";
-                $large_photo = isset($maker['photo']) ? legacy_get_resized_remote_image_url($maker['photo'], 400, 400) : "";
+                $large_photo = isset($maker['photo']) ? legacy_get_resized_remote_image_url($maker['photo'], 760, 760) : "";
+                if($maker['firstname'] != '' || $maker['photo'] != '') {
             ?>
                 <div class="small-column">
                     <picture>
@@ -93,7 +94,8 @@
                     <h2><?php echo($maker['firstname'] . " " . $maker['lastname']); ?></h2>
                     <p class="maker-description"><?php echo($maker['bio']); ?>
                 </div>
-            <?php } ?>              
+            <?php }
+            } ?>              
         </section>
     <?php } ?>  
 
