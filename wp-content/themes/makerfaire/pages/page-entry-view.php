@@ -75,7 +75,7 @@
                         <?php echo $maker['social']; ?>
                     </div>
                 <?php }
-            } else if($makers) { 
+            } else if( $makers && $makers[0]['firstname'] != '' && $makers[0]['photo'] != '' ) { 
                 $maker = current($makers);
                 $small_photo = isset($maker['photo']) ? legacy_get_resized_remote_image_url($maker['photo'], 400, 400) : "";
                 $large_photo = isset($maker['photo']) ? legacy_get_resized_remote_image_url($maker['photo'], 400, 400) : "";
