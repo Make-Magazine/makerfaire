@@ -39,10 +39,10 @@
                     </div>
                     <p class="project-description"><?php echo nl2br($project_short); ?></p>
                 </div>
-                <?php $scheduleBlock = display_entry_schedule($entry); 
-                if( $scheduleBlock != '' && $show_sched ) { ?>
+                <?php
+                if( $scheduleOutput != '' && $show_sched ) { ?>
                     <div class="entry-box">
-                        <?php echo $scheduleBlock; ?>
+                        <?php echo $scheduleOutput; ?>
                     </div>
                 <?php
                     }   

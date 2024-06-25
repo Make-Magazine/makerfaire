@@ -187,7 +187,8 @@ if (isset($entry->errors)) {
     }
 
     $friday = (isset($entry['879.3']) && !empty($entry['879.3'])  ? 1 : 0); // is it on friday
-    $location = entry_location($entry);
+    $location = "";
+    $scheduleOutput = display_entry_schedule($entry);
 
     $project_website = (isset($entry['27']) ? $entry['27'] : '');  //Website
     $project_social = getSocial(isset($entry['906']) ? $entry['906'] : '');
@@ -427,35 +428,10 @@ if (!$displayMakers) {
 <?php
 get_footer();
 
-function entry_location($entry) {
-    global $wpdb;
-    $entry_id=$entry['id'];
-    $sql = "select location.entry_id, area.area, subarea.subarea, subarea.nicename, location.location
-            from  wp_mf_location location
-            join  wp_mf_faire_subarea subarea
-                            ON  location.subarea_id = subarea.ID
-            join wp_mf_faire_area area
-                            ON subarea.area_id = area.ID
-             where location.entry_id=" . $entry_id . " 
-             group by area, subarea, location";
-    $results = $wpdb->get_results($sql);
-    
-    $location = "";
-    // how do we handle multiple locations????
-    foreach($results as $result){
-        // so this was because there was a workshop that also had a normal location
-        if($result->subarea != "Workshop") {
-            $location = $result->nicename;
-        }
-    }
-    return $location;
-}
-
 // this eachs data and spits out schedule blocks
 function display_entry_schedule($entry) {    
     global $wpdb;
-    global $show_sched;
-    global $fieldData;    
+    global $show_sched; 
     global $location;
 
     //set entry id
@@ -472,18 +448,16 @@ function display_entry_schedule($entry) {
              where location.entry_id=$entry_id"
             . " group by area, subarea, location, schedule.start_dt"
             . " order by schedule.start_dt";
-    $results = $wpdb->get_results($sql);
-        
-    $schedule = '<div class="schedule-items">';    
-    $location = '';
+    $results = $wpdb->get_results($sql);  
 
     if ($wpdb->num_rows > 0) {           
         $prev_start_dt = NULL;
         $prev_location = NULL;
         $multipleLocations = NULL;
+        $schedule = '<div class="schedule-items">';  
 
         //split the results into base location and schedule        
-        foreach ($results as $row) {       
+        foreach ($results as $row) {      
             //schedule data     
             if (!is_null($row->start_dt)) { // if there is no start date, it's a base location
                 $start_dt = strtotime($row->start_dt);
@@ -533,7 +507,9 @@ function display_entry_schedule($entry) {
             } else {
                 //base location at faire
                 //set primary location
-                $location = $row->area . ' - ' . ($row->nicename != '' ? $row->nicename : $row->subarea);                             
+                if(empty($location) || $location == "") {
+                    $location = ($row->nicename != '' ? $row->nicename : $row->subarea);       
+                }                   
             }
         } //end for each loop       
         if ($multipleLocations == TRUE) { // this is kind of a mess to require this
@@ -549,6 +525,12 @@ function display_entry_schedule($entry) {
         $return .=  '<h4>Schedule</h4>'
                         . $schedule;        
     }
+
+    // if there is only one result and the there is no start time for it, there is no schedule and we don't want to show this block
+    if(is_null($results[0]->start_dt) && $wpdb->num_rows == 1) {
+        $return = "";  
+    }
+
         
     return $return;
 }
