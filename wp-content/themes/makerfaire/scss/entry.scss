@@ -281,10 +281,12 @@
 				display: block;
 				clear: both;
 			}
-			.schedule-start:not(:last-of-type) {
+			.schedule-start {
 				float: left;
-				margin-right: 5px;
-				&:after {
+			}
+			.schedule-start + .schedule-start {
+				margin-left: 5px;
+				&:before {
 					content: " & ";
 				}
 			}
