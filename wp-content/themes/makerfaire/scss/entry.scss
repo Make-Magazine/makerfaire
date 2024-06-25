@@ -173,6 +173,10 @@
 			}
 			.entry-box {
 				max-width: 330px;
+				min-width: 330px;
+				.maker-website {
+					margin-top: auto;
+				}
 				p { 
 					font-size: 18px;
 					color: #333;

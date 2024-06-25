@@ -67,8 +67,8 @@
                 foreach($makers as $maker) { ?>
                     <div class='entry-box'>
                         <img src='<?php echo(legacy_get_resized_remote_image_url($maker['photo'], 300, 300)); ?>' 
-                            alt='<?php echo $maker['firstname'].' '.$maker['lastname']; ?>'
-                            onerror="this.onerror=null;this.src='/wp-content/themes/makerfaire/images/makey-profile-default.png';this.srcset=''" />
+                            alt='<?php echo $maker['firstname'].' '.$maker['lastname']; ?> Maker Picture'
+                            onerror="this.onerror=null;this.src='/wp-content/themes/makerfaire/images/default-makey-medium.png';this.srcset=''" />
                         <h3><?php echo($maker['firstname'] . " " . $maker['lastname']); ?></h3>
                         <p class="maker-description"><?php echo($maker['bio']); ?></p>
                         <a class="maker-website" href="<?php echo($maker['website']); ?>" target="_blank"><?php echo($maker['website']); ?></a>
@@ -85,7 +85,7 @@
                         <img srcset="<?php echo $small_photo; ?> 420w, <?php echo $large_photo; ?> 760w, <?php echo $large_photo; ?>" 
                             sizes="(max-width: 420px) 420px, (max-width: 760px) 760px, 1200px" 
                             src="<?php echo $large_photo ?>" 
-                            alt="<?php echo $maker['firstname'].' '.$maker['lastname']; ?>"
+                            alt="<?php echo $maker['firstname'].' '.$maker['lastname']; ?> Maker Picture"
                             onerror="this.onerror=null;this.src='/wp-content/themes/makerfaire/images/default-makey-large.png';this.srcset=''" />
                     </picture>
                 </div>
@@ -125,13 +125,15 @@
                 <span class="entry-box-item"><i class="fa fa-tools"></i><a href="/<?php echo $url_sub_path; ?>/meet-the-makers/">See All Makers</a></span>
             </div>
         </div>
-        <div class="entry-box">
+        <?php if(!empty($project_website) && !empty($project_social)) { ?>
+            <div class="entry-box">
                 <h4>More Project Info</h4>
                 <?php if(!empty($project_website)) { ?>
                     <a class="maker-website" href="<?php echo($project_website); ?>" target="_blank"><?php echo($project_website); ?></a>
                 <?php } ?>  
                 <?php echo $project_social; ?>
             </div>
+        <?php } ?>  
     </section>
 
     <section id="sponsorSection">
