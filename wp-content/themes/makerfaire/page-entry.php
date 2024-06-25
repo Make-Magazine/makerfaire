@@ -450,11 +450,13 @@ function display_entry_schedule($entry) {
             . " order by schedule.start_dt";
     $results = $wpdb->get_results($sql);  
 
+    $schedule = "";
+
     if ($wpdb->num_rows > 0) {           
         $prev_start_dt = NULL;
         $prev_location = NULL;
         $multipleLocations = NULL;
-        $schedule = '<div class="schedule-items">';  
+        $schedule = '<div class="schedule-items">'; 
 
         //split the results into base location and schedule        
         foreach ($results as $row) {      
@@ -462,9 +464,9 @@ function display_entry_schedule($entry) {
             if (!is_null($row->start_dt)) { // if there is no start date, it's a base location
                 $start_dt = strtotime($row->start_dt);
                 $current_start_dt = date("l, F j", $start_dt);
-                $date = date('D d Y', $start_dt);
+                $date = date('D j Y', $start_dt);
                 $dow = date('D', $start_dt);
-                $day = date('d', $start_dt);
+                $day = date('j', $start_dt);
                 $current_location = ($row->nicename != '' ? $row->nicename : $row->subarea);
 
                 if ($prev_start_dt == NULL) {
@@ -515,9 +517,8 @@ function display_entry_schedule($entry) {
         if ($multipleLocations == TRUE) { // this is kind of a mess to require this
             $schedule .= "</div></div>";
         }
+        $schedule .= "</div>";
     } //end if location data found
-
-    $schedule .= "</div>";
 
     $return = '';
     
@@ -526,10 +527,6 @@ function display_entry_schedule($entry) {
                         . $schedule;        
     }
 
-    // if there is only one result and the there is no start time for it, there is no schedule and we don't want to show this block
-    if(is_null($results[0]->start_dt) && $wpdb->num_rows == 1) {
-        $return = "";  
-    }
 
         
     return $return;

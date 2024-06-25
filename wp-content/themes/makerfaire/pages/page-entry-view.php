@@ -15,12 +15,16 @@
                         src="<?php echo $project_photo_small; ?>" alt="<?php echo $project_title; ?> project image" 
                         onerror="this.onerror=null;this.src='/wp-content/themes/makerfaire/images/default-featured-image.jpg';this.srcset=''" />
                 </picture>
-            <?php } else { ?>
+            <?php } else if($proj_photo_size[0] > 420 ) { ?>
                 <picture class="exhibit-picture small-picture">
-                    <img class="small-image" width="<?php echo $proj_photo_size[0]; ?>" height="<?php echo $proj_photo_size[1]; ?>"
-                        srcset="<?php echo $project_photo_small; ?> 420w, <?php echo $project_photo_medium; ?> 760w" 
+                    <img srcset="<?php echo $project_photo_small; ?> 420w, <?php echo $project_photo_medium; ?> 760w" 
                         sizes="(max-width: 420px) 420px, (max-width: 760px) 760px, 761px" 
                         src="<?php echo $project_photo_small; ?>" alt="<?php echo $project_title; ?> project image" 
+                        onerror="this.onerror=null;this.src='/wp-content/themes/makerfaire/images/default-featured-image.jpg';this.srcset=''" />
+                </picture>
+            <?php } else { ?>
+                <picture class="exhibit-picture small-picture">
+                    <img src="<?php echo $project_photo_small; ?>" alt="<?php echo $project_title; ?> project image" 
                         onerror="this.onerror=null;this.src='/wp-content/themes/makerfaire/images/default-featured-image.jpg';this.srcset=''" />
                 </picture>
             <?php } ?>

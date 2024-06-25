@@ -215,11 +215,16 @@
 			justify-content: center;
 		}
 		#bottomSection {
+			justify-content: space-around;
 			.entry-box {
 				background: #1F1A2C;
 				border-color: #fff;
 				flex: 1;
 				min-width: 300px;
+				max-width: 45%;
+				.entry-box-items {
+					margin-top: -15px;
+				}
 				h4 {
 					color: #9BDAF5;
 				}
