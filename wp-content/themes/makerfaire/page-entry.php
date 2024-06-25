@@ -451,10 +451,11 @@ function entry_location($entry) {
     return $location;
 }
 
-// adapt this to only get the schedule
-function schedule_block($entry) {    
-    global $wpdb; 
-    global $exhibit_type;
+// this eachs data and spits out schedule blocks
+function display_entry_schedule($entry) {    
+    global $wpdb;
+    global $show_sched;
+    global $fieldData;    
     global $location;
 
     //set entry id
@@ -472,71 +473,83 @@ function schedule_block($entry) {
             . " group by area, subarea, location, schedule.start_dt"
             . " order by schedule.start_dt";
     $results = $wpdb->get_results($sql);
-
-    $return = "<h2>Schedule</h2><div class='schedule-items'>";
-
-    // this object has all the schedule details for each day
-    $daysObj = new stdClass();
-
-    if ($wpdb->num_rows > 0) {              
-        foreach ($results as $row) {   
-            //schedule data     
-            if (!is_null($row->start_dt)) {
-                $start_dt = strtotime($row->start_dt);
-                $date_key = date('D-d', $start_dt);
-                if(!property_exists($daysObj, $date_key)) {
-                    $dayObj = new stdClass;
-                    $dayObj->date = date('D d Y', $start_dt);
-                    $dayObj->dow = date('D', $start_dt);
-                    $dayObj->day = date('d', $start_dt);
-                    $dayObj->location = $row->nicename;
-                    $dayObj->times[] = date('g:i a', $start_dt);
-                    // assign our dynamic object to the daysObj
-                    $daysObj->$date_key = $dayObj;
-                } else {
-                    array_push($daysObj->$date_key->times, date('g:i a', $start_dt));
-                }
-            } else {
-                //set primary location
-                $location = $row->area . ' - ' . ($row->nicename != '' ? $row->nicename : $row->subarea);
-            }
-        } //end for each loop  
         
-        foreach($daysObj as $key => $value) {
-            $time_list = '';
-            if(count($value->times) > 2) {
-                $last = array_pop($value->times);
-                $time_list = implode(', ', $value->times);
-                if ($time_list) {
-                    $time_list .= ', & ';
-                }
-                $time_list .= $last;
-            } else {
-                $time_list = implode(' & ', $value->times);
-            }
-            $return .= "<div class='schedule-item'>
-                            <div class='schedule-calendar'>
-                                <span class='schedule-dow'>" . $value->dow . "</span>
-                                <span class='schedule-day'>" . $value->day . "</span>
-                                <img src='/wp-content/themes/makerfaire/images/calendar-blank.svg' width='65' height='72' alt='" . $dayObj->date . "' title='" . $dayObj->date . "' />
-                            </div>
-                            <div class='schedule-details'>
-                            <div class='location'>" . $value->location  . "</div>
-                                <div class='schedule-start'>" . $time_list . "</div>
-                            </div>
-                        </div>";   
-        }
-        $return .= "</div>";
-    } else { //end if location data found 
-        // otherwise don't return anything
-        $return = "";
-    }
-    // also, if the schedule object is empty, don't show the block
-    if(empty((array) $daysObj)) {
-        $return = "";
-    }
-    //var_dump($daysObj);
+    $schedule = '<div class="schedule-items">';    
+    $location = '';
 
+    if ($wpdb->num_rows > 0) {           
+        $prev_start_dt = NULL;
+        $prev_location = NULL;
+        $multipleLocations = NULL;
+
+        //split the results into base location and schedule        
+        foreach ($results as $row) {       
+            //schedule data     
+            if (!is_null($row->start_dt)) { // if there is no start date, it's a base location
+                $start_dt = strtotime($row->start_dt);
+                $current_start_dt = date("l, F j", $start_dt);
+                $date = date('D d Y', $start_dt);
+                $dow = date('D', $start_dt);
+                $day = date('d', $start_dt);
+                $current_location = ($row->nicename != '' ? $row->nicename : $row->subarea);
+
+                if ($prev_start_dt == NULL) {
+                    $schedule .= "<div class='schedule-item'>
+                                    <div class='schedule-calendar'>
+                                        <span class='schedule-dow'>" . $dow . "</span>
+                                        <span class='schedule-day'>" . $day . "</span>
+                                        <img src='/wp-content/themes/makerfaire/images/calendar-blank.svg' width='65' height='72' alt='" . $date . "' title='" . $date . "' />
+                                    </div>
+                                    <div class='schedule-details'>";
+                }
+
+                if ($prev_start_dt != $current_start_dt) {
+                    //This is not the first new date
+                    if ($prev_start_dt != NULL) {
+                        $schedule .= '</div></div>    
+                                      <div class="schedule-item">
+                                        <div class="schedule-calendar">
+                                            <span class="schedule-dow">' . $dow . '</span>
+                                            <span class="schedule-day">' . $day . '</span>
+                                            <img src="/wp-content/themes/makerfaire/images/calendar-blank.svg" width="65" height="72" alt="' . $date . '" title=""'. $date . '" />
+                                        </div>
+                                        <div class="schedule-details">';
+                    }
+                    $prev_start_dt = $current_start_dt;
+                    $prev_location = null;
+                    $multipleLocations = TRUE;
+                }
+
+                // this is a new location
+                if ($prev_location != $current_location) {
+                    $prev_location = $current_location;
+                    $schedule .= '<b class="location">' . $current_location . '</b>';
+                }
+                $schedule .= '<div class="schedule-start">' . date("g:i a", $start_dt) . '</div>';
+                if($row->location!=''){
+                    $schedule .= $row->location;
+                }
+
+            } else {
+                //base location at faire
+                //set primary location
+                $location = $row->area . ' - ' . ($row->nicename != '' ? $row->nicename : $row->subarea);                             
+            }
+        } //end for each loop       
+        if ($multipleLocations == TRUE) { // this is kind of a mess to require this
+            $schedule .= "</div></div>";
+        }
+    } //end if location data found
+
+    $schedule .= "</div>";
+
+    $return = '';
+    
+    if ($show_sched && $schedule!='') {
+        $return .=  '<h4>Schedule</h4>'
+                        . $schedule;        
+    }
+        
     return $return;
 }
 

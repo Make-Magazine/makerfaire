@@ -152,6 +152,7 @@
 		.maker-website {
 			font-size: 23px;
 			overflow: hidden;
+			white-space: nowrap;
 			-webkit-mask-image: linear-gradient(90deg, #fff 85%, transparent);
 		}
 		#makerInfo {
@@ -159,6 +160,7 @@
 			margin: 0 -15px;
 			padding: 15px;
 			display: flex;
+			gap: 40px;
 			&:not(.makers-1) {
 				justify-content: center;
 				align-items: center;
@@ -271,10 +273,22 @@
 			}
 		}
 		.schedule-details {
+			width: 100%;
 			.location {
 				font-family: 'Roboto Bold';
 				margin-top: 5px;
+				width: 100%;
+				display: block;
+				clear: both;
 			}
+			.schedule-start:not(:last-of-type) {
+				float: left;
+				margin-right: 5px;
+				&:after {
+					content: " & ";
+				}
+			}
+			
 		}
 		&:nth-of-type(even) {
 			img { filter: invert(48%) sepia(55%) saturate(569%) hue-rotate(153deg) brightness(94%) contrast(95%); }

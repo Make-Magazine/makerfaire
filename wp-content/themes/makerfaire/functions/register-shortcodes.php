@@ -316,7 +316,7 @@ function createSponsSlide($atts) {
                       </div>
                       <div class="col-sm-5">
                         <h5><a href="/sponsors">Become a sponsor</a></h5>
-                        <h5><a href="<?php echo $url;?>">All sponsors</a></h5>
+                        <h5><a href="' . $url .'">All sponsors</a></h5>
                       </div>
                     </div> <!-- end .row -->
                     <div class="row">
