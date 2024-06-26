@@ -284,7 +284,7 @@ if (is_array($entry) && !empty($entry)) { //is this a valid entry?
         }
     }
     // is this a show management or not sure in exhibit type?
-    if( isset($exhibit_type['339.6']) || isset($exhibit_type['339.8']) ) {
+    if( isset($exhibit_type['339.6']) || in_array('Show Management', $exhibit_type) || isset($exhibit_type['339.8']) ) {
         $validEntry = false;
     }
 
@@ -451,6 +451,7 @@ function display_entry_schedule($entry) {
     $results = $wpdb->get_results($sql);  
 
     $schedule = "";
+    $has_schedule = true;     
 
     if ($wpdb->num_rows > 0) {           
         $prev_start_dt = NULL;
@@ -511,7 +512,9 @@ function display_entry_schedule($entry) {
                 //set primary location
                 if(empty($location) || $location == "") {
                     $location = ($row->nicename != '' ? $row->nicename : $row->subarea);       
-                }                   
+                }    
+                // if there are no start dates, it doesn't have a schedule  
+                $has_schedule = false;             
             }
         } //end for each loop       
         if ($multipleLocations == TRUE) { // this is kind of a mess to require this
@@ -522,7 +525,7 @@ function display_entry_schedule($entry) {
 
     $return = '';
     
-    if ($show_sched && $schedule!='') {
+    if ($show_sched && $has_schedule) {
         $return .=  '<h4>Schedule</h4>'
                         . $schedule;        
     }
@@ -717,16 +720,15 @@ function getMakerInfoLegacy($entry) {
             'social' => getSocial(isset($entry['827']) ? $entry['827'] : ''),
             'website' => (isset($entry['212']) ? $entry['212'] : '')
         );
-    // rather than have the page entry view have to do something different for groups, let's just put it at the front of the maker array
+    // rather than have the page entry view have to do something different for groups, let's just replace all makers with the group
     if($isGroup) {
-        array_unshift($makers, array(
+        $makers = array(array(
             'firstname' => $groupname, 'lastname' => null,
             'bio' => $groupbio,
             'photo' => $groupphoto,
             'social' => $groupsocial,
             'website' => $groupwebsite
-            )
-        );
+            ));
     }
     return $makers;
 }
