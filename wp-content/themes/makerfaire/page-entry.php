@@ -141,10 +141,10 @@ if (isset($entry->errors)) {
     // check if project photo is too small to treat normally
     $proj_photo_size = !empty($project_photo) ? getimagesize( $project_photo ) : array(750, 500);;
 
-    // here is where we would want to check the size of the image
-    $project_photo_large  = legacy_get_resized_remote_image_url($project_photo, 1050, 700);
-    $project_photo_medium = legacy_get_resized_remote_image_url($project_photo, 765, 510);
-    $project_photo_small  = legacy_get_resized_remote_image_url($project_photo, 420, 280);
+    // these are the images we're using for the img src-set. by setting the height to 0, it won't crop
+    $project_photo_large  = legacy_get_resized_remote_image_url($project_photo, 1050, 0);
+    $project_photo_medium = legacy_get_resized_remote_image_url($project_photo, 765, 0);
+    $project_photo_small  = legacy_get_resized_remote_image_url($project_photo, 420, 0);
         
     $project_short = (isset($entry['16']) ? $entry['16'] : '');    // Description
     $presentation_title  = (isset($entry['880']) ? $entry['880'] : ''); 
