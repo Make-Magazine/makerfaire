@@ -10,8 +10,7 @@ $entryId = (isset($wp_query->query_vars['e_id'])?$wp_query->query_vars['e_id']:'
 $editEntry = (isset($wp_query->query_vars['edit_slug'])?$wp_query->query_vars['edit_slug']:'');
 $entry = GFAPI::get_entry($entryId);
 
-//error_log(print_r($entry, TRUE));
-// The opengraph cards for sharing
+// The opengraph cards for sharing. This is necessary as otherwise yoast is not pulling dynamic data
 $sharing_cards = new mf_sharing_cards();
 
 // give admin, editor and reviewer user roles special ability to see all entries
@@ -119,26 +118,12 @@ if (isset($entry->errors)) {
     //get makers info
     $makers = getMakerInfo($entry);
 
-    //For BA23, a change was made to only use field 217. 
-    //If 111, group photo is set, use that. Else if 217, Maker Photo is set, use that
-    $groupphoto = '';
-    if(isset($entry['111']) && $entry['111'] != ''){
-        $groupphoto = $entry['111'];        
-    }elseif(isset($entry['217']) && $entry['217'] != ''){
-        $groupphoto = $entry['217'];        
-    }    
-
-    //for BA24, the single photo was changed to a multi image which messed things up a bit
-    $photo = json_decode($groupphoto);
-    if (is_array($photo) && !empty($photo)) {
-      $groupphoto = $photo[0];
-    }
 
     $project_name = (isset($entry['151']) ? $entry['151'] : '');  //Change Project Name
     
     $project_photo = (isset($entry['22']) ? $entry['22'] : '');
     //for BA24, the single photo was changed to a multi image which messed things up a bit
-    $photo = json_decode($entry['22']);
+    $photo = json_decode($project_photo);
     if (is_array($photo)) {
       $project_photo = $photo[0];
     }
@@ -264,12 +249,6 @@ if (strpos($faireShort, "VMF") === 0) { // special for virtual faires
 }
 //$registerLink = ''; //post faire return blank for register link
 //
-// give admin and editor users special ability to see all entries
-$user = wp_get_current_user();
-$adminView = false;
-if (array_intersect(array('administrator', 'editor'), $user->roles)) {
-    $adminView = true;
-}
 
 //decide if we should display this entry
 $validEntry = false;
@@ -283,8 +262,8 @@ if (is_array($entry) && !empty($entry)) { //is this a valid entry?
             $validEntry = true; //display the entry
         }
     }
-    // is this a show management or not sure in exhibit type?
-    if( isset($exhibit_type['339.6']) || in_array('Show Management', $exhibit_type) || isset($exhibit_type['339.8']) ) {
+    // is this a show management, other, or not sure in exhibit type? we don't want to show it
+    if( (in_array('Show Management', $exhibit_type) || in_array('Not Sure Yet', $exhibit_type) || in_array('Other', $exhibit_type)) && $adminView == false ) {
         $validEntry = false;
     }
 
@@ -419,7 +398,7 @@ if (!$displayMakers) {
             include get_template_directory() . '/pages/page-entry-edit.php';
         }
     } else { //entry is not active
-        echo '<div class="container invalid"><h2>Invalid entry</h2></div>';
+        echo '<div class="container invalid"><h2>Invalid Entry</h2></div>';
         echo '<div class="entry-footer">' . displayEntryFooter() . '</div>';
     }
     ?>
@@ -451,7 +430,8 @@ function display_entry_schedule($entry) {
     $results = $wpdb->get_results($sql);  
 
     $schedule = "";
-    $has_schedule = true;     
+    // we default to believing an entry doesn't have a schedule. if starts dates are found, this will change
+    $has_schedule = false;     
 
     if ($wpdb->num_rows > 0) {           
         $prev_start_dt = NULL;
@@ -506,6 +486,8 @@ function display_entry_schedule($entry) {
                 if($row->location!=''){
                     $schedule .= $row->location;
                 }
+                // if there any start dates were found, we should show a schedule
+                $has_schedule = true;        
 
             } else {
                 //base location at faire
@@ -513,8 +495,7 @@ function display_entry_schedule($entry) {
                 if(empty($location) || $location == "") {
                     $location = ($row->nicename != '' ? $row->nicename : $row->subarea);       
                 }    
-                // if there are no start dates, it doesn't have a schedule  
-                $has_schedule = false;             
+                           
             }
         } //end for each loop       
         if ($multipleLocations == TRUE) { // this is kind of a mess to require this
@@ -656,7 +637,20 @@ function getMakerInfoLegacy($entry) {
     global $groupbio;
     global $groupsocial;
     $groupname = (isset($entry['109']) ? $entry['109'] : '');
-    $groupphoto = (isset($entry['111']) ? $entry['111'] : '');
+    $groupphoto = "";
+    //For BA23, a change was made to only use field 217. 
+    //If 111, group photo is set, use that. Else if 217, Maker Photo is set, use that
+    if(isset($entry['111']) && $entry['111'] != ''){
+        $groupphoto = $entry['111'];        
+    }elseif(isset($entry['217']) && $entry['217'] != ''){
+        $groupphoto = $entry['217'];        
+    }    
+    //for BA24, the single photo was changed to a multi image which messed things up a bit
+    $photo = json_decode($groupphoto);
+    if (is_array($photo) && !empty($photo)) {
+      $groupphoto = $photo[0];
+    }
+
     $groupbio = (isset($entry['110']) ? $entry['110'] : '');
     $groupsocial = getSocial(isset($entry['828']) ? $entry['828'] : '');
     $groupwebsite = isset($entry['112']) ? $entry['112'] : '';
