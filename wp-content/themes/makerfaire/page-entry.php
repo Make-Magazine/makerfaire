@@ -27,7 +27,10 @@ if (isset($entry->errors)) {
     $entry = array();
     $faire = '';
     $faireShort = '';
-    $timeZone = '';
+    $timeZone = 
+    $project_short = 
+    $project_photo = 
+    $project_title = '';
 } else {
     //find out which faire this entry is for to set the 'look for more makers link'
     $form_id = $entry['form_id'];
@@ -723,6 +726,22 @@ function getMakerInfoLegacy($entry) {
             'social' => $groupsocial,
             'website' => $groupwebsite
             ));
+    }
+    // if we are not using the makers 1-7 and it isn't a group, the makers array will be empty and we should instead try pulling from the default first name / last name
+    if(!$makers) {
+        // deal with the maker photo possibly being a multi image
+        $makerphoto = (isset($entry['217']) && $entry['217'] != '') ? $entry['217'] : "";
+        $photo = json_decode($makerphoto);
+        if (is_array($photo) && !empty($photo)) {
+            $makerphoto = $photo[0];
+        } 
+        $makers = array(array(
+            'firstname' => $entry['96.3'], 'lastname' => $entry['96.6'],
+            'bio' => (isset($entry['234']) ? $entry['234'] : ''),
+            'photo' => $makerphoto,
+            'social' => getSocial(isset($entry['821']) ? $entry['821'] : ''),
+            'website' => (isset($entry['209']) ? $entry['209'] : ''),
+        ));
     }
     return $makers;
 }
