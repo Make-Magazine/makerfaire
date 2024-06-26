@@ -39,7 +39,7 @@
                         <?php if(isset($friday) && $friday == 1 && count(array_intersect($exhibit_type, array("Exhibit", "Sponsor", "Startup Sponsor"))) > 0) { ?><span class="entry-box-item"><i class="fa fa-calendar" aria-label="Calendar Detail"></i>Friday Only</span><?php } ?>
                         <?php if(!empty($exhibit_type)) { ?><span class="entry-box-item"><i class="fa fa-check" aria-label="Exhibit Type"></i><?php echo implode(" & ",$exhibit_type); ?></span><?php } ?>
                         <?php if(isset($mainCategory) && $mainCategory != '') { ?><span class="entry-box-item"><i class="fa fa-rocket" aria-label="Main Category"></i><?php echo $mainCategory ; ?></span><?php } ?>
-                        <?php if(!empty($ribbons)) { ?><span class="entry-box-item"><i class="fa fa-award" aria-label="Ribbon"></i>Ribbon Recipient</span><?php } ?>
+                        <?php if(!empty($ribbons)) { ?><span class="entry-box-item"><a href="/ribbons/"><i class="fa fa-award" aria-label="Ribbon"></i>Ribbon Recipient</a></span><?php } ?>
                     </div>
                     <?php if(isset($project_short) && $project_short != '') { ?><p class="project-description"><?php echo nl2br($project_short); ?></p><?php } ?>
                 </div>

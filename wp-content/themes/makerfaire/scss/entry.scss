@@ -134,6 +134,11 @@
 					display: flex;
 					align-items: center;
 					height: 40px;
+					a {
+						display: flex;
+  						align-items: center;
+						color: #333;
+					}
 				}
 				.fa {
 					color: #f51400;
