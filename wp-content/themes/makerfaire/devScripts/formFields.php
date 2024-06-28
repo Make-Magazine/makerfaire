@@ -143,20 +143,7 @@ $publicFields = array(109,11,110,105,151,22,16,27,32,151,160,234,217,158,258,224
           //var_dump($field);
           $label   = (isset($field['adminLabel']) && trim($field['adminLabel']) != '' ? $field['adminLabel'] : $field['label']);
           $paramName=(isset($field['origFieldID'])?$field['origFieldID']:'');          
-          switch($field['type']) {
-            //parameter name is stored in a different place
-            case 'name':
-            case 'address':
-              $parmArray=array();
-              foreach($field['inputs'] as $key=>$input) {
-                if (isset($input->name) && $input->name!='') {
-                  $parmArray[] = $input->name.'('.$input->id.')';
-                }
-              }
-              $paramName = implode("<br/>", $parmArray);
-              break;
-          }
-
+  
           if($label=='' && $field['type']=='checkbox') $label = $field['choices'][0]->text;
 
           ?>
