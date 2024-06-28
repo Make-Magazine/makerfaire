@@ -110,15 +110,12 @@ function update_original_entry($form, $origEntryID, $suppEntry) {
         case 'section':
         case 'html':
           break;
-        default:
-          if ($field->id == 886) {
-          }
+        default:          
           //find submitted value
           if (isset($_POST['input_' . $field->id])) {
             $updValue =  $_POST['input_' . $field->id];
             
-            GFAPI::update_entry_field($origEntryID, $updField, stripslashes($updValue));
-          }
+            GFAPI::update_entry_field($origEntryID, $updField, stripslashes($updValue));        
           break;
       }
     }
