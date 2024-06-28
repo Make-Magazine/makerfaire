@@ -121,6 +121,7 @@ function update_original_entry($form, $origEntryID, $suppEntry) {
       }
     }
   }
+  
   //need to trigger the gform_after_update_entry to trigger RMT logic
   $origEntry = GFAPI::get_entry($origEntryID);
   $origForm  = GFAPI::get_form($origEntry['form_id']);
