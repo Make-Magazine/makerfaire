@@ -26,7 +26,7 @@ function gf_summary_metabox($form, $lead) {
     $photo = (isset($lead['22']) ? $lead['22'] : '');
     //starting with ba24, the photo field was set as a multi image
     $photoField = gfapi::get_field($form, '22');    
-    if($photoField->multipleFiles) {
+    if(isset($photoField->multipleFiles) && $photoField->multipleFiles) {
       $photoField = json_decode(stripslashes($photo), true);
       $photo = $photoField[0];
     }
