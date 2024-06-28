@@ -184,7 +184,7 @@ function my_advanced_settings($position, $form_id) {
 ?>
     <li class="orig_fieldID_setting field_setting">
       <label for="field_admin_label">
-        <?php _e('Field ID to populate from Original Entry', 'makerfaire'); ?>
+        <?php _e('CFM Field ID to Update', 'makerfaire'); ?>
       </label>
       <input type="text" id="field_orig_fieldID" onchange="SetFieldProperty('origFieldID', this.value);" class="fieldwidth-3" />
     </li>
