@@ -70,7 +70,6 @@ function update_original_entry($form, $origEntryID, $suppEntry) {
           break;
         case 'list':
           $updValue = ''; //blank out update field in case all values are deleted
-
           //if the field was populated, link through and build the data
           if (isset($_POST['input_' . $field->id])) {
             $options = array();
@@ -101,21 +100,18 @@ function update_original_entry($form, $origEntryID, $suppEntry) {
           GFAPI::update_entry_field($origEntryID, $updField, $updValue);
 
           break;
-        case 'fileupload':
-          $updValue = (isset($suppEntry[$field->id]) ? $suppEntry[$field->id] : '');          
-          GFAPI::update_entry_field($origEntryID, $updField, stripslashes($updValue));
-
-          //skip these  
+        //skip page, section and html fields  
         case 'page':
         case 'section':
         case 'html':
           break;
+        
+        case 'fileupload':  
         default:
           //find submitted value
-          if (isset($_POST['input_' . $field->id])) {
-            $updValue =  $_POST['input_' . $field->id];
-            
-            GFAPI::update_entry_field($origEntryID, $updField, stripslashes($updValue));
+          if (isset($suppEntry[$field->id])) {
+            $updValue = (isset($suppEntry[$field->id]) ? $suppEntry[$field->id] : '');          
+            GFAPI::update_entry_field($origEntryID, $updField, stripslashes($updValue));                        
           }
           break;
       }
