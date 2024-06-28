@@ -103,7 +103,7 @@ $publicFields = array(109,11,110,105,151,22,16,27,32,151,160,234,217,158,258,224
             <td style="width: 40%">Label</td>
             <td style="width:  3%">Type</td>
             <td style="width: 30%">Options</td>
-            <td style="width: 10%">Parameter Name </td>
+            <td style="width: 10%">Field ID to Populate</td>
             <td style="width:  1%">Admin Only</td>
             <td style="width:  1%">Req</td>
             <td style="width:  1%">Public</td>
@@ -142,7 +142,7 @@ $publicFields = array(109,11,110,105,151,22,16,27,32,151,160,234,217,158,258,224
         ){
           //var_dump($field);
           $label   = (isset($field['adminLabel']) && trim($field['adminLabel']) != '' ? $field['adminLabel'] : $field['label']);
-          $paramName=(isset($field['inputName'])?$field['inputName']:'');          
+          $paramName=(isset($field['origFieldID'])?$field['origFieldID']:'');          
           switch($field['type']) {
             //parameter name is stored in a different place
             case 'name':
