@@ -87,7 +87,7 @@ if (isset($entry->errors)) {
             $faire_start = $results->start_dt;
             $faire_end = $results->end_dt;
             $faire_year = substr($faire_start, 0, 4);
-            $faire_dates = date_format(date_create($faire_start), "M jS") . "-" . date_format(date_create($faire_end), "jS, Y");
+            $faire_dates = date_format(date_create($faire_start), "F jS") . "-" . date_format(date_create($faire_end), "jS");
             $url_sub_path = $results->url_path;
             $faire_map = $results->faire_map;
             $program_guide = $results->program_guide;
