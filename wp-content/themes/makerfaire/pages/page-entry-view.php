@@ -111,8 +111,10 @@
     ?>
 
     <section id="bottomSection">
-        <?php if(count($makers) == 1 && (!empty($maker['website']) || !empty($maker['social']))) { 
-            $maker = current($makers); ?>
+        <?php 
+        if(count($makers) == 1) { 
+            $maker = current($makers); 
+            if(!empty($maker['website']) || $maker['social'] != '<span class="social-links reversed"></span>') { ?>
             <div class="entry-box">
                 <h4>More Maker Info</h4>
                 <?php if(!empty($maker['website'])) { ?>
@@ -120,12 +122,13 @@
                 <?php } ?>  
                 <?php echo $maker['social']; ?>
             </div>
-        <?php } ?>  
+        <?php }
+        } ?>  
         <div class="entry-box">
             <h4>More Event Info</h4>
             <div class="entry-box-items">
                 <?php if(isset($mainCategory ) && $mainCategory  != '') { ?>
-                    <span class="entry-box-item"><i class="fa fa-rocket"></i><a href="/<?php echo $url_sub_path; ?>/meet-the-makers/?category=<?php echo $mainCategory; ?>">See All <?php echo $mainCategory; ?></a></span>
+                    <span class="entry-box-item"><i class="fa fa-rocket"></i><a href="/<?php echo $url_sub_path; ?>/meet-the-makers/?category=<?php echo $mainCategory; ?>">See All<?php echo $mainCategory; ?></a></span>
                 <?php } ?>
                 <span class="entry-box-item"><i class="fa fa-calendar"></i><a href="/<?php echo $url_sub_path; ?>/schedule/">Event Schedule</a></span>
                 <span class="entry-box-item"><i class="fa fa-tools"></i><a href="/<?php echo $url_sub_path; ?>/meet-the-makers/">See All Makers</a></span>
