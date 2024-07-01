@@ -34,6 +34,7 @@
                 <div class="entry-box">
                     <h1 class="project-title"><?php echo $project_title; ?></h1>
                     <h3 class="faireName"><a href="/<?php echo $url_sub_path; ?>"><?php echo ucwords(str_replace('-', ' ', $faire));?></a></h3>
+                    <h4 class="faireDate"><?php echo $faire_dates; ?></h4>
                     <div class="entry-box-items">
                         <?php if(isset($location) && trim($location) != '' && count(array_intersect($exhibit_type, array("Exhibit", "Sponsor", "Startup Sponsor"))) > 0) { ?><span class="entry-box-item"><i class="fa fa-map-signs" aria-label="Location"></i><?php echo $location; ?></span><?php } ?>
                         <?php if(isset($friday) && $friday == 1 && count(array_intersect($exhibit_type, array("Exhibit", "Sponsor", "Startup Sponsor"))) > 0) { ?><span class="entry-box-item"><i class="fa fa-calendar" aria-label="Calendar Detail"></i>Friday Only</span><?php } ?>

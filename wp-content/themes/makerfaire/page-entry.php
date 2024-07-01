@@ -72,7 +72,7 @@ if (isset($entry->errors)) {
 
     $faire = $show_sched = $faireShort = $faire_end = '';
     if ($form_id != '') {
-        $formSQL = "select faire_name as pretty_faire_name, replace(lower(faire_name),' ','-') as faire_name, faire_location, faire, id,show_sched,start_dt, end_dt, url_path, faire_map, program_guide, time_zone "
+        $formSQL = "select faire_name as pretty_faire_name, replace(lower(faire_name),' ','-') as faire_name, faire_location, faire, id,show_sched, start_dt, end_dt, url_path, faire_map, program_guide, time_zone "
                 . " from wp_mf_faire where FIND_IN_SET ($form_id, wp_mf_faire.form_ids)> 0 order by ID DESC limit 1";
 
         $results = $wpdb->get_row($formSQL);
@@ -87,6 +87,7 @@ if (isset($entry->errors)) {
             $faire_start = $results->start_dt;
             $faire_end = $results->end_dt;
             $faire_year = substr($faire_start, 0, 4);
+            $faire_dates = date_format(date_create($faire_start), "M jS") . "-" . date_format(date_create($faire_end), "jS, Y");
             $url_sub_path = $results->url_path;
             $faire_map = $results->faire_map;
             $program_guide = $results->program_guide;
@@ -448,7 +449,7 @@ function display_entry_schedule($entry) {
             if (!is_null($row->start_dt)) { // if there is no start date, it's a base location
                 $start_dt = strtotime($row->start_dt);
                 $current_start_dt = date("l, F j", $start_dt);
-                $date = date('D j Y', $start_dt);
+                $date = date('D j F Y', $start_dt);
                 $dow = date('D', $start_dt);
                 $day = date('j', $start_dt);
                 $current_location = ($row->nicename != '' ? $row->nicename : $row->subarea);
@@ -458,7 +459,7 @@ function display_entry_schedule($entry) {
                                     <div class='schedule-calendar'>
                                         <span class='schedule-dow'>" . $dow . "</span>
                                         <span class='schedule-day'>" . $day . "</span>
-                                        <img src='/wp-content/themes/makerfaire/images/calendar-blank.svg' width='65' height='72' alt='" . $date . "' title='" . $date . "' />
+                                        <img src='/wp-content/themes/makerfaire/images/calendar-blank.svg' width='65' height='72' aria-label='" . $date . "' title='" . $date . "' alt='" . $date . "' title='" . $date . "' />
                                     </div>
                                     <div class='schedule-details'>";
                 }
@@ -471,7 +472,7 @@ function display_entry_schedule($entry) {
                                         <div class="schedule-calendar">
                                             <span class="schedule-dow">' . $dow . '</span>
                                             <span class="schedule-day">' . $day . '</span>
-                                            <img src="/wp-content/themes/makerfaire/images/calendar-blank.svg" width="65" height="72" alt="' . $date . '" title=""'. $date . '" />
+                                            <img src="/wp-content/themes/makerfaire/images/calendar-blank.svg" width="65" height="72" aria-label="' . $date . '" alt="' . $date . '" title="'. $date . '" />
                                         </div>
                                         <div class="schedule-details">';
                     }

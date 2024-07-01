@@ -18,6 +18,12 @@
 				}
 			}
 		}
+		h4.faireDate {
+			color: #333;
+			font-size: 18px;
+			font-style: italic;
+			margin-top: -15px;
+		}
 		section {
 			display: flex;
 			flex-wrap: wrap;
@@ -302,6 +308,7 @@
 				z-index: 9;
 				width: 100%;
 				text-align: center;
+				pointer-events: none;
 			}
 			.schedule-day {
 				position: absolute;
