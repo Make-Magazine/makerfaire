@@ -13,6 +13,7 @@ $type = (isset($obj->type) ? $obj->type : '');
 $table = (isset($obj->table) ? $obj->table : '');
 $formSelect = (isset($obj->formSelect) ? $obj->formSelect : '');
 $formType = (isset($obj->formType) ? $obj->formType : '');
+
 $selectedFields = (isset($obj->selectedFields) ? $obj->selectedFields : '');
 $rmtData = (isset($obj->rmtData) ? $obj->rmtData : '');
 $location = (isset($obj->location) ? $obj->location : false);
@@ -23,7 +24,11 @@ $status = (isset($obj->status) ? $obj->status : '');
 if ($type != '') {
    if ($type == "tableData") {
       if ($table == 'formData') {
-         getBuildRptData();
+         if($formSelect != ''){
+            getBuildRptFields($formSelect);
+         }else{
+            getBuildRptForms();
+         }         
       } elseif ($table == 'wp_mf_entity_tasks') {
          pullEntityTasks($formSelect);
       } else {
@@ -41,7 +46,7 @@ if ($type != '') {
    } elseif ($type == 'paymentRpt') {
       paymentRpt($table, $faire);
    } elseif ($type == 'notesRpt') {
-      notesRpt($table, $faire);   
+      notesRpt($table, $faire);
    } else {
       invalidRequest('Invalid Request type');
    }
@@ -50,36 +55,36 @@ if ($type != '') {
 }
 
 /* Build your own report function */
-
 function cannedRpt() {
    global $wpdb;
    global $obj;
-   $useFormSC = (isset($obj->useFormSC) ? $obj->useFormSC : false);
-   $formSelect = (isset($obj->formSelect) ? $obj->formSelect : array());
-   $formTypeArr = (isset($obj->formType) ? $obj->formType : array());
-   $faire = (isset($obj->faire) ? $obj->faire : '');
 
-   $dispFormID = (isset($obj->dispFormID) ? $obj->dispFormID : false);
+   $useFormSC     = (isset($obj->useFormSC) ? $obj->useFormSC : false);
+   $formSelect    = (isset($obj->formSelect) ? $obj->formSelect : array());
+   $formTypeArr   = (isset($obj->formType) ? $obj->formType : array());
+   $faire         = (isset($obj->faire) ? $obj->faire : '');
+
+   $dispFormID    = (isset($obj->dispFormID) ? $obj->dispFormID : false);
+   $dispFormType  = (isset($obj->dispFormType) ? $obj->dispFormType : true);
    $formTypeLabel = (isset($obj->formTypeLabel) ? $obj->formTypeLabel : ($useFormSC ? "TYPE" : 'Form Type'));
-   $entryIDLabel = (isset($obj->entryIDLabel) ? $obj->entryIDLabel : ($useFormSC ? 'ENTRY ID' : 'Entry Id'));
-
-   $orderBy = (isset($obj->orderBy) ? $obj->orderBy : '');
+   $entryIDLabel  = (isset($obj->entryIDLabel) ? $obj->entryIDLabel : ($useFormSC ? 'ENTRY ID' : 'Entry Id'));
+   
    $selectedFields = (isset($obj->selectedFields) ? $obj->selectedFields : array());
-   $rmtData = (isset($obj->rmtData) ? $obj->rmtData : array());
-   $location = (isset($obj->location) ? $obj->location : false);
-   $tickets = (isset($obj->tickets) ? $obj->tickets : false);
-   $payment = (isset($obj->payments) ? $obj->payments : false);
+   $rmtData        = (isset($obj->rmtData) ? $obj->rmtData : array());
+   $location       = (isset($obj->location) ? $obj->location : false);
+   $tickets        = (isset($obj->tickets) ? $obj->tickets : false);
+   $payment        = (isset($obj->payments) ? $obj->payments : false);
 
-   $entryIDorder = (isset($obj->entryIDorder) ? $obj->entryIDorder : 10);
-   $formIDorder = (isset($obj->formIDorder) ? $obj->formIDorder : 20);
-   $locationOrder = (isset($obj->locationOrder) ? $obj->locationOrder : 30);
-   $ticketsOrder = (isset($obj->ticketsOrder) ? $obj->ticketsOrder : 70);
-   $formTypeorder = (isset($obj->formTypeorder) ? $obj->formTypeorder : 40);
-   $paymentOrder = (isset($obj->paymentOrder) ? $obj->paymentOrder : 50);
-   $CMOrder = (isset($obj->CMOrder) ? $obj->CMOrder : 60);
+   $entryIDorder   = (isset($obj->entryIDorder) ? $obj->entryIDorder : 10);
+   $formIDorder    = (isset($obj->formIDorder) ? $obj->formIDorder : 20);
+   $locationOrder  = (isset($obj->locationOrder) ? $obj->locationOrder : 30);
+   $ticketsOrder   = (isset($obj->ticketsOrder) ? $obj->ticketsOrder : 70);
+   $formTypeorder  = (isset($obj->formTypeorder) ? $obj->formTypeorder : 40);
+   $paymentOrder   = (isset($obj->paymentOrder) ? $obj->paymentOrder : 50);
+   $CMOrder        = (isset($obj->CMOrder) ? $obj->CMOrder : 60);
 
-   $forms = implode(",", $formSelect);
-   $formTypes = implode("', '", $formTypeArr);
+   $forms          = implode(",", $formSelect);
+   $formTypes      = implode("', '", $formTypeArr);
    if (!empty($formTypes))
       $formTypes = "'" . $formTypes . "'";
 
@@ -104,18 +109,17 @@ function cannedRpt() {
 
    $visible = $dispFormID;
    $data['columnDefs'][] = array('field' => 'form_id', 'visible' => $visible, 'displayOrder' => $formIDorder);
-   $data['columnDefs'][] = array('field' => 'form_type', 'displayName' => $formTypeLabel, 'displayOrder' => $formTypeorder);
+   if ($dispFormType) {
+      $data['columnDefs'][] = array('field' => 'form_type', 'displayName' => $formTypeLabel, 'displayOrder' => $formTypeorder);
+   }
 
    //pull all entries based on formSelect, faire, and status
    //question: does wp_mf_entity have the information i need for all forms?? non exhibits missing information?
    //build array of requested fields
-   $fieldSQL = ''; //sql to pull field_numbers (called meta_key)
-   $fieldIDarr = array(); //unique array of field ID's
-   $fieldArr = array(); //array of field data keyed by field id
+   $fieldSQL = ''; //sql to pull field_numbers (called meta_key)   
    $fieldIDArr["376"] = (object) array("id" => "376", "label" => "CM Ind", "choices" => "all", "type" => "radio", "order" => $CMOrder);
    $combineFields = array();
-   $fieldQuery = array(" meta_key like '376' ");
-   $acceptedOnly = true;
+   $fieldQuery = array(" meta_key like '376' ");   
 
    //build list of categories
    $categories = get_categories(array('taxonomy' => 'makerfaire_category', 'hide_empty' => false));
@@ -144,6 +148,9 @@ function cannedRpt() {
          if ($selFields->choices == 'all' && $selFields->type == 'checkbox') {
             $fieldQuery[] = " meta_key like '" . $selFieldsID . ".%' ";
             $fieldIDArr[$selFieldsID] = $selFields; //search for all values
+         } elseif ($selFields->choices !== 'all' && $selFields->choices !== '' && $selFields->type == 'checkbox') { //searching for specific choices
+            $fieldQuery[] = " (meta_key like '" . $selFieldsID . ".%' and meta_value like '" . $selFields->choices . "') ";
+            $fieldIDArr[$selFieldsID] = $selFields; //search for all values            
          } else {
             $fieldQuery[] = " meta_key like '" . $selFieldsID . "' ";
             $fieldIDArr[$selFieldsID][] = $selFields; //search for specific values
@@ -156,17 +163,21 @@ function cannedRpt() {
 
       if ($selFieldsID == '151' && !isset($selFields->order))
          $selFields->order = 25;
-      //add requested field to columns
-      if (isset($selFields->hide) && $selFields->hide == true) {
-         //don't add this field to display
-         $data['columnDefs'][$selFieldsID] = array('field' => 'field_' . str_replace('.', '_', $selFieldsID),
-             'displayName' => $selFields->label, 'type' => 'string', 'visible' => false, 
-             'displayOrder' => (isset($selFields->order) ? $selFields->order : 9999));
-      } else {
-         $data['columnDefs'][$selFieldsID] = array('field' => 'field_' . str_replace('.', '_', $selFieldsID),
-             'displayName' => $selFields->label, 'type' => 'string', 
-             'displayOrder' => (isset($selFields->order) ? $selFields->order : 9999));
+
+      //determine field visibility      
+      if (isset($selFields->hide) && $selFields->hide == true) {         
+         $visible = false; //don't add this field to display
+      }else{
+         $visible = true;
       }
+      
+      //add requested field to columns
+      $data['columnDefs'][$selFieldsID] = array(
+         'field' => 'field_' . str_replace('.', '_', $selFieldsID),
+         'displayName' => $selFields->label, 'type' => 'string', 'visible' => $visible,
+         'displayOrder' => (isset($selFields->order) ? $selFields->order : 9999)
+      );
+     
 
       if (isset($selFields->exact) && $selFields->exact) {
          $exactCriteria[$selFieldsID] = $selFields->choices;
@@ -179,10 +190,10 @@ function cannedRpt() {
    /* Note: form type is not set on entries prior to BA16 */
    $sql = "SELECT  wp_gf_entry.id as lead_id, wp_gf_entry.form_id
           FROM    wp_gf_entry  "
-           . (!empty($faire) ? ' JOIN  wp_mf_faire on wp_mf_faire.ID  =' . $faire : '')
-           . " where wp_gf_entry.status = 'active'"
-           . (!empty($faire) ? " AND FIND_IN_SET (`wp_gf_entry`.`form_id`,wp_mf_faire.form_ids)> 0" : '')
-           . (!empty($forms) ? " AND wp_gf_entry.form_id in(" . $forms . ")" : '');
+      . (!empty($faire) ? ' JOIN  wp_mf_faire on wp_mf_faire.ID  =' . $faire : '')
+      . " where wp_gf_entry.status = 'active'"
+      . (!empty($faire) ? " AND FIND_IN_SET (`wp_gf_entry`.`form_id`,wp_mf_faire.form_ids)> 0" : '')
+      . (!empty($forms) ? " AND wp_gf_entry.form_id in(" . $forms . ")" : '');
 
    $entries = $wpdb->get_results($sql, ARRAY_A);
    $entryData = array();
@@ -195,12 +206,12 @@ function cannedRpt() {
 
       //Are specific detail fields requested?
       if (!empty($fieldSQL)) {
-         //pull entry specifc detail based on requested fields
+         //pull entry specifc detail based on requested fields         
          $detailSQL = "SELECT detail.entry_id as lead_id, detail.form_id, detail.meta_key, detail.meta_value as value
                       FROM wp_gf_entry_meta detail"
-                 . " where detail.entry_id = $lead_id "
-                 . " and ($fieldSQL) "
-                 . " ORDER BY detail.entry_id asc, detail.meta_key asc";
+            . " where detail.entry_id = $lead_id "
+            . " and ($fieldSQL) "
+            . " ORDER BY detail.entry_id asc, detail.meta_key asc";
 
          $details = $wpdb->get_results($detailSQL, ARRAY_A);
          $cmInd = '';
@@ -220,23 +231,25 @@ function cannedRpt() {
 
             //check if we pulled by specific field id or if this was a request for all values
             $fieldID = $detail['meta_key'];
-            
+
             //remove everything after the period
             $basefieldID = (strpos($fieldID, ".") ? substr($fieldID, 0, strpos($fieldID, ".")) : $fieldID);
 
             if (isset($fieldIDArr[$fieldID])) {
                $fieldCritArr = $fieldIDArr[$fieldID];
-            } else {//let's look for the base id
+            } else { //let's look for the base id
                $fieldCritArr = (isset($fieldIDArr[$basefieldID]) ? $fieldIDArr[$basefieldID] : '');
             }
-            
+
             // radio and select options
             if (is_array($fieldCritArr)) {
                //radio and select boxes must match one of the passed values
                //checkboxes will only match the value if this is for field 321
                foreach ($fieldCritArr as $fieldCriteria) {
-                  if ($fieldCriteria->type === 'radio' || $fieldCriteria->type === 'select' || 
-                          ($fieldCriteria->type === 'checkbox' && $basefieldID==='321')) { //check value
+                  if (
+                     $fieldCriteria->type === 'radio' || $fieldCriteria->type === 'select' ||
+                     ($fieldCriteria->type === 'checkbox' && $basefieldID === '321')
+                  ) { //check value
                      //default to failing criteria
                      $passCriteria = false;
                      if ($fieldCriteria->choices === 'all') {
@@ -246,20 +259,20 @@ function cannedRpt() {
                         $passCriteria = true;
                         break;
                      }
-                  }             
+                  }
                }
             } else {
-               if (isset($fieldCritArr->type) && $fieldCritArr->type==='list') {
+               if (isset($fieldCritArr->type) && $fieldCritArr->type === 'list') {
                   $list_data = unserialize($value);
                   $value = '';
-                  foreach ($list_data as $list){
-                     foreach($list as $lkey=>$ldata){
-                        if($ldata!==''){
-                           $value .= $ldata.' ';
+                  foreach ($list_data as $list) {
+                     foreach ($list as $lkey => $ldata) {
+                        if ($ldata !== '') {
+                           $value .= $ldata . ' ';
                         }
                      }
                      $value .= " \r";
-                  }                  
+                  }
                }
                if (isset($fieldCritArr->type) && isset($fieldCritArr->choices)) {
                   if ($fieldCritArr->type === 'checkbox' && $fieldCritArr->choices === 'all') {
@@ -276,7 +289,7 @@ function cannedRpt() {
             $fieldKey = 'field_' . str_replace('.', '_', $fieldID);
             $fieldData[$fieldKey] = (isset($fieldData[$fieldKey]) ? $fieldData[$fieldKey] . " \r" : '') . $value;
          }
-//var_dump($fieldData);
+         
          if (!empty($exactCriteria)) {
             //exclude exact fields if they do not match
             //  (doing this outside of the details loop as the requested field may not be set
@@ -349,6 +362,7 @@ function cannedRpt() {
                $fieldData = array_merge($fieldData, $rmtRetData['data']);
                $colDefs = array_merge($colDefs, $rmtRetData['colDefs']);
             }
+            
             if ($location) {
                $locRetData = pullLocData($lead_id, $useFormSC, $locationOrder);
                $fieldData = array_merge($fieldData, $locRetData['data']);
@@ -367,14 +381,17 @@ function cannedRpt() {
             $entryData[$lead_id] = $fieldData;
             $entryData[$lead_id]['entry_id'] = $lead_id;
             $entryData[$lead_id]['form_id'] = $entry['form_id'];
-            $entryData[$lead_id]['form_type'] = $form_type;
-
+            if ($dispFormType) {
+               $entryData[$lead_id]['form_type'] = $form_type;
+            }
+            
+            if($data['columnDefs'])
             //merge in RMT data and location info
             $data['columnDefs'] = array_merge($data['columnDefs'], $colDefs);
          }
       }
    }
-
+      
    /*
     * after we have pulled data from database
     *   compare against selected criteria
@@ -394,15 +411,16 @@ function cannedRpt() {
 function orderReturnColumns($columnDefs) {
    //sort columns by display order
    usort(
-           $columnDefs, function($a, $b) {
-      $result = 0;
-      if ($a["displayOrder"] > $b["displayOrder"]) {
-         $result = 1;
-      } else if ($a["displayOrder"] < $b["displayOrder"]) {
-         $result = -1;
+      $columnDefs,
+      function ($a, $b) {
+         $result = 0;
+         if ($a["displayOrder"] > $b["displayOrder"]) {
+            $result = 1;
+         } else if ($a["displayOrder"] < $b["displayOrder"]) {
+            $result = -1;
+         }
+         return $result;
       }
-      return $result;
-   }
    );
    //reindex columnDefs as the grid will blow up if the indexes aren't in order
    $columnDefs = array_values($columnDefs);
@@ -413,14 +431,13 @@ function pullRmtData($rmtData, $entryID, $useFormSC) {
    global $wpdb;
 
    //returned data and column definitions
-   $return = array();
-   $return['data'] = array();
+   $return            = array();
+   $return['data']    = array();
    $return['colDefs'] = array();
 
    $colDefs2Sort = array();
    $incComments = false; //display comments in a separate field (set at individual
-   $aggregated = false; //aggregate comments with value;
-   $comments = (isset($rmtData->comments) ? $rmtData->comments : false); //display comments in a separate field (set overall for all RMT data)
+   $aggregated = false; //aggregate comments with value;   
 
    /*
     * Process the requested resources
@@ -432,7 +449,8 @@ function pullRmtData($rmtData, $entryID, $useFormSC) {
     * value -      what label should be used for the label row of the report
     * order -      what numeric order should this resource be placed in the report
     * aggregated - return resource comments after the value of the resource surrounded by ()
-    * comments -   include resource comments in a separate column
+    * columns    - return each different resource type in it's own column
+    * comments   - include resource comments in a separate column
     */
 
    $value = '';
@@ -440,32 +458,38 @@ function pullRmtData($rmtData, $entryID, $useFormSC) {
    if (isset($rmtData->resource) && !empty($rmtData->resource)) {
       foreach ($rmtData->resource as $selRMT) {
          $displayOrder = (isset($selRMT->order) ? $selRMT->order : 100);  //order in returned data where RMT data displays
-         $incComments = (isset($selRMT->comments) ? $selRMT->comments : false); //display commments in separate column
-         $aggregated = (isset($selRMT->aggregated) ? $selRMT->aggregated : false); //aggregate comments with value
-         $displayLabel = (isset($selRMT->value) ? $selRMT->value : '');
+         $incComments  = (isset($selRMT->comments) ? $selRMT->comments : false); //display commments in separate column
+         $aggregated   = (isset($selRMT->aggregated) ? $selRMT->aggregated : false); //aggregate comments with value
+         $columns      = (isset($selRMT->columns) ? $selRMT->columns : false); //aggregate comments with value
+         //$displayLabel = (isset($selRMT->value) ? $selRMT->value : '');
 
          //set sql
          if ($selRMT->id == 'all') {
             //return all attributes set for this entry
             $sql = 'SELECT  resource_id, qty, concat(type, " ", wp_rmt_resource_categories.category) as type, comment '
-                    . ' FROM    `wp_rmt_entry_resources`, wp_rmt_resources, wp_rmt_resource_categories '
-                    . ' WHERE   resource_id = wp_rmt_resources.ID and'
-                    . '         resource_category_id = wp_rmt_resource_categories.ID and'
-                    . '         entry_id =' . $entryID;
+               . ' FROM    `wp_rmt_entry_resources`, wp_rmt_resources, wp_rmt_resource_categories '
+               . ' WHERE   resource_id = wp_rmt_resources.ID and'
+               . '         resource_category_id = wp_rmt_resource_categories.ID and'
+               . '         entry_id =' . $entryID;
          } else {
             $sql = 'SELECT  qty,type,comment, token,resource_id '
-                    . ' FROM   `wp_rmt_entry_resources`, wp_rmt_resources '
-                    . ' where   resource_id = wp_rmt_resources.ID and'
-                    . '         resource_category_id = ' . $selRMT->id . ' and'
-                    . '         entry_id =' . $entryID;
+               . ' FROM   `wp_rmt_entry_resources`, wp_rmt_resources '
+               . ' where   resource_id = wp_rmt_resources.ID and'
+               . '         resource_category_id = ' . $selRMT->id . ' and'
+               . '         entry_id =' . $entryID;
          }
-
+         
          //loop thru data
          $resources = $wpdb->get_results($sql, ARRAY_A);
          $entryValue = array();
          $entryComment = array();
          foreach ($resources as $resource) {
-            $type = $resource['qty'] . ' : ' . $resource['type'];
+            if ($columns) {
+               $type = $resource['qty'];
+            } else {
+               $type = $resource['qty'] . ' : ' . $resource['type'];
+            }
+
             $value = ($useFormSC ? formSC($type) : $type); //find and replace certain data in the value
             //add comment to the value if aggregated and not blank
             if ($aggregated && $resource['comment'] != '') {
@@ -473,18 +497,41 @@ function pullRmtData($rmtData, $entryID, $useFormSC) {
             }
             $entryValue[] = $value;
             $entryComment[] = $resource['comment'];
+
+            //if columns is set, return each individual token
+            if ($columns) {
+               //don't set if no resources are set for this entry
+               if ($resource['resource_id'] !== '') {                  
+                  $return['colDefs']['res_' . $resource['resource_id']] =
+                     array(
+                        'field' => 'res_' . str_replace('.', '_', $resource['resource_id']),
+                        'displayName' => $resource['token'],
+                        'displayOrder' => $displayOrder,
+                        'aggregationType' => 'uiGridConstants.aggregationTypes.sum'
+                     );
+   
+                  $return['data']['res_' . $resource['resource_id']] = $value;
+               }
+            }
          }
 
-         //set return data and column definitions
-         $return['colDefs']['res_' . $selRMT->id] = array('field' => 'res_' . str_replace('.', '_', $selRMT->id),
-             'displayName' => $selRMT->value,
-             'displayOrder' => $displayOrder);
-         $return['data']['res_' . $selRMT->id] = implode("\r", $entryValue);  //separate each resource with a line break in the csv file
+         //set return data and column definitions         
+         if (!$columns) {
+            $return['colDefs']['res_' . $selRMT->id] = array(
+               'field' => 'res_' . str_replace('.', '_', $selRMT->id),
+               'displayName' => $selRMT->value,
+               'displayOrder' => $displayOrder
+            );
+            $return['data']['res_' . $selRMT->id] = implode("\r", $entryValue);  //separate each resource with a line break in the csv file
+         }
+
          //set comments column if requested
          if ($incComments) {
-            $return['colDefs']['res_' . $selRMT->id . '_comment'] = array('field' => 'res_' . str_replace('.', '_', $selRMT->id) . '_comment',
-                'displayName' => $selRMT->value . ' - comment',
-                'displayOrder' => $displayOrder + .2);
+            $return['colDefs']['res_' . $selRMT->id . '_comment'] = array(
+               'field' => 'res_' . str_replace('.', '_', $selRMT->id) . '_comment',
+               'displayName' => $selRMT->value . ' - comment',
+               'displayOrder' => $displayOrder + .2
+            );
             $return['data']['res_' . $selRMT->id . '_comment'] = implode("\r", $entryComment);
          }
       } //end foreach $rmtData->resource loop
@@ -494,13 +541,13 @@ function pullRmtData($rmtData, $entryID, $useFormSC) {
       foreach ($rmtData->attribute as $selRMT) {
          if ($selRMT->id != 'all') {
             $sql = 'select value,comment '
-                    . 'from wp_rmt_entry_attributes '
-                    . 'where entry_id =' . $entryID . ' and attribute_id=' . $selRMT->id;
+               . 'from wp_rmt_entry_attributes '
+               . 'where entry_id =' . $entryID . ' and attribute_id=' . $selRMT->id;
          } else {
             $sql = 'select concat(category," ",value) as value,comment '
-                    . 'from wp_rmt_entry_attributes, wp_rmt_entry_att_categories '
-                    . 'where entry_id =' . $entryID
-                    . ' and attribute_id = wp_rmt_entry_att_categories.ID';
+               . 'from wp_rmt_entry_attributes, wp_rmt_entry_att_categories '
+               . 'where entry_id =' . $entryID
+               . ' and attribute_id = wp_rmt_entry_att_categories.ID';
          }
 
          //set variables with input
@@ -526,15 +573,19 @@ function pullRmtData($rmtData, $entryID, $useFormSC) {
 
          //new
          //set return data and column definitions
-         $return['colDefs']['att_' . $selRMT->id] = array('field' => 'att_' . str_replace('.', '_', $selRMT->id),
-             'displayName' => $selRMT->value,
-             'displayOrder' => $displayOrder);
+         $return['colDefs']['att_' . $selRMT->id] = array(
+            'field' => 'att_' . str_replace('.', '_', $selRMT->id),
+            'displayName' => $selRMT->value,
+            'displayOrder' => $displayOrder
+         );
          $return['data']['att_' . $selRMT->id] = implode("\r", $entryValue);  //separate each resource with a line break in the csv file
          //set comments column if requested
          if ($incComments) {
-            $return['colDefs']['att_' . $selRMT->id . '_comment'] = array('field' => 'att_' . str_replace('.', '_', $selRMT->id) . '_comment',
-                'displayName' => $selRMT->value . ' - comment',
-                'displayOrder' => $displayOrder + .2);
+            $return['colDefs']['att_' . $selRMT->id . '_comment'] = array(
+               'field' => 'att_' . str_replace('.', '_', $selRMT->id) . '_comment',
+               'displayName' => $selRMT->value . ' - comment',
+               'displayOrder' => $displayOrder + .2
+            );
             //$return['data']['att_' . $selRMT->id . '_comment'] = $attribute['comment'];
             $return['data']['att_' . $selRMT->id . '_comment'] = implode("\r", $entryComment);
          }
@@ -547,8 +598,8 @@ function pullRmtData($rmtData, $entryID, $useFormSC) {
             $sql = 'select comment from wp_rmt_entry_attn where entry_id =' . $entryID . ' and attn_id=' . $selRMT->id;
          } else {
             $sql = 'select concat(wp_rmt_attn.value," ",comment) as comment from wp_rmt_entry_attn,wp_rmt_attn where '
-                    . ' entry_id =' . $entryID
-                    . ' and attn_id= wp_rmt_attn.ID';
+               . ' entry_id =' . $entryID
+               . ' and attn_id= wp_rmt_attn.ID';
          }
          //loop thru data
          $attentions = $wpdb->get_results($sql, ARRAY_A);
@@ -557,9 +608,11 @@ function pullRmtData($rmtData, $entryID, $useFormSC) {
          foreach ($attentions as $attention) {
             $entryAttn[] = $attention['comment'];
          }
-         $return['colDefs']['attn_' . $selRMT->id] = array('field' => 'attn_' . str_replace('.', '_', $selRMT->id),
-             'displayName' => $selRMT->value,
-             'displayOrder' => (isset($selRMT->order) ? $selRMT->order : 300));
+         $return['colDefs']['attn_' . $selRMT->id] = array(
+            'field' => 'attn_' . str_replace('.', '_', $selRMT->id),
+            'displayName' => $selRMT->value,
+            'displayOrder' => (isset($selRMT->order) ? $selRMT->order : 300)
+         );
          $return['data']['attn_' . $selRMT->id] = implode(', ', $entryAttn);
       }
    }
@@ -588,16 +641,17 @@ function pullRmtData($rmtData, $entryID, $useFormSC) {
 
       foreach ($metas as $meta) {
          $selRMT = $reqMetaArr[$meta['meta_key']];
-         $return['colDefs']['meta_' . $selRMT->id] = array('field' => 'meta_' . str_replace('.', '_', $selRMT->id),
-             'displayName' => $selRMT->value,
-             'displayOrder' => (isset($selRMT->order) ? $selRMT->order : 400)
+         $return['colDefs']['meta_' . $selRMT->id] = array(
+            'field' => 'meta_' . str_replace('.', '_', $selRMT->id),
+            'displayName' => $selRMT->value,
+            'displayOrder' => (isset($selRMT->order) ? $selRMT->order : 400)
          );
          $return['data']['meta_' . $selRMT->id] = $meta['meta_value'];
       }
    }
 
    //sort $colDefs2Sort array by displayName
-   uasort($colDefs2Sort, function($a, $b) {
+   uasort($colDefs2Sort, function ($a, $b) {
       return strcmp($a["displayName"], $b["displayName"]);
    });
    $return['colDefs'] = array_merge($return['colDefs'], $colDefs2Sort);
@@ -718,7 +772,7 @@ function pullPayData($entryID, $paymentOrder = 50) {
                   left  outer join wp_gf_addon_payment_transaction
                         on wp_gf_entry_meta.entry_id = wp_gf_addon_payment_transaction.lead_id
                  where  meta_value = $entryID "
-              . "    and wp_gf_entry_meta.meta_key = 'entry_id'";
+         . "    and wp_gf_entry_meta.meta_key = 'entry_id'";
 
       $payresults = $wpdb->get_results($paysql);
       if ($wpdb->num_rows > 0) {
@@ -827,9 +881,7 @@ function pullFieldData($entryID, $reqFields) {
 function retrieveRptData($table, $faire) {
    global $wpdb;
    require_once 'table.fields.defs.php';
-   $sql = '';
-   $where = '';
-   $orderBy = '';
+
    //build columnDefs
    foreach ($tableFields[$table]['colDefs'] as $fields) {
       $vars = array();
@@ -862,10 +914,11 @@ function retrieveRptData($table, $faire) {
             //usort($options, "cmpfkey");
             //usort($selectOptions, "cmpval");
 
-            $vars = array('displayName' => ucfirst((isset($fields['fieldLabel']) ? $fields['fieldLabel'] : $fields['fieldName'])),
-                'filter' => array('selectOptions' => $selectOptions),
-                'cellFilter' => 'griddropdown:this',
-                'editDropdownOptionsArray' => $options
+            $vars = array(
+               'displayName' => ucfirst((isset($fields['fieldLabel']) ? $fields['fieldLabel'] : $fields['fieldName'])),
+               'filter' => array('selectOptions' => $selectOptions),
+               'cellFilter' => 'griddropdown:this',
+               'editDropdownOptionsArray' => $options
             );
             break;
          case 'entrylink':
@@ -918,18 +971,18 @@ function retrieveRptData($table, $faire) {
       if (isset($row['schedType'])) {
          if (trim($row['schedType']) == '') {
             //determine sched type based on form type
-         	if(isset($row->form_id)){
-	            $form = GFAPI::get_form($row->form_id);
-	            if ($form['form_type'] == 'Performance') {
-	               $row['schedType'] = 'Performance';
-	            } elseif ($form['form_type'] == 'Workshop') {
-	               $row['schedType'] = 'Workshop';
-	            } else {
-	               $row['schedType'] = 'Talk';
-	            }
-         	}else{
-         		$row['schedType'] = '';
-         	}
+            if (isset($row->form_id)) {
+               $form = GFAPI::get_form($row->form_id);
+               if ($form['form_type'] == 'Performance') {
+                  $row['schedType'] = 'Performance';
+               } elseif ($form['form_type'] == 'Workshop') {
+                  $row['schedType'] = 'Workshop';
+               } else {
+                  $row['schedType'] = 'Talk';
+               }
+            } else {
+               $row['schedType'] = '';
+            }
          }
          $row['schedType'] = ucfirst($row['schedType']);
       }
@@ -958,7 +1011,7 @@ function getFkeyData($fkeySQL) {
       $options[] = array('id' => intval($row['ID']), 'fkey' => $row['field']);
       $selectOptions[] = array('value' => intval($row['ID']), 'label' => $row['field']);
    }
-   return(array($options, $selectOptions));
+   return (array($options, $selectOptions));
 }
 
 function cmp($a, $b) {
@@ -977,9 +1030,9 @@ function cmpEntryID($a, $b) {
    return $b['entry_id'] - $a['entry_id'];
 }
 
-function getBuildRptData() {
-   global $mysqli;
+function getBuildRptForms() {
    $data = array();
+
    //return form data
    $formReturn = array();
    $forms = RGFormsModel::get_forms(null, 'title');
@@ -989,11 +1042,18 @@ function getBuildRptData() {
          $formReturn[] = array('id' => absint($form->id), 'name' => htmlspecialchars_decode($form->title));
       }
    }
-   $form = RGFormsModel::get_form_meta(9);
 
-   //field list (from form 9)
+   $data['forms'] = $formReturn;   
+   echo json_encode($data);
+   exit;
+}   
+function getBuildRptFields($formID) {
+   global $mysqli;
+   $data = array();      
+
+   //field list (from selected form)
    $fieldReturn = array();
-   $sql = 'select display_meta from wp_gf_form_meta where form_id=9';
+   $sql = 'select display_meta from wp_gf_form_meta where form_id='.$formID;
    $result = $mysqli->query($sql) or trigger_error($mysqli->error . "[$sql]");
    while ($row = $result->fetch_array(MYSQLI_ASSOC)) {
       $json = json_decode($row['display_meta']);
@@ -1067,8 +1127,7 @@ function getBuildRptData() {
    $data['rmt']['meta'][] = array('id' => 'res_assign', 'type' => 'meta', 'value' => 'Resource Assign To');
    //$data['rmt']['meta'][]=array('id'=>$row['entryRating'],'type'=>'meta','value'=>'Entry Rating');
    //$data['rmt']['meta'][]=array('id'=>$row['entry_id'],'type'=>'meta','value'=>'Linked to Entry');
-
-   $data['forms'] = $formReturn;
+   
    $data['fields'] = $fieldReturn;
    echo json_encode($data);
    exit;
@@ -1097,12 +1156,11 @@ function ent2resource($table, $faire, $type) {
                   faire is not NULL and
                   form_id!=1 and form_id!=9 and
                   wp_mf_faire.ID=" . $faire .
-           " order by wp_gf_entry.id asc";
+      " order by wp_gf_entry.id asc";
 
    //loop thru entry data and build array
    $entries = $wpdb->get_results($sql, ARRAY_A);
 
-   $entryData = array();
    $resArray = array();
    $attArray = array();
    $attnArray = array();
@@ -1115,6 +1173,7 @@ function ent2resource($table, $faire, $type) {
       //set basic data
       $dbdata['entry_id'] = $entry['entry_id'];
       $dbdata['form_id'] = $entry['form_id'];
+
       //pull form data and see if it matches the requested form type
       $formPull = GFAPI::get_form($entry['form_id']);
       $formType = (isset($formPull['form_type']) ? $formPull['form_type'] : '');
@@ -1123,7 +1182,7 @@ function ent2resource($table, $faire, $type) {
             continue;
       }
       //do not return Presenation records or entries from form type other
-      if ($formType == 'Presentation' || $formType == 'Other') 
+      if ($formType == 'Presentation' || $formType == 'Other')
          continue; //skip this record
 
       $dbdata['form_type'] = $formType;
@@ -1194,18 +1253,16 @@ function ent2resource($table, $faire, $type) {
 
    //set up info for the sub header row
    $subHeader = array(
-       0 => array(
-           'entry_id' => 0,
-           'form_id' => 0,
-           'form_type' => '',
-           'faire' => 'Field Descriptions',
-           'status' => 0,
-           'proj_name' => '',
-       )
+      0 => array(
+         'entry_id' => 0,
+         'form_id' => 0,
+         'form_type' => '',
+         'faire' => 'Field Descriptions',
+         'status' => 0,
+         'proj_name' => '',
+      )
    );
-
-   //$resArray  = array_unique($resArray);
-   //$attArray  = array_unique($attArray);
+   
    $attnArray = array_unique($attnArray);
    $colDefs2Sort = array();
 
@@ -1222,54 +1279,54 @@ function ent2resource($table, $faire, $type) {
    foreach ($attnArray as $key => $attention) {
       $colDefs2Sort[] = array('displayName' => $attention, 'field' => 'attention.' . $key . '.comment');
    }
+   
    //sort $colDefs2Sort array by displayName
-   usort($colDefs2Sort, function($a, $b) {
+   usort($colDefs2Sort, function ($a, $b) {
       return strcmp($a["displayName"], $b["displayName"]);
    });
-   //array merge $colDefs2Sort with $columnDefs
-
-
+   
    $retData = array();
-   //usort($data, "cmpEntryID");
-   //$data = (array) $data;
+   
    //sort data by status, area, subarea, location
    $columnDefs = array_merge($columnDefs, $colDefs2Sort);
+
    //merge subheader data with $data
-   //$data[''] = $subHeader;
    $retData['data'] = array_merge($subHeader, $data);
    $retData['columnDefs'] = $columnDefs;
+
    //reindex columnDefs as the grid will blow up if the indexes aren't in order
    $retData['columnDefs'] = array_values($retData['columnDefs']);
    $retData['data'] = array_values($retData['data']);
+
    echo json_encode($retData);
    exit;
 }
 
 function convert_smart_quotes($string) {
    $chr_map = array(
-       // Windows codepage 1252
-       "\xC2\x82" => "'", // U+0082⇒U+201A single low-9 quotation mark
-       "\xC2\x84" => '"', // U+0084⇒U+201E double low-9 quotation mark
-       "\xC2\x8B" => "'", // U+008B⇒U+2039 single left-pointing angle quotation mark
-       "\xC2\x91" => "'", // U+0091⇒U+2018 left single quotation mark
-       "\xC2\x92" => "'", // U+0092⇒U+2019 right single quotation mark
-       "\xC2\x93" => '"', // U+0093⇒U+201C left double quotation mark
-       "\xC2\x94" => '"', // U+0094⇒U+201D right double quotation mark
-       "\xC2\x9B" => "'", // U+009B⇒U+203A single right-pointing angle quotation mark
-       // Regular Unicode     // U+0022 quotation mark (")
-       // U+0027 apostrophe     (')
-       "\xC2\xAB" => '"', // U+00AB left-pointing double angle quotation mark
-       "\xC2\xBB" => '"', // U+00BB right-pointing double angle quotation mark
-       "\xE2\x80\x98" => "'", // U+2018 left single quotation mark
-       "\xE2\x80\x99" => "'", // U+2019 right single quotation mark
-       "\xE2\x80\x9A" => "'", // U+201A single low-9 quotation mark
-       "\xE2\x80\x9B" => "'", // U+201B single high-reversed-9 quotation mark
-       "\xE2\x80\x9C" => '"', // U+201C left double quotation mark
-       "\xE2\x80\x9D" => '"', // U+201D right double quotation mark
-       "\xE2\x80\x9E" => '"', // U+201E double low-9 quotation mark
-       "\xE2\x80\x9F" => '"', // U+201F double high-reversed-9 quotation mark
-       "\xE2\x80\xB9" => "'", // U+2039 single left-pointing angle quotation mark
-       "\xE2\x80\xBA" => "'", // U+203A single right-pointing angle quotation mark
+      // Windows codepage 1252
+      "\xC2\x82" => "'", // U+0082⇒U+201A single low-9 quotation mark
+      "\xC2\x84" => '"', // U+0084⇒U+201E double low-9 quotation mark
+      "\xC2\x8B" => "'", // U+008B⇒U+2039 single left-pointing angle quotation mark
+      "\xC2\x91" => "'", // U+0091⇒U+2018 left single quotation mark
+      "\xC2\x92" => "'", // U+0092⇒U+2019 right single quotation mark
+      "\xC2\x93" => '"', // U+0093⇒U+201C left double quotation mark
+      "\xC2\x94" => '"', // U+0094⇒U+201D right double quotation mark
+      "\xC2\x9B" => "'", // U+009B⇒U+203A single right-pointing angle quotation mark
+      // Regular Unicode     // U+0022 quotation mark (")
+      // U+0027 apostrophe     (')
+      "\xC2\xAB" => '"', // U+00AB left-pointing double angle quotation mark
+      "\xC2\xBB" => '"', // U+00BB right-pointing double angle quotation mark
+      "\xE2\x80\x98" => "'", // U+2018 left single quotation mark
+      "\xE2\x80\x99" => "'", // U+2019 right single quotation mark
+      "\xE2\x80\x9A" => "'", // U+201A single low-9 quotation mark
+      "\xE2\x80\x9B" => "'", // U+201B single high-reversed-9 quotation mark
+      "\xE2\x80\x9C" => '"', // U+201C left double quotation mark
+      "\xE2\x80\x9D" => '"', // U+201D right double quotation mark
+      "\xE2\x80\x9E" => '"', // U+201E double low-9 quotation mark
+      "\xE2\x80\x9F" => '"', // U+201F double high-reversed-9 quotation mark
+      "\xE2\x80\xB9" => "'", // U+2039 single left-pointing angle quotation mark
+      "\xE2\x80\xBA" => "'", // U+203A single right-pointing angle quotation mark
    );
    $chr = array_keys($chr_map); // but: for efficiency you should
    $rpl = array_values($chr_map); // pre-calculate these two arrays
@@ -1308,20 +1365,22 @@ function pullEntityTasks($formSelect) {
    $result = $wpdb->get_results($sql);
 
    $data['columnDefs'] = array(
-       array("name" => "lead_id", "displayName" => "Entry", "width" => "65",
-           "cellTemplate" => '<div class="ui-grid-cell-contents"><a href="/wp-admin/admin.php?page=gf_entries&view=entry&id={{row.entity.formid}}&lid={{row.entity[col.field]}}" target="_blank"> {{row.entity[col.field]}}</a></div>'
-       ),
-       array("name" => "formid", "displayName" => "Form ID", "width" => "300", "visible" => false),
-       array("name" => "project_name", "displayName" => "Project Name", "width" => "300"),
-       array("name" => "created", "width" => "150"),
-       array("name" => "completed", "width" => "150"),
-       array("name" => "description", "width" => "150"),
-       array("name" => "required", "displayName" => "Req?", "width" => "70"),
-       array("name" => "oformid", "displayName" => "Other Form ID", "width" => "65"),
-       array("name" => "oentry", "displayName" => "Other Entry ID", "width" => "165",
-           "cellTemplate" => '<div class="ui-grid-cell-contents"><a href="/wp-admin/admin.php?page=gf_entries&view=entry&id={{row.entity.oformid}}&lid={{row.entity[col.field]}}" target="_blank"> {{row.entity[col.field]}}</a></div>'
-       ),
-       array("name" => "not_assigned", "displayName" => "Not Assigned", "width" => "100")
+      array(
+         "name" => "lead_id", "displayName" => "Entry", "width" => "65",
+         "cellTemplate" => '<div class="ui-grid-cell-contents"><a href="/wp-admin/admin.php?page=gf_entries&view=entry&id={{row.entity.formid}}&lid={{row.entity[col.field]}}" target="_blank"> {{row.entity[col.field]}}</a></div>'
+      ),
+      array("name" => "formid", "displayName" => "Form ID", "width" => "300", "visible" => false),
+      array("name" => "project_name", "displayName" => "Project Name", "width" => "300"),
+      array("name" => "created", "width" => "150"),
+      array("name" => "completed", "width" => "150"),
+      array("name" => "description", "width" => "150"),
+      array("name" => "required", "displayName" => "Req?", "width" => "70"),
+      array("name" => "oformid", "displayName" => "Other Form ID", "width" => "65"),
+      array(
+         "name" => "oentry", "displayName" => "Other Entry ID", "width" => "165",
+         "cellTemplate" => '<div class="ui-grid-cell-contents"><a href="/wp-admin/admin.php?page=gf_entries&view=entry&id={{row.entity.oformid}}&lid={{row.entity[col.field]}}" target="_blank"> {{row.entity[col.field]}}</a></div>'
+      ),
+      array("name" => "not_assigned", "displayName" => "Not Assigned", "width" => "100")
    );
 
    //create array of table data
@@ -1334,16 +1393,17 @@ function pullEntityTasks($formSelect) {
          $lead_id = $row->lead_id;
       }
       $other_entry = ($row->other_entry == NULL ? '' : $row->other_entry);
-      $data['data'][] = array('lead_id' => $lead_id,
-          'formid' => $row->form_id,
-          'project_name' => $row->project_name,
-          'created' => $row->created,
-          'completed' => $row->completed,
-          'description' => $row->description,
-          'required' => ($row->required == 1 ? 'Yes' : 'No'),
-          'not_assigned' => $not_assigned,
-          'oformid' => $formSelect,
-          'oentry' => $other_entry
+      $data['data'][] = array(
+         'lead_id' => $lead_id,
+         'formid' => $row->form_id,
+         'project_name' => $row->project_name,
+         'created' => $row->created,
+         'completed' => $row->completed,
+         'description' => $row->description,
+         'required' => ($row->required == 1 ? 'Yes' : 'No'),
+         'not_assigned' => $not_assigned,
+         'oformid' => $formSelect,
+         'oentry' => $other_entry
       );
    }
    echo json_encode($data);
@@ -1440,26 +1500,26 @@ function paymentRpt($table, $faire) {
 
    //fields to return
    $data['columnDefs'] = array(
-       array("field" => "form_id", "visible" => false, "displayOrder" => 20),
-       array("field" => "form_type", "displayName" => "Form Type", "displayOrder" => 40),
-       array("field" => "lead_id", "displayName" => "Entry Id", "displayOrder" => 200),
-       array("field" => "presentation_title", "displayName" => "Exhibit Name", "type" => "string", "displayOrder" => 300),
-       array("field" => "field_442", "displayName" => "Fee Management", "type" => "string", "displayOrder" => 400),
-       array("field" => "meta_res_status", "displayName" => "Resource Status", "displayOrder" => 401),
-       array("field" => "field_434", "displayName" => "Fee Ind", "type" => "string", "displayOrder" => 600),
-       array("field" => "field_55", "displayName" => "What are your plans at Maker Faire?", "type" => "string", "displayOrder" => 700),
-       array("field" => "status", "displayName" => "Status", "type" => "string", "visible" => false, "displayOrder" => 800),
-       //payment information
-       array("field" => "order_id", "displayName" => "Order ID", "displayOrder" => 100),
-       array("field" => "invoice_id", "displayName" => "Invoice ID", "displayOrder" => 101),
-       array("field" => "trx_id", "displayName" => "Pay trxID", "displayOrder" => 102),
-       array("field" => "pay_amt", "displayName" => "Pay amount", "cellFilter" => "currency", "displayOrder" => 103),
-       array("field" => "pay_date", "displayName" => "Pay date", "displayOrder" => 104),
-       array("field" => "pay_det", "displayName" => "Payment Details", "displayOrder" => 105),
-       array("field" => "pay_status", "displayName" => "Payment Status", "displayOrder" => 106),
-       array("field" => "area", "displayName" => "Area", "displayOrder" => 900),
-       array("field" => "subarea", "displayName" => "Subarea", "displayOrder" => 901),
-       array("field" => "location", "displayName" => "Location", "displayOrder" => 902)
+      array("field" => "form_id", "visible" => false, "displayOrder" => 20),
+      array("field" => "form_type", "displayName" => "Form Type", "displayOrder" => 40),
+      array("field" => "lead_id", "displayName" => "Entry Id", "displayOrder" => 200),
+      array("field" => "presentation_title", "displayName" => "Exhibit Name", "type" => "string", "displayOrder" => 300),
+      array("field" => "field_442", "displayName" => "Fee Management", "type" => "string", "displayOrder" => 400),
+      array("field" => "meta_res_status", "displayName" => "Resource Status", "displayOrder" => 401),
+      array("field" => "field_434", "displayName" => "Fee Ind", "type" => "string", "displayOrder" => 600),
+      array("field" => "field_55", "displayName" => "What are your plans at Maker Faire?", "type" => "string", "displayOrder" => 700),
+      array("field" => "status", "displayName" => "Status", "type" => "string", "visible" => false, "displayOrder" => 800),
+      //payment information
+      array("field" => "order_id", "displayName" => "Order ID", "displayOrder" => 100),
+      array("field" => "invoice_id", "displayName" => "Invoice ID", "displayOrder" => 101),
+      array("field" => "trx_id", "displayName" => "Pay trxID", "displayOrder" => 102),
+      array("field" => "pay_amt", "displayName" => "Pay amount", "cellFilter" => "currency", "displayOrder" => 103),
+      array("field" => "pay_date", "displayName" => "Pay date", "displayOrder" => 104),
+      array("field" => "pay_det", "displayName" => "Payment Details", "displayOrder" => 105),
+      array("field" => "pay_status", "displayName" => "Payment Status", "displayOrder" => 106),
+      array("field" => "area", "displayName" => "Area", "displayOrder" => 900),
+      array("field" => "subarea", "displayName" => "Subarea", "displayOrder" => 901),
+      array("field" => "location", "displayName" => "Location", "displayOrder" => 902)
    );
 
    //set requested form type based on submitted table request   
@@ -1467,31 +1527,31 @@ function paymentRpt($table, $faire) {
 
    //pull basic entry information 
    $sql = "select wp_mf_entity.lead_id, wp_mf_entity.form_id,presentation_title, status, "
-           . "(select meta_value from wp_gf_entry_meta where meta_key = '434' and entry_id=wp_mf_entity.lead_id limit 1) as field_434, "
-           . "(select meta_value from wp_gf_entry_meta where meta_key = 'res_status' and entry_id=wp_mf_entity.lead_id limit 1) as meta_res_status "
-           . "from wp_mf_entity "
-           . "left outer join wp_mf_faire on find_in_set (wp_mf_entity.form_id,wp_mf_faire.form_ids) > 0 "
-           . "where wp_mf_faire.id= " . $faire . " "
-           . "and form_type like'%$form_type%'"
-           . "and status != 'trash'";
+      . "(select meta_value from wp_gf_entry_meta where meta_key = '434' and entry_id=wp_mf_entity.lead_id limit 1) as field_434, "
+      . "(select meta_value from wp_gf_entry_meta where meta_key = 'res_status' and entry_id=wp_mf_entity.lead_id limit 1) as meta_res_status "
+      . "from wp_mf_entity "
+      . "left outer join wp_mf_faire on find_in_set (wp_mf_entity.form_id,wp_mf_faire.form_ids) > 0 "
+      . "where wp_mf_faire.id= " . $faire . " "
+      . "and form_type like'%$form_type%'"
+      . "and status != 'trash'";
 
    // Pull additional fields: field 442 - 'Fee Management' and field 55  - 'What are your plans at Maker Faire   
    $reqFields = array(442 => "Fee Management", 55 => "What are your plans at Maker Faire?");
 
    $result = $wpdb->get_results($sql);
-   $colDefs = array();
+   
    foreach ($result as $row) {
       $entryID = $row->lead_id;
       $retformType = shortFormType($form_type); //retrieve shortned version of form type
       //set returned data
       $fieldData = array(
-          'lead_id' => $row->lead_id,
-          'form_id' => $row->form_id,
-          'form_type' => $retformType,
-          'presentation_title' => $row->presentation_title,
-          'meta_res_status' => $row->meta_res_status,
-          'status' => $row->status,
-          'field_434' => $row->field_434
+         'lead_id' => $row->lead_id,
+         'form_id' => $row->form_id,
+         'form_type' => $retformType,
+         'presentation_title' => $row->presentation_title,
+         'meta_res_status' => $row->meta_res_status,
+         'status' => $row->status,
+         'field_434' => $row->field_434
       );
 
       // Pull additional fields: field 442 - 'Fee Management' and field 55  - 'What are your plans at Maker Faire
@@ -1511,8 +1571,8 @@ function paymentRpt($table, $faire) {
                         (SELECT form_id FROM `wp_gf_entry` WHERE wp_gf_entry.id = pymt_entry limit 1) as pay_form_id
                   from  wp_gf_entry_meta, wp_gf_addon_payment_transaction                        
                  where  meta_value = '$entryID'"
-              . "  and meta_key = 'entry_id'"
-              . "  and entry_id = wp_gf_addon_payment_transaction.lead_id";
+         . "  and meta_key = 'entry_id'"
+         . "  and entry_id = wp_gf_addon_payment_transaction.lead_id";
 
       $payresults = $wpdb->get_results($paysql);
 
@@ -1538,7 +1598,7 @@ function paymentRpt($table, $faire) {
                      if (is_array($payFields['inputs'])) {
                         foreach ($payFields['inputs'] as $input) {
                            $pay_det .= $input['label'] . ': ';
-                           $pay_det .= (isset($payEntry[$input['id']])?$payEntry[$input['id']]:'') . "\r";
+                           $pay_det .= (isset($payEntry[$input['id']]) ? $payEntry[$input['id']] : '') . "\r";
                         }
                         $pay_det .= "\r";
                      }
@@ -1578,38 +1638,36 @@ function notesRpt($table, $faire) {
 
    //fields to return
    $data['columnDefs'] = array(
-       array("field" => "form_id", "displayOrder" => 20),       
-       array("field" => "entry_id", "displayName" => "Entry Id", "displayOrder" => 200),
-       array("field" => "user_name", "displayName" => "User Name", "type" => "string", "displayOrder" => 300),
-       array("field" => "date_created", "displayName" => "Date Added", "type" => "string", "displayOrder" => 400),
-       array("field" => "note", "displayName" => "Note", "displayOrder" => 401),
-       array("field" => "project_name", "displayName" => "Project Name", "type" => "string", "displayOrder" => 600),      
+      array("field" => "form_id", "displayOrder" => 20),
+      array("field" => "entry_id", "displayName" => "Entry Id", "displayOrder" => 200),
+      array("field" => "user_name", "displayName" => "User Name", "type" => "string", "displayOrder" => 300),
+      array("field" => "date_created", "displayName" => "Date Added", "type" => "string", "displayOrder" => 400),
+      array("field" => "note", "displayName" => "Note", "displayOrder" => 401),
+      array("field" => "project_name", "displayName" => "Project Name", "type" => "string", "displayOrder" => 600),
    );
 
    $sql = "SELECT b.form_id, a.entry_id,a.user_name, a.date_created,"
-           . "DATE_FORMAT(a.date_created,'%m/%d/%Y %l:%i %p') AS niceDate,a.value as note, "
-           . "(select wp_gf_entry_meta.meta_value "
-           . " from wp_gf_entry_meta where meta_key = 151 and wp_gf_entry_meta.entry_id=a.entry_id) as project_name "
-           . "FROM `wp_gf_entry_notes` a "
-           . "join `wp_gf_entry` b on a.entry_id=b.id "
-           . "left outer join wp_mf_faire on find_in_set (b.form_id,wp_mf_faire.form_ids) > 0 "
-           . "where wp_mf_faire.id= " . $faire;
-   
-   
+      . "DATE_FORMAT(a.date_created,'%m/%d/%Y %l:%i %p') AS niceDate,a.value as note, "
+      . "(select wp_gf_entry_meta.meta_value "
+      . " from wp_gf_entry_meta where meta_key = 151 and wp_gf_entry_meta.entry_id=a.entry_id) as project_name "
+      . "FROM `wp_gf_entry_notes` a "
+      . "join `wp_gf_entry` b on a.entry_id=b.id "
+      . "left outer join wp_mf_faire on find_in_set (b.form_id,wp_mf_faire.form_ids) > 0 "
+      . "where wp_mf_faire.id= " . $faire;
+
+
    $result = $wpdb->get_results($sql);
-   $colDefs = array();
-   foreach ($result as $row) {
-      $entryID = $row->lead_id;
-      $retformType = shortFormType($form_type); //retrieve shortned version of form type
+
+   foreach ($result as $row) {            
       //set returned data
       $data['data'][] = array(
-          'entry_id' => $row->entry_id,
-          'form_id' => $row->form_id,
-          'user_name' => $row->user_name,
-          'date_created' => $row->date_created,
-          'note' => $row->note,
-          'project_name' => $row->project_name
-      );      
+         'entry_id' => $row->entry_id,
+         'form_id' => $row->form_id,
+         'user_name' => $row->user_name,
+         'date_created' => $row->date_created,
+         'note' => $row->note,
+         'project_name' => $row->project_name
+      );
    }
 
    $data['columnDefs'] = array_values($data['columnDefs']); //returns all the values from the array and indexes the array numerically
@@ -1620,7 +1678,7 @@ function notesRpt($table, $faire) {
 }
 
 function shortFormType($form_type) {
-	global $cmInd;
+   global $cmInd;
    switch ($form_type) {
       case 'Show Management':
          $form_type = 'SHOW';

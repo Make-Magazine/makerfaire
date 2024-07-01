@@ -2,10 +2,10 @@
     <div id="entry_filters"></div>
     <div class="row">
       <div class="col-md-6">
-        <h3>Forms</h3>
-        Search Forms: <input type="text" ng-model="formSearch">
-        <select name="formSelect" ng-model="reports.formSelect" multiple style="max-width: -webkit-fill-available;">
-          <option ng-repeat="form in reports.forms | orderBy:'-id' | filter:formSearch" value="{{form.id}}">{{form.id}} - {{form.name}}</option>
+        <h3>Forms</h3>        
+        <select name="formSelect" ng-model="reports.formSelect" ng-change="retGridData()"  style="max-width: -webkit-fill-available;">
+          <option value="">Please Select</option>
+          <option ng-repeat="form in reports.forms | orderBy:'-id'" value="{{form.id}}">{{form.id}} - {{form.name}}</option>
         </select>
       </div>
       <div class="col-md-6 checkbox">
@@ -16,72 +16,80 @@
         </label>
       </div>
     </div>
-    <br/><br/>
-    <h3>Fields (from the original submission)</h3>
-    <small><i>Note: Field information is from Master Form 9<br/>
-    All Reports will include Entry ID and Form ID</i></small>
-    <br/><br/>
+    
+    <!--<div ng-if="reports.showFields">-->
+    <div>
+      <h3>Fields</h3>
+      <small><i>Note: All Reports will include Entry ID and Form ID</i></small>
+      <br/><br/>
 
-    <button type="button" class="btn btn-success" ng-click="clearAll()">Clear All</button>
-    <div ui-grid="fieldSelect" ui-grid-selection ui-grid-resize-columns  class="grid"></div>
-
-    <br/><br/>
-    <h3>RMT fields</h3><label><input type="checkbox" ng-model="reports.rmt.comment" style="margin-right:10px">Include Resource comments<br></label>
-    <div class="checkbox well" style="background: white;height: 400px;overflow: auto;padding: 0 20px;">
+      <button type="button" class="btn btn-success" ng-click="clearAll()">Clear All</button>
+      <div ui-grid="fieldSelect" ui-grid-selection ui-grid-resize-columns  class="grid"></div>
+      
+      <div style="clear:both"></div>
+      <h3>RMT fields</h3>
+    
+      <label>
+        <input type="checkbox" ng-model="reports.rmt.comment" style="margin-right:10px">Include Resource comments
+        <br />
+      </label>
+    
+      <div class="checkbox well" style="background: white;height: 400px;overflow: auto;padding: 0 20px;">
+        <div class="row">
+          <div class="col-md-3">
+            <h4> Resources</h4>
+            <div ng-repeat="rmtField in reports.rmt.resource">
+              <label><input type="checkbox" ng-model="rmtField.checked">{{rmtField.value}}<br></label>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <h4>Attributes</h4>
+            <div ng-repeat="rmtField in reports.rmt.attribute">
+              <input type="checkbox" name="attribute" ng-model="rmtField.checked">{{rmtField.value}}<br>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <h4>Attention</h4>
+            <div ng-repeat="rmtField in reports.rmt.attention">
+              <input type="checkbox" name="attention" ng-model="rmtField.checked">{{rmtField.value}}<br>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <h4>Other</h4>
+            <div ng-repeat="rmtField in reports.rmt.meta">
+              <input type="checkbox" name="meta" ng-model="rmtField.checked"">{{rmtField.value}}<br/>
+            </div>
+          </div>
+        </div>
+      </div>
+      <br/><br/>
       <div class="row">
         <div class="col-md-3">
-          <h4> Resources</h4>
-          <div ng-repeat="rmtField in reports.rmt.resource">
-            <label><input type="checkbox" ng-model="rmtField.checked">{{rmtField.value}}<br></label>
-          </div>
+          <h4>Reporting on Form:</h4>
+          <div style="text-indent:10px">{{reports.formName(reports.formSelect)}}</div>
         </div>
-        <div class="col-md-3">
-          <h4>Attributes</h4>
-          <div ng-repeat="rmtField in reports.rmt.attribute">
-            <input type="checkbox" name="attribute" ng-model="rmtField.checked">{{rmtField.value}}<br>
-          </div>
+        <div class="col-md-6">
+          <h4>Original Form Fields</h4>
+          <div style="text-indent:10px" ng-repeat="fields in reports.selectedFields">{{fields.id}} - {{fields.label}} - {{fields.choices}}</div>
         </div>
-        <div class="col-md-3">
-          <h4>Attention</h4>
-          <div ng-repeat="rmtField in reports.rmt.attention">
-            <input type="checkbox" name="attention" ng-model="rmtField.checked">{{rmtField.value}}<br>
-          </div>
+        <div class="col-md-2">
+          <h4>RMT:</h4>
+          <div style="text-indent:10px" ng-repeat="rmtField in reports.rmt.resource"><span ng-if="rmtField.checked">{{rmtField.value}}</span></div>
+          <div style="text-indent:10px" ng-repeat="rmtField in reports.rmt.attribute"><span ng-if="rmtField.checked">{{rmtField.value}}</span></div>
+          <div style="text-indent:10px" ng-repeat="rmtField in reports.rmt.attention"><span ng-if="rmtField.checked">{{rmtField.value}}</span></div>
+          <div style="text-indent:10px" ng-repeat="rmtField in reports.rmt.meta"><span ng-if="rmtField.checked">{{rmtField.value}}</span></div>
         </div>
-        <div class="col-md-3">
-          <h4>Other</h4>
-          <div ng-repeat="rmtField in reports.rmt.meta">
-            <input type="checkbox" name="meta" ng-model="rmtField.checked"">{{rmtField.value}}<br/>
-          </div>
+        <div class="col-md-1">
+          <h4>Other:</h4>
+          <span ng-if="reports.location">Location</span>
+          <span ng-if="reports.tickets">Tickets</span>        
         </div>
       </div>
-    </div>
-    <br/><br/>
-    <div class="row">
-      <div class="col-md-3">
-        <h4>Reporting on Forms:</h4>
-        <div style="text-indent:10px" ng-repeat="selected in reports.formSelect">{{reports.formName(selected)}}</div>
-      </div>
-      <div class="col-md-6">
-        <h4>Original Form Fields</h4>
-        <div style="text-indent:10px" ng-repeat="fields in reports.selectedFields">{{fields.id}} - {{fields.label}} - {{fields.choices}}</div>
-      </div>
-      <div class="col-md-2">
-        <h4>RMT:</h4>
-        <div style="text-indent:10px" ng-repeat="rmtField in reports.rmt.resource"><span ng-if="rmtField.checked">{{rmtField.value}}</span></div>
-        <div style="text-indent:10px" ng-repeat="rmtField in reports.rmt.attribute"><span ng-if="rmtField.checked">{{rmtField.value}}</span></div>
-        <div style="text-indent:10px" ng-repeat="rmtField in reports.rmt.attention"><span ng-if="rmtField.checked">{{rmtField.value}}</span></div>
-        <div style="text-indent:10px" ng-repeat="rmtField in reports.rmt.meta"><span ng-if="rmtField.checked">{{rmtField.value}}</span></div>
-      </div>
-      <div class="col-md-1">
-        <h4>Other:</h4>
-        <span ng-if="reports.location">Location</span>
-        <span ng-if="reports.tickets">Tickets</span>        
-      </div>
-    </div>
 
-    <br/><br/>
-    <button type="button" class="btn btn-success" ng-click="generateReport()">Generate Report</button>
-    <br/><br/>
+      <br/><br/>
+      <button ng-if="reports.showFields" type="button" class="btn btn-success" ng-click="generateReport()">Generate Report</button>
+      <br/><br/>
+    </div>
   </div>
 
   <!-- grid to hold report data -->
