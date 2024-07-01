@@ -52,7 +52,7 @@ class Page_Search extends Widget_Base {
 
     protected function render() {
         $settings = $this->get_settings_for_display();
-		wp_enqueue_script('jquery-mark', get_stylesheet_directory_uri() . '/js/libs/jquery.mark.min.js');
+		wp_enqueue_script('jquery-mark', get_stylesheet_directory_uri() . '/js/standalone/jquery.mark.min.js', array('jquery') );
 		?>
 		<style>
 			mark {
