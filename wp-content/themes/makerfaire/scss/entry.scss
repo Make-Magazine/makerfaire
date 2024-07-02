@@ -143,7 +143,7 @@
 					}
 				}
 			}
-			.owl-dots {
+			.owl-dots, .owl-nav {
 				display: none;
 			}
 		}
@@ -264,6 +264,9 @@
 				min-width: 300px;
 				max-width: 45%;
 				gap: 15px;
+				@media screen and (max-width: 781px) {
+					max-width: 100%;
+				}
 				.entry-box-items {
 					margin-top: -5px;
 				}
