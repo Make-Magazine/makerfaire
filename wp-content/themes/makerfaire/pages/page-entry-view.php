@@ -146,11 +146,11 @@
         <?php } ?>  
     </section>
 
-    <section id="sponsorSection">
+    <?php /* <section id="sponsorSection">
         <?php 
             $slideshowShortcode = "[sponsor_slideshow faire_id=" . $faireShort . " url=https://" . $_SERVER['SERVER_NAME'] . "/" . $url_sub_path . "/sponsors/]";
             echo(do_shortcode($slideshowShortcode)); 
         ?>
-    </section>
+    </section> */ ?>
 
 </main>

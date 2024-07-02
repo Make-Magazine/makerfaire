@@ -20,6 +20,9 @@ if (array_intersect(array('administrator', 'editor', 'reviewer'), $user->roles))
     $adminView = true;
 }
 
+$displayMakers = true;
+$displayFormType = true;
+
 //entry not found
 if (isset($entry->errors)) {
     $form_id = '';
@@ -40,22 +43,28 @@ if (isset($entry->errors)) {
     $exhibit_type = array();
     $formType = $form['form_type'];
 
-    if ($formType == "Master") {                    
+    if ($formType == "Master") {
         foreach ($entry as $key => $value) {
-            if (strpos($key, '339.') === 0) {         
-                if($value!='') $exhibit_type[$key] = $value;       
-                if(stripos($value, 'sponsor') !== false){
-                    $formType = "Sponsor";
-                    $sponsorshipLevel = $value;                    
-                }                                             
-            }    
-        }        
+            if (strpos($key, '339.') === 0) {
+                if ($value != '') {
+                    if (stripos($value, 'sponsor') !== false) {
+                        $exhibit_type[$key] = 'Exhibit';
+                    } else {
+                        $exhibit_type[$key] = $value;
+                    }
+                }
+            }
+        }
     } else { // otherwise the exhibit type is just the form type
-        $exhibit_type[] = $formType;
-        if ($formType == "Sponsor") {
-            $sponsorshipLevel = (isset($entry["442.3"])?$entry["442.3"]:'');
+        if (stripos($formType, 'sponsor') !== false) {
+            // if the form type is a kind of sponsor, it should be shown as an exhibit, and the maker info shouldn't be shown
+            $exhibit_type[] = 'Exhibit';
+            $displayMakers = false;
+        } else {
+            $exhibit_type[] = $value;
         }
     }
+    $exhibit_type = array_unique($exhibit_type);
     
     //build an array of field information for updating fields
     foreach ($form['fields'] as $field) {
@@ -274,10 +283,6 @@ if (is_array($entry) && !empty($entry)) { //is this a valid entry?
 }
 
 //check flags
-$displayMakers = true;
-
-
-$displayFormType = true;
 foreach ($entry as $key => $field) {
     $pos = strpos($key, '304.');
     if ($pos !== false) {
