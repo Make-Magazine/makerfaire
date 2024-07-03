@@ -61,7 +61,7 @@ if (isset($entry->errors)) {
             $exhibit_type[] = 'Exhibit';
             $displayMakers = false;
         } else {
-            $exhibit_type[] = $value;
+            $exhibit_type[] = $formType;
         }
     }
     $exhibit_type = array_unique($exhibit_type);
