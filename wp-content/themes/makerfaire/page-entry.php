@@ -267,7 +267,6 @@ if (strpos($faireShort, "VMF") === 0) { // special for virtual faires
 $validEntry = false;
 if (is_array($entry) && !empty($entry)) { //is this a valid entry?
     if (isset($entry[151]) && $entry[151] != '') {
-        // if 
         if ((isset($entry['status']) && $entry['status'] === 'active' && //is the entry not trashed
                 isset($entry[303]) && $entry[303] == 'Accepted') || //is the entry accepted?
                 $adminView == true) {                                         // OR, if user is an administrator or editor they can see it all
@@ -279,7 +278,6 @@ if (is_array($entry) && !empty($entry)) { //is this a valid entry?
     if( (in_array('Show Management', $exhibit_type) || in_array('Not Sure Yet', $exhibit_type) || in_array('Other', $exhibit_type)) && $adminView == false ) {
         $validEntry = false;
     }
-
 }
 
 //check flags
@@ -294,7 +292,10 @@ foreach ($entry as $key => $field) {
             $displayFormType = false;
     }
 }
-
+// if edit entry is true, this means the user viewing the entry is the user who created the entry and should be able to see it
+if($makerEdit) {
+    $validEntry = true;
+}
 
 // Project Inline video
 $video = '';
@@ -403,8 +404,8 @@ if (!$displayMakers) {
             include get_template_directory() . '/pages/page-entry-view.php';
         //}
         if ($makerEdit) {
-            //use the edit entry public info page
-            include get_template_directory() . '/pages/page-entry-edit.php';
+            //use the edit entry public info page  - this isn't ready yet
+            //include get_template_directory() . '/pages/page-entry-edit.php';
         }
     } else { //entry is not active
         echo '<div class="container invalid"><h2>Invalid Entry</h2></div>';
