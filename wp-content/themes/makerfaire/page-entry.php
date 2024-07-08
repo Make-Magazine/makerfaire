@@ -196,7 +196,7 @@ if (isset($entry->errors)) {
     $project_title = preg_replace('/\v+|\\\[rn]/', '<br/>', $project_title);
 }
 
-//set sharing card data (do we need this? can we remove)
+//set sharing card data, this is necessary
 if ((is_array($entry) && isset($entry['status']) && $entry['status'] == 'active' && isset($entry[303]) && $entry[303] == 'Accepted') || $adminView == true) {
     $sharing_cards->project_short = $project_short;
     $sharing_cards->project_photo = $project_photo;
@@ -295,6 +295,7 @@ foreach ($entry as $key => $field) {
 // if edit entry is true, this means the user viewing the entry is the user who created the entry and should be able to see it
 if($makerEdit) {
     $validEntry = true;
+    $project_title = esc_html($entry['151']);
 }
 
 // Project Inline video
@@ -545,6 +546,7 @@ function display_group($entryID) {
             $return .= '<section class="group-list entry-box">';
             foreach ($results as $row) {
                 $link_entryID = ($type == 'parent' ? $row->childID : $row->parentID);
+                // if type is parent, it's a showcase
                 $entry = GFAPI::get_entry($link_entryID);
                 //Title
                 $project_title = esc_html($entry['151']);
@@ -576,11 +578,12 @@ function display_groupEntries($entryID) {
     $return = '';
 
     //look for all associated entries but exclude trashed entries
-    $sql = "select wp_mf_lead_rel.*, title.meta_value as title
+    $sql = "select wp_mf_lead_rel.*, title.meta_value as title, photo.meta_value as photo
             from wp_mf_lead_rel 
             left outer join wp_gf_entry child on wp_mf_lead_rel.childID = child.id 
-            left outer join wp_gf_entry_meta on child.id = wp_gf_entry_meta.entry_id and wp_gf_entry_meta.meta_key =303 
-            left outer join wp_gf_entry_meta title on child.id = title.entry_id and title.meta_key =151 
+            left outer join wp_gf_entry_meta on child.id = wp_gf_entry_meta.entry_id and wp_gf_entry_meta.meta_key ='303' 
+            left outer join wp_gf_entry_meta title on child.id = title.entry_id and title.meta_key ='151' 
+            left outer join wp_gf_entry_meta photo on child.id = photo.entry_id and photo.meta_key ='22'
             left outer join wp_gf_entry parent on wp_mf_lead_rel.parentID = parent.id 
             
             where (parentID=" . $entryID . " or childID=" . $entryID . ") 
@@ -600,6 +603,7 @@ function display_groupEntries($entryID) {
                 //Title
                 $project_title = esc_html($row->title);            
                 $project_title = preg_replace('/\v+|\\\[rn]/', '<br/>', $project_title);
+                $project_photo = $row->photo;  
 
                 $return .= '<span><a href="/maker/entry/' . $link_entryID . '">' . $project_title . '</a></span><br/>';
             }            
@@ -677,49 +681,49 @@ function getMakerInfoLegacy($entry) {
     //set maker information
     if (isset($entry['160.3']) && $entry['160.3'] != "")
         $makers[1] = array('firstname' => $entry['160.3'], 'lastname' => $entry['160.6'],
-            'bio' => (isset($entry['234']) ? $entry['234'] : ''),
+            'bio' => (isset($entry['234']) ? preg_replace('/\\\\["\']/','"',$entry['234']) : ''), //remove backslashes from urls in the description 
             'photo' => (isset($entry['217']) ? $entry['217'] : ''),
             'social' => getSocial(isset($entry['821']) ? $entry['821'] : ''),
             'website' => (isset($entry['209']) ? $entry['209'] : '')
         );
     if (isset($entry['158.3']) && $entry['158.3'] != "")
         $makers[2] = array('firstname' => $entry['158.3'], 'lastname' => $entry['158.6'],
-            'bio' => (isset($entry['258']) ? $entry['258'] : ''),
+            'bio' => (isset($entry['258']) ? preg_replace('/\\\\["\']/','"',$entry['258']) : ''),
             'photo' => (isset($entry['224']) ? $entry['224'] : ''),
             'social' => getSocial(isset($entry['822']) ? $entry['822'] : ''),
             'website' => (isset($entry['216']) ? $entry['216'] : '')
         );
     if (isset($entry['155.3']) && $entry['155.3'] != "")
         $makers[3] = array('firstname' => $entry['155.3'], 'lastname' => $entry['155.6'],
-            'bio' => (isset($entry['259']) ? $entry['259'] : ''),
+            'bio' => (isset($entry['259']) ? preg_replace('/\\\\["\']/','"',$entry['259']) : ''),
             'photo' => (isset($entry['223']) ? $entry['223'] : ''),
             'social' => getSocial(isset($entry['823']) ? $entry['823'] : ''),
             'website' => (isset($entry['215']) ? $entry['215'] : '')
         );
     if (isset($entry['156.3']) && $entry['156.3'] != "")
         $makers[4] = array('firstname' => $entry['156.3'], 'lastname' => $entry['156.6'],
-            'bio' => (isset($entry['260']) ? $entry['260'] : ''),
+            'bio' => (isset($entry['260']) ? preg_replace('/\\\\["\']/','"',$entry['260']) : ''),
             'photo' => (isset($entry['222']) ? $entry['222'] : ''),
             'social' => getSocial(isset($entry['824']) ? $entry['824'] : ''),
             'website' => (isset($entry['214']) ? $entry['214'] : '')
         );
     if (isset($entry['157.3']) && $entry['157.3'] != "")
         $makers[5] = array('firstname' => $entry['157.3'], 'lastname' => $entry['157.6'],
-            'bio' => (isset($entry['261']) ? $entry['261'] : ''),
+            'bio' => (isset($entry['261']) ? preg_replace('/\\\\["\']/','"',$entry['261']) : ''),
             'photo' => (isset($entry['220']) ? $entry['220'] : ''),
             'social' => getSocial(isset($entry['825']) ? $entry['825'] : ''),
             'website' => (isset($entry['213']) ? $entry['213'] : '')
         );
     if (isset($entry['159.3']) && $entry['159.3'] != "")
         $makers[6] = array('firstname' => $entry['159.3'], 'lastname' => $entry['159.6'],
-            'bio' => (isset($entry['262']) ? $entry['262'] : ''),
+            'bio' => (isset($entry['262']) ? preg_replace('/\\\\["\']/','"',$entry['262']) : ''),
             'photo' => (isset($entry['221']) ? $entry['221'] : ''),
             'social' => getSocial(isset($entry['826']) ? $entry['826'] : ''),
             'website' => (isset($entry['211']) ? $entry['211'] : '')
         );
     if (isset($entry['154.3']) && $entry['154.3'] != "")
         $makers[7] = array('firstname' => $entry['154.3'], 'lastname' => $entry['154.6'],
-            'bio' => (isset($entry['263']) ? $entry['263'] : ''),
+            'bio' => (isset($entry['263']) ? preg_replace('/\\\\["\']/','"',$entry['263']) : ''),
             'photo' => (isset($entry['219']) ? $entry['219'] : ''),
             'social' => getSocial(isset($entry['827']) ? $entry['827'] : ''),
             'website' => (isset($entry['212']) ? $entry['212'] : '')
@@ -728,7 +732,7 @@ function getMakerInfoLegacy($entry) {
     if($isGroup) {
         $makers = array(array(
             'firstname' => $groupname, 'lastname' => null,
-            'bio' => $groupbio,
+            'bio' => preg_replace('/\\\\["\']/','"',$groupbio),
             'photo' => $groupphoto,
             'social' => $groupsocial,
             'website' => $groupwebsite
@@ -996,7 +1000,7 @@ function getMakerInfoNested($entry) {
 
             if (!is_wp_error($child_entry) && $child_entry['form_id'] == 246) {
                 $makers[] = array('firstname' => $child_entry['160.3'], 'lastname' => $child_entry['160.6'],
-                    'bio' => (isset($child_entry['234']) ? $child_entry['234'] : ''),
+                    'bio' => (isset($child_entry['234']) ? preg_replace('/\\\\["\']/','"',$child_entry['234']) : ''),
                     'photo' => (isset($child_entry['217']) ? $child_entry['217'] : ''),
                     'social' => getSocial(isset($child_entry['821']) ? $child_entry['821'] : ''),
                     'website' => (isset($child_entry['209']) ? $child_entry['209'] : '')
