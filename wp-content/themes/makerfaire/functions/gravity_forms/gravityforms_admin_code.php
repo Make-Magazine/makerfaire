@@ -1,89 +1,144 @@
 <?php
 
 /* This adds new form types for the users to select when creating new gravity forms */
-add_filter('gform_form_settings', 'my_custom_form_setting', 10, 2);
+add_filter('gform_form_settings_fields', 'my_custom_form_setting', 10, 2);
 
 function my_custom_form_setting($settings, $form) {
    global $wpdb;
 
-   $form_type = rgar($form, 'form_type');
-   if ($form_type == '')
-      $form_type = 'Other'; //default
+   //create section for maker faire settings
+   $mf_settings = array();
+   $mf_settings['mf_settings']['title'] = 'Maker Faire Settings';
 
-      
-//build select with all form type options
-   $sql = $wpdb->get_results("SELECT * FROM `wp_mf_form_types`");
-   $select = '<select name="form_type">';
+   // Add Form Type
+   //build select with all form type options
+   $sql = $wpdb->get_results("SELECT * FROM `wp_mf_form_types` order by form_type ASC");
+   $choices_array = array();
    foreach ($sql as $result) {
-      $select .= '<option value="' . $result->form_type . '" ' . ($form_type == $result->form_type ? 'selected' : '') . '>' . $result->form_type . '</option>';
+      $choices_array[] = array('label' => $result->form_type, 'value' => $result->form_type);
    }
-   $select .= '</select>';
 
-   $settings['Form Basics']['form_type'] = '<tr><th>Form Type</th><td>' . $select . '</td></tr>';
-   
-   $master_form_id = rgar($form, 'master_form_id');
-   $settings['Form Basics']['master_form_id'] = '<tr><th>Master Form ID</th>
-   <td><input type="text" name="master_form_id" value="' . $master_form_id . '" /></td></tr>
-   <tr><th></th><td><small><i>Use this to create a master entry upon acceptance of entry.</i></small></td></tr>';
+   $mf_settings['mf_settings']['fields'][] = array(
+      'label'           => 'Form Type',
+      'name'            => 'form_type',
+      'default_value'   => 'Other',
+      'type'            => 'select',
+      'choices'         => $choices_array
+   );
 
    // Add option to create invoice from form
-   $create_invoice = rgar($form, 'create_invoice');
-   $settings['Form Basics']['create_invoice'] = '
-    <tr>
-      <th><label for="my_custom_setting">Create Invoice</label></th>
-      <td>
-        <input type="radio" name="create_invoice" ' . ($create_invoice == 'no' ? 'checked' : '') . ' value="no"> No<br>
-        <input type="radio" name="create_invoice" ' . ($create_invoice == 'yes' ? 'checked' : '') . '  value="yes"> Yes
-      </td>
-    </tr>';
+   $choices_array = array(
+      array('label' => 'Yes', 'value' => 'yes'),
+      array('label' => 'No', 'value' => 'no'),
+   );
+   $mf_settings['mf_settings']['fields'][] = array(
+      'label'           => 'Create Invoice',
+      'name'            => 'create_invoice',
+      'default_value'   => 'no',
+      'type'            => 'radio',
+      'horizontal'      => 1,
+      'choices'         => $choices_array
+   );
 
    // Add Maker Portal message
-   $mat_message = rgar($form, 'mat_message');
-   $mat_array['mat_message'] = '
-    <tr><th>Messaging</th>
-      <td><textarea rows="4" cols="50" name="mat_message">' . $mat_message . '</textarea></td></tr>';
+   $mf_settings['mf_settings']['fields'][] = array(
+      'label'        => 'Maker Portal Messaging',
+      'name'         => 'mat_message',
+      'allow_html'   => 1,
+      'type'         => 'textarea'
+   );
 
    //add radio to display or hide edit entry resources link
-   $mat_disp_res_link = rgar($form, 'mat_disp_res_link');
-   $mat_array['mat_disp_res_link'] = '<tr>
-      <th>Display Setup/Resources</th>
-      <td><input type="radio" name="mat_disp_res_link" value="no" ' . ($mat_disp_res_link == 'no' || $mat_disp_res_link == '' ? 'checked' : '') . '> No&nbsp;
-          <input type="radio" name="mat_disp_res_link" value="yes" ' . ($mat_disp_res_link == 'yes' ? 'checked' : '') . '> Yes<br>
-      </td>
-    </tr>';
+   $choices_array = array(
+      array('label' => 'Yes', 'value' => 'yes'),
+      array('label' => 'No', 'value' => 'no'),
+   );
+   $mf_settings['mf_settings']['fields'][] = array(
+      'label'           => 'Display Setup/Resources',
+      'name'            => 'mat_disp_res_link',
+      'default_value'   => 'no',
+      'type'            => 'radio',
+      'horizontal'      => 1,
+      'choices'         => $choices_array
+   );
 
-   // Setup/Rsources Modal layout
-   $mat_res_modal_layout = rgar($form, 'mat_res_modal_layout');
-   $mat_array['mat_res_modal_layout'] = '
-    <tr><th>Setup/Resource Modal Layout</th>
-      <td><textarea rows="4" cols="50" name="mat_res_modal_layout">' . $mat_res_modal_layout . '</textarea></td></tr>';
+   // Setup/Resources Modal layout
+   $mf_settings['mf_settings']['fields'][] = array(
+      'label'        => 'Setup/Resource Modal Layout',
+      'name'         => 'mat_res_modal_layout',
+      'allow_html'   => 1,
+      'type'         => 'textarea'
+   );
 
-   //url to edit resources form
-   $mat_edit_res_url = rgar($form, 'mat_edit_res_url');
-   $mat_array['mat_edit_res_url'] = '<tr>
-      <th>URL to Edit Resources Form</th>
-      <td><input type="text" name="mat_edit_res_url" value="' . $mat_edit_res_url . '" /></td>
-    </tr>';
+   // Supplemental Form URLs to show on the Maker Portal
+   $mf_settings['mf_settings']['fields'][] = array(
+				
+						'name'  => 'show_supp_forms',
+						'type'  => 'toggle',
+						'label' => 'Show Supplemental Form Links in Maker Portal',
+   );
 
-   //place MAT section after Form Basics
-   $newSettings = array_slice($settings, 0, 1, true) +
-           array("Maker Portal" => $mat_array) +
-           array_slice($settings, 1, count($settings) - 1, true);
+   $mf_settings['mf_settings']['fields'][] = array(				
+      'name'  => 'exhibit_supp_form_URL',
+      'type'  => 'text',
+      'label' => 'Link to Exhibit Supplemental Form',
+      'dependency' => array(
+         'live' => 1,
+         'fields' => array(
+            array(
+               'field'=>'show_supp_forms'
+            )
+         )
+      )
+   );
+
+   $mf_settings['mf_settings']['fields'][] = array(				
+      'name'  => 'presentation_supp_form_URL',
+      'type'  => 'text',
+      'label' => 'Link to Presentation Supplemental Form',
+      'dependency' => array(
+         'live' => 1,
+         'fields' => array(
+            array(
+               'field'=>'show_supp_forms'
+            )
+         )
+      )
+   );
+
+   $mf_settings['mf_settings']['fields'][] = array(				
+      'name'  => 'performer_supp_form_URL',
+      'type'  => 'text',
+      'label' => 'Link to Performer Supplemental Form',
+      'dependency' => array(
+         'live' => 1,
+         'fields' => array(
+            array(
+               'field'=>'show_supp_forms'
+            )
+         )
+      )
+   );
+
+   $mf_settings['mf_settings']['fields'][] = array(				
+      'name'  => 'workshop_supp_form_URL',
+      'type'  => 'text',
+      'label' => 'Link to Workshop Supplemental Form',
+      'dependency' => array(
+         'live' => 1,
+         'fields' => array(
+            array(
+               'field'=>'show_supp_forms'
+            )
+         )
+      )
+   );
+   //place MakerFaire section after Form Basics, and then append all other sections after
+   $newSettings = array_merge(array_slice($settings, 0, 1, true), 
+   $mf_settings,
+   array_slice($settings, 1, count($settings) - 1, true));
+
    return $newSettings;
-}
-
-/* This will save the form type & MAT messaging & MAT display flag selected by admin users */
-add_filter('gform_pre_form_settings_save', 'save_form_type_form_setting');
-
-function save_form_type_form_setting($form) {
-   $form['form_type'] = rgpost('form_type');
-   $form['master_form_id'] = rgpost('master_form_id');
-   $form['mat_message'] = rgpost('mat_message');
-   $form['create_invoice'] = rgpost('create_invoice');
-   $form['mat_disp_res_link'] = rgpost('mat_disp_res_link');
-   $form['mat_edit_res_url'] = rgpost('mat_edit_res_url');
-   $form['mat_res_modal_layout'] = rgpost('mat_res_modal_layout');
-   return $form;
 }
 
 //=============================================
@@ -130,15 +185,15 @@ function get_all_fieldby_name($key, $form, $entry = array()) {
       if ($field['type'] == 'name' || $field['type'] == 'address') {
          foreach ($field['inputs'] as $choice) {
             if (isset($choice['name']) && $choice['name'] == $key) {
-            	$return[] = array('id' => $choice['id'], 'value' => (!empty($entry) && isset($entry[$choice['id']])? $entry[$choice['id']] : ''));
+               $return[] = array('id' => $choice['id'], 'value' => (!empty($entry) && isset($entry[$choice['id']]) ? $entry[$choice['id']] : ''));
             }
          }
       } else {
          $lead_key = $field['inputName'];
          if ($lead_key == $key) {
             $return[] = array(
-                'id' => $field['id'],
-            		'value' => (!empty($entry) && isset($entry[$field['id']]) ? $entry[$field['id']] : '')
+               'id' => $field['id'],
+               'value' => (!empty($entry) && isset($entry[$field['id']]) ? $entry[$field['id']] : '')
             );
          }
       }
