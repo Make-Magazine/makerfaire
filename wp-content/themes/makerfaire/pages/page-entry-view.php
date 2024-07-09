@@ -34,12 +34,13 @@
                 <div class="entry-box">
                     <h1 class="project-title"><?php echo $project_title; ?></h1>
                     <h3 class="faireName"><a href="/<?php echo $url_sub_path; ?>"><?php echo ucwords(str_replace('-', ' ', $faire));?></a></h3>
+                    <h4 class="faireDate"><?php echo $faire_dates; ?></h4>
                     <div class="entry-box-items">
-                        <?php if(isset($location) && trim($location) != '' && count(array_intersect($exhibit_type, array("Exhibit", "Sponsor", "Startup Sponsor"))) > 0) { ?><span class="entry-box-item"><i class="fa fa-map-signs" aria-label="Location"></i><?php echo $location; ?></span><?php } ?>
-                        <?php if(isset($friday) && $friday == 1 && count(array_intersect($exhibit_type, array("Exhibit", "Sponsor", "Startup Sponsor"))) > 0) { ?><span class="entry-box-item"><i class="fa fa-calendar" aria-label="Calendar Detail"></i>Friday Only</span><?php } ?>
-                        <?php if(!empty($exhibit_type)) { ?><span class="entry-box-item"><i class="fa fa-check" aria-label="Exhibit Type"></i><?php echo implode(" & ",$exhibit_type); ?></span><?php } ?>
-                        <?php if(isset($mainCategory) && $mainCategory != '') { ?><span class="entry-box-item"><i class="fa fa-rocket" aria-label="Main Category"></i><?php echo $mainCategory ; ?></span><?php } ?>
-                        <?php if(!empty($ribbons)) { ?><span class="entry-box-item"><i class="fa fa-award" aria-label="Ribbon"></i>Ribbon Recipient</span><?php } ?>
+                        <?php if(isset($location) && trim($location) != '' && count(array_intersect($exhibit_type, array("Exhibit", "Sponsor", "Startup Sponsor"))) > 0) { ?><span class="entry-box-item" aria-label="Location"><i class="fa fa-map-signs" aria-hidden="true"></i><?php echo $location; ?></span><?php } ?>
+                        <?php if(isset($friday) && $friday == 1 && count(array_intersect($exhibit_type, array("Exhibit", "Sponsor", "Startup Sponsor"))) > 0) { ?><span class="entry-box-item" aria-label="Calendar Detail"><i class="fa fa-calendar" aria-hidden="true"></i>Friday Only</span><?php } ?>
+                        <?php if(!empty($exhibit_type)) { ?><span class="entry-box-item" aria-label="Exhibit Type"  ><i class="fa fa-check" aria-hidden="true"></i><?php echo implode(" & ",$exhibit_type); ?></span><?php } ?>
+                        <?php if(isset($mainCategory) && $mainCategory != '') { ?><span class="entry-box-item" aria-label="Main Category"><i class="fa fa-rocket" aria-hidden="true"></i><?php echo $mainCategory ; ?></span><?php } ?>
+                        <?php if(!empty($ribbons)) { ?><span class="entry-box-item" aria-label="Ribbon"><a href="/ribbons/"><i class="fa fa-award" aria-hidden="true"></i>Ribbon Recipient</a></span><?php } ?>
                     </div>
                     <?php if(isset($project_short) && $project_short != '') { ?><p class="project-description"><?php echo nl2br($project_short); ?></p><?php } ?>
                 </div>
@@ -70,12 +71,14 @@
             <?php if(count($makers) > 1) {  
                 foreach($makers as $maker) { ?>
                     <div class='entry-box'>
-                        <img src='<?php echo(legacy_get_resized_remote_image_url($maker['photo'], 300, 300)); ?>' 
+                        <img src='<?php echo(legacy_get_resized_remote_image_url($maker['photo'], 400, 400)); ?>' 
                             alt='<?php echo $maker['firstname'].' '.$maker['lastname']; ?> Maker Picture'
                             onerror="this.onerror=null;this.src='/wp-content/themes/makerfaire/images/default-makey-medium.png';this.srcset=''" />
                         <h3><?php echo($maker['firstname'] . " " . $maker['lastname']); ?></h3>
                         <p class="maker-description"><?php echo($maker['bio']); ?></p>
-                        <a class="maker-website" href="<?php echo($maker['website']); ?>" target="_blank"><?php echo($maker['website']); ?></a>
+                        <?php if(!empty($maker['website'])) { ?>
+                            <a class="maker-website" href="<?php echo($maker['website']); ?>" target="_blank"><?php echo($maker['website']); ?></a>
+                        <?php } ?>                    
                         <?php echo $maker['social']; ?>
                     </div>
                 <?php } 
@@ -111,8 +114,10 @@
     ?>
 
     <section id="bottomSection">
-        <?php if(count($makers) == 1 && !empty($maker['website']) && !empty($maker['social'])) { 
-            $maker = current($makers); ?>
+        <?php 
+        if(count($makers) == 1) { 
+            $maker = current($makers); 
+            if(!empty($maker['website']) || $maker['social'] != '<span class="social-links reversed"></span>') { ?>
             <div class="entry-box">
                 <h4>More Maker Info</h4>
                 <?php if(!empty($maker['website'])) { ?>
@@ -120,12 +125,13 @@
                 <?php } ?>  
                 <?php echo $maker['social']; ?>
             </div>
-        <?php } ?>  
+        <?php }
+        } ?>  
         <div class="entry-box">
             <h4>More Event Info</h4>
             <div class="entry-box-items">
                 <?php if(isset($mainCategory ) && $mainCategory  != '') { ?>
-                    <span class="entry-box-item"><i class="fa fa-rocket"></i><a href="/<?php echo $url_sub_path; ?>/meet-the-makers/?category=<?php echo $mainCategory; ?>">Category</a></span>
+                    <span class="entry-box-item"><i class="fa fa-rocket"></i><a href="/<?php echo $url_sub_path; ?>/meet-the-makers/?category=<?php echo $mainCategory; ?>">See All <?php echo $mainCategory; ?></a></span>
                 <?php } ?>
                 <span class="entry-box-item"><i class="fa fa-calendar"></i><a href="/<?php echo $url_sub_path; ?>/schedule/">Event Schedule</a></span>
                 <span class="entry-box-item"><i class="fa fa-tools"></i><a href="/<?php echo $url_sub_path; ?>/meet-the-makers/">See All Makers</a></span>
@@ -142,11 +148,11 @@
         <?php } ?>  
     </section>
 
-    <section id="sponsorSection">
+    <?php /* <section id="sponsorSection">
         <?php 
             $slideshowShortcode = "[sponsor_slideshow faire_id=" . $faireShort . " url=https://" . $_SERVER['SERVER_NAME'] . "/" . $url_sub_path . "/sponsors/]";
             echo(do_shortcode($slideshowShortcode)); 
         ?>
-    </section>
+    </section> */ ?>
 
 </main>

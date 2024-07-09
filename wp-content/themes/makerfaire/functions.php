@@ -147,6 +147,11 @@ function remove_unnecessary_scripts() {
             wp_dequeue_script('elementor-ai');
         }
     }
+    if(is_page_template('page-entry.php')) {
+        wp_deregister_script('spacetime');
+        wp_dequeue_script('spacetime');
+
+    }
 }
 add_action('wp_print_scripts', 'remove_unnecessary_scripts', PHP_INT_MAX); // we want this to happen absolutely last
 
@@ -154,6 +159,20 @@ function remove_unnecessary_styles() {
     if (is_admin()) {
         wp_deregister_style('elementor-ai');
         wp_dequeue_style('elementor-ai');
+    }
+    if(is_page_template('page-entry.php')) {
+        wp_deregister_style('elementor-pro');
+        wp_dequeue_style('elementor-pro');
+        wp_deregister_style('elementor-frontend');
+        wp_dequeue_style('elementor-frontend');
+        wp_deregister_style('search-filter-plugin-styles');
+        wp_dequeue_style('search-filter-plugin-styles');
+        wp_deregister_style('e-animations');
+        wp_dequeue_style('e-animations');
+        wp_deregister_style('swiper');
+        wp_dequeue_style('swiper');
+        wp_deregister_style('fancybox');
+        wp_dequeue_style('fancybox');
     }
 }
 add_action('wp_print_styles', 'remove_unnecessary_styles', PHP_INT_MAX); // we want this to happen absolutely last
@@ -203,7 +222,7 @@ function mf_map() {
     // Map page only
     if (is_page_template('page-makerfaire-map.php')) {
         wp_enqueue_script('google-map', 'https://maps.googleapis.com/maps/api/js?key=AIzaSyDtWsCdftU2vI9bkZcwLxGQwlYmNRnT2VM', false, false, true);
-        wp_enqueue_script('google-markers', 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/markerclusterer.js', array('google-map'), false, true);
+        wp_enqueue_script('google-markers', 'https://cdnjs.cloudflare.com/ajax/libs/js-marker-clusterer/1.0.0/markerclusterer_compiled.js', array('google-map'), false, true);
         wp_enqueue_script('vue', get_stylesheet_directory_uri() . '/js/mf-map/vue.min.js', false, $my_version, true);
         wp_enqueue_script('axios', get_stylesheet_directory_uri() . '/js/mf-map/axios.min.js', array('vue'), $my_version, true);
         wp_enqueue_script('vue-table-2', get_stylesheet_directory_uri() . '/js/mf-map/vue-tables-2.min.js', array('vue'), $my_version, true);

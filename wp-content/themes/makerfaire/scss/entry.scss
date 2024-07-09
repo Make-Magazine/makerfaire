@@ -18,6 +18,12 @@
 				}
 			}
 		}
+		h4.faireDate {
+			color: #333;
+			font-size: 18px;
+			font-style: italic;
+			margin-top: -15px;
+		}
 		section {
 			display: flex;
 			flex-wrap: wrap;
@@ -104,15 +110,40 @@
 		.owl-carousel {
 			.owl-stage {
 				display: flex;
-				flex-direction: column;
-				gap: 10px;
+				flex-direction: row;
+				flex-wrap: wrap;
+				gap: 15px;
 				margin-bottom: -10px;
-				width: 100% !important;
+				width: calc(100% + 15px) !important;
 			}
 			.owl-item {
-				width: 100% !important;
+				width: calc(50% - 15px) !important;
+				margin: 0px !important;
+				.gallery-item {
+					aspect-ratio: 1;
+					overflow: hidden;
+					display: flex;
+					// Fallback
+					@supports not (aspect-ratio: auto) {
+						&::before {
+							float: left;
+							padding-top: 100%;
+							content: "";
+						}
+						&::after {
+							display: block;
+							content: "";
+							clear: both;
+						}
+					}
+					img {
+						object-fit: cover;
+						object-position: top;
+						width: 100%;
+					}
+				}
 			}
-			.owl-dots {
+			.owl-dots, .owl-nav {
 				display: none;
 			}
 		}
@@ -134,6 +165,11 @@
 					display: flex;
 					align-items: center;
 					height: 40px;
+					a {
+						display: flex;
+  						align-items: center;
+						color: #333;
+					}
 				}
 				.fa {
 					color: #f51400;
@@ -162,10 +198,13 @@
 			display: flex;
 			gap: 15px;
 			&:not(.makers-1) {
-				justify-content: center;
+				justify-content: space-evenly;
 				align-items: center;
 				flex-wrap: wrap;
 				gap: 40px;
+				@media screen and (max-width: 800px) {
+					flex-direction: row;
+				}
 			}
 			p {
 				color: #fff;
@@ -175,8 +214,13 @@
 				color: $color-light-blue;
 			}
 			.entry-box {
-				max-width: 330px;
-				min-width: 330px;
+				max-width: 400px;
+				min-width: 400px;
+				.maker-description {
+					a {
+						overflow-wrap: break-word;
+					}
+				}
 				.maker-website {
 					margin-top: auto;
 				}
@@ -199,21 +243,30 @@
 		}
 		section.group-list {
 			margin: 15px -20px;
-			@media screen and (max-width: 800px) {
-				flex-direction: column;
-			}
 			.group-wrapper {
 				max-width: 1140px;
 				margin: 0 auto;
 				display: flex;
 				gap: 25px;
+				img { 
+					width: 230px; 
+					aspect-ratio: 1 / 1;
+				}
+				@media screen and (max-width: 800px) {
+					flex-direction: column;
+					img {
+						width: auto;
+						max-width: 400px;
+						margin: 0 auto;
+					}
+				}
 				h2 {
 					margin-bottom: 25px;
 				}
 				p {
 					font-size: 18px;
 				}
-				img { width: 230px; }
+				
 			}
 		}
 		#sponsorSection {
@@ -228,6 +281,9 @@
 				min-width: 300px;
 				max-width: 45%;
 				gap: 15px;
+				@media screen and (max-width: 781px) {
+					max-width: 100%;
+				}
 				.entry-box-items {
 					margin-top: -5px;
 				}
@@ -237,6 +293,9 @@
 				a { color: #fff !important; }
 			}
 		}
+	}
+	.elementor-location-popup {
+		display: none;
 	}
 }
 
@@ -272,6 +331,7 @@
 				z-index: 9;
 				width: 100%;
 				text-align: center;
+				pointer-events: none;
 			}
 			.schedule-day {
 				position: absolute;
