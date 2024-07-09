@@ -198,10 +198,13 @@
 			display: flex;
 			gap: 15px;
 			&:not(.makers-1) {
-				justify-content: center;
+				justify-content: space-evenly;
 				align-items: center;
 				flex-wrap: wrap;
 				gap: 40px;
+				@media screen and (max-width: 800px) {
+					flex-direction: row;
+				}
 			}
 			p {
 				color: #fff;
@@ -211,8 +214,13 @@
 				color: $color-light-blue;
 			}
 			.entry-box {
-				max-width: 330px;
-				min-width: 330px;
+				max-width: 400px;
+				min-width: 400px;
+				.maker-description {
+					a {
+						overflow-wrap: break-word;
+					}
+				}
 				.maker-website {
 					margin-top: auto;
 				}
@@ -235,21 +243,30 @@
 		}
 		section.group-list {
 			margin: 15px -20px;
-			@media screen and (max-width: 800px) {
-				flex-direction: column;
-			}
 			.group-wrapper {
 				max-width: 1140px;
 				margin: 0 auto;
 				display: flex;
 				gap: 25px;
+				img { 
+					width: 230px; 
+					aspect-ratio: 1 / 1;
+				}
+				@media screen and (max-width: 800px) {
+					flex-direction: column;
+					img {
+						width: auto;
+						max-width: 400px;
+						margin: 0 auto;
+					}
+				}
 				h2 {
 					margin-bottom: 25px;
 				}
 				p {
 					font-size: 18px;
 				}
-				img { width: 230px; }
+				
 			}
 		}
 		#sponsorSection {

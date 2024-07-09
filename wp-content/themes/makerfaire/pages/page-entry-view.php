@@ -71,7 +71,7 @@
             <?php if(count($makers) > 1) {  
                 foreach($makers as $maker) { ?>
                     <div class='entry-box'>
-                        <img src='<?php echo(legacy_get_resized_remote_image_url($maker['photo'], 300, 300)); ?>' 
+                        <img src='<?php echo(legacy_get_resized_remote_image_url($maker['photo'], 400, 400)); ?>' 
                             alt='<?php echo $maker['firstname'].' '.$maker['lastname']; ?> Maker Picture'
                             onerror="this.onerror=null;this.src='/wp-content/themes/makerfaire/images/default-makey-medium.png';this.srcset=''" />
                         <h3><?php echo($maker['firstname'] . " " . $maker['lastname']); ?></h3>
