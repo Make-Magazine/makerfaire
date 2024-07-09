@@ -7,6 +7,21 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
   $scope.reports.selFaire  = '';
   $scope.data     = [];
   $scope.msg = {};
+  $scope.canned_rpt = [];
+
+  
+  $scope.handleSelect = function() {
+    if($scope.reports.selFaire!==''){
+      $scope.reports.showLinks = true;      
+    }else{
+      return;
+    }
+
+    if($scope.reports.subRoute!=''){
+      //redirect to the correct canned report based on selection 
+      window.location = '#canned/'+ $scope.reports.subRoute+'/'+$scope.reports.selFaire;
+    }        
+  };
 
   //faire dropdown
   $scope.retrieveData = function(type) {
@@ -125,15 +140,18 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
     });
   };
 
-//default
-  var tablename = 'wp_rmt_entry_resources';
-
   if($routeParams){
+    if(typeof $routeParams.sub !== 'undefined' && $routeParams.sub !== 'undefined'){
+      if(!jQuery("#wrapper").hasClass("toggled")){
+        //hide the sidebar
+        $("#menu-toggle").click();
+      }
+    }
     $scope.reports.subRoute = $routeParams.sub;
+    $scope.reports.selFaire = $routeParams.faire;
 
     if("faire" in $routeParams){
-      var faire = $routeParams.faire;
-      $scope.reports.selFaire = $routeParams.faire;
+      var faire = $routeParams.faire;      
       $scope.reports.showLinks = true;
     }else{
       $scope.reports.selFaire = '';
@@ -184,43 +202,79 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
               "formType":["Master","Exhibit","Performance","Startup Sponsor","Sponsor","Show Management"],
               "faire": faire,
               "useFormSC": true,
-              "entryIDorder": 200,
-              "locationOrder": 300,
+              "entryIDorder": 50,
+              "locationOrder": 10,
               "formTypeorder":400,
               "selectedFields":[
-                {"id":16, "label":"EXHIBIT SUMMARY", "choices":"", "type":"textarea", "inputs":"", "order":1700},
+                {"id":16, "label":"EXHIBIT SUMMARY", "choices":"", "type":"textarea", "inputs":"", "order":280},
                 {"id":96, "label":"MAKER NAME", "choices":"", "type":"name",
                  "inputs":[{"id":"96.3","label":"First","name":""},{"id":"96.6","label":"Last","name":""}], 
-                 "order":700
+                 "order":250
                 },
-                {"id":98,"label":"Contact Email","choices":"","type":"email","inputs":"", "order":800},
-                {"id":99,"label":"PHONE","choices":"","type":"phone","inputs":"", "order":900},
-                {"id":151,"label":"EXHIBIT","choices":"","type":"text","inputs":"", "order":100},
-                {"id":303,"label":"Status","choices":"Proposed","type":"radio"},
-                {"id":303,"label":"Status","choices":"Accepted","type":"radio"},
-                {"id":303,"label":"Status","choices":"Rejected","type":"radio"},
-                {"id":303,"label":"Status","choices":"Wait List","type":"radio"},
-                {"id":303,"label":"Status","choices":"Cancelled","type":"radio"},
-                {"id":879,"label":"Weekend","choices":"all","type":"checkbox"},
-                {"id":339,"label":"Exhibit Type","choices":"all","type":"checkbox"}
+                {"id":98,"label":"Contact Email","choices":"","type":"email","inputs":"", "order":260},
+                {"id":99,"label":"PHONE","choices":"","type":"phone","inputs":"", "order":270},
+                {"id":151,"label":"EXHIBIT","choices":"","type":"text","inputs":"", "order":40},                
+                {"id":303,"label":"Status","choices":"Accepted","type":"radio", "order": 240},                
+                {"id":879,"label":"Weekend","choices":"all","type":"checkbox","order":220},
+                {"id":339,"label":"Exhibit Type","choices":"all","type":"checkbox", "order":230}
              ],
              "rmtData":{
                 "resource":[
-                  {"id":"all","value":"ALL RESOURCES","checked":true, "order":1800},
-                  {"id":"2","value":"TABLE","checked":true, "order":1100},
-                  {"id":"3","value":"CHAIR","checked":true, "order":1200},
-                  {"id":"9","value":"ELEC","checked":true, "order":1300}
+                  {"id":"all","value":"ALL RESOURCES","checked":true, "order":60},
+                  {"id":"47","value":"Storage","checked":true, "order":110},
+                  {"id":"18","value":"Fencing","checked":true, "order":110},
+                  {"id":"22","value":"Pipe & Drape","checked":true, "order":110},
+                  {"id":"23","value":"Pipe only","checked":true, "order":110},
+                  {"id":"12","value":"Bleachers","checked":true, "order":110},
+                  {"id":"14","value":"Garbage","checked":true, "order":110},
+                  {"id":"17","value":"Whiteboard","checked":true, "order":110},
+                  {"id":"20","value":"Road Plate","checked":true, "order":110},
+                  {"id":"21","value":"Milk Crates","checked":true, "order":110},
+                  {"id":"24","value":"Port A Pottie","checked":true, "order":110},
+                  {"id":"25","value":"Propane","checked":true, "order":110},
+                  {"id":"26","value":"Rigging","checked":true, "order":110},
+                  {"id":"27","value":"Safety Glasses","checked":true, "order":110},
+                  {"id":"28","value":"Sand","checked":true, "order":110},
+                  {"id":"29","value":"Sand Bags","checked":true, "order":110},
+                  {"id":"30","value":"Linens","checked":true, "order":110},
+                  {"id":"31","value":"Yellow Jacket","checked":true, "order":110},
+                  {"id":"32","value":"Signage","checked":true, "order":110},
+                  {"id":"33","value":"Fire Extinguisher","checked":true, "order":110},
+
+                  {"id":"45","value":"Umbrella","checked":true, "order":110},
+                  {"id":"46","value":"Umbrella Stand","checked":true, "order":110},
+
+                  {"id":"48","value":"Tent Walls","checked":true, "order":110},
+                  {"id":"49","value":"Tent - Extra","checked":true, "order":110},
+                  {"id":"51","value":"Stage","checked":true, "order":110},
+                  {"id":"52","value":"Extension Cords","checked":true, "order":110},
+                  {"id":"53","value":"Security","checked":true, "order":110},
+                  {"id":"54","value":"Internet _Sponsors","checked":true, "order":110},
+                  {"id":"55","value":"Audio Visual","checked":true, "order":110},
+                  {"id":"56","value":"Flooring","checked":true, "order":110},
+                  {"id":"57","value":"Structure","checked":true, "order":110},
+                  {"id":"58","value":"Traveler","checked":true, "order":110},
+                  {"id":"14","value":"Garbage","checked":true, "order":110},
+                  {"id":"35","value":"Heavy Equipment","checked":true, "order":120},
+                  {"id":"19","value":"Barricade","checked":true, "order":130},
+                  {"id":"15","value":"Water","checked":true, "order":130},
+                  {"id":"2","value":"TABLE","checked":true, "order":160},
+                  {"id":"3","value":"CHAIR","checked":true, "order":170},
+                  {"id":"9","value":"ELEC","checked":true, "order":180},
+                  {"id":"41","value":"Work Bench","checked":true, "order":110}
+                  {"id":"42","value":"Stools","checked":true, "order":110}
                 ],
                 "attribute":[
-                  {"id":"2",  "value":"SIZE","checked":true, "order":1000},
-                  {"id":"4",  "value":"IN/OUT","checked":true, "order":1600},
-                  {"id":"9",  "value":"NZ","checked":true, "order":1500},
-                  {"id":"11", "value":"INT","checked":true, "order":1400}
+                  {"id":"2",  "value":"Final Space Size","checked":true, "order":70},
+                  {"id":"19",  "value":"Space Size: Requested","checked":true, "order":150},
+                  {"id":"4",  "value":"IN/OUT","checked":true, "order":210},
+                  {"id":"9",  "value":"NZ","checked":true, "order":200},
+                  {"id":"11", "value":"INT","checked":true, "order":190}
                 ],
                 "attention":[
-                  {"id":"9","value":"Area Manager Notes","checked":true, "order":1900},
-                  {"id":"10","value":"Early Setup","checked":true},
-                  {"id":"11","value":"No Friday","checked":true}
+                  {"id":"9","value":"Area Manager Notes","checked":true, "order":100},
+                  {"id":"10","value":"Early Setup","checked":true, "order":90},
+                  {"id":"11","value":"No Friday","checked":true, "order":80}
                 ],
                 "meta":[]
               },
@@ -332,21 +386,21 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
               "formType":["Master","Exhibit","Performance","Startup Sponsor","Sponsor","Show Management"],
               "faire": faire,
               "dispFormID":false,
-              "useFormSC": true,
-              "entryIDorder": 200,
-              "locationOrder": 300,
-              "formTypeorder":400,
-              "CMOrder": 700,
-              "selectedFields":[
-                {"id":151,"label":"Exhibit","choices":"","type":"text","inputs":"", "order":250},
-                {"id":303,"label":"Status","choices":"Accepted","type":"radio","exact":true,"hide":true, "order":600},
-                {"id":879,"label":"Weekend","choices":"all","type":"checkbox"},
-                {"id":339,"label":"Exhibit Type","choices":"all","type":"checkbox"},
+              "dispFormType":false,
+              "useFormSC": false,
+              "entryIDorder": 120,
+              "locationOrder": 30,              
+              
+              "selectedFields":[                
+                {"id":879,"label":"Fri / Weekend","choices":"all","type":"checkbox", "order":80},
+                {"id":339,"label":"Exhibit Type","choices":"all","type":"checkbox", "order":90},
+                {"id":303,"label":"Status","choices":"Accepted","type":"radio","exact":true,"hide":true, "order":100},
+                {"id":151,"label":"Exhibit","choices":"","type":"text","inputs":"", "order":110},                
               ],
               "rmtData":{
                 "resource":[
-                  {"id":"2","value":"Tables","checked":true,"aggregated":false,"order":2000},
-                  {"id":"3","value":"Chairs","checked":true,"aggregated":false,"order":3000}
+                  {"id":"2","value":"Tables","checked":true,"aggregated":false,"order":40,"columns":true},
+                  {"id":"3","value":"Chairs","checked":true,"aggregated":false,"order":50,"columns":true}
                 ],
                 "attribute":[],"attention":[],"meta":[]
               },
@@ -383,17 +437,20 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
               "formType":["Master","Exhibit","Performance","Startup Sponsor","Sponsor","Show Management"],
               "faire": faire,
               "dispFormID":false,
-              "useFormSC": true,
+              "dispFormType":false,
+              "useFormSC": false,
+              "entryIDorder": 150,
               "selectedFields":[
-                {"id":151,"label":"EXHIBIT","choices":"","type":"text","inputs":"", "order":25},
-                {"id":303,"label":"Status","choices":"Accepted","type":"radio","exact":true,"hide":true},
-                {"id":879,"label":"Weekend","choices":"all","type":"checkbox"},
-                {"id":339,"label":"Exhibit Type","choices":"all","type":"checkbox"},
+                {"id":74,"label":"What are you powering","choices":"","type":"text", "order":120},                 
+                {"id":302,"label":"Fri Only?","choices":"FridaysOnly","type":"checkbox", "order":130},
+                {"id":339,"label":"Exhibit Type","choices":"all","type":"checkbox", "order":140},                
+                {"id":151,"label":"EXHIBIT","choices":"","type":"text","inputs":"", "order":160}, 
+                {"id":303,"label":"Status","choices":"Accepted","type":"radio","exact":true,"hide":true, "order":170},                                
               ],
               "rmtData":{
                 "resource":[
-                  {"id":"9","value":"Electrical 120V","checked":true,"aggregated":true},
-                  {"id":"10","value":"Electrical 220V","checked":true,"aggregated":true}
+                  {"id":"9","value":"Electrical 120V","checked":true,"aggregated":false,  "comments":true, "columns":true, "totals":true},
+                  {"id":"10","value":"Electrical 220V","checked":true,"aggregated":false, "comments":true, "columns":true, "totals":true}
                 ],
                 "attribute":[],"attention":[],"meta":[]},
               "type":"customRpt",
@@ -425,17 +482,21 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
       vars = {"formSelect":[],
               "formType":["Master","Exhibit","Performance","Startup Sponsor","Sponsor","Show Management"],
               "faire": faire,
+              "dispFormID":false,
+              "dispFormType":false,
+              "useFormSC": false,
+              "entryIDorder": 180,
+              "locationOrder": 10,
               "selectedFields":[
-                {"id":151,"label":"Record Name","choices":"","type":"text","inputs":"", "order":25},
-                {"id":303,"label":"Status","choices":"Proposed","type":"radio"},
-                {"id":303,"label":"Status","choices":"Accepted","type":"radio"},
-                {"id":879,"label":"Weekend","choices":"all","type":"checkbox"},
-                {"id":339,"label":"Exhibit Type","choices":"all","type":"checkbox"},
+                {"id":151,"label":"Record Name","choices":"","type":"text","inputs":"", "order":110},                
+                {"id":303,"label":"Status","choices":"Accepted","type":"radio", "order":120},                
+                {"id":339,"label":"Exhibit Type","choices":"all","type":"checkbox", "order":140},
               ],
               "rmtData":{
                 "resource":[
-                  {"id":"41","value":"Work Bench","checked":true,"aggregated":true},
-                  {"id":"42","value":"Stools","checked":true,"aggregated":true}
+                  {"id":"11","value":"Bench","checked":true,"aggregated":false, "order":40, "columns":true, "totals":true},
+                  {"id":"41","value":"Work Bench","checked":true,"aggregated":false, "order":45, "columns":true, "totals":true},
+                  {"id":"42","value":"Stools","checked":true,"aggregated":false,"order":50, "columns":true, "totals":true}
                 ],
                 "attribute":[],"attention":[],"meta":[]},
               "type":"customRpt",
