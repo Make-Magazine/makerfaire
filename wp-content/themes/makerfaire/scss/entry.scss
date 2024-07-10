@@ -269,15 +269,20 @@
 				}
 				@media screen and (max-width: 800px) {
 					flex-direction: column;
-					img {
-						width: auto;
-						max-width: 400px;
-						margin: 0 auto;
+					picture {
+						justify-content: center;
+						aspect-ratio: unset;
+						img {
+							width: auto;
+							max-width: 400px;
+						}
 					}
 				}
-				@media screen and (max-width: 440px) {
-					img {
-						max-width: 330px;
+				@media screen and (max-width: 460px) {
+					picture {
+						img {
+							max-width: 100%;
+						}
 					}
 				}
 				h2 {
