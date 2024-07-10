@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Template Name: Maker Portal
  *
@@ -37,11 +38,10 @@ get_header();
     width: 100%;
   }
 
-  #cancelText ::placeholder { 
-    color: #848484;  
+  #cancelText ::placeholder {
+    color: #848484;
     font-style: italic;
   }
-
 </style>
 <div id="manageEntries" style="width:95%; margin: 35px auto;" class="maker-portal">
   <input type="hidden" id="user_email" value="<?php echo $current_user->user_email; ?>" />
@@ -49,12 +49,12 @@ get_header();
     <h1 style="text-align:center">Hello <?php echo $current_user->user_email; ?></h1>
 
     <h4 id="loadingMsg">Please wait while we retrieve your submitted entries.</h4>
-    <div v-if="showData" v-for="(faire, faire_name) in faire_entries" style="margin-bottom:50px">            
+    <div v-if="showData" v-for="(faire, faire_name) in faire_entries" style="margin-bottom:50px">
       <h2 v-if="Date.now() < new Date(faire.faire_end_dt) || faire.entries.length!=0">{{faire_name}} Entries</h2>
       <span v-if="Date.now() < new Date(faire.faire_end_dt) && faire.entries.length==0">
-        I'm sorry. We could not find any entries for your email.<br/>Please submit one <a href='https://makerfaire.com/bay-area/apply'>HERE</a>
+        I'm sorry. We could not find any entries for your email.<br />Please submit one <a href='https://makerfaire.com/bay-area/apply'>HERE</a>
       </span>
-      
+
       <b-card :id="entry.project_id" v-for="entry in faire.entries" :key="entry.project_id" style="margin-bottom:50px;">
         <input type="hidden" name="entry_info_entry_id" :value=entry.project_id />
         <b-row fluid>
@@ -81,8 +81,8 @@ get_header();
               </b-col>
 
               <b-col>
-                <span class="editLink" v-if="entry.status =='Accepted'">
-                <!--<span class="editLink" v-if="entry.status !='Cancelled' && entry.status!='Rejected'">-->
+                <span class="editLink">
+                  <!--<span class="editLink" v-if="entry.status !='Cancelled' && entry.status!='Rejected'">-->
                   <a target="_blank" :href="'/maker/entry/'+entry.project_id+'/edit/'">
                     <i class="fa fa-eye" aria-hidden="true"></i>
                     <span v-if="entry.status=='Accepted'">View My Public Page</span>
@@ -96,6 +96,15 @@ get_header();
                 <div style="text-align:center" v-html='faire.maker_messaging'></div>
               </b-col>
             </b-row>
+
+            <!-- logistic links -->
+            <span v-if="entry.links.length">
+              <b-row>
+                <b-col v-for="link in entry.links">
+                  <a :href="link.link" target="_blank">{{link.title}}</a>
+                </b-col>
+              </b-row>
+            </span>       
 
             <div style="margin-top: auto; padding-top: 15px; font-size: 20px">
               <b-row align-h="between" v-if="entry.status!='Cancelled'"><!-- Tickets/Tasks/Manage Section-->
@@ -193,7 +202,7 @@ get_header();
                     <div id="cancelText">
                       <p>Are you sure you want to cancel?</p><br />
                       <textarea rows="4" cols="50" name="cancelReason" placeholder="Please let us know why you are cancelling your Maker Faire entry"></textarea>
-                    </div>                    
+                    </div>
                     <template #modal-footer="{ ok, cancel }">
                       <span id="cancelResponse"></span><br />
                       <b-button id="cancelButton" size="sm" variant="outline" @click="cancel()">
@@ -211,7 +220,7 @@ get_header();
 
           </b-col>
         </b-row>
-        
+
       </b-card>
     </div>
   </div>
