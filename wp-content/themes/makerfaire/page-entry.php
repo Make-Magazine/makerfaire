@@ -28,8 +28,8 @@ if (isset($entry->errors)) {
     $form_id = '';
     $formType = '';
     $entry = array();
-    $faire = '';
-    $faireShort = '';
+    $faire = 
+    $faireShort = 
     $timeZone = 
     $project_short = 
     $project_photo = 
@@ -131,6 +131,8 @@ if (isset($entry->errors)) {
     //get makers info
     $makers = getMakerInfo($entry);
 
+    // showcase var, can be blank, parent or child
+    $showcase = '';
 
     $project_name = (isset($entry['151']) ? $entry['151'] : '');  //Change Project Name
     
@@ -527,6 +529,93 @@ function display_entry_schedule($entry) {
     return $return;
 }
 
+// new showcase function, can be used for parent or children
+function showcase($entryID) {
+    global $wpdb;
+    global $showcase;  
+    
+    $return = '';
+
+    //look for all associated entries but exclude trashed entries
+    $sql = "SELECT parentID, 
+                   childID, 
+                   if(parentID=$entryID,'parent','child') as type,
+                   (select meta_value from wp_gf_entry_meta where meta_key='151' and entry_id=childID) as child_title, 
+                   (select meta_value from wp_gf_entry_meta where meta_key='22' and entry_id=childID) as child_photo 
+            FROM wp_mf_lead_rel 
+                left outer join wp_gf_entry child on wp_mf_lead_rel.childID = child.id  
+                left outer join wp_gf_entry_meta child_mf_status on child.id = child_mf_status.entry_id and child_mf_status.meta_key = '303' 
+                left outer join wp_gf_entry parent on wp_mf_lead_rel.parentID = parent.id 
+                left outer join wp_gf_entry_meta parent_mf_status on parent.id = parent_mf_status.entry_id and parent_mf_status.meta_key = '303' 
+            WHERE (parentID=$entryID or childID=$entryID) 
+                AND child.status != 'trash' 
+                AND parent_mf_status.meta_value='Accepted' 
+                AND parent.status != 'trash' 
+                AND child_mf_status.meta_value='Accepted'";
+    $results = $wpdb->get_results($sql);
+    if ($wpdb->num_rows > 1) { // it's a parent!
+        global $groupname;  
+        global $groupphoto;  
+        global $groupbio;  
+        global $entry;
+        $groupsocial = getSocial(isset($entry['828']) ? $entry['828'] : '');
+        $groupwebsite = isset($entry['112']) ? $entry['112'] : '';
+        $showcase = "parent";
+        // we reuse the makerInfo section for projects here, as it's the same css
+        $return .= '<section id="makerInfo" class="showcase-list makers-' . count($results) . '">';
+                    foreach ($results as $row) {
+                        $return .= '<a href="/maker/entry/' . $row->childID . '" class="entry-box">
+                                        <img src="' . legacy_get_resized_remote_image_url($row->child_photo, 400, 400) . '"
+                                            alt="' . $row->child_title . ' Picture"
+                                            onerror="this.onerror=null;this.src=\'/wp-content/themes/makerfaire/images/default-makey-medium.png\';" />
+                                        <h3>' . $row->child_title . '</h3>
+                                    </a>';
+                    }
+        $return .= '</section>';
+        $return .= '<section class="showcase-list showcase-parent entry-box">
+                            <div class="showcase-wrapper">
+                                <div>
+                                   <picture>
+                                      <img src="' . legacy_get_resized_remote_image_url($groupphoto, 215, 215) . '" alt="' . $groupname . '" />
+                                   </picture>
+                                </div>
+                                <div>
+                                    <h2>' . $groupname . '</h2>
+                                    <p>' . $groupbio . '</p>
+                                    <p><a class="showcase-website" href="' . $groupwebsite . '">' . $groupwebsite . '</a></p>'
+                                    . $groupsocial .
+                                '</div>
+                            </div>
+                    </section>';
+    } else if($wpdb->num_rows == 1) { // it's a child
+        $showcase = "child";
+        $parentID = $results[0]->parentID;
+        $childSQL = "SELECT parentID, 
+                            (select meta_value from wp_gf_entry_meta where meta_key='111' and entry_id=parentID) as parent_photo, 
+                            (select meta_value from wp_gf_entry_meta where meta_key='109' and entry_id=parentID) as parent_title, 
+                            (select meta_value from wp_gf_entry_meta where meta_key='110' and entry_id=parentID) as parent_description 
+                    FROM wp_mf_lead_rel 
+                    WHERE parentID=$parentID 
+                    LIMIT 1";
+        $parent = $wpdb->get_results($childSQL)[0];
+        $return .= '<section class="showcase-list showcase-parent entry-box">
+                            <div class="showcase-wrapper">
+                                <div>
+                                   <picture>
+                                      <img src="' . legacy_get_resized_remote_image_url($parent->parent_photo, 215, 215) . '" alt="' . $parent->parent_title . '" />
+                                   </picture>
+                                </div>
+                                <div>
+                                    <a href="/maker/entry/' . $parentID .'/"><h2>' . $parent->parent_title . ' Showcase Maker</h2></a>
+                                    <p>' . $parent->parent_description . '</p>
+                                </div>
+                            </div>
+                    </section>';
+    } 
+    return $return;
+}
+
+// old version just for displaying the parent info on the child
 function display_group($entryID) {
     global $wpdb;
     global $groupphoto;  
@@ -543,7 +632,7 @@ function display_group($entryID) {
     if ($wpdb->num_rows > 0) {
         if ($results[0]->parentID != $entryID) {            
             $type = 'child';
-            $return .= '<section class="group-list entry-box">';
+            $return .= '<section class="showcase-list showcase-parent entry-box">';
             foreach ($results as $row) {
                 $link_entryID = ($type == 'parent' ? $row->childID : $row->parentID);
                 // if type is parent, it's a showcase
@@ -554,7 +643,7 @@ function display_group($entryID) {
                 $project_photo = $entry['22'];
                 $project_bio = $entry['110'];
                 //$return .= '<span>Part of: <a href="/maker/entry/' . $link_entryID . '">' . $project_title . '</a></span>';
-                $return .= '<div class="group-wrapper">
+                $return .= '<div class="showcase-wrapper">
                                 <div>
                                    <picture>
                                       <img src="' . legacy_get_resized_remote_image_url($project_photo, 215, 215) . '" alt="' . $project_title . '" />

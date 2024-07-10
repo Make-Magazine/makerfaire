@@ -3,6 +3,7 @@
  * This is the public facing entry page view
  *
  */
+$showcaseResults = showcase($entryId); // this will also tell us if this is a parent or child of a showcase
 ?>
 
 <main class="wrapper-fluid">
@@ -58,7 +59,7 @@
                     <div id="projectGallery" class="owl-carousel">
                     <?php foreach($project_gallery as $key=>$image) { 
                             if($image!=''){?>
-                                <div class="gallery-item"><img alt="<?php echo $project_title;?> - exhibit detail <?php echo $key;?>"  src='<?php echo legacy_get_fit_remote_image_url($image, 750, 500); ?>' /></div>
+                                <div class="gallery-item"><img alt="<?php echo $project_title;?> - exhibit detail <?php echo $key;?>"  src='<?php echo legacy_get_fit_remote_image_url($image, 750, 500); ?>' onerror="this.onerror=null;this.src='/wp-content/themes/makerfaire/images/default-gallery-image.jpg';this.srcset=''" /></div>
                             <?php } ?>
                     <?php } ?>
                     </div>
@@ -66,7 +67,7 @@
             </div>
         </div>
     </section>
-    <?php if ($dispMakerInfo) { ?>
+    <?php if ($dispMakerInfo && $showcase != 'parent') { ?>
         <section id="makerInfo" class="makers-<?php echo count($makers); ?>">
             <?php if(count($makers) > 1) {  
                 foreach($makers as $maker) { ?>
@@ -107,46 +108,48 @@
     <?php } ?>  
 
     <?php 
-    $displayGroup = display_group($entryId);
-    if($displayGroup) { 
-        echo $displayGroup;
-    } 
+    // displays the showcase parent if it's one of the makers in the showcase, and the makers in the showcase with the showcase maker info under if it's the showcase parent themselves
+    if($showcase != '') {
+        echo $showcaseResults;
+    }
     ?>
 
-    <section id="bottomSection">
-        <?php 
-        if(count($makers) == 1) { 
-            $maker = current($makers); 
-            if(!empty($maker['website']) || $maker['social'] != '<span class="social-links reversed"></span>') { ?>
+    <?php if($showcase != 'parent') { // we're not showing this section for showcase makers?>
+        <section id="bottomSection">
+            <?php 
+            if(count($makers) == 1) { 
+                $maker = current($makers); 
+                if(!empty($maker['website']) || $maker['social'] != '<span class="social-links reversed"></span>') { ?>
+                <div class="entry-box">
+                    <h4>More Maker Info</h4>
+                    <?php if(!empty($maker['website'])) { ?>
+                        <a class="maker-website" href="<?php echo($maker['website']); ?>" target="_blank"><?php echo($maker['website']); ?></a>
+                    <?php } ?>  
+                    <?php echo $maker['social']; ?>
+                </div>
+            <?php }
+            } ?>  
             <div class="entry-box">
-                <h4>More Maker Info</h4>
-                <?php if(!empty($maker['website'])) { ?>
-                    <a class="maker-website" href="<?php echo($maker['website']); ?>" target="_blank"><?php echo($maker['website']); ?></a>
-                <?php } ?>  
-                <?php echo $maker['social']; ?>
+                <h4>More Event Info</h4>
+                <div class="entry-box-items">
+                    <?php if(isset($mainCategory ) && $mainCategory  != '') { ?>
+                        <span class="entry-box-item"><i class="fa fa-rocket"></i><a href="/<?php echo $url_sub_path; ?>/meet-the-makers/?category=<?php echo $mainCategory; ?>">See All <?php echo $mainCategory; ?></a></span>
+                    <?php } ?>
+                    <span class="entry-box-item"><i class="fa fa-calendar"></i><a href="/<?php echo $url_sub_path; ?>/schedule/">Event Schedule</a></span>
+                    <span class="entry-box-item"><i class="fa fa-tools"></i><a href="/<?php echo $url_sub_path; ?>/meet-the-makers/">See All Makers</a></span>
+                </div>
             </div>
-        <?php }
-        } ?>  
-        <div class="entry-box">
-            <h4>More Event Info</h4>
-            <div class="entry-box-items">
-                <?php if(isset($mainCategory ) && $mainCategory  != '') { ?>
-                    <span class="entry-box-item"><i class="fa fa-rocket"></i><a href="/<?php echo $url_sub_path; ?>/meet-the-makers/?category=<?php echo $mainCategory; ?>">See All <?php echo $mainCategory; ?></a></span>
-                <?php } ?>
-                <span class="entry-box-item"><i class="fa fa-calendar"></i><a href="/<?php echo $url_sub_path; ?>/schedule/">Event Schedule</a></span>
-                <span class="entry-box-item"><i class="fa fa-tools"></i><a href="/<?php echo $url_sub_path; ?>/meet-the-makers/">See All Makers</a></span>
-            </div>
-        </div>
-        <?php if(!empty($project_website) && !empty($project_social)) { ?>
-            <div class="entry-box">
-                <h4>More Project Info</h4>
-                <?php if(!empty($project_website)) { ?>
-                    <a class="maker-website" href="<?php echo($project_website); ?>" target="_blank"><?php echo($project_website); ?></a>
-                <?php } ?>  
-                <?php echo $project_social; ?>
-            </div>
-        <?php } ?>  
-    </section>
+            <?php if(!empty($project_website) && !empty($project_social)) { ?>
+                <div class="entry-box">
+                    <h4>More Project Info</h4>
+                    <?php if(!empty($project_website)) { ?>
+                        <a class="maker-website" href="<?php echo($project_website); ?>" target="_blank"><?php echo($project_website); ?></a>
+                    <?php } ?>  
+                    <?php echo $project_social; ?>
+                </div>
+            <?php } ?>  
+        </section>
+    <?php } ?>  
 
     <?php /* <section id="sponsorSection">
         <?php 
