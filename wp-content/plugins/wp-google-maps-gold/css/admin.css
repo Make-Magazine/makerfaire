@@ -1,0 +1,157 @@
+/* 
+ * Bridging styles for the Gold add-on admin area
+ *
+ * V9 basic/pro have a lot of new componenets, but we still need some "polyfill" esque styles for gold to look 
+ * decent across instances 
+ *
+ * For example, the live tracking systems are still using structures from V4, so this tries to clean that up a bit
+*/
+
+/* Atlas Novus specific */
+.wpgmza-wrap.wpgmza-tabs-container .wpgmza-card.wpgmza-tracking-table {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    border-spacing: unset;
+}
+
+.wpgmza-wrap.wpgmza-tabs-container .wpgmza-card.wpgmza-tracking-table thead{
+    font-weight: 600;
+}
+
+.wpgmza-wrap.wpgmza-tabs-container .wpgmza-card.wpgmza-tracking-table tr td{
+    border-bottom: 1px solid var(--wpgmza-color-grey-100);
+    padding: 10px;
+}
+
+.wpgmza-wrap.wpgmza-tabs-container .wpgmza-card.wpgmza-tracking-table tbody tr:last-child td{
+    border-bottom: none;
+}
+
+.wpgmza-wrap.wpgmza-tabs-container .cache-info {
+    border: 1px solid var(--wpgmza-color-grey-200);
+    border-radius: 5px;
+}
+
+.wpgmza-button-state-checkbox input{
+    display: none;
+}
+
+.wpgmza-button-state-checkbox input ~ [data-state='checked']{
+    display: none;
+}
+
+.wpgmza-button-state-checkbox input ~ [data-state='unchecked']{
+    display: block;
+}
+
+.wpgmza-button-state-checkbox input:checked ~ [data-state='checked']{
+    display: block;
+}
+
+.wpgmza-button-state-checkbox input:checked ~ [data-state='unchecked']{
+    display: none;
+}
+
+.wpgmza-tracking-table span.wpgmza-button {
+    width: fit-content;   
+    color: #fff;
+    font-weight: 600; 
+}
+
+.wpgmza-tracking-table span.wpgmza-button .fa{
+    font-weight: 200;
+}
+
+.wpgmza-tracking-table span.wpgmza-button.wpgmza-tracking-positive {
+    background: #39C217;
+    border-color: #39C217;
+}
+
+.wpgmza-tracking-table span.wpgmza-button.wpgmza-tracking-negative {
+    background: #ea4335;
+    border-color: #ea4335;
+}
+
+.wpgmza-tracking-table span.wpgmza-button.button:hover{
+    color: #fff;
+}
+
+.wpgmza-tracking-polyline-config {
+    display: inline-flex;
+    border: 1px solid #c4c4c4;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.wpgmza-tracking-polyline-config input {
+    margin: 0;
+}
+
+.wpgmza-tracking-polyline-config input:focus{
+    outline: none;
+    border: none;
+    box-shadow: none;
+}
+
+.wpgmza-tracking-polyline-config input[type="number"]{
+    padding-right: 0;
+    padding-left: 0;
+    text-align: center;
+    border: none;
+}
+
+.wpgmza-tracking-polyline-config input[type="color"]{
+    appearance: none;
+    -moz-appearance: none;
+    -webkit-appearance: none;
+    background: none;
+    border: 0;
+    cursor: pointer;
+    height: 30px !important;
+    padding: 0;
+
+}
+
+.wpgmza-tracking-polyline-config *::-webkit-color-swatch-wrapper {
+  padding: 0;
+}
+
+.wpgmza-tracking-polyline-config *::-webkit-color-swatch{
+  border: 0;
+  border-radius: 0;
+}
+
+.wpgmza-tracking-polyline-config *::-moz-color-swatch,
+.wpgmza-tracking-polyline-config *::-moz-focus-inner{
+  border: 0;
+}
+
+.wpgmza-tracking-polyline-config *::-moz-focus-inner{
+  padding: 0;
+}
+
+#wpgmza-refresh-live-tracking-devices {
+    margin-left: 10px;
+    cursor: pointer;
+}
+
+.wpgmza-wrap.wpgmza-tabs-container .wpgmza-card.wpgmza-tracking-table tbody:empty,
+.wpgmza-tracking-table.wp-list-table.widefat tbody:empty {
+    height: 40px;
+    position: relative;
+}
+
+.wpgmza-wrap.wpgmza-tabs-container .wpgmza-card.wpgmza-tracking-table tbody:empty:after,
+.wpgmza-tracking-table.wp-list-table.widefat tbody:empty:after {
+    display: block;
+    content: "You have not linked any devices...";
+    position: absolute;
+    top: 50%; 
+    left: 50%;
+
+    transform: translate(-50%, -50%);
+    opacity: 0.8;
+    font-style: italic;
+}
+

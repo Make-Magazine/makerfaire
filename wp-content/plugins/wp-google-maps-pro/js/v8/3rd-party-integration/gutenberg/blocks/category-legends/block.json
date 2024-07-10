@@ -1,0 +1,13 @@
+{
+    "$schema": "https://schemas.wp.org/trunk/block.json",
+    "apiVersion": 3,
+    "name": "gutenberg-wpgmza/category-legends",
+    "title": "Legends",
+    "category": "wpgmza-gutenberg",
+    "icon": "category",
+    "description": "WP Go Maps Category Legends block",
+    "keywords": [ "Category", "Category Legends", "Map Categories", "Legend" ],
+    "version": "2.0.0",
+    "textdomain": "wp-google-maps",
+    "editorScript": "wpgmza-gutenberg-category-legends"
+}
