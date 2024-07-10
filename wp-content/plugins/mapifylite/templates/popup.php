@@ -1,1 +1,0 @@
-<div class="mpfy-p-loading"></div>

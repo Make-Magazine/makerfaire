@@ -1,0 +1,90 @@
+{
+    "wpgmza-caching-settings-panel": {
+        "src": "js\/v8\/cache-settings-panel.js",
+        "pro": false,
+        "dependencies": []
+    },
+    "wpgmza-live-tracker": {
+        "src": "js\/v8\/live-tracker.js",
+        "pro": false,
+        "dependencies": []
+    },
+    "wpgmza-live-tracking-settings-panel": {
+        "src": "js\/v8\/live-tracking-settings-panel.js",
+        "pro": false,
+        "dependencies": []
+    },
+    "wpgmza-marker-cluster-icon": {
+        "src": "js\/v8\/marker-cluster-icon.js",
+        "pro": false,
+        "dependencies": []
+    },
+    "wpgmza-marker-cluster": {
+        "src": "js\/v8\/marker-cluster.js",
+        "pro": false,
+        "dependencies": []
+    },
+    "wpgmza-marker-clusterer": {
+        "src": "js\/v8\/marker-clusterer.js",
+        "pro": false,
+        "dependencies": []
+    },
+    "wpgmza-marker-separator-group": {
+        "src": "js\/v8\/marker-separator-group.js",
+        "pro": false,
+        "dependencies": []
+    },
+    "wpgmza-marker-separator-settings-panel": {
+        "src": "js\/v8\/marker-separator-settings-panel.js",
+        "pro": false,
+        "dependencies": []
+    },
+    "wpgmza-marker-separator": {
+        "src": "js\/v8\/marker-separator.js",
+        "pro": false,
+        "dependencies": []
+    },
+    "wpgmza-google-marker-cluster-icon": {
+        "src": "js\/v8\/google-maps\/google-marker-cluster-icon.js",
+        "pro": false,
+        "dependencies": []
+    },
+    "wpgmza-ol-marker-cluster-icon": {
+        "src": "js\/v8\/open-layers\/ol-marker-cluster-icon.js",
+        "pro": false,
+        "dependencies": []
+    },
+    "wpgmza-gradient-rating-widget": {
+        "src": "js\/v8\/rating-widgets\/gradient-rating-widget.js",
+        "pro": false,
+        "dependencies": [
+            "wpgmza-rating-widget"
+        ]
+    },
+    "wpgmza-radios-rating-widget": {
+        "src": "js\/v8\/rating-widgets\/radios-rating-widget.js",
+        "pro": false,
+        "dependencies": [
+            "wpgmza-rating-widget"
+        ]
+    },
+    "wpgmza-rating-widget": {
+        "src": "js\/v8\/rating-widgets\/rating-widget.js",
+        "pro": false,
+        "dependencies": []
+    },
+    "wpgmza-stars-rating-widget": {
+        "src": "js\/v8\/rating-widgets\/stars-rating-widget.js",
+        "pro": false,
+        "dependencies": [
+            "wpgmza-rating-widget"
+        ]
+    },
+    "wpgmza-thumbs-rating-widget": {
+        "src": "js\/v8\/rating-widgets\/thumbs-rating-widget.js",
+        "pro": false,
+        "dependencies": [
+            "wpgmza-rating-widget"
+        ]
+    }
+}
