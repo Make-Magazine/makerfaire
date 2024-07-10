@@ -539,7 +539,6 @@ function showcase($entryID) {
     //look for all associated entries but exclude trashed entries
     $sql = "SELECT parentID, 
                    childID, 
-                   if(parentID=$entryID,'parent','child') as type,
                    (select meta_value from wp_gf_entry_meta where meta_key='151' and entry_id=childID) as child_title, 
                    (select meta_value from wp_gf_entry_meta where meta_key='22' and entry_id=childID) as child_photo 
             FROM wp_mf_lead_rel 
@@ -587,7 +586,7 @@ function showcase($entryID) {
                                 '</div>
                             </div>
                     </section>';
-    } else if($wpdb->num_rows == 1) { // it's a child
+    } else if($wpdb->num_rows == 1) { // it's a child!
         $showcase = "child";
         $parentID = $results[0]->parentID;
         $childSQL = "SELECT parentID, 
@@ -601,9 +600,11 @@ function showcase($entryID) {
         $return .= '<section class="showcase-list showcase-parent entry-box">
                             <div class="showcase-wrapper">
                                 <div>
-                                   <picture>
-                                      <img src="' . legacy_get_resized_remote_image_url($parent->parent_photo, 215, 215) . '" alt="' . $parent->parent_title . '" />
-                                   </picture>
+                                    <picture>
+                                        <a href="/maker/entry/' . $parentID .'/">
+                                            <img src="' . legacy_get_resized_remote_image_url($parent->parent_photo, 215, 215) . '" alt="' . $parent->parent_title . '" />
+                                        </a>
+                                    </picture>
                                 </div>
                                 <div>
                                     <a href="/maker/entry/' . $parentID .'/"><h2>' . $parent->parent_title . ' Showcase Maker</h2></a>
@@ -612,92 +613,6 @@ function showcase($entryID) {
                             </div>
                     </section>';
     } 
-    return $return;
-}
-
-// old version just for displaying the parent info on the child
-function display_group($entryID) {
-    global $wpdb;
-    global $groupphoto;  
-    
-    $return = '';
-
-    //look for all associated entries but exclude trashed entries
-    $sql = "select wp_mf_lead_rel.*
-          from wp_mf_lead_rel
-          left outer join wp_gf_entry  child on wp_mf_lead_rel.childID = child.id
-          left outer join wp_gf_entry parent on wp_mf_lead_rel.parentID = parent.id
-          where (parentID=" . $entryID . " or childID=" . $entryID . ") and child.status != 'trash' and parent.status != 'trash' GROUP BY wp_mf_lead_rel.parentID";
-    $results = $wpdb->get_results($sql);
-    if ($wpdb->num_rows > 0) {
-        if ($results[0]->parentID != $entryID) {            
-            $type = 'child';
-            $return .= '<section class="showcase-list showcase-parent entry-box">';
-            foreach ($results as $row) {
-                $link_entryID = ($type == 'parent' ? $row->childID : $row->parentID);
-                // if type is parent, it's a showcase
-                $entry = GFAPI::get_entry($link_entryID);
-                //Title
-                $project_title = esc_html($entry['151']);
-                $project_title = preg_replace('/\v+|\\\[rn]/', '<br/>', $project_title);
-                $project_photo = $entry['22'];
-                $project_bio = $entry['110'];
-                //$return .= '<span>Part of: <a href="/maker/entry/' . $link_entryID . '">' . $project_title . '</a></span>';
-                $return .= '<div class="showcase-wrapper">
-                                <div>
-                                   <picture>
-                                      <img src="' . legacy_get_resized_remote_image_url($project_photo, 215, 215) . '" alt="' . $project_title . '" />
-                                   </picture>
-                                </div>
-                                <div>
-                                    <h2>' . $project_title . ' Showcase Maker</h2>
-                                    <p>' . $project_bio . '</p>
-                                </div>
-                            </div>';
-            }
-            return $return .= "</section>";
-        }
-    }
-}
-
-/* This function is used to display grouped entries and links */
-
-function display_groupEntries($entryID) {
-    global $wpdb;    
-    $return = '';
-
-    //look for all associated entries but exclude trashed entries
-    $sql = "select wp_mf_lead_rel.*, title.meta_value as title, photo.meta_value as photo
-            from wp_mf_lead_rel 
-            left outer join wp_gf_entry child on wp_mf_lead_rel.childID = child.id 
-            left outer join wp_gf_entry_meta on child.id = wp_gf_entry_meta.entry_id and wp_gf_entry_meta.meta_key ='303' 
-            left outer join wp_gf_entry_meta title on child.id = title.entry_id and title.meta_key ='151' 
-            left outer join wp_gf_entry_meta photo on child.id = photo.entry_id and photo.meta_key ='22'
-            left outer join wp_gf_entry parent on wp_mf_lead_rel.parentID = parent.id 
-            
-            where (parentID=" . $entryID . " or childID=" . $entryID . ") 
-            AND child.status != 'trash' 
-            AND parent.status != 'trash' 
-            AND wp_gf_entry_meta.meta_value='Accepted' 
-            order by title;";
-        
-    $results = $wpdb->get_results($sql);
-    if ($wpdb->num_rows > 0) {
-        if ($results[0]->parentID == $entryID) {
-            $return .= '<h4>Exhibits in this group:</h4>';
-            $type = 'parent';            
-            foreach ($results as $row) {
-                $link_entryID = ($type == 'parent' ? $row->childID : $row->parentID);                
-                
-                //Title
-                $project_title = esc_html($row->title);            
-                $project_title = preg_replace('/\v+|\\\[rn]/', '<br/>', $project_title);
-                $project_photo = $row->photo;  
-
-                $return .= '<span><a href="/maker/entry/' . $link_entryID . '">' . $project_title . '</a></span><br/>';
-            }            
-        }
-    }
     return $return;
 }
 
