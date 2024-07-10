@@ -105,25 +105,38 @@ if (isset($entry->errors)) {
     }
     
     // build array of categories
-    $mainCategory = '';
+    $mainCategorName = '';
+    $mainCategoryIcon = '<i class="fa fa-rocket" aria-hidden="true"></i>';
     $categories = array();    
 
     if (isset($entry['320']) && $entry['320']!='') {
-        $mainCategory = (isset(get_term($entry['320'])->name)?get_term($entry['320'])->name:'');
-        $categories[] = $mainCategory;
+        $mainCategory = get_term($entry['320']);
+        $mainCategoryName = (isset($mainCategory->name)?$mainCategory->name:'');
+        $mainCategoryIconType = get_field('icon_type', $mainCategory->taxonomy . '_' . $mainCategory->term_id);
+        // get the mainCategory icon from the mf category taxonomy, if indeed one is set
+        if($mainCategoryIconType == "uploaded_icon") {
+            $mainCategoryIcon = '<picture class="main-category-icon"><img src="' . get_field('uploaded_icon', $mainCategory->taxonomy . '_' . $mainCategory->term_id)['url'] . '" height="27px" width="27px" aria-hidden="true" /></picture>';
+        } else {
+            $fa = get_field('font_awesome', $mainCategory->taxonomy . '_' . $mainCategory->term_id);
+            if(!empty($fa)) {
+                $mainCategoryIcon = '<i class="fa ' . $fa .'" aria-hidden="true"></i>';
+            }
+        }
+
+        $categories[] = $mainCategoryName;
     }
 
     // get terms from secondary catetgories
     foreach ($entry as $key => $value) {
         if (strpos($key, '321.') !== false && $value != null) {
-            if (get_term($value)->name != $mainCategory) {
+            if (get_term($value)->name != $mainCategoryName) {
                 $categories[] = get_term($value)->name;
             }
         }
     }
     // if main category is not set, grab the first category that is
-    if($mainCategory == '' && isset($categories[0])) {
-        $mainCategory = $categories[0];
+    if($mainCategoryName == '' && isset($categories[0])) {
+        $mainCategoryName = $categories[0];
     }
     
     $categoryDisplay = (!empty($categories)?display_categories($categories):'');
@@ -550,7 +563,8 @@ function showcase($entryID) {
                 AND child.status != 'trash' 
                 AND parent_mf_status.meta_value='Accepted' 
                 AND parent.status != 'trash' 
-                AND child_mf_status.meta_value='Accepted'";
+                AND child_mf_status.meta_value='Accepted'
+            ORDER BY child_title";
     $results = $wpdb->get_results($sql);
     if ($wpdb->num_rows > 1) { // it's a parent!
         global $groupname;  

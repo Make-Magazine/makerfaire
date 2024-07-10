@@ -160,7 +160,7 @@ function remove_unnecessary_styles() {
         wp_deregister_style('elementor-ai');
         wp_dequeue_style('elementor-ai');
     }
-    if(is_page_template('page-entry.php')) {
+    if( is_page_template('page-entry.php') || is_page_template('page-schedule.php') || is_page_template('page-meet-the-makers.php') ) {
         wp_deregister_style('elementor-pro');
         wp_dequeue_style('elementor-pro');
         wp_deregister_style('elementor-frontend');

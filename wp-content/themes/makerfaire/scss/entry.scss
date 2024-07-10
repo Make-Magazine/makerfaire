@@ -320,6 +320,15 @@
 				a { color: #fff !important; }
 			}
 		}
+		.main-category-icon {
+			width: 35px;
+			justify-content: center;
+			align-items: center;
+  			margin-right: 10px;
+			img {
+				filter: brightness(0) saturate(100%) invert(20%) sepia(84%) saturate(7496%) hue-rotate(12deg) brightness(100%) contrast(109%);
+			}
+		}
 	}
 	.elementor-location-popup {
 		display: none;
