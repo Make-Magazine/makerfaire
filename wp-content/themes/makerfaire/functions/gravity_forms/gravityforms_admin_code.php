@@ -71,8 +71,7 @@ function my_custom_form_setting($settings, $form) {
    );
 
    // Supplemental Form URLs to show on the Maker Portal
-   $mf_settings['mf_settings']['fields'][] = array(
-				
+   $mf_settings['mf_settings']['fields'][] = array(				
 						'name'  => 'show_supp_forms',
 						'type'  => 'toggle',
 						'label' => 'Show Supplemental Form Links in Maker Portal',

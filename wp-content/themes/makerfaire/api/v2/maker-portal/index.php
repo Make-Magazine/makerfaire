@@ -112,22 +112,27 @@ function getAllEntries($email, $formID = '', $page = '', $years = '') {
       //GV edit link
       $GVeditLink = do_shortcode('[gv_entry_link action="edit" return="url" view_id="687928" entry_id="'.$entry['id'].'"]');
 
-      //set logistics links
-      $logistics_links = array();
-      $fieldArr = fieldOutput(339, $entry, $field_array, $form);
+      //easy passthrough token
       $ep_token = isset($entry['fg_easypassthrough_token'])?$entry['fg_easypassthrough_token']:'';
-
-      foreach($fieldArr['value'] as $exhibit_type){
-        if(stripos($exhibit_type, 'exhibit')!== false && isset($form['exhibit_supp_form_URL'])){
-          $logistics_links[] = array('title'=>'Exhibit Logistics', 'link'=>$form['exhibit_supp_form_URL'].'?ep_token='.$ep_token);
-        }elseif(stripos($exhibit_type, 'presenter')!== false && isset($form['presentation_supp_form_URL'])){
-          $logistics_links[] = array('title'=>'Presenter Logistics', 'link'=>$form['presentation_supp_form_URL'].'?ep_token='.$ep_token);
-        }elseif(stripos($exhibit_type, 'performer')!== false && isset($form['performer_supp_form_URL'])){
-          $logistics_links[] = array('title'=>'Performer Logistics', 'link'=>$form['performer_supp_form_URL'].'?ep_token='.$ep_token);
-        }elseif(stripos($exhibit_type, 'workshop')!== false && isset($form['workshop_supp_form_URL'])){
-          $logistics_links[] = array('title'=>'Workshop Logistics', 'link'=>$form['workshop_supp_form_URL'].'?ep_token='.$ep_token);
-        }
-      }      
+      
+      //set logistics links
+      $logistics_links = array();      
+      
+      if(isset($form['show_supp_forms']) && $form['show_supp_forms']){
+        $fieldArr = fieldOutput(339, $entry, $field_array, $form);
+        foreach($fieldArr['value'] as $exhibit_type){
+          if(stripos($exhibit_type, 'exhibit')!== false && isset($form['exhibit_supp_form_URL'])){
+            $logistics_links[] = array('title'=>'Exhibit Logistics', 'link'=>$form['exhibit_supp_form_URL'].'?ep_token='.$ep_token);
+          }elseif(stripos($exhibit_type, 'presenter')!== false && isset($form['presentation_supp_form_URL'])){
+            $logistics_links[] = array('title'=>'Presenter Logistics', 'link'=>$form['presentation_supp_form_URL'].'?ep_token='.$ep_token);
+          }elseif(stripos($exhibit_type, 'performer')!== false && isset($form['performer_supp_form_URL'])){
+            $logistics_links[] = array('title'=>'Performer Logistics', 'link'=>$form['performer_supp_form_URL'].'?ep_token='.$ep_token);
+          }elseif(stripos($exhibit_type, 'workshop')!== false && isset($form['workshop_supp_form_URL'])){
+            $logistics_links[] = array('title'=>'Workshop Logistics', 'link'=>$form['workshop_supp_form_URL'].'?ep_token='.$ep_token);
+          }
+        }  
+      }
+            
 
       $return_entries[] = array(
         'project_name'  => $entry['151'],
