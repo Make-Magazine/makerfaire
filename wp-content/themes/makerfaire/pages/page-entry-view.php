@@ -134,7 +134,9 @@ $showcaseResults = showcase($entryId); // this will also tell us if this is a pa
                     <?php if(isset($mainCategoryName ) && $mainCategoryName  != '') { ?>
                         <span class="entry-box-item"><?php echo $mainCategoryIcon; ?><a href="/<?php echo $url_sub_path; ?>/meet-the-makers/?category=<?php echo $mainCategoryName; ?>">See All <?php echo $mainCategoryName; ?></a></span>
                     <?php } ?>
-                    <span class="entry-box-item"><i class="fa fa-calendar"></i><a href="/<?php echo $url_sub_path; ?>/schedule/">Event Schedule</a></span>
+                    <?php if($show_sched ){ ?>
+                        <span class="entry-box-item"><i class="fa fa-calendar"></i><a href="/<?php echo $url_sub_path; ?>/schedule/">Event Schedule</a></span>
+                    <?php } ?>
                     <span class="entry-box-item"><i class="fa fa-tools"></i><a href="/<?php echo $url_sub_path; ?>/meet-the-makers/">See All Makers</a></span>
                 </div>
             </div>
