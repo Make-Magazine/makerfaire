@@ -116,15 +116,27 @@ add_filter('gform_after_submission', 'maybeCompleteTasks', 10, 2 ); //$entry, $f
 function maybeCompleteTasks ($entry, $form) {
   global $wpdb;
 
-  //is this an additional form?
-  $entryID       = get_value_by_label('entry-id', $form);
-  if (!empty($entryID)) {
+  //check for a Easy Passthrough token to find associated entry ID  
+  $ep_token = rgget('ep_token');
+
+  //nothing to copy here
+  if ($ep_token == '') {
+    return;
+  }
+
+  //find the associated entry id based on the token
+  $entryid = $wpdb->get_var(
+    $wpdb->prepare(
+      "SELECT entry_id FROM wp_gf_entry_meta WHERE `meta_key` = '%s' AND `meta_value` = '%s'",
+      'fg_easypassthrough_token',
+      $ep_token
+    )
+  );
+  
+  if (!empty($entryid)) {
     global $wpdb;
     $sql = "";
-
-    //let's check if this form has been assigned to the entry
-    $entryid   = $entry[$entryID['id']]; //original entry id
-
+    
     //was a task ID set?
     $taskID = '';
     if(isset($_GET['taskID']))   $taskID = $_GET['taskID'];
