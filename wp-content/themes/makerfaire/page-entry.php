@@ -390,6 +390,16 @@ if (!$displayMakers) {
     <?php
     }
     // If there is edit in the url, they get all these options
+    ?>
+    <div class="makerEditHead"  style="text-align: center;font-size: 30px;">
+        <span>
+            <i>This is a a preview of your public entry page.</i>
+            <hr/>
+        </span>
+        
+    </div>
+    <?php
+    /*
     if ($makerEdit) {
         $GVeditLink = do_shortcode('[gv_entry_link post_id="478584" action="edit" return="url" view_id="642359" entry_id="'.$entryId.'"]');
         ?>
@@ -410,7 +420,7 @@ if (!$displayMakers) {
         </div>
         <br/>
         <?php
-    }
+    }*/
 
     if ($validEntry) {
         //display the normal entry public information page
