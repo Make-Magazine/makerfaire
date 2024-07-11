@@ -5,7 +5,6 @@
  */
 $showcaseResults = showcase($entryId); // this will also tell us if this is a parent or child of a showcase
 ?>
-
 <main class="wrapper-fluid">
     <section id="topSection">
         <div class="big-column">
