@@ -3,214 +3,159 @@
  * This is the public facing entry page view
  *
  */
+$showcaseResults = showcase($entryId); // this will also tell us if this is a parent or child of a showcase
 ?>
-<div class="container-fluid">
-    <div class="row flex-row">
-        <div class="col-md-8 col-sm-12 col-xs-12" id="viewEntry">
-            <!-- Project Title and ribbons -->
-            <?php echo $ribbons; ?>
-            <div class="entry-header">
-                <h1>
-                    <span id="project_title"><?php echo $project_title; ?></span>
-                </h1>
-            </div>
 
-            <!-- Project Image -->
-            <p id="proj_img">
-                <img alt="<?php echo $project_title; ?>" class="img-responsive dispPhoto" src="<?php echo $project_photo; ?>" />
-            </p>            
+<main class="wrapper-fluid">
+    <section id="topSection">
+        <div class="big-column">
+            <?php if($proj_photo_size[0] > 900 ) { ?>
+                <picture class="exhibit-picture">
+                    <img srcset="<?php echo $project_photo_small; ?> 420w, <?php echo $project_photo_medium; ?> 760w, <?php echo $project_photo_large; ?> 1199w" 
+                        sizes="(max-width: 420px) 420px, (max-width: 760px) 760px, (max-width: 1199px) 1199px, 1200px" 
+                        src="<?php echo $project_photo_small; ?>" alt="<?php echo $project_title; ?> project image" 
+                        onerror="this.onerror=null;this.src='/wp-content/themes/makerfaire/images/default-featured-image.jpg';this.srcset=''" />
+                </picture>
+            <?php } else if($proj_photo_size[0] > 420 ) { ?>
+                <picture class="exhibit-picture small-picture">
+                    <img srcset="<?php echo $project_photo_small; ?> 420w, <?php echo $project_photo_medium; ?> 760w" 
+                        sizes="(max-width: 420px) 420px, (max-width: 760px) 760px, 761px" 
+                        src="<?php echo $project_photo_small; ?>" alt="<?php echo $project_title; ?> project image" 
+                        onerror="this.onerror=null;this.src='/wp-content/themes/makerfaire/images/default-featured-image.jpg';this.srcset=''" />
+                </picture>
+            <?php } else { ?>
+                <picture class="exhibit-picture small-picture">
+                    <img src="<?php echo $project_photo_small; ?>" alt="<?php echo $project_title; ?> project image" 
+                        onerror="this.onerror=null;this.src='/wp-content/themes/makerfaire/images/default-featured-image.jpg';this.srcset=''" />
+                </picture>
+            <?php } ?>
         </div>
-
-        <div class="col-md-4 col-sm-12 col-xs-12" id="entrySidebar">
-            <div class="entryInfo">
-                <div class="bottom"><h3 class="faireName"><?php echo ucwords(str_replace('-', ' ', $faire));?></h3></div>
-                <div class="entry-type">                    
-                    <?php
-                    if ($displayFormType == true) {
-                        echo implode(" & ",$exhibit_type);
-                    }
-                    ?>
+        <div class="small-column">
+            <div class="small-column-wrapper">
+                <div class="entry-box">
+                    <h1 class="project-title"><?php echo $project_title; ?></h1>
+                    <h3 class="faireName"><a href="/<?php echo $url_sub_path; ?>"><?php echo ucwords(str_replace('-', ' ', $faire));?></a></h3>
+                    <h4 class="faireDate"><?php echo $faire_dates; ?></h4>
+                    <div class="entry-box-items">
+                        <?php if(isset($location) && trim($location) != '' && count(array_intersect($exhibit_type, array("Exhibit", "Sponsor", "Startup Sponsor"))) > 0) { ?><span class="entry-box-item" aria-label="Location"><i class="fa fa-map-signs" aria-hidden="true"></i><?php echo $location; ?></span><?php } ?>
+                        <?php if(isset($friday) && $friday == 1 && count(array_intersect($exhibit_type, array("Exhibit", "Sponsor", "Startup Sponsor"))) > 0) { ?><span class="entry-box-item" aria-label="Calendar Detail"><i class="fa fa-calendar" aria-hidden="true"></i>Friday Only</span><?php } ?>
+                        <?php if(!empty($exhibit_type)) { ?><span class="entry-box-item" aria-label="Exhibit Type"  ><i class="fa fa-check" aria-hidden="true"></i><?php echo implode(" & ",$exhibit_type); ?></span><?php } ?>
+                        <?php if(isset($mainCategoryName) && $mainCategoryName != '') { ?><span class="entry-box-item" aria-label="Main Category"><?php echo $mainCategoryIcon; echo $mainCategoryName ; ?></span><?php } ?>
+                        <?php if(!empty($ribbons)) { ?><span class="entry-box-item" aria-label="Ribbon"><a href="/ribbons/"><i class="fa fa-award" aria-hidden="true"></i>Ribbon Recipient</a></span><?php } ?>
+                    </div>
+                    <?php if(isset($project_short) && $project_short != '') { ?><p class="project-description"><?php echo nl2br($project_short); ?></p><?php } ?>
                 </div>
                 <?php
-                if (!empty($handsOn)) {
-                    echo $handsOn;
-                }
-                ?>
-            </div>
-
-
-            <div class="sidebar-type"> <!-- Maker/Group/Worskhop etc -->
-                <?php if ($dispMakerInfo) { ?>
-                    <?php
-                    global $isGroup;
-                    if ($isGroup) {
-                        ?>
-                        <div class="entry-header"><h2>GROUP</h2></div>
-                        <div class="entry-page-maker-info">
-                            <div class="row padbottom">
-                                <div class="col-xs-12">
-                                    <h3 class="text-capitalize" id="groupname"><?php echo $groupname; ?></h3>
-                                </div>
-                                <?php 
-                                if(!empty($groupphoto)) { ?>
-
-                                <div class="col-xs-12">
-                                    <div class="entry-page-maker-img">
-                                        <img alt="<?php echo $groupname; ?>" class="img-responsive" src="<?php echo legacy_get_fit_remote_image_url($groupphoto, 400, 400); ?>" />
-                                    </div>
-                                </div>
-                                <?php 
-                                } ?>
-                            </div>
-                            <div class="row">
-                                <div class="col-xs-12"><p id="groupbio"><?php echo $groupbio; ?></p></div>
-                            </div>
-                            <div class="row">
-                                <div class="col-xs-12"><?php echo $groupsocial; ?></div>
-                            </div>
-                        </div>
-                        <?php
-                    } else {                        
-                        echo '<div class="entry-header"><h2>MAKER'.(count($makers) > 1?'S':'').'</h2></div>';                        
-                        foreach ($makers as $key => $maker) {
-                            if (isset($maker['firstname']) && $maker['firstname'] != '') {
-                                ?>
-                                <div class="entry-page-maker-info">
-                                    <div class="row padbottom">
-                                        <div class="col-xs-12">
-                                            <h3>
-                                                <span class="text-capitalize"><?php echo $maker['firstname']; ?></span>
-                                                <span class="text-capitalize"><?php echo $maker['lastname']; ?></span>
-                                            </h3>
-                                        </div>
-                                        <?php
-                                        if(!empty($maker['photo'])){
-                                        ?>
-                                        <div class="col-xs-12">
-                                            <div class="entry-page-maker-img">
-                                                <img alt="<?php echo $maker['firstname'].' '.$maker['lastname']; ?>" class="img-responsive" src="<?php echo legacy_get_resized_remote_image_url($maker['photo'], 400, 400); ?>" />
-                                            </div>
-                                        </div>
-                                        <?php
-                                        }
-                                        ?>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-xs-12"><p><?php echo $maker['bio']; ?></p></div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-xs-12"><?php echo $maker['social']; ?></div>
-                                    </div>
-                                    <?php
-                                    if (!empty($maker['website'])) {
-                                        ?>
-                                        <div class="row">
-                                            <div class="col-xs-12">
-                                                <a href="<?php echo $maker['website']; ?>" class="btn universal-btn entry-website"target="_blank" >Maker Website</a>
-                                            </div>
-                                        </div>
-                                        <?php }
-                                    ?>
-                                </div>
-                                <?php
-                            }
-                        }
-                    }
-                }
-                
-                $entrySchedule = display_entry_schedule($entry);
-                $displayGroup  = display_group($entryId);
-                $groupEntries  = display_groupEntries($entryId);
-
-                if( trim($entrySchedule) != ''    || 
-                    !empty($registerLink)   ||
-                    !empty($viewNow)        ||
-                    $displayGroup!=''       ||
-                    $groupEntries) {
-                    ?>
-                    <div class="entryInfo">
-                        <?php
-                        //display schedule/location information if there is any
-                        echo $entrySchedule; 
-                        if (!empty($registerLink)) {
-                            ?>
-                            <a href="<?php echo $registerLink; ?>" class="btn universal-btn-red" style="margin-top:10px;">Register Here</a>
-                            <?php
-                        }
-                        if (!empty($viewNow)) {
-                            ?>
-                            <a href="<?php echo $viewNow; ?>" class="btn universal-btn-red" style="margin-top:10px;">Watch Live</a>
-                        <?php 
-                        }                        
-
-                        if ($displayGroup!='') { ?>
-                            <div class="group-entry"><?php echo $displayGroup; ?></div><?php
-                        }
-                        
-                        if ($groupEntries) { ?>
-                            <div class="group-entries"><?php echo $groupEntries; ?></div><?php 
-                        }
-                        ?>
-                    </div>  
-                    <?php
-                }
-                ?>                
-                              
-            </div>
-        </div>  <!-- END SIDEBAR -->
-    </div>
-    <div class="row">
-        <div id="entryFullWidth">
-            <!-- Project Short Description -->
-            <div id="project_short" class="lead">
-                <p><?php echo nl2br($project_short); ?></p>
-                <?php if (isset($field_287) && $field_287 != '') { ?>
-                    <p><b><?php echo $label_287; ?>:</b><br/><?php echo nl2br($field_287); ?></p>
-                <?php } ?>
-                <?php if (isset($field_877) && $field_877 != '') { ?>
-                    <p><b><?php echo $label_877; ?>:</b><br/><?php echo nl2br($field_877); ?></p>
-                <?php } ?>
-            </div>
-            <!-- Presentation information (if provided) -->
-            <?php
-            /* 
-            if($presentation_title!=''){
-                ?>
-                <div id="project_short" class="lead">
-                    <h3>Also presenting at:</h3>
-                    <p><?php echo nl2br($presentation_title); ?></p>
-                    <p><?php echo nl2br($presentation_description); ?></p>                
-                </div>
+                if( $scheduleOutput != '' && $show_sched ) { ?>
+                    <div class="entry-box">
+                        <?php echo $scheduleOutput; ?>
+                    </div>
                 <?php
-            }*/
-            
-            if (!empty($project_website)) { ?> 
-                <a href="<?php echo $project_website; ?>" class="btn universal-btn entry-website"target="_blank" ><?php if($formType !='Sponsor') echo 'Project';?> Website</a><?php
-            }
-            ?>
-        </div>
-    </div>
-    <div class="row">
-        <div id="entryFullWidth">            
-            <?php if(isset($project_gallery) && !empty($project_gallery)) { ?>
-                <div id="projectGallery" class="owl-carousel">
-                <?php foreach($project_gallery as $key=>$image) { 
-                        if($image!=''){?>
-                            <div class="gallery-item"><img alt="<?php echo $project_title;?> - exhibit detail <?php echo $key;?>"  src='<?php echo legacy_get_fit_remote_image_url($image, 750, 500); ?>' /></div>
-                        <?php } ?>
+                    }   
+                    echo $video;  //project Video
+                    echo $video2; //field386
+                ?>
+                <?php if(isset($project_gallery) && !empty($project_gallery)) { ?>
+                    <div id="projectGallery" class="owl-carousel">
+                    <?php foreach($project_gallery as $key=>$image) { 
+                            if($image!=''){?>
+                                <div class="gallery-item"><img alt="<?php echo $project_title;?> - exhibit detail <?php echo $key;?>"  src='<?php echo legacy_get_fit_remote_image_url($image, 750, 500); ?>' onerror="this.onerror=null;this.src='/wp-content/themes/makerfaire/images/default-gallery-image.jpg';this.srcset=''" /></div>
+                            <?php } ?>
+                    <?php } ?>
+                    </div>
                 <?php } ?>
-                </div>
-            <?php } 
-                echo $video;  //project Video
-                echo $video2; //field386
-                if ($categoryDisplay ) {
-                    ?><div class="entry-categories"><?php echo $categoryDisplay; ?></div><?php
-                }
-            ?>
+            </div>
         </div>
-    </div>
-</div>
+    </section>
+    <?php if ($dispMakerInfo && $showcase != 'parent') { ?>
+        <section id="makerInfo" class="makers-<?php echo count($makers); ?>">
+            <?php if(count($makers) > 1) {  
+                foreach($makers as $maker) { ?>
+                    <div class='entry-box'>
+                        <img src='<?php echo(legacy_get_resized_remote_image_url($maker['photo'], 400, 400)); ?>' 
+                            alt='<?php echo $maker['firstname'].' '.$maker['lastname']; ?> Maker Picture'
+                            onerror="this.onerror=null;this.src='/wp-content/themes/makerfaire/images/default-makey-medium.png';this.srcset=''" />
+                        <h3><?php echo($maker['firstname'] . " " . $maker['lastname']); ?></h3>
+                        <p class="maker-description"><?php echo($maker['bio']); ?></p>
+                        <?php if(!empty($maker['website'])) { ?>
+                            <a class="maker-website" href="<?php echo($maker['website']); ?>" target="_blank"><?php echo($maker['website']); ?></a>
+                        <?php } ?>                    
+                        <?php echo $maker['social']; ?>
+                    </div>
+                <?php } 
+            } else if( $makers  ) { 
+                $maker = current($makers);
+                $small_photo = isset($maker['photo']) ? legacy_get_resized_remote_image_url($maker['photo'], 400, 400) : "";
+                $large_photo = isset($maker['photo']) ? legacy_get_resized_remote_image_url($maker['photo'], 760, 760) : "";
+                if($maker['firstname'] != '' || $maker['photo'] != '') {
+            ?>
+                <div class="small-column">
+                    <picture>
+                        <img srcset="<?php echo $small_photo; ?> 420w, <?php echo $large_photo; ?> 760w, <?php echo $large_photo; ?>" 
+                            sizes="(max-width: 420px) 420px, (max-width: 760px) 760px, 1200px" 
+                            src="<?php echo $large_photo ?>" 
+                            alt="<?php echo $maker['firstname'].' '.$maker['lastname']; ?> Maker Picture"
+                            onerror="this.onerror=null;this.src='/wp-content/themes/makerfaire/images/default-makey-large.png';this.srcset=''" />
+                    </picture>
+                </div>
+                <div class="big-column">
+                    <h2><?php echo($maker['firstname'] . " " . $maker['lastname']); ?></h2>
+                    <p class="maker-description"><?php echo($maker['bio']); ?>
+                </div>
+            <?php }
+            } ?>              
+        </section>
+    <?php } ?>  
 
-<div class="entry-footer">
-    <?php echo displayEntryFooter(); ?>
-</div>
+    <?php 
+    // displays the showcase parent if it's one of the makers in the showcase, and the makers in the showcase with the showcase maker info under if it's the showcase parent themselves
+    if($showcase != '') {
+        echo $showcaseResults;
+    }
+    ?>
+
+    <?php if($showcase != 'parent') { // we're not showing this section for showcase makers?>
+        <section id="bottomSection">
+            <?php 
+            if(count($makers) == 1) { 
+                $maker = current($makers); 
+                if(!empty($maker['website']) || $maker['social'] != '<span class="social-links reversed"></span>') { ?>
+                <div class="entry-box">
+                    <h4>More Maker Info</h4>
+                    <?php if(!empty($maker['website'])) { ?>
+                        <a class="maker-website" href="<?php echo($maker['website']); ?>" target="_blank"><?php echo($maker['website']); ?></a>
+                    <?php } ?>  
+                    <?php echo $maker['social']; ?>
+                </div>
+            <?php }
+            } ?>  
+            <div class="entry-box">
+                <h4>More Event Info</h4>
+                <div class="entry-box-items">
+                    <?php if(isset($mainCategoryName ) && $mainCategoryName  != '') { ?>
+                        <span class="entry-box-item"><?php echo $mainCategoryIcon; ?><a href="/<?php echo $url_sub_path; ?>/meet-the-makers/?category=<?php echo $mainCategoryName; ?>">See All <?php echo $mainCategoryName; ?></a></span>
+                    <?php } ?>
+                    <span class="entry-box-item"><i class="fa fa-calendar"></i><a href="/<?php echo $url_sub_path; ?>/schedule/">Event Schedule</a></span>
+                    <span class="entry-box-item"><i class="fa fa-tools"></i><a href="/<?php echo $url_sub_path; ?>/meet-the-makers/">See All Makers</a></span>
+                </div>
+            </div>
+            <?php if(!empty($project_website) && !empty($project_social)) { ?>
+                <div class="entry-box">
+                    <h4>More Project Info</h4>
+                    <?php if(!empty($project_website)) { ?>
+                        <a class="maker-website" href="<?php echo($project_website); ?>" target="_blank"><?php echo($project_website); ?></a>
+                    <?php } ?>  
+                    <?php echo $project_social; ?>
+                </div>
+            <?php } ?>  
+        </section>
+    <?php } ?>  
+
+    <?php /* <section id="sponsorSection">
+        <?php 
+            $slideshowShortcode = "[sponsor_slideshow faire_id=" . $faireShort . " url=https://" . $_SERVER['SERVER_NAME'] . "/" . $url_sub_path . "/sponsors/]";
+            echo(do_shortcode($slideshowShortcode)); 
+        ?>
+    </section> */ ?>
+
+</main>

@@ -68,11 +68,11 @@ h6 {
 }
 
 a {
-  color: #1989C7;
+  color: #167BB1;
   font-weight: 400;
   transition: color 0.1s ease;
   &:visited {
-    color: #1989C7;
+    color: #167BB1
   }
   &:active,
   &:hover,
@@ -549,6 +549,10 @@ input[type=checkbox].fa-checkbox {
   position: absolute;
 }
 
+.instagram-media {
+  max-width: 100% !important;
+}
+
 img.attachment-post-thumbnail{width:100%;height:auto;}
 
 #makerfaire {
@@ -580,6 +584,7 @@ img.attachment-post-thumbnail{width:100%;height:auto;}
 
 b, strong {    
     font-family: 'Roboto Bold';
+    font-weight: 400;
 }
 
 // Gutenberg padding

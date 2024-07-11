@@ -306,16 +306,17 @@ function createSponsSlide($atts) {
       array('type'=>'coppersmith_sponsors', 'name'=>'Coppersmith Sponsors'),
       array('type'=>'media_sponsors', 'name'=>'Media and Community Sponsors'),
   );
+  $return = '';
   //IF CUSTOM FIELD FOR SPONSOR SLIDER HAS A URL THEN SHOW THAT URL'S SPONSORS
   if( have_rows('goldsmith_sponsors', $postid) || have_rows('silversmith_sponsors', $postid) || have_rows('coppersmith_sponsors', $postid) || have_rows('media_sponsors', $postid) ) {
-    $return  = '  <div class="sponsor-slide sponsor-slide-shortcode">
+    $return .= '  <div class="sponsor-slide sponsor-slide-shortcode">
                     <div class="row">
                       <div class="col-sm-7">
                         <h4 class="sponsor-slide-title">'. $faireData['faire_name'].' Sponsors: <span class="sponsor-slide-cat"></span></h4>
                       </div>
                       <div class="col-sm-5">
                         <h5><a href="/sponsors">Become a sponsor</a></h5>
-                        <h5><a href="<?php echo $url;?>">All sponsors</a></h5>
+                        <h5><a href="' . $url .'">All sponsors</a></h5>
                       </div>
                     </div> <!-- end .row -->
                     <div class="row">

@@ -1,0 +1,111 @@
+{
+    "key": "group_668eeac579616",
+    "title": "MF Category Icons",
+    "fields": [
+        {
+            "key": "field_668ef2548edaa",
+            "label": "Icon Type",
+            "name": "icon_type",
+            "aria-label": "",
+            "type": "radio",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "choices": {
+                "font_awesome": "Font Awesome",
+                "uploaded_icon": "Upload your own Icon"
+            },
+            "default_value": "font_awesome",
+            "return_format": "value",
+            "allow_null": 0,
+            "other_choice": 0,
+            "layout": "vertical",
+            "save_other_choice": 0
+        },
+        {
+            "key": "field_668eeac9d18c2",
+            "label": "Taxonomy Font Awesome Icon",
+            "name": "font_awesome",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "Available Icons:\r\n\"fa-check\",\"fa-search\",\"fa-chevron-up\",\"fa-chevron-down\",\"fa-chevron-right\",\"fa-chevron-left\",\"fa-chevron-circle-right\",\"fa-chevron-circle-left\",\"fa-chevron-circle-up\",\"fa-chevron-circle-down\",\"fa-ellipsis-h\",\"fa-bars\",\"fa-list\",\"fa-id-card\",\"fa-calendar-alt\",\"fa-calendar\",\"fa-calendar-check\",\"fa-users\",\"fa-user\",\"fa-times\",\"fa-sign-out-alt\",\"fa-spinner\",\"fa-wrench\",\"fa-clock\",\"fa-tags\",\"fa-caret-right\",\"fa-caret-left\",\"fa-caret-up\",\"fa-caret-down\",\"fa-circle\",\"fa-minus-circle\",\"fa-times-circle\",\"fa-plus\",\"fa-edit\",\"fa-link\",  \"images\",\"fa-image\",\"fa-globe\",\"fa-th-list\",\"fa-th-large\",\"fa-envelope\",\"fa-star\",\"fa-sort\",\"fa-angle-double-right\",\"fa-angle-double-left\",\"fa-book\",\"fa-book-open\",\"fa-book-reader\",\"fa-ellipsis-v\",\"fa-compress-alt\",\"fa-envelope-open-text\",\"fa-photo-video\",\"fa-video\",\"fa-tools\",\"fa-eye\",\"fa-arrow-circle-up\",\"fa-link\",\"fa-ticket-alt\",\"fa-cog\",\"fa-robot\",\"fa-comment\",\"fa-microphone\",\"fa-print\",\"fa-map-marker-alt\",\"fa-globe-africa\",\"fa-info-circle\",\"fa-lightbulb\",\"fa-info\",\"fa-sort-amount-up\",\"fa-th-large\",\"fa-camera\",\"fa-check-circle\",\"fa-exclamation-circle\",\"fa-arrow-right\",\"fa-tasks\",\"fa-sync\",\"fa-sliders-h\",\"fa-download\",\"fa-toggle-on\",\"fa-toggle-off\", 'gift', 'arrow-up', 'arrow-down', 'map-signs', 'rocket', 'child',\"fa-award\", \"fa-cubes\", \"fa-microchip\", \"fa-spray-can\", \"fa-brain\", \"fa-bicycle\", \"fa-virus\", \"fa-mask\", \"fa-gem\", \"fa-memory\", \"fa-cogs\", \"fa-vest-patches\", \"fa-plane\", \"fa-pepper-hot\", \"fa-chess-knight\", \"fa-headset\", \"fa-heartbeat\", \"fa-house-user\", \"fa-server\", \"fa-network-wired\", \"fa-music\", \"fa-camera-retro\", \"fa-atom\", \"fa-space-shuttle\", \"fa-seedling\", \"fa-ship\", \"fa-hat-wizard\", \"fa-tree\", \"fa-solar-panel\", \"fa-vr-cardboard\", \"fa-school\"",
+            "required": 0,
+            "conditional_logic": [
+                [
+                    {
+                        "field": "field_668ef2548edaa",
+                        "operator": "==",
+                        "value": "font_awesome"
+                    }
+                ]
+            ],
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "maxlength": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": ""
+        },
+        {
+            "key": "field_668eeb30d18c3",
+            "label": "Taxonomy Uploaded Icon",
+            "name": "uploaded_icon",
+            "aria-label": "",
+            "type": "image",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": [
+                [
+                    {
+                        "field": "field_668ef2548edaa",
+                        "operator": "==",
+                        "value": "uploaded_icon"
+                    }
+                ]
+            ],
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "return_format": "array",
+            "library": "all",
+            "min_width": "",
+            "min_height": "",
+            "min_size": "",
+            "max_width": "",
+            "max_height": "",
+            "max_size": ".1",
+            "mime_types": "",
+            "preview_size": "medium"
+        }
+    ],
+    "location": [
+        [
+            {
+                "param": "taxonomy",
+                "operator": "==",
+                "value": "makerfaire_category"
+            }
+        ]
+    ],
+    "menu_order": 0,
+    "position": "normal",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "hide_on_screen": "",
+    "active": true,
+    "description": "",
+    "show_in_rest": 0,
+    "modified": 1720653976
+}

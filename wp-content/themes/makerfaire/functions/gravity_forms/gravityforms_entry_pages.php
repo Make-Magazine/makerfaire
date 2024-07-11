@@ -13,24 +13,25 @@ function checkForRibbons($postID=0,$entryID=0){
     }
     
     $ribbons = $wpdb->get_results($sql);
-    $return = '<div class="ribbon-wrapper">';
-    //check for 0??
-    $blueCount = $redCount = 0;
-    foreach($ribbons as $ribbon){
-      if($ribbon->ribbonType==0){
-        for($i=0; $i< $ribbon->numRibbons;$i++){
-          $return .= '<div class="blueMakey"></div>';
+    $return = "";
+    if(!empty($ribbons)) {
+      $return = '<div class="ribbon-wrapper">';
+      foreach($ribbons as $ribbon){
+        if($ribbon->ribbonType==0){
+          for($i=0; $i< $ribbon->numRibbons;$i++){
+            $return .= '<div class="blueMakey"></div>';
+          }
         }
-      }
 
-      if($ribbon->ribbonType==1){
-        for($i=0; $i< $ribbon->numRibbons;$i++){
-          $return .= '<div class="redMakey"></div>';
+        if($ribbon->ribbonType==1){
+          for($i=0; $i< $ribbon->numRibbons;$i++){
+            $return .= '<div class="redMakey"></div>';
+          }
         }
       }
+      $return .= '</div>';    
     }
-    $return .= '</div>'
-;    return $return;
+    return $return;
 }
 
 
