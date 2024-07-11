@@ -389,18 +389,18 @@ if (!$displayMakers) {
         <input type="hidden" id="faire_tz" value="<?php echo $timeZone; ?>" />
     <?php
     }
-    // If there is edit in the url, they get all these options
-    ?>
-    <div class="makerEditHead"  style="text-align: center;font-size: 30px;">
-        <span>
-            <i>This is a a preview of your public entry page.</i>
-            <hr/>
-        </span>
-        
-    </div>
-    <?php
-    /*
+    // If there is edit in the url, they get all these options        
     if ($makerEdit) {
+        ?>
+        <div class="makerEditHead"  style="text-align: center;font-size: 30px;">
+            <span>
+                <i>This is a a preview of your public entry page.</i>
+                <hr/>
+            </span>
+            
+        </div>
+        <?php
+        /*
         $GVeditLink = do_shortcode('[gv_entry_link post_id="478584" action="edit" return="url" view_id="642359" entry_id="'.$entryId.'"]');
         ?>
         <div class="makerEditHead">
@@ -420,7 +420,8 @@ if (!$displayMakers) {
         </div>
         <br/>
         <?php
-    }*/
+        */
+    }
 
     if ($validEntry) {
         //display the normal entry public information page
