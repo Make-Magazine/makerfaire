@@ -16,11 +16,8 @@ function change_email_to($notification, $form, $entry) {
         $notification['toType']  = 'email';
    	  	$notification['to'] 	 = 'webmaster@make.co';
    	  	$notification['from'] 	 = 'webmaster@make.co';
-		$notification['cc'] 	 = 'siana@make.co';
-   	  	$notification['subject'] = 'Redirect Email from '.$homeurl.' sent to ' . $notification['to'] . ' - ' . $notification['subject'];   	
-
-      	if (isset($notification['bcc'])) $notification['bcc'] = '';
-		error_log(print_r($notification,TRUE));
+		$notification['bcc'] 	 = 'siana@make.co';
+   	  	$notification['subject'] = 'Redirect Email from '.$homeurl.' - ' . $notification['subject'];   	
    } elseif (strpos($homeurl, '.local') !== false) {
       // Check for local sites
       if (defined('MF_OVERRITE_EMAIL')) {
