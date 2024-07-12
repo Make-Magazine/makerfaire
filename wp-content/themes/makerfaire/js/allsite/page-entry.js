@@ -41,6 +41,22 @@ jQuery(document).ready(function(){
         }
     });
 
+    jQuery('.exhibit-picture img').on("click", function () {
+        jQuery('body').append('<div id="dialog"><img src="' + jQuery(this).attr('data-photo') + '" width="100%" /></div>');
+        jQuery('#dialog').dialog({
+            dialogClass: "hide-heading",
+            modal: true,
+            close: function(event, ui) {
+                jQuery(this).remove();
+            },
+            open: function(event, ui) { 
+              jQuery('.ui-widget-overlay').bind('click', function(){ 
+                  jQuery("#dialog").dialog('close');
+            }); 
+          }
+        });
+    });
+
     jQuery('#projectGallery .owl-item').on("click", function () {
         //every time you click on an owl item, open a dialog modal to show the images
         var owlItem = jQuery(this);

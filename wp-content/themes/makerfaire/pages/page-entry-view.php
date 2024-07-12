@@ -10,22 +10,27 @@ $showcaseResults = showcase($entryId); // this will also tell us if this is a pa
         <div class="big-column">
             <?php if($proj_photo_size[0] > 900 ) { ?>
                 <picture class="exhibit-picture">
-                    <img srcset="<?php echo $project_photo_small; ?> 420w, <?php echo $project_photo_medium; ?> 760w, <?php echo $project_photo_large; ?> 1199w" 
-                        sizes="(max-width: 420px) 420px, (max-width: 760px) 760px, (max-width: 1199px) 1199px, 1200px" 
-                        src="<?php echo $project_photo_small; ?>" alt="<?php echo $project_title; ?> project image" 
-                        onerror="this.onerror=null;this.src='/wp-content/themes/makerfaire/images/default-featured-image.jpg';this.srcset=''" />
+                    <source media="(max-width: 420px)" srcset="<?php echo $project_photo_small; ?>">
+                    <source media="(max-width: 760px)" srcset="<?php echo $project_photo_medium; ?>">
+                    <img src="<?php echo $project_photo_large; ?>" 
+                         alt="<?php echo $project_title; ?> project image"
+                         onerror="this.onerror=null;this.src='/wp-content/themes/makerfaire/images/default-featured-image.jpg';this.srcset=''"
+                         data-photo="<?php echo $project_photo; ?>">
                 </picture>
             <?php } else if($proj_photo_size[0] > 420 ) { ?>
                 <picture class="exhibit-picture small-picture">
-                    <img srcset="<?php echo $project_photo_small; ?> 420w, <?php echo $project_photo_medium; ?> 760w" 
-                        sizes="(max-width: 420px) 420px, (max-width: 760px) 760px, 761px" 
-                        src="<?php echo $project_photo_small; ?>" alt="<?php echo $project_title; ?> project image" 
-                        onerror="this.onerror=null;this.src='/wp-content/themes/makerfaire/images/default-featured-image.jpg';this.srcset=''" />
+                    <source media="(max-width: 420px)" srcset="<?php echo $project_photo_small; ?>">
+                    <img src="<?php echo $project_photo_medium; ?>" 
+                         alt="<?php echo $project_title; ?> project image"
+                         onerror="this.onerror=null;this.src='/wp-content/themes/makerfaire/images/default-featured-image.jpg';this.srcset=''"
+                         data-photo="<?php echo $project_photo; ?>">
                 </picture>
             <?php } else { ?>
                 <picture class="exhibit-picture small-picture">
-                    <img src="<?php echo $project_photo_small; ?>" alt="<?php echo $project_title; ?> project image" 
-                        onerror="this.onerror=null;this.src='/wp-content/themes/makerfaire/images/default-featured-image.jpg';this.srcset=''" />
+                    <img src="<?php echo $project_photo_small; ?>" 
+                         alt="<?php echo $project_title; ?> project image"
+                         onerror="this.onerror=null;this.src='/wp-content/themes/makerfaire/images/default-featured-image.jpg';this.srcset=''"
+                         data-photo="<?php echo $project_photo; ?>">
                 </picture>
             <?php } ?>
         </div>
@@ -90,11 +95,10 @@ $showcaseResults = showcase($entryId); // this will also tell us if this is a pa
             ?>
                 <div class="small-column">
                     <picture>
-                        <img srcset="<?php echo $small_photo; ?> 420w, <?php echo $large_photo; ?> 760w, <?php echo $large_photo; ?>" 
-                            sizes="(max-width: 420px) 420px, (max-width: 760px) 760px, 1200px" 
-                            src="<?php echo $large_photo ?>" 
-                            alt="<?php echo $maker['firstname'].' '.$maker['lastname']; ?> Maker Picture"
-                            onerror="this.onerror=null;this.src='/wp-content/themes/makerfaire/images/default-makey-large.png';this.srcset=''" />
+                        <source media="(max-width: 420px)" srcset="<?php echo  $small_photo; ?>">
+                        <img src="<?php echo $large_photo ?>" 
+                             alt="<?php echo $maker['firstname'].' '.$maker['lastname']; ?> Maker Picture"
+                             onerror="this.onerror=null;this.src='/wp-content/themes/makerfaire/images/default-makey-large.png';this.srcset=''" />
                     </picture>
                 </div>
                 <div class="big-column">

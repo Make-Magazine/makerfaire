@@ -48,9 +48,17 @@ class mf_sharing_cards {
 
         global $project_short;
         $project_short = $this->project_short;
-        add_filter('wpseo_opengraph_desc', 'change_wpseo_metadesc');
+        add_filter('wpseo_opengraph_desc', 'change_wpseo_opengragh_desc');
 
-        function change_wpseo_metadesc($text) {
+        function change_wpseo_opengragh_desc($text) {
+            global $project_short;      
+            $text = $project_short;
+            return $text;
+        }
+
+        add_filter('wpseo_metadesc', 'change_wpseo_metadesc');
+
+        function change_wpseo_metadesc($url) {
             global $project_short;      
             $text = $project_short;
             return $text;
