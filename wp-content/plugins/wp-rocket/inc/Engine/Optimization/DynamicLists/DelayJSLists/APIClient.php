@@ -15,4 +15,5 @@ class APIClient extends AbstractAPIClient {
 	protected function get_api_path() {
 		return 'delay-js-exclusions/list';
 	}
+
 }

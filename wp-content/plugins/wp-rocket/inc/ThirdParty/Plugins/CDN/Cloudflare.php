@@ -3,15 +3,14 @@ declare(strict_types=1);
 
 namespace WP_Rocket\ThirdParty\Plugins\CDN;
 
-use WP_Rocket\Admin\{Options, Options_Data};
+use WP_Rocket\Admin\{Options,Options_Data};
 use WP_Rocket\Engine\Admin\Beacon\Beacon;
-use WP_Rocket\Engine\Deactivation\DeactivationInterface;
 use WP_Rocket\Event_Management\Subscriber_Interface;
 
 /**
  * Compatibility class for cloudflare.
  */
-class Cloudflare implements Subscriber_Interface, DeactivationInterface {
+class Cloudflare implements Subscriber_Interface {
 	/**
 	 * Options instance.
 	 *
@@ -70,13 +69,12 @@ class Cloudflare implements Subscriber_Interface, DeactivationInterface {
 			'rocket_display_input_do_cloudflare'  => 'hide_addon_radio',
 			'rocket_cloudflare_field_settings'    => 'update_addon_field',
 			'pre_get_rocket_option_do_cloudflare' => 'disable_cloudflare_option',
-			'rocket_after_clean_domain'           => 'purge_cloudflare',
+			'after_rocket_clean_domain'           => 'purge_cloudflare',
 			'after_rocket_clean_files'            => 'purge_cloudflare_partial',
-			'rocket_saas_complete_job_status'     => 'purge_cloudflare_after_usedcss',
+			'rocket_rucss_complete_job_status'    => 'purge_cloudflare_after_usedcss',
 			'rocket_rucss_after_clearing_usedcss' => 'purge_cloudflare_after_usedcss',
 			'admin_post_rocket_enable_separate_mobile_cache' => 'enable_separate_mobile_cache',
 			'rocket_cdn_helper_addons'            => 'add_cdn_helper_message',
-			'init'                                => 'unregister_cloudflare_clean_on_post',
 		];
 	}
 
@@ -111,7 +109,7 @@ class Cloudflare implements Subscriber_Interface, DeactivationInterface {
 		}
 
 		// If RUCSS is enabled.
-		if ( ! (bool) $this->options->get( 'remove_unused_css', 0 ) ) {
+		if ( ! (bool) $this->options->get( 'remove_unused_css', 0 ) && ! (bool) $this->options->get( 'minify_concatenate_css', 0 ) ) {
 			return;
 		}
 
@@ -449,55 +447,5 @@ class Cloudflare implements Subscriber_Interface, DeactivationInterface {
 		}
 		$addons[] = 'Cloudflare';
 		return $addons;
-	}
-
-	/**
-	 * Purge Cloudflare on deactivate.
-	 *
-	 * @return void
-	 */
-	public function deactivate() {
-		$this->purge_cloudflare();
-	}
-
-	/**
-	 * Unregister Call on clean posts.
-	 *
-	 * @return void
-	 */
-	public function unregister_cloudflare_clean_on_post() {
-		$this->unregister_callback( 'deleted_post', 'purgeCacheByRelevantURLs' );
-		$this->unregister_callback( 'transition_post_status', 'purgeCacheOnPostStatusChange', PHP_INT_MAX );
-	}
-
-	/**
-	 * Unregister a callback.
-	 *
-	 * @param string $hook Hook on which to unregister.
-	 * @param string $method The callback to unregister.
-	 * @param int    $priority the priority from the callback.
-	 * @return void
-	 */
-	protected function unregister_callback( string $hook, string $method, int $priority = 10 ) {
-		global $wp_filter;
-
-		if ( ! key_exists( $hook, $wp_filter ) ) {
-			return;
-		}
-
-		$original_wp_filter = $wp_filter[ $hook ]->callbacks;
-
-		if ( ! key_exists( $priority, $original_wp_filter ) ) {
-			return;
-		}
-
-		foreach ( $original_wp_filter[ $priority ] as $key => $config ) {
-
-			if ( substr( $key, - strlen( $method ) ) !== $method ) {
-				continue;
-			}
-
-			unset( $wp_filter[ $hook ]->callbacks[ $priority ][ $key ] );
-		}
 	}
 }

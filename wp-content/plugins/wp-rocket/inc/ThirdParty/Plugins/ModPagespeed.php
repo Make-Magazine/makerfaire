@@ -110,4 +110,5 @@ class ModPagespeed implements Subscriber_Interface {
 			]
 		);
 	}
+
 }

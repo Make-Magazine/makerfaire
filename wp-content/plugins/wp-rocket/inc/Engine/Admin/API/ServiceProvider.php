@@ -5,8 +5,13 @@ namespace WP_Rocket\Engine\Admin\API;
 use WP_Rocket\Dependencies\League\Container\ServiceProvider\AbstractServiceProvider;
 
 class ServiceProvider extends AbstractServiceProvider {
+
 	/**
-	 * Array of services provided by this service provider
+	 * The provides array is a way to let the container
+	 * know that a service is provided by this service
+	 * provider. Every service that is registered via
+	 * this service provider must have an alias added
+	 * to this array or it will be ignored.
 	 *
 	 * @var array
 	 */
@@ -15,22 +20,13 @@ class ServiceProvider extends AbstractServiceProvider {
 	];
 
 	/**
-	 * Check if the service provider provides a specific service.
-	 *
-	 * @param string $id The id of the service.
-	 *
-	 * @return bool
-	 */
-	public function provides( string $id ): bool {
-		return in_array( $id, $this->provides, true );
-	}
-
-	/**
 	 * Registers the option array in the container
+	 *
+	 * @since 3.3
 	 *
 	 * @return void
 	 */
-	public function register(): void {
+	public function register() {
 		$this->getContainer()->add( 'admin_api_subscriber', Subscriber::class );
 	}
 }

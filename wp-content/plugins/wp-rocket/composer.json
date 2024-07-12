@@ -25,8 +25,7 @@
 		"process-timeout": 0,
 		"allow-plugins": {
 			"mnsami/composer-custom-directory-installer": true,
-			"dealerdirect/phpcodesniffer-composer-installer": true,
-			"phpstan/extension-installer": true
+			"dealerdirect/phpcodesniffer-composer-installer": true
 		}
 	},
 	"support": {
@@ -41,39 +40,36 @@
 	],
 	"require": {
 		"php": ">=7.3",
-		"cloudflare/cf-ip-rewrite": "^1.0"
+		"cloudflare/cf-ip-rewrite": "^1.0",
+		"monolog/monolog": "^1.0 || ^2.0"
 	},
 	"require-dev": {
 		"php": "^7 || ^8",
 		"brain/monkey": "^2.0",
 		"dealerdirect/phpcodesniffer-composer-installer": "^0.7.0",
-		"league/container": "^4.2",
+		"league/container": "^3.3",
 		"mikey179/vfsstream": "1.6.11",
 		"mnsami/composer-custom-directory-installer": "^2.0",
 		"mobiledetect/mobiledetectlib": "^2.8",
-		"php-stubs/wordpress-tests-stubs": "^6.5",
 		"phpcompatibility/phpcompatibility-wp": "^2.0",
-		"phpstan/extension-installer": "^1.3",
-		"phpstan/phpstan-phpunit": "^1.4",
+		"phpstan/phpstan": "^1.8",
 		"phpunit/phpunit": "^7.5 || ^8 || ^9",
-		"psr/container": "1.1.1",
+		"psr/container": "1.0.0",
 		"roave/security-advisories": "dev-master",
 		"szepeviktor/phpstan-wordpress": "^1.3",
 		"woocommerce/action-scheduler": "^3.4",
-		"wp-coding-standards/wpcs": "^3",
+		"wp-coding-standards/wpcs": "^2",
 		"wp-media/background-processing": "^1.3",
-		"wp-media/monolog": "^0.0",
 		"wp-media/phpunit": "^3",
 		"wp-media/rocket-lazyload-common": "^3.0.11",
 		"wp-media/wp-imagify-partner": "^1.0",
 		"wpackagist-plugin/amp": "^1.1.4",
 		"wpackagist-plugin/hummingbird-performance": "2.0.1",
 		"wpackagist-plugin/jetpack": "9.3.2",
-		"wpackagist-plugin/pdf-embedder": "4.6.*",
+		"wpackagist-plugin/pdf-embedder": "^4.6",
 		"wpackagist-plugin/simple-custom-css": "^4.0.3",
 		"wpackagist-plugin/spinupwp": "^1.1",
-		"wpackagist-plugin/the-events-calendar": "6.5.0.1",
-		"wpackagist-plugin/woocommerce": "^8",
+		"wpackagist-plugin/woocommerce": "^7",
 		"wpackagist-plugin/wp-smushit": "^3"
 	},
 	"autoload": {
@@ -111,14 +107,13 @@
 				"wp-media/background-processing",
 				"wp-media/rocket-lazyload-common",
 				"wp-media/wp-imagify-partner",
-				"wp-media/monolog",
 				"league/container"
 			]
 		}
 	},
 	"scripts": {
-		"test-unit": "\"vendor/bin/phpunit\" --testsuite unit --colors=always --configuration tests/Unit/phpunit.xml.dist --coverage-php tests/report/unit.cov",
-		"test-integration": "\"vendor/bin/phpunit\" --testsuite integration --colors=always --configuration tests/Integration/phpunit.xml.dist --exclude-group AdminOnly,BeaverBuilder,Elementor,Hummingbird,WithSmush,WithWoo,WithAmp,WithAmpAndCloudflare,WithSCCSS,Cloudways,Dreampress,Cloudflare,CloudflareAdmin,Multisite,WPEngine,SpinUpWP,WordPressCom,O2Switch,PDFEmbedder,PDFEmbedderPremium,PDFEmbedderSecure,Godaddy,LiteSpeed,RevolutionSlider,WordFence,ConvertPlug,Kinsta,Jetpack,RankMathSEO,AllInOneSeoPack,SEOPress,TheSEOFramework,OneCom,RocketLazyLoad,WPXCloud,TheEventsCalendar,Perfmatters,RapidLoad,ProIsp,TranslatePress,WPGeotargeting,Weglot,Pressidium --coverage-php tests/report/integration.cov",
+		"test-unit": "\"vendor/bin/phpunit\" --testsuite unit --colors=always --configuration tests/Unit/phpunit.xml.dist",
+		"test-integration": "\"vendor/bin/phpunit\" --testsuite integration --colors=always --configuration tests/Integration/phpunit.xml.dist --exclude-group AdminOnly,BeaverBuilder,Elementor,Hummingbird,WithSmush,WithWoo,WithAmp,WithAmpAndCloudflare,WithSCCSS,Cloudways,Dreampress,Cloudflare,CloudflareAdmin,Multisite,WPEngine,SpinUpWP,WordPressCom,O2Switch,PDFEmbedder,PDFEmbedderPremium,PDFEmbedderSecure,Godaddy,LiteSpeed,RevolutionSlider,WordFence,ConvertPlug,Kinsta,Jetpack,RankMathSEO,AllInOneSeoPack,SEOPress,TheSEOFramework,OneCom,RocketLazyLoad,WPXCloud,TheEventsCalendar,Perfmatters,RapidLoad,ProIsp,TranslatePress,WPGeotargeting",
 		"test-integration-adminonly": "\"vendor/bin/phpunit\" --testsuite integration --colors=always --configuration tests/Integration/phpunit.xml.dist --group AdminOnly",
 		"test-integration-bb": "\"vendor/bin/phpunit\" --testsuite integration --colors=always --configuration tests/Integration/phpunit.xml.dist --group BeaverBuilder",
 		"test-integration-cloudflare": "\"vendor/bin/phpunit\" --testsuite integration --colors=always --configuration tests/Integration/phpunit.xml.dist --group Cloudflare",
@@ -160,17 +155,9 @@
 	    "test-integration-proisp": "\"vendor/bin/phpunit\" --testsuite integration --colors=always --configuration tests/Integration/phpunit.xml.dist --group ProIsp",
 	    "test-integration-wp-geotargeting": "\"vendor/bin/phpunit\" --testsuite integration --colors=always --configuration tests/Integration/phpunit.xml.dist --group WPGeotargeting",
       "test-integration-translatepress": "\"vendor/bin/phpunit\" --testsuite integration --colors=always --configuration tests/Integration/phpunit.xml.dist --group TranslatePress",
-      "test-integration-weglot": "\"vendor/bin/phpunit\" --testsuite integration --colors=always --configuration tests/Integration/phpunit.xml.dist --group Weglot",
-		  "test-integration-pressidium": "\"vendor/bin/phpunit\" --testsuite integration --colors=always --configuration tests/Integration/phpunit.xml.dist --group Pressidium",
 		"run-tests": [
-			"@run-tests-general",
-			"@run-tests-integration-specific"
-		],
-		"run-tests-general": [
 			"@test-unit",
-			"@test-integration"
-		],
-		"run-tests-integration-specific": [
+			"@test-integration",
 			"@test-integration-adminonly",
 			"@test-integration-cloudflare",
 			"@test-integration-cloudflareadmin",
@@ -209,9 +196,7 @@
 		    "@test-integration-rapidload",
 		    "@test-integration-proisp",
 			"@test-integration-wp-geotargeting",
-      "@test-integration-translatepress",
-      "@test-integration-weglot",
-			"@test-integration-pressidium"
+      "@test-integration-translatepress"
 		],
 		"run-stan": "vendor/bin/phpstan analyze --memory-limit=2G --no-progress",
 		"install-codestandards": "Dealerdirect\\Composer\\Plugin\\Installers\\PHPCodeSniffer\\Plugin::run",
@@ -226,6 +211,6 @@
 			"\"vendor/bin/mozart\" compose",
 			"composer dump-autoload"
 		],
-		"report-code-coverage": "\"vendor/bin/phpcov\" merge tests/report --clover tests/report/coverage.clover"
+		"code-coverage": "\"vendor/bin/phpunit\" --testsuite unit --colors=always --configuration tests/Unit/phpunit.xml.dist --coverage-clover=tests/report/coverage.clover"
 	}
 }

@@ -144,7 +144,6 @@ class Manager implements ActivationInterface, DeactivationInterface {
 	 * Add WP Rocket as a cap group in Members
 	 */
 	public function add_cap_group_to_members() {
-		// @phpstan-ignore-next-line
 		\members_register_cap_group(
 			'wp_rocket',
 			[
@@ -160,7 +159,6 @@ class Manager implements ActivationInterface, DeactivationInterface {
 	 */
 	public function add_caps_to_members() {
 		foreach ( $this->get_capabilities() as $cap ) {
-			// @phpstan-ignore-next-line
 			\members_register_cap( $cap, [ 'label' => $cap ] );
 		}
 	}

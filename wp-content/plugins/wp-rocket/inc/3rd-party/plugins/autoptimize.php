@@ -40,6 +40,7 @@ if ( class_exists( 'autoptimizeConfig' ) ) :
 	function rocket_maybe_deactivate_minify_css( $old_value, $value ) {
 		if ( $value !== $old_value && 'on' === $value ) {
 			update_rocket_option( 'minify_css', 0 );
+			update_rocket_option( 'minify_concatenate_css', 0 );
 		}
 	}
 	add_action( 'update_option_autoptimize_css', 'rocket_maybe_deactivate_minify_css', 10, 2 );
@@ -88,6 +89,7 @@ endif;
 function rocket_activate_autoptimize() {
 	if ( 'on' === get_option( 'autoptimize_css' ) ) {
 		update_rocket_option( 'minify_css', 0 );
+		update_rocket_option( 'minify_concatenate_css', 0 );
 	}
 
 	if ( 'on' === get_option( 'autoptimize_js' ) ) {

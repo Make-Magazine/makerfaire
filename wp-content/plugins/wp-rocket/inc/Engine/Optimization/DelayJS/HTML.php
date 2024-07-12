@@ -10,7 +10,6 @@ use WP_Rocket\Logger\Logger;
 
 class HTML {
 	use RegexTrait;
-
 	/**
 	 * Plugin options instance.
 	 *

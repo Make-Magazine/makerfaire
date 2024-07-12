@@ -306,4 +306,5 @@ class Config {
 
 		return '#' . $mandatory_cookies . '#';
 	}
+
 }

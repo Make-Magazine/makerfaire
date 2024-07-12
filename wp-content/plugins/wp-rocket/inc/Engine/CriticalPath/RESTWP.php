@@ -176,6 +176,7 @@ abstract class RESTWP implements RESTWPInterface {
 		return rest_ensure_response(
 			$this->return_success( $generated )
 		);
+
 	}
 
 	/**
@@ -317,4 +318,5 @@ abstract class RESTWP implements RESTWPInterface {
 			200
 		);
 	}
+
 }

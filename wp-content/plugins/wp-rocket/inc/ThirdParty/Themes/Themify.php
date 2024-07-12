@@ -2,15 +2,22 @@
 namespace WP_Rocket\ThirdParty\Themes;
 
 use WP_Rocket\Admin\Options_Data;
-use WP_Rocket\Event_Management\Subscriber_Interface;
 
-class Themify implements Subscriber_Interface {
+class Themify extends ThirdpartyTheme {
+
 	/**
 	 * WP Rocket options instance.
 	 *
 	 * @var Options_Data
 	 */
 	private $options;
+
+	/**
+	 * Theme name
+	 *
+	 * @var string
+	 */
+	protected static $theme_name = 'themify-ultra';
 
 	/**
 	 * Instantiate the class.
@@ -27,6 +34,10 @@ class Themify implements Subscriber_Interface {
 	 * @return array
 	 */
 	public static function get_subscribed_events() {
+		if ( ! self::is_current_theme() ) {
+			return [];
+		}
+
 		return [
 			'after_switch_theme' => 'disabling_concat_on_theme',
 			'update_option_' . rocket_get_constant( 'WP_ROCKET_SLUG', 'wp_rocket_settings' ) => [ 'disabling_concat_on_rucss', 10, 2 ],
@@ -41,7 +52,6 @@ class Themify implements Subscriber_Interface {
 	 * @return void
 	 */
 	public function disabling_concat_on_theme() {
-		// @phpstan-ignore-next-line
 		$data = themify_get_data();
 
 		$remove_unused_css = $this->options->get( 'remove_unused_css', false );
@@ -54,7 +64,6 @@ class Themify implements Subscriber_Interface {
 			$data = $this->maybe_enable( $data );
 		}
 
-		// @phpstan-ignore-next-line
 		themify_set_data( $data );
 	}
 
@@ -80,13 +89,12 @@ class Themify implements Subscriber_Interface {
 	 *
 	 * @return void
 	 */
-	public function disabling_concat_on_rucss( $old, $new ) { // phpcs:ignore Universal.NamingConventions.NoReservedKeywordParameterNames.newFound
+	public function disabling_concat_on_rucss( $old, $new ) {
 
 		if ( ! key_exists( 'remove_unused_css', $old ) || ! key_exists( 'remove_unused_css', $new ) || $old['remove_unused_css'] === $new['remove_unused_css'] ) {
 			return;
 		}
 
-		// @phpstan-ignore-next-line
 		$data = themify_get_data();
 
 		if ( ! $new['remove_unused_css'] ) {
@@ -97,7 +105,6 @@ class Themify implements Subscriber_Interface {
 			$data = $this->maybe_enable( $data );
 		}
 
-		// @phpstan-ignore-next-line
 		themify_set_data( $data );
 	}
 

@@ -51,7 +51,7 @@ class LoadInitialSitemap {
 		/**
 		 * Filter custom preload URL.
 		 *
-		 * @param array $custom_urls Array of custom preload URLs.
+		 * @param array Array of custom preload URL
 		 */
 		$urls    = apply_filters( 'rocket_preload_load_custom_urls', [] );
 		$urls [] = home_url();
@@ -67,22 +67,21 @@ class LoadInitialSitemap {
 		}
 
 		/**
-		 * Filter sitemaps URLs.
+		 * Filter sitemaps URL.
 		 *
-		 * @param array $sitemaps Array of sitemaps URLs.
+		 * @param array Array of sitemaps URL
 		 */
 		$sitemaps = (array) apply_filters( 'rocket_sitemap_preload_list', [] );
 
 		if ( count( $sitemaps ) > 0 ) {
 			/**
-			 * Filter sitemaps URLs that will be preloaded.
+			 * Filter sitemaps URL that will be preloaded.
 			 *
-			 * @param array $sitemaps Array of sitemaps URLs.
+			 * @param array Array of sitemaps URL
+			 * @returns array
 			 */
 			$sitemaps = apply_filters( 'rocket_preload_sitemap_before_queue', $sitemaps );
-
 			$this->add_task_to_queue( $sitemaps );
-
 			return;
 		}
 
@@ -90,17 +89,15 @@ class LoadInitialSitemap {
 
 		if ( ! $sitemap ) {
 			$this->add_homepage_urls();
-
 			return;
 		}
-
 		/**
 		 * Filter sitemaps URL that will be preloaded.
 		 *
-		 * @param array $sitemaps Array of sitemaps URL.
+		 * @param array Array of sitemaps URL
+		 * @returns array
 		 */
 		$sitemaps = apply_filters( 'rocket_preload_sitemap_before_queue', [ $sitemap ] );
-
 		$this->add_task_to_queue( $sitemaps );
 	}
 

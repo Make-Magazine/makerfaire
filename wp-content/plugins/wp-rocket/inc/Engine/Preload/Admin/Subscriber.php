@@ -1,11 +1,24 @@
 <?php
-declare(strict_types=1);
 
 namespace WP_Rocket\Engine\Preload\Admin;
 
+use stdClass;
+use WP_Rocket\Admin\Options_Data;
+use WP_Rocket\Engine\Preload\Controller\ClearCache;
+
 use WP_Rocket\Event_Management\Subscriber_Interface;
+use WP_Rocket\Logger\Logger;
+use WP_Rocket\Engine\Admin\Settings\Settings as AdminSettings;
 
 class Subscriber implements Subscriber_Interface {
+
+	/**
+	 * Options instance.
+	 *
+	 * @var Options_Data
+	 */
+	protected $options;
+
 	/**
 	 * Settings instance.
 	 *
@@ -15,10 +28,12 @@ class Subscriber implements Subscriber_Interface {
 
 	/**
 	 * Creates an instance of the class.
-
-	 * @param Settings $settings Settings instance.
+	 *
+	 * @param Options_Data $options Options instance.
+	 * @param Settings     $settings Settings instance.
 	 */
-	public function __construct( Settings $settings ) {
+	public function __construct( Options_Data $options, Settings $settings ) {
+		$this->options  = $options;
 		$this->settings = $settings;
 	}
 
@@ -29,15 +44,14 @@ class Subscriber implements Subscriber_Interface {
 	 */
 	public static function get_subscribed_events() {
 		return [
-			'admin_notices'                 => [
+			'admin_notices'               => [
 				[ 'maybe_display_preload_notice' ],
 			],
-			'rocket_options_changed'        => 'preload_homepage',
-			'switch_theme'                  => 'preload_homepage',
-			'rocket_after_clean_used_css'   => 'preload_homepage',
-			'rocket_domain_options_changed' => 'clear_and_preload',
-			'rocket_input_sanitize'         => 'sanitize_options',
-			'wp_rocket_upgrade'             => [ 'maybe_clean_cron', 15, 2 ],
+			'rocket_options_changed'      => 'preload_homepage',
+			'switch_theme'                => 'preload_homepage',
+			'rocket_after_clean_used_css' => 'preload_homepage',
+			'rocket_input_sanitize'       => 'sanitize_options',
+			'wp_rocket_upgrade'           => [ 'maybe_clean_cron', 15, 2 ],
 		];
 	}
 
@@ -51,21 +65,12 @@ class Subscriber implements Subscriber_Interface {
 	}
 
 	/**
-	 * Preload the homepage
+	 * Preload the homepage after changing the settings
 	 *
 	 * @return void
 	 */
 	public function preload_homepage() {
 		$this->settings->preload_homepage();
-	}
-
-	/**
-	 * Clear the cache table and preload
-	 *
-	 * @return void
-	 */
-	public function clear_and_preload() {
-		$this->settings->clear_and_preload();
 	}
 
 	/**
@@ -75,7 +80,7 @@ class Subscriber implements Subscriber_Interface {
 	 *
 	 * @return array
 	 */
-	public function sanitize_options( $input ): array {
+	public function sanitize_options( $input ) : array {
 		if ( empty( $input['preload_excluded_uri'] ) ) {
 			$input['preload_excluded_uri'] = [];
 

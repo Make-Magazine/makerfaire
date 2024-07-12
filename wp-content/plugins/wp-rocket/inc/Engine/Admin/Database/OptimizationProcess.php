@@ -33,13 +33,13 @@ class OptimizationProcess extends WP_Rocket_WP_Background_Process {
 	/**
 	 * Dispatch
 	 *
-	 * @return void
+	 * @return array|WP_Error
 	 */
 	public function dispatch() {
 		set_transient( 'rocket_database_optimization_process', 'running', HOUR_IN_SECONDS );
 
 		// Perform remote post.
-		parent::dispatch();
+		return parent::dispatch();
 	}
 
 	/**
@@ -148,4 +148,5 @@ class OptimizationProcess extends WP_Rocket_WP_Background_Process {
 
 		parent::complete();
 	}
+
 }

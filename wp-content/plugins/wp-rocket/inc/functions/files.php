@@ -542,9 +542,8 @@ function rocket_maybe_find_right_trash_url( array $parsed_url, int $post_id ) {
  *
  * @param string|array              $urls       URLs of cache files to be deleted.
  * @param WP_Filesystem_Direct|null $filesystem Optional. Instance of filesystem handler.
- * @param bool                      $run_actions Run actions.
  */
-function rocket_clean_files( $urls, $filesystem = null, $run_actions = true ) {
+function rocket_clean_files( $urls, $filesystem = null ) {
 	$urls = (array) $urls;
 	if ( empty( $urls ) ) {
 		return;
@@ -563,27 +562,24 @@ function rocket_clean_files( $urls, $filesystem = null, $run_actions = true ) {
 		$filesystem = rocket_direct_filesystem();
 	}
 
-	if ( $run_actions ) {
-		/**
-		 * Fires before all cache files are deleted.
-		 *
-		 * @since  3.2.2
-		 *
-		 * @param array $urls The URLs corresponding to the deleted cache files.
-		 */
-		do_action( 'before_rocket_clean_files', $urls ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals
-	}
+	/**
+	 * Fires before all cache files are deleted.
+	 *
+	 * @since  3.2.2
+	 *
+	 * @param array $urls The URLs corresponding to the deleted cache files.
+	 */
+	do_action( 'before_rocket_clean_files', $urls ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals
 
 	foreach ( $urls as $url ) {
-		if ( $run_actions ) {
-			/**
-			 * Fires before the cache file is deleted.
-			 *
-			 * @param string $url The URL that the cache file to be deleted.
-			 * @since 1.0
-			 */
-			do_action( 'before_rocket_clean_file', $url ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals
-		}
+		/**
+		 * Fires before the cache file is deleted.
+		 *
+		 * @since 1.0
+		 *
+		 * @param string $url The URL that the cache file to be deleted.
+		 */
+		do_action( 'before_rocket_clean_file', $url ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals
 
 		if ( $url_no_dots ) {
 			$url = str_replace( '.', '_', $url );
@@ -603,7 +599,7 @@ function rocket_clean_files( $urls, $filesystem = null, $run_actions = true ) {
 
 				// Encode Non-latin characters if found in url path.
 				if ( false !== preg_match_all( '/(?<non_latin>[^\x00-\x7F]+)/', $parsed_url['path'], $matches ) ) {
-					$cb_encode_non_latin = function ( $non_latin ) {
+					$cb_encode_non_latin = function( $non_latin ) {
 						return strtolower( rawurlencode( $non_latin ) );
 					};
 
@@ -624,19 +620,15 @@ function rocket_clean_files( $urls, $filesystem = null, $run_actions = true ) {
 				}
 			}
 		}
-		if ( $run_actions ) {
-			/**
-			 * Fires after the cache file is deleted.
-			 *
-			 * @param string $url The URL that the cache file was deleted.
-			 * @since 1.0
-			 */
-			do_action( 'after_rocket_clean_file', $url ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals
-		}
-	}
 
-	if ( ! $run_actions ) {
-		return;
+		/**
+		 * Fires after the cache file is deleted.
+		 *
+		 * @since 1.0
+		 *
+		 * @param string $url The URL that the cache file was deleted.
+		 */
+		do_action( 'after_rocket_clean_file', $url ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals
 	}
 
 	/**
@@ -705,14 +697,6 @@ function rocket_clean_home( $lang = '' ) {
 	$dirs = glob( $root . '*/' . $GLOBALS['wp_rewrite']->pagination_base, GLOB_NOSORT );
 	if ( $dirs ) {
 		foreach ( $dirs as $dir ) {
-			rocket_rrmdir( $dir );
-		}
-	}
-
-	$param_dirs = glob( $root . '/#*', GLOB_NOSORT );
-
-	if ( $param_dirs ) {
-		foreach ( $param_dirs as $dir ) {
 			rocket_rrmdir( $dir );
 		}
 	}
@@ -803,17 +787,10 @@ function rocket_clean_home_feeds() {
  * @param WP_Filesystem_Direct|null $filesystem Optional. Instance of filesystem handler.
  */
 function rocket_clean_domain( $lang = '', $filesystem = null ) {
-	if ( did_action( 'rocket_after_clean_domain' ) ) {
-		return;
-	}
-
-	if ( rocket_is_importing() ) {
-		return;
-	}
-
 	$urls = ( ! $lang || is_object( $lang ) || is_array( $lang ) || is_int( $lang ) )
 		? (array) get_rocket_i18n_uri()
 		: (array) get_rocket_i18n_home_url( $lang );
+
 	/**
 	 * Filter URLs to delete all caching files from a domain.
 	 *
@@ -882,16 +859,6 @@ function rocket_clean_domain( $lang = '', $filesystem = null ) {
 		 */
 		do_action( 'after_rocket_clean_domain', $root, $lang, $url ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals
 	}
-
-	/**
-	 * Fires after all cache files was deleted.
-	 *
-	 * @since 3.15.5
-	 *
-	 * @param string $lang The current lang to purge.
-	 * @param array|string[] $urls  All urls to clean.
-	 */
-	do_action( 'rocket_after_clean_domain', $lang, $urls );
 
 	return true;
 }
@@ -1190,17 +1157,15 @@ function rocket_mkdir( $dir ) {
 /**
  * Recursive directory creation based on full path.
  *
- * @param string                    $target path to the directory we want to create.
- * @param WP_Filesystem_Direct|null $filesystem WordPress filesystem.
- * @return bool True if directory is created/exists, false otherwise
  * @since 1.3.4
  *
  * @source wp_mkdir_p() in /wp-includes/functions.php
+ *
+ * @param string $target path to the directory we want to create.
+ * @return bool True if directory is created/exists, false otherwise
  */
-function rocket_mkdir_p( $target, $filesystem = null ) {
+function rocket_mkdir_p( $target ) {
 	$wrapper = null;
-
-	$filesystem = $filesystem ?: rocket_direct_filesystem();
 
 	if ( rocket_is_stream( $target ) ) {
 		list( $wrapper, $target ) = explode( '://', $target, 2 );
@@ -1220,20 +1185,20 @@ function rocket_mkdir_p( $target, $filesystem = null ) {
 		$target = '/';
 	}
 
-	if ( $filesystem->exists( $target ) ) {
-		return $filesystem->is_dir( $target );
+	if ( rocket_direct_filesystem()->exists( $target ) ) {
+		return rocket_direct_filesystem()->is_dir( $target );
 	}
 
 	// Attempting to create the directory may clutter up our display.
 	if ( rocket_mkdir( $target ) ) {
 		return true;
-	} elseif ( $filesystem->is_dir( dirname( $target ) ) ) {
+	} elseif ( rocket_direct_filesystem()->is_dir( dirname( $target ) ) ) {
 		return false;
 	}
 
 	// If the above failed, attempt to create the parent node, then try again.
-	if ( ( '/' !== $target ) && ( rocket_mkdir_p( dirname( $target ), $filesystem ) ) ) {
-		return rocket_mkdir_p( $target, $filesystem );
+	if ( ( '/' !== $target ) && ( rocket_mkdir_p( dirname( $target ) ) ) ) {
+		return rocket_mkdir_p( $target );
 	}
 
 	return false;
@@ -1365,6 +1330,7 @@ function _rocket_get_dir_files_by_regex( $dir, $regex ) { // phpcs:ignore WordPr
 	} catch ( Exception $e ) {
 		return [];
 	}
+
 }
 
 /**

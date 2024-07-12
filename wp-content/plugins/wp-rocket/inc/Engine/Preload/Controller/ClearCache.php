@@ -6,7 +6,6 @@ use WP_Rocket\Engine\Preload\Database\Queries\Cache;
 
 class ClearCache {
 	use CheckExcludedTrait;
-
 	/**
 	 * DB query.
 	 *

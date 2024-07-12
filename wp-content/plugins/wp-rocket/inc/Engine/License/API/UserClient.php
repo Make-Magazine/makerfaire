@@ -3,9 +3,8 @@
 namespace WP_Rocket\Engine\License\API;
 
 use WP_Rocket\Admin\Options_Data;
-use WP_Rocket\Engine\Common\JobManager\APIHandler\AbstractSafeAPIClient;
 
-class UserClient extends AbstractSafeAPIClient {
+class UserClient {
 	const USER_ENDPOINT = 'https://wp-rocket.me/stat/1.0/wp-rocket/user.php';
 
 	/**
@@ -14,28 +13,6 @@ class UserClient extends AbstractSafeAPIClient {
 	 * @var Options_Data
 	 */
 	private $options;
-
-	/**
-	 * Get the transient key for plugin updates.
-	 *
-	 * This method returns the transient key used for caching plugin updates.
-	 *
-	 * @return string The transient key for plugin updates.
-	 */
-	protected function get_transient_key() {
-		return 'wpr_user_information';
-	}
-
-	/**
-	 * Get the API URL for plugin updates.
-	 *
-	 * This method returns the API URL used for fetching plugin updates.
-	 *
-	 * @return string The API URL for plugin updates.
-	 */
-	protected function get_api_url() {
-		return self::USER_ENDPOINT;
-	}
 
 	/**
 	 * Instantiate the class
@@ -88,14 +65,14 @@ class UserClient extends AbstractSafeAPIClient {
 			? $this->options->get( 'consumer_email', '' )
 			: rocket_get_constant( 'WP_ROCKET_EMAIL', '' );
 
-		$response = $this->send_post_request(
+		$response = wp_safe_remote_post(
+			self::USER_ENDPOINT,
 			[
 				'body' => 'user_id=' . rawurlencode( $customer_email ) . '&consumer_key=' . sanitize_key( $customer_key ),
-			],
-			true
+			]
 		);
 
-		if ( is_wp_error( $response ) ) {
+		if ( 200 !== wp_remote_retrieve_response_code( $response ) ) {
 			return false;
 		}
 

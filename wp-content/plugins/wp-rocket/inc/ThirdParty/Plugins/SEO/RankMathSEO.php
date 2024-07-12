@@ -1,29 +1,41 @@
 <?php
-declare(strict_types=1);
 
 namespace WP_Rocket\ThirdParty\Plugins\SEO;
 
 use RankMath\Helper;
 use RankMath\Sitemap\Router;
+use WP_Rocket\Admin\Options_Data;
 use WP_Rocket\Event_Management\Subscriber_Interface;
 
 class RankMathSEO implements Subscriber_Interface {
-	/**
-	 * Returns an array of events this subscriber wants to listen to.
-	 *
-	 * @return array
-	 */
-	public static function get_subscribed_events(): array {
-		if ( ! class_exists( 'RankMath\Helper' ) ) {
-			return [];
-		}
 
+
+	/**
+	 * Options instance.
+	 *
+	 * @var Options_Data
+	 */
+	protected $option;
+
+	/**
+	 * Instantiate class.
+	 *
+	 * @param Options_Data $option Options instance.
+	 */
+	public function __construct( Options_Data $option ) {
+		$this->option = $option;
+	}
+
+	/**
+	 * Subscribed events.
+	 */
+	public static function get_subscribed_events() {
 		if ( ! defined( 'RANK_MATH_FILE' ) || ! Helper::is_module_active( 'sitemap' ) ) {
 			return [];
 		}
 
 		return [
-			'rocket_sitemap_preload_list' => [ 'add_sitemap', 15 ],
+			'rocket_sitemap_preload_list' => [ 'rocket_sitemap', 15 ],
 		];
 	}
 
@@ -31,13 +43,9 @@ class RankMathSEO implements Subscriber_Interface {
 	 * Add SEO sitemap URL to the sitemaps to preload
 	 *
 	 * @param array $sitemaps Sitemaps to preload.
-	 *
-	 * @return array
+	 * @return array Updated Sitemaps to preload
 	 */
-	public function add_sitemap( $sitemaps ) {
-		if ( ! class_exists( 'RankMath\Sitemap\Router' ) ) {
-			return $sitemaps;
-		}
+	public function rocket_sitemap( $sitemaps ) { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals
 
 		$sitemaps[] = Router::get_base_url( 'sitemap_index.xml' );
 

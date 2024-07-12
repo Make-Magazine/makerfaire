@@ -320,10 +320,10 @@ class Minify extends AbstractCSSOptimization implements ProcessorInterface {
 				]
 			);
 
-			return ''; // phpcs:ignore Universal.CodeAnalysis.ConstructorDestructorReturn.ReturnValueFound
+			return '';
 		}
 
-		return $minified_content; // phpcs:ignore Universal.CodeAnalysis.ConstructorDestructorReturn.ReturnValueFound
+		return $minified_content;
 	}
 
 	/**

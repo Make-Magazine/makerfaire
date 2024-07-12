@@ -1,5 +1,4 @@
 <?php
-declare(strict_types=1);
 
 namespace WP_Rocket\Engine\Preload\Database\Tables;
 
@@ -96,18 +95,5 @@ class Cache extends Table {
 		}
 
 		return $this->is_success( $created );
-	}
-
-	/**
-	 * Truncate cache table.
-	 *
-	 * @return bool
-	 */
-	public function truncate_cache_table(): bool {
-		if ( ! $this->exists() ) {
-			return false;
-		}
-
-		return $this->truncate();
 	}
 }

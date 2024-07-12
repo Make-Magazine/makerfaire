@@ -3,9 +3,13 @@ declare(strict_types=1);
 
 namespace WP_Rocket\ThirdParty\Themes;
 
-use WP_Rocket\Event_Management\Subscriber_Interface;
-
-class Xstore implements Subscriber_Interface {
+class Xstore extends ThirdpartyTheme {
+	/**
+	 * Theme name
+	 *
+	 * @var string
+	 */
+	protected static $theme_name = 'xstore';
 
 	/**
 	 * Return an array of events that this subscriber wants to listen to.
@@ -13,9 +17,12 @@ class Xstore implements Subscriber_Interface {
 	 * @return array
 	 */
 	public static function get_subscribed_events() {
-		return [
-			'rocket_rucss_inline_content_exclusions' => 'exclude_inline_content',
-		];
+
+		if ( ! self::is_current_theme() ) {
+			return [];
+		}
+
+		return [ 'rocket_rucss_inline_content_exclusions' => 'exclude_inline_content' ];
 	}
 
 	/**

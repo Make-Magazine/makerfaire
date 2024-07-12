@@ -3,8 +3,6 @@ declare(strict_types=1);
 
 namespace WP_Rocket\Engine\Optimization\RUCSS\Frontend;
 
-use WP_Rocket\Engine\Common\Context\ContextInterface;
-use WP_Rocket\Engine\Optimization\RUCSS\Context\RUCSSContext;
 use WP_Rocket\Event_Management\Subscriber_Interface;
 use WP_Rocket\Engine\Optimization\RUCSS\Controller\UsedCSS;
 
@@ -18,21 +16,12 @@ class Subscriber implements Subscriber_Interface {
 	private $used_css;
 
 	/**
-	 * RUCSS context.
-	 *
-	 * @var ContextInterface
-	 */
-	protected $context;
-
-	/**
 	 * Instantiate the class
 	 *
-	 * @param UsedCSS          $used_css UsedCSS instance.
-	 * @param ContextInterface $context RUCSS context.
+	 * @param UsedCSS $used_css UsedCSS instance.
 	 */
-	public function __construct( UsedCSS $used_css, ContextInterface $context ) {
+	public function __construct( UsedCSS $used_css ) {
 		$this->used_css = $used_css;
-		$this->context  = $context;
 	}
 
 	/**
@@ -70,7 +59,7 @@ class Subscriber implements Subscriber_Interface {
 	 * @return bool
 	 */
 	public function maybe_disable_preload_fonts( $value ): bool {
-		if ( $this->context->is_allowed() ) {
+		if ( $this->used_css->is_allowed() ) {
 			return true;
 		}
 

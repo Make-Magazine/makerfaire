@@ -163,8 +163,6 @@ class ProcessorService {
 		) {
 			return $this->on_job_success( $item_path, $item_url, $job_details->data->critical_path, $is_mobile, $item_type );
 		}
-
-		return $this->on_job_error( $job_details, $item_url, $is_mobile, $item_type );
 	}
 
 	/**
@@ -337,4 +335,5 @@ class ProcessorService {
 			]
 		);
 	}
+
 }

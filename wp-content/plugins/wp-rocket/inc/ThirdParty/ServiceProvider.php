@@ -33,10 +33,9 @@ use WP_Rocket\ThirdParty\Plugins\Smush;
 use WP_Rocket\ThirdParty\Plugins\TheEventsCalendar;
 use WP_Rocket\ThirdParty\Plugins\ThirstyAffiliates;
 use WP_Rocket\ThirdParty\Plugins\UnlimitedElements;
-use WP_Rocket\ThirdParty\Plugins\CDN\{Cloudflare, CloudflareFacade};
+use WP_Rocket\ThirdParty\Plugins\CDN\{Cloudflare,CloudflareFacade};
 use WP_Rocket\ThirdParty\Plugins\Jetpack;
 use WP_Rocket\ThirdParty\Plugins\WPGeotargeting;
-use WP_Rocket\ThirdParty\Plugins\ContactForm7;
 use WP_Rocket\ThirdParty\Plugins\SEO\RankMathSEO;
 use WP_Rocket\ThirdParty\Plugins\SEO\AllInOneSEOPack;
 use WP_Rocket\ThirdParty\Plugins\SEO\SEOPress;
@@ -44,14 +43,20 @@ use WP_Rocket\ThirdParty\Plugins\SEO\TheSEOFramework;
 use WP_Rocket\ThirdParty\Plugins\Optimization\RocketLazyLoad;
 use WP_Rocket\ThirdParty\Plugins\Optimization\Perfmatters;
 use WP_Rocket\ThirdParty\Plugins\Optimization\RapidLoad;
-use WP_Rocket\ThirdParty\Plugins\I18n\Weglot;
 
 /**
  * Service provider for WP Rocket third party compatibility
+ *
+ * @since 3.3
  */
 class ServiceProvider extends AbstractServiceProvider {
+
 	/**
-	 * Array of services provided by this service provider
+	 * The provides array is a way to let the container
+	 * know that a service is provided by this service
+	 * provider. Every service that is registered via
+	 * this service provider must have an alias added
+	 * to this array or it will be ignored.
 	 *
 	 * @var array
 	 */
@@ -96,20 +101,7 @@ class ServiceProvider extends AbstractServiceProvider {
 		'rapidload',
 		'translatepress',
 		'wpgeotargeting',
-		'weglot',
-		'contactform7',
 	];
-
-	/**
-	 * Check if the service provider provides a specific service.
-	 *
-	 * @param string $id The id of the service.
-	 *
-	 * @return bool
-	 */
-	public function provides( string $id ): bool {
-		return in_array( $id, $this->provides, true );
-	}
 
 	/**
 	 * Registers the subscribers in the container
@@ -118,154 +110,152 @@ class ServiceProvider extends AbstractServiceProvider {
 	 *
 	 * @return void
 	 */
-	public function register(): void {
+	public function register() {
 		$options = $this->getContainer()->get( 'options' );
 
 		$this->getContainer()
-			->addShared( 'mobile_subscriber', Mobile_Subscriber::class )
+			->share( 'mobile_subscriber', Mobile_Subscriber::class )
 			->addTag( 'common_subscriber' );
 		$this->getContainer()
-			->addShared( 'elementor_subscriber', Elementor::class )
+			->share( 'elementor_subscriber', Elementor::class )
 			->addArgument( $options )
 			->addArgument( rocket_direct_filesystem() )
 			->addArgument( $this->getContainer()->get( 'delay_js_html' ) )
 			->addTag( 'common_subscriber' );
 		$this->getContainer()
-			->addShared( 'woocommerce_subscriber', WooCommerceSubscriber::class )
+			->share( 'woocommerce_subscriber', WooCommerceSubscriber::class )
 			->addArgument( $this->getContainer()->get( 'delay_js_html' ) )
 			->addTag( 'common_subscriber' );
 		$this->getContainer()
-			->addShared( 'syntaxhighlighter_subscriber', SyntaxHighlighter_Subscriber::class )
+			->share( 'syntaxhighlighter_subscriber', SyntaxHighlighter_Subscriber::class )
 			->addTag( 'common_subscriber' );
 		$this->getContainer()
-			->addShared( 'ngg_subscriber', NGG_Subscriber::class )
+			->share( 'ngg_subscriber', NGG_Subscriber::class )
 			->addTag( 'common_subscriber' );
 		$this->getContainer()
-			->addShared( 'smush_subscriber', Smush::class )
+			->share( 'smush_subscriber', Smush::class )
 			->addArgument( $this->getContainer()->get( 'options_api' ) )
 			->addArgument( $this->getContainer()->get( 'options' ) )
 			->addTag( 'common_subscriber' );
 		$this->getContainer()
-			->addShared( 'imagify_webp_subscriber', Imagify_Subscriber::class )
+			->share( 'imagify_webp_subscriber', Imagify_Subscriber::class )
 			->addArgument( $options )
 			->addTag( 'common_subscriber' );
 		$this->getContainer()
-			->addShared( 'shortpixel_webp_subscriber', ShortPixel_Subscriber::class )
+			->share( 'shortpixel_webp_subscriber', ShortPixel_Subscriber::class )
 			->addArgument( $options )
 			->addTag( 'common_subscriber' );
 		$this->getContainer()
-			->addShared( 'ewww_webp_subscriber', EWWW_Subscriber::class )
+			->share( 'ewww_webp_subscriber', EWWW_Subscriber::class )
 			->addArgument( $options )
 			->addTag( 'common_subscriber' );
 		$this->getContainer()
-			->addShared( 'optimus_webp_subscriber', Optimus_Subscriber::class )
+			->share( 'optimus_webp_subscriber', Optimus_Subscriber::class )
 			->addTag( 'common_subscriber' );
 		$this->getContainer()
-			->addShared( 'bigcommerce_subscriber', BigCommerce::class )
+			->share( 'bigcommerce_subscriber', BigCommerce::class )
 			->addTag( 'common_subscriber' );
 		$this->getContainer()
-			->addShared( 'beaverbuilder_subscriber', BeaverBuilder::class )
+			->share( 'beaverbuilder_subscriber', BeaverBuilder::class )
 			->addTag( 'common_subscriber' );
 		$this->getContainer()
-			->addShared( 'amp_subscriber', AMP::class )
+			->share( 'amp_subscriber', AMP::class )
 			->addArgument( $options )->addArgument( $this->getContainer()->get( 'cdn_subscriber' ) )
 			->addTag( 'common_subscriber' );
 		$this->getContainer()
-			->addShared( 'simple_custom_css', SimpleCustomCss::class )
+			->share( 'simple_custom_css', SimpleCustomCss::class )
 			->addArgument( WP_ROCKET_CACHE_BUSTING_PATH )->addArgument( WP_ROCKET_CACHE_BUSTING_URL )
 			->addTag( 'common_subscriber' );
 		$this->getContainer()
-			->addShared( 'pdfembedder', PDFEmbedder::class )
+			->share( 'pdfembedder', PDFEmbedder::class )
 			->addTag( 'common_subscriber' );
 		$this->getContainer()
-			->addShared( 'mod_pagespeed', ModPagespeed::class )
+			->share( 'mod_pagespeed', ModPagespeed::class )
 			->addTag( 'common_subscriber' );
 		$this->getContainer()
-			->addShared( 'adthrive', Adthrive::class )
+			->share( 'adthrive', Adthrive::class )
 			->addTag( 'common_subscriber' );
 		$this->getContainer()
-			->addShared( 'autoptimize', Autoptimize::class )
+			->share( 'autoptimize', Autoptimize::class )
 			->addArgument( $options )
 			->addTag( 'common_subscriber' );
 		$this->getContainer()
-			->addShared( 'wp-meteor', WPMeteor::class )
+			->share( 'wp-meteor', WPMeteor::class )
 			->addTag( 'common_subscriber' );
 		$this->getContainer()
-			->addShared( 'revolution_slider_subscriber', RevolutionSlider::class )
+			->share( 'revolution_slider_subscriber', RevolutionSlider::class )
 			->addTag( 'common_subscriber' );
 		$this->getContainer()
-			->addShared( 'wordfence_subscriber', WordFenceCompatibility::class )
+			->share( 'wordfence_subscriber', WordFenceCompatibility::class )
 			->addTag( 'common_subscriber' );
 		$this->getContainer()
-			->addShared( 'ezoic', Ezoic::class )
+			->share( 'ezoic', Ezoic::class )
 			->addTag( 'common_subscriber' );
 		$this->getContainer()
-			->addShared( 'thirstyaffiliates', ThirstyAffiliates::class )
+			->share( 'thirstyaffiliates', ThirstyAffiliates::class )
 			->addTag( 'common_subscriber' );
 		$this->getContainer()
-			->addShared( 'pwa', PWA::class )
+			->share( 'pwa', PWA::class )
 			->addTag( 'common_subscriber' );
 		$this->getContainer()
-			->addShared( 'yoast_seo', Yoast::class )
+			->share( 'yoast_seo', Yoast::class )
 			->addArgument( $options )
 			->addTag( 'common_subscriber' );
 		$this->getContainer()
-			->addShared( 'convertplug', ConvertPlug::class )
+			->share( 'convertplug', ConvertPlug::class )
 			->addTag( 'common_subscriber' );
 		$this->getContainer()
-			->addShared( 'unlimited_elements', UnlimitedElements::class )
+			->share( 'unlimited_elements', UnlimitedElements::class )
 			->addTag( 'common_subscriber' );
 		$this->getContainer()
-			->addShared( 'inline_related_posts', InlineRelatedPosts::class )
+			->share( 'inline_related_posts', InlineRelatedPosts::class )
 			->addTag( 'common_subscriber' );
 		$this->getContainer()
-			->addShared( 'wpml', WPML::class )
+			->share( 'wpml', WPML::class )
 			->addTag( 'common_subscriber' );
 		$this->getContainer()->add( 'cloudflare_plugin_facade', CloudflareFacade::class );
 		$this->getContainer()
-			->addShared( 'cloudflare_plugin_subscriber', Cloudflare::class )
+			->share( 'cloudflare_plugin_subscriber', Cloudflare::class )
 			->addArgument( $options )
 			->addArgument( $this->getContainer()->get( 'options_api' ) )
 			->addArgument( $this->getContainer()->get( 'beacon' ) )
 			->addArgument( $this->getContainer()->get( 'cloudflare_plugin_facade' ) )
 			->addTag( 'common_subscriber' );
 		$this->getContainer()
-			->addShared( 'jetpack', Jetpack::class )
+			->share( 'jetpack', Jetpack::class )
 			->addArgument( $options )
 			->addTag( 'common_subscriber' );
 		$this->getContainer()
-			->addShared( 'convertplug', ConvertPlug::class )
+			->share( 'convertplug', ConvertPlug::class )
 			->addTag( 'common_subscriber' );
 		$this->getContainer()
-			->addShared( 'rank_math_seo', RankMathSEO::class )
-			->addTag( 'common_subscriber' );
-		$this->getContainer()
-			->addShared( 'all_in_one_seo_pack', AllInOneSEOPack::class )
+			->share( 'rank_math_seo', RankMathSEO::class )
 			->addArgument( $options )
 			->addTag( 'common_subscriber' );
 		$this->getContainer()
-			->addShared( 'seopress', SEOPress::class )
+			->share( 'all_in_one_seo_pack', AllInOneSEOPack::class )
 			->addArgument( $options )
 			->addTag( 'common_subscriber' );
 		$this->getContainer()
-			->addShared( 'the_seo_framework', TheSEOFramework::class )
+			->share( 'seopress', SEOPress::class )
 			->addArgument( $options )
 			->addTag( 'common_subscriber' );
 		$this->getContainer()
-			->addShared( 'rocket_lazy_load', RocketLazyLoad::class )
+			->share( 'the_seo_framework', TheSEOFramework::class )
+			->addArgument( $options )
 			->addTag( 'common_subscriber' );
 		$this->getContainer()
-			->addShared( 'the_events_calendar', TheEventsCalendar::class )
+			->share( 'rocket_lazy_load', RocketLazyLoad::class )
 			->addTag( 'common_subscriber' );
 		$this->getContainer()
-			->addShared( 'perfmatters', Perfmatters::class )
+			->share( 'the_events_calendar', TheEventsCalendar::class )
 			->addTag( 'common_subscriber' );
 		$this->getContainer()
-			->addShared( 'rapidload', RapidLoad::class );
+			->share( 'perfmatters', Perfmatters::class )
+			->addTag( 'common_subscriber' );
 		$this->getContainer()
-			->addShared( 'weglot', Weglot::class );
-		$this->getContainer()->addShared( 'translatepress', TranslatePress::class );
-		$this->getContainer()->addShared( 'wpgeotargeting', WPGeotargeting::class );
-		$this->getContainer()->addShared( 'contactform7', ContactForm7::class );
+			->share( 'rapidload', RapidLoad::class );
+		$this->getContainer()->share( 'translatepress', TranslatePress::class );
+		$this->getContainer()->share( 'wpgeotargeting', WPGeotargeting::class );
 	}
 }

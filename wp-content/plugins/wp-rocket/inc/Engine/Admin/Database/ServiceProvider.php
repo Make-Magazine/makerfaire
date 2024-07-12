@@ -5,10 +5,17 @@ use WP_Rocket\Dependencies\League\Container\ServiceProvider\AbstractServiceProvi
 
 /**
  * Service Provider for database optimization
+ *
+ * @since 3.3
  */
 class ServiceProvider extends AbstractServiceProvider {
+
 	/**
-	 * Array of services provided by this service provider
+	 * The provides array is a way to let the container
+	 * know that a service is provided by this service
+	 * provider. Every service that is registered via
+	 * this service provider must have an alias added
+	 * to this array or it will be ignored.
 	 *
 	 * @var array
 	 */
@@ -19,26 +26,17 @@ class ServiceProvider extends AbstractServiceProvider {
 	];
 
 	/**
-	 * Check if the service provider provides a specific service.
-	 *
-	 * @param string $id The id of the service.
-	 *
-	 * @return bool
-	 */
-	public function provides( string $id ): bool {
-		return in_array( $id, $this->provides, true );
-	}
-
-	/**
 	 * Registers the option array in the container
+	 *
+	 * @since 3.3
 	 *
 	 * @return void
 	 */
-	public function register(): void {
+	public function register() {
 		$this->getContainer()->add( 'db_optimization_process', OptimizationProcess::class );
 		$this->getContainer()->add( 'db_optimization', Optimization::class )
 			->addArgument( $this->getContainer()->get( 'db_optimization_process' ) );
-		$this->getContainer()->addShared( 'db_optimization_subscriber', Subscriber::class )
+		$this->getContainer()->share( 'db_optimization_subscriber', Subscriber::class )
 			->addArgument( $this->getContainer()->get( 'db_optimization' ) )
 			->addArgument( $this->getContainer()->get( 'options' ) )
 			->addTag( 'common_subscriber' );

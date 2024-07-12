@@ -16,14 +16,7 @@ function rocket_admin_bar( $wp_admin_bar ) {
 	global $pagenow, $post;
 
 	if ( ! empty( $_SERVER['REQUEST_URI'] ) ) {
-		$uri = filter_var( wp_unslash( $_SERVER['REQUEST_URI'], FILTER_SANITIZE_URL ) );
-		/**
-		 * Filters to act on the referer url for the admin bar.
-		 *
-		 * @param string $uri Current uri
-		 */
-		$referer = (string) apply_filters( 'rocket_admin_bar_referer', $uri );
-		$referer = esc_url_raw( $referer );
+		$referer = filter_var( wp_unslash( $_SERVER['REQUEST_URI'] ), FILTER_SANITIZE_URL );
 		$referer = '&_wp_http_referer=' . rawurlencode( remove_query_arg( 'fl_builder', $referer ) );
 	} else {
 		$referer = '';
@@ -92,8 +85,6 @@ function rocket_admin_bar( $wp_admin_bar ) {
 					]
 				);
 
-				$langlinks_default = [];
-
 				// Add submenu for each active langs.
 				switch ( $i18n_plugin ) {
 					case 'wpml':
@@ -109,19 +100,21 @@ function rocket_admin_bar( $wp_admin_bar ) {
 						$langlinks = get_rocket_polylang_langs_for_admin_bar();
 						break;
 					default:
-						/**
-						 * Filters the value of the lang links menu
-						 *
-						 * @param array $langlinks Array of languages.
-						 */
-						$langlinks = apply_filters( 'rocket_i18n_admin_bar_menu', [] );
-
-						if ( ! is_array( $langlinks ) ) {
-							$langlinks = $langlinks_default;
-						}
+						$langlinks = [];
 				}
 
 				if ( $langlinks ) {
+					foreach ( $langlinks as $lang ) {
+						$wp_admin_bar->add_menu(
+							[
+								'parent' => 'purge-all',
+								'id'     => 'purge-all-' . $lang['code'],
+								'title'  => $lang['flag'] . '&nbsp;' . $lang['anchor'],
+								'href'   => wp_nonce_url( admin_url( 'admin-post.php?action=' . $action . '&type=all&lang=' . $lang['code'] . $referer ), $action . '_all' ),
+							]
+						);
+					}
+
 					if ( 'wpml' !== $i18n_plugin ) {
 						// Add subemnu "All langs" (the one for WPML is already printed).
 						$wp_admin_bar->add_menu(
@@ -130,17 +123,6 @@ function rocket_admin_bar( $wp_admin_bar ) {
 								'id'     => 'purge-all-all',
 								'title'  => '<div class="dashicons-before dashicons-admin-site" style="line-height:1.5"> ' . __( 'All languages', 'rocket' ) . '</div>',
 								'href'   => wp_nonce_url( admin_url( 'admin-post.php?action=' . $action . '&type=all&lang=all' . $referer ), $action . '_all' ),
-							]
-						);
-					}
-
-					foreach ( $langlinks as $lang ) {
-						$wp_admin_bar->add_menu(
-							[
-								'parent' => 'purge-all',
-								'id'     => 'purge-all-' . $lang['code'],
-								'title'  => $lang['flag'] . '&nbsp;' . $lang['anchor'],
-								'href'   => wp_nonce_url( admin_url( 'admin-post.php?action=' . $action . '&type=all&lang=' . $lang['code'] . $referer ), $action . '_all' ),
 							]
 						);
 					}

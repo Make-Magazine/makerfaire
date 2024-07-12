@@ -172,10 +172,6 @@ if ( ! function_exists( 'rocket_get_purge_urls' ) ) {
  * @param WP_Post $post    WP_Post object.
  */
 function rocket_clean_post( $post_id, $post = null ) {
-	if ( rocket_is_importing() ) {
-		return;
-	}
-
 	static $done = [];
 
 	if ( isset( $done[ $post_id ] ) ) {
@@ -213,7 +209,7 @@ function rocket_clean_post( $post_id, $post = null ) {
 
 	// Get the post language.
 	$i18n_plugin = rocket_has_i18n();
-	$lang        = '';
+	$lang        = false;
 
 	if ( 'wpml' === $i18n_plugin && ! rocket_is_plugin_active( 'woocommerce-multilingual/wpml-woocommerce.php' ) ) {
 		// WPML.
@@ -292,20 +288,15 @@ add_action( 'wp_update_comment_count', 'rocket_clean_post' );
  * @param array $post_data Array of unslashed post data.
  */
 function rocket_clean_post_cache_on_status_change( $post_id, $post_data ) {
-	if ( rocket_is_importing() ) {
-		return;
-	}
-
 	if ( 'publish' !== get_post_field( 'post_status', $post_id ) || 'draft' !== $post_data['post_status'] ) {
 		return;
 	}
 
 	$purge_urls = [];
 	$post       = get_post( $post_id );
-	$post_type  = get_post_type_object( $post->post_type );
 
-	// Return if $post is not an object or $post_type is not public.
-	if ( ! is_object( $post ) || true !== $post_type->public ) {
+	// Return if $post is not an object.
+	if ( ! is_object( $post ) ) {
 		return;
 	}
 	// Get the post language.
@@ -584,10 +575,6 @@ add_action( 'admin_post_purge_cache', 'do_admin_post_rocket_purge_cache' );
  * @param array       $hook_extra  Array of bulk item update data.
  */
 function rocket_clean_cache_theme_update( $wp_upgrader, $hook_extra ) {
-	if ( rocket_is_importing() ) {
-		return;
-	}
-
 	if ( ! isset( $hook_extra['action'] ) || 'update' !== $hook_extra['action'] ) {
 		return;
 	}
@@ -624,10 +611,6 @@ add_action( 'upgrader_process_complete', 'rocket_clean_cache_theme_update', 10, 
  * @param array $post_data Array of unslashed post data.
  */
 function rocket_clean_post_cache_on_slug_change( $post_id, $post_data ) {
-	if ( rocket_is_importing() ) {
-		return;
-	}
-
 	// Bail out if the post status is draft, pending or auto-draft.
 	if ( in_array( get_post_field( 'post_status', $post_id ), [ 'draft', 'pending', 'auto-draft', 'trash' ], true ) ) {
 		return;

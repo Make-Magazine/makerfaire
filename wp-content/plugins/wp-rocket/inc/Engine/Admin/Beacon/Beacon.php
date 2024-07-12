@@ -190,7 +190,7 @@ class Beacon extends Abstract_Render implements Subscriber_Interface {
 	 *
 	 * @return array
 	 */
-	private function config_data(): array {
+	private function config_data() : array {
 		return [
 			'display' => [
 				'position' => is_rtl() ? 'left' : 'right',
@@ -771,16 +771,6 @@ class Beacon extends Abstract_Render implements Subscriber_Interface {
 					'url' => 'https://fr.docs.wp-rocket.me/article/1327-problemes-critical-css-fouc#critical-path-css-de-secours',
 				],
 			],
-			'domain_change'              => [
-				'en' => [
-					'id'  => '577578b1903360258a10d8ba',
-					'url' => 'https://docs.wp-rocket.me/article/705-changing-domains-migrating-sites-with-wp-rocket?utm_source=wp_plugin&utm_medium=wp_rocket',
-				],
-				'fr' => [
-					'id'  => '57868414c697912dee72a98a',
-					'url' => 'https://fr.docs.wp-rocket.me/article/837-changer-de-domaine-migrer-un-site-avec-wp-rocket?utm_source=wp_plugin&utm_medium=wp_rocket',
-				],
-			],
 			'rucss_firewall_ips'         => [
 				'en' => [
 					'id'  => '6076083ff8c0ef2d98df1f97',
@@ -789,26 +779,6 @@ class Beacon extends Abstract_Render implements Subscriber_Interface {
 				'fr' => [
 					'id'  => '60d499a705ff892e6bc2a89e',
 					'url' => 'https://fr.docs.wp-rocket.me/article/1577-supprimer-les-ressources-css-inutilisees?utm_source=wp_plugin&utm_medium=wp_rocket#basic-requirements',
-				],
-			],
-			'optimize_critical_images'   => [
-				'en' => [
-					'id'  => '662c1a144c3ddc1d4e7a1d25',
-					'url' => 'https://docs.wp-rocket.me/article/1816-optimize-critical-images?utm_source=wp_plugin&utm_medium=wp_rocket',
-				],
-				'fr' => [
-					'id'  => '6634e9fe0cfcb4508af6b290',
-					'url' => 'https://fr.docs.wp-rocket.me/article/1819-optimiser-images-essentielle?utm_source=wp_plugin&utm_medium=wp_rocket',
-				],
-			],
-			'remove_cache_tab'           => [
-				'en' => [
-					'id'  => '6633b5df1009cb439ac6a432',
-					'url' => 'https://docs.wp-rocket.me/article/1817-removal-of-the-cache-tab?utm_source=wp_plugin&utm_medium=wp_rocket',
-				],
-				'fr' => [
-					'id'  => '6634e9b21009cb439ac6a6fb',
-					'url' => 'https://fr.docs.wp-rocket.me/article/1818-suppression-onglet-cache?utm_source=wp_plugin&utm_medium=wp_rocket',
 				],
 			],
 		];

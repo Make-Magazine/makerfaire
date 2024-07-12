@@ -401,4 +401,5 @@ class PurgeExpiredCache {
 
 		update_option( 'wp_rocket_settings', $options );
 	}
+
 }

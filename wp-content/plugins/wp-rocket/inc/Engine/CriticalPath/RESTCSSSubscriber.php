@@ -51,4 +51,5 @@ class RESTCSSSubscriber implements Subscriber_Interface {
 		$this->rest_manager->register_generate_route();
 		$this->rest_manager->register_delete_route();
 	}
+
 }
