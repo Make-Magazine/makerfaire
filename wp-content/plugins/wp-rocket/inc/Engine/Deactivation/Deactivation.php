@@ -2,8 +2,13 @@
 
 namespace WP_Rocket\Engine\Deactivation;
 
+use WP_Rocket\Admin\Options;
 use WP_Rocket\Dependencies\League\Container\Container;
+use WP_Rocket\Engine\Admin\Beacon\ServiceProvider as BeaconServiceProvider;
+use WP_Rocket\Engine\Support\ServiceProvider as SupportServiceProvider;
+use WP_Rocket\ServiceProvider\Options as OptionsServiceProvider;
 use WP_Rocket\ThirdParty\Hostings\HostResolver;
+use WP_Rocket\ThirdParty\Hostings\ServiceProvider as HostingsServiceProvider;
 
 class Deactivation {
 	/**
@@ -15,6 +20,7 @@ class Deactivation {
 		'advanced_cache',
 		'capabilities_manager',
 		'wp_cache',
+		'cloudflare_plugin_subscriber',
 	];
 
 	/**
@@ -27,9 +33,15 @@ class Deactivation {
 
 		$container = new Container();
 
+		$container->add( 'options_api', new Options( 'wp_rocket_' ) );
 		$container->add( 'template_path', WP_ROCKET_PATH . 'views' );
-		$container->addServiceProvider( 'WP_Rocket\Engine\Deactivation\ServiceProvider' );
-		$container->addServiceProvider( 'WP_Rocket\ThirdParty\Hostings\ServiceProvider' );
+
+		$container->addServiceProvider( new OptionsServiceProvider() );
+		$container->addServiceProvider( new BeaconServiceProvider() );
+		$container->addServiceProvider( new SupportServiceProvider() );
+
+		$container->addServiceProvider( new ServiceProvider() );
+		$container->addServiceProvider( new HostingsServiceProvider() );
 
 		$host_type = HostResolver::get_host_service();
 
@@ -91,7 +103,7 @@ class Deactivation {
 		delete_site_transient( 'wp_rocket_update_data' );
 
 		// Delete user metadata.
-		delete_user_meta( get_current_user_id(), 'rocket_boxes' );
+		rocket_renew_box( 'preload_notice' );
 
 		// Unschedule WP Cron events.
 		wp_clear_scheduled_hook( 'rocket_cache_dir_size_check' );

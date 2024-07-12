@@ -40,7 +40,7 @@ abstract class AbstractGFOptimization {
 	 *
 	 * @return string
 	 */
-	abstract public function optimize( $html): string;
+	abstract public function optimize( $html ): string;
 
 	/**
 	 * Check whether the optimizer has found google fonts on the page.
@@ -116,7 +116,7 @@ abstract class AbstractGFOptimization {
 	 */
 	protected function get_optimized_markup( string $url ): string {
 		return sprintf(
-			'<link rel="preload" as="style" href="%1$s" /><link rel="stylesheet" href="%1$s" media="print" onload="this.media=\'all\'" /><noscript><link rel="stylesheet" href="%1$s" /></noscript>', // phpcs:ignore WordPress.WP.EnqueuedResources.NonEnqueuedStylesheet
+			'<link rel="preload" data-rocket-preload as="style" href="%1$s" /><link rel="stylesheet" href="%1$s" media="print" onload="this.media=\'all\'" /><noscript><link rel="stylesheet" href="%1$s" /></noscript>', // phpcs:ignore WordPress.WP.EnqueuedResources.NonEnqueuedStylesheet
 			$url
 		);
 	}

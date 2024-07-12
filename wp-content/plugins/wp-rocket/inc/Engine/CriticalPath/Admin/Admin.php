@@ -104,7 +104,7 @@ class Admin {
 		);
 
 		// Increment this item's threshold count.
-		$cpcss_pending[ $cpcss_item['path'] ]['check']++;
+		++$cpcss_pending[ $cpcss_item['path'] ]['check'];
 
 		$this->cpcss_heartbeat_notices( $cpcss_generation, $cpcss_item );
 
@@ -129,8 +129,8 @@ class Admin {
 	 *
 	 * @since 3.6
 	 *
-	 * @param array|WP_Error $cpcss_generation CPCSS regeneration reply.
-	 * @param array          $cpcss_item       Item processed.
+	 * @param array|\WP_Error $cpcss_generation CPCSS regeneration reply.
+	 * @param array           $cpcss_item       Item processed.
 	 */
 	private function cpcss_heartbeat_notices( $cpcss_generation, $cpcss_item ) {
 		$mobile    = isset( $cpcss_item['mobile'] ) ? $cpcss_item['mobile'] : 0;

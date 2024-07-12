@@ -20,7 +20,7 @@ class APIClient {
 	 * @param string $url    The URL to send a CPCSS generation request for.
 	 * @param array  $params Optional. Parameters needed to be sent in the body. Default: [].
 	 * @param string $item_type Optional. Type for this item if it's custom or specific type. Default: custom.
-	 * @return array
+	 * @return array|WP_Error
 	 */
 	public function send_generation_request( $url, $params = [], $item_type = 'custom' ) {
 		$params['url'] = $url;
@@ -230,7 +230,7 @@ class APIClient {
 	 *
 	 * @return string response code.
 	 */
-	private function get_response_code( $response ) {
+	private function get_response_code( $response ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.Found
 		// Todo: we can return code based on the response status number, for example 404 not_found.
 		return 'cpcss_generation_failed';
 	}

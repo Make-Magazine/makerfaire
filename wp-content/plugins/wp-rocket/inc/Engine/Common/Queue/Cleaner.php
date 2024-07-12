@@ -52,7 +52,8 @@ class Cleaner extends \ActionScheduler_QueueCleaner {
 		 *
 		 * @since 3.11.0.5
 		 *
-		 * @param int $lifespan Lifespan in seconds.
+		 * @param int    $lifespan Lifespan in seconds.
+		 * @param string $group The group name.
 		 *
 		 * @return int
 		 */
@@ -62,6 +63,7 @@ class Cleaner extends \ActionScheduler_QueueCleaner {
 		$statuses_to_purge = [
 			\ActionScheduler_Store::STATUS_COMPLETE,
 			\ActionScheduler_Store::STATUS_CANCELED,
+			\ActionScheduler_Store::STATUS_FAILED,
 		];
 		foreach ( $statuses_to_purge as $status ) {
 			$actions_to_delete = $this->store->query_actions(
@@ -98,5 +100,4 @@ class Cleaner extends \ActionScheduler_QueueCleaner {
 			}
 		}
 	}
-
 }

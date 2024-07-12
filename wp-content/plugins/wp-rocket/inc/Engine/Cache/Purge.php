@@ -73,8 +73,14 @@ class Purge {
 			}
 
 			foreach ( $this->get_iterator( $path ) as $item ) {
+
 				if ( $item->isFile() ) {
 					$this->filesystem->delete( $item->getPathname() );
+					continue;
+				}
+
+				if ( str_contains( $item->getPathname(), '#' ) ) {
+					$this->filesystem->delete( $item->getPathname(), true );
 				}
 			}
 
@@ -181,7 +187,7 @@ class Purge {
 		/**
 		 * Action to preload urls after cleaning cache.
 		 *
-		 * @param array urls to preload.
+		 * @param array $urls urls to preload.
 		 */
 		do_action( 'rocket_after_clean_terms', $urls );
 	}
