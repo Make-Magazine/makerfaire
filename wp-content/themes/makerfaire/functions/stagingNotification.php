@@ -12,9 +12,11 @@ function change_email_to($notification, $form, $entry) {
 		if(strpos($notification['to'], '@make.co') !== false){
 			return $notification;
 		}
-   	  	$notification['to'] = 'webmaster@make.co,siana@make.co';
-   	  	$notification['from'] = 'webmaster@make.co';
-		$notification['cc'] = '';
+		// toType can be routing or email
+        $notification['toType']  = 'email';
+   	  	$notification['to'] 	 = 'webmaster@make.co';
+   	  	$notification['from'] 	 = 'webmaster@make.co';
+		$notification['cc'] 	 = 'siana@make.co';
    	  	$notification['subject'] = 'Redirect Email from '.$homeurl.' sent to ' . $notification['to'] . ' - ' . $notification['subject'];   	
 
       	if (isset($notification['bcc'])) $notification['bcc'] = '';
