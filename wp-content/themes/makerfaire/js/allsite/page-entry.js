@@ -88,8 +88,8 @@ jQuery(document).ready(function(){
     // photo modal for the main project image
     jQuery('.exhibit-picture img').on("click", function () {
         jQuery('body').append('<div id="dialog" class="projectImageDialog"><img src="' + jQuery(this).attr('data-photo') + '" width="100%" /></div>');
-        var winW = jQuery(window).width() - 180;
-        var winH = jQuery(window).height() - 180;
+        var winW = jQuery(window).width() - 50;
+        var winH = jQuery(window).height() - 50;
         jQuery('#dialog').dialog({
             dialogClass: "hide-heading",
             modal: true,
