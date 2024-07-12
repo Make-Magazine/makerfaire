@@ -14,7 +14,7 @@ function change_email_to($notification, $form, $entry) {
 		}
 		// toType can be routing or email
         $notification['toType']  = 'email';
-   	  	$notification['to'] 	 = 'webmaster@make.co';
+   	  	$notification['to'] 	 = 'webmaster@make.co'; //do not make this a comma separated list of emails. it breaks it for some reason
    	  	$notification['from'] 	 = 'webmaster@make.co';
 		$notification['bcc'] 	 = 'siana@make.co';
    	  	$notification['subject'] = 'Redirect Email from '.$homeurl.' - ' . $notification['subject'];   	
