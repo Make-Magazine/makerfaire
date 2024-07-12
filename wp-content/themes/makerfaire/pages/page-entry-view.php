@@ -11,7 +11,7 @@ $showcaseResults = showcase($entryId); // this will also tell us if this is a pa
             <?php if($proj_photo_size[0] > 900 ) { ?>
                 <picture class="exhibit-picture">
                     <source media="(max-width: 420px)" srcset="<?php echo $project_photo_small; ?>">
-                    <source media="(max-width: 760px)" srcset="<?php echo $project_photo_medium; ?>">
+                    <source media="(max-width: 1200px)" srcset="<?php echo $project_photo_medium; ?>">
                     <img src="<?php echo $project_photo_large; ?>" 
                          alt="<?php echo $project_title; ?> project image"
                          onerror="this.onerror=null;this.src='/wp-content/themes/makerfaire/images/default-featured-image.jpg';this.srcset=''"

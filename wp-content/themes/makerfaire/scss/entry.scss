@@ -439,6 +439,11 @@
 	}
 }
 
+.projectImageDialog img {
+	object-fit: contain;
+  	height: 100%;
+}
+
 // Invalid page
 .invalid h2 {
 	color: #333 !important;
