@@ -7,11 +7,9 @@ add_filter('gform_notification', 'change_email_to', 10, 3);
 function change_email_to($notification, $form, $entry) {
    $homeurl = get_home_url();
    // Check for our stage and dev sites	
-   if (strpos($homeurl, '.wpengine.com') !== false 	|| 
-		$homeurl === "https://stage.makerfaire.com" || 
-		$homeurl === "https://dev.makerfaire.com" ) {
+   if (strpos($homeurl, '.wpengine.com') !== false) {
 		//if we are in the testing env, and the to email is one of our own, let it through
-		if(strpos($$notification['to'], '@make.co') !== false){
+		if(strpos($notification['to'], '@make.co') !== false){
 			return $notification;
 		}
    	  	$notification['to'] = 'webmaster@make.co,siana@make.co';
@@ -20,6 +18,7 @@ function change_email_to($notification, $form, $entry) {
    	  	$notification['subject'] = 'Redirect Email from '.$homeurl.' sent to ' . $notification['to'] . ' - ' . $notification['subject'];   	
 
       	if (isset($notification['bcc'])) $notification['bcc'] = '';
+		error_log(print_r($notification,TRUE));
    } elseif (strpos($homeurl, '.local') !== false) {
       // Check for local sites
       if (defined('MF_OVERRITE_EMAIL')) {
@@ -43,7 +42,7 @@ function change_email_for_wp($notification) {
 	$homeurl = get_home_url();
 
 	// Check for our stage and dev sites	
-	if ($homeurl === "https://stage.makerfaire.com" || $homeurl === "https://dev.makerfaire.com" || $homeurl === "https://makerfaire.staging.wpengine.com") {
+	if ($homeurl === "https://mfairestage.wpengine.com/" || $homeurl === "https://mfairedev.wpengine.com/") {
 		$notification = array(
 				'to' => 'webmaster@make.co,siana@make.co',
 				'bcc' => '',
