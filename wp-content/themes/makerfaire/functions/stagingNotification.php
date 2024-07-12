@@ -2,7 +2,7 @@
 /*
  * Function to change the TO email for all outgoing Gravity Form emails
  */
-add_filter('gform_notification', 'change_email_to', 10, 3);
+add_filter('gform_notification', 'change_email_to', 10, 9999);
 
 function change_email_to($notification, $form, $entry) {
    $homeurl = get_home_url();
