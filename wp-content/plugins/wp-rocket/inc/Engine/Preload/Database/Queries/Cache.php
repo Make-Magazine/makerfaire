@@ -121,7 +121,7 @@ class Cache extends Query {
 	 *
 	 * @return bool
 	 */
-	public function create_or_update( array $resource ) {
+	public function create_or_update( array $resource ) { // phpcs:ignore Universal.NamingConventions.NoReservedKeywordParameterNames.resourceFound
 
 		/**
 		 * Format the url.
@@ -196,7 +196,7 @@ class Cache extends Query {
 	 *
 	 * @return bool
 	 */
-	public function create_or_nothing( array $resource ) {
+	public function create_or_nothing( array $resource ) { // phpcs:ignore Universal.NamingConventions.NoReservedKeywordParameterNames.resourceFound
 
 		if ( $this->is_rejected( $resource['url'] ) ) {
 			return false;
@@ -298,7 +298,7 @@ class Cache extends Query {
 	 * @param string $unit unit from the delay.
 	 * @return array
 	 */
-	public function get_old_cache( float $delay = 1, string $unit = 'month' ) : array {
+	public function get_old_cache( float $delay = 1, string $unit = 'month' ): array {
 		// Get the database interface.
 		$db = $this->get_db();
 
@@ -347,7 +347,7 @@ class Cache extends Query {
 			false
 		);
 
-		if ( $inprogress_count >= $total ) {
+		if ( $total <= 0 || $inprogress_count >= $total ) {
 			return [];
 		}
 
@@ -699,6 +699,5 @@ class Cache extends Query {
 			],
 			false
 		);
-
 	}
 }

@@ -1,6 +1,7 @@
 <?php
 namespace WP_Rocket\Engine\Cache;
 
+use WP_Post;
 use WP_Rocket\Event_Management\Subscriber_Interface;
 use WP_Rocket\Admin\Options_Data;
 use WP_Rocket\Logger\Logger;
@@ -52,11 +53,12 @@ class PurgeActionsSubscriber implements Subscriber_Interface {
 				[ 'purge_dates_archives' ],
 				[ 'purge_post_terms_urls' ],
 			],
-			'rocket_rucss_complete_job_status'    => [ 'purge_url_cache', 100 ],
+			'rocket_saas_complete_job_status'     => [ 'purge_url_cache', 100 ],
 			'rocket_rucss_after_clearing_usedcss' => 'purge_url_cache',
-			'rocket_after_save_dynamic_lists'     => 'purge_cache',
+			'rocket_after_save_dynamic_lists'     => 'purge_cache_after_saving_dynamic_lists',
 			'update_option_' . $slug              => [ 'purge_cache_reject_uri_partially', 10, 2 ],
 			'update_option_blog_public'           => 'purge_cache',
+			'wp_rocket_upgrade'                   => [ 'on_update', 10, 2 ],
 		];
 	}
 
@@ -87,6 +89,10 @@ class PurgeActionsSubscriber implements Subscriber_Interface {
 	 * @return void
 	 */
 	public function maybe_purge_cache_on_term_change( $term_id, $tt_id, $taxonomy ) {
+		if ( rocket_is_importing() ) {
+			return;
+		}
+
 		if ( ! $this->is_taxonomy_public( $taxonomy ) ) {
 			return;
 		}
@@ -178,5 +184,34 @@ class PurgeActionsSubscriber implements Subscriber_Interface {
 	 */
 	public function purge_cache_reject_uri_partially( array $old_value, array $value ): void {
 		$this->purge->purge_cache_reject_uri_partially( $old_value, $value );
+	}
+
+	/**
+	 * Purge cache after saving dynamic lists.
+	 *
+	 * @param bool $should_purge Should purge or not.
+	 *
+	 * @return void
+	 */
+	public function purge_cache_after_saving_dynamic_lists( $should_purge = true ) {
+		if ( ! $should_purge ) {
+			return;
+		}
+		$this->purge_cache();
+	}
+
+	/**
+	 * Regenerate the advanced cache file on update
+	 *
+	 * @param string $new_version New plugin version.
+	 * @param string $old_version Previous plugin version.
+	 *
+	 * @return void
+	 */
+	public function on_update( $new_version, $old_version ) {
+		if ( version_compare( $old_version, '3.15.3', '>=' ) ) {
+			return;
+		}
+		rocket_generate_advanced_cache_file();
 	}
 }

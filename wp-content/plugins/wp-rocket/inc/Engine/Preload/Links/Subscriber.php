@@ -86,7 +86,7 @@ class Subscriber implements Subscriber_Interface {
 				'rocket-browser-checker',
 				'',
 				[],
-				'',
+				rocket_get_constant( WP_ROCKET_VERSION, '' ),
 				true
 			);
 			wp_enqueue_script( 'rocket-browser-checker' );
@@ -106,7 +106,7 @@ class Subscriber implements Subscriber_Interface {
 			[
 				'rocket-browser-checker',
 			],
-			'',
+			rocket_get_constant( WP_ROCKET_VERSION, '' ),
 			true
 		);
 		wp_enqueue_script( 'rocket-preload-links' );
@@ -152,7 +152,7 @@ class Subscriber implements Subscriber_Interface {
 		 *
 		 * @since 3.7
 		 *
-		 * @param string[] $config Preload Links script configuration parameters.
+		 * @param array $config Preload Links script configuration parameters.
 		 */
 		$filtered_config = apply_filters( 'rocket_preload_links_config', $config );
 

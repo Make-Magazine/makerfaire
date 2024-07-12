@@ -322,9 +322,9 @@ trait CSSTrait {
 			 *
 			 * @since 3.8.6
 			 *
-			 * @param bool Skipped or not (Default not skipped).
+			 * @param bool   $skip_import Skipped or not (Default not skipped).
 			 * @param string $file_path Matched import path.
-			 * @param string $import_match Full import match.
+			 * @param array  $import_match Full import match.
 			 */
 			if ( apply_filters( 'rocket_skip_import_replacement', false, $match['path'], $match ) ) {
 				continue;
@@ -550,7 +550,7 @@ trait CSSTrait {
 	 *
 	 * @return bool
 	 */
-	private function check_cached_import( string $path ) : bool {
+	private function check_cached_import( string $path ): bool {
 		return isset( $this->imports[ md5( rocket_realpath( $path ) ) ] );
 	}
 
@@ -562,7 +562,7 @@ trait CSSTrait {
 	 *
 	 * @return string
 	 */
-	public function handle_charsets( string $content, bool $keep_first_charset = true ) : string {
+	public function handle_charsets( string $content, bool $keep_first_charset = true ): string {
 		$new_content = preg_replace_callback( '/@charset\s+["|\'](.*?)["|\'];?/i', [ $this, 'match_charsets' ], $content );
 
 		if ( ! $keep_first_charset ) {
@@ -583,12 +583,11 @@ trait CSSTrait {
 	 *
 	 * @return string
 	 */
-	private function match_charsets( array $match ) : string {
+	private function match_charsets( array $match ): string { // phpcs:ignore Universal.NamingConventions.NoReservedKeywordParameterNames.matchFound
 		if ( is_null( $this->found_charset ) ) {
 			$this->found_charset = $match[1];
 		}
 
 		return '';
 	}
-
 }

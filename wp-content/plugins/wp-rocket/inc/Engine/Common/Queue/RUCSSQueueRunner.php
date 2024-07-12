@@ -67,7 +67,8 @@ class RUCSSQueueRunner extends ActionScheduler_Abstract_QueueRunner {
 			 *
 			 * @since 3.11.0.5
 			 *
-			 * @param int $batch_size Batch size.
+			 * @param int    $batch_size Batch size.
+			 * @param string $group The group name.
 			 *
 			 * @return int
 			 */
@@ -161,7 +162,8 @@ class RUCSSQueueRunner extends ActionScheduler_Abstract_QueueRunner {
 	 *
 	 * @param string $context Optional identifer for the context in which this action is being processed, e.g. 'WP CLI' or 'WP Cron'
 	 *        Generally, this should be capitalised and not localised as it's a proper noun.
-	 * @return int The number of actions processed.
+	 *
+	 * @return void
 	 */
 	public function run( $context = 'WP Cron' ) {
 		\ActionScheduler_Compatibility::raise_memory_limit();
@@ -178,7 +180,6 @@ class RUCSSQueueRunner extends ActionScheduler_Abstract_QueueRunner {
 		}
 
 		do_action( 'action_scheduler_after_process_queue' );// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
-		return $processed_actions;
 	}
 
 	/**
@@ -204,7 +205,7 @@ class RUCSSQueueRunner extends ActionScheduler_Abstract_QueueRunner {
 					break;
 				}
 				$this->process_action( $action_id, $context );
-				$processed_actions++;
+				++$processed_actions;
 
 				if ( $this->batch_limits_exceeded( $processed_actions ) ) {
 					break;
@@ -213,13 +214,25 @@ class RUCSSQueueRunner extends ActionScheduler_Abstract_QueueRunner {
 			$this->store->release_claim( $claim );
 			$this->monitor->detach();
 			$this->clear_caches();
-
+			$this->reset_group();
 			return $processed_actions;
 		} catch ( \Exception $exception ) {
 			Logger::debug( $exception->getMessage() );
-
+			$this->reset_group();
 			return 0;
 		}
+	}
+
+	/**
+	 * Reset group in store's claim filter.
+	 *
+	 * @return void
+	 */
+	private function reset_group() {
+		if ( ! method_exists( $this->store, 'set_claim_filter' ) ) {
+			return;
+		}
+		$this->store->set_claim_filter( 'group', '' );
 	}
 
 	/**
@@ -264,5 +277,4 @@ class RUCSSQueueRunner extends ActionScheduler_Abstract_QueueRunner {
 	public function get_allowed_concurrent_batches() {
 		return 2;
 	}
-
 }
