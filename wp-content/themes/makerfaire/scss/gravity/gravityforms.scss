@@ -38,6 +38,7 @@
 
 .gform_wrapper .gfad_form {
     .gf_page_steps {
+        display: flex;;
         border-bottom: solid 1px #005e9a;
         margin-bottom: 30px;
         padding-bottom: 0px;
@@ -62,6 +63,9 @@
                 margin-bottom: 5px;
             }
             .gf_step_number { display: none; }
+            .gf_step_label {
+                padding: 0px;
+            }
             &.gpmpn-step-current { border: 1px solid #005e9a; }
             &.gpmpn-step-linked {
                 background: #005e9a;
@@ -83,8 +87,8 @@
         .gf_step_clear { height: 0px; }
     }
     select { 
-        height: 36px;
-        border-radius: 0px;
+        height: 40px;
+        border-radius: 30px;
         border: solid 1px #ccc;
     }
     button {
@@ -312,4 +316,8 @@
 		min-height: 50px;
 		margin-top: 10px;
 	}
+}
+
+.gfield_validation_message {
+    padding-top: 15px !important;
 }
