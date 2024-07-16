@@ -100,15 +100,15 @@ $publicFields = array(109,11,110,105,151,22,16,27,32,151,160,234,217,158,258,224
         <thead>
           <tr id="headerRow">
             <td style="width:  3%">ID</td>
-            <td style="width: 40%">Label</td>
+            <td style="width: 30%">Label</td>
             <td style="width:  3%">Type</td>
             <td style="width: 30%">Options</td>
             <td style="width: 10%">CFM Field ID to Update</td>
-            <td style="width:  1%">Admin Only</td>
+            <td style="width:  3%">Admin Only / Hidden</td>
             <td style="width:  1%">Req</td>
-            <td style="width:  1%">Public</td>
+            <!--<td style="width:  1%">Public</td>-->
             <?php if($condLog){ ?>
-              <td style="width:  1%">Conditional Logic</td>
+              <td style="width:  20%">Conditional Logic</td>
             <?php } ?>
           </tr>
         </thead>
@@ -145,7 +145,7 @@ $publicFields = array(109,11,110,105,151,22,16,27,32,151,160,234,217,158,258,224
           $paramName=(isset($field['origFieldID'])?$field['origFieldID']:'');          
   
           if($label=='' && $field['type']=='checkbox') $label = $field['choices'][0]->text;
-
+          $visibility = (isset($field['visibility']) && $field['visibility']!='visible'?$field['visibility']:'');
           ?>
           <tr class="detailRow">
             <td class="tcenter"><?php echo $field['id'];?></td>
@@ -177,11 +177,12 @@ $publicFields = array(109,11,110,105,151,22,16,27,32,151,160,234,217,158,258,224
               ?>
             </td>
             <td><?php echo $paramName;?></td>
-            <td class="tcenter"><?php echo (isset($field['visibility']) && $field['visibility']=='administrative'?'X':'');?></td>
+            <td class="tcenter"><?php echo $visibility;?></td>
+            
             <td class="tcenter"><?php echo ($field['isRequired']?'X':'');?></td>
-            <td class="tcenter"><?php echo (in_array($field['id'],$publicFields)?'X':'');?></td>
+            <!--<td class="tcenter"><?php echo (in_array($field['id'],$publicFields)?'X':'');?></td>-->
             <?php if($condLog){ ?>
-              <td class="tcenter"><?php echo $condDisp; ?></td>
+              <td><?php echo $condDisp; ?></td>
             <?php } ?>  
           </tr>
           <?php
