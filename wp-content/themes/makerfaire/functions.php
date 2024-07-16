@@ -150,7 +150,8 @@ function remove_unnecessary_scripts() {
     if(is_page_template('page-entry.php')) {
         wp_deregister_script('spacetime');
         wp_dequeue_script('spacetime');
-
+        wp_deregister_script('events-manager');
+        wp_dequeue_script('events-manager');
     }
 }
 add_action('wp_print_scripts', 'remove_unnecessary_scripts', PHP_INT_MAX); // we want this to happen absolutely last
@@ -173,6 +174,10 @@ function remove_unnecessary_styles() {
         wp_dequeue_style('swiper');
         wp_deregister_style('fancybox');
         wp_dequeue_style('fancybox');
+        wp_deregister_style('remodal');
+        wp_dequeue_style('remodal');
+        wp_deregister_style('remodal-default-them');
+        wp_dequeue_style('remodal-default-them');
     }
 }
 add_action('wp_print_styles', 'remove_unnecessary_styles', PHP_INT_MAX); // we want this to happen absolutely last
@@ -579,4 +584,4 @@ function gf_wprocket()  {
     add_filter( 'pre_get_rocket_option_delay_js', '__return_zero' );
     add_filter( 'pre_get_rocket_option_defer_all_js', '__return_zero' );
 }
-add_action( 'gform_register_init_scripts', 'gf_wprocket', 10, 0 );
+add_action( 'gform_register_init_scripts', 'gf_wprocket', 9999, 0 );
