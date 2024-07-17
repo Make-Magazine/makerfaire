@@ -1,6 +1,18 @@
 
 # Changelog
 
+## 1.9.33 | July 9, 2024
+
+- Updated Easy Passthrough to send `nocache_headers()` and set `DONOTCACHEPAGE` if the `ep_token` query parameter is set.
+
+## 1.9.32 | June 20, 2024
+
+- Fixed issue with Easy Passthrough's icon not displaying correctly if using Safari.
+
+## 1.9.31 | May 29, 2024
+
+- Added support for populating data from previously stored tokens.
+
 ## 1.9.30 | May 22, 2024
 
 - Removed custom settings messages for consistency with other feed-based perks.

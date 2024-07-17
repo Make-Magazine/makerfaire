@@ -155,7 +155,7 @@ class GP_Easy_Passthrough extends GP_Feed_Plugin {
 	 * @since  1.9.22
 	 * @var array
 	 */
-	protected $populated_from_token = null;
+	protected $current_token = null;
 
 	/**
 	* Get instance of this class.
@@ -262,7 +262,7 @@ class GP_Easy_Passthrough extends GP_Feed_Plugin {
 	 * Add a menu icon to override the default cog/gear.
 	 */
 	public function get_menu_icon() {
-		return '<svg version="1.1" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+		return '<svg width="20px" height="20px" version="1.1" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
  <path d="m70.844 16.73c-1.6953 0.003906-3.2188 1.0312-3.8516 2.6016-0.63672 1.5703-0.26172 3.3711 0.95312 4.5508l9.4336 9.4219h-31.535v0.003906c-1.1172-0.015625-2.1914 0.41797-2.9844 1.2031-0.79297 0.78125-1.2383 1.8516-1.2383 2.9688 0 1.1133 0.44922 2.1836 1.2461 2.9648 0.79297 0.78125 1.8711 1.2109 2.9844 1.1953h31.617l-9.5234 9.5117v0.003906c-0.80859 0.77344-1.2695 1.8438-1.2812 2.9609-0.011718 1.1211 0.42969 2.1992 1.2227 2.9883 0.78906 0.79297 1.8672 1.2344 2.9883 1.2227s2.1875-0.47266 2.9648-1.2812l16.594-16.578c0.78125-0.78125 1.2227-1.8438 1.2227-2.9492s-0.44141-2.168-1.2227-2.9492l-16.594-16.578c-0.78906-0.80859-1.8672-1.2656-2.9961-1.2617zm-41.789 24.871c-1.082 0.03125-2.1094 0.48828-2.8633 1.2695l-16.625 16.641h-0.003906c-1.625 1.6289-1.625 4.2656 0 5.8906l16.625 16.641 0.003906 0.003906c1.625 1.6289 4.2656 1.6289 5.8945 0.003906 1.6289-1.6289 1.6328-4.2656 0.003906-5.8945l-9.5039-9.5117h31.602l-0.003906-0.003906c1.1172 0.015625 2.1914-0.41406 2.9844-1.1992 0.79688-0.78125 1.2422-1.8516 1.2422-2.9688 0-1.1133-0.44531-2.1836-1.2422-2.9648-0.79297-0.78516-1.8672-1.2148-2.9844-1.1992h-31.641l9.5469-9.5547c1.2344-1.1992 1.6055-3.0312 0.93359-4.6172-0.67188-1.582-2.25-2.5898-3.9688-2.5352z" fill-rule="evenodd"/>
 </svg>';
 	}
@@ -974,6 +974,13 @@ class GP_Easy_Passthrough extends GP_Feed_Plugin {
 			return;
 		}
 
+		// Ensure no caching - prevents certain hosts aggressive caching on query
+		if ( ! defined( 'DONOTCACHEPAGE' ) ) {
+			define( 'DONOTCACHEPAGE', 'true' );
+		}
+		
+		nocache_headers();
+
 		// Get token.
 		$token = sanitize_text_field( rgget( 'ep_token' ) );
 
@@ -991,8 +998,8 @@ class GP_Easy_Passthrough extends GP_Feed_Plugin {
 		// Store entry ID.
 		$this->store_entry_id( $entry, $form );
 
-		// Set flag to indiciate that an entry was populated with the token.
-		$this->populated_from_token = array(
+		// Set flag to indicate that an entry was populated with the token.
+		$this->current_token = array(
 			'entry_id' => $entry['id'],
 			'form_id'  => $form['id'],
 		);
@@ -1493,11 +1500,27 @@ class GP_Easy_Passthrough extends GP_Feed_Plugin {
 					continue;
 				}
 
-				// If populated using a token, then do not use session.
-				if ( ! empty( $this->populated_from_token ) ) {
-					$source_entry_id = $this->populated_from_token['entry_id'];
+				$has_token         = ! empty( $this->current_token );
+				/**
+				 * Filter whether multiple tokens can be used to populate a form.
+				 *
+				 * Token entries are always stored in the session but only the current token entry is used to populate the
+				 * form. Use this filter to allow data aggregated from multiple tokens to populate the form.
+				 *
+				 * @param bool  $single_token_mode  Use only the current token entry if a token is passed (Default: true)
+				 * @param array $target_form        The current GF form array
+				 * @param array $source_form        The source GF form array
+				 */
+				$single_token_mode = apply_filters( 'gpep_single_token_mode', true, $target_form, $source_form );
+
+				/**
+				 * If in single-token mode (which is the default), always use the current token entry if one is set. If
+				 * not in single-token mode, only use the token entry if it matches the source form. Otherwise, fetch the
+				 * entry from the session.
+				 */
+				if ( $has_token && ( $single_token_mode || $this->current_token['form_id'] === $source_form['id'] ) ) {
+					$source_entry_id = $this->current_token['entry_id'];
 				} else {
-					// Use entry ID from session.
 					$source_entry_id = $session[ $this->get_slug() . '_' . $source_form['id'] ];
 				}
 			}
