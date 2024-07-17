@@ -581,7 +581,13 @@ function th_register_cap_groups() {
 
 // turn off caching on gravity form pages
 function gf_wprocket()  {
-    add_filter( 'pre_get_rocket_option_delay_js', '__return_zero' );
-    add_filter( 'pre_get_rocket_option_defer_all_js', '__return_zero' );
+    if(class_exists('WP_Rocket_Requirements_Check')) {
+        add_filter( 'pre_get_rocket_option_delay_js', '__return_zero' );
+        add_filter( 'pre_get_rocket_option_defer_all_js', '__return_zero' );
+    }
+    // also cache bust to get rid of gravity form cookies
+    if(class_exists('GW_Cache_Buster')) {
+        add_filter( 'gfcb_enable_cache_buster', '__return_true' );
+    }
 }
 add_action( 'gform_register_init_scripts', 'gf_wprocket', 9999, 0 );
