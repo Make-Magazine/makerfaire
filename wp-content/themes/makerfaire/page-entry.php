@@ -105,7 +105,7 @@ if (isset($entry->errors)) {
     }
     
     // build array of categories
-    $mainCategorName = '';
+    $mainCategoryName = '';
     $mainCategoryIcon = '<i class="fa fa-rocket" aria-hidden="true"></i>';
     $categories = array();    
 
