@@ -1,4 +1,4 @@
-/*! elementor - v3.21.0 - 26-05-2024 */
+/*! elementor - v3.23.0 - 15-07-2024 */
 .dialog-widget-content {
   background-color: var(--e-a-bg-default);
   position: absolute;
@@ -283,6 +283,10 @@
 
 .elementor-hidden {
   display: none;
+}
+
+.elementor-visibility-hidden {
+  visibility: hidden;
 }
 
 .elementor-screen-only,

@@ -64,7 +64,7 @@ This template is the main meat of the calendar, most of the heavy lifting is don
 							//$days_left_in_event = floor(($EM_Event->end()->getTimestamp() - $cell_data['date']) / DAY_IN_SECONDS);
 							if( $EM_Event->event_start_date === $date ){
 								// first day of event
-								$event_text = $EM_Event->output( get_option('dbem_calendar_large_pill_format') );
+								$event_text = $EM_Event->output(  $calendar['format'] );
 								$classes[] = 'has-start';
 								// is end date at and of this week?
 								if( $days_left_in_event < $days_left_in_week ){
@@ -75,7 +75,7 @@ This template is the main meat of the calendar, most of the heavy lifting is don
 							}elseif( $col_count === 1 ){
 								// event continues onto following week, so decide when it ends or if it rolls over to next week
 								$event_multiday_continuation = true;
-								$event_text = $EM_Event->output( get_option('dbem_calendar_large_pill_format') );
+								$event_text = $EM_Event->output(  $calendar['format'] );
 								if( $days_left_in_event < $days_left_in_week ){
 									// spans a few more days and ends
 									$classes[] = 'has-end';
@@ -135,7 +135,7 @@ This template is the main meat of the calendar, most of the heavy lifting is don
 						ob_start();
 						?>
 						<div class="em-cal-event" style="<?php echo esc_attr($EM_Event->get_colors(true)); ?>" data-event-url="<?php echo esc_url($EM_Event->get_permalink()); ?>" data-event-id="<?php echo esc_attr($EM_Event->event_id); ?>">
-							<div><?php echo $EM_Event->output( get_option('dbem_calendar_large_pill_format') ); ?></div>
+							<div><?php echo $EM_Event->output( $calendar['format'] ); ?></div>
 						</div>
 						<?php
 						$single_day_events[] = ob_get_clean();

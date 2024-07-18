@@ -45,9 +45,7 @@ const Ordering = ({ populate }: { populate: GPPAPopulate }) => {
 					}
 				>
 					{propertiesLoaded ? (
-						<option value="" disabled hidden>
-							&ndash; Select a Property &ndash;
-						</option>
+						<option value="">{strings.defaultOrdering}</option>
 					) : (
 						<option value="" disabled hidden>
 							{strings.loadingEllipsis}

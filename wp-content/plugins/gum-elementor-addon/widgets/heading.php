@@ -114,6 +114,9 @@ class Gum_Elementor_Widget_Heading extends Widget_Base {
         'dynamic' => [
           'active' => false,
         ],
+        'ai' => [
+          'active' => false,
+        ],
         'placeholder' => esc_html__( 'Enter your title', 'gum-elementor-addon' ),
         'default' => esc_html__( 'Heading Text Here', 'gum-elementor-addon' ),
         'condition' => [
@@ -130,6 +133,9 @@ class Gum_Elementor_Widget_Heading extends Widget_Base {
         'dynamic' => [
           'active' => false,
         ],
+        'ai' => [
+          'active' => false,
+        ],
         'default' => '',
         'condition' => [
           'heading_source[value]' => 'text'
@@ -143,6 +149,9 @@ class Gum_Elementor_Widget_Heading extends Widget_Base {
         'label' => esc_html__( 'Suffix Title', 'gum-elementor-addon' ),
         'type' => Controls_Manager::TEXTAREA,
         'dynamic' => [
+          'active' => false,
+        ],
+        'ai' => [
           'active' => false,
         ],
         'default' => '',
@@ -1038,18 +1047,18 @@ class Gum_Elementor_Widget_Heading extends Widget_Base {
       $this->add_render_attribute( 'prefix_heading','class','prefix');
       $this->add_inline_editing_attributes( 'prefix_heading' );
 
-      $heading = '<span '.$this->get_render_attribute_string( 'prefix_heading' ).'>'.$prefix_heading.'</span>';
+      $heading = '<span '.$this->get_render_attribute_string( 'prefix_heading' ).'>'.esc_html($prefix_heading).'</span>';
 
 
       $this->add_render_attribute( 'main_heading','class','maintitle');
       $this->add_inline_editing_attributes( 'main_heading' );
 
-      $heading .= '<span '.$this->get_render_attribute_string( 'main_heading' ).'>'.$main_heading.'</span>';
+      $heading .= '<span '.$this->get_render_attribute_string( 'main_heading' ).'>'.esc_html($main_heading).'</span>';
 
       $this->add_render_attribute( 'sub_heading','class','subfix');
       $this->add_inline_editing_attributes( 'sub_heading' );
 
-      $heading .= '<span '.$this->get_render_attribute_string( 'sub_heading' ).'>'.$sub_heading.'</span>';
+      $heading .= '<span '.$this->get_render_attribute_string( 'sub_heading' ).'>'.esc_html($sub_heading).'</span>';
 
       $main_heading = $heading;
 

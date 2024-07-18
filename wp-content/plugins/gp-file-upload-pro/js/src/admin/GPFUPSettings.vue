@@ -374,11 +374,4 @@ body:not(.gf-legacy-ui) #gform_multiple_files_options br {
 	display: none;
 }
 
-/* Tweak GF's icon placement for our notice so it is vertically centered. */
-#gpfup-multi-file-requirement-notice .gform-alert__icon {
-    top: 0;
-    margin-top: auto;
-    margin-bottom: auto;
-}
-
 </style>

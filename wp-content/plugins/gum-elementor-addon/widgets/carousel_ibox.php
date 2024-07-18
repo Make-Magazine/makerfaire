@@ -1963,7 +1963,7 @@ class Gum_Elementor_Widget_imagebox_carousel extends Widget_Base {
 
           if ( $show_button == '' && ! empty( $slide['link']['url'] ) ) {
             $image_html = sprintf( '<a href="%s">'.$image_html.'</a>', esc_url( $slide['link']['url'] ) );
-          }?><div class="blog-featureimage" style="background-image: url('<?php print $image_url; ?>');"><?php 
+          }?><div class="blog-featureimage" style="background-image: url('<?php print esc_attr($image_url); ?>');"><?php 
             
             if( $show_button === 'overimage'){
               $this->get_button( $index, $slide, $settings, true );
@@ -2045,7 +2045,7 @@ class Gum_Elementor_Widget_imagebox_carousel extends Widget_Base {
           <?php Icons_Manager::render_icon( $slide['selected_icon'], [ 'aria-hidden' => 'true' ] ); ?>
       </span>
       <?php endif; ?>
-      <span <?php echo $this->get_render_attribute_string( $index );?>><?php echo $slide['button_label']; ?></span>
+      <span <?php echo $this->get_render_attribute_string( $index );?>><?php esc_html_e($slide['button_label']); ?></span>
     </span>
   </a></div><?php
 
@@ -3451,7 +3451,7 @@ class Gum_Elementor_Widget_imagebox extends Widget_Base {
 
           if ( $show_button == '' && ! empty( $link['url'] ) ) {
             $image_html = sprintf( '<a href="%s">'.$image_html.'</a>', esc_url( $link['url'] ) );
-          }?><div class="blog-featureimage" style="background-image: url('<?php print $image_url; ?>');"><?php 
+          }?><div class="blog-featureimage" style="background-image: url('<?php print esc_attr( $image_url ); ?>');"><?php 
             
             if( $show_button === 'overimage'){
               $this->get_button( $settings, true );
@@ -3513,7 +3513,7 @@ class Gum_Elementor_Widget_imagebox extends Widget_Base {
           <?php Icons_Manager::render_icon( $settings['selected_icon'], [ 'aria-hidden' => 'true' ] ); ?>
       </span>
       <?php endif; ?>
-      <span <?php echo $this->get_render_attribute_string( 'button_label' );?>><?php echo $settings['button_label']; ?></span>
+      <span <?php echo $this->get_render_attribute_string( 'button_label' );?>><?php esc_html_e( $settings['button_label']); ?></span>
     </span>
   </a></div><?php
 
@@ -3540,6 +3540,5 @@ class Gum_Elementor_Widget_imagebox extends Widget_Base {
 
 // Register widget
 \Elementor\Plugin::instance()->widgets_manager->register_widget_type( new Gum_Elementor_Widget_imagebox() );
-
 
 ?>

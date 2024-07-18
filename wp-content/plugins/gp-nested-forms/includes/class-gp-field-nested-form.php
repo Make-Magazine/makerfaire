@@ -229,6 +229,14 @@ class GP_Field_Nested_Form extends GF_Field {
 			<p class="gpnf-add-entry-max" data-bind="visible: isMaxed" style="display: none;">
 				%s
 			</p>',
+			/**
+			 * Filters the message that is displayed when the maximum number
+			 * of entries allowed for the nested form field is reached.
+			 *
+			 * @since 1.0-beta-7.21
+			 *
+			 * @param string $message The message to be displayed.
+			 */
 			gf_apply_filters( array( 'gpnf_add_button_max_message', $form_id, $nested_form_id ), $message )
 		);
 	}

@@ -571,6 +571,17 @@ export default class GPPopulateAnything {
 	}
 
 	bindPageConditionalLogic() {
+		// Ensure we don't bind the same event multiple times
+		window.gform.removeAction(
+			'gform_frontend_pages_evaluated',
+			'gppaPageConditionalLogic'
+		);
+
+		window.gform.removeAction(
+			'gform_frontend_page_visible',
+			'gppaPageConditionalLogic'
+		);
+
 		window.gform.addAction(
 			'gform_frontend_pages_evaluated',
 			(pages: any, formId: number, self: any) => {
@@ -578,7 +589,9 @@ export default class GPPopulateAnything {
 				if (formId == this.formId) {
 					this.gfPageConditionalLogic = self;
 				}
-			}
+			},
+			10,
+			'gppaPageConditionalLogic'
 		);
 
 		window.gform.addAction(
@@ -595,6 +608,10 @@ export default class GPPopulateAnything {
 			) => {
 				// eslint-disable-next-line eqeqeq
 				if (formId != this.formId || !this.gfPageConditionalLogic) {
+					return;
+				}
+
+				if (!page.isUpdated || !page.isVisible) {
 					return;
 				}
 
@@ -618,7 +635,9 @@ export default class GPPopulateAnything {
 						)
 					);
 				}
-			}
+			},
+			10,
+			'gppaPageConditionalLogic'
 		);
 	}
 

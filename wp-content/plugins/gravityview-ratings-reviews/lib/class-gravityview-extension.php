@@ -3,12 +3,12 @@
  * @package   GravityView
  * @license   GPL2+
  * @author    GravityView
- * @link      https://gravityview.co
+ * @link      https://www.gravitykit.com
  * @copyright Copyright 2018, Katz Web Services, Inc.
  */
 
 /**
- * Extend this class to create a GravityView extension that gets updates from GravityView.co
+ * Extend this class to create a GravityView extension that gets updates from gravitykit.com
  *
  * @version 1.1.3
  *
@@ -19,7 +19,7 @@
 abstract class GravityView_Extension {
 
 	/**
-	 * @var string Name of the plugin in gravityview.co
+	 * @var string Name of the plugin in gravitykit.com
 	 */
 	protected $_title = NULL;
 
@@ -29,7 +29,7 @@ abstract class GravityView_Extension {
 	protected $_version = NULL;
 
 	/**
-	 * @var int The ID of the download on gravityview.co
+	 * @var int The ID of the download on gravitykit.com
 	 * @since 1.1
 	 */
 	protected $_item_id = NULL;
@@ -355,19 +355,19 @@ abstract class GravityView_Extension {
 		$message = '';
 
 		if( !class_exists( 'GravityView_Plugin' ) ) {
-
+			// Translators: %s contains the name of the extension.
 			$message = sprintf( __('Could not activate the %s Extension; GravityView is not active.', 'gravityview-ratings-reviews' ), esc_html( $this->_title ) );
 
 		} else if( false === version_compare(GravityView_Plugin::version, $this->_min_gravityview_version , ">=") ) {
-
-			$message = sprintf( __('The %s Extension requires GravityView Version %s or newer.', 'gravityview-ratings-reviews' ), esc_html( $this->_title ), '<tt>'.$this->_min_gravityview_version.'</tt>' );
+			// Translators: %1$s contains the name of the extension, %2$s contains the version number.
+			$message = sprintf( __('The %1$s Extension requires GravityView Version %2$s or newer.', 'gravityview-ratings-reviews' ), esc_html( $this->_title ), '<tt>'.$this->_min_gravityview_version.'</tt>' );
 
 		} else if( isset( $this->_min_php_version ) && false === version_compare( phpversion(), $this->_min_php_version , ">=") ) {
-
-			$message = sprintf( __('The %s Extension requires PHP Version %s or newer. Please ask your host to upgrade your server\'s PHP.', 'gravityview-ratings-reviews' ), esc_html( $this->_title ), '<tt>'.$this->_min_php_version.'</tt>' );
+			// Translators: %1%s contains the name of the extension, %2$s contains the version number.
+			$message = sprintf( __('The %1$s Extension requires PHP Version %2$s or newer. Please ask your host to upgrade your server\'s PHP.', 'gravityview-ratings-reviews' ), esc_html( $this->_title ), '<tt>'.$this->_min_php_version.'</tt>' );
 
 		} else if ( ! empty( $this->_max_gravityview_version ) && false === version_compare( $this->_max_gravityview_version, GravityView_Plugin::version, ">" ) ) {
-
+			// Translators: %s contains the name of the extension.
 			$message = sprintf( __( 'The %s Extension is not compatible with this version of GravityView. Please update the Extension to the latest version.', 'gravityview-ratings-reviews' ), esc_html( $this->_title ) );
 
 		} else {

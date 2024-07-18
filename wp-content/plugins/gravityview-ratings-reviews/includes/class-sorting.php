@@ -5,7 +5,7 @@
  * @package   GravityView_Ratings_Reviews
  * @license   GPL2+
  * @author    Katz Web Services, Inc.
- * @link      http://gravityview.co
+ * @link      http://www.gravitykit.com
  * @copyright Copyright 2014, Katz Web Services, Inc.
  *
  * @since 0.1.0

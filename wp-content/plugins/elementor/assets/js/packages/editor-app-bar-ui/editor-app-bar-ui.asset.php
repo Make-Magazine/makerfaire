@@ -8,6 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 return [
 	'handle' => 'elementor-v2-editor-app-bar-ui',
 	'deps' => [
+		'elementor-v2-editor-documents',
 		'elementor-v2-icons',
 		'elementor-v2-locations',
 		'elementor-v2-ui',

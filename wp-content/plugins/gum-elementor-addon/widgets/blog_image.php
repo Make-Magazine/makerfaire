@@ -405,9 +405,7 @@ class Gum_Elementor_Widget_blog_featured_image extends Widget_Base {
     $this->add_render_attribute( 'wrapper', 'class', 'blog-featureimage' );
     $this->add_render_attribute( 'wrapper', 'style', 'background-image: url('.esc_attr( $image_url ).')' );
 
-    $image_html = sprintf( '<img src="%s" title="%s" alt="%s" />', esc_attr( $image_url ), Control_Media::get_image_title( $thumb_id ), Control_Media::get_image_alt( $thumb_id ) );
-
-    ?><div <?php $this->print_render_attribute_string( 'wrapper' ); ?>><?php print $image_html;?></div><?php
+    ?><div <?php $this->print_render_attribute_string( 'wrapper' ); ?>><?php printf( '<img src="%s" title="%s" alt="%s" />', esc_attr( $image_url ), Control_Media::get_image_title( $thumb_id ), Control_Media::get_image_alt( $thumb_id ) );?></div><?php
 
   }
 }

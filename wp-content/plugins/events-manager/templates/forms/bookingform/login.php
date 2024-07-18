@@ -23,7 +23,7 @@
 				<div class="em-login-buttons">
 					<button type="submit" name="wp-submit" class="button-primary em-login-submit"><?php esc_attr_e('Log In', 'events-manager'); ?></button>
 					<button type="button" class="em-login-cancel"><?php esc_html_e('Cancel', 'events-manager'); ?></button>
-					<input type="hidden" name="redirect_to" value="<?php $protocol = is_ssl() ? 'https' : 'http'; echo esc_url( $protocol . '://' . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI']); ?>#em-event-booking-form">
+					<input type="hidden" name="redirect_to" value="<?php echo esc_url($_SERVER['REQUEST_URI']); ?>#em-event-booking-form">
 				</div>
 				<div class="em-login-meta">
 					<label class="em-login-rememberme"><input name="rememberme" type="checkbox" value="forever"> <?php esc_html_e( 'Remember Me','events-manager') ?></label>

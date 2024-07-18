@@ -7,7 +7,7 @@
  * @package   GravityView_Ratings_Reviews
  * @license   GPL2+
  * @author    Katz Web Services, Inc.
- * @link      http://gravityview.co
+ * @link      http://www.gravitykit.com
  * @copyright Copyright 2014, Katz Web Services, Inc.
  *
  * @since     0.1.0
@@ -69,12 +69,14 @@ class GravityView_Ratings_Reviews_Review extends GravityView_Ratings_Reviews_Com
 	 *
 	 * @return void
 	 * @since 0.1.0
-	 *
 	 */
 	public function load() {
 
 		// By default `wp_star_rating` is enabled for admin only.
 		require_once ABSPATH . 'wp-admin/includes/template.php';
+
+		add_filter( 'gform_custom_merge_tags', [ $this, 'add_merge_tags' ] );
+		add_filter( 'gform_replace_merge_tags', [ $this, 'replace_merge_tags' ], 10, 3 );
 
 		$this->gravityview_hooks();
 		$this->wp_hooks();
@@ -85,7 +87,6 @@ class GravityView_Ratings_Reviews_Review extends GravityView_Ratings_Reviews_Com
 	 *
 	 * @return void
 	 * @since 0.1.0
-	 *
 	 */
 	protected function gravityview_hooks() {
 
@@ -118,7 +119,6 @@ class GravityView_Ratings_Reviews_Review extends GravityView_Ratings_Reviews_Com
 	 *
 	 * @return void
 	 * @since 0.1.0
-	 *
 	 */
 	protected function wp_hooks() {
 
@@ -135,6 +135,8 @@ class GravityView_Ratings_Reviews_Review extends GravityView_Ratings_Reviews_Com
 		add_filter( 'comments_open', array( $this, 'comments_open' ), 10, 2 );
 		add_filter( 'comment_class', array( $this, 'comment_class' ), 10, 4 );
 		add_filter( 'get_comment_link', array( $this, 'get_comment_link' ), 10, 3 );
+		add_filter( 'pre_comment_on_post', array( $this, 'require_rating_validation' ) );
+		add_filter( 'gv_ratings_reviews_review_form_settings', array( $this, 'hide_comment_textarea_field' ) );
 
 		add_action( 'comment_trashed_gravityview', array( $this, 'update_counter' ), 15, 2 );
 		add_action( 'comment_approved_gravityview', array( $this, 'update_counter' ), 15, 2 );
@@ -150,7 +152,29 @@ class GravityView_Ratings_Reviews_Review extends GravityView_Ratings_Reviews_Com
 		// Styles and scripts.
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
+
 	}
+
+	/**
+	 * Hides comment textarea field.
+	 *
+	 * @since 2.3.0
+	 *
+	 * @param array $args
+	 *
+	 * @return array
+	 */
+	public function hide_comment_textarea_field( $args ) {
+		$gravityview_view = GravityView_View::getInstance();
+
+		if ( $gravityview_view && true === (bool) $gravityview_view->getAtts( 'hide_title_and_desc' ) ) {
+			$args['comment_field']       = '';
+			$args['comment_notes_after'] = '';
+		}
+		return $args;
+	}
+
+
 
 	/**
 	 * Adds the GravityView Ratings and Reviews as a type of Comment to be filtered in the comments listing page
@@ -180,7 +204,6 @@ class GravityView_Ratings_Reviews_Review extends GravityView_Ratings_Reviews_Com
 	 * @since  0.1.1
 	 *
 	 * @uses   gravityview_get_entry() Fetch the entry attached to the comment
-	 *
 	 */
 	public function delete_entry_comments( $entry_id = 0 ) {
 
@@ -201,7 +224,6 @@ class GravityView_Ratings_Reviews_Review extends GravityView_Ratings_Reviews_Com
 	 * @since  0.1.1
 	 *
 	 * @uses   gravityview_get_entry() Fetch the entry attached to the comment
-	 *
 	 */
 	public function update_status_entry_comments( $entry_id, $property_value, $previous_value = '' ) {
 
@@ -243,9 +265,9 @@ class GravityView_Ratings_Reviews_Review extends GravityView_Ratings_Reviews_Com
 	 * @return mixed|void
 	 * @since 1.3
 	 */
-	public function allow_empty_comment_content( $view_id = 0, $comment_post_ID = 0 ) {
+	public static function allow_empty_comment_content( $view_id = 0, $comment_post_ID = 0 ) {
 
-		$allow_empty_comments = function_exists( 'gravityview_get_template_setting' ) ? gravityview_get_template_setting( $view_id, 'allow_empty_reviews' ) : false;
+		$allow_empty_comments = function_exists( 'gravityview_get_template_setting' ) ? gravityview_get_template_setting( $view_id, 'allow_empty_reviews' ) || gravityview_get_template_setting( $view_id, 'hide_title_and_desc' ) : false;
 
 		/**
 		 * @filter `gv_ratings_reviews_allow_empty_comments` Should empty review comments be allowed?
@@ -264,12 +286,14 @@ class GravityView_Ratings_Reviews_Review extends GravityView_Ratings_Reviews_Com
 	 *
 	 * The placeholder text is added to pass WP validation. Now we remove it after the comment's been otherwise validated.
 	 *
-	 * @param int    $comment_post_ID Bridge Post ID
-	 * @param object $comment         WP Comment object
+	 * @since 1.3
+	 *
+	 * @see add_empty_comment_placeholder
+	 *
+	 * @param int        $comment_post_ID Bridge Post ID.
+	 * @param WP_Comment $comment         WP_Comment object.
 	 *
 	 * @return void
-	 * @since 1.3
-	 * @see   add_empty_comment_placeholder
 	 */
 	public function remove_empty_comment_placeholder( $id, $comment ) {
 
@@ -301,11 +325,13 @@ class GravityView_Ratings_Reviews_Review extends GravityView_Ratings_Reviews_Com
 	 * If empty comments are allowed, add a placeholder comment to trick WP into thinking not empty
 	 * This placeholder is then removed in remove_empty_comment_placeholder()
 	 *
+	 * @see   remove_empty_comment_placeholder()
+	 *
+	 * @since 1.3
+	 *
 	 * @param int $comment_post_ID Bridge Post ID
 	 *
 	 * @return void
-	 * @see   remove_empty_comment_placeholder()
-	 * @since 1.3
 	 */
 	public function add_empty_comment_placeholder( $comment_post_ID = 0 ) {
 
@@ -321,7 +347,7 @@ class GravityView_Ratings_Reviews_Review extends GravityView_Ratings_Reviews_Com
 		// Comments on reviews should not be empty
 		$has_parent_comment = ! empty( $_POST['comment_parent'] );
 
-		if ( empty( $submitted_comment ) && ! $has_parent_comment && $this->allow_empty_comment_content( absint( $_POST[ $this->field_view_id ] ), $comment_post_ID ) ) {
+		if ( empty( $submitted_comment ) && ! $has_parent_comment && self::allow_empty_comment_content( absint( $_POST[ $this->field_view_id ] ), $comment_post_ID ) ) {
 
 			/** @internal microtime() is to make it unique so that duplicate comments don't get booted */
 			$_POST['comment'] = sprintf( '<!-- GV%s -->', microtime( true ) * 10000 );
@@ -365,7 +391,6 @@ class GravityView_Ratings_Reviews_Review extends GravityView_Ratings_Reviews_Com
 			if ( $bridge_id && ! is_wp_error( $bridge_id ) ) {
 				$commentdata['comment_post_ID'] = $bridge_id;
 			}
-
 		}
 
 		return $commentdata;
@@ -378,7 +403,6 @@ class GravityView_Ratings_Reviews_Review extends GravityView_Ratings_Reviews_Com
 	 * @param array       $commentdata Comment data.
 	 *
 	 * @since 0.1.0
-	 *
 	 */
 	public function pre_comment_approved( $approved, $commentdata ) {
 
@@ -410,13 +434,14 @@ class GravityView_Ratings_Reviews_Review extends GravityView_Ratings_Reviews_Com
 	 *
 	 * Filters the comment and makes sure certain fields are valid before updating.
 	 *
-	 * @param array $comment Contains information on the comment.
-	 *
-	 * @return int Comment was updated if value is 1, or was not updated if value is 0.
 	 * @since 2.0.0
 	 *
 	 * @global wpdb $wpdb    WordPress database abstraction object.
 	 *
+	 * @param int $id The ID of the comment to update.
+	 * @param array $comment Contains information on the comment.
+	 *
+	 * @return int Comment was updated if value is 1, or was not updated if value is 0.
 	 */
 	public function update_comment_type( $id, $comment = array() ) {
 
@@ -456,7 +481,6 @@ class GravityView_Ratings_Reviews_Review extends GravityView_Ratings_Reviews_Com
 	 *
 	 * @return void
 	 * @since  1.3
-	 *
 	 */
 	public function update_comment_post_id( $id = 0, $comment = null ) {
 
@@ -481,7 +505,6 @@ class GravityView_Ratings_Reviews_Review extends GravityView_Ratings_Reviews_Com
 	 *
 	 * @return void
 	 * @since  0.1.1
-	 *
 	 */
 	public function update_counter( $id = 0, $comment = null ) {
 
@@ -536,7 +559,6 @@ class GravityView_Ratings_Reviews_Review extends GravityView_Ratings_Reviews_Com
 	 *
 	 * @return void
 	 * @since  0.1.1
-	 *
 	 */
 	function update_entry_meta_counter( $id, $comment ) {
 
@@ -559,7 +581,6 @@ class GravityView_Ratings_Reviews_Review extends GravityView_Ratings_Reviews_Com
 	 *
 	 * @return void
 	 * @since  0.1.0
-	 *
 	 */
 	public function review_duplicate_message( $commentdata ) {
 
@@ -582,7 +603,6 @@ class GravityView_Ratings_Reviews_Review extends GravityView_Ratings_Reviews_Com
 	 *
 	 * @action comment_form_logged_in_after
 	 * @action comment_form_after_fields
-	 *
 	 */
 	public function review_fields() {
 
@@ -620,15 +640,18 @@ class GravityView_Ratings_Reviews_Review extends GravityView_Ratings_Reviews_Com
 			);
 		}
 
-		$fields                    = array();
-		$fields['gv_review_title'] = '<p class="comment-form-gv-review comment-form-gv-review-title"><label for="gv_review_title">' . __( 'Title', 'gravityview-ratings-reviews' ) . '</label> ' . '<input id="gv_review_title" name="gv_review_title" type="text" size="30" /></p>';
+		$fields = array();
+		if ( false === (bool) $gravityview_view->getAtts( 'hide_title_and_desc' ) ) {
+			$fields['gv_review_title'] = '<p class="comment-form-gv-review comment-form-gv-review-title"><label for="gv_review_title">' . __( 'Title', 'gravityview-ratings-reviews' ) . '</label> ' . '<input id="gv_review_title" name="gv_review_title" type="text" size="30" /></p>';
+		}
 
 		if ( true === GravityView_Ratings_Reviews_Helper::is_ratings_allowed( null, null, $gravityview_view ) ) {
 			$fields['gv_review_rate'] = sprintf(
-				'<p class="comment-form-gv-review comment-form-gv-review-rate"><label>%s</label>%s %s</p>',
-				__( 'Rate', 'gravityview-ratings-reviews' ),
+				'<div class="comment-form-gv-review comment-form-gv-review-rate"><label>%s</label>%s %s %s</div>',
+				esc_html__( 'Rate', 'gravityview-ratings-reviews' ),
 				$rating_field,
-				'<input id="gv_review_rate" class="gv-star-rate-field" name="gv_review_rate" type="hidden" />'
+				'<input id="gv_review_rate" data-required="' . esc_attr( $gravityview_view->getAtts( 'rating_required', 0 ) ) . '" class="gv-star-rate-field" name="gv_review_rate" type="hidden" />',
+				'<span aria-role="alert" class="required-message">' . esc_html__( 'Please provide a rating', 'gravityview-ratings-reviews' ) . '</span>'
 			);
 		}
 
@@ -647,7 +670,6 @@ class GravityView_Ratings_Reviews_Review extends GravityView_Ratings_Reviews_Com
 	 *
 	 * @return string Location to entry
 	 * @since  0.1.0
-	 *
 	 */
 	public function redirect_to_entry( $location, $comment ) {
 
@@ -664,7 +686,6 @@ class GravityView_Ratings_Reviews_Review extends GravityView_Ratings_Reviews_Com
 	 * @uses   GravityView_API::get_entry_slug() Get the slug for the entry
 	 *
 	 * @since  0.1.0
-	 *
 	 */
 	public function inject_fields() {
 
@@ -695,7 +716,6 @@ class GravityView_Ratings_Reviews_Review extends GravityView_Ratings_Reviews_Com
 	 * @action gravityview_after
 	 *
 	 * @since  0.1.0
-	 *
 	 */
 	public function entry_reviews( $view_id ) {
 
@@ -716,7 +736,7 @@ class GravityView_Ratings_Reviews_Review extends GravityView_Ratings_Reviews_Com
 			remove_all_filters( 'comments_open' );
 
 			if ( class_exists( 'Jetpack_Comments' ) ) {
-				$jp = new Jetpack_Comments;
+				$jp = new Jetpack_Comments();
 				remove_action( 'comment_form_before', array( $jp, 'comment_form_before' ) );
 				remove_action( 'comment_form_after', array( $jp, 'comment_form_after' ) );
 			}
@@ -745,10 +765,9 @@ class GravityView_Ratings_Reviews_Review extends GravityView_Ratings_Reviews_Com
 	 *
 	 * @return bool
 	 * @since  0.1.0
-	 *
 	 */
 	public function comments_open( $is_open, $post_id ) {
-  
+
 		if ( $this->is_single_context() ) {
 			$is_open = $this->is_allowable_to_receive_review( $post_id );
 		} elseif ( ! empty( $_POST[ $this->field_view_id ] ) ) {
@@ -768,7 +787,6 @@ class GravityView_Ratings_Reviews_Review extends GravityView_Ratings_Reviews_Com
 	 *
 	 * @return array An array of classes.
 	 * @since 0.1.0
-	 *
 	 */
 	public function comment_class( $classes, $class, $comment_id, $post_id ) {
 
@@ -791,11 +809,38 @@ class GravityView_Ratings_Reviews_Review extends GravityView_Ratings_Reviews_Com
 	 * @see    get_page_of_comment()
 	 *
 	 * @since  0.1.0
-	 *
 	 */
 	public function get_comment_link( $link, $comment, $args ) {
 
 		return GravityView_Ratings_Reviews_Helper::get_review_permalink( $link, $comment, 'permalink' );
+	}
+
+	/**
+	 * Makes sure a comment contains a rating if that is required for the View.
+	 *
+	 * @since 2.3.0
+	 */
+	public function require_rating_validation() : void {
+		/** Not a GravityView comment */
+		if ( empty( $_POST[ $this->field_view_id ] ) || empty( $_POST[ $this->field_entry_id ] ) ) {
+			return;
+		}
+
+		$view = GV\View::by_id( $_POST[ $this->field_view_id ] );
+
+		if ( ! $view || ! GravityView_Ratings_Reviews_Helper::is_rating_required( $view ) ) {
+			return;
+		}
+
+		if ( empty( $_POST['gv_review_rate'] ?? 0 ) ) {
+			wp_die(
+				'<p>' . __( 'Sorry, comments require a rating.', 'gravityview-ratings-reviews' ) . '</p>',
+				__( 'Comment Submission Failure', 'gravityview-ratings-reviews' ),
+				array(
+					'back_link' => true,
+				)
+			);
+		}
 	}
 
 	/**
@@ -805,7 +850,6 @@ class GravityView_Ratings_Reviews_Review extends GravityView_Ratings_Reviews_Com
 	 *
 	 * @return bool
 	 * @since 0.1.0
-	 *
 	 */
 	public function is_allowable_to_receive_review( $post ) {
 
@@ -832,7 +876,6 @@ class GravityView_Ratings_Reviews_Review extends GravityView_Ratings_Reviews_Com
 	 * @global GravityView_View $gravityview_view
 	 *
 	 * @since 0.1.0
-	 *
 	 */
 	public function is_single_context() {
 
@@ -848,7 +891,6 @@ class GravityView_Ratings_Reviews_Review extends GravityView_Ratings_Reviews_Com
 	 *
 	 * @return void
 	 * @since  0.1.0
-	 *
 	 */
 	public function enqueue_scripts() {
 
@@ -875,7 +917,6 @@ class GravityView_Ratings_Reviews_Review extends GravityView_Ratings_Reviews_Com
 	 *
 	 * @return void
 	 * @since 0.1.0
-	 *
 	 */
 	protected function register_scripts() {
 
@@ -900,7 +941,6 @@ class GravityView_Ratings_Reviews_Review extends GravityView_Ratings_Reviews_Com
 	 *
 	 * @return void
 	 * @since 0.1.0
-	 *
 	 */
 	protected function enqueue_when_needed() {
 
@@ -973,7 +1013,6 @@ class GravityView_Ratings_Reviews_Review extends GravityView_Ratings_Reviews_Com
 	 * @param int|WP_Post $post_id              Post ID or WP_Post object to generate the form for. Default current post.
 	 *
 	 * @since 0.1.0
-	 *
 	 */
 	public static function review_form( $args = array(), $post_id = null ) {
 
@@ -1006,6 +1045,7 @@ class GravityView_Ratings_Reviews_Review extends GravityView_Ratings_Reviews_Com
 						'<input id="url" name="url" ' . ( $html5 ? 'type="url"' : 'type="text"' ) . ' value="' . esc_attr( $commenter['comment_author_url'] ) . '" size="30" /></p>',
 		);
 
+		// Translators: %s contains the "required" asterisk surrounded by HTML.
 		$required_text = sprintf( ' ' . __( 'Required fields are marked %s', 'gravityview-ratings-reviews' ), '<span class="required">*</span>' );
 
 		if ( ! empty( $gravityview_view->entries[0] ) ) {
@@ -1030,29 +1070,32 @@ class GravityView_Ratings_Reviews_Review extends GravityView_Ratings_Reviews_Com
 		 * @param array $fields The default comment fields.
 		 *
 		 * @since 0.1.0
-		 *
 		 */
 		$fields   = apply_filters( 'gv_ratings_reviews_review_form_fields', $fields );
 		$defaults = array(
 			'fields'                => $fields,
-			'comment_field'         => '<p class="comment-form-comment"><label for="comment">' . _x( 'Review', 'noun', 'gravityview-ratings-reviews' ) . '</label> <textarea id="comment" name="comment" cols="45" rows="8" aria-required="true"></textarea></p>',
-			/** This filter is documented in wp-includes/link-template.php */
+			'comment_field'         => '<p class="comment-form-comment"><label for="comment">' . esc_html_x( 'Review', 'noun', 'gravityview-ratings-reviews' ) . '</label> <textarea id="comment" name="comment" cols="45" rows="8" aria-required="true"></textarea></p>',
+			// This filter is documented in wp-includes/link-template.php
+			// Translators: %s contains the URL to login.
 			'must_log_in'           => '<p class="must-log-in">' . sprintf( __( 'You must be <a href="%s">logged in</a> to post a comment.', 'gravityview-ratings-reviews' ), wp_login_url( $permalink ) ) . '</p>',
-			/** This filter is documented in wp-includes/link-template.php */
+			// This filter is documented in wp-includes/link-template.php
+			// Translators: %1$s contains the URL to users profile,  %2%s the user identity and %3$s the URL to log out.
 			'logged_in_as'          => '<p class="logged-in-as">' . sprintf( __( 'Logged in as <a href="%1$s">%2$s</a>. <a href="%3$s" title="Log out of this account">Log out?</a>', 'gravityview-ratings-reviews' ), get_edit_user_link(), $user_identity, wp_logout_url( $permalink ) ) . '</p>',
 			'comment_notes_before'  => '<p class="comment-notes">' . __( 'Your email address will not be published.', 'gravityview-ratings-reviews' ) . ( $req ? $required_text : '' ) . '</p>',
+			// Translators: %s contains the allowed html tags and attributes.
 			'comment_notes_after'   => '<p class="form-allowed-tags">' . sprintf( __( 'You may use these <abbr title="HyperText Markup Language">HTML</abbr> tags and attributes: %s', 'gravityview-ratings-reviews' ), ' <code>' . allowed_tags() . '</code>' ) . '</p>',
 			'id_form'               => 'commentform',
 			'id_submit'             => 'submit',
 			'name_submit'           => 'submit',
-			'title_reply'           => __( 'Review this entry', 'gravityview-ratings-reviews' ),
-			'title_reply_to'        => __( 'Reply to %s', 'gravityview-ratings-reviews' ),
-			'cancel_reply_link'     => __( 'Cancel reply', 'gravityview-ratings-reviews' ),
-			'label_submit'          => __( 'Post Review', 'gravityview-ratings-reviews' ),
+			'title_reply'           => esc_html__( 'Review this entry', 'gravityview-ratings-reviews' ),
+			// Translators: %s contains the name of the original comment's author.
+			'title_reply_to'        => esc_html__( 'Reply to %s', 'gravityview-ratings-reviews' ),
+			'cancel_reply_link'     => esc_html__( 'Cancel reply', 'gravityview-ratings-reviews' ),
+			'label_submit'          => esc_html__( 'Post Review', 'gravityview-ratings-reviews' ),
 			'format'                => 'xhtml',
 
 			/** The message shown to users who try to add two reviews to the same entry. */
-			'limited_to_one_review' => '<p class="limited-to-one-review">' . sprintf( __( 'You have already reviewed this entry.', 'gravityview-ratings-reviews' ) ) . '</p>',
+			'limited_to_one_review' => '<p class="limited-to-one-review">' . esc_html__( 'You have already reviewed this entry.', 'gravityview-ratings-reviews' ) . '</p>',
 		);
 
 		/**
@@ -1063,7 +1106,6 @@ class GravityView_Ratings_Reviews_Review extends GravityView_Ratings_Reviews_Com
 		 * @param array $defaults The default comment form arguments.
 		 *
 		 * @since 1.3
-		 *
 		 */
 		$args = wp_parse_args( $args, apply_filters( 'gv_ratings_reviews_review_form_settings', $defaults ) );
 
@@ -1077,29 +1119,198 @@ class GravityView_Ratings_Reviews_Review extends GravityView_Ratings_Reviews_Com
 	 *
 	 * @return array
 	 * @since 0.1.0
-	 *
 	 */
 	protected function get_exported_vars() {
+		if ( is_admin() ) {
+			return [];
+		}
 
-		$vars = array(
+		$view     = gravityview()->request->is_view();
+		$view_settings = $view ? $view->settings->all() : [];
+		$limit_one_review_per_person = 0;
+		if ( isset( $view_settings['limit_one_review_per_person'] ) ) {
+			$limit_one_review_per_person = (int) $view_settings['limit_one_review_per_person'];
+		}
+
+		$vars = [
 			'comment_label_when_reply'      => __( 'Comment', 'gravityview-ratings-reviews' ),
 			'comment_submit_when_reply'     => __( 'Post Comment', 'gravityview-ratings-reviews' ),
 			'comment_to_review_text'        => __( 'Leave comment on this review', 'gravityview-ratings-reviews' ),
 			'cancel_comment_to_review_text' => __( 'Cancel comment', 'gravityview-ratings-reviews' ),
 			'vote_text_format'              => __( '<%= number %> rating', 'gravityview-ratings-reviews' ),
 			'vote_up'                       => GravityView_Ratings_Reviews_Helper::get_vote_rating_text( 1 ),
-			'vote_down'                     => GravityView_Ratings_Reviews_Helper::get_vote_rating_text( - 1 ),
+			'vote_down'                     => GravityView_Ratings_Reviews_Helper::get_vote_rating_text( -1 ),
 			'vote_zero'                     => GravityView_Ratings_Reviews_Helper::get_vote_rating_text( 0 ),
-		);
+			'limit_one_review_per_person'   => $limit_one_review_per_person,
+			'already_reviewed_text'         => esc_html__( 'You have already reviewed this entry.', 'gravityview-ratings-reviews' ),
+		];
 
 		/**
 		 * Filter the array of data to be localized for javascript
 		 *
-		 * @param array $vars
-		 *
 		 * @since 1.3
+		 *
+		 * @param array $vars
 		 *
 		 */
 		return apply_filters( 'gv_ratings_reviews_js_vars', $vars );
+	}
+
+
+	/**
+	 * Returns available merge tags.
+	 *
+	 * @since 2.3.0
+	 *
+	 * @return array
+	 */
+	public function get_merge_tags() {
+		$merge_tags = [
+			'{gv_entry_ratings:review_count}'  => esc_html__( 'Entry Ratings: Review Count', 'gravityview-ratings-reviews' ),
+			'{gv_entry_ratings:average_stars}' => esc_html__( 'Entry Ratings: Average Stars', 'gravityview-ratings-reviews' ),
+			'{gv_entry_ratings:empty_star}'    => esc_html__( 'Entry Ratings: Empty Stars', 'gravityview-ratings-reviews' ),
+			'{gv_entry_ratings:1_star}'        => esc_html__( 'Entry Ratings: 1 Star', 'gravityview-ratings-reviews' ),
+			'{gv_entry_ratings:2_stars}'       => esc_html__( 'Entry Ratings: 2 Stars', 'gravityview-ratings-reviews' ),
+			'{gv_entry_ratings:3_stars}'       => esc_html__( 'Entry Ratings: 3 Stars', 'gravityview-ratings-reviews' ),
+			'{gv_entry_ratings:4_stars}'       => esc_html__( 'Entry Ratings: 4 Stars', 'gravityview-ratings-reviews' ),
+			'{gv_entry_ratings:5_stars}'       => esc_html__( 'Entry Ratings: 5 Stars', 'gravityview-ratings-reviews' ),
+			'{gv_entry_ratings:vote_total}'    => esc_html__( 'Entry Ratings: Vote Total', 'gravityview-ratings-reviews' ),
+			'{gv_entry_ratings:neutral_votes}' => esc_html__( 'Entry Ratings: Neutral Votes', 'gravityview-ratings-reviews' ),
+			'{gv_entry_ratings:up_votes}'      => esc_html__( 'Entry Ratings: Up Votes', 'gravityview-ratings-reviews' ),
+			'{gv_entry_ratings:down_votes}'    => esc_html__( 'Entry Ratings: Down Votes', 'gravityview-ratings-reviews' ),
+		];
+
+		/**
+		 * Modifies the list of available merge tags.
+		 *
+		 * @filter `gravityview_ratings_reviews_merge_tags`
+		 *
+		 * @since  2.3.0
+		 *
+		 * @param array $merge_tags Available merge tags in the `{tag}` => `Label` format.
+		 */
+		return apply_filters( 'gravityview_ratings_reviews_merge_tags', $merge_tags );
+	}
+
+	/**
+	 * Adds merge tags to the Gravity Forms merge tags list.
+	 *
+	 * @used-by `gform_custom_merge_tags` filter.
+	 *
+	 * @since 2.3.0
+	 *
+	 * @param array $merge_tags Gravity Forms merge tags.
+	 *
+	 * @return array
+	 */
+	public function add_merge_tags( $merge_tags ) {
+		foreach ( $this->get_merge_tags() as $merge_tag => $label ) {
+			$merge_tags[] = [
+				'label' => $label,
+				'tag'   => $merge_tag,
+			];
+		}
+
+		return $merge_tags;
+	}
+
+	/**
+	 * Replaces merge tags with their values.
+	 *
+	 * @used-by `gform_replace_merge_tags` filter.
+	 *
+	 * @since 2.3.0
+	 *
+	 * @param string $text  Text to replace.
+	 * @param array  $form  Gravity Forms form data.
+	 * @param array  $entry Gravity Forms entry data.
+	 *
+	 * @return string Text with replaced merge tags.
+	 */
+	public function replace_merge_tags( $text, $form = [], $entry = [] ) {
+		if ( empty( $entry ) || empty( $form ) ) {
+			return $text;
+		}
+
+		$entry_ratings_detailed = GravityView_Ratings_Reviews_Helper::get_ratings_detailed( null, $entry['id'] );
+
+		foreach ( array_keys( $this->get_merge_tags() ) as $merge_tag ) {
+			if ( strpos( $text, $merge_tag ) === false ) {
+				continue;
+			}
+
+			switch ( $merge_tag ) {
+				case '{gv_entry_ratings:review_count}':
+					$replacement = $entry_ratings_detailed['total'];
+
+					break;
+				case '{gv_entry_ratings:average_stars}':
+					$replacement = $entry_ratings_detailed['stars'];
+
+					break;
+				case '{gv_entry_ratings:empty_star}':
+					$replacement = $entry_ratings_detailed['star_empty'];
+
+					break;
+				case '{gv_entry_ratings:1_star}':
+					$replacement = $entry_ratings_detailed['star_1'];
+
+					break;
+				case '{gv_entry_ratings:2_stars}':
+					$replacement = $entry_ratings_detailed['star_2'];
+
+					break;
+				case '{gv_entry_ratings:3_stars}':
+					$replacement = $entry_ratings_detailed['star_3'];
+
+					break;
+				case '{gv_entry_ratings:4_stars}':
+					$replacement = $entry_ratings_detailed['star_4'];
+
+					break;
+				case '{gv_entry_ratings:5_stars}':
+					$replacement = $entry_ratings_detailed['star_5'];
+
+					break;
+				case '{gv_entry_ratings:vote_total}':
+					$replacement = $entry_ratings_detailed['votes'];
+
+					break;
+				case '{gv_entry_ratings:neutral_votes}':
+					$replacement = $entry_ratings_detailed['vote_neutral'];
+
+					break;
+				case '{gv_entry_ratings:up_votes}':
+					$replacement = $entry_ratings_detailed['vote_up'];
+
+					break;
+				case '{gv_entry_ratings:down_votes}':
+					$replacement = $entry_ratings_detailed['vote_down'];
+
+					break;
+				default:
+					$replacement = 0;
+			}
+
+			/**
+			 * Replaces merge tag with its value.
+			 *
+			 * @filter `gravityview_ratings_reviews_replace_merge_tag`
+			 *
+			 * @since  2.3.0
+			 *
+			 * @param int|float|mixed $replacement            Replacement value.
+			 * @param string          $merge_tag              Merge tag to replace.
+			 * @param string          $text                   Text where the replacement takes place.
+			 * @param array           $entry_ratings_detailed Entry ratings data generated by {@see \GravityView_Ratings_Reviews_Helper::get_ratings_detailed}
+			 * @param array           $form                   Gravity Forms form data.
+			 * @param array           $entry                  Gravity Forms entry data.
+			 */
+			$replacement = apply_filters( 'gravityview_ratings_reviews_replace_merge_tag', $replacement, $merge_tag, $text, $entry_ratings_detailed, $form, $entry );
+
+			$text = str_replace( $merge_tag, $replacement, $text );
+		}
+
+		return $text;
 	}
 }

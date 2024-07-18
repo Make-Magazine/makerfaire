@@ -695,6 +695,7 @@ function em_add_options() {
 		'dbem_display_calendar_orderby' => 'event_name,event_start_time',
 		'dbem_display_calendar_events_limit' => get_option('dbem_full_calendar_events_limit',3),
 		'dbem_display_calendar_events_limit_msg' => __('more...','events-manager'),
+		'dbem_calendar_size' => 'auto',
 		'dbem_calendar_direct_links' => 1,
 		'dbem_calendar_preview_mode' => 'modal',
 		'dbem_calendar_preview_mode_date' => 'modal',
@@ -848,6 +849,9 @@ function em_add_options() {
 		'dbem_css_categories' => 1,
 		'dbem_css_tags' => 1,
 		'dbem_css_myrsvp' => 1,
+		// Optimization settings
+		'dbem_css_minified' => 1,
+		'dbem_js_minified' => 0,
 		/*
 		 * Custom Post Options - set up to mimick old EM settings and install with minimal setup for most users
 		 */
@@ -912,6 +916,11 @@ function em_add_options() {
 		'dbem_data_privacy_erase_locations' => 1,
 		'dbem_data_privacy_erase_bookings' => 1,
 		'dbem_advanced_formatting' => 0,
+		// security options
+		'dbem_shortcodes_decode_content' => $already_installed && version_compare( get_option('dbem_version', 0), '6.4.8', '<'),
+		'dbem_shortcodes_kses_decoded_content' => 1,
+		'dbem_shortcodes_allow_format_params' => $already_installed,
+		'dbem_shortcodes_decode_params' => $already_installed,
 	);
 	
 	//do date js according to locale:
@@ -954,7 +963,7 @@ function em_upgrade_current_installation(){
 		update_site_option('dbem_data', $data);
 	}
 	// temp promo
-	if( time() < 1713949200 && ( version_compare($current_version, '6.4.7', '<') || !empty($data['admin-modals']['review-nudge']) )  ) {
+	if( time() < 1721044800 && ( version_compare($current_version, '6.4.7', '<') || !empty($data['admin-modals']['review-nudge']) )  ) {
 		if( empty($data['admin-modals']) ) $data['admin-modals'] = array();
 		$data['admin-modals']['promo-popup'] = true;
 		update_site_option('dbem_data', $data);
@@ -1578,6 +1587,16 @@ function em_upgrade_current_installation(){
 		if( version_compare( $current_version, '6.4.7.2', '<') ){
 			// remove flag for admin notice
 			delete_option('dbem_hello_to_user');
+		}
+		if( version_compare( $current_version, '6.4.9.1', '<') ){
+			// remove flag for admin notice
+			$message = 'Events Manager 6.4.10 automatically disables minified JS files from being loaded, which addresses a false positive security threat from Avast Anti-Virus. For more information, please <a target="_blank" href="https://wp-events-plugin.com/blog/2024/07/03/false-positive-avast-anti-virus-security-threats/">check our blog post</a>';
+			EM_Admin_Notices::add(new EM_Admin_Notice(array( 'name' => 'v-update', 'who' => 'admin', 'what' => 'warning', 'where' => 'all', 'message' => $message )), is_multisite());
+		}
+		if( version_compare( $current_version, '6.4.11', '<') ){
+			// remove flag for admin notice
+			$message = 'Events Manager 6.4.11 introduces some security options related to shortcodes, this is particularly important for sites where untrusted users contribute content via shortcode. Please <a target="_blank" href="https://wp-events-plugin.com/blog/2024/07/06/shortcode-security-updates/">check our blog post</a> for more details on how best to proceed.';
+			EM_Admin_Notices::add(new EM_Admin_Notice(array( 'name' => 'shortcode-security-update-6-4-11', 'who' => 'admin', 'what' => 'warning', 'where' => 'all', 'message' => $message )), is_multisite());
 		}
 	}
 }

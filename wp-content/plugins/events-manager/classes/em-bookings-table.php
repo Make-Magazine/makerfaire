@@ -1092,7 +1092,7 @@ class EM_Bookings_Table extends EM\List_Table {
 		?>
 		<button type="button" class="<?php echo esc_attr($this->id) ?>-action-shortcuts em-tooltip-ddm em-clickable" data-tooltip-class="<?php echo esc_attr($this->id) ?>-action-shortcuts-tooltip" title="<?php esc_attr_e('Booking Actions', 'events-manager'); ?>">&centerdot;&centerdot;&centerdot;</button>
 		<div class="em-tooltip-ddm-content em-bookings-admin-get-invoice-content">
-			<?php echo implode("<br>", $actions); ?>
+			<?php echo implode("", $actions); ?>
 		</div>
 		<a class="em-icon em-icon-edit em-tooltip" href="<?php echo esc_url($edit_url); ?>" aria-label="<?php esc_attr_e('Edit/View', 'events-manager'); ?>"></a>
 		<div class="em-loader"></div>

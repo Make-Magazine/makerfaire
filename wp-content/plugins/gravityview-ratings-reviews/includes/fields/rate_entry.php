@@ -80,7 +80,6 @@ class GravityView_Field_Rate_Entry extends GravityView_Field {
 	 * @return void
 	 */
 	function add_update_rating() {
-
 		global $gv_ratings_reviews;
 
 		// Validate AJAX request
@@ -96,7 +95,7 @@ class GravityView_Field_Rate_Entry extends GravityView_Field {
 		$entry           = GFAPI::get_entry( $entry_id );
 		$update_rating   = (boolean) rgpost( 'update_rating' );
 
-		if ( ! $is_valid_action || ! $is_valid_action || ! $entry_id ) {
+		if ( ! $is_valid_action || ! $entry_id ) {
 			// Return 'forbidden' response if nonce is invalid, otherwise it's a 'bad request'
 			wp_die( false, false, array( 'response' => ( ! $is_valid_nonce ) ? 403 : 400 ) );
 		}
@@ -104,6 +103,10 @@ class GravityView_Field_Rate_Entry extends GravityView_Field {
 		$success = true;
 
 		if ( $type === 'vote' ) {
+			if ( ! GravityView_Ratings_Reviews_Helper::can_downvote() && 1 !== $rating ) {
+				return wp_send_json_error( [ 'error' => esc_html__( 'Downvoting is not allowed.', 'gravityview-ratings-reviews' ) ] );
+			}
+
 			switch ( true ) {
 				case $rating < 0:
 					$rating = 1;
@@ -146,7 +149,7 @@ class GravityView_Field_Rate_Entry extends GravityView_Field {
 						$success = false;
 					}
 				} else {
-					$error_message = esc_html__( 'You can  could not be rated. Please try again or contact support.', 'gravityview-ratings-reviews' );
+					$error_message = esc_html__( 'Entry could not be rated. Please try again or contact support.', 'gravityview-ratings-reviews' );
 
 					$success = false;
 				}
@@ -154,6 +157,8 @@ class GravityView_Field_Rate_Entry extends GravityView_Field {
 				$success = false;
 			}
 		}
+
+		\GravityView_Ratings_Reviews_Helper::refresh_ratings( null, $entry_id );
 
 		if ( $success ) {
 			wp_send_json_success(

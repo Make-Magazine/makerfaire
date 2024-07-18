@@ -256,7 +256,7 @@ class GWPreviewConfirmation {
 		}
 
 		$is_multi_input = is_array( rgar( $field, 'inputs' ) );
-		$is_input       = intval( $input_id ) != $input_id;
+		$is_input       = is_numeric( $input_id ) && intval( $input_id ) != $input_id;
 
 		if ( ! $is_upload_field && ! $is_multi_input ) {
 			return $value;

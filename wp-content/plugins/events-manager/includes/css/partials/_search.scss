@@ -448,13 +448,27 @@ button.em-clickable.em-search-advanced-trigger {
 	}
 
 	/* Modal Structure */
-	&.em-modal-content {
-		overflow-y: auto;
-		padding: 20px;
-		margin: 0;
+	.em-modal-content {
+		flex: 1 1 auto;
 
 		section > div {
 			margin: 0;
+		}
+
+		/* Selectize MultiDropdown needs some special styling so it doesn't look wierd when overflowing */
+		.selectize-control.em-selectize.multidropdown {
+			margin-bottom: 15px;
+			max-height: none;
+			.selectize-dropdown {
+				display: none !important;
+				position: relative;
+			}
+			&.dropdown-active {
+				height: auto;
+				.selectize-dropdown {
+					display: block !important;
+				}
+			}
 		}
 	}
 

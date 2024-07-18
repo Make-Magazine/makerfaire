@@ -152,8 +152,21 @@
 .gv-reviews-area .gv-review-list-header .gv-review-list-title .gv-review-rating-aggregate .gv-star-rating {
   width: auto;
 }
+.gv-reviews-area .gv-review-list-body .gravityview.comment .gv-review-edit-area > div {
+  margin-bottom: 10px;
+}
+.gv-reviews-area .gv-review-list-body .gravityview.comment .gv-review-edit-area > div label {
+  display: block;
+  margin-bottom: 5px;
+}
+.gv-reviews-area .gv-review-list-body .gravityview.comment .review-edit-duration {
+  margin-left: 10px;
+}
 .gv-reviews-area .gv-review-list-body .gravityview.comment .comment-meta {
   position: relative;
+}
+.gv-reviews-area .gv-review-list-body .gravityview.comment .comment-meta .gravatar {
+  display: inline-block;
 }
 .gv-reviews-area .gv-review-list-body .gravityview.comment .comment-meta .edit-link {
   display: inline-block;
@@ -178,4 +191,18 @@
 }
 .gv-reviews-area .gv-review-list-footer #respond .comment-reply-title {
   margin: 1em 0;
+}
+
+.comment-form-gv-review-rate {
+  margin-bottom: 2rem;
+}
+.comment-form-gv-review-rate .required-message {
+  display: none;
+  font-size: 1.25rem;
+}
+.comment-form-gv-review-rate.is-required {
+  color: red;
+}
+.comment-form-gv-review-rate.is-required .required-message {
+  display: inline;
 }

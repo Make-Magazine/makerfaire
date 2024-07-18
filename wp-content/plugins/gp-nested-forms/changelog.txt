@@ -1,6 +1,12 @@
 
 # Changelog
 
+## 1.1.60 | June 6, 2024
+
+- Added PHP DocBlock for the `gpnf_add_button_max_message` filter hook.
+- Fixed issue when targeting a single index with All Fields Template.
+- Added support for `format[text]` modifier if using GP Nested Forms with [All Fields Template](https://gravitywiz.com/gravity-forms-all-fields-template/). Example: `{Nested Form:1:index[0],filter[3],format[text]}`
+
 ## 1.1.59 | May 15, 2024
 
 - Fixed compatibility issue with Gravity Forms 2.8.9.1.

@@ -14,7 +14,7 @@ Theme dependencies:
 - Gravity Forms Theme Foundation: gravity-forms-theme-foundation.css
 
 Gravity Forms is a Rocketgenius project
-copyright 2008-2023 Rocketgenius Inc.
+copyright 2008-2024 Rocketgenius Inc.
 https://www.rocketgenius.com
 this may not be re-distributed without the
 express written permission of the author.
@@ -55,10 +55,8 @@ Deprecated version (stripe): 5.2.2
 /* Stripe Payment Element */
 
 .gform-theme--foundation .gfield--type-stripe_creditcard-payment-element .StripeElement--link {
-			-webkit-margin-after: var(--gform-theme-field-row-gap);
-			        margin-block-end: var(--gform-theme-field-row-gap);
-			-webkit-margin-after: var(--gf-field-gap-y, var(--gform-theme-field-row-gap));
-			        margin-block-end: var(--gf-field-gap-y, var(--gform-theme-field-row-gap));
+			margin-block-end: var(--gform-theme-field-row-gap);
+			margin-block-end: var(--gf-field-gap-y, var(--gform-theme-field-row-gap));
 		}
 
 .gform-theme--foundation .gfield--type-stripe_creditcard-payment-element #stripe-payment-link:not(.visible) {

@@ -7,7 +7,7 @@
  * @package   GravityView_Ratings_Reviews
  * @license   GPL2+
  * @author    Katz Web Services, Inc.
- * @link      http://gravityview.co
+ * @link      http://www.gravitykit.com
  * @copyright Copyright 2014, Katz Web Services, Inc.
  *
  * @since 0.1.0
@@ -155,7 +155,8 @@ class GravityView_Ratings_Reviews_Post_Bridge extends GravityView_Ratings_Review
 
 		if ( ! $post_id ) {
 
-			$post_bridge_title = sprintf( __( 'GF entry ID %d, GF form ID %d', 'gravityview-ratings-reviews' ), $entry['id'], $entry['form_id'] );
+			// Translators: %1$d contains the entry ID, and %2$d contains the form ID.
+			$post_bridge_title = sprintf( __( 'GF entry ID %1$d, GF form ID %2$d', 'gravityview-ratings-reviews' ), $entry['id'], $entry['form_id'] );
 
 			/**
 			 * @filter `gv_ratings_reviews_post_bridge_title` Modify the title of the Post Bridge using entry data

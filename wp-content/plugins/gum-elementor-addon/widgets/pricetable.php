@@ -270,6 +270,9 @@ class Month_Anual_Pricetable_Regular_Widget extends Widget_Base {
         'label' => esc_html__( 'Currency Symbol', 'gum-elementor-addon' ),
         'type' => Controls_Manager::TEXT,
         'default' => '$',
+        'ai' => [
+          'active' => false,
+        ],
       ]
     );
 
@@ -359,6 +362,9 @@ class Month_Anual_Pricetable_Regular_Widget extends Widget_Base {
         'type' => Controls_Manager::TEXTAREA,
         'default' => esc_html__( 'Lorem ipsum dolor sit amet', 'gum-elementor-addon' ),
         'rows' => 3,
+        'ai' => [
+          'active' => false,
+        ],
         'label_block' => true,
       ]
     );
@@ -2010,7 +2016,7 @@ class Month_Anual_Pricetable_Regular_Widget extends Widget_Base {
                 $list_iconHTML = ob_get_clean();
             }
 
-           $compile.='<li class="elementor-repeater-item-'.esc_attr($list['_id']).'">'.$list_iconHTML.'<span '.$this->get_render_attribute_string( $repeater_setting_key ).'>'.esc_html($list['list_content']).'</span></li>';
+           $compile.='<li class="elementor-repeater-item-'.esc_attr($list['_id']).'">'.$list_iconHTML.'<span '.$this->get_render_attribute_string( $repeater_setting_key ).'>'.strip_tags($list['list_content']).'</span></li>';
     }
 
     $compile .= '</ul>';
@@ -2057,7 +2063,7 @@ class Month_Anual_Pricetable_Regular_Widget extends Widget_Base {
                 $icon = ob_get_clean();
 
 
-                 $button_icon = '<span class="elementor-button-icon elementor-align-icon-'.$icon_align.'">'.$icon.'</span>';
+                 $button_icon = '<span class="elementor-button-icon elementor-align-icon-'.esc_attr($icon_align).'">'.$icon.'</span>';
 
               }
 

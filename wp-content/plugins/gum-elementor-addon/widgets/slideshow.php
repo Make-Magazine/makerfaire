@@ -1815,8 +1815,8 @@ class Elementor_Petro_Slides_Widget extends Widget_Base {
     $layouter = $this->get_slide_layout($slide_layout);
 
   ?>
-<div id="<?php print esc_attr($widgetID);?>-helper" class="gum-superslide-helper">
-<div id="<?php print esc_attr($widgetID);?>" class="gum-superslide" dir="ltr">
+<div id="<?php esc_attr_e($widgetID);?>-helper" class="gum-superslide-helper">
+<div id="<?php esc_attr_e($widgetID);?>" class="gum-superslide" dir="ltr">
     <ul class="slides-container">
     <?php 
 
@@ -1833,7 +1833,7 @@ class Elementor_Petro_Slides_Widget extends Widget_Base {
   $bg_image=Gum_Elementor_Addon::get_image_size($image_id,'full');
 
 ?>
-<li class="elementor-repeater-item-<?php print $slide['_id']; ?>">
+<li class="elementor-repeater-item-<?php esc_attr_e($slide['_id']); ?>">
 <?php 
 
     if($bg_image){
@@ -1857,7 +1857,7 @@ class Elementor_Petro_Slides_Widget extends Widget_Base {
         $this->add_inline_editing_attributes( $slide_title_key );
         $this->add_render_attribute( $slide_title_key , 'class', 'caption-heading' );
 
-        $title = sprintf('<h2 %1$s>%2$s</h2>', $this->get_render_attribute_string( $slide_title_key ), $title);
+        $title = sprintf('<h2 %1$s>%2$s</h2>', $this->get_render_attribute_string( $slide_title_key ), esc_html($title));
 
       }
 
@@ -1878,7 +1878,7 @@ class Elementor_Petro_Slides_Widget extends Widget_Base {
         $this->add_inline_editing_attributes( $slide_subtitle_key );
         $this->add_render_attribute( $slide_subtitle_key , 'class', 'caption-subheading' );
 
-       $slide_subtitle = sprintf('<h4 %1$s>%2$s</h4>', $this->get_render_attribute_string( $slide_subtitle_key ), $slide_subtitle);
+       $slide_subtitle = sprintf('<h4 %1$s>%2$s</h4>', $this->get_render_attribute_string( $slide_subtitle_key ), esc_html($slide_subtitle));
 
       }
 
@@ -2020,7 +2020,7 @@ class Elementor_Petro_Slides_Widget extends Widget_Base {
         <?php endif; ?>
       </span>
       <?php endif; ?>
-      <span <?php echo $this->get_render_attribute_string( $index );?>><?php echo $slide['button_label']; ?></span>
+      <span <?php echo $this->get_render_attribute_string( $index );?>><?php esc_html_e($slide['button_label']); ?></span>
     </span>
   </a><?php
 
@@ -2074,7 +2074,7 @@ class Elementor_Petro_Slides_Widget extends Widget_Base {
         <?php endif; ?>
       </span>
       <?php endif; ?>
-      <span <?php echo $this->get_render_attribute_string( $index );?>><?php echo $slide['button_r_label']; ?></span>
+      <span <?php echo $this->get_render_attribute_string( $index );?>><?php esc_html_e( $slide['button_r_label'] ); ?></span>
     </span>
   </a><?php
 

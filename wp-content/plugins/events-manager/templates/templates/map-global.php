@@ -8,10 +8,11 @@
  */
 /* @var array $args */
 if( empty($args['id']) ) $args['id'] = rand(100, getrandmax()); // prevent warnings
+$id = esc_attr($args['id']); // once
 if (get_option('dbem_gmap_is_active') == '1') {
 	?>
 	<div class="em em-location-map-container"  style='position:relative; <?php if( $args['width'] ) echo 'width:'. esc_attr($args['width']).';'; ?> <?php if( $args['height'] ) echo 'height: '. esc_attr($args['height']) .';' ?>'>
-		<div class='em-locations-map' id='em-locations-map-<?php echo esc_attr($args['id']); ?>' style="width:100%; height:100%">
+		<div class='em-locations-map' id='em-locations-map-<?php echo $id; ?>' style="width:100%; height:100%">
 			<div class="em-loading-maps">
 				<span><?php _e('Loading Map....', 'events-manager'); ?></span>
 				<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="margin: auto; background: none; display: block; shape-rendering: auto;" width="200px" height="200px" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid">
@@ -30,12 +31,12 @@ if (get_option('dbem_gmap_is_active') == '1') {
 				</svg>
 			</div>
 		</div>
-		<div class='em-locations-map-coords' id='em-locations-map-coords-<?php echo $args['id']; ?>' style="display:none; visibility:hidden;"><?php echo EM_Object::json_encode($args); ?></div>
+		<div class='em-locations-map-coords' id='em-locations-map-coords-<?php echo $id; ?>' style="display:none; visibility:hidden;"><?php echo esc_html(EM_Object::json_encode($args)); ?></div>
 		<?php if( !empty($map_json_style) ): ?>
 		<script type="text/javascript">
 			if( typeof EM == 'object'){
 				if( typeof EM.google_map_id_styles != 'object' ) EM.google_map_id_styles = [];
-				EM.google_map_id_styles['<?php echo $args['id']; ?>'] = <?php echo $map_json_style; ?>;
+				EM.google_map_id_styles['<?php echo $id; ?>'] = <?php echo $map_json_style; ?>;
 			}
 		</script>
 		<?php endif; ?>

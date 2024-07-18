@@ -358,6 +358,7 @@ add_action('admin_init', 'em_options_save');
  * @return mixed
  */
 function em_options_save_kses_deep( $string ) {
+	if ( (defined('EM_UNFILTERED_HTML') && EM_UNFILTERED_HTML) || current_user_can('unfiltered_html') ) return $string;
 	if( is_array($string) ) {
 		foreach ( $string as $k => $v ) {
 			$string[$k] = em_options_save_kses_deep( $v );
@@ -838,6 +839,31 @@ function em_admin_option_box_uninstall(){
 				do_action('em_admin_update_settings_'.$update, $update_data);
 			}
 			?>
+
+			<table class="form-table">
+				<tr class="em-header"><td colspan="2">
+					<h4><?php _e ( 'Shortcode HTML Entity Decoding', 'events-manager'); ?></h4>
+					<p>
+						<?php
+							esc_html_e('Recent Events Manager updates have made security improvements to how events are output, specifically with Shortcodes. The result is that some shortcode created prior to these updates will be displayed as raw/escaped HTML rather than content.','events-manager');
+						?>
+					</p>
+					<p>
+						<?php
+							esc_html_e('The following options will re-enable this behaviour. If you notice escaped content (raw HTML) displayed on your site, you can enable these temporarily whilst you fix the underlying issue.','events-manager');
+						?>
+					</p>
+					<p style="font-weight:bold; color: red;">
+						<?php
+							echo sprintf( esc_html__('These options have security implications and are intended for transition! For more information, please see our %s.','events-manager'), '<a href="https://wp-events-plugin.com/documentation/advanced/security/shortcode-security/">'. esc_html__('documentation', 'events-manager') .'</a>');
+						?>
+					</p>
+				</td></tr>
+				<?php em_options_radio_binary ( __( 'Decode shortcode content?', 'events-manager'), 'dbem_shortcodes_decode_content', sprintf(esc_html__('Content supplied within shortcode tags like %s will be HTML entity-decoded.', 'events-manager'), '<code>[shortcode]content[/shortcode]</code>'), '', '#dbem_shortcodes_kses_decoded_content_row' ); ?>
+				<?php em_options_radio_binary ( __( 'Sanitize shortcode content?', 'events-manager'), 'dbem_shortcodes_kses_decoded_content', esc_html__('HTML entity-decoded shortcode content will be sanitized after being decoded, we STRONGLY recommend leaving this enabled.', 'events-manager') ); ?>
+				<?php em_options_radio_binary ( __( 'Allow format shortcode parameters?', 'events-manager'), 'dbem_shortcodes_allow_format_params', sprintf(esc_html__('%s parameters will be permitted in shortcode.', 'events-manager'), '<code>format</code> <code>format_header</code> <code>format_footer</code>'), '', '#dbem_shortcodes_decode_params_row' ); ?>
+				<?php em_options_radio_binary ( __( 'Decode shortcode format parameters?', 'events-manager'), 'dbem_shortcodes_decode_params', esc_html__('Content supplied within shortcode tags and the %s parameters will be HTML entity-decoded and sanitized.', 'events-manager') ); ?>
+			</table>
 			
 			<table class="form-table">
     		    <tr class="em-header"><td colspan="2">

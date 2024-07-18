@@ -342,14 +342,14 @@ export default class GPFUPField {
 					}
 				}
 
-				/* Add coords (only applies if cropping is enabled) */
+				/* Add cropper results (only applies if cropping is enabled) */
 				for (const file of this.up.files) {
-					const coords = await parent.storage.getCoords(file.id);
+					const results = await parent.storage.getCroppedResults(file.id);
 
-					if (coords) {
-						parent.$store.commit('STORE_CROPPED_COORDS', {
+					if (results) {
+						parent.$store.commit('STORE_CROPPER_RESULTS', {
 							fileId: file.id,
-							coords: coords,
+							results,
 						});
 					}
 				}

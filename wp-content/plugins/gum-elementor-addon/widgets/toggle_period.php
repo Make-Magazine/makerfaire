@@ -435,7 +435,7 @@ class Month_Anual_Pricetable_TogglePeriod_Regular_Widget extends Widget_Base {
 ?>
     <div class="price-period-switch-wrap">
       <ul class="price-period-switch" data-target="<?php esc_attr_e($target_id);?>">
-      <li class="period active regular-period"><span <?php echo $this->get_render_attribute_string( 'main_period' ); ?>><?php print esc_html($main_period);?></span></li><li class="period anual-period"><span <?php echo $this->get_render_attribute_string( 'anual_period' ); ?>><?php print esc_html($anual_period);?></span></li>
+      <li class="period active regular-period"><span <?php echo $this->get_render_attribute_string( 'main_period' ); ?>><?php esc_html_e($main_period);?></span></li><li class="period anual-period"><span <?php echo $this->get_render_attribute_string( 'anual_period' ); ?>><?php esc_html_e($anual_period);?></span></li>
       </ul>
     </div>
 <?php

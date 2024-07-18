@@ -327,12 +327,15 @@ class GFStripe extends GFPaymentAddOn {
 	 * @return array The scripts to be enqueued.
 	 */
 	public function scripts() {
-		$min     = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG || isset( $_GET['gform_debug'] ) ? '' : '.min';
+		$base_url = $this->get_base_url();
+        $version  = $this->_version;
+		$min      = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG || isset( $_GET['gform_debug'] ) ? '' : '.min';
+
 		$scripts = array(
 			array(
 				'handle'    => 'stripe.js',
 				'src'       => 'https://js.stripe.com/v2/',
-				'version'   => $this->_version,
+				'version'   => $version,
 				'deps'      => array(),
 				'in_footer' => false,
 				'enqueue'   => array(
@@ -342,7 +345,7 @@ class GFStripe extends GFPaymentAddOn {
 			array(
 				'handle'    => 'stripe_v3',
 				'src'       => 'https://js.stripe.com/v3/',
-				'version'   => $this->_version,
+				'version'   => $version,
 				'deps'      => array(),
 				'in_footer' => false,
 				'enqueue'   => array(
@@ -351,8 +354,8 @@ class GFStripe extends GFPaymentAddOn {
 			),
 			array(
 				'handle'    => 'gforms_stripe_frontend',
-				'src'       => $this->get_base_url() . "/js/frontend{$min}.js",
-				'version'   => $this->_version,
+				'src'       => $base_url . "/js/frontend{$min}.js",
+				'version'   => $version,
 				'deps'      => array( 'jquery', 'gform_json', 'gform_gravityforms', 'wp-a11y' ),
 				'in_footer' => false,
 				'enqueue'   => array(
@@ -381,8 +384,8 @@ class GFStripe extends GFPaymentAddOn {
 			),
 			array(
 				'handle'    => 'gforms_stripe_admin',
-				'src'       => $this->get_base_url() . "/js/admin{$min}.js",
-				'version'   => $this->_version,
+				'src'       => $base_url . "/js/admin{$min}.js",
+				'version'   => $version,
 				'deps'      => array( 'jquery', 'thickbox', 'stripe.js', 'wp-a11y' ),
 				'in_footer' => false,
 				'enqueue'   => array(
@@ -417,8 +420,8 @@ class GFStripe extends GFPaymentAddOn {
 			),
 			array(
 				'handle'    => 'gform_stripe_payment_element_form_editor',
-				'src'       => $this->get_base_url() . "/js/payment_element_form_editor{$min}.js",
-				'version'   => $this->_version,
+				'src'       => $base_url . "/js/payment_element_form_editor{$min}.js",
+				'version'   => $version,
 				'deps'      => array( 'jquery', 'stripe_v3' ),
 				'in_footer' => false,
 				'enqueue'   => array(
@@ -454,13 +457,15 @@ class GFStripe extends GFPaymentAddOn {
 	 * @return array Returns an array of styles and when to enqueue them
 	 */
 	public function styles() {
-		$min = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG || isset( $_GET['gform_debug'] ) ? '' : '.min';
+		$base_url = $this->get_base_url();
+        $version  = $this->_version;
+        $min     = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG || isset( $_GET['gform_debug'] ) ? '' : '.min';
 
 		$styles = array(
 			array(
 				'handle'    => 'gforms_stripe_frontend',
-				'src'       => $this->get_base_url() . "/assets/css/dist/theme{$min}.css",
-				'version'   => $this->_version,
+				'src'       => $base_url . "/assets/css/dist/theme{$min}.css",
+				'version'   => $version,
 				'in_footer' => false,
 				'enqueue'   => array(
 					array( $this, 'frontend_style_callback' ),
@@ -468,8 +473,8 @@ class GFStripe extends GFPaymentAddOn {
 			),
 			array(
 				'handle'  => 'gform_stripe_pluginsettings',
-				'src'     => $this->get_base_url() . "/assets/css/dist/admin{$min}.css",
-				'version' => $this->_version,
+				'src'     => $base_url . "/assets/css/dist/admin{$min}.css",
+				'version' => $version,
 				'deps'    => array( 'thickbox' ),
 				'enqueue' => array(
 					array(
@@ -504,13 +509,14 @@ class GFStripe extends GFPaymentAddOn {
 		}
 
 		$base_url = plugins_url( '', __FILE__ );
+        $min      = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG || isset( $_GET['gform_debug'] ) ? '' : '.min';
 
 		return array(
 			'foundation' => array(
-				array( 'gravity_forms_stripe_theme_foundation', "$base_url/assets/css/dist/theme-foundation.css" ),
+				array( 'gravity_forms_stripe_theme_foundation', $base_url . "/assets/css/dist/theme-foundation{$min}.css" ),
 			),
 			'framework' => array(
-				array( 'gravity_forms_stripe_theme_framework', "$base_url/assets/css/dist/theme-framework.css" ),
+				array( 'gravity_forms_stripe_theme_framework', $base_url . "/assets/css/dist/theme-framework{$min}.css" ),
 			),
 		);
 	}
@@ -7199,7 +7205,7 @@ class GFStripe extends GFPaymentAddOn {
 		$authorization_only = apply_filters( 'gform_stripe_payment_element_authorization_only', false, $form, $feed );
 
 		if ( $authorization_only ) {
-			$this->log_debug( __METHOD__ . '(): The gform_stripe_payment_element_authorization_only filter was used to prevent capture tracking id:' . md5( rggpost( 'state_' . rgar( $form, 'id' ) ) ) );
+			$this->log_debug( __METHOD__ . '(): The gform_stripe_payment_element_authorization_only filter was used to prevent capture tracking id:' . md5( rgpost( 'state_' . rgar( $form, 'id' ) ) ) );
 
 			return 'manual';
 		}

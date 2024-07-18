@@ -1,4 +1,4 @@
-/*! elementor - v3.21.0 - 26-05-2024 */
+/*! elementor - v3.23.0 - 15-07-2024 */
 .dialog-widget-content {
   background-color: var(--e-a-bg-default);
   position: absolute;
@@ -283,6 +283,10 @@
 
 .elementor-hidden {
   display: none;
+}
+
+.elementor-visibility-hidden {
+  visibility: hidden;
 }
 
 .elementor-screen-only,
@@ -1954,7 +1958,7 @@ body:not(.elementor-device-mobile) .elementor-control.elementor-control-responsi
   font-size: 13px;
 }
 .e-global__preview-items-container {
-  max-height: 260px;
+  max-height: 400px;
   overflow-y: auto;
   padding: 5px 0;
 }
@@ -2444,6 +2448,10 @@ body:not(.elementor-device-mobile) .elementor-control.elementor-control-responsi
   padding-block-end: 10px;
 }
 .elementor-control-type-repeater.elementor-repeater-has-minimum-rows .elementor-repeater-tool-remove {
+  display: none;
+}
+.elementor-control-type-repeater.elementor-repeater-has-maximum-rows .elementor-repeater-tool-duplicate,
+.elementor-control-type-repeater.elementor-repeater-has-maximum-rows .elementor-repeater-add {
   display: none;
 }
 .elementor-control-type-repeater .elementor-repeater-fields {
@@ -3676,6 +3684,14 @@ body.elementor-editor-active .elementor.elementor-edit-mode .elementor-element.e
 }
 .e-ui-state--elements-color-picker-color-picking__on .elementor-section:hover {
   outline: 1px solid #2563EB;
+}
+
+/**
+* Contact Buttons has position: fixed, therefore the container results as `empty`
+* and it's not visible in the preview when the aside is hidden.
+*/
+.elementor-editor-preview .elementor-element:has(.e-contact-buttons) .elementor-widget-empty {
+  display: block;
 }
 
 [class^=eicon-flex], [class*=" eicon-flex"] {

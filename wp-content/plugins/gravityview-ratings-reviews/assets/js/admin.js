@@ -12,7 +12,7 @@
 		'viewCommentSelector'          : '#preview-action .preview',
 		'editCommentTitleSelector'     : '.wrap h2:first',
 		'listReviewsTitleSelector'     : '.wrap h2:first',
-		'ratingsReviewsmetaboxSelector': '#gravityview_ratings_reviews_entry'
+		'ratingsReviewsmetaboxSelector': 'li#gravityview_ratings_reviews_entry'
 	}, GV_RATINGS_REVIEWS_ADMIN);
 
 	self.init = function() {

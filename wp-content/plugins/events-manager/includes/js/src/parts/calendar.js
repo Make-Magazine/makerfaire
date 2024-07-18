@@ -15,9 +15,11 @@ jQuery(document).ready( function($){
 			if( el.data('disabled') == 1 || el.attr('href') === '') return; // do nothing if disabled or no link provided
 			el.closest('.em-calendar').prepend('<div class="loading" id="em-loading"></div>');
 			let url = em_ajaxify(el.attr('href'));
+			const view_id = el.closest('[data-view-id]').data('view-id');
 			const calendar_id = calendar.attr('id').replace('em-calendar-', '');
 			const custom_data = $('form#em-view-custom-data-calendar-'+ calendar_id);
 			let form_data = new FormData();
+			form_data.set('id', view_id);
 			if( custom_data.length > 0 ){
 				form_data = new FormData(custom_data[0]);
 				let url_params = new URL(url, window.location.origin).searchParams;

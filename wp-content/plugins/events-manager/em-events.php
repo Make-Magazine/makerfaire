@@ -344,7 +344,7 @@ function em_get_page_type(){
 	if( is_single() && $has_post && $post->post_type == EM_POST_TYPE_EVENT  ){
 		return 'event';
 	}
-	if( (!empty($locations_page_id) && $has_post && $post->ID == $locations_page_id) || (!is_single() && $wp_query->query_vars['post_type'] == EM_POST_TYPE_LOCATION) ){
+	if( (!empty($locations_page_id) && $has_post && $post->ID == $locations_page_id) || (!is_single() && !empty($wp_query->query_vars['post_type']) && $wp_query->query_vars['post_type'] == EM_POST_TYPE_LOCATION) ){
 		return is_object($EM_Location) ? "location":"locations";
 	}elseif( is_single() && $post->post_type == EM_POST_TYPE_LOCATION ){
 		return 'location';

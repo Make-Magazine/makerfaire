@@ -7,8 +7,8 @@ class GP_Read_Only extends GWPerk {
 	protected $min_gravity_forms_version = '2.4';
 	protected $min_wp_version            = '3.0';
 
-	private $unsupported_field_types  = array( 'hidden', 'html', 'captcha', 'page', 'section', 'form' );
-	private $disable_attr_field_types = array( 'radio', 'select', 'checkbox', 'multiselect', 'time', 'date', 'name', 'address', 'workflow_user', 'workflow_role', 'workflow_assignee_select' );
+	private $unsupported_field_types  = array( 'hidden', 'html', 'captcha', 'page', 'section', 'form', 'fileupload' );
+	private $disable_attr_field_types = array( 'radio', 'select', 'checkbox', 'multiselect', 'time', 'date', 'name', 'address', 'workflow_user', 'workflow_role', 'workflow_assignee_select', 'consent' );
 
 	public function init() {
 
@@ -254,6 +254,10 @@ class GP_Read_Only extends GWPerk {
 				$search  = '<input';
 				$replace = $search . " readonly='readonly'";
 				break;
+			case 'consent':
+				$search  = "type='checkbox'";
+				$replace = $search . " disabled='disabled'";
+				break;
 			default:
 				$search  = '<input';
 				$replace = $search . " readonly='readonly'";
@@ -437,7 +441,7 @@ class GP_Read_Only extends GWPerk {
 
 			// Only use hidden capture if $_POST does not already contain a value for this inputs;
 			// this allows support for checking/unchecking via JS (i.e. checkbox fields).
-			if ( empty( $_POST[ "input_{$full_input_id}" ] ) && $value ) {
+			if ( $this->is_empty_hidden_capture( $full_input_id, $field ) && $value ) {
 				if ( method_exists( 'GFCommon', 'is_json' ) && is_string( $value ) ) {
 					$stripped_slashes_value = stripslashes( $value );
 
@@ -451,6 +455,19 @@ class GP_Read_Only extends GWPerk {
 		}
 
 		return $form;
+	}
+
+	private function is_empty_hidden_capture( $full_input_id, $field ) {
+		// For a time field, ensure all 3 values are stored (Hours - Minutes - AM/PM).
+		if ( $field->type == 'time' && is_array( $_POST[ "input_{$full_input_id}" ] ) && count( $_POST[ "input_{$full_input_id}" ] ) != 3 ) {
+			return true;
+		}
+
+		if ( empty( $_POST[ "input_{$full_input_id}" ] ) ) {
+			return true;
+		}
+
+		return false;
 	}
 
 	public function process_hidden_captures_gravityview( $_, $entry, $view, $request ) {

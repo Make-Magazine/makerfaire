@@ -2494,8 +2494,8 @@ class EM_Event extends EM_Object{
 							if( !empty($params[0]) ) $time_format = $params[0];
 							if( !empty($params[1]) ) $separator = $params[1];
 						}
-						if( empty($separator) ) $separator = get_option('dbem_times_separator');
 						// if no moment format provided, we convert the one stored for times in php
+						$start_time = $this->start()->getTimestamp();
 						if( empty($time_format) ){
 							// convert EM format setting to moment formatting, adapted from https://stackoverflow.com/questions/30186611/php-dateformat-to-moment-js-format
 							$replacements = array(
@@ -2513,16 +2513,18 @@ class EM_Event extends EM_Object{
 							}
 							if( $result === '#_EVENTDATES_LOCAL' ){
 								$time_format = ( get_option('dbem_date_format') ) ? get_option('dbem_date_format'):get_option('date_format');
-								$start_time = $this->start()->getTimestamp();
 								$end_time = $this->event_start_date == $this->event_end_date ? $start_time : $this->end()->getTimestamp();
 								if( empty($separator) ) $separator = get_option('dbem_dates_separator');
 							}else{
 								$time_format = ( get_option('dbem_time_format') ) ? get_option('dbem_time_format'):get_option('time_format');
-								$start_time = $this->start()->getTimestamp();
 								$end_time = $this->event_start_time == $this->event_end_time ? $start_time : $this->end()->getTimestamp();
 								if( empty($separator) ) $separator = get_option('dbem_times_separator');
 							}
 							$time_format = strtr($time_format, $replacements);
+						} else {
+							$end_time = $this->end()->getTimestamp();
+							// decide whether to use dates separator or time separator, if there's a day format, use date, if not use time
+							if( empty($separator) ) $separator = $result === '#_EVENTDATES_LOCAL' ? get_option('dbem_dates_separator') : get_option('dbem_times_separator');
 						}
 						wp_enqueue_script('moment', '', array(), false, true); //add to footer if not already
 						// start output
@@ -2835,7 +2837,7 @@ class EM_Event extends EM_Object{
 					if( !empty($tags_list) ) {
 						$replace = implode(', ', $tags_list);
 					}else{
-						$replace = get_option ( 'dbem_no_categories_message' );
+						$replace = get_option ( 'dbem_no_tags_message' );
 					}
 					break;
 				case '#_CATEGORIES': //deprecated
@@ -2909,6 +2911,8 @@ class EM_Event extends EM_Object{
 					$replace = $this->generate_ical_url( $url, $dateStart, $dateEnd );
 					if( $result == '#_EVENTOUTLOOKLIVELINK' ){
 						$replace = '<a href="'.esc_url($replace).'" target="_blank">Outlook Live</a>';
+					} elseif ( $result == '#_EVENTOFFICE365LINK' ){
+						$replace = '<a href="'.esc_url($replace).'" target="_blank">Office 365</a>';
 					}
 					break;
 				//Event location (not physical location)

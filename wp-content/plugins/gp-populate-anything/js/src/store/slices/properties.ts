@@ -3,6 +3,7 @@ import $ from 'jquery';
 import { CoreSlice } from './core';
 import { FiltersSlice } from './filters';
 import { ComputedSlice } from './computed';
+import { memoizedjQueryAjax } from '../../helpers/memoizedjQueryAjax';
 
 const { strings } = window.GPPA_ADMIN;
 
@@ -18,8 +19,6 @@ export interface PropertiesSlice {
 			disabled?: boolean;
 		}[];
 	};
-	getPropertiesLock?: string;
-	getPropertyValuesLock: string[];
 
 	/* Actions */
 	getProperties: () => void;
@@ -44,39 +43,30 @@ const createPropertiesSlice: StateCreator<
 	PropertiesSlice
 > = (set, get) => ({
 	...initialStateProperties,
-	getPropertyValuesLock: [],
 
 	getProperties() {
 		if (!get().computed.objectTypeInstance) {
 			return;
 		}
 
-		// Prevent multiple requests
-		if (get().getPropertiesLock === get().objectType) {
-			return;
-		}
-
-		set({
-			getPropertiesLock: get().objectType,
-		});
-
 		get().resetPropertyValues(true);
 
-		const ajaxArgs = {
-			action: 'gppa_get_object_type_properties',
-			'object-type': get().computed.objectTypeInstance!.id,
-			populate: get().populate,
-			security: window.GPPA_ADMIN.nonce,
-			'primary-property-value':
-				'primary-property' in get().computed.objectTypeInstance!
-					? get().computed.primaryPropertyComputed
-					: undefined,
-		};
-
-		$.post(window.ajaxurl, ajaxArgs, null, 'json').done((data) => {
+		memoizedjQueryAjax(window.ajaxurl, {
+			data: {
+				action: 'gppa_get_object_type_properties',
+				'object-type': get().computed.objectTypeInstance!.id,
+				populate: get().populate,
+				security: window.GPPA_ADMIN.nonce,
+				'primary-property-value':
+					'primary-property' in get().computed.objectTypeInstance!
+						? get().computed.primaryPropertyComputed
+						: undefined,
+			},
+			dataType: 'json',
+			method: 'POST',
+		}).then((data) => {
 			set({
 				properties: data,
-				getPropertiesLock: undefined,
 			});
 		});
 	},
@@ -90,27 +80,20 @@ const createPropertiesSlice: StateCreator<
 			return;
 		}
 
-		// Prevent multiple requests
-		if (get().getPropertyValuesLock.includes(property)) {
-			return;
-		}
-
-		const ajaxArgs = {
-			action: 'gppa_get_property_values',
-			'object-type': get().computed.objectTypeInstance!.id,
-			property,
-			security: window.GPPA_ADMIN.nonce,
-			'primary-property-value':
-				'primary-property' in get().computed.objectTypeInstance!
-					? get().computed.primaryPropertyComputed
-					: undefined,
-		};
-
-		set({
-			getPropertyValuesLock: get().getPropertyValuesLock.concat(property),
-		});
-
-		$.post(window.ajaxurl, ajaxArgs, null, 'json').done((data) => {
+		memoizedjQueryAjax(window.ajaxurl, {
+			data: {
+				action: 'gppa_get_property_values',
+				'object-type': get().computed.objectTypeInstance!.id,
+				property,
+				security: window.GPPA_ADMIN.nonce,
+				'primary-property-value':
+					'primary-property' in get().computed.objectTypeInstance!
+						? get().computed.primaryPropertyComputed
+						: undefined,
+			},
+			dataType: 'json',
+			method: 'POST',
+		}).then((data) => {
 			if (data === 'gppa_over_max_values_in_editor') {
 				/**
 				 * If gppa_max_property_values_in_editor filter is met, do not output any properties to be selected.
@@ -137,9 +120,6 @@ const createPropertiesSlice: StateCreator<
 			}
 
 			set({
-				getPropertyValuesLock: get().getPropertyValuesLock.filter(
-					(lock) => lock !== property
-				),
 				propertyValues: {
 					...get().propertyValues,
 					[property]: $.map(data, function(option, index) {

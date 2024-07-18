@@ -52,7 +52,7 @@ class EDD_SL_Plugin_Updater {
 		/**
 		 * Fires after the $edd_plugin_data is setup.
 		 *
-		 * @since x.x.x
+		 * @since 2.2.0
 		 *
 		 * @param array $edd_plugin_data Array of EDD SL plugin data.
 		 */

@@ -30,7 +30,7 @@ export default function replaceFile({ up, $store, formId, fieldId, existingFile,
 	up.removeFile(existingFile?.id);
 
 	/* Transfer original image and coords */
-	$store.dispatch('transferCoords', {
+	$store.dispatch('transferResults', {
 		currentFileId: existingFile?.id,
 		newFileId: newFile.id,
 	})

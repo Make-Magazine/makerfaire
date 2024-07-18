@@ -12,7 +12,6 @@
 	@import 'partials/tooltips';
 	@import 'partials/libraries';
 	@import 'partials/buttons';
-	@import 'partials/selectize';
 	@import "partials/charts";
 	.em {
 		* {
@@ -23,6 +22,11 @@
 		@import 'partials/modal';
 		@import "partials/list-tables";
 		@import "partials/phone";
+		@import 'partials/selectize';
+
+		.selectize-dropdown {
+			margin-top: -1px;
+		}
 	}
 
 	--button-icon-padding : 10px !important;

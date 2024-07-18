@@ -3,8 +3,12 @@
  * The template for displaying review form.
  *
  * @see GravityView_Ratings_Reviews_Review::review_form()
+ *
  * @package GravityView_Ratings_Reviews
+ *
  * @since 0.1.0
+ *
+ * @global int $post_id
  */
 defined( 'ABSPATH' ) || exit;
 ?>

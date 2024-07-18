@@ -94,7 +94,7 @@
 				self.addBackToLastPageButton();
 			} else if ( self.activationType == 'progression' && self.getCurrentPage() < self.getPageProgression() ) {
 				self.addBackToLastPageButton( self.getPageProgression() );
-			} else if ( self.activationType == 'first_page' && ! self.isLastPage() && self.wasFinalSubmissionAttempted() ) {
+			} else if ( ! self.isLastPage() && self.wasFinalSubmissionAttempted() ) {
 				self.addNextPageWithErrorsButton();
 			}
 

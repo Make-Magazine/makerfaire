@@ -5,7 +5,7 @@
  * @package   GravityView_Ratings_Reviews
  * @license   GPL2+
  * @author    Katz Web Services, Inc.
- * @link      http://gravityview.co
+ * @link      http://www.gravitykit.com
  * @copyright Copyright 2014, Katz Web Services, Inc.
  *
  * @since 0.1.0
@@ -16,7 +16,7 @@ defined( 'ABSPATH' ) || exit;
 class GravityView_Ratings_Reviews_Loader extends GravityView_Extension {
 
 	/**
-	 * Name of the plugin, used to fetch updates from GravityView.co
+	 * Name of the plugin, used to fetch updates from gravitykit.com
 	 *
 	 * @see GravityView_Extension::settings()
 	 *
@@ -34,7 +34,7 @@ class GravityView_Ratings_Reviews_Loader extends GravityView_Extension {
 	protected $_min_gravityview_version = '2.0';
 
 	/**
-	 * @var int The Download ID on gravityview.co
+	 * @var int The Download ID on gravitykit.com
 	 */
 	protected $_item_id = 34;
 
@@ -61,6 +61,7 @@ class GravityView_Ratings_Reviews_Loader extends GravityView_Extension {
 		'meta-box-edit-review',
 		'recalculate-ratings',
 		'review',
+		'review-edit',
 		'form-fields',
 		'sorting',
 	);
@@ -98,6 +99,24 @@ class GravityView_Ratings_Reviews_Loader extends GravityView_Extension {
 	 * @var array
 	 */
 	public $component_instances = array();
+
+	/**
+	 * The public plugin URL.
+	 * @var string
+	 */
+	public $url;
+
+	/**
+	 * The public js URL.
+	 * @var string
+	 */
+	public $js_url;
+
+	/**
+	 * The public css URL.
+	 * @var string
+	 */
+	public $css_url;
 
 	/**
 	 * Constructor.
@@ -216,7 +235,7 @@ class GravityView_Ratings_Reviews_Loader extends GravityView_Extension {
 
 	/**
 	 * Returns the plugin title.
-	 * @since $ver$
+	 * @since 2.2.0
 	 * @return string
 	 */
 	public function getTitle() {

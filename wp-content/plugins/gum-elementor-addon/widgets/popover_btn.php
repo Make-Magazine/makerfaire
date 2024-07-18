@@ -716,7 +716,7 @@ class Popover_Regular_Btn_Widget extends Widget_Base {
       Icons_Manager::render_icon( $selected_icon, [ 'aria-hidden' => 'true' ] );
       $icon = ob_get_clean();
 
-       $button_icon = '<span class="elementor-button-icon elementor-align-icon-'.$icon_align.'">'.$icon.'</span>';
+       $button_icon = '<span class="elementor-button-icon elementor-align-icon-'.esc_attr_e($icon_align).'">'.$icon.'</span>';
     }
 
     $button_html .= '<span '.$this->get_render_attribute_string( 'button_text' ).'>'.esc_html($button_text).'</span>';

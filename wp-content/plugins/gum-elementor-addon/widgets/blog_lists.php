@@ -1235,7 +1235,7 @@ class Gum_Elementor_Widget_Post_list extends Widget_Base {
 
 
     $query_params= array(
-      'posts_per_page' => $posts_per_page,
+      'posts_per_page' => absint($posts_per_page),
       'no_found_rows' => true,
       'post_status' => 'publish',
       'post_type'=>'post',

@@ -18,7 +18,9 @@ $entry_average_rating = GravityView_Ratings_Reviews_Helper::get_review_average_r
 	<h2 class="gv-review-list-title">
 	<?php if ( $reviews_number ) : ?>
 		<span class="gv-review-num-of-reviews">
-			<?php echo esc_html( sprintf( _n( 'One review of this entry', '%1$s reviews of this entry', $reviews_number, 'gravityview-ratings-reviews' ), number_format_i18n( $reviews_number ) ) ); ?>
+			<?php
+            // Translators: %d contains the amount of reviews.
+            echo esc_html( sprintf( _n( 'One review of this entry', '%d reviews of this entry', $reviews_number, 'gravityview-ratings-reviews' ), number_format_i18n( $reviews_number ) ) ); ?>
 		</span>
 
 		<span class="gv-review-rating-aggregate">

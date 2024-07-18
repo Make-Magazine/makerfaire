@@ -1,10 +1,10 @@
 import { StateCreator } from 'zustand';
-import $ from 'jquery';
 import { FiltersSlice } from './filters';
 import { TemplatesSlice } from './templates';
 import { CoreSlice } from './core';
 import { FieldSettingsSyncingSlice } from '../../framework/field-settings-syncing';
 import { ComputedSlice } from './computed';
+import { memoizedjQueryAjax } from '../../helpers/memoizedjQueryAjax';
 
 export interface PreviewSlice {
 	previewResults:
@@ -53,18 +53,17 @@ const createPreviewSlice: StateCreator<
 
 		set({ previewResultsLoading: true });
 
-		const previewResultsPromise = $.post(
-			window.ajaxurl,
-			{
+		const previewResultsPromise = memoizedjQueryAjax(window.ajaxurl, {
+			data: {
 				action: 'gppa_get_query_results',
 				templateRows: get().computed.templateRows,
 				gppaPopulate: get().populate,
 				fieldSettings: JSON.stringify(get().field),
 				security: window.GPPA_ADMIN.nonce,
 			},
-			null,
-			'json'
-		);
+			dataType: 'json',
+			method: 'POST',
+		});
 
 		previewResultsPromise
 			.done((data) => {

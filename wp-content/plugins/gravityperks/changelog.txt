@@ -1,6 +1,10 @@
 
 # Changelog
 
+## 2.3.8 | June 26, 2024
+
+- Fixed issue where the plugin updater API response for perks included the changelog property, which could prevent plugin updates from showing up in some situations.
+
 ## 2.3.7 | May 15, 2024
 
 - Fixed a potential PHP warning.

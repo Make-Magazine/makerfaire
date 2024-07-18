@@ -19,8 +19,9 @@ $post_id           = $post_bridge_comp->create_bridge( $gravityview->entry->as_e
 $view_settings     = $gravityview->view->settings->all();
 $user              = wp_get_current_user();
 $allowed_to_review = GravityView_Ratings_Reviews_Helper::is_user_allowed_to_leave_review( $post_id, $user->user_login, $user->user_email, array(), $view_settings );
+$must_be_logged_in = (bool) get_option('comment_registration');
 
-if ( ! is_user_logged_in() ) {
+if ( ( ! is_user_logged_in() && $must_be_logged_in ) ) {
 	echo esc_html__( 'Please log in to rate an entry from this View.', 'gravityview-ratings-reviews' );
 } elseif ( ! absint( $view_settings['allow_entry_reviews'] ) ) {
 	echo esc_html__( 'To rate an entry, please enable this option in the View settings.', 'gravityview-ratings-reviews' );

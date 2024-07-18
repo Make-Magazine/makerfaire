@@ -411,6 +411,7 @@
 	<div class="inside">
     	<table class="form-table">
     		<?php
+		    em_options_select( __( 'Default calendar size', 'events-manager'), 'dbem_calendar_size', array('auto' => esc_html__('Responsive', 'events-manager'), 'large' => esc_html__('Large', 'events-manager'), 'medium' => esc_html__('Medium', 'events-manager'), 'small' => esc_html__('Small', 'events-manager')), sprintf(__( 'Unless speficied with the %s parameter, the calendar will by default remain the chosen size regardless of calendar width. Responsive calendar size will adjust from small to large according to the calendar width on screen.','events-manager'), '<code>calendar_size</code>') );
 		    em_options_radio_binary ( __( 'Link directly to event on day with single event?', 'events-manager'), 'dbem_calendar_direct_links', __( "If a calendar day has only one event, you can force a direct link to the event (recommended to avoid duplicate content).",'events-manager') );
 		    em_options_radio_binary ( __( 'Show list on day with single event?', 'events-manager'), 'dbem_display_calendar_day_single', __( "By default, if a calendar day only has one event, it display a single event when clicking on the link of that calendar date. If you select Yes here, you will get always see a list of events.",'events-manager') );
 		    em_options_input_text ( __( 'Month format', 'events-manager'), 'dbem_full_calendar_month_format', __('The format of the month/year header of the calendar.','events-manager').' '.$date_time_format_tip);

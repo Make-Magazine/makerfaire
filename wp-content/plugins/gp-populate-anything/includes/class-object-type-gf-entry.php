@@ -284,7 +284,7 @@ class GPPA_Object_Type_GF_Entry extends GPPA_Object_Type {
 		 */
 		$filter_value_field_interpreted_multi_input = false;
 
-		if ( strpos( $filter['value'], 'gf_field:' ) === 0 && strpos( $filter['value'], '.' ) === false ) {
+		if ( is_string( $filter['value'] ) && strpos( $filter['value'], 'gf_field:' ) === 0 && strpos( $filter['value'], '.' ) === false ) {
 			$filter_value_field_id = str_replace( 'gf_field:', '', $filter['value'] );
 			$filter_value_field    = GFAPI::get_field( $primary_property_value, $filter_value_field_id );
 

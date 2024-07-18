@@ -8,7 +8,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * Modified by gravityview on 29-May-2024 using {@see https://github.com/BrianHenryIE/strauss}.
+ * Modified by gravityview on 05-June-2024 using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\GravityView\Symfony\Polyfill\Mbstring;

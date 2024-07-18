@@ -291,7 +291,7 @@ class Dashboard {
 		// get compare data scopes
 		if( $args['range_type'] !== 'all' && in_array( $args['compare'], array('custom', 'previous', 'year')) ) {
 			// get difference of dates for first scope and add it to the base date via DateTime
-			$start_scope_date = is_array($scope_dates[0]) ? $scope_dates[0][1] : $scope_dates[0];
+			$start_scope_date = is_array($scope_dates[0]) ? $scope_dates[0][0] : $scope_dates[0];
 			$end_scope_date   = is_array($scope_dates[0]) && !empty($scope_dates[0][1]) ? $scope_dates[0][1] : 'now';
 			$base_start_scope = new EM_DateTime( $start_scope_date, 'UTC' );
 			$base_end_scope   = new EM_DateTime( $end_scope_date, 'UTC' );

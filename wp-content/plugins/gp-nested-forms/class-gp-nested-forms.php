@@ -1397,6 +1397,9 @@ class GP_Nested_Forms extends GP_Plugin {
 		$is_all_fields = $merge_tag === 'all_fields';
 		$modifiers     = $is_all_fields ? "context[nested],parent[{$field->id}]," . $modifiers : $modifiers;
 
+		// Allow changing the format based on the modifier. Example: {Nested Form:1:index[0],filter[3],format[text]}
+		$format = $this->parse_modifier( 'format', $modifiers ) ? $this->parse_modifier( 'format', $modifiers ) : $format;
+
 		// When filtering down to a single field from the child form (via All Fields Template), show simplified template.
 		if ( $this->is_filtered_single( $modifiers, $field, $is_all_fields ) ) {
 			$index = $this->parse_modifier( 'index', $modifiers );
@@ -1404,6 +1407,19 @@ class GP_Nested_Forms extends GP_Plugin {
 				return $this->get_single_value( $index, $field, $value, $modifiers, $format );
 			}
 			return $this->get_filtered_single_template( $field, $raw_value, $modifiers, $format );
+		}
+
+		// When not filtering a single field, but filtering a single index.
+		$index = $this->parse_modifier( 'index', $modifiers );
+		if ( is_numeric( $index ) ) {
+			$values = explode( ',', $raw_value );
+			if ( $index < 0 ) {
+				$index = count( $values ) + $index;
+				$index = max( $index, 0 );
+			}
+			if ( isset( $values[ $index ] ) ) {
+				$raw_value = $values[ $index ];
+			}
 		}
 
 		// Provide opportunity for users to override the all entries template; no core template provided.

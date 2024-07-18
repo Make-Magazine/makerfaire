@@ -1,14 +1,15 @@
 === Gum Elementor Addon ===
 Contributors: celomitan
 Donate link: https://wordpressfoundation.org/donate/
-Tags: elementor, blog, slideshow, slider, popover, pricing, table, spot, post meta, post related, menu
-Requires at least: 3.7
-Tested up to: 6.4.3
-Requires PHP: 5.0
-Stable tag: 4.4
+Tags: elementor, blog, slide, pricing, menu
+Requires at least: 6.0
+Tested up to: 6.5.5
+Requires PHP: 7.0
+Stable tag: 1.3.6
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
+Offers inbuilt elementor widgets that help to create design more attractive
 == Description ==
 
 This plugin addon for Elementor Website Builder it mean you need install <a href="https://wordpress.org/plugins/elementor/">Elementor</a> plugin and activate before.
@@ -68,6 +69,9 @@ Not yet
 5. Three colors heading
 
 == Changelog ==
+= 1.3.6 =
+* Security issue fixing
+
 = 1.3.5 =
 * Security issue fixing
 

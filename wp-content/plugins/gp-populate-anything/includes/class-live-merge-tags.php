@@ -979,8 +979,11 @@ class GP_Populate_Anything_Live_Merge_Tags {
 			}
 
 			if ( $field->get_input_type() === 'number' ) {
-				/** @var \GF_Field_Number $field */
-				$entry_values[ $input_id ] = $field->clean_number( $entry_value );
+				if ( GFCommon::is_numeric( $entry_value, 'decimal_dot' ) ) {
+					$entry_values[ $input_id ] = GFCommon::clean_number( $entry_value, 'decimal_dot' );
+				} else if ( GFCommon::is_numeric( $entry_value, 'decimal_comma' ) ) {
+					$entry_values[ $input_id ] = GFCommon::clean_number( $entry_value, 'decimal_comma' );
+				}
 				continue;
 			}
 
@@ -1130,6 +1133,25 @@ class GP_Populate_Anything_Live_Merge_Tags {
 				$entry_values   = $entry_values + GFFormsModel::create_lead( $form );
 				$form['fields'] = $fields;
 			}
+
+			// LMT on checkbox value (like 1.1) on form load may result in PHP warning if not set, ensure that value is alteast set albeit empty on form load.
+			preg_match_all( '/{[^{]*?:(\d+(\.\w+)?)(:(.*?))?}/mi', $merge_tag, $matches, PREG_SET_ORDER );
+			$input_id = rgar( $matches[0], '1' );
+			if ( ! rgar( $entry_values, $input_id ) ) {
+				$entry_values[ $input_id ] = '';
+			}
+
+			// If we have an entry from something like Entry Details, GPEB, or GV, use it instead.
+			$entry_values = gf_apply_filters(
+				array(
+					'gppa_populate_form_entry',
+					$form['id'],
+				),
+				$entry_values,
+				$form,
+				false,
+				$entry_values
+			);
 
 			$merge_tag_match_value_html = GFCommon::replace_variables( $merge_tag, $form, $entry_values, false, false, false );
 

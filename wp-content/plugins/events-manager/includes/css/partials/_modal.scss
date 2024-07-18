@@ -71,6 +71,8 @@
 		transition: all $speed $easing !important;
 		transition-delay: $delay !important;
 		z-index: 99999 !important;
+		pointer-events: none;
+		touch-action: none;
 
 		&.active {
 			visibility: visible !important;
@@ -80,6 +82,8 @@
 			.em-modal-content, .em-close-modal {
 				opacity: 1 !important;
 			}
+			pointer-events: auto;
+			touch-action: auto;
 		}
 
 
