@@ -579,7 +579,7 @@ function th_register_cap_groups() {
     );
 }
 
-// turn off caching on gravity form pages
+/* turn off caching on gravity form pages
 function gf_wprocket()  {
     if(class_exists('WP_Rocket_Requirements_Check')) {
         add_filter( 'pre_get_rocket_option_delay_js', '__return_zero' );
@@ -591,3 +591,4 @@ function gf_wprocket()  {
     }
 }
 add_action( 'gform_register_init_scripts', 'gf_wprocket', 9999, 0 );
+*/
