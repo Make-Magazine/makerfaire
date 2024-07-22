@@ -390,32 +390,28 @@ if (!$displayMakers) {
     <?php
     }
     // If there is edit in the url, they get all these options          
-    if ($makerEdit) {
-        ////link to edit photos            
-        $GVeditLink = do_shortcode('[gv_entry_link action="edit" return="url" view_id="688349" entry_id="' . $entryId . '"]');
-
-
+    if ($makerEdit) {            
+                
     ?>
-        <script>
+        <script>        
             jQuery(function() {
-                jQuery("#dialog-form").dialog({
-                    autoOpen: false,
+                autoOpen = false;
+                //if there is an error on the submission, auto open the modal
+                if(jQuery(".gv-error").length){
+                    autoOpen = true;
+                }
+                dialog = jQuery("#dialog-form").dialog({
+                    autoOpen: autoOpen,
                     height: "auto",
                     width: 950,
                     modal: true,
-                    show: {
-                        effect: "blind",
-                        duration: 1000
-                    },
-                    hide: {
-                        effect: "explode",
-                        duration: 1000
-                    }
-                });
+                    closeOnEscape: false                   
+                });                
 
-                jQuery("#edit-photos").on("click", function() {
-                    jQuery("#dialog-form").dialog("open");
-                });
+                //open dialog/modal
+                jQuery("#edit-photos").on("click", function() {                    
+                    jQuery("#dialog-form").dialog("open");                                        
+                });                                
             });
         </script>
         <div class="makerEditHead" style="display:flex; justify-content: space-between; padding:10px; align-items: center;">
@@ -423,15 +419,13 @@ if (!$displayMakers) {
             <span>&nbsp;</span>
 
             <span style="font-size: 30px;">
-                <i>This is a a preview of your public entry page.</i>
+                <i>This is a preview of your public entry page.</i>
             </span>
             
-            <div id="dialog-form" title="Manage Public Information">
-                <p>
+            <div id="dialog-form" title="Update Public Information">                
                 <?php
                 echo do_shortcode('[gventry entry_id="' . $entryId . '" view_id="'.$form['gv_id_update_public_info'].'" edit="1"]');
-                ?>
-                </p>
+                ?>                                               
             </div>
             <button id="edit-photos">Edit Public Info</button>  
             <!--
