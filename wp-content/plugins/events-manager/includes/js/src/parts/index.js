@@ -618,7 +618,7 @@ jQuery(document).ready( function($){
 			// old method is splitting id with _ and second/third items are id and nonce, otherwise supply it all via data attributes
 			var button_data = button.attr('id').split('_');
 			let button_ajax = {};
-			if( button_data.length < 3 ){
+			if( button_data.length < 3 || !('booking_id' in button[0].dataset) ){
 				// legacy support
 				button_ajax = {
 					booking_id : button_data[1],

@@ -54,8 +54,8 @@ class GPPA_Compatibility_GravityFlow {
 				if ( $field->type == 'html' && $lmt->has_live_merge_tag( $field->content ) ) {
 					$lmt->populate_lmt_whitelist( $target_form );
 					$field->content = $lmt->replace_live_merge_tags_static( $field->content, $target_form, $new_entry );
-				} elseif ( $field->gppaEnable ) {
-					$hydrated_field            = gp_populate_anything()->populate_field( $field, $target_form, $new_entry, $new_entry );
+				} elseif ( gp_populate_anything()->is_field_dynamically_populated( $field ) || $lmt->has_live_merge_tag( $field->defaultValue ) ) {
+					$hydrated_field            = gp_populate_anything()->populate_field( $field, $target_form, $new_entry );
 					$new_entry[ $field['id'] ] = $hydrated_field['field_value'];
 				}
 			}

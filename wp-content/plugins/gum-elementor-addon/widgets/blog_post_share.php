@@ -517,7 +517,7 @@ class Gum_Elementor_Widget_Post_share extends Widget_Base {
 <?php }
 
     if($link_text!=''){ ?>
-    <span <?php echo $this->get_render_attribute_string( 'link_text' );?>><?php echo $link_text; ?></span><?php } ?></a>    
+    <span <?php echo $this->get_render_attribute_string( 'link_text' );?>><?php esc_html_e($link_text); ?></span><?php } ?></a>    
     <?php 
   }
 

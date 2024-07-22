@@ -4,6 +4,7 @@ namespace NinjaTables\App\Traits;
 
 use NinjaTables\App\Library\Csv\Reader;
 use NinjaTables\App\Modules\DragAndDrop\InitConfig;
+use NinjaTables\Framework\Support\Arr;
 use NinjaTables\Framework\Support\Sanitizer;
 
 trait ImportTrait
@@ -20,7 +21,7 @@ trait ImportTrait
     public function savedDragAndDropTable($csvData, $fileName)
     {
         if (isset($csvData['table_name'])) {
-            $tableId                   = $this->wpInsertPost($csvData['table_name']);
+            $tableId = $this->wpInsertPost($csvData['table_name']);
             $data    = $csvData;
         } else {
             $initConfig                = new InitConfig();
@@ -48,18 +49,32 @@ trait ImportTrait
 
     public static function importFromURL($url)
     {
-        $file_info                  = new \finfo(FILEINFO_MIME_TYPE);
-        $mime_type                  = $file_info->buffer(file_get_contents($url));
-        $_FILES['file']['type']     = $mime_type;
-        $_FILES['file']['tmp_name'] = $url;
+        $file_info     = new \finfo (FILEINFO_MIME_TYPE);
+        $remoteContent = ninjaTablesGetRemoteContent($url);
+        $fileType      = $file_info->buffer($remoteContent);
 
-        return $_FILES;
+        if ( ! in_array($fileType, static::$mimeTypes)) {
+            wp_send_json_error(array(
+                'errors'  => array(),
+                'message' => __('Please upload valid CSV or JSON', 'ninja-tables')
+            ), 423);
+        }
+
+        if ($fileType === 'application/json') {
+            $content = json_decode($remoteContent, true);
+
+            return $content;
+        } else {
+            $data = mb_convert_encoding($remoteContent, 'UTF-8', 'ISO-8859-1');
+
+            return Reader::createFromString($data)->fetchAll();
+        }
     }
 
     public static function getData()
     {
         $mimes    = static::$mimeTypes;
-        $fileType = Sanitizer::sanitizeTextField($_FILES['file']['type']);
+        $fileType = Sanitizer::sanitizeTextField(Arr::get($_FILES, 'file.type'));
 
         if ( ! in_array($fileType, $mimes)) {
             wp_send_json_error(array(
@@ -77,12 +92,10 @@ trait ImportTrait
 
     private static function importCSV()
     {
-        $tmpName = Sanitizer::sanitizeTextField($_FILES['file']['tmp_name']);
-        $data    = file_get_contents($tmpName);
-        $data    = mb_convert_encoding($data, 'UTF-8', 'ISO-8859-1');
+        $tmpName = Sanitizer::sanitizeTextField(Arr::get($_FILES, 'file.tmp_name'));
 
         try {
-            $reader = Reader::createFromString($data)->fetchAll();
+            $reader = Reader::createFromPath($tmpName, 'r');
         } catch (\Exception $exception) {
             wp_send_json_error(array(
                 'errors'  => $exception->getMessage(),
@@ -90,14 +103,11 @@ trait ImportTrait
             ), 423);
         }
 
-        return $reader;
+        return isset($reader) ? $reader->fetchAll() : [];
     }
 
     private static function importJSON()
     {
-        $tmpName = Sanitizer::sanitizeTextField($_FILES['file']['tmp_name']);
-        $content = json_decode(file_get_contents($tmpName), true);
-
         if (isset($content['table_id']) && isset($content['table_name'])) {
             return [
                 'table_name'       => $content['table_name'],
@@ -107,6 +117,9 @@ trait ImportTrait
                 'table_html'       => $content['table_html']
             ];
         } else {
+            $tmpName = Sanitizer::sanitizeTextField(Arr::get($_FILES, 'file.tmp_name'));
+            $content = json_decode(file_get_contents($tmpName), true);
+
             return $content;
         }
     }

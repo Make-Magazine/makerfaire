@@ -5,7 +5,7 @@
  * @package   GravityView_Ratings_Reviews
  * @license   GPL2+
  * @author    Katz Web Services, Inc.
- * @link      http://gravityview.co
+ * @link      http://www.gravitykit.com
  * @copyright Copyright 2014, Katz Web Services, Inc.
  *
  * @since 0.1.0
@@ -14,7 +14,6 @@
 defined( 'ABSPATH' ) || exit;
 
 class GravityView_Ratings_Reviews_Review_Walker extends Walker_Comment {
-
 	/**
 	 * @var GravityView_View
 	 */
@@ -30,6 +29,19 @@ class GravityView_Ratings_Reviews_Review_Walker extends Walker_Comment {
 	public function __construct( $gv_obj ) {
 		$this->gv_obj = $gv_obj;
 	}
+
+
+	/**
+	 * Returns the GravityView_View object.
+	 *
+	 * @since 2.3.0
+	 *
+	 * @return GravityView_View
+	 */
+	public function get_gv_obj() {
+		return $this->gv_obj;
+	}
+
 
 	/**
 	 * Output a single comment.
@@ -47,13 +59,11 @@ class GravityView_Ratings_Reviews_Review_Walker extends Walker_Comment {
 	 * @return void
 	 */
 	protected function comment( $comment, $depth, $args ) {
-		global $gv_ratings_reviews;
-
 		if ( 'div' == $args['style'] ) {
-			$tag = 'div';
+			$tag       = 'div';
 			$add_below = 'comment';
 		} else {
-			$tag = 'li';
+			$tag       = 'li';
 			$add_below = 'div-comment';
 		}
 

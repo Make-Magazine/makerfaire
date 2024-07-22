@@ -2,14 +2,14 @@
 # This file is distributed under the GPL2.
 msgid ""
 msgstr ""
-"Project-Id-Version: GP File Upload Pro 1.3.18\n"
-"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/cloned-perk-peegnucua\n"
+"Project-Id-Version: GP File Upload Pro 1.4\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/cloned-perk-YQW7XNYui\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2024-05-23T01:49:07+00:00\n"
+"POT-Creation-Date: 2024-06-21T01:27:52+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.10.0\n"
 "X-Domain: gp-file-upload-pro\n"
@@ -60,40 +60,57 @@ msgid "Crop"
 msgstr ""
 
 #: class-gp-file-upload-pro.php:408
-msgid "Cropping"
+msgid "Save"
 msgstr ""
 
 #: class-gp-file-upload-pro.php:409
-msgid "of"
+msgid "Rotate Right"
 msgstr ""
 
 #: class-gp-file-upload-pro.php:410
-msgid "This image does not meet the minimum dimensions: {minWidth}x{minHeight}px."
+msgid "Rotate Left"
 msgstr ""
 
 #: class-gp-file-upload-pro.php:411
-msgid "This image does not meet the minimum width: {minWidth}px."
+msgid "Cropping"
 msgstr ""
 
 #: class-gp-file-upload-pro.php:412
+msgid "Editing"
+msgstr ""
+
+#: class-gp-file-upload-pro.php:413
+#: class-gp-file-upload-pro.php:414
+msgid "of"
+msgstr ""
+
+#: class-gp-file-upload-pro.php:415
+msgid "This image does not meet the minimum dimensions: {minWidth}x{minHeight}px."
+msgstr ""
+
+#: class-gp-file-upload-pro.php:416
+msgid "This image does not meet the minimum width: {minWidth}px."
+msgstr ""
+
+#: class-gp-file-upload-pro.php:417
 msgid "This image does not meet the minimum height: {minHeight}px."
 msgstr ""
 
-#: class-gp-file-upload-pro.php:423
-#: class-gp-file-upload-pro.php:447
+#: class-gp-file-upload-pro.php:428
+#: class-gp-file-upload-pro.php:452
 msgid "Enable Cropping"
 msgstr ""
 
-#: class-gp-file-upload-pro.php:424
-#: class-gp-file-upload-pro.php:452
+#: class-gp-file-upload-pro.php:429
+#: class-gp-file-upload-pro.php:457
 msgid "Enable Sorting"
 msgstr ""
 
-#: class-gp-file-upload-pro.php:425
+#: class-gp-file-upload-pro.php:430
 msgid "Enable File Upload Pro"
 msgstr ""
 
-#: class-gp-file-upload-pro.php:426
+#: class-gp-file-upload-pro.php:431
 msgid ""
 "You are about to enable File Upload Pro on a Single File Upload field.\n"
 "\n"
@@ -102,89 +119,89 @@ msgid ""
 "Would you like to enable File Upload Pro on this field?"
 msgstr ""
 
-#: class-gp-file-upload-pro.php:427
+#: class-gp-file-upload-pro.php:432
 msgid "Require Crop"
 msgstr ""
 
-#: class-gp-file-upload-pro.php:428
+#: class-gp-file-upload-pro.php:433
 msgid "Constraints"
 msgstr ""
 
-#: class-gp-file-upload-pro.php:429
-#: class-gp-file-upload-pro.php:477
+#: class-gp-file-upload-pro.php:434
+#: class-gp-file-upload-pro.php:482
 msgid "Aspect Ratio"
 msgstr ""
 
-#: class-gp-file-upload-pro.php:430
+#: class-gp-file-upload-pro.php:435
 msgid "Max Dimensions"
 msgstr ""
 
-#: class-gp-file-upload-pro.php:431
+#: class-gp-file-upload-pro.php:436
 msgid "Min Dimensions"
 msgstr ""
 
-#: class-gp-file-upload-pro.php:432
-#: class-gp-file-upload-pro.php:462
+#: class-gp-file-upload-pro.php:437
+#: class-gp-file-upload-pro.php:467
 msgid "Exact Dimensions"
 msgstr ""
 
-#: class-gp-file-upload-pro.php:433
+#: class-gp-file-upload-pro.php:438
 msgid "Width"
 msgstr ""
 
-#: class-gp-file-upload-pro.php:434
+#: class-gp-file-upload-pro.php:439
 msgid "Height"
 msgstr ""
 
 #. translators: placeholder is URL to File Upload Pro FAQ
-#: class-gp-file-upload-pro.php:437
+#: class-gp-file-upload-pro.php:442
 msgid "This setting is required when File Upload Pro is enabled. <a href=\"%s\" target=\"_blank\">Learn more.</a>"
 msgstr ""
 
-#: class-gp-file-upload-pro.php:442
+#: class-gp-file-upload-pro.php:447
 msgid "File Upload Pro"
 msgstr ""
 
-#: class-gp-file-upload-pro.php:443
+#: class-gp-file-upload-pro.php:448
 msgid "Greatly improve the uploading experience for your Gravity Forms File Upload fields."
 msgstr ""
 
-#: class-gp-file-upload-pro.php:448
+#: class-gp-file-upload-pro.php:453
 msgid "Automatically crop images according to the specified constraints. Users may re-crop the image by clicking on the image thumbnail. Use the Require Crop setting to require the user to manually crop the image."
 msgstr ""
 
-#: class-gp-file-upload-pro.php:453
+#: class-gp-file-upload-pro.php:458
 msgid "Allow the order of files to be modified using drag-and-drop sorting in the uploader area."
 msgstr ""
 
-#: class-gp-file-upload-pro.php:457
+#: class-gp-file-upload-pro.php:462
 msgid "Require Crop on Upload"
 msgstr ""
 
-#: class-gp-file-upload-pro.php:458
+#: class-gp-file-upload-pro.php:463
 msgid "Require that images be cropped on upload by automatically opening the cropper. If the crop is canceled, the files are not uploaded."
 msgstr ""
 
-#: class-gp-file-upload-pro.php:463
+#: class-gp-file-upload-pro.php:468
 msgid "Require file to be upload with exact dimensions. These dimensions will be used as the minimum dimensions in the cropper and an aspect ratio will be derived from the dimensions. If an image exceeds the exact dimensions after cropping, it will be downscaled."
 msgstr ""
 
-#: class-gp-file-upload-pro.php:467
+#: class-gp-file-upload-pro.php:472
 msgid "Minimum Dimensions"
 msgstr ""
 
-#: class-gp-file-upload-pro.php:468
+#: class-gp-file-upload-pro.php:473
 msgid "Require cropper to meet the minimum dimensions. If cropper is not used, file dimensions will be validated prior to upload."
 msgstr ""
 
-#: class-gp-file-upload-pro.php:472
+#: class-gp-file-upload-pro.php:477
 msgid "Maximum Dimensions"
 msgstr ""
 
-#: class-gp-file-upload-pro.php:473
+#: class-gp-file-upload-pro.php:478
 msgid "Images will be downscaled to the maximum dimensions set below."
 msgstr ""
 
-#: class-gp-file-upload-pro.php:478
+#: class-gp-file-upload-pro.php:483
 msgid "Restrict cropper to aspect ratio."
 msgstr ""

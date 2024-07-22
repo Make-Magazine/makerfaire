@@ -98,7 +98,7 @@
 										if( !empty($action_links) ) {
 											if (is_array($action_links) ) {
 												?>
-												<button type="button" class="em-tooltip-ddm em-clickable input button-secondary" data-button-width="match" data-tooltip-class="em-my-bookings-actions-tooltip"><?php esc_html_e('Actions', 'events-manager-pro'); ?></button>
+												<button type="button" class="em-tooltip-ddm em-clickable input button-secondary" data-button-width="match" data-tooltip-class="em-my-bookings-actions-tooltip"><?php esc_html_e('Actions', 'events-manager'); ?></button>
 												<div class="em-tooltip-ddm-content em-my-bookings-actions-content">
 													<?php foreach( $action_links as $link ): ?>
 														<?php echo $link; ?>

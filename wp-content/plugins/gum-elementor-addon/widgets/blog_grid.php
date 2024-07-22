@@ -3788,7 +3788,7 @@ class Gum_Elementor_Widget_blog_grid extends Widget_Base {
       $divider = '';
 
       if($meta_divider == 'text'){
-        $divider = '<span>'.$divider_text.'</span>';
+        $divider = '<span>'.esc_html($divider_text).'</span>';
 
       }elseif($meta_divider == 'icon'){
         ob_start();
@@ -4068,7 +4068,7 @@ class Gum_Elementor_Widget_blog_grid extends Widget_Base {
 
             $author_id = get_post_field( 'post_author', $post_id );
             $meta_type = get_the_author_meta('nickname', $author_id);
-            $meta_url = get_the_author_meta('url',$author_id);
+            $meta_url = esc_url(get_the_author_meta('url',$author_id));
 
             break;
           case 'category_meta':
@@ -4134,7 +4134,7 @@ class Gum_Elementor_Widget_blog_grid extends Widget_Base {
           <?php Icons_Manager::render_icon( $settings['readmore_icon'], [ 'aria-hidden' => 'true' ] ); ?>
       </span>
       <?php endif; ?>
-      <span <?php echo $this->get_render_attribute_string( $index );?>><?php echo $settings['readmore_label']; ?></span>
+      <span <?php echo $this->get_render_attribute_string( $index );?>><?php echo esc_html($settings['readmore_label']); ?></span>
     </span>
   </a></div><?php
 

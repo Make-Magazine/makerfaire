@@ -492,8 +492,7 @@ class Gum_Elementor_Widget_Post_term extends Widget_Base {
        
       }
 
-
-    echo '<ul '.$this->get_render_attribute_string( 'list_wrapper' ).'>'.join('<li class="term-divider"><span>'.$separator.'</span></li>',$rows_html).'</ul>';
+    echo '<ul '.$this->get_render_attribute_string( 'list_wrapper' ).'>'.join('<li class="term-divider"><span>'.esc_html($separator).'</span></li>',$rows_html).'</ul>';
 
 
   }
@@ -832,6 +831,9 @@ class Gum_Elementor_Widget_Post_meta extends Widget_Base {
           'divider' => 'text',
         ],
         'default' => '-',
+        'ai' => [
+          'active' => false,
+        ],
         'dynamic' => [
           'active' => false,
         ],
@@ -1258,13 +1260,13 @@ class Gum_Elementor_Widget_Post_meta extends Widget_Base {
       } 
 
       if($meta_type!=''){
-          $rows_html[] = '<li class="list-meta">'. ( $meta_linked=='yes' ? sprintf('<a href="%s">'.$meta_icon_html.'<span class="meta-text">%s</span></a>', esc_url($meta_url), $meta_type) : sprintf( $meta_icon_html.'<span class="meta-text">%s</span>',$meta_type) ).'</li>';
+          $rows_html[] = '<li class="list-meta">'. ( $meta_linked=='yes' ? sprintf('<a href="%s">'.$meta_icon_html.'<span class="meta-text">%s</span></a>', esc_url($meta_url), esc_html($meta_type)) : sprintf( $meta_icon_html.'<span class="meta-text">%s</span>',esc_html($meta_type)) ).'</li>';
       }
      
     }
 
     if($divider == 'text'){
-      $divider = '<span>'.$divider_text.'</span>';
+      $divider = '<span>'.esc_html($divider_text).'</span>';
 
     }elseif($divider == 'icon'){
       ob_start();

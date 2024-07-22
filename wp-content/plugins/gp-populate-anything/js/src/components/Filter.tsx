@@ -1,7 +1,7 @@
 import useGPPAStore from '../store/store';
 import truncateStringMiddle from '../helpers/truncateStringMiddle';
-import { useEffect } from 'react';
 import Select from './Select';
+import useDeepCompareEffect from 'use-deep-compare-effect';
 
 const { strings, defaultOperators } = window.GPPA_ADMIN;
 
@@ -85,21 +85,34 @@ const Filter = ({
 	});
 
 	// If filter.property is not set, set it to the first property
-	useEffect(() => {
+	useDeepCompareEffect(() => {
 		if (!filter.property) {
+			let property = '';
+
+			// Get the first from either ungrouped or grouped properties. First, try ungrouped.
+			if (filterPropertiesUngrouped?.length) {
+				property = filterPropertiesUngrouped[0].value;
+			} else {
+				const firstGroup = Object.values(filterPropertiesGrouped)[0];
+				if (firstGroup?.length) {
+					property = firstGroup[0].value;
+				}
+			}
+
 			updateFilter(groupIndex, index, {
-				property: filterPropertiesUngrouped?.[0].value,
+				property,
 			});
 		}
 	}, [
 		filter.property,
 		filterPropertiesUngrouped,
+		filterPropertiesGrouped,
 		groupIndex,
 		index,
 		updateFilter,
 	]);
 
-	useEffect(() => {
+	useDeepCompareEffect(() => {
 		getPropertyValues(filter.property);
 	}, [getPropertyValues, filter.property, fieldId]);
 
@@ -116,7 +129,7 @@ const Filter = ({
 			<select
 				disabled={!propertiesLoaded}
 				className="gppa-filter-property"
-				value={propertiesLoaded ? filter.property ?? 'name' : ''}
+				value={propertiesLoaded ? filter.property : ''}
 				onChange={(event) =>
 					updateFilter(groupIndex, index, {
 						property: event.target.value,

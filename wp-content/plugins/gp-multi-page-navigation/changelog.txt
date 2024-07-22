@@ -1,6 +1,10 @@
 
 # Changelog
 
+## 1.2.10 | May 29, 2024
+
+- Added support for 'Next Page with Errors' link to work with all progress indicators.
+
 ## 1.2.9 | May 22, 2024
 
 - Fixed broken documentation link.

@@ -405,7 +405,12 @@ class GP_File_Upload_Pro extends GP_Plugin {
 				'or'                               => __( 'or', 'gp-file-upload-pro' ),
 				'cancel'                           => __( 'Cancel', 'gp-file-upload-pro' ),
 				'crop'                             => __( 'Crop', 'gp-file-upload-pro' ),
+				'save'                             => __( 'Save', 'gp-file-upload-pro' ),
+				'rotateRight'                      => __( 'Rotate Right', 'gp-file-upload-pro' ),
+				'rotateLeft'                       => __( 'Rotate Left', 'gp-file-upload-pro' ),
 				'cropping'                         => __( 'Cropping', 'gp-file-upload-pro' ),
+				'editing'                          => __( 'Editing', 'gp-file-upload-pro' ),
+				'editingOf'                        => __( 'of', 'gp-file-upload-pro' ), // Editing x _of_ y.
 				'croppingOf'                       => __( 'of', 'gp-file-upload-pro' ), // Cropping x _of_ y.
 				'does_not_meet_minimum_dimensions' => __( 'This image does not meet the minimum dimensions: {minWidth}x{minHeight}px.', 'gp-file-upload-pro' ),
 				'does_not_meet_minimum_width'      => __( 'This image does not meet the minimum width: {minWidth}px.', 'gp-file-upload-pro' ),

@@ -7,7 +7,7 @@ export default function () {
 		state: {
 			currentFile: null,
 			originals: {},
-			croppedCoords: {},
+			cropperResults: {},
 			open: false,
 		},
 		getters: {
@@ -24,7 +24,7 @@ export default function () {
 				return state.originals[state.currentFile?.id]?.src;
 			},
 			imgSize: (state: any) => {
-				const cropped = state.croppedCoords[state.currentFile?.id];
+				const cropped = state?.cropperResults[state.currentFile?.id]?.coords;
 
 				if (cropped) {
 					return {
@@ -35,8 +35,11 @@ export default function () {
 
 				return state.originals[state.currentFile?.id]?.size;
 			},
+			imgOriginalSize: (state: any) => {
+				return state.originals[state.currentFile?.id]?.size;
+			},
 			imgPos: (state: any) => {
-				const cropped = state.croppedCoords[state.currentFile?.id];
+				const cropped = state?.cropperResults[state.currentFile?.id]?.coords;
 
 				if (cropped) {
 					return {
@@ -49,6 +52,11 @@ export default function () {
 					top: 0,
 					left: 0,
 				};
+			},
+			imgTransforms: (state: any) => {
+				const imageTransforms = state?.cropperResults[state.currentFile?.id]?.imageTransforms;
+
+				return imageTransforms;
 			}
 		},
 		actions: {
@@ -108,24 +116,32 @@ export default function () {
 
 				context.rootState.storage.transferOriginal(newFileId, currentFileId);
 			},
-			async transferCoords(context: any, {
+			async transferResults(context: any, {
 				currentFileId,
 				newFileId
 			}: { currentFileId: string, newFileId: string }) {
-				context.commit('TRANSFER_COORDS', {
+				context.commit('TRANSFER_RESULTS', {
 					currentFileId,
 					newFileId,
 				});
 
-				context.rootState.storage.transferCoords(newFileId, currentFileId);
+				context.rootState.storage.transferResults(newFileId, currentFileId);
 			},
-			async storeCroppedCoords(context: any, {fileId, coords}: { fileId: string, coords: Coords }) {
-				context.commit('STORE_CROPPED_COORDS', {
-					fileId,
+			async storeCroppedResults(context: any, {fileId, coords, imageTransforms}: { fileId: string, coords: Coords, imageTransforms: ImageTransforms }) {
+				const results = {
 					coords,
+					imageTransforms,
+				};
+
+				context.commit('STORE_CROPPER_RESULTS', {
+					fileId,
+					results,
 				});
 
-				context.rootState.storage.storeCoords(fileId, coords);
+				context.rootState.storage.storeCroppedResults(fileId, {
+					coords,
+					results,
+				});
 			}
 		},
 		mutations: {
@@ -159,18 +175,18 @@ export default function () {
 				Vue.set(state.originals, newFileId, state.originals?.[currentFileId]);
 				Vue.delete(state.originals, currentFileId);
 			},
-			TRANSFER_COORDS(
+			TRANSFER_RESULTS(
 				state: any,
 				{newFileId, currentFileId}: { newFileId: string, currentFileId: string }
 			) {
-				Vue.set(state.croppedCoords, newFileId, state.croppedCoords?.[currentFileId]);
-				Vue.delete(state.croppedCoords, currentFileId);
+				Vue.set(state.cropperResults, newFileId, state.cropperResults?.[currentFileId]);
+				Vue.delete(state.cropperResults, currentFileId);
 			},
-			STORE_CROPPED_COORDS(
+			STORE_CROPPER_RESULTS(
 				state: any,
-				{fileId, coords}: { filename: string, fileId: string, coords: Coords },
+				{fileId, results}: { filename: string, fileId: string, results: CropperResults },
 			) {
-				Vue.set(state.croppedCoords, fileId, coords);
+				Vue.set(state.cropperResults, fileId, results);
 			},
 		},
 	}

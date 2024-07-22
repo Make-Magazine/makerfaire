@@ -486,17 +486,16 @@ class Gum_Elementor_Widget_Accordion{
               <?php } ?>
               </span>
             <?php endif; ?>
-            <a class="elementor-accordion-title" href=""><?php echo $item['tab_title']; 
+            <a class="elementor-accordion-title" href=""><?php echo esc_html($item['tab_title']); 
 
             $iconHTML = '';
 
             if(!empty($item['tab_icon']['value'])){
                 ob_start();
                 Icons_Manager::render_icon( $item['tab_icon'], [ 'aria-hidden' => 'true' ] );
-                $iconHTML = ob_get_clean();
+                echo ob_get_clean();
             }
 
-            print $iconHTML;
 
           ?></a>
           </<?php echo Utils::validate_html_tag( $settings['title_html_tag'] ); ?>>

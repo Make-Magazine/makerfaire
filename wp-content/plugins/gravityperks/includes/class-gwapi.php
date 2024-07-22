@@ -356,6 +356,7 @@ class GWAPI {
 				'download_link',
 				'categories',
 				'documentation',
+				'changelog',
 				'legacy_version',
 				'legacy_changelog',
 				'legacy_version_requirement',

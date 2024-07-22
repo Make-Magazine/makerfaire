@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: Events Manager
-Version: 6.4.7.3
+Version: 6.4.10.2
 Plugin URI: https://wp-events-plugin.com
 Description: Event registration and booking management for WordPress. Recurring events, locations, webinars, google maps, rss, ical, booking registration and more!
 Author: Pixelite
@@ -28,7 +28,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
 // Setting constants
-define('EM_VERSION', '6.4.7.3'); //self expanatory, although version currently may not correspond directly with published version number. until 6.0 we're stuck updating 5.999.x
+define('EM_VERSION', '6.4.10.2'); //self expanatory, although version currently may not correspond directly with published version number. until 6.0 we're stuck updating 5.999.x
 define('EM_PRO_MIN_VERSION', '3.0'); //self expanatory
 define('EM_PRO_MIN_VERSION_CRITICAL', '3.0'); //self expanatory
 define('EM_DIR', dirname( __FILE__ )); //an absolute path to this directory
@@ -375,13 +375,13 @@ class EM_Scripts_and_Styles {
 	}
 	
 	public static function enqueue_public_styles( $deps = array(), $min = true ){
-		$min = static::get_minified_extension( $min );
+		$min = static::get_minified_extension_css( $min );
 		wp_enqueue_style('events-manager', plugins_url('includes/css/events-manager' . $min . '.css', __FILE__), $deps, EM_VERSION); //main css
 		do_action('em_enqueue_styles', $deps, $min);
 	}
 	
 	public static function enqueue_scripts( $deps = null, $min = true ){
-		$min = static::get_minified_extension( $min );
+		$min = static::get_minified_extension_js( $min );
 		if( $deps === null ){
 			// default deps if null
 			$deps = array('jquery', 'jquery-ui-core','jquery-ui-widget','jquery-ui-position','jquery-ui-sortable','jquery-ui-datepicker','jquery-ui-dialog','wp-color-picker');
@@ -396,9 +396,19 @@ class EM_Scripts_and_Styles {
 	}
 	
 	public static function enqueue_admin_styles( $deps = array(), $min = true ){
-		$min = static::get_minified_extension( $min );
+		$min = static::get_minified_extension_css( $min );
 		wp_enqueue_style('events-manager-admin', plugins_url('includes/css/events-manager-admin'.$min.'.css',__FILE__), $deps, EM_VERSION);
 		do_action('em_enqueue_admin_styles', $deps, $min);
+	}
+	
+	public static function get_minified_extension_css( $minified = true ) {
+		if( !get_option('dbem_css_minified', false) ) return ''; // force non-minified file for now, because AVAST AVG is giving a false positive and wreaking havoc
+		return static::get_minified_extension( $minified );
+	}
+	
+	public static function get_minified_extension_js( $minified = true ) {
+		if( !get_option('dbem_js_minified', false) ) return ''; // force non-minified file for now, because AVAST AVG is giving a false positive and wreaking havoc
+		return static::get_minified_extension( $minified );
 	}
 	
 	public static function get_minified_extension( $minified = true ){
@@ -907,6 +917,11 @@ function em_get_template_components_classes( $component ){
 			array_unshift($component_classes, 'em-list-widget');
 			break;
 		// Admin Areas
+		case 'bookings-table':
+			$component_classes[] = 'has-filter';
+			$show_theme_class = true;
+			$show_theme_class_admin = 0;
+			break;
 		case 'bookings-admin':
 			$show_theme_class = get_option('dbem_css_rsvpadmin');
 			$show_theme_class_admin = 0;
@@ -937,7 +952,7 @@ function em_get_template_components_classes( $component ){
  *
  * @param string|false $component           The component being displayed, such as events-list, single-event, etc. and these are usually repeated into the classlist with an em- prefix
  * @param string|array $subcomponents       Additional CSS components to be added which will get prefixed with em-
- * @param string|array $just_subcomponent   If you want to display subcomponent clasess, but also decide whether to show the base classes ('em' and 'pixelbones') based on the main component, set to true and main component classes will not be returned
+ * @param string|array $just_subcomponent   If you want to display subcomponent clases, but also decide whether to show the base classes ('em' and 'pixelbones') based on the main component, set to true and main component classes will not be returned
  * @return array
  */
 function em_get_template_classes($component, $subcomponents = array(), $just_subcomponent = false ){

@@ -113,9 +113,13 @@ class Modules_Manager {
 			'announcements',
 			'site-navigation',
 			'styleguide',
+			'element-cache',
 			'apps',
 			'home',
+			'link-in-bio',
+			'floating-buttons',
 			'content-sanitizer',
+			'editor-events',
 		];
 	}
 

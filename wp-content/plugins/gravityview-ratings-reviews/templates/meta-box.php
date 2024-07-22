@@ -15,9 +15,15 @@ defined( 'ABSPATH' ) || exit;
 
 	GravityView_Render_Settings::render_setting_row( 'allow_entry_reviews', $current_settings );
 	GravityView_Render_Settings::render_setting_row( 'entry_review_type', $current_settings );
+	GravityView_Render_Settings::render_setting_row( 'disable_downvoting', $current_settings );
+	GravityView_Render_Settings::render_setting_row( 'rating_required', $current_settings );
 	GravityView_Render_Settings::render_setting_row( 'limit_one_review_per_person', $current_settings );
 	GravityView_Render_Settings::render_setting_row( 'hide_ratings', $current_settings );
+	GravityView_Render_Settings::render_setting_row( 'hide_title_and_desc', $current_settings );
 	GravityView_Render_Settings::render_setting_row( 'allow_empty_reviews', $current_settings );
+	GravityView_Render_Settings::render_setting_row( 'allow_reviews_edit', $current_settings );
+	GravityView_Render_Settings::render_setting_row( 'allow_reviews_edit_duration', $current_settings );
+	GravityView_Render_Settings::render_setting_row( 'show_gravatar_for_review', $current_settings );
 
 	do_action( 'gravityview_metabox_ratings_reviews_after', $current_settings );
 	?>

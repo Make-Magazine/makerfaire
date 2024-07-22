@@ -1,7 +1,7 @@
 === GravityView - Ratings Reviews Extension ===
 Tags: gravityview
 Requires at least: 4.4
-Tested up to: 6.1
+Tested up to: 6.6
 Stable tag: trunk
 Contributors: gravitykit, bordoni, akeda
 License: GPL 3 or higher
@@ -22,6 +22,36 @@ Enable Ratings and Reviews for entries in GravityView.
 Administrators, users who are able to moderate comments, and users who have full permission for Gravity Forms functionality are able to leave unlimited comments on ratings.
 
 == Changelog ==
+
+= 2.3.1 on July 15, 2024 =
+
+This is a minor update that fixes a fatal error.
+
+* Fixed: Fatal error dividing by zero when calculating average rating
+
+= 2.3 on July 11, 2024 =
+
+This is a major update that introduces new features for anonymous reviews, enhanced control over the review form, Merge Tags, and additional customization options.
+
+#### 🚀 Added
+- Anonymous (not logged in) users can now leave reviews/vote on entries. [Learn more about anonymous reviews](https://docs.gravitykit.com/article/1014-ratings-reviews-anonymous-reviews).
+- Option to allow users to edit their reviews.
+- Ability to sort entries by the number of upvotes.
+- View setting to hide "Title" and "Rating" fields.
+- Support for displaying the reviewer's avatar next to their review.
+- Ratings can now be *required* on a review.
+- View setting to disable downvoting.
+- Merge Tags to display the total and average number of entry stars and votes. [See all available Merge Tags](https://docs.gravitykit.com/article/1012-ratings-reviews-merge-tags).
+
+#### 🐛 Fixed
+- Typo in an error message when a user tries to leave a review, but they're not allowed.
+- The Rate Entry field was not allowing ratings when using the DataTables layout.
+- Improved translation strings.
+- PHP 8.2 deprecation notices.
+
+#### 🔧 Developer Updates
+- Added: `gv_ratings_reviews_disable_downvoting` filter to disable downvoting (default is `false` or the value set in the View settings). [Learn more about the filter](https://docs.gravitykit.com/article/1013-ratings-reviews-hooks).
+- Added: `gravityview_ratings_reviews_merge_tags` and `gravityview_ratings_reviews_replace_merge_tag` filters to add additional Merge Tags and replace their contents. [Learn more about the filter](https://docs.gravitykit.com/article/1013-ratings-reviews-hooks).
 
 = 2.2.1 on February 15, 2023 =
 
@@ -153,4 +183,4 @@ __Developer Updates:__
 * Initial release
 
 
-= 1689871467-4249 =
+= 1721335883-4249 =

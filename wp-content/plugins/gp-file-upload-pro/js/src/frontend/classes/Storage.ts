@@ -43,8 +43,8 @@ export default class Storage {
 		return localforage.getItem(`${this.prefix}-${fileId}-original`);
 	}
 
-	getCoords(fileId: string) : Promise<Coords | null> {
-		return localforage.getItem(`${this.prefix}-${fileId}-coords`);
+	getCroppedResults(fileId: string) : Promise<Coords | null> {
+		return localforage.getItem(`${this.prefix}-${fileId}-cropper-results`);
 	}
 
 	async storeFileInfo(files: MOxieFile[]) : Promise<void> {
@@ -88,19 +88,19 @@ export default class Storage {
 		localforage.setItem(`${this.prefix}-${fileId}-preview-dimensions`, dimensions);
 	}
 
-	storeCoords(fileId: string, coords: Coords) : void {
-		localforage.setItem(`${this.prefix}-${fileId}-coords`, coords);
+	storeCroppedResults(fileId: string, results: CropperResults) : void {
+		localforage.setItem(`${this.prefix}-${fileId}-cropper-results`, results);
 	}
 
-	async transferCoords(newFileId: string, currentFileId: string) : Promise<void> {
-		const existingKey = `${this.prefix}-${currentFileId}-coords`;
-		const existingCoords = await localforage.getItem(existingKey);
+	async transferResults(newFileId: string, currentFileId: string) : Promise<void> {
+		const existingKey = `${this.prefix}-${currentFileId}-cropper-results`;
+		const existingResults = await localforage.getItem(existingKey);
 
-		if (!existingCoords) {
+		if (!existingResults) {
 			return;
 		}
 
-		await localforage.setItem(`${this.prefix}-${newFileId}-coords`, existingCoords);
+		await localforage.setItem(`${this.prefix}-${newFileId}-cropper-results`, existingResults);
 		await localforage.removeItem(existingKey);
 	}
 

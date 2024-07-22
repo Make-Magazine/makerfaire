@@ -1480,7 +1480,7 @@ class Gum_Elementor_Widget_Post_related extends Widget_Base {
     $post_id = get_the_ID();
 
     $query_params= array(
-      'posts_per_page' => $posts_per_page,
+      'posts_per_page' => absint($posts_per_page),
       'no_found_rows' => true,
       'post_status' => 'publish',
       'post_type'=>'post',
@@ -1697,7 +1697,7 @@ class Gum_Elementor_Widget_Post_related extends Widget_Base {
           <?php Icons_Manager::render_icon( $settings['readmore_icon'], [ 'aria-hidden' => 'true' ] ); ?>
       </span>
       <?php endif; ?>
-      <span <?php echo $this->get_render_attribute_string( $index );?>><?php echo $settings['readmore_label']; ?></span>
+      <span <?php echo $this->get_render_attribute_string( $index );?>><?php echo esc_html($settings['readmore_label']); ?></span>
     </span>
   </a></div><?php
 

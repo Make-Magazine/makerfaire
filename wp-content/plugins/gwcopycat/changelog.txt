@@ -1,6 +1,14 @@
 
 # Changelog
 
+## 1.4.81 | July 17, 2024
+
+- Fixed an issue where conditionally hidden fields would still trigger a copy action.
+
+## 1.4.80 | July 9, 2024
+
+- Fixed an issue where conditional fields copy over empty values.
+
 ## 1.4.79 | May 15, 2024
 
 - Fixed issues concerning copying to List fields and when it would overwrite and not overwrite.

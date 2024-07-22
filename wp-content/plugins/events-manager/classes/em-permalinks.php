@@ -76,7 +76,7 @@ if( !class_exists('EM_Permalinks') ){
 				}elseif( $wp_query->get('category_slug') ){
 					$url = get_term_link($wp_query->get('category_slug'), EM_TAXONOMY_CATEGORY);
 				}
-				if(!empty($url)){
+				if( !empty($url) && is_string($url) ){
 					wp_safe_redirect($url,301);
 					exit();
 				}
@@ -200,17 +200,18 @@ if( !class_exists('EM_Permalinks') ){
 					$em_rules[$locations_slug.'/'.get_site_option('dbem_ms_locations_slug',EM_LOCATION_SLUG).'/(.+)$'] = 'index.php?pagename='.trim($locations_slug,'/').'&location_slug=$matches[1]'; //single event booking form with slug
 				}					
 			}
-			//add ical CPT endpoints
-			$em_rules[EM_POST_TYPE_EVENT_SLUG."/(.+)/ical/?$"] = 'index.php?'.EM_POST_TYPE_EVENT.'=$matches[1]&ical=1';
+			// add ical CPT endpoints
 			if( get_option('dbem_locations_enabled') ){
 				$em_rules[EM_POST_TYPE_LOCATION_SLUG."/([^/]+)/ical/?$"] = 'index.php?'.EM_POST_TYPE_LOCATION.'=$matches[1]&ical=1';
 			}
-			//add ical taxonomy endpoints
+			// add ical taxonomy endpoints
 			$taxonomies = EM_Object::get_taxonomies();
 			foreach($taxonomies as $tax_arg => $taxonomy_info){
 				//set the dynamic rule for this taxonomy
 				$em_rules[$taxonomy_info['slug']."/(.+)/ical/?$"] = 'index.php?'.$taxonomy_info['query_var'].'=$matches[1]&ical=1';
 			}
+			// add ical endpoint for events (last in case of subdierctory overlap
+			$em_rules[EM_POST_TYPE_EVENT_SLUG."/(.+)/ical/?$"] = 'index.php?'.EM_POST_TYPE_EVENT.'=$matches[1]&ical=1';
 			//add RSS location CPT endpoint
 			if( get_option('dbem_locations_enabled') ){
 				$em_rules[EM_POST_TYPE_LOCATION_SLUG."/([^/]+)/rss/?$"] = 'index.php?'.EM_POST_TYPE_LOCATION.'=$matches[1]&rss=1';

@@ -5,7 +5,7 @@
  * @package   GravityView_Ratings_Reviews
  * @license   GPL2+
  * @author    Katz Web Services, Inc.
- * @link      http://gravityview.co
+ * @link      http://www.gravitykit.com
  * @copyright Copyright 2015, Katz Web Services, Inc.
  *
  * @since 0.1.1
@@ -15,7 +15,6 @@ defined( 'ABSPATH' ) || exit;
 
 class GravityView_Ratings_Reviews_Form_Fields extends GravityView_Ratings_Reviews_Component {
 
-	
 	/**
 	 * Callback when this component is loaded by the loader.
 	 *
@@ -127,12 +126,25 @@ class GravityView_Ratings_Reviews_Form_Fields extends GravityView_Ratings_Review
 	}
 
 	/**
-	 * Check whether we're currently on the export screen
+	 * Check whether we're currently on the export screen.
+	 *
 	 * @since 0.1.1
-	 * @return boolean True: Yep; False: nope
+	 *
+	 * @return bool True if it is an export screen, false otherwise.
 	 */
 	private static function is_export_screen() {
-		return ( ! empty( $_GET['page'] ) && 'gf_export' === $_GET['page'] ) || ( ! empty( $_REQUEST['action'] ) && 'rg_select_export_form' === $_REQUEST['action'] );
+
+		if ( ! class_exists( 'GFForms' ) ) {
+			return false;
+		}
+
+		$page = GFForms::get_page();
+
+		if ( in_array( $page, [ 'export_entry', 'export_entry_ajax' ], true ) ) {
+			return true;
+		}
+
+		return false;
 	}
 
 	/**

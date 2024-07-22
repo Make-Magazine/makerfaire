@@ -24,11 +24,15 @@ if( is_user_logged_in() ){ //only show this to logged in users
 		$EM_Booking = $EM_Event->get_bookings()->has_booking();
 		if( is_object($EM_Booking) && $EM_Booking->booking_status != 3 && get_option('dbem_bookings_user_cancellation') ){
 			$status = 'cancel';
-			?><a id="em-cancel-button_<?php echo $EM_Booking->booking_id; ?>_<?php echo wp_create_nonce('booking_cancel'); ?>" class="button em-cancel-button" href="#"><?php echo $button_cancel; ?></a><?php
+			$booking_id = $EM_Booking->booking_id;
+			$nonce = wp_create_nonce('booking_cancel');
+			?><a id="em-cancel-button_<?php echo $booking_id . '_' . $nonce; ?>" class="button em-cancel-button" href="#" data-booking_id="<?php echo $booking_id; ?>" data-_wpnonce="<?php echo $nonce; ?>" data-action="booking_cancel"><?php echo $button_cancel; ?></a><?php
 		}elseif( $EM_Event->get_bookings()->is_open() ){
 			if( !is_object($EM_Booking) ){
 				$status = 'open';
-				?><a id="em-booking-button_<?php echo $EM_Event->event_id; ?>_<?php echo wp_create_nonce('booking_add_one'); ?>" class="button em-booking-button" href="#"><?php echo $button_text; ?></a><?php
+				$event_id = absint($EM_Event->event_id);
+				$nonce = wp_create_nonce('booking_add_one');
+				?><a id="em-booking-button_<?php echo $event_id .'_'. $nonce; ?>" class="button em-booking-button" href="#"  data-event_id="<?php echo $event_id; ?>" data-_wpnonce="<?php echo $nonce; ?>" data-action="booking_add_one"><?php echo $button_text; ?></a><?php
 			}else{
 				$status = 'booked';
 				?><span class="em-booked-button"><?php echo $button_already_booked ?></span><?php

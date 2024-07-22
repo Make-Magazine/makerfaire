@@ -3,7 +3,7 @@
 /* @var int $id */
 /* @var EM_Event $EM_Event */
 ?>
-<?php if( get_option('dbem_timezone_enabled') ): ?>
+<?php if( get_option('dbem_timezone_enabled') || $EM_Event->event_timezone !== get_option('timezone_string') ): ?>
 	<p class="em-timezone">
 		<label for="event-timezone-<?php echo $id; ?>"><?php esc_html_e('Timezone', 'events-manager'); ?></label>
 		<select id="event-timezone-<?php echo $id; ?>" name="event_timezone" class="em-selectize">

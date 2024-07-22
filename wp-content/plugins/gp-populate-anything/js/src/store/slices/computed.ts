@@ -538,6 +538,7 @@ export const createComputedSlice: StateCreator<
 						templateRows.push({
 							id: 'value',
 							label: strings.value,
+							required: true,
 						});
 					}
 					break;

@@ -71,7 +71,7 @@ class GP_Preview_Submission extends GWPerk {
 				}
 
 				gppsDoingMergeTags = true;
-				var allTags = gfMergeTags.getMergeTags( Copy( form.fields ), elementId, hideAllFields, excludeFieldTypes, false, option );
+				var allTags = window.gfMergeTags ? window.gfMergeTags.getMergeTags( Copy( form.fields ), elementId, hideAllFields, excludeFieldTypes, false, option ) : '';
 				gppsDoingMergeTags = false;
 
 				for( var key in allTags ) {

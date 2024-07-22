@@ -132,6 +132,14 @@ function my_custom_form_setting($settings, $form) {
          )
       )
    );
+
+   //gravityView for update public info
+   $mf_settings['mf_settings']['fields'][] = array(				
+      'name'  => 'gv_id_update_public_info',
+      'type'  => 'text',
+      'label' => 'Gravity View ID for Update Public Info'      
+   );
+
    //place MakerFaire section after Form Basics, and then append all other sections after
    $newSettings = array_merge(array_slice($settings, 0, 1, true), 
    $mf_settings,

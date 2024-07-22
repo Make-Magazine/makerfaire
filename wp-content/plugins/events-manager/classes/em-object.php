@@ -124,9 +124,12 @@ class EM_Object {
 				$array['near_unit'] = !empty($array['near_unit']) && in_array($array['near_unit'], array('km','mi')) ? $array['near_unit']:$defaults['near_unit']; //default is 'mi'
 				$array['near_distance'] = !empty($array['near_distance']) && is_numeric($array['near_distance']) ? absint($array['near_distance']) : $defaults['near_distance']; //default is 25
 			}
-			//Country - Turn into array for multiple search if comma-separated 
-			if( !empty($array['country']) && is_string($array['country']) && preg_match('/^( ?.+ ?,?)+$/', $array['country']) ){
-			    $array['country'] = explode(',',$array['country']);
+			//Locations - Turn into array for multiple search if comma-separated
+			$location_fields = array('country','town','state','region','postcode');
+			foreach( $location_fields as $location_field ) {
+				if( !empty($array[$location_field]) && is_string($array[$location_field]) && preg_match('/^( ?.+ ?,?)+$/', $array[$location_field]) ){
+					$array[$location_field] = explode(',',$array[$location_field]);
+				}
 			}
 			//TODO validate search query array
 			//Clean the supplied array, so we only have allowed keys
@@ -459,43 +462,48 @@ class EM_Object {
 			$unit = ( !empty($args['near_unit']) && $args['near_unit'] == 'km' ) ? 6371 /* kilometers */ : 3959 /* miles */;
 			$conditions['near'] = "( $unit * acos( cos( radians({$args['near'][0]}) ) * cos( radians( location_latitude ) ) * cos( radians( location_longitude ) - radians({$args['near'][1]}) ) + sin( radians({$args['near'][0]}) ) * sin( radians( location_latitude ) ) ) ) < $distance";
 		}else{
-			//country lookup
+			//country lookup and cleanup
 			if( !empty($args['country']) ){
 				$countries = em_get_countries();
+				$countries_search = array();
 				//we can accept country codes or names so we need to change names to country codes
-				$country_arg = !is_array($args['country']) ? array($args['country']) : $args['country'];
+				$country_arg = !is_array($args['country']) ? explode(',', $args['country']) : $args['country'];
 			    foreach( $country_arg as $country ){
-    			    if( array_key_exists($country, $countries) ){
+					$country_clean = $country[0] === '-' ? substr($country, 1) : $country;
+    			    if( array_key_exists($country_clean, $countries) ){
         					//we have a country code
         				$countries_search[] = $country;					
-        			}elseif( in_array($country, $countries) ){
+        			}elseif( in_array($country_clean, $countries) ){
         				//we have a country name, 
         				$countries_search[] = array_search($country, $countries);
     			    }
 			    }
-			    if( !empty($countries_search) ){
-			        if( count($countries_search) > 1 ){
-			            $conditions['country'] = "location_country IN ('".implode("','",$countries_search)."')";
-			        }else{
-			            $conditions['country'] = "location_country='".array_pop($countries_search)."'";
-			        }
-			    }
+				$args['country'] = $countries_search;
 			}
-			//state lookup
-			if( !empty($args['state']) ){
-				$conditions['state'] = $wpdb->prepare('location_state=%s', $args['state']);
-			}
-			//town lookup
-			if( !empty($args['town']) ){
-				$conditions['town'] = $wpdb->prepare('location_town=%s', $args['town']);
-			}
-			//region lookup
-			if( !empty($args['region']) ){
-				$conditions['region'] = $wpdb->prepare('location_region=%s', $args['region']);
-			}
-			//postcode lookup
-			if( !empty($args['postcode']) ){
-				$conditions['postcode'] = $wpdb->prepare('location_postcode=%s', $args['postcode']);
+			$location_fields = array('country','town','state','region','postcode');
+			foreach( $location_fields as $loc_field ) {
+				if ( !empty( $args[$loc_field] ) ) {
+					$search_arg = is_array( $args[$loc_field] ) ? $args[$loc_field] : explode( ',', $args[$loc_field] );
+					// create array of include/exclude values
+					$search_placeholders = array( 'include' => array(), 'exclude' => array() );
+					$search_values = array( 'include' => array(), 'exclude' => array() );
+					foreach( $search_arg as $search_value ) {
+						if( $search_value[0] === '-' ) {
+							$search_placeholders['exclude'][] = '%s';
+							$search_values['exclude'][] = substr( $search_value, 1 );
+						} else {
+							$search_placeholders['include'][] = '%s';
+							$search_values['include'][] = $search_value;
+						}
+					}
+					if( !empty($search_values['include']) ) {
+						$placeholders = implode( ', ', array_fill( 0, count( $search_placeholders['include'] ), '%s' ) );
+						$conditions[$loc_field] = $wpdb->prepare( "location_{$loc_field} IN ($placeholders)", $search_values['include'] );
+					} elseif( !empty($search_values['exclude']) ) {
+						$placeholders = implode( ', ', array_fill( 0, count( $search_placeholders['exclude'] ), '%s' ) );
+						$conditions[$loc_field] = $wpdb->prepare( "location_{$loc_field} NOT IN ($placeholders)", $search_values['exclude'] );
+					}
+				}
 			}
 		}
 		

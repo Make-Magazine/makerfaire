@@ -5,11 +5,13 @@
  * @since     0.1.0
  * @license   GPL2+
  * @author    Katz Web Services, Inc.
- * @link      http://gravityview.co
+ * @link      http://www.gravitykit.com
  * @copyright Copyright 2014, Katz Web Services, Inc.
  *
  * @package   GravityView_Ratings_Reviews
  */
+
+use GV\View;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -54,6 +56,7 @@ class GravityView_Ratings_Reviews_Helper {
 	 * @param string      $status  Status for reviews. Default: approve
 	 *
 	 * @param int|WP_Post $post_id Optional. Post ID or WP_Post object. Default is global $post.
+	 *
 	 * @return array Reviews arrays
 	 */
 	public static function get_reviews( $post = 0, $status = 'approve' ) {
@@ -61,7 +64,7 @@ class GravityView_Ratings_Reviews_Helper {
 		/** @global GravityView_Ratings_Reviews_Loader $gv_ratings_reviews */
 		global $gv_ratings_reviews;
 
-		$reviews = array();
+		$reviews = [];
 		$post    = get_post( $post );
 
 		if ( ! $post ) {
@@ -70,17 +73,18 @@ class GravityView_Ratings_Reviews_Helper {
 
 		if ( $gv_ratings_reviews->component_instances['post-bridge']->name === get_post_type( $post ) ) {
 
-			$defaults = array(
+			$defaults = [
 				'post_id' => $post->ID,
-				# 'type__in' => array( 'gravityview' ), // TODO: Consider converting to only fetch GravityView comments
+				// 'type__in' => array( 'gravityview' ), // TODO: Consider converting to only fetch GravityView comments
 				'status'  => $status, // Only get approved comments
-			);
+			];
 
 			/**
 			 * @filter `gv_ratings_reviews_get_reviews_atts` Modify the settings passed to get_comments() when fetching reviews
 			 *
 			 * @since  2.0.1
 			 * @see    get_comments()
+			 *
 			 * @param string      $status Status for reviews. Default: approve
 			 *
 			 * @param array       $atts   Settings for get_comments()
@@ -112,10 +116,10 @@ class GravityView_Ratings_Reviews_Helper {
 
 		$comments = self::get_reviews( $bridge_post_id, $status );
 
-		$comments_dump = array();
+		$comments_dump = [];
 
 		foreach ( $comments as $comment ) {
-			$data = array();
+			$data = [];
 
 			foreach ( $comment as $key => $value ) {
 				$data[ str_replace( 'comment_', '', $key ) ] = $value;
@@ -144,7 +148,7 @@ class GravityView_Ratings_Reviews_Helper {
 	public static function get_reviews_number( $post ) {
 
 		$reviews     = self::get_reviews( $post );
-		$parent_only = array_filter( $reviews, array( __CLASS__, 'filter_parent' ) );
+		$parent_only = array_filter( $reviews, [ __CLASS__, 'filter_parent' ] );
 
 		return count( $parent_only );
 	}
@@ -174,6 +178,7 @@ class GravityView_Ratings_Reviews_Helper {
 	 * @param string      $more Optional. Text for more than one comment. Default false.
 	 *
 	 * @param int|WP_Post $post Optional. Post ID or WP_Post object. Default is global $post.
+	 *
 	 * @return string
 	 */
 	public static function get_reviews_number_text( $post, $zero = false, $one = false, $more = false ) {
@@ -211,6 +216,7 @@ class GravityView_Ratings_Reviews_Helper {
 	 * @param string      $more    Optional. Text for more than one comment. Default false.
 	 *
 	 * @param int|WP_Post $post_id Optional. Post ID or WP_Post object. Default is global $post.
+	 *
 	 * @return void
 	 */
 	public static function the_reviews_number_text( $post, $zero = false, $one = false, $more = false ) {
@@ -235,16 +241,17 @@ class GravityView_Ratings_Reviews_Helper {
 	 * Get the average rating array for an entry
 	 *
 	 * @since 1.3
-	 * @param array $entry Gravity Forms entry. If not set, uses GravityView_View::getCurrentEntry()
-	 *
-	 * @return array Array with 'detail_stars' ( the number of votes at each star level ), 'detail_vote' (number of votes
-	 * for each voting option), 'average_stars' (the aggregate star rating), 'average_vote' (the aggregate vote count), and 'total_voters'
 	 * @uses  get_review_average_rating()
 	 *
 	 * @uses  get_post_bridge_id()
 	 * @uses  GravityView_View::getCurrentEntry()
+	 *
+	 * @param array $entry Gravity Forms entry. If not set, uses GravityView_View::getCurrentEntry()
+	 *
+	 * @return array Array with 'detail_stars' ( the number of votes at each star level ), 'detail_vote' (number of votes
+	 * for each voting option), 'average_stars' (the aggregate star rating), 'average_vote' (the aggregate vote count), and 'total_voters'
 	 */
-	public static function get_entry_average_rating( $entry = array() ) {
+	public static function get_entry_average_rating( $entry = [] ) {
 
 		if ( empty( $entry ) ) {
 			do_action( 'gravityview_log_debug', __METHOD__ . ': $entry not passed; fetching current entry' );
@@ -254,7 +261,7 @@ class GravityView_Ratings_Reviews_Helper {
 		if ( empty( $entry ) ) {
 			do_action( 'gravityview_log_error', __METHOD__ . ': $entry is empty' );
 
-			return array();
+			return [];
 		}
 
 		// Post ID that links entry with comments.
@@ -263,7 +270,7 @@ class GravityView_Ratings_Reviews_Helper {
 		// Replaces current post with bridge post.
 		$post = get_post( $post_bridge_id );
 
-		$average = array();
+		$average = [];
 		if ( $post && ! is_wp_error( $post ) ) {
 			setup_postdata( $post );
 			$average = self::get_review_average_rating( $post );
@@ -289,12 +296,12 @@ class GravityView_Ratings_Reviews_Helper {
 
 		$fs = wp_parse_args(
 			$gravityview_view->getCurrentField( 'field_settings' ),
-			array(
+			[
 				'no_comment_text'     => __( 'Leave a Review', 'gravityview-ratings-reviews' ),
 				'one_comment_text'    => __( '1 Review', 'gravityview-ratings-reviews' ),
 				'more_comments_text'  => __( '% Reviews', 'gravityview-ratings-reviews' ),
 				'show_average_rating' => true,
-			)
+			]
 		);
 
 		$entry = $gravityview_view->getCurrentEntry();
@@ -326,28 +333,28 @@ class GravityView_Ratings_Reviews_Helper {
 
 				if ( 'vote' === $type ) {
 					self::the_vote_rating(
-						array(
+						[
 							'rating' => $average['average_vote'],
 							'number' => $average['total_voters'],
-						)
+						]
 					);
 				} else {
 					self::the_star_rating(
-						array(
+						[
 							'rating' => $average['average_stars'],
 							'type'   => 'rating',
 							'number' => $average['total_voters'],
-						)
+						]
 					);
 				}
 			}
 
-			if ( true === GravityView_Ratings_Reviews_Helper::is_reviews_allowed( null, null, $gravityview_view ) ) {
+			if ( true === self::is_reviews_allowed( null, null, $gravityview_view ) ) {
 
 				$form = (array) GFAPI::get_form( $entry['form_id'] );
 
-				$no_comment_text = GFCommon::replace_variables( $fs['no_comment_text'], $form, $entry );
-				$one_comment_text = GFCommon::replace_variables( $fs['one_comment_text'], $form, $entry );
+				$no_comment_text    = GFCommon::replace_variables( $fs['no_comment_text'], $form, $entry );
+				$one_comment_text   = GFCommon::replace_variables( $fs['one_comment_text'], $form, $entry );
 				$more_comments_text = GFCommon::replace_variables( $fs['more_comments_text'], $form, $entry );
 
 				$anchor_text = self::get_reviews_number_text( $post, $no_comment_text, $one_comment_text, $more_comments_text );
@@ -358,9 +365,9 @@ class GravityView_Ratings_Reviews_Helper {
 			$return_link = gravityview_get_link(
 				$href . '#gv-entry-reviews',
 				$anchor_text,
-				array(
+				[
 					'title' => __( 'Reviews of this entry', 'gravityview-ratings-reviews' ),
-				)
+				]
 			);
 
 		}
@@ -385,6 +392,7 @@ class GravityView_Ratings_Reviews_Helper {
 	 * @param object $review   Comment object
 	 *
 	 * @param string $location Original location
+	 *
 	 * @return string
 	 */
 	public static function get_review_permalink( $location, $review, $action = 'permalink' ) {
@@ -425,11 +433,10 @@ class GravityView_Ratings_Reviews_Helper {
 					if ( 'redirect' === $action ) {
 						unset( $_POST['redirect_to'] );
 					}
-
 				} else {
 
 					// Recent comments widget
-					if ( in_array( current_filter(), array( 'get_comment_link', 'comment_notification_text' ) ) ) {
+					if ( in_array( current_filter(), [ 'get_comment_link', 'comment_notification_text' ] ) ) {
 						$post_id = get_comment_meta( $review->comment_ID, $review_comp->review_meta_id, true );
 					} else {
 						$post_id = wp_cache_get( 'gv_post_container_id' );
@@ -459,9 +466,10 @@ class GravityView_Ratings_Reviews_Helper {
 	 * @param array $args       Optional. Args to be passed as query string
 	 *
 	 * @param int   $comment_id Optional. Comment ID.
+	 *
 	 * @return string
 	 */
-	public static function get_edit_review_link( $comment_id = 0, $args = array() ) {
+	public static function get_edit_review_link( $comment_id = 0, $args = [] ) {
 
 		$comment = get_comment( $comment_id );
 
@@ -493,9 +501,10 @@ class GravityView_Ratings_Reviews_Helper {
 	 * @param array  $args   Optional. Args to be passed as query string
 	 *
 	 * @param string $text   Optional. Anchor text.
+	 *
 	 * @return void
 	 */
-	public static function edit_review_link( $text = null, $before = '', $after = '', $args = array() ) {
+	public static function edit_review_link( $text = null, $before = '', $after = '', $args = [] ) {
 
 		global $comment;
 
@@ -530,6 +539,7 @@ class GravityView_Ratings_Reviews_Helper {
 	 * @param string $mode     Screen mode. Can be 'edit'.
 	 *
 	 * @param int    $entry_id GF entry ID
+	 *
 	 * @return string URL to view entry in admin. If entry or form not found, it's an inline javascript alert URL.
 	 */
 	public static function get_entry_admin_url( $entry_id, $mode = '' ) {
@@ -551,7 +561,6 @@ class GravityView_Ratings_Reviews_Helper {
 					$js_error = __( 'The form connected to this entry no longer exists.', 'gravityview-ratings-reviews' );
 				}
 			}
-
 		} else {
 			$js_error = __( 'Gravity Forms must be active to view this entry.', 'gravityview-ratings-reviews' );
 		}
@@ -561,7 +570,7 @@ class GravityView_Ratings_Reviews_Helper {
 			return 'javascript:alert("' . esc_html( $js_error ) . '");';
 		}
 
-		if ( ! in_array( $mode, array( 'edit' ) ) ) {
+		if ( ! in_array( $mode, [ 'edit' ] ) ) {
 			$mode = '';
 		}
 
@@ -596,13 +605,16 @@ class GravityView_Ratings_Reviews_Helper {
 		// The suffix should matches with 'Review type'
 		// found in 'Ratings & Reviews' meta box.
 		//
-		$result = array(
+		$result = [
 			'detail_stars'  => array_fill( 1, 5, 0 ),
-			'detail_vote'   => array( 'down' => 0, 'up' => 0 ),
+			'detail_vote'   => [
+				'down' => 0,
+				'up'   => 0,
+			],
 			'average_stars' => 0,
 			'average_vote'  => 0,
 			'total_voters'  => 0, // Doesn't count someone that doesn't leave a rate.
-		);
+		];
 
 		$post_bridge_comp = $gv_ratings_reviews->component_instances['post-bridge'];
 		$review_comp      = $gv_ratings_reviews->component_instances['review'];
@@ -667,7 +679,7 @@ class GravityView_Ratings_Reviews_Helper {
 
 			if ( 1 === $vote ) {
 				$result['detail_vote']['up'] += $count;
-			} elseif ( - 1 === $vote ) {
+			} elseif ( -1 === $vote ) {
 				$result['detail_vote']['down'] += $count;
 			}
 
@@ -690,6 +702,7 @@ class GravityView_Ratings_Reviews_Helper {
 	 * @since 1.3 Added $create_if_not_exists
 	 *
 	 * @since 0.1.0
+	 *
 	 * @param mixed   $entry_id             GF Entry ID
 	 * @param boolean $create_if_not_exists If the post bridge doesn't exist, create one?
 	 *
@@ -702,14 +715,14 @@ class GravityView_Ratings_Reviews_Helper {
 
 		/** When deleting bulk entries, GV may not have initiated yet. */
 		if ( ! class_exists( 'GravityView_View' ) && defined( 'GRAVITYVIEW_DIR' ) ) {
-			include_once( GRAVITYVIEW_DIR . 'includes/class-template.php' );
+			include_once GRAVITYVIEW_DIR . 'includes/class-template.php';
 		}
 
 		$gravityview_view = GravityView_View::getInstance();
 
 		if ( null === $entry_id
-			 && 'single' === $gravityview_view->getContext()
-			 && ! empty( $gravityview_view->entries[0] )
+		     && 'single' === $gravityview_view->getContext()
+		     && ! empty( $gravityview_view->entries[0] )
 		) {
 
 			$entry_id = $gravityview_view->entries[0]['id'];
@@ -735,13 +748,13 @@ class GravityView_Ratings_Reviews_Helper {
 	 */
 	private static function get_star_rating_title( $number = null ) {
 
-		$original_star_titles = array(
+		$original_star_titles = [
 			1 => _x( '1 star', 'Rating description shown when hovering over a star', 'gravityview-ratings-reviews' ),
 			2 => _x( '2 stars', 'Rating description shown when hovering over a star', 'gravityview-ratings-reviews' ),
 			3 => _x( '3 stars', 'Rating description shown when hovering over a star', 'gravityview-ratings-reviews' ),
 			4 => _x( '4 stars', 'Rating description shown when hovering over a star', 'gravityview-ratings-reviews' ),
 			5 => _x( '5 stars', 'Rating description shown when hovering over a star', 'gravityview-ratings-reviews' ),
-		);
+		];
 
 		/**
 		 * @filter `gv_ratings_reviews_star_rating_titles` Filter the star rating hover titles.
@@ -775,36 +788,36 @@ class GravityView_Ratings_Reviews_Helper {
 	}
 
 	/**
-	 * Get a HTML element with a star rating for a given rating. Copied from
+	 * Returns an HTML element with a star rating for a given rating. Copied from
 	 * wp_star_rating with a bit of sugar addition.
 	 *
 	 * @since 0.1.0
 	 *
-	 * @param array $args         {
-	 *                            Optional. Array of star ratings arguments.
+	 * @param array $args             {
+	 *                                Optional. Array of star ratings arguments.
 	 *
-	 * @type int    $rating       The rating to display, expressed in either a 0.5 rating increment,
+	 * @type int    $rating           The rating to display, expressed in either a 0.5 rating increment,
 	 *                                or percentage. Default 0.
-	 * @type string $type         Format that the $rating is in. Valid values are 'rating' (default),
+	 * @type string $type             Format that the $rating is in. Valid values are 'rating' (default),
 	 *                                or, 'percent'. Default 'rating'.
-	 * @type int    $number       The number of ratings that makes up this rating. Default 0.
-	 * @type bool   $clickable    Whether the star is clickable or not. Default false.
-	 * @type bool   $display_text Whether to show the text. Default false.
-	 * }
+	 * @type int    $number           The number of ratings that makes up this rating. Default 0.
+	 * @type bool   $clickable        Whether the star is clickable or not. Default false.
+	 * @type bool   $display_text     Whether to show the text. Default false.
+	 *                                }
 	 *
 	 * @return string
 	 */
-	public static function get_star_rating( $args = array() ) {
+	public static function get_star_rating( $args = [] ) {
 
 		global $gravityview_view;
 
-		$defaults = array(
+		$defaults = [
 			'rating'       => 0,
 			'type'         => 'rating',
 			'number'       => 0,
 			'clickable'    => false,
 			'display_text' => false,
-		);
+		];
 		$r        = wp_parse_args( $args, $defaults );
 
 		$output = '';
@@ -827,8 +840,9 @@ class GravityView_Ratings_Reviews_Helper {
 		}
 
 		if ( $r['clickable'] ) {
+
 			$entry_id = ( ! empty( $r['entry_id'] ) ) ? sprintf( 'data-entry-id="%d"', $r['entry_id'] ) : '';
-			$view_id  = sprintf( 'data-view-id="%d"', $gravityview_view->view_id );
+			$view_id  = ( ! empty( $gravityview_view ) ) ? sprintf( 'data-view-id="%d"', $gravityview_view->view_id ) : '';
 
 			$output .= sprintf( '<div class="gv-star-rating gv-star-rate-holder" %s %s>', $entry_id, $view_id );
 
@@ -846,7 +860,7 @@ class GravityView_Ratings_Reviews_Helper {
 
 				$output .= sprintf( $format, $title );
 
-				$star_count ++;
+				$star_count++;
 			}
 
 			$output .= '</div>';
@@ -882,10 +896,10 @@ class GravityView_Ratings_Reviews_Helper {
 		 * Filter for HTML element with a star rating.
 		 *
 		 * @since 0.1.0
+		 *
 		 * @param array  $r      Optional array of star ratings arguments.
 		 *
 		 * @param string $output HTML element with a star rating
-		 *
 		 */
 		return apply_filters( 'gv_ratings_reviews_star_rating', $output, $r );
 	}
@@ -897,21 +911,21 @@ class GravityView_Ratings_Reviews_Helper {
 	 *
 	 * @since 0.1.0
 	 *
-	 * @param array $args         {
-	 *                            Optional. Array of star ratings arguments.
+	 * @param array $args             {
+	 *                                Optional. Array of star ratings arguments.
 	 *
-	 * @type int    $rating       The rating to display, expressed in either a 0.5 rating increment,
+	 * @type int    $rating           The rating to display, expressed in either a 0.5 rating increment,
 	 *                                or percentage. Default 0.
-	 * @type string $type         Format that the $rating is in. Valid values are 'rating' (default),
+	 * @type string $type             Format that the $rating is in. Valid values are 'rating' (default),
 	 *                                or, 'percent'. Default 'rating'.
-	 * @type int    $number       The number of ratings that makes up this rating. Default 0.
-	 * @type bool   $clickable    Whether the star is clickable or not. Default false.
-	 * @type bool   $display_text Whether to show the text. Default false.
-	 * }
+	 * @type int    $number           The number of ratings that makes up this rating. Default 0.
+	 * @type bool   $clickable        Whether the star is clickable or not. Default false.
+	 * @type bool   $display_text     Whether to show the text. Default false.
+	 *                                }
 	 *
 	 * @return void
 	 */
-	public static function the_star_rating( $args = array() ) {
+	public static function the_star_rating( $args = [] ) {
 
 		echo self::get_star_rating( $args );
 	}
@@ -923,15 +937,16 @@ class GravityView_Ratings_Reviews_Helper {
 	 *
 	 * @since 1.3
 	 *
+	 * @uses  get_entry_average_rating
+	 * @uses  get_star_rating
+	 *
 	 * @param array $entry Gravity Forms Entry array
 	 *
 	 * @return string Star rating from get_star_rating()
-	 * @uses  get_entry_average_rating
-	 * @uses  get_star_rating
 	 */
-	public static function get_star_rating_for_entry( $entry = array() ) {
+	public static function get_star_rating_for_entry( $entry = [] ) {
 
-		$average = GravityView_Ratings_Reviews_Helper::get_entry_average_rating( $entry );
+		$average = self::get_entry_average_rating( $entry );
 
 		// There was a problem.
 		if ( ! isset( $average['average_stars'] ) ) {
@@ -940,13 +955,20 @@ class GravityView_Ratings_Reviews_Helper {
 			return '';
 		}
 
-		do_action( 'gravityview_log_debug', 'Average rating array for entry', array( '$entry' => $entry, '$average' => $average ) );
+		do_action(
+			'gravityview_log_debug',
+			'Average rating array for entry',
+			[
+				'$entry'   => $entry,
+				'$average' => $average,
+			]
+		);
 
-		$args = array(
+		$args = [
 			'rating' => $average['average_stars'],
 			'type'   => 'rating',
 			'number' => $average['total_voters'],
-		);
+		];
 
 		return self::get_star_rating( $args );
 	}
@@ -962,11 +984,13 @@ class GravityView_Ratings_Reviews_Helper {
 
 		$rating_abs = absint( $rating_value );
 
-		$original_rating_text = array(
+		$original_rating_text = [
+			// Translators: %d contains the number to increase by.
 			'up'   => sprintf( __( '+%d', 'gravityview-ratings-reviews' ), number_format_i18n( $rating_abs ) ),
+			// Translators: %d contains the number to increase by.
 			'down' => sprintf( __( '-%d', 'gravityview-ratings-reviews' ), number_format_i18n( $rating_abs ) ),
 			'zero' => __( 'No Rating', 'gravityview-ratings-reviews' ),
-		);
+		];
 
 		/**
 		 * @filer `gv_ratings_reviews_vote_rating_text` Filter the vote rating text.
@@ -978,7 +1002,7 @@ class GravityView_Ratings_Reviews_Helper {
 		 * @type string $up                   The text to show when the rating is positive. Default: "+1"
 		 * @type string $down                 The text to show when the rating is negative. Default: "-1"
 		 * @type string $down                 The text to show when there is no rating. Default: "No Rating"
-		 * }
+		 *                                    }
 		 */
 		$rating_text = apply_filters( 'gv_ratings_reviews_vote_rating_text', $original_rating_text );
 
@@ -1003,20 +1027,20 @@ class GravityView_Ratings_Reviews_Helper {
 	 * @type int    $number       The number of ratings that makes up this rating. Default 0.
 	 * @type bool   $clickable    Whether the vote is clickable or not. Default false.
 	 * @type bool   $display_text Whether to show the text. Default false.
-	 * }
+	 *                            }
 	 *
 	 * @return string
 	 */
-	public static function get_vote_rating( $args = array() ) {
+	public static function get_vote_rating( $args = [] ) {
 
 		global $gravityview_view;
 
-		$defaults = array(
+		$defaults = [
 			'rating'       => 0,
 			'number'       => 0,
 			'clickable'    => false,
 			'display_text' => false,
-		);
+		];
 
 		$r                  = wp_parse_args( $args, $defaults );
 		$is_positive_rating = ( $r['rating'] > 0 );
@@ -1055,12 +1079,15 @@ class GravityView_Ratings_Reviews_Helper {
 			$is_positive_rating ? ' gv-rate-mutated' : '',
 			$is_positive_rating ? esc_attr__( 'Up vote shows the entry is useful for the author', 'gravityview-ratings-reviews' ) : ''
 		);
-		$output .= sprintf(
-			'<%s class="gv-vote-down%s" title="%s"></%1$s>',
-			$vote_tag,
-			$is_negative_rating ? ' gv-rate-mutated' : '',
-			$is_negative_rating ? esc_attr__( 'Down vote shows the entry is not useful for the author', 'gravityview-ratings-reviews' ) : ''
-		);
+
+		if ( self::can_downvote() ) {
+			$output .= sprintf(
+				'<%s class="gv-vote-down%s" title="%s"></%1$s>',
+				$vote_tag,
+				$is_negative_rating ? ' gv-rate-mutated' : '',
+				$is_negative_rating ? esc_attr__( 'Down vote shows the entry is not useful for the author', 'gravityview-ratings-reviews' ) : ''
+			);
+		}
 
 		if ( ! $r['clickable'] ) {
 			$output .= sprintf(
@@ -1081,6 +1108,7 @@ class GravityView_Ratings_Reviews_Helper {
 		 * Filter for HTML element with a vote rating.
 		 *
 		 * @since 0.1.0
+		 *
 		 * @param array  $r      Array of args used to generate the output
 		 *
 		 * @param string $output HTML element with a vote rating
@@ -1093,15 +1121,16 @@ class GravityView_Ratings_Reviews_Helper {
 	 *
 	 * @since 1.3
 	 *
+	 * @uses  get_entry_average_rating
+	 * @uses  get_vote_rating
+	 *
 	 * @param array $entry Gravity Forms Entry array
 	 *
 	 * @return string Star rating from get_vote_rating()
-	 * @uses  get_entry_average_rating
-	 * @uses  get_vote_rating
 	 */
-	public static function get_vote_rating_for_entry( $entry = array() ) {
+	public static function get_vote_rating_for_entry( $entry = [] ) {
 
-		$average = GravityView_Ratings_Reviews_Helper::get_entry_average_rating( $entry );
+		$average = self::get_entry_average_rating( $entry );
 
 		// There was a problem.
 		if ( ! isset( $average['average_vote'] ) ) {
@@ -1110,13 +1139,20 @@ class GravityView_Ratings_Reviews_Helper {
 			return '';
 		}
 
-		do_action( 'gravityview_log_debug', 'Average vote array for entry', array( '$entry' => $entry, '$average' => $average ) );
+		do_action(
+			'gravityview_log_debug',
+			'Average vote array for entry',
+			[
+				'$entry'   => $entry,
+				'$average' => $average,
+			]
+		);
 
-		$args = array(
+		$args = [
 			'rating' => $average['average_vote'],
 			'type'   => 'vote',
 			'number' => $average['total_voters'],
-		);
+		];
 
 		return self::get_vote_rating( $args );
 	}
@@ -1133,11 +1169,11 @@ class GravityView_Ratings_Reviews_Helper {
 	 * @type int    $number       The number of ratings that makes up this rating. Default 0.
 	 * @type bool   $clickable    Whether the star is clickable or not. Default false.
 	 * @type bool   $display_text Whether to show the text. Default false.
-	 * }
+	 *                            }
 	 *
 	 * @return void
 	 */
-	public static function the_vote_rating( $args = array() ) {
+	public static function the_vote_rating( $args = [] ) {
 
 		echo self::get_vote_rating( $args );
 	}
@@ -1156,7 +1192,7 @@ class GravityView_Ratings_Reviews_Helper {
 		$rating = absint( $rating );
 
 		if ( 3 > $rating && 0 < $rating ) {
-			return - 1;
+			return -1;
 		}
 
 		if ( 3 < $rating ) {
@@ -1187,7 +1223,7 @@ class GravityView_Ratings_Reviews_Helper {
 			return 5;
 		}
 
-		if ( - 1 === $vote ) {
+		if ( -1 === $vote ) {
 			return 1;
 		}
 
@@ -1199,7 +1235,7 @@ class GravityView_Ratings_Reviews_Helper {
 	 *
 	 * @since 0.1.0
 	 *
-	 * @param null|int $post_id The bridge post the comments and ratings are attached to.
+	 * @param null|int $post_id  The bridge post the comments and ratings are attached to.
 	 * @param null|int $entry_id The entry to retrieve the ratings for.
 	 *
 	 * @return int[] Array of review ratings
@@ -1211,11 +1247,17 @@ class GravityView_Ratings_Reviews_Helper {
 		}
 
 		if ( ! is_numeric( $post_id ) ) {
-			return array();
+			return [];
 		}
+		$query = new WP_Comment_Query(
+			[
+				'post_id'          => $post_id,
+				'comment_approved' => '1',
+				'status'           => 'approve',
+			]
+		);
 
-		$query = new WP_Comment_Query( array( 'post_id' => $post_id ) );
-		$rates = array();
+		$rates = [];
 		// Todo: This can probably be retrieved in a single query instead of N+1
 		foreach ( $query->comments as $comment ) {
 			$rates[] = get_comment_meta( $comment->comment_ID, 'gv_review_rate', true );
@@ -1229,7 +1271,7 @@ class GravityView_Ratings_Reviews_Helper {
 	 *
 	 * @see http://php.net/manual/en/function.array-replace.php for usage
 	 *
-	 * @param array  &$array the Original Array
+	 * @param array &$array the Original Array
 	 *
 	 * @return null|array         If any of the Arguments are not array it will return otherwise if several arrays are passed for replacement, they will be processed in order, the later arrays overwriting the previous values.
 	 */
@@ -1242,13 +1284,14 @@ class GravityView_Ratings_Reviews_Helper {
 		}
 
 		if ( ! function_exists( 'array_replace' ) ) {
-			for ( $i = 0; $i < $count; ++ $i ) {
+			for ( $i = 0; $i < $count; ++$i ) {
 				if ( is_array( $args[ $i ] ) ) {
 					foreach ( $args[ $i ] as $key => $val ) {
 						$array[ $key ] = $val;
 					}
 				} else {
-					trigger_error( sprintf( __( '%s(): Argument #%d is not an array', 'gravityview-ratings-reviews' ), __FUNCTION__, ( $i + 1 ) ), E_USER_NOTICE );
+					// Translators: %1$s contains the function name, and %2$d the argument number.
+					trigger_error( sprintf( __( '%1$s(): Argument #%2$d is not an array', 'gravityview-ratings-reviews' ), __FUNCTION__, ( $i + 1 ) ), E_USER_NOTICE );
 
 					return null;
 				}
@@ -1265,7 +1308,7 @@ class GravityView_Ratings_Reviews_Helper {
 	 *
 	 * @since 0.1.0
 	 *
-	 * @param null|int $post_id The bridge post the comments and ratings are attached to.
+	 * @param null|int $post_id  The bridge post the comments and ratings are attached to.
 	 * @param null|int $entry_id The entry to retrieve the ratings for.
 	 *
 	 * @return array Array of key => value pairs for entry meta (star ratings, votes, etc)
@@ -1278,28 +1321,45 @@ class GravityView_Ratings_Reviews_Helper {
 		$count_stars = self::array_replace( array_fill( 1, 5, 0 ), array_count_values( $stars ) );
 		$total_stars = array_sum( $stars );
 
-		$votes = array();
+		$votes = [];
 		foreach ( $stars as $star ) {
 			$votes[] = self::get_vote_from_star( $star );
 		}
-		$count_votes = self::array_replace( array( '-1' => 0, '0' => 0, '1' => 0, ), array_count_values( $votes ) );
+		$count_votes = self::array_replace(
+			[
+				'-1' => 0,
+				'0'  => 0,
+				'1'  => 0,
+			],
+			array_count_values( $votes )
+		);
 		$total_votes = array_sum( $votes );
 
-		$metas = array(
+		$empty_stars = $count_stars[''] ?? 0;
+		$star_count =  $total_count - $empty_stars;
+		$stars_average = $total_count && $star_count ? ( $total_stars / $star_count ) : 0;
+
+		// Format the average to be a whole number if it's a whole number. Otherwise, keep it as a float.
+		$nice_round = function ( $number ) {
+			return $number == (int) $number ? (int) $number : round( $number, 2 );
+		};
+
+		$metas = [
+			'star_empty' => $empty_stars,
 			'star_1' => $count_stars[1],
 			'star_2' => $count_stars[2],
 			'star_3' => $count_stars[3],
 			'star_4' => $count_stars[4],
 			'star_5' => $count_stars[5],
-			'stars'  => $total_count > 0 ? $total_stars / $total_count : 0,
+			'stars'  => $stars_average ? $nice_round( $stars_average ) : $stars_average,
 
-			'vote_down'    => $count_votes[ - 1 ],
+			'vote_down'    => $count_votes[ -1 ],
 			'vote_neutral' => $count_votes[0],
 			'vote_up'      => $count_votes[1],
 			'votes'        => $total_count > 0 ? $total_votes : 0,
 
 			'total' => $total_count,
-		);
+		];
 
 		return $metas;
 	}
@@ -1307,12 +1367,12 @@ class GravityView_Ratings_Reviews_Helper {
 	/**
 	 * Refreshes the ratings fields for a specific entry.
 	 *
-	 * @since $ver$
+	 * @since 2.2.0
 	 *
-	 * @param null|int $post_id The bridge post the comments and ratings are attached to.
-	 * @param null|int $entry_id The entry to retrieve the ratings for.
-	 * @param bool $clear_cache Whether to clear the cache.
-	 * @param null|int $form_id The form ID.
+	 * @param null|int $post_id     The bridge post the comments and ratings are attached to.
+	 * @param null|int $entry_id    The entry to retrieve the ratings for.
+	 * @param bool     $clear_cache Whether to clear the cache.
+	 * @param null|int $form_id     The form ID.
 	 *
 	 * @return void
 	 */
@@ -1345,7 +1405,9 @@ class GravityView_Ratings_Reviews_Helper {
 	}
 
 	/**
-	 * If view setting limits to one review per person then the person that
+	 * Returns whether the user can leave a review based on View settings.
+	 *
+	 * If View setting limits to one review per person then the person that
 	 * has left review before is not allowed to leave review again.
 	 *
 	 * @since 0.1.0
@@ -1358,7 +1420,7 @@ class GravityView_Ratings_Reviews_Helper {
 	 *
 	 * @return bool|WP_Error If returning a WP_Error, the message will be displayed to the user. Otherwise, default "You have already reviewed this entry." message will be shown.
 	 */
-	public static function is_user_allowed_to_leave_review( $post_bridge, $review_author = '', $review_author_email = '', $reviewdata = array(), $view_settings = array() ) {
+	public static function is_user_allowed_to_leave_review( $post_bridge, $review_author = '', $review_author_email = '', $reviewdata = [], $view_settings = [] ) {
 
 		global $gravityview_view, $gv_ratings_reviews;
 
@@ -1369,7 +1431,7 @@ class GravityView_Ratings_Reviews_Helper {
 		$post_bridge = get_post( $post_bridge );
 
 		// Admins and users who can moderate comments can leave unlimited comments.
-		if ( GFCommon::current_user_can_any( array( 'manage_options', 'moderate_comments' ) ) ) {
+		if ( GFCommon::current_user_can_any( [ 'manage_options', 'moderate_comments' ] ) ) {
 			$is_allowed = true;
 		} elseif ( $post_bridge_comp->name === get_post_type( $post_bridge ) ) {
 			// When POSTing data to wp-comments-post.php or working with an AJAX request, the global `$gravityview_view` is not instantiated.
@@ -1387,7 +1449,7 @@ class GravityView_Ratings_Reviews_Helper {
 				$view_settings = $view_data['atts'];
 			}
 
-			if ( ! $view_settings['limit_one_review_per_person'] ) {
+			if ( empty( $view_settings['limit_one_review_per_person'] ) ) {
 				$is_allowed = true;
 			} else {
 				$reviewdata['comment_post_ID']      = $post_bridge->ID;
@@ -1404,6 +1466,7 @@ class GravityView_Ratings_Reviews_Helper {
 		 * @filter `gv_ratings_reviews_is_user_allowed_to_review`
 		 *
 		 * @since  2.0.1
+		 *
 		 * @param array         $reviewdata  Comment data array, including author, email,
 		 * @param int|WP_Post   $post_bridge The post ID or WP_Post object of post bridge
 		 *
@@ -1545,7 +1608,7 @@ class GravityView_Ratings_Reviews_Helper {
 		/** @global GravityView_Ratings_Reviews_Loader $gv_ratings_reviews */
 		global $gv_ratings_reviews;
 
-		if ( ! in_array( $section, array( 'header', 'body', 'footer' ) ) ) {
+		if ( ! in_array( $section, [ 'header', 'body', 'footer' ] ) ) {
 			return '';
 		}
 
@@ -1586,11 +1649,35 @@ class GravityView_Ratings_Reviews_Helper {
 	}
 
 	/**
+	 * Whether the View requires a rating for a comment.
+	 * @since 2.3.0
+	 *
+	 * @param View|null $view The View object.
+	 *
+	 * @return bool
+	 */
+	public static function is_rating_required( $view = null ): bool {
+		$is_rating_required = false;
+
+		if ( $view instanceof View ) {
+			$is_rating_required = (bool) $view->settings->get( 'rating_required', false );
+		}
+
+		/**
+		 * @filter `gk/ratings-reviews/rating-required` Whether a rating is required on a comment.
+		 *
+		 * @param boolean     $is_rating_required Whether the rating is required.
+		 * @param object|null $view               GravityView Object or ID.
+		 */
+		return (bool) apply_filters( 'gk/ratings-reviews/rating-required', $is_rating_required, $view );
+	}
+
+	/**
 	 * Allows users to filter if an Entry, Form or View can be reviewed by the users
 	 *
-	 * @param object|array|int $form  GravityForms Form Object or ID
-	 * @param object|array|int $entry GravityForms Entry Object or ID
-	 * @param object|array|int $view  GravityView Object or ID
+	 * @param array|int $form Gravity Forms Form Object or ID.
+	 * @param array|int $entry Gravity Forms Entry Object or ID.
+	 * @param GravityView_View|array|int $view GravityView Object or ID.
 	 *
 	 * @filter gv_ratings_reviews_reviews_allowed
 	 *
@@ -1607,12 +1694,43 @@ class GravityView_Ratings_Reviews_Helper {
 		/**
 		 * @filter `gv_ratings_reviews_ratings_allowed` Allow reviewing an entry for this View?
 		 *
-		 * @param boolean          $allow_ratings True: Yes, allow reviews; false: no, don't allow reviews
-		 * @param object|array|int $form          GravityForms Form Object or ID
-		 * @param object|array|int $entry         GravityForms Entry Object or ID
-		 * @param object|array|int $view          GravityView Object or ID
+		 * @param boolean $allow_ratings True: Yes, allow reviews; false: no, don't allow reviews
+		 * @param array|int $form Gravity Forms Form Object or ID.
+		 * @param array|int $entry Gravity Forms Entry Object or ID.
+		 * @param GravityView_View|array|int $view GravityView Object or ID.
 		 */
 		return apply_filters( 'gv_ratings_reviews_reviews_allowed', $reviews_allowed, $form, $entry, $view );
 	}
 
+	/*
+	 * Returns whether downvoting is allowed.
+	 *
+	 * @since 2.3.0
+	 *
+	 * @return bool
+	 */
+	public static function can_downvote() {
+		$disable_downvoting = false;
+
+		$view_id = isset( $_POST['view_id'] ) ? $_POST['view_id'] : ( isset( $_GET['view_id'] ) ? $_GET['view_id'] : null );
+
+		if ( wp_doing_ajax() && ! empty( $view_id ) ) {
+			$view = View::by_id( $view_id );
+
+			$disable_downvoting = $view ? (bool) $view->settings->get( 'disable_downvoting', $disable_downvoting ) : $disable_downvoting;
+		} else {
+			$disable_downvoting = ( GravityView_View::getInstance() )->atts['disable_downvoting'] ?? $disable_downvoting;
+		}
+
+		/**
+		 * Controls whether downvoting is disabled.
+		 *
+		 * @filter `gv_ratings_reviews_disable_downvoting`
+		 *
+		 * @since  2.3.0
+		 *
+		 * @param bool $disable_downvoting Whether to disable downvoting. Default: false or the value set in the View settings.
+		 */
+		return apply_filters( 'gv_ratings_reviews_disable_downvoting', ! $disable_downvoting );
+	}
 }

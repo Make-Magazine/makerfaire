@@ -107,7 +107,7 @@ class OAuth_API_Client {
 			if( !empty($creds[$k]) ){
 				$this->$k = $creds[$k];
 			}elseif( empty($this->$k) ) { // constructors can be overriden to add any of the above
-				throw new EM_Exception( __('OAuth application information incomplete.', 'events-manager') );
+				throw new EM_Exception( __('OAuth application information incomplete.', 'events-manager'), 'missing_creds' );
 			}
 		}
 		if( !$this->oauth_refresh_token_url ){

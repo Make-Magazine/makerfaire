@@ -1,5 +1,29 @@
 # Changelog
 
+## 2.1.5 | July 17, 2024
+
+- Fixed PHP warning that could show for some forms when updating entries using the Entry Details admin screen.
+
+## 2.1.4 | July 9, 2024
+
+- Fixed a regression regarding Page Conditional Logic support where dynamically populated field values could reset in some situations.
+
+## 2.1.3 | June 20, 2024
+
+- Fixed PHP warning that could be encountered when using a Multi-Select Field as a Field Value Object pulling from Gravity Forms entries. This could impact downstream population.
+- Added ability to disable ordering of objects in the form editor.
+- Fixed issue where Live Merge Tags in checkable choices wouldn't be replaced with the current entry with integrations such as GP Entry Blocks.
+- Fixed issue where dynamic value population of number fields with decimals as commas would be incorrectly formatted using periods as decimals.
+- Fixed issue where Live Merge Tags referencing Checkbox fields in field labels could result in a PHP warning.
+
+## 2.1.2 | May 29, 2024
+
+- Fixed issue where form objects could get cached after going through the `gpnf_get_nested_form` filter hook and cause issues with prepopulated values.
+- Improved the caching of XHR requests in the Form Editor to fix issues where property value selects could get stuck in a "Loading..." state.
+- Updated the "Value" row under Value Template field setting to be a required template prior to showing the results preview.
+- Fixed regression where adding new filter groups would not automatically fetch the property values for some object types in the Form Editor.
+- Fixed regression with fields containing Live Merge Tags not having their values populated with the Gravity Flow Form Connector's Form Submission workflow step.
+
 ## 2.1.1 | May 23, 2024
 
 - Fixed regression where merge tag selectors would not have their inserted merge tags persisted.

@@ -1388,15 +1388,17 @@
   border-left: none;
 }
 .em.em-calendar .em-cal-body {
-  --grid-auto-rows: auto;
-  grid-auto-rows: var(--grid-auto-rows);
   border-bottom: var(--date-box-border);
   background-color: var(--calendar-background);
+  --grid-auto-rows: auto;
   /*
   --- Display Option Flags ---
   */
   /* Display date cells with even height, taking the highest cell as the minimum height */
   /* Event Items in Pill Form */
+}
+.em.em-calendar .em-cal-body:not(.auto-aspect) {
+  grid-auto-rows: var(--grid-auto-rows);
 }
 .em.em-calendar .em-cal-body .em-cal-day {
   text-align: right;
@@ -1850,6 +1852,8 @@
   transition: all 0.3s cubic-bezier(0.55, 0, 0.1, 1) !important;
   transition-delay: 0.15s !important;
   z-index: 99999 !important;
+  pointer-events: none;
+  touch-action: none;
   /**
    * Mobile styling for popups
    */
@@ -1858,6 +1862,8 @@
   visibility: visible !important;
   opacity: 1 !important;
   transform: scale(1) !important;
+  pointer-events: auto;
+  touch-action: auto;
 }
 .em.em-modal .em-modal-popup.active .em-modal-content, .em.em-modal .em-modal-popup.active .em-close-modal {
   opacity: 1 !important;
@@ -2422,13 +2428,26 @@
 .em.em-search-advanced section.em-search-main > .em-search-field {
   margin: 0 !important;
 }
-.em.em-search-advanced.em-modal-content {
-  overflow-y: auto;
-  padding: 20px;
+.em.em-search-advanced .em-modal-content {
+  flex: 1 1 auto;
+  /* Selectize MultiDropdown needs some special styling so it doesn't look wierd when overflowing */
+}
+.em.em-search-advanced .em-modal-content section > div {
   margin: 0;
 }
-.em.em-search-advanced.em-modal-content section > div {
-  margin: 0;
+.em.em-search-advanced .em-modal-content .selectize-control.em-selectize.multidropdown {
+  margin-bottom: 15px;
+  max-height: none;
+}
+.em.em-search-advanced .em-modal-content .selectize-control.em-selectize.multidropdown .selectize-dropdown {
+  display: none !important;
+  position: relative;
+}
+.em.em-search-advanced .em-modal-content .selectize-control.em-selectize.multidropdown.dropdown-active {
+  height: auto;
+}
+.em.em-search-advanced .em-modal-content .selectize-control.em-selectize.multidropdown.dropdown-active .selectize-dropdown {
+  display: block !important;
 }
 .em.em-search-advanced.em-modal footer {
   display: grid;

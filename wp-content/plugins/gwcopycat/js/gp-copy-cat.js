@@ -186,6 +186,11 @@
 
 						var $trigger = $( '#field_{0}_{1}'.gformFormat( formId, fieldSettings[i].trigger ) ).find( 'input, textarea, select' );
 
+						// Skip processing copy for a Hidden Field.
+						if ( $trigger.parents('.gfield').attr( 'data-conditional-logic' ) == 'hidden' ) {
+							continue;
+						}
+
 						/**
 						 * This resolves an issue where copied values that were edited were overwritten unexpectedly when
 						 * the form was reloaded (e.g. navigating pages, validation errors).
@@ -203,7 +208,7 @@
 
 						if ( $trigger.is( ':checkbox' ) ) {
 							if ( $trigger.filter( ':checked' ).length ) {
-								self.copyValues( $trigger[0], shouldOverwrite );
+								self.copyValues( $trigger[0], shouldOverwrite, false );
 							} else {
 								/**
 								 * We shouldn't need to clear values as inputs hidden via conditional logic already have their
@@ -215,7 +220,7 @@
 							}
 						}
 						else {
-							self.copyValues( $trigger[0], shouldOverwrite );
+							self.copyValues( $trigger[0], shouldOverwrite, false );
 						}
 
 					}

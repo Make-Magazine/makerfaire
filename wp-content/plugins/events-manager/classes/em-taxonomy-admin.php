@@ -79,7 +79,7 @@ class EM_Taxonomy_Admin {
 	    <tr class="form-field term-color-wrap">
 	        <th scope="row" valign="top"><label for="term-color"><?php esc_html_e('Color','events-manager'); ?></label></th>
 	        <td>
-	            <input type="text" name="term_color" id="term-color" class="term-color" value="<?php echo esc_attr($taxonomy_color); ?>" /><br />
+	            <input type="text" name="term_color" id="term-color" class="term-color" value="<?php echo esc_attr($taxonomy_color); ?>"><br>
 	            <p class="description"><?php echo sprintf(__('Choose a color for your %s. You can access this using the %s placeholder.','events-manager'), __(self::$name_singular, 'events-manager'), '<code>'. self::$placeholder_color. '</code>'); ?></p>
 	            <div id="picker" style="position:absolute; display:none; background:#DEDEDE"></div>
 	        </td>
@@ -89,16 +89,16 @@ class EM_Taxonomy_Admin {
 	        <td>
 	        	<div class="img-container">
 	        		<?php if( !empty($taxonomy_image) ): ?>
-	        		<img src="<?php echo $taxonomy_image; ?>" />
+	        		<img src="<?php echo $taxonomy_image; ?>" style="max-width:250px;">
 	        		<?php endif; ?>
 	        	</div>
-	            <input type="text" name="term_image" id="term-image" class="img-url" value="<?php echo esc_attr($taxonomy_image); ?>" />
-	            <input type="hidden" name="term_image_id" id="term-image-id" class="img-id" value="<?php echo esc_attr($taxonomy_image_id); ?>" />
+	            <input type="text" name="term_image" id="term-image" class="img-url" value="<?php echo esc_attr($taxonomy_image); ?>">
+	            <input type="hidden" name="term_image_id" id="term-image-id" class="img-id" value="<?php echo esc_attr($taxonomy_image_id); ?>">
 	            <p class="hide-if-no-js">
-		            <input id="upload_image_button" type="button" value="<?php _e('Choose/Upload Image','events-manager'); ?>" class="upload-img-button button-secondary" />
-		            <input id="delete_image_button" type="button" value="<?php _e('Remove Image','events-manager'); ?>" class="delete-img-button button-secondary" <?php if( empty($taxonomy_image) ) echo 'style="display:none;"'; ?> />
+		            <input id="upload_image_button" type="button" value="<?php _e('Choose/Upload Image','events-manager'); ?>" class="upload-img-button button-secondary" >
+		            <input id="delete_image_button" type="button" value="<?php _e('Remove Image','events-manager'); ?>" class="delete-img-button button-secondary" <?php if( empty($taxonomy_image) ) echo 'style="display:none;"'; ?> >
 				</p>
-	            <br />
+	            <br >
 				<p class="description"><?php echo sprintf(__('Choose an image for your %s, which can be displayed using the %s placeholder.','events-manager'), __(self::$name_singular,'events-manager'),'<code>'. self::$placeholder_image. '</code>'); ?></p>
 	        </td>
 	    </tr>
@@ -109,17 +109,17 @@ class EM_Taxonomy_Admin {
 		?>
 	    <div class="term-color-wrap">
 	        <label for="term-color"><?php esc_html_e('Color','events-manager'); ?></label>
-            <input type="text" name="term_color" id="term-color" class="term-color" value="#FFFFFF" /><br />
+            <input type="text" name="term_color" id="term-color" class="term-color" value="#FFFFFF" ><br>
             <p class="description"><?php echo sprintf(__('Choose a color for your %s. You can access this using the %s placeholder.','events-manager'), __(self::$name_singular,'events-manager'),'<code>'. self::$placeholder_color. '</code>'); ?></p>
 	    </div>
 	    <div class="form-field term-image-wrap">
 	        <label for="term-image"><?php esc_html_e('Image','events-manager'); ?></label>
         	<div class="img-container"></div>
-            <input type="text" name="term_image" id="term-image" class="img-url" value="" />
-            <input type="hidden" name="term_image_id" id="term-image-id" class="img-id" value="" />
+            <input type="text" name="term_image" id="term-image" class="img-url" value="">
+            <input type="hidden" name="term_image_id" id="term-image-id" class="img-id" value="">
             <p class="hide-if-no-js">
-	            <input id="upload_image_button" type="button" value="<?php _e('Choose/Upload Image','events-manager'); ?>" class="upload-img-button button-secondary" />
-	            <input id="delete_image_button" type="button" value="<?php _e('Remove Image','events-manager'); ?>" class="delete-img-button button-secondary" style="display:none;" />
+	            <input id="upload_image_button" type="button" value="<?php _e('Choose/Upload Image','events-manager'); ?>" class="upload-img-button button-secondary">
+	            <input id="delete_image_button" type="button" value="<?php _e('Remove Image','events-manager'); ?>" class="delete-img-button button-secondary" style="display:none;">
 			</p>
 			<p class="description"><?php echo sprintf(__('Choose an image for your %s, which can be displayed using the %s placeholder.','events-manager'), __(self::$name_singular,'events-manager'),'<code>'. self::$placeholder_image. '</code>'); ?></p>
 	    </div>
@@ -139,6 +139,7 @@ class EM_Taxonomy_Admin {
 				}else{
 					$wpdb->insert(EM_META_TABLE, array('object_id' => $term_id, 'meta_key' => self::$option_name .'-bgcolor', 'meta_value' => $color));
 				}
+				wp_cache_set($term_id, $color, 'em_'.self::$option_name.'_colors');
 			}
 		}
 		if( !empty($_POST['term_image']) ){

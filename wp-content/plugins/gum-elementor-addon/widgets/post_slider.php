@@ -2079,7 +2079,7 @@ class Gum_Elementor_Widget_post_slider extends Widget_Base {
       $divider = '';
 
       if($meta_divider == 'text'){
-        $divider = '<span>'.$divider_text.'</span>';
+        $divider = '<span>'.esc_html($divider_text).'</span>';
 
       }elseif($meta_divider == 'icon'){
         ob_start();
@@ -2101,7 +2101,7 @@ class Gum_Elementor_Widget_post_slider extends Widget_Base {
     $ignore_sticky_posts = ( $filter_by!='sticky' && $ignore_sticky === 'yes') ? true : false;
 
     $query_params= array(
-      'posts_per_page' => $posts_per_page,
+      'posts_per_page' => absint($posts_per_page),
       'no_found_rows' => false,
       'post_status' => 'publish',
       'post_type'=>'post',
@@ -2180,14 +2180,14 @@ class Gum_Elementor_Widget_post_slider extends Widget_Base {
 
     $make_carousel = ($posts_per_page > $grid_layout) && (count($rows_html) > $grid_layout ) ? true : false;
 
-    $col_class = $make_carousel ? 'slide-item grid-post grid-col-1 image-position-'.$image_position : 'slide-item grid-post grid-col-'.absint($grid_layout).' image-position-'.$image_position;
+    $col_class = $make_carousel ? 'slide-item grid-post grid-col-1 image-position-'.sanitize_html_class($image_position) : 'slide-item grid-post grid-col-'.absint($grid_layout).' image-position-'.sanitize_html_class($image_position);
 
     if($image_totop === 'yes'){
       $col_class.=' mobile-force-ontop';
     }
 
-    echo '<div id="mod_'.$widget_id.'" class="owl-carousel-container">';
-    echo '<div class="grid-posts'.($make_carousel ? ' owl-carousel':'').'"><div class="'.$col_class.'">'.join('</div><div class="'.$col_class.'">',$rows_html).'</div></div>';
+    echo '<div id="mod_'.esc_attr($widget_id).'" class="owl-carousel-container">';
+    echo '<div class="grid-posts'.($make_carousel ? ' owl-carousel':'').'"><div class="'.esc_attr($col_class).'">'.join('</div><div class="'.esc_attr($col_class).'">',$rows_html).'</div></div>';
 
    if($make_carousel && $slide_navigation === 'arrow'){
      print $this->get_carousel_navigation($settings);
@@ -2248,10 +2248,10 @@ class Gum_Elementor_Widget_post_slider extends Widget_Base {
 
     ob_start();
 ?>
-<article id="post-<?php print esc_attr($post_id); ?>" <?php post_class(); ?>>
+<article id="post-<?php esc_attr_e($post_id); ?>" <?php post_class(); ?>>
     <?php if($image_url!=''):?>
   <div class="post-top">
-    <div class="blog-image" style="background-image: url('<?php print $image_url; ?>');"><?php print $image_html;?></div>
+    <div class="blog-image" style="background-image: url('<?php esc_attr_e($image_url); ?>');"><?php print $image_html;?></div>
   </div>
     <?php endif;?>
     <div class="post-content">
@@ -2357,7 +2357,7 @@ class Gum_Elementor_Widget_post_slider extends Widget_Base {
           <?php Icons_Manager::render_icon( $settings['readmore_icon'], [ 'aria-hidden' => 'true' ] ); ?>
       </span>
       <?php endif; ?>
-      <span <?php echo $this->get_render_attribute_string( $index );?>><?php echo esc_html($settings['readmore_label']); ?></span>
+      <span <?php echo $this->get_render_attribute_string( $index );?>><?php esc_html_e($settings['readmore_label']); ?></span>
     </span>
   </a></div><?php
 

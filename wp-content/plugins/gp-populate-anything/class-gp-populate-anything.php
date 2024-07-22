@@ -257,13 +257,26 @@ class GP_Populate_Anything extends GP_Plugin {
 		 * Hydrate fields any time the nested form is fetched. One key example of this is ensuring that the label of
 		 * a choice-based field is reflected in the merge value rather than the value of the option itself.
 		 */
-		add_filter( 'gpnf_get_nested_form', array( $this, 'populate_form' ) );
+		add_filter( 'gpnf_get_nested_form', array( $this, 'populate_nested_form' ) );
 
 		/**
 		 * Easy Passthrough
 		 */
 		add_filter( 'gform_gp-easy-passthrough_field_value', array( $this, 'easy_passthrough_override_field_value' ), 10, 4 );
 		add_filter( 'gppa_prepopulate_field_values', array( $this, 'easy_passthrough_prepopulate_values' ), 10, 2 );
+	}
+
+	/**
+	 * Handles populating a Nested Form. We have a callback here that way we can clear the form cache to prevent
+	 * fields from being cached.
+	 */
+	public function populate_nested_form( $nested_form ) {
+		$nested_form = gp_populate_anything()->populate_form( $nested_form );
+
+		// Clear the form cache to prevent issues with prepopulation.
+		GFFormsModel::flush_current_forms();
+
+		return $nested_form;
 	}
 
 	/**
@@ -585,6 +598,7 @@ class GP_Populate_Anything extends GP_Plugin {
 				'price'                             => __( 'Price', 'gp-populate-anything' ),
 				'image'                             => __( 'Image', 'gp-populate-anything' ),
 				'loadingEllipsis'                   => __( 'Loading...', 'gp-populate-anything' ),
+				'defaultOrdering'                   => __( 'Default', 'gp-populate-anything' ),
 				/**
 				 * Using HTML entity (&#9998;) does not work with esc_html__ so the pencil has been pasted in directly.
 				 */
@@ -2615,6 +2629,11 @@ class GP_Populate_Anything extends GP_Plugin {
 				$fake_entry['form_id']           = $form['id'];
 				$field_value[ "{$field->id}.2" ] = GFCommon::calculate( $field, $form, $fake_entry );
 				break;
+			case 'number':
+				// Ensure that number is correctly formatted when loaded into the form. By default, the saved value
+				// will always come through with periods for the decimal place and commas for thousand separator.
+				$field_value = $field->get_value_entry_detail( $field_value );
+				break;
 		}
 
 		/**
@@ -3494,7 +3513,7 @@ class GP_Populate_Anything extends GP_Plugin {
 	}
 
 	public function get_current_entry() {
-		if ( ! class_exists( 'GFEntryDetail' ) || ! GFCommon::is_entry_detail_edit() ) {
+		if ( ! class_exists( 'GFEntryDetail' ) || ! ( GFCommon::is_entry_detail_edit() || GFCommon::is_entry_detail_view() ) ) {
 			return false;
 		}
 

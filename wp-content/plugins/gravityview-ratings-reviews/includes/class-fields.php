@@ -5,7 +5,7 @@
  * @package   GravityView_Ratings_Reviews
  * @license   GPL2+
  * @author    Katz Web Services, Inc.
- * @link      http://gravityview.co
+ * @link      http://www.gravitykit.com
  * @copyright Copyright 2014, Katz Web Services, Inc.
  *
  * @since 0.1.0
@@ -61,6 +61,7 @@ class GravityView_Ratings_Reviews_Fields extends GravityView_Ratings_Reviews_Com
 		$field_options['more_comments_text'] = array(
 			'type'  => 'text',
 			'label' => __( 'More reviews text:', 'gravityview-ratings-reviews' ),
+			// Translators: %s contains the placeholder to be replaced.
 			'desc'  => sprintf( _x( 'Text to display when there are more than one reviews. %s is replaced by the number of reviews.', 'The placeholder symbol that will be replaced', 'gravityview-ratings-reviews' ), '<code>%</code>'),
 			'value' => __( '% Reviews', 'gravityview-ratings-reviews'),
 		);

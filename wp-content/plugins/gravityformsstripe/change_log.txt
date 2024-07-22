@@ -1,3 +1,6 @@
+### 5.7.0 | 2024-06-17
+- Fixed a typo that can cause a fatal error when using the gform_stripe_payment_element_authorization_only filter.
+
 ### 5.6.0 | 2024-04-29
 - Added a new [`gform_stripe_payment_element_updated_payment_information`](https://docs.gravityforms.com/gform_stripe_payment_element_updated_payment_information/) JavaScript filter to allow modifying the payment element payment information when the form total changes.
 - Updated logging to decrease the log file size and make it easier to track issues.

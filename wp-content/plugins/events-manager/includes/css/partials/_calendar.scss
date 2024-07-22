@@ -197,12 +197,14 @@
 	}
 
 	.em-cal-body {
-		--grid-auto-rows : auto;
-
-		grid-auto-rows: var(--grid-auto-rows); // we'll adjust this one depending on size of calendar via @media and CSS/JS class flags
 
 		border-bottom: var(--date-box-border);
 		background-color: var(--calendar-background);
+
+		--grid-auto-rows : auto;
+		&:not(.auto-aspect) {
+			grid-auto-rows: var(--grid-auto-rows); // we'll adjust this one depending on size of calendar via @media and CSS/JS class flags
+		}
 
 		.em-cal-day {
 			text-align: right;

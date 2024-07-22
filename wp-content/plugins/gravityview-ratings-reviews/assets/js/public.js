@@ -24,6 +24,12 @@
 	 */
 	self.init = function() {
 		self._holder = '.gv-star-rate-holder, .gv-vote-rate-holder';
+
+		// Only run it once.
+		if ( $( self._holder ).length <= 0 ) {
+			return;
+		}
+
 		self._star = '.gv-star-rate';
 		self._vote = '.gv-vote-up, .gv-vote-down';
 		self._input = '.gv-star-rate-field';
@@ -48,6 +54,17 @@
 		}
 
 		self.voteHolder = $( '.gv-vote-rate-holder' );
+
+		$.merge( self.starHolder, self.voteHolder ).each( function () {
+			var $element = $( this );
+			var viewId = $element.data( 'view-id' );
+			var entryId = $element.data( 'entry-id' );
+
+			if ( self.limit_one_review_per_person && localStorage.getItem( `${ viewId }-${ entryId }-rated` ) === 'true' ) {
+				$element.parent().html( self.already_reviewed_text );
+			}
+		} );
+
 		self.vote = $( 'a.gv-vote-up, a.gv-vote-down', self.voteHolder );
 		self.vote.on( 'click touchend', self.voteRateReview );
 
@@ -55,6 +72,77 @@
 		self.originalCancelReplyText = self.getText( $( self.cancelId ) );
 		self.originalCommentLabelText = self.getText( $( self.commentLabel ) );
 		self.originalCommentSubmitText = $( self.commentSubmit ).val();
+
+		$(self.commentSubmit).on( 'click', self.validateRatingRequired );
+		self.$field.on('change', self.setRatingRequiredState );
+		self.editReview();
+	};
+
+	self.setStars = function() {
+		if(!$('.gv-star-rate-field').length){
+			return;
+		}
+		$('.gv-star-rate-field').each( function(i,el){
+			var val = parseInt( $( el ).val(), 10 );
+			if (val >= 1 && val <= 5) {
+				$(el).parent().find('.gv-star-rate:eq(' + (val-1) + ')').trigger('click');
+			}
+		});
+
+
+	};
+
+	self.reviewTimer = function(){
+		var commentElements = $('.review-edit-duration');
+		commentElements.each(function() {
+			var commentElement = $(this);
+			var timeLeft = new Date(commentElement.data('edit-time-left'));
+			if(timeLeft > 0){
+				self.editReviewTimer(commentElement, timeLeft);
+			}
+		});
+	};
+
+
+	self.editReviewTimer = function(commentElement, review_edit_duration){
+
+		function startTimer() {
+			var h = Math.floor(review_edit_duration / 3600);
+			var m = Math.floor(review_edit_duration % 3600 / 60);
+			var s = Math.floor(review_edit_duration % 3600 % 60);
+
+			var hDisplay = h > 0 ? h + ":" : "";
+			var mDisplay = h > 0 || m > 0 ? (m<10 && h > 0 ? "0" : "") + m + ":" : "";
+			var sDisplay = (s<10 ? "0" : "") + s;
+			commentElement.text(hDisplay + mDisplay + sDisplay);
+
+			review_edit_duration--;
+
+			if (review_edit_duration >= 0) {
+				setTimeout(startTimer, 1000);
+			}else{
+				commentElement.fadeOut().remove();
+			}
+		}
+
+		startTimer();
+	};
+
+	self.editReview = function(){
+		self.setStars();
+		self.reviewTimer();
+		$('a.gv-review-edit-button').on('click',function(e){
+			e.preventDefault();
+			var commentId = $(this).data('commentid');
+			$('#gv-review-'+commentId).toggle();
+		});
+
+		$('button.gv-review-edit-cancel').on('click',function(e){
+			e.preventDefault();
+			var commentId = $(this).data('commentid');
+			$(this).parents('.gv-review-edit-area').hide().prev().show();
+		});
+
 	};
 
 	/**
@@ -221,11 +309,11 @@
 				$field    = $holder.siblings( self._input ),
 				index     = $siblings.index( $star );
 
-		$field.val( index + 1 );
+		$field.val( index + 1 ).trigger( 'change' );
 
 		$siblings.removeClass( 'gv-rate-mutated' ).attr( 'data-selected', 0 ).each( function( i, el ) {
 			var $el = $( el );
-			// Dont fill the star if bigger than the one clicked
+			// Don't fill the star if bigger than the one clicked
 			if ( i >= index + 1 ) {
 				return;
 			}
@@ -238,6 +326,8 @@
 			var currentRating = $parent.attr( 'data-star-rating' );
 			var newRating = $parent.find( '.gv-rate-mutated' ).length;
 			var response_error = false;
+			var viewId = $parent.attr( 'data-view-id' );
+			var entryId = $parent.attr( 'data-entry-id' );
 
 			$parent.attr( 'data-star-rating', newRating );
 
@@ -248,9 +338,9 @@
 				data: {
 					action: self.action,
 					nonce: self.nonce,
-					view_id: $parent.attr( 'data-view-id' ),
 					comment_id: $parent.attr( 'data-comment-id' ),
-					entry_id: $parent.attr( 'data-entry-id' ),
+					view_id: viewId,
+					entry_id: entryId,
 					update_rating: $parent.attr( 'data-rated' ),
 					rating: newRating,
 					type: 'star',
@@ -262,6 +352,12 @@
 					if ( ! response.success ) {
 						response_error = true;
 					} else {
+						localStorage.setItem( `${ viewId }-${ entryId }-rated`, 'true' );
+
+						if ( self.limit_one_review_per_person ) {
+							$(`[data-view-id="${viewId}"][data-entry-id="${entryId}"]`).parent().html(self.already_reviewed_text);
+						}
+
 						$parent.attr( 'data-rated', true );
 						$parent.attr( 'data-comment-id', response.data.comment_id );
 					}
@@ -299,6 +395,8 @@
 			var currentText = $text.text();
 			var currentTitle = $text.attr( 'title' );
 			var response_error = false;
+			var viewId = $parent.attr( 'data-view-id' );
+			var entryId = $parent.attr( 'data-entry-id' );
 
 			$.ajax( {
 				type: 'post',
@@ -307,9 +405,9 @@
 				data: {
 					action: self.action,
 					nonce: self.nonce,
-					view_id: $parent.attr( 'data-view-id' ),
+					view_id: viewId,
 					comment_id: $parent.attr( 'data-comment-id' ),
-					entry_id: $parent.attr( 'data-entry-id' ),
+					entry_id: entryId,
 					update_rating: $parent.attr( 'data-rated' ),
 					type: 'vote',
 					rating: String( vote ),
@@ -321,6 +419,12 @@
 					if ( ! response.success ) {
 						response_error = true;
 					} else {
+						localStorage.setItem( `${ viewId }-${ entryId }-rated`, 'true' );
+
+						if ( self.limit_one_review_per_person ) {
+							$(`[data-view-id="${viewId}"][data-entry-id="${entryId}"]`).parent().html(self.already_reviewed_text);
+						}
+
 						$parent.attr( 'data-rated', true );
 						$parent.attr( 'data-comment-id', response.data.comment_id );
 					}
@@ -330,7 +434,6 @@
 				},
 				complete: function() {
 					if ( response_error ) {
-						$holder.find( 'a' ).removeClass( 'gv-rate-mutated' );
 
 						if ( currentVote == 1 ) {
 							$holder.find( 'a.gv-vote-up' ).addClass( 'gv-rate-mutated' );
@@ -352,10 +455,26 @@
 		}
 
 		$text.text( text ).attr( 'title', title );
-		$field.val( vote );
+		$field.val( vote ).trigger( 'change' );
 
 		return false;
 	};
+
+	self.validateRatingRequired = function (e) {
+		if ( parseInt( self.$field.data( 'required' ) ) === 1 && self.$field.val() === '' ) {
+			e.preventDefault();
+			self.setRatingRequiredState();
+		}
+	};
+
+	self.setRatingRequiredState = function () {
+		self.$field.closest( self.fieldClass ).toggleClass( 'is-required', self.$field.val() === '' );
+	};
+
+	// Datatables Init
+	$(window).on('gravityview-datatables/event/draw', function() {
+		$( self.init );
+	});
 
 	// Init!
 	$( self.init );
