@@ -514,7 +514,7 @@ add_action('init', function () {
 
 function child_remove_page_templates($page_templates) {
     unset($page_templates['page-maker-portal.php']);
-    unset($page_templates['page-entry.php']);
+    //unset($page_templates['page-entry.php']);
 
     unset($page_templates['404.php']);
     unset($page_templates['flagship-faire-landing-page.php']);
