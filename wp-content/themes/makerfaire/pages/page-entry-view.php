@@ -4,6 +4,7 @@
  *
  */
 $showcaseResults = showcase($entryId); // this will also tell us if this is a parent or child of a showcase
+$showEditMakey = false;
 ?>
 <main class="wrapper-fluid">
     <section id="topSection">
@@ -49,7 +50,9 @@ $showcaseResults = showcase($entryId); // this will also tell us if this is a pa
                     </div>
                     <?php if(isset($project_short) && $project_short != '') { ?>
                         <p class="project-description"><?php echo nl2br($project_short); 
-                            if(strlen($project_short) < 200 && $makerEdit) { ?>
+                            if(strlen($project_short) < 200 && $makerEdit) { 
+                                $showEditMakey = true;
+                                ?>
                                 <span class="edit-message">Please consider <a href="#" onclick="document.getElementById('edit-photos').click();return false;">editing your form</a> to add more descriptive text.</span>
                             <?php } ?>
                         </p>
@@ -75,7 +78,9 @@ $showcaseResults = showcase($entryId); // this will also tell us if this is a pa
                             <?php } ?>
                     <?php } ?>
                     </div>
-                <?php } else if($makerEdit && empty($video) && empty($video2)) { ?>
+                <?php } else if($makerEdit && empty($video) && empty($video2)) { 
+                    $showEditMakey = true;
+                    ?>
                     <span class="edit-message">Please <a href="#" onclick="document.getElementById('edit-photos').click();return false;">edit your form</a> to add additional photos or a video.</span>
                 <?php } ?>
             </div>
@@ -93,8 +98,18 @@ $showcaseResults = showcase($entryId); // this will also tell us if this is a pa
                         <p class="maker-description"><?php echo($maker['bio']); ?></p>
                         <?php if(!empty($maker['website'])) { ?>
                             <a class="maker-website" href="<?php echo($maker['website']); ?>" target="_blank"><?php echo($maker['website']); ?></a>
-                        <?php } ?>                    
-                        <?php echo $maker['social']; ?>
+                        <?php } else if($makerEdit) { 
+                            $showEditMakey = true;
+                            ?> 
+                            <span class="edit-message">Please consider <a href="#" onclick="document.getElementById('edit-photos').click();return false;">editing your form</a> to add this Maker's website.</span>
+                        <?php } ?> 
+                        <?php if($maker['social'] != '<span class="social-links reversed"></span>') {                    
+                                echo $maker['social'];
+                              } else if($makerEdit) { 
+                                $showEditMakey = true;
+                                ?> 
+                                <span class="edit-message">Please consider <a href="#" onclick="document.getElementById('edit-photos').click();return false;">editing your form</a> and adding whatever social links this Maker might have.</span>
+                        <?php } ?> 
                     </div>
                 <?php } 
             } else if( $makers  ) { 
@@ -114,7 +129,9 @@ $showcaseResults = showcase($entryId); // this will also tell us if this is a pa
                 <div class="big-column">
                     <h2><?php echo($maker['firstname'] . " " . $maker['lastname']); ?></h2>
                     <p class="maker-description"><?php echo($maker['bio']);
-                    if(strlen($maker['bio']) < 200 && $makerEdit) { ?>
+                    if(strlen($maker['bio']) < 200 && $makerEdit) { 
+                        $showEditMakey = true;
+                        ?>
                         <span class="edit-message">Please consider <a href="#" onclick="document.getElementById('edit-photos').click();return false;">editing your form</a> to add more descriptive text.</span>
                     <?php } ?>
                 </div>
@@ -140,8 +157,16 @@ $showcaseResults = showcase($entryId); // this will also tell us if this is a pa
                     <h4>More Maker Info</h4>
                     <?php if(!empty($maker['website'])) { ?>
                         <a class="maker-website" href="<?php echo($maker['website']); ?>" target="_blank"><?php echo($maker['website']); ?></a>
+                    <?php } else if($makerEdit) { 
+                        $showEditMakey = true; ?> 
+                        <span class="edit-message">Please consider <a href="#" onclick="document.getElementById('edit-photos').click();return false;">editing your form</a> to add a maker website.</span>
                     <?php } ?>  
-                    <?php echo $maker['social']; ?>
+                    <?php if($maker['social'] != '<span class="social-links reversed"></span>') { 
+                        echo $maker['social'];
+                    } else if($makerEdit) { 
+                        $showEditMakey = true; ?> 
+                        <span class="edit-message">Please consider <a href="#" onclick="document.getElementById('edit-photos').click();return false;">editing your form</a> and adding whatever social links you might have.</span>
+                    <?php } ?> 
                 </div>
             <?php }
             } ?>  
@@ -157,19 +182,34 @@ $showcaseResults = showcase($entryId); // this will also tell us if this is a pa
                     <span class="entry-box-item"><i class="fa fa-tools"></i><a href="/<?php echo $url_sub_path; ?>/meet-the-makers/">See All Makers</a></span>
                 </div>
             </div>
-            <?php if(!empty($project_website) && !empty($project_social)) { ?>
+            <?php if((!empty($project_website) && !empty($project_social)) || $makerEdit) { ?>
                 <div class="entry-box">
                     <h4>More Project Info</h4>
                     <?php if(!empty($project_website)) { ?>
                         <a class="maker-website" href="<?php echo($project_website); ?>" target="_blank"><?php echo($project_website); ?></a>
-                    <?php } ?>  
-                    <?php echo $project_social; ?>
+                    <?php } else if($makerEdit) { 
+                        $showEditMakey = true; ?> 
+                        <span class="edit-message">Please consider <a href="#" onclick="document.getElementById('edit-photos').click();return false;">editing your form</a> to add a project website.</span>
+                    <?php } ?> 
+                    <?php if($project_social != '<span class="social-links reversed"></span>') { 
+                        echo $project_social;
+                    } else if($makerEdit) { 
+                        $showEditMakey = true; ?> 
+                        <span class="edit-message">Please consider <a href="#" onclick="document.getElementById('edit-photos').click();return false;">editing your form</a> and adding some social links for your project.</span>
+                    <?php } ?> 
                 </div>
             <?php } ?>  
         </section>
     <?php } ?>  
 
-    <?php /* <section id="sponsorSection">
+    <?php if($showEditMakey == true) { ?>
+        <a id="editMakey" href="#" onclick="document.getElementById('edit-photos').click();return false;">
+            <img src="/wp-content/themes/makerfaire/images/more-info-makey.png" width="203px" height="254px" alt="Edit your entry!" title="Click here to edit your entry details to make this page the best it can be!" />
+        </a>
+    <?php } ?>
+    
+    <?php
+    /* <section id="sponsorSection">
         <?php 
             $slideshowShortcode = "[sponsor_slideshow faire_id=" . $faireShort . " url=https://" . $_SERVER['SERVER_NAME'] . "/" . $url_sub_path . "/sponsors/]";
             echo(do_shortcode($slideshowShortcode)); 

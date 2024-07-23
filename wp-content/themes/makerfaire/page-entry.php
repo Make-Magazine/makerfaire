@@ -411,7 +411,7 @@ if (!$displayMakers) {
                 //open dialog/modal
                 jQuery("#edit-photos").on("click", function() {                    
                     jQuery("#dialog-form").dialog("open");                                        
-                });                                
+                });                         
             });
         </script>
         <div class="makerEditHead" style="display:flex; justify-content: space-between; padding:10px; align-items: center;">
