@@ -399,6 +399,11 @@ if (!$displayMakers) {
                 //if there is an error on the submission, auto open the modal
                 if(jQuery(".gv-error").length){
                     autoOpen = true;
+                } else if(jQuery(".gv-notice").length) {
+                    jQuery(".entry-page").prepend("<img class='makey-spinner' src='https://make.co/wp-content/universal-assets/v1/images/makey-spinner.gif' height='50px' width='50px' style='margin:auto;' />");
+                    jQuery('.entry-page .wrapper-fluid').load(document.URL + " .entry-page .wrapper-fluid > *", function() {
+                        jQuery(".makey-spinner").remove();
+                    });
                 }
                 dialog = jQuery("#dialog-form").dialog({
                     autoOpen: autoOpen,

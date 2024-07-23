@@ -321,3 +321,7 @@
 .gfield_validation_message {
     padding-top: 15px !important;
 }
+
+.gform_wrapper.gravity-theme .gform_footer button, .gform_wrapper.gravity-theme .gform_footer input, .gform_wrapper.gravity-theme .gform_page_footer button, .gform_wrapper.gravity-theme .gform_page_footer input {
+    margin-bottom: 0px;
+}

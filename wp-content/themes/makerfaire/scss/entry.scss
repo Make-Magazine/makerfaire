@@ -331,6 +331,11 @@
 				width: auto;
 			}
 		}
+		.makey-spinner {
+			position: relative;
+			left: 50%;
+			right: 50%;
+		}
 	}
 	.elementor-location-popup {
 		display: none;
@@ -503,6 +508,7 @@
 		}
 	}
 }
+
 
 .edit-message {
 	display: block;
