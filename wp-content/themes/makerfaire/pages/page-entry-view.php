@@ -53,7 +53,7 @@ $showEditMakey = false;
                             if(strlen($project_short) < 200 && $makerEdit) { 
                                 $showEditMakey = true;
                                 ?>
-                                <span class="edit-message">Please consider <a href="#" onclick="document.getElementById('edit-photos').click();return false;">editing your form</a> to add more descriptive text.</span>
+                                <span class="edit-message">Please consider <a href="#" onclick="document.getElementById('edit-photos').click();return false;">editing your project</a> to add more descriptive text.</span>
                             <?php } ?>
                         </p>
                     <?php } ?>
@@ -81,7 +81,7 @@ $showEditMakey = false;
                 <?php } else if($makerEdit && empty($video) && empty($video2)) { 
                     $showEditMakey = true;
                     ?>
-                    <span class="edit-message">Please <a href="#" onclick="document.getElementById('edit-photos').click();return false;">edit your form</a> to add additional photos or a video.</span>
+                    <span class="edit-message">Please <a href="#" onclick="document.getElementById('edit-photos').click();return false;">edit your project</a> to add additional photos or a video.</span>
                 <?php } ?>
             </div>
         </div>
@@ -101,14 +101,14 @@ $showEditMakey = false;
                         <?php } else if($makerEdit) { 
                             $showEditMakey = true;
                             ?> 
-                            <span class="edit-message">Please consider <a href="#" onclick="document.getElementById('edit-photos').click();return false;">editing your form</a> to add this Maker's website.</span>
+                            <span class="edit-message">Please consider <a href="#" onclick="document.getElementById('edit-photos').click();return false;">editing your project</a> to add this Maker's website.</span>
                         <?php } ?> 
                         <?php if($maker['social'] != '<span class="social-links reversed"></span>') {                    
                                 echo $maker['social'];
                               } else if($makerEdit) { 
                                 $showEditMakey = true;
                                 ?> 
-                                <span class="edit-message">Please consider <a href="#" onclick="document.getElementById('edit-photos').click();return false;">editing your form</a> and adding whatever social links this Maker might have.</span>
+                                <span class="edit-message">Please consider <a href="#" onclick="document.getElementById('edit-photos').click();return false;">editing your project</a> and adding whatever social links this Maker might have.</span>
                         <?php } ?> 
                     </div>
                 <?php } 
@@ -132,7 +132,7 @@ $showEditMakey = false;
                     if(strlen($maker['bio']) < 200 && $makerEdit) { 
                         $showEditMakey = true;
                         ?>
-                        <span class="edit-message">Please consider <a href="#" onclick="document.getElementById('edit-photos').click();return false;">editing your form</a> to add more descriptive text.</span>
+                        <span class="edit-message">Please consider <a href="#" onclick="document.getElementById('edit-photos').click();return false;">editing your project</a> to add more descriptive text.</span>
                     <?php } ?>
                 </div>
             <?php }
@@ -152,20 +152,20 @@ $showEditMakey = false;
             <?php 
             if(count($makers) == 1) { 
                 $maker = current($makers); 
-                if(!empty($maker['website']) || $maker['social'] != '<span class="social-links reversed"></span>') { ?>
+                if(!empty($maker['website']) || $maker['social'] != '<span class="social-links reversed"></span>' || $makerEdit == true) { ?>
                 <div class="entry-box">
                     <h4>More Maker Info</h4>
                     <?php if(!empty($maker['website'])) { ?>
                         <a class="maker-website" href="<?php echo($maker['website']); ?>" target="_blank"><?php echo($maker['website']); ?></a>
                     <?php } else if($makerEdit) { 
                         $showEditMakey = true; ?> 
-                        <span class="edit-message">Please consider <a href="#" onclick="document.getElementById('edit-photos').click();return false;">editing your form</a> to add a maker website.</span>
+                        <span class="edit-message">Please consider <a href="#" onclick="document.getElementById('edit-photos').click();return false;">editing your project</a> to add a maker website.</span>
                     <?php } ?>  
                     <?php if($maker['social'] != '<span class="social-links reversed"></span>') { 
                         echo $maker['social'];
                     } else if($makerEdit) { 
                         $showEditMakey = true; ?> 
-                        <span class="edit-message">Please consider <a href="#" onclick="document.getElementById('edit-photos').click();return false;">editing your form</a> and adding whatever social links you might have.</span>
+                        <span class="edit-message">Please consider <a href="#" onclick="document.getElementById('edit-photos').click();return false;">editing your project</a> and adding whatever social links you might have.</span>
                     <?php } ?> 
                 </div>
             <?php }
@@ -189,13 +189,13 @@ $showEditMakey = false;
                         <a class="maker-website" href="<?php echo($project_website); ?>" target="_blank"><?php echo($project_website); ?></a>
                     <?php } else if($makerEdit) { 
                         $showEditMakey = true; ?> 
-                        <span class="edit-message">Please consider <a href="#" onclick="document.getElementById('edit-photos').click();return false;">editing your form</a> to add a project website.</span>
+                        <span class="edit-message">Please consider <a href="#" onclick="document.getElementById('edit-photos').click();return false;">editing your project</a> to add a project website.</span>
                     <?php } ?> 
                     <?php if($project_social != '<span class="social-links reversed"></span>') { 
                         echo $project_social;
                     } else if($makerEdit) { 
                         $showEditMakey = true; ?> 
-                        <span class="edit-message">Please consider <a href="#" onclick="document.getElementById('edit-photos').click();return false;">editing your form</a> and adding some social links for your project.</span>
+                        <span class="edit-message">Please consider <a href="#" onclick="document.getElementById('edit-photos').click();return false;">editing your project</a> and adding some social links for your project.</span>
                     <?php } ?> 
                 </div>
             <?php } ?>  
