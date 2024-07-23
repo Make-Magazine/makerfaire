@@ -793,11 +793,12 @@ function getMakerInfoLegacy($entry) {
             $makerphoto = $photo[0];
         }
         $makers = array(array(
-            'firstname' => $entry['96.3'], 'lastname' => $entry['96.6'],
-            'bio' => (isset($entry['234']) ? $entry['234'] : ''),
-            'photo' => $makerphoto,
-            'social' => getSocial(isset($entry['821']) ? $entry['821'] : ''),
-            'website' => (isset($entry['209']) ? $entry['209'] : ''),
+            'firstname' => (isset($entry['96.3']) ? $entry['96.3']:''), 
+            'lastname'  => (isset($entry['96.6']) ? $entry['96.6']:''),
+            'bio'       => (isset($entry['234']) ? $entry['234'] : ''),
+            'photo'     => $makerphoto,
+            'social'    => getSocial(isset($entry['821']) ? $entry['821'] : ''),
+            'website'   => (isset($entry['209']) ? $entry['209'] : ''),
         ));
     }
     return $makers;

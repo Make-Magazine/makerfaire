@@ -9,7 +9,7 @@ $showEditMakey = false;
 <main class="wrapper-fluid">
     <section id="topSection">
         <div class="big-column">
-            <?php if($proj_photo_size[0] > 900 ) { ?>
+            <?php if(isset($proj_photo_size[0]) && $proj_photo_size[0] > 900 ) { ?>
                 <picture class="exhibit-picture">
                     <source media="(max-width: 420px)" srcset="<?php echo $project_photo_small; ?>">
                     <source media="(max-width: 1200px)" srcset="<?php echo $project_photo_medium; ?>">
@@ -18,7 +18,7 @@ $showEditMakey = false;
                          onerror="this.onerror=null;this.src='/wp-content/themes/makerfaire/images/default-featured-image.jpg';this.srcset=''"
                          data-photo="<?php echo $project_photo; ?>">
                 </picture>
-            <?php } else if($proj_photo_size[0] > 420 ) { ?>
+            <?php } elseif(isset($proj_photo_size[0]) && $proj_photo_size[0] > 420 ) { ?>
                 <picture class="exhibit-picture small-picture">
                     <source media="(max-width: 420px)" srcset="<?php echo $project_photo_small; ?>">
                     <img src="<?php echo $project_photo_medium; ?>" 
