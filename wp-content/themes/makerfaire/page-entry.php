@@ -407,12 +407,18 @@ if (!$displayMakers) {
                 }
                 dialog = jQuery("#dialog-form").dialog({
                     autoOpen: autoOpen,
+                    resizable: false,                    
+                    width: 'auto',
                     height: "auto",
-                    width: 950,
                     modal: true,
-                    closeOnEscape: false                   
-                });                
-
+                    
+                    open: function(event, ui) {
+                        jQuery('.ui-widget-overlay').bind('click', function(){
+                            jQuery('#dialog-form').dialog('close');
+                        });
+                    }                                                                   
+                });
+                
                 //open dialog/modal
                 jQuery("#edit-photos").on("click", function() {                    
                     jQuery("#dialog-form").dialog("open");                                        
