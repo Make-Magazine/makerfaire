@@ -179,7 +179,7 @@ $showEditMakey = false;
                     <?php if($show_sched ){ ?>
                         <span class="entry-box-item"><i class="fa fa-calendar"></i><a href="/<?php echo $url_sub_path; ?>/schedule/">Event Schedule</a></span>
                     <?php } ?>
-                    <span class="entry-box-item"><i class="fa fa-screwdriver-wrench"></i><a href="/<?php echo $url_sub_path; ?>/meet-the-makers/">See All Makers</a></span>
+                    <span class="entry-box-item"><i class="fa fa-tools"></i><a href="/<?php echo $url_sub_path; ?>/meet-the-makers/">See All Makers</a></span>
                 </div>
             </div>
             <?php if((!empty($project_website) && !empty($project_social)) || $makerEdit) { ?>
