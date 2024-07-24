@@ -62,9 +62,9 @@ if (($showMakeProjects === 'mponly' || $showMakeProjects === 'mfandmp') && $MPCa
                 <div class="col-sm-4">
                     <div class="mtm-filter-view">
                         <span class="mtm-view-by"><?php _e("View by:", 'makerfaire') ?></span>
-                        <a ng-class="{active: layout == 'grid'}" ng-click="layout = 'grid'" class="mtm-filter-g pointer-on-hover box gallery"><i class="fa fa-picture-o" aria-hidden="true"></i> <?php _e("GALLERY", 'makerfaire') ?></a>
+                        <a ng-class="{active: layout == 'grid'}" ng-click="layout = 'grid'" class="mtm-filter-g pointer-on-hover box gallery"><i class="fas fa-image" aria-hidden="true"></i> <?php _e("GALLERY", 'makerfaire') ?></a>
                         <span class="mtm-pipe">|</span>
-                        <a ng-class="{active: layout == 'list'}" ng-click="layout = 'list'" class="mtm-filter-l pointer-on-hover box list" ><i class="fa fa-th-list" aria-hidden="true"></i> <?php _e("LIST", 'makerfaire') ?></a>
+                        <a ng-class="{active: layout == 'list'}" ng-click="layout = 'list'" class="mtm-filter-l pointer-on-hover box list" ><i class="fas fa-list" aria-hidden="true"></i> <?php _e("LIST", 'makerfaire') ?></a>
                     </div>
                 </div>
                 <div class="col-sm-4 mid-section">

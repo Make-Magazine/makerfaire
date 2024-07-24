@@ -773,7 +773,7 @@ function entryResources($lead, $html=TRUE) {
             . ' <th>Comments</th>'
             . ' <th>User</th>'
             . ' <th>Last Updated</th>'
-            . ' <th><p class="addIcon" onclick="addRow(\'resource\')"><i class="fa fa-plus-circle fa-lg"></i></p></th>'
+            . ' <th><p class="addIcon" onclick="addRow(\'resource\')"><i class="fa fa-circle-plus fa-lg"></i></p></th>'
             . ' </tr></thead>';
     $return = '';
     $resourceDisp .= '<tbody>';
@@ -801,7 +801,7 @@ function entryResources($lead, $html=TRUE) {
           'update'        => '<span onclick="resAttDelete(\'resRow' . $result->ID . '\','.$lead['id'].')"><i class="bi bi-dash-circle""></i></span>'          
         );
         $resourceDisp .= '<tr id="resRow' . $result->ID . '">'
-                . ' <td class="lock"><span class="lockIcon" onclick="resAttLock(\'#resRow' . $result->ID . '\',' . $result->lockBit . ')">' . ($result->lockBit == 1 ? '<i class="fa fa-lock fa-lg"></i>' : '<i class="fa fa-unlock-alt fa-lg"></i>') . '</span></td>'
+                . ' <td class="lock"><span class="lockIcon" onclick="resAttLock(\'#resRow' . $result->ID . '\',' . $result->lockBit . ')">' . ($result->lockBit == 1 ? '<i class="fa fa-lock fa-lg"></i>' : '<i class="fa fa-lock-open fa-lg"></i>') . '</span></td>'
                 . ' <td id="resitem_' . $result->ID . '" data-itemID="' . $result->item_id . '">' . $result->item . '</td>'
                 . ' <td id="restype_' . $result->ID . '" data-typeID="' . $result->resource_id . '" class="editable dropdown">' . $result->type . '</td>'
                 . ' <td id="resqty_' . $result->ID . '"  class="editable numeric">' . $result->qty . '</td>'
@@ -809,7 +809,7 @@ function entryResources($lead, $html=TRUE) {
                 . ' <td id="resuser_' . $result->ID . '">' . $dispUser . '</td>'
                 . ' <td id="resdateupdate_' . $result->ID . '">' . $update_stamp
                 . '</td>'
-                . ' <td class="delete"><span class="delIcon" onclick="resAttDelete(\'#resRow' . $result->ID . '\')"><i class="fa fa-minus-circle fa-lg"></i></span></td>'
+                . ' <td class="delete"><span class="delIcon" onclick="resAttDelete(\'#resRow' . $result->ID . '\')"><i class="fa fa-circle-minus fa-lg"></i></span></td>'
                 . ' </tr>';
     }
     $resourceDisp .= '</tbody>';
@@ -828,7 +828,7 @@ function entryResources($lead, $html=TRUE) {
             . ' <th>Comment</th>'
             . ' <th>User</th>'
             . ' <th>Last Updated</th>'
-            . ' <th><span class="addIcon" onclick="addRow(\'attribute\')"><i class="fa fa-plus-circle fa-lg"></i></span></th></tr></thead>';
+            . ' <th><span class="addIcon" onclick="addRow(\'attribute\')"><i class="fa fa-circle-plus fa-lg"></i></span></th></tr></thead>';
     $attDisp .= '<tbody>';
     foreach ($results as $result) {
         if ($result->user == NULL) {
@@ -855,7 +855,7 @@ function entryResources($lead, $html=TRUE) {
                 . ' <td id="attcomment_' . $result->ID . '" class="editable textAreaEdit">' . $result->comment . '</td>'
                 . ' <td id="attuser_' . $result->ID . '">' . $dispUser . '</td>'
                 . ' <td id="attdateupdate_' . $result->ID . '">' . $update_stamp . '</td>'
-                . ' <td class="delete"><span class="delIcon" onclick="resAttDelete(\'#attRow' . $result->ID . '\')"><i class="fa fa-minus-circle fa-lg"></i></span></td></tr>';
+                . ' <td class="delete"><span class="delIcon" onclick="resAttDelete(\'#attRow' . $result->ID . '\')"><i class="fa fa-circle-minus fa-lg"></i></span></td></tr>';
     }
     $attDisp .= '</tbody>';
     $attDisp .= '</table>';
@@ -882,7 +882,7 @@ function entryResources($lead, $html=TRUE) {
             . ' <th>Comment</th>'
             . ' <th>User</th>'
             . ' <th>Last Updated</th>'
-            . ' <th><span onclick="addRow(\'attention\')"><i class="fa fa-plus-circle"></i></span></th></tr></thead>';
+            . ' <th><span onclick="addRow(\'attention\')"><i class="fa fa-circle-plus"></i></span></th></tr></thead>';
     $attnDisp .= '<tbody>';
     foreach ($results as $result) {
         if ($result->user == NULL) {
@@ -905,7 +905,7 @@ function entryResources($lead, $html=TRUE) {
                 . ' <td id="attncomment_' . $result->ID . '" class="editable textAreaEdit">' . $result->comment . '</td>'
                 . ' <td id="attnuser_' . $result->ID . '">' . $dispUser . '</td>'
                 . ' <td id="attndateupdate_' . $result->ID . '">' . $update_stamp . '</td>'
-                . ' <td><span onclick="resAttDelete(\'#attnRow' . $result->ID . '\')"><i class="fa fa-minus-circle"></i></span></td></tr>';
+                . ' <td><span onclick="resAttDelete(\'#attnRow' . $result->ID . '\')"><i class="fa fa-circle-minus"></i></span></td></tr>';
     }
     $attnDisp .= '</tbody>';
     $attnDisp .= '</table>';
@@ -1004,7 +1004,7 @@ function entryTicketing($lead, $format = 'admin') {
                 $return .= '<td><a target="_blank" href="https://www.eventbrite.com/e/' . $result->event_id . '?discount=' . $result->access_code . '">' . $result->access_code . '</a></td>';
                 $return .= '<td><h4>' . $result->title . '</h4>' . $result->subtitle . '</td>';
                 $return .= '<td><p class="' . ($result->hidden == 0 ? 'checked' : '') . '" id="HT' . $result->access_code . '" onclick="hiddenTicket(\'' . $result->access_code . '\')">';
-                $return .= '<i class="fa fa-' . ($result->hidden == 0 ? 'check-' : '') . 'square-o" aria-hidden="true"></i>';
+                $return .= '<i class="' . ($result->hidden == 0 ? 'fa fa-check-' : '') . 'far fa-square-o" aria-hidden="true"></i>';
 
                 $return .= '</p></td>';
                 $return .= '</tr>';
