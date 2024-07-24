@@ -400,9 +400,10 @@ if (!$displayMakers) {
                 if(jQuery(".gv-error").length){
                     autoOpen = true;
                 } else if(jQuery(".gv-notice").length) {
-                    jQuery(".entry-page").prepend("<img class='makey-spinner' src='https://make.co/wp-content/universal-assets/v1/images/makey-spinner.gif' height='50px' width='50px' style='margin:auto;' />");
-                    jQuery('.entry-page .wrapper-fluid').load(document.URL + " .entry-page .wrapper-fluid > *", function() {
-                        jQuery(".makey-spinner").remove();
+                    jQuery("#dialog-refresh").dialog({
+                        dialogClass: 'message',
+                        modal: true,
+                        position: { my: "top", at: "top", of: ".entry-page" },
                     });
                 }
                 dialog = jQuery("#dialog-form").dialog({
@@ -411,7 +412,13 @@ if (!$displayMakers) {
                     width: 'auto',
                     height: "auto",
                     modal: true,
-                    
+                    position: { my: "top", at: "top", of: ".entry-page" },
+                    create: function(event, ui) {
+                        //document.body.style.overflow = "hidden";
+                    },
+                    beforeClose: function(event, ui) {
+                        //document.body.style.overflow = "auto";
+                    },
                     open: function(event, ui) {
                         jQuery('.ui-widget-overlay').bind('click', function(){
                             jQuery('#dialog-form').dialog('close');
@@ -422,10 +429,14 @@ if (!$displayMakers) {
                 //open dialog/modal
                 jQuery("#edit-photos").on("click", function() {                    
                     jQuery("#dialog-form").dialog("open");                                        
-                });                         
+                });          
+                
+                jQuery(".gv-button-cancel").bind('click', function(){
+                    jQuery('#dialog-form').dialog('close');
+                });
             });
         </script>
-        <div class="makerEditHead" style="display:flex; justify-content: space-between; padding:10px; align-items: center;">
+        <div class="makerEditHead">
             <!-- empty span to center the above text -->
             <span>&nbsp;</span>
 
@@ -438,6 +449,11 @@ if (!$displayMakers) {
                 echo do_shortcode('[gventry entry_id="' . $entryId . '" view_id="'.$form['gv_id_update_public_info'].'" edit="1"]');
                 ?>                                               
             </div>
+
+            <div id="dialog-refresh" style="display:none;">                
+                <b>Entry Updated.<b> <a href=".">Refresh page to see changes.</a>                                       
+            </div>
+            
             <button id="edit-photos">Edit Public Info</button>  
             <!--
             <a class="pull-left" target="_blank" href="/maker-sign/<?php echo $entryId ?>/<?php echo $faireShort; ?>/">
