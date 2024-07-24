@@ -171,21 +171,15 @@ $showEditMakey = false;
                     <span class="entry-box-item"><i class="fa fa-tools"></i><a href="/<?php echo $url_sub_path; ?>/meet-the-makers/">See All Makers</a></span>
                 </div>
             </div>
-            <?php if((!empty($project_website) && !empty($project_social)) || $makerEdit) { ?>
+            <?php if((!empty($project_website) && !empty($project_social))) { ?>
                 <div class="entry-box">
                     <h4>More Project Info</h4>
                     <?php if(!empty($project_website)) { ?>
-                        <a class="maker-website" href="<?php echo($project_website); ?>" target="_blank"><?php echo($project_website); ?></a>
-                    <?php } else if($makerEdit) { 
-                        $showEditMakey = true; ?> 
-                        <span class="edit-message">Please consider <a href="#" onclick="document.getElementById('edit-photos').click();return false;">editing your project</a> to add a project website.</span>
+                        <a class="maker-website" href="<?php echo($project_website); ?>" target="_blank"><?php echo($project_website); ?></a>                    
                     <?php } ?> 
                     <?php if($project_social != '<span class="social-links reversed"></span>') { 
-                        echo $project_social;
-                    } else if($makerEdit) { 
-                        $showEditMakey = true; ?> 
-                        <span class="edit-message">Please consider <a href="#" onclick="document.getElementById('edit-photos').click();return false;">editing your project</a> and adding social media information for your project.</span>
-                    <?php } ?> 
+                        echo $project_social;                    
+                        } ?> 
                 </div>
             <?php } ?>  
         </section>
