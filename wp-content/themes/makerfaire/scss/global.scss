@@ -381,7 +381,7 @@ ul.bulletless {
     transition: all 0.15s ease;
   }
   &:after {
-    font-family: FontAwesome;
+    font-family: "Font Awesome 6 Pro";
     content: "\f019";
     position: absolute;
     right: 8px;
@@ -482,7 +482,7 @@ input[type=radio].fa-radio {
   position: absolute;
   width: 1px;
   ~ label:before {
-    font-family: FontAwesome;
+    font-family: "Font Awesome 6 Pro";
     display: inline-block;
     content: "\f1db";
     letter-spacing: 10px;
@@ -507,7 +507,7 @@ input[type=checkbox].fa-checkbox {
   position: absolute;
   width: 1px;
   ~ label:before {
-    font-family: FontAwesome;
+    font-family: "Font Awesome 6 Pro";
     display: inline-block;
     content: "\f096";
     letter-spacing: 10px;
@@ -558,27 +558,6 @@ img.attachment-post-thumbnail{width:100%;height:auto;}
 #makerfaire {
   .cursor-pointer {
     cursor: pointer;
-  }
-  // input square checkbox with fontawesome
-  .checkbox-fa-icon {
-    display: none;
-    &~.far.fa-check-square {
-      display: none;
-      color: #0090C7;
-    }
-    &~.far.fa-square {
-      display: inline;
-      padding-right: 2px;
-      color: #0090C7;
-    }
-    &:checked {
-      &~.far.fa-check-square {
-        display: inline;
-      }
-      &~.far.fa-square {
-        display: none;
-      }
-    }
   }
 }
 
