@@ -17,9 +17,12 @@ $post_data = get_post($post->post_parent);
 $parent_slug = $post_data->post_name;
 
 $sql = 'select * from wp_mf_faire where url_path="' . $parent_slug . '";';
-$faireData = $wpdb->get_row($sql);
-$faire = (isset($faireData->faire) ? $faireData->faire : '');
-$timeZone = (isset($faireData->time_zone) ? $faireData->time_zone : '');
+$faireData  = $wpdb->get_row($sql);
+$faire      = (isset($faireData->faire)     ? $faireData->faire     : '');
+$timeZone   = (isset($faireData->time_zone) ? $faireData->time_zone : '');
+$start_dt   = (isset($faireData->start_dt)  ? $faireData->start_dt  : '');
+$end_dt     = (isset($faireData->end_dt)    ? $faireData->end_dt    : '');
+
 ?>
 <script type="text/javascript">
     printScheduleEvent = function() {
@@ -36,8 +39,8 @@ if ($schedule_ids_trimmed && $schedule_ids_trimmed != '') { //display the new sc
     <div id="page-schedule" class="page-content schedule-table  ng-cloak" ng-controller="scheduleCtrl" ng-app="scheduleApp" ng-cloak="">
         <input type="hidden" id="schedType" value="<?php echo $sched_type; ?>" />
         <input type="hidden" id="faire" value="<?php echo $faire; ?>" />
-        <input type="hidden" id="faire_st" value="<?php echo $faireData->start_dt; ?>" />
-        <input type="hidden" id="faire_end" value="<?php echo $faireData->end_dt; ?>" />
+        <input type="hidden" id="faire_st" value="<?php echo $start_dt; ?>" />
+        <input type="hidden" id="faire_end" value="<?php echo $end_dt; ?>" />
         <input type="hidden" id="faire_tz" value="<?php echo $timeZone; ?>" />
 
         <div class="schedule-wrapper">
