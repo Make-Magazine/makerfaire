@@ -451,7 +451,7 @@ if (!$displayMakers) {
             </div>
 
             <div id="dialog-refresh" style="display:none;">                
-                <b>Entry Updated.<b> <a href=".">Refresh page to see changes.</a>                                       
+                <b>Entry Updated.</b> <a href=".">Refresh page to see changes.</a>                                       
             </div>
             
             <button id="edit-photos">Edit Public Info</button>  
