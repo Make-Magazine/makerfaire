@@ -159,7 +159,7 @@ get_header();
                         </b-col>
                         <b-col cols="2">
                           <a target="_blank" :href="ticket.link">
-                            <i class="fa fa-chevron-circle-right" aria-hidden="true"></i>
+                            <i class="fa fa-circle-chevron-right" aria-hidden="true"></i>
                           </a>
                         </b-col>
                       </b-row>
