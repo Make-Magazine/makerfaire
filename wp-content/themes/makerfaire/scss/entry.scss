@@ -216,7 +216,7 @@
 				font-size: 20px;
 			}
 			h2 {
-				color: $color-light-blue;
+				color: #9bdaf5;
 			}
 			.entry-box {
 				max-width: 400px;
@@ -356,7 +356,7 @@
 }
 
 .schedule-items {
-	margin-left: 20px;
+	margin-left: 5px;
 	.schedule-item {
 		display: flex;
 		align-items: center;
@@ -364,7 +364,7 @@
 		margin-bottom: 10px;
 		.schedule-calendar {
 			position: relative;
-			img { filter: invert(14%) sepia(56%) saturate(7180%) hue-rotate(351deg) brightness(102%) contrast(83%); }
+			img { filter: invert(19%) sepia(94%) saturate(7025%) hue-rotate(7deg) brightness(98%) contrast(104%); }
 			.schedule-dow {
 				position: absolute;
 				color: #fff;
