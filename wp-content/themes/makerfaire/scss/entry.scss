@@ -216,7 +216,7 @@
 				font-size: 20px;
 			}
 			h2 {
-				color: $color-light-blue;
+				color: #9bdaf5;
 			}
 			.entry-box {
 				max-width: 400px;
@@ -356,7 +356,7 @@
 }
 
 .schedule-items {
-	margin-left: 20px;
+	margin-left: 5px;
 	.schedule-item {
 		display: flex;
 		align-items: center;
@@ -364,7 +364,7 @@
 		margin-bottom: 10px;
 		.schedule-calendar {
 			position: relative;
-			img { filter: invert(14%) sepia(56%) saturate(7180%) hue-rotate(351deg) brightness(102%) contrast(83%); }
+			img { filter: invert(19%) sepia(94%) saturate(7025%) hue-rotate(7deg) brightness(98%) contrast(104%); }
 			.schedule-dow {
 				position: absolute;
 				color: #fff;
@@ -414,7 +414,7 @@
 	}
 }
 
-.ui-dialog.message {
+.ui-dialog.update-message {
 	max-width:200px;
 	margin: 0 auto;
 	display: flex;
@@ -422,6 +422,7 @@
 	position: absolute !important;
 	top: 50px !important;
 	right: calc(50% - 200px);
+	font-size: 30px;
 	.ui-dialog-titlebar { display:none} 
 	#dialog-refresh {
 		display: flex;
@@ -532,6 +533,23 @@
 	justify-content: space-between; 
 	padding:10px; 
 	align-items: center;
+	.suggestions-toggle {
+		display: flex;
+		align-items: center;
+		gap: 10px;
+		i {
+			font-size: 24px;
+			&.fa-toggle-on {
+				color: green;
+			}
+		}
+		
+	}
+}
+.hide-suggestions {
+	.edit-message, #editMakey {
+		display: none;
+	}
 }
 
 .edit-message {
