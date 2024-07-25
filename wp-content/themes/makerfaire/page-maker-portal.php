@@ -85,14 +85,14 @@ get_header();
                   <div v-if="entry.status=='Accepted'">
                     <a target="_blank" :href="'/maker/entry/'+entry.project_id">
                       <i class="fa fa-eye" aria-hidden="true"></i>
-                      Share your Entry Page
+                      Share My Entry Page
                     </a>
                   </div>
                   
                   <div>
                     <a target="_blank" :href="'/maker/entry/'+entry.project_id+'/edit/'">
-                      <i class="fa fa-eye" aria-hidden="true"></i>                    
-                      Edit My Public Page
+                      <i class="fa fa-edit" aria-hidden="true"></i>                    
+                      Edit My Entry Page
                     </a>
                   </div>
                 </span>
