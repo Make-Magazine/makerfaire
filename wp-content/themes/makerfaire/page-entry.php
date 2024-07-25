@@ -390,48 +390,51 @@ if (!$displayMakers) {
     <?php
     }
     // If there is edit in the url, they get all these options          
-    if ($makerEdit) {            
-                
+    if ($makerEdit) {
+
     ?>
-        <script>        
+        <script>
             jQuery(function() {
                 autoOpen = false;
                 //if there is an error on the submission, auto open the modal
-                if(jQuery(".gv-error").length){
+                if (jQuery(".gv-error").length) {
                     autoOpen = true;
-                } else if(jQuery(".gv-notice").length) {
+                } else if (jQuery(".gv-notice").length) {
                     jQuery("#dialog-refresh").dialog({
                         dialogClass: 'message',
                         modal: true,
-                        position: { my: "top", at: "top", of: ".entry-page" },
+                        position: {
+                            my: "top",
+                            at: "top",
+                            of: ".entry-page"
+                        },
                     });
                 }
                 dialog = jQuery("#dialog-form").dialog({
                     autoOpen: autoOpen,
-                    resizable: false,                    
+                    resizable: false,
                     width: 'auto',
                     height: "auto",
                     modal: true,
-                    position: { my: "top", at: "top", of: ".entry-page" },
-                    create: function(event, ui) {
-                        //document.body.style.overflow = "hidden";
+                    position: {
+                        my: "top",
+                        at: "top",
+                        of: ".entry-page"
                     },
-                    beforeClose: function(event, ui) {
-                        //document.body.style.overflow = "auto";
-                    },
+                    
                     open: function(event, ui) {
-                        jQuery('.ui-widget-overlay').bind('click', function(){
+                        jQuery('.ui-widget-overlay').bind('click', function() {
                             jQuery('#dialog-form').dialog('close');
                         });
-                    }                                                                   
+                    }
                 });
-                
+
                 //open dialog/modal
-                jQuery("#edit-photos").on("click", function() {                    
-                    jQuery("#dialog-form").dialog("open");                                        
-                });          
-                
-                jQuery(".gv-button-cancel").bind('click', function(){
+                jQuery("#edit-photos").on("click", function() {
+                    jQuery("#dialog-form").dialog("open");
+                });
+
+                jQuery(".gv-button-cancel").bind('click', function() {
                     jQuery('#dialog-form').dialog('close');
                 });
             });
@@ -443,25 +446,37 @@ if (!$displayMakers) {
             <span style="font-size: 30px;">
                 <i>This is a preview of your public entry page.</i>
             </span>
-            
-            <div id="dialog-form" title="Update Public Information">                
-                <?php
-                echo do_shortcode('[gventry entry_id="' . $entryId . '" view_id="'.$form['gv_id_update_public_info'].'" edit="1"]');
-                ?>                                               
-            </div>
 
-            <div id="dialog-refresh" style="display:none;">                
-                <b>Entry Updated.</b> <a href=".">Refresh page to see changes.</a>                                       
-            </div>
-            
-            <button id="edit-photos">Edit Public Info</button>  
+            <?php
+            if ($form['gv_id_update_public_info'] != '') {
+            ?>
+                <button id="edit-photos">Edit Public Info</button>
+            <?php
+            } else {
+            ?>
+                <!-- empty span to center the above text -->
+                <span>&nbsp;</span>
+            <?php
+
+            }
+            ?>
+
             <!--
             <a class="pull-left" target="_blank" href="/maker-sign/<?php echo $entryId ?>/<?php echo $faireShort; ?>/">
                 <i class="far fa-file-image" aria-hidden="true"></i>View Your Maker Sign
             </a>-->
-        
+
         </div>
         <hr />
+        <div id="dialog-form" title="Update Public Information">
+            <?php
+            echo do_shortcode('[gventry entry_id="' . $entryId . '" view_id="' . $form['gv_id_update_public_info'] . '" edit="1"]');
+            ?>
+        </div>
+
+        <div id="dialog-refresh" style="display:none;">
+            <b>Entry Updated.</b> <a href=".">Refresh page to see changes.</a>
+        </div>
     <?php
     }
 
@@ -815,8 +830,8 @@ function getMakerInfoLegacy($entry) {
             $makerphoto = $photo[0];
         }
         $makers = array(array(
-            'firstname' => (isset($entry['96.3']) ? $entry['96.3']:''), 
-            'lastname'  => (isset($entry['96.6']) ? $entry['96.6']:''),
+            'firstname' => (isset($entry['96.3']) ? $entry['96.3'] : ''),
+            'lastname'  => (isset($entry['96.6']) ? $entry['96.6'] : ''),
             'bio'       => (isset($entry['234']) ? $entry['234'] : ''),
             'photo'     => $makerphoto,
             'social'    => getSocial(isset($entry['821']) ? $entry['821'] : ''),
