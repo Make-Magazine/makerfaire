@@ -1,0 +1,19 @@
+= 2.0.3 =
+- Fix plugin name not showing in admin notice.
+
+= 2.0.2 =
+- Fix issue with with license activation.
+
+= 2.0.1 =
+- Fix php fatal error in generate error Messages.
+
+= 2.0.0 =
+- Update license handler to support and work with Paddlepress Pro.
+
+= 1.0.21 = 
+- Show an error message when license activation fails.
+- Fix error icon being shown directly after saving a correct license.
+
+= 1.0.20 = 
+- Update comment to reflect changes in appsero 1.2.2.
+- Added changelog.
