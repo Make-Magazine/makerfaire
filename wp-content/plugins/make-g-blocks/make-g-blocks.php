@@ -18,7 +18,7 @@ include_once(plugin_dir_path(__FILE__) . '/functions/register-ACF-blocks.php');
 
 // Plugin styles, add bootstrap and panels.less for easy previewing
 function wpdocs_enqueue_custom_admin_styles() {
-    wp_enqueue_style('bootstrap-css', '//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css', array(), null, 'all');
+    //wp_enqueue_style('bootstrap-css', '//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css', array(), null, 'all');
     // in the package json, we've compiled the css necessary for the panels/blocks here
     if(!wp_style_is( 'mf-admin-style', 'enqueued' )) {
         wp_enqueue_style('admin-style-css', get_stylesheet_directory_uri() . '/css/mf-admin-style.min.css', array(), null, 'all');
