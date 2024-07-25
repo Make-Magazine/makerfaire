@@ -53,7 +53,7 @@ $showEditMakey = false;
                             if(strlen($project_short) < 200 && $makerEdit) { 
                                 $showEditMakey = true;
                                 ?>
-                                <span class="edit-message">A Project Description of at least 200 characters will fillout your page better.</span>
+                                <span class="edit-message">Consider <a href="#" onclick="document.getElementById('edit-photos').click();return false;">editing</a> your Project Description to be at least 350 characters to help fillout your page better.</span>
                             <?php } ?>
                         </p>
                     <?php } ?>
@@ -125,9 +125,7 @@ $showEditMakey = false;
                     if(strlen($maker['bio']) < 200 && $makerEdit) { 
                         $showEditMakey = true;
                         ?>
-                        <span class="edit-message">
-                            A Maker Bio or Group/Company description of at least 200 characters will fill out your page better.
-                        </span>
+                        <span class="edit-message">Consider <a href="#" onclick="document.getElementById('edit-photos').click();return false;">editing</a> your Bio or Group/Company description to be at least 200 characters to help fillout your page better.</span>                        
                     <?php } ?>
                 </div>
             <?php }
