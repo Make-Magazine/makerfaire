@@ -448,7 +448,7 @@ if (!$displayMakers) {
             <!-- empty span to center the above text -->
             <span class="suggestions-toggle">
                 Show suggestions:
-                <i class="fa-solid fa-toggle-on"></i>
+                <i class="fa fa-toggle-on"></i>
             </span>
 
             <span style="font-size: 30px;">
