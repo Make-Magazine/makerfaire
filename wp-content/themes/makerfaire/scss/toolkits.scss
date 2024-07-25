@@ -147,7 +147,7 @@
 			margin-left: 40%;
 			padding-top: 20px;
 			&::after {
-				font-family: "Font Awesome 6 Pro";
+				font-family: "FontAwesome";
 				content: '\f0ab';
 				color: #37afed;
 				font-size: 36px;
@@ -194,7 +194,7 @@
 		font-size: 18px;
 		&::after {
 			padding-left: 15px;
-			font-family: "Font Awesome 6 Pro";
+			font-family: "FontAwesome";
 			content: '\f0aa';
 		}
 		&:hover, &:active, &:focus {

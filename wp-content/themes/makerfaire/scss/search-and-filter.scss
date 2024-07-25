@@ -59,7 +59,7 @@ form.searchandfilter {
                 }
                 &:before {
                     position: absolute;;
-                    font-family: "Font Awesome 6 Pro";
+                    font-family: "FontAwesome";
                     content: "\f002";
                     top: 15px;
                     left: 8px;
@@ -82,7 +82,7 @@ form.searchandfilter {
                         b { display: none; }
                         &::after {
                             content: "\f161";
-                            font-family: "Font Awesome 6 Pro";
+                            font-family: "FontAwesome";
                         }
                     }   
                 }
@@ -128,7 +128,7 @@ form.searchandfilter {
             margin-top: -10px;
          }
         &::after {
-            font-family: "Font Awesome 6 Pro";
+            font-family: "FontAwesome";
             content: "\f03a";
             color: #333;
             position: absolute;
@@ -206,7 +206,7 @@ form.searchandfilter {
                 }
                 &:before {
                     position: absolute;;
-                    font-family: "Font Awesome 6 Pro";
+                    font-family: "FontAwesome";
                     content: "\f002";
                     top: 15px;
                     left: 8px;
@@ -265,7 +265,7 @@ form.searchandfilter {
         .sf-field-reset[data-sf-field-input-type="button"] {
             visibility: visible;
             &:before {
-                font-family: "Font Awesome 6 Pro";
+                font-family: "FontAwesome";
                 content: "\f002";
                 position: absolute;
                 z-index: 9;

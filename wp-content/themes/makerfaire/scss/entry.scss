@@ -414,6 +414,24 @@
 	}
 }
 
+.ui-dialog.message {
+	max-width:200px;
+	margin: 0 auto;
+	display: flex;
+	justify-content: center;
+	position: absolute !important;
+	top: 50px !important;
+	right: calc(50% - 200px);
+	.ui-dialog-titlebar { display:none} 
+	#dialog-refresh {
+		display: flex;
+		align-items: center;
+		justify-content: center;;
+		flex-direction: column;
+		gap:10px;
+	}
+}
+
 .dialog-nav-btn {
 	position: absolute;
 	top: 50%;
@@ -428,7 +446,7 @@
 	justify-content: center;
 	align-items: center;
 	&:before {
-		font-family: "Font Awesome 6 Pro";
+		font-family: "FontAwesome";
 	}
 }
 .dialog-nav-btn.dialog-prev-btn {
@@ -509,6 +527,12 @@
 	}
 }
 
+.makerEditHead {
+	display:flex; 
+	justify-content: space-between; 
+	padding:10px; 
+	align-items: center;
+}
 
 .edit-message {
 	display: block;
@@ -520,7 +544,7 @@
 	background: oldlace;
 	width: fit-content;
 	&:before {
-		font-family: "Font Awesome 6 Pro";
+		font-family: "FontAwesome";
 		content: "\f06a";
 		font-style: normal;
 		padding-right: 8px;

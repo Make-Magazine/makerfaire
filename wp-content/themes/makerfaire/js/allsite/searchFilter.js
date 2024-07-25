@@ -21,7 +21,9 @@ jQuery(document).ready(function(){
 
 // this function does all the things we want to have happen to the search and filter pages on load and ajax refresh
 function sf_yearbook() {
-	jQuery('.sf-field-sort_order select.sf-input-select').select2();
+	if(jQuery(".sf-field-sort_order select.sf-input-select").length) {
+		jQuery('.sf-field-sort_order select.sf-input-select').select2();
+	}
 	jQuery( ".sf-field-sort_order label .select2-selection" ).prop("title","Sort").tooltip();
 	// Listview button
 	jQuery(".sf-field-submit input").on('click', function(event){
