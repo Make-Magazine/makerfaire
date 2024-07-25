@@ -414,7 +414,7 @@
 	}
 }
 
-.ui-dialog.message {
+.ui-dialog.update-message {
 	max-width:200px;
 	margin: 0 auto;
 	display: flex;
@@ -422,6 +422,7 @@
 	position: absolute !important;
 	top: 50px !important;
 	right: calc(50% - 200px);
+	font-size: 30px;
 	.ui-dialog-titlebar { display:none} 
 	#dialog-refresh {
 		display: flex;
@@ -532,6 +533,23 @@
 	justify-content: space-between; 
 	padding:10px; 
 	align-items: center;
+	.suggestions-toggle {
+		display: flex;
+		align-items: center;
+		gap: 10px;
+		i {
+			font-size: 24px;
+			&.fa-toggle-on {
+				color: green;
+			}
+		}
+		
+	}
+}
+.hide-suggestions {
+	.edit-message {
+		display: none;
+	}
 }
 
 .edit-message {

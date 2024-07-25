@@ -401,7 +401,7 @@ if (!$displayMakers) {
                     autoOpen = true;
                 } else if (jQuery(".gv-notice").length) {
                     jQuery("#dialog-refresh").dialog({
-                        dialogClass: 'message',
+                        dialogClass: 'update-message',
                         modal: true,
                         position: {
                             my: "top",
@@ -437,11 +437,19 @@ if (!$displayMakers) {
                 jQuery(".gv-button-cancel").bind('click', function() {
                     jQuery('#dialog-form').dialog('close');
                 });
+
+                jQuery(".suggestions-toggle i").bind('click', function() {
+                    jQuery('body').toggleClass( "hide-suggestions" );
+                    jQuery(this).toggleClass('fa-toggle-on').toggleClass('fa-toggle-off');
+                });
             });
         </script>
         <div class="makerEditHead">
             <!-- empty span to center the above text -->
-            <span>&nbsp;</span>
+            <span class="suggestions-toggle">
+                Show suggestions:
+                <i class="fa-solid fa-toggle-on"></i>
+            </span>
 
             <span style="font-size: 30px;">
                 <i>This is a preview of your public entry page.</i>
