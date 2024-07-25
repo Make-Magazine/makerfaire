@@ -140,10 +140,10 @@
                 float: left;
                 &:first-of-type { margin-right: 25px; }
                 @media (min-width:768px) and (max-width:996px) {
-                    &:first-of-type { margin-right: auto; }
                     float: none;
                     margin: 0 auto;
                     width: 150px;
+                    &:first-of-type { margin-right: auto; }
                     label { float: left; }
                     .nav-pills { float: right; margin-top: -10px; }
                 }

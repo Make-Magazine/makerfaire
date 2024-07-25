@@ -61,26 +61,26 @@
 			}
 		}
 		picture {
+			aspect-ratio: 1 / 1;
+			overflow: hidden;
+			display: flex;
+			// Fallback
+			@supports not (aspect-ratio: auto) {
+				&::before {
+					float: left;
+					padding-top: 100%;
+					content: "";
+				}
+				&::after {
+					display: block;
+					content: "";
+					clear: both;
+				}
+			}
 			@media screen and (min-width: 800px) {
 				position: sticky;
 				top: 125px;
 			}
-			aspect-ratio: 1 / 1;
-				overflow: hidden;
-				display: flex;
-				// Fallback
-				@supports not (aspect-ratio: auto) {
-					&::before {
-						float: left;
-						padding-top: 100%;
-						content: "";
-					}
-					&::after {
-						display: block;
-						content: "";
-						clear: both;
-					}
-				}
 			&.exhibit-picture {
 				aspect-ratio: 3 / 2;
 				overflow: hidden;
@@ -409,7 +409,7 @@
 		}
 		&:nth-of-type(even) {
 			img { filter: invert(48%) sepia(55%) saturate(569%) hue-rotate(153deg) brightness(94%) contrast(95%); }
-			.schedule-day { color:#e4242a; }
+			.schedule-day { color:#F51400; }
 		}
 	}
 }

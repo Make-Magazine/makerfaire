@@ -113,14 +113,14 @@
             font-size: 16px;
             color: #fff;
             font-weight: 300;
-            @media (max-width:767px) {
-               font-weight: 400;
-            }
             font-family: Roboto, "Helvetica Neue", Helvetica, sans-serif;
             display: inline;
             padding: 0;
             margin: 0;
             text-shadow: 0 1px 4px #000, 0 1px 12px #000;
+            @media (max-width:767px) {
+               font-weight: 400;
+            }
             i.fa {
                color: red;
                margin-right: 5px;
@@ -431,6 +431,11 @@
          .event-img {
             width: 100%;
             height: 185px;
+            margin-right: auto;
+            margin-left: auto;
+            background-size: cover;
+            background-position: center center;
+            border: 2px solid #999;
             @media (min-width:992px) and (max-width:1199px) {
                height: 150px;
                width: 150px;
@@ -444,11 +449,6 @@
                width: 40vw;
                margin-left: 0;
             }
-            margin-right: auto;
-            margin-left: auto;
-            background-size: cover;
-            background-position: center center;
-            border: 2px solid #999;
          }
          .event-description {
             max-height: 145px;
@@ -541,12 +541,12 @@
       background-repeat: no-repeat;
       background-position: center;
       background-size: 92px;
-      @media (max-width:600px) {
-         background-image: none;
-      }
       padding: 0;
       background-color: #005E9A;
       color: #fff;
+      @media (max-width:600px) {
+         background-image: none;
+      }
       h5 {
          display: inline-block;
       }
