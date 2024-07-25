@@ -211,25 +211,6 @@ if (isset($entry->errors)) {
     $project_title = preg_replace('/\v+|\\\[rn]/', '<br/>', $project_title);
 }
 
-//set sharing card data, this is necessary
-if ((is_array($entry) && isset($entry['status']) && $entry['status'] == 'active' && isset($entry[303]) && $entry[303] == 'Accepted') || $adminView == true) {
-    $sharing_cards->project_short = $project_short;
-    $sharing_cards->project_photo = $project_photo;
-    $sharing_cards->project_title = $project_title;
-} else {
-    $sharing_cards->project_title = 'Invalid Entry';
-    $sharing_cards->project_photo = '';
-    $sharing_cards->project_short = '';
-}
-
-//Url
-global $wp;
-$canonical_url = home_url($wp->request) . '/';
-$sharing_cards->canonical_url = $canonical_url;
-
-$sharing_cards->set_values();
-get_header();
-
 /* Lets check if we are coming from the Maker Portal -
  * if we are, and user is logged in and has access to this record
  *   Display edit functionality
@@ -248,6 +229,25 @@ if ($editEntry == 'edit') {
         $makerEdit = true;
     }
 }
+
+//set sharing card data, this is necessary
+if ((is_array($entry) && isset($entry['status']) && $entry['status'] == 'active' && isset($entry[303]) && $entry[303] == 'Accepted') || $adminView == true || $makerEdit) {
+    $sharing_cards->project_short = $project_short;
+    $sharing_cards->project_photo = $project_photo;
+    $sharing_cards->project_title = $project_title;
+} else {
+    $sharing_cards->project_title = 'Invalid Entry';
+    $sharing_cards->project_photo = '';
+    $sharing_cards->project_short = '';
+}
+
+//Url
+global $wp;
+$canonical_url = home_url($wp->request) . '/';
+$sharing_cards->canonical_url = $canonical_url;
+
+$sharing_cards->set_values();
+get_header();
 
 //check if this entry has won any awards
 $ribbons = checkForRibbons(0, $entryId);
@@ -307,10 +307,10 @@ foreach ($entry as $key => $field) {
             $displayFormType = false;
     }
 }
+
 // if edit entry is true, this means the user viewing the entry is the user who created the entry and should be able to see it
 if ($makerEdit) {
-    $validEntry = true;
-    $project_title = esc_html($entry['151']);
+    $validEntry = true;    
 }
 
 // Project Inline video
