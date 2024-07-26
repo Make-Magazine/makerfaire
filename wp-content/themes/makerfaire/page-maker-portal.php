@@ -76,7 +76,7 @@ get_header();
                   <br />
                 </span>
                 <span v-if="entry.entry_type  !== null ">
-                  <b>Programmed Entry Type(s):</b> {{entry.entry_type}}
+                  <b>Participating As:</b> {{entry.entry_type}}
                 </span>
               </b-col>
 
