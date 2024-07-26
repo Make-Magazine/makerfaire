@@ -83,7 +83,7 @@ get_header();
               <b-col>
                 <span>                  
                   <div v-if="entry.status=='Accepted'">
-                    <a target="_blank" :href="'/maker/entry/'+entry.project_id">
+                    <a target="_blank" :href="'/maker/entry/'+entry.project_id+'/'">
                       <i class="fa fa-eye" aria-hidden="true"></i>
                       Share My Entry Page
                     </a>
