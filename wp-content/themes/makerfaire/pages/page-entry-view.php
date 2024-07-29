@@ -66,7 +66,7 @@ $showEditMakey = false;
                     </div>
                 <?php
                 }   
-                if(!empty($video) || !empty($video2)) {
+                if(!empty($video) && !empty($video2)) {
                     echo $video;  //project Video
                     echo $video2; //field386
                 } 
