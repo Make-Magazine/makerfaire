@@ -25,9 +25,8 @@ define( 'MF_API_KEY', sanitize_text_field( get_option( 'make_app_api_key' ) ) );
 define( 'MF_EVENTBASE_API_VERSION', '3.2' );
 
 
-/**
+/*
  * SECURITY CHECKS
- */
 
 $allowed_types = array(
 	'category',
@@ -36,9 +35,9 @@ $allowed_types = array(
 	'maker',
 	'schedule',
 	'sponsor',
-	'maker_export',
-	'expofp'
+	'maker_export'
 );
+ */
 
 // Check that all required fields are passed before running anything and assign them to variables
 $key = ( ! empty( $_REQUEST['key'] ) ? sanitize_text_field( $_REQUEST['key'] ) : null );
