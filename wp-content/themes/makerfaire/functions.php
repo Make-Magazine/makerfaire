@@ -205,12 +205,12 @@ function load_admin_scripts() {
     wp_enqueue_script('make-fairesigns-admin', get_stylesheet_directory_uri() . '/js/standalone/mf_fairesigns.js', array('jquery'), $my_version);
     wp_enqueue_script('jquery-datetimepicker', get_stylesheet_directory_uri() . '/js/standalone/jquery.datetimepicker.js', array('jquery'), null);
 
-    wp_enqueue_script('make-bootstrap', get_stylesheet_directory_uri() . '/js/built-libs.min.js', array('jquery'));
+    //wp_enqueue_script('make-bootstrap', get_stylesheet_directory_uri() . '/js/built-libs.min.js', array('jquery'));
     wp_enqueue_script('fontawesome', 'https://kit.fontawesome.com/b9da6f1400.js', array(), "", true);
     wp_enqueue_script('admin-scripts', get_stylesheet_directory_uri() . '/js/built-admin-scripts.min.js', array('jquery'), $my_version);
 
     //styles
-    //wp_enqueue_style('make-bootstrap', get_stylesheet_directory_uri() . '/css/bootstrap.min.css');
+    wp_enqueue_style('make-bootstrap', get_stylesheet_directory_uri() . '/css/bootstrap.min.css');
     wp_enqueue_style('jquery-datetimepicker-css', get_stylesheet_directory_uri() . '/css/jquery.datetimepicker.css');
     wp_enqueue_style('mf-admin-style', get_stylesheet_directory_uri() . '/css/mf-admin-style.min.css', array(), $my_version);
 
