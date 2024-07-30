@@ -82,7 +82,7 @@ function load_scripts() {
     // select 2 for styling select
     wp_enqueue_script('select2', WP_PLUGIN_URL . '/search-filter-pro/public/assets/js/select2.min.js', array(), false, true);
     // font awesome 6
-    // wp_enqueue_script('fontawesome', 'https://kit.fontawesome.com/b9da6f1400.js', array(), "", true);
+    wp_enqueue_script('fontawesome', 'https://kit.fontawesome.com/b9da6f1400.js', array(), "", true);
     // Libraries concatenated by our npm build
     wp_enqueue_script('make-js', get_stylesheet_directory_uri() . '/js/built.min.js', array('jquery'), $my_version, true);
     // Universasl libraries:

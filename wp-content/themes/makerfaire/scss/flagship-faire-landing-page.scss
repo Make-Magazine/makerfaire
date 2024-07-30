@@ -75,6 +75,15 @@
       }
    }
    .flagship-header {
+      //background: rgba(0,0,0,0) url(../images/bg-border.png) repeat-x 0 100%;
+      margin: 0 -15px;
+      padding: 0 15px 25px 15px;
+      @media all and (min-width: 992px) {
+         margin-bottom: 10px;
+      }
+      @media all and (max-width: 991px) {
+         padding-bottom: 40px;
+      }
       .flagship-info {
          font-size: 20px;
          font-weight: 300;
@@ -84,15 +93,6 @@
       }
       h1 {
          margin: 5px 0;
-      }
-      //background: rgba(0,0,0,0) url(../images/bg-border.png) repeat-x 0 100%;
-      margin: 0 -15px;
-      padding: 0 15px 25px 15px;
-      @media all and (min-width: 992px) {
-         margin-bottom: 10px;
-      }
-      @media all and (max-width: 991px) {
-         padding-bottom: 40px;
       }
    }
    .flagship-content {

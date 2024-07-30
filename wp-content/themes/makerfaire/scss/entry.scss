@@ -447,7 +447,8 @@
 	justify-content: center;
 	align-items: center;
 	&:before {
-		font-family: "FontAwesome";
+		font-family: "Font Awesome 6 Pro";
+    	font-weight: 900;
 	}
 }
 .dialog-nav-btn.dialog-prev-btn {
@@ -563,7 +564,8 @@
 	background: oldlace;
 	width: fit-content;
 	&:before {
-		font-family: "FontAwesome";
+		font-family: "Font Awesome 6 Pro";
+    	font-weight: 900;
 		content: "\f06a";
 		font-style: normal;
 		padding-right: 8px;

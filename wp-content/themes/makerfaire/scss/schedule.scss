@@ -32,16 +32,16 @@ h4.featured {
 }
 
 .schedule-header {
+	margin-left: 0px;
+	padding-left: 0px;
+	@media (max-width: 992px) {
+		margin: 0px 15px;
+	}
 	h1 {
 		font-size: 36px;
 		color: #4A4A4A;
 		font-family: "Roboto Light";
 		margin-bottom: 0px;
-	}
-	margin-left: 0px;
-	padding-left: 0px;
-	@media (max-width: 992px) {
-		margin: 0px 15px;
 	}
 }
 .schedule-description {
@@ -426,14 +426,16 @@ h4.featured {
 						flex-wrap: wrap;
 						gap: 10px;
 						&:before {
-							font-family: "FontAwesome";
+							font-family: "Font Awesome 6 Pro";
+    						font-weight: 900;
 							content: "\f017";
 							color: #6ec1e4;
 						}
 					}
 					.sched-type {
 						&:before {
-							font-family: "FontAwesome";
+							font-family: "Font Awesome 6 Pro";
+    						font-weight: 900;
 							content: "\f0ad";
 							color: #6ec1e4;
 							margin-right: 10px;
