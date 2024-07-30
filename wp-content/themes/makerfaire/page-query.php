@@ -36,7 +36,8 @@ $allowed_types = array(
 	'maker',
 	'schedule',
 	'sponsor',
-	'maker_export'
+	'maker_export',
+	'expofp'
 );
 
 // Check that all required fields are passed before running anything and assign them to variables
