@@ -27,6 +27,7 @@ class Search_Filter_Third_Party {
 	private $sfid                    = 0;
 
 	public $cache_table_name;
+	private $woocommerce;
 
 	public function __construct() {
 		global $wpdb;
@@ -272,6 +273,23 @@ class Search_Filter_Third_Party {
 				if ( isset( $attributes['data-infinite-scroll-container'] ) ) {
 					unset( $attributes['data-infinite-scroll-container'] );
 				}
+			} else if ( $attributes['data-display-result-method'] == 'custom_dce_archives' ) {
+				$attributes['data-ajax-target'] = '.elementor-widget-dce-dynamic-archives' . $search_filter_results_class;
+				
+				// for fixing pagination issue when there are multiple instance of the S&F.
+				$attributes['data-ajax-links-selector'] = '.elementor-widget-dce-dynamic-archives' . $search_filter_results_class . ' .dce-pagination a';
+
+				if ( isset( $attributes['data-infinite-scroll-result-class'] ) ) {
+					unset( $attributes['data-infinite-scroll-result-class'] );
+				}
+
+				if ( isset( $attributes['data-ajax-pagination-type'] ) ) {
+					unset( $attributes['data-ajax-pagination-type'] );
+				}
+
+				if ( isset( $attributes['data-infinite-scroll-container'] ) ) {
+					unset( $attributes['data-infinite-scroll-container'] );
+				}
 			}
 		}
 
@@ -280,17 +298,27 @@ class Search_Filter_Third_Party {
 
 	public function dce_filter_display_results_options( $display_results_methods ) {
 		$display_results_methods['custom_dce_posts'] = array(
-			'label'       => __( 'Dynamic.ooo: Posts' ),
+			'label'       => __( 'Dynamic.ooo: Dynamic Posts' ),
 			'description' =>
-			'<p>' . __( 'Use the powerful Dynamic Posts v2 widget for Elementor to create any kind of layout you can imagine.', $this->plugin_slug ) . '</p>' .
+			'<p>' . __( 'Use the powerful Dynamic Posts widget for Elementor to create any kind of layout you can imagine.', $this->plugin_slug ) . '</p>' .
 			'<p><a href="https://searchandfilter.com/documentation/3rd-party/dynamic-content-elementor/" target="_blank">' . __( 'View the setup instructions', $this->plugin_slug ) . '</a></p>',
 
 			'base'        => 'shortcode',
 		);
+		if ( version_compare( DCE_VERSION, '2.13.0', '>=' ) ) {
+			$display_results_methods['custom_dce_dynamic_archives'] = array(
+				'label'       => __( 'Dynamic.ooo: Dynamic Archives' ),
+				'description' =>
+				'<p>' . __( 'Use the powerful Dynamic Archives widget for Elementor to create any kind of layout you can imagine.', $this->plugin_slug ) . '</p>' .
+				'<p><a href="https://searchandfilter.com/documentation/3rd-party/dynamic-content-elementor/" target="_blank">' . __( 'View the setup instructions', $this->plugin_slug ) . '</a></p>',
+
+				'base'        => 'shortcode',
+			);
+		}
 
 		if ( version_compare( DCE_VERSION, '1.13.0', '>=' ) ) {
 			$display_results_methods['custom_dce_google_maps'] = array(
-				'label'       => __( 'Dynamic.ooo: Google Maps' ),
+				'label'       => __( 'Dynamic.ooo: Dynamic Google Maps' ),
 				'description' =>
 				'<p>' . __( 'Use the powerful Dynamic Google Maps widget for Elementor to create advanced searches that work with your maps!', $this->plugin_slug ) . '</p>' .
 				'<p><a href="https://searchandfilter.com/documentation/3rd-party/dynamic-content-elementor/" target="_blank">' . __( 'View the setup instructions', $this->plugin_slug ) . '</a></p>',
@@ -301,7 +329,7 @@ class Search_Filter_Third_Party {
 
 		if ( version_compare( DCE_VERSION, '1.13.0', '>=' ) ) {
 			$display_results_methods['custom_dce_google_maps_posts'] = array(
-				'label'       => __( 'Dynamic.ooo: Posts + Google Maps' ),
+				'label'       => __( 'Dynamic.ooo: Dynamic Posts + Dynamic Google Maps' ),
 				'description' =>
 				'<p>' . __( 'Use the powerful Dynamic Google Maps widget combined with a Dynamic Posts widget to create advanced searches that work with your maps + posts at the same time!', $this->plugin_slug ) . '</p>' .
 				'<p><a href="https://searchandfilter.com/documentation/3rd-party/dynamic-content-elementor/" target="_blank">' . __( 'View the setup instructions', $this->plugin_slug ) . '</a></p>',
@@ -549,6 +577,7 @@ class Search_Filter_Third_Party {
 
 		return $ajax_url;
 	}
+	
 	public function pll_sf_archive_results_url( $results_url, $sfid, $page_slug = '' ) {
 		if ( ( function_exists( 'pll_home_url' ) ) && ( function_exists( 'pll_current_language' ) ) ) {
 			$results_url = pll_home_url( pll_current_language() );
@@ -594,6 +623,8 @@ class Search_Filter_Third_Party {
 
 		return $results_url;
 	}
+
+	
 
 	/* Relevanssi integration */
 	public function remove_relevanssi_defaults() {

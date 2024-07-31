@@ -264,7 +264,7 @@ class Search_Filter_Display_Shortcode {
 
 
 	public function enqueue_scripts() {
-		 $load_jquery_i18n = Search_Filter_Helper::get_option( 'load_jquery_i18n' );
+		$load_jquery_i18n = Search_Filter_Helper::get_option( 'load_jquery_i18n' );
 		$combobox_script   = Search_Filter_Helper::get_option( 'combobox_script' );
 
 		wp_enqueue_script( $this->plugin_slug . '-plugin-build' );
@@ -274,7 +274,6 @@ class Search_Filter_Display_Shortcode {
 		if ( $load_jquery_i18n == 1 ) {
 			wp_enqueue_script( $this->plugin_slug . '-plugin-jquery-i18n' );
 		}
-
 	}
 
 	public function display_shortcode( $atts, $content = null ) {
