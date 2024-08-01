@@ -218,10 +218,11 @@ function mf_admin_MFupdate_entry() {
   $response = array('rebuild' => '', 'rebuildHTML' => '');
   //Only process if there was a gravity forms action
   if (!empty($mfAction)) {
-    $entry_id     = $_POST['entry_id'];
-    $lead         = GFAPI::get_entry($entry_id);
-    $form_id      = isset($lead['form_id']) ? $lead['form_id'] : 0;
-    $form         = RGFormsModel::get_form_meta($form_id);
+    $entry_id       = $_POST['entry_id'];
+    $lead           = GFAPI::get_entry($entry_id);
+    $original_entry = $lead;
+    $form_id        = isset($lead['form_id']) ? $lead['form_id'] : 0;
+    $form           = RGFormsModel::get_form_meta($form_id);
 
     switch ($mfAction) {
       // Entry Management Update      
@@ -290,6 +291,7 @@ function mf_admin_MFupdate_entry() {
         return;
         break;
     }
+    do_action('gform_after_update_entry', $form, $entry_id, $original_entry);
 
     //update the change report with any changes
     GVupdate_changeRpt($form, $entry_id, $lead);

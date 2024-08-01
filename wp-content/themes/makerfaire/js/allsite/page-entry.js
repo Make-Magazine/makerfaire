@@ -79,9 +79,9 @@ jQuery(document).ready(function(){
             },
             open: function(event, ui) { 
               jQuery('.ui-widget-overlay').bind('click', function(){ 
-                  jQuery("#dialog").dialog('close');
-            }); 
-          }
+                    jQuery("#dialog").dialog('close');
+              }); 
+            }
         });
     });
 

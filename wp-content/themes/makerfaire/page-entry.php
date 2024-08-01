@@ -211,25 +211,6 @@ if (isset($entry->errors)) {
     $project_title = preg_replace('/\v+|\\\[rn]/', '<br/>', $project_title);
 }
 
-//set sharing card data, this is necessary
-if ((is_array($entry) && isset($entry['status']) && $entry['status'] == 'active' && isset($entry[303]) && $entry[303] == 'Accepted') || $adminView == true) {
-    $sharing_cards->project_short = $project_short;
-    $sharing_cards->project_photo = $project_photo;
-    $sharing_cards->project_title = $project_title;
-} else {
-    $sharing_cards->project_title = 'Invalid Entry';
-    $sharing_cards->project_photo = '';
-    $sharing_cards->project_short = '';
-}
-
-//Url
-global $wp;
-$canonical_url = home_url($wp->request) . '/';
-$sharing_cards->canonical_url = $canonical_url;
-
-$sharing_cards->set_values();
-get_header();
-
 /* Lets check if we are coming from the Maker Portal -
  * if we are, and user is logged in and has access to this record
  *   Display edit functionality
@@ -248,6 +229,25 @@ if ($editEntry == 'edit') {
         $makerEdit = true;
     }
 }
+
+//set sharing card data, this is necessary
+if ((is_array($entry) && isset($entry['status']) && $entry['status'] == 'active' && isset($entry[303]) && $entry[303] == 'Accepted') || $adminView == true || $makerEdit) {
+    $sharing_cards->project_short = $project_short;
+    $sharing_cards->project_photo = $project_photo;
+    $sharing_cards->project_title = $project_title;
+} else {
+    $sharing_cards->project_title = 'Invalid Entry';
+    $sharing_cards->project_photo = '';
+    $sharing_cards->project_short = '';
+}
+
+//Url
+global $wp;
+$canonical_url = home_url($wp->request) . '/';
+$sharing_cards->canonical_url = $canonical_url;
+
+$sharing_cards->set_values();
+get_header();
 
 //check if this entry has won any awards
 $ribbons = checkForRibbons(0, $entryId);
@@ -307,10 +307,10 @@ foreach ($entry as $key => $field) {
             $displayFormType = false;
     }
 }
+
 // if edit entry is true, this means the user viewing the entry is the user who created the entry and should be able to see it
 if ($makerEdit) {
-    $validEntry = true;
-    $project_title = esc_html($entry['151']);
+    $validEntry = true;    
 }
 
 // Project Inline video
@@ -390,56 +390,101 @@ if (!$displayMakers) {
     <?php
     }
     // If there is edit in the url, they get all these options          
-    if ($makerEdit) {            
-                
+    if ($makerEdit) {
+
     ?>
-        <script>        
+        <script>
             jQuery(function() {
                 autoOpen = false;
                 //if there is an error on the submission, auto open the modal
-                if(jQuery(".gv-error").length){
+                if (jQuery(".gv-error").length) {
                     autoOpen = true;
-                } else if(jQuery(".gv-notice").length) {
-                    jQuery(".entry-page").prepend("<img class='makey-spinner' src='https://make.co/wp-content/universal-assets/v1/images/makey-spinner.gif' height='50px' width='50px' style='margin:auto;' />");
-                    jQuery('.entry-page .wrapper-fluid').load(document.URL + " .entry-page .wrapper-fluid > *", function() {
-                        jQuery(".makey-spinner").remove();
+                } else if (jQuery(".gv-notice").length) {
+                    jQuery("#dialog-refresh").dialog({
+                        dialogClass: 'update-message',
+                        modal: true,
+                        position: {
+                            my: "top",
+                            at: "top",
+                            of: ".entry-page"
+                        },
                     });
                 }
                 dialog = jQuery("#dialog-form").dialog({
                     autoOpen: autoOpen,
+                    resizable: false,
+                    width: 'auto',
                     height: "auto",
-                    width: 950,
                     modal: true,
-                    closeOnEscape: false                   
-                });                
+                    position: {
+                        my: "top",
+                        at: "top",
+                        of: ".entry-page"
+                    },
+                    
+                    open: function(event, ui) {
+                        jQuery('.ui-widget-overlay').bind('click', function() {
+                            jQuery('#dialog-form').dialog('close');
+                        });
+                    }
+                });
 
                 //open dialog/modal
-                jQuery("#edit-photos").on("click", function() {                    
-                    jQuery("#dialog-form").dialog("open");                                        
-                });                         
+                jQuery("#edit-photos").on("click", function() {
+                    jQuery("#dialog-form").dialog("open");
+                });
+
+                jQuery(".gv-button-cancel").bind('click', function() {
+                    jQuery('#dialog-form').dialog('close');
+                });
+
+                jQuery(".suggestions-toggle i").bind('click', function() {
+                    jQuery('body').toggleClass( "hide-suggestions" );
+                    jQuery(this).toggleClass('fa-toggle-on').toggleClass('fa-toggle-off');
+                });
             });
         </script>
-        <div class="makerEditHead" style="display:flex; justify-content: space-between; padding:10px; align-items: center;">
+        <div class="makerEditHead">
             <!-- empty span to center the above text -->
-            <span>&nbsp;</span>
+            <span class="suggestions-toggle">
+                Show suggestions:
+                <i class="fa fa-toggle-on"></i>
+            </span>
 
             <span style="font-size: 30px;">
                 <i>This is a preview of your public entry page.</i>
             </span>
-            
-            <div id="dialog-form" title="Update Public Information">                
-                <?php
-                echo do_shortcode('[gventry entry_id="' . $entryId . '" view_id="'.$form['gv_id_update_public_info'].'" edit="1"]');
-                ?>                                               
-            </div>
-            <button id="edit-photos">Edit Public Info</button>  
+
+            <?php
+            if ($form['gv_id_update_public_info'] != '') {
+            ?>
+                <button id="edit-photos">Edit Public Info</button>
+            <?php
+            } else {
+            ?>
+                <!-- empty span to center the above text -->
+                <span>&nbsp;</span>
+            <?php
+
+            }
+            ?>
+
             <!--
             <a class="pull-left" target="_blank" href="/maker-sign/<?php echo $entryId ?>/<?php echo $faireShort; ?>/">
                 <i class="far fa-file-image" aria-hidden="true"></i>View Your Maker Sign
             </a>-->
-        
+
         </div>
         <hr />
+        <div id="dialog-form" title="Update Public Information">
+            <?php
+            echo do_shortcode('[gventry entry_id="' . $entryId . '" view_id="' . $form['gv_id_update_public_info'] . '" edit="1"]');
+            ?>
+        </div>
+
+        <div id="dialog-refresh" style="display:none;">
+            <b>Entry Updated.</b> <a href=".">Refresh page to see changes.</a>
+        </div>
     <?php
     }
 
@@ -793,8 +838,8 @@ function getMakerInfoLegacy($entry) {
             $makerphoto = $photo[0];
         }
         $makers = array(array(
-            'firstname' => (isset($entry['96.3']) ? $entry['96.3']:''), 
-            'lastname'  => (isset($entry['96.6']) ? $entry['96.6']:''),
+            'firstname' => (isset($entry['96.3']) ? $entry['96.3'] : ''),
+            'lastname'  => (isset($entry['96.6']) ? $entry['96.6'] : ''),
             'bio'       => (isset($entry['234']) ? $entry['234'] : ''),
             'photo'     => $makerphoto,
             'social'    => getSocial(isset($entry['821']) ? $entry['821'] : ''),

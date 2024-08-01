@@ -82,7 +82,7 @@ form.searchandfilter {
                         b { display: none; }
                         &::after {
                             content: "\f161";
-                            font-family: FontAwesome;
+                            font-family: "FontAwesome";
                         }
                     }   
                 }
@@ -128,7 +128,7 @@ form.searchandfilter {
             margin-top: -10px;
          }
         &::after {
-            font-family: FontAwesome;
+            font-family: "FontAwesome";
             content: "\f03a";
             color: #333;
             position: absolute;

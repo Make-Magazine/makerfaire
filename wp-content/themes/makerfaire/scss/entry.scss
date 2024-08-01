@@ -2,7 +2,7 @@
 	.entry-page {
 		background: #fff;
 		h1, h2, h4 {
-			color: #2D91C3;
+			color: #9bdaf5;
 			font-family: "Roboto Bold", Sans-serif;
 			font-size: 30px;
 			margin: 0px;
@@ -61,26 +61,26 @@
 			}
 		}
 		picture {
+			aspect-ratio: 1 / 1;
+			overflow: hidden;
+			display: flex;
+			// Fallback
+			@supports not (aspect-ratio: auto) {
+				&::before {
+					float: left;
+					padding-top: 100%;
+					content: "";
+				}
+				&::after {
+					display: block;
+					content: "";
+					clear: both;
+				}
+			}
 			@media screen and (min-width: 800px) {
 				position: sticky;
 				top: 125px;
 			}
-			aspect-ratio: 1 / 1;
-				overflow: hidden;
-				display: flex;
-				// Fallback
-				@supports not (aspect-ratio: auto) {
-					&::before {
-						float: left;
-						padding-top: 100%;
-						content: "";
-					}
-					&::after {
-						display: block;
-						content: "";
-						clear: both;
-					}
-				}
 			&.exhibit-picture {
 				aspect-ratio: 3 / 2;
 				overflow: hidden;
@@ -216,7 +216,7 @@
 				font-size: 20px;
 			}
 			h2 {
-				color: $color-light-blue;
+				color: #9bdaf5;
 			}
 			.entry-box {
 				max-width: 400px;
@@ -356,7 +356,7 @@
 }
 
 .schedule-items {
-	margin-left: 20px;
+	margin-left: 5px;
 	.schedule-item {
 		display: flex;
 		align-items: center;
@@ -364,7 +364,7 @@
 		margin-bottom: 10px;
 		.schedule-calendar {
 			position: relative;
-			img { filter: invert(14%) sepia(56%) saturate(7180%) hue-rotate(351deg) brightness(102%) contrast(83%); }
+			img { filter: invert(19%) sepia(94%) saturate(7025%) hue-rotate(7deg) brightness(98%) contrast(104%); }
 			.schedule-dow {
 				position: absolute;
 				color: #fff;
@@ -409,8 +409,27 @@
 		}
 		&:nth-of-type(even) {
 			img { filter: invert(48%) sepia(55%) saturate(569%) hue-rotate(153deg) brightness(94%) contrast(95%); }
-			.schedule-day { color:#e4242a; }
+			.schedule-day { color:#F51400; }
 		}
+	}
+}
+
+.ui-dialog.update-message {
+	max-width:200px;
+	margin: 0 auto;
+	display: flex;
+	justify-content: center;
+	position: absolute !important;
+	top: 50px !important;
+	right: calc(50% - 200px);
+	font-size: 30px;
+	.ui-dialog-titlebar { display:none} 
+	#dialog-refresh {
+		display: flex;
+		align-items: center;
+		justify-content: center;;
+		flex-direction: column;
+		gap:10px;
 	}
 }
 
@@ -428,7 +447,7 @@
 	justify-content: center;
 	align-items: center;
 	&:before {
-		font-family: FontAwesome;
+		font-family: "FontAwesome";
 	}
 }
 .dialog-nav-btn.dialog-prev-btn {
@@ -509,18 +528,42 @@
 	}
 }
 
+.makerEditHead {
+	display:flex; 
+	justify-content: space-between; 
+	padding:10px; 
+	align-items: center;
+	.suggestions-toggle {
+		display: flex;
+		align-items: center;
+		gap: 10px;
+		i {
+			font-size: 24px;
+			&.fa-toggle-on {
+				color: green;
+			}
+		}
+		
+	}
+}
+.hide-suggestions {
+	.edit-message, #editMakey {
+		display: none;
+	}
+}
 
+.GVedit-message,
 .edit-message {
 	display: block;
-	color: hotpink;
+	color: #f51400;
 	font-style: italic;
 	font-size: 20px;
-	border: solid hotpink;
+	border: solid #f51400;
 	padding: 5px 10px 10px;
-	background: navy;
+	background: oldlace;
 	width: fit-content;
 	&:before {
-		font-family: FontAwesome;
+		font-family: "FontAwesome";
 		content: "\f06a";
 		font-style: normal;
 		padding-right: 8px;

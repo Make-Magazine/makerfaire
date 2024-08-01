@@ -43,7 +43,7 @@ $showEditMakey = false;
                     <h4 class="faireDate"><?php echo $faire_dates; ?></h4>
                     <div class="entry-box-items">
                         <?php if(isset($location) && trim($location) != '' && count(array_intersect($exhibit_type, array("Exhibit", "Sponsor", "Startup Sponsor"))) > 0) { ?><span class="entry-box-item" aria-label="Location"><i class="fa fa-map-signs" aria-hidden="true"></i><?php echo $location; ?></span><?php } ?>
-                        <?php if(isset($friday) && $friday == 1 && count(array_intersect($exhibit_type, array("Exhibit", "Sponsor", "Startup Sponsor"))) > 0) { ?><span class="entry-box-item" aria-label="Calendar Detail"><i class="fa fa-calendar" aria-hidden="true"></i>Friday Only</span><?php } ?>
+                        <?php if(isset($friday) && $friday == 1 && count(array_intersect($exhibit_type, array("Exhibit", "Sponsor", "Startup Sponsor"))) > 0) { ?><span class="entry-box-item" aria-label="Calendar Detail"><i class="fa fa-calendar-days" aria-hidden="true"></i>Friday Only</span><?php } ?>
                         <?php if(!empty($exhibit_type)) { ?><span class="entry-box-item" aria-label="Exhibit Type"  ><i class="fa fa-check" aria-hidden="true"></i><?php echo implode(" & ",$exhibit_type); ?></span><?php } ?>
                         <?php if(isset($mainCategoryName) && $mainCategoryName != '') { ?><span class="entry-box-item" aria-label="Main Category"><?php echo $mainCategoryIcon; echo $mainCategoryName ; ?></span><?php } ?>
                         <?php if(!empty($ribbons)) { ?><span class="entry-box-item" aria-label="Ribbon"><a href="/ribbons/"><i class="fa fa-award" aria-hidden="true"></i>Ribbon Recipient</a></span><?php } ?>
@@ -53,7 +53,7 @@ $showEditMakey = false;
                             if(strlen($project_short) < 200 && $makerEdit) { 
                                 $showEditMakey = true;
                                 ?>
-                                <span class="edit-message">Please consider <a href="#" onclick="document.getElementById('edit-photos').click();return false;">editing your project</a> to add more descriptive text.</span>
+                                <span class="edit-message">Consider <a href="#" onclick="document.getElementById('edit-photos').click();return false;">editing</a> your Project Description to be at least 350 characters to help fillout your page better.</span>
                             <?php } ?>
                         </p>
                     <?php } ?>
@@ -97,19 +97,12 @@ $showEditMakey = false;
                         <h3><?php echo($maker['firstname'] . " " . $maker['lastname']); ?></h3>
                         <p class="maker-description"><?php echo($maker['bio']); ?></p>
                         <?php if(!empty($maker['website'])) { ?>
-                            <a class="maker-website" href="<?php echo($maker['website']); ?>" target="_blank"><?php echo($maker['website']); ?></a>
-                        <?php } else if($makerEdit) { 
-                            $showEditMakey = true;
-                            ?> 
-                            <span class="edit-message">Please consider <a href="#" onclick="document.getElementById('edit-photos').click();return false;">editing your project</a> to add this Maker's website.</span>
+                            <a class="maker-website" href="<?php echo($maker['website']); ?>" target="_blank"><?php echo($maker['website']); ?></a>                     
                         <?php } ?> 
                         <?php if($maker['social'] != '<span class="social-links reversed"></span>') {                    
                                 echo $maker['social'];
-                              } else if($makerEdit) { 
-                                $showEditMakey = true;
-                                ?> 
-                                <span class="edit-message">Please consider <a href="#" onclick="document.getElementById('edit-photos').click();return false;">editing your project</a> and adding whatever social links this Maker might have.</span>
-                        <?php } ?> 
+                              } 
+                        ?> 
                     </div>
                 <?php } 
             } else if( $makers  ) { 
@@ -132,7 +125,7 @@ $showEditMakey = false;
                     if(strlen($maker['bio']) < 200 && $makerEdit) { 
                         $showEditMakey = true;
                         ?>
-                        <span class="edit-message">Please consider <a href="#" onclick="document.getElementById('edit-photos').click();return false;">editing your project</a> to add more descriptive text.</span>
+                        <span class="edit-message">Consider <a href="#" onclick="document.getElementById('edit-photos').click();return false;">editing</a> your Bio or Group/Company description to be at least 200 characters to help fillout your page better.</span>                        
                     <?php } ?>
                 </div>
             <?php }
@@ -152,21 +145,15 @@ $showEditMakey = false;
             <?php 
             if(count($makers) == 1) { 
                 $maker = current($makers); 
-                if(!empty($maker['website']) || $maker['social'] != '<span class="social-links reversed"></span>' || $makerEdit == true) { ?>
+                if(!empty($maker['website']) || $maker['social'] != '<span class="social-links reversed"></span>') { ?>
                 <div class="entry-box">
                     <h4>More Maker Info</h4>
                     <?php if(!empty($maker['website'])) { ?>
                         <a class="maker-website" href="<?php echo($maker['website']); ?>" target="_blank"><?php echo($maker['website']); ?></a>
-                    <?php } else if($makerEdit) { 
-                        $showEditMakey = true; ?> 
-                        <span class="edit-message">Please consider <a href="#" onclick="document.getElementById('edit-photos').click();return false;">editing your project</a> to add a maker website.</span>
                     <?php } ?>  
                     <?php if($maker['social'] != '<span class="social-links reversed"></span>') { 
-                        echo $maker['social'];
-                    } else if($makerEdit) { 
-                        $showEditMakey = true; ?> 
-                        <span class="edit-message">Please consider <a href="#" onclick="document.getElementById('edit-photos').click();return false;">editing your project</a> and adding whatever social links you might have.</span>
-                    <?php } ?> 
+                        echo $maker['social'];                   
+                        } ?> 
                 </div>
             <?php }
             } ?>  
@@ -177,26 +164,20 @@ $showEditMakey = false;
                         <span class="entry-box-item"><?php echo $mainCategoryIcon; ?><a href="/<?php echo $url_sub_path; ?>/meet-the-makers/?category=<?php echo $mainCategoryName; ?>">See All <?php echo $mainCategoryName; ?></a></span>
                     <?php } ?>
                     <?php if($show_sched ){ ?>
-                        <span class="entry-box-item"><i class="fa fa-calendar"></i><a href="/<?php echo $url_sub_path; ?>/schedule/">Event Schedule</a></span>
+                        <span class="entry-box-item"><i class="fa fa-calendar-days"></i><a href="/<?php echo $url_sub_path; ?>/schedule/">Event Schedule</a></span>
                     <?php } ?>
                     <span class="entry-box-item"><i class="fa fa-tools"></i><a href="/<?php echo $url_sub_path; ?>/meet-the-makers/">See All Makers</a></span>
                 </div>
             </div>
-            <?php if((!empty($project_website) && !empty($project_social)) || $makerEdit) { ?>
+            <?php if((!empty($project_website) && !empty($project_social))) { ?>
                 <div class="entry-box">
                     <h4>More Project Info</h4>
                     <?php if(!empty($project_website)) { ?>
-                        <a class="maker-website" href="<?php echo($project_website); ?>" target="_blank"><?php echo($project_website); ?></a>
-                    <?php } else if($makerEdit) { 
-                        $showEditMakey = true; ?> 
-                        <span class="edit-message">Please consider <a href="#" onclick="document.getElementById('edit-photos').click();return false;">editing your project</a> to add a project website.</span>
+                        <a class="maker-website" href="<?php echo($project_website); ?>" target="_blank"><?php echo($project_website); ?></a>                    
                     <?php } ?> 
                     <?php if($project_social != '<span class="social-links reversed"></span>') { 
-                        echo $project_social;
-                    } else if($makerEdit) { 
-                        $showEditMakey = true; ?> 
-                        <span class="edit-message">Please consider <a href="#" onclick="document.getElementById('edit-photos').click();return false;">editing your project</a> and adding some social links for your project.</span>
-                    <?php } ?> 
+                        echo $project_social;                    
+                        } ?> 
                 </div>
             <?php } ?>  
         </section>

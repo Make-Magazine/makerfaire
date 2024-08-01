@@ -6,7 +6,7 @@
 		float: left;
 		text-decoration: none;;
 		&::before {
-			font-family: FontAwesome;
+			font-family: "FontAwesome";
 			content: "\f0c1";
 			color: #333;
 			visibility: visible;
@@ -14,7 +14,7 @@
 		}
 		&[href*="facebook" i] {
 			&::before {
-				font-family: FontAwesomeBrands;
+				font-family: "FontAwesomeBrands";
 				content: "\f09a";
 				color: #3b5998;
 			}
@@ -54,98 +54,98 @@
 		}
 		&[href*="instagram" i] {
 			&::before {
-				font-family: FontAwesomeBrands;
+				font-family: "FontAwesomeBrands";
 				content: "\f16d";
 				color: #e1306c;
 			}
 		}
 		&[href*="youtube" i] {
 			&::before {
-				font-family: FontAwesomeBrands;
+				font-family: "FontAwesomeBrands";
 				content: "\f167";
 				color: #ff0000;
 			}
 		}
 		&[href*="linkedin" i] {
 			&::before {
-				font-family: FontAwesomeBrands;
+				font-family: "FontAwesomeBrands";
 				content: "\f08c";
 				color: #0a66c2;
 			}
 		}
 		&[href*="pinterest" i] {
 			&::before {
-				font-family: FontAwesomeBrands;
+				font-family: "FontAwesomeBrands";
 				content: "\f0d2";
 				color: #c8232c;
 			}
 		}
 		&[href*="telegram" i], &[href*="t.me"] {
 			&::before {
-				font-family: FontAwesomeBrands;
+				font-family: "FontAwesomeBrands";
 				content: "\f2c6";
 				color: #0088cc;
 			}
 		}
 		&[href*="github" i] {
 			&::before {
-				font-family: FontAwesomeBrands;
+				font-family: "FontAwesomeBrands";
 				content: "\f09b";
 				color: #4078c0;
 			}
 		}
 		&[href*="discord" i] {
 			&::before {
-				font-family: FontAwesomeBrands;
+				font-family: "FontAwesomeBrands";
 				content: "\f392";
 				color: #7289da;
 			}
 		}
 		&[href*="mastodon" i], &[href*=".social"] {
 			&::before {
-				font-family: FontAwesomeBrands;
+				font-family: "FontAwesomeBrands";
 				content: "\f4f6";
 				color: #6364FF;
 			}
 		}
 		&[href*="tiktok" i] {
 			&::before {
-				font-family: FontAwesomeBrands;
+				font-family: "FontAwesomeBrands";
 				content: "\e07b";
 				color: #ff0050;
 			}
 		}
 		&[href*="snapchat" i] {
 			&::before {
-				font-family: FontAwesomeBrands;
+				font-family: "FontAwesomeBrands";
 				content: "\f2ab";
 				color: #fffc00;
 			}
 		}
 		&[href*="whatsapp" i] {
 			&::before {
-				font-family: FontAwesomeBrands;
+				font-family: "FontAwesomeBrands";
 				content: "\f2ab";
 				color: #075e54;
 			}
 		}
 		&[href*="wiki" i] {
 			&::before {
-				font-family: FontAwesomeBrands;
+				font-family: "FontAwesomeBrands";
 				content: "\f266";
 				color: #000;
 			}
 		}
 		&[href*="medium.com" i] {
 			&::before {
-				font-family: FontAwesomeBrands;
+				font-family: "FontAwesomeBrands";
 				content: "\f23a";
 				color: #00ab6c;
 			}
 		}
 		&[href*="meetup.com" i] {
 			&::before {
-				font-family: FontAwesomeBrands;
+				font-family: "FontAwesomeBrands";
 				content: "\f2e0";
 				color: #e51937;
 			}

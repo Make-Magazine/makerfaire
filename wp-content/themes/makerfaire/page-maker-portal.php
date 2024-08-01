@@ -70,7 +70,7 @@ get_header();
               <b-col md="2" sm="5" style="color: #ccc;">{{entry.project_id}}</b-col>
             </b-row>
             <b-row> <!-- Link Row -->
-              <b-col md="auto" sm="12" lg="8">
+              <b-col md="8" sm="12">
                 <span v-if="entry.req_entry_type !== null && entry.req_entry_type !== '' ">
                   <b>Requested Entry Type:</b> {{entry.req_entry_type}}
                   <br />
@@ -81,13 +81,20 @@ get_header();
               </b-col>
 
               <b-col>
-                <span class="editLink">
-                  <!--<span class="editLink" v-if="entry.status !='Cancelled' && entry.status!='Rejected'">-->
-                  <a target="_blank" :href="'/maker/entry/'+entry.project_id+'/edit/'">
-                    <i class="fa fa-eye" aria-hidden="true"></i>
-                    <span v-if="entry.status=='Accepted'">View My Public Page</span>
-                    <span v-else>Preview My Public Page</span>
-                  </a>
+                <span>                  
+                  <div v-if="entry.status=='Accepted'">
+                    <a target="_blank" :href="'/maker/entry/'+entry.project_id">
+                      <i class="fa fa-eye" aria-hidden="true"></i>
+                      Share My Entry Page
+                    </a>
+                  </div>
+                  
+                  <div>
+                    <a target="_blank" :href="'/maker/entry/'+entry.project_id+'/edit/'">
+                      <i class="fa fa-edit" aria-hidden="true"></i>                    
+                      Edit My Entry Page
+                    </a>
+                  </div>
                 </span>
               </b-col>
             </b-row>
@@ -159,7 +166,7 @@ get_header();
                         </b-col>
                         <b-col cols="2">
                           <a target="_blank" :href="ticket.link">
-                            <i class="fa fa-chevron-circle-right" aria-hidden="true"></i>
+                            <i class="fa fa-circle-chevron-right" aria-hidden="true"></i>
                           </a>
                         </b-col>
                       </b-row>
