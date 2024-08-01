@@ -243,7 +243,7 @@ $entries   = $tableData['data'];
                         </div>
                         <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
                           <a target="_blank" href="<?php echo $ticket['link'];?>">
-                            <i class="fas fa-chevron-circle-right fa-2x" aria-hidden="true"></i>
+                            <i class="fas fa-circle-chevron-right fa-2x" aria-hidden="true"></i>
                           </a>
                         </div>
                       </div>

@@ -350,9 +350,9 @@ function resAttLock(currentEle, lock) {
 		lockBit = 1;
 	}
 
-	var newLock = '<i class="fa fa-unlock-keyhole fa-lg"></i>';
+	var newLock = '<i class="fas fa-lock-open fa-lg"></i>';
 	if (lock == 0) {
-		newLock = '<i class="fa fa-lock fa-lg"></i>';
+		newLock = '<i class="fas fa-lock fa-lg"></i>';
 	}
 	var lockHtml = '<span class="lockIcon" onclick="resAttLock(\'' + currentEle + '\',' + lockBit + ')">' + newLock + '</span>';
 	jQuery(currentEle + ' .lock').html(lockHtml);
@@ -434,7 +434,7 @@ function insertRowDB(type) {
 		};
 		jQuery.post(ajaxurl, data, function(response) {
 			//set actions column
-			jQuery('#' + type + 'RowNew #actions').html('<span onclick="resAttDelete(\'#' + type + 'Row' + response.ID + '\')"><i class="fas fa-minus-circle fa-lg"></i></span></td>');
+			jQuery('#' + type + 'RowNew #actions').html('<span onclick="resAttDelete(\'#' + type + 'Row' + response.ID + '\')"><i class="fa fa-circle-minus fa-lg"></i></span></td>');
 
 			//set item to locked
 			jQuery('#' + type + 'RowNew .lock').html('<span class="lockIcon" onclick="resAttLock(\'#' + type + 'Row' + response.ID + '\,0)">' + '<i class="fas fa-lock fa-lg"></i>' + '</span>');
