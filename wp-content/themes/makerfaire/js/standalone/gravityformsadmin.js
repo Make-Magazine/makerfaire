@@ -350,7 +350,7 @@ function resAttLock(currentEle, lock) {
 		lockBit = 1;
 	}
 
-	var newLock = '<i class="fas fa-unlock-keyhole fa-lg"></i>';
+	var newLock = '<i class="fas fa-lock-open fa-lg"></i>';
 	if (lock == 0) {
 		newLock = '<i class="fas fa-lock fa-lg"></i>';
 	}
