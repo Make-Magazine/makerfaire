@@ -801,7 +801,7 @@ function entryResources($lead, $html=TRUE) {
           'update'        => '<span onclick="resAttDelete(\'resRow' . $result->ID . '\','.$lead['id'].')"><i class="bi bi-dash-circle""></i></span>'          
         );
         $resourceDisp .= '<tr id="resRow' . $result->ID . '">'
-                . ' <td class="lock"><span class="lockIcon" onclick="resAttLock(\'#resRow' . $result->ID . '\',' . $result->lockBit . ')">' . ($result->lockBit == 1 ? '<i class="fa fa-lock fa-lg"></i>' : '<i class="fa fa-lock-open fa-lg"></i>') . '</span></td>'
+                . ' <td class="lock"><span class="lockIcon" onclick="resAttLock(\'#resRow' . $result->ID . '\',' . $result->lockBit . ')">' . ($result->lockBit == 1 ? '<i class="fas fa-lock fa-lg"></i>' : '<i class="fas fa-lock-open fa-lg"></i>') . '</span></td>'
                 . ' <td id="resitem_' . $result->ID . '" data-itemID="' . $result->item_id . '">' . $result->item . '</td>'
                 . ' <td id="restype_' . $result->ID . '" data-typeID="' . $result->resource_id . '" class="editable dropdown">' . $result->type . '</td>'
                 . ' <td id="resqty_' . $result->ID . '"  class="editable numeric">' . $result->qty . '</td>'

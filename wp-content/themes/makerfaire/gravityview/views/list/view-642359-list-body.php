@@ -275,7 +275,7 @@ if ( ! $gravityview->entries->count() ) {
 									</div>
 									<div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
 										<a target="_blank" href="<?php echo $ticket['link'];?>">
-											<i class="fa fa-chevron-circle-right" aria-hidden="true"></i>
+											<i class="fa fa-circle-chevron-right" aria-hidden="true"></i>
 										</a>
 									</div>
 								</div>
