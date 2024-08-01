@@ -15,8 +15,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Search_Filter_Field_Post_Meta_Number {
 
-
+	private $plugin_slug;
+	private $sfid;
+	private $create_input;
 	private $use_transients = false;
+
 	public function __construct( $plugin_slug, $sfid ) {
 		$this->plugin_slug  = $plugin_slug;
 		$this->sfid         = $sfid;
@@ -142,6 +145,8 @@ class Search_Filter_Field_Post_Meta_Number {
 			'name'                     => $field_name,
 			'range_min'                => $args['range_min'],
 			'range_max'                => $args['range_max'],
+			'range_min_formatted'      => number_format( (float) $args['range_min'], $decimal_places, $decimal_point, $thousand_seperator ),
+			'range_max_formatted'      => number_format( (float) $args['range_max'], $decimal_places, $decimal_point, $thousand_seperator ),
 			'range_step'               => $args['range_step'],
 			'default_min'              => $defaults[0],
 			'default_max'              => $defaults[1],
@@ -370,8 +375,6 @@ class Search_Filter_Field_Post_Meta_Number {
 
 		global $searchandfilter;
 		$searchform                      = $searchandfilter->get( $this->sfid );
-		$this->auto_count                = $searchform->settings( 'enable_auto_count' );
-		$this->auto_count_deselect_emtpy = $searchform->settings( 'auto_count_deselect_emtpy' );
 
 		$min                = $args['min'];
 		$max                = $args['max'];
@@ -444,8 +447,6 @@ class Search_Filter_Field_Post_Meta_Number {
 
 		global $searchandfilter;
 		$searchform                      = $searchandfilter->get( $this->sfid );
-		$this->auto_count                = $searchform->settings( 'enable_auto_count' );
-		$this->auto_count_deselect_emtpy = $searchform->settings( 'auto_count_deselect_emtpy' );
 
 		$min                = $args['min'];
 		$max                = $args['max'];

@@ -831,6 +831,8 @@ class Search_Filter_Generate_Input {
 		$args['attributes']['data-start-max-formatted'] = $args['default_max_formatted'];
 		$args['attributes']['data-min']                 = $args['range_min'];
 		$args['attributes']['data-max']                 = $args['range_max'];
+		$args['attributes']['data-min-formatted']       = $args['range_min_formatted'];
+		$args['attributes']['data-max-formatted']       = $args['range_max_formatted'];
 		$args['attributes']['data-step']                = $args['range_step'];
 		$args['attributes']['data-decimal-places']      = $args['decimal_places'];
 		$args['attributes']['data-thousand-seperator']  = $args['thousand_seperator'];

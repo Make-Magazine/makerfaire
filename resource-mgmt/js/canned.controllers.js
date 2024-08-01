@@ -261,7 +261,7 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
                   {"id":"2","value":"TABLE","checked":true, "order":160},
                   {"id":"3","value":"CHAIR","checked":true, "order":170},
                   {"id":"9","value":"ELEC","checked":true, "order":180},
-                  {"id":"41","value":"Work Bench","checked":true, "order":110}
+                  {"id":"41","value":"Work Bench","checked":true, "order":110},
                   {"id":"42","value":"Stools","checked":true, "order":110}
                 ],
                 "attribute":[

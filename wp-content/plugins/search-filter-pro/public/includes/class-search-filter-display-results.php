@@ -42,7 +42,7 @@ class Search_Filter_Display_Results {
 
 		// $get_results_obj = new Search_Filter_Query($this->plugin_slug);
 
-		Search_Filter_Helper::start_log( 'the_results' );
+		// Search_Filter_Helper::start_log( 'the_results' );
 
 		$the_results = $searchandfilter->get( $sfid )->query()->the_results();
 

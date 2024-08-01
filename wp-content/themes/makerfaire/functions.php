@@ -82,7 +82,7 @@ function load_scripts() {
     // select 2 for styling select
     wp_enqueue_script('select2', WP_PLUGIN_URL . '/search-filter-pro/public/assets/js/select2.min.js', array(), false, true);
     // font awesome 6
-    // wp_enqueue_script('fontawesome', 'https://kit.fontawesome.com/b9da6f1400.js', array(), "", true);
+    wp_enqueue_script('fontawesome', 'https://kit.fontawesome.com/b9da6f1400.js', array(), "", true);
     // Libraries concatenated by our npm build
     wp_enqueue_script('make-js', get_stylesheet_directory_uri() . '/js/built.min.js', array('jquery'), $my_version, true);
     // Universasl libraries:
@@ -210,7 +210,7 @@ function load_admin_scripts() {
     wp_enqueue_script('admin-scripts', get_stylesheet_directory_uri() . '/js/built-admin-scripts.min.js', array('jquery'), $my_version);
 
     //styles
-    //wp_enqueue_style('make-bootstrap', get_stylesheet_directory_uri() . '/css/bootstrap.min.css');
+    wp_enqueue_style('make-bootstrap', get_stylesheet_directory_uri() . '/css/bootstrap.min.css');
     wp_enqueue_style('jquery-datetimepicker-css', get_stylesheet_directory_uri() . '/css/jquery.datetimepicker.css');
     wp_enqueue_style('mf-admin-style', get_stylesheet_directory_uri() . '/css/mf-admin-style.min.css', array(), $my_version);
 

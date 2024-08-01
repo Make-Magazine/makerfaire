@@ -59,7 +59,8 @@ form.searchandfilter {
                 }
                 &:before {
                     position: absolute;;
-                    font-family: "FontAwesome";
+                    font-family: "Font Awesome 6 Pro";
+                    font-weight: 900;
                     content: "\f002";
                     top: 15px;
                     left: 8px;
@@ -82,7 +83,8 @@ form.searchandfilter {
                         b { display: none; }
                         &::after {
                             content: "\f161";
-                            font-family: "FontAwesome";
+                            font-family: "Font Awesome 6 Pro";
+                            font-weight: 900;
                         }
                     }   
                 }
@@ -128,7 +130,8 @@ form.searchandfilter {
             margin-top: -10px;
          }
         &::after {
-            font-family: "FontAwesome";
+            font-family: "Font Awesome 6 Pro";
+            font-weight: 900;
             content: "\f03a";
             color: #333;
             position: absolute;
@@ -206,7 +209,8 @@ form.searchandfilter {
                 }
                 &:before {
                     position: absolute;;
-                    font-family: "FontAwesome";
+                    font-family: "Font Awesome 6 Pro";
+                    font-weight: 900;
                     content: "\f002";
                     top: 15px;
                     left: 8px;
@@ -265,7 +269,8 @@ form.searchandfilter {
         .sf-field-reset[data-sf-field-input-type="button"] {
             visibility: visible;
             &:before {
-                font-family: "FontAwesome";
+                font-family: "Font Awesome 6 Pro";
+                font-weight: 900;
                 content: "\f002";
                 position: absolute;
                 z-index: 9;
@@ -498,15 +503,15 @@ body.listview {
                 .result-image {
                     img { max-height: 275px; }
                 }
-                .results-text {
-                    h2 {
-                        text-align: left;
-                    }
+                .results-text {    
                     margin: 10px 50px 10px 35px;
                     width: 100%;
                     background-position-x: right;
                     background-position-y: 30%;
                     background-size: 120px;
+                    h2 {
+                        text-align: left;
+                    }
                     .result-detail {
                         .sf-learn-more {
                             padding-left: 0px;

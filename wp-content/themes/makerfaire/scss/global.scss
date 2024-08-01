@@ -381,7 +381,8 @@ ul.bulletless {
     transition: all 0.15s ease;
   }
   &:after {
-    font-family: "FontAwesome";
+    font-family: "Font Awesome 6 Pro";
+    font-weight: 900;
     content: "\f019";
     position: absolute;
     right: 8px;
@@ -482,7 +483,8 @@ input[type=radio].fa-radio {
   position: absolute;
   width: 1px;
   ~ label:before {
-    font-family: "FontAwesome";
+    font-family: "Font Awesome 6 Pro";
+    font-weight: 900;
     display: inline-block;
     content: "\f1db";
     letter-spacing: 10px;
@@ -507,7 +509,8 @@ input[type=checkbox].fa-checkbox {
   position: absolute;
   width: 1px;
   ~ label:before {
-    font-family: "FontAwesome";
+    font-family: "Font Awesome 6 Pro";
+    font-weight: 900;
     display: inline-block;
     content: "\f096";
     letter-spacing: 10px;

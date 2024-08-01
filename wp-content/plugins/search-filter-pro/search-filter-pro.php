@@ -11,13 +11,18 @@
  * Plugin Name:       Search & Filter Pro
  * Plugin URI:        https://searchandfilter.com
  * Description:       Search & Filtering for posts, products and custom posts. Allow your users to Search & Filter by categories, tags, taxonomies, custom fields, post meta, post dates, post types and authors.
- * Version:           2.5.16
+ * Version:           2.5.18
  * Author:            Code Amp
  * Author URI:        http://www.codeamp.com
+ * Developer:         Code Amp
+ * Developer URI:     http://www.codeamp.com
  * Text Domain:       search-filter
  * License:           GPL-2.0+
  * License URI:       http://www.gnu.org/licenses/gpl-2.0.html
  * Domain Path:       /languages
+ * 
+ * WC requires at least: 7.0
+ * WC tested up to: 8.5
  */
 
 // If this file is called directly, abort.
@@ -33,7 +38,7 @@ if ( ! defined( 'SEARCH_FILTER_QUERY_DEBUG' ) ) {
 }
 
 if ( ! defined( 'SEARCH_FILTER_VERSION' ) ) {
-	define( 'SEARCH_FILTER_VERSION', '2.5.16' );
+	define( 'SEARCH_FILTER_VERSION', '2.5.18' );
 }
 
 if ( ! defined( 'SEARCH_FILTER_PRO_BASE_PATH' ) ) {
@@ -135,3 +140,17 @@ $search_filter_third_party = new Search_Filter_Third_Party();
 
 global $search_filter_shared;
 $search_filter_shared = new Search_Filter_Shared();
+
+
+/**
+ * Add compatibility with WooCommerce Custom Order Tables.
+ * 
+ * We don't actually do anything with the order tables, but without this users cannot use
+ * custom order tables.  The alternative is to remove the WC tested upto version from the
+ * plugin readme.
+ */
+add_action( 'before_woocommerce_init', function() {
+	if ( class_exists( \Automattic\WooCommerce\Utilities\FeaturesUtil::class ) ) {
+		\Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility( 'custom_order_tables', __FILE__, true );
+	}
+} );

@@ -3,8 +3,8 @@ Contributors: DesignsAndCode, CodeAmp
 Donate link:
 Tags: posts, custom posts, products, category, filter, taxonomy, post meta, custom fields, search, wordpress, post type, post date, author
 Requires at least: 5.1
-Tested up to: 6.0
-Stable tag: 2.5.16
+Tested up to: 6.4
+Stable tag: 2.5.18
 
 Search and Filtering for posts, products and custom posts. Allow your users to Search & Filter by taxonomies, custom fields and more.
 
@@ -56,6 +56,19 @@ Great for searching in your online shop, tested with: WooCommerce and WP eCommer
 
 
 == Changelog ==
+
+= 2.5.18 =
+* Security - a fix for a low risk security issue has been applied which can only be exploited via an admin page, by an administrator account - the frontend is unaffected.
+* Update - add support for WooCommerce HPOS.
+* Fix - an issue while caching and a WooCommerce product was not found.
+* Fix - an issue with the range slider not being reset correctly under certain conditions.
+* Fix - add support for multibyte spaces in search terms.
+
+* New - add support for Dynamic.ooo Dynamic Archives widget.
+
+= 2.5.17 =
+* Fix - Deprecated issues and compatibility with PHP 8.2
+* Fix - an issue with negative number ranges not working in some scenarios
 
 = 2.5.16 =
 * Fix - an issue with our pagination functions causing fatal errors.

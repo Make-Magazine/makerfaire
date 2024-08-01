@@ -563,6 +563,8 @@ class Search_Filter_Query {
 
 		if ( isset( $_GET['_sf_s'] ) ) {
 			$search_term = trim( urldecode( stripslashes( $_GET['_sf_s'] ) ) );
+			// Support multibyte space by replacing it with a regular space
+			$search_term = str_replace( '　', ' ', $search_term );
 			$args['s']   = $search_term;
 		}
 

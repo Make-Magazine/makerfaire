@@ -76,14 +76,14 @@ get_header();
                   <br />
                 </span>
                 <span v-if="entry.entry_type  !== null ">
-                  <b>Programmed Entry Type(s):</b> {{entry.entry_type}}
+                  <b>Participating As:</b> {{entry.entry_type}}
                 </span>
               </b-col>
 
               <b-col>
                 <span>                  
                   <div v-if="entry.status=='Accepted'">
-                    <a target="_blank" :href="'/maker/entry/'+entry.project_id">
+                    <a target="_blank" :href="'/maker/entry/'+entry.project_id+'/'">
                       <i class="fa fa-eye" aria-hidden="true"></i>
                       Share My Entry Page
                     </a>

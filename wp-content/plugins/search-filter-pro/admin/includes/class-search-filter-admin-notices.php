@@ -246,42 +246,42 @@ class Search_Filter_Admin_Notices {
 			} elseif ( $display_results_as == 'post_type_archive' ) {
 					// check to see if there is only 1 post type set
 
-				if ( isset( $settings['post_types'] ) ) {
+				if ( isset( $settings['post_types'] ) && is_array( $settings['post_types'] ) ) {
 					$post_types = array_keys( $settings['post_types'] );
 				} else {
 					$settings['post_types'] = array();
 				}
 
-					$this->set_max_post_types_error( $post_types, 1 );
-					$this->set_post_type_archive_attributes_error( $post_types );
+				$this->set_max_post_types_error( $post_types, 1 );
+				$this->set_post_type_archive_attributes_error( $post_types );
 
-					// check for duplicates - can't have 2 search forms set to post type archive, with the same post type
-					$args = array(
-						'property_key'    => 'display_results_as',
-						'property_value'  => 'post_type_archive',
-						'secondary_key'   => 'post_types',
-						'secondary_value' => $post_types,
-					);
+				// check for duplicates - can't have 2 search forms set to post type archive, with the same post type
+				$args = array(
+					'property_key'    => 'display_results_as',
+					'property_value'  => 'post_type_archive',
+					'secondary_key'   => 'post_types',
+					'secondary_value' => $post_types,
+				);
 
-					$total_forms_with_properties = $this->count_forms_with_properties( $args );
+				$total_forms_with_properties = $this->count_forms_with_properties( $args );
 
-					if ( $total_forms_with_properties > 1 ) {
-						if ( count( $post_types ) == 1 ) {
-							$post_type_object = get_post_type_object( $post_types[0] );
-							$label_name       = '';
+				if ( $total_forms_with_properties > 1 ) {
+					if ( count( $post_types ) == 1 ) {
+						$post_type_object = get_post_type_object( $post_types[0] );
+						$label_name       = '';
 
-							if ( isset( $post_type_object->label ) ) {
-								$label_name = $post_type_object->label;
-							}
-
-							$message = array(
-								'type'    => 'error',
-								'message' => sprintf( __( 'There are <strong>%1$d</strong> Search Forms set to use <strong>Post Type Archive</strong> display mode for the post type <strong>%2$s</strong> - you may only have <strong>1</strong>', $this->plugin_slug ), $total_forms_with_properties, $label_name ),
-							);
-
-							array_push( $this->post_message_log, $message );
+						if ( isset( $post_type_object->label ) ) {
+							$label_name = $post_type_object->label;
 						}
+
+						$message = array(
+							'type'    => 'error',
+							'message' => sprintf( __( 'There are <strong>%1$d</strong> Search Forms set to use <strong>Post Type Archive</strong> display mode for the post type <strong>%2$s</strong> - you may only have <strong>1</strong>', $this->plugin_slug ), $total_forms_with_properties, $label_name ),
+						);
+
+						array_push( $this->post_message_log, $message );
 					}
+				}
 			} elseif ( $display_results_as == 'shortcode' ) {
 				// check to make sure the results url is filled in
 				if ( isset( $settings['results_url'] ) ) {
