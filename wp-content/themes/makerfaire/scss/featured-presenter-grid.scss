@@ -5,11 +5,11 @@ $feat_img_touch_lg_breakpoint: 960px;
 $feat_img_touch_sm_breakpoint: 768px;
 $feat_img_mobile_breakpoint: 560px;
 .featured-item-panel {
+   padding-bottom: 30px;
 	.panel-title {
 		display: flex;
 		justify-content: center;
-	 }
-	padding-bottom: 30px;
+	}
 }
 .featured-image-grid {
    display: grid;

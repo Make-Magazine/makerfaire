@@ -26,6 +26,8 @@ class Search_Filter_Active_Query {
 	private $form_settings;
 	private $field_values;
 
+	private $searchterm = '';
+
 	public function __construct( $plugin_slug, $sfid, $settings, $fields ) {
 		global $wpdb;
 

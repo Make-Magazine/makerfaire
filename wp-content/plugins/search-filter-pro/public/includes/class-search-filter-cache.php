@@ -1132,6 +1132,8 @@ class Search_Filter_Cache {
 				$cast_type = 'UNSIGNED';
 			}
 		} else {
+			$cast_type = 'SIGNED';
+
 			$min_value = (float) $filter['active_values'][0];
 			$max_value = (float) $filter['active_values'][1];
 

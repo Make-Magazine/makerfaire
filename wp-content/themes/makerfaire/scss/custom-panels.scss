@@ -1067,15 +1067,14 @@
       p {
          margin: 0px;
          font-size: 20px;
+         line-height: 1.3em;
          // Medium devices (tablets, 768px and up)
          @media (min-width: 768px) and (max-width: 991.98px) {
             font-size: 13px;
          }
-
          @media (min-width: 992px) and (max-width: 1199.98px) {
             font-size: 15px;
          }
-         line-height: 1.3em;
       }
       img {
          margin: auto;
@@ -1889,8 +1888,8 @@
 		}
 		@media screen and (max-width: 560px) {
 			margin-right: 0px;
+         width: 100%;
 			&:nth-of-type(3n) { margin-right: 0px; }
-			width: 100%;
 		}
 		img { width: 100%; }
 	}
@@ -1991,7 +1990,8 @@ ul.community-cfm-list {
       text-align: center;
    }
    i {
-      font-family: "FontAwesome";
+      font-family: "Font Awesome 6 Pro";
+      font-weight: 900;
       color: #1989C7;
       font-size: .8em;
    }

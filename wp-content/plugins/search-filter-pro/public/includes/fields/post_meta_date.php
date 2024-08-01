@@ -15,6 +15,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Search_Filter_Field_Post_Meta_Date {
 
+	private $plugin_slug;
+	private $sfid;
+	private $create_input;
+
 	public function __construct( $plugin_slug, $sfid ) {
 
 		$this->plugin_slug  = $plugin_slug;

@@ -745,7 +745,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 							echo '<select name="default_meta_key" class="meta_key" id="default_meta_key">';
 							foreach($all_meta_keys as $v)
 							{						
-								echo '<option value="'.$v.'"'.$this->set_selected($values['default_meta_key'], $v, false).'>'.$v."</option>";
+								echo '<option value="'.esc_attr( $v ).'"'.$this->set_selected($values['default_meta_key'], $v, false).'>'.esc_html( $v )."</option>";
 							}
 							echo '</select> ';
 						}
@@ -815,7 +815,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 								echo '<select name="secondary_meta_key" class="meta_key" id="secondary_meta_key">';
 								foreach($all_meta_keys as $v)
 								{						
-									echo '<option value="'.$v.'"'.$this->set_selected($values['secondary_meta_key'], $v, false).'>'.$v."</option>";
+									echo '<option value="'.esc_attr( $v ).'"'.$this->set_selected($values['secondary_meta_key'], $v, false).'>'.esc_html( $v )."</option>";
 								}
 								echo '</select> ';
 							}

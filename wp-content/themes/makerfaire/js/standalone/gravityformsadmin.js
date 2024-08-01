@@ -350,9 +350,9 @@ function resAttLock(currentEle, lock) {
 		lockBit = 1;
 	}
 
-	var newLock = '<i class="fas fa-unlock-alt fa-lg"></i>';
+	var newLock = '<i class="fa fa-unlock-keyhole fa-lg"></i>';
 	if (lock == 0) {
-		newLock = '<i class="fas fa-lock fa-lg"></i>';
+		newLock = '<i class="fa fa-lock fa-lg"></i>';
 	}
 	var lockHtml = '<span class="lockIcon" onclick="resAttLock(\'' + currentEle + '\',' + lockBit + ')">' + newLock + '</span>';
 	jQuery(currentEle + ' .lock').html(lockHtml);

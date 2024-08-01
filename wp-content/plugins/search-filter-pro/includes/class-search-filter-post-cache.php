@@ -28,6 +28,9 @@ class Search_Filter_Post_Cache {
 	private $posts_updated      = array();
 	private $context            = 'none';
 
+	private $cached_search_form_settings = array();
+	private $cached_search_form_fields   = array();
+
 	private $cache_table_name        = '';
 	private $term_results_table_name = '';
 
@@ -1101,8 +1104,12 @@ class Search_Filter_Post_Cache {
 		if ( $meta_key == '_edit_lock' ) {
 			return;
 		}
-
 		$post = get_post( $object_id );
+		if ( $post === null ) {
+			return;
+		}
+
+		// TODO - we should only schedule it if we are watching the post meta key.
 		$this->schedule_post_updated( $post->ID );
 	}
 
@@ -1112,7 +1119,7 @@ class Search_Filter_Post_Cache {
 			return;
 		}
 		$post = get_post( $post_id );
-		if ( ! $post ) {
+		if ( $post === null ) {
 			return;
 		}
 		$this->schedule_post_updated( $post_id );

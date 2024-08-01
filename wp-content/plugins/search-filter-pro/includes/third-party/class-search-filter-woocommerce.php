@@ -133,7 +133,10 @@ class Search_Filter_Third_Party_Woocommerce {
 	public function sf_woo_update_product_insert_data( $insert_data, $post_id, $type ) {
 
 		$product = wc_get_product( $post_id );
-		// $post_status = get_post_status($post->ID); //don't index variations if the parent is private
+		
+		if ( ! $product ) {
+			return $insert_data;
+		}
 
 		if ( $product->is_type( 'variable' ) ) {
 
@@ -184,6 +187,9 @@ class Search_Filter_Third_Party_Woocommerce {
 		return $insert_data;
 	}
 	public function sf_woo_update_post_cache( $post_id, $post, $context ) {
+		if ( ! $this->is_woo_enabled() ) {
+			return;
+		}
 		// If we're not in the cache context, and we update a parent post, then we want to
 		// rebuild the children.
 		if ( $post->post_type !== 'product' ) {
@@ -196,6 +202,11 @@ class Search_Filter_Third_Party_Woocommerce {
 
 		// If the product is variable, loop the through the IDS:
 		$product = wc_get_product( $post_id );
+
+		if ( ! $product ) {
+			return;
+		}
+
 		if ( $product->is_type( 'variable' ) ) {
 			$variations = $product->get_available_variations();
 			foreach ( $variations as $variation ) {
@@ -223,6 +234,9 @@ class Search_Filter_Third_Party_Woocommerce {
 		}
 
 		$post = get_post( $post_id );
+		if( $post === null ) {
+			return $insert_data;
+		}
 
 		if ( ! $post ) {
 			return $insert_data;
@@ -245,7 +259,10 @@ class Search_Filter_Third_Party_Woocommerce {
 			return $insert_arr;
 		}
 
-		$post             = get_post( $post_id );
+		$post = get_post( $post_id );
+		if ( $post === null ) {
+			return $insert_arr;
+		}
 		$post_type        = $post->post_type;
 		$taxonomies       = get_object_taxonomies( $post_type, 'objects' );
 		$current_language = false;
@@ -334,9 +351,11 @@ class Search_Filter_Third_Party_Woocommerce {
 	}
 	public function sf_woo_get_variation_taxonomy_values( $index_data, $product_id ) {
 
-		// $index_data = array();
-
 		$product = wc_get_product( $product_id );
+
+		if ( ! $product ) {
+			return $index_data;
+		}
 
 		$product_attributes = $product->get_attributes();
 
@@ -444,6 +463,9 @@ class Search_Filter_Third_Party_Woocommerce {
 		$variation      = wc_get_product( $variation_id );
 		$parent_product = wc_get_product( $variation->get_parent_id() );
 
+		if ( $parent_product === null || $parent_product === false ) {
+			return array();
+		}
 		// loop through the variations
 		$single_variation     = new WC_Product_Variation( $variation_id );
 		$variation_price      = $single_variation->get_price();
@@ -521,7 +543,7 @@ class Search_Filter_Third_Party_Woocommerce {
 
 		// We're managing stock status at product level, not variation, so forget about it for variations
 		// (ie, just copy the parent value).
-		if ( $parent_product->managing_stock() == true ) {
+		if ( $parent_product->managing_stock() === true ) {
 			if ( isset( $variation_values['_sfm__stock_status'] ) ) {
 				unset( $variation_values['_sfm__stock_status'] );
 			}
@@ -555,6 +577,11 @@ class Search_Filter_Third_Party_Woocommerce {
 		}
 
 		$variation      = wc_get_product( $variation_id );
+
+		if ( ! $variation ) {
+			return array();
+		}
+		
 		$parent_product = wc_get_product( $variation->get_parent_id() );
 
 		// loop through the variations
