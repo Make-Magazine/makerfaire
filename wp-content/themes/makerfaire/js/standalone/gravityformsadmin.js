@@ -290,8 +290,8 @@ var resourceArray = [{ 'id': 'reslock', 'class': 'lock', 'display': '' },
 { 'id': 'resuser', class: '', 'display': '' },
 { 'id': 'resdateupdate', class: '', 'display': '' }
 ];
-var attributeArray = [{ 'id': 'attlock', 'class': 'lock', 'display': '' },
-{ 'id': 'attcategory', 'class': '', 'display': "dropdown" },
+
+var attributeArray = [{ 'id': 'attcategory', 'class': '', 'display': "dropdown" },
 { 'id': 'attvalue', 'class': 'editable textareaEdit', 'display': 'textarea' },
 { 'id': 'attcomment', 'class': 'editable textareaEdit', 'display': 'textarea' },
 { 'id': 'attuser', class: '', 'display': '' },
