@@ -134,8 +134,8 @@ class GFRMTHELPER {
   /* Update RMT resource data for an entry */
   public static function rmt_update_resource($entryID, $resource_id, $qty, $comment, $user) {    
     global $wpdb;
-    global $form;
-    global $entry;
+    $entry = GFAPI::get_entry($entryID);
+    $form  = GFAPI::get_form($entry['form_id']);
     $rowID = 0;
 
     //default to adding the resource
@@ -194,6 +194,8 @@ class GFRMTHELPER {
         $chgRPTins[] = RMTchangeArray($user, $entry, $resource_id, $res->comment, $comment, 'RMT resource: ' . $res->token . ' - comment changed');
       }
     } elseif ($type == 'insert') {
+      //get some info about this resource
+      $res=$wpdb->get_row("select description from wp_rmt_resources where ID = ".$resource_id);
       //insert this resource
       $wpdb->get_results("INSERT INTO `wp_rmt_entry_resources`  (`entry_id`, `resource_id`, `qty`, `comment`, user) "
         . " VALUES (" . $entryID . "," . $resource_id . "," . $qty . ',"' . $comment . '",' . $user . ')');
@@ -201,14 +203,14 @@ class GFRMTHELPER {
       $rowID = $wpdb->insert_id;
 
       //update change report      
-      $chgRPTins[] = RMTchangeArray($user, $entry, $resource_id, $resource_id, $resource_id, 'RMT resource: added ' . $res->token);
-      $chgRPTins[] = RMTchangeArray($user, $entry, $resource_id, '', $qty, 'RMT Resource: ' . $res->token . ' -  qty added');
-      $chgRPTins[] = RMTchangeArray($user, $entry, $resource_id, '', $comment, 'RMT Resource: ' . $res->token . ' - comment added');
+      $chgRPTins[] = RMTchangeArray($user, $entry, $resource_id, '', '', 'RMT resource: added ' . addslashes($res->description));
+      $chgRPTins[] = RMTchangeArray($user, $entry, $resource_id, '', $qty, 'RMT Resource: ' . addslashes($res->description) . ' -  qty added');
+      $chgRPTins[] = RMTchangeArray($user, $entry, $resource_id, '', $comment, 'RMT Resource: ' . addslashes($res->description) . ' - comment added');
     }
 
     //lock the resource if this a payment form
     if ($form['form_type'] == 'Payment') {
-      self::rmt_set_lock_ind(1, $rowID, 'resource');           
+      self::rmt_set_lock_ind(1, $rowID, 'resource', $user);           
     }
     /* Update change report */
     if (!empty($chgRPTins))  updateChangeRPT($chgRPTins);
@@ -261,14 +263,18 @@ class GFRMTHELPER {
 
       //update change report
       $res = $wpdb->get_row('SELECT token FROM `wp_rmt_entry_att_categories` where ID=' . $attribute_id);
+      $chgRPTins[] = RMTchangeArray($user, $entry, $attribute_id, '', 'Added', 'RMT Attribute: added ' . addslashes($res->description));
       $chgRPTins[] = RMTchangeArray($user, $entry, $attribute_id, '', $value, 'RMT attribute: ' . $res->token . ' -  value');
       $chgRPTins[] = RMTchangeArray($user, $entry, $attribute_id, '', $comment, 'RMT attribute: ' . $res->token . ' -  comment');
     }
 
     //lock the attribute if this a payment form
     if ($form['form_type'] == 'Payment') {
-      self::rmt_set_lock_ind(1, $rowID, 'attribute');                  
+      self::rmt_set_lock_ind(1, $rowID, 'attribute', $user);                  
     }
+
+    /* Update change report */
+    if (!empty($chgRPTins))  updateChangeRPT($chgRPTins);
 
     return $rowID;
   }
@@ -280,31 +286,37 @@ class GFRMTHELPER {
     if($rowID==0){
       return;
     }
-
+    
     if($type=='resource'){            
-      $field      = 'resource_id';
-      $table      = 'wp_rmt_entry_resources';
-      $rmt_table  = 'wp_rmt_resources';  
+      //pull previous data to update change report      
+      $res = $wpdb->get_row('SELECT entry_id, lockBit, resource_id as field, description '.
+                            'FROM wp_rmt_entry_resources '.
+                            'left outer join wp_rmt_resources '.
+                              'on resource_id=wp_rmt_resources.ID '.
+                            'where wp_rmt_entry_resources.id=' . $rowID);      
+      
+      //update resource
+      $wpdb->get_results('update wp_rmt_entry_resources set lockBit='.$lockBit.' where id=' . $rowID);
     } elseif($type=='attribute'){      
-      $field      = 'attribute_id';
-      $table      = 'wp_rmt_entry_attributes';
-      $rmt_table  = 'wp_rmt_attributes';      
+      //pull previous data to update change report      
+      $res = $wpdb->get_row('SELECT entry_id, lockBit, attribute_id as field, category as description ' .
+                            'FROM wp_rmt_entry_attributes '.
+                            'left outer join wp_rmt_entry_att_categories '.
+                              'on attribute_id=wp_rmt_entry_att_categories.ID '.
+                            'where wp_rmt_entry_attributes.id=' . $rowID);
+      
+      //update attribute
+      $wpdb->get_results('update wp_rmt_entry_attributes set lockBit='.$lockBit.' where id=' . $rowID);
     }else{
       return;
     }
-  
-    //pull previous data to update change report      
-    $res = $wpdb->get_row('SELECT entry_id, lockBit, '.$field.' as field, token '.
-                          'FROM '.$table. ' left outer join '.$rmt_table.' on '.$field.'='.$rmt_table.'.ID');
     
     //get entry
     $entry_id = $res->entry_id;
     $entry=GFAPI::get_entry($entry_id);
     
-    $chgRPTins[] = RMTchangeArray($user, $entry, $res->field, ($res->lockBit==0?'Unlocked':'Locked'), ($lockBit==0?'Unlocked':'Locked'), 'RMT '.$res->token.($lockBit==0?' Unlocked':' Locked'));
-
-    $sql = "update '.$table.' set lockBit='.$lockBit.' where id=" . $rowID;
-    $wpdb->get_results($sql);            
+    //Build Change report data 
+    $chgRPTins[] = RMTchangeArray($user, $entry, $res->field, ($res->lockBit==0?'Unlocked':'Locked'), ($lockBit==0?'Unlocked':'Locked'), 'RMT '.$type.' '.addslashes($res->description));    
 
     /* Update change report */
     if (!empty($chgRPTins))  updateChangeRPT($chgRPTins);
