@@ -427,7 +427,7 @@ function insertRowDB(type) {
 			var dataArray = attentionArray;
 		}
 		var data = {
-			'action': 'update-entry-resAtt',
+			'action': 'update-entry-resAtt',			
 			'insertArr': insertArr,
 			'ID': 0,
 			'table': table
@@ -454,8 +454,7 @@ function insertRowDB(type) {
 	}
 
 }
-function updateDB(newVal, currentEle) {
-	var fieldName = ''; var ID = ''; var table = ""; var type = "";
+function updateDB(newVal, currentEle) {	
 	//remove #
 	currentEle = currentEle.replace("#", "");
 	var fieldData = breakDownEle(currentEle);
@@ -470,7 +469,8 @@ function updateDB(newVal, currentEle) {
 		'fieldName': fieldData['fieldName'],
 		'ID': fieldData['ID'],
 		'table': fieldData['table'],
-		'newValue': newVal
+		'newValue': newVal,
+		'entry_id': jQuery('[name="entry_info_entry_id"]').val()
 	};
 	jQuery.post(ajaxurl, data, function(response) {
 		//update the date/time and user info

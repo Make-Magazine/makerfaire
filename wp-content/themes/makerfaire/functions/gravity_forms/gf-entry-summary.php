@@ -811,7 +811,7 @@ function entryResources($entry) {
   
   foreach ($rmt_data['attention'] as $data) {
     $attnDisp .= '<tr id="attnRow' . $data['id'] . '">'
-      . ' <td id="attnvalue_' . $data['id'] . '">' . $data['value'] . '</td>'
+      . ' <td id="attnvalue_' . $data['id'] . '">' . $data['attention'] . '</td>'
       . ' <td id="attncomment_' . $data['id'] . '" class="editable textAreaEdit">' . $data['comment'] . '</td>'
       . ' <td id="attnuser_' . $data['id'] . '">' . $data['user'] . '</td>'
       . ' <td id="attndateupdate_' . $data['id'] . '">' . $data['last_updated'] . '</td>'

@@ -2,31 +2,45 @@
 /* This function is used to update entry resources and entry attributes via AJAX */
 function update_entry_resatt() {
   global $wpdb;
-  $rowID     = $_POST['ID'];
-  $table     = $_POST['table'];
+  $rowID    = $_POST['ID'];
+  $table    = $_POST['table'];
+
+  //default values
+  $entryID  = $qty = $resource_id = $attribute_id = $attention_id = 0;          
+  $comment  = $value = '';
+  
 
   //set who is updating the record
   $current_user = wp_get_current_user();
   $user     = $current_user->ID;
+  if($rowID==0){
+    $insertArr    = $_POST['insertArr'];
+    
+    //find the field data to add
+    $entryID      = (isset($insertArr['entry_id']) ? $insertArr['entry_id'] : 0);        
+    $qty          = (isset($insertArr['qty']) ? $insertArr['qty'] : 0);
+    $comment      = (isset($insertArr['comment']) ? htmlspecialchars($insertArr['comment']) : '');    
+    $value        = (isset($insertArr['value']) ? htmlspecialchars($insertArr['value']) : '');
+    $resource_id  = (isset($insertArr['resource_id']) ? $insertArr['resource_id']:0);
+    $attribute_id = (isset($insertArr['attribute_id']) ? $insertArr['attribute_id']:0);
+    $attention_id = (isset($insertArr['attn_id']) ? $insertArr['attn_id']:0);
 
-  $insertArr = $_POST['insertArr'];
-  foreach ($insertArr as $key => $value) {
-    $fields[] = $key;
-    $values[] = $value;
+    if ($table == 'wp_rmt_entry_resources') {    
+      $rowID = GFRMTHELPER::rmt_update_resource($entryID, $resource_id, $qty, $comment);
+    } elseif ($table == 'wp_rmt_entry_attributes') {    
+      $rowID = GFRMTHELPER::rmt_update_attribute($entryID, $attribute_id, $value, $comment);
+    } else {
+      //update/insert attention
+      $rowID = GFRMTHELPER::rmt_update_attention($entryID, $attention_id, $comment);
+    }
+  }else{
+    //find the field data to update    
+    $newValue   = $_POST['newValue'];
+    $fieldName  = $_POST['fieldName'];
+    
+    GFRMTHELPER::rmt_update_field($table, $fieldName, $newValue, $rowID);
   }
-
-  $entryID  = (isset($insertArr['entry_id']) ? $insertArr['entry_id'] : 0);
-  $comment  = (isset($insertArr['comment']) ? htmlspecialchars($insertArr['comment']) : '');
-  if ($table == 'wp_rmt_entry_resources') {
-    $qty      = (isset($insertArr['qty']) ? $insertArr['qty'] : 0);
-    $rowID = GFRMTHELPER::rmt_update_resource($entryID, $insertArr['resource_id'], $qty, $comment, $user);
-  } elseif ($table == 'wp_rmt_entry_attributes') {
-    $value    = (isset($insertArr['value']) ? htmlspecialchars($insertArr['value']) : '');
-    $rowID = GFRMTHELPER::rmt_update_attribute($entryID, $insertArr['attribute_id'], $value, $comment, $user);
-  } else {
-    //update/insert attention
-  }
-
+    
   //set lockBit to locked
   if ($table == 'wp_rmt_entry_resources' || $table == 'wp_rmt_entry_attributes') {
     if ($table == 'wp_rmt_entry_resources') {
@@ -34,7 +48,7 @@ function update_entry_resatt() {
     } elseif ($table == 'wp_rmt_entry_attributes') {
       $type = 'attribute';
     }
-    GFRMTHELPER::rmt_set_lock_ind(1, $rowID, $type, $user);
+    GFRMTHELPER::rmt_set_lock_ind(1, $rowID, $type);
   }
 
   //return the ID
@@ -85,7 +99,7 @@ function update_lock_resAtt() {
     $current_user = wp_get_current_user();
     $user     = $current_user->ID;
 
-    GFRMTHELPER::rmt_set_lock_ind($lock, $ID, $type, $user);
+    GFRMTHELPER::rmt_set_lock_ind($lock, $ID, $type);
     $response = array('message' => 'Updated', 'ID' => $ID);
   }
   wp_send_json($response);

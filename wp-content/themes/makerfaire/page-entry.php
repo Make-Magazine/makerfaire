@@ -72,13 +72,6 @@ if (isset($entry->errors)) {
         $fieldData[$fieldID] = $field;
     }
 
-    //if the form was submitted
-    $submit = filter_input(INPUT_POST, 'edit_entry_page');
-    if ($submit != '') {
-        entryPageSubmit($entryId);
-        $entry = GFAPI::get_entry($entryId);
-    }
-
     $faire = $show_sched = $faireShort = $faire_end = '';
     if ($form_id != '') {
         $formSQL = "select faire_name as pretty_faire_name, replace(lower(faire_name),' ','-') as faire_name, faire_location, faire, id,show_sched, start_dt, end_dt, url_path, faire_map, program_guide, time_zone "
@@ -903,76 +896,6 @@ function natural_language_join(array $list, $conjunction = 'and') {
         return implode(', ', $list) . ' ' . $conjunction . ' ' . $last;
     }
     return $last;
-}
-
-function entryPageSubmit($entryId) {
-    //get submitted data
-    $form_id = filter_input(INPUT_POST, 'form_id', FILTER_SANITIZE_NUMBER_INT);
-    $form = GFAPI::get_form($form_id);
-
-    foreach ($_POST as $inputField => $value) {
-        $pos = strpos($inputField, 'input_');
-        if ($pos !== false) {
-            $fieldID = str_replace('input_', '', $inputField);
-            $fieldID = str_replace('_', '.', $fieldID);
-
-            updateFieldValue($fieldID, $value, $entryId);
-        }
-    }
-
-    //update maker table information
-    GFRMTHELPER::updateMakerTables($entryId);
-}
-
-function updateFieldValue($fieldID, $newValue, $entryId) {
-    global $fieldData;
-    global $entry;
-    global $form;
-    $fieldInfo = $fieldData[(int) $fieldID];
-
-    $fieldLabel = $fieldInfo['label'];
-
-    //set who is updating the record
-    $current_user = wp_get_current_user();
-    $user = $current_user->ID;
-
-    $form_id = $entry['form_id'];
-    $chgRPTins = array();
-
-    $entry_id = $entry['id'];
-
-    if ($fieldInfo->type == 'fileupload') {
-        $field = GFFormsModel::get_field($form, $fieldNum);
-        $input_name = 'input_' . str_replace('.', '_', $fieldID);
-
-        //validate uploaded file
-        $field->validate($_FILES[$input_name], $form);
-        if ($field->failed_validation) {
-            echo $field->validation_message;
-            echo 'failed';
-            return;
-        }
-        $newValue = $field->upload_file($form_id, $_FILES[$input_name]);
-
-        //trigger cron job to correct image orientation if needed
-        triggerCronImg($entry, $form);
-
-        //trigger update
-        gf_do_action(array('gform_after_update_entry', $form_id), $form, $entry_id, $entry);
-
-        //for security reason, we force to remove all uploaded file
-        //@unlink($_FILES['value']);
-    } else {
-        $fieldValue = (isset($entry[$fieldID]) ? $entry[$fieldID] : '');
-    }
-
-    //update field and change report if needed
-    if ($fieldValue != $newValue) {
-        GFAPI::update_entry_field($entry_id, $fieldID, $newValue);
-        $chgRPTins[] = RMTchangeArray($user, $entryId, $form_id, $fieldID, $fieldValue, $newValue, $fieldLabel);
-        updateChangeRPT($chgRPTins);
-        $entry[$fieldID] = $newValue;
-    }
 }
 
 function displayEntryFooter() {
