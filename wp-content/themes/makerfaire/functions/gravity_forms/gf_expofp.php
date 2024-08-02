@@ -7,7 +7,8 @@ function create_expofp_exhibitor( $entry, $form ) {
     foreach ($entry as $key => $value) {
         if (strpos($key, '339.') === 0) {
             if ($value != '') {
-                if (stripos($value, 'exhibit') == true || stripos($value, 'sponsor' || stripos($value, 'show') == true || stripos($value, 'not sure') == true) == true) {
+                if (str_contains(strtolower($value), 'exhibit') == true || str_contains(strtolower($value), 'sponsor') == true || str_contains(strtolower($value), 'show') == true || str_contains(strtolower($value), 'not sure') == true) {
+
                     $write_to_expofp = true;
                 }
             }
@@ -36,7 +37,7 @@ function update_expofp_exhibitor($form, $entry_id) {
     foreach ($entry as $key => $value) {
         if (strpos($key, '339.') === 0) {
             if ($value != '') {
-                if (stripos($value, 'exhibit') == true || stripos($value, 'sponsor' || stripos($value, 'show') == true || stripos($value, 'not sure') == true) == true) {
+                if (str_contains(strtolower($value), 'exhibit') == true || str_contains(strtolower($value), 'sponsor') == true || str_contains(strtolower($value), 'show') == true || str_contains(strtolower($value), 'not sure') == true) {
                     $write_to_expofp = true;
                 }
             }
@@ -86,7 +87,7 @@ function createExpoFpExhibit($entry, $form, $expofpToken, $expofpId) {
                         $featured = true;
                         array_push($tags, "Sponsor");
                     }
-                    array_push($categories, $value);
+                    $categories["name"] = $value;
                 }
             }
         }
@@ -95,7 +96,7 @@ function createExpoFpExhibit($entry, $form, $expofpToken, $expofpId) {
             $featured = true;
             array_push($tags, "Sponsor");
         } 
-        array_push($categories, $formType);
+        $categories["name"] = $formType;
     }
 
     $data = [
@@ -150,7 +151,7 @@ function updateExpoFpExhibit($entry, $form, $expofpToken, $exhibitor_id) {
                         $featured = true;
                         array_push($tags, "Sponsor");
                     }
-                    array_push($categories, $value);
+                    $categories["name"] = $value;
                 }
             }
         }
@@ -159,7 +160,7 @@ function updateExpoFpExhibit($entry, $form, $expofpToken, $exhibitor_id) {
             $featured = true;
             array_push($tags, "Sponsor");
         } 
-        array_push($categories, $formType);
+        $categories["name"] = $formType;
     }
 
     $data = [
