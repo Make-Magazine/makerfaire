@@ -66,19 +66,18 @@ add_action('wp_ajax_delete-entry-resAtt', 'delete_entry_resatt');
 
 /* This function is used to delete entry resources and entry attributes via AJAX */
 function update_lock_resAtt() {
-  global $wpdb;
+  $ID    = (isset($_POST['ID'])    ? $_POST['ID'] : 0);
+  $lock  = (isset($_POST['lock']) && $_POST['lock'] == 0 ? 1 : 0);
+  $table = (isset($_POST['table']) ? $_POST['table'] : '');
 
   //determine type to update
-  $type  = '';
-  $table = (isset($_POST['table']) ? $_POST['table'] : '');
+  $type  = '';  
   if ($table == 'wp_rmt_entry_resources') {
     $type = 'resource';
   } elseif ($table == 'wp_rmt_entry_attributes') {
     $type = 'attribute';
   }
 
-  $ID    = (isset($_POST['ID'])    ? $_POST['ID'] : 0);
-  $lock  = (isset($_POST['lock']) && $_POST['lock'] == 0 ? 1 : 0);
   $response = array('table' => $table, 'ID' => $ID);
 
   if ($ID != 0 && $table != '' && $type != '') {
