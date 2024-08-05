@@ -415,7 +415,7 @@ class GFRMTHELPER {
       case 'wp_rmt_entry_attn':
         $attn_id = $resAtt->attn_id;
         $res = $wpdb->get_row('SELECT value as description FROM wp_rmt_attn where ID=' . $attn_id);
-        $chgRPTins[] = RMTchangeArray($entry, 0, $attn_id, '', 'Deleted', 'Attention Deleted (' . addslashes($res->description) . ')');
+        $chgRPTins[] = RMTchangeArray($entry, $attn_id, '', 'Deleted', 'Attention Deleted (' . addslashes($res->description) . ')');
         break;
       default:
         break;
