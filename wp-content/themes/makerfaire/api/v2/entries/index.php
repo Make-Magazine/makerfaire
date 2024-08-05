@@ -311,7 +311,7 @@ function fieldOutput($fieldID, $entry, $field_array, $form, $arg = '') {
         if (current_user_can('view_rmt')) {
           $type  = 'html';
           $label = '';          
-          $value   = entryResources($entry);          
+          $value   = '<div id="rmt'.$entry['id'].'">'.entryResources($entry).'</div>';          
         }  
         break;          
       case 'notes':
