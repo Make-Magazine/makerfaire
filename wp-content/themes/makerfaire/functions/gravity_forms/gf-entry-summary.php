@@ -228,7 +228,6 @@ function gf_summary_metabox($form, $entry) {
         <label >Email Note To:</label><br />';
 
   $emailto1 = array(
-    "Caleb Kraft" => "caleb@make.co",
     "Dale Dougherty" => "dale@make.co",
     "Siana Alcorn" => "siana@make.co",
     "Gillian Mutti" => "gillian@make.co",
@@ -752,8 +751,8 @@ function entryResources($entry) {
   $resourceDisp = '<table id="resTable"><thead>'
     . ' <tr>'
     . ' <th>Lock</th>'
-    . ' <th>Item</th>'
-    . ' <th>Type</th>'
+    . ' <th>Category</th>'
+    . ' <th>Resource</th>'
     . ' <th>Qty</th>'
     . ' <th>Comments</th>'
     . ' <th>User</th>'
@@ -836,30 +835,30 @@ function entryResources($entry) {
     <div class="panel panel-default">
       <div class="panel-heading" id="headingOne">
         <h4 class="panel-title">
-          <a class="accordion-toggle" data-toggle="collapse" href="#collapseOne">Resources</a>
+          Resources
         </h4>
       </div>
-      <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel">
+      <div id="collapseOne" class="panel-collapse" role="tabpanel">
         <div class="panel-body">' . $resourceDisp . '</div>
       </div>
     </div>
     <div class="panel panel-default">
       <div class="panel-heading" id="headingTwo">
         <h4 class="panel-title">
-          <a class="accordion-toggle" data-toggle="collapse" href="#collapseTwo">Attributes</a>
+          Attributes
         </h4>
       </div>
-      <div id="collapseTwo" class="panel-collapse collapse in" role="tabpanel">
+      <div id="collapseTwo" class="panel-collapse" role="tabpanel">
         <div class="panel-body">' . $attDisp . '</div>
       </div>
     </div>
     <div class="panel panel-default">
       <div class="panel-heading" id="headingTwo">
         <h4 class="panel-title">
-          <a class="accordion-toggle" data-toggle="collapse" href="#collapseThree">Attention</a>
+          Attention
         </h4>
       </div>
-      <div id="collapseThree" class="panel-collapse collapse in" role="tabpanel">
+      <div id="collapseThree" class="panel-collapse" role="tabpanel">
         <div class="panel-body">' . $attnDisp . '</div>
       </div>
     </div>
