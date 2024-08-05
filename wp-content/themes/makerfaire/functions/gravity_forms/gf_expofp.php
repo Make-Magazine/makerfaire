@@ -2,39 +2,67 @@
 
 add_action( 'gform_after_submission', 'create_expofp_exhibitor', 10, 2 );
 function create_expofp_exhibitor( $entry, $form ) {
-    //error_log(print_r($entry, true));
-    $expofpId = $form['expofp_event_id'];
-    $expofpToken = EXPOFP_TOKEN;
+    // only create the exhibit if the type is Exhibit, Sponsor, StartUp Sponsor, Show Management or ‘Not Sure Yet’
+    $write_to_expofp = false;
+    foreach ($entry as $key => $value) {
+        if (strpos($key, '339.') === 0) {
+            if ($value != '') {
+                if (str_contains(strtolower($value), 'exhibit') == true || str_contains(strtolower($value), 'sponsor') == true || str_contains(strtolower($value), 'show') == true || str_contains(strtolower($value), 'not sure') == true) {
 
-    $result = createExpoFpExhibit($entry, $form, $expofpToken, $expofpId);
-    $exhibitor_id = json_decode($result)->id;
+                    $write_to_expofp = true;
+                }
+            }
+        }
+    }
+    if($write_to_expofp == true){
+        //error_log(print_r($entry, true));
+        $expofpId = $form['expofp_event_id'];
+        $expofpToken = EXPOFP_TOKEN;
+        $result = createExpoFpExhibit($entry, $form, $expofpToken, $expofpId);
+        $exhibitor_id = json_decode($result)->id;
 
-    // Now add the featured image to the exhibitor id on ExpoFP
-    $image = json_decode($entry['22'])[0];
-    updateExpoFpImage($expofpToken, $exhibitor_id, $image);
+        // Now add the featured image to the exhibitor id on ExpoFP
+        $image = json_decode($entry['22'])[0];
+        updateExpoFpImage($expofpToken, $exhibitor_id, $image);
+    }
 }
 
 add_action('gform_after_update_entry', 'update_expofp_exhibitor', 10, 2 ); //$form, $entry_id
 function update_expofp_exhibitor($form, $entry_id) {
     //need to set $entry and reset $form as gravity view removes admin only fields
     $entry = GFAPI::get_entry(esc_attr($entry_id));
-    // get the Expo FP token
-    $expofpToken = EXPOFP_TOKEN;
-    $exhibitor_id = gform_get_meta( $entry_id, 'expofp_exhibit_id');
-    if(isset($exhibitor_id)) { // this meta is set when the 
-        // after update, if the status is canceled or rejected, delete
-        error_log($entry['303']);
-        if($entry['303'] == "Cancelled" || $entry['303'] == "Rejected") {
-            deleteExpoFpExhibit($exhibitor_id, $expofpToken);
-        } else { // otherwise, update exhibitor with new title, description, image, etc
-            updateExpoFpExhibit($entry, $form, $expofpToken, $exhibitor_id);
-            $image = json_decode($entry['22'])[0];
-            updateExpoFpImage($expofpToken, $exhibitor_id, $image);
+
+    // only create the exhibit if the type is Exhibit, Sponsor, StartUp Sponsor, Show Management or ‘Not Sure Yet’
+    $write_to_expofp = false;
+    foreach ($entry as $key => $value) {
+        if (strpos($key, '339.') === 0) {
+            if ($value != '') {
+                if (str_contains(strtolower($value), 'exhibit') == true || str_contains(strtolower($value), 'sponsor') == true || str_contains(strtolower($value), 'show') == true || str_contains(strtolower($value), 'not sure') == true) {
+                    $write_to_expofp = true;
+                }
+            }
         }
-    } else {
-        // it should have already created the exhibitor in ExpoFP when the entry was submitted, but we can catch it here if not
-        $expofpId = $form['expofp_event_id'];
-        createExpoFpExhibit($entry, $form, $expofpToken, $expofpId);
+    }
+    if($write_to_expofp == true){
+        // get the Expo FP token
+        $expofpToken = EXPOFP_TOKEN;
+        $exhibitor_id = gform_get_meta( $entry_id, 'expofp_exhibit_id');
+
+        if(isset($exhibitor_id)) { // this meta is set when the exhibit is created
+            // after update, if the status is canceled or rejected, delete
+            //error_log($entry['303']);
+            if($entry['303'] == "Cancelled" || $entry['303'] == "Rejected") {
+                deleteExpoFpExhibit($exhibitor_id, $expofpToken);
+            } else { // otherwise, update exhibitor with new title, description, image, etc
+                updateExpoFpExhibit($entry, $form, $expofpToken, $exhibitor_id);
+                $image = json_decode($entry['22'])[0];
+                updateExpoFpImage($expofpToken, $exhibitor_id, $image);
+            }
+        } else {
+            // it should have already created the exhibitor in ExpoFP when the entry was submitted, but we can catch it here if not
+            $expofpId = $form['expofp_event_id'];
+            createExpoFpExhibit($entry, $form, $expofpToken, $expofpId);
+        }
     }
 }
 
@@ -49,6 +77,7 @@ function createExpoFpExhibit($entry, $form, $expofpToken, $expofpId) {
     $featured = false;
     $formType = $form['form_type'];
     $tags = array();
+    $categories = array();
 
     if ($formType == "Master") {
         foreach ($entry as $key => $value) {
@@ -58,6 +87,7 @@ function createExpoFpExhibit($entry, $form, $expofpToken, $expofpId) {
                         $featured = true;
                         array_push($tags, "Sponsor");
                     }
+                    $categories["name"] = $value;
                 }
             }
         }
@@ -66,6 +96,7 @@ function createExpoFpExhibit($entry, $form, $expofpToken, $expofpId) {
             $featured = true;
             array_push($tags, "Sponsor");
         } 
+        $categories["name"] = $formType;
     }
 
     $data = [
@@ -79,9 +110,7 @@ function createExpoFpExhibit($entry, $form, $expofpToken, $expofpId) {
         "adminNotes" => "", // should we include this?
         "externalId" => $entry['id'],
         "categories" => array(
-            array(
-                "name" => "10 x 10"
-            )
+            $categories
         ),
         "tags" => $tags/*, meta data does what
         "metadata" => array(
@@ -112,6 +141,7 @@ function updateExpoFpExhibit($entry, $form, $expofpToken, $exhibitor_id) {
     $featured = false;
     $formType = $form['form_type'];
     $tags = array();
+    $categories = array();
 
     if ($formType == "Master") {
         foreach ($entry as $key => $value) {
@@ -121,6 +151,7 @@ function updateExpoFpExhibit($entry, $form, $expofpToken, $exhibitor_id) {
                         $featured = true;
                         array_push($tags, "Sponsor");
                     }
+                    $categories["name"] = $value;
                 }
             }
         }
@@ -129,6 +160,7 @@ function updateExpoFpExhibit($entry, $form, $expofpToken, $exhibitor_id) {
             $featured = true;
             array_push($tags, "Sponsor");
         } 
+        $categories["name"] = $formType;
     }
 
     $data = [
@@ -141,9 +173,7 @@ function updateExpoFpExhibit($entry, $form, $expofpToken, $exhibitor_id) {
         "website" => "https://makerfaire.com/maker/entry/" . $entry['id'], // this will be the maker/entry page
         "adminNotes" => "", // should we include this?
         "categories" => array(
-            array(
-                "name" => "10 x 10"
-            )
+            $categories
         ),
         "tags" => $tags
     ];
