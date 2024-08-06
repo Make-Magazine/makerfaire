@@ -332,7 +332,7 @@ function getMTMentries($formIDs = '', $faireID = '', $years = '') {
                 if ($value != '') $category[] = $value;
             }
             $primeCat = htmlspecialchars_decode(get_CPT_name($result->prime_cat));
-            if ($primeCat != '')   $category[] = $primeCat;
+            if ($primeCat != '')   array_unshift($category, $primeCat); // add the primary category to the start of the array
 
             //weekends               
             if (isset($result->weekends)) {

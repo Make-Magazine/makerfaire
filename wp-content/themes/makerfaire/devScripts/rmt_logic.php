@@ -62,8 +62,8 @@ while ($row = $result->fetch_array(MYSQLI_ASSOC)) {
     );
     
 }
-array_push($writeRule, $ruleArray);
-//error_log(print_r($writeRule, TRUE));
+//need to write the final rule
+$writeRule[$save_rule] = $ruleArray;
 
 ?>
 <!doctype html>
@@ -260,6 +260,7 @@ array_push($writeRule, $ruleArray);
                 }
             }
 
+            //after 
 
             ?>
         </table>

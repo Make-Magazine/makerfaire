@@ -10,6 +10,7 @@
         <!-- Load polyfills to support older browsers -->
         <script src="https://polyfill.io/v3/polyfill.min.js?features=es2015%2CIntersectionObserver"></script>
         <link rel="stylesheet" href="https://c0.wp.com/c/6.4.3/wp-includes/css/admin-bar.min.css" />
+        <script src="https://kit.fontawesome.com/b9da6f1400.js?ver=6.5.3" id="fontawesome-js"></script>
     </footer>
 
   </html>

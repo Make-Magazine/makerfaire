@@ -26,8 +26,8 @@
             </li>
             <li><label class="tree-toggle nav-header">Manage RMT Data</label>
               <ul class="nav nav-list tree">
-                <li><a href="#resources/list">Resource Type</a></li>
-                <li><a href="#resources/items">Resource Items</a></li>
+              <li><a href="#resources/items">Resource Categories</a></li>
+                <li><a href="#resources/list">Resources</a></li>                
                 <li><a href="#entry/atttibuteCategories">Attributes</a></li>
                 <li><a href="#entry/workflow">Workflow/Attention</a></li>
                 <li><a href="#vendors/list">Vendor List</a></li>

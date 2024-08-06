@@ -200,6 +200,84 @@ function ResendNotifications(entry_id, form_id) {
     }
 }
 
+/*  RMT code    */
+//define default layout for each new row
+var resourceArray = [{ 'id': 'reslock', 'class': 'lock', 'display': '' },
+    { 'id': 'resitem', 'class': 'noSend', 'display': "dropdown" },
+    { 'id': 'restype', 'class': 'editable dropdown', 'display': 'dropdown' },
+    { 'id': 'resqty', 'class': 'editable numeric', 'display': 'numeric' },
+    { 'id': 'rescomment', 'class': 'editable textareaEdit', 'display': 'textarea' },
+    { 'id': 'resuser', class: '', 'display': '' },
+    { 'id': 'resdateupdate', class: '', 'display': '' }
+    ];
+    
+    var attributeArray = [{ 'id': 'attcategory', 'class': '', 'display': "dropdown" },
+    { 'id': 'attvalue', 'class': 'editable textareaEdit', 'display': 'textarea' },
+    { 'id': 'attcomment', 'class': 'editable textareaEdit', 'display': 'textarea' },
+    { 'id': 'attuser', class: '', 'display': '' },
+    { 'id': 'attdateupdate', class: '', 'display': '' }
+    ];
+    var attentionArray = [{ 'id': 'attnvalue', 'class': '', 'display': "dropdown" },
+    { 'id': 'attncomment', 'class': 'editable textareaEdit', 'display': 'textarea' },
+    { 'id': 'attnuser', class: '', 'display': '' },
+    { 'id': 'attndateupdate', class: '', 'display': '' }
+    ];
+
+//function to add a new row to the RMT table for resource, attribute or attention
+function addRow(addTo,entryID) {    
+    var tableRow = '';
+	if (addTo == 'resource') {
+		//add resource
+		type = 'res';
+		dataArray = resourceArray;
+	} else if (addTo == 'attribute') {
+		//add attribute
+		type = 'att';
+		dataArray = attributeArray;
+	} else if (addTo == 'attention') {
+		//add attribute
+		type = 'attn';
+		dataArray = attentionArray;
+	}
+
+    var tableRow = '<tr id="' + type + 'RowNew">';
+
+	//build table columns
+	for (i = 0; i < dataArray.length; i++) {
+		tableRow += '<td  class="' + dataArray[i]['class'] + '" id="' + dataArray[i]['id'] + '">';
+		if (dataArray[i]['display'] == 'dropdown') {
+			tableRow += buildDropDown(dataArray[i]['id']);
+		} else if (dataArray[i]['display'] == 'numeric') {
+			tableRow += '<input  size="4"  class="thVal" type="number" />';
+		} else if (dataArray[i]['display'] == 'text') {
+			tableRow += '<input  size="4"  class="thVal" type="text" />';
+		} else if (dataArray[i]['display'] == 'textarea') {
+			tableRow += '<textarea  class="thVal" cols="20" rows="4"></textarea>';
+		} else {
+			tableRow += dataArray[i]['display'];
+		}
+		tableRow += '</td>';
+	}
+
+	//add action row
+	tableRow += '<td id="actions" class="noSend delete">' +
+		'<span onclick="insertRowDB(\'' + type + '\')">' +
+		'<i class="fas fa-check"></i>' +
+		'</span>' +
+		'<span onclick="jQuery(\'#' + type + 'RowNew\').remove();">' +  //Rio - convert me
+		'<i class="fas fa-ban"></i>' +
+		'</span>' +
+		'</td>';
+	tableRow += '</tr>';
+
+    var tbody = document.querySelector("#rmt" + entryID+" #"+type+"Table tbody");
+    if (tbody.children().length == 0) {
+		tbody.html(tableRow);
+	} else {
+		jQuery('#' + type + 'Table > tbody > tr:first').before(tableRow); //Rio - convert me
+	}
+}
+
 //RMT delete assigned rmt values
 function resAttDelete(currentEle, entryID) {
     var r = confirm("Are you sure want to delete this row (this cannot be undone)!");
@@ -311,285 +389,48 @@ function breakDownEle(currentEle) {
     return fieldData;
 }
 
-//function to add a new row to the RMT table on page
-function addRow(addTo, entryID) {
-    var table = document.getElementById(addTo + '_' + entryID);
-    var row = table.insertRow(table.rows.length);
+//RIO - conver this
+jQuery('.editable').click(function(e) {
+    var that = jQuery(this);
+    if (that.find('input').length > 0 || that.find('textarea').length > 0 || that.find('select').length > 0) {
+        return;
+    }
+    var i = 0;
+    var id = jQuery(this).attr('id');
+    e.stopPropagation();      //<-------stop the bubbling of the event here
+    var value = jQuery('#' + id).html();
 
-    if (addTo == 'resource') {
-        //add resource
-        type = 'res';
-        dataArray = resourceArray;
-    } else if (addTo == 'attribute') {
-        //add attribute
-        type = 'att';
-        dataArray = attributeArray;
-    } else if (addTo == 'attention') {
-        //add attribute
-        type = 'attn';
-        dataArray = attentionArray;
+    updateVal('#' + id, value);
+});
+
+//create input or textarea elements where admin can edit values
+function updateVal(currentEle, value) {
+    if (jQuery(currentEle).hasClass('textAreaEdit')) {
+        var cols = Math.round(jQuery(currentEle).width() / 10); //determine how many columns wide the textarea should be
+        jQuery(currentEle).html('<textarea class="thVal" cols="' + cols + '" rows="4">' + value + '</textarea>');
+    } else if (jQuery(currentEle).hasClass('dropdown')) {
+        //build dropdown
+        var fieldData = breakDownEle(currentEle.replace("#", ""));
+
+        if (fieldData['fieldName'] == 'type') {
+            var type_id = jQuery('#restype_' + fieldData['ID']).attr('data-typeID');
+            var item_id = jQuery('#resitem_' + fieldData['ID']).attr('data-itemID');
+            setType(item_id, type_id, fieldData['ID']);
+        }
+    } else if (jQuery(currentEle).hasClass('numeric')) {
+        jQuery(currentEle).html('<input class="thVal" type="number" value="' + value + '" />');
+    } else {
+        jQuery(currentEle).html('<input class="thVal" maxlength="4" type="text" size="4" value="' + value + '" />');
     }
 
-    //add id to row
-    row.setAttribute("class", type + "RowNew", 0);
-    var cell = '';
-
-    cell = row.insertCell(0);
-    cell.setAttribute("class", 'actionRow', 0);
-    cell.innerHTML = '<span onclick="insertRowDB(\'' + type + '\',' + entryID + ')">' + '<i class="bi bi-check-circle"></i></span><br/>' +
-        '<span onclick="document.getElementById(\'' + type + 'RowNew\').remove();">' +
-        '<i class="bi bi-ban"></i>' +
-        '</span>';
-
-    //build table columns (need to add in reverse order)
-    for (i = dataArray.length - 1; i >= 0; i--) {
-        if (dataArray[i]['display'] == 'dropdown') {
-            cell = row.insertCell(0);
-            cell.innerHTML = buildDropDown(dataArray[i]['id'], entryID);
-        } else if (dataArray[i]['display'] == 'numeric') {
-            cell = row.insertCell(0);
-            cell.innerHTML = '<input  size="4"  class="' + dataArray[i]['display'] + '" type="number" />';
-        } else if (dataArray[i]['display'] == 'text') {
-            cell = row.insertCell(0);
-            cell.innerHTML = '<input  size="4"  class="' + dataArray[i]['display'] + '" type="text" />';
-        } else if (dataArray[i]['display'] == 'textarea') {
-            cell = row.insertCell(0);
-            cell.innerHTML = '<textarea  class="' + dataArray[i]['display'] + '" cols="20" rows="4"></textarea>';
+    jQuery(".thVal").focus();
+    jQuery(".thVal").focusout(function() {
+        //update value in db
+        updateDB(jQuery(".thVal").val().trim(), currentEle);
+        if (jQuery(currentEle).hasClass('dropdown')) {
+            jQuery(currentEle).html(jQuery(".thVal").find("option:selected").text());
         } else {
-            cell = row.insertCell(0);
-            cell.innerHTML = dataArray[i]['display'];
+            jQuery(currentEle).html(jQuery(".thVal").val().trim());
         }
-        cell.setAttribute("class", dataArray[i]['class'], 0);
-        cell.setAttribute("class", dataArray[i]['id'], 0);
-    }
-    //empty cell for the id to be set
-    cell = row.insertCell(0);
-    cell.innerHTML = '';
-
-    return;
-}
-
-//build the item drop down for entry resources
-function buildDropDown(type, entryID) {
-    var items = review.rmt.res_items;
-    var attributes = review.rmt.att_items;
-    var attentions = review.rmt.attn_items;
-    var itemSel = '';
-    if (type == 'resitem') {
-        var itemSel = '<select onchange="setType(this.value,\'\',\'\',\'' + entryID + '\')" class="dropdown">' +
-            '<option>Select Item</option>';
-
-        for (const [key, value] of Object.entries(items)) {
-            itemSel += '<option value="' + key + '">' + value + '</option>';
-        }
-
-        itemSel += '</select>';
-    } else if (type == 'attcategory') {
-        var itemSel = '<select class="dropdown"><option>Select Item</option>';
-
-        for (const [key, value] of Object.entries(attributes)) {
-            itemSel += '<option value="' + key + '">' + value + '</option>';
-        }
-
-        itemSel += '</select>';
-    } else if (type == 'attnvalue') {
-        var itemSel = '<select class="dropdown"><option>Select Item</option>';
-
-        for (const [key, value] of Object.entries(attentions)) {
-            itemSel += '<option value="' + key + '">' + value + '</option>';
-        }
-
-        itemSel += '</select>';
-    }
-
-    return itemSel;
-}
-
-//static definition of resource field layout
-var resourceArray = [{ 'id': 'reslock', 'class': 'lock', 'display': '' },
-{ 'id': 'resitem', 'class': 'noSend', 'display': "dropdown" },
-{ 'id': 'restype', 'class': 'editable dropdown', 'display': 'dropdown' },
-{ 'id': 'resqty', 'class': 'editable numeric', 'display': 'numeric' },
-{ 'id': 'rescomment', 'class': 'editable textareaEdit', 'display': 'textarea' },
-{ 'id': 'resuser', class: '', 'display': '' },
-{ 'id': 'resdateupdate', class: '', 'display': '' }
-];
-
-//static definition of attribute field layout
-var attributeArray = [
-{ 'id': 'attcategory', 'class': '', 'display': "dropdown" },
-{ 'id': 'attvalue', 'class': 'editable textareaEdit', 'display': 'textarea' },
-{ 'id': 'attcomment', 'class': 'editable textareaEdit', 'display': 'textarea' },
-{ 'id': 'attuser', class: '', 'display': '' },
-{ 'id': 'attdateupdate', class: '', 'display': '' }
-];
-
-//static definition of attention field layout
-var attentionArray = [{ 'id': 'attnvalue', 'class': '', 'display': "dropdown" },
-{ 'id': 'attncomment', 'class': 'editable textareaEdit', 'display': 'textarea' },
-{ 'id': 'attnuser', class: '', 'display': '' },
-{ 'id': 'attndateupdate', class: '', 'display': '' }
-];
-
-//build the resource type drop down based on item drop down
-function setType(itemID, typeID, id, entryID) {
-    //find the row we are trying to set the type for
-    var row = document.getElementById('resource_' + entryID).querySelector('.resRowNew');
-   
-    var types = review.rmt.res_types;
-
-    if (types[itemID]) {
-        var options = '<option value = "">Select Type</option>';
-        for (const [key, type] of Object.entries(types[itemID])) {
-            selected = '';
-            if (key == typeID) selected = 'selected';
-            options += '<option value = "' + key + '" ' + selected + '>' + type + '</option>';
-        }
-
-        var typeSel = '<select class="dropdown">' + options + '</select>';
-        row.querySelector('.restype').innerHTML = typeSel;
-    }
-}
-
-//add RMT items to the database
-function insertRowDB(type, entryID) {    
-    var insertArr = {};
-    insertArr['entry_id'] = entryID;
-
-    //if the type is resource, need to make sure everything is filled out correctly
-    if (type == "res") { //resource
-        var row         = document.getElementById('resource_' + entryID).querySelector('.resRowNew');
-        var resitemIdx  = row.querySelector('.resitem').querySelector('.dropdown').selectedIndex;
-        var resitem     = row.querySelector('.resitem').querySelector('.dropdown').options[resitemIdx];
-        
-        var restypeIdx  = row.querySelector('.restype').querySelector('.dropdown').selectedIndex;
-        var restype     = row.querySelector('.restype').querySelector('.dropdown').options[restypeIdx];
-
-        var resqty      = row.querySelector('.resqty').querySelector('.numeric');
-        var comment     = row.querySelector('.rescomment').querySelector('.textarea').value;
-
-        //must select a resource item, type and quantity
-        if (resitem.value == '' || restype.value == '' || resqty.value == '') {
-            alert("You must select a resource item, type and enter a quantity.");
-            return;
-        }
-
-        //set data to pass in ajax
-        insertArr['resource_id'] = restype.value;
-        insertArr['qty']         = resqty.value;
-        insertArr['comment']     = comment;
-        table                    = 'wp_rmt_entry_resources';
-        action                   = 'update-entry-resAtt';
-    } else if (type == 'att') { //attribute        
-        var row         = document.getElementById('attribute_' + entryID).querySelector('.attRowNew');                
-        var attCatIdx   = row.querySelector('.attcategory').querySelector('.dropdown').selectedIndex;
-        var attcategory = row.querySelector('.attcategory').querySelector('.dropdown').options[attCatIdx];
-
-        var attvalue    = row.querySelector('.attvalue').querySelector('.textarea').value;
-        var comment     = row.querySelector('.attcomment').querySelector('.textarea').value;
-
-        //must select an attribute
-        if (attcategory.value == '') {
-            alert("You must select an attribute item.");
-            return;
-        }
-
-        //prepare data to pass in ajax
-        var table = 'wp_rmt_entry_attributes';
-        insertArr['attribute_id']   = attcategory.value;
-        insertArr['value']          = attvalue;
-        insertArr['comment']        = comment;
-    } else if (type == 'attn') {
-        //must at least select an attention value
-        var row         = document.getElementById('attention_' + entryID).querySelector('.attnRowNew');
-        
-        var attnCatIdx  = row.querySelector('.attnvalue').querySelector('.dropdown').selectedIndex;
-        var attnvalue   = row.querySelector('.attnvalue').querySelector('.dropdown').options[attnCatIdx];
-        var comment     = row.querySelector('.attncomment').querySelector('.textarea').value;
-
-        //must select an attention
-        if (attnvalue.value == '') {
-            alert("You must select an attention item.");
-            return;
-        }
-
-        //prepare data to pass in ajax
-        var table = 'wp_rmt_entry_attn';
-        insertArr['attn_id'] = attnvalue.value;
-        insertArr['comment'] = comment;
-    }
-
-    row.querySelector('.actionRow').innerHTML= 'Please Wait';
-    axios.post(ajaxurl, {
-        'action': 'update-entry-resAtt',
-        'insertArr': insertArr,
-        'ID': 0,
-        'table': table
-    }, {
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
-        }
-    }).then(function (resData) {
-        response = resData.data;
-        //if everything worked, let's update the row
-        if(response.message =='Saved') {
-            
-            id = response.ID;
-            //update the id
-            row.setAttribute("id", type + "Row"+id, 0);
-            row.setAttribute("class", '', 0);
-
-            if(type=='res'){
-                //set item to locked                
-                row.querySelector('.reslock').innerHTML = '<span class="lockIcon" onclick="resAttLock(\'resRow'+id,1+'\')"><i class="bi bi-lock-fill"></i></span>';
-                row.querySelector('.reslock').setAttribute("id", 'resRow'+id+'_lock', 0);
-
-                //set item to text instead of dropdown             
-                row.querySelector('.resitem').innerHTML = resitem.text;
-                row.querySelector('.resitem').setAttribute("id", 'resRow'+id+'_item', 0);
-
-                //set type to text instead of dropdown
-                row.querySelector('.restype').setAttribute("id", 'resRow'+id+'_type', 0);
-                row.querySelector('.restype').innerHTML = restype.text;
-
-                //set qty to text instead of input field
-                row.querySelector('.resqty').setAttribute("id", 'resRow'+id+'_qty', 0);
-                row.querySelector('.resqty').innerHTML = resqty.value;               
-            } else if (type == 'att') { //attribute  
-                //set id of row with newly added attribute
-                row.querySelector('.attcategory').innerHTML = attcategory.text;
-
-                //set category to text instead of dropdown                             
-                row.querySelector('.attcategory').setAttribute("id", 'attRow'+id+'_attrribute', 0);    
-                 
-                //set value to text instead of input field
-                row.querySelector('.attvalue').setAttribute("id", 'attRow'+id+'_value', 0);
-                row.querySelector('.attvalue').innerHTML = attvalue;     
-            } else if (type == 'attn') { //attention
-                //set id of row with newly added attribute
-                row.querySelector('.attnvalue').setAttribute("id", 'attnRow'+id+'_attrribute', 0);    
-
-                //set value to text instead of dropdown             
-                row.querySelector('.attnvalue').innerHTML = attnvalue.text;                
-            }
-
-            //set comment to text instead of input field
-            row.querySelector('.'+type+'comment').setAttribute("id", type+'Row'+id+'_comment', 0);
-            row.querySelector('.'+type+'comment').innerHTML = comment;
-
-            //set user
-            row.querySelector('.'+type+'user').innerHTML = response.user;
-
-            //set date/time        
-			row.querySelector('.'+type+'dateupdate').innerHTML = response.dateupdate;
-
-            //set action row to delete icon
-            row.querySelector('.actionRow').innerHTML= '<span onclick="resAttDelete(\''+type+'Row'+id+'\','+id+')"><i class="bi bi-dash-circle" "=""></i></span>';
-        }
-    
-    })
-        .catch(function (error) {
-            console.log(error);
-        });
-
+    });
 }

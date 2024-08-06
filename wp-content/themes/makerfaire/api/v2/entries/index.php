@@ -22,15 +22,7 @@ $form = (!empty($_REQUEST['form']) ? sanitize_text_field($_REQUEST['form']) : fa
 // Double check again we have requested this file
 if ($type == 'entries') {
   $data = getAllEntries($form);
-  //RMT values for adding new resources, attributes, and attention items
-  $all_rmt = getAllRMT();
-  $data['rmt'] = array(
-    'res_items'       => $all_rmt['resItems'],
-    'res_types'       => $all_rmt['resTypes'],
-    'att_items'       => $all_rmt['attItems'],
-    'attn_items'      => $all_rmt['attnItems']
-  );  
-
+ 
   // Output the JSON
   echo json_encode($data);
 
@@ -317,26 +309,9 @@ function fieldOutput($fieldID, $entry, $field_array, $form, $arg = '') {
     switch ($fieldID) {
       case 'rmt':
         if (current_user_can('view_rmt')) {
-          $type  = 'rmt';
-          $label = '';
-          $class = 'hideFirst';
-          $rmt   = entryResources($entry, false); 
-          $value = array('resource' => array(
-                            'table_label' => 'Assigned Resources',
-                            'col_labels'  => array('id', 'Lock', 'Item', 'Type', 'Qty', 'Comments', 'User', 'Last Updated', '<span class="addIcon" onclick="addRow(\'resource\','.$entry['id'].')"><i class="bi bi-plus-circle"></i></span>'),
-                            'data'        => $rmt['resources']
-                          ),
-                        'attribute' => array(
-                            'table_label' => 'Assigned Attributes',
-                            'col_labels'  => array('id', 'Attribute', 'Value', 'Comment', 'User', 'Last Updated','<span class="addIcon" onclick="addRow(\'attribute\','.$entry['id'].')"><i class="bi bi-plus-circle"></i></span>'),
-                            'data'        => $rmt['attributes']
-                          ),
-                        'attention'  => array(
-                            'table_label' => 'Attention',
-                            'col_labels'  => array('id', 'Attention', 'Comment', 'User', 'Last Updated', '<span class="addIcon" onclick="addRow(\'attention\','.$entry['id'].')"><i class="bi bi-plus-circle"></i></span>'),
-                            'data'        => $rmt['attention']
-                          )
-                        );
+          $type  = 'html';
+          $label = '';          
+          $value   = '<div id="rmt'.$entry['id'].'">'.entryResources($entry).'</div>';          
         }  
         break;          
       case 'notes':
@@ -580,53 +555,6 @@ function get_form_notifications($form, $entryID) {
       '</span>';
   }
   $return .= '</div>';
-
-  return $return;
-}
-
-//in order to add resources, attributes and attention - we need to populate the dropdowns
-function getAllRMT() {
-  global $wpdb;
-  $return  = array();
-  $itemArr = array();
-  $typeArr = array();
-
-  //build Item to type drop down array
-  $sql = "SELECT wp_rmt_resource_categories.ID as item_id, wp_rmt_resource_categories.category as item, wp_rmt_resources.ID as type_id, wp_rmt_resources.type FROM `wp_rmt_resource_categories` right outer join wp_rmt_resources on wp_rmt_resource_categories.ID= wp_rmt_resources.resource_category_id ORDER BY `wp_rmt_resource_categories`.`category` ASC, type ASC";
-  $results = $wpdb->get_results($sql);
-  $itemArr = array();
-  foreach ($results as $result) {
-    if (!isset($itemArr[$result->item_id])) {
-      $itemArr[$result->item_id] = $result->item;
-    }
-    if (!isset($typeArr[$result->item_id][$result->type_id])) {
-      $typeArr[$result->item_id][$result->type_id] = $result->type;
-    }
-  }
-  $return['resItems'] = $itemArr;
-  $return['resTypes'] = $typeArr;
-
-  //Build Attribute type array
-  $attArr = array();
-
-  $sql = "SELECT ID, category FROM wp_rmt_entry_att_categories";
-  $results = $wpdb->get_results($sql);
-  
-  foreach ($results as $result) {
-    $attArr[$result->ID] = $result->category;
-  }
-  $return['attItems'] = $attArr;  
-
-  //build attention drop down values
-  $attnArr = array();
-
-  $sql = "SELECT ID, value FROM wp_rmt_attn";
-  $results = $wpdb->get_results($sql);
-  
-  foreach ($results as $result) {
-      $attnArr[$result->ID] = $result->value;
-  }
-  $return['attnItems'] = $attnArr;
 
   return $return;
 }

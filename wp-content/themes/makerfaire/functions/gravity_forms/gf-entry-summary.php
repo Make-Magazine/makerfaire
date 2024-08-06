@@ -2,115 +2,115 @@
 // Adding Entry Detail and checking for Processing Posts
 add_action("gform_entry_detail_content_before", "add_main_text_before", 10, 2);
 
-function add_main_text_before($form, $lead) {
-    $mode = empty($_POST['screen_mode']) ? 'view' : $_POST['screen_mode'];
-    if ($mode != "view")
-        return;
-    if (is_null($form['fields']))
-        return;
-
-
-    if(isset($form['form_type']) && $form['form_type']!='Default'){
-      echo gf_summary_metabox($form, $lead);
-      echo gf_collapsible_sections($form, $lead);
-    }    
+function add_main_text_before($form, $entry) {
+  $mode = empty($_POST['screen_mode']) ? 'view' : $_POST['screen_mode'];
+  if ($mode != "view")
     return;
+  if (is_null($form['fields']))
+    return;
+
+
+  if (isset($form['form_type']) && $form['form_type'] != 'Default') {
+    echo gf_summary_metabox($form, $entry);
+    echo gf_collapsible_sections($form, $entry);
+  }
+  return;
 }
 
 // Summary Metabox
-function gf_summary_metabox($form, $lead) {
+function gf_summary_metabox($form, $entry) {
 
-    $entry_id = $lead['id'];
+  $entry_id = $entry['id'];
 
-    //find primary photo
-    $photo = (isset($lead['22']) ? $lead['22'] : '');
-    //starting with ba24, the photo field was set as a multi image
-    $photoField = gfapi::get_field($form, '22');    
-    if(isset($photoField->multipleFiles) && $photoField->multipleFiles) {
-      $photoField = json_decode(stripslashes($photo), true);
-      $photo = $photoField[0];
-    }
-    
-    $short_description = (isset($lead['16']) ? $lead['16'] : '');
-    $long_description = (isset($lead['21']) ? $lead['21'] : '');
-    $project_name = (isset($lead['151']) ? $lead['151'] : '');
-    $areyoua = (isset($lead['45']) ? $lead['45'] : '');
-    $size_request = (isset($lead['60']) ? $lead['60'] : '');
-    $size_request_heightwidth = ((isset($lead['345']) && strlen($lead['345']) > 0 ) ? $lead['345'] . ' X ' : '') .
-            ((isset($lead['344']) && strlen($lead['344']) > 0 ) ? $lead['344'] : '');
-    $size_request_other = (isset($lead['61']) ? $lead['61'] : '');
+  //find primary photo
+  $photo = (isset($entry['22']) ? $entry['22'] : '');
+  //starting with ba24, the photo field was set as a multi image
+  $photoField = gfapi::get_field($form, '22');
+  if (isset($photoField->multipleFiles) && $photoField->multipleFiles) {
+    $photoField = json_decode(stripslashes($photo), true);
+    $photo = $photoField[0];
+  }
 
-    //starting BA23 we are now using exhibit type instead of form_type
-    $exhibit_types = array_filter($lead, function($key) {
-      return strpos($key, '339.') === 0;
-    }, ARRAY_FILTER_USE_KEY);
-    
-    $exhibit_types = implode(",", array_filter($exhibit_types));
-    $entry_form_type = ($exhibit_types!=''?$exhibit_types:$form['form_type']);
+  $short_description = (isset($entry['16']) ? $entry['16'] : '');
+  $long_description = (isset($entry['21']) ? $entry['21'] : '');
+  $project_name = (isset($entry['151']) ? $entry['151'] : '');
+  $areyoua = (isset($entry['45']) ? $entry['45'] : '');
+  $size_request = (isset($entry['60']) ? $entry['60'] : '');
+  $size_request_heightwidth = ((isset($entry['345']) && strlen($entry['345']) > 0) ? $entry['345'] . ' X ' : '') .
+    ((isset($entry['344']) && strlen($entry['344']) > 0) ? $entry['344'] : '');
+  $size_request_other = (isset($entry['61']) ? $entry['61'] : '');
 
-    $entry_form_status = (isset($lead['303']) ? $lead['303'] : '');
-    $wkey = (isset($lead['27']) ? $lead['27'] : '');
-    $vkey = (isset($lead['32']) ? $lead['32'] : '');
+  //starting BA23 we are now using exhibit type instead of form_type
+  $exhibit_types = array_filter($entry, function ($key) {
+    return strpos($key, '339.') === 0;
+  }, ARRAY_FILTER_USE_KEY);
 
-    $makerfirstname1 = (isset($lead['160.3']) ? $lead['160.3'] : '');
-    $makerlastname1 = (isset($lead['160.6']) ? $lead['160.6'] : '');
-    $makerPhoto1 = (isset($lead['217']) ? $lead['217'] : '');
-    $makerfirstname2 = (isset($lead['158.3']) ? $lead['158.3'] : '');
-    $makerlastname2 = (isset($lead['158.6']) ? $lead['158.6'] : '');
-    $makerPhoto2 = (isset($lead['224']) ? $lead['224'] : '');
-    $makerfirstname3 = (isset($lead['155.3']) ? $lead['155.3'] : '');
-    $makerlastname3 = (isset($lead['155.6']) ? $lead['155.6'] : '');
-    $makerPhoto3 = (isset($lead['223']) ? $lead['223'] : '');
-    $makerfirstname4 = (isset($lead['156.3']) ? $lead['156.3'] : '');
-    $makerlastname4 = (isset($lead['156.6']) ? $lead['156.6'] : '');
-    $makerPhoto4 = (isset($lead['222']) ? $lead['222'] : '');
-    $makerfirstname5 = (isset($lead['157.3']) ? $lead['157.3'] : '');
-    $makerlastname5 = (isset($lead['157.6']) ? $lead['157.6'] : '');
-    $makerPhoto5 = (isset($lead['220']) ? $lead['220'] : '');
-    $makerfirstname6 = (isset($lead['159.3']) ? $lead['159.3'] : '');
-    $makerlastname6 = (isset($lead['159.6']) ? $lead['159.6'] : '');
-    $makerPhoto6 = (isset($lead['221']) ? $lead['221'] : '');
-    $makerfirstname7 = (isset($lead['154.3']) ? $lead['154.3'] : '');
-    $makerlastname7 = (isset($lead['154.6']) ? $lead['154.6'] : '');
-    $makerPhoto7 = (isset($lead['219']) ? $lead['219'] : '');
-    $makergroupname = (isset($lead['109']) ? $lead['109'] : '');
-    $makerGroupPhoto = (isset($lead['111']) ? $lead['111'] : '');
-    $suppToken  = (isset($lead['fg_easypassthrough_token']) ? $lead['fg_easypassthrough_token'] : '');
+  $exhibit_types = implode(",", array_filter($exhibit_types));
+  $entry_form_type = ($exhibit_types != '' ? $exhibit_types : $form['form_type']);
 
-    $field55 = RGFormsModel::get_field($form, '55');
-    $whatareyourplansvalues = (isset($field55['choices'])?$field55['choices']:'');    
+  $entry_form_status = (isset($entry['303']) ? $entry['303'] : '');
+  $wkey = (isset($entry['27']) ? $entry['27'] : '');
+  $vkey = (isset($entry['32']) ? $entry['32'] : '');
 
-    $main_description = '';
-// Check if we are loading the public description or a short description
-    if (isset($long_description) && $long_description != '') {
-        $main_description = $long_description;
-    } else if (isset($short_description)) {
-        $main_description = $short_description;
-    }
+  $makerfirstname1 = (isset($entry['160.3']) ? $entry['160.3'] : '');
+  $makerlastname1 = (isset($entry['160.6']) ? $entry['160.6'] : '');
+  $makerPhoto1 = (isset($entry['217']) ? $entry['217'] : '');
+  $makerfirstname2 = (isset($entry['158.3']) ? $entry['158.3'] : '');
+  $makerlastname2 = (isset($entry['158.6']) ? $entry['158.6'] : '');
+  $makerPhoto2 = (isset($entry['224']) ? $entry['224'] : '');
+  $makerfirstname3 = (isset($entry['155.3']) ? $entry['155.3'] : '');
+  $makerlastname3 = (isset($entry['155.6']) ? $entry['155.6'] : '');
+  $makerPhoto3 = (isset($entry['223']) ? $entry['223'] : '');
+  $makerfirstname4 = (isset($entry['156.3']) ? $entry['156.3'] : '');
+  $makerlastname4 = (isset($entry['156.6']) ? $entry['156.6'] : '');
+  $makerPhoto4 = (isset($entry['222']) ? $entry['222'] : '');
+  $makerfirstname5 = (isset($entry['157.3']) ? $entry['157.3'] : '');
+  $makerlastname5 = (isset($entry['157.6']) ? $entry['157.6'] : '');
+  $makerPhoto5 = (isset($entry['220']) ? $entry['220'] : '');
+  $makerfirstname6 = (isset($entry['159.3']) ? $entry['159.3'] : '');
+  $makerlastname6 = (isset($entry['159.6']) ? $entry['159.6'] : '');
+  $makerPhoto6 = (isset($entry['221']) ? $entry['221'] : '');
+  $makerfirstname7 = (isset($entry['154.3']) ? $entry['154.3'] : '');
+  $makerlastname7 = (isset($entry['154.6']) ? $entry['154.6'] : '');
+  $makerPhoto7 = (isset($entry['219']) ? $entry['219'] : '');
+  $makergroupname = (isset($entry['109']) ? $entry['109'] : '');
+  $makerGroupPhoto = (isset($entry['111']) ? $entry['111'] : '');
+  $suppToken  = (isset($entry['fg_easypassthrough_token']) ? $entry['fg_easypassthrough_token'] : '');
 
-//pull faireID
-    global $wpdb;
-    $faire = $wpdb->get_var('select faire from wp_mf_faire where find_in_set (' . $form['id'] . ', wp_mf_faire.form_ids) > 0');
+  $field55 = RGFormsModel::get_field($form, '55');
+  $whatareyourplansvalues = (isset($field55['choices']) ? $field55['choices'] : '');
 
-    //is there a parent entry?
-    $parent_entry_ID = $lead['gpnf_entry_parent'];    
-    $parent_form = ($parent_entry_ID!=''?$lead['gpnf_entry_parent_form']:'');                    
-    
-    //starting BA23 we added a new field of final Weekend
-    $finalWeekend = array_filter($lead, function($key) {
-      return strpos($key, '879.') === 0;
-    }, ARRAY_FILTER_USE_KEY);
-    
-    $finalWeekend = implode("<br/>", array_filter($finalWeekend));
+  $main_description = '';
+  // Check if we are loading the public description or a short description
+  if (isset($long_description) && $long_description != '') {
+    $main_description = $long_description;
+  } else if (isset($short_description)) {
+    $main_description = $short_description;
+  }
 
-    $return = '
+  //pull faireID
+  global $wpdb;
+  $faire = $wpdb->get_var('select faire from wp_mf_faire where find_in_set (' . $form['id'] . ', wp_mf_faire.form_ids) > 0');
+
+  //is there a parent entry?
+  $parent_entry_ID = $entry['gpnf_entry_parent'];
+  $parent_form = ($parent_entry_ID != '' ? $entry['gpnf_entry_parent_form'] : '');
+
+  //starting BA23 we added a new field of final Weekend
+  $finalWeekend = array_filter($entry, function ($key) {
+    return strpos($key, '879.') === 0;
+  }, ARRAY_FILTER_USE_KEY);
+
+  $finalWeekend = implode("<br/>", array_filter($finalWeekend));
+
+  $return = '
 
 <table cellspacing="0" class="gf-entry-summary">
 		<tr>
 			<th colspan="2" style="text-align: left;" id="header">
-				<h1>' . esc_html($project_name) . '</h1>'.
-            	($parent_entry_ID!=''?'<a target="_blank" href="/wp-admin/admin.php?page=gf_entries&view=entry&id='.$parent_form.'&lid='.$parent_entry_ID.'" target="_blank"><input class="button button-large button-primary" style="text-align:center" value="Parent Entry" /></a>':'').
-            '</th>
+				<h1>' . esc_html($project_name) . '</h1>' .
+    ($parent_entry_ID != '' ? '<a target="_blank" href="/wp-admin/admin.php?page=gf_entries&view=entry&id=' . $parent_form . '&lid=' . $parent_entry_ID . '" target="_blank"><input class="button button-large button-primary" style="text-align:center" value="Parent Entry" /></a>' : '') .
+    '</th>
 		</tr>
 	
 		<tr>
@@ -131,80 +131,80 @@ function gf_summary_metabox($form, $lead) {
 					<tr>
 						<td valign="top"><strong>Status:</strong></td>
 						<td valign="top">' . esc_attr($entry_form_status) . '</td>
-					</tr>'.
-($suppToken!='' && $form['form_type'] =='Master'
-?
-          '<tr>
+					</tr>' .
+    ($suppToken != '' && $form['form_type'] == 'Master'
+      ?
+      '<tr>
             <td valign="top"><strong>Supplemental Token ID:</strong></td>
 						<td valign="top">' . $suppToken . '</td>
           </tr>'
-:'')
-					.'<tr>
+      : '')
+    . '<tr>
 						<td valign="top"><strong>Website:</strong></td>
 						<td valign="top"><a href="' . esc_url($wkey) . '" target="_blank">' . esc_url($wkey) . '</a></td>
 					</tr>
 					<tr>
 						<td valign="top"><strong>Video:</strong></td>
-						<td>' . (( isset($vkey) ) ? '<a href="' . esc_url($vkey) . '" target="_blank">' . esc_url($vkey) . '</a><br/>' : '') . '</td>
+						<td>' . ((isset($vkey)) ? '<a href="' . esc_url($vkey) . '" target="_blank">' . esc_url($vkey) . '</a><br/>' : '') . '</td>
 					</tr>
 					<tr>
 						<td valign="top"><strong>Maker Names:</strong></td>
 						<td valign="top">' . (!empty($makergroupname) ? $makergroupname . '(Group)</br>' : '');
 
-    //loop thru all 7 maker photos
-    for ($x = 1; $x <= 7; $x++) {
-        if (!empty(${"makerPhoto_$x"})) {
-            $return .= '<a href="' . ${"makerPhoto_$x"} . '" ><img width="30px" src="' . legacy_get_resized_remote_image_url(${"makerPhoto_$x"}, 30, 30) . '" alt="" /></a>';
-        }
-        $return .= (!empty(${"makerfirstname$x"}) ? ${"makerfirstname$x"} . ' ' . ${"makerlastname$x"} . '</br>' : '');
+  //loop thru all 7 maker photos
+  for ($x = 1; $x <= 7; $x++) {
+    if (!empty(${"makerPhoto_$x"})) {
+      $return .= '<a href="' . ${"makerPhoto_$x"} . '" ><img width="30px" src="' . legacy_get_resized_remote_image_url(${"makerPhoto_$x"}, 30, 30) . '" alt="" /></a>';
     }
+    $return .= (!empty(${"makerfirstname$x"}) ? ${"makerfirstname$x"} . ' ' . ${"makerlastname$x"} . '</br>' : '');
+  }
 
-    if (!empty($makerGroupPhoto)) {
-        $return .= 'Group Photo<br/>
+  if (!empty($makerGroupPhoto)) {
+    $return .= 'Group Photo<br/>
                     <a href="' . $makerGroupPhoto . '" >
                     <img width="30px" src="' . legacy_get_resized_remote_image_url($makerGroupPhoto, 30, 30) . '" alt="" />
                     </a>';
-    }
+  }
 
-    $return .= (!empty($makerfirstname7) ? $makerfirstname7 . ' ' . $makerlastname7 . '</br>' : '');
-    $return .= '
+  $return .= (!empty($makerfirstname7) ? $makerfirstname7 . ' ' . $makerlastname7 . '</br>' : '');
+  $return .= '
             </td>
 					</tr>
           <tr>
 						<td valign="top"><strong>We are (a/an)...:</strong></td>
-						<td>' . (( isset($areyoua) ) ? $areyoua : '') . '</td>
+						<td>' . ((isset($areyoua)) ? $areyoua : '') . '</td>
 					</tr>
 					<tr>
 						<td valign="top"><strong>What are your plans:</strong></td>
 						<td valign="top">';
 
-    if (is_array($whatareyourplansvalues)) {
-        for ($i = 0; $i < count($whatareyourplansvalues); $i++) {
-            $return .= ((!empty($lead['55.' . $i])) ? $lead['55.' . $i] . '<br />' : '');
-        }
+  if (is_array($whatareyourplansvalues)) {
+    for ($i = 0; $i < count($whatareyourplansvalues); $i++) {
+      $return .= ((!empty($entry['55.' . $i])) ? $entry['55.' . $i] . '<br />' : '');
     }
-    $return .= '
+  }
+  $return .= '
             </td>
 					</tr>
           <tr>
             <td valign="top"><strong>Fee Indicator:</strong></td>
-						<td>' . (( isset($lead[434]) ) ? $lead[434] : 'No') . '</td>
+						<td>' . ((isset($entry[434])) ? $entry[434] : 'No') . '</td>
           </tr>
           <tr>
             <td valign="top"><strong>CM Indicator:</strong></td>
-						<td>' . (( isset($lead[376]) ) ? $lead[376] : 'No') . '</td>
+						<td>' . ((isset($entry[376])) ? $entry[376] : 'No') . '</td>
           </tr>
 					<tr>
 						<td valign="top"><strong>Size Request:</strong></td>
 						<td>
-              ' . (( isset($size_request) ) ? $size_request : 'Not Filled out') .
-            (( isset($size_request_heightwidth) && $size_request_heightwidth != '') ? ' - ' . $size_request_heightwidth : '') .
-            (( strlen($size_request_other) > 0 ) ? ' <br />Comment: ' . $size_request_other : '') . '
+              ' . ((isset($size_request)) ? $size_request : 'Not Filled out') .
+    ((isset($size_request_heightwidth) && $size_request_heightwidth != '') ? ' - ' . $size_request_heightwidth : '') .
+    ((strlen($size_request_other) > 0) ? ' <br />Comment: ' . $size_request_other : '') . '
 						</td>
 					</tr>
           <tr>
             <td valign="top"><strong>Schedule/Location:</strong></td>
-            <td>' . display_schedule($form['id'], $lead, 'summary') . '</td>
+            <td>' . display_schedule($form['id'], $entry, 'summary') . '</td>
           </tr>
           <tr>
             <td valign="top"><strong>Final Weekend:</strong></td>
@@ -227,64 +227,66 @@ function gf_summary_metabox($form, $lead) {
 			<td>
         <label >Email Note To:</label><br />';
 
-    $emailto1 = array("Caleb Kraft" => "caleb@make.co",
-        "Dale Dougherty" => "dale@make.co",
-        "Siana Alcorn" => "siana@make.co",
-        "Gillian Mutti" => "gillian@make.co",
-        "Jennifer Blakeslee" => "jennifer@make.co");
-    $emailto2 = array(
-        "Webmaster" => "webmaster@make.co",
-        "Editors" => "editor@make.co",
-        "Rob Bullington" => "rob@make.co",
-        "Keith Hammond" => "keith@make.co",
-        "Katie Kunde" => "katie@make.co");
-    $emailtoaliases = array(
-        "Maker Relations" => "makers@make.co",
-        "PR" => "pr@make.co",
-            //"Sales" => "sales@makerfaire.com",
-            //"Sustainability" => "sustainability@makerfaire.com",
-            //"Speakers" => "speakers@makerfaire.com"
-    );
+  $emailto1 = array(
+    "Dale Dougherty" => "dale@make.co",
+    "Siana Alcorn" => "siana@make.co",
+    "Gillian Mutti" => "gillian@make.co",
+    "Jennifer Blakeslee" => "jennifer@make.co"
+  );
+  $emailto2 = array(
+    "Webmaster" => "webmaster@make.co",
+    "Editors" => "editor@make.co",
+    "Rob Bullington" => "rob@make.co",
+    "Keith Hammond" => "keith@make.co",
+    "Katie Kunde" => "katie@make.co"
+  );
+  $emailtoaliases = array(
+    "Maker Relations" => "makers@make.co",
+    "PR" => "pr@make.co",
+    //"Sales" => "sales@makerfaire.com",
+    //"Sustainability" => "sustainability@makerfaire.com",
+    //"Speakers" => "speakers@makerfaire.com"
+  );
 
-    $return .= '<div style="float:left">';
-    foreach ($emailtoaliases as $name => $email) {
-        $return .= '<input type="checkbox"  name="gentry_email_notes_to_sidebar[]" style="margin: 3px;" value="' . $email . '" />'
-                . '<span title="' . $email . '"><strong>' . $name . '</strong></span><br />';
-    }
-    $return .= '
+  $return .= '<div style="float:left">';
+  foreach ($emailtoaliases as $name => $email) {
+    $return .= '<input type="checkbox"  name="gentry_email_notes_to_sidebar[]" style="margin: 3px;" value="' . $email . '" />'
+      . '<span title="' . $email . '"><strong>' . $name . '</strong></span><br />';
+  }
+  $return .= '
 				</div>
 			  <div style="float:left">';
-    foreach ($emailto1 as $name => $email) {
-        $return .= '<input type="checkbox"  name="gentry_email_notes_to_sidebar[]" style="margin: 3px;" value="' . $email . '" />'
-                . '<span title="' . $email . '">' . $name . '</span><br />';
-    }
-    $return .= '
+  foreach ($emailto1 as $name => $email) {
+    $return .= '<input type="checkbox"  name="gentry_email_notes_to_sidebar[]" style="margin: 3px;" value="' . $email . '" />'
+      . '<span title="' . $email . '">' . $name . '</span><br />';
+  }
+  $return .= '
 				</div>            
 			  <div style="float:left">';
-    foreach ($emailto2 as $name => $email) {
-        $return .= '<input type="checkbox"  name="gentry_email_notes_to_sidebar[]" style="margin: 3px;" value="' . $email . '" />'
-                . '<span title="' . $email . '">' . $name . '</span><br />';
-    }
-    $return .= '
+  foreach ($emailto2 as $name => $email) {
+    $return .= '<input type="checkbox"  name="gentry_email_notes_to_sidebar[]" style="margin: 3px;" value="' . $email . '" />'
+      . '<span title="' . $email . '">' . $name . '</span><br />';
+  }
+  $return .= '
 				</div>
             <div class="clear"></div><br/>Enter Email: <input type="email" placeholder="example@make.co" name="otherEmail" size="40" />
 			</td>
 			<td style="vertical-align: top; padding: 10px;">
         <textarea	name="new_note_sidebar"	style="width: 90%; height: 240px;" cols=""	rows=""></textarea>';
-    $note_button = '<input type="button" name="add_note_sidebar" value="' . __('Add Note', 'gravityforms') . '" class="button" style="width:auto;padding-bottom:2px;" onclick="updateMgmt(\'add_note_sidebar\');"/>';
-    $return .= apply_filters('gform_addnote_button', $note_button);
-    $return .= '<span class="updMsg add_note_sidebarMsg"></span>
+  $note_button = '<input type="button" name="add_note_sidebar" value="' . __('Add Note', 'gravityforms') . '" class="button" style="width:auto;padding-bottom:2px;" onclick="updateMgmt(\'add_note_sidebar\');"/>';
+  $return .= apply_filters('gform_addnote_button', $note_button);
+  $return .= '<span class="updMsg add_note_sidebarMsg"></span>
 			</td>
 		</tr>
 </table>';
 
-    return $return;
+  return $return;
 }
 
 //end function
 
-function gf_collapsible_sections($form, $lead) {
-    /*
+function gf_collapsible_sections($form, $entry) {
+  /*
      * 1. Content
       Include field IDs:
       11 [Tell us about your project and exhibit.]
@@ -296,72 +298,73 @@ function gf_collapsible_sections($form, $lead) {
       62 [Tables and Chairs]
       288 [How many tables and chairs?]
      */
-    global $wpdb;
-    $entry_id = $lead['id'];
+  global $wpdb;
+  $entry_id = $entry['id'];
 
-    $makerfirstname1 = (isset($lead['160.3']) ? $lead['160.3'] : '');
-    $makerlastname1 = (isset($lead['160.6']) ? $lead['160.6'] : '');
+  $makerfirstname1 = (isset($entry['160.3']) ? $entry['160.3'] : '');
+  $makerlastname1 = (isset($entry['160.6']) ? $entry['160.6'] : '');
 
-    $makerfirstname2 = (isset($lead['158.3']) ? $lead['158.3'] : '');
-    $makerlastname2 = (isset($lead['158.6']) ? $lead['158.6'] : '');
+  $makerfirstname2 = (isset($entry['158.3']) ? $entry['158.3'] : '');
+  $makerlastname2 = (isset($entry['158.6']) ? $entry['158.6'] : '');
 
-    $makerfirstname3 = (isset($lead['155.3']) ? $lead['155.3'] : '');
-    $makerlastname3 = (isset($lead['155.6']) ? $lead['155.6'] : '');
+  $makerfirstname3 = (isset($entry['155.3']) ? $entry['155.3'] : '');
+  $makerlastname3 = (isset($entry['155.6']) ? $entry['155.6'] : '');
 
-    $makerfirstname4 = (isset($lead['156.3']) ? $lead['156.3'] : '');
-    $makerlastname4 = (isset($lead['156.6']) ? $lead['156.6'] : '');
+  $makerfirstname4 = (isset($entry['156.3']) ? $entry['156.3'] : '');
+  $makerlastname4 = (isset($entry['156.6']) ? $entry['156.6'] : '');
 
-    $makerfirstname5 = (isset($lead['157.3']) ? $lead['157.3'] : '');
-    $makerlastname5 = (isset($lead['157.6']) ? $lead['157.6'] : '');
+  $makerfirstname5 = (isset($entry['157.3']) ? $entry['157.3'] : '');
+  $makerlastname5 = (isset($entry['157.6']) ? $entry['157.6'] : '');
 
-    $makerfirstname6 = (isset($lead['159.3']) ? $lead['159.3'] : '');
-    $makerlastname6 = (isset($lead['159.6']) ? $lead['159.6'] : '');
+  $makerfirstname6 = (isset($entry['159.3']) ? $entry['159.3'] : '');
+  $makerlastname6 = (isset($entry['159.6']) ? $entry['159.6'] : '');
 
-    $makerfirstname7 = (isset($lead['154.3']) ? $lead['154.3'] : '');
-    $makerlastname7 = (isset($lead['154.6']) ? $lead['154.6'] : '');
+  $makerfirstname7 = (isset($entry['154.3']) ? $entry['154.3'] : '');
+  $makerlastname7 = (isset($entry['154.6']) ? $entry['154.6'] : '');
 
-    $contactFirstName = (isset($lead['96.3']) ? $lead['96.3'] : '');
-    $contactLastName  = (isset($lead['96.6']) ? $lead['96.6'] : '');
+  $contactFirstName = (isset($entry['96.3']) ? $entry['96.3'] : '');
+  $contactLastName  = (isset($entry['96.6']) ? $entry['96.6'] : '');
 
-    //email fields
-    $emailArray = array();
+  //email fields
+  $emailArray = array();
 
-    if (isset($lead['98']) && $lead['98'] != '')
-        $emailArray[$lead['98']]['Contact'] = $contactFirstName . ' ' . $contactLastName;
-    if (isset($lead['161']) && $lead['161'] != '')
-        $emailArray[$lead['161']]['Maker 1'] = $makerfirstname1 . ' ' . $makerlastname1;
-    if (isset($lead['162']) && $lead['162'] != '')
-        $emailArray[$lead['162']]['Maker 2'] = $makerfirstname2 . ' ' . $makerlastname2;
-    if (isset($lead['167']) && $lead['167'] != '')
-        $emailArray[$lead['167']]['Maker 3'] = $makerfirstname3 . ' ' . $makerlastname3;
-    if (isset($lead['166']) && $lead['166'] != '')
-        $emailArray[$lead['166']]['Maker 4'] = $makerfirstname4 . ' ' . $makerlastname4;
-    if (isset($lead['165']) && $lead['165'] != '')
-        $emailArray[$lead['165']]['Maker 5'] = $makerfirstname5 . ' ' . $makerlastname5;
-    if (isset($lead['164']) && $lead['164'] != '')
-        $emailArray[$lead['164']]['Maker 6'] = $makerfirstname6 . ' ' . $makerlastname6;
-    if (isset($lead['163']) && $lead['163'] != '')
-        $emailArray[$lead['163']]['Maker 7'] = $makerfirstname7 . ' ' . $makerlastname7;
+  if (isset($entry['98']) && $entry['98'] != '')
+    $emailArray[$entry['98']]['Contact'] = $contactFirstName . ' ' . $contactLastName;
+  if (isset($entry['161']) && $entry['161'] != '')
+    $emailArray[$entry['161']]['Maker 1'] = $makerfirstname1 . ' ' . $makerlastname1;
+  if (isset($entry['162']) && $entry['162'] != '')
+    $emailArray[$entry['162']]['Maker 2'] = $makerfirstname2 . ' ' . $makerlastname2;
+  if (isset($entry['167']) && $entry['167'] != '')
+    $emailArray[$entry['167']]['Maker 3'] = $makerfirstname3 . ' ' . $makerlastname3;
+  if (isset($entry['166']) && $entry['166'] != '')
+    $emailArray[$entry['166']]['Maker 4'] = $makerfirstname4 . ' ' . $makerlastname4;
+  if (isset($entry['165']) && $entry['165'] != '')
+    $emailArray[$entry['165']]['Maker 5'] = $makerfirstname5 . ' ' . $makerlastname5;
+  if (isset($entry['164']) && $entry['164'] != '')
+    $emailArray[$entry['164']]['Maker 6'] = $makerfirstname6 . ' ' . $makerlastname6;
+  if (isset($entry['163']) && $entry['163'] != '')
+    $emailArray[$entry['163']]['Maker 7'] = $makerfirstname7 . ' ' . $makerlastname7;
 
-    //for supplement forms, let's see if there is a field set to pull in email
-    $return = get_value_by_label('contact-email', $form, array());
-    if (isset($return['id']) && isset($lead[$return['id']])) {
-        $emailArray[$lead[$return['id']]]['contact-email'] = $lead[$return['id']];
-    }
+  //for supplement forms, let's see if there is a field set to pull in email
+  $return = get_value_by_label('contact-email', $form, array());
+  if (isset($return['id']) && isset($entry[$return['id']])) {
+    $emailArray[$entry[$return['id']]]['contact-email'] = $entry[$return['id']];
+  }
 
 
-    foreach ($form['fields'] as $field) {
-        $fieldData[$field['id']] = $field;
-    }
+  foreach ($form['fields'] as $field) {
+    $fieldData[$field['id']] = $field;
+  }
 
-    $data = array('content' => array(11, 16, 320, 321, 66, 67, 293),
-        'logistics' => array(60, 344, 345, 61, 62, 347, 348, 64, 65, 68, 69, 70, 71, 72, 73, 74, 75, 76, 803, 806, 805),
-        'additional' => array(123, 130, 287, 134, 37, 38, 41),
-        'images' => array(22, 65, 111, 122, 217, 224, 223, 222, 220, 221, 219, 878),
-        'imagesOver' => array(324, 334, 330, 338, 333, 337, 332, 336, 331, 335)
-    );
-    //additional Entries
-    $addEntries = '<table width="100%">
+  $data = array(
+    'content' => array(11, 16, 320, 321, 66, 67, 293),
+    'logistics' => array(60, 344, 345, 61, 62, 347, 348, 64, 65, 68, 69, 70, 71, 72, 73, 74, 75, 76, 803, 806, 805),
+    'additional' => array(123, 130, 287, 134, 37, 38, 41),
+    'images' => array(22, 65, 111, 122, 217, 224, 223, 222, 220, 221, 219, 878),
+    'imagesOver' => array(324, 334, 330, 338, 333, 337, 332, 336, 331, 335)
+  );
+  //additional Entries
+  $addEntries = '<table width="100%">
           <thead>
             <tr>
               <th>Maker Name  </th>
@@ -373,46 +376,46 @@ function gf_collapsible_sections($form, $lead) {
             </tr>
           </thead>';
 
-    $addEntriesCnt = 0;
-    foreach ($emailArray as $key => $email) {
-        $results = $wpdb->get_results('SELECT  *,
+  $addEntriesCnt = 0;
+  foreach ($emailArray as $key => $email) {
+    $results = $wpdb->get_results('SELECT  *,
                                             (SELECT meta_value FROM wp_gf_entry_meta detail2 WHERE detail2.entry_id = wp_gf_entry_meta.entry_id AND meta_key = 151 ) as projectName,
                                             (SELECT meta_value FROM wp_gf_entry_meta detail2 WHERE detail2.entry_id = wp_gf_entry_meta.entry_id AND meta_key = 303 ) as status,
                                             (SELECT status FROM wp_gf_entry WHERE wp_gf_entry.id = wp_gf_entry_meta.entry_id) as lead_status
                                       FROM wp_gf_entry_meta
                                       JOIN wp_gf_form on wp_gf_form.id = wp_gf_entry_meta.form_id
                                      WHERE meta_value = "' . $key . '"' .
-                '  AND entry_id != ' . $entry_id . '
+      '  AND entry_id != ' . $entry_id . '
                                   GROUP BY entry_id
                                   ORDER BY entry_id');
 
-        foreach ($results as $addData) {
-            $outputURL = admin_url('admin.php') . "?page=gf_entries&view=entry&id=" . $addData->form_id . '&lid=' . $addData->entry_id;
-            $addEntriesCnt++;
-            $addEntries .= '<tr>';
+    foreach ($results as $addData) {
+      $outputURL = admin_url('admin.php') . "?page=gf_entries&view=entry&id=" . $addData->form_id . '&lid=' . $addData->entry_id;
+      $addEntriesCnt++;
+      $addEntries .= '<tr>';
 
-            //only display the first instance of the email
-            foreach ($email as $typeKey => $typeData) {
-                $name = $typeKey;
-                $type = $typeData;
-                if ($name != '')
-                    break;
-            }
-            $addEntries .= '<td>' . $type . '</td>';
-            $addEntries .= '<td>' . $name . '</td>';
-            $addEntries .= '<td><a target="_blank" href="' . $outputURL . '">' . $addData->entry_id . '</a></td>'
-                    . '<td>' . $addData->projectName . '</td>'
-                    . '<td>' . $addData->title . '</td>'
-                    . '<td>' . ($addData->lead_status == 'active' ? $addData->status : ucwords($addData->lead_status)) . '</td>'
-                    . '</tr>';
-        }
+      //only display the first instance of the email
+      foreach ($email as $typeKey => $typeData) {
+        $name = $typeKey;
+        $type = $typeData;
+        if ($name != '')
+          break;
+      }
+      $addEntries .= '<td>' . $type . '</td>';
+      $addEntries .= '<td>' . $name . '</td>';
+      $addEntries .= '<td><a target="_blank" href="' . $outputURL . '">' . $addData->entry_id . '</a></td>'
+        . '<td>' . $addData->projectName . '</td>'
+        . '<td>' . $addData->title . '</td>'
+        . '<td>' . ($addData->lead_status == 'active' ? $addData->status : ucwords($addData->lead_status)) . '</td>'
+        . '</tr>';
     }
-    $addEntries .= '</table>';
+  }
+  $addEntries .= '</table>';
 
-    //form data
-    $addFormsData = getmetaData($entry_id);
-    $pmtFormsData = getmetaData($entry_id, 'payments');
-    $return = '
+  //form data
+  $addFormsData = getmetaData($entry_id);
+  $pmtFormsData = getmetaData($entry_id, 'payments');
+  $return = '
   <div id="tabs" class="adminEntrySummary">
     <ul class="nav nav-tabs" role="tablist">
       <li role="presentation"><a href="#tabs-1" aria-controls="tabs-1" role="tab" data-toggle="tabs-1"><br/>Content</a></li>
@@ -427,14 +430,14 @@ function gf_collapsible_sections($form, $lead) {
     </ul>
     <div class="tab-content">
       <div role="tabpanel" class="tab-pane" id="tabs-1">
-        ' . displayContent($data['content'], $lead, $fieldData) . '
+        ' . displayContent($data['content'], $entry, $fieldData) . '
       </div>
       <div role="tabpanel" class="tab-pane" id="tabs-2">
-        ' . displayContent($data['logistics'], $lead, $fieldData) .
-            '
+        ' . displayContent($data['logistics'], $entry, $fieldData) .
+    '
       </div>
       <div role="tabpanel" class="tab-pane" id="additional">
-        ' . displayContent($data['additional'], $lead, $fieldData) . '
+        ' . displayContent($data['additional'], $entry, $fieldData) . '
       </div>
 
       <div role="tabpanel" class="tab-pane" id="addForms">
@@ -451,27 +454,27 @@ function gf_collapsible_sections($form, $lead) {
         ' . $addEntries . '
       </div>
       <div role="tabpanel" class="tab-pane"  id="images">
-        ' . displayContent($data['images'], $lead, $fieldData) . '
-        ' . displayContent($data['imagesOver'], $lead, $fieldData) . '
+        ' . displayContent($data['images'], $entry, $fieldData) . '
+        ' . displayContent($data['imagesOver'], $entry, $fieldData) . '
       </div>
 
       <div role="tabpanel" class="tab-pane"  id="resources">
         <div class="entry-resource">
-          ' . entryResources($lead) . '
+          ' . entryResources($entry) . '
         </div>
       </div>
 
       <div role="tabpanel" class="tab-pane"  id="ticketing">
-        <div class="panel-group">';    		
+        <div class="panel-group">';
 
-    $ticketing = entryTicketing($lead);
-    if ($ticketing) {
-        $return .= $ticketing;
-    } else {
-        $EBcount = $wpdb->get_var("select count(*) from eb_event, wp_mf_faire where wp_mf_faire_id = wp_mf_faire.id and "
-                . "FIND_IN_SET (" . $lead['form_id'] . ",wp_mf_faire.form_ids)> 0");
-        if ($EBcount >= 1) {
-            $return .= '
+  $ticketing = entryTicketing($entry);
+  if ($ticketing) {
+    $return .= $ticketing;
+  } else {
+    $EBcount = $wpdb->get_var("select count(*) from eb_event, wp_mf_faire where wp_mf_faire_id = wp_mf_faire.id and "
+      . "FIND_IN_SET (" . $entry['form_id'] . ",wp_mf_faire.form_ids)> 0");
+    if ($EBcount >= 1) {
+      $return .= '
             <div id="noTickets">
               No Access Codes found for this entry.<br/>
               
@@ -486,174 +489,176 @@ function gf_collapsible_sections($form, $lead) {
               <span class="sr-only">Loading...</span>
               <i>Please be patient.  This may take a while to complete</i>
             </div>';
-        } else {
-            //no eventbrite event set up
-            $return .= '
+    } else {
+      //no eventbrite event set up
+      $return .= '
                   <div id="noTickets">
                     I\'m sorry.  There is not an Eventbrite event set up for this faire.
                   </div>';
-        }
     }
-    $return .= '
+  }
+  $return .= '
         </div>
       </div>
     </div> <!-- .tab-content -->
   </div>';
 
-    return $return;
+  return $return;
 }
 
-function displayContent($content, $lead, $fieldData, $display = 'table') {
-    global $display_empty_fields;
-    $return = '';
-    if ($display === 'table')
-        $return .= '<table>';
-    $form = GFAPI::get_form($lead['form_id']);
+function displayContent($content, $entry, $fieldData, $display = 'table') {
+  global $display_empty_fields;
+  $return = '';
+  if ($display === 'table')
+    $return .= '<table>';
+  $form = GFAPI::get_form($entry['form_id']);
 
-    foreach ($content as $fieldID) {
-        if (isset($fieldData[$fieldID])) {
-            $field = $fieldData[$fieldID];
-            $value = RGFormsModel::get_lead_field_value($lead, $field);
+  foreach ($content as $fieldID) {
+    if (isset($fieldData[$fieldID])) {
+      $field = $fieldData[$fieldID];
+      $value = RGFormsModel::get_lead_field_value($entry, $field);
 
-            if ($field->type != 'fileupload') {
-                $display_value = GFCommon::get_lead_field_display($field, $value, $lead['currency']);
-                $display_value = apply_filters('gform_entry_field_value', $display_value, $field, $lead, $form);
-            } else {
-                //display images in a grid
-                if ($value != '') {
-                    if ($field->multipleFiles) {
-                        if (!empty($value)) {
-                            $array = json_decode($value, true);
-                            $display_value = '';
-                            foreach ($array as $file) {
-                                $path = pathinfo($file);
-                                $ext = strtolower($path['extension']);
-                                $supported_image = array('gif', 'jpg', 'jpeg', 'png');
-                                if (in_array($ext, $supported_image)) {
-                                    $displayItem = '<img width="100px" src="' . legacy_get_resized_remote_image_url($file, 100, 100) . '" alt="" />';
-                                } else {
-                                    $displayItem = $path['basename'];
-                                }
-                                $display_value .= '<a href="' . $file . '" target="_blank">' . $displayItem . '</a><br/>';
-                            }
-                        }
-                    } else {
-                        $path = pathinfo($value);
-                        $ext = (isset($path['extension'])?strtolower($path['extension']):'');
-                        $supported_image = array('gif', 'jpg', 'jpeg', 'png');
-                        if (in_array($ext, $supported_image)) {
-                            $displayItem = '<img width="100px" src="' . legacy_get_resized_remote_image_url($value, 100, 100) . '" alt="" />';
-                        } else {
-                            $displayItem = $path['basename'];
-                        }
-                        $display_value = '<a href="' . $value . '" target="_blank">' . $displayItem . '</a>';
-                    }
+      if ($field->type != 'fileupload') {
+        $display_value = GFCommon::get_lead_field_display($field, $value, $entry['currency']);
+        $display_value = apply_filters('gform_entry_field_value', $display_value, $field, $entry, $form);
+      } else {
+        //display images in a grid
+        if ($value != '') {
+          if ($field->multipleFiles) {
+            if (!empty($value)) {
+              $array = json_decode($value, true);
+              $display_value = '';
+              foreach ($array as $file) {
+                $path = pathinfo($file);
+                $ext = strtolower($path['extension']);
+                $supported_image = array('gif', 'jpg', 'jpeg', 'png');
+                if (in_array($ext, $supported_image)) {
+                  $displayItem = '<img width="100px" src="' . legacy_get_resized_remote_image_url($file, 100, 100) . '" alt="" />';
                 } else {
-                    $display_value = '';
+                  $displayItem = $path['basename'];
                 }
+                $display_value .= '<a href="' . $file . '" target="_blank">' . $displayItem . '</a><br/>';
+              }
             }
+          } else {
+            $path = pathinfo($value);
+            $ext = (isset($path['extension']) ? strtolower($path['extension']) : '');
+            $supported_image = array('gif', 'jpg', 'jpeg', 'png');
+            if (in_array($ext, $supported_image)) {
+              $displayItem = '<img width="100px" src="' . legacy_get_resized_remote_image_url($value, 100, 100) . '" alt="" />';
+            } else {
+              $displayItem = $path['basename'];
+            }
+            $display_value = '<a href="' . $value . '" target="_blank">' . $displayItem . '</a>';
+          }
+        } else {
+          $display_value = '';
+        }
+      }
 
 
-            if ($display_empty_fields || !empty($display_value) || $display_value === '0') {
-                $display_value = empty($display_value) && $display_value !== '0' ? '&nbsp;' : $display_value;
-                if ($display === 'table') {
-                    $content = '
+      if ($display_empty_fields || !empty($display_value) || $display_value === '0') {
+        $display_value = empty($display_value) && $display_value !== '0' ? '&nbsp;' : $display_value;
+        if ($display === 'table') {
+          $content = '
                   <tr>
                      <td colspan="2" class="entry-view-field-name">' . esc_html(GFCommon::get_label($field)) . '</td>
                   </tr>
                   <tr>
                      <td colspan="2" class="entry-view-field-value">' . $display_value . '</td>
                   </tr>';
-                } else {
-                    $content = '<div style="' . ($field->cssClass === '' ? 'float:left;' : '') . 'padding:5px;margin:10px" class="' . $field['cssClass'] . '">' . esc_html(GFCommon::get_label($field)) . '<br/>' . $display_value . '</div>';
-                }
-                $content = apply_filters('gform_field_content', $content, $field, $value, $lead['id'], $form['id']);
-                $return .= $content;
-            }
+        } else {
+          $content = '<div style="' . ($field->cssClass === '' ? 'float:left;' : '') . 'padding:5px;margin:10px" class="' . $field['cssClass'] . '">' . esc_html(GFCommon::get_label($field)) . '<br/>' . $display_value . '</div>';
         }
+        $content = apply_filters('gform_field_content', $content, $field, $value, $entry['id'], $form['id']);
+        $return .= $content;
+      }
     }
-    if ($display === 'table')
-        $return .= '</table>';
-    if ($display === 'grid')
-        $return .= '<div class="clear"></div>';
+  }
+  if ($display === 'table')
+    $return .= '</table>';
+  if ($display === 'grid')
+    $return .= '<div class="clear"></div>';
 
-    return $return;
+  return $return;
 }
 
 function getmetaData($entry_id, $type = '') {
-    $return = '';
-    $metaData = mf_get_form_meta('entry_id', $entry_id);
+  $return = '';
+  $metaData = mf_get_form_meta('entry_id', $entry_id);
 
 
-    $formCount = 0;
-    foreach ($metaData as $data) {
-        $entry = GFAPI::get_entry($data->entry_id);
-        //check if entry-id is valid
-        if (is_array($entry)) {  //display entry data
-            $formPull = GFAPI::get_form($data->form_id);
-            if (!isset($formPull['form_type']))
-                $formPull['form_type'] = '';
-            /*
+  $formCount = 0;
+  foreach ($metaData as $data) {
+    $entry = GFAPI::get_entry($data->entry_id);
+    //check if entry-id is valid
+    if (is_array($entry)) {  //display entry data
+      $formPull = GFAPI::get_form($data->form_id);
+      if (!isset($formPull['form_type']))
+        $formPull['form_type'] = '';
+      /*
              * determine if we should display form data
              * If type = blank, display all forms but Payment type
              * If type = payments, only display forms with type of Payment
              */
-            if (($type == '' && $formPull['form_type'] != 'Payment') ||
-                    ($type == 'payments' && $formPull['form_type'] == 'Payment') ||
-                    ($type == 'payments' && $formPull['form_type'] == 'Invoice')
-            ) {
-                $formCount ++;
-                $formTable = '<table>';
+      if (($type == '' && $formPull['form_type'] != 'Payment') ||
+        ($type == 'payments' && $formPull['form_type'] == 'Payment') ||
+        ($type == 'payments' && $formPull['form_type'] == 'Invoice')
+      ) {
+        $formCount++;
+        $formTable = '<table>';
 
-                $count = 0;
-                $field_count = sizeof($formPull['fields']);
-                $has_product_fields = false;
-                foreach ($formPull['fields'] as $formFields) {
-                    $gwreadonly_enable = (isset($formFields['gwreadonly_enable']) ? $formFields['gwreadonly_enable'] : 0);
-                    //exclude page breaks and the entry fields used to verify the entry
-                    // and the display only fields from the additional forms
-                    if ($formFields['type'] != 'page' &&
-                            $formFields['inputName'] != 'entry-id' &&
-                            $formFields['inputName'] != 'contact-email' &&
-                            $gwreadonly_enable != 1) {
+        $count = 0;
+        $field_count = sizeof($formPull['fields']);
+        $has_product_fields = false;
+        foreach ($formPull['fields'] as $formFields) {
+          $gwreadonly_enable = (isset($formFields['gwreadonly_enable']) ? $formFields['gwreadonly_enable'] : 0);
+          //exclude page breaks and the entry fields used to verify the entry
+          // and the display only fields from the additional forms
+          if (
+            $formFields['type'] != 'page' &&
+            $formFields['inputName'] != 'entry-id' &&
+            $formFields['inputName'] != 'contact-email' &&
+            $gwreadonly_enable != 1
+          ) {
 
-                        $display_empty_fields = false;
+            $display_empty_fields = false;
 
-                        switch (RGFormsModel::get_input_type($formFields)) {
-                            case 'section' :
-                                if (!GFCommon::is_section_empty($formFields, $formPull, $entry) || $display_empty_fields) {
-                                    $count ++;
-                                    $is_last = $count >= $field_count ? true : false;
-                                    $formTable .= '
+            switch (RGFormsModel::get_input_type($formFields)) {
+              case 'section':
+                if (!GFCommon::is_section_empty($formFields, $formPull, $entry) || $display_empty_fields) {
+                  $count++;
+                  $is_last = $count >= $field_count ? true : false;
+                  $formTable .= '
                   <tr>
                     <td colspan="2" class="entry-view-section-break' . ($is_last ? ' lastrow' : '') . '">' . esc_html(GFCommon::get_label($formFields)) . '</td>
                   </tr>';
-                                }
-                                break;
+                }
+                break;
 
-                            case 'captcha':
-                            case 'html':
-                            case 'password':
-                            case 'page':
-                                //ignore captcha, html, password, page field
-                                break;
+              case 'captcha':
+              case 'html':
+              case 'password':
+              case 'page':
+                //ignore captcha, html, password, page field
+                break;
 
-                            default :
-                                //ignore product fields as they will be grouped together at the end of the grid
-                                if (GFCommon::is_product_field($formFields->type)) {
-                                    $has_product_fields = true;
-                                    //continue 2;
-                                    break;
-                                }
+              default:
+                //ignore product fields as they will be grouped together at the end of the grid
+                if (GFCommon::is_product_field($formFields->type)) {
+                  $has_product_fields = true;
+                  //continue 2;
+                  break;
+                }
 
-                                $value = RGFormsModel::get_lead_field_value($entry, $formFields);
-                                $display_value = GFCommon::get_lead_field_display($formFields, $value, $entry['currency']);
-                                $display_value = apply_filters('gform_entry_field_value', $display_value, $formFields, $entry, $formPull);
+                $value = RGFormsModel::get_lead_field_value($entry, $formFields);
+                $display_value = GFCommon::get_lead_field_display($formFields, $value, $entry['currency']);
+                $display_value = apply_filters('gform_entry_field_value', $display_value, $formFields, $entry, $formPull);
 
-                                if ($display_empty_fields || !empty($display_value) || $display_value === '0') {
-                                    $display_value = empty($display_value) && $display_value !== '0' ? '&nbsp;' : $display_value;
+                if ($display_empty_fields || !empty($display_value) || $display_value === '0') {
+                  $display_value = empty($display_value) && $display_value !== '0' ? '&nbsp;' : $display_value;
 
-                                    $content = '
+                  $content = '
                     <tr>
                       <td colspan="2" class="entry-view-field-name">' . esc_html(GFCommon::get_label($formFields)) . '</td>
                     </tr>
@@ -661,270 +666,165 @@ function getmetaData($entry_id, $type = '') {
                       <td colspan="2" class="entry-view-field-value">' . $display_value . '</td>
                     </tr>';
 
-                                    $content = apply_filters('gform_field_content', $content, $formFields, $value, $entry['id'], $formPull['id']);
-                                    $formTable .= $content;
-                                }
-                                break;
-                        }
-                    }
+                  $content = apply_filters('gform_field_content', $content, $formFields, $value, $entry['id'], $formPull['id']);
+                  $formTable .= $content;
                 }
-                if ($has_product_fields) {
-                    $format = 'html';
-                    $formTable .= GFCommon::get_submitted_pricing_fields($formPull, $entry, $format);
-                }
-
-                //display any payment notes
-                if(isset($data->lead_id)){
-                  $notes = RGFormsModel::get_lead_notes($data->lead_id);
-                  foreach ($notes as $note) {
-                      if ($note->user_name == 'PayPal') {
-                          $formTable .= '<tr><td colspan="2" class="entry-view-field-name">PayPal</td></tr>';
-                          $formTable .= '<tr><td colspan="2" class="entry-view-field-value">' .
-                                  esc_html(GFCommon::format_date($note->date_created, false)) . '<br/>' .
-                                  $note->value . '</td>' .
-                                  '</tr>';
-                      }
-                  }
-                }
-                $formTable .= '</table>';
-
-                //let's set up each form as it's own collapsible section
-                $return .= '<div class="panel-heading" id="headingOne">' .
-                        '<div class="row">' .
-                        '<div class="col-md-9">'
-                        . '<h3 class="panel-title">' . $formPull['title'] . '</h3>';
-                if (isset($entry['payment_status']) && $entry['payment_status'] != NULL) {
-                    $return .= '<br/>Status: ' . $entry['payment_status'] .
-                            ($entry['payment_amount'] != NULL ? ' (' . GFCommon::to_money($entry['payment_amount'], $entry['currency']) . ')' : '') .
-                            ($entry['payment_date'] != NULL ? ' - ' . $entry['payment_date'] : '');
-                }
-                $return .= '</div>' .
-                        '<div class="col-md-3">' .
-                        '<button type="button"   class="btn btn-info" data-toggle="collapse" data-target="#entr_' . $entry['id'] . '">Show/Hide Form Data</button>' .
-                        '</div>' .
-                        '</div>' . //close .row
-                        '<hr/>' .
-                        '</div>' . //close .panel-heading
-                        '<div id="entr_' . $entry['id'] . '" class="panel-collapse collapse" role="tabpanel">' .
-                        '<div class="panel-body">' . $formTable . '</div>' .
-                        '</div>'; //close panel-collapse
+                break;
             }
+          }
         }
+        if ($has_product_fields) {
+          $format = 'html';
+          $formTable .= GFCommon::get_submitted_pricing_fields($formPull, $entry, $format);
+        }
+
+        //display any payment notes
+        if (isset($data->lead_id)) {
+          $notes = RGFormsModel::get_lead_notes($data->lead_id);
+          foreach ($notes as $note) {
+            if ($note->user_name == 'PayPal') {
+              $formTable .= '<tr><td colspan="2" class="entry-view-field-name">PayPal</td></tr>';
+              $formTable .= '<tr><td colspan="2" class="entry-view-field-value">' .
+                esc_html(GFCommon::format_date($note->date_created, false)) . '<br/>' .
+                $note->value . '</td>' .
+                '</tr>';
+            }
+          }
+        }
+        $formTable .= '</table>';
+
+        //let's set up each form as it's own collapsible section
+        $return .= '<div class="panel-heading" id="headingOne">' .
+          '<div class="row">' .
+          '<div class="col-md-9">'
+          . '<h3 class="panel-title">' . $formPull['title'] . '</h3>';
+        if (isset($entry['payment_status']) && $entry['payment_status'] != NULL) {
+          $return .= '<br/>Status: ' . $entry['payment_status'] .
+            ($entry['payment_amount'] != NULL ? ' (' . GFCommon::to_money($entry['payment_amount'], $entry['currency']) . ')' : '') .
+            ($entry['payment_date'] != NULL ? ' - ' . $entry['payment_date'] : '');
+        }
+        $return .= '</div>' .
+          '<div class="col-md-3">' .
+          '<button type="button"   class="btn btn-info" data-toggle="collapse" data-target="#entr_' . $entry['id'] . '">Show/Hide Form Data</button>' .
+          '</div>' .
+          '</div>' . //close .row
+          '<hr/>' .
+          '</div>' . //close .panel-heading
+          '<div id="entr_' . $entry['id'] . '" class="panel-collapse collapse" role="tabpanel">' .
+          '<div class="panel-body">' . $formTable . '</div>' .
+          '</div>'; //close panel-collapse
+      }
     }
-    return array($return, $formCount);
+  }
+  return array($return, $formCount);
 }
 
 // this function returns all entries with a
 // meta key set to a certain meta value
 
 function mf_get_form_meta($meta_key, $meta_value) {
-    global $wpdb;
-    $table_name = 'wp_gf_entry_meta';
-    $entry = GFAPI::get_entry($meta_value);
+  global $wpdb;
+  $table_name = 'wp_gf_entry_meta';
+  $entry = GFAPI::get_entry($meta_value);
 
 
-    //retrieve the most current records for each additional form/entry id/form_id combination
-    $results = $wpdb->get_results($sql = $wpdb->prepare("SELECT * FROM {$table_name}
+  //retrieve the most current records for each additional form/entry id/form_id combination
+  $results = $wpdb->get_results($sql = $wpdb->prepare("SELECT * FROM {$table_name}
               WHERE meta_value=%d AND meta_key=%s
               order by id desc", $meta_value, $meta_key));
-    return $results;
+  return $results;
 }
 
 //retrieves resource and attribute information for the entry
-function entryResources($lead, $html=TRUE) {
-    global $wpdb;
+function entryResources($entry) {
+  $rmt_data       = GFRMTHELPER::rmt_get_entry_data($entry['id']);
+  $rmt_table_data = GFRMTHELPER::rmt_table_data();
 
-    $return_array = array('attributes' => array(), 'resources' => array(), 'attention' => array());
-    
-    //create JS array for item drop down and type drop down
-    $sql = "SELECT * FROM `wp_rmt_resource_categories` order by category ASC";
-    $results = $wpdb->get_results($sql);
-    $itemArr = array();
-    $itemDD = 'var itemDrop=[];';
-    foreach ($results as $result) {
-        $itemDD .= 'itemDrop[' . $result->ID . ']="' . addslashes($result->category) . '";';
+  $itemArr = $rmt_table_data['resource_categories'];
+  $typeArr = $rmt_table_data['resources'];
+  $attArr  = $rmt_table_data['attItems'];
+  $attnArr = $rmt_table_data['attnItems'];
 
-    }
+  //display resource data
+  $resourceDisp = '<table id="resTable"><thead>'
+    . ' <tr>'
+    . ' <th>Lock</th>'
+    . ' <th>Category</th>'
+    . ' <th>Resource</th>'
+    . ' <th>Qty</th>'
+    . ' <th>Comments</th>'
+    . ' <th>User</th>'
+    . ' <th>Last Updated</th>'
+    . ' <th><p class="addIcon" onclick="addRow(\'resource\','.$entry['id'].')"><i class="fa fa-circle-plus fa-lg"></i></p></th>'
+    . ' </tr></thead>';
+  $return = '';
+  $resourceDisp .= '<tbody>';
+  foreach ($rmt_data['resources'] as $data) {
+    $resourceDisp .= '<tr id="resRow' . $data['id'] . '">'
+      . ' <td class="lock"><span class="lockIcon" onclick="resAttLock(\'#resRow' . $data['id'] . '\',' . $data['lock'] . ')">' . ($data['lock'] == 1 ? '<i class="fas fa-lock fa-lg"></i>' : '<i class="fas fa-lock-open fa-lg"></i>') . '</span></td>'
+      . ' <td id="resitem_' . $data['id'] . '" data-itemID="' . $data['category_id'] . '">' . $data['category'] . '</td>'
+      . ' <td id="restype_' . $data['id'] . '" data-typeID="' . $data['resource_id'] . '" class="editable dropdown">' . $data['resource'] . '</td>'
+      . ' <td id="resqty_' . $data['id'] . '"  class="editable numeric">' . $data['qty'] . '</td>'
+      . ' <td id="rescomment_' . $data['id'] . '" class="editable textAreaEdit">' . $data['comment'] . '</td>'
+      . ' <td id="resuser_' . $data['id'] . '">' . $data['user'] . '</td>'
+      . ' <td id="resdateupdate_' . $data['id'] . '">' . $data['last_updated']
+      . '</td>'
+      . ' <td class="delete"><span class="delIcon" onclick="resAttDelete(\'#resRow' . $data['id'] . '\')"><i class="fa fa-circle-minus fa-lg"></i></span></td>'
+      . ' </tr>';
+  }
+  $resourceDisp .= '</tbody>';
+  $resourceDisp .= '</table>';
 
-    //build Item to type drop down array
-    $sql = "SELECT wp_rmt_resource_categories.ID as item_id, wp_rmt_resource_categories.category as item, wp_rmt_resources.ID as type_id, wp_rmt_resources.type FROM `wp_rmt_resource_categories` right outer join wp_rmt_resources on wp_rmt_resource_categories.ID= wp_rmt_resources.resource_category_id ORDER BY `wp_rmt_resource_categories`.`category` ASC, type ASC";
-    $results = $wpdb->get_results($sql);
-    $itemArr = array();
-    foreach ($results as $result) {
-        $itemArr[$result->item_id] = $result->item;
-        $typeArr[$result->item_id][$result->type_id] = $result->type;
-    }
-    
-    //gather resource data
-    $sql = "SELECT er.*, type, wp_rmt_resource_categories.category as item, wp_rmt_resource_categories.ID as item_id,"
-            . "er.update_Stamp as dateUpdated "
-            . "FROM `wp_rmt_entry_resources` er, wp_rmt_resources, wp_rmt_resource_categories "
-            . "where er.resource_id = wp_rmt_resources.ID "
-            . "and resource_category_id = wp_rmt_resource_categories.ID  "
-            . "and er.entry_id = " . $lead['id'] . " order by item ASC, type ASC";
+  //display attribute data    
+  $attDisp = '<table id="attTable"><thead><tr>'
+    . ' <th>Attribute</th>'
+    . ' <th>Value</th>'
+    . ' <th>Comment</th>'
+    . ' <th>User</th>'
+    . ' <th>Last Updated</th>'
+    . ' <th><span class="addIcon" onclick="addRow(\'attribute\')"><i class="fa fa-circle-plus fa-lg"></i></span></th></tr></thead>';
+  $attDisp .= '<tbody>';
 
-    $results = $wpdb->get_results($sql);
-    $resourceDisp = '<table id="resTable"><thead>'
-            . ' <tr>'
-            . ' <th>Lock</th>'
-            . ' <th>Item</th>'
-            . ' <th>Type</th>'
-            . ' <th>Qty</th>'
-            . ' <th>Comments</th>'
-            . ' <th>User</th>'
-            . ' <th>Last Updated</th>'
-            . ' <th><p class="addIcon" onclick="addRow(\'resource\')"><i class="fa fa-circle-plus fa-lg"></i></p></th>'
-            . ' </tr></thead>';
-    $return = '';
-    $resourceDisp .= '<tbody>';
-    foreach ($results as $result) {
-        if ($result->user == NULL) {
-            $dispUser = 'Initial';
-        } elseif ($result->user == 0) {
-            $dispUser = 'Payment';
-        } else {
-            $userInfo = get_userdata($result->user);
-            $dispUser = $userInfo->display_name;
-        }
+  foreach ($rmt_data['attributes'] as $data) {
+    $attDisp .= '<tr id="attRow' . $data['id'] . '">'
+      . ' <td id="attcategory_' . $data['id'] . '">' . $data['attribute'] . '</td>'
+      . ' <td id="attvalue_' . $data['id'] . '" class="editable textAreaEdit">' . $data['value'] . '</td>'
+      . ' <td id="attcomment_' . $data['id'] . '" class="editable textAreaEdit">' . $data['comment'] . '</td>'
+      . ' <td id="attuser_' . $data['id'] . '">' . $data['user'] . '</td>'
+      . ' <td id="attdateupdate_' . $data['id'] . '">' . $data['last_updated'] . '</td>'
+      . ' <td class="delete"><span class="delIcon" onclick="resAttDelete(\'#attRow' . $data['id'] . '\')"><i class="fa fa-circle-minus fa-lg"></i></span></td></tr>';
+  }
+  $attDisp .= '</tbody>';
+  $attDisp .= '</table>';
 
-        $update_stamp = esc_html(GFCommon::format_date($result->dateUpdated, false, 'm/d/y h:i a'));
-        $return_array['resources'][] = array(
-          'id'            => 'resRow'.$result->ID,
-          'lock'          => '<span class="lockIcon" onclick="resAttLock(\'resRow' . $result->ID . '\',' . $result->lockBit . ')">' 
-                                . ($result->lockBit == 1 ? '<i class="bi bi-lock-fill"></i>' : '<i class="bi bi-unlock-fill"></i>') 
-                            . '</span>',
-          'item'          => $result->item,
-          'type'          => $result->type,'qty'=>$result->qty,
-          'comments'      => $result->comment,
-          'user'          => $dispUser,
-          'last updated'  => $update_stamp,
-          'update'        => '<span onclick="resAttDelete(\'resRow' . $result->ID . '\','.$lead['id'].')"><i class="bi bi-dash-circle""></i></span>'          
-        );
-        $resourceDisp .= '<tr id="resRow' . $result->ID . '">'
-                . ' <td class="lock"><span class="lockIcon" onclick="resAttLock(\'#resRow' . $result->ID . '\',' . $result->lockBit . ')">' . ($result->lockBit == 1 ? '<i class="fa fa-lock fa-lg"></i>' : '<i class="fa fa-lock-open fa-lg"></i>') . '</span></td>'
-                . ' <td id="resitem_' . $result->ID . '" data-itemID="' . $result->item_id . '">' . $result->item . '</td>'
-                . ' <td id="restype_' . $result->ID . '" data-typeID="' . $result->resource_id . '" class="editable dropdown">' . $result->type . '</td>'
-                . ' <td id="resqty_' . $result->ID . '"  class="editable numeric">' . $result->qty . '</td>'
-                . ' <td id="rescomment_' . $result->ID . '" class="editable textAreaEdit">' . $result->comment . '</td>'
-                . ' <td id="resuser_' . $result->ID . '">' . $dispUser . '</td>'
-                . ' <td id="resdateupdate_' . $result->ID . '">' . $update_stamp
-                . '</td>'
-                . ' <td class="delete"><span class="delIcon" onclick="resAttDelete(\'#resRow' . $result->ID . '\')"><i class="fa fa-circle-minus fa-lg"></i></span></td>'
-                . ' </tr>';
-    }
-    $resourceDisp .= '</tbody>';
-    $resourceDisp .= '</table>';
+  //build attention section        
+  $attnDisp = '<table id="attnTable"><thead><tr>'
+    . ' <th>Attention</th>'
+    . ' <th>Comment</th>'
+    . ' <th>User</th>'
+    . ' <th>Last Updated</th>'
+    . ' <th><span onclick="addRow(\'attention\')"><i class="fa fa-circle-plus"></i></span></th></tr></thead>';
+  $attnDisp .= '<tbody>';
+  
+  foreach ($rmt_data['attention'] as $data) {
+    $attnDisp .= '<tr id="attnRow' . $data['id'] . '">'
+      . ' <td id="attnvalue_' . $data['id'] . '">' . $data['attention'] . '</td>'
+      . ' <td id="attncomment_' . $data['id'] . '" class="editable textAreaEdit">' . $data['comment'] . '</td>'
+      . ' <td id="attnuser_' . $data['id'] . '">' . $data['user'] . '</td>'
+      . ' <td id="attndateupdate_' . $data['id'] . '">' . $data['last_updated'] . '</td>'
+      . ' <td><span onclick="resAttDelete(\'#attnRow' . $data['id'] . '\')"><i class="fa fa-circle-minus"></i></span></td></tr>';
+  }
+  $attnDisp .= '</tbody>';
+  $attnDisp .= '</table>';
 
-    //gather attribute data
-    $sql = "SELECT wp_rmt_entry_attributes.*, wp_rmt_entry_attributes.update_stamp as dateUpdated, attribute_id,value,wp_rmt_entry_att_categories.category
-          FROM `wp_rmt_entry_attributes`, wp_rmt_entry_att_categories
-          where attribute_id = wp_rmt_entry_att_categories.ID
-          and entry_id = " . $entry_id = $lead['id'] . " order by category";
-
-    $results = $wpdb->get_results($sql);
-    $attDisp = '<table id="attTable"><thead><tr>'            
-            . ' <th>Attribute</th>'
-            . ' <th>Value</th>'
-            . ' <th>Comment</th>'
-            . ' <th>User</th>'
-            . ' <th>Last Updated</th>'
-            . ' <th><span class="addIcon" onclick="addRow(\'attribute\')"><i class="fa fa-circle-plus fa-lg"></i></span></th></tr></thead>';
-    $attDisp .= '<tbody>';
-    foreach ($results as $result) {
-        if ($result->user == NULL) {
-            $dispUser = 'Initial';
-        } elseif ($result->user == 0) {
-            $dispUser = 'Payment';
-        } else {
-            $userInfo = get_userdata($result->user);
-            $dispUser = $userInfo->display_name;
-        }
-        $update_stamp = esc_html(GFCommon::format_date($result->dateUpdated, false, 'm/d/y h:i a'));
-        $return_array['attributes'][] =array(        
-            'id'          => 'attRow' . $result->ID,    
-            'attribute'   => $result->category,
-            'value'       => $result->value,
-            'comment'     => $result->comment,
-            'user'        => $dispUser,
-            'last updated'=> $update_stamp,
-            'delete'      => '<span onclick="resAttDelete(\'attRow' . $result->ID . '\','.$lead['id'].')"><i class="bi bi-dash-circle""></i></span>'
-          );
-        $attDisp .= '<tr id="attRow' . $result->ID . '">'             
-                . ' <td id="attcategory_' . $result->ID . '">' . $result->category . '</td>'
-                . ' <td id="attvalue_' . $result->ID . '" class="editable textAreaEdit">' . $result->value . '</td>'
-                . ' <td id="attcomment_' . $result->ID . '" class="editable textAreaEdit">' . $result->comment . '</td>'
-                . ' <td id="attuser_' . $result->ID . '">' . $dispUser . '</td>'
-                . ' <td id="attdateupdate_' . $result->ID . '">' . $update_stamp . '</td>'
-                . ' <td class="delete"><span class="delIcon" onclick="resAttDelete(\'#attRow' . $result->ID . '\')"><i class="fa fa-circle-minus fa-lg"></i></span></td></tr>';
-    }
-    $attDisp .= '</tbody>';
-    $attDisp .= '</table>';
-
-    //build attribute drop down values
-    //build Item to type drop down array
-    $sql = "SELECT ID, category FROM wp_rmt_entry_att_categories";
-    $results = $wpdb->get_results($sql);
-    $attArr = array();
-    foreach ($results as $result) {
-        $attArr[] = array('key' => $result->ID, 'value' => $result->category);
-    }
-
-    //build attention section
-    $attnDisp = '';
-    $sql = "SELECT wp_rmt_entry_attn.*, wp_rmt_attn.value, wp_rmt_entry_attn.update_Stamp as dateUpdated 
-            FROM `wp_rmt_entry_attn`, wp_rmt_attn
-            where wp_rmt_entry_attn.attn_id = wp_rmt_attn.ID
-            and entry_id = " . $lead['id'] . " order by wp_rmt_attn.value";
-
-    $results = $wpdb->get_results($sql);
-    $attnDisp = '<table id="attnTable"><thead><tr>'
-            . ' <th>Attention</th>'
-            . ' <th>Comment</th>'
-            . ' <th>User</th>'
-            . ' <th>Last Updated</th>'
-            . ' <th><span onclick="addRow(\'attention\')"><i class="fa fa-circle-plus"></i></span></th></tr></thead>';
-    $attnDisp .= '<tbody>';
-    foreach ($results as $result) {
-        if ($result->user == NULL) {
-            $dispUser = 'Initial';
-        } else {
-            $userInfo = get_userdata($result->user);
-            $dispUser = $userInfo->display_name;
-        }
-        $update_stamp = esc_html(GFCommon::format_date($result->dateUpdated, false, 'm/d/y h:i a'));
-        $return_array['attention'][] =array(     
-            'id'          => 'attnRow' . $result->ID,       
-            'attention'   => $result->value,
-            'comment'     => $result->comment,
-            'user'        => $dispUser,
-            'last_updated'=> $update_stamp,
-            'delete'      => '<span onclick="resAttDelete(\'attnRow' . $result->ID . '\','.$lead['id'].')"><i class="bi bi-dash-circle""></i></span>'
-          );            
-        $attnDisp .= '<tr id="attnRow' . $result->ID . '">'
-                . ' <td id="attnvalue_' . $result->ID . '">' . $result->value . '</td>'
-                . ' <td id="attncomment_' . $result->ID . '" class="editable textAreaEdit">' . $result->comment . '</td>'
-                . ' <td id="attnuser_' . $result->ID . '">' . $dispUser . '</td>'
-                . ' <td id="attndateupdate_' . $result->ID . '">' . $update_stamp . '</td>'
-                . ' <td><span onclick="resAttDelete(\'#attnRow' . $result->ID . '\')"><i class="fa fa-circle-minus"></i></span></td></tr>';
-    }
-    $attnDisp .= '</tbody>';
-    $attnDisp .= '</table>';
-
-    //build attention drop down values
-    $sql = "SELECT ID, value FROM wp_rmt_attn";
-    $results = $wpdb->get_results($sql);
-    $attnArr = array();
-    foreach ($results as $result) {
-        $attnArr[] = array('key' => $result->ID, 'value' => $result->value);
-    }
-    $return = '
+  $return = '
   <script>
     //store items as JS object
     var items = [];';
-    foreach ($itemArr as $itemKey => $item) {
-        $return .= 'items.push({"key":' . $itemKey . ',"value": "' . $item . '"});';
-    }
-    $return .= '
+  foreach ($itemArr as $itemKey => $item) {
+    $return .= 'items.push({"key":' . $itemKey . ',"value": "' . $item . '"});';
+  }
+  $return .= '
     var types      = ' . json_encode($typeArr) . ';
     var attributes = ' . json_encode($attArr) . ';
     var attention  = ' . json_encode($attnArr) . ';
@@ -933,85 +833,82 @@ function entryResources($lead, $html=TRUE) {
     <div class="panel panel-default">
       <div class="panel-heading" id="headingOne">
         <h4 class="panel-title">
-          <a class="accordion-toggle" data-toggle="collapse" href="#collapseOne">Resources</a>
+          Resources
         </h4>
       </div>
-      <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel">
+      <div id="collapseOne" class="panel-collapse" role="tabpanel">
         <div class="panel-body">' . $resourceDisp . '</div>
       </div>
     </div>
     <div class="panel panel-default">
       <div class="panel-heading" id="headingTwo">
         <h4 class="panel-title">
-          <a class="accordion-toggle" data-toggle="collapse" href="#collapseTwo">Attributes</a>
+          Attributes
         </h4>
       </div>
-      <div id="collapseTwo" class="panel-collapse collapse in" role="tabpanel">
+      <div id="collapseTwo" class="panel-collapse" role="tabpanel">
         <div class="panel-body">' . $attDisp . '</div>
       </div>
     </div>
     <div class="panel panel-default">
       <div class="panel-heading" id="headingTwo">
         <h4 class="panel-title">
-          <a class="accordion-toggle" data-toggle="collapse" href="#collapseThree">Attention</a>
+          Attention
         </h4>
       </div>
-      <div id="collapseThree" class="panel-collapse collapse in" role="tabpanel">
+      <div id="collapseThree" class="panel-collapse" role="tabpanel">
         <div class="panel-body">' . $attnDisp . '</div>
       </div>
     </div>
   </div>';
-  
-  if(!$html){
-    return $return_array;
-  }
-    return $return;
+
+  return $return;
 }
 
-function entryTicketing($lead, $format = 'admin') {
-    global $wpdb;
-    $return = '';
-    $entry_id = $lead['id'];
-    
-    $sql = 'select eb_entry_access_code.*, eb_eventToTicket.title, eb_eventToTicket.subtitle,'
-            . ' (SELECT EB_event_id FROM `eb_event` where eb_event.ID = eb_eventToTicket.eventID) as event_id'
-            . ' from eb_entry_access_code,eb_eventToTicket'
-            . ' where eb_eventToTicket.ID=eb_entry_access_code.EBticket_id'
-            . ' and entry_id = ' . $entry_id . ' order by eb_eventToTicket.disp_order';
+function entryTicketing($entry, $format = 'admin') {
+  global $wpdb;
+  $return = '';
+  $entry_id = $entry['id'];
 
-    $results = $wpdb->get_results($sql);
-    if ($wpdb->num_rows > 0) {
-        $attnArr = array();
-        //determine output format
-        if ($format == 'MAT') {  //return data
-            $return = array();
-            foreach ($results as $result) {
-                if ($result->hidden == 0) {
-                    $return[] = array('title' => $result->title, 'subtitle' => $result->subtitle, 'link' => 'https://www.eventbrite.com/e/' . $result->event_id . '?discount=' . $result->access_code);
-                }
-            }
-        } else {
-            //admin format
-            $return = '<table>'
-                    . '  <thead>'
-                    . '    <th>Access Code</th>'
-                    . '    <th></th>'
-                    . '    <th>Show to Maker</th>'
-                    . '  </thead>';
+  $sql = 'select eb_entry_access_code.*, eb_eventToTicket.title, eb_eventToTicket.subtitle,'
+    . ' (SELECT EB_event_id FROM `eb_event` where eb_event.ID = eb_eventToTicket.eventID) as event_id'
+    . ' from eb_entry_access_code,eb_eventToTicket'
+    . ' where eb_eventToTicket.ID=eb_entry_access_code.EBticket_id'
+    . ' and entry_id = ' . $entry_id . ' order by eb_eventToTicket.disp_order';
 
-            foreach ($results as $result) {
-                $return .= '<tr>';
-                $return .= '<td><a target="_blank" href="https://www.eventbrite.com/e/' . $result->event_id . '?discount=' . $result->access_code . '">' . $result->access_code . '</a></td>';
-                $return .= '<td><h4>' . $result->title . '</h4>' . $result->subtitle . '</td>';
-                $return .= '<td><p class="' . ($result->hidden == 0 ? 'checked' : '') . '" id="HT' . $result->access_code . '" onclick="hiddenTicket(\'' . $result->access_code . '\')">';
-                $return .= '<i class="' . ($result->hidden == 0 ? 'fa fa-check-' : '') . 'far fa-square-o" aria-hidden="true"></i>';
-
-                $return .= '</p></td>';
-                $return .= '</tr>';
-            }
-            $return .= '</table>';
+  $results = $wpdb->get_results($sql);
+  if ($wpdb->num_rows > 0) {
+    $attnArr = array();
+    //determine output format
+    if ($format == 'MAT') {  //return data
+      $return = array();
+      foreach ($results as $result) {
+        if ($result->hidden == 0) {
+          $return[] = array('title' => $result->title, 'subtitle' => $result->subtitle, 'link' => 'https://www.eventbrite.com/e/' . $result->event_id . '?discount=' . $result->access_code);
         }
-    }
+      }
+    } else {
+      //admin format
+      $return = '<table>'
+        . '  <thead>'
+        . '    <th>Access Code</th>'
+        . '    <th></th>'
+        . '    <th>Show to Maker</th>'
+        . '  </thead>';
 
-    return $return;
+      foreach ($results as $result) {
+        $return .= '<tr>';
+        $return .= '<td><a target="_blank" href="https://www.eventbrite.com/e/' . $result->event_id . '?discount=' . $result->access_code . '">' . $result->access_code . '</a></td>';
+        $return .= '<td><h4>' . $result->title . '</h4>' . $result->subtitle . '</td>';
+        $return .= '<td><p class="' . ($result->hidden == 0 ? 'checked' : '') . '" id="HT' . $result->access_code . '" onclick="hiddenTicket(\'' . $result->access_code . '\')">';
+        $return .= '<i class="' . ($result->hidden == 0 ? 'fa fa-check-' : '') . 'far fa-square-o" aria-hidden="true"></i>';
+
+        $return .= '</p></td>';
+        $return .= '</tr>';
+      }
+      $return .= '</table>';
+    }
+  }
+
+  return $return;
 }
