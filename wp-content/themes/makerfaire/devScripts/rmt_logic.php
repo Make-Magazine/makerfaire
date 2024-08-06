@@ -58,6 +58,8 @@ while ($row = $result->fetch_array(MYSQLI_ASSOC)) {
         'rmt_field_value'   => $row['rmt_field_value']
     );
 }
+//need to write the final rule
+$writeRule[$save_rule] = $ruleArray;
 
 ?>
 <!doctype html>
@@ -253,6 +255,7 @@ while ($row = $result->fetch_array(MYSQLI_ASSOC)) {
                 }
             }
 
+            //after 
 
             ?>
         </table>
