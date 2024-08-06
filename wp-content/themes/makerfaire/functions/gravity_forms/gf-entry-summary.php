@@ -737,8 +737,6 @@ function mf_get_form_meta($meta_key, $meta_value) {
 
 //retrieves resource and attribute information for the entry
 function entryResources($entry) {
-  global $wpdb;  
-
   $rmt_data       = GFRMTHELPER::rmt_get_entry_data($entry['id']);
   $rmt_table_data = GFRMTHELPER::rmt_table_data();
 
@@ -757,7 +755,7 @@ function entryResources($entry) {
     . ' <th>Comments</th>'
     . ' <th>User</th>'
     . ' <th>Last Updated</th>'
-    . ' <th><p class="addIcon" onclick="addRow(\'resource\')"><i class="fa fa-circle-plus fa-lg"></i></p></th>'
+    . ' <th><p class="addIcon" onclick="addRow(\'resource\','.$entry['id'].')"><i class="fa fa-circle-plus fa-lg"></i></p></th>'
     . ' </tr></thead>';
   $return = '';
   $resourceDisp .= '<tbody>';

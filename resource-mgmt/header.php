@@ -8,7 +8,7 @@ $my_version = $my_theme->get('Version');
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>MakerFaire Resource Management Tool</title>
+	<title>Maker Faire Reporting Tool</title>
 
 	<!-- Bootstrap -->
 	<link href="/wp-content/themes/makerfaire/css/bootstrap.min.css" rel="stylesheet">
