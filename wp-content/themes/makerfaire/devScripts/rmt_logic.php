@@ -30,6 +30,7 @@ $sql =  'SELECT wp_rmt_rules.id as rule, wp_mf_form_types.form_type, rmt_field, 
 
 $mysqli->query("SET NAMES 'utf8'");
 $result = $mysqli->query($sql) or trigger_error($mysqli->error . "[$sql]");
+
 $save_rule = '';
 $ruleArray = array();
 $writeRule = array();
@@ -38,7 +39,9 @@ while ($row = $result->fetch_array(MYSQLI_ASSOC)) {
     if ($save_rule == '')  $save_rule = $row['rule'];
 
     //if form_type is set is set in the rule, we need to show who to apply to
+    
     if ($row['rule'] != $save_rule && !empty($ruleArray)) {
+        
         //write array        
         $writeRule[$save_rule] = $ruleArray;
 
@@ -57,7 +60,10 @@ while ($row = $result->fetch_array(MYSQLI_ASSOC)) {
         'rmt_field_text'    => $row['rmt_field_text'],
         'rmt_field_value'   => $row['rmt_field_value']
     );
+    
 }
+array_push($writeRule, $ruleArray);
+//error_log(print_r($writeRule, TRUE));
 
 ?>
 <!doctype html>
@@ -161,6 +167,7 @@ while ($row = $result->fetch_array(MYSQLI_ASSOC)) {
             $row_color = '';
             // Loop through the posts
             foreach ($writeRule as $rule) {
+                //var_dump($rule);
                 $output = '';
 
                 //first if the form ID is set, let's ensure that the rule even applies to this form
