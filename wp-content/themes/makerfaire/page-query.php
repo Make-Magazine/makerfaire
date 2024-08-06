@@ -44,7 +44,12 @@ $type  = ( ! empty( $_REQUEST['type'] ) ? sanitize_text_field( $_REQUEST['type']
 $faire = ( ! empty( $_REQUEST['faire'] ) ? sanitize_text_field( $_REQUEST['faire'] ) : null );
 
 //check if this is an allowed type
-if ( ! in_array( $type, $allowed_types ) ) {
+if ( empty( $type ) ) {
+	header( 'HTTP/1.0 403 Forbidden' );
+
+	echo '<h2>Invalid: Type</h2>';
+	return;	
+}elseif ( ! in_array( $type, $allowed_types ) ) {
 	header( 'HTTP/1.0 403 Forbidden' );
 
 	echo '<h2>Invalid: Parameter Not Valid - "' . esc_html( $_REQUEST['type'] ) . '"</h2>';
@@ -62,16 +67,6 @@ if ( ! in_array( $type, $allowed_types ) ) {
 	header( 'HTTP/1.0 403 Forbidden' );
 
 	echo '<h2>Invalid: Parameter Not Valid - "' . esc_html( $_REQUEST['key'] ) . '"</h2>';
-	return;
-} elseif ( empty( $type ) ) {
-	header( 'HTTP/1.0 403 Forbidden' );
-
-	echo '<h2>Invalid: Type</h2>';
-	return;
-} elseif ( ! in_array( $type, $allowed_types ) ) {
-	header( 'HTTP/1.0 403 Forbidden' );
-
-	echo '<h2>Invalid: Parameter Not Valid - "' . esc_html( $_REQUEST['type'] ) . '"</h2>';
 	return;
 } elseif ( empty( $faire ) ) {
 	header( 'HTTP/1.0 403 Forbidden' );
