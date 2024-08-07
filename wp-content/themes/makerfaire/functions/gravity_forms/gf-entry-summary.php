@@ -769,7 +769,7 @@ function entryResources($entry) {
       . ' <td id="resuser_' . $data['id'] . '">' . $data['user'] . '</td>'
       . ' <td id="resdateupdate_' . $data['id'] . '">' . $data['last_updated']
       . '</td>'
-      . ' <td class="delete"><span class="delIcon" onclick="resAttDelete(\'#resRow' . $data['id'] . '\')"><i class="fa fa-circle-minus fa-lg"></i></span></td>'
+      . ' <td class="delete"><span class="delIcon" onclick="resAttDelete(\'resRow' . $data['id'] . '\', \'' . $entry['id'] . '\')"><i class="fa fa-circle-minus fa-lg"></i></span></td>'
       . ' </tr>';
   }
   $resourceDisp .= '</tbody>';
@@ -782,7 +782,7 @@ function entryResources($entry) {
     . ' <th>Comment</th>'
     . ' <th>User</th>'
     . ' <th>Last Updated</th>'
-    . ' <th><span class="addIcon" onclick="addRow(\'attribute\')"><i class="fa fa-circle-plus fa-lg"></i></span></th></tr></thead>';
+    . ' <th><span class="addIcon" onclick="addRow(\'attribute\','.$entry['id'].')"><i class="fa fa-circle-plus fa-lg"></i></span></th></tr></thead>';
   $attDisp .= '<tbody>';
 
   foreach ($rmt_data['attributes'] as $data) {
@@ -792,7 +792,7 @@ function entryResources($entry) {
       . ' <td id="attcomment_' . $data['id'] . '" class="editable textAreaEdit">' . $data['comment'] . '</td>'
       . ' <td id="attuser_' . $data['id'] . '">' . $data['user'] . '</td>'
       . ' <td id="attdateupdate_' . $data['id'] . '">' . $data['last_updated'] . '</td>'
-      . ' <td class="delete"><span class="delIcon" onclick="resAttDelete(\'#attRow' . $data['id'] . '\')"><i class="fa fa-circle-minus fa-lg"></i></span></td></tr>';
+      . ' <td class="delete"><span class="delIcon" onclick="resAttDelete(\'attRow' . $data['id'] . '\')"><i class="fa fa-circle-minus fa-lg"></i></span></td></tr>';
   }
   $attDisp .= '</tbody>';
   $attDisp .= '</table>';
@@ -803,7 +803,7 @@ function entryResources($entry) {
     . ' <th>Comment</th>'
     . ' <th>User</th>'
     . ' <th>Last Updated</th>'
-    . ' <th><span onclick="addRow(\'attention\')"><i class="fa fa-circle-plus"></i></span></th></tr></thead>';
+    . ' <th><span onclick="addRow(\'attention\','.$entry['id'].')"><i class="fa fa-circle-plus fa-lg"></i></span></th></tr></thead>';
   $attnDisp .= '<tbody>';
   
   foreach ($rmt_data['attention'] as $data) {
@@ -812,11 +812,12 @@ function entryResources($entry) {
       . ' <td id="attncomment_' . $data['id'] . '" class="editable textAreaEdit">' . $data['comment'] . '</td>'
       . ' <td id="attnuser_' . $data['id'] . '">' . $data['user'] . '</td>'
       . ' <td id="attndateupdate_' . $data['id'] . '">' . $data['last_updated'] . '</td>'
-      . ' <td><span onclick="resAttDelete(\'#attnRow' . $data['id'] . '\')"><i class="fa fa-circle-minus"></i></span></td></tr>';
+      . ' <td><span onclick="resAttDelete(\'attnRow' . $data['id'] . '\')"><i class="fa fa-circle-minus fa-lg"></i></span></td></tr>';
   }
   $attnDisp .= '</tbody>';
   $attnDisp .= '</table>';
 
+  // this output won't work for vue, which will get these same values from the rmt object
   $return = '
   <script>
     //store items as JS object
@@ -829,6 +830,9 @@ function entryResources($entry) {
     var attributes = ' . json_encode($attArr) . ';
     var attention  = ' . json_encode($attnArr) . ';
   </script>
+
+
+
   <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
     <div class="panel panel-default">
       <div class="panel-heading" id="headingOne">

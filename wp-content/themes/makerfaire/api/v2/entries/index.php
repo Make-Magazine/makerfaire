@@ -22,6 +22,16 @@ $form = (!empty($_REQUEST['form']) ? sanitize_text_field($_REQUEST['form']) : fa
 // Double check again we have requested this file
 if ($type == 'entries') {
   $data = getAllEntries($form);
+
+  //RMT values for adding new resources, attributes, and attention items - this will be used by Vue
+  $all_rmt = GFRMTHELPER::rmt_table_data();
+  $data['rmt'] = array(
+    'res_items'       => $all_rmt['resource_categories'],
+    'res_types'       => $all_rmt['resources'],
+    'att_items'       => $all_rmt['attItems'],
+    'attn_items'      => $all_rmt['attnItems']
+  );  
+  
  
   // Output the JSON
   echo json_encode($data);
@@ -313,7 +323,7 @@ function fieldOutput($fieldID, $entry, $field_array, $form, $arg = '') {
           $label = '';          
           $value   = '<div id="rmt'.$entry['id'].'">'.entryResources($entry).'</div>';          
         }  
-        break;          
+        break;      
       case 'notes':
         if (current_user_can('notes_view')) {
           $type  = 'notes';
