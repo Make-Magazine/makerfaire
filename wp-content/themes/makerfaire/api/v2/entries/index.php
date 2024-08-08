@@ -1,51 +1,67 @@
 <?php
-
 /**
- * v2 of the Maker Faire API - MAP
- *
- * This is the call for the API to handle map data for faires.
- *
- * This page specifically handles the Faire map location data.
- *
+ * v2 of the Maker Faire API
+ *    This API returns entry data by form
  * @version 2.0
- *
- * Read from location_elements
  */
 
 // Stop any direct calls to this file
 defined('ABSPATH') or die('This file cannot be called directly!');
 
-$type = (!empty($_REQUEST['type']) ? sanitize_text_field($_REQUEST['type']) : null);
-$form = (!empty($_REQUEST['form']) ? sanitize_text_field($_REQUEST['form']) : false);
+$type   = (!empty($_REQUEST['type']) ? sanitize_text_field($_REQUEST['type']) : null);
+$formID = (!empty($_REQUEST['form']) ? sanitize_text_field($_REQUEST['form']) : false);
 
+//set the users edit capabilities
+$edit_fee_mgmt        = (current_user_can('edit_fee_mgmt')        ? 'edit' : 'view');
+$edit_entry_type      = (current_user_can('edit_entry_type')      ? 'edit' : 'view');
+$edit_prelim_loc      = (current_user_can('edit_prelim_loc')      ? 'edit' : 'view');
+$edit_flags           = (current_user_can('edit_flags')           ? 'edit' : 'view');
+$edit_status          = (current_user_can('edit_status')          ? true : false);
+$notes_view           = (current_user_can('notes_view')           ? true : false);
+$notes_send           = (current_user_can('notes_send')           ? true : false);
+$notifications_resend = (current_user_can('notifications_resend') ? true : false);
+$view_notifications   = (current_user_can('view_notifications')   ? true : false);
+$view_rmt             = (current_user_can('view_rmt')             ? true : false);
+
+//set global data
+$form     = GFAPI::get_form($formID);
+$field303 = RGFormsModel::get_field($form, '303');
+$all_rmt  = GFRMTHELPER::rmt_table_data();
 
 // Double check again we have requested this file
-if ($type == 'entries') {
-  $data = getAllEntries($form);
- 
+if ($type == 'entries' && $formID) {
+  $data = getAllEntries($formID);
+
+  //RMT values for adding new resources, attributes, and attention items - this will be used by Vue  
+  $data['rmt'] = array(
+    'res_items'       => $all_rmt['resource_categories'],
+    'res_types'       => $all_rmt['resources'],
+    'att_items'       => $all_rmt['attItems'],
+    'attn_items'      => $all_rmt['attnItems']
+  );      
+  
   // Output the JSON
   echo json_encode($data);
 
   exit;
 }
 
-function getAllEntries($formID = '', $page = '', $years = '') {
+function getAllEntries($formID = '') {
   $return = array();
+  global $form;
 
+  //get all active entries in this form
   $search_criteria = array('status' => 'active');
   $sorting         = array();
   $paging          = array('offset' => 0, 'page_size' => 999);
   $total_count     = 0;
-  $entries         = GFAPI::get_entries($formID, $search_criteria, $sorting, $paging, $total_count);
-  $form            = GFAPI::get_form($formID);
+  $entries         = GFAPI::get_entries($formID, $search_criteria, $sorting, $paging, $total_count);  
 
-  //convert this into a usable array
+  //convert the form fields into a usable array
   $field_array = array();
   foreach ($form['fields'] as $field) {
     $field_array[$field['id']] = $field;
   }
-
-  $data = array();
 
   //pull admin review layout file
   $file = file_get_contents(ABSPATH . "/review/templates/admin_review.txt");
@@ -89,6 +105,22 @@ function getAllEntries($formID = '', $page = '', $years = '') {
   }
 
   foreach ($entries as $entry) {
+    //modify the data
+    //if group, use the group name, else use the main contact name
+    if (strpos($entry['105'], 'group')  !== false) {
+      $maker_name = (isset($entry['109']) ? $entry['109'] : '');
+    } else {
+      $maker_name = (isset($entry['96.3']) ? $entry['96.3'] : '') . ' ' . (isset($entry['96.6']) ? $entry['96.6'] : '');
+    }
+
+    //for BA24, the single photo was changed to a multi image which messed things up a bit
+    $maker_photo = $entry['22']; //??? but this is the project photo??
+
+    $photo = json_decode($entry['22']);
+    if (is_array($photo)) {
+      $maker_photo = $photo[0];
+    }
+
     $tabData = array();
 
     foreach ($tabArr as $tabkey => $tab) {
@@ -140,36 +172,21 @@ function getAllEntries($formID = '', $page = '', $years = '') {
         unset($tabData[$tabkey]);
     }
 
-    //if group, use the group name, else use the main contact name
-    if (strpos($entry['105'], 'group')  !== false) {
-      $maker_name = (isset($entry['109']) ? $entry['109'] : '');
-    } else {
-      $maker_name = (isset($entry['96.3']) ? $entry['96.3'] : '') .
-        ' ' .
-        (isset($entry['96.6']) ? $entry['96.6'] : '');
-    }
-
-    //for BA24, the single photo was changed to a multi image which messed things up a bit
-    $maker_photo = $entry['22'];
-
-    $photo = json_decode($entry['22']);
-    if (is_array($photo)) {
-      $maker_photo = $photo[0];
-    }
-
-    //put exhibit type in a comma separated array
-    $fieldArr = fieldOutput(339, $entry, $field_array, $form);
-    $exhibit_types = (isset($fieldArr['value']) && $fieldArr['value'] != '' ? implode(", ", $fieldArr['value']) : '');
 
     //flags
     $fieldArr = fieldOutput(304, $entry, $field_array, $form);
     $flags    = (isset($fieldArr['value']) && $fieldArr['value'] != '' ? implode(", ", $fieldArr['value']) : '');
 
+    //put exhibit type in a comma separated array
+    $fieldArr = fieldOutput(339, $entry, $field_array, $form);
+    $exhibit_types = (isset($fieldArr['value']) && $fieldArr['value'] != '' ? implode(", ", $fieldArr['value']) : '');
+
     //prelimLoc
     $fieldArr = fieldOutput(302, $entry, $field_array, $form);
-    $prelim_loc    = (isset($fieldArr['value']) && $fieldArr['value'] != '' ? implode(", ", $fieldArr['value']) : '');    
-    
-    $return['makers'][] = array(      
+    $prelim_loc    = (isset($fieldArr['value']) && $fieldArr['value'] != '' ? implode(", ", $fieldArr['value']) : '');
+
+    //set the return data
+    $return['makers'][] = array(
       'tabs'            => $tabData,
       'project_name'    => $entry['151'],
       'project_id'      => $entry['id'],
@@ -180,7 +197,7 @@ function getAllEntries($formID = '', $page = '', $years = '') {
       'photo'           => $maker_photo,
       'maker_name'      => $maker_name,
       'prelim_loc'      => $prelim_loc,
-      'prime_cat'       => html_entity_decode(get_CPT_name($entry['320']))      
+      'prime_cat'       => html_entity_decode(get_CPT_name($entry['320']))
     );
   }
 
@@ -219,6 +236,8 @@ function retrieve_blocks($content = '') {
 }
 
 function fieldOutput($fieldID, $entry, $field_array, $form, $arg = '') {
+  $label = $type = $value = $class = '';
+
   //set default values
   $label = $fieldID;
 
@@ -306,69 +325,147 @@ function fieldOutput($fieldID, $entry, $field_array, $form, $arg = '') {
         break;
     }
   } else {
+    $type  = $label = $value = '';
     switch ($fieldID) {
-      case 'rmt':
-        if (current_user_can('view_rmt')) {
-          $type  = 'html';
-          $label = '';          
-          $value   = '<div id="rmt'.$entry['id'].'">'.entryResources($entry).'</div>';          
-        }  
-        break;          
       case 'notes':
-        if (current_user_can('notes_view')) {
+        global $notes_view;
+        if ($notes_view) {
           $type  = 'notes';
           $label = '';
           $value = GFAPI::get_notes(array('entry_id' => $entry['id'], 'note_type' => 'user'), array('key' => 'id', 'direction' => 'DESC'));
           if ($value == '') $value = '&nbsp;';
-        } else {
-          $type  = $label = $value = '';
         }
 
         break;
       case 'notes_table':
-        if (current_user_can('notes_send')) {
+        global $notes_send;
+        if ($notes_send) {
           $type  = 'html';
           $label = 'Notes';
           $value = '<p>Enter Email: <input type="email" placeholder="example@make.co" id="toEmail' . $entry['id'] . '" size="40" /></p>' .
             ' <textarea	id="new_note_' . $entry['id'] . '"	style="width: 90%; height: 240px;" cols=""	rows=""></textarea>' .
             ' <input type="button" value="Add Note" class="button updButton" style="width:auto;padding-bottom:2px;" onclick="updateMgmt(\'add_note_sidebar\',\'' . $entry['id'] . '\');"/>' .
             ' <span class="updMsg" id="add_noteMSG_' . $entry['id'] . '"></span>';
+        }
+        break;
+
+      case 'update_admin_button':
+        $type  = 'html';
+        $label = '';
+
+        //only display the update admin button if the user can actually edit something
+        global $edit_flags;
+        global $edit_prelim_loc;
+        global $edit_entry_type;
+        global $edit_fee_mgmt;
+        global $edit_status;
+        if ($edit_flags == 'edit' || $edit_prelim_loc == 'edit' || $edit_entry_type == 'edit' || $edit_fee_mgmt == 'edit' || $edit_status) {
+
+          $value = '<p><input type="button" id="updAdmin' . $entry['id'] . '" value="Update Admin" class="button updButton" style="width:auto;padding-bottom:2px;" onclick="updateMgmt(\'update_admin\', \'' . $entry['id'] . '\');"/></p>
+                      <p><span class="updMsg" id="updAdminMSG' . $entry['id'] . '"></span></p>';
+        }
+        break;
+      case 'date_created':
+        $type  = 'text';
+        $date  = date_create($entry[$fieldID]);
+        $value = date_format($date, "m/d/Y");
+        $label = 'Submitted On';
+        break;
+      case 'public_entry_page':
+        $type  = 'html';
+        $label = '';
+        $value = '<a href="/maker/entry/' . $entry['id'] . '" target="_none">Public Entry Page</a>';
+        break;
+
+        //checkbox fields for edit
+      case 'flags':
+        global $edit_flags;
+        $field_id = '304';
+        $label = 'Flags';
+        $fieldName = 'entry_flags_';
+        $type    = 'html';
+        $field = ($field_array[$field_id] ? $field_array[$field_id] : '');
+        //is this a valid field in the form
+        if ($field != NULL) {
+          $field_value   = RGFormsModel::get_lead_field_value($entry, $field);
+          $value  = mf_checkbox_display($field, $field_value, $entry['form_id'], $fieldName, $field_id, $edit_flags);
+        }
+        break;
+      case 'prelim_loc':
+        global $edit_prelim_loc;
+
+        $field_id = '302';
+        $label = 'Preliminary Location';
+        $fieldName = 'entry_prelim_loc_';
+        $type    = 'html';
+        $field = ($field_array[$field_id] ? $field_array[$field_id] : '');
+        if ($field != NULL) {
+          $field_value   = RGFormsModel::get_lead_field_value($entry, $field);
+          $value  = mf_checkbox_display($field, $field_value, $entry['form_id'], $fieldName, $field_id, $edit_prelim_loc);
+        }
+        break;
+      case 'exhibit_type':
+        global $edit_entry_type;
+
+        $field_id = '339';
+        $label   = 'Entry Type';
+        $fieldName = 'admin_exhibit_type_';
+        $type    = 'html';
+        $field = ($field_array[$field_id] ? $field_array[$field_id] : '');
+        if ($field != NULL) {
+          $field_value   = RGFormsModel::get_lead_field_value($entry, $field);
+          $value  = mf_checkbox_display($field, $field_value, $entry['form_id'], $fieldName, $field_id, $edit_entry_type);
+        }
+        break;
+      case 'fee_mgmt':
+        global $edit_fee_mgmt;
+        $field_id = '442';
+        $label = 'Fee Management';
+        $fieldName = 'info_fee_mgmt_';
+        $type    = 'html';
+        $field = ($field_array[$field_id] ? $field_array[$field_id] : '');
+        if ($field != NULL) {
+          $field_value   = RGFormsModel::get_lead_field_value($entry, $field);
+          $value  = mf_checkbox_display($field, $field_value, $entry['form_id'], $fieldName, $field_id, $edit_fee_mgmt);
+        }
+
+        break;
+        //Notes
+      case 'send_notifications':
+        global $notifications_resend;
+        if ($notifications_resend) {
+          $type  = 'html';
+          $label = 'Send Notifications';
+          $value = get_form_notifications($form, $entry['id']);
         } else {
           $type  = $label = $value = '';
         }
 
         break;
-      case 'flags':
-        $type  = 'html';
-        $label = 'Flags';
-
-        //flags        
-        $value     = field_display($entry, $form, '304', 'entry_flags_' . $entry['id']);
-
-        break;
-      case 'prelim_loc':
-        $type  = 'html';
-        $label = 'Preliminary Location';
-
-        //preliminary locations        
-        $value  = field_display($entry, $form, '302', 'entry_prelim_loc_' . $entry['id']);
-        if (current_user_can('edit_prelim_loc')) {
-          $value .= '<textarea id="location_comment_' . $entry['id'] . '">' . (isset($entry['307']) ? $entry['307'] : '') . '</textarea>';
+      case 'notifications_sent':
+        global $view_notifications;
+        if ($view_notifications) {
+          $type  = 'notes';
+          $label = 'Notifications Sent';
+          $search_criteria = array('entry_id' => $entry['id'], 'note_type' => 'notification');
+          $value = GFAPI::get_notes($search_criteria, array('key' => 'id', 'direction' => 'DESC'));
+        } else {
+          $type  = $label = $value = '';
         }
-
         break;
-      case 'exhibit_type':
+      case 'other_entries': //2:91->4:25
         $type  = 'html';
-        $label = 'Entry Type';
-        $value = field_display($entry, $form, '339', 'admin_exhibit_type_' . $entry['id']);
-
+        $label = '';
+        $value = '';
+        $value = getAddEntries($entry[98], $entry['id']);
         break;
       case 'edit_status':
         $type  = 'html';
         $label = 'Status';
-        $field303 = RGFormsModel::get_field($form, '303');
+        global $field303;
+        global $edit_status;
 
-        if (current_user_can('edit_status')) {
+        if ($edit_status) {
           $value = '    <select id="entryStatus_' . $entry['id'] . '" name="entry_info_status_change">';
           if (isset($field303['choices'])) {
             foreach ($field303['choices'] as $choice) {
@@ -382,75 +479,27 @@ function fieldOutput($fieldID, $entry, $field_array, $form, $arg = '') {
         }
 
         break;
-      case 'fee_mgmt':
-        $type  = 'html';
-        $label = 'Fee Management';
-        $value = field_display($entry, $form, '442', 'info_fee_mgmt_' . $entry['id']);
-        break;
       case 'schedule_loc':
         //$type = 'html';
         //$label = 'Schedule/Location';
         //$value = mf_sidebar_entry_schedule( $form['id'], $entry );
         break;
-      case 'update_admin_button':
-        $type  = 'html';
-        $label = '';
 
-        //only display the update admin button if the user can actually edit something
-        if (
-          current_user_can('edit_flags') ||
-          current_user_can('edit_prelim_loc') ||
-          current_user_can('edit_entry_type') ||
-          current_user_can('edit_fee_mgmt') ||
-          current_user_can('edit_status')
-        ) {
-
-          $value = '<p><input type="button" id="updAdmin' . $entry['id'] . '" value="Update Admin" class="button updButton" style="width:auto;padding-bottom:2px;" onclick="updateMgmt(\'update_admin\', \'' . $entry['id'] . '\');"/></p>
-                  <p><span class="updMsg" id="updAdminMSG' . $entry['id'] . '"></span></p>';
-        }
-        break;
       case 'final_location':
         $type  = 'html';
         $label = 'Final Location';
         //$value= 'final location is'.display_schedule($form['id'],$entry,$section='sidebar');
         break;
-      case 'date_created':
-        $type  = 'text';
-        $date  = date_create($entry[$fieldID]);
-        $value = date_format($date, "m/d/Y");
-        $label = 'Submitted On';
-        break;
-      case 'other_entries':
-        $type  = 'html';
-        $label = '';
-        $value = '';
-        $value = getAddEntries($entry[98], $entry['id']);
-        break;
-      case 'public_entry_page':
-        $type  = 'html';
-        $label = '';
-        $value = '<a href="/maker/entry/' . $entry['id'] . '" target="_none">Public Entry Page</a>';
-        break;
-      case 'notifications_sent':
-        if (current_user_can('view_notifications')) {
-          $type  = 'notes';
-          $label = 'Notifications Sent';
-          $value = GFAPI::get_notes(array('entry_id' => $entry['id'], 'note_type' => 'notification'), array('key' => 'id', 'direction' => 'DESC'));
-        } else {
-          $type  = $label = $value = '';
-        }
-
-        break;
-      case 'send_notifications':
-        if (current_user_can('notifications_resend')) {
-          $type  = 'html';
-          $label = 'Send Notifications';
-          $value = get_form_notifications($form, $entry['id']);
-        } else {
-          $type  = $label = $value = '';
-        }
-
-        break;
+        case 'rmt': //2:16->3:45
+          global $view_rmt;
+          
+          if ($view_rmt) {                        
+            $type  = 'html';
+            $label = '';          
+            $value='';
+            $value   = '<div id="rmt'.$entry['id'].'">'.entryResources($entry).'</div>';          
+          }  
+          break;             
     }
   }
   if ($arg == 'no_label')  $label = '';
@@ -460,6 +509,21 @@ function fieldOutput($fieldID, $entry, $field_array, $form, $arg = '') {
 
 function getAddEntries($email, $currEntryID) {
   global $wpdb;
+
+  $addEntriesCnt = 0;
+  $sql = 'SELECT distinct(entry_id), wp_gf_entry_meta.form_id, wp_gf_form.title as form_title, ' .
+    '(SELECT meta_value FROM wp_gf_entry_meta detail2 WHERE detail2.entry_id = wp_gf_entry_meta.entry_id AND meta_key = 151 ) as projectName, ' .
+    '(SELECT meta_value FROM wp_gf_entry_meta detail2 WHERE detail2.entry_id = wp_gf_entry_meta.entry_id AND meta_key = 303 ) as status, ' .
+    'status as lead_status, wp_gf_entry.date_created ' .
+    'FROM wp_gf_entry_meta ' .
+    'left outer join wp_gf_entry on wp_gf_entry_meta.entry_id=wp_gf_entry.id ' .
+    'left outer join wp_gf_form on wp_gf_entry_meta.form_id= wp_gf_form.id ' .
+    'WHERE meta_value = "' . $email . '" ' .
+    'AND entry_id != ' . $currEntryID . ' ' .
+    'AND status!="trash" ' .
+    'ORDER BY `wp_gf_entry_meta`.`entry_id` DESC';
+
+  $results = $wpdb->get_results($sql);
 
   $addEntriesCnt = 0;
   //additional Entries
@@ -473,25 +537,11 @@ function getAddEntries($email, $currEntryID) {
       <th>Status</th>
     </tr>
   </thead>';
-
-  $addEntriesCnt = 0;
-  $sql = 'SELECT  distinct(entry_id), form_id, ' .
-    ' (SELECT meta_value FROM wp_gf_entry_meta detail2 WHERE detail2.entry_id = wp_gf_entry_meta.entry_id AND meta_key = 151 ) as projectName, ' .
-    ' (SELECT meta_value FROM wp_gf_entry_meta detail2 WHERE detail2.entry_id = wp_gf_entry_meta.entry_id AND meta_key = 303 ) as status, ' .
-    ' (SELECT status FROM wp_gf_entry WHERE wp_gf_entry.id = wp_gf_entry_meta.entry_id) as lead_status, ' .
-    ' (SELECT date_created FROM wp_gf_entry WHERE wp_gf_entry.id = wp_gf_entry_meta.entry_id) as date_created ' .
-    'FROM wp_gf_entry_meta ' .
-    'JOIN wp_gf_form on wp_gf_form.id = wp_gf_entry_meta.form_id ' .
-    'WHERE meta_value = "' . $email . '" ' .
-    'AND entry_id != ' . $currEntryID . ' ' .
-    'AND is_trash != 1 ' .
-    'ORDER BY entry_id DESC';
-
-  $results = $wpdb->get_results($sql);
   $exclude_type = array('Attendee', 'Invoice', 'Default');
 
-  foreach ($results as $addData) {
-    $form = GFAPI::get_form($addData->form_id);
+  foreach ($results as $addData) {    
+    $form = GFAPI::get_form($addData->form_id);    
+    $form['title'] = $addData->form_title;
 
     //exclude certain form types
     if (isset($form['form_type']) && !in_array($form['form_type'], $exclude_type)) {

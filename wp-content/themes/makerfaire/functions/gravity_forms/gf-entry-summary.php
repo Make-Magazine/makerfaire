@@ -415,6 +415,21 @@ function gf_collapsible_sections($form, $entry) {
   //form data
   $addFormsData = getmetaData($entry_id);
   $pmtFormsData = getmetaData($entry_id, 'payments');
+
+  //RMT data
+  $rmt_table_data = GFRMTHELPER::rmt_table_data();
+
+  //why do we have to do the items this way??
+  $itemArr = $rmt_table_data['resource_categories'];
+  $items = 'var items = [];';
+  foreach ($itemArr as $itemKey => $item) {
+    $items .= 'items.push({"key":' . $itemKey . ',"value": "' . $item . '"});';
+  }
+  
+  $typeArr = json_encode($rmt_table_data['resources']);
+  $attArr  = json_encode($rmt_table_data['attItems']);
+  $attnArr = json_encode($rmt_table_data['attnItems']);
+
   $return = '
   <div id="tabs" class="adminEntrySummary">
     <ul class="nav nav-tabs" role="tablist">
@@ -460,6 +475,13 @@ function gf_collapsible_sections($form, $entry) {
 
       <div role="tabpanel" class="tab-pane"  id="resources">
         <div class="entry-resource">
+          <script>
+            //encoded RMT variables here          
+            ' . $items . ';
+            var types      = ' . $typeArr . ';
+            var attributes = ' . $attArr . ';
+            var attention  = ' . $attnArr . '
+          </script>
           ' . entryResources($entry) . '
         </div>
       </div>
@@ -737,13 +759,8 @@ function mf_get_form_meta($meta_key, $meta_value) {
 
 //retrieves resource and attribute information for the entry
 function entryResources($entry) {
+  $return = '';
   $rmt_data       = GFRMTHELPER::rmt_get_entry_data($entry['id']);
-  $rmt_table_data = GFRMTHELPER::rmt_table_data();
-
-  $itemArr = $rmt_table_data['resource_categories'];
-  $typeArr = $rmt_table_data['resources'];
-  $attArr  = $rmt_table_data['attItems'];
-  $attnArr = $rmt_table_data['attnItems'];
 
   //display resource data
   $resourceDisp = '<table id="resTable"><thead>'
@@ -755,9 +772,9 @@ function entryResources($entry) {
     . ' <th>Comments</th>'
     . ' <th>User</th>'
     . ' <th>Last Updated</th>'
-    . ' <th><p class="addIcon" onclick="addRow(\'resource\','.$entry['id'].')"><i class="fa fa-circle-plus fa-lg"></i></p></th>'
+    . ' <th><p class="addIcon" onclick="addRow(\'resource\',' . $entry['id'] . ')"><i class="fa fa-circle-plus fa-lg"></i></p></th>'
     . ' </tr></thead>';
-  $return = '';
+
   $resourceDisp .= '<tbody>';
   foreach ($rmt_data['resources'] as $data) {
     $resourceDisp .= '<tr id="resRow' . $data['id'] . '">'
@@ -805,7 +822,7 @@ function entryResources($entry) {
     . ' <th>Last Updated</th>'
     . ' <th><span onclick="addRow(\'attention\')"><i class="fa fa-circle-plus"></i></span></th></tr></thead>';
   $attnDisp .= '<tbody>';
-  
+
   foreach ($rmt_data['attention'] as $data) {
     $attnDisp .= '<tr id="attnRow' . $data['id'] . '">'
       . ' <td id="attnvalue_' . $data['id'] . '">' . $data['attention'] . '</td>'
@@ -817,19 +834,10 @@ function entryResources($entry) {
   $attnDisp .= '</tbody>';
   $attnDisp .= '</table>';
 
-  $return = '
-  <script>
-    //store items as JS object
-    var items = [];';
-  foreach ($itemArr as $itemKey => $item) {
-    $return .= 'items.push({"key":' . $itemKey . ',"value": "' . $item . '"});';
-  }
-  $return .= '
-    var types      = ' . json_encode($typeArr) . ';
-    var attributes = ' . json_encode($attArr) . ';
-    var attention  = ' . json_encode($attnArr) . ';
-  </script>
-  <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+
+  $return = 
+  
+  '<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
     <div class="panel panel-default">
       <div class="panel-heading" id="headingOne">
         <h4 class="panel-title">
