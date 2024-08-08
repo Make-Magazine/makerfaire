@@ -39,10 +39,10 @@ function mf_custom_toolbar($form_id) {
                   } else {
                      $meta = GFFormsModel::get_entry_meta(array($form['id']));
                      $metaField = $meta[$field_id];
-                     if ($metaField) {
+                     if ($metaField) {                        
                         $fieldName = (isset($metaField['label']) && $metaField['label'] !== '' ? $metaField['label'] : $filterValues[0]);
-                        if (is_array($metaField['filter']['choices'])) {
-                           foreach ($metaField['filter']['choices'] as $choice) {
+                        if (isset($metaField['filter']['choices']) && is_array($metaField['filter']['choices'])) {
+                           foreach ($metaField['filter']['choices'] as $choice) {                              
                               if ($choice['value'] == $fieldValue)
                                  $fieldValue = $choice['value'];
                            }
