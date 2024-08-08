@@ -282,6 +282,7 @@ function mf_custom_import_entries() {
   }
 
   //function to update attributes for mf import
+  //alicia - don't think anything calls this
   function updateAttribute($entryID, $attribute_id,$attvalue,$user,$formID){
     global $wpdb;
     $chgRPTins = '';

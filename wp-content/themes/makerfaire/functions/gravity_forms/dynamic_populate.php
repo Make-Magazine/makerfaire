@@ -16,6 +16,7 @@ function calc_field_pre_process($form,$entry_id,$orig_entry=array()){
  *      If it passes - set field value to Yes
  *      If it fails  - set field value to No
  */
+//Alicia!! look into this, these no longer work!!
 function calc_field_ind($entry, $form) {
   $entry_id = $entry['id'];
   $form_id  = $entry['form_id'];
