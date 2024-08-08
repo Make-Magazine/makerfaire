@@ -94,7 +94,7 @@ function custom_entry_meta($entry_meta, $form_id) {
 
     //final location
     $entry_meta['location'] = array(
-        'label' => 'Location',
+        'label' => 'Booth ID',
         'is_numeric' => false,
         'is_default_column' => true
     );    
