@@ -137,7 +137,11 @@ function modify_field_display_values($value, $form_id, $field_id, $lead) {
          case 'location':
             $value = $wpdb->get_var("SELECT location FROM `wp_mf_location`                
             where entry_id=".$lead['id']);
-            break;            
+            break;   
+         case 'schedule':
+            $value = $wpdb->get_var("SELECT concat(DATE_FORMAT(start_dt, '%c/%e/%y %l:%i %p'),' - ',DATE_FORMAT(start_dt, '%l:%i %p')) FROM `wp_mf_schedule`                
+            where entry_id=".$lead['id']);            
+            break;                        
       } 
    }
    return $value;
@@ -192,43 +196,6 @@ function multi_search_criteria_entry_list($search_criteria, $form_id) {
    return $search_criteria;
 }
 
-// Add custom MF Edit link to the entry actions - this will include our multi filter options
-//add_action( 'gform_entries_first_column_actions', 'add_MF_edit_link', 10, 5 );
-/**
- * Add an Edit link to the GF Entry actions row
- * @param int $form_id      ID of the current form
- * @param int $field_id     The ID of the field in the first column, where the row actions are shown
- * @param string $value        The value of the `$field_id` field
- * @param array  $lead         The current entry data
- * @param string $query_string URL query string for a link to the current entry. Missing the `?page=` part, which is strange. Example: `gf_entries&view=entry&id=35&lid=5212&filter=&paged=1`
- */
-function add_MF_edit_link($form_id = NULL, $field_id = NULL, $value = NULL, $lead = array(), $query_string = NULL) {
-   if (isset($_GET['filterField']) && is_array($_GET['filterField'])) {
-      $filterFields = $_GET['filterField'];
-   } else {
-      $filterFields = array();
-   }
-
-   $filter_qs = '';
-   foreach ($filterFields as $filterField) {
-      $filter_qs .= '&filterField[]=' . esc_attr($filterField);
-   }
-
-   $params = array(
-       'page' => 'gf_entries',
-       'view' => 'entry',
-       'id' => (int) $form_id,
-       'lid' => (int) $lead["id"],
-       'screen_mode' => 'edit',
-   );
-   ?>
-
-   <span class="edit edit_entry">
-      |
-      <a title="<?php esc_attr_e('Edit this entry', 'gravityview'); ?>" href="<?php echo esc_url(add_query_arg($params, admin_url('admin.php?page=' . $query_string)) . $filter_qs); ?>"><?php esc_html_e('MF Edit', 'gravityview'); ?></a>
-   </span>
-   <?php
-}
 
 //remove GF filter links from screen options
 add_filter('gform_filter_links_entry_list', 'remove_gf_filter', 10, 3);
@@ -243,7 +210,7 @@ function remove_gf_filter($filter_links, $form, $include_counts) {
    return $filter_links;
 }
 
-//remove teh approve/dissaprove column added by gravity view
+//remove the approve/dissaprove column added by gravity view
 add_filter('gravityview/approve_entries/show-column','gravityview_show_approved_entries_column', 10, 2 );
 
 function gravityview_show_approved_entries_column( $show_approve_column, $form_id ) {
@@ -255,14 +222,4 @@ function gravityview_show_approved_entries_column( $show_approve_column, $form_i
 
   //all other forms, remove the approval column
   return false;
-}
-
-/* Quick fix for BA17 Add approve option  to entry list first column */
-add_action('gform_entries_first_column_actions', 'first_column_actions', 10, 5);
-
-function first_column_actions($form_id, $field_id, $value, $entry) {
-   if ($form_id == 127) {
-      $lead_id = $entry['id'];
-      echo ' | <a href="javascript:approveEntry(' . $entry['id'] . ')">Accept</a>';
-   }
 }

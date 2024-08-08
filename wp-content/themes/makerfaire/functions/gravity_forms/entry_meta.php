@@ -1,6 +1,5 @@
 <?php
-
-//adding custom meta fields
+//adding custom meta fields for gravity forms
 add_filter('gform_entry_meta', 'custom_entry_meta', 10, 2);
 
 function custom_entry_meta($entry_meta, $form_id) {
@@ -9,6 +8,7 @@ function custom_entry_meta($entry_meta, $form_id) {
     //  is_numeric - used when sorting the entry list, indicates whether the data should be treated as numeric when sorting
     //  is_default_column - when set to true automatically adds the column to the entry list, without having to edit and add the column for display
     //  update_entry_meta_callback - indicates what function to call to update the entry meta upon form submission or editing an entry
+    
     //entry rating
     $entry_meta['entryRating'] = array(
         'label' => 'Rating',
@@ -95,6 +95,13 @@ function custom_entry_meta($entry_meta, $form_id) {
     //final location
     $entry_meta['location'] = array(
         'label' => 'Location',
+        'is_numeric' => false,
+        'is_default_column' => true
+    );    
+
+    //entry schedule
+    $entry_meta['schedule'] = array(
+        'label' => 'Schedule',
         'is_numeric' => false,
         'is_default_column' => true
     );    
