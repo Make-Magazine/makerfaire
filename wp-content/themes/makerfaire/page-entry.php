@@ -72,27 +72,28 @@ if (isset($entry->errors)) {
         $fieldData[$fieldID] = $field;
     }
 
-    $faire = $show_sched = $faireShort = $faire_end = '';
+    //set defaults
+    $faire = $show_sched = $faireShort = $faire_end = $url_sub_path = $faire_dates = '';
+    $faire_name = $faireShort = $faire_start = $faire_end = $faire_year = '';
+    $timeZone = 'America/Los_Angeles'; 
+    
     if ($form_id != '') {
-        $formSQL = "select faire_name as pretty_faire_name, replace(lower(faire_name),' ','-') as faire_name, faire_location, faire, id,show_sched, start_dt, end_dt, url_path, faire_map, program_guide, time_zone "
-            . " from wp_mf_faire where FIND_IN_SET ($form_id, wp_mf_faire.form_ids)> 0 order by ID DESC limit 1";
+        $formSQL = "select faire_name, faire, id, show_sched, start_dt, end_dt, url_path, time_zone "
+                 . "from wp_mf_faire "
+                 . "where FIND_IN_SET ($form_id, wp_mf_faire.form_ids)> 0 "
+                 . "order by ID DESC limit 1";
 
         $results = $wpdb->get_row($formSQL);
 
-        if ($wpdb->num_rows > 0) {
-            $faire = $results->faire_name;
-            $faire_name = $results->pretty_faire_name;
-            $faire_location_db = $results->faire_location;
-            $faireShort = $results->faire;
-            $faireID = $results->id;
+        if ($wpdb->num_rows > 0) {            
+            $faire_name = $results->faire_name;            
+            $faireShort = $results->faire;            
             $show_sched = $results->show_sched;
             $faire_start = $results->start_dt;
             $faire_end = $results->end_dt;
             $faire_year = substr($faire_start, 0, 4);
             $faire_dates = date_format(date_create($faire_start), "F jS") . "-" . date_format(date_create($faire_end), "jS");
-            $url_sub_path = $results->url_path;
-            $faire_map = $results->faire_map;
-            $program_guide = $results->program_guide;
+            $url_sub_path = $results->url_path;            
             $timeZone = $results->time_zone;
         }
     }

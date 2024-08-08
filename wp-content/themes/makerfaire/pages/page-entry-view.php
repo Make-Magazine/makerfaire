@@ -39,7 +39,7 @@ $showEditMakey = false;
             <div class="small-column-wrapper">
                 <div class="entry-box">
                     <h1 class="project-title"><?php echo $project_title; ?></h1>
-                    <h3 class="faireName"><a href="/<?php echo $url_sub_path; ?>"><?php echo ucwords(str_replace('-', ' ', $faire));?></a></h3>
+                    <h3 class="faireName"><a href="/<?php echo $url_sub_path; ?>"><?php echo $faire_name;?></a></h3>
                     <h4 class="faireDate"><?php echo $faire_dates; ?></h4>
                     <div class="entry-box-items">
                         <?php if(isset($location) && trim($location) != '' && count(array_intersect($exhibit_type, array("Exhibit", "Sponsor", "Startup Sponsor"))) > 0) { ?><span class="entry-box-item" aria-label="Location"><i class="fa fa-map-signs" aria-hidden="true"></i><?php echo $location; ?></span><?php } ?>
