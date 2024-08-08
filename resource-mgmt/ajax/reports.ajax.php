@@ -105,12 +105,12 @@ function cannedRpt() {
     */
 
    $data['columnDefs'] = array();
-   $data['columnDefs'][] = array('field' => 'entry_id', 'displayName' => $entryIDLabel, 'displayOrder' => $entryIDorder);
+   $data['columnDefs'][] = array('field' => 'entry_id', 'displayName' => $entryIDLabel, 'displayOrder' => $entryIDorder, 'width'=>'100');
 
    $visible = $dispFormID;
-   $data['columnDefs'][] = array('field' => 'form_id', 'visible' => $visible, 'displayOrder' => $formIDorder);
+   $data['columnDefs'][] = array('field' => 'form_id', 'visible' => $visible, 'displayOrder' => $formIDorder,'width'=>'100');
    if ($dispFormType) {
-      $data['columnDefs'][] = array('field' => 'form_type', 'displayName' => $formTypeLabel, 'displayOrder' => $formTypeorder);
+      $data['columnDefs'][] = array('field' => 'form_type', 'displayName' => $formTypeLabel, 'displayOrder' => $formTypeorder,'width'=>'100');
    }
 
    //pull all entries based on formSelect, faire, and status
@@ -174,7 +174,9 @@ function cannedRpt() {
       //add requested field to columns
       $data['columnDefs'][$selFieldsID] = array(
          'field' => 'field_' . str_replace('.', '_', $selFieldsID),
-         'displayName' => $selFields->label, 'type' => 'string', 'visible' => $visible,
+         'displayName' => $selFields->label, 
+         'type' => 'string', 'visible' => $visible,
+         'min_width' => "100", 'width' => "100",
          'displayOrder' => (isset($selFields->order) ? $selFields->order : 9999)
       );
      
@@ -385,9 +387,9 @@ function cannedRpt() {
                $entryData[$lead_id]['form_type'] = $form_type;
             }
             
-            if($data['columnDefs'])
             //merge in RMT data and location info
-            $data['columnDefs'] = array_merge($data['columnDefs'], $colDefs);
+            if($data['columnDefs'])               
+               $data['columnDefs'] = array_merge($data['columnDefs'], $colDefs);
          }
       }
    }
@@ -478,12 +480,19 @@ function pullRmtData($rmtData, $entryID, $useFormSC) {
                . '         resource_category_id = ' . $selRMT->id . ' and'
                . '         entry_id =' . $entryID;
          }
-         
+
          //loop thru data
          $resources = $wpdb->get_results($sql, ARRAY_A);
+         if(empty($resources)){
+            continue; //if there are no resources set for this resource, go to the next one
+         }
          $entryValue = array();
          $entryComment = array();
          foreach ($resources as $resource) {
+            //skip this resource if it has a qty of zero
+            if($resource['qty']==0){
+               continue;
+            }
             if ($columns) {
                $type = $resource['qty'];
             } else {
@@ -507,7 +516,8 @@ function pullRmtData($rmtData, $entryID, $useFormSC) {
                         'field' => 'res_' . str_replace('.', '_', $resource['resource_id']),
                         'displayName' => $resource['token'],
                         'displayOrder' => $displayOrder,
-                        'aggregationType' => 'uiGridConstants.aggregationTypes.sum'
+                        'aggregationType' => 'uiGridConstants.aggregationTypes.sum',
+                        'width' => "100"
                      );
    
                   $return['data']['res_' . $resource['resource_id']] = $value;
@@ -520,9 +530,10 @@ function pullRmtData($rmtData, $entryID, $useFormSC) {
             $return['colDefs']['res_' . $selRMT->id] = array(
                'field' => 'res_' . str_replace('.', '_', $selRMT->id),
                'displayName' => $selRMT->value,
-               'displayOrder' => $displayOrder
+               'displayOrder' => $displayOrder,
+               'width' => "100"
             );
-            $return['data']['res_' . $selRMT->id] = implode("\r", $entryValue);  //separate each resource with a line break in the csv file
+            $return['data']['res_' . $selRMT->id] = implode("\n", $entryValue);  //separate each resource with a line break in the csv file
          }
 
          //set comments column if requested
@@ -530,7 +541,8 @@ function pullRmtData($rmtData, $entryID, $useFormSC) {
             $return['colDefs']['res_' . $selRMT->id . '_comment'] = array(
                'field' => 'res_' . str_replace('.', '_', $selRMT->id) . '_comment',
                'displayName' => $selRMT->value . ' - comment',
-               'displayOrder' => $displayOrder + .2
+               'displayOrder' => $displayOrder + .2,
+               'width' => "100"
             );
             $return['data']['res_' . $selRMT->id . '_comment'] = implode("\r", $entryComment);
          }
@@ -576,7 +588,8 @@ function pullRmtData($rmtData, $entryID, $useFormSC) {
          $return['colDefs']['att_' . $selRMT->id] = array(
             'field' => 'att_' . str_replace('.', '_', $selRMT->id),
             'displayName' => $selRMT->value,
-            'displayOrder' => $displayOrder
+            'displayOrder' => $displayOrder,
+            'width' => "100"
          );
          $return['data']['att_' . $selRMT->id] = implode("\r", $entryValue);  //separate each resource with a line break in the csv file
          //set comments column if requested
@@ -584,7 +597,8 @@ function pullRmtData($rmtData, $entryID, $useFormSC) {
             $return['colDefs']['att_' . $selRMT->id . '_comment'] = array(
                'field' => 'att_' . str_replace('.', '_', $selRMT->id) . '_comment',
                'displayName' => $selRMT->value . ' - comment',
-               'displayOrder' => $displayOrder + .2
+               'displayOrder' => $displayOrder + .2,
+               'width' => "100"
             );
             //$return['data']['att_' . $selRMT->id . '_comment'] = $attribute['comment'];
             $return['data']['att_' . $selRMT->id . '_comment'] = implode("\r", $entryComment);
@@ -611,7 +625,8 @@ function pullRmtData($rmtData, $entryID, $useFormSC) {
          $return['colDefs']['attn_' . $selRMT->id] = array(
             'field' => 'attn_' . str_replace('.', '_', $selRMT->id),
             'displayName' => $selRMT->value,
-            'displayOrder' => (isset($selRMT->order) ? $selRMT->order : 300)
+            'displayOrder' => (isset($selRMT->order) ? $selRMT->order : 300),
+            'width' => "100"
          );
          $return['data']['attn_' . $selRMT->id] = implode(', ', $entryAttn);
       }
@@ -644,7 +659,8 @@ function pullRmtData($rmtData, $entryID, $useFormSC) {
          $return['colDefs']['meta_' . $selRMT->id] = array(
             'field' => 'meta_' . str_replace('.', '_', $selRMT->id),
             'displayName' => $selRMT->value,
-            'displayOrder' => (isset($selRMT->order) ? $selRMT->order : 400)
+            'displayOrder' => (isset($selRMT->order) ? $selRMT->order : 400),
+            'width' => "100"
          );
          $return['data']['meta_' . $selRMT->id] = $meta['meta_value'];
       }
@@ -706,11 +722,11 @@ function pullLocData($entryID, $useFormSC = false, $locationOrder = 30) {
          $location = implode(' and ', $locArr['location']);
 
          //populate return data
-         $return['colDefs']['area'] = array('field' => 'area', 'displayName' => ($useFormSC ? 'A' : 'Area'), 'displayOrder' => $locationOrder);
+         $return['colDefs']['area'] = array('field' => 'area', 'width'=>'100', 'displayName' => ($useFormSC ? 'A' : 'Area'), 'displayOrder' => $locationOrder);
          $return['data']['area'] = $area;
-         $return['colDefs']['subarea'] = array('field' => 'subarea', 'displayName' => ($useFormSC ? 'SUBAREA' : 'Subarea'), 'displayOrder' => $locationOrder + 1);
+         $return['colDefs']['subarea'] = array('field' => 'subarea', 'width'=>'100', 'displayName' => ($useFormSC ? 'SUBAREA' : 'Subarea'), 'displayOrder' => $locationOrder + 1);
          $return['data']['subarea'] = $subarea;
-         $return['colDefs']['location'] = array('field' => 'location', 'displayName' => ($useFormSC ? 'LOC' : 'Location'), 'displayOrder' => $locationOrder + 2);
+         $return['colDefs']['location'] = array('field' => 'location', 'width'=>'100', 'displayName' => ($useFormSC ? 'LOC' : 'Location'), 'displayOrder' => $locationOrder + 2);
          $return['data']['location'] = $location;
       }
    }
@@ -746,7 +762,7 @@ function pullTickData($entryID, $useFormSC = false, $ticketsOrder = 70) {
          $access_code = implode('    ', $ticketArr['access_code']);
 
          //populate return data
-         $return['colDefs']['access_code'] = array('field' => 'access_code', 'displayName' => 'Access Codes', 'displayOrder' => $ticketsOrder);
+         $return['colDefs']['access_code'] = array('field' => 'access_code', 'width' => "100", 'displayName' => 'Access Codes', 'displayOrder' => $ticketsOrder);
          $return['data']['access_code'] = $access_code;
       }
    }
@@ -818,31 +834,31 @@ function pullPayData($entryID, $paymentOrder = 50) {
             }
          }
 
-         $return['colDefs']['order_id'] = array('field' => 'order_id', 'displayName' => 'Order ID', 'displayOrder' => $paymentOrder);
+         $return['colDefs']['order_id'] = array('field' => 'order_id', 'width' => "100", 'displayName' => 'Order ID', 'displayOrder' => $paymentOrder);
          $return['data']['order_id'] = $order_id;
 
          //Invoice ID
-         $return['colDefs']['invoice_id'] = array('field' => 'invoice_id', 'displayName' => 'Invoice ID', 'displayOrder' => $paymentOrder);
+         $return['colDefs']['invoice_id'] = array('field' => 'invoice_id', 'width' => "100", 'displayName' => 'Invoice ID', 'displayOrder' => $paymentOrder);
          $return['data']['invoice_id'] = $invoice_id;
          $paymentOrder = $paymentOrder + 2;
 
          //payment transaction ID (from paypal)
-         $return['colDefs']['trx_id'] = array('field' => 'trx_id', 'displayName' => 'Pay trxID', 'displayOrder' => $paymentOrder);
+         $return['colDefs']['trx_id'] = array('field' => 'trx_id', 'width' => "100", 'displayName' => 'Pay trxID', 'displayOrder' => $paymentOrder);
          $return['data']['trx_id'] = implode("\r", $transaction_id);
 
          //payment amt
-         $return['colDefs']['pay_amt'] = array('field' => 'pay_amt', 'displayName' => 'Pay amount', 'cellFilter' => 'currency', 'displayOrder' => $paymentOrder + 1);
+         $return['colDefs']['pay_amt'] = array('field' => 'pay_amt', 'width' => '100', 'displayName' => 'Pay amount', 'cellFilter' => 'currency', 'displayOrder' => $paymentOrder + 1);
          $return['data']['pay_amt'] = $amount;
 
          //payment date
-         $return['colDefs']['pay_date'] = array('field' => 'pay_date', 'displayName' => 'Pay date', 'displayOrder' => $paymentOrder + 2);
+         $return['colDefs']['pay_date'] = array('field' => 'pay_date','width' => '100', 'displayName' => 'Pay date', 'displayOrder' => $paymentOrder + 2);
          $return['data']['pay_date'] = implode("\r", $date_created);
 
          //payment details
-         $return['colDefs']['pay_det'] = array('field' => 'pay_det', 'displayName' => 'Payment Details', 'displayOrder' => $paymentOrder + 3);
+         $return['colDefs']['pay_det'] = array('field' => 'pay_det', 'width' => '100', 'displayName' => 'Payment Details', 'displayOrder' => $paymentOrder + 3);
          $return['data']['pay_det'] = $pay_det;
 
-         $return['colDefs']['pay_status'] = array('field' => 'pay_status', 'displayName' => 'Payment Status', 'displayOrder' => $paymentOrder + 3);
+         $return['colDefs']['pay_status'] = array('field' => 'pay_status', 'width' => '100', 'displayName' => 'Payment Status', 'displayOrder' => $paymentOrder + 3);
          $return['data']['pay_status'] = $pay_status;
       }
    }
@@ -872,7 +888,7 @@ function pullFieldData($entryID, $reqFields) {
             }
          }
          $return['data']['field_' . $reqID] = $data;
-         $return['colDefs']['field_' . $reqID] = array('field' => 'field_' . $reqID, 'displayName' => $reqLabel);
+         $return['colDefs']['field_' . $reqID] = array('field' => 'field_' . $reqID, 'displayName' => $reqLabel, 'width' => '100');
       }
    }
    return $return;
@@ -947,7 +963,7 @@ function retrieveRptData($table, $faire) {
       if (isset($fields['fieldLabel']))
          $vars['displayName'] = $fields['fieldLabel'];
       $vars['name'] = $fields['fieldName'];
-      $vars['minWidth'] = 100;
+      $vars['minWidth'] = '100';
       $vars['width'] = (isset($fields['width']) ? $fields['width'] : '*');
 
       $columnDefs[] = $vars;
@@ -1244,7 +1260,7 @@ function ent2resource($table, $faire, $type) {
    //default columns
    $columnDefs[] = array('field' => 'faire', 'displayName' => 'Faire', 'width' => '50');
    $columnDefs[] = array('field' => 'status', 'displayName' => 'Status', 'width' => '100', 'sort' => array('direction' => 'uiGridConstants.ASC', 'priority' => 0), 'enableSorting' => true);
-   $columnDefs[] = array('field' => 'entry_id', 'displayName' => 'Entry ID', 'width' => '75');
+   $columnDefs[] = array('field' => 'entry_id', 'displayName' => 'Entry ID', 'width' => '100');
    $columnDefs[] = array('field' => 'form_type', 'displayName' => 'Form Type', 'width' => '150');
    $columnDefs[] = array('field' => 'proj_name', 'displayName' => 'Entry Name', 'width' => '*');
    $columnDefs[] = array('field' => 'location.area', 'displayName' => 'Area', 'sort' => array('direction' => 'uiGridConstants.ASC', 'priority' => 1), 'enableSorting' => true);
@@ -1639,7 +1655,7 @@ function notesRpt($table, $faire) {
    //fields to return
    $data['columnDefs'] = array(
       array("field" => "form_id", "displayOrder" => 20),
-      array("field" => "entry_id", "displayName" => "Entry Id", "displayOrder" => 200),
+      array("field" => "entry_id", "displayName" => "Entry Id", "width"=>'100', "displayOrder" => 200),
       array("field" => "user_name", "displayName" => "User Name", "type" => "string", "displayOrder" => 300),
       array("field" => "date_created", "displayName" => "Date Added", "type" => "string", "displayOrder" => 400),
       array("field" => "note", "displayName" => "Note", "displayOrder" => 401),
