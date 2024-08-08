@@ -43,6 +43,14 @@ $key   = ( ! empty( $_REQUEST['key'] ) ? sanitize_text_field( $_REQUEST['key'] )
 $type  = ( ! empty( $_REQUEST['type'] ) ? sanitize_text_field( $_REQUEST['type'] ) : null );
 $faire = ( ! empty( $_REQUEST['faire'] ) ? sanitize_text_field( $_REQUEST['faire'] ) : null );
 
+//check if the key is set and verify it
+if ( !empty($key) && $key !== MF_API_KEY ) {
+	header( 'HTTP/1.0 403 Forbidden' );
+
+	echo '<h2>Invalid: Parameter Not Valid - "' . esc_html( $_REQUEST['key'] ) . '"</h2>';
+	return;
+}
+
 //check if this is an allowed type
 if ( empty( $type ) ) {
 	header( 'HTTP/1.0 403 Forbidden' );
@@ -62,11 +70,6 @@ if ( empty( $type ) ) {
 	header( 'HTTP/1.0 403 Forbidden' );
 	echo '<h2>Invalid: No Key.</h2>';
 
-	return;
-} elseif ( $key !== MF_API_KEY ) {
-	header( 'HTTP/1.0 403 Forbidden' );
-
-	echo '<h2>Invalid: Parameter Not Valid - "' . esc_html( $_REQUEST['key'] ) . '"</h2>';
 	return;
 } elseif ( empty( $faire ) ) {
 	header( 'HTTP/1.0 403 Forbidden' );
