@@ -227,7 +227,7 @@ var attentionArray = [
 
 
 //function to add a new row to the RMT table for resource, attribute or attention
-function addRow(addTo,entryID) {    
+function addRow(addTo, entryID) {    
     var tableRow = '';
 	if (addTo == 'resource') {
 		//add resource
@@ -264,10 +264,10 @@ function addRow(addTo,entryID) {
 
 	//add action row
 	tableRow += '<td id="actions" class="noSend delete">' +
-                    '<span onclick="insertRowDB(\'' + type + '\')">' +
+                    '<span onclick="insertRowDB(\'' + type + '\', ' + entryID + ')">' +
                         '<i class="fas fa-check"></i>' +
                     '</span>' +
-                    '<span onclick="document.querySelector(\'#' + type + 'RowNew\').remove();">' +
+                    '<span onclick="document.querySelector(\'#rmt' + entryID + ' #' + type + 'RowNew\').remove();">' +
                         '<i class="fas fa-ban"></i>' +
                     '</span>' +
 		        '</td>';
@@ -278,7 +278,7 @@ function addRow(addTo,entryID) {
     if (!tbody.childNodes.length) {
 		tbody.innerHTML = tableRow;
 	} else {
-        var nodes = document.querySelectorAll('#' + type + 'Table > tbody > tr');
+        var nodes = document.querySelectorAll('#rmt' + entryID + ' #' + type + 'Table > tbody > tr');
 		nodes[0].insertAdjacentHTML('beforebegin', tableRow); 
 	}
 }
@@ -334,8 +334,8 @@ function buildDropDown(type) {
 function resAttDelete(currentEle, entryID) {
     var r = confirm("Are you sure want to delete this row (this cannot be undone)!!!");
     if (r == true) {
-        //delete the row
-        const element = document.getElementById(currentEle);
+        //delete the row for this entry
+        const element = document.querySelector("#rmt" + entryID + " #" + currentEle);
         element.remove();
 
         var fieldData = breakDownEle(currentEle);
@@ -370,25 +370,23 @@ function resAttDelete(currentEle, entryID) {
 }
 
 //lock/unlock a RMT resource
-function resAttLock(currentEle, lock) {
+function resAttLock(currentEle, lock, entryID) {
     var lockBit = 0;
     if (lock == 0) {
         lockBit = 1;
     }
 
-    var newLock = '<i class="bi bi-unlock-fill"></i>';
+    var newLock = '<i class="fas fa-lock-open fa-lg"></i>';
     if (lock == 0) {
-        newLock = '<i class="bi bi-lock-fill"></i>';
+        newLock = '<i class="fas fa-lock fa-lg"></i>';
     }
 
-    var lockHtml = '<span class="lockIcon" onclick="resAttLock(\'' + currentEle + '\',' + lockBit + ')">' + newLock + '</span>';
+    var lockHtml = '<span class="lockIcon" onclick="resAttLock(\'' + currentEle + '\',' + lockBit + ',' + entryID + ')">' + newLock + '</span>';
     document.querySelector(currentEle + ' .lock').innerHTML = lockHtml;
 
     var fieldData = breakDownEle(currentEle);
-    var rowID = currentEle.replace("Row", "");
-    var rowID = rowID.replace("attn", "");
-    var rowID = rowID.replace("att", "");
-    var rowID = rowID.replace("res", "");
+    var rowID = currentEle.replace("Row", "").replace("attn", "").replace("att", "").replace("res", "").replace("#", "");
+
     //send delete
     var data = {
         'action': 'update-lock-resAtt',
@@ -405,7 +403,8 @@ function resAttLock(currentEle, lock) {
     xhr.onreadystatechange = function () {
         if (xhr.readyState == XMLHttpRequest.DONE) {
             try {
-                //response = JSON.parse(xhr.response);
+                response = JSON.parse(xhr.response);
+                console.log(response);
             } catch (e) {
 
             }
@@ -490,7 +489,7 @@ function updateVal(currentEle, value) {
     });
 }
 
-function insertRowDB(type) {
+function insertRowDB(type, entryID) {
 
 	var allSelected = true;
 	var insertArr = {};
@@ -499,7 +498,7 @@ function insertRowDB(type) {
         allSelected = false;
     }
 	//update DB table with AJAX
-    Array.from(document.querySelectorAll('#' + type + 'RowNew td')).forEach(function(el, index){
+    Array.from(document.querySelectorAll('#rmt' + entryID + ' #' + type + 'RowNew td')).forEach(function(el, index){
         // this conditional is to determine which columns are edited and need to be changed after approval
         if(el.classList.contains("editable") || el.classList.contains("firstdrop") ) {
             value = el.querySelector(".thVal").value;
@@ -551,6 +550,7 @@ function insertRowDB(type) {
         for (const [key, value] of Object.entries(insertArr)) {
             data["insertArr[" + key + "]"] = value;
         }
+        data["insertArr[entry_id]"] = entryID;
         var xhr = new XMLHttpRequest();
         xhr.open("POST", ajaxurl);
         xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
@@ -560,11 +560,12 @@ function insertRowDB(type) {
             if (xhr.readyState == XMLHttpRequest.DONE) {
                 try {
                     response = JSON.parse(xhr.response);
+                    //console.log(response);
                     //set actions column
-                    document.querySelector('#' + type + 'RowNew #actions').innerHTML = '<span onclick="resAttDelete(\'#' + type + 'Row' + response.ID + '\')"><i class="fa fa-circle-minus fa-lg"></i></span></td>';
+                    document.querySelector('#' + type + 'RowNew #actions').innerHTML = '<span onclick="resAttDelete(\'#' + type + 'Row' + response.ID + '\', ' + entryID + ')"><i class="fa fa-circle-minus fa-lg"></i></span></td>';
 
                     //set item to locked
-                    document.querySelector('#' + type + 'RowNew .lock').innerHTML = '<span class="lockIcon" onclick="resAttLock(\'#' + type + 'Row' + response.ID + '\,0)">' + '<i class="fas fa-lock fa-lg"></i>' + '</span>';
+                    document.querySelector('#' + type + 'RowNew .lock').innerHTML = '<span class="lockIcon" onclick="resAttLock(\'#' + type + 'Row' + response.ID + '\,0, ' + entryID + ')">' + '<i class="fas fa-lock fa-lg"></i>' + '</span>';
                     //update fields with returned row id
                     for (i = 0; i < dataArray.length; i++) {
                         document.querySelector('#' + type + 'RowNew #' + dataArray[i]['id']).setAttribute('id', dataArray[i]['id'] + '_' + response.ID);
