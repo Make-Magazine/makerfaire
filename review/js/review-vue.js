@@ -3,6 +3,11 @@ var formID = document.getElementById("form_select").value;
 // this query will be updates with our route
 var query = {};
 
+var items = {};
+var types = {};
+var attributes = {};
+var attention = {};
+
 Vue.use(VueRouter);
 const routes = [
     { path: '/review'  }
@@ -136,7 +141,12 @@ var review = new Vue({
                 return response;
               })
             .then((response) => {
-                this.rmt = response.data.rmt               
+                this.rmt = response.data.rmt   
+                // set these objects to create the editable rmt dropdowns 
+                items = this.rmt.res_items   
+                types = this.rmt.res_types     
+                attributes = this.rmt.att_items    
+                attention = this.rmt.attn_items 
             });            
             
         document.getElementById("review").style.display = "block";
@@ -280,3 +290,25 @@ var review = new Vue({
         }
     }
 });  
+
+
+function waitForElm(selector) {
+    return new Promise(resolve => {
+        if (document.querySelector(selector)) {
+            return resolve(document.querySelector(selector));
+        }
+
+        const observer = new MutationObserver(mutations => {
+            if (document.querySelector(selector)) {
+                observer.disconnect();
+                resolve(document.querySelector(selector));
+            }
+        });
+
+        // If you get "parameter 1 is not of type 'Node'" error, see https://stackoverflow.com/a/77855838/492336
+        observer.observe(document.body, {
+            childList: true,
+            subtree: true
+        });
+    });
+}

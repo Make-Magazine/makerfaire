@@ -778,7 +778,7 @@ function entryResources($entry) {
   $resourceDisp .= '<tbody>';
   foreach ($rmt_data['resources'] as $data) {
     $resourceDisp .= '<tr id="resRow' . $data['id'] . '">'
-      . ' <td class="lock"><span class="lockIcon" onclick="resAttLock(\'#resRow' . $data['id'] . '\',' . $data['lock'] . ')">' . ($data['lock'] == 1 ? '<i class="fas fa-lock fa-lg"></i>' : '<i class="fas fa-lock-open fa-lg"></i>') . '</span></td>'
+      . ' <td class="lock"><span class="lockIcon" onclick="resAttLock(\'#resRow' . $data['id'] . '\',' . $data['lock'] . ',' . $entry['id'] . ')">' . ($data['lock'] == 1 ? '<i class="fas fa-lock fa-lg"></i>' : '<i class="fas fa-lock-open fa-lg"></i>') . '</span></td>'
       . ' <td id="resitem_' . $data['id'] . '" data-itemID="' . $data['category_id'] . '">' . $data['category'] . '</td>'
       . ' <td id="restype_' . $data['id'] . '" data-typeID="' . $data['resource_id'] . '" class="editable dropdown">' . $data['resource'] . '</td>'
       . ' <td id="resqty_' . $data['id'] . '"  class="editable numeric">' . $data['qty'] . '</td>'
@@ -786,7 +786,7 @@ function entryResources($entry) {
       . ' <td id="resuser_' . $data['id'] . '">' . $data['user'] . '</td>'
       . ' <td id="resdateupdate_' . $data['id'] . '">' . $data['last_updated']
       . '</td>'
-      . ' <td class="delete"><span class="delIcon" onclick="resAttDelete(\'#resRow' . $data['id'] . '\')"><i class="fa fa-circle-minus fa-lg"></i></span></td>'
+      . ' <td class="delete"><span class="delIcon" onclick="resAttDelete(\'resRow' . $data['id'] . '\',' . $entry['id'] . ')"><i class="fa fa-circle-minus fa-lg"></i></span></td>'
       . ' </tr>';
   }
   $resourceDisp .= '</tbody>';
@@ -799,7 +799,7 @@ function entryResources($entry) {
     . ' <th>Comment</th>'
     . ' <th>User</th>'
     . ' <th>Last Updated</th>'
-    . ' <th><span class="addIcon" onclick="addRow(\'attribute\')"><i class="fa fa-circle-plus fa-lg"></i></span></th></tr></thead>';
+    . ' <th><span class="addIcon" onclick="addRow(\'attribute\','.$entry['id'].')"><i class="fa fa-circle-plus fa-lg"></i></span></th></tr></thead>';
   $attDisp .= '<tbody>';
 
   foreach ($rmt_data['attributes'] as $data) {
@@ -809,7 +809,7 @@ function entryResources($entry) {
       . ' <td id="attcomment_' . $data['id'] . '" class="editable textAreaEdit">' . $data['comment'] . '</td>'
       . ' <td id="attuser_' . $data['id'] . '">' . $data['user'] . '</td>'
       . ' <td id="attdateupdate_' . $data['id'] . '">' . $data['last_updated'] . '</td>'
-      . ' <td class="delete"><span class="delIcon" onclick="resAttDelete(\'#attRow' . $data['id'] . '\')"><i class="fa fa-circle-minus fa-lg"></i></span></td></tr>';
+      . ' <td class="delete"><span class="delIcon" onclick="resAttDelete(\'attRow' . $data['id'] . '\',' . $entry['id'] . ')"><i class="fa fa-circle-minus fa-lg"></i></span></td></tr>';
   }
   $attDisp .= '</tbody>';
   $attDisp .= '</table>';
@@ -820,7 +820,7 @@ function entryResources($entry) {
     . ' <th>Comment</th>'
     . ' <th>User</th>'
     . ' <th>Last Updated</th>'
-    . ' <th><span onclick="addRow(\'attention\')"><i class="fa fa-circle-plus"></i></span></th></tr></thead>';
+    . ' <th><span onclick="addRow(\'attention\','.$entry['id'].')"><i class="fa fa-circle-plus fa-lg"></i></span></th></tr></thead>';
   $attnDisp .= '<tbody>';
 
   foreach ($rmt_data['attention'] as $data) {
@@ -829,14 +829,13 @@ function entryResources($entry) {
       . ' <td id="attncomment_' . $data['id'] . '" class="editable textAreaEdit">' . $data['comment'] . '</td>'
       . ' <td id="attnuser_' . $data['id'] . '">' . $data['user'] . '</td>'
       . ' <td id="attndateupdate_' . $data['id'] . '">' . $data['last_updated'] . '</td>'
-      . ' <td><span onclick="resAttDelete(\'#attnRow' . $data['id'] . '\')"><i class="fa fa-circle-minus"></i></span></td></tr>';
+      . ' <td><span onclick="resAttDelete(\'attnRow' . $data['id'] . '\',' . $entry['id'] . ')"><i class="fa fa-circle-minus fa-lg"></i></span></td></tr>';
   }
   $attnDisp .= '</tbody>';
   $attnDisp .= '</table>';
 
 
-  $return = 
-  
+  $return =   
   '<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
     <div class="panel panel-default">
       <div class="panel-heading" id="headingOne">
@@ -848,7 +847,7 @@ function entryResources($entry) {
         <div class="panel-body">' . $resourceDisp . '</div>
       </div>
     </div>
-    <div class="panel panel-default">
+    <div class="panel panel-default panel-att">
       <div class="panel-heading" id="headingTwo">
         <h4 class="panel-title">
           Attributes
@@ -858,7 +857,7 @@ function entryResources($entry) {
         <div class="panel-body">' . $attDisp . '</div>
       </div>
     </div>
-    <div class="panel panel-default">
+    <div class="panel panel-default panel-attn">
       <div class="panel-heading" id="headingTwo">
         <h4 class="panel-title">
           Attention

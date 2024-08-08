@@ -324,8 +324,7 @@ function setType(itemID, typeID, id) { //build type drop down based on item drop
 function resAttDelete(currentEle) {
 	var r = confirm("Are you sure want to delete this row (this cannot be undone)!");
 	if (r == true) {
-		jQuery(currentEle).remove(); //delete the row
-		currentEle = currentEle.replace("#", ""); //remove hashtag
+		jQuery("#"+currentEle).remove(); //delete the row
 		var fieldData = breakDownEle(currentEle);
 		var rowID = currentEle.replace("Row", "");
 		var rowID = rowID.replace("attn", "");
