@@ -381,7 +381,7 @@ function resAttLock(currentEle, lock, entryID) {
         newLock = '<i class="fas fa-lock fa-lg"></i>';
     }
 
-    var lockHtml = '<span class="lockIcon" onclick="resAttLock(\'' + currentEle + '\',' + lockBit + ',' + entryID + ')">' + newLock + '</span>';
+    var lockHtml = '<span class="lockIcon" onclick="resAttLock(\'' + currentEle + '\',' + lockBit + ')">' + newLock + '</span>';
     document.querySelector(currentEle + ' .lock').innerHTML = lockHtml;
 
     var fieldData = breakDownEle(currentEle);
@@ -565,7 +565,7 @@ function insertRowDB(type, entryID) {
                     document.querySelector('#' + type + 'RowNew #actions').innerHTML = '<span onclick="resAttDelete(\'#' + type + 'Row' + response.ID + '\', ' + entryID + ')"><i class="fa fa-circle-minus fa-lg"></i></span></td>';
 
                     //set item to locked
-                    document.querySelector('#' + type + 'RowNew .lock').innerHTML = '<span class="lockIcon" onclick="resAttLock(\'#' + type + 'Row' + response.ID + '\,0, ' + entryID + ')">' + '<i class="fas fa-lock fa-lg"></i>' + '</span>';
+                    document.querySelector('#' + type + 'RowNew .lock').innerHTML = '<span class="lockIcon" onclick="resAttLock(\'#' + type + 'Row' + response.ID + '\',1)">' + '<i class="fas fa-lock fa-lg"></i>' + '</span>';
                     //update fields with returned row id
                     for (i = 0; i < dataArray.length; i++) {
                         document.querySelector('#' + type + 'RowNew #' + dataArray[i]['id']).setAttribute('id', dataArray[i]['id'] + '_' + response.ID);

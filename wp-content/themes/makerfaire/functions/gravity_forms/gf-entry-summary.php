@@ -778,7 +778,7 @@ function entryResources($entry) {
   $resourceDisp .= '<tbody>';
   foreach ($rmt_data['resources'] as $data) {
     $resourceDisp .= '<tr id="resRow' . $data['id'] . '">'
-      . ' <td class="lock"><span class="lockIcon" onclick="resAttLock(\'#resRow' . $data['id'] . '\',' . $data['lock'] . ',' . $entry['id'] . ')">' . ($data['lock'] == 1 ? '<i class="fas fa-lock fa-lg"></i>' : '<i class="fas fa-lock-open fa-lg"></i>') . '</span></td>'
+      . ' <td class="lock"><span class="lockIcon" onclick="resAttLock(\'#resRow' . $data['id'] . '\',' . $data['lock'] . ')">' . ($data['lock'] == 1 ? '<i class="fas fa-lock fa-lg"></i>' : '<i class="fas fa-lock-open fa-lg"></i>') . '</span></td>'
       . ' <td id="resitem_' . $data['id'] . '" data-itemID="' . $data['category_id'] . '">' . $data['category'] . '</td>'
       . ' <td id="restype_' . $data['id'] . '" data-typeID="' . $data['resource_id'] . '" class="editable dropdown">' . $data['resource'] . '</td>'
       . ' <td id="resqty_' . $data['id'] . '"  class="editable numeric">' . $data['qty'] . '</td>'
