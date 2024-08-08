@@ -16,6 +16,7 @@
 				[field]884[/field]
 				[field]320[/field]				
 				[field]date_created[/field]
+				[field]showcase_info[/field]
 			[/column]
 		[/block]
 	[/tab_content]

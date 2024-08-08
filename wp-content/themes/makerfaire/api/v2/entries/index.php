@@ -330,13 +330,13 @@ function fieldOutput($fieldID, $entry, $field_array, $form, $arg = '') {
         break;
     }
   } else {
-    $type  = $label = $value = '';
+    //default these items
+    $label = $value = '';
     switch ($fieldID) {
       case 'notes':
         global $notes_view;
         if ($notes_view) {
           $type  = 'notes';
-          $label = '';
           $value = GFAPI::get_notes(array('entry_id' => $entry['id'], 'note_type' => 'user'), array('key' => 'id', 'direction' => 'DESC'));
           if ($value == '') $value = '&nbsp;';
         }
@@ -356,7 +356,6 @@ function fieldOutput($fieldID, $entry, $field_array, $form, $arg = '') {
 
       case 'update_admin_button':
         $type  = 'html';
-        $label = '';
 
         //only display the update admin button if the user can actually edit something
         global $edit_flags;
@@ -371,7 +370,7 @@ function fieldOutput($fieldID, $entry, $field_array, $form, $arg = '') {
         }
         break;
       case 'date_created':
-        $type  = 'text';
+        //type defaults to 'text'
         $date  = date_create($entry[$fieldID]);
         $value = date_format($date, "m/d/Y");
         $label = 'Submitted On';
@@ -400,13 +399,13 @@ function fieldOutput($fieldID, $entry, $field_array, $form, $arg = '') {
         break;
       case 'prelim_loc':
         global $edit_prelim_loc;
-        $edit_cap = ($edit_prelim_loc?'edit':'view');
+        $edit_cap   = ($edit_prelim_loc?'edit':'view');
 
-        $field_id = '302';
-        $label = 'Preliminary Location';
-        $fieldName = 'entry_prelim_loc_';
-        $type    = 'html';
-        $field = ($field_array[$field_id] ? $field_array[$field_id] : '');
+        $field_id   = '302';
+        $label      = 'Preliminary Location';
+        $fieldName  = 'entry_prelim_loc_';
+        $type       = 'html';
+        $field      = ($field_array[$field_id] ? $field_array[$field_id] : '');
         if ($field != NULL) {
           $field_value   = RGFormsModel::get_lead_field_value($entry, $field);
           $value  = mf_checkbox_display($field, $field_value, $entry['form_id'], $fieldName, $field_id, $edit_cap);
@@ -414,12 +413,13 @@ function fieldOutput($fieldID, $entry, $field_array, $form, $arg = '') {
         break;      
       case 'exhibit_type':
         global $edit_entry_type;
-        $edit_cap = ($edit_entry_type?'edit':'view');
+        $edit_cap   = ($edit_entry_type?'edit':'view');
 
-        $field_id = '339';
-        $label   = 'Entry Type';
-        $fieldName = 'admin_exhibit_type_';
-        $type    = 'html';
+        $field_id   = '339';
+        $type       = 'html';
+        $label      = 'Entry Type';
+        $fieldName  = 'admin_exhibit_type_';
+        
         $field = ($field_array[$field_id] ? $field_array[$field_id] : '');
         if ($field != NULL) {
           $field_value   = RGFormsModel::get_lead_field_value($entry, $field);
@@ -431,9 +431,10 @@ function fieldOutput($fieldID, $entry, $field_array, $form, $arg = '') {
         $edit_cap = ($edit_fee_mgmt?'edit':'view');
 
         $field_id = '442';
+        $type    = 'html';
         $label = 'Fee Management';
         $fieldName = 'info_fee_mgmt_';
-        $type    = 'html';
+        
         $field = ($field_array[$field_id] ? $field_array[$field_id] : '');
         if ($field != NULL) {
           $field_value   = RGFormsModel::get_lead_field_value($entry, $field);
@@ -448,8 +449,6 @@ function fieldOutput($fieldID, $entry, $field_array, $form, $arg = '') {
           $type  = 'html';
           $label = 'Send Notifications';
           $value = get_form_notifications($form, $entry['id']);
-        } else {
-          $type  = $label = $value = '';
         }
 
         break;
@@ -460,14 +459,11 @@ function fieldOutput($fieldID, $entry, $field_array, $form, $arg = '') {
           $label = 'Notifications Sent';
           $search_criteria = array('entry_id' => $entry['id'], 'note_type' => 'notification');
           $value = GFAPI::get_notes($search_criteria, array('key' => 'id', 'direction' => 'DESC'));
-        } else {
-          $type  = $label = $value = '';
         }
         break;
       case 'other_entries': //2:91->4:25
         $type  = 'html';
-        $label = '';
-        $value = '';
+        
         $value = getAddEntries($entry[98], $entry['id']);
         break;
       case 'edit_status':
@@ -506,11 +502,30 @@ function fieldOutput($fieldID, $entry, $field_array, $form, $arg = '') {
 
         if ($view_rmt) {
           $type  = 'html';
-          $label = '';
-          $value = '';
+        
           $value   = '<div id="rmt' . $entry['id'] . '">' . entryResources($entry) . '</div>';
         }
         break;
+      case 'showcase_info':
+        $type = 'html';
+        $label = 'Showcase Information';
+        $showcase_info = get_showcase_entries($entry['id']);
+
+        //is this a showcase or part of one?
+        if(isset($showcase_info['type'])){
+          $showcase = $showcase_info['type'];
+          if($showcase == 'parent'){
+            $value = 'Entries that are part of this showcase:</br>';
+            foreach ($showcase_info['child_data'] as $parent) {
+              $value .= '<a href="/maker/entry/' . $parent['child_entryID'] . '" class="entry-box">' . $parent['child_title'] . '</h3></a><br/>';
+            }
+          }elseif($showcase == 'child'){
+              $parent = $showcase_info['parent_data'];              
+              $value = 'Part of Showcase <a href="/maker/entry/' . $parent['parent_id'] . '" target="none">'.$parent['parent_title'].'</a>';
+          }
+
+        }
+        break;  
     }
   }
   if ($arg == 'no_label')  $label = '';
