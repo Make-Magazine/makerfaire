@@ -11,26 +11,31 @@ defined('ABSPATH') or die('This file cannot be called directly!');
 $type   = (!empty($_REQUEST['type']) ? sanitize_text_field($_REQUEST['type']) : null);
 $formID = (!empty($_REQUEST['form']) ? sanitize_text_field($_REQUEST['form']) : false);
 
-//set the users edit capabilities
-$edit_fee_mgmt        = (current_user_can('edit_fee_mgmt')        ? 'edit' : 'view');
-$edit_entry_type      = (current_user_can('edit_entry_type')      ? 'edit' : 'view');
-$edit_prelim_loc      = (current_user_can('edit_prelim_loc')      ? 'edit' : 'view');
-$edit_flags           = (current_user_can('edit_flags')           ? 'edit' : 'view');
-$edit_status          = (current_user_can('edit_status')          ? true : false);
-$notes_view           = (current_user_can('notes_view')           ? true : false);
-$notes_send           = (current_user_can('notes_send')           ? true : false);
-$notifications_resend = (current_user_can('notifications_resend') ? true : false);
-$view_notifications   = (current_user_can('view_notifications')   ? true : false);
-$view_rmt             = (current_user_can('view_rmt')             ? true : false);
-
-//set global data
-$form     = GFAPI::get_form($formID);
-$field303 = RGFormsModel::get_field($form, '303');
-$all_rmt  = GFRMTHELPER::rmt_table_data();
-
 // Double check again we have requested this file
 if ($type == 'entries' && $formID) {
-  $data = getAllEntries($formID);
+  //get the current users capabilities
+  $user = wp_get_current_user();
+  $user_caps = $user->allcaps;
+
+  //set the users edit capabilities  
+  $edit_fee_mgmt        = (isset($user_cap['edit_fee_mgmt']) && $user_cap['edit_fee_mgmt'] ? true : false);
+  $edit_entry_type      = (isset($user_cap['edit_entry_type']) && $user_cap['edit_entry_type'] ? true : false);
+  $edit_prelim_loc      = (isset($user_cap['edit_prelim_loc']) && $user_cap['edit_prelim_loc'] ? true : false);
+  $edit_flags           = (isset($user_cap['edit_flags']) && $user_cap['edit_flags'] ? true : false);
+  $edit_status          = (isset($user_cap['edit_status']) && $user_cap['edit_status'] ? true : false);
+  $notes_view           = (isset($user_cap['notes_view']) && $user_cap['notes_view'] ? true : false);
+  $notes_send           = (isset($user_cap['notes_send']) && $user_cap['notes_send'] ? true : false);
+  $notifications_resend = (isset($user_cap['notifications_resend']) && $user_cap['notifications_resend'] ? true : false);
+  $view_notifications   = (isset($user_cap['view_notifications']) && $user_cap['view_notifications'] ? true : false);
+  $view_rmt             = (isset($user_cap['view_rmt']) && $user_cap['view_rmt'] ? true : false);
+
+  //set global data
+  $form     = GFAPI::get_form($formID);
+  $field303 = RGFormsModel::get_field($form, '303');
+  $all_rmt  = GFRMTHELPER::rmt_table_data();
+
+  //set entry data
+  $data     = getAllEntries($formID);
 
   //RMT values for adding new resources, attributes, and attention items - this will be used by Vue  
   $data['rmt'] = array(
@@ -38,8 +43,8 @@ if ($type == 'entries' && $formID) {
     'res_types'       => $all_rmt['resources'],
     'att_items'       => $all_rmt['attItems'],
     'attn_items'      => $all_rmt['attnItems']
-  );      
-  
+  );
+
   // Output the JSON
   echo json_encode($data);
 
@@ -55,7 +60,7 @@ function getAllEntries($formID = '') {
   $sorting         = array();
   $paging          = array('offset' => 0, 'page_size' => 999);
   $total_count     = 0;
-  $entries         = GFAPI::get_entries($formID, $search_criteria, $sorting, $paging, $total_count);  
+  $entries         = GFAPI::get_entries($formID, $search_criteria, $sorting, $paging, $total_count);
 
   //convert the form fields into a usable array
   $field_array = array();
@@ -359,7 +364,7 @@ function fieldOutput($fieldID, $entry, $field_array, $form, $arg = '') {
         global $edit_entry_type;
         global $edit_fee_mgmt;
         global $edit_status;
-        if ($edit_flags == 'edit' || $edit_prelim_loc == 'edit' || $edit_entry_type == 'edit' || $edit_fee_mgmt == 'edit' || $edit_status) {
+        if ($edit_flags || $edit_prelim_loc || $edit_entry_type || $edit_fee_mgmt || $edit_status) {
 
           $value = '<p><input type="button" id="updAdmin' . $entry['id'] . '" value="Update Admin" class="button updButton" style="width:auto;padding-bottom:2px;" onclick="updateMgmt(\'update_admin\', \'' . $entry['id'] . '\');"/></p>
                       <p><span class="updMsg" id="updAdminMSG' . $entry['id'] . '"></span></p>';
@@ -377,9 +382,11 @@ function fieldOutput($fieldID, $entry, $field_array, $form, $arg = '') {
         $value = '<a href="/maker/entry/' . $entry['id'] . '" target="_none">Public Entry Page</a>';
         break;
 
-        //checkbox fields for edit
+      //checkbox fields for edit
       case 'flags':
         global $edit_flags;
+        $edit_cap = ($edit_flags?'edit':'view');
+
         $field_id = '304';
         $label = 'Flags';
         $fieldName = 'entry_flags_';
@@ -388,11 +395,12 @@ function fieldOutput($fieldID, $entry, $field_array, $form, $arg = '') {
         //is this a valid field in the form
         if ($field != NULL) {
           $field_value   = RGFormsModel::get_lead_field_value($entry, $field);
-          $value  = mf_checkbox_display($field, $field_value, $entry['form_id'], $fieldName, $field_id, $edit_flags);
+          $value  = mf_checkbox_display($field, $field_value, $entry['form_id'], $fieldName, $field_id, $edit_cap);
         }
         break;
       case 'prelim_loc':
         global $edit_prelim_loc;
+        $edit_cap = ($edit_prelim_loc?'edit':'view');
 
         $field_id = '302';
         $label = 'Preliminary Location';
@@ -401,11 +409,12 @@ function fieldOutput($fieldID, $entry, $field_array, $form, $arg = '') {
         $field = ($field_array[$field_id] ? $field_array[$field_id] : '');
         if ($field != NULL) {
           $field_value   = RGFormsModel::get_lead_field_value($entry, $field);
-          $value  = mf_checkbox_display($field, $field_value, $entry['form_id'], $fieldName, $field_id, $edit_prelim_loc);
+          $value  = mf_checkbox_display($field, $field_value, $entry['form_id'], $fieldName, $field_id, $edit_cap);
         }
-        break;
+        break;      
       case 'exhibit_type':
         global $edit_entry_type;
+        $edit_cap = ($edit_entry_type?'edit':'view');
 
         $field_id = '339';
         $label   = 'Entry Type';
@@ -414,11 +423,13 @@ function fieldOutput($fieldID, $entry, $field_array, $form, $arg = '') {
         $field = ($field_array[$field_id] ? $field_array[$field_id] : '');
         if ($field != NULL) {
           $field_value   = RGFormsModel::get_lead_field_value($entry, $field);
-          $value  = mf_checkbox_display($field, $field_value, $entry['form_id'], $fieldName, $field_id, $edit_entry_type);
+          $value  = mf_checkbox_display($field, $field_value, $entry['form_id'], $fieldName, $field_id, $edit_cap);
         }
         break;
       case 'fee_mgmt':
         global $edit_fee_mgmt;
+        $edit_cap = ($edit_fee_mgmt?'edit':'view');
+
         $field_id = '442';
         $label = 'Fee Management';
         $fieldName = 'info_fee_mgmt_';
@@ -426,7 +437,7 @@ function fieldOutput($fieldID, $entry, $field_array, $form, $arg = '') {
         $field = ($field_array[$field_id] ? $field_array[$field_id] : '');
         if ($field != NULL) {
           $field_value   = RGFormsModel::get_lead_field_value($entry, $field);
-          $value  = mf_checkbox_display($field, $field_value, $entry['form_id'], $fieldName, $field_id, $edit_fee_mgmt);
+          $value  = mf_checkbox_display($field, $field_value, $entry['form_id'], $fieldName, $field_id, $edit_cap);
         }
 
         break;
@@ -490,16 +501,16 @@ function fieldOutput($fieldID, $entry, $field_array, $form, $arg = '') {
         $label = 'Final Location';
         //$value= 'final location is'.display_schedule($form['id'],$entry,$section='sidebar');
         break;
-        case 'rmt': //2:16->3:45
-          global $view_rmt;
-          
-          if ($view_rmt) {                        
-            $type  = 'html';
-            $label = '';          
-            $value='';
-            $value   = '<div id="rmt'.$entry['id'].'">'.entryResources($entry).'</div>';          
-          }  
-          break;             
+      case 'rmt': //2:16->13:45
+        global $view_rmt;
+
+        if ($view_rmt) {
+          $type  = 'html';
+          $label = '';
+          $value = '';
+          $value   = '<div id="rmt' . $entry['id'] . '">' . entryResources($entry) . '</div>';
+        }
+        break;
     }
   }
   if ($arg == 'no_label')  $label = '';
@@ -539,8 +550,8 @@ function getAddEntries($email, $currEntryID) {
   </thead>';
   $exclude_type = array('Attendee', 'Invoice', 'Default');
 
-  foreach ($results as $addData) {    
-    $form = GFAPI::get_form($addData->form_id);    
+  foreach ($results as $addData) {
+    $form = GFAPI::get_form($addData->form_id);
     $form['title'] = $addData->form_title;
 
     //exclude certain form types
