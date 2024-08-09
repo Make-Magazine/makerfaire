@@ -43,7 +43,7 @@ get_header();
     font-style: italic;
   }
 </style>
-<div id="manageEntries" style="width:95%; margin: 35px auto;" class="maker-portal">
+<div id="manageEntries" style="width:95%; margin: 35px auto;margin-bottom: 0px;" class="maker-portal">
   <input type="hidden" id="user_email" value="<?php echo $current_user->user_email; ?>" />
   <div class="row">
     <h1 style="text-align:center">Hello <?php echo $current_user->user_email; ?></h1>
