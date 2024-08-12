@@ -17,7 +17,6 @@ function create_expofp_exhibitor( $entry, $form ) {
             }
         }
     }
-    
     if($write_to_expofp == true){
         //error_log(print_r($entry, true));
         $expofpToken = EXPOFP_TOKEN;
@@ -80,10 +79,23 @@ function createExpoFpExhibit($entry, $form, $expofpToken, $expofpId) {
     );
 
     //check if exhibitor is a sponsor
-    $featured = false;
-    $formType = $form['form_type'];
-    $tags = array();
+    $featured   = false;
+    $formType   = $form['form_type'];
+    $tags       = array();
     $categories = array();
+    $rmt_data   = GFRMTHELPER::rmt_get_entry_data($entry['id']);
+    $res_arr    = array();
+    $attr_arr   = array();
+    foreach($rmt_data['resources'] as $resource) {
+        $res_obj = new stdClass();
+        $res_obj->name = $resource['token'];
+        $categories[] = $res_obj;
+        $res_arr[] = $resource['token'] . ":" . $resource['qty'];
+    }
+    foreach($rmt_data['attributes'] as $attribute) {
+        $attr_arr[] = $attribute['token'] . ":" . $attribute['value'];
+    }
+    $rmt_shown  = implode(', ', array_merge($res_arr, $attr_arr));
 
     if ($formType == "Master") {
         foreach ($entry as $key => $value) {
@@ -93,7 +105,7 @@ function createExpoFpExhibit($entry, $form, $expofpToken, $expofpId) {
                         $featured = true;
                         array_push($tags, "Sponsor");
                     }
-                    $categories["name"] = $value;
+                    $categories[] = array("name" => $value);
                 }
             }
         }
@@ -111,20 +123,12 @@ function createExpoFpExhibit($entry, $form, $expofpToken, $expofpId) {
         "name" => $entry['151'],
         "description" => $entry['16'],
         "featured" => $featured,
-        "address" => "1 Main Ave.", // this will hold the category list as a comma delimited strings
+        "address" => $rmt_shown, // this holds all the resources and attributes entered as a comma delimited string
         "website" => "https://makerfaire.com/maker/entry/" . $entry['id'], // this will be the maker/entry page
         "adminNotes" => "", // should we include this?
         "externalId" => $entry['id'],
-        "categories" => array(
-            $categories
-        ),
-        "tags" => $tags/*, meta data does what
-        "metadata" => array(
-            array(
-                "key" => "metaKey",
-                "value" => "metaValue"
-            )
-        )*/
+        "categories" => $categories,
+        "tags" => $tags
     ];
 
     //error_log(print_r(json_encode($data), TRUE));
@@ -148,6 +152,19 @@ function updateExpoFpExhibit($entry, $form, $expofpToken, $exhibitor_id) {
     $formType = $form['form_type'];
     $tags = array();
     $categories = array();
+    $rmt_data   = GFRMTHELPER::rmt_get_entry_data($entry['id']);
+    $res_arr    = array();
+    $attr_arr   = array();
+    foreach($rmt_data['resources'] as $resource) {
+        $res_obj = new stdClass();
+        $res_obj->name = $resource['token'];
+        $categories[] = $res_obj;
+        $res_arr[] = $resource['token'] . ":" . $resource['qty'];
+    }
+    foreach($rmt_data['attributes'] as $attribute) {
+        $attr_arr[] = $attribute['token'] . ":" . $attribute['value'];
+    }
+    $rmt_shown  = implode(', ', array_merge($res_arr, $attr_arr));
 
     if ($formType == "Master") {
         foreach ($entry as $key => $value) {
@@ -157,7 +174,9 @@ function updateExpoFpExhibit($entry, $form, $expofpToken, $exhibitor_id) {
                         $featured = true;
                         array_push($tags, "Sponsor");
                     }
-                    $categories["name"] = $value;
+                    $res_obj = new stdClass();
+                    $res_obj->name = $value;
+                    $categories[] = $res_obj;
                 }
             }
         }
@@ -166,7 +185,9 @@ function updateExpoFpExhibit($entry, $form, $expofpToken, $exhibitor_id) {
             $featured = true;
             array_push($tags, "Sponsor");
         } 
-        $categories["name"] = $formType;
+        $res_obj = new stdClass();
+        $res_obj->name = $formType;
+        $categories[] = $res_obj;
     }
 
     $data = [
@@ -175,17 +196,16 @@ function updateExpoFpExhibit($entry, $form, $expofpToken, $exhibitor_id) {
         "name" => $entry['151'],
         "description" => $entry['16'],
         "featured" => $featured,
-        //"address" => "1 Main Ave.", // this will hold the category list as a comma delimited strings
+        "address" => $rmt_shown, // this holds all the resources and attributes entered as a comma delimited string
         "website" => "https://makerfaire.com/maker/entry/" . $entry['id'], // this will be the maker/entry page
         "adminNotes" => "", // should we include this?
-        "categories" => array(
-            $categories
-        ),
+        "categories" => $categories,
         "tags" => $tags
     ];
 
     //error_log(print_r(json_encode($data), TRUE));
     $result = postCurl($url, $headers, json_encode($data), "POST");
+    //error_log(print_r($result, TRUE));
 
     return $result;
 }
