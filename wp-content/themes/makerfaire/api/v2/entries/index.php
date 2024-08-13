@@ -501,8 +501,7 @@ function fieldOutput($fieldID, $entry, $field_array, $form, $arg = '') {
         global $view_rmt;
         
         if ($view_rmt) {
-          $type  = 'html';
-          $label = 'RMT';
+          $type  = 'html';          
           $value   = '<div id="rmt' . $entry['id'] . '">' . entryResources($entry) . '</div>';
         }
         break;
