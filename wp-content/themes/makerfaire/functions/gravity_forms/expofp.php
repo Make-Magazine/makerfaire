@@ -60,7 +60,7 @@ function update_expofp_exhibitor($form, $entry_id) {
             if($entry['303'] == "Cancelled" || $entry['303'] == "Rejected") {
                 deleteExpoFpExhibit($exhibitor_id, $expofpToken);
             } else { // otherwise, update exhibitor with new title, description, image, etc
-                updateExpoFpExhibit($entry, $form, $expofpToken, $exhibitor_id);
+                updateExpoFpExhibit($entry, $form, $expofpToken, $expofpId, $exhibitor_id);
                 $image = json_decode($entry['22'])[0];
                 updateExpoFpImage($expofpToken, $exhibitor_id, $image);
             }
@@ -87,9 +87,7 @@ function createExpoFpExhibit($entry, $form, $expofpToken, $expofpId) {
     $res_arr    = array();
     $attr_arr   = array();
     foreach($rmt_data['resources'] as $resource) {
-        $res_obj = new stdClass();
-        $res_obj->name = $resource['token'];
-        $categories[] = $res_obj;
+        $categories[] = array("name" => $resource['token']);
         $res_arr[] = $resource['token'] . ":" . $resource['qty'];
     }
     foreach($rmt_data['attributes'] as $attribute) {
@@ -118,6 +116,16 @@ function createExpoFpExhibit($entry, $form, $expofpToken, $expofpId) {
         $categories["name"] = $formType;
     }
 
+    // we also want to create a category for each entry id so we can set the entry id as a category in expoFP
+    $categories[] = array("name" => $entry['id']);
+    $entryID_url = "https://app.expofp.com/api/v1/add-category";
+    $entryID_data = [
+        "token" => $expofpToken,
+        "name" => $entry['id'],
+        "eventId" =>  $expofpId
+    ];
+    postCurl($entryID_url, $headers, json_encode($entryID_data), "POST");
+
     $data = [
         "token" => $expofpToken,
         "eventId" => $expofpId,
@@ -134,6 +142,7 @@ function createExpoFpExhibit($entry, $form, $expofpToken, $expofpId) {
 
     //error_log(print_r(json_encode($data), TRUE));
     $result = postCurl($url, $headers, json_encode($data), "POST");
+    //error_log(print_r($result, TRUE));
     $exhibitor_id = json_decode($result)->id;
     // set the gf_entry_meta to the exhibitor id. if this meta is present, we know we should update rather than add to ExpoFP
     gform_update_meta( $entry['id'], "expofp_exhibit_id", $exhibitor_id, $form['id']);
@@ -141,7 +150,7 @@ function createExpoFpExhibit($entry, $form, $expofpToken, $expofpId) {
     return $result;
 }
 
-function updateExpoFpExhibit($entry, $form, $expofpToken, $exhibitor_id) {
+function updateExpoFpExhibit($entry, $form, $expofpToken, $expofpId, $exhibitor_id) {
     $url = "https://app.expofp.com/api/v1/update-exhibitor";
     $headers = array(
         'Accept: application/json', 
@@ -157,9 +166,7 @@ function updateExpoFpExhibit($entry, $form, $expofpToken, $exhibitor_id) {
     $res_arr    = array();
     $attr_arr   = array();
     foreach($rmt_data['resources'] as $resource) {
-        $res_obj = new stdClass();
-        $res_obj->name = $resource['token'];
-        $categories[] = $res_obj;
+        $categories[] = array("name" => $resource['token']);
         $res_arr[] = $resource['token'] . ":" . $resource['qty'];
     }
     foreach($rmt_data['attributes'] as $attribute) {
@@ -176,9 +183,7 @@ function updateExpoFpExhibit($entry, $form, $expofpToken, $exhibitor_id) {
                         $featured = true;
                         array_push($tags, "Sponsor");
                     }
-                    $res_obj = new stdClass();
-                    $res_obj->name = $value;
-                    $categories[] = $res_obj;
+                    $categories[] = array("name" => $value);
                 }
             }
         }
@@ -187,10 +192,18 @@ function updateExpoFpExhibit($entry, $form, $expofpToken, $exhibitor_id) {
             $featured = true;
             array_push($tags, "Sponsor");
         } 
-        $res_obj = new stdClass();
-        $res_obj->name = $formType;
-        $categories[] = $res_obj;
+        $categories[] = array("name" => $formType);
     }
+
+    // we also want to create a category for each entry id so we can set the entry id as a category in expoFP
+    $categories[] = array("name" => $entry['id']);
+    $entryID_url = "https://app.expofp.com/api/v1/add-category";
+    $entryID_data = [
+        "token" => $expofpToken,
+        "name" => $entry['id'],
+        "eventId" =>  $expofpId
+    ];
+    postCurl($entryID_url, $headers, json_encode($entryID_data), "POST");
 
     $data = [
         "token" => $expofpToken,
@@ -200,7 +213,6 @@ function updateExpoFpExhibit($entry, $form, $expofpToken, $exhibitor_id) {
         "featured" => $featured,
         "address" => $rmt_shown, // this holds all the resources and attributes entered as a comma delimited string
         "website" => "https://makerfaire.com/maker/entry/" . $entry['id'], // this will be the maker/entry page
-        "adminNotes" => "", // should we include this?
         "categories" => $categories,
         "tags" => $tags
     ];
