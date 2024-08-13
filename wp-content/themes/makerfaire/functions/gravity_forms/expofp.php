@@ -1,6 +1,6 @@
 <?php
 
-add_action( 'gform_after_submission', 'create_expofp_exhibitor', 10, 2 );
+add_action( 'gform_after_submission', 'create_expofp_exhibitor', 999, 2 );
 function create_expofp_exhibitor( $entry, $form ) {
     $expofpId = isset($form['expofp_event_id']) ? $form['expofp_event_id'] : "";
     if($expofpId == "") { 
