@@ -15,7 +15,7 @@ $formID = (!empty($_REQUEST['form']) ? sanitize_text_field($_REQUEST['form']) : 
 if ($type == 'entries' && $formID) {
   //get the current users capabilities
   $user = wp_get_current_user();
-  $user_caps = $user->allcaps;
+  $user_cap = $user->allcaps;
 
   //set the users edit capabilities  
   $edit_fee_mgmt        = (isset($user_cap['edit_fee_mgmt']) && $user_cap['edit_fee_mgmt'] ? true : false);
@@ -499,10 +499,10 @@ function fieldOutput($fieldID, $entry, $field_array, $form, $arg = '') {
         break;
       case 'rmt': //2:16->13:45
         global $view_rmt;
-
+        
         if ($view_rmt) {
           $type  = 'html';
-        
+          $label = 'RMT';
           $value   = '<div id="rmt' . $entry['id'] . '">' . entryResources($entry) . '</div>';
         }
         break;
