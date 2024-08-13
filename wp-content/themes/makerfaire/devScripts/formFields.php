@@ -130,7 +130,7 @@ $publicFields = array(109,11,110,105,151,22,16,27,32,151,160,234,217,158,258,224
         usort($jsonArray, "cmp");
       }
             
-      //var_dump($jsonArray);
+      var_dump($jsonArray);
       foreach($jsonArray as $field){
         $condDisp = '';
         if(isset($field['conditionalLogic']) && $field['conditionalLogic']!='' && $condLog){
@@ -159,14 +159,8 @@ $publicFields = array(109,11,110,105,151,22,16,27,32,151,160,234,217,158,258,224
             <td><?php echo $field['type'];?></td>
             <td><?php
               if($field['type']=='product') {
-                echo '<table width="100%">';
-                echo '<tr><th>Label</th><th>Price</th></tr>';
-                if(isset($field['choices']) && is_array($field['choices'])){
-                  foreach($field['choices'] as $choice){
-                    echo '<tr><td>'.($choice->value!=$choice->text?$choice->value.'-'.$choice->text:$choice->text).'</td><td>'.$choice->price.'</td></tr>';
-                  }
-                }                
-                echo '</table>';
+                echo 'Base Price = '.$field['basePrice'];
+                
               }elseif($field['type']=='checkbox'||$field['type']=='radio'||$field['type']=='select' ||$field['type']=='address'||$field['type']=='name'){
                 echo '<ul style="padding-left: 20px;">';
                 if(isset($field['inputs']) && !empty($field['inputs'])){
