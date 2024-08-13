@@ -1,6 +1,6 @@
 <?php
 
-add_action( 'gform_after_submission', 'create_expofp_exhibitor', 10, 2 );
+add_action( 'gform_after_submission', 'create_expofp_exhibitor', 999, 2 );
 function create_expofp_exhibitor( $entry, $form ) {
     $expofpId = isset($form['expofp_event_id']) ? $form['expofp_event_id'] : "";
     if($expofpId == "") { 
@@ -17,7 +17,6 @@ function create_expofp_exhibitor( $entry, $form ) {
             }
         }
     }
-    
     if($write_to_expofp == true){
         //error_log(print_r($entry, true));
         $expofpToken = EXPOFP_TOKEN;
@@ -61,7 +60,7 @@ function update_expofp_exhibitor($form, $entry_id) {
             if($entry['303'] == "Cancelled" || $entry['303'] == "Rejected") {
                 deleteExpoFpExhibit($exhibitor_id, $expofpToken);
             } else { // otherwise, update exhibitor with new title, description, image, etc
-                updateExpoFpExhibit($entry, $form, $expofpToken, $exhibitor_id);
+                updateExpoFpExhibit($entry, $form, $expofpToken, $expofpId, $exhibitor_id);
                 $image = json_decode($entry['22'])[0];
                 updateExpoFpImage($expofpToken, $exhibitor_id, $image);
             }
@@ -80,10 +79,22 @@ function createExpoFpExhibit($entry, $form, $expofpToken, $expofpId) {
     );
 
     //check if exhibitor is a sponsor
-    $featured = false;
-    $formType = $form['form_type'];
-    $tags = array();
+    $featured   = false;
+    $formType   = $form['form_type'];
+    $tags       = array();
     $categories = array();
+    $rmt_data   = GFRMTHELPER::rmt_get_entry_data($entry['id']);
+    $res_arr    = array();
+    $attr_arr   = array();
+    foreach($rmt_data['resources'] as $resource) {
+        $categories[] = array("name" => $resource['token']);
+        $res_arr[] = $resource['token'] . ":" . $resource['qty'];
+    }
+    foreach($rmt_data['attributes'] as $attribute) {
+        $attr_arr[] = $attribute['token'] . ":" . $attribute['value'];
+        $tags[] = $attribute['token'] . ":" . $attribute['value'];
+    }
+    $rmt_shown  = implode(', ', array_merge($res_arr, $attr_arr));
 
     if ($formType == "Master") {
         foreach ($entry as $key => $value) {
@@ -93,7 +104,7 @@ function createExpoFpExhibit($entry, $form, $expofpToken, $expofpId) {
                         $featured = true;
                         array_push($tags, "Sponsor");
                     }
-                    $categories["name"] = $value;
+                    $categories[] = array("name" => $value);
                 }
             }
         }
@@ -105,30 +116,33 @@ function createExpoFpExhibit($entry, $form, $expofpToken, $expofpId) {
         $categories["name"] = $formType;
     }
 
+    // we also want to create a category for each entry id so we can set the entry id as a category in expoFP
+    $categories[] = array("name" => $entry['id']);
+    $entryID_url = "https://app.expofp.com/api/v1/add-category";
+    $entryID_data = [
+        "token" => $expofpToken,
+        "name" => $entry['id'],
+        "eventId" =>  $expofpId
+    ];
+    postCurl($entryID_url, $headers, json_encode($entryID_data), "POST");
+
     $data = [
         "token" => $expofpToken,
         "eventId" => $expofpId,
         "name" => $entry['151'],
         "description" => $entry['16'],
         "featured" => $featured,
-        "address" => "1 Main Ave.", // this will hold the category list as a comma delimited strings
+        "address" => $rmt_shown, // this holds all the resources and attributes entered as a comma delimited string
         "website" => "https://makerfaire.com/maker/entry/" . $entry['id'], // this will be the maker/entry page
         "adminNotes" => "", // should we include this?
         "externalId" => $entry['id'],
-        "categories" => array(
-            $categories
-        ),
-        "tags" => $tags/*, meta data does what
-        "metadata" => array(
-            array(
-                "key" => "metaKey",
-                "value" => "metaValue"
-            )
-        )*/
+        "categories" => $categories,
+        "tags" => $tags
     ];
 
     //error_log(print_r(json_encode($data), TRUE));
     $result = postCurl($url, $headers, json_encode($data), "POST");
+    //error_log(print_r($result, TRUE));
     $exhibitor_id = json_decode($result)->id;
     // set the gf_entry_meta to the exhibitor id. if this meta is present, we know we should update rather than add to ExpoFP
     gform_update_meta( $entry['id'], "expofp_exhibit_id", $exhibitor_id, $form['id']);
@@ -136,7 +150,7 @@ function createExpoFpExhibit($entry, $form, $expofpToken, $expofpId) {
     return $result;
 }
 
-function updateExpoFpExhibit($entry, $form, $expofpToken, $exhibitor_id) {
+function updateExpoFpExhibit($entry, $form, $expofpToken, $expofpId, $exhibitor_id) {
     $url = "https://app.expofp.com/api/v1/update-exhibitor";
     $headers = array(
         'Accept: application/json', 
@@ -148,6 +162,18 @@ function updateExpoFpExhibit($entry, $form, $expofpToken, $exhibitor_id) {
     $formType = $form['form_type'];
     $tags = array();
     $categories = array();
+    $rmt_data   = GFRMTHELPER::rmt_get_entry_data($entry['id']);
+    $res_arr    = array();
+    $attr_arr   = array();
+    foreach($rmt_data['resources'] as $resource) {
+        $categories[] = array("name" => $resource['token']);
+        $res_arr[] = $resource['token'] . ":" . $resource['qty'];
+    }
+    foreach($rmt_data['attributes'] as $attribute) {
+        $attr_arr[] = $attribute['token'] . ":" . $attribute['value'];
+        $tags[] = $attribute['token'] . ":" . $attribute['value'];
+    }
+    $rmt_shown  = implode(', ', array_merge($res_arr, $attr_arr));
 
     if ($formType == "Master") {
         foreach ($entry as $key => $value) {
@@ -157,7 +183,7 @@ function updateExpoFpExhibit($entry, $form, $expofpToken, $exhibitor_id) {
                         $featured = true;
                         array_push($tags, "Sponsor");
                     }
-                    $categories["name"] = $value;
+                    $categories[] = array("name" => $value);
                 }
             }
         }
@@ -166,8 +192,18 @@ function updateExpoFpExhibit($entry, $form, $expofpToken, $exhibitor_id) {
             $featured = true;
             array_push($tags, "Sponsor");
         } 
-        $categories["name"] = $formType;
+        $categories[] = array("name" => $formType);
     }
+
+    // we also want to create a category for each entry id so we can set the entry id as a category in expoFP
+    $categories[] = array("name" => $entry['id']);
+    $entryID_url = "https://app.expofp.com/api/v1/add-category";
+    $entryID_data = [
+        "token" => $expofpToken,
+        "name" => $entry['id'],
+        "eventId" =>  $expofpId
+    ];
+    postCurl($entryID_url, $headers, json_encode($entryID_data), "POST");
 
     $data = [
         "token" => $expofpToken,
@@ -175,17 +211,15 @@ function updateExpoFpExhibit($entry, $form, $expofpToken, $exhibitor_id) {
         "name" => $entry['151'],
         "description" => $entry['16'],
         "featured" => $featured,
-        //"address" => "1 Main Ave.", // this will hold the category list as a comma delimited strings
+        "address" => $rmt_shown, // this holds all the resources and attributes entered as a comma delimited string
         "website" => "https://makerfaire.com/maker/entry/" . $entry['id'], // this will be the maker/entry page
-        "adminNotes" => "", // should we include this?
-        "categories" => array(
-            $categories
-        ),
+        "categories" => $categories,
         "tags" => $tags
     ];
 
     //error_log(print_r(json_encode($data), TRUE));
     $result = postCurl($url, $headers, json_encode($data), "POST");
+    //error_log(print_r($result, TRUE));
 
     return $result;
 }
