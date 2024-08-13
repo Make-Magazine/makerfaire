@@ -130,7 +130,7 @@ $publicFields = array(109,11,110,105,151,22,16,27,32,151,160,234,217,158,258,224
         usort($jsonArray, "cmp");
       }
             
-      var_dump($jsonArray);
+      //var_dump($jsonArray);
       foreach($jsonArray as $field){
         $condDisp = '';
         if(isset($field['conditionalLogic']) && $field['conditionalLogic']!='' && $condLog){
