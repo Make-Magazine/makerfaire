@@ -93,7 +93,7 @@ $showEditMakey = false;
                     <div class='entry-box'>
                         <img src='<?php echo(legacy_get_resized_remote_image_url($maker['photo'], 400, 400)); ?>' 
                             alt='<?php echo $maker['firstname'].' '.$maker['lastname']; ?> Maker Picture'
-                            onerror="this.onerror=null;this.src='/wp-content/themes/makerfaire/images/default-makey-medium.png';this.srcset=''" />
+                            onerror="this.onerror=null;this.src='/wp-content/themes/makerfaire/images/default-makey-medium.jpg?v=1';this.srcset=''" />
                         <h3><?php echo($maker['firstname'] . " " . $maker['lastname']); ?></h3>
                         <p class="maker-description"><?php echo($maker['bio']); ?></p>
                         <?php if(!empty($maker['website'])) { ?>
@@ -116,7 +116,7 @@ $showEditMakey = false;
                         <source media="(max-width: 420px)" srcset="<?php echo  $small_photo; ?>">
                         <img src="<?php echo $large_photo ?>" 
                              alt="<?php echo $maker['firstname'].' '.$maker['lastname']; ?> Maker Picture"
-                             onerror="this.onerror=null;this.src='/wp-content/themes/makerfaire/images/default-makey-large.png';this.srcset=''" />
+                             onerror="this.onerror=null;this.src='/wp-content/themes/makerfaire/images/default-makey-large.jpg?v=1';this.srcset=''" />
                     </picture>
                 </div>
                 <div class="big-column">
