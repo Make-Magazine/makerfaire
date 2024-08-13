@@ -94,6 +94,7 @@ function createExpoFpExhibit($entry, $form, $expofpToken, $expofpId) {
     }
     foreach($rmt_data['attributes'] as $attribute) {
         $attr_arr[] = $attribute['token'] . ":" . $attribute['value'];
+        $tags[] = $attribute['token'] . ":" . $attribute['value'];
     }
     $rmt_shown  = implode(', ', array_merge($res_arr, $attr_arr));
 
@@ -163,6 +164,7 @@ function updateExpoFpExhibit($entry, $form, $expofpToken, $exhibitor_id) {
     }
     foreach($rmt_data['attributes'] as $attribute) {
         $attr_arr[] = $attribute['token'] . ":" . $attribute['value'];
+        $tags[] = $attribute['token'] . ":" . $attribute['value'];
     }
     $rmt_shown  = implode(', ', array_merge($res_arr, $attr_arr));
 
