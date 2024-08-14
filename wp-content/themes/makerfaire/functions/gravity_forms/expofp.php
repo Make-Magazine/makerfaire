@@ -115,6 +115,18 @@ function createExpoFpExhibit($entry, $form, $expofpToken, $expofpId) {
         } 
         $categories["name"] = $formType;
     }
+    // now, add all the additional tags we want
+    array_push($tags, "Status:" . $entry['303']); // status
+    // then, add all the category taxonomies the user selected as categories in expofp
+    $mainCategoryName = get_term($entry[320])->name;
+    $categories[] = array("name" => $mainCategoryName);
+    foreach ($entry as $key => $value) {
+        if (strpos($key, '321.') !== false && $value != null) {
+            if (get_term($value)->name != $mainCategoryName) {
+                $categories[] = array("name" => get_term($value)->name);
+            }
+        }
+    }
 
     // we also want to create a category for each entry id so we can set the entry id as a category in expoFP
     $categories[] = array("name" => $entry['id']);
@@ -193,6 +205,18 @@ function updateExpoFpExhibit($entry, $form, $expofpToken, $expofpId, $exhibitor_
             array_push($tags, "Sponsor");
         } 
         $categories[] = array("name" => $formType);
+    }
+    // now, add all the additional tags we want
+    array_push($tags, "Status:" . $entry['303']); // status
+    // then, add all the category taxonomies the user selected as categories in expofp
+    $mainCategoryName = html_entity_decode(get_term($entry[320])->name);
+    $categories[] = array("name" => $mainCategoryName);
+    foreach ($entry as $key => $value) {
+        if (strpos($key, '321.') !== false && $value != null) {
+            if (get_term($value)->name != $mainCategoryName) {
+                $categories[] = array("name" => html_entity_decode(get_term($value)->name));
+            }
+        }
     }
 
     // we also want to create a category for each entry id so we can set the entry id as a category in expoFP
