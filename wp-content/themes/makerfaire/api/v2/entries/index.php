@@ -187,6 +187,7 @@ function getAllEntries($formID = '', $page = '', $years = '') {
       'entry_type'      => $exhibit_types,
       'photo'           => $maker_photo,
       'maker_name'      => $maker_name,
+      'email'           => $entry['98'],
       'prelim_loc'      => $prelim_loc,
       'prime_cat'       => html_entity_decode(get_CPT_name($entry['320']))      
     );
