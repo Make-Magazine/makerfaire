@@ -297,7 +297,10 @@ i.bi-plus-circle, i.bi-plus-circle-fill, i.bi-check-circle, i.bi-check2 {
             th {
                 background-color: #d3d3d3;
             }
-            #actions span { display: block; }
+            #actions {
+                display: table-caption;
+                span { display: block; }
+            } 
             i.fa-circle-plus, i.fa-check {
                 color: #4caf50;
             }
