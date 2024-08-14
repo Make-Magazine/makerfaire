@@ -404,7 +404,7 @@ function resAttLock(currentEle, lock, entryID) {
         if (xhr.readyState == XMLHttpRequest.DONE) {
             try {
                 response = JSON.parse(xhr.response);
-                console.log(response);
+                //console.log(response);
             } catch (e) {
 
             }
@@ -562,7 +562,7 @@ function insertRowDB(type, entryID) {
                     response = JSON.parse(xhr.response);
                     //console.log(response);
                     //set actions column
-                    document.querySelector('#' + type + 'RowNew #actions').innerHTML = '<span onclick="resAttDelete(\'#' + type + 'Row' + response.ID + '\', ' + entryID + ')"><i class="fa fa-circle-minus fa-lg"></i></span></td>';
+                    document.querySelector('#' + type + 'RowNew #actions').innerHTML = '<span onclick="resAttDelete(\'' + type + 'Row' + response.ID + '\', ' + entryID + ')"><i class="fa fa-circle-minus fa-lg"></i></span></td>';
 
                     //set item to locked
                     document.querySelector('#' + type + 'RowNew .lock').innerHTML = '<span class="lockIcon" onclick="resAttLock(\'#' + type + 'Row' + response.ID + '\',1)">' + '<i class="fas fa-lock fa-lg"></i>' + '</span>';
@@ -612,8 +612,9 @@ function updateDB(newVal, currentEle) {
     xhr.onreadystatechange = function () {
         if (xhr.readyState == XMLHttpRequest.DONE) {
             try {
-                //response = JSON.parse(xhr.response);
+                response = JSON.parse(xhr.response);
                 //console.log(response);
+                //console.log(fieldData);
                 //update the date/time and user info
                 document.querySelector('#' + fieldData['type'] + 'user_' + fieldData['ID']).innerHTML  = response.user;
                 document.querySelector('#' + fieldData['type'] + 'dateupdate_' + fieldData['ID']).innerHTML = response.dateupdate;
