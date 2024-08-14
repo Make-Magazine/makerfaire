@@ -159,8 +159,19 @@ $publicFields = array(109,11,110,105,151,22,16,27,32,151,160,234,217,158,258,224
             <td><?php echo $field['type'];?></td>
             <td><?php
               if($field['type']=='product') {
-                echo 'Base Price = '.$field['basePrice'];
-                
+                if($field['basePrice'] != '$0.00')
+                  echo 'Base Price = '.$field['basePrice'];
+
+                //if the product is choice based, show those values
+                if(isset($field['choices']) && is_array($field['choices'])){
+                  echo '<table width="100%">';
+                  echo '<tr><th>Label</th><th>Price</th></tr>';                
+                  foreach($field['choices'] as $choice){
+                    echo '<tr><td>'.($choice->value!=$choice->text?$choice->value.'-'.$choice->text:$choice->text).'</td><td>'.$choice->price.'</td></tr>';
+                  }
+                  echo '</table>';
+                }                
+                                
               }elseif($field['type']=='checkbox'||$field['type']=='radio'||$field['type']=='select' ||$field['type']=='address'||$field['type']=='name'){
                 echo '<ul style="padding-left: 20px;">';
                 if(isset($field['inputs']) && !empty($field['inputs'])){
