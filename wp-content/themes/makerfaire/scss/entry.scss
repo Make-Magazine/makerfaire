@@ -53,7 +53,7 @@
 					flex-direction: column;
 					gap: 15px;
 					position: sticky;
-					top: 125px;
+					top: 168px;
 				}
 				.embed-youtube, .embed-vimeo {
 					margin-bottom: 0px;
@@ -339,9 +339,12 @@
 			align-items: center;
   			margin-right: 10px;
 			img {
-				filter: brightness(0) saturate(100%) invert(20%) sepia(84%) saturate(7496%) hue-rotate(12deg) brightness(100%) contrast(109%);
+				filter: brightness(0) saturate(100%) invert(15%) sepia(81%) saturate(7431%) hue-rotate(5deg) brightness(98%) contrast(101%);
 				object-fit: unset;
 				width: auto;
+				&:hover {
+					filter: brightness(0) saturate(100%) invert(93%) sepia(14%) saturate(2862%) hue-rotate(172deg) brightness(98%) contrast(97%);
+				}
 			}
 		}
 		.makey-spinner {

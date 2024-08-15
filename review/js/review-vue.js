@@ -25,7 +25,7 @@ var review = new Vue({
             layoutQuery: urlParams.get('layout') ? urlParams.get('layout') : "",
             // the splits here will both make sure these are arrays, and select all options in the multiselect
             selectedStatus: urlParams.get('status') ? urlParams.get('status').split(",") : [],
-            selectedPrimeCat: urlParams.get('category') ? urlParams.get('category').split(",") : [],
+            selectedCat: urlParams.get('category') ? urlParams.get('category').split(",") : [],
             selectedEntryType: urlParams.get('type') ? urlParams.get('type').split(",") : [],
             selectedFlag: urlParams.get('flag') ? urlParams.get('flag').split(",") : [],
             selectedPrelimLoc: urlParams.get('location') ? urlParams.get('location').split(",") : [],
@@ -99,7 +99,7 @@ var review = new Vue({
         resetFilters: function () {
             this.searchQuery = "";
             this.selectedStatus = [];
-            this.selectedPrimeCat = [];
+            this.selectedCat = [];
             this.selectedEntryType = [];
             this.selectedFlag = [];
             this.selectedPrelimLoc = [];
@@ -107,11 +107,13 @@ var review = new Vue({
             query = {};
             this.router.push({ path: 'review', query: query }).catch(()=>{});
         },
-        filterCommaList: function(field){                
+        filterCommaList: function(field){    
+            console.log(field);
             filteredList = [];
             
-            this.makers.forEach((maker) => {                
-                if (maker[field] != '') {               
+            this.makers.forEach((maker) => {               
+                if (maker[field] != '') {     
+                    console.log(maker[field]);             
                     //breakup the comma separated string into an array
                     entryFieldArr = maker[field].split(", ");
             
@@ -144,14 +146,14 @@ var review = new Vue({
     computed: {
         filterBy() {
             if (this.searchQuery || this.selectedStatus ||
-                this.selectedPrimeCat || this.selectedEntryType ||
+                this.selectedCat || this.selectedEntryType ||
                 this.selectedFlag || this.selectedPrelimLoc || this.entryIDQuery
             ) {
                 var searchValue     = this.searchQuery.toLowerCase();
                 var entryIDValue    = this.entryIDQuery;
                 var layoutValue     = this.layoutQuery;
                 var statusFilter    = this.selectedStatus;
-                var primeCatFilter  = this.selectedPrimeCat;
+                var catFilter       = this.selectedCat;
                 var entryTypeFilter = this.selectedEntryType;
                 var flagFilter      = this.selectedFlag;
                 var prelimLocFilter = this.selectedPrelimLoc;
@@ -159,14 +161,14 @@ var review = new Vue({
                 var passEntryType   = true;
                 var passFlag        = true;
                 var passPrelimLoc   = true;
-                var passPrimeCat    = true;
+                var passCat    = true;
                 var passStatus      = true;
 
                 // here we build the queryString based on the filters and add it to our route
                 if(searchValue) { query.search = searchValue; }
                 if(layoutValue) { query.layout = layoutValue; }
                 if(statusFilter.toString() != "") { query.status = statusFilter.toString(); }
-                if(primeCatFilter.toString() != "") { query.category = primeCatFilter.toString(); }
+                if(catFilter.toString() != "") { query.category = catFilter.toString(); }
                 if(entryTypeFilter.toString() != "") { query.type = entryTypeFilter.toString(); }
                 if(flagFilter.toString() != "") { query.flag = flagFilter.toString(); }
                 if(prelimLocFilter.toString() != "") { query.location = prelimLocFilter.toString(); }
@@ -216,14 +218,15 @@ var review = new Vue({
                         });
                     }
 
-                    // Primary Category
-                    if (primeCatFilter != '') {
-                        passPrimeCat = false;
+                    // CATegories - meow
+                    if (catFilter != '') {
+                        passCat = false;
+                        catArr = maker.categories.split(", ")
 
-                        //loop through entry types set
-                        primeCatFilter.forEach((prime_cat) => {
-                            if (maker.prime_cat == prime_cat) {
-                                passPrimeCat = true;
+                        //loop through categories set
+                        catArr.forEach((cat) => {
+                            if (catFilter.includes(cat)) {
+                                passCat = true;
                             }
                         });
                     }
@@ -246,7 +249,7 @@ var review = new Vue({
                         maker.maker_name.toLowerCase().indexOf(searchValue) > -1 ||
                         maker.email.toLowerCase().indexOf(searchValue) > -1) &&
                         maker.project_id.indexOf(entryIDValue) > -1 &&
-                        passEntryType && passFlag && passPrelimLoc && passPrimeCat && passStatus;
+                        passEntryType && passFlag && passPrelimLoc && passCat && passStatus;
                 })
             } else {
                 return this.makers;
@@ -258,11 +261,8 @@ var review = new Vue({
                 return filteredStatus.sort();
             }
         },
-        filteredPrimeCat() {
-            if (this.makers) {
-                filteredPrimeCat = Array.from(new Set(this.makers.map(maker => maker.prime_cat)));
-                return filteredPrimeCat.sort();
-            }
+        filteredCat() {
+            if (this.makers) return this.filterCommaList('categories').sort();          
         },
         filteredEntryType() {
             if (this.makers) return this.filterCommaList('entry_type').sort();                                           

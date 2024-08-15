@@ -69,11 +69,11 @@
                 </div>
             </b-col>
         </b-row>
-        <b-row align-h="between" v-if="selectedStatus!='' || selectedEntryType!='' || selectedPrimeCat!='' || selectedFlag!='' || selectedPrelimLoc!=''">
+        <b-row align-h="between" v-if="selectedStatus!='' || selectedEntryType!='' || selectedCat!='' || selectedFlag!='' || selectedPrelimLoc!=''">
             <b-col cols="12">Filters: 
                 <b-badge pill variant="primary" v-if="selectedStatus">{{selectedStatus.toString().trim()}}</b-badge>
                 <b-badge pill variant="primary" v-if="selectedEntryType">{{selectedEntryType.toString().trim()}}</b-badge>
-                <b-badge pill variant="primary" v-if="selectedPrimeCat">{{selectedPrimeCat.toString().trim()}}</b-badge>
+                <b-badge pill variant="primary" v-if="selectedCat">{{selectedCat.toString().trim()}}</b-badge>
                 <b-badge pill variant="primary" v-if="selectedFlag">{{selectedFlag.toString().trim()}}</b-badge>
                 <b-badge pill variant="primary" v-if="selectedPrelimLoc">{{selectedPrelimLoc.toString().trim()}}</b-badge>
             </b-col>

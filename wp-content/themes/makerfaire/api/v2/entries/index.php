@@ -169,6 +169,11 @@ function getAllEntries($formID = '', $page = '', $years = '') {
     $fieldArr = fieldOutput(339, $entry, $field_array, $form);
     $exhibit_types = (isset($fieldArr['value']) && $fieldArr['value'] != '' ? implode(", ", $fieldArr['value']) : '');
 
+    //build an array of categories with the prime category first
+    $categoryArr = fieldOutput(321, $entry, $field_array, $form);
+    array_unshift($categoryArr, html_entity_decode(get_CPT_name($entry['320'])));
+    $categories = (isset($categoryArr['value']) && $categoryArr['value'] != '' ? implode(", ", $categoryArr['value']) : '');
+
     //flags
     $fieldArr = fieldOutput(304, $entry, $field_array, $form);
     $flags    = (isset($fieldArr['value']) && $fieldArr['value'] != '' ? implode(", ", $fieldArr['value']) : '');
@@ -189,7 +194,7 @@ function getAllEntries($formID = '', $page = '', $years = '') {
       'maker_name'      => $maker_name,
       'email'           => $entry['98'],
       'prelim_loc'      => $prelim_loc,
-      'prime_cat'       => html_entity_decode(get_CPT_name($entry['320']))      
+      'categories'      => $categories      
     );
   }
 
