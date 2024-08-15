@@ -427,7 +427,7 @@ if (!$displayMakers) {
             </span>
 
             <?php
-            if ($form['gv_id_update_public_info'] != '') {
+            if (isset($form['gv_id_update_public_info']) && $form['gv_id_update_public_info'] != '') {
             ?>
                 <button id="edit-photos">Edit Public Info</button>
             <?php
