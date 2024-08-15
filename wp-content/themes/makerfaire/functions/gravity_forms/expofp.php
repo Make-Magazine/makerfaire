@@ -113,6 +113,27 @@ function createExpoFpExhibit($entry, $form, $expofpToken, $expofpId) {
         } 
         $categories["name"] = $formType;
     }
+    // now, add all the additional tags we want
+    array_push($tags, "Status:" . $entry['303']); // status
+    $placementRequest = isset($entry['68']) ? $entry['68'] : '';
+    if($placementRequest != '') {
+        array_push($tags, "Status:" . $placementRequest); // placement request
+    }
+    $mobile = str_contains($entry['60'], "mobile") ? $entry['60'] : "";
+    if(!empty($mobile)) {
+        array_push($tags, "Mobile"); // it's mobile (in case they set a space request other than mobile, but marked mobile later)
+    }
+    
+    // then, add all the category taxonomies the user selected as categories in expofp
+    $mainCategoryName = html_entity_decode(get_term($entry[320])->name);
+    $categories[] = array("name" => $mainCategoryName);
+    foreach ($entry as $key => $value) {
+        if (strpos($key, '321.') !== false && $value != null) {
+            if (get_term($value)->name != $mainCategoryName) {
+                $categories[] = array("name" => html_entity_decode(get_term($value)->name));
+            }
+        }
+    }
 
     // we also want to create a category for each entry id so we can set the entry id as a category in expoFP
     $categories[] = array("name" => $entry['id']);
@@ -191,6 +212,27 @@ function updateExpoFpExhibit($entry, $form, $expofpToken, $expofpId, $exhibitor_
             array_push($tags, "Sponsor");
         } 
         $categories[] = array("name" => $formType);
+    }
+    // now, add all the additional tags we want
+    array_push($tags, "Status:" . $entry['303']); // status
+    $placementRequest = isset($entry['68']) ? $entry['68'] : '';
+    if($placementRequest != '') {
+        array_push($tags, "Status:" . $placementRequest); // placement request
+    }
+    $mobile = str_contains($entry['60'], "mobile") ? $entry['60'] : "";
+    if(!empty($mobile)) {
+        array_push($tags, "Mobile"); // it's mobile (in case they set a space request other than mobile, but marked mobile later)
+    }
+    
+    // then, add all the category taxonomies the user selected as categories in expofp
+    $mainCategoryName = html_entity_decode(get_term($entry[320])->name);
+    $categories[] = array("name" => $mainCategoryName);
+    foreach ($entry as $key => $value) {
+        if (strpos($key, '321.') !== false && $value != null) {
+            if (get_term($value)->name != $mainCategoryName) {
+                $categories[] = array("name" => html_entity_decode(get_term($value)->name));
+            }
+        }
     }
 
     // we also want to create a category for each entry id so we can set the entry id as a category in expoFP

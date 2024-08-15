@@ -1,4 +1,4 @@
-/*! elementor - v3.23.0 - 15-07-2024 */
+/*! elementor - v3.23.0 - 05-08-2024 */
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
@@ -870,7 +870,11 @@ var request = function request(endpoint) {
   var immediately = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
   var signal = arguments.length > 3 ? arguments[3] : undefined;
   if (Object.keys(data).length) {
-    data.context = window.elementorAiCurrentContext;
+    if (window.elementorAiCurrentContext) {
+      data.context = window.elementorAiCurrentContext;
+    } else {
+      data.context = window.elementorWpAiCurrentContext;
+    }
   }
   return new Promise(function (resolve, reject) {
     var ajaxData = elementorCommon.ajax.addRequest(endpoint, {
@@ -1683,7 +1687,7 @@ var UpgradeChip = function UpgradeChip(_ref3) {
     open: isPopoverOpen,
     anchorEl: anchorEl.current,
     sx: {
-      zIndex: '9999',
+      zIndex: '170001',
       maxWidth: 300
     },
     modifiers: [{

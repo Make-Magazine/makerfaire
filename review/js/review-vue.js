@@ -253,7 +253,8 @@ var review = new Vue({
                     return (maker.project_name.toLowerCase().indexOf(searchValue) > -1 ||
                         maker.project_id.toLowerCase().indexOf(searchValue) > -1 ||
                         maker.description.toLowerCase().indexOf(searchValue) > -1 ||
-                        maker.maker_name.toLowerCase().indexOf(searchValue) > -1) &&
+                        maker.maker_name.toLowerCase().indexOf(searchValue) > -1 ||
+                        maker.email.toLowerCase().indexOf(searchValue) > -1) &&
                         maker.project_id.indexOf(entryIDValue) > -1 &&
                         passEntryType && passFlag && passPrelimLoc && passPrimeCat && passStatus;
                 })
