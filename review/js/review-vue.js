@@ -108,12 +108,10 @@ var review = new Vue({
             this.router.push({ path: 'review', query: query }).catch(()=>{});
         },
         filterCommaList: function(field){    
-            console.log(field);
             filteredList = [];
             
             this.makers.forEach((maker) => {               
-                if (maker[field] != '') {     
-                    console.log(maker[field]);             
+                if (maker[field] != '') {                
                     //breakup the comma separated string into an array
                     entryFieldArr = maker[field].split(", ");
             
