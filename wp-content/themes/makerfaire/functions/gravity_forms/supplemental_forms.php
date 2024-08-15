@@ -3,7 +3,6 @@
    entry. */
 
 //after the supplemental form is submitted, copy the data back to the original entry   
-add_action('gform_after_submission', 'update_original_data', 10, 2); //$entry, $form
 function update_original_data($entry, $form) {
   global $wpdb;
   $ep_token = rgget('ep_token');

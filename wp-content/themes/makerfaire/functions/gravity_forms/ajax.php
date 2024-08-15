@@ -6,41 +6,40 @@ function update_entry_resatt() {
   $table    = $_POST['table'];
 
   //default values
-  $entryID  = $qty = $resource_id = $attribute_id = $attention_id = 0;          
+  $entryID  = $qty = $resource_id = $attribute_id = $attention_id = 0;
   $comment  = $value = '';
-  
 
   //set who is updating the record
   $current_user = wp_get_current_user();
   $user     = $current_user->ID;
-  if($rowID==0){
+  if ($rowID == 0) {
     $insertArr    = $_POST['insertArr'];
-    
-    //find the field data to add
-    $entryID      = (isset($insertArr['entry_id']) ? $insertArr['entry_id'] : 0);        
-    $qty          = (isset($insertArr['qty']) ? $insertArr['qty'] : 0);
-    $comment      = (isset($insertArr['comment']) ? htmlspecialchars($insertArr['comment']) : '');    
-    $value        = (isset($insertArr['value']) ? htmlspecialchars($insertArr['value']) : '');
-    $resource_id  = (isset($insertArr['resource_id']) ? $insertArr['resource_id']:0);
-    $attribute_id = (isset($insertArr['attribute_id']) ? $insertArr['attribute_id']:0);
-    $attention_id = (isset($insertArr['attn_id']) ? $insertArr['attn_id']:0);
 
-    if ($table == 'wp_rmt_entry_resources') {    
+    //find the field data to add
+    $entryID      = (isset($insertArr['entry_id']) ? $insertArr['entry_id'] : 0);
+    $qty          = (isset($insertArr['qty']) ? $insertArr['qty'] : 0);
+    $comment      = (isset($insertArr['comment']) ? htmlspecialchars($insertArr['comment']) : '');
+    $value        = (isset($insertArr['value']) ? htmlspecialchars($insertArr['value']) : '');
+    $resource_id  = (isset($insertArr['resource_id']) ? $insertArr['resource_id'] : 0);
+    $attribute_id = (isset($insertArr['attribute_id']) ? $insertArr['attribute_id'] : 0);
+    $attention_id = (isset($insertArr['attn_id']) ? $insertArr['attn_id'] : 0);
+
+    if ($table == 'wp_rmt_entry_resources') {
       $rowID = GFRMTHELPER::rmt_update_resource($entryID, $resource_id, $qty, $comment);
-    } elseif ($table == 'wp_rmt_entry_attributes') {    
+    } elseif ($table == 'wp_rmt_entry_attributes') {
       $rowID = GFRMTHELPER::rmt_update_attribute($entryID, $attribute_id, $value, $comment);
     } else {
       //update/insert attention
       $rowID = GFRMTHELPER::rmt_update_attention($entryID, $attention_id, $comment);
     }
-  }else{
+  } else {
     //find the field data to update    
     $newValue   = $_POST['newValue'];
     $fieldName  = $_POST['fieldName'];
     
-    GFRMTHELPER::rmt_update_field($table, $fieldName, $newValue, $rowID);
+    $entry = GFRMTHELPER::rmt_update_field($table, $fieldName, $newValue, $rowID);
   }
-    
+
   //set lockBit to locked
   if ($table == 'wp_rmt_entry_resources' || $table == 'wp_rmt_entry_attributes') {
     if ($table == 'wp_rmt_entry_resources') {
@@ -48,8 +47,10 @@ function update_entry_resatt() {
     } elseif ($table == 'wp_rmt_entry_attributes') {
       $type = 'attribute';
     }
-    GFRMTHELPER::rmt_set_lock_ind(1, $rowID, $type);
+    $entry = GFRMTHELPER::rmt_set_lock_ind(1, $rowID, $type);
   }
+  
+  update_entry($entryID, $entry);
 
   //return the ID
   $response = array('message' => 'Saved', 'ID' => $rowID, 'user' => $current_user->display_name, 'dateupdate' => current_time('m/d/y h:i a'));
@@ -68,9 +69,11 @@ function delete_entry_resatt() {
 
   $response = array('table' => $table, 'ID' => $ID);
   if ($ID != 0 && $table != '' && $entryID != 0) {
-    GFRMTHELPER::rmt_delete($ID, $table, $entryID);
+    $entry = GFRMTHELPER::rmt_delete($ID, $table, $entryID);
     $response = array('message' => 'Deleted', 'ID' => $ID);
   }
+  
+  update_entry($entryID, $entry);
 
   wp_send_json($response);
   // IMPORTANT: don't forget to "exit"
@@ -85,7 +88,7 @@ function update_lock_resAtt() {
   $table = (isset($_POST['table']) ? $_POST['table'] : '');
 
   //determine type to update
-  $type  = '';  
+  $type  = '';
   if ($table == 'wp_rmt_entry_resources') {
     $type = 'resource';
   } elseif ($table == 'wp_rmt_entry_attributes') {
@@ -99,9 +102,14 @@ function update_lock_resAtt() {
     $current_user = wp_get_current_user();
     $user     = $current_user->ID;
 
-    GFRMTHELPER::rmt_set_lock_ind($lock, $ID, $type);
+    $entry = GFRMTHELPER::rmt_set_lock_ind($lock, $ID, $type);
     $response = array('message' => 'Updated', 'ID' => $ID);
-  }
+    
+    $entry_id = $entry['id'];
+        
+    update_entry($entry_id, $entry);
+  }  
+
   wp_send_json($response);
   // IMPORTANT: don't forget to "exit"
   exit;
@@ -214,7 +222,6 @@ function mf_admin_MFupdate_entry() {
     $response['rebuildHTML'] = display_entry_notes_box($form, $lead);
   }
 
-  processTasks($lead, $form);
   wp_send_json($response);
   // IMPORTANT: don't forget to "exit"
   exit;
@@ -395,9 +402,7 @@ function upd_flags_prelim_loc($lead, $form, $type = 'both') {
 function set_form_id($lead, $form) {
   $entry_id    = $lead['id'];
   $form_change = $_POST['entry_form_change'];
-
-  error_log('$form_change=' . $form_change);
-  error_log('$entry_id=' . $entry_id);
+  
   $entry = GFAPI::get_entry($entry_id);
 
   $is_form_id_changed = (strcmp($entry['form_id'], $form_change) !== 0);
@@ -405,8 +410,7 @@ function set_form_id($lead, $form) {
   if (!empty($entry_id)) {
     if (!empty($is_form_id_changed)) {
       //Update Field for Acceptance Status
-      $result = update_entry_form_id($entry_id, $form_change);
-      error_log('UPDATE RESULTS = ' . print_r($result, true));
+      $result = update_entry_form_id($entry_id, $form_change);      
 
       //add note about form change
       $newForm = RGFormsModel::get_form_meta($form_change);
@@ -778,4 +782,33 @@ function setLocChgRpt($subarea, $locCode = '', $entry = array(), $type = 'add') 
     )
   );
   updateChangeRPT($chgRptArr);
+}
+
+function update_entry($entryID, $entry = array(), $form = array()) {  
+  //check if $entryID is set
+  if($entryID==0){
+    //can we get entryID from the entry object?
+    if(isset($entry['id'])){
+      $entryID = $entry['id'];
+    }else{
+      //unable to process
+      //write to the error log, we have an issue
+      error_log('Missing Entry ID in RMT update_entry');
+      return;
+    }
+  }
+
+  //check if the entry object is set
+  if (empty($entry)) {
+    $entry = GFAPI::get_entry($entryID);              
+  } 
+
+  //check if the entry object is set
+  if (empty($form)) {
+    $form = GFAPI::get_form($entry['form_id']);              
+  } 
+
+  if (!empty($form) && $entryID != 0) {
+    do_action('gform_after_update_entry', $form, $entryID);
+  }
 }

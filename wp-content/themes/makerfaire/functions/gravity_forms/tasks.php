@@ -20,18 +20,6 @@ function mf_update_task_active() {
 	return $result;
 }
 
-//process tasks when an entry is updated.
-add_action('gform_after_submission', 'processTasks', 10, 2 ); //$entry, $form
-add_action('gform_after_update_entry', 'processTasks_setup', 10, 2 ); //$form, $entry_id
-add_action('gform_post_add_entry', 'processTasks', 10, 2 ); //$entry, $form
-
-function processTasks_setup($form, $entry_id) {
-  //need to set $entry and reset $form as gravity view removes admin only fields
-  $entry = GFAPI::get_entry(esc_attr($entry_id));
-  $form = GFAPI::get_form($entry['form_id']);
-  processTasks( $entry, $form);
-}
-
 /*
  * Function to proces task rules and assign tasks to entries
  */
@@ -112,7 +100,7 @@ function mf_add_taskid( $form ) {
 	return $form;
 };
 
-add_filter('gform_after_submission', 'maybeCompleteTasks', 10, 2 ); //$entry, $form
+//determine if tasks need to be completed
 function maybeCompleteTasks ($entry, $form) {
   global $wpdb;
 

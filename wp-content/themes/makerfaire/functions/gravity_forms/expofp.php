@@ -1,6 +1,5 @@
 <?php
-
-add_action( 'gform_after_submission', 'create_expofp_exhibitor', 999, 2 );
+//create a new exhibitor on exopFP
 function create_expofp_exhibitor( $entry, $form ) {
     $expofpId = isset($form['expofp_event_id']) ? $form['expofp_event_id'] : "";
     if($expofpId == "") { 
@@ -29,7 +28,6 @@ function create_expofp_exhibitor( $entry, $form ) {
     }
 }
 
-add_action('gform_after_update_entry', 'update_expofp_exhibitor', 10, 2 ); //$form, $entry_id
 function update_expofp_exhibitor($form, $entry_id) {
     $expofpId = isset($form['expofp_event_id']) ? $form['expofp_event_id'] : "";
     if($expofpId == "") { 

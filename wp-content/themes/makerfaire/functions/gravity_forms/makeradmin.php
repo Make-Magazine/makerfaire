@@ -17,9 +17,7 @@ function makerCancelEntry(){
     //Make a note of the cancellation
     $cancelText = "The Exhibit has been cancelled by the maker.  Reason given is: ".stripslashes($reason);
     mf_add_note($entryID,$cancelText);
-
-    //update maker and entity table
-    GFRMTHELPER::updateMakerTables($entryID); //update maker table information
+    
 
     //Handle notifications for acceptance
     $notifications_to_send = GFCommon::get_notifications_to_send( 'maker_cancel_exhibit', $form, $lead );

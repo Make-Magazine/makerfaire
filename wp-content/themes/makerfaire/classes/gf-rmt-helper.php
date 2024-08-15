@@ -157,6 +157,7 @@ class GFRMTHELPER {
     $wpdb->get_results("update " . $table . ' set ' . $fieldName . '="' . $newValue . '",user= ' . $user . ' where ID=' . $rowID);
 
     updateChangeRPT(array(RMTchangeArray($entry, $rmt_field, $current->$fieldName, $newValue, 'Resource changed - ' . $fieldName)));
+    return $entry;
   }
 
   /* Update RMT resource data for an entry */
@@ -177,8 +178,9 @@ class GFRMTHELPER {
     //Look for any resources set within the same category type (ie. chairs, tables, electricity, etc)    
     $res = $wpdb->get_row('SELECT entry_res.*, res.resource_category_id, res.description '
       . ' FROM `wp_rmt_entry_resources` entry_res, wp_rmt_resources res '
-      . ' where entry_id=' . $entryID . ' and entry_res.resource_id = res.ID and resource_category_id=' . $cat_id);
-
+      . ' where entry_id=' . $entryID . ' and entry_res.resource_id = res.ID '
+      . ' and resource_category_id=' . $cat_id);
+   
     //check if this resource category has been set for this entry
     if (!is_null($res)) { //resource found of the same category
       //Is it the same resource?
@@ -191,6 +193,8 @@ class GFRMTHELPER {
         } elseif ($res->lockBit == 0 || $form['form_type'] == 'Payment') {
           //update the resource
           $type = 'update';
+        }elseif ($res->lockBit == 1) {
+          $type = '';//do not update
         }
       } else {
         //Payment forms are allowed to have multiple resources of the same category
@@ -340,7 +344,7 @@ class GFRMTHELPER {
     return $rowID;
   }
 
-  public static function rmt_set_lock_ind($lockBit, $rowID, $type) {
+  public static function rmt_set_lock_ind($lockBit, $rowID, $type) {    
     global $wpdb;
     $chgRPTins = array();
 
@@ -374,6 +378,7 @@ class GFRMTHELPER {
 
     //get entry
     $entry_id = $res->entry_id;
+    
     $entry = GFAPI::get_entry($entry_id);
 
     //Build Change report data 
@@ -381,6 +386,8 @@ class GFRMTHELPER {
 
     /* Update change report */
     if (!empty($chgRPTins))  updateChangeRPT($chgRPTins);
+    
+    return $entry;
   }
 
   public static function rmt_delete($rowID = 0, $table = '', $entryID = 0) {
@@ -423,6 +430,8 @@ class GFRMTHELPER {
 
     /* Update change report */
     if (!empty($chgRPTins))  updateChangeRPT($chgRPTins);
+
+    return $entry;
   }
 
   /* Retrieves RMT data for an entry */
@@ -739,6 +748,8 @@ class GFRMTHELPER {
         $wpdb->get_results($wp_mf_maker_to_entity);
       }
     }
+
+    return $entry;
   }
 
   //function to build the maker data table to update the wp_mf_maker table

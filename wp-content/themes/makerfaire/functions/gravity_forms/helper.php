@@ -49,23 +49,7 @@ function gform_previous_button_markup($previous_button) {
     return $previous_button;
 }
 
-//add_filter('gform_submit_button','form_submit_button');
-//function form_submit_button($button){
-//	return '<input id="gform_submit_button_' . $form['id'] . '" class="gform_button gform_submit_button button" type="submit" onclick="if(window["gf_submitting_' . $form['id'] . '"]){return false;} if( !jQuery("#gform_' . $form['id'] . '")[0].checkValidity || jQuery("#gform_' . $form['id'] . '")[0].checkValidity()){window["gf_submitting_' . $form['id'] . '"]=true;} " value="Submit">';
-//}
-
-/*
- * After Submission Gravity Forms Action Handling
- */
-add_action('gform_after_submission', 'updateRMT', 10, 2);
-
-function updateRMT($entry, $form) {
-    $result = GFRMTHELPER::gravityforms_makerInfo($entry, $form, 'new');
-}
-
 /* This function will write all user changes to entries to a database table to create a change report */
-add_action('gform_after_update_entry', 'GVupdate_changeRpt', 10, 3);
-
 function GVupdate_changeRpt($form, $entry_id, $orig_entry = array()) {
     //get updated entry
     $updatedEntry = GFAPI::get_entry(esc_attr($entry_id));
