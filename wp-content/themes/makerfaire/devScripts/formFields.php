@@ -10,8 +10,10 @@ $sql = 'select display_meta from wp_gf_form_meta where form_id!=1 and form_id!=2
 if(isset($_GET['formID'])) $sql.= ' and form_id='.$_GET['formID'];
 $sort     = (isset( $_GET['sort'])    ? $_GET['sort'] : '');
 $showAll  = (isset( $_GET['showAll']) ? TRUE : FALSE);
-//$condLog  = (isset( $_GET['condLog']) ? TRUE : FALSE);
-$condLog = TRUE; //for now let's always display the conditional logic
+$showCalc = (isset( $_GET['showCalc']) ? TRUE : FALSE);
+
+$condLog  = (isset( $_GET['condLog']) ? TRUE : FALSE);
+$condLog  = TRUE; //for now let's always display the conditional logic
 
 $mysqli->query("SET NAMES 'utf8'");
 $result   = $mysqli->query($sql) or trigger_error($mysqli->error."[$sql]");
@@ -87,8 +89,9 @@ $publicFields = array(109,11,110,105,151,22,16,27,32,151,160,234,217,158,258,224
         <div style="font-size: 12px;line-height: 12px;">          
           <ul>
             <li>to show a specific form -  add ?formID=xxx</li>
-            <li>to sort by ID - add '&sort=id'</li>
-            <li>to show all fields (including HTML, Section and Page) - add  &showAll=true</li>
+            <li>to sort by ID - add <a href="<?php echo $_SERVER['REQUEST_URI'];?>&sort=id">&sort=id</a></li>
+            <li>to show all fields (including HTML, Section and Page) - add <a href="<?php echo $_SERVER['REQUEST_URI'];?>&showAll=true">&showAll=true</a></li>
+            <li>to show calculations - add <a href="<?php echo $_SERVER['REQUEST_URI'];?>&showCalc=true">&showCalc=true</a></li>
             <!--<li>to show conditional logic for the field - add &condLog=true</li>-->
           </ul>
           
@@ -110,6 +113,9 @@ $publicFields = array(109,11,110,105,151,22,16,27,32,151,160,234,217,158,258,224
             <?php if($condLog){ ?>
               <td style="width:  20%">Conditional Logic</td>
             <?php } ?>
+            <?php if($showCalc){ ?>
+              <td style="width:  20%">Calculation</td>
+            <?php } ?>
           </tr>
         </thead>
       <?php
@@ -123,11 +129,11 @@ $publicFields = array(109,11,110,105,151,22,16,27,32,151,160,234,217,158,258,224
       if($sort=='id'){
         usort($jsonArray, "cmp");
       }
-      
-         //var_dump($jsonArray);
+            
+      //var_dump($jsonArray);
       foreach($jsonArray as $field){
         $condDisp = '';
-        if(isset($field['conditionalLogic']) && $field['conditionalLogic']!=''){
+        if(isset($field['conditionalLogic']) && $field['conditionalLogic']!='' && $condLog){
           $condLogic = $field['conditionalLogic'];          
           if(isset($condLogic->enabled)&&$condLogic->enabled){
             $condDisp = '<b>'.$condLogic->actionType .'</b> if <b>'.$condLogic->logicType .'</b>:<br/>';
@@ -153,14 +159,19 @@ $publicFields = array(109,11,110,105,151,22,16,27,32,151,160,234,217,158,258,224
             <td><?php echo $field['type'];?></td>
             <td><?php
               if($field['type']=='product') {
-                echo '<table width="100%">';
-                echo '<tr><th>Label</th><th>Price</th></tr>';
+                if($field['basePrice'] != '$0.00')
+                  echo 'Base Price = '.$field['basePrice'];
+
+                //if the product is choice based, show those values
                 if(isset($field['choices']) && is_array($field['choices'])){
+                  echo '<table width="100%">';
+                  echo '<tr><th>Label</th><th>Price</th></tr>';                
                   foreach($field['choices'] as $choice){
                     echo '<tr><td>'.($choice->value!=$choice->text?$choice->value.'-'.$choice->text:$choice->text).'</td><td>'.$choice->price.'</td></tr>';
                   }
+                  echo '</table>';
                 }                
-                echo '</table>';
+                                
               }elseif($field['type']=='checkbox'||$field['type']=='radio'||$field['type']=='select' ||$field['type']=='address'||$field['type']=='name'){
                 echo '<ul style="padding-left: 20px;">';
                 if(isset($field['inputs']) && !empty($field['inputs'])){
@@ -184,6 +195,9 @@ $publicFields = array(109,11,110,105,151,22,16,27,32,151,160,234,217,158,258,224
             <?php if($condLog){ ?>
               <td><?php echo $condDisp; ?></td>
             <?php } ?>  
+            <?php if($showCalc){ ?>
+              <td><?php echo (isset($field['calculationFormula'])?$field['calculationFormula']:'');?></td>
+            <?php } ?>
           </tr>
           <?php
         }
