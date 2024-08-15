@@ -206,12 +206,19 @@ class GFRMTHELPER {
         }
       }
     }
-
+    
     if ($type == 'update') {
       $rowID = $res->ID;
-      //update the resource
-      $wpdb->get_results('update `wp_rmt_entry_resources` '
+
+      //if the calculated qty is zero, remove the existing resource
+      if($qty == 0){
+        //delete the existing resource        
+        $wpdb->get_results('delete from `wp_rmt_entry_resources` where id=' . $res->ID);
+      } else { 
+        //update the existing resource
+        $wpdb->get_results('update `wp_rmt_entry_resources` '
         . ' set `resource_id` = ' . $resource_id . ', `qty` = ' . $qty . ', user=' . $user . ', update_stamp=now() where id=' . $res->ID);
+      }          
 
       //did the resource itself change
       if ($res->resource_id != $resource_id) { //update the change report               
@@ -226,9 +233,8 @@ class GFRMTHELPER {
       //did the comment change
       if ($res->comment != $comment) { //update the change report        
         $chgRPTins[] = RMTchangeArray($entry, $resource_id, $res->comment, $comment, 'Resource comment changed(' . addslashes($res->description) . ')');
-      }
-    } elseif ($type == 'insert') {
-
+      }    
+    } elseif ($type == 'insert' && $qty!=0) { //don't add if the calculated qty is 0
       //insert this resource
       $wpdb->get_results("INSERT INTO `wp_rmt_entry_resources`  (`entry_id`, `resource_id`, `qty`, `comment`, user) "
         . " VALUES (" . $entryID . "," . $resource_id . "," . $qty . ',"' . $comment . '",' . $user . ')');
