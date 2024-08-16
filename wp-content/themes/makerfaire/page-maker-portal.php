@@ -42,6 +42,10 @@ get_header();
     color: #848484;
     font-style: italic;
   }
+
+  .popover-body a .fas {
+    margin-right: 8px;
+  }
 </style>
 <div id="manageEntries" style="width:95%; margin: 35px auto;margin-bottom: 0px;" class="maker-portal">
   <input type="hidden" id="user_email" value="<?php echo $current_user->user_email; ?>" />
@@ -182,7 +186,7 @@ get_header();
                   <b-popover ref="popover" :target="'entry-manage-'+entry.project_id" :id="'manage-popover-'+entry.project_id" title="Manage My Entry">
                     <span v-if="entry.status !='Cancelled' && entry.status!='Rejected'">
                       <p>
-                        <a href="#" @click="cancelModal('cancelModal'+entry.project_id, 'manage-popover-'+entry.project_id)">
+                        <a href="#" @click="cancelModal('cancelModal'+entry.project_id, 'manage-popover-'+entry.project_id)" style="text-decoration:none;">
                           <span style="color:red">
                             <i class="fas fa-times"></i> Cancel Entry
                           </span>
@@ -191,8 +195,8 @@ get_header();
                     </span>
 
                     <p><a :href="entry.gv_edit_link"><i class="fas fa-edit" aria-hidden="true"></i>Edit Submitted Info</a></p>
-                    <p><i class="fas fa-truck" aria-hidden="true"></i><a href="https://makerfaire.com/bay-area/maker-shipping/">Shipping Request Form</a></p>
-                    <p><i class="fas fa-sparkles" aria-hidden="true"></i><a href="https://makerfaire.com/bay-area/special-request-form/">Special Request Form</a></p>
+                    <p><a href="https://makerfaire.com/bay-area/maker-shipping/"><i class="fas fa-truck" aria-hidden="true"></i>Shipping Request Form</a></p>
+                    <p><a href="https://makerfaire.com/bay-area/special-request-form/"><i class="fas fa-sparkles" aria-hidden="true"></i>Special Request Form</a></p>
                     <!--<span v-if="entry.ep_token!=''"> 
                       <div>
                       <a target="_blank" :href="'/bay-area/logistics-information/?ep_token='+entry.ep_token"><i class="fas fa-edit" aria-hidden="true"></i>Manage Logistics Info</a>
