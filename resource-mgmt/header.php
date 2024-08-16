@@ -28,7 +28,7 @@ $my_version = $my_theme->get('Version');
 			}
 		};
 		</script>
-	  	<!-- scripts built with grunt -->
+	  	<!-- scripts built with npm -->
 	  	<script src="js/built-angular-reporting.min.js?ver=<?php echo $my_version;?>"></script>
 	
 	<base href="/resource-mgmt/"></base>
