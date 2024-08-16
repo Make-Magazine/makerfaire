@@ -50,7 +50,7 @@ $showEditMakey = false;
                     </div>
                     <?php if(isset($project_short) && $project_short != '') { ?>
                         <p class="project-description"><?php echo nl2br($project_short); 
-                            if ($form['gv_id_update_public_info'] != '') {
+                            if (isset($form['gv_id_update_public_info']) && $form['gv_id_update_public_info'] != '') {
                                 if(strlen($project_short) < 200 && $makerEdit) { 
                                     $showEditMakey = true;
                                     ?>
@@ -126,7 +126,7 @@ $showEditMakey = false;
                 <div class="big-column">
                     <h2><?php echo($maker['firstname'] . " " . $maker['lastname']); ?></h2>
                     <p class="maker-description"><?php echo($maker['bio']);
-                    if ($form['gv_id_update_public_info'] != '') {
+                    if (isset($form['gv_id_update_public_info']) && $form['gv_id_update_public_info'] != '') {
                         if(strlen($maker['bio']) < 200 && $makerEdit) { 
                             $showEditMakey = true;
                             ?>

@@ -784,7 +784,7 @@ function setLocChgRpt($subarea, $locCode = '', $entry = array(), $type = 'add') 
   updateChangeRPT($chgRptArr);
 }
 
-function update_entry($entryID, $entry = array(), $form = array()) {  
+function update_entry($entryID, $entry = array()) {  
   //check if $entryID is set
   if($entryID==0){
     //can we get entryID from the entry object?
@@ -803,10 +803,7 @@ function update_entry($entryID, $entry = array(), $form = array()) {
     $entry = GFAPI::get_entry($entryID);              
   } 
 
-  //check if the entry object is set
-  if (empty($form)) {
-    $form = GFAPI::get_form($entry['form_id']);              
-  } 
+  $form = GFAPI::get_form($entry['form_id']);              
 
   if (!empty($form) && $entryID != 0) {
     do_action('gform_after_update_entry', $form, $entryID);
