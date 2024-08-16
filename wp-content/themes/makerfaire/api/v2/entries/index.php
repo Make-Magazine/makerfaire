@@ -363,13 +363,24 @@ function fieldOutput($fieldID, $entry, $field_array, $form, $arg = '') {
         global $edit_prelim_loc;
         global $edit_entry_type;
         global $edit_fee_mgmt;
-        global $edit_status;
-        if ($edit_flags || $edit_prelim_loc || $edit_entry_type || $edit_fee_mgmt || $edit_status) {
+        
+        if ($edit_flags || $edit_prelim_loc || $edit_entry_type || $edit_fee_mgmt) {
 
           $value = '<p><input type="button" id="updAdmin' . $entry['id'] . '" value="Update Admin" class="button updButton" style="width:auto;padding-bottom:2px;" onclick="updateMgmt(\'update_admin\', \'' . $entry['id'] . '\');"/></p>
                       <p><span class="updMsg" id="updAdminMSG' . $entry['id'] . '"></span></p>';
         }
         break;
+        case 'update_status_button':
+          $type  = 'html';
+  
+          //only display the update admin button if the user can actually edit something         
+          global $edit_status;
+          if ($edit_status) {
+  
+            $value = '<p><input type="button" id="updStatus' . $entry['id'] . '" value="Change Status" class="button updButton" style="width:auto;padding-bottom:2px;" onclick="updateMgmt(\'update_entry_status\', \'' . $entry['id'] . '\');"/></p>
+                        <p><span class="updMsg" id="updStatusMSG' . $entry['id'] . '"></span></p>';
+          }
+          break;  
       case 'date_created':
         //type defaults to 'text'
         $date  = date_create($entry[$fieldID]);
@@ -389,7 +400,8 @@ function fieldOutput($fieldID, $entry, $field_array, $form, $arg = '') {
 
         $field_id = '304';
         $label = 'Flags';
-        $fieldName = 'entry_flags_';
+        $fieldName = 'entry_flags_' . $entry['id'];
+        
         $type    = 'html';
         $field = ($field_array[$field_id] ? $field_array[$field_id] : '');
         //is this a valid field in the form
@@ -404,12 +416,16 @@ function fieldOutput($fieldID, $entry, $field_array, $form, $arg = '') {
 
         $field_id   = '302';
         $label      = 'Preliminary Location';
-        $fieldName  = 'entry_prelim_loc_';
+        $fieldName  = 'entry_prelim_loc_' . $entry['id'];
         $type       = 'html';
         $field      = ($field_array[$field_id] ? $field_array[$field_id] : '');
         if ($field != NULL) {
           $field_value   = RGFormsModel::get_lead_field_value($entry, $field);
           $value  = mf_checkbox_display($field, $field_value, $entry['form_id'], $fieldName, $field_id, $edit_cap);
+        }
+
+        if ($edit_prelim_loc) {
+          $value .= '<textarea id="location_comment_' . $entry['id'] . '">' . (isset($entry['307']) ? $entry['307'] : '') . '</textarea>';
         }
         break;      
       case 'exhibit_type':
@@ -419,7 +435,7 @@ function fieldOutput($fieldID, $entry, $field_array, $form, $arg = '') {
         $field_id   = '339';
         $type       = 'html';
         $label      = 'Entry Type';
-        $fieldName  = 'admin_exhibit_type_';
+        $fieldName  = 'admin_exhibit_type_' . $entry['id'];
         
         $field = ($field_array[$field_id] ? $field_array[$field_id] : '');
         if ($field != NULL) {
@@ -434,7 +450,7 @@ function fieldOutput($fieldID, $entry, $field_array, $form, $arg = '') {
         $field_id = '442';
         $type    = 'html';
         $label = 'Fee Management';
-        $fieldName = 'info_fee_mgmt_';
+        $fieldName = 'info_fee_mgmt_' . $entry['id'];
         
         $field = ($field_array[$field_id] ? $field_array[$field_id] : '');
         if ($field != NULL) {

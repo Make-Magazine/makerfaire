@@ -185,9 +185,9 @@ function mf_admin_MFupdate_entry() {
       case 'update_admin': //update admin action updates flags, prelim loc, exhibit type, fee management AND status.
         upd_flags_prelim_loc($lead, $form, 'both');
         set_exhibit_type($lead, $form);
-        set_feeMgmt($lead, $form);
-        set_entry_status($lead, $form, $entry_id);
+        set_feeMgmt($lead, $form);        
         break;
+        
       case 'update_fee_mgmt':
         set_feeMgmt($lead, $form);
         break;
