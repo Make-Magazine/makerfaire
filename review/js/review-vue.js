@@ -1,5 +1,8 @@
 var urlParams = new URLSearchParams(window.location.search);
-var formID = document.getElementById("form_select").value;
+var formID = 278;
+window.onload = (event) => {
+  document.querySelector('#form_select').value = '278';
+};
 // this query will be updates with our route
 var query = {};
 
