@@ -14,7 +14,7 @@ $offset = ($page != 1 ? (($page - 1) * $limit) : 0);
 global $wpdb;        
                         
 $count=0;
-$entries = GFAPI::get_entries($form_id,array('status' => 'active'), null, array( 'offset' => 0, 'page_size' => 999 ), $count);                                
+$entries = GFAPI::get_entries($form_id,array('status' => 'active'), null, array( 'offset' => $offset, 'page_size' => $limit ), $count);                                
 
 if($count>999){
     echo 'WARNING!! More than 999 entries found. Total found = '.$count.'<br/>';
