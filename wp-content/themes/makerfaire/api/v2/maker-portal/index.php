@@ -129,6 +129,8 @@ function getAllEntries($email, $formID = '', $page = '', $years = '') {
             $logistics_links[] = array('title'=>'Performer Logistics', 'link'=>$form['performer_supp_form_URL'].'?ep_token='.$ep_token);
           }elseif(stripos($exhibit_type, 'workshop')!== false && isset($form['workshop_supp_form_URL'])){
             $logistics_links[] = array('title'=>'Workshop Logistics', 'link'=>$form['workshop_supp_form_URL'].'?ep_token='.$ep_token);
+          }elseif(stripos($exhibit_type, 'sponsor')!== false || stripos($exhibit_type, 'startup sponsor') !== false){  
+            $logistics_links[] = array('title'=>'Sponsor Order Form', 'link'=>'/bay-area/sponsor-order-form/?ep_token='.$ep_token);            
           }
         }  
       }
