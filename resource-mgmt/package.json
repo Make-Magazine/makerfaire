@@ -1,6 +1,6 @@
 {
    "name": "resource-mgmt",
-   "version": "1.0.2",
+   "version": "1.0.3",
    "description": "Resource Management",
    "main": "",
    "private": true,
@@ -14,10 +14,13 @@
       "replace:version": "replace-in-file '/Version\\: [0-9]\\.{0,1}[0-9]*\\.{0,1}[0-9]*/' 'Version: '\"$npm_package_version\" style.css --isRegex",
       "scss:bs:compile": "sass scss/bootstrap/bootstrap.scss css/bootstrap.min.css --style compressed",
       "scss:ar:compile": "sass scss/angular-reporting-style.scss css/angular-reporting.min.css --style compressed",
-      "js:ngreporting:uglify": "uglifyjs js/*.js js/grunt-scripts/*.js node_modules/bootstrap/dist/js/bootstrap.min.js node_modules/bootstrap-dialog/dist/js/bootstrap-dialog.min.js node_modules/angular/angular.js node_modules/angular-route/angular-route.js node_modules/angular-ui-bootstrap/dist/ui-bootstrap-tpls.js node_modules/angular-utils-pagination/dirPagination.js node_modules/angular-animate/angular-animate.js node_modules/angular-sanitize/angular-sanitize.js node_modules/angular-ui-grid/ui-grid.min.js -o js/built-angular-reporting.min.js node_modules/angular-filter/dist/angular-filter.js  -c -m --source-map \"root='../', url='built-angular-reporting.min.js.map'\"",
+      "js:nglibs:uglify": "uglifyjs node_modules/angular/angular.js node_modules/angular-route/angular-route.js node_modules/angular-ui-bootstrap/dist/ui-bootstrap-tpls.js node_modules/angular-utils-pagination/dirPagination.js node_modules/angular-animate/angular-animate.js node_modules/angular-sanitize/angular-sanitize.js node_modules/angular-filter/dist/angular-filter.js -o js/min/built-angular-libs.min.js -c --source-map \"root='/resource-mgmt/', url='built-angular-libs.min.js.map'\"",
+      "js:ngreporting:uglify": "uglifyjs node_modules/bootstrap/dist/js/bootstrap.min.js node_modules/angular-ui-grid/ui-grid.min.js js/grunt-scripts/*.js -o js/min/built-angular-reporting.min.js -c -m --source-map \"root='/resource-mgmt/', url='built-angular-reporting.min.js.map'\"",
+      "js:footer-scripts:uglify": "uglifyjs js/footer-scripts/*.js -o js/min/footer-scripts.min.js -c -m --source-map \"root='/resource-mgmt/', url='footer-scripts.min.js.map'\"",
       "onchange:scss:bs": "onchange 'scss/bootstrap/*.scss' -- npm run scss:bs:compile",
       "onchange:scss:ar": "onchange 'scss/*.scss' -- npm run scss:ar:compile",
-      "onchange:js:nglibs": "onchange 'js/*.js' -- npm run js:nglibs:uglify",
+      "onchange:js:ngreporting": "onchange 'js/*.js' -- npm run js:ngreporting:uglify",
+      "onchange:js:footer-scripts": "onchange 'js/footer-scripts/*.js' -- npm run js:footer-scripts:uglify",
       "build": "npm-run-all js:**:uglify scss:**:compile",
       "build:cachebust": "npm-run-all cachebust:update js:**:uglify scss:**:compile concat:**:css",
       "dev": "npm-run-all build -p onchange:js:** onchange:scss:**"
@@ -33,7 +36,7 @@
    "author": "Make: Community",
    "license": "UNLICENSED",
    "dependencies": {
-      "angular": "^1.6.10",
+      "angular": "1.7.2",
       "angular-animate": "1.7.2",
       "angular-filter": "0.5.17",
       "angular-route": "1.7.2",

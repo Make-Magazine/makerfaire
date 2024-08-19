@@ -29,7 +29,8 @@ $my_version = $my_theme->get('Version');
 		};
 		</script>
 	  	<!-- scripts built with npm -->
-	  	<script src="js/built-angular-reporting.min.js?ver=<?php echo $my_version;?>"></script>
+	  	<script src="js/min/built-angular-libs.min.js?ver=<?php echo $my_version;?>"></script>
+	  	<script src="js/min/built-angular-reporting.min.js?ver=<?php echo $my_version;?>"></script>
 	
 	<base href="/resource-mgmt/"></base>
 </head>
