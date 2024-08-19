@@ -138,7 +138,7 @@ function createExpoFpExhibit($entry, $form, $expofpToken, $expofpId) {
     $categories[] = array("name" => $mainCategoryName);
     foreach ($entry as $key => $value) {
         if (strpos($key, '321.') !== false && $value != null) {
-            if (get_term($value)->name != $mainCategoryName) {
+            if (html_entity_decode(get_term($value)->name) != $mainCategoryName) {
                 $categories[] = array("name" => html_entity_decode(get_term($value)->name));
             }
         }
@@ -238,7 +238,7 @@ function updateExpoFpExhibit($entry, $form, $expofpToken, $expofpId, $exhibitor_
     $categories[] = array("name" => $mainCategoryName);
     foreach ($entry as $key => $value) {
         if (strpos($key, '321.') !== false && $value != null) {
-            if (get_term($value)->name != $mainCategoryName) {
+            if (html_entity_decode(get_term($value)->name) != $mainCategoryName) {
                 $categories[] = array("name" => html_entity_decode(get_term($value)->name));
             }
         }
