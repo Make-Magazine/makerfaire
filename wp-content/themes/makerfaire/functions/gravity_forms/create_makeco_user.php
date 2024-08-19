@@ -1,6 +1,5 @@
 <?php
-
-add_action( 'gform_after_submission', 'create_makeco_user', 10, 2 );
+//Upon submission of a CFM form, take the email and add a new user to make.co to allow the user to login through Auth0
 function create_makeco_user( $entry, $form ) {
     if($form['form_type'] == 'Master') {
         $url = "https://make.co/wp-json/wp/v2/users";

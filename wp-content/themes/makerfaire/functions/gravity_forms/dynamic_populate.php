@@ -2,8 +2,8 @@
 /*
  * This function is to dynamically populate any form field based on parameter name
  */
-add_action('gform_after_submission', 'calc_field_ind',5, 2 );
-add_action('gform_after_update_entry', 'calc_field_pre_process', 5, 3 );
+//add_action('gform_after_submission', 'calc_field_ind',5, 2 );
+//add_action('gform_after_update_entry', 'calc_field_pre_process', 5, 3 );
 function calc_field_pre_process($form,$entry_id,$orig_entry=array()){
   $entry = GFAPI::get_entry(esc_attr($entry_id));
   //need to reset $form as gravity view removes admin only fields
@@ -16,6 +16,7 @@ function calc_field_pre_process($form,$entry_id,$orig_entry=array()){
  *      If it passes - set field value to Yes
  *      If it fails  - set field value to No
  */
+//Alicia!! look into this, these no longer work!!
 function calc_field_ind($entry, $form) {
   $entry_id = $entry['id'];
   $form_id  = $entry['form_id'];

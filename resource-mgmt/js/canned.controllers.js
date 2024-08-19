@@ -201,21 +201,21 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
       vars = {"formSelect":[],
               "formType":["Master","Exhibit","Performance","Startup Sponsor","Sponsor","Show Management"],
               "faire": faire,
-              "useFormSC": true,
               "entryIDorder": 50,
               "locationOrder": 10,
-              "formTypeorder":400,
+              "formTypeorder": 400,
+              "dispFormType": false,
               "selectedFields":[
-                {"id":16, "label":"EXHIBIT SUMMARY", "choices":"", "type":"textarea", "inputs":"", "order":280},
-                {"id":96, "label":"MAKER NAME", "choices":"", "type":"name",
+                {"id":16, "label":"Exhibit Description", "choices":"", "type":"textarea", "inputs":"", "order":280},
+                {"id":96, "label":"Maker Name", "choices":"", "type":"name",
                  "inputs":[{"id":"96.3","label":"First","name":""},{"id":"96.6","label":"Last","name":""}], 
                  "order":250
                 },
                 {"id":98,"label":"Contact Email","choices":"","type":"email","inputs":"", "order":260},
-                {"id":99,"label":"PHONE","choices":"","type":"phone","inputs":"", "order":270},
-                {"id":151,"label":"EXHIBIT","choices":"","type":"text","inputs":"", "order":40},                
+                {"id":99,"label":"Contact #","choices":"","type":"phone","inputs":"", "order":270},
+                {"id":151,"label":"Exhibit ID","choices":"","type":"text","inputs":"", "order":40},                
                 {"id":303,"label":"Status","choices":"Accepted","type":"radio", "order": 240},                
-                {"id":879,"label":"Weekend","choices":"all","type":"checkbox","order":220},
+                {"id":879,"label":"Days","choices":"all","type":"checkbox","order":220},
                 {"id":339,"label":"Exhibit Type","choices":"all","type":"checkbox", "order":230}
              ],
              "rmtData":{
@@ -240,10 +240,8 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
                   {"id":"31","value":"Yellow Jacket","checked":true, "order":110},
                   {"id":"32","value":"Signage","checked":true, "order":110},
                   {"id":"33","value":"Fire Extinguisher","checked":true, "order":110},
-
                   {"id":"45","value":"Umbrella","checked":true, "order":110},
                   {"id":"46","value":"Umbrella Stand","checked":true, "order":110},
-
                   {"id":"48","value":"Tent Walls","checked":true, "order":110},
                   {"id":"49","value":"Tent - Extra","checked":true, "order":110},
                   {"id":"51","value":"Stage","checked":true, "order":110},

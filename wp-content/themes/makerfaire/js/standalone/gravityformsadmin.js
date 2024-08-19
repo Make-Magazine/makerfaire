@@ -290,8 +290,8 @@ var resourceArray = [{ 'id': 'reslock', 'class': 'lock', 'display': '' },
 { 'id': 'resuser', class: '', 'display': '' },
 { 'id': 'resdateupdate', class: '', 'display': '' }
 ];
-var attributeArray = [{ 'id': 'attlock', 'class': 'lock', 'display': '' },
-{ 'id': 'attcategory', 'class': '', 'display': "dropdown" },
+
+var attributeArray = [{ 'id': 'attcategory', 'class': '', 'display': "dropdown" },
 { 'id': 'attvalue', 'class': 'editable textareaEdit', 'display': 'textarea' },
 { 'id': 'attcomment', 'class': 'editable textareaEdit', 'display': 'textarea' },
 { 'id': 'attuser', class: '', 'display': '' },
@@ -324,8 +324,7 @@ function setType(itemID, typeID, id) { //build type drop down based on item drop
 function resAttDelete(currentEle) {
 	var r = confirm("Are you sure want to delete this row (this cannot be undone)!");
 	if (r == true) {
-		jQuery(currentEle).remove(); //delete the row
-		currentEle = currentEle.replace("#", ""); //remove hashtag
+		jQuery("#"+currentEle).remove(); //delete the row
 		var fieldData = breakDownEle(currentEle);
 		var rowID = currentEle.replace("Row", "");
 		var rowID = rowID.replace("attn", "");
@@ -427,7 +426,7 @@ function insertRowDB(type) {
 			var dataArray = attentionArray;
 		}
 		var data = {
-			'action': 'update-entry-resAtt',
+			'action': 'update-entry-resAtt',			
 			'insertArr': insertArr,
 			'ID': 0,
 			'table': table
@@ -454,8 +453,7 @@ function insertRowDB(type) {
 	}
 
 }
-function updateDB(newVal, currentEle) {
-	var fieldName = ''; var ID = ''; var table = ""; var type = "";
+function updateDB(newVal, currentEle) {	
 	//remove #
 	currentEle = currentEle.replace("#", "");
 	var fieldData = breakDownEle(currentEle);
@@ -470,7 +468,8 @@ function updateDB(newVal, currentEle) {
 		'fieldName': fieldData['fieldName'],
 		'ID': fieldData['ID'],
 		'table': fieldData['table'],
-		'newValue': newVal
+		'newValue': newVal,
+		'entry_id': jQuery('[name="entry_info_entry_id"]').val()
 	};
 	jQuery.post(ajaxurl, data, function(response) {
 		//update the date/time and user info

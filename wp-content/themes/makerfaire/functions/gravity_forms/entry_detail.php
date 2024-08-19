@@ -58,3 +58,21 @@ function mf_entry_detail_head($form, $lead) {
   </script>
   <?php
 }
+function get_makerfaire_status_counts( $form_id ) {
+	global $wpdb;
+	$lead_details_table_name = 'wp_gf_entry_meta';
+	$sql             = $wpdb->prepare(
+			"SELECT count(0) as entries, meta_value as label "
+    . "  FROM $lead_details_table_name
+			   JOIN wp_gf_entry entry on  entry.id = $lead_details_table_name.entry_id AND
+			   entry.status = 'active'
+        WHERE meta_key = '303' AND
+              $lead_details_table_name.form_id=%d
+		GROUP BY meta_value",
+			$form_id
+	);
+
+	$results = $wpdb->get_results( $sql, ARRAY_A );
+	return $results;
+
+}

@@ -269,3 +269,44 @@ i.bi-plus-circle, i.bi-plus-circle-fill, i.bi-check-circle, i.bi-check2 {
 .hideFirst td:first-child, .hideFirst th:first-child {
     display: none;
 }
+
+// RMT TABLES
+[id^=rmt] {
+    .panel {
+        background: #fff;
+        border-radius: 5px;
+        border: solid 1px #000;
+        width: 100%;
+        margin-bottom: 15px;
+        .panel-heading {
+            color: #333;
+            background-color: #f5f5f5;
+            border-color: #ddd;
+            padding: 15px 10px;
+            border-top-left-radius: 5px;
+            border-top-right-radius: 5px;
+            h4 { font-size: 30px; }
+        }
+        table {
+            width: 100%;
+            padding: 15px 10px;
+            th, td {
+                vertical-align: middle;
+                padding: 8px 10px;
+            }
+            th {
+                background-color: #d3d3d3;
+            }
+            #actions {
+                display: table-caption;
+                span { display: block; }
+            } 
+            i.fa-circle-plus, i.fa-check {
+                color: #4caf50;
+            }
+            i.fa-circle-minus, i.fa-ban {
+                color: red;
+            }
+        }
+    }
+}

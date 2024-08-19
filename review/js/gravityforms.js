@@ -33,7 +33,7 @@ function updateMgmt(action, entryID) {
         }
 
         data.append('gentry_email_notes_to_sidebar', gentry_email_notes_to_sidebar);
-    } else if (action === 'update_admin') {
+    } else if (action === 'update_admin') {        
         //find all checked flags
         var flags = document.getElementsByName("entry_flags_" + entryID + '[]');
 
@@ -83,7 +83,10 @@ function updateMgmt(action, entryID) {
                 }
             }
         }
-
+       
+        //Message Box
+        var updMsgBox = 'updAdminMSG' + entryID;
+    } else if (action === 'update_entry_status') {        
         //Entry Status
         var updateStatus = document.getElementById("entryStatus_" + entryID);
         if (typeof (updateStatus) != 'undefined' && updateStatus != null) {
@@ -91,7 +94,7 @@ function updateMgmt(action, entryID) {
         }
 
         //Message Box
-        var updMsgBox = 'updAdminMSG' + entryID;
+        var updMsgBox = 'updStatusMSG' + entryID;
     }
 
     //set message box to the processing icon

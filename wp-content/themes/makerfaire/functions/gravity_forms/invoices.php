@@ -49,29 +49,30 @@ function mf_invoice_cpt() {
 }
 
 //after form submission or entry update recreate invoices if need be
-add_action('gform_after_submission', 'mf_createInvoice', 10, 2);
-add_action('gform_after_update_entry', 'mf_updateInvoice', 10, 3);
-
+//add_action('gform_after_submission', 'mf_createInvoice', 10, 2);
+//add_action('gform_after_update_entry', 'mf_updateInvoice', 10, 3);
+/*
 function mf_createInvoice($entry, $form) {
   //Create Invoice option from form settings
   if (isset($form['create_invoice']) && $form['create_invoice'] == 'yes') {
     createInvoice($form, $entry);
   }
-}
-
+}*/
+/*
 function mf_updateInvoice($form, $entry_id, $orig_entry = array()) {
   //Create Invoice option from form settings
   if (isset($form['create_invoice']) && $form['create_invoice'] == 'yes') {
     $lead = GFAPI::get_entry(esc_attr($entry_id));
     createInvoice($form, $lead);
   }
-}
+}*/
 
 /* Sponsor Invoice */
+/*
 function createInvoice($form, $lead) {
   $entry_id = $lead['id'];
 
-  /*  see if this entry already has an invoice created */
+  //  see if this entry already has an invoice created 
 
   //invoice post id
   $fieldData       = get_value_by_label('inv_post_id', $form, $lead);
@@ -97,9 +98,9 @@ function createInvoice($form, $lead) {
       )
     ); 
 
-    /* Build the Invoice Number
-       * mf<order entryid><original entry id>
-       */
+    // Build the Invoice Number
+    //   mf<order entryid><original entry id>
+   
     $invNum = 'MF' . $entry_id . $origEntryID; //create invoice number
 
     // Create new invoice post
@@ -124,7 +125,7 @@ function createInvoice($form, $lead) {
     update_field('order_form_entry_id', $entry_id, $post_id);
   }
 
-  /* Set Invoice ACF fields */
+  // Set Invoice ACF fields 
   $invoiceFields = array(
     'billing_company_name', 'billing_email', 'billing_phone_num',
     'billing_address', 'billing_address2', 'billing_city', 'billing_state',
@@ -144,11 +145,11 @@ function createInvoice($form, $lead) {
     update_field($field, $fieldValue, $post_id);
   }
 
-  /* ACF - billing_contact_name
-     * Parameter Names -
-     *    billing_contact_fname
-     *    billing_contact_lname
-     */
+  // ACF - billing_contact_name
+  // Parameter Names -
+  //    billing_contact_fname
+  //    billing_contact_lname
+    
   $return = get_all_fieldby_name('billing_contact_fname', $form, $lead);
   $fName = '';
   if (!empty($return)) {
@@ -174,7 +175,8 @@ function createInvoice($form, $lead) {
   $invoice_services = get_invoice_services($form, $lead);
   update_field('invoice_services', $invoice_services, $post_id);
 } //end function create_invoice
-
+*/
+/*
 function get_invoice_services($form, $lead) {
   $invoice_services = array();
 
@@ -226,11 +228,11 @@ function get_invoice_services($form, $lead) {
             $fieldID = str_replace('}', '', $fieldID);
             $amt = (isset($lead[$fieldID]) ? $lead[$fieldID] : 0);
           }
-          /*
-           * determine amt field
-           * Look for price in the label field.  Should be in this format:
-           *  30” x 72” Folding Banquet Table: $60.00
-           */
+          //
+           // determine amt field
+           // Look for price in the label field.  Should be in this format:
+           //  30” x 72” Folding Banquet Table: $60.00
+           //
 
           $orderedQty = (!empty($lead) && isset($lead[$qty]) ? $lead[$qty] : 0);
         } else {
@@ -299,3 +301,5 @@ function get_invoice_services($form, $lead) {
 
   return $invoice_services;
 } //end function get_invoice_services
+
+*/

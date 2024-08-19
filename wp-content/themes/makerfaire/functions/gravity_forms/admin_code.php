@@ -140,6 +140,13 @@ function my_custom_form_setting($settings, $form) {
       'label' => 'Gravity View ID for Update Public Info'      
    );
 
+   // ExpoFP Form ID
+   $mf_settings['mf_settings']['fields'][] = array(				
+      'name'  => 'expofp_event_id',
+      'type'  => 'text',
+      'label' => 'ExpoFP Event ID'      
+   );
+
    //place MakerFaire section after Form Basics, and then append all other sections after
    $newSettings = array_merge(array_slice($settings, 0, 1, true), 
    $mf_settings,

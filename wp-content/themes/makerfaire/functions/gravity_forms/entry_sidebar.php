@@ -308,27 +308,6 @@ function display_flags_prelim_locs($form, $lead) {
 
 function field_display($lead, $form, $field_id, $fieldName) {
   $return    = '';
-  $ability   = 'edit';
-  switch ($field_id) {
-    case '442': //fee management
-      if (!current_user_can('edit_fee_mgmt'))
-        $ability   = 'view';
-      break;
-    case '339': //admin entry type      
-      if (!current_user_can('edit_entry_type'))
-        $ability   = 'view';
-      break;
-    case '302': //preliminary location
-      if (!current_user_can('edit_prelim_loc'))
-        $ability   = 'view';
-
-      break;
-    case '304': //flags      
-      if (!current_user_can('edit_flags'))
-        $ability   = 'view';
-
-      break;
-  }
 
   $form_id = $form['id'];
   $field     = RGFormsModel::get_field($form, $field_id);
@@ -336,7 +315,7 @@ function field_display($lead, $form, $field_id, $fieldName) {
   //is this a valid field in the form
   if ($field != NULL) {
     $value   = RGFormsModel::get_lead_field_value($lead, $field);
-    $return  = mf_checkbox_display($field, $value, $form_id, $fieldName, $field_id, $ability);
+    $return  = mf_checkbox_display($field, $value, $form_id, $fieldName, $field_id);
   }
   return $return;
 }
@@ -641,80 +620,68 @@ function sortFlagsByLabel($a, $b) {
   return strnatcmp($a['text'], $b['text']);
 };
 
-function  mf_checkbox_display($field, $value, $form_id, $fieldName, $field_id, $ability = "edit") {
-  $choices = '';
-  $is_entry_detail = $field->is_entry_detail();
-  $is_form_editor  = $field->is_form_editor();
+function  mf_checkbox_display($field, $value, $form_id, $fieldName, $field_id, $ability='edit') {
   $output = '';
 
-  $choices = $field->choices;
-  $inputs = $field->inputs;
-  $mergedChoicesAndInputs = [];
-  $useMerged = false;
+  if ($field->type != 'checkbox') {
+    return 'not a checkbox field';
+  }
 
-  $choicesArray = $field->choices;
+  //field with combined choices and inputs
+  $mergedChoicesAndInputs = $choicesArray = array();
 
-  if (is_array($field->choices)) {
-    if ($field_id === "304") {
-      $useMerged = true;
-      foreach ($choices as $chItem) {
-        foreach ($inputs as $inItem) {
-          if (in_array($chItem["text"], $inItem)) {
-            $chItem["id"] = $inItem['id'];
-            $mergedChoicesAndInputs[] = $chItem;
-          } else {
-            // TBD (ts): we may need some error handling here
-          }
-        }
-      }
-      //TBD (ts): we may need to add some overall error checking here
-      usort($mergedChoicesAndInputs, "sortFlagsByLabel");
-      $choicesArray = $mergedChoicesAndInputs;
-    }
+  //we need both the label and the value set for each choice, so we need to combine these two
+  $inputs   = (isset($field->inputs) ? $field->inputs : '');
+  $choices  = (isset($field->choices) ? $field->choices : '');
+  if ($inputs == '') {
+    return 'error in inputs';
+  } elseif ($choices == '') {
+    return 'error in choices';
+  }
 
-    $choice_number = 1;
-    //foreach ( $field->choices as $choice ) { // Old version of this loop, before $mergedChoicesAndInputs
-    foreach ($choicesArray as $choice) {
-
-      if ($choice_number % 10 == 0) { //hack to skip numbers ending in 0. so that 5.1 doesn't conflict with 5.10
-        $choice_number++;
-      }
-
-      if ($useMerged) {
-        $input_id = $choice["id"];
-      } else {
-        $input_id = $field->id . '.' . $choice_number;
-      }
-
-      if ($is_entry_detail || $is_form_editor || $form_id == 0) {
-        $id = $field->id . '_' . $choice_number++;
-      } else {
-        $id = $form_id . '_' . $field->id . '_' . $choice_number++;
-      }
-      $choiceValue = (!empty($choice['value']) ? $choice['value'] : $choice['text']);
-      if (is_array($value)  && in_array($choiceValue, $value)) {
-        //if ( is_array( $value ) && RGFormsModel::choice_value_match( $field, $choice, stripslashes(rgget( $input_id, $value ) )) ) {
-        $checked = "checked='checked'";
-      } elseif (!is_array($value) && RGFormsModel::choice_value_match($field, $choice, $value)) {
-        $checked = "checked='checked'";
-      } else {
-        $checked = '';
-      }
-
-      $choice_value = $choice['value'];
-      if ($field->enablePrice) {
-        $price = rgempty('price', $choice) ? 0 : GFCommon::to_number(rgar($choice, 'price'));
-        $choice_value .= '|' . $price;
-      }
-      $choice_value  = esc_attr($choice_value);
-
-      if ($ability == 'edit') {
-        $output .= '<input type="checkbox" ' . $checked . ' name="' . $fieldName . '[]" style="margin: 3px;" value="' . $input_id . '_' . $choice_value . '" />' . $choice['text'] . ' <br />';
-      } elseif ($checked) {
-        $output .= $choice['text'] . ' <br />';
+  foreach ($choices as $chItem) {
+    foreach ($inputs as $inItem) {
+      if (in_array($chItem["text"], $inItem)) {
+        $chItem["id"] = $inItem['id'];
+        $mergedChoicesAndInputs[] = $chItem;
       }
     }
   }
+
+  //sort flags alphabetically                
+  if ($field_id === "304") {
+    usort($mergedChoicesAndInputs, "sortFlagsByLabel");
+  }
+
+  //loop through the available choices and built the output  
+  foreach ($mergedChoicesAndInputs as $choice) {
+    $input_id = $choice["id"];
+
+    $choiceValue = (!empty($choice['value']) ? $choice['value'] : $choice['text']);
+    if (is_array($value)  && in_array($choiceValue, $value)) {
+      $checked = "checked='checked'";
+    } elseif (!is_array($value) && RGFormsModel::choice_value_match($field, $choice, $value)) {
+      echo 'i am here ' . $value;
+      $checked = "checked='checked'";
+    } else {
+      $checked = '';
+    }
+
+    $choice_value = $choice['value'];
+    if ($field->enablePrice) {
+      $price = rgempty('price', $choice) ? 0 : GFCommon::to_number(rgar($choice, 'price'));
+      $choice_value .= '|' . $price;
+    }
+    $choice_value  = esc_attr($choice_value);
+
+    
+    if ($ability == 'edit') {
+      $output .= '<input type="checkbox" ' . $checked . ' name="' . $fieldName . '[]" style="margin: 3px;" value="' . $input_id . '_' . $choice_value . '" />' . $choice['text'] . ' <br />';
+    } elseif ($checked) {
+      $output .= $choice['text'] . ' <br />';
+    }
+  }
+
   return $output;
 }
 

@@ -270,7 +270,7 @@ function buildFaireDrop(&$wp_admin_bar, $faire_id = null) {
     if (!(isset($faire_id))) {
         $args[] = array(
             'id' => 'mf_admin_parent_rmt',
-            'title' => 'RMT',
+            'title' => 'Reports',
             'href' => '/resource-mgmt/',
             'meta' => array('class' => 'my-toolbar-page'),
             'target' => '_blank',

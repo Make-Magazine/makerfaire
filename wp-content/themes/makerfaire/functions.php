@@ -4,12 +4,6 @@ $templatePath = get_template_directory();
 // Register Custom Navigation Walker include custom menu widget to use walkerclass
 include_once $templatePath . '/lib/wp_bootstrap_navwalker.php';
 
-// Load the settings field for the Applications API
-//include_once dirname(__FILE__) . '/api/admin-settings.php';
-
-// Load the functions for the Applications API
-include_once dirname(__FILE__) . '/api/v2/functions.php';
-
 include_once $templatePath . '/classes/makerfaire-helper.php';
 include_once $templatePath . '/classes/gf-rmt-helper.php';
 include_once $templatePath . '/classes/mf-sharing-cards.php';
