@@ -34,10 +34,10 @@ function create_expofp_exhibitor( $entry, $form ) {
 
 function update_expofp_exhibitor($form, $entry_id) {
     //we only set this in our production env so we avoid writing test data to expoFP
-    if(!isset(EXPOFP_TOKEN)){
+    if(!defined('EXPOFP_TOKEN')){     
         return;
-    } 
-    
+    }
+
     $expofpId = isset($form['expofp_event_id']) ? $form['expofp_event_id'] : "";
     if($expofpId == "") { 
         return;
