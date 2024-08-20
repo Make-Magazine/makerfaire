@@ -53,7 +53,7 @@ function gform_previous_button_markup($previous_button) {
 function GVupdate_changeRpt($form, $entry_id, $orig_entry = array()) {
     //get updated entry
     $updatedEntry = GFAPI::get_entry(esc_attr($entry_id));
-    GFRMTHELPER::gravityforms_makerInfo($updatedEntry, $form);
+    
     $updates = array();
 
     foreach ($form['fields'] as $field) {

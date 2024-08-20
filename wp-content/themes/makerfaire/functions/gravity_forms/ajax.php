@@ -204,8 +204,6 @@ function mf_admin_MFupdate_entry() {
     }
     do_action('gform_after_update_entry', $form, $entry_id, $original_entry);
 
-    //update the change report with any changes
-    GVupdate_changeRpt($form, $entry_id, $lead);
     $response['result'] = 'updated';
   } else {
     $response['result'] = 'Error: No Action Passed';
