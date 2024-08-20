@@ -9,6 +9,7 @@ function add_event( $notification_events ) {
     $notification_events['maker_delete_exhibit']  = __( 'Maker Deleted Exhibit', 'gravityforms' );   
     $notification_events['manual']                = __( 'Send Manually', 'gravityforms' );
     $notification_events['mf_acceptance_status_changed'] = __( 'Acceptance Status Changed', 'gravityforms' );
+    $notification_events['mf_entry_changed']      = __( 'Entry Updated', 'gravityforms' );
     return $notification_events;
 }
 

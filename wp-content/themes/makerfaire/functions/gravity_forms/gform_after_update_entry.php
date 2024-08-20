@@ -4,7 +4,7 @@ add_action('gform_after_update_entry', 'mf_after_gf_update_entry', 10, 3 ); //$f
 function mf_after_gf_update_entry( $form, $entry_id, $orig_entry = array() ){    
     
     $entry = GFAPI::get_entry(esc_attr($entry_id));
-    $form = GFAPI::get_form($entry['form_id']);
+    $form  = GFAPI::get_form($entry['form_id']);
 
     //determine if anything has changed in entry, and if so update the change report
     GVupdate_changeRpt($form, $entry_id, $orig_entry); // /functions/gravity_forms/helper.php
@@ -17,4 +17,17 @@ function mf_after_gf_update_entry( $form, $entry_id, $orig_entry = array() ){
     
     //update the expoFP exhibitor
     update_expofp_exhibitor($form, $entry_id); // /functions/gravity_forms/expofp.php
+
+    //send notification of changes    
+    $notifications_to_send = GFCommon::get_notifications_to_send('mf_entry_changed', $form, $entry);
+    foreach ($notifications_to_send as $notification) {
+      // The isActive paramater is not always set. 
+      // If it's not set, assume the notification is turned on
+      if (
+        !isset($notification['isActive']) ||
+        (isset($notification['isActive']) && $notification['isActive'])
+      ) {
+        GFCommon::send_notification($notification, $form, $entry);
+      }
+    }
 }

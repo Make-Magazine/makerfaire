@@ -28,7 +28,7 @@ function gf_summary_metabox($form, $entry) {
   $photoField = gfapi::get_field($form, '22');
   if (isset($photoField->multipleFiles) && $photoField->multipleFiles) {
     $photoField = json_decode(stripslashes($photo), true);
-    $photo = $photoField[0];
+    $photo = (isset($photoField[0])?$photoField[0]:'');
   }
 
   $short_description = (isset($entry['16']) ? $entry['16'] : '');
