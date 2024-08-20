@@ -185,14 +185,23 @@ class GFRMTHELPER {
     if (!is_null($res)) { //resource found of the same category
       //Is it the same resource?
       if ($res->resource_id == $resource_id) {
-        //is there anything to update
-        if ($res->qty == $qty && $res->comment == $comment) {
+        //always do an update if qty is 0 so we can remove any old ones that were set 
+        // before we deleted qty of 0
+        if($qty == 0){
+          //update the resource
+          $type = 'update';
+        
+        //is there anything to update  
+        } elseif ($res->qty == $qty && $res->comment == $comment) { 
           //exit, there is nothing to update
           return;
-          //is the resource unlocked OR is this a payment form?  
+
+        //is the resource unlocked OR is this a payment form?  
         } elseif ($res->lockBit == 0 || $form['form_type'] == 'Payment') {
           //update the resource
           $type = 'update';
+        
+        //is the resource locked?
         }elseif ($res->lockBit == 1) {
           $type = '';//do not update
         }
