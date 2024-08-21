@@ -469,18 +469,17 @@ function getDataByFaire($mysqli, $table, $selfaire) {
 				'width' => "300"
 		);
 		$data ['columnDefs'] [] = array (
-				'displayName' => "Sort Order",
+				'displayName' => "Order",
 				'enableCellEdit' => true,
 				'enableFiltering' => true,
 				'name' => "sort_order",
-				'width' => "110"
+				'width' => "75"
 		);
 		$data ['columnDefs'] [] = array (
 			'displayName' => "Exposure",
 			'enableCellEdit' => true,
 			'enableFiltering' => true,
-			'name' => "exposure",
-			'width' => "200"
+			'name' => "exposure"
 	);
 		// build data
 		$query = "select wp_mf_faire_subarea.*, wp_mf_faire_area.faire_id as faire,
