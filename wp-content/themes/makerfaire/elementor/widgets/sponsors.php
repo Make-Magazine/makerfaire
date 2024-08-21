@@ -52,12 +52,23 @@ class Sponsors extends Widget_Base {
 		);
 
 		$this->add_control(
+			'sponsors_page_id',
+			[
+				'label' => __( 'Sponsor Page ID', 'makerfaire' ),
+				'label_block' => true,
+				'type' => \Elementor\Controls_Manager::NUMBER,
+				'default' => 0,
+				'description' => __( 'Enter the ID of the page  page you\'d like to pull sponsor data from.', 'makerfaire' ),
+			]
+		);
+
+		$this->add_control(
 			'sponsors_page_url',
 			[
 				'label' => __( 'Sponsor Page URL', 'makerfaire' ),
 				'type' => \Elementor\Controls_Manager::URL,
 				'placeholder' => __( 'https://your-link.com/sponsors', 'makerfaire' ),
-				'description' => __( 'Provide the url of the page you\'d like to draw sponsor data from', 'makerfaire' ),
+				'description' => __( 'Provide the url of the sponsor page to link to.', 'makerfaire' ),
 				'default' => [
 					'url' => '',
 				]
@@ -101,19 +112,28 @@ class Sponsors extends Widget_Base {
 			array('coppersmith_sponsors', 'COPPERSMITH'),
 			array('media_sponsors', 'MEDIA AND COMMUNITY'),											
 		);
+
+		//pull settings for this widget
         $settings = $this->get_settings_for_display();
 
-		$show_type = (isset($settings['show_sponsor_type'])?$settings['show_sponsor_type']:'yes');
-		$show_link = (isset($settings['show_sponsor_link'])?$settings['show_sponsor_link']:'yes');
-		$url = $settings['sponsors_page_url']['url'];
-	    $year = $settings['sponsors_page_year'];
-	    $id = url_to_postid($url);
+		$show_type 	= (isset($settings['show_sponsor_type']) ? $settings['show_sponsor_type'] : 'yes');
+		$show_link 	= (isset($settings['show_sponsor_link']) ? $settings['show_sponsor_link'] : 'yes');
+		$id 		= (isset($settings['sponsors_page_id'])  ? $settings['sponsors_page_id']  : 0);
 
-	    $title = $settings['title_sponsor_panel'];
+		$url 		= $settings['sponsors_page_url']['url'];
+		
+		//if the post ID isn't set, try to get it from the passed URL
+		if($id==0){
+			$id 	= url_to_postid($url);
+		}
+		
+	    $year 		= $settings['sponsors_page_year'];
+	    
+	    $title 		= $settings['title_sponsor_panel'];
 	    if($title=='')  $title = 'Thank you to our sponsors';
 
-	    // IF CUSTOM FIELD FOR SPONSOR SLIDER HAS A URL THEN SHOW THAT URL'S SPONSORS
-	    if ($url!='') {
+	    // if we have a page to pull sponsors from
+	    if ($id != 0) {
 	    	$return = '
 		<div class="sponsor-slide">
 	      <div class="container">
