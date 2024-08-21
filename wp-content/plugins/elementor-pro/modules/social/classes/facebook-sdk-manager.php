@@ -41,7 +41,7 @@ class Facebook_SDK_Manager {
 			$content = sprintf(
 				/* translators: 1: Setting Page Link opening tag, 2: Link closing tag. */
 				esc_html__( 'Set your Facebook App ID in the %1$sIntegrations Settings%2$s', 'elementor-pro' ),
-				sprintf( '<a href="%s" target="_blank">', Settings::get_url() . '#tab-integrations' ),
+				sprintf( '<a href="%s" target="_blank">', Settings::get_settings_tab_url( 'integrations' ) ),
 				'</a>'
 			);
 			$alert_type = 'warning';
@@ -50,7 +50,7 @@ class Facebook_SDK_Manager {
 				/* translators: 1: App ID, 2: Setting Page Link opening tag, 3: Link closing tag. */
 				esc_html__( 'You are connected to Facebook App %1$s, %2$sChange App%3$s', 'elementor-pro' ),
 				self::get_app_id(),
-				sprintf( '<a href="%s" target="_blank">', Settings::get_url() . '#tab-integrations' ),
+				sprintf( '<a href="%s" target="_blank">', Settings::get_settings_tab_url( 'integrations' ) ),
 				'</a>'
 			);
 			$alert_type = 'info';
@@ -59,8 +59,7 @@ class Facebook_SDK_Manager {
 		$widget->add_control(
 			'app_id',
 			[
-				// TODO: Remove define() with the release of Elementor 3.22
-				'type' => defined( 'Controls_Manager::ALERT' ) ? Controls_Manager::ALERT : 'alert',
+				'type' => Controls_Manager::ALERT,
 				'alert_type' => $alert_type,
 				'content' => $content,
 			]
@@ -69,8 +68,7 @@ class Facebook_SDK_Manager {
 		$widget->add_control(
 			'app_eu_message',
 			[
-				// TODO: Remove define() with the release of Elementor 3.22
-				'type' => defined( 'Controls_Manager::ALERT' ) ? Controls_Manager::ALERT : 'alert',
+				'type' => Controls_Manager::ALERT,
 				'alert_type' => 'info',
 				'content' => sprintf(
 					/* translators: 1: Link opening tag, 2: Link closing tag. */
