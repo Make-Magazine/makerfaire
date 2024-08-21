@@ -42,7 +42,7 @@ if (($showMakeProjects === 'mponly' || $showMakeProjects === 'mfandmp') && $MPCa
             </div>
         </div> */ ?>
         <?php if (have_posts()) : while (have_posts()) : the_post(); ?>
-                <div class="schedule-description">
+                <div class="content-wrapper">
                     <?php the_content(); ?>
                 </div>
             <?php endwhile; ?>
