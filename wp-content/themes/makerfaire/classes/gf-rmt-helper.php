@@ -5,18 +5,11 @@ if (!class_exists('GFRMTHELPER')) {
 }
 
 class GFRMTHELPER {
-  public static function get_user($entry, $form = array()) {
-    if (empty($form) && isset($entry['form_id'])) {
-      $form = GFAPI::get_form($entry['form_id']);
-    }
-    $form_type = $form['form_type'];
-
+  public static function get_user() {
     //find current user
     $current_user = wp_get_current_user();
     $user = $current_user->ID;
-
-    //If Payment form, set the user to show the as a payment         
-    if ($form_type == 'Payment') $user = 0;
+    
     return $user;
   }
 
@@ -28,7 +21,7 @@ class GFRMTHELPER {
     $entryID   = $entry['id'];
     //check for a Easy Passthrough token to find original entry ID
     $ep_token = rgget('ep_token');
-
+    
     //if the ep_token is set, need to find the original entry ID to update instead
     if ($ep_token != '') {
       //find the associated entry id based on the token
@@ -39,10 +32,10 @@ class GFRMTHELPER {
           $ep_token
         )
       );
-
+      
       $entryID = ($origEntryID != '' ? $origEntryID : $entryID);
     }
-
+    
     //find the faire_location for this entry
     $faire_location = $wpdb->get_var("SELECT faire_location "
       . "   FROM wp_mf_faire "
@@ -51,9 +44,11 @@ class GFRMTHELPER {
 
     /* RMT logic is stored in wp_rmt_rules and wp_rmt_rules_logic */
     //pull all RMT rules
-    $sql = "SELECT rules.id as rule_id, rules.form_type, rules.rmt_type, rules.rmt_field, rules.value, rules.comment, "
+    $sql = "SELECT rules.id as rule_id, wp_mf_form_types.form_type, rules.rmt_type, rules.rmt_field, rules.value, rules.comment, "
       . " logic.field_number, logic.operator, logic.value as logic_value "
-      . "FROM wp_rmt_rules rules, `wp_rmt_rules_logic` logic "
+      . "FROM wp_rmt_rules rules "
+      . "left outer join wp_mf_form_types on wp_mf_form_types.id=rules.form_type, "
+      . "`wp_rmt_rules_logic` logic "
       . "WHERE rules.id=logic.rule_id "
       . "ORDER BY `rule_id` ASC";
 
@@ -73,7 +68,13 @@ class GFRMTHELPER {
     }
 
     //loop through rules
-    foreach ($rules as $rule) {
+    foreach ($rules as $key=>$rule) {      
+      if(!is_null($rule['form_type'])){
+        if($form_type != $rule['form_type']){       
+          continue;
+        }
+      }
+      
       $pass = false;
       //loop through logic, as soon as one fails, we exit the foreach loop
       foreach ($rule['logic'] as $logic) {
@@ -83,7 +84,7 @@ class GFRMTHELPER {
         if ($field_number == 'faire_location') {
           $entryfield = $faire_location;
         } elseif ($field_number == 'form_type') {
-          $entryfield = $form_type;
+          $entryfield = $form_type;          
         } elseif (isset($entry[$field_number])) {
           $entryfield = $entry[$field_number];
         } else {
@@ -98,10 +99,10 @@ class GFRMTHELPER {
             $pass = false;
             break;
           }
-        } elseif ($logic['operator'] == 'not') {
-          if (strtolower($entryfield) != strtolower($logic['value'])) {
+        } elseif ($logic['operator'] == 'not') {                    
+          if (strtolower($entryfield) != strtolower($logic['value'])) {            
             $pass = true;
-          } else {
+          } else {            
             $pass = false;
             break;
           }
@@ -117,19 +118,19 @@ class GFRMTHELPER {
           //other operator logic goes here
         }
       } //end loop through each rule logic
-
+     
       //logic met - set RMT field
-      if ($pass) {
+      if ($pass) {                
         //look if there is a a field in the value or comment field (these are surrounded by {} )
         $value   = findFieldData($rule['value'], $entry);
         $comment = findFieldData($rule['comment'], $entry);
 
         if ($rule['rmt_type'] == 'resource') {
           //update resource for entry
-          self::rmt_update_resource($entryID, $rule['rmt_field'], (int) $value, $comment);
+          self::rmt_update_resource($entryID, $rule['rmt_field'], (int) $value, addslashes($comment), $form_type);
         } elseif ($rule['rmt_type'] == 'attribute') {
           //update attribute for entry
-          self::rmt_update_attribute($entryID, $rule['rmt_field'], $value, $comment);
+          self::rmt_update_attribute($entryID, $rule['rmt_field'], addslashes($value), addslashes($comment), $form_type);
         }
       }
     } //end loop through rules
@@ -151,7 +152,7 @@ class GFRMTHELPER {
       $rmt_field = $current->attn_id;
     }
 
-    $user = self::get_user($entry);
+    $user = self::get_user();
 
     //now update the RMT item
     $wpdb->get_results("update " . $table . ' set ' . $fieldName . '="' . $newValue . '",user= ' . $user . ' where ID=' . $rowID);
@@ -161,11 +162,16 @@ class GFRMTHELPER {
   }
 
   /* Update RMT resource data for an entry */
-  public static function rmt_update_resource($entryID, $resource_id, $qty, $comment) {
+  public static function rmt_update_resource($entryID, $resource_id, $qty, $comment, $form_type='') {
     global $wpdb;
     $entry  = GFAPI::get_entry($entryID);
-    $form   = GFAPI::get_form($entry['form_id']);
-    $user   = self::get_user($entry, $form);
+
+    //If Payment form, set the user to show the as a payment         
+    if ($form_type == 'Payment') {
+      $user = 0;
+    }else{
+      $user   = self::get_user();
+    }    
 
     $rowID  = 0;
 
@@ -197,7 +203,7 @@ class GFRMTHELPER {
           return;
 
         //is the resource unlocked OR is this a payment form?  
-        } elseif ($res->lockBit == 0 || $form['form_type'] == 'Payment') {
+        } elseif ($res->lockBit == 0 || $form_type == 'Payment') {
           //update the resource
           $type = 'update';
         
@@ -209,7 +215,7 @@ class GFRMTHELPER {
         //Payment forms are allowed to have multiple resources of the same category
         //if this isn't a payment form and the resource is unlocked
         //what if they put 05 amps on their form but then paid for 10 amps
-        if ($form['form_type'] != 'Payment' && $res->lockBit == 0) {
+        if ($form_type != 'Payment' && $res->lockBit == 0) {
           //update the resource
           $type = 'update';
         }
@@ -262,7 +268,7 @@ class GFRMTHELPER {
     if (!empty($chgRPTins))  updateChangeRPT($chgRPTins);
 
     //lock the resource if this a payment form
-    if ($form['form_type'] == 'Payment') {
+    if ($form_type == 'Payment') {
       self::rmt_set_lock_ind(1, $rowID, 'resource', $user);
     }
 
@@ -270,13 +276,18 @@ class GFRMTHELPER {
   }
 
   /* Update RMT attribute data for an entry */
-  public static function rmt_update_attribute($entryID, $attribute_id, $value, $comment) {
+  public static function rmt_update_attribute($entryID, $attribute_id, $value, $comment, $form_type='') {
     global $wpdb;
     $rowID = 0;
 
-    $entry = GFAPI::get_entry($entryID);
-    $form  = GFAPI::get_form($entry['form_id']);
-    $user   = self::get_user($entry, $form);
+    $entry = GFAPI::get_entry($entryID);    
+
+    //If Payment form, set the user to show the as a payment         
+    if ($form_type == 'Payment') {
+      $user = 0;
+    }else{
+      $user   = self::get_user();
+    }    
 
     //look to see if this attribute is already set
     $res = $wpdb->get_row('SELECT * from wp_rmt_entry_attributes where entry_id=' . $entryID . ' and attribute_id=' . $attribute_id);
@@ -286,8 +297,8 @@ class GFRMTHELPER {
       //is the attribute unlocked?
       if ($res->lockBit == 0) {
         //if this is a payment record, append the payment comment to the end of the existing comment
-        if (isset($form['form_type']) && $form['form_type'] == 'Payment') {
-          $comment = $res->comment . '<br/>' . $form['form_type'] . ' Form Comment - ' . $comment;
+        if ($form_type == 'Payment') {
+          $comment = $res->comment . '<br/>' . $form_type . ' Form Comment - ' . $comment;
         }
 
         //if there are changes, update the record
@@ -326,7 +337,7 @@ class GFRMTHELPER {
     if (!empty($chgRPTins))  updateChangeRPT($chgRPTins);
 
     //lock the attribute if this a payment form
-    if ($form['form_type'] == 'Payment') {
+    if ($form_type == 'Payment') {
       self::rmt_set_lock_ind(1, $rowID, 'attribute', $user);
     }
 
@@ -339,9 +350,9 @@ class GFRMTHELPER {
     $rowID = 0;
 
     $entry = GFAPI::get_entry($entryID);
-    $form  = GFAPI::get_form($entry['form_id']);
 
-    $user   = self::get_user($entry, $form);
+    $user   = self::get_user();
+    
 
     //add the ATTENTION
     $wpdb->get_results("INSERT INTO `wp_rmt_entry_attn`(`entry_id`, `attn_id`, `comment`,user) "
@@ -1184,5 +1195,6 @@ function findFieldData($var, $entry) {
     $var = str_replace($req_field, $fieldData, $var);
     $pos = strpos($var, '{');
   }
+
   return $var;
 }

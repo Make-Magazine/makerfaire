@@ -134,9 +134,9 @@ function updateChangeRPT($updates) {
                 $update['lead_id'] . ', ' .
                 $update['form_id'] . ', ' .
                 '"' . $update['field_id'] . '", ' .
-                '"' . $update['field_before'] . '", ' .
-                '"' . $update['field_after'] . '", ' .
-                '"' . $update['fieldLabel'] . '", ' .
+                '"' . addslashes($update['field_before']) . '", ' .
+                '"' . addslashes($update['field_after']) . '", ' .
+                '"' . addslashes($update['fieldLabel']) . '", ' .
                 '"' . $update['status_at_update'] . '"' .
                 ')';
     }
