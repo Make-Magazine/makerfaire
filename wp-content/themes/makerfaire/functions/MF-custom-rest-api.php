@@ -151,7 +151,7 @@ function mf_fairedata(WP_REST_Request $request) {
                 break;
             case 'schedule':
                 $data = getSchedule($dataids, $faireID);
-                break;            
+                break;
         }
     } else {
         $data['error'] = 'Error: Type or data ids not submitted';
@@ -182,7 +182,7 @@ function getMakerDirEntries($years) {
     //build entry array
     $entries = array();
     foreach ($results as $result) {
-        
+
         $entry_id = $result->entry_id;
         $makerList = $result->maker;
 
@@ -306,7 +306,12 @@ function getMTMentries($formIDs = '', $faireID = '', $years = '') {
 
             //project photo
             $projPhoto = $result->proj_photo;
-
+            //for BA24, the single photo was changed to a multi image which messed things up a bit
+            $photo = json_decode($projPhoto);
+            if (is_array($photo)) {
+                $projPhoto = $photo[0];
+            }
+            
             //find out if there is an override image for this page
             $overrideImg = findOverride($result->entry_id, 'mtm');
             if ($overrideImg != '')
@@ -335,8 +340,8 @@ function getMTMentries($formIDs = '', $faireID = '', $years = '') {
                 if ($value != '') $category[] = $value;
             }
             // handle cases where no main category was set
-            if($result->prime_cat == "-- select a makerfaire category --") {
-                $result->prime_cat = ""; 
+            if ($result->prime_cat == "-- select a makerfaire category --") {
+                $result->prime_cat = "";
             }
             $primeCat = htmlspecialchars_decode(get_CPT_name($result->prime_cat));
             if ($primeCat != '')   array_unshift($category, $primeCat); // add the primary category to the start of the array
@@ -354,6 +359,7 @@ function getMTMentries($formIDs = '', $faireID = '', $years = '') {
                 }
             }
 
+            //Admin entry types (only for BA23 and forward)
             $types = explode(",", $result->types);
 
             //weekends               
@@ -637,7 +643,7 @@ function getMakerList($entryID, $faireID) {
         $query = "SELECT *
               FROM wp_gf_entry_meta as lead_detail
               where lead_detail.entry_id = $entryID "
-            . "and cast(meta_key as char) in('160.3', '160.6', '158.3', '158.6', '155.3', '155.6', "
+            . "and cast(meta_key as char) in('96.3','96.6', '160.3', '160.6', '158.3', '158.6', '155.3', '155.6', "
             . "'156.3', '156.6', '157.3', '157.6', '159.3', '159.6', '154.3', '154.6', '109', '105')";
         $entryData = $wpdb->get_results($query);
         //field 105 - who would you like listed
@@ -651,15 +657,11 @@ function getMakerList($entryID, $faireID) {
         }
 
         if (isset($fieldData['105'])) {
-            $whoListed = strtolower($fieldData['105']);                        
-            $isGroup = (stripos($whoListed, 'group') !== false || stripos($whoListed, 'team') !== false?true:false);
-            $isOneMaker = false;
-            $isOneMaker = (strpos($whoListed, 'one') !== false);
+            $whoListed = strtolower($fieldData['105']);
+            $isGroup = (stripos($whoListed, 'group') !== false || stripos($whoListed, 'team') !== false ? true : false);            
 
             if ($isGroup) {
                 $makerList = (isset($fieldData['109']) ? $fieldData['109'] : '');
-            } elseif ($isOneMaker) {
-                $makerList = (isset($fieldData['160.3']) ? $fieldData['160.3'] : '') . (isset($fieldData['160.6']) ? ' ' . $fieldData['160.6'] : '');
             } else {
                 $makerArr = array();
                 if (isset($fieldData['160.3']))
@@ -677,6 +679,11 @@ function getMakerList($entryID, $faireID) {
                 if (isset($fieldData['154.3']))
                     $makerArr[] = $fieldData['154.3'] . ' ' . (isset($fieldData['154.6']) ? $fieldData['154.6'] : '');
 
+                //starting with BA24, we moved away from using Maker 1 name, to using primary contact name
+                if (empty($makerArr)) {
+                    if (isset($fieldData['96.3']))
+                        $makerArr[] = $fieldData['96.3'] . ' ' . (isset($fieldData['96.6']) ? $fieldData['96.6'] : '');
+                }
                 $makerList = implode(", ", $makerArr);
             }
         }
