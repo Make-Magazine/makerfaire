@@ -39,18 +39,6 @@ class Sponsors extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
-			'sponsors_page_url',
-			[
-				'label' => __( 'Sponsor Page URL', 'makerfaire' ),
-				'type' => \Elementor\Controls_Manager::URL,
-				'placeholder' => __( 'https://your-link.com/sponsors', 'makerfaire' ),
-				'description' => __( 'Provide the url of the page you\'d like to draw sponsor data from', 'makerfaire' ),
-				'default' => [
-					'url' => '',
-				]
-			]
-		);
 
 		$this->add_control(
 			'sponsors_page_year',
@@ -63,12 +51,60 @@ class Sponsors extends Widget_Base {
 			]
 		);
 
+		$this->add_control(
+			'sponsors_page_url',
+			[
+				'label' => __( 'Sponsor Page URL', 'makerfaire' ),
+				'type' => \Elementor\Controls_Manager::URL,
+				'placeholder' => __( 'https://your-link.com/sponsors', 'makerfaire' ),
+				'description' => __( 'Provide the url of the page you\'d like to draw sponsor data from', 'makerfaire' ),
+				'default' => [
+					'url' => '',
+				]
+			]
+		);
+		//show or hide the types for each sponsor level
+		$this->add_control(
+			'show_sponsor_type',
+			[
+				'label' => esc_html__( 'Show Sponsor Type', 'makerfaire' ),
+				'type' => \Elementor\Controls_Manager::SWITCHER,
+				'label_on' => esc_html__( 'Show', 'makerfaire' ),
+				'label_off' => esc_html__( 'Hide', 'makerfaire' ),
+				'return_value' => 'yes',
+				'default' => 'yes',
+			]
+		);
+
+		//show or hide the link to the sponsor page
+		$this->add_control(
+			'show_sponsor_link',
+			[
+				'label' => esc_html__( 'Show Link to Sponsor Page', 'makerfaire' ),
+				'type' => \Elementor\Controls_Manager::SWITCHER,
+				'label_on' => esc_html__( 'Show', 'makerfaire' ),
+				'label_off' => esc_html__( 'Hide', 'makerfaire' ),
+				'return_value' => 'yes',
+				'default' => 'yes',
+			]
+		);		
+
         $this->end_controls_section();
     }
 
     protected function render() {
+		$sponsorArray = array(
+			array('presenting_sponsors', 'PRESENTING'),
+			array('platinum_sponsors', 'PLATINUM'),
+			array('goldsmith_sponsors', 'GOLDSMITH'),
+			array('silversmith_sponsors', 'SILVERSMITH'),
+			array('coppersmith_sponsors', 'COPPERSMITH'),
+			array('media_sponsors', 'MEDIA AND COMMUNITY'),											
+		);
         $settings = $this->get_settings_for_display();
 
+		$show_type = (isset($settings['show_sponsor_type'])?$settings['show_sponsor_type']:'yes');
+		$show_link = (isset($settings['show_sponsor_link'])?$settings['show_sponsor_link']:'yes');
 		$url = $settings['sponsors_page_url']['url'];
 	    $year = $settings['sponsors_page_year'];
 	    $id = url_to_postid($url);
@@ -77,9 +113,9 @@ class Sponsors extends Widget_Base {
 	    if($title=='')  $title = 'Thank you to our sponsors';
 
 	    // IF CUSTOM FIELD FOR SPONSOR SLIDER HAS A URL THEN SHOW THAT URL'S SPONSORS
-	    if (have_rows('goldsmith_sponsors', $id) || have_rows('silversmith_sponsors', $id) || have_rows('coppersmith_sponsors', $id) || have_rows('media_sponsors', $id)) {
-	        $return = '
-	   <div class="sponsor-slide">
+	    if ($url!='') {
+	    	$return = '
+		<div class="sponsor-slide">
 	      <div class="container">
 	         <div class="row">
 	            <div class="col-xs-12 text-center padbottom">
@@ -96,23 +132,20 @@ class Sponsors extends Widget_Base {
 	               <div id="carousel-sponsors-slider" class="carousel slide" data-ride="carousel">
 	                  <!-- Wrapper for slides -->
 	                  <div class="carousel-inner" role="listbox">';
-	        $sponsorArray = array(
-	            array('goldsmith_sponsors', 'GOLDSMITH'),
-	            array('silversmith_sponsors', 'SILVERSMITH'),
-	            array('coppersmith_sponsors', 'COPPERSMITH'),
-	            array('media_sponsors', 'MEDIA AND COMMUNITY'),
-	        );
+		
 	        foreach ($sponsorArray as $sponsor) {
-	            if (have_rows($sponsor[0], $id)) {
-
+	            if (have_rows($sponsor[0], $id)) {					
 	                $sponsorCount = get_post_meta($id, $sponsor[0], true);
 
 	                $return .= '
 	                     <div class="item">
 	                        <div class="row sponsors-row sponsors-' . $sponsorCount . '">
-	                           <div class="col-xs-12">
-	                              <h3 class="sponsors-type text-center">' . $sponsor[1] . '</h3>
-	                              <div class="faire-sponsors-box">';
+	                           <div class="col-xs-12">';
+							   if($show_type=='yes'){
+									'$return .= <h3 class="sponsors-type text-center">' . $sponsor[1] . '</h3>';
+							   }		   
+	                              
+	                $return .= '<div class="faire-sponsors-box">';
 
 	                while (have_rows($sponsor[0], $id)) {
 	                    the_row();
@@ -141,12 +174,18 @@ class Sponsors extends Widget_Base {
 	                  </div> <!-- close .carousel-inner-->
 	               </div> <!-- close #carousel-sponsors-slider -->
 	            </div> <!-- close .col-xs-12 -->
-	         </div> <!-- close .row -->
-	         <div class="row">
+	         </div> <!-- close .row -->';
+			 
+			 if($show_link == 'yes'){
+				$return .= '<div class="row">
 	            <div class="col-xs-12 text-center">
 	               <a class="btn btn-white more-makers-link" href="' . $url . '">Meet The Sponsors</a>
 	            </div>
-	         </div>
+	         </div>';
+			 }
+
+	        $return .= ' 
+
 	      </div> <!-- close .container -->
 	   </div> <!-- close .sponsor-slide -->';
 
