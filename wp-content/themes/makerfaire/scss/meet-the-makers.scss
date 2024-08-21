@@ -285,6 +285,7 @@
                                         align-items: center;
                                         img {
                                             margin-right: 13px;
+                                            filter: brightness(0) saturate(100%) invert(15%) sepia(81%) saturate(7431%) hue-rotate(5deg) brightness(98%) contrast(101%);
                                         }
                                     }
                                     p {
@@ -391,6 +392,7 @@
                                 }
                                 img {
                                     margin-right: 10px;
+                                    filter: brightness(0) saturate(100%) invert(15%) sepia(81%) saturate(7431%) hue-rotate(5deg) brightness(98%) contrast(101%);
                                 }
                             }
                         }
