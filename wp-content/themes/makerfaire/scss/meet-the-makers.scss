@@ -151,7 +151,7 @@
                         border: solid 1px #6A6A6A;
                     }
                     &:focus {outline:0;}
-                    .fa { color: #37afed; }
+                    .fa { color: $color-blue; }
                 }
             }
         }
@@ -453,6 +453,11 @@
     .filterAlpha {
         padding-left: 10px;
     }
+}
+
+.mtm .no-results {
+    margin: 30px;
+    text-align: center;
 }
 
 .eoy-results-cont {

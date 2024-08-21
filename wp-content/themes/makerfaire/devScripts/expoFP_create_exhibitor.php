@@ -25,7 +25,7 @@ $expoFP_count = 0;
 
 //loop through entries
 foreach ($entries as $entry) {   
-    GFRMTHELPER::buildRmtData($entry, $form);
+    //GFRMTHELPER::buildRmtData($entry, $form);
     create_expofp_exhibitor( $entry, $form );
     $expoFP_count++;    
 }
