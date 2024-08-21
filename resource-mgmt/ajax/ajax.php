@@ -475,6 +475,13 @@ function getDataByFaire($mysqli, $table, $selfaire) {
 				'name' => "sort_order",
 				'width' => "130"
 		);
+		$data ['columnDefs'] [] = array (
+			'displayName' => "Exposure",
+			'enableCellEdit' => true,
+			'enableFiltering' => true,
+			'name' => "exposure",
+			'width' => "130"
+	);
 		// build data
 		$query = "select wp_mf_faire_subarea.*, wp_mf_faire_area.faire_id as faire,
                 (SELECT count(*) from wp_mf_location where wp_mf_faire_subarea.ID = subarea_id) as assCount
