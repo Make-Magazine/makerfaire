@@ -311,7 +311,7 @@ function getMTMentries($formIDs = '', $faireID = '', $years = '') {
             if (is_array($photo)) {
                 $projPhoto = $photo[0];
             }
-            
+
             //find out if there is an override image for this page
             $overrideImg = findOverride($result->entry_id, 'mtm');
             if ($overrideImg != '')
@@ -361,9 +361,9 @@ function getMTMentries($formIDs = '', $faireID = '', $years = '') {
 
             //Admin entry types (only for BA23 and forward)
             $types = explode(",", $result->types);
-
+            
             //weekends               
-            if (isset($result->weekends)) {
+            if ($faireID=='BA23' && isset($result->weekends)) {
                 $weekends = explode(',', $result->weekends);
                 foreach ($weekends as &$weekend) {
                     if ($weekend == 'Wk1' || $weekend == 'Fri1') {
@@ -656,8 +656,8 @@ function getMakerList($entryID, $faireID) {
             $fieldData[$field->meta_key] = $field->meta_value;
         }
 
-        if (isset($fieldData['105'])) {
-            $whoListed = strtolower($fieldData['105']);
+        
+            $whoListed = (isset($fieldData['105'])?strtolower($fieldData['105']):'');
             $isGroup = (stripos($whoListed, 'group') !== false || stripos($whoListed, 'team') !== false ? true : false);            
 
             if ($isGroup) {
@@ -686,7 +686,7 @@ function getMakerList($entryID, $faireID) {
                 }
                 $makerList = implode(", ", $makerArr);
             }
-        }
+        
     }
 
     return $makerList;
