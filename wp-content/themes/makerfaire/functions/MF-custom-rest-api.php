@@ -182,6 +182,7 @@ function getMakerDirEntries($years) {
     //build entry array
     $entries = array();
     foreach ($results as $result) {
+        
         $entry_id = $result->entry_id;
         $makerList = $result->maker;
 
@@ -253,6 +254,7 @@ function getMTMentries($formIDs = '', $faireID = '', $years = '') {
                      (SELECT meta_value FROM   wp_gf_entry_meta WHERE  meta_key = '151' AND entry_id = entry.id) AS proj_name, 
                      (SELECT meta_value FROM   wp_gf_entry_meta WHERE  meta_key = '16'  AND entry_id = entry.id) AS short_desc, 
                      (SELECT meta_value FROM   wp_gf_entry_meta WHERE  meta_key = '320' AND entry_id = entry.id) AS prime_cat, 
+                     (SELECT Group_concat(meta_value) FROM   wp_gf_entry_meta WHERE  meta_key LIKE '339.%' AND entry_id = entry.id GROUP  BY entry_id) AS types, 
                      (SELECT Group_concat(meta_value) FROM   wp_gf_entry_meta WHERE  meta_key LIKE '321.%' AND entry_id = entry.id GROUP  BY entry_id) AS second_cat, 
                      (SELECT Group_concat(meta_value) FROM   wp_gf_entry_meta WHERE  meta_key LIKE '304.%' AND entry_id = entry.id GROUP  BY entry_id) AS flags,
                      (SELECT Group_concat(meta_value) FROM   wp_gf_entry_meta WHERE  meta_key LIKE '879.%' AND entry_id = entry.id GROUP  BY entry_id) AS weekends, 
@@ -279,6 +281,7 @@ function getMTMentries($formIDs = '', $faireID = '', $years = '') {
                      (SELECT meta_value FROM   wp_gf_entry_meta WHERE  meta_key = '151' AND entry_id = entry.id) AS proj_name, 
                      (SELECT meta_value FROM   wp_gf_entry_meta WHERE  meta_key = '16'  AND entry_id = entry.id) AS short_desc, 
                      (SELECT meta_value FROM   wp_gf_entry_meta WHERE  meta_key = '320' AND entry_id = entry.id) AS prime_cat, 
+                     (SELECT meta_value FROM   wp_gf_entry_meta WHERE  meta_key = '321' AND entry_id = entry.id) AS types, 
                      (SELECT Group_concat(meta_value) FROM   wp_gf_entry_meta WHERE  meta_key LIKE '321.%' AND entry_id = entry.id GROUP  BY entry_id) AS second_cat, 
                      (SELECT Group_concat(meta_value) FROM   wp_gf_entry_meta WHERE  meta_key LIKE '304.%' AND entry_id = entry.id GROUP  BY entry_id) AS flags,
                      (SELECT meta_value FROM   wp_gf_entry_meta WHERE  meta_key = '320' AND entry_id = entry.id) AS area
@@ -331,8 +334,27 @@ function getMTMentries($formIDs = '', $faireID = '', $years = '') {
                 $value = htmlspecialchars_decode(get_CPT_name($leadCat));
                 if ($value != '') $category[] = $value;
             }
+            // handle cases where no main category was set
+            if($result->prime_cat == "-- select a makerfaire category --") {
+                $result->prime_cat = ""; 
+            }
             $primeCat = htmlspecialchars_decode(get_CPT_name($result->prime_cat));
             if ($primeCat != '')   array_unshift($category, $primeCat); // add the primary category to the start of the array
+
+            $mainCategory = get_term($result->prime_cat);
+            $mainCategoryIcon = '<i class="fa fa-rocket" aria-hidden="true"></i>';
+            $mainCategoryIconType = get_field('icon_type', $mainCategory->taxonomy . '_' . $mainCategory->term_id);
+            // get the mainCategory icon from the mf category taxonomy, if indeed one is set
+            if ($mainCategoryIconType == "uploaded_icon") {
+                $mainCategoryIcon = '<picture class="main-category-icon"><img src="' . get_field('uploaded_icon', $mainCategory->taxonomy . '_' . $mainCategory->term_id)['url'] . '" height="27px" width="27px" aria-hidden="true" /></picture>';
+            } else {
+                $fa = get_field('font_awesome', $mainCategory->taxonomy . '_' . $mainCategory->term_id);
+                if (!empty($fa)) {
+                    $mainCategoryIcon = '<i class="fa ' . $fa . '" aria-hidden="true"></i>';
+                }
+            }
+
+            $types = explode(",", $result->types);
 
             //weekends               
             if (isset($result->weekends)) {
@@ -368,6 +390,8 @@ function getMTMentries($formIDs = '', $faireID = '', $years = '') {
                 'name' => $result->proj_name,
                 'large_img_url' => $projPhoto,
                 'categories' => $category,
+                'main_cat_icon' => $mainCategoryIcon,
+                'types' => $types,
                 'description' => $result->short_desc,
                 'flag' => $flag, //only set if flag is set to 'Featured Maker'
                 'handson' => $handson, //only set if handson is set to 'Featured Handson'

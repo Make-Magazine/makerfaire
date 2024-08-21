@@ -33,18 +33,21 @@ mtm.controller('mtmMakers', ['$scope', '$sce', '$filter', '$http', function ($sc
         $scope.showHandsOn = '';
         $scope.handson = '';
         $scope.locations = [];
+        $scope.types = [];
         $scope.weekends = [];
         $scope.letter = '';
         $scope.makerSearch = {};
         $scope.makerSearch.flag = '';
         $scope.makerSearch.handson = '';
         $scope.makerSearch.categories = '';
+        $scope.makerSearch.types = '';
         $scope.makerSearch.location = '';
         $scope.makerSearch.weekend = '';
         $scope.alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
 
         $scope.layout = 'grid';
         $scope.category = '';
+        $scope.type = '';
         $scope.tags = [];
         $scope.makers = [];
         catJson = [];
@@ -145,6 +148,7 @@ mtm.controller('mtmMakers', ['$scope', '$sce', '$filter', '$http', function ($sc
                         }
 
                         jQuery.merge($scope.makers, response.data.entity);
+                        //console.log($scope.makers);
                         shuffle($scope.makers);
 
                     }, function errorCallback(error) {
@@ -172,6 +176,9 @@ mtm.controller('mtmMakers', ['$scope', '$sce', '$filter', '$http', function ($sc
             $scope.handson = handson;
         };
 
+        $scope.setTypeFilter = function (type) {
+            $scope.type = type;
+        };
 
         $scope.setTagFilter = function (tag) {
             $scope.category = tag;
@@ -184,6 +191,7 @@ mtm.controller('mtmMakers', ['$scope', '$sce', '$filter', '$http', function ($sc
         // Clear category filter on All button click
         $scope.clearFilter = function () {
             $scope.category = '';
+            $scope.type = '';
         };
 
         //watch the maker variable, if it changes update the location, category and weekend drop downs
@@ -191,6 +199,7 @@ mtm.controller('mtmMakers', ['$scope', '$sce', '$filter', '$http', function ($sc
             var catList = [];
             var locList = [];
             var wkndList = [];
+            var typeList = [];
             angular.forEach($scope.makers, function (maker) {
                 //weekends
                 var weekend = maker.weekend;
@@ -226,6 +235,16 @@ mtm.controller('mtmMakers', ['$scope', '$sce', '$filter', '$http', function ($sc
                             catList.push(cat);
                     });
                 }
+
+                var types = maker.types;
+                if (types != null) {
+                    angular.forEach(types, function (type) {
+                        if (typeList.indexOf(type) === -1 && type !== '') {
+                            typeList.push(type);
+                        }
+                    });
+                }
+                maker.typeString = types.join(", ");
             });
 
             //categories
@@ -241,6 +260,12 @@ mtm.controller('mtmMakers', ['$scope', '$sce', '$filter', '$http', function ($sc
             if (locList.length > 0) {
                 var collator = new Intl.Collator(undefined, {numeric: true, sensitivity: 'base'});
                 $scope.locations = locList.sort(collator.compare);
+            }           
+            //exhibit types
+            $scope.types = [];
+            if (typeList.length > 0) {
+                var collator = new Intl.Collator(undefined, {numeric: true, sensitivity: 'base'});
+                $scope.types = typeList.sort(collator.compare);
             }           
         }, true);
     }]);

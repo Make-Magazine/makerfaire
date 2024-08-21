@@ -29,7 +29,7 @@ if (($showMakeProjects === 'mponly' || $showMakeProjects === 'mfandmp') && $MPCa
         <input type="hidden" id="showMakeProjects" value="<?php echo $showMakeProjects; ?>" />
         <input type="hidden" id="MPCategory" value="<?php echo $MPCategory; ?>" />
 
-        <div class="container">
+        <?php /* <div class="container">
             <div class="col-md-3 col-sm-12 col-xs-12">
                 <?php
                 echo get_faire_backlink();
@@ -40,133 +40,135 @@ if (($showMakeProjects === 'mponly' || $showMakeProjects === 'mfandmp') && $MPCa
             </div>
             <div class="col-md-3 col-sm-12">
             </div>
-        </div>
+        </div> */ ?>
         <?php if (have_posts()) : while (have_posts()) : the_post(); ?>
                 <div class="schedule-description">
                     <?php the_content(); ?>
                 </div>
             <?php endwhile; ?>
         <?php endif; ?>
-        <div class="flag-banner"></div>
-
-        <div class="mtm-search">
-            <form class="form-inline">
-                <label for="mtm-search-input"><?php _e("Search by topic, keyword, project, sponsor or maker name", 'makerfaire') ?></label><br/>
-                <input ng-model="makerSearch.$" id="mtm-search-input" class="form-control" placeholder="<?php _e("Enter your search", 'makerfaire') ?>" type="text">
-            </form>
-        </div>
 
 
-        <div class="mtm-filter container">
-            <div class="row" ng-cloak>
-                <div class="col-sm-4">
-                    <div class="mtm-filter-view">
-                        <span class="mtm-view-by"><?php _e("View by:", 'makerfaire') ?></span>
-                        <a ng-class="{active: layout == 'grid'}" ng-click="layout = 'grid'" class="mtm-filter-g pointer-on-hover box gallery"><i class="fas fa-image" aria-hidden="true"></i> <?php _e("GALLERY", 'makerfaire') ?></a>
-                        <span class="mtm-pipe">|</span>
-                        <a ng-class="{active: layout == 'list'}" ng-click="layout = 'list'" class="mtm-filter-l pointer-on-hover box list" ><i class="fas fa-list" aria-hidden="true"></i> <?php _e("LIST", 'makerfaire') ?></a>
-                    </div>
-                </div>
-                <div class="col-sm-4 mid-section">
-                    <div class="faux-checkbox">
-                        <label>Featured Makers</label>
-                        <ul class="nav nav-pills">
-                            <li class="nav-item">
-                                <button ng-class="{'ng-hide':showFeatured == 'Featured Maker'}" type="button" ng-click="makerSearch.flag = 'Featured Maker';showFeatured = 'Featured Maker';" class="btn btn-default" ng-hide="showFeatured">&nbsp;</button>
-                            </li>
-                            <li class="nav-item">
-                                <button ng-init="showFeatured = makerSearch.flag" ng-class="{'ng-hide':showFeatured == ''}" type="button" ng-click="makerSearch.flag = '';showFeatured = '';" class="btn btn-default"><i class="fa fa-check"></i></button>
-                            </li>
-                        </ul>
-                    </div>
-                    <div class="faux-checkbox" style='display:none'>
-                        <label>Hands-On Activities</label>
-                        <ul class="nav nav-pills">
-                            <li class="nav-item">
-                                <button ng-class="{'ng-hide':showHandsOn == 'Featured HandsOn'}" type="button" ng-click="makerSearch.handson = 'Featured HandsOn';showHandsOn = 'Featured HandsOn';" class="btn btn-default">&nbsp;</button>
-                            </li>
-                            <li class="nav-item">
-                                <button ng-init="showHandsOn = makerSearch.handson" ng-class="{'ng-hide':showHandsOn == ''}" type="button" ng-click="makerSearch.handson = '';showHandsOn = '';" class="btn btn-default"><i class="fa fa-check"></i></button>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="col-sm-4 filter-section">
-                    <!-- Weekend Filter -->
-                    <div class="dropdown" ng-if="weekends.length > 0">
-                        <button class="btn btn-link dropdown-toggle" type="button" id="weekend-dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                            <span ng-if="makerSearch.weekend != ''">{{makerSearch.weekend}}</span>
-                            <span ng-if="makerSearch.weekend == ''">Weekends Exhibiting</span>
-                            <i class="fa fa-chevron-down" aria-hidden="true"></i>
-                        </button>
-                        <ul class="dropdown-menu" aria-labelledby="weekend-dropdownMenu">
-                            <li>
-                                <a class="pointer-on-hover" ng-click="makerSearch.weekend = ''"><?php _e("Any", 'makerfaire') ?></a>
-                            </li>
 
-                            <li ng-repeat="weekend in weekends| orderBy: 'weekend'">
-                                <a class="pointer-on-hover" ng-click="makerSearch.weekend = weekend">{{weekend}}</a>
-                            </li>
-                        </ul>
-                    </div>
+        <div class="mtm-filter-wrap" ng-cloak>
+            
+            <input ng-model="makerSearch.$" id="mtm-search-input" class="form-control" placeholder="<?php _e("Search...", 'makerfaire') ?>" type="text">
 
-                    <!-- Area Filter -->
-                    <div class="dropdown" ng-if="locations.length > 0">
-                        <button class="btn btn-link dropdown-toggle" type="button" id="location-dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                            <span ng-if="makerSearch.location != ''">{{makerSearch.location}}</span>
-                            <span ng-if="makerSearch.location == ''">All <?php echo (get_field('faire') == 'VMF2020' ? 'Tracks' : 'Locations'); ?></span>
-                            <i class="fa fa-chevron-down" aria-hidden="true"></i>
-                        </button>
-                        <ul class="dropdown-menu" aria-labelledby="location-dropdownMenu">
-                            <li>
-                                <a class="pointer-on-hover" ng-click="makerSearch.location = ''"><?php _e("All", 'makerfaire') ?></a>
-                            </li>
+            <!-- Weekend Filter -->
+            <div class="dropdown form-control" ng-if="weekends.length > 0">
+                <button class="btn btn-link dropdown-toggle" type="button" id="weekend-dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                    <span ng-if="makerSearch.weekend != ''">{{makerSearch.weekend}}</span>
+                    <span ng-if="makerSearch.weekend == ''">Weekends Exhibiting</span>
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="weekend-dropdownMenu">
+                    <li>
+                        <a class="pointer-on-hover" ng-click="makerSearch.weekend = ''"><?php _e("Any", 'makerfaire') ?></a>
+                    </li>
 
-                            <li ng-repeat="location in locations| orderBy: 'location'">
-                                <a class="pointer-on-hover" ng-click="makerSearch.location = location">{{location}}</a>
-                            </li>
-                        </ul>
-                    </div>
-
-                    <!--Category filter-->
-                    <div class="dropdown">
-                        <button class="btn btn-link dropdown-toggle" type="button" id="mtm-dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                            <span ng-if="makerSearch.categories != ''">{{makerSearch.categories}}</span>
-                            <span ng-if="makerSearch.categories == ''">All Topics</span>
-                            <i class="fa fa-chevron-down" aria-hidden="true"></i>
-                        </button>
-
-                        <ul>
-                            <li ng-repeat="maker in makers| filter:{categories: {id}}">
-                                {{ maker.categories}}
-                            </li>
-
-                        </ul>
-                        <ul class="dropdown-menu topic-menu" aria-labelledby="mtm-dropdownMenu">
-                            <li>
-                                <a class="pointer-on-hover" ng-click="makerSearch.categories = ''"><?php _e("All", 'makerfaire') ?></a>
-                            </li>
-                            <li ng-repeat="tag in tags| orderBy: tag">
-                                <a class="pointer-on-hover" ng-click="makerSearch.categories = tag">{{tag}}</a>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
+                    <li ng-repeat="weekend in weekends| orderBy: 'weekend'">
+                        <a class="pointer-on-hover" ng-click="makerSearch.weekend = weekend">{{weekend}}</a>
+                    </li>
+                </ul>
             </div>
+
+            <!-- Area Filter -->
+            <div class="dropdown form-control" ng-if="locations.length > 0">
+                <button class="btn btn-link dropdown-toggle" type="button" id="location-dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                    <span ng-if="makerSearch.location != ''">{{makerSearch.location}}</span>
+                    <span ng-if="makerSearch.location == ''">All <?php echo (get_field('faire') == 'VMF2020' ? 'Tracks' : 'Locations'); ?></span>
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="location-dropdownMenu">
+                    <li>
+                        <a class="pointer-on-hover" ng-click="makerSearch.location = ''"><?php _e("All", 'makerfaire') ?></a>
+                    </li>
+
+                    <li ng-repeat="location in locations| orderBy: 'location'">
+                        <a class="pointer-on-hover" ng-click="makerSearch.location = location">{{location}}</a>
+                    </li>
+                </ul>
+            </div>
+
+            <!--Category filter-->
+            <div class="dropdown form-control">
+                <button class="btn btn-link dropdown-toggle" type="button" id="mtm-dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                    <span ng-if="makerSearch.categories != ''">{{makerSearch.categories}}</span>
+                    <span ng-if="makerSearch.categories == ''">All Categories</span>
+                </button>
+
+                <ul>
+                    <li ng-repeat="maker in makers| filter:{categories: {id}}">
+                        {{maker.categories}}
+                    </li>
+                </ul>
+                <ul class="dropdown-menu topic-menu" aria-labelledby="mtm-dropdownMenu">
+                    <li>
+                        <a class="pointer-on-hover" ng-click="makerSearch.categories = ''"><?php _e("All", 'makerfaire') ?></a>
+                    </li>
+                    <li ng-repeat="tag in tags| orderBy: tag">
+                        <a class="pointer-on-hover" ng-click="makerSearch.categories = tag">{{tag}}</a>
+                    </li>
+                </ul>
+            </div>
+
+            <!--Type filter-->
+            <div class="dropdown form-control" ng-if="types.length > 0">
+                <button class="btn btn-link dropdown-toggle" type="button" id="mtm-dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                    <span ng-if="makerSearch.types != ''">{{makerSearch.types}}</span>
+                    <span ng-if="makerSearch.types == ''">All Types</span>
+                </button>
+
+                <ul class="dropdown-menu topic-menu" aria-labelledby="mtm-dropdownMenu">
+                    <li>
+                        <a class="pointer-on-hover" ng-click="makerSearch.types = ''"><?php _e("All", 'makerfaire') ?></a>
+                    </li>
+                    <li ng-repeat="type in types| orderBy: type">
+                        <a class="pointer-on-hover" ng-click="makerSearch.types = type">{{type}}</a>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="faux-checkbox">
+                <label>Featured Makers</label>
+                <ul class="nav nav-pills">
+                    <li class="nav-item">
+                        <button ng-class="{'ng-hide':showFeatured == 'Featured Maker'}" type="button" ng-click="makerSearch.flag = 'Featured Maker';showFeatured = 'Featured Maker';" class="btn btn-default" ng-hide="showFeatured">&nbsp;</button>
+                    </li>
+                    <li class="nav-item">
+                        <button ng-init="showFeatured = makerSearch.flag" ng-class="{'ng-hide':showFeatured == ''}" type="button" ng-click="makerSearch.flag = '';showFeatured = '';" class="btn btn-default"><i class="fa fa-check"></i></button>
+                    </li>
+                </ul>
+            </div>
+            <div class="faux-checkbox" style='display:none'>
+                <label>Hands-On Activities</label>
+                <ul class="nav nav-pills">
+                    <li class="nav-item">
+                        <button ng-class="{'ng-hide':showHandsOn == 'Featured HandsOn'}" type="button" ng-click="makerSearch.handson = 'Featured HandsOn';showHandsOn = 'Featured HandsOn';" class="btn btn-default">&nbsp;</button>
+                    </li>
+                    <li class="nav-item">
+                        <button ng-init="showHandsOn = makerSearch.handson" ng-class="{'ng-hide':showHandsOn == ''}" type="button" ng-click="makerSearch.handson = '';showHandsOn = '';" class="btn btn-default"><i class="fa fa-check"></i></button>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="mtm-filter-view">
+                <a ng-class="{active: layout == 'list'}" ng-click="layout = 'list'" class="mtm-filter-l pointer-on-hover box list" ><i class="fas fa-bars" aria-hidden="true"></i></a>
+                <a ng-class="{active: layout == 'grid'}" ng-click="layout = 'grid'" class="mtm-filter-g pointer-on-hover box gallery"><i class="far fa-grid-2" aria-hidden="true"></i></a>
+            </div>
+            
         </div>
 
-        <div class="mtm-results" mtm-scroll="loadMore()">
+        <div class="mtm-results container-fluid" mtm-scroll="loadMore()">
             <div ng-show="!makers.length" class="mtm-results-cont loading">
-                <div class="ng-scope"><a href="javascript:void();" style="pointer-events:none;"><article class="mtm-maker"><h3></h3><div class="mtm-image" style="background-image:url(https://makerfaire.com/wp-content/themes/makerfaire/images/stripe_bg1.gif);"></div><div class="bottom-line">&nbsp;</div><div class="read-more-btn universal-btn"></div></article></a></div>
-                <div class="ng-scope"><a href="javascript:void();" style="pointer-events:none;"><article class="mtm-maker"><h3></h3><div class="mtm-image" style="background-image:url(https://makerfaire.com/wp-content/themes/makerfaire/images/stripe_bg1.gif);"></div><div class="bottom-line">&nbsp;</div><div class="read-more-btn universal-btn"></div></article></a></div>
-                <div class="ng-scope"><a href="javascript:void();" style="pointer-events:none;"><article class="mtm-maker"><h3></h3><div class="mtm-image" style="background-image:url(https://makerfaire.com/wp-content/themes/makerfaire/images/stripe_bg1.gif);"></div><div class="bottom-line">&nbsp;</div><div class="read-more-btn universal-btn"></div></article></a></div>
-                <div class="ng-scope"><a href="javascript:void();" style="pointer-events:none;"><article class="mtm-maker"><h3></h3><div class="mtm-image" style="background-image:url(https://makerfaire.com/wp-content/themes/makerfaire/images/stripe_bg1.gif);"></div><div class="bottom-line">&nbsp;</div><div class="read-more-btn universal-btn"></div></article></a></div>
-                <div class="ng-scope"><a href="javascript:void();" style="pointer-events:none;"><article class="mtm-maker"><h3></h3><div class="mtm-image" style="background-image:url(https://makerfaire.com/wp-content/themes/makerfaire/images/stripe_bg1.gif);"></div><div class="bottom-line">&nbsp;</div><div class="read-more-btn universal-btn"></div></article></a></div>
-                <div class="ng-scope"><a href="javascript:void();" style="pointer-events:none;"><article class="mtm-maker"><h3></h3><div class="mtm-image" style="background-image:url(https://makerfaire.com/wp-content/themes/makerfaire/images/stripe_bg1.gif);"></div><div class="bottom-line">&nbsp;</div><div class="read-more-btn universal-btn"></div></article></a></div>
-                <div class="ng-scope"><a href="javascript:void();" style="pointer-events:none;"><article class="mtm-maker"><h3></h3><div class="mtm-image" style="background-image:url(https://makerfaire.com/wp-content/themes/makerfaire/images/stripe_bg1.gif);"></div><div class="bottom-line">&nbsp;</div><div class="read-more-btn universal-btn"></div></article></a></div>
-                <div class="ng-scope"><a href="javascript:void();" style="pointer-events:none;"><article class="mtm-maker"><h3></h3><div class="mtm-image" style="background-image:url(https://makerfaire.com/wp-content/themes/makerfaire/images/stripe_bg1.gif);"></div><div class="bottom-line">&nbsp;</div><div class="read-more-btn universal-btn"></div></article></a></div>
-                <div class="ng-scope"><a href="javascript:void();" style="pointer-events:none;"><article class="mtm-maker"><h3></h3><div class="mtm-image" style="background-image:url(https://makerfaire.com/wp-content/themes/makerfaire/images/stripe_bg1.gif);"></div><div class="bottom-line">&nbsp;</div><div class="read-more-btn universal-btn"></div></article></a></div>
-                <div class="ng-scope"><a href="javascript:void();" style="pointer-events:none;"><article class="mtm-maker"><h3></h3><div class="mtm-image" style="background-image:url(https://makerfaire.com/wp-content/themes/makerfaire/images/stripe_bg1.gif);"></div><div class="bottom-line">&nbsp;</div><div class="read-more-btn universal-btn"></div></article></a></div>
+                <div class="ng-scope"><a href="javascript:void();" style="pointer-events:none;"><article class="mtm-maker"><div class="mtm-image" style="background-image:url(https://makerfaire.com/wp-content/themes/makerfaire/images/stripe_bg1.gif);"></div><div class="mtm-text"><h3>Loading...</h3><div class="mtm-detail-items"><div class="mtm-detail-item"><span><i class="fa fa-user-robot"></i></span><p>&nbsp;</p></div><div class="mtm-detail-item"><span><i class="fa fa-rocket"></i></span><p>&nbsp;</p></div><div class="mtm-detail-item"><span><i class="fa fa-tent-double-peak"></i></span><p>&nbsp;</p></div></div><div class="read-more-link">More</div></div></article></article></a></div>
+                <div class="ng-scope"><a href="javascript:void();" style="pointer-events:none;"><article class="mtm-maker"><div class="mtm-image" style="background-image:url(https://makerfaire.com/wp-content/themes/makerfaire/images/stripe_bg1.gif);"></div><div class="mtm-text"><h3>Loading...</h3><div class="mtm-detail-items"><div class="mtm-detail-item"><span><i class="fa fa-user-robot"></i></span><p>&nbsp;</p></div><div class="mtm-detail-item"><span><i class="fa fa-rocket"></i></span><p>&nbsp;</p></div><div class="mtm-detail-item"><span><i class="fa fa-tent-double-peak"></i></span><p>&nbsp;</p></div></div><div class="read-more-link">More</div></div></article></article></a></div>
+                <div class="ng-scope"><a href="javascript:void();" style="pointer-events:none;"><article class="mtm-maker"><div class="mtm-image" style="background-image:url(https://makerfaire.com/wp-content/themes/makerfaire/images/stripe_bg1.gif);"></div><div class="mtm-text"><h3>Loading...</h3><div class="mtm-detail-items"><div class="mtm-detail-item"><span><i class="fa fa-user-robot"></i></span><p>&nbsp;</p></div><div class="mtm-detail-item"><span><i class="fa fa-rocket"></i></span><p>&nbsp;</p></div><div class="mtm-detail-item"><span><i class="fa fa-tent-double-peak"></i></span><p>&nbsp;</p></div></div><div class="read-more-link">More</div></div></article></article></a></div>
+                <div class="ng-scope"><a href="javascript:void();" style="pointer-events:none;"><article class="mtm-maker"><div class="mtm-image" style="background-image:url(https://makerfaire.com/wp-content/themes/makerfaire/images/stripe_bg1.gif);"></div><div class="mtm-text"><h3>Loading...</h3><div class="mtm-detail-items"><div class="mtm-detail-item"><span><i class="fa fa-user-robot"></i></span><p>&nbsp;</p></div><div class="mtm-detail-item"><span><i class="fa fa-rocket"></i></span><p>&nbsp;</p></div><div class="mtm-detail-item"><span><i class="fa fa-tent-double-peak"></i></span><p>&nbsp;</p></div></div><div class="read-more-link">More</div></div></article></article></a></div>
+                <div class="ng-scope"><a href="javascript:void();" style="pointer-events:none;"><article class="mtm-maker"><div class="mtm-image" style="background-image:url(https://makerfaire.com/wp-content/themes/makerfaire/images/stripe_bg1.gif);"></div><div class="mtm-text"><h3>Loading...</h3><div class="mtm-detail-items"><div class="mtm-detail-item"><span><i class="fa fa-user-robot"></i></span><p>&nbsp;</p></div><div class="mtm-detail-item"><span><i class="fa fa-rocket"></i></span><p>&nbsp;</p></div><div class="mtm-detail-item"><span><i class="fa fa-tent-double-peak"></i></span><p>&nbsp;</p></div></div><div class="read-more-link">More</div></div></article></article></a></div>
+                <div class="ng-scope"><a href="javascript:void();" style="pointer-events:none;"><article class="mtm-maker"><div class="mtm-image" style="background-image:url(https://makerfaire.com/wp-content/themes/makerfaire/images/stripe_bg1.gif);"></div><div class="mtm-text"><h3>Loading...</h3><div class="mtm-detail-items"><div class="mtm-detail-item"><span><i class="fa fa-user-robot"></i></span><p>&nbsp;</p></div><div class="mtm-detail-item"><span><i class="fa fa-rocket"></i></span><p>&nbsp;</p></div><div class="mtm-detail-item"><span><i class="fa fa-tent-double-peak"></i></span><p>&nbsp;</p></div></div><div class="read-more-link">More</div></div></article></article></a></div>
+                <div class="ng-scope"><a href="javascript:void();" style="pointer-events:none;"><article class="mtm-maker"><div class="mtm-image" style="background-image:url(https://makerfaire.com/wp-content/themes/makerfaire/images/stripe_bg1.gif);"></div><div class="mtm-text"><h3>Loading...</h3><div class="mtm-detail-items"><div class="mtm-detail-item"><span><i class="fa fa-user-robot"></i></span><p>&nbsp;</p></div><div class="mtm-detail-item"><span><i class="fa fa-rocket"></i></span><p>&nbsp;</p></div><div class="mtm-detail-item"><span><i class="fa fa-tent-double-peak"></i></span><p>&nbsp;</p></div></div><div class="read-more-link">More</div></div></article></article></a></div>
+                <div class="ng-scope"><a href="javascript:void();" style="pointer-events:none;"><article class="mtm-maker"><div class="mtm-image" style="background-image:url(https://makerfaire.com/wp-content/themes/makerfaire/images/stripe_bg1.gif);"></div><div class="mtm-text"><h3>Loading...</h3><div class="mtm-detail-items"><div class="mtm-detail-item"><span><i class="fa fa-user-robot"></i></span><p>&nbsp;</p></div><div class="mtm-detail-item"><span><i class="fa fa-rocket"></i></span><p>&nbsp;</p></div><div class="mtm-detail-item"><span><i class="fa fa-tent-double-peak"></i></span><p>&nbsp;</p></div></div><div class="read-more-link">More</div></div></article></article></a></div>
+                <div class="ng-scope"><a href="javascript:void();" style="pointer-events:none;"><article class="mtm-maker"><div class="mtm-image" style="background-image:url(https://makerfaire.com/wp-content/themes/makerfaire/images/stripe_bg1.gif);"></div><div class="mtm-text"><h3>Loading...</h3><div class="mtm-detail-items"><div class="mtm-detail-item"><span><i class="fa fa-user-robot"></i></span><p>&nbsp;</p></div><div class="mtm-detail-item"><span><i class="fa fa-rocket"></i></span><p>&nbsp;</p></div><div class="mtm-detail-item"><span><i class="fa fa-tent-double-peak"></i></span><p>&nbsp;</p></div></div><div class="read-more-link">More</div></div></article></article></a></div>
+                <div class="ng-scope"><a href="javascript:void();" style="pointer-events:none;"><article class="mtm-maker"><div class="mtm-image" style="background-image:url(https://makerfaire.com/wp-content/themes/makerfaire/images/stripe_bg1.gif);"></div><div class="mtm-text"><h3>Loading...</h3><div class="mtm-detail-items"><div class="mtm-detail-item"><span><i class="fa fa-user-robot"></i></span><p>&nbsp;</p></div><div class="mtm-detail-item"><span><i class="fa fa-rocket"></i></span><p>&nbsp;</p></div><div class="mtm-detail-item"><span><i class="fa fa-tent-double-peak"></i></span><p>&nbsp;</p></div></div><div class="read-more-link">More</div></div></article></article></a></div>
                 <div class="loading-container">
                     <img src="https://make.co/wp-content/universal-assets/v2/images/makey-spinner.gif" />
                     <span class="sr-only"><?php _e("Loading", 'makerfaire') ?>...</span>
@@ -177,13 +179,24 @@ if (($showMakeProjects === 'mponly' || $showMakeProjects === 'mfandmp') && $MPCa
                 <div ng-repeat="maker in makers| filter : makerSearch | limitTo: limit">
                     <a href="{{maker.link}}" target="_blank">
                         <article class="mtm-maker">
-                            <h3>{{maker.name}}</h3>
-                            <div class="mtm-image" style="background-image:url({{maker.large_img_url}});"></div>
-                            <div class="bottom-line">
-                                <div class="mtm-cat">{{maker.category_id_refs[0]}}</div>
-                                <span ng-bind-html="trust(maker.makerList)"></span>
+                            <div class="mtm-image">
+                                <img src="{{maker.large_img_url}}" alt="{{maker.name}} Photo" />
                             </div>
-                            <div class="read-more-btn universal-btn">Read More</div>
+                            <div class="mtm-text">
+                                <h3>{{maker.name}}</h3>
+                                <div class="mtm-detail-items">
+                                    <div class="mtm-detail-item" ng-show="maker.makerList.length">
+                                        <span><i class="fa fa-user-robot"></i></span><p ng-bind-html="trust(maker.makerList)"></p>
+                                    </div>
+                                    <div class="mtm-detail-item">
+                                        <span ng-bind-html="maker.main_cat_icon"></span><p>{{maker.category_id_refs[0]}}</p>
+                                    </div>
+                                    <div class="mtm-detail-item">
+                                        <span><i class="fa {{maker.types[0].toLowerCase()}}"></i></span><p>{{maker.typeString}}</p>
+                                    </div>
+                                </div>
+                                <div class="read-more-link">More</div>
+                            </div>
                         </article>
                     </a>
                 </div>
@@ -202,11 +215,25 @@ if (($showMakeProjects === 'mponly' || $showMakeProjects === 'mfandmp') && $MPCa
                 <div ng-repeat="maker in makers| filter : makerSearch | orderBy: 'name' | startsWithLetter:letter">
                     <a href="{{maker.link}}" target="_blank">
                         <article class="mtm-maker">
-                            <h3>{{maker.name}}</h3>
-                            <h4 ng-bind-html="trust(maker.makerList)"></h4>
-                            <span>
-                                {{maker.category_id_refs.join(', ')}}
-                            </span>
+                            <div class="mtm-image">
+                                <img src="{{maker.large_img_url}}" alt="{{maker.name}} Photo" />
+                            </div>
+                            <div class="mtm-text">
+                                <h3>{{maker.name}}</h3>
+                                <h4 ng-bind-html="trust(maker.makerList)"></h4>
+                                <p class="description">{{maker.description}}</p>
+                                <div class="mtm-detail-items">
+                                    <div class="mtm-detail-item">
+                                        <span><i class="fa fa-plus"></i></span><p>More</p>
+                                    </div>
+                                    <div class="mtm-detail-item">
+                                        <span ng-bind-html="maker.main_cat_icon"></span><p>{{maker.category_id_refs[0]}}</p>
+                                    </div>
+                                    <div class="mtm-detail-item">
+                                        <span><i class="fa {{maker.types[0].toLowerCase()}}"></i></span><p>{{maker.typeString}}</p>
+                                    </div>
+                                </div>
+                            </div>
                         </article>
                     </a>
                 </div>
