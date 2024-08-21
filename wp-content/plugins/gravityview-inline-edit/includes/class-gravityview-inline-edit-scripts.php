@@ -258,7 +258,8 @@ final class GravityView_Inline_Edit_Scripts {
 			'tel',
 			'textarea',
 			'url',
-			'file'
+			'file',
+			'entry_tags'
 		);
 
 		foreach ( $custom_inline_edit_field_types as $custom_field ) {
@@ -267,6 +268,27 @@ final class GravityView_Inline_Edit_Scripts {
 				GravityView_Inline_Edit::get_instance()->get_edit_style(),
 				'gv-inline-edit-gvutils',
 			);
+
+			if ( 'entry_tags' === $custom_field && !is_admin() && defined('GK_ENTRY_TAGS_URL') ) {
+				
+				wp_enqueue_script( 'tagify',GK_ENTRY_TAGS_URL.'assets/tagify/jQuery.tagify.min.js',array('jquery'),GravityView_Inline_Edit::get_version(),true );
+				wp_enqueue_script( 'gktag_public',GK_ENTRY_TAGS_URL.'assets/public.js',array( 'jquery', 'tagify'),GravityView_Inline_Edit::get_version(),true );
+				wp_enqueue_script( 'random_color',GK_ENTRY_TAGS_URL.'assets/randomColor.min.js',array(),GravityView_Inline_Edit::get_version(),true );
+				wp_localize_script(
+					'gktag_public',
+					'GK_ENTRY_TAGS_PUBLIC',
+					array(
+						'add_tag' => esc_html__( 'Add tag:', 'gktag', 'gk-gravityedit' ),
+					)
+				);
+
+				
+				wp_enqueue_style('gktag_public',GK_ENTRY_TAGS_URL.'assets/public.css');
+				wp_enqueue_style('gktag_preview',GK_ENTRY_TAGS_URL.'assets/preview.css');
+				wp_enqueue_style('tagify',GK_ENTRY_TAGS_URL.'assets/tagify/tagify.css');
+
+
+			}
 
 			if ( 'gvlist' === $custom_field ) {
 

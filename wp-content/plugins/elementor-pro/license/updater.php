@@ -128,10 +128,6 @@ class Updater {
 			$_transient_data = new \stdClass();
 		}
 
-		if ( 'plugins.php' === $pagenow && is_multisite() ) {
-			return $_transient_data;
-		}
-
 		return $this->check_transient_data( $_transient_data );
 	}
 

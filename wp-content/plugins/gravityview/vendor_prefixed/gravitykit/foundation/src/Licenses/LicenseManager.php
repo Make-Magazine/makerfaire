@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by gravityview on 05-June-2024 using {@see https://github.com/BrianHenryIE/strauss}.
+ * Modified by gravityview on 14-August-2024 using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\GravityView\Foundation\Licenses;
@@ -308,6 +308,7 @@ class LicenseManager {
 			'url'         => is_multisite() ? network_home_url() : home_url(),
 			'api_version' => self::EDD_LICENSES_API_VERSION,
 			'license'     => $license,
+			'environment' => function_exists( 'wp_get_environment_type' ) ? wp_get_environment_type() : 'production',
 		];
 
 		if ( self::EDD_ACTION_CHECK_LICENSE === $edd_action ) {

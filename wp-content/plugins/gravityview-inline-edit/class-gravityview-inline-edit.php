@@ -26,6 +26,18 @@ final class GravityView_Inline_Edit {
 	 */
 	private static $_instance;
 
+	/**
+	 * The plugin title.
+	 * @var
+	 */
+	private $_title;
+
+	/**
+	 * The addon.
+	 * @var GravityView_Inline_Edit_GFAddon|null
+	 */
+	public $GFAddon;
+
 
 	/**
 	 * GravityView_Inline_Edit constructor.
@@ -204,6 +216,7 @@ final class GravityView_Inline_Edit {
 			'created_by',
 			'source_url',
 			'date_created',
+			'entry_tags'
 		);
 
 		/**

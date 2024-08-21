@@ -159,6 +159,10 @@ export default Vue.extend({
 	border-radius: 50%;
 }
 
+.gpfup--strict .gpfup__delete svg {
+	fill: #333;
+}
+
 .gpfup--strict .gpfup__delete {
 	background-color: transparent !important;
 }

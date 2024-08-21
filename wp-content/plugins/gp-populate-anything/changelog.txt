@@ -1,5 +1,17 @@
 # Changelog
 
+## 2.1.7 | August 14, 2024
+
+- Fixed issue with `{embed_url}` and `{embed_post}` not working in Live Merge Tags when fields are refreshed dynamically.
+- Fixed an issue with population on multi-page forms using Page Transitions, Soft Validation, and Page Conditional Logic.
+- Fixed potential PHP warning when comparing dates. Additionally, the behavior of `<` and `>` with dates has been corrected.
+- Fixed issue where Live Merge Tags with a `fallback` of `0` would not use the fallback.
+- Fixed potential PHP warning and deprecation notice.
+
+## 2.1.6 | July 24, 2024
+
+- Fixed JavaScript error that could occur in the Form Editor if custom object types do not supply operators for properties.
+
 ## 2.1.5 | July 17, 2024
 
 - Fixed PHP warning that could show for some forms when updating entries using the Entry Details admin screen.

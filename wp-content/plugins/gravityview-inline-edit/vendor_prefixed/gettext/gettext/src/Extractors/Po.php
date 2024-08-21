@@ -2,7 +2,7 @@
 /**
  * @license MIT
  *
- * Modified by __root__ on 02-November-2023 using Strauss.
+ * Modified by __root__ on 16-August-2024 using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 
@@ -34,6 +34,10 @@ class Po extends Extractor implements ExtractorInterface
         for ($n = count($lines); $i < $n; ++$i) {
             $line = trim($lines[$i]);
             $line = static::fixMultiLines($line, $lines, $i);
+
+            if ($line === "#") {
+                $line = "";
+            }
 
             if ($line === '') {
                 if ($translation->is('', '')) {

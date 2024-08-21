@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by __root__ on 02-November-2023 using Strauss.
+ * Modified by __root__ on 16-August-2024 using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 
@@ -30,9 +30,9 @@ class Core {
 			$buffer = ob_get_clean();
 
 			if ( $buffer ) {
-				error_log( "[GravityKit] Buffer output before returning Ajax response: {$buffer}" );
+				error_log( "[GravityKit] Buffer output before returning Ajax response: {$buffer}" ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
 
-				header( 'GravityKit: ' . json_encode( $buffer ) );
+				header( 'GravityKit: ' . wp_json_encode( $buffer ) );
 			}
 
 			if ( $is_error ) {
@@ -122,12 +122,19 @@ class Core {
 	 *
 	 * @since 1.0.0
 	 * @since 1.2.0 Added $skip_cache parameter.
+	 * @since TODO  Use static variable to cache plugins data.
 	 *
 	 * @param bool $skip_cache (optional) Whether to skip cache when getting plugins data. Default: false.
 	 *
 	 * @return array[]
 	 */
 	public static function get_plugins( $skip_cache = false ) {
+		static $plugins;
+
+		if ( $plugins && ! $skip_cache ) {
+			return $plugins;
+		}
+
 		if ( ! function_exists( 'get_plugins' ) ) {
 			require_once ABSPATH . 'wp-admin/includes/plugin.php';
 		}
@@ -136,7 +143,9 @@ class Core {
 			wp_cache_delete( 'plugins', 'plugins' );
 		}
 
-		return get_plugins();
+		$plugins = get_plugins();
+
+		return $plugins;
 	}
 
 	/**
@@ -145,25 +154,28 @@ class Core {
 	 * @since 1.0.0
 	 * @since 1.0.4 Moved from GravityKit\Foundation\Licenses\ProductManager to GravityKit\Foundation\Helpers\Core.
 	 * @since 1.2.0 Added $skip_cache parameter.
+	 * @since 1.2.12 Result is now keyed by plugin path instead of text domain.
 	 *
 	 * @param bool $skip_cache (optional) Whether to skip cache when getting plugins data. Default: false.
 	 *
-	 * @return array{name:string, path: string, plugin_file:string, installed: bool, installed_version: string, version: string, text_domain: string, active: bool, network_active: bool, free: bool, has_update: bool, download_link: string|null}
+	 * @return array{array{name:string, author: string, path: string, plugin_file:string, installed: bool, installed_version: string, version: string, text_domain: string, active: bool, network_active: bool, free: bool, has_update: bool, download_link: string|null}}
 	 */
 	public static function get_installed_plugins( $skip_cache = false ) {
 		if ( ! function_exists( 'is_plugin_active' ) ) {
 			require_once ABSPATH . 'wp-admin/includes/plugin.php';
 		}
 
-		$plugins = [];
+		$plugins    = [];
+		$wp_plugins = self::get_plugins( $skip_cache );
 
-		foreach ( self::get_plugins( $skip_cache ) as $path => $plugin ) {
+		foreach ( $wp_plugins as $path => $plugin ) {
 			if ( empty( $plugin['TextDomain'] ) ) {
 				continue;
 			}
 
-			$plugins[ $plugin['TextDomain'] ] = array(
+			$plugins[ $path ] = [
 				'name'              => $plugin['Name'],
+				'author'            => $plugin['Author'],
 				'path'              => $path,
 				'plugin_file'       => file_exists( WP_PLUGIN_DIR . DIRECTORY_SEPARATOR . $path ) ? WP_PLUGIN_DIR . DIRECTORY_SEPARATOR . $path : null,
 				'installed'         => true,
@@ -175,13 +187,13 @@ class Core {
 				'free'              => true, // @TODO: possibly handle this differently.
 				'has_update'        => false, // @TODO: detect if there's an update available.
 				'download_link'     => null, // @TODO: get the download link if there's an update available.
-			);
+			];
 
 			$dependencies = [
 				'0.0.1' => [
 					'system' => [],
 					'plugin' => [],
-				]
+				],
 			];
 
 			$required_php_version = $plugin['RequiresPHP'] ?? null;
@@ -195,7 +207,6 @@ class Core {
 				];
 			}
 
-
 			if ( $required_wp_version ) {
 				$dependencies['0.0.1']['system'][] = [
 					'name'    => 'WordPress',
@@ -204,10 +215,10 @@ class Core {
 				];
 			}
 
-			$plugins[ $plugin['TextDomain'] ]['dependencies'] = $dependencies;
+			$plugins[ $path ]['dependencies'] = $dependencies;
 		}
 
-		return $plugins;
+		return array_values( $plugins );
 	}
 
 	/**
@@ -216,24 +227,39 @@ class Core {
 	 * @since 1.0.0
 	 * @since 1.0.4 Moved from GravityKit\Foundation\Licenses\ProductManager to GravityKit\Foundation\Helpers\Core.
 	 * @since 1.2.0 Added $skip_cache parameter.
+	 * @since 1.2.12 Added $author_str & $return_multiple parameters.
 	 *
 	 * @param string $text_domains_str Text domain(s). Optionally pipe-separated (e.g. 'gravityview|gk-gravtiyview').
 	 * @param bool   $skip_cache       (optional) Whether to skip cache when getting plugins data. Default: false.
+	 * @param string $author_str       (optional) Plugins author(s). Optionally pipe-separated (e.g. 'GravityView|GravityKit|Katz Web Services, Inc.').
+	 * @param bool   $return_multiple  (optional) Whether to return multiple plugins that may share the same author/text domain. Default: false.
 	 *
-	 * @return array|null An array with plugin data or null if not installed.
+	 * @return array|null An array with plugin data, array of arrays with multiple plugins data, or null if not installed.
 	 */
-	public static function get_installed_plugin_by_text_domain( $text_domains_str, $skip_cache = false ) {
+	public static function get_installed_plugin_by_text_domain( $text_domains_str, $skip_cache = false, $author_str = '', $return_multiple = false ) {
 		$installed_plugins = self::get_installed_plugins( $skip_cache );
 
-		$text_domains_arr = explode( '|', $text_domains_str );
+		$plugins      = [];
+		$text_domains = explode( '|', strtolower( $text_domains_str ) );
+		$authors      = '' === $author_str ? [] : explode( '|', strtolower( $author_str ) );
 
-		foreach ( $text_domains_arr as $text_domain ) {
-			if ( isset( $installed_plugins[ $text_domain ] ) ) {
-				return $installed_plugins[ $text_domain ];
+		foreach ( $installed_plugins as $plugin ) {
+			if ( ! in_array( strtolower( $plugin['text_domain'] ), $text_domains, true ) ) {
+				continue;
 			}
+
+			if ( ! empty( $authors ) && ! in_array( strtolower( $plugin['author'] ?? '' ), $authors, true ) ) {
+				continue;
+			}
+
+			if ( ! $return_multiple ) {
+				return $plugin;
+			}
+
+			$plugins[] = $plugin;
 		}
 
-		return null;
+		return ! empty( $plugins ) ? $plugins : null;
 	}
 
 	/**
@@ -255,6 +281,27 @@ class Core {
 		}
 
 		return get_plugin_data( $plugin_file, $markup, $translate );
+	}
+
+	/**
+	 * Returns the plugin slug from its text domain.
+	 *
+	 * @since 1.2.6
+	 *
+	 * @param string $text_domain Text domain.
+	 *
+	 * @return string|null
+	 */
+	public static function get_plugin_slug_from_text_domain( $text_domain ) {
+		$installed_plugins = self::get_installed_plugins();
+
+		foreach ( $installed_plugins as $plugin ) {
+			if ( $plugin['text_domain'] === $text_domain ) {
+				return dirname( plugin_basename( $plugin['plugin_file'] ) );
+			}
+		}
+
+		return null;
 	}
 
 	/**

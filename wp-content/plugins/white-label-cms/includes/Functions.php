@@ -55,14 +55,26 @@ if (!function_exists('wlcms_sanitize_text_field')) {
             $value[$key] = wlcms_sanitize_text_field($array_value);
         }
         return $value;
-
     }
 }
+if (!function_exists('wlcms_esc_html_deep')) {
+    function wlcms_esc_html_deep($value)
+    {
+        if (!is_array($value)) {
+            return esc_html($value);
+        }
+
+        foreach ($value as $key => $array_value) {
+            $value[$key] = wlcms_esc_html_deep($array_value);
+        }
+        return $value;
+    }
+}
+
 if (!function_exists('wlcms_esc_html_e')) {
     function wlcms_esc_html_e($value)
     {
         return wlcms_sanitize_text_field($value);
-
     }
 }
 
@@ -97,10 +109,10 @@ if (!function_exists('wlcms_add_js')) {
 if (!function_exists('is_wlcms_super_admin')) {
     function is_wlcms_super_admin()
     {
-        if( ! current_user_can( 'install_plugins' ) ) return false;
+        if (!current_user_can('install_plugins')) return false;
 
         $enable_wlcms_admin = (bool) wlcms_field_setting('enable_wlcms_admin');
-        if( ! is_wlcms_admin() && $enable_wlcms_admin ) return false;
+        if (!is_wlcms_admin() && $enable_wlcms_admin) return false;
 
         return true;
     }
@@ -175,15 +187,15 @@ if (!function_exists('wlcms_select_pages')) {
         $return .= '<option value=""> </option>';
         if ($pages) :
             foreach ($pages as $page) {
-            $selected_val = '';
-            $key = $page->ID;
-            $title = $page->post_title;
+                $selected_val = '';
+                $key = $page->ID;
+                $title = $page->post_title;
 
-            if ($selected == $key) {
-                $selected_val = ' selected';
+                if ($selected == $key) {
+                    $selected_val = ' selected';
+                }
+                $return .= '<option value="' . $key . '" ' . $selected_val . '>' . $title . '</option>';
             }
-            $return .= '<option value="' . $key . '" ' . $selected_val . '>' . $title . '</option>';
-        }
         endif;
         $return .= '</select>';
 
@@ -245,7 +257,6 @@ if (!function_exists('wlcms_form_upload_field')) {
                 <div class="wlcms-help">' . $help . '</div>';
 
         return $html;
-
     }
 }
 
@@ -286,7 +297,6 @@ if (!function_exists('wlcms_css_metrics')) {
         if (strpos($value, 'px') !== false) return $value;
 
         return $value . 'px';
-
     }
 }
 
@@ -315,15 +325,15 @@ if (!function_exists('wlcms_get_pages_by_ids')) {
             'post_type' => ['page'],
             'posts_per_page' => -1
         ]);
-        
+
         $result = [];
         if ($query->have_posts()) {
 
-            while ( $query->have_posts() ) : $query->the_post();
-            $result[] = ['id' => get_the_ID(), 'text' => get_the_title()];
+            while ($query->have_posts()) : $query->the_post();
+                $result[] = ['id' => get_the_ID(), 'text' => get_the_title()];
             endwhile;
         }
-        
+
         wp_reset_postdata();
 
         return $result;
@@ -341,9 +351,9 @@ if (!function_exists('wlcms_search_pages')) {
         ]);
         $result = [];
         if ($query->have_posts()) {
-            
-            while ( $query->have_posts() ) : $query->the_post();
-            $result[] = ['id' => get_the_ID(), 'text' => get_the_title()];
+
+            while ($query->have_posts()) : $query->the_post();
+                $result[] = ['id' => get_the_ID(), 'text' => get_the_title()];
             endwhile;
         }
         wp_reset_postdata();

@@ -17,7 +17,7 @@ class WLCMS_Admin_Dashboard extends WLCMS_Previewable
     }
     public function init()
     {
-        
+
         $welcome_panels = wlcms_field_setting('welcome_panel');
 
         if (!$welcome_panels || !is_array($welcome_panels)) {
@@ -29,19 +29,19 @@ class WLCMS_Admin_Dashboard extends WLCMS_Previewable
         }
 
         $pages = [];
-        foreach($welcome_panels as $panel) {
+        foreach ($welcome_panels as $panel) {
             if ($panel && is_array($panel) && isset($panel['template_type']) && $panel['template_type'] == 'page' && isset($panel['page_id_page'])) {
-                $pages[] = (int)  $panel['page_id_page'];  
+                $pages[] = (int)  $panel['page_id_page'];
             }
         }
 
-        if(count($pages) > 0) {
+        if (count($pages) > 0) {
             wlcms()->require_class("Welcome_Messages/Welcome_Messages_Page");
             $template = new Welcome_Messages_Page();
             $template->init($pages);
         }
     }
-    
+
     public function dashboard_setup()
     {
         $this->reset_dashboard_style();
@@ -53,8 +53,8 @@ class WLCMS_Admin_Dashboard extends WLCMS_Previewable
         if (!wlcms_field_setting('dashboard_role_stat')) {
             if (is_wlcms_admin()) return;
         } else {
-            $dashboard_widgets_visibility_roles = wlcms_field_setting('dashboard_widgets_visibility_roles');
-            if( ! $dashboard_widgets_visibility_roles ) return;
+            $dashboard_widgets_visibility_roles = wlcms_esc_html_deep(wlcms_field_setting('dashboard_widgets_visibility_roles'));
+            if (!$dashboard_widgets_visibility_roles) return;
             if (!$this->has_current_user_role($dashboard_widgets_visibility_roles))
                 return;
         }
@@ -64,7 +64,8 @@ class WLCMS_Admin_Dashboard extends WLCMS_Previewable
         $this->remove_dashed_border();
     }
 
-    private function reset_dashboard_style() {
+    private function reset_dashboard_style()
+    {
 
         wlcms_set_css(
             '.wlcms-welcome-panel .elementor div,
@@ -74,7 +75,7 @@ class WLCMS_Admin_Dashboard extends WLCMS_Previewable
             .wlcms-welcome-panel .elementor h4,
             .wlcms-welcome-panel .elementor h5,
             .wlcms-welcome-panel .fl-builder-content p,
-            .wlcms-welcome-panel p', 
+            .wlcms-welcome-panel p',
             array(
                 'border' => '0',
                 'font-size' => '100%',
@@ -82,91 +83,96 @@ class WLCMS_Admin_Dashboard extends WLCMS_Previewable
                 'line-height' => 'inherit',
                 'vertical-align' => 'baseline',
                 'color' => 'unset'
-                )
-            );
-        
-        wlcms_set_css( '.wlcms-welcome-panel .welcome-panel-content > h2', 
+            )
+        );
+
+        wlcms_set_css(
+            '.wlcms-welcome-panel .welcome-panel-content > h2',
             array(
                 'width' => '95%',
                 'padding' => '0 21px'
-                )
-            );
-        wlcms_set_css( '.wlcms-welcome-panel .wlcms-welcome-content', 
+            )
+        );
+        wlcms_set_css(
+            '.wlcms-welcome-panel .wlcms-welcome-content',
             array(
                 'padding' => '20px'
-                )
-            );
-        wlcms_set_css( '.wlcms-welcome-panel .welcome-panel-content', 
+            )
+        );
+        wlcms_set_css(
+            '.wlcms-welcome-panel .welcome-panel-content',
             array(
                 'max-width' => 'none!important',
                 'margin-left' => '0!important',
                 'justify-content' => 'flex-start',
                 'min-height' => 'auto'
-                )
-            );
+            )
+        );
 
-        wlcms_set_css( '.wlcms-welcome-panel .elementor-section-full_width', 
+        wlcms_set_css(
+            '.wlcms-welcome-panel .elementor-section-full_width',
             array(
                 'width' => '100%!important',
                 'left' => '0!important'
-                )
-            );
-        
-        wlcms_set_css( '.wlcms-welcome-panel', array(
-                'position' => 'relative',
-                "border"=>"1px solid #c3c4c7",
-                "box-shadow"=>"0 1px 1px rgb(0 0 0 / 4%)",
-                "background"=>"#fff",
-                "font-size"=>"13px",
-                "line-height"=>"1.7",
-                "margin" => "16px 0"
+            )
+        );
+
+        wlcms_set_css('.wlcms-welcome-panel', array(
+            'position' => 'relative',
+            "border" => "1px solid #c3c4c7",
+            "box-shadow" => "0 1px 1px rgb(0 0 0 / 4%)",
+            "background" => "#fff",
+            "font-size" => "13px",
+            "line-height" => "1.7",
+            "margin" => "16px 0"
         ));
 
-        wlcms_set_css( '.wlcms-welcome-panel .welcome-panel-close:before', array(
-            "background"=>"0 0",
-            "color"=>"#787c82",
-            "content"=>'"\f153"',
-            "display"=>"block",
-            "font"=>"normal 16px/20px dashicons",
-            "speak"=>"never",
-            "height"=>"20px",
-            "text-align"=>"center",
-            "width"=>"20px",
-            "-webkit-font-smoothing"=>"antialiased",
-            "-moz-osx-font-smoothing"=>"grayscale",
-            "position"=>"absolute",
-            "top"=>"8px",
-            "left"=>"0",
-            "transition"=>"all .1s ease-in-out",
+        wlcms_set_css('.wlcms-welcome-panel .welcome-panel-close:before', array(
+            "background" => "0 0",
+            "color" => "#787c82",
+            "content" => '"\f153"',
+            "display" => "block",
+            "font" => "normal 16px/20px dashicons",
+            "speak" => "never",
+            "height" => "20px",
+            "text-align" => "center",
+            "width" => "20px",
+            "-webkit-font-smoothing" => "antialiased",
+            "-moz-osx-font-smoothing" => "grayscale",
+            "position" => "absolute",
+            "top" => "8px",
+            "left" => "0",
+            "transition" => "all .1s ease-in-out",
         ));
 
-        wlcms_set_css( '.wlcms-welcome-panel, .wlcms-welcome-panel .welcome-panel-content', array(
+        wlcms_set_css('.wlcms-welcome-panel, .wlcms-welcome-panel .welcome-panel-content', array(
             'padding' => '0!important',
         ));
 
-        wlcms_set_css( '.wlcms-welcome-panel a', array(
-            "color"=>"#2271b1",
+        wlcms_set_css('.wlcms-welcome-panel a', array(
+            "color" => "#2271b1",
         ));
-        wlcms_set_css( '.wlcms-welcome-panel .welcome-panel-close', 
+        wlcms_set_css(
+            '.wlcms-welcome-panel .welcome-panel-close',
             array(
                 'top' => '0!important',
                 'right' => '0!important',
                 'background' => 'white!important',
                 'z-index' => '1000',
-                "position"=>"absolute",
-                "top"=>"0",
-                "right"=>"0",
-                "padding"=>"10px 15px 10px 24px",
-                "font-size"=>"13px",
-                "line-height"=>"1.23076923",
-                "text-decoration"=>"none"
-                )
-            );
+                "position" => "absolute",
+                "top" => "0",
+                "right" => "0",
+                "padding" => "10px 15px 10px 24px",
+                "font-size" => "13px",
+                "line-height" => "1.23076923",
+                "text-decoration" => "none"
+            )
+        );
     }
 
     private function set_dashboard_all_hidden()
     {
-        $this->is_dashboard_all_hidden = $this->get_settings('hide_all_dashboard_panels');
+        $this->is_dashboard_all_hidden = (bool) $this->get_settings('hide_all_dashboard_panels');
     }
 
     public function is_dashboard_all_hidden()
@@ -181,17 +187,17 @@ class WLCMS_Admin_Dashboard extends WLCMS_Previewable
      */
     private function dashboard_title()
     {
-        global $current_screen, $wp_version;
+        global $wp_version;
 
         $dashboard_title = '';
         if ($icon = $this->get_settings('dashboard_icon')) {
-            $dashboard_title .= '<span id=\"wlcms_dashboard_logo\"><img src=\"' . $icon . '\" alt=\"\" /></span>';
+            $dashboard_title .= '<span id=\"wlcms_dashboard_logo\"><img src=\"' . esc_url($icon) . '\" alt=\"\" /></span>';
 
             wlcms_set_css('.index-php #wlcms_dashboard_logo img', array('vertical-align' => 'middle', 'padding-right' => '10px'));
         }
 
         if ($title = $this->get_settings('dashboard_title')) {
-            $dashboard_title .= '<span id=\"wlcms_dashboard_title\">' . $title . '</span>';
+            $dashboard_title .= '<span id=\"wlcms_dashboard_title\">' . esc_attr($title) . '</span>';
         }
 
         if (version_compare($wp_version, '3.8-beta', '>=')) {
@@ -213,25 +219,29 @@ class WLCMS_Admin_Dashboard extends WLCMS_Previewable
     {
         global $wp_meta_boxes;
 
-        $wlcms_widgets = $this->get_settings('dashboard_widgets');
-        
+        $wlcms_widgets = wlcms_esc_html_deep($this->get_settings('dashboard_widgets'));
+
+        if (!$wlcms_widgets) {
+            return;
+        }
+
         if (!(isset($wp_meta_boxes['dashboard']) && is_array($wp_meta_boxes['dashboard']))) {
             return;
         }
-        
+
         foreach ($wp_meta_boxes['dashboard'] as $section_key => $section) {
             if (!is_array($section)) {
                 continue;
             }
-            foreach ( $section as $position_key => $position ) {
+            foreach ($section as $position_key => $position) {
                 if (!is_array($position)) {
                     continue;
                 }
-                foreach ( $position as $widget_id => $widget ) {
+                foreach ($position as $widget_id => $widget) {
                     if ($this->is_wlcms_widget($widget_id)) {
                         continue;
-                    }elseif (!$this->is_dashboard_all_hidden()) {
-                        if($wlcms_widgets && is_array($wlcms_widgets) && count($wlcms_widgets) > 0){
+                    } elseif (!$this->is_dashboard_all_hidden()) {
+                        if ($wlcms_widgets && is_array($wlcms_widgets) && count($wlcms_widgets) > 0) {
                             if (!in_array($widget_id, $wlcms_widgets)) {
                                 continue;
                             }
@@ -241,14 +251,13 @@ class WLCMS_Admin_Dashboard extends WLCMS_Previewable
                     }
                     unset($wp_meta_boxes['dashboard'][$section_key][$position_key][$widget_id]);
                 }
-            
             }
         }
     }
 
     private function is_wlcms_widget($dashboard_key = false)
     {
-        if (!$dashboard_key){
+        if (!$dashboard_key) {
             return false;
         }
 
@@ -258,7 +267,7 @@ class WLCMS_Admin_Dashboard extends WLCMS_Previewable
 
         return in_array($dashboard_key, $this->excluded_widgets());
     }
-    
+
     private function excluded_widgets()
     {
         return apply_filters('wlcms_exclude_dashboard_metaboxes', array('wlcms_rss_box'));
@@ -273,8 +282,7 @@ class WLCMS_Admin_Dashboard extends WLCMS_Previewable
     {
 
         $user_id = get_current_user_id();
-        if( $user_id == 0 )
-        {
+        if ($user_id == 0) {
             return false;
         }
 
@@ -288,18 +296,18 @@ class WLCMS_Admin_Dashboard extends WLCMS_Previewable
             return;
         }
 
-        
+
         $admin_Dashboard_Welcome_Message = wlcms()->require_class("Admin_Dashboard_Welcome_Message");
         $admin_Dashboard_Welcome_Message = new Admin_Dashboard_Welcome_Message();
-        
+
         foreach ($welcome_panels as $key => $welcome_panel) {
             if (!$this->is_welcome_panel_visible($welcome_panel) || !is_array($welcome_panel)) {
                 continue;
             }
-            
-            $welcome_content_hidden = get_user_meta($user_id, 'vum_hide_dashboard' . $key ,true);
-            
-            if( $welcome_content_hidden && isset($welcome_panel['dismissible']) ) {
+
+            $welcome_content_hidden = get_user_meta($user_id, 'vum_hide_dashboard' . $key, true);
+
+            if ($welcome_content_hidden && isset($welcome_panel['dismissible'])) {
 
                 continue;
             }
@@ -324,14 +332,15 @@ class WLCMS_Admin_Dashboard extends WLCMS_Previewable
             return false;
         }
 
-        if (!isset($setting['visible_to'])
-            || (isset($setting['visible_to']) && !$setting['visible_to']))
+        if (
+            !isset($setting['visible_to'])
+            || (isset($setting['visible_to']) && !$setting['visible_to'])
+        )
             return false;
 
         $roles = $setting['visible_to'];
 
         return $this->has_current_user_role($roles);
-
     }
 
     private function has_current_user_role($roles)
@@ -450,17 +459,17 @@ class WLCMS_Admin_Dashboard extends WLCMS_Previewable
         foreach ($rss_items as $item) :
 
             $rss_list .= sprintf(
-            '<li><strong><a href="%s" title="Posted %s" target="_blank">%s</a> </strong> <br />',
-            esc_url($item->get_permalink()),
-            $item->get_date('j F Y | g:i a'),
-            esc_html($item->get_title())
-        );
+                '<li><strong><a href="%s" title="Posted %s" target="_blank">%s</a> </strong> <br />',
+                esc_url($item->get_permalink()),
+                $item->get_date('j F Y | g:i a'),
+                esc_html($item->get_title())
+            );
 
-        if ($show_post_content) :
-            $rss_list .= preg_replace('/<img[^>]+./', '', $item->get_content());
+            if ($show_post_content) :
+                $rss_list .= preg_replace('/<img[^>]+./', '', $item->get_content());
 
-        endif;
-        $rss_list .= '</li>';
+            endif;
+            $rss_list .= '</li>';
 
         endforeach;
 
@@ -471,15 +480,14 @@ class WLCMS_Admin_Dashboard extends WLCMS_Previewable
 
     public function hide_vum_dashboard()
     {
-        if ( !wp_verify_nonce( $_REQUEST['nonce'], "vum_hide_dashboard_nonce")) {
+        if (!wp_verify_nonce($_REQUEST['nonce'], "vum_hide_dashboard_nonce")) {
             exit("No naughty business please");
         }
         $user_id = get_current_user_id();
-        if( $user_id == 0 )
-        {
+        if ($user_id == 0) {
             return false;
         }
-        
+
         $key = sanitize_text_field($_POST['key']);
         update_user_meta($user_id, 'vum_hide_dashboard' . $key, 1);
         echo json_encode(array('type' => 'success'));
@@ -488,36 +496,36 @@ class WLCMS_Admin_Dashboard extends WLCMS_Previewable
 
     public function reset_welcome_dashboard()
     {
-        if(!  isset($_GET['wlcms-action'])  ) return;
-        
-        if( $_GET['wlcms-action'] !== 'reset-welcome-dashboard' ) return;
-        if(!  isset($_GET['dashboard'])  ) return;
-        
-        if( ! is_wlcms_super_admin() ) return;
+        if (!isset($_GET['wlcms-action'])) return;
+
+        if ($_GET['wlcms-action'] !== 'reset-welcome-dashboard') return;
+        if (!isset($_GET['dashboard'])) return;
+
+        if (!is_wlcms_super_admin()) return;
         $key = sanitize_text_field($_GET['dashboard']);
-        
-        delete_metadata( 'user', 0, 'vum_hide_dashboard'. $key, '', true );
+
+        delete_metadata('user', 0, 'vum_hide_dashboard' . $key, '', true);
 
         WLCMS_Queue('Welcome dashboard message successfully reset.');
     }
 
     public function widgets()
     {
-		global $wp_meta_boxes;
+        global $wp_meta_boxes;
 
-        if (isset( $wp_meta_boxes['dashboard'] ) && is_array( $wp_meta_boxes['dashboard'])) {
+        if (isset($wp_meta_boxes['dashboard']) && is_array($wp_meta_boxes['dashboard'])) {
             return $wp_meta_boxes['dashboard'];
         }
-        
+
         require_once ABSPATH . '/wp-admin/includes/dashboard.php';
 
-        set_current_screen( 'dashboard' );
+        set_current_screen('dashboard');
         //remove wlcms hook
         remove_action('wp_dashboard_setup', array($this, 'dashboard_setup'), 999);
         wp_dashboard_setup();
         //re-apply wlcms hook
         add_action('wp_dashboard_setup', array($this, 'dashboard_setup'), 999);
-        set_current_screen( get_current_screen() );
-		return $wp_meta_boxes['dashboard'];
+        set_current_screen(get_current_screen());
+        return $wp_meta_boxes['dashboard'];
     }
 }

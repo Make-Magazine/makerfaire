@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by __root__ on 02-November-2023 using Strauss.
+ * Modified by __root__ on 16-August-2024 using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 
@@ -14,12 +14,21 @@ use GravityKit\GravityEdit\Foundation\Helpers\Core as CoreHelpers;
 
 class GravityForms {
 	/**
+	 * Class instance.
+	 *
 	 * @since 1.0.3
 	 *
-	 * @var GravityForms Class instance.
+	 * @var GravityForms
 	 */
 	private static $_instance;
 
+	/**
+	 * Class constructor.
+	 *
+	 * @since 1.0.3
+	 *
+	 * @return void
+	 */
 	private function __construct() {
 		add_filter( 'gform_system_report', [ $this, 'modify_system_report' ] );
 	}
@@ -44,7 +53,7 @@ class GravityForms {
 	 *
 	 * @since 1.0.3
 	 *
-	 * @param array $system_report
+	 * @param array $system_report System report data.
 	 *
 	 * @return array
 	 */

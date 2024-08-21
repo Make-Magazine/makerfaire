@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by __root__ on 02-November-2023 using Strauss.
+ * Modified by __root__ on 16-August-2024 using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 
@@ -27,8 +27,8 @@ class Products extends AbstractCommand {
 	 *
 	 * @since      1.2.0
 	 *
-	 * @param array $args
-	 * @param array $assoc_args
+	 * @param array $args       Command arguments.
+	 * @param array $assoc_args Command associative arguments.
 	 *
 	 * @subcommand list
 	 *
@@ -61,25 +61,28 @@ class Products extends AbstractCommand {
 	public function list( array $args, array $assoc_args ) {
 		$products = $this->get_products_or_exit( isset( $assoc_args['skip-cache'] ) );
 
-		$products = array_filter( $products, function ( $product ) use ( $assoc_args ) {
-			if ( isset( $assoc_args['only-installed'] ) && ! $product['installed'] ) {
-				return false;
-			}
+		$products = array_filter(
+			$products,
+			function ( $product ) use ( $assoc_args ) {
+				if ( isset( $assoc_args['only-installed'] ) && ! $product['installed'] ) {
+					return false;
+				}
 
-			if ( $product['hidden'] && ! isset( $assoc_args['include-hidden'] ) ) {
-				return false;
-			}
+				if ( $product['hidden'] && ! isset( $assoc_args['include-hidden'] ) ) {
+					return false;
+				}
 
-			if ( $product['free'] ) {
+				if ( $product['free'] ) {
+					return true;
+				}
+
+				if ( isset( $assoc_args['exclude-unlicensed'] ) ) {
+					return ! empty( $product['licenses'] );
+				}
+
 				return true;
 			}
-
-			if ( isset( $assoc_args['exclude-unlicensed'] ) ) {
-				return ! empty( $product['licenses'] );
-			}
-
-			return true;
-		} );
+		);
 
 		$this->show_count_or_exit( $products );
 
@@ -95,8 +98,8 @@ class Products extends AbstractCommand {
 	 * @since      1.2.0
 	 * @since      1.2.4 Added --all option.
 	 *
-	 * @param array $args
-	 * @param array $assoc_args
+	 * @param array $args       Command arguments.
+	 * @param array $assoc_args Command associative arguments.
 	 *
 	 * @subcommand install
 	 *
@@ -205,8 +208,8 @@ class Products extends AbstractCommand {
 	 * @since      1.2.0
 	 * @since      1.2.4 Added --all option.
 	 *
-	 * @param array $args
-	 * @param array $assoc_args
+	 * @param array $args       Command arguments.
+	 * @param array $assoc_args Command associative arguments.
 	 *
 	 * @subcommand update
 	 *
@@ -325,8 +328,8 @@ class Products extends AbstractCommand {
 	 * @since      1.2.0
 	 * @since      1.2.4 Added --all option.
 	 *
-	 * @param array $args
-	 * @param array $assoc_args
+	 * @param array $args       Command arguments.
+	 * @param array $assoc_args Command associative arguments.
 	 *
 	 * @subcommand activate
 	 *
@@ -420,8 +423,8 @@ class Products extends AbstractCommand {
 	 * @since      1.2.0
 	 * @since      1.2.4 Added --all option.
 	 *
-	 * @param array $args
-	 * @param array $assoc_args
+	 * @param array $args       Command arguments.
+	 * @param array $assoc_args Command associative arguments.
 	 *
 	 * @subcommand deactivate
 	 *
@@ -522,8 +525,8 @@ class Products extends AbstractCommand {
 	 * @since      1.2.0
 	 * @since      1.2.4 Added --all option.
 	 *
-	 * @param array $args
-	 * @param array $assoc_args
+	 * @param array $args       Command arguments.
+	 * @param array $assoc_args Command associative arguments.
 	 *
 	 * @subcommand delete
 	 *
@@ -580,7 +583,7 @@ class Products extends AbstractCommand {
 					WP_CLI::warning( "{$product['name']} is active and needs to be deactivated first.\n", false );
 
 					continue;
-				} else if ( $product['active'] ) {
+				} elseif ( $product['active'] ) {
 					try {
 						ProductManager::get_instance()->deactivate_product( $product );
 					} catch ( Exception $e ) {
@@ -622,8 +625,8 @@ class Products extends AbstractCommand {
 	 *
 	 * @since      1.2.0
 	 *
-	 * @param array $args
-	 * @param array $assoc_args
+	 * @param array $args       Command arguments.
+	 * @param array $assoc_args Command associative arguments.
 	 *
 	 * @subcommand search
 	 *
@@ -660,21 +663,24 @@ class Products extends AbstractCommand {
 
 		$search_properties = [ 'name', 'text_domain', 'excerpt' ];
 
-		$products = array_filter( $products, function ( $product ) use ( $search_term, $search_properties, $assoc_args ) {
-			if ( $product['hidden'] && ! isset( $assoc_args['include-hidden'] ) ) {
-				return false;
-			}
-
-			foreach ( $search_properties as $key ) {
-				if ( ! isset( $product[ $key ] ) ) {
-					continue;
+		$products = array_filter(
+			$products,
+			function ( $product ) use ( $search_term, $search_properties, $assoc_args ) {
+				if ( $product['hidden'] && ! isset( $assoc_args['include-hidden'] ) ) {
+					return false;
 				}
 
-				if ( strpos( strtolower( $product[ $key ] ), $search_term ) !== false ) {
-					return true;
+				foreach ( $search_properties as $key ) {
+					if ( ! isset( $product[ $key ] ) ) {
+						continue;
+					}
+
+					if ( strpos( strtolower( $product[ $key ] ), $search_term ) !== false ) {
+						return true;
+					}
 				}
 			}
-		} );
+		);
 
 		$this->show_count_or_exit( $products );
 
@@ -711,7 +717,7 @@ class Products extends AbstractCommand {
 	 *
 	 * @interal
 	 *
-	 * @param array $products
+	 * @param array $products Products data.
 	 *
 	 * @return void
 	 */
@@ -731,8 +737,8 @@ class Products extends AbstractCommand {
 	 *
 	 * @interal
 	 *
-	 * @param array  $products
-	 * @param string $format Output format: table, json.
+	 * @param array  $products Products data.
+	 * @param string $format   Output format: table, json.
 	 *
 	 * @return void
 	 */
@@ -751,10 +757,13 @@ class Products extends AbstractCommand {
 			'Network Active',
 		];
 
-		if ( $format === 'json' ) {
-			$columns = array_map( function ( $value ) {
-				return strtolower( str_replace( ' ', '_', $value ) );
-			}, $columns );
+		if ( 'json' === $format ) {
+			$columns = array_map(
+				function ( $value ) {
+					return strtolower( str_replace( ' ', '_', $value ) );
+				},
+				$columns
+			);
 		}
 
 		foreach ( $products as &$product ) {
@@ -769,8 +778,9 @@ class Products extends AbstractCommand {
 					! empty( $product['licenses'] ) ? '✓' : ( $product['free'] ? 'Free' : '' ),
 					$product['installed'] ? '✓ ' : '',
 					$product['active'] ? '✓' : '',
-					$product['network_activated'] ? '✓' : ''
-				] );
+					$product['network_activated'] ? '✓' : '',
+				]
+			);
 		}
 
 		format_items(
@@ -787,7 +797,7 @@ class Products extends AbstractCommand {
 	 *
 	 * @interal
 	 *
-	 * @param $unmet_dependencies
+	 * @param array $unmet_dependencies Unmet dependencies data.
 	 *
 	 * @return void
 	 */
@@ -811,7 +821,6 @@ class Products extends AbstractCommand {
 					'Status'           => $dependency['reason'],
 				];
 			}
-
 
 			format_items( self::DEFAULT_OUTPUT_FORMAT, $unmet_dependencies['system'], [ 'Name', 'Required Version', 'Status' ] );
 		}

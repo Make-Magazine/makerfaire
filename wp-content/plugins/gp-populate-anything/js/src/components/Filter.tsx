@@ -18,15 +18,15 @@ const useFilterOperators = ({
 	if (filter.property in flattenedProperties && objectTypeInstance) {
 		const property = flattenedProperties[filter.property];
 
-		if ('operators' in property) {
-			return property.operators!;
+		if (property.operators?.length) {
+			return property.operators;
 		}
 
 		if ('group' in property && property.group) {
 			const group = objectTypeInstance.groups[property.group];
 
-			if ('operators' in group) {
-				return group.operators!;
+			if (group.operators?.length) {
+				return group.operators;
 			}
 		}
 	}

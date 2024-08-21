@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by __root__ on 02-November-2023 using Strauss.
+ * Modified by __root__ on 16-August-2024 using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 
@@ -106,6 +106,10 @@ class ProductDependencyChecker {
 		$products = [];
 
 		foreach ( $this->products as $product ) {
+			if ( ! $dependency_text_domain && ! $product['text_domain'] ) {
+				continue;
+			}
+
 			$required_by = $this->is_a_dependency_of_product( $dependency_text_domain, $product['text_domain'], $active_products_only );
 
 			if ( $required_by ) {
@@ -256,7 +260,7 @@ class ProductDependencyChecker {
 			if ( ! $product_version ) {
 				if ( ! empty( $product['installed_version'] ) ) {
 					$product_version = $product['installed_version'];
-				} else if ( ! empty( $product['server_version'] ) ) {
+				} elseif ( ! empty( $product['server_version'] ) ) {
 					$product_version = $product['server_version'];
 				}
 
@@ -298,7 +302,10 @@ class ProductDependencyChecker {
 			foreach ( ( $dependencies['plugin'] ?? [] ) as $dependency_data ) {
 				$dependency_text_domain = $dependency_data['text_domain'];
 
-				$dependency_product = $this->get_product( ( implode( '|', [ $dependency_text_domain, $dependency_data['text_domain_legacy'] ?? '' ] ) ) );
+				$dependency_product = $this->get_product(
+					( implode( '|', [ $dependency_text_domain, $dependency_data['text_domain_legacy'] ?? '' ] ) ),
+					$dependency_data['author'] ?? ''
+				);
 
 				if ( ! $dependency_product ) {
 					$checked_dependencies[ $dependency_text_domain ] = true;
@@ -430,12 +437,15 @@ class ProductDependencyChecker {
 
 		if ( $dependency_product['installed'] ) {
 			switch ( true ) {
-				// Unlicensed product.
-				case empty( $dependency_product['licenses'] ) && ! $dependency_product['free']:
-					$unmet_dependency['reason']     = self::FAILURE_UNLICENSED;
-					$unmet_dependency['resolvable'] = false;
+				/* phpcs:ignore Squiz.PHP.CommentedOutCode.Found
+				    // In the future, we might want to check if the product is licensed and if the license is valid. This was removed in 4fdd142.
+					// Unlicensed product.
+					case empty( $dependency_product['licenses'] ) && ! $dependency_product['free']:
+						$unmet_dependency['reason']     = self::FAILURE_UNLICENSED;
+						$unmet_dependency['resolvable'] = false;
 
-					break;
+						break;
+				*/
 				// Low version and no update available OR Update available but low version.
 				case ! $dependency_product['update_available'] && version_compare( $dependency_product['installed_version'] ?? 0, $highest_required_version, '<' ):
 				case $dependency_product['update_available'] && version_compare( $dependency_product['server_version'] ?? 0, $highest_required_version, '<' ):
@@ -534,15 +544,21 @@ class ProductDependencyChecker {
 	 * If the product is not GK (as returned by our EDD API) product, it will be searched in the installed plugins.
 	 *
 	 * @since 1.2.0
+	 * @since 1.2.12 Added $author_str parameter.
 	 *
-	 * @param string|null $text_domain_str Text domain(s). Optionally pipe-separated (e.g. 'gravityview|gk-gravtiyview').
+	 * @param string $text_domain_str Text domain(s). Optionally pipe-separated (e.g. 'gravityview|gk-gravityview').
+	 * @param string $author_str (optional) Product author(s). Optionally pipe-separated (e.g. 'GravityView|GravityKit|Katz Web Services, Inc.').
 	 *
 	 * @return array|null
 	 */
-	private function get_product( $text_domain_str = '' ): ?array {
-		$text_domains_arr = explode( '|', $text_domain_str );
+	private function get_product( $text_domain_str = '', $author_str = '' ): ?array {
+		if ( '' === $text_domain_str ) {
+			return null;
+		}
 
-		foreach ( $text_domains_arr as $text_domain ) {
+		$text_domains = explode( '|', $text_domain_str );
+
+		foreach ( $text_domains as $text_domain ) {
 			$gk_product = Arr::first(
 				$this->products,
 				function ( $product ) use ( $text_domain ) {
@@ -555,7 +571,7 @@ class ProductDependencyChecker {
 			}
 		}
 
-		$non_gk_product = CoreHelpers::get_installed_plugin_by_text_domain( $text_domain_str );
+		$non_gk_product = CoreHelpers::get_installed_plugin_by_text_domain( $text_domain_str, false, $author_str );
 
 		if ( $non_gk_product ) {
 			$non_gk_product = ProductManager::get_instance()->normalize_product_data( $non_gk_product );
@@ -570,8 +586,8 @@ class ProductDependencyChecker {
 	 *
 	 * @since 1.2.0
 	 *
-	 * @param string|null $product_version
-	 * @param array        $dependencies
+	 * @param string|null $product_version The product version.
+	 * @param array       $dependencies    The dependencies data.
 	 *
 	 * @return mixed|null
 	 */
@@ -582,10 +598,12 @@ class ProductDependencyChecker {
 			return null;
 		}
 
-		$compatible_version = array_filter( $dependencies_versions, function ( $dependency_version ) use ( $product_version ) {
-			return version_compare( $dependency_version, $product_version, '<=' );
-		} );
-
+		$compatible_version = array_filter(
+			$dependencies_versions,
+			function ( $dependency_version ) use ( $product_version ) {
+				return version_compare( $dependency_version, $product_version, '<=' );
+			}
+		);
 
 		if ( empty( $compatible_version ) ) {
 			return null;

@@ -1,3 +1,6 @@
+= 2.0.4 =
+- Optimizing the validation function caches the result.
+
 = 2.0.3 =
 - Fix plugin name not showing in admin notice.
 
