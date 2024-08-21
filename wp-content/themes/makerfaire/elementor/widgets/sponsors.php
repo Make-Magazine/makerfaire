@@ -152,7 +152,12 @@ class Sponsors extends Widget_Base {
 	                    $sub_field_1 = get_sub_field('image'); //Photo
 	                    $sub_field_2 = get_sub_field('url'); //URL
 
-	                    $return .= '      <div class="sponsors-box-md">';
+						if($sponsor[1]=='PRESENTING'){
+							$return .= '      <div class="sponsors-box-lg">';
+						}else{
+							$return .= '      <div class="sponsors-box-md">';
+						}
+	                    
 	                    if (get_sub_field('url')) {
 	                        $return .= '      <a href="' . $sub_field_2 . '" target="_blank">';
 	                    }
