@@ -1,54 +1,33 @@
 <?php
 declare(strict_types=1);
 
-namespace WP_Rocket\Engine\Media\AboveTheFold\Admin;
-
-use WP_Rocket\Engine\Media\AboveTheFold\Context\Context;
-use WP_Rocket\Engine\Media\AboveTheFold\Database\Tables\AboveTheFold as ATFTable;
-use WP_Rocket\Engine\Media\AboveTheFold\Database\Queries\AboveTheFold as ATFQuery;
+namespace WP_Rocket\Engine\Common\PerformanceHints\Admin;
 
 class Controller {
-	/**
-	 * ATF Table instance
-	 *
-	 * @var ATFTable
-	 */
-	private $table;
 
 	/**
-	 * ATF Query instance
+	 * Array of factories
 	 *
-	 * @var ATFQuery
+	 * @var array
 	 */
-	private $query;
-
-	/**
-	 * Context instance
-	 *
-	 * @var Context
-	 */
-	private $context;
+	private $factories;
 
 	/**
 	 * Constructor
 	 *
-	 * @param ATFTable $table Table instance.
-	 * @param ATFQuery $query ATF Query instance.
-	 * @param Context  $context Context instance.
+	 * @param array $factories Array of factories.
 	 */
-	public function __construct( ATFTable $table, ATFQuery $query, Context $context ) {
-		$this->table   = $table;
-		$this->query   = $query;
-		$this->context = $context;
+	public function __construct( array $factories ) {
+		$this->factories = $factories;
 	}
 
 	/**
-	 * Truncate delete ATF DB table.
+	 * Truncate performance hints optimization tables.
 	 *
 	 * @return void
 	 */
-	public function truncate_atf() {
-		if ( ! $this->context->is_allowed() ) {
+	public function truncate_tables() {
+		if ( empty( $this->factories ) ) {
 			return;
 		}
 
@@ -61,28 +40,35 @@ class Controller {
 	 * @return void
 	 */
 	private function delete_rows() {
-		if ( 0 < $this->query->get_not_completed_count() ) {
-			$this->table->remove_all_completed_rows();
-			return;
+		foreach ( $this->factories as $factory ) {
+			if ( 0 < $factory->queries()->get_not_completed_count() ) {
+				$factory->table()->remove_all_completed_rows();
+				continue;
+			}
+
+			$factory->table()->truncate_table();
 		}
 
-		$this->table->truncate_atf_table();
-
 		/**
-		 * Fires after clearing lcp & atf data.
+		 * Fires after clearing performance hints optimization data.
 		 */
-		do_action( 'rocket_after_clear_atf' );
+		rocket_do_action_and_deprecated(
+			'rocket_after_clear_performance_hints_data',
+			[],
+			'3.16.4',
+			'rocket_after_clear_atf'
+		);
 	}
 
 	/**
-	 * Delete ATF row on update Post or delete post.
+	 * Delete row on update Post or delete post.
 	 *
 	 * @param int $post_id The post ID.
 	 *
 	 * @return void
 	 */
-	public function delete_post_atf( $post_id ) {
-		if ( ! $this->context->is_allowed() ) {
+	public function delete_post( $post_id ) {
+		if ( empty( $this->factories ) ) {
 			return;
 		}
 
@@ -92,18 +78,18 @@ class Controller {
 			return;
 		}
 
-		$this->query->delete_by_url( untrailingslashit( $url ) );
+		$this->delete_by_url( $url );
 	}
 
 	/**
-	 * Deletes the ATF when updating a term
+	 * Deletes performance hints optimizations when updating a term
 	 *
 	 * @param int $term_id the term ID.
 	 *
 	 * @return void
 	 */
-	public function delete_term_atf( $term_id ) {
-		if ( ! $this->context->is_allowed() ) {
+	public function delete_term( $term_id ) {
+		if ( empty( $this->factories ) ) {
 			return;
 		}
 
@@ -113,7 +99,7 @@ class Controller {
 			return;
 		}
 
-		$this->query->delete_by_url( untrailingslashit( $url ) );
+		$this->delete_by_url( $url );
 	}
 
 	/**
@@ -123,8 +109,8 @@ class Controller {
 	 *
 	 * @return array
 	 */
-	public function truncate_atf_admin( $clean ) {
-		if ( ! $this->context->is_allowed() ) {
+	public function truncate_from_admin( $clean ) {
+		if ( empty( $this->factories ) ) {
 			return $clean;
 		}
 
@@ -163,11 +149,11 @@ class Controller {
 			$url       = $parse_url['scheme'] . '://' . $parse_url['host'] . $url;
 		}
 
-		$this->query->delete_by_url( untrailingslashit( $url ) );
+		$this->delete_by_url( $url );
 	}
 
 	/**
-	 * Truncate ATF table on update to 3.16.1.1 and higher
+	 * Truncate Performance hints optimization tables on update to 3.16.1.1 and higher
 	 *
 	 * @param string $new_version New plugin version.
 	 * @param string $old_version Old plugin version.
@@ -179,6 +165,18 @@ class Controller {
 			return;
 		}
 
-		$this->truncate_atf();
+		$this->truncate_tables();
+	}
+
+	/**
+	 * Deletes row by url from table.
+	 *
+	 * @param string $url Url to delete.
+	 * @return void
+	 */
+	private function delete_by_url( string $url ) {
+		foreach ( $this->factories as $factory ) {
+			$factory->queries()->delete_by_url( untrailingslashit( $url ) );
+		}
 	}
 }
