@@ -3,7 +3,6 @@
  * Custom Plugin Updater
  *
  * @package gravitywp-license-handler
- *
  */
 
 namespace GravityWP\Updater;
@@ -106,6 +105,15 @@ class Plugin_Updater {
 	public $error_messages;
 
 	/**
+	 * Store the Handler class
+	 *
+	 * @since  2.0.4
+	 * @access private
+	 * @var    string $_addon_class the GravityWP GF Addon classname.
+	 */
+	private $handler_class;
+
+	/**
 	 * Health check timeout
 	 *
 	 * @var $health_check_timeout
@@ -126,17 +134,17 @@ class Plugin_Updater {
 
 		global $paddlepress_plugin_data;
 
-		$this->api_url         = trailingslashit( $this->api_url_update );
-		$this->api_url_license = $this->api_url_license;
-		$this->api_data        = $_api_data;
-		$this->name            = plugin_basename( $_plugin_file );
-		$this->version         = $_api_data['version'];
-		$this->download_tag    = $_api_data['download_tag'];
-		$this->slug            = $_api_data['download_tag']; // the slug of download term
-		$this->wp_override     = isset( $_api_data['wp_override'] ) ? (bool) $_api_data['wp_override'] : false;
-		$this->beta            = ! empty( $this->api_data['beta'] ) ? true : false;
-		$this->cache_key       = 'paddlepress_' . md5( serialize( $this->slug . $this->api_data['license_key'] . $this->beta ) ); // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.serialize_serialize
-
+		$this->api_url                          = trailingslashit( $this->api_url_update );
+		$this->api_url_license                  = $this->api_url_license;
+		$this->api_data                         = $_api_data;
+		$this->name                             = plugin_basename( $_plugin_file );
+		$this->version                          = $_api_data['version'];
+		$this->download_tag                     = $_api_data['download_tag'];
+		$this->slug                             = $_api_data['download_tag']; // the slug of download term
+		$this->wp_override                      = isset( $_api_data['wp_override'] ) ? (bool) $_api_data['wp_override'] : false;
+		$this->beta                             = ! empty( $this->api_data['beta'] ) ? true : false;
+		$this->cache_key                        = 'paddlepress_' . md5( serialize( $this->slug . $this->api_data['license_key'] . $this->beta ) ); // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.serialize_serialize
+		$this->handler_class                    = $_api_data['handler_class'];
 		$paddlepress_plugin_data[ $this->slug ] = $this->api_data;
 
 		/**
@@ -159,6 +167,7 @@ class Plugin_Updater {
 	 * @uses add_filter()
 	 */
 	public function init() {
+		add_filter( 'pre_set_site_transient_update_plugins', array( $this, 'check_update_license' ) );
 		add_filter( 'pre_set_site_transient_update_plugins', array( $this, 'check_update' ) );
 		add_filter( 'plugins_api', array( $this, 'plugins_api_filter' ), 10, 3 );
 		remove_action( 'after_plugin_row_' . $this->name, 'wp_plugin_update_row', 10 );
@@ -237,7 +246,7 @@ class Plugin_Updater {
 	 */
 	public function generateErrorMessage( $error ) {
 		// Initialize the error message string with a prefix.
-		$errorMessage = "Something went wrong:\n";
+		$error_message = "Something went wrong:\n";
 		if ( is_array( $error ) ) {
 			// Loop through each entry in the error array.
 			foreach ( $error as $key => $messages ) {
@@ -247,65 +256,138 @@ class Plugin_Updater {
 						// Sanitize the error message to remove any harmful content.
 						$sanitized_message = sanitize_text_field( $message );
 						// Append the sanitized message to the error message string.
-						$errorMessage .= "- $sanitized_message\n";
+						$error_message .= "- $sanitized_message\n";
 					}
 				} else {
 					$sanitized_message = sanitize_text_field( $messages );
-					$errorMessage     .= "- $sanitized_message\n";
+					$error_message     .= "- $sanitized_message\n";
 				}
 			}
 		} else {
-			$errorMessage .= $error;
+			$error_message .= $error;
 		}
 
 		// Return the formatted error message string.
-		return $errorMessage;
+		return $error_message;
 	}
 
 	/**
-	 * Validates the plugin's current against the defined API endpoint.
+	 * Validates the plugin's license key by checking against the API endpoint.
 	 *
-	 * This method checks if the plugin's is valid by retrieving version information
-	 * from the defined API endpoint. If the version information is not cached, it makes
-	 * an API request to fetch it. It utilizes the 'get_version' endpoint and provides
-	 * necessary parameters such as the download tag, beta status, license key, and license URL.
-	 * The method returns true if the version information includes a download link, indicating
-	 * that the plugin is valid; otherwise, it returns false.
+	 * This method ensures that the plugin's license key is valid by either retrieving
+	 * validation status from a locally stored cache or making an API request to verify the status.
+	 * If the cached status has expired or is unavailable, it will make an API call using the
+	 * 'request_is_activate' function to fetch the current status and update the cache accordingly.
+	 * The check includes parameters such as the license key, which can be passed directly or
+	 * fetched from the stored API data within the class.
 	 *
-	 * @param array $_transient_data Update array built by WordPress.
+	 * The method returns true if the license key is validated successfully; otherwise, it returns false.
 	 *
-	 * @return bool True if the plugin version is valid, false otherwise.
-	 * @uses api_request() This function is used to make an API request to fetch version information.
+	 * @param bool        $cached Unused parameter but kept for maintaining signature consistency.
+	 * @param string|null $key Optional. License key to be used instead of the one stored in the object.
+	 *
+	 * @return bool True if the license key is valid, false otherwise.
+	 *
+	 * @uses request_is_activate() Makes an API request to validate the license key.
+	 * @uses set_version_info_cache() Caches the result of the license key validation.
 	 */
 	public function gwp_is_valid( $cached, $key = null ) {
-		if ( $cached ) {
-			$version_info = $this->get_cached_version_info();
-		} else {
-			$version_info = false;
-		}
+
 		$license_key = ! empty( $key ) ? $key : $this->api_data['license_key'];
 		if ( empty( $license_key ) ) {
 			return false;
 		}
-		if ( $version_info === false ) {
-			$version_info = $this->api_request(
-				'get_version',
-				array(
-					'download_tag' => $this->download_tag,
-					'beta'         => $this->beta,
-					'license_key'  => $license_key,
-					'license_url'  => $this->api_data['license_url'],
-				)
-			);
+
+		$status_cache_key = 'paddlepress_status_request_' . md5( serialize( $this->slug . $this->api_data['license_key'] . $this->beta ) ); // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.serialize_serialize
+
+		$cache = get_option( $status_cache_key );
+
+		$cache_status = true;
+		if ( empty( $cache ) || ! isset( $cache['timeout'] ) || empty( $cache['timeout'] ) || time() > $cache['timeout'] ) {
+			$cache_status = false; // Cache is expired.
 		}
-		if ( $version_info ) {
-			if ( isset( $version_info->download_link ) ) {
+		if ( $cache_status === true ) {
+			if ( $cache['value'] === 'true' ) {
 				return true;
-			} else {
-				return false;
+			}
+		} else {
+			$license_key = ! empty( $key ) ? $key : $this->api_data['license_key'];
+			$status      = $this->request_is_activate( $license_key );
+			$this->set_version_info_cache( $status, $status_cache_key );
+			if ( $status === true ) {
+				return true;
 			}
 		}
+
+		return false;
 	}
+
+	/**
+	 * Checks the plugin's license status and updates the transient data accordingly.
+	 *
+	 * This method verifies the validity of the plugin's license key and updates the cached 
+	 * license status. It also manages admin notices based on the validation result. If the 
+	 * license key is valid, it removes any existing admin notices. Otherwise, it adds an 
+	 * admin notice to inform the user about the invalid license status.
+	 *
+	 * Key Details:
+	 * - Verifies if the current context is not the plugins page in a multisite network, 
+	 *   and returns early if true.
+	 * - Checks existing transient data for license status response, and skips further checks
+	 *   if the data is already populated unless overridden.
+	 * - Retrieves the license key and generates a unique cache key for the status request.
+	 * - Calls the API to check the license activation status.
+	 * - Updates the license status cache with the API response.
+	 * - Based on the license validation result, either removes or adds admin notices.
+	 *
+	 * @param stdClass $_transient_data Transient data object containing update information.
+	 *                                  If not provided as an object, it initializes a new stdClass object.
+	 *
+	 * @global string $pagenow Current admin page identifier.
+	 *
+	 * @return stdClass The (possibly modified) transient data object.
+	 *
+	 * @uses request_is_activate() Makes an API request to validate the license key.
+	 * @uses set_version_info_cache() Caches the result of the license key validation.
+	 * @uses gwp_is_valid() Validates the license key using cached data or via API.
+	 */
+	public function check_update_license($_transient_data) {
+		global $pagenow;
+
+		// Ensure $_transient_data is an object.
+		if (!is_object($_transient_data)) {
+			$_transient_data = new stdClass();
+		}
+
+		// Return early if on the plugins page in a multisite network.
+		if ('plugins.php' === $pagenow && is_multisite()) {
+			return $_transient_data;
+		}
+
+		// Check if the transient data already has a response and is not being overridden.
+		if (!empty($_transient_data->response) && !empty($_transient_data->response[$this->name]) && false === $this->wp_override) {
+			return $_transient_data;
+		}
+
+		// Retrieve license key and generate a unique cache key.
+		$license_key      = $this->api_data['license_key'];
+		$status_cache_key = 'paddlepress_status_request_' . md5(serialize($this->slug . $this->api_data['license_key'] . $this->beta)); // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.serialize_serialize
+
+		// Validate the license key through the API and update the cache.
+		$status = $this->request_is_activate($license_key);
+		$this->set_version_info_cache($status, $status_cache_key);
+
+		// Validate the license key and manage admin notices based on validity.
+		if ($this->gwp_is_valid(false, $license_key)) {
+			remove_action('admin_notices', array($this->handler_class, 'action_admin_notices'));
+		} else {
+			add_action('admin_notices', array($this->handler_class, 'action_admin_notices'));
+		}
+
+		return $_transient_data;
+	}
+
+
 
 	/**
 	 * Check for Updates at the defined API endpoint and modify the update array.
@@ -336,7 +418,7 @@ class Plugin_Updater {
 			return $_transient_data;
 		}
 
-		$version_info = $this->get_cached_version_info();
+		$version_info = false; // $this->get_cached_version_info();
 
 		if ( false === $version_info ) {
 			$version_info = $this->api_request(
@@ -440,7 +522,7 @@ class Plugin_Updater {
 
 		if ( empty( $update_cache->response ) || empty( $update_cache->response[ $this->name ] ) ) {
 
-			$version_info = false;// $this->get_cached_version_info();
+			$version_info = $this->get_cached_version_info(); //  || false;
 
 			if ( false === $version_info ) {
 				$version_info = $this->api_request(
@@ -829,8 +911,13 @@ class Plugin_Updater {
 
 		}
 
-		if ( ! empty( $version_info ) && isset( $version_info->sections['changelog'] ) ) {
-			echo '<div style="background:#fff;padding:10px;">' . wp_kses_allowed_html( $version_info->sections['changelog'] ) . '</div>';
+		if ( ! empty( $version_info ) && isset( $version_info->sections ) ) {
+			// Ensure sections are converted to an array if they are an object.
+			$sections = (array) $version_info->sections;
+
+			if ( isset( $sections['changelog'] ) ) {
+				echo '<div style="background:#fff;padding:10px;">' . wp_kses_post( $sections['changelog'] ) . '</div>';
+			}
 		}
 
 		exit;

@@ -8,7 +8,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * Modified by __root__ on 02-November-2023 using Strauss.
+ * Modified by __root__ on 16-August-2024 using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 
@@ -129,6 +129,18 @@ if (!function_exists('mb_scrub')) {
 }
 if (!function_exists('mb_str_split')) {
     function mb_str_split(?string $string, ?int $length = 1, ?string $encoding = null): array { return p\Mbstring::mb_str_split((string) $string, (int) $length, $encoding); }
+}
+
+if (!function_exists('mb_str_pad')) {
+    function mb_str_pad(string $string, int $length, string $pad_string = ' ', int $pad_type = STR_PAD_RIGHT, ?string $encoding = null): string { return p\Mbstring::mb_str_pad($string, $length, $pad_string, $pad_type, $encoding); }
+}
+
+if (!function_exists('mb_ucfirst')) {
+    function mb_ucfirst($string, ?string $encoding = null): string { return p\Mbstring::mb_ucfirst($string, $encoding); }
+}
+
+if (!function_exists('mb_lcfirst')) {
+    function mb_lcfirst($string, ?string $encoding = null): string { return p\Mbstring::mb_lcfirst($string, $encoding); }
 }
 
 if (extension_loaded('mbstring')) {

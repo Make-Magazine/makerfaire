@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by __root__ on 02-November-2023 using Strauss.
+ * Modified by __root__ on 16-August-2024 using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 
@@ -93,7 +93,7 @@ class CLI {
 
 		foreach ( $commands as $command => $class ) {
 			WP_CLI::add_command(
-				$command === 'root' ? self::COMMAND_PREFIX : self::COMMAND_PREFIX . ' ' . $command,
+				'root' === $command ? self::COMMAND_PREFIX : self::COMMAND_PREFIX . ' ' . $command,
 				$class
 			);
 		}

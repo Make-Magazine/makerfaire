@@ -118,7 +118,7 @@ class GPNF_GravityFlow {
 
 		$current_step = gravity_flow()->get_current_step( $parent_form, $parent_entry );
 
-		if ( $current_step && $current_step->get_type() === 'user_input' ) {
+		if ( $current_step && ( $current_step->get_type() === 'user_input' || $current_step->get_type() === 'approval' ) ) {
 			foreach ( $parent_form['fields'] as $field ) {
 				if ( $field->get_input_type() == 'form' ) {
 					if ( ! $this->can_user_edit_parent_entry( $current_step, $field->id ) ) {

@@ -597,7 +597,7 @@ export default class GPPopulateAnything {
 		window.gform.addAction(
 			'gform_frontend_page_visible',
 			(
-				page: {
+				currentPage: {
 					conditionalLogic: any;
 					fieldId: number;
 					isUpdated: boolean;
@@ -611,7 +611,7 @@ export default class GPPopulateAnything {
 					return;
 				}
 
-				if (!page.isUpdated || !page.isVisible) {
+				if (!currentPage.isUpdated || !currentPage.isVisible) {
 					return;
 				}
 
@@ -621,7 +621,7 @@ export default class GPPopulateAnything {
 				for (const page of this.gfPageConditionalLogic.options.pages) {
 					pageNumber++;
 
-					if (page.fieldId === page.fieldId) {
+					if (currentPage.fieldId === page.fieldId) {
 						break;
 					}
 				}

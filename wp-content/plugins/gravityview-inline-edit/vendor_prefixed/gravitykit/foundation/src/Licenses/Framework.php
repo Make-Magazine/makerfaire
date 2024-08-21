@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by __root__ on 02-November-2023 using Strauss.
+ * Modified by __root__ on 16-August-2024 using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 
@@ -23,36 +23,51 @@ class Framework {
 	const AJAX_ROUTER = 'licenses';
 
 	/**
+	 * {@Framework} Class instance.
+	 *
 	 * @since 1.0.0
 	 *
-	 * @var Framework Class instance.
+	 * @var Framework
 	 */
 	private static $_instance;
 
 	/**
+	 * {@LicenseManager} Class instance.
+	 *
 	 * @since 1.0.3
 	 *
-	 * @var LicenseManager Class instance.
+	 * @var LicenseManager
 	 */
 	private $_license_manager;
 
 	/**
+	 * {@ProductManager} Class instance.
+	 *
 	 * @since 1.0.3
 	 *
-	 * @var ProductManager Class instance.
+	 * @var ProductManager
 	 */
 	private $_product_manager;
 
 	/**
+	 * User permissions to manage licenses/products.
+	 *
 	 * @since 1.0.0
 	 *
-	 * @var array User permissions to manage licenses/products.
+	 * @var array
 	 */
 	private $_permissions;
 
+	/**
+	 * Framework constructor.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @throws Exception
+	 */
 	private function __construct() {
 		$permissions = [
-			// Licenses
+			// Licenses.
 			'view_licenses'       =>
 				( ! is_super_admin() && current_user_can( 'gk_foundation_view_licenses' ) ) ||
 				( ! is_multisite() && current_user_can( 'manage_options' ) ) ||
@@ -61,7 +76,7 @@ class Framework {
 				( ! is_super_admin() && current_user_can( 'gk_foundation_manage_licenses' ) ) ||
 				( ! is_multisite() && current_user_can( 'manage_options' ) ) ||
 				( is_multisite() && current_user_can( 'manage_network_options' ) && CoreHelpers::is_network_admin() ),
-			// Products
+			// Products.
 			'view_products'       =>
 				( ! is_super_admin() && current_user_can( 'gk_foundation_view_products' ) ) ||
 				( ! is_multisite() && current_user_can( 'install_plugins' ) ) ||
@@ -89,7 +104,9 @@ class Framework {
 		];
 
 		/**
-		 * @filter `gk/foundation/licenses/permissions` Modifies permissions to access Licenses functionality.
+		 * Modifies permissions to access Licenses functionality.
+		 *
+		 * @filter `gk/foundation/licenses/permissions`
 		 *
 		 * @since  1.0.0
 		 *
@@ -125,6 +142,10 @@ class Framework {
 			return;
 		}
 
+		if ( ! CoreHelpers::is_cli() && ! is_admin() && ( ! defined( 'DOING_AJAX' ) || ! DOING_AJAX ) ) {
+			return;
+		}
+
 		if ( ! $this->current_user_can( 'view_licenses' ) && ! $this->current_user_can( 'view_products' ) ) {
 			return;
 		}
@@ -147,7 +168,9 @@ class Framework {
 		$this->add_gk_submenu_item();
 
 		/**
-		 * @action `gk/foundation/licenses/initialized` Fires when the class has finished initializing.
+		 * Fires when the class has finished initializing.
+		 *
+		 * @action `gk/foundation/licenses/initialized`
 		 *
 		 * @since  1.0.0
 		 *
@@ -168,9 +191,12 @@ class Framework {
 	 * @return array
 	 */
 	public function configure_ajax_routes( array $routes ) {
-		return array_merge( $routes, [
-			'get_app_data' => [ $this, 'ajax_get_app_data' ],
-		] );
+		return array_merge(
+			$routes,
+			[
+				'get_app_data' => [ $this, 'ajax_get_app_data' ],
+			]
+		);
 	}
 
 	/**
@@ -178,16 +204,19 @@ class Framework {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param array $payload
+	 * @param array $payload Ajax request payload.
 	 *
 	 * @throws Exception
 	 *
 	 * @return array{products:array,licenses:array}
 	 */
 	public function ajax_get_app_data( array $payload ) {
-		$payload = wp_parse_args( $payload, [
-			'skip_cache' => false,
-		] );
+		$payload = wp_parse_args(
+			$payload,
+			[
+				'skip_cache' => false,
+			]
+		);
 
 		$response = [];
 
@@ -245,17 +274,20 @@ class Framework {
 	 * @return void
 	 */
 	public function add_gk_submenu_item() {
-		AdminMenu::add_submenu_item( [
-			'page_title'         => $this->get_framework_title(),
-			'menu_title'         => $this->get_framework_title(),
-			'capability'         => 'manage_options',
-			'id'                 => self::ID,
-			'callback'           => function () {
-				// Settings data will be injected into #wpbody by gk-setting.js (see /UI/Settings/src/main-prod.js)
-			},
-			'order'              => 1,
-			'hide_admin_notices' => true,
-		], 'top' );
+		AdminMenu::add_submenu_item(
+			[
+				'page_title'         => $this->get_framework_title(),
+				'menu_title'         => $this->get_framework_title(),
+				'capability'         => 'manage_options',
+				'id'                 => self::ID,
+				'callback'           => function () {
+					// Settings data will be injected into #wpbody by gk-setting.js (see /UI/Settings/src/main-prod.js).
+				},
+				'order'              => 1,
+				'hide_admin_notices' => true,
+			],
+			'top'
+		);
 	}
 
 	/**
@@ -289,7 +321,8 @@ class Framework {
 			self::ID,
 			CoreHelpers::get_assets_url( $script ),
 			[ 'wp-i18n' ],
-			filemtime( CoreHelpers::get_assets_path( $script ) )
+			filemtime( CoreHelpers::get_assets_path( $script ) ),
+			true
 		);
 
 		$script_data = array_merge(
@@ -298,8 +331,6 @@ class Framework {
 				'isNetworkAdmin'            => CoreHelpers::is_network_admin(),
 				'permissions'               => $this->_permissions,
 				'frontendFoundationVersion' => FoundationCore::VERSION,
-				'backendFoundationVersion'  => FoundationCore::VERSION,
-				'pluginsPageUrl'            => CoreHelpers::is_network_admin() ? network_admin_url( 'plugins.php' ) : admin_url( 'plugins.php' ),
 				'languageDirection'         => is_rtl() ? 'rtl' : 'ltr',
 			],
 			FoundationCore::ajax_router()->get_ajax_params( self::AJAX_ROUTER )
@@ -312,7 +343,7 @@ class Framework {
 
 		try {
 			$app_data = $this->ajax_get_app_data( [] );
-		} catch ( Exception $e ) {
+		} catch ( Exception $e ) { // phpcs:ignore Generic.CodeAnalysis.EmptyStatement.DetectedCatch
 			// No need to handle the error here.
 		}
 
@@ -333,7 +364,7 @@ class Framework {
 
 		// WP's forms.css interferes with our styles.
 		wp_deregister_style( 'forms' );
-		wp_register_style( 'forms', false );
+		wp_register_style( 'forms', false ); // phpcs:ignore WordPress.WP.EnqueuedResourceParameters.MissingVersion
 
 		// Load UI translations using the text domain of the product that instantiated Foundation.
 		$foundation_information = FoundationCore::get_instance()->get_foundation_information();
@@ -345,9 +376,11 @@ class Framework {
 	 *
 	 * @since 1.0.0
 	 *
+	 * @param string $permission Permission to check.
+	 *
 	 * @return bool
 	 */
-	function current_user_can( $permission ) {
+	public function current_user_can( $permission ) {
 		if ( CoreHelpers::is_cli() ) {
 			return true;
 		}
@@ -362,7 +395,7 @@ class Framework {
 	 *
 	 * @return ProductManager
 	 */
-	function product_manager() {
+	public function product_manager() {
 		return $this->_product_manager;
 	}
 
@@ -373,7 +406,7 @@ class Framework {
 	 *
 	 * @return LicenseManager
 	 */
-	function license_manager() {
+	public function license_manager() {
 		return $this->_license_manager;
 	}
 
@@ -386,7 +419,7 @@ class Framework {
 	 *
 	 * @return string
 	 */
-	function get_link_to_product_search( $product_id ) {
+	public function get_link_to_product_search( $product_id ) {
 		$admin_page = 'admin.php?page=' . self::ID;
 
 		$admin_url = CoreHelpers::is_network_admin() ? network_admin_url( $admin_page ) : admin_url( $admin_page );

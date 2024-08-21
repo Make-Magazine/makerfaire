@@ -2,12 +2,13 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by __root__ on 02-November-2023 using Strauss.
+ * Modified by __root__ on 16-August-2024 using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 
 namespace GravityKit\GravityEdit\Foundation;
 
+use GravityKit\GravityEdit\Foundation\Components\NewsletterSignup;
 use GravityKit\GravityEdit\Foundation\Integrations\GravityForms;
 use GravityKit\GravityEdit\Foundation\Integrations\HelpScout;
 use GravityKit\GravityEdit\Foundation\Integrations\TrustedLogin;
@@ -42,7 +43,7 @@ use GravityKitFoundation;
  * @method static PluginActivationHandler plugin_activation_handler()
  */
 class Core {
-	const VERSION = '1.2.5';
+	const VERSION = '1.2.17';
 
 	const ID = 'gk_foundation';
 
@@ -183,8 +184,8 @@ class Core {
 	 */
 	public static function register( $plugin_file ) {
 		if ( wp_doing_ajax() &&
-		     ( LicensesFramework::AJAX_ROUTER === ( $_REQUEST['ajaxRouter'] ?? '' ) ) &&
-		     version_compare( $_REQUEST['frontendFoundationVersion'] ?? 0, self::VERSION, '<' )
+		     ( LicensesFramework::AJAX_ROUTER === ( $_REQUEST['ajaxRouter'] ?? '' ) ) && // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		     version_compare( $_REQUEST['frontendFoundationVersion'] ?? 0, self::VERSION, '<' ) // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		) {
 			return;
 		}
@@ -197,7 +198,7 @@ class Core {
 				'text_domain'        => CoreHelpers::get_plugin_data( $plugin_file )['TextDomain'],
 				'foundation_version' => self::$_instance->get_plugin_foundation_version( $plugin_file ),
 				'has_foundation'     => false,
-				'loads_foundation'   => false
+				'loads_foundation'   => false,
 			];
 		}
 	}
@@ -277,6 +278,7 @@ class Core {
 		}
 
 		$this->_components = [
+			'newsletter'      => NewsletterSignup::get_instance(),
 			'settings'        => SettingsFramework::get_instance(),
 			'licenses'        => LicensesFramework::get_instance(),
 			'translations'    => TranslationsFramework::get_instance(),
@@ -343,30 +345,34 @@ class Core {
 				}
 
 				$default_settings = [
-					'group_gk_products'     => 0,
-					'top_level_menu_action' => $this->licenses()::ID,
-					'support_email'         => get_bloginfo( 'admin_email' ),
-					'support_port'          => 1,
-					'no_conflict_mode'      => 1,
-					'powered_by'            => 0,
-					'beta'                  => 0,
+					'group_gk_products'       => 0,
+					'top_level_menu_action'   => $this->licenses()::ID,
+					'top_level_menu_position' => class_exists( 'GFAPI' ) ? 'gf_edit_forms' : 'upload.php',
+					'support_email'           => get_bloginfo( 'admin_email' ),
+					'support_port'            => 1,
+					'no_conflict_mode'        => 1,
+					'powered_by'              => 0,
+					'beta'                    => 0,
 				];
 
 				$admin_menu_items = Arr::flatten( $this->admin_menu()->get_submenus(), 1 );
 
-				$top_level_menu_action_choices = array_map( function ( $menu_item ) {
-					if ( Arr::get( $menu_item, 'hide' ) || Arr::get( $menu_item, 'exclude_from_top_level_menu_action' ) ) {
-						return;
-					}
+				$top_level_menu_action_choices = array_map(
+					function ( $menu_item ) {
+						if ( Arr::get( $menu_item, 'hide' ) || Arr::get( $menu_item, 'exclude_from_top_level_menu_action' ) ) {
+							return;
+						}
 
-					return [
-						'title' => $menu_item['menu_title'],
-						'value' => $menu_item['id'],
-					];
-				}, $admin_menu_items );
+						return [
+							'title' => $menu_item['menu_title'],
+							'value' => $menu_item['id'],
+						];
+					},
+					$admin_menu_items
+				);
 
 				$top_level_menu_action_value = Arr::get( $gk_settings, 'top_level_menu_action' );
-				$top_level_menu_action_value = in_array( $top_level_menu_action_value, Arr::flatten( $top_level_menu_action_choices ) ) ? $top_level_menu_action_value : $default_settings['top_level_menu_action'];
+				$top_level_menu_action_value = in_array( $top_level_menu_action_value, Arr::flatten( $top_level_menu_action_choices ), true ) ? $top_level_menu_action_value : $default_settings['top_level_menu_action'];
 
 				$top_level_menu_action_choices = array_values( array_filter( $top_level_menu_action_choices ) );
 
@@ -411,6 +417,15 @@ HTML;
 					];
 				}
 
+				$gravitykit_menu_position_choices = [];
+
+				foreach ( AdminMenu::get_menus() as $menu ) {
+					$gravitykit_menu_position_choices[] = [
+						'title' => $menu['title'],
+						'value' => $menu['id'],
+					];
+				}
+
 				$general_settings = array_merge(
 					$general_settings,
 					[
@@ -423,12 +438,20 @@ HTML;
 							'description' => esc_html__( 'Aggregate all GravityKit products into a single entry on the Plugins page for a cleaner view and easier management.', 'gk-gravityedit' ),
 						],
 						[
+							'id'          => 'top_level_menu_position',
+							'type'        => 'select',
+							'title'       => esc_html__( 'GravityKit Menu Position', 'gk-gravityedit' ),
+							'description' => esc_html__( 'Select the menu below which to place the GravityKit menu.', 'gk-gravityedit' ),
+							'value'       => Arr::get( $gk_settings, 'top_level_menu_position', $default_settings['top_level_menu_position'] ),
+							'choices'     => $gravitykit_menu_position_choices,
+						],
+						[
 							'id'          => 'top_level_menu_action',
 							'type'        => 'select',
 							'value'       => $top_level_menu_action_value,
 							'choices'     => $top_level_menu_action_choices,
-							'title'       => esc_html__( 'GravityKit Menu Item Action', 'gk-gravityedit' ),
-							'description' => esc_html__( 'Open the selected page when clicking the GravityKit menu item.', 'gk-gravityedit' ),
+							'title'       => esc_html__( 'GravityKit Menu Action', 'gk-gravityedit' ),
+							'description' => esc_html__( 'Select the page to open when clicking the GravityKit menu.', 'gk-gravityedit' ),
 						],
 						[
 							'id'          => 'powered_by',
@@ -705,7 +728,7 @@ HTML;
 			return;
 		}
 
-		printf( '<!-- %s -->', $foundation_information['loaded_by_message'] );
+		echo wp_kses_data( sprintf( '<!-- %s -->', $foundation_information['loaded_by_message'] ) );
 	}
 
 	/**
@@ -716,9 +739,12 @@ HTML;
 	 * @return array{version: string, source: array, registered_plugins: array, loaded_by_foundation_message: string, display_loaded_by_foundation_message: bool}
 	 */
 	public function get_foundation_information(): array {
-		$foundation_source = Arr::first( $this->_registered_plugins, function ( $plugin ) {
-			return $plugin['loads_foundation'];
-		} );
+		$foundation_source = Arr::first(
+			$this->_registered_plugins,
+			function ( $plugin ) {
+				return $plugin['loads_foundation'];
+			}
+		);
 
 		$version            = $foundation_source['foundation_version'];
 		$source_plugin      = CoreHelpers::get_plugin_data( $foundation_source['plugin_file'] );
@@ -764,9 +790,12 @@ HTML;
 	 */
 	public function get_plugin_foundation_version( $plugin_file, $ignore_registered_plugins = false ) {
 		// Try to get the version first from the registered plugins.
-		$plugin = Arr::first( $this->_registered_plugins, function ( $plugin ) use ( $plugin_file ) {
-			return $plugin['plugin_file'] === $plugin_file;
-		} );
+		$plugin = Arr::first(
+			$this->_registered_plugins,
+			function ( $plugin ) use ( $plugin_file ) {
+				return $plugin['plugin_file'] === $plugin_file;
+			}
+		);
 
 		// If the plugin is not registered, try to get the version from the plugin file.
 		if ( $ignore_registered_plugins || ! isset( $plugin['foundation_version'] ) ) {
@@ -800,13 +829,21 @@ HTML;
 		$registered_plugins = $this->_registered_plugins;
 
 		if ( $text_domain_to_exclude ) {
-			$registered_plugins = array_filter( $this->_registered_plugins, function ( $plugin ) use ( $text_domain_to_exclude ) {
-				return $plugin['text_domain'] !== $text_domain_to_exclude;
-			} );
+			$registered_plugins = array_filter(
+				$this->_registered_plugins,
+				function ( $plugin ) use ( $text_domain_to_exclude ) {
+					return $plugin['text_domain'] !== $text_domain_to_exclude;
+				}
+			);
 		}
 
-		return max( array_map( function ( $plugin ) {
-			return $plugin['foundation_version'] ?? 0;
-		}, $registered_plugins ) ) ?: '';
+		$foundation_versions = array_map(
+			function ( $plugin ) {
+				return $plugin['foundation_version'] ?? '0';
+			},
+			$registered_plugins
+		) ?: [ '0' ];
+
+		return max( $foundation_versions );
 	}
 }

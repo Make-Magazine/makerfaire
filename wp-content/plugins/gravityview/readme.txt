@@ -1,7 +1,7 @@
 === GravityView ===
 Tags: gravity forms, directory, gravity forms directory
 Requires at least: 4.7
-Tested up to: 6.5.3
+Tested up to: 6.6.0
 Requires PHP: 7.2.0
 Stable tag: trunk
 Contributors: The GravityKit Team
@@ -20,6 +20,52 @@ Beautifully display your Gravity Forms entries. Learn more on [gravitykit.com](h
 3. Follow the instructions
 
 == Changelog ==
+
+= 2.27.1 on August 14, 2024 =
+
+This release fixes an issue with adding fields in the View editor's Edit Entry layout when the Multiple Forms extension is enabled.
+
+#### 🐛 Fixed
+* Fields added to the Edit Entry layout in the View editor could not be configured and would disappear after saving the View when Multiple Forms was enabled.
+
+= 2.27 on August 13, 2024 =
+
+This update resolves several issues related to the Multiple Forms extension, fixes the recently introduced `:format` merge tag modifier to return the Time field value in the local timezone, and adds a new filter to control which fields are added by default when creating a new View.
+
+#### 🐛 Fixed
+* Time zone selection in the Search Bar did not persist after searching a View, causing it to reset upon page refresh.
+* Fields added to the View could not be configured and would disappear after saving the View when Multiple Forms was enabled.
+* Fatal error occurred on the Edit Entry screen when Multiple Forms was enabled.
+* The `:format` merge tag modifier on the Time field returned a UTC-adjusted time value.
+
+#### 💻 Developer Updates
+* Added `gk/gravityview/view/configuration/multiple-entries/initialize-with-all-form-fields` filter that, when set to `true`, initializes the Multiple Entries layout with all form fields when creating a new View. The default is `false`, which populates the View with only the fields configured in the Gravity Forms Entries table.
+
+= 2.26 on August 8, 2024 =
+
+This update resolves various issues, including compatibility with Yoast SEO, improves performance through enhanced View entries caching, and adds new functionality.
+
+#### 🚀 Added
+* Ability to modify the entry creator’s information on the Edit Entry screen.
+* Merge tag modifier for formatting Date and Time fields (e.g., `{Date Field:1:format:Y-m-d}`).
+* Placeholders in View Settings to inform you that additional functionality is available.
+
+#### ✨ Improved
+* The "Sort By" option in the GravityView Gutenberg block now offers a dropdown selection of fields instead of requiring manual entry of the field ID.
+* Caching of View entries to prevent unnecessary database queries. Thanks, Shehroz!
+
+#### 🐛 Fixed
+* Timeout issue when rendering a page/post with GravityView Gutenberg blocks when Yoast SEO is active.
+* View editor fields added to the Single or Edit Entry layouts inheriting options from the View type set in the Multiple Entries layout.
+* An issue in the Search Bar widget configuration where adding a Date field caused the search mode ("any" and "all") to no longer be toggleable.
+* `[gv_entry_link]` shortcode not rendering inside the Custom HTML block.
+
+#### 🔧 Updated
+* [Foundation](https://www.gravitykit.com/foundation/) and [TrustedLogin](https://www.trustedlogin.com/) to versions 1.2.17 and 1.8.0, respectively.
+
+#### 💻 Developer Updates
+* Added `gk/gravityview/feature/upgrade/disabled` filter to disable the functionality placeholders. Return `true` to disable the placeholders.
+* Added `gk/gravityview/metabox/content/before` and `gk/gravityview/metabox/content/after` actions, triggered before and after the View metabox is rendered.
 
 = 2.25 on June 5, 2024 =
 
@@ -3151,6 +3197,3 @@ We're just getting started with what can be done with DataTables. We'll have muc
 = 1.0 =
 
 * Liftoff!
-
-
-= 1721335771-4249 =

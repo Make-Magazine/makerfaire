@@ -2,7 +2,6 @@
 
 /**
  * Add GravityView inline edit settings
- *
  */
 
 /**
@@ -16,7 +15,7 @@ final class GravityView_Inline_Edit_GravityView extends GravityView_Inline_Edit_
 	 *
 	 * @var array $forms
 	 */
-	protected $forms = [];
+	protected $forms = array();
 
 	/**
 	 * Return whether this class should add hooks when initialized
@@ -29,7 +28,7 @@ final class GravityView_Inline_Edit_GravityView extends GravityView_Inline_Edit_
 
 		$is_valid_nonce = isset( $_POST['nonce'] ) && ( wp_verify_nonce( $_POST['nonce'], 'gravityview_inline_edit' ) || wp_verify_nonce( $_POST['nonce'], 'gravityview_datatables_data' ) );
 
-		$is_inline_edit_request = defined('DOING_AJAX') && DOING_AJAX && $is_valid_nonce;
+		$is_inline_edit_request = defined( 'DOING_AJAX' ) && DOING_AJAX && $is_valid_nonce;
 
 		return defined( 'GRAVITYVIEW_FILE' ) && ( ! is_admin() || $this->is_gv_admin() || $is_inline_edit_request );
 	}
@@ -70,6 +69,34 @@ final class GravityView_Inline_Edit_GravityView extends GravityView_Inline_Edit_
 
 		add_filter( 'gravityview/admin/indicator_icons', array( $this, 'add_inline_edit_icon' ), 10, 2 );
 
+		// GravityPerks inventory instant updates.
+		if ( class_exists( 'GravityPerks' ) && class_exists( 'GP_Inventory' ) ) {
+			$fields = array( 'select', 'radiolist', 'multiselect', 'checklist' );
+			foreach ( $fields as $field ) {
+				add_filter( 'gravityview-inline-edit/entry-updated/' . $field, array( $this, 'fix_gp_inventory_count' ), 99, 5 );
+			}
+		}
+
+	}
+
+	/**
+	 * Fixes GravityPerks Inventory instant updates
+	 *
+	 * @since 2.1.0
+	 *
+	 * @param boolean $update_result
+	 * @param array   $entry
+	 * @param integer $form_id
+	 * @param object  $gf_field
+	 * @param array   $original_entry
+	 *
+	 * @return array
+	 */
+	public function fix_gp_inventory_count( $update_result, $entry, $form_id, $gf_field, $original_entry ) {
+		$form         = GFAPI::get_form( $form_id );
+		$updated_form = gp_inventory_type_choices()->pre_render( $form );
+		$field        = GFFormsModel::get_field( $updated_form, $gf_field->id );
+		return array( 'source' => json_encode( $field->choices ) );
 	}
 
 	/**
@@ -96,11 +123,11 @@ final class GravityView_Inline_Edit_GravityView extends GravityView_Inline_Edit_
 	 *
 	 * @since 1.7 Moved to this class from GravityView_Inline_Edit_GFAddon.
 	 *
-	 * @param array $field_options
+	 * @param array   $field_options
 	 * @param integer $template_id
 	 * @param integer $field_id
-	 * @param string $context
-	 * @param string $input_type
+	 * @param string  $context
+	 * @param string  $input_type
 	 * @param integer $form_id
 	 *
 	 * @return array
@@ -143,7 +170,7 @@ final class GravityView_Inline_Edit_GravityView extends GravityView_Inline_Edit_
 	 * @since 1.5
 	 *
 	 * @param bool|WP_Error $update_result True: the entry has been updated by Gravity Forms or WP_Error if there was a problem
-	 * @param array $entry The Entry Object that's been updated
+	 * @param array         $entry The Entry Object that's been updated
 	 *
 	 * @return bool|WP_Error Original $update_result
 	 */
@@ -161,21 +188,21 @@ final class GravityView_Inline_Edit_GravityView extends GravityView_Inline_Edit_
 	 *
 	 * @since 1.0
 	 *
-	 * @param array $wrapper_attributes
-	 * @param string $field_input_type
-	 * @param string|int $field_id
-	 * @param array $entry
-	 * @param array $current_form
-	 * @param GF_Field_Checkbox $gf_field
-	 * @param string $output The original field value HTML.
-	 * @param array $field_settings GravityView field settings array.
+	 * @param array                     $wrapper_attributes
+	 * @param string                    $field_input_type
+	 * @param string|int                $field_id
+	 * @param array                     $entry
+	 * @param array                     $current_form
+	 * @param GF_Field_Checkbox         $gf_field
+	 * @param string                    $output The original field value HTML.
+	 * @param array                     $field_settings GravityView field settings array.
 	 * @param null|\GV\Template_Context $context The GravityView Template Context, if available.
 	 *
 	 * @return array
 	 */
 	public function modify_attributes_add_choice_display( $wrapper_attributes, $field_input_type, $field_id, $entry, $current_form, $gf_field, $output, $field_settings, $context = null ) {
 
-		if( ! $context instanceof \GV\Template_Context ) {
+		if ( ! $context instanceof \GV\Template_Context ) {
 			return $wrapper_attributes;
 		}
 
@@ -193,9 +220,9 @@ final class GravityView_Inline_Edit_GravityView extends GravityView_Inline_Edit_
 	 * @since 1.0
 	 *
 	 * @param bool $can_edit True: User can edit the entry at $entry_id; False; they just can't
-	 * @param int $entry_id Entry ID to check
-	 * @param int $form_id Form connected to $entry_id
-	 * @param int|$view_id View ID, if set
+	 * @param int  $entry_id Entry ID to check
+	 * @param int  $form_id Form connected to $entry_id
+	 * @param int| $view_id View ID, if set
 	 *
 	 * @return bool True: User can edit this entry. False: Nope.
 	 */
@@ -215,14 +242,14 @@ final class GravityView_Inline_Edit_GravityView extends GravityView_Inline_Edit_
 
 			$entry = GFAPI::get_entry( $entry_id );
 
-			if( ! is_wp_error( $entry ) ) {
+			if ( ! is_wp_error( $entry ) ) {
 
 				// GravityView_View not loaded in AJAX, but used by GravityView_Edit_Entry
-				if ( ! class_exists( 'GravityView_View' ) && defined('GRAVITYVIEW_DIR') ) {
-					include_once( GRAVITYVIEW_DIR .'includes/class-template.php' );
+				if ( ! class_exists( 'GravityView_View' ) && defined( 'GRAVITYVIEW_DIR' ) ) {
+					include_once GRAVITYVIEW_DIR . 'includes/class-template.php';
 				}
 
-				if( class_exists( 'GravityView_View' ) ) {
+				if ( class_exists( 'GravityView_View' ) ) {
 					return GravityView_Edit_Entry::check_user_cap_edit_entry( $entry, $view_id );
 				}
 			}
@@ -240,14 +267,14 @@ final class GravityView_Inline_Edit_GravityView extends GravityView_Inline_Edit_
 	 */
 	public function can_edit_any_entries( $view_id = 0 ) {
 
-		if( ! function_exists( 'gravityview' ) || ! class_exists( '\GV\View' ) || empty( $view_id ) ) {
+		if ( ! function_exists( 'gravityview' ) || ! class_exists( '\GV\View' ) || empty( $view_id ) ) {
 			return null;
 		}
 
 		// Prevent from running multiple times for one request.
 		static $_can_edit_cache;
 
-		$_can_edit_cache = isset( $_can_edit_cache ) ? $_can_edit_cache : [];
+		$_can_edit_cache = isset( $_can_edit_cache ) ? $_can_edit_cache : array();
 
 		// Already processed!
 		if ( isset( $_can_edit_cache[ $view_id ] ) ) {
@@ -262,7 +289,7 @@ final class GravityView_Inline_Edit_GravityView extends GravityView_Inline_Edit_
 		$_can_edit_cache[ $view_id ] = false;
 
 		foreach ( $view_entries['entries'] as $entry ) {
-			if( $this->filter_can_edit_entry( false, $entry['id'], $view->form->ID ) ) {
+			if ( $this->filter_can_edit_entry( false, $entry['id'], $view->form->ID ) ) {
 				$_can_edit_cache[ $view_id ] = true;
 				break;
 			}
@@ -346,11 +373,10 @@ final class GravityView_Inline_Edit_GravityView extends GravityView_Inline_Edit_
 	 * @since 1.0
 	 * @since 2.0 Removed $entry, $field_settings, and $field parameters and used $context instead.
 	 *
-	 * @param  string $output The field output HTML
+	 * @param  string               $output The field output HTML
 	 * @param  \GV\Template_Context $context The context of the field.
 	 *
 	 * @return string HTML for the field value wrapped in an X-editable-format
-	 *
 	 */
 	public function wrap_gravityview_field_value( $output, $context ) {
 		$is_export = $context->template instanceof GV\Field_CSV_Template && ( get_query_var( 'csv' ) || get_query_var( 'tsv' ) );
@@ -416,7 +442,7 @@ final class GravityView_Inline_Edit_GravityView extends GravityView_Inline_Edit_
 
 		$entry_link = gv_entry_link( $entry, $context->view->ID );
 
-		if ( strpos( $output, $entry_link ) !== false) {
+		if ( strpos( $output, $entry_link ) !== false ) {
 			$wrapper_attributes['data-entry-link'] = $entry_link;
 		}
 
@@ -515,14 +541,14 @@ final class GravityView_Inline_Edit_GravityView extends GravityView_Inline_Edit_
 	 * @since 1.0
 	 * @since 2.0 Added $context parameter.
 	 *
-	 * @param string $css_class Existing CSS classes for the GravityView container.
+	 * @param string               $css_class Existing CSS classes for the GravityView container.
 	 * @param \GV\Template_Context $context Current context.
 	 *
 	 * @return string CSS class with X-editable CSS class added
 	 */
 	public function add_container_class( $css_class, $context ) {
 
-		if( ! $this->is_inline_edit_enabled( $context ) ) {
+		if ( ! $this->is_inline_edit_enabled( $context ) ) {
 			return $css_class;
 		}
 
@@ -540,12 +566,12 @@ final class GravityView_Inline_Edit_GravityView extends GravityView_Inline_Edit_
 
 		$tooltips = array(
 			array(
-				'image' => 'popup',
-				'description' => esc_html__('Popup: The edit form will appear above the content.', 'gk-gravityedit' ),
+				'image'       => 'popup',
+				'description' => esc_html__( 'Popup: The edit form will appear above the content.', 'gk-gravityedit' ),
 			),
 			array(
-				'image' => 'in-place',
-				'description' => esc_html__('In-Place: The edit form for the field will show in the same place as the content.', 'gk-gravityedit' ),
+				'image'       => 'in-place',
+				'description' => esc_html__( 'In-Place: The edit form for the field will show in the same place as the content.', 'gk-gravityedit' ),
 			),
 		);
 
@@ -583,13 +609,11 @@ final class GravityView_Inline_Edit_GravityView extends GravityView_Inline_Edit_
 			'default_value' => 'popup',
 			'horizontal'    => 1,
 			'choices'       => array(
-				array
-				(
+				array(
 					'label' => esc_html__( 'Popup', 'gk-gravityedit' ),
 					'value' => 'popup',
 				),
-				array
-				(
+				array(
 					'label' => esc_html__( 'In-Place', 'gk-gravityedit' ),
 					'value' => 'inline',
 				),

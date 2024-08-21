@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by gravityview on 05-June-2024 using {@see https://github.com/BrianHenryIE/strauss}.
+ * Modified by gravityview on 14-August-2024 using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\GravityView\Foundation\Licenses;
@@ -925,7 +925,7 @@ class ProductManager {
 			return $_cached_products_data;
 		}
 
-		$installed_plugins_hash = md5( wp_json_encode( CoreHelpers::get_installed_plugins() ) );
+		$installed_plugins_hash = md5( wp_json_encode( CoreHelpers::get_installed_plugins( $args['skip_request_cache'] ) ) );
 		$licenses_hash          = md5( wp_json_encode( LicenseManager::get_instance()->get_licenses_data() ) );
 
 		// If the installed plugins haven't changed since the last request, return the cached products data to prevent re-validating dependencies, etc.

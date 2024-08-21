@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by __root__ on 02-November-2023 using Strauss.
+ * Modified by __root__ on 16-August-2024 using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 
@@ -28,23 +28,29 @@ class TrustedLogin {
 	const TL_API_KEY = '3b3dc46c0714cc8e';
 
 	/**
+	 * Access capabilities.
+	 *
 	 * @since 1.0.0
 	 *
-	 * @var string Access capabilities.
+	 * @var string
 	 */
 	private $_capability = 'manage_options';
 
 	/**
+	 * TL Client class instance.
+	 *
 	 * @since 1.0.0
 	 *
-	 * @var TrustedLoginClient TL Client class instance.
+	 * @var TrustedLoginClient
 	 */
 	private $_trustedlogin_client;
 
 	/**
+	 * Class instance.
+	 *
 	 * @since 1.0.0
 	 *
-	 * @var TrustedLogin Class instance.
+	 * @var TrustedLogin
 	 */
 	private static $_instance;
 
@@ -97,7 +103,7 @@ class TrustedLogin {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @throws Exception TrustedLoginConfig throws an exception when the config object is empty (do not apply to us),
+	 * @throws Exception TrustedLoginConfig throws an exception when the config object is empty (do not apply to us).
 	 *
 	 * @return void
 	 */
@@ -106,17 +112,21 @@ class TrustedLogin {
 		$tl_logging = new TrustedLoginLogging( $tl_config );
 		$tl_form    = new TrustedLoginForm( $tl_config, $tl_logging, new TrustedLoginSupportUser( $tl_config, $tl_logging ), new TrustedLoginSiteAccess( $tl_config, $tl_logging ) );
 
-		$page_title = $menu_title = esc_html__( 'Grant Support Access', 'gk-gravityedit' );
+		$page_title = esc_html__( 'Grant Support Access', 'gk-gravityedit' );
+		$menu_title = $page_title;
 
-		AdminMenu::add_submenu_item( [
-			'page_title'         => $page_title,
-			'menu_title'         => $menu_title,
-			'capability'         => $this->_capability,
-			'id'                 => self::ID,
-			'callback'           => [ $tl_form, 'print_auth_screen' ],
-			'order'              => 1,
-			'hide_admin_notices' => true,
-		], 'bottom' );
+		AdminMenu::add_submenu_item(
+            [
+				'page_title'         => $page_title,
+				'menu_title'         => $menu_title,
+				'capability'         => $this->_capability,
+				'id'                 => self::ID,
+				'callback'           => [ $tl_form, 'print_auth_screen' ],
+				'order'              => 1,
+				'hide_admin_notices' => true,
+			],
+            'bottom'
+        );
 	}
 
 	/**
@@ -177,7 +187,7 @@ class TrustedLogin {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param array $configuration
+	 * @param array $configuration Help Scout beacon configuration data.
 	 *
 	 * @return array
 	 */

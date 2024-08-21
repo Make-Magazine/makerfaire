@@ -2,10 +2,9 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by __root__ on 02-November-2023 using Strauss.
+ * Modified by __root__ on 16-August-2024 using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
-
 /**
  * Class Form
  *
@@ -16,13 +15,12 @@
 
 namespace GravityKit\GravityEdit\Foundation\ThirdParty\TrustedLogin;
 
-// Exit if accessed directly
+// Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-use \WP_User;
-
+use WP_User;
 
 /**
  * Creates the TrustedLogin support user form.
@@ -44,21 +42,29 @@ final class Form {
 	const ABOUT_LIVE_ACCESS_URL = 'https://www.trustedlogin.com/about/live-access/';
 
 	/**
-	 * @var Config
+	 * Config object.
+	 *
+	 * @var Config $config
 	 */
 	private $config;
 
 	/**
+	 * SiteAccess object.
+	 *
 	 * @var SiteAccess $site_access
 	 */
 	private $site_access;
 
 	/**
+	 * SupportUser object.
+	 *
 	 * @var SupportUser $support_user
 	 */
 	private $support_user;
 
 	/**
+	 * Logging object.
+	 *
 	 * @var null|Logging $logging
 	 */
 	private $logging;
@@ -66,7 +72,10 @@ final class Form {
 	/**
 	 * Admin constructor.
 	 *
-	 * @param Config $config
+	 * @param Config      $config Config object.
+	 * @param Logging     $logging Logging object.
+	 * @param SupportUser $support_user SupportUser object.
+	 * @param SiteAccess  $site_access SiteAccess object.
 	 */
 	public function __construct( Config $config, Logging $logging, SupportUser $support_user, SiteAccess $site_access ) {
 		$this->config       = $config;
@@ -112,6 +121,7 @@ final class Form {
 		$registered_filtered = array_filter( $registered );
 
 		if ( count( $registered ) !== count( $registered_filtered ) ) {
+			// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_print_r
 			$this->logging->log( 'Not all scripts and styles were registered: ' . print_r( $registered_filtered, true ), __METHOD__, 'error' );
 		}
 	}
@@ -141,34 +151,58 @@ final class Form {
 		$this->print_request_screen();
 	}
 
+	/**
+	 * Print the TrustedLogin override of the WP Login screen.
+	 *
+	 * @return void
+	 */
 	public function print_request_screen() {
 		global $interim_login, $wp_version;
 
-		// Don't output a "← Back to site" link on the login page
+		/**
+		 * This prevents the `#backtoblog` "← Go to {Site Name}" link from showing up on the login page.
+		 * Since we're overriding the login screen, setting this global using $_REQUEST['interim-login'] isn't possible.
+		 *
+		 * @see login_footer()
+		 */
+		// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 		$interim_login = true;
 
-		// The login_headertitle filter was deprecated in WP 5.2.0 for login_headertext
+		// The login_headertitle filter was deprecated in WP 5.2.0 for login_headertext.
 		if ( version_compare( $wp_version, '5.2.0', '<' ) ) {
 			add_filter( 'login_headertitle', '__return_empty_string' );
 		} else {
 			add_filter( 'login_headertext', '__return_empty_string' );
 		}
 
-		add_filter( 'login_headerurl', function () {
-			return $this->config->get_setting( 'vendor/website' );
-		} );
+		add_filter( 'login_headerurl', array( $this, 'callback_return_vendor_website' ) );
 
 		login_header();
 
 		wp_enqueue_style( 'common' );
 
-		wp_add_inline_style( 'common', $this->get_login_inline_css() );
+		$inline_css = $this->get_login_inline_css();
+		wp_add_inline_style( 'common', $inline_css );
 
+		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		echo $this->get_auth_screen();
 
 		login_footer();
 
 		die();
+	}
+
+	/**
+	 * Returns the vendor website setting.
+	 * This needs to be a separate method because it's used as a callback, and PHP 5.3 doesn't support $this in
+	 * anonymous functions.
+	 *
+	 * @since 1.8.0
+	 * @internal
+	 * @return array|false|int|string|null
+	 */
+	public function callback_return_vendor_website() {
+		return (string) $this->config->get_setting( 'vendor/website' );
 	}
 
 	/**
@@ -204,9 +238,15 @@ final class Form {
 	 * @return void
 	 */
 	public function print_auth_screen() {
+		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		echo $this->get_auth_screen();
 	}
 
+	/**
+	 * Returns the HTML for the auth header, which shows whether support user has access, and the Revoke Access button.
+	 *
+	 * @return string
+	 */
 	public function get_auth_header_html() {
 		$support_users = $this->support_user->get_all();
 
@@ -216,7 +256,7 @@ final class Form {
 
 		$support_user = $support_users[0];
 
-		$_user_creator_id = get_user_option( $this->support_user->created_by_meta_key, $support_user->ID );
+		$_user_creator_id = get_user_option( $this->support_user->created_by_meta_key, $support_user->ID ); // @phpstan-ignore-line
 		$_user_creator    = $_user_creator_id ? get_user_by( 'id', $_user_creator_id ) : false;
 
 		// translators: %s is the ID of the user who created the support session. The user can't be found; only the User ID is known.
@@ -233,9 +273,9 @@ final class Form {
 
 		$content = array(
 			'display_name'         => $support_user->display_name,
-			'revoke_access_button' => sprintf( '<a href="%s" class="button button-danger alignright tl-client-revoke-button">%s</a>', $revoke_url, esc_html__( 'Revoke Access', 'gk-gravityedit' ) ),
-			// translators: %s is the display name of the user who granted access
-			'auth_meta'            => sprintf( esc_html__( 'Created %s ago by %s', 'gk-gravityedit' ), human_time_diff( strtotime( $support_user->user_registered ) ), $auth_meta ),
+			'revoke_access_button' => sprintf( '<a href="%1$s" class="button button-danger alignright tl-client-revoke-button">%2$s</a>', $revoke_url, esc_html__( 'Revoke Access', 'gk-gravityedit' ) ),
+			// translators: %s is the display name of the user who granted access.
+			'auth_meta'            => sprintf( esc_html__( 'Created %1$s ago by %2$s', 'gk-gravityedit' ), human_time_diff( strtotime( $support_user->user_registered ) ), $auth_meta ),
 		);
 
 		return $this->prepare_output( $template, $content );
@@ -265,7 +305,7 @@ final class Form {
 			'footer'                  => $this->get_footer_html(),
 			'reference'               => $this->get_reference_html(),
 			'admin_debug'             => $this->get_admin_debug_html(),
-			'terms_of_service'		  => $this->get_terms_of_service_html(),
+			'terms_of_service'        => $this->get_terms_of_service_html(),
 		);
 
 		$auth_screen_template = '
@@ -308,6 +348,13 @@ final class Form {
 		return $output;
 	}
 
+	/**
+	 * Returns the HTML for the header of the Auth screen, which includes the vendor logo.
+	 *
+	 * @since 1.6.0
+	 *
+	 * @return string
+	 */
 	private function get_header_html() {
 
 		if ( $this->is_login_screen() ) {
@@ -344,6 +391,7 @@ final class Form {
 
 		/**
 		 * Filter trustedlogin/{ns}/template/auth/terms_of_service/anchor.
+		 *
 		 * @since 1.6.0
 		 * @param string $tos_anchor The text of the link to the Terms of Service.
 		 */
@@ -352,7 +400,7 @@ final class Form {
 		$tos_link_template = '<a href="{{url}}" target="_blank" rel="noopener noreferrer">{{anchor}}</a>';
 
 		$tos_link_variables = array(
-			'url' => esc_url( $terms_of_service_url ),
+			'url'    => esc_url( $terms_of_service_url ),
 			'anchor' => esc_html( $tos_anchor ),
 		);
 
@@ -362,9 +410,9 @@ final class Form {
 			</div>';
 
 		$variables = array(
-			'ns'            => $this->config->ns(),
-			'tos_text'      => esc_html__( 'By granting access, you agree to the {{tos_link}}.', 'gk-gravityedit' ),
-			'tos_link'      => $this->prepare_output( $tos_link_template, $tos_link_variables ),
+			'ns'       => $this->config->ns(),
+			'tos_text' => esc_html__( 'By granting access, you agree to the {{tos_link}}.', 'gk-gravityedit' ),
+			'tos_link' => $this->prepare_output( $tos_link_template, $tos_link_variables ),
 		);
 
 		return $this->prepare_output( $terms_of_service_template, $variables );
@@ -403,7 +451,7 @@ final class Form {
 		$template = '<div class="tl-{{ns}}-auth__ref"><p><span class="tl-{{ns}}-auth_ref__id">{{reference_text}}</span></p></div>';
 
 		$content = array(
-			// translators: %s is the reference ID
+			// translators: %s is the reference ID.
 			'reference_text' => sprintf( esc_html__( 'Reference #%s', 'gk-gravityedit' ), $reference_id ),
 			'ns'             => $this->config->ns(),
 			'site_url'       => esc_html( str_replace( array( 'https://', 'http://' ), '', get_site_url() ) ),
@@ -412,14 +460,20 @@ final class Form {
 		return $this->prepare_output( $template, $content );
 	}
 
+	/**
+	 * Returns the HTML for the intro section of the Auth screen (e.g. "Grant Acme Widgets access to this site.")
+	 *
+	 * @since 1.5.0
+	 *
+	 * @return string
+	 */
 	private function get_intro() {
-
 
 		$has_access = $this->support_user->get_all();
 
 		if ( $has_access ) {
 			foreach ( $has_access as $access ) {
-				// translators: %1$s is replaced with the name of the software developer (e.g. "Acme Widgets"). %2$s is the amount of time remaining for access ("1 week")
+				// translators: %1$s is replaced with the name of the software developer (e.g. "Acme Widgets"). %2$s is the amount of time remaining for access ("1 week").
 				$intro = sprintf( esc_html__( '%1$s has site access that expires in %2$s.', 'gk-gravityedit' ), '<a href="' . esc_url( $this->config->get_setting( 'vendor/website' ) ) . '" target="_blank" rel="noopener noreferrer">' . $this->config->get_setting( 'vendor/title' ) . '</a>', str_replace( ' ', '&nbsp;', $this->support_user->get_expiration( $access, true, false ) ) );
 			}
 
@@ -427,10 +481,10 @@ final class Form {
 		}
 
 		if ( $this->is_login_screen() ) {
-			// translators: %1$s is replaced with the name of the software developer (e.g. "Acme Widgets")
+			// translators: %1$s is replaced with the name of the software developer (e.g. "Acme Widgets").
 			$intro = sprintf( esc_html__( '%1$s would like support access to this site.', 'gk-gravityedit' ), '<a href="' . esc_url( $this->config->get_setting( 'vendor/website' ) ) . '">' . $this->config->get_display_name() . '</a>' );
 		} else {
-			// translators: %1$s is replaced with the name of the software developer (e.g. "Acme Widgets")
+			// translators: %1$s is replaced with the name of the software developer (e.g. "Acme Widgets").
 			$intro = sprintf( esc_html__( 'Grant %1$s access to this site.', 'gk-gravityedit' ), '<a href="' . esc_url( $this->config->get_setting( 'vendor/website' ) ) . '">' . $this->config->get_display_name() . '</a>' );
 		}
 
@@ -463,16 +517,23 @@ final class Form {
 		return $this->config->get_setting( 'webhook/url' ) && $this->config->get_setting( 'webhook/debug_data', false );
 	}
 
+	/**
+	 * Returns the HTML for the details section, which includes the roles, capabilities, and expiration details.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return string
+	 */
 	private function get_details_html() {
 
 		$has_access = $this->support_user->get_all();
 
-		// Has access
+		// Has access.
 		if ( $has_access ) {
-			$output_template = '';
+			$output_template  = '';
 			$output_template .= '{{users_table}}';
-			$content         = array(
-				'users_table' => $this->output_support_users( false, array( 'current_url' => true ) ),
+			$content          = array(
+				'users_table' => $this->output_support_users( false ),
 			);
 
 			return $this->prepare_output( $output_template, $content, false );
@@ -496,7 +557,6 @@ final class Form {
 			';
 
 		if ( $this->is_create_ticket_enabled() ) {
-
 			$message_summary = sprintf(
 				'<span
 					class="tl-{{ns}}-toggle"
@@ -506,7 +566,8 @@ final class Form {
 				esc_html__( 'Include a message for support?', 'gk-gravityedit' )
 			);
 
-			$message_fields  = sprintf( '
+			$message_fields = sprintf(
+				'
 				<fieldset class="tl-{{ns}}-ticket__fields hidden">
 					<textarea
 						class="tl-{{ns}}-ticket-field__message large-text"
@@ -516,15 +577,19 @@ final class Form {
 						rows="8"
 					></textarea>
 				</fieldset>
-			', esc_html__( 'Please describe the issue you are having.', 'gk-gravityedit' ) );
+			',
+				esc_html__( 'Please describe the issue you are having.', 'gk-gravityedit' )
+			);
 
-			$output_template .= $this->prepare_output( '<div class="tl-{{ns}}-ticket">
+			$output_template .= $this->prepare_output(
+				'<div class="tl-{{ns}}-ticket">
 					<h2>
 						<span class="dashicons dashicons-format-chat dashicons--large"></span>
 						{{message_summary}}
 					</h2>
 					{{message_fields}}
-				</div>', array(
+				</div>',
+				array(
 					'ns'              => $ns,
 					'message_summary' => $this->prepare_output( $message_summary, array( 'ns' => $ns ) ),
 					'message_fields'  => $this->prepare_output( $message_fields, array( 'ns' => $ns ) ),
@@ -539,26 +604,25 @@ final class Form {
 				</div>';
 		}
 
-		// translators: %s is replaced with the of time that the login will be active for (e.g. "1 week")
+		// translators: %s is replaced with the of time that the login will be active for (e.g. "1 week").
 		$expire_summary = sprintf( esc_html__( 'Access this site for %s.', 'gk-gravityedit' ), '<strong>' . human_time_diff( 0, $this->config->get_setting( 'decay' ) ) . '</strong>' );
 
-		// translators: %s is replaced by the amount of time that the login will be active for (e.g. "1 week")
+		// translators: %s is replaced by the amount of time that the login will be active for (e.g. "1 week").
 		$expire_desc = '<small>' . sprintf( esc_html__( 'Access auto-expires in %s. You may revoke access at any time.', 'gk-gravityedit' ), human_time_diff( 0, $this->config->get_setting( 'decay' ) ) ) . '</small>';
 
 		$cloned_role = translate_user_role( ucfirst( $this->config->get_setting( 'role' ) ) );
 
-		if( $this->config->get_setting( 'clone_role' ) ) {
+		if ( $this->config->get_setting( 'clone_role' ) ) {
 
-			// translators: %s is replaced with the name of the role (e.g. "Administrator")
+			// translators: %s is replaced with the name of the role (e.g. "Administrator").
 			$roles_summary = sprintf( esc_html__( 'Create a user with a role based on %s.', 'gk-gravityedit' ), '<strong>' . $cloned_role . '</strong>' );
 
 			if ( $this->config->get_setting( 'caps/add' ) || $this->config->get_setting( 'caps/remove' ) ) {
 				$roles_summary .= sprintf( '<small class="tl-' . $ns . '-toggle" data-toggle=".tl-' . $ns . '-auth__role-container">%s <span class="dashicons dashicons--small dashicons-arrow-down-alt2"></span></small>', esc_html__( 'View modified role capabilities', 'gk-gravityedit' ) );
 			}
-
 		} else {
 
-			// translators: %s is replaced with the name of the role (e.g. "Administrator")
+			// translators: %s is replaced with the name of the role (e.g. "Administrator").
 			$roles_summary = sprintf( esc_html__( 'Create a user with a role of %s.', 'gk-gravityedit' ), '<strong>' . $cloned_role . '</strong>' );
 		}
 
@@ -587,10 +651,16 @@ final class Form {
 	private function get_debug_data_consent_html() {
 
 		// translators: [link] and [/link] are replaced with a link to the Site Health page. Do not translate.
-		$output = sprintf( '<h2><label><input type="checkbox" id="tl-{{ns}}-debug-data-consent" class="tl-{{ns}}-auth__checkbox--large" /> %s</label></h2>', strtr( esc_html__( 'Include the [link]Site Health[/link] troubleshooting report', 'gk-gravityedit' ), array(
-			'[link]'  => '<a href="' . esc_url( admin_url( 'site-health.php?tab=debug' ) ) . '">',
-			'[/link]' => '</a>',
-		) ) );
+		$output = sprintf(
+			'<h2><label><input type="checkbox" id="tl-{{ns}}-debug-data-consent" class="tl-{{ns}}-auth__checkbox--large" /> %s</label></h2>',
+			strtr(
+				esc_html__( 'Include the [link]Site Health[/link] troubleshooting report', 'gk-gravityedit' ),
+				array(
+					'[link]'  => '<a href="' . esc_url( admin_url( 'site-health.php?tab=debug' ) ) . '">',
+					'[/link]' => '</a>',
+				)
+			)
+		);
 
 		$content = array(
 			'ns' => $this->config->ns(),
@@ -609,7 +679,7 @@ final class Form {
 		$added   = $this->config->get_setting( 'caps/add' );
 		$removed = $this->config->get_setting( 'caps/remove' );
 
-		$caps = '';
+		$caps  = '';
 		$caps .= $this->get_caps_section( $added, __( 'Additional capabilities:', 'gk-gravityedit' ), 'dashicons-yes-alt' );
 		$caps .= $this->get_caps_section( $removed, __( 'Removed capabilities:', 'gk-gravityedit' ), 'dashicons-dismiss' );
 
@@ -621,11 +691,11 @@ final class Form {
 	}
 
 	/**
-	 * Generate additional/removed capabilities sections
+	 * Generate additional/removed capabilities sections.
 	 *
-	 * @param array $caps_array Associative array of cap => reason why cap is set
-	 * @param string $heading Text to show for the heading of the caps section
-	 * @param string $dashicon CSS class for the specific dashicon
+	 * @param array  $caps_array Associative array of cap => reason why cap is set.
+	 * @param string $heading Text to show for the heading of the caps section.
+	 * @param string $dashicon CSS class for the specific dashicon.
 	 *
 	 * @return string
 	 */
@@ -637,7 +707,7 @@ final class Form {
 			return '';
 		}
 
-		$output = '';
+		$output  = '';
 		$output .= '<div>';
 		$output .= '<h3>' . esc_html( $heading ) . '</h3>';
 		$output .= '<ul>';
@@ -645,7 +715,7 @@ final class Form {
 		foreach ( (array) $caps_array as $cap => $reason ) {
 			$dashicon = '<span class="dashicons ' . esc_attr( $dashicon ) . ' dashicons--small"></span>';
 			$reason   = empty( $reason ) ? '' : '<small>' . esc_html( $reason ) . '</small>';
-			$output   .= sprintf( '<li>%s<span class="code">%s</span>%s</li>', $dashicon, esc_html( $cap ), $reason );
+			$output  .= sprintf( '<li>%s<span class="code">%s</span>%s</li>', $dashicon, esc_html( $cap ), $reason );
 		}
 
 		$output .= '</ul>';
@@ -680,7 +750,7 @@ final class Form {
 			</div>';
 
 		$content = array(
-			// translators: %s is replaced with the name of the software developer (e.g. "Acme Widgets")
+			// translators: %s is replaced with the name of the software developer (e.g. "Acme Widgets").
 			'local_site'            => sprintf( esc_html__( '%s support may not be able to access this site.', 'gk-gravityedit' ), $this->config->get_setting( 'vendor/title' ) ),
 			'need_access'           => esc_html__( 'This website is running in a local development environment. To provide support, we must be able to access your site using a publicly-accessible URL.', 'gk-gravityedit' ),
 			'about_live_access_url' => esc_url( $this->config->get_setting( 'vendor/about_live_access_url', self::ABOUT_LIVE_ACCESS_URL ) ),
@@ -691,6 +761,8 @@ final class Form {
 	}
 
 	/**
+	 * Returns the logo HTML shown at the top of the Auth form.
+	 *
 	 * @return string
 	 */
 	private function get_logo_html() {
@@ -703,7 +775,7 @@ final class Form {
 			$logo_output = sprintf(
 				'<a href="%1$s" title="%2$s" target="_blank" rel="noreferrer noopener"><img src="%3$s" alt="%4$s" /></a>',
 				esc_url( $this->config->get_setting( 'vendor/website' ) ),
-				// translators: %s is replaced with the name of the software developer (e.g. "Acme Widgets")
+				// translators: %s is replaced with the name of the software developer (e.g. "Acme Widgets").
 				sprintf( 'Visit the %s website (opens in a new tab)', $this->config->get_setting( 'vendor/title' ) ),
 				esc_attr( $this->config->get_setting( 'vendor/logo_url' ) ),
 				esc_attr( $this->config->get_setting( 'vendor/title' ) )
@@ -722,8 +794,9 @@ final class Form {
 
 		$support_url = $this->config->get_setting( 'vendor/support_url' );
 
-		if ( $reference_id = Client::get_reference_id() ) {
+		$reference_id = Client::get_reference_id();
 
+		if ( $reference_id ) {
 			$support_args = array(
 				'tl'  => Client::VERSION,
 				'ref' => $reference_id,
@@ -735,7 +808,7 @@ final class Form {
 
 		$footer_links = array(
 			esc_html__( 'Learn about TrustedLogin', 'gk-gravityedit' )                    => self::ABOUT_TL_URL,
-			// translators: %s is replaced with the name of the software developer (e.g. "Acme Widgets")
+			// translators: %s is replaced with the name of the software developer (e.g. "Acme Widgets").
 			sprintf( 'Visit %s support', $this->config->get_setting( 'vendor/title' ) ) => $support_url,
 		);
 
@@ -778,29 +851,30 @@ final class Form {
 	 */
 	private function get_admin_debug_html() {
 
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		if ( ! isset( $_GET['debug'] ) ) {
 			return '';
 		}
 
-		if(  ! current_user_can( 'manage_options' ) ) {
+		if ( ! current_user_can( 'manage_options' ) ) {
 			return '';
 		}
 
-		$remote = new Remote( $this->config, $this->logging );
+		$remote     = new Remote( $this->config, $this->logging );
 		$encryption = new Encryption( $this->config, $remote, $this->logging );
 
 		$items = array(
 			esc_html__( 'TrustedLogin Status', 'gk-gravityedit' ) => sprintf( '<a href="%s" target="_blank" rel="noopener noreferrer">%s</a>', 'https://status.trustedlogin.com', is_wp_error( wp_remote_request( 'https://app.trustedlogin.com/api/status' ) ) ? esc_html__( 'Offline', 'gk-gravityedit' ) : esc_html__( 'Online', 'gk-gravityedit' ) ),
-			esc_html__( 'API Key', 'gk-gravityedit' ) => sprintf( '<code>%s</code>', $this->config->get_setting( 'auth/api_key' ) ),
+			esc_html__( 'API Key', 'gk-gravityedit' )     => sprintf( '<code>%s</code>', $this->config->get_setting( 'auth/api_key' ) ),
 			esc_html__( 'License Key', 'gk-gravityedit' ) => sprintf( '<code>%s</code>', $this->config->get_setting( 'auth/license_key' ) ),
-			esc_html__( 'Log URL', 'gk-gravityedit' ) => sprintf( '<a href="%s" target="_blank" rel="noopener noreferrer">%s</a>', str_replace( ABSPATH, get_site_url() . '/', $this->logging->get_log_file_path() ), esc_html__( 'Download the log', 'gk-gravityedit' ) ),
-			esc_html__( 'Log Level', 'gk-gravityedit' ) => $this->config->get_setting( 'logging/threshold', esc_html__( '(Default)', 'gk-gravityedit' ) ),
+			esc_html__( 'Log URL', 'gk-gravityedit' )     => sprintf( '<a href="%s" target="_blank" rel="noopener noreferrer">%s</a>', str_replace( ABSPATH, get_site_url() . '/', $this->logging->get_log_file_path() ), esc_html__( 'Download the log', 'gk-gravityedit' ) ),
+			esc_html__( 'Log Level', 'gk-gravityedit' )   => $this->config->get_setting( 'logging/threshold', esc_html__( '(Default)', 'gk-gravityedit' ) ),
 			esc_html__( 'Webhook URL', 'gk-gravityedit' ) => sprintf( '<code>%s</code>', $this->config->get_setting( 'webhook/url', '(Empty)' ) ),
 			esc_html__( 'Vendor Public Key', 'gk-gravityedit' ) => sprintf( '<code>%s</code> (<a href="%s" target="_blank">%s</a>)', $encryption->get_vendor_public_key(), $encryption->get_remote_encryption_key_url(), esc_html__( 'Verify key', 'gk-gravityedit' ) ),
 		);
 
 		$debugging_info = '';
-		foreach( $items as $label => $value ) {
+		foreach ( $items as $label => $value ) {
 			$debugging_info .= sprintf( '<p><strong>%s</strong>: %s</p>', $label, $value );
 		}
 
@@ -812,15 +886,27 @@ final class Form {
             {{tl_config}}
         </div>';
 
-		return $this->prepare_output( $debugging_output, array(
-			'ns' => $this->config->ns(),
-			'debugging_label' => esc_html__( 'Debugging Info', 'gk-gravityedit' ),
-			'debugging_info' => $debugging_info,
-			'tl_config_label' => esc_html__( 'TrustedLogin Config', 'gk-gravityedit' ),
-			'tl_config' => '<pre>' . print_r( $this->config->get_settings(), true ) . '</pre>',
-		) );
+		return $this->prepare_output(
+			$debugging_output,
+			array(
+				'ns'              => $this->config->ns(),
+				'debugging_label' => esc_html__( 'Debugging Info', 'gk-gravityedit' ),
+				'debugging_info'  => $debugging_info,
+				'tl_config_label' => esc_html__( 'TrustedLogin Config', 'gk-gravityedit' ),
+				'tl_config'       => '<pre>' . print_r( $this->config->get_settings(), true ) . '</pre>', // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_print_r
+			)
+		);
 	}
 
+	/**
+	 * Replace placeholders in a template with content.
+	 *
+	 * @param string $template The template to use for the output.
+	 * @param array  $content  The content to replace in the template.
+	 * @param bool   $wp_kses Whether to run the output through wp_kses.
+	 *
+	 * @return string
+	 */
 	private function prepare_output( $template, $content, $wp_kses = true ) {
 
 		$output_html = $template;
@@ -831,7 +917,7 @@ final class Form {
 
 		if ( $wp_kses ) {
 
-			// Allow SVGs for logos
+			// Allow SVGs for logos.
 			$allowed_protocols   = wp_allowed_protocols();
 			$allowed_protocols[] = 'data';
 
@@ -863,42 +949,103 @@ final class Form {
 						'data-toggle' => array(),
 						'style'       => array(),
 					),
-					'label'    => array( 'class' => array(), 'id' => array(), 'for' => array() ),
-					'code'     => array( 'class' => array(), 'id' => array() ),
-					'tt'       => array( 'class' => array(), 'id' => array() ),
-					'pre'      => array( 'class' => array(), 'id' => array() ),
-					'table'    => array( 'class' => array(), 'id' => array() ),
+					'label'    => array(
+						'class' => array(),
+						'id'    => array(),
+						'for'   => array(),
+					),
+					'code'     => array(
+						'class' => array(),
+						'id'    => array(),
+					),
+					'tt'       => array(
+						'class' => array(),
+						'id'    => array(),
+					),
+					'pre'      => array(
+						'class' => array(),
+						'id'    => array(),
+					),
+					'table'    => array(
+						'class' => array(),
+						'id'    => array(),
+					),
 					'thead'    => array(),
 					'tfoot'    => array(),
-					'td'       => array( 'class' => array(), 'id' => array(), 'colspan' => array() ),
+					'td'       => array(
+						'class'   => array(),
+						'id'      => array(),
+						'colspan' => array(),
+					),
 					'th'       => array(
 						'class'   => array(),
 						'id'      => array(),
 						'colspan' => array(),
 						'scope'   => array(),
 					),
-					'ul'       => array( 'class' => array(), 'id' => array() ),
-					'li'       => array( 'class' => array(), 'id' => array() ),
-					'p'        => array( 'class' => array(), 'id' => array() ),
-					'h1'       => array( 'class' => array(), 'id' => array() ),
-					'h2'       => array( 'class' => array(), 'id' => array() ),
-					'h3'       => array( 'class' => array(), 'id' => array(), 'style' => array(), ),
-					'h4'       => array( 'class' => array(), 'id' => array() ),
-					'h5'       => array( 'class' => array(), 'id' => array() ),
+					'ul'       => array(
+						'class' => array(),
+						'id'    => array(),
+					),
+					'li'       => array(
+						'class' => array(),
+						'id'    => array(),
+					),
+					'p'        => array(
+						'class' => array(),
+						'id'    => array(),
+					),
+					'h1'       => array(
+						'class' => array(),
+						'id'    => array(),
+					),
+					'h2'       => array(
+						'class' => array(),
+						'id'    => array(),
+					),
+					'h3'       => array(
+						'class' => array(),
+						'id'    => array(),
+						'style' => array(),
+					),
+					'h4'       => array(
+						'class' => array(),
+						'id'    => array(),
+					),
+					'h5'       => array(
+						'class' => array(),
+						'id'    => array(),
+					),
 					'div'      => array(
 						'class'     => array(),
 						'id'        => array(),
 						'aria-live' => array(),
 						'style'     => array(),
 					),
-					'small'    => array( 'class' => array(), 'id' => array(), 'data-toggle' => array() ),
-					'header'   => array( 'class' => array(), 'id' => array() ),
-					'footer'   => array( 'class' => array(), 'id' => array() ),
-					'section'  => array( 'class' => array(), 'id' => array() ),
+					'small'    => array(
+						'class'       => array(),
+						'id'          => array(),
+						'data-toggle' => array(),
+					),
+					'header'   => array(
+						'class' => array(),
+						'id'    => array(),
+					),
+					'footer'   => array(
+						'class' => array(),
+						'id'    => array(),
+					),
+					'section'  => array(
+						'class' => array(),
+						'id'    => array(),
+					),
 					'br'       => array(),
 					'strong'   => array(),
 					'em'       => array(),
-					'fieldset' => array( 'class' => array(), 'id' => array() ),
+					'fieldset' => array(
+						'class' => array(),
+						'id'    => array(),
+					),
 					'input'    => array(
 						'class'      => array(),
 						'id'         => array(),
@@ -936,12 +1083,12 @@ final class Form {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param array $atts {@see get_button()} for configuration array
-	 * @param bool $print Should results be printed and returned (true) or only returned (false)
+	 * @param array $atts {@see get_button()} for configuration array.
+	 * @param bool  $print_and_return Should results be printed and returned (true) or only returned (false).
 	 *
 	 * @return string the HTML output
 	 */
-	public function generate_button( $atts = array(), $print = true ) {
+	public function generate_button( $atts = array(), $print_and_return = true ) {
 
 		if ( ! current_user_can( 'create_users' ) ) {
 			return '';
@@ -965,21 +1112,26 @@ final class Form {
 			'debug'         => $this->logging->is_enabled(),
 			'selector'      => '.button-trustedlogin-' . $this->config->ns(),
 			'reference_id'  => Client::get_reference_id(),
-			'query_string'  => esc_url( remove_query_arg( array(
-				Endpoint::REVOKE_SUPPORT_QUERY_PARAM,
-				'_wpnonce',
-			) ) ),
+			'query_string'  => esc_url(
+				remove_query_arg(
+					array(
+						Endpoint::REVOKE_SUPPORT_QUERY_PARAM,
+						'_wpnonce',
+					)
+				)
+			),
 			'create_ticket' => $this->is_create_ticket_enabled(),
 		);
 
-		// TODO: Add data to tl_obj when detecting that it's already been localized by another vendor
+		// TODO: Add data to tl_obj when detecting that it's already been localized by another vendor.
 		wp_localize_script( 'trustedlogin-' . $this->config->ns(), 'tl_obj', $button_settings );
 
 		wp_enqueue_script( 'trustedlogin-' . $this->config->ns() );
 
 		$return = $this->get_button( $atts );
 
-		if ( $print ) {
+		if ( $print_and_return ) {
+			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 			echo $return;
 		}
 
@@ -990,7 +1142,7 @@ final class Form {
 	 * Generates HTML for a TrustedLogin Grant Access button
 	 *
 	 * @param array $atts {
-	 *
+	 * Settings for the button.
 	 * @type string $text Button text to grant access. Sanitized using esc_html(). Default: "Grant %s Access"
 	 *                      (%s replaced with vendor/title setting)
 	 * @type string $exists_text Button text when vendor already has a support account. Sanitized using esc_html().
@@ -1008,13 +1160,13 @@ final class Form {
 	public function get_button( $atts = array() ) {
 
 		$defaults = array(
-			// translators: %s is replaced with the name of the software developer (e.g. "Acme Widgets")
+			// translators: %s is replaced with the name of the software developer (e.g. "Acme Widgets").
 			'text'        => sprintf( esc_html__( 'Grant %s Access', 'gk-gravityedit' ), $this->config->get_display_name() ),
-			// translators: %s is replaced with the name of the software developer (e.g. "Acme Widgets")
-			'exists_text' => sprintf( esc_html__( 'Extend %s Access', 'gk-gravityedit' ), $this->config->get_display_name(), ucwords( human_time_diff( time(), time() + $this->config->get_setting( 'decay' ) ) ) ),
+			// translators: %s is replaced with the name of the software developer (e.g. "Acme Widgets").
+			'exists_text' => sprintf( esc_html__( 'Extend %s Access', 'gk-gravityedit' ), $this->config->get_display_name(), ucwords( human_time_diff( time(), time() + (int) $this->config->get_setting( 'decay' ) ) ) ),
 			'size'        => 'hero',
 			'class'       => 'button-primary',
-			'tag'         => 'a', // "a", "button", "span"
+			'tag'         => 'a', // Inline tags only.
 			'powered_by'  => false,
 			'support_url' => $this->config->get_setting( 'vendor/support_url' ),
 		);
@@ -1031,7 +1183,7 @@ final class Form {
 				$css_class = 'button';
 				break;
 			default:
-				if ( ! in_array( $atts['size'], $sizes ) ) {
+				if ( ! in_array( $atts['size'], $sizes, true ) ) {
 					$atts['size'] = 'hero';
 				}
 
@@ -1132,12 +1284,12 @@ final class Form {
 		$error_content = sprintf(
 			'<p>%s</p><p>%s</p>',
 			sprintf(
-			// translators: %s is replaced with the name of the software developer (e.g. "Acme Widgets")
+			// translators: %s is replaced with the name of the software developer (e.g. "Acme Widgets").
 				esc_html__( 'The user details could not be sent to %1$s automatically.', 'gk-gravityedit' ),
 				$vendor_title
 			),
 			sprintf(
-			// translators: %1$s is the vendor support url and %2$s is the vendor title
+			// translators: %1$s is the vendor support url and %2$s is the vendor title.
 				__( 'Please <a href="%1$s" target="_blank">click here</a> to go to the %2$s support site', 'gk-gravityedit' ),
 				esc_url( add_query_arg( $query_args, $this->config->get_setting( 'vendor/support_url' ) ) ),
 				$vendor_title
@@ -1148,11 +1300,11 @@ final class Form {
 			'buttons' => array(
 				'confirm'    => esc_html__( 'Confirm', 'gk-gravityedit' ),
 				'ok'         => esc_html__( 'Ok', 'gk-gravityedit' ),
-				// translators: %1$s is the vendor title
+				// translators: %1$s is the vendor title.
 				'go_to_site' => sprintf( __( 'Go to %1$s support site', 'gk-gravityedit' ), $vendor_title ),
 				'close'      => esc_html__( 'Close', 'gk-gravityedit' ),
 				'cancel'     => esc_html__( 'Cancel', 'gk-gravityedit' ),
-				// translators: %1$s is the vendor title
+				// translators: %1$s is the vendor title.
 				'revoke'     => sprintf( esc_html__( 'Revoke %1$s support access', 'gk-gravityedit' ), $vendor_title ),
 				'copy'       => esc_html__( 'Copy', 'gk-gravityedit' ),
 				'copied'     => esc_html__( 'Copied!', 'gk-gravityedit' ),
@@ -1165,39 +1317,42 @@ final class Form {
 				'synced'             => array(
 					'title'   => esc_html__( 'Support access granted', 'gk-gravityedit' ),
 					'content' => sprintf(
-					// translators: %1$s is the vendor title
+					// translators: %1$s is the vendor title.
 						__( 'A temporary support user has been created, and sent to %1$s support.', 'gk-gravityedit' ),
 						$vendor_title
 					),
 				),
 				'pending'            => array(
-					// translators: %1$s is the vendor title
+					// translators: %1$s is the vendor title.
 					'content' => sprintf( __( 'Generating & encrypting secure support access for %1$s', 'gk-gravityedit' ), $vendor_title ),
 				),
 				'extending'          => array(
-					// translators: %1$s is the vendor title and %2$s is the human-readable expiration time (for example, "1 week")
-					'content' => sprintf( __( 'Extending support access for %1$s by %2$s', 'gk-gravityedit' ), $vendor_title, human_time_diff( time(), time() + $this->config->get_setting( 'decay' ) ) ),
+					// translators: %1$s is the vendor title and %2$s is the human-readable expiration time (for example, "1 week").
+					'content' => sprintf( __( 'Extending support access for %1$s by %2$s', 'gk-gravityedit' ), $vendor_title, human_time_diff( time(), time() + (int) $this->config->get_setting( 'decay' ) ) ),
 				),
 				'syncing'            => array(
-					// translators: %1$s is the vendor title
+					// translators: %1$s is the vendor title.
 					'content' => sprintf( __( 'Sending encrypted access to %1$s.', 'gk-gravityedit' ), $vendor_title ),
 				),
 				'error'              => array(
-					// translators: %1$s is the vendor title
+					// translators: %1$s is the vendor title.
 					'title'   => sprintf( __( 'Error syncing support user to %1$s', 'gk-gravityedit' ), $vendor_title ),
-					'content' => wp_kses( $error_content, array(
-						'a' => array(
-							'href'   => array(),
-							'rel'    => array(),
-							'target' => array(),
-						),
-						'p' => array(),
-					) ),
+					'content' => wp_kses(
+						$error_content,
+						array(
+							'a' => array(
+								'href'   => array(),
+								'rel'    => array(),
+								'target' => array(),
+							),
+							'p' => array(),
+						)
+					),
 				),
 				'cancel'             => array(
 					'title'   => esc_html__( 'Action Cancelled', 'gk-gravityedit' ),
 					'content' => sprintf(
-					// translators: %1$s is the vendor title
+					// translators: %1$s is the vendor title.
 						__( 'A support account for %1$s was not created.', 'gk-gravityedit' ),
 						$vendor_title
 					),
@@ -1212,7 +1367,7 @@ final class Form {
 				'accesskey'          => array(
 					'title'       => esc_html__( 'TrustedLogin Key Created', 'gk-gravityedit' ),
 					'content'     => sprintf(
-					// translators: %1$s is the vendor title
+					// translators: %1$s is the vendor title.
 						__( 'Share this TrustedLogin Key with %1$s to give them secure access:', 'gk-gravityedit' ),
 						$vendor_title
 					),
@@ -1224,15 +1379,20 @@ final class Form {
 				),
 				'error409'           => array(
 					'title'   => sprintf(
-					// translators: %1$s is the vendor title
+					// translators: %1$s is the vendor title.
 						__( '%1$s Support user already exists', 'gk-gravityedit' ),
 						$vendor_title
 					),
 					'content' => sprintf(
 						wp_kses(
-						// translators: %1$s is the vendor title, %2$s is the URL to the users list page
+						// translators: %1$s is the vendor title, %2$s is the URL to the users list page.
 							__( 'A support user for %1$s already exists. You may revoke this support access from your <a href="%2$s" target="_blank">Users list</a>.', 'gk-gravityedit' ),
-							array( 'a' => array( 'href' => array(), 'target' => array() ) )
+							array(
+								'a' => array(
+									'href'   => array(),
+									'target' => array(),
+								),
+							)
 						),
 						$vendor_title,
 						esc_url( admin_url( 'users.php?role=' . $this->support_user->role->get_name() ) )
@@ -1249,33 +1409,30 @@ final class Form {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param bool $print Whether to print and return (true) or return (false) the results. Default: true
-	 * @param array $atts Settings for the table. {
-	 *
-	 * @type bool $current_url Whether to generate Revoke links based on the current URL. Default: false.
-	 * }
+	 * @param bool $print_and_return Whether to print and return (true) or return (false) the results. Default: true.
 	 *
 	 * @return string HTML table of active support users for vendor. Empty string if current user can't `create_users`
 	 */
-	public function output_support_users( $print = true, $atts = array() ) {
+	public function output_support_users( $print_and_return = true ) {
 
 		if ( ( ! is_admin() && ! $this->is_login_screen() ) || ! current_user_can( 'create_users' ) ) {
 			return '';
 		}
 
-		// The `trustedlogin/{$ns}/button` action passes an empty string
-		if ( '' === $print ) {
-			$print = true;
+		// The `trustedlogin/{$ns}/button` action passes an empty string.
+		if ( '' === $print_and_return ) {
+			$print_and_return = true;
 		}
 
 		$support_users = $this->support_user->get_all();
 
 		if ( empty( $support_users ) ) {
 
-			// translators: %s is replaced with the name of the software developer (e.g. "Acme Widgets")
-			$return = '<h3>' . sprintf( esc_html__( 'No %s users exist.', 'gk-gravityedit' ), $this->config->get_setting( 'vendor/title' ) ) . '</h3>';
+			// translators: %s is replaced with the name of the software developer (e.g. "Acme Widgets").
+			$return = '<h3>' . sprintf( esc_html__( 'No %s users exist.', 'gk-gravityedit' ), esc_html( $this->config->get_setting( 'vendor/title' ) ) ) . '</h3>';
 
-			if ( $print ) {
+			if ( $print_and_return ) {
+				// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 				echo $return;
 			}
 
@@ -1287,7 +1444,6 @@ final class Form {
 		$access_key = $this->site_access->get_access_key();
 
 		if ( is_wp_error( $access_key ) ) {
-
 			$access_key_template = <<<EOD
 	<%3\$s class="tl-%1\$s-auth__accesskey">
 		<h3>%2\$s</h3>
@@ -1308,7 +1464,6 @@ EOD;
 				esc_html( $access_key->get_error_message() )
 			);
 		} else {
-
 			$access_key_template = <<<EOD
 	<%6\$s class="tl-%1\$s-auth__accesskey">
 		<label for="tl-%1\$s-access-key"><h3>%2\$s</h3></label>
@@ -1336,16 +1491,16 @@ EOD;
 				'div',
 				/* %7$s */
 				esc_html__( 'Copy the access key to your clipboard', 'gk-gravityedit' ),
+				// %8$s
 				// translators: %s is the display name of the TrustedLogin support user.
-				/* %8$s */
-				sprintf( esc_html__( 'The access key is not a password; only %1$s will be able to access your site using this code. You may share this access key on support forums.', 'gk-gravityedit' ), $this->support_user->get_first()->display_name )
+				sprintf( esc_html__( 'The access key is not a password; only %1$s will be able to access your site using this code. You may share this access key on support forums.', 'gk-gravityedit' ), esc_html( $this->support_user->get_first()->display_name ) )
 			);
 		}
 
-
 		$return .= $access_key_output;
 
-		if ( $print ) {
+		if ( $print_and_return ) {
+			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 			echo $return;
 		}
 
@@ -1362,17 +1517,19 @@ EOD;
 
 		static $displayed_notice;
 
-		// Only show notice once
+		// Only show notice once.
 		if ( $displayed_notice ) {
 			return;
 		}
 
 		?>
 		<div class="notice notice-success is-dismissible">
-			<h3><?php
-				// translators: %s is replaced with the name of the software developer (e.g. "Acme Widgets")
+			<h3>
+			<?php
+				// translators: %s is replaced with the name of the software developer (e.g. "Acme Widgets").
 				echo esc_html( sprintf( __( '%s access revoked.', 'gk-gravityedit' ), $this->config->get_setting( 'vendor/title' ) ) );
-				?></h3>
+			?>
+				</h3>
 			<?php if ( ! current_user_can( 'delete_users' ) ) { ?>
 				<p><?php echo esc_html__( 'You may safely close this window.', 'gk-gravityedit' ); ?></p>
 			<?php } ?>
@@ -1388,6 +1545,7 @@ EOD;
 	 * @return bool
 	 */
 	private function is_login_screen() {
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		return did_action( 'login_init' ) && isset( $_GET['ns'] ) && $_GET['ns'] === $this->config->ns();
 	}
 }

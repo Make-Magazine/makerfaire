@@ -1,6 +1,10 @@
 
 # Changelog
 
+## 1.1.61 | August 14, 2024
+
+- Fixed issue Gravity Flow editable fields not showing Nested Form on Approval Workflow Step.
+
 ## 1.1.60 | June 6, 2024
 
 - Added PHP DocBlock for the `gpnf_add_button_max_message` filter hook.
