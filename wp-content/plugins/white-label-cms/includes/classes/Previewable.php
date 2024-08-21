@@ -19,7 +19,6 @@ class WLCMS_Previewable
 
         $this->is_preview = true;
         $this->preview_section = isset($_GET['preview_section']) ? wp_filter_kses($_GET['preview_section']) : '';
-
     }
 
     public function place_holder()
@@ -55,16 +54,14 @@ class WLCMS_Previewable
         return $this->preview_section;
     }
 
-    public function settings() {
+    public function settings()
+    {
         return [];
     }
 
     public function get_settings($key)
     {
-        // Prepend "_" placeholder if in preview mode to get the preview login settings
-        $key = $this->setting_key($key);
-
-        return wlcms_field_setting($key);
+        return $this->get_db_setting($key);
     }
 
     public function setting_key($key)
@@ -72,7 +69,7 @@ class WLCMS_Previewable
         if ($this->is_preview) {
             $key = $this->preview_setting_key_placeholder . $key;
         }
-        
+
         return $key;
     }
 

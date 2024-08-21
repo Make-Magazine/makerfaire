@@ -27,13 +27,12 @@ class WLCMS_Settings
 
         // check or initiate export
         $this->export();
-
     }
-    public function plugin_settings($links, $file) 
+    public function plugin_settings($links, $file)
     {
         if (WLCMS_BASENAME == $file) {
             // Add your custom link
-            $custom_link = '<a href="' . admin_url('options-general.php?page=wlcms-plugin.php&wlcms-action=reset&_wlcms_anonce='. wp_create_nonce( 'wlcms-action-nonce' )). '"onclick="return confirm(\'Are you sure you want to reset?\')">Reset</a>';
+            $custom_link = '<a href="' . admin_url('options-general.php?page=wlcms-plugin.php&wlcms-action=reset&_wlcms_anonce=' . wp_create_nonce('wlcms-action-nonce')) . '"onclick="return confirm(\'Are you sure you want to reset?\')">Reset</a>';
             // Insert the custom link at the beginning of the array
             array_unshift($links, $custom_link);
         }
@@ -169,7 +168,7 @@ class WLCMS_Settings
 
     public function import()
     {
-        if(!is_wlcms_super_admin()) {
+        if (!is_wlcms_super_admin()) {
             return;
         }
 
@@ -224,7 +223,6 @@ class WLCMS_Settings
             WLCMS_Queue('Nothing to import, please check your json file format.', 'error');
             wp_redirect(wlcms()->admin_url());
             exit;
-
         }
 
         $this->setAll($settings);
@@ -239,7 +237,7 @@ class WLCMS_Settings
 
     public function export()
     {
-        if(!is_wlcms_super_admin()) {
+        if (!is_wlcms_super_admin()) {
             return;
         }
 
@@ -249,6 +247,7 @@ class WLCMS_Settings
             wp_redirect(wlcms()->admin_url());
             exit;
         }
+
         if (!isset($_GET['wlcms-action']) || (isset($_GET['wlcms-action']) && $_GET['wlcms-action'] != 'export')) {
             return;
         }
@@ -270,7 +269,7 @@ class WLCMS_Settings
     public function reset_plugin()
     {
         global $wpdb;
-        if( ! current_user_can( 'install_plugins' ) ) {
+        if (!current_user_can('install_plugins')) {
             return false;
         }
 
@@ -303,7 +302,7 @@ class WLCMS_Settings
         $settings = $this->default_options();
         return isset($settings[$key]) ? $settings[$key] : null;
     }
-    
+
     public function default_options()
     {
 
