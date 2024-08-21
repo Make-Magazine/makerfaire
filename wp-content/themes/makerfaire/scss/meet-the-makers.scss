@@ -283,6 +283,9 @@
                                     span, p {
                                         display: flex;
                                         align-items: center;
+                                        img {
+                                            margin-right: 13px;
+                                        }
                                     }
                                     p {
                                         overflow: hidden;
@@ -385,6 +388,9 @@
                                 margin-bottom: 0px;
                                 i.fa {
                                     margin-right: 7px;
+                                }
+                                img {
+                                    margin-right: 10px;
                                 }
                             }
                         }

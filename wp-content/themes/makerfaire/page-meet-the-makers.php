@@ -160,7 +160,6 @@ if (($showMakeProjects === 'mponly' || $showMakeProjects === 'mfandmp') && $MPCa
         </div>
 
         <div class="mtm-results container-fluid" mtm-scroll="loadMore()">
-            <div class="no-results" ng-if="(makers|filter:makerSearch).length == 0">No Results for your search and filter terms</div>
             <div ng-show="!makers.length" class="mtm-results-cont loading">
                 <div class="ng-scope mf-card"><a href="javascript:void();" style="pointer-events:none;"><article class="mtm-maker"><div class="mtm-image" style="background-image:url(https://makerfaire.com/wp-content/themes/makerfaire/images/stripe_bg1.gif);"></div><div class="mtm-text"><h3>Loading...</h3><div class="mtm-detail-items"><div class="mtm-detail-item"><span><i class="fa fa-user-robot"></i></span><p>&nbsp;</p></div><div class="mtm-detail-item"><span><i class="fa fa-rocket"></i></span><p>&nbsp;</p></div><div class="mtm-detail-item"><span><i class="fa fa-tent-double-peak"></i></span><p>&nbsp;</p></div></div><div class="read-more-link">More</div></div></article></article></a></div>
                 <div class="ng-scope mf-card"><a href="javascript:void();" style="pointer-events:none;"><article class="mtm-maker"><div class="mtm-image" style="background-image:url(https://makerfaire.com/wp-content/themes/makerfaire/images/stripe_bg1.gif);"></div><div class="mtm-text"><h3>Loading...</h3><div class="mtm-detail-items"><div class="mtm-detail-item"><span><i class="fa fa-user-robot"></i></span><p>&nbsp;</p></div><div class="mtm-detail-item"><span><i class="fa fa-rocket"></i></span><p>&nbsp;</p></div><div class="mtm-detail-item"><span><i class="fa fa-tent-double-peak"></i></span><p>&nbsp;</p></div></div><div class="read-more-link">More</div></div></article></article></a></div>
@@ -177,6 +176,7 @@ if (($showMakeProjects === 'mponly' || $showMakeProjects === 'mfandmp') && $MPCa
                     <span class="sr-only"><?php _e("Loading", 'makerfaire') ?>...</span>
                 </div>
             </div>
+            <div class="no-results" ng-if="(makers|filter:makerSearch).length == 0">No Results for your search and filter terms</div>
             <!-- Grid View -->
             <div ng-if="layout == 'grid'" class="mtm-results-cont">
                 <div class="mf-card" ng-repeat="maker in makers| filter : makerSearch | limitTo: limit">
