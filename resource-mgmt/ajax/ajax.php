@@ -432,16 +432,16 @@ function getDataByFaire($mysqli, $table, $selfaire) {
 				'width' => "25"
 		);
 		$data ['columnDefs'] [] = array (
-				'displayName' => "SubArea ID",
+				'displayName' => "ID",
 				'enableCellEdit' => false,
 				'enableFiltering' => false,
 				'headerCellClass' => '$scope.highlightFilteredHeader',
 				'name' => "ID",
-				'width' => "110"
+				'width' => "50"
 		);
 		$data ['columnDefs'] [] = array (
 				'cellFilter' => "griddropdown:this",
-				'displayName' => "Area Name",
+				'displayName' => "Area",
 				'editDropdownIdLabel' => "id",
 				'editDropdownOptionsArray' => $editOptions,
 				'editDropdownValueLabel' => "fkey",
@@ -452,7 +452,7 @@ function getDataByFaire($mysqli, $table, $selfaire) {
 						'selectOptions' => $selectOptions
 				),
 				'headerCellClass' => '$scope.highlightFilteredHeader',
-				'width' => 150
+				'width' => 100
 		);
 		$data ['columnDefs'] [] = array (
 				'displayName' => "Internal Name",
@@ -473,14 +473,14 @@ function getDataByFaire($mysqli, $table, $selfaire) {
 				'enableCellEdit' => true,
 				'enableFiltering' => true,
 				'name' => "sort_order",
-				'width' => "130"
+				'width' => "110"
 		);
 		$data ['columnDefs'] [] = array (
 			'displayName' => "Exposure",
 			'enableCellEdit' => true,
 			'enableFiltering' => true,
 			'name' => "exposure",
-			'width' => "130"
+			'width' => "200"
 	);
 		// build data
 		$query = "select wp_mf_faire_subarea.*, wp_mf_faire_area.faire_id as faire,
