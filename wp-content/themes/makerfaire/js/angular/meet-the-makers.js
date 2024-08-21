@@ -21,10 +21,10 @@ if (getUrlParam("featured")) {
 mtm.controller('mtmMakers', ['$scope', '$sce', '$filter', '$http', function ($scope, $sce, $filter, $http) {
         $scope.trust = $sce.trustAsHtml; // for rendering html
         //infinite scroll
-        $scope.limit = 10;
+        $scope.limit = 12;
         var counter = 0;
         $scope.loadMore = function () {
-            $scope.limit += 5;
+            $scope.limit += 12;
         };
 
         $scope.location = '';
@@ -52,7 +52,6 @@ mtm.controller('mtmMakers', ['$scope', '$sce', '$filter', '$http', function ($sc
         $scope.makers = [];
         catJson = [];
         var mp_array = [];
-        var catName = [];
         var noMakerText = jQuery('#noMakerText').val();
 
         var formIDs = jQuery('#forms2use').val();
