@@ -361,6 +361,9 @@ function getMTMentries($formIDs = '', $faireID = '', $years = '') {
 
             //Admin entry types (only for BA23 and forward)
             $types = explode(",", $result->types);
+            if (($key = array_search("Show Management", $types)) !== false) {
+                unset($types[$key]);
+            }
             
             //weekends               
             if ($faireID=='BA23' && isset($result->weekends)) {
