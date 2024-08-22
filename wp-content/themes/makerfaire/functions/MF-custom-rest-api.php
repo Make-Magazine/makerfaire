@@ -355,7 +355,7 @@ function getMTMentries($formIDs = '', $faireID = '', $years = '') {
             } else {
                 $fa = get_field('font_awesome', $mainCategory->taxonomy . '_' . $mainCategory->term_id);
                 if (!empty($fa)) {
-                    $mainCategoryIcon = '<i class="fa ' . $fa . '" aria-hidden="true"></i>';
+                    $mainCategoryIcon = '<a href="?category='.$primeCat.'"><i class="fa ' . $fa . '" aria-hidden="true"></i></a>';
                 }
             }
 
