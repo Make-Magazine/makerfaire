@@ -601,7 +601,7 @@ function getAddEntries($email, $currEntryID) {
         . '<td>' . $addData->projectName . '</td>'
         . '<td>' . $form['title'] . '</td>'
         . '<td>' . date_format($date, "m-d-Y") . '</td>'
-        . '<td>' . ucwords($addData->lead_status) . '</td>'
+        . '<td>' . ucwords($addData->status) . '</td>'
         . '</tr>';
     }
   }
