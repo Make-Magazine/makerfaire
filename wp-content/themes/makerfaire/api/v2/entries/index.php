@@ -477,7 +477,7 @@ function fieldOutput($fieldID, $entry, $field_array, $form, $arg = '') {
       case 'notifications_sent':
         global $view_notifications;
         if ($view_notifications) {
-          $type  = 'user';
+          $type  = 'notes';
           $label = 'Notifications Sent';
           $search_criteria = array('entry_id' => $entry['id'], 'note_type' => 'user');
           $value = GFAPI::get_notes($search_criteria, array('key' => 'id', 'direction' => 'DESC'));
