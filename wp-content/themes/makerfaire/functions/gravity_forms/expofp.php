@@ -193,6 +193,9 @@ function createExpoFpExhibit($entry, $form, $expofpToken, $expofpId) {
     ];
     postCurl($entryID_url, $headers, json_encode($entryID_data), "POST");
 
+    // remove duplicate categories, as that would break the expofp api
+    $categories = array_unique($categories, SORT_REGULAR);
+
     $data = [
         "token" => $expofpToken,
         "eventId" => $expofpId,
@@ -202,7 +205,7 @@ function createExpoFpExhibit($entry, $form, $expofpToken, $expofpId) {
         "address" => $rmt_shown, // this holds all the resources and attributes entered as a comma delimited string
         "website" => "https://makerfaire.com/maker/entry/" . $entry['id'], // this will be the maker/entry page
         "externalId" => $entry['id'],
-        "categories" => array_unique($categories, SORT_REGULAR), // dedupe categories array
+        "categories" => array_values($categories), // array_values here removes empty array elements removed by array_unique, as that would also break the api
         "tags" => $tags
     ];
 
@@ -324,7 +327,9 @@ function updateExpoFpExhibit($entry, $form, $expofpToken, $expofpId, $exhibitor_
         "eventId" =>  $expofpId
     ];
     postCurl($entryID_url, $headers, json_encode($entryID_data), "POST");
-    error_log(print_r($categories, TRUE));
+
+    // remove duplicate categories, as that would break the expofp api
+    $categories = array_unique($categories, SORT_REGULAR);
 
     $data = [
         "token" => $expofpToken,
@@ -334,13 +339,13 @@ function updateExpoFpExhibit($entry, $form, $expofpToken, $expofpId, $exhibitor_
         "featured" => $featured,
         "address" => $rmt_shown, // this holds all the resources and attributes entered as a comma delimited string
         "website" => "https://makerfaire.com/maker/entry/" . $entry['id'], // this will be the maker/entry page
-        "categories" => array_unique($categories, SORT_REGULAR),
+        "categories" => array_values($categories), // array_values here removes empty array elements removed by array_unique, as that would also break the api
         "tags" => $tags
     ];
 
-    error_log(print_r($data, TRUE));
+    //error_log(print_r($data, TRUE));
     $result = postCurl($url, $headers, json_encode($data), "POST");
-    error_log(print_r($result, TRUE));
+    //error_log(print_r($result, TRUE));
 
     return $result;
 }
