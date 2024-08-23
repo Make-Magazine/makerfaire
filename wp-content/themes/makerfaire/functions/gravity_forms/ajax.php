@@ -130,18 +130,18 @@ function mf_admin_MFupdate_entry() {
   //Only process if there was a gravity forms action
   if (!empty($mfAction)) {
     $entry_id       = $_POST['entry_id'];
-    $lead           = GFAPI::get_entry($entry_id);
-    $original_entry = $lead;
-    $form_id        = isset($lead['form_id']) ? $lead['form_id'] : 0;
+    $entry           = GFAPI::get_entry($entry_id);
+    $original_entry = $entry;
+    $form_id        = isset($entry['form_id']) ? $entry['form_id'] : 0;
     $form           = RGFormsModel::get_form_meta($form_id);
 
     switch ($mfAction) {
         // Entry Management Update      
       case 'update_entry_management':
-        upd_flags_prelim_loc($lead, $form);
+        upd_flags_prelim_loc($entry, $form);
         break;
       case 'update_entry_status':
-        set_entry_status($lead, $form, $entry_id);
+        set_entry_status($entry, $form, $entry_id);
         break;
       case 'update_ticket_code':
         $ticket_code  = $_POST['entry_ticket_code'];
@@ -149,32 +149,32 @@ function mf_admin_MFupdate_entry() {
         mf_update_entry_field($entry_id, '308', $ticket_code);
         break;
       case 'update_entry_schedule':
-        set_entry_schedule($lead, $form);
+        set_entry_schedule($entry, $form);
         break;
       case 'delete_entry_schedule':
-        delete_entry_schedule($lead, $form);
+        delete_entry_schedule($entry, $form);
         break;
       case 'change_form_id':
-        $response['entryID'] = set_form_id($lead, $form);
+        $response['entryID'] = set_form_id($entry, $form);
         break;
       case 'duplicate_entry_id':
-        $response['entryID'] = duplicate_entry_id($lead, $form);
+        $response['entryID'] = duplicate_entry_id($entry, $form);
         break;
       case 'send_conf_letter':
         //first update the schedule if one is set
-        set_entry_schedule($lead, $form);
+        set_entry_schedule($entry, $form);
         //then send confirmation letter
-        $notifications_to_send = GFCommon::get_notifications_to_send('confirmation_letter', $form, $lead);
+        $notifications_to_send = GFCommon::get_notifications_to_send('confirmation_letter', $form, $entry);
         foreach ($notifications_to_send as $notification) {
           if ($notification['isActive']) {
-            GFCommon::send_notification($notification, $form, $lead);
+            GFCommon::send_notification($notification, $form, $entry);
           }
         }
         mf_add_note($entry_id, 'Confirmation Letter sent');
         break;
         //Sidebar Note Add
       case 'add_note_sidebar':
-        add_note_sidebar($lead, $form);
+        add_note_sidebar($entry, $form);
         break;
         //Sidebar Note Delete
       case 'delete_note_sidebar':
@@ -183,19 +183,19 @@ function mf_admin_MFupdate_entry() {
         }
         break;
       case 'update_admin': //update admin action updates flags, prelim loc, exhibit type, fee management AND status.
-        upd_flags_prelim_loc($lead, $form, 'both');
-        set_exhibit_type($lead, $form);
-        set_feeMgmt($lead, $form);        
+        upd_flags_prelim_loc($entry, $form, 'both');
+        set_exhibit_type($entry, $form);
+        set_feeMgmt($entry, $form);        
         break;
         
       case 'update_fee_mgmt':
-        set_feeMgmt($lead, $form);
+        set_feeMgmt($entry, $form);
         break;
       case 'update_exhibit_type':
-        set_exhibit_type($lead, $form);
+        set_exhibit_type($entry, $form);
         break;
       case 'update_final_weekend':
-        set_final_weekend($lead, $form);
+        set_final_weekend($entry, $form);
         break;
       default:
         $response['result'] = 'Error: Invalid Action Passed';
@@ -210,14 +210,14 @@ function mf_admin_MFupdate_entry() {
   }
 
   //get updated lead
-  $lead = GFAPI::get_entry($entry_id);
+  $entry = GFAPI::get_entry($entry_id);
   //rebuild schedule sidebar to send back
   if ($mfAction == 'update_entry_schedule' || $mfAction == 'delete_entry_schedule') {
     $response['rebuild']     = 'schedBox';
-    $response['rebuildHTML'] = display_sched_loc_box($form, $lead);
+    $response['rebuildHTML'] = display_sched_loc_box($form, $entry);
   } elseif ($mfAction == 'add_note_sidebar') {
     $response['rebuild']     = 'notesbox';
-    $response['rebuildHTML'] = display_entry_notes_box($form, $lead);
+    $response['rebuildHTML'] = display_entry_notes_box($form, $entry);
   }
 
   wp_send_json($response);
@@ -226,11 +226,11 @@ function mf_admin_MFupdate_entry() {
 }
 
 /* Modify Set Entry Status */
-function set_entry_status($lead, $form) {
+function set_entry_status($entry, $form) {
   global $wpdb;
-  $entry_id = $lead['id'];
+  $entry_id = $entry['id'];
   $acceptance_status_change  = $_POST['entry_info_status_change'];
-  $acceptance_current_status = isset($lead['303']) ? $lead['303'] : '';
+  $acceptance_current_status = isset($entry['303']) ? $entry['303'] : '';
 
   $is_acceptance_status_changed = (strcmp($acceptance_current_status, $acceptance_status_change) != 0);
 
@@ -240,13 +240,13 @@ function set_entry_status($lead, $form) {
       mf_update_entry_field($entry_id, '303', $acceptance_status_change);
 
       //Reload entry to get any changes in status
-      $lead['303'] = $acceptance_status_change;
+      $entry['303'] = $acceptance_status_change;
 
       //Handle acceptance status changes
       if ($is_acceptance_status_changed) {
         if ($acceptance_status_change == 'Accepted' || $acceptance_status_change == 'Interested') {
           //trigger an action
-          entry_accepted_cb($lead);
+          entry_accepted_cb($entry);
 
           /*
            * If the status is accepted, trigger a cron job to generate EventBrite Tickets.
@@ -255,13 +255,13 @@ function set_entry_status($lead, $form) {
           wp_schedule_single_event(time() + 1, 'sidebar_entry_update', array($entry_id));
 
           //lock attribute 19 and 20 upon setting the status to accepted (original space size and exposure are locked)
-          $wpdb->update('wp_rmt_entry_attributes', array('lockBit' => 1), array('attribute_id' => 19, 'entry_id' => $lead['id']), array('%d'), array('%d', '%d'));
-          $wpdb->update('wp_rmt_entry_attributes', array('lockBit' => 1), array('attribute_id' => 20, 'entry_id' => $lead['id']), array('%d'), array('%d', '%d'));
+          $wpdb->update('wp_rmt_entry_attributes', array('lockBit' => 1), array('attribute_id' => 19, 'entry_id' => $entry['id']), array('%d'), array('%d', '%d'));
+          $wpdb->update('wp_rmt_entry_attributes', array('lockBit' => 1), array('attribute_id' => 20, 'entry_id' => $entry['id']), array('%d'), array('%d', '%d'));
 
           //if the form type is invoice, set the invoice date
           if (isset($form['create_invoice']) && $form['create_invoice'] == 'yes') {
             //get post id
-            $fieldData       = get_value_by_label('inv_post_id', $form, $lead);
+            $fieldData       = get_value_by_label('inv_post_id', $form, $entry);
             $post_id         = (is_array($fieldData) && $fieldData['value'] != '' ? $fieldData['value'] : 0);
             if ($post_id != 0) {
               update_field('invoice_date', date('m/d/Y'), $post_id);
@@ -270,14 +270,14 @@ function set_entry_status($lead, $form) {
         }
 
         if ($acceptance_status_change == 'Cancelled') {
-          //$wpdb->delete( 'wp_mf_location', array( 'entry_id' => $lead['id'] ) );
+          //$wpdb->delete( 'wp_mf_location', array( 'entry_id' => $entry['id'] ) );
         }
 
         //Create a note of the status change.
         $results = mf_add_note($entry_id, 'EntryID:' . $entry_id . ' status changed to ' . $acceptance_status_change);
 
         //Handle notifications for acceptance
-        $notifications_to_send = GFCommon::get_notifications_to_send('mf_acceptance_status_changed', $form, $lead);
+        $notifications_to_send = GFCommon::get_notifications_to_send('mf_acceptance_status_changed', $form, $entry);
         foreach ($notifications_to_send as $notification) {
           // The isActive paramater is not always set. 
           // If it's not set, assume the notification is turned on
@@ -285,7 +285,7 @@ function set_entry_status($lead, $form) {
             !isset($notification['isActive']) ||
             (isset($notification['isActive']) && $notification['isActive'])
           ) {
-            GFCommon::send_notification($notification, $form, $lead);
+            GFCommon::send_notification($notification, $form, $entry);
           }
         }
 
@@ -327,10 +327,10 @@ function mf_update_entry_field($entry_id, $input_id, $value) {
 
   $field = GFFormsModel::get_field($form, $input_id);
 
-  $lead_detail_id = $wpdb->get_var($wpdb->prepare("SELECT id FROM {$wpdb->prefix}gf_entry_meta WHERE entry_id=%d AND  CAST(meta_key AS CHAR) ='%s' order by id DESC limit 1", $entry_id, $input_id));
+  $entry_detail_id = $wpdb->get_var($wpdb->prepare("SELECT id FROM {$wpdb->prefix}gf_entry_meta WHERE entry_id=%d AND  CAST(meta_key AS CHAR) ='%s' order by id DESC limit 1", $entry_id, $input_id));
 
   $result = true;
-  $result = GFFormsModel::update_lead_field_value($form, $entry, $field, $lead_detail_id, $input_id, $value);
+  $result = GFFormsModel::update_lead_field_value($form, $entry, $field, $entry_detail_id, $input_id, $value);
 
   return $result;
 }
@@ -338,15 +338,15 @@ function mf_update_entry_field($entry_id, $input_id, $value) {
 /*
  * Add a single note
  */
-function mf_add_note($leadid, $notetext) {
+function mf_add_note($entryid, $notetext) {
   global $current_user;
   $user_data = get_userdata($current_user->ID);
-  RGFormsModel::add_note($leadid, $current_user->ID, $user_data->display_name, $notetext);
+  RGFormsModel::add_note($entryid, $current_user->ID, $user_data->display_name, $notetext);
 }
 
 /* Update flags and Preliminary Location */
-function upd_flags_prelim_loc($lead, $form, $type = 'both') {
-  $entry_id = $lead['id'];
+function upd_flags_prelim_loc($entry, $form, $type = 'both') {
+  $entry_id = $entry['id'];
 
   $location_change          = (isset($_POST['entry_info_location_change']) ? $_POST['entry_info_location_change'] : array());
   $flags_change             = (isset($_POST['entry_info_flags_change']) ? $_POST['entry_info_flags_change'] : array());
@@ -397,8 +397,8 @@ function upd_flags_prelim_loc($lead, $form, $type = 'both') {
 }
 
 /* Modify Form Id Status */
-function set_form_id($lead, $form) {
-  $entry_id    = $lead['id'];
+function set_form_id($entry, $form) {
+  $entry_id    = $entry['id'];
   $form_change = $_POST['entry_form_change'];
   
   $entry = GFAPI::get_entry($entry_id);
@@ -434,26 +434,26 @@ function set_form_id($lead, $form) {
 function update_entry_form_id($entry_id, $form_id) {
   global $wpdb;
 
-  $lead_table        = 'wp_gf_entry';
-  $lead_detail_table = 'wp_gf_entry_meta';
-  $lead_meta_table   = 'wp_gf_entry_meta';
+  $entry_table        = 'wp_gf_entry';
+  $entry_detail_table = 'wp_gf_entry_meta';
+  $entry_meta_table   = 'wp_gf_entry_meta';
   $result     = $wpdb->query(
-    $wpdb->prepare("UPDATE $lead_table SET form_id={$form_id} WHERE id=%d ", $entry_id)
+    $wpdb->prepare("UPDATE $entry_table SET form_id={$form_id} WHERE id=%d ", $entry_id)
   );
   $wpdb->query(
-    $wpdb->prepare("UPDATE $lead_detail_table SET form_id={$form_id} WHERE entry_id=%d ", $entry_id)
+    $wpdb->prepare("UPDATE $entry_detail_table SET form_id={$form_id} WHERE entry_id=%d ", $entry_id)
   );
   $wpdb->query(
-    $wpdb->prepare("UPDATE $lead_meta_table SET form_id={$form_id} WHERE entry_id=%d ", $entry_id)
+    $wpdb->prepare("UPDATE $entry_meta_table SET form_id={$form_id} WHERE entry_id=%d ", $entry_id)
   );
 
   return $result;
 }
 
 /* Copy entry record into specific form*/
-function duplicate_entry_id($lead, $form) {
+function duplicate_entry_id($entry, $form) {
   $form_change = $_POST['entry_form_copy']; //selected form field
-  $entry_id    = $lead['id'];
+  $entry_id    = $entry['id'];
 
   error_log('$duplicating entry id =' . $entry_id . ' into form ' . $form_change);
 
@@ -464,83 +464,88 @@ function duplicate_entry_id($lead, $form) {
 
 /**
  * Duplicates the contents of a specified entry id into the specified form
- * Adapted from forms_model.php, RGFormsModel::save_lead($Form, $lead) and
+ * Adapted from forms_model.php, RGFormsModel::save_lead($Form, $entry) and
  * gravity -forms-addons.php for the gravity forms addon plugin
  * @param  array $form Form object.
- * @param  array $lead Lead object
+ * @param  array $entry Lead object
  * @return void
  */
 function duplicate_entry_data($form_change, $current_entry_id) {
   global $wpdb;
   global $current_user;
 
-  $lead_table        = 'wp_gf_entry';
-  $lead_detail_table = 'wp_gf_entry_meta';
-  $lead_meta_table   = 'wp_gf_entry_meta';
+  $current_entry=gfapi::get_entry($current_entry_id);  
+  $newEntry = array('form_id'=>$form_change,  
+    'res_status' => (isset($current_entry['res_status'])?$current_entry['res_status']:''),
+    'res_assign' => (isset($current_entry['res_assign'])?$current_entry['res_assign']:''),
+    '303'        => 'Proposed'
+  );
 
-  //pull existing entries information
-  $current_lead   = $wpdb->get_results($wpdb->prepare("SELECT * FROM $lead_table WHERE id=%d", $current_entry_id));
-  $current_fields = $wpdb->get_results($wpdb->prepare("SELECT wp_gf_entry_meta.meta_key, wp_gf_entry_meta.meta_value "
-    . "  FROM $lead_detail_table "
-    . " WHERE entry_id=%d", $current_entry_id));
+  //only copy over data for fields that exist in new form
+  $newForm = GFAPI::get_form($form_change);
+  foreach($newForm['fields'] as $field){            
+    if($field->id==303) continue; //skips status
+    
+    if($field->type=="address" || $field->type=="name"){
+      foreach($field->inputs as $input){        
+        if(isset($current_entry[$input['id']])){
+          $newEntry[$input['id']] = $current_entry[$input['id']];          
+        }    
+      }
+    }elseif($field->type=="checkbox"){
+      //get value(s) set on the original entry      
+      $field_value   = RGFormsModel::get_lead_field_value($current_entry, $field);
 
-  // new lead
-  $user_id    = $current_user && $current_user->ID ? $current_user->ID : 'NULL';
-  $user_agent = GFCommon::truncate_url($_SERVER["HTTP_USER_AGENT"], 250);
-  $currency   = GFCommon::get_currency();
-  $source_url = GFCommon::truncate_url(RGFormsModel::get_current_page_url(), 200);
-  $wpdb->query($wpdb->prepare("INSERT INTO $lead_table(form_id, ip, source_url, date_created, user_agent, currency, created_by) VALUES(%d, %s, %s, utc_timestamp(), %s, %s, {$user_id})", $form_change, RGFormsModel::get_ip(), $source_url, $user_agent, $currency));
-  $lead_id    = $wpdb->insert_id;
-  $return = 'Entry ' . $lead_id . ' created in Form ' . $form_change;
+      //we need both the label and the value set for each choice, so we need to combine these two
+      $inputs   = (isset($field->inputs) ? $field->inputs : array());
+      $choices  = (isset($field->choices) ? $field->choices : '');
+      foreach ($choices as $chItem) {              
+        //get the current field ID
+        $key = array_search($chItem['text'], array_column($inputs, 'label'));
+        $input_id = $inputs[$key]['id'];
+               
+        //is this item set in the current entry (regardless of input id)
+        if(in_array($chItem['value'], $field_value)){            
+          $newEntry[$input_id] = $chItem['value'];
+        }else{
+          $newEntry[$input_id] = '';
+        }                            
+      }
+    }elseif($field->type=="fileupload" && $field->multipleFiles){
+      //we converted some of our single file uploads to multi file uploads.      
+      $file = json_decode($current_entry[$field->id]);      
+      
+      //if this does not convert to an array, then it is a single file and we need to convert it 
+      if(is_array($file)){
+        //no need to convert
+        $upload = $current_entry[$field->id];
+      }else{                
+        $upload = json_encode(array($current_entry[$field->id]));        
+      }
+      
+      $newEntry[$field->id] = $upload;      
+    }elseif(isset($current_entry[$field->id])){
+      //if this field was set in the old entry, copy it to the new entry
+      $newEntry[$field->id] = $current_entry[$field->id];      
+    }
+  }
+
+  $entry_id = GFAPI::add_entry($newEntry);
+  
+  $return = 'Entry ' . $entry_id . ' created in Form ' . $form_change;
 
   //if GF easypassthrough is active, we need to reset the token 
   $resetToken = (class_exists('GP_Easy_Passthrough') ? TRUE : FALSE);
 
   //add a note to the new entry
-  $results = mf_add_note($lead_id, 'Copied Entry ID:' . $current_entry_id . ' into form ' . $form_change . '. New Entry ID =' . $lead_id);
-
-  foreach ($current_fields as $row) {
-    //do not write the easypassthrough token on duplicate
-    if ($resetToken && $row->meta_key == 'fg_easypassthrough_token') {
-      continue;
-    } elseif ($row->meta_key == '303') {
-      $fieldValue = 'Proposed';
-    } else {
-      $fieldValue = $row->meta_value;
-    }
-
-    $wpdb->query($wpdb->prepare(
-      "INSERT INTO $lead_detail_table(entry_id, form_id, meta_key, meta_value) VALUES(%d, %s, %s, %s)",
-      $lead_id,
-      $form_change,
-      $row->meta_key,
-      $fieldValue
-    ));
-  }
-
-  //save the entry in order to recreate a new easy passthrough token
-  if ($resetToken) {
-    $form = gfapi::get_form($form_change);
-    $lead = gfapi::get_entry($lead_id);
-    apply_filters('gform_entry_post_save', $lead, $form);
-  }
-
-  //update/insert into maker tables
-  GFRMTHELPER::updateMakerTables($lead_id);
-
-  //copy resources and attributes
-  $wpdb->get_results("INSERT INTO `wp_rmt_entry_resources` (`entry_id`, `resource_id`, `qty`, `comment`, `user`, `update_stamp`, `lockBit`)
-          select '$lead_id', `resource_id`, `qty`, `comment`, '$user_id', now(),0 from wp_rmt_entry_resources where entry_id = $current_entry_id");
-
-  $wpdb->get_results("INSERT INTO `wp_rmt_entry_attributes` (`entry_id`, `attribute_id`, `value`, `comment`, `user`, `update_stamp`, `lockBit`)
-          select '$lead_id', `attribute_id`, `value`, `comment`,  '$user_id', now(), 0 from wp_rmt_entry_attributes where entry_id = $current_entry_id");
-
+  mf_add_note($entry_id, 'Copied Entry ID:' . $current_entry_id . ' into form ' . $form_change . '. New Entry ID =' . $entry_id);
+  
   return $return;
 }
 
 /* Modify Set Entry Schedule */
-function set_entry_schedule($lead, $form) {
-  $entry_id              = $lead['id'];
+function set_entry_schedule($entry, $form) {
+  $entry_id              = $entry['id'];
   $entry_schedule_start  = (isset($_POST['datetimepickerstart'])   ? $_POST['datetimepickerstart']   : '');
   $entry_schedule_end    = (isset($_POST['datetimepickerend'])     ? $_POST['datetimepickerend']     : '');
   $entry_schedule_end    = (isset($_POST['datetimepickerend'])     ? $_POST['datetimepickerend']     : '');
@@ -549,12 +554,12 @@ function set_entry_schedule($lead, $form) {
   //location fields
   $entry_location_subarea_change = (isset($_POST['entry_location_subarea_change']) ? $_POST['entry_location_subarea_change'] : '');
 
-  $form_id = $lead['form_id'];
+  $form_id = $entry['form_id'];
 
   //set the location
   $location_id = 'NULL';
   if ($entry_location_subarea_change != 'none') {
-    set_entry_location($lead, $form, $location_id);
+    set_entry_location($entry, $form, $location_id);
   }
 
   if ($entry_schedule_start != '' && $entry_schedule_end != '') {
@@ -577,12 +582,12 @@ function set_entry_schedule($lead, $form) {
 }
 
 /* Modify Set Entry Location */
-function set_entry_location($lead, $form, &$location_id = '') {
+function set_entry_location($entry, $form, &$location_id = '') {
   $entry_schedule_change      = $_POST['entry_location_subarea_change'];
-  $entry_info_entry_id        = $lead['id'];
+  $entry_info_entry_id        = $entry['id'];
   $update_entry_location_code = $_POST['update_entry_location_code'];
 
-  //$form_id=$lead['form_id'];
+  //$form_id=$entry['form_id'];
 
   $mysqli = new mysqli(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME);
   if ($mysqli->connect_errno) {
@@ -599,12 +604,12 @@ function set_entry_location($lead, $form, &$location_id = '') {
     error_log('Error :' . $insert_query . ':(' . $mysqli->errno . ') ' . $mysqli->error);
   }
 
-  setLocChgRpt($entry_schedule_change, $update_entry_location_code, $lead, 'add');
+  setLocChgRpt($entry_schedule_change, $update_entry_location_code, $entry, 'add');
   $location_id = $mysqli->insert_id;
 }
 
 /* Delete entry schedule */
-function delete_entry_schedule($lead, $form) {
+function delete_entry_schedule($entry, $form) {
   global $wpdb;
 
   $delete_entry_schedule = (isset($_POST['delete_schedule_id']) ? implode(',', ($_POST['delete_schedule_id']))    : '');
@@ -628,7 +633,7 @@ function delete_entry_schedule($lead, $form) {
   if (!empty($delete_entry_location)) {
     //update change report
     $location = $wpdb->get_row("SELECT subarea_id, location FROM wp_mf_location where wp_mf_location.ID IN ($delete_entry_location)");
-    setLocChgRpt($location->subarea_id, $location->location, $lead, 'delete');
+    setLocChgRpt($location->subarea_id, $location->location, $entry, 'delete');
 
     //delete from schedule and location table
     $delete_query =  "DELETE FROM `wp_mf_location` WHERE wp_mf_location.ID IN ($delete_entry_location)";
@@ -640,11 +645,11 @@ function delete_note_sidebar($notes) {
   RGFormsModel::delete_notes($notes);
 }
 
-function add_note_sidebar($lead, $form) {
+function add_note_sidebar($entry, $form) {
   global $current_user;
 
   $user_data = get_userdata($current_user->ID);
-  $project_name = $lead['151'];
+  $project_name = $entry['151'];
   $email_to     = $_POST['gentry_email_notes_to_sidebar'];
   if (is_array($email_to)) {
     $email_to = implode(', ', $email_to);
@@ -657,8 +662,8 @@ function add_note_sidebar($lead, $form) {
 
     //$email_to      = $_POST['gentry_email_notes_to_sidebar'];    
     $email_from    = $current_user->user_email;
-    $email_subject = stripslashes('Entry Note: ' . $project_name . ' ' . $lead['id']);
-    $entry_url = get_bloginfo('wpurl') . '/review/index.php?layout=list&search=' . rgar($lead, 'id');
+    $email_subject = stripslashes('Entry Note: ' . $project_name . ' ' . $entry['id']);
+    $entry_url = get_bloginfo('wpurl') . '/review/index.php?layout=list&search=' . rgar($entry, 'id');
 
     $body = stripslashes($_POST['new_note_sidebar']) . '<br /><br />' .
       'Please reply in entry:<a href="' . $entry_url . '">' . $entry_url . '</a>';
@@ -674,11 +679,11 @@ function add_note_sidebar($lead, $form) {
     $email_note_info = '<br /><br />:SENT TO:[' . $email_to . ']';
   }
 
-  mf_add_note($lead['id'],  nl2br(stripslashes($_POST['new_note_sidebar'] . $email_note_info)));
+  mf_add_note($entry['id'],  nl2br(stripslashes($_POST['new_note_sidebar'] . $email_note_info)));
 }
 
-function set_feeMgmt($lead, $form) {
-  $entry_id         = $lead['id'];
+function set_feeMgmt($entry, $form) {
+  $entry_id         = $entry['id'];
   $fee_mgmt_change  = $_POST['entry_info_fee_mgmt'];
 
   $field442 = RGFormsModel::get_field($form, '442');
@@ -701,8 +706,8 @@ function set_feeMgmt($lead, $form) {
 }
 
 //Update Exhibit Type
-function set_exhibit_type($lead, $form) {
-  $entry_id             = $lead['id'];
+function set_exhibit_type($entry, $form) {
+  $entry_id             = $entry['id'];
   $exhibit_type_change  = $_POST['entry_exhibit_type'];
 
   $field339 = RGFormsModel::get_field($form, '339');
@@ -725,8 +730,8 @@ function set_exhibit_type($lead, $form) {
 }
 
 //Update Final Weekend
-function set_final_weekend($lead, $form) {
-  $entry_id             = $lead['id'];
+function set_final_weekend($entry, $form) {
+  $entry_id             = $entry['id'];
   $final_weekend_change  = $_POST['entry_final_weekend'];
 
   $field879 = RGFormsModel::get_field($form, '879');

@@ -477,7 +477,7 @@ function fieldOutput($fieldID, $entry, $field_array, $form, $arg = '') {
       case 'notifications_sent':
         global $view_notifications;
         if ($view_notifications) {
-          $type  = 'notes';
+          $type  = 'user';
           $label = 'Notifications Sent';
           $search_criteria = array('entry_id' => $entry['id'], 'note_type' => 'user');
           $value = GFAPI::get_notes($search_criteria, array('key' => 'id', 'direction' => 'DESC'));
@@ -559,8 +559,8 @@ function getAddEntries($email, $currEntryID) {
 
   $addEntriesCnt = 0;
   $sql = 'SELECT distinct(entry_id), wp_gf_entry_meta.form_id, wp_gf_form.title as form_title, ' .
-    '(SELECT meta_value FROM wp_gf_entry_meta detail2 WHERE detail2.entry_id = wp_gf_entry_meta.entry_id AND meta_key = 151 ) as projectName, ' .
-    '(SELECT meta_value FROM wp_gf_entry_meta detail2 WHERE detail2.entry_id = wp_gf_entry_meta.entry_id AND meta_key = 303 ) as status, ' .
+    '(SELECT meta_value FROM wp_gf_entry_meta detail2 WHERE detail2.entry_id = wp_gf_entry_meta.entry_id AND meta_key = "151" ) as projectName, ' .
+    '(SELECT meta_value FROM wp_gf_entry_meta detail2 WHERE detail2.entry_id = wp_gf_entry_meta.entry_id AND meta_key = "303" ) as status, ' .
     'status as lead_status, wp_gf_entry.date_created ' .
     'FROM wp_gf_entry_meta ' .
     'left outer join wp_gf_entry on wp_gf_entry_meta.entry_id=wp_gf_entry.id ' .
@@ -601,7 +601,7 @@ function getAddEntries($email, $currEntryID) {
         . '<td>' . $addData->projectName . '</td>'
         . '<td>' . $form['title'] . '</td>'
         . '<td>' . date_format($date, "m-d-Y") . '</td>'
-        . '<td>' . ($addData->lead_status == 'active' ? $addData->status : ucwords($addData->lead_status)) . '</td>'
+        . '<td>' . ucwords($addData->status) . '</td>'
         . '</tr>';
     }
   }
