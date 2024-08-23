@@ -7,6 +7,15 @@
     h2 {
         margin-bottom: 30px;
     }
+    // hover colors for the font awesome icons
+    .ng-scope .mtm-detail-item {
+        .fa:hover {
+            color: #9bdaf5;
+        }
+        img:hover { // this is for svgs
+            filter: brightness(0) saturate(100%) invert(93%) sepia(14%) saturate(2862%) hue-rotate(172deg) brightness(98%) contrast(97%) !important;
+        }
+    }
     .mtm-carousel-cont {
         position: relative;
         .mtm-carousel {
