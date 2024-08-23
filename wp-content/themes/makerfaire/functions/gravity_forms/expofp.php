@@ -129,7 +129,7 @@ function createExpoFpExhibit($entry, $form, $expofpToken, $expofpId) {
         } 
         $categories["name"] = $formType;
     }
-    
+
     // now, add all the additional tags we want
     array_push($tags, "Status:" . $entry['303']); // status
     $placementRequest = isset($entry['68']) ? $entry['68'] : '';
@@ -146,10 +146,10 @@ function createExpoFpExhibit($entry, $form, $expofpToken, $expofpId) {
     }
     $tablesChairs = isset($entry['62']) ? $entry['62'] : '';
     if(!empty($tablesChairs)) {
-        if($tablesChairs == "More than 1 table and 2 chairs. List specific number of tables and chairs below.") {
+        if(stripos($tablesChairs, "More than 1 table and 2 chairs") !== false) {
             $tablesChairs = $entry['347'] . "tables and " . $entry['348'] . " chairs";
         }
-        array_push($tags, "Electricty needs:" . $electrictyNeeds); // electricty needs
+        array_push($tags, "Tables and chairs:" . $tablesChairs); // tables and chairs
     }
     
     // then, add all the category taxonomies the user selected as categories in expofp
@@ -157,31 +157,29 @@ function createExpoFpExhibit($entry, $form, $expofpToken, $expofpId) {
     $categories[] = array("name" => $mainCategoryName);
     foreach ($entry as $key => $value) {
         if (strpos($key, '321.') !== false && $value != null) {
-            if (!in_array(array("name" => html_entity_decode(get_term($value)->name)), $categories)) {
-                $categories[] = array("name" => html_entity_decode(get_term($value)->name));
-            }
+            $categories[] = array("name" => html_entity_decode(get_term($value)->name));
         }
     }
     // additional data to be added as categories (Food, Fire, Exposure, Dark, Amplified, Repetitive, Loud)
-    if($entry['44'] == 'Yes') {
+    if(isset($entry['44']) && $entry['44'] == 'Yes') {
         $categories[] = array("name" => "Food");
     }
-    if($entry['83'] == 'Yes') {
+    if(isset($entry['83']) && $entry['83'] == 'Yes') {
         $categories[] = array("name" => "Fire");
     }
-    if($entry['69'] == 'Inside') {
+    if(isset($entry['69']) && $entry['69'] == 'Inside') {
         $categories[] = array("name" => "Inside");
     } else if($entry['69'] == 'Outside') {
         $categories[] = array("name" => "Outside");
     }
-    if($entry['71'] == 'Dark') {
+    if(isset($entry['71']) && $entry['71'] == 'Dark') {
         $categories[] = array("name" => "Dark");
     }
-    if($entry['72'] == 'Amplified - adjustable level of amplification') {
+    if(isset($entry['72']) && stripos($entry['72'], 'Amplified') !== false) {
         $categories[] = array("name" => "Amplified");
-    } else if($entry['72'] == 'Repetitive or potentially annoying sound') {
+    } else if(stripos($entry['72'], 'Repetitive') !== false) {
         $categories[] = array("name" => "Repetitive");
-    } else if($entry['72'] == 'Loud!') {
+    } else if(stripos($entry['72'], 'Loud') !== false) {
         $categories[] = array("name" => "Loud");
     }
 
@@ -204,7 +202,7 @@ function createExpoFpExhibit($entry, $form, $expofpToken, $expofpId) {
         "address" => $rmt_shown, // this holds all the resources and attributes entered as a comma delimited string
         "website" => "https://makerfaire.com/maker/entry/" . $entry['id'], // this will be the maker/entry page
         "externalId" => $entry['id'],
-        "categories" => $categories,
+        "categories" => array_unique($categories, SORT_REGULAR), // dedupe categories array
         "tags" => $tags
     ];
 
@@ -280,10 +278,10 @@ function updateExpoFpExhibit($entry, $form, $expofpToken, $expofpId, $exhibitor_
     }
     $tablesChairs = isset($entry['62']) ? $entry['62'] : '';
     if(!empty($tablesChairs)) {
-        if($tablesChairs == "More than 1 table and 2 chairs. List specific number of tables and chairs below.") {
+        if(stripos($tablesChairs, "More than 1 table and 2 chairs") !== false) {
             $tablesChairs = $entry['347'] . "tables and " . $entry['348'] . " chairs";
         }
-        array_push($tags, "Electricty needs:" . $electrictyNeeds); // electricty needs
+        array_push($tags, "Tables and Chairs:" . $tablesChairs); // electricty needs
     }
     
     // then, add all the category taxonomies the user selected as categories in expofp
@@ -291,31 +289,29 @@ function updateExpoFpExhibit($entry, $form, $expofpToken, $expofpId, $exhibitor_
     $categories[] = array("name" => $mainCategoryName);
     foreach ($entry as $key => $value) {
         if (strpos($key, '321.') !== false && $value != null) {
-            if (!in_array(array("name" => html_entity_decode(get_term($value)->name)), $categories)) {
-                $categories[] = array("name" => html_entity_decode(get_term($value)->name));
-            }
+            $categories[] = array("name" => html_entity_decode(get_term($value)->name));
         }
     }
     // additional data to be added as categories (Food, Fire, Exposure, Dark, Amplified, Repetitive, Loud)
-    if($entry['44'] == 'Yes') {
+    if(isset($entry['44']) && $entry['44'] == 'Yes') {
         $categories[] = array("name" => "Food");
     }
-    if($entry['83'] == 'Yes') {
+    if(isset($entry['83']) && $entry['83'] == 'Yes') {
         $categories[] = array("name" => "Fire");
     }
-    if($entry['69'] == 'Inside') {
+    if(isset($entry['69']) && $entry['69'] == 'Inside') {
         $categories[] = array("name" => "Inside");
     } else if($entry['69'] == 'Outside') {
         $categories[] = array("name" => "Outside");
     }
-    if($entry['71'] == 'Dark') {
+    if(isset($entry['71']) && $entry['71'] == 'Dark') {
         $categories[] = array("name" => "Dark");
     }
-    if($entry['72'] == 'Amplified - adjustable level of amplification') {
+    if(isset($entry['72']) && stripos($entry['72'], 'Amplified') !== false) {
         $categories[] = array("name" => "Amplified");
-    } else if($entry['72'] == 'Repetitive or potentially annoying sound') {
+    } else if(stripos($entry['72'], 'Repetitive') !== false) {
         $categories[] = array("name" => "Repetitive");
-    } else if($entry['72'] == 'Loud!') {
+    } else if(stripos($entry['72'], 'Loud') !== false) {
         $categories[] = array("name" => "Loud");
     }
 
@@ -328,6 +324,7 @@ function updateExpoFpExhibit($entry, $form, $expofpToken, $expofpId, $exhibitor_
         "eventId" =>  $expofpId
     ];
     postCurl($entryID_url, $headers, json_encode($entryID_data), "POST");
+    error_log(print_r($categories, TRUE));
 
     $data = [
         "token" => $expofpToken,
@@ -337,13 +334,13 @@ function updateExpoFpExhibit($entry, $form, $expofpToken, $expofpId, $exhibitor_
         "featured" => $featured,
         "address" => $rmt_shown, // this holds all the resources and attributes entered as a comma delimited string
         "website" => "https://makerfaire.com/maker/entry/" . $entry['id'], // this will be the maker/entry page
-        "categories" => $categories,
+        "categories" => array_unique($categories, SORT_REGULAR),
         "tags" => $tags
     ];
 
-    //error_log(print_r($data, TRUE));
+    error_log(print_r($data, TRUE));
     $result = postCurl($url, $headers, json_encode($data), "POST");
-    //error_log(print_r($result, TRUE));
+    error_log(print_r($result, TRUE));
 
     return $result;
 }
