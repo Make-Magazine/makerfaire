@@ -417,7 +417,7 @@
                     content: "\e627";
                 }
             }
-            &.presenter {
+            &.presenter, .presentation {
                 &:after {
                     content: "\f685";
                 }
