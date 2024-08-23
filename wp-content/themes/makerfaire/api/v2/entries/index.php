@@ -559,8 +559,8 @@ function getAddEntries($email, $currEntryID) {
 
   $addEntriesCnt = 0;
   $sql = 'SELECT distinct(entry_id), wp_gf_entry_meta.form_id, wp_gf_form.title as form_title, ' .
-    '(SELECT meta_value FROM wp_gf_entry_meta detail2 WHERE detail2.entry_id = wp_gf_entry_meta.entry_id AND meta_key = 151 ) as projectName, ' .
-    '(SELECT meta_value FROM wp_gf_entry_meta detail2 WHERE detail2.entry_id = wp_gf_entry_meta.entry_id AND meta_key = 303 ) as status, ' .
+    '(SELECT meta_value FROM wp_gf_entry_meta detail2 WHERE detail2.entry_id = wp_gf_entry_meta.entry_id AND meta_key = "151" ) as projectName, ' .
+    '(SELECT meta_value FROM wp_gf_entry_meta detail2 WHERE detail2.entry_id = wp_gf_entry_meta.entry_id AND meta_key = "303" ) as status, ' .
     'status as lead_status, wp_gf_entry.date_created ' .
     'FROM wp_gf_entry_meta ' .
     'left outer join wp_gf_entry on wp_gf_entry_meta.entry_id=wp_gf_entry.id ' .
