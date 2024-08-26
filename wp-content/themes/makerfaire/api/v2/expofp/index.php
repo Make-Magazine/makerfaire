@@ -9,11 +9,32 @@
  */
 
 // Stop any direct calls to this file
-//error_log("webhook been hooked after 1pm");
 defined('ABSPATH') or die('This file cannot be called directly!');
 
 $body = file_get_contents('php://input');
 $webhook = json_decode($body);
-//error_log(print_r($webhook, TRUE));
 
-$type = (!empty($_REQUEST['type']) ? sanitize_text_field($_REQUEST['type']) : null);
+// we don't want to run calls on every webhook type, so we will confine it to just when booths are reserved (assigned and saved)
+if($webhook->Type == "booth_reserved") {
+    // get the Expo FP token
+    $expofpToken = EXPOFP_TOKEN;
+    $url = "https://app.expofp.com/api/v1/get-booth";
+    $headers = array(
+        'Accept: application/json', 
+        'Content-Type: application/json'
+    );
+
+    $data = [
+        "token" => $expofpToken,
+        "eventId" => $webhook->ExpoId,
+        "name" => $webhook->BoothKey,
+    ];
+
+    $result = postCurl($url, $headers, json_encode($data), "POST");
+
+    $exhibitorID = json_decode($result)->exhibitors[0]; // technically there can be more than one exhibitor assigned to a booth, but we aren't using booths like that
+
+    $entry = gform_get_entry_byMeta("expofp_exhibit_id", $exhibitorID);
+    error_log(print_r($entry, TRUE));
+
+}
