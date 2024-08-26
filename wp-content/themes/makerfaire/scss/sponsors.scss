@@ -122,7 +122,7 @@
   h4.sponsor-slide-title {
     color: #999;
     font-weight: 300;
-	text-align: center;
+	  text-align: center;
   }
   .sponsor-slide-cat {
     color: #666;
@@ -169,6 +169,7 @@
 			.faire-sponsors-box {
 				.sponsors-box-md  {
 					width: 200px;
+          margin: 0px 50px;
 				}
 			}
 		}
@@ -182,9 +183,12 @@
 			}
 		}
 		.sponsors-3, .sponsors-4, .sponsors-5, .sponsors-6 {
+      height: auto;
 			.faire-sponsors-box {
+        height: auto;
 				.sponsors-box-md  {
-					width: 180px;
+					width: 200px;
+          margin-bottom: 20px;
 				}
 			}
 		}
@@ -198,20 +202,15 @@
 		.sponsors-1, .sponsors-2 {
 			.faire-sponsors-box {
 				.sponsors-box-md  {
-					width: 160px;
+					width: 200px;
 				}
 			}
 		}
 		.sponsors-3, .sponsors-4, .sponsors-5, .sponsors-6 {
 			.faire-sponsors-box {
 				.sponsors-box-md  {
-					width: 120px;
+					width: 180px;
 				}
-			}
-		}
-		.faire-sponsors-box {
-			.sponsors-box-md  {
-				width: 70px;
 			}
 		}
 	}
@@ -231,7 +230,7 @@
     max-height:100px;
     height: auto;        
     display: flex;        
-    
+    align-items: center;
 	  img { width: 100%; }
   }
 
@@ -240,7 +239,7 @@
     max-height:150px;
     height: auto;        
     display: flex;        
-    
+    align-items: center;
 	  img { width: 100%; }
   }
   .sponsors-text-box {
