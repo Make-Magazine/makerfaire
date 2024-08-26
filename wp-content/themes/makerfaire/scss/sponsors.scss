@@ -222,16 +222,15 @@
 	}
   .faire-sponsors-box {
     display: flex;
-    justify-content: space-around;
-    align-items: center;
+    justify-content: space-around;    
     flex-wrap: wrap;
     padding-bottom: 10px;
   }
   .sponsors-box-md {
-    max-width: 200px;
+    width: 200px;
+    max-height:100px;
     height: auto;        
-    display: flex;    
-    align-items: center;
+    display: flex;        
     
 	  img { width: 100%; }
   }
