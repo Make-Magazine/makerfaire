@@ -550,17 +550,20 @@ function displayContent($content, $entry, $fieldData, $display = 'table') {
             if (!empty($value)) {
               $array = json_decode($value, true);
               $display_value = '';
-              foreach ($array as $file) {
-                $path = pathinfo($file);
-                $ext = strtolower($path['extension']);
-                $supported_image = array('gif', 'jpg', 'jpeg', 'png');
-                if (in_array($ext, $supported_image)) {
-                  $displayItem = '<img width="100px" src="' . legacy_get_resized_remote_image_url($file, 100, 100) . '" alt="" />';
-                } else {
-                  $displayItem = $path['basename'];
+              if(is_array($array)){                
+                foreach ($array as $file) {
+                  $path = pathinfo($file);
+                  $ext = (isset($path['extension'])?strtolower($path['extension']):'');
+                  $supported_image = array('gif', 'jpg', 'jpeg', 'png');
+                  if (in_array($ext, $supported_image)) {
+                    $displayItem = '<img width="100px" src="' . legacy_get_resized_remote_image_url($file, 100, 100) . '" alt="" />';
+                  } else {
+                    $displayItem = $path['basename'];
+                  }
+                  $display_value .= '<a href="' . $file . '" target="_blank">' . $displayItem . '</a><br/>';
                 }
-                $display_value .= '<a href="' . $file . '" target="_blank">' . $displayItem . '</a><br/>';
               }
+
             }
           } else {
             $path = pathinfo($value);
