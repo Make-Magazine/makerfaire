@@ -104,7 +104,8 @@ h3 {
 
     .card-header:has(> .img-thumbnail) {
         aspect-ratio: 3 / 2;
-
+        overflow: hidden;
+        
         @supports not (aspect-ratio: 3 / 2) {
             &::before {
                 float: left;
@@ -117,9 +118,7 @@ h3 {
                 content: "";
                 clear: both;
             }
-        }
-
-        overflow: hidden;
+        }        
 
         .img-thumbnail {
             object-fit: cover;

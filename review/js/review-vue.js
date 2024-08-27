@@ -25,8 +25,10 @@ var review = new Vue({
     el: '#review',
     data() {
         return {
+            filterCounts: {},      
             makers: [],
             rmt: [],
+            statusArray: ['Proposed', 'Accepted', 'Pending', 'No Response', 'Wait List', 'Rejected', 'Cancelled', 'No Show'],
             currentView: urlParams.get('layout') ? urlParams.get('layout') : "grid",
             searchQuery: urlParams.get('search') ? urlParams.get('search') : "",
             entryIDQuery: "",
@@ -134,6 +136,10 @@ var review = new Vue({
             });
         
             return filteredList;
+        },
+        getCountofStatus(status){            
+            var statusFilter = this.filterBy.filter((item) => item.status == status);
+            return statusFilter.length;
         }      
     },
     mounted() {
@@ -172,7 +178,7 @@ var review = new Vue({
                 var passEntryType   = true;
                 var passFlag        = true;
                 var passPrelimLoc   = true;
-                var passCat    = true;
+                var passCat         = true;
                 var passStatus      = true;
 
                 // here we build the queryString based on the filters and add it to our route
@@ -184,10 +190,9 @@ var review = new Vue({
                 if(flagFilter.toString() != "") { query.flag = flagFilter.toString(); }
                 if(prelimLocFilter.toString() != "") { query.location = prelimLocFilter.toString(); }
                 this.router.push({ path: 'review', query: query }).catch(()=>{});
-
-                return this.makers.filter(function (maker) {
-
-                    //Entry Type
+                
+                return this.makers.filter(function (maker) {                                         
+                    //Filter by Entry Type
                     if (entryTypeFilter != '') {
                         passEntryType = false;
                         //breakup the entry types into an array
@@ -247,8 +252,8 @@ var review = new Vue({
                         passStatus = false;
 
                         //loop through entry types set
-                        statusFilter.forEach((status) => {
-                            if (maker.status == status) {
+                        statusFilter.forEach((status) => {                            
+                            if (maker.status == status) {                                                                
                                 passStatus = true;
                             }
                         });
