@@ -53,7 +53,7 @@ get_header();
             $sub_field_1 = get_sub_field('image'); //Photo
             $sub_field_2 = get_sub_field('url'); //URL
 
-            echo '<div class="sponsors-box-xl">';
+            echo '<div class="sponsors-box-lg">';
             if( get_sub_field('url') ):
               echo '<a href="' . $sub_field_2 . '" target="_blank">';
             endif;

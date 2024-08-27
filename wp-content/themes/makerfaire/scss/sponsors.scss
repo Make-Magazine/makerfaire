@@ -20,17 +20,17 @@
     padding-bottom: 10px;
   }
   .sponsors-box-xl {
-    width: 250px;
+    max-width: 300px;
     
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
   }
   .sponsors-box-lg {
-    width: 250px;
+    max-width: 200px;
     
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
 
   }
