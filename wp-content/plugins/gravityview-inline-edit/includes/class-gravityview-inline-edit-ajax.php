@@ -51,7 +51,8 @@ final class GravityView_Inline_Edit_AJAX {
 	 * @return void
 	 */
 	private function _add_hooks() {
-		add_action( 'init', array( $this, 'process_inline_edit_callbacks' ), 16 );
+		// Priority 20 so we can run gp_inventory_type_choices which exist at 20 or after.
+		add_action( 'init', array( $this, 'process_inline_edit_callbacks' ), 20 );
 		add_action( 'wp_ajax_gv_inline_edit_get_users', array( $this, 'get_users' ) );
 		add_action( 'wp_ajax_gv_inline_upload_file', array( $this, 'upload_file' ) );
 	}
@@ -463,6 +464,11 @@ final class GravityView_Inline_Edit_AJAX {
 				}
 
 				$field_validate                = is_array( $value ) ? $value : rtrim( $value, ',' );
+				$values_to_update[ $field_id ] = $field_validate;
+				break;
+
+			case 'entry_tags':
+				$field_validate                = $post_value;
 				$values_to_update[ $field_id ] = $field_validate;
 				break;
 			case 'wysihtml5':

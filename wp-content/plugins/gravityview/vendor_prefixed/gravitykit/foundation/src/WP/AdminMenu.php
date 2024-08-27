@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by gravityview on 05-June-2024 using {@see https://github.com/BrianHenryIE/strauss}.
+ * Modified by gravityview on 14-August-2024 using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\GravityView\Foundation\WP;
@@ -176,7 +176,7 @@ class AdminMenu {
 		 */
 		$menu_position = apply_filters(
 			'gk/foundation/admin-menu/position',
-			self::get_menu_position_by_id( $gk_settings['top_level_menu_position'] ?? '' ) ?? self::get_menu_position_by_id( 'index.php' )
+			self::get_menu_position_by_id( $gk_settings['top_level_menu_position'] ?? '' )
 		);
 
 		add_menu_page(

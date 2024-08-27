@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by __root__ on 02-November-2023 using Strauss.
+ * Modified by __root__ on 16-August-2024 using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 
@@ -19,16 +19,20 @@ use GFAddOn;
  */
 class GravityFormsHandler extends AbstractProcessingHandler {
 	/**
+	 * Unique logger ID.
+	 *
 	 * @since 1.0.0
 	 *
-	 * @var string Logger unique ID.
+	 * @var string
 	 */
 	protected $_logger_id;
 
 	/**
+	 * Logger title.
+	 *
 	 * @since 1.0.0
 	 *
-	 * @var string Logger title.
+	 * @var string
 	 */
 	protected $_logger_title;
 
@@ -63,6 +67,12 @@ class GravityFormsHandler extends AbstractProcessingHandler {
 
 	/**
 	 * {@inheritdoc}
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param array $record The record to process.
+	 *
+	 * @return void
 	 */
 	protected function write( array $record ) {
 		$monolog_to_klogger_log_level_map = [
@@ -80,6 +90,7 @@ class GravityFormsHandler extends AbstractProcessingHandler {
 	}
 }
 
+// phpcs:disable Squiz.Commenting.VariableComment.MissingVar, Squiz.Commenting.FunctionComment.MissingParamTag, Generic.Files.OneObjectStructurePerFile.MultipleFound
 class MockGFAddon extends GFAddOn {
 	/**
 	 * {@inheritdoc}
@@ -115,3 +126,4 @@ class MockGFAddon extends GFAddOn {
 		parent::__construct();
 	}
 }
+// phpcs:enable Squiz.Commenting.VariableComment.MissingVar, Squiz.Commenting.FunctionComment.MissingParamTag, Generic.Files.OneObjectStructurePerFile.MultipleFound

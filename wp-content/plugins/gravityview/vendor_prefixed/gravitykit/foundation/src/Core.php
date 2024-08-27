@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by gravityview on 05-June-2024 using {@see https://github.com/BrianHenryIE/strauss}.
+ * Modified by gravityview on 14-August-2024 using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\GravityView\Foundation;
@@ -42,7 +42,7 @@ use GravityKitFoundation;
  * @method static PluginActivationHandler plugin_activation_handler()
  */
 class Core {
-	const VERSION = '1.2.15';
+	const VERSION = '1.2.17';
 
 	const ID = 'gk_foundation';
 
@@ -346,7 +346,7 @@ class Core {
 				$default_settings = [
 					'group_gk_products'       => 0,
 					'top_level_menu_action'   => $this->licenses()::ID,
-					'top_level_menu_position' => 'gf_edit_forms',
+					'top_level_menu_position' => class_exists( 'GFAPI' ) ? 'gf_edit_forms' : 'upload.php',
 					'support_email'           => get_bloginfo( 'admin_email' ),
 					'support_port'            => 1,
 					'no_conflict_mode'        => 1,

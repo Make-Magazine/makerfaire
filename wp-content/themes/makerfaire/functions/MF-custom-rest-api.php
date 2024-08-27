@@ -151,7 +151,7 @@ function mf_fairedata(WP_REST_Request $request) {
                 break;
             case 'schedule':
                 $data = getSchedule($dataids, $faireID);
-                break;            
+                break;
         }
     } else {
         $data['error'] = 'Error: Type or data ids not submitted';
@@ -182,6 +182,7 @@ function getMakerDirEntries($years) {
     //build entry array
     $entries = array();
     foreach ($results as $result) {
+
         $entry_id = $result->entry_id;
         $makerList = $result->maker;
 
@@ -235,8 +236,7 @@ function getMTMentries($formIDs = '', $faireID = '', $years = '') {
     //find if the show location switch is turned on
     $showLoc = false;
 
-    /*  For Bay Area 23 we forced everyone to not show location
-    
+    /*  For Bay Area 23 we forced everyone to not show location    
     $query = "select show_sched from wp_mf_faire where faire = '" . $faireID . "'";
 
     $show_sched = $wpdb->get_var($query);
@@ -253,6 +253,7 @@ function getMTMentries($formIDs = '', $faireID = '', $years = '') {
                      (SELECT meta_value FROM   wp_gf_entry_meta WHERE  meta_key = '151' AND entry_id = entry.id) AS proj_name, 
                      (SELECT meta_value FROM   wp_gf_entry_meta WHERE  meta_key = '16'  AND entry_id = entry.id) AS short_desc, 
                      (SELECT meta_value FROM   wp_gf_entry_meta WHERE  meta_key = '320' AND entry_id = entry.id) AS prime_cat, 
+                     (SELECT Group_concat(meta_value) FROM   wp_gf_entry_meta WHERE  meta_key LIKE '339.%' AND entry_id = entry.id GROUP  BY entry_id) AS types, 
                      (SELECT Group_concat(meta_value) FROM   wp_gf_entry_meta WHERE  meta_key LIKE '321.%' AND entry_id = entry.id GROUP  BY entry_id) AS second_cat, 
                      (SELECT Group_concat(meta_value) FROM   wp_gf_entry_meta WHERE  meta_key LIKE '304.%' AND entry_id = entry.id GROUP  BY entry_id) AS flags,
                      (SELECT Group_concat(meta_value) FROM   wp_gf_entry_meta WHERE  meta_key LIKE '879.%' AND entry_id = entry.id GROUP  BY entry_id) AS weekends, 
@@ -279,6 +280,7 @@ function getMTMentries($formIDs = '', $faireID = '', $years = '') {
                      (SELECT meta_value FROM   wp_gf_entry_meta WHERE  meta_key = '151' AND entry_id = entry.id) AS proj_name, 
                      (SELECT meta_value FROM   wp_gf_entry_meta WHERE  meta_key = '16'  AND entry_id = entry.id) AS short_desc, 
                      (SELECT meta_value FROM   wp_gf_entry_meta WHERE  meta_key = '320' AND entry_id = entry.id) AS prime_cat, 
+                     (SELECT meta_value FROM   wp_gf_entry_meta WHERE  meta_key = '321' AND entry_id = entry.id) AS types, 
                      (SELECT Group_concat(meta_value) FROM   wp_gf_entry_meta WHERE  meta_key LIKE '321.%' AND entry_id = entry.id GROUP  BY entry_id) AS second_cat, 
                      (SELECT Group_concat(meta_value) FROM   wp_gf_entry_meta WHERE  meta_key LIKE '304.%' AND entry_id = entry.id GROUP  BY entry_id) AS flags,
                      (SELECT meta_value FROM   wp_gf_entry_meta WHERE  meta_key = '320' AND entry_id = entry.id) AS area
@@ -303,6 +305,11 @@ function getMTMentries($formIDs = '', $faireID = '', $years = '') {
 
             //project photo
             $projPhoto = $result->proj_photo;
+            //for BA24, the single photo was changed to a multi image which messed things up a bit
+            $photo = json_decode($projPhoto);
+            if (is_array($photo)) {
+                $projPhoto = $photo[0];
+            }
 
             //find out if there is an override image for this page
             $overrideImg = findOverride($result->entry_id, 'mtm');
@@ -331,11 +338,50 @@ function getMTMentries($formIDs = '', $faireID = '', $years = '') {
                 $value = htmlspecialchars_decode(get_CPT_name($leadCat));
                 if ($value != '') $category[] = $value;
             }
+            // handle cases where no main category was set
+            if ($result->prime_cat == "-- select a makerfaire category --") {
+                $result->prime_cat = "";
+            }
             $primeCat = htmlspecialchars_decode(get_CPT_name($result->prime_cat));
             if ($primeCat != '')   array_unshift($category, $primeCat); // add the primary category to the start of the array
 
+            $mainCategory = get_term($result->prime_cat);
+            $mainCategoryIcon = '<i class="fa fa-rocket" aria-hidden="true"></i>';
+            $mainCategoryIconType = get_field('icon_type', $mainCategory->taxonomy . '_' . $mainCategory->term_id);
+            // get the mainCategory icon from the mf category taxonomy, if indeed one is set
+            if ($mainCategoryIconType == "uploaded_icon") {
+                $mainCategoryIcon = '<picture class="main-category-icon"><img src="' . get_field('uploaded_icon', $mainCategory->taxonomy . '_' . $mainCategory->term_id)['url'] . '" height="27px" width="27px" aria-hidden="true" /></picture>';
+            } else {
+                $fa = get_field('font_awesome', $mainCategory->taxonomy . '_' . $mainCategory->term_id);
+                if (!empty($fa)) {
+                    $mainCategoryIcon = '<a href="?category='.$primeCat.'"><i class="fa ' . $fa . '" aria-hidden="true"></i></a>';
+                }
+            }
+
+            //Admin entry types (only for BA23 and forward)
+            $types = explode(",", $result->types);
+            if (($key = array_search("Show Management", $types)) !== false) {
+                unset($types[$key]);
+            }
+
+            //replace Startup Sponsor with Exhibit
+            array_walk_recursive(
+                $types,
+                function (&$value) {
+                    $value = str_ireplace('Startup Sponsor', 'Exhibit', $value);
+                }
+            );
+
+            //Replace Sponsor with Exhibit
+            array_walk_recursive(
+                $types,
+                function (&$value) {
+                    $value = str_ireplace('Sponsor', 'Exhibit', $value);
+                }
+            );
+            
             //weekends               
-            if (isset($result->weekends)) {
+            if ($faireID=='BA23' && isset($result->weekends)) {
                 $weekends = explode(',', $result->weekends);
                 foreach ($weekends as &$weekend) {
                     if ($weekend == 'Wk1' || $weekend == 'Fri1') {
@@ -368,6 +414,8 @@ function getMTMentries($formIDs = '', $faireID = '', $years = '') {
                 'name' => $result->proj_name,
                 'large_img_url' => $projPhoto,
                 'categories' => $category,
+                'main_cat_icon' => $mainCategoryIcon,
+                'types' => $types,
                 'description' => $result->short_desc,
                 'flag' => $flag, //only set if flag is set to 'Featured Maker'
                 'handson' => $handson, //only set if handson is set to 'Featured Handson'
@@ -613,7 +661,7 @@ function getMakerList($entryID, $faireID) {
         $query = "SELECT *
               FROM wp_gf_entry_meta as lead_detail
               where lead_detail.entry_id = $entryID "
-            . "and cast(meta_key as char) in('160.3', '160.6', '158.3', '158.6', '155.3', '155.6', "
+            . "and cast(meta_key as char) in('96.3','96.6', '160.3', '160.6', '158.3', '158.6', '155.3', '155.6', "
             . "'156.3', '156.6', '157.3', '157.6', '159.3', '159.6', '154.3', '154.6', '109', '105')";
         $entryData = $wpdb->get_results($query);
         //field 105 - who would you like listed
@@ -626,16 +674,12 @@ function getMakerList($entryID, $faireID) {
             $fieldData[$field->meta_key] = $field->meta_value;
         }
 
-        if (isset($fieldData['105'])) {
-            $whoListed = strtolower($fieldData['105']);                        
-            $isGroup = (stripos($whoListed, 'group') !== false || stripos($whoListed, 'team') !== false?true:false);
-            $isOneMaker = false;
-            $isOneMaker = (strpos($whoListed, 'one') !== false);
+        
+            $whoListed = (isset($fieldData['105'])?strtolower($fieldData['105']):'');
+            $isGroup = (stripos($whoListed, 'group') !== false || stripos($whoListed, 'team') !== false ? true : false);            
 
             if ($isGroup) {
                 $makerList = (isset($fieldData['109']) ? $fieldData['109'] : '');
-            } elseif ($isOneMaker) {
-                $makerList = (isset($fieldData['160.3']) ? $fieldData['160.3'] : '') . (isset($fieldData['160.6']) ? ' ' . $fieldData['160.6'] : '');
             } else {
                 $makerArr = array();
                 if (isset($fieldData['160.3']))
@@ -653,9 +697,14 @@ function getMakerList($entryID, $faireID) {
                 if (isset($fieldData['154.3']))
                     $makerArr[] = $fieldData['154.3'] . ' ' . (isset($fieldData['154.6']) ? $fieldData['154.6'] : '');
 
+                //starting with BA24, we moved away from using Maker 1 name, to using primary contact name
+                if (empty($makerArr)) {
+                    if (isset($fieldData['96.3']))
+                        $makerArr[] = $fieldData['96.3'] . ' ' . (isset($fieldData['96.6']) ? $fieldData['96.6'] : '');
+                }
                 $makerList = implode(", ", $makerArr);
             }
-        }
+        
     }
 
     return $makerList;

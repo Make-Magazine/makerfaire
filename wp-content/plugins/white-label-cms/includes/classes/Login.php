@@ -27,17 +27,16 @@ class WLCMS_Login extends WLCMS_Previewable
         if (!isset($_GET['wlcms-action'])) {
             return;
         }
-        
+
         if ($_GET['wlcms-action'] != 'preview') {
             return;
         }
-        
+
         if (current_user_can('manage_options')) {
             return;
         }
 
-        wp_die( __( 'Sorry, you are not allowed to do this action.' ) );
-
+        wp_die(__('Sorry, you are not allowed to do this action.'));
     }
 
     public function save_preview_login($setting, $placeholder)
@@ -46,7 +45,7 @@ class WLCMS_Login extends WLCMS_Previewable
         if (isset($_REQUEST['logo_width']) || isset($_REQUEST['logo_height']))
             return;
 
-        $logo = $setting->get($placeholder . 'login_logo');
+        $logo = esc_url($setting->get($placeholder . 'login_logo'));
 
         if ($logo) {
             $imagesize = @getimagesize($logo);
@@ -85,8 +84,8 @@ class WLCMS_Login extends WLCMS_Previewable
         $content .= $this->set_form_css();
         $content .= $this->set_links_css();
 
-        $content = wp_kses( $content, array( '\'', '\"' ) );
-        $content = str_replace( '&gt;', '>', $content );
+        $content = wp_kses($content, array('\'', '\"'));
+        $content = str_replace('&gt;', '>', $content);
         return $content;
     }
 
@@ -103,12 +102,12 @@ class WLCMS_Login extends WLCMS_Previewable
     {
         $logo_css = '#login h1 a, .login h1 a { ';
         if ($login_logo = $this->get_db_setting('login_logo')) {
-            $logo_css .= 'background-image: url(' . $login_logo . ')!important;';
+            $logo_css .= 'background-image: url(' . esc_url($login_logo) . ')!important;';
         }
 
         $has_width = false;
         if ($logo_width = $this->get_db_setting('logo_width')) {
-            $logo_css .= 'width:' . wlcms_css_metrics($logo_width) . '!important;';
+            $logo_css .= 'width:' . wlcms_css_metrics(esc_attr($logo_width)) . '!important;';
             $has_width = true;
         } else {
             $logo_css .= 'width:auto!important;';
@@ -120,27 +119,26 @@ class WLCMS_Login extends WLCMS_Previewable
         $has_height = false;
         if ($logo_height = $this->get_db_setting('logo_height')) {
             $has_height = true;
-            $logo_css .= 'height:' . wlcms_css_metrics($logo_height) . ';';
+            $logo_css .= 'height:' . wlcms_css_metrics(esc_attr($logo_height)) . ';';
         }
 
         //Add logo background size
         $logo_css_background_size = 'background-size:contain;background-position-y: center;';
         if ($has_height && $has_width) {
-            $logo_css_background_size = sprintf('background-size:%s %s;', wlcms_css_metrics($logo_width), wlcms_css_metrics($logo_height));
+            $logo_css_background_size = sprintf('background-size:%s %s;', wlcms_css_metrics($logo_width), wlcms_css_metrics(esc_attr($logo_height)));
         }
         $logo_css .= $logo_css_background_size;
 
         if ($logo_bottom_margin = $this->get_db_setting('logo_bottom_margin')) {
-            $logo_css .= 'margin-bottom: ' . $logo_bottom_margin . 'px!important;';
+            $logo_css .= 'margin-bottom: ' . esc_attr($logo_bottom_margin) . 'px!important;';
         }
 
         $logo_css .= '}'; // close #login h1 a, .login h1 a 
 
         if ($retina_login_logo = $this->get_db_setting('retina_login_logo')) {
             $logo_css .= '@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) { 
-                #login h1 a, .login h1 a { background-image: url(' . $retina_login_logo . ')!important;}
+                #login h1 a, .login h1 a { background-image: url(' . esc_url($retina_login_logo) . ')!important;}
             }';
-
         }
 
         return $logo_css;
@@ -158,19 +156,19 @@ class WLCMS_Login extends WLCMS_Previewable
         }
 
         if ($background_color = $this->get_db_setting('background_color')) {
-            $body_login .= 'background-color:' . $background_color . '!important;';
+            $body_login .= 'background-color:' . esc_attr($background_color) . '!important;';
         }
 
         if ($background_image = $this->get_db_setting('background_image')) {
-            $body_login .= 'background-image: url(' . $background_image . ')!important;';
+            $body_login .= 'background-image: url(' . esc_url($background_image) . ')!important;';
         }
 
         if ($background_positions = $this->get_db_setting('background_positions')) {
-            $body_login .= 'background-position:' . $background_positions . '!important;';
+            $body_login .= 'background-position:' . esc_attr($background_positions) . '!important;';
         }
 
         if ($background_repeat = $this->get_db_setting('background_repeat')) {
-            $body_login .= 'background-repeat:' . $background_repeat . '!important;';
+            $body_login .= 'background-repeat:' . esc_attr($background_repeat) . '!important;';
         }
 
         $body_login .= '}';
@@ -183,18 +181,18 @@ class WLCMS_Login extends WLCMS_Previewable
         $form_css = '';
 
         if ($form_label_color = $this->get_db_setting('form_label_color')) {
-            $form_css .= '#loginform label{ color:' . $form_label_color . '}';
+            $form_css .= '#loginform label{ color:' . esc_attr($form_label_color) . '}';
         }
 
         if ($form_background_color = $this->get_db_setting('form_background_color')) {
-            $form_css .= '#loginform{ background-color:' . $form_background_color . '}';
+            $form_css .= '#loginform{ background-color:' . esc_attr($form_background_color) . '}';
         }
 
         /**
          * Submit Button css
          */
-        $form_button_text_color = $this->get_db_setting('form_button_text_color');
-        $form_button_color = $this->get_db_setting('form_button_color');
+        $form_button_text_color = esc_attr($this->get_db_setting('form_button_text_color'));
+        $form_button_color = esc_attr($this->get_db_setting('form_button_color'));
 
         if ($form_button_text_color || $form_button_color) {
             $form_css .= '#loginform input[type=submit],#loginform .submit input[type=button]{ ';
@@ -215,8 +213,8 @@ class WLCMS_Login extends WLCMS_Previewable
         /**
          * Submit Button Hover
          */
-        $form_button_text_hover_color = $this->get_db_setting('form_button_text_hover_color');
-        $form_button_hover_color = $this->get_db_setting('form_button_hover_color');
+        $form_button_text_hover_color = esc_attr($this->get_db_setting('form_button_text_hover_color'));
+        $form_button_hover_color = esc_attr($this->get_db_setting('form_button_hover_color'));
 
         if ($form_button_hover_color || $form_button_text_hover_color) {
             $form_css .= '#loginform input[type=submit]:hover,#loginform .submit input[type=button]:hover{ ';
@@ -245,19 +243,19 @@ class WLCMS_Login extends WLCMS_Previewable
             $form_css .= 'p#backtoblog{display:none;}';
         }
 
-        if ($back_to_register_link_color = $this->get_db_setting('back_to_register_link_color')) {
+        if ($back_to_register_link_color = esc_attr($this->get_db_setting('back_to_register_link_color'))) {
             $form_css .= 'p#backtoblog a, p#nav a{color:' . $back_to_register_link_color . '!important;}';
         }
 
-        if ($back_to_register_link_hover_color = $this->get_db_setting('back_to_register_link_hover_color')) {
+        if ($back_to_register_link_hover_color = esc_attr($this->get_db_setting('back_to_register_link_hover_color'))) {
             $form_css .= 'p#backtoblog a:hover, p#nav a:hover{color:' . $back_to_register_link_hover_color . '!important;}';
         }
 
-        if ($privacy_policy_link_color = $this->get_db_setting('privacy_policy_link_color')) {
+        if ($privacy_policy_link_color = esc_attr($this->get_db_setting('privacy_policy_link_color'))) {
             $form_css .= 'a.privacy-policy-link{color:' . $privacy_policy_link_color . '!important;text-decoration:none}';
         }
 
-        if ($privacy_policy_link_hover_color = $this->get_db_setting('privacy_policy_link_hover_color')) {
+        if ($privacy_policy_link_hover_color = esc_attr($this->get_db_setting('privacy_policy_link_hover_color'))) {
             $form_css .= 'a.privacy-policy-link:hover{color:' . $privacy_policy_link_hover_color . '!important;}';
         }
 
@@ -267,9 +265,9 @@ class WLCMS_Login extends WLCMS_Previewable
     private function set_custom_css()
     {
         $content = $this->get_db_setting('login_custom_css');
-        
-        $content = wp_kses( $content, array( '\'', '\"' ) );
-        $content = str_replace( '&gt;', '>', $content );
+
+        $content = wp_kses($content, array('\'', '\"'));
+        $content = str_replace('&gt;', '>', $content);
         return $content;
     }
 
@@ -277,7 +275,7 @@ class WLCMS_Login extends WLCMS_Previewable
     {
         return wlcms_esc_html_e($this->get_db_setting('login_custom_js'));
     }
-    
+
     public function settings()
     {
         if ($this->saving_preview_section() == 'wizard') {
@@ -358,5 +356,4 @@ class WLCMS_Login extends WLCMS_Previewable
     {
         return array_merge($settings, $this->complete_settings());
     }
-
 }

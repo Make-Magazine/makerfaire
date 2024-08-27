@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by __root__ on 02-November-2023 using Strauss.
+ * Modified by __root__ on 16-August-2024 using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 
@@ -14,16 +14,20 @@ class ProductHistoryManager {
 	const DB_OPTION_NAME = '_gk_foundation_products_history';
 
 	/**
+	 * Products history.
+	 *
 	 * @since 1.2.2
 	 *
-	 * @var string Products history.
+	 * @var string
 	 */
 	private $_products_history;
 
 	/**
+	 * {@PluginHistoryManager} clas instance.
+	 *
 	 * @since 1.2.2
 	 *
-	 * @var ProductHistoryManager Class instance.
+	 * @var ProductHistoryManager
 	 */
 	private static $_instance;
 
@@ -57,7 +61,9 @@ class ProductHistoryManager {
 		}
 
 		/**
-		 * @filter `gk/foundation/products/disable-history` Controls whether to track product history, such as installation, activation, deactivation, update, and deletion events.
+		 * Controls whether to track product history, such as installation, activation, deactivation, update, and deletion events.
+		 *
+		 * @filter `gk/foundation/products/disable-history`
 		 *
 		 * @since  1.2.2
 		 *
@@ -87,16 +93,19 @@ class ProductHistoryManager {
 	 *
 	 * @since 1.2.2
 	 *
-	 * @param string $product_path
+	 * @param string $product_path Path to the product file.
 	 *
 	 * @return void
 	 */
 	public function record_product_activation_event( $product_path ) {
 		$products = ProductManager::get_instance()->get_products_data();
 
-		$product = Arr::first( $products, function ( $product ) use ( $product_path ) {
-			return $product['path'] === $product_path;
-		} );
+		$product = Arr::first(
+			$products,
+			function ( $product ) use ( $product_path ) {
+				return $product['path'] === $product_path;
+			}
+		);
 
 		if ( ! $product ) {
 			return;
@@ -110,16 +119,19 @@ class ProductHistoryManager {
 	 *
 	 * @since 1.2.2
 	 *
-	 * @param string $product_path
+	 * @param string $product_path Path to the product file.
 	 *
 	 * @return void
 	 */
 	public function record_product_deactivation_event( $product_path ) {
 		$products = ProductManager::get_instance()->get_products_data();
 
-		$product = Arr::first( $products, function ( $product ) use ( $product_path ) {
-			return $product['path'] === $product_path;
-		} );
+		$product = Arr::first(
+			$products,
+			function ( $product ) use ( $product_path ) {
+				return $product['path'] === $product_path;
+			}
+		);
 
 		if ( ! $product ) {
 			return;
@@ -133,8 +145,8 @@ class ProductHistoryManager {
 	 *
 	 * @since 1.2.2
 	 *
-	 * @param string $product_path
-	 * @param bool   $deleted
+	 * @param string $product_path Path to the product file.
+	 * @param bool   $deleted      Whether the product was deleted.
 	 *
 	 * @return void
 	 */
@@ -145,9 +157,12 @@ class ProductHistoryManager {
 
 		$products = ProductManager::get_instance()->get_products_data();
 
-		$product = Arr::first( $products, function ( $product ) use ( $product_path ) {
-			return $product['path'] === $product_path;
-		} );
+		$product = Arr::first(
+			$products,
+			function ( $product ) use ( $product_path ) {
+				return $product['path'] === $product_path;
+			}
+		);
 
 		if ( ! $product ) {
 			return;
@@ -171,9 +186,11 @@ class ProductHistoryManager {
 			return;
 		}
 
-		$products = ProductManager::get_instance()->get_products_data( [
-			'skip_request_cache' => true,
-		] );
+		$products = ProductManager::get_instance()->get_products_data(
+			[
+				'skip_request_cache' => true,
+			]
+		);
 
 		$text_domain = $upgrader->new_plugin_data['TextDomain'] ?? null;
 
@@ -195,19 +212,28 @@ class ProductHistoryManager {
 	 * @return void
 	 */
 	public function record_product_update_event( $upgrader, $data ) {
-		if ( 'plugin' !== Arr::get( $data, 'type' ) || 'update' !== $data['action'] ) {
+		if ( 'plugin' !== Arr::get( $data, 'type' ) && 'update' !== $data['action'] ) {
 			return;
 		}
 
 		$cached_products = ProductManager::get_instance()->get_products_data();
 
-		$products = ProductManager::get_instance()->get_products_data( [
-			'skip_request_cache' => true,
-		] );
+		$products = ProductManager::get_instance()->get_products_data(
+			[
+				'skip_request_cache' => true,
+			]
+		);
 
-		$product = Arr::first( $products, function ( $product ) use ( $data ) {
-			return $product['path'] === $data['plugin'];
-		} );
+		$product = Arr::first(
+			$products,
+			function ( $product ) use ( $data ) {
+				if ( ! isset( $product['path'] ) || ! isset( $data['plugin'] ) ) {
+					return false;
+				}
+
+				return $product['path'] === $data['plugin'];
+			}
+		);
 
 		if ( ! $product ) {
 			return;
@@ -236,14 +262,14 @@ class ProductHistoryManager {
 
 		$history_entry = [
 			'action'  => $action,
-			'version' => $product['installed_version']
+			'version' => $product['installed_version'],
 		];
 
 		if ( 'update' === $action ) {
 			$history_entry['previous_version'] = $previous_version ?? $product['installed_version'];
 		}
 
-		$history[ $product['text_domain'] ][ current_time( 'timestamp' ) ] = $history_entry;
+		$history[ $product['text_domain'] ][ current_time( 'timestamp' ) ] = $history_entry; // phpcs:ignore WordPress.DateTime.CurrentTimeTimestamp.Requested
 
 		krsort( $history[ $product['text_domain'] ] );
 
@@ -278,7 +304,7 @@ class ProductHistoryManager {
 	 *
 	 * @since 1.2.2
 	 *
-	 * @param string $text_domain
+	 * @param string $text_domain Product text domain.
 	 *
 	 * @return array
 	 */

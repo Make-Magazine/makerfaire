@@ -5,7 +5,7 @@
     font-weight: 300;
   }
   .sponsors-row {
-    border-top: 1px solid rgba(0,173,239,0.9);
+    
     padding-bottom: 50px;
   }
   h3.sponsors-type {
@@ -14,48 +14,32 @@
   }
   .faire-sponsors-box {
     display: flex;
-    justify-content: center;
+    justify-content: space-evenly;
     align-items: center;
     flex-wrap: wrap;
     padding-bottom: 10px;
   }
   .sponsors-box-xl {
     width: 250px;
-    margin-top: 20px;
-    padding-left: 25px;
-    padding-right: 25px;
+    
     display: flex;
     justify-content: center;
     align-items: center;
   }
   .sponsors-box-lg {
     width: 250px;
-    margin-top: 20px;
-    padding-left: 25px;
-    padding-right: 25px;
-    border-right: 1px solid #D3D3D3;
+    
     display: flex;
     justify-content: center;
     align-items: center;
-    &:last-child {
-      border-right: none;
-    }
+
   }
   .sponsors-box-md {
     width: 160px;
-    height: 100px;
-    margin-top: 20px;
-    padding-left: 15px;
-    padding-right: 15px;
-    border-left: 1px solid #D3D3D3;
-    border-right: 1px solid #D3D3D3;
-    margin-left: -1px;
+    height: 100px;    
     display: flex;
     justify-content: center;
     align-items: center;
-    &:last-child {
-      border-right: 1px solid #D3D3D3;
-    }
   }
   // IE fix
   .sponsors-box-xl a,
@@ -107,7 +91,7 @@
 
 // SPONSOR SLIDER FUNCTION
 .sponsor-slide {
-  border-top: 10px solid #3FAFED;
+  
   padding-top: 20px;
   &.sponsor-slide-shortcode {
     border-top: none;
@@ -122,7 +106,7 @@
   h4.sponsor-slide-title {
     color: #999;
     font-weight: 300;
-	text-align: center;
+	  text-align: center;
   }
   .sponsor-slide-cat {
     color: #666;
@@ -169,11 +153,36 @@
 			.faire-sponsors-box {
 				.sponsors-box-md  {
 					width: 200px;
+          margin: 0px 50px;
 				}
 			}
 		}
 	}
 	@media screen and (max-width: 767px) {
+		.sponsors-1, .sponsors-2 {
+			.faire-sponsors-box {
+				.sponsors-box-md  {
+					width: 200px;
+				}
+			}
+		}
+		.sponsors-3, .sponsors-4, .sponsors-5, .sponsors-6 {
+      height: auto;
+			.faire-sponsors-box {
+        height: auto;
+				.sponsors-box-md  {
+					width: 200px;
+          margin-bottom: 20px;
+				}
+			}
+		}
+		.faire-sponsors-box {
+			.sponsors-box-md  {
+				width: 90px;
+			}
+		}
+	}
+	@media screen and (max-width: 480px) {
 		.sponsors-1, .sponsors-2 {
 			.faire-sponsors-box {
 				.sponsors-box-md  {
@@ -188,32 +197,6 @@
 				}
 			}
 		}
-		.faire-sponsors-box {
-			.sponsors-box-md  {
-				width: 90px;
-			}
-		}
-	}
-	@media screen and (max-width: 480px) {
-		.sponsors-1, .sponsors-2 {
-			.faire-sponsors-box {
-				.sponsors-box-md  {
-					width: 160px;
-				}
-			}
-		}
-		.sponsors-3, .sponsors-4, .sponsors-5, .sponsors-6 {
-			.faire-sponsors-box {
-				.sponsors-box-md  {
-					width: 120px;
-				}
-			}
-		}
-		.faire-sponsors-box {
-			.sponsors-box-md  {
-				width: 70px;
-			}
-		}
 	}
 	@media screen and (max-width: 360px) {
 		.faire-sponsors-box, .sponsors-row {
@@ -222,29 +205,28 @@
 	}
   .faire-sponsors-box {
     display: flex;
-    justify-content: center;
-    align-items: center;
+    justify-content: space-around;    
     flex-wrap: wrap;
-    padding-bottom: 10px;
+    padding-bottom: 30px;
   }
   .sponsors-box-md {
-    width: 120px;
-    height: 75px;
-    margin-top: 20px;
-    padding-left: 15px;
-    padding-right: 15px;
-    border-left: 1px solid #D3D3D3;
-    border-right: 1px solid #D3D3D3;
-    margin-left: -1px;
-    display: flex;
-    justify-content: center;
+    max-width: 200px;
+    width: 200px;
+    max-height:100px;
+    height: auto;        
+    display: flex;        
     align-items: center;
-    &:last-child {
-      border-right: 1px solid #D3D3D3;
-    }
 	  img { width: 100%; }
   }
 
+  .sponsors-box-lg {
+    max-width: 300px;
+    max-height:150px;
+    height: auto;        
+    display: flex;        
+    align-items: center;
+	  img { width: 100%; }
+  }
   .sponsors-text-box {
     display: flex;
     flex-wrap: wrap;

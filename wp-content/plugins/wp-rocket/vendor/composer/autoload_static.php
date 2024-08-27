@@ -4,8 +4,12 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit46a65e1fe8be58ad5e0aa085264a96b8
+class ComposerStaticInitd8f56632a33b6a0f05b3861c333317d6
 {
+    public static $files = array (
+        '6c592737b91137905268e9a0eb968869' => __DIR__ . '/..' . '/wp-media/apply-filters-typed/functions.php',
+    );
+
     public static $prefixLengthsPsr4 = array (
         'W' => 
         array (
@@ -245,6 +249,28 @@ class ComposerStaticInit46a65e1fe8be58ad5e0aa085264a96b8
         'WP_Rocket\\Engine\\Common\\JobManager\\Strategy\\Strategies\\JobSetFail' => __DIR__ . '/../..' . '/inc/Engine/Common/JobManager/Strategy/Strategies/JobSetFail.php',
         'WP_Rocket\\Engine\\Common\\JobManager\\Strategy\\Strategies\\ResetRetryProcess' => __DIR__ . '/../..' . '/inc/Engine/Common/JobManager/Strategy/Strategies/ResetRetryProcess.php',
         'WP_Rocket\\Engine\\Common\\JobManager\\Strategy\\Strategies\\StrategyInterface' => __DIR__ . '/../..' . '/inc/Engine/Common/JobManager/Strategy/Strategies/StrategyInterface.php',
+        'WP_Rocket\\Engine\\Common\\PerformanceHints\\AJAX\\ControllerInterface' => __DIR__ . '/../..' . '/inc/Engine/Common/PerformanceHints/AJAX/ControllerInterface.php',
+        'WP_Rocket\\Engine\\Common\\PerformanceHints\\AJAX\\Subscriber' => __DIR__ . '/../..' . '/inc/Engine/Common/PerformanceHints/AJAX/Subscriber.php',
+        'WP_Rocket\\Engine\\Common\\PerformanceHints\\ActivationFactoryInterface' => __DIR__ . '/../..' . '/inc/Engine/Common/PerformanceHints/ActivationFactoryInterface.php',
+        'WP_Rocket\\Engine\\Common\\PerformanceHints\\Activation\\Activation' => __DIR__ . '/../..' . '/inc/Engine/Common/PerformanceHints/Activation/Activation.php',
+        'WP_Rocket\\Engine\\Common\\PerformanceHints\\Activation\\ServiceProvider' => __DIR__ . '/../..' . '/inc/Engine/Common/PerformanceHints/Activation/ServiceProvider.php',
+        'WP_Rocket\\Engine\\Common\\PerformanceHints\\Admin\\Controller' => __DIR__ . '/../..' . '/inc/Engine/Common/PerformanceHints/Admin/Controller.php',
+        'WP_Rocket\\Engine\\Common\\PerformanceHints\\Admin\\Subscriber' => __DIR__ . '/../..' . '/inc/Engine/Common/PerformanceHints/Admin/Subscriber.php',
+        'WP_Rocket\\Engine\\Common\\PerformanceHints\\Cron\\Controller' => __DIR__ . '/../..' . '/inc/Engine/Common/PerformanceHints/Cron/Controller.php',
+        'WP_Rocket\\Engine\\Common\\PerformanceHints\\Cron\\Subscriber' => __DIR__ . '/../..' . '/inc/Engine/Common/PerformanceHints/Cron/Subscriber.php',
+        'WP_Rocket\\Engine\\Common\\PerformanceHints\\Database\\Queries\\AbstractQueries' => __DIR__ . '/../..' . '/inc/Engine/Common/PerformanceHints/Database/Queries/AbstractQueries.php',
+        'WP_Rocket\\Engine\\Common\\PerformanceHints\\Database\\Queries\\QueriesInterface' => __DIR__ . '/../..' . '/inc/Engine/Common/PerformanceHints/Database/Queries/QueriesInterface.php',
+        'WP_Rocket\\Engine\\Common\\PerformanceHints\\Database\\Table\\AbstractTable' => __DIR__ . '/../..' . '/inc/Engine/Common/PerformanceHints/Database/Table/AbstractTable.php',
+        'WP_Rocket\\Engine\\Common\\PerformanceHints\\Database\\Table\\TableInterface' => __DIR__ . '/../..' . '/inc/Engine/Common/PerformanceHints/Database/Table/TableInterface.php',
+        'WP_Rocket\\Engine\\Common\\PerformanceHints\\FactoryInterface' => __DIR__ . '/../..' . '/inc/Engine/Common/PerformanceHints/FactoryInterface.php',
+        'WP_Rocket\\Engine\\Common\\PerformanceHints\\Frontend\\ControllerInterface' => __DIR__ . '/../..' . '/inc/Engine/Common/PerformanceHints/Frontend/ControllerInterface.php',
+        'WP_Rocket\\Engine\\Common\\PerformanceHints\\Frontend\\Processor' => __DIR__ . '/../..' . '/inc/Engine/Common/PerformanceHints/Frontend/Processor.php',
+        'WP_Rocket\\Engine\\Common\\PerformanceHints\\Frontend\\Subscriber' => __DIR__ . '/../..' . '/inc/Engine/Common/PerformanceHints/Frontend/Subscriber.php',
+        'WP_Rocket\\Engine\\Common\\PerformanceHints\\ServiceProvider' => __DIR__ . '/../..' . '/inc/Engine/Common/PerformanceHints/ServiceProvider.php',
+        'WP_Rocket\\Engine\\Common\\PerformanceHints\\WarmUp\\APIClient' => __DIR__ . '/../..' . '/inc/Engine/Common/PerformanceHints/WarmUp/APIClient.php',
+        'WP_Rocket\\Engine\\Common\\PerformanceHints\\WarmUp\\Controller' => __DIR__ . '/../..' . '/inc/Engine/Common/PerformanceHints/WarmUp/Controller.php',
+        'WP_Rocket\\Engine\\Common\\PerformanceHints\\WarmUp\\Queue' => __DIR__ . '/../..' . '/inc/Engine/Common/PerformanceHints/WarmUp/Queue.php',
+        'WP_Rocket\\Engine\\Common\\PerformanceHints\\WarmUp\\Subscriber' => __DIR__ . '/../..' . '/inc/Engine/Common/PerformanceHints/WarmUp/Subscriber.php',
         'WP_Rocket\\Engine\\Common\\Queue\\AbstractASQueue' => __DIR__ . '/../..' . '/inc/Engine/Common/Queue/AbstractASQueue.php',
         'WP_Rocket\\Engine\\Common\\Queue\\Cleaner' => __DIR__ . '/../..' . '/inc/Engine/Common/Queue/Cleaner.php',
         'WP_Rocket\\Engine\\Common\\Queue\\QueueInterface' => __DIR__ . '/../..' . '/inc/Engine/Common/Queue/QueueInterface.php',
@@ -287,25 +313,16 @@ class ComposerStaticInit46a65e1fe8be58ad5e0aa085264a96b8
         'WP_Rocket\\Engine\\License\\Subscriber' => __DIR__ . '/../..' . '/inc/Engine/License/Subscriber.php',
         'WP_Rocket\\Engine\\License\\Upgrade' => __DIR__ . '/../..' . '/inc/Engine/License/Upgrade.php',
         'WP_Rocket\\Engine\\Media\\AboveTheFold\\AJAX\\Controller' => __DIR__ . '/../..' . '/inc/Engine/Media/AboveTheFold/AJAX/Controller.php',
-        'WP_Rocket\\Engine\\Media\\AboveTheFold\\AJAX\\Subscriber' => __DIR__ . '/../..' . '/inc/Engine/Media/AboveTheFold/AJAX/Subscriber.php',
-        'WP_Rocket\\Engine\\Media\\AboveTheFold\\Activation\\Activation' => __DIR__ . '/../..' . '/inc/Engine/Media/AboveTheFold/Activation/Activation.php',
-        'WP_Rocket\\Engine\\Media\\AboveTheFold\\Activation\\ServiceProvider' => __DIR__ . '/../..' . '/inc/Engine/Media/AboveTheFold/Activation/ServiceProvider.php',
-        'WP_Rocket\\Engine\\Media\\AboveTheFold\\Admin\\Controller' => __DIR__ . '/../..' . '/inc/Engine/Media/AboveTheFold/Admin/Controller.php',
-        'WP_Rocket\\Engine\\Media\\AboveTheFold\\Admin\\Subscriber' => __DIR__ . '/../..' . '/inc/Engine/Media/AboveTheFold/Admin/Subscriber.php',
+        'WP_Rocket\\Engine\\Media\\AboveTheFold\\Activation\\ActivationFactory' => __DIR__ . '/../..' . '/inc/Engine/Media/AboveTheFold/Activation/ActivationFactory.php',
         'WP_Rocket\\Engine\\Media\\AboveTheFold\\Context\\Context' => __DIR__ . '/../..' . '/inc/Engine/Media/AboveTheFold/Context/Context.php',
-        'WP_Rocket\\Engine\\Media\\AboveTheFold\\Cron\\Controller' => __DIR__ . '/../..' . '/inc/Engine/Media/AboveTheFold/Cron/Controller.php',
-        'WP_Rocket\\Engine\\Media\\AboveTheFold\\Cron\\Subscriber' => __DIR__ . '/../..' . '/inc/Engine/Media/AboveTheFold/Cron/Subscriber.php',
         'WP_Rocket\\Engine\\Media\\AboveTheFold\\Database\\Queries\\AboveTheFold' => __DIR__ . '/../..' . '/inc/Engine/Media/AboveTheFold/Database/Queries/AboveTheFold.php',
         'WP_Rocket\\Engine\\Media\\AboveTheFold\\Database\\Rows\\AboveTheFold' => __DIR__ . '/../..' . '/inc/Engine/Media/AboveTheFold/Database/Rows/AboveTheFold.php',
         'WP_Rocket\\Engine\\Media\\AboveTheFold\\Database\\Schemas\\AboveTheFold' => __DIR__ . '/../..' . '/inc/Engine/Media/AboveTheFold/Database/Schemas/AboveTheFold.php',
         'WP_Rocket\\Engine\\Media\\AboveTheFold\\Database\\Tables\\AboveTheFold' => __DIR__ . '/../..' . '/inc/Engine/Media/AboveTheFold/Database/Tables/AboveTheFold.php',
+        'WP_Rocket\\Engine\\Media\\AboveTheFold\\Factory' => __DIR__ . '/../..' . '/inc/Engine/Media/AboveTheFold/Factory.php',
         'WP_Rocket\\Engine\\Media\\AboveTheFold\\Frontend\\Controller' => __DIR__ . '/../..' . '/inc/Engine/Media/AboveTheFold/Frontend/Controller.php',
         'WP_Rocket\\Engine\\Media\\AboveTheFold\\Frontend\\Subscriber' => __DIR__ . '/../..' . '/inc/Engine/Media/AboveTheFold/Frontend/Subscriber.php',
         'WP_Rocket\\Engine\\Media\\AboveTheFold\\ServiceProvider' => __DIR__ . '/../..' . '/inc/Engine/Media/AboveTheFold/ServiceProvider.php',
-        'WP_Rocket\\Engine\\Media\\AboveTheFold\\WarmUp\\APIClient' => __DIR__ . '/../..' . '/inc/Engine/Media/AboveTheFold/WarmUp/APIClient.php',
-        'WP_Rocket\\Engine\\Media\\AboveTheFold\\WarmUp\\Controller' => __DIR__ . '/../..' . '/inc/Engine/Media/AboveTheFold/WarmUp/Controller.php',
-        'WP_Rocket\\Engine\\Media\\AboveTheFold\\WarmUp\\Queue' => __DIR__ . '/../..' . '/inc/Engine/Media/AboveTheFold/WarmUp/Queue.php',
-        'WP_Rocket\\Engine\\Media\\AboveTheFold\\WarmUp\\Subscriber' => __DIR__ . '/../..' . '/inc/Engine/Media/AboveTheFold/WarmUp/Subscriber.php',
         'WP_Rocket\\Engine\\Media\\Emojis\\EmojisSubscriber' => __DIR__ . '/../..' . '/inc/Engine/Media/Emojis/EmojisSubscriber.php',
         'WP_Rocket\\Engine\\Media\\ImageDimensions\\AdminSubscriber' => __DIR__ . '/../..' . '/inc/Engine/Media/ImageDimensions/AdminSubscriber.php',
         'WP_Rocket\\Engine\\Media\\ImageDimensions\\ImageDimensions' => __DIR__ . '/../..' . '/inc/Engine/Media/ImageDimensions/ImageDimensions.php',
@@ -551,10 +568,10 @@ class ComposerStaticInit46a65e1fe8be58ad5e0aa085264a96b8
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit46a65e1fe8be58ad5e0aa085264a96b8::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInit46a65e1fe8be58ad5e0aa085264a96b8::$prefixDirsPsr4;
-            $loader->prefixesPsr0 = ComposerStaticInit46a65e1fe8be58ad5e0aa085264a96b8::$prefixesPsr0;
-            $loader->classMap = ComposerStaticInit46a65e1fe8be58ad5e0aa085264a96b8::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInitd8f56632a33b6a0f05b3861c333317d6::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInitd8f56632a33b6a0f05b3861c333317d6::$prefixDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInitd8f56632a33b6a0f05b3861c333317d6::$prefixesPsr0;
+            $loader->classMap = ComposerStaticInitd8f56632a33b6a0f05b3861c333317d6::$classMap;
 
         }, null, ClassLoader::class);
     }

@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by __root__ on 02-November-2023 using Strauss.
+ * Modified by __root__ on 16-August-2024 using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 
@@ -14,9 +14,11 @@ use Exception;
 
 class EDD {
 	/**
+	 * Class instance.
+	 *
 	 * @since 1.0.0
 	 *
-	 * @var EDD Class instance.
+	 * @var EDD
 	 */
 	private static $_instance;
 
@@ -43,7 +45,7 @@ class EDD {
 	 * @return void
 	 */
 	public function init() {
-		add_filter( 'pre_set_site_transient_update_plugins', [ $this, 'check_for_product_updates' ] );
+		add_filter( 'pre_set_site_transient_update_plugins', [ $this, 'check_for_product_updates' ], 999 );
 		add_filter( 'plugins_api', [ $this, 'display_product_information' ], 999, 3 );
 		add_filter( 'admin_init', [ $this, 'disable_legacy_edd_updater' ], 999 );
 	}
@@ -102,24 +104,29 @@ class EDD {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param object $transient_data
-	 * @param bool   $skip_cache (optional) Whether to skip cache when getting products data. Default: false.
+	 * @param object $transient_data Transient data.
+	 * @param bool   $skip_cache     (optional) Whether to skip cache when getting products data. Default: false.
 	 *
 	 * @return object
 	 */
 	public function check_for_product_updates( $transient_data, $skip_cache = false ) {
 		static $checked;
 
-		if ( ! is_object( $transient_data ) ) {
-			$transient_data = new \stdClass();
+		if ( ! is_object( $transient_data ) || empty( $transient_data->checked ) ) {
+			return $transient_data;
 		}
 
-		if ( ! $checked && ! $skip_cache && Arr::get( $_GET, 'force-check', false ) ) {
+		if ( ! $checked && ! $skip_cache && Arr::get( $_GET, 'force-check', false ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			$skip_cache = true;
 		}
 
 		try {
-			$products_data = ProductManager::get_instance()->get_products_data( [ 'skip_request_cache' => true, 'skip_remote_cache' => $skip_cache ] );
+			$products_data = ProductManager::get_instance()->get_products_data(
+				[
+					'skip_request_cache' => true,
+					'skip_remote_cache'  => $skip_cache,
+				]
+			);
 		} catch ( Exception $e ) {
 			LoggerFramework::get_instance()->error( "Can't get products data when checking for updated versions: " . $e->getMessage() );
 
@@ -137,14 +144,8 @@ class EDD {
 
 			if ( $product['update_available'] ) {
 				$transient_data->response[ $product_path ] = $wp_product_data;
-			} else {
-				$transient_data->no_update[ $product_path ] = $wp_product_data;
 			}
-
-			$transient_data->checked[ $product_path ] = $product['installed_version'];
 		}
-
-		$transient_data->last_checked = time();
 
 		$checked = true;
 
@@ -234,9 +235,12 @@ class EDD {
 			return $result;
 		}
 
-		$product = Arr::first( $products, function ( $product ) use ( $args ) {
-			return $product['slug'] === $args->slug;
-		} );
+		$product = Arr::first(
+			$products,
+			function ( $product ) use ( $args ) {
+				return $product['slug'] === $args->slug;
+			}
+		);
 
 		if ( ! $product ) {
 			return $result;

@@ -99,7 +99,7 @@ if ( $query->have_posts() ) {
             }
                         
             ?>
-            <div class="result-item <?php echo $postType; ?>">
+            <div class="result-item mf-card <?php echo $postType; ?>">
                 <?php if ( has_post_thumbnail() ) { ?>
                         <div class="result-image">
 							<a href="<?php echo $permalink; ?>">

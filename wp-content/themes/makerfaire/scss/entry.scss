@@ -601,3 +601,11 @@
 	-webkit-filter: drop-shadow(5px 5px 5px #222);
     filter: drop-shadow(5px 5px 5px #222);
 }
+
+.icon-link:hover {
+	text-decoration: none;
+	cursor: pointer;
+	span {
+		text-decoration: underline;
+	}
+}

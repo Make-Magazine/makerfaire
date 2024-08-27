@@ -45,7 +45,7 @@ $showEditMakey = false;
                         <?php if(isset($location) && trim($location) != '' && count(array_intersect($exhibit_type, array("Exhibit", "Sponsor", "Startup Sponsor"))) > 0) { ?><span class="entry-box-item" aria-label="Location"><i class="fa fa-map-signs" aria-hidden="true"></i><?php echo $location; ?></span><?php } ?>
                         <?php if(isset($friday) && $friday == 1 && count(array_intersect($exhibit_type, array("Exhibit", "Sponsor", "Startup Sponsor"))) > 0) { ?><span class="entry-box-item" aria-label="Calendar Detail"><i class="fa fa-calendar-days" aria-hidden="true"></i>Friday Only</span><?php } ?>
                         <?php if(!empty($exhibit_type)) { ?><span class="entry-box-item" aria-label="Exhibit Type"  ><i class="fa fa-check" aria-hidden="true"></i><?php echo implode(" & ",$exhibit_type); ?></span><?php } ?>
-                        <?php if(isset($mainCategoryName) && $mainCategoryName != '') { ?><span class="entry-box-item" aria-label="Main Category"><?php echo $mainCategoryIcon; echo $mainCategoryName ; ?></span><?php } ?>
+                        <?php if(isset($mainCategoryName) && $mainCategoryName != '') { ?><span class="entry-box-item" aria-label="Main Category"><a href="/<?php echo $url_sub_path; ?>/meet-the-makers/?category=<?php echo $mainCategoryName; ?>" class="icon-link"><?php echo $mainCategoryIcon; ?><span><?php echo $mainCategoryName; ?></span></a></span><?php } ?>
                         <?php if(!empty($ribbons)) { ?><span class="entry-box-item" aria-label="Ribbon"><a href="/ribbons/"><i class="fa fa-award" aria-hidden="true"></i>Ribbon Recipient</a></span><?php } ?>
                     </div>
                     <?php if(isset($project_short) && $project_short != '') { ?>
@@ -169,7 +169,7 @@ $showEditMakey = false;
                 <h4>More Event Info</h4>
                 <div class="entry-box-items">
                     <?php if(isset($mainCategoryName ) && $mainCategoryName  != '') { ?>
-                        <span class="entry-box-item"><?php echo $mainCategoryIcon; ?><a href="/<?php echo $url_sub_path; ?>/meet-the-makers/?category=<?php echo $mainCategoryName; ?>">See All <?php echo $mainCategoryName; ?></a></span>
+                        <span class="entry-box-item"><a href="/<?php echo $url_sub_path; ?>/meet-the-makers/?category=<?php echo $mainCategoryName; ?>" class="icon-link"><?php echo $mainCategoryIcon; ?><span>See All <?php echo $mainCategoryName; ?></span></a></span>
                     <?php } ?>
                     <?php if($show_sched ){ ?>
                         <span class="entry-box-item"><i class="fa fa-calendar-days"></i><a href="/<?php echo $url_sub_path; ?>/schedule/">Event Schedule</a></span>

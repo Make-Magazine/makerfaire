@@ -20,27 +20,26 @@ class WLCMS_Admin_Script
 
     public function header_css()
     {
-       
+
         // no need to append scripts for guest users
         if (!is_user_logged_in()) {
             return;
         }
-        
+
         $scripts = "<!-- WLCMS Style-->\n";
-        if (count($this->css) || count($this->hidded_elements) || count($this->bulk_css) || !empty($this->admin_css) ) {
+        if (count($this->css) || count($this->hidded_elements) || count($this->bulk_css) || !empty($this->admin_css)) {
             $scripts .= sprintf('<style type="text/css">%s</style>', $this->compiled_header_css());
         }
-        
+
         $scripts .= "\n<!-- WLCMS End Style-->";
         echo $scripts;
-
     }
 
     private function compiled_header_css()
     {
-        $content = $this->admin_css . $this->compileCss(). $this->additional_css;
-        $content = wp_kses( $content, array( '\'', '\"' ) );
-        $content = str_replace( '&gt;', '>', $content );
+        $content = $this->admin_css . $this->compileCss() . $this->additional_css;
+        $content = wp_kses($content, array('\'', '\"'));
+        $content = str_replace('&gt;', '>', $content);
         return $content;
     }
 
@@ -110,7 +109,7 @@ class WLCMS_Admin_Script
     {
         $this->admin_css = $admin_css;
     }
-    
+
     function compileCss()
     {
         $this->_setHiddenCss();
@@ -128,7 +127,6 @@ class WLCMS_Admin_Script
             }
 
             $css_output .= '}';
-
         }
 
         $css_output .= $this->_setBulkCss();
@@ -140,5 +138,4 @@ class WLCMS_Admin_Script
     {
         $this->additional_css .= $css;
     }
-
 }

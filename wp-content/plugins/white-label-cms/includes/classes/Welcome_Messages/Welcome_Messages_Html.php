@@ -8,9 +8,8 @@ class Welcome_Messages_Html
         $this->key = $key;
         $this->settings = $settings;
 
-        if( isset( $this->settings['is_fullwidth']) && $this->settings['is_fullwidth'] == 1  ) 
-        {
-            add_action( 'in_admin_header', array( $this, 'welcome_panel' ) );
+        if (isset($this->settings['is_fullwidth']) && $this->settings['is_fullwidth'] == 1) {
+            add_action('in_admin_header', array($this, 'welcome_panel'));
             return;
         }
 
@@ -29,28 +28,28 @@ class Welcome_Messages_Html
     }
 
     public function welcome_panel()
-    {?>
-        <div id="welcome-panel<?php echo $this->key?>" data-welcome_key="<?php echo $this->key?>" class="wlcms-welcome-panel">
+    { ?>
+        <div id="welcome-panel<?php echo $this->key ?>" data-welcome_key="<?php echo $this->key ?>" class="wlcms-welcome-panel">
             <?php
-            if(isset($this->settings['dismissible'])):
+            if (isset($this->settings['dismissible'])) :
             ?><a class="welcome-panel-close" href="#" aria-label="Dismiss the welcome panel">Dismiss</a>
-            <?php endif?>
-            <div class="welcome-panel-content welcome-panel-content<?php echo $this->key?>" style="padding-bottom:20px">
-                <?php if(isset( $this->settings['title'] )):?>
-                    <h2><?php echo $this->settings['title']?></h2>
-                <?php endif;?>
+            <?php endif ?>
+            <div class="welcome-panel-content welcome-panel-content<?php echo $this->key ?>" style="padding-bottom:20px">
+                <?php if (isset($this->settings['title'])) : ?>
+                    <h2><?php echo esc_html($this->settings['title']) ?></h2>
+                <?php endif; ?>
                 <div class="wlcms-welcome-content">
-                <?php echo $this->template(); ?>
+                    <?php echo $this->template(); ?>
                 </div>
             </div>
         </div>
-        <?php
+<?php
         $welcome = sprintf(";jQuery('#welcome-panel%1\$d').insertBefore('#dashboard-widgets-wrap');jQuery('#welcome-panel%1\$d').show();", $this->key);
         wlcms_add_js($welcome);
     }
 
     public function template()
     {
-        return isset($this->settings['description']) ? wpautop($this->settings['description']) : '';
+        return isset($this->settings['description']) ? wpautop(wp_kses_post($this->settings['description'])) : '';
     }
 }

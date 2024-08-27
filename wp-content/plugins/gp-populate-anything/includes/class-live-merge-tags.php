@@ -978,7 +978,7 @@ class GP_Populate_Anything_Live_Merge_Tags {
 				continue;
 			}
 
-			if ( $field->get_input_type() === 'number' ) {
+			if ( $field->get_input_type() === 'number' && ! rgblank( $entry_value ) ) {
 				if ( GFCommon::is_numeric( $entry_value, 'decimal_dot' ) ) {
 					$entry_values[ $input_id ] = GFCommon::clean_number( $entry_value, 'decimal_dot' );
 				} else if ( GFCommon::is_numeric( $entry_value, 'decimal_comma' ) ) {
@@ -1136,7 +1136,7 @@ class GP_Populate_Anything_Live_Merge_Tags {
 
 			// LMT on checkbox value (like 1.1) on form load may result in PHP warning if not set, ensure that value is alteast set albeit empty on form load.
 			preg_match_all( '/{[^{]*?:(\d+(\.\w+)?)(:(.*?))?}/mi', $merge_tag, $matches, PREG_SET_ORDER );
-			$input_id = rgar( $matches[0], '1' );
+			$input_id = isset( $matches[0] ) ? rgar( $matches[0], '1' ) : '';
 			if ( ! rgar( $entry_values, $input_id ) ) {
 				$entry_values[ $input_id ] = '';
 			}
@@ -1188,7 +1188,7 @@ class GP_Populate_Anything_Live_Merge_Tags {
 
 			$fallback = rgar( $merge_tag_modifiers, 'fallback' );
 
-			if ( $fallback && ! $merge_tag_match_value ) {
+			if ( ! rgblank( $fallback ) && ! $merge_tag_match_value ) {
 				$merge_tag_match_value = $fallback;
 			}
 

@@ -19,6 +19,15 @@
             'aliases' => array(),
             'dev_requirement' => false,
         ),
+        'wp-media/apply-filters-typed' => array(
+            'pretty_version' => 'v1.1',
+            'version' => '1.1.0.0',
+            'reference' => 'ba4e7864f354582a28eedf8ddac99034b2ea6915',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../wp-media/apply-filters-typed',
+            'aliases' => array(),
+            'dev_requirement' => false,
+        ),
         'wp-media/wp-rocket' => array(
             'pretty_version' => '1.0.0+no-version-set',
             'version' => '1.0.0.0',
