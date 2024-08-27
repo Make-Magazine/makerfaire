@@ -12,8 +12,14 @@ $noMakerText = get_field('no_makers_found_text');
 if ($noMakerText == '')
     $noMakerText = 'No makers found';
 
+//faire name
+$faire     = get_field('faire');
+$results   = $wpdb->get_results('SELECT * FROM wp_mf_faire where faire= "'.strtoupper($faire).'"');
+$faireName = (isset($results[0]->faire_name)?$results[0]->faire_name:'');
 ?>
-<div class="container">
+
+<div class="row">
+
     <?php    
     if (have_posts()) {
         while (have_posts()) {
@@ -27,19 +33,20 @@ if ($noMakerText == '')
                 <?php
             } else {
                 ?>  
-                <div class="col-sm-12 col-xs-12">
-                    <h1 class="page-title text-center"><?php echo get_the_title(); ?></h1>
+                <div class="content col-sm-12 col-xs-12">
+                    <h1 class="page-title text-center">Meet the Makers - <?php echo $faireName; ?></h1>
                 </div>
                 <?php
             }
         }
     } 
-    ?>
-</div>    
+?>
+</div>
+  
 <div class="mtm" ng-app="mtm">
     <div ng-controller="mtmMakers">
         <input type="hidden" id="forms2use" value="<?php echo $faire_forms_trimmed; ?>" />
-        <input type="hidden" id="mtm-faire" value="<?php echo get_field('faire'); ?>" />
+        <input type="hidden" id="mtm-faire" value="<?php echo $faire; ?>" />
         <input type="hidden" id="noMakerText" value="<?php echo $noMakerText; ?>" />
 
         <div class="mtm-filter-wrap" ng-cloak>
