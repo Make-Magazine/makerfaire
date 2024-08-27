@@ -285,7 +285,9 @@ class GFRMTHELPER {
     //If Payment form, set the user to show the as a payment         
     if ($form_type == 'Payment') {
       $user = 0;
-    }else{
+    }else if($form_type == "ExpoFP") {
+      $user = 1;
+    } else {
       $user   = self::get_user();
     }    
 
@@ -480,6 +482,8 @@ class GFRMTHELPER {
         $dispUser = 'Initial';
       } elseif ($result->user == 0) {
         $dispUser = 'Payment';
+      } elseif ($result->user == 1) { // 1 is wpengine, but since they aren't an active user, we are using this to indicate from the ExpoFP API
+        $dispUser = 'ExpoFP';
       } else {
         $userInfo = get_userdata($result->user);
         $dispUser = $userInfo->display_name;
