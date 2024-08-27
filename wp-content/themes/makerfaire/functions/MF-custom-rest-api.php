@@ -236,8 +236,7 @@ function getMTMentries($formIDs = '', $faireID = '', $years = '') {
     //find if the show location switch is turned on
     $showLoc = false;
 
-    /*  For Bay Area 23 we forced everyone to not show location
-    
+    /*  For Bay Area 23 we forced everyone to not show location    
     $query = "select show_sched from wp_mf_faire where faire = '" . $faireID . "'";
 
     $show_sched = $wpdb->get_var($query);
@@ -364,6 +363,22 @@ function getMTMentries($formIDs = '', $faireID = '', $years = '') {
             if (($key = array_search("Show Management", $types)) !== false) {
                 unset($types[$key]);
             }
+
+            //replace Startup Sponsor with Exhibit
+            array_walk_recursive(
+                $types,
+                function (&$value) {
+                    $value = str_replace('Startup Sponsor', 'Exhibit', $value);
+                }
+            );
+
+            //Replace Sponsor with Exhibit
+            array_walk_recursive(
+                $types,
+                function (&$value) {
+                    $value = str_replace('Sponsor', 'Exhibit', $value);
+                }
+            );
             
             //weekends               
             if ($faireID=='BA23' && isset($result->weekends)) {

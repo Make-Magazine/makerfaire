@@ -19,25 +19,25 @@ $faireName = (isset($results[0]->faire_name)?$results[0]->faire_name:'');
 ?>
 
 <div class="row">
-
     <?php    
     if (have_posts()) {
         while (have_posts()) {
             the_post();
-            $the_content = get_the_content();        
-            if (!empty($the_content)) {
+            
+            
+            ?>
+            <div class="content-wrapper">                
+                <?php 
+                
+                //elementor requires us to use $the_content
+                the_content();
+                $the_content = get_the_content();            
+                if(empty($the_content)){
+                    echo '<h1 class="page-title text-center">Meet the Makers - '. $faireName.'</h1>';
+                }
                 ?>
-                <div class="content-wrapper">
-                    <?php echo $the_content; ?>
-                </div>
-                <?php
-            } else {
-                ?>  
-                <div class="content col-sm-12 col-xs-12">
-                    <h1 class="page-title text-center">Meet the Makers - <?php echo $faireName; ?></h1>
-                </div>
-                <?php
-            }
+            </div>
+            <?php
         }
     } 
 ?>
