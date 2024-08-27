@@ -30,16 +30,6 @@ class Sponsors extends Widget_Base {
 		);
 
 		$this->add_control(
-			'title_sponsor_panel',
-			[
-				'label' => __('Title', 'makerfaire'),
-				'label_block' => true,
-				'type' => \Elementor\Controls_Manager::TEXT,
-				'placeholder' => __('Thank you to our sponsors', 'makerfaire'),
-			]
-		);
-
-		$this->add_control(
 			'sponsors_page_id',
 			[
 				'label' => __('Sponsor Page ID', 'makerfaire'),
@@ -47,19 +37,6 @@ class Sponsors extends Widget_Base {
 				'type' => \Elementor\Controls_Manager::NUMBER,
 				'default' => 0,
 				'description' => __('Enter the ID of the page  page you\'d like to pull sponsor data from.', 'makerfaire'),
-			]
-		);
-
-		//show or hide the types for each sponsor level
-		$this->add_control(
-			'show_sponsor_type',
-			[
-				'label' => esc_html__('Show Sponsor Type', 'makerfaire'),
-				'type' => \Elementor\Controls_Manager::SWITCHER,
-				'label_on' => esc_html__('Show', 'makerfaire'),
-				'label_off' => esc_html__('Hide', 'makerfaire'),
-				'return_value' => 'yes',
-				'default' => 'yes',
 			]
 		);
 
@@ -86,161 +63,125 @@ class Sponsors extends Widget_Base {
 				'return_value' => 'yes',
 				'default' => 'yes',
 			]
-		);		
-		
+		);
+
+		//show or hide the link to the sponsor page
+		$this->add_control(
+			'show_slide_block',
+			[
+				'label' => esc_html__('Show Slider or Block Layout', 'makerfaire'),
+				'type' => \Elementor\Controls_Manager::SWITCHER,
+				'label_on' => esc_html__('Slide', 'makerfaire'),
+				'label_off' => esc_html__('Stacked', 'makerfaire'),
+				'return_value' => 'slide',
+				'default' => 'yes',
+			]
+		);
 
 		$this->end_controls_section();
 	}
 
 	protected function render() {
-		$sponsorArray = array(
-			array('platinum_sponsors', 'PLATINUM'),
-			array('goldsmith_sponsors', 'GOLDSMITH'),
-			array('silversmith_sponsors', 'SILVERSMITH'),
-			array('coppersmith_sponsors', 'COPPERSMITH'),
-			array('media_sponsors', 'MEDIA AND COMMUNITY'),
-		);
-
+		$return = '';
 		//pull settings for this widget
 		$settings = $this->get_settings_for_display();
 
-		$show_type 	= (isset($settings['show_sponsor_type']) ? $settings['show_sponsor_type'] : 'yes');
-		$show_link 	= (isset($settings['show_sponsor_link']) ? $settings['show_sponsor_link'] : 'yes');
-		$id 		= (isset($settings['sponsors_page_id'])  ? $settings['sponsors_page_id']  : 0);
-
-		$url 		= $settings['sponsors_page_url']['url'];
-
+		$show_link   = (isset($settings['show_sponsor_link']) 	? $settings['show_sponsor_link'] : 'yes');
+		$slide_block = (isset($settings['show_slide_block'])  	? $settings['show_slide_block']  : 'slide');
+				
 		//if the post ID isn't set, try to get it from the passed URL
-		if ($id == 0) {
-			$id 	= url_to_postid($url);
-		}
-
-		$title 		= $settings['title_sponsor_panel'];
-		if ($title == '')  $title = 'Thank you to our sponsors';
+		$url 		 = $settings['sponsors_page_url']['url'];
+		$id 		 = (isset($settings['sponsors_page_id'])  ? $settings['sponsors_page_id'] : url_to_postid($url));
 
 		// if we have a page to pull sponsors from
-		if ($id != 0) {
-			$return = '
-		<div class="sponsor-slide">
-	      <div class="container">
-	         <div class="row">
-	            <div class="col-xs-12 text-center padbottom">
-	               <h2 class="sponsor-slide-title">' . $title . '</h2>
-	            </div>
-	         </div>';
-
-			//always show the presenting sponsors above the slider if they are set			 
-			if (have_rows('presenting_sponsors', $id)) {
-				$return.= '<div class="faire-sponsors-box">';
-				while (have_rows('presenting_sponsors', $id)) {
-					the_row();
-					$sponsor_img = get_sub_field('image'); //Photo
-					$sponsor_url = get_sub_field('url'); //URL
-
-					$return .= '      <div class="sponsors-box-lg">';
-					//set sponsor link
-					if ($sponsor_url != '') {
-						$return .= '      <a href="' . $sponsor_url . '" target="_blank">';
-					}
-
-					//set sponsor image
-					if ($sponsor_img != '') {
-						$return .= '            <img src="' . $sponsor_img . '" alt="Maker Faire sponsor logo" />';
-					}
-
-					//close sponsor link
-					if ($sponsor_url != '') {
-						$return .= '      </a>';
-					}
-
-					$return .= '      </div><!-- close .sponsors-box-lg -->';
-				}
-				$return.= '</div>';
-			}
-			$return .= '<div class="row">
-	            <div class="col-xs-12">
-	               <div id="carousel-sponsors-slider" class="carousel slide" data-ride="carousel">
-	                  <!-- Wrapper for slides -->
-	                  <div class="carousel-inner" role="listbox">';
-
-			foreach ($sponsorArray as $sponsor) {
-				if (have_rows($sponsor[0], $id)) {
-					$sponsorCount = get_post_meta($id, $sponsor[0], true);
-
-					$return .= '
-	                     <div class="item">
-	                        <div class="row sponsors-row sponsors-' . $sponsorCount . '">
-	                           <div class="col-xs-12">';
-					if ($show_type == 'yes') {
-						'$return .= <h3 class="sponsors-type text-center">' . $sponsor[1] . '</h3>';
-					}
-
-					$return .= '<div class="faire-sponsors-box">';
-
-					while (have_rows($sponsor[0], $id)) {
-						the_row();
-						$sub_field_1 = get_sub_field('image'); //Photo
-						$sub_field_2 = get_sub_field('url'); //URL
-
-						if ($sponsor[1] == 'PRESENTING') {
-							$return .= '      <div class="sponsors-box-lg">';
-						} else {
-							$return .= '      <div class="sponsors-box-md">';
-						}
-
-						if (get_sub_field('url')) {
-							$return .= '      <a href="' . $sub_field_2 . '" target="_blank">';
-						}
-						$return .= '            <img src="' . $sub_field_1 . '" alt="Maker Faire sponsor logo" />';
-						if (get_sub_field('url')) {
-							$return .= '      </a>';
-						}
-						$return .= '      </div><!-- close .sponsors-box-md -->';
-					}
-					$return .= '
-	                              </div> <!-- close .faire-sponsors-box -->
-	                           </div> <!-- close .col-xs-12 -->
-	                        </div> <!-- close .row sponsors-row -->
-	                     </div> <!-- close .item -->';
-				}
-			}
-
-			$return .= '
-	                  </div> <!-- close .carousel-inner-->
-	               </div> <!-- close #carousel-sponsors-slider -->
-	            </div> <!-- close .col-xs-12 -->
-	         </div> <!-- close .row -->';
-
-			if ($show_link == 'yes') {
-				$return .= '<div class="row">
-	            <div class="col-xs-12 text-center">
-	               <a class="btn btn-white more-makers-link" href="' . $url . '">Meet The Sponsors</a>
-	            </div>
-	         </div>';
-			}
-
-			$return .= ' 
-
-	      </div> <!-- close .container -->
-	   </div> <!-- close .sponsor-slide -->';
-
-			$return .= '<script>
-	                     // Update the sponsor slide title each time the slide changes
-	                     jQuery("#carousel-sponsors-slider .carousel-inner .item:first-child").addClass("active");
-	                     jQuery(function() {
-	                       var title = jQuery(".item.active .sponsors-type").html();
-	                       jQuery(".sponsor-slide-cat").text(title);
-	                       jQuery("#carousel-sponsors-slider").on("slid.bs.carousel", function () {
-	                         var title = jQuery(".item.active .sponsors-type").html();
-	                         jQuery(".sponsor-slide-cat").text(title);
-	                       });
-	                       if (jQuery(window).width() < 767) {
-	                         jQuery( ".maker-slider-btn" ).html("Learn More");
-	                       }
-	                     });
-	                     </script>';
-		}
-
+		if ($id != 0 && have_rows('sponsors', $id)) {
+			ob_start(); ?>
+			<div class="sponsor-slide">
+				<div class="container">
+					<div class="row">
+						<div class="col-xs-12">
+							<div id="carousel-sponsors-slider" class="carousel slide" data-ride="carousel">
+								<!-- Wrapper for slides -->
+								<div class="carousel-inner" role="listbox">
+									<?php
+									//each sponsor
+									while (have_rows('sponsors', $id)) {
+										the_row();
+										$sponsor_label = get_sub_field('sponsor_level_label');
+										$logo_size     = get_sub_field('logo_size');
+										$sponsorCount  = get_post_meta($id, 'sponsors', true);
+?>										
+										<div class="<?php echo ($slide_block=='slide'?'item':'');?>">
+											<div class="row sponsors-row sponsors-<?php echo $sponsorCount; ?>">
+												<div class="col-xs-12">
+													<h3 class="sponsors-type text-center"><?php echo $sponsor_label; ?></h3>
+													<div class="faire-sponsors-box">
+<?php
+														if( have_rows('sponsor_list') ) {
+															while( have_rows('sponsor_list') ) {
+															  	the_row();
+															  	$sponsor_logo = get_sub_field('sponsor_logo'); //Photo
+															  	$sponsor_link = get_sub_field('sponsor_link'); //URL
+															  	?>
+																<div class="sponsors-box-<?php echo $logo_size;?>"> 
+<?php																	
+																if( $sponsor_link !='') ?>
+																	<a href="<?php echo $sponsor_link; ?>" target="_blank">
+																		<img src="<?php echo $sponsor_logo['url'];?>" alt="Maker Faire sponsor logo" class="img-responsive" />
+<?php																			
+																if( $sponsor_link !='') ?>
+																	</a>
+																</div>
+<?php														
+															}			
+														}
+?>
+													</div>
+												</div>
+											</div>
+										</div>
+<?php
+									}
+									if ($show_link == 'yes') {
+?>										
+										<div class="row">
+											<div class="col-xs-12 text-center">
+										   		<a class="btn btn-white more-makers-link" href="<?php echo $url; ?>">Meet The Sponsors</a>
+											</div>
+									 	</div>
+<?php										
+									}
+?>
+								</div>
+							</div>
+<?php
+							if($slide_block=='slide'){
+?>								
+								<script>
+									// Update the sponsor slide title each time the slide changes
+									jQuery("#carousel-sponsors-slider .carousel-inner .item:first-child").addClass("active");
+									jQuery(function() {
+									var title = jQuery(".item.active .sponsors-type").html();
+									jQuery(".sponsor-slide-cat").text(title);
+									jQuery("#carousel-sponsors-slider").on("slid.bs.carousel", function () {
+										var title = jQuery(".item.active .sponsors-type").html();
+										jQuery(".sponsor-slide-cat").text(title);
+									});
+									if (jQuery(window).width() < 767) {
+										jQuery( ".maker-slider-btn" ).html("Learn More");
+									}
+									});
+	                     		</script>
+<?php						 
+							}
+?>							
+						</div>
+					</div>
+				</div>
+			</div>
+<?php
+			$return = ob_get_clean();
+		} //end if
 		echo $return;
 	} //end render function
 

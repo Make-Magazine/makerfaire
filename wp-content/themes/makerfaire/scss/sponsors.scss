@@ -1,52 +1,44 @@
+.faire-sponsors-box {
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  flex-wrap: wrap;
+  padding-bottom: 20px;
+  gap:20px;
+  .sponsors-box-xl,
+  .sponsors-box-lg,
+  .sponsors-box-md {
+    height: auto; 
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    img, a { width: 100%; }    
+  }
+  .sponsors-box-xl {
+    max-width: 300px;        
+  }
+  .sponsors-box-lg {
+    max-width: 200px;    
+  }
+  .sponsors-box-md {
+    max-width:  150px;        	  
+  }
+}
+
 .sponsors-landing {
   margin-top: 30px;
   margin-left: 30px;
   h2 {
     font-weight: 300;
   }
-  .sponsors-row {
-    
+  .sponsors-row {    
     padding-bottom: 50px;
   }
   h3.sponsors-type {
     font-weight: 300;
     font-size: 35px;
   }
-  .faire-sponsors-box {
-    display: flex;
-    justify-content: space-evenly;
-    align-items: center;
-    flex-wrap: wrap;
-    padding-bottom: 10px;
-  }
-  .sponsors-box-xl {
-    max-width: 300px;
-    
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  .sponsors-box-lg {
-    max-width: 200px;
-    
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-
-  }
-  .sponsors-box-md {
-    width: 160px;
-    height: 100px;    
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-  // IE fix
-  .sponsors-box-xl a,
-  .sponsors-box-lg a,
-  .sponsors-box-md a {
-    width: 100%;
-  }
+  
   .sponsors-text-box {
     display: flex;
     flex-wrap: wrap;
@@ -91,7 +83,6 @@
 
 // SPONSOR SLIDER FUNCTION
 .sponsor-slide {
-  
   padding-top: 20px;
   &.sponsor-slide-shortcode {
     border-top: none;
@@ -101,7 +92,6 @@
     font-weight: 300;
     font-size: 22px;
     margin-top: 0;
-    display: none;
   }
   h4.sponsor-slide-title {
     color: #999;
@@ -134,176 +124,5 @@
   }
   .sponsors-row {
     padding-bottom: 20px;
-  }
-  // keep the carousel the same height
-	@media screen and (max-width: 1200px) {
-		.sponsors-row { height: 225px; }
-		.faire-sponsors-box {
-			height: 225px;
-			align-items: center;
-		}
-		.sponsors-1, .sponsors-2 {
-			.faire-sponsors-box {
-				.sponsors-box-md  {
-					width: 300px;
-				}
-			}
-		}
-		.sponsors-3, .sponsors-4  {
-			.faire-sponsors-box {
-				.sponsors-box-md  {
-					width: 200px;
-          margin: 0px 50px;
-				}
-			}
-		}
-	}
-	@media screen and (max-width: 767px) {
-		.sponsors-1, .sponsors-2 {
-			.faire-sponsors-box {
-				.sponsors-box-md  {
-					width: 200px;
-				}
-			}
-		}
-		.sponsors-3, .sponsors-4, .sponsors-5, .sponsors-6 {
-      height: auto;
-			.faire-sponsors-box {
-        height: auto;
-				.sponsors-box-md  {
-					width: 200px;
-          margin-bottom: 20px;
-				}
-			}
-		}
-		.faire-sponsors-box {
-			.sponsors-box-md  {
-				width: 90px;
-			}
-		}
-	}
-	@media screen and (max-width: 480px) {
-		.sponsors-1, .sponsors-2 {
-			.faire-sponsors-box {
-				.sponsors-box-md  {
-					width: 200px;
-				}
-			}
-		}
-		.sponsors-3, .sponsors-4, .sponsors-5, .sponsors-6 {
-			.faire-sponsors-box {
-				.sponsors-box-md  {
-					width: 180px;
-				}
-			}
-		}
-	}
-	@media screen and (max-width: 360px) {
-		.faire-sponsors-box, .sponsors-row {
-			height: 320px;
-		}
-	}
-  .faire-sponsors-box {
-    display: flex;
-    justify-content: space-around;    
-    flex-wrap: wrap;
-    padding-bottom: 30px;
-  }
-  .sponsors-box-md {
-    max-width: 200px;
-    width: 200px;
-    max-height:100px;
-    height: auto;        
-    display: flex;        
-    align-items: center;
-	  img { width: 100%; }
-  }
-
-  .sponsors-box-lg {
-    max-width: 300px;
-    max-height:150px;
-    height: auto;        
-    display: flex;        
-    align-items: center;
-	  img { width: 100%; }
-  }
-  .sponsors-text-box {
-    display: flex;
-    flex-wrap: wrap;
-    margin: 40px 0 15px;
-  }
-  .sponsors-text-box-inner {
-    width: 25%;
-    padding: 5px 15px;
-    p {
-      color: #222;
-      font-weight: 300;
-      font-size: 16px;
-      margin-bottom: 0;
-    }
-  }
-}
-
-@media screen and (max-width: 767px) {
-  .sponsors-landing .sponsors-text-box-inner {
-    width: 50%;
-  }
-  .sponsors-landing h3.sponsors-type {
-    font-size: 24px;
-  }
-  .sponsors-landing .sponsors-box-xl {
-    width: 180px;
-  }
-  .sponsors-landing .sponsors-box-lg {
-    width: 148px;
-  }
-  .sponsors-landing .sponsors-box-md {
-    width: 140px;
-    height: 90px;
-  }
-  .sponsors-landing .sponsors-btn-top {
-    margin-top: 10px;
-  }
-  .sponsor-slide .col-sm-5 {
-    text-align: center;
-    -webkit-box-pack: center;
-    -webkit-justify-content: center;
-        -ms-flex-pack: center;
-            justify-content: center;
-  }
-  .sponsor-slide h5 {
-    margin: 5px 10px 0;
-    text-align: center;
-  }
-  .sponsor-slide h4.sponsor-slide-title {
-    font-size: 16px;
-  }
-}
-
-.sponsor-select-wrapper {
-  .select2-container {
-    width: 200px !important;
-    .select2-selection {
-      border: solid 1px transparent;
-      width: 200px;
-      height: 32px;
-      &[aria-owns="select2-sponsorLevel-results"] {
-        border: solid 1px #ccc;
-      }
-      #select2-sponsorLevel-container {
-        border: 0px;
-        color: #1989c7;
-        font-size: 24px;
-        &:hover {
-          color: #01afee;
-        }
-      }
-    }
-  }
-  .select2-container--default.select2-container--open .select2-selection--single .select2-selection__arrow b {
-    border-color: transparent transparent #1989c7;
-  }
-  .select2-container--default .select2-selection--single .select2-selection__arrow b {
-    border-color: #1989c7 transparent transparent;
   }
 }

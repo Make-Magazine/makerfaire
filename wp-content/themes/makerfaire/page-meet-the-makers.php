@@ -22,13 +22,10 @@ $faireName = (isset($results[0]->faire_name)?$results[0]->faire_name:'');
     <?php    
     if (have_posts()) {
         while (have_posts()) {
-            the_post();
-            
-            
+            the_post();                        
             ?>
             <div class="content-wrapper">                
-                <?php 
-                
+                <?php                 
                 //elementor requires us to use $the_content
                 the_content();
                 $the_content = get_the_content();            

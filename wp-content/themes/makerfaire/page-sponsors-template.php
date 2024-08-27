@@ -14,6 +14,48 @@ get_header();
     </div>
   </div>
 
+<!-- New sponsors repeating -->
+  <?php 
+  if( have_rows('sponsors') ) {
+    while( have_rows('sponsors') ) {
+      the_row();
+      $sponsor_label = get_sub_field('sponsor_level_label');
+      $logo_size     = get_sub_field('logo_size');
+      ?>
+      <div class="row sponsors-row">
+        <div class="col-xs-12">
+          <?php if($sponsor_label!=''){
+            echo '<h3 class="sponsors-type text-center">'.$sponsor_label.'</h3>';
+          } 
+          ?>
+          <div class="faire-sponsors-box">
+            <?php      
+            //sponsors list
+            if( have_rows('sponsor_list') ) {
+              while( have_rows('sponsor_list') ) {
+                the_row();
+                $sponsor_logo = get_sub_field('sponsor_logo'); //Photo
+                $sponsor_link = get_sub_field('sponsor_link'); //URL
+                
+                echo '<div class="sponsors-box-'.$logo_size.'">';
+                  if( $sponsor_link !='') {
+                    echo '<a href="' . $sponsor_link . '" target="_blank">';
+                  }
+                  echo '<img src="' . $sponsor_logo['url'] . '" alt="Maker Faire sponsor logo" class="img-responsive" />';
+                  if( $sponsor_link !='') {
+                    echo '</a>';
+                  }
+                echo '</div>';                
+              }
+            }
+            ?>
+          </div>
+        </div>
+      </div>  
+      <?php      
+    } 
+  } ?>
+  
   <!-- PRESENTING SPONSORS -->
   <?php if( have_rows('presenting_sponsors') ): ?>
   <div class="row sponsors-row">
