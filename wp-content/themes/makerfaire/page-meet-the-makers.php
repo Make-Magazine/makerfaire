@@ -13,36 +13,36 @@ if ($noMakerText == '')
     $noMakerText = 'No makers found';
 
 ?>
-
+<div class="container">
+    <?php    
+    if (have_posts()) {
+        while (have_posts()) {
+            the_post();
+            $the_content = the_content();        
+            if (!empty($the_content)) {
+                ?>
+                <div class="content-wrapper">
+                    <?php echo $the_content; ?>
+                </div>
+                <?php
+            } else {
+                ?>  
+                <div class="col-sm-12 col-xs-12">
+                    <h1 class="page-title text-center"><?php echo get_the_title(); ?></h1>
+                </div>
+                <?php
+            }
+        }
+    } 
+    ?>
+</div>    
 <div class="mtm" ng-app="mtm">
     <div ng-controller="mtmMakers">
         <input type="hidden" id="forms2use" value="<?php echo $faire_forms_trimmed; ?>" />
         <input type="hidden" id="mtm-faire" value="<?php echo get_field('faire'); ?>" />
         <input type="hidden" id="noMakerText" value="<?php echo $noMakerText; ?>" />
 
-        <?php /* <div class="container">
-            <div class="col-md-3 col-sm-12 col-xs-12">
-                <?php
-                echo get_faire_backlink();
-                ?>
-            </div>
-            <div class="col-md-6 col-sm-12 col-xs-12">
-                <h1 class="page-title text-center"><?php echo get_the_title(); ?></h1>
-            </div>
-            <div class="col-md-3 col-sm-12">
-            </div>
-        </div> */ ?>
-        <?php if (have_posts()) : while (have_posts()) : the_post(); ?>
-                <div class="content-wrapper">
-                    <?php the_content(); ?>
-                </div>
-            <?php endwhile; ?>
-        <?php endif; ?>
-
-
-
         <div class="mtm-filter-wrap" ng-cloak>
-
             <div class="search-wrapper">
                 <input ng-model="makerSearch.$" id="mtm-search-input" class="form-control" placeholder="<?php _e("Search...", 'makerfaire') ?>" type="text">
             </div>
@@ -460,15 +460,15 @@ if ($noMakerText == '')
                                 </div>
                                 <div class="mtm-detail-item">
                                     <span>
-                                    <a href="?type={{maker.typeString}}">        
-                                    <i class="fa {{maker.types[0].toLowerCase()}}"></i>
-</a>
-                                </span>
+                                        <a href="?type={{maker.typeString}}">
+                                            <i class="fa {{maker.types[0].toLowerCase()}}"></i>
+                                        </a>
+                                    </span>
                                     <p>
-                                    <a href="?type={{maker.typeString}}">    
-                                    {{maker.typeString}}
-</a>
-                                </p>
+                                        <a href="?type={{maker.typeString}}">
+                                            {{maker.typeString}}
+                                        </a>
+                                    </p>
                                 </div>
                             </div>
                         </div>
