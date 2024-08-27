@@ -13,16 +13,16 @@ defined('ABSPATH') or die('This file cannot be called directly!');
 
 $body = file_get_contents('php://input');
 $webhook = json_decode($body);
+
 // we don't want to run calls on every webhook type, so we will confine it to just when booths are reserved (assigned and saved)
 if(isset($webhook->Type)) {
+    global $wpdb;
     // unfortunately, booth_reserved always seems to happen before booth_unassigned, therefore we need to save between deleting a booth and assigning it to a new place
     if($webhook->Type == "booth_reserved") {
-        error_log("booth reserved");
+
         $result = getExpoFPWebhookResult($webhook);
-        //error_log(print_r($result, TRUE));
 
         $exhibitorID  = $result->exhibitors[0]; // technically there can be more than one exhibitor assigned to a booth, but we aren't using booths like that
-        error_log(print_r($exhibitorID, TRUE));
         $area_number  = explode('|', $result->type)[1]; // this gets the area id we placed after the pipe in the expoFP booth types
         $booth_name   = $result->name;
         // we've already stored the expofp exhibit id in the gf entry when the exhibit was first created in expofp
@@ -30,29 +30,44 @@ if(isset($webhook->Type)) {
         $space_size   = $result->size;
 
         // update the wp_mf_location table for this entry with the subarea and booth name we have had returned from expofp
-        $mysqli = new mysqli(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME);
         $insert_query = "INSERT INTO `wp_mf_location`(`entry_id`, `subarea_id`, `location`) "
         . " VALUES ($entry_id,$area_number,'$booth_name')";
-        //MySqli Insert Query
-        $insert_row = $mysqli->query($insert_query);
+       
+        $wpdb->query($insert_query);
+
+        // set a gf_entry_meta for the boothname, so the unassign function can find out those booth details to delete
+        gform_update_meta( $entry_id, "expofp_booth_name", $booth_name);
 
         // and then we update the final space size attribute
         GFRMTHELPER::rmt_update_attribute($entry_id, 2, $space_size, "", "ExpoFP");
-    } else if($webhook->Type == "booth_unassigned") {
-        error_log("booth unassigned");
-        global $wpdb;
-
-        $mysqli = new mysqli(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME);
-        if ($mysqli->connect_errno) {
-            error_log("Failed to connect to MySQL: (" . $mysqli->connect_errno . ") " . $mysqli->connect_error);
-        }
+    } 
+    if($webhook->Type == "booth_unassigned") {
 
         $exhibitorID  = $webhook->ExhibitorId;
         $entry_id     = gform_get_entry_byMeta("expofp_exhibit_id", $exhibitorID);
+        $booth_key    = gform_get_meta( $entry_id, 'expofp_booth_name');
+
+        $expofpToken = EXPOFP_TOKEN;
+        $url = "https://app.expofp.com/api/v1/get-booth";
+        $headers = array(
+            'Accept: application/json', 
+            'Content-Type: application/json'
+        );
+
+        $data = [
+            "token" => $expofpToken,
+            "eventId" => $webhook->ExpoId,
+            "name" => $booth_key,
+        ];
+
+        $result = json_decode(postCurl($url, $headers, json_encode($data), "POST"));
+        $area_number = explode('|', $result->type)[1]; // this gets the area id we placed after the pipe in the expoFP booth types
 
         //delete from schedule and location table
-        $delete_query =  "DELETE FROM `wp_mf_location` WHERE wp_mf_location.entry_id = $entry_id";
+        $delete_query =  "DELETE FROM `wp_mf_location` WHERE wp_mf_location.entry_id = $entry_id AND wp_mf_location.subarea_id = $area_number AND wp_mf_location.location = '$booth_key'";
         $wpdb->get_results($delete_query);
+
+        gform_update_meta( $entry_id, "expofp_booth_name", "");
 
         $rowID_query = "SELECT wp_rmt_entry_attributes.ID FROM `wp_rmt_entry_attributes` WHERE wp_rmt_entry_attributes.entry_id = $entry_id AND wp_rmt_entry_attributes.attribute_id = 2";
         $rowID = isset($wpdb->get_results($rowID_query)[0]) ? $wpdb->get_results($rowID_query)[0]->ID : 0;
