@@ -9,7 +9,7 @@ class GFRMTHELPER {
     //find current user
     $current_user = wp_get_current_user();
     $user = $current_user->ID;
-    
+
     return $user;
   }
 
@@ -21,7 +21,7 @@ class GFRMTHELPER {
     $entryID   = $entry['id'];
     //check for a Easy Passthrough token to find original entry ID
     $ep_token = rgget('ep_token');
-    
+
     //if the ep_token is set, need to find the original entry ID to update instead
     if ($ep_token != '') {
       //find the associated entry id based on the token
@@ -32,10 +32,10 @@ class GFRMTHELPER {
           $ep_token
         )
       );
-      
+
       $entryID = ($origEntryID != '' ? $origEntryID : $entryID);
     }
-    
+
     //find the faire_location for this entry
     $faire_location = $wpdb->get_var("SELECT faire_location "
       . "   FROM wp_mf_faire "
@@ -68,13 +68,13 @@ class GFRMTHELPER {
     }
 
     //loop through rules
-    foreach ($rules as $key=>$rule) {      
-      if(!is_null($rule['form_type'])){
-        if($form_type != $rule['form_type']){       
+    foreach ($rules as $key => $rule) {
+      if (!is_null($rule['form_type'])) {
+        if ($form_type != $rule['form_type']) {
           continue;
         }
       }
-      
+
       $pass = false;
       //loop through logic, as soon as one fails, we exit the foreach loop
       foreach ($rule['logic'] as $logic) {
@@ -84,7 +84,7 @@ class GFRMTHELPER {
         if ($field_number == 'faire_location') {
           $entryfield = $faire_location;
         } elseif ($field_number == 'form_type') {
-          $entryfield = $form_type;          
+          $entryfield = $form_type;
         } elseif (isset($entry[$field_number])) {
           $entryfield = $entry[$field_number];
         } else {
@@ -99,10 +99,10 @@ class GFRMTHELPER {
             $pass = false;
             break;
           }
-        } elseif ($logic['operator'] == 'not') {                    
-          if (strtolower($entryfield) != strtolower($logic['value'])) {            
+        } elseif ($logic['operator'] == 'not') {
+          if (strtolower($entryfield) != strtolower($logic['value'])) {
             $pass = true;
-          } else {            
+          } else {
             $pass = false;
             break;
           }
@@ -118,9 +118,9 @@ class GFRMTHELPER {
           //other operator logic goes here
         }
       } //end loop through each rule logic
-     
+
       //logic met - set RMT field
-      if ($pass) {                
+      if ($pass) {
         //look if there is a a field in the value or comment field (these are surrounded by {} )
         $value   = findFieldData($rule['value'], $entry);
         $comment = findFieldData($rule['comment'], $entry);
@@ -162,16 +162,16 @@ class GFRMTHELPER {
   }
 
   /* Update RMT resource data for an entry */
-  public static function rmt_update_resource($entryID, $resource_id, $qty, $comment, $form_type='') {
+  public static function rmt_update_resource($entryID, $resource_id, $qty, $comment, $form_type = '') {
     global $wpdb;
     $entry  = GFAPI::get_entry($entryID);
 
     //If Payment form, set the user to show the as a payment         
     if ($form_type == 'Payment') {
       $user = 0;
-    }else{
+    } else {
       $user   = self::get_user();
-    }    
+    }
 
     $rowID  = 0;
 
@@ -186,30 +186,30 @@ class GFRMTHELPER {
       . ' FROM `wp_rmt_entry_resources` entry_res, wp_rmt_resources res '
       . ' where entry_id=' . $entryID . ' and entry_res.resource_id = res.ID '
       . ' and resource_category_id=' . $cat_id);
-   
+
     //check if this resource category has been set for this entry
     if (!is_null($res)) { //resource found of the same category
       //Is it the same resource?
       if ($res->resource_id == $resource_id) {
         //always do an update if qty is 0 so we can remove any old ones that were set 
         // before we deleted qty of 0
-        if($qty == 0){
+        if ($qty == 0) {
           //update the resource
           $type = 'update';
-        
-        //is there anything to update  
-        } elseif ($res->qty == $qty && $res->comment == $comment) { 
+
+          //is there anything to update  
+        } elseif ($res->qty == $qty && $res->comment == $comment) {
           //exit, there is nothing to update
           return;
 
-        //is the resource unlocked OR is this a payment form?  
+          //is the resource unlocked OR is this a payment form?  
         } elseif ($res->lockBit == 0 || $form_type == 'Payment') {
           //update the resource
           $type = 'update';
-        
-        //is the resource locked?
-        }elseif ($res->lockBit == 1) {
-          $type = '';//do not update
+
+          //is the resource locked?
+        } elseif ($res->lockBit == 1) {
+          $type = ''; //do not update
         }
       } else {
         //Payment forms are allowed to have multiple resources of the same category
@@ -221,19 +221,19 @@ class GFRMTHELPER {
         }
       }
     }
-    
+
     if ($type == 'update') {
       $rowID = $res->ID;
 
       //if the calculated qty is zero, remove the existing resource
-      if($qty == 0){
+      if ($qty == 0) {
         //delete the existing resource        
         $wpdb->get_results('delete from `wp_rmt_entry_resources` where id=' . $res->ID);
-      } else { 
+      } else {
         //update the existing resource
         $wpdb->get_results('update `wp_rmt_entry_resources` '
-        . ' set `resource_id` = ' . $resource_id . ', `qty` = ' . $qty . ', user=' . $user . ', update_stamp=now() where id=' . $res->ID);
-      }          
+          . ' set `resource_id` = ' . $resource_id . ', `qty` = ' . $qty . ', user=' . $user . ', update_stamp=now() where id=' . $res->ID);
+      }
 
       //did the resource itself change
       if ($res->resource_id != $resource_id) { //update the change report               
@@ -248,8 +248,8 @@ class GFRMTHELPER {
       //did the comment change
       if ($res->comment != $comment) { //update the change report        
         $chgRPTins[] = RMTchangeArray($entry, $resource_id, $res->comment, $comment, 'Resource comment changed(' . addslashes($res->description) . ')');
-      }    
-    } elseif ($type == 'insert' && $qty!=0) { //don't add if the calculated qty is 0
+      }
+    } elseif ($type == 'insert' && $qty != 0) { //don't add if the calculated qty is 0
       //insert this resource
       $wpdb->get_results("INSERT INTO `wp_rmt_entry_resources`  (`entry_id`, `resource_id`, `qty`, `comment`, user) "
         . " VALUES (" . $entryID . "," . $resource_id . "," . $qty . ',"' . $comment . '",' . $user . ')');
@@ -276,20 +276,20 @@ class GFRMTHELPER {
   }
 
   /* Update RMT attribute data for an entry */
-  public static function rmt_update_attribute($entryID, $attribute_id, $value, $comment, $form_type='') {
+  public static function rmt_update_attribute($entryID, $attribute_id, $value, $comment, $form_type = '') {
     global $wpdb;
     $rowID = 0;
 
-    $entry = GFAPI::get_entry($entryID);    
+    $entry = GFAPI::get_entry($entryID);
 
     //If Payment form, set the user to show the as a payment         
     if ($form_type == 'Payment') {
       $user = 0;
-    }else if($form_type == "ExpoFP") {
+    } else if ($form_type == "ExpoFP") {
       $user = 1;
     } else {
       $user   = self::get_user();
-    }    
+    }
 
     //look to see if this attribute is already set
     $res = $wpdb->get_row('SELECT * from wp_rmt_entry_attributes where entry_id=' . $entryID . ' and attribute_id=' . $attribute_id);
@@ -354,7 +354,7 @@ class GFRMTHELPER {
     $entry = GFAPI::get_entry($entryID);
 
     $user   = self::get_user();
-    
+
 
     //add the ATTENTION
     $wpdb->get_results("INSERT INTO `wp_rmt_entry_attn`(`entry_id`, `attn_id`, `comment`,user) "
@@ -372,7 +372,7 @@ class GFRMTHELPER {
     return $rowID;
   }
 
-  public static function rmt_set_lock_ind($lockBit, $rowID, $type) {    
+  public static function rmt_set_lock_ind($lockBit, $rowID, $type) {
     global $wpdb;
     $chgRPTins = array();
 
@@ -406,7 +406,7 @@ class GFRMTHELPER {
 
     //get entry
     $entry_id = $res->entry_id;
-    
+
     $entry = GFAPI::get_entry($entry_id);
 
     //Build Change report data 
@@ -414,7 +414,7 @@ class GFRMTHELPER {
 
     /* Update change report */
     if (!empty($chgRPTins))  updateChangeRPT($chgRPTins);
-    
+
     return $entry;
   }
 
@@ -463,104 +463,116 @@ class GFRMTHELPER {
   }
 
   /* Retrieves RMT data for an entry */
-  public static function rmt_get_entry_data($entry_id) {
+
+  public static function rmt_get_entry_data($entry_id, $type = 'all') {
     global $wpdb;
 
-    $return_array = array('attributes' => array(), 'resources' => array(), 'attention' => array());
-
-    //gather resource data
-    $results = $wpdb->get_results("SELECT er.ID, er.lockBit, er.qty, er.comment, er.user, er.update_Stamp as dateUpdated,
-     wp_rmt_resource_categories.category as category, wp_rmt_resource_categories.ID as category_id, 
-     type as resource, wp_rmt_resources.id as resource_id, wp_rmt_resources.token as token "
-      . "FROM `wp_rmt_entry_resources` er, wp_rmt_resources, wp_rmt_resource_categories "
-      . "where er.resource_id = wp_rmt_resources.ID "
-      . "and resource_category_id = wp_rmt_resource_categories.ID  "
-      . "and er.entry_id = " . $entry_id . " ORDER BY `dateUpdated` DESC");
-
-    foreach ($results as $result) {
-      if ($result->user == NULL) {
-        $dispUser = 'Initial';
-      } elseif ($result->user == 0) {
-        $dispUser = 'Payment';
-      } else {
-        $userInfo = get_userdata($result->user);
-        $dispUser = $userInfo->display_name;
-      }
-
-      $update_stamp = esc_html(GFCommon::format_date($result->dateUpdated, false, 'm/d/y h:i a'));
-      $return_array['resources'][] = array(
-        'id'            => $result->ID,
-        'lock'          => $result->lockBit,
-        'qty'           => $result->qty,
-        'comment'       => $result->comment,
-        'user'          => $dispUser,
-        'category_id'   => $result->category_id,
-        'category'      => $result->category,
-        'resource_id'   => $result->resource_id,
-        'resource'      => $result->resource,
-        'token'         => $result->token,
-        'last_updated'  => $update_stamp
-      );
+    if ($type == 'all') {
+      $return_array = array('attributes' => array(), 'resources' => array(), 'attention' => array());
+    } else {
+      $return_array = array($type => array());
     }
 
+    //gather resource data
+    if ($type == 'all' || $type == 'resources') {
+      $results = $wpdb->get_results("SELECT er.ID, er.lockBit, er.qty, er.comment, er.user, er.update_Stamp as dateUpdated,
+     wp_rmt_resource_categories.category as category, wp_rmt_resource_categories.ID as category_id, 
+     type as resource, wp_rmt_resources.id as resource_id, wp_rmt_resources.token as token "
+        . "FROM `wp_rmt_entry_resources` er, wp_rmt_resources, wp_rmt_resource_categories "
+        . "where er.resource_id = wp_rmt_resources.ID "
+        . "and resource_category_id = wp_rmt_resource_categories.ID  "
+        . "and er.entry_id = " . $entry_id . " ORDER BY `dateUpdated` DESC");
+
+      foreach ($results as $result) {
+        if ($result->user == NULL) {
+          $dispUser = 'Initial';
+        } elseif ($result->user == 0) {
+          $dispUser = 'Payment';
+        } else {
+          $userInfo = get_userdata($result->user);
+          $dispUser = $userInfo->display_name;
+        }
+
+        $update_stamp = esc_html(GFCommon::format_date($result->dateUpdated, false, 'm/d/y h:i a'));
+        $return_array['resources'][] = array(
+          'id'            => $result->ID,
+          'lock'          => $result->lockBit,
+          'qty'           => $result->qty,
+          'comment'       => $result->comment,
+          'user'          => $dispUser,
+          'category_id'   => $result->category_id,
+          'category'      => $result->category,
+          'resource_id'   => $result->resource_id,
+          'resource'      => $result->resource,
+          'token'         => $result->token,
+          'last_updated'  => $update_stamp
+        );
+      }
+    }
+
+
     //gather attribute data
-    $sql = "SELECT wp_rmt_entry_attributes.*, attribute_id, value, " .
-      "wp_rmt_entry_att_categories.category as attribute, token
+    if ($type == 'all' || $type == 'attributes') {
+      $sql = "SELECT wp_rmt_entry_attributes.*, attribute_id, value, " .
+        "wp_rmt_entry_att_categories.category as attribute, token
             FROM `wp_rmt_entry_attributes`, wp_rmt_entry_att_categories
             where attribute_id = wp_rmt_entry_att_categories.ID
             and entry_id = " . $entry_id . " order by category";
 
-    $results = $wpdb->get_results($sql);
+      $results = $wpdb->get_results($sql);
 
-    foreach ($results as $result) {
-      if ($result->user == NULL) {
-        $dispUser = 'Initial';
-      } elseif ($result->user == 0) {
-        $dispUser = 'Payment';
-      } elseif ($result->user == 1) { // 1 is wpengine, but since they aren't an active user, we are using this to indicate from the ExpoFP API
-        $dispUser = 'ExpoFP';
-      } else {
-        $userInfo = get_userdata($result->user);
-        $dispUser = $userInfo->display_name;
+      foreach ($results as $result) {
+        if ($result->user == NULL) {
+          $dispUser = 'Initial';
+        } elseif ($result->user == 0) {
+          $dispUser = 'Payment';
+        } elseif ($result->user == 1) { // 1 is wpengine, but since they aren't an active user, we are using this to indicate from the ExpoFP API
+          $dispUser = 'ExpoFP';
+        } else {
+          $userInfo = get_userdata($result->user);
+          $dispUser = $userInfo->display_name;
+        }
+        $update_stamp = esc_html(GFCommon::format_date($result->update_stamp, false, 'm/d/y h:i a'));
+        $return_array['attributes'][] = array(
+          'id'            => $result->ID,
+          'lock'          => $result->lockBit,
+          'value'         => $result->value,
+          'comment'       => $result->comment,
+          'user'          => $dispUser,
+          'attribute'     => $result->attribute,
+          'attribute_id'  => $result->attribute_id,
+          'token'         => $result->token,
+          'last_updated'  => $update_stamp,
+        );
       }
-      $update_stamp = esc_html(GFCommon::format_date($result->update_stamp, false, 'm/d/y h:i a'));
-      $return_array['attributes'][] = array(
-        'id'            => $result->ID,
-        'lock'          => $result->lockBit,
-        'value'         => $result->value,
-        'comment'       => $result->comment,
-        'user'          => $dispUser,
-        'attribute'     => $result->attribute,
-        'attribute_id'  => $result->attribute_id,
-        'token'         => $result->token,
-        'last_updated'  => $update_stamp,
-      );
     }
 
     //gather attention data
-    $results = $wpdb->get_results("SELECT wp_rmt_entry_attn.*, wp_rmt_attn.value, token 
+    if ($type == 'all' || $type == 'attention') {
+      $results = $wpdb->get_results("SELECT wp_rmt_entry_attn.*, wp_rmt_attn.value, token 
                 FROM `wp_rmt_entry_attn`, wp_rmt_attn
                 where wp_rmt_entry_attn.attn_id = wp_rmt_attn.ID
                 and entry_id = " . $entry_id . " order by wp_rmt_attn.value");
 
-    foreach ($results as $result) {
-      if ($result->user == NULL) {
-        $dispUser = 'Initial';
-      } else {
-        $userInfo = get_userdata($result->user);
-        $dispUser = $userInfo->display_name;
-      }
+      foreach ($results as $result) {
+        if ($result->user == NULL) {
+          $dispUser = 'Initial';
+        } else {
+          $userInfo = get_userdata($result->user);
+          $dispUser = $userInfo->display_name;
+        }
 
-      $update_stamp = esc_html(GFCommon::format_date($result->update_stamp, false, 'm/d/y h:i a'));
-      $return_array['attention'][] = array(
-        'id'            => $result->ID,
-        'attn_id'       => $result->attn_id,
-        'attention'     => $result->value,
-        'comment'       => $result->comment,
-        'user'          => $dispUser,
-        'token'         => $result->token,
-        'last_updated'  => $update_stamp
-      );
+        $update_stamp = esc_html(GFCommon::format_date($result->update_stamp, false, 'm/d/y h:i a'));
+        $return_array['attention'][] = array(
+          'id'            => $result->ID,
+          'attn_id'       => $result->attn_id,
+          'attention'     => $result->value,
+          'comment'       => $result->comment,
+          'user'          => $dispUser,
+          'token'         => $result->token,
+          'last_updated'  => $update_stamp
+        );
+      }
     }
     return $return_array;
   }
