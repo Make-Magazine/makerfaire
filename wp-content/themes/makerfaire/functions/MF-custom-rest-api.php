@@ -368,7 +368,7 @@ function getMTMentries($formIDs = '', $faireID = '', $years = '') {
             array_walk_recursive(
                 $types,
                 function (&$value) {
-                    $value = str_replace('Startup Sponsor', 'Exhibit', $value);
+                    $value = str_ireplace('Startup Sponsor', 'Exhibit', $value);
                 }
             );
 
@@ -376,7 +376,7 @@ function getMTMentries($formIDs = '', $faireID = '', $years = '') {
             array_walk_recursive(
                 $types,
                 function (&$value) {
-                    $value = str_replace('Sponsor', 'Exhibit', $value);
+                    $value = str_ireplace('Sponsor', 'Exhibit', $value);
                 }
             );
             
