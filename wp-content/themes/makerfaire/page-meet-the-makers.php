@@ -24,7 +24,7 @@ $faireName = (isset($results[0]->faire_name)?$results[0]->faire_name:'');
     if (have_posts()) {
         while (have_posts()) {
             the_post();
-            $the_content = the_content();        
+            $the_content = get_the_content();        
             if (!empty($the_content)) {
                 ?>
                 <div class="content-wrapper">
