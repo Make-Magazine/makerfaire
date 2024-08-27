@@ -482,8 +482,6 @@ class GFRMTHELPER {
         $dispUser = 'Initial';
       } elseif ($result->user == 0) {
         $dispUser = 'Payment';
-      } elseif ($result->user == 1) { // 1 is wpengine, but since they aren't an active user, we are using this to indicate from the ExpoFP API
-        $dispUser = 'ExpoFP';
       } else {
         $userInfo = get_userdata($result->user);
         $dispUser = $userInfo->display_name;
@@ -519,6 +517,8 @@ class GFRMTHELPER {
         $dispUser = 'Initial';
       } elseif ($result->user == 0) {
         $dispUser = 'Payment';
+      } elseif ($result->user == 1) { // 1 is wpengine, but since they aren't an active user, we are using this to indicate from the ExpoFP API
+        $dispUser = 'ExpoFP';
       } else {
         $userInfo = get_userdata($result->user);
         $dispUser = $userInfo->display_name;

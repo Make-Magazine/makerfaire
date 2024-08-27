@@ -13,14 +13,16 @@ defined('ABSPATH') or die('This file cannot be called directly!');
 
 $body = file_get_contents('php://input');
 $webhook = json_decode($body);
-
 // we don't want to run calls on every webhook type, so we will confine it to just when booths are reserved (assigned and saved)
 if(isset($webhook->Type)) {
+    // unfortunately, booth_reserved always seems to happen before booth_unassigned, therefore we need to save between deleting a booth and assigning it to a new place
     if($webhook->Type == "booth_reserved") {
+        error_log("booth reserved");
         $result = getExpoFPWebhookResult($webhook);
         //error_log(print_r($result, TRUE));
 
         $exhibitorID  = $result->exhibitors[0]; // technically there can be more than one exhibitor assigned to a booth, but we aren't using booths like that
+        error_log(print_r($exhibitorID, TRUE));
         $area_number  = explode('|', $result->type)[1]; // this gets the area id we placed after the pipe in the expoFP booth types
         $booth_name   = $result->name;
         // we've already stored the expofp exhibit id in the gf entry when the exhibit was first created in expofp
@@ -36,10 +38,8 @@ if(isset($webhook->Type)) {
 
         // and then we update the final space size attribute
         GFRMTHELPER::rmt_update_attribute($entry_id, 2, $space_size, "", "ExpoFP");
-
-    }
-    if($webhook->Type == "booth_unassigned") {
-        error_log("we are removing the location info");
+    } else if($webhook->Type == "booth_unassigned") {
+        error_log("booth unassigned");
         global $wpdb;
 
         $mysqli = new mysqli(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME);
@@ -47,14 +47,26 @@ if(isset($webhook->Type)) {
             error_log("Failed to connect to MySQL: (" . $mysqli->connect_errno . ") " . $mysqli->connect_error);
         }
 
-        error_log(print_r($webhook, TRUE));
-        $exhibitorID  = $webhook->exhibitorId;
-        error_log($exhibitorID);
+        $exhibitorID  = $webhook->ExhibitorId;
         $entry_id     = gform_get_entry_byMeta("expofp_exhibit_id", $exhibitorID);
 
         //delete from schedule and location table
         $delete_query =  "DELETE FROM `wp_mf_location` WHERE wp_mf_location.entry_id = $entry_id";
         $wpdb->get_results($delete_query);
+
+        $rowID_query = "SELECT wp_rmt_entry_attributes.ID FROM `wp_rmt_entry_attributes` WHERE wp_rmt_entry_attributes.entry_id = $entry_id AND wp_rmt_entry_attributes.attribute_id = 2";
+        $rowID = isset($wpdb->get_results($rowID_query)[0]) ? $wpdb->get_results($rowID_query)[0]->ID : 0;
+
+        //delete the final size attribute from the rmt table as well
+        GFRMTHELPER::rmt_delete($rowID, "wp_rmt_entry_attributes", $entry_id);
+    }
+}
+if(isset($webhook->type)) { // because of course they don't use consistent capitalization
+    if($webhook->type == "exhibitor_upserted") {
+        /* this doesn't go off at all when assigning or changing booths anyways
+        error_log("exhibitor changed");
+        error_log(print_r($webhook, TRUE));
+        */
     }
 }
 
