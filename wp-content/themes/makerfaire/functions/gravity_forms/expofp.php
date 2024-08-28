@@ -112,11 +112,12 @@ function createExpoFpExhibit($entry, $form, $expofpToken, $expofpId) {
         foreach ($entry as $key => $value) {
             if (strpos($key, '339.') === 0) {
                 if ($value != '') {
-                    if (stripos($value, 'sponsor') !== false) {
-                        $featured = true;
-                        array_push($tags, "Sponsor");
-                    }
                     if($value != "Presentation" && $value != "Performer" && $value != "Workshop") {
+                        if (stripos($value, 'sponsor') !== false) {
+                            $featured = true;
+                            array_push($tags, "Sponsor");
+                            $value = "Exhibit";
+                        }
                         $categories[] = array("name" => $value);
                     }
                 }
@@ -183,23 +184,13 @@ function createExpoFpExhibit($entry, $form, $expofpToken, $expofpId) {
         $categories[] = array("name" => "Loud");
     }
 
-    // we also want to create a category for each entry id so we can set the entry id as a category in expoFP
-    $categories[] = array("name" => $entry['id']);
-    $entryID_url = "https://app.expofp.com/api/v1/add-category";
-    $entryID_data = [
-        "token" => $expofpToken,
-        "name" => $entry['id'],
-        "eventId" =>  $expofpId
-    ];
-    postCurl($entryID_url, $headers, json_encode($entryID_data), "POST");
-
     // remove duplicate categories, as that would break the expofp api
     $categories = array_unique($categories, SORT_REGULAR);
 
     $data = [
         "token" => $expofpToken,
         "eventId" => $expofpId,
-        "name" => $entry['151'],
+        "name" => $entry['151'] . " - " . $entry['id'],
         "description" => $entry['16'],
         "featured" => $featured,
         "address" => $rmt_shown, // this holds all the resources and attributes entered as a comma delimited string
@@ -248,11 +239,12 @@ function updateExpoFpExhibit($entry, $form, $expofpToken, $expofpId, $exhibitor_
         foreach ($entry as $key => $value) {
             if (strpos($key, '339.') === 0) {
                 if ($value != '') {
-                    if (stripos($value, 'sponsor') !== false) {
-                        $featured = true;
-                        array_push($tags, "Sponsor");
-                    }
                     if($value != "Presentation" && $value != "Performer" && $value != "Workshop") {
+                        if (stripos($value, 'sponsor') !== false) {
+                            $featured = true;
+                            array_push($tags, "Sponsor");
+                            $value = "Exhibit";
+                        }
                         $categories[] = array("name" => $value);
                     }
                 }
@@ -263,8 +255,9 @@ function updateExpoFpExhibit($entry, $form, $expofpToken, $expofpId, $exhibitor_
             $featured = true;
             array_push($tags, "Sponsor");
         } 
-        $categories[] = array("name" => $formType);
+        $categories["name"] = $formType;
     }
+    
     // now, add all the additional tags we want
     array_push($tags, "Status:" . $entry['303']); // status
     $placementRequest = isset($entry['68']) ? $entry['68'] : '';
@@ -318,23 +311,13 @@ function updateExpoFpExhibit($entry, $form, $expofpToken, $expofpId, $exhibitor_
         $categories[] = array("name" => "Loud");
     }
 
-    // we also want to create a category for each entry id so we can set the entry id as a category in expoFP
-    $categories[] = array("name" => $entry['id']);
-    $entryID_url = "https://app.expofp.com/api/v1/add-category";
-    $entryID_data = [
-        "token" => $expofpToken,
-        "name" => $entry['id'],
-        "eventId" =>  $expofpId
-    ];
-    postCurl($entryID_url, $headers, json_encode($entryID_data), "POST");
-
     // remove duplicate categories, as that would break the expofp api
     $categories = array_unique($categories, SORT_REGULAR);
 
     $data = [
         "token" => $expofpToken,
         "id" => $exhibitor_id,
-        "name" => $entry['151'],
+        "name" => $entry['151'] . " - " . $entry['id'],
         "description" => $entry['16'],
         "featured" => $featured,
         "address" => $rmt_shown, // this holds all the resources and attributes entered as a comma delimited string
