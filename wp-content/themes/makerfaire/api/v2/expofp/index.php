@@ -36,7 +36,13 @@ if(isset($webhook->Type)) {
         $wpdb->query($insert_query);
 
         // set a gf_entry_meta for the boothname, so the unassign function can find out those booth details to delete
-        gform_update_meta( $entry_id, "expofp_booth_name", $booth_name);
+        $booth_data     = gform_get_meta( $entry_id, 'expofp_booth_name');
+        $booth_array    = json_decode($booth_data, TRUE);
+        if(!is_array($booth_array)) {
+            $booth_array = array();
+        }
+        $booth_array[]  = array('booth_id' => $webhook->BoothId, 'booth_key' => $webhook->BoothKey);
+        gform_update_meta( $entry_id, "expofp_booth_name", json_encode($booth_array));
 
         // and then we update the final space size attribute
         GFRMTHELPER::rmt_update_attribute($entry_id, 2, $space_size, "", "ExpoFP");
@@ -45,35 +51,62 @@ if(isset($webhook->Type)) {
 
         $exhibitorID  = $webhook->ExhibitorId;
         $entry_id     = gform_get_entry_byMeta("expofp_exhibit_id", $exhibitorID);
-        $booth_key    = gform_get_meta( $entry_id, 'expofp_booth_name');
+        $booth_data   = gform_get_meta( $entry_id, 'expofp_booth_name');
+        $booth_array  = json_decode($booth_data, TRUE);
+        $booth_key    = 0;
 
-        $expofpToken = EXPOFP_TOKEN;
-        $url = "https://app.expofp.com/api/v1/get-booth";
-        $headers = array(
-            'Accept: application/json', 
-            'Content-Type: application/json'
-        );
+        foreach($booth_array as $key => $booth) {
+            error_log(print_r($booth, TRUE));
+            error_log($booth['booth_id'] . " should equal " . $webhook->BoothId);
+            if($booth['booth_id'] == $webhook->BoothId) {
+                unset($booth_array[$key]);
+                $booth_key = $booth['booth_key'];
+                break;
+            }
+        }
 
-        $data = [
-            "token" => $expofpToken,
-            "eventId" => $webhook->ExpoId,
-            "name" => $booth_key,
-        ];
+        if($booth_key != 0) {
+            $expofpToken = EXPOFP_TOKEN;
+            $url = "https://app.expofp.com/api/v1/get-booth";
+            $headers = array(
+                'Accept: application/json', 
+                'Content-Type: application/json'
+            );
 
-        $result = json_decode(postCurl($url, $headers, json_encode($data), "POST"));
-        $area_number = explode('|', $result->type)[1]; // this gets the area id we placed after the pipe in the expoFP booth types
+            $data = [
+                "token" => $expofpToken,
+                "eventId" => $webhook->ExpoId,
+                "name" => $booth_key,
+            ];
 
-        //delete from schedule and location table
-        $delete_query =  "DELETE FROM `wp_mf_location` WHERE wp_mf_location.entry_id = $entry_id AND wp_mf_location.subarea_id = $area_number AND wp_mf_location.location = '$booth_key'";
-        $wpdb->get_results($delete_query);
+            $result = json_decode(postCurl($url, $headers, json_encode($data), "POST"));
+            $area_number = explode('|', $result->type)[1]; // this gets the area id we placed after the pipe in the expoFP booth types
 
-        gform_update_meta( $entry_id, "expofp_booth_name", "");
+            //delete from schedule and location table
+            $delete_query =  "DELETE FROM `wp_mf_location` WHERE wp_mf_location.entry_id = $entry_id AND wp_mf_location.subarea_id = $area_number AND wp_mf_location.location = '$booth_key'";
+            $wpdb->get_results($delete_query);
 
-        $rowID_query = "SELECT wp_rmt_entry_attributes.ID FROM `wp_rmt_entry_attributes` WHERE wp_rmt_entry_attributes.entry_id = $entry_id AND wp_rmt_entry_attributes.attribute_id = 2";
-        $rowID = isset($wpdb->get_results($rowID_query)[0]) ? $wpdb->get_results($rowID_query)[0]->ID : 0;
+            gform_update_meta( $entry_id, "expofp_booth_name", json_encode($booth_array));
 
-        //delete the final size attribute from the rmt table as well
-        GFRMTHELPER::rmt_delete($rowID, "wp_rmt_entry_attributes", $entry_id);
+            // delete the attribute from the entry that matches the final space size
+            $attArray = GFRMTHELPER::rmt_get_entry_data($entry_id, 'attributes') ; 
+            error_log(print_r($attArray, TRUE));
+            $rowID = '';
+            foreach($attArray as $attribute){
+                // Rio, look at [28-Aug-2024 00:29:39 UTC] PHP Notice:  Undefined index: attribute_id in /nas/content/live/mfairedev/wp-content/themes/makerfaire/api/v2/expofp/index.php on line 96
+                if($attribute['attribute_id']==2){
+                    $rowID = $attribute['id'];
+                    break;
+                }
+            }
+            if($rowID!=''){
+                GFRMTHELPER::rmt_delete($rowID, "wp_rmt_entry_attributes", $entry_id);
+            }
+
+        } else {
+            error_log("Error in expoFP booth_unassigned");
+            error_log(print_r($webhook, TRUE));
+        }
     }
 }
 if(isset($webhook->type)) { // because of course they don't use consistent capitalization
