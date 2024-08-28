@@ -130,6 +130,7 @@
 			[column]
 				[field]edit_status[/field]					
 				[field]update_status_button[/field]
+				[field]edit_public_info[/field]		
 				[field]schedule_loc[/field]																	
 			[/column]
 		[/block]		

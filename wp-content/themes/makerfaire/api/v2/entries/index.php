@@ -547,7 +547,12 @@ function fieldOutput($fieldID, $entry, $field_array, $form, $arg = '') {
 
         }
         break;  
-    }
+      case 'edit_public_info':
+        $type = 'html';
+        $value = '<a href="/maker/entry/'.$entry['id'].'/edit/" target="_none">Edit Public Info</a>';
+        break;
+    
+    }    
   }
   if ($arg == 'no_label')  $label = '';
   if ($value == '')  return array();
