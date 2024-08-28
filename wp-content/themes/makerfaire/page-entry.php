@@ -219,7 +219,7 @@ if ($editEntry == 'edit') {
 
     //instantiate the model
     $maker = new maker($current_user->user_email);
-    if ($maker->check_entry_access($entry)) {
+    if ($maker->check_entry_access($entry) || $adminView) {
         $makerEdit = true;
     }
 }
