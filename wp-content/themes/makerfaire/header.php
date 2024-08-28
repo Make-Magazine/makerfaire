@@ -158,16 +158,12 @@
 		<div id="universal-subnav" class="nav-level-2">
 			<?php
             $secondary_nav='secondary_universal_menu';
-            if(is_object($post)) {
-                $post_data = get_post($post->post_parent);
-                
-                //because we rewrite the project and faire pages, it isn't showing yearbook as being a parent, so we need to check the guid instead.                
-                $pos = strpos($post_data->guid, '/yearbook/');
-                
-                $parent_slug = $post_data->post_name;
-                if($parent_slug=='bay-area'){
+            if(is_object($post)) {                                                
+                $permalink = get_permalink($post);
+                                
+                if (stripos($permalink, 'bay-area') !== false) {                
                     $secondary_nav='bay_area_secondary_nav';
-                }elseif($parent_slug=='yearbook' || $pos!==false){
+                }elseif(stripos($permalink, 'yearbook') !== false){
                     $secondary_nav='yearbook_secondary_nav';
                 }
             } 
