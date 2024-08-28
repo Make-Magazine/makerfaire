@@ -232,7 +232,7 @@
                     }
 
 				}
-                                    .mtm-maker {
+                .mtm-maker {
                         background: #fff;
                         position: relative;
                         font-family: Roboto;                        
@@ -293,7 +293,6 @@
                                     display: flex;
                                     span, p {
                                         display: flex;
-                                        align-items: center;
                                         img {
                                             margin-right: 13px;
                                             filter: brightness(0) saturate(100%) invert(15%) sepia(81%) saturate(7431%) hue-rotate(5deg) brightness(98%) contrast(101%);
