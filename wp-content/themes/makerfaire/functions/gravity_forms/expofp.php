@@ -66,7 +66,7 @@ function update_expofp_exhibitor($form, $entry_id) {
         $exhibitor_id = gform_get_meta( $entry_id, 'expofp_exhibit_id');
         //error_log($exhibitor_id);
 
-        if(isset($exhibitor_id)) { // this meta is set when the exhibit is created
+        if($exhibitor_id) { // this meta is set when the exhibit is created
             // after update, if the status is canceled or rejected, delete
             if($entry['303'] == "Cancelled" || $entry['303'] == "Rejected") {
                 deleteExpoFpExhibit($exhibitor_id, $expofpToken);
