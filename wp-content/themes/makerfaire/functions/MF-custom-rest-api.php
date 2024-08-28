@@ -347,14 +347,16 @@ function getMTMentries($formIDs = '', $faireID = '', $years = '') {
 
             $mainCategory = get_term($result->prime_cat);
             $mainCategoryIcon = '<i class="fa fa-rocket" aria-hidden="true"></i>';
-            $mainCategoryIconType = get_field('icon_type', $mainCategory->taxonomy . '_' . $mainCategory->term_id);
-            // get the mainCategory icon from the mf category taxonomy, if indeed one is set
-            if ($mainCategoryIconType == "uploaded_icon") {
-                $mainCategoryIcon = '<picture class="main-category-icon"><img src="' . get_field('uploaded_icon', $mainCategory->taxonomy . '_' . $mainCategory->term_id)['url'] . '" height="27px" width="27px" aria-hidden="true" /></picture>';
-            } else {
-                $fa = get_field('font_awesome', $mainCategory->taxonomy . '_' . $mainCategory->term_id);
-                if (!empty($fa)) {
-                    $mainCategoryIcon = '<a href="?category='.$primeCat.'"><i class="fa ' . $fa . '" aria-hidden="true"></i></a>';
+            if(isset($mainCategory->taxonomy)) {
+                $mainCategoryIconType = get_field('icon_type', $mainCategory->taxonomy . '_' . $mainCategory->term_id);
+                // get the mainCategory icon from the mf category taxonomy, if indeed one is set
+                if ($mainCategoryIconType == "uploaded_icon") {
+                    $mainCategoryIcon = '<picture class="main-category-icon"><img src="' . get_field('uploaded_icon', $mainCategory->taxonomy . '_' . $mainCategory->term_id)['url'] . '" height="27px" width="27px" aria-hidden="true" /></picture>';
+                } else {
+                    $fa = get_field('font_awesome', $mainCategory->taxonomy . '_' . $mainCategory->term_id);
+                    if (!empty($fa)) {
+                        $mainCategoryIcon = '<a href="?category='.$primeCat.'"><i class="fa ' . $fa . '" aria-hidden="true"></i></a>';
+                    }
                 }
             }
 
