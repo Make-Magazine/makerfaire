@@ -484,7 +484,7 @@ function mf_sidebar_entry_schedule($form_id, $lead) {
                 </script>';
 
   //create dropdown of current locations for selected subarea
-  $output .= 'Location Code: (optional)<br/>';
+  $output .= 'Booth ID: (optional)<br/>';
   $output .= '<select id="locationSel"><option>Select Area - Subarea above</option></select><br/>';
   $output .= '<input type="text" name="update_entry_location_code" style="display:none" id="update_entry_location_code" /><br/>';
 
@@ -520,14 +520,15 @@ function display_schedule($form_id, $lead, $section = 'sidebar') {
   //first, let's display any schedules already entered for this entry
   $entry_id = $lead['id'];
   $sql = "select `wp_mf_schedule`.`ID` as schedule_id, `wp_mf_schedule`.`entry_id`,  `wp_mf_schedule`.type,
+                  `wp_mf_schedule`.`start_dt`, `wp_mf_schedule`.`end_dt`, 
+                  `wp_mf_schedule`.`day`, wp_mf_faire.time_zone, `wp_mf_faire`.`faire`, 
                   location.ID as location_id, location.location,
-                  area.area, subarea.subarea,
-                  `wp_mf_faire`.`faire`, `wp_mf_schedule`.`start_dt`, `wp_mf_schedule`.`end_dt`, `wp_mf_schedule`.`day`, wp_mf_faire.time_zone,
+                  area.area, subarea.subarea,                                    
                   subarea.ID as subarea_id
 
           from wp_mf_location location
-          left outer join wp_mf_schedule on `wp_mf_schedule`.`entry_id` = " . $entry_id . " and wp_mf_schedule.location_id = location.ID,
-                          wp_mf_faire_subarea subarea, wp_mf_faire_area area,wp_mf_faire
+          left outer join wp_mf_schedule on `wp_mf_schedule`.`entry_id` = location.entry_id and wp_mf_schedule.location_id = location.ID,
+          wp_mf_faire_subarea subarea, wp_mf_faire_area area,wp_mf_faire
 
           where location.entry_id=" . $entry_id . "
             and FIND_IN_SET(" . $form_id . ",wp_mf_faire.form_ids)
@@ -536,7 +537,9 @@ function display_schedule($form_id, $lead, $section = 'sidebar') {
           order by area ASC, subarea ASC, start_dt ASC";
 
   $scheduleArr = array();
+  
   foreach ($wpdb->get_results($sql, ARRAY_A) as $row) {
+    $schedData   = array();
     //order entries by subarea(stage), then date
     $stage = ($row['subarea'] != NULL ? $row['area'] . ' - ' . $row['subarea'] : '');
     if ($row['location'] != '')    $stage .= ' (' . $row['location'] . ')';
@@ -549,12 +552,13 @@ function display_schedule($form_id, $lead, $section = 'sidebar') {
     $type       = $row['type'];
 
     //build array
-    $schedules[$subarea_id]['location'] = $row['location_id'];
-    $schedules[$subarea_id]['stage']    = $stage;
+    $schedData['location'] = $row['location_id'];
+    $schedData['stage']    = $stage;
 
     if ($date != '') {
-      $schedules[$subarea_id]['schedule'][$date][$schedule_id] = array('start_dt' => $start_dt, 'end_dt' => $end_dt, 'timeZone' => $timeZone, 'type' => $type);
+      $schedData['schedule'][$date][$schedule_id] = array('start_dt' => $start_dt, 'end_dt' => $end_dt, 'timeZone' => $timeZone, 'type' => $type);
     }
+    $schedules[]=$schedData;
   }
 
   //make sure there is data to display
