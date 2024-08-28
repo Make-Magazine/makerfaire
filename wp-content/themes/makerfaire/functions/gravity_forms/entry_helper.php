@@ -564,3 +564,12 @@ function getMakerInfoNested($entry) {
 
     return $makers;
 }
+
+// Functions to pull entries based on meta value
+function gform_get_entry_byMeta( $meta_key, $meta_value ) {
+    global $wpdb;
+    $results  = $wpdb->get_results('SELECT entry_id FROM wp_gf_entry_meta where meta_key="'.$meta_key.'" and meta_value="'.$meta_value.'" ORDER BY wp_gf_entry_meta.id DESC');
+    $entry_id = isset( $results[0] ) ? $results[0]->entry_id : 0;
+    
+    return $entry_id;
+}
