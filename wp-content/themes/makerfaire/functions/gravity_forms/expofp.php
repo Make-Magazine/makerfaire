@@ -66,7 +66,7 @@ function update_expofp_exhibitor($form, $entry_id) {
         $exhibitor_id = gform_get_meta( $entry_id, 'expofp_exhibit_id');
         //error_log($exhibitor_id);
 
-        if(isset($exhibitor_id)) { // this meta is set when the exhibit is created
+        if($exhibitor_id) { // this meta is set when the exhibit is created
             // after update, if the status is canceled or rejected, delete
             if($entry['303'] == "Cancelled" || $entry['303'] == "Rejected") {
                 deleteExpoFpExhibit($exhibitor_id, $expofpToken);
@@ -142,7 +142,7 @@ function createExpoFpExhibit($entry, $form, $expofpToken, $expofpId) {
         array_push($tags, "Mobile"); // it's mobile (in case they set a space request other than mobile, but marked mobile later)
     }
     $electrictyNeeds = isset($entry['75']) ? $entry['75'] : '';
-    if(!empty($electricty)) {
+    if(!empty($electrictyNeeds)) {
         array_push($tags, "Electricty needs:" . $electrictyNeeds); // electricty needs
     }
     $tablesChairs = isset($entry['62']) ? $entry['62'] : '';
@@ -269,7 +269,7 @@ function updateExpoFpExhibit($entry, $form, $expofpToken, $expofpId, $exhibitor_
         array_push($tags, "Mobile"); // it's mobile (in case they set a space request other than mobile, but marked mobile later)
     }
     $electrictyNeeds = isset($entry['75']) ? $entry['75'] : '';
-    if(!empty($electricty)) {
+    if(!empty($electrictyNeeds)) {
         array_push($tags, "Electricty needs:" . $electrictyNeeds); // electricty needs
     }
     $tablesChairs = isset($entry['62']) ? $entry['62'] : '';
