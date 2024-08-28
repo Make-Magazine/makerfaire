@@ -112,11 +112,12 @@ function createExpoFpExhibit($entry, $form, $expofpToken, $expofpId) {
         foreach ($entry as $key => $value) {
             if (strpos($key, '339.') === 0) {
                 if ($value != '') {
-                    if (stripos($value, 'sponsor') !== false) {
-                        $featured = true;
-                        array_push($tags, "Sponsor");
-                    }
                     if($value != "Presentation" && $value != "Performer" && $value != "Workshop") {
+                        if (stripos($value, 'sponsor') !== false) {
+                            $featured = true;
+                            array_push($tags, "Sponsor");
+                            $value = "Exhibit";
+                        }
                         $categories[] = array("name" => $value);
                     }
                 }
@@ -238,11 +239,12 @@ function updateExpoFpExhibit($entry, $form, $expofpToken, $expofpId, $exhibitor_
         foreach ($entry as $key => $value) {
             if (strpos($key, '339.') === 0) {
                 if ($value != '') {
-                    if (stripos($value, 'sponsor') !== false) {
-                        $featured = true;
-                        array_push($tags, "Sponsor");
-                    }
                     if($value != "Presentation" && $value != "Performer" && $value != "Workshop") {
+                        if (stripos($value, 'sponsor') !== false) {
+                            $featured = true;
+                            array_push($tags, "Sponsor");
+                            $value = "Exhibit";
+                        }
                         $categories[] = array("name" => $value);
                     }
                 }
@@ -253,8 +255,9 @@ function updateExpoFpExhibit($entry, $form, $expofpToken, $expofpId, $exhibitor_
             $featured = true;
             array_push($tags, "Sponsor");
         } 
-        $categories[] = array("name" => $formType);
+        $categories["name"] = $formType;
     }
+    
     // now, add all the additional tags we want
     array_push($tags, "Status:" . $entry['303']); // status
     $placementRequest = isset($entry['68']) ? $entry['68'] : '';

@@ -48,24 +48,23 @@ if(isset($webhook->Type)) {
         GFRMTHELPER::rmt_update_attribute($entry_id, 2, $space_size, "", "ExpoFP");
     } 
     if($webhook->Type == "booth_unassigned") {
-
         $exhibitorID  = $webhook->ExhibitorId;
         $entry_id     = gform_get_entry_byMeta("expofp_exhibit_id", $exhibitorID);
         $booth_data   = gform_get_meta( $entry_id, 'expofp_booth_name');
         $booth_array  = json_decode($booth_data, TRUE);
-        $booth_key    = 0;
-
-        foreach($booth_array as $key => $booth) {
-            error_log(print_r($booth, TRUE));
-            error_log($booth['booth_id'] . " should equal " . $webhook->BoothId);
-            if($booth['booth_id'] == $webhook->BoothId) {
-                unset($booth_array[$key]);
-                $booth_key = $booth['booth_key'];
-                break;
+        $booth_key    = "";
+        // check what booth data we have stored in the gform meta and remove any entries that match the id of the booth we are unassigning
+        if(is_array($booth_array)){
+            foreach($booth_array as $key => $booth) {
+                if($booth['booth_id'] == $webhook->BoothId) {
+                    $booth_key = $booth['booth_key'];
+                    unset($booth_array[$key]);
+                    break;
+                }
             }
         }
 
-        if($booth_key != 0) {
+        if($booth_key != "") {
             $expofpToken = EXPOFP_TOKEN;
             $url = "https://app.expofp.com/api/v1/get-booth";
             $headers = array(
@@ -90,22 +89,21 @@ if(isset($webhook->Type)) {
 
             // delete the attribute from the entry that matches the final space size
             $attArray = GFRMTHELPER::rmt_get_entry_data($entry_id, 'attributes') ; 
-            error_log(print_r($attArray, TRUE));
             $rowID = '';
-            foreach($attArray as $attribute){
-                // Rio, look at [28-Aug-2024 00:29:39 UTC] PHP Notice:  Undefined index: attribute_id in /nas/content/live/mfairedev/wp-content/themes/makerfaire/api/v2/expofp/index.php on line 96
+            foreach($attArray['attributes'] as $attribute){
                 if($attribute['attribute_id']==2){
                     $rowID = $attribute['id'];
                     break;
                 }
             }
-            if($rowID!=''){
+            // only straight delete the attribute if there is nothing available to replace
+            if($rowID!='' && empty($booth_array)){
                 GFRMTHELPER::rmt_delete($rowID, "wp_rmt_entry_attributes", $entry_id);
             }
 
         } else {
-            error_log("Error in expoFP booth_unassigned");
-            error_log(print_r($webhook, TRUE));
+            // this should only go off the first time
+            //error_log("Error in expoFP booth_unassigned");
         }
     }
 }
