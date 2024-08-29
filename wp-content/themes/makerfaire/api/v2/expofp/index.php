@@ -19,11 +19,11 @@ if(isset($webhook->Type)) {
     global $wpdb;
     // unfortunately, booth_reserved always seems to happen before booth_unassigned, therefore we need to save between deleting a booth and assigning it to a new place
     if($webhook->Type == "booth_reserved") {
-
+        
         $result = getExpoFPWebhookResult($webhook);
 
         $exhibitorID  = $result->exhibitors[0]; // technically there can be more than one exhibitor assigned to a booth, but we aren't using booths like that
-        $area_number  = explode('|', $result->type)[1]; // this gets the area id we placed after the pipe in the expoFP booth types
+        $subarea_id   = explode('|', $result->type)[1]; // this gets the subarea id we placed after the pipe in the expoFP booth types
         $booth_name   = $result->name;
         // we've already stored the expofp exhibit id in the gf entry when the exhibit was first created in expofp
         $entry_id     = gform_get_entry_byMeta("expofp_exhibit_id", $exhibitorID);
@@ -31,7 +31,7 @@ if(isset($webhook->Type)) {
 
         // update the wp_mf_location table for this entry with the subarea and booth name we have had returned from expofp
         $insert_query = "INSERT INTO `wp_mf_location`(`entry_id`, `subarea_id`, `location`) "
-        . " VALUES ($entry_id,$area_number,'$booth_name')";
+        . " VALUES ($entry_id,$subarea_id,'$booth_name')";
        
         $wpdb->query($insert_query);
 
@@ -79,10 +79,10 @@ if(isset($webhook->Type)) {
             ];
 
             $result = json_decode(postCurl($url, $headers, json_encode($data), "POST"));
-            $area_number = explode('|', $result->type)[1]; // this gets the area id we placed after the pipe in the expoFP booth types
+            $subarea_id = explode('|', $result->type)[1]; // this gets the area id we placed after the pipe in the expoFP booth types
 
             //delete from schedule and location table
-            $delete_query =  "DELETE FROM `wp_mf_location` WHERE wp_mf_location.entry_id = $entry_id AND wp_mf_location.subarea_id = $area_number AND wp_mf_location.location = '$booth_key'";
+            $delete_query =  "DELETE FROM `wp_mf_location` WHERE wp_mf_location.entry_id = $entry_id AND wp_mf_location.subarea_id = $subarea_id AND wp_mf_location.location = '$booth_key'";
             $wpdb->get_results($delete_query);
 
             gform_update_meta( $entry_id, "expofp_booth_name", json_encode($booth_array));
