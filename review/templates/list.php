@@ -5,7 +5,7 @@
             <h3>{{maker.project_name}}</h3>
         </b-col>
         <b-col cols="2">{{maker.entry_type}}</b-col>
-        <b-col cols="1">{{maker.entry_placed}}</b-col>
+        <b-col cols="1" class="placed">{{maker.entry_placed}}</b-col>
         <b-col cols="1"><span :class="'status_'+maker.project_id">{{maker.status}}</span></b-col>
         <b-col cols="1" style="color: #ccc;">{{maker.project_id}}</b-col>
         <b-button v-if="entryIDQuery" @click="backToGrid(maker.project_id)" variant="outline-primary" v-b-tooltip.hover title="Back to Grid"><i class="bi bi-arrow-return-left"></i><i aria-hidden="true" class="bi bi-grid"></i></b-button>

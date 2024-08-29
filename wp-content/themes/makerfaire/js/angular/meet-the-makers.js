@@ -89,10 +89,6 @@ mtm.controller('mtmMakers', ['$scope', '$sce', '$filter', '$http', function ($sc
         $scope.makerSearch.flag = "Featured Maker";
     }
 
-
-    var MPCategory = jQuery('#MPCategory').val();
-
-
     //call to MF custom rest API
 
     //console.log('pulling makerfaire data');
