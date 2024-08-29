@@ -162,7 +162,7 @@ $faireName = (isset($results[0]->faire_name)?$results[0]->faire_name:'');
                             <div class="mtm-text">
                                 <h3>Loading...</h3>
                                 <div class="mtm-detail-items">
-                                    <div class="mtm-detail-item"><span><i class="fa fa-user-robot"></i></span>
+                                    <div class="mtm-detail-item"><span><i class="fa fa-circle-user"></i></span>
                                         <p>&nbsp;</p>
                                     </div>
                                     <div class="mtm-detail-item"><span><i class="fa fa-rocket"></i></span>
@@ -183,7 +183,7 @@ $faireName = (isset($results[0]->faire_name)?$results[0]->faire_name:'');
                             <div class="mtm-text">
                                 <h3>Loading...</h3>
                                 <div class="mtm-detail-items">
-                                    <div class="mtm-detail-item"><span><i class="fa fa-user-robot"></i></span>
+                                    <div class="mtm-detail-item"><span><i class="fa fa-circle-user"></i></span>
                                         <p>&nbsp;</p>
                                     </div>
                                     <div class="mtm-detail-item"><span><i class="fa fa-rocket"></i></span>
@@ -204,7 +204,7 @@ $faireName = (isset($results[0]->faire_name)?$results[0]->faire_name:'');
                             <div class="mtm-text">
                                 <h3>Loading...</h3>
                                 <div class="mtm-detail-items">
-                                    <div class="mtm-detail-item"><span><i class="fa fa-user-robot"></i></span>
+                                    <div class="mtm-detail-item"><span><i class="fa fa-circle-user"></i></span>
                                         <p>&nbsp;</p>
                                     </div>
                                     <div class="mtm-detail-item"><span><i class="fa fa-rocket"></i></span>
@@ -225,7 +225,7 @@ $faireName = (isset($results[0]->faire_name)?$results[0]->faire_name:'');
                             <div class="mtm-text">
                                 <h3>Loading...</h3>
                                 <div class="mtm-detail-items">
-                                    <div class="mtm-detail-item"><span><i class="fa fa-user-robot"></i></span>
+                                    <div class="mtm-detail-item"><span><i class="fa fa-circle-user"></i></span>
                                         <p>&nbsp;</p>
                                     </div>
                                     <div class="mtm-detail-item"><span><i class="fa fa-rocket"></i></span>
@@ -246,7 +246,7 @@ $faireName = (isset($results[0]->faire_name)?$results[0]->faire_name:'');
                             <div class="mtm-text">
                                 <h3>Loading...</h3>
                                 <div class="mtm-detail-items">
-                                    <div class="mtm-detail-item"><span><i class="fa fa-user-robot"></i></span>
+                                    <div class="mtm-detail-item"><span><i class="fa fa-circle-user"></i></span>
                                         <p>&nbsp;</p>
                                     </div>
                                     <div class="mtm-detail-item"><span><i class="fa fa-rocket"></i></span>
@@ -267,7 +267,7 @@ $faireName = (isset($results[0]->faire_name)?$results[0]->faire_name:'');
                             <div class="mtm-text">
                                 <h3>Loading...</h3>
                                 <div class="mtm-detail-items">
-                                    <div class="mtm-detail-item"><span><i class="fa fa-user-robot"></i></span>
+                                    <div class="mtm-detail-item"><span><i class="fa fa-circle-user"></i></span>
                                         <p>&nbsp;</p>
                                     </div>
                                     <div class="mtm-detail-item"><span><i class="fa fa-rocket"></i></span>
@@ -288,7 +288,7 @@ $faireName = (isset($results[0]->faire_name)?$results[0]->faire_name:'');
                             <div class="mtm-text">
                                 <h3>Loading...</h3>
                                 <div class="mtm-detail-items">
-                                    <div class="mtm-detail-item"><span><i class="fa fa-user-robot"></i></span>
+                                    <div class="mtm-detail-item"><span><i class="fa fa-circle-user"></i></span>
                                         <p>&nbsp;</p>
                                     </div>
                                     <div class="mtm-detail-item"><span><i class="fa fa-rocket"></i></span>
@@ -309,7 +309,7 @@ $faireName = (isset($results[0]->faire_name)?$results[0]->faire_name:'');
                             <div class="mtm-text">
                                 <h3>Loading...</h3>
                                 <div class="mtm-detail-items">
-                                    <div class="mtm-detail-item"><span><i class="fa fa-user-robot"></i></span>
+                                    <div class="mtm-detail-item"><span><i class="fa fa-circle-user"></i></span>
                                         <p>&nbsp;</p>
                                     </div>
                                     <div class="mtm-detail-item"><span><i class="fa fa-rocket"></i></span>
@@ -330,7 +330,7 @@ $faireName = (isset($results[0]->faire_name)?$results[0]->faire_name:'');
                             <div class="mtm-text">
                                 <h3>Loading...</h3>
                                 <div class="mtm-detail-items">
-                                    <div class="mtm-detail-item"><span><i class="fa fa-user-robot"></i></span>
+                                    <div class="mtm-detail-item"><span><i class="fa fa-circle-user"></i></span>
                                         <p>&nbsp;</p>
                                     </div>
                                     <div class="mtm-detail-item"><span><i class="fa fa-rocket"></i></span>
@@ -351,7 +351,7 @@ $faireName = (isset($results[0]->faire_name)?$results[0]->faire_name:'');
                             <div class="mtm-text">
                                 <h3>Loading...</h3>
                                 <div class="mtm-detail-items">
-                                    <div class="mtm-detail-item"><span><i class="fa fa-user-robot"></i></span>
+                                    <div class="mtm-detail-item"><span><i class="fa fa-circle-user"></i></span>
                                         <p>&nbsp;</p>
                                     </div>
                                     <div class="mtm-detail-item"><span><i class="fa fa-rocket"></i></span>
@@ -388,7 +388,7 @@ $faireName = (isset($results[0]->faire_name)?$results[0]->faire_name:'');
                                 <div class="mtm-detail-item" ng-show="maker.makerList.length">
                                     <span>
                                         <a href="{{maker.link}}" target="_blank">
-                                            <i class="fa fa-user-robot"></i></a>
+                                            <i class="fa fa-circle-user"></i></a>
                                     </span>
                                     <p>
                                         <a href="{{maker.link}}" ng-bind-html="trust(maker.makerList)" target="_blank"></a>
