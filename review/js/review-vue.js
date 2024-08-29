@@ -1,11 +1,13 @@
 var urlParams = new URLSearchParams(window.location.search);
 var formID = 278;
 window.onload = (event) => {
-  document.querySelector('#form_select').value = '278';
-  if(!window.location.search) {
-    //window.location.search = "?test";
-  }
+    document.querySelector('#form_select').value = '278';
 };
+// if there are no parameters set other than list, we will default to all entry types except for 'Show Management'
+if(urlParams.size == 0 || ( urlParams.get('layout') == "list" && urlParams.size == 1) ) {
+    urlParams.set('type', "Exhibit,Not Sure Yet,Performer,Presentation,Sponsor,StartUp Sponsor");
+} 
+
 // this query will be updates with our route
 var query = {};
 
