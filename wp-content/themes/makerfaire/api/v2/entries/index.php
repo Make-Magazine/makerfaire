@@ -202,9 +202,10 @@ function getAllEntries($formID = '') {
     $entry_placed='';
     $booth_data     = gform_get_meta( $entry['id'], 'expofp_booth_name');
     
-    if($booth_data){
-      $booth_array    = json_decode($booth_data, TRUE);
-      if(is_array($booth_array)) $entry_placed = 'Placed';
+    //is this entry placed?
+    if($booth_data && $booth_data != '[]'){
+      //json_decode is too inneficient to use here.       
+      $entry_placed = 'Placed';
     }
         
     //set the return data
