@@ -45,9 +45,9 @@
         <hr />
         <?php include('templates/filters.html'); ?>
         <br/>        
-        <b-list-group horizontal>
+        <b-list-group horizontal class="status-buttons">
             <b-list-group-item v-for="status in statusArray" v-if="getCountofStatus(status)!=0">
-                {{status}} - {{getCountofStatus(status)}}            
+                <b-button @click="selectStatusFilter(status)">{{status}} - {{getCountofStatus(status)}}</b-button>    
             </b-list-group-item>            
         </b-list-group>
         <hr />

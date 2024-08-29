@@ -28,6 +28,7 @@ var review = new Vue({
             filterCounts: {},      
             makers: [],
             rmt: [],
+
             statusArray: ['Proposed', 'Accepted', 'Pending', 'No Response', 'Wait List', 'Rejected', 'Cancelled', 'No Show'],
             currentView: urlParams.get('layout') ? urlParams.get('layout') : "grid",
             searchQuery: urlParams.get('search') ? urlParams.get('search') : "",
@@ -105,6 +106,10 @@ var review = new Vue({
             var vimeoRegex = /(?:vimeo)\.com.*(?:videos|video|channels|)\/([\d]+)/i;
             var parsed = url.match(vimeoRegex);
             return "//player.vimeo.com/video/" + parsed[1];    
+        },
+        selectStatusFilter: function(status) {
+            document.getElementById("statusFilter").value = status;
+            this.selectedStatus = [status];
         },
         resetFilters: function () {
             this.searchQuery = "";

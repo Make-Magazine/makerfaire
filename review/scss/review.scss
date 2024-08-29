@@ -64,6 +64,18 @@ h3 {
     padding: 0px;
 }
 
+.status-buttons {
+    button, button:hover {
+        background: transparent;
+        color: #333;
+        border: 0px;
+        padding: 0px;
+        &:hover {
+            text-decoration: underline;
+        }
+    }
+}
+
 .card {
     margin: 50px 0;
 
