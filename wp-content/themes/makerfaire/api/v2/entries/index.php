@@ -34,6 +34,9 @@ if ($type == 'entries' && $formID) {
   $field303 = RGFormsModel::get_field($form, '303');
   $all_rmt  = GFRMTHELPER::rmt_table_data();
 
+  //only need to build this html once
+  //$add_sched_html = build_add_sched($formID);
+  $add_sched_html = '';
   //set entry data
   $data     = getAllEntries($formID);
 
@@ -195,6 +198,15 @@ function getAllEntries($formID = '') {
     $fieldArr = fieldOutput(302, $entry, $field_array, $form);
     $prelim_loc    = (isset($fieldArr['value']) && $fieldArr['value'] != '' ? implode(", ", $fieldArr['value']) : '');
 
+    //set entry_placed indicator
+    $entry_placed='';
+    $booth_data     = gform_get_meta( $entry['id'], 'expofp_booth_name');
+    
+    if($booth_data){
+      $booth_array    = json_decode($booth_data, TRUE);
+      if(is_array($booth_array)) $entry_placed = 'Placed';
+    }
+        
     //set the return data
     $return['makers'][] = array(
       'tabs'            => $tabData,
@@ -204,6 +216,7 @@ function getAllEntries($formID = '') {
       'description'     => $entry['16'],
       'flags'           => $flags,
       'entry_type'      => $exhibit_types,
+      'entry_placed'    => $entry_placed,
       'photo'           => $maker_photo,
       'maker_name'      => $maker_name,
       'email'           => $entry['98'],
@@ -375,17 +388,6 @@ function fieldOutput($fieldID, $entry, $field_array, $form, $arg = '') {
                       <p><span class="updMsg" id="updAdminMSG' . $entry['id'] . '"></span></p>';
         }
         break;
-        case 'update_status_button':
-          $type  = 'html';
-  
-          //only display the update admin button if the user can actually edit something         
-          global $edit_status;
-          if ($edit_status) {
-  
-            $value = '<p><input type="button" id="updStatus' . $entry['id'] . '" value="Change Status" class="button updButton" style="width:auto;padding-bottom:2px;" onclick="updateMgmt(\'update_entry_status\', \'' . $entry['id'] . '\');"/></p>
-                        <p><span class="updMsg" id="updStatusMSG' . $entry['id'] . '"></span></p>';
-          }
-          break;  
       case 'date_created':
         //type defaults to 'text'
         $date  = date_create($entry[$fieldID]);
@@ -495,7 +497,7 @@ function fieldOutput($fieldID, $entry, $field_array, $form, $arg = '') {
         global $edit_status;
 
         if ($edit_status) {
-          $value = '    <select id="entryStatus_' . $entry['id'] . '" name="entry_info_status_change">';
+          $value = '    <select id="entryStatus_' . $entry['id'] . '" name="entry_info_status_change" style="margin-bottom:10px;margin-right:10px">';
           if (isset($field303['choices'])) {
             foreach ($field303['choices'] as $choice) {
               $selected = '';
@@ -503,17 +505,24 @@ function fieldOutput($fieldID, $entry, $field_array, $form, $arg = '') {
               $value .= '<option ' . $selected . ' value="' . $choice['text'] . '">' . $choice['text'] . '</option>';
             }
           }
+          
+          $value .= '<p><input type="button" id="updStatus' . $entry['id'] . '" value="Change Status" class="button" style="width:auto;" onclick="updateMgmt(\'update_entry_status\', \'' . $entry['id'] . '\');"/></p>'.
+                    '<p><span class="updMsg" id="updStatusMSG' . $entry['id'] . '"></span></p>';          
         } else {
           $value = $entry[$field303['id']];
         }
 
         break;
-      case 'schedule_loc':
-        //$type = 'html';
-        //$label = 'Schedule/Location';
+      case 'schedule_loc'://9.39 -> 32.9!!!!      
+        /*
+        $type = 'html';
+        $label = 'Schedule/Location';
+        global $add_sched_html;
         //$value = mf_sidebar_entry_schedule( $form['id'], $entry );
+        $value  = display_schedule($form['id'], $entry);
+        $value .= $add_sched_html;
         break;
-
+*/
       case 'final_location':
         $type  = 'html';
         $label = 'Final Location';
