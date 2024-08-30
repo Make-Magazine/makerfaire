@@ -530,7 +530,8 @@ class GFRMTHELPER {
           $dispUser = 'ExpoFP';
         } else {
           $userInfo = get_userdata($result->user);
-          $dispUser = $userInfo->display_name;
+          
+          $dispUser = ($userInfo?$userInfo->display_name:'');
         }
         $update_stamp = esc_html(GFCommon::format_date($result->update_stamp, false, 'm/d/y h:i a'));
         $return_array['attributes'][] = array(
