@@ -79,10 +79,12 @@ if(isset($webhook->Type)) {
             ];
 
             $result = json_decode(postCurl($url, $headers, json_encode($data), "POST"));
-            $subarea_id = explode('|', $result->type)[1]; // this gets the area id we placed after the pipe in the expoFP booth types
+            $subarea_id = strlen($result->type) ? explode('|', $result->type)[1] : ""; // this gets the area id we placed after the pipe in the expoFP booth types
 
             //delete from schedule and location table
-            $delete_query =  "DELETE FROM `wp_mf_location` WHERE wp_mf_location.entry_id = $entry_id AND wp_mf_location.subarea_id = $subarea_id AND wp_mf_location.location = '$booth_key'";
+            if(!empty($subarea_id) && $subarea_id != "") {
+                $delete_query =  "DELETE FROM `wp_mf_location` WHERE wp_mf_location.entry_id = $entry_id AND wp_mf_location.subarea_id = $subarea_id AND wp_mf_location.location = '$booth_key'";
+            }
             $wpdb->get_results($delete_query);
 
             gform_update_meta( $entry_id, "expofp_booth_name", json_encode($booth_array));
