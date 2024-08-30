@@ -199,7 +199,7 @@ function getAllEntries($formID = '') {
     $prelim_loc    = (isset($fieldArr['value']) && $fieldArr['value'] != '' ? implode(", ", $fieldArr['value']) : '');
 
     //set entry_placed indicator
-    $entry_placed='';
+    $entry_placed='0';
     $booth_data     = gform_get_meta( $entry['id'], 'expofp_booth_name');
     
     //is this entry placed?
