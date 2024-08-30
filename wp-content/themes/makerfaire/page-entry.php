@@ -194,8 +194,10 @@ if (isset($entry->errors)) {
     }
 
     $friday = (isset($entry['879.3']) && !empty($entry['879.3'])  ? 1 : 0); // is it on friday
-    $location = "";
-    $scheduleOutput = display_entry_schedule($entry);
+    $location = $scheduleOutput = "";
+    if($show_sched){
+        $scheduleOutput = display_entry_schedule($entry);
+    }
 
     $project_website = (isset($entry['27']) ? $entry['27'] : '');  //Website
     $project_social = getSocial(isset($entry['906']) ? $entry['906'] : '');
