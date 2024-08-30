@@ -15,6 +15,22 @@ $my_version = $my_theme->get('Version');
 	<link href="//maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css" rel="stylesheet">
 	<link href="/wp-content/themes/makerfaire/css/angular-reporting.min.css" rel="stylesheet">
 
+	<style> /* tell me a better place to put this and I'll jump on it */
+	.reportsView .ui-grid-render-container {
+		display: flex;
+		flex-direction: column;
+	}
+	.reportsView .ui-grid-render-container .ui-grid-header, .reportsView .ui-grid-render-container .ui-grid-viewport {
+		order: 1;
+	}
+	.reportsView .ui-grid-render-container ui-grid-footer {
+		order: 0;
+	}
+	.reportsView .ui-grid-render-container ui-grid-footer .ui-grid-footer-cell:first-of-type .ui-grid-cell-contents.ng-scope::before {
+		content: "Count:";
+	}
+	</style>
+
 	<!-- jQuery -->
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>	
 
