@@ -569,8 +569,8 @@ function fieldOutput($fieldID, $entry, $field_array, $form, $arg = '') {
         break;
       case 'final_location':
         $type  = 'html';
-        $label = 'Final Location';
-        $value = 'final location is' . display_schedule($form['id'], $entry, $section = 'sidebar');
+        $label = 'Final Location';        
+        $value = display_schedule($form['id'], $entry, 'summary');
         break;
       
       //these slow down the api        
