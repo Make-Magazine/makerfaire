@@ -77,24 +77,10 @@ h3 {
         }
     }
 }
-.custom-checkbox {
+.placed-radio {
+    margin-bottom: 0px;
     display: flex;
     align-items: end;
-    #placedCheckbox {
-        &+ label {
-            border: solid 1px #ccc;
-            border-radius: 5px; 
-            padding: 10px;
-            &:before {
-                display: none;
-            }
-        }
-        &:checked + label {
-            background: green;
-            border: solid 1px green;
-            color: #fff;
-        }
-    }
 }
 
 .card {
