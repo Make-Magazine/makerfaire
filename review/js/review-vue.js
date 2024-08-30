@@ -1,8 +1,13 @@
 var urlParams = new URLSearchParams(window.location.search);
 var formID = 278;
 window.onload = (event) => {
-  document.querySelector('#form_select').value = '278';
+    document.querySelector('#form_select').value = '278';
 };
+// if there are no parameters set other than list, we will default to all entry types except for 'Show Management'
+if(urlParams.size == 0 || ( urlParams.get('layout') == "list" && urlParams.size == 1) ) {
+    urlParams.set('type', "Exhibit,Not Sure Yet,Performer,Presentation,Sponsor,StartUp Sponsor");
+} 
+
 // this query will be updates with our route
 var query = {};
 
@@ -32,6 +37,7 @@ var review = new Vue({
             statusArray: ['Proposed', 'Accepted', 'Pending', 'No Response', 'Wait List', 'Rejected', 'Cancelled', 'No Show'],
             currentView: urlParams.get('layout') ? urlParams.get('layout') : "grid",
             searchQuery: urlParams.get('search') ? urlParams.get('search') : "",
+            placedQuery: urlParams.get('placed') ? urlParams.get('placed') : "",
             entryIDQuery: "",
             layoutQuery: urlParams.get('layout') ? urlParams.get('layout') : "",
             // the splits here will both make sure these are arrays, and select all options in the multiselect
@@ -113,6 +119,7 @@ var review = new Vue({
         },
         resetFilters: function () {
             this.searchQuery = "";
+            this.placedQuery = "";
             this.selectedStatus = [];
             this.selectedCat = [];
             this.selectedEntryType = [];
@@ -167,11 +174,12 @@ var review = new Vue({
     },
     computed: {
         filterBy() {
-            if (this.searchQuery || this.selectedStatus ||
+            if (this.searchQuery || this.placedQuery || this.selectedStatus ||
                 this.selectedCat || this.selectedEntryType ||
                 this.selectedFlag || this.selectedPrelimLoc || this.entryIDQuery
             ) {
                 var searchValue     = this.searchQuery.toLowerCase();
+                var placedValue     = this.placedQuery;
                 var entryIDValue    = this.entryIDQuery;
                 var layoutValue     = this.layoutQuery;
                 var statusFilter    = this.selectedStatus;
@@ -187,13 +195,14 @@ var review = new Vue({
                 var passStatus      = true;
 
                 // here we build the queryString based on the filters and add it to our route
-                if(searchValue) { query.search = searchValue; }
+                if(searchValue) { query.search = searchValue; } else { delete query.search; }
+                if(placedValue) { query.placed = placedValue; } else { delete query.placed; }
                 if(layoutValue) { query.layout = layoutValue; }
-                if(statusFilter.toString() != "") { query.status = statusFilter.toString(); }
-                if(catFilter.toString() != "") { query.category = catFilter.toString(); }
-                if(entryTypeFilter.toString() != "") { query.type = entryTypeFilter.toString(); }
-                if(flagFilter.toString() != "") { query.flag = flagFilter.toString(); }
-                if(prelimLocFilter.toString() != "") { query.location = prelimLocFilter.toString(); }
+                if(statusFilter.toString() != "") { query.status = statusFilter.toString(); } else { delete query.status; }
+                if(catFilter.toString() != "") { query.category = catFilter.toString(); } else { delete query.category; }
+                if(entryTypeFilter.toString() != "") { query.type = entryTypeFilter.toString(); } else { delete query.type; }
+                if(flagFilter.toString() != "") { query.flag = flagFilter.toString(); } else { delete query.flag; }
+                if(prelimLocFilter.toString() != "") { query.location = prelimLocFilter.toString(); } else { delete query.location; }
                 this.router.push({ path: 'review', query: query }).catch(()=>{});
                 
                 return this.makers.filter(function (maker) {                                         
@@ -270,6 +279,7 @@ var review = new Vue({
                         maker.maker_name.toLowerCase().indexOf(searchValue) > -1 ||
                         maker.email.toLowerCase().indexOf(searchValue) > -1) &&
                         maker.project_id.indexOf(entryIDValue) > -1 &&
+                        maker.entry_placed.toLowerCase().indexOf(placedValue) > -1 && 
                         passEntryType && passFlag && passPrelimLoc && passCat && passStatus;
                 })
             } else {

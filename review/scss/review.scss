@@ -41,6 +41,8 @@ h3 {
     z-index: 999 !important;
 }
 
+.search-input { min-height: 45px; }
+
 .form-select {
     align-items: center;
     display: flex;
@@ -75,6 +77,25 @@ h3 {
         }
     }
 }
+.custom-checkbox {
+    display: flex;
+    align-items: end;
+    #placedCheckbox {
+        &+ label {
+            border: solid 1px #ccc;
+            border-radius: 5px; 
+            padding: 10px;
+            &:before {
+                display: none;
+            }
+        }
+        &:checked + label {
+            background: green;
+            border: solid 1px green;
+            color: #fff;
+        }
+    }
+}
 
 .card {
     margin: 50px 0;
@@ -95,6 +116,7 @@ h3 {
                 background-color: #007bff;
             }
         }
+        .placed { color: green; }
     }
 
     ul.card-header-tabs li {
