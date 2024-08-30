@@ -181,9 +181,28 @@ function showcase($entryID) {
 function get_showcase_entries($entryID){
     $showcase_info = array();
     global $wpdb;
-    //look for all associated entries but exclude trashed entries
-    $sql = "SELECT parentID, 
-        childID, 
+    //first see if this entry is a parent or child record, this helps speed up admin review    
+    $sql = "SELECT parentID, childID ".
+            "FROM wp_mf_lead_rel ".
+            "WHERE (parentID=$entryID or childID=$entryID) limit 1";
+    $results = $wpdb->get_row($sql,ARRAY_A);        
+
+    //if no results found, exit. this is not a showcase or part of one
+    if(empty($results)){
+        return $showcase_info;
+    }
+
+    //now lets look at the first row and see if we are dealing with the child or the parent
+    if($results['parentID']==$entryID) {
+        $showcase_info['type']='parent';
+    }else{
+        $showcase_info['type']='child';
+    }
+
+    //now that we know the type let's either pull the parent or the child data
+    if($showcase_info['type']=='parent'){
+        //look for all associated entries but exclude trashed entries
+        $sql = "SELECT parentID, childID, 
         (select meta_value from wp_gf_entry_meta where meta_key='151' and entry_id=childID) as child_title, 
         (select meta_value from wp_gf_entry_meta where meta_key='22' and entry_id=childID) as child_photo 
         FROM wp_mf_lead_rel 
@@ -197,23 +216,18 @@ function get_showcase_entries($entryID){
         AND parent.status != 'trash' 
         AND child_mf_status.meta_value='Accepted'
         ORDER BY child_title";
-    $results = $wpdb->get_results($sql);
-    //if no results found, exit this is not a showcase or part of one
-    if(empty($results)){
-        return $showcase_info;
-    }
+        $results = $wpdb->get_results($sql);
 
-    if ($wpdb->num_rows > 1) { // it's a parent!
-        foreach ($results as $row) {
-            $showcase_info['type']='parent';
+        //pull child data
+        foreach ($results as $row) {            
             $showcase_info['child_data'][] = array(
                 'child_entryID' =>$row->childID,
                 'child_photo' =>$row->child_photo,
                 'child_title' =>$row->child_title);
         }
     }else{
-        $showcase_info['type']='child';            
-        $parent_id = $results[0]->parentID;
+        //pull parent data
+        $parent_id = $results['parentID'];
         
         //pull parent information
         $childSQL = "SELECT parentID, 
@@ -223,7 +237,8 @@ function get_showcase_entries($entryID){
                 FROM wp_mf_lead_rel 
                 WHERE parentID=$parent_id 
                 LIMIT 1";
-        $parent = $wpdb->get_results($childSQL)[0];
+        $parent = $wpdb->get_row($childSQL);
+        
         $showcase_info['parent_data'] = array(
             'parent_id'     => $parent_id,
             'parent_photo'  => $parent->parent_photo,
@@ -231,6 +246,7 @@ function get_showcase_entries($entryID){
             'parent_desc'   => $parent->parent_description
         );
     }
+
     return $showcase_info;
 }
 
