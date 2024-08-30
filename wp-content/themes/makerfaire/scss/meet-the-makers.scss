@@ -410,48 +410,6 @@
                 }
 			}
 		}
-        i.fa {
-            color: #f51400;
-            font-size: 26px;
-            margin-right: 10px;
-            min-width: 30px;
-            font-style: normal;
-            text-align: center;
-            &:after {
-                font-family: "Font Awesome 6 Pro";
-                font-weight: 900;
-            }
-            &.maker, &.exhibit {
-                &:after {
-                    content: "\e627";
-                }
-            }
-            &.presenter, &.presentation {
-                &:after {
-                    content: "\f685";
-                }
-            }
-            &.workshop {
-                &:after {
-                    content: "\f256";
-                }
-            }
-            &.sponsor {
-                &:after {
-                    content: "\f2b5";
-                }
-            }
-            &.startup.sponsor  {
-                &:after {
-                    content: "\f675";
-                }
-            }
-            &.performer {
-                &:after {
-                    content: "\e31b";
-                }
-            }
-        }
 	}
     .loading-container {
         position: absolute;
@@ -476,6 +434,51 @@
 .mtm .no-results {
     margin: 30px;
     text-align: center;
+}
+
+.mtm, .entry-page {
+    i.fa {
+        color: #f51400;
+        font-size: 26px;
+        margin-right: 10px;
+        min-width: 30px;
+        font-style: normal;
+        text-align: center;
+        &:after {
+            font-family: "Font Awesome 6 Pro";
+            font-weight: 900;
+        }
+        &.maker, &.exhibit {
+            &:after {
+                content: "\e627";
+            }
+        }
+        &.presenter, &.presentation {
+            &:after {
+                content: "\f685";
+            }
+        }
+        &.workshop {
+            &:after {
+                content: "\f256";
+            }
+        }
+        &.sponsor {
+            &:after {
+                content: "\f2b5";
+            }
+        }
+        &.startup.sponsor  {
+            &:after {
+                content: "\f675";
+            }
+        }
+        &.performer {
+            &:after {
+                content: "\e31b";
+            }
+        }
+    }
 }
 
 .eoy-results-cont {
