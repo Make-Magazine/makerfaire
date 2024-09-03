@@ -25,6 +25,7 @@ function mf_custom_merge_tags($merge_tags, $form_id, $fields, $element_id) {
     $merge_tags[] = array('label' => 'Resource Category Lock Ind', 'tag' => '{rmt_res_cat_lock}');
     $merge_tags[] = array('label' => 'Attribute Lock Ind', 'tag' => '{rmt_att_lock}');
     $merge_tags[] = array('label' => 'Supplemental Form Token', 'tag' => '{supp_form_token}');
+    $merge_tags[] = array('label' => 'Exposure', 'tag' => '{exposure_token}');
 
     //add merge tag for Attention field - Confirmation Comment
     $merge_tags[] = array('label' => 'Confirmation Comment', 'tag' => '{CONF_COMMENT}');
@@ -65,6 +66,12 @@ function mf_replace_merge_tags($text, $form, $entry, $url_encode, $esc_html, $nl
     $schedule = get_location($entry, 'full');
     $text = str_replace('{entry_loc}', $schedule, $text);
   }
+
+  //Exposure Token
+  if (strpos($text, '{exposure_token}') !== false) {    
+    $exposure = get_exposure($entry);
+    $text = str_replace('{exposure_token}', $exposure, $text);
+  }  
 
   //scheduled locations {entry_area}
   if (strpos($text, '{entry_area}') !== false) {
@@ -396,4 +403,40 @@ function get_location($entry, $type='full'){
       }
   }
   return $location;
+}
+
+
+/* Return exposure for entry */
+function get_exposure($entry){
+  global $wpdb;
+  $exposure = '';
+  $entry_id = (isset($entry['id'])?$entry['id']:'');
+
+  if($entry_id!=''){
+      $sql = "SELECT DISTINCT area.area, subarea.subarea, subarea.exposure, subarea.nicename, location
+              FROM    wp_mf_location location,
+                      wp_mf_faire_subarea subarea,
+                      wp_mf_faire_subarea exposure,
+                      wp_mf_faire_area area
+
+              where       location.entry_id   = $entry_id
+                      and subarea.id          = location.subarea_id
+                      and area.id             = subarea.area_id";
+
+      $results = $wpdb->get_results($sql);
+
+      if($wpdb->num_rows > 0){
+          foreach($results as $row){
+            //if there are multiple exposures separate with a space
+            $exposure .= ($exposure != '' ? ',' : '');
+
+            // either get the exposure, or leave it blank
+            if($row->subarea!=''){
+              $exposure .= isset($row->exposure) ? $row->exposure : "";
+            }
+       
+          }
+      }
+  }
+  return $exposure;
 }
