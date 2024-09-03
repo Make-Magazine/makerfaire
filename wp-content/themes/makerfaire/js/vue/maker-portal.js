@@ -72,3 +72,10 @@ new Vue({
         }
     }
 });  
+
+window.addEventListener("load", (event) => {
+    document.querySelector("#profile-view #dropdownMenuLink").addEventListener('click', function() {
+        document.querySelector("#profile-view .profile-menu").classList.toggle('show');
+    },
+    false);
+});

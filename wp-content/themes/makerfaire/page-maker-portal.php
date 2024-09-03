@@ -46,6 +46,10 @@ get_header();
   .popover-body a .fas {
     margin-right: 8px;
   }
+
+  .tasks-row .align-self-end {
+    padding-left: 0px;
+  }
 </style>
 <div id="manageEntries" style="width:95%; margin: 35px auto;margin-bottom: 0px;" class="maker-portal">
   <input type="hidden" id="user_email" value="<?php echo $current_user->user_email; ?>" />
@@ -118,7 +122,7 @@ get_header();
             </span>       
 
             <div style="margin-top: auto; padding-top: 15px; font-size: 20px">
-              <b-row align-h="between" v-if="entry.status!='Cancelled'"><!-- Tickets/Tasks/Manage Section-->
+              <b-row align-h="between" v-if="entry.status!='Cancelled'" class="tasks-row"><!-- Tickets/Tasks/Manage Section-->
                 <b-col><!-- Tasks - This should only show for current faire -->
                   <span v-if="entry.tasks.toDo.length || entry.tasks.done.length">
                     <b-button v-b-tooltip.hover title="My Tasks" :id="'entry-tasks-'+entry.project_id" variant="primary" class="notifications-button">

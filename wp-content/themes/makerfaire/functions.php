@@ -128,7 +128,7 @@ function load_scripts() {
         wp_enqueue_script('vue-js', "https://unpkg.com/vue@2.6.12/dist/vue.min.js", array(), '', true);
         wp_enqueue_script('bs-vue-js', "https://unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.min.js", array('vue-js', 'bootstrap'), '', true);
         wp_enqueue_script('axios', "https://unpkg.com/axios@1.6.8/dist/axios.min.js", array('vue-js'), '', true);
-        wp_enqueue_script('maker-portal', get_stylesheet_directory_uri() . "/js/min/maker-portal.min.js", array('axios'), '', true);
+        wp_enqueue_script('maker-portal', get_stylesheet_directory_uri() . "/js/min/maker-portal.min.js", array('axios'), $my_version, true);
         wp_localize_script('maker-portal', 'vueAjax', array('ajaxurl' => admin_url('admin-ajax.php')));
     }
 }

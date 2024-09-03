@@ -438,7 +438,6 @@
 	justify-content: center;
 	position: absolute !important;
 	top: 50px !important;
-	right: calc(50% - 200px);
 	font-size: 30px;
 	.ui-dialog-titlebar { display:none} 
 	#dialog-refresh {
@@ -447,6 +446,11 @@
 		justify-content: center;;
 		flex-direction: column;
 		gap:10px;
+	}
+	@media screen and (max-width: 768px) {
+		max-width: 95vw !important;
+		text-align: center;
+    	margin-top: 25px;
 	}
 }
 
@@ -561,7 +565,11 @@
 				color: green;
 			}
 		}
-		
+	}
+	@media screen and (max-width: 768px) {
+		flex-direction: column;
+		gap: 10px;
+		text-align: center;
 	}
 }
 .hide-suggestions {
