@@ -561,7 +561,11 @@
 				color: green;
 			}
 		}
-		
+	}
+	@media screen and (max-width: 768px) {
+		flex-direction: column;
+		gap: 10px;
+		text-align: center;
 	}
 }
 .hide-suggestions {
