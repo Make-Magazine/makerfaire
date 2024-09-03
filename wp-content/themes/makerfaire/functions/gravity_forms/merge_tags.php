@@ -413,28 +413,20 @@ function get_exposure($entry){
   $entry_id = (isset($entry['id'])?$entry['id']:'');
 
   if($entry_id!=''){
-      $sql = "SELECT DISTINCT area.area, subarea.subarea, subarea.exposure, subarea.nicename, location
+      $sql = "SELECT group_concat(subarea.exposure separator ', ') as exposure
               FROM    wp_mf_location location,
-                      wp_mf_faire_subarea subarea,
-                      wp_mf_faire_subarea exposure,
-                      wp_mf_faire_area area
+                      wp_mf_faire_subarea subarea
+              WHERE   location.entry_id   = $entry_id
+                  and subarea.id          = location.subarea_id
+                  and subarea.exposure    != ''
+              GROUP BY entry_id";
 
-              where       location.entry_id   = $entry_id
-                      and subarea.id          = location.subarea_id
-                      and area.id             = subarea.area_id";
-
-      $results = $wpdb->get_results($sql);
+      $results = $wpdb->get_row($sql);
 
       if($wpdb->num_rows > 0){
-          foreach($results as $row){
-            //if there are multiple exposures separate with a space
-            $exposure .= ($exposure != '' ? ',' : '');
-
+          foreach($results as $key => $value){
             // either get the exposure, or leave it blank
-            if($row->subarea!=''){
-              $exposure .= isset($row->exposure) ? $row->exposure : "";
-            }
-       
+            $exposure .= $key == 'exposure' ? $value : "";
           }
       }
   }
