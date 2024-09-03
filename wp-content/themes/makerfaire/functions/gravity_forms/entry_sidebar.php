@@ -603,18 +603,19 @@ function display_schedule($form_id, $lead, $section = 'sidebar') {
             .  '<span class="schedDate">Remove Location</span>';
         }
         $output .= '<div class="clear"></div>';
-      }
-      $output .= '<br/>';
+      }      
     }
 
     if ($section != 'summary') {
+      $output .= '<br/>';
       $entry_delete_button = '<input type="button" name="delete_entry_schedule[]" value="Delete Selected" class="button"
                                     style="width:auto;padding-bottom:2px;"
                                    onclick="updateMgmt(\'delete_entry_schedule\');"/><br />';
       $updMsg  = '<span class="updMsg delete_entry_scheduleMsg"></span>';
       $output .= $entry_delete_button . $updMsg;
+      $output .= '<br/>';
     }
-    $output .= '<br/>';
+    
     $output .= '</div>';
     return $output;
   }
