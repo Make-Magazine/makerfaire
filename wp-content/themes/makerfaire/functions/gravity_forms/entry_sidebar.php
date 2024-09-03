@@ -613,8 +613,9 @@ function display_schedule($form_id, $lead, $section = 'sidebar') {
                                    onclick="updateMgmt(\'delete_entry_schedule\');"/><br />';
       $updMsg  = '<span class="updMsg delete_entry_scheduleMsg"></span>';
       $output .= $entry_delete_button . $updMsg;
+      $output .= '<br/>';
     }
-    $output .= '<br/>';
+    
     $output .= '</div>';
     return $output;
   }
