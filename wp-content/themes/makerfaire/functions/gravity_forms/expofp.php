@@ -203,10 +203,14 @@ function createExpoFpExhibit($entry, $form, $expofpToken, $expofpId) {
     //error_log(print_r(json_encode($data), TRUE));
     $result = postCurl($url, $headers, json_encode($data), "POST");
     //error_log(print_r($result, TRUE));
-    $exhibitor_id = json_decode($result)->id;
-    // set the gf_entry_meta to the exhibitor id. if this meta is present, we know we should update rather than add to ExpoFP
-    gform_update_meta( $entry['id'], "expofp_exhibit_id", $exhibitor_id, $form['id']);
-
+    $exhibitor = json_decode($result);
+    if(isset($exhibitor->id)){
+        // set the gf_entry_meta to the exhibitor id. if this meta is present, we know we should update rather than add to ExpoFP
+        gform_update_meta( $entry['id'], "expofp_exhibit_id", $exhibitor->id, $form['id']);
+    } else {
+        error_log("Create exhibitor Failed in ExpoFP");
+        error_log(print_r($result, TRUE));
+    }
     return $result;
 }
 
