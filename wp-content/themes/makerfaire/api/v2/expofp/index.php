@@ -23,29 +23,34 @@ if(isset($webhook->Type)) {
         $result = getExpoFPWebhookResult($webhook);
 
         $exhibitorID  = $result->exhibitors[0]; // technically there can be more than one exhibitor assigned to a booth, but we aren't using booths like that
-        $subarea_id   = explode('|', $result->type)[1]; // this gets the subarea id we placed after the pipe in the expoFP booth types
+        $type         = explode('|', $result->type); // this gets the subarea id we placed after the pipe in the expoFP booth types
+        $subarea_id   = (is_array($type) && isset($type[1])) ? $type[1] : "";
         $booth_name   = $result->name;
         // we've already stored the expofp exhibit id in the gf entry when the exhibit was first created in expofp
         $entry_id     = gform_get_entry_byMeta("expofp_exhibit_id", $exhibitorID);
         $space_size   = $result->size;
 
         // update the wp_mf_location table for this entry with the subarea and booth name we have had returned from expofp
-        $insert_query = "INSERT INTO `wp_mf_location`(`entry_id`, `subarea_id`, `location`) "
-        . " VALUES ($entry_id,$subarea_id,'$booth_name')";
-       
-        $wpdb->query($insert_query);
+        if($subarea_id != "") {
+            $insert_query = "INSERT INTO `wp_mf_location`(`entry_id`, `subarea_id`, `location`) "
+            . " VALUES ($entry_id,$subarea_id,'$booth_name')";
+        
+            $wpdb->query($insert_query);
 
-        // set a gf_entry_meta for the boothname, so the unassign function can find out those booth details to delete
-        $booth_data     = gform_get_meta( $entry_id, 'expofp_booth_name');
-        $booth_array    = json_decode($booth_data, TRUE);
-        if(!is_array($booth_array)) {
-            $booth_array = array();
+            // set a gf_entry_meta for the boothname, so the unassign function can find out those booth details to delete
+            $booth_data     = gform_get_meta( $entry_id, 'expofp_booth_name');
+            $booth_array    = json_decode($booth_data, TRUE);
+            if(!is_array($booth_array)) {
+                $booth_array = array();
+            }
+            $booth_array[]  = array('booth_id' => $webhook->BoothId, 'booth_key' => $webhook->BoothKey);
+            gform_update_meta( $entry_id, "expofp_booth_name", json_encode($booth_array));
+
+            // and then we update the final space size attribute
+            GFRMTHELPER::rmt_update_attribute($entry_id, 2, $space_size, "", "ExpoFP");
+        } else {
+            error_log("Exhibit was placed without boothtype set - Entry ID: " . $entry_id);
         }
-        $booth_array[]  = array('booth_id' => $webhook->BoothId, 'booth_key' => $webhook->BoothKey);
-        gform_update_meta( $entry_id, "expofp_booth_name", json_encode($booth_array));
-
-        // and then we update the final space size attribute
-        GFRMTHELPER::rmt_update_attribute($entry_id, 2, $space_size, "", "ExpoFP");
     } 
     if($webhook->Type == "booth_unassigned") {
         $exhibitorID  = $webhook->ExhibitorId;
