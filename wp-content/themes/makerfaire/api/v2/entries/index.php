@@ -457,7 +457,7 @@ function fieldOutput($fieldID, $entry, $field_array, $form, $arg = '') {
         break;
 
 
-        //notes
+      //notes
       case 'notes_table':
         global $notes_send;
         if ($notes_send) {
@@ -618,7 +618,7 @@ function getAddEntries($email, $currEntryID) {
     'left outer join wp_gf_form on wp_gf_entry_meta.form_id= wp_gf_form.id ' .
     'WHERE meta_value = "' . $email . '" ' .
     'AND entry_id != ' . $currEntryID . ' ' .
-    'AND status!="trash" ' .
+    'AND status="active"  ' .
     'ORDER BY `wp_gf_entry_meta`.`entry_id` DESC';
 
   $results = $wpdb->get_results($sql);

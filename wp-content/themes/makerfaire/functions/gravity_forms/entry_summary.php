@@ -390,6 +390,9 @@ function gf_collapsible_sections($form, $entry) {
                                   ORDER BY entry_id');
 
     foreach ($results as $addData) {
+      if($addData->lead_status!='active'){
+        continue;
+      }
       $outputURL = admin_url('admin.php') . "?page=gf_entries&view=entry&id=" . $addData->form_id . '&lid=' . $addData->entry_id;
       $addEntriesCnt++;
       $addEntries .= '<tr>';
