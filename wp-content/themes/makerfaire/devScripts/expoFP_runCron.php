@@ -4,7 +4,7 @@ include '../../../../wp-load.php';
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
-define('EXPOFP_TOKEN', '9184lcd016f2a3c23afda141b19e6137afa2f9019113ee0d810d8f85b88446299d702');
+
 ?>
 
 <!DOCTYPE html>
