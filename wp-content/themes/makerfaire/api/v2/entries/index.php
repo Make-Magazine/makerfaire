@@ -225,15 +225,9 @@ function getAllEntries($formID = '') {
     $fieldArr = fieldOutput(302, $entry, $field_array, $form);
     $prelim_loc    = (isset($fieldArr['value']) && $fieldArr['value'] != '' ? implode(", ", $fieldArr['value']) : '');
 
-    //set entry_placed indicator
-    $entry_placed   = '0';
-    $booth_data     = gform_get_meta( $entry['id'], 'expofp_booth_name');
-    
-    //is this entry placed?
-    if ($booth_data && $booth_data != '[]') {
-      //json_decode is too inneficient to use here.       
-      $entry_placed = 'Placed';
-    }
+    //set entry_placed indicator    
+    $placed_meta    = gform_get_meta( $entry['id'], 'expofp_placed');
+    $entry_placed   = ($placed_meta=='Placed'?$placed_meta:0);    
 
     //set the return data
     $return['makers'][] = array(

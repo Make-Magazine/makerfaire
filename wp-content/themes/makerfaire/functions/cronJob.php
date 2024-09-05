@@ -74,6 +74,7 @@ function cron_expofp_sync($expoID = '') {
         "eventId" => $expoID
     ];
 
+    $written = 0;
     // perform an API call to List all exhibitors on expoFP for the specific event id
     $exhibitors = json_decode(postCurl($url, $headers, json_encode($data), "POST"), TRUE);
     foreach ($exhibitors as $exhibitor) {
@@ -100,7 +101,8 @@ function cron_expofp_sync($expoID = '') {
         $wpdb->query($delete_sql);
 
         //check if a booth has been assigned to this entry
-        if (isset($exhibitor['booths']) && !empty($exhibitor['booths'])) {                        
+        if (isset($exhibitor['booths']) && !empty($exhibitor['booths'])) {      
+            ++$written;                 
             foreach ($exhibitor['booths'] as $booth_name) {                
                 //call expoFP to get booth details
                 $url = "https://app.expofp.com/api/v1/get-booth";
@@ -123,25 +125,32 @@ function cron_expofp_sync($expoID = '') {
                 
                 //subarea id found?
                 if ($subarea_id != "") {                                                            
+                    //find the form information
+                    $entry = gfapi::get_entry($entry_id);
+                    if(!is_array($entry)){
+                        echo 'error in pulling entry information for '.$entry_id.'<br/>';
+                        continue;
+                    }
+                    $form_id = (isset($entry['form_id'])?$entry['form_id']:0);
+                    
                     //set the location information for this entry with the subarea and booth name from expofp
                     $insert_query = "INSERT INTO `wp_mf_location`(`entry_id`, `subarea_id`, `location`) "
                                     . " VALUES ($entry_id,$subarea_id,'$booth_name')";
                     $wpdb->query($insert_query);
 
                     // set a gf_entry_meta for expoFP placed
-                    gform_update_meta( $entry_id, "expofp_placed",'Placed');
+                    gform_update_meta( $entry_id, "expofp_placed",'Placed', $form_id);
 
                     // and then we update the final space size attribute
                     GFRMTHELPER::rmt_update_attribute($entry_id, 2, $space_size, "", "ExpoFP");
+                    echo 'Placed '.$entry_id;
+                    if($prev_value!='') echo ' previous location="' . $prev_value.'"';
                     
+                    echo '. ExpoFP placement - ' . $booth_details['type'] . '('.$booth_name.') '.$space_size.' MF status '.$entry[303].'<br/>';
+
                     //if this location was not previously set, make a note in the change report
                     if(!in_array($subarea_id,$prev_subareas)){                        
-                        //set change report data 
-                        echo 'Placed '.$entry_id;
-                        if($prev_value!='') echo ' previous location=' . $prev_value;
-                        echo '<br/>';
-                        echo '&emsp;&emsp;' . $booth_details['type'] . '('.$booth_name.') '.$space_size.'<br/>';
-                        
+                        //set change report data                                                 
                         $chgReport[] = array(
                             'user_id'           => 0, //expoFP
                             'lead_id'           => $entry_id,
@@ -159,11 +168,14 @@ function cron_expofp_sync($expoID = '') {
             }
         } else {            
             //update meta field  "expofp_placed" to blank                        
-            //gform_delete_meta( $entry_id,'expoFP Placed');
+            gform_delete_meta( $entry_id,'expofp_placed');
         }                    
               
         //After you have processed all entries, call this function to update the change rpt
         if(!empty($chgReport))
             updateChangeRPT($chgReport);
     }
+    echo '<br/>';
+    echo count($exhibitors) .' exhibitors received from ExpoFP<br/>';
+    echo $written .' placed';
 }

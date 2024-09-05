@@ -123,9 +123,9 @@ function getAllEntries($email, $formID = '', $page = '', $years = '') {
         foreach($fieldArr['value'] as $exhibit_type){
           if(stripos($exhibit_type, 'exhibit')!== false && isset($form['exhibit_supp_form_URL'])){
             $logistics_links[] = array('title'=>'Exhibit Logistics', 'link'=>$form['exhibit_supp_form_URL'].'?ep_token='.$ep_token);
-          }elseif(stripos($exhibit_type, 'presenter')!== false && isset($form['presentation_supp_form_URL'])){
+          }elseif(stripos($exhibit_type, 'present')!== false && isset($form['presentation_supp_form_URL'])){
             $logistics_links[] = array('title'=>'Presenter Logistics', 'link'=>$form['presentation_supp_form_URL'].'?ep_token='.$ep_token);
-          }elseif(stripos($exhibit_type, 'performer')!== false && isset($form['performer_supp_form_URL'])){
+          }elseif(stripos($exhibit_type, 'perform')!== false && isset($form['performer_supp_form_URL'])){
             $logistics_links[] = array('title'=>'Performer Logistics', 'link'=>$form['performer_supp_form_URL'].'?ep_token='.$ep_token);
           }elseif(stripos($exhibit_type, 'workshop')!== false && isset($form['workshop_supp_form_URL'])){
             $logistics_links[] = array('title'=>'Workshop Logistics', 'link'=>$form['workshop_supp_form_URL'].'?ep_token='.$ep_token);
