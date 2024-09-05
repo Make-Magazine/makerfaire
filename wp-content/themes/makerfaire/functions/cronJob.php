@@ -102,8 +102,10 @@ function cron_expofp_sync($expoID = '') {
 
         //check if a booth has been assigned to this entry
         if (isset($exhibitor['booths']) && !empty($exhibitor['booths'])) {      
-            ++$written;                 
-            foreach ($exhibitor['booths'] as $booth_name) {                
+            ++$written;         
+            $booth_count = 0;        
+            foreach ($exhibitor['booths'] as $booth_name) {        
+                ++$booth_count;        
                 //call expoFP to get booth details
                 $url = "https://app.expofp.com/api/v1/get-booth";
                 $headers = array(
@@ -165,6 +167,9 @@ function cron_expofp_sync($expoID = '') {
                     echo "Exhibit was placed without subarea set - Entry ID: " . $entry_id.'<br/>';
                     error_log("Exhibit was placed without boothtype set - Entry ID: " . $entry_id);
                 }                             
+            }
+            if($booth_count> 1){
+                echo 'multiple booths set for this exhibitor</br>';
             }
         } else {            
             //update meta field  "expofp_placed" to blank                        
