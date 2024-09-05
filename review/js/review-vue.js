@@ -272,7 +272,7 @@ var review = new Vue({
                             }
                         });
                     }
-                    console.log(maker.entry_placed.toLowerCase() + " \ " + placedValue);
+                    //console.log(maker.entry_placed.toLowerCase() + " \ " + placedValue);
                     return (maker.project_name.toLowerCase().indexOf(searchValue) > -1 ||
                         maker.project_id.toLowerCase().indexOf(searchValue) > -1 ||
                         maker.description.toLowerCase().indexOf(searchValue) > -1 ||
