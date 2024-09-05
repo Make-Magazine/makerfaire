@@ -69,7 +69,7 @@ function update_expofp_exhibitor($form, $entry_id) {
         if($exhibitor_id) { // this meta is set when the exhibit is created
             // after update, if the status is canceled or rejected, delete
             if($entry['303'] == "Cancelled" || $entry['303'] == "Rejected") {
-                deleteExpoFpExhibit($exhibitor_id, $expofpToken);
+                deleteExpoFpExhibit($exhibitor_id, $expofpToken, $entry_id);
             } else { // otherwise, update exhibitor with new title, description, image, etc
                 updateExpoFpExhibit($entry, $form, $expofpToken, $expofpId, $exhibitor_id);
                 $image = json_decode($entry['22'])[0];
@@ -337,7 +337,7 @@ function updateExpoFpExhibit($entry, $form, $expofpToken, $expofpId, $exhibitor_
     return $result;
 }
 
-function deleteExpoFpExhibit($exhibitor_id, $expofpToken) {
+function deleteExpoFpExhibit($exhibitor_id, $expofpToken, $entry_id) {
     $url = "https://app.expofp.com/api/v1/delete-exhibitor";
     $headers = array(
         'Accept: application/json', 
@@ -348,6 +348,7 @@ function deleteExpoFpExhibit($exhibitor_id, $expofpToken) {
         "id" => $exhibitor_id
     ];
     postCurl($url, $headers, json_encode($data), "POST");
+    gform_delete_meta($entry_id, 'expofp_exhibit_id');
 }
 
 function updateExpoFpImage($expofpToken, $exhibitor_id, $image) {
