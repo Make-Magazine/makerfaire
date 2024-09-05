@@ -227,7 +227,7 @@ function getAllEntries($formID = '') {
 
     //set entry_placed indicator    
     $placed_meta    = gform_get_meta( $entry['id'], 'expofp_placed');
-    $entry_placed   = ($placed_meta=='Placed'?$placed_meta:0);    
+    $entry_placed   = ($placed_meta=='Placed'?$placed_meta:"0");    
 
     //set the return data
     $return['makers'][] = array(
