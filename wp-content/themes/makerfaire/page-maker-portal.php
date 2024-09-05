@@ -10,7 +10,7 @@ if (!is_user_logged_in())
 
 //get logged in users information
 $current_user = wp_get_current_user();
-
+$user_email = $current_user->user_email;
 get_header();
 ?>
 <style>
@@ -52,9 +52,33 @@ get_header();
   }
 </style>
 <div id="manageEntries" style="width:95%; margin: 35px auto;margin-bottom: 0px;" class="maker-portal">
-  <input type="hidden" id="user_email" value="<?php echo $current_user->user_email; ?>" />
+  <?php
+  //only allow alicia, rio and webmaster to test emails
+  if($current_user->user_email=='alicia@make.co' || $current_user->user_email=='rio@make.co' ||$current_user->user_email=='webmaster@make.co')	
+  //if (in_array('administrator', $current_user->roles)) { //allow admins to test any email		
+    global $wp;
+    $current_slug = add_query_arg( array(), $wp->request );
+
+    echo '<div class="account-form-wrapper" style="text-align:center">                            
+        <div class="account-form">							
+          <form action="/'.$current_slug.'">
+            <b>Admin only</b> Enter in an email to see what user sees.
+            <input id="test_email" name="test_email" value="" />
+            <input type="submit" value="Submit">
+            '.(isset($_GET['test_email'])?'<br/><i>Testing Email: '.$_GET['test_email'].'</i>':'') .'
+          </form>
+        </div>
+      </div>
+      <br/>';
+      
+			if(isset($_GET['test_email']) && $_GET['test_email']!=''){
+				$user_email = $_GET['test_email'];
+      }				
+  }
+  ?>
+  <input type="hidden" id="user_email" value="<?php echo $user_email; ?>" />
   <div class="row">
-    <h1 style="text-align:center">Hello <?php echo $current_user->user_email; ?></h1>
+    <h1 style="text-align:center">Hello <?php echo $user_email; ?></h1>
 
     <h4 id="loadingMsg">Please wait while we retrieve your submitted entries.</h4>
     <div v-if="showData" v-for="(faire, faire_name) in faire_entries" style="margin-bottom:50px">
