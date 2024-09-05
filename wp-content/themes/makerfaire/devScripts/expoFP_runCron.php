@@ -16,6 +16,7 @@ define('EXPOFP_TOKEN', '9184lcd016f2a3c23afda141b19e6137afa2f9019113ee0d810d8f85
         <?php
         //call function
         echo 'start of job<br/>';
+        set_time_limit(60000);
         $return = cron_expofp_sync(17504);
         echo $return.'<br/>';
         echo 'end of job<br/>';
