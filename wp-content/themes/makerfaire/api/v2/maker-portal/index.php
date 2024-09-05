@@ -1,5 +1,4 @@
 <?php
-
 /**
  * v2 of the Maker Faire API - Manage Entries used for the Maker Portal
  *
@@ -38,8 +37,6 @@ function getAllEntries($email, $formID = '', $page = '', $years = '') {
 
   //TBD - Dynamically build the form array based on formtype
   $forms = array(278, 260);
-
-  $user = get_user_by('email', $email);
 
   //TBD also filter based on created by email
   $search_criteria = array(
