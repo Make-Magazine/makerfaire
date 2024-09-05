@@ -85,7 +85,7 @@ function cron_expofp_sync($expoID = '') {
         }
 
         //if this was already placed from expoFP, save the current value
-        $loc_sql = "SELECT subarea_id, ".
+        $loc_sql = "SELECT subarea_id, location, ".
                         "concat(COALESCE(wp_mf_faire_subarea.subarea,''), ' (', COALESCE(location,''),')') as combined ".
                     "FROM `wp_mf_location` ".
                     "left outer join wp_mf_schedule on wp_mf_schedule.location_id= wp_mf_location.id ".
@@ -95,6 +95,7 @@ function cron_expofp_sync($expoID = '') {
         $loc_results = $wpdb->get_results($loc_sql,ARRAY_A);
         $prev_value = implode(", ", array_column($loc_results, 'combined')); //for change report
         $prev_subareas = array_column($loc_results, 'subarea_id');         
+        $prev_booths   = array_column($loc_results, 'location');         
         
         //delete any locations for this entry
         $delete_sql = "delete FROM `wp_mf_location` where (select start_dt from wp_mf_schedule where wp_mf_schedule.location_id= wp_mf_location.id) is NULL and wp_mf_location.entry_id=$entry_id";
@@ -150,8 +151,8 @@ function cron_expofp_sync($expoID = '') {
                     
                     echo '. ExpoFP placement - ' . $booth_details['type'] . '('.$booth_name.') '.$space_size.' MF status '.$entry[303].'<br/>';
 
-                    //if this location was not previously set, make a note in the change report
-                    if(!in_array($subarea_id,$prev_subareas)){                        
+                    //if this location/subarea was not previously set, make a note in the change report
+                    if(!in_array($subarea_id,$prev_subareas) || !in_array($booth_name,$prev_booths)){                        
                         //set change report data                                                 
                         $chgReport[] = array(
                             'user_id'           => 0, //expoFP
