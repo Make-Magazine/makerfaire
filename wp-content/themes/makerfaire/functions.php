@@ -12,9 +12,6 @@ include_once $templatePath . '/classes/ICS.php';
 // Legacy Helper Functions replacing VIP Wordpress.com calls
 include_once $templatePath . '/classes/legacy-helper.php';
 
-//cron job
-include_once $templatePath . '/classes/cronJob.php';
-
 // Include all function files in the makerfaire/functions directory:
 foreach (glob($templatePath . '/functions/*.php') as $file) {
     include_once $file;
