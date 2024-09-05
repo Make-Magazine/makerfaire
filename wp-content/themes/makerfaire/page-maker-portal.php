@@ -54,7 +54,10 @@ get_header();
 <div id="manageEntries" style="width:95%; margin: 35px auto;margin-bottom: 0px;" class="maker-portal">
   <?php
   //only allow alicia, rio and webmaster to test emails
-  if($current_user->user_email=='alicia@make.co' || $current_user->user_email=='rio@make.co' ||$current_user->user_email=='webmaster@make.co'){	
+  if($current_user->user_email=='alicia@make.co' || 
+     $current_user->user_email=='rio@make.co'    ||
+     $current_user->user_email=='webmaster@make.co' ||
+     $current_user->user_email=='siana@make.co'){	
   //if (in_array('administrator', $current_user->roles)) { //allow admins to test any email		
     global $wp;
     $current_slug = add_query_arg( array(), $wp->request );
