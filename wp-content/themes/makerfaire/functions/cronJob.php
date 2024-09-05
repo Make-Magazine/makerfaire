@@ -78,7 +78,7 @@ function cron_expofp_sync($expoID = '') {
     $exhibitors = json_decode(postCurl($url, $headers, json_encode($data), "POST"), TRUE);
     foreach ($exhibitors as $exhibitor) {
         //find the entryID        
-        $entry_id = (isset($exhibitor['externalId'])&&$exhibitor['externalId']!=''?$exhibitor['externalId']:'');
+        $entry_id = (isset($exhibitor['externalId'])&&$exhibitor['externalId']!=''?(int) $exhibitor['externalId']:'');
         if($entry_id==''){
             return 'Error in cron_expofp_sync. externalId is not set for exhibitior id='.$exhibitor['id']. ' name='.$exhibitor['name']; 
         }
