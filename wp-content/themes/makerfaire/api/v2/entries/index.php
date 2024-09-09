@@ -32,11 +32,15 @@ if ($type == 'entries' && $formID) {
   //set global data
   $form     = GFAPI::get_form($formID);
   $field303 = RGFormsModel::get_field($form, '303');
-  $all_rmt  = GFRMTHELPER::rmt_table_data();
+  $all_rmt  = GFRMTHELPER::rmt_table_data(); //used to build drop downs for resources, attributes and attention fields
 
-  //only need to build this html once
-  //$add_sched_html = build_add_sched($formID);
-  $add_sched_html = '';
+  //build an array of available area/subarea combinations
+  $locSql = "SELECT concat(area.area,' - ', subarea.subarea) as text, subarea.id as value
+                FROM wp_mf_faire faire, wp_mf_faire_area area, wp_mf_faire_subarea subarea
+                where FIND_IN_SET($formID,faire.form_ids) and faire.ID = area.faire_id and subarea.area_id = area.ID
+                order by area,subarea";
+  $locResults = $wpdb->get_results($locSql,ARRAY_A);
+
   //set entry data
   $data     = getAllEntries($formID);
 
@@ -47,6 +51,7 @@ if ($type == 'entries' && $formID) {
     'att_items'       => $all_rmt['attItems'],
     'attn_items'      => $all_rmt['attnItems']
   );
+  $data['locations'] = $locResults;
 
   // Output the JSON
   echo json_encode($data);
@@ -582,17 +587,12 @@ function fieldOutput($fieldID, $entry, $field_array, $form, $arg = '') {
           $value   = '<div id="rmt' . $entry['id'] . '">' . entryResources($entry) . '</div>';
         }
         break;
-        /*                                 
-      case 'schedule_loc'://9.39 -> 32.9!!!!              
-        $type = 'html';
-        $label = 'Schedule/Location';
-        //global $add_sched_html;
-        //$value = mf_sidebar_entry_schedule( $form['id'], $entry );
-        //$value  = display_schedule($form['id'], $entry);
-        //$value .= $add_sched_html;
+                              
+      case 'schedule_loc':      
+        $type = 'schedule';
+        $value = mf_get_schedule_only($entry['id']);        
+        
         break;
-      
-        */
     }
   }
   if ($arg == 'no_label')  $label = '';
@@ -719,4 +719,19 @@ function get_checkbox_value($field, $entry, $fieldName, $edit_cap = 'view') {
     }
   }
   return $value;
+}
+
+function mf_get_schedule_only($entry_id){
+  global $wpdb;
+  $return = array();
+  $sql = "SELECT wp_mf_schedule.id as sched_id, start_dt, end_dt, type, area, subarea, location ".
+        "FROM `wp_mf_schedule` ".
+        "left outer join wp_mf_location on wp_mf_schedule.entry_id = wp_mf_location.entry_id and ".
+                        "wp_mf_schedule.location_id = wp_mf_location.id ".
+        "left outer join wp_mf_faire_subarea on wp_mf_faire_subarea.id=wp_mf_location.subarea_id ".
+        "left outer join wp_mf_faire_area   on wp_mf_faire_area.id = wp_mf_faire_subarea.area_id ".
+        "WHERE wp_mf_schedule.entry_id=$entry_id ORDER BY `wp_mf_schedule`.`start_dt` ASC";
+  $results = $wpdb->get_results($sql, ARRAY_A);
+  
+  return $results;
 }
