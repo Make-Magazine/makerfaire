@@ -67,7 +67,7 @@ $default_locations = isset($default_locations) ? $default_locations : "414";
             function scheduler_save(e) {
                 if(e.event.presentationType == null) {
                     e.preventDefault();
-                    alert("You must add an Exhibit type");
+                    alert("You must set a Schedule type");
                 }
             }
         });
