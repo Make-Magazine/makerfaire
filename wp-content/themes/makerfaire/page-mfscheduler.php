@@ -46,19 +46,46 @@ $default_locations = isset($default_locations) ? $default_locations : "414";
             var select = jQuery("#select").data("kendoComboBox");
             onChange(null);
 
+            /*var scheduler = jQuery("#scheduler").data("kendoScheduler");
+            // make the scheduler open on a single click, rather than a double click
+            scheduler.wrapper.on("mousedown end", ".k-scheduler-table td", function(e) {
+                var target = $(e.currentTarget);;
+                if(target.hasClass("k-si-close")){
+                    return;
+                } else {
+                    var slot = scheduler.slotByElement(target[0]);
+                    console.log(slot);
+                    scheduler.addEvent({
+                        title: "No Title",
+                        start: slot.startDate,
+                        end: slot.endDate
+                    });
+                }
+            }); 
+            scheduler.bind("save", scheduler_save);
+            function scheduler_save(e) {
+                var entryID = e.event.entries[0];
+                //console.log(e.event);
+                //console.log(jQuery('#entry'+entryID))
+                //setTimeout(function (){jQuery('#makerfaire').load(document.URL +  ' #makerfaire');}, 5000);
+            }*/
         });
     </script>
     <script id="presentation-template" type="text/x-kendo-template">
-        <div class="mf-entry-template" style="background-color:#: StatusColor #">
-        # if(entries){ #
-        <a target="_blank" title="#: title #" href="/wp-admin/admin.php?page=gf_entries&view=entry&id=#: form #&lid=#: entries[0] #">#: entries[0] #</a>
-
+    # if(entries){ #
+        <div id="entry#: entries[0] #" class="mf-entry-template" style="background-color:#: StatusColor #">
+            <a target="_blank" title="#: title #" href="/wp-admin/admin.php?page=gf_entries&view=entry&id=#: form #&lid=#: entries[0] #">#: entries[0] #</a>
+        <p># if(names){ #
+            #: names[0] #
+        # } else { #
+            #: title #
         # } #
-        <p>#: title #</p></div>
+        </p></div>
+    # } #
     </script>
     <!-- begin#woahbar -->
     <div class="woahbar" style="display: none;">
-        <span> <a class="woahbar-link" href="/wp-admin/">Back to wp-admin</a> Howdy, <?php echo $current_user->user_login; ?>
+        <span> <a class="woahbar-link" href="/wp-admin/">Back to wp-admin</a> Salutations, <?php echo $current_user->user_login; ?>
         </span> <a class="close-notify" onclick="woahbar_hide();"> <img
                 class="woahbar-up-arrow"
                 src="/wp-content/themes/makerfaire/lib/Kendo/woahbar/woahbar-up-arrow.png" /></a>
@@ -126,6 +153,23 @@ $default_locations = isset($default_locations) ? $default_locations : "414";
         .k-widget.k-window { border-radius: 10px; }
         .k-edit-field input[type="checkbox"] { margin: 20px; }
 
+        .k-edit-label { padding: 0px; }
+        .k-edit-label label {
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: end;
+        }
+
+        /* hide all day checkbox, timezone and description fields */
+        label[for="timezone"], label[for="description"], label[for="isAllDay"], label[for="subareaId"],
+        .k-edit-field[data-container-for="timezone"],
+        .k-edit-field[data-container-for="description"],
+        .k-edit-field[data-container-for="isAllDay"],
+        .k-edit-field[data-container-for="subareaId"] {
+            display: none;
+        }
+
         /* Hide toolbar, navigation and footer during export */
         .woahbar,.k-pdf-export .k-scheduler-toolbar,.k-pdf-export .k-scheduler-navigation .k-nav-today,.k-pdf-export .k-scheduler-navigation .k-nav-prev,.k-pdf-export .k-scheduler-navigation .k-nav-next,.k-pdf-export .k-scheduler-footer
         {
@@ -177,11 +221,9 @@ $default_locations = isset($default_locations) ? $default_locations : "414";
                 //filter the resource data source
                 scheduler.resources[0].dataSource.filter(filter);
 
-                scheduler.view(scheduler.view().name); //refresh the currunt view
+                scheduler.view(scheduler.view().name); //refresh the current view
             }
-
-        }
-        ;
+        };
     </script>
 
     <?php
@@ -259,17 +301,18 @@ $default_locations = isset($default_locations) ? $default_locations : "414";
         }
         $entries = array();
 
-        $result = $mysqli->query("SELECT lead_id,presentation_title ,status
-				FROM wp_mf_entity
-				where faire='$faire_id'") or trigger_error($mysqli->error);
-
+        $result = $mysqli->query("SELECT lead_id, presentation_title, wp_mf_entity.status 
+				FROM wp_mf_entity left outer join wp_gf_entry on wp_gf_entry.id=wp_mf_entity.lead_id
+				WHERE faire='$faire_id' AND wp_gf_entry.status = 'active'
+                AND wp_mf_entity.status <> 'Cancelled' AND wp_mf_entity.status <> 'Rejected'")  
+                or trigger_error($mysqli->error);
         if ($result) {
             while ($row = $result->fetch_row()) {
                 $entry = preg_replace("/[^A-Za-z0-9 ]/", '', $row [1]);
                 $entry_id = $row [0];
                 $entry_status = $row [2];
                 $entry_color = status_to_color($entry_status);
-                $entry_title = "$entry_id ($entry - $entry_status)";
+                $entry_title = "$entry ($entry_id) - $entry_status";
                 $entries [] = array(
                     'text' => $entry_title,
                     'value' => $entry_id,
@@ -351,8 +394,8 @@ $default_locations = isset($default_locations) ? $default_locations : "414";
         $destroy->url('/mfscheduler-tasks?faire_id=' . $faire_id . '&type=destroy')->contentType('application/json')->type('POST')->dataType('json');
 
         $transport->create($create)->read($read)->update($update)->destroy($destroy)->parameterMap('function(data) {
-              return kendo.stringify(data);
-          }');
+            return kendo.stringify(data);
+        }');
 
         $model = new \Kendo\Data\DataSourceSchemaModel ();
 
@@ -385,6 +428,9 @@ $default_locations = isset($default_locations) ? $default_locations : "414";
         $entriesField = new \Kendo\Data\DataSourceSchemaModelField('entries');
         $entriesField->from('Entries')->nullable(true);
 
+        $namesField = new \Kendo\Data\DataSourceSchemaModelField('names');
+        $namesField->from('Names')->nullable(true);
+
         $formField = new \Kendo\Data\DataSourceSchemaModelField('form');
         $formField->from('Form')->nullable(true);
 
@@ -396,6 +442,7 @@ $default_locations = isset($default_locations) ? $default_locations : "414";
                 ->addField($isAllDayField)
                 ->addField($subareaIdField)
                 ->addField($entriesField)
+                ->addField($namesField)
                 ->addField($formField)
                 ->addField($presentationTypeField)
                 ->addField($statusColorField);
@@ -406,25 +453,25 @@ $default_locations = isset($default_locations) ? $default_locations : "414";
         $dataSource = new \Kendo\Data\DataSource ();
         $dataSource->transport($transport)->schema($schema)->batch(false);
 
-
+        // these add the custom fields
         $typesResource = new \Kendo\UI\SchedulerResource ();
         $types_array = get_entry_presentationTypes();
         $typesResource->field('presentationType')->title('Type')->name('Types')->dataSource($types_array);
         $subareasResource = new \Kendo\UI\SchedulerResource ();
         $locations_array = get_entry_locations($faire_id);
         $subareasResource->field('subareaId')->title('Stage')->name('Stages')->dataSource($locations_array);
-
-
+        // this adds the presenter/entries field
         $entries = get_entries($faire_id);
         $entriesResource = new \Kendo\UI\SchedulerResource ();
-        $entriesResource->field('entries')->title('Presenter')->multiple(true)->name('Presenters')->dataSource($entries);
+        $entriesResource->field('entries')->title('Maker')->multiple(true)->name('Makers')->dataSource($entries);
 
         $pdf = new \Kendo\UI\SchedulerPdf ();
         $pdf->fileName('Kendo UI Scheduler Export.pdf')->proxyURL('makerfaire-scheduling.php?type=save');
 
         $scheduler = new \Kendo\UI\Scheduler('scheduler');
 
-        $scheduler->eventTemplateId('presentation-template')                
+        // Default options for kendoScheduler
+        $scheduler->eventTemplateId('presentation-template')          
                 ->timezone('UTC')
                 ->currentTimeMarker(false)
                 ->date(new DateTime($start_dt))
@@ -433,21 +480,21 @@ $default_locations = isset($default_locations) ? $default_locations : "414";
                 ->addResource($subareasResource, $entriesResource, $typesResource)
                 ->group(array('resources' => array('Stages')
                 ))->addView(array(
-            'type' => 'day',
-            'majorTick' => 30,
-            'showWorkHours' => false,
-            'workWeekEnd' => $end_dow,
-            'workDayStart' => new DateTime('2016/5/20 17:00', new DateTimeZone('UTC')),
-            'workDayEnd' => new DateTime('2016/5/22 02:00', new DateTimeZone('UTC'))
-                ), array(
-            'type' => 'workWeek',
-            'majorTick' => 30,
-            'selected' => true,
-            'workWeekStart' => $start_dow,
-            'workWeekEnd' => $end_dow,
-            'showWorkHours' => false,
-            'workDayStart' => new DateTime('2016/5/20 17:00', new DateTimeZone('UTC')),
-            'workDayEnd' => new DateTime('2016/5/22 02:00', new DateTimeZone('UTC'))
+                    'type' => 'day',
+                    'majorTick' => 30,
+                    'showWorkHours' => true,
+                    'workWeekEnd' => $end_dow,
+                    'workDayStart' => new DateTime('2024/10/18 17:00', new DateTimeZone('UTC')),
+                    'workDayEnd' => new DateTime('2024/10/20 01:00', new DateTimeZone('UTC'))
+                        ), array(
+                    'type' => 'workWeek',
+                    'majorTick' => 30,
+                    'selected' => true,
+                    'workWeekStart' => $start_dow,
+                    'workWeekEnd' => $end_dow,
+                    'showWorkHours' => true,
+                    'workDayStart' => new DateTime('2024/10/18 17:00', new DateTimeZone('UTC')),
+                    'workDayEnd' => new DateTime('2024/10/20 01:00', new DateTimeZone('UTC'))
                 ), 'agenda')->dataSource($dataSource);
 
         return $scheduler;
