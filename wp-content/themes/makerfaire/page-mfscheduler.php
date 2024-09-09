@@ -45,9 +45,9 @@ $default_locations = isset($default_locations) ? $default_locations : "414";
             var input = jQuery("#input").data("kendoComboBox");
             var select = jQuery("#select").data("kendoComboBox");
             onChange(null);
-
-            /*var scheduler = jQuery("#scheduler").data("kendoScheduler");
-            // make the scheduler open on a single click, rather than a double click
+            
+            var scheduler = jQuery("#scheduler").data("kendoScheduler");
+            /* // make the scheduler open on a single click, rather than a double click
             scheduler.wrapper.on("mousedown end", ".k-scheduler-table td", function(e) {
                 var target = $(e.currentTarget);;
                 if(target.hasClass("k-si-close")){
@@ -61,14 +61,15 @@ $default_locations = isset($default_locations) ? $default_locations : "414";
                         end: slot.endDate
                     });
                 }
-            }); 
+            });*/
             scheduler.bind("save", scheduler_save);
+            // validation to make sure the exhibit type is set
             function scheduler_save(e) {
-                var entryID = e.event.entries[0];
-                //console.log(e.event);
-                //console.log(jQuery('#entry'+entryID))
-                //setTimeout(function (){jQuery('#makerfaire').load(document.URL +  ' #makerfaire');}, 5000);
-            }*/
+                if(e.event.presentationType == null) {
+                    e.preventDefault();
+                    alert("You must add an Exhibit type");
+                }
+            }
         });
     </script>
     <script id="presentation-template" type="text/x-kendo-template">
@@ -162,10 +163,12 @@ $default_locations = isset($default_locations) ? $default_locations : "414";
         }
 
         /* hide all day checkbox, timezone and description fields */
-        label[for="timezone"], label[for="description"], label[for="isAllDay"], label[for="subareaId"],
+        label[for="timezone"], label[for="description"], label[for="isAllDay"], label[for="subareaId"], label[for="title"], label[for="recurrenceRule"],
         .k-edit-field[data-container-for="timezone"],
         .k-edit-field[data-container-for="description"],
         .k-edit-field[data-container-for="isAllDay"],
+        .k-edit-field[data-container-for="title"],
+        .k-edit-field[data-container-for="recurrenceRule"],
         .k-edit-field[data-container-for="subareaId"] {
             display: none;
         }
