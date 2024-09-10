@@ -13,6 +13,7 @@ $showEditMakey = false;
                 <picture class="exhibit-picture">
                     <source media="(max-width: 420px)" srcset="<?php echo $project_photo_small; ?>">
                     <source media="(max-width: 1200px)" srcset="<?php echo $project_photo_medium; ?>">
+                    <source media="(max-width: 1500px)" srcset="<?php echo legacy_get_resized_remote_image_url($project_photo_large, 840, 560); ?>">
                     <img src="<?php echo $project_photo_large; ?>" 
                          alt="<?php echo $project_title; ?> project image"
                          onerror="this.onerror=null;this.src='/wp-content/themes/makerfaire/images/default-featured-image.jpg';this.srcset=''"
@@ -86,7 +87,7 @@ $showEditMakey = false;
                     <?php foreach($project_gallery as $key=>$image) { 
                             if($image!=''){?>
                                 <div class="gallery-item">
-                                    <source media="(max-width: 1200px)" srcset="<?php echo legacy_get_resized_remote_image_url($image, 225, 225); ?> ?>">
+                                    <source media="(max-width: 1200px)" srcset="<?php echo legacy_get_resized_remote_image_url($image, 225, 225); ?>">
                                     <source media="(max-width: 800px)" srcset="<?php echo legacy_get_resized_remote_image_url($image, 380, 380); ?>">
                                     <source media="(max-width: 600px)" srcset="<?php echo legacy_get_resized_remote_image_url($image, 280, 280); ?>">
                                     <source media="(max-width: 450px)" srcset="<?php echo legacy_get_resized_remote_image_url($image, 200, 200); ?>">
