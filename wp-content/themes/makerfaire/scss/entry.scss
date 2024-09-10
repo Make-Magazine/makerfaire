@@ -53,7 +53,7 @@
 					flex-direction: column;
 					gap: 15px;
 					position: sticky;
-					top: 168px;
+					top: 135px;
 				}
 				.embed-youtube, .embed-vimeo {
 					margin-bottom: 0px;
@@ -80,7 +80,7 @@
 			}
 			@media screen and (min-width: 800px) {
 				position: sticky;
-				top: 168px;
+				top: 135px;
 			}
 			&.exhibit-picture {
 				aspect-ratio: 3 / 2;
@@ -356,6 +356,23 @@
 	}
 	.elementor-location-popup {
 		display: none;
+	}
+}
+
+.page-template-page-entry.admin-bar {
+	.entry-page {
+		section {
+			.small-column {
+				.small-column-wrapper {
+					top: 168px;
+				}
+			}
+			picture {
+				@media screen and (min-width: 800px) {
+					top: 168px;
+				}
+			}
+		}
 	}
 }
 

@@ -45,7 +45,7 @@ jQuery(document).ready(function(){
     jQuery('#projectGallery .owl-item').on("click", function () {
         //every time you click on an owl item, open a dialog modal to show the images
         var owlItem = jQuery(this);
-        jQuery('body').append('<div id="dialog"><img src="' + jQuery("img", this).attr('src') + '" width="100%" /></div>');
+        jQuery('body').append('<div id="dialog"><img src="' + jQuery("img", this).attr('data-photo') + '" width="100%" /></div>');
         jQuery('#dialog').dialog({
             dialogClass: "hide-heading",
             modal: true,
@@ -54,8 +54,8 @@ jQuery(document).ready(function(){
                 {
                     "class": "dialog-nav-btn dialog-prev-btn",
                     click: function() {
-                        if(owlItem.prev(".owl-item").children(".gallery-item").children("img").attr("src")) {
-                            jQuery("#dialog img").attr("src", owlItem.prev(".owl-item").children(".gallery-item").children("img").attr("src"));
+                        if(owlItem.prev(".owl-item").children(".gallery-item").children("img").attr("data-photo")) {
+                            jQuery("#dialog img").attr("src", owlItem.prev(".owl-item").children(".gallery-item").children("img").attr("data-photo"));
                             owlItem = owlItem.prev();
                         } else {
                             jQuery("#dialog").dialog('close');
@@ -65,8 +65,8 @@ jQuery(document).ready(function(){
                 {
                     "class": "dialog-nav-btn dialog-next-btn",
                     click: function() {  
-                        if(owlItem.next(".owl-item").children(".gallery-item").children("img").attr("src")) {
-                            jQuery("#dialog img").attr("src", owlItem.next(".owl-item").children(".gallery-item").children("img").attr("src"));
+                        if(owlItem.next(".owl-item").children(".gallery-item").children("img").attr("data-photo")) {
+                            jQuery("#dialog img").attr("src", owlItem.next(".owl-item").children(".gallery-item").children("img").attr("data-photo"));
                             owlItem = owlItem.next();
                         } else {
                             jQuery("#dialog").dialog('close');
