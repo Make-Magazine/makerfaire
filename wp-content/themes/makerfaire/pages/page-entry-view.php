@@ -86,14 +86,14 @@ $showEditMakey = false;
                     <?php foreach($project_gallery as $key=>$image) { 
                             if($image!=''){?>
                                 <div class="gallery-item">
-                                    <source media="(max-width: 1200px)" srcset="<?php echo legacy_get_fit_remote_image_url($image, 225, 225); ?> ?>">
-                                    <source media="(max-width: 800px)" srcset="<?php echo legacy_get_fit_remote_image_url($image, 380, 380); ?>">
-                                    <source media="(max-width: 600px)" srcset="<?php echo legacy_get_fit_remote_image_url($image, 280, 280); ?>">
-                                    <source media="(max-width: 450px)" srcset="<?php echo legacy_get_fit_remote_image_url($image, 200, 200); ?>">
-                                    <img src="<?php echo legacy_get_fit_remote_image_url($image, 360, 360); ?>" 
+                                    <source media="(max-width: 1200px)" srcset="<?php echo legacy_get_resized_remote_image_url($image, 225, 225); ?> ?>">
+                                    <source media="(max-width: 800px)" srcset="<?php echo legacy_get_resized_remote_image_url($image, 380, 380); ?>">
+                                    <source media="(max-width: 600px)" srcset="<?php echo legacy_get_resized_remote_image_url($image, 280, 280); ?>">
+                                    <source media="(max-width: 450px)" srcset="<?php echo legacy_get_resized_remote_image_url($image, 200, 200); ?>">
+                                    <img src="<?php echo legacy_get_resized_remote_image_url($image, 360, 360); ?>" 
                                         alt="<?php echo $project_title;?> - exhibit detail <?php echo $key;?>"
                                         onerror="this.onerror=null;this.src='/wp-content/themes/makerfaire/images/default-gallery-image.jpg';this.srcset=''"
-                                        data-photo="<?php echo legacy_get_fit_remote_image_url($image, 500, 500); ?>">
+                                        data-photo="<?php echo legacy_get_fit_remote_image_url($image, 750, 750); ?>">
                                 </div>
                             <?php } ?>
                     <?php } ?>
