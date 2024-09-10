@@ -472,12 +472,12 @@
 	}
 	&.entry-gallery {
 		position: fixed !important;
-		top: 60px !important;
+		top: 40px !important;
 		#dialog {
 			display: flex;
 			justify-content: center;
 			img {
-				max-height: 90vh;
+				max-height: calc(90vh - 40px);
 				width: auto;
 				max-width: 100%;
 			}
