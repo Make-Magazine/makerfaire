@@ -47,7 +47,7 @@ jQuery(document).ready(function(){
         var owlItem = jQuery(this);
         jQuery('body').append('<div id="dialog"><img src="' + jQuery("img", this).attr('data-photo') + '" width="100%" /></div>');
         jQuery('#dialog').dialog({
-            dialogClass: "hide-heading",
+            dialogClass: ["hide-heading", "entry-gallery"],
             modal: true,
             // these buttons will go to the next image from the #projectGallery and replace the src of the image in the modal with the next or previous image in the gallery
             buttons: numImages <= 1 ? [] : [
@@ -91,7 +91,7 @@ jQuery(document).ready(function(){
         var winW = jQuery(window).width() - 50;
         var winH = jQuery(window).height() - 150;
         jQuery('#dialog').dialog({
-            dialogClass: "hide-heading",
+            dialogClass: ["hide-heading", "entry-gallery"],
             modal: true,
             height: winH,
             width: winW,

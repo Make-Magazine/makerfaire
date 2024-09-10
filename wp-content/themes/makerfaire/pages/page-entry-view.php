@@ -85,13 +85,33 @@ $showEditMakey = false;
                 if(isset($project_gallery) && !empty($project_gallery)) { ?>
                     <div id="projectGallery" class="owl-carousel">
                     <?php foreach($project_gallery as $key=>$image) { 
-                            if($image!=''){?>
+                            if($image!=''){
+                                $image_size = getimagesize($image);
+                                $image_default = $image;
+                                ?>
                                 <picture class="gallery-item">
-                                    <source media="(max-width: 450px)" srcset="<?php echo legacy_get_resized_remote_image_url($image, 200, 200); ?>">
-                                    <source media="(max-width: 600px)" srcset="<?php echo legacy_get_resized_remote_image_url($image, 280, 280); ?>">
-                                    <source media="(max-width: 800px)" srcset="<?php echo legacy_get_resized_remote_image_url($image, 380, 380); ?>">
-                                    <source media="(max-width: 1200px)" srcset="<?php echo legacy_get_resized_remote_image_url($image, 225, 225); ?>">
-                                    <img src="<?php echo legacy_get_resized_remote_image_url($image, 360, 360); ?>" 
+                                    <?php if($image_size[0] >= 200 && $image_size[1] >= 200) { 
+                                        // we never wsnt the image to get upsized beyond it's initial size, and now reason to put sources above it size either.
+                                        $image_default = legacy_get_resized_remote_image_url($image, 200, 200); ?>
+                                        <source media="(max-width: 450px)" srcset="<?php echo legacy_get_resized_remote_image_url($image, 200, 200); ?>">
+                                    <?php } ?>
+                                    <?php if($image_size[0] >= 225 && $image_size[1] >= 225) { 
+                                        $image_default = legacy_get_resized_remote_image_url($image, 225, 225); ?>
+                                        <source media="(max-width: 1200px)" srcset="<?php echo legacy_get_resized_remote_image_url($image, 225, 225); ?>">
+                                    <?php } ?>
+                                    <?php if($image_size[0] > 280 && $image_size[1] > 280) { 
+                                        $image_default = legacy_get_resized_remote_image_url($image, 280, 280); ?>
+                                        <source media="(max-width: 600px)" srcset="<?php echo legacy_get_resized_remote_image_url($image, 280, 280); ?>">
+                                    <?php } ?>
+                                    <?php if($image_size[0] > 360 && $image_size[1] > 360) { 
+                                        $image_default = legacy_get_resized_remote_image_url($image, 360, 360);
+                                    } ?>
+                                    <?php if($image_size[0] > 380 && $image_size[1] > 380) { 
+                                        $image_default = legacy_get_resized_remote_image_url($image, 380, 380); ?>
+                                        <source media="(max-width: 800px)" srcset="<?php echo legacy_get_resized_remote_image_url($image, 380, 380); ?>">
+                                    <?php } ?>
+
+                                    <img src="<?php echo $image_default; ?>" 
                                         alt="<?php echo $project_title;?> - exhibit detail <?php echo $key;?>"
                                         onerror="this.onerror=null;this.src='/wp-content/themes/makerfaire/images/default-gallery-image.jpg';this.srcset=''"
                                         data-photo="<?php echo $image; ?>">
