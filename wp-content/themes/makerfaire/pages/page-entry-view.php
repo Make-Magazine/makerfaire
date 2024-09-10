@@ -88,28 +88,38 @@ $showEditMakey = false;
                             if($image!=''){
                                 $image_size = getimagesize($image);
                                 $image_default = $image;
+                                $image_sources = array();
                                 ?>
                                 <picture class="gallery-item">
-                                    <?php if($image_size[0] >= 200 && $image_size[1] >= 200) { 
-                                        // we never wsnt the image to get upsized beyond it's initial size, and now reason to put sources above it size either.
-                                        $image_default = legacy_get_resized_remote_image_url($image, 200, 200); ?>
-                                        <source media="(max-width: 450px)" srcset="<?php echo legacy_get_resized_remote_image_url($image, 200, 200); ?>">
-                                    <?php } ?>
-                                    <?php if($image_size[0] >= 225 && $image_size[1] >= 225) { 
-                                        $image_default = legacy_get_resized_remote_image_url($image, 225, 225); ?>
-                                        <source media="(max-width: 1200px)" srcset="<?php echo legacy_get_resized_remote_image_url($image, 225, 225); ?>">
-                                    <?php } ?>
-                                    <?php if($image_size[0] > 280 && $image_size[1] > 280) { 
-                                        $image_default = legacy_get_resized_remote_image_url($image, 280, 280); ?>
-                                        <source media="(max-width: 600px)" srcset="<?php echo legacy_get_resized_remote_image_url($image, 280, 280); ?>">
-                                    <?php } ?>
-                                    <?php if($image_size[0] > 360 && $image_size[1] > 360) { 
+                                    <?php 
+                                    // we never want the image to get upsized beyond it's initial size, and no reason to put sources above it size either.
+                                    // sources have to be listed by size though, so we will put them into an array based on size to output later!
+                                    if($image_size[0] >= 200 && $image_size[1] >= 200) { 
+                                        $image_default = legacy_get_resized_remote_image_url($image, 200, 200);
+                                        $image_sources[0] = '<source media="(max-width: 450px)" srcset="'.legacy_get_resized_remote_image_url($image, 200, 200).'">';
+                                    }
+                                    if($image_size[0] >= 225 && $image_size[1] >= 225) { 
+                                        $image_default = legacy_get_resized_remote_image_url($image, 225, 225);
+                                        $image_sources[3] = '<source media="(max-width: 1200px)" srcset="'.legacy_get_resized_remote_image_url($image, 225, 225).'">';
+                                    }
+                                    if($image_size[0] >= 280 && $image_size[1] >=280) { 
+                                        $image_default = legacy_get_resized_remote_image_url($image, 280, 280); 
+                                        $image_sources[1] = '<source media="(max-width: 600px)" srcset="'.legacy_get_resized_remote_image_url($image, 280, 280).'">';
+                                    } 
+                                    if($image_size[0] >= 360 && $image_size[1] >= 360) { 
                                         $image_default = legacy_get_resized_remote_image_url($image, 360, 360);
-                                    } ?>
-                                    <?php if($image_size[0] > 380 && $image_size[1] > 380) { 
-                                        $image_default = legacy_get_resized_remote_image_url($image, 380, 380); ?>
-                                        <source media="(max-width: 800px)" srcset="<?php echo legacy_get_resized_remote_image_url($image, 380, 380); ?>">
-                                    <?php } ?>
+                                        $image_sources[4] = '<source media="(max-width: 2000px)" srcset="'.legacy_get_resized_remote_image_url($image, 360, 360).'">';
+                                    } 
+                                    if($image_size[0] >= 380 && $image_size[1] >= 380) { 
+                                        $image_default = legacy_get_resized_remote_image_url($image, 380, 380); 
+                                        $image_sources[2] = '<source media="(max-width: 800px)" srcset="'.legacy_get_resized_remote_image_url($image, 380, 380).'">';
+                                    } 
+                                    // sort our image sources so they are in the right order to display (lowest to highest)
+                                    ksort($image_sources);
+                                    foreach($image_sources as $source) {
+                                        echo ($source);
+                                    }
+                                    ?>
 
                                     <img src="<?php echo $image_default; ?>" 
                                         alt="<?php echo $project_title;?> - exhibit detail <?php echo $key;?>"
