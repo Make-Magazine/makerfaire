@@ -147,8 +147,6 @@
             </span>
             <span v-else-if="field.type === 'schedule'" :id="'schedule'+maker.project_id">
                 <h3 class="text-capitalize fieldLabel">Currently Scheduled Items:</h3>
-
-                <span v-if="field.value.length > 0">
                     <b-table-simple striped responsive :id="'schedTable-' + maker.project_id">
                         <b-tbody>
                             <b-tr v-for="sched in field.value" :id="'sched-' + sched.sched_id">
@@ -167,9 +165,9 @@
                         </b-tbody>
                     </b-table-simple>
                     <span :id="'delScheduleMSG'+maker.project_id"></span>
-                </span>
+
                 <span v-if="field.value.length ==0">
-                    No Scheduled Items
+                    No Scheduled Items <!-- needs to be removed after schedule items load-->
                 </span>
                 <hr />
 

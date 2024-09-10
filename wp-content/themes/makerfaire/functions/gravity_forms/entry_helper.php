@@ -5,6 +5,7 @@ function display_entry_schedule($entry) {
     global $wpdb;
     global $show_sched;
     global $location;
+    global $url_sub_path;
 
     //set entry id
     $entry_id = $entry['id'];
@@ -80,7 +81,7 @@ function display_entry_schedule($entry) {
                 if ($row->location != '') {
                     $schedule .= $row->location;
                 } */
-                
+
                 // if there any start dates were found, we should show a schedule
                 $has_schedule = true;
 
@@ -96,7 +97,7 @@ function display_entry_schedule($entry) {
         if ($multipleLocations == TRUE) { // this is kind of a mess to require this
             $schedule .= "</div></div>";
         }
-        $schedule .= "</div>";
+        $schedule .= "<a href='/" . $url_sub_path . "/schedule/'>See Details</a></div>";
     } //end if location data found
 
     $return = '';
