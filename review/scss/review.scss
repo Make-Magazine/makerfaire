@@ -157,23 +157,23 @@ h3 {
         overflow: hidden;
         min-height: 88px;
     }
+    &:not([id^=listView]) {
+        .card-text {
+            display: -webkit-box;
+            -webkit-box-orient: vertical;
+            -webkit-line-clamp: 5;
+            overflow: hidden;
 
-    .card-text {
-        display: -webkit-box;
-        -webkit-box-orient: vertical;
-        -webkit-line-clamp: 5;
-        overflow: hidden;
+            .bv-example-row {
+                margin-bottom: 20px;
 
-        .bv-example-row {
-            margin-bottom: 20px;
-
-            .list-group,
-            .img-thumbnail {
-                margin-bottom: 10px;
+                .list-group,
+                .img-thumbnail {
+                    margin-bottom: 10px;
+                }
             }
         }
     }
-    // the above card text overflow-hidden has to only apply to the grid view
 
     .image-wrapper {
         aspect-ratio: 3 / 2;
