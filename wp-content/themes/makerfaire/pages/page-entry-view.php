@@ -94,7 +94,7 @@ $showEditMakey = false;
                                     <img src="<?php echo legacy_get_resized_remote_image_url($image, 360, 360); ?>" 
                                         alt="<?php echo $project_title;?> - exhibit detail <?php echo $key;?>"
                                         onerror="this.onerror=null;this.src='/wp-content/themes/makerfaire/images/default-gallery-image.jpg';this.srcset=''"
-                                        data-photo="<?php echo legacy_get_fit_remote_image_url($image, 750, 750); ?>">
+                                        data-photo="<?php echo $image; ?>">
                                 </div>
                             <?php } ?>
                     <?php } ?>
