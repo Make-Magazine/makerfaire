@@ -813,3 +813,39 @@ function update_entry($entryID, $entry = array()) {
     do_action('gform_after_update_entry', $form, $entryID);
   }
 }
+
+/* Update Existing Showcases */
+add_action('wp_ajax_add-to-showcase', 'mf_admin_addToShowcase');
+function mf_admin_addToShowcase() {
+  $response = array();
+  $parentID  = (isset($_POST['parentID'])?$_POST['parentID']:'');
+  $childIDs  = (isset($_POST['childIDs'])?$_POST['childIDs']:'');
+  $formID      = (isset($_POST['formID'])?$_POST['formID']:'');
+  if($formID==''){
+    $response['result'] = 'Error: Form ID not passed';    
+  }elseif($parentID==''){
+    //throw error
+    $response['result'] = 'Error: Showcase ID not passed';    
+  }else{    
+    $childArr = explode(",",trim($childIDs));
+    
+    if($childIDs == '' || empty($childArr)){
+      $response['result'] = 'Error: No Entries passed to add';    
+    }else{
+      foreach($childArr as $child){
+        if($child!=''){
+          $sql = "INSERT INTO `wp_mf_lead_rel`(`parentID`, `childID`, `form`) VALUES ($parentID,$child,$formID) on duplicate key UPDATE id=id";          
+          global $wpdb;
+          $wpdb->query($sql);
+        }
+      }
+      $response['result'] = 'updated';
+    }
+  }
+  
+  // Make your array as json
+	wp_send_json($response);
+ 
+  // Don't forget to stop execution afterward.
+  wp_die();
+}

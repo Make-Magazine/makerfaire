@@ -30,6 +30,7 @@ add_action('admin_menu', 'redirect_gf_admin_pages');
 add_filter('gform_addon_navigation', 'add_menu_item');
 
 function add_menu_item($menu_items) {
+    $menu_items[] = array("name" => "mf_showcase", "label" => "Showcases", "callback" => "build_mf_showcase", "permission" => "edit_posts");
     $menu_items[] = array("name" => "mf_fsp_gsp", "label" => "FSP/GSP", "callback" => "build_fsp_gsp", "permission" => "edit_posts");
     $menu_items[] = array("name" => "mf_fairesign", "label" => "Faire Signs", "callback" => "build_faire_signs", "permission" => "edit_posts");
 
@@ -309,4 +310,25 @@ function mf_tasks_settings_page() {
 
 function build_fsp_gsp() {
     require_once(get_template_directory() . '/adminPages/other_form_download.php');
+}
+
+function build_mf_showcase() {
+    require_once(get_template_directory() . '/adminPages/build_mf_showcase.php');
+}
+
+add_filter( 'gform_toolbar_menu', 'my_custom_toolbar', 10, 2 );
+ 
+function my_custom_toolbar( $menu_items, $form_id ) {
+ 
+    $menu_items['my_custom_link'] = array(
+        'label'       => 'Showcases', // the text to display on the menu for this link
+        'title'       => 'Showcase Entries', // the text to be displayed in the title attribute for this link
+        'url'         => self_admin_url( 'admin.php?page=mf_showcase&formid=' . $form_id ), // the URL this link should point to
+        'menu_class'  => 'gf_form_toolbar_custom_link', // optional, class to apply to menu list item (useful for providing a custom icon)
+        //'link_class'  => rgget( 'page' ) == 'my_custom_page' ? 'gf_toolbar_active' : '', // class to apply to link (useful for specifying an active style when this link is the current page)
+        'capabilities'=> array( 'gravityforms_edit_forms' ), // the capabilities the user should possess in order to access this page
+        'priority'    => 500 // optional, use this to specify the order in which this menu item should appear; if no priority is provided, the menu item will be appended to end
+    );
+ 
+    return $menu_items;
 }

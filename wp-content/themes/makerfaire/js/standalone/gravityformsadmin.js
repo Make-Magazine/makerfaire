@@ -13,21 +13,22 @@ jQuery(document).ready(function() {
 				jQuery(this).parents('table.entry-detail-view').children('tbody').toggle();
 			}
 		);
-
-		jQuery('#datetimepicker').datetimepicker({ value: '2015/04/15 05:03', step: 30 });
-		jQuery('#datetimepickerstart').datetimepicker({
-			formatTime: 'g:i a',
-			formatDate: 'd.m.Y',
-			defaultTime: '10:00 am', 
-			step: 30,
-		});
-		jQuery('#datetimepickerend').datetimepicker({
-			formatTime: 'g:i a',
-			formatDate: 'd.m.Y',
-			defaultTime: '10:00 am', 
-			step: 30,
-		});
-
+		
+		if (typeof datetimepicker === 'function')	{
+			jQuery('#datetimepicker').datetimepicker({ value: '2015/04/15 05:03', step: 30 });
+			jQuery('#datetimepickerstart').datetimepicker({
+				formatTime: 'g:i a',
+				formatDate: 'd.m.Y',
+				defaultTime: '10:00 am', 
+				step: 30,
+			});
+			jQuery('#datetimepickerend').datetimepicker({
+				formatTime: 'g:i a',
+				formatDate: 'd.m.Y',
+				defaultTime: '10:00 am', 
+				step: 30,
+			});
+		}
 		jQuery('#gf_admin_page_title').click(
 			function() {
 				window.location = "/wp-admin/admin.php?page=gf_entries&view=entry&id=20&lid=" + prompt('Enter your ID!', ' ');
@@ -678,5 +679,39 @@ function updateMgmt(action) {
 			jQuery("span.change_form_idMsg").after(r.entryID);
 		}
 
+	});
+}
+
+/*
+ * Triggers an AJAX to update a showcase
+ */
+function addShowcase(parentID='') {
+	var formID   = jQuery("#formID").val();
+	//set the processing icon
+	var msgArea = "#showcase"+parentID +" span.add_to_showcaseMsg";
+	jQuery(msgArea).html('<i class="fas fa-spinner fa-pulse fa-3x fa-fw"></i><span class="sr-only">Loading...</span>');
+	var childIDs = jQuery("#showcase"+parentID +" .assign-entries").val();
+	//alicia - throw errror if childIDs are not numeric or blank or null
+	
+	if(parentID=='new'){
+		var parentID = jQuery("#showcasenew .add-showcase").val();
+		//alicia - throw errror if parentID is not numeric or blank or null
+	}
+
+	var data = {
+		'action': 'add-to-showcase',	
+		'formID': formID, 	
+		'parentID': parentID,
+		'childIDs': childIDs
+	};
+
+	jQuery.post(ajaxurl, data, function(r) {
+		if (r.result === 'updated') {
+			//after update - set meta field status to success
+			jQuery(msgArea).html('<i style="color:green" class="fas fa-check"></i>');
+		} else {
+			//after update - set meta field status to failed
+			jQuery(msgArea).html('<i style="color:red" class="fas fa-times"></i>'+r.result);
+		}		
 	});
 }
