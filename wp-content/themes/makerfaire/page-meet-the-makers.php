@@ -157,215 +157,35 @@ $faireName = (isset($results[0]->faire_name)?$results[0]->faire_name:'');
         <div class="mtm-results container-fluid" mtm-scroll="loadMore()">
             <div ng-show="!makers.length" class="mtm-results-cont loading">
                 <div class="ng-scope mf-card"><a href="javascript:void();" style="pointer-events:none;">
-                        <article class="mtm-maker">
-                            <div class="mtm-image" style="background-image:url(https://makerfaire.com/wp-content/themes/makerfaire/images/stripe_bg1.gif);"></div>
-                            <div class="mtm-text">
-                                <h3>Loading...</h3>
-                                <div class="mtm-detail-items">
-                                    <div class="mtm-detail-item"><span><i class="fa fa-circle-user"></i></span>
-                                        <p>&nbsp;</p>
-                                    </div>
-                                    <div class="mtm-detail-item"><span><i class="fa fa-rocket"></i></span>
-                                        <p>&nbsp;</p>
-                                    </div>
-                                    <div class="mtm-detail-item"><span><i class="fa fa-tent-double-peak"></i></span>
-                                        <p>&nbsp;</p>
-                                    </div>
-                                </div>
-                                <div class="read-more-link">More</div>
-                            </div>
-                        </article>
-                        </article>
-                    </a></div>
+                    <article class="mtm-maker"> <div class="mtm-image" style="background-image:url(https://makerfaire.com/wp-content/themes/makerfaire/images/stripe_bg1.gif);"></div> <div class="mtm-text"> <h3>Loading...</h3> <div class="mtm-detail-items"> <div class="mtm-detail-item"><span><i class="fa fa-circle-user"></i></span> <p>&nbsp;</p> </div> <div class="mtm-detail-item"><span><i class="fa fa-rocket"></i></span> <p>&nbsp;</p> </div> <div class="mtm-detail-item"><span><i class="fa fa-tent-double-peak"></i></span> <p>&nbsp;</p> </div> </div> <div class="read-more-link">More</div> </div> </article>
+                </a></div>
                 <div class="ng-scope mf-card"><a href="javascript:void();" style="pointer-events:none;">
-                        <article class="mtm-maker">
-                            <div class="mtm-image" style="background-image:url(https://makerfaire.com/wp-content/themes/makerfaire/images/stripe_bg1.gif);"></div>
-                            <div class="mtm-text">
-                                <h3>Loading...</h3>
-                                <div class="mtm-detail-items">
-                                    <div class="mtm-detail-item"><span><i class="fa fa-circle-user"></i></span>
-                                        <p>&nbsp;</p>
-                                    </div>
-                                    <div class="mtm-detail-item"><span><i class="fa fa-rocket"></i></span>
-                                        <p>&nbsp;</p>
-                                    </div>
-                                    <div class="mtm-detail-item"><span><i class="fa fa-tent-double-peak"></i></span>
-                                        <p>&nbsp;</p>
-                                    </div>
-                                </div>
-                                <div class="read-more-link">More</div>
-                            </div>
-                        </article>
-                        </article>
-                    </a></div>
+                    <article class="mtm-maker"> <div class="mtm-image" style="background-image:url(https://makerfaire.com/wp-content/themes/makerfaire/images/stripe_bg1.gif);"></div> <div class="mtm-text"> <h3>Loading...</h3> <div class="mtm-detail-items"> <div class="mtm-detail-item"><span><i class="fa fa-circle-user"></i></span> <p>&nbsp;</p> </div> <div class="mtm-detail-item"><span><i class="fa fa-rocket"></i></span> <p>&nbsp;</p> </div> <div class="mtm-detail-item"><span><i class="fa fa-tent-double-peak"></i></span> <p>&nbsp;</p> </div> </div> <div class="read-more-link">More</div> </div> </article>
+                </a></div>
                 <div class="ng-scope mf-card"><a href="javascript:void();" style="pointer-events:none;">
-                        <article class="mtm-maker">
-                            <div class="mtm-image" style="background-image:url(https://makerfaire.com/wp-content/themes/makerfaire/images/stripe_bg1.gif);"></div>
-                            <div class="mtm-text">
-                                <h3>Loading...</h3>
-                                <div class="mtm-detail-items">
-                                    <div class="mtm-detail-item"><span><i class="fa fa-circle-user"></i></span>
-                                        <p>&nbsp;</p>
-                                    </div>
-                                    <div class="mtm-detail-item"><span><i class="fa fa-rocket"></i></span>
-                                        <p>&nbsp;</p>
-                                    </div>
-                                    <div class="mtm-detail-item"><span><i class="fa fa-tent-double-peak"></i></span>
-                                        <p>&nbsp;</p>
-                                    </div>
-                                </div>
-                                <div class="read-more-link">More</div>
-                            </div>
-                        </article>
-                        </article>
-                    </a></div>
+                    <article class="mtm-maker"> <div class="mtm-image" style="background-image:url(https://makerfaire.com/wp-content/themes/makerfaire/images/stripe_bg1.gif);"></div> <div class="mtm-text"> <h3>Loading...</h3> <div class="mtm-detail-items"> <div class="mtm-detail-item"><span><i class="fa fa-circle-user"></i></span> <p>&nbsp;</p> </div> <div class="mtm-detail-item"><span><i class="fa fa-rocket"></i></span> <p>&nbsp;</p> </div> <div class="mtm-detail-item"><span><i class="fa fa-tent-double-peak"></i></span> <p>&nbsp;</p> </div> </div> <div class="read-more-link">More</div> </div> </article>
+                </a></div>
                 <div class="ng-scope mf-card"><a href="javascript:void();" style="pointer-events:none;">
-                        <article class="mtm-maker">
-                            <div class="mtm-image" style="background-image:url(https://makerfaire.com/wp-content/themes/makerfaire/images/stripe_bg1.gif);"></div>
-                            <div class="mtm-text">
-                                <h3>Loading...</h3>
-                                <div class="mtm-detail-items">
-                                    <div class="mtm-detail-item"><span><i class="fa fa-circle-user"></i></span>
-                                        <p>&nbsp;</p>
-                                    </div>
-                                    <div class="mtm-detail-item"><span><i class="fa fa-rocket"></i></span>
-                                        <p>&nbsp;</p>
-                                    </div>
-                                    <div class="mtm-detail-item"><span><i class="fa fa-tent-double-peak"></i></span>
-                                        <p>&nbsp;</p>
-                                    </div>
-                                </div>
-                                <div class="read-more-link">More</div>
-                            </div>
-                        </article>
-                        </article>
-                    </a></div>
+                    <article class="mtm-maker"> <div class="mtm-image" style="background-image:url(https://makerfaire.com/wp-content/themes/makerfaire/images/stripe_bg1.gif);"></div> <div class="mtm-text"> <h3>Loading...</h3> <div class="mtm-detail-items"> <div class="mtm-detail-item"><span><i class="fa fa-circle-user"></i></span> <p>&nbsp;</p> </div> <div class="mtm-detail-item"><span><i class="fa fa-rocket"></i></span> <p>&nbsp;</p> </div> <div class="mtm-detail-item"><span><i class="fa fa-tent-double-peak"></i></span> <p>&nbsp;</p> </div> </div> <div class="read-more-link">More</div> </div> </article>
+                </a></div>
                 <div class="ng-scope mf-card"><a href="javascript:void();" style="pointer-events:none;">
-                        <article class="mtm-maker">
-                            <div class="mtm-image" style="background-image:url(https://makerfaire.com/wp-content/themes/makerfaire/images/stripe_bg1.gif);"></div>
-                            <div class="mtm-text">
-                                <h3>Loading...</h3>
-                                <div class="mtm-detail-items">
-                                    <div class="mtm-detail-item"><span><i class="fa fa-circle-user"></i></span>
-                                        <p>&nbsp;</p>
-                                    </div>
-                                    <div class="mtm-detail-item"><span><i class="fa fa-rocket"></i></span>
-                                        <p>&nbsp;</p>
-                                    </div>
-                                    <div class="mtm-detail-item"><span><i class="fa fa-tent-double-peak"></i></span>
-                                        <p>&nbsp;</p>
-                                    </div>
-                                </div>
-                                <div class="read-more-link">More</div>
-                            </div>
-                        </article>
-                        </article>
-                    </a></div>
+                    <article class="mtm-maker"> <div class="mtm-image" style="background-image:url(https://makerfaire.com/wp-content/themes/makerfaire/images/stripe_bg1.gif);"></div> <div class="mtm-text"> <h3>Loading...</h3> <div class="mtm-detail-items"> <div class="mtm-detail-item"><span><i class="fa fa-circle-user"></i></span> <p>&nbsp;</p> </div> <div class="mtm-detail-item"><span><i class="fa fa-rocket"></i></span> <p>&nbsp;</p> </div> <div class="mtm-detail-item"><span><i class="fa fa-tent-double-peak"></i></span> <p>&nbsp;</p> </div> </div> <div class="read-more-link">More</div> </div> </article>
+                </a></div>
                 <div class="ng-scope mf-card"><a href="javascript:void();" style="pointer-events:none;">
-                        <article class="mtm-maker">
-                            <div class="mtm-image" style="background-image:url(https://makerfaire.com/wp-content/themes/makerfaire/images/stripe_bg1.gif);"></div>
-                            <div class="mtm-text">
-                                <h3>Loading...</h3>
-                                <div class="mtm-detail-items">
-                                    <div class="mtm-detail-item"><span><i class="fa fa-circle-user"></i></span>
-                                        <p>&nbsp;</p>
-                                    </div>
-                                    <div class="mtm-detail-item"><span><i class="fa fa-rocket"></i></span>
-                                        <p>&nbsp;</p>
-                                    </div>
-                                    <div class="mtm-detail-item"><span><i class="fa fa-tent-double-peak"></i></span>
-                                        <p>&nbsp;</p>
-                                    </div>
-                                </div>
-                                <div class="read-more-link">More</div>
-                            </div>
-                        </article>
-                        </article>
-                    </a></div>
+                    <article class="mtm-maker"> <div class="mtm-image" style="background-image:url(https://makerfaire.com/wp-content/themes/makerfaire/images/stripe_bg1.gif);"></div> <div class="mtm-text"> <h3>Loading...</h3> <div class="mtm-detail-items"> <div class="mtm-detail-item"><span><i class="fa fa-circle-user"></i></span> <p>&nbsp;</p> </div> <div class="mtm-detail-item"><span><i class="fa fa-rocket"></i></span> <p>&nbsp;</p> </div> <div class="mtm-detail-item"><span><i class="fa fa-tent-double-peak"></i></span> <p>&nbsp;</p> </div> </div> <div class="read-more-link">More</div> </div> </article>
+                </a></div>
                 <div class="ng-scope mf-card"><a href="javascript:void();" style="pointer-events:none;">
-                        <article class="mtm-maker">
-                            <div class="mtm-image" style="background-image:url(https://makerfaire.com/wp-content/themes/makerfaire/images/stripe_bg1.gif);"></div>
-                            <div class="mtm-text">
-                                <h3>Loading...</h3>
-                                <div class="mtm-detail-items">
-                                    <div class="mtm-detail-item"><span><i class="fa fa-circle-user"></i></span>
-                                        <p>&nbsp;</p>
-                                    </div>
-                                    <div class="mtm-detail-item"><span><i class="fa fa-rocket"></i></span>
-                                        <p>&nbsp;</p>
-                                    </div>
-                                    <div class="mtm-detail-item"><span><i class="fa fa-tent-double-peak"></i></span>
-                                        <p>&nbsp;</p>
-                                    </div>
-                                </div>
-                                <div class="read-more-link">More</div>
-                            </div>
-                        </article>
-                        </article>
-                    </a></div>
+                    <article class="mtm-maker"> <div class="mtm-image" style="background-image:url(https://makerfaire.com/wp-content/themes/makerfaire/images/stripe_bg1.gif);"></div> <div class="mtm-text"> <h3>Loading...</h3> <div class="mtm-detail-items"> <div class="mtm-detail-item"><span><i class="fa fa-circle-user"></i></span> <p>&nbsp;</p> </div> <div class="mtm-detail-item"><span><i class="fa fa-rocket"></i></span> <p>&nbsp;</p> </div> <div class="mtm-detail-item"><span><i class="fa fa-tent-double-peak"></i></span> <p>&nbsp;</p> </div> </div> <div class="read-more-link">More</div> </div> </article>
+                </a></div>
                 <div class="ng-scope mf-card"><a href="javascript:void();" style="pointer-events:none;">
-                        <article class="mtm-maker">
-                            <div class="mtm-image" style="background-image:url(https://makerfaire.com/wp-content/themes/makerfaire/images/stripe_bg1.gif);"></div>
-                            <div class="mtm-text">
-                                <h3>Loading...</h3>
-                                <div class="mtm-detail-items">
-                                    <div class="mtm-detail-item"><span><i class="fa fa-circle-user"></i></span>
-                                        <p>&nbsp;</p>
-                                    </div>
-                                    <div class="mtm-detail-item"><span><i class="fa fa-rocket"></i></span>
-                                        <p>&nbsp;</p>
-                                    </div>
-                                    <div class="mtm-detail-item"><span><i class="fa fa-tent-double-peak"></i></span>
-                                        <p>&nbsp;</p>
-                                    </div>
-                                </div>
-                                <div class="read-more-link">More</div>
-                            </div>
-                        </article>
-                        </article>
-                    </a></div>
+                    <article class="mtm-maker"> <div class="mtm-image" style="background-image:url(https://makerfaire.com/wp-content/themes/makerfaire/images/stripe_bg1.gif);"></div> <div class="mtm-text"> <h3>Loading...</h3> <div class="mtm-detail-items"> <div class="mtm-detail-item"><span><i class="fa fa-circle-user"></i></span> <p>&nbsp;</p> </div> <div class="mtm-detail-item"><span><i class="fa fa-rocket"></i></span> <p>&nbsp;</p> </div> <div class="mtm-detail-item"><span><i class="fa fa-tent-double-peak"></i></span> <p>&nbsp;</p> </div> </div> <div class="read-more-link">More</div> </div> </article>
+                </a></div>
                 <div class="ng-scope mf-card"><a href="javascript:void();" style="pointer-events:none;">
-                        <article class="mtm-maker">
-                            <div class="mtm-image" style="background-image:url(https://makerfaire.com/wp-content/themes/makerfaire/images/stripe_bg1.gif);"></div>
-                            <div class="mtm-text">
-                                <h3>Loading...</h3>
-                                <div class="mtm-detail-items">
-                                    <div class="mtm-detail-item"><span><i class="fa fa-circle-user"></i></span>
-                                        <p>&nbsp;</p>
-                                    </div>
-                                    <div class="mtm-detail-item"><span><i class="fa fa-rocket"></i></span>
-                                        <p>&nbsp;</p>
-                                    </div>
-                                    <div class="mtm-detail-item"><span><i class="fa fa-tent-double-peak"></i></span>
-                                        <p>&nbsp;</p>
-                                    </div>
-                                </div>
-                                <div class="read-more-link">More</div>
-                            </div>
-                        </article>
-                        </article>
-                    </a></div>
+                    <article class="mtm-maker"> <div class="mtm-image" style="background-image:url(https://makerfaire.com/wp-content/themes/makerfaire/images/stripe_bg1.gif);"></div> <div class="mtm-text"> <h3>Loading...</h3> <div class="mtm-detail-items"> <div class="mtm-detail-item"><span><i class="fa fa-circle-user"></i></span> <p>&nbsp;</p> </div> <div class="mtm-detail-item"><span><i class="fa fa-rocket"></i></span> <p>&nbsp;</p> </div> <div class="mtm-detail-item"><span><i class="fa fa-tent-double-peak"></i></span> <p>&nbsp;</p> </div> </div> <div class="read-more-link">More</div> </div> </article>
+                </a></div>
                 <div class="ng-scope mf-card"><a href="javascript:void();" style="pointer-events:none;">
-                        <article class="mtm-maker">
-                            <div class="mtm-image" style="background-image:url(https://makerfaire.com/wp-content/themes/makerfaire/images/stripe_bg1.gif);"></div>
-                            <div class="mtm-text">
-                                <h3>Loading...</h3>
-                                <div class="mtm-detail-items">
-                                    <div class="mtm-detail-item"><span><i class="fa fa-circle-user"></i></span>
-                                        <p>&nbsp;</p>
-                                    </div>
-                                    <div class="mtm-detail-item"><span><i class="fa fa-rocket"></i></span>
-                                        <p>&nbsp;</p>
-                                    </div>
-                                    <div class="mtm-detail-item"><span><i class="fa fa-tent-double-peak"></i></span>
-                                        <p>&nbsp;</p>
-                                    </div>
-                                </div>
-                                <div class="read-more-link">More</div>
-                            </div>
-                        </article>
-                        </article>
-                    </a></div>
+                    <article class="mtm-maker"> <div class="mtm-image" style="background-image:url(https://makerfaire.com/wp-content/themes/makerfaire/images/stripe_bg1.gif);"></div> <div class="mtm-text"> <h3>Loading...</h3> <div class="mtm-detail-items"> <div class="mtm-detail-item"><span><i class="fa fa-circle-user"></i></span> <p>&nbsp;</p> </div> <div class="mtm-detail-item"><span><i class="fa fa-rocket"></i></span> <p>&nbsp;</p> </div> <div class="mtm-detail-item"><span><i class="fa fa-tent-double-peak"></i></span> <p>&nbsp;</p> </div> </div> <div class="read-more-link">More</div> </div> </article>
+                </a></div>
                 <div class="loading-container">
                     <img src="https://make.co/wp-content/universal-assets/v2/images/makey-spinner.gif" />
                     <span class="sr-only"><?php _e("Loading", 'makerfaire') ?>...</span>
@@ -379,7 +199,7 @@ $faireName = (isset($results[0]->faire_name)?$results[0]->faire_name:'');
                     <article class="mtm-maker">
                         <div class="mtm-image">
                             <a href="{{maker.link}}" target="_blank">
-                                <img src="{{maker.large_img_url}}" alt="{{maker.name}} Photo" />
+                                <img src="{{maker.large_img_url}}" alt="{{maker.name}} Photo" onerror="this.onerror=null;this.src='/wp-content/themes/makerfaire/images/default-mtm-image.jpg';this.srcset=''" />
                             </a>
                         </div>
                         <div class="mtm-text">
@@ -434,7 +254,7 @@ $faireName = (isset($results[0]->faire_name)?$results[0]->faire_name:'');
                     <article class="mtm-maker">
                         <div class="mtm-image">
                             <a href="{{maker.link}}" target="_blank">
-                                <img src="{{maker.large_img_url}}" alt="{{maker.name}} Photo" />
+                                <img src="{{maker.large_img_url}}" alt="{{maker.name}} Photo" onerror="this.onerror=null;this.src='/wp-content/themes/makerfaire/images/default-mtm-image.jpg';this.srcset=''" />
                             </a>
                         </div>
                         <div class="mtm-text">

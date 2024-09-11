@@ -149,7 +149,7 @@ function mf_admin_MFupdate_entry() {
         mf_update_entry_field($entry_id, '308', $ticket_code);
         break;
       case 'update_entry_schedule':
-        set_entry_schedule($entry, $form);
+        $response['insert_row'] = set_entry_schedule($entry, $form);
         break;
       case 'delete_entry_schedule':
         delete_entry_schedule($entry, $form);
@@ -574,7 +574,8 @@ function set_entry_schedule($entry, $form) {
     //MySqli Insert Query
     $insert_row = $mysqli->query($insert_query);
     if ($insert_row) {
-      //echo 'Success! <br />';
+      //echo 'Success! <br />';      
+      return $mysqli->insert_id;
     } else {
       error_log('Error :' . $insert_query . ':(' . $mysqli->errno . ') ' . $mysqli->error);
     }

@@ -322,11 +322,7 @@ function getMTMentries($formIDs = '', $faireID = '', $years = '') {
                 $projPhoto = $project_gallery[0];
             }
 
-            $fitPhoto = legacy_get_resized_remote_image_url($projPhoto, 350, 350);
-
-            // Check to see if the fit photo returned an image
-            if ($fitPhoto == NULL)
-                $fitPhoto = $projPhoto;
+            $largePhoto = legacy_get_resized_remote_image_url($projPhoto, 435, 290);
 
             $makerList = getMakerList($result->entry_id, $faireID);
 
@@ -414,7 +410,7 @@ function getMTMentries($formIDs = '', $faireID = '', $years = '') {
                 'id' => $result->entry_id,
                 'link' => '/maker/entry/' . $result->entry_id,
                 'name' => $result->proj_name,
-                'large_img_url' => $projPhoto,
+                'large_img_url' => $largePhoto,
                 'categories' => $category,
                 'main_cat_icon' => $mainCategoryIcon,
                 'types' => $types,

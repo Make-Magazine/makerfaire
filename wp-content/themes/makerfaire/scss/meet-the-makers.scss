@@ -1,3 +1,7 @@
+.page-template-page-meet-the-makers .site-content {
+    overflow-x: hidden;
+}
+
 .mtm {
     h1.page-title {
         font-size: 36px;
@@ -386,6 +390,7 @@
                         -webkit-line-clamp: 3;
                         overflow: hidden;
                         font-size: 15px;
+                        height: 70px;
                     }
                     .mtm-detail-items {
                         display: flex;
