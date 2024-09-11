@@ -10,13 +10,7 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
   $scope.canned_rpt = [];
 
   
-  $scope.handleSelect = function() {
-    if($scope.reports.selFaire!==''){
-      $scope.reports.showLinks = true;      
-    }else{
-      return;
-    }
-
+  $scope.handleSelect = function() {       
     if($scope.reports.subRoute!=''){
       //redirect to the correct canned report based on selection 
       window.location = '#canned/'+ $scope.reports.subRoute+'/'+$scope.reports.selFaire;
@@ -39,11 +33,13 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
       .then(function(response){
         if("error" in response.data) {
           alert(response.data.error);
-        }else if(type=='faires'){
-          $scope.data[type] = response.data[type];
+        }else if(type=='faires'){          
+          $scope.data[type] = response.data[type];  
+          $scope.reports.selFaire = $scope.data.faires[0].ID;  
+          $scope.reports.showLinks = true;            
         }
-      }).finally(function () {
-        if(type=='faires'){
+      }).finally(function () {        
+        if(type=='faires'){          
           faires = $scope.data.faires;
           angular.forEach(faires, function(value,key){
             if(value.faire==$scope.subRoute){
@@ -423,7 +419,10 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
               "rmtData":{
                 "resource":[
                   {"id":"19","value":"Barricade","checked":true,"aggregated":true},
-                  {"id":"18","value":"Fencing","checked":true,"aggregated":true}
+                  {"id":"18","value":"Fencing","checked":true,"aggregated":true},
+                  {"id":"22","value":"Pipe & Drape","checked":true,"aggregated":true},
+                  {"id":"23","value":"Pipe Only","checked":true,"aggregated":true},
+
                 ],
                 "attribute":[],"attention":[],"meta":[]},
               "type":"customRpt",
