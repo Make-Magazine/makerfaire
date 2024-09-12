@@ -90,10 +90,10 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
     $scope.reports.showGrid  = true;
     $scope.reports.loading = true;
     var sortParams = {
-      'field_303':  {'direction': uiGridConstants.ASC, 'priority':0},
-      'area':       {'direction': uiGridConstants.ASC, 'priority':1},
-      'subarea':    {'direction': uiGridConstants.ASC, 'priority':2},
-      'location':   {'direction': uiGridConstants.ASC, 'priority':3}
+      //'field_303':  {'direction': uiGridConstants.ASC, 'priority':4},
+      'area':       {'direction': uiGridConstants.ASC, 'priority':0},
+      'subarea':    {'direction': uiGridConstants.ASC, 'priority':1},
+      'location':   {'direction': uiGridConstants.ASC, 'priority':2}
                 };
 
     //get grid data
@@ -114,7 +114,7 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
         angular.forEach(response.data.columnDefs, function(value, key) {
           //add sorting - status, area, sub area, location
           var findMe = value.field;
-          if(findMe in sortParams){
+          if(findMe in sortParams){            
             value.sort = {'direction':sortParams[findMe].direction, 'priority': sortParams[findMe].priority};
           }
           if('aggregationType' in value){
@@ -199,8 +199,9 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
               "faire": faire,
               "entryIDorder": 50,
               "locationOrder": 10,
-              "formTypeorder": 400,
-              "dispFormType": false,
+              "formTypeorder": 400,                            
+              "dispFormType":false,
+              "useFormSC": false,
               "selectedFields":[
                 {"id":16, "label":"Exhibit Description", "choices":"", "type":"textarea", "inputs":"", "order":280},
                 {"id":96, "label":"Maker Name", "choices":"", "type":"name",
@@ -281,7 +282,9 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
       vars = {"formSelect":[],
               "formType":["Master", "Exhibit","Performance","Startup Sponsor","Sponsor","Show Management"],
               "faire": faire,
-              "useFormSC": true,
+              "dispFormID":false,
+              "dispFormType":false,
+              "useFormSC": false,
               "entryIDorder": 200,
               "locationOrder": 300,
               "formTypeorder":400,
@@ -343,7 +346,9 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
       vars = {"formSelect":[],
               "formType":["Master","Exhibit","Performance","Startup Sponsor","Sponsor","Show Management"],
               "faire": faire,
-              "useFormSC": true,
+              "dispFormID":false,
+              "dispFormType":false,
+              "useFormSC": false,
               "entryIDorder": 200,
               "locationOrder": 300,
               "formTypeorder":400,
@@ -408,7 +413,8 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
               "formType":["Master","Exhibit","Performance","Startup Sponsor","Sponsor","Show Management"],
               "faire": faire,
               "dispFormID":false,
-              "useFormSC": true,
+              "dispFormType":false,
+              "useFormSC": false,
               "selectedFields":[
                 {"id":151,"label":"Exhibit","type":"text", "order":25},
                 {"id":303,"label":"Status","choices":"Accepted","type":"radio","exact":true,"hide":true},
@@ -458,6 +464,9 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
       vars = {"formSelect":[],
               "formType":["Master","Exhibit","Performance","Startup Sponsor","Sponsor","Show Management"],
               "faire": faire,
+              "dispFormID":false,
+              "dispFormType":false,
+              "useFormSC": false,
               "selectedFields":[
                 {"id":151,"label":"Record Name","choices":"","type":"text","inputs":"", "order":25},
                 {"id":303,"label":"Status","choices":"Proposed","type":"radio"},

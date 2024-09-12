@@ -3,20 +3,21 @@
           <ul class="nav nav-list">
             <li><label class="tree-toggle nav-header">Reports</label>
               <ul class="nav nav-list tree">
-                <li><a href="#reports/drill">Resource Drill Down</a></li>                
+                <li><a href="#canned">Canned Rpts</a></li>                
                 <li><a href="#reports/change">Entry Change Rpt</a></li>                
-                <li><a href="#reports/location">Schedule/Location Rpt</a></li>
-                <li><a href="#reports/build">Build your own Rpt</a></li>
-                <li><a href="#canned">Canned Rpts</a></li>
-                <li><a href="#ent2resources/all">Entry 2 Resource</a></li>
-                <li><a href="#ent2resources/sponsor">Sponsor Entry2Resource</a></li>
-                <li><a href="#reports/tasksComp">Tasks Completed</a></li>
-                <li><a href="/wp-admin/admin.php?page=mf_fsp_gsp">FSP/GSP</a></li>  
-                <li><a href="/wp-admin/admin.php?page=mf_fairesign">Faire Signs and Table tags</a></li>
+                <li><a href="#reports/location">Schedule/Location Rpt</a></li>                                
                 <li><a href="#reports/notes">Notes Report</a></li>
+                <!--<li><a href="#reports/drill">Resource Drill Down</a></li>-->                
+                <!--<li><a href="#ent2resources/all">Entry 2 Resource</a></li>-->
+                <!--<li><a href="#ent2resources/sponsor">Sponsor Entry2Resource</a></li>-->
+                <li><a href="#reports/tasksComp">Tasks Completed</a></li>
+                <li><a href="/wp-admin/admin.php?page=mf_fsp_gsp">Download FSP/GSP</a></li>  
+                <li><a href="/wp-admin/admin.php?page=mf_fairesign">Download Signs and Table tags</a></li>                
+                <li><a href="#reports/build">Build your own Rpt</a></li>
               </ul>
             </li>
-            <li><label class="tree-toggle nav-header">Entry Specific Data</label>
+            <?php if (!current_user_can( 'reports_only' ) ) { ?>
+              <li><label class="tree-toggle nav-header">Entry Specific Data</label>
               <ul class="nav nav-list tree">
                 <li><a href="#entry/resources">Assigned Resources</a></li>
                 <li><a href="#entry/attributes">Assigned Attributes</a></li>
@@ -43,6 +44,8 @@
                 <li><a href="#faire/schedule">Assigned Location/Schedule</a></li>
               </ul>
             </li>
+            <?php } ?>
+
           </ul>
         </div>
       </div>

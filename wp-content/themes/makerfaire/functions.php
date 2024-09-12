@@ -570,6 +570,7 @@ function th_register_caps() {
     //other
     members_register_cap('edit_rmt', array('label' => __('Edit RMT', 'makerfaire'), 'group' => 'makerfaire'));
     members_register_cap('view_rmt', array('label' => __('View RMT', 'makerfaire'), 'group' => 'makerfaire'));
+    members_register_cap('reports_only', array('label' => __('View Reports Only', 'makerfaire'), 'group' => 'makerfaire'));
     members_register_cap('edit_public_info', array('label' => __('Edit Public Info', 'makerfaire'), 'group' => 'makerfaire'));
 }
 add_action('members_register_cap_groups', 'th_register_cap_groups');
