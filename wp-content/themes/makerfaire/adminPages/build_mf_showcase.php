@@ -248,13 +248,19 @@ ORDER BY `wp_mf_lead_rel`.`parentID` ASC;";
         });
         //Add new parent section
         jQuery(".add-showcase").autocomplete({
-            source: items,
+            source: function(request, response) {
+                // delegate back to autocomplete, but extract the last term
+                response(jQuery.ui.autocomplete.filter(
+                    items, extractLast(request.term)));
+            },
             select: function(event, ui) {
                 this.value = ui.item.value;                
                 jQuery('#showcase-name').html('<p>' + ui.item.value + ' - ' + ui.item.label + '</p>');
-                // remove item from array after selection
+                // remove item from items array after selection and put in storedItems
                 items = items.filter(function( obj ) {
-                    storedItems.push(obj);
+                    if(obj.value == ui.item.value) {
+                        storedItems.push(obj);
+                    }
                     return obj.value !== ui.item.value;
                 });
                 return false;
@@ -287,13 +293,13 @@ ORDER BY `wp_mf_lead_rel`.`parentID` ASC;";
 
                     // add the selected item text
                     terms.push(ui.item.value);
-                    //remove ui.item.value from the items array
-
                     // add placeholder to get the comma-and-space at the end
                     terms.push("");
                     this.value = terms.join(", ");
 
-                    jQuery(this).closest(".ui-widget").next("#assign-entries-value").append('<p class="adding' + ui.item.value + '">' + ui.item.value + ' - ' + ui.item.label + '<span class="fa fa-times" onclick="returnShowcase(' + ui.item.value +', el)"></p>');
+                    jQuery(this).closest(".ui-widget").next("#assign-entries-value").append('<p class="adding' + ui.item.value + '">' + ui.item.value + ' - ' + ui.item.label + '<span class="fa fa-times" onclick="returnShowcase(' + ui.item.value +', this)"></p>');
+                    
+                    //remove ui.item.value from the items array and put it in storedItems
                     items = items.filter(function( obj ) {
                         if(obj.value == ui.item.value) {
                             storedItems.push(obj);
@@ -306,14 +312,16 @@ ORDER BY `wp_mf_lead_rel`.`parentID` ASC;";
             });
     });
 
+    // remove showcase that was already selected, remove from storedItems array, put back in items array
     function returnShowcase(entryID, el) {
-        jQuery(".adding" + entryID).remove();
         storedItems.forEach(function(item) {
-            var itemIndex = storedItems.indexOf(item);
-            storedItems.splice(itemIndex, 1);
-            //console.log(jQuery(el).parent().parent().prev());
             if(item.value == entryID) {
+                var itemIndex = storedItems.indexOf(item);
+                storedItems.splice(itemIndex, 1);
                 items.push(item);
+                var input = jQuery(el).parent().parent().prev().children(".assign-entries")[0];
+                input.value = input.value.replace(entryID + ', ','');
+                jQuery(".adding" + entryID).remove();
             }
         });
     }

@@ -691,8 +691,7 @@ function addShowcase(parentID='') {
 	var msgArea = "#showcase"+parentID +" span.add_to_showcaseMsg";
 	
 	var childIDs = jQuery("#showcase"+parentID +" .assign-entries").val();
-	// throw errror if parentID is not numeric or blank or null
-
+	// throw error if parentID is not numeric or blank or null
 	if(!childIDs || childIDs.split(", ").some(isNaN)) {
 		jQuery(msgArea).html("<span class='errorMsg'>Attempted to add bad values as Showcase Member</span");
 		return;
@@ -700,7 +699,7 @@ function addShowcase(parentID='') {
 	
 	if(parentID=='new'){
 		var parentID = jQuery("#showcasenew .add-showcase").val();
-		//alicia - throw errror if parentID is not numeric or blank or null
+		//throw errror if parentID is not numeric or blank or null
 		if(!parentID || isNaN(parentID)) {
 			jQuery(msgArea).html("<span class='errorMsg'>Attempted to add bad value as Showcase</span");
 			return;
