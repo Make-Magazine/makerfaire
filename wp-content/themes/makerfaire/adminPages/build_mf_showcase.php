@@ -1,79 +1,14 @@
 <?php
-/* this provides a javascript button that allows the users to print out
- * all maker pdf's
+/* Admin page where showcases and their entries can be assigned
  */
 global $wpdb;
 $selfaire  = '';
 $type   = '';
 $formid = (isset($_GET['formid']) ? $_GET['formid'] : '');
 
-//Alicia - how can we get this to work without hardcoding the jquery libraries, just add what we need
 wp_enqueue_script( "jqueryui-menu", "/wp-includes/js/jquery/ui/menu.min.js", array("jquery-ui-core"), "");
 wp_enqueue_script( "jqueryui-autocomplete", "/wp-includes/js/jquery/ui/autocomplete.min.js", array("jquery-ui-core"), "");
 ?>
-<!--<link rel="stylesheet" href="https://code.jquery.com/ui/1.14.0/themes/base/jquery-ui.css">
-<script src="https://code.jquery.com/jquery-3.7.1.js"></script>
-<script src="https://code.jquery.com/ui/1.14.0/jquery-ui.js"></script>-->
-
-<style>
-    .showcase-admin-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-top: 20px;
-        padding-bottom: 20px;
-        border-bottom: solid 1px #ccc;
-        margin-bottom: 20px;
-    }
-    .showcase-admin-header h2 {
-        margin: 0px;
-    }
-    .showcase-admin-header .form-select {
-        margin-right: 20px;
-    }
-    [id^="showcase"]:not(#showcasenew) {
-        background: #fff;
-        margin: 10px 20px 10px 0px;
-        border-radius: 5px;
-        padding-bottom: 20px;
-    }
-    #showcasenew {
-        padding: 15px 30px 0px 0px;
-    }
-    #showcasenew [class^="col"] {
-        height: 50px;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        margin-top: 15px;
-    }
-    @media screen and (min-width: 992px) {
-        #showcasenew .new-assign {
-            margin-left: 1%;
-        }
-        #showcasenew .new-assign input {
-            width: 92%;
-        }
-        #showcasenew .new-button {
-            margin-left: -3%;
-        }
-    }
-    #showcase-name {
-        background: transparent !important;
-    }
-    .fa-times { 
-        color: red;
-        cursor: pointer;
-        margin-left: 10px;
-        font-weight: 900;
-    }
-    .errorMsg {
-        color: red;
-    }
-    #assign-entries-value {
-        margin-top: 5px;
-    }
-</style>
 
 <div class="showcase-admin-header">
     <h2>Showcase Management</h2>
