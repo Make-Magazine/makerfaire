@@ -13,21 +13,22 @@ jQuery(document).ready(function() {
 				jQuery(this).parents('table.entry-detail-view').children('tbody').toggle();
 			}
 		);
-
-		jQuery('#datetimepicker').datetimepicker({ value: '2015/04/15 05:03', step: 30 });
-		jQuery('#datetimepickerstart').datetimepicker({
-			formatTime: 'g:i a',
-			formatDate: 'd.m.Y',
-			defaultTime: '10:00 am', 
-			step: 30,
-		});
-		jQuery('#datetimepickerend').datetimepicker({
-			formatTime: 'g:i a',
-			formatDate: 'd.m.Y',
-			defaultTime: '10:00 am', 
-			step: 30,
-		});
-
+		
+		if (typeof datetimepicker === 'function')	{
+			jQuery('#datetimepicker').datetimepicker({ value: '2015/04/15 05:03', step: 30 });
+			jQuery('#datetimepickerstart').datetimepicker({
+				formatTime: 'g:i a',
+				formatDate: 'd.m.Y',
+				defaultTime: '10:00 am', 
+				step: 30,
+			});
+			jQuery('#datetimepickerend').datetimepicker({
+				formatTime: 'g:i a',
+				formatDate: 'd.m.Y',
+				defaultTime: '10:00 am', 
+				step: 30,
+			});
+		}
 		jQuery('#gf_admin_page_title').click(
 			function() {
 				window.location = "/wp-admin/admin.php?page=gf_entries&view=entry&id=20&lid=" + prompt('Enter your ID!', ' ');
@@ -679,4 +680,64 @@ function updateMgmt(action) {
 		}
 
 	});
+}
+
+/*
+ * Triggers an AJAX to update a showcase
+ */
+function addShowcase(parentID='') {
+	var formID   = jQuery("#formID").val();
+	//set the processing icon
+	var msgArea = "#showcase"+parentID +" span.add_to_showcaseMsg";
+	
+	var childIDs = jQuery("#showcase"+parentID +" .assign-entries").val();
+	// throw error if parentID is not numeric or blank or null
+	if(!childIDs || childIDs.split(", ").some(isNaN)) {
+		jQuery(msgArea).html("<span class='errorMsg'>Attempted to add bad values as Showcase Member</span");
+		return;
+	}
+	
+	if(parentID=='new'){
+		var parentID = jQuery("#showcasenew .add-showcase").val();
+		//throw errror if parentID is not numeric or blank or null
+		if(!parentID || isNaN(parentID)) {
+			jQuery(msgArea).html("<span class='errorMsg'>Attempted to add bad value as Showcase</span");
+			return;
+		}
+	}
+
+	jQuery(msgArea).html("");
+	jQuery(msgArea).html('<i class="fas fa-spinner fa-pulse fa-3x fa-fw"></i><span class="sr-only">Loading...</span>');
+
+	var data = {
+		'action': 'add-to-showcase',	
+		'formID': formID, 	
+		'parentID': parentID,
+		'childIDs': childIDs
+	};
+
+	jQuery.post(ajaxurl, data, function(r) {
+		if (r.result === 'updated') {
+			//after update - set meta field status to success
+			jQuery(msgArea).html('<i style="color:green" class="fas fa-check"></i>');
+		} 
+	});
+}
+
+/*
+* Triggers an AJAX to remove a showcase
+*/
+function removeShowcase(parentID='', childID='', relationID='') {
+
+   var data = {
+	   'action': 'remove-from-showcase',	
+	   'relationID': relationID
+   };
+
+   jQuery.post(ajaxurl, data, function(r) {
+	   if (r.result === 'removed') {
+		   //after update - remove the deleted item
+		   jQuery("#showcase"+parentID+" #child"+childID).remove();
+	   } 	
+   });
 }
