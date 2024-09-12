@@ -64,7 +64,12 @@ function cannedRpt() {
    $formTypeArr   = (isset($obj->formType) ? $obj->formType : array());
    $faire         = (isset($obj->faire) ? $obj->faire : '');
 
+   //return entries if the RMT data is empty?
+   $rtnIfRMTempty = (isset($obj->rtnIfRMTempty) ? $obj->rtnIfRMTempty : true);
+
+   //display form ID?
    $dispFormID    = (isset($obj->dispFormID) ? $obj->dispFormID : false);
+   //display form type?
    $dispFormType  = (isset($obj->dispFormType) ? $obj->dispFormType : true);
    $formTypeLabel = (isset($obj->formTypeLabel) ? $obj->formTypeLabel : ($useFormSC ? "TYPE" : 'Form Type'));
    $entryIDLabel  = (isset($obj->entryIDLabel) ? $obj->entryIDLabel : ($useFormSC ? 'ENTRY ID' : 'Entry Id'));
@@ -358,9 +363,14 @@ function cannedRpt() {
          //add data to array
          if ($passCriteria) {
             $colDefs = array();
+            $writeEntry = TRUE;
             //pull rmt data and location information
             if (!empty($rmtData)) {
                $rmtRetData = pullRmtData($rmtData, $lead_id, $useFormSC);
+               //if the indicator is false, only write the entry id rmt data is set
+               if(!$rtnIfRMTempty && empty($rmtRetData['data'])){               
+                  $writeEntry = FALSE;
+               }
                $fieldData = array_merge($fieldData, $rmtRetData['data']);
                $colDefs = array_merge($colDefs, $rmtRetData['colDefs']);
             }
@@ -379,17 +389,19 @@ function cannedRpt() {
                $PayRetData = pullPayData($lead_id, $paymentOrder);
                $fieldData = array_merge($fieldData, $PayRetData['data']);
                $colDefs = array_merge($colDefs, $PayRetData['colDefs']);
-            }
-            $entryData[$lead_id] = $fieldData;
-            $entryData[$lead_id]['entry_id'] = $lead_id;
-            $entryData[$lead_id]['form_id'] = $entry['form_id'];
-            if ($dispFormType) {
-               $entryData[$lead_id]['form_type'] = $form_type;
-            }
-            
-            //merge in RMT data and location info
-            if($data['columnDefs'])               
-               $data['columnDefs'] = array_merge($data['columnDefs'], $colDefs);
+            }            
+                                    
+            if($writeEntry){
+               $entryData[$lead_id] = $fieldData;
+               $entryData[$lead_id]['entry_id'] = $lead_id;
+               $entryData[$lead_id]['form_id'] = $entry['form_id'];
+               if ($dispFormType) {
+                  $entryData[$lead_id]['form_type'] = $form_type;
+               }
+               //merge in RMT data and location info
+               if($data['columnDefs'])               
+                  $data['columnDefs'] = array_merge($data['columnDefs'], $colDefs);
+            }                                    
          }
       }
    }
@@ -570,6 +582,9 @@ function pullRmtData($rmtData, $entryID, $useFormSC) {
 
          //loop thru data
          $attributes = $wpdb->get_results($sql, ARRAY_A);
+         if(empty($attributes)){
+            continue; //if there are no attributes set for this entry, go to the next one
+         }
          $entryValue = array();
          $entryComment = array();
 
@@ -582,8 +597,7 @@ function pullRmtData($rmtData, $entryID, $useFormSC) {
             $entryValue[] = $value;
             $entryComment[] = $attribute['comment'];  //set entry comment to display in separate column
          }
-
-         //new
+         
          //set return data and column definitions
          $return['colDefs']['att_' . $selRMT->id] = array(
             'field' => 'att_' . str_replace('.', '_', $selRMT->id),
@@ -617,6 +631,9 @@ function pullRmtData($rmtData, $entryID, $useFormSC) {
          }
          //loop thru data
          $attentions = $wpdb->get_results($sql, ARRAY_A);
+         if(empty($attentions)){
+            continue; //if there are no attentions set for this entry, go to the next one
+         }
          $entryAttn = array();
 
          foreach ($attentions as $attention) {
