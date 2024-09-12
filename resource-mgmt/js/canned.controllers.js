@@ -483,6 +483,8 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
               "location":true};
       var subTitle = 'Guest Seating';
       $scope.reports.callAJAX(vars);
+
+    //work bench and stools report
     }else if(subRoute=="wb_stools"){
       vars = {"formSelect":[],
               "formType":["Master","Exhibit","Performance","Startup Sponsor","Sponsor","Show Management"],
@@ -506,8 +508,43 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
                 "attribute":[],"attention":[],"meta":[]},
               "type":"customRpt",
               "location":true};
-      var subTitle = 'WB/Stools';
+      var subTitle = 'Workbench/Stools';
       $scope.reports.callAJAX(vars);
+
+    }else if(subRoute=="specials"){
+      vars = {"formSelect":[],
+              "formType":["Master","Exhibit","Performance","Startup Sponsor","Sponsor","Show Management"],
+              "faire": faire,
+              "dispFormID":false,
+              "dispFormType":false,
+              "useFormSC": false,
+              "entryIDorder": 40,
+              "locationOrder": 10,
+              "selectedFields":[
+                {"id":"151",  "label":"Record Name","choices":"","type":"text","inputs":"", "order":50},                
+                {"id":"339",  "label":"Entry Type","choices":"all","type":"checkbox", "order":60},
+                {"id":"879",  "label":"Days","choices":"all","type":"checkbox", "order":1400},
+                {"id":"303",  "label":"Status","choices":"Accepted","type":"radio", "order":200},                
+                
+              ],
+              "rmtData":{
+                "resource":[
+                  {"id":"15","value":"Water","checked":true,"aggregated":true, "order":70},
+                  {"id":"19","value":"Barricade","checked":true,"aggregated":true, "order":80},
+                  {"id":"35","value":"Heavy Equipment","checked":true,"aggregated":true,"order":90},
+                  {"id":"47","value":"Storage","checked":true,"aggregated":true,"order":100},
+                  {"id":"26","value":"Rigging","checked":true,"aggregated":true,"order":110}
+                ],
+                "attention":[
+                  {"id":"10","value":"Early Setup","checked":true, "order":120},
+                  {"id":"11","value":"No Friday","checked":true, "order":130},                                                      
+                ],
+                "attribute":[],"meta":[]},
+              "type":"customRpt",
+              "location":true};
+      var subTitle = 'Specials';
+      $scope.reports.callAJAX(vars);
+
     }else if(subRoute=="label"){
       vars = {"formSelect":[],"formType":["Master","Exhibit","Startup Sponsor","Sponsor","Show Management"],
               "faire": faire,
