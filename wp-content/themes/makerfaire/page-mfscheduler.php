@@ -173,6 +173,11 @@ $default_locations = isset($default_locations) ? $default_locations : "414";
             display: none;
         }
 
+        /* striping, based on the assumption that all faires are three day affairs */
+        .k-scheduler-table tr td:nth-child(6n+1), .k-scheduler-table tr td:nth-child(6n+2), .k-scheduler-table tr td:nth-child(6n+3), .k-scheduler-header-wrap .k-scheduler-table tr.k-scheduler-date-group th:nth-child(6n+1), .k-scheduler-header-wrap .k-scheduler-table tr.k-scheduler-date-group th:nth-child(6n+2), .k-scheduler-header-wrap .k-scheduler-table tr.k-scheduler-date-group th:nth-child(6n+3), .k-scheduler-header-wrap .k-scheduler-table tr:not(.k-scheduler-date-group) th:nth-child(odd) {
+            background-color: #f1f1f1;
+        }
+
         /* Hide toolbar, navigation and footer during export */
         .woahbar,.k-pdf-export .k-scheduler-toolbar,.k-pdf-export .k-scheduler-navigation .k-nav-today,.k-pdf-export .k-scheduler-navigation .k-nav-prev,.k-pdf-export .k-scheduler-navigation .k-nav-next,.k-pdf-export .k-scheduler-footer
         {
@@ -191,12 +196,6 @@ $default_locations = isset($default_locations) ? $default_locations : "414";
         }
         .k-scheduler-header-wrap th { color: #151733; }
         .k-scheduler-times-all-day, .k-scheduler-header-all-day { display: none;}
-
-        /* .k-scheduler-content .k-scheduler-table,.k-scheduler-header .k-scheduler-table
-           {
-            width: 3000px ;
-        }
-        */
 
     </style>
     <script>
@@ -288,11 +287,9 @@ $default_locations = isset($default_locations) ? $default_locations : "414";
     function get_entry_presentationTypes() {
         $presentationTypes = array();
 
-        $presentationTypes [] = array('text' => "Unknown", 'value' => "unknown");
+        $presentationTypes [] = array('text' => "Presentation", 'value' => "presentation");
+        $presentationTypes [] = array('text' => "Performance", 'value' => "performer");
         $presentationTypes [] = array('text' => "Workshop", 'value' => "workshop");
-        $presentationTypes [] = array('text' => "Talk", 'value' => "talk");
-        $presentationTypes [] = array('text' => "Performance", 'value' => "performance");
-        $presentationTypes [] = array('text' => "Demo", 'value' => "demo");
         // Create Update button for sidebar entry management
         return $presentationTypes;
     }
@@ -449,7 +446,7 @@ $default_locations = isset($default_locations) ? $default_locations : "414";
                 ->addField($formField)
                 ->addField($presentationTypeField)
                 ->addField($statusColorField);
-
+        
         $schema = new \Kendo\Data\DataSourceSchema ();
         $schema->model($model);
 
@@ -475,7 +472,7 @@ $default_locations = isset($default_locations) ? $default_locations : "414";
 
         // Default options for kendoScheduler
         $scheduler->eventTemplateId('presentation-template')          
-                ->timezone('UTC')
+                ->timezone('America/Los_Angeles')
                 ->currentTimeMarker(false)
                 ->date(new DateTime($start_dt))
                 ->height(900)->pdf($pdf)
@@ -487,8 +484,8 @@ $default_locations = isset($default_locations) ? $default_locations : "414";
                     'majorTick' => 30,
                     'showWorkHours' => true,
                     'workWeekEnd' => $end_dow,
-                    'workDayStart' => new DateTime('2024/10/18 17:00', new DateTimeZone('UTC')),
-                    'workDayEnd' => new DateTime('2024/10/20 01:00', new DateTimeZone('UTC'))
+                    'workDayStart' => new DateTime('2024/10/18 10:00', new DateTimeZone('America/Los_Angeles')),
+                    'workDayEnd' => new DateTime('2024/10/20 17:30', new DateTimeZone('America/Los_Angeles'))
                         ), array(
                     'type' => 'workWeek',
                     'majorTick' => 30,
@@ -496,8 +493,8 @@ $default_locations = isset($default_locations) ? $default_locations : "414";
                     'workWeekStart' => $start_dow,
                     'workWeekEnd' => $end_dow,
                     'showWorkHours' => true,
-                    'workDayStart' => new DateTime('2024/10/18 17:00', new DateTimeZone('UTC')),
-                    'workDayEnd' => new DateTime('2024/10/20 01:00', new DateTimeZone('UTC'))
+                    'workDayStart' => new DateTime('2024/10/18 10:00', new DateTimeZone('America/Los_Angeles')),
+                    'workDayEnd' => new DateTime('2024/10/20 17:30', new DateTimeZone('America/Los_Angeles'))
                 ), 'agenda')->dataSource($dataSource);
 
         return $scheduler;
