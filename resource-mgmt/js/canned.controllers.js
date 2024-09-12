@@ -58,7 +58,7 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
     showGridFooter: true,
     showColumnFooter: true,
     rowHeight: 100,
-    exporterMenuPdf: false, // hide PDF export
+    exporterMenuPdf: true, // hide PDF export
     exporterCsvFilename: $routeParams.sub+'-export.csv',
     exporterCsvLinkElement: angular.element(document.querySelectorAll(".custom-csv-link-location")),
     exporterFieldCallback: function( grid, row, col, input ) {

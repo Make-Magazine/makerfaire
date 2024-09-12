@@ -253,6 +253,7 @@ rmgControllers.controller('reportsCtrl', ['$scope', '$routeParams', '$http', '$i
             $scope.retGridData();
          }
       };
+      
       //faire dropdown
       $scope.retrieveData = function (type) {
          if (type === 'faires') {
@@ -273,11 +274,15 @@ rmgControllers.controller('reportsCtrl', ['$scope', '$routeParams', '$http', '$i
             headers: head2pass
          })
                  .then(function (response) {
+                  
                     if ("error" in response.data) {
                        alert(response.data.error);
                     } else if (type === 'faires' || type === 'forms') {
-                       $scope.reports[type] = response.data[type];
-                    }
+                       $scope.reports[type] = response.data[type];                       
+                       if(type==='faires'){
+                        $scope.reports.selFaire = $scope.reports.faires[0].ID;                       
+                       }
+                    }                    
                  }).finally(function () {
             if (type === 'faires') {
                faires = $scope.reports.faires;
