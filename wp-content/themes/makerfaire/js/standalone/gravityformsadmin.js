@@ -689,14 +689,26 @@ function addShowcase(parentID='') {
 	var formID   = jQuery("#formID").val();
 	//set the processing icon
 	var msgArea = "#showcase"+parentID +" span.add_to_showcaseMsg";
-	jQuery(msgArea).html('<i class="fas fa-spinner fa-pulse fa-3x fa-fw"></i><span class="sr-only">Loading...</span>');
+	
 	var childIDs = jQuery("#showcase"+parentID +" .assign-entries").val();
-	//alicia - throw errror if childIDs are not numeric or blank or null
+	// throw errror if parentID is not numeric or blank or null
+
+	if(!childIDs || childIDs.split(", ").some(isNaN)) {
+		jQuery(msgArea).html("<span class='errorMsg'>Attempted to add bad values as Showcase Member</span");
+		return;
+	}
 	
 	if(parentID=='new'){
 		var parentID = jQuery("#showcasenew .add-showcase").val();
 		//alicia - throw errror if parentID is not numeric or blank or null
+		if(!parentID || isNaN(parentID)) {
+			jQuery(msgArea).html("<span class='errorMsg'>Attempted to add bad value as Showcase</span");
+			return;
+		}
 	}
+
+	jQuery(msgArea).html("");
+	jQuery(msgArea).html('<i class="fas fa-spinner fa-pulse fa-3x fa-fw"></i><span class="sr-only">Loading...</span>');
 
 	var data = {
 		'action': 'add-to-showcase',	
@@ -709,9 +721,24 @@ function addShowcase(parentID='') {
 		if (r.result === 'updated') {
 			//after update - set meta field status to success
 			jQuery(msgArea).html('<i style="color:green" class="fas fa-check"></i>');
-		} else {
-			//after update - set meta field status to failed
-			jQuery(msgArea).html('<i style="color:red" class="fas fa-times"></i>'+r.result);
-		}		
+		} 
 	});
+}
+
+/*
+* Triggers an AJAX to remove a showcase
+*/
+function removeShowcase(parentID='', childID='', relationID='') {
+
+   var data = {
+	   'action': 'remove-from-showcase',	
+	   'relationID': relationID
+   };
+
+   jQuery.post(ajaxurl, data, function(r) {
+	   if (r.result === 'removed') {
+		   //after update - remove the deleted item
+		   jQuery("#showcase"+parentID+" #child"+childID).remove();
+	   } 	
+   });
 }

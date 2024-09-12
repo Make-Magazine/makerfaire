@@ -849,3 +849,25 @@ function mf_admin_addToShowcase() {
   // Don't forget to stop execution afterward.
   wp_die();
 }
+
+/* Update Existing Showcase relationship (removing child from parent) */
+add_action('wp_ajax_remove-from-showcase', 'mf_admin_removeFromShowcase');
+function mf_admin_removeFromShowcase() {
+  $response = array();
+  $relationID = (isset($_POST['relationID'])?$_POST['relationID']:'');
+ 
+  if(!$relationID){
+    $response['result'] = 'Error: No Showcase to Remove';    
+  }else{
+    $sql = "DELETE FROM `wp_mf_lead_rel` WHERE id=$relationID";          
+    global $wpdb;
+    $wpdb->query($sql);
+    $response['result'] = 'removed';
+  }
+  
+  // Make your array as json
+	wp_send_json($response);
+ 
+  // Don't forget to stop execution afterward.
+  wp_die();
+}

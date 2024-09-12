@@ -288,7 +288,6 @@ $default_locations = isset($default_locations) ? $default_locations : "414";
     function get_entry_presentationTypes() {
         $presentationTypes = array();
 
-        $presentationTypes [] = array('text' => "Unknown", 'value' => "unknown");
         $presentationTypes [] = array('text' => "Workshop", 'value' => "workshop");
         $presentationTypes [] = array('text' => "Talk", 'value' => "talk");
         $presentationTypes [] = array('text' => "Performance", 'value' => "performance");

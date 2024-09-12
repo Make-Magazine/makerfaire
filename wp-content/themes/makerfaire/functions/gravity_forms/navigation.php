@@ -30,9 +30,13 @@ add_action('admin_menu', 'redirect_gf_admin_pages');
 add_filter('gform_addon_navigation', 'add_menu_item');
 
 function add_menu_item($menu_items) {
-    $menu_items[] = array("name" => "mf_showcase", "label" => "Showcases", "callback" => "build_mf_showcase", "permission" => "edit_posts");
+    
     $menu_items[] = array("name" => "mf_fsp_gsp", "label" => "FSP/GSP", "callback" => "build_fsp_gsp", "permission" => "edit_posts");
     $menu_items[] = array("name" => "mf_fairesign", "label" => "Faire Signs", "callback" => "build_faire_signs", "permission" => "edit_posts");
+
+    // or add a page without it getting added to the menu
+    add_submenu_page(null, "Showcases", "Showcases", "edit_posts", "mf_showcase", "build_mf_showcase");
+    //$menu_items[] = array("name" => "mf_showcase", "label" => "Showcases", "callback" => "build_mf_showcase", "permission" => "edit_posts");
 
     return $menu_items;
 }
