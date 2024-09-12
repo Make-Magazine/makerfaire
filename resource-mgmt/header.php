@@ -58,6 +58,7 @@ $my_version = $my_theme->get('Version');
 	<base href="/resource-mgmt/"></base>
 </head>
 <body>
+	<?php if (!current_user_can( 'reports_only' ) ) { ?>
 	<div id="wpadminbar" class="nojq">
 		<div class="quicklinks" id="wp-toolbar" role="navigation" aria-label="Toolbar">
 			<ul id="wp-admin-bar-root-default" class="ab-top-menu">
@@ -66,7 +67,6 @@ $my_version = $my_theme->get('Version');
 
 				</li>
 			</ul>
-
 		</div>
-
 	</div>
+	<?php } ?>

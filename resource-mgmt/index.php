@@ -18,14 +18,14 @@ if ( !current_user_can( 'view_rmt' ) ) {
 include 'header.php';
 
 ?>
-
-  <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+<?php if (!current_user_can( 'reports_only' ) ) { ?>
+  <nav class="navbar navbar-default navbar-fixed-top" role="navigation">    
     <div class="navbar-header">
       <button href="#menu-toggle" class="slidebar-toggle" id="menu-toggle">
         <span>Collapse sidebar</span>
       </button>
-    </div>
-    <?php do_action('rmt_head');?>
+    </div>    
+    
     <div class="navbar-title">
       <i>
         <span id="pageTitle"></span> :
@@ -33,16 +33,19 @@ include 'header.php';
       </i>
     </div>
   </nav>
+  <?php } ?>
 
-  <div id="wrapper">
+  <div id="wrapper" style="<?php if (current_user_can( 'reports_only' ) ) echo 'padding-left:25px !important;' ?>">
+    <?php if (!current_user_can( 'reports_only' ) ) { ?>
     <!-- Sidebar -->
     <div id="slidebar-white" class="slidebar-nav">
       <nav id="navbar-white" class="navbar navbar-default" role="navigation">
         <?php include 'nav.php';?>
       </nav><!--/.navbar -->
     </div><!--/.sidebar-nav -->
+    <?php } ?>
     <!-- Page Content -->
-    <main id="page-wrapper6">
+    <main id="page-wrapper6" style="<?php if (current_user_can( 'reports_only' ) ) echo 'top:0px !important;' ?>">
       <div ng-app="resourceApp" class="ng-scope col-md-12">
         <div ng-view></div>
       </div>

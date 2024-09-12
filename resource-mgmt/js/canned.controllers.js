@@ -10,13 +10,7 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
   $scope.canned_rpt = [];
 
   
-  $scope.handleSelect = function() {
-    if($scope.reports.selFaire!==''){
-      $scope.reports.showLinks = true;      
-    }else{
-      return;
-    }
-
+  $scope.handleSelect = function() {       
     if($scope.reports.subRoute!=''){
       //redirect to the correct canned report based on selection 
       window.location = '#canned/'+ $scope.reports.subRoute+'/'+$scope.reports.selFaire;
@@ -39,11 +33,13 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
       .then(function(response){
         if("error" in response.data) {
           alert(response.data.error);
-        }else if(type=='faires'){
-          $scope.data[type] = response.data[type];
+        }else if(type=='faires'){          
+          $scope.data[type] = response.data[type];  
+          $scope.reports.selFaire = $scope.data.faires[0].ID;  
+          $scope.reports.showLinks = true;            
         }
-      }).finally(function () {
-        if(type=='faires'){
+      }).finally(function () {        
+        if(type=='faires'){          
           faires = $scope.data.faires;
           angular.forEach(faires, function(value,key){
             if(value.faire==$scope.subRoute){
@@ -94,10 +90,10 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
     $scope.reports.showGrid  = true;
     $scope.reports.loading = true;
     var sortParams = {
-      'field_303':  {'direction': uiGridConstants.ASC, 'priority':0},
-      'area':       {'direction': uiGridConstants.ASC, 'priority':1},
-      'subarea':    {'direction': uiGridConstants.ASC, 'priority':2},
-      'location':   {'direction': uiGridConstants.ASC, 'priority':3}
+      //'field_303':  {'direction': uiGridConstants.ASC, 'priority':4},
+      'area':       {'direction': uiGridConstants.ASC, 'priority':0},
+      'subarea':    {'direction': uiGridConstants.ASC, 'priority':1},
+      'location':   {'direction': uiGridConstants.ASC, 'priority':2}
                 };
 
     //get grid data
@@ -118,7 +114,7 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
         angular.forEach(response.data.columnDefs, function(value, key) {
           //add sorting - status, area, sub area, location
           var findMe = value.field;
-          if(findMe in sortParams){
+          if(findMe in sortParams){            
             value.sort = {'direction':sortParams[findMe].direction, 'priority': sortParams[findMe].priority};
           }
           if('aggregationType' in value){
@@ -203,10 +199,10 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
               "faire": faire,
               "entryIDorder": 50,
               "locationOrder": 10,
-              "formTypeorder": 400,
-              "dispFormType": false,
-              "selectedFields":[
-                {"id":16, "label":"Exhibit Description", "choices":"", "type":"textarea", "inputs":"", "order":280},
+              "formTypeorder": 400,                            
+              "dispFormType":false,
+              "useFormSC": false,
+              "selectedFields":[                
                 {"id":96, "label":"Maker Name", "choices":"", "type":"name",
                  "inputs":[{"id":"96.3","label":"First","name":""},{"id":"96.6","label":"Last","name":""}], 
                  "order":250
@@ -285,12 +281,14 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
       vars = {"formSelect":[],
               "formType":["Master", "Exhibit","Performance","Startup Sponsor","Sponsor","Show Management"],
               "faire": faire,
-              "useFormSC": true,
+              "dispFormID":false,
+              "dispFormType":false,
+              "useFormSC": false,
               "entryIDorder": 200,
               "locationOrder": 300,
               "formTypeorder":400,
               "selectedFields":[          
-                {"id":879,"label":"Weekend","choices":"all","type":"checkbox"},
+                {"id":879,"label":"Days","choices":"all","type":"checkbox"},
                 {"id":339,"label":"Exhibit Type","choices":"all","type":"checkbox"},
                 {"id":16,"label":"EXHIBIT SUMMARY","choices":"","type":"textarea","inputs":"", "order":1500},
                 {"id":83,"label":"FIRE","choices":"Yes","type":"radio", "order":1800},
@@ -347,7 +345,9 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
       vars = {"formSelect":[],
               "formType":["Master","Exhibit","Performance","Startup Sponsor","Sponsor","Show Management"],
               "faire": faire,
-              "useFormSC": true,
+              "dispFormID":false,
+              "dispFormType":false,
+              "useFormSC": false,
               "entryIDorder": 200,
               "locationOrder": 300,
               "formTypeorder":400,
@@ -358,7 +358,7 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
                 {"id":303,"label":"Status","choices":"Rejected","type":"radio"},
                 {"id":303,"label":"Status","choices":"Wait List","type":"radio"},
                 {"id":303,"label":"Status","choices":"Cancelled","type":"radio"},
-                {"id":879,"label":"Weekend","choices":"all","type":"checkbox"},
+                {"id":879,"label":"Days","choices":"all","type":"checkbox"},
                 {"id":339,"label":"Exhibit Type","choices":"all","type":"checkbox"}
               ],
               "rmtData":{
@@ -390,7 +390,7 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
               "locationOrder": 30,              
               
               "selectedFields":[                
-                {"id":879,"label":"Fri / Weekend","choices":"all","type":"checkbox", "order":80},
+                {"id":879,"label":"Days","choices":"all","type":"checkbox", "order":80},
                 {"id":339,"label":"Exhibit Type","choices":"all","type":"checkbox", "order":90},
                 {"id":303,"label":"Status","choices":"Accepted","type":"radio","exact":true,"hide":true, "order":100},
                 {"id":151,"label":"Exhibit","choices":"","type":"text","inputs":"", "order":110},                
@@ -412,18 +412,22 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
               "formType":["Master","Exhibit","Performance","Startup Sponsor","Sponsor","Show Management"],
               "faire": faire,
               "dispFormID":false,
-              "useFormSC": true,
+              "dispFormType":false,
+              "useFormSC": false,
               "selectedFields":[
                 {"id":151,"label":"Exhibit","type":"text", "order":25},
                 {"id":303,"label":"Status","choices":"Accepted","type":"radio","exact":true,"hide":true},
-                {"id":879,"label":"Weekend","choices":"all","type":"checkbox"},
+                {"id":879,"label":"Days","choices":"all","type":"checkbox"},
                 {"id":339,"label":"Exhibit Type","choices":"all","type":"checkbox"},
               ],
               "orderBy":'location',
               "rmtData":{
                 "resource":[
                   {"id":"19","value":"Barricade","checked":true,"aggregated":true},
-                  {"id":"18","value":"Fencing","checked":true,"aggregated":true}
+                  {"id":"18","value":"Fencing","checked":true,"aggregated":true},
+                  {"id":"22","value":"Pipe & Drape","checked":true,"aggregated":true},
+                  {"id":"23","value":"Pipe Only","checked":true,"aggregated":true},
+
                 ],
                 "attribute":[],"attention":[],"meta":[]},
               "type":"customRpt",
@@ -459,11 +463,14 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
       vars = {"formSelect":[],
               "formType":["Master","Exhibit","Performance","Startup Sponsor","Sponsor","Show Management"],
               "faire": faire,
+              "dispFormID":false,
+              "dispFormType":false,
+              "useFormSC": false,
               "selectedFields":[
                 {"id":151,"label":"Record Name","choices":"","type":"text","inputs":"", "order":25},
                 {"id":303,"label":"Status","choices":"Proposed","type":"radio"},
                 {"id":303,"label":"Status","choices":"Accepted","type":"radio"},
-                {"id":879,"label":"Weekend","choices":"all","type":"checkbox"},
+                {"id":879,"label":"Days","choices":"all","type":"checkbox"},
                 {"id":339,"label":"Exhibit Type","choices":"all","type":"checkbox"},
               ],
               "rmtData":{
@@ -476,6 +483,8 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
               "location":true};
       var subTitle = 'Guest Seating';
       $scope.reports.callAJAX(vars);
+
+    //work bench and stools report
     }else if(subRoute=="wb_stools"){
       vars = {"formSelect":[],
               "formType":["Master","Exhibit","Performance","Startup Sponsor","Sponsor","Show Management"],
@@ -499,8 +508,43 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
                 "attribute":[],"attention":[],"meta":[]},
               "type":"customRpt",
               "location":true};
-      var subTitle = 'WB/Stools';
+      var subTitle = 'Workbench/Stools';
       $scope.reports.callAJAX(vars);
+
+    }else if(subRoute=="specials"){
+      vars = {"formSelect":[],
+              "formType":["Master","Exhibit","Performance","Startup Sponsor","Sponsor","Show Management"],
+              "faire": faire,
+              "dispFormID":false,
+              "dispFormType":false,
+              "useFormSC": false,
+              "entryIDorder": 40,
+              "locationOrder": 10,
+              "selectedFields":[
+                {"id":"151",  "label":"Record Name","choices":"","type":"text","inputs":"", "order":50},                
+                {"id":"339",  "label":"Entry Type","choices":"all","type":"checkbox", "order":60},
+                {"id":"879",  "label":"Days","choices":"all","type":"checkbox", "order":1400},
+                {"id":"303",  "label":"Status","choices":"Accepted","type":"radio", "order":200},                
+                
+              ],
+              "rmtData":{
+                "resource":[
+                  {"id":"15","value":"Water","checked":true,"aggregated":true, "order":70},
+                  {"id":"19","value":"Barricade","checked":true,"aggregated":true, "order":80},
+                  {"id":"35","value":"Heavy Equipment","checked":true,"aggregated":true,"order":90},
+                  {"id":"47","value":"Storage","checked":true,"aggregated":true,"order":100},
+                  {"id":"26","value":"Rigging","checked":true,"aggregated":true,"order":110}
+                ],
+                "attention":[
+                  {"id":"10","value":"Early Setup","checked":true, "order":120},
+                  {"id":"11","value":"No Friday","checked":true, "order":130},                                                      
+                ],
+                "attribute":[],"meta":[]},
+              "type":"customRpt",
+              "location":true};
+      var subTitle = 'Specials';
+      $scope.reports.callAJAX(vars);
+
     }else if(subRoute=="label"){
       vars = {"formSelect":[],"formType":["Master","Exhibit","Startup Sponsor","Sponsor","Show Management"],
               "faire": faire,
@@ -524,8 +568,8 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
                 {"id": "44",  "label":"FOOD","choices":"all","type":"radio","order":180},    //column S
                 {"id": "84",  "label":"TOOL","choices":"all","type":"radio","order":190},  //column T
                 {"id": "83",  "label":"FIRE","choices":"all","type":"radio","order":200}, //column U
-                {"id":879,"label":"Weekend","choices":"all","type":"checkbox"},
-                {"id":339,"label":"Exhibit Type","choices":"all","type":"checkbox"},
+                {"id":"879",  "label":"Days","choices":"all","type":"checkbox"},
+                {"id":"339",  "label":"Exhibit Type","choices":"all","type":"checkbox"},
               ],
               "rmtData":{
                 "resource":[
@@ -556,7 +600,7 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
                 {"id":303,"label":"Status","choices":"Rejected","type":"radio"},
                 {"id":303,"label":"Status","choices":"Wait List","type":"radio"},
                 {"id":303,"label":"Status","choices":"Cancelled","type":"radio"},                
-                {"id":879,"label":"Weekend","choices":"all","type":"checkbox"},
+                {"id":879,"label":"Days","choices":"all","type":"checkbox"},
                 {"id":339,"label":"Exhibit Type","choices":"all","type":"checkbox"},
                 {"id":737,"label":"Additional Items","choices":"","type":"textarea"},
                 {"id":749,"label":"Custom Order","choices":"","type":"textarea","inputs":""},
