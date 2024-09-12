@@ -161,7 +161,7 @@ function cron_expofp_sync($expoID = '') {
                             'field_id'          => 0,
                             'field_before'      => addslashes($prev_value), 
                             'field_after'       => addslashes(explode("|", $booth_details['type'])[0] . " (" . $booth_name . ")"),
-                            'fieldLabel'        => addslashes('New ExpoFP Placement'),
+                            'fieldLabel'        => addslashes('ExpoFP Placement/Change'),
                             'status_at_update'  => '');      
                     }                    
                 } else {
