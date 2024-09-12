@@ -202,8 +202,7 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
               "formTypeorder": 400,                            
               "dispFormType":false,
               "useFormSC": false,
-              "selectedFields":[
-                {"id":16, "label":"Exhibit Description", "choices":"", "type":"textarea", "inputs":"", "order":280},
+              "selectedFields":[                
                 {"id":96, "label":"Maker Name", "choices":"", "type":"name",
                  "inputs":[{"id":"96.3","label":"First","name":""},{"id":"96.6","label":"Last","name":""}], 
                  "order":250
@@ -289,7 +288,7 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
               "locationOrder": 300,
               "formTypeorder":400,
               "selectedFields":[          
-                {"id":879,"label":"Weekend","choices":"all","type":"checkbox"},
+                {"id":879,"label":"Days","choices":"all","type":"checkbox"},
                 {"id":339,"label":"Exhibit Type","choices":"all","type":"checkbox"},
                 {"id":16,"label":"EXHIBIT SUMMARY","choices":"","type":"textarea","inputs":"", "order":1500},
                 {"id":83,"label":"FIRE","choices":"Yes","type":"radio", "order":1800},
@@ -359,7 +358,7 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
                 {"id":303,"label":"Status","choices":"Rejected","type":"radio"},
                 {"id":303,"label":"Status","choices":"Wait List","type":"radio"},
                 {"id":303,"label":"Status","choices":"Cancelled","type":"radio"},
-                {"id":879,"label":"Weekend","choices":"all","type":"checkbox"},
+                {"id":879,"label":"Days","choices":"all","type":"checkbox"},
                 {"id":339,"label":"Exhibit Type","choices":"all","type":"checkbox"}
               ],
               "rmtData":{
@@ -391,7 +390,7 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
               "locationOrder": 30,              
               
               "selectedFields":[                
-                {"id":879,"label":"Fri / Weekend","choices":"all","type":"checkbox", "order":80},
+                {"id":879,"label":"Days","choices":"all","type":"checkbox", "order":80},
                 {"id":339,"label":"Exhibit Type","choices":"all","type":"checkbox", "order":90},
                 {"id":303,"label":"Status","choices":"Accepted","type":"radio","exact":true,"hide":true, "order":100},
                 {"id":151,"label":"Exhibit","choices":"","type":"text","inputs":"", "order":110},                
@@ -418,7 +417,7 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
               "selectedFields":[
                 {"id":151,"label":"Exhibit","type":"text", "order":25},
                 {"id":303,"label":"Status","choices":"Accepted","type":"radio","exact":true,"hide":true},
-                {"id":879,"label":"Weekend","choices":"all","type":"checkbox"},
+                {"id":879,"label":"Days","choices":"all","type":"checkbox"},
                 {"id":339,"label":"Exhibit Type","choices":"all","type":"checkbox"},
               ],
               "orderBy":'location',
@@ -471,7 +470,7 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
                 {"id":151,"label":"Record Name","choices":"","type":"text","inputs":"", "order":25},
                 {"id":303,"label":"Status","choices":"Proposed","type":"radio"},
                 {"id":303,"label":"Status","choices":"Accepted","type":"radio"},
-                {"id":879,"label":"Weekend","choices":"all","type":"checkbox"},
+                {"id":879,"label":"Days","choices":"all","type":"checkbox"},
                 {"id":339,"label":"Exhibit Type","choices":"all","type":"checkbox"},
               ],
               "rmtData":{
@@ -532,8 +531,8 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
                 {"id": "44",  "label":"FOOD","choices":"all","type":"radio","order":180},    //column S
                 {"id": "84",  "label":"TOOL","choices":"all","type":"radio","order":190},  //column T
                 {"id": "83",  "label":"FIRE","choices":"all","type":"radio","order":200}, //column U
-                {"id":879,"label":"Weekend","choices":"all","type":"checkbox"},
-                {"id":339,"label":"Exhibit Type","choices":"all","type":"checkbox"},
+                {"id":"879",  "label":"Days","choices":"all","type":"checkbox"},
+                {"id":"339",  "label":"Exhibit Type","choices":"all","type":"checkbox"},
               ],
               "rmtData":{
                 "resource":[
@@ -564,7 +563,7 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
                 {"id":303,"label":"Status","choices":"Rejected","type":"radio"},
                 {"id":303,"label":"Status","choices":"Wait List","type":"radio"},
                 {"id":303,"label":"Status","choices":"Cancelled","type":"radio"},                
-                {"id":879,"label":"Weekend","choices":"all","type":"checkbox"},
+                {"id":879,"label":"Days","choices":"all","type":"checkbox"},
                 {"id":339,"label":"Exhibit Type","choices":"all","type":"checkbox"},
                 {"id":737,"label":"Additional Items","choices":"","type":"textarea"},
                 {"id":749,"label":"Custom Order","choices":"","type":"textarea","inputs":""},
