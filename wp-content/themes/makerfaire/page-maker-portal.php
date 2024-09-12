@@ -226,9 +226,9 @@ get_header();
                       </p>
                     </span>
 
-                    <p><a :href="entry.gv_edit_link"><i class="fas fa-edit" aria-hidden="true"></i>Edit Submitted Info</a></p>
-                    <p><a href="https://makerfaire.com/bay-area/maker-shipping/"><i class="fas fa-truck" aria-hidden="true"></i>Shipping Request Form</a></p>
-                    <p><a href="https://makerfaire.com/bay-area/special-request-form/"><i class="fas fa-sparkles" aria-hidden="true"></i>Special Request Form</a></p>
+                    <p><a :href="entry.gv_edit_link"><i class="fas fa-edit" aria-hidden="true"></i>Edit Full Entry</a></p>
+                    <p><a href="https://makerfaire.com/bay-area/maker-shipping/"><i class="fas fa-truck" aria-hidden="true"></i>Shipping Form</a></p>
+                    <p><a href="https://makerfaire.com/bay-area/special-request-form/"><i class="fas fa-sparkles" aria-hidden="true"></i>Special Requests</a></p>
                     <!--<span v-if="entry.ep_token!=''"> 
                       <div>
                       <a target="_blank" :href="'/bay-area/logistics-information/?ep_token='+entry.ep_token"><i class="fas fa-edit" aria-hidden="true"></i>Manage Logistics Info</a>
