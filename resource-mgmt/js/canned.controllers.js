@@ -443,8 +443,8 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
               "useFormSC": false,
               "entryIDorder": 150,
               "selectedFields":[
-                {"id":74,"label":"What are you powering","choices":"","type":"text", "order":120},                 
-                {"id":302,"label":"Fri Only?","choices":"FridaysOnly","type":"checkbox", "order":130},
+                {"id":74,"label":"What are you powering","choices":"","type":"text", "order":120},                                 
+                {"id":"879",  "label":"Days","choices":"all","type":"checkbox", "order":130},
                 {"id":339,"label":"Exhibit Type","choices":"all","type":"checkbox", "order":140},                
                 {"id":151,"label":"EXHIBIT","choices":"","type":"text","inputs":"", "order":160}, 
                 {"id":303,"label":"Status","choices":"Accepted","type":"radio","exact":true,"hide":true, "order":170},                                
@@ -520,6 +520,7 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
               "useFormSC": false,
               "entryIDorder": 40,
               "locationOrder": 10,
+              "rtnIfRMTempty": false,
               "selectedFields":[
                 {"id":"151",  "label":"Record Name","choices":"","type":"text","inputs":"", "order":50},                
                 {"id":"339",  "label":"Entry Type","choices":"all","type":"checkbox", "order":60},
