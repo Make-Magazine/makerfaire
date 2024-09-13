@@ -30,6 +30,12 @@ if (getUrlParam("featured")) {
     featured = getUrlParam("featured");
 }
 
+// filter by layout with url
+var layout = "grid";
+if (getUrlParam("layout")) {
+    layout = getUrlParam("layout");
+}
+
 mtm.controller('mtmMakers', ['$scope', '$sce', '$filter', '$http', function ($scope, $sce, $filter, $http) {
     $scope.trust = $sce.trustAsHtml; // for rendering html
     //infinite scroll
@@ -57,7 +63,7 @@ mtm.controller('mtmMakers', ['$scope', '$sce', '$filter', '$http', function ($sc
     $scope.makerSearch.weekend = '';
     $scope.alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
 
-    $scope.layout = 'grid';
+    $scope.layout = layout;
     $scope.category = '';
     $scope.type = '';
     $scope.tags = [];

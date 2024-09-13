@@ -486,7 +486,7 @@ $default_locations = isset($default_locations) ? $default_locations : "414";
                     'workWeekEnd' => $end_dow,
                     'workDayStart' => new DateTime('2024/10/18 17:00', new DateTimeZone('UTC')),
                     'workDayEnd' => new DateTime('2024/10/20 1:00', new DateTimeZone('UTC')),
-                        ), array(
+                ), array(
                     'type' => 'workWeek',
                     'majorTick' => 30,
                     'selected' => true,

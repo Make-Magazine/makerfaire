@@ -148,8 +148,9 @@ $faireName = (isset($results[0]->faire_name)?$results[0]->faire_name:'');
             </div>
 
             <div class="mtm-filter-view">
-                <a ng-class="{active: layout == 'list'}" ng-click="layout = 'list'" class="mtm-filter-l pointer-on-hover box list"><i class="fas fa-bars" aria-hidden="true"></i></a>
-                <a ng-class="{active: layout == 'grid'}" ng-click="layout = 'grid'" class="mtm-filter-g pointer-on-hover box gallery"><i class="far fa-grid-2" aria-hidden="true"></i></a>
+                <a ng-class="{active: layout == 'list'}" ng-click="layout = 'list'" class="mtm-filter-l pointer-on-hover box list" title="List View"><i class="fas fa-bars" aria-hidden="true"></i></a>
+                <a ng-class="{active: layout == 'grid'}" ng-click="layout = 'grid'" class="mtm-filter-g pointer-on-hover box gallery" title="Grid View"><i class="far fa-grid-2" aria-hidden="true"></i></a>
+                <a ng-show="makers[0].name" ng-class="{active: layout == 'maker'}" ng-click="layout = 'maker'" class="mtm-filter-m pointer-on-hover box maker" title="Maker View"><i class="fas fa-user" aria-hidden="true"></i></a>
             </div>
 
         </div>
@@ -297,10 +298,60 @@ $faireName = (isset($results[0]->faire_name)?$results[0]->faire_name:'');
                             </div>
                         </div>
                     </article>
-
                 </div>
                 <div class="clearfix"></div>
             </div>
+
+            <!-- Maker View -->
+            <div ng-if="layout == 'maker'" class="mtm-results-cont maker-view">
+
+                <div class="mf-card" ng-repeat="maker in makers| filter : makerSearch | limitTo: limit">
+
+                    <article class="mtm-maker">
+                        <div class="mtm-image">
+                            <a href="{{maker.link}}" target="_blank">
+                                <img src="{{maker.maker_photo}}" alt="{{maker.name}} Photo" />
+                            </a>
+                        </div>
+                        <div class="mtm-text">
+                            <a href="{{maker.link}}" target="_blank">
+                                <h4 ng-bind-html="trust(maker.makerList)"></h4>
+                                <p class="location">{{maker.maker_location}}</p>
+                            </a>
+                            <div class="mtm-detail-items">
+                                <div class="mtm-detail-item">
+                                    <span ng-bind-html="maker.main_cat_icon"></span>
+                                    <p>
+                                        <a href="?category={{maker.category_id_refs[0]}}">{{maker.category_id_refs[0]}}</a>
+                                    </p>
+                                </div>
+                                <div class="mtm-detail-item">
+                                    <span>
+                                        <a href="?type={{maker.typeString}}">
+                                            <i class="fa {{maker.types[0].toLowerCase()}}"></i>
+                                        </a>
+                                    </span>
+                                    <p>
+                                        <a href="?type={{maker.typeString}}">{{maker.typeString}}</a>
+                                    </p>
+                                </div>
+                                <div class="mtm-detail-item">
+                                    <span>
+                                        <a href="{{maker.link}}" target="_blank">
+                                            <i class="fa fa-plus"></i>
+                                        </a>
+                                    </span>
+                                    <p>
+                                        <a href="{{maker.link}}" target="_blank">More</a>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </article>
+                </div>
+                <div class="clearfix"></div>
+            </div>
+
         </div>
     </div>
 
