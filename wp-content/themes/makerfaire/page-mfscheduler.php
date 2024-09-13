@@ -482,7 +482,7 @@ $default_locations = isset($default_locations) ? $default_locations : "414";
                 ))->addView(array(
                     'type' => 'day',
                     'majorTick' => 30,
-                    'showWorkHours' => true,
+                    'showWorkHours' => false,
                     'workWeekEnd' => $end_dow,
                     'workDayStart' => new DateTime('2024/10/18 17:00', new DateTimeZone('UTC')),
                     'workDayEnd' => new DateTime('2024/10/20 1:00', new DateTimeZone('UTC')),
@@ -492,7 +492,7 @@ $default_locations = isset($default_locations) ? $default_locations : "414";
                     'selected' => true,
                     'workWeekStart' => $start_dow,
                     'workWeekEnd' => $end_dow,
-                    'showWorkHours' => true,
+                    'showWorkHours' => false,
                     'workDayStart' => new DateTime('2024/10/18 17:00', new DateTimeZone('UTC')),
                     'workDayEnd' => new DateTime('2024/10/20 1:00', new DateTimeZone('UTC'))
                 ), 'agenda')->dataSource($dataSource);
