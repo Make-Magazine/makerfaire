@@ -4,10 +4,11 @@
     <option ng-repeat="(key, faire) in data.faires" value="{{faire.ID}}">{{faire.faire_name}}</option>
   </select>  
 
-  <span ng-if="reports.showLinks" class="reportsView animated fadeInUp cannedLinks">    
+  <span ng-if="reports.showLinks" class="reportsView animated fadeInUp cannedLinks">        
     <select ng-model="reports.subRoute" name="canned_rpt" id="canned_rpt" ng-change="handleSelect()">
       <option value="undefined">Please select a Report</option>
       <option value="am_summary">Area Manager Summary</option>
+      <option value="am_short">Area Manager Print</option>
       <option value="table_chairs">Table/Chairs</option>
       <option value="electrical">Electrical</option>
       <option value="wb_stools">Maker Bench and Stools</option>      
@@ -25,6 +26,14 @@
       <option value="spdist">Sponsor Distribution</option>
       <option value="spint">Sponsor Internet</option>-->
     </select>
+    <span>      
+      <button ng-click="export('pdf')">Export PDF</button>
+      <!--<button ng-click="export('csv')">Export CSV</button>      -->
+    </span>
+    <!--<div class="custom-csv-link-location">
+      <label>Your CSV will show below:</label>
+      <span class="ui-grid-exporter-csv-link">&nbsp;</span>
+    </div>-->
   </span>
   
 </div>
