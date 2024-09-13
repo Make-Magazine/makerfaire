@@ -4,6 +4,7 @@
  *
  * @version 2.1
  */
+
 global $wp_query;
 global $wpdb;
 $entryId = (isset($wp_query->query_vars['e_id']) ? $wp_query->query_vars['e_id'] : '');
