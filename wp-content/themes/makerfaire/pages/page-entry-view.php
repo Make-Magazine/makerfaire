@@ -85,7 +85,7 @@ $showEditMakey = false;
                 if(isset($project_gallery) && !empty($project_gallery)) { ?>
                     <div id="projectGallery" class="owl-carousel">
                     <?php foreach($project_gallery as $key=>$image) { 
-                            if($image!=''){
+                            if(isset($image) && $image!=''){
                                 $image_size = getimagesize($image);
                                 $image_default = $image;
                                 $image_sources = array();
