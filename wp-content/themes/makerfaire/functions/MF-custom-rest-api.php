@@ -415,7 +415,7 @@ function getMTMentries($formIDs = '', $faireID = '', $years = '') {
                 'small_img_url' => $smallPhoto,
                 'categories' => $category,
                 'main_cat_icon' => $mainCategoryIcon,
-                'types' => $types,
+                'types' => array_unique($types),
                 'description' => $result->short_desc,
                 'flag' => $flag, //only set if flag is set to 'Featured Maker'
                 'handson' => $handson, //only set if handson is set to 'Featured Handson'
