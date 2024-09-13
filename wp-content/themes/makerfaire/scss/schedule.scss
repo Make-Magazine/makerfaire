@@ -443,8 +443,18 @@ h4.featured {
 						&.talk::before {
 							content: "\f075";
 						}
-						&.performance::before {
-							content: "\f130";
+						&.workshop::before {
+							content: "\f256";
+						}
+						&.performance, &.performer {
+							&::before {
+								content: "\e31b";
+							}
+						}
+						&.presenter, &.presentation {
+							&:before {
+								content: "\f685";
+							}
 						}
 						&.demo::before {
 							content: "\f06e";

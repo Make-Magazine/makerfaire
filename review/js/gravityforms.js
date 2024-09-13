@@ -200,7 +200,7 @@ function updateMgmt(action, entryID, delID=0) {
                         cell2.innerHTML = 'Type: '+type.charAt(0).toUpperCase() + type.slice(1); //Type: type
 
                         //schedule date
-                        const date = new Date(selDate);                                                
+                        const date = new Date(selDate.replace("-", "/")); // creating new date is more accurate when using / rather than - for dividers https://stackoverflow.com/questions/7556591/is-the-javascript-date-object-always-one-day-off                       
                         cell3.innerHTML = new Intl.DateTimeFormat('default', {dateStyle: 'short'}).format(date); 
 
                         //schedule time
