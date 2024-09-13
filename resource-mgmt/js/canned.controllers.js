@@ -48,7 +48,7 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
           });
         }
       });
-    }
+    }    
   };
 
   //set up gridOptions for predefined reports
@@ -59,8 +59,20 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
     showColumnFooter: true,
     rowHeight: 100,
     exporterMenuPdf: true, // hide PDF export
+    exporterPdfDefaultStyle: {fontSize: 6},
+    //need this to center grid
+    exporterPdfTableStyle: {margin: [-20, -10, -10, -20]},
+    //exporterPdfTableStyle: {margin: [5, 5, 5, 5]},
+    exporterPdfTableHeaderStyle: {fontSize: 6, bold: false},
     exporterCsvFilename: $routeParams.sub+'-export.csv',
     exporterCsvLinkElement: angular.element(document.querySelectorAll(".custom-csv-link-location")),
+     //Allows external buttons to be pressed for exporting
+    onRegisterApi: function(gridApi){$scope.gridApi = gridApi;},
+    exporterPdfMaxGridWidth: 680,
+    exporterPdfFooter: function ( currentPage, pageCount ) {
+      return { text: 'Page ' + currentPage.toString() + ' of ' + 
+        pageCount.toString(), style: 'footerStyle' };
+    },
     exporterFieldCallback: function( grid, row, col, input ) {
 
       if(("editDropdownOptionsArray" in col.colDef)){
@@ -77,6 +89,7 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
           return optionsHash[input];
         }
       }else{
+        //return grid.getCellDisplayValue(row, col);
         return input;
       }
     },
@@ -84,6 +97,18 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
       $scope.gridApi = gridApi;
     }
   };
+//export functionality
+$scope.export = function(export_format='pdf'){    
+  var export_row_type       = 'visible';
+  var export_column_type    = 'visible';
+  if ($scope.export_format == 'csv') {
+    var myElement = angular.element(document.querySelectorAll(".custom-csv-link-location"));
+    console.log(myElement);
+    $scope.gridApi.exporter.csvExport( export_row_type, export_column_type, myElement );
+  } else if (export_format == 'pdf') {    
+    $scope.gridApi.exporter.pdfExport( export_row_type, export_column_type );
+  };
+};
 
  //get report data
   $scope.reports.callAJAX = function(pvars){
@@ -135,7 +160,7 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
       $scope.reports.loading = false;
     });
   };
-
+  
   if($routeParams){
     if(typeof $routeParams.sub !== 'undefined' && $routeParams.sub !== 'undefined'){
       if(!jQuery("#wrapper").hasClass("toggled")){
@@ -209,7 +234,7 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
                 },
                 {"id":98,"label":"Contact Email","choices":"","type":"email","inputs":"", "order":260},
                 {"id":99,"label":"Contact #","choices":"","type":"phone","inputs":"", "order":270},
-                {"id":151,"label":"Exhibit ID","choices":"","type":"text","inputs":"", "order":40},                
+                {"id":151,"label":"Project Name","choices":"","type":"text","inputs":"", "order":40},                
                 {"id":303,"label":"Status","choices":"Accepted","type":"radio", "order": 240},                
                 {"id":879,"label":"Days","choices":"all","type":"checkbox","order":220},
                 {"id":339,"label":"Exhibit Type","choices":"all","type":"checkbox", "order":230}
@@ -277,7 +302,53 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
       var subTitle = 'AM summary';
       $scope.reports.callAJAX(vars);
     }else
-    if(subRoute=='zoho'){
+    if(subRoute=='am_short'){
+      vars = {"formSelect":[],
+              "formType":["Master","Exhibit","Performance","Startup Sponsor","Sponsor","Show Management"],
+              "faire": faire,
+              "entryIDorder": 50,
+              "entryIDwidth": 30,
+              "locationOrder": 10,
+              "formTypeorder": 400,                            
+              "dispFormType":false,
+              "dispFormID":false,
+              "useFormSC": true,
+              "placedOnly":true,
+              "selectedFields":[                
+                {"id":96, "label":"Maker", "choices":"", "type":"name",
+                 "inputs":[{"id":"96.3","label":"First","name":""},{"id":"96.6","label":"Last","name":""}], 
+                 "order":250, "width":'*'
+                },
+                //{"id":98,"label":"Contact Email","choices":"","type":"email","inputs":"", "order":260},
+                {"id":99,"label":"Contact #","choices":"","type":"phone","inputs":"", "order":270},
+                {"id":151,"label":"Proj Name","choices":"","type":"text","inputs":"", "order":40},    
+                //{"id":303,"label":"Status","choices":"Accepted","type":"radio", "order": 240},                              
+                {"id":879,"label":"Days","choices":"all","type":"checkbox","order":220},
+                {"id":339,"label":"Type","choices":"all","type":"checkbox", "order":230, "width":40}
+             ],
+             "rmtData":{
+                "resource":[
+                  {"id":"all","value":"ALL RESOURCES","checked":true, "order":60}
+                ],
+                "attribute":[
+                  {"id":"2",  "value":"Final Space Size","checked":true, "order":70},
+                  //{"id":"19",  "value":"Space Size: Requested","checked":true, "order":150},
+                  {"id":"4",  "value":"IN/OUT","checked":true, "order":210},
+                  {"id":"9",  "value":"NZ","checked":true, "order":200},
+                  {"id":"11", "value":"INT","checked":true, "order":190}
+                ],
+                "attention":[
+                  {"id":"9","value":"Area Manager Notes","checked":true, "order":100},
+                  {"id":"10","value":"Early Setup","checked":true, "order":90},
+                  //{"id":"11","value":"No Friday","checked":true, "order":80}
+                ],                
+                "meta":[]
+              },
+             "type":"customRpt",
+             "location":true};
+      var subTitle = 'AM summary(short)';
+      $scope.reports.callAJAX(vars);
+    }else if(subRoute=='zoho'){
       vars = {"formSelect":[],
               "formType":["Master", "Exhibit","Performance","Startup Sponsor","Sponsor","Show Management"],
               "faire": faire,
@@ -291,8 +362,8 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
                 {"id":879,"label":"Days","choices":"all","type":"checkbox"},
                 {"id":339,"label":"Exhibit Type","choices":"all","type":"checkbox"},
                 {"id":16,"label":"EXHIBIT SUMMARY","choices":"","type":"textarea","inputs":"", "order":1500},
-                {"id":83,"label":"FIRE","choices":"Yes","type":"radio", "order":1800},
-                {"id":83,"label":"FIRE","choices":"No","type":"radio", "order":1800},
+                {"id":83,"label":"FIRE","choices":"all","type":"radio", "order":1800},
+                
                 {"id":85,"label":"Describe any fire or safety issues.","choices":"","type":"textarea","inputs":""},
                 {"id":96,"label":"MAKER NAME","choices":"","type":"name", "order":500,
                   "inputs":[

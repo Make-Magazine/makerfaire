@@ -1,5 +1,4 @@
 <?php
-
 /*
   ajax to populate resource management table
  */
@@ -66,6 +65,9 @@ function cannedRpt() {
 
    //return entries if the RMT data is empty?
    $rtnIfRMTempty = (isset($obj->rtnIfRMTempty) ? $obj->rtnIfRMTempty : true);
+   
+   //only returned placed data
+   $placedOnly    = (isset($obj->placedOnly) ? $obj->placedOnly : true);
 
    //display form ID?
    $dispFormID    = (isset($obj->dispFormID) ? $obj->dispFormID : false);
@@ -110,10 +112,10 @@ function cannedRpt() {
     */
 
    $data['columnDefs'] = array();
-   $data['columnDefs'][] = array('field' => 'entry_id', 'displayName' => $entryIDLabel, 'displayOrder' => $entryIDorder, 'width'=>'100');
+   $data['columnDefs'][] = array('field' => 'entry_id', 'displayName' => $entryIDLabel, 'displayOrder' => $entryIDorder);
 
    $visible = $dispFormID;
-   $data['columnDefs'][] = array('field' => 'form_id', 'visible' => $visible, 'displayOrder' => $formIDorder,'width'=>'100');
+   $data['columnDefs'][] = array('field' => 'form_id', 'visible' => $visible, 'displayOrder' => $formIDorder,'width'=>'*');
    if ($dispFormType) {
       $data['columnDefs'][] = array('field' => 'form_type', 'displayName' => $formTypeLabel, 'displayOrder' => $formTypeorder,'width'=>'100');
    }
@@ -178,10 +180,11 @@ function cannedRpt() {
       
       //add requested field to columns
       $data['columnDefs'][$selFieldsID] = array(
-         'field' => 'field_' . str_replace('.', '_', $selFieldsID),
-         'displayName' => $selFields->label, 
-         'type' => 'string', 'visible' => $visible,
-         'min_width' => "100", 'width' => "100",
+         'field'        => 'field_' . str_replace('.', '_', $selFieldsID),
+         'displayName'  => $selFields->label, 
+         'type'         => 'string', 
+         'visible'      => $visible,
+         'width'        =>  (isset($selFields->width) ? $selFields->width : '*'),
          'displayOrder' => (isset($selFields->order) ? $selFields->order : 9999)
       );
      
@@ -379,6 +382,9 @@ function cannedRpt() {
                $locRetData = pullLocData($lead_id, $useFormSC, $locationOrder);
                $fieldData = array_merge($fieldData, $locRetData['data']);
                $colDefs = array_merge($colDefs, $locRetData['colDefs']);
+               if($placedOnly && empty($locRetData['data'])){               
+                  $writeEntry = FALSE;
+               }
             }
             if ($tickets) {
                $tickRetData = pullTickData($lead_id, $useFormSC, $ticketsOrder);
@@ -543,7 +549,7 @@ function pullRmtData($rmtData, $entryID, $useFormSC) {
                'field' => 'res_' . str_replace('.', '_', $selRMT->id),
                'displayName' => $selRMT->value,
                'displayOrder' => $displayOrder,
-               'width' => "100"
+               'width'        => (isset($selRMT->width) ? $selRMT->width : '*') 
             );
             $return['data']['res_' . $selRMT->id] = implode("\n", $entryValue);  //separate each resource with a line break in the csv file
          }
@@ -554,7 +560,7 @@ function pullRmtData($rmtData, $entryID, $useFormSC) {
                'field' => 'res_' . str_replace('.', '_', $selRMT->id) . '_comment',
                'displayName' => $selRMT->value . ' - comment',
                'displayOrder' => $displayOrder + .2,
-               'width' => "100"
+               'width'        => (isset($selRMT->width) ? $selRMT->width : '*') 
             );
             $return['data']['res_' . $selRMT->id . '_comment'] = implode("\r", $entryComment);
          }
@@ -576,9 +582,8 @@ function pullRmtData($rmtData, $entryID, $useFormSC) {
 
          //set variables with input
          $displayOrder = (isset($selRMT->order) ? $selRMT->order : 200);  //order in returned data where RMT data displays
-         $incComments = (isset($selRMT->comments) ? $selRMT->comments : false); //display commments in separate column
-         $aggregated = (isset($selRMT->aggregated) ? $selRMT->aggregated : false); //aggregate comments with value
-         $displayLabel = (isset($selRMT->value) ? $selRMT->value : '');
+         $incComments  = (isset($selRMT->comments) ? $selRMT->comments : false); //display commments in separate column
+         $aggregated   = (isset($selRMT->aggregated) ? $selRMT->aggregated : false); //aggregate comments with value         
 
          //loop thru data
          $attributes = $wpdb->get_results($sql, ARRAY_A);
@@ -600,19 +605,19 @@ function pullRmtData($rmtData, $entryID, $useFormSC) {
          
          //set return data and column definitions
          $return['colDefs']['att_' . $selRMT->id] = array(
-            'field' => 'att_' . str_replace('.', '_', $selRMT->id),
-            'displayName' => $selRMT->value,
+            'field'        => 'att_' . str_replace('.', '_', $selRMT->id),
+            'displayName'  => $selRMT->value,
             'displayOrder' => $displayOrder,
-            'width' => "100"
+            'width'        => (isset($selRMT->width) ? $selRMT->width : '*') 
          );
          $return['data']['att_' . $selRMT->id] = implode("\r", $entryValue);  //separate each resource with a line break in the csv file
          //set comments column if requested
          if ($incComments) {
             $return['colDefs']['att_' . $selRMT->id . '_comment'] = array(
-               'field' => 'att_' . str_replace('.', '_', $selRMT->id) . '_comment',
-               'displayName' => $selRMT->value . ' - comment',
+               'field'        => 'att_' . str_replace('.', '_', $selRMT->id) . '_comment',
+               'displayName'  => $selRMT->value . ' - comment',
                'displayOrder' => $displayOrder + .2,
-               'width' => "100"
+               'width'        => (isset($selRMT->width) ? $selRMT->width : '*')
             );
             //$return['data']['att_' . $selRMT->id . '_comment'] = $attribute['comment'];
             $return['data']['att_' . $selRMT->id . '_comment'] = implode("\r", $entryComment);
@@ -640,10 +645,10 @@ function pullRmtData($rmtData, $entryID, $useFormSC) {
             $entryAttn[] = $attention['comment'];
          }
          $return['colDefs']['attn_' . $selRMT->id] = array(
-            'field' => 'attn_' . str_replace('.', '_', $selRMT->id),
-            'displayName' => $selRMT->value,
+            'field'        => 'attn_' . str_replace('.', '_', $selRMT->id),
+            'displayName'  => $selRMT->value,
             'displayOrder' => (isset($selRMT->order) ? $selRMT->order : 300),
-            'width' => "100"
+            'width'        => (isset($selRMT->width) ? $selRMT->width : '*') 
          );
          $return['data']['attn_' . $selRMT->id] = implode(', ', $entryAttn);
       }
@@ -668,16 +673,15 @@ function pullRmtData($rmtData, $entryID, $useFormSC) {
       $sql = "SELECT meta_key,meta_value FROM `wp_gf_entry_meta` where meta_key in(" . $reqIDs . ") and entry_id = " . $entryID;
 
       //loop thru data
-      $metas = $wpdb->get_results($sql, ARRAY_A);
-      $entryMeta = array();
+      $metas = $wpdb->get_results($sql, ARRAY_A);      
 
       foreach ($metas as $meta) {
          $selRMT = $reqMetaArr[$meta['meta_key']];
          $return['colDefs']['meta_' . $selRMT->id] = array(
-            'field' => 'meta_' . str_replace('.', '_', $selRMT->id),
-            'displayName' => $selRMT->value,
+            'field'        => 'meta_' . str_replace('.', '_', $selRMT->id),
+            'displayName'  => $selRMT->value,
             'displayOrder' => (isset($selRMT->order) ? $selRMT->order : 400),
-            'width' => "100"
+            'width'        => (isset($selRMT->width) ? $selRMT->width : '*') 
          );
          $return['data']['meta_' . $selRMT->id] = $meta['meta_value'];
       }
@@ -729,9 +733,9 @@ function pullLocData($entryID, $useFormSC = false, $locationOrder = 30) {
             $locArr['location'][] = $row->location;
          }
          //remove any duplicates
-         $locArr['area'] = array_unique($locArr['area']);
-         $locArr['subarea'] = array_unique($locArr['subarea']);
-         $locArr['location'] = array_unique($locArr['location']);
+         $locArr['area']      = array_unique($locArr['area']);
+         $locArr['subarea']   = array_unique($locArr['subarea']);
+         $locArr['location']  = array_unique($locArr['location']);
 
          //concatenate array values into strings separated by ' and '
          $area = implode(' and ', $locArr['area']);
@@ -739,11 +743,11 @@ function pullLocData($entryID, $useFormSC = false, $locationOrder = 30) {
          $location = implode(' and ', $locArr['location']);
 
          //populate return data
-         $return['colDefs']['area'] = array('field' => 'area', 'width'=>'100', 'displayName' => ($useFormSC ? 'A' : 'Area'), 'displayOrder' => $locationOrder);
+         $return['colDefs']['area'] = array('field' => 'area', 'width'=>'*', 'displayName' => ($useFormSC ? 'A' : 'Area'), 'displayOrder' => $locationOrder);
          $return['data']['area'] = $area;
-         $return['colDefs']['subarea'] = array('field' => 'subarea', 'width'=>'100', 'displayName' => ($useFormSC ? 'SUBAREA' : 'Subarea'), 'displayOrder' => $locationOrder + 1);
+         $return['colDefs']['subarea'] = array('field' => 'subarea', 'width'=>'*', 'displayName' => ($useFormSC ? 'SUBAREA' : 'Subarea'), 'displayOrder' => $locationOrder + 1);
          $return['data']['subarea'] = $subarea;
-         $return['colDefs']['location'] = array('field' => 'location', 'width'=>'100', 'displayName' => ($useFormSC ? 'LOC' : 'Location'), 'displayOrder' => $locationOrder + 2);
+         $return['colDefs']['location'] = array('field' => 'location', 'width'=>'*', 'displayName' => ($useFormSC ? 'LOC' : 'Location'), 'displayOrder' => $locationOrder + 2);
          $return['data']['location'] = $location;
       }
    }
@@ -779,7 +783,7 @@ function pullTickData($entryID, $useFormSC = false, $ticketsOrder = 70) {
          $access_code = implode('    ', $ticketArr['access_code']);
 
          //populate return data
-         $return['colDefs']['access_code'] = array('field' => 'access_code', 'width' => "100", 'displayName' => 'Access Codes', 'displayOrder' => $ticketsOrder);
+         $return['colDefs']['access_code'] = array('field' => 'access_code', 'width' => "*", 'displayName' => 'Access Codes', 'displayOrder' => $ticketsOrder);
          $return['data']['access_code'] = $access_code;
       }
    }
@@ -905,7 +909,7 @@ function pullFieldData($entryID, $reqFields) {
             }
          }
          $return['data']['field_' . $reqID] = $data;
-         $return['colDefs']['field_' . $reqID] = array('field' => 'field_' . $reqID, 'displayName' => $reqLabel, 'width' => '100');
+         $return['colDefs']['field_' . $reqID] = array('field' => 'field_' . $reqID, 'displayName' => $reqLabel, 'width' => '*');
       }
    }
    return $return;
@@ -1277,7 +1281,7 @@ function ent2resource($table, $faire, $type) {
    //default columns
    $columnDefs[] = array('field' => 'faire', 'displayName' => 'Faire', 'width' => '50');
    $columnDefs[] = array('field' => 'status', 'displayName' => 'Status', 'width' => '100', 'sort' => array('direction' => 'uiGridConstants.ASC', 'priority' => 0), 'enableSorting' => true);
-   $columnDefs[] = array('field' => 'entry_id', 'displayName' => 'Entry ID', 'width' => '100');
+   $columnDefs[] = array('field' => 'entry_id', 'displayName' => 'Entry ID', 'width' => '30');
    $columnDefs[] = array('field' => 'form_type', 'displayName' => 'Form Type', 'width' => '150');
    $columnDefs[] = array('field' => 'proj_name', 'displayName' => 'Entry Name', 'width' => '*');
    $columnDefs[] = array('field' => 'location.area', 'displayName' => 'Area', 'sort' => array('direction' => 'uiGridConstants.ASC', 'priority' => 1), 'enableSorting' => true);
