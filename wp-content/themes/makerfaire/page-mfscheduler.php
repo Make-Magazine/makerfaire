@@ -472,7 +472,7 @@ $default_locations = isset($default_locations) ? $default_locations : "414";
 
         // Default options for kendoScheduler
         $scheduler->eventTemplateId('presentation-template')          
-                ->timezone('America/Los_Angeles')
+                ->timezone('UTC')
                 ->currentTimeMarker(false)
                 ->date(new DateTime($start_dt))
                 ->height(900)->pdf($pdf)
@@ -484,8 +484,8 @@ $default_locations = isset($default_locations) ? $default_locations : "414";
                     'majorTick' => 30,
                     'showWorkHours' => true,
                     'workWeekEnd' => $end_dow,
-                    'workDayStart' => new DateTime('2024/10/18 10:00', new DateTimeZone('America/Los_Angeles')),
-                    'workDayEnd' => new DateTime('2024/10/20 17:30', new DateTimeZone('America/Los_Angeles'))
+                    'workDayStart' => new DateTime('2024/10/18 17:00', new DateTimeZone('UTC')),
+                    'workDayEnd' => new DateTime('2024/10/20 1:00', new DateTimeZone('UTC')),
                         ), array(
                     'type' => 'workWeek',
                     'majorTick' => 30,
@@ -493,8 +493,8 @@ $default_locations = isset($default_locations) ? $default_locations : "414";
                     'workWeekStart' => $start_dow,
                     'workWeekEnd' => $end_dow,
                     'showWorkHours' => true,
-                    'workDayStart' => new DateTime('2024/10/18 10:00', new DateTimeZone('America/Los_Angeles')),
-                    'workDayEnd' => new DateTime('2024/10/20 17:30', new DateTimeZone('America/Los_Angeles'))
+                    'workDayStart' => new DateTime('2024/10/18 17:00', new DateTimeZone('UTC')),
+                    'workDayEnd' => new DateTime('2024/10/20 1:00', new DateTimeZone('UTC'))
                 ), 'agenda')->dataSource($dataSource);
 
         return $scheduler;
