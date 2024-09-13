@@ -668,6 +668,18 @@ class GFRMTHELPER {
       return;
     }
 
+    if ($form_type == "Master") {
+      $exhibit_type = array();
+      foreach ($entry as $key => $value) {
+          if (strpos($key, '339.') === 0) {
+              if ($value != '') {
+                  $exhibit_type[$key] = $value;
+              }
+          }
+      }
+      $form_type = implode(",",$exhibit_type);
+    }
+
     //build Maker Data Array
     $data = self::buildMakerData($entry, $form);
     $makerData  = $data['maker'];
