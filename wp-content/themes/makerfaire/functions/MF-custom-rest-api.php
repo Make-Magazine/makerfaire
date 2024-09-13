@@ -364,7 +364,7 @@ function getMTMentries($formIDs = '', $faireID = '', $years = '') {
             $maker_photo = isset($result->group_photo) ? $result->group_photo : $result->maker_photo;
             $maker_photo = json_decode($maker_photo);
             if (is_array($maker_photo)) {
-                $maker_photo = $maker_photo[0];
+                $maker_photo = isset($maker_photo[0]) ? $maker_photo[0] : "";
             }
             if(empty($maker_photo)) {
                 $maker_photo = "/wp-content/themes/makerfaire/images/default-makey-large.jpg";
