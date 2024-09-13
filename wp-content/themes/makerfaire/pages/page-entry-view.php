@@ -85,7 +85,7 @@ $showEditMakey = false;
                 if(isset($project_gallery) && !empty($project_gallery)) { ?>
                     <div id="projectGallery" class="owl-carousel">
                     <?php foreach($project_gallery as $key=>$image) { 
-                            if($image!=''){
+                            if(isset($image) && $image!=''){
                                 $image_size = getimagesize($image);
                                 $image_default = $image;
                                 $image_sources = array();
@@ -158,16 +158,16 @@ $showEditMakey = false;
                 <?php } 
             } else if( $makers  ) { 
                 $maker = current($makers);
-                $small_photo = isset($maker['photo']) ? legacy_get_resized_remote_image_url($maker['photo'], 400, 400) : "";
-                $large_photo = isset($maker['photo']) ? legacy_get_resized_remote_image_url($maker['photo'], 760, 760) : "";
-                if($maker['firstname'] != '' || $maker['photo'] != '') {
+                $small_photo = file_exists($maker['photo']) ? legacy_get_resized_remote_image_url($maker['photo'], 400, 400) : "";
+                $large_photo = file_exists($maker['photo']) ? legacy_get_resized_remote_image_url($maker['photo'], 760, 760) : "";
+                if($maker['firstname'] != '' || $maker['photo'] != "") {
             ?>
                 <div class="small-column">
                     <picture>
                         <source media="(max-width: 420px)" srcset="<?php echo  $small_photo; ?>">
                         <img src="<?php echo $large_photo ?>" 
                              alt="<?php echo $maker['firstname'].' '.$maker['lastname']; ?> Maker Picture"
-                             onerror="this.onerror=null;this.src='/wp-content/themes/makerfaire/images/default-makey-large.jpg?v=1';this.srcset=''" />
+                             onerror="this.onerror=null;this.src='/wp-content/themes/makerfaire/images/default-makey-large.jpg';this.srcset=''" />
                     </picture>
                 </div>
                 <div class="big-column">
