@@ -323,6 +323,7 @@ function getMTMentries($formIDs = '', $faireID = '', $years = '') {
             }
 
             $largePhoto = legacy_get_resized_remote_image_url($projPhoto, 435, 290);
+            $smallPhoto = legacy_get_resized_remote_image_url($projPhoto, 300, 200);
 
             $makerList = getMakerList($result->entry_id, $faireID);
 
@@ -411,9 +412,10 @@ function getMTMentries($formIDs = '', $faireID = '', $years = '') {
                 'link' => '/maker/entry/' . $result->entry_id,
                 'name' => $result->proj_name,
                 'large_img_url' => $largePhoto,
+                'small_img_url' => $smallPhoto,
                 'categories' => $category,
                 'main_cat_icon' => $mainCategoryIcon,
-                'types' => $types,
+                'types' => array_unique($types),
                 'description' => $result->short_desc,
                 'flag' => $flag, //only set if flag is set to 'Featured Maker'
                 'handson' => $handson, //only set if handson is set to 'Featured Handson'
