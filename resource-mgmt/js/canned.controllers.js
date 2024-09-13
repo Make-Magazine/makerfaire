@@ -1,13 +1,13 @@
 // reports controller
 rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$interval','uiGridConstants', function ($scope, $routeParams, $http,$interval,uiGridConstants) {
-  $scope.reports    = {};
-  $scope.reports.loading   = true;
-  $scope.reports.showGrid  = false;
-  $scope.reports.showLinks = false;
-  $scope.reports.selFaire  = '';
-  $scope.data     = [];
-  $scope.msg = {};
-  $scope.canned_rpt = [];
+  $scope.reports            = {};
+  $scope.reports.loading    = true;
+  $scope.reports.showGrid   = false;
+  $scope.reports.showLinks  = false;
+  $scope.reports.selFaire   = '';
+  $scope.data               = [];
+  $scope.msg                = {};
+  $scope.canned_rpt         = [];
 
   
   $scope.handleSelect = function() {       
@@ -35,7 +35,10 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
           alert(response.data.error);
         }else if(type=='faires'){          
           $scope.data[type] = response.data[type];  
-          $scope.reports.selFaire = $scope.data.faires[0].ID;  
+          if($scope.reports.selFaire=='') {
+            $scope.reports.selFaire  = $scope.data.faires[0].ID;  
+          }
+            
           $scope.reports.showLinks = true;            
         }
       }).finally(function () {        
@@ -102,8 +105,7 @@ $scope.export = function(export_format='pdf'){
   var export_row_type       = 'visible';
   var export_column_type    = 'visible';
   if ($scope.export_format == 'csv') {
-    var myElement = angular.element(document.querySelectorAll(".custom-csv-link-location"));
-    console.log(myElement);
+    var myElement = angular.element(document.querySelectorAll(".custom-csv-link-location"));    
     $scope.gridApi.exporter.csvExport( export_row_type, export_column_type, myElement );
   } else if (export_format == 'pdf') {    
     $scope.gridApi.exporter.pdfExport( export_row_type, export_column_type );
@@ -168,24 +170,25 @@ $scope.export = function(export_format='pdf'){
         $("#menu-toggle").click();
       }
     }
+
     $scope.reports.subRoute = $routeParams.sub;
     $scope.reports.selFaire = $routeParams.faire;
 
     if("faire" in $routeParams){
-      var faire = $routeParams.faire;      
-      $scope.reports.showLinks = true;
+      var faire = $routeParams.faire;                 
     }else{
       $scope.reports.selFaire = '';
       var faire = '';
     }
+    
     var subRoute  = $routeParams.sub;
     var pageTitle = 'Reports';
     var subTitle  = '';
     if(subRoute=='sponsor_pymt'){
        vars = {"faire": faire,
                "table": "sponsorOrder",
-               "type": "paymentRpt"
-            };
+               "type":  "paymentRpt"
+              };
       var subTitle = 'Sponsor Payment(s)';
       $scope.reports.callAJAX(vars);
     }else
