@@ -160,7 +160,7 @@ if (isset($entry->errors)) {
         $project_photo = $project_gallery[0];
     }
     // check if project photo is too small to treat normally
-    $proj_photo_size = file_exists($project_photo) ? getimagesize($project_photo) : array(750, 500);
+    $proj_photo_size = !empty($project_photo) ? getimagesize($project_photo) : array(750, 500);
 
     // these are the images we're using for the responsvie image sources
     $project_photo_large  = legacy_get_resized_remote_image_url($project_photo, 1050, 700);
