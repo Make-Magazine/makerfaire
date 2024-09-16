@@ -363,7 +363,6 @@ function getMTMentries($formIDs = '', $faireID = '', $years = '') {
             
             // Maker / Group Photos 
             $maker_photo = ($result->maker_photo && $result->maker_photo != "[]") ? $result->maker_photo : $result->group_photo;
-            error_log(print_r($maker_photo, tRUE));
             $maker_photo_decoded = json_decode($maker_photo);
             if (is_array($maker_photo_decoded)) {
                 $maker_photo = isset($maker_photo_decoded[0]) ? $maker_photo_decoded[0] : "";
