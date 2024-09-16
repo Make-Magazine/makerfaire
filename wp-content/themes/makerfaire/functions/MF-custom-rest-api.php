@@ -252,6 +252,7 @@ function getMTMentries($formIDs = '', $faireID = '', $years = '') {
                      (SELECT meta_value FROM   wp_gf_entry_meta WHERE  meta_key = '878'   AND entry_id = entry.id) AS proj_photo_gallery,  
                      (SELECT meta_value FROM   wp_gf_entry_meta WHERE  meta_key = '217'   AND entry_id = entry.id) AS maker_photo,  
                      (SELECT meta_value FROM   wp_gf_entry_meta WHERE  meta_key = '111'   AND entry_id = entry.id) AS group_photo,    
+                     (SELECT meta_value FROM   wp_gf_entry_meta WHERE  meta_key = '101.4' AND entry_id = entry.id) AS state,  
                      (SELECT meta_value FROM   wp_gf_entry_meta WHERE  meta_key = '101.6' AND entry_id = entry.id) AS country,  
                      (SELECT meta_value FROM   wp_gf_entry_meta WHERE  meta_key = '151'   AND entry_id = entry.id) AS proj_name, 
                      (SELECT meta_value FROM   wp_gf_entry_meta WHERE  meta_key = '16'    AND entry_id = entry.id) AS short_desc, 
@@ -362,14 +363,17 @@ function getMTMentries($formIDs = '', $faireID = '', $years = '') {
             
             // Maker / Group Photos 
             $maker_photo = ($result->maker_photo && $result->maker_photo != "[]") ? $result->maker_photo : $result->group_photo;
-            $maker_photo = json_decode($maker_photo);
-            if (is_array($maker_photo)) {
-                $maker_photo = isset($maker_photo[0]) ? $maker_photo[0] : "";
+            error_log(print_r($maker_photo, tRUE));
+            $maker_photo_decoded = json_decode($maker_photo);
+            if (is_array($maker_photo_decoded)) {
+                $maker_photo = isset($maker_photo_decoded[0]) ? $maker_photo_decoded[0] : "";
             } 
             if(empty($maker_photo)) {
                 $maker_photo = "/wp-content/themes/makerfaire/images/default-makey-large.jpg";
             }
             $maker_photo = legacy_get_resized_remote_image_url($maker_photo, 400, 400);
+
+            $maker_location = isset($result->state) ? $result->state . ", " . $result->country : $result->country;
 
             //Admin entry types (only for BA23 and forward)
             $types = explode(",", $result->types);
@@ -435,7 +439,7 @@ function getMTMentries($formIDs = '', $faireID = '', $years = '') {
                 'handson' => $handson, //only set if handson is set to 'Featured Handson'
                 'makerList' => $makerList,
                 'maker_photo' => $maker_photo,
-                'maker_location' => $result->country,
+                'maker_location' => $maker_location,
                 'location' => $locations,
                 'weekend' => $weekends
             );

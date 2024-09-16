@@ -55,6 +55,9 @@ $showEditMakey = false;
                         <?php } ?>
                         <?php if(isset($mainCategoryName) && $mainCategoryName != '') { ?><span class="entry-box-item" aria-label="Main Category"><a href="/<?php echo $url_sub_path; ?>/meet-the-makers/?category=<?php echo $mainCategoryName; ?>" class="icon-link"><?php echo $mainCategoryIcon; ?><span><?php echo $mainCategoryName; ?></span></a></span><?php } ?>
                         <?php if(!empty($ribbons)) { ?><span class="entry-box-item" aria-label="Ribbon"><a href="/ribbons/"><i class="fa fa-award" aria-hidden="true"></i>Ribbon Recipient</a></span><?php } ?>
+                        <?php if($faire_end > date("Y-m-d j:i:s")) { ?>
+                            <span class="entry-box-item" aria-label="Tickets"><a href="/<?php echo $url_sub_path; ?>/buy-tickets/"><i class="fa fa-ticket" aria-hidden="true"></i>Get Tickets</a></span>
+                        <?php } ?>
                     </div>
                     <?php if(isset($project_short) && $project_short != '') { ?>
                         <p class="project-description"><?php echo nl2br($project_short); 

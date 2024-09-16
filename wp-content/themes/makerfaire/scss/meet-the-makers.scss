@@ -8,9 +8,12 @@
         color: #4A4A4A;
         font-family: "Roboto Light";
     }
-    h2 {
-        margin-bottom: 30px;
+    h2.page-title {
+        font-size: 32px;
+        color: #4A4A4A;
+        margin-bottom: 0px;
     }
+
     // hover colors for the font awesome icons
     .ng-scope .mtm-detail-item {
         .fa:hover {
