@@ -631,9 +631,6 @@ function  mf_checkbox_display($field, $value, $form_id, $fieldName, $field_id, $
   if ($field->type != 'checkbox') {
     return 'not a checkbox field';
   }
-  if($field_id=='879'){ // what is this?
-    error_log(print_r($field,true));
-  }
 
   //field with combined choices and inputs
   $mergedChoicesAndInputs = $choicesArray = array();

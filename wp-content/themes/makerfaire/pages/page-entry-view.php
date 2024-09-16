@@ -9,7 +9,13 @@ $showEditMakey = false;
 <main class="wrapper-fluid">
     <section id="topSection">
         <div class="big-column">
-            <?php if(isset($proj_photo_size[0]) && $proj_photo_size[0] > 900 ) { ?>
+            <?php // if proj_photo_size is false, the project photo does not exist
+            if(!$proj_photo_size) { ?>
+                <picture class="exhibit-picture">
+                    <img src="/wp-content/themes/makerfaire/images/default-featured-image.jpg"
+                         alt="<?php echo $project_title; ?> project image" />
+                </picture>
+            <?php } elseif( isset($proj_photo_size[0]) && $proj_photo_size[0] > 900 ) { ?>
                 <picture class="exhibit-picture">
                     <source media="(max-width: 420px)" srcset="<?php echo $project_photo_small; ?>">
                     <source media="(max-width: 1200px)" srcset="<?php echo $project_photo_medium; ?>">
