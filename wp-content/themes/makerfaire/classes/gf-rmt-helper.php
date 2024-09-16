@@ -203,7 +203,7 @@ class GFRMTHELPER {
           return;
 
           //is the resource unlocked OR is this a payment form?  
-        } elseif ($res->lockBit == 0 || $form_type == 'Payment') {
+        } elseif ($res->lockBit == 0 || $form_type == 'Payment') {          
           //update the resource
           $type = 'update';
 
@@ -211,13 +211,17 @@ class GFRMTHELPER {
         } elseif ($res->lockBit == 1) {
           $type = ''; //do not update
         }
-      } else {
+      } else {        
         //Payment forms are allowed to have multiple resources of the same category
         //if this isn't a payment form and the resource is unlocked
         //what if they put 05 amps on their form but then paid for 10 amps
-        if ($form_type != 'Payment' && $res->lockBit == 0) {
-          //update the resource
-          $type = 'update';
+        if ($form_type != 'Payment') {
+          if($res->lockBit == 0) {
+            //update the resource
+            $type = 'update';
+          }else{
+            $type='';
+          }
         }
       }
     }
