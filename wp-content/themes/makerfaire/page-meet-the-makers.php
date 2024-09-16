@@ -312,7 +312,7 @@ $faireName = (isset($results[0]->faire_name)?$results[0]->faire_name:'');
                     <article class="mtm-maker">
                         <div class="mtm-image">
                             <a href="{{maker.link}}">
-                                <img src="{{maker.maker_photo}}" alt="{{maker.name}} Photo" onerror="this.onerror=null;this.src='/wp-content/themes/makerfaire/images/default-makey-medium.jpg?v=1';this.srcset=''" />
+                                <img ng-src="{{maker.maker_photo}}" on-error="/wp-content/themes/makerfaire/images/default-makey-medium.jpg" alt="{{maker.name}} Photo" />
                             </a>
                         </div>
                         <div class="mtm-text">
@@ -320,7 +320,7 @@ $faireName = (isset($results[0]->faire_name)?$results[0]->faire_name:'');
                                 <h4 ng-bind-html="trust(maker.makerList)"></h4>
                             </a>
                             <div class="mtm-detail-items">
-                            <div class="mtm-detail-item">
+                                <div class="mtm-detail-item" ng-show="maker.maker_location">
                                     <span>
                                         <a href="{{maker.link}}">
                                             <i class="fa fa-earth-americas"></i>
