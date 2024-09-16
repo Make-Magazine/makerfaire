@@ -312,7 +312,7 @@ $faireName = (isset($results[0]->faire_name)?$results[0]->faire_name:'');
                     <article class="mtm-maker">
                         <div class="mtm-image">
                             <a href="{{maker.link}}">
-                                <img src="{{maker.maker_photo}}" alt="{{maker.name}} Photo" />
+                                <img src="{{maker.maker_photo}}" alt="{{maker.name}} Photo" onerror="this.onerror=null;this.src='/wp-content/themes/makerfaire/images/default-makey-medium.jpg?v=1';this.srcset=''" />
                             </a>
                         </div>
                         <div class="mtm-text">
