@@ -202,7 +202,7 @@ $faireName = (isset($results[0]->faire_name)?$results[0]->faire_name:'');
                     <article class="mtm-maker">
                         <div class="mtm-image">
                             <a href="{{maker.link}}">
-                                <img src="{{maker.large_img_url}}" alt="{{maker.name}} Photo" />
+                                <img src="{{maker.large_img_url}}" on-error="/wp-content/themes/makerfaire/images/default-mtm-image.jpg" alt="{{maker.name}} Photo" />
                             </a>
                         </div>
                         <div class="mtm-text">
@@ -257,7 +257,7 @@ $faireName = (isset($results[0]->faire_name)?$results[0]->faire_name:'');
                     <article class="mtm-maker">
                         <div class="mtm-image">
                             <a href="{{maker.link}}">
-                                <img src="{{maker.small_img_url}}" alt="{{maker.name}} Photo" />
+                                <img src="{{maker.small_img_url}}" on-error="/wp-content/themes/makerfaire/images/default-mtm-image.jpg" alt="{{maker.name}} Photo" />
                             </a>
                         </div>
                         <div class="mtm-text">
