@@ -153,15 +153,21 @@
 		<?php
 		// Universal Nav
 		echo basicCurl(UNIVERSAL_MAKEHUB_ASSET_URL_PREFIX . '/wp-content/universal-assets/v2/page-elements/universal-topnav.html');
-               
+         
+        //from the individual entry page, used to set the subnav on maker/entry pages
+        global $faire_name;
+        if(!isset($faire_name)){
+            $faire_name = '';
+        }  
+              
 		?>
 		<div id="universal-subnav" class="nav-level-2">
 			<?php
             $secondary_nav='secondary_universal_menu';
             if(is_object($post)) {                                                
                 $permalink = get_permalink($post);
-                                
-                if (stripos($permalink, 'bay-area') !== false) {                
+                if(stripos($faire_name, 'Bay Area') !== false ||
+                   stripos($permalink,  'bay-area') !== false) {                
                     $secondary_nav='bay_area_secondary_nav';
                 }elseif(stripos($permalink, 'yearbook') !== false){
                     $secondary_nav='yearbook_secondary_nav';
