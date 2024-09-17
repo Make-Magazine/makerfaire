@@ -12,13 +12,19 @@ if($form_id!=''){
         'field_filters' => array(
             'mode' => 'all',
             array(
-                'key'   => '303',
-                'value' => 'Accepted'
+                'key'       => '303',
+                'value'     => 'Accepted'
             ),
             array(
-                'key'   => '304',
-                'value' => 'Featured Maker'
+                'key'       => '304',
+                'value'     => 'Featured Maker'
             ),
+            array(
+                'key'       => '304', 
+                'operator'  => 'IS NOT', 
+                'value'     => 'no-public-view'
+            )
+            
         )
     );
     $sorting         = array( 'key' => '10', 'direction' => 'RAND' );
