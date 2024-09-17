@@ -42,7 +42,7 @@ $faireName = (isset($results[0]->faire_name)?$results[0]->faire_name:'');
     <div ng-controller="mtmMakers">
         <?php if(empty($the_content)){ ?>
             <h1 class="page-title text-center">Meet the Makers</h1>
-            <h2 class="page-title text-center"><span ng-if="layout == 'maker'">Faces of </span><?php echo $faireName ?></h2>;
+            <h2 class="page-title text-center"><span ng-if="layout == 'maker'">Faces of </span><?php echo $faireName ?></h2>
         <?php } ?>
         <input type="hidden" id="forms2use" value="<?php echo $faire_forms_trimmed; ?>" />
         <input type="hidden" id="mtm-faire" value="<?php echo $faire; ?>" />
