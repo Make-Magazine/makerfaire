@@ -256,7 +256,7 @@
                             border-top-left-radius: 5px;
                             border-top-right-radius: 5px;
                             a {
-                                background: url("/wp-content/themes/makerfaire/images/default-mtm-image.jpg");
+                                background-image: url("/wp-content/themes/makerfaire/images/default-mtm-image.jpg");
                             }
                             @supports not (aspect-ratio: auto) {
                                 &::before {

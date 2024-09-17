@@ -156,7 +156,8 @@ function cannedRpt() {
             $fieldQuery[] = " meta_key like '" . $selFieldsID . ".%' ";
             $fieldIDArr[$selFieldsID] = $selFields; //search for all values
          } elseif ($selFields->choices !== 'all' && $selFields->choices !== '' && $selFields->type == 'checkbox') { //searching for specific choices
-            $fieldQuery[] = " (meta_key like '" . $selFieldsID . ".%' and meta_value like '" . $selFields->choices . "') ";
+            
+            $fieldQuery[] = " (meta_key like '" . $selFieldsID . "%' and meta_value like '" . $selFields->choices . "') ";
             $fieldIDArr[$selFieldsID] = $selFields; //search for all values            
          } else {
             $fieldQuery[] = " meta_key like '" . $selFieldsID . "' ";
@@ -1560,17 +1561,16 @@ function paymentRpt($table, $faire) {
    );
 
    //set requested form type based on submitted table request   
-   $form_type = ($table === 'sponsorOrder' ? 'Sponsor' : 'Exhibit');
-
+   $form_type = ($table === 'sponsorOrder' ? 'sponsor' : 'Exhibit');
    //pull basic entry information 
-   $sql = "select wp_mf_entity.lead_id, wp_mf_entity.form_id,presentation_title, status, "
-      . "(select meta_value from wp_gf_entry_meta where meta_key = '434' and entry_id=wp_mf_entity.lead_id limit 1) as field_434, "
+   $sql = "select wp_mf_entity.lead_id, wp_mf_entity.form_id,presentation_title, status, "      
       . "(select meta_value from wp_gf_entry_meta where meta_key = 'res_status' and entry_id=wp_mf_entity.lead_id limit 1) as meta_res_status "
       . "from wp_mf_entity "
       . "left outer join wp_mf_faire on find_in_set (wp_mf_entity.form_id,wp_mf_faire.form_ids) > 0 "
+      . "left outer join wp_gf_entry on lead_id=wp_gf_entry.id "
       . "where wp_mf_faire.id= " . $faire . " "
       . "and form_type like'%$form_type%'"
-      . "and status != 'trash'";
+      . "and wp_gf_entry.status = 'active'";
 
    // Pull additional fields: field 442 - 'Fee Management' and field 55  - 'What are your plans at Maker Faire   
    $reqFields = array(442 => "Fee Management", 55 => "What are your plans at Maker Faire?");
@@ -1587,17 +1587,16 @@ function paymentRpt($table, $faire) {
          'form_type' => $retformType,
          'presentation_title' => $row->presentation_title,
          'meta_res_status' => $row->meta_res_status,
-         'status' => $row->status,
-         'field_434' => $row->field_434
+         'status' => $row->status
       );
 
       // Pull additional fields: field 442 - 'Fee Management' and field 55  - 'What are your plans at Maker Faire
       $fieldRetData = pullFieldData($row->lead_id, $reqFields);
-      $fieldData = array_merge($fieldData, $fieldRetData['data']);
+      $fieldData    = array_merge($fieldData, $fieldRetData['data']);
 
       //pull location information
       $locRetData = pullLocData($entryID, FALSE, 900);
-      $fieldData = array_merge($fieldData, $locRetData['data']);
+      $fieldData  = array_merge($fieldData, $locRetData['data']);
 
       //pull payment information           
       $paysql = "select wp_gf_entry_meta.entry_id as pymt_entry, wp_gf_addon_payment_transaction.transaction_type,

@@ -349,6 +349,7 @@ function deleteExpoFpExhibit($exhibitor_id, $expofpToken, $entry_id) {
     ];
     postCurl($url, $headers, json_encode($data), "POST");
     gform_delete_meta($entry_id, 'expofp_exhibit_id');
+    gform_delete_meta($entry_id, 'expofp_placed');
 }
 
 function updateExpoFpImage($expofpToken, $exhibitor_id, $image) {

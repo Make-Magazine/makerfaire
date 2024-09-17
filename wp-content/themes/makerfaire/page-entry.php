@@ -107,14 +107,16 @@ if (isset($entry->errors)) {
     if (isset($entry['320']) && $entry['320'] != '') {
         $mainCategory = get_term($entry['320']);
         $mainCategoryName = (isset($mainCategory->name) ? $mainCategory->name : '');
-        $mainCategoryIconType = get_field('icon_type', $mainCategory->taxonomy . '_' . $mainCategory->term_id);
-        // get the mainCategory icon from the mf category taxonomy, if indeed one is set
-        if ($mainCategoryIconType == "uploaded_icon") {
-            $mainCategoryIcon = '<picture class="main-category-icon"><img src="' . get_field('uploaded_icon', $mainCategory->taxonomy . '_' . $mainCategory->term_id)['url'] . '" height="27px" width="27px" aria-hidden="true" /></picture>';
-        } else {
-            $fa = get_field('font_awesome', $mainCategory->taxonomy . '_' . $mainCategory->term_id);
-            if (!empty($fa)) {
-                $mainCategoryIcon = '<i class="fa ' . $fa . '" aria-hidden="true"></i>';
+        if(isset($mainCategory->taxonomy)) {
+            $mainCategoryIconType = get_field('icon_type', $mainCategory->taxonomy . '_' . $mainCategory->term_id);
+            // get the mainCategory icon from the mf category taxonomy, if indeed one is set
+            if ($mainCategoryIconType == "uploaded_icon") {
+                $mainCategoryIcon = '<picture class="main-category-icon"><img src="' . get_field('uploaded_icon', $mainCategory->taxonomy . '_' . $mainCategory->term_id)['url'] . '" height="27px" width="27px" aria-hidden="true" /></picture>';
+            } else {
+                $fa = get_field('font_awesome', $mainCategory->taxonomy . '_' . $mainCategory->term_id);
+                if (!empty($fa)) {
+                    $mainCategoryIcon = '<i class="fa ' . $fa . '" aria-hidden="true"></i>';
+                }
             }
         }
 
@@ -158,8 +160,9 @@ if (isset($entry->errors)) {
     if ($project_photo == '' && is_array($project_gallery)) {
         $project_photo = $project_gallery[0];
     }
+
     // check if project photo is too small to treat normally
-    $proj_photo_size = !file_exists($project_photo) ? getimagesize($project_photo) : array(750, 500);
+    $proj_photo_size = !empty($project_photo) ? @getimagesize($project_photo) : array(750, 500);
 
     // these are the images we're using for the responsvie image sources
     $project_photo_large  = legacy_get_resized_remote_image_url($project_photo, 1050, 700);

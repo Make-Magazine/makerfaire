@@ -247,9 +247,9 @@ function display_final_wknd_box($form, $lead) {
   $field_id   = '879';
 
   $return     = field_display($lead, $form, $field_id, $fieldName);
-  $return .= '<input type="button" name="update_final_weekend" value="Update Final Weekend" class="button" style="width:auto;padding-bottom:2px;" onclick="updateMgmt(\'update_final_weekend\');"/>';
+  $return .= '<input type="button" name="update_final_weekend" value="Update Activation Days" class="button" style="width:auto;padding-bottom:2px;" onclick="updateMgmt(\'update_final_weekend\');"/>';
   $return .= '<span class="updMsg update_final_weekendMsg"></span>';
-  return addExpandBox($return, 'Final Weekend', 'final_weekend');
+  return addExpandBox($return, 'Activation Days', 'final_weekend');
 }
 function display_entry_notes_box($form, $lead) {
   /* Notes Sidebar Area */
@@ -646,7 +646,7 @@ function  mf_checkbox_display($field, $value, $form_id, $fieldName, $field_id, $
 
   foreach ($choices as $chItem) {
     foreach ($inputs as $inItem) {
-      if (in_array($chItem["text"], $inItem)) {
+      if (in_array(htmlspecialchars_decode($chItem["text"]), $inItem)) {
         $chItem["id"] = $inItem['id'];
         $mergedChoicesAndInputs[] = $chItem;
       }
