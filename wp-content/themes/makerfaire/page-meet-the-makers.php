@@ -26,12 +26,10 @@ $faireName = (isset($results[0]->faire_name)?$results[0]->faire_name:'');
             ?>
             <div class="content-wrapper">                
                 <?php                 
-                //elementor requires us to use $the_content
+                //elementor requires us to use $the_content, which we will check once inside the angular app for the alt title
                 the_content();
                 $the_content = get_the_content();            
-                if(empty($the_content)){
-                    echo '<h1 class="page-title text-center">Meet the Makers - '. $faireName.'</h1>';
-                }
+                
                 ?>
             </div>
             <?php
@@ -42,6 +40,10 @@ $faireName = (isset($results[0]->faire_name)?$results[0]->faire_name:'');
   
 <div class="mtm" ng-app="mtm">
     <div ng-controller="mtmMakers">
+        <?php if(empty($the_content)){ ?>
+            <h1 class="page-title text-center">Meet the Makers</h1>
+            <h2 class="page-title text-center"><span ng-if="layout == 'maker'">Faces of </span><?php echo $faireName ?></h2>
+        <?php } ?>
         <input type="hidden" id="forms2use" value="<?php echo $faire_forms_trimmed; ?>" />
         <input type="hidden" id="mtm-faire" value="<?php echo $faire; ?>" />
         <input type="hidden" id="noMakerText" value="<?php echo $noMakerText; ?>" />
@@ -148,8 +150,9 @@ $faireName = (isset($results[0]->faire_name)?$results[0]->faire_name:'');
             </div>
 
             <div class="mtm-filter-view">
-                <a ng-class="{active: layout == 'list'}" ng-click="layout = 'list'" class="mtm-filter-l pointer-on-hover box list"><i class="fas fa-bars" aria-hidden="true"></i></a>
-                <a ng-class="{active: layout == 'grid'}" ng-click="layout = 'grid'" class="mtm-filter-g pointer-on-hover box gallery"><i class="far fa-grid-2" aria-hidden="true"></i></a>
+                <a ng-class="{active: layout == 'list'}" ng-click="layout = 'list'" class="mtm-filter-l pointer-on-hover box list" title="List View"><i class="fas fa-bars" aria-hidden="true"></i></a>
+                <a ng-class="{active: layout == 'grid'}" ng-click="layout = 'grid'" class="mtm-filter-g pointer-on-hover box gallery" title="Grid View"><i class="far fa-grid-2" aria-hidden="true"></i></a>
+                <a ng-show="makers[0].name" ng-class="{active: layout == 'maker'}" ng-click="layout = 'maker'" class="mtm-filter-m pointer-on-hover box maker" title="Maker View"><i class="fas fa-user" aria-hidden="true"></i></a>
             </div>
 
         </div>
@@ -198,20 +201,20 @@ $faireName = (isset($results[0]->faire_name)?$results[0]->faire_name:'');
 
                     <article class="mtm-maker">
                         <div class="mtm-image">
-                            <a href="{{maker.link}}" target="_blank">
-                                <img src="{{maker.large_img_url}}" alt="{{maker.name}} Photo" />
+                            <a href="{{maker.link}}">
+                                <img src="{{maker.large_img_url}}" on-error="/wp-content/themes/makerfaire/images/default-mtm-image.jpg" alt="{{maker.name}} Photo" />
                             </a>
                         </div>
                         <div class="mtm-text">
-                            <h3> <a href="{{maker.link}}" target="_blank">{{maker.name}}</a></h3>
+                            <h3> <a href="{{maker.link}}">{{maker.name}}</a></h3>
                             <div class="mtm-detail-items">
                                 <div class="mtm-detail-item" ng-show="maker.makerList.length">
                                     <span>
-                                        <a href="{{maker.link}}" target="_blank">
+                                        <a href="{{maker.link}}">
                                             <i class="fa fa-circle-user"></i></a>
                                     </span>
                                     <p>
-                                        <a href="{{maker.link}}" ng-bind-html="trust(maker.makerList)" target="_blank"></a>
+                                        <a href="{{maker.link}}" ng-bind-html="trust(maker.makerList)"></a>
                                     </p>
 
                                 </div>
@@ -232,7 +235,7 @@ $faireName = (isset($results[0]->faire_name)?$results[0]->faire_name:'');
                                     </p>
                                 </div>
                             </div>
-                            <div class="read-more-link"><a href="{{maker.link}}" target="_blank">More</a></div>
+                            <div class="read-more-link"><a href="{{maker.link}}">More</a></div>
                         </div>
                     </article>
 
@@ -253,12 +256,12 @@ $faireName = (isset($results[0]->faire_name)?$results[0]->faire_name:'');
 
                     <article class="mtm-maker">
                         <div class="mtm-image">
-                            <a href="{{maker.link}}" target="_blank">
-                                <img src="{{maker.small_img_url}}" alt="{{maker.name}} Photo" />
+                            <a href="{{maker.link}}">
+                                <img src="{{maker.small_img_url}}" on-error="/wp-content/themes/makerfaire/images/default-mtm-image.jpg" alt="{{maker.name}} Photo" />
                             </a>
                         </div>
                         <div class="mtm-text">
-                            <a href="{{maker.link}}" target="_blank">
+                            <a href="{{maker.link}}">
                                 <h3>{{maker.name}}</h3>
                                 <h4 ng-bind-html="trust(maker.makerList)"></h4>
                                 <p class="description">{{maker.description}}</p>
@@ -266,12 +269,12 @@ $faireName = (isset($results[0]->faire_name)?$results[0]->faire_name:'');
                             <div class="mtm-detail-items">
                                 <div class="mtm-detail-item">
                                     <span>
-                                        <a href="{{maker.link}}" target="_blank">
+                                        <a href="{{maker.link}}">
                                             <i class="fa fa-plus"></i>
                                         </a>
                                     </span>
                                     <p>
-                                        <a href="{{maker.link}}" target="_blank">More</a>
+                                        <a href="{{maker.link}}">More</a>
                                     </p>
                                 </div>
                                 <div class="mtm-detail-item">
@@ -297,10 +300,59 @@ $faireName = (isset($results[0]->faire_name)?$results[0]->faire_name:'');
                             </div>
                         </div>
                     </article>
-
                 </div>
                 <div class="clearfix"></div>
             </div>
+
+            <!-- Maker View -->
+            <div ng-if="layout == 'maker'" class="mtm-results-cont maker-view">
+
+                <div class="mf-card" ng-repeat="maker in makers| filter : makerSearch | limitTo: limit">
+
+                    <article class="mtm-maker">
+                        <div class="mtm-image">
+                            <a href="{{maker.link}}">
+                                <img ng-src="{{maker.maker_photo}}" on-error="/wp-content/themes/makerfaire/images/default-makey-medium.jpg" alt="{{maker.name}} Photo" />
+                            </a>
+                        </div>
+                        <div class="mtm-text">
+                            <a href="{{maker.link}}">
+                                <h4 ng-bind-html="trust(maker.makerList)"></h4>
+                            </a>
+                            <div class="mtm-detail-items">
+                                <div class="mtm-detail-item" ng-show="maker.maker_location">
+                                    <span>
+                                        <a href="{{maker.link}}">
+                                            <i class="fa fa-earth-americas"></i>
+                                        </a>
+                                    </span>
+                                    <p>
+                                        <a href="{{maker.link}}">{{maker.maker_location}}</a>
+                                    </p>
+                                </div>
+                                <div class="mtm-detail-item">
+                                    <span ng-bind-html="maker.main_cat_icon"></span>
+                                    <p>
+                                        <a href="?layout=maker&category={{maker.category_id_refs[0]}}">{{maker.category_id_refs[0]}}</a>
+                                    </p>
+                                </div>
+                                <div class="mtm-detail-item">
+                                    <span>
+                                        <a href="{{maker.link}}">
+                                            <i class="fa fa-plus"></i>
+                                        </a>
+                                    </span>
+                                    <p>
+                                        <a href="{{maker.link}}">More {{maker.typeString}} details</a>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </article>
+                </div>
+                <div class="clearfix"></div>
+            </div>
+
         </div>
     </div>
 

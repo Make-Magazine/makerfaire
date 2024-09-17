@@ -8,9 +8,12 @@
         color: #4A4A4A;
         font-family: "Roboto Light";
     }
-    h2 {
-        margin-bottom: 30px;
+    h2.page-title {
+        font-size: 30px;
+        color: #4A4A4A;
+        margin-bottom: 0px;
     }
+
     // hover colors for the font awesome icons
     .ng-scope .mtm-detail-item {
         .fa:hover {
@@ -328,6 +331,32 @@
                         
                     }
 			}
+            &.maker-view {
+                .ng-scope .mtm-maker {
+                    .mtm-image {
+                        aspect-ratio: 1 / 1;
+                        a {
+                            background-size: cover;
+                        }
+                        @supports not (aspect-ratio: auto) {
+                            &::before {
+                               float: left;
+                               padding-top: 100%;
+                               content: "";
+                            }
+                            &::after {
+                               display: block;
+                               content: "";
+                               clear: both;
+                            }
+                        }
+                    }
+                    .mtm-text .mtm-detail-items {
+                        margin: 10px 0px 10px;
+                    }
+                }
+
+            }
 
 		}
 		.mtm-results-cont-list {
@@ -347,6 +376,9 @@
                     width: 300px;
                     float: left;
                     margin-right: 20px;
+                    a {
+                        background: url("/wp-content/themes/makerfaire/images/default-mtm-image.jpg");
+                    }
                     @supports not (aspect-ratio: auto) {
                         &::before {
                            float: left;
@@ -363,6 +395,7 @@
                         object-fit: cover;
                         width: 100%;
                         height: 100%;
+                        background: #fff;
                     }
                     @media screen and (max-width:800px) {
                         display: none;
@@ -445,7 +478,7 @@
     text-align: center;
 }
 
-.mtm, .entry-page {
+.mtm .mtm-detail-item, .entry-page {
     i.fa {
         color: #f51400;
         font-size: 26px;

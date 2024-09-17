@@ -247,12 +247,16 @@ function getMTMentries($formIDs = '', $faireID = '', $years = '') {
       */
     //find all active entries for selected forms
     $query = "SELECT  entry.id                         AS entry_id, 
-                     (SELECT meta_value FROM   wp_gf_entry_meta WHERE  meta_key = '303' AND entry_id = entry.id) AS entry_status, 
-                     (SELECT meta_value FROM   wp_gf_entry_meta WHERE  meta_key = '22'  AND entry_id = entry.id) AS proj_photo,
-                     (SELECT meta_value FROM   wp_gf_entry_meta WHERE  meta_key = '878'  AND entry_id = entry.id) AS proj_photo_gallery,  
-                     (SELECT meta_value FROM   wp_gf_entry_meta WHERE  meta_key = '151' AND entry_id = entry.id) AS proj_name, 
-                     (SELECT meta_value FROM   wp_gf_entry_meta WHERE  meta_key = '16'  AND entry_id = entry.id) AS short_desc, 
-                     (SELECT meta_value FROM   wp_gf_entry_meta WHERE  meta_key = '320' AND entry_id = entry.id) AS prime_cat, 
+                     (SELECT meta_value FROM   wp_gf_entry_meta WHERE  meta_key = '303'   AND entry_id = entry.id) AS entry_status, 
+                     (SELECT meta_value FROM   wp_gf_entry_meta WHERE  meta_key = '22'    AND entry_id = entry.id) AS proj_photo,
+                     (SELECT meta_value FROM   wp_gf_entry_meta WHERE  meta_key = '878'   AND entry_id = entry.id) AS proj_photo_gallery,  
+                     (SELECT meta_value FROM   wp_gf_entry_meta WHERE  meta_key = '217'   AND entry_id = entry.id) AS maker_photo,  
+                     (SELECT meta_value FROM   wp_gf_entry_meta WHERE  meta_key = '111'   AND entry_id = entry.id) AS group_photo,    
+                     (SELECT meta_value FROM   wp_gf_entry_meta WHERE  meta_key = '101.4' AND entry_id = entry.id) AS state,  
+                     (SELECT meta_value FROM   wp_gf_entry_meta WHERE  meta_key = '101.6' AND entry_id = entry.id) AS country,  
+                     (SELECT meta_value FROM   wp_gf_entry_meta WHERE  meta_key = '151'   AND entry_id = entry.id) AS proj_name, 
+                     (SELECT meta_value FROM   wp_gf_entry_meta WHERE  meta_key = '16'    AND entry_id = entry.id) AS short_desc, 
+                     (SELECT meta_value FROM   wp_gf_entry_meta WHERE  meta_key = '320'   AND entry_id = entry.id) AS prime_cat, 
                      (SELECT Group_concat(meta_value) FROM   wp_gf_entry_meta WHERE  meta_key LIKE '339.%' AND entry_id = entry.id GROUP  BY entry_id) AS types, 
                      (SELECT Group_concat(meta_value) FROM   wp_gf_entry_meta WHERE  meta_key LIKE '321.%' AND entry_id = entry.id GROUP  BY entry_id) AS second_cat, 
                      (SELECT Group_concat(meta_value) FROM   wp_gf_entry_meta WHERE  meta_key LIKE '304.%' AND entry_id = entry.id GROUP  BY entry_id) AS flags,
@@ -356,6 +360,19 @@ function getMTMentries($formIDs = '', $faireID = '', $years = '') {
                     }
                 }
             }
+            
+            // Maker / Group Photos 
+            $maker_photo = ($result->maker_photo && $result->maker_photo != "[]") ? $result->maker_photo : $result->group_photo;
+            $maker_photo_decoded = json_decode($maker_photo);
+            if (is_array($maker_photo_decoded)) {
+                $maker_photo = isset($maker_photo_decoded[0]) ? $maker_photo_decoded[0] : "";
+            } 
+            if(empty($maker_photo)) {
+                $maker_photo = isset($projPhoto) ? $projPhoto : "/wp-content/themes/makerfaire/images/default-makey-medium.jpg";
+            }
+            $maker_photo = legacy_get_resized_remote_image_url($maker_photo, 400, 400);
+
+            $maker_location = isset($result->state) ? $result->state . ", " . $result->country : $result->country;
 
             //Admin entry types (only for BA23 and forward)
             $types = explode(",", $result->types);
@@ -420,6 +437,8 @@ function getMTMentries($formIDs = '', $faireID = '', $years = '') {
                 'flag' => $flag, //only set if flag is set to 'Featured Maker'
                 'handson' => $handson, //only set if handson is set to 'Featured Handson'
                 'makerList' => $makerList,
+                'maker_photo' => $maker_photo,
+                'maker_location' => $maker_location,
                 'location' => $locations,
                 'weekend' => $weekends
             );

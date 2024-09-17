@@ -9,7 +9,13 @@ $showEditMakey = false;
 <main class="wrapper-fluid">
     <section id="topSection">
         <div class="big-column">
-            <?php if(isset($proj_photo_size[0]) && $proj_photo_size[0] > 900 ) { ?>
+            <?php // if proj_photo_size is false, the project photo does not exist
+            if(!$proj_photo_size) { ?>
+                <picture class="exhibit-picture">
+                    <img src="/wp-content/themes/makerfaire/images/default-featured-image.jpg"
+                         alt="<?php echo $project_title; ?> project image" />
+                </picture>
+            <?php } elseif( isset($proj_photo_size[0]) && $proj_photo_size[0] > 900 ) { ?>
                 <picture class="exhibit-picture">
                     <source media="(max-width: 420px)" srcset="<?php echo $project_photo_small; ?>">
                     <source media="(max-width: 1200px)" srcset="<?php echo $project_photo_medium; ?>">
@@ -55,6 +61,9 @@ $showEditMakey = false;
                         <?php } ?>
                         <?php if(isset($mainCategoryName) && $mainCategoryName != '') { ?><span class="entry-box-item" aria-label="Main Category"><a href="/<?php echo $url_sub_path; ?>/meet-the-makers/?category=<?php echo $mainCategoryName; ?>" class="icon-link"><?php echo $mainCategoryIcon; ?><span><?php echo $mainCategoryName; ?></span></a></span><?php } ?>
                         <?php if(!empty($ribbons)) { ?><span class="entry-box-item" aria-label="Ribbon"><a href="/ribbons/"><i class="fa fa-award" aria-hidden="true"></i>Ribbon Recipient</a></span><?php } ?>
+                        <?php if($faire_end > date("Y-m-d j:i:s")) { ?>
+                            <span class="entry-box-item" aria-label="Tickets"><a href="/<?php echo $url_sub_path; ?>/buy-tickets/" class="icon-link"><i class="fa fa-ticket" aria-hidden="true"></i><span>Buy Tickets</span></a></span>
+                        <?php } ?>
                     </div>
                     <?php if(isset($project_short) && $project_short != '') { ?>
                         <p class="project-description"><?php echo nl2br($project_short); 
@@ -86,7 +95,8 @@ $showEditMakey = false;
                     <div id="projectGallery" class="owl-carousel">
                     <?php foreach($project_gallery as $key=>$image) { 
                             if(isset($image) && $image!=''){
-                                $image_size = getimagesize($image);
+                                // if image doesn't exist @getimagesize will return false
+                                $image_size = @getimagesize($image);
                                 $image_default = $image;
                                 $image_sources = array();
                                 ?>
@@ -94,31 +104,34 @@ $showEditMakey = false;
                                     <?php 
                                     // we never want the image to get upsized beyond it's initial size, and no reason to put sources above it size either.
                                     // sources have to be listed by size though, so we will put them into an array based on size to output later!
-                                    if($image_size[0] >= 200 && $image_size[1] >= 200) { 
-                                        $image_default = legacy_get_resized_remote_image_url($image, 200, 200);
-                                        $image_sources[0] = '<source media="(max-width: 450px)" srcset="'.legacy_get_resized_remote_image_url($image, 200, 200).'">';
-                                    }
-                                    if($image_size[0] >= 225 && $image_size[1] >= 225) { 
-                                        $image_default = legacy_get_resized_remote_image_url($image, 225, 225);
-                                        $image_sources[3] = '<source media="(max-width: 1200px)" srcset="'.legacy_get_resized_remote_image_url($image, 225, 225).'">';
-                                    }
-                                    if($image_size[0] >= 280 && $image_size[1] >=280) { 
-                                        $image_default = legacy_get_resized_remote_image_url($image, 280, 280); 
-                                        $image_sources[1] = '<source media="(max-width: 600px)" srcset="'.legacy_get_resized_remote_image_url($image, 280, 280).'">';
+                                    if($image_size) {
+                                        if($image_size[0] >= 200 && $image_size[1] >= 200) { 
+                                            $image_default = legacy_get_resized_remote_image_url($image, 200, 200);
+                                            $image_sources[0] = '<source media="(max-width: 450px)" srcset="'.legacy_get_resized_remote_image_url($image, 200, 200).'">';
+                                        }
+                                        if($image_size[0] >= 225 && $image_size[1] >= 225) { 
+                                            $image_default = legacy_get_resized_remote_image_url($image, 225, 225);
+                                            $image_sources[3] = '<source media="(max-width: 1200px)" srcset="'.legacy_get_resized_remote_image_url($image, 225, 225).'">';
+                                        }
+                                        if($image_size[0] >= 280 && $image_size[1] >=280) { 
+                                            $image_default = legacy_get_resized_remote_image_url($image, 280, 280); 
+                                            $image_sources[1] = '<source media="(max-width: 600px)" srcset="'.legacy_get_resized_remote_image_url($image, 280, 280).'">';
+                                        } 
+                                        if($image_size[0] >= 360 && $image_size[1] >= 360) { 
+                                            $image_default = legacy_get_resized_remote_image_url($image, 360, 360);
+                                            $image_sources[4] = '<source media="(max-width: 2000px)" srcset="'.legacy_get_resized_remote_image_url($image, 360, 360).'">';
+                                        } 
+                                        if($image_size[0] >= 380 && $image_size[1] >= 380) { 
+                                            $image_default = legacy_get_resized_remote_image_url($image, 380, 380); 
+                                            $image_sources[2] = '<source media="(max-width: 800px)" srcset="'.legacy_get_resized_remote_image_url($image, 380, 380).'">';
+                                        } 
+                                        // sort our image sources so they are in the right order to display (lowest to highest)
+                                        ksort($image_sources);
+                                        foreach($image_sources as $source) {
+                                            echo ($source);
+                                        }
                                     } 
-                                    if($image_size[0] >= 360 && $image_size[1] >= 360) { 
-                                        $image_default = legacy_get_resized_remote_image_url($image, 360, 360);
-                                        $image_sources[4] = '<source media="(max-width: 2000px)" srcset="'.legacy_get_resized_remote_image_url($image, 360, 360).'">';
-                                    } 
-                                    if($image_size[0] >= 380 && $image_size[1] >= 380) { 
-                                        $image_default = legacy_get_resized_remote_image_url($image, 380, 380); 
-                                        $image_sources[2] = '<source media="(max-width: 800px)" srcset="'.legacy_get_resized_remote_image_url($image, 380, 380).'">';
-                                    } 
-                                    // sort our image sources so they are in the right order to display (lowest to highest)
-                                    ksort($image_sources);
-                                    foreach($image_sources as $source) {
-                                        echo ($source);
-                                    }
+  
                                     ?>
 
                                     <img src="<?php echo $image_default; ?>" 
