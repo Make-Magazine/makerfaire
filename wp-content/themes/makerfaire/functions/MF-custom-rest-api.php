@@ -368,7 +368,7 @@ function getMTMentries($formIDs = '', $faireID = '', $years = '') {
                 $maker_photo = isset($maker_photo_decoded[0]) ? $maker_photo_decoded[0] : "";
             } 
             if(empty($maker_photo)) {
-                $maker_photo = "/wp-content/themes/makerfaire/images/default-makey-large.jpg";
+                $maker_photo = isset($projPhoto) ? $projPhoto : "/wp-content/themes/makerfaire/images/default-makey-medium.jpg";
             }
             $maker_photo = legacy_get_resized_remote_image_url($maker_photo, 400, 400);
 
