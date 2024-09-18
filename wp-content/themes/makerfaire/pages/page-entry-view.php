@@ -7,7 +7,7 @@ $showcaseResults = showcase($entryId); // this will also tell us if this is a pa
 $showEditMakey = false;
 
 $imageClass = "project-image";
-if($proj_photo_size && ($proj_photo_size[0]/$proj_photo_size[1] < 1.77777)) {
+if($proj_photo_size && ($proj_photo_size[0]/$proj_photo_size[1] > 1.77777)) {
     $imageClass = "project-image-wide";
 }
 ?>
@@ -31,7 +31,7 @@ if($proj_photo_size && ($proj_photo_size[0]/$proj_photo_size[1] < 1.77777)) {
                          data-photo="<?php echo $project_photo; ?>">
                 </picture>
             <?php } elseif(isset($proj_photo_size[0]) && $proj_photo_size[0] > 420 ) { ?>
-                <picture class="exhibit-picture small-picture">
+                <picture class="exhibit-picture small-picture <?php echo $imageClass; ?>">
                     <source media="(max-width: 420px)" srcset="<?php echo $project_photo_small; ?>">
                     <img src="<?php echo $project_photo_medium; ?>" 
                          alt="<?php echo $project_title; ?> project image"
@@ -39,7 +39,7 @@ if($proj_photo_size && ($proj_photo_size[0]/$proj_photo_size[1] < 1.77777)) {
                          data-photo="<?php echo $project_photo; ?>">
                 </picture>
             <?php } else { ?>
-                <picture class="exhibit-picture small-picture">
+                <picture class="exhibit-picture small-picture <?php echo $imageClass; ?>">
                     <img src="<?php echo $project_photo_small; ?>"
                          alt="<?php echo $project_title; ?> project image"
                          onerror="this.onerror=null;this.src='/wp-content/themes/makerfaire/images/default-featured-image.jpg';this.srcset=''"
