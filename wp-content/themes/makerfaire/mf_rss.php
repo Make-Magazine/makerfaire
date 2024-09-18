@@ -32,6 +32,8 @@ if($form_id!=''){
 }else{
     $entries = array();
 }
+// randomize entries, as the feed seems static and not updating every hour
+shuffle($entries);
 
 $postCount = 5; // The number of posts to show in the feed
 //$posts = query_posts('showposts=' . $postCount);
