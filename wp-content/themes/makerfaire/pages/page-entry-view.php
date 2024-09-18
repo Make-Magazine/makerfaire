@@ -5,6 +5,11 @@
  */
 $showcaseResults = showcase($entryId); // this will also tell us if this is a parent or child of a showcase
 $showEditMakey = false;
+
+$imageClass = "project-image";
+if($proj_photo_size && ($proj_photo_size[0]/$proj_photo_size[1] < 1.77777)) {
+    $imageClass = "project-image-wide";
+}
 ?>
 <main class="wrapper-fluid">
     <section id="topSection">
@@ -21,6 +26,7 @@ $showEditMakey = false;
                     <source media="(max-width: 1200px)" srcset="<?php echo $project_photo_medium; ?>">
                     <source media="(max-width: 1500px)" srcset="<?php echo legacy_get_resized_remote_image_url($project_photo_large, 840, 560); ?>">
                     <img src="<?php echo $project_photo_large; ?>" 
+                         class="<?php echo $imageClass; ?>" 
                          alt="<?php echo $project_title; ?> project image"
                          onerror="this.onerror=null;this.src='/wp-content/themes/makerfaire/images/default-featured-image.jpg';this.srcset=''"
                          data-photo="<?php echo $project_photo; ?>">
@@ -29,13 +35,15 @@ $showEditMakey = false;
                 <picture class="exhibit-picture small-picture">
                     <source media="(max-width: 420px)" srcset="<?php echo $project_photo_small; ?>">
                     <img src="<?php echo $project_photo_medium; ?>" 
+                         class="<?php echo $imageClass; ?>" 
                          alt="<?php echo $project_title; ?> project image"
                          onerror="this.onerror=null;this.src='/wp-content/themes/makerfaire/images/default-featured-image.jpg';this.srcset=''"
                          data-photo="<?php echo $project_photo; ?>">
                 </picture>
             <?php } else { ?>
                 <picture class="exhibit-picture small-picture">
-                    <img src="<?php echo $project_photo_small; ?>" 
+                    <img src="<?php echo $project_photo_small; ?>"
+                         class="<?php echo $imageClass; ?>" 
                          alt="<?php echo $project_title; ?> project image"
                          onerror="this.onerror=null;this.src='/wp-content/themes/makerfaire/images/default-featured-image.jpg';this.srcset=''"
                          data-photo="<?php echo $project_photo; ?>">

@@ -104,6 +104,10 @@
 				object-position: top;
 				width: 100%;
 				border-radius: 5px;
+				&.project-image-wide { // for those long, logo images
+					object-fit: contain;
+  					object-position: center;
+				}
 			}
 			&.small-picture {
 				justify-content: center;
