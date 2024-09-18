@@ -21,12 +21,11 @@ if($proj_photo_size && ($proj_photo_size[0]/$proj_photo_size[1] < 1.77777)) {
                          alt="<?php echo $project_title; ?> project image" />
                 </picture>
             <?php } elseif( isset($proj_photo_size[0]) && $proj_photo_size[0] > 900 ) { ?>
-                <picture class="exhibit-picture">
+                <picture class="exhibit-picture <?php echo $imageClass; ?>">
                     <source media="(max-width: 420px)" srcset="<?php echo $project_photo_small; ?>">
                     <source media="(max-width: 1200px)" srcset="<?php echo $project_photo_medium; ?>">
                     <source media="(max-width: 1500px)" srcset="<?php echo legacy_get_resized_remote_image_url($project_photo_large, 840, 560); ?>">
                     <img src="<?php echo $project_photo_large; ?>" 
-                         class="<?php echo $imageClass; ?>" 
                          alt="<?php echo $project_title; ?> project image"
                          onerror="this.onerror=null;this.src='/wp-content/themes/makerfaire/images/default-featured-image.jpg';this.srcset=''"
                          data-photo="<?php echo $project_photo; ?>">
@@ -35,7 +34,6 @@ if($proj_photo_size && ($proj_photo_size[0]/$proj_photo_size[1] < 1.77777)) {
                 <picture class="exhibit-picture small-picture">
                     <source media="(max-width: 420px)" srcset="<?php echo $project_photo_small; ?>">
                     <img src="<?php echo $project_photo_medium; ?>" 
-                         class="<?php echo $imageClass; ?>" 
                          alt="<?php echo $project_title; ?> project image"
                          onerror="this.onerror=null;this.src='/wp-content/themes/makerfaire/images/default-featured-image.jpg';this.srcset=''"
                          data-photo="<?php echo $project_photo; ?>">
@@ -43,7 +41,6 @@ if($proj_photo_size && ($proj_photo_size[0]/$proj_photo_size[1] < 1.77777)) {
             <?php } else { ?>
                 <picture class="exhibit-picture small-picture">
                     <img src="<?php echo $project_photo_small; ?>"
-                         class="<?php echo $imageClass; ?>" 
                          alt="<?php echo $project_title; ?> project image"
                          onerror="this.onerror=null;this.src='/wp-content/themes/makerfaire/images/default-featured-image.jpg';this.srcset=''"
                          data-photo="<?php echo $project_photo; ?>">
