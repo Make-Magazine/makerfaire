@@ -114,7 +114,6 @@
 			}
 			&.project-image-wide { // for those long, logo images
 				aspect-ratio: auto;
-				height: 100%;
 				img{
 					object-fit: contain;
 					object-position: center;
