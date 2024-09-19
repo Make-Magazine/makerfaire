@@ -24,7 +24,7 @@ if($proj_photo_size && ($proj_photo_size[0]/$proj_photo_size[1] > 1.77777)) {
                 <picture class="exhibit-picture <?php echo $imageClass; ?>">
                     <source media="(max-width: 420px)" srcset="<?php echo $project_photo_small; ?>">
                     <source media="(max-width: 1200px)" srcset="<?php echo $project_photo_medium; ?>">
-                    <source media="(max-width: 1500px)" srcset="<?php echo legacy_get_resized_remote_image_url($project_photo_large, 840, 560); ?>">
+                    <source media="(max-width: 1500px)" srcset="<?php echo $project_photo_largish; ?>">
                     <img src="<?php echo $project_photo_large; ?>" 
                          alt="<?php echo $project_title; ?> project image"
                          onerror="this.onerror=null;this.src='/wp-content/themes/makerfaire/images/default-featured-image.jpg';this.srcset=''"
