@@ -157,7 +157,7 @@ if($proj_photo_size && ($proj_photo_size[0]/$proj_photo_size[1] > 1.77777)) {
     </section>
     <?php if ($dispMakerInfo && $showcase != 'parent') { ?>
         <section id="makerInfo" class="makers-<?php echo count($makers); ?>">
-            <?php if(count($makers) > 1) {  
+            <?php if(count($makers) > 1) {
                 foreach($makers as $maker) { ?>
                     <div class='entry-box'>
                         <img src='<?php echo(legacy_get_resized_remote_image_url($maker['photo'], 400, 400)); ?>' 
@@ -174,11 +174,11 @@ if($proj_photo_size && ($proj_photo_size[0]/$proj_photo_size[1] > 1.77777)) {
                         ?> 
                     </div>
                 <?php } 
-            } else if( $makers  ) { 
+            } else if( $makers ) { 
                 $maker = current($makers);
                 $small_photo = isset($maker['photo']) ? legacy_get_resized_remote_image_url($maker['photo'], 400, 400) : "";
                 $large_photo = isset($maker['photo']) ? legacy_get_resized_remote_image_url($maker['photo'], 760, 760) : "";
-                if($maker['firstname'] != '' || $maker['photo'] != '') {
+                if($maker['firstname'] != '' || $maker['photo'] != '' && file_exists($maker['photo'])) {
             ?>
                 <div class="small-column">
                     <picture>
@@ -198,11 +198,11 @@ if($proj_photo_size && ($proj_photo_size[0]/$proj_photo_size[1] > 1.77777)) {
                             <span class="edit-message">Consider <a href="#" onclick="document.getElementById('edit-photos').click();return false;">editing</a> your Bio or Group/Company description to be at least 200 characters to help fillout your page better.</span>                        
                             <?php 
                         } 
-                    }   ?>
+                    } ?>
                 </div>
             <?php 
                 }
-            } ?>              
+            } ?>
         </section>
     <?php } ?>  
 

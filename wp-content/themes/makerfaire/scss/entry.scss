@@ -221,6 +221,10 @@
 					flex-direction: row;
 				}
 			}
+			// if empty or only whitespace
+			&:empty, &:not(:has(*)) { 
+				display: none;
+			}
 			p {
 				color: #fff;
 				font-size: 20px;
