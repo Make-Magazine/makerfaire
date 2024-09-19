@@ -539,6 +539,12 @@ function getSchedule($formIDs, $faireID) {
         } else {
             $projPhoto = $row->photo;
         }
+        //for BA24, the single photo was changed to a multi image which messed things up a bit
+        $photo = json_decode($projPhoto);
+        if (is_array($photo)) {
+            $projPhoto = $photo[0];
+        }
+        
         //find out if there is an override image for this page
         $overrideImg = findOverride($row->entry_id, 'schedule');
         if ($overrideImg != '')
