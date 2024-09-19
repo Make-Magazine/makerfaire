@@ -544,7 +544,7 @@ function getSchedule($formIDs, $faireID) {
         if (is_array($photo)) {
             $projPhoto = $photo[0];
         }
-        
+
         //find out if there is an override image for this page
         $overrideImg = findOverride($row->entry_id, 'schedule');
         if ($overrideImg != '')
@@ -556,7 +556,7 @@ function getSchedule($formIDs, $faireID) {
             $projPhoto = $project_gallery[0];
         }
 
-        $fitPhoto = legacy_get_resized_remote_image_url($projPhoto, 200, 200);
+        $fitPhoto = legacy_get_resized_remote_image_url($projPhoto, 300, 200);
         if ($fitPhoto == NULL)
             $fitPhoto = $projPhoto;
 

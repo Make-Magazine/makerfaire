@@ -371,7 +371,7 @@ h4.featured {
 				display: flex;
 				margin: 20px 0px;
 				box-shadow: 0px 3px 13px 0px rgba(0, 0, 0, 0.08);
-  				padding: 30px 40px 40px 40px;
+  				padding: 40px 40px 40px 40px;
 				position: relative;
 				@media (max-width:991px) {
 					margin-left: 5px;
@@ -407,7 +407,6 @@ h4.featured {
 				.sched-img {
 					width: 145px;
 					height: 145px;
-					border-radius: 75px;
 					margin-right: 30px;
 					background-size: cover;
 					background-repeat: no-repeat;
