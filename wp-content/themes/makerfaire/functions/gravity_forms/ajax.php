@@ -455,10 +455,10 @@ function duplicate_entry_id($entry, $form) {
   $form_change = $_POST['entry_form_copy']; //selected form field
   $entry_id    = $entry['id'];
 
-  error_log('$duplicating entry id =' . $entry_id . ' into form ' . $form_change);
+  //error_log('$duplicating entry id =' . $entry_id . ' into form ' . $form_change);
 
   $result     = duplicate_entry_data($form_change, $entry_id);
-  error_log('UPDATE RESULTS = ' . print_r($result, true));
+  //error_log('UPDATE RESULTS = ' . print_r($result, true));
   return $result;
 }
 
@@ -473,6 +473,7 @@ function duplicate_entry_id($entry, $form) {
 function duplicate_entry_data($form_change, $current_entry_id) {
   global $wpdb;
   global $current_user;
+  $user_id    = $current_user && $current_user->ID ? $current_user->ID : 'NULL';
 
   $current_entry=gfapi::get_entry($current_entry_id);  
   $newEntry = array('form_id'=>$form_change,  
@@ -535,7 +536,20 @@ function duplicate_entry_data($form_change, $current_entry_id) {
   $return = 'Entry ' . $entry_id . ' created in Form ' . $form_change;
 
   //if GF easypassthrough is active, we need to reset the token 
-  $resetToken = (class_exists('GP_Easy_Passthrough') ? TRUE : FALSE);
+  //$resetToken = (class_exists('GP_Easy_Passthrough') ? TRUE : FALSE);
+    
+
+  //copy resources and attributes
+  $wpdb->get_results("INSERT INTO `wp_rmt_entry_resources` (`entry_id`, `resource_id`, `qty`, `comment`, `user`, `update_stamp`, `lockBit`)
+  select '$entry_id', `resource_id`, `qty`, `comment`, '$user_id', now(),0 from wp_rmt_entry_resources where entry_id = $current_entry_id");
+
+  //copy attributes from original entry
+  $wpdb->get_results("INSERT INTO `wp_rmt_entry_attributes` (`entry_id`, `attribute_id`, `value`, `comment`, `user`, `update_stamp`, `lockBit`)
+  select '$entry_id', `attribute_id`, `value`, `comment`,  '$user_id', now(), 0 from wp_rmt_entry_attributes where entry_id = $current_entry_id");
+
+  //copy attention fields from original entry
+  $wpdb->get_results("INSERT INTO `wp_rmt_entry_attn` (`entry_id`, `attn_id`, `comment`, `user`, `update_stamp`)
+  select '$entry_id', `attn_id`, `comment`,  '$user_id', now() from wp_rmt_entry_attn where entry_id = $current_entry_id");
 
   //add a note to the new entry
   mf_add_note($entry_id, 'Copied Entry ID:' . $current_entry_id . ' into form ' . $form_change . '. New Entry ID =' . $entry_id);
