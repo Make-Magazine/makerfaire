@@ -112,6 +112,13 @@
 					width: auto;
 				}
 			}
+			&.project-image-wide { // for those long, logo images
+				aspect-ratio: auto;
+				img{
+					object-fit: contain;
+					object-position: center;
+				}
+			}
 		}
 		.owl-carousel {
 			.owl-stage {
@@ -213,6 +220,10 @@
 				@media screen and (max-width: 800px) {
 					flex-direction: row;
 				}
+			}
+			// if empty or only whitespace
+			&:empty, &:not(:has(*)) { 
+				display: none;
 			}
 			p {
 				color: #fff;

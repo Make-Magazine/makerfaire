@@ -5,6 +5,11 @@
  */
 $showcaseResults = showcase($entryId); // this will also tell us if this is a parent or child of a showcase
 $showEditMakey = false;
+
+$imageClass = "project-image";
+if($proj_photo_size && ($proj_photo_size[0]/$proj_photo_size[1] > 1.77777)) {
+    $imageClass = "project-image-wide";
+}
 ?>
 <main class="wrapper-fluid">
     <section id="topSection">
@@ -16,17 +21,17 @@ $showEditMakey = false;
                          alt="<?php echo $project_title; ?> project image" />
                 </picture>
             <?php } elseif( isset($proj_photo_size[0]) && $proj_photo_size[0] > 900 ) { ?>
-                <picture class="exhibit-picture">
+                <picture class="exhibit-picture <?php echo $imageClass; ?>">
                     <source media="(max-width: 420px)" srcset="<?php echo $project_photo_small; ?>">
                     <source media="(max-width: 1200px)" srcset="<?php echo $project_photo_medium; ?>">
-                    <source media="(max-width: 1500px)" srcset="<?php echo legacy_get_resized_remote_image_url($project_photo_large, 840, 560); ?>">
+                    <source media="(max-width: 1500px)" srcset="<?php echo $project_photo_largish; ?>">
                     <img src="<?php echo $project_photo_large; ?>" 
                          alt="<?php echo $project_title; ?> project image"
                          onerror="this.onerror=null;this.src='/wp-content/themes/makerfaire/images/default-featured-image.jpg';this.srcset=''"
                          data-photo="<?php echo $project_photo; ?>">
                 </picture>
             <?php } elseif(isset($proj_photo_size[0]) && $proj_photo_size[0] > 420 ) { ?>
-                <picture class="exhibit-picture small-picture">
+                <picture class="exhibit-picture small-picture <?php echo $imageClass; ?>">
                     <source media="(max-width: 420px)" srcset="<?php echo $project_photo_small; ?>">
                     <img src="<?php echo $project_photo_medium; ?>" 
                          alt="<?php echo $project_title; ?> project image"
@@ -34,8 +39,8 @@ $showEditMakey = false;
                          data-photo="<?php echo $project_photo; ?>">
                 </picture>
             <?php } else { ?>
-                <picture class="exhibit-picture small-picture">
-                    <img src="<?php echo $project_photo_small; ?>" 
+                <picture class="exhibit-picture small-picture <?php echo $imageClass; ?>">
+                    <img src="<?php echo $project_photo_small; ?>"
                          alt="<?php echo $project_title; ?> project image"
                          onerror="this.onerror=null;this.src='/wp-content/themes/makerfaire/images/default-featured-image.jpg';this.srcset=''"
                          data-photo="<?php echo $project_photo; ?>">
@@ -152,7 +157,7 @@ $showEditMakey = false;
     </section>
     <?php if ($dispMakerInfo && $showcase != 'parent') { ?>
         <section id="makerInfo" class="makers-<?php echo count($makers); ?>">
-            <?php if(count($makers) > 1) {  
+            <?php if(count($makers) > 1) {
                 foreach($makers as $maker) { ?>
                     <div class='entry-box'>
                         <img src='<?php echo(legacy_get_resized_remote_image_url($maker['photo'], 400, 400)); ?>' 
@@ -169,11 +174,11 @@ $showEditMakey = false;
                         ?> 
                     </div>
                 <?php } 
-            } else if( $makers  ) { 
+            } else if( $makers ) { 
                 $maker = current($makers);
                 $small_photo = isset($maker['photo']) ? legacy_get_resized_remote_image_url($maker['photo'], 400, 400) : "";
                 $large_photo = isset($maker['photo']) ? legacy_get_resized_remote_image_url($maker['photo'], 760, 760) : "";
-                if($maker['firstname'] != '' || $maker['photo'] != '') {
+                if($maker['firstname'] != '' || $maker['photo'] != '' && file_exists($maker['photo'])) {
             ?>
                 <div class="small-column">
                     <picture>
@@ -193,11 +198,11 @@ $showEditMakey = false;
                             <span class="edit-message">Consider <a href="#" onclick="document.getElementById('edit-photos').click();return false;">editing</a> your Bio or Group/Company description to be at least 200 characters to help fillout your page better.</span>                        
                             <?php 
                         } 
-                    }   ?>
+                    } ?>
                 </div>
             <?php 
                 }
-            } ?>              
+            } ?>
         </section>
     <?php } ?>  
 

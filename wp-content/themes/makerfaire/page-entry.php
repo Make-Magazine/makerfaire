@@ -164,10 +164,19 @@ if (isset($entry->errors)) {
     // check if project photo is too small to treat normally
     $proj_photo_size = !empty($project_photo) ? @getimagesize($project_photo) : array(750, 500);
 
-    // these are the images we're using for the responsvie image sources
-    $project_photo_large  = legacy_get_resized_remote_image_url($project_photo, 1050, 700);
-    $project_photo_medium = legacy_get_resized_remote_image_url($project_photo, 765, 510);
-    $project_photo_small  = legacy_get_resized_remote_image_url($project_photo, 420, 280);
+    // these are the images we're using for the responsive image sources
+    if(is_array($proj_photo_size) && $proj_photo_size[1] > 0 && $proj_photo_size[0]/$proj_photo_size[1] < 1.77777) {
+        $project_photo_large  = legacy_get_resized_remote_image_url($project_photo, 1050, 700);
+        $project_photo_largish= legacy_get_resized_remote_image_url($project_photo, 840, 560);
+        $project_photo_medium = legacy_get_resized_remote_image_url($project_photo, 765, 510);
+        $project_photo_small  = legacy_get_resized_remote_image_url($project_photo, 420, 280);
+    } else {
+        //for very wide, short images
+        $project_photo_large  = legacy_get_fit_remote_image_url($project_photo, 1050, 700);
+        $project_photo_largish= legacy_get_fit_remote_image_url($project_photo, 840, 560);
+        $project_photo_medium = legacy_get_fit_remote_image_url($project_photo, 765, 510);
+        $project_photo_small  = legacy_get_fit_remote_image_url($project_photo, 420, 280);
+    }
 
     $project_short = (isset($entry['16']) ? $entry['16'] : '');    // Description
     $presentation_title  = (isset($entry['880']) ? $entry['880'] : '');
