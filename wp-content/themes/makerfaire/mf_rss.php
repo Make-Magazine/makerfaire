@@ -27,11 +27,13 @@ if($form_id!=''){
             
         )
     );
-    $sorting         = array( 'key' => '10', 'direction' => 'RAND' );
+    $sorting = array( 'key' => '10', 'direction' => 'RAND' );
     $entries = GFAPI::get_entries($form_id, $search_criteria );
 }else{
-    $entries=array();
+    $entries = array();
 }
+// randomize entries, as the feed seems static and not updating every hour
+shuffle($entries);
 
 $postCount = 5; // The number of posts to show in the feed
 //$posts = query_posts('showposts=' . $postCount);
@@ -70,7 +72,7 @@ echo '<?xml version="1.0" encoding="'.get_option('blog_charset').'"?'.'>';
                         <pubDate><?php echo $entry['date_created']; ?></pubDate>
                         <dc:creator><?php echo $entry['96.3'].' '.$entry['96.6']; ?></dc:creator>
                         <guid isPermaLink="false"><?php the_guid(); ?></guid>
-                        <description><![CDATA[<?php echo $entry['151']; ?>]]></description>
+                        <description><![CDATA[<img src="<?php echo $project_photo; ?>" /><?php echo $entry['16']; ?>]]></description>
                         <content:encoded><![CDATA[<img src="<?php echo $project_photo; ?>" /><?php echo $entry['16']; ?>]]></content:encoded>                        
                 </item>
         <?php } ?>
