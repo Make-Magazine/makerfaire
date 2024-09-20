@@ -25,12 +25,12 @@ function update_entry_resatt() {
     $attention_id = (isset($insertArr['attn_id']) ? $insertArr['attn_id'] : 0);
 
     if ($table == 'wp_rmt_entry_resources') {
-      $rowID = GFRMTHELPER::rmt_update_resource($entryID, $resource_id, $qty, $comment);
+      $rowID = GFRMTHELPER::rmt_update_resource($entryID, $resource_id, $qty, $comment, 'admin');
     } elseif ($table == 'wp_rmt_entry_attributes') {
-      $rowID = GFRMTHELPER::rmt_update_attribute($entryID, $attribute_id, $value, $comment);
+      $rowID = GFRMTHELPER::rmt_update_attribute($entryID, $attribute_id, $value, $comment, 'admin');
     } else {
       //update/insert attention
-      $rowID = GFRMTHELPER::rmt_update_attention($entryID, $attention_id, $comment);
+      $rowID = GFRMTHELPER::rmt_update_attention($entryID, $attention_id, $comment, 'admin');
     }
   } else {
     //find the field data to update    

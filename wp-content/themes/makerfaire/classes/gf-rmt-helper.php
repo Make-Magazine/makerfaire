@@ -215,11 +215,24 @@ class GFRMTHELPER {
         //Payment forms are allowed to have multiple resources of the same category
         //if this isn't a payment form and the resource is unlocked
         //what if they put 05 amps on their form but then paid for 10 amps
-        if ($form_type != 'Payment') {
+        if ($form_type == 'Payment') {
+          $type = 'insert';
+          //if the resource is unlocked
+          if($res->lockBit == 0) {            
+            //update the resource with the payment
+            $type = 'update';
+          }else{
+            $type = 'insert';
+          }   
+        }elseif($form_type=='admin'){
+          $type = 'insert';
+        }else{  //user submitted forms
+          //if resource is unlocked
           if($res->lockBit == 0) {
             //update the resource
             $type = 'update';
           }else{
+            //if resource is locked, don't do anything.
             $type='';
           }
         }
