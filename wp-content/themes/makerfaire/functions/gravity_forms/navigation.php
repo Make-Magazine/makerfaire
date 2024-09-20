@@ -246,7 +246,7 @@ function buildFaireDrop(&$wp_admin_bar, $faire_id = null) {
                     'meta' => array('class' => 'my-toolbar-page'),
                     'parent' => 'mf_admin_parent_' . $faire
                 ));
-            }
+            }        
 
             //add scheduling link
             if (!(isset($faire_id))) {

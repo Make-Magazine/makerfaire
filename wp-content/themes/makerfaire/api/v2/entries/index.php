@@ -522,7 +522,7 @@ function fieldOutput($fieldID, $entry, $field_array, $form, $arg = '') {
         $type      = 'html';
 
         $fieldName = 'entry_flags_' . $entry['id'];
-        $field     = ($field_array['304'] ? $field_array['304'] : '');
+        $field     = (isset($field_array['304']) ? $field_array['304'] : '');
         $value     = get_checkbox_value($field, $entry, $fieldName, $edit_cap);
         break;
 
@@ -534,7 +534,7 @@ function fieldOutput($fieldID, $entry, $field_array, $form, $arg = '') {
         $type      = 'html';
 
         $fieldName = 'entry_prelim_loc_' . $entry['id'];
-        $field     = ($field_array['302'] ? $field_array['302'] : '');
+        $field     = (isset($field_array['302']) ? $field_array['302'] : '');
         $value     = get_checkbox_value($field, $entry, $fieldName, $edit_cap);
 
         if ($edit_prelim_loc) {
@@ -550,7 +550,7 @@ function fieldOutput($fieldID, $entry, $field_array, $form, $arg = '') {
         $type      = 'html';
 
         $fieldName = 'admin_exhibit_type_' . $entry['id'];
-        $field     = ($field_array['339'] ? $field_array['339'] : '');
+        $field     = (isset($field_array['339']) ? $field_array['339'] : '');
         $value     = get_checkbox_value($field, $entry, $fieldName, $edit_cap);
 
         break;
@@ -562,7 +562,7 @@ function fieldOutput($fieldID, $entry, $field_array, $form, $arg = '') {
         $type      = 'html';
 
         $fieldName = 'info_fee_mgmt_' . $entry['id'];
-        $field     = ($field_array['442'] ? $field_array['442'] : '');
+        $field     = (isset($field_array['442']) ? $field_array['442'] : '');
         $value     = get_checkbox_value($field, $entry, $fieldName, $edit_cap);
 
         break;
