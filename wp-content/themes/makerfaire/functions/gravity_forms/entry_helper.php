@@ -136,9 +136,9 @@ function showcase($entryID) {
         
         // we reuse the makerInfo section for projects here, as it's the same css
         $return .= '<section id="makerInfo" class="showcase-list makers-' . count($showcase_info['child_data']) . '">';
-        foreach ($showcase_info['child_data'] as $parent) {
+        foreach ($showcase_info['child_data'] as $parent) {            
             $return .= '<a href="/maker/entry/' . $parent['child_entryID'] . '" class="entry-box">
-                                        <img src="' . legacy_get_resized_remote_image_url($parent['child_photo'], 400, 400) . '"
+                                        <img src="' . legacy_get_resized_remote_image_url(stripslashes($parent['child_photo']), 400, 400) . '"
                                             alt="' . $parent['child_title'] . ' Picture"
                                             onerror="this.onerror=null;this.src=\'/wp-content/themes/makerfaire/images/default-makey-medium.png\';" />
                                         <h3>' . $parent['child_title'] . '</h3>
@@ -223,10 +223,17 @@ function get_showcase_entries($entryID){
 
         //pull child data
         foreach ($results as $row) {            
+            //for BA24, the single photo was changed to a multi image which messed things up a bit
+            $child_photo = $row->child_photo;
+            $photo = json_decode($child_photo);
+            if (is_array($photo)) {
+                $child_photo = $photo[0];
+            }
+            
             $showcase_info['child_data'][] = array(
-                'child_entryID' =>$row->childID,
-                'child_photo' =>$row->child_photo,
-                'child_title' =>$row->child_title);
+                'child_entryID' => $row->childID,
+                'child_photo'   => $child_photo,
+                'child_title'   => $row->child_title);
         }
     }else{
         //pull parent data
@@ -242,9 +249,16 @@ function get_showcase_entries($entryID){
                 LIMIT 1";
         $parent = $wpdb->get_row($childSQL);
         
+        //for BA24, the single photo was changed to a multi image which messed things up a bit
+        $parent_photo = $parent->parent_photo;
+        $photo        = json_decode($parent_photo);
+        if (is_array($photo)) {
+            $parent_photo = $photo[0];
+        }
+
         $showcase_info['parent_data'] = array(
             'parent_id'     => $parent_id,
-            'parent_photo'  => $parent->parent_photo,
+            'parent_photo'  => $parent_photo,
             'parent_title'  => $parent->parent_title,
             'parent_desc'   => $parent->parent_description
         );
