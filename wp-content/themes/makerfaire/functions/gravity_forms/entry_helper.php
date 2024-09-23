@@ -249,9 +249,16 @@ function get_showcase_entries($entryID){
                 LIMIT 1";
         $parent = $wpdb->get_row($childSQL);
         
+        //for BA24, the single photo was changed to a multi image which messed things up a bit
+        $parent_photo = $parent->parent_photo;
+        $photo        = json_decode($parent_photo);
+        if (is_array($photo)) {
+            $parent_photo = $photo[0];
+        }
+
         $showcase_info['parent_data'] = array(
             'parent_id'     => $parent_id,
-            'parent_photo'  => $parent->parent_photo,
+            'parent_photo'  => $parent_photo,
             'parent_title'  => $parent->parent_title,
             'parent_desc'   => $parent->parent_description
         );
