@@ -138,9 +138,9 @@ function showcase($entryID) {
         $return .= '<section id="makerInfo" class="showcase-list makers-' . count($showcase_info['child_data']) . '">';
         foreach ($showcase_info['child_data'] as $parent) {            
             $return .= '<a href="/maker/entry/' . $parent['child_entryID'] . '" class="entry-box">
-                                        <img src="' . legacy_get_resized_remote_image_url(stripslashes($parent['child_photo']), 400, 400) . '"
+                                        <img src="' . legacy_get_resized_remote_image_url(stripslashes($parent['child_photo']), 400, 266) . '"
                                             alt="' . $parent['child_title'] . ' Picture"
-                                            onerror="this.onerror=null;this.src=\'/wp-content/themes/makerfaire/images/default-makey-medium.png\';" />
+                                            onerror="this.onerror=null;this.src=\'/wp-content/themes/makerfaire/images/default-featured-image.jpg\';" />
                                         <h3>' . $parent['child_title'] . '</h3>
                                     </a>';
         }
