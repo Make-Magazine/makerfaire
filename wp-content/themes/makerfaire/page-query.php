@@ -4,7 +4,6 @@
  *
  * v2 of the Maker Faire API
  *
- * Built specifically for the mobile app but we have interest in building it further
  * This page is the controller for grabbing the appropriate API version and files.
  *
  * @version 2.0
@@ -19,18 +18,10 @@ define( 'MF_POSTS_PER_PAGE', 2000 );
 // Set the API keys to run this API.
 define( 'MF_API_KEY', sanitize_text_field( get_option( 'make_app_api_key' ) ) );
 
-// Set the Eventbase API version
-define( 'MF_EVENTBASE_API_VERSION', '3.2' );
-
 /*
  * SECURITY CHECKS
 */
-$allowed_types = array(
-	'category', 		 //is this used??
-	'entity', 			 //is this used??
-	'location-category', //is this used??
-	'maker', 			 //is this used??
-	'schedule', 		 //is this used??	
+$allowed_types = array(	
 	'entries',
 	'expofp',		
 	'maker-portal',
