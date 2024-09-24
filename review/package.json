@@ -12,14 +12,13 @@
     "scss:css:compile": "sass scss/style.scss css/style.min.css --style compressed",
     "onchange:js:vue-libs": "onchange 'js/*.js' -- npm run js:vue:uglify",
     "onchange:js:vue": "onchange 'js/*.js' -- npm run js:vue:uglify",
-    "js:vue-libs:uglify": "uglifyjs node_modules/vue/dist/vue.min.js node_modules/bootstrap-vue/dist/bootstrap-vue.js node_modules/axios/dist/axios.js node_modules/vue-router/dist/vue-router.min.js node_modules/arrive/minified/arrive.min.js -o js/min/vue.min.js -c -m --source-map \"root='/review/', url='vue.min.js.map'\"",
+    "js:vue-libs:uglify": "uglifyjs node_modules/vue/dist/vue.min.js node_modules/bootstrap-vue/dist/bootstrap-vue.js node_modules/axios/dist/axios.js node_modules/vue-router/dist/vue-router.min.js -o js/min/vue.min.js -c -m --source-map \"root='/review/', url='vue.min.js.map'\"",
     "js:vue:uglify": "uglifyjs js/*.js -o js/min/review.min.js -c -m --source-map \"root='/review/', url='review.min.js.map'\"",
     "build": "npm-run-all js:**:uglify",
     "build:cachebust": "npm-run-all cachebust:update js:**:uglify scss:**:compile",
     "dev": "npm-run-all build -p onchange:js:** onchange:scss:**"
   },
   "dependencies": {
-    "arrive": "^2.4.1",
     "axios": "^1.6.8",
     "bootstrap": "~4.6.1",
     "bootstrap-vue": ">=2.23.1",

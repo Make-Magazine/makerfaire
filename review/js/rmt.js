@@ -47,7 +47,7 @@ function addRow(addTo, entryID) {
 
 	//build table columns
 	for (i = 0; i < dataArray.length; i++) {
-		tableRow += '<td class="' + dataArray[i]['class'] + '" id="' + dataArray[i]['id'] + '">';
+		tableRow += '<td  class="' + dataArray[i]['class'] + '" id="' + dataArray[i]['id'] + '">';
 		if (dataArray[i]['display'] == 'dropdown') {
 			tableRow += buildDropDown(dataArray[i]['id']);
 		} else if (dataArray[i]['display'] == 'numeric') {
@@ -239,19 +239,22 @@ function breakDownEle(currentEle) {
     return fieldData;
 }
 
-// when the editable fields appear add an onclick to change them into editable fields - uses "npm arrive" library
-document.arrive(".editable", function(newRMT) {
-    newRMT.onclick = function(){
-        if (newRMT.querySelectorAll('input').length > 0 || newRMT.querySelectorAll('textarea').length > 0 || newRMT.querySelectorAll('select').length > 0) {
-            return;
-        }
-        var id = newRMT.getAttribute('id');
-        var value = document.querySelector('#' + id).innerHTML;
+// wait for the .editable element to exist before adding the click function
+waitForElm('.editable').then((elm) => {
+    var editableElms = document.querySelectorAll(".editable")
+    Array.from(editableElms).forEach(elm => {
+       elm.addEventListener('click', function(event){
+            if (elm.querySelectorAll('input').length > 0 || elm.querySelectorAll('textarea').length > 0 || elm.querySelectorAll('select').length > 0) {
+                return;
+            }
+            var id = elm.getAttribute('id');
+            event.stopPropagation();      //<-------stop the bubbling of the event here
+            var value = document.querySelector('#' + id).innerHTML;
 
-        updateVal('#' + id, value);
-    }
+            updateVal('#' + id, value);
+        });
+    });
 });
-
 
 //create input or textarea elements where admin can edit values
 function updateVal(currentEle, value) {
@@ -399,7 +402,7 @@ function updateDB(newVal, currentEle) {
 		'ID': fieldData['ID'],
 		'table': fieldData['table'],
 		'newValue': newVal,
-		'entry_id': document.querySelector('#' + currentEle).closest(".card").querySelector('[name="entry_info_entry_id"]').value
+		'entry_id': document.querySelector('[name="entry_info_entry_id"]').value
 	};
     var xhr = new XMLHttpRequest();
     xhr.open("POST", ajaxurl);
