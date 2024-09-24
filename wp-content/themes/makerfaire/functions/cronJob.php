@@ -146,13 +146,13 @@ function cron_expofp_sync($expoID = '') {
 
                     // and then we update the final space size attribute
                     GFRMTHELPER::rmt_update_attribute($entry_id, 2, $space_size, "", "ExpoFP");
-                    echo 'Placed '.$entry_id;
-                    if($prev_value!='') echo ' previous location="' . $prev_value.'"';
                     
-                    echo '. ExpoFP placement - ' . $booth_details['type'] . '('.$booth_name.') '.$space_size.' MF status '.$entry[303].'<br/>';
 
                     //if this location/subarea was not previously set, make a note in the change report
-                    if(!in_array($subarea_id,$prev_subareas) || !in_array($booth_name,$prev_booths)){                        
+                    if(!in_array($subarea_id,$prev_subareas) || !in_array($booth_name,$prev_booths)){   
+
+                        echo "Moved " .$entry_id. " from " . $prev_value . " to " . explode("|", $booth_details['type'])[0] . " (" . $booth_name . ")";
+                        
                         //set change report data                                                 
                         $chgReport[] = array(
                             'user_id'           => 0, //expoFP
