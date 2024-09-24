@@ -180,7 +180,7 @@ function mf_replace_merge_tags($text, $form, $entry, $url_encode, $esc_html, $nl
     if (strpos($text, '{CONF_BUTTON}') !== false) {
         $suppToken  = (isset($entry['fg_easypassthrough_token']) ? $entry['fg_easypassthrough_token'] : '');
         $confButton = '<a href="https://makerfaire.com/query/?type=entry&token=' . $suppToken . '">' .
-            ' <button>Yes, I\'ll be there!</button>' .
+            ' <button style="border-radius:2px;border: solid 1px #eb002a;background:#eb002a;color:#fff;padding: 0px 15px;">Yes, I\'ll be there!</button>' .
             '</a>';
         $text = str_replace('{CONF_COMMENT}', $confButton, $text);
     }
