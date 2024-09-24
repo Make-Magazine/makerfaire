@@ -277,6 +277,8 @@
 				a { color: #333; }
 				.entry-box {
 					margin: 30px 0;
+					max-width: 400px;
+					max-height: fit-content;
 				}
 			}
 		}

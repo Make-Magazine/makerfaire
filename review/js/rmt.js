@@ -330,7 +330,7 @@ function insertRowDB(type, entryID) {
 	if(allSelected == false) {
 		alert("You must fill out Item, Type and Qty fields to submit")
 	} else {
-
+        document.querySelector('#' + type + 'RowNew #actions').innerHTML = '<i class="fas fa-spinner fa-lg"></i>';
 		if (type == 'res') {
 			var table = 'wp_rmt_entry_resources';
 			var dataArray = resourceArray;

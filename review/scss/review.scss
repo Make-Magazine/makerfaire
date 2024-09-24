@@ -331,6 +331,17 @@ i.bi-plus-circle, i.bi-plus-circle-fill, i.bi-check-circle, i.bi-check2 {
             i.fa-circle-minus, i.fa-ban {
                 color: red;
             }
+            .fa-spinner{
+                animation: loading 3s linear infinite;
+                @keyframes loading {
+                    0% { 
+                        transform: rotate(0); 
+                    }
+                    100% { 
+                        transform: rotate(360deg);
+                    }
+                }
+            }
         }
     }
 }
