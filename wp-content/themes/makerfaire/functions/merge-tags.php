@@ -182,7 +182,7 @@ function mf_replace_merge_tags($text, $form, $entry, $url_encode, $esc_html, $nl
         $confButton = '<a href="https://makerfaire.com/query/?type=entry&token=' . $suppToken . '">' .
             ' <button style="border-radius:2px;border: solid 1px #eb002a;background:#eb002a;color:#fff;padding:0px 15px;height:30px;font-weight:500;cursor:pointer;">Yes, I\'ll be there!</button>' .
             '</a>';
-        $text = str_replace('{CONF_COMMENT}', $confButton, $text);
+        $text = str_replace('{CONF_BUTTON}', $confButton, $text);
     }
     //resource lock indicator
     if (strpos($text, '{rmt_res_cat_lock') !== false) {
