@@ -25,7 +25,8 @@ $allowed_types = array(
 	'entries',
 	'expofp',		
 	'maker-portal',
-	'map'			
+	'map',
+	'entry'			
 );
 
 
@@ -86,8 +87,9 @@ if ( strpos( $api_path, '../' ) !== false || strpos( $api_path, "..\\" ) !== fal
 if ( ! file_exists( $api_path ) )
 	return;
 
-// Set the JSON header
-header( 'Content-type: application/json' );
-
+	if ( $type !='entry' ) {	
+		// Set the JSON header
+		header( 'Content-type: application/json' );
+	}
 // Load the file and process everything
 include_once( $api_path );
