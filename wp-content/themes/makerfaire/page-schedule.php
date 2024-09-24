@@ -45,7 +45,7 @@ if ($schedule_ids_trimmed && $schedule_ids_trimmed != '') { //display the new sc
 
         <div class="schedule-wrapper">
             <?php if (have_posts()) : while (have_posts()) : the_post(); ?>
-                    <div class="schedule-header container-fluid">
+                    <div class="schedule-header container-fluid">                                  
                         <h1 class="page-title"><span ng-show="schedSearch.type != ''">{{schedSearch.type}} </span><?php echo get_the_title(); ?><span ng-show="schedSearch.category != ''"> for {{schedSearch.category}}</span><span ng-show="schedSearch.nicename != ''"> on &lsquo;{{schedSearch.nicename}}&rsquo;</span></h1>
                     </div>
                     <div class="schedule-description">
@@ -148,8 +148,7 @@ if ($schedule_ids_trimmed && $schedule_ids_trimmed != '') { //display the new sc
                                     </div>
 
                                 </div>
-                            <?php }
-                            if ($faire != "VMF2020") {
+                            <?php }else {
                             ?>
 
                                 <div class="sched-col-4">
@@ -172,6 +171,9 @@ if ($schedule_ids_trimmed && $schedule_ids_trimmed != '') { //display the new sc
                                     </div>
                                 </div>
                             <?php } ?>
+                            <div class="sched-col-4">
+                                <input ng-model="schedSearch.$" id="mtm-search-input" class="form-control" placeholder="<?php _e("Enter your search", 'makerfaire') ?>" type="text">
+                            </div>
                             <?php /* <div class="sched-col-4">
                                             <div class="faux-checkbox">
                                                 <label>Featured</label>
@@ -231,24 +233,27 @@ if ($schedule_ids_trimmed && $schedule_ids_trimmed != '') { //display the new sc
             <div class="sched-table" sched-scroll="loadMore()">
                 <div class="row sched-header">
                     <div class="sched-col-1"></div>
-                    <div class="sched-body">
-                        <!-- if we are in the faire time, only display events that haven't occurred yet inFaire = {{inFaire}} {{todaysDate | date:'yyyy-MM-ddTHH:mm:ss'}} -->
-                        <div ng-repeat="schedule in schedules| filter : schedSearch | dateFilter: filterdow | orderBy: ['time_start', 'time_end'] | limitTo: limit">
-
+                    <div class="sched-body">                    
+                        <!-- if we are in the faire time, only display events that haven't occurred yet inFaire = {{inFaire}} {{todaysDate | date:'yyyy-MM-ddTHH:mm:ss'}} -->                        
+                        <div ng-repeat="schedule in schedules| filter : schedSearch | dateFilter: filterdow">                        
+                            <div ng-show="schedule.day !== schedules[$index - 1].day">
+                                <h2 style="text-align:center">{{schedule.day}}</h2>
+                            </div>
+                            <div ng-show="schedule.hour !== schedules[$index - 1].hour">
+                                <h3>{{schedule.hour}}</h3>
+                            </div>
+                            <!-- Show Day and hourly time -->
                             <div class="sched-row">
 
                                 <div class="stage-track stage-{{schedule.stageOrder}} area-{{schedule.stageClass}}">{{schedule.nicename}}</div>
-
                                 <a href="/maker/entry/{{schedule.id}}">
                                     <div class="sched-img" style="background-image:url({{schedule.thumb_img_url}});"></div>
                                 </a>
-
                                 <div class="sched-wrapper">
-
                                     <div class="sched-meta">
                                         <div class="sched-time">
                                             <div class="dispDay">
-                                                {{schedule.time_start| date: "EEEE, MMMM d"}}
+                                                {{schedule.time_start | date: "EEEE, MMMM d"}}
                                             </div>
                                             <span class="dispStartTime">{{schedule.time_start| date: "shortTime"}}</span> -
                                             <span class="dispEndTime">{{schedule.time_end| date: "shortTime"}}</span>
@@ -262,14 +267,19 @@ if ($schedule_ids_trimmed && $schedule_ids_trimmed != '') { //display the new sc
                                     <h3> <a href="/maker/entry/{{schedule.id}}">{{schedule.name}}</a> </h3>
                                     <!--<p class="sched-name" ng-bind-html="trust(schedule.maker_list)"></p>-->
 
-                                    <p class="sched-description" ng-bind-html="schedule.desc"></p><a href="/maker/entry/{{schedule.id}}" class="read-more-btn">Read More</a>
+                                    <p class="sched-description" ng-bind-html="schedule.desc"></p>
+                                    <div ng-show="schedule.additional !== ''">
+                                        Additional Times: {{schedule.additional}}
+                                    </div>
 
+                                    <a href="/maker/entry/{{schedule.id}}" class="read-more-btn">Read More</a>
+                                <!--
                                     <div class="sched-registration" ng-show="schedule.registration != NULL && schedule.registration != ''">
                                         <a class="btn universal-btn" href="{{schedule.registration}}" target="_blank">Register Here</a>
                                     </div>
                                     <div class="sched-viewNow" ng-show="schedule.view_now != NULL && schedule.view_now != ''">
                                         <a class="btn universal-btn" href="{{schedule.view_now}}" target="_blank">Watch Live</a>
-                                    </div>
+                                    </div>-->
 
 
                                     <?php /* <div class="sched-more-info">

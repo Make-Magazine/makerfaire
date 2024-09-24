@@ -245,6 +245,7 @@ function getMTMentries($formIDs = '', $faireID = '', $years = '') {
     if ($show_sched === "1")
         $showLoc = true;
       */
+
     //find all active entries for selected forms
     $query = "SELECT  entry.id                         AS entry_id, 
                      (SELECT meta_value FROM   wp_gf_entry_meta WHERE  meta_key = '303'   AND entry_id = entry.id) AS entry_status, 
@@ -481,48 +482,47 @@ function getSchedule($formIDs, $faireID) {
     $data = array();
     $data['schedule'] = array();
     $formIDarr = array_map('intval', explode("-", $formIDs));
-    $query = "SELECT schedule.entry_id, schedule.start_dt as time_start, schedule.end_dt as time_end, schedule.type,
-              lead_detail.form_id, area.area, subarea.subarea, subarea.nicename, subarea.sort_order,
-              lead_detail.meta_value as entry_status, DAYOFWEEK(schedule.start_dt) as day,
-              location.latitude, location.longitude,
-              (select meta_value as value from wp_gf_entry_meta where wp_gf_entry_meta.entry_id = schedule.entry_id AND wp_gf_entry_meta.meta_key like '22')  as photo,
-              (select meta_value as value from wp_gf_entry_meta where wp_gf_entry_meta.entry_id = schedule.entry_id AND wp_gf_entry_meta.meta_key like '217') as mkr1_photo,
-              (SELECT meta_value FROM   wp_gf_entry_meta WHERE  meta_key = '878'  AND entry_id = entry.id) AS proj_photo_gallery,  
-              (select meta_value as value from wp_gf_entry_meta where wp_gf_entry_meta.entry_id = schedule.entry_id AND wp_gf_entry_meta.meta_key like '151') as name,
-              (select meta_value as value from wp_gf_entry_meta where wp_gf_entry_meta.entry_id = schedule.entry_id AND wp_gf_entry_meta.meta_key like '880') as presentation_name,
-              (select meta_value as value from wp_gf_entry_meta where wp_gf_entry_meta.entry_id = schedule.entry_id AND wp_gf_entry_meta.meta_key like '16')  as short_desc,     
-              (select meta_value as value from wp_gf_entry_meta where wp_gf_entry_meta.entry_id = schedule.entry_id AND wp_gf_entry_meta.meta_key like '882')  as presentation_desc,           
-              (select meta_value as value from wp_gf_entry_meta where wp_gf_entry_meta.entry_id = schedule.entry_id AND wp_gf_entry_meta.meta_key like '829')  as registration,
-              (select meta_value as value from wp_gf_entry_meta where wp_gf_entry_meta.entry_id = schedule.entry_id AND wp_gf_entry_meta.meta_key like '830')  as region,              
-              (select meta_value as value from wp_gf_entry_meta where wp_gf_entry_meta.entry_id = schedule.entry_id AND wp_gf_entry_meta.meta_key like '837')  as viewNow,              
-              (select group_concat( meta_value separator ',') as cat from wp_gf_entry_meta where wp_gf_entry_meta.entry_id = schedule.entry_id AND wp_gf_entry_meta.meta_key like '304.%') as flags,
-              (select group_concat( meta_value separator ',') as cat from wp_gf_entry_meta where wp_gf_entry_meta.entry_id = schedule.entry_id AND (wp_gf_entry_meta.meta_key like '320' OR wp_gf_entry_meta.meta_key like '321.%')) as category
-             FROM wp_mf_schedule as schedule
-               left outer join wp_mf_location as location on location_id = location.id
-               left outer join wp_mf_faire_subarea subarea on subarea.id = location.subarea_id
-               left outer join wp_mf_faire_area area on area.id = subarea.area_id
-               left outer join wp_gf_entry as entry on schedule.entry_id = entry.id
-               left outer join wp_gf_entry_meta as lead_detail on schedule.entry_id = lead_detail.entry_id and lead_detail.meta_key = '303'
-               where entry.status = 'active' and lead_detail.meta_value='Accepted' "
-        . " and lead_detail.form_id in(" . implode(",", $formIDarr) . ") "
-        /* code to hide scheduled items as they occur */
-        //. " and schedule.end_dt >= now()+ INTERVAL -4 HOUR  " //eastern time
-        // . " and schedule.end_dt >= now()+ INTERVAL -7 HOUR  " //Bay Area time
-        . "order by subarea.sort_order";
-    //TBD check if faire end date is beyond today. if it is hide this code, otherwise show it
-    // " and schedule.end_dt >= now()+ INTERVAL -7 HOUR  " 
+   
+$query = "SELECT schedule.entry_id,
+	schedule.start_dt as time_start,
+    DAYOFWEEK(schedule.start_dt) as day,
+	schedule.end_dt as time_end,
+	schedule.type,
+	entity.form_type,
+	entity.status as entry_status,
+	subarea.subarea,
+    subarea.nicename,
+	subarea.sort_order,
+	entity.project_photo as photo,
+	entity.presentation_title as title,
+	entity.desc_short as short_desc,
+	(select group_concat(meta_value separator',')as cat 
+     	from wp_gf_entry_meta 
+     	where wp_gf_entry_meta.entry_id=schedule.entry_id 
+     	AND wp_gf_entry_meta.meta_key like '304.%')as flags,
+	entity.category as category 
+    
+FROM wp_mf_schedule as schedule 
+	left outer join wp_mf_location 		location  	on location_id		 = location.id 
+	left outer join wp_mf_faire_subarea subarea 	on subarea.id		 = location.subarea_id 
+    left outer join wp_gf_entry 		entry 		on entry.id 		 = schedule.entry_id
+    left outer join wp_mf_entity 		entity 		on entity.lead_id = schedule.entry_id    
 
+where   entry.status='active' 
+    and entry.form_id in(" . implode(",", $formIDarr) . ") 
+    and schedule.faire ='$faireID' 
+    and subarea.subarea is not null
+order by start_dt, end_dt;";
+//echo $query;
     $schedule = $wpdb->get_results($query);
 
-    //retrieve project name, img (22), maker list, topics
+    //retrieve schedule information
     foreach ($schedule as $row) {
-        $form = GFAPI::get_form($row->form_id);
-        $form_type = $form['form_type'];
+        //if this entry is not accepted, move along to the next record
+        if($row->entry_status != 'Accepted')  continue;        
+        $form_type = $row->form_type;
 
-        $makerList = getMakerList($row->entry_id, $faireID);
-
-        $makerArr = array();
-
+        //$makerList = getMakerList($row->entry_id, $faireID);
         //get array of categories. set name based on category id
         $category = array();
         $leadCategory = explode(',', $row->category);
@@ -531,20 +531,14 @@ function getSchedule($formIDs, $faireID) {
         }
 
         $catList = implode(',', $category);
-
-        // NOTE (ts): For 'Workshop' update... this may be the spot where the image is set... TBD
-        //we do not have maker 1 photo for vmf2020. need to pull it differently
-        if ($form_type == 'Presentation') {
-            $projPhoto = ($row->mkr1_photo != '' ? $row->mkr1_photo : $row->photo);
-        } else {
-            $projPhoto = $row->photo;
-        }
+        
+        $projPhoto = $row->photo;
         //for BA24, the single photo was changed to a multi image which messed things up a bit
         $photo = json_decode($projPhoto);
         if (is_array($photo)) {
             $projPhoto = $photo[0];
         }
-
+        
         //find out if there is an override image for this page
         $overrideImg = findOverride($row->entry_id, 'schedule');
         if ($overrideImg != '')
@@ -561,9 +555,8 @@ function getSchedule($formIDs, $faireID) {
             $fitPhoto = $projPhoto;
 
         //format start and end date
-        $startDay = date_create($row->time_start);
-        $startDate = date_format($startDay, 'Y-m-d') . 'T' . date_format($startDay, 'H:i:s');
-        $keyDate = date_format($startDay, 'Y-m-d');
+        $startDay  = date_create($row->time_start);
+        $startDate = date_format($startDay, 'Y-m-d') . 'T' . date_format($startDay, 'H:i:s');        
 
         $endDate = date_create($row->time_end);
         $endDate = date_format($endDate, 'Y-m-d') . 'T' . date_format($endDate, 'H:i:s');
@@ -584,9 +577,7 @@ function getSchedule($formIDs, $faireID) {
         if (strpos($row->flags, "Featured Maker") === 0) {
             $featured = 'Featured';
         }
-
-        $registration = $row->registration;
-        $viewNow = $row->viewNow;
+        
         //set default values for schedule type if not set
         if (strpos($faireID, "VMF") === 0) { // special for virtual faires
             if ($row->type == 'talk' || $row->type == '') {
@@ -608,30 +599,28 @@ function getSchedule($formIDs, $faireID) {
             }
         }
         //$registration =''; //post faire - return blank for registration link
+
         //set stage name
         $stage = ($row->nicename != '' ? $row->nicename : $row->subarea);
-        //"2016-05-21T11:55:00-07:00"
+        
         $data['schedule'][] = array(
-            'id' => $row->entry_id,
-            'time_start' => $startDate,
-            'time_end' => $endDate,
-            'name' => isset($row->presentation_name) ? htmlspecialchars_decode($row->presentation_name, ENT_QUOTES) : htmlspecialchars_decode($row->name, ENT_QUOTES),
-            'thumb_img_url' => $fitPhoto,
-            'maker_list' => $makerList,
-            'nicename' => $stage,
-            'stageClass' => str_replace(' ', '-', strtolower($stage)),
-            'stageOrder' => (int) ($row->sort_order != '' ? $row->sort_order : 0),
-            'category' => $catList,
-            'latitude' => $row->latitude,
-            'longitude' => $row->longitude,
-            'day' => (int) $row->day,
-            'desc' => isset($row->presentation_desc) ? htmlspecialchars_decode($row->presentation_desc, ENT_QUOTES) : htmlspecialchars_decode($row->short_desc, ENT_QUOTES),
-            'type' => ucwords($type),
-            'flags' => $row->flags,
-            'featured' => $featured,
-            'registration' => $registration,
-            'view_now' => $viewNow,
-            'region' => $row->region
+            'id'            => $row->entry_id,
+            'time_start'    => $startDate,
+            'time_end'      => $endDate,
+            'name'          => isset($row->title) ? htmlspecialchars_decode($row->title, ENT_QUOTES) : '',
+            'thumb_img_url' => $fitPhoto,            
+            //'maker_list' => $makerList,
+            'nicename'      => $stage,
+            'stageClass'    => str_replace(' ', '-', strtolower($stage)),
+            'stageOrder'    => (int) ($row->sort_order != '' ? $row->sort_order : 0),
+            'category'      => $catList,
+            'day'           => date_format($startDay, 'l'),
+            'hour'          => date_format($startDay, 'g:00 A'),
+            'desc'          => isset($row->short_desc) ? htmlspecialchars_decode($row->short_desc, ENT_QUOTES) : '',
+            'type'          => ucwords($type),
+            //'flags'         => $row->flags,
+            'featured'      => $featured,
+            'additional'    => ''
         );
     }
     //error_log(print_r($data, TRUE));
