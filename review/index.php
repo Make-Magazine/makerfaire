@@ -68,10 +68,10 @@
             <b-col cols="2">
                 <div class="listGrid-toolbar text-right">
                     <i class="bi bi-arrow-down-up" v-if="makers.length>0" @click="switchDateOrder" v-b-tooltip.hover title="See Oldest" style="margin-right:5px;"></i>
-                    <span class="listGrid-switch-iconGroup">
+                    <!--<span class="listGrid-switch-iconGroup">
                         <i class="bi bi-list listGrid-switch-icon" v-b-tooltip.hover v-bind:class="{ active: currentView=='list'}" aria-hidden="true" :title="currentView=='grid' ? 'Switch to List View': 'List View'" v-on:click="switchToListView"></i>
                         <i class="bi bi-grid listGrid-switch-icon" v-b-tooltip.hover v-bind:class="{ active: currentView=='grid'}" :title="currentView=='list' ? 'Switch to Grid View': 'Grid View'" aria-hidden="true" v-on:click="switchToGridView"></i>
-                    </span>
+                    </span>-->
                 </div>
             </b-col>
         </b-row>
