@@ -151,7 +151,7 @@ function cron_expofp_sync($expoID = '') {
                     //if this location/subarea was not previously set, make a note in the change report
                     if(!in_array($subarea_id,$prev_subareas) || !in_array($booth_name,$prev_booths)){   
 
-                        echo "Moved " .$entry_id. " from " . $prev_value . " to " . explode("|", $booth_details['type'])[0] . " (" . $booth_name . ")";
+                        echo "Moved " .$entry_id. " from " . $prev_value . " to " . explode("|", $booth_details['type'])[0] . " (" . $booth_name . ")<br/>";
                         
                         //set change report data                                                 
                         $chgReport[] = array(
@@ -170,7 +170,7 @@ function cron_expofp_sync($expoID = '') {
                 }                             
             }
             if($booth_count> 1){
-                echo 'multiple booths set for this exhibitor</br>';
+                echo 'multiple booths set - Entry ID: ' . $entry_id.'</br>';
             }
         } else {            
             //update meta field  "expofp_placed" to blank                        
