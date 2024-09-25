@@ -113,12 +113,13 @@ function display_entry_schedule($entry) {
 }
 
 // new showcase function, can be used for parent or children
-function showcase($entryID) {    
+function showcase($entryID, $edit = false) {    
     global $showcase;
 
     $return = '';
 
-    $showcase_info = get_showcase_entries($entryID);
+
+    $showcase_info = get_showcase_entries($entryID, $edit);
 
     //if this isn't a showcase, get out of here
     if(!isset($showcase_info['type'])){
@@ -181,14 +182,14 @@ function showcase($entryID) {
     return $return;
 }
 
-function get_showcase_entries($entryID){
+function get_showcase_entries($entryID, $edit=false){
     $showcase_info = array();
     global $wpdb;
     //first see if this entry is a parent or child record, this helps speed up admin review    
     $sql = "SELECT parentID, childID ".
             "FROM wp_mf_lead_rel ".
             "WHERE (parentID=$entryID or childID=$entryID) limit 1";
-    $results = $wpdb->get_row($sql,ARRAY_A);        
+    $results = $wpdb->get_row($sql,ARRAY_A);     
 
     //if no results found, exit. this is not a showcase or part of one
     if(empty($results)){
@@ -214,11 +215,13 @@ function get_showcase_entries($entryID){
         left outer join wp_gf_entry parent on wp_mf_lead_rel.parentID = parent.id 
         left outer join wp_gf_entry_meta parent_mf_status on parent.id = parent_mf_status.entry_id and parent_mf_status.meta_key = '303' 
         WHERE (parentID=$entryID or childID=$entryID) 
-        AND child.status != 'trash' 
-        AND parent_mf_status.meta_value='Accepted' 
         AND parent.status != 'trash' 
-        AND child_mf_status.meta_value='Accepted'
-        ORDER BY child_title";
+        AND child.status != 'trash'";
+        if($edit == false) {
+            $sql .= " AND parent_mf_status.meta_value='Accepted' 
+                      AND child_mf_status.meta_value='Accepted'";
+        }
+        $sql .= " ORDER BY child_title";
         $results = $wpdb->get_results($sql);
 
         //pull child data
@@ -263,7 +266,6 @@ function get_showcase_entries($entryID){
             'parent_desc'   => $parent->parent_description
         );
     }
-
     return $showcase_info;
 }
 
