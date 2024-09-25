@@ -48,7 +48,7 @@ get_header();
   }
 
   .tasks-row .align-self-end {
-    padding-left: 0px;
+    text-align: right;
   }
 </style>
 <div id="manageEntries" style="width:95%; margin: 35px auto;margin-bottom: 0px;" class="maker-portal">
@@ -146,7 +146,7 @@ get_header();
 
             <!-- logistic links -->
             <span v-if="entry.links.length">
-              <b-row>
+              <b-row cols-md="2" cols-sm="1" cols="1">
                 <b-col v-for="link in entry.links">
                   <a :href="link.link" target="_blank">{{link.title}}</a>
                   <span v-if="entry.res_message!='' && link.title.includes('Exhibit')" class="setup-btn-wrapper"><!-- resource messaging -->
@@ -163,7 +163,7 @@ get_header();
 
             <div style="margin-top: auto; padding-top: 15px; font-size: 20px">
               <b-row align-h="between" v-if="entry.status!='Cancelled'" class="tasks-row"><!-- Tickets/Tasks/Manage Section-->
-                <b-col><!-- Tasks - This should only show for current faire -->
+                <b-col cols="5"><!-- Tasks - This should only show for current faire -->
                   <span v-if="entry.tasks.toDo.length || entry.tasks.done.length">
                     <b-button v-b-tooltip.hover title="My Tasks" :id="'entry-tasks-'+entry.project_id" variant="primary" class="notifications-button">
                       <i class="fas fa-tasks"></i>
@@ -195,7 +195,7 @@ get_header();
                   </span>
                 </b-col>
 
-                <b-col><!-- tickets - This should only show for current faire -->
+                <b-col cols="5"><!-- tickets - This should only show for current faire -->
                   <span v-if="entry.tickets.length">
                     <b-button v-b-tooltip.hover title="Get My Tickets" :id="'entry-tickets-'+entry.project_id" variant="primary" class="notifications-button">
                       <i class="fas fa-ticket"></i>
@@ -222,7 +222,7 @@ get_header();
                       <!--</b-collapse>-->
                     </b-popover>
                 </b-col>
-                <b-col cols="1" align-self="end"><!-- Manage Entry-->
+                <b-col cols="2" align-self="end"><!-- Manage Entry-->
                   <b-button v-b-tooltip.hover title="Manage My Entry" :id="'entry-manage-'+entry.project_id" variant="primary" class="notifications-button">
                     <i class="fas fa-cog"></i>
                   </b-button>
