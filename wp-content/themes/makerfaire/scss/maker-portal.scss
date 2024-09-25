@@ -102,6 +102,15 @@
     position: relative;
   }
 
+  .setup-btn-wrapper {
+    padding: 20px 10px;
+    .card-body {
+      @media (max-width: 768px) {
+        padding: 0px;
+      }
+    }
+  }
+
   div.entryData {
     line-height: 1.3em;
     clear: both;

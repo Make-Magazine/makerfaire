@@ -149,9 +149,9 @@ get_header();
               <b-row>
                 <b-col v-for="link in entry.links">
                   <a :href="link.link" target="_blank">{{link.title}}</a>
-                  <span v-if="entry.res_message!='' && link.title.includes('Exhibit')" style="padding:20px 10px;"><!-- resource messaging -->
-                    <b-button v-b-toggle.collapse-1 variant="primary">Check Setup</b-button>
-                    <b-collapse id="collapse-1" class="mt-2">
+                  <span v-if="entry.res_message!='' && link.title.includes('Exhibit')" class="setup-btn-wrapper"><!-- resource messaging -->
+                    <b-button v-b-toggle="'collapse-'+entry.project_id" variant="primary">Check Setup</b-button>
+                    <b-collapse :id="'collapse-'+entry.project_id" class="mt-2">
                       <b-card>
                         <div style="text-align:center" v-html='entry.res_message'></div>
                       </b-card>
