@@ -25,7 +25,7 @@ if ($type == 'entry') {
     ); 
     if($entryID){
       gform_update_meta( $entryID, "mf_confirmed", 'yes');
-      $return = '<h2> Thank you for confirming your exhibit.</h2><h3>Please respond to your Confirmation Email or reach out to <a href="mailto:makers@make.co">makers@make.co</a> with any questions about your setup.<br /><br />See you at the Faire!</h3><br />';  
+      $return = '<h2>Thank you for confirming your participation.</h2><h3>Please respond to your Confirmation Email or reach out to <a href="mailto:makers@make.co">makers@make.co</a> with any questions about your setup.<br /><br />See you at the Faire!</h3><br />';  
     }else{
       $return = 'Invalid Token';  
     }

@@ -136,31 +136,33 @@ function showcase($entryID, $edit = false) {
         $groupwebsite = isset($entry['112']) ? $entry['112'] : '';
         
         // we reuse the makerInfo section for projects here, as it's the same css
-        $return .= '<section id="makerInfo" class="showcase-list makers-' . count($showcase_info['child_data']) . '">';
-        foreach ($showcase_info['child_data'] as $parent) {            
-            $return .= '<a href="/maker/entry/' . $parent['child_entryID'] . '" class="entry-box">
-                                        <img src="' . legacy_get_resized_remote_image_url(stripslashes($parent['child_photo']), 400, 266) . '"
-                                            alt="' . $parent['child_title'] . ' Picture"
-                                            onerror="this.onerror=null;this.src=\'/wp-content/themes/makerfaire/images/default-featured-image.jpg\';" />
-                                        <h3>' . $parent['child_title'] . '</h3>
-                                    </a>';
-        }
-        $return .= '</section>';
-        $return .= '<section class="showcase-list showcase-parent entry-box">
-                            <div class="showcase-wrapper">
-                                <div>
-                                   <picture>
-                                      <img src="' . legacy_get_resized_remote_image_url($groupphoto, 215, 215) . '" alt="' . $groupname . '" />
-                                   </picture>
+        if(isset($showcase_info['child_data'])) {
+            $return .= '<section id="makerInfo" class="showcase-list makers-' . count($showcase_info['child_data']) . '">';
+            foreach ($showcase_info['child_data'] as $parent) {            
+                $return .= '<a href="/maker/entry/' . $parent['child_entryID'] . '" class="entry-box">
+                                            <img src="' . legacy_get_resized_remote_image_url(stripslashes($parent['child_photo']), 400, 266) . '"
+                                                alt="' . $parent['child_title'] . ' Picture"
+                                                onerror="this.onerror=null;this.src=\'/wp-content/themes/makerfaire/images/default-featured-image.jpg\';" />
+                                            <h3>' . $parent['child_title'] . '</h3>
+                                        </a>';
+            }
+            $return .= '</section>';
+            $return .= '<section class="showcase-list showcase-parent entry-box">
+                                <div class="showcase-wrapper">
+                                    <div>
+                                    <picture>
+                                        <img src="' . legacy_get_resized_remote_image_url($groupphoto, 215, 215) . '" alt="' . $groupname . '" />
+                                    </picture>
+                                    </div>
+                                    <div>
+                                        <h2>' . $groupname . '</h2>
+                                        <p>' . $groupbio . '</p>
+                                        <p><a class="showcase-website" href="' . $groupwebsite . '">' . $groupwebsite . '</a></p>'
+                . $groupsocial .
+                '</div>
                                 </div>
-                                <div>
-                                    <h2>' . $groupname . '</h2>
-                                    <p>' . $groupbio . '</p>
-                                    <p><a class="showcase-website" href="' . $groupwebsite . '">' . $groupwebsite . '</a></p>'
-            . $groupsocial .
-            '</div>
-                            </div>
-                    </section>';
+                        </section>';
+        }
     } elseif($showcase == 'child'){        
         $parent = $showcase_info['parent_data'];
         $return .= '<section class="showcase-list showcase-parent entry-box">
@@ -215,8 +217,8 @@ function get_showcase_entries($entryID, $edit=false){
         left outer join wp_gf_entry parent on wp_mf_lead_rel.parentID = parent.id 
         left outer join wp_gf_entry_meta parent_mf_status on parent.id = parent_mf_status.entry_id and parent_mf_status.meta_key = '303' 
         WHERE (parentID=$entryID or childID=$entryID) 
-        AND parent.status != 'trash' 
-        AND child.status != 'trash'";
+        AND parent.status = 'active' 
+        AND child.status = 'active'";
         if($edit == false) {
             $sql .= " AND parent_mf_status.meta_value='Accepted' 
                       AND child_mf_status.meta_value='Accepted'";
