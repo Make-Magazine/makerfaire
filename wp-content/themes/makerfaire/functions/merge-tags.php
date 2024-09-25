@@ -30,6 +30,8 @@ function mf_custom_merge_tags($merge_tags, $form_id, $fields, $element_id) {
     $merge_tags[] = array('label' => 'Confirmation Comment', 'tag' => '{CONF_COMMENT}'); //Attention field - Confirmation Comment
     $merge_tags[] = array('label' => 'Confirmation Button', 'tag' => '{CONF_BUTTON}');
 
+    $merge_tags[] = array('label' => 'Requested Logistics', 'tag' => '{requested_logistics}');
+
     return $merge_tags;
 }
 
@@ -89,6 +91,130 @@ function mf_replace_merge_tags($text, $form, $entry, $url_encode, $esc_html, $nl
     if (strpos($text, '{entry_booth}') !== false) {
         $schedule = get_location($entry, 'booth');
         $text = str_replace('{entry_booth}', $schedule, $text);
+    }
+
+    //requested logistics     
+    if (strpos($text, '{requested_logistics}') !== false) {
+        //find out if this entry is placed
+        $exhibit_placed = gform_get_meta($entry['id'], 'expofp_placed');
+
+        //pull attributes
+        $sql = "select * from wp_rmt_entry_attributes where entry_id=" . $entry['id'];
+        $attributes         = $wpdb->get_results($sql, ARRAY_A);
+        $set_atts           = array_column($attributes, 'attribute_id');
+
+        //requested space size - attribute 19
+        $attKey             = array_search('19', $set_atts);
+        $reqSpaceSize       = ($attKey !== FALSE ? $attributes[$attKey]['value'] : '');
+
+        //final space size - attribute 2
+        $attKey             = array_search('2', $set_atts);
+        $finalSpaceSize     = ($attKey !== FALSE ? $attributes[$attKey]['value'] : '');
+
+        //requested exposure - attribute 20
+        $attKey             = array_search('20', $set_atts);
+        $reqExposure        = ($attKey !== FALSE ? $attributes[$attKey]['value'] : '');
+
+        //final exposure - subarea table
+        $sql = "SELECT exposure FROM `wp_mf_location` 
+                left outer join wp_mf_faire_subarea on subarea_id = wp_mf_faire_subarea.id 
+                left outer join wp_mf_schedule on wp_mf_location.id=location_id 
+                where   wp_mf_location.entry_id = " . $entry['id'] . "
+                and     start_dt is NULL 
+                order by wp_mf_location.ID 
+                DESC limit 1;";
+        $finalExposure      = $wpdb->get_var($sql);
+
+        //pull resources
+        $sql = "SELECT wp_rmt_entry_resources.*, resource_category_id, description
+                FROM `wp_rmt_entry_resources`
+                left outer join wp_rmt_resources on wp_rmt_resources.id=resource_id
+                where entry_id=" . $entry['id'];
+        $resources          = $wpdb->get_results($sql, ARRAY_A);
+        $set_resources      = array_column($resources, 'resource_category_id');
+
+        //final tables - resource category 2
+        $resKey             = array_search('2', $set_resources);
+        $finalTables        = ($resKey !== FALSE ? $resources[$resKey]['qty'] . ' - ' . $resources[$resKey]['description'] : '');
+
+        //final chairs - resource category 3
+        $resKey             = array_search('3', $set_resources);
+        $finalChairs        = ($resKey !== FALSE ? $resources[$resKey]['qty'] . ' - ' . $resources[$resKey]['description'] : '');
+
+        //final electricity - resource category 9 - 120V
+        $resKey             = array_search('9', $set_resources); //120V
+        $finalElec          = ($resKey !== FALSE ? $resources[$resKey]['qty'] . ' - ' . $resources[$resKey]['description'] : '');
+
+        if ($finalElec == '') {
+            //final electricity - resource category 10 - 220V
+            $resKey         = array_search('10', $set_resources); //220V
+            $finalElec      = ($resKey !== FALSE ? $resources[$resKey]['qty'] . ' - ' . $resources[$resKey]['description'] : '');
+        }
+
+        //requested tables and chairs
+        $reqTables = '0';
+        $reqChairs = '0';
+        if (isset($entry['62'])) {
+            if (stripos($entry['62'], '1 table') !== false) {
+                //1 table and 2 chairs
+                $reqTables = '1';
+                $reqChairs = '2';
+            } elseif (stripos($entry['62'], 'more than') !== false) {
+                //More than 1 table and 2 chairs
+                $reqTables = $entry['347'];
+                $reqChairs = $entry['348'];
+            }
+        }
+
+        //requested electricity
+        $reqElec = '';
+        //if 75 contains the word other, pull field 76 - special power requirements
+        if (isset($entry['75']) && stripos($entry['75'], 'other') === false) {
+            //the word 'other' is not found in field 75
+            $reqElec = $entry['75'];
+        } elseif (isset($entry['76'])) {
+            //Other selected
+            $reqElec = $entry['76'];
+        }
+
+        $reqLogistics = "<table class='resource_table'>
+                            <thead>
+                                <tr>
+                                    <th scope='col' width='20%'></th>
+                                    <th scope='col' width='40%'>Requested</th>
+                                    <th scope='col' width='40%'>As Placed</th>
+                                </tr>
+                            </thead>
+                            <tbody>             
+                                <tr>
+                                    <th scope='row'>Tables</th>
+                                    <td>$reqTables</td>                                
+                                    <td>" . ($exhibit_placed == 'Placed' ? $finalTables : '') . "</td>
+                                </tr>
+                                <tr>
+                                    <th scope='row'>Chairs</th>
+                                    <td>$reqChairs</td>                                
+                                    <td>" . ($exhibit_placed == 'Placed' ? $finalChairs : '') . "</td>
+                                </tr>
+                                <tr>
+                                    <th scope='row'>Electricity</th>
+                                    <td>$reqElec</td>                                                
+                                    <td>" . ($exhibit_placed == 'Placed' ? $finalElec : '') . "</td>
+                                </tr>
+                                <tr>
+                                    <th scope='row'>Space Size</th>
+                                    <td>$reqSpaceSize</td>
+                                    <td>" . ($exhibit_placed == 'Placed' ? $finalSpaceSize : '') . "</td>
+                                </tr>              
+                                <tr>
+                                    <th scope='row'>Exposure</th>
+                                    <td>$reqExposure</td>                                                
+                                    <td>" . ($exhibit_placed == 'Placed' ? $finalExposure : '') . "</td>
+                                </tr>
+                            </tbody>
+                        </table>";
+
+        $text = str_replace('{requested_logistics}', $reqLogistics, $text);
     }
 
     //Entry Resources
