@@ -48,36 +48,39 @@ get_header();
   }
 
   .tasks-row .align-self-end {
-    padding-left: 0px;
+    text-align: right;
   }
 </style>
 <div id="manageEntries" style="width:95%; margin: 35px auto;margin-bottom: 0px;" class="maker-portal">
+
   <?php
   //only allow alicia, rio and webmaster to test emails
-  if($current_user->user_email=='alicia@make.co' || 
-     $current_user->user_email=='rio@make.co'    ||
-     $current_user->user_email=='webmaster@make.co' ||
-     $current_user->user_email=='siana@make.co'     ||
-     $current_user->user_email=='nicole@make.co'){	
-  //if (in_array('administrator', $current_user->roles)) { //allow admins to test any email		
+  if (
+    $current_user->user_email == 'alicia@make.co' ||
+    $current_user->user_email == 'rio@make.co'    ||
+    $current_user->user_email == 'webmaster@make.co' ||
+    $current_user->user_email == 'siana@make.co'     ||
+    $current_user->user_email == 'nicole@make.co'
+  ) {
+    //if (in_array('administrator', $current_user->roles)) { //allow admins to test any email		
     global $wp;
-    $current_slug = add_query_arg( array(), $wp->request );
+    $current_slug = add_query_arg(array(), $wp->request);
 
     echo '<div class="account-form-wrapper" style="text-align:center">                            
         <div class="account-form">							
-          <form action="/'.$current_slug.'">
+          <form action="/' . $current_slug . '">
             <b>Admin only</b> Enter in an email to see what user sees.
             <input id="test_email" name="test_email" value="" />
             <input type="submit" value="Submit">
-            '.(isset($_GET['test_email'])?'<br/><i>Testing Email: '.$_GET['test_email'].'</i>':'') .'
+            ' . (isset($_GET['test_email']) ? '<br/><i>Testing Email: ' . $_GET['test_email'] . '</i>' : '') . '
           </form>
         </div>
       </div>
       <br/>';
-      
-			if(isset($_GET['test_email']) && $_GET['test_email']!=''){
-				$user_email = $_GET['test_email'];
-      }				
+
+    if (isset($_GET['test_email']) && $_GET['test_email'] != '') {
+      $user_email = $_GET['test_email'];
+    }
   }
   ?>
   <input type="hidden" id="user_email" value="<?php echo $user_email; ?>" />
@@ -117,41 +120,50 @@ get_header();
               </b-col>
 
               <b-col>
-                <span>                  
+                <span>
                   <div v-if="entry.status=='Accepted'">
                     <a target="_blank" :href="'/maker/entry/'+entry.project_id+'/'">
                       <i class="fa fa-eye" aria-hidden="true"></i>
                       Share My Entry Page
                     </a>
                   </div>
-                  
+
                   <div>
                     <a target="_blank" :href="'/maker/entry/'+entry.project_id+'/edit/'">
-                      <i class="fa fa-edit" aria-hidden="true"></i>                    
+                      <i class="fa fa-edit" aria-hidden="true"></i>
                       Edit My Entry Page
                     </a>
                   </div>
                 </span>
               </b-col>
             </b-row>
-            <b-row style="padding:20px 10px;"><!-- MAT messaging -->
+            <b-row style="padding:20px 10px;"><!-- Form specific messaging -->
               <b-col sm="12" style="border: thin solid grey; padding: 10px">
                 <div style="text-align:center" v-html='faire.maker_messaging'></div>
               </b-col>
             </b-row>
 
+
             <!-- logistic links -->
             <span v-if="entry.links.length">
-              <b-row>
+              <b-row cols-md="2" cols-sm="1" cols="1">
                 <b-col v-for="link in entry.links">
                   <a :href="link.link" target="_blank">{{link.title}}</a>
+                  <span v-if="entry.res_message!='' && link.title.includes('Exhibit')" class="setup-btn-wrapper"><!-- resource messaging -->
+                    <b-button v-b-toggle="'collapse-'+entry.project_id" variant="primary">Check Setup</b-button>
+                    <b-collapse :id="'collapse-'+entry.project_id" class="mt-2">
+                      <b-card>
+                        <div style="text-align:center" v-html='entry.res_message'></div>
+                      </b-card>
+                    </b-collapse>
+                  </span>
                 </b-col>
               </b-row>
-            </span>       
+            </span>
 
             <div style="margin-top: auto; padding-top: 15px; font-size: 20px">
               <b-row align-h="between" v-if="entry.status!='Cancelled'" class="tasks-row"><!-- Tickets/Tasks/Manage Section-->
-                <b-col><!-- Tasks - This should only show for current faire -->
+                <b-col cols="5"><!-- Tasks - This should only show for current faire -->
                   <span v-if="entry.tasks.toDo.length || entry.tasks.done.length">
                     <b-button v-b-tooltip.hover title="My Tasks" :id="'entry-tasks-'+entry.project_id" variant="primary" class="notifications-button">
                       <i class="fas fa-tasks"></i>
@@ -183,7 +195,7 @@ get_header();
                   </span>
                 </b-col>
 
-                <b-col><!-- tickets - This should only show for current faire -->
+                <b-col cols="5"><!-- tickets - This should only show for current faire -->
                   <span v-if="entry.tickets.length">
                     <b-button v-b-tooltip.hover title="Get My Tickets" :id="'entry-tickets-'+entry.project_id" variant="primary" class="notifications-button">
                       <i class="fas fa-ticket"></i>
@@ -210,7 +222,7 @@ get_header();
                       <!--</b-collapse>-->
                     </b-popover>
                 </b-col>
-                <b-col cols="1" align-self="end"><!-- Manage Entry-->
+                <b-col cols="2" align-self="end"><!-- Manage Entry-->
                   <b-button v-b-tooltip.hover title="Manage My Entry" :id="'entry-manage-'+entry.project_id" variant="primary" class="notifications-button">
                     <i class="fas fa-cog"></i>
                   </b-button>

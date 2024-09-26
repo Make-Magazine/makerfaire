@@ -1,4 +1,5 @@
 <?php
+
 /**
  * v2 of the Maker Faire API - Manage Entries used for the Maker Portal
  *
@@ -65,7 +66,7 @@ function getAllEntries($email, $formID = '', $page = '', $years = '') {
     //Maker Portal messaging    
     $text = GFCommon::replace_variables(rgar($form, 'mat_message'), $form, array(), false, false);
     $text = do_shortcode($text); //process any conditional logic  
-    
+
     //get entry information
     $entries         = GFAPI::get_entries($formID, $search_criteria, $sorting, $paging, $total_count);
 
@@ -107,31 +108,37 @@ function getAllEntries($email, $formID = '', $page = '', $years = '') {
       $prelim_loc    = (isset($fieldArr['value']) && $fieldArr['value'] != '' ? implode(", ", $fieldArr['value']) : '');
 
       //GV edit link
-      $GVeditLink = do_shortcode('[gv_entry_link action="edit" return="url" view_id="687928" entry_id="'.$entry['id'].'"]');
+      $GVeditLink = do_shortcode('[gv_entry_link action="edit" return="url" view_id="687928" entry_id="' . $entry['id'] . '"]');
 
       //easy passthrough token
-      $ep_token = isset($entry['fg_easypassthrough_token'])?$entry['fg_easypassthrough_token']:'';
-      
+      $ep_token = isset($entry['fg_easypassthrough_token']) ? $entry['fg_easypassthrough_token'] : '';
+
       //set logistics links
-      $logistics_links = array();      
-      
-      if(isset($form['show_supp_forms']) && $form['show_supp_forms']){
+      $logistics_links = array();
+
+      if (isset($form['show_supp_forms']) && $form['show_supp_forms']) {
         $fieldArr = fieldOutput(339, $entry, $field_array, $form);
-        foreach($fieldArr['value'] as $exhibit_type){
-          if(stripos($exhibit_type, 'exhibit')!== false && isset($form['exhibit_supp_form_URL'])){
-            $logistics_links[] = array('title'=>'Exhibit Logistics', 'link'=>$form['exhibit_supp_form_URL'].'?ep_token='.$ep_token);
-          }elseif(stripos($exhibit_type, 'present')!== false && isset($form['presentation_supp_form_URL'])){
-            $logistics_links[] = array('title'=>'Presenter Logistics', 'link'=>$form['presentation_supp_form_URL'].'?ep_token='.$ep_token);
-          }elseif(stripos($exhibit_type, 'perform')!== false && isset($form['performer_supp_form_URL'])){
-            $logistics_links[] = array('title'=>'Performer Logistics', 'link'=>$form['performer_supp_form_URL'].'?ep_token='.$ep_token);
-          }elseif(stripos($exhibit_type, 'workshop')!== false && isset($form['workshop_supp_form_URL'])){
-            $logistics_links[] = array('title'=>'Workshop Logistics', 'link'=>$form['workshop_supp_form_URL'].'?ep_token='.$ep_token);
-          }elseif(stripos($exhibit_type, 'sponsor')!== false || stripos($exhibit_type, 'startup sponsor') !== false){  
-            $logistics_links[] = array('title'=>'Sponsor Order Form', 'link'=>'/bay-area/sponsor-order-form/?ep_token='.$ep_token);            
+        foreach ($fieldArr['value'] as $exhibit_type) {
+          if (stripos($exhibit_type, 'exhibit') !== false && isset($form['exhibit_supp_form_URL'])) {
+            $logistics_links[] = array('title' => 'Exhibit Logistics', 'link' => $form['exhibit_supp_form_URL'] . '?ep_token=' . $ep_token);
+          } elseif (stripos($exhibit_type, 'present') !== false && isset($form['presentation_supp_form_URL'])) {
+            $logistics_links[] = array('title' => 'Presenter Logistics', 'link' => $form['presentation_supp_form_URL'] . '?ep_token=' . $ep_token);
+          } elseif (stripos($exhibit_type, 'perform') !== false && isset($form['performer_supp_form_URL'])) {
+            $logistics_links[] = array('title' => 'Performer Logistics', 'link' => $form['performer_supp_form_URL'] . '?ep_token=' . $ep_token);
+          } elseif (stripos($exhibit_type, 'workshop') !== false && isset($form['workshop_supp_form_URL'])) {
+            $logistics_links[] = array('title' => 'Workshop Logistics', 'link' => $form['workshop_supp_form_URL'] . '?ep_token=' . $ep_token);
+          } elseif (stripos($exhibit_type, 'sponsor') !== false || stripos($exhibit_type, 'startup sponsor') !== false) {
+            $logistics_links[] = array('title' => 'Sponsor Order Form', 'link' => '/bay-area/sponsor-order-form/?ep_token=' . $ep_token);
           }
-        }  
+        }
       }
-            
+
+      //Resource messaging
+      $res_message = false;
+      $mat_disp_res_link = rgar($form, 'mat_disp_res_link');
+      if ($mat_disp_res_link == 'yes') {
+        $res_message = $maker->get_resource_msg($form, $entry);
+      }
 
       $return_entries[] = array(
         'project_name'  => $entry['151'],
@@ -139,24 +146,27 @@ function getAllEntries($email, $formID = '', $page = '', $years = '') {
         'status'        => $entry['303'],
         'description'   => $entry['16'],
         'flags'         => $flags,
-        'req_entry_type' => (isset($entry['896'])?$entry['896']:''),
+        'req_entry_type' => (isset($entry['896']) ? $entry['896'] : ''),
         'entry_type'    => $exhibit_types,
         'photo'         => $maker_photo,
         'maker_name'    => $maker_name,
         'prelim_loc'    => $prelim_loc,
         'prime_cat'     => html_entity_decode(get_CPT_name($entry['320'])),
         'tasks'         => $maker->get_tasks_by_entry($entry['id']),
+        'res_message'   => $res_message,
         'tickets'       => entryTicketing($entry, 'MAT'),
         'gv_edit_link'  => $GVeditLink,
         'ep_token'      => $ep_token,
         'links'         => $logistics_links
       );
     }
-    
-    $return['data'][$faire_name] = 
-      array('faire_end_dt'    => $faire_end_dt, 
-            'maker_messaging' => $text,            
-            'entries'         => $return_entries);    
+
+    $return['data'][$faire_name] =
+      array(
+        'faire_end_dt'    => $faire_end_dt,
+        'maker_messaging' => $text,
+        'entries'         => $return_entries
+      );
   }
   return $return;
 }

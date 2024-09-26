@@ -10,48 +10,49 @@
  */
 
 // Define the API version.
-define( 'MF_API_VERSION', 'v2' );
+define('MF_API_VERSION', 'v2');
 
 // Set the post per page for our queries
-define( 'MF_POSTS_PER_PAGE', 2000 );
+define('MF_POSTS_PER_PAGE', 2000);
 
 // Set the API keys to run this API.
-define( 'MF_API_KEY', sanitize_text_field( get_option( 'make_app_api_key' ) ) );
+define('MF_API_KEY', sanitize_text_field(get_option('make_app_api_key')));
 
 /*
  * SECURITY CHECKS
 */
-$allowed_types = array(	
+$allowed_types = array(
 	'entries',
-	'expofp',		
+	'expofp',
 	'maker-portal',
-	'map'			
+	'map',
+	'entry'
 );
 
 
 // Check that all required fields are passed before running anything and assign them to variables
-$key   = ( ! empty( $_REQUEST['key'] ) ? sanitize_text_field( $_REQUEST['key'] ) : null );
-$type  = ( ! empty( $_REQUEST['type'] ) ? sanitize_text_field( $_REQUEST['type'] ) : null );
-$faire = ( ! empty( $_REQUEST['faire'] ) ? sanitize_text_field( $_REQUEST['faire'] ) : null );
+$key   = (! empty($_REQUEST['key']) ? sanitize_text_field($_REQUEST['key']) : null);
+$type  = (! empty($_REQUEST['type']) ? sanitize_text_field($_REQUEST['type']) : null);
+$faire = (! empty($_REQUEST['faire']) ? sanitize_text_field($_REQUEST['faire']) : null);
 
 //check if the key is set and verify it
-if ( !empty($key) && $key !== MF_API_KEY ) {
-	header( 'HTTP/1.0 403 Forbidden' );
+if (!empty($key) && $key !== MF_API_KEY) {
+	header('HTTP/1.0 403 Forbidden');
 
-	echo '<h2>Invalid: Parameter Not Valid - "' . esc_html( $_REQUEST['key'] ) . '"</h2>';
+	echo '<h2>Invalid: Parameter Not Valid - "' . esc_html($_REQUEST['key']) . '"</h2>';
 	return;
 }
 
 //check if this is an allowed type
-if ( empty( $type ) ) {
-	header( 'HTTP/1.0 403 Forbidden' );
+if (empty($type)) {
+	header('HTTP/1.0 403 Forbidden');
 
 	echo '<h2>Invalid: Type</h2>';
-	return;	
-}elseif ( ! in_array( $type, $allowed_types ) ) {
-	header( 'HTTP/1.0 403 Forbidden' );
+	return;
+} elseif (! in_array($type, $allowed_types)) {
+	header('HTTP/1.0 403 Forbidden');
 
-	echo '<h2>Invalid: Parameter Not Valid - "' . esc_html( $_REQUEST['type'] ) . '"</h2>';
+	echo '<h2>Invalid: Parameter Not Valid - "' . esc_html($_REQUEST['type']) . '"</h2>';
 	return;
 }
 
@@ -76,18 +77,31 @@ if ( empty( $type ) ) {
  */
 
 // Get the appropriate API file.
-$api_path = __DIR__ . '/api/' . sanitize_title( MF_API_VERSION ) . '/' . sanitize_title( $type ) . '/index.php';
+$api_path = __DIR__ . '/api/' . sanitize_title(MF_API_VERSION) . '/' . sanitize_title($type) . '/index.php';
 
 // Prevent Path Traversal
-if ( strpos( $api_path, '../' ) !== false || strpos( $api_path, "..\\" ) !== false || strpos( $api_path, '/..' ) !== false || strpos( $api_path, '\..' ) !== false )
+if (strpos($api_path, '../') !== false || strpos($api_path, "..\\") !== false || strpos($api_path, '/..') !== false || strpos($api_path, '\..') !== false)
 	return;
 
 // Make sure the api file exists...
-if ( ! file_exists( $api_path ) )
+if (! file_exists($api_path))
 	return;
 
-// Set the JSON header
-header( 'Content-type: application/json' );
-
-// Load the file and process everything
-include_once( $api_path );
+if ($type != 'entry') {
+	// Set the JSON header
+	header('Content-type: application/json');
+	// Load the file and process everything
+	include_once($api_path);
+} else {
+	get_header();
+	?>
+	<div class="container">
+		<div class="row">
+			<div class="content col-md-12">
+				<?php include_once($api_path);?> 
+			</div>
+		</div>
+	</div>
+	<?php
+	get_footer();
+}

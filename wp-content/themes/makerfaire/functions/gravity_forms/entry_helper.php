@@ -113,12 +113,13 @@ function display_entry_schedule($entry) {
 }
 
 // new showcase function, can be used for parent or children
-function showcase($entryID) {    
+function showcase($entryID, $edit = false) {    
     global $showcase;
 
     $return = '';
 
-    $showcase_info = get_showcase_entries($entryID);
+
+    $showcase_info = get_showcase_entries($entryID, $edit);
 
     //if this isn't a showcase, get out of here
     if(!isset($showcase_info['type'])){
@@ -135,31 +136,33 @@ function showcase($entryID) {
         $groupwebsite = isset($entry['112']) ? $entry['112'] : '';
         
         // we reuse the makerInfo section for projects here, as it's the same css
-        $return .= '<section id="makerInfo" class="showcase-list makers-' . count($showcase_info['child_data']) . '">';
-        foreach ($showcase_info['child_data'] as $parent) {            
-            $return .= '<a href="/maker/entry/' . $parent['child_entryID'] . '" class="entry-box">
-                                        <img src="' . legacy_get_resized_remote_image_url(stripslashes($parent['child_photo']), 400, 400) . '"
-                                            alt="' . $parent['child_title'] . ' Picture"
-                                            onerror="this.onerror=null;this.src=\'/wp-content/themes/makerfaire/images/default-makey-medium.png\';" />
-                                        <h3>' . $parent['child_title'] . '</h3>
-                                    </a>';
-        }
-        $return .= '</section>';
-        $return .= '<section class="showcase-list showcase-parent entry-box">
-                            <div class="showcase-wrapper">
-                                <div>
-                                   <picture>
-                                      <img src="' . legacy_get_resized_remote_image_url($groupphoto, 215, 215) . '" alt="' . $groupname . '" />
-                                   </picture>
+        if(isset($showcase_info['child_data'])) {
+            $return .= '<section id="makerInfo" class="showcase-list makers-' . count($showcase_info['child_data']) . '">';
+            foreach ($showcase_info['child_data'] as $parent) {            
+                $return .= '<a href="/maker/entry/' . $parent['child_entryID'] . '" class="entry-box">
+                                            <img src="' . legacy_get_resized_remote_image_url(stripslashes($parent['child_photo']), 400, 266) . '"
+                                                alt="' . $parent['child_title'] . ' Picture"
+                                                onerror="this.onerror=null;this.src=\'/wp-content/themes/makerfaire/images/default-featured-image.jpg\';" />
+                                            <h3>' . $parent['child_title'] . '</h3>
+                                        </a>';
+            }
+            $return .= '</section>';
+            $return .= '<section class="showcase-list showcase-parent entry-box">
+                                <div class="showcase-wrapper">
+                                    <div>
+                                    <picture>
+                                        <img src="' . legacy_get_resized_remote_image_url($groupphoto, 215, 215) . '" alt="' . $groupname . '" />
+                                    </picture>
+                                    </div>
+                                    <div>
+                                        <h2>' . $groupname . '</h2>
+                                        <p>' . $groupbio . '</p>
+                                        <p><a class="showcase-website" href="' . $groupwebsite . '">' . $groupwebsite . '</a></p>'
+                . $groupsocial .
+                '</div>
                                 </div>
-                                <div>
-                                    <h2>' . $groupname . '</h2>
-                                    <p>' . $groupbio . '</p>
-                                    <p><a class="showcase-website" href="' . $groupwebsite . '">' . $groupwebsite . '</a></p>'
-            . $groupsocial .
-            '</div>
-                            </div>
-                    </section>';
+                        </section>';
+        }
     } elseif($showcase == 'child'){        
         $parent = $showcase_info['parent_data'];
         $return .= '<section class="showcase-list showcase-parent entry-box">
@@ -181,14 +184,14 @@ function showcase($entryID) {
     return $return;
 }
 
-function get_showcase_entries($entryID){
+function get_showcase_entries($entryID, $edit=false){
     $showcase_info = array();
     global $wpdb;
     //first see if this entry is a parent or child record, this helps speed up admin review    
     $sql = "SELECT parentID, childID ".
             "FROM wp_mf_lead_rel ".
             "WHERE (parentID=$entryID or childID=$entryID) limit 1";
-    $results = $wpdb->get_row($sql,ARRAY_A);        
+    $results = $wpdb->get_row($sql,ARRAY_A);     
 
     //if no results found, exit. this is not a showcase or part of one
     if(empty($results)){
@@ -214,11 +217,13 @@ function get_showcase_entries($entryID){
         left outer join wp_gf_entry parent on wp_mf_lead_rel.parentID = parent.id 
         left outer join wp_gf_entry_meta parent_mf_status on parent.id = parent_mf_status.entry_id and parent_mf_status.meta_key = '303' 
         WHERE (parentID=$entryID or childID=$entryID) 
-        AND child.status != 'trash' 
-        AND parent_mf_status.meta_value='Accepted' 
-        AND parent.status != 'trash' 
-        AND child_mf_status.meta_value='Accepted'
-        ORDER BY child_title";
+        AND parent.status = 'active' 
+        AND child.status = 'active'";
+        if($edit == false) {
+            $sql .= " AND parent_mf_status.meta_value='Accepted' 
+                      AND child_mf_status.meta_value='Accepted'";
+        }
+        $sql .= " ORDER BY child_title";
         $results = $wpdb->get_results($sql);
 
         //pull child data
@@ -263,7 +268,6 @@ function get_showcase_entries($entryID){
             'parent_desc'   => $parent->parent_description
         );
     }
-
     return $showcase_info;
 }
 

@@ -3,7 +3,7 @@
  * This is the public facing entry page view
  *
  */
-$showcaseResults = showcase($entryId); // this will also tell us if this is a parent or child of a showcase
+$showcaseResults = showcase($entryId, $makerEdit); // this will also tell us if this is a parent or child of a showcase
 $showEditMakey = false;
 
 $imageClass = "project-image";

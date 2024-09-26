@@ -105,6 +105,21 @@ function custom_entry_meta($entry_meta, $form_id) {
         'is_numeric' => false,
         'is_default_column' => true
     );    
+
+    //Confirmation for attending faire
+    $entry_meta['mf_confirmed'] = array(
+        'label' => 'Confirmed?',
+        'is_numeric'        => false,
+        'is_default_column' => false,
+        'filter' => array(
+            'operators' => array('is', 'isnot', '<', '>'),
+            'choices' => array(
+                array('value' => 'yes', 'text' => 'Yes'),
+                array('value' => '',    'text' => 'No')
+            )
+        )
+    );
+
     return $entry_meta;
 }
 
