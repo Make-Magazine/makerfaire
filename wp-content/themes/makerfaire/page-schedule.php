@@ -282,11 +282,11 @@ if ($schedule_ids_trimmed && $schedule_ids_trimmed != '') { //display the new sc
                 <div class="row sched-header">                    
                     <div class="sched-body">
                         <!-- if we are in the faire time, only display events that haven't occurred yet inFaire = {{inFaire}} {{todaysDate | date:'yyyy-MM-ddTHH:mm:ss'}} -->
-                        <div ng-repeat="schedule in schedules| filter : schedSearch | dateFilter: filterdow">
-                            <div ng-show="schedule.day !== schedules[$index - 1].day">
+                        <div ng-repeat="schedule in (filteredschedule = (schedules | filter:schedSearch | dateFilter: filterdow))">                  
+                            <div ng-show="schedule.day !== filteredschedule[$index - 1].day">
                                 <h2 style="text-align:center">{{schedule.day}}</h2>
                             </div>
-                            <div ng-show="schedule.hour !== schedules[$index - 1].hour">
+                            <div ng-show="schedule.hour !== filteredschedule[$index - 1].hour">
                                 <h3>{{schedule.hour}}</h3>
                             </div>
                             <!-- Show Day and hourly time -->
