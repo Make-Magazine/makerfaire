@@ -68,6 +68,13 @@ h4.featured {
 	position: relative;
 	@media (max-width: 992px) {
 		width: 100%;
+		padding: 0px 15px;
+		.search-wrapper {
+			width: 100%;
+		}
+	}
+	.mtm-filter-wrap {
+		padding: 0px;
 	}
 	.timezone-wrapper {
 		margin-bottom: 12px;
@@ -263,10 +270,6 @@ h4.featured {
 				box-shadow: 0px 3px 13px 0px rgba(0, 0, 0, 0.08);
   				padding: 40px 40px 40px 40px;
 				position: relative;
-				@media (max-width:991px) {
-					margin-left: 5px;
-					margin-right: 5px;
-				}
 				@media (max-width:768px) {
 					flex-direction: column;
 				}
@@ -304,6 +307,9 @@ h4.featured {
 					background-position: center center;
 					@media (max-width:768px) {
 						margin: 0 auto 15px;
+						width: 100%;
+						height: auto;
+						aspect-ratio: 3/2;
 					}
 				}
 				.sched-meta {
@@ -320,6 +326,14 @@ h4.featured {
     						font-weight: 900;
 							content: "\f017";
 							color: #6ec1e4;
+						}
+						@media screen and (max-width: 450px) {
+							.dispDay {
+								width: 90%;
+							}
+							.dispStartTime {
+								margin-left: 26px;
+							}
 						}
 					}
 					.sched-type {
@@ -363,14 +377,17 @@ h4.featured {
 					margin-top: 10px;
 					font-weight: 400;
 					line-height: 1.1em;
-					max-height: 70px;
+					display: -webkit-box;
+					-webkit-box-orient: vertical;
+					-webkit-line-clamp: 2;
 					overflow: hidden;
 					a {
 						color: #333;
 					}
 					@media (max-width:767px) {
 						font-size: 18px;
-						max-height: none;
+						line-height: 1.6em;
+						overflow: none;
 					}
 				}
 				.sched-name {
