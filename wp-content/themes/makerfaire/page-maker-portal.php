@@ -56,11 +56,12 @@ get_header();
   <?php
   //only allow alicia, rio and webmaster to test emails
   if (
-    $current_user->user_email == 'alicia@make.co' ||
-    $current_user->user_email == 'rio@make.co'    ||
+    $current_user->user_email == 'alicia@make.co'    ||
+    $current_user->user_email == 'rio@make.co'       ||
     $current_user->user_email == 'webmaster@make.co' ||
     $current_user->user_email == 'siana@make.co'     ||
-    $current_user->user_email == 'nicole@make.co'
+    $current_user->user_email == 'nicole@make.co'    ||
+    $current_user->user_email == 'jamie@make.co'
   ) {
     //if (in_array('administrator', $current_user->roles)) { //allow admins to test any email		
     global $wp;
