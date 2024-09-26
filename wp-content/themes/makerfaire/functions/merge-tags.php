@@ -159,14 +159,14 @@ function mf_replace_merge_tags($text, $form, $entry, $url_encode, $esc_html, $nl
         $reqTables = '0';
         $reqChairs = '0';
         if (isset($entry['62'])) {
-            if (stripos($entry['62'], '1 table') !== false) {
-                //1 table and 2 chairs
-                $reqTables = '1';
-                $reqChairs = '2';
-            } elseif (stripos($entry['62'], 'more than') !== false) {
+            if (stripos($entry['62'], 'more than') !== false) {
                 //More than 1 table and 2 chairs
                 $reqTables = $entry['347'];
                 $reqChairs = $entry['348'];
+            }elseif (stripos($entry['62'], '1 table') !== false) {
+                //1 table and 2 chairs
+                $reqTables = '1';
+                $reqChairs = '2';
             }
         }
 
@@ -189,34 +189,47 @@ function mf_replace_merge_tags($text, $form, $entry, $url_encode, $esc_html, $nl
                                     <th scope='col' width='40%'>".($exhibit_placed == 'Placed' ? 'As Placed' : '') ."</th>
                                 </tr>
                             </thead>
-                            <tbody>             
-                                <tr>
+                            <tbody>";
+        if($reqTables !=0 || ($exhibit_placed == 'Placed' && $finalTables!='')){    
+            $reqLogistics .= "  <tr>
                                     <th scope='row'>Tables</th>
                                     <td>$reqTables</td>                                
                                     <td>" . ($exhibit_placed == 'Placed' ? $finalTables : '') . "</td>
-                                </tr>
-                                <tr>
+                                </tr>";
+        }
+        
+        if($reqChairs!=0 || ($exhibit_placed == 'Placed' && $finalChairs!=='')){            
+            $reqLogistics .= "  <tr>
                                     <th scope='row'>Chairs</th>
                                     <td>$reqChairs</td>                                
                                     <td>" . ($exhibit_placed == 'Placed' ? $finalChairs : '') . "</td>
-                                </tr>
-                                <tr>
+                                </tr>";
+        };
+
+        if($reqElec!='' || ($exhibit_placed == 'Placed' && $finalElec!=='')){            
+            $reqLogistics .= "  <tr>
                                     <th scope='row'>Electricity</th>
                                     <td>$reqElec</td>                                                
                                     <td>" . ($exhibit_placed == 'Placed' ? $finalElec : '') . "</td>
-                                </tr>
-                                <tr>
+                                </tr>";
+        }
+
+        if($reqSpaceSize!='' || ($exhibit_placed == 'Placed' && $finalSpaceSize!=='')){            
+            $reqLogistics .= "  <tr>        
                                     <th scope='row'>Space Size</th>
                                     <td>$reqSpaceSize</td>
                                     <td>" . ($exhibit_placed == 'Placed' ? $finalSpaceSize : '') . "</td>
-                                </tr>              
-                                <tr>
+                                </tr>";
+        }                                   
+        if($reqExposure!='' || ($exhibit_placed == 'Placed' && $finalExposure!=='')){            
+            $reqLogistics .= "  <tr>                   
                                     <th scope='row'>Exposure</th>
                                     <td>$reqExposure</td>                                                
                                     <td>" . ($exhibit_placed == 'Placed' ? $finalExposure : '') . "</td>
                                 </tr>
                             </tbody>
                         </table>";
+        }
 
         $text = str_replace('{requested_logistics}', $reqLogistics, $text);
     }
