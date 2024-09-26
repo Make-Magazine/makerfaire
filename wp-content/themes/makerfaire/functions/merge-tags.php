@@ -521,13 +521,11 @@ function get_location($entry, $type = 'full') {
     if ($entry_id != '') {
         //get scheduling information for this entry
         $sql = "SELECT  area.area, subarea.subarea, subarea.nicename, location
-              FROM    wp_mf_location location,
-                      wp_mf_faire_subarea subarea,
-                      wp_mf_faire_area area
-
-              where       location.entry_id   = $entry_id
-                      and subarea.id          = location.subarea_id
-                      and area.id             = subarea.area_id";
+                FROM    wp_mf_location location
+        left outer join wp_mf_faire_subarea subarea on subarea.id = location.subarea_id
+        left outer join wp_mf_faire_area area on area.id          = subarea.area_id
+        left outer join wp_mf_schedule  on wp_mf_schedule.entry_id=location.entry_id and wp_mf_schedule.location_id=location.id
+                where   location.entry_id   = $entry_id and start_dt is null";
 
         $results = $wpdb->get_results($sql);
         if ($wpdb->num_rows > 0) {
