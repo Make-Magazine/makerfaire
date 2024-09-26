@@ -36,7 +36,7 @@ var review = new Vue({
             locations: [],
 
             statusArray: ['Proposed', 'Accepted', 'Pending', 'No Response', 'Wait List', 'Rejected', 'Cancelled', 'No Show'],
-            currentView: urlParams.get('layout') ? urlParams.get('layout') : "grid",
+            currentView: urlParams.get('layout') ? urlParams.get('layout') : "list",
             searchQuery: urlParams.get('search') ? urlParams.get('search') : "",
             placedQuery: urlParams.get('placed') ? urlParams.get('placed') : "",
             entryIDQuery: "",
