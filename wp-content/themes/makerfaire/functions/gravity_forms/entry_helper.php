@@ -222,6 +222,10 @@ function get_showcase_entries($entryID, $edit=false){
         if($edit == false) {
             $sql .= " AND parent_mf_status.meta_value='Accepted' 
                       AND child_mf_status.meta_value='Accepted'";
+        } else {
+            // even in edit mode, we don't want to see the following
+            $sql .= " AND parent_mf_status.meta_value NOT IN ('Rejected', 'Cancelled', 'No Response', 'No Show')
+                      AND child_mf_status.meta_value NOT IN ('Rejected', 'Cancelled', 'No Response', 'No Show')";
         }
         $sql .= " ORDER BY child_title";
         $results = $wpdb->get_results($sql);
