@@ -271,7 +271,7 @@ function mf_replace_merge_tags($text, $form, $entry, $url_encode, $esc_html, $nl
             $incResources     = substr($res_merge_tag, $incStartPos, $incEndPos - $incStartPos);
         }
 
-        $resTable = '<table cellpadding="10" width=60%><tr><th width="40%">Resource</th><th>Quantity</th></tr>';
+        $resTable = '<table width=60%><tr><th width="40%">Resource</th><th>Quantity</th></tr>';
         $resources = get_mf_resources($entry, $excResources, $incResources);
 
         foreach ($resources as $entRes) {
@@ -291,7 +291,7 @@ function mf_replace_merge_tags($text, $form, $entry, $url_encode, $esc_html, $nl
         $attIDs = substr($text, $attStartPos + 1, $closeBracketPos - $attStartPos - 1);
 
         $attArr = explode(",", $attIDs);
-        $attTable  = '<table cellpadding="10"  width=60%><tr><th width="40%">Attribute</th><th>Value</th></tr>';
+        $attTable  = '<table width=60%><tr><th width="40%">Attribute</th><th>Value</th></tr>';
         foreach ($attArr as $att) {
             $AttText = get_attribute($entry, trim($att));
             if (!empty($AttText)) {
