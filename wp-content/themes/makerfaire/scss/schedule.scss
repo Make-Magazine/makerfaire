@@ -34,9 +34,6 @@ h4.featured {
 .schedule-header {
 	margin-left: 0px;
 	padding-left: 0px;
-	@media (max-width: 992px) {
-		margin: 0px 15px;
-	}
 	h1 {
 		font-size: 36px;
 		color: #4A4A4A;
@@ -44,11 +41,7 @@ h4.featured {
 		margin-bottom: 0px;
 	}
 }
-.schedule-description {
-	@media (max-width: 992px) {
-		margin: 0px 15px;
-	}
-}
+
 .left-nav-active {
 	.schedule-wrapper {
 		width: 100%;
@@ -71,10 +64,20 @@ h4.featured {
 		padding: 0px 15px;
 		.search-wrapper {
 			width: 100%;
+			input {
+				height: 38px;
+			}
 		}
+	}
+	h2 {
+		margin-top: 10px;
 	}
 	.mtm-filter-wrap {
 		padding: 0px;
+		margin-bottom: 0px;
+		.form-control {
+			width: 100% !important;
+		}
 	}
 	.timezone-wrapper {
 		margin-bottom: 12px;
@@ -93,6 +96,9 @@ h4.featured {
 	}
 	.schedule-description {
 		margin-bottom: 20px;
+		@media (max-width: 600px) {
+			h3 { font-size: 20px; }
+		}
 	}
    .sched-registration {
       font-weight: 600;
@@ -272,6 +278,7 @@ h4.featured {
 				position: relative;
 				@media (max-width:768px) {
 					flex-direction: column;
+					padding: 40px 25px 30px;
 				}
 				.stage-track {
 					position: absolute;
@@ -329,7 +336,7 @@ h4.featured {
 						}
 						@media screen and (max-width: 450px) {
 							.dispDay {
-								width: 90%;
+								width: 80%;
 							}
 							.dispStartTime {
 								margin-left: 26px;
