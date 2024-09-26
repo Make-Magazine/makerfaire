@@ -126,30 +126,34 @@ function mf_replace_merge_tags($text, $form, $entry, $url_encode, $esc_html, $nl
         $finalExposure      = $wpdb->get_var($sql);
 
         //pull resources
-        $sql = "SELECT wp_rmt_entry_resources.*, resource_category_id, description
-                FROM `wp_rmt_entry_resources`
-                left outer join wp_rmt_resources on wp_rmt_resources.id=resource_id
-                where entry_id=" . $entry['id'];
+        $sql = "SELECT GROUP_CONCAT(concat(qty, ' - ', description) separator '<br/>') as description, resource_category_id 
+                FROM `wp_rmt_entry_resources` 
+                left outer join wp_rmt_resources on wp_rmt_resources.id=resource_id 
+                where entry_id=" . $entry['id'] .
+            " group by entry_id, resource_category_id;";
+        
         $resources          = $wpdb->get_results($sql, ARRAY_A);
         $set_resources      = array_column($resources, 'resource_category_id');
 
         //final tables - resource category 2
         $resKey             = array_search('2', $set_resources);
-        $finalTables        = ($resKey !== FALSE ? $resources[$resKey]['qty'] . ' - ' . $resources[$resKey]['description'] : '');
+        $finalTables        = ($resKey !== FALSE ? $resources[$resKey]['description'] : '');
 
         //final chairs - resource category 3
         $resKey             = array_search('3', $set_resources);
-        $finalChairs        = ($resKey !== FALSE ? $resources[$resKey]['qty'] . ' - ' . $resources[$resKey]['description'] : '');
+        $finalChairs        = ($resKey !== FALSE ? $resources[$resKey]['description'] : '');
 
         //final electricity - resource category 9 - 120V
         $resKey             = array_search('9', $set_resources); //120V
-        $finalElec          = ($resKey !== FALSE ? $resources[$resKey]['qty'] . ' - ' . $resources[$resKey]['description'] : '');
+        $finalElec          = ($resKey !== FALSE ? $resources[$resKey]['description'] : '');
 
-        if ($finalElec == '') {
-            //final electricity - resource category 10 - 220V
-            $resKey         = array_search('10', $set_resources); //220V
-            $finalElec      = ($resKey !== FALSE ? $resources[$resKey]['qty'] . ' - ' . $resources[$resKey]['description'] : '');
-        }
+        
+        //final electricity - resource category 10 - 220V
+        $resKey         = array_search('10', $set_resources); //220V
+        $elec220        = ($resKey !== FALSE ? $resources[$resKey]['description'] : '');     
+        if($finalElec!='' && $elec220!='')  $finalElec .= '<br/>';
+        $finalElec      .= $elec220;
+        
 
         //requested tables and chairs
         $reqTables = '0';
@@ -182,7 +186,7 @@ function mf_replace_merge_tags($text, $form, $entry, $url_encode, $esc_html, $nl
                                 <tr>
                                     <th scope='col' width='20%'></th>
                                     <th scope='col' width='40%'>Requested</th>
-                                    <th scope='col' width='40%'>As Placed</th>
+                                    <th scope='col' width='40%'>".($exhibit_placed == 'Placed' ? 'As Placed' : '') ."</th>
                                 </tr>
                             </thead>
                             <tbody>             

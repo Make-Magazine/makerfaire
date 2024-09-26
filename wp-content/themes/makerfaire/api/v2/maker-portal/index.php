@@ -135,7 +135,8 @@ function getAllEntries($email, $formID = '', $page = '', $years = '') {
 
       //Resource messaging
       $res_message = false;
-      if (rgar($form, 'mat_disp_res_link')) {
+      $mat_disp_res_link = rgar($form, 'mat_disp_res_link');
+      if ($mat_disp_res_link == 'yes') {
         $res_message = $maker->get_resource_msg($form, $entry);
       }
 
