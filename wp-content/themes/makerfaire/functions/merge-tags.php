@@ -26,6 +26,7 @@ function mf_custom_merge_tags($merge_tags, $form_id, $fields, $element_id) {
     $merge_tags[] = array('label' => 'Attribute Lock Ind', 'tag' => '{rmt_att_lock}');
     $merge_tags[] = array('label' => 'Supplemental Form Token', 'tag' => '{supp_form_token}');
     $merge_tags[] = array('label' => 'Exposure', 'tag' => '{final_exposure}');
+    $merge_tags[] = array('label' => 'Final Space Size', 'tag' => '{final_space_size}');
 
     $merge_tags[] = array('label' => 'Confirmation Comment', 'tag' => '{CONF_COMMENT}'); //Attention field - Confirmation Comment
     $merge_tags[] = array('label' => 'Confirmation Button', 'tag' => '{CONF_BUTTON}');
@@ -306,6 +307,19 @@ function mf_replace_merge_tags($text, $form, $entry, $url_encode, $esc_html, $nl
         //full merge tag for replace
         $mergeTag = substr($text, $startPos, $closeBracketPos - $startPos + 1);
         $text = str_replace($mergeTag, $attTable, $text);
+    }
+
+    if (strpos($text, '{final_space_size}') !== false) {                
+        $final_space_size = '';
+        
+        $AttText = get_attribute($entry, trim(2));
+        if (!empty($AttText)) {
+            foreach ($AttText as $attDetail) {
+                $final_space_size .= $attDetail['value'];
+            }        
+        }
+                        
+        $text = str_replace('{final_space_size}', $final_space_size, $text);
     }
 
     //attention field
