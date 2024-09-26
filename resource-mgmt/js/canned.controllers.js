@@ -184,10 +184,18 @@ $scope.export = function(export_format='pdf'){
     var subRoute  = $routeParams.sub;
     var pageTitle = 'Reports';
     var subTitle  = '';
+    if(subRoute=='sponsor_order'){
+      vars = {"faire": faire,
+               "table": "sponsorOrder",                
+               "type":  "sponsorOrderRpt"
+             };
+     var subTitle = 'Sponsor Orders(s)';
+     $scope.reports.callAJAX(vars);
+   }else
     if(subRoute=='sponsor_pymt'){
        vars = {"faire": faire,
-               "table": "sponsorOrder",
-               "type":  "paymentRpt"
+                "table": "sponsorOrder",                
+                "type":  "paymentRpt"
               };
       var subTitle = 'Sponsor Payment(s)';
       $scope.reports.callAJAX(vars);
@@ -219,93 +227,9 @@ $scope.export = function(export_format='pdf'){
               "type":"customRpt"
             };
       var subTitle = 'Nonprofit Payment(s)';
-      $scope.reports.callAJAX(vars);
+      $scope.reports.callAJAX(vars);        
     }else
     if(subRoute=='am_summary'){
-      vars = {"formSelect":[],
-              "formType":["Master","Exhibit","Performance","Startup Sponsor","Sponsor","Show Management"],
-              "faire": faire,
-              "entryIDorder": 50,
-              "locationOrder": 10,
-              "formTypeorder": 400,                            
-              "dispFormType":false,
-              "useFormSC": false,
-              "selectedFields":[                
-                {"id":96, "label":"Maker Name", "choices":"", "type":"name",
-                 "inputs":[{"id":"96.3","label":"First","name":""},{"id":"96.6","label":"Last","name":""}], 
-                 "order":250
-                },
-                {"id":98,"label":"Contact Email","choices":"","type":"email","inputs":"", "order":260},
-                {"id":99,"label":"Contact #","choices":"","type":"phone","inputs":"", "order":270},
-                {"id":151,"label":"Project Name","choices":"","type":"text","inputs":"", "order":40},                
-                {"id":303,"label":"Status","choices":"Accepted","type":"radio", "order": 240},                
-                {"id":879,"label":"Days","choices":"all","type":"checkbox","order":220},
-                {"id":339,"label":"Exhibit Type","choices":"all","type":"checkbox", "order":230}
-             ],
-             "rmtData":{
-                "resource":[
-                  {"id":"all","value":"ALL RESOURCES","checked":true, "order":60},
-                  {"id":"47","value":"Storage","checked":true, "order":110},
-                  {"id":"18","value":"Fencing","checked":true, "order":110},
-                  {"id":"22","value":"Pipe & Drape","checked":true, "order":110},
-                  {"id":"23","value":"Pipe only","checked":true, "order":110},
-                  {"id":"12","value":"Bleachers","checked":true, "order":110},
-                  {"id":"14","value":"Garbage","checked":true, "order":110},
-                  {"id":"17","value":"Whiteboard","checked":true, "order":110},
-                  {"id":"20","value":"Road Plate","checked":true, "order":110},
-                  {"id":"21","value":"Milk Crates","checked":true, "order":110},
-                  {"id":"24","value":"Port A Pottie","checked":true, "order":110},
-                  {"id":"25","value":"Propane","checked":true, "order":110},
-                  {"id":"26","value":"Rigging","checked":true, "order":110},
-                  {"id":"27","value":"Safety Glasses","checked":true, "order":110},
-                  {"id":"28","value":"Sand","checked":true, "order":110},
-                  {"id":"29","value":"Sand Bags","checked":true, "order":110},
-                  {"id":"30","value":"Linens","checked":true, "order":110},
-                  {"id":"31","value":"Yellow Jacket","checked":true, "order":110},
-                  {"id":"32","value":"Signage","checked":true, "order":110},
-                  {"id":"33","value":"Fire Extinguisher","checked":true, "order":110},
-                  {"id":"45","value":"Umbrella","checked":true, "order":110},
-                  {"id":"46","value":"Umbrella Stand","checked":true, "order":110},
-                  {"id":"48","value":"Tent Walls","checked":true, "order":110},
-                  {"id":"49","value":"Tent - Extra","checked":true, "order":110},
-                  {"id":"51","value":"Stage","checked":true, "order":110},
-                  {"id":"52","value":"Extension Cords","checked":true, "order":110},
-                  {"id":"53","value":"Security","checked":true, "order":110},
-                  {"id":"54","value":"Internet _Sponsors","checked":true, "order":110},
-                  {"id":"55","value":"Audio Visual","checked":true, "order":110},
-                  {"id":"56","value":"Flooring","checked":true, "order":110},
-                  {"id":"57","value":"Structure","checked":true, "order":110},
-                  {"id":"58","value":"Traveler","checked":true, "order":110},
-                  {"id":"14","value":"Garbage","checked":true, "order":110},
-                  {"id":"35","value":"Heavy Equipment","checked":true, "order":120},
-                  {"id":"19","value":"Barricade","checked":true, "order":130},
-                  {"id":"15","value":"Water","checked":true, "order":130},
-                  {"id":"2","value":"TABLE","checked":true, "order":160},
-                  {"id":"3","value":"CHAIR","checked":true, "order":170},
-                  {"id":"9","value":"ELEC","checked":true, "order":180},
-                  {"id":"41","value":"Work Bench","checked":true, "order":110},
-                  {"id":"42","value":"Stools","checked":true, "order":110}
-                ],
-                "attribute":[
-                  {"id":"2",  "value":"Final Space Size","checked":true, "order":70},
-                  {"id":"19",  "value":"Space Size: Requested","checked":true, "order":150},
-                  {"id":"4",  "value":"IN/OUT","checked":true, "order":210},
-                  {"id":"9",  "value":"NZ","checked":true, "order":200},
-                  {"id":"11", "value":"INT","checked":true, "order":190}
-                ],
-                "attention":[
-                  {"id":"9","value":"Area Manager Notes","checked":true, "order":100},
-                  {"id":"10","value":"Early Setup","checked":true, "order":90},
-                  {"id":"11","value":"No Friday","checked":true, "order":80}
-                ],
-                "meta":[]
-              },
-             "type":"customRpt",
-             "location":true};
-      var subTitle = 'AM summary';
-      $scope.reports.callAJAX(vars);
-    }else
-    if(subRoute=='am_short'){
       vars = {"formSelect":[],
               "formType":["Master","Exhibit","Performance","Startup Sponsor","Sponsor","Show Management"],
               "faire": faire,
@@ -334,11 +258,7 @@ $scope.export = function(export_format='pdf'){
                   {"id":"all","value":"ALL RESOURCES","checked":true, "order":60}
                 ],
                 "attribute":[
-                  {"id":"2",  "value":"Final Space Size","checked":true, "order":70},
-                  //{"id":"19",  "value":"Space Size: Requested","checked":true, "order":150},
-                  {"id":"4",  "value":"IN/OUT","checked":true, "order":210},
-                  {"id":"9",  "value":"NZ","checked":true, "order":200},
-                  {"id":"11", "value":"INT","checked":true, "order":190}
+                  {"id":"2",  "value":"Final Space Size","checked":true, "order":70}                  
                 ],
                 "attention":[
                   {"id":"9","value":"Area Manager Notes","checked":true, "order":100},
@@ -456,23 +376,25 @@ $scope.export = function(export_format='pdf'){
     if(subRoute=="table_chairs"){
       vars = {"formSelect":[],
               "formType":["Master","Exhibit","Performance","Startup Sponsor","Sponsor","Show Management"],
+              "rtnIfRMTempty" : false,
               "faire": faire,
               "dispFormID":false,
               "dispFormType":false,
               "useFormSC": false,
-              "entryIDorder": 120,
-              "locationOrder": 30,              
+              "entryIDorder": 50,
+              "locationOrder": 10,              
               
               "selectedFields":[                
                 {"id":879,"label":"Days","choices":"all","type":"checkbox", "order":80},
-                {"id":339,"label":"Exhibit Type","choices":"all","type":"checkbox", "order":90},
-                {"id":303,"label":"Status","choices":"Accepted","type":"radio","exact":true,"hide":true, "order":100},
-                {"id":151,"label":"Exhibit","choices":"","type":"text","inputs":"", "order":110},                
+                {"id":339,"label":"Entry Type","choices":"all","type":"checkbox", "order":90},
+                {"id":151,"label":"Title","choices":"","type":"text","inputs":"", "order":100},                
+                {"id":303,"label":"Status","choices":"Accepted","type":"radio","exact":true,"hide":false, "order":110},
+                
               ],
               "rmtData":{
                 "resource":[
-                  {"id":"2","value":"Tables","checked":true,"aggregated":false,"order":40,"columns":true},
-                  {"id":"3","value":"Chairs","checked":true,"aggregated":false,"order":50,"columns":true}
+                  {"id":"2","value":"Tables","checked":true,"aggregated":false,"order":60,"columns":true},
+                  {"id":"3","value":"Chairs","checked":true,"aggregated":false,"order":70,"columns":true}
                 ],
                 "attribute":[],"attention":[],"meta":[]
               },
