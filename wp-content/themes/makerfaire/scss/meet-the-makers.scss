@@ -342,6 +342,12 @@
     padding: 0px 25px;
     @media screen and (max-width: 600px) {
         flex-direction: column;
+        .search-wrapper {
+			width: 100%;
+			input {
+				height: 38px;
+			}
+		}
     }
     .form-control {
         width: auto !important;

@@ -8,7 +8,6 @@
 	justify-content: center;
 	height: 30px;
 	label { 
-		color: #fff;
 		margin-bottom: 0px;
 		font-weight: 100;
 		margin-right: 10px;
@@ -62,12 +61,6 @@ h4.featured {
 	@media (max-width: 992px) {
 		width: 100%;
 		padding: 0px 15px;
-		.search-wrapper {
-			width: 100%;
-			input {
-				height: 38px;
-			}
-		}
 	}
 	h2 {
 		margin-top: 10px;
