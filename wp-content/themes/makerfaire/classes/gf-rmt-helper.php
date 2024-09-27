@@ -178,67 +178,69 @@ class GFRMTHELPER {
     //default to adding the resource
     $type = 'insert';
 
-    //find the category ID for this resource
-    $cat_id = $wpdb->get_var("select resource_category_id from wp_rmt_resources where id = " . $resource_id);
+    //determine if this is an insert, update or no change
+    if ($form_type != 'admin') {
 
-    //Look for any resources set within the same category type (ie. chairs, tables, electricity, etc)    
-    $res = $wpdb->get_row('SELECT entry_res.*, res.resource_category_id, res.description '
-      . ' FROM `wp_rmt_entry_resources` entry_res, wp_rmt_resources res '
-      . ' where entry_id=' . $entryID . ' and entry_res.resource_id = res.ID '
-      . ' and resource_category_id=' . $cat_id);
+      //find the category ID for this resource
+      $cat_id = $wpdb->get_var("select resource_category_id from wp_rmt_resources where id = " . $resource_id);
 
-    //check if this resource category has been set for this entry
-    if (!is_null($res)) { //resource found of the same category
-      //Is it the same resource?
-      if ($res->resource_id == $resource_id) {
-        //always do an update if qty is 0 so we can remove any old ones that were set 
-        // before we deleted qty of 0
-        if ($qty == 0) {
-          //update the resource
-          $type = 'update';
+      //Look for any resources set within the same category type (ie. chairs, tables, electricity, etc)    
+      $res = $wpdb->get_row('SELECT entry_res.*, res.resource_category_id, res.description '
+        . ' FROM `wp_rmt_entry_resources` entry_res, wp_rmt_resources res '
+        . ' where entry_id=' . $entryID . ' and entry_res.resource_id = res.ID '
+        . ' and resource_category_id=' . $cat_id);
 
-          //is there anything to update  
-        } elseif ($res->qty == $qty && $res->comment == $comment) {
-          //exit, there is nothing to update
-          return;
-
-          //is the resource unlocked OR is this a payment form?  
-        } elseif ($res->lockBit == 0 || $form_type == 'Payment') {          
-          //update the resource
-          $type = 'update';
-
-          //is the resource locked?
-        } elseif ($res->lockBit == 1) {
-          $type = ''; //do not update
-        }
-      } else {        
-        //Payment forms are allowed to have multiple resources of the same category
-        //if this isn't a payment form and the resource is unlocked
-        //what if they put 05 amps on their form but then paid for 10 amps
-        if ($form_type == 'Payment') {
-          $type = 'insert';
-          //if the resource is unlocked
-          if($res->lockBit == 0) {            
-            //update the resource with the payment
-            $type = 'update';
-          }else{
-            $type = 'insert';
-          }   
-        }elseif($form_type=='admin'){
-          $type = 'insert';
-        }else{  //user submitted forms
-          //if resource is unlocked
-          if($res->lockBit == 0) {
+      //check if this resource category has been set for this entry
+      if (!is_null($res)) { //resource found of the same category
+        //Is it the same resource?
+        if ($res->resource_id == $resource_id) {
+          //always do an update if qty is 0 so we can remove any old ones that were set 
+          // before we deleted qty of 0
+          if ($qty == 0) {
             //update the resource
             $type = 'update';
-          }else{
-            //if resource is locked, don't do anything.
-            $type='';
+
+            //is there anything to update  
+          } elseif ($res->qty == $qty && $res->comment == $comment) {
+            //exit, there is nothing to update
+            return;
+
+            //is the resource unlocked OR is this a payment form?  
+          } elseif ($res->lockBit == 0 || $form_type == 'Payment') {
+            //update the resource
+            $type = 'update';
+
+            //is the resource locked?
+          } elseif ($res->lockBit == 1) {
+            $type = ''; //do not update
+          }
+        } else {
+          //Payment forms are allowed to have multiple resources of the same category
+          //if this isn't a payment form and the resource is unlocked
+          //what if they put 05 amps on their form but then paid for 10 amps
+          if ($form_type == 'Payment') {
+            $type = 'insert';
+            //if the resource is unlocked
+            if ($res->lockBit == 0) {
+              //update the resource with the payment
+              $type = 'update';
+            } else {
+              $type = 'insert';
+            }
+          } else {  //user submitted forms
+            //if resource is unlocked
+            if ($res->lockBit == 0) {
+              //update the resource
+              $type = 'update';
+            } else {
+              //if resource is locked, don't do anything.
+              $type = '';
+            }
           }
         }
       }
     }
-
+    
     if ($type == 'update') {
       $rowID = $res->ID;
 
@@ -547,8 +549,8 @@ class GFRMTHELPER {
           $dispUser = 'ExpoFP';
         } else {
           $userInfo = get_userdata($result->user);
-          
-          $dispUser = ($userInfo?$userInfo->display_name:'');
+
+          $dispUser = ($userInfo ? $userInfo->display_name : '');
         }
         $update_stamp = esc_html(GFCommon::format_date($result->update_stamp, false, 'm/d/y h:i a'));
         $return_array['attributes'][] = array(
@@ -688,13 +690,13 @@ class GFRMTHELPER {
     if ($form_type == "Master") {
       $exhibit_type = array();
       foreach ($entry as $key => $value) {
-          if (strpos($key, '339.') === 0) {
-              if ($value != '') {
-                  $exhibit_type[$key] = $value;
-              }
+        if (strpos($key, '339.') === 0) {
+          if ($value != '') {
+            $exhibit_type[$key] = $value;
           }
+        }
       }
-      $form_type = implode(",",$exhibit_type);
+      $form_type = implode(",", $exhibit_type);
     }
 
     //build Maker Data Array
