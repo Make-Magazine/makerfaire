@@ -314,7 +314,10 @@ function fieldOutput($fieldID, $entry, $field_array, $form, $arg = '') {
           $value = json_decode($value);
 
           //if the array is empty, set this back to blank
-          if (empty($value))   $value = '';
+          if (empty($value))   {
+            $value = '';
+            $type  = '';
+          }
         }
 
         break;
