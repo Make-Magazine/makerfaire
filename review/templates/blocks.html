@@ -11,11 +11,13 @@
                 <b-container class="p-0">
                     <b-row>
                         <b-col fluid="sm" v-for="(image,image_id) in field.value">
+                            <span v-if="image">
                             <embed v-if="image.includes('.pdf')" :src="image" width="600" height="500" alt="pdf"
                                 pluginspage="http://www.adobe.com/products/acrobat/readstep2.html">
                             <img v-else :class="maker.project_id+'-img'+tabKey+field_id"
                                 @click="showModal(maker.project_id+'-img'+tabKey+field_id, image_id)"
                                 :id="maker.project_id+'-img-' +tabKey+field_id" :src="image" alt="Image">
+                            </span>    
                         </b-col>
 
                     </b-row>
