@@ -91,8 +91,9 @@ if($proj_photo_size && ($proj_photo_size[0]/$proj_photo_size[1] > 1.77777)) {
                         <?php echo $scheduleOutput; ?>
                     </div>
                 <?php
-                }   
-                if(!empty($video) && !empty($video2)) {
+                }                   
+                if(!empty($video) || !empty($video2)) {
+                    
                     echo $video;  //project Video
                     echo $video2; //field386
                 } 
