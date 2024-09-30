@@ -1,6 +1,4 @@
 <?php
-
-
 //add new Notification event of - send confirmation letter and maker cancelled exhibit
 add_filter( 'gform_notification_events', 'add_event' );
 function add_event( $notification_events ) {
@@ -30,4 +28,23 @@ function set_resource_status( $notification, $form, $entry ) {
     }
   }
   return $notification;
+}
+
+//trigger update notification after gravityview update 
+add_action( 'gravityview/edit_entry/after_update', 'mf_entry_change_notification', 10, 3 );
+
+function mf_entry_change_notification( $form, $entry_id, $object = null ) {
+  $entry = GFAPI::get_entry($entry_id);
+  //send notification of changes    
+  $notifications_to_send = GFCommon::get_notifications_to_send('mf_entry_changed', $form, $entry);
+  foreach ($notifications_to_send as $notification) {
+    // The isActive paramater is not always set. 
+    // If it's not set, assume the notification is turned on
+    if (
+      !isset($notification['isActive']) ||
+      (isset($notification['isActive']) && $notification['isActive'])
+    ) {
+      GFCommon::send_notification($notification, $form, $entry);
+    }
+  }
 }

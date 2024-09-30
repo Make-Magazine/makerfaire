@@ -17,17 +17,5 @@ function mf_after_gf_update_entry( $form, $entry_id, $orig_entry = array() ){
     
     //update the expoFP exhibitor
     update_expofp_exhibitor($form, $entry_id); // /functions/gravity_forms/expofp.php
-
-    //send notification of changes    
-    $notifications_to_send = GFCommon::get_notifications_to_send('mf_entry_changed', $form, $entry);
-    foreach ($notifications_to_send as $notification) {
-      // The isActive paramater is not always set. 
-      // If it's not set, assume the notification is turned on
-      if (
-        !isset($notification['isActive']) ||
-        (isset($notification['isActive']) && $notification['isActive'])
-      ) {
-        GFCommon::send_notification($notification, $form, $entry);
-      }
-    }
+    
 }
