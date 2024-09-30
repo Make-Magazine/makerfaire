@@ -173,6 +173,10 @@
 			align-self: stretch;
 			gap: 25px; 
 			background: #fff;
+			.project-description {
+				overflow-wrap: break-word;
+				word-wrap: break-word;
+			}
 			.entry-box-items {
 				.entry-box-item {
 					font-family: "Roboto Regular", Sans-serif;
