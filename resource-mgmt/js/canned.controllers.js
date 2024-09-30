@@ -250,7 +250,7 @@ $scope.export = function(export_format='pdf'){
                 {"id":99,"label":"Contact #","choices":"","type":"phone","inputs":"", "order":270},
                 {"id":151,"label":"Proj Name","choices":"","type":"text","inputs":"", "order":40},    
                 //{"id":303,"label":"Status","choices":"Accepted","type":"radio", "order": 240},                              
-                {"id":879,"label":"Days","choices":"all","type":"checkbox","order":220},
+                {"id":879,"label":"Days","choices":"all","type":"checkbox","order":120},
                 {"id":339,"label":"Type","choices":"all","type":"checkbox", "order":230, "width":40}
              ],
              "rmtData":{
@@ -258,12 +258,12 @@ $scope.export = function(export_format='pdf'){
                   {"id":"all","value":"ALL RESOURCES","checked":true, "order":60}
                 ],
                 "attribute":[
-                  {"id":"2",  "value":"Final Space Size","checked":true, "order":70}                  
+                  {"id":"2",  "value":"Final Space Size","checked":true, "order":110}                  
                 ],
                 "attention":[
-                  {"id":"9","value":"Area Manager Notes","checked":true, "order":100},
+                  {"id":"9","value":"Area Manager Notes","checked":true, "order":80},
                   {"id":"10","value":"Early Setup","checked":true, "order":90},
-                  //{"id":"11","value":"No Friday","checked":true, "order":80}
+                  {"id":"11","value":"No Friday","checked":true, "order":100}
                 ],                
                 "meta":[]
               },
