@@ -75,7 +75,7 @@ if ( $type == 'map' ) {
 
   $header = array(
     'header' => array(
-      'version' => esc_html( MF_EVENTBASE_API_VERSION ),
+      'version' => 2,
       'results' => intval( $result->num_rows ),
     ),
   );
