@@ -69,9 +69,7 @@ function custom_entry_meta($entry_meta, $form_id) {
                 array('value' => 'fee_team', 'text' => 'Gen Fee'),
                 array('value' => 'fire', 'text' => 'Fire'),
                 array('value' => 'power', 'text' => 'Power'),
-                array('value' => 'special_request', 'text' => 'Special Requests'),
-                array('value' => 'louise', 'text' => 'Louise'),
-                array('value' => 'jay', 'text' => 'Jay'),
+                array('value' => 'special_request', 'text' => 'Special Requests'),                
                 array('value' => 'space_size', 'text' => 'Space Size'),
                 array('value' => 'other', 'text' => 'Other')
             )
@@ -120,6 +118,18 @@ function custom_entry_meta($entry_meta, $form_id) {
         )
     );
 
+    //create new meta field to hold resource status and resource assign to
+    $entry_meta['expofp_placed'] = array(
+        'label' => 'ExpoFP Placed',
+        'is_numeric' => false,
+        'is_default_column' => false,
+        'filter' => array(
+            'operators' => array('is', 'isnot'),
+            'choices' => array(
+                array('value' => 'Placed', 'text' => 'Placed')
+            )
+        )
+    );
     return $entry_meta;
 }
 
