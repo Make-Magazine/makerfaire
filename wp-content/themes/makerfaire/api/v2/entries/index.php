@@ -16,6 +16,7 @@ if ($type == 'entries' && $formID) {
   //get the current users capabilities
   $user = wp_get_current_user();
   $user_cap = $user->allcaps;
+  $super_user = false;
 
   //set the users edit capabilities  
   $edit_fee_mgmt        = (isset($user_cap['edit_fee_mgmt']) && $user_cap['edit_fee_mgmt'] ? true : false);
@@ -28,6 +29,17 @@ if ($type == 'entries' && $formID) {
   $notifications_resend = (isset($user_cap['notifications_resend']) && $user_cap['notifications_resend'] ? true : false);
   $view_notifications   = (isset($user_cap['view_notifications']) && $user_cap['view_notifications'] ? true : false);
   $view_rmt             = (isset($user_cap['view_rmt']) && $user_cap['view_rmt'] ? true : false);
+
+  if (
+    $current_user->user_email == 'alicia@make.co'    ||
+    $current_user->user_email == 'rio@make.co'       ||
+    $current_user->user_email == 'webmaster@make.co' ||
+    $current_user->user_email == 'siana@make.co'     ||
+    $current_user->user_email == 'nicole@make.co'    ||
+    $current_user->user_email == 'rob@make.co'
+  ) {
+    $super_user = true;
+  }
 
   //set global data
   $form     = GFAPI::get_form($formID);
@@ -577,15 +589,19 @@ function fieldOutput($fieldID, $entry, $field_array, $form, $arg = '') {
       
       //these slow down the api        
       case 'other_entries': //adds 2.5 seconds
-        $type  = 'html';
-
-        $value = getAddEntries($entry[98], $entry['id']);
+        global $super_user;
+        
+        if ($super_user) {
+          $type  = 'html';
+          $value = getAddEntries($entry[98], $entry['id']);
+        }
         break;
 
       case 'rmt': //adds 2.5 seconds
-        global $view_rmt;
+        //global $view_rmt;
+        global $super_user;
 
-        if ($view_rmt) {
+        if ($super_user) {
           $type  = 'html';
           $value   = '<div id="rmt' . $entry['id'] . '">' . entryResources($entry) . '</div>';
         }
