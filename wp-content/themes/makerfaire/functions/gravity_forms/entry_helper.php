@@ -97,7 +97,7 @@ function display_entry_schedule($entry) {
         if ($multipleLocations == TRUE) { // this is kind of a mess to require this
             $schedule .= "</div></div>";
         }
-        $schedule .= "<a href='/" . $url_sub_path . "/schedule/'>See Details</a></div>";
+        $schedule .= "<a href='/" . $url_sub_path . "/schedule/'>Full Schedule</a></div>";
     } //end if location data found
 
     $return = '';
