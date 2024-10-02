@@ -365,35 +365,29 @@
     padding: 5px 0;
     .ticket-btn {
       text-decoration: none;
-      background: $color-red;
-      border: solid 1px $color-red;
+      border-top: solid 8px $color-blue;
       display: block;
       padding: 10px;
       border-radius: 5px;
-      color: #fff;
+      color: $color-blue;
       margin-bottom: 15px;
+      box-shadow: 0px 10px 20px -5px rgba(0,0,0,.5);
       .title {
         font-size: 1.2em;
       }
       .subtitle {
-        color: #dfdfdf;
+        color: #333;
       }
       &:hover {
         background: #fff;
-        color: $color-red;
-        .subtitle {
-          color: #db445f;
+        border-top: solid 8px #36afec;
+        .title {
+          color: #36afec;
         }
       }
       
     }
 
-    
-
-    i.fa-circle-chevron-right {
-      color: #00B4F3;
-      font-size: 24px;
-    }
   }
 
   .actionSection {
