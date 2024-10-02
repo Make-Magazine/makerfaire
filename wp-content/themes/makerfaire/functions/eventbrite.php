@@ -74,31 +74,37 @@ function genEBtickets($entryID ){
     $event_id = 0;
   }
 
-  // find the exhibit type  
-  $entReturn = get_value_by_label('entLevel', $form, $entry);
-  $entReturn = (array) $entReturn;
+  // find the exhibit type using field 339
+  /*
+    Admin entry type - field 339
+    values exhibit, presentation, performer, workshop, sponsor, startup sponsor, show management, unknown
+  */  
+  $ent_type_arr = array_intersect_key($entry, array_flip(preg_grep('/^339./', array_keys($entry))));
+  $ent_type = implode('-', array_filter($ent_type_arr));
   
-  $exit = FALSE;
-  foreach ($entReturn as $exhibitArr){
-    if(isset($exhibitArr['value'])){
-      $entLevel= strtolower($exhibitArr['value']);
-      switch ($exhibitArr['value']) {
-        case 'Maker':
-        case 'Sponsor':
-        case 'Startup Sponsor':
-        case 'Show Management':          
-          $exit = TRUE;
-          break;                          
-      }
+  //setting entry type based on who gets the most tickets  
+  if (stripos($ent_type, 'sponsor') !== false && stripos($ent_type, 'startup') === false) { //not startup sponsor
+    $entLevel = 'sponsor';//sponsor (not startup)
+  }elseif (stripos($ent_type, 'exhibit') !== false) {
+    $entLevel = 'exhibit';
+  }elseif (stripos($ent_type, 'startup') !== false) { 
+    $entLevel = 'startup sponsor';    
+  }elseif (stripos($ent_type, 'workshop') !== false) { 
+    $entLevel = 'workshop';     
+  }elseif (stripos($ent_type, 'present') !== false) { //Presenters 
+    $entLevel = 'presenter'; 
+  }elseif (stripos($ent_type, 'perform') !== false) { //not startup sponsor 
+    $entLevel = 'performer'; 
+  }  
 
-      if($exit) {
-        break;
-      }      
-    }else{
-      $entLevel = '';
-    }    
-  }
+  //determine if they are part of a showcase
+  $sc_sql = "SELECT count(*) FROM `wp_mf_lead_rel` where childID=$entryID";
   
+  $sc_count = $wpdb->get_var($sc_sql);
+  if($sc_count && $sc_count > 0){
+    $entLevel = 'showcase';
+  }  
+    
   //Final Weekend  
   $entWkndArr = array();
   foreach ($entry as $key => $value) {
@@ -125,6 +131,7 @@ function genEBtickets($entryID ){
   $tck_results = $wpdb->get_results($tktSQL);  
 
   foreach($tck_results as $tck_row){
+    if($tck_row->qty==0)  continue;
      //if this ticket is for a specific weekend, let's make sure the entry is exhibiting that weekend
      if($tck_row->weekend_ind !='' && !in_array($tck_row->weekend_ind,$entWkndArr)){        
       continue;
@@ -164,11 +171,18 @@ function genEBtickets($entryID ){
     }
 
     /*
-    error_log('for entry '.$entryID.' $entLevel = '.$entLevel.' '.
-    'Generating '.$accessCode.' EventID ='.$tck_row->eventID.' quantity '.$tck_row->qty.' weekend '.$tck_row->weekend_ind);      
-    error_log(print_r($args,TRUE));*/
-    
+    echo('for entry '.$entryID.
+    '|set ent_type = '.$ent_type.
+    '|calculated entry Level = '.$entLevel.' '.
+    '|Generating '.$accessCode.
+    '|ticketID ='.$tck_row->eventID.
+    '|EventID ='.$tck_row->ticketID.
+    '|quantity '.$tck_row->qty.
+    '|hidden '.$tck_row->hidden).'<br/>';    
 
+    error_log(print_r($args,TRUE));
+    */
+    
     //call eventbrite to create access code    
     $access_codes = $eventbrite->post('/organizations/'.EB_ORG.'/discounts/', $args);
     
@@ -185,7 +199,7 @@ function genEBtickets($entryID ){
             . ' on duplicate key update access_code = "'.$accessCode.'"';
 
     $wpdb->get_results($dbSQL);        
-
+       
   }
   
   $response['msg'] = 'Access Codes generated.  Please refresh to see<br/>';

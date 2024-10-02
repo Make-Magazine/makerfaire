@@ -187,7 +187,8 @@ function createMFSignZip($area) {
 }
 function mancron_genEBtickets(){
   global $wpdb;
-  $sql =  "SELECT entry_id "
+  //this only looks for faires that are not past their end date
+  $sql =  "SELECT wp_gf_entry_meta.entry_id "
         . "FROM   wp_mf_faire, wp_gf_entry_meta "
         . "       left outer join eb_entry_access_code on wp_gf_entry_meta.entry_id =eb_entry_access_code.entry_id "
         . "WHERE  meta_key='303' and meta_value='Accepted' "
@@ -201,7 +202,7 @@ function mancron_genEBtickets(){
   $results = $wpdb->get_results($sql);
   foreach($results as $entry){
     echo 'Creating ticket codes for '.$entry->entry_id.'<br/>';
-    $response = genEBtickets($entry->entry_id);
+    $response = genEBtickets($entry->entry_id);    
     if(isset($response['msg']))
       echo 'Ticket Response - '.$response['msg'].'<br/>';
   }
