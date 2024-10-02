@@ -246,19 +246,17 @@ get_header();
 
           </b-col>
         </b-row>
-        <div class="mat-ticketing" style="border: thin solid grey;padding: 10px;margin-top:15px;" v-if="entry.status=='Accepted'">
+        <div class="mat-ticketing" style="border: thin solid grey;padding: 10px;margin-top:15px;" v-if="entry.status=='Accepted' && entry.tickets.length">
             <b-row><b-col><h2>Entry Passes</h2></b-col></b-row>
-            <b-row><!-- tickets - This should only show for current faire -->
-              <b-col v-if="entry.tickets.length">
-                <b-row v-for="ticket in entry.tickets">
+            <b-row v-for="ticket in entry.tickets"><!-- tickets - This should only show for current faire -->
+
                   <b-col>
                     <a target="_blank" :href="ticket.link" class="ticket-btn">
                         <div class="title"><i aria-hidden="true" class="fas fa-ticket"></i> {{ticket.title}}</div>
                         <div class="subtitle">{{ticket.subtitle}}</div>
                     </a>
                   </b-col>  
-                </b-row>
-              </b-col>
+ 
             </b-row>
         </div>
       </b-card>
