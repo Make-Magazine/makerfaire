@@ -147,137 +147,127 @@ get_header();
 
             <!-- logistic links -->
             <span v-if="entry.links.length">
-              <b-row cols-md="2" cols-sm="1" cols="1">
-                <b-col v-for="link in entry.links">
-                  <a :href="link.link" target="_blank">{{link.title}}</a>
-                  <span v-if="entry.res_message!='' && link.title.includes('Exhibit')" class="setup-btn-wrapper"><!-- resource messaging -->
-                    <b-button v-b-toggle="'collapse-'+entry.project_id" variant="primary">Check Setup</b-button>
-                    <b-collapse :id="'collapse-'+entry.project_id" class="mt-2">
-                      <b-card>
-                        <div style="text-align:center" v-html='entry.res_message'></div>
-                      </b-card>
-                    </b-collapse>
-                  </span>
+              <b-row>
+                <b-col>
+                  <b-row v-for="link in entry.links">
+                    <b-col>
+                      <a :href="link.link" target="_blank">{{link.title}}</a>
+                      <span v-if="entry.res_message!='' && link.title.includes('Exhibit')" class="setup-btn-wrapper"><!-- resource messaging -->
+                        <b-button v-b-toggle="'collapse-'+entry.project_id" variant="primary">Check Setup</b-button>
+                        <b-collapse :id="'collapse-'+entry.project_id" class="mt-2">
+                          <b-card>
+                            <div style="text-align:center" v-html='entry.res_message'></div>
+                          </b-card>
+                        </b-collapse>
+                      </span>
+                    </b-col>
+                  </b-row>
                 </b-col>
+                <b-col>
+                  <b-row align-h="between" v-if="entry.status!='Cancelled'" class="tasks-row"><!-- Tickets/Tasks/Manage Section-->
+                    <b-col cols="5"><!-- Tasks - This should only show for current faire -->
+                      <span v-if="entry.tasks.toDo.length || entry.tasks.done.length">
+                        <b-button v-b-tooltip.hover title="My Tasks" :id="'entry-tasks-'+entry.project_id" variant="primary" class="notifications-button">
+                          <i class="fas fa-tasks"></i>
+                          <div class="notification-counter toggle-popover" data-toggle="popover" :data-count="entry.tasks.toDo.length">{{entry.tasks.toDo.length}}</div>
+                        </b-button>
+
+                        <b-popover ref="popover" :target="'entry-tasks-'+entry.project_id" :id="'entry-tasks-'+entry.project_id" title="My Tasks">
+                          <b-row v-for="toDo in entry.tasks.toDo">
+                            <b-col>
+                              <div class="manage-links">
+                                <a target="_blank" :href="toDo.action_url">{{toDo.description}}</a>
+                              </div>
+                            </b-col>
+                            <b-col>
+                              <span class="todoTasks" style="color:red">
+                                <i class="fas fa-arrow-right" aria-hidden="true"></i>To Do
+                              </span>
+                            </b-col>
+                          </b-row>
+                          <b-row v-for="done in entry.tasks.done">
+                            <b-col>{{done.description}}</b-col>
+                            <b-col>
+                              <span class="doneTasks" style="color:green">
+                                <i class="fa fa-check" aria-hidden="true"></i>Done
+                              </span>
+                            </b-col>
+                          </b-row>
+                        </b-popover>
+                      </span>
+                    </b-col>
+
+                    <b-col cols="2" align-self="end"><!-- Manage Entry-->
+                      <b-button v-b-tooltip.hover title="Manage My Entry" :id="'entry-manage-'+entry.project_id" variant="primary" class="notifications-button">
+                        <i class="fas fa-cog"></i>
+                      </b-button>
+
+                      <b-popover ref="popover" :target="'entry-manage-'+entry.project_id" :id="'manage-popover-'+entry.project_id" title="Manage My Entry">
+                        <span v-if="entry.status !='Cancelled' && entry.status!='Rejected'">
+                          <p>
+                            <a href="#" @click="cancelModal('cancelModal'+entry.project_id, 'manage-popover-'+entry.project_id)" style="text-decoration:none;">
+                              <span style="color:red">
+                                <i class="fas fa-times"></i> Cancel Entry
+                              </span>
+                            </a>
+                          </p>
+                        </span>
+
+                        <p><a :href="entry.gv_edit_link"><i class="fas fa-edit" aria-hidden="true"></i>Edit Full Entry</a></p>
+                        <p><a href="https://makerfaire.com/bay-area/maker-shipping/"><i class="fas fa-truck" aria-hidden="true"></i>Shipping Form</a></p>
+                        <p><a href="https://makerfaire.com/bay-area/special-request-form/"><i class="fas fa-sparkles" aria-hidden="true"></i>Special Requests</a></p>
+                      </b-popover>
+
+                      <b-modal :id="'cancelModal'+entry.project_id" size="lg" :title="'Cancel '+entry.project_name+', Entry ID:'+entry.project_id">
+                        <template #modal-header="{ close }">
+                          <h5>"<span id="projName">{{entry.project_name}}</span>" Exhibit ID: <span id="cancelEntryID" name="entryID">{{entry.project_id}}</span></h5>
+                        </template>
+
+                        <div id="cancelText">
+                          <p>Are you sure you want to cancel?</p><br />
+                          <textarea rows="4" cols="50" name="cancelReason" placeholder="Please let us know why you are cancelling your Maker Faire entry"></textarea>
+                        </div>
+                        <template #modal-footer="{ ok, cancel }">
+                          <span id="cancelResponse"></span><br />
+                          <b-button id="cancelButton" size="sm" variant="outline" @click="cancel()">
+                            No, go back.
+                          </b-button>
+                          <b-button id="submitButton" size="sm" variant="danger" @click="submitCancel(entry.project_id)">
+                            Yes, Cancel.
+                          </b-button>
+                        </template>
+                      </b-modal>
+                    </b-col>
+                  </b-row>
               </b-row>
             </span>
-
-            <div style="margin-top: auto; padding-top: 15px; font-size: 20px">
-              <b-row align-h="between" v-if="entry.status!='Cancelled'" class="tasks-row"><!-- Tickets/Tasks/Manage Section-->
-                <b-col cols="5"><!-- Tasks - This should only show for current faire -->
-                  <span v-if="entry.tasks.toDo.length || entry.tasks.done.length">
-                    <b-button v-b-tooltip.hover title="My Tasks" :id="'entry-tasks-'+entry.project_id" variant="primary" class="notifications-button">
-                      <i class="fas fa-tasks"></i>
-                      <div class="notification-counter toggle-popover" data-toggle="popover" :data-count="entry.tasks.toDo.length">{{entry.tasks.toDo.length}}</div>
-                    </b-button>
-
-                    <b-popover ref="popover" :target="'entry-tasks-'+entry.project_id" :id="'entry-tasks-'+entry.project_id" title="My Tasks">
-                      <b-row v-for="toDo in entry.tasks.toDo">
-                        <b-col>
-                          <div class="manage-links">
-                            <a target="_blank" :href="toDo.action_url">{{toDo.description}}</a>
-                          </div>
-                        </b-col>
-                        <b-col>
-                          <span class="todoTasks" style="color:red">
-                            <i class="fas fa-arrow-right" aria-hidden="true"></i>To Do
-                          </span>
-                        </b-col>
-                      </b-row>
-                      <b-row v-for="done in entry.tasks.done">
-                        <b-col>{{done.description}}</b-col>
-                        <b-col>
-                          <span class="doneTasks" style="color:green">
-                            <i class="fa fa-check" aria-hidden="true"></i>Done
-                          </span>
-                        </b-col>
-                      </b-row>
-                    </b-popover>
-                  </span>
-                </b-col>
-
-                <b-col cols="5"><!-- tickets - This should only show for current faire -->
-                  <span v-if="entry.tickets.length">
-                    <b-button v-b-tooltip.hover title="Get My Tickets" :id="'entry-tickets-'+entry.project_id" variant="primary" class="notifications-button">
-                      <i class="fas fa-ticket"></i>
-                    </b-button>
-
-                    <b-popover ref="popover" :target="'entry-tickets-'+entry.project_id" title="My Tickets">
-
-                      <!--<b-collapse :id="'entry-tickets-'+entry.project_id" class="mt-2">-->
-
-                      <b-row v-for="ticket in entry.tickets">
-                        <b-col cols="10">
-                          <a target="_blank" :href="ticket.link">
-                            <div class="title">{{ticket.title}}</div>
-                            <div class="subtitle">{{ticket.subtitle}}</div>
-                          </a>
-                        </b-col>
-                        <b-col cols="2">
-                          <a target="_blank" :href="ticket.link">
-                            <i class="fa fa-circle-chevron-right" aria-hidden="true"></i>
-                          </a>
-                        </b-col>
-                      </b-row>
-
-                      <!--</b-collapse>-->
-                    </b-popover>
-                </b-col>
-                <b-col cols="2" align-self="end"><!-- Manage Entry-->
-                  <b-button v-b-tooltip.hover title="Manage My Entry" :id="'entry-manage-'+entry.project_id" variant="primary" class="notifications-button">
-                    <i class="fas fa-cog"></i>
-                  </b-button>
-
-                  <b-popover ref="popover" :target="'entry-manage-'+entry.project_id" :id="'manage-popover-'+entry.project_id" title="Manage My Entry">
-                    <span v-if="entry.status !='Cancelled' && entry.status!='Rejected'">
-                      <p>
-                        <a href="#" @click="cancelModal('cancelModal'+entry.project_id, 'manage-popover-'+entry.project_id)" style="text-decoration:none;">
-                          <span style="color:red">
-                            <i class="fas fa-times"></i> Cancel Entry
-                          </span>
-                        </a>
-                      </p>
-                    </span>
-
-                    <p><a :href="entry.gv_edit_link"><i class="fas fa-edit" aria-hidden="true"></i>Edit Full Entry</a></p>
-                    <p><a href="https://makerfaire.com/bay-area/maker-shipping/"><i class="fas fa-truck" aria-hidden="true"></i>Shipping Form</a></p>
-                    <p><a href="https://makerfaire.com/bay-area/special-request-form/"><i class="fas fa-sparkles" aria-hidden="true"></i>Special Requests</a></p>
-                    <!--<span v-if="entry.ep_token!=''"> 
-                      <div>
-                      <a target="_blank" :href="'/bay-area/logistics-information/?ep_token='+entry.ep_token"><i class="fas fa-edit" aria-hidden="true"></i>Manage Logistics Info</a>
-                      </div>
-                    </span>  -->
-                    <!--<b-col md="auto" sm="12"></b-col>
-                    <b-col md="auto" sm="12"><a href="/bay-area/public-information/?ep_token="><i class="fas fa-edit" aria-hidden="true"></i>Manage Public Info</a></b-col>-->
-                  </b-popover>
-
-                  <b-modal :id="'cancelModal'+entry.project_id" size="lg" :title="'Cancel '+entry.project_name+', Entry ID:'+entry.project_id">
-                    <template #modal-header="{ close }">
-                      <h5>"<span id="projName">{{entry.project_name}}</span>" Exhibit ID: <span id="cancelEntryID" name="entryID">{{entry.project_id}}</span></h5>
-                    </template>
-
-                    <div id="cancelText">
-                      <p>Are you sure you want to cancel?</p><br />
-                      <textarea rows="4" cols="50" name="cancelReason" placeholder="Please let us know why you are cancelling your Maker Faire entry"></textarea>
-                    </div>
-                    <template #modal-footer="{ ok, cancel }">
-                      <span id="cancelResponse"></span><br />
-                      <b-button id="cancelButton" size="sm" variant="outline" @click="cancel()">
-                        No, go back.
-                      </b-button>
-                      <b-button id="submitButton" size="sm" variant="danger" @click="submitCancel(entry.project_id)">
-                        Yes, Cancel.
-                      </b-button>
-                    </template>
-                  </b-modal>
-                </b-col>
-              </b-row>
-            </div>
+            
 
 
           </b-col>
         </b-row>
-
+        <div class="mat-ticketing" style="border: thin solid grey;padding: 10px;margin-top:15px;" v-if="entry.status=='Accepted'">
+        <b-row><b-col><h2>Entry Passes</h2></b-col></b-row>
+              <b-row><!-- tickets - This should only show for current faire -->
+                <b-col>
+                  <span v-if="entry.tickets.length">
+                    <b-row striped v-for="ticket in entry.tickets">
+                      <b-col cols="10">
+                        
+                          <div class="title">{{ticket.title}}</div>
+                          <div class="subtitle">{{ticket.subtitle}}</div>
+                        
+                      </b-col>
+                      <b-col cols="2">
+                        <a target="_blank" :href="ticket.link">
+                          <i class="fa fa-circle-chevron-right" aria-hidden="true"></i>
+                        </a>
+                      </b-col>
+                    </b-row>
+                  </span>
+                </b-col>
+              </b-row>
+            </div>
       </b-card>
     </div>
   </div>
