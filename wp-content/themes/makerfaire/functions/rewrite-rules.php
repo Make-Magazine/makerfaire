@@ -14,6 +14,10 @@ function maker_url_vars($rules) {
   $newrules['maker-sign/(\d*)/?(.*)$/?'] = 'index.php?makersign=true&eid=$matches[1]&faire=$matches[2]';
   $newrules['^maker-sign/([^/]*)/([^/]*)$'] = '/wp-content/themes/makerfaire/generate_pdf/makersigns.php?eid=$matches[1]&faire=$matches[2]';        
 
+  //create maker load in pass
+  $newrules['loadin-pass/(\d*)/?(.*)$/?'] = 'index.php?loadin=true&eid=$matches[1]&type=$matches[2]';
+  $newrules['^loadin-pass/([^/]*)/([^/]*)$'] = '/wp-content/themes/makerfaire/generate_pdf/loadInPass.php?eid=$matches[1]&type=$matches[2]';        
+  
   //kendo scheduler - page-mfscheduler.php
   $newrules['^mfscheduler/([^/]*)/?'] = 'index.php?pagename=mfscheduler&faire_id=$matches[1]';
   $newrules['^mfscheduler-tasks/?'] = 'index.php?pagename=mfscheduler-tasks';
