@@ -77,9 +77,12 @@ function createOutput($entry_id, $pdf) {
    $subarea = $wpdb->get_var($sql);
    if($subarea != ''){
     $pdf->setTextColor(0);
-    $pdf->SetFont('Benton Sans', 'B', 60);
-    $pdf->SetXY(12, 160);   
-    $pdf->MultiCell(190, 25, 'Loading in at '.$subarea, 0, 'C');    
+    $pdf->SetFont('Benton Sans', 'B', 40);
+    $pdf->SetXY(12, 150);   
+    $pdf->MultiCell(190, 25, 'Loading in at ', 0, 'C');    
+    $pdf->SetFont('Benton Sans', 'B', 90);
+    $pdf->SetXY(12, 180);   
+    $pdf->MultiCell(190, 30, $subarea, 0, 'C');    
    }
 }
 
