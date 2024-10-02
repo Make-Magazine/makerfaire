@@ -17,7 +17,7 @@ get_header();
   #content {
     background: #f9f9f9;
   }
-
+  .floating-footer { display: none !important; }
   .card {
     box-shadow: 0 10px 20px -5px rgba(0, 0, 0, .5);
   }
