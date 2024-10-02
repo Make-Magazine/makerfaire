@@ -14,8 +14,10 @@ $formID = (!empty($_REQUEST['form']) ? sanitize_text_field($_REQUEST['form']) : 
 // Double check again we have requested this file
 if ($type == 'entries' && $formID) {
   //get the current users capabilities
-  $user = wp_get_current_user();
-  $user_cap = $user->allcaps;
+  if(!isset($current_user)){
+    $current_user = wp_get_current_user();
+  }  
+  $user_cap = $current_user->allcaps;
   $super_user = false;
 
   //set the users edit capabilities  
@@ -458,7 +460,7 @@ function fieldOutput($fieldID, $entry, $field_array, $form, $arg = '') {
         //is this a showcase or part of one?
         if (isset($showcase_info['type'])) {
           $showcase = $showcase_info['type'];
-          if ($showcase == 'parent') {
+          if ($showcase == 'parent' && isset($showcase_info['child_data'])) {
             $value = 'Entries that are part of this showcase:</br>';
             foreach ($showcase_info['child_data'] as $parent) {
               $value .= '<a href="/maker/entry/' . $parent['child_entryID'] . '" class="entry-box">' . $parent['child_title'] . '</h3></a><br/>';
