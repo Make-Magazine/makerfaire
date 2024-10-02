@@ -201,10 +201,10 @@ function mancron_genEBtickets(){
 
   $results = $wpdb->get_results($sql);
   foreach($results as $entry){
-    echo 'Creating ticket codes for '.$entry->entry_id.'<br/>';
+    echo 'Creating ticket codes for '.$entry->entry_id;
     $response = genEBtickets($entry->entry_id);    
     if(isset($response['msg']))
-      echo 'Ticket Response - '.$response['msg'].'<br/>';
+      echo ' - '.$response['msg'];
   }
 }
 
