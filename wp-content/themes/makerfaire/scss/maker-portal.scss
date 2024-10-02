@@ -1,6 +1,7 @@
 /* maker admin e.g. makerfaire.com/maker-portal */
 .maker-portal {
   margin-bottom: 100px;
+  .floating-footer { display: none;}
 
   .maker-admin-list-wrp {
     padding: 15px 0;
@@ -100,6 +101,10 @@
 
   @media (min-width: 767px) {
     position: relative;
+    .img-thumbnail {
+      padding: 0px;
+      margin-bottom: 10px;
+    }
   }
 
   .setup-btn-wrapper {
@@ -356,14 +361,32 @@
   .mat-ticketing {
     border-bottom: thin solid lightgrey;
     padding: 5px 0;
-
-    .subtitle {
-      color: #9B9B9B;
+    .ticket-btn {
+      text-decoration: none;
+      background: $color-red;
+      border: solid 1px $color-red;
+      display: block;
+      padding: 10px;
+      border-radius: 5px;
+      color: #fff;
+      margin-bottom: 15px;
+      .title {
+        font-size: 1.2em;
+      }
+      .subtitle {
+        color: #dfdfdf;
+      }
+      &:hover {
+        background: #fff;
+        color: $color-red;
+        .subtitle {
+          color: #db445f;
+        }
+      }
+      
     }
 
-    .title {
-      font-size: 1.2em;
-    }
+    
 
     i.fa-circle-chevron-right {
       color: #00B4F3;

@@ -106,8 +106,8 @@ get_header();
               <b-col md="8" sm="12">
                 <h3>{{entry.project_name}}</h3>
               </b-col>
-              <b-col><span :class="'status_'+entry.project_id">{{entry.status}}</span></b-col>
-              <b-col md="2" sm="5" style="color: #ccc;">{{entry.project_id}}</b-col>
+              <b-col cols="6"><span :class="'status_'+entry.project_id">{{entry.status}}</span></b-col>
+              <b-col cols="6" md="2" sm="5" style="color: #ccc;">{{entry.project_id}}</b-col>
             </b-row>
             <b-row> <!-- Link Row -->
               <b-col md="8" sm="12">
@@ -148,7 +148,7 @@ get_header();
             <!-- logistic links -->
             <span v-if="entry.links.length">
               <b-row>
-                <b-col>
+                <b-col cols="12" sm="5" style="margin-bottom:10px;">
                   <b-row v-for="link in entry.links">
                     <b-col>
                       <a :href="link.link" target="_blank">{{link.title}}</a>
@@ -163,9 +163,9 @@ get_header();
                     </b-col>
                   </b-row>
                 </b-col>
-                <b-col>
+                <b-col cols="12" sm="7">
                   <b-row align-h="between" v-if="entry.status!='Cancelled'" class="tasks-row"><!-- Tickets/Tasks/Manage Section-->
-                    <b-col cols="5"><!-- Tasks - This should only show for current faire -->
+                    <b-col cols="7"><!-- Tasks - This should only show for current faire -->
                       <span v-if="entry.tasks.toDo.length || entry.tasks.done.length">
                         <b-button v-b-tooltip.hover title="My Tasks" :id="'entry-tasks-'+entry.project_id" variant="primary" class="notifications-button">
                           <i class="fas fa-tasks"></i>
@@ -197,7 +197,7 @@ get_header();
                       </span>
                     </b-col>
 
-                    <b-col cols="2" align-self="end"><!-- Manage Entry-->
+                    <b-col cols="5" align-self="end"><!-- Manage Entry-->
                       <b-button v-b-tooltip.hover title="Manage My Entry" :id="'entry-manage-'+entry.project_id" variant="primary" class="notifications-button">
                         <i class="fas fa-cog"></i>
                       </b-button>
@@ -247,27 +247,20 @@ get_header();
           </b-col>
         </b-row>
         <div class="mat-ticketing" style="border: thin solid grey;padding: 10px;margin-top:15px;" v-if="entry.status=='Accepted'">
-        <b-row><b-col><h2>Entry Passes</h2></b-col></b-row>
-              <b-row><!-- tickets - This should only show for current faire -->
-                <b-col>
-                  <span v-if="entry.tickets.length">
-                    <b-row striped v-for="ticket in entry.tickets">
-                      <b-col cols="10">
-                        
-                          <div class="title">{{ticket.title}}</div>
-                          <div class="subtitle">{{ticket.subtitle}}</div>
-                        
-                      </b-col>
-                      <b-col cols="2">
-                        <a target="_blank" :href="ticket.link">
-                          <i class="fa fa-circle-chevron-right" aria-hidden="true"></i>
-                        </a>
-                      </b-col>
-                    </b-row>
-                  </span>
-                </b-col>
-              </b-row>
-            </div>
+            <b-row><b-col><h2>Entry Passes</h2></b-col></b-row>
+            <b-row><!-- tickets - This should only show for current faire -->
+              <b-col v-if="entry.tickets.length">
+                <b-row v-for="ticket in entry.tickets">
+                  <b-col>
+                    <a target="_blank" :href="ticket.link" class="ticket-btn">
+                        <div class="title"><i aria-hidden="true" class="fas fa-ticket"></i> {{ticket.title}}</div>
+                        <div class="subtitle">{{ticket.subtitle}}</div>
+                    </a>
+                  </b-col>  
+                </b-row>
+              </b-col>
+            </b-row>
+        </div>
       </b-card>
     </div>
   </div>
