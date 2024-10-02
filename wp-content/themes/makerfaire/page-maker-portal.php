@@ -246,8 +246,8 @@ get_header();
 
           </b-col>
         </b-row>
-        <div class="mat-ticketing" style="border: thin solid grey;padding: 10px;margin-top:15px;" v-if="entry.status=='Accepted' && entry.tickets.length">
-            <b-row><b-col><h2>Entry Passes</h2></b-col></b-row>
+        <div class="mat-ticketing" v-if="entry.status=='Accepted' && entry.tickets.length">
+            <b-row><b-col><h2 style="text-align:center">My Entry Passes</h2></b-col></b-row>
             <b-row v-for="ticket in entry.tickets"><!-- tickets - This should only show for current faire -->
 
                   <b-col>

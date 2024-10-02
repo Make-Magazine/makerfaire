@@ -361,8 +361,13 @@
   }
 
   .mat-ticketing {
-    border-bottom: thin solid lightgrey;
-    padding: 5px 0;
+    border: thin solid lightgrey;    
+    padding: 20px 50px;
+    margin-top:50px;
+    @media screen and (max-width: 768px) {
+      padding: 20px;
+      margin-top:20px;
+    }
     .ticket-btn {
       text-decoration: none;
       border-top: solid 8px $color-blue;
@@ -370,7 +375,8 @@
       padding: 10px;
       border-radius: 5px;
       color: $color-blue;
-      margin-bottom: 15px;
+      margin-top: 15px;
+      margin-bottom: 10px;
       box-shadow: 0px 10px 20px -5px rgba(0,0,0,.5);
       .title {
         font-size: 1.2em;
