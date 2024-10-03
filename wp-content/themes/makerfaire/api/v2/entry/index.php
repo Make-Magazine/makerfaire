@@ -24,14 +24,19 @@ if ($type == 'entry') {
       )
     ); 
     if($entryID){
+      $header_msg = "Thank you for confirming your participation.";
       gform_update_meta( $entryID, "mf_confirmed", 'yes');
       $load_in_time = (!empty($_REQUEST['load_in_time']) ? sanitize_text_field($_REQUEST['load_in_time']) : null);
       if(!empty($load_in_time)) {
-        gform_update_meta( $entryID, "load_in_time", $load_in_time);
-        $load_in_msg = "You'll be loading in " . $load_in_time;
-      }
+        if(empty(gform_get_meta($entryID, "load_in_time"))) {
+          gform_update_meta( $entryID, "load_in_time", $load_in_time);
+          $header_msg = "Thank you for confirming you'll be loading in " . $load_in_time;
+        } else {
+          $header_msg = "You have already confirmed your load in day.";
+        }
+      } 
       // update a meta for their load in time
-      $return = '<h2>Thank you for confirming your participation. ' . $load_in_msg . '.</h2><h3>Please respond to your Confirmation Email or reach out to <a href="mailto:makers@make.co">makers@make.co</a> with any questions about your setup.<br /><br />See you at the Faire!</h3><br />';  
+      $return = '<h2>' . $header_msg . '</h2><h3>Please respond to your Confirmation Email or reach out to <a href="mailto:makers@make.co">makers@make.co</a> with any questions about your setup.<br /><br />See you at the Faire!</h3><br />';  
     }else{
       $return = 'Invalid Token';  
     }

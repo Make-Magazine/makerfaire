@@ -338,7 +338,7 @@ function mf_replace_merge_tags($text, $form, $entry, $url_encode, $esc_html, $nl
         $suppToken  = (isset($entry['fg_easypassthrough_token']) ? $entry['fg_easypassthrough_token'] : '');
         $loadInTime = (preg_match('/load_in_time=\"(.*?)\"/', $text, $match) == 1) ? "&load_in_time=" . $match[1] : "";
         $btnTitle   = (preg_match('/title=\"(.*?)\"/', $text, $match) == 1) ? $match[1] : "Yes, I'll be there!";
-        $confButton = '<a href="https://makerfaire.com/query/?type=entry&token=' . $suppToken . $loadInTime . '">' .
+        $confButton = '<a href="https://'.$_SERVER['HTTP_HOST'].'/query/?type=entry&token=' . $suppToken . $loadInTime . '">' .
             ' <button style="border-radius:2px;border: solid 1px #eb002a;background:#eb002a;color:#fff;padding:0px 15px;height:30px;font-weight:500;cursor:pointer;">' . $btnTitle . '</button>' .
             '</a>';
         preg_match('/{CONF_BUTTON(.*?)}/', $text, $oldMergeTag); // set the oldMergeTag value to replace with our new confButton
