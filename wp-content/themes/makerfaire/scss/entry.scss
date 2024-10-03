@@ -284,6 +284,13 @@
 					max-width: 400px;
 					max-height: fit-content;
 				}
+				h3 {
+					height: 2.5em;
+					display: -webkit-box;
+					-webkit-line-clamp: 2;
+					-webkit-box-orient: vertical;
+				 	overflow: hidden;
+				}
 			}
 		}
 		section.showcase-list {
