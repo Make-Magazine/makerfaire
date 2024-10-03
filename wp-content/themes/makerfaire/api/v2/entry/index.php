@@ -30,9 +30,9 @@ if ($type == 'entry') {
       if(!empty($load_in_time)) {
         if(empty(gform_get_meta($entryID, "load_in_time"))) {
           gform_update_meta( $entryID, "load_in_time", $load_in_time);
-          $header_msg = "Thank you for confirming you'll be loading in " . $load_in_time;
+          $header_msg = "Thanks for giving us your arrival and initial load in time.";
         } else {
-          $header_msg = "You have already confirmed your load in day.";
+          $header_msg = "You have already confirmed your initial load in time.";
         }
       } 
       // update a meta for their load in time
