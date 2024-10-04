@@ -704,7 +704,7 @@ function pullRmtData($rmtData, $entryID, $useFormSC) {
 /* Pull Location information */
 
 function pullLocData($entryID, $useFormSC = false, $locationOrder = 30) {
-   global $wpdb;
+   global $wpdb;   
    //global $useFormSC;
    $return = array();
    $return['data'] = array();
@@ -714,12 +714,13 @@ function pullLocData($entryID, $useFormSC = false, $locationOrder = 30) {
    if ($entryID != '') {
       //get scheduling information for this lead
       $sql = "SELECT  area.area,subarea.subarea,subarea.nicename, location.location
-            FROM wp_mf_location location,
-                    wp_mf_faire_subarea subarea,
-                    wp_mf_faire_area area
+              FROM    wp_mf_location location,
+                      wp_mf_faire_subarea subarea,
+                      wp_mf_faire_area area
             where       location.entry_id   = $entryID
-                    and subarea.id          = location.subarea_id
-                    and area.id             = subarea.area_id";
+            and subarea.id          = location.subarea_id
+            and area.id             = subarea.area_id
+            and (select start_dt from wp_mf_schedule where location.id=wp_mf_schedule.location_id) is NULL ";      
 
       $results = $wpdb->get_results($sql);
       if ($wpdb->num_rows > 0) {
