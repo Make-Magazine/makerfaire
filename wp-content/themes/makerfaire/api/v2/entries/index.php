@@ -19,7 +19,6 @@ if ($type == 'entries' && $formID) {
     $current_user = wp_get_current_user();
   }
   $user_cap = $current_user->allcaps;
-  $super_user = false;
 
   //set the users edit capabilities  
   $edit_fee_mgmt        = (isset($user_cap['edit_fee_mgmt']) && $user_cap['edit_fee_mgmt'] ? true : false);
@@ -32,18 +31,6 @@ if ($type == 'entries' && $formID) {
   $notifications_resend = (isset($user_cap['notifications_resend']) && $user_cap['notifications_resend'] ? true : false);
   $view_notifications   = (isset($user_cap['view_notifications']) && $user_cap['view_notifications'] ? true : false);
   $view_rmt             = (isset($user_cap['view_rmt']) && $user_cap['view_rmt'] ? true : false);
-
-  if (
-    $current_user->user_email == 'alicia@make.co'    ||
-    $current_user->user_email == 'rio@make.co'       ||
-    $current_user->user_email == 'webmaster@make.co' ||
-    $current_user->user_email == 'siana@make.co'     ||
-    $current_user->user_email == 'nicole@make.co'    ||
-    $current_user->user_email == 'gillian@make.co'   ||
-    $current_user->user_email == 'rob@make.co'
-  ) {
-    $super_user = true;
-  }
 
   //set global data
   $form     = GFAPI::get_form($formID);
@@ -569,12 +556,8 @@ function fieldOutput($fieldID, $entry, $field_array, $form, $arg = '') {
         break;
        //these slow down the api          
        case 'other_entries': //adds 2.5 seconds
-        global $super_user;
-        
-        if ($super_user) {  
-          $type  = 'html';
-          $value = getAddEntries($entry[98], $entry['id']);
-        }
+        $type  = 'html';
+        $value = getAddEntries($entry[98], $entry['id']);
         break;
              
       case 'schedule_loc':      //adds 1 second
@@ -609,10 +592,9 @@ function fieldOutput($fieldID, $entry, $field_array, $form, $arg = '') {
           break;  
        
       case 'rmt': //adds 2.5 seconds
-        //global $view_rmt;
-        global $super_user;
+        global $view_rmt;        
 
-        if ($super_user) {
+        if ($view_rmt) {
           $type  = 'html';
           $value   = '<div id="rmt' . $entry['id'] . '">' . entryResources($entry) . '</div>';
         }
