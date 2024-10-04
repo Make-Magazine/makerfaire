@@ -441,8 +441,18 @@ function getSocial($entrySocial) {
 
         //only show the first 3 social links entered
         foreach (array_slice($socialArray, 0, 3) as $link) {
+            if(!$link || !isset($link['Your Link']) || $link['Your Link'] == ''){
+                continue;
+            }
+
+            $url = $link['Your Link'];
+
+            //check if the url has https:// or http:// at the beginning                
+            if (stripos($link['Your Link'], 'https') === false) {    
+                $link['Your Link'] = 'https://'.$link['Your Link'];
+            }
             //verify that the social media link provided is not blank and is a valid url
-            if ($link && isset($link['Your Link']) && $link['Your Link'] != '' && validate_url($link['Your Link'])) {
+            if (validate_url($link['Your Link'])) {
                 //platform was misspelled as plateform in some earlier forms
                 if (isset($link['Platform'])) {
                     $platform = $link['Platform'];
