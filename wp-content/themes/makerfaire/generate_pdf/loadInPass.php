@@ -33,22 +33,26 @@ $pdf->SetFont('Benton Sans', '', 12);
 $pdf->SetFillColor(255, 255, 255);
 
 //get the entry-id, if one isn't set return an error
-if (isset($_GET['eid']) && $_GET['eid'] != '') {
-   $faire = (isset($_GET['faire']) && $_GET['faire'] != '' ? $_GET['faire'] : '');
-   $entryid = sanitize_text_field($_GET['eid']);
+$eid = '';
+if (isset($wp_query->query_vars['eid'])) {
+   $eid = $wp_query->query_vars['eid'];
+   //error_log("EID Query Vars: " . $wp_query->query_vars['eid']);
+} else if (isset($_GET['eid']) && $_GET['eid'] != '') {
+   $eid = $_GET['eid'];
+   //error_log("EID: ".$_GET['eid']);
+}
+if (isset($wp_query->query_vars['type'])) {
+   $type = $wp_query->query_vars['type'];
+} else if (isset($_GET['type']) && $_GET['type'] != '') {
+   $type = $_GET['type'];
+}
+if ($eid != '') {
+   $entryid = sanitize_text_field($eid);
    createOutput($entryid, $pdf);
-   if (isset($_GET['type']) && $_GET['type'] == 'download') {
+   if ($type == 'download') {
       if (ob_get_contents())
          ob_clean();
       $pdf->Output($entryid . '-LoadIn.pdf', 'D');
-   } elseif (isset($_GET['type']) && $_GET['type'] == 'save') {
-      $filename = get_template_directory() . '/signs/' . $faire . '/tempLoadIn/' . $entryid . '.pdf';
-      $dirname = dirname($filename);
-      if (!is_dir($dirname)) {
-         mkdir($dirname, 0755, true);
-      }
-      $pdf->Output($filename, 'F');
-      echo $entryid;
    } else {
       if (ob_get_contents())
          ob_clean();
