@@ -49,6 +49,7 @@ var review = new Vue({
             modalShow: false,
             CustomSource: '',
             toggler: false,
+            results: true,
             router: router
         }
     },
@@ -100,7 +101,15 @@ var review = new Vue({
             var formID = document.getElementById("form_select").value;
             axios
                 .get('/query/?type=entries&form=' + formID)
-                .then(response => (this.makers = response.data.makers));
+                .then((response) => {
+                    console.log(response.data.makers);
+                    if(response.data.makers) {
+                        this.makers = response.data.makers
+                    } else {
+                        this.results = false;
+                    }
+                    return response;
+                })
         },
         showModal: function (img_class, image_id) {
             setLightBox(img_class, image_id);
@@ -168,7 +177,11 @@ var review = new Vue({
         axios
             .get('/query/?type=entries&form=' + formID)
             .then((response) => {
-                this.makers = response.data.makers
+                if(response.data.makers) {
+                    this.makers = response.data.makers
+                } else {
+                    this.results = false;
+                }
                 return response;
             })
             .then((response) => {

@@ -94,8 +94,8 @@
             <?php include('templates/list.php'); ?>
         </div>
 
-        <div class="no-results" v-if="!filterBy.length && makers.length">No Results to Show</div>
-        <div id="loader" v-if="makers.length==0">
+        <div class="no-results" v-if="(!filterBy.length && makers.length) || results==false">No Results to Show</div>
+        <div id="loader" v-if="makers.length==0 && results==true">
             <img src="/review/img/loading.gif" />
         </div>
 
