@@ -387,7 +387,7 @@ $scope.export = function(export_format='pdf'){
               "selectedFields":[                
                 {"id":879,"label":"Days","choices":"all","type":"checkbox", "order":80},
                 {"id":339,"label":"Entry Type","choices":"all","type":"checkbox", "order":90},
-                {"id":151,"label":"Title","choices":"","type":"text","inputs":"", "order":100},                
+                {"id":151,"label":"Proj Name","choices":"","type":"text","inputs":"", "order":40},                
                 {"id":303,"label":"Status","choices":"Accepted","type":"radio","exact":true,"hide":false, "order":110},
                 
               ],
@@ -414,7 +414,7 @@ $scope.export = function(export_format='pdf'){
               "entryIDorder": 50,
               "locationOrder": 10,   
               "selectedFields":[
-                {"id":151,"label":"Exhibit","type":"text", "order":130},
+                {"id":151,"label":"Proj Name","type":"text", "order":40},
                 {"id":303,"label":"Status","choices":"Accepted","type":"radio","exact":true, "order":140},
                 {"id":879,"label":"Days","choices":"all","type":"checkbox", "order":110},
                 {"id":339,"label":"Entry Type","choices":"all","type":"checkbox", "order":120},
@@ -447,7 +447,7 @@ $scope.export = function(export_format='pdf'){
                 {"id":74,"label":"What are you powering","choices":"","type":"text", "order":100},                                 
                 {"id":"879",  "label":"Days","choices":"all","type":"checkbox", "order":110},
                 {"id":339,"label":"Entry Type","choices":"all","type":"checkbox", "order":120},                
-                {"id":151,"label":"Title","choices":"","type":"text","inputs":"", "order":130}, 
+                {"id":151,"label":"Proj Name","choices":"","type":"text","inputs":"", "order":40}, 
                 {"id":303,"label":"Status","choices":"Accepted","type":"radio","exact":true,"order":140},                                
               ],
               "rmtData":{
@@ -468,7 +468,7 @@ $scope.export = function(export_format='pdf'){
               "dispFormType":false,
               "useFormSC": false,
               "selectedFields":[
-                {"id":151,"label":"Record Name","choices":"","type":"text","inputs":"", "order":25},
+                {"id":151,"label":"Proj Name","choices":"","type":"text","inputs":"", "order":25},
                 {"id":303,"label":"Status","choices":"Proposed","type":"radio"},
                 {"id":303,"label":"Status","choices":"Accepted","type":"radio"},
                 {"id":879,"label":"Days","choices":"all","type":"checkbox"},
@@ -499,7 +499,7 @@ $scope.export = function(export_format='pdf'){
               "selectedFields":[
                 {"id":879,"label":"Days","choices":"all","type":"checkbox","order":100},
                 {"id":339,"label":"Entry Type","choices":"all","type":"checkbox", "order":110},
-                {"id":151,"label":"Title","choices":"","type":"text","inputs":"", "order":120},                
+                {"id":151,"label":"Proj Name","choices":"","type":"text","inputs":"", "order":40},                
                 {"id":303,"label":"Status","choices":"Accepted","type":"radio", "order":130},                
                 
               ],
@@ -528,7 +528,7 @@ $scope.export = function(export_format='pdf'){
               "selectedFields":[
                 {"id":879,"label":"Days","choices":"all","type":"checkbox","order":100},
                 {"id":339,"label":"Entry Type","choices":"all","type":"checkbox", "order":110},
-                {"id":151,"label":"Title","choices":"","type":"text","inputs":"", "order":120},                
+                {"id":151,"label":"Proj Name","choices":"","type":"text","inputs":"", "order":40},                
                 {"id":303,"label":"Status","choices":"Accepted","type":"radio", "order":130},                
                 
               ],
