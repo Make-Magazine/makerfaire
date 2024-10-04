@@ -97,6 +97,7 @@ var review = new Vue({
             this.makers.reverse();
         },
         updateForm: function (event) {
+            this.results = true;
             this.makers = [];
             var formID = document.getElementById("form_select").value;
             axios
