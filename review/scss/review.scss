@@ -345,3 +345,8 @@ i.bi-plus-circle, i.bi-plus-circle-fill, i.bi-check-circle, i.bi-check2 {
         }
     }
 }
+
+
+#wpadminbar #wp-admin-bar-site-name > .ab-item::before {
+    display: none;
+}
