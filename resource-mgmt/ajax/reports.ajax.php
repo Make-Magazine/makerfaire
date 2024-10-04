@@ -385,11 +385,11 @@ function cannedRpt() {
             }
 
             if ($location) {
-               $locRetData = pullLocData($lead_id, $useFormSC, $locationOrder);
-               $fieldData = array_merge($fieldData, $locRetData['data']);
-               $colDefs = array_merge($colDefs, $locRetData['colDefs']);
+               $locRetData = pullLocData($lead_id);
                if ($placedOnly && empty($locRetData['data'])) {
                   $writeEntry = FALSE;
+               }else{
+                  $fieldData = array_merge($fieldData, $locRetData['data']);               
                }
             }
             if ($tickets) {
@@ -418,6 +418,12 @@ function cannedRpt() {
       }
    }
 
+   //set column defs for location if applicable
+   if ($location) {
+      $data['columnDefs']['area'] = array('field' => 'area', 'width' => '*', 'displayName' => ($useFormSC ? 'A' : 'Area'), 'displayOrder' => $locationOrder);
+      $data['columnDefs']['subarea'] = array('field' => 'subarea', 'width' => '*', 'displayName' => ($useFormSC ? 'SUBAREA' : 'Subarea'), 'displayOrder' => $locationOrder + 1);
+      $data['columnDefs']['location'] = array('field' => 'location', 'width' => '*', 'displayName' => ($useFormSC ? 'LOC' : 'Location'), 'displayOrder' => $locationOrder + 2);      
+   }
    /*
     * after we have pulled data from database
     *   compare against selected criteria
@@ -749,12 +755,9 @@ function pullLocData($entryID, $useFormSC = false, $locationOrder = 30) {
          $subarea = implode(' and ', $locArr['subarea']);
          $location = implode(' and ', $locArr['location']);
 
-         //populate return data
-         $return['colDefs']['area'] = array('field' => 'area', 'width' => '*', 'displayName' => ($useFormSC ? 'A' : 'Area'), 'displayOrder' => $locationOrder);
-         $return['data']['area'] = $area;
-         $return['colDefs']['subarea'] = array('field' => 'subarea', 'width' => '*', 'displayName' => ($useFormSC ? 'SUBAREA' : 'Subarea'), 'displayOrder' => $locationOrder + 1);
-         $return['data']['subarea'] = $subarea;
-         $return['colDefs']['location'] = array('field' => 'location', 'width' => '*', 'displayName' => ($useFormSC ? 'LOC' : 'Location'), 'displayOrder' => $locationOrder + 2);
+         //populate return data         
+         $return['data']['area'] = $area;         
+         $return['data']['subarea'] = $subarea;         
          $return['data']['location'] = $location;
       }
    }
@@ -797,16 +800,17 @@ function pullTickData($entryID, $useFormSC = false, $ticketsOrder = 70) {
    return $return;
 }
 function pullPayDataGeneric($payEntry, $payForm, $paymentOrder = 50) {
-   global $wpdb;
-
+   global $wpdb;   
+   
    $return = array();
    $return['data'] = array();
    $return['colDefs'] = array();
 
    $entryID = $payEntry['id'];
+
    //add payment information
    if ($entryID != '') {
-      //get scheduling information for this lead
+      //
       $paysql = "select lead_id, wp_gf_addon_payment_transaction.transaction_type,
                         wp_gf_addon_payment_transaction.transaction_id,
                         wp_gf_addon_payment_transaction.amount,
@@ -815,16 +819,15 @@ function pullPayDataGeneric($payEntry, $payForm, $paymentOrder = 50) {
                  where  lead_id = " . $entryID;
 
       $payresults = $wpdb->get_results($paysql);
-      if ($wpdb->num_rows > 0) {
+      //add payment data to report
+      $pay_det = "";
 
-         //add payment data to report
-         $pay_det = "";
+      $transaction_id = array();
+      $order_status   = array();
+      $date_created   = array();
+      $order_entry    = array();
 
-         $transaction_id = array();
-         $order_status   = array();
-         $date_created   = array();
-         $order_entry    = array();
-         
+                      
          foreach ($payresults as $payrow) {
             //only write the entry id one time.
             if (!in_array($payrow->lead_id, $order_entry)) {
@@ -841,24 +844,29 @@ function pullPayDataGeneric($payEntry, $payForm, $paymentOrder = 50) {
 
             //don't show order details for the refund
             if ($payrow->transaction_type != 'refund') {
-               foreach ($payForm['fields'] as $payFields) {
-                  if ($payFields['type'] == 'product') {
-                     if ($payFields['inputType'] == 'singleproduct') {
-                        //only report if the qty field is set                     
-                        if (isset($payEntry[$payFields['id'] . '.3']) && $payEntry[$payFields['id'] . '.3'] != '') {
-                           $pay_det .= $payEntry[$payFields['id'] . '.3'] . ' : ' . $payEntry[$payFields['id'] . '.1'] . "\n";
-                        }
-                     } else {
-                        $pay_det .= (isset($payFields['label']) ? $payFields['label'] : '') . ': ';
-                        $pay_det .= (isset($payEntry[$payFields['id'] . '.2']) ? $payEntry[$payFields['id'] . '.2'] : '') . "\n";
-                     }
+               //
+
+
+            }
+         }
+
+         foreach ($payForm['fields'] as $payFields) {
+            if ($payFields['type'] == 'product') {
+               if ($payFields['inputType'] == 'singleproduct') {
+                  //only report if the qty field is set                     
+                  if (isset($payEntry[$payFields['id'] . '.3']) && $payEntry[$payFields['id'] . '.3'] != '') {
+                     $pay_det .= $payEntry[$payFields['id'] . '.3'] . ' : ' . $payEntry[$payFields['id'] . '.1'] . "\n";
                   }
+               } else {
+                  $pay_det .= (isset($payFields['label']) ? $payFields['label'] : '') . ': ';
+                  $pay_det .= (isset($payEntry[$payFields['id'] . '.2']) ? $payEntry[$payFields['id'] . '.2'] : '') . "\n";
                }
             }
          }
 
          //payment details
-         $return['colDefs']['pay_det'] = array('field' => 'pay_det', 'width' => '*', 'displayName' => 'Order Details', 'displayOrder' => $paymentOrder);
+         $return['colDefs']['pay_det'] = array('field' => 'pay_det', 'width' => '*', 'displayName' => 'Order Details', 'displayOrder' => $paymentOrder,
+         'cellTemplate'=> '<span ng-bind-html="row.entity[col.field]"></span>');
          $return['data']['pay_det'] = $pay_det;
 
          //payment amt and status
@@ -873,7 +881,7 @@ function pullPayDataGeneric($payEntry, $payForm, $paymentOrder = 50) {
          //payment transaction ID (from paypal)
          $return['colDefs']['trx_id'] = array('field' => 'trx_id', 'width' => "*", 'displayName' => 'Stripe trxID', 'displayOrder' => $paymentOrder + 4);
          $return['data']['trx_id'] = implode("\n", $transaction_id);
-      }
+      
    }
 
    return $return;
@@ -1639,8 +1647,13 @@ function sponsorOrderRpt($table, $faire) {
          continue;
       }
 
-      //get entries for this form
-      $entries = GFAPI::get_entries($form['id']);
+      //get entries for this form      
+      $search_criteria = array('status' => 'active');
+      $sorting         = array();
+      $paging          = array('offset' => 0, 'page_size' => 999);
+      $total_count     = 0;      
+      
+      $entries         = GFAPI::get_entries($form['id'], $search_criteria, $sorting, $paging, $total_count);
       foreach ($entries as $entry) {
          $entry_id   = $entry['id'];
          $PayRetData = pullPayDataGeneric($entry, $formObj, 50);
@@ -1801,7 +1814,11 @@ function paymentRpt($table, $faire) {
          $data['data'][] = $fieldData;
       }
    }
-
+   //set column defs for location if applicable
+   $data['columnDefs']['area']      = array('field' => 'area', 'width' => '*', 'displayName' => 'Area', 'displayOrder' => 900);
+   $data['columnDefs']['subarea']   = array('field' => 'subarea', 'width' => '*', 'displayName' => 'Subarea', 'displayOrder' => 901);
+   $data['columnDefs']['location']  = array('field' => 'location', 'width' => '*', 'displayName' => 'Location', 'displayOrder' => 902);      
+   
    $data['columnDefs'] = array_values($data['columnDefs']); //returns all the values from the array and indexes the array numerically
    $data['columnDefs'] = orderReturnColumns($data['columnDefs']);
 
