@@ -512,7 +512,6 @@ class GFRMTHELPER {
           $dispUser = $userInfo->display_name;
         }
 
-        $update_stamp = esc_html(GFCommon::format_date($result->dateUpdated, false, 'm/d/y h:i a'));
         $return_array['resources'][] = array(
           'id'            => $result->ID,
           'lock'          => $result->lockBit,
@@ -524,7 +523,7 @@ class GFRMTHELPER {
           'resource_id'   => $result->resource_id,
           'resource'      => $result->resource,
           'token'         => $result->token,
-          'last_updated'  => $update_stamp
+          'last_updated'  => $result->dateUpdated
         );
       }
     }
@@ -552,7 +551,6 @@ class GFRMTHELPER {
 
           $dispUser = ($userInfo ? $userInfo->display_name : '');
         }
-        $update_stamp = esc_html(GFCommon::format_date($result->update_stamp, false, 'm/d/y h:i a'));
         $return_array['attributes'][] = array(
           'id'            => $result->ID,
           'lock'          => $result->lockBit,
@@ -562,7 +560,7 @@ class GFRMTHELPER {
           'attribute'     => $result->attribute,
           'attribute_id'  => $result->attribute_id,
           'token'         => $result->token,
-          'last_updated'  => $update_stamp,
+          'last_updated'  => $result->update_stamp
         );
       }
     }
@@ -582,7 +580,6 @@ class GFRMTHELPER {
           $dispUser = $userInfo->display_name;
         }
 
-        $update_stamp = esc_html(GFCommon::format_date($result->update_stamp, false, 'm/d/y h:i a'));
         $return_array['attention'][] = array(
           'id'            => $result->ID,
           'attn_id'       => $result->attn_id,
@@ -590,7 +587,7 @@ class GFRMTHELPER {
           'comment'       => $result->comment,
           'user'          => $dispUser,
           'token'         => $result->token,
-          'last_updated'  => $update_stamp
+          'last_updated'  => $result->update_stamp
         );
       }
     }

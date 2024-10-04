@@ -38,6 +38,7 @@ if ($type == 'entries' && $formID) {
     $current_user->user_email == 'webmaster@make.co' ||
     $current_user->user_email == 'siana@make.co'     ||
     $current_user->user_email == 'nicole@make.co'    ||
+    $current_user->user_email == 'gillian@make.co'   ||
     $current_user->user_email == 'rob@make.co'
   ) {
     $super_user = true;

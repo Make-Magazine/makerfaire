@@ -503,7 +503,7 @@ function hiddenTicket(accessCode) {
 		checkObj.removeClass('checked');
 		var checked = 1;
 	} else {
-		checkObj.html('<i class="far fa-check-square" aria-hidden="true"></i>');
+		checkObj.html('<i class="far fa-square-check" aria-hidden="true"></i>');
 		checkObj.addClass('checked');
 		var checked = 0;
 	}
