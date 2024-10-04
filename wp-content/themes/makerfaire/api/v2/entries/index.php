@@ -10,13 +10,14 @@ defined('ABSPATH') or die('This file cannot be called directly!');
 
 $type   = (!empty($_REQUEST['type']) ? sanitize_text_field($_REQUEST['type']) : null);
 $formID = (!empty($_REQUEST['form']) ? sanitize_text_field($_REQUEST['form']) : false);
+$data   = array();
 
 // Double check again we have requested this file
 if ($type == 'entries' && $formID) {
   //get the current users capabilities
-  if(!isset($current_user)){
+  if (!isset($current_user)) {
     $current_user = wp_get_current_user();
-  }  
+  }
   $user_cap = $current_user->allcaps;
   $super_user = false;
 
@@ -54,7 +55,7 @@ if ($type == 'entries' && $formID) {
                 FROM wp_mf_faire faire, wp_mf_faire_area area, wp_mf_faire_subarea subarea
                 where FIND_IN_SET($formID,faire.form_ids) and faire.ID = area.faire_id and subarea.area_id = area.ID
                 order by area,subarea";
-  $locResults = $wpdb->get_results($locSql,ARRAY_A);
+  $locResults = $wpdb->get_results($locSql, ARRAY_A);
 
   //set entry data
   $data     = getAllEntries($formID);
@@ -79,14 +80,6 @@ function getAllEntries($formID = '') {
   global $form;
   global $entry_notes;
 
-  //get all active entries in this form
-  $search_criteria = array('status' => 'active');
-  $sorting         = array();
-  $paging          = array('offset' => 0, 'page_size' => 999);
-  $total_count     = 0;
-  //adds roughly 1 second to the call
-  $entries         = GFAPI::get_entries($formID, $search_criteria, $sorting, $paging, $total_count);
-
   //convert the form fields into a usable array
   $field_array = array();
   foreach ($form['fields'] as $field) {
@@ -97,7 +90,7 @@ function getAllEntries($formID = '') {
       //we need both the label and the value set for each choice, so we need to combine these two
       $inputs   = (isset($field->inputs) ? $field->inputs : '');
       $choices  = (isset($field->choices) ? $field->choices : '');
-     
+
       foreach ($choices as $chItem) {
         foreach ($inputs as $inItem) {
           if (in_array($chItem["text"], $inItem)) {
@@ -156,6 +149,14 @@ function getAllEntries($formID = '') {
     );
   }
 
+  //get all active entries in this form
+  $search_criteria = array('status' => 'active');
+  $sorting         = array();
+  $paging          = array('offset' => 0, 'page_size' => 999);
+  $total_count     = 0;
+
+  //adds roughly 1 second to the call
+  $entries         = GFAPI::get_entries($formID, $search_criteria, $sorting, $paging, $total_count);
 
   foreach ($entries as $entry) {
     //pull notifications only once per entry    
@@ -246,8 +247,8 @@ function getAllEntries($formID = '') {
     $prelim_loc    = (isset($fieldArr['value']) && $fieldArr['value'] != '' ? implode(", ", $fieldArr['value']) : '');
 
     //set entry_placed indicator    
-    $placed_meta    = gform_get_meta( $entry['id'], 'expofp_placed');
-    $entry_placed   = ($placed_meta=='Placed'?$placed_meta:"0");    
+    $placed_meta    = gform_get_meta($entry['id'], 'expofp_placed');
+    $entry_placed   = ($placed_meta == 'Placed' ? $placed_meta : "0");
 
     //set the return data
     $return['makers'][] = array(
@@ -313,6 +314,7 @@ function fieldOutput($fieldID, $entry, $field_array, $form, $arg = '') {
 
   //find this field in the form object                
   if (isset($field_array[$fieldID])) {
+    //this section adds 1 second
     $field_data = $field_array[$fieldID];
     $label      = ($field_data['adminLabel'] != '' ? $field_data['adminLabel'] : $field_data['label']);
     $type       = $field_data['type'];
@@ -329,7 +331,7 @@ function fieldOutput($fieldID, $entry, $field_array, $form, $arg = '') {
           $value = json_decode($value);
 
           //if the array is empty, set this back to blank
-          if (empty($value))   {
+          if (empty($value)) {
             $value = '';
             $type  = '';
           }
@@ -394,10 +396,12 @@ function fieldOutput($fieldID, $entry, $field_array, $form, $arg = '') {
         break;
     }
   } else {
-
+    //this section adds 9 seconds
     //default these items
     $label = $value = '';
+
     switch ($fieldID) {
+        //html only fields
       case 'update_admin_button':
         $type  = 'html';
 
@@ -452,29 +456,8 @@ function fieldOutput($fieldID, $entry, $field_array, $form, $arg = '') {
 
         break;
 
-      case 'showcase_info':
-        $type = 'html';
-        $label = 'Showcase Information';
 
-        $showcase_info = get_showcase_entries($entry['id']);
-
-        //is this a showcase or part of one?
-        if (isset($showcase_info['type'])) {
-          $showcase = $showcase_info['type'];
-          if ($showcase == 'parent' && isset($showcase_info['child_data'])) {
-            $value = 'Entries that are part of this showcase:</br>';
-            foreach ($showcase_info['child_data'] as $parent) {
-              $value .= '<a href="/maker/entry/' . $parent['child_entryID'] . '" class="entry-box">' . $parent['child_title'] . '</h3></a><br/>';
-            }
-          } elseif ($showcase == 'child') {
-            $parent = $showcase_info['parent_data'];
-            $value = 'Part of Showcase <a href="/maker/entry/' . $parent['parent_id'] . '" target="none">' . $parent['parent_title'] . '</a>';
-          }
-        }
-        break;
-
-
-      //notes
+        //notes
       case 'notes_table':
         global $notes_send;
         if ($notes_send) {
@@ -530,9 +513,9 @@ function fieldOutput($fieldID, $entry, $field_array, $form, $arg = '') {
         }
 
         break;
-
-        //checkbox fields for edit
-      case 'flags':
+        
+        //checkbox fields for edit      
+        case 'flags':
         global $edit_flags;
         $edit_cap  = ($edit_flags ? 'edit' : 'view');
 
@@ -559,7 +542,7 @@ function fieldOutput($fieldID, $entry, $field_array, $form, $arg = '') {
           $value .= '<textarea id="location_comment_' . $entry['id'] . '">' . (isset($entry['307']) ? $entry['307'] : '') . '</textarea>';
         }
 
-        break;
+        break;        
       case 'exhibit_type':
         global $edit_entry_type;
         $edit_cap  = ($edit_entry_type ? 'edit' : 'view');
@@ -584,22 +567,47 @@ function fieldOutput($fieldID, $entry, $field_array, $form, $arg = '') {
         $value     = get_checkbox_value($field, $entry, $fieldName, $edit_cap);
 
         break;
-      case 'final_location':
-        $type  = 'html';
-        $label = 'Final Location';        
-        $value = display_schedule($form['id'], $entry, 'summary');
-        break;
-      
-      //these slow down the api        
-      case 'other_entries': //adds 2.5 seconds
+       //these slow down the api          
+       case 'other_entries': //adds 2.5 seconds
         global $super_user;
         
-        if ($super_user) {
+        if ($super_user) {  
           $type  = 'html';
           $value = getAddEntries($entry[98], $entry['id']);
         }
         break;
-
+             
+      case 'schedule_loc':      //adds 1 second
+        $type = 'schedule';
+        $value = mf_get_schedule_only($entry['id']);        
+        
+        break;
+      case 'final_location'://adds 1 second
+        $type  = 'html';
+        $label = 'Final Location';        
+        $value = display_schedule($form['id'], $entry, 'summary');
+        break;
+      case 'showcase_info': //adds 1 second
+          $type = 'html';
+          $label = 'Showcase Information';
+  
+          $showcase_info = get_showcase_entries($entry['id']);
+  
+          //is this a showcase or part of one?
+          if (isset($showcase_info['type'])) {
+            $showcase = $showcase_info['type'];
+            if ($showcase == 'parent' && isset($showcase_info['child_data'])) {
+              $value = 'Entries that are part of this showcase:</br>';
+              foreach ($showcase_info['child_data'] as $parent) {
+                $value .= '<a href="/maker/entry/' . $parent['child_entryID'] . '" class="entry-box">' . $parent['child_title'] . '</h3></a><br/>';
+              }
+            } elseif ($showcase == 'child') {
+              $parent = $showcase_info['parent_data'];
+              $value = 'Part of Showcase <a href="/maker/entry/' . $parent['parent_id'] . '" target="none">' . $parent['parent_title'] . '</a>';
+            }
+          }
+          break;  
+       
       case 'rmt': //adds 2.5 seconds
         //global $view_rmt;
         global $super_user;
@@ -608,15 +616,10 @@ function fieldOutput($fieldID, $entry, $field_array, $form, $arg = '') {
           $type  = 'html';
           $value   = '<div id="rmt' . $entry['id'] . '">' . entryResources($entry) . '</div>';
         }
-        break;
-                              
-      case 'schedule_loc':      
-        $type = 'schedule';
-        $value = mf_get_schedule_only($entry['id']);        
-        
-        break;
+        break;                                    
     }
   }
+
   if ($arg == 'no_label')  $label = '';
   if ($value == '')  return array();
   return array('label' => $label, 'type' => $type, 'value' => $value, 'class' => $class);
@@ -624,6 +627,7 @@ function fieldOutput($fieldID, $entry, $field_array, $form, $arg = '') {
 
 function getAddEntries($email, $currEntryID) {
   global $wpdb;
+  if($email =='') return '';
 
   $sql = 'SELECT distinct(entry_id), wp_gf_entry_meta.form_id, wp_gf_form.title as form_title, ' .
     '(SELECT meta_value FROM wp_gf_entry_meta detail2 WHERE detail2.entry_id = wp_gf_entry_meta.entry_id AND meta_key = "151" ) as projectName, ' .
@@ -636,7 +640,7 @@ function getAddEntries($email, $currEntryID) {
     'AND entry_id != ' . $currEntryID . ' ' .
     'AND status="active"  ' .
     'ORDER BY `wp_gf_entry_meta`.`entry_id` DESC';
-
+  
   $results = $wpdb->get_results($sql);
 
   //don't return an empty table 
@@ -659,7 +663,7 @@ function getAddEntries($email, $currEntryID) {
 
   foreach ($results as $addData) {
     $form = GFAPI::get_form($addData->form_id);
-
+    
     //exclude certain form types
     if (isset($form['form_type']) && !in_array($form['form_type'], $exclude_type)) {
       $outputURL = admin_url('admin.php') . "?page=gf_entries&view=entry&id=" . $addData->form_id . '&lid=' . $addData->entry_id;
@@ -743,17 +747,17 @@ function get_checkbox_value($field, $entry, $fieldName, $edit_cap = 'view') {
   return $value;
 }
 
-function mf_get_schedule_only($entry_id){
+function mf_get_schedule_only($entry_id) {
   global $wpdb;
   $return = array();
-  $sql = "SELECT wp_mf_schedule.id as sched_id, start_dt, end_dt, type, area, subarea, location ".
-        "FROM `wp_mf_schedule` ".
-        "left outer join wp_mf_location on wp_mf_schedule.entry_id = wp_mf_location.entry_id and ".
-                        "wp_mf_schedule.location_id = wp_mf_location.id ".
-        "left outer join wp_mf_faire_subarea on wp_mf_faire_subarea.id=wp_mf_location.subarea_id ".
-        "left outer join wp_mf_faire_area   on wp_mf_faire_area.id = wp_mf_faire_subarea.area_id ".
-        "WHERE wp_mf_schedule.entry_id=$entry_id ORDER BY `wp_mf_schedule`.`start_dt` ASC";
+  $sql = "SELECT wp_mf_schedule.id as sched_id, start_dt, end_dt, type, area, subarea, location " .
+    "FROM `wp_mf_schedule` " .
+    "left outer join wp_mf_location on wp_mf_schedule.entry_id = wp_mf_location.entry_id and " .
+    "wp_mf_schedule.location_id = wp_mf_location.id " .
+    "left outer join wp_mf_faire_subarea on wp_mf_faire_subarea.id=wp_mf_location.subarea_id " .
+    "left outer join wp_mf_faire_area   on wp_mf_faire_area.id = wp_mf_faire_subarea.area_id " .
+    "WHERE wp_mf_schedule.entry_id=$entry_id ORDER BY `wp_mf_schedule`.`start_dt` ASC";
   $results = $wpdb->get_results($sql, ARRAY_A);
-  
+
   return $results;
 }
