@@ -421,11 +421,11 @@ $scope.export = function(export_format='pdf'){
               ],
               "orderBy":'location',
               "rmtData":{
-                "resource":[
-                  {"id":"19","value":"Barricade","checked":true,"aggregated":true, "order":70},
-                  {"id":"18","value":"Fencing","checked":true,"aggregated":true, "order":80},
-                  {"id":"22","value":"Pipe & Drape","checked":true,"aggregated":true, "order":90},
-                  {"id":"23","value":"Pipe Only","checked":true,"aggregated":true, "order":100},
+                "resource":[                  
+                  {"id":"19","value":"Barricade","checked":true,"aggregated":false, "order":70,"columns":true},
+                  {"id":"18","value":"Fencing","checked":true,"aggregated":false, "order":80,"columns":true},
+                  {"id":"22","value":"Pipe & Drape","checked":true,"aggregated":false, "order":90,"columns":true},
+                  {"id":"23","value":"Pipe Only","checked":true,"aggregated":false, "order":100,"columns":true},
 
                 ],
                 "attribute":[],"attention":[],"meta":[]},
