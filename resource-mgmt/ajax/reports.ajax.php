@@ -544,7 +544,7 @@ function pullRmtData($rmtData, $entryID, $useFormSC) {
                   $return['colDefs']['res_' . $resource['resource_id']] =
                      array(
                         'field' => 'res_' . str_replace('.', '_', $resource['resource_id']),
-                        'displayName' => $resource['token'],
+                        'displayName' => $resource['type'],
                         'displayOrder' => $displayOrder,
                         'aggregationType' => 'uiGridConstants.aggregationTypes.sum',
                         'width' => "100"
