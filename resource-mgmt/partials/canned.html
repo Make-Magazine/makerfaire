@@ -30,7 +30,7 @@
       <option value="spdist">Sponsor Distribution</option>
       <option value="spint">Sponsor Internet</option>-->
     </select>
-    <span>      
+    <span ng-if="reports.subRoute && reports.subRoute!='undefined'">      
       <button ng-click="export('pdf')">Export PDF</button>
       <!--<button ng-click="export('csv')">Export CSV</button>      -->
     </span>
