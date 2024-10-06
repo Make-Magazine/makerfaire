@@ -49,7 +49,7 @@ if(isset($webhook->Type)) {
             // and then we update the final space size attribute
             GFRMTHELPER::rmt_update_attribute($entry_id, 2, $space_size, "", "ExpoFP");
         } else {
-            error_log("Exhibit was placed without boothtype set - Entry ID: " . $entry_id);
+            //error_log("Exhibit was placed without boothtype set - Entry ID: " . $entry_id);
         }
     } 
     if($webhook->Type == "booth_unassigned") {

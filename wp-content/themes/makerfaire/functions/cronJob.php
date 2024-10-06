@@ -123,7 +123,7 @@ function cron_expofp_sync($expoID = '') {
                 // perform an API call to List all exhibitors on expoFP for the specific event id
                 $booth_details  = json_decode(postCurl($url, $headers, json_encode($data), "POST"), TRUE);                
                 $space_size     = (isset($booth_details['size'])?$booth_details['size']:'');
-                $type           = explode('|', $booth_details['type']); // this gets the subarea id we placed after the pipe in the expoFP booth types
+                $type           = (isset($booth_details['type'])?explode('|', $booth_details['type']):''); // this gets the subarea id we placed after the pipe in the expoFP booth types
                 $subarea_id     = (is_array($type) && isset($type[1])) ? $type[1] : "";
                 
                 //subarea id found?
@@ -166,7 +166,7 @@ function cron_expofp_sync($expoID = '') {
                     }                    
                 } else {
                     echo "Exhibit was placed without subarea set - Entry ID: " . $entry_id.'<br/>';
-                    error_log("Exhibit was placed without boothtype set - Entry ID: " . $entry_id);
+                    //error_log("Exhibit was placed without boothtype set - Entry ID: " . $entry_id);
                 }                             
             }
             if($booth_count> 1){
