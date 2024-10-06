@@ -8,7 +8,8 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
   $scope.data               = [];
   $scope.msg                = {};
   $scope.canned_rpt         = [];
-
+  $scope.reports_only       = jQuery('#reports_only').val();  
+  $scope.display_faire      = '';
   
   $scope.handleSelect = function() {       
     if($scope.reports.subRoute!=''){
@@ -22,7 +23,7 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
     if(type=='faires'){
       var vars = jQuery.param({ 'type' :  type});
       var head2pass = {'Content-Type': 'application/x-www-form-urlencoded'};
-
+      
       //get grid data
       $http({
         method: 'post',
@@ -36,17 +37,20 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
         }else if(type=='faires'){          
           $scope.data[type] = response.data[type];  
           if($scope.reports.selFaire=='') {
-            $scope.reports.selFaire  = $scope.data.faires[0].ID;  
-          }
-            
+            setFaire = 0;
+            $scope.reports.selFaire  = $scope.data.faires[0].ID;              
+            $scope.display_faire     = $scope.data.faires[0].faire_name;
+          }          
+                            
           $scope.reports.showLinks = true;            
         }
       }).finally(function () {        
-        if(type=='faires'){          
-          faires = $scope.data.faires;
+        if(type=='faires'){                  
+          faires = $scope.data.faires;          
           angular.forEach(faires, function(value,key){
-            if(value.faire==$scope.subRoute){
-              $scope.reports.selFaire = key;
+            console.log(value);
+            if(value.ID==$scope.reports.selFaire){              
+              $scope.display_faire     = $scope.data.faires[key].faire_name;              
             }
           });
         }

@@ -1,6 +1,10 @@
 <div ng-init="retrieveData('faires')">
   <h3>Canned Faire Reports</h3>
-  <select ng-if="reports.showLinks" ng-model="reports.selFaire" ng-change="handleSelect()" name="faireSelect">    
+  
+  <span ng-if="reports.showLinks && reports_only">
+    {{display_faire}}  
+  </span>
+  <select ng-if="reports.showLinks && !reports_only" ng-model="reports.selFaire" ng-change="handleSelect()" name="faireSelect">    
     <option ng-repeat="(key, faire) in data.faires" value="{{faire.ID}}">{{faire.faire_name}}</option>
   </select>  
 
