@@ -1,6 +1,6 @@
 <?php
 /* This function is used to update entry resources and entry attributes via AJAX */
-function update_entry_resatt() {
+function update_entry_resatt() {  
   global $wpdb;
   $rowID    = $_POST['ID'];
   $table    = $_POST['table'];
@@ -39,7 +39,7 @@ function update_entry_resatt() {
     
     $entry = GFRMTHELPER::rmt_update_field($table, $fieldName, $newValue, $rowID);
   }
-
+  
   //set lockBit to locked
   if ($table == 'wp_rmt_entry_resources' || $table == 'wp_rmt_entry_attributes') {
     if ($table == 'wp_rmt_entry_resources') {
@@ -50,7 +50,7 @@ function update_entry_resatt() {
     $entry = GFRMTHELPER::rmt_set_lock_ind(1, $rowID, $type);
   }
   
-  update_entry($entryID, $entry);
+  //update_entry($entryID, $entry);
 
   //return the ID
   $response = array('message' => 'Saved', 'ID' => $rowID, 'user' => $current_user->display_name, 'dateupdate' => current_time('m/d/y h:i a'));
@@ -72,7 +72,8 @@ function delete_entry_resatt() {
     $entry = GFRMTHELPER::rmt_delete($ID, $table, $entryID);
     $response = array('message' => 'Deleted', 'ID' => $ID);
   }
-  
+
+  //recalculate rmt
   update_entry($entryID, $entry);
 
   wp_send_json($response);
@@ -103,11 +104,7 @@ function update_lock_resAtt() {
     $user     = $current_user->ID;
 
     $entry = GFRMTHELPER::rmt_set_lock_ind($lock, $ID, $type);
-    $response = array('message' => 'Updated', 'ID' => $ID);
-    
-    $entry_id = $entry['id'];
-        
-    update_entry($entry_id, $entry);
+    $response = array('message' => 'Updated', 'ID' => $ID);        
   }  
 
   wp_send_json($response);

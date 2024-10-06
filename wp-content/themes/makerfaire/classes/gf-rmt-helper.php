@@ -194,9 +194,9 @@ class GFRMTHELPER {
       if (!is_null($res)) { //resource found of the same category
         //Is it the same resource?
         if ($res->resource_id == $resource_id) {
-          //always do an update if qty is 0 so we can remove any old ones that were set 
-          // before we deleted qty of 0
-          if ($qty == 0) {
+          //IF the set resource is unlocked AND the calculated qty is 0, 
+          //always do an update so we can remove any old ones that were set           
+          if ($qty == 0 && $res->lockBit == 0 ) {
             //update the resource
             $type = 'update';
 
