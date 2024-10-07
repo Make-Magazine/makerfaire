@@ -26,13 +26,15 @@ if ($type == 'entry') {
     if($entryID){
       $header_msg = "Thank you for confirming your participation.";
       gform_update_meta( $entryID, "mf_confirmed", 'yes');
+      //this needs to be the previousl confirmed time
       $load_in_time = (!empty($_REQUEST['load_in_time']) ? sanitize_text_field($_REQUEST['load_in_time']) : null);
       if(!empty($load_in_time)) {
-        if(empty(gform_get_meta($entryID, "load_in_time"))) {
+        $conf_load_in_time = gform_get_meta($entryID, "load_in_time");
+        if(empty($conf_load_in_time)) {
           gform_update_meta( $entryID, "load_in_time", $load_in_time);
           $header_msg = "Thanks for giving us your arrival and initial load in time.";
         } else {
-          $header_msg = "You have already confirmed your initial load in time for " . $load_in_time . ".";
+          $header_msg = "You have already confirmed your initial load in time for " . $conf_load_in_time . ".";
         }
       } 
       // update a meta for their load in time
