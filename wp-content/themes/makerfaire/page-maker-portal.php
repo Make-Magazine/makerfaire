@@ -148,7 +148,7 @@ get_header();
             <!-- logistic links -->
             <span v-if="entry.links.length">
               <b-row>
-                <b-col cols="12" sm="5" style="margin-bottom:10px;">
+                <b-col cols="12" sm="6" style="margin-bottom:10px;">
                   <b-row v-for="link in entry.links">
                     <b-col>
                       <a :href="link.link" target="_blank">{{link.title}}</a>
@@ -160,10 +160,13 @@ get_header();
                           </b-card>
                         </b-collapse>
                       </span>
+                      <b-button target="_blank" :href="'/loadin/'+entry.project_id+'/'" class="universal-btn" style="height:38px;display:inline-flex;flex-direction:row;">
+                          <i aria-hidden="true" class="fas fa-truck"></i> Load In Pass
+                      </b-button
                     </b-col>
                   </b-row>
                 </b-col>
-                <b-col cols="12" sm="7">
+                <b-col cols="12" sm="6">
                   <b-row align-h="between" v-if="entry.status!='Cancelled'" class="tasks-row"><!-- Tickets/Tasks/Manage Section-->
                     <b-col cols="7"><!-- Tasks - This should only show for current faire -->
                       <span v-if="entry.tasks.toDo.length || entry.tasks.done.length">
@@ -255,15 +258,6 @@ get_header();
                       <div class="subtitle">{{ticket.subtitle}}</div>
                   </a>
                 </b-col>  
-            </b-row>
-            <b-row><b-col><h2 style="text-align:center;margin-top:20px;">Load In Pass</h2></b-col></b-row>
-            <b-row>
-              <b-col>
-                <a target="_blank" :href="'/loadin/'+entry.project_id+'/'" class="ticket-btn">
-                  <div class="title"><i aria-hidden="true" class="fas fa-truck"></i>Download Load In Pass</div>
-                  <div class="subtitle">You will need to have this printed out to put on the dashboard of your car during load in.</div>
-                </a>
-              </b-col>  
             </b-row>
         </div>
       </b-card>
