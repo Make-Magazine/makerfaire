@@ -154,6 +154,14 @@ $scope.export = function(export_format='pdf'){
               value.aggregationHideLabel = true;
             }
           }
+          /*
+          if(value=='area'){
+            
+            value.filter = = {'term': '1',
+              type: uiGridConstants.filter.SELECT,
+              selectOptions: [ { value: '1', label: 'male' }, { value: '2', label: 'female' }, { value: '3', label: 'unknown'}, { value: '4', label: 'not stated' }, { value: '5', label: 'a really long value that extends things' } ]
+            },
+          }*/
         });
         $scope.gridOptions.columnDefs = response.data.columnDefs;
         $scope.gridOptions.data       = response.data.data;
@@ -388,6 +396,7 @@ $scope.export = function(export_format='pdf'){
               "entryIDorder": 50,
               "locationOrder": 10,              
               
+              "placedOnly":false,
               "selectedFields":[                
                 {"id":879,"label":"Days","choices":"all","type":"checkbox", "order":80},
                 {"id":339,"label":"Entry Type","choices":"all","type":"checkbox", "order":90},
@@ -416,7 +425,8 @@ $scope.export = function(export_format='pdf'){
               "dispFormType":false,
               "useFormSC": false,
               "entryIDorder": 50,
-              "locationOrder": 10,   
+              "locationOrder": 10,
+              "placedOnly":false,   
               "selectedFields":[
                 {"id":151,"label":"Proj Name","type":"text", "order":40},
                 {"id":303,"label":"Status","choices":"Accepted","type":"radio","exact":true, "order":140},
@@ -447,6 +457,7 @@ $scope.export = function(export_format='pdf'){
               "useFormSC": false,
               "entryIDorder": 50,
               "locationOrder": 10,  
+              "placedOnly":false,
               "selectedFields":[
                 {"id":74,"label":"What are you powering","choices":"","type":"text", "order":100},                                 
                 {"id":"879",  "label":"Days","choices":"all","type":"checkbox", "order":110},
@@ -498,6 +509,7 @@ $scope.export = function(export_format='pdf'){
               "dispFormID":false,
               "dispFormType":false,
               "useFormSC": false,
+              "placedOnly":false,
               "entryIDorder": 50,
               "locationOrder": 10,
               "selectedFields":[
@@ -528,7 +540,8 @@ $scope.export = function(export_format='pdf'){
               "useFormSC": false,
               "entryIDorder": 50,
               "locationOrder": 10,
-              "rtnIfRMTempty": false,              
+              "rtnIfRMTempty": false,     
+              "placedOnly":false,         
               "selectedFields":[
                 {"id":879,"label":"Days","choices":"all","type":"checkbox","order":100},
                 {"id":339,"label":"Entry Type","choices":"all","type":"checkbox", "order":110},
@@ -542,11 +555,13 @@ $scope.export = function(export_format='pdf'){
                   {"id":"19","value":"Barricade","checked":true,"aggregated":true, "order":61},
                   {"id":"35","value":"Heavy Equipment","checked":true,"aggregated":true,"order":62},
                   {"id":"47","value":"Storage","checked":true,"aggregated":true,"order":63},
-                  {"id":"26","value":"Rigging","checked":true,"aggregated":true,"order":64}
+                  {"id":"26","value":"Rigging","checked":true,"aggregated":true,"order":64},
+                  {"id":"28","value":"Sand","checked":true,"aggregated":true,"order":65},
+                  {"id":"29","value":"Sand Bags","checked":true,"aggregated":true,"order":66}
                 ],
                 "attention":[
-                  {"id":"10","value":"Early Setup","checked":true, "order":65},
-                  {"id":"11","value":"No Friday","checked":true, "order":66},                                                      
+                  {"id":"10","value":"Early Setup","checked":true, "order":70},
+                  {"id":"11","value":"No Friday","checked":true, "order":71},                                                      
                 ],
                 "attribute":[],"meta":[]},
               "type":"customRpt",
