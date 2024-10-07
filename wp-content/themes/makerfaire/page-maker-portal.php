@@ -249,14 +249,21 @@ get_header();
         <div class="mat-ticketing" v-if="entry.status=='Accepted' && entry.tickets.length">
             <b-row><b-col><h2 style="text-align:center">My Entry Passes</h2></b-col></b-row>
             <b-row v-for="ticket in entry.tickets"><!-- tickets - This should only show for current faire -->
-
-                  <b-col>
-                    <a target="_blank" :href="ticket.link" class="ticket-btn">
-                        <div class="title"><i aria-hidden="true" class="fas fa-ticket"></i> {{ticket.title}}</div>
-                        <div class="subtitle">{{ticket.subtitle}}</div>
-                    </a>
-                  </b-col>  
- 
+                <b-col>
+                  <a target="_blank" :href="ticket.link" class="ticket-btn">
+                      <div class="title"><i aria-hidden="true" class="fas fa-ticket"></i> {{ticket.title}}</div>
+                      <div class="subtitle">{{ticket.subtitle}}</div>
+                  </a>
+                </b-col>  
+            </b-row>
+            <b-row><b-col><h2 style="text-align:center;margin-top:20px;">Load In Pass</h2></b-col></b-row>
+            <b-row>
+              <b-col>
+                <a target="_blank" :href="'/loadin/'+entry.project_id+'/'" class="ticket-btn">
+                  <div class="title"><i aria-hidden="true" class="fas fa-truck"></i>Download Load In Pass</div>
+                  <div class="subtitle">You will need to have this printed out to put on the dashboard of your car during load in.</div>
+                </a>
+              </b-col>  
             </b-row>
         </div>
       </b-card>
