@@ -144,12 +144,11 @@ get_header();
               </b-col>
             </b-row>
 
-
-            <!-- logistic links -->
-            <span v-if="entry.links.length">
+            <!-- this data is only shown on active faires -->
+            <span v-if="Date.now() <= new Date(faire.faire_end_dt).getTime()">
               <b-row>
                 <b-col cols="12" sm="5" style="margin-bottom:10px;">
-                  <b-row v-for="link in entry.links">
+                  <b-row v-if="entry.links.length" v-for="link in entry.links">
                     <b-col>
                       <a :href="link.link" target="_blank">{{link.title}}</a>
                       <span v-if="entry.res_message!='' && link.title.includes('Exhibit')" class="setup-btn-wrapper"><!-- resource messaging -->
@@ -165,7 +164,7 @@ get_header();
                 </b-col>
                 <b-col cols="12" sm="7">
                   <b-row align-h="between" v-if="entry.status!='Cancelled'" class="tasks-row"><!-- Tickets/Tasks/Manage Section-->
-                    <b-col cols="7"><!-- Tasks - This should only show for current faire -->
+                    <b-col cols="7">
                       <span v-if="entry.tasks.toDo.length || entry.tasks.done.length">
                         <b-button v-b-tooltip.hover title="My Tasks" :id="'entry-tasks-'+entry.project_id" variant="primary" class="notifications-button">
                           <i class="fas fa-tasks"></i>
@@ -241,24 +240,30 @@ get_header();
                   </b-row>
               </b-row>
             </span>
-            
+
 
 
           </b-col>
         </b-row>
-        <div class="mat-ticketing" v-if="entry.status=='Accepted' && entry.tickets.length">
-            <b-row><b-col><h2 style="text-align:center">My Entry Passes</h2></b-col></b-row>
+        <!-- this data is only shown on active faires -->
+        <span v-if="Date.now() <= new Date(faire.faire_end_dt).getTime()">
+          <div class="mat-ticketing" v-if="entry.status=='Accepted' && entry.tickets.length">
+            <b-row><b-col>
+                <h2 style="text-align:center">My Entry Passes</h2>
+              </b-col></b-row>
             <b-row v-for="ticket in entry.tickets"><!-- tickets - This should only show for current faire -->
 
-                  <b-col>
-                    <a target="_blank" :href="ticket.link" class="ticket-btn">
-                        <div class="title"><i aria-hidden="true" class="fas fa-ticket"></i> {{ticket.title}}</div>
-                        <div class="subtitle">{{ticket.subtitle}}</div>
-                    </a>
-                  </b-col>  
- 
+              <b-col>
+                <a target="_blank" :href="ticket.link" class="ticket-btn">
+                  <div class="title"><i aria-hidden="true" class="fas fa-ticket"></i> {{ticket.title}}</div>
+                  <div class="subtitle">{{ticket.subtitle}}</div>
+                </a>
+              </b-col>
+
             </b-row>
-        </div>
+          </div>
+        </span>
+
       </b-card>
     </div>
   </div>
