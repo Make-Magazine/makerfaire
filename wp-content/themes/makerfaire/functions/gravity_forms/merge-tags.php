@@ -333,13 +333,21 @@ function mf_replace_merge_tags($text, $form, $entry, $url_encode, $esc_html, $nl
         $text = str_replace('{CONF_COMMENT}', $attnText, $text);
     }
 
-    //Confirmation Button
-    if (strpos($text, '{CONF_BUTTON}') !== false) {
+    //Confirmation Button 
+    if (strpos($text, '{CONF_BUTTON') !== false) {
         $suppToken  = (isset($entry['fg_easypassthrough_token']) ? $entry['fg_easypassthrough_token'] : '');
-        $confButton = '<a href="https://makerfaire.com/query/?type=entry&token=' . $suppToken . '">' .
-            ' <button style="border-radius:2px;border: solid 1px #eb002a;background:#eb002a;color:#fff;padding:0px 15px;height:30px;font-weight:500;cursor:pointer;">Yes, I\'ll be there!</button>' .
-            '</a>';
-        $text = str_replace('{CONF_BUTTON}', $confButton, $text);
+        
+        // need to match multiple occurences of this button if necessary
+        preg_match_all('/{CONF_BUTTON(.*?)}/', $text, $confBtnArray); 
+        foreach($confBtnArray[0] as $confBtn) {
+            $loadInTime = (preg_match('/load_in_time=\"(.*?)\"/', $confBtn, $match) == 1) ? "&load_in_time=" . $match[1] : "";
+            $btnTitle   = (preg_match('/title=\"(.*?)\"/', $confBtn, $match) == 1) ? $match[1] : "Yes, I'll be there!";
+            $confBtnTxt = '<a href="https://'.$_SERVER['HTTP_HOST'].'/query/?type=entry&token=' . $suppToken . $loadInTime . '" 
+                              style="border-radius:2px;border:solid 1px #eb002a;background:#eb002a;color:#fff;padding:5px 15px;height:30px;font-weight:500;text-decoration:none;">'
+                            . $btnTitle . 
+                          '</a>';
+            $text = str_replace($confBtn, $confBtnTxt, $text);
+        }
     }
     //resource lock indicator
     if (strpos($text, '{rmt_res_cat_lock') !== false) {
