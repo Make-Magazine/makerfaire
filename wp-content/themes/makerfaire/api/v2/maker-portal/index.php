@@ -62,11 +62,7 @@ function getAllEntries($email, $formID = '', $page = '', $years = '') {
     $faire = $wpdb->get_row("SELECT * FROM wp_mf_faire where FIND_IN_SET ($formID,wp_mf_faire.form_ids)> 0 order by ID DESC limit 1");
     $faire_name   = $faire->faire_name;
     $faire_end_dt = $faire->end_dt;
-
-    //Maker Portal messaging    
-    $text = GFCommon::replace_variables(rgar($form, 'mat_message'), $form, array(), false, false);
-    $text = do_shortcode($text); //process any conditional logic  
-
+    
     //get entry information
     $entries         = GFAPI::get_entries($formID, $search_criteria, $sorting, $paging, $total_count);
 
@@ -78,6 +74,10 @@ function getAllEntries($email, $formID = '', $page = '', $years = '') {
 
     $return_entries = array();
     foreach ($entries as $entry) {
+      //Maker Portal messaging    
+      $maker_message = GFCommon::replace_variables(rgar($form, 'mat_message'), $form, $entry, false, false);
+      $maker_message = do_shortcode($maker_message); //process any conditional logic  
+      
       //if group, use the group name, else use the main contact name
       if (strpos($entry['105'], 'group')  !== false) {
         $maker_name = (isset($entry['109']) ? $entry['109'] : '');
@@ -157,14 +157,14 @@ function getAllEntries($email, $formID = '', $page = '', $years = '') {
         'tickets'       => entryTicketing($entry, 'MAT'),
         'gv_edit_link'  => $GVeditLink,
         'ep_token'      => $ep_token,
-        'links'         => $logistics_links
+        'links'         => $logistics_links,
+        'maker_message' => $maker_message
       );
     }
 
     $return['data'][$faire_name] =
       array(
-        'faire_end_dt'    => $faire_end_dt,
-        'maker_messaging' => $text,
+        'faire_end_dt'    => $faire_end_dt,        
         'entries'         => $return_entries
       );
   }

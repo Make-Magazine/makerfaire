@@ -128,8 +128,8 @@ get_header();
                       Share My Entry Page
                     </a>
                   </div>
-
-                  <div>
+                  
+                  <div v-if="Date.now() <= new Date(faire.faire_end_dt).getTime()">
                     <a target="_blank" :href="'/maker/entry/'+entry.project_id+'/edit/'">
                       <i class="fa fa-edit" aria-hidden="true"></i>
                       Edit My Entry Page
@@ -140,14 +140,14 @@ get_header();
             </b-row>
             <b-row style="padding:20px 10px;"><!-- Form specific messaging -->
               <b-col sm="12" style="border: thin solid grey; padding: 10px">
-                <div style="text-align:center" v-html='faire.maker_messaging'></div>
+                <div style="text-align:center" v-html='entry.maker_message'></div>
               </b-col>
             </b-row>
 
             <!-- this data is only shown on active faires -->
             <span v-if="Date.now() <= new Date(faire.faire_end_dt).getTime()">
               <b-row>
-                <b-col cols="12" sm="5" style="margin-bottom:10px;">
+                <b-col cols="12" sm="6" style="margin-bottom:10px;">
                   <b-row v-if="entry.links.length" v-for="link in entry.links">
                     <b-col>
                       <a :href="link.link" target="_blank">{{link.title}}</a>
@@ -162,9 +162,9 @@ get_header();
                     </b-col>
                   </b-row>
                 </b-col>
-                <b-col cols="12" sm="7">
+                <b-col cols="12" sm="6">
                   <b-row align-h="between" v-if="entry.status!='Cancelled'" class="tasks-row"><!-- Tickets/Tasks/Manage Section-->
-                    <b-col cols="7">
+                    <b-col cols="7"><!-- Tasks-->
                       <span v-if="entry.tasks.toDo.length || entry.tasks.done.length">
                         <b-button v-b-tooltip.hover title="My Tasks" :id="'entry-tasks-'+entry.project_id" variant="primary" class="notifications-button">
                           <i class="fas fa-tasks"></i>
@@ -252,6 +252,7 @@ get_header();
                 <h2 style="text-align:center">My Entry Passes</h2>
               </b-col></b-row>
             <b-row v-for="ticket in entry.tickets"><!-- tickets - This should only show for current faire -->
+<<<<<<< HEAD
 
               <b-col>
                 <a target="_blank" :href="ticket.link" class="ticket-btn">
@@ -260,6 +261,14 @@ get_header();
                 </a>
               </b-col>
 
+=======
+                <b-col>
+                  <a target="_blank" :href="ticket.link" class="ticket-btn">
+                      <div class="title"><i aria-hidden="true" class="fas fa-ticket"></i> {{ticket.title}}</div>
+                      <div class="subtitle">{{ticket.subtitle}}</div>
+                  </a>
+                </b-col>  
+>>>>>>> 868a9a63d6367b1ece6b9e74d6b0cfa0ee2fc37b
             </b-row>
           </div>
         </span>
