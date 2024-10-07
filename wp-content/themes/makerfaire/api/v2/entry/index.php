@@ -32,7 +32,7 @@ if ($type == 'entry') {
           gform_update_meta( $entryID, "load_in_time", $load_in_time);
           $header_msg = "Thanks for giving us your arrival and initial load in time.";
         } else {
-          $header_msg = "You have already confirmed your initial load in time.";
+          $header_msg = "You have already confirmed your initial load in time for " . $load_in_time . ".";
         }
       } 
       // update a meta for their load in time
