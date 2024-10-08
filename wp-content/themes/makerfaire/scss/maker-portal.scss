@@ -104,13 +104,13 @@
   }
   .image-wrapper {
     aspect-ratio: 3 / 2;
-    display: inline-flex;
     overflow: hidden;
     border-radius: 15px;
     .img-thumbnail {
       object-fit: cover;
       padding: 0px;
       width: 100%;
+      height: 100%;
     }
   }
     
