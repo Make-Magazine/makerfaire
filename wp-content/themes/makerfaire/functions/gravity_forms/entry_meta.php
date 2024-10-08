@@ -118,6 +118,22 @@ function custom_entry_meta($entry_meta, $form_id) {
         )
     );
 
+    //Confirmation for attending faire
+    $entry_meta['load_in_time'] = array(
+        'label' => 'Load In Time',
+        'is_numeric'        => false,
+        'is_default_column' => false,
+        'filter'    => array(
+            'key'       => 'load_in_time',
+            'text'      => 'Load In Time',
+            'operators' => array(
+                'is',
+                'isnot',
+                'contains'
+            )
+        ),
+    );
+
     //create new meta field to hold resource status and resource assign to
     $entry_meta['expofp_placed'] = array(
         'label' => 'ExpoFP Placed',
