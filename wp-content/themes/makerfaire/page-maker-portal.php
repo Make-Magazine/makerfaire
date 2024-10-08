@@ -98,8 +98,10 @@ get_header();
       <b-card :id="entry.project_id" v-for="entry in faire.entries" :key="entry.project_id" style="margin-bottom:50px;">
         <input type="hidden" name="entry_info_entry_id" :value=entry.project_id />
         <b-row fluid>
-          <b-col md="3" sm="12" class="image-wrapper">
-            <b-img-lazy thumbnail fluid :src="entry.photo" :alt="entry.project_name"></b-img>
+          <b-col md="3" sm="12">
+            <div class="image-wrapper">
+              <b-img-lazy thumbnail fluid :src="entry.photo" :alt="entry.project_name"></b-img>
+            </div>
           </b-col>
           <b-col md="9" sm="12">
             <b-row align-v="baseline" align-h="between">
