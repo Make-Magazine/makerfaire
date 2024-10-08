@@ -252,23 +252,12 @@ get_header();
                 <h2 style="text-align:center">My Entry Passes</h2>
               </b-col></b-row>
             <b-row v-for="ticket in entry.tickets"><!-- tickets - This should only show for current faire -->
-<<<<<<< HEAD
-
-              <b-col>
-                <a target="_blank" :href="ticket.link" class="ticket-btn">
-                  <div class="title"><i aria-hidden="true" class="fas fa-ticket"></i> {{ticket.title}}</div>
-                  <div class="subtitle">{{ticket.subtitle}}</div>
-                </a>
-              </b-col>
-
-=======
                 <b-col>
                   <a target="_blank" :href="ticket.link" class="ticket-btn">
                       <div class="title"><i aria-hidden="true" class="fas fa-ticket"></i> {{ticket.title}}</div>
                       <div class="subtitle">{{ticket.subtitle}}</div>
                   </a>
                 </b-col>  
->>>>>>> 868a9a63d6367b1ece6b9e74d6b0cfa0ee2fc37b
             </b-row>
           </div>
         </span>
