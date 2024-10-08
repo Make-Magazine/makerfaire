@@ -47,8 +47,7 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
       }).finally(function () {        
         if(type=='faires'){                  
           faires = $scope.data.faires;          
-          angular.forEach(faires, function(value,key){
-            console.log(value);
+          angular.forEach(faires, function(value,key){                        
             if(value.ID==$scope.reports.selFaire){              
               $scope.display_faire     = $scope.data.faires[key].faire_name;              
             }
@@ -66,10 +65,8 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
     showColumnFooter: true,
     rowHeight: 100,
     exporterMenuPdf: true, // hide PDF export
-    exporterPdfDefaultStyle: {fontSize: 6},
-    //need this to center grid
-    exporterPdfTableStyle: {margin: [-20, -10, -10, -20]},
-    //exporterPdfTableStyle: {margin: [5, 5, 5, 5]},
+    exporterPdfDefaultStyle: {fontSize: 6},    
+    exporterPdfTableStyle: {margin: [-20, -10, -10, -20]},    //need this to center grid
     exporterPdfTableHeaderStyle: {fontSize: 6, bold: false},
     exporterCsvFilename: $routeParams.sub+'-export.csv',
     exporterCsvLinkElement: angular.element(document.querySelectorAll(".custom-csv-link-location")),
@@ -82,7 +79,7 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
     },
     exporterFieldCallback: function( grid, row, col, input ) {
 
-      if(("editDropdownOptionsArray" in col.colDef)){
+      if(("editDropdownOptionsArray" in col.colDef)){        
         //console.log(col);
         //convert gridArray to usable hash
         var optionsHash =  {};
@@ -99,11 +96,9 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
         //return grid.getCellDisplayValue(row, col);
         return input;
       }
-    },
-    onRegisterApi: function(gridApi){
-      $scope.gridApi = gridApi;
     }
   };
+
 //export functionality
 $scope.export = function(export_format='pdf'){    
   var export_row_type       = 'visible';
@@ -147,21 +142,32 @@ $scope.export = function(export_format='pdf'){
           var findMe = value.field;
           if(findMe in sortParams){            
             value.sort = {'direction':sortParams[findMe].direction, 'priority': sortParams[findMe].priority};
+            value.sortingAlgorithm =  function(a, b, rowA, rowB, direction) {
+              var nulls = $scope.gridApi.core.sortHandleNulls(a, b);
+              if( nulls !== null ) {
+                return nulls;
+              } else {
+                if(a=='') return 0;
+                if(b=='') return -1;
+                if( a === b ) {
+                  return 0;
+                }                
+                if(a>b) return 1;
+                if(b>a) return -1;
+                return 0;
+              }
+            }
           }
           if('aggregationType' in value){
             if(value.aggregationType =='uiGridConstants.aggregationTypes.sum'){
               value.aggregationType = uiGridConstants.aggregationTypes.sum;
               value.aggregationHideLabel = true;
             }
-          }
-          /*
-          if(value=='area'){
-            
-            value.filter = = {'term': '1',
-              type: uiGridConstants.filter.SELECT,
-              selectOptions: [ { value: '1', label: 'male' }, { value: '2', label: 'female' }, { value: '3', label: 'unknown'}, { value: '4', label: 'not stated' }, { value: '5', label: 'a really long value that extends things' } ]
-            },
-          }*/
+          }          
+          if('filter' in value && 'selectOptions' in value.filter){                        
+            value.filter.type = uiGridConstants.filter.SELECT;                        
+          }       
+          
         });
         $scope.gridOptions.columnDefs = response.data.columnDefs;
         $scope.gridOptions.data       = response.data.data;

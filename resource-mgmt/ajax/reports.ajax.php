@@ -213,7 +213,7 @@ function cannedRpt() {
 
    $entries = $wpdb->get_results($sql, ARRAY_A);
    $entryData = array();
-
+   
    //loop thru entries
    foreach ($entries as $entry) {
       $lead_id = $entry['lead_id'];
@@ -375,7 +375,7 @@ function cannedRpt() {
             $writeEntry = TRUE;
             //pull rmt data and location information
             if (!empty($rmtData)) {
-               $rmtRetData = pullRmtData($rmtData, $lead_id, $useFormSC);
+               $rmtRetData = pullRmtData($rmtData, $lead_id, $useFormSC);               
                //if the indicator is false, only write the entry id rmt data is set
                if (!$rtnIfRMTempty && empty($rmtRetData['data'])) {
                   $writeEntry = FALSE;
@@ -390,7 +390,7 @@ function cannedRpt() {
                   $writeEntry = FALSE;
                }else{
                   $fieldData = array_merge($fieldData, $locRetData['data']);               
-               }
+               }              
             }
             if ($tickets) {
                $tickRetData = pullTickData($lead_id, $useFormSC, $ticketsOrder);
@@ -420,8 +420,42 @@ function cannedRpt() {
 
    //set column defs for location if applicable
    if ($location) {
-      $data['columnDefs']['area'] = array('field' => 'area', 'width' => '*', 'displayName' => ($useFormSC ? 'A' : 'Area'), 'displayOrder' => $locationOrder);
-      $data['columnDefs']['subarea'] = array('field' => 'subarea', 'width' => '*', 'displayName' => ($useFormSC ? 'SUBAREA' : 'Subarea'), 'displayOrder' => $locationOrder + 1);
+      $areaSelect    = array();
+      $subAreaSelect = array();
+      //figure out the dropdown filters for area/subarea
+      foreach($entryData as $key=>$edata){         
+         if($edata['area']==''){
+            $entryData[$key]['area']=$edata['area']='Not Set';
+            $entryData[$key]['subarea']=$edata['subarea']='Not Set';
+         }
+         //area
+         $areaKey = array_search($edata['area'], array_column($areaSelect, 'value'));                  
+         if($areaKey===FALSE){         
+            $areaSelect[]     = array('value'=>$edata['area'], 'label'=>$edata['area']);
+         }
+
+         //subarea
+         $subAreaKey = array_search($edata['subarea'], array_column($subAreaSelect, 'value'));         
+         if($subAreaKey===FALSE){                   
+            $subAreaSelect[]  =  array('value'=>$edata['subarea'], 'label'=>$edata['subarea']);
+         }
+      }
+      $data['columnDefs']['area'] = array(         
+         'field' => 'area', 
+         'width' => '*', 
+         'displayName' => ($useFormSC ? 'A' : 'Area'), 
+         'displayOrder' => $locationOrder,         
+         'filter' => array('selectOptions' => $areaSelect),
+         'placeholder' => 'Select'
+      );
+      $data['columnDefs']['subarea'] = array(
+         'field' => 'subarea', 
+         'width' => '*', 
+         'displayName' => ($useFormSC ? 'SUBAREA' : 'Subarea'), 
+         'displayOrder' => $locationOrder + 1,
+         'filter' => array('selectOptions' => $subAreaSelect),
+         'placeholder' => 'Select'
+      );
       $data['columnDefs']['location'] = array('field' => 'location', 'width' => '*', 'displayName' => ($useFormSC ? 'LOC' : 'Location'), 'displayOrder' => $locationOrder + 2);      
    }
    /*
@@ -545,7 +579,8 @@ function pullRmtData($rmtData, $entryID, $useFormSC) {
                      array(
                         'field' => 'res_' . str_replace('.', '_', $resource['resource_id']),
                         'displayName' => $resource['type'],
-                        'displayOrder' => $displayOrder,
+                        'displayOrder' => $displayOrder,        
+                        'type'=>'string',                
                         'aggregationType' => 'uiGridConstants.aggregationTypes.sum',
                         'width' => "100"
                      );
@@ -553,7 +588,7 @@ function pullRmtData($rmtData, $entryID, $useFormSC) {
                   $return['data']['res_' . $resource['resource_id']] = $value;
                }
             }
-         }
+         }         
 
          //set return data and column definitions         
          if (!$columns) {
@@ -561,8 +596,10 @@ function pullRmtData($rmtData, $entryID, $useFormSC) {
                'field' => 'res_' . str_replace('.', '_', $selRMT->id),
                'displayName' => $selRMT->value,
                'displayOrder' => $displayOrder,
+               'type'         => ($aggregated ? 'text':'number'),
                'width'        => (isset($selRMT->width) ? $selRMT->width : '*')
             );
+            
             $return['data']['res_' . $selRMT->id] = implode("\n", $entryValue);  //separate each resource with a line break in the csv file
          }
 
@@ -708,13 +745,13 @@ function pullRmtData($rmtData, $entryID, $useFormSC) {
 }
 
 /* Pull Location information */
-
 function pullLocData($entryID, $useFormSC = false, $locationOrder = 30) {
    global $wpdb;   
    //global $useFormSC;
    $return = array();
    $return['data'] = array();
    $return['colDefs'] = array();
+   $area = $subarea = $location = '';
 
    //schedule information
    if ($entryID != '') {
@@ -754,18 +791,17 @@ function pullLocData($entryID, $useFormSC = false, $locationOrder = 30) {
          $area = implode(' and ', $locArr['area']);
          $subarea = implode(' and ', $locArr['subarea']);
          $location = implode(' and ', $locArr['location']);
-
-         //populate return data         
-         $return['data']['area'] = $area;         
-         $return['data']['subarea'] = $subarea;         
-         $return['data']['location'] = $location;
       }
+
+      //populate return data         
+      $return['data']['area'] = $area;         
+      $return['data']['subarea'] = $subarea;         
+      $return['data']['location'] = $location;
    }
    return $return;
 }
 
-/* Pull Location information */
-
+/* Pull Ticket information */
 function pullTickData($entryID, $useFormSC = false, $ticketsOrder = 70) {
    global $wpdb;
    //global $useFormSC;
