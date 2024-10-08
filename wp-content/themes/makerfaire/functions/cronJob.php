@@ -96,11 +96,11 @@ function cron_expofp_sync($expoID = '') {
         $prev_value = implode(", ", array_column($loc_results, 'combined')); //for change report
         $prev_subareas = array_column($loc_results, 'subarea_id');         
         $prev_booths   = array_column($loc_results, 'location');         
-        
+           
         //delete any locations for this entry
         $delete_sql = "delete FROM `wp_mf_location` where (select start_dt from wp_mf_schedule where wp_mf_schedule.location_id= wp_mf_location.id) is NULL and wp_mf_location.entry_id=$entry_id";
         $wpdb->query($delete_sql);
-
+               
         //check if a booth has been assigned to this entry
         if (isset($exhibitor['booths']) && !empty($exhibitor['booths'])) {      
             ++$written;         
@@ -135,12 +135,12 @@ function cron_expofp_sync($expoID = '') {
                         continue;
                     }
                     $form_id = (isset($entry['form_id'])?$entry['form_id']:0);
-                    
+                                        
                     //set the location information for this entry with the subarea and booth name from expofp
                     $insert_query = "INSERT INTO `wp_mf_location`(`entry_id`, `subarea_id`, `location`) "
-                                    . " VALUES ($entry_id,$subarea_id,'$booth_name')";
+                                . " VALUES ($entry_id,$subarea_id,'$booth_name')";
                     $wpdb->query($insert_query);
-
+                
                     // set a gf_entry_meta for expoFP placed
                     gform_update_meta( $entry_id, "expofp_placed",'Placed', $form_id);
 
@@ -151,7 +151,7 @@ function cron_expofp_sync($expoID = '') {
                     //if this location/subarea was not previously set, make a note in the change report
                     if(!in_array($subarea_id,$prev_subareas) || !in_array($booth_name,$prev_booths)){   
 
-                        echo "Moved " .$entry_id. " from " . $prev_value . " to " . explode("|", $booth_details['type'])[0] . " (" . $booth_name . ")<br/>";
+                        echo "Moved " .$entry_id. " from " . $prev_value . " to " . explode("|", $booth_details['type'])[0] . " (" . $booth_name . ")<br/>";                        
                         
                         //set change report data                                                 
                         $chgReport[] = array(
@@ -172,15 +172,18 @@ function cron_expofp_sync($expoID = '') {
             if($booth_count> 1){
                 echo 'multiple booths set - Entry ID: ' . $entry_id.'</br>';
             }
-        } else {            
+        } else {                    
             //update meta field  "expofp_placed" to blank                        
-            gform_delete_meta( $entry_id,'expofp_placed');
+            gform_delete_meta( $entry_id,'expofp_placed');            
         }                    
-              
-        //After you have processed all entries, call this function to update the change rpt
-        if(!empty($chgReport))
-            updateChangeRPT($chgReport);
+                        
     }
+
+    //After you have processed all entries, call this function to update the change rpt
+    if(!empty($chgReport)){        
+        updateChangeRPT($chgReport);                    
+    }  
+
     echo '<br/>';
     echo count($exhibitors) .' exhibitors received from ExpoFP<br/>';
     echo $written .' placed';
