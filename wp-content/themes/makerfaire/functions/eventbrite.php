@@ -81,7 +81,7 @@ function genEBtickets($entryID ){
   */  
   $ent_type_arr = array_intersect_key($entry, array_flip(preg_grep('/^339./', array_keys($entry))));
   $ent_type = implode('-', array_filter($ent_type_arr));
-  
+  $entLevel = '';
   //setting entry type based on who gets the most tickets  
   if (stripos($ent_type, 'sponsor') !== false && stripos($ent_type, 'startup') === false) { //not startup sponsor
     $entLevel = 'sponsor';//sponsor (not startup)
