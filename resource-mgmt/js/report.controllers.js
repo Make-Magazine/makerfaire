@@ -228,7 +228,7 @@ rmgControllers.controller('reportsCtrl', ['$scope', '$routeParams', '$http', '$i
          $scope.reports.tableName = tablename;
 
          if ("faire" in $routeParams) {
-            $scope.reports.selFaire = $routeParams.faire;
+            $scope.reports.selFaire = $routeParams.faire;            
             $scope.retGridData(); //pull the faire data
          } else {
             $scope.reports.selFaire = '';
@@ -255,7 +255,7 @@ rmgControllers.controller('reportsCtrl', ['$scope', '$routeParams', '$http', '$i
       };
       
       //faire dropdown
-      $scope.retrieveData = function (type) {
+      $scope.retrieveData = function (type) {         
          if (type === 'faires') {
             var vars = jQuery.param({'type': type});
             var url = '/resource-mgmt/ajax/ajax.php';
@@ -280,7 +280,8 @@ rmgControllers.controller('reportsCtrl', ['$scope', '$routeParams', '$http', '$i
                     } else if (type === 'faires' || type === 'forms') {
                        $scope.reports[type] = response.data[type];                       
                        if(type==='faires'){
-                        $scope.reports.selFaire = $scope.reports.faires[0].ID;                       
+                        $scope.reports.selFaire = $scope.reports.faires[0].ID;  
+                        $scope.retGridData(); //pull the faire data                     
                        }
                     }                    
                  }).finally(function () {
@@ -289,6 +290,7 @@ rmgControllers.controller('reportsCtrl', ['$scope', '$routeParams', '$http', '$i
                angular.forEach(faires, function (value, key) {
                   if (value.faire === $scope.subRoute) {
                      $scope.reports.selFaire = key;
+                     $scope.retGridData(); //pull the faire data
                   }
                });
             } else if (type === 'forms') {
