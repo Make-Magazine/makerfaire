@@ -102,11 +102,18 @@
     position: relative;
     
   }
-
+  .image-wrapper {
+    aspect-ratio: 3 / 2;
+    display: inline-flex;
+    overflow: hidden;
+    border-radius: 15px;
     .img-thumbnail {
+      object-fit: cover;
       padding: 0px;
-      margin-bottom: 10px;
+      width: 100%;
     }
+  }
+    
 
 
   .setup-btn-wrapper {
