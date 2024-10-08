@@ -440,6 +440,10 @@ function cannedRpt() {
             $subAreaSelect[]  =  array('value'=>$edata['subarea'], 'label'=>$edata['subarea']);
          }
       }
+      //sort by value
+      array_multisort(array_column($areaSelect, 'value'), SORT_ASC, $areaSelect);
+      array_multisort(array_column($subAreaSelect, 'value'), SORT_ASC, $subAreaSelect);
+      
       $data['columnDefs']['area'] = array(         
          'field' => 'area', 
          'width' => '*', 
