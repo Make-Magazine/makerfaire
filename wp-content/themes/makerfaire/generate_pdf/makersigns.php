@@ -162,12 +162,16 @@ function createOutput($entry_id, $pdf) {
        $project_photo = $project_gallery[0];
    }
 
-   // Field from Gravity form which is maker image
-   $maker_photo = (isset($entry['217']) ? $entry['217'] : '');
+   // Field from Gravity form which is maker image or group image
+   $group_photo = ($entry['111'] ? $entry['111'] : '');
+   $maker_photo = (($entry['217'] && !empty($entry['217']) && $entry['217'] != "[]" && $entry['217'] != '[]') ? $entry['217'] : $group_photo);
+
    $photo = json_decode($maker_photo);
 
    if (is_array($photo) && !empty($photo)) {
       $maker_photo = $photo[0];
+   } else { // it's the final default image if no maker or group photo is found
+      $maker_photo = get_template_directory().'/images/default-makey-medium.png';
    }
 
    
@@ -175,7 +179,7 @@ function createOutput($entry_id, $pdf) {
       $project_photo= stripslashes($project_photo);      
       $imgSize = getimagesize($project_photo);
       // NOTE: we need a new default image
-      $error_photo = get_template_directory().'/generate_pdf/pdf_layouts/BA23_Badge.png';
+      $error_photo = get_template_directory().'/images/default-featured-image.jpg';
       
       if(!$imgSize){
          error_log('error in getimagesize for '.$project_photo.' for '.$entry_id);         
@@ -438,7 +442,7 @@ function createOutput($entry_id, $pdf) {
 
 function filterText($text) {
    try {
-      $string = iconv('UTF-8', 'windows-1252', $text);
+      $string = iconv('UTF-8', 'windows-1252//IGNORE', $text);
    } catch (Exception $e) {
       error_log("Unable to convert $text due to: " + $e);
       ini_set('mbstring.substitute_character', "none");
