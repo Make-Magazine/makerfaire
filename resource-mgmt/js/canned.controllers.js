@@ -280,8 +280,8 @@ $scope.export = function(export_format='pdf'){
                 },
                 //{"id":98,"label":"Contact Email","choices":"","type":"email","inputs":"", "order":260},
                 {"id":99,"label":"Contact #","choices":"","type":"phone","inputs":"", "order":270},
-                {"id":151,"label":"Proj Name","choices":"","type":"text","inputs":"", "order":40},    
-                //{"id":303,"label":"Status","choices":"Accepted","type":"radio", "order": 240},                              
+                {"id":151,"label":"Proj Name","choices":"","type":"text","inputs":"", "order":40},                    
+                {"id":303,"label":"Status","choices":"Accepted","type":"radio","exact":true,"hide":true, "order":150},                          
                 {"id":879,"label":"Days","choices":"all","type":"checkbox","order":120},
                 {"id":339,"label":"Type","choices":"all","type":"checkbox", "order":230, "width":40}
              ],
