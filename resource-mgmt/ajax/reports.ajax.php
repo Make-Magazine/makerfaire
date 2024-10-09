@@ -423,10 +423,9 @@ function cannedRpt() {
       $areaSelect    = array();
       $subAreaSelect = array();
       //figure out the dropdown filters for area/subarea
-      foreach($entryData as $key=>$edata){         
+      foreach($entryData as $edata){         
          if($edata['area']==''){
-            $entryData[$key]['area']=$edata['area']='Not Set';
-            $entryData[$key]['subarea']=$edata['subarea']='Not Set';
+            continue;
          }
          //area
          $areaKey = array_search($edata['area'], array_column($areaSelect, 'value'));                  
