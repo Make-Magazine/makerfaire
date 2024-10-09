@@ -17,7 +17,11 @@ get_header();
   #content {
     background: #f9f9f9;
   }
-  .floating-footer { display: none !important; }
+
+  .floating-footer {
+    display: none !important;
+  }
+
   .card {
     box-shadow: 0 10px 20px -5px rgba(0, 0, 0, .5);
   }
@@ -108,36 +112,45 @@ get_header();
               <b-col md="8" sm="12">
                 <h3>{{entry.project_name}}</h3>
               </b-col>
-              <b-col cols="6"><span :class="'status_'+entry.project_id">{{entry.status}}</span></b-col>
-              <b-col cols="6" md="2" sm="5" style="color: #ccc;">{{entry.project_id}}</b-col>
+              <b-col cols="6" md="2" sm="6"><span :class="'status_'+entry.project_id">{{entry.status}}</span></b-col>
+              <b-col cols="6" md="2" sm="6" style="color: #ccc;">{{entry.project_id}}</b-col>
             </b-row>
-            <b-row> <!-- Link Row -->
-              <b-col md="8" sm="12">
-                <span v-if="entry.req_entry_type !== null && entry.req_entry_type !== '' ">
-                  <b>Requested Entry Type:</b> {{entry.req_entry_type}}
-                  <br />
-                </span>
-                <span v-if="entry.entry_type  !== null ">
-                  <b>Participating As:</b> {{entry.entry_type}}
-                </span>
+            <b-row> 
+              <b-col md="6" sm="12">
+                <b-row> <!-- Link Row -->
+                  <b-col md="12" sm="6">
+                    <span v-if="entry.req_entry_type !== null && entry.req_entry_type !== '' ">
+                      <b>Requested Entry Type:</b> {{entry.req_entry_type}}
+                      <br />
+                    </span>
+                  </b-col>
+                  <b-col cols="12" sm="6">
+                    <span v-if="entry.entry_type  !== null ">
+                      <b>Participating As:</b> {{entry.entry_type}}
+                    </span>
+                  </b-col>
+                </b-row>
               </b-col>
 
               <b-col>
-                <span>
-                  <div v-if="entry.status=='Accepted'">
-                    <a target="_blank" :href="'/maker/entry/'+entry.project_id+'/'">
-                      <i class="fa fa-eye" aria-hidden="true"></i>
-                      Share My Entry Page
-                    </a>
-                  </div>
-                  
-                  <div v-if="Date.now() <= new Date(faire.faire_end_dt).getTime()">
-                    <a target="_blank" :href="'/maker/entry/'+entry.project_id+'/edit/'">
-                      <i class="fa fa-edit" aria-hidden="true"></i>
-                      Edit My Entry Page
-                    </a>
-                  </div>
-                </span>
+                <b-row> 
+                  <b-col md="12" sm="6">
+                    <div v-if="entry.status=='Accepted'">
+                      <a target="_blank" :href="'/maker/entry/'+entry.project_id+'/'">
+                        <i class="fa fa-eye" aria-hidden="true"></i>
+                        Share My Entry Page
+                      </a>
+                    </div>
+                  </b-col>
+                  <b-col cols="12" sm="6">
+                    <div v-if="Date.now() <= new Date(faire.faire_end_dt).getTime()">
+                      <a target="_blank" :href="'/maker/entry/'+entry.project_id+'/edit/'">
+                        <i class="fa fa-edit" aria-hidden="true"></i>
+                        Edit My Entry Page
+                      </a>
+                    </div>
+                  </b-col>
+                </b-row>
               </b-col>
             </b-row>
             <b-row style="padding:20px 10px;"><!-- Form specific messaging -->
@@ -254,12 +267,12 @@ get_header();
                 <h2 style="text-align:center">My Entry Passes</h2>
               </b-col></b-row>
             <b-row v-for="ticket in entry.tickets"><!-- tickets - This should only show for current faire -->
-                <b-col>
-                  <a target="_blank" :href="ticket.link" class="ticket-btn">
-                      <div class="title"><i aria-hidden="true" class="fas fa-ticket"></i> {{ticket.title}}</div>
-                      <div class="subtitle">{{ticket.subtitle}}</div>
-                  </a>
-                </b-col>  
+              <b-col>
+                <a target="_blank" :href="ticket.link" class="ticket-btn">
+                  <div class="title"><i aria-hidden="true" class="fas fa-ticket"></i> {{ticket.title}}</div>
+                  <div class="subtitle">{{ticket.subtitle}}</div>
+                </a>
+              </b-col>
             </b-row>
           </div>
         </span>
