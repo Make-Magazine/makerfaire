@@ -166,8 +166,22 @@ $scope.export = function(export_format='pdf'){
           }          
           if('filter' in value && 'selectOptions' in value.filter){                        
             value.filter.type = uiGridConstants.filter.SELECT;                        
-          }       
+          }    
           
+            /*
+            value.sortingAlgorithm =  function(a, b, rowA, rowB, direction) {    
+              if( a === b ) {
+                return 0;
+              } else if(!a && !b) {
+                return 0;  // No change if both are null
+              }else if(!a) { // a is null, push it to the bottom                                
+                return 1;
+              }else if(!b) { // b is null, push it to the bottom                
+                return -1;
+              }  else {
+                return a - b; // Regular sorting for non-null values
+              }                           
+            }*/                    
         });
         $scope.gridOptions.columnDefs = response.data.columnDefs;
         $scope.gridOptions.data       = response.data.data;
@@ -402,7 +416,7 @@ $scope.export = function(export_format='pdf'){
               "entryIDorder": 50,
               "locationOrder": 10,              
               
-              "placedOnly":false,
+              "placedOnly":true,
               "selectedFields":[                
                 {"id":879,"label":"Days","choices":"all","type":"checkbox", "order":80},
                 {"id":339,"label":"Entry Type","choices":"all","type":"checkbox", "order":90},
@@ -432,7 +446,7 @@ $scope.export = function(export_format='pdf'){
               "useFormSC": false,
               "entryIDorder": 50,
               "locationOrder": 10,
-              "placedOnly":false,   
+              "placedOnly":true,   
               "selectedFields":[
                 {"id":151,"label":"Proj Name","type":"text", "order":40},
                 {"id":303,"label":"Status","choices":"Accepted","type":"radio","exact":true, "order":140},
@@ -463,7 +477,7 @@ $scope.export = function(export_format='pdf'){
               "useFormSC": false,
               "entryIDorder": 50,
               "locationOrder": 10,  
-              "placedOnly":false,
+              "placedOnly":true,
               "selectedFields":[
                 {"id":74,"label":"What are you powering","choices":"","type":"text", "order":100},                                 
                 {"id":"879",  "label":"Days","choices":"all","type":"checkbox", "order":110},
@@ -515,7 +529,7 @@ $scope.export = function(export_format='pdf'){
               "dispFormID":false,
               "dispFormType":false,
               "useFormSC": false,
-              "placedOnly":false,
+              "placedOnly":true,
               "entryIDorder": 50,
               "locationOrder": 10,
               "selectedFields":[
@@ -547,7 +561,7 @@ $scope.export = function(export_format='pdf'){
               "entryIDorder": 50,
               "locationOrder": 10,
               "rtnIfRMTempty": false,     
-              "placedOnly":false,         
+              "placedOnly":true,         
               "selectedFields":[
                 {"id":879,"label":"Days","choices":"all","type":"checkbox","order":100},
                 {"id":339,"label":"Entry Type","choices":"all","type":"checkbox", "order":110},
