@@ -35,7 +35,7 @@ if ($type == 'entries' && $formID) {
   //set global data
   $form     = GFAPI::get_form($formID);
   $field303 = RGFormsModel::get_field($form, '303');
-  $all_rmt  = GFRMTHELPER::rmt_table_data(); //used to build drop downs for resources, attributes and attention fields
+  //$all_rmt  = GFRMTHELPER::rmt_table_data(); //used to build drop downs for resources, attributes and attention fields
 
   //build an array of available area/subarea combinations
   $locSql = "SELECT concat(area.area,' - ', subarea.subarea) as text, subarea.id as value
@@ -47,13 +47,14 @@ if ($type == 'entries' && $formID) {
   //set entry data
   $data     = getAllEntries($formID);
 
+  /*
   //RMT values for adding new resources, attributes, and attention items - this will be used by Vue  
   $data['rmt'] = array(
     'res_items'       => $all_rmt['resource_categories'],
     'res_types'       => $all_rmt['resources'],
     'att_items'       => $all_rmt['attItems'],
     'attn_items'      => $all_rmt['attnItems']
-  );
+  );*/
   $data['locations'] = $locResults;
 
   // Output the JSON
@@ -595,8 +596,9 @@ function fieldOutput($fieldID, $entry, $field_array, $form, $arg = '') {
         global $view_rmt;        
 
         if ($view_rmt) {
-          $type  = 'html';
-          $value   = '<div id="rmt' . $entry['id'] . '">' . entryResources($entry) . '</div>';
+          $type  = 'rmt';
+          $value       = dispEntRes($entry);//display only - no edit          
+          //$value   = '<div id="rmt' . $entry['id'] . '">' . entryResources($entry) . '</div>';
         }
         break;                                    
     }
@@ -742,4 +744,40 @@ function mf_get_schedule_only($entry_id) {
   $results = $wpdb->get_results($sql, ARRAY_A);
 
   return $results;
+}
+
+function dispEntRes($entry){
+  $return = array();
+  $rmt_data = GFRMTHELPER::rmt_get_entry_data($entry['id']);
+  foreach ($rmt_data['resources'] as $data) {
+    $return['resources'][] = array(  
+      'lock'          => ($data['lock'] == 1 ? '<i class="fas fa-lock fa-lg"></i>' : '<i class="fas fa-lock-open fa-lg"></i>'),
+      'category'      => $data['category'],
+      'resource'      => $data['resource'],
+      'qty'           => $data['qty'],
+      'comment'       => $data['comment'],
+      'user'          => $data['user'],
+      'last_updated'  => $data['last_updated']);
+  }
+
+  //attributes
+  foreach ($rmt_data['attributes'] as $data) {
+    $return['attributes'][] = array(      
+      'attribute'     => $data['attribute'],        
+      'value'         => $data['value'],      
+      'comment'       => $data['comment'],
+      'user'          => $data['user'],
+      'last_updated'  => $data['last_updated']);
+  }
+
+  //attention fields
+  foreach ($rmt_data['attention'] as $data) {
+    $return['attention'][] = array(              
+      'attention'     => $data['attention'],      
+      'comment'       => $data['comment'],
+      'user'          => $data['user'],
+      'last_updated'  => $data['last_updated']);  
+  }
+
+  return $return;
 }

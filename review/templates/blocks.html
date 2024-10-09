@@ -234,10 +234,16 @@
                 </ul>
             </span>
             <span v-else-if="field.type === 'rmt'">
-                <div v-for="(vtable,type) in field.value">
-                    <div v-if="vtable" :class="field.class">
-                        <label class="text-capitalize fieldLabel">{{ vtable.table_label }}</label>
-
+                <div v-for="(vtable,type) in field.value">                    
+                    <label class="text-capitalize fieldLabel">{{ type }}</label>
+                    <b-table striped hover :items="vtable">
+                        <template #cell(lock)="data">
+                        <span v-html="data.value"></span>
+                      </template>
+                    </b-table>
+                    <!--<div v-if="vtable" :class="field.class">
+                        <label class="text-capitalize fieldLabel">{{ vtable.type }}</label>
+                        <b-table striped hover :items="items"></b-table>
                         <b-table-simple striped responsive :id="type+'_'+maker.project_id">
                             <b-thead>
                                 <b-tr>
@@ -254,7 +260,7 @@
                                 </b-tr>
                             </b-tbody>
                         </b-table-simple>
-                    </div>
+                    </div>-->
                 </div>
             </span>
             <span v-else-if="field.type === 'list'">
