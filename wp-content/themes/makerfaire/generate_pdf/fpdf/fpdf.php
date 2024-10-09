@@ -67,6 +67,7 @@ protected $LayoutMode;         // layout display mode
 protected $metadata;           // document properties
 protected $CreationDate;       // document creation date
 protected $PDFVersion;         // PDF version number
+protected $angle;              // PDF version number
 
 /*******************************************************************************
 *                               Public methods                                 *

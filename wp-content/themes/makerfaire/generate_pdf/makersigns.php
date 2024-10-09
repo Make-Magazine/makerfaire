@@ -165,6 +165,7 @@ function createOutput($entry_id, $pdf) {
    // Field from Gravity form which is maker image
    $maker_photo = (isset($entry['217']) ? $entry['217'] : '');
    $photo = json_decode($maker_photo);
+
    if (is_array($photo) && !empty($photo)) {
       $maker_photo = $photo[0];
    }
@@ -354,7 +355,7 @@ function createOutput($entry_id, $pdf) {
          $maker_photo = legacy_get_fit_remote_image_url( stripslashes($maker_photo), 150, 150, 0);
 
          $pdf->ClippingRoundedRect(15.5,1015.5,116.5,117.5,13.5,true);
-         $pdf->Image($maker_photo,15,41015,118,null,$photo_extension);
+         $pdf->Image($maker_photo,15,1015,118,null,$photo_extension);
 
          //list($width, $height) = resizeToFit($project_photo);
                            
