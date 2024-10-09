@@ -445,7 +445,7 @@ function cannedRpt() {
       
       $data['columnDefs']['area'] = array(         
          'field' => 'area', 
-         'width' => '*', 
+         'width' => '100', 
          'displayName' => ($useFormSC ? 'A' : 'Area'), 
          'displayOrder' => $locationOrder,         
          'filter' => array('selectOptions' => $areaSelect),
@@ -453,13 +453,13 @@ function cannedRpt() {
       );
       $data['columnDefs']['subarea'] = array(
          'field' => 'subarea', 
-         'width' => '*', 
+         'width' => '100', 
          'displayName' => ($useFormSC ? 'SUBAREA' : 'Subarea'), 
          'displayOrder' => $locationOrder + 1,
          'filter' => array('selectOptions' => $subAreaSelect),
          'placeholder' => 'Select'
       );
-      $data['columnDefs']['location'] = array('field' => 'location', 'width' => '*', 'displayName' => ($useFormSC ? 'LOC' : 'Location'), 'displayOrder' => $locationOrder + 2);      
+      $data['columnDefs']['location'] = array('field' => 'location', 'width' => '100', 'displayName' => ($useFormSC ? 'LOC' : 'Location'), 'displayOrder' => $locationOrder + 2);      
    }
    /*
     * after we have pulled data from database
