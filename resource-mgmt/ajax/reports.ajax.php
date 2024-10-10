@@ -386,6 +386,7 @@ function cannedRpt() {
 
             if ($location) {
                $locRetData = pullLocData($lead_id);
+             
                if ($placedOnly && empty($locRetData['data'])) {
                   $writeEntry = FALSE;
                }else{
@@ -794,12 +795,12 @@ function pullLocData($entryID, $useFormSC = false, $locationOrder = 30) {
          $area = implode(' and ', $locArr['area']);
          $subarea = implode(' and ', $locArr['subarea']);
          $location = implode(' and ', $locArr['location']);
-      }
 
-      //populate return data         
-      $return['data']['area'] = $area;         
-      $return['data']['subarea'] = $subarea;         
-      $return['data']['location'] = $location;
+         //populate return data         
+         $return['data']['area'] = $area;         
+         $return['data']['subarea'] = $subarea;         
+         $return['data']['location'] = $location;
+      }      
    }
    return $return;
 }
