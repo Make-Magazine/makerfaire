@@ -93,11 +93,11 @@ get_header();
     <div v-if="showData" v-for="(faire, faire_name) in faire_entries" style="margin-bottom:50px">
       <div class="mportal-header">
         <h2 v-if="Date.now() < new Date(faire.faire_end_dt) || faire.entries.length!=0">{{faire_name}} Entries</h2>
-        <span v-if="Date.now() < new Date(faire.faire_end_dt) && faire.entries.length==0">
-          I'm sorry. We could not find any entries for your email.<br />Please submit one <a href='https://makerfaire.com/bay-area/apply'>HERE</a>
-        </span>
-        <div class="help-message">Have questions?  Email us at <a href="mailto:makers@make.co">makers@make.co</a></div>
+        <div v-if="Date.now() < new Date(faire.faire_end_dt) || faire.entries.length!=0" class="help-message">Have questions?  Email us at <a href="mailto:makers@make.co">makers@make.co</a></div>
       </div>
+      <span v-if="Date.now() < new Date(faire.faire_end_dt) && faire.entries.length==0">
+        I'm sorry. We could not find any entries for your email.<br />Please submit one <a href='https://makerfaire.com/bay-area/apply'>HERE</a>
+      </span>
 
       <b-card :id="entry.project_id" v-for="entry in faire.entries" :key="entry.project_id" style="margin-bottom:50px;">
         <input type="hidden" name="entry_info_entry_id" :value=entry.project_id />
