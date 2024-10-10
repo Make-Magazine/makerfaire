@@ -522,7 +522,7 @@ order by start_dt, end_dt;";
         if($row->entry_status != 'Accepted')  continue;        
         $form_type = $row->form_type;
 
-        //$makerList = getMakerList($row->entry_id, $faireID);
+        $makerList = getMakerList($row->entry_id, $faireID);
         //get array of categories. set name based on category id
         $category = array();
         $leadCategory = explode(',', $row->category);
@@ -609,7 +609,7 @@ order by start_dt, end_dt;";
             'time_end'      => $endDate,
             'name'          => isset($row->title) ? htmlspecialchars_decode($row->title, ENT_QUOTES) : '',
             'thumb_img_url' => $fitPhoto,            
-            //'maker_list' => $makerList,
+            'maker_list' => $makerList,
             'nicename'      => $stage,
             'stageClass'    => str_replace(' ', '-', strtolower($stage)),
             'stageOrder'    => (int) ($row->sort_order != '' ? $row->sort_order : 0),
