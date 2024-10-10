@@ -61,7 +61,7 @@ function getAllEntries($email, $formID = '', $page = '', $years = '') {
     //get faire information
     $faire = $wpdb->get_row("SELECT * FROM wp_mf_faire where FIND_IN_SET ($formID,wp_mf_faire.form_ids)> 0 order by ID DESC limit 1");
     $faire_name   = $faire->faire_name;
-    $faire_end_dt = $faire->end_dt;
+    $faire_end_dt = str_replace('-', '/', $faire->end_dt);
     
     //get entry information
     $entries         = GFAPI::get_entries($formID, $search_criteria, $sorting, $paging, $total_count);

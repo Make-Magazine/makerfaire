@@ -63,9 +63,9 @@ try {
    $pdf->AddFont('FontAwesome2','','FontAwesome47-P2.php'); // https://drive.google.com/file/d/1XjjEyhkcD0mO6FTf0w9XHB4bwjMCL2ij/view
    $pdf->AddFont('FontAwesome3','','FontAwesome47-P3.php'); // https://drive.google.com/file/d/10WBuA63DMbNPRWjKSKJpVSk4I1OPwh2R/view
    $pdf->AddFont('FontAwesome4','','FontAwesome47-P4.php'); // https://drive.google.com/file/d/1lPeh5IGXY8Re6nNXEU7i0Wf63o97Svx0/view
-   $pdf->AddPage('P', array(288, 1152));
+   $pdf->AddPage('P', array(288, 576));
    $pdf->SetFont('Benton Sans', '', 12);
-   $pdf->Image(get_template_directory().'/generate_pdf/pdf_layouts/signBackground2024.png', 0, 576, 288, 576); // background image
+   $pdf->Image(get_template_directory().'/generate_pdf/pdf_layouts/signBackground2024.png', 0, 0, 288, 576); // background image
    
    $pdf->SetMargins(20,139,22); //left, top, right
 
@@ -162,11 +162,16 @@ function createOutput($entry_id, $pdf) {
        $project_photo = $project_gallery[0];
    }
 
-   // Field from Gravity form which is maker image
-   $maker_photo = (isset($entry['217']) ? $entry['217'] : '');
+   // Field from Gravity form which is maker image or group image
+   $group_photo = ($entry['111'] ? $entry['111'] : '');
+   $maker_photo = (($entry['217'] && !empty($entry['217']) && $entry['217'] != "[]" && $entry['217'] != '[]') ? $entry['217'] : $group_photo);
+
    $photo = json_decode($maker_photo);
+
    if (is_array($photo) && !empty($photo)) {
       $maker_photo = $photo[0];
+   } else { // it's the final default image if no maker or group photo is found
+      $maker_photo = get_template_directory().'/images/default-makey-medium.png';
    }
 
    
@@ -174,7 +179,7 @@ function createOutput($entry_id, $pdf) {
       $project_photo= stripslashes($project_photo);      
       $imgSize = getimagesize($project_photo);
       // NOTE: we need a new default image
-      $error_photo = get_template_directory().'/generate_pdf/pdf_layouts/BA23_Badge.png';
+      $error_photo = get_template_directory().'/images/default-featured-image.jpg';
       
       if(!$imgSize){
          error_log('error in getimagesize for '.$project_photo.' for '.$entry_id);         
@@ -221,22 +226,13 @@ function createOutput($entry_id, $pdf) {
    $project_subarea = isset($location_results[0]->nicename) ? $location_results[0]->nicename : '';
    //$project_booth = isset($location_results[0]->location) ? $location_results[0]->location : '';
 
-   /***************************************************************************
-    * Project ID
-    ***************************************************************************/
-   $pdf->SetFont('Benton Sans', '', 24);
-   $pdf->setTextColor(51, 51, 51);
-   $pdf->SetXY(275, 570);
-   $pdf->Rotate(180); // this is on the backside, so needs to be upside down
-   $pdf->MultiCell(115, 15, $entry_id, 0, 'L');
-   $pdf->Rotate(0);
    
    /***************************************************************************
     * Project Title
     * auto adjust the font so the text will fit
     ***************************************************************************/
    $pdf->setTextColor(43, 143, 192);
-   $pdf->SetXY(16, 821);
+   $pdf->SetXY(16, 245);
 
    // auto adjust the font so the text will fit
    //$x = 72; // set the starting font size
@@ -256,7 +252,7 @@ function createOutput($entry_id, $pdf) {
     * field 16 - short description
     * auto adjust the font so the text will fit
     ***************************************************************************/   
-    $pdf->SetXY(16, 916);
+    $pdf->SetXY(16, 340);
     $pdf->setTextColor(51, 51, 51);
 
     // auto adjust the font so the text will fit
@@ -279,10 +275,10 @@ function createOutput($entry_id, $pdf) {
     ***************************************************************************/
     $pdf->setTextColor(245, 20, 0);
     $pdf->SetFont('FontAwesome4', '', 26);
-    $pdf->Text(18, 871, chr(0x003D));
+    $pdf->Text(18, 295, chr(0x003D));
     $pdf->setTextColor(51, 51, 51);
     $pdf->SetFont('Benton Sans', '', 26);
-    $pdf->Text(32, 871, $project_subarea);
+    $pdf->Text(32, 295, $project_subarea);
     //$pdf->setTextColor(245, 20, 0);
     //$pdf->SetFont('Benton Sans', '', 42);
     //$pdf->Text(21, 267, $project_booth); // no longer showing booth
@@ -292,20 +288,20 @@ function createOutput($entry_id, $pdf) {
     ***************************************************************************/
     $pdf->setTextColor(245, 20, 0);
     $pdf->SetFont('FontAwesome1', '', 26);
-    $pdf->Text(18, 886, chr(0x0031));
+    $pdf->Text(18, 310, chr(0x0031));
     $pdf->setTextColor(51, 51, 51);
     $pdf->SetFont('Benton Sans', '', 26);
-    $pdf->Text(32, 886, $project_type);
+    $pdf->Text(32, 310, $project_type);
 
     /***************************************************************************
     * Category  
     ***************************************************************************/
     $pdf->setTextColor(245, 20, 0);
     $pdf->SetFont('FontAwesome2', '', 26);
-    $pdf->Text(18, 901, chr(0x0078));
+    $pdf->Text(18, 325, chr(0x0078));
     $pdf->setTextColor(51, 51, 51);
     $pdf->SetFont('Benton Sans', '', 26);
-    $pdf->Text(32, 901, $project_category);
+    $pdf->Text(32, 325, $project_category);
  
      
    /***************************************************************************
@@ -315,7 +311,15 @@ function createOutput($entry_id, $pdf) {
    $entryURL = 'https://makerfaire.com/maker/entry/'.$entry_id.'/';
    $QR_Code = 'https://quickchart.io/qr?text=' . urlencode($entryURL) . '&dark=d82a2e&margin=5&size=150';
    
-   $pdf->Image($QR_Code,163,1021,105,null,image_type_to_extension(IMAGETYPE_PNG,false));
+   $pdf->Image($QR_Code,163,445,105,null,image_type_to_extension(IMAGETYPE_PNG,false));
+
+   /***************************************************************************
+    * Project ID
+    ***************************************************************************/
+    $pdf->SetFont('Benton Sans', '', 18);
+    $pdf->setTextColor(91, 91, 91);
+    $pdf->SetXY(203, 540);
+    $pdf->MultiCell(115, 15, $entry_id, 0, 'L');
     
           
    /***************************************************************************
@@ -329,7 +333,7 @@ function createOutput($entry_id, $pdf) {
          
          $project_photo = legacy_get_fit_remote_image_url( stripslashes($project_photo), 1200, 800, 0);
 
-         $pdf->Image($project_photo, 0, 611.83, 288, 192, $photo_extension);
+         $pdf->Image($project_photo, 0, 35.83, 288, 192, $photo_extension);
 
 
       } else {
@@ -351,14 +355,14 @@ function createOutput($entry_id, $pdf) {
       if ($photo_extension) {
          //fit image onto pdf
          
-         $maker_photo = legacy_get_fit_remote_image_url( stripslashes($maker_photo), 150, 150, 0);
+         $maker_photo = stripslashes($maker_photo);
 
-         $pdf->ClippingRoundedRect(15.5,1015.5,116.5,117.5,13.5,true);
-         $pdf->Image($maker_photo,15,41015,118,null,$photo_extension);
-
-         //list($width, $height) = resizeToFit($project_photo);
+         $pdf->ClippingRoundedRect(15.5,439.5,116.5,117.5,13.5,true);
+         $pdf->Image($maker_photo,15,439,118,null,$photo_extension);
+         
+         //list($width, $height) = resizeToFit($maker_photo);
                            
-         //$pdf->Image($project_photo, 22, 110, $width, $height, $photo_extension);
+         //$pdf->Image($maker_photo, 15, 439, $width, $height, $photo_extension);
       } else {
          error_log("Unable to find the Maker Photo for entry $entry_id for $maker_photo");
          $resizeImage = 0;
@@ -437,7 +441,7 @@ function createOutput($entry_id, $pdf) {
 
 function filterText($text) {
    try {
-      $string = iconv('UTF-8', 'windows-1252', $text);
+      $string = iconv('UTF-8', 'windows-1252//IGNORE', $text);
    } catch (Exception $e) {
       error_log("Unable to convert $text due to: " + $e);
       ini_set('mbstring.substitute_character', "none");

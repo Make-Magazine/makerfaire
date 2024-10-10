@@ -67,6 +67,7 @@ protected $LayoutMode;         // layout display mode
 protected $metadata;           // document properties
 protected $CreationDate;       // document creation date
 protected $PDFVersion;         // PDF version number
+protected $angle;              // PDF version number
 
 /*******************************************************************************
 *                               Public methods                                 *
@@ -751,7 +752,7 @@ function MultiCell($w, $h, $txt, $border=0, $align='J', $fill=false, $maxline=0)
                     }
 					$line = substr($s,$j,$sep-$j);
 					if($maxline && $nl<$maxline) {
-					} else {
+					} else if ($maxline != 0) {
 						$line .= "...";
 					}
                     $this->Cell($w,$h,$line,$b,2,$align,$fill);
