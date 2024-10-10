@@ -363,17 +363,22 @@ function getMTMentries($formIDs = '', $faireID = '', $years = '') {
             }
             
             // Maker / Group Photos 
-            $maker_photo = ($result->maker_photo && $result->maker_photo != "[]") ? $result->maker_photo : $result->group_photo;
+            $group_photo = (isset($result->group_photo)?$result->group_photo:'');
+            $maker_photo = (isset($result->maker_photo) && $result->maker_photo != "[]" ? $result->maker_photo : $group_photo);                        
+            
             $maker_photo_decoded = json_decode($maker_photo);
             if (is_array($maker_photo_decoded)) {
                 $maker_photo = isset($maker_photo_decoded[0]) ? $maker_photo_decoded[0] : "";
-            } 
+            }
+             
             if(empty($maker_photo)) {
                 $maker_photo = isset($projPhoto) ? $projPhoto : "/wp-content/themes/makerfaire/images/default-makey-medium.jpg";
             }
             $maker_photo = legacy_get_resized_remote_image_url($maker_photo, 400, 400);
 
-            $maker_location = isset($result->state) ? $result->state . ", " . $result->country : $result->country;
+            $maker_location = (isset($result->state) ? $result->state:'') . 
+                (isset($result->state)&& isset($result->country)? ", ":'') .
+                (isset($result->country) ? $result->country : '');
 
             //Admin entry types (only for BA23 and forward)
             $types = explode(",", $result->types);
