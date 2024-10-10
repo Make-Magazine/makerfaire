@@ -752,7 +752,7 @@ function MultiCell($w, $h, $txt, $border=0, $align='J', $fill=false, $maxline=0)
                     }
 					$line = substr($s,$j,$sep-$j);
 					if($maxline && $nl<$maxline) {
-					} else {
+					} else if ($maxline != 0) {
 						$line .= "...";
 					}
                     $this->Cell($w,$h,$line,$b,2,$align,$fill);

@@ -355,14 +355,14 @@ function createOutput($entry_id, $pdf) {
       if ($photo_extension) {
          //fit image onto pdf
          
-         $maker_photo = legacy_get_fit_remote_image_url( stripslashes($maker_photo), 150, 150, 0);
+         $maker_photo = stripslashes($maker_photo);
 
          $pdf->ClippingRoundedRect(15.5,439.5,116.5,117.5,13.5,true);
          $pdf->Image($maker_photo,15,439,118,null,$photo_extension);
-
-         //list($width, $height) = resizeToFit($project_photo);
+         
+         //list($width, $height) = resizeToFit($maker_photo);
                            
-         //$pdf->Image($project_photo, 22, 110, $width, $height, $photo_extension);
+         //$pdf->Image($maker_photo, 15, 439, $width, $height, $photo_extension);
       } else {
          error_log("Unable to find the Maker Photo for entry $entry_id for $maker_photo");
          $resizeImage = 0;
