@@ -168,20 +168,27 @@ $scope.export = function(export_format='pdf'){
             value.filter.type = uiGridConstants.filter.SELECT;                        
           }    
           
-            /*
+
             value.sortingAlgorithm =  function(a, b, rowA, rowB, direction) {    
-              if( a === b ) {
-                return 0;
-              } else if(!a && !b) {
-                return 0;  // No change if both are null
-              }else if(!a) { // a is null, push it to the bottom                                
-                return 1;
-              }else if(!b) { // b is null, push it to the bottom                
-                return -1;
-              }  else {
-                return a - b; // Regular sorting for non-null values
-              }                           
-            }*/                    
+              // this keeps the set values to the top, for both ascending and descending order
+              if(direction == "asc") {
+                if(!a) { // a is null, push it to the bottom                                
+                  return 1;
+                }else if(!b) { // b is null, push it to the bottom                
+                  return -1;
+                } else {
+                  return a - b; // Regular sorting for non-null values
+                }      
+              } else if(direction == "desc") {
+                if(!a) { // a is null, push it to the bottom                                
+                  return -1;
+                }else if(!b) { // b is null, push it to the bottom                
+                  return 1;
+                } else {
+                  return a - b; // Regular sorting for non-null values
+                }  
+              }                     
+            }                  
         });
         $scope.gridOptions.columnDefs = response.data.columnDefs;
         $scope.gridOptions.data       = response.data.data;
