@@ -312,7 +312,7 @@ if ($schedule_ids_trimmed && $schedule_ids_trimmed != '') { //display the new sc
                                     </div>
 
                                     <h3> <a href="/maker/entry/{{schedule.id}}">{{schedule.name}}</a> </h3>
-                                    <!--<p class="sched-name" ng-bind-html="trust(schedule.maker_list)"></p>-->
+                                    <p class="sched-name" ng-bind-html="trust(schedule.maker_list)"></p>
 
                                     <p class="sched-description" ng-bind-html="schedule.desc"></p>
                                     <div ng-show="schedule.additional !== ''">
