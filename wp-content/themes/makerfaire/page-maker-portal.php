@@ -104,7 +104,7 @@ get_header();
         <b-row fluid>
           <b-col md="3" sm="12">
             <div class="image-wrapper">
-              <a class="universal-btn hidden-sm hidden-md hidden-lg" :href="'#tickets'+entry.project_id" v-if="entry.status=='Accepted' && entry.tickets.length">Get Entry Passes</a>
+              <a class="universal-btn hidden-sm hidden-md hidden-lg" :href="'#tickets'+entry.project_id" v-if="Date.now() <= new Date(faire.faire_end_dt).getTime() &&entry.status=='Accepted' && entry.tickets.length">Get Entry Passes</a>
               <b-img-lazy thumbnail fluid :src="entry.photo" :alt="entry.project_name"></b-img>
             </div>
           </b-col>
