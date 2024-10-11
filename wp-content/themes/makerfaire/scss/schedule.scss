@@ -62,8 +62,11 @@ h4.featured {
 		width: 100%;
 		padding: 0px 15px;
 	}
-	h2 {
-		margin-top: 10px;
+	.sched-body {
+		h2 {
+			margin-top: 10px;
+			margin-bottom: -56px;
+		}
 	}
 	.mtm-filter-wrap {
 		padding: 0px;
@@ -188,14 +191,14 @@ h4.featured {
 			}
 			&.active {
 				.day-nav-item {
-				background: #00A3DA;
-				transition: background 0.1s;
-				&:hover {
 					background: #00A3DA;
-				}
-				h2, h4 {
-					color: #fff;
-				}
+					transition: background 0.1s;
+					&:hover {
+						background: #00A3DA;
+					}
+					h2, h4 {
+						color: #fff;
+					}
 				}
 			}
 			a.day-nav-item {
