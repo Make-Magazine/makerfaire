@@ -607,6 +607,10 @@ order by start_dt, end_dt;";
 
         //set stage name
         $stage = ($row->nicename != '' ? $row->nicename : $row->subarea);
+        // only include in the schedule if the area has stage in the name
+        if(!str_contains(strtolower($stage), "stage")){
+            continue;
+        } 
         
         $data['schedule'][] = array(
             'id'            => $row->entry_id,
