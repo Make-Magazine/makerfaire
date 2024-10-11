@@ -489,18 +489,17 @@ function getSchedule($formIDs, $faireID) {
     $formIDarr = array_map('intval', explode("-", $formIDs));
    
 $query = "SELECT schedule.entry_id,
-	schedule.start_dt as time_start,
-    DAYOFWEEK(schedule.start_dt) as day,
-	schedule.end_dt as time_end,
-	schedule.type,
-	entity.form_type,
-	entity.status as entry_status,
-	subarea.subarea,
-    subarea.nicename,
-	subarea.sort_order,
-	entity.project_photo as photo,
-	entity.presentation_title as title,
-	entity.desc_short as short_desc,
+	schedule.start_dt as time_start, DAYOFWEEK(schedule.start_dt) as day,
+	schedule.end_dt as time_end, schedule.type,
+    
+    (select meta_value from wp_gf_entry_meta where wp_gf_entry_meta.entry_id = schedule.entry_id and meta_key='96.3') as maker_fname,
+    (select meta_value from wp_gf_entry_meta where wp_gf_entry_meta.entry_id = schedule.entry_id and meta_key='96.6') as maker_lname,
+
+    (select meta_value from wp_gf_entry_meta where wp_gf_entry_meta.entry_id = schedule.entry_id and meta_key='109') as group_name,
+    (select meta_value from wp_gf_entry_meta where wp_gf_entry_meta.entry_id = schedule.entry_id and meta_key='916') as presenter_list,      
+	entity.form_type, entity.status as entry_status,
+	subarea.subarea, subarea.nicename, subarea.sort_order,
+	entity.project_photo as photo, entity.presentation_title as title, entity.desc_short as short_desc,
 	(select group_concat(meta_value separator',')as cat 
      	from wp_gf_entry_meta 
      	where wp_gf_entry_meta.entry_id=schedule.entry_id 
@@ -527,7 +526,21 @@ order by start_dt, end_dt;";
         if($row->entry_status != 'Accepted')  continue;        
         $form_type = $row->form_type;
 
-        $makerList = getMakerList($row->entry_id, $faireID);
+        //determine presenter names
+        $maker_name = $row->maker_fname . ($row->maker_lname!=''?' '.$row->maker_lname:'');
+        $group_name = $row->group_name; 
+        $presenter_list = unserialize($row->presenter_list);
+        if($row->entry_id==76952){
+            //echo 'maker_name='.$maker_name.'<br/>';
+            //echo 'group_name='.$group_name.'<br/>';
+            //echo 'presenter_list='.$presenter_list.'<br/>';
+        }
+        if(is_array($presenter_list)){         
+            $maker_name = implode(", ", $presenter_list);
+        }        
+         
+        $makerList = $maker_name . ($group_name!=''?' - '.$group_name:'');
+        
         //get array of categories. set name based on category id
         $category = array();
         $leadCategory = explode(',', $row->category);
@@ -618,7 +631,7 @@ order by start_dt, end_dt;";
             'time_end'      => $endDate,
             'name'          => isset($row->title) ? htmlspecialchars_decode($row->title, ENT_QUOTES) : '',
             'thumb_img_url' => $fitPhoto,            
-            'maker_list' => $makerList,
+            'maker_list'    => $makerList,
             'nicename'      => $stage,
             'stageClass'    => str_replace(' ', '-', strtolower($stage)),
             'stageOrder'    => (int) ($row->sort_order != '' ? $row->sort_order : 0),
