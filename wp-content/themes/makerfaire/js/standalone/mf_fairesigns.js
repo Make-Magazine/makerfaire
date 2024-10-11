@@ -54,7 +54,7 @@
   }
 
   function createPDF(faire, type) {
-    jQuery('#collapse'+faire+' .'+type+'.pdfEntList').html('Process submitted, this could take a while to run depending on the number of signs to create. Please check back for an update.');
+    jQuery('#collapse'+faire+' .'+type+'.pdfEntList').html('Process submitted, this could take a while to run depending on the number of signs to create.<br/>Please check back for an update.');
     var data = {
       'action': 'createEntList',
       'faire': faire,

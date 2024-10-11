@@ -174,7 +174,7 @@ function createSignZip() {
                   left outer join wp_mf_faire_subarea on wp_mf_location.subarea_id    = wp_mf_faire_subarea.id
                   left outer join wp_mf_faire_area    on wp_mf_faire_subarea.area_id  = wp_mf_faire_area.id
             WHERE faire = '$faire'
-              AND wp_gf_entry.status  != 'trash'
+              AND wp_gf_entry.status  = 'active'
               AND FIND_IN_SET (wp_gf_entry.form_id, wp_mf_faire.form_ids) > 0
               AND FIND_IN_SET (wp_gf_entry.form_id, wp_mf_faire.non_public_forms) <= 0";
 
@@ -236,7 +236,7 @@ function createSignZip() {
                         $zip->addFile($filepath . $file, $file);
                     } else {
                         if ($typeKey != 'error') {
-                            error_log('Missing PDF for entry Id ' . $entryID);
+                            error_log('Missing PDF for entry Id ' . $entryID);                            
                         }
                     }
                 }
@@ -354,10 +354,8 @@ function createEntList($faire, $type) {
                         error_log('skipped '.$entry->lead_id.' exhibit type ='.$entry->exhibit_type);                        
                         continue;
                     }   
-                    $entry_id = $entry->lead_id;
-                        $entList[] = $entry_id;                                                           
-
-                                                           
+                    $entry_id  = $entry->lead_id;
+                    $entList[] = $entry_id;                                                                                                                      
                 }
             }
         }
