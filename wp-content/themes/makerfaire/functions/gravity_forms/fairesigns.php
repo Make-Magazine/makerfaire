@@ -179,17 +179,19 @@ function createSignZip() {
               AND FIND_IN_SET (wp_gf_entry.form_id, wp_mf_faire.non_public_forms) <= 0";
 
     $results = $wpdb->get_results($sql);
+    
     foreach ($results as $row) {      
-        if($type=='maker'){
+        if($signType=='maker'){
             //exclude all but Exhibit, Sponsor or Startup sponsor                
             if (stripos($row->exhibit_type, 'exhibit')  === false && stripos($row->exhibit_type, 'sponsor') === false) {
                 continue;
             }
-        }elseif($type=='presenter'){
+        }elseif($signType=='presenter'){
            //only include presentations
            if (stripos($row->exhibit_type, 'present')  === false) {
             continue;
-            } 
+            }
+            //error_log('including entry_id '.$row->entry_id.' exhibit type = '.$row->exhibit_type);
         }        
 
         // exclude records based on status filter
