@@ -142,6 +142,7 @@ $scope.export = function(export_format='pdf'){
           var findMe = value.field;
           if(findMe in sortParams){            
             value.sort = {'direction':sortParams[findMe].direction, 'priority': sortParams[findMe].priority};
+
             value.sortingAlgorithm =  function(a, b, rowA, rowB, direction) {
               var nulls = $scope.gridApi.core.sortHandleNulls(a, b);
               if( nulls !== null ) {
@@ -167,8 +168,7 @@ $scope.export = function(export_format='pdf'){
           if('filter' in value && 'selectOptions' in value.filter){                        
             value.filter.type = uiGridConstants.filter.SELECT;                        
           }    
-          
-
+        /*
             value.sortingAlgorithm =  function(a, b, rowA, rowB, direction) {    
               // this keeps the set values to the top, for both ascending and descending order
               if(direction == "asc") {
@@ -188,7 +188,7 @@ $scope.export = function(export_format='pdf'){
                   return a - b; // Regular sorting for non-null values
                 }  
               }                     
-            }                  
+            }                */  
         });
         $scope.gridOptions.columnDefs = response.data.columnDefs;
         $scope.gridOptions.data       = response.data.data;
