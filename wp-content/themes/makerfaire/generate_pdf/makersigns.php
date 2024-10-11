@@ -173,7 +173,7 @@ function createOutput($entry_id, $pdf) {
    
    if($project_photo !=''){
       //$project_photo= stripslashes($project_photo);      
-      $project_photo = legacy_get_resized_remote_image_url($project_photo, 840, 560);
+      
       $imgSize = getimagesize($project_photo);
       // NOTE: we need a new default image
       $error_photo = get_template_directory().'/images/default-featured-image.jpg';
