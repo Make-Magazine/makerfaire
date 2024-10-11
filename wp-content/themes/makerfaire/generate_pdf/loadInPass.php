@@ -46,10 +46,12 @@ if (isset($wp_query->query_vars['type'])) {
 } else if (isset($_GET['type']) && $_GET['type'] != '') {
    $type = $_GET['type'];
 }
+
 if ($eid != '') {
    $entryid = sanitize_text_field($eid);
    createOutput($entryid, $pdf);
    if ($type == 'download') {
+      
       if (ob_get_contents())
          ob_clean();
       $pdf->Output($entryid . '-LoadIn.pdf', 'D');
