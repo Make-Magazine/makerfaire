@@ -140,10 +140,13 @@ function gf_summary_metabox($form, $entry) {
           </tr>'
       : '')
     . '<tr>
+            <td valign="top"><strong>Loadin Pass:</strong></td>
+            <td valign="top"><a href="/loadin/' . $entry_id . '/" target="_blank">https://' . $_SERVER['SERVER_NAME'] . '/loadin/' . $entry_id . '/</a></td>
+        </tr><tr>
 						<td valign="top"><strong>Website:</strong></td>
 						<td valign="top"><a href="' . esc_url($wkey) . '" target="_blank">' . esc_url($wkey) . '</a></td>
-					</tr>
-					<tr>
+        </tr>
+        <tr>
 						<td valign="top"><strong>Video:</strong></td>
 						<td>' . ((isset($vkey)) ? '<a href="' . esc_url($vkey) . '" target="_blank">' . esc_url($vkey) . '</a><br/>' : '') . '</td>
 					</tr>
