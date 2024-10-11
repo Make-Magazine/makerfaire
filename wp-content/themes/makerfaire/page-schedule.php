@@ -272,10 +272,61 @@ if ($schedule_ids_trimmed && $schedule_ids_trimmed != '') { //display the new sc
                 </div>
             </div>
 
-            <div ng-show="!schedules.length" class="container loading">
-                <i class="fas fa-spinner fa-pulse fa-3x fa-fw"></i>
-                <br /><b style="font-size: 25px;padding-top: 15px;display: block;">Please Wait While We Load Your Maker Faire Experience</b>
-                <span class="sr-only"><?php _e("Loading", 'makerfaire') ?>...</span>
+            <div ng-show="!schedules.length" class="container-fluid loading" style="position: relative;">
+                <div class="loading-wrapper style="position: absolute;top: 30px;left:100px;">
+                    <i class="fas fa-spinner fa-pulse fa-3x fa-fw"></i>
+                    <br /><b style="font-size: 25px;padding-top: 15px;display: block;">Please Wait While We Load Your Maker Faire Experience</b>
+                    <span class="sr-only"><?php _e("Loading", 'makerfaire') ?>...</span>
+                </div>
+                <!-- Dummy Filters -->
+                <div class="mtm-filter-wrap mtm-search">
+                    <div class="search-wrapper"> 
+                        <input class="form-control" placeholder="Enter your search" type="text">
+                    </div>
+                    <div class="dropdown form-control">
+                        <button class="btn btn-link dropdown-toggle" type="button" id="mtm-dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                            <span> --- </span>                            
+                        </button>
+                    </div>
+                    <div class="dropdown form-control">
+                        <button class="btn btn-link dropdown-toggle" type="button" id="mtm-dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                            <span> --- </span>                            
+                        </button>
+                    </div>
+                    <div class="dropdown form-control">
+                        <button class="btn btn-link dropdown-toggle" type="button" id="mtm-dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                            <span> --- </span>                            
+                        </button>
+                    </div>
+                    <div class="disclaimer">* All times shown in PDT</div>
+                     
+                </div>
+                <!-- Dummy Event -->
+                <div class="sched-table">
+                    <div class="row sched-header">                    
+                        <div class="sched-body">
+                            <!-- if we are in the faire time, only display events that haven't occurred yet inFaire = {{inFaire}} {{todaysDate | date:'yyyy-MM-ddTHH:mm:ss'}} -->
+                            <div>                  
+                                <div>
+                                    <h2 style="text-align:center">Day</h2>
+                                </div>
+                                <div>
+                                    <h3>Hour</h3>
+                                </div>
+                                <!-- Show Day and hourly time -->
+                                <div class="sched-row">
+
+                                    <div class="stage-track">Stage</div>
+                                    <a href="#" style="pointer-events: none;">
+                                        <div class="sched-img" style="background-image:url(https://makerfaire.com/wp-content/themes/makerfaire/images/stripe_bg1.gif);"></div>
+                                    </a>
+                                    <div class="sched-wrapper">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <div class="sched-table" sched-scroll="loadMore()">
