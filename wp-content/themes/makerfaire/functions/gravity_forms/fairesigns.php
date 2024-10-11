@@ -185,6 +185,11 @@ function createSignZip() {
             if (stripos($row->exhibit_type, 'exhibit')  === false && stripos($row->exhibit_type, 'sponsor') === false) {
                 continue;
             }
+        }elseif($type=='presenter'){
+           //only include presentations
+           if (stripos($row->exhibit_type, 'present')  === false) {
+            continue;
+            } 
         }        
 
         // exclude records based on status filter
