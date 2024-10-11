@@ -229,7 +229,7 @@ function createOutput($entry_id, $pdf) {
     * auto adjust the font so the text will fit
     ***************************************************************************/
    $pdf->setTextColor(43, 143, 192);
-   $pdf->SetXY(16, 245);
+   $pdf->SetXY(16, 258);
 
    // auto adjust the font so the text will fit
    //$x = 72; // set the starting font size
@@ -272,23 +272,23 @@ function createOutput($entry_id, $pdf) {
     ***************************************************************************/
     $pdf->setTextColor(245, 20, 0);
     $pdf->SetFont('FontAwesome4', '', 26);
-    $pdf->Text(18, 295, chr(0x003D));
+    $pdf->Text(18, 312, chr(0x003D));
     $pdf->setTextColor(51, 51, 51);
     $pdf->SetFont('Benton Sans', '', 26);
-    $pdf->Text(32, 295, $project_subarea);
+    $pdf->Text(32, 312, $project_subarea);
     //$pdf->setTextColor(245, 20, 0);
     //$pdf->SetFont('Benton Sans', '', 42);
     //$pdf->Text(21, 267, $project_booth); // no longer showing booth
 
     /***************************************************************************
     * Type  
-    ***************************************************************************/
+    **************************************************************************
     $pdf->setTextColor(245, 20, 0);
     $pdf->SetFont('FontAwesome1', '', 26);
     $pdf->Text(18, 310, chr(0x0031));
     $pdf->setTextColor(51, 51, 51);
     $pdf->SetFont('Benton Sans', '', 26);
-    $pdf->Text(32, 310, $project_type);
+    $pdf->Text(32, 310, $project_type);*/
 
     /***************************************************************************
     * Category  
@@ -330,7 +330,7 @@ function createOutput($entry_id, $pdf) {
          
          $project_photo = legacy_get_fit_remote_image_url( stripslashes($project_photo), 1200, 800, 0);
 
-         $pdf->Image($project_photo, 0, 35.83, 288, 192, $photo_extension);
+         $pdf->Image($project_photo, 0, 44.23, 288, 192, $photo_extension);
 
 
       } else {
