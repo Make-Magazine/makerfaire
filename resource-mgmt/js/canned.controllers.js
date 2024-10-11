@@ -168,27 +168,32 @@ $scope.export = function(export_format='pdf'){
           if('filter' in value && 'selectOptions' in value.filter){                        
             value.filter.type = uiGridConstants.filter.SELECT;                        
           }    
-        /*
-            value.sortingAlgorithm =  function(a, b, rowA, rowB, direction) {    
-              // this keeps the set values to the top, for both ascending and descending order
-              if(direction == "asc") {
-                if(!a) { // a is null, push it to the bottom                                
-                  return 1;
-                }else if(!b) { // b is null, push it to the bottom                
-                  return -1;
-                } else {
-                  return a - b; // Regular sorting for non-null values
-                }      
-              } else if(direction == "desc") {
-                if(!a) { // a is null, push it to the bottom                                
-                  return -1;
-                }else if(!b) { // b is null, push it to the bottom                
-                  return 1;
-                } else {
-                  return a - b; // Regular sorting for non-null values
-                }  
-              }                     
-            }                */  
+          if('sortingAlgorithm' in value){
+            if(value.sortingAlgorithm =='numeric'){
+              value.sortingAlgorithm =  function(a, b, rowA, rowB, direction) {    
+                // this keeps the set values to the top, for both ascending and descending order
+                if(direction == "asc") {
+                  if(!a) { // a is null, push it to the bottom                                
+                    return 1;
+                  }else if(!b) { // b is null, push it to the bottom                
+                    return -1;
+                  } else {
+                    return a - b; // Regular sorting for non-null values
+                  }      
+                } else if(direction == "desc") {
+                  if(!a) { // a is null, push it to the bottom                                
+                    return -1;
+                  }else if(!b) { // b is null, push it to the bottom                
+                    return 1;
+                  } else {
+                    return a - b; // Regular sorting for non-null values
+                  }  
+                }                     
+              }                
+            }
+          }            
+        
+            
         });
         $scope.gridOptions.columnDefs = response.data.columnDefs;
         $scope.gridOptions.data       = response.data.data;
@@ -433,8 +438,8 @@ $scope.export = function(export_format='pdf'){
               ],
               "rmtData":{
                 "resource":[
-                  {"id":"2","value":"Tables","checked":true,"aggregated":false,"order":60,"columns":true},
-                  {"id":"3","value":"Chairs","checked":true,"aggregated":false,"order":70,"columns":true}
+                  {"id":"2","value":"Tables","checked":true,"aggregated":false,"order":60,"columns":true, 'sortingAlgorithm':true},
+                  {"id":"3","value":"Chairs","checked":true,"aggregated":false,"order":70,"columns":true, 'sortingAlgorithm':true}
                 ],
                 "attribute":[],"attention":[],"meta":[]
               },

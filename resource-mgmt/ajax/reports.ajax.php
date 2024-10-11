@@ -584,7 +584,8 @@ function pullRmtData($rmtData, $entryID, $useFormSC) {
                         'field' => 'res_' . str_replace('.', '_', $resource['resource_id']),
                         'displayName' => $resource['type'],
                         'displayOrder' => $displayOrder,        
-                        'type'=>'string',                
+                        'type'=>'string',               
+                        'sortingAlgorithm' => 'numeric', 
                         'aggregationType' => 'uiGridConstants.aggregationTypes.sum',
                         'width' => "100"
                      );
