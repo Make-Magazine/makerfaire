@@ -149,13 +149,9 @@ function createOutput($entry_id, $pdf) {
    if (is_array($photo)) {
       $project_photo = $photo[0];
    }
-   //Check for image override
-   $overrideImg = findOverride($entry_id, 'signs');
-   if ($overrideImg != '')
-      $project_photo = $overrideImg;
-
-   // project gallery was introduced with BA23 - this returns an array of image urls from the additional images field
-   $project_gallery = (isset($entry['878']) ? explode(",", str_replace(array( '[', ']', '"' ), '', $entry['878'])) : '');
+   
+   // this returns an array of image urls from the additional images field
+   $project_gallery = (isset($entry['878']) ? json_decode($entry['878']) : '');
 
    //if the main project photo isn't set but the photo gallery is, use the first image in the photo gallery
    if($project_photo=='' && is_array($project_gallery)){
@@ -176,7 +172,8 @@ function createOutput($entry_id, $pdf) {
 
    
    if($project_photo !=''){
-      $project_photo= stripslashes($project_photo);      
+      //$project_photo= stripslashes($project_photo);      
+      $project_photo = legacy_get_resized_remote_image_url($project_photo, 840, 560);
       $imgSize = getimagesize($project_photo);
       // NOTE: we need a new default image
       $error_photo = get_template_directory().'/images/default-featured-image.jpg';
