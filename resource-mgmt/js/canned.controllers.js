@@ -59,6 +59,7 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
 
   //set up gridOptions for predefined reports
   $scope.gridOptions = {
+    exporterMenuExcel: false,
     enableFiltering: true,
     enableGridMenu: true,
     showGridFooter: true,
