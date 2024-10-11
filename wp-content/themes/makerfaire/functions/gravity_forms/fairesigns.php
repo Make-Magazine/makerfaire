@@ -180,10 +180,12 @@ function createSignZip() {
 
     $results = $wpdb->get_results($sql);
     foreach ($results as $row) {      
-        //exclude all but Exhibit, Sponsor or Startup sponsor                
-        if (stripos($row->exhibit_type, 'exhibit')  === false && stripos($row->exhibit_type, 'sponsor') === false) {
-            continue;
-        }
+        if($type=='maker'){
+            //exclude all but Exhibit, Sponsor or Startup sponsor                
+            if (stripos($row->exhibit_type, 'exhibit')  === false && stripos($row->exhibit_type, 'sponsor') === false) {
+                continue;
+            }
+        }        
 
         // exclude records based on status filter
         if ($statusFilter == 'accepted' && $row->entry_status != 'Accepted')
@@ -351,7 +353,7 @@ function createEntList($faire, $type) {
                 foreach ($results as $entry) {
                     //exclude all but Exhibit, Sponsor or Startup sponsor 
                     if (stripos($entry->exhibit_type, 'exhibit') === false && stripos($entry->exhibit_type, 'sponsor') ===false) {
-                        error_log('skipped '.$entry->lead_id.' exhibit type ='.$entry->exhibit_type);                        
+                        //error_log('skipped '.$entry->lead_id.' exhibit type ='.$entry->exhibit_type);                        
                         continue;
                     }   
                     $entry_id  = $entry->lead_id;
