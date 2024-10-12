@@ -14,11 +14,13 @@ $formSelect = (isset($obj->formSelect) ? $obj->formSelect : '');
 $formType = (isset($obj->formType) ? $obj->formType : '');
 
 $selectedFields = (isset($obj->selectedFields) ? $obj->selectedFields : '');
-$rmtData = (isset($obj->rmtData) ? $obj->rmtData : '');
-$location = (isset($obj->location) ? $obj->location : false);
-$payment = (isset($obj->payments) ? $obj->payments : false);
-$faire = (isset($obj->faire) ? $obj->faire : '');
-$status = (isset($obj->status) ? $obj->status : '');
+$rmtData        = (isset($obj->rmtData)   ? $obj->rmtData : '');
+$location       = (isset($obj->location)  ? $obj->location : false);
+$payment        = (isset($obj->payments)  ? $obj->payments : false);
+$faire          = (isset($obj->faire)     ? $obj->faire : '');
+$status         = (isset($obj->status)    ? $obj->status : '');
+$subRoute       = (isset($obj->subRoute)  ? $obj->subRoute : 'change');
+$date_after     = (isset($obj->dateAfter) ? $obj->dateAfter : '');
 
 if ($type != '') {
    if ($type == "tableData") {
@@ -32,7 +34,7 @@ if ($type != '') {
          pullEntityTasks($formSelect);
       } else {
          //build report data
-         retrieveRptData($table, $faire);
+         retrieveRptData($table, $faire, $subRoute, $date_after);
       }
    } elseif ($type == "customRpt") {
       if (($formSelect != '' || $formType != '') && $selectedFields != '') {
@@ -584,8 +586,8 @@ function pullRmtData($rmtData, $entryID, $useFormSC) {
                         'field' => 'res_' . str_replace('.', '_', $resource['resource_id']),
                         'displayName' => $resource['type'],
                         'displayOrder' => $displayOrder,        
-                        'type'=>'string',               
-                        'sortingAlgorithm' => 'numeric', 
+                        'type'=>'string',                
+                        'sortingAlgorithm' => 'numeric',
                         'aggregationType' => 'uiGridConstants.aggregationTypes.sum',
                         'width' => "100"
                      );
@@ -599,8 +601,8 @@ function pullRmtData($rmtData, $entryID, $useFormSC) {
          if (!$columns) {
             $return['colDefs']['res_' . $selRMT->id] = array(
                'field' => 'res_' . str_replace('.', '_', $selRMT->id),
-               'displayName' => $selRMT->value,
-               'displayOrder' => $displayOrder,
+               'displayName'  => $selRMT->value,               
+               'displayOrder' => $displayOrder,               
                'type'         => ($aggregated ? 'text':'number'),
                'width'        => (isset($selRMT->width) ? $selRMT->width : '*')
             );
@@ -1052,7 +1054,7 @@ function pullFieldData($entryID, $reqFields) {
    return $return;
 }
 
-function retrieveRptData($table, $faire) {
+function retrieveRptData($table, $faire, $subRoute='', $date_after) {
    global $wpdb;
    require_once 'table.fields.defs.php';
 
@@ -1107,7 +1109,7 @@ function retrieveRptData($table, $faire) {
          default:
             break;
       }
-
+      
       if (isset($fields['cellTooltip']))
          $vars['cellTooltip'] = $fields['cellTooltip'];
       if (isset($fields['cellTemplate']))
@@ -1120,10 +1122,12 @@ function retrieveRptData($table, $faire) {
          $vars['type'] = $fields['type'];
       if (isset($fields['fieldLabel']))
          $vars['displayName'] = $fields['fieldLabel'];
+      if (isset($fields['filter']))
+         $vars['filter'] = $fields['filter'];
       $vars['name'] = $fields['fieldName'];
       $vars['minWidth'] = '100';
       $vars['width'] = (isset($fields['width']) ? $fields['width'] : '*');
-
+      
       $columnDefs[] = $vars;
    }
 

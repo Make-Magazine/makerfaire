@@ -10,7 +10,7 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
   $scope.canned_rpt         = [];
   $scope.reports_only       = jQuery('#reports_only').val();  
   $scope.display_faire      = '';
-  
+
   $scope.handleSelect = function() {       
     if($scope.reports.subRoute!=''){
       //redirect to the correct canned report based on selection 
@@ -166,9 +166,11 @@ $scope.export = function(export_format='pdf'){
               value.aggregationHideLabel = true;
             }
           }          
-          if('filter' in value && 'selectOptions' in value.filter){                        
-            value.filter.type = uiGridConstants.filter.SELECT;                        
-          }    
+          if ('filter' in value) {
+            if('selectOptions' in value.filter) {
+              value.filter.type = uiGridConstants.filter.SELECT;
+            }            
+          }
           if('sortingAlgorithm' in value){
             if(value.sortingAlgorithm =='numeric'){
               value.sortingAlgorithm =  function(a, b, rowA, rowB, direction) {    
@@ -208,6 +210,23 @@ $scope.export = function(export_format='pdf'){
     });
   };
   
+  $scope.filterAfterDate = function(){
+    var year = jQuery("#year").val();
+    var month = jQuery("#month").val();
+    var day = jQuery("#day").val();
+    
+    vars = {
+      "faire": faire,
+      "table": "wp_mf_lead_detail_changes",
+      "type": "tableData",
+      "dateAfter": year+"-"+month+"-"+day,
+      "subRoute":subRoute
+    };
+
+    var subTitle = 'Sponsor Internet';
+    $scope.reports.callAJAX(vars);
+  }
+
   if($routeParams){
     if(typeof $routeParams.sub !== 'undefined' && $routeParams.sub !== 'undefined'){
       if(!jQuery("#wrapper").hasClass("toggled")){
@@ -732,6 +751,17 @@ $scope.export = function(export_format='pdf'){
               },
               "type":"customRpt",
               "location":true};
+      var subTitle = 'Sponsor Internet';
+      $scope.reports.callAJAX(vars);
+    } else if (subRoute === "prod_change") {
+      vars = {
+        "faire": faire,
+        "table": "wp_mf_lead_detail_changes",
+        "type": "tableData",
+        "dateAfter": "",
+        "subRoute":subRoute
+      };
+
       var subTitle = 'Sponsor Internet';
       $scope.reports.callAJAX(vars);
     }
