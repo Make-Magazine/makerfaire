@@ -206,7 +206,8 @@ if (isset($entry->errors)) {
         }
     }
 
-    $friday = (isset($entry['879.3']) && !empty($entry['879.3'])  ? 1 : 0); // is it on friday
+    $friday = (isset($entry['879.3']) && !empty($entry['879.3'])  ? 1 : 0); // is it on friday only
+    $satSun = (isset($entry['879.2']) && !empty($entry['879.2'])  ? 1 : 0); // is it on Sat & Sunday only
     $location = $scheduleOutput = "";
     if($show_sched){
         $scheduleOutput = display_entry_schedule($entry);
