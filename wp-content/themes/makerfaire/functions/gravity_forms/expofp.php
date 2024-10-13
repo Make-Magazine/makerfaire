@@ -285,7 +285,8 @@ function updateExpoFpExhibit($entry, $form, $expofpToken, $expofpId, $exhibitor_
     }
     
     // then, add all the category taxonomies the user selected as categories in expofp
-    $mainCategoryName = html_entity_decode(get_term($entry[320])->name);
+    $mainTerm = get_term($entry[320]);
+    $mainCategoryName = (isset($mainTerm->name) ? html_entity_decode($mainTerm->name):'');
     $categories[] = array("name" => $mainCategoryName);
     foreach ($entry as $key => $value) {
         if (strpos($key, '321.') !== false && $value != null) {
