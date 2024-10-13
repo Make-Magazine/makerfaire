@@ -72,7 +72,8 @@ function update_expofp_exhibitor($form, $entry_id) {
                 deleteExpoFpExhibit($exhibitor_id, $expofpToken, $entry_id);
             } else { // otherwise, update exhibitor with new title, description, image, etc
                 updateExpoFpExhibit($entry, $form, $expofpToken, $expofpId, $exhibitor_id);
-                $image = json_decode($entry['22'])[0];
+                $decode_image = json_decode($entry['22']);
+                $image = (is_array($decode_image)?$decode_image[0]:'');
                 updateExpoFpImage($expofpToken, $exhibitor_id, $image);
             }
         } else {
@@ -153,8 +154,9 @@ function createExpoFpExhibit($entry, $form, $expofpToken, $expofpId) {
         array_push($tags, "Tables and chairs:" . $tablesChairs); // tables and chairs
     }
     
-    // then, add all the category taxonomies the user selected as categories in expofp
-    $mainCategoryName = html_entity_decode(get_term($entry[320])->name);
+    // then, add all the category taxonomies the user selected as categories in expofp    
+    $mainTerm = get_term($entry[320]);
+    $mainCategoryName = (isset($mainTerm->name) ? html_entity_decode($mainTerm->name):'');
     $categories[] = array("name" => $mainCategoryName);
     foreach ($entry as $key => $value) {
         if (strpos($key, '321.') !== false && $value != null) {
