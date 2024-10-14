@@ -32,13 +32,13 @@ if ($type == 'entry') {
         $conf_load_in_time = gform_get_meta($entryID, "load_in_time");
         if(empty($conf_load_in_time)) {
           gform_update_meta( $entryID, "load_in_time", $load_in_time);
-          $header_msg = "Thanks for giving us your arrival and initial load in time.";
+          $header_msg = "Thanks for confirming your initial load in time of ".$load_in_time .".";
         } else {
           $header_msg = "You have already confirmed your initial load in time for " . $conf_load_in_time . ".";
         }
       } 
       // update a meta for their load in time
-      $return = '<h2>' . $header_msg . '</h2><h3>Please respond to your Confirmation Email or reach out to <a href="mailto:makers@make.co">makers@make.co</a> with any questions about your setup.<br /><br />See you at the Faire!</h3><br />';  
+      $return = '<h2>' . $header_msg . '</h2><h3>Please reach out to <a href="mailto:makers@make.co">makers@make.co</a> with any questions.<br /><br />See you at the Faire!</h3><br />';  
     }else{
       $return = 'Invalid Token';  
     }
