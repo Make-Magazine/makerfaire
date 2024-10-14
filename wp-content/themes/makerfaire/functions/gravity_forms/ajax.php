@@ -1,6 +1,7 @@
 <?php
 /* This function is used to update entry resources and entry attributes via AJAX */
 function update_entry_resatt() {  
+
   global $wpdb;
   $rowID    = $_POST['ID'];
   $table    = $_POST['table'];
@@ -50,7 +51,9 @@ function update_entry_resatt() {
     $entry = GFRMTHELPER::rmt_set_lock_ind(1, $rowID, $type);
   }
   
-  //update_entry($entryID, $entry);
+  //update the exhibitor info after updating RMT
+  $form = GFAPI::get_form($entry['form_id']);
+  update_expofp_exhibitor( $form, $entry['id'] );
 
   //return the ID
   $response = array('message' => 'Saved', 'ID' => $rowID, 'user' => $current_user->display_name, 'dateupdate' => current_time('m/d/y h:i a'));

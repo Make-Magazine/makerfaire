@@ -37,6 +37,7 @@ function create_expofp_exhibitor( $entry, $form ) {
 }
 
 function update_expofp_exhibitor($form, $entry_id) {
+
     //we only set this in our production env so we avoid writing test data to expoFP
     if(!defined('EXPOFP_TOKEN')){     
         return;
@@ -60,11 +61,11 @@ function update_expofp_exhibitor($form, $entry_id) {
             }
         }
     }
+
     if($write_to_expofp == true){
         // get the Expo FP token
         $expofpToken = EXPOFP_TOKEN;
         $exhibitor_id = gform_get_meta( $entry_id, 'expofp_exhibit_id');
-        //error_log($exhibitor_id);
 
         if($exhibitor_id) { // this meta is set when the exhibit is created
             // after update, if the status is canceled or rejected, delete
@@ -234,9 +235,21 @@ function updateExpoFpExhibit($entry, $form, $expofpToken, $expofpId, $exhibitor_
         $categories[] = array("name" => $resource['token']);
         $res_arr[] = $resource['token'] . ":" . $resource['qty'];
     }
+    $special_request = "";
     foreach($rmt_data['attributes'] as $attribute) {
-        $attr_arr[] = $attribute['token'] . ":" . $attribute['value'];
-        $tags[] = $attribute['token'] . ":" . $attribute['value'];
+        // add all attributes except for the Space Size Request and Exposure Request
+        if($attribute['token'] != "SPACESZREQ" && $attribute['token'] != "EX_REQ" && $attribute['token'] != "SPECL") {
+            $attr_arr[] = $attribute['token'] . ":" . $attribute['value'];
+            $tags[] = $attribute['token'] . ":" . $attribute['value'];
+        // if the attribute is special request, let's save it to add at the end of the displays
+        } else if ($attribute['token'] == "SPECL") {
+            error_log("we should be here");
+            $special_request = $attribute['token'] . ":" . $attribute['value'];
+        }
+    }
+    if($special_request != "") {
+        $attr_arr[] = $special_request;
+        $tags[] = $special_request;
     }
     $rmt_shown  = implode(', ', array_merge($res_arr, $attr_arr));
 
