@@ -5,7 +5,7 @@
               <ul class="nav nav-list tree">
                 <li><a href="#canned">Canned Rpts</a></li>                
                 <li><a href="#reports/change">Entry Change Rpt</a></li>                
-                <li><a href="#reports/location">Schedule/Location Rpt</a></li>                                
+                <li><a href="#reports/location">Schedule Rpt</a></li>                                
                 <li><a href="#reports/notes">Notes Report</a></li>
                 <!--<li><a href="#reports/drill">Resource Drill Down</a></li>-->                
                 <!--<li><a href="#ent2resources/all">Entry 2 Resource</a></li>-->

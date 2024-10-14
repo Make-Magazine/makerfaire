@@ -122,19 +122,22 @@ $tableFields['wp_mf_location']['colDefs'][] = array('fieldName' => 'status',    
 $tableFields['wp_mf_location']['colDefs'][] = array('fieldName' => 'entity_status', 'fieldLabel' => 'Entry Status', 'filterType'   => 'text');
 $tableFields['wp_mf_location']['colDefs'][] = array('fieldName' => 'form_id', 'filterType' => 'text', 'fieldLabel' => 'form_id','visible' => false);
 $tableFields['wp_mf_location']['query'] =
-          'SELECT wp_mf_location.location,wp_mf_location.entry_id, wp_mf_location.subarea_id, '
-                . 'wp_mf_faire_subarea.subarea, wp_mf_faire_subarea.nicename, wp_mf_faire_subarea.area_id, '
-                . 'wp_mf_faire_area.area, wp_mf_schedule.start_dt, wp_mf_schedule.end_dt, wp_mf_schedule.type as schedType, wp_gf_entry.form_id, '
-                . ' case wp_gf_entry.status
-        when "trash" then "Trashed"
-        when "active" then wp_mf_entity.status
-        else wp_gf_entry.status 
-    end as entity_status,'
-        . '(SELECT meta_value as value FROM `wp_gf_entry_meta` where meta_key = "151" and wp_gf_entry_meta.entry_id = wp_mf_location.entry_id  limit 1) as exName '
-        . 'FROM    wp_mf_location '
-        . 'left outer join  wp_mf_faire_subarea on wp_mf_location.subarea_id = wp_mf_faire_subarea.ID '
-        . 'left outer join  wp_mf_faire_area    on wp_mf_faire_subarea.area_id = wp_mf_faire_area.ID '
-        . 'left outer join  wp_mf_schedule      on wp_mf_schedule.location_id = wp_mf_location.ID '
-        . 'left outer join  wp_gf_entry         on wp_gf_entry.ID = wp_mf_location.entry_id '
-        . 'left outer join  wp_mf_entity        on wp_gf_entry.ID = wp_mf_entity.lead_id '
-        . 'left outer join  wp_mf_faire         on find_in_set (wp_gf_entry.form_id, wp_mf_faire.form_ids) > 0  where  wp_mf_faire.ID = '.$faire;
+'SELECT wp_mf_location.location, wp_mf_location.entry_id, wp_mf_location.subarea_id, 
+wp_mf_faire_subarea.subarea, wp_mf_faire_subarea.nicename, wp_mf_faire_subarea.area_id, 
+wp_mf_faire_area.area, wp_mf_schedule.start_dt, wp_mf_schedule.end_dt, wp_mf_schedule.type as schedType, 
+wp_gf_entry.form_id, (SELECT meta_value as value FROM `wp_gf_entry_meta` where meta_key = "151" and 
+wp_gf_entry_meta.entry_id = wp_mf_location.entry_id limit 1) as exName, 
+wp_gf_entry_meta.meta_value as entity_status 
+FROM wp_mf_location 
+  left outer join wp_mf_faire_subarea on wp_mf_location.subarea_id = wp_mf_faire_subarea.ID 
+  left outer join wp_mf_faire_area on wp_mf_faire_subarea.area_id = wp_mf_faire_area.ID 
+  left outer join wp_mf_schedule on wp_mf_schedule.location_id = wp_mf_location.ID 
+  left outer join wp_gf_entry on wp_gf_entry.ID = wp_mf_location.entry_id 
+  left outer join wp_gf_entry_meta on wp_gf_entry_meta.entry_id = wp_mf_location.entry_id 
+    and wp_gf_entry_meta.meta_key="303" 
+  left outer join wp_mf_faire on find_in_set (wp_gf_entry.form_id, wp_mf_faire.form_ids) > 0 
+where wp_mf_faire.ID = '.$faire.' 
+and wp_gf_entry.status="Active" 
+and wp_gf_entry_meta.meta_value="Accepted" 
+and wp_mf_schedule.start_dt is not null 
+ORDER BY month(wp_mf_schedule.start_dt),day(wp_mf_schedule.start_dt), area ASC, nicename ASC';
