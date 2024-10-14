@@ -86,7 +86,7 @@ function createOutput($entry_id, $pdf) {
     $pdf->SetFont('Benton Sans', 'B', 40);
     $pdf->SetXY(12, 150);   
     $pdf->MultiCell(190, 25, 'Loading in at ', 0, 'C');    
-    $pdf->SetFont('Benton Sans', 'B', 90);
+    $pdf->SetFont('Benton Sans', 'B', 80);
     $pdf->SetXY(12, 180);   
     $pdf->MultiCell(190, 30, $subarea, 0, 'C');    
    }
