@@ -243,7 +243,6 @@ function updateExpoFpExhibit($entry, $form, $expofpToken, $expofpId, $exhibitor_
             $tags[] = $attribute['token'] . ":" . $attribute['value'];
         // if the attribute is special request, let's save it to add at the end of the displays
         } else if ($attribute['token'] == "SPECL") {
-            error_log("we should be here");
             $special_request = $attribute['token'] . ":" . $attribute['value'];
         }
     }
