@@ -97,12 +97,14 @@ function genEBtickets($entryID, $testing=FALSE) {
     $entLevel = 'performer';
   }
 
-  //determine if they are part of a showcase
-  $sc_sql = "SELECT count(*) FROM `wp_mf_lead_rel` where childID=$entryID";
+  if($entLevel=='exhibit'){
+    //determine if they are part of a showcase
+    $sc_sql = "SELECT count(*) FROM `wp_mf_lead_rel` where childID=$entryID";
 
-  $sc_count = $wpdb->get_var($sc_sql);
-  if ($sc_count && $sc_count > 0) {
-    $entLevel = 'showcase';
+    $sc_count = $wpdb->get_var($sc_sql);
+    if ($sc_count && $sc_count > 0) {
+      $entLevel = 'showcase';
+    }
   }
 
   //Final Weekend  
