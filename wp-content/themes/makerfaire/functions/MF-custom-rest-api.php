@@ -486,7 +486,7 @@ function getSchedule($formIDs, $faireID) {
     global $wpdb;
     $data = array();
     $data['schedule'] = array();
-    $formIDarr = array_map('intval', explode("-", $formIDs));
+    $formIDarr = array_map('intval', explode(",", $formIDs));
    
 $query = "SELECT schedule.entry_id,
 	schedule.start_dt as time_start, DAYOFWEEK(schedule.start_dt) as day,
@@ -620,8 +620,8 @@ order by start_dt, end_dt;";
 
         //set stage name
         $stage = ($row->nicename != '' ? $row->nicename : $row->subarea);
-        // only include in the schedule if the area has stage in the name
-        if(!str_contains(strtolower($stage), "stage")){
+        // only include in the schedule if the schedtype is not workshop
+        if($type == "workshop"){
             continue;
         } 
         

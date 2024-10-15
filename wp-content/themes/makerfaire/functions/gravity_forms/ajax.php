@@ -33,6 +33,7 @@ function update_entry_resatt() {
       //update/insert attention
       $rowID = GFRMTHELPER::rmt_update_attention($entryID, $attention_id, $comment, 'admin');
     }
+    $entry = GFAPI::get_entry($entryID);
   } else {
     //find the field data to update    
     $newValue   = $_POST['newValue'];

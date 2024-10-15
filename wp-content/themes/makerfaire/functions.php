@@ -531,7 +531,7 @@ function child_remove_page_templates($page_templates) {
     unset($page_templates['page-video-ba15.php']);
     unset($page_templates['page-white-house.php']);
     unset($page_templates['signage-detail.php']);
-    unset($page_templates['signage-list.php']);
+    //unset($page_templates['signage-list.php']);
     unset($page_templates['page-query.php']);
 
     unset($page_templates['page-wide-leftnav.php']);

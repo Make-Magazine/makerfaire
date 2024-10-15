@@ -1,19 +1,25 @@
 <?php
 // Template Name: Signage
 //get the URL variables
+
 if(!is_user_logged_in()) {
 	die('You do not have permission to access this page.');
 }
 $location = ( isset($_GET['loc']) ? intval($_GET['loc']) : '' );
-$faire = (isset($_GET['faire']) ? $_GET['faire'] : 'ny15');
+$faire = (isset($_GET['faire']) ? $_GET['faire'] : 'BA24');
 $short_description = (!isset($_GET['description']) ? true : false);
 $orderBy = (isset($_GET['orderBy']) ? $_GET['orderBy'] : '' );
-$day = (isset($_GET['day']) ? sanitize_title_for_query($_GET['day']) : '');
+$day = (isset($_GET['day']) ? $_GET['day'] : '');
+if(str_contains($day, ",")) {
+    $day = strtok($day, ',');
+}
+$day = sanitize_title_for_query($day);
 $qr = (isset($_GET['qr']) ? $_GET['qr'] : '');
 $filter_type = (isset($_GET['type']) ? strtolower($_GET['type']) : '');
 $filter_topic = (isset($_GET['topic']) ? $_GET['topic'] : '');
 $filter_stage = (isset($_GET['stage']) ? urldecode($_GET['stage']) : '');
 $filter_text = (isset($_GET['text']) ? urldecode($_GET['text']) : '');
+$print = (isset($_GET['print']) ? urldecode($_GET['print']) : false);
 
 if (!empty($location))
     $term = get_term_by('name', $location, 'location');
@@ -61,7 +67,14 @@ $schedList = get_schedule_list($location, $short_description, $day, $faire);
         }
         echo $schedList;
         if ($qr != '') {
-            ?> <img src="/wp-content/themes/makerfaire/img/qrcode-schedule.png" class="qr-code-print" /> <?php } ?>
+            ?> <img src="/wp-content/themes/makerfaire/img/qrcode-schedule.jpg" class="qr-code-print" /> <?php }
+        if ($print == true) {  ?>
+            <script type="text/javascript">
+                window.onload = function() {
+                    window.print();
+                };
+            </script>
+        <?php } ?>
     </body>
 </html>
 <?php
@@ -71,45 +84,50 @@ $schedList = get_schedule_list($location, $short_description, $day, $faire);
  * @param  String $location [description]
  * @return [type]           [description]
  */
-function get_schedule_list($location, $short_description = false, $day_set = '', $faire = 'ny15') {
+function get_schedule_list($location, $short_description = false, $day_set = '', $faire = 'BA24') {
     global $orderBy;
     global $wpdb;
     global $filter_type;
     global $filter_topic;
     global $filter_stage;
+    error_log($filter_stage);
     global $filter_text;
     $output = '';
     //retrieve Data
-    $sql = "SELECT  DAYNAME(schedule.start_dt) as Day,
-                    DATE_FORMAT(schedule.start_dt,'%l:%i %p') as 'Start Time',
-                    DATE_FORMAT(schedule.end_dt,'%l:%i %p') as 'End Time',
-                    if(subarea.niceName = '' or subarea.niceName is null,subarea.subarea,subarea.niceName) as nicename,
-                       area.area, entity.presentation_title as 'Exhibit',
-
-                    (select  group_concat( distinct concat(maker.`FIRST NAME`,' ',maker.`LAST NAME`) separator ', ') as Makers
-                                    from    wp_mf_maker maker,
-                                            wp_mf_maker_to_entity maker_to_entity
-                                    where   schedule.entry_id           = maker_to_entity.entity_id  AND
-                                            maker_to_entity.maker_id    = maker.maker_id AND
-                                            maker_to_entity.maker_type != 'Contact'
-                                    group by maker_to_entity.entity_id) as Presenters, 
-                    type, entity.form_id,
-                    (select group_concat( meta_value separator ',') as cat from wp_gf_entry_meta where wp_gf_entry_meta.entry_id = schedule.entry_id AND (wp_gf_entry_meta.meta_key like '%320%' OR wp_gf_entry_meta.meta_key like '%321%')) as category 
-            FROM    wp_mf_schedule schedule
-            JOIN    wp_mf_entity entity on schedule.entry_id   = entity.lead_id AND entity.status       = 'Accepted'
-            JOIN    wp_mf_location location on schedule.location_id  = location.ID AND schedule.entry_id = location.entry_id
-            JOIN    wp_mf_faire_subarea subarea on location.subarea_id = subarea.id
-            JOIN    wp_mf_faire_area area on subarea.area_id = area.id
-
-            WHERE   schedule.faire          = '" . $faire . "'"
-            . ($day_set != '' ? " and DAYNAME(`schedule`.`start_dt`)='" . ucfirst($day_set) . "'" : '')
-            . ($filter_stage != '' ? " and lower(nicename)='" . $filter_stage . "'" : '');
+    $sql = "SELECT  DAYNAME(wp_mf_schedule.start_dt) as Day,
+            DATE_FORMAT(wp_mf_schedule.start_dt,'%l:%i %p') as 'Start Time',
+            DATE_FORMAT(wp_mf_schedule.end_dt,'%l:%i %p') as 'End Time',
+            if(subarea.niceName = '' or subarea.niceName is null,subarea.subarea,subarea.niceName) as nicename,
+            area.area, 
+            
+            (select meta_value from wp_gf_entry_meta where wp_gf_entry_meta.entry_id = wp_mf_schedule.entry_id and meta_key='151') as 'Exhibit',
+            (select meta_value from wp_gf_entry_meta where wp_gf_entry_meta.entry_id = wp_mf_schedule.entry_id and meta_key='96.3') as maker_fname,
+                (select meta_value from wp_gf_entry_meta where wp_gf_entry_meta.entry_id = wp_mf_schedule.entry_id and meta_key='96.6') as maker_lname,
+                (select meta_value from wp_gf_entry_meta where wp_gf_entry_meta.entry_id = wp_mf_schedule.entry_id and meta_key='109') as group_name,
+                (select meta_value from wp_gf_entry_meta where wp_gf_entry_meta.entry_id = wp_mf_schedule.entry_id and meta_key='916') as presenter_list, type, wp_gf_entry.form_id,
+            (select group_concat( meta_value separator ',') 
+                from wp_gf_entry_meta 
+                where wp_gf_entry_meta.entry_id = wp_mf_schedule.entry_id 
+                AND (wp_gf_entry_meta.meta_key like '320' OR wp_gf_entry_meta.meta_key like '32.1%')
+            ) as category
+            
+            FROM    wp_mf_schedule
+            left outer JOIN    wp_gf_entry on wp_mf_schedule.entry_id   = wp_gf_entry.id
+            left outer JOIN    wp_mf_location location     on wp_mf_schedule.location_id  = location.ID AND wp_mf_schedule.entry_id = location.entry_id
+            left outer JOIN    wp_mf_faire_subarea subarea on location.subarea_id = subarea.id
+            left outer JOIN    wp_mf_faire_area area       on subarea.area_id = area.id
+            WHERE   wp_mf_schedule.faire = '" . $faire . "'"
+            . ($day_set != '' ? " and DAYNAME(`wp_mf_schedule`.`start_dt`)='" . ucfirst($day_set) . "'" : '')
+            . ($filter_stage != '' ? " and lower(nicename)='" . $filter_stage . "'" : '') .
+            " and wp_gf_entry.status='active'
+            and (select meta_value from wp_gf_entry_meta where wp_gf_entry_meta.entry_id=wp_mf_schedule.entry_id and meta_key='303')='Accepted'";
 
     if ($orderBy == 'time') {
-        $sql .= " order by schedule.start_dt ASC, schedule.end_dt ASC, nicename ASC, 'Exhibit' ASC";
+        $sql .= " order by wp_mf_schedule.start_dt ASC, wp_mf_schedule.end_dt ASC, nicename ASC, 'Exhibit' ASC";
     } else {
-        $sql .= " order by nicename ASC, schedule.start_dt ASC, schedule.end_dt ASC,  'Exhibit' ASC";
+        $sql .= " order by nicename ASC, wp_mf_schedule.start_dt ASC, wp_mf_schedule.end_dt ASC,  'Exhibit' ASC";
     }
+    //error_log(print_r($sql, TRUE));
 
     //group by stage and date
     $dayOfWeek = '';
@@ -133,6 +151,17 @@ function get_schedule_list($location, $short_description = false, $day_set = '',
         }
 
         $search_cats = implode(', ', $category);
+        //determine presenter names
+        $maker_name = $row['maker_fname'] . ($row['maker_lname']!=''?' '.$row['maker_lname']:'');
+        $group_name = $row['group_name']; 
+        $presenter_list = unserialize($row['presenter_list']);
+      
+        //if presenter list is set, use this instead of the maker name
+        if(is_array($presenter_list)){         
+            $maker_name = implode(", ", $presenter_list);
+        }        
+         
+        $makerList = $maker_name . ($group_name!=''?' - '.$group_name:'');
         
 
         //filter by schedule type
@@ -162,7 +191,7 @@ function get_schedule_list($location, $short_description = false, $day_set = '',
             //if the filter text is found in the exhibit name, sponsor or presenter names, categories, or stage names
             // display the event. else skip it                     
             $pos1 = stripos($row['Exhibit'], $filter_text);
-            $pos2 = stripos($row['Presenters'], $filter_text);
+            $pos2 = stripos($makerList, $filter_text);
             $pos3 = stripos($search_cats, $filter_text);
             $pos4 = stripos($row['nicename'], $filter_text);
                                     
@@ -194,11 +223,11 @@ function get_schedule_list($location, $short_description = false, $day_set = '',
                 $dayOfWeek = $row['Day'];
 
                 $output .= '<div style="clear:both;width:100%;height:32px;"><h1 style="font-size:2.2em; margin:31px 0 0; max-width:75%;float:left">' . $stage . ' <small>(' . $row['area'] . ')</small> </h1>
-                                <h2 style="float:right;margin-top:31px;"><img src="/wp-content/uploads/2016/01/mf_logo.jpg" style="width:200px;" alt="" ></h2>
+                                <h2 style="float:right;margin-top:31px;margin-bottom:10px;"><img src="/wp-content/uploads/2016/01/mf_logo.jpg" style="width:200px;" alt="" ></h2>
                                 <p></p>
                                 <p></p>
                                 <p></p>';
-                $output .= '<div style="clear:both"><h2>' . $dayOfWeek . '</h2></div></div><br /><br /><br />';
+                $output .= '<div style="clear:left;display:flex;"><h2>' . $dayOfWeek . '</h2></div></div><br /><br /><br />';
             }
         }
 
@@ -214,7 +243,7 @@ function get_schedule_list($location, $short_description = false, $day_set = '',
         $output .= '</td>';
         $output .= '<td>';
         $output .= '<h3 style="margin-top:0;">' . $row['Exhibit'] . '</h3>';
-        $output .= $row['Presenters'];
+        $output .= $makerList;
         $output .= '<tr><td colspan="2"><div style="border-bottom:2px solid #ccc;"></div></td></tr>';
         $output .= '</td>';
         $output .= '</tr>';

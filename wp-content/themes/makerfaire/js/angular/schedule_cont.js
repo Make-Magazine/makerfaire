@@ -100,7 +100,6 @@ scheduleApp.controller('scheduleCtrl', ['$scope', '$sce', '$filter', '$http', fu
                     angular.forEach($scope.schedules, function (schedule) {
                         defDOW = $filter('date')(schedule.time_start, "EEEE, MMMM d");
                         dateList.push({ startDt: schedule.time_start, dow: defDOW });
-
                         var categories = schedule.category;
                         if (categories != null) {
                             var catArray = categories.split(",");
@@ -110,6 +109,7 @@ scheduleApp.controller('scheduleCtrl', ['$scope', '$sce', '$filter', '$http', fu
                             });
                         }
                     });
+
                     $scope.tags = catList;
                     $scope.dates = dateList.sort();
                 }, function errorCallback(error) {
@@ -152,14 +152,14 @@ scheduleApp.controller('scheduleCtrl', ['$scope', '$sce', '$filter', '$http', fu
 
             var stage = $scope.schedSearch.nicename;
             if (stage !== '') {
-                builtURL = builtURL + '&stage=' + stage;
+                // encodeURIComponent fixes this for stages with ampersands
+                builtURL = builtURL + '&stage=' + encodeURIComponent(stage);
             }
 
             var textsearch = jQuery('#mtm-search-input').val();
             if (textsearch !== '') {
                 builtURL = builtURL + '&text=' + textsearch;
             }
-
             jQuery("#printSchedule").attr("src", encodeURI(builtURL));
         }
         $scope.$watch('schedSearch.type', function (newV) {

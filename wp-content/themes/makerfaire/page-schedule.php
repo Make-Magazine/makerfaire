@@ -54,7 +54,7 @@ if ($schedule_ids_trimmed && $schedule_ids_trimmed != '') { //display the new sc
                 <?php endwhile; ?>
             <?php endif; ?>
 
-            <div>
+            <div style="position:relative;">
                 <div class="mtm-filter-wrap mtm-search" ng-show="showSchedules">
                     <div class="search-wrapper"> <!-- Search Box -->
                         <input ng-model="schedSearch.$" id="mtm-search-input" class="form-control" placeholder="<?php _e("Enter your search", 'makerfaire') ?>" type="text">
@@ -246,29 +246,30 @@ if ($schedule_ids_trimmed && $schedule_ids_trimmed != '') { //display the new sc
                         <?php } ?>
                     </div>
 
-                    <div class="calendar-wrapper" style="display:none">
-                        <form class="calendar" method="post" action="/wp-content/themes/makerfaire/download-ics.php">
-                            <input type="hidden" name="forms2use" id="forms2use" value="<?php echo $schedule_ids_trimmed; ?>" />
-                            <input type="hidden" name="filter_type" value="{{schedSearch.type}}">
-                            <input type="hidden" name="filter_topic" value="{{schedSearch.category}}">
-                            <input type="hidden" name="filter_stage" value="{{schedSearch.nicename}}">
-                            <input type="hidden" name="filter_text" value="{{schedSearch.$}}">
-                            <input type="hidden" name="parent_slug" value="<?php echo $parent_slug; ?>">
+                </div>
+                <div class="calendar-wrapper" ng-show="showSchedules">
+                    <form class="calendar" method="post" action="/wp-content/themes/makerfaire/download-ics.php">
+                        <input type="hidden" name="formName" id="formName" value="BA24" />
+                        <input type="hidden" name="forms2use" id="forms2use" value="<?php echo $schedule_ids_trimmed; ?>" />
+                        <input type="hidden" name="filter_type" value="{{schedSearch.type}}">
+                        <input type="hidden" name="filter_topic" value="{{schedSearch.category}}">
+                        <input type="hidden" name="filter_stage" value="{{schedSearch.nicename}}">
+                        <input type="hidden" name="filter_text" value="{{schedSearch.$}}">
+                        <input type="hidden" name="filter_day" value="{{filterdow}}">
+                        <input type="hidden" name="parent_slug" value="<?php echo $parent_slug; ?>">
 
-                            <span class="calendar-btn">
-                                <i class="fas fa-calendar"></i>
-                                <input type="submit" value="Download Filtered Calendar">
-                            </span>
+                        <span class="calendar-btn">
+                            <i class="fas fa-calendar" title="Download ICS Calendar" onclick="getElementById('icsBtn').click()"></i>
+                            <input type="submit" id="icsBtn" style="display:none;" value="Download Filtered Calendar">
+                        </span>
 
-                        </form>
+                    </form>
 
-                        <a class="calendar" style="cursor:pointer;" onclick="window.frames['printSchedule'].focus();window.frames['printSchedule'].print();printScheduleEvent();event.preventDefault();">
-                            <span class="calendar-btn">
-                                <i class="fas fa-print"></i>
-                                Print filtered schedule
-                            </span>
-                        </a>
-                    </div>
+                    <a class="calendar" style="cursor:pointer;" onclick="window.frames['printSchedule'].focus();window.frames['printSchedule'].print();printScheduleEvent();event.preventDefault();">
+                        <span class="calendar-btn">
+                            <i class="fas fa-print" title="Download Schedule"></i>
+                        </span>
+                    </a>
                 </div>
             </div>
 
@@ -338,7 +339,7 @@ if ($schedule_ids_trimmed && $schedule_ids_trimmed != '') { //display the new sc
                                 <h2 style="text-align:center">{{schedule.day}}</h2>
                             </div>
                             <div ng-show="schedule.hour !== filteredschedule[$index - 1].hour">
-                                <h3>{{schedule.hour}}</h3>
+                                <h3 class="sched-hour">{{schedule.hour}}</h3>
                             </div>
                             <!-- Show Day and hourly time -->
                             <div class="sched-row">
@@ -404,6 +405,7 @@ if ($schedule_ids_trimmed && $schedule_ids_trimmed != '') { //display the new sc
                         </div>
                     </div><!-- .sched-body -->
                     <div class="load-trigger"></div>
+
                     <div class="additionalPresentions">
                         <?php
                         global $acf_blocks;
@@ -430,6 +432,7 @@ if ($schedule_ids_trimmed && $schedule_ids_trimmed != '') { //display the new sc
             </div>
         </div>
     </div>
+    <iframe src="/stage-schedule/?faire=<?php echo $faire; ?>&orderBy=time&qr=true" style="display:none;" id="printSchedule" name="printSchedule"></iframe>
 
 <?php
 } else { //display what is in content
@@ -469,6 +472,5 @@ if ($schedule_ids_trimmed && $schedule_ids_trimmed != '') { //display the new sc
 }
 ?>
 
-<iframe src="/stage-schedule/?faire=<?php echo $faire; ?>&orderBy=time&qr=true" style="display:none;" id="printSchedule" name="printSchedule"></iframe>
 
 <?php get_footer(); ?>
