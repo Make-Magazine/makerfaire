@@ -245,8 +245,11 @@ function set_entry_status($entry, $form) {
       //Handle acceptance status changes
       if ($is_acceptance_status_changed) {
         if ($acceptance_status_change == 'Accepted' || $acceptance_status_change == 'Interested') {
-          //trigger an action
-          entry_accepted_cb($entry);
+          //trigger an action (this is for interst form/master form)
+          //entry_accepted_cb($entry);
+          
+          //generate EB tickets
+          genEBtickets($entry_id);
 
           /*
            * If the status is accepted, trigger a cron job to generate EventBrite Tickets.
