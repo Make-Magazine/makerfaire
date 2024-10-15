@@ -19,7 +19,6 @@ $filter_type = (isset($_GET['type']) ? strtolower($_GET['type']) : '');
 $filter_topic = (isset($_GET['topic']) ? $_GET['topic'] : '');
 $filter_stage = (isset($_GET['stage']) ? urldecode($_GET['stage']) : '');
 $filter_text = (isset($_GET['text']) ? urldecode($_GET['text']) : '');
-$print = (isset($_GET['print']) ? urldecode($_GET['print']) : false);
 
 if (!empty($location))
     $term = get_term_by('name', $location, 'location');
@@ -67,13 +66,7 @@ $schedList = get_schedule_list($location, $short_description, $day, $faire);
         }
         echo $schedList;
         if ($qr != '') {
-            ?> <img src="/wp-content/themes/makerfaire/img/qrcode-schedule.jpg" class="qr-code-print" /> <?php }
-        if ($print == true) {  ?>
-            <script type="text/javascript">
-                window.onload = function() {
-                    window.print();
-                };
-            </script>
+            ?> <img src="/wp-content/themes/makerfaire/img/qrcode-schedule.jpg" class="qr-code-print" /> 
         <?php } ?>
     </body>
 </html>
