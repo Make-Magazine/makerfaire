@@ -175,18 +175,27 @@ function genEBtickets($entryID, $testing=FALSE) {
     //do not call eventbrite on local!!!
     if (DB_HOST == 'localhost' || $testing) {
       if($testing){
-        echo 'you are NOT generating actual tickets';
-      }  
-      echo ('for entry ' . $entryID .
+        echo 'you are NOT generating actual tickets - '.
+        'for entry ' . $entryID .
         '|set ent_type = ' . $ent_type .
         '|calculated entry Level = ' . $entLevel . ' ' .
         '|Generating ' . $accessCode .
         '|ticketID =' . $tck_row->eventID .
         '|EventID =' . $tck_row->ticketID .
         '|quantity ' . $tck_row->qty .
-        '|hidden ' . $tck_row->hidden) . '<br/>';
-
-      error_log(print_r($args, TRUE));
+        '|hidden ' . $tck_row->hidden . '<br/>';
+      }else{
+        error_log('you are NOT generating actual tickets - ' .
+        'for entry ' . $entryID .
+        '|set ent_type = ' . $ent_type .
+        '|calculated entry Level = ' . $entLevel . ' ' .
+        '|Generating ' . $accessCode .
+        '|ticketID =' . $tck_row->eventID .
+        '|EventID =' . $tck_row->ticketID .
+        '|quantity ' . $tck_row->qty .
+        '|hidden ' . $tck_row->hidden);
+        //error_log(print_r($args, TRUE));
+      }        
     } else {
       //call eventbrite to create access code    
       $access_codes = $eventbrite->post('/organizations/' . EB_ORG . '/discounts/', $args);
