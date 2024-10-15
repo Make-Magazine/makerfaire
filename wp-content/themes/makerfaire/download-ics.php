@@ -95,8 +95,6 @@ foreach ($schedules['schedule'] as $schedule) {
     }
 }
 
-
 $event = new ICS(array('location' => 'MakerFaire'));
 $output = $event->buildCal($ics);
 echo $output;
-

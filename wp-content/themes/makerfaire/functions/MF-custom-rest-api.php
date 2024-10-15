@@ -617,6 +617,7 @@ order by start_dt, end_dt;";
 
         //set stage name
         $stage = ($row->nicename != '' ? $row->nicename : $row->subarea);
+        
         // only include in the schedule if the schedtype is not workshop
         if($type == "workshop"){
             continue;
