@@ -530,11 +530,8 @@ order by start_dt, end_dt;";
         $maker_name = $row->maker_fname . ($row->maker_lname!=''?' '.$row->maker_lname:'');
         $group_name = $row->group_name; 
         $presenter_list = unserialize($row->presenter_list);
-        if($row->entry_id==76952){
-            //echo 'maker_name='.$maker_name.'<br/>';
-            //echo 'group_name='.$group_name.'<br/>';
-            //echo 'presenter_list='.$presenter_list.'<br/>';
-        }
+      
+        //if presenter list is set, use this instead of the maker name
         if(is_array($presenter_list)){         
             $maker_name = implode(", ", $presenter_list);
         }        
