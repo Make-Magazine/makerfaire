@@ -5,12 +5,15 @@
               <ul class="nav nav-list tree">
                 <li><a href="#canned">Canned Rpts</a></li>                
                 <li><a href="#reports/change">Entry Change Rpt</a></li>                
-                <li><a href="#reports/location">Schedule Rpt</a></li>                                
+                <li><a href="#reports/schedule">Schedule Rpt</a></li>                                
+                <li><a href="#reports/lookup">LookUp Report</a></li>
                 <li><a href="#reports/notes">Notes Report</a></li>
+                <li><a href="#reports/tickets">Tickets Report</a></li>
+                
                 <!--<li><a href="#reports/drill">Resource Drill Down</a></li>-->                
                 <!--<li><a href="#ent2resources/all">Entry 2 Resource</a></li>-->
                 <!--<li><a href="#ent2resources/sponsor">Sponsor Entry2Resource</a></li>-->
-                <li><a href="#reports/tasksComp">Tasks Completed</a></li>
+                <!--<li><a href="#reports/tasksComp">Tasks Completed</a></li>-->
                 <li><a href="/wp-admin/admin.php?page=mf_fsp_gsp">Download FSP/GSP</a></li>  
                 <li><a href="/wp-admin/admin.php?page=mf_fairesign">Download Signs and Table tags</a></li>                
                 <li><a href="#reports/build">Build your own Rpt</a></li>

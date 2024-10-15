@@ -36,6 +36,10 @@
         </div>
       </div>
     </div>
+    
+    <div ng-if="reports.subRoute=='lookup'">      
+      <button ng-click="export('pdf')">Export Sorted PDF</button>
+    </div> 
     <div ng-if="reports.subRoute!='drill'">
       <div class="table-responsive">
         <div ui-grid="gridOptions" ui-grid-exporter  ui-grid-auto-resize  class="grid">

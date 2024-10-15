@@ -50,6 +50,8 @@ if ($type != '') {
       sponsorOrderRpt($table, $faire);
    } elseif ($type == 'notesRpt') {
       notesRpt($table, $faire);
+   } elseif ($type == 'ticketsRpt') {
+      ticketsRpt($faire);
    } else {
       invalidRequest('Invalid Request type');
    }
@@ -119,10 +121,10 @@ function cannedRpt() {
    $data['columnDefs'][] = array('field' => 'entry_id', 'displayName' => $entryIDLabel, 'displayOrder' => $entryIDorder);
 
    $visible = $dispFormID;
-   if($dispFormID){
+   if ($dispFormID) {
       $data['columnDefs'][] = array('field' => 'form_id', 'visible' => $visible, 'displayOrder' => $formIDorder, 'width' => '*');
    }
-   
+
    if ($dispFormType) {
       $data['columnDefs'][] = array('field' => 'form_type', 'displayName' => $formTypeLabel, 'displayOrder' => $formTypeorder, 'width' => '100');
    }
@@ -215,7 +217,7 @@ function cannedRpt() {
 
    $entries = $wpdb->get_results($sql, ARRAY_A);
    $entryData = array();
-   
+
    //loop thru entries
    foreach ($entries as $entry) {
       $lead_id = $entry['lead_id'];
@@ -377,7 +379,7 @@ function cannedRpt() {
             $writeEntry = TRUE;
             //pull rmt data and location information
             if (!empty($rmtData)) {
-               $rmtRetData = pullRmtData($rmtData, $lead_id, $useFormSC);               
+               $rmtRetData = pullRmtData($rmtData, $lead_id, $useFormSC);
                //if the indicator is false, only write the entry id rmt data is set
                if (!$rtnIfRMTempty && empty($rmtRetData['data'])) {
                   $writeEntry = FALSE;
@@ -388,12 +390,12 @@ function cannedRpt() {
 
             if ($location) {
                $locRetData = pullLocData($lead_id);
-             
+
                if ($placedOnly && empty($locRetData['data'])) {
                   $writeEntry = FALSE;
-               }else{
-                  $fieldData = array_merge($fieldData, $locRetData['data']);               
-               }              
+               } else {
+                  $fieldData = array_merge($fieldData, $locRetData['data']);
+               }
             }
             if ($tickets) {
                $tickRetData = pullTickData($lead_id, $useFormSC, $ticketsOrder);
@@ -426,43 +428,43 @@ function cannedRpt() {
       $areaSelect    = array();
       $subAreaSelect = array();
       //figure out the dropdown filters for area/subarea
-      foreach($entryData as $edata){         
-         if($edata['area']==''){
+      foreach ($entryData as $edata) {
+         if ($edata['area'] == '') {
             continue;
          }
          //area
-         $areaKey = array_search($edata['area'], array_column($areaSelect, 'value'));                  
-         if($areaKey===FALSE){         
-            $areaSelect[]     = array('value'=>$edata['area'], 'label'=>$edata['area']);
+         $areaKey = array_search($edata['area'], array_column($areaSelect, 'value'));
+         if ($areaKey === FALSE) {
+            $areaSelect[]     = array('value' => $edata['area'], 'label' => $edata['area']);
          }
 
          //subarea
-         $subAreaKey = array_search($edata['subarea'], array_column($subAreaSelect, 'value'));         
-         if($subAreaKey===FALSE){                   
-            $subAreaSelect[]  =  array('value'=>$edata['subarea'], 'label'=>$edata['subarea']);
+         $subAreaKey = array_search($edata['subarea'], array_column($subAreaSelect, 'value'));
+         if ($subAreaKey === FALSE) {
+            $subAreaSelect[]  =  array('value' => $edata['subarea'], 'label' => $edata['subarea']);
          }
       }
       //sort by value
       array_multisort(array_column($areaSelect, 'value'), SORT_ASC, $areaSelect);
       array_multisort(array_column($subAreaSelect, 'value'), SORT_ASC, $subAreaSelect);
-      
-      $data['columnDefs']['area'] = array(         
-         'field' => 'area', 
-         'width' => '100', 
-         'displayName' => ($useFormSC ? 'A' : 'Area'), 
-         'displayOrder' => $locationOrder,         
+
+      $data['columnDefs']['area'] = array(
+         'field' => 'area',
+         'width' => '100',
+         'displayName' => ($useFormSC ? 'A' : 'Area'),
+         'displayOrder' => $locationOrder,
          'filter' => array('selectOptions' => $areaSelect),
          'placeholder' => 'Select'
       );
       $data['columnDefs']['subarea'] = array(
-         'field' => 'subarea', 
-         'width' => '100', 
-         'displayName' => ($useFormSC ? 'SUBAREA' : 'Subarea'), 
+         'field' => 'subarea',
+         'width' => '100',
+         'displayName' => ($useFormSC ? 'SUBAREA' : 'Subarea'),
          'displayOrder' => $locationOrder + 1,
          'filter' => array('selectOptions' => $subAreaSelect),
          'placeholder' => 'Select'
       );
-      $data['columnDefs']['location'] = array('field' => 'location', 'width' => '100', 'displayName' => ($useFormSC ? 'LOC' : 'Location'), 'displayOrder' => $locationOrder + 2);      
+      $data['columnDefs']['location'] = array('field' => 'location', 'width' => '100', 'displayName' => ($useFormSC ? 'LOC' : 'Location'), 'displayOrder' => $locationOrder + 2);
    }
    /*
     * after we have pulled data from database
@@ -585,8 +587,8 @@ function pullRmtData($rmtData, $entryID, $useFormSC) {
                      array(
                         'field' => 'res_' . str_replace('.', '_', $resource['resource_id']),
                         'displayName' => $resource['type'],
-                        'displayOrder' => $displayOrder,        
-                        'type'=>'string',                
+                        'displayOrder' => $displayOrder,
+                        'type' => 'string',
                         'sortingAlgorithm' => 'numeric',
                         'aggregationType' => 'uiGridConstants.aggregationTypes.sum',
                         'width' => "100"
@@ -595,18 +597,18 @@ function pullRmtData($rmtData, $entryID, $useFormSC) {
                   $return['data']['res_' . $resource['resource_id']] = $value;
                }
             }
-         }         
+         }
 
          //set return data and column definitions         
          if (!$columns) {
             $return['colDefs']['res_' . $selRMT->id] = array(
                'field' => 'res_' . str_replace('.', '_', $selRMT->id),
-               'displayName'  => $selRMT->value,               
-               'displayOrder' => $displayOrder,               
-               'type'         => ($aggregated ? 'text':'number'),
+               'displayName'  => $selRMT->value,
+               'displayOrder' => $displayOrder,
+               'type'         => ($aggregated ? 'text' : 'number'),
                'width'        => (isset($selRMT->width) ? $selRMT->width : '*')
             );
-            
+
             $return['data']['res_' . $selRMT->id] = implode("\n", $entryValue);  //separate each resource with a line break in the csv file
          }
 
@@ -753,7 +755,7 @@ function pullRmtData($rmtData, $entryID, $useFormSC) {
 
 /* Pull Location information */
 function pullLocData($entryID, $useFormSC = false, $locationOrder = 30) {
-   global $wpdb;   
+   global $wpdb;
    //global $useFormSC;
    $return = array();
    $return['data'] = array();
@@ -770,7 +772,7 @@ function pullLocData($entryID, $useFormSC = false, $locationOrder = 30) {
             where       location.entry_id   = $entryID
             and subarea.id          = location.subarea_id
             and area.id             = subarea.area_id
-            and (select start_dt from wp_mf_schedule where location.id=wp_mf_schedule.location_id) is NULL ";      
+            and (select start_dt from wp_mf_schedule where location.id=wp_mf_schedule.location_id) is NULL ";
 
       $results = $wpdb->get_results($sql);
       if ($wpdb->num_rows > 0) {
@@ -800,10 +802,10 @@ function pullLocData($entryID, $useFormSC = false, $locationOrder = 30) {
          $location = implode(' and ', $locArr['location']);
 
          //populate return data         
-         $return['data']['area'] = $area;         
-         $return['data']['subarea'] = $subarea;         
+         $return['data']['area'] = $area;
+         $return['data']['subarea'] = $subarea;
          $return['data']['location'] = $location;
-      }      
+      }
    }
    return $return;
 }
@@ -843,8 +845,8 @@ function pullTickData($entryID, $useFormSC = false, $ticketsOrder = 70) {
    return $return;
 }
 function pullPayDataGeneric($payEntry, $payForm, $paymentOrder = 50) {
-   global $wpdb;   
-   
+   global $wpdb;
+
    $return = array();
    $return['data'] = array();
    $return['colDefs'] = array();
@@ -870,61 +872,65 @@ function pullPayDataGeneric($payEntry, $payForm, $paymentOrder = 50) {
       $date_created   = array();
       $order_entry    = array();
 
-                      
-         foreach ($payresults as $payrow) {
-            //only write the entry id one time.
-            if (!in_array($payrow->lead_id, $order_entry)) {
-               $order_entry[]    = $payrow->lead_id;
-            }
 
-            //only write the trx id one time.
-            if (!in_array($payrow->transaction_id, $transaction_id)) {
-               $transaction_id[] = $payrow->transaction_id;   //payment transaction ID    
-            }
-
-            $order_status[]   = '$' . number_format($payrow->amount, 2) . ' - ' . ucfirst($payrow->transaction_type); //payment amt
-            $date_created[]   = $payrow->date_created;     //payment date                        
-
-            //don't show order details for the refund
-            if ($payrow->transaction_type != 'refund') {
-               //
-
-
-            }
+      foreach ($payresults as $payrow) {
+         //only write the entry id one time.
+         if (!in_array($payrow->lead_id, $order_entry)) {
+            $order_entry[]    = $payrow->lead_id;
          }
 
-         foreach ($payForm['fields'] as $payFields) {
-            if ($payFields['type'] == 'product') {
-               if ($payFields['inputType'] == 'singleproduct') {
-                  //only report if the qty field is set                     
-                  if (isset($payEntry[$payFields['id'] . '.3']) && $payEntry[$payFields['id'] . '.3'] != '') {
-                     $pay_det .= $payEntry[$payFields['id'] . '.3'] . ' : ' . $payEntry[$payFields['id'] . '.1'] . "\n";
-                  }
-               } else {
-                  $pay_det .= (isset($payFields['label']) ? $payFields['label'] : '') . ': ';
-                  $pay_det .= (isset($payEntry[$payFields['id'] . '.2']) ? $payEntry[$payFields['id'] . '.2'] : '') . "\n";
+         //only write the trx id one time.
+         if (!in_array($payrow->transaction_id, $transaction_id)) {
+            $transaction_id[] = $payrow->transaction_id;   //payment transaction ID    
+         }
+
+         $order_status[]   = '$' . number_format($payrow->amount, 2) . ' - ' . ucfirst($payrow->transaction_type); //payment amt
+         $date_created[]   = $payrow->date_created;     //payment date                        
+
+         //don't show order details for the refund
+         if ($payrow->transaction_type != 'refund') {
+            //
+
+
+         }
+      }
+
+      foreach ($payForm['fields'] as $payFields) {
+         if ($payFields['type'] == 'product') {
+            if ($payFields['inputType'] == 'singleproduct') {
+               //only report if the qty field is set                     
+               if (isset($payEntry[$payFields['id'] . '.3']) && $payEntry[$payFields['id'] . '.3'] != '') {
+                  $pay_det .= $payEntry[$payFields['id'] . '.3'] . ' : ' . $payEntry[$payFields['id'] . '.1'] . "\n";
                }
+            } else {
+               $pay_det .= (isset($payFields['label']) ? $payFields['label'] : '') . ': ';
+               $pay_det .= (isset($payEntry[$payFields['id'] . '.2']) ? $payEntry[$payFields['id'] . '.2'] : '') . "\n";
             }
          }
+      }
 
-         //payment details
-         $return['colDefs']['pay_det'] = array('field' => 'pay_det', 'width' => '*', 'displayName' => 'Order Details', 'displayOrder' => $paymentOrder,
-         'cellTemplate'=> '<span ng-bind-html="row.entity[col.field]"></span>');
-         $return['data']['pay_det'] = $pay_det;
+      //payment details
+      $return['colDefs']['pay_det'] = array(
+         'field' => 'pay_det',
+         'width' => '*',
+         'displayName' => 'Order Details',
+         'displayOrder' => $paymentOrder,
+         'cellTemplate' => '<span ng-bind-html="row.entity[col.field]"></span>'
+      );
+      $return['data']['pay_det'] = $pay_det;
 
-         //payment amt and status
-         $return['colDefs']['pay_status'] = array('field' => 'pay_status', 'width' => '*', 'displayName' => 'Order Total/Status', 'displayOrder' => $paymentOrder + 2);
-         $return['data']['pay_status'] = implode("\n", $order_status);
+      //payment amt and status
+      $return['colDefs']['pay_status'] = array('field' => 'pay_status', 'width' => '*', 'displayName' => 'Order Total/Status', 'displayOrder' => $paymentOrder + 2);
+      $return['data']['pay_status'] = implode("\n", $order_status);
 
-         //payment date
-         $return['colDefs']['pay_date'] = array('field' => 'pay_date', 'width' => '200', 'displayName' => 'Order Date', 'displayOrder' => $paymentOrder + 3);
-         $return['data']['pay_date'] = implode("\n", $date_created);
+      //payment date
+      $return['colDefs']['pay_date'] = array('field' => 'pay_date', 'width' => '200', 'displayName' => 'Order Date', 'displayOrder' => $paymentOrder + 3);
+      $return['data']['pay_date'] = implode("\n", $date_created);
 
 
-         //payment transaction ID (from paypal)
-         $return['colDefs']['trx_id'] = array('field' => 'trx_id', 'width' => "*", 'displayName' => 'Stripe trxID', 'displayOrder' => $paymentOrder + 4);
-         $return['data']['trx_id'] = implode("\n", $transaction_id);
-      
+      //payment transaction ID (from paypal)
+      $return['colDefs']['trx_id'] = array('field' => 'trx_id', 'width' => "*", 'displayName' => 'Stripe trxID', 'displayOrder' => $paymentOrder + 4);
+      $return['data']['trx_id'] = implode("\n", $transaction_id);
    }
 
    return $return;
@@ -1054,7 +1060,7 @@ function pullFieldData($entryID, $reqFields) {
    return $return;
 }
 
-function retrieveRptData($table, $faire, $subRoute='', $date_after) {
+function retrieveRptData($table, $faire, $subRoute = '', $date_after) {
    global $wpdb;
    require_once 'table.fields.defs.php';
 
@@ -1109,7 +1115,7 @@ function retrieveRptData($table, $faire, $subRoute='', $date_after) {
          default:
             break;
       }
-      
+
       if (isset($fields['cellTooltip']))
          $vars['cellTooltip'] = $fields['cellTooltip'];
       if (isset($fields['cellTemplate']))
@@ -1122,12 +1128,14 @@ function retrieveRptData($table, $faire, $subRoute='', $date_after) {
          $vars['type'] = $fields['type'];
       if (isset($fields['fieldLabel']))
          $vars['displayName'] = $fields['fieldLabel'];
+      if (isset($fields['sort']))
+         $vars['sort'] = $fields['sort'];
       if (isset($fields['filter']))
          $vars['filter'] = $fields['filter'];
       $vars['name'] = $fields['fieldName'];
       $vars['minWidth'] = '100';
       $vars['width'] = (isset($fields['width']) ? $fields['width'] : '*');
-      
+
       $columnDefs[] = $vars;
    }
 
@@ -1544,7 +1552,9 @@ function pullEntityTasks($formSelect) {
 
    $data['columnDefs'] = array(
       array(
-         "name" => "lead_id", "displayName" => "Entry", "width" => "65",
+         "name" => "lead_id",
+         "displayName" => "Entry",
+         "width" => "65",
          "cellTemplate" => '<div class="ui-grid-cell-contents"><a href="/wp-admin/admin.php?page=gf_entries&view=entry&id={{row.entity.formid}}&lid={{row.entity[col.field]}}" target="_blank"> {{row.entity[col.field]}}</a></div>'
       ),
       array("name" => "formid", "displayName" => "Form ID", "width" => "300", "visible" => false),
@@ -1555,7 +1565,9 @@ function pullEntityTasks($formSelect) {
       array("name" => "required", "displayName" => "Req?", "width" => "70"),
       array("name" => "oformid", "displayName" => "Other Form ID", "width" => "65"),
       array(
-         "name" => "oentry", "displayName" => "Other Entry ID", "width" => "165",
+         "name" => "oentry",
+         "displayName" => "Other Entry ID",
+         "width" => "165",
          "cellTemplate" => '<div class="ui-grid-cell-contents"><a href="/wp-admin/admin.php?page=gf_entries&view=entry&id={{row.entity.oformid}}&lid={{row.entity[col.field]}}" target="_blank"> {{row.entity[col.field]}}</a></div>'
       ),
       array("name" => "not_assigned", "displayName" => "Not Assigned", "width" => "100")
@@ -1696,8 +1708,8 @@ function sponsorOrderRpt($table, $faire) {
       $search_criteria = array('status' => 'active');
       $sorting         = array();
       $paging          = array('offset' => 0, 'page_size' => 999);
-      $total_count     = 0;      
-      
+      $total_count     = 0;
+
       $entries         = GFAPI::get_entries($form['id'], $search_criteria, $sorting, $paging, $total_count);
       foreach ($entries as $entry) {
          $entry_id   = $entry['id'];
@@ -1862,8 +1874,8 @@ function paymentRpt($table, $faire) {
    //set column defs for location if applicable
    $data['columnDefs']['area']      = array('field' => 'area', 'width' => '*', 'displayName' => 'Area', 'displayOrder' => 900);
    $data['columnDefs']['subarea']   = array('field' => 'subarea', 'width' => '*', 'displayName' => 'Subarea', 'displayOrder' => 901);
-   $data['columnDefs']['location']  = array('field' => 'location', 'width' => '*', 'displayName' => 'Location', 'displayOrder' => 902);      
-   
+   $data['columnDefs']['location']  = array('field' => 'location', 'width' => '*', 'displayName' => 'Location', 'displayOrder' => 902);
+
    $data['columnDefs'] = array_values($data['columnDefs']); //returns all the values from the array and indexes the array numerically
    $data['columnDefs'] = orderReturnColumns($data['columnDefs']);
 
@@ -1907,6 +1919,97 @@ function notesRpt($table, $faire) {
          'date_created' => $row->date_created,
          'note' => $row->note,
          'project_name' => $row->project_name
+      );
+   }
+
+   $data['columnDefs'] = array_values($data['columnDefs']); //returns all the values from the array and indexes the array numerically
+   $data['columnDefs'] = orderReturnColumns($data['columnDefs']);
+
+   echo json_encode($data);
+   exit;
+}
+
+function ticketsRpt($faire) {
+   global $wpdb;
+   $data = array();
+   $data['data'] = array();
+
+   //fields to return
+   $data['columnDefs'] = array(
+      array("field" => "area", "displayName" => "Area", "width" => '100', "displayOrder" => 10, "visible" => false),
+      array("field" => "nicename", "displayName" => "SubArea", "width" => '100', "displayOrder" => 20, "visible" => false),
+      array("field" => "entry_id", "displayName" => "Entry Id", "width" => '100', "displayOrder" => 30),
+      array("field" => "title", "displayName" => "Title", "width" => '100', "displayOrder" => 40, 'sort' => array('direction' => 'uiGridConstants.ASC', 'priority' => 1)),
+      array("field" => "entry_type", "displayName" => "Entry Type", "width" => '100', "displayOrder" => 50),
+      array("field" => "calc_type", "displayName" => "Calc Entry Type", "width" => '100', "displayOrder" => 60, "visible" => false),
+      array("field" => "access_code", "displayName" => "Access Code", "width" => '100', "displayOrder" => 70),
+      //array("field" => "hidden", "displayName" => "Shown/Hidden", "width" => '100', "displayOrder" => 80),	
+      array("field" => "ticket_type", "displayName" => "Ticket Type", "width" => '100', "displayOrder" => 90),
+      array("field" => "qty", "displayName" => "Qty", "width" => '100', "displayOrder" => 100),
+      array("field" => "ticket_title", "displayName" => "Title", "width" => '100', "displayOrder" => 110),
+      array("field" => "EB_event_id", "displayName" => "EB event ID", "width" => '100', "displayOrder" => 120)
+   );
+
+   $sql = 'SELECT wp_mf_faire_area.area, wp_mf_faire_subarea.nicename, eb_entry_access_code.entry_id, 
+(select meta_value from wp_gf_entry_meta where wp_gf_entry_meta.entry_id = eb_entry_access_code.entry_id and meta_key="151") as title, 
+(select meta_value from wp_gf_entry_meta where wp_gf_entry_meta.entry_id = eb_entry_access_code.entry_id and meta_key="303") as entry_status, 
+(select group_concat(meta_value) from wp_gf_entry_meta where wp_gf_entry_meta.entry_id = eb_entry_access_code.entry_id and meta_key like "339.%" group by entry_id) as entry_type, 
+(SELECT count(*) FROM `wp_mf_lead_rel` where childID=eb_entry_access_code.entry_id) as showcase_cnt,
+access_code, hidden, ticketID, ticket_type, title as ticket_title, EB_event_id, EBticket_id 
+
+FROM `eb_entry_access_code` 
+left outer join wp_gf_entry on eb_entry_access_code.entry_id = wp_gf_entry.id 
+left outer join eb_eventToTicket on eb_eventToTicket.ID =eb_entry_access_code.EBticket_id 
+left outer join eb_event on eventID = eb_event.id 
+left outer join wp_mf_location on wp_mf_location.entry_id = eb_entry_access_code.entry_id 
+left outer join wp_mf_schedule on wp_mf_location.ID=wp_mf_schedule.location_id 
+left outer join wp_mf_faire_subarea on wp_mf_location.subarea_id = wp_mf_faire_subarea.ID 
+left outer join wp_mf_faire_area on wp_mf_faire_subarea.area_id = wp_mf_faire_area.ID 
+
+where wp_gf_entry.status="active" and wp_mf_schedule.start_dt is NULL 
+and hidden = 0
+and eb_event.wp_mf_faire_id = ' . $faire;
+
+   $result = $wpdb->get_results($sql);
+
+   foreach ($result as $row) {
+      $entLevel = '';
+      $ent_type = $row->entry_type;
+      //setting entry type based on who gets the most tickets  
+      if (stripos($ent_type, 'sponsor') !== false && stripos($ent_type, 'startup') === false) { //not startup sponsor
+         $entLevel = 'sponsor'; //sponsor (not startup)
+      } elseif (stripos($ent_type, 'exhibit') !== false) {
+         $entLevel = 'exhibit';
+      } elseif (stripos($ent_type, 'startup') !== false) {
+         $entLevel = 'startup sponsor';
+      } elseif (stripos($ent_type, 'workshop') !== false) {
+         $entLevel = 'workshop';
+      } elseif (stripos($ent_type, 'present') !== false) { //Presenters 
+         $entLevel = 'presenter';
+      } elseif (stripos($ent_type, 'perform') !== false) { //not startup sponsor 
+         $entLevel = 'performer';
+      }
+
+      if ($row->showcase_cnt && $row->showcase_cnt > 0) {
+         $entLevel = 'showcase';
+      }
+
+      $qty = $wpdb->get_var('select qty from eb_ticket_type where event_ticket_id = ' . $row->EBticket_id . ' and entLevel = "' . $entLevel . '"');
+
+      //set returned data
+      $data['data'][] = array(
+         "area"         => $row->area,
+         "nicename"     => $row->nicename,
+         "entry_id"     => $row->entry_id,
+         "title"        => $row->title,
+         "entry_type"   => $row->entry_type,
+         "calc_type"    => $entLevel,
+         "access_code"  => $row->access_code,
+         //"hidden"       => ($row->hidden==0?'Shown':'Hidden'),
+         "ticket_type"  => $row->ticket_type,
+         "qty"          => $qty,
+         "ticket_title" => $row->ticket_title,
+         "EB_event_id"  => $row->EB_event_id,
       );
    }
 
