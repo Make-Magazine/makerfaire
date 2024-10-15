@@ -1,12 +1,10 @@
 <?php
 /* Displays faire sign code */
-
 function build_faire_signs() {
     require_once(get_template_directory() . '/adminPages/faire_signs.php');
 }
 
 /* This is for the Export all Fields button in the Entry Summary */
-
 function createCSVfile() {
     // create CSV for individual entries come as a GET request, the mass entry list is a POST request
     $form_id = (isset($_POST['exportForm']) && $_POST['exportForm'] != '' ? $_POST['exportForm'] : '');
@@ -337,7 +335,6 @@ function cronCreateEntList() {
 add_action('create_mf_signs', 'createEntList', 10, 2);
 function createEntList($faire, $type) {
     global $wpdb;
-
     $entList = array();
     if ($type != 'presenter') {
         $sql = "select form_ids from wp_mf_faire where faire='" . $faire . "'";
@@ -374,8 +371,9 @@ function createEntList($faire, $type) {
                               wp_mf_entity entity
 
                       where   schedule.entry_id       = entity.lead_id
-                              AND entity.status       = 'Accepted'
-                              and schedule.faire      = '" . $faire . "' " . " group BY   entity.lead_id";
+                        and type = 'presentation'
+                        AND entity.status       = 'Accepted'
+                        and schedule.faire      = '" . $faire . "' " . " group BY   entity.lead_id";
 
         $results = $wpdb->get_results($select_query);
         foreach ($results as $entry) {
