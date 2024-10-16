@@ -21,6 +21,8 @@ if (!empty($location))
     $term = get_term_by('name', $location, 'location');
 
 $schedList = get_schedule_list($location, $short_description, $day, $faire);
+
+$faire_name = $wpdb->get_var("select faire_name from wp_mf_faire where faire='".$faire."'");
 ?>
 <!DOCTYPE html>
 <!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
@@ -34,10 +36,12 @@ $schedList = get_schedule_list($location, $short_description, $day, $faire);
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width">
         <style>
-            body { font-family: 'Benton Sans', Helvetica, sans-serif; }
+            
+            body { font-family: 'Benton Sans', Helvetica, sans-serif;     width: 95%;
+                margin: 20px auto;}
             a { text-decoration:none; color:#000; }
             h1, h2, h3, h4 { margin:5px 0 0; }
-            .sumome-react-wysiwyg-popup-container, #wpadminbar { display: none !important; } 
+            
             .qr-code-print {
                 position:fixed;
                 z-index:999;
@@ -46,9 +50,21 @@ $schedList = get_schedule_list($location, $short_description, $day, $faire);
                 display:block;
                 width:100px;
             }
+            @media print{
+                @page {
+                    size: portrait;
+                    
+                    @top-right {
+                        content: "Page " counter(pageNumber);
+                    }
+                }
+            }
+
         </style>
     </head>
     <body>
+        <h1>Schedule for <?php echo $faire_name; ?></h1>
+        
         <?php
         if ($filter_type != '' || $filter_topic != '' || $filter_stage != '' || $filter_text != '') {
             echo '<h2>Filtered for:</h2><br/>';
@@ -61,6 +77,7 @@ $schedList = get_schedule_list($location, $short_description, $day, $faire);
             if ($filter_text != '' && $filter_text != 'undefined')
                 echo 'Text: '. ucwords($filter_text) . '<br/>';
         }
+        echo '<hr/>';
         echo $schedList;
         if ($qr != '') {
             ?> <img src="/wp-content/themes/makerfaire/img/qrcode-schedule.jpg" class="qr-code-print" /> 
@@ -198,11 +215,12 @@ function get_schedule_list($location, $short_description = false, $day_set = '',
                     $output .= '<div style="page-break-after: always;"></div>';
                 $dayOfWeek = $row['Day'];
 
-                $output .= '<div style="clear:both;width:100%;height:32px;"><h1 style="font-size:2.2em; margin:31px 0 0; max-width:75%;float:left">' . $dayOfWeek . '</h1>
-                                <h2 style="float:right;margin-top:31px;"><img src="/wp-content/uploads/2016/01/mf_logo.jpg" style="width:200px;" alt="" ></h2>
+                $output .= '<div style="clear:both;width:100%;height:32px;">
+                                <h2 style="font-size:2.2em; max-width:75%;float:left">' . $dayOfWeek . '</h2>                                
                                 <p></p>
                                 <p></p>
-                                <p></p></div><br /><br /><br />';
+                                <p></p>
+                            </div>';
             }
         } else {
             if ($stage != $row['nicename'] || $dayOfWeek != $row['Day']) {
@@ -212,8 +230,8 @@ function get_schedule_list($location, $short_description = false, $day_set = '',
                 $stage = $row['nicename'];
                 $dayOfWeek = $row['Day'];
 
-                $output .= '<div style="clear:both;width:100%;height:32px;"><h1 style="font-size:2.2em; margin:31px 0 0; max-width:75%;float:left">' . $stage . ' <small>(' . $row['area'] . ')</small> </h1>
-                                <h2 style="float:right;margin-top:31px;margin-bottom:10px;"><img src="/wp-content/uploads/2016/01/mf_logo.jpg" style="width:200px;" alt="" ></h2>
+                $output .= '<div style="clear:both;width:100%;height:2em;">
+                                <h1 style="font-size:2.0em; max-width:75%;float:left">' . $stage . '</h1>                                
                                 <p></p>
                                 <p></p>
                                 <p></p>';
@@ -228,7 +246,7 @@ function get_schedule_list($location, $short_description = false, $day_set = '',
 
         $output .= '<h2 style="font-size:.9em; color:#333; margin-top:3px;">' . $row['Start Time'] . ' &mdash; ' . $row['End Time'] . '</h2>';
         if ($orderBy == 'time') {
-            $output .= $stage . ' (' . $row['area'] . ')';
+            $output .= $stage;// . ' (' . $row['area'] . ')';
         }
         $output .= '</td>';
         $output .= '<td>';

@@ -267,7 +267,7 @@ if ($schedule_ids_trimmed && $schedule_ids_trimmed != '') { //display the new sc
 
                     <a class="calendar" style="cursor:pointer;" onclick="window.frames['printSchedule'].focus();window.frames['printSchedule'].print();printScheduleEvent();event.preventDefault();">
                         <span class="calendar-btn">
-                            <i class="fas fa-print" title="Download Schedule"></i>
+                            <i class="fas fa-print" title="Print Schedule"></i>
                         </span>
                     </a>
                 </div>
