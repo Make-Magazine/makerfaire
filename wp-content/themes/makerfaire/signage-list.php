@@ -53,7 +53,7 @@ $faire_name = $wpdb->get_var("select faire_name from wp_mf_faire where faire='".
             @media print{
                 @page {
                     size: portrait;
-                    
+                    margin: 1in; /* 1 inch margin for all sides */
                     @top-right {
                         content: "Page " counter(pageNumber);
                     }
