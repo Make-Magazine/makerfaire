@@ -81,7 +81,6 @@ rmgControllers.controller('cannedCtrl', ['$scope', '$routeParams', '$http','$int
     exporterFieldCallback: function( grid, row, col, input ) {
 
       if(("editDropdownOptionsArray" in col.colDef)){        
-        //console.log(col);
         //convert gridArray to usable hash
         var optionsHash =  {};
         var gridArray = col.colDef.editDropdownOptionsArray;

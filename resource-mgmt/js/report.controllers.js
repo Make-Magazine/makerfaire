@@ -9,10 +9,10 @@ rmgControllers.controller('reportsCtrl', ['$scope', '$routeParams', '$http', '$i
       $scope.reports.selectedFields = {};
       $scope.msg = {};
       $scope.sortField = '';
-      $scope.sortChanged = function ( grid, sortColumns ) {      
-         var sortField = []; 
+      $scope.sortChanged = function ( grid, sortColumns ) {         
+         var sortField = [];
          angular.forEach(sortColumns, function (value, key) { 
-            if(value.displayName !== undefined){
+            if(value !== undefined && value.displayName !== undefined){
                sortField.push(value.displayName);
             }                   
          });
@@ -39,7 +39,13 @@ rmgControllers.controller('reportsCtrl', ['$scope', '$routeParams', '$http', '$i
          },
          
          exporterPdfHeader: function ( currentPage, pageCount ) {
-            return { text: 'Maker Lookup By '+$scope.sortField, alignment: 'center',  style: 'headerStyle' };
+            if($scope.reports.subRoute =='lookup'){
+               return { text: 'Maker Lookup By '+$scope.sortField, alignment: 'center',  style: 'headerStyle' };
+            }
+            if($scope.reports.subRoute =='schedule'){
+              return { text: 'Schedule By '+$scope.sortField, alignment: 'center',  style: 'headerStyle' };
+            }
+            return;
          },
          exporterPdfCustomFormatter: function (docDefinition) {
             docDefinition.styles.headerStyle = {
@@ -53,6 +59,7 @@ rmgControllers.controller('reportsCtrl', ['$scope', '$routeParams', '$http', '$i
          
          exporterPdfDefaultStyle: {fontSize: 9},         
          exporterPdfTableHeaderStyle: {fontSize: 10, bold: true},
+         exporterPdfTableStyle: {margin: [-20, 10, -10, -20]},    //need this to center grid
          exporterPdfOrientation: 'landscape',
          exporterPdfPageSize: 'LETTER',
          
@@ -67,14 +74,13 @@ rmgControllers.controller('reportsCtrl', ['$scope', '$routeParams', '$http', '$i
          exporterCsvLinkElement: angular.element(document.querySelectorAll(".custom-csv-link-location")),
          exporterFieldCallback: function (grid, row, col, input) {
             if (("editDropdownOptionsArray" in col.colDef)) {
-               //console.log(col);
                //convert gridArray to usable hash
                var optionsHash = {};
                var gridArray = col.colDef.editDropdownOptionsArray;
                for (var i = 0; i < gridArray.length; i++) {
                   optionsHash[gridArray[i].id] = gridArray[i].fkey;
                }
-               //console.log('exporterFieldCallback: input - '+input + ' hash value='+optionsHash[input]);
+               
                if (!input) {
                   return '';
                } else {

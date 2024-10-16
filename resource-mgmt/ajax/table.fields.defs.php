@@ -111,26 +111,35 @@ if ($subRoute === 'change') {
  */
 $tableFields['wp_mf_location']['colDefs'][] = array('fieldName' => 'area',     'filterType'=>'dropdown', 'width' => 100,
 'sort' =>array("direction" => "uiGridConstants.ASC", "priority"=> 1 ),
-    'fkeySQL' => "select ID, area as field from wp_mf_faire_area".($faire!=''?' where faire_id='.$faire:'')." order by area asc");
+'fkeySQL' => "select ID, area as field from wp_mf_faire_area".($faire!=''?' where faire_id='.$faire:'')." order by area asc");
 $tableFields['wp_mf_location']['colDefs'][] = array('fieldName' => 'nicename',   'filterType' => 'text', 'fieldLabel' => 'Subarea', 'width' => 100,
-'sort' =>array("direction" => "uiGridConstants.ASC", "priority"=> 2 ) );    
-$tableFields['wp_mf_location']['colDefs'][] = array('fieldName' => 'location', 'filterType' => 'text',
-'fieldLabel' => 'Location', 'sort' =>array("direction" => "uiGridConstants.ASC", "priority"=> 3 ));
+'sort' =>array("direction" => "uiGridConstants.ASC", "priority"=> 2 )
+ );    
+
+if ($subRoute === 'lookup'){
+  $tableFields['wp_mf_location']['colDefs'][] = array('fieldName' => 'location', 'filterType' => 'text', 'fieldLabel' => 'Location', 'sort' =>array("direction" => "uiGridConstants.ASC", "priority"=> 3 ));
+}
+
 $tableFields['wp_mf_location']['colDefs'][] = array('fieldName' => 'entry_id', 'filterType' => 'text', 'width'=> 85,
 'fieldLabel' => 'Entry ID', 'sort' =>array("direction" => "uiGridConstants.ASC", "priority"=> 4 ));
 $tableFields['wp_mf_location']['colDefs'][] = array('fieldName' => 'exName',   'filterType' => 'text', 'fieldLabel' => 'Exhibit Name');
 
 if ($subRoute === 'schedule') {
-  $tableFields['wp_mf_location']['colDefs'][] = array('fieldName' => 'start_dt', 'filterType' => 'text');
-  $tableFields['wp_mf_location']['colDefs'][] = array('fieldName' => 'end_dt',    'filterType'   => 'text');
-  $tableFields['wp_mf_location']['colDefs'][] = array('fieldName' => 'schedType', 'filterType'   => 'text');
+  $tableFields['wp_mf_location']['colDefs'][] = array('fieldName' => 'start_dt', 'fieldLabel' => 'Start', 'filterType' => 'text', 'width'=>110);
+  $tableFields['wp_mf_location']['colDefs'][] = array('fieldName' => 'end_dt',    'fieldLabel' => 'End', 'filterType'   => 'text', 'width'=>110);
+  $tableFields['wp_mf_location']['colDefs'][] = array('fieldName' => 'schedType', 'fieldLabel' => 'Type', 'filterType'   => 'text', 'width'=>90);
+  $tableFields['wp_mf_location']['colDefs'][] = array('fieldName' => 'maker_name', 'fieldLabel' => 'Name', 'filterType'   => 'text', 'width'=>100);
   $tableFields['wp_mf_location']['query'] =
 'SELECT wp_mf_location.location, wp_mf_location.entry_id, wp_mf_location.subarea_id, 
 wp_mf_faire_subarea.subarea, wp_mf_faire_subarea.nicename, wp_mf_faire_subarea.area_id, 
-wp_mf_faire_area.area, wp_mf_schedule.start_dt, wp_mf_schedule.end_dt, wp_mf_schedule.type as schedType, 
+wp_mf_faire_area.area, 	wp_mf_schedule.type as schedType, 
+DATE_FORMAT(wp_mf_schedule.start_dt,"%c-%d-%y %h:%i %p") as start_dt, 
+DATE_FORMAT(wp_mf_schedule.end_dt,"%c-%d-%y %h:%i %p") as end_dt, 
+
 wp_gf_entry.form_id, (SELECT meta_value as value FROM `wp_gf_entry_meta` where meta_key = "151" and 
 wp_gf_entry_meta.entry_id = wp_mf_location.entry_id limit 1) as exName, 
-wp_gf_entry_meta.meta_value as entity_status 
+wp_gf_entry_meta.meta_value as entity_status,
+(select group_concat(meta_value separator " ") from wp_gf_entry_meta where wp_gf_entry_meta.entry_id = wp_mf_location.entry_id and meta_key like "96.%" group by wp_gf_entry_meta.entry_id) as maker_name
 FROM wp_mf_location 
   left outer join wp_mf_faire_subarea on wp_mf_location.subarea_id = wp_mf_faire_subarea.ID 
   left outer join wp_mf_faire_area on wp_mf_faire_subarea.area_id = wp_mf_faire_area.ID 
