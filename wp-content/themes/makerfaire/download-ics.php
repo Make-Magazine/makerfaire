@@ -6,7 +6,7 @@ require_once ($root . '/wp-includes/class-wpdb.php');
 require_once ($root . '/wp-content/themes/makerfaire/classes/ICS.php');
 
 header('Content-Type: text/calendar; charset=utf-8');
-header('Content-Disposition: attachment; filename=invite.ics');
+header('Content-Disposition: attachment; filename=makerfaire-schedule.ics');
 
 //check for any filters
 $formIDs        = (isset($_POST['forms2use']) ? $_POST['forms2use']:'');
