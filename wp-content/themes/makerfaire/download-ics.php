@@ -2,7 +2,7 @@
 // set up database
 $root = $_SERVER['DOCUMENT_ROOT'];
 require_once ($root . '/wp-config.php');
-require_once ($root . '/wp-includes/wp-db.php');
+require_once ($root . '/wp-includes/class-wpdb.php');
 require_once ($root . '/wp-content/themes/makerfaire/classes/ICS.php');
 
 header('Content-Type: text/calendar; charset=utf-8');
@@ -10,14 +10,19 @@ header('Content-Disposition: attachment; filename=invite.ics');
 
 //check for any filters
 $formIDs        = (isset($_POST['forms2use']) ? $_POST['forms2use']:'');
+$formName       = (isset($_POST['formName']) ? $_POST['formName']:'');
 $filter_day     = (isset($_POST['filter_day']) ? strtolower(sanitize_title_for_query($_POST['filter_day'])) : '');
+if(str_contains($filter_day, "-")) {
+    $filter_day = strtok($filter_day, '-');
+}
 $filter_type    = (isset($_POST['filter_type']) ? strtolower($_POST['filter_type']) : '');
 $filter_topic   = (isset($_POST['filter_topic']) ? $_POST['filter_topic'] : '');
 $filter_stage   = (isset($_POST['filter_stage']) ? strtolower(urldecode($_POST['filter_stage'])) : '');
 $filter_text    = (isset($_POST['filter_text']) ? urldecode($_POST['filter_text']) : '');
 
 
-$schedules = getSchedule($formIDs);
+$schedules = getSchedule($formIDs, $formName);
+
 $parent_slug = 'bay-area';
 if (strtolower($parent_slug) === 'bay-area') {
     $location = 'Mare Island 560 Nimitz Ave, Vallejo, CA 94592';
@@ -90,8 +95,6 @@ foreach ($schedules['schedule'] as $schedule) {
     }
 }
 
-
 $event = new ICS(array('location' => 'MakerFaire'));
 $output = $event->buildCal($ics);
 echo $output;
-

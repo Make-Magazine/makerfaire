@@ -101,12 +101,15 @@ h4.featured {
       cursor: pointer; 
    }
 	.calendar-wrapper { 
-		display: none;
-		padding-top: 5px;clear: both;
+		clear: both;
+		position: absolute;
+		right: 0px;
+		bottom: -55px;
 		.calendar-btn {
 			display: flex;
 			align-items: center;
 			gap: 5px;
+			font-size: 15px;
 			.fas { 
 				background: #ea002a;
 				border-radius: 25px;
@@ -118,22 +121,27 @@ h4.featured {
 				color: #fff; 
 			}
 		}
+		a { 
+			text-decoration: none;
+			cursor: pointer;
+		}
 	 }
 	//form.calendar { display: none; }
     .calendar {
 		font-size: 14px;
-		padding: 0px 15px;
+		padding-left: 15px;
 		float: left;
-		color: #fff;
 		&:first-of-type { 
 			margin-top: 3px;
-			padding-left: 10px;
-		 }
-		@media (max-width: 768px) { padding: 0 15px; }
+			padding-left: 20px;
+		}
 		input[type="submit"] {
 			background: transparent;
 			border: none;
 			font-weight: 400;
+			color:rgb(22, 123, 177);
+			font-size: 15px;
+			cursor: pointer;
 			&:hover {
 				text-decoration: underline;
 			}
@@ -278,6 +286,11 @@ h4.featured {
 			text-align: left;
 			.no-results { display: block; }
 			.ng-scope + .no-results { display: none; }
+			.sched-hour {
+				@media (max-width:500px) {
+					font-size: 20px;
+				}
+			}
 			.sched-row {
 				display: flex;
 				margin: 20px 0px;
