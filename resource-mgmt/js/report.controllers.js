@@ -11,8 +11,10 @@ rmgControllers.controller('reportsCtrl', ['$scope', '$routeParams', '$http', '$i
       $scope.sortField = '';
       $scope.sortChanged = function ( grid, sortColumns ) {      
          var sortField = []; 
-         angular.forEach(sortColumns, function (value, key) {        
-            sortField.push(value.displayName);
+         angular.forEach(sortColumns, function (value, key) { 
+            if(value.displayName !== undefined){
+               sortField.push(value.displayName);
+            }                   
          });
          $scope.sortField = sortField.join(", "); // set the default sorting for the PDF header display
        }
@@ -37,9 +39,18 @@ rmgControllers.controller('reportsCtrl', ['$scope', '$routeParams', '$http', '$i
          },
          
          exporterPdfHeader: function ( currentPage, pageCount ) {
-            return { text: 'Maker Lookup By '+$scope.sortField, alignment: 'center' };
+            return { text: 'Maker Lookup By '+$scope.sortField, alignment: 'center',  style: 'headerStyle' };
          },
-       
+         exporterPdfCustomFormatter: function (docDefinition) {
+            docDefinition.styles.headerStyle = {
+              fontSize: 14,
+              bold: true,
+              margin:20,
+              fillColor: '#f0f0f0' // Light gray background
+            };
+            return docDefinition;
+          },
+         
          exporterPdfDefaultStyle: {fontSize: 9},         
          exporterPdfTableHeaderStyle: {fontSize: 10, bold: true},
          exporterPdfOrientation: 'landscape',
