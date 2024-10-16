@@ -2,9 +2,6 @@
 // Template Name: Signage
 //get the URL variables
 
-if(!is_user_logged_in()) {
-	die('You do not have permission to access this page.');
-}
 $location = ( isset($_GET['loc']) ? intval($_GET['loc']) : '' );
 $faire = (isset($_GET['faire']) ? $_GET['faire'] : 'BA24');
 $short_description = (!isset($_GET['description']) ? true : false);
