@@ -103,7 +103,7 @@ function createOutput($entry_id, $pdf) {
    
    //$presenters = "Judy Castro, Terry & Belinda Kilby, Jillian & Jefferey Northrup, Kyrsten Mate & Jon Sarriugarte";
    $presenterHeight = $pdf->GetStringWidth($presenters);
-//$presenters .= '-'.$presenterHeight;
+   //$presenters .= '-'.$presenterHeight;
    if ($presenterHeight > 700) {
       $y1 = 30;
       $y2 = 145;
@@ -115,8 +115,9 @@ function createOutput($entry_id, $pdf) {
       $y2 = 170;
    }
 
-   $x = 38;
-
+   $x = 30;
+   $y1 = 30;
+   $y2 = 145;
 
 
 
@@ -124,37 +125,38 @@ function createOutput($entry_id, $pdf) {
    
 
    //auto adjust the font so the text will fit
-   $x = 49;    // set the starting font size
+   $x = 15;    // set the starting font size
    $pdf->SetFont('Benton Sans', 'B', 49);
 
    /* Cycle thru decreasing the font size until it's width is lower than the max width */
+  /*
    while ($pdf->GetStringWidth($presentation_title) > 600) {
       $x = $x-.1;   // Decrease the variable which holds the font size
       $pdf->SetFont('Benton Sans', 'B', $x);
-   }
-   $lineHeight = $x * 0.2645833333333 * 1.5;
+   }*/
+   $lineHeight = 23;
 
    //Write Presentation title
    $pdf->setTextColor(0);
    
    //top section
-   $pdf->SetXY($x, $y1);
-   $pdf->MultiCell(355.6, $lineHeight, $presentation_title, 0, 'C');
+   $pdf->SetXY(15, $y1);
+   $pdf->MultiCell(400, $lineHeight, $presentation_title, 0, 'C');
    
    //bottom section
-   $pdf->SetXY($x, $y2);
-   $pdf->MultiCell(355.6, $lineHeight, $presentation_title, 0, 'C');
+   $pdf->SetXY(15, $y2);
+   $pdf->MultiCell(400.6, $lineHeight, $presentation_title, 0, 'C');
 
    //Write presenter name
    $pdf->setTextColor(160, 0, 0);
    
    //top section 
-   $pdf->SetXY(38, 195); /* Output the title at the required font size */   
-   $pdf->MultiCell(355.6, $lineHeight, $presenters, 0, 'C');
+   $pdf->SetXY(15, 195); /* Output the title at the required font size */   
+   $pdf->MultiCell(400, $lineHeight, $presenters, 0, 'C');
 
    //bottom section
-   $pdf->SetXY(38, 80);
-   $pdf->MultiCell(355.6, $lineHeight, $presenters, 0, 'C');
+   $pdf->SetXY(15, 80);
+   $pdf->MultiCell(400, $lineHeight, $presenters, 0, 'C');
 }
 
 function filterText($text) {   

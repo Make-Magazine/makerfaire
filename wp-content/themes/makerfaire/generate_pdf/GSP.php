@@ -7,7 +7,7 @@
 //set up database
 $root = $_SERVER['DOCUMENT_ROOT'];
 require_once( $root . '/wp-config.php' );
-require_once( $root . '/wp-includes/wp-db.php' );
+require_once( $root . '/wp-includes/class-wpdb.php' );
 if (!is_user_logged_in())
    auth_redirect();
 
