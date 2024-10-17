@@ -356,9 +356,13 @@ function createEntList($faire, $type) {
 
                 foreach ($results as $entry) {
                     //exclude all but Exhibit, Sponsor or Startup sponsor 
-                    if (stripos($entry->exhibit_type, 'exhibit') === false && stripos($entry->exhibit_type, 'sponsor') ===false) {
-                        //error_log('skipped '.$entry->lead_id.' exhibit type ='.$entry->exhibit_type);                        
-                        continue;
+                    if (stripos($entry->exhibit_type, 'exhibit') === false && 
+                        stripos($entry->exhibit_type, 'sponsor') === false) {
+                        //if this is for tabletags, continue to write show management records
+                        if($type =='tabletags' && stripos($entry->exhibit_type, 'show') === false) {
+                            //error_log('skipped '.$entry->lead_id.' exhibit type ='.$entry->exhibit_type);                        
+                            continue;
+                        }
                     }   
                     $entry_id  = $entry->lead_id;
                     $entList[] = $entry_id;                                                                                                                      

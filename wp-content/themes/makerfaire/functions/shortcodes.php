@@ -53,6 +53,7 @@ function make_rss_func($atts) {
 
 
     $rss = fetch_feed($a['feed']);
+    $maxitems = 10;
     if (!is_wp_error($rss)) {
         $maxitems = $rss->get_item_quantity($a['number']); //gets latest x items, this can be changed to suit your requirements
         $rss_items = $rss->get_items(0, $maxitems);
