@@ -338,8 +338,9 @@ if ($schedule_ids_trimmed && $schedule_ids_trimmed != '') { //display the new sc
                             <div ng-show="schedule.day !== filteredschedule[$index - 1].day">
                                 <h2 class="sched-day" style="text-align:center">{{schedule.day}}</h2>
                             </div>
+                            
                             <div ng-show="schedule.hour !== filteredschedule[$index - 1].hour">
-                                <h3 class="sched-hour">{{schedule.hour}}</h3>
+                                <h3 class="sched-hour">&nbsp;<!--{{schedule.hour}} - {{schedule.hour.add(1, 'hour')}}--></h3>
                             </div>
                             <!-- Show Day and hourly time -->
                             <div class="sched-row">
