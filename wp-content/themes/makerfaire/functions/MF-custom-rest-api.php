@@ -621,9 +621,9 @@ where   entry.status='active'
         $stage = ($row->nicename != '' ? $row->nicename : $row->subarea);
         
         // only include in the schedule if the schedtype is not workshop
-        if($type == "workshop"){
+        /*if($type == "workshop"){
             continue;
-        } 
+        } */
         
         $data['schedule'][] = array(
             'id'            => $row->entry_id,
