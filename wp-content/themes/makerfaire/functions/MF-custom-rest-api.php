@@ -488,6 +488,7 @@ function getSchedule($formIDs, $faireID) {
     $data['schedule'] = array();
     $formIDarr = array_map('intval', explode(",", $formIDs));
    
+
 $query = "SELECT schedule.entry_id,
 	schedule.start_dt as time_start, DAYOFWEEK(schedule.start_dt) as day,
 	schedule.end_dt as time_end, schedule.type,
@@ -516,7 +517,9 @@ where   entry.status='active'
     and entry.form_id in(" . implode(",", $formIDarr) . ") 
     and schedule.faire ='$faireID' 
     and subarea.subarea is not null
-order by start_dt, end_dt;";
+    and schedule.end_dt >= now() " 
+
+."order by start_dt, end_dt;";
 //echo $query;
     $schedule = $wpdb->get_results($query);
 
