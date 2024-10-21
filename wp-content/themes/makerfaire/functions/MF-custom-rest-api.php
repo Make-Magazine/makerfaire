@@ -516,9 +516,9 @@ FROM wp_mf_schedule as schedule
 where   entry.status='active' 
     and entry.form_id in(" . implode(",", $formIDarr) . ") 
     and schedule.faire ='$faireID' 
-    and subarea.subarea is not null
- and schedule.end_dt >= now()+ INTERVAL -5 HOUR   
- order by start_dt, end_dt;";
+    and subarea.subarea is not null ".
+ //" and schedule.end_dt >= now()+ INTERVAL -7 HOUR   
+ " order by start_dt, end_dt;";
 //echo $query;
     $schedule = $wpdb->get_results($query);
 
