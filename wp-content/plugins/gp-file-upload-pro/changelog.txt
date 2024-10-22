@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.4.1 | August 15, 2024
+
+- Added default color to the delete button. This fixes an issue where some themes may cause the delete button to not be visible.
+
 ## 1.4 | June 21, 2024
 
 - Fixed issue where warning icon was misaligned.

@@ -68,6 +68,15 @@ class Nav_Menu extends Base_Widget {
 			]
 		);
 
+		$this->add_control(
+			'menu_name',
+			[
+				'label' => esc_html__( 'Menu Name', 'elementor-pro' ),
+				'type' => Controls_Manager::TEXT,
+				'default' => esc_html__( 'Menu', 'elementor-pro' ),
+			]
+		);
+
 		$menus = $this->get_available_menus();
 
 		if ( ! empty( $menus ) ) {
@@ -92,8 +101,7 @@ class Nav_Menu extends Base_Widget {
 			$this->add_control(
 				'menu',
 				[
-					// TODO: Remove define() with the release of Elementor 3.22
-					'type' => defined( 'Controls_Manager::ALERT' ) ? Controls_Manager::ALERT : 'alert',
+					'type' => Controls_Manager::ALERT,
 					'alert_type' => 'info',
 					'heading' => esc_html__( 'There are no menus in your site.', 'elementor-pro' ),
 					'content' => sprintf(
@@ -1465,6 +1473,10 @@ class Nav_Menu extends Base_Widget {
 
 		if ( empty( $menu_html ) ) {
 			return;
+		}
+
+		if ( $settings['menu_name'] ) {
+			$this->add_render_attribute( 'main-menu', 'aria-label', $settings['menu_name'] );
 		}
 
 		$is_migrated = isset( $settings['__fa4_migrated']['submenu_icon'] );

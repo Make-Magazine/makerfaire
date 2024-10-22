@@ -3,7 +3,7 @@
  * Plugin Name: GravityWP - Advanced Merge Tags
  * Plugin URI: https://gravitywp.com
  * Description: Add powerful Merge Tags and Merge Tag modifiers to Gravity Forms
- * Version: 1.6.1
+ * Version: 1.6.2
  * Requires PHP: 7.0
  * Author: GravityWP
  * Author URI: https://gravitywp.com
@@ -29,7 +29,7 @@
  */
 
 // Defines the current version of the GravityWP Advanced Merge Tags Add-On.
-define( 'GWP_ADVANCED_MERGE_TAGS_VERSION', '1.6.1' );
+define( 'GWP_ADVANCED_MERGE_TAGS_VERSION', '1.6.2' );
 
 // Defines the minimum version of Gravity Forms required to run GravityWP Advanced Uploads Add-On.
 define( 'GWP_ADVANCED_MERGE_TAGS_MIN_GF_VERSION', '2.4' );

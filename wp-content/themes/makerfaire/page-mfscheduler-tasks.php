@@ -28,7 +28,6 @@ if ($_SERVER ['REQUEST_METHOD'] == 'GET') {
 
   switch ($type) {
     case 'create' :
-
       $subareaid = $model->SubareaID;
       $sched_type = $model->PresentationType;
       $start = date('Y-m-d H:i:s', strtotime($model->Start));
@@ -236,6 +235,7 @@ function read_schedule($faire_id, $subarea_id, &$total) {
 
   if ($result) {
     while ($row = $result->fetch_assoc()) {
+      //error_log(print_r($row, TRUE));
       $total ++;
       // order entries by subarea(stage), then date
       $stage = $row ['subarea_id'];
@@ -246,13 +246,14 @@ function read_schedule($faire_id, $subarea_id, &$total) {
       $sched_type = @$row ['type'];
       $schedule_entry_id = $row ['ID'];
       $entry_ids = array(
-          $row ['entry_id']
+          $row['entry_id']
+      );
+      $names = array(
+          $row['presentation_title']
       );
       $form = $row ['form_id'];
       $presentername = (isset($row['maker_name'])) ? $row['maker_name'] : 'TBD';
-      $title = preg_replace("/[^a-z0-9 ]/i", "", $row['presentation_title']) . ' (Presenter: ' . $presentername . ') ';
-      $type = $row['presentation_type'];
-      $desc_short = $row['desc_short'];
+      $title = preg_replace("/[^a-z0-9 ]/i", "", $row['presentation_title']) . ' (Maker: ' . $presentername . ') ';
       $maker_name = $row['maker_name'];
 
       // build array
@@ -278,11 +279,12 @@ function read_schedule($faire_id, $subarea_id, &$total) {
           'IsAllDay' => false,
           'SubareaID' => $stage,
           'Entries' => $entry_ids,
+          'Names' => $names,
           'Form' => $form,
           'Event' => $maker_name,
           'Title' => $title,
           'StatusColor' => status_to_color($status),
-          'PresentationTyp' => $sched_type);
+          'PresentationType' => $sched_type);
     }
   } else {
     echo ('Error :' . $select_query . ':(' . $mysqli->errno . ') ' . $mysqli->error);

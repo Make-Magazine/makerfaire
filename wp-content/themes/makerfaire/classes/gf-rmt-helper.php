@@ -1,71 +1,60 @@
 <?php
-/* Class to update all stuff maker related */
+/* Class to manage all things RMT related */
 if (!class_exists('GFRMTHELPER')) {
   die();
 }
 
 class GFRMTHELPER {
-  function __construct() {
-    global $wpdb;
+  public static function get_user() {
+    //find current user
+    $current_user = wp_get_current_user();
+    $user = $current_user->ID;
+
+    return $user;
   }
 
-  /*
-   * This function is called when there is an entry update or new entry submission
-   * $type - this tells us if this is a new submission or an update to the entry
-	*/
-  public static function gravityforms_makerInfo($entry, $form, $type = 'update') {
-    //build/update RMT data
-    self::buildRmtData($entry, $form, $type);
-
-    //update/insert into maker tables
-    self::updateMakerTables($entry['id']);
-  }
-
-  public static function buildRmtData($entry, $form, $type = 'update') {
+  /* Loop an entry through the RMT rules and set fields according */
+  public static function buildRmtData($entry, $form) {
     global $wpdb;
-    $attribute   = array();
-    $resource    = array();
-    $entryID     = $entry['id'];
-    $form_type   = $form['form_type'];
 
+    $form_type = $form['form_type'];
+    $entryID   = $entry['id'];
     //check for a Easy Passthrough token to find original entry ID
     $ep_token = rgget('ep_token');
 
-    //nothing to copy here
-    if ($ep_token == '') {
-      return;
+    //if the ep_token is set, need to find the original entry ID to update instead
+    if ($ep_token != '') {
+      //find the associated entry id based on the token
+      $origEntryID = $wpdb->get_var(
+        $wpdb->prepare(
+          "SELECT entry_id FROM wp_gf_entry_meta WHERE `meta_key` = '%s' AND `meta_value` = '%s'",
+          'fg_easypassthrough_token',
+          $ep_token
+        )
+      );
+
+      $entryID = ($origEntryID != '' ? $origEntryID : $entryID);
     }
 
-    //find the associated entry id based on the token
-    $origEntryID = $wpdb->get_var(
-      $wpdb->prepare(
-        "SELECT entry_id FROM wp_gf_entry_meta WHERE `meta_key` = '%s' AND `meta_value` = '%s'",
-        'fg_easypassthrough_token',
-        $ep_token
-      )
-    );
-
-    global $current_user;
-    $user = (isset($current_user->ID) ? $current_user->ID : NULL);
-
-    //set faire_location for this entry
+    //find the faire_location for this entry
     $faire_location = $wpdb->get_var("SELECT faire_location "
       . "   FROM wp_mf_faire "
       . "   WHERE FIND_IN_SET (" . $form['id'] . ", replace(wp_mf_faire.non_public_forms, \" \", \"\") )> 0 OR "
       . "         FIND_IN_SET (" . $form['id'] . ", replace(wp_mf_faire.form_ids, \" \", \"\"))> 0 order by id desc limit 1");
 
     /* RMT logic is stored in wp_rmt_rules and wp_rmt_rules_logic */
-
     //pull all RMT rules
-    $sql = "SELECT rules.id as rule_id, rules.form_type, rules.rmt_type, rules.rmt_field, rules.value, rules.comment, "
+    $sql = "SELECT rules.id as rule_id, wp_mf_form_types.form_type, rules.rmt_type, rules.rmt_field, rules.value, rules.comment, "
       . " logic.field_number, logic.operator, logic.value as logic_value "
-      . "FROM wp_rmt_rules rules, `wp_rmt_rules_logic` logic "
+      . "FROM wp_rmt_rules rules "
+      . "left outer join wp_mf_form_types on wp_mf_form_types.id=rules.form_type, "
+      . "`wp_rmt_rules_logic` logic "
       . "WHERE rules.id=logic.rule_id "
       . "ORDER BY `rule_id` ASC";
 
+    //build rule array
     $rules = array();
     foreach ($wpdb->get_results($sql) as $row) {
-      //build rule array
       $rules[$row->rule_id]['form_type'] = $row->form_type;
       $rules[$row->rule_id]['rmt_type']  = $row->rmt_type;
       $rules[$row->rule_id]['rmt_field'] = $row->rmt_field;
@@ -78,11 +67,20 @@ class GFRMTHELPER {
       );
     }
 
-    foreach ($rules as $rule) {
+    //loop through rules
+    foreach ($rules as $key => $rule) {
+      if (!is_null($rule['form_type'])) {
+        if ($form_type != $rule['form_type']) {
+          continue;
+        }
+      }
+
       $pass = false;
+      //loop through logic, as soon as one fails, we exit the foreach loop
       foreach ($rule['logic'] as $logic) {
         $field_number = $logic['field_number'];
 
+        //what field are we looking for
         if ($field_number == 'faire_location') {
           $entryfield = $faire_location;
         } elseif ($field_number == 'form_type') {
@@ -119,7 +117,7 @@ class GFRMTHELPER {
         } else {
           //other operator logic goes here
         }
-      }
+      } //end loop through each rule logic
 
       //logic met - set RMT field
       if ($pass) {
@@ -128,264 +126,532 @@ class GFRMTHELPER {
         $comment = findFieldData($rule['comment'], $entry);
 
         if ($rule['rmt_type'] == 'resource') {
-          $value = (int) $value; //resource values are quantity fields and need to be an integer. 
-          //set $value and $comment {}
-          $resource[] = array($rule['rmt_field'], $value, $comment);
+          //update resource for entry
+          self::rmt_update_resource($entryID, $rule['rmt_field'], (int) $value, addslashes($comment), $form_type);
         } elseif ($rule['rmt_type'] == 'attribute') {
-          $attribute[] = array($rule['rmt_field'], $value, $comment);
+          //update attribute for entry
+          self::rmt_update_attribute($entryID, $rule['rmt_field'], addslashes($value), addslashes($comment), $form_type);
         }
       }
+    } //end loop through rules
+  } //end function
+
+  /* update one field for a RMT item for an entry */
+  public static function rmt_update_field($table, $fieldName, $newValue, $rowID) {
+    global $wpdb;
+
+    //first let's pull the current data so we can report the change in the change report
+    $current  = $wpdb->get_row("select * from $table where ID= $rowID");
+
+    $entry    = GFAPI::get_entry($current->entry_id);
+    if ($table == 'wp_rmt_entry_resources') {
+      $rmt_field = $current->resource_id;
+    } elseif ($table == 'wp_rmt_entry_attributes') {
+      $rmt_field = $current->attribute_id;
+    } elseif ($table == 'wp_rmt_entry_attn') {
+      $rmt_field = $current->attn_id;
     }
 
-    //if form type=payment we need to map resource fields back to the original entry
+    $user = self::get_user();
+
+    //now update the RMT item
+    $wpdb->get_results("update " . $table . ' set ' . $fieldName . '="' . $newValue . '",user= ' . $user . ' where ID=' . $rowID);
+
+    updateChangeRPT(array(RMTchangeArray($entry, $rmt_field, $current->$fieldName, $newValue, 'Resource changed - ' . $fieldName)));
+    return $entry;
+  }
+
+  /* Update RMT resource data for an entry */
+  public static function rmt_update_resource($entryID, $resource_id, $qty, $comment, $form_type = '') {
+    global $wpdb;
+    $entry  = GFAPI::get_entry($entryID);
+
+    //If Payment form, set the user to show the as a payment         
     if ($form_type == 'Payment') {
-      //get original entry id
-      $entryID = ($origEntryID != '' ? $origEntryID : $entryID);
-      //check if any electrical resources have been set
-      $sql = "SELECT wp_rmt_entry_resources.ID "
-        . " from wp_rmt_entry_resources, wp_rmt_resources, wp_rmt_resource_categories "
-        . " where resource_id=wp_rmt_resources.ID and "
-        . "       resource_category_id=wp_rmt_resource_categories.ID and "
-        . "       entry_id = $entryID and "
-        . "       wp_rmt_resource_categories.category like '%electrical%'";
-      //if an electrical resource has been set, delete it
-      $resourceElec = $wpdb->get_var($sql);
-
-      if ($resourceElec != NULL) { //if result, update.
-        //delete any electrical resources MF-901
-        $wpdb->delete('wp_rmt_entry_resources', array('ID' => $resourceElec));
-      }
+      $user = 0;
+    } else {
+      $user   = self::get_user();
     }
 
+    $rowID  = 0;
 
-    //if this is a payment form overwrite the user
-    if ($form_type == 'Payment') {
-      $user = 0;  //user = 0 - payment form
-    }
+    //default to adding the resource
+    $type = 'insert';
 
-    $chgRPTins = array();
+    //determine if this is an insert, update or no change
+    if ($form_type != 'admin') {
 
-    /*
-     *        R M T
-     *  R E S O U R C E S
-     *
-     */
-    foreach ($resource as $value) {
-      $resource_id = $value[0];
-      $qty         = $value[1];
-      $comment     = htmlspecialchars($value[2]);
+      //find the category ID for this resource
+      $cat_id = $wpdb->get_var("select resource_category_id from wp_rmt_resources where id = " . $resource_id);
 
-      /* If Payment form, we allow them to set multiple items for the same category
-       *    If the resource is already set
-       *        if the qty is 0 - delete resource
-       *        else            - update existing resource
-       *    else if the resource is not set
-       *        if the qty is not 0 - add resource
-       * if form type is not payment
-       *    if the entry already has a resource set with the same category - overwrite
-       *    else - add new
-       */
+      //Look for any resources set within the same category type (ie. chairs, tables, electricity, etc)    
+      $res = $wpdb->get_row('SELECT entry_res.*, res.resource_category_id, res.description '
+        . ' FROM `wp_rmt_entry_resources` entry_res, wp_rmt_resources res '
+        . ' where entry_id=' . $entryID . ' and entry_res.resource_id = res.ID '
+        . ' and resource_category_id=' . $cat_id);
 
-      //on new records the user is always null unless this is a payment form
-      if ($form_type == 'Payment') {
-        $user = '0';
-        // is resource already set?
-        $res = $wpdb->get_row("select wp_rmt_entry_resources.*, wp_rmt_resources.token "
-          . " from wp_rmt_entry_resources"
-          . " left outer join wp_rmt_resources on wp_rmt_resources.ID=resource_id"
-          . ' where entry_id=' . $entryID . ' and resource_id =' . $resource_id);
+      //check if this resource category has been set for this entry
+      if (!is_null($res)) { //resource found of the same category
+        //Is it the same resource?
+        if ($res->resource_id == $resource_id) {
+          //IF the set resource is unlocked AND the calculated qty is 0, 
+          //always do an update so we can remove any old ones that were set           
+          if ($qty == 0 && $res->lockBit == 0 ) {
+            //update the resource
+            $type = 'update';
 
-        //matching record found
-        if (null !== $res) {  // yes
-          //If there are changes, update this record
-          if ($res->resource_id != $resource_id || $res->qty != $qty || $res->comment != $comment) {
-            $wpdb->get_results('update `wp_rmt_entry_resources` '
-              . ' set `resource_id` = ' . $resource_id . ', `qty` = ' . $qty . ',user=' . $user . ',comment="' . $comment . '", update_stamp=now() where id=' . $res->ID);
+            //is there anything to update  
+          } elseif ($res->qty == $qty && $res->comment == $comment) {
+            //exit, there is nothing to update
+            return;
 
-            //update change report
-            if ($res->qty != $qty)
-              $chgRPTins[] = RMTchangeArray($user, $entryID, $form['id'], $resource_id, $res->qty, $qty, 'RMT Resource: ' . $res->token . ' -  qty');
-            if ($res->comment != $comment)
-              $chgRPTins[] = RMTchangeArray($user, $entryID, $form['id'], $resource_id, $res->comment, $comment, 'RMT Resource: ' . $res->token . ' - comment');
-            if ($res->resource_id != $resource_id)
-              $chgRPTins[] = RMTchangeArray($user, $entryID, $form['id'], $resource_id, $res->resource_id, $resource_id, 'RMT Resource: id changed');
-          }
-        } else { //no record found, if qty is a numeric value add
-          if (is_int($qty)) {
-            //insert this record
-            $wpdb->get_results("INSERT INTO `wp_rmt_entry_resources`  (`entry_id`, `resource_id`, `qty`, `comment`, user) "
-              . " VALUES (" . $entryID . "," . $resource_id . "," . $qty . ',"' . $comment . '",' . $user . ')');
-            //update change report
-            $res         = $wpdb->get_row('SELECT token FROM `wp_rmt_resources` where ID=' . $resource_id);
-            $chgRPTins[] = RMTchangeArray($user, $entryID, $form['id'], $resource_id, '', $qty, 'RMT Resource: ' . $res->token . ' -  qty');
-            $chgRPTins[] = RMTchangeArray($user, $entryID, $form['id'], $resource_id, '', $comment, 'RMT Resource: ' . $res->token . ' - comment');
-          }
-        }
-      } else { //all other form types
-        $cat_id = $wpdb->get_var("select resource_category_id from wp_rmt_resources where id = " . $resource_id);
+            //is the resource unlocked OR is this a payment form?  
+          } elseif ($res->lockBit == 0 || $form_type == 'Payment') {
+            //update the resource
+            $type = 'update';
 
-        //find if they already have a resource set with the same Item (ie. chairs, tables, electricity, etc)
-        $res = $wpdb->get_row('SELECT entry_res.*, res.resource_category_id, res.token '
-          . ' FROM `wp_rmt_entry_resources` entry_res,wp_rmt_resources res '
-          . ' where entry_id=' . $entryID . ' and entry_res.resource_id = res.ID and resource_category_id=' . $cat_id);
-
-        //matching record found
-        if (null !== $res) {
-          //check lockbit
-          if ($res->lockBit == 0) {
-            //If there are changes, update this record
-            if ($res->resource_id != $resource_id || $res->qty != $qty) {
-              $wpdb->get_results('update `wp_rmt_entry_resources` '
-                . ' set `resource_id` = ' . $resource_id . ', `qty` = ' . $qty . ', user=' . $user . ', update_stamp=now() where id=' . $res->ID);
-
-              //update change report
-              if ($res->qty != $qty)
-                $chgRPTins[] = RMTchangeArray($user, $entryID, $form['id'], $resource_id, $res->qty, $qty, 'RMT resource: ' . $res->token . ' -  qty');
-              if ($res->resource_id != $resource_id)
-                $chgRPTins[] = RMTchangeArray($user, $entryID, $form['id'], $resource_id, $res->resource_id, $resource_id, 'RMT resource: id changed');
-            }
+            //is the resource locked?
+          } elseif ($res->lockBit == 1) {
+            $type = ''; //do not update
           }
         } else {
-          //insert this record
-          if (is_int($qty)) {
-            $wpdb->get_results("INSERT INTO `wp_rmt_entry_resources`  (`entry_id`, `resource_id`, `qty`, `comment`, user) "
-              . " VALUES (" . $entryID . "," . $resource_id . "," . $qty . ',"' . $comment . '",' . $user . ')');
-
-            //update change report
-            $res         = $wpdb->get_row('SELECT token FROM `wp_rmt_resources` where ID=' . $resource_id);
-            $chgRPTins[] = RMTchangeArray($user, $entryID, $form['id'], $resource_id, '', $qty, 'RMT resource: ' . $res->token . ' -  qty');
-            $chgRPTins[] = RMTchangeArray($user, $entryID, $form['id'], $resource_id, '', $comment, 'RMT resource: ' . $res->token . ' - comment');
-          }
-        }
-      } //end check for payment form type
-
-      //lock the resource if this a payment form
-      if ($form_type == 'Payment') {
-        $sql = "update wp_rmt_entry_resources set lockBit=1 where entry_id=" . $entryID . " and resource_id=" . $resource_id;
-        $wpdb->get_results($sql);
-      }
-    }
-
-    /*
-     *        R M T
-     *  A T T R I B U T E S
-     *
-     */
-    foreach ($attribute as $value) {
-      $attribute_id = $value[0];
-      $attvalue     = htmlspecialchars($value[1]);
-      $comment      = htmlspecialchars($value[2]);
-
-      //check if attribute is locked
-      $res = $wpdb->get_row("select wp_rmt_entry_attributes.*, wp_rmt_entry_att_categories.token"
-        . " from wp_rmt_entry_attributes"
-        . " left outer join wp_rmt_entry_att_categories on wp_rmt_entry_att_categories.ID=attribute_id"
-        . ' where entry_id = ' . $entryID . ' and attribute_id = ' . $attribute_id);
-      //matching record found
-      if (null !== $res) {
-        if ($res->lockBit == 0) {  //If this attribute is not locked, update this record
-          //if this is a payment record, append the payment comment to the end of the existing comment
+          //Payment forms are allowed to have multiple resources of the same category
+          //if this isn't a payment form and the resource is unlocked
+          //what if they put 05 amps on their form but then paid for 10 amps
           if ($form_type == 'Payment') {
-            $comment = $res->comment . '<br/>' . $form_type . ' Form Comment - ' . $comment;
-          }
-          //if there are changes, update the record
-          if ($res->comment != $comment || $res->value != $attvalue) {
-            $wpdb->get_results('update `wp_rmt_entry_attributes` '
-              . ' set comment="' . $comment . '", user=' . $user . ', value="' . $attvalue . '",	update_stamp=now()'
-              . ' where id=' . $res->ID);
-            //update change report
-            if ($res->comment != $comment)
-              $chgRPTins[] = RMTchangeArray($user, $entryID, $form['id'], $attribute_id, $res->comment, $comment, 'RMT attribute: ' . $res->token . ' -  comment');
-            if ($res->value != $attvalue)
-              $chgRPTins[] = RMTchangeArray($user, $entryID, $form['id'], $attribute_id, $res->value, $attvalue, 'RMT attribute: ' . $res->token . ' -  value');
+            $type = 'insert';
+            //if the resource is unlocked
+            if ($res->lockBit == 0) {
+              //update the resource with the payment
+              $type = 'update';
+            } else {
+              $type = 'insert';
+            }
+          } else {  //user submitted forms
+            //if resource is unlocked
+            if ($res->lockBit == 0) {
+              //update the resource
+              $type = 'update';
+            } else {
+              //if resource is locked, don't do anything.
+              $type = '';
+            }
           }
         }
+      }
+    }
+    
+    if ($type == 'update') {
+      $rowID = $res->ID;
+
+      //if the calculated qty is zero, remove the existing resource
+      if ($qty == 0) {
+        //delete the existing resource        
+        $wpdb->get_results('delete from `wp_rmt_entry_resources` where id=' . $res->ID);
       } else {
-        $wpdb->get_results("INSERT INTO `wp_rmt_entry_attributes`(`entry_id`, `attribute_id`, `value`,`comment`,user) "
-          . " VALUES (" . $entryID . "," . $attribute_id . ',"' . $attvalue . '","' . $comment . '",' . $user . ')');
-
-        //update change report
-        $res = $wpdb->get_row('SELECT token FROM `wp_rmt_entry_att_categories` where ID=' . $attribute_id);
-        $chgRPTins[] = RMTchangeArray($user, $entryID, $form['id'], $attribute_id, '', $attvalue, 'RMT attribute: ' . $res->token . ' -  value');
-        $chgRPTins[] = RMTchangeArray($user, $entryID, $form['id'], $attribute_id, '', $comment, 'RMT attribute: ' . $res->token . ' -  comment');
+        //update the existing resource
+        $wpdb->get_results('update `wp_rmt_entry_resources` '
+          . ' set `resource_id` = ' . $resource_id . ', `qty` = ' . $qty . ', user=' . $user . ', update_stamp=now() where id=' . $res->ID);
       }
-      //lock the attribute if this a payment form
-      if ($form_type == 'Payment') {
-        $sql = "update wp_rmt_entry_attributes set lockBit=1 where entry_id=" . $entryID . " and attribute_id=" . $attribute_id;
-        $wpdb->get_results($sql);
+
+      //did the resource itself change
+      if ($res->resource_id != $resource_id) { //update the change report               
+        $chgRPTins[] = RMTchangeArray($entry, $resource_id, $res->resource_id, $resource_id, 'Resource changed(' . $res->description . ')');
       }
+
+      //did the qty change
+      if ($res->qty != $qty) { //update the change report        
+        $chgRPTins[] = RMTchangeArray($entry, $resource_id, $res->qty, $qty, 'Resource qty changed(' . addslashes($res->description) . ')');
+      }
+
+      //did the comment change
+      if ($res->comment != $comment) { //update the change report        
+        $chgRPTins[] = RMTchangeArray($entry, $resource_id, $res->comment, $comment, 'Resource comment changed(' . addslashes($res->description) . ')');
+      }
+    } elseif ($type == 'insert' && $qty != 0) { //don't add if the calculated qty is 0
+      //insert this resource
+      $wpdb->get_results("INSERT INTO `wp_rmt_entry_resources`  (`entry_id`, `resource_id`, `qty`, `comment`, user) "
+        . " VALUES (" . $entryID . "," . $resource_id . "," . $qty . ',"' . $comment . '",' . $user . ')');
+
+      $rowID = $wpdb->insert_id;
+
+      //get some info about this resource
+      $res = $wpdb->get_row("select description from wp_rmt_resources where ID = " . $resource_id);
+      $note = 'Resource Added (' . addslashes($res->description) . ') : qty=' . $qty . ($comment != '' ? ', comment=' . $comment : '');
+
+      //update change report      
+      $chgRPTins[] = RMTchangeArray($entry, $resource_id, '', 'New', $note);
     }
 
-    /*
-     *    C H A N G E
-     *    R E P O R T
-     *
-     */
-    //Write to the change report if this is a payment form or if this is an update thru maker Portal or admin resources tab
-    if ($type == 'update' || $form_type == 'Payment') {
-      if (!empty($chgRPTins))  updateChangeRPT($chgRPTins);
-    }
+    /* Update change report */
+    if (!empty($chgRPTins))  updateChangeRPT($chgRPTins);
 
-    /*
-     *  R E S O U R C E     S T A T U S
-     *  R E S O U R C E     A S S I G N     T O
-     *
-     * note: resource assign to values can be found in
-     *      wp-content/themes/makerfaire/functions/gravity_forms/gravityforms_entry_meta.php
-     *      in custom_entry_meta function
-     */
-    //if resouce and attribute update
-    /*  set default values */
-    $assignTo    = 'na'; //not assigned to anyone
-    $status      = 'ready'; //ready
-
-    /* MF-1644 new logic based on indicators
-     *    1) CMIndicator(376) = Yes
-     *         Resource Status needs to be set to Review
-     *         Resource Assign To set to Kerry
-     *    2) CMIndicator = No + FeeIndicator (434) = Yes
-     *         Resource Statues => Review
-     *         Resource Assign To => Siana
-     *    3) If CM=no and Fee indicator=No
-     *         Resource status= ready (unless any of the other logic turns it into review)
-     */
-    if (isset($entry['376']) && $entry['376'] == 'Yes') { //cm indicator
-      $status   = 'review';
-      $assignTo = 'cm_team';
-    } elseif (isset($entry['434']) && $entry['434'] == 'Yes') { //fee indicator
-      $status   = 'review';
-      $assignTo = 'fee_team';
-    } elseif (isset($entry['83']) && $entry['83'] == 'Yes') {  //field 83
-      $status   = 'review';
-      $assignTo = 'fire';
-    } elseif (
-      isset($entry['73']) && $entry['73'] == 'Yes' &&
-      isset($entry['75']) && $entry['75'] == 'Other. Power request specified in the Special Power Requirements box'
-    ) {
-      $status   = 'review';
-      $assignTo = 'power';
-    } elseif (isset($entry['64']) && $entry['64'] != '') {
-      $status   = 'review';
-      $assignTo = 'special_request'; //Kerry
-    }
-    //overrides all other logic
+    //lock the resource if this a payment form
     if ($form_type == 'Payment') {
-      $status = 'ready';
-      gform_update_meta($entryID, 'res_status', $status, $form['id']);
+      self::rmt_set_lock_ind(1, $rowID, 'resource', $user);
     }
 
-    // update custom meta field (do not update if meta already exists)
-    $res_status = gform_get_meta($entryID, 'res_status');
-    $res_assign = gform_get_meta($entryID, 'res_assign');
+    return $rowID;
+  }
 
-    //  if the current status or assign to is blank, or
-    //  if the calculated assign to is different than the curent assign to,
-    //      update the vaues
-    if ($assignTo != $res_assign || empty($res_status) || empty($res_assign)) {
-      //update the status and assign to
-      gform_update_meta($entryID, 'res_status', $status, $form['id']);
-      gform_update_meta($entryID, 'res_assign', $assignTo, $form['id']);
+  /* Update RMT attribute data for an entry */
+  public static function rmt_update_attribute($entryID, $attribute_id, $value, $comment, $form_type = '') {
+    global $wpdb;
+    $rowID = 0;
+
+    $entry = GFAPI::get_entry($entryID);
+
+    //If Payment form, set the user to show the as a payment         
+    if ($form_type == 'Payment') {
+      $user = 0;
+    } else if ($form_type == "ExpoFP") {
+      $user = 1;
+    } else {
+      $user   = self::get_user();
     }
+
+    //look to see if this attribute is already set
+    $res = $wpdb->get_row('SELECT * from wp_rmt_entry_attributes where entry_id=' . $entryID . ' and attribute_id=' . $attribute_id);
+
+    //has this attribute been set for this entry?
+    if (!is_null($res)) { //attribute found      
+      //is the attribute unlocked?
+      if ($res->lockBit == 0) {
+        //if this is a payment record, append the payment comment to the end of the existing comment
+        if ($form_type == 'Payment') {
+          $comment = $res->comment . '<br/>' . $form_type . ' Form Comment - ' . $comment;
+        }
+
+        //if there are changes, update the record
+        if ($res->comment != $comment || $res->value != $value) {
+          $rowID = $res->ID;
+          $wpdb->get_results('update `wp_rmt_entry_attributes` '
+            . ' set comment="' . $comment . '", user=' . $user . ', value="' . $value . '",	update_stamp=now()'
+            . ' where id=' . $res->ID);
+
+          //get description for this attribute      
+          $att = $wpdb->get_row('SELECT category as description FROM `wp_rmt_entry_att_categories` where ID=' . $attribute_id);
+
+          //determine what changed in order to update the change report        
+          if ($res->value != $value)
+            $chgRPTins[] = RMTchangeArray($entry, $attribute_id, $res->value, $value,  'Attribute value changed (' . addslashes($att->description) . ')');
+          if ($res->comment != $comment)
+            $chgRPTins[] = RMTchangeArray($entry, $attribute_id, $res->comment, $comment,  'Attribute comment changed (' . addslashes($att->description) . ')');
+        } else {
+          //nothing to update, exit
+          return;
+        }
+      }
+    } else {
+      //add the attribute
+      $wpdb->get_results("INSERT INTO `wp_rmt_entry_attributes`(`entry_id`, `attribute_id`, `value`,`comment`,user) "
+        . " VALUES (" . $entryID . "," . $attribute_id . ',"' . $value . '","' . $comment . '",' . $user . ')');
+      $rowID = $wpdb->insert_id;
+
+      //update change report      
+      $att = $wpdb->get_row('SELECT category as description FROM `wp_rmt_entry_att_categories` where ID=' . $attribute_id);
+      $note = 'Attribute Added (' . addslashes($att->description) . ') : value=' . $value . ($comment != '' ? ', comment=' . $comment : '');
+      $chgRPTins[] = RMTchangeArray($entry, $attribute_id, '', 'New', $note);
+    }
+
+    /* Update change report */
+    if (!empty($chgRPTins))  updateChangeRPT($chgRPTins);
+
+    //lock the attribute if this a payment form
+    if ($form_type == 'Payment') {
+      self::rmt_set_lock_ind(1, $rowID, 'attribute', $user);
+    }
+
+    return $rowID;
+  }
+
+  /* Update RMT attention data for an entry */
+  public static function rmt_update_attention($entryID, $attn_id, $comment) {
+    global $wpdb;
+    $rowID = 0;
+
+    $entry = GFAPI::get_entry($entryID);
+
+    $user   = self::get_user();
+
+
+    //add the ATTENTION
+    $wpdb->get_results("INSERT INTO `wp_rmt_entry_attn`(`entry_id`, `attn_id`, `comment`,user) "
+      . " VALUES (" . $entryID . "," . $attn_id . ',"' . $comment . '",' . $user . ')');
+    $rowID = $wpdb->insert_id;
+
+    //update change report      
+    $att = $wpdb->get_row('SELECT value as description FROM `wp_rmt_attn` where ID=' . $attn_id);
+    $note = 'Attention Added (' . addslashes($att->description) . ')' . ($comment != '' ? ': comment=' . $comment : '');
+    $chgRPTins[] = RMTchangeArray($entry, $attn_id, '', 'New', $note);
+
+    /* Update change report */
+    if (!empty($chgRPTins))  updateChangeRPT($chgRPTins);
+
+    return $rowID;
+  }
+
+  public static function rmt_set_lock_ind($lockBit, $rowID, $type) {
+    global $wpdb;
+    $chgRPTins = array();
+
+    if ($rowID == 0) {
+      return;
+    }
+
+    if ($type == 'resource') {
+      //pull previous data to update change report      
+      $res = $wpdb->get_row('SELECT entry_id, lockBit, resource_id as field, description ' .
+        'FROM wp_rmt_entry_resources ' .
+        'left outer join wp_rmt_resources ' .
+        'on resource_id=wp_rmt_resources.ID ' .
+        'where wp_rmt_entry_resources.id=' . $rowID);
+
+      //update resource
+      $wpdb->get_results('update wp_rmt_entry_resources set lockBit=' . $lockBit . ' where id=' . $rowID);
+    } elseif ($type == 'attribute') {
+      //pull previous data to update change report      
+      $res = $wpdb->get_row('SELECT entry_id, lockBit, attribute_id as field, category as description ' .
+        'FROM wp_rmt_entry_attributes ' .
+        'left outer join wp_rmt_entry_att_categories ' .
+        'on attribute_id=wp_rmt_entry_att_categories.ID ' .
+        'where wp_rmt_entry_attributes.id=' . $rowID);
+
+      //update attribute
+      $wpdb->get_results('update wp_rmt_entry_attributes set lockBit=' . $lockBit . ' where id=' . $rowID);
+    } else {
+      return;
+    }
+
+    //get entry
+    $entry_id = $res->entry_id;
+
+    $entry = GFAPI::get_entry($entry_id);
+
+    //Build Change report data 
+    $chgRPTins[] = RMTchangeArray($entry, $res->field, ($res->lockBit == 0 ? 'Unlocked' : 'Locked'), ($lockBit == 0 ? 'Unlocked' : 'Locked'), ucfirst($type) . ' (' . addslashes($res->description) . ')');
+
+    /* Update change report */
+    if (!empty($chgRPTins))  updateChangeRPT($chgRPTins);
+
+    return $entry;
+  }
+
+  public static function rmt_delete($rowID = 0, $table = '', $entryID = 0) {
+    global $wpdb;
+    if ($rowID == 0 || $table == '' || $entryID == 0) {
+      return;
+    }
+
+    $entry = GFAPI::get_entry($entryID);
+
+    //first get the current value of the RMT field    
+    $resAtt = $wpdb->get_row('SELECT * FROM ' . $table . ' where ID=' . $rowID);
+
+    //We can now delete it
+    $sql = "DELETE from " . $table . " where ID =" . $rowID;
+    $wpdb->get_results($sql);
+
+    //update change report for RMT data
+    $chgRPTins = array();
+
+    switch ($table) {
+      case 'wp_rmt_entry_resources':
+        $fieldID     = $resAtt->resource_id;
+        $res         = $wpdb->get_row('SELECT description FROM `wp_rmt_resources` where ID=' . $fieldID);
+        $chgRPTins[] = RMTchangeArray($entry, $fieldID, '', 'Deleted', 'Resource Deleted (' . addslashes($res->description) . ')');
+        break;
+      case 'wp_rmt_entry_attributes':
+        $attribute_id = $resAtt->attribute_id;
+        $res = $wpdb->get_row('SELECT category as description FROM `wp_rmt_entry_att_categories` where ID=' . $attribute_id);
+        $chgRPTins[] = RMTchangeArray($entry, $attribute_id, '', 'Deleted', 'Attribute Deleted (' . addslashes($res->description) . ')');
+        break;
+      case 'wp_rmt_entry_attn':
+        $attn_id = $resAtt->attn_id;
+        $res = $wpdb->get_row('SELECT value as description FROM wp_rmt_attn where ID=' . $attn_id);
+        $chgRPTins[] = RMTchangeArray($entry, $attn_id, '', 'Deleted', 'Attention Deleted (' . addslashes($res->description) . ')');
+        break;
+      default:
+        break;
+    }
+
+    /* Update change report */
+    if (!empty($chgRPTins))  updateChangeRPT($chgRPTins);
+
+    return $entry;
+  }
+
+  /* Retrieves RMT data for an entry */
+
+  public static function rmt_get_entry_data($entry_id, $type = 'all') {
+    global $wpdb;
+
+    if ($type == 'all') {
+      $return_array = array('attributes' => array(), 'resources' => array(), 'attention' => array());
+    } else {
+      $return_array = array($type => array());
+    }
+
+    //gather resource data
+    if ($type == 'all' || $type == 'resources') {
+      $results = $wpdb->get_results("SELECT er.ID, er.lockBit, er.qty, er.comment, er.user, er.update_Stamp as dateUpdated,
+     wp_rmt_resource_categories.category as category, wp_rmt_resource_categories.ID as category_id, 
+     type as resource, wp_rmt_resources.id as resource_id, wp_rmt_resources.token as token "
+        . "FROM `wp_rmt_entry_resources` er, wp_rmt_resources, wp_rmt_resource_categories "
+        . "where er.resource_id = wp_rmt_resources.ID "
+        . "and resource_category_id = wp_rmt_resource_categories.ID  "
+        . "and er.entry_id = " . $entry_id . " ORDER BY `dateUpdated` DESC");
+
+      foreach ($results as $result) {
+        if ($result->user == NULL) {
+          $dispUser = 'Initial';
+        } elseif ($result->user == 0) {
+          $dispUser = 'Payment';
+        } else {
+          $userInfo = get_userdata($result->user);
+          $dispUser = $userInfo->display_name;
+        }
+
+        $return_array['resources'][] = array(
+          'id'            => $result->ID,
+          'lock'          => $result->lockBit,
+          'qty'           => $result->qty,
+          'comment'       => $result->comment,
+          'user'          => $dispUser,
+          'category_id'   => $result->category_id,
+          'category'      => $result->category,
+          'resource_id'   => $result->resource_id,
+          'resource'      => $result->resource,
+          'token'         => $result->token,
+          'last_updated'  => $result->dateUpdated
+        );
+      }
+    }
+
+
+    //gather attribute data
+    if ($type == 'all' || $type == 'attributes') {
+      $sql = "SELECT wp_rmt_entry_attributes.*, attribute_id, value, " .
+        "wp_rmt_entry_att_categories.category as attribute, token
+            FROM `wp_rmt_entry_attributes`, wp_rmt_entry_att_categories
+            where attribute_id = wp_rmt_entry_att_categories.ID
+            and entry_id = " . $entry_id . " order by category";
+
+      $results = $wpdb->get_results($sql);
+
+      foreach ($results as $result) {
+        if ($result->user == NULL) {
+          $dispUser = 'Initial';
+        } elseif ($result->user == 0) {
+          $dispUser = 'Payment';
+        } elseif ($result->user == 1) { // 1 is wpengine, but since they aren't an active user, we are using this to indicate from the ExpoFP API
+          $dispUser = 'ExpoFP';
+        } else {
+          $userInfo = get_userdata($result->user);
+
+          $dispUser = ($userInfo ? $userInfo->display_name : '');
+        }
+        $return_array['attributes'][] = array(
+          'id'            => $result->ID,
+          'lock'          => $result->lockBit,
+          'value'         => $result->value,
+          'comment'       => $result->comment,
+          'user'          => $dispUser,
+          'attribute'     => $result->attribute,
+          'attribute_id'  => $result->attribute_id,
+          'token'         => $result->token,
+          'last_updated'  => $result->update_stamp
+        );
+      }
+    }
+
+    //gather attention data
+    if ($type == 'all' || $type == 'attention') {
+      $results = $wpdb->get_results("SELECT wp_rmt_entry_attn.*, wp_rmt_attn.value, token 
+                FROM `wp_rmt_entry_attn`, wp_rmt_attn
+                where wp_rmt_entry_attn.attn_id = wp_rmt_attn.ID
+                and entry_id = " . $entry_id . " order by wp_rmt_attn.value");
+
+      foreach ($results as $result) {
+        if ($result->user == NULL) {
+          $dispUser = 'Initial';
+        } else {
+          $userInfo = get_userdata($result->user);
+          $dispUser = $userInfo->display_name;
+        }
+
+        $return_array['attention'][] = array(
+          'id'            => $result->ID,
+          'attn_id'       => $result->attn_id,
+          'attention'     => $result->value,
+          'comment'       => $result->comment,
+          'user'          => $dispUser,
+          'token'         => $result->token,
+          'last_updated'  => $result->update_stamp
+        );
+      }
+    }
+    return $return_array;
+  }
+
+  /* Retrieves RMT table data */
+  public static function rmt_table_data() {
+    global $wpdb;
+
+    $return  = array();
+    $itemArr = array();
+    $typeArr = array();
+
+    //build Item to type drop down array
+    $sql = "SELECT wp_rmt_resource_categories.ID as item_id, wp_rmt_resource_categories.category as item, wp_rmt_resources.ID as type_id, wp_rmt_resources.type FROM `wp_rmt_resource_categories` right outer join wp_rmt_resources on wp_rmt_resource_categories.ID= wp_rmt_resources.resource_category_id ORDER BY `wp_rmt_resource_categories`.`category` ASC, type ASC";
+    $results = $wpdb->get_results($sql);
+    $itemArr = array();
+    foreach ($results as $result) {
+      if (!isset($itemArr[$result->item_id])) {
+        $itemArr[$result->item_id] = $result->item;
+      }
+      if (!isset($typeArr[$result->item_id][$result->type_id])) {
+        $typeArr[$result->item_id][$result->type_id] = $result->type;
+      }
+    }
+    $return['resource_categories'] = $itemArr;
+    $return['resources'] = $typeArr;
+
+    //Build Attribute type array
+    $attArr = array();
+
+    $sql = "SELECT ID, category FROM wp_rmt_entry_att_categories";
+    $results = $wpdb->get_results($sql);
+
+    foreach ($results as $result) {
+      $attArr[] = array('key' => $result->ID, 'value' => $result->category);
+    }
+    $return['attItems'] = $attArr;
+
+    //build attention drop down values
+    $attnArr = array();
+
+    $sql = "SELECT ID, value FROM wp_rmt_attn";
+    $results = $wpdb->get_results($sql);
+
+    foreach ($results as $result) {
+      $attnArr[] = array('key' => $result->ID, 'value' => $result->value);
+    }
+    $return['attnItems'] = $attnArr;
+
+    return $return;
+  }
+
+  /*
+   * This function is called when there is an entry update or new entry submission
+   * $type - this tells us if this is a new submission or an update to the entry
+	*/
+  public static function gravityforms_makerInfo($entry, $form) {
+    //build/update RMT data
+    self::buildRmtData($entry, $form);
+
+    //update/insert into maker tables
+    self::updateMakerTables($entry['id']);
   }
 
   /* Function to add/update the maker data tables for entity/project and maker data
@@ -416,6 +682,18 @@ class GFRMTHELPER {
       $form_type != 'Master'
     ) {
       return;
+    }
+
+    if ($form_type == "Master") {
+      $exhibit_type = array();
+      foreach ($entry as $key => $value) {
+        if (strpos($key, '339.') === 0) {
+          if ($value != '') {
+            $exhibit_type[$key] = $value;
+          }
+        }
+      }
+      $form_type = implode(",", $exhibit_type);
     }
 
     //build Maker Data Array
@@ -541,6 +819,8 @@ class GFRMTHELPER {
         $wpdb->get_results($wp_mf_maker_to_entity);
       }
     }
+
+    return $entry;
   }
 
   //function to build the maker data table to update the wp_mf_maker table
@@ -920,16 +1200,26 @@ class GFRMTHELPER {
   }
 }
 
-function RMTchangeArray($user, $entryID, $formID, $field_id, $field_before, $field_after, $fieldLabel) {
+function RMTchangeArray($entry, $field_id, $field_before, $field_after, $fieldLabel) {
+  $form = GFAPI::get_form($entry['form_id']);
+  $form_type = $form['form_type'];
+
+  //find current user
+  $current_user = wp_get_current_user();
+  $user = $current_user->ID;
+
+  //If Payment form, set the user to show the as a payment         
+  if ($form_type == 'Payment') $user = 0;
+
   $return = array(
     'user_id'           => $user,
-    'lead_id'           => $entryID,
-    'form_id'           => $formID,
+    'lead_id'           => $entry['id'],
+    'form_id'           => $entry['form_id'],
     'field_id'          => $field_id,
     'field_before'      => $field_before,
     'field_after'       => $field_after,
     'fieldLabel'        => $fieldLabel,
-    'status_at_update'  => ''
+    'status_at_update'  => $entry['303']
   );
   return $return;
 }
@@ -950,5 +1240,6 @@ function findFieldData($var, $entry) {
     $var = str_replace($req_field, $fieldData, $var);
     $pos = strpos($var, '{');
   }
+
   return $var;
 }

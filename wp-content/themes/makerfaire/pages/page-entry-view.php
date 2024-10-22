@@ -3,23 +3,35 @@
  * This is the public facing entry page view
  *
  */
-$showcaseResults = showcase($entryId); // this will also tell us if this is a parent or child of a showcase
+$showcaseResults = showcase($entryId, $makerEdit); // this will also tell us if this is a parent or child of a showcase
 $showEditMakey = false;
+
+$imageClass = "project-image";
+if($proj_photo_size && ($proj_photo_size[0]/$proj_photo_size[1] > 1.77777)) {
+    $imageClass = "project-image-wide";
+}
 ?>
 <main class="wrapper-fluid">
     <section id="topSection">
         <div class="big-column">
-            <?php if(isset($proj_photo_size[0]) && $proj_photo_size[0] > 900 ) { ?>
+            <?php // if proj_photo_size is false, the project photo does not exist
+            if(!$proj_photo_size) { ?>
                 <picture class="exhibit-picture">
+                    <img src="/wp-content/themes/makerfaire/images/default-featured-image.jpg"
+                         alt="<?php echo $project_title; ?> project image" />
+                </picture>
+            <?php } elseif( isset($proj_photo_size[0]) && $proj_photo_size[0] > 900 ) { ?>
+                <picture class="exhibit-picture <?php echo $imageClass; ?>">
                     <source media="(max-width: 420px)" srcset="<?php echo $project_photo_small; ?>">
                     <source media="(max-width: 1200px)" srcset="<?php echo $project_photo_medium; ?>">
+                    <source media="(max-width: 1500px)" srcset="<?php echo $project_photo_largish; ?>">
                     <img src="<?php echo $project_photo_large; ?>" 
                          alt="<?php echo $project_title; ?> project image"
                          onerror="this.onerror=null;this.src='/wp-content/themes/makerfaire/images/default-featured-image.jpg';this.srcset=''"
                          data-photo="<?php echo $project_photo; ?>">
                 </picture>
             <?php } elseif(isset($proj_photo_size[0]) && $proj_photo_size[0] > 420 ) { ?>
-                <picture class="exhibit-picture small-picture">
+                <picture class="exhibit-picture small-picture <?php echo $imageClass; ?>">
                     <source media="(max-width: 420px)" srcset="<?php echo $project_photo_small; ?>">
                     <img src="<?php echo $project_photo_medium; ?>" 
                          alt="<?php echo $project_title; ?> project image"
@@ -27,8 +39,8 @@ $showEditMakey = false;
                          data-photo="<?php echo $project_photo; ?>">
                 </picture>
             <?php } else { ?>
-                <picture class="exhibit-picture small-picture">
-                    <img src="<?php echo $project_photo_small; ?>" 
+                <picture class="exhibit-picture small-picture <?php echo $imageClass; ?>">
+                    <img src="<?php echo $project_photo_small; ?>"
                          alt="<?php echo $project_title; ?> project image"
                          onerror="this.onerror=null;this.src='/wp-content/themes/makerfaire/images/default-featured-image.jpg';this.srcset=''"
                          data-photo="<?php echo $project_photo; ?>">
@@ -39,22 +51,37 @@ $showEditMakey = false;
             <div class="small-column-wrapper">
                 <div class="entry-box">
                     <h1 class="project-title"><?php echo $project_title; ?></h1>
-                    <h3 class="faireName"><a href="/<?php echo $url_sub_path; ?>"><?php echo ucwords(str_replace('-', ' ', $faire));?></a></h3>
+                    <h3 class="faireName"><a href="/<?php echo $url_sub_path; ?>"><?php echo $faire_name;?></a></h3>
                     <h4 class="faireDate"><?php echo $faire_dates; ?></h4>
                     <div class="entry-box-items">
                         <?php if(isset($location) && trim($location) != '' && count(array_intersect($exhibit_type, array("Exhibit", "Sponsor", "Startup Sponsor"))) > 0) { ?><span class="entry-box-item" aria-label="Location"><i class="fa fa-map-signs" aria-hidden="true"></i><?php echo $location; ?></span><?php } ?>
                         <?php if(isset($friday) && $friday == 1 && count(array_intersect($exhibit_type, array("Exhibit", "Sponsor", "Startup Sponsor"))) > 0) { ?><span class="entry-box-item" aria-label="Calendar Detail"><i class="fa fa-calendar-days" aria-hidden="true"></i>Friday Only</span><?php } ?>
-                        <?php if(!empty($exhibit_type)) { ?><span class="entry-box-item" aria-label="Exhibit Type"  ><i class="fa fa-check" aria-hidden="true"></i><?php echo implode(" & ",$exhibit_type); ?></span><?php } ?>
-                        <?php if(isset($mainCategoryName) && $mainCategoryName != '') { ?><span class="entry-box-item" aria-label="Main Category"><?php echo $mainCategoryIcon; echo $mainCategoryName ; ?></span><?php } ?>
+                        <?php if(isset($satSun) && $satSun == 1 && count(array_intersect($exhibit_type, array("Exhibit", "Sponsor", "Startup Sponsor"))) > 0) { ?><span class="entry-box-item" aria-label="Calendar Detail"><i class="fa fa-calendar-days" aria-hidden="true"></i>Sat & Sun</span><?php } ?>
+                        <?php if(!empty($exhibit_type)) { ?>
+                            <span class="entry-box-item" aria-label="Exhibit Type"  >
+                                <?php /* <a href="/<?php echo $url_sub_path; ?>/meet-the-makers/?type=<?php echo reset($exhibit_type); ?>"> */ ?>
+                                    <i class="fa <?php echo strtolower(reset($exhibit_type)); ?>"></i>
+                                    <?php echo implode(" & ",$exhibit_type); ?>
+                                <?php /* </a> */ ?>
+                            </span>
+                        <?php } ?>
+                        <?php if(isset($mainCategoryName) && $mainCategoryName != '') { ?><span class="entry-box-item" aria-label="Main Category"><a href="/<?php echo $url_sub_path; ?>/meet-the-makers/?category=<?php echo $mainCategoryName; ?>" class="icon-link"><?php echo $mainCategoryIcon; ?><span><?php echo $mainCategoryName; ?></span></a></span><?php } ?>
                         <?php if(!empty($ribbons)) { ?><span class="entry-box-item" aria-label="Ribbon"><a href="/ribbons/"><i class="fa fa-award" aria-hidden="true"></i>Ribbon Recipient</a></span><?php } ?>
+                        <?php if($faire_end > date("Y-m-d j:i:s")) { ?>
+                            <!--<span class="entry-box-item" aria-label="Tickets"><a href="/<?php echo $url_sub_path; ?>/buy-tickets/" class="icon-link"><i class="fa fa-ticket" aria-hidden="true"></i><span>Buy Tickets</span></a></span>-->
+                        <?php } ?>
                     </div>
                     <?php if(isset($project_short) && $project_short != '') { ?>
                         <p class="project-description"><?php echo nl2br($project_short); 
-                            if(strlen($project_short) < 200 && $makerEdit) { 
-                                $showEditMakey = true;
-                                ?>
-                                <span class="edit-message">Consider <a href="#" onclick="document.getElementById('edit-photos').click();return false;">editing</a> your Project Description to be at least 350 characters to help fillout your page better.</span>
-                            <?php } ?>
+                            if (isset($form['gv_id_update_public_info']) && $form['gv_id_update_public_info'] != '') {
+                                if(strlen($project_short) < 200 && $makerEdit) { 
+                                    $showEditMakey = true;
+                                    ?>
+                                    <span class="edit-message">Consider <a href="#" onclick="document.getElementById('edit-photos').click();return false;">editing</a> your Project Description to be at least 350 characters to help fillout your page better.</span>
+                            <?php 
+                                } 
+                            }
+                            ?>
                         </p>
                     <?php } ?>
                     
@@ -65,16 +92,60 @@ $showEditMakey = false;
                         <?php echo $scheduleOutput; ?>
                     </div>
                 <?php
-                }   
+                }                   
                 if(!empty($video) || !empty($video2)) {
+                    
                     echo $video;  //project Video
                     echo $video2; //field386
                 } 
                 if(isset($project_gallery) && !empty($project_gallery)) { ?>
                     <div id="projectGallery" class="owl-carousel">
                     <?php foreach($project_gallery as $key=>$image) { 
-                            if($image!=''){?>
-                                <div class="gallery-item"><img alt="<?php echo $project_title;?> - exhibit detail <?php echo $key;?>"  src='<?php echo legacy_get_fit_remote_image_url($image, 750, 500); ?>' onerror="this.onerror=null;this.src='/wp-content/themes/makerfaire/images/default-gallery-image.jpg';this.srcset=''" /></div>
+                            if(isset($image) && $image!=''){
+                                // if image doesn't exist @getimagesize will return false
+                                $image_size = @getimagesize($image);
+                                $image_default = $image;
+                                $image_sources = array();
+                                ?>
+                                <picture class="gallery-item">
+                                    <?php 
+                                    // we never want the image to get upsized beyond it's initial size, and no reason to put sources above it size either.
+                                    // sources have to be listed by size though, so we will put them into an array based on size to output later!
+                                    if($image_size) {
+                                        if($image_size[0] >= 200 && $image_size[1] >= 200) { 
+                                            $image_default = legacy_get_resized_remote_image_url($image, 200, 200);
+                                            $image_sources[0] = '<source media="(max-width: 450px)" srcset="'.legacy_get_resized_remote_image_url($image, 200, 200).'">';
+                                        }
+                                        if($image_size[0] >= 225 && $image_size[1] >= 225) { 
+                                            $image_default = legacy_get_resized_remote_image_url($image, 225, 225);
+                                            $image_sources[3] = '<source media="(max-width: 1200px)" srcset="'.legacy_get_resized_remote_image_url($image, 225, 225).'">';
+                                        }
+                                        if($image_size[0] >= 280 && $image_size[1] >=280) { 
+                                            $image_default = legacy_get_resized_remote_image_url($image, 280, 280); 
+                                            $image_sources[1] = '<source media="(max-width: 600px)" srcset="'.legacy_get_resized_remote_image_url($image, 280, 280).'">';
+                                        } 
+                                        if($image_size[0] >= 360 && $image_size[1] >= 360) { 
+                                            $image_default = legacy_get_resized_remote_image_url($image, 360, 360);
+                                            $image_sources[4] = '<source media="(max-width: 2000px)" srcset="'.legacy_get_resized_remote_image_url($image, 360, 360).'">';
+                                        } 
+                                        if($image_size[0] >= 380 && $image_size[1] >= 380) { 
+                                            $image_default = legacy_get_resized_remote_image_url($image, 380, 380); 
+                                            $image_sources[2] = '<source media="(max-width: 800px)" srcset="'.legacy_get_resized_remote_image_url($image, 380, 380).'">';
+                                        } 
+                                        // sort our image sources so they are in the right order to display (lowest to highest)
+                                        ksort($image_sources);
+                                        foreach($image_sources as $source) {
+                                            echo ($source);
+                                        }
+                                    } 
+  
+                                    ?>
+
+                                    <img src="<?php echo $image_default; ?>" 
+                                        alt="<?php echo $project_title;?> - exhibit detail <?php echo $key;?>"
+                                        onerror="this.onerror=null;this.src='/wp-content/themes/makerfaire/images/default-gallery-image.jpg';this.srcset=''"
+                                        data-photo="<?php echo $image; ?>">
+                                </picture>
                             <?php } ?>
                     <?php } ?>
                     </div>
@@ -88,7 +159,7 @@ $showEditMakey = false;
     </section>
     <?php if ($dispMakerInfo && $showcase != 'parent') { ?>
         <section id="makerInfo" class="makers-<?php echo count($makers); ?>">
-            <?php if(count($makers) > 1) {  
+            <?php if(count($makers) > 1) {
                 foreach($makers as $maker) { ?>
                     <div class='entry-box'>
                         <img src='<?php echo(legacy_get_resized_remote_image_url($maker['photo'], 400, 400)); ?>' 
@@ -105,11 +176,11 @@ $showEditMakey = false;
                         ?> 
                     </div>
                 <?php } 
-            } else if( $makers  ) { 
+            } else if( $makers ) { 
                 $maker = current($makers);
                 $small_photo = isset($maker['photo']) ? legacy_get_resized_remote_image_url($maker['photo'], 400, 400) : "";
                 $large_photo = isset($maker['photo']) ? legacy_get_resized_remote_image_url($maker['photo'], 760, 760) : "";
-                if($maker['firstname'] != '' || $maker['photo'] != '') {
+                if($maker['firstname'] != '' || $maker['photo'] != '' && file_exists($maker['photo'])) {
             ?>
                 <div class="small-column">
                     <picture>
@@ -122,14 +193,18 @@ $showEditMakey = false;
                 <div class="big-column">
                     <h2><?php echo($maker['firstname'] . " " . $maker['lastname']); ?></h2>
                     <p class="maker-description"><?php echo($maker['bio']);
-                    if(strlen($maker['bio']) < 200 && $makerEdit) { 
-                        $showEditMakey = true;
-                        ?>
-                        <span class="edit-message">Consider <a href="#" onclick="document.getElementById('edit-photos').click();return false;">editing</a> your Bio or Group/Company description to be at least 200 characters to help fillout your page better.</span>                        
-                    <?php } ?>
+                    if (isset($form['gv_id_update_public_info']) && $form['gv_id_update_public_info'] != '') {
+                        if(strlen($maker['bio']) < 200 && $makerEdit) { 
+                            $showEditMakey = true;
+                            ?>
+                            <span class="edit-message">Consider <a href="#" onclick="document.getElementById('edit-photos').click();return false;">editing</a> your Bio or Group/Company description to be at least 200 characters to help fillout your page better.</span>                        
+                            <?php 
+                        } 
+                    } ?>
                 </div>
-            <?php }
-            } ?>              
+            <?php 
+                }
+            } ?>
         </section>
     <?php } ?>  
 
@@ -161,7 +236,7 @@ $showEditMakey = false;
                 <h4>More Event Info</h4>
                 <div class="entry-box-items">
                     <?php if(isset($mainCategoryName ) && $mainCategoryName  != '') { ?>
-                        <span class="entry-box-item"><?php echo $mainCategoryIcon; ?><a href="/<?php echo $url_sub_path; ?>/meet-the-makers/?category=<?php echo $mainCategoryName; ?>">See All <?php echo $mainCategoryName; ?></a></span>
+                        <span class="entry-box-item"><a href="/<?php echo $url_sub_path; ?>/meet-the-makers/?category=<?php echo $mainCategoryName; ?>" class="icon-link"><?php echo $mainCategoryIcon; ?><span>See All <?php echo $mainCategoryName; ?></span></a></span>
                     <?php } ?>
                     <?php if($show_sched ){ ?>
                         <span class="entry-box-item"><i class="fa fa-calendar-days"></i><a href="/<?php echo $url_sub_path; ?>/schedule/">Event Schedule</a></span>

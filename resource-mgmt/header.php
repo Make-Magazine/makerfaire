@@ -8,19 +8,36 @@ $my_version = $my_theme->get('Version');
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>MakerFaire Resource Management Tool</title>
+	<title>Maker Faire Reporting Tool</title>
 
 	<!-- Bootstrap -->
 	<link href="css/bootstrap.min.css" rel="stylesheet">
 	<link href="//maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css" rel="stylesheet">
   	<link href="css/angular-reporting.min.css" rel="stylesheet">
 
-  	<!-- jQuery -->
-  	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-  	<script type="text/javascript">
-  		<!-- This script was moved into the universal scripts so I had to add it back here as we don't use that library -->
+	<style> /* tell me a better place to put this and I'll jump on it */
+	.reportsView .ui-grid-render-container {
+		display: flex;
+		flex-direction: column;
+	}
+	.reportsView .ui-grid-render-container .ui-grid-header, .reportsView .ui-grid-render-container .ui-grid-viewport {
+		order: 1;
+	}
+	.reportsView .ui-grid-render-container ui-grid-footer {
+		order: 0;
+	}
+	.reportsView .ui-grid-render-container ui-grid-footer .ui-grid-footer-cell:first-of-type .ui-grid-cell-contents.ng-scope::before {
+		content: "Count:";
+	}
+	</style>
+
+	<!-- jQuery -->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>	
+
+	<!-- This script was moved into the universal scripts so I had to add it back here as we don't use that library -->
+	<script type="text/javascript">
 		function getUrlParam(name) {
-			if(window.location.search) {
+			if (window.location.search) {
 				name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
 				var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
 				var results = regex.exec(location.search);
@@ -35,15 +52,15 @@ $my_version = $my_theme->get('Version');
 	<base href="/resource-mgmt/"></base>
 </head>
 <body>
+	<?php if (!$reports_only ) { ?>
 	<div id="wpadminbar" class="nojq">
-        <div class="quicklinks" id="wp-toolbar" role="navigation" aria-label="Toolbar">
-            <ul id="wp-admin-bar-root-default" class="ab-top-menu">                
-                <li id="wp-admin-bar-site-name" class="menupop">
-                    <a class="ab-item" href="../wp-admin" target="_none"><i class="bi bi-house"></i> Maker Faire Admin</a>
-                    
-                </li>      
-            </ul>
+		<div class="quicklinks" id="wp-toolbar" role="navigation" aria-label="Toolbar">
+			<ul id="wp-admin-bar-root-default" class="ab-top-menu">
+				<li id="wp-admin-bar-site-name" class="menupop">
+					<a class="ab-item" href="../wp-admin" target="_none"><i class="bi bi-house"></i> Maker Faire Admin</a>
 
-        </div>
-
-    </div>
+				</li>
+			</ul>
+		</div>
+	</div>
+	<?php } ?>

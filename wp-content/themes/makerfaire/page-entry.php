@@ -4,6 +4,7 @@
  *
  * @version 2.1
  */
+
 global $wp_query;
 global $wpdb;
 $entryId = (isset($wp_query->query_vars['e_id']) ? $wp_query->query_vars['e_id'] : '');
@@ -72,34 +73,28 @@ if (isset($entry->errors)) {
         $fieldData[$fieldID] = $field;
     }
 
-    //if the form was submitted
-    $submit = filter_input(INPUT_POST, 'edit_entry_page');
-    if ($submit != '') {
-        entryPageSubmit($entryId);
-        $entry = GFAPI::get_entry($entryId);
-    }
-
-    $faire = $show_sched = $faireShort = $faire_end = '';
+    //set defaults
+    $faire = $show_sched = $faireShort = $faire_end = $url_sub_path = $faire_dates = '';
+    $faire_name = $faireShort = $faire_start = $faire_end = $faire_year = '';
+    $timeZone = 'America/Los_Angeles'; 
+    
     if ($form_id != '') {
-        $formSQL = "select faire_name as pretty_faire_name, replace(lower(faire_name),' ','-') as faire_name, faire_location, faire, id,show_sched, start_dt, end_dt, url_path, faire_map, program_guide, time_zone "
-            . " from wp_mf_faire where FIND_IN_SET ($form_id, wp_mf_faire.form_ids)> 0 order by ID DESC limit 1";
+        $formSQL = "select faire_name, faire, id, show_sched, start_dt, end_dt, url_path, time_zone "
+                 . "from wp_mf_faire "
+                 . "where FIND_IN_SET ($form_id, wp_mf_faire.form_ids)> 0 "
+                 . "order by ID DESC limit 1";
 
         $results = $wpdb->get_row($formSQL);
 
-        if ($wpdb->num_rows > 0) {
-            $faire = $results->faire_name;
-            $faire_name = $results->pretty_faire_name;
-            $faire_location_db = $results->faire_location;
-            $faireShort = $results->faire;
-            $faireID = $results->id;
+        if ($wpdb->num_rows > 0) {            
+            $faire_name = $results->faire_name;            
+            $faireShort = $results->faire;            
             $show_sched = $results->show_sched;
             $faire_start = $results->start_dt;
             $faire_end = $results->end_dt;
             $faire_year = substr($faire_start, 0, 4);
             $faire_dates = date_format(date_create($faire_start), "F jS") . "-" . date_format(date_create($faire_end), "jS");
-            $url_sub_path = $results->url_path;
-            $faire_map = $results->faire_map;
-            $program_guide = $results->program_guide;
+            $url_sub_path = $results->url_path;            
             $timeZone = $results->time_zone;
         }
     }
@@ -112,14 +107,16 @@ if (isset($entry->errors)) {
     if (isset($entry['320']) && $entry['320'] != '') {
         $mainCategory = get_term($entry['320']);
         $mainCategoryName = (isset($mainCategory->name) ? $mainCategory->name : '');
-        $mainCategoryIconType = get_field('icon_type', $mainCategory->taxonomy . '_' . $mainCategory->term_id);
-        // get the mainCategory icon from the mf category taxonomy, if indeed one is set
-        if ($mainCategoryIconType == "uploaded_icon") {
-            $mainCategoryIcon = '<picture class="main-category-icon"><img src="' . get_field('uploaded_icon', $mainCategory->taxonomy . '_' . $mainCategory->term_id)['url'] . '" height="27px" width="27px" aria-hidden="true" /></picture>';
-        } else {
-            $fa = get_field('font_awesome', $mainCategory->taxonomy . '_' . $mainCategory->term_id);
-            if (!empty($fa)) {
-                $mainCategoryIcon = '<i class="fa ' . $fa . '" aria-hidden="true"></i>';
+        if(isset($mainCategory->taxonomy)) {
+            $mainCategoryIconType = get_field('icon_type', $mainCategory->taxonomy . '_' . $mainCategory->term_id);
+            // get the mainCategory icon from the mf category taxonomy, if indeed one is set
+            if ($mainCategoryIconType == "uploaded_icon") {
+                $mainCategoryIcon = '<picture class="main-category-icon"><img src="' . get_field('uploaded_icon', $mainCategory->taxonomy . '_' . $mainCategory->term_id)['url'] . '" height="27px" width="27px" aria-hidden="true" /></picture>';
+            } else {
+                $fa = get_field('font_awesome', $mainCategory->taxonomy . '_' . $mainCategory->term_id);
+                if (!empty($fa)) {
+                    $mainCategoryIcon = '<i class="fa ' . $fa . '" aria-hidden="true"></i>';
+                }
             }
         }
 
@@ -163,13 +160,23 @@ if (isset($entry->errors)) {
     if ($project_photo == '' && is_array($project_gallery)) {
         $project_photo = $project_gallery[0];
     }
-    // check if project photo is too small to treat normally
-    $proj_photo_size = !empty($project_photo) ? getimagesize($project_photo) : array(750, 500);;
 
-    // these are the images we're using for the responsvie image sources
-    $project_photo_large  = legacy_get_resized_remote_image_url($project_photo, 1050, 700);
-    $project_photo_medium = legacy_get_resized_remote_image_url($project_photo, 765, 510);
-    $project_photo_small  = legacy_get_resized_remote_image_url($project_photo, 420, 280);
+    // check if project photo is too small to treat normally
+    $proj_photo_size = !empty($project_photo) ? @getimagesize($project_photo) : array(750, 500);
+
+    // these are the images we're using for the responsive image sources
+    if(is_array($proj_photo_size) && $proj_photo_size[1] > 0 && $proj_photo_size[0]/$proj_photo_size[1] < 1.77777) {
+        $project_photo_large  = legacy_get_resized_remote_image_url($project_photo, 1050, 700);
+        $project_photo_largish= legacy_get_resized_remote_image_url($project_photo, 840, 560);
+        $project_photo_medium = legacy_get_resized_remote_image_url($project_photo, 765, 510);
+        $project_photo_small  = legacy_get_resized_remote_image_url($project_photo, 420, 280);
+    } else {
+        //for very wide, short images
+        $project_photo_large  = legacy_get_fit_remote_image_url($project_photo, 1050, 700);
+        $project_photo_largish= legacy_get_fit_remote_image_url($project_photo, 840, 560);
+        $project_photo_medium = legacy_get_fit_remote_image_url($project_photo, 765, 510);
+        $project_photo_small  = legacy_get_fit_remote_image_url($project_photo, 420, 280);
+    }
 
     $project_short = (isset($entry['16']) ? $entry['16'] : '');    // Description
     $presentation_title  = (isset($entry['880']) ? $entry['880'] : '');
@@ -199,9 +206,12 @@ if (isset($entry->errors)) {
         }
     }
 
-    $friday = (isset($entry['879.3']) && !empty($entry['879.3'])  ? 1 : 0); // is it on friday
-    $location = "";
-    $scheduleOutput = display_entry_schedule($entry);
+    $friday = (isset($entry['879.3']) && !empty($entry['879.3'])  ? 1 : 0); // is it on friday only
+    $satSun = (isset($entry['879.2']) && !empty($entry['879.2'])  ? 1 : 0); // is it on Sat & Sunday only
+    $location = $scheduleOutput = "";
+    if($show_sched){
+        $scheduleOutput = display_entry_schedule($entry);
+    }
 
     $project_website = (isset($entry['27']) ? $entry['27'] : '');  //Website
     $project_social = getSocial(isset($entry['906']) ? $entry['906'] : '');
@@ -225,7 +235,7 @@ if ($editEntry == 'edit') {
 
     //instantiate the model
     $maker = new maker($current_user->user_email);
-    if ($maker->check_entry_access($entry)) {
+    if ($maker->check_entry_access($entry) || $adminView) {
         $makerEdit = true;
     }
 }
@@ -360,29 +370,6 @@ if (!$displayMakers) {
 /* JS used only if the person visiting this page can edit the information on it */
 ?>
 <div class="clear"></div>
-<script type="text/javascript">
-    /*    jQuery(document).ready(function () {
-
-        jQuery(".timeZoneSelect").on("change", function () {
-            var tzone = jQuery('#faire_tz').val();
-            //start time
-            var s = spacetime(jQuery("#start_dt").val(), tzone);
-            s = s.goto(this.value);
-            var dispStartTime = s.format('time');
-            jQuery("#dispStartTime").text(dispStartTime);
-
-            //set date
-            var dispDate = s.format("{day}, {month} {date}");
-            jQuery("#startDT").text(dispDate);
-
-            //end time
-            var e = spacetime(jQuery("#end_dt").val(), tzone);
-            e = e.goto(this.value);
-            dispEndTime = e.format('time');
-            jQuery("#dispEndTime").text(dispEndTime);
-        });
-    });*/
-</script>
 
 <div class="entry-page">
     <?php if (isset($timeZone)) { ?>
@@ -456,7 +443,7 @@ if (!$displayMakers) {
             </span>
 
             <?php
-            if ($form['gv_id_update_public_info'] != '') {
+            if (isset($form['gv_id_update_public_info']) && $form['gv_id_update_public_info'] != '') {
             ?>
                 <button id="edit-photos">Edit Public Info</button>
             <?php
@@ -505,601 +492,3 @@ if (!$displayMakers) {
 
 <?php
 get_footer();
-
-// this eachs data and spits out schedule blocks
-function display_entry_schedule($entry) {
-    global $wpdb;
-    global $show_sched;
-    global $location;
-
-    //set entry id
-    $entry_id = $entry['id'];
-
-    $sql = "select location.entry_id, area.area, subarea.subarea, subarea.nicename, location.location, schedule.start_dt, schedule.end_dt
-            from  wp_mf_location location
-            join  wp_mf_faire_subarea subarea
-                            ON  location.subarea_id = subarea.ID
-            join wp_mf_faire_area area
-                            ON subarea.area_id = area.ID
-            left join wp_mf_schedule schedule
-                    on location.ID = schedule.location_id
-             where location.entry_id=$entry_id"
-        . " group by area, subarea, location, schedule.start_dt"
-        . " order by schedule.start_dt";
-    $results = $wpdb->get_results($sql);
-
-    $schedule = "";
-    // we default to believing an entry doesn't have a schedule. if starts dates are found, this will change
-    $has_schedule = false;
-
-    if ($wpdb->num_rows > 0) {
-        $prev_start_dt = NULL;
-        $prev_location = NULL;
-        $multipleLocations = NULL;
-        $schedule = '<div class="schedule-items">';
-
-        //split the results into base location and schedule        
-        foreach ($results as $row) {
-            //schedule data     
-            if (!is_null($row->start_dt)) { // if there is no start date, it's a base location
-                $start_dt = strtotime($row->start_dt);
-                $current_start_dt = date("l, F j", $start_dt);
-                $date = date('D j F Y', $start_dt);
-                $dow = date('D', $start_dt);
-                $day = date('j', $start_dt);
-                $current_location = ($row->nicename != '' ? $row->nicename : $row->subarea);
-
-                if ($prev_start_dt == NULL) {
-                    $schedule .= "<div class='schedule-item'>
-                                    <div class='schedule-calendar'>
-                                        <span class='schedule-dow'>" . $dow . "</span>
-                                        <span class='schedule-day'>" . $day . "</span>
-                                        <img src='/wp-content/themes/makerfaire/images/calendar-blank.svg' width='65' height='72' aria-label='" . $date . "' title='" . $date . "' alt='" . $date . "' title='" . $date . "' />
-                                    </div>
-                                    <div class='schedule-details'>";
-                }
-
-                if ($prev_start_dt != $current_start_dt) {
-                    //This is not the first new date
-                    if ($prev_start_dt != NULL) {
-                        $schedule .= '</div></div>    
-                                      <div class="schedule-item">
-                                        <div class="schedule-calendar">
-                                            <span class="schedule-dow">' . $dow . '</span>
-                                            <span class="schedule-day">' . $day . '</span>
-                                            <img src="/wp-content/themes/makerfaire/images/calendar-blank.svg" width="65" height="72" aria-label="' . $date . '" alt="' . $date . '" title="' . $date . '" />
-                                        </div>
-                                        <div class="schedule-details">';
-                    }
-                    $prev_start_dt = $current_start_dt;
-                    $prev_location = null;
-                    $multipleLocations = TRUE;
-                }
-
-                // this is a new location
-                if ($prev_location != $current_location) {
-                    $prev_location = $current_location;
-                    $schedule .= '<b class="location">' . $current_location . '</b>';
-                }
-                $schedule .= '<div class="schedule-start">' . date("g:i a", $start_dt) . '</div>';
-                if ($row->location != '') {
-                    $schedule .= $row->location;
-                }
-                // if there any start dates were found, we should show a schedule
-                $has_schedule = true;
-
-            } else {
-                //base location at faire
-                //set primary location
-                if (empty($location) || $location == "") {
-                    $location = ($row->nicename != '' ? $row->nicename : $row->subarea);
-                }
-                           
-            }
-        } //end for each loop       
-        if ($multipleLocations == TRUE) { // this is kind of a mess to require this
-            $schedule .= "</div></div>";
-        }
-        $schedule .= "</div>";
-    } //end if location data found
-
-    $return = '';
-
-    if ($show_sched && $has_schedule) {
-        $return .=  '<h4>Schedule</h4>'
-            . $schedule;
-    }
-
-
-
-    return $return;
-}
-
-// new showcase function, can be used for parent or children
-function showcase($entryID) {
-    global $wpdb;
-    global $showcase;
-
-    $return = '';
-
-    //look for all associated entries but exclude trashed entries
-    $sql = "SELECT parentID, 
-                   childID, 
-                   (select meta_value from wp_gf_entry_meta where meta_key='151' and entry_id=childID) as child_title, 
-                   (select meta_value from wp_gf_entry_meta where meta_key='22' and entry_id=childID) as child_photo 
-            FROM wp_mf_lead_rel 
-                left outer join wp_gf_entry child on wp_mf_lead_rel.childID = child.id  
-                left outer join wp_gf_entry_meta child_mf_status on child.id = child_mf_status.entry_id and child_mf_status.meta_key = '303' 
-                left outer join wp_gf_entry parent on wp_mf_lead_rel.parentID = parent.id 
-                left outer join wp_gf_entry_meta parent_mf_status on parent.id = parent_mf_status.entry_id and parent_mf_status.meta_key = '303' 
-            WHERE (parentID=$entryID or childID=$entryID) 
-                AND child.status != 'trash' 
-                AND parent_mf_status.meta_value='Accepted' 
-                AND parent.status != 'trash' 
-                AND child_mf_status.meta_value='Accepted'
-            ORDER BY child_title";
-    $results = $wpdb->get_results($sql);
-    if ($wpdb->num_rows > 1) { // it's a parent!
-        global $groupname;
-        global $groupphoto;
-        global $groupbio;
-        global $entry;
-        $groupsocial = getSocial(isset($entry['828']) ? $entry['828'] : '');
-        $groupwebsite = isset($entry['112']) ? $entry['112'] : '';
-        $showcase = "parent";
-        // we reuse the makerInfo section for projects here, as it's the same css
-        $return .= '<section id="makerInfo" class="showcase-list makers-' . count($results) . '">';
-        foreach ($results as $row) {
-            $return .= '<a href="/maker/entry/' . $row->childID . '" class="entry-box">
-                                        <img src="' . legacy_get_resized_remote_image_url($row->child_photo, 400, 400) . '"
-                                            alt="' . $row->child_title . ' Picture"
-                                            onerror="this.onerror=null;this.src=\'/wp-content/themes/makerfaire/images/default-makey-medium.png\';" />
-                                        <h3>' . $row->child_title . '</h3>
-                                    </a>';
-        }
-        $return .= '</section>';
-        $return .= '<section class="showcase-list showcase-parent entry-box">
-                            <div class="showcase-wrapper">
-                                <div>
-                                   <picture>
-                                      <img src="' . legacy_get_resized_remote_image_url($groupphoto, 215, 215) . '" alt="' . $groupname . '" />
-                                   </picture>
-                                </div>
-                                <div>
-                                    <h2>' . $groupname . '</h2>
-                                    <p>' . $groupbio . '</p>
-                                    <p><a class="showcase-website" href="' . $groupwebsite . '">' . $groupwebsite . '</a></p>'
-            . $groupsocial .
-            '</div>
-                            </div>
-                    </section>';
-    } else if ($wpdb->num_rows == 1) { // it's a child!
-        $showcase = "child";
-        $parentID = $results[0]->parentID;
-        $childSQL = "SELECT parentID, 
-                            (select meta_value from wp_gf_entry_meta where meta_key='111' and entry_id=parentID) as parent_photo, 
-                            (select meta_value from wp_gf_entry_meta where meta_key='109' and entry_id=parentID) as parent_title, 
-                            (select meta_value from wp_gf_entry_meta where meta_key='110' and entry_id=parentID) as parent_description 
-                    FROM wp_mf_lead_rel 
-                    WHERE parentID=$parentID 
-                    LIMIT 1";
-        $parent = $wpdb->get_results($childSQL)[0];
-        $return .= '<section class="showcase-list showcase-parent entry-box">
-                            <div class="showcase-wrapper">
-                                <div>
-                                    <picture>
-                                        <a href="/maker/entry/' . $parentID . '/">
-                                            <img src="' . legacy_get_resized_remote_image_url($parent->parent_photo, 215, 215) . '" alt="' . $parent->parent_title . '" />
-                                        </a>
-                                    </picture>
-                                </div>
-                                <div>
-                                    <a href="/maker/entry/' . $parentID . '/"><h2>' . $parent->parent_title . ' Showcase Maker</h2></a>
-                                    <p>' . $parent->parent_description . '</p>
-                                </div>
-                            </div>
-                    </section>';
-    }
-    return $return;
-}
-
-// provide a linked list of the categories
-function display_categories($catArray) {
-    global $url_sub_path;
-    $return = '<b>Categories:</b>';
-    foreach ($catArray as $value) {
-        $return .= ' <a href="/' . $url_sub_path . '/meet-the-makers/?category=' . str_replace("&amp;", "%26", $value) . '">' . $value . '</a>,';
-    }
-    return rtrim($return, ',');
-}
-
-//return makers info
-function getMakerInfo($entry) {
-    $makers = array();
-
-    /* for VMF2020 we had two nested forms, one for makers one for entries. We determined this was too confusing for
-     * our makers, and switched to one parent form for entry with one nested form for multiple makers.
-     */
-    if (isset($entry['gpnf_entry_parent']) && $entry['gpnf_entry_parent'] != '') { //is this a nested form with parent information
-        //pull maker information from nested form - VMF2020
-        $makers = getMakerInfoNested($entry);
-    } elseif (isset($entry['854'])) {
-        // after VMF2020
-        $makers = getMakerInfoNested($entry);
-    } else {
-        //pull information from legacy - pre VMF2020
-        $makers = getMakerInfoLegacy($entry);
-    }
-
-    return $makers;
-}
-
-function getMakerInfoLegacy($entry) {
-    //set group information
-    global $isGroup;
-    global $groupname;
-    global $groupphoto;
-    global $groupbio;
-    global $groupsocial;
-    $groupname = (isset($entry['109']) ? $entry['109'] : '');
-    $groupphoto = "";
-    //For BA23, a change was made to only use field 217. 
-    //If 111, group photo is set, use that. Else if 217, Maker Photo is set, use that
-    if (isset($entry['111']) && $entry['111'] != '') {
-        $groupphoto = $entry['111'];
-    } elseif (isset($entry['217']) && $entry['217'] != '') {
-        $groupphoto = $entry['217'];
-    }
-    //for BA24, the single photo was changed to a multi image which messed things up a bit
-    $photo = json_decode($groupphoto);
-    if (is_array($photo) && !empty($photo)) {
-        $groupphoto = $photo[0];
-    }
-
-    $groupbio = (isset($entry['110']) ? $entry['110'] : '');
-    $groupsocial = getSocial(isset($entry['828']) ? $entry['828'] : '');
-    $groupwebsite = isset($entry['112']) ? $entry['112'] : '';
-
-    // One maker
-    // A list of makers (7 max)
-    // A group or association
-    $displayType = (isset($entry['105']) ? $entry['105'] : '');
-
-    $isGroup = false;
-    $isGroup = (stripos($displayType, 'group') !== false || stripos($displayType, 'team') !== false ? true : false);
-
-    $makers = array();
-    //set maker information
-    if (isset($entry['160.3']) && $entry['160.3'] != "")
-        $makers[1] = array('firstname' => $entry['160.3'], 'lastname' => $entry['160.6'],
-            'bio' => (isset($entry['234']) ? preg_replace('/\\\\["\']/', '"', $entry['234']) : ''), //remove backslashes from urls in the description 
-            'photo' => (isset($entry['217']) ? $entry['217'] : ''),
-            'social' => getSocial(isset($entry['821']) ? $entry['821'] : ''),
-            'website' => (isset($entry['209']) ? $entry['209'] : '')
-        );
-    if (isset($entry['158.3']) && $entry['158.3'] != "")
-        $makers[2] = array('firstname' => $entry['158.3'], 'lastname' => $entry['158.6'],
-            'bio' => (isset($entry['258']) ? preg_replace('/\\\\["\']/', '"', $entry['258']) : ''),
-            'photo' => (isset($entry['224']) ? $entry['224'] : ''),
-            'social' => getSocial(isset($entry['822']) ? $entry['822'] : ''),
-            'website' => (isset($entry['216']) ? $entry['216'] : '')
-        );
-    if (isset($entry['155.3']) && $entry['155.3'] != "")
-        $makers[3] = array('firstname' => $entry['155.3'], 'lastname' => $entry['155.6'],
-            'bio' => (isset($entry['259']) ? preg_replace('/\\\\["\']/', '"', $entry['259']) : ''),
-            'photo' => (isset($entry['223']) ? $entry['223'] : ''),
-            'social' => getSocial(isset($entry['823']) ? $entry['823'] : ''),
-            'website' => (isset($entry['215']) ? $entry['215'] : '')
-        );
-    if (isset($entry['156.3']) && $entry['156.3'] != "")
-        $makers[4] = array('firstname' => $entry['156.3'], 'lastname' => $entry['156.6'],
-            'bio' => (isset($entry['260']) ? preg_replace('/\\\\["\']/', '"', $entry['260']) : ''),
-            'photo' => (isset($entry['222']) ? $entry['222'] : ''),
-            'social' => getSocial(isset($entry['824']) ? $entry['824'] : ''),
-            'website' => (isset($entry['214']) ? $entry['214'] : '')
-        );
-    if (isset($entry['157.3']) && $entry['157.3'] != "")
-        $makers[5] = array('firstname' => $entry['157.3'], 'lastname' => $entry['157.6'],
-            'bio' => (isset($entry['261']) ? preg_replace('/\\\\["\']/', '"', $entry['261']) : ''),
-            'photo' => (isset($entry['220']) ? $entry['220'] : ''),
-            'social' => getSocial(isset($entry['825']) ? $entry['825'] : ''),
-            'website' => (isset($entry['213']) ? $entry['213'] : '')
-        );
-    if (isset($entry['159.3']) && $entry['159.3'] != "")
-        $makers[6] = array('firstname' => $entry['159.3'], 'lastname' => $entry['159.6'],
-            'bio' => (isset($entry['262']) ? preg_replace('/\\\\["\']/', '"', $entry['262']) : ''),
-            'photo' => (isset($entry['221']) ? $entry['221'] : ''),
-            'social' => getSocial(isset($entry['826']) ? $entry['826'] : ''),
-            'website' => (isset($entry['211']) ? $entry['211'] : '')
-        );
-    if (isset($entry['154.3']) && $entry['154.3'] != "")
-        $makers[7] = array('firstname' => $entry['154.3'], 'lastname' => $entry['154.6'],
-            'bio' => (isset($entry['263']) ? preg_replace('/\\\\["\']/', '"', $entry['263']) : ''),
-            'photo' => (isset($entry['219']) ? $entry['219'] : ''),
-            'social' => getSocial(isset($entry['827']) ? $entry['827'] : ''),
-            'website' => (isset($entry['212']) ? $entry['212'] : '')
-        );
-    // rather than have the page entry view have to do something different for groups, let's just replace all makers with the group
-    if ($isGroup) {
-        $makers = array(array(
-            'firstname' => $groupname, 'lastname' => null,
-            'bio' => preg_replace('/\\\\["\']/', '"', $groupbio),
-            'photo' => $groupphoto,
-            'social' => $groupsocial,
-            'website' => $groupwebsite
-        ));
-    }
-    // if we are not using the makers 1-7 and it isn't a group, the makers array will be empty and we should instead try pulling from the default first name / last name
-    if (!$makers) {
-        // deal with the maker photo possibly being a multi image
-        $makerphoto = (isset($entry['217']) && $entry['217'] != '') ? $entry['217'] : "";
-        $photo = json_decode($makerphoto);
-        if (is_array($photo) && !empty($photo)) {
-            $makerphoto = $photo[0];
-        }
-        $makers = array(array(
-            'firstname' => (isset($entry['96.3']) ? $entry['96.3'] : ''),
-            'lastname'  => (isset($entry['96.6']) ? $entry['96.6'] : ''),
-            'bio'       => (isset($entry['234']) ? $entry['234'] : ''),
-            'photo'     => $makerphoto,
-            'social'    => getSocial(isset($entry['821']) ? $entry['821'] : ''),
-            'website'   => (isset($entry['209']) ? $entry['209'] : ''),
-        ));
-    }
-    return $makers;
-}
-
-function handsOnMarker($entry) {
-    ################ For form exhibits, show if exhibit is hands on ################
-    if (isset($entry['66'])) {
-        if ($entry['66'] == "Yes") {
-            return '<div class="hands-on"><span class="lnr lnr-checkmark-circle"></span> Hands-on Activity</div>';
-        }
-    }
-}
-
-function getSocial($entrySocial) {
-    $socialBlock = '';
-
-    if (isset($entrySocial)) {
-        $entrySocial = (string) $entrySocial;
-        $socialArray = (is_serialized($entrySocial) ? unserialize($entrySocial) : array());
-
-        $socialBlock = '<span class="social-links reversed">';
-
-        //only show the first 3 social links entered
-        foreach (array_slice($socialArray, 0, 3) as $link) {
-            //verify that the social media link provided is not blank and is a valid url
-            if ($link && isset($link['Your Link']) && $link['Your Link'] != '' && validate_url($link['Your Link'])) {
-                //platform was misspelled as plateform in some earlier forms
-                if (isset($link['Platform'])) {
-                    $platform = $link['Platform'];
-                } elseif (isset($link['Plateform'])) {
-                    $platform = $link['Plateform'];
-                }
-                //$platform = (isset($link['Platform'])?$link['Platform']:isset($link['Plateform'])?$link['Plateform']:'');
-                $socialBlock .= '<a target="_blank" href="' . $link['Your Link'] . '" aria-label="Check them out on ' . $platform . '" title="Check them out on ' . $platform . '"><span>' . $platform . '</span></a>';
-            }
-        }
-        $socialBlock .= '</span>';
-    }
-
-    return $socialBlock;
-}
-
-function progDateRange($faire_start, $faire_end) {
-    $dates = array();
-    $flexDate = $faire_start;
-    while ($flexDate <= $faire_end) {
-        $dates[] = date("l", $flexDate);
-        $flexDate = strtotime('+1 day', $flexDate);
-    }
-    return $dates;
-}
-
-function natural_language_join(array $list, $conjunction = 'and') {
-    $last = array_pop($list);
-    if ($list) {
-        return implode(', ', $list) . ' ' . $conjunction . ' ' . $last;
-    }
-    return $last;
-}
-
-function entryPageSubmit($entryId) {
-    //get submitted data
-    $form_id = filter_input(INPUT_POST, 'form_id', FILTER_SANITIZE_NUMBER_INT);
-    $form = GFAPI::get_form($form_id);
-
-    foreach ($_POST as $inputField => $value) {
-        $pos = strpos($inputField, 'input_');
-        if ($pos !== false) {
-            $fieldID = str_replace('input_', '', $inputField);
-            $fieldID = str_replace('_', '.', $fieldID);
-
-            updateFieldValue($fieldID, $value, $entryId);
-        }
-    }
-
-    //update maker table information
-    GFRMTHELPER::updateMakerTables($entryId);
-}
-
-function updateFieldValue($fieldID, $newValue, $entryId) {
-    global $fieldData;
-    global $entry;
-    global $form;
-    $fieldInfo = $fieldData[(int) $fieldID];
-
-    $fieldLabel = $fieldInfo['label'];
-
-    //set who is updating the record
-    $current_user = wp_get_current_user();
-    $user = $current_user->ID;
-
-    $form_id = $entry['form_id'];
-    $chgRPTins = array();
-
-    $entry_id = $entry['id'];
-
-    if ($fieldInfo->type == 'fileupload') {
-        $field = GFFormsModel::get_field($form, $fieldNum);
-        $input_name = 'input_' . str_replace('.', '_', $fieldID);
-
-        //validate uploaded file
-        $field->validate($_FILES[$input_name], $form);
-        if ($field->failed_validation) {
-            echo $field->validation_message;
-            echo 'failed';
-            return;
-        }
-        $newValue = $field->upload_file($form_id, $_FILES[$input_name]);
-
-        //trigger cron job to correct image orientation if needed
-        triggerCronImg($entry, $form);
-
-        //trigger update
-        gf_do_action(array('gform_after_update_entry', $form_id), $form, $entry_id, $entry);
-
-        //for security reason, we force to remove all uploaded file
-        //@unlink($_FILES['value']);
-    } else {
-        $fieldValue = (isset($entry[$fieldID]) ? $entry[$fieldID] : '');
-    }
-
-    //update field and change report if needed
-    if ($fieldValue != $newValue) {
-        GFAPI::update_entry_field($entry_id, $fieldID, $newValue);
-        $chgRPTins[] = RMTchangeArray($user, $entryId, $form_id, $fieldID, $fieldValue, $newValue, $fieldLabel);
-        updateChangeRPT($chgRPTins);
-        $entry[$fieldID] = $newValue;
-    }
-}
-
-function displayEntryFooter() {
-    global $faire;
-    global $faire_name;
-    global $faire_year;
-    global $show_sched;
-    global $backMsg;
-    global $url_sub_path;
-    global $faire_map;
-    global $makerEdit;
-
-    $faire_location = "Bay Area";
-    $faire_link = "/bay-area";
-
-    if (strpos($faire, 'new-york') !== false) {
-        $faire_location = "New York";
-        $faire_link = "/new-york";
-    }
-    if (strpos($faire, 'virtual') !== false) {
-        $faire_location = "";
-        $faire_link = "";
-    } else {
-        //if a valid url is added to the db, use that otherwise assume it's a MF link
-        if (validate_url($url_sub_path)) {
-            $faire_location = $faire_name;
-            $faire_link = $url_sub_path;
-        } else {
-            $faire_location = '';
-            $faire_link = '/' . $url_sub_path;
-        }
-    }
-
-    // we're going to check if the schedule page exists
-    //find the parent page
-    $parentPage = get_page_by_path($url_sub_path . '/');
-    $schedulePage = '';
-    $mtmPage = '';
-    if (isset($parentPage->ID)) {
-        $args = array('parent' => $parentPage->ID, 'meta_key' => '_wp_page_template', 'meta_value' => 'page-meet-the-makers.php');
-        $mtmPages = get_pages($args);
-        $mtmPage = (isset($mtmPages[0]) ? $mtmPages[0] : '');
-
-        $args = array('parent' => $parentPage->ID, 'meta_key' => '_wp_page_template', 'meta_value' => 'page-schedule.php');
-        $schedulePages = get_pages($args);
-        $schedulePage = (isset($schedulePages[0]) ? $schedulePages[0] : '');
-    }
-    $return = '';
-    $return .= '<div class="faireActions container">';
-
-    //set the 'backlink' text and link (only set on valid entries)    
-    if ($faire != '') {
-        $url = parse_url(wp_get_referer()); //getting the referring URL
-        $url['path'] = rtrim($url['path'], "/"); //remove any trailing slashes
-        $path = explode("/", $url['path']); // splitting the path
-        $backlink = ($mtmPage && isset($mtmPage->ID) ? get_permalink($mtmPage->ID) : '');
-        $backMsg = 'See all ' . $faire_year . ' makers';
-
-        //overwrite the backlink to send makers back to the Maker Portal if $makerEdit = true
-        if ($makerEdit) {
-            $backlink = "/maker-portal/";
-            $backMsg = 'Back to Your Maker Faire Portal';
-        }
-
-        if (($mtmPage && isset($mtmPage->post_status) && $mtmPage->post_status == 'publish') || $backlink == "/maker-portal/") {
-            $return .= '<div class="faireAction-box">
-		            		<a class="btn universal-btn" href="' . $backlink . '"><h4>' . $backMsg . '</h4></a>
-						</div>';
-        }
-    }
-    if ($schedulePage && isset($schedulePage->post_status) && $schedulePage->post_status == 'publish') {
-        $return .= '<div class="faireAction-box">
-			<a class="btn universal-btn" href="' . get_permalink($schedulePage->ID) . '"><h4>View full schedule</h4></a>
-		    </div>';
-    }
-
-    if ($faire_map != '' && $show_sched != 0) {
-        $return .= '<div class="faireAction-box">
-		        <a class="btn universal-btn" href="' . $faire_map . '"><h4>Download Map</h4></a>
-		    </div>';
-    }
-    if ($faire_link != '' || $faire_location != '') {
-        $return .= '<div class="faireAction-box">
-		         <a class="btn universal-btn" href="' . $faire_link . '"><h4>' . ($faire_location != '' ? $faire_location : 'Faire') . ' Home</h4></a>
-                    </div>';
-    }
-    $return .= '</div>';
-
-    return $return;
-}
-
-function getMakerInfoNested($entry) {
-    global $isGroup;
-
-    global $groupname;
-    global $groupphoto;
-    global $groupbio;
-    global $groupsocial;
-    global $entryId;
-
-    //pull group information from current entry
-    if (isset($entry['844']) && $entry['844'] == 'Yes') {
-        $isGroup = true;
-        $groupname = (isset($entry['109']) ? $entry['109'] : '');
-        $groupphoto = (isset($entry['111']) ? $entry['111'] : '');
-        $groupbio = (isset($entry['110']) ? $entry['110'] : '');
-        $groupsocial = getSocial(isset($entry['828']) ? $entry['828'] : '');
-    }
-    $child_entryID_array = (isset($entry['854']) ? explode(",", $entry['854']) : array()); //field 854 contains the makers, 852 contains the projects
-
-    //get maker information
-    $makers = array();
-
-    foreach ($child_entryID_array as $child_entryID) {
-        if ($child_entryID != $entryId) { //no need to process the entry we are looking at
-            $child_entry = GFAPI::get_entry($child_entryID);
-
-            if (!is_wp_error($child_entry) && $child_entry['form_id'] == 246) {
-                $makers[] = array('firstname' => $child_entry['160.3'], 'lastname' => $child_entry['160.6'],
-                    'bio' => (isset($child_entry['234']) ? preg_replace('/\\\\["\']/', '"', $child_entry['234']) : ''),
-                    'photo' => (isset($child_entry['217']) ? $child_entry['217'] : ''),
-                    'social' => getSocial(isset($child_entry['821']) ? $child_entry['821'] : ''),
-                    'website' => (isset($child_entry['209']) ? $child_entry['209'] : '')
-                );
-            }
-        }
-    }
-
-    return $makers;
-}

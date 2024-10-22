@@ -197,6 +197,7 @@ class LicenseHandler {
 			unset( $this->_paddlepress_client );
 			unset( $this->_license_handler );
 			$license_key            = ! empty( $field_setting ) ? $field_setting : $this->_addon_license;
+
 			$this->_license_handler = new Plugin_Updater(
 				$this->_addon_file_path,
 				array(
@@ -205,6 +206,7 @@ class LicenseHandler {
 					'license_url'  => home_url(),                   // license domain.
 					'download_tag' => $this->_addon_slug, // download tag slug.
 					'beta'         => false,
+					'handler_class' => $this,
 				)
 			);
 
@@ -214,6 +216,7 @@ class LicenseHandler {
 			} else {
 				add_action( 'admin_notices', array( $this, 'action_admin_notices' ) );
 			}
+			
 		} catch ( \Exception $e ) {
 			$this->_addon_class::get_instance()->log_error( __CLASS__ . '::' . __METHOD__ . '(): License client failed to initialize: ' . $e->getMessage() );
 			return false;

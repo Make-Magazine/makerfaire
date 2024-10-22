@@ -151,7 +151,7 @@ function mf_fairedata(WP_REST_Request $request) {
                 break;
             case 'schedule':
                 $data = getSchedule($dataids, $faireID);
-                break;            
+                break;
         }
     } else {
         $data['error'] = 'Error: Type or data ids not submitted';
@@ -182,6 +182,7 @@ function getMakerDirEntries($years) {
     //build entry array
     $entries = array();
     foreach ($results as $result) {
+
         $entry_id = $result->entry_id;
         $makerList = $result->maker;
 
@@ -235,8 +236,7 @@ function getMTMentries($formIDs = '', $faireID = '', $years = '') {
     //find if the show location switch is turned on
     $showLoc = false;
 
-    /*  For Bay Area 23 we forced everyone to not show location
-    
+    /*  For Bay Area 23 we forced everyone to not show location    
     $query = "select show_sched from wp_mf_faire where faire = '" . $faireID . "'";
 
     $show_sched = $wpdb->get_var($query);
@@ -245,14 +245,20 @@ function getMTMentries($formIDs = '', $faireID = '', $years = '') {
     if ($show_sched === "1")
         $showLoc = true;
       */
+
     //find all active entries for selected forms
     $query = "SELECT  entry.id                         AS entry_id, 
-                     (SELECT meta_value FROM   wp_gf_entry_meta WHERE  meta_key = '303' AND entry_id = entry.id) AS entry_status, 
-                     (SELECT meta_value FROM   wp_gf_entry_meta WHERE  meta_key = '22'  AND entry_id = entry.id) AS proj_photo,
-                     (SELECT meta_value FROM   wp_gf_entry_meta WHERE  meta_key = '878'  AND entry_id = entry.id) AS proj_photo_gallery,  
-                     (SELECT meta_value FROM   wp_gf_entry_meta WHERE  meta_key = '151' AND entry_id = entry.id) AS proj_name, 
-                     (SELECT meta_value FROM   wp_gf_entry_meta WHERE  meta_key = '16'  AND entry_id = entry.id) AS short_desc, 
-                     (SELECT meta_value FROM   wp_gf_entry_meta WHERE  meta_key = '320' AND entry_id = entry.id) AS prime_cat, 
+                     (SELECT meta_value FROM   wp_gf_entry_meta WHERE  meta_key = '303'   AND entry_id = entry.id) AS entry_status, 
+                     (SELECT meta_value FROM   wp_gf_entry_meta WHERE  meta_key = '22'    AND entry_id = entry.id) AS proj_photo,
+                     (SELECT meta_value FROM   wp_gf_entry_meta WHERE  meta_key = '878'   AND entry_id = entry.id) AS proj_photo_gallery,  
+                     (SELECT meta_value FROM   wp_gf_entry_meta WHERE  meta_key = '217'   AND entry_id = entry.id) AS maker_photo,  
+                     (SELECT meta_value FROM   wp_gf_entry_meta WHERE  meta_key = '111'   AND entry_id = entry.id) AS group_photo,    
+                     (SELECT meta_value FROM   wp_gf_entry_meta WHERE  meta_key = '101.4' AND entry_id = entry.id) AS state,  
+                     (SELECT meta_value FROM   wp_gf_entry_meta WHERE  meta_key = '101.6' AND entry_id = entry.id) AS country,  
+                     (SELECT meta_value FROM   wp_gf_entry_meta WHERE  meta_key = '151'   AND entry_id = entry.id) AS proj_name, 
+                     (SELECT meta_value FROM   wp_gf_entry_meta WHERE  meta_key = '16'    AND entry_id = entry.id) AS short_desc, 
+                     (SELECT meta_value FROM   wp_gf_entry_meta WHERE  meta_key = '320'   AND entry_id = entry.id) AS prime_cat, 
+                     (SELECT Group_concat(meta_value) FROM   wp_gf_entry_meta WHERE  meta_key LIKE '339.%' AND entry_id = entry.id GROUP  BY entry_id) AS types, 
                      (SELECT Group_concat(meta_value) FROM   wp_gf_entry_meta WHERE  meta_key LIKE '321.%' AND entry_id = entry.id GROUP  BY entry_id) AS second_cat, 
                      (SELECT Group_concat(meta_value) FROM   wp_gf_entry_meta WHERE  meta_key LIKE '304.%' AND entry_id = entry.id GROUP  BY entry_id) AS flags,
                      (SELECT Group_concat(meta_value) FROM   wp_gf_entry_meta WHERE  meta_key LIKE '879.%' AND entry_id = entry.id GROUP  BY entry_id) AS weekends, 
@@ -279,6 +285,7 @@ function getMTMentries($formIDs = '', $faireID = '', $years = '') {
                      (SELECT meta_value FROM   wp_gf_entry_meta WHERE  meta_key = '151' AND entry_id = entry.id) AS proj_name, 
                      (SELECT meta_value FROM   wp_gf_entry_meta WHERE  meta_key = '16'  AND entry_id = entry.id) AS short_desc, 
                      (SELECT meta_value FROM   wp_gf_entry_meta WHERE  meta_key = '320' AND entry_id = entry.id) AS prime_cat, 
+                     (SELECT meta_value FROM   wp_gf_entry_meta WHERE  meta_key = '321' AND entry_id = entry.id) AS types, 
                      (SELECT Group_concat(meta_value) FROM   wp_gf_entry_meta WHERE  meta_key LIKE '321.%' AND entry_id = entry.id GROUP  BY entry_id) AS second_cat, 
                      (SELECT Group_concat(meta_value) FROM   wp_gf_entry_meta WHERE  meta_key LIKE '304.%' AND entry_id = entry.id GROUP  BY entry_id) AS flags,
                      (SELECT meta_value FROM   wp_gf_entry_meta WHERE  meta_key = '320' AND entry_id = entry.id) AS area
@@ -303,6 +310,11 @@ function getMTMentries($formIDs = '', $faireID = '', $years = '') {
 
             //project photo
             $projPhoto = $result->proj_photo;
+            //for BA24, the single photo was changed to a multi image which messed things up a bit
+            $photo = json_decode($projPhoto);
+            if (is_array($photo)) {
+                $projPhoto = $photo[0];
+            }
 
             //find out if there is an override image for this page
             $overrideImg = findOverride($result->entry_id, 'mtm');
@@ -315,11 +327,8 @@ function getMTMentries($formIDs = '', $faireID = '', $years = '') {
                 $projPhoto = $project_gallery[0];
             }
 
-            $fitPhoto = legacy_get_resized_remote_image_url($projPhoto, 350, 350);
-
-            // Check to see if the fit photo returned an image
-            if ($fitPhoto == NULL)
-                $fitPhoto = $projPhoto;
+            $largePhoto = legacy_get_resized_remote_image_url($projPhoto, 435, 290);
+            $smallPhoto = legacy_get_resized_remote_image_url($projPhoto, 300, 200);
 
             $makerList = getMakerList($result->entry_id, $faireID);
 
@@ -331,11 +340,70 @@ function getMTMentries($formIDs = '', $faireID = '', $years = '') {
                 $value = htmlspecialchars_decode(get_CPT_name($leadCat));
                 if ($value != '') $category[] = $value;
             }
+            // handle cases where no main category was set
+            if ($result->prime_cat == "-- select a makerfaire category --") {
+                $result->prime_cat = "";
+            }
             $primeCat = htmlspecialchars_decode(get_CPT_name($result->prime_cat));
             if ($primeCat != '')   array_unshift($category, $primeCat); // add the primary category to the start of the array
 
+            $mainCategory = get_term($result->prime_cat);
+            $mainCategoryIcon = '<i class="fa fa-rocket" aria-hidden="true"></i>';
+            if(isset($mainCategory->taxonomy)) {
+                $mainCategoryIconType = get_field('icon_type', $mainCategory->taxonomy . '_' . $mainCategory->term_id);
+                // get the mainCategory icon from the mf category taxonomy, if indeed one is set
+                if ($mainCategoryIconType == "uploaded_icon") {
+                    $mainCategoryIcon = '<picture class="main-category-icon"><img src="' . get_field('uploaded_icon', $mainCategory->taxonomy . '_' . $mainCategory->term_id)['url'] . '" height="27px" width="27px" aria-hidden="true" /></picture>';
+                } else {
+                    $fa = get_field('font_awesome', $mainCategory->taxonomy . '_' . $mainCategory->term_id);
+                    if (!empty($fa)) {
+                        $mainCategoryIcon = '<a href="?category='.$primeCat.'"><i class="fa ' . $fa . '" aria-hidden="true"></i></a>';
+                    }
+                }
+            }
+            
+            // Maker / Group Photos 
+            $group_photo = (isset($result->group_photo)?$result->group_photo:'');
+            $maker_photo = (isset($result->maker_photo) && $result->maker_photo != "[]" ? $result->maker_photo : $group_photo);                        
+            
+            $maker_photo_decoded = json_decode($maker_photo);
+            if (is_array($maker_photo_decoded)) {
+                $maker_photo = isset($maker_photo_decoded[0]) ? $maker_photo_decoded[0] : "";
+            }
+             
+            if(empty($maker_photo)) {
+                $maker_photo = isset($projPhoto) ? $projPhoto : "/wp-content/themes/makerfaire/images/default-makey-medium.jpg";
+            }
+            $maker_photo = legacy_get_resized_remote_image_url($maker_photo, 400, 400);
+
+            $maker_location = (isset($result->state) ? $result->state:'') . 
+                (isset($result->state)&& isset($result->country)? ", ":'') .
+                (isset($result->country) ? $result->country : '');
+
+            //Admin entry types (only for BA23 and forward)
+            $types = explode(",", $result->types);
+            if (($key = array_search("Show Management", $types)) !== false) {
+                unset($types[$key]);
+            }
+
+            //replace Startup Sponsor with Exhibit
+            array_walk_recursive(
+                $types,
+                function (&$value) {
+                    $value = str_ireplace('Startup Sponsor', 'Exhibit', $value);
+                }
+            );
+
+            //Replace Sponsor with Exhibit
+            array_walk_recursive(
+                $types,
+                function (&$value) {
+                    $value = str_ireplace('Sponsor', 'Exhibit', $value);
+                }
+            );
+            
             //weekends               
-            if (isset($result->weekends)) {
+            if ($faireID=='BA23' && isset($result->weekends)) {
                 $weekends = explode(',', $result->weekends);
                 foreach ($weekends as &$weekend) {
                     if ($weekend == 'Wk1' || $weekend == 'Fri1') {
@@ -366,12 +434,17 @@ function getMTMentries($formIDs = '', $faireID = '', $years = '') {
                 'id' => $result->entry_id,
                 'link' => '/maker/entry/' . $result->entry_id,
                 'name' => $result->proj_name,
-                'large_img_url' => $projPhoto,
+                'large_img_url' => $largePhoto,
+                'small_img_url' => $smallPhoto,
                 'categories' => $category,
+                'main_cat_icon' => $mainCategoryIcon,
+                'types' => array_unique($types),
                 'description' => $result->short_desc,
                 'flag' => $flag, //only set if flag is set to 'Featured Maker'
                 'handson' => $handson, //only set if handson is set to 'Featured Handson'
                 'makerList' => $makerList,
+                'maker_photo' => $maker_photo,
+                'maker_location' => $maker_location,
                 'location' => $locations,
                 'weekend' => $weekends
             );
@@ -413,49 +486,60 @@ function getSchedule($formIDs, $faireID) {
     global $wpdb;
     $data = array();
     $data['schedule'] = array();
-    $formIDarr = array_map('intval', explode("-", $formIDs));
-    $query = "SELECT schedule.entry_id, schedule.start_dt as time_start, schedule.end_dt as time_end, schedule.type,
-              lead_detail.form_id, area.area, subarea.subarea, subarea.nicename, subarea.sort_order,
-              lead_detail.meta_value as entry_status, DAYOFWEEK(schedule.start_dt) as day,
-              location.latitude, location.longitude,
-              (select meta_value as value from wp_gf_entry_meta where wp_gf_entry_meta.entry_id = schedule.entry_id AND wp_gf_entry_meta.meta_key like '22')  as photo,
-              (select meta_value as value from wp_gf_entry_meta where wp_gf_entry_meta.entry_id = schedule.entry_id AND wp_gf_entry_meta.meta_key like '217') as mkr1_photo,
-              (SELECT meta_value FROM   wp_gf_entry_meta WHERE  meta_key = '878'  AND entry_id = entry.id) AS proj_photo_gallery,  
-              (select meta_value as value from wp_gf_entry_meta where wp_gf_entry_meta.entry_id = schedule.entry_id AND wp_gf_entry_meta.meta_key like '151') as name,
-              (select meta_value as value from wp_gf_entry_meta where wp_gf_entry_meta.entry_id = schedule.entry_id AND wp_gf_entry_meta.meta_key like '880') as presentation_name,
-              (select meta_value as value from wp_gf_entry_meta where wp_gf_entry_meta.entry_id = schedule.entry_id AND wp_gf_entry_meta.meta_key like '16')  as short_desc,     
-              (select meta_value as value from wp_gf_entry_meta where wp_gf_entry_meta.entry_id = schedule.entry_id AND wp_gf_entry_meta.meta_key like '882')  as presentation_desc,           
-              (select meta_value as value from wp_gf_entry_meta where wp_gf_entry_meta.entry_id = schedule.entry_id AND wp_gf_entry_meta.meta_key like '829')  as registration,
-              (select meta_value as value from wp_gf_entry_meta where wp_gf_entry_meta.entry_id = schedule.entry_id AND wp_gf_entry_meta.meta_key like '830')  as region,              
-              (select meta_value as value from wp_gf_entry_meta where wp_gf_entry_meta.entry_id = schedule.entry_id AND wp_gf_entry_meta.meta_key like '837')  as viewNow,              
-              (select group_concat( meta_value separator ',') as cat from wp_gf_entry_meta where wp_gf_entry_meta.entry_id = schedule.entry_id AND wp_gf_entry_meta.meta_key like '304.%') as flags,
-              (select group_concat( meta_value separator ',') as cat from wp_gf_entry_meta where wp_gf_entry_meta.entry_id = schedule.entry_id AND (wp_gf_entry_meta.meta_key like '320' OR wp_gf_entry_meta.meta_key like '321.%')) as category
-             FROM wp_mf_schedule as schedule
-               left outer join wp_mf_location as location on location_id = location.id
-               left outer join wp_mf_faire_subarea subarea on subarea.id = location.subarea_id
-               left outer join wp_mf_faire_area area on area.id = subarea.area_id
-               left outer join wp_gf_entry as entry on schedule.entry_id = entry.id
-               left outer join wp_gf_entry_meta as lead_detail on schedule.entry_id = lead_detail.entry_id and lead_detail.meta_key = '303'
-               where entry.status = 'active' and lead_detail.meta_value='Accepted' "
-        . " and lead_detail.form_id in(" . implode(",", $formIDarr) . ") "
-        /* code to hide scheduled items as they occur */
-        //. " and schedule.end_dt >= now()+ INTERVAL -4 HOUR  " //eastern time
-        // . " and schedule.end_dt >= now()+ INTERVAL -7 HOUR  " //Bay Area time
-        . "order by subarea.sort_order";
-    //TBD check if faire end date is beyond today. if it is hide this code, otherwise show it
-    // " and schedule.end_dt >= now()+ INTERVAL -7 HOUR  " 
+    $formIDarr = array_map('intval', explode(",", $formIDs));
+   
 
+$query = "SELECT schedule.entry_id,
+	schedule.start_dt as time_start, DAYOFWEEK(schedule.start_dt) as day,
+	schedule.end_dt as time_end, schedule.type,
+    
+    (select meta_value from wp_gf_entry_meta where wp_gf_entry_meta.entry_id = schedule.entry_id and meta_key='96.3') as maker_fname,
+    (select meta_value from wp_gf_entry_meta where wp_gf_entry_meta.entry_id = schedule.entry_id and meta_key='96.6') as maker_lname,
+
+    (select meta_value from wp_gf_entry_meta where wp_gf_entry_meta.entry_id = schedule.entry_id and meta_key='109') as group_name,
+    (select meta_value from wp_gf_entry_meta where wp_gf_entry_meta.entry_id = schedule.entry_id and meta_key='916') as presenter_list,      
+	entity.form_type, entity.status as entry_status,
+	subarea.subarea, subarea.nicename, subarea.sort_order,
+	entity.project_photo as photo, entity.presentation_title as title, entity.desc_short as short_desc,
+	(select group_concat(meta_value separator',')as cat 
+     	from wp_gf_entry_meta 
+     	where wp_gf_entry_meta.entry_id=schedule.entry_id 
+     	AND wp_gf_entry_meta.meta_key like '304.%')as flags,
+	entity.category as category 
+    
+FROM wp_mf_schedule as schedule 
+	left outer join wp_mf_location 		location  	on location_id		 = location.id 
+	left outer join wp_mf_faire_subarea subarea 	on subarea.id		 = location.subarea_id 
+    left outer join wp_gf_entry 		entry 		on entry.id 		 = schedule.entry_id
+    left outer join wp_mf_entity 		entity 		on entity.lead_id = schedule.entry_id    
+
+where   entry.status='active' 
+    and entry.form_id in(" . implode(",", $formIDarr) . ") 
+    and schedule.faire ='$faireID' 
+    and subarea.subarea is not null ".
+ //" and schedule.end_dt >= now()+ INTERVAL -7 HOUR   
+ " order by start_dt, end_dt;";
+//echo $query;
     $schedule = $wpdb->get_results($query);
 
-    //retrieve project name, img (22), maker list, topics
+    //retrieve schedule information
     foreach ($schedule as $row) {
-        $form = GFAPI::get_form($row->form_id);
-        $form_type = $form['form_type'];
+        //if this entry is not accepted, move along to the next record
+        if($row->entry_status != 'Accepted')  continue;        
+        $form_type = $row->form_type;
 
-        $makerList = getMakerList($row->entry_id, $faireID);
-
-        $makerArr = array();
-
+        //determine presenter names
+        $maker_name = $row->maker_fname . ($row->maker_lname!=''?' '.$row->maker_lname:'');
+        $group_name = $row->group_name; 
+        $presenter_list = unserialize($row->presenter_list);
+      
+        //if presenter list is set, use this instead of the maker name
+        if(is_array($presenter_list)){         
+            $maker_name = implode(", ", $presenter_list);
+        }        
+         
+        $makerList = $maker_name . ($group_name!=''?' - '.$group_name:'');
+        
         //get array of categories. set name based on category id
         $category = array();
         $leadCategory = explode(',', $row->category);
@@ -464,14 +548,14 @@ function getSchedule($formIDs, $faireID) {
         }
 
         $catList = implode(',', $category);
-
-        // NOTE (ts): For 'Workshop' update... this may be the spot where the image is set... TBD
-        //we do not have maker 1 photo for vmf2020. need to pull it differently
-        if ($form_type == 'Presentation') {
-            $projPhoto = ($row->mkr1_photo != '' ? $row->mkr1_photo : $row->photo);
-        } else {
-            $projPhoto = $row->photo;
+        
+        $projPhoto = $row->photo;
+        //for BA24, the single photo was changed to a multi image which messed things up a bit
+        $photo = json_decode($projPhoto);
+        if (is_array($photo)) {
+            $projPhoto = $photo[0];
         }
+        
         //find out if there is an override image for this page
         $overrideImg = findOverride($row->entry_id, 'schedule');
         if ($overrideImg != '')
@@ -483,14 +567,13 @@ function getSchedule($formIDs, $faireID) {
             $projPhoto = $project_gallery[0];
         }
 
-        $fitPhoto = legacy_get_resized_remote_image_url($projPhoto, 200, 200);
+        $fitPhoto = legacy_get_resized_remote_image_url($projPhoto, 300, 200);
         if ($fitPhoto == NULL)
             $fitPhoto = $projPhoto;
 
         //format start and end date
-        $startDay = date_create($row->time_start);
-        $startDate = date_format($startDay, 'Y-m-d') . 'T' . date_format($startDay, 'H:i:s');
-        $keyDate = date_format($startDay, 'Y-m-d');
+        $startDay  = date_create($row->time_start);
+        $startDate = date_format($startDay, 'Y-m-d') . 'T' . date_format($startDay, 'H:i:s');        
 
         $endDate = date_create($row->time_end);
         $endDate = date_format($endDate, 'Y-m-d') . 'T' . date_format($endDate, 'H:i:s');
@@ -511,9 +594,7 @@ function getSchedule($formIDs, $faireID) {
         if (strpos($row->flags, "Featured Maker") === 0) {
             $featured = 'Featured';
         }
-
-        $registration = $row->registration;
-        $viewNow = $row->viewNow;
+        
         //set default values for schedule type if not set
         if (strpos($faireID, "VMF") === 0) { // special for virtual faires
             if ($row->type == 'talk' || $row->type == '') {
@@ -529,36 +610,39 @@ function getSchedule($formIDs, $faireID) {
                 if (isset($linked_result['entry_id'])) {
                     $linked_entryID = $linked_result['entry_id'];
                     $linked_entry = GFAPI::get_entry($linked_entryID);
-                    $registration = (isset($linked_entry['829']) && $linked_entry['829'] != '' ? $linked_entry['829'] : $registration);
-                    $viewNow = (isset($linked_entry['52']) && $linked_entry['52'] != '' ? $linked_entry['52'] : $viewNow);
+                    $registration = (isset($linked_entry['829']) && $linked_entry['829'] != '' ? $linked_entry['829'] : '');
+                    $viewNow = (isset($linked_entry['52']) && $linked_entry['52'] != '' ? $linked_entry['52'] : '');
                 }
             }
         }
         //$registration =''; //post faire - return blank for registration link
+
         //set stage name
         $stage = ($row->nicename != '' ? $row->nicename : $row->subarea);
-        //"2016-05-21T11:55:00-07:00"
+        
+        // only include in the schedule if the schedtype is not workshop
+        /*if($type == "workshop"){
+            continue;
+        } */
+        
         $data['schedule'][] = array(
-            'id' => $row->entry_id,
-            'time_start' => $startDate,
-            'time_end' => $endDate,
-            'name' => isset($row->presentation_name) ? htmlspecialchars_decode($row->presentation_name, ENT_QUOTES) : htmlspecialchars_decode($row->name, ENT_QUOTES),
-            'thumb_img_url' => $fitPhoto,
-            'maker_list' => $makerList,
-            'nicename' => $stage,
-            'stageClass' => str_replace(' ', '-', strtolower($stage)),
-            'stageOrder' => (int) ($row->sort_order != '' ? $row->sort_order : 0),
-            'category' => $catList,
-            'latitude' => $row->latitude,
-            'longitude' => $row->longitude,
-            'day' => (int) $row->day,
-            'desc' => isset($row->presentation_desc) ? htmlspecialchars_decode($row->presentation_desc, ENT_QUOTES) : htmlspecialchars_decode($row->short_desc, ENT_QUOTES),
-            'type' => ucwords($type),
-            'flags' => $row->flags,
-            'featured' => $featured,
-            'registration' => $registration,
-            'view_now' => $viewNow,
-            'region' => $row->region
+            'id'            => $row->entry_id,
+            'time_start'    => $startDate,
+            'time_end'      => $endDate,
+            'name'          => isset($row->title) ? htmlspecialchars_decode($row->title, ENT_QUOTES) : '',
+            'thumb_img_url' => $fitPhoto,            
+            'maker_list'    => $makerList,
+            'nicename'      => $stage,
+            'stageClass'    => str_replace(' ', '-', strtolower($stage)),
+            'stageOrder'    => (int) ($row->sort_order != '' ? $row->sort_order : 0),
+            'category'      => $catList,
+            'day'           => date_format($startDay, 'l'),
+            'hour'          => date_format($startDay, 'g:00 A'),
+            'desc'          => isset($row->short_desc) ? htmlspecialchars_decode($row->short_desc, ENT_QUOTES) : '',
+            'type'          => ucwords($type),
+            //'flags'         => $row->flags,
+            'featured'      => $featured,
+            'additional'    => ''
         );
     }
     //error_log(print_r($data, TRUE));
@@ -613,7 +697,7 @@ function getMakerList($entryID, $faireID) {
         $query = "SELECT *
               FROM wp_gf_entry_meta as lead_detail
               where lead_detail.entry_id = $entryID "
-            . "and cast(meta_key as char) in('160.3', '160.6', '158.3', '158.6', '155.3', '155.6', "
+            . "and cast(meta_key as char) in('96.3','96.6', '160.3', '160.6', '158.3', '158.6', '155.3', '155.6', "
             . "'156.3', '156.6', '157.3', '157.6', '159.3', '159.6', '154.3', '154.6', '109', '105')";
         $entryData = $wpdb->get_results($query);
         //field 105 - who would you like listed
@@ -626,16 +710,12 @@ function getMakerList($entryID, $faireID) {
             $fieldData[$field->meta_key] = $field->meta_value;
         }
 
-        if (isset($fieldData['105'])) {
-            $whoListed = strtolower($fieldData['105']);                        
-            $isGroup = (stripos($whoListed, 'group') !== false || stripos($whoListed, 'team') !== false?true:false);
-            $isOneMaker = false;
-            $isOneMaker = (strpos($whoListed, 'one') !== false);
+        
+            $whoListed = (isset($fieldData['105'])?strtolower($fieldData['105']):'');
+            $isGroup = (stripos($whoListed, 'group') !== false || stripos($whoListed, 'team') !== false ? true : false);            
 
             if ($isGroup) {
                 $makerList = (isset($fieldData['109']) ? $fieldData['109'] : '');
-            } elseif ($isOneMaker) {
-                $makerList = (isset($fieldData['160.3']) ? $fieldData['160.3'] : '') . (isset($fieldData['160.6']) ? ' ' . $fieldData['160.6'] : '');
             } else {
                 $makerArr = array();
                 if (isset($fieldData['160.3']))
@@ -653,9 +733,14 @@ function getMakerList($entryID, $faireID) {
                 if (isset($fieldData['154.3']))
                     $makerArr[] = $fieldData['154.3'] . ' ' . (isset($fieldData['154.6']) ? $fieldData['154.6'] : '');
 
+                //starting with BA24, we moved away from using Maker 1 name, to using primary contact name
+                if (empty($makerArr)) {
+                    if (isset($fieldData['96.3']))
+                        $makerArr[] = $fieldData['96.3'] . ' ' . (isset($fieldData['96.6']) ? $fieldData['96.6'] : '');
+                }
                 $makerList = implode(", ", $makerArr);
             }
-        }
+        
     }
 
     return $makerList;

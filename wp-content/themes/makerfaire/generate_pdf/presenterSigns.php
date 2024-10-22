@@ -67,20 +67,29 @@ function createOutput($entry_id, $pdf) {
    global $wpdb;
    $presenters = $presentation_title = '';
    $sql = "select entity.presentation_title,
-          (select  group_concat( distinct concat(maker.`FIRST NAME`,' ',maker.`LAST NAME`) separator ', ') as Makers
-              from    wp_mf_maker maker,
-                      wp_mf_maker_to_entity maker_to_entity
-              where   entity.lead_id           = maker_to_entity.entity_id  AND
-                      maker_to_entity.maker_id    = maker.maker_id AND
-                      maker_to_entity.maker_type != 'Contact'
-              group by maker_to_entity.entity_id
-          )  as makers_list
+    (select meta_value from wp_gf_entry_meta where wp_gf_entry_meta.entry_id = entity.lead_id and meta_key='96.3') as maker_fname,
+    (select meta_value from wp_gf_entry_meta where wp_gf_entry_meta.entry_id = entity.lead_id and meta_key='96.6') as maker_lname,
+    (select meta_value from wp_gf_entry_meta where wp_gf_entry_meta.entry_id = entity.lead_id and meta_key='109') as group_name,
+    (select meta_value from wp_gf_entry_meta where wp_gf_entry_meta.entry_id = entity.lead_id and meta_key='916') as presenter_list
+    
           FROM    wp_mf_entity entity
           where entity.lead_id = " . $entry_id;
-   foreach ($wpdb->get_results($sql) as $row) {
-      $presenters = filterText($row->makers_list);
-      $presentation_title = filterText($row->presentation_title);
-   }
+   $row = $wpdb->get_row($sql);
+   
+   $presentation_title = filterText($row->presentation_title);
+
+   //determine presenter names
+   $maker_name = $row->maker_fname . ($row->maker_lname!=''?' '.$row->maker_lname:'');
+   $group_name = $row->group_name; 
+   $presenter_list = unserialize($row->presenter_list);
+ 
+   //if presenter list is set, use this instead of the maker name
+   if(is_array($presenter_list)){         
+       $maker_name = implode(", ", $presenter_list);
+   }        
+    
+   $presenters = $maker_name . ($group_name!=''?' - '.$group_name:'');
+   
    // Presenter names
    $pdf->SetFont('Benton Sans', 'B', 49);
    $x = 49;    // set the starting font size
@@ -91,10 +100,10 @@ function createOutput($entry_id, $pdf) {
    }
 
    $lineHeight = $x * 0.2645833333333 * 1.5;
-   $pdf->setTextColor(160, 0, 0);
+   
    //$presenters = "Judy Castro, Terry & Belinda Kilby, Jillian & Jefferey Northrup, Kyrsten Mate & Jon Sarriugarte";
    $presenterHeight = $pdf->GetStringWidth($presenters);
-//$presenters .= '-'.$presenterHeight;
+   //$presenters .= '-'.$presenterHeight;
    if ($presenterHeight > 700) {
       $y1 = 30;
       $y2 = 145;
@@ -106,35 +115,44 @@ function createOutput($entry_id, $pdf) {
       $y2 = 170;
    }
 
-   $x = 38;
-
-   $pdf->SetXY($x, $y1);
-   $pdf->MultiCell(355.6, $lineHeight, $presenters, 0, 'C');
-
-   $pdf->SetXY($x, $y2);
-   $pdf->MultiCell(355.6, $lineHeight, $presenters, 0, 'C');
-
+   $x = 30;
+   $y1 = 30;
+   $y2 = 145;
 
    // Presentation Title
-   $pdf->setTextColor(0);
-
    //auto adjust the font so the text will fit
-   $x = 49;    // set the starting font size
+   $x = 15;    // set the starting font size
    $pdf->SetFont('Benton Sans', 'B', 49);
 
    /* Cycle thru decreasing the font size until it's width is lower than the max width */
+  /*
    while ($pdf->GetStringWidth($presentation_title) > 600) {
       $x = $x-.1;   // Decrease the variable which holds the font size
       $pdf->SetFont('Benton Sans', 'B', $x);
-   }
-   $lineHeight = $x * 0.2645833333333 * 1.5;
+   }*/
+   $lineHeight = 20;
 
+   //Write Presentation title
+   $pdf->setTextColor(0);
+   
+   //top section
+   $pdf->SetXY(15, $y1);
+   $pdf->MultiCell(400, $lineHeight, $presentation_title, 0, 'C');
+   
+   //bottom section
+   $pdf->SetXY(15, $y2);
+   $pdf->MultiCell(400, $lineHeight, $presentation_title, 0, 'C');
 
-   $pdf->SetXY(38, 195);
-   /* Output the title at the required font size */
-   $pdf->MultiCell(355.6, $lineHeight, $presentation_title, 0, 'C');
-   $pdf->SetXY(38, 80);
-   $pdf->MultiCell(355.6, $lineHeight, $presentation_title, 0, 'C');
+   //Write presenter name
+   $pdf->setTextColor(160, 0, 0);
+   
+   //top section 
+   $pdf->SetXY(30, 70); /* Output the title at the required font size */   
+   $pdf->MultiCell(370, $lineHeight, $presenters, 0, 'C');
+
+   //bottom section
+   $pdf->SetXY(30, 185);
+   $pdf->MultiCell(370, $lineHeight, $presenters, 0, 'C');
 }
 
 function filterText($text) {   

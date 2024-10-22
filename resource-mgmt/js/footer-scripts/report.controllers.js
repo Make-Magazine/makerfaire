@@ -8,6 +8,16 @@ rmgControllers.controller('reportsCtrl', ['$scope', '$routeParams', '$http', '$i
 
       $scope.reports.selectedFields = {};
       $scope.msg = {};
+      $scope.sortField = '';
+      $scope.sortChanged = function ( grid, sortColumns ) {         
+         var sortField = [];
+         angular.forEach(sortColumns, function (value, key) { 
+            if(value !== undefined && value.displayName !== undefined){
+               sortField.push(value.displayName);
+            }                   
+         });
+         $scope.sortField = sortField.join(", "); // set the default sorting for the PDF header display
+       }
 
       //set location based on url parameters
       if ("location" in $routeParams) {
@@ -22,19 +32,55 @@ rmgControllers.controller('reportsCtrl', ['$scope', '$routeParams', '$http', '$i
          enableSorting: true,
          enableGridMenu: true,
          rowHeight: 100,
-
+         exporterMenuPdf: true, // hide PDF export          
+         exporterPdfMaxGridWidth: 680,
+         exporterPdfFooter: function ( currentPage, pageCount ) {
+            return { text: 'Page ' + currentPage.toString() + ' of ' + pageCount.toString(), style: 'footerStyle' };
+         },
+         
+         exporterPdfHeader: function ( currentPage, pageCount ) {
+            if($scope.reports.subRoute =='lookup'){
+               return { text: 'Maker Lookup By '+$scope.sortField, alignment: 'center',  style: 'headerStyle' };
+            }
+            if($scope.reports.subRoute =='schedule'){
+              return { text: 'Schedule By '+$scope.sortField, alignment: 'center',  style: 'headerStyle' };
+            }
+            return;
+         },
+         exporterPdfCustomFormatter: function (docDefinition) {
+            docDefinition.styles.headerStyle = {
+              fontSize: 14,
+              bold: true,
+              margin:20,
+              fillColor: '#f0f0f0' // Light gray background
+            };
+            return docDefinition;
+          },
+         
+         exporterPdfDefaultStyle: {fontSize: 9},         
+         exporterPdfTableHeaderStyle: {fontSize: 10, bold: true},
+         exporterPdfTableStyle: {margin: [-20, 10, -10, -20]},    //need this to center grid
+         exporterPdfOrientation: 'landscape',
+         exporterPdfPageSize: 'LETTER',
+         
+         exporterHeaderFilter: function( displayName ) {
+           if( displayName === 'Name' ) {
+             return 'Person Name';
+           } else {
+             return displayName;
+           }
+         },
          exporterCsvFilename: 'export.csv',
          exporterCsvLinkElement: angular.element(document.querySelectorAll(".custom-csv-link-location")),
          exporterFieldCallback: function (grid, row, col, input) {
             if (("editDropdownOptionsArray" in col.colDef)) {
-               //console.log(col);
                //convert gridArray to usable hash
                var optionsHash = {};
                var gridArray = col.colDef.editDropdownOptionsArray;
                for (var i = 0; i < gridArray.length; i++) {
                   optionsHash[gridArray[i].id] = gridArray[i].fkey;
                }
-               //console.log('exporterFieldCallback: input - '+input + ' hash value='+optionsHash[input]);
+               
                if (!input) {
                   return '';
                } else {
@@ -48,9 +94,12 @@ rmgControllers.controller('reportsCtrl', ['$scope', '$routeParams', '$http', '$i
                return input;
             }
          },
-         onRegisterApi: function (gridApi) {
-            $scope.gridApi = gridApi;
-         }
+          //Allows external buttons to be pressed for exporting
+    onRegisterApi: function( gridApi ) {
+      $scope.gridApi = gridApi;
+      $scope.gridApi.core.on.sortChanged( $scope, $scope.sortChanged );
+      $scope.sortChanged($scope.gridApi.grid, [ $scope.gridOptions.columnDefs[1] ] );
+    },
       };
 
       //set report column grouping
@@ -79,10 +128,14 @@ rmgControllers.controller('reportsCtrl', ['$scope', '$routeParams', '$http', '$i
          $http({
             method: 'post',
             url: url,
-            data: JSON.stringify({'table': $scope.reports.tableName, 'type': type, 'faire': $scope.reports.selFaire, 'formSelect': $scope.reports.selForm}),
+            data: JSON.stringify({'table': $scope.reports.tableName, 'type': type, 
+               'faire': $scope.reports.selFaire, 'formSelect': $scope.reports.selForm,
+               'subRoute': $scope.reports.subRoute
+            }),
             headers: {'Content-Type': 'application/json'}
          })
                  .then(function (response) {
+                  var sortField = [];
                     angular.forEach(response.data.columnDefs, function (value, key) {
                        if (value.name == 'faire' && $scope.reports.selFaire != '') {
                           angular.forEach(value.filter.selectOptions, function (selValue, selKey) {
@@ -94,6 +147,32 @@ rmgControllers.controller('reportsCtrl', ['$scope', '$routeParams', '$http', '$i
                              response.data.columnDefs[key].filter.term = selTerm;
                           }
                        }
+                       if('sort' in value){                        
+                        sortField.push(value.displayName);
+                        if('direction' in value.sort){
+                           if(value.sort.direction=='uiGridConstants.ASC'){
+                              value.sort.direction = uiGridConstants.ASC;
+                           }else if(value.sort.direction=='uiGridConstants.DESC'){
+                              value.sort.direction = uiGridConstants.DESC;
+                           }
+                        }
+                        value.sortingAlgorithm =  function(a, b, rowA, rowB, direction) {
+                           var nulls = $scope.gridApi.core.sortHandleNulls(a, b);
+                           if( nulls !== null ) {
+                             return nulls;
+                           } else {
+                             if(a=='') return 0;
+                             if(b=='') return -1;
+                             if( a === b ) {
+                               return 0;
+                             }                
+                             if(a>b) return 1;
+                             if(b>a) return -1;
+                             return 0;
+                           }
+                         }
+                       }
+                      
                        //apply select filter
                        if (("filter" in value)) {
                           value.filter.type = uiGridConstants.filter.SELECT;
@@ -102,7 +181,8 @@ rmgControllers.controller('reportsCtrl', ['$scope', '$routeParams', '$http', '$i
                        if (("sort" in value)) {
                           value.sort.direction = uiGridConstants.ASC;
                        }
-                    });
+                    });                    
+                    $scope.sortField = sortField.join(", "); // set the default sorting for the PDF header display
 
                     //populate column defs and data
                     $scope.gridOptions.columnDefs = response.data.columnDefs;
@@ -204,9 +284,12 @@ rmgControllers.controller('reportsCtrl', ['$scope', '$routeParams', '$http', '$i
          } else if (subRoute === 'drill') {
             tablename = 'wp_rmt_entry_resources';
             subTitle = 'Resource Drill Down';
-         } else if (subRoute === 'location') {
+         } else if (subRoute === 'schedule') {
             tablename = 'wp_mf_location';
-            subTitle = 'Faire Location Report';
+            subTitle = 'Faire Schedule Report';
+         }else if (subRoute === 'lookup') {      
+            tablename = 'wp_mf_location';            
+            subTitle = 'Faire Lookup Report';            
          } else if (subRoute === 'tasksComp') {
             tablename = 'wp_mf_entity_tasks';
             subTitle = 'Tasks Completed';
@@ -222,13 +305,18 @@ rmgControllers.controller('reportsCtrl', ['$scope', '$routeParams', '$http', '$i
             tablename = 'notes';
             type = "notesRpt";
             subTitle = 'Faire Notes Report';
-         }
+         } else if (subRoute === 'tickets') {
+            tablename = 'tickets';
+            type = "ticketsRpt";
+            subTitle = 'Faire Entry Passes Report';
+         } 
+
          jQuery('#pageTitle').html(pageTitle);
          jQuery('#subTitle').html(subTitle);
          $scope.reports.tableName = tablename;
 
          if ("faire" in $routeParams) {
-            $scope.reports.selFaire = $routeParams.faire;
+            $scope.reports.selFaire = $routeParams.faire;            
             $scope.retGridData(); //pull the faire data
          } else {
             $scope.reports.selFaire = '';
@@ -253,8 +341,9 @@ rmgControllers.controller('reportsCtrl', ['$scope', '$routeParams', '$http', '$i
             $scope.retGridData();
          }
       };
+      
       //faire dropdown
-      $scope.retrieveData = function (type) {
+      $scope.retrieveData = function (type) {         
          if (type === 'faires') {
             var vars = jQuery.param({'type': type});
             var url = '/resource-mgmt/ajax/ajax.php';
@@ -273,17 +362,23 @@ rmgControllers.controller('reportsCtrl', ['$scope', '$routeParams', '$http', '$i
             headers: head2pass
          })
                  .then(function (response) {
+                  
                     if ("error" in response.data) {
                        alert(response.data.error);
                     } else if (type === 'faires' || type === 'forms') {
-                       $scope.reports[type] = response.data[type];
-                    }
+                       $scope.reports[type] = response.data[type];                       
+                       if(type==='faires'){
+                        $scope.reports.selFaire = $scope.reports.faires[0].ID;  
+                        $scope.retGridData(); //pull the faire data                     
+                       }
+                    }                    
                  }).finally(function () {
             if (type === 'faires') {
                faires = $scope.reports.faires;
                angular.forEach(faires, function (value, key) {
                   if (value.faire === $scope.subRoute) {
                      $scope.reports.selFaire = key;
+                     $scope.retGridData(); //pull the faire data
                   }
                });
             } else if (type === 'forms') {
@@ -291,7 +386,17 @@ rmgControllers.controller('reportsCtrl', ['$scope', '$routeParams', '$http', '$i
             }
          });
       }; //end faire drop down
-
+     
+      //export functionality
+      $scope.export = function(export_format='pdf'){    
+         var export_row_type       = 'visible';
+         var export_column_type    = 'visible';
+         
+         $scope.gridApi.exporter.pdfExport( export_row_type, export_column_type );
+         
+      };
+      
+ 
    }])
         .filter('griddropdown', function () {
            return function (input, map) {

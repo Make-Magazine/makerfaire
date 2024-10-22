@@ -187,23 +187,39 @@ function createMFSignZip($area) {
 }
 function mancron_genEBtickets(){
   global $wpdb;
-  $sql =  "SELECT entry_id "
-        . "FROM   wp_mf_faire, wp_gf_entry_meta "
-        . "       left outer join eb_entry_access_code on wp_gf_entry_meta.entry_id =eb_entry_access_code.entry_id "
-        . "WHERE  meta_key='303' and meta_value='Accepted' "
-          . " and end_dt > now() "
-          . " and FIND_IN_SET (wp_gf_entry_meta.form_id,wp_mf_faire.form_ids)> 0 "
-          . " and eb_entry_access_code.EBticket_id is NULL "
-          . " and (select EB_event_id from eb_event where wp_mf_faire_id = wp_mf_faire.id limit 1) is not NULL"
-          . " and wp_gf_entry_meta.form_id != 120 "
-          . " limit 20";
+  $testing=(isset($_GET['testing'])?TRUE:'');
+  //run for new ticket id's 
+  $runAll = (isset($_GET['runAll'])?TRUE:false);
+  
+  //this only looks for faires that are not past their end date
+  if($runAll == true){
+    //run through all entries looking for new tickets
+    $sql =  "SELECT wp_gf_entry_meta.entry_id "
+    . "FROM   wp_mf_faire, wp_gf_entry_meta "
+    . "WHERE  meta_key='303' and meta_value='Accepted' "
+      . " and end_dt > now() "
+      . " and FIND_IN_SET (wp_gf_entry_meta.form_id,wp_mf_faire.form_ids)> 0 "     
+      . " and (select EB_event_id from eb_event where wp_mf_faire_id = wp_mf_faire.id limit 1) is not NULL"          
+      . " and wp_gf_entry_meta.form_id != 120 ";
+  }else{ 
+    //only look for new entries
+    $sql =  "SELECT wp_gf_entry_meta.entry_id "
+    . "FROM   wp_mf_faire, wp_gf_entry_meta "
+    . "       left outer join eb_entry_access_code on wp_gf_entry_meta.entry_id =eb_entry_access_code.entry_id "
+    . "WHERE  meta_key='303' and meta_value='Accepted' "
+      . " and end_dt > now() "
+      . " and FIND_IN_SET (wp_gf_entry_meta.form_id,wp_mf_faire.form_ids)> 0 "     
+      . " and eb_entry_access_code.EBticket_id is NULL "
+      . " and (select EB_event_id from eb_event where wp_mf_faire_id = wp_mf_faire.id limit 1) is not NULL"          
+      . " and wp_gf_entry_meta.form_id != 120 "
+      . " limit 20";
+  } 
 
   $results = $wpdb->get_results($sql);
-  foreach($results as $entry){
-    echo 'Creating ticket codes for '.$entry->entry_id.'<br/>';
-    $response = genEBtickets($entry->entry_id);
+  foreach($results as $entry){    
+    $response = genEBtickets($entry->entry_id, $testing);    
     if(isset($response['msg']))
-      echo 'Ticket Response - '.$response['msg'].'<br/>';
+      echo 'Creating ticket codes for '.$entry->entry_id . ' - '.$response['msg'];
   }
 }
 

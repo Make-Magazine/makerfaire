@@ -21,7 +21,7 @@ abstract class Integration_Base extends Action_Base {
 				/* translators: 1: Integration label, 2: Link opening tag, 3: Link closing tag. */
 				esc_html__( 'Set your %1$s in the %2$sIntegrations Settings%3$s.', 'elementor-pro' ),
 				$label,
-				sprintf( '<a href="%s" target="_blank">', Settings::get_url() . '#tab-integrations' ),
+				sprintf( '<a href="%s" target="_blank">', Settings::get_settings_tab_url( 'integrations' ) ),
 				'</a>'
 			);
 			$alert_type = 'warning';
@@ -30,7 +30,7 @@ abstract class Integration_Base extends Action_Base {
 				/* translators: 1: Integration label, 2: Link opening tag, 3: Link closing tag. */
 				esc_html__( 'You are using %1$s set in the %2$sIntegrations Settings%3$s.', 'elementor-pro' ),
 				$label,
-				sprintf( '<a href="%s" target="_blank">', Settings::get_url() . '#tab-integrations' ),
+				sprintf( '<a href="%s" target="_blank">', Settings::get_settings_tab_url( 'integrations' ) ),
 				'</a>'
 			);
 			$alert_type = 'info';
@@ -42,8 +42,7 @@ abstract class Integration_Base extends Action_Base {
 		$widget->add_control(
 			$id . '_api_key_msg',
 			[
-				// TODO: Remove define() with the release of Elementor 3.22
-				'type' => defined( 'Controls_Manager::ALERT' ) ? Controls_Manager::ALERT : 'alert',
+				'type' => Controls_Manager::ALERT,
 				'alert_type' => $alert_type,
 				'content' => $content,
 				'condition' => $condition,

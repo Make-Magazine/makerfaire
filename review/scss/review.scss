@@ -41,6 +41,8 @@ h3 {
     z-index: 999 !important;
 }
 
+.search-input { min-height: 45px; }
+
 .form-select {
     align-items: center;
     display: flex;
@@ -64,6 +66,27 @@ h3 {
     padding: 0px;
 }
 
+.status-buttons {
+    button, button:hover {
+        background: transparent;
+        color: #333;
+        border: 0px;
+        padding: 0px;
+        &:hover {
+            text-decoration: underline;
+        }
+    }
+}
+.placed-radio {
+    margin-bottom: 0px;
+    display: flex;
+    align-items: end;
+}
+
+.faux-btn {
+    cursor: pointer;
+}
+
 .card {
     margin: 50px 0;
 
@@ -83,6 +106,7 @@ h3 {
                 background-color: #007bff;
             }
         }
+        .placed { color: green; }
     }
 
     ul.card-header-tabs li {
@@ -104,7 +128,8 @@ h3 {
 
     .card-header:has(> .img-thumbnail) {
         aspect-ratio: 3 / 2;
-
+        overflow: hidden;
+        
         @supports not (aspect-ratio: 3 / 2) {
             &::before {
                 float: left;
@@ -117,9 +142,7 @@ h3 {
                 content: "";
                 clear: both;
             }
-        }
-
-        overflow: hidden;
+        }        
 
         .img-thumbnail {
             object-fit: cover;
@@ -134,19 +157,20 @@ h3 {
         overflow: hidden;
         min-height: 88px;
     }
+    &:not([id^=listView]) {
+        .card-text {
+            display: -webkit-box;
+            -webkit-box-orient: vertical;
+            -webkit-line-clamp: 5;
+            overflow: hidden;
 
-    .card-text {
-        display: -webkit-box;
-        -webkit-box-orient: vertical;
-        -webkit-line-clamp: 5;
-        overflow: hidden;
+            .bv-example-row {
+                margin-bottom: 20px;
 
-        .bv-example-row {
-            margin-bottom: 20px;
-
-            .list-group,
-            .img-thumbnail {
-                margin-bottom: 10px;
+                .list-group,
+                .img-thumbnail {
+                    margin-bottom: 10px;
+                }
             }
         }
     }
@@ -267,5 +291,62 @@ i.bi-plus-circle, i.bi-plus-circle-fill, i.bi-check-circle, i.bi-check2 {
 }
 
 .hideFirst td:first-child, .hideFirst th:first-child {
+    display: none;
+}
+
+// RMT TABLES
+[id^=rmt] {
+    .panel {
+        background: #fff;
+        border-radius: 5px;
+        border: solid 1px #000;
+        width: 100%;
+        margin-bottom: 15px;
+        .panel-heading {
+            color: #333;
+            background-color: #f5f5f5;
+            border-color: #ddd;
+            padding: 15px 10px;
+            border-top-left-radius: 5px;
+            border-top-right-radius: 5px;
+            h4 { font-size: 30px; }
+        }
+        table {
+            width: 100%;
+            padding: 15px 10px;
+            th, td {
+                vertical-align: middle;
+                padding: 8px 10px;
+            }
+            th {
+                background-color: #d3d3d3;
+            }
+            #actions {
+                display: table-caption;
+                span { display: block; }
+            } 
+            i.fa-circle-plus, i.fa-check {
+                color: #4caf50;
+            }
+            i.fa-circle-minus, i.fa-ban {
+                color: red;
+            }
+            .fa-spinner{
+                animation: loading 3s linear infinite;
+                @keyframes loading {
+                    0% { 
+                        transform: rotate(0); 
+                    }
+                    100% { 
+                        transform: rotate(360deg);
+                    }
+                }
+            }
+        }
+    }
+}
+
+
+#wpadminbar #wp-admin-bar-site-name > .ab-item::before {
     display: none;
 }

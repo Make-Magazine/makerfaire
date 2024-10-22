@@ -66,3 +66,12 @@ function add_rss_tags() {
         echo '<faire_name>' . get_the_title($faireData["faire_post"]).'</faire_name>';
     }    
 } 
+
+/* Custom RSS feed to pull MF entries for a specific faire */
+add_action('init', 'mfRSS');
+function mfRSS(){
+        add_feed('faire_projects', 'mfRSSFunc');
+}
+function mfRSSFunc(){
+        get_template_part('mf_rss', 'faire_projects');
+}

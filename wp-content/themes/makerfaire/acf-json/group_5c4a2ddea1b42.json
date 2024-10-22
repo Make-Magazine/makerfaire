@@ -6,6 +6,7 @@
             "key": "field_5c4a2e3308952",
             "label": "No Makers Found Text",
             "name": "no_makers_found_text",
+            "aria-label": "",
             "type": "text",
             "instructions": "This text is displayed on the page when no makers are found matching the forms entered or search results entered.",
             "required": 0,
@@ -25,6 +26,7 @@
             "key": "field_5c4a2e9108953",
             "label": "Faire Forms",
             "name": "faire-forms",
+            "aria-label": "",
             "type": "text",
             "instructions": "Comma separated list of form id's to pull accepted makers from to display on the page",
             "required": 0,
@@ -44,62 +46,11 @@
             "key": "field_5c4a2ebf08954",
             "label": "Faire",
             "name": "faire",
+            "aria-label": "",
             "type": "text",
             "instructions": "4 character ID representing the faire (ie BA19)",
             "required": 0,
             "conditional_logic": 0,
-            "wrapper": {
-                "width": "",
-                "class": "",
-                "id": ""
-            },
-            "default_value": "",
-            "placeholder": "",
-            "prepend": "",
-            "append": "",
-            "maxlength": ""
-        },
-        {
-            "key": "field_5f0f67efe80eb",
-            "label": "Show Make Projects?",
-            "name": "show_make_projects",
-            "type": "radio",
-            "instructions": "Please select if you want to show projects from Make: Projects in the Meet the Makers Page",
-            "required": 0,
-            "conditional_logic": 0,
-            "wrapper": {
-                "width": "",
-                "class": "",
-                "id": ""
-            },
-            "choices": {
-                "mfonly": "Pull projects only from current makerfaire site (default)",
-                "mponly": "Pull projects only from Make: Projects",
-                "mfandmp": "Pull projects from both the current maker faire site AND Make: Projects"
-            },
-            "allow_null": 0,
-            "other_choice": 0,
-            "default_value": "mfonly",
-            "layout": "vertical",
-            "return_format": "value",
-            "save_other_choice": 0
-        },
-        {
-            "key": "field_5f0f6834e80ec",
-            "label": "Make: Projects Category to pull from",
-            "name": "make:_projects_category_to_pull_from",
-            "type": "text",
-            "instructions": "Please enter the Make: Projects category that your projects will be found under. This field is required to pull from Make: Projects.",
-            "required": 1,
-            "conditional_logic": [
-                [
-                    {
-                        "field": "field_5f0f67efe80eb",
-                        "operator": "!=",
-                        "value": "mfonly"
-                    }
-                ]
-            ],
             "wrapper": {
                 "width": "",
                 "class": "",
@@ -127,7 +78,8 @@
     "label_placement": "top",
     "instruction_placement": "label",
     "hide_on_screen": "",
-    "active": 1,
+    "active": true,
     "description": "",
-    "modified": 1594852391
+    "show_in_rest": 0,
+    "modified": 1724783854
 }

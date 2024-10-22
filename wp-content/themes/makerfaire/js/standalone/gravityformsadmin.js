@@ -13,21 +13,22 @@ jQuery(document).ready(function() {
 				jQuery(this).parents('table.entry-detail-view').children('tbody').toggle();
 			}
 		);
-
-		jQuery('#datetimepicker').datetimepicker({ value: '2015/04/15 05:03', step: 30 });
-		jQuery('#datetimepickerstart').datetimepicker({
-			formatTime: 'g:i a',
-			formatDate: 'd.m.Y',
-			defaultTime: '10:00 am', 
-			step: 30,
-		});
-		jQuery('#datetimepickerend').datetimepicker({
-			formatTime: 'g:i a',
-			formatDate: 'd.m.Y',
-			defaultTime: '10:00 am', 
-			step: 30,
-		});
-
+		
+		if (typeof datetimepicker === 'function')	{
+			jQuery('#datetimepicker').datetimepicker({ value: '2015/04/15 05:03', step: 30 });
+			jQuery('#datetimepickerstart').datetimepicker({
+				formatTime: 'g:i a',
+				formatDate: 'd.m.Y',
+				defaultTime: '10:00 am', 
+				step: 30,
+			});
+			jQuery('#datetimepickerend').datetimepicker({
+				formatTime: 'g:i a',
+				formatDate: 'd.m.Y',
+				defaultTime: '10:00 am', 
+				step: 30,
+			});
+		}
 		jQuery('#gf_admin_page_title').click(
 			function() {
 				window.location = "/wp-admin/admin.php?page=gf_entries&view=entry&id=20&lid=" + prompt('Enter your ID!', ' ');
@@ -290,8 +291,8 @@ var resourceArray = [{ 'id': 'reslock', 'class': 'lock', 'display': '' },
 { 'id': 'resuser', class: '', 'display': '' },
 { 'id': 'resdateupdate', class: '', 'display': '' }
 ];
-var attributeArray = [{ 'id': 'attlock', 'class': 'lock', 'display': '' },
-{ 'id': 'attcategory', 'class': '', 'display': "dropdown" },
+
+var attributeArray = [{ 'id': 'attcategory', 'class': '', 'display': "dropdown" },
 { 'id': 'attvalue', 'class': 'editable textareaEdit', 'display': 'textarea' },
 { 'id': 'attcomment', 'class': 'editable textareaEdit', 'display': 'textarea' },
 { 'id': 'attuser', class: '', 'display': '' },
@@ -324,8 +325,7 @@ function setType(itemID, typeID, id) { //build type drop down based on item drop
 function resAttDelete(currentEle) {
 	var r = confirm("Are you sure want to delete this row (this cannot be undone)!");
 	if (r == true) {
-		jQuery(currentEle).remove(); //delete the row
-		currentEle = currentEle.replace("#", ""); //remove hashtag
+		jQuery("#"+currentEle).remove(); //delete the row
 		var fieldData = breakDownEle(currentEle);
 		var rowID = currentEle.replace("Row", "");
 		var rowID = rowID.replace("attn", "");
@@ -427,7 +427,7 @@ function insertRowDB(type) {
 			var dataArray = attentionArray;
 		}
 		var data = {
-			'action': 'update-entry-resAtt',
+			'action': 'update-entry-resAtt',			
 			'insertArr': insertArr,
 			'ID': 0,
 			'table': table
@@ -454,8 +454,7 @@ function insertRowDB(type) {
 	}
 
 }
-function updateDB(newVal, currentEle) {
-	var fieldName = ''; var ID = ''; var table = ""; var type = "";
+function updateDB(newVal, currentEle) {	
 	//remove #
 	currentEle = currentEle.replace("#", "");
 	var fieldData = breakDownEle(currentEle);
@@ -470,7 +469,8 @@ function updateDB(newVal, currentEle) {
 		'fieldName': fieldData['fieldName'],
 		'ID': fieldData['ID'],
 		'table': fieldData['table'],
-		'newValue': newVal
+		'newValue': newVal,
+		'entry_id': jQuery('[name="entry_info_entry_id"]').val()
 	};
 	jQuery.post(ajaxurl, data, function(response) {
 		//update the date/time and user info
@@ -503,7 +503,7 @@ function hiddenTicket(accessCode) {
 		checkObj.removeClass('checked');
 		var checked = 1;
 	} else {
-		checkObj.html('<i class="far fa-check-square" aria-hidden="true"></i>');
+		checkObj.html('<i class="far fa-square-check" aria-hidden="true"></i>');
 		checkObj.addClass('checked');
 		var checked = 0;
 	}
@@ -680,4 +680,64 @@ function updateMgmt(action) {
 		}
 
 	});
+}
+
+/*
+ * Triggers an AJAX to update a showcase
+ */
+function addShowcase(parentID='') {
+	var formID   = jQuery("#formID").val();
+	//set the processing icon
+	var msgArea = "#showcase"+parentID +" span.add_to_showcaseMsg";
+	
+	var childIDs = jQuery("#showcase"+parentID +" .assign-entries").val();
+	// throw error if parentID is not numeric or blank or null
+	if(!childIDs || childIDs.split(", ").some(isNaN)) {
+		jQuery(msgArea).html("<span class='errorMsg'>Attempted to add bad values as Showcase Member</span");
+		return;
+	}
+	
+	if(parentID=='new'){
+		var parentID = jQuery("#showcasenew .add-showcase").val();
+		//throw errror if parentID is not numeric or blank or null
+		if(!parentID || isNaN(parentID)) {
+			jQuery(msgArea).html("<span class='errorMsg'>Attempted to add bad value as Showcase</span");
+			return;
+		}
+	}
+
+	jQuery(msgArea).html("");
+	jQuery(msgArea).html('<i class="fas fa-spinner fa-pulse fa-3x fa-fw"></i><span class="sr-only">Loading...</span>');
+
+	var data = {
+		'action': 'add-to-showcase',	
+		'formID': formID, 	
+		'parentID': parentID,
+		'childIDs': childIDs
+	};
+
+	jQuery.post(ajaxurl, data, function(r) {
+		if (r.result === 'updated') {
+			//after update - set meta field status to success
+			jQuery(msgArea).html('<i style="color:green" class="fas fa-check"></i>');
+		} 
+	});
+}
+
+/*
+* Triggers an AJAX to remove a showcase
+*/
+function removeShowcase(parentID='', childID='', relationID='') {
+
+   var data = {
+	   'action': 'remove-from-showcase',	
+	   'relationID': relationID
+   };
+
+   jQuery.post(ajaxurl, data, function(r) {
+	   if (r.result === 'removed') {
+		   //after update - remove the deleted item
+		   jQuery("#showcase"+parentID+" #child"+childID).remove();
+	   } 	
+   });
 }

@@ -4,12 +4,6 @@ $templatePath = get_template_directory();
 // Register Custom Navigation Walker include custom menu widget to use walkerclass
 include_once $templatePath . '/lib/wp_bootstrap_navwalker.php';
 
-// Load the settings field for the Applications API
-//include_once dirname(__FILE__) . '/api/admin-settings.php';
-
-// Load the functions for the Applications API
-include_once dirname(__FILE__) . '/api/v2/functions.php';
-
 include_once $templatePath . '/classes/makerfaire-helper.php';
 include_once $templatePath . '/classes/gf-rmt-helper.php';
 include_once $templatePath . '/classes/mf-sharing-cards.php';
@@ -17,9 +11,6 @@ include_once $templatePath . '/classes/ICS.php';
 
 // Legacy Helper Functions replacing VIP Wordpress.com calls
 include_once $templatePath . '/classes/legacy-helper.php';
-
-//cron job
-include_once $templatePath . '/classes/cronJob.php';
 
 // Include all function files in the makerfaire/functions directory:
 foreach (glob($templatePath . '/functions/*.php') as $file) {
@@ -134,7 +125,7 @@ function load_scripts() {
         wp_enqueue_script('vue-js', "https://unpkg.com/vue@2.6.12/dist/vue.min.js", array(), '', true);
         wp_enqueue_script('bs-vue-js', "https://unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.min.js", array('vue-js', 'bootstrap'), '', true);
         wp_enqueue_script('axios', "https://unpkg.com/axios@1.6.8/dist/axios.min.js", array('vue-js'), '', true);
-        wp_enqueue_script('maker-portal', get_stylesheet_directory_uri() . "/js/min/maker-portal.min.js", array('axios'), '', true);
+        wp_enqueue_script('maker-portal', get_stylesheet_directory_uri() . "/js/min/maker-portal.min.js", array('axios'), $my_version, true);
         wp_localize_script('maker-portal', 'vueAjax', array('ajaxurl' => admin_url('admin-ajax.php')));
     }
 }
@@ -162,11 +153,25 @@ function remove_unnecessary_styles() {
         wp_deregister_style('elementor-ai');
         wp_dequeue_style('elementor-ai');
     }
-    if( is_page_template('page-entry.php') || is_page_template('page-schedule.php') || is_page_template('page-meet-the-makers.php') ) {
+    if( is_page_template('page-entry.php') ) {
         wp_deregister_style('elementor-pro');
         wp_dequeue_style('elementor-pro');
         wp_deregister_style('elementor-frontend');
         wp_dequeue_style('elementor-frontend');
+        wp_deregister_style('search-filter-plugin-styles');
+        wp_dequeue_style('search-filter-plugin-styles');
+        wp_deregister_style('e-animations');
+        wp_dequeue_style('e-animations');
+        wp_deregister_style('swiper');
+        wp_dequeue_style('swiper');
+        wp_deregister_style('fancybox');
+        wp_dequeue_style('fancybox');
+        wp_deregister_style('remodal');
+        wp_dequeue_style('remodal');
+        wp_deregister_style('remodal-default-them');
+        wp_dequeue_style('remodal-default-them');
+    }
+    if (is_page_template('page-meet-the-makers.php')) {
         wp_deregister_style('search-filter-plugin-styles');
         wp_dequeue_style('search-filter-plugin-styles');
         wp_deregister_style('e-animations');
@@ -526,7 +531,6 @@ function child_remove_page_templates($page_templates) {
     unset($page_templates['page-video-ba15.php']);
     unset($page_templates['page-white-house.php']);
     unset($page_templates['signage-detail.php']);
-    unset($page_templates['signage-list.php']);
     unset($page_templates['page-query.php']);
 
     unset($page_templates['page-wide-leftnav.php']);
@@ -565,6 +569,7 @@ function th_register_caps() {
     //other
     members_register_cap('edit_rmt', array('label' => __('Edit RMT', 'makerfaire'), 'group' => 'makerfaire'));
     members_register_cap('view_rmt', array('label' => __('View RMT', 'makerfaire'), 'group' => 'makerfaire'));
+    members_register_cap('reports_only', array('label' => __('View Reports Only', 'makerfaire'), 'group' => 'makerfaire'));
     members_register_cap('edit_public_info', array('label' => __('Edit Public Info', 'makerfaire'), 'group' => 'makerfaire'));
 }
 add_action('members_register_cap_groups', 'th_register_cap_groups');

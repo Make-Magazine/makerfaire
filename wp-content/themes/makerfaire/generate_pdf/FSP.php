@@ -5,7 +5,7 @@
 //set up database
 $root = $_SERVER['DOCUMENT_ROOT'];
 require_once( $root . '/wp-config.php' );
-require_once( $root . '/wp-includes/wp-db.php' );
+require_once( $root . '/wp-includes/class-wpdb.php' );
 if (!is_user_logged_in())
    auth_redirect();
 
@@ -54,7 +54,51 @@ class PDF extends Fpdi {
       //$this->Image($badge,153,11,45,0,'jpg');
       //set font size for PDF answers
       $this->SetFont('Helvetica', '', 10);
-      $this->SetXY(15, 52);
+      $this->SetXY(15, 42);
+   }
+
+   //function for makign text bold
+   public function WriteText($text){
+      $intPosIni = 0;
+      $intPosFim = 0;
+      if (strpos($text,'<')!==false && strpos($text,'[')!==false){
+         if (strpos($text,'<')<strpos($text,'[')){
+            $this->Write(5,substr($text,0,strpos($text,'<')));
+            $intPosIni = strpos($text,'<');
+            $intPosFim = strpos($text,'>');
+            $this->SetFont('','B');
+            $this->Write(5,substr($text,$intPosIni+1,$intPosFim-$intPosIni-1));
+            $this->SetFont('','');
+            $this->WriteText(substr($text,$intPosFim+1,strlen($text)));
+         }else{
+            $this->Write(5,substr($text,0,strpos($text,'[')));
+            $intPosIni = strpos($text,'[');
+            $intPosFim = strpos($text,']');
+            $w=$this->GetStringWidth('a')*($intPosFim-$intPosIni-1);
+            $this->Cell($w,$this->FontSize+0.75,substr($text,$intPosIni+1,$intPosFim-$intPosIni-1),1,0,'');
+            $this->WriteText(substr($text,$intPosFim+1,strlen($text)));
+         }
+      }else{
+         if (strpos($text,'<')!==false){
+            $this->Write(5,substr($text,0,strpos($text,'<')));
+            $intPosIni = strpos($text,'<');
+            $intPosFim = strpos($text,'>');
+            $this->SetFont('','B');
+            $this->WriteText(substr($text,$intPosIni+1,$intPosFim-$intPosIni-1));
+            $this->SetFont('','');
+            $this->WriteText(substr($text,$intPosFim+1,strlen($text)));
+         }elseif (strpos($text,'[')!==false){
+            $this->Write(5,substr($text,0,strpos($text,'[')));
+            $intPosIni = strpos($text,'[');
+            $intPosFim = strpos($text,']');
+            $w=$this->GetStringWidth('a')*($intPosFim-$intPosIni-1);
+            $this->Cell($w,$this->FontSize+0.75,substr($text,$intPosIni+1,$intPosFim-$intPosIni-1),1,0,'');
+            $this->WriteText(substr($text,$intPosFim+1,strlen($text)));
+         }else{
+            $this->Write(5,$text);
+         }
+
+      }
    }
 
 }
@@ -98,6 +142,9 @@ if (ob_get_contents())
    ob_clean();
 $pdf->Output('FSP.pdf', 'D');        //output download
 //$pdf->Output('doc.pdf', 'I');        //output in browser
+
+
+
 
 function output_data($pdf, $lead = array(), $form = array(), $fieldData = array()) {
    $pdf->AddPage();
@@ -144,9 +191,13 @@ function output_data($pdf, $lead = array(), $form = array(), $fieldData = array(
       }
       $display_value = str_replace('<br />', "\n", $display_value);
       $display_value = htmlspecialchars_decode( (string) $display_value, ENT_QUOTES);
-
-      $pdf->MultiCell(0, $lineheight, $data[0] . ': ');
-      $pdf->MultiCell(0, $lineheight, $display_value, 0, 'L', true);
-      $pdf->Ln();
+      if(in_array($fieldID, array(37,19,27,20,7), true )) {
+         $pdf->MultiCell(0, $lineheight, $pdf->WriteText("<" .$data[0] . '>: '));
+         $pdf->MultiCell(0, $lineheight, $display_value, 0);
+      } else {
+         $pdf->MultiCell(0, $lineheight, $pdf->WriteText("<" .$data[0] . '>: ' . $display_value));
+      }
+      
+      //$pdf->Ln(); // don't print this line between
    }
 }

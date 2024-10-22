@@ -1,7 +1,7 @@
 === GravityEdit ===
 Tags: gravity forms, inline edit, gravityview
 Requires at least: 5.1
-Tested up to: 6.3
+Tested up to: 6.6.1
 Contributors: The GravityKit Team
 License: GPL 2
 Requires PHP: 7.2.0
@@ -19,6 +19,22 @@ Inline Editing is a powerful way to quickly make changes to a form entry without
 3. Set your license key
 
 == Changelog ==
+
+= 2.1.0 on August 16, 2024 =
+
+This release introduces support for the Gravity Forms Entry Tags plugin and resolves PHP 8.2 deprecation notices.
+
+#### 🚀 Added
+* Support for the [Gravity Forms Entry Tags](https://www.gravitykit.com/products/gravity-forms-entry-tags/) plugin (requires version 1.1.0 or newer).
+
+#### 🐛 Fixed
+* PHP 8.2 deprecation notices.
+
+#### 🔧 Updated
+* [Foundation](https://www.gravitykit.com/foundation/) and [TrustedLogin](https://www.trustedlogin.com/) to versions 1.2.17 and 1.8.0, respectively.
+
+#### 💻 Developer Updates
+* Added `gk/gravityedit/field-updated` JavaScript hook, which fires on the document when a field is updated.
 
 = 2.0.3 on October 31, 2023 =
 
@@ -327,6 +343,3 @@ __Developer Updates:__
 = 1.0 =
 
 - Blastoff!
-
-
-= 1706734024-4249 =

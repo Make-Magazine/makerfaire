@@ -21,7 +21,7 @@ class WLCMS_Messages
     public static function show()
     {
         $group_messages = maybe_unserialize(get_option('_wlcms_messages'));
-        
+
         if (!$group_messages) {
             return;
         }
@@ -32,8 +32,8 @@ class WLCMS_Messages
                 $errors .= '<div class="notice notice-' . $class . ' is-dismissible"">';
                 $prev_message = '';
                 foreach ($messages as $message) {
-                    if( $prev_message !=  $message)
-                    $errors .= '<p>' . $message . '</p>';
+                    if ($prev_message !=  $message)
+                        $errors .= '<p>' . $message . '</p>';
                     $prev_message =  $message;
                 }
                 $errors .= '</div>';

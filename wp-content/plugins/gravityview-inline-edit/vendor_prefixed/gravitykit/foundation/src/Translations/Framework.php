@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by __root__ on 02-November-2023 using Strauss.
+ * Modified by __root__ on 16-August-2024 using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 
@@ -37,9 +37,11 @@ class Framework {
 	private $_logger;
 
 	/**
+	 * Text domain for which translations are fetched.
+	 *
 	 * @since 1.0.0
 	 *
-	 * @var array Text domain for which translations are fetched.
+	 * @var array
 	 */
 	private $_text_domains = [];
 
@@ -67,7 +69,7 @@ class Framework {
 	 *
 	 * @return TranslationsPress_Updater
 	 */
-	public function get_T15s_updater( $text_domain ) {
+	public function get_T15s_updater( $text_domain ) { // phpcs:ignore WordPress.NamingConventions.ValidFunctionName.MethodNameInvalid
 		return TranslationsPress_Updater::get_instance( $text_domain );
 	}
 
@@ -83,11 +85,65 @@ class Framework {
 			return;
 		}
 
+		$this->_logger = LoggerFramework::get_instance();
+
 		foreach ( FoundationCore::get_instance()->get_registered_plugins() as $plugin ) {
 			$plugin_data = CoreHelpers::get_plugin_data( $plugin['plugin_file'] );
 
 			if ( isset( $plugin_data['TextDomain'] ) ) {
 				$this->_text_domains[] = $plugin_data['TextDomain'];
+
+				if ( $this->is_en_locale() ) {
+					continue;
+				}
+
+				/**
+				 * Disables downloading translations.
+				 *
+				 * @filter `gk/foundation/translations/disable-download`
+				 *
+				 * @since  1.2.6
+				 *
+				 * @param bool $disable_translations Whether to download translations. Default: false.
+				 */
+				$disable_download = apply_filters( 'gk/foundation/translations/disable-download', false );
+
+				if ( $this->can_install_languages() && ! $disable_download ) {
+					// This will automatically try to install translations for all plugins when:
+					// 1) The language is available in T15S and is not installed locally
+					// 2) T15S has updated translations
+					// Minimal to no performance impact if the 2 conditions are not met.
+					$this->install_and_load_translations( $plugin_data['TextDomain'], get_locale() );
+				} else {
+					// If translations can't be installed due to permisisons but were previously installed,
+					// remap the location of the .mo file as it is stored in a folder suffixed with the blog ID.
+					add_filter(
+                        'load_textdomain_mofile',
+                        function ( $mo_file, $text_domain ) use ( $plugin_data ) {
+							/**
+							 * Specifies the location of the .mo file.
+							 *
+							 * @filter `gk/foundation/translations/<text-domain>/mo-file`
+							 *
+							 * @since  1.2.6
+							 *
+							 * @param string $remapped_mo_file
+							 */
+							$remapped_mo_file = apply_filters(
+                                "gk/foundation/translations/{$plugin_data['TextDomain']}/mo-file",
+                                self::get_translation_file_name( $plugin_data['TextDomain'], get_locale() )
+							);
+
+							if ( $plugin_data['TextDomain'] === $text_domain && file_exists( $remapped_mo_file ) ) {
+								return $remapped_mo_file;
+							}
+
+							return $mo_file;
+						},
+                        10,
+                        2
+                    );
+				}
 			}
 		}
 
@@ -95,14 +151,12 @@ class Framework {
 			return;
 		}
 
-		add_action( 'update_option_WPLANG', [ $this, 'on_site_language_change' ], 10, 2 );
-		add_action( 'gk/foundation/plugin-activated', [ $this, 'on_plugin_activation' ] );
 		add_action( 'gk/foundation/plugin-deactivated', [ $this, 'on_plugin_deactivation' ] );
 
-		$this->_logger = LoggerFramework::get_instance();
-
 		/**
-		 * @action `gk/foundation/translations/initialized` Fires when the class has finished initializing.
+		 * Fires when the class has finished initializing.
+		 *
+		 * @action `gk/foundation/translations/initialized`
 		 *
 		 * @since  1.0.0
 		 *
@@ -119,12 +173,18 @@ class Framework {
 	 * @return bool
 	 */
 	public function can_install_languages() {
+		if ( CoreHelpers::is_cli() ) {
+			return true;
+		}
+
 		/**
-		 * @filter `gk/foundation/translations/permissions/can_install_languages` Sets permission to install languages.
+		 * Sets permission to install languages.
+		 *
+		 * @filter `gk/foundation/translations/permissions/can-install-languages`
 		 *
 		 * @since  1.0.0
 		 *
-		 * @param bool $can_install_languages Default: 'install_languages' capability.
+		 * @param bool $can_install_languages Default: `install_languages` capability.
 		 */
 		return apply_filters( 'gk/foundation/translations/permissions/can-install-languages', current_user_can( 'install_languages' ) );
 	}
@@ -133,13 +193,14 @@ class Framework {
 	 * Downloads and installs translations from TranslationsPress.
 	 *
 	 * @since 1.0.0
+	 * @since 1.2.6 Method renamed from `install` to `install_and_load_translations`.
 	 *
-	 * @param string $text_domain  Text domain.
-	 * @param string $new_language The new site language, only set if user is updating their language settings.
+	 * @param string $text_domain Text domain.
+	 * @param string $language    Language to install.
 	 *
 	 * @return void
 	 */
-	public function install( $text_domain, $new_language ) {
+	public function install_and_load_translations( $text_domain, $language ) {
 		$current_user = wp_get_current_user();
 
 		if ( ! $this->can_install_languages() ) {
@@ -152,15 +213,17 @@ class Framework {
 		}
 
 		try {
+			// phpcs:disable WordPress.NamingConventions.ValidVariableName.VariableNotSnakeCase
 			$T15s_updater = $this->get_T15s_updater( $text_domain );
 
-			$T15s_updater->install( $new_language );
+			$T15s_updater->install( $language );
 
 			$translations = $T15s_updater->get_installed_translations( true );
 
-			if ( isset( $translations[ $new_language ] ) ) {
-				$this->load_backend_translations( $text_domain, $new_language );
+			if ( isset( $translations[ $language ] ) ) {
+				$this->load_backend_translations( $text_domain, $language );
 			}
+			// phpcs:enable WordPress.NamingConventions.ValidVariableName.VariableNotSnakeCase
 		} catch ( Exception $e ) {
 			$this->_logger->error( $e->getMessage() );
 		}
@@ -191,17 +254,17 @@ class Framework {
 	 *
 	 * @return void
 	 */
-	function load_backend_translations( $text_domain, $language = '' ) {
+	public function load_backend_translations( $text_domain, $language = '' ) {
 		if ( ! $language ) {
 			$language = get_locale();
 		}
 
-		$mo_translations = $this->get_translation_filename( $text_domain, $language );
+		$mo_file = $this->get_translation_file_name( $text_domain, $language );
 
-		if ( ! $mo_translations ) {
+		if ( ! $mo_file ) {
 			$this->_logger->notice(
 				sprintf(
-					'No "%s" .mo translations found for "%s".',
+					'"%s" .mo translation file not found for "%s".',
 					$text_domain,
 					$language
 				)
@@ -210,7 +273,7 @@ class Framework {
 			return;
 		}
 
-		load_textdomain( $text_domain, $mo_translations );
+		load_textdomain( $text_domain, $mo_file );
 	}
 
 	/**
@@ -224,7 +287,7 @@ class Framework {
 	 *
 	 * @return void
 	 */
-	function load_frontend_translations( $text_domain, $language = '', $frontend_text_domain = '' ) {
+	public function load_frontend_translations( $text_domain, $language = '', $frontend_text_domain = '' ) {
 		if ( ! $language ) {
 			$language = get_locale();
 		}
@@ -233,9 +296,9 @@ class Framework {
 			return;
 		}
 
-		$json_translations = $this->get_translation_filename( $text_domain, $language, 'json' );
+		$json_translations = $this->get_translation_file_name( $text_domain, $language, 'json' );
 
-		if ( ! $json_translations ) {
+		if ( ! file_exists( $json_translations ) ) {
 			$this->_logger->notice(
 				sprintf(
 					'No %s.json translations file found for "%s" text domain.',
@@ -252,8 +315,10 @@ class Framework {
 		// Optionally override text domain if UI expects a different one.
 		$text_domain = $frontend_text_domain ?: $text_domain;
 
-		add_filter( 'gk/foundation/inline-scripts', function ( $scripts ) use ( $text_domain, $json_translations ) {
-			$js = <<<JS
+		add_filter(
+            'gk/foundation/inline-scripts',
+            function ( $scripts ) use ( $text_domain, $json_translations ) {
+				$js = <<<JS
 ( function( domain, translations ) {
 	var localeData = translations.locale_data[ domain ] || translations.locale_data.messages;
 	localeData[""].domain = domain;
@@ -261,13 +326,14 @@ class Framework {
 } )( '{$text_domain}', {$json_translations});
 JS;
 
-			$scripts[] = [
-				'script'       => $js,
-				'dependencies' => [ 'wp-i18n' ],
-			];
+				$scripts[] = [
+					'script'       => $js,
+					'dependencies' => [ 'wp-i18n' ],
+				];
 
-			return $scripts;
-		} );
+				return $scripts;
+			}
+        );
 	}
 
 	/**
@@ -279,53 +345,29 @@ JS;
 	 *
 	 * @return string|null
 	 */
-	public static function get_translation_filename( $text_domain, $language, $extension = 'mo' ) {
-		$filename = sprintf( '%s/%s-%s.%s', self::WP_LANG_DIR, $text_domain, $language, $extension );
-
-		return ( file_exists( $filename ) ) ? $filename : null;
+	public static function get_translation_file_name( $text_domain, $language, $extension = 'mo' ) {
+		return sprintf(
+			'%s/%s-%s.%s',
+			self::get_path_to_translations_folder(),
+			$text_domain,
+			$language,
+			$extension
+		);
 	}
 
 	/**
-	 * Installs or updates translations for all plugins when the site's language setting is changed.
+	 * Returns path to folder where translations are stored, suffixed by the blog ID.
 	 *
-	 * @since 1.0.0
+	 * @since 1.2.6
 	 *
-	 * @param string $from_language The language before the user changed their language setting.
-	 * @param string $to_language   The new language after the user changed their language setting.
-	 *
-	 * @return void
+	 * @return string
 	 */
-	public function on_site_language_change( $from_language, $to_language ) {
-		if ( empty( $to_language ) || ! $this->can_install_languages() ) {
-			return;
-		}
-
-		foreach ( $this->_text_domains as $text_domain ) {
-			$this->install( $text_domain, $to_language );
-		}
-	}
-
-	/**
-	 * Installs or updates translations for all plugins when a plugin is activated.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @param string $plugin_file Plugin file.
-	 *
-	 * @return void
-	 */
-	public function on_plugin_activation( $plugin_file ) {
-		if ( ! function_exists( 'get_plugin_data' ) ) {
-			require_once( ABSPATH . 'wp-admin/includes/plugin.php' );
-		}
-
-		$plugin_data = get_plugin_data( $plugin_file );
-
-		if ( ! isset( $plugin_data['TextDomain'] ) || $this->is_en_locale() || ! $this->can_install_languages() ) {
-			return;
-		}
-
-		$this->install( $plugin_data['TextDomain'], get_locale() );
+	public static function get_path_to_translations_folder() {
+		return sprintf(
+			'%s/%s',
+			untrailingslashit( self::WP_LANG_DIR ),
+			get_current_blog_id()
+		);
 	}
 
 	/**
@@ -339,7 +381,7 @@ JS;
 	 */
 	public function on_plugin_deactivation( $plugin_file ) {
 		if ( ! function_exists( 'get_plugin_data' ) ) {
-			require_once( ABSPATH . 'wp-admin/includes/plugin.php' );
+			require_once ABSPATH . 'wp-admin/includes/plugin.php';
 		}
 
 		$plugin_data = get_plugin_data( $plugin_file );
@@ -348,17 +390,38 @@ JS;
 			return;
 		}
 
-		$files = glob( sprintf(
-			'%s/%s-*',
-			self::WP_LANG_DIR,
-			$plugin_data['TextDomain']
-		) );
+		$files = glob(
+            sprintf(
+                '%s/%s-*',
+                self::get_path_to_translations_folder(),
+                $plugin_data['TextDomain']
+            )
+        );
 
 		if ( empty( $files ) ) {
 			return;
 		}
 
 		array_walk( $files, 'wp_delete_file' );
+
+		global $wp_filesystem;
+
+		if ( ! $wp_filesystem ) {
+			require_once ABSPATH . '/wp-admin/includes/admin.php';
+		}
+
+		if ( ! WP_Filesystem() ) {
+			return;
+		}
+
+		if ( ! $wp_filesystem->rmdir( self::get_path_to_translations_folder() ) ) {
+			$this->_logger->error(
+				sprintf(
+					'Failed to delete translations folder for site ID "%d"',
+					get_current_blog_id()
+				)
+			);
+		}
 	}
 
 	/**

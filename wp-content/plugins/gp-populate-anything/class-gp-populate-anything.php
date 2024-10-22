@@ -4266,6 +4266,21 @@ class GP_Populate_Anything extends GP_Plugin {
 
 		$fake_lead = $GLOBALS['gppa-field-values'][ $form['id'] ];
 
+		$referer         = rgar( $_SERVER, 'HTTP_REFERER' );
+		$referer_post_id = url_to_postid( $referer );
+
+		// Add the HTTP referrer as the source_url to the fake lead.
+		$fake_lead['source_url'] = $referer;
+
+		// setup the post object and ensure query object on post reflects singular context.
+		if ( $referer_post_id ) {
+			$GLOBALS['post'] = get_post( $referer_post_id );
+			setup_postdata( $GLOBALS['post'] );
+
+			global $wp_query;
+			$wp_query->is_singular = true;
+		}
+
 		/**
 		 * Allow throwing out field values during hydration using a filter.
 		 *

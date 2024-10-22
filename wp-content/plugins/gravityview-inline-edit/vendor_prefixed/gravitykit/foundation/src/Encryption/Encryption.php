@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by __root__ on 02-November-2023 using Strauss.
+ * Modified by __root__ on 16-August-2024 using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 
@@ -17,16 +17,20 @@ class Encryption {
 	const DEFAULT_NONCE = 'bc5d92ffc6c54ff8d865a1e6f3361f48d0a84a2b145be34e'; // 24-bit value stored as a hex string
 
 	/**
+	 * Class instance.
+	 *
 	 * @since 1.0.0
 	 *
-	 * @var Encryption Class instance.
+	 * @var Encryption
 	 */
 	private static $_instances;
 
 	/**
+	 * Secret key used to encrypt license key.
+	 *
 	 * @since 1.0.0
 	 *
-	 * @var string Secret key used to encrypt license key.
+	 * @var string
 	 */
 	private $_secret_key;
 
@@ -146,7 +150,7 @@ class Encryption {
 			return null;
 		}
 
-		if ( $decrypted === false ) {
+		if ( false === $decrypted ) {
 			$decrypted = null;
 		}
 

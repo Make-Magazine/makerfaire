@@ -7,8 +7,8 @@ rmgControllers.controller('VendorsCtrl', ['$scope', '$routeParams', '$http', '$q
       'resources': { table: 'wp_rmt_vendor_resources', pageTitle : 'Vendors', subTitle  : 'Vendor Resources'},
       },
     'resources': {
-      'list':     { table: 'wp_rmt_resources',pageTitle:'Manage RMT Data',subTitle:'Resource Type'},
-      'items':    { table: 'wp_rmt_resource_categories',pageTitle:'Manage RMT Data',subTitle : 'Resource Items'},
+      'list':     { table: 'wp_rmt_resources',pageTitle:'Manage RMT Data',subTitle:'Resources'},
+      'items':    { table: 'wp_rmt_resource_categories',pageTitle:'Manage RMT Data',subTitle : 'Resource Categories'},
     },
     'faire': {
       'data'                : {table : 'wp_mf_faire',pageTitle:'Faire Data',subTitle:'Faire Data'},
@@ -23,8 +23,8 @@ rmgControllers.controller('VendorsCtrl', ['$scope', '$routeParams', '$http', '$q
       'attention'           : {table : 'wp_rmt_entry_attn', pageTitle:'Entry Specific Data',subTitle:'Assigned Attention'},
       'attributes'          : {table : 'wp_rmt_entry_attributes',pageTitle:'Entry Specific Data',subTitle:'Assigned Attributes'},
       'atttibuteCategories' : {table : 'wp_rmt_entry_att_categories',pageTitle:'Manage RMT Data',subTitle:'Attributes'},
-      'workflow'            : {table :'wp_rmt_attn',pageTitle:'Manage RMT Data',subTitle:'Workflow/Attention'},
-      'ribbons'             : {table :'wp_mf_ribbons',pageTitle:'Manage Ribbon Data',subTitle:'Ribbons'},
+      'workflow'            : {table : 'wp_rmt_attn',pageTitle:'Manage RMT Data',subTitle:'Workflow/Attention'},
+      'ribbons'             : {table : 'wp_mf_ribbons',pageTitle:'Manage Ribbon Data',subTitle:'Ribbons'},
     }
   };
 

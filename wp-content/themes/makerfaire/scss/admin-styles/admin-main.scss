@@ -176,3 +176,75 @@ ul#input_321 li {
     border-color: #214859;
   }
 }
+
+.admin_page_mf_showcase {
+    .showcase-admin-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 20px;
+        padding-bottom: 20px;
+        border-bottom: solid 1px #ccc;
+        margin-bottom: 20px;
+        h2 {
+          margin: 0px;
+        }
+        .form-select {
+          margin-right: 20px;
+        }
+    }
+    [id^="showcase"]:not(#showcasenew) {
+        background: #fff;
+        margin: 10px 20px 10px 0px;
+        border-radius: 5px;
+        padding-bottom: 20px;
+    }
+    #showcase-name {
+        margin-bottom: -15px !important;
+    }
+    #showcasenew {
+        padding: 15px 30px 0px 0px;
+        [class^="col"] {
+          height: 50px;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          margin-top: 25px;
+      }
+    }
+    @media screen and (min-width: 992px) {
+        #showcasenew {
+          .new-assign {
+            margin-left: 1%;
+            input {
+              width: 92%;
+            }
+          }
+          .new-button {
+            margin-left: -3%;
+          } 
+        }
+    }
+    #showcase-name {
+        background: transparent !important;
+    }
+    .fa-times { 
+        color: red;
+        cursor: pointer;
+        margin-left: 10px;
+        font-weight: 900;
+    }
+    .errorMsg {
+        color: red;
+    }
+    #assign-entries-value {
+        margin-top: 5px;
+    }
+}
+
+#faire-signs {
+  .pdfEntList, .updateMsg {
+    color: red;
+    font-size: 20px;
+  }
+}

@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by gravityview on 05-June-2024 using {@see https://github.com/BrianHenryIE/strauss}.
+ * Modified by gravityview on 14-August-2024 using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\GravityView\Foundation\Helpers;
@@ -121,12 +121,19 @@ class Core {
 	 *
 	 * @since 1.0.0
 	 * @since 1.2.0 Added $skip_cache parameter.
+	 * @since TODO  Use static variable to cache plugins data.
 	 *
 	 * @param bool $skip_cache (optional) Whether to skip cache when getting plugins data. Default: false.
 	 *
 	 * @return array[]
 	 */
 	public static function get_plugins( $skip_cache = false ) {
+		static $plugins;
+
+		if ( $plugins && ! $skip_cache ) {
+			return $plugins;
+		}
+
 		if ( ! function_exists( 'get_plugins' ) ) {
 			require_once ABSPATH . 'wp-admin/includes/plugin.php';
 		}
@@ -135,7 +142,9 @@ class Core {
 			wp_cache_delete( 'plugins', 'plugins' );
 		}
 
-		return get_plugins();
+		$plugins = get_plugins();
+
+		return $plugins;
 	}
 
 	/**
@@ -155,9 +164,10 @@ class Core {
 			require_once ABSPATH . 'wp-admin/includes/plugin.php';
 		}
 
-		$plugins = [];
+		$plugins    = [];
+		$wp_plugins = self::get_plugins( $skip_cache );
 
-		foreach ( self::get_plugins( $skip_cache ) as $path => $plugin ) {
+		foreach ( $wp_plugins as $path => $plugin ) {
 			if ( empty( $plugin['TextDomain'] ) ) {
 				continue;
 			}

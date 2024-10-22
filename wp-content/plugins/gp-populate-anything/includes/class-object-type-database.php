@@ -280,17 +280,17 @@ class GPPA_Object_Type_Database extends GPPA_Object_Type {
 			}
 		}
 
-		if ( $is_date ) {
+		if ( $is_date && $value !== null ) {
 			$value = gmdate( 'Y-m-d', strtotime( $value ) );
 
 			switch ( $operator ) {
 				case '>=':
-				case '>':
+				case '<':
 					$value .= ' 00:00:00';
 					break;
 
 				case '<=':
-				case '<':
+				case '>':
 					$value .= ' 23:59:59';
 					break;
 			}

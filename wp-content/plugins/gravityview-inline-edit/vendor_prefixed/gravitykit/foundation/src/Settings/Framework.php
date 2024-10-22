@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by __root__ on 02-November-2023 using Strauss.
+ * Modified by __root__ on 16-August-2024 using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 
@@ -31,29 +31,42 @@ class Framework {
 	private static $_instance;
 
 	/**
+	 * Access capabilities.
+	 *
 	 * @since 1.0.0
 	 *
-	 * @var string Access capabilities.
+	 * @var string
 	 */
 	private $_capability = 'manage_options';
 
 	/**
+	 * Settings validator instance.
+	 *
 	 * @since 1.0.0
 	 *
-	 * @var SettingsValidator Settings validator instance.
+	 * @var SettingsValidator
 	 */
 	private $_validator;
 
 	/**
+	 * Cached settings data.
+	 *
 	 * @since 1.0.0
 	 *
-	 * @var array Cached settings data.
+	 * @var array
 	 */
 	private $_settings_data = [];
 
+	/**
+	 * Class constructor.
+	 *
+	 * @since 1.0.0
+	 */
 	private function __construct() {
 		/**
-		 * @filter `gk/foundation/settings/capability` Modifies capability to access GravityKit Settings.
+		 * Modifies capability to access GravityKit Settings.
+		 *
+		 * @filter `gk/foundation/settings/capability`
 		 *
 		 * @since  1.0.0
 		 *
@@ -98,7 +111,9 @@ class Framework {
 		$this->add_gk_submenu_item();
 
 		/**
-		 * @action `gk/foundation/settings/initialized` Fires when the class has finished initializing.
+		 * Fires when the class has finished initializing.
+		 *
+		 * @action `gk/foundation/settings/initialized`
 		 *
 		 * @since  1.0.0
 		 *
@@ -119,9 +134,12 @@ class Framework {
 	 * @return array
 	 */
 	public function configure_ajax_routes( array $routes ) {
-		return array_merge( $routes, [
-			'save_settings' => [ $this, 'save_ui_settings' ],
-		] );
+		return array_merge(
+			$routes,
+			[
+				'save_settings' => [ $this, 'save_ui_settings' ],
+			]
+		);
 	}
 
 	/**
@@ -170,8 +188,7 @@ class Framework {
 		$plugins_settings_data = apply_filters( 'gk/foundation/settings/data/plugins', [] );
 
 		if ( ! is_array( $plugins_settings_data ) ) {
-
-			LoggerFramework::get_instance()->error( 'Invalid settings data. Expected array, got ' . print_r( $plugins_settings_data, true ) );
+			LoggerFramework::get_instance()->error( 'Invalid settings data. Expected array, got ' . print_r( $plugins_settings_data, true ) ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_print_r
 
 			return [];
 		}
@@ -183,13 +200,18 @@ class Framework {
 				continue;
 			}
 
-			add_filter( $filter, function () use ( $plugin_id ) {
-				return $this->get_plugin_settings_url( $plugin_id );
-			} );
+			add_filter(
+				$filter,
+				function () use ( $plugin_id ) {
+					return $this->get_plugin_settings_url( $plugin_id );
+				}
+			);
 		}
 
 		/**
-		 * @filter `gk/foundation/settings/data/plugins` Modifies plugins' settings.
+		 * Modifies plugins' settings.
+		 *
+		 * @filter `gk/foundation/settings/data/plugins`
 		 *
 		 * @since  1.0.0
 		 *
@@ -204,7 +226,7 @@ class Framework {
 	 *
 	 * @since 1.0.3
 	 *
-	 * @param $plugin_id
+	 * @param string|null $plugin_id (optional) Plugin ID. Default is null (i.e., all plugins).
 	 *
 	 * @return array|array[]
 	 */
@@ -216,9 +238,12 @@ class Framework {
 		}
 
 		if ( ! $plugin_id ) {
-			return array_map( function ( $plugin_data ) {
-				return Arr::get( $plugin_data, 'defaults', [] );
-			}, $plugins_data );
+			return array_map(
+				function ( $plugin_data ) {
+					return Arr::get( $plugin_data, 'defaults', [] );
+				},
+				$plugins_data
+			);
 		}
 
 		return Arr::get( $plugins_data, "{$plugin_id}.defaults", [] );
@@ -229,8 +254,8 @@ class Framework {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param array    $settings
-	 * @param int|null $site_id (optional) Site ID for which to save settings. Default is null (i.e., current site ID).
+	 * @param array    $settings Settings data.
+	 * @param int|null $site_id  (optional) Site ID for which to save settings. Default is null (i.e., current site ID).
 	 *
 	 * @return bool
 	 */
@@ -250,7 +275,7 @@ class Framework {
 	 * @param string           $plugin              Plugin ID as specified in the settings object.
 	 * @param string           $plugin_setting_name Setting name as specified in the settings object.
 	 * @param null|array|mixed $default             (optional) Default value to return if the setting is not found. Default is null.
-	 * @param int|null         $site_id             (optional) Site ID for which to get settings. Default is null (i.e., current site ID).     *
+	 * @param int|null         $site_id             (optional) Site ID for which to get settings. Default is null (i.e., current site ID).
 	 *
 	 * @return mixed|null
 	 */
@@ -262,7 +287,6 @@ class Framework {
 		if ( array_key_exists( $plugin_setting_name, $plugin_settings ) ) {
 			return $plugin_settings[ $plugin_setting_name ];
 		}
-
 
 		if ( is_array( $default ) && array_key_exists( $plugin_setting_name, $default ) ) {
 			return $default[ $plugin_setting_name ];
@@ -276,10 +300,10 @@ class Framework {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param string   $plugin
-	 * @param string   $plugin_setting_name
-	 * @param mixed    $plugin_setting_value
-	 * @param int|null $site_id (optional) Site ID for which to save settings. Default is null (i.e., current site ID).
+	 * @param string   $plugin               Plugin ID as specified in the settings object.
+	 * @param string   $plugin_setting_name  Setting name as specified in the settings object.
+	 * @param mixed    $plugin_setting_value Setting value.
+	 * @param int|null $site_id              (optional) Site ID for which to save settings. Default is null (i.e., current site ID).
 	 *
 	 * @return bool
 	 */
@@ -298,7 +322,7 @@ class Framework {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param string   $plugin
+	 * @param string   $plugin  Plugin ID as specified in the settings object.
 	 * @param int|null $site_id (optional) Site ID for which to get settings. Default is null (i.e., current site ID).
 	 *
 	 * @return array
@@ -316,9 +340,9 @@ class Framework {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param string   $plugin
-	 * @param array    $plugin_settings
-	 * @param int|null $site_id (optional) Site ID for which to save settings. Default is null (i.e, current site ID).
+	 * @param string   $plugin          Plugin ID as specified in the settings object.
+	 * @param array    $plugin_settings Plugin settings.
+	 * @param int|null $site_id         (optional) Site ID for which to save settings. Default is null (i.e, current site ID).
 	 *
 	 * @return bool
 	 */
@@ -332,7 +356,9 @@ class Framework {
 		$settings_data[ $plugin ] = array_merge( $settings_data[ $plugin ], $plugin_settings );
 
 		/**
-		 * @filter `gk/foundation/settings/{plugin}/save/before` Modifies plugin settings object before saving.
+		 * Modifies plugin settings object before saving.
+		 *
+		 * @filter `gk/foundation/settings/{plugin}/save/before`
 		 *
 		 * @since  1.0.0
 		 *
@@ -351,19 +377,23 @@ class Framework {
 	 * @return void
 	 */
 	public function add_gk_submenu_item() {
-		$page_title = $menu_title = esc_html__( 'Settings', 'gk-gravityedit' );
+		$page_title = esc_html__( 'Settings', 'gk-gravityedit' );
+		$menu_title = $page_title;
 
-		AdminMenu::add_submenu_item( [
-			'page_title'         => $page_title,
-			'menu_title'         => $menu_title,
-			'capability'         => $this->_capability,
-			'id'                 => self::ID,
-			'callback'           => function () {
-				// Settings data will be injected into #wpbody by gk-setting.js (see /UI/Settings/src/main-prod.js)
-			},
-			'order'              => 2,
-			'hide_admin_notices' => true,
-		], 'top' );
+		AdminMenu::add_submenu_item(
+			[
+				'page_title'         => $page_title,
+				'menu_title'         => $menu_title,
+				'capability'         => $this->_capability,
+				'id'                 => self::ID,
+				'callback'           => function () {
+					// Settings data will be injected into #wpbody by gk-setting.js (see /UI/Settings/src/main-prod.js).
+				},
+				'order'              => 2,
+				'hide_admin_notices' => true,
+			],
+			'top'
+		);
 	}
 
 	/**
@@ -371,15 +401,18 @@ class Framework {
 	 *
 	 * @since 1.0.3
 	 *
-	 * @param string $plugin_id
+	 * @param string $plugin_id Plugin ID.
 	 *
 	 * @return string
 	 */
 	public function get_plugin_settings_url( $plugin_id ) {
-		return add_query_arg( [
-			'page' => self::ID,
-			'p'    => $plugin_id,
-		], admin_url( 'admin.php' ) );
+		return add_query_arg(
+			[
+				'page' => self::ID,
+				'p'    => $plugin_id,
+			],
+			admin_url( 'admin.php' )
+		);
 	}
 
 	/**
@@ -390,7 +423,7 @@ class Framework {
 	 * @return bool
 	 */
 	public function is_settings_page() {
-		return Arr::get( $_REQUEST, 'page' ) === self::ID;
+		return Arr::get( $_REQUEST, 'page' ) === self::ID; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 	}
 
 	/**
@@ -428,7 +461,9 @@ class Framework {
 		}
 
 		/**
-		 * @filter `gk/foundation/settings/data/config` Modifies global settings configuration.
+		 * Modifies global settings configuration.
+		 *
+		 * @filter `gk/foundation/settings/data/config`
 		 *
 		 * @since  1.0.0 Introduced but not (yet) used.
 		 *
@@ -438,9 +473,9 @@ class Framework {
 
 		$script_data = array_merge(
 			[
-				'config'                => $config,
-				'plugins'               => array_values( $plugins_data ),
-				'languageDirection'     => is_rtl() ? 'rtl' : 'ltr',
+				'config'            => $config,
+				'plugins'           => array_values( $plugins_data ),
+				'languageDirection' => is_rtl() ? 'rtl' : 'ltr',
 			],
 			FoundationCore::ajax_router()->get_ajax_params( self::AJAX_ROUTER )
 		);
@@ -449,7 +484,8 @@ class Framework {
 			self::ID,
 			CoreHelpers::get_assets_url( $script ),
 			[ 'wp-hooks', 'wp-i18n' ],
-			filemtime( CoreHelpers::get_assets_path( $script ) )
+			filemtime( CoreHelpers::get_assets_path( $script ) ),
+			true
 		);
 
 		wp_localize_script(
@@ -465,11 +501,13 @@ class Framework {
 			filemtime( CoreHelpers::get_assets_path( $style ) )
 		);
 
+		wp_enqueue_media();
+
 		foreach ( $plugins_data as &$plugin_data ) {
 			$styles  = Arr::get( $plugin_data, 'assets.styles', [] );
 			$scripts = Arr::get( $plugin_data, 'assets.scripts', [] );
 
-			if ( empty( $styles ) || empty ( $scripts ) ) {
+			if ( empty( $styles ) || empty( $scripts ) ) {
 				continue;
 			}
 
@@ -482,7 +520,8 @@ class Framework {
 					self::ID . '-' . md5( $script['file'] ),
 					plugin_dir_url( $script['file'] ) . basename( $script['file'] ),
 					Arr::get( $script, 'deps', [] ),
-					filemtime( $script['file'] )
+					filemtime( $script['file'] ),
+					true
 				);
 			}
 			foreach ( $styles as $style ) {
@@ -503,7 +542,7 @@ class Framework {
 
 		// WP's forms.css interferes with our styles.
 		wp_deregister_style( 'forms' );
-		wp_register_style( 'forms', false );
+		wp_register_style( 'forms', false ); // phpcs:ignore WordPress.WP.EnqueuedResourceParameters.MissingVersion
 
 		// Load UI translations using the text domain of the product that instantiated Foundation.
 		$foundation_information = FoundationCore::get_instance()->get_foundation_information();
@@ -515,9 +554,10 @@ class Framework {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param array $settings_data
+	 * @param array $settings_data Settings data.
 	 *
 	 * @throws Exception
+	 * @throws ValidatorException
 	 *
 	 * @return mixed|void Exit with JSON response or return response message.
 	 */
@@ -596,7 +636,9 @@ class Framework {
 			}
 
 			/**
-			 * @filter `gk/foundation/settings/{$plugin}/validation/before` Modifies plugin settings object before validation.
+			 * Modifies plugin settings object before validation.
+			 *
+			 * @filter `gk/foundation/settings/{$plugin}/validation/before`
 			 *
 			 * @since  1.0.0
 			 *
@@ -607,7 +649,9 @@ class Framework {
 			$this->_validator->validate( $plugin_id, $plugin_settings, $ui_settings );
 
 			/**
-			 * @filter `gk/foundation/settings/{$plugin}/validation/after` Modifies plugin settings object after validation.
+			 * Modifies plugin settings object after validation.
+			 *
+			 * @filter `gk/foundation/settings/{$plugin}/validation/after`
 			 *
 			 * @since  1.0.0
 			 *

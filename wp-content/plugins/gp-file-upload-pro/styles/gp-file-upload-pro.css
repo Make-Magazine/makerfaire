@@ -769,6 +769,9 @@ button.gpfup__cancel {
 	border: 0;
 	border-radius: 50%;
 }
+.gpfup--strict .gpfup__delete svg {
+	fill: #333;
+}
 .gpfup--strict .gpfup__delete {
 	background-color: transparent !important;
 }
