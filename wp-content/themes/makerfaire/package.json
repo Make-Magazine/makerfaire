@@ -32,8 +32,8 @@
       "onchange:vue:map": "onchange './js/mf-map/mf-map-src.js' -- npm run js:transpile:map",
       "onchange:js:vue": "onchange 'js/vue/*.js' -- npm run js:vue:uglify",
       "js:vue:uglify": "uglifyjs js/vue/*.js -o js/min/maker-portal.min.js -c -m --source-map \"root='../../', url='vue.min.js.map'\"",
-      "build": "npm-run-all js:**:uglify js:transpile:map scss:**:compile concat:**:css",
-      "build:cachebust": "npm-run-all cachebust:update js:**:uglify js:transpile:map scss:**:compile concat:**:css",
+      "build": "npm-run-all js:**:uglify js:transpile:map scss:**:compile",
+      "build:cachebust": "npm-run-all cachebust:update js:**:uglify js:transpile:map scss:**:compile",
       "dev": "npm-run-all build -p onchange:js:** onchange:vue:map onchange:scss:**"
    },
    "devDependencies": {
