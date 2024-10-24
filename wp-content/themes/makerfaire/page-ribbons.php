@@ -1,4 +1,7 @@
 <?php
+/*
+ * Template name: Ribbons
+ */
 get_header();
 $yearSql = $wpdb->get_results("SELECT distinct(year) FROM wp_mf_ribbons  where entry_id > 0 order by year desc");
 $firstYear = $yearSql[0]->year;
