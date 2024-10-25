@@ -18,28 +18,47 @@
     $scope.currentPage = 1;
     $scope.pageSize    = 40;
     $scope.faires      = [];
-    var faires         = [];
+    
+    $scope.query = {};
+    $scope.query.faireYear = '';
+    $scope.query.location = '';
+    $scope.query.ribbonType = '';
+
+    $scope.hasBlue = false;
+    $scope.hasRed  = false;
 
     $scope.loadData = function(year, years) {
       var faireYear = year;
       $scope.years = years || $scope.years;
+      $scope.ribbons = [];
       $http.get('/wp-json/makerfaire/v2/mfRibbons/'+faireYear)
         .then(function successCallback(response) {
           var data = response.data;
-          $scope.ribbons      = data.ribbons;
+          $scope.ribbons      = data.ribbons;          
           $scope.blueRibbons  = data.ribbons;
           $scope.redRibbons   = $scope.ribbons;
 
           //for random order
           shuffle($scope.ribbons);
+          
+          
           var faires = [];
           angular.forEach(data.ribbons, function(row) {
+            //get a list of faires for this particular year
             if (faires.indexOf(row.location) === -1) {
                 faires.push(row.location);
+            }
+            if(row.blueCount > 0){
+              $scope.hasBlue = true;
+            }
+            if(row.redCount > 0){
+              $scope.hasRed = true;
             }
           });
           faires.sort();
           $scope.faires = faires;
+
+          
           $scope.blueCount = function(arr) {
             return $filter('blueCount')
               ($filter('blueCount')(arr, 'blueCount'));

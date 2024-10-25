@@ -1,73 +1,13 @@
 #ribbonPage {
-  select {
-    border: none;
-    background: none;
-    color: #085a7e;
-    margin-top: .3em;
-  }
-  /* override Quor placeholder hardcoded style */
-  .textSearch span {
-    color: #D3D3D3 !important;
-  }
   .ribbonHeader {
     padding-top: .4em
   }
-  .textSearch span,
-  .textSearch input {
-    padding: 3px 10px;
-  }
-  .projImg {
-    height: 270px;
-    max-width: 100%;
-    overflow: hidden;
-  }
-  .projImg img {
-    object-position: center;
-    height: 100%;
-    width: auto;
-    max-width: none;
-    min-width: 100%;
-    min-height: 100%;
-  }
-  .bluedata,
-  .reddata {
-    padding: 5px;
-    margin: 5px;
-    float: left;
-    font-size: 12px;
-  }
-  .bluedata {
-    background-color: #0e7db5
-  }
-  .reddata {
-    background-color: #ff0000
-  }
-  .ribbData {
+
+  //to allow placing ribbon over the list view
+  .mtm .mtm-results .mtm-results-cont-list .mtm-maker {
     position: relative;
-    margin: 10px 0;
-  }
-  div.makerData {
-    position: absolute;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.5);
-    padding: 10px;
-    opacity: 0;
-    -webkit-transition: opacity .25s ease;
-    -moz-transition: opacity .25s ease;
-    color: white;
-    width: 90%;
-    height: 60%;
-    vertical-align: text-top;
-    overflow: hidden;
-    font-size: 14px;
-  }
-  div.makerData.show,
-  .ribbData:hover div.makerData {
-    opacity: 1;
-  }
-  .entryImg {
-    position: relative
-  }
+  }  
+
   .ribbons {
     position: absolute;
     top: -7px;
@@ -96,9 +36,7 @@
     transition: all 0.3s ease 0s;
     width: auto;
   }
-  .projName {
-    font-size: 18px;
-  }
+  
   .box {
     color: #085a7e;
     padding: 10px;
@@ -110,35 +48,13 @@
       padding: 0 5px;
     }
   }
-  .box.active {
-    background-color: #085a7e;
-    color: #fff
-  }
-  .ribbonGrid,
-  .ribbonList {
-    margin-bottom: 20px;
-  }
-  .ribbonList {
-    .ribbonTitle div {
-      display: inline-block;
-      vertical-align: middle;
-    }
-    .ribbonTitle {
-      padding-top: 2em;
-      font-size: 1.4em;
-    }
-    ul {
-      list-style-type: none;
-    }
-  }
+  
   p.noData {
     text-align: center;
     padding: 10px;
   }
   .redRibbon,
-  .blueRibbon,
-  .redMakey,
-  .blueMakey {
+  .blueRibbon {
     width: 38px;
     height: 56px;
     background-size: 38px 56px;
@@ -155,29 +71,13 @@
   .blueRibbon {
     background-image: url('../images/blue-ribbon.png');
   }
-  .redMakey {
-    background-image: url('../images/red-makey.png');
-    vertical-align: middle;
-  }
-  .blueMakey {
-    background-image: url('../images/blue-makey.png');
-    vertical-align: middle;
-  }
+  
   .blueRibbon,
-  .redRibbon,
-  .redMakey,
-  .blueMakey {
+  .redRibbon {
     float: none;
     display: inline-block
   }
-  .page-id-82 {
-    .quora#header {
-      margin-bottom: 0;
-    }
-    .quora .navbar {
-      border-bottom: none;
-    }
-  }
+
   div#brHeaderImg {
     width: 100%;
     background-size: cover;

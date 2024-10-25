@@ -22,14 +22,8 @@ function getRibbons($year){
               . "wp_mf_ribbons.project_photo as ribbon_proj_photo, post_id, maker_name, "
               . "wp_mf_entity.presentation_title as project_name, "
               . "wp_mf_entity.project_photo, "
-              . "(select sum(red_ribbon.numRibbons)
-                  from wp_mf_ribbons red_ribbon
-                  where red_ribbon.ribbonType=1 and red_ribbon.entry_id = wp_mf_ribbons.entry_id
-                  group by red_ribbon.entry_id) as red_ribbon_cnt,
-                (select sum(blue_ribbon.numRibbons)
-                  from wp_mf_ribbons blue_ribbon
-                  where blue_ribbon.ribbonType=0 and blue_ribbon.entry_id = wp_mf_ribbons.entry_id
-                  group by blue_ribbon.entry_id) as blue_ribbon_cnt  "
+              . "SUM(case when ribbonType = 0 then numRibbons else 0 end) as blue_ribbon_cnt, "
+              . "SUM(case when ribbonType = 1 then numRibbons else 0 end) as red_ribbon_cnt   "
         . "FROM `wp_mf_ribbons` "
         . "left outer join wp_mf_entity on lead_id=entry_id "
         . "where year= ".($year!=''? $year:date("Y"))
@@ -38,14 +32,13 @@ function getRibbons($year){
 
     foreach($wpdb->get_results($sql,ARRAY_A) as $ribbon){
       //entry information
-      $entry_id       = $ribbon['entry_id'];
+      $entry_id        = $ribbon['entry_id'];
       $blue_ribbon_cnt = (is_numeric($ribbon['blue_ribbon_cnt'])?$ribbon['blue_ribbon_cnt']:0);
       $red_ribbon_cnt  = (is_numeric($ribbon['red_ribbon_cnt'])?$ribbon['red_ribbon_cnt']:0);
+      
       //ribbon information
       $location       = $ribbon['location'];
-      $year           = $ribbon['year'];
-
-      $post_id        = $ribbon['post_id'];
+      $year           = $ribbon['year'];      
 
       //entries from 2015 and forward are in the correct format and post_id will be 0
       if($post_id==0){

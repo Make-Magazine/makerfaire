@@ -3,14 +3,14 @@
  * Template name: Ribbons
  */
 get_header();
-$yearSql = $wpdb->get_results("SELECT distinct(year) FROM wp_mf_ribbons  where entry_id > 0 order by year desc");
+$yearSql = $wpdb->get_results("SELECT distinct(year) FROM wp_mf_ribbons  where entry_id > 0 and post_id=0 order by year desc");
 $firstYear = $yearSql[0]->year;
 
-foreach($yearSql as $year) {
-  if($year->year == $firstYear) {
-      $yearJSON = '{"id" : "'.$year->year.'", "name": "'.$year->year.'"}';
+foreach ($yearSql as $year) {
+  if ($year->year == $firstYear) {
+    $yearJSON = '{"id" : "' . $year->year . '", "name": "' . $year->year . '"}';
   } else {
-      $yearJSON .= ',{"id" : "'.$year->year.'", "name": "'.$year->year.'"}';
+    $yearJSON .= ',{"id" : "' . $year->year . '", "name": "' . $year->year . '"}';
   }
 }
 
@@ -20,7 +20,7 @@ foreach($yearSql as $year) {
 <div id="ribbonPage">
   <?php
   // Output the featured image.
-  if ( has_post_thumbnail() ) :
+  if (has_post_thumbnail()) :
   ?>
     <div id="brHeaderImg"
       style="background-image: url('<?php echo wp_get_attachment_url(get_post_thumbnail_id($post->ID), 'full'); ?>');">
@@ -28,56 +28,116 @@ foreach($yearSql as $year) {
     </div>
   <?php endif; ?>
 
-  <div class="container ng-cloak" ng-app="ribbonApp">
+  <div class="mtm ng-cloak" ng-app="ribbonApp">
     <div class="row">
       <div class="content col-xs-12">
-        <?php if ( have_posts() ) : while ( have_posts() ) : the_post(); ?>
-          <article <?php post_class(); ?>>
-            <?php the_content(); ?>
-          </article>
-        <?php endwhile; ?>
-        <ul class="pager">
-          <li class="previous"><?php previous_posts_link('&larr; Previous Page'); ?></li>
-          <li class="next"><?php next_posts_link('Next Page &rarr;'); ?></li>
-        </ul>
+        <?php if (have_posts()) : while (have_posts()) : the_post(); ?>
+            <article <?php post_class(); ?>>
+              <?php the_content(); ?>
+            </article>
+          <?php endwhile; ?>
+          <ul class="pager">
+            <li class="previous"><?php previous_posts_link('&larr; Previous Page'); ?></li>
+            <li class="next"><?php next_posts_link('Next Page &rarr;'); ?></li>
+          </ul>
         <?php else: ?>
           <p><?php _e('Sorry, no posts matched your criteria.'); ?></p>
         <?php endif; ?>
         <!-- start blue ribbon data -->
         <div>
-          <div ng-controller="ribbonController" class="my-controller" ng-init='loadData(<?php echo $firstYear;?>, [<?php echo $yearJSON;?>])'>
-            <div class="ribbonFilter">
-              <div class="pull-left">
-                <div ng-class="{active: layout == 'grid'}" ng-click="layout = 'grid'" class="box gallery"><i class="far fa-image"></i>Gallery</div>
-                <div ng-class="{active: layout == 'list'}" ng-click="layout = 'list'" class="box list"><i class="fas fa-list"></i>List</div>
+          <div ng-controller="ribbonController" class="my-controller mtm-results container-fluid" ng-init='loadData(<?php echo $firstYear; ?>, [<?php echo $yearJSON; ?>])'>
+            <!-- Filters-->
+            <div class="mtm-filter-wrap" ng-cloak>
+              <!-- Text Search -->
+              <div class="search-wrapper">
+                <input ng-model="query.$" id="mtm-search-input" class="form-control" placeholder="<?php _e("Search...", 'makerfaire') ?>" type="text">
               </div>
-              <div class="ribbonHeader pull-right">
-                <select ng-model="faireYear" ng-init="faireYear = '<?php echo $firstYear;?>'" ng-change="loadData(faireYear)">
-                  <option ng-repeat="year in years" value="{{year.id}}">{{year.name}}</option>
-                </select>
-                <select ng-model="query.location">
-                  <option value="" selected>All Faires</option>
-                  <option ng-repeat="faire in faires" value="{{faire}}">{{faire}}</option>
-                </select>
-                <select ng-model="query.ribbonType">
-                  <option value="" selected>All Ribbons</option>
-                  <option value="blue">Blue</option>
-                  <option value="red">Red</option>
-                </select>
-                <div class="textSearch pull-right">
-                  <input ng-model="query.$" placeholder="Filter Winners">
-                </div>
+
+              <!-- Faire Year Filter -->
+              <div class="dropdown form-control" ng-init="faireYear = '<?php echo $firstYear; ?>'">
+                <button class="btn btn-link dropdown-toggle" type="button" id="year-dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                  <span ng-if="query.faireYear != ''">{{query.faireYear}}</span>
+                  <span ng-if="query.faireYear == ''">Faire Year</span>
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="year-dropdownMenu">
+                  <li>
+                    <a class="pointer-on-hover" ng-click="query.faireYear = ''"><?php _e("All", 'makerfaire') ?></a>
+                  </li>
+
+                  <li ng-repeat="year in years | orderBy: 'year'">
+                    <a class="pointer-on-hover" ng-click="query.faireYear = year.id;loadData(year.id)">{{year.name}}</a>
+                  </li>
+                </ul>
+              </div>
+
+              <!-- Faire Location Filter -->
+              <div class="dropdown form-control" ng-if="faires.length >   1">
+                <button class="btn btn-link dropdown-toggle" type="button" id="location-dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                  <span ng-if="query.location != ''">{{query.location}}</span>
+                  <span ng-if="query.location == ''">All Faires</span>
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="location-dropdownMenu">
+                  <li>
+                    <a class="pointer-on-hover" ng-click="query.location = ''"><?php _e("All", 'makerfaire') ?></a>
+                  </li>
+
+                  <li ng-repeat="faire in faires | orderBy: 'faire'">
+                    <a class="pointer-on-hover" ng-click="query.location = faire">{{faire}}</a>
+                  </li>
+                </ul>
+              </div>
+
+              <!-- Ribbon Type Filter -->
+              <div class="dropdown form-control" ng-if="hasBlue && hasRed">
+                <button class="btn btn-link dropdown-toggle" type="button" id="ribbonType-dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                  <span ng-if="query.ribbonType != ''">{{query.ribbonType}}</span>
+                  <span ng-if="query.ribbonType == ''">All Ribbons</span>
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="ribbonType-dropdownMenu">
+                  <li>
+                    <a class="pointer-on-hover" ng-click="query.ribbonType = ''"><?php _e("All", 'makerfaire') ?></a>
+                  </li>
+
+                  <li><a class="pointer-on-hover" ng-click="query.ribbonType = blue">Blue</a></li>
+                  <li><a class="pointer-on-hover" ng-click="query.ribbonType = red">Red</a></li>
+                </ul>
+              </div>
+
+              <div class="mtm-filter-view">
+                <a ng-class="{active: layout == 'list'}" ng-click="layout = 'list'" class="mtm-filter-l pointer-on-hover box list" title="List View"><i class="fas fa-bars" aria-hidden="true"></i></a>
+                <a ng-class="{active: layout == 'grid'}" ng-click="layout = 'grid'" class="mtm-filter-g pointer-on-hover box gallery" title="Grid View"><i class="far fa-grid-2" aria-hidden="true"></i></a>
               </div>
             </div>
-            <br/>
-            <br/>
-            <p ng-show="(ribbons | filter:query).length == 0" class="noData">I'm sorry. There are no winners found.</p>
-            <!--| filter:year -->
-            <div ng-show="layout == 'grid'" class="ribbonGrid row">
-              <div class="ribbData col-xs-12 col-sm-4 col-md-3" dir-paginate="ribbon in ribbons| filter:query |itemsPerPage: 40" current-page="currentPage">
-                <a href="{{ribbon.link}}" target="_blank">
-                  <div class="projImg">
-                    <img class="img-responsive" fallback-src="/wp-content/themes/makerfaire/images/grey-makey.png" ng-src="{{ribbon.project_photo != '' && ribbon.project_photo || '/wp-content/themes/makerfaire/images/grey-makey.png'}}" />
+
+            <!-- Default view and no ribbon data found-->
+            <div ng-show="!ribbons.length" class="mtm-results-cont loading">
+                <div class="ng-scope mf-card"><a href="javascript:void();" style="pointer-events:none;">
+                    <article class="mtm-maker"> <div class="mtm-image" style="background-image:url(https://makerfaire.com/wp-content/themes/makerfaire/images/stripe_bg1.gif);"></div> <div class="mtm-text"> <h3>Loading...</h3> <div class="mtm-detail-items"> <div class="mtm-detail-item"><span><i class="fa fa-circle-user"></i></span> <p>&nbsp;</p> </div> <div class="mtm-detail-item"><span><i class="fa fa-rocket"></i></span> <p>&nbsp;</p> </div> <div class="mtm-detail-item"><span><i class="fa fa-tent-double-peak"></i></span> <p>&nbsp;</p> </div> </div> <div class="read-more-link">More</div> </div> </article>
+                </a></div>
+                <div class="ng-scope mf-card"><a href="javascript:void();" style="pointer-events:none;">
+                    <article class="mtm-maker"> <div class="mtm-image" style="background-image:url(https://makerfaire.com/wp-content/themes/makerfaire/images/stripe_bg1.gif);"></div> <div class="mtm-text"> <h3>Loading...</h3> <div class="mtm-detail-items"> <div class="mtm-detail-item"><span><i class="fa fa-circle-user"></i></span> <p>&nbsp;</p> </div> <div class="mtm-detail-item"><span><i class="fa fa-rocket"></i></span> <p>&nbsp;</p> </div> <div class="mtm-detail-item"><span><i class="fa fa-tent-double-peak"></i></span> <p>&nbsp;</p> </div> </div> <div class="read-more-link">More</div> </div> </article>
+                </a></div>
+                <div class="ng-scope mf-card"><a href="javascript:void();" style="pointer-events:none;">
+                    <article class="mtm-maker"> <div class="mtm-image" style="background-image:url(https://makerfaire.com/wp-content/themes/makerfaire/images/stripe_bg1.gif);"></div> <div class="mtm-text"> <h3>Loading...</h3> <div class="mtm-detail-items"> <div class="mtm-detail-item"><span><i class="fa fa-circle-user"></i></span> <p>&nbsp;</p> </div> <div class="mtm-detail-item"><span><i class="fa fa-rocket"></i></span> <p>&nbsp;</p> </div> <div class="mtm-detail-item"><span><i class="fa fa-tent-double-peak"></i></span> <p>&nbsp;</p> </div> </div> <div class="read-more-link">More</div> </div> </article>
+                </a></div>
+                <div class="ng-scope mf-card"><a href="javascript:void();" style="pointer-events:none;">
+                    <article class="mtm-maker"> <div class="mtm-image" style="background-image:url(https://makerfaire.com/wp-content/themes/makerfaire/images/stripe_bg1.gif);"></div> <div class="mtm-text"> <h3>Loading...</h3> <div class="mtm-detail-items"> <div class="mtm-detail-item"><span><i class="fa fa-circle-user"></i></span> <p>&nbsp;</p> </div> <div class="mtm-detail-item"><span><i class="fa fa-rocket"></i></span> <p>&nbsp;</p> </div> <div class="mtm-detail-item"><span><i class="fa fa-tent-double-peak"></i></span> <p>&nbsp;</p> </div> </div> <div class="read-more-link">More</div> </div> </article>
+                </a></div>                
+                <div class="loading-container">
+                    <img src="https://make.co/wp-content/universal-assets/v2/images/makey-spinner.gif" />
+                    <span class="sr-only"><?php _e("Loading", 'makerfaire') ?>...</span>
+                </div>
+            </div>
+            <div class="no-results" ng-if="ribbons.length && (ribbons|filter:query).length == 0">I'm sorry. There are no winners found.</div>
+
+            <!-- Grid View -->
+            <div ng-if="layout == 'grid'" class="mtm-results-cont">
+              <div class="mf-card" dir-paginate="ribbon in ribbons| filter:query | itemsPerPage: 100" current-page="currentPage">
+                <article class="mtm-maker">
+                  <div class="mtm-image projImg">
+                    <a href="{{ribbon.link}}">
+                      <img src="{{ribbon.project_photo}}" on-error="/wp-content/themes/makerfaire/images/default-mtm-image.jpg" alt="{{maker.name}} Photo" />
+                    </a>
                     <div class="ribbons">
                       <div class="blueRibbon" ng-if="ribbon.blueCount > 0">
                         {{ribbon.blueCount}}
@@ -87,67 +147,83 @@ foreach($yearSql as $year) {
                       </div>
                     </div>
                   </div>
-                </a>
-                <div class="makerData">
-                  <div class="projName">
-                    {{ribbon.project_name}}
-                  </div>{{ribbon.maker_name}}
-                  <br>
-                  <br>
-                  <span class="bluedata" ng-if="ribbon.blueCount > 0">
-                    {{ribbon.location}} {{ribbon.faireYear}}
-                  </span>
-                  <span class="reddata" ng-if="ribbon.redCount > 0">
-                    {{ribbon.location}} {{ribbon.faireYear}}
-                  </span>
-                </div>
+                  <div class="mtm-text">
+                    <h3> <a href="{{ribbon.link}}">{{ribbon.project_name}}</a></h3>
+                    <h4> <a href="{{ribbon.link}}">{{ribbon.location}} {{ribbon.faireYear}}</a></h4>
+                    <div class="mtm-detail-items">
+                      <div class="mtm-detail-item" ng-show="ribbon.maker_name.length">
+                        <span>
+                          <a href="{{ribbon.link}}">
+                            <i class="fa fa-circle-user"></i></a>
+                        </span>
+                        <p>
+                          <a href="{{ribbon.link}}">{{ribbon.maker_name}}</a>
+                        </p>
+                      </div>                     
+                    </div>
+                    <div class="read-more-link"><a href="{{ribbon.link}}">More</a></div>
+                  </div>
+                </article>
+
               </div>
-              <div class="text-center">
-                <dir-pagination-controls boundary-links="true" template-url="<?php echo get_stylesheet_directory_uri();?>/partials/dirPagination.tpl.html">
-                </dir-pagination-controls>
-              </div>
+              <div class="clearfix"></div>
             </div>
-            <div ng-show="layout == 'list'" class="ribbonList">
-              <div ng-repeat="ribbon in blueRibbons  | filter:query | groupBy: 'blueCount' | toArray: true | orderBy: -blueCount">
-                <div ng-if="ribbon.$key > 0">
-                  <div class="ribbonTitle">
-                    <div class="blueMakey"></div>
-                    <div>{{ribbon.$key}} Blue Ribbons</div>
-                  </div>
-                  <ul>
-                    <li ng-repeat="bRibbonData in ribbon | orderBy: 'project_name'">
-                      <a href="{{bRibbonData.link}}" target="_blank">{{ bRibbonData.project_name }}</a>
-                    </li>
-                  </ul>
 
-                <div class="clear"></div>
-                </div>
-              </div>
-              <div class="clear"></div>
-              <div ng-repeat="rribbon in redRibbons | filter:query | groupBy: 'redCount' | toArray: true | orderBy: -redCount">
-                <div ng-if="rribbon.$key > 0">
-                  <div class="ribbonTitle">
-                    <div class="redMakey"></div>
-                    <div>{{rribbon.$key}} Red Ribbons</div>
+            <!-- List View -->
+            <div ng-if="layout == 'list'" class="mtm-results-cont-list container">
+              <div class="mf-card" dir-paginate="ribbon in ribbons| filter:query |orderBy: 'project_name' |itemsPerPage: 100" current-page="currentPage">              
+                <article class="mtm-maker">
+                  <div class="mtm-image projImg">
+                    <a href="{{ribbon.link}}">
+                      <img src="{{ribbon.project_photo}}" on-error="/wp-content/themes/makerfaire/images/default-mtm-image.jpg" alt="{{ribbon.project_name}} Photo" />
+                    </a>
+                    <div class="ribbons">
+                      <div class="blueRibbon" ng-if="ribbon.blueCount > 0">
+                        {{ribbon.blueCount}}
+                      </div>
+                      <div class="redRibbon" ng-if="ribbon.redCount > 0">
+                        {{ribbon.redCount}}
+                      </div>
+                    </div>
                   </div>
-                  <ul>
-                    <li ng-repeat="rRibbonData in rribbon | orderBy: 'project_name'">
-                      <a href="{{rRibbonData.link}}" target="_blank">{{ rRibbonData.project_name }}</a>
-                    </li>
-                  </ul>
-
-                  <div class="clear"></div>
-                </div>
+                  <div class="mtm-text">
+                    <a href="{{ribbon.link}}">
+                      <h3>{{ribbon.project_name}}</h3>
+                      <h4>{{ribbon.maker_name}}</h4>
+                      <!--<p class="description">{{maker.description}}</p>-->
+                    </a>
+                    <div class="mtm-detail-items">
+                      <div class="mtm-detail-item">
+                        <span>
+                          <a href="{{ribbon.link}}">
+                            <i class="fa fa-plus"></i>
+                          </a>
+                        </span>
+                        <p>
+                          <a href="{{ribbon.link}}">More</a>
+                        </p>
+                      </div>                      
+                    </div>
+                  </div>
+                </article>
               </div>
+              <div class="clearfix"></div>
+            </div>
+
+            <div class="text-center">
+              <dir-pagination-controls boundary-links="true" template-url="<?php echo get_stylesheet_directory_uri(); ?>/partials/dirPagination.tpl.html">
+              </dir-pagination-controls>
             </div>
           </div>
+
         </div>
       </div>
-      <div class="container-fluid">
-      </div>
-      <!--Content-->
     </div>
+    <div class="container-fluid">
+    </div>
+    <!--Content-->
   </div>
+</div>
 </div>
 <!--Container-->
 
