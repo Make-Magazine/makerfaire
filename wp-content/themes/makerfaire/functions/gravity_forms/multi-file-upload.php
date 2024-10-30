@@ -5,7 +5,7 @@ gw_multi_file_merge_tag()->register_settings( array(
 		array(
 			'file_types' => array( 'jpg', 'jpeg', 'png', 'gif' ),
 			'markup'     => '<div class="gw-image grid-image">
-                                <a href="{url}" class="gw-image-link"><img src="{url}" width="100%" /></a>
+                                <a href="{url}" class="gravityview-fancybox gw-image-link"><img src="{url}" width="100%" /></a>
                             </div>'
 		),
 		array(
@@ -20,11 +20,19 @@ gw_multi_file_merge_tag()->register_settings( array(
 		array(
 			'file_types' => array( 'MOV' ),
 			'markup'     => '<div class="grid-video">
-                                <video width="320" height="240" controls>
-                                    <source src="{url}" >
+                                <video width="320" height="240" controls>                                   
+                                    <source src="{url}" >                                    
                                     Your browser does not support the video tag.
                                 </video>
                             </div>'
-        ),        
+        ),
+        array(
+            'file_types' => array( 'pdf', 'txt', 'doc', 'docx', 'ppt', 'eps', 'zip' ),
+            'markup' => '<div class="gw-file gw-text grid-doc">  
+                {ext} file uploaded
+
+                <a href="{url}">Click here to view</a>                
+            </div>'
+        )        
 	)
 ) );
