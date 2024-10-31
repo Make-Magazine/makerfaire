@@ -140,7 +140,7 @@ get_header();
                       </a>
                     </div>
                   
-                    <div v-if="Date.now() <= new Date(faire.faire_end_dt).getTime()">
+                    <div v-if="faire.gv_edit">                    
                       <a target="_blank" :href="'/maker/entry/'+entry.project_id+'/edit/'">
                         <i class="fa fa-edit" aria-hidden="true"></i>
                         Edit My Entry Page

@@ -164,7 +164,8 @@ function getAllEntries($email, $formID = '', $page = '', $years = '') {
 
     $return['data'][$faire_name] =
       array(
-        'faire_end_dt'    => $faire_end_dt,        
+        'faire_end_dt'    => $faire_end_dt,   
+        'gv_edit'         => (isset($form['gv_id_update_public_info']) && $form['gv_id_update_public_info'] != ''?TRUE:FALSE),
         'entries'         => $return_entries
       );
   }
