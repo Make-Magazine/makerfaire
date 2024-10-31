@@ -48,7 +48,7 @@ $type = '';
                            <div class="right-border">
                               <h4>Create a zip file of the maker signs:</h4>
                               <input type="hidden" id="zipFiles" value="<?php echo $row->faire; ?>" />
-                              <div class="is-flex">
+                              <div class="is-flex justify-space-between">
                                  <div>
                                     How should we group the zip files?<br/>
                                     <input type="radio" name="<?php echo $row->faire; ?>seltype" value="area" checked> By Area<br>
@@ -125,11 +125,11 @@ $type = '';
                            <div style="margin-left: 20px;"><p><br><br>Last created on: <?php echo $lastCreated; ?></p></div> 
                         </div>    
 
-                        <div class="row is-flex">
+                        <div class="is-flex">
                            <div class="right-border">
                               <h4>Create a zip file of the presenter signs:</h4>
                               <input type="hidden" id="zipFiles" value="<?php echo $row->faire; ?>" />
-                              <div class="is-flex">
+                              <div class="is-flex justify-space-between">
                                  <div>
                                     How should we group the zip file?<br/>
                                     <input type="radio" name="<?php echo $row->faire; ?>seltype" value="area" checked> By Area<br>
@@ -192,7 +192,7 @@ $type = '';
                            <div class="right-border">
                               <h4>Create a zip file of the table tags:</h4>
                               <input type="hidden" id="zipFiles" value="<?php echo $row->faire; ?>" />
-                              <div class="is-flex">
+                              <div class="is-flex justify-space-between">
                                  <div>
                                     How should we group the zip file?<br/>
                                     <input type="radio" name="<?php echo $row->faire; ?>seltype" value="area" checked> By Area<br>

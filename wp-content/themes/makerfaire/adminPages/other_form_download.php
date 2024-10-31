@@ -15,8 +15,8 @@ $results = $wpdb->get_results($sql);
 <div id="faire-signs">
   <h2 style="text-align:center">FSP/GSP Download</h2>
 
-  <div class="row">
-    <div class="col-md-4">
+  <div class="is-flex">
+    <div>
       <h4>Download FSP</h4>
       <div class="form-group">
         <label for="faire">Faire</label>
@@ -32,7 +32,7 @@ $results = $wpdb->get_results($sql);
       </div>
       <button id="fsp_download">Download</button>
     </div>
-    <div class="col-md-4">
+    <div>
       <h4>Download GSP</h4>
       <div class="form-group">
         <label for="GSPfaire">Faire</label>
