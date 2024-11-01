@@ -97,7 +97,7 @@ function get_schedule_list($location, $short_description = false, $day_set = '',
     global $filter_type;
     global $filter_topic;
     global $filter_stage;
-    error_log($filter_stage);
+    //error_log($filter_stage);
     global $filter_text;
     $output = '';
     //retrieve Data
