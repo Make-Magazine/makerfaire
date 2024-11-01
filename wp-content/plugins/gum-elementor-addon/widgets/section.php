@@ -1838,8 +1838,5 @@ class Gum_Elementor_Section_Widget{
 
 }
 
-
-
-
 new \Elementor\Gum_Elementor_Section_Widget();
 ?>

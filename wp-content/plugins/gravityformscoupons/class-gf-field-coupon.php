@@ -181,21 +181,31 @@ class GF_Field_Coupon extends GF_Field {
 		$script = sprintf( "function SetDefaultValues_%s(field) {field.label = '%s';}", $this->type, $this->get_form_editor_field_title() ) . PHP_EOL;
 
 		$script .= "
-		gform.addFilter('gform_form_editor_can_field_be_added', function (canFieldBeAdded, type) {
-			if (type == 'coupon') {
-				if (GetFieldsByType(['product']).length <= 0) {
-					alert(" . json_encode( esc_html__( 'You must add a Product field to the form', 'gravityformscoupons' ) ) . ");
-					return false;
-				} else if (GetFieldsByType(['total']).length  <= 0) {
-					alert(" . json_encode( esc_html__( 'You must add a Total field to the form', 'gravityformscoupons' ) ) . ");
-					return false;
-				} else if (GetFieldsByType(['coupon']).length) {
-					alert(" . json_encode( esc_html__( 'Only one Coupon field can be added to the form', 'gravityformscoupons' ) ) . ");
-					return false;
-				}
-			}
-			return canFieldBeAdded;
-		});";
+					gform.addFilter('gform_form_editor_can_field_be_added', function (canFieldBeAdded, type) {
+						if (type == 'coupon') {
+							const title = " . json_encode(esc_html__('Coupons', 'gravityformscoupons')) . ";
+							let message = '';
+							
+							if (GetFieldsByType(['product']).length <= 0) {
+								message = " . json_encode(esc_html__('You must add a Product field to the form.', 'gravityformscoupons')) . ";
+							} else if (GetFieldsByType(['total']).length <= 0) {
+								message = " . json_encode(esc_html__('You must add a Total field to the form.', 'gravityformscoupons')) . ";
+							} else if (GetFieldsByType(['coupon']).length) {
+								message = " . json_encode(esc_html__('Only one Coupon field can be added to the form.', 'gravityformscoupons')) . ";
+							}
+				
+							if (message) {
+								if (gform?.instances?.dialogAlert) {
+									gform.instances.dialogAlert(title, message);
+								} else {
+									alert(title + '\\n' + message);
+								}
+								return false;
+							}
+						}
+						return canFieldBeAdded;
+					});
+				";
 
 		return $script;
 	}

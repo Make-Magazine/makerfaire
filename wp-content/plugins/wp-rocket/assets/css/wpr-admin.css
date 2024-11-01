@@ -299,6 +299,14 @@ a:focus, button:focus {
   content: url("../img/imagify-install.svg");
 }
 
+.wpr-icons-plugins:before, #wpr-nav-plugins:before {
+  content: url("../img/plugins.png");
+}
+
+.wpr-icons-plugins-hover:before, #wpr-nav-plugins.isActive:before, #wpr-nav-plugins:hover:before {
+  content: url("../img/plugins-hover.png");
+}
+
 .wpr-title1 {
   font-size: 1.625rem;
   line-height: 1;
@@ -508,6 +516,9 @@ a:focus, button:focus {
 }
 .wpr-Page-col {
   flex: 1 1 auto;
+}
+.wpr-Page-col-half {
+  flex: 0 1 50%;
 }
 .wpr-Page-col--fixed {
   margin-left: 24px;
@@ -1624,6 +1635,9 @@ div.wpr-upgrade-websites {
   font-size: 0.6875rem;
   line-height: 1.8181818182;
 }
+.wpr-button--no-min-width {
+  min-width: auto !important;
+}
 .wpr-button--icon {
   min-width: 160px;
   padding-left: 8px;
@@ -1684,7 +1698,10 @@ div.wpr-upgrade-websites {
   outline: none;
   color: #fff !important;
 }
-
+.wpr-button--black {
+  background: #121116;
+  color: #fff;
+}
 /*-----------------------------------------------*\
 
     Field container
@@ -2015,7 +2032,6 @@ div.wpr-upgrade-websites {
   .wpr-radio-buttons {
     padding-left: 24px;
   }
-
   .wpr-fieldWarning.wpr-radio-warning {
     margin-left: -24px;
     padding-left: 30px;
@@ -2547,6 +2563,38 @@ div.wpr-tutorial-item {
 }
 .wpr-rocketcdn-modal iframe {
   max-width: 100%;
+}
+
+/*-----------------------------------------------*\
+
+    Plugin Tab style
+
+\*-----------------------------------------------*/
+.wpr-plugins {
+  gap: 25px;
+}
+.wpr-plugins--box {
+  background: #F9FAFB;
+  color: #121116;
+  padding: 10px;
+  border: 1px solid #eff1f3;
+  margin: 20px 0 15px;
+  display: grid;
+}
+.wpr-plugins--logo {
+  border-bottom: 1px solid #edeff2;
+  padding: 10px 0 5px;
+  margin-bottom: 15px;
+}
+.wpr-plugins--meta {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 15px;
+  align-self: end;
+}
+.wpr-plugins--meta span {
+  color: #00A66B;
 }
 
 /*-----------------------------------------------*\

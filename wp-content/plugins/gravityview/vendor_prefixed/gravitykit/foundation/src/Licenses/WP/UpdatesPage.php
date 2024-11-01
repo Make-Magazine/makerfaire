@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by gravityview on 14-August-2024 using {@see https://github.com/BrianHenryIE/strauss}.
+ * Modified by gravityview on 15-October-2024 using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\GravityView\Foundation\Licenses\WP;
@@ -22,9 +22,9 @@ class UpdatesPage {
 	 *
 	 * @since 1.2.0
 	 *
-	 * @var UpdatesPage
+	 * @var UpdatesPage|null;
 	 */
-	private static $_instance;
+	private static $_instance = null;
 
 	/**
 	 * Returns class instance.
@@ -55,7 +55,7 @@ class UpdatesPage {
 			return;
 		}
 
-		add_filter( 'init', [ $this, 'modify_display_of_updates_table' ] );
+		add_action( 'init', [ $this, 'modify_display_of_updates_table' ] );
 		add_filter( 'upgrader_pre_install', [ $this, 'prevent_update' ], 10, 2 );
 
 		$initialized = true;
@@ -76,7 +76,7 @@ class UpdatesPage {
 		$products = array_filter(
 			ProductManager::get_instance()->get_products_data( [ 'key_by' => 'path' ] ),
 			function ( $product ) {
-				return ! $product['third_party'] && $product['update_available'] && ( ! $product['checked_dependencies'][ $product['server_version'] ]['status'] ?? false );
+				return ! $product['third_party'] && $product['update_available'] && ( ! $product['checked_dependencies'][ $product['server_version'] ]['status'] );
 			}
 		);
 

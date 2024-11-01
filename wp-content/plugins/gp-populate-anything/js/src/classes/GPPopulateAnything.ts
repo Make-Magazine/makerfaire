@@ -975,10 +975,7 @@ export default class GPPopulateAnything {
 
 						if (fieldDetails.hasChosen) {
 							window.gformInitChosenFields(
-								('#input_{0}_{1}' as any).gformFormat(
-									this.formId,
-									fieldID
-								),
+								`#input_${this.formId}_${fieldID}`,
 								window.GPPA.I18N.chosen_no_results
 							);
 						}

@@ -14,7 +14,7 @@
 	</p>
 	<p>
 		<label for='dbem_phone'><?php _e('Phone','events-manager') ?></label>
-		<input type="tel" name="dbem_phone" id="dbem_phone" class="input" value="<?php if(!empty($_REQUEST['dbem_phone'])) echo esc_attr($_REQUEST['dbem_phone']); ?>" />
+		<input type="tel" name="dbem_phone" id="dbem_phone" class="input em-phone-intl" value="<?php if(!empty($_REQUEST['dbem_phone'])) echo esc_attr($_REQUEST['dbem_phone']); ?>" />
 	</p>
 	<p>
 		<label for='user_email'><?php _e('E-mail','events-manager') ?></label> 

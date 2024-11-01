@@ -7,7 +7,7 @@
  * @copyright 2024 Katz Web Services, Inc.
  *
  * @license GPL-2.0-or-later
- * Modified by __root__ on 16-August-2024 using Strauss.
+ * Modified by __root__ on 01-October-2024 using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 
@@ -17,11 +17,6 @@ namespace GravityKit\GravityEdit\Foundation\ThirdParty\TrustedLogin;
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
-
-use Exception;
-use WP_Error;
-use WP_User;
-use WP_Admin_Bar;
 
 /**
  * Class Ajax

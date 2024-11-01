@@ -18,6 +18,7 @@ class ProMarker extends Marker implements \JsonSerializable
 	public function __construct($id_or_fields=-1, $read_mode=Crud::SINGLE_READ, $raw_data=false)
 	{
 		global $wpdb;
+		global $wpgmza;
 		global $WPGMZA_TABLE_NAME_MARKERS;
 		global $WPGMZA_TABLE_NAME_MARKERS_HAS_CATEGORIES;
 		
@@ -27,14 +28,29 @@ class ProMarker extends Marker implements \JsonSerializable
 		
 		Marker::__construct($id_or_fields, $read_mode);
 		
-		$this->customFields = new CustomMarkerFields($this->id);
+		if(empty($this->customFields)){
+			$this->customFields = new CustomMarkerFields($this->id);
+		}
 		
 		// Legacy support
 		$this->custom_fields = $this->customFields;
 		
 		// TODO: Optimize by not doing this if ratings aren't enabled, also, do it on Gold
-		if(class_exists('WPGMZA\\MarkerRating'))
-			$this->rating = new MarkerRating($this);
+		if(class_exists('WPGMZA\\MarkerRating')){
+			if(!empty($wpgmza) && !empty($wpgmza->__activeMarkerFilter)){
+				if(!empty($wpgmza->__activeMarkerFilter->map)){
+					if(!empty($wpgmza->__activeMarkerFilter->map->enable_marker_ratings)){
+						/* Edited: 2024-10-10
+						 * 
+						 * We now check for the settings, but this jumps through a few strange hoops to access the setting on the map
+						 * 
+						 * We should rework this down the road to actually make these easily accessible. 
+						 */
+						$this->rating = new MarkerRating($this);
+					}
+				}
+			}
+		}
 		
 		if($read_mode == Crud::SINGLE_READ && is_numeric($id_or_fields)){
 			/* 
@@ -183,9 +199,12 @@ class ProMarker extends Marker implements \JsonSerializable
 		
 		$json['categories']		= $this->categories ? $this->categories : array();
 		
-		if(!$this->useRawData && empty($wpgmza->processingContext) && !empty($this->description)){
+		/* Changed 2024-10-25 to solve shortcode errors */
+		// if(!$this->useRawData && empty($wpgmza->processingContext) && !empty($this->description)){
+
+		if(empty($wpgmza->processingContext) && !empty($this->description)){
 			$json['description']	= do_shortcode($this->description);
-		}
+		} 
 		
 		// Gallery
 		if(!empty($this->gallery))
@@ -569,11 +588,24 @@ class ProMarker extends Marker implements \JsonSerializable
 			$stmt = $wpdb->prepare($qstr, $this->map_id);
 		}
 		
-		$data = $wpdb->get_var($stmt);
-		if(!empty($integratedIcon)){
-			$data = $integratedIcon;
+		/*
+		 * Modified: 2024-10-09
+		 * 
+		 * We found that we are running double queries when loading markers, whereby we refresh the icon from the database
+		 * even when there is no real tangible need to
+		 * 
+		 * This now is conditional instead, to enforce a better performance of big queries, and small queries we imagine.
+		 * 
+		 * Measured improvement: 45%
+		*/
+		if(!$this->useRawData || $this->isIntegrated){
+			$data = $wpdb->get_var($stmt);
+			if(!empty($integratedIcon)){
+				$data = $integratedIcon;
+			}
+			$this->_icon = new MarkerIcon($data);
 		}
-		$this->_icon = new MarkerIcon($data);
+		
 
 	}
 }

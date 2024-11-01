@@ -1,3 +1,14 @@
+### 5.8.0 | 2024-10-07
+- Added support for the new form validation placement setting.
+- Updated the Stripe field to support the new form theme asset loading system from GFAddOn.
+- Updated the Stripe settings in the form editor to be compatible with Gravity Forms 2.9.0.
+- Updated webhook configuration instructions in the add-on settings page.
+- Fixed an issue where the field fails to render when using certain currencies.
+- Fixed an issue where the `gform_stripe_subscription_params_pre_update_customer` filter returns an API logging error.
+- Fixed an issue with the Stripe field where the sub-label and placeholder settings are incorrectly displayed when the "Enable additional payment methods" setting is enabled.
+- Fixed an issue where 3DS submissions fail when using Stripe Elements in a Conversational Form with version 1.4.1 or later of the Conversational Forms Add-On.
+- API: Removed the deprecated form Theme Framework global CSS API properties.
+
 ### 5.7.0 | 2024-06-17
 - Fixed a typo that can cause a fatal error when using the gform_stripe_payment_element_authorization_only filter.
 

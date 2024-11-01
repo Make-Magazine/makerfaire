@@ -1,6 +1,32 @@
 
 # Changelog
 
+## 1.1.67 | October 23, 2024
+
+- Added a check before initializing certain frontend logic to prevent JS errors during initialization if the form is not displayed due to restrictions (e.g. GP Limit Submissions).
+
+## 1.1.66 | October 16, 2024
+
+- Fixed issue where removing files from File Upload fields when editing child entries would not result in the files being deleted.
+- Added additional security check  when editing entries.
+
+## 1.1.65 | October 9, 2024
+
+- Added [`gpnf_modal_button_passthrough_classes`](https://gravitywiz.com/documentation/gpnf_modal_button_passthrough_classes) JS filter.
+- Fixed an issue where GP Multi-page Navigation's "Next Page with Errors" and "Last Page" buttons lost their CSS classes when displayed in Nested Forms modals.
+
+## 1.1.64 | October 1, 2024
+
+- Fixed PHP 8.2 deprecation notices.
+
+## 1.1.63 | September 11, 2024
+
+- Fixed issue where `focus-trap` could throw errors on some themes. It now has a check to prevent JS errors that prevent the modal from fully initializing.
+
+## 1.1.62 | August 27, 2024
+
+- Fixed issue where parent form ID and parent entry ID metas were not set on child entries when sessions were disabled.
+
 ## 1.1.61 | August 14, 2024
 
 - Fixed issue Gravity Flow editable fields not showing Nested Form on Approval Workflow Step.

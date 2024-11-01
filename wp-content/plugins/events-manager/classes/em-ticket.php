@@ -759,8 +759,9 @@ class EM_Ticket extends EM_Object{
 		        $default_value = $this->is_required() ? $min_spaces:0;
 		    }
 			ob_start();
+			$label = esc_attr__('Select number of spaces', 'events-manager');
 			?>
-			<select name="em_tickets[<?php echo $this->ticket_id ?>][spaces]" class="em-ticket-select" id="em-ticket-spaces-<?php echo $this->ticket_id ?>" data-ticket-id="<?php echo esc_attr($this->ticket_id); ?>">
+			<select name="em_tickets[<?php echo $this->ticket_id ?>][spaces]" class="em-ticket-select" id="em-ticket-spaces-<?php echo $this->ticket_id ?>" data-ticket-id="<?php echo esc_attr($this->ticket_id); ?>" aria-label="<?php echo $label; ?>">
 				<?php 
 					$min = ($this->ticket_min > 0) ? $this->ticket_min:1;
 					$max = ($this->ticket_max > 0) ? $this->ticket_max:$max_spaces;

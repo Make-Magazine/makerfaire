@@ -53,23 +53,36 @@ class Processor {
 			return $html;
 		}
 
+		if ( is_user_logged_in() && $this->options->get( 'cache_logged_user', 0 ) ) {
+			return $html;
+		}
+
 		global $wp;
 
 		$url       = untrailingslashit( home_url( add_query_arg( [], $wp->request ) ) );
 		$is_mobile = $this->is_mobile();
 
-		$html_optimized = null;
+		// Set flag as true by default.
+		$optimization_applied = true;
+
 		foreach ( $this->factories as $factory ) {
 			$row = $factory->queries()->get_row( $url, $is_mobile );
+
 			if ( empty( $row ) ) {
-				return $this->inject_beacon( $html, $url, $is_mobile );
+				// Flag false if optimization has not been applied.
+				$optimization_applied = false;
+				continue;
 			}
 
-			$html           = $html_optimized ?? $html;
-			$html_optimized = $factory->get_frontend_controller()->optimize( $html, $row );
+			$html = $factory->get_frontend_controller()->optimize( $html, $row );
 		}
 
-		return $html_optimized;
+		// Check if all optimizations were applied: if not, inject beacon.
+		if ( ! $optimization_applied ) {
+			$html = $this->inject_beacon( $html, $url, $is_mobile );
+		}
+
+		return $html;
 	}
 
 	/**
@@ -82,6 +95,10 @@ class Processor {
 	 * @return string The modified HTML content with the beacon script injected just before the closing body tag.
 	 */
 	private function inject_beacon( $html, $url, $is_mobile ): string {
+		if ( rocket_get_constant( 'DONOTROCKETOPTIMIZE' ) && empty( $_GET['wpr_imagedimensions'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			return $html;
+		}
+
 		$min = ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? '' : '.min';
 
 		if ( ! $this->filesystem->exists( rocket_get_constant( 'WP_ROCKET_ASSETS_JS_PATH' ) . 'wpr-beacon' . $min . '.js' ) ) {

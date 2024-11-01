@@ -1,6 +1,26 @@
 
 # Changelog
 
+## 1.4.86 | October 30, 2024
+
+- Removed definition and usage of `String.prototype.gformFormat()` on the frontend to resolve conflicts with Elementor in some situations.
+
+## 1.4.85 | October 16, 2024
+
+- Improved compatibility with GP Advanced Phone Field 1.1 and newer.
+
+## 1.4.84 | September 19, 2024
+
+- Fixed compatibility issue with GF Image Choices where choices in a target field with images could still show as selected when new choices are selected.
+
+## 1.4.83 | September 5, 2024
+
+- Fixed an issue where values are not copied when the target field is an Advanced Phone Field.
+
+## 1.4.82 | August 29, 2024
+
+- Refactored to use `GP_Plugin` as the base PHP class.
+
 ## 1.4.81 | July 17, 2024
 
 - Fixed an issue where conditionally hidden fields would still trigger a copy action.

@@ -36,6 +36,20 @@ class Nested_Carousel extends Widget_Nested_Base {
 		return [ 'Carousel', 'Slides', 'Nested', 'Media', 'Gallery', 'Image' ];
 	}
 
+	/**
+	 * Get style dependencies.
+	 *
+	 * Retrieve the list of style dependencies the widget requires.
+	 *
+	 * @since 3.24.0
+	 * @access public
+	 *
+	 * @return array Widget style dependencies.
+	 */
+	public function get_style_depends(): array {
+		return [ 'e-swiper', 'widget-nested-carousel' ];
+	}
+
 	protected function get_default_children_elements() {
 		return [
 			[
@@ -334,16 +348,12 @@ class Nested_Carousel extends Widget_Nested_Base {
 	}
 
 	protected function get_initial_config(): array {
-		if ( Plugin::elementor()->experiments->is_feature_active( 'e_nested_atomic_repeaters' ) ) {
-			return array_merge( parent::get_initial_config(), [
-				'support_improved_repeaters' => true,
-				'target_container' => [ '.e-n-carousel > .swiper-wrapper' ],
-				'node' => 'div',
-				'is_interlaced' => true,
-			] );
-		}
-
-		return parent::get_initial_config();
+		return array_merge( parent::get_initial_config(), [
+			'support_improved_repeaters' => true,
+			'target_container' => [ '.e-n-carousel > .swiper-wrapper' ],
+			'node' => 'div',
+			'is_interlaced' => true,
+		] );
 	}
 
 	protected function get_default_children_container_placeholder_selector() {

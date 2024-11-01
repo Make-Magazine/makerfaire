@@ -4,7 +4,7 @@ function em_setup_tippy( container_element ){
 		theme : 'light-border',
 		appendTo : 'parent',
 		content(reference) {
-			if( 's' in reference.dataset && reference.dataset.content.match(/^[.#][a-zA-Z0-9]+/) ){
+			if( reference.dataset.content ){
 				try {
 					let content = container[0].querySelector(reference.dataset.content);
 					if (content) {
@@ -21,7 +21,7 @@ function em_setup_tippy( container_element ){
 		allowHTML : true,
 	};
 	jQuery(document).trigger('em-tippy-vars',[tooltip_vars, container]);
-	tippy('.em-tooltip', tooltip_vars);
+	container.find('.em-tooltip').each( ( i, tooltip ) => tippy( tooltip, tooltip_vars ) );
 	// Set up Tippy DDMs
 	let tippy_ddm_options = {
 		theme : 'light-border',

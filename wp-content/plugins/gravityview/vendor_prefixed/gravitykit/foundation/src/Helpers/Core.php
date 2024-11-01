@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by gravityview on 14-August-2024 using {@see https://github.com/BrianHenryIE/strauss}.
+ * Modified by gravityview on 15-October-2024 using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\GravityView\Foundation\Helpers;
@@ -58,7 +58,7 @@ class Core {
 	 * @return string
 	 */
 	public static function get_assets_path( $file = '' ) {
-		$path = realpath( __DIR__ . '/../../assets' );
+		$path = realpath( __DIR__ . '/../../assets' ) ?: '';
 
 		return $file ? trailingslashit( $path ) . $file : $path;
 	}
@@ -89,7 +89,7 @@ class Core {
 	public static function is_network_admin() {
 		return ! wp_doing_ajax()
 			? is_network_admin()
-			: is_multisite() && strpos( wp_get_referer(), network_admin_url() ) !== false;
+			: is_multisite() && strpos( wp_get_referer() ?: '', network_admin_url() ) !== false;
 	}
 
 	/**
@@ -157,7 +157,7 @@ class Core {
 	 *
 	 * @param bool $skip_cache (optional) Whether to skip cache when getting plugins data. Default: false.
 	 *
-	 * @return array{array{name:string, author: string, path: string, plugin_file:string, installed: bool, installed_version: string, version: string, text_domain: string, active: bool, network_active: bool, free: bool, has_update: bool, download_link: string|null}}
+	 * @return array[] Array of installed plugins with their metadata.
 	 */
 	public static function get_installed_plugins( $skip_cache = false ) {
 		if ( ! function_exists( 'is_plugin_active' ) ) {
@@ -247,7 +247,7 @@ class Core {
 				continue;
 			}
 
-			if ( ! empty( $authors ) && ! in_array( strtolower( $plugin['author'] ?? '' ), $authors, true ) ) {
+			if ( ! empty( $authors ) && ! in_array( strtolower( $plugin['author'] ), $authors, true ) ) {
 				continue;
 			}
 
@@ -272,7 +272,7 @@ class Core {
 	 * @param bool   $markup      (optional) If the returned data should have HTML markup applied. Default is true.
 	 * @param bool   $translate   (optional) If the returned data should be translated. Default is true.
 	 *
-	 * @return array[]
+	 * @return array<string, mixed> Associative array of plugin data.
 	 */
 	public static function get_plugin_data( $plugin_file, $markup = true, $translate = true ) {
 		if ( ! function_exists( 'get_plugin_data' ) ) {

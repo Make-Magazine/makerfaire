@@ -491,7 +491,7 @@ class Gum_Elementor_Widget_Post_share extends Widget_Base {
 
     $post = get_post();
 
-    if( empty( $post ) || $post->post_type !='post') return '';
+    if( empty( $post )) return '';
 
     $post_id = $post->ID;
 
@@ -506,7 +506,7 @@ class Gum_Elementor_Widget_Post_share extends Widget_Base {
 
     if($link_text_position!=''){
 
-      $this->add_render_attribute( 'share-link', ['class' => 'label-'.$link_text_position ]);
+      $this->add_render_attribute( 'share-link', ['class' => 'label-'.sanitize_html_class($link_text_position )]);
     }
    ?>
    <a <?php echo $this->get_render_attribute_string( 'share-link'); ?>>

@@ -8,7 +8,7 @@ if ( ! defined( 'GRAVITYVIEW_DIR' ) ) {
 
 class Edit_Entry_DIY {
 	public function __construct() {
-		add_filter( 'gravityview/edit_entry/form_fields', array( $this, 'wrap_custom_content_field_in_container' ), 10, 3 );
+		add_filter( 'gravityview/edit_entry/form_fields', [ $this, 'wrap_custom_content_field_in_container' ], 10, 3 );
 	}
 
 	/**
@@ -22,7 +22,7 @@ class Edit_Entry_DIY {
 	 *
 	 * @return GF_Field[]
 	 */
-	public function wrap_custom_content_field_in_container( $gf_fields, $edit_fields = null, $form = array() ) {
+	public function wrap_custom_content_field_in_container( $gf_fields, $edit_fields = null, $form = [] ) {
 		if ( ! $edit_fields ) {
 			return $gf_fields;
 		}

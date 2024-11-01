@@ -179,7 +179,11 @@ const ko = window.ko;
 					}
 
 					if ( self.trap ) {
-						self.trap.activate();
+						try {
+							self.trap.activate();
+						} catch ( error ) {
+							console.error( 'Failed to activate focus trap: ', error );
+						}
 					}
 				},
 				onClose: function() {
@@ -286,6 +290,12 @@ const ko = window.ko;
 			 * @since 1.1.51
 			 */
 			self.viewModel = gform.applyFilters( 'gpnf_view_model', self.viewModel, self );
+
+			// Ensure the element exists, otherwise Knockout will throw an error.
+			if ( self.$fieldContainer.length === 0 ) {
+				console.warn( 'Could not find the Nested Form field container to initialize.' );
+				return;
+			}
 
 			ko.applyBindings(self.viewModel, self.$fieldContainer[0]);
 		};
@@ -515,7 +525,28 @@ const ko = window.ko;
 						classes        = [ 'tingle-btn', 'tingle-btn--primary' ],
 						isDisabled     = $button.is( ':disabled' );
 
-					if ( $button.hasClass( 'gform_previous_button' ) ) {
+					var gpnfWhitelistClasses = [
+						// GP Multi Page Navigation classes
+						'gform_next_page_errors_button',
+						'gform_last_page_button',
+					];
+
+					/**
+					 * Filter the classes that will be passed through when added as buttons to the modal footer.
+					 *
+					 * @param {string[]} 			gpnfWhitelistClasses 	An array of classes that will be passed through when added as buttons to the modal footer.
+					 * @param {int}           		formId 					The parent form ID.
+					 * @param {int}             	fieldId   				The field ID of the Nested Form field.
+					 * @param {GPNestedForms} 		gpnf      				Current instance of the GPNestedForms object.
+					 *
+					 * @since 1.1.64
+					 */
+					gpnfWhitelistClasses = window.gform.applyFilters( 'gpnf_modal_button_passthrough_classes', gpnfWhitelistClasses, self.formId, self.fieldId, self );
+
+					var gpnfWhitelistMatchingClass = gpnfWhitelistClasses.find( className => $button.hasClass( className ) );
+					if ( gpnfWhitelistMatchingClass ) {
+						classes.push( gpnfWhitelistMatchingClass );
+					} else if ( $button.hasClass( 'gform_previous_button' ) ) {
 						classes.push( 'gpnf-btn-previous' );
 						buttonType = 'previous';
 					} else if ( $button.hasClass( 'gform_next_button' ) ) {

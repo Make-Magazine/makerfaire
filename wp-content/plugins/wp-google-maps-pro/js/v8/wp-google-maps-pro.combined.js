@@ -7893,7 +7893,9 @@ jQuery(function($) {
 		let storeLocatorElement = false;
 		for(let i in selectors){
 			if($(selectors[i]).length > 0 && storeLocatorElement === false){
-				storeLocatorElement = $(selectors[i]);
+				if($(selectors[i]).attr('data-id') && parseInt($(selectors[i]).attr('data-id')) === parseInt(this.id)){
+					storeLocatorElement = $(selectors[i]);
+				}
 			}
 		}
 		if(storeLocatorElement.length){
@@ -12399,6 +12401,10 @@ jQuery(function($) {
 			$(this.resetButton).on("click", function(event){
 				self.onReset(event);
 			});
+
+			if(self.map.settings.store_locator_name_string){
+				$(this.element).find("input.wpgmza-keywords").attr('placeholder', self.map.settings.store_locator_name_string);
+			}
 		}
 		
 		// Enter listener
@@ -18155,7 +18161,8 @@ jQuery(function($) {
 	{
 		$.ajax(WPGMZA.ajaxurl, {
 			data: {
-				action: "wpgmza_clear_nominatim_cache"
+				action: "wpgmza_clear_nominatim_cache",
+				wpgmza_security : WPGMZA.ajaxnonce || false
 			},
 			method: "POST",
 			success: function(response){
@@ -18863,8 +18870,17 @@ jQuery(function($) {
 			success: function(response, status, xhr) {
 				
 				response.draw = draw;
-				self.lastResponse = response;
+				
+				/* Convert any false objects to arrays */
+				if(!(response.data instanceof Array) && response.data instanceof Object){
+					response.data = Object.keys(response.data).map((key) => response.data[key]);
+				}
 
+				if(!(response.meta instanceof Array) && response.meta instanceof Object){
+					response.meta = Object.keys(response.meta).map((key) => response.meta[key]);
+				}
+
+				self.lastResponse = response;
 				
 				callback(response);
 				
@@ -29493,6 +29509,7 @@ jQuery(function($) {
 
 			if(WPGMZA.settings.open_layers_api_key && WPGMZA.settings.open_layers_api_key !== ""){
 				options.url += "?apikey=" + WPGMZA.settings.open_layers_api_key.trim();
+				options.url += "&key=" + WPGMZA.settings.open_layers_api_key.trim();
 			}
 		}
 
@@ -38458,6 +38475,10 @@ jQuery(function($) {
 		
 		if(WPGMZA.settings.carouselAutoplay && !isNaN(WPGMZA.settings.carouselAutoplay)){
 			options.autoplayTimeout = parseInt(WPGMZA.settings.carouselAutoplay);
+		}
+
+		if(WPGMZA.settings.carouselDisableAutoplay){
+			options.autoplay = false;
 		}
 		
 		if(WPGMZA.settings.carousel_autoheight)

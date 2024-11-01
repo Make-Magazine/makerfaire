@@ -33,7 +33,7 @@ trait CustomFilter
                         $filters[$filterIndex]['showTime'] = $formattedColumns[$filter['columns'][0]]['showTime'];
                     }
 
-                    if (isset($filters[$filterIndex]['firstDayOfWeek']) && isset($formattedColumns[$filter['columns'][0]]['firstDayOfWeek'])) {
+                    if (!isset($filters[$filterIndex]['firstDayOfWeek']) && isset($formattedColumns[$filter['columns'][0]]['firstDayOfWeek'])) {
                         $filters[$filterIndex]['firstDayOfWeek'] = $formattedColumns[$filter['columns'][0]]['firstDayOfWeek'];
                     }
                 }

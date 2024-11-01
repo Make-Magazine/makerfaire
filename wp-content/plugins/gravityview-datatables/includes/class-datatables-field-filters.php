@@ -272,7 +272,20 @@ class GV_Extension_DataTables_Field_Filters extends GV_DataTables_Extension {
 		if ( $gf_field && ! empty( $gf_field->choices ) ) {
 			$choices = $gf_field->choices;
 
-			if ( class_exists( 'GP_Populate_Anything' ) && ( $gf_field->{'gppa-choices-enabled'} || $gf_field->{'gppa-values-enabled'} ) ) {
+			if ( 'chainedselect' === $gf_field->type ) {
+				$choices = array_map( function ( $entry ) use ( $field ) {
+					$value = $entry->as_entry()[ $field->ID ] ?? '';
+
+					return '' === $value ? [] : [
+						'text'  => $value,
+						'value' => $value,  // text = value in Chained Selects.
+					];
+				}, $view->get_entries()->all() );
+
+				$choices = array_filter( $choices );
+
+				array_multisort( array_column( $choices, 'text' ), SORT_ASC, $choices );
+			} elseif ( class_exists( 'GP_Populate_Anything' ) && ( $gf_field->{'gppa-choices-enabled'} || $gf_field->{'gppa-values-enabled'} ) ) {
 				GP_Populate_Anything::get_instance()->populate_field( $gf_field, $form, [] );
 
 				$choices = $gf_field->choices;

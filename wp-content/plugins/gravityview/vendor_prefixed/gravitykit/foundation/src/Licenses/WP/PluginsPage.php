@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by gravityview on 14-August-2024 using {@see https://github.com/BrianHenryIE/strauss}.
+ * Modified by gravityview on 15-October-2024 using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\GravityView\Foundation\Licenses\WP;
@@ -25,9 +25,9 @@ class PluginsPage {
 	 *
 	 * @since 1.2.0
 	 *
-	 * @var PluginsPage
+	 * @var PluginsPage|null
 	 */
-	private static $_instance;
+	private static $_instance = null;
 
 	/**
 	 * Returns class instance.
@@ -58,7 +58,7 @@ class PluginsPage {
 			return;
 		}
 
-		add_filter( 'init', [ $this, 'configure_hooks' ] );
+		add_action( 'init', [ $this, 'configure_hooks' ] );
 
 		$initialized = true;
 	}
@@ -68,20 +68,20 @@ class PluginsPage {
 	 *
 	 * @since 1.2.0
 	 *
-	 * @return void|bool
+	 * @return void
 	 */
 	public function configure_hooks() {
 		if ( ! $this->is_plugins_page() ) {
 			return;
 		}
 
-		add_filter( 'all_plugins', [ $this, 'group_products' ], 10, 2 );
+		add_filter( 'all_plugins', [ $this, 'group_products' ] );
 
 		add_action( 'after_plugin_row', [ $this, 'enqueue_update_notices' ], 10, 2 );
 
 		add_action( 'after_plugin_row', [ $this, 'enqueue_unlicensed_notices' ], 10, 2 );
 
-		add_action( 'after_plugin_row', [ $this, 'display_notices' ], 11, 2 );
+		add_action( 'after_plugin_row', [ $this, 'display_notices' ], 11 );
 
 		add_filter( 'plugin_action_links', [ $this, 'modify_product_action_links' ], 10, 3 );
 
@@ -89,7 +89,9 @@ class PluginsPage {
 		if ( isset( $_REQUEST['gk_disable_grouping'] ) || isset( $_REQUEST['gk_enable_grouping'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification
 			SettingsFramework::get_instance()->save_plugin_setting( Core::ID, 'group_gk_products', isset( $_REQUEST['gk_enable_grouping'] ) ); // phpcs:ignore WordPress.Security.NonceVerification
 
-			return wp_safe_redirect( remove_query_arg( isset( $_REQUEST['gk_enable_grouping'] ) ? 'gk_enable_grouping' : 'gk_disable_grouping' ) ); // phpcs:ignore WordPress.Security.NonceVerification
+			wp_safe_redirect( remove_query_arg( isset( $_REQUEST['gk_enable_grouping'] ) ? 'gk_enable_grouping' : 'gk_disable_grouping' ) ); // phpcs:ignore WordPress.Security.NonceVerification
+
+			exit();
 		}
 
 		// Add action to links that require confirmation.
@@ -144,7 +146,7 @@ JS;
 						continue;
 					}
 
-					if ( ! $product['checked_dependencies'][ $product['server_version'] ]['status'] ?? false ) {
+					if ( empty( $product['checked_dependencies'][ $product['server_version'] ]['status'] ) ) {
 						unset( $data->response[ $plugin_path ] );
 					}
 
@@ -227,7 +229,7 @@ JS;
 					}
 				*/
 				// Modify Activate link for products that have unmet dependencies.
-				if ( ! $product['checked_dependencies'][ $product['installed_version'] ]['status'] ?? false ) {
+				if ( ! $product['checked_dependencies'][ $product['installed_version'] ]['status'] ) {
 					$links['activate'] = sprintf(
 						'<a href="%s" title="%s">%s</a>',
 						esc_url_raw( add_query_arg( [ 'action' => 'activate' ], Framework::get_instance()->get_link_to_product_search( $product['id'] ) ) ),
@@ -445,7 +447,7 @@ JS;
 				];
 			},
 			10,
-			4
+			3
 		);
 
 		return $wp_plugins;
@@ -539,7 +541,7 @@ JS;
 				return;
 			}
 
-			if ( ! $product['checked_dependencies'][ $product['installed_version'] ]['status'] ?? false ) {
+			if ( ! $product['checked_dependencies'][ $product['installed_version'] ]['status'] ) {
 				$notice = strtr(
 					esc_html_x( 'There is a new version [version] of [product] available. [link]Update now…[/link].', 'Placeholders inside [] are not to be translated.', 'gk-gravityview' ),
 					[

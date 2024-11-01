@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by gravityview on 14-August-2024 using {@see https://github.com/BrianHenryIE/strauss}.
+ * Modified by gravityview on 15-October-2024 using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\GravityView\Foundation\Helpers;
@@ -131,8 +131,8 @@ class Arr extends IlluminateArr {
 	 *
 	 * @since 1.0.0
 	 */
-	public static function flatten( $array, $depth = INF ) {
-		return parent::flatten( $array, $depth );
+	public static function flatten( $array, $depth = PHP_INT_MAX ) {
+		return parent::flatten( $array, $depth);
 	}
 
 	/**
@@ -141,7 +141,7 @@ class Arr extends IlluminateArr {
 	 * @since 1.0.0
 	 */
 	public static function forget( &$array, $keys ) {
-		return parent::forget( $array, $keys );
+		parent::forget( $array, $keys );
 	}
 
 	/**

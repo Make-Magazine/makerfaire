@@ -3,6 +3,7 @@
 class GPNF_Feed_Processing {
 
 	private static $instance = null;
+	private $_parent_form_data;
 
 	public static function get_instance() {
 		if ( self::$instance == null ) {

@@ -76,7 +76,7 @@ const NavigationBar = () => {
             </ul>
           </li>
           <li
-            className={`${styles.menuItem} ${styles.menuItemHasChild}`}
+            className={`${styles.menuItem}`}
           >
             <Link
               to='/photos'
@@ -84,7 +84,7 @@ const NavigationBar = () => {
             >
               Photos
             </Link>
-            <ul className={styles.subNavWrap}>
+            {/* <ul className={styles.subNavWrap}>
               <li className={styles.subNavItem}>
                 <Link
                   to='/photos'
@@ -108,7 +108,7 @@ const NavigationBar = () => {
                   <span className='dashicons dashicons-external' />
                 </a>
               </li>
-            </ul>
+            </ul> */}
           </li>
         </ul>
 

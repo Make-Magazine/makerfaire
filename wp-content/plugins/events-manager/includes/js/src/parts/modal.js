@@ -5,6 +5,7 @@ let openModal = function( modal, onOpen = null ){
 	setTimeout( function(){
 		modal.addClass('active').find('.em-modal-popup').addClass('active');
 		jQuery(document).triggerHandler('em_modal_open', [modal]);
+		document.dispatchEvent( new CustomEvent('em_modal_open', { detail: { modal: modal } }) );
 		if( typeof onOpen === 'function' ){
 			setTimeout( onOpen, 200); // timeout allows css transition
 		}

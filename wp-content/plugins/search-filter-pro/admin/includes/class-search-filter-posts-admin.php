@@ -17,6 +17,7 @@ class Search_Filter_Posts_Admin {
 
 	private $post_meta_keys = array();
 	private $plugin_slug    = '';
+	private $post_data_validation;
 
 	public function __construct() {
 

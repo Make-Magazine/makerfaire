@@ -15,6 +15,7 @@
 defined( 'ABSPATH' ) || exit;
 
 class GravityView_Ratings_Reviews_Meta_Box extends GravityView_Ratings_Reviews_Component {
+	const DEFAULT_REVIEW_EDIT_DURATION = HOUR_IN_SECONDS;
 
 	/**
 	 * Callback when this component is loaded by the loader.
@@ -148,7 +149,7 @@ class GravityView_Ratings_Reviews_Meta_Box extends GravityView_Ratings_Reviews_C
 			'type'              => 'number',
 			'step'              => 1,
 			'group'	            => 'ratings_reviews',
-			'value'             => HOUR_IN_SECONDS,
+			'value'             => self::DEFAULT_REVIEW_EDIT_DURATION,
 			'show_in_shortcode' => false,
 			'requires'          => 'allow_reviews_edit',
 			'full_width'        => true,

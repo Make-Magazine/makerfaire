@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by gravityview on 14-August-2024 using {@see https://github.com/BrianHenryIE/strauss}.
+ * Modified by gravityview on 15-October-2024 using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\GravityView\Foundation\Integrations;
@@ -23,9 +23,9 @@ class HelpScout {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @var TrustedLogin
+	 * @var HelpScout|null
 	 */
-	private static $_instance;
+	private static $_instance = null;
 
 	/**
 	 * Class constructor.
@@ -43,7 +43,7 @@ class HelpScout {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @return TrustedLogin
+	 * @return HelpScout
 	 */
 	public static function get_instance() {
 		if ( ! self::$_instance ) {

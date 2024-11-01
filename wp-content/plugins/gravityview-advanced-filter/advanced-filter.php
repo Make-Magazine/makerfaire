@@ -3,7 +3,7 @@
  * Plugin Name:         GravityView - Advanced Filter Extension
  * Plugin URI:          https://www.gravitykit.com/extensions/advanced-filter/
  * Description:         Filter which entries are shown in a View based on their values.
- * Version:             4.0.1
+ * Version:             4.0.3
  * Author:              GravityKit
  * Author URI:          https://www.gravitykit.com
  * Text Domain:         gravityview-advanced-filter
@@ -21,7 +21,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 require_once __DIR__ . '/vendor/autoload.php';
 
-const GRAVITYKIT_ADVANCED_FILTERING_VERSION  = '4.0.1';
+const GRAVITYKIT_ADVANCED_FILTERING_VERSION  = '4.0.3';
 const GRAVITYKIT_ADVANCED_FILTER_PLUGIN_FILE = __FILE__;
 
 add_action( 'gravityview/loaded', function () {

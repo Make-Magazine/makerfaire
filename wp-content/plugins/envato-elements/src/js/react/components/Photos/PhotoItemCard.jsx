@@ -1,5 +1,4 @@
 import React, { useRef, useState } from 'react'
-import buildElementsImageUrl from '../../utils/buildElementsImageUrl'
 import ButtonWrapper from '../Buttons/ButtonWrapper'
 import Button from '../Buttons/Button'
 import PhotoPreviewModal from '../Modal/PhotoPreviewModal'
@@ -13,7 +12,8 @@ const PhotoItemCard = ({ layout, item }) => {
   const cardRef = useRef(null)
 
   const isPhotoImported = !!getDownloadedItemId(item.humane_id)
-  const imageUrl = buildElementsImageUrl({ imageData: item.cover_image, sizes: ['w600', 'w400', 'w100'] })
+  const imageUrl = item.cover_image_urls.w600 || item.cover_image_urls.w400 || item.cover_image_urls.w100
+  const previewImageUrl = item.cover_image_urls.w1200 || item.cover_image_urls.w1000 || item.cover_image_urls.w600
   const backgroundImageInlineStyle = {
     backgroundImage: `url('${imageUrl}')`
   }
@@ -46,7 +46,7 @@ const PhotoItemCard = ({ layout, item }) => {
               {isActivationModelOpen
                 ? (
                   <PhotoPreviewModal
-                    photoUrl={buildElementsImageUrl({ imageData: item.cover_image, sizes: ['w1200', 'w1000', 'w600'] })}
+                    photoUrl={previewImageUrl}
                     photoTitle={item.title}
                     photoId={item.humane_id}
                     aspectRatioHeight={item.aspectRatioHeight}

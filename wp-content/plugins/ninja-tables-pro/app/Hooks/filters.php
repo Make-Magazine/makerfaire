@@ -44,4 +44,3 @@ $app->addFilter('ninja_tables_rendering_table_settings', [TableHandler::class, '
 $app->addFilter('ninja_table_rendering_table_vars', [TableHandler::class, 'ninjaTableRenderingTableVars'], 10, 3);
 $app->addFilter('ninja_parse_placeholder', [PlaceholderParserHandler::class, 'parse']);
 $app->addFilter('ninja_tables_get_public_data', [TableHandler::class, 'ninjaTableGetPublicData'], 11, 1);
-

@@ -109,7 +109,7 @@ class EM_Taxonomy_Admin {
 		?>
 	    <div class="term-color-wrap">
 	        <label for="term-color"><?php esc_html_e('Color','events-manager'); ?></label>
-            <input type="text" name="term_color" id="term-color" class="term-color" value="#FFFFFF" ><br>
+            <input type="text" name="term_color" id="term-color" class="term-color" value="<?php echo esc_attr(get_option('dbem_'.static::$option_name . '_default_color', '#80b538')); ?>" ><br>
             <p class="description"><?php echo sprintf(__('Choose a color for your %s. You can access this using the %s placeholder.','events-manager'), __(self::$name_singular,'events-manager'),'<code>'. self::$placeholder_color. '</code>'); ?></p>
 	    </div>
 	    <div class="form-field term-image-wrap">

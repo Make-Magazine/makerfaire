@@ -5,7 +5,7 @@
  * @package GravityKit\GravityEdit\Foundation\ThirdParty\TrustedLogin\Client
  *
  * @license GPL-2.0-or-later
- * Modified by __root__ on 16-August-2024 using Strauss.
+ * Modified by __root__ on 01-October-2024 using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 

@@ -28,6 +28,14 @@ class CacheSettingsPanel extends DOMDocument {
 
 				foreach($cacheReport as $instance => $report){
 					$title = ucwords($instance);
+
+					if(empty($report->runtime)){
+						$reportHtml[] = "<div class='cache-dataset'>";
+						$reportHtml[] = 	"<div><strong>{$title}:</strong> Caching halted, please regenerate</div>";
+						$reportHtml[] = "</div>";
+						continue;
+					}
+
 					$improvement = number_format((($report->runtime - $report->filetime) / $report->runtime) * 100, 2) . '%';
 					$improvement .= " (" . ($report->runtime > 0 ? number_format($report->runtime / 1000, 2) : 0) . "s → " . ($report->filetime ? number_format($report->filetime / 1000, 2) : 0) . "s)";
 
@@ -38,7 +46,8 @@ class CacheSettingsPanel extends DOMDocument {
 					$reportHtml[] = "<div class='cache-dataset'>";
 					$reportHtml[] = 	"<div><strong>{$title}:</strong></div>";
 
-					$reportHtml[] = 	"<div>- Total Records: {$report->total}</div>";
+					$reportHtml[] = 	"<div>- Total Maps: {$report->total}</div>";
+					$reportHtml[] = 	"<div>- Total Markers: {$report->recordsTotal}</div>";
 					$reportHtml[] = 	"<div>- Improvement: {$improvement}</div>";
 					$reportHtml[] = 	"<div>- Last Update: {$report->updated}</div>";
 					$reportHtml[] = "</div>";

@@ -109,7 +109,7 @@ const mountCard = () => {
 		jQuery('.stripe-payment-element-container').text(gform_stripe_payment_element_form_editor_strings.payment_element_error);
 	} else {
 		const elements = stripe.elements({
-			amount: 100,
+			amount: Math.round(gform_stripe_payment_element_form_editor_strings.payment_element_amount),
 			currency: gform_stripe_payment_element_form_editor_strings.payment_element_currency,
 			mode: "payment",
 			payment_method_types: ['card']
@@ -143,7 +143,7 @@ const showHideElement = (enabled = null) => {
 	const $elementContainer = jQuery('.stripe-payment-element-container');
 	const $cardContainer = jQuery('.ginput_stripe_creditcard');
 	const elementContainerStyle = enabled ? 'block' : 'none';
-	const cardContainerStyle = enabled ? 'none' : 'block';
+	const cardContainerStyle = enabled ? 'none' : 'flex';
 	const $linkEmailField = jQuery('#link_email_field_container');
 
 	if (!enabled) {
@@ -189,9 +189,7 @@ const filterSubLabelsSettingClasses = (settingsArray, field) => {
 	}
 	const paymentElementEnabled = jQuery('#field_enable_multiple_payment_methods').is(':checked');
 	if (paymentElementEnabled) {
-		settingsArray.splice(settingsArray.indexOf('.sub_label_placement_setting'), 1);
-		settingsArray.splice(settingsArray.indexOf('.sub_labels_setting'), 1);
-		settingsArray.splice(settingsArray.indexOf('.input_placeholders_setting'), 1);
+		settingsArray = settingsArray.filter(item => !['.sub_label_placement_setting', '.sub_labels_setting', '.input_placeholders_setting'].includes(item));
 	} else {
 		settingsArray.push('.sub_labels_setting', '.sub_label_placement_setting', '.input_placeholders_setting');
 	}

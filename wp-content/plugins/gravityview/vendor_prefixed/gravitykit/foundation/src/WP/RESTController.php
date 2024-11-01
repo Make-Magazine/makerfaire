@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by gravityview on 14-August-2024 using {@see https://github.com/BrianHenryIE/strauss}.
+ * Modified by gravityview on 15-October-2024 using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\GravityView\Foundation\WP;
@@ -21,9 +21,9 @@ class RESTController {
 	 *
 	 * @since 1.0.11
 	 *
-	 * @var RESTController
+	 * @var RESTController|null
 	 */
-	private static $_instance;
+	private static $_instance = null;
 
 	/**
 	 * Collection of routes used for registering REST API endpoints.
@@ -32,7 +32,7 @@ class RESTController {
 	 *
 	 * @var array
 	 */
-	public $routes;
+	public $routes = [];
 
 	/**
 	 * Class constructor.
@@ -67,7 +67,7 @@ class RESTController {
 	 *
 	 * @return void
 	 */
-	public function add_route( array $route = [] ) {
+	public function add_route( array $route) {
 		$this->routes[] = $route;
 	}
 
@@ -86,13 +86,9 @@ class RESTController {
 		 *
 		 * @since  1.0.11
 		 *
-		 * @param array{array{version?: integer, endpoint: string, methods: string, callback: callable, permission_callback: callable, args?: array, override: boolean}} $routes
+		 * @param array<string, mixed> $routes
 		 */
 		$routes = apply_filters( 'gk/foundation/rest/routes', $this->routes );
-
-		if ( empty( $routes ) ) {
-			return;
-		}
 
 		array_map( [ $this, 'register_route' ], $routes );
 	}

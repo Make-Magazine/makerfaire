@@ -154,20 +154,20 @@ class Popover_Regular_Btn_Widget extends Widget_Base {
         'type' => Controls_Manager::CHOOSE,
         'options' => [
           'left' => [
-            'title' => esc_html__( 'Centered', 'gum-elementor-addon' ),
-            'icon' => 'eicon-text-align-left',
+            'title' => esc_html__( 'Left', 'gum-elementor-addon' ),
+            'icon' => 'eicon-h-align-left',
           ],
           'center' => [
             'title' => esc_html__( 'Centered', 'gum-elementor-addon' ),
-            'icon' => 'eicon-text-align-center',
+            'icon' => 'eicon-h-align-center',
           ],
           'right' => [
-            'title' => esc_html__( 'Centered', 'gum-elementor-addon' ),
-            'icon' => 'eicon-text-align-right',
+            'title' => esc_html__( 'Right', 'gum-elementor-addon' ),
+            'icon' => 'eicon-h-align-right',
           ],
           'justify' => [
             'title' => esc_html__( 'Full Width', 'gum-elementor-addon' ),
-            'icon' => 'eicon-text-align-justify',
+            'icon' => 'eicon-h-align-stretch',
           ],
         ],
         'prefix_class' => 'elementor%s-align-',
@@ -199,17 +199,27 @@ class Popover_Regular_Btn_Widget extends Widget_Base {
       'icon_align',
       [
         'label' => esc_html__( 'Icon Position', 'gum-elementor-addon' ),
-        'type' => Controls_Manager::SELECT,
-        'default' => 'left',
+        'type' => Controls_Manager::CHOOSE,
         'options' => [
-          'left' => esc_html__( 'Before', 'gum-elementor-addon' ),
-          'right' => esc_html__( 'After', 'gum-elementor-addon' ),
+          'row' => [
+            'title' => esc_html__( 'Left', 'gum-elementor-addon' ),
+            'icon' => 'eicon-h-align-left',
+          ],
+          'row-reverse' => [
+            'title' => esc_html__( 'Right', 'gum-elementor-addon' ),
+            'icon' => 'eicon-h-align-right',
+          ],
         ],
         'condition' => [
           'selected_icon[value]!' => '',
         ],
+        'default' => 'row',
+        'selectors' => [
+            '{{WRAPPER}} .elementor-button-content-wrapper' => 'flex-direction: {{VALUE}};'
+        ],
       ]
     );
+
 
     $this->add_control(
       'icon_indent',
@@ -223,8 +233,9 @@ class Popover_Regular_Btn_Widget extends Widget_Base {
         ],
         'default' =>['value'=>5, 'unit'=>'px'],
         'selectors' => [
-          '{{WRAPPER}} .elementor-button .elementor-align-icon-right' => 'margin-left: {{SIZE}}{{UNIT}};',
-          '{{WRAPPER}} .elementor-button .elementor-align-icon-left' => 'margin-right: {{SIZE}}{{UNIT}};',
+          '{{WRAPPER}} .elementor-button .elementor-align-icon-right' => 'margin-left: {{SIZE}}{{UNIT}};margin-right:0;',
+          '{{WRAPPER}} .elementor-button .elementor-align-icon-left' => 'margin-right: {{SIZE}}{{UNIT}};margin-left: 0;',
+          '{{WRAPPER}} .elementor-button .elementor-button-content-wrapper' => 'gap:{{SIZE}}{{UNIT}};'
         ],
         'condition' => ['selected_icon[value]!' => ''],
       ]
@@ -239,32 +250,6 @@ class Popover_Regular_Btn_Widget extends Widget_Base {
       ]
     );
 
-    $this->add_control(
-      'pop_align',
-      [
-        'label' => esc_html__( 'Position', 'gum-elementor-addon' ),
-        'type' => Controls_Manager::CHOOSE,
-        'options' => [
-          'left' => [
-            'title' => esc_html__( 'Left', 'gum-elementor-addon' ),
-            'icon' => 'eicon-h-align-left',
-          ],
-          'top' => [
-            'title' => esc_html__( 'Top', 'gum-elementor-addon' ),
-            'icon' => 'eicon-v-align-top',
-          ],
-          'right' => [
-            'title' => esc_html__( 'Right', 'gum-elementor-addon' ),
-            'icon' => 'eicon-h-align-right',
-          ],
-          'bottom' => [
-            'title' => esc_html__( 'Bottom', 'gum-elementor-addon' ),
-            'icon' => 'eicon-v-align-bottom',
-          ],
-        ],
-        'default' => 'bottom',
-      ]
-    );
 
     $this->add_control(
       'pop_title',
@@ -297,6 +282,56 @@ class Popover_Regular_Btn_Widget extends Widget_Base {
         'show_label' => false,
       ]
     );
+
+
+    $this->add_control(
+      'pop_align',
+      [
+        'label' => esc_html__( 'Position', 'gum-elementor-addon' ),
+        'type' => Controls_Manager::CHOOSE,
+        'options' => [
+          'left' => [
+            'title' => esc_html__( 'Left', 'gum-elementor-addon' ),
+            'icon' => 'eicon-h-align-left',
+          ],
+          'top' => [
+            'title' => esc_html__( 'Top', 'gum-elementor-addon' ),
+            'icon' => 'eicon-v-align-top',
+          ],
+          'right' => [
+            'title' => esc_html__( 'Right', 'gum-elementor-addon' ),
+            'icon' => 'eicon-h-align-right',
+          ],
+          'bottom' => [
+            'title' => esc_html__( 'Bottom', 'gum-elementor-addon' ),
+            'icon' => 'eicon-v-align-bottom',
+          ],
+        ],
+        'default' => 'bottom',
+      ]
+    );
+
+
+    $this->add_control(
+      'pop_width',
+      [
+        'label' => esc_html__( 'Width', 'gum-elementor-addon' ),
+        'type' => Controls_Manager::SLIDER,
+        'range' => [
+          'px' => [
+            'min' => 100,
+            'max' => 1000,
+            'step'=> 1
+          ],
+          'default' => ['value'=> -1,'unit'=>'px']
+        ],
+        'selectors' => [
+          '[data-elementor-device-mode=tablet] {{WRAPPER}} .popover-box' => 'width: {{SIZE}}{{UNIT}};',
+          '[data-elementor-device-mode=desktop] {{WRAPPER}} .popover-box' => 'width: {{SIZE}}{{UNIT}};'
+        ]
+      ]
+    );
+
 
     $this->end_controls_section();
 
@@ -479,26 +514,6 @@ class Popover_Regular_Btn_Widget extends Widget_Base {
       ]
     );    
 
-
-    $this->add_control(
-      'pop_width',
-      [
-        'label' => esc_html__( 'Width', 'gum-elementor-addon' ),
-        'type' => Controls_Manager::SLIDER,
-        'range' => [
-          'px' => [
-            'min' => 100,
-            'max' => 1000,
-            'step'=> 1
-          ],
-          'default' => ['value'=> -1,'unit'=>'px']
-        ],
-        'selectors' => [
-          '[data-elementor-device-mode=tablet] {{WRAPPER}} .popover-box' => 'width: {{SIZE}}{{UNIT}};',
-          '[data-elementor-device-mode=desktop] {{WRAPPER}} .popover-box' => 'width: {{SIZE}}{{UNIT}};'
-        ]
-      ]
-    );
 
 
     $this->add_control(
@@ -696,8 +711,8 @@ class Popover_Regular_Btn_Widget extends Widget_Base {
     $this->add_render_attribute( 'button', 'class', [
       'elementor-button',
       'popover-button',
-      'elementor-size-' . $size,
-      'elementor-button-align-'.$button_align
+      'elementor-size-' . sanitize_html_class($size),
+      'elementor-button-align-'.sanitize_html_class($button_align)
     ] );
 
 
@@ -716,7 +731,7 @@ class Popover_Regular_Btn_Widget extends Widget_Base {
       Icons_Manager::render_icon( $selected_icon, [ 'aria-hidden' => 'true' ] );
       $icon = ob_get_clean();
 
-       $button_icon = '<span class="elementor-button-icon elementor-align-icon-'.esc_attr_e($icon_align).'">'.$icon.'</span>';
+       $button_icon = '<span class="elementor-button-icon elementor-align-icon-'.esc_attr($icon_align).'">'.$icon.'</span>';
     }
 
     $button_html .= '<span '.$this->get_render_attribute_string( 'button_text' ).'>'.esc_html($button_text).'</span>';

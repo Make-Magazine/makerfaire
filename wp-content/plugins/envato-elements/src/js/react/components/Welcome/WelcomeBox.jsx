@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 import styles from './WelcomeBox.module.scss'
 import InternalLinkButton from '../Buttons/InternalLinkButton'
-import ExternalLinkButton from '../Buttons/ExternalLinkButton'
 
 const WelcomeBox = () => {
   const [playVideoEmbed, setPlayVideoEmbed] = useState(false)
@@ -23,7 +22,7 @@ const WelcomeBox = () => {
             <InternalLinkButton type='primary' label='Premium Template Kits' icon='arrow' href='/template-kits/premium-kits' />
             <InternalLinkButton type='primary' label='Free Template Kits' icon='arrow' href='/template-kits/free-kits' />
             <InternalLinkButton type='primary' label='Premium Photos' icon='arrow' href='/photos' />
-            <ExternalLinkButton
+            {/* <ExternalLinkButton
               type='primary' label={(
                 <>
                   AI Generated Images
@@ -38,7 +37,7 @@ const WelcomeBox = () => {
                   </span>
                 </>
             )} icon='link' href='https://labs.envato.com/?utm_source=extensions&utm_medium=referral&utm_campaign=wp-elements-home'
-            />
+            /> */}
           </div>
         </div>
       </div>

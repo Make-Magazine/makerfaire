@@ -150,6 +150,14 @@ abstract class GPPA_Object_Type {
 		return array();
 	}
 
+	public function get_option_group_id() {
+		return null;
+	}
+
+	public function get_option_group_label() {
+		return null;
+	}
+
 	public function to_simple_array() {
 
 		$output = array(
@@ -160,6 +168,8 @@ abstract class GPPA_Object_Type {
 			'templates'               => $this->get_default_templates(),
 			'restricted'              => $this->is_restricted(),
 			'supportsNullFilterValue' => $this->supports_null_filter_value,
+			'optionGroupId'           => $this->get_option_group_id(),
+			'optionGroupLabel'        => $this->get_option_group_label(),
 		);
 
 		if ( $this->get_primary_property() ) {
@@ -177,7 +187,7 @@ abstract class GPPA_Object_Type {
 		}
 
 		if ( preg_match_all( '/{\w+:gf_field_(\d+)}/', $value, $field_matches ) ) {
-			if ( count( $field_matches ) && ! empty( $field_matches[0] ) ) {
+			if ( ! empty( $field_matches[0] ) ) {
 				foreach ( $field_matches[0] as $index => $match ) {
 					$field_id       = $field_matches[1][ $index ];
 					$replaced_value = $this->replace_gf_field_value( "gf_field:{$field_id}", $field_values, $primary_property_value, $filter, $ordering, $field );
@@ -555,7 +565,12 @@ abstract class GPPA_Object_Type {
 					);
 				}
 
-				$filter_value   = apply_filters( 'gppa_replace_filter_value_variables_' . $this->id, $filter_value, $field_values, $primary_property_value, $filter, $ordering, $field, $property );
+				$filter_value = apply_filters( 'gppa_replace_filter_value_variables_' . $this->id, $filter_value, $field_values, $primary_property_value, $filter, $ordering, $field, $property );
+
+				if ( $filter_value === null && ! $this->supports_null_filter_value ) {
+					$filter_value = '';
+				}
+
 				$wp_filter_name = 'gppa_object_type_' . $this->id . '_filter_' . $filter['property'];
 
 				$group = rgar( $property, 'group' );

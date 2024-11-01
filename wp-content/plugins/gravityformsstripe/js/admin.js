@@ -125,6 +125,7 @@ window.GFStripeAdmin = null;
 
             this.maybeLockAccountSettings();
             this.bindWebhookAlert();
+            this.bindViewWebhookInstructions();
 
             this.bindRefund();
             this.bindCapture();
@@ -353,6 +354,43 @@ window.GFStripeAdmin = null;
                     scrollTop: $("#" + self.inputContainerPrefix + "api_mode").offset().top + 20
                 }, 1000);
             }
+        };
+        /**
+         * @function bindViewWebhooks
+         * @description Binds the view webhooks button to the viewWebhookInstructions function.
+         *
+         * @since 5.8.0
+         */
+        this.bindViewWebhookInstructions = function () {
+            const viewWebhooksButton = gform.utils.getNode('.view-webhooks', document, true);
+            if (!viewWebhooksButton) {
+                return;
+            }
+
+            viewWebhooksButton.addEventListener('click', this.viewWebhookInstructions);
+            viewWebhooksButton.addEventListener('keypress', this.viewWebhookInstructions);
+        };
+
+        /**
+         * @function viewWebhookInstructions
+         * @description Shows the webhook instructions for the current API mode.
+         *
+         * @since 5.8.0
+         */
+        this.viewWebhookInstructions = function () {
+            const liveModeRadioInput = gform.utils.getNode('#api_mode0', document, true);
+            const apiMode = liveModeRadioInput.checked ? 'live' : 'test';
+            let hideMode = apiMode === 'live' ? 'test' : 'live';
+            const webhookHiddenInstructions = gform.utils.getNodes(`.webhooks-${hideMode}-instructions`, true, document, true);
+            const webhooksDisplayedInstructions = gform.utils.getNodes(`.webhooks-${apiMode}-instructions`, true, document, true);
+            webhookHiddenInstructions.forEach(function (instructions) {
+                instructions.classList.add('hidden');
+            });
+            webhooksDisplayedInstructions.forEach(function (instructions) {
+                instructions.classList.remove('hidden');
+            });
+
+            tb_show('Webhook Instructions', '#TB_inline?width=500&inlineId=stripe-webhooks-instructions', '');
         };
 
         /**

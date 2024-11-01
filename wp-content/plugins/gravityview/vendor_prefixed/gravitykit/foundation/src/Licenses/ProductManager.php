@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by gravityview on 14-August-2024 using {@see https://github.com/BrianHenryIE/strauss}.
+ * Modified by gravityview on 15-October-2024 using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\GravityView\Foundation\Licenses;
@@ -36,9 +36,9 @@ class ProductManager {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @var ProductManager
+	 * @var ProductManager|null;
 	 */
-	private static $_instance;
+	private static $_instance = null;
 
 	/**
 	 * Returns class instance.
@@ -136,7 +136,7 @@ class ProductManager {
 	 * @return array|null The product object.
 	 */
 	private function get_first_project_by_payload( array $payload ): ?array {
-		$text_domains = explode( '|', $payload['text_domain'] ?? '' );
+		$text_domains = array_filter( explode( '|', $payload['text_domain'] ?? '' ) );
 
 		if ( ! $text_domains ) {
 			return null;
@@ -205,7 +205,7 @@ class ProductManager {
 
 				$backend_foundation_version = version_compare(
 					Core::VERSION,
-					$product_foundation_version ?? 0,
+					$product_foundation_version ?? '0',
 					'<'
 				) ? $product_foundation_version : Core::VERSION;
 			} catch ( Exception $e ) {
@@ -553,7 +553,7 @@ class ProductManager {
 
 		$backend_foundation_version = version_compare(
 			Core::VERSION,
-			$product_foundation_version ?? 0,
+			$product_foundation_version ?? '0',
 			'<'
 		) ? $product_foundation_version : Core::VERSION;
 
@@ -582,7 +582,7 @@ class ProductManager {
 			throw new Exception( esc_html__( 'Product is already active.', 'gk-gravityview' ) );
 		}
 
-		$result = activate_plugin( $product['path'], false, CoreHelpers::is_network_admin() );
+		$result = activate_plugin( $product['path'], '', CoreHelpers::is_network_admin() );
 
 		if ( is_wp_error( $result ) ) {
 			throw new Exception(
@@ -665,6 +665,7 @@ class ProductManager {
 
 		deactivate_plugins( $product['path'], false, CoreHelpers::is_network_admin() );
 
+		// @phpstan-ignore-next-line
 		if ( $this->is_product_active_in_current_context( $product['path'] ) ) {
 			throw new Exception( esc_html__( 'Could not deactivate the product.', 'gk-gravityview' ) );
 		}
@@ -925,8 +926,8 @@ class ProductManager {
 			return $_cached_products_data;
 		}
 
-		$installed_plugins_hash = md5( wp_json_encode( CoreHelpers::get_installed_plugins( $args['skip_request_cache'] ) ) );
-		$licenses_hash          = md5( wp_json_encode( LicenseManager::get_instance()->get_licenses_data() ) );
+		$installed_plugins_hash = md5( wp_json_encode( CoreHelpers::get_installed_plugins( $args['skip_request_cache'] ) ) ?: '' );
+		$licenses_hash          = md5( wp_json_encode( LicenseManager::get_instance()->get_licenses_data() ) ?: '' );
 
 		// If the installed plugins haven't changed since the last request, return the cached products data to prevent re-validating dependencies, etc.
 		if ( $installed_plugins_hash === $products['installed_plugins_hash'] && $licenses_hash === $products['licenses_hash'] ) {
@@ -1233,11 +1234,7 @@ class ProductManager {
 		global $wpdb;
 
 		$products_data_cache_key       = self::PRODUCTS_DATA_CACHE_ID;
-		$older_products_data_cache_key = substr( $products_data_cache_key, 0, strrpos( $products_data_cache_key, '/' ) );
-
-		if ( '' === $products_data_cache_key || '' === $older_products_data_cache_key ) {
-			return;
-		}
+		$older_products_data_cache_key = substr( $products_data_cache_key, 0, strrpos( $products_data_cache_key, '/' ) ?: strlen( $products_data_cache_key ) );
 
 		$wpdb->query(
             $wpdb->prepare(

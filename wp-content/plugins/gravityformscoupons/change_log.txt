@@ -1,3 +1,10 @@
+### 3.4.0 | 2024-10-09
+- Added support for the form validation placement setting.
+- Updated the style enqueuing logic to be compatible with Gravity Forms 2.9.0.
+- Updated the remove button text and aria-label to be translatable.
+- Updated error messages in the form editor to use a dialog instead of an alert with Gravity Forms 2.9.0.
+- API: Removed the deprecated form Theme Framework global CSS API properties.
+
 ### 3.3.0 | 2023-11-16
 - Updated the theme framework variables to be compatible with Gravity Forms 2.8.
 - Fixed an issue where the datepicker doesn't appear when creating a coupon with no conflict mode enabled.

@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by gravityview on 14-August-2024 using {@see https://github.com/BrianHenryIE/strauss}.
+ * Modified by gravityview on 15-October-2024 using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\GravityView\Foundation;
@@ -63,7 +63,7 @@ function is_disabled_via_url( $plugin_file ) {
 
 	if ( isset( $_COOKIE[ $cookie ] ) ) {
 		if ( isset( $_GET['gk_enable_loading'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-			setcookie( $cookie, false, time() - $cookie_expiry_time );
+			setcookie( $cookie, '', time() - $cookie_expiry_time );
 
 			return false;
 		}

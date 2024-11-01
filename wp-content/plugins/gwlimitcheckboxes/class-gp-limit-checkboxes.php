@@ -437,7 +437,13 @@ class GP_Limit_Checkboxes extends GWPerk {
 			return false;
 		}
 
-		if ( $field['pageNumber'] != GFFormDisplay::get_source_page( $form['id'] ) ) {
+		// Field should not be validated for Limit Checkboxes if it is not on the current page.
+		// But will need to be validated if it's the last page.
+		$is_last_page = method_exists( 'GFFormDisplay', 'is_last_page' ) ?
+			GFFormDisplay::is_last_page( $form ) :
+			\RGForms::post( "gform_target_page_number_{$form['id']}" ) == '0';
+
+		if ( $field['pageNumber'] != GFFormDisplay::get_source_page( $form['id'] ) && ! GFFormDisplay::is_last_page( $form ) ) {
 			return false;
 		}
 

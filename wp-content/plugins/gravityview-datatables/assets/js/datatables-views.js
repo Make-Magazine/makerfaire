@@ -64,17 +64,18 @@ window.gvDTFixedHeaderColumns = window.gvDTFixedHeaderColumns || {};
 				}
 
 				input = $( '<input/>' )
-					.attr( 'type', column.atts.type )
+					.attr( 'type', column.atts.field_type )
 					.attr( 'placeholder', column.atts.placeholder )
 					.attr( 'min', ( column.atts.min || null ) )
 					.attr( 'max', ( column.atts.max || null ) )
 					.attr( 'step', ( column.atts.step || null ) );
 
-				if ( 'select' === column.atts.type && column.atts.options ) {
+				if ( [ 'select', 'chainedselect', 'checkbox', 'multiselect' ].includes( column.atts.field_type ) && column.atts.options ) {
 					input = $( '<select></select>' )
 						.append( $( '<option>' )
 							.val( '' )
-							.text( column.atts.placeholder || '' ) );
+							.text( column.atts.placeholder || '' )
+						);
 
 					var options;
 
@@ -88,9 +89,10 @@ window.gvDTFixedHeaderColumns = window.gvDTFixedHeaderColumns || {};
 					$.each( options, function ( d, j ) {
 						input.append( $( '<option>' )
 							.val( $( '<div />' ).html( j.value ).text() )
-							.text( ( j.text || j.label ) ) );
+							.text( $( '<div />' ).html( j.text || j.label ).text() )
+						);
 					} );
-				} else if ( 'date_range' === column.atts.type ) {
+				} else if ( 'date_range' === column.atts.field_type ) {
 					input = $('<div/>').addClass('date-input-wrapper');
 
 					const type = 'date';
@@ -110,7 +112,7 @@ window.gvDTFixedHeaderColumns = window.gvDTFixedHeaderColumns || {};
 						.attr( 'step', ( column.atts.step || null ) );
 
 					input.append(fromDateInput).append(toDateInput);
-				} else if ( 'date' === column.atts.type ) {
+				} else if ( 'date' === column.atts.field_type ) {
 					input.removeAttr( 'placeholder' ).attr( 'title', column.atts.title );
 				}
 
@@ -226,10 +228,10 @@ window.gvDTFixedHeaderColumns = window.gvDTFixedHeaderColumns || {};
 				var options = window.gvDTglobals[ i ];
 				var viewId = $( this ).attr( 'data-viewid' );
 
-				gvDataTables.tables[ viewId ] = {};
-
-				// assign ajax data to the global object
-				gvDataTables.tables[ viewId ].data = options.ajax.data;
+				gvDataTables.tables[ viewId ] = {
+					emptyServerResponse: false,
+					data: options.ajax.data,
+				};
 
 				options.buttons = gvDataTables.setButtons( options );
 
@@ -336,10 +338,6 @@ window.gvDTFixedHeaderColumns = window.gvDTFixedHeaderColumns || {};
 
 				// Configure custom render logic for columns.
 				options.columns.forEach( column => {
-					if ( ![ 'date', 'search' ].includes( column.type ) ) {
-						return;
-					}
-
 					// Use shadow data object to sort columns.
 					column.render = ( data, type, row, settings ) => {
 						if ( type !== 'sort' ) {
@@ -349,6 +347,26 @@ window.gvDTFixedHeaderColumns = window.gvDTFixedHeaderColumns || {};
 						return gvDataTables.tables?.[viewId]?.shadowData?.[ settings.row ]?.[ settings.col ] ?? data;
 					};
 				} );
+
+				if ( options.ajax ) {
+					// Handle empty server response.
+					options.ajax = $.extend( {}, options.ajax, {
+						dataFilter: function ( data, type ) {
+							if ( data !== '' ) {
+								return data;
+							}
+
+							gvDataTables.tables[ viewId ].emptyServerResponse = true;
+
+							return JSON.stringify( {
+								draw: options.ajax?.draw || 0,
+								recordsTotal: 0,
+								recordsFiltered: 0,
+								data: []
+							} );
+						}
+					} );
+				}
 
 				// Client-side processing is on.
 				if ( !options.serverSide && options.ajax ) {
@@ -598,6 +616,7 @@ window.gvDTFixedHeaderColumns = window.gvDTFixedHeaderColumns || {};
 				gvDataTables.tables[ viewId ].table
 					.on( 'draw.dt', function ( e, settings ) {
 						var api = new $.fn.dataTable.Api( settings );
+
 						if ( api.column( 0 ).data().length ) {
 							$( e.target )
 								.parents( '.gv-container-no-results' )
@@ -609,6 +628,9 @@ window.gvDTFixedHeaderColumns = window.gvDTFixedHeaderColumns || {};
 						var viewId = $( e.target ).data( 'viewid' );
 						var tableData = gvDataTables.tables[ viewId ].data ?? null;
 						var getData = ( tableData && tableData.hasOwnProperty( 'getData' ) ) ? tableData.getData : null;
+						var $viewContainer = $( e.target ).parents( 'div[id^=gv-view-]' );
+						var noEntriesOption = tableData?.noEntriesOption * 1;
+						var hideUntilSearched = tableData?.hideUntilSearched * 1;
 
 						if (
 							api.data().length === 0 && // No entries.
@@ -623,12 +645,9 @@ window.gvDTFixedHeaderColumns = window.gvDTFixedHeaderColumns || {};
 
 							$( e.target ).find( '.dataTables_empty' ).text( zeroRecords );
 
-							var noEntriesOption = tableData && tableData.hasOwnProperty( 'noEntriesOption' ) ? tableData.noEntriesOption * 1 : null;
-
 							switch ( noEntriesOption ) {
 								case 1: // Show a form.
-									$container = $( e.target ).parents( 'div[id^=gv-view-]' );
-									$container
+									$viewContainer
 										.find( '[id^=gv-datatables-],.gv-widgets-header,.gv-powered-by' ).hide().end()
 										.find( '.gv-datatables-form-container' ).removeClass( 'gv-hidden' );
 									break;
@@ -644,8 +663,19 @@ window.gvDTFixedHeaderColumns = window.gvDTFixedHeaderColumns || {};
 							}
 
 						} else {
+							// Entries found.
+							if ( !hideUntilSearched && $( gvDataTables.tables[ viewId ].table.table().container() ).is( ':hidden' ) ) {
+								$viewContainer
+									.find( '.gv-widgets-header, .gv-widgets-footer, .gv-datatables-container' )
+									.removeClass( 'gv-hidden' );
+
+								// Unsetting width fixes the issue with the table not being displayed properly after being unhidden.
+								// api.columns().adjust() doesn't work in this case.
+								$viewContainer.find( 'table.dataTable' ).css( 'width', '' );
+							}
+
 							// No search results.
-							const emptyTable = $('<div/>').html( options.language.emptyTable ).text();
+							const emptyTable = $('<div/>').html( gvDataTables.tables[ viewId ].emptyServerResponse ? options.language.emptyServerResponse : options.language.emptyTable ).text();
 
 							$( e.target ).find( '.dataTables_empty' ).text( emptyTable );
 						}
@@ -667,7 +697,7 @@ window.gvDTFixedHeaderColumns = window.gvDTFixedHeaderColumns || {};
 						gvDataTables.repositionLoader( $( e.target ) );
 					} )
 					.on( 'xhr.dt', function ( e, settings, json, xhr ) {
-						if ( json.shadowData ) {
+						if ( json?.shadowData ) {
 							const shadowData = buildShadowDataObject( { data: json.data, shadowData: json.shadowData, columns: options.columns } );
 
 							json.shadowData = shadowData;
@@ -816,6 +846,9 @@ window.gvDTFixedHeaderColumns = window.gvDTFixedHeaderColumns || {};
 					return $tableEl.dataTable().api().columns().visible()[ idx ];
 				},
 				format: {
+					header: function ( data, columnIdx, row ) {
+						return $( row ).find( '.gv-field-label' ).text();
+					},
 					body: function ( data, column, row ) {
 
 						var newValue = data;
@@ -966,8 +999,11 @@ window.gvDTFixedHeaderColumns = window.gvDTFixedHeaderColumns || {};
 						$table.DataTable().settings()[ 0 ].ajax = currentTableOptions._ajax;
 					}
 
-					// reload table
-					if ( currentTableOptions.serverSide ) {
+					const shouldUseAjax = currentTableOptions.serverSide ||
+						( !currentTableOptions.serverSide && !gvDataTables.tables[ viewId ].allRecordsLoaded );
+
+					// Reload table.
+					if ( shouldUseAjax ) {
 						gvDataTables.tables[ viewId ].allRecordsLoaded = true;
 
 						$table.DataTable().ajax.reload();
@@ -1016,7 +1052,7 @@ window.gvDTFixedHeaderColumns = window.gvDTFixedHeaderColumns || {};
 				}
 
 				if ( tableData.hideUntilSearched * 1 ) {
-					$container.toggleClass( 'hidden gv-hidden', inputs.length <= 1 );
+					delete ( tableData.hideUntilSearched );
 				}
 
 				getData = convertFormValuesToJSON( inputs );
@@ -1191,7 +1227,7 @@ window.gvDTFixedHeaderColumns = window.gvDTFixedHeaderColumns || {};
 				let value = '';
 				const columnFilterValue = fieldFiltersColumn.find( 'input, select' ).val() ?? '';
 
-				if ( [ 'date', 'date_range' ].includes( column.atts?.type ) ) {
+				if ( [ 'date', 'date_range' ].includes( column.atts?.field_type ) ) {
 					const dateInputs = fieldFiltersColumn.find( 'input' );
 
 					value = `${ dateInputs.eq( 0 ).val() }--${ dateInputs.eq( 1 ).val() }`.replace( /--$/, '' ); // Format: `start--end`.
@@ -1214,7 +1250,7 @@ window.gvDTFixedHeaderColumns = window.gvDTFixedHeaderColumns || {};
 			if ( searchWidgetValues.length && gvDataTables.tables[ viewId ].allRecordsLoaded ) {
 				const searchFn = ( { value: searchWidgetValue, filterName } ) => {
 					const column = columns.find( column => filterName === column.name.replace( 'gv_', 'filter_' ).replace( '.', '_' ) );
-					const exactMatch = ( searchWidgetValue.startsWith( '"' ) && searchWidgetValue.endsWith( '"' ) ) || column?.atts?.type === 'select';
+					const exactMatch = ( searchWidgetValue.startsWith( '"' ) && searchWidgetValue.endsWith( '"' ) ) || column?.atts?.field_type === 'select';
 
 					// Is "search everything" used or the mode is "any"? Match any values in the row.
 					if ( filterName === 'gv_search' || searchWidgetMode !== 'all' ) {
@@ -1252,9 +1288,9 @@ window.gvDTFixedHeaderColumns = window.gvDTFixedHeaderColumns || {};
 
 				filterValue = filterValue ?? '';
 
-				const exactMatch = ( filterValue.startsWith( '"' ) && filterValue.endsWith( '"' ) ) || settings.oInit.aoColumns[ columnIndex ]?.atts?.type === 'select';
+				const exactMatch = ( filterValue.startsWith( '"' ) && filterValue.endsWith( '"' ) ) || settings.oInit.aoColumns[ columnIndex ]?.atts?.field_type === 'select';
 
-				if ( [ 'date', 'date_range' ].includes( column.atts?.type ) ) {
+				if ( [ 'date', 'date_range' ].includes( column.atts.field_type ) ) {
 					const [ fromDate, toDate ] = filterValue.split( '--' );
 
 					const fromDateStamp = ( new Date( fromDate + 'T00:00:00Z' ) ).getTime() || 0;

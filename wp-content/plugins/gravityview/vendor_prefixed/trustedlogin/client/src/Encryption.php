@@ -7,7 +7,7 @@
  * @copyright 2021 Katz Web Services, Inc.
  *
  * @license GPL-2.0-or-later
- * Modified by gravityview on 14-August-2024 using {@see https://github.com/BrianHenryIE/strauss}.
+ * Modified by gravityview on 15-October-2024 using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\GravityView\Foundation\ThirdParty\TrustedLogin;
@@ -17,9 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-use Exception;
 use WP_Error;
-use Sodium;
 
 /**
  * Class Encryption
@@ -170,14 +168,14 @@ final class Encryption {
 		}
 
 		if ( ! function_exists( 'openssl_random_pseudo_bytes' ) ) {
-			return new \WP_Error( 'generate_hash_failed', 'Could not generate a secure hash with random_bytes or openssl.' );
+			return new WP_Error( 'generate_hash_failed', 'Could not generate a secure hash with random_bytes or openssl.' );
 		}
 
 		$crypto_strong = false;
 		$hash          = openssl_random_pseudo_bytes( $byte_length, $crypto_strong );
 
 		if ( ! $crypto_strong ) {
-			return new \WP_Error( 'openssl_not_strong_crypto', 'Site could not generate a secure hash with OpenSSL.' );
+			return new WP_Error( 'openssl_not_strong_crypto', 'Site could not generate a secure hash with OpenSSL.' );
 		}
 
 		return $hash;
@@ -197,29 +195,32 @@ final class Encryption {
 	public static function hash( $string_to_hash, $length = 16 ) {
 
 		if ( ! function_exists( 'sodium_crypto_generichash' ) ) {
-			return new \WP_Error( 'sodium_crypto_generichash_not_available', 'sodium_crypto_generichash not available' );
+			return new WP_Error( 'sodium_crypto_generichash_not_available', 'sodium_crypto_generichash not available' );
 		}
 
 		try {
 			$hash_bin = sodium_crypto_generichash( $string_to_hash, '', (int) $length );
 			$hash     = sodium_bin2hex( $hash_bin );
+			// @phpstan-ignore-next-line
 		} catch ( \TypeError $e ) {
-			return new \WP_Error(
+			return new WP_Error(
 				'encryption_failed_generichash_typeerror',
 				sprintf( 'Error while generating hash: %s (%s)', $e->getMessage(), $e->getCode() )
 			);
+			// @phpstan-ignore-next-line
 		} catch ( \Error $e ) {
-			return new \WP_Error(
+			return new WP_Error(
 				'encryption_failed_generichash_error',
 				sprintf( 'Error while generating hash: %s (%s)', $e->getMessage(), $e->getCode() )
 			);
 		} catch ( \SodiumException $e ) {
-			return new \WP_Error(
+			return new WP_Error(
 				'encryption_failed_generichash_sodium',
 				sprintf( 'Error while generating hash: %s (%s)', $e->getMessage(), $e->getCode() )
 			);
+			// @phpstan-ignore-next-line
 		} catch ( \Exception $e ) {
-			return new \WP_Error(
+			return new WP_Error(
 				'encryption_failed_generichash',
 				sprintf( 'Error while generating hash: %s (%s)', $e->getMessage(), $e->getCode() )
 			);
@@ -339,7 +340,7 @@ final class Encryption {
 
 		if ( is_wp_error( $response_json ) ) {
 			if ( 'not_found' === $response_json->get_error_code() ) {
-				return new \WP_Error( 'not_found', __( 'Encryption key could not be fetched, Vendor site returned 404.', 'gk-gravityview' ) );
+				return new WP_Error( 'not_found', __( 'Encryption key could not be fetched, Vendor site returned 404.', 'gk-gravityview' ) );
 			}
 
 			return $response_json;
@@ -364,11 +365,11 @@ final class Encryption {
 	public function encrypt( $data, $nonce, $alice_secret_key ) {
 
 		if ( empty( $data ) ) {
-			return new \WP_Error( 'no_data', 'No data provided.' );
+			return new WP_Error( 'no_data', 'No data provided.' );
 		}
 
 		if ( ! function_exists( 'sodium_crypto_secretbox' ) ) {
-			return new \WP_Error( 'sodium_crypto_secretbox_not_available', 'lib_sodium not available' );
+			return new WP_Error( 'sodium_crypto_secretbox_not_available', 'lib_sodium not available' );
 		}
 
 		$bob_public_key = $this->get_vendor_public_key();
@@ -381,17 +382,13 @@ final class Encryption {
 			$alice_to_bob_kp = sodium_crypto_box_keypair_from_secretkey_and_publickey( $alice_secret_key, \sodium_hex2bin( $bob_public_key ) );
 			$encrypted       = sodium_crypto_box( $data, $nonce, $alice_to_bob_kp );
 		} catch ( \SodiumException $e ) {
-			return new \WP_Error(
+			return new WP_Error(
 				'encryption_failed_cryptobox',
 				sprintf( 'Error while encrypting the envelope: %s (%s)', $e->getMessage(), $e->getCode() )
 			);
-		} catch ( \RangeException $e ) {
-			return new \WP_Error(
-				'encryption_failed_cryptobox_rangeexception',
-				sprintf( 'Error while encrypting the envelope: %s (%s)', $e->getMessage(), $e->getCode() )
-			);
+			// @phpstan-ignore-next-line
 		} catch ( \TypeError $e ) {
-			return new \WP_Error(
+			return new WP_Error(
 				'encryption_failed_cryptobox_typeerror',
 				sprintf( 'Error while encrypting the envelope: %s (%s)', $e->getMessage(), $e->getCode() )
 			);
@@ -411,13 +408,13 @@ final class Encryption {
 	public function get_nonce() {
 
 		if ( ! function_exists( 'random_bytes' ) ) {
-			return new \WP_Error( 'missing_function', 'No random_bytes function installed.' );
+			return new WP_Error( 'missing_function', 'No random_bytes function installed.' );
 		}
 
 		try {
 			$nonce = random_bytes( SODIUM_CRYPTO_SECRETBOX_NONCEBYTES );
 		} catch ( \Exception $e ) {
-			return new \WP_Error( 'encryption_failed_randombytes', sprintf( 'Unable to generate encryption nonce: %s (%s)', $e->getMessage(), $e->getCode() ) );
+			return new WP_Error( 'encryption_failed_randombytes', sprintf( 'Unable to generate encryption nonce: %s (%s)', $e->getMessage(), $e->getCode() ) );
 		}
 
 		return $nonce;
@@ -441,7 +438,7 @@ final class Encryption {
 	public function generate_keys() {
 
 		if ( ! function_exists( 'sodium_crypto_box_keypair' ) ) {
-			return new \WP_Error( 'sodium_crypto_secretbox_not_available', 'lib_sodium not available' );
+			return new WP_Error( 'sodium_crypto_secretbox_not_available', 'lib_sodium not available' );
 		}
 
 		// In our build Alice = Client & Bob = Vendor.

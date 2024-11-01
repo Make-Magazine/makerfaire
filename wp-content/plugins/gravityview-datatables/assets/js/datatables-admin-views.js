@@ -22,8 +22,7 @@
             gvDataTablesExt.has_tabs = $( '#gravityview_settings' ).data("ui-tabs");
 
 			$('#gravityview_directory_template')
-				.on( 'change', gvDataTablesExt.toggleMetaboxAndRowGroup )
-				.trigger('change');
+				.on( 'change', gvDataTablesExt.toggleMetaboxAndRowGroup );
 
 			$('#datatables_settingsbuttons, #datatables_settingsscroller, #datatables_settingsauto_update, #datatables_settingsrowgroup')
 				.on( 'change', gvDataTablesExt.showGroupOptions )

@@ -136,9 +136,9 @@
 				<?php
 				em_options_radio_binary ( __( 'Display free booking summary?', 'events-manager'), 'dbem_bookings_summary_free', __( 'Display the booking summary if the event is free. If there are any available tickets worth more than 0 then the event is not considered free.', 'events-manager') );
 				em_options_input_text ( __( 'Booking summary default text', 'events-manager'), 'dbem_bookings_summary_message', __( 'When no tickets are selected, this text will appear in place of a booking summary, prompting users to select a ticket.', 'events-manager'));
-				em_options_radio_binary ( __( 'Display taxes separately?', 'events-manager'), 'dbem_bookings_summary_taxes_itemized', __( 'Display ticket prices without tax and calculate the tax total separately.', 'events-manager') );
+				em_options_radio_binary ( __( 'Display taxes separately?', 'events-manager'), 'dbem_bookings_summary_taxes_itemized', __( 'Display ticket prices without tax and calculate the tax total separately.', 'events-manager'), '', '#dbem_bookings_summary_subtotal_exc_taxes_row', true );
+				em_options_radio_binary ( __( 'Exclude taxes from subtotal?', 'events-manager'), 'dbem_bookings_summary_subtotal_exc_taxes', __( 'Subtotals will exclude taxes and display taxes separately.', 'events-manager') );
 				em_options_radio_binary ( __( 'Display subsection titles?', 'events-manager'), 'dbem_bookings_summary_subsections', __( 'Display subsection titles above groups of line items, such as taxes, discounts and surcharges.', 'events-manager') );
-				
 				?>
 			</tbody>
 			<tr class="em-header"><td colspan='2'><h4><?php esc_html_e('Booking form section headers','events-manager') ?></h4></td></tr>
@@ -253,11 +253,39 @@
 			<table class='form-table'>
 				<?php
 				em_options_radio_binary ( __( 'Display on WP Dashboard', 'events-manager'), 'dbem_booking_charts_wpdashboard');
+				em_options_radio_binary ( __( 'Display on Frontend', 'events-manager'), 'dbem_booking_charts_frontend');
+				?>
+				<tbody class="em-opt-chart-options-settings hidden">
+				<?php
 				em_options_radio_binary ( __( 'Display on bookings dashboard', 'events-manager'), 'dbem_booking_charts_dashboard');
 				em_options_radio_binary ( __( 'Display on event bookings admin', 'events-manager'), 'dbem_booking_charts_event');
+				?>
+				</tbody>
+				<?php
 				echo $save_button;
 				?>
 			</table>
+			<script>
+				document.addEventListener('DOMContentLoaded', function(){
+					document.querySelectorAll('[name="dbem_booking_charts_wpdashboard"],[name="dbem_booking_charts_frontend"]').forEach( function(el) {
+						el.addEventListener('click', function(){
+							if ( el.value === '1' ) {
+								document.querySelector('.em-opt-chart-options-settings').classList.remove('hidden');
+							} else {
+								// check if there are any yes checked
+								let checked = document.querySelectorAll('[name="dbem_booking_charts_wpdashboard"][value="1"]:checked,[name="dbem_booking_charts_frontend"][value="1"]:checked');
+								if ( checked && checked.length === 0 ) {
+									document.querySelector('.em-opt-chart-options-settings').classList.add('hidden');
+								}
+							}
+						});
+						let checked = document.querySelectorAll('[name="dbem_booking_charts_wpdashboard"][value="1"]:checked,[name="dbem_booking_charts_frontend"][value="1"]:checked');
+						if ( checked && checked.length > 0 ) {
+							document.querySelector('.em-opt-chart-options-settings').classList.remove('hidden');
+						}
+					});
+				})
+			</script>
 		</div> <!-- . inside -->
 	</div> <!-- .postbox -->
 

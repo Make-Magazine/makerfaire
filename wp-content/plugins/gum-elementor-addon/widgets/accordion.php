@@ -469,24 +469,23 @@ class Gum_Elementor_Widget_Accordion{
 
         $tab_title_setting_key = $this->get_repeater_setting_key( 'tab_title', 'tabs', $index );
         $tab_content_setting_key = $this->get_repeater_setting_key( 'tab_content', 'tabs', $index );
-
-//        $this->add_inline_editing_attributes( $tab_content_setting_key, 'advanced', $element );     
+  
         ?>
         <div class="elementor-accordion-item">
           <<?php echo Utils::validate_html_tag( $settings['title_html_tag'] ); ?> <?php echo $element->get_render_attribute_string( $tab_title_setting_key ); ?>>
             <?php if ( $has_icon ) : ?>
-              <span class="elementor-accordion-icon elementor-accordion-icon-<?php echo esc_attr( $settings['icon_align'] ); ?>" aria-hidden="true">
+              <span class="elementor-accordion-icon elementor-accordion-icon-<?php esc_attr_e( $settings['icon_align'] ); ?>" aria-hidden="true">
               <?php
               if ( $is_new || $migrated ) { ?>
                 <span class="elementor-accordion-icon-closed"><?php Icons_Manager::render_icon( $settings['selected_icon'] ); ?></span>
                 <span class="elementor-accordion-icon-opened"><?php Icons_Manager::render_icon( $settings['selected_active_icon'] ); ?></span>
               <?php } else { ?>
-                <i class="elementor-accordion-icon-closed <?php echo esc_attr( $settings['icon'] ); ?>"></i>
-                <i class="elementor-accordion-icon-opened <?php echo esc_attr( $settings['icon_active'] ); ?>"></i>
+                <i class="elementor-accordion-icon-closed <?php esc_attr_e( $settings['icon'] ); ?>"></i>
+                <i class="elementor-accordion-icon-opened <?php esc_attr_e( $settings['icon_active'] ); ?>"></i>
               <?php } ?>
               </span>
             <?php endif; ?>
-            <a class="elementor-accordion-title" href=""><?php echo esc_html($item['tab_title']); 
+            <a class="elementor-accordion-title" href=""><?php esc_html_e($item['tab_title']); 
 
             $iconHTML = '';
 

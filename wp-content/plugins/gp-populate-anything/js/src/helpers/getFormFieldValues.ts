@@ -66,9 +66,23 @@ function serializeAll(
 					});
 				}
 
+				/**
+				 * Filter the AJAX form field values used when dynamically refreshing fields and Live Merge Tags.
+				 *
+				 * @param string elVal  The form field value.
+				 * @param string elName The form field name.
+				 *
+				 * @since 2.1.11
+				 */
+				const elVal = window.gform.applyFilters(
+					'gppa_ajax_form_field_values',
+					(val as string)?.replace(rCRLF, '\n'),
+					el.name
+				);
+
 				return {
 					name: el.name,
-					value: (val as string)?.replace(rCRLF, '\n'),
+					value: elVal,
 					el,
 				};
 			})

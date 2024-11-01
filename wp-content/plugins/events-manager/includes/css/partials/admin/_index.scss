@@ -1,3 +1,4 @@
-@import "when";
-@import "bookings";
-@import "settings";
+@use "when";
+@use "bookings";
+@use "settings";
+@use "../general";

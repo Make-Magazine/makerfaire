@@ -3,7 +3,7 @@
         'name' => 'gravitykit/advanced-filters',
         'pretty_version' => 'dev-main',
         'version' => 'dev-main',
-        'reference' => '97c0a2787f29ec2fc18ffea25a7c570f70337e37',
+        'reference' => 'ca46b312aa89c47eceba2a2c2ba17035fada6dd8',
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -13,7 +13,7 @@
         'gravitykit/advanced-filters' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
-            'reference' => '97c0a2787f29ec2fc18ffea25a7c570f70337e37',
+            'reference' => 'ca46b312aa89c47eceba2a2c2ba17035fada6dd8',
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
@@ -22,7 +22,7 @@
         'gravitykit/query-filters' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
-            'reference' => '811a57c0cfc5cce382a21715d975f7a1fa65e634',
+            'reference' => 'c7d17bb4bcf8e2acaa0b98c3d772df733fd351e7',
             'type' => 'library',
             'install_path' => __DIR__ . '/../gravitykit/query-filters',
             'aliases' => array(),

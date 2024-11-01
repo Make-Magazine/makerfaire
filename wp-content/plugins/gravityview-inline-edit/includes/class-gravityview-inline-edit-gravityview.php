@@ -55,7 +55,7 @@ final class GravityView_Inline_Edit_GravityView extends GravityView_Inline_Edit_
 
 		add_filter( 'gravityview/render/container/class', array( $this, 'add_container_class' ), 10, 2 );
 		add_action( 'gravityview/template/header', array( $this, 'maybe_add_inline_edit_toggle_button' ) );
-		add_filter( 'gravityview/template/field/output', array( $this, 'wrap_gravityview_field_value' ), 10, 2 );
+		add_filter( 'gravityview/template/field/output', array( $this, 'wrap_gravityview_field_value' ), 6, 2 );
 		add_action( 'gravityview/template/before', array( $this, 'maybe_enqueue_inline_edit_styles' ), 1 );
 		add_action( 'gravityview/template/after', array( $this, 'maybe_enqueue_inline_edit_scripts' ) );
 

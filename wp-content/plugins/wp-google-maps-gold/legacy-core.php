@@ -1558,6 +1558,12 @@ function wpgmaps_gold_plugin_api_call($def, $action, $args) {
 	
 	// Get the current version
 	$plugin_info = get_site_transient('update_plugins');
+
+    if(empty($plugin_info) || empty($plugin_info->checked) || empty($plugin_info->checked[$wpgmaps_gold_plugin_slug .'/'. $wpgmaps_gold_plugin_slug .'.php'])){
+        /* Failure */
+        return false;
+    }
+
 	$current_version = $plugin_info->checked[$wpgmaps_gold_plugin_slug .'/'. $wpgmaps_gold_plugin_slug .'.php'];
 	$args->version = $current_version;
 	
@@ -2972,7 +2978,8 @@ function wpgmza_gold_81_localize_filter($data){
 add_filter("wpgmza-map-editor-navigation-map-settings-behaviour", "wpgmza_gold_filter_atlas_novus_map_editor_navigation", 11, 1);
 function wpgmza_gold_filter_atlas_novus_map_editor_navigation($navigation){
     $navigation .= "<div class='item caret-right' data-group='map-settings-behaviour-marker-clustering'>";
-    $navigation .=  __("Marker Clustering", "wp-google-maps");
+    $navigation .=   "<span class='dashicons dashicons-image-filter'></span>";
+    $navigation .=    __("Marker Clustering", "wp-google-maps");
     $navigation .= "</div>";
     return $navigation;
 }

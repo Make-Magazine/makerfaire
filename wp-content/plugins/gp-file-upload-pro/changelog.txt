@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.4.2 | October 16, 2024
+
+- Fixed a compatibility issue with Gravity Forms 2.9.
+
 ## 1.4.1 | August 15, 2024
 
 - Added default color to the delete button. This fixes an issue where some themes may cause the delete button to not be visible.

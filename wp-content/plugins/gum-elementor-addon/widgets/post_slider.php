@@ -271,15 +271,24 @@ class Gum_Elementor_Widget_post_slider extends Widget_Base {
       'readmore_icon_align',
       [
         'label' => esc_html__( 'Icon Position', 'gum-elementor-addon' ),
-        'type' => Controls_Manager::SELECT,
-        'default' => 'left',
+        'type' => Controls_Manager::CHOOSE,
         'options' => [
-          'left' => esc_html__( 'Before', 'gum-elementor-addon' ),
-          'right' => esc_html__( 'After', 'gum-elementor-addon' ),
+          'row' => [
+            'title' => esc_html__( 'Left', 'gum-elementor-addon' ),
+            'icon' => 'eicon-h-align-left',
+          ],
+          'row-reverse' => [
+            'title' => esc_html__( 'Right', 'gum-elementor-addon' ),
+            'icon' => 'eicon-h-align-right',
+          ],
         ],
         'condition' => [
           'show_readmore' => 'yes',
           'readmore_icon[value]!' => '',
+        ],
+        'default' => 'row',
+        'selectors' => [
+            '{{WRAPPER}} .elementor-button-content-wrapper' => 'flex-direction: {{VALUE}};'
         ],
       ]
     );
@@ -1596,6 +1605,7 @@ class Gum_Elementor_Widget_post_slider extends Widget_Base {
       ]
     );
 
+
     $this->add_control(
       'readmore_icon_indent',
       [
@@ -1608,8 +1618,9 @@ class Gum_Elementor_Widget_post_slider extends Widget_Base {
         ],
         'default' =>['value'=>5, 'unit'=>'px'],
         'selectors' => [
-          '{{WRAPPER}} .elementor-button .elementor-align-icon-right' => 'margin-left: {{SIZE}}{{UNIT}};',
-          '{{WRAPPER}} .elementor-button .elementor-align-icon-left' => 'margin-right: {{SIZE}}{{UNIT}};',
+          '{{WRAPPER}} .elementor-button .elementor-align-icon-right' => 'margin-left: {{SIZE}}{{UNIT}};margin-right:0;',
+          '{{WRAPPER}} .elementor-button .elementor-align-icon-left' => 'margin-right: {{SIZE}}{{UNIT}};margin-left: 0;',
+          '{{WRAPPER}} .elementor-button .elementor-button-content-wrapper' => 'gap:{{SIZE}}{{UNIT}};'
         ],
         'condition' => ['readmore_icon[value]!' => ''],
       ]
@@ -2342,7 +2353,7 @@ class Gum_Elementor_Widget_post_slider extends Widget_Base {
       'readmore_icon_align' => [
         'class' => [
           'elementor-button-icon',
-          'elementor-align-icon-' . $settings['readmore_icon_align'],
+          'elementor-align-icon-' . sanitize_html_class( $settings['readmore_icon_align'] ),
         ],
       ],
     ] );
@@ -2350,7 +2361,7 @@ class Gum_Elementor_Widget_post_slider extends Widget_Base {
     $this->add_render_attribute( $index , 'class', 'elementor-button-text' );
     $this->add_inline_editing_attributes( $index, 'none' );
 
-    ?><div class="elementor-button-wrap<?php print ' button-align-'.esc_attr($settings['readmore_button_align']);?>"><a <?php echo $this->get_render_attribute_string( 'button-'.$index ); ?>>
+    ?><div class="elementor-button-wrap<?php print ' button-align-'.sanitize_html_class($settings['readmore_button_align']);?>"><a <?php echo $this->get_render_attribute_string( 'button-'.$index ); ?>>
           <span class="elementor-button-content-wrapper">
       <?php if ( ! empty( $settings['readmore_icon']['value'] ) ) : ?>
       <span <?php echo $this->get_render_attribute_string( 'readmore_icon_align' ); ?>>
@@ -2410,9 +2421,9 @@ class Gum_Elementor_Widget_post_slider extends Widget_Base {
                 responsiveClass:true,
                 responsive : {
                     0 : {items : 1},
-                    360 : {items : '.$grid_mobile_layout.'},
-                    768 : {items : '.$grid_table_layout.'},
-                    1024 : {items : '.$grid_layout.'}
+                    360 : {items : '.absint($grid_mobile_layout).'},
+                    768 : {items : '.absint($grid_table_layout).'},
+                    1024 : {items : '.absint($grid_layout).'}
                 },
                 loop: '.($slide_loop ? 'true':'false').',
                 dots  : '.(($slide_navigation=='dot')?"true":"false").',

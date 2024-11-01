@@ -35,7 +35,7 @@ class GravityView_Ratings_Reviews_Review_Edit extends GravityView_Ratings_Review
 
 		$comment = get_comment( $_POST['comment_ID'] );
 		if ( ! $comment ) {
-			wp_die( __( 'Comemnt ID is not valid.', 'gravityview-ratings-reviews' ) );
+			wp_die( __( 'Comment ID is not valid.', 'gravityview-ratings-reviews' ) );
 		}
 
 		if ( ! $this->is_user_allowed_to_edit_review( $comment, (int) $_POST['post_id'], $view_id ) ) {
@@ -55,7 +55,7 @@ class GravityView_Ratings_Reviews_Review_Edit extends GravityView_Ratings_Review
 
 		do_action( 'gravityview_ratings_review_edited', $comment, $updated );
 
-		$redirect = GravityView_Ratings_Reviews_Helper::get_review_permalink( $location, $comment, 'redirect' );
+		$redirect = GravityView_Ratings_Reviews_Helper::get_review_permalink( '', $comment, 'redirect' );
 		wp_safe_redirect( $redirect );
 		exit;
 
@@ -226,7 +226,7 @@ class GravityView_Ratings_Reviews_Review_Edit extends GravityView_Ratings_Review
 
 		$view_settings = GVCommon::get_template_settings( $view_id );
 
-		if ( isset( $view_settings['allow_reviews_edit'] ) && 1 !== (int) $view_settings['allow_reviews_edit'] ) {
+		if ( 1 !== (int) ( $view_settings['allow_reviews_edit'] ?? 0 ) ) {
 			return apply_filters( 'gv_review_can_edit', false, $review, $entry_id, $view_id );
 		}
 
@@ -240,15 +240,18 @@ class GravityView_Ratings_Reviews_Review_Edit extends GravityView_Ratings_Review
 		}
 
 		$time_diff             = current_time( 'timestamp' ) - strtotime( $review->comment_date );
-		$allowed_edit_duration = ( $view_settings['allow_reviews_edit_duration'] ? $view_settings['allow_reviews_edit_duration'] : 0 );
+		$allowed_edit_duration = GravityView_Ratings_Reviews_Meta_Box::DEFAULT_REVIEW_EDIT_DURATION;
+
+		if ( array_key_exists( 'allow_reviews_edit_duration', $view_settings ) ) {
+			$allowed_edit_duration = (int) $view_settings['allow_reviews_edit_duration'];
+		}
 
 		$review_edit_duration = intval( $allowed_edit_duration ) - $time_diff;
-		if ( $review_edit_duration <= 0 ) {
+
+		if ( 0 !== $allowed_edit_duration && $review_edit_duration <= 0 ) {
 			return apply_filters( 'gv_review_can_edit', false, $review, $entry_id, $view_id );
 		}
 
 		return apply_filters( 'gv_review_can_edit', true, $review, $entry_id, $view_id );
 	}
-
-
 }

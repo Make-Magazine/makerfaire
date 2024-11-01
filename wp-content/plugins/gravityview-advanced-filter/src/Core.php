@@ -314,7 +314,8 @@ HTML;
 		}
 
 		$conditions = stripslashes_deep( Utils::_POST( 'gk-query-filters' ) );
-		$filters    = json_decode( $conditions, true );
+		$filters    = json_decode( $conditions ?? 'null', true );
+
 		if ( $filters || is_null( $filters ) ) {
 			update_post_meta( $post_id, '_gravityview_filters', $filters );
 		}

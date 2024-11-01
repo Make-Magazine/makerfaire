@@ -36,6 +36,15 @@
 		}
 	}
 
+	@media only screen and (max-width: 40rem) {
+		display : none !important;
+		visibility: hidden !important;
+		&.active {
+			display: block !important;
+			visibility: visible !important;
+		}
+	}
+
 	// repeated rules for the popup or if wrapped by a form (so that scrolling is possible)
 	@mixin popup-sizing() {
 		margin: 0 auto !important;
@@ -175,6 +184,20 @@
 					margin: 0 !important;
 				}
 			}
+				display: grid;
+				grid-template-columns: 1fr 1fr;
+				align-items: center;
+
+				div:first-child {
+					justify-self: start;
+				}
+				div:not(:first-child):last-child {
+					justify-self: end;
+				}
+				button.button {
+					margin-bottom : 0 !important;
+					padding-bottom : 0 !important;
+				}
 		}
 
 		/**

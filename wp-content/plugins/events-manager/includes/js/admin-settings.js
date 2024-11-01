@@ -272,6 +272,95 @@ jQuery(document).ready(function($){
             }
         });
     }
+
+	// MultiSite Stuff
+	//events
+	$('input[name="dbem_ms_global_events"]').on('change', function(){
+		if( $('input:radio[name="dbem_ms_global_events"]:checked').val() == 1 ){
+			$("tr#dbem_ms_global_events_links_row").show();
+			$('input:radio[name="dbem_ms_global_events_links"]:checked').trigger('change');
+		}else{
+			$("tr#dbem_ms_global_events_links_row, tr#dbem_ms_events_slug_row").hide();
+		}
+	}).first().trigger('change');
+	$('input[name="dbem_ms_global_events_links"]').on('change', function(){
+		if( $('input:radio[name="dbem_ms_global_events_links"]:checked').val() == 1 ){
+			$("tr#dbem_ms_events_slug_row").hide();
+		}else{
+			$("tr#dbem_ms_events_slug_row").show();
+		}
+	}).first().trigger('change');
+	//locations
+	$('input[name="dbem_ms_mainblog_locations"]').on('change', function(){
+		if( $('input:radio[name="dbem_ms_mainblog_locations"]:checked').val() == 1 ){
+			$("tbody.em-global-locations").hide();
+		}else{
+			$("tbody.em-global-locations").show();
+		}
+	}).first().trigger('change');
+	$('input[name="dbem_ms_global_locations"]').on('change', function(){
+		if( $('input:radio[name="dbem_ms_global_locations"]:checked').val() == 1 ){
+			$("tr#dbem_ms_global_locations_links_row").show();
+			$('input:radio[name="dbem_ms_global_locations_links"]:checked').trigger('change');
+		}else{
+			$("tr#dbem_ms_global_locations_links_row, tr#dbem_ms_locations_slug_row").hide();
+		}
+	}).first().trigger('change');
+	$('input[name="dbem_ms_global_locations_links"]').on('change', function(){
+		if( $('input:radio[name="dbem_ms_global_locations_links"]:checked').val() == 1 ){
+			$("tr#dbem_ms_locations_slug_row").hide();
+		}else{
+			$("tr#dbem_ms_locations_slug_row").show();
+		}
+	});
+	//MS Mode selection hiders
+	$('input[name="dbem_ms_global_table"]').on('change', function(){ //global
+		if( $('input:radio[name="dbem_ms_global_table"]:checked').val() == 1 ){
+			$("tbody.em-global-options").show();
+			$('input:radio[name="dbem_ms_mainblog_locations"]:checked').trigger('change');
+		}else{
+			$("tbody.em-global-options").hide();
+		}
+	}).first().trigger('change');
+});
+
+jQuery(document).on('em_javascript_loaded', function(){
+	let settings = document.getElementById('em-phone-settings');
+	let phoneContainer = document.getElementById('em-phone-example-container');
+	let phone = document.getElementById('em-phone-example');
+	let options = {};
+	let selectItems = {
+		'dbem_phone_default_country' : 'initialCountry',
+		'dbem_phone_countries_include[]': 'onlyCountries',
+		'dbem_phone_countries_exclude[]': 'excludeCountries'
+	};
+	const reset = function(){
+		let iti = EM.intlTelInput.getInstance(phone);
+		if( iti ) iti.destroy();
+		// rebuild arrays so they have fresh values not referenced
+		for ( const [key, opt] of Object.entries(selectItems) ) {
+			let value = settings.querySelector('select[name="' + key + '"]').selectize.getValue();
+			options[opt] = JSON.parse(JSON.stringify(value));
+		}
+		em_setup_phone_inputs( phoneContainer, options );
+	}
+	for ( const [key, opt] of Object.entries(selectItems) ) {
+		settings.querySelector('select[name="' + key + '"]').selectize.on('change', reset);
+	}
+	let boolItems = {
+		'dbem_phone_national_format' : 'nationalMode',
+		'dbem_phone_show_selected_code' : 'separateDialCode',
+		'dbem_phone_show_flags' : 'showFlags',
+		'dbem_phone_detect' : 'detectJS',
+	};
+	for ( const [key, opt] of Object.entries(boolItems) ) {
+		settings.querySelectorAll('[name="' + key + '"]').forEach((el) => {
+			el.addEventListener('click', (e) => {
+				options[opt] = e.target.value === '1';
+				reset();
+			})
+		});
+	}
 });
 
 /*! js-cookie v3.0.1 | MIT */

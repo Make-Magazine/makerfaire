@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by gravityview on 14-August-2024 using {@see https://github.com/BrianHenryIE/strauss}.
+ * Modified by gravityview on 15-October-2024 using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\GravityView\Foundation\CLI;
@@ -24,9 +24,9 @@ class CLI {
 	 *
 	 * @since 1.2.0
 	 *
-	 * @var CLI
+	 * @var CLI|null;
 	 */
-	private static $_instance;
+	private static $_instance = null;
 
 	/**
 	 * Class constructor.
@@ -64,7 +64,7 @@ class CLI {
 	public static function register_commands() {
 		$commands = [];
 
-		$command_classes = glob( self::COMMANDS_FOLDER . '*.php' );
+		$command_classes = glob( self::COMMANDS_FOLDER . '*.php' ) ?: [];
 
 		foreach ( $command_classes as $class ) {
 			$class           = pathinfo( $class, PATHINFO_FILENAME );

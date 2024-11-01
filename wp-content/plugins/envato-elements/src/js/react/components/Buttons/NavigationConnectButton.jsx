@@ -27,8 +27,8 @@ const NavigationConnectButton = () => {
           )
         : null}
       <ExternalLinkButton
-        type='ghost'
-        label='Connect Elements Account'
+        type='primary'
+        label='Connect Envato Account'
         icon='link'
         href={tokenUrl({ utm_content: 'get_started_button' })}
         openNewWindow

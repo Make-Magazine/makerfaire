@@ -2,7 +2,7 @@
 /**
  * @license MIT
  *
- * Modified by gravitykit on 16-April-2024 using {@see https://github.com/BrianHenryIE/strauss}.
+ * Modified by gravitykit on 11-September-2024 using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\AdvancedFilter\QueryFilters;
@@ -17,6 +17,7 @@ use GravityKit\AdvancedFilter\QueryFilters\Filter\RandomFilterIdGenerator;
 use GravityKit\AdvancedFilter\QueryFilters\Filter\Visitor\CurrentUserVisitor;
 use GravityKit\AdvancedFilter\QueryFilters\Filter\Visitor\DisableAdminVisitor;
 use GravityKit\AdvancedFilter\QueryFilters\Filter\Visitor\DisableFiltersVisitor;
+use GravityKit\AdvancedFilter\QueryFilters\Filter\Visitor\EntryAwareFilterVisitor;
 use GravityKit\AdvancedFilter\QueryFilters\Filter\Visitor\FilterVisitor;
 use GravityKit\AdvancedFilter\QueryFilters\Filter\Visitor\ProcessDateVisitor;
 use GravityKit\AdvancedFilter\QueryFilters\Filter\Visitor\ProcessFieldTypeVisitor;
@@ -450,7 +451,7 @@ class QueryFilters {
 			return false;
 		}
 
-		return $this->entry_filter_service->meets_filter( $entry, $this->get_filters() );
+		return $this->entry_filter_service->meets_filter( $entry, $this->get_filters( false, $entry ) );
 	}
 
 	/**
@@ -465,16 +466,21 @@ class QueryFilters {
 	/**
 	 * Retrieves the finalized filters.
 	 *
-	 * @param bool $as_unprocessed Whether to return the filters unprocessed.
+	 * @param bool  $as_unprocessed Whether to return the filters unprocessed.
+	 * @param array $entry          An optional entry object used as context.
 	 *
 	 * @return Filter
 	 * @since 2.0.0
 	 */
-	final public function get_filters( bool $as_unprocessed = false ): Filter {
+	final public function get_filters( bool $as_unprocessed = false, array $entry = [] ): Filter {
 		$clone = clone $this->filters;
 
 		if ( ! $as_unprocessed ) {
 			foreach ( $this->get_filter_visitors() as $visitor ) {
+				if ( $visitor instanceof EntryAwareFilterVisitor ) {
+					$visitor->set_entry( $entry );
+				}
+
 				$clone->accept( $visitor );
 			}
 		}

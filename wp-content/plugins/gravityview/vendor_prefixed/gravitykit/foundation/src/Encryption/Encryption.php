@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by gravityview on 14-August-2024 using {@see https://github.com/BrianHenryIE/strauss}.
+ * Modified by gravityview on 15-October-2024 using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\GravityView\Foundation\Encryption;
@@ -20,9 +20,9 @@ class Encryption {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @var Encryption
+	 * @var array<string, Encryption>
 	 */
-	private static $_instances;
+	private static $_instances = [];
 
 	/**
 	 * Secret key used to encrypt license key.
@@ -144,7 +144,7 @@ class Encryption {
 		$encrypted = mb_substr( $encrypted, SODIUM_CRYPTO_SECRETBOX_NONCEBYTES, null, '8bit' );
 
 		try {
-			$decrypted = sodium_crypto_secretbox_open( $encrypted, $nonce, $this->_secret_key ) ?? null;
+			$decrypted = sodium_crypto_secretbox_open( $encrypted, $nonce, $this->_secret_key );
 		} catch ( Exception $e ) {
 			return null;
 		}

@@ -7,7 +7,7 @@ For the Coupons Add-On
 https://www.gravityforms.com
 
 Gravity Forms is a Rocketgenius project
-copyright 2008-2023 Rocketgenius Inc.
+copyright 2008-2024 Rocketgenius Inc.
 https://www.rocketgenius.com
 this may not be re-distributed without the
 express written permission of the author.
@@ -41,8 +41,9 @@ AND ANY CHANGES MADE HERE WILL BE OVERWRITTEN.
 	width: auto;
 }
 
-html[dir=rtl] #gform_setting_couponAmountType .gform-settings-input__container + .gform-settings-input__container {
+html[dir="rtl"] #gform_setting_couponAmountType .gform-settings-input__container + .gform-settings-input__container {
 			margin-left: unset;
 			margin-right: 1rem;
 		}
+
 /*# sourceMappingURL=admin.css.map */

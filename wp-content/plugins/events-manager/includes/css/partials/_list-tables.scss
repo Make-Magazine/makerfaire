@@ -1,71 +1,230 @@
-/* Bookings Table (originally from events-manager.css) */
-.em_obj { position:relative; }
-.em-bookings-table .em-bookings-table-trigger {
-	float: left;
-	display: block;
-	margin: 2px 8px 0 0;
-	width: 24px;
-	height: 24px;
-	background-size: 24px;
-	&:first-child{
-		margin-left: 5px;
-	}
-}
+/// Styles the em-list-tables classes used both in front and backend, providing a consistent UI on both sides.
 
-.em-bookings-table {
+/// Whether stylesheet is intended for front-end use or WP Admin area, in which case different styling is loaded.
+/// @param {boolean} $frontend
+$frontend: true !default;
 
-	.tablenav {
-		margin-bottom: 12px;
-		.actions input, .actions select {
+.em-list-table {
+	position: relative; // for spinners to load correctly
+	margin: 15px 0;
+
+	.em-list-table-triggers {
+		margin-right: 5px;
+		.em-list-table-trigger {
 			float: left;
-			margin-right: 6px;
-			max-width: 12.5rem;
-			&:first-child{
-				margin-left: 10px;
+			display: block;
+			margin: 2px 5px 0 5px;
+			width: 24px;
+			height: 36px;
+			background-position: 50% 50%;
+			background-size: 24px;
+
+			&:hover, &:focus {
+				outline: none;
+				box-shadow: none;
 			}
 		}
 	}
-	&.frontend {
-		.bulkactions {
-			display:none;
-		}
-		.tablenav .alignleft {
-			float: left;
-			margin-right: 10px;
-		}
-	}
 
-	.table-wrap {
-		margin-top:5px;
+	.em-list-table-error-notice {
 		clear: both;
+	}
 
-		thead {
-			.check-column {
-				padding: 0 0 0 3px;
+	// Table styling is mainly on the front-end, in the backend we let WP take over and apply its WP_List_Table CSS to allow a consistent looking UI
+	&.frontend {
+		// Sorting elements, alternate table colors and styling are front-end only
+		div.table-wrap {
+		}
+
+		// Pagination elements only modified in front-end, let WP do it's thing backend
+		div.tablenav {
+			.tablenav-pages {
+				float:right;
+				grid-area: pagination;
+				text-wrap: nowrap;
+				text-align: right;
+				margin: 0 0 15px;
+
+				&.no-pages, &.one-page {
+					@if $frontend {
+						padding-top: 18px;
+					}
+					.pagination-links {
+						display: none;
+						visibility: hidden;
+					}
+				}
+
+				.button {
+					padding: 0 12px !important;
+					margin: 0 !important;
+					&.disabled {
+						display: none;
+					}
+				}
+				input.current-page {
+					width: auto !important;
+					margin: 0 !important;
+				}
 			}
 		}
-		tr {
-			transition: opacity 800ms ease-out;
-		}
-		tr.faded-out {
-			opacity: 0;
-		}
-		.check-column {
-			width: 5.5rem;
-			padding: 10px 0 10px 3px;
+	}
 
-			button {
+	// WP Admin area-specific styling
+	&.backend {
+		div.tablenav {
+			> .actions {
+				.actions {
+					vertical-align: middle;
+				}
+			}
+		}
+	}
+
+	&.has-filter {
+		div.tablenav {
+			margin-bottom: 0;
+			.actions.filters {
+				margin-bottom: 15px;
+			}
+		}
+	}
+
+	div.tablenav {
+		clear: both;
+		width: 100%;
+		margin-bottom: 12px;
+
+		> br.clear {
+			display: none;
+			visibility: hidden;
+		}
+
+		> .actions {
+			display: block;
+			float: left;
+			margin: 0 0 15px;
+			text-align: left;
+
+			&:last-child {
+				margin-bottom: 0;
+			}
+
+			&.filters {
+				clear: left;
+			}
+
+			.actions {
+				display: inline-block;
+				float: none;
+				margin-right: 0;
+				padding-right: 0;
+				vertical-align: top;
+				&:not(:last-child, :first-child) {
+					margin-left: 10px;
+					padding-left: 10px;
+					border-left: 1px solid var(--border-color-softer);
+				}
+				&:last-child {
+					margin-left: 10px;
+				}
+				:last-of-type {
+					margin-right: 0;
+				}
+				&.bulkactions-input {
+					text-wrap: nowrap;
+				}
+			}
+			input, select, button {
+				max-width: 12.5rem;
+				min-height: auto;
+				margin: 0 6px 0 0 !important;
+			}
+
+			button.filters-trigger, button.small-expand-trigger {
+				width: 25px;
+				height: 25px;
+				background-size: 25px;
+				padding: 0 12.5px !important;
+				margin: 0 !important;
+				background-repeat: no-repeat;
+				background-position: center center;
+				background-color: transparent !important;
+				text-indent: -10000px !important;
+				border: 0 !important;
+				background-image: var(--icon-filter-hide);
+				opacity: 0.5;
+				&.hidden {
+					display: inline-block !important;
+					visibility: visible !important;
+					background-image: var(--icon-filter);
+					opacity: 1;
+				}
+				&:active, &:focus {
+					border: none !important;
+					box-shadow: none !important;
+					outline: none !important;
+				}
+			}
+
+			button.small-expand-trigger {
+				display: none;
+				visibility: hidden;
+			}
+		}
+
+		select {
+			width: auto !important;
+			padding-right: 30px !important;
+		}
+
+		// special bottom stuff
+		&.bottom {
+			margin-top: 15px;
+			align-items: start;
+
+			.tablenav-pages {
+				&.no-pages, &.one-page {
+					padding-top: 0;
+				}
+			}
+		}
+
+		@if $frontend {
+
+		} @else {
+			.em-list-table-trigger {
+				height: 25px;
+				margin-top: 0;
+			}
+		}
+
+	}
+
+	div.table-wrap {
+		overflow-x: auto;
+		border: 1px solid var(--border-color);
+		margin: 0;
+		clear: both;
+		margin-top:5px;
+		font-size: 14px;
+
+		.check-column {
+			text-wrap: nowrap;
+			padding: 10px 0 10px 10px !important;
+
+			button.em-tooltip-ddm {
 				font-family: "Arial", sans-serif !important;
 				transform: rotate(-90deg) !important;
 				border: 0 !important;
 				background: none !important;
 				width: 22px !important;
-				height: 16px !important;
+				height: 1px !important;
 				font-size: 16px !important;
 				line-height: 3px !important;
 				font-weight: bold !important;
 				color: #aaa !important;
-				padding: 0 3px !important;
+				padding: 0 0 10px 6px !important;
 				cursor: pointer !important;
 
 				&:active, &:focus {
@@ -74,21 +233,164 @@
 				}
 			}
 		}
-		tr.loading {
-			pointer-events: none;
-			cursor: not-allowed;
-			td:not(.check-column) {
-				opacity: 0.5;
-			}
+
+		thead {
 			.check-column {
-				input {
-					opacity : 0.3;
+				padding: 0 0 0 3px;
+			}
+		}
+
+		table {
+			width: 100%;
+			margin: 0 !important;
+			border: 0 !important;
+		}
+
+		.toggle-row {
+			display: none;
+			visibility: hidden;
+		}
+
+		tr {
+			transition: opacity 800ms ease-out;
+
+			&.loading {
+				pointer-events: none;
+				cursor: not-allowed;
+
+				td:not(.check-column) {
+					opacity: 0.5;
 				}
-				button {
-					background: var(--icon-spinner) 3px 0 no-repeat;
-					background-size: 16px;
-					text-indent: -99999px;
-					overflow: hidden;
+
+				.check-column {
+					input {
+						opacity: 0.3;
+					}
+
+					button {
+						background: var(--icon-spinner) 3px 0 no-repeat;
+						background-size: 16px;
+						text-indent: -99999px;
+						overflow: hidden;
+					}
+				}
+			}
+
+			&.faded-out {
+				opacity: 0;
+			}
+		}
+
+		td.column-primary {
+			.em-list-table-row-responsive-meta {
+				display: none;
+				visibility: hidden;
+			}
+			.primary-column-content {
+				display: inline-block;
+			}
+		}
+
+		@if $frontend {
+			thead, tfoot {
+				td.manage-column {
+					vertical-align: middle;
+
+					label {
+						position: absolute;
+					}
+				}
+				th {
+					vertical-align: center;
+				}
+			}
+
+			tbody {
+				td {
+					vertical-align: top;
+				}
+
+				> :nth-child(odd) {
+					background-color: #fafafa;
+				}
+
+				> .selected {
+					background-color: #f6f6f6;
+				}
+			}
+
+			tfoot {
+				display: none;
+
+				td, th {
+					border-bottom: 0 !important;
+				}
+			}
+
+			th {
+				font-weight: normal;
+				vertical-align: top;
+				padding: 10px 12px !important;
+
+				&.sortable, &.sorted {
+					a {
+						display: grid;
+						grid-gap: 10px;
+						grid-template-columns: auto 15px;
+						align-items: center;
+						color: var(--text-color-normal) !important;
+
+						&:hover {
+							color: var(--text-color-normal);
+							text-decoration: none;
+						}
+
+						.sorting-indicators {
+							display: grid;
+							grid-template-columns: 1fr;
+							grid-template-rows: min-content;
+
+							.sorting-indicator {
+								display: block;
+								width: 12px;
+								height: 12px;
+								background-size: 12px;
+								background-repeat: no-repeat;
+
+								&.asc {
+									background-image: var(--icon-chevron-up);
+								}
+
+								&.desc {
+									background-image: var(--icon-chevron-down);
+								}
+							}
+						}
+					}
+
+					&:hover {
+						&.asc .sorting-indicator.asc, &.desc .sorting-indicator.desc {
+							opacity: 0.2;
+						}
+
+						&.asc .sorting-indicator.desc, &.desc .sorting-indicator.asc {
+							opacity: 1 !important;
+						}
+					}
+
+					&.sorted {
+						&.asc .sorting-indicator.desc, &.desc .sorting-indicator.asc {
+							opacity: 0.2;
+						}
+					}
+				}
+			}
+
+			td {
+				padding: 11px 12px !important;
+
+				&.column-primary {
+					text-wrap: nowrap;
 				}
 			}
 		}
@@ -102,17 +404,399 @@
 			&.em-icon-cross-circle { background : red; -webkit-mask-image: var(--icon-cross-circle); mask-image: var(--icon-cross-circle); }
 			&.em-icon-trash { background : red; -webkit-mask-image: var(--icon-trash); mask-image: var(--icon-trash); }
 		}
+
+		.em-list-table-col-tooltip {
+			.em-tooltip-content {
+				padding: 10px;
+
+				section {
+					margin: 0 0 12px !important;
+
+					&:last-of-type { margin-bottom: 0 !important; }
+					header {
+						padding-bottom: 2px;
+						border-bottom: 1px solid #dedede;
+						margin-bottom: 10px;
+					}
+					footer {
+						margin-top: 5px;
+
+						p {
+							margin: 0 0 5px !important;
+							padding: 0 !important;
+						}
+					}
+					dl {
+						display: grid;
+						grid-template-columns: max-content max-content;
+						margin: 0 0 10px !important;
+						padding: 0 !important;
+
+						&:last-child { margin-bottom: 0 !important; }
+						dt, dd {
+							margin: 0 !important;
+							padding: 3px 0 !important;
+						}
+						dd { padding-left: 15px !important; }
+						dt { font-weight: bold; }
+
+						&.tabular-data {
+							dt {
+								font-weight: normal;
+								padding: 8px 0 !important;
+							}
+							dd {
+								padding: 8px 0 0 15px !important;
+							}
+							dt, dd {
+								border-bottom : 1px solid #dedede;
+								&:first-of-type {
+									border-top: 0 !important;
+									padding-top: 0 !important;
+								}
+								&:last-of-type {
+									border-bottom: 0 !important;
+									padding-bottom: 0 !important;
+								}
+							}
+						}
+					}
+					div.general-data {
+						margin: 0 0 10px !important;
+						&:last-child { margin-bottom: 0 !important; }
+					}
+				}
+			}
+			.tippy-box {
+				max-width: none !important;
+			}
+			a.em-tooltip {
+				color: var(--text-color-softer) !important;
+				border-bottom: 2px dotted #ccc;
+				padding-bottom: 2px;
+				text-wrap: nowrap;
+				&:hover {
+					cursor: pointer;
+					text-decoration: none !important;
+				}
+			}
+		}
+
+
+		/* Special Pricing Rules */
+		td.booking_price, td.ticket_price, td.ticket_total, td.total_paid, td.price-col {
+			text-wrap: nowrap;
+		}
 	}
 
-	&.size-small {
-		.em-table-row-responsive-meta {
-			display: block;
-			visibility: visible;
+	&.no-checkboxes {
+		div.tablenav {
+			> .actions {
+				margin-right: 15px;
+				.actions {
+					margin-right: 5px;
+				}
+				&.filters {
+					clear: none;
+				}
+			}
+		}
+		.em-list-table-triggers {
+
+		}
+	}
+
+	/*
+		Handle small and medium sized list boxes, with mixins to allow for optimal sizes in admin area
+	 */
+	@mixin size-medium-nav {
+		div.tablenav {
+			// spread filter out across whole screen, on one or more lines, with center alignment
+			> .actions, > .tablenav-pages {
+				display: flex;
+				float: none;
+				text-align: center;
+				justify-content: center;
+				justify-items: center;
+				align-items: center;
+			}
+
+			> .filters {
+				border-width: 1px 0;
+				border-style: solid;
+				border-color: var(--border-color);
+				padding: 10px 0;
+
+				> * {
+					width : 100% !important;
+					max-width: none !important;
+					float: none;
+				}
+
+				> button, .button {
+					width: auto !important;
+				}
+			}
+
+			// navigation pages go on their own line
+			> .tablenav-pages {
+				gap: 8px;
+
+				&.no-pages, &.one-page {
+					padding-top: 0;
+				}
+			}
+		}
+	}
+
+	@mixin size-small-nav {
+		div.tablenav {
+			> .actions.filters {
+				display: block;
+
+				> * {
+					width: 90% !important;
+					max-width: none;
+					margin: 5px 5% !important;
+				}
+			}
+		}
+	}
+
+	@mixin size-small-table {
+		button.small-expand-trigger {
+			display: inline-block !important;
+			visibility: visible !important;
+			width: 15px;
+
+			background-image: var(--icon-expand) !important;
+			opacity: 0.5;
+
+			&.expanded {
+				background-image: var(--icon-collapse) !important;
+				opacity: 1;
+			}
+		}
+
+		&.no-checkboxes {
+			.wp-list-table {
+				thead th:not(:nth-child(-n+1)) {
+					display: none !important;
+					overflow: hidden;
+				}
+			}
+			tbody {
+				td:not(.check-column) {
+					&:not(:nth-child(-n+1))::before {
+						display: inline-block;
+						overflow: hidden;
+						width: 35%;
+						content: attr(data-colname);
+						white-space: nowrap;
+						text-overflow: ellipsis;
+						border: 0;
+						vertical-align: middle;
+					}
+				}
+			}
+		}
+
+		&.has-checkboxes {
+			.wp-list-table {
+				thead th:not(:nth-child(-n+2)) {
+					display: none !important;
+					overflow: hidden;
+				}
+			}
+			tbody {
+				td:not(.check-column) {
+					&:not(:nth-child(-n+2))::before {
+						display: inline-block;
+						overflow: hidden;
+						width: 35%;
+						content: attr(data-colname);
+						white-space: nowrap;
+						text-overflow: ellipsis;
+						border: 0;
+						vertical-align: middle;
+					}
+				}
+			}
+		}
+
+		.wp-list-table {
+			tr:not(.inline-edit-row):not(.no-items) td:not(.check-column) {
+				position: relative;
+				clear: both;
+				width: auto !important;
+			}
+
+			thead th.column-primary {
+				content: '';
+			}
+
+			tbody {
+				th.check-column {
+					width: 77px;
+				}
+				td:not(.check-column) {
+					display: block !important;
+					overflow: hidden;
+
+					&:not(.column-primary) {
+						display: none !important;
+					}
+
+					&:not(.column-primary, :last-child) {
+						border: 0 !important;
+						padding-top: 5px !important;
+						padding-bottom: 5px !important;
+					}
+					&:last-child {
+						padding-top: 5px !important;
+						padding-bottom: 10px !important;
+					}
+				}
+
+				td, th {
+					vertical-align: top;
+				}
+
+				tr.expanded {
+					td.column-primary {
+						// primary col border shouldn't be shown if there's no responsive meta
+						&:not(:has(.em-list-table-row-responsive-meta)) {
+							margin-bottom: 0 !important;
+							padding-bottom: 0 !important;
+							border-bottom: 0 !important;
+						}
+					}
+				}
+
+				td.column-primary {
+
+					&:not(:has(.em-list-table-row-responsive-meta)) {
+						.primary-column-content {
+							border-bottom: 0;
+						}
+					}
+
+					button.toggle-row {
+						display: inline-block !important;
+						visibility: visible !important;
+						float: right;
+						width: 10px !important;
+						height: 15px !important;
+						background-size: 15px;
+						padding: 0 5px !important;
+						margin: 0 0 0 5px !important;
+						background-repeat: no-repeat;
+						background-position: center center;
+						background-color: transparent !important;
+						text-indent: -10000px !important;
+						border: 0 !important;
+						background-image: var(--icon-chevron-down);
+						&.expanded {
+							background-image: var(--icon-chevron-up);
+						}
+						&:active, &:focus {
+							border: none !important;
+							box-shadow: none !important;
+							outline: none !important;
+						}
+						:focus:before {
+							box-shadow: none;
+							outline: none;
+						}
+					}
+
+					.em-list-table-row-responsive-meta {
+						float: left;
+						clear: left;
+						display: block;
+						visibility: visible;
+					}
+
+					.primary-column-content {
+						float: left;
+						clear: left;
+						margin-bottom: 8px;
+						border-bottom: 1px solid var(--border-color-softer);
+						padding-bottom: 5px;
+					}
+				}
+
+				tr.expanded {
+					td:not(:first-child, .column-primary) {
+						display: block !important;
+					}
+					td.column-primary {
+						margin: 0 13px 10px 11px !important;
+						padding-left: 0 !important;
+						padding-right: 0 !important;
+					}
+				}
+			}
+		}
+	}
+
+	@mixin size-xsmall-nav {
+		// break up the bulk action and buttons
+		div.tablenav {
+			> .actions, > .tablenav-pages {
+				display: block;
+				.bulkactions-input {
+					display: block;
+					margin-top: 15px;
+					select {
+						float: none;
+					}
+				}
+			}
+		}
+	}
+
+	@if $frontend {
+		&.size-medium, &.size-small, &.size-xsmall {
+			@include size-medium-nav;
+		}
+		&.size-small, &.size-xsmall {
+			@include size-small-table;
+			@include size-small-nav;
+		}
+		&.size-xsmall {
+			@include size-xsmall-nav;
+		}
+	} @else {
+		a.em-list-table-trigger {
+			&:last-of-type {
+				margin-right: 5px !important;
+			}
+		}
+
+		div.tablenav {
+			> .actions {
+				button.filters-trigger, button.small-expand-trigger {
+				}
+			}
+		}
+
+		// This is the key to making the list tables responsive in an EM-fashioned way
+		@media screen and (max-width: 782px) {
+			@include size-medium-nav;
+			@include size-small-table;
+
+			&.size-small, &.size-xsmall {
+				@include size-small-nav;
+			}
+		}
+		@media screen and (max-width: 480px ) {
+			@include size-xsmall-nav;
 		}
 	}
 }
 
-.em-bookings-table-cols {
+.em-list-table-cols {
 	display: grid;
 	width:  100%;
 	grid-template-columns: 1fr 1fr;
@@ -122,7 +806,7 @@
 		margin-bottom: 15px !important;
 	}
 
-	.em-bookings-cols-selected {
+	.em-list-table-cols-selected {
 		.item {
 			width: 100%;
 			display: flex;
@@ -136,6 +820,12 @@
 			background: #dff4fd;
 			border: 1px solid #97dbf9;
 			color: #0095c3;
+
+			&.sortable-ghost {
+				// remove contents and make barder dotted
+				border-style: dotted;
+				opacity: 0.4;
+			}
 
 			> span {
 				flex: 1 1 auto;
@@ -156,7 +846,7 @@
 		}
 	}
 
-	.em-bookings-cols-select{
+	.em-list-table-cols-select{
 		.selectize-input.items {
 			.item {
 				display: none !important;
@@ -185,540 +875,168 @@
 	}
 }
 
-.em-booking-table.size-small {
-	/* WP List Table Options & Filters */
-	.tablenav {
-		height: auto;
+.em-bookings-table {
+	@if $frontend {
+		.em-bookings-table-views-selection + .actions {
+			margin-left: 5px !important;
+		}
 	}
 
-	.tablenav.top {
-		margin: 20px 0 5px;
-	}
-
-	.tablenav.bottom {
-		position: relative;
-		margin-top: 15px;
-	}
-
-	.tablenav br {
-		display: none;
-	}
-
-	.tablenav br.clear {
-		display: block;
-	}
-
-	.tablenav.top .actions,
-	.tablenav .view-switch {
-		display: none;
-	}
-
-	.view-switch a {
-		width: 36px;
-		height: 36px;
-		line-height: 2.53846153;
-	}
-
-	/* Pagination */
-	.tablenav.top .displaying-num {
-		display: none;
-	}
-
-	.tablenav.bottom .displaying-num {
-		position: absolute;
-		left: 0;
-		top: 11px;
-		margin: 0;
-		font-size: 14px;
-	}
-
-	.tablenav .tablenav-pages {
-		width: 100%;
-		text-align: center;
-		margin: 0 0 25px;
-	}
-
-	.tablenav.bottom .tablenav-pages {
-		margin-top: 25px;
-	}
-
-	.tablenav.top .tablenav-pages.one-page {
-		display: none;
-	}
-
-	.tablenav.bottom .tablenav-pages.one-page {
-		margin-top: 15px;
-		height: 0;
-	}
-
-	.tablenav-pages .pagination-links {
-		font-size: 16px;
-	}
-
-	.tablenav .tablenav-pages .button,
-	.tablenav .tablenav-pages .tablenav-pages-navspan {
-		min-width: 44px;
-		padding: 12px 8px;
-		font-size: 18px;
-		line-height: 1;
-	}
-
-	.tablenav-pages .pagination-links .current-page {
-		min-width: 44px;
-		padding: 12px 6px;
-		font-size: 16px;
-		line-height: 1.125;
-	}
-
-	/* WP List Table Adjustments: General */
-	.form-wrap > p {
-		display: none;
-	}
-
-	.wp-list-table th.column-primary ~ th,
-	.wp-list-table tr:not(.inline-edit-row):not(.no-items) td.column-primary ~ td:not(.check-column) {
-		display: none;
-	}
-
-	.wp-list-table thead th.column-primary {
-		width: 100%;
-	}
-
-	/* Checkboxes need to show */
-	.wp-list-table tr th.check-column {
-		display: table-cell;
-	}
-
-	.wp-list-table .check-column {
-		width: 2.5em;
-	}
-
-	.wp-list-table .column-primary .toggle-row {
-		display: block;
-	}
-
-	.wp-list-table tr:not(.inline-edit-row):not(.no-items) td:not(.check-column) {
-		position: relative;
-		clear: both;
-		width: auto !important; /* needs to override some columns that are more specifically targeted */
-	}
-
-	.wp-list-table td.column-primary {
-		padding-left: 50px; /* space for toggle button */
-	}
-
-	.wp-list-table tr:not(.inline-edit-row):not(.no-items) td.column-primary ~ td:not(.check-column) {
-		padding: 3px 35% 3px 8px;
-	}
-
-	.wp-list-table tr:not(.inline-edit-row):not(.no-items) td:not(.column-primary)::before {
-		position: absolute;
-		right: 10px; /* match padding of regular table cell */
-		display: block;
-		overflow: hidden;
-		width: 32%; /* leave a little space for a gutter */
-		content: attr(data-colname);
-		white-space: nowrap;
-		text-overflow: ellipsis;
-	}
-
-	.wp-list-table .is-expanded td:not(.hidden) {
-		display: block !important;
-		overflow: hidden; /* clearfix */
-	}
-
-	/* Special cases */
-	.widefat .num,
-	.column-posts {
-		text-align: right;
-	}
-
-	#comments-form .fixed .column-author,
-	#commentsdiv .fixed .column-author {
-		display: none !important;
-	}
-
-	.fixed .column-comment .comment-author {
-		display: block;
-	}
-
-	/* Comment author hidden via Screen Options */
-	.fixed .column-author.hidden ~ .column-comment .comment-author {
-		display: none;
-	}
-
-	#the-comment-list .is-expanded td {
-		box-shadow: none;
-	}
-
-	#the-comment-list .is-expanded td:last-child {
-		box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.1);
-	}
-
-	/* Show comment bubble as text instead */
-	.post-com-count .screen-reader-text {
-		position: static;
-		-webkit-clip-path: none;
-		clip-path: none;
-		width: auto;
-		height: auto;
-		margin: 0;
-	}
-
-	.column-response .post-com-count-no-comments:after,
-	.column-response .post-com-count-approved:after,
-	.column-comments .post-com-count-no-comments:after,
-	.column-comments .post-com-count-approved:after {
-		content: none;
-	}
-
-	.column-response .post-com-count [aria-hidden="true"],
-	.column-comments .post-com-count [aria-hidden="true"] {
-		display: none;
-	}
-
-	.column-response .post-com-count-wrapper,
-	.column-comments .post-com-count-wrapper {
-		white-space: normal;
-	}
-
-	.column-response .post-com-count-wrapper > a,
-	.column-comments .post-com-count-wrapper > a {
-		display: block;
-	}
-
-	.column-response .post-com-count-no-comments,
-	.column-response .post-com-count-approved,
-	.column-comments .post-com-count-no-comments,
-	.column-comments .post-com-count-approved {
-		margin-top: 0;
-		margin-left: 0.5em;
-	}
-
-	.column-response .post-com-count-pending,
-	.column-comments .post-com-count-pending {
-		position: static;
-		height: auto;
-		min-width: 0;
-		padding: 0;
-		border: none;
-		border-radius: 0;
-		background: none;
-		color: #b32d2e;
-		font-size: inherit;
-		line-height: inherit;
-		text-align: right;
-	}
-
-	.column-response .post-com-count-pending:hover,
-	.column-comments .post-com-count-pending:hover {
-		color: #d63638;
-	}
-
-	.widefat thead td.check-column,
-	.widefat tfoot td.check-column {
-		padding-top: 10px;
-	}
-
-	.row-actions {
-		margin-right: -8px;
-		margin-left: -8px;
-		padding-top: 4px;
-	}
-
-	/* Make row actions more easy to select on mobile */
-	body:not(.plugins-php) .row-actions {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 8px;
-		color: transparent;
-	}
-
-	.row-actions span a,
-	.row-actions span .button-link {
+	.em-bookings-table-views {
 		display: inline-block;
-		padding: 4px 8px;
-		line-height: 1.5;
+
+		[data-view="bookings"] {
+			background-image: var(--icon-tickets) !important;
+			background-size: 30px !important;
+		}
+		[data-view="tickets"] {
+			background-image: var(--icon-ticket) !important;
+		}
+		[data-view="attendees"] {
+			background-image: var(--icon-attendees) !important;
+		}
+		[data-view="multiple-bookings"] {
+		 	background-image: var(--icon-multiple) !important;
+		}
+
+		.em-bookings-table-views-trigger {
+			display: block;
+			width: 42px;
+			background: var(--icon-point-down) 30px 6px no-repeat;
+			background-size: 14px;
+			padding: 0 15px 0 0;
+			margin: 0;
+			cursor: pointer;
+
+			.em-bookings-table-view-option {
+				display: block;
+				width: 25px;
+				height: 25px;
+				background-size: 25px;
+				background-repeat: no-repeat;
+				background-position: center center;
+				background-color: transparent !important;
+				text-indent: -10000px !important;
+				padding: 0 !important;
+				border: 0 !important;
+			}
+		}
+
+		.em-bookings-table-views-options {
+			display:none;
+		}
+		.tippy-content .em-bookings-table-views-options {
+			display: block;
+		}
+		.em-bookings-table-views-options-list {
+			display: block !important;
+			padding: 0 !important;
+			margin: 5px 0 !important;
+			border: none !important;
+			background: transparent !important;
+			cursor: pointer !important;
+			overflow: visible !important;
+
+			label.em-bookings-table-view-option {
+				display: block !important;
+				padding: 5px 10px 5px 40px !important;
+				margin: 0 !important;
+				background-repeat: no-repeat !important;
+				background-size: 18px !important;
+				background-position: 10px center !important;
+				background-color: transparent !important;
+
+				&:hover, &.focused {
+					background-color: #efefef !important;
+				}
+				&:checked, &.checked {
+					background-color: #cee0ea !important;
+				}
+				input[type="radio"] {
+					@include screen-reader-only();
+				}
+				&[data-view="bookings"], &[data-view="mulitple-bookings"] {
+					background-size: 24px !important;
+					background-position: 6px center !important;
+				}
+			}
+
+			&:focus {
+				border: none !important;
+				outline: none !important;
+			}
+		}
 	}
 
-	.row-actions span.approve:before,
-	.row-actions span.unapprove:before {
-		content: "| ";
+	@if $frontend {
+
+	} @else {
+		.em-bookings-table-views-trigger {
+			padding-top: 3px;
+		}
 	}
 
-	/* Quick Edit and Bulk Edit */
-	#wpbody-content .quick-edit-row-post .inline-edit-col-left,
-	#wpbody-content .quick-edit-row-post .inline-edit-col-right,
-	#wpbody-content .inline-edit-row-post .inline-edit-col-center,
-	#wpbody-content .quick-edit-row-page .inline-edit-col-left,
-	#wpbody-content .quick-edit-row-page .inline-edit-col-right,
-	#wpbody-content .bulk-edit-row-post .inline-edit-col-right,
-	#wpbody-content .bulk-edit-row .inline-edit-col-left,
-	#wpbody-content .bulk-edit-row-page .inline-edit-col-right,
-	#wpbody-content .bulk-edit-row .inline-edit-col-bottom {
-		float: none;
-		width: 100%;
-		padding: 0;
-	}
+	td.column-actions {
+		text-wrap: nowrap;
+		a {
+			display: inline-block;
+			text-indent: -9999px;
+			background-size : 18px;
+			width: 18px;
+			height: 18px;
+			margin: 0 6px 0 0;
 
-	#the-list .inline-edit-row .inline-edit-legend,
-	.inline-edit-row span.title {
-		font-size: 16px;
-	}
+			&:last-of-type {
+				margin-right: 0;
+			}
+			:focus {
+				box-shadow: none;
+				outline: none;
+			}
 
-	.inline-edit-row p.howto {
-		font-size: 14px;
+			&[data-row_action="delete"] {
+				background: var(--icon-trash) no-repeat;
+			}
+			&[data-row_action="approve"] {
+				background: var(--icon-checkmark-circle) no-repeat;
+			}
+			&[data-row_action="unapprove"] {
+				background: var(--icon-undo) no-repeat;
+			}
+			&[data-row_action="reject"], &[data-row_action="cancel"] {
+				background: var(--icon-cross-circle) no-repeat;
+			}
+			&[data-row_action="checkin"] {
+				background: var(--icon-enter) no-repeat;
+			}
+			&[data-row_action="checkout"] {
+				background: var(--icon-exit) no-repeat;
+			}
+			&.em-list-table-row-edit {
+				background: var(--icon-edit) no-repeat;
+			}
+		}
 	}
+}
 
-	#wpbody-content .inline-edit-row-page .inline-edit-col-right {
-		margin-top: 0;
-	}
-
-	#wpbody-content .quick-edit-row fieldset .inline-edit-col label,
-	#wpbody-content .quick-edit-row fieldset .inline-edit-group label,
-	#wpbody-content .bulk-edit-row fieldset .inline-edit-col label,
-	#wpbody-content .bulk-edit-row fieldset .inline-edit-group label {
-		max-width: none;
-		float: none;
-		margin-bottom: 5px;
-	}
-
-	#wpbody .bulk-edit-row fieldset select {
-		display: block;
-		width: 100%;
-		max-width: none;
-		box-sizing: border-box;
-	}
-
-	.inline-edit-row fieldset input[name=jj],
-	.inline-edit-row fieldset input[name=hh],
-	.inline-edit-row fieldset input[name=mn],
-	.inline-edit-row fieldset input[name=aa] {
-		font-size: 16px;
-		line-height: 2;
-		padding: 3px 4px;
-	}
-
-	#bulk-titles .ntdelbutton,
-	#bulk-titles .ntdeltitle,
-	.inline-edit-row fieldset ul.cat-checklist label {
-		padding: 6px 0;
-		font-size: 16px;
-		line-height: 28px;
-	}
-
-	#bulk-titles .ntdelitem {
-		padding-right: 37px;
-	}
-
-	#bulk-titles .ntdelbutton {
-		width: 40px;
-		height: 40px;
-		margin: 0 -40px 0 0;
-		overflow: hidden;
-	}
-
-	#bulk-titles .ntdelbutton:before {
-		font-size: 20px;
-		line-height: 28px;
-	}
-
-	.inline-edit-row fieldset label span.title,
-	.inline-edit-row fieldset.inline-edit-date legend {
-		float: none;
-	}
-
-	.inline-edit-row fieldset .inline-edit-col label.inline-edit-tags {
-		padding: 0;
-	}
-
-	.inline-edit-row fieldset label span.input-text-wrap,
-	.inline-edit-row fieldset .timestamp-wrap {
-		margin-right: 0;
-	}
-
-	.inline-edit-row .inline-edit-or {
-		margin: 0 0 0 6px;
-	}
-
-	#edithead .inside,
-	#commentsdiv #edithead .inside {
-		float: none;
+/* The selection modal of columns for the bookings table */
+&.em-list-table-settings {
+	.em-list-table-settings-remember {
 		text-align: right;
-		padding: 3px 5px;
-	}
 
-	#commentsdiv #edithead .inside input,
-	#edithead .inside input {
-		width: 100%;
-	}
-
-	#edithead label {
-		display: block;
-	}
-
-	/* Updates */
-	#wpbody-content .updates-table .plugin-title {
-		width: auto;
-		white-space: normal;
-	}
-
-	/* Links */
-	.link-manager-php #posts-filter {
-		margin-top: 25px;
-	}
-
-	.link-manager-php .tablenav.bottom {
-		overflow: hidden;
-	}
-
-	/* List tables that don't toggle rows */
-	.comments-box .toggle-row,
-	.wp-list-table.plugins .toggle-row {
-		display: none;
-	}
-
-	/* Plugin/Theme Management */
-	#wpbody-content .wp-list-table.plugins td {
-		display: block;
-		width: auto;
-		padding: 10px 9px; /* reset from other list tables that have a label at this width */
-	}
-
-	/* Plugin description hidden via Screen Options */
-	#wpbody-content .wp-list-table.plugins .desc.hidden {
-		display: none;
-	}
-
-	#wpbody-content .wp-list-table.plugins .column-description {
-		padding-top: 2px;
-	}
-
-	#wpbody-content .wp-list-table.plugins .plugin-title,
-	#wpbody-content .wp-list-table.plugins .theme-title {
-		padding-left: 12px;
-		white-space: normal;
-	}
-
-	.wp-list-table.plugins .plugin-title,
-	.wp-list-table.plugins .theme-title {
-		padding-top: 13px;
-		padding-bottom: 4px;
-	}
-
-	.plugins #the-list tr > td:not(:last-child),
-	.plugins #the-list .update th,
-	.plugins #the-list .update td,
-	.wp-list-table.plugins #the-list .theme-title {
-		box-shadow: none;
-		border-top: none;
-	}
-
-	.plugins #the-list tr td {
-		border-top: none;
-	}
-
-	.plugins tbody {
-		padding: 1px 0 0;
-	}
-
-	.plugins tr.active + tr.inactive th.check-column,
-	.plugins tr.active + tr.inactive td.column-description,
-	.plugins .plugin-update-tr:before {
-		box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.1);
-	}
-
-	.plugins tr.active + tr.inactive th.check-column,
-	.plugins tr.active + tr.inactive td {
-		border-top: none;
-	}
-
-	/* mimic the checkbox th */
-	.plugins .plugin-update-tr:before {
-		content: "";
-		display: table-cell;
-	}
-
-	.plugins #the-list .plugin-update-tr .plugin-update {
-		border-right: none;
-	}
-
-	.plugin-update-tr .update-message {
-		margin-right: 0;
-	}
-
-	.plugins .active.update + .plugin-update-tr:before,
-	.plugins .active.updated + .plugin-update-tr:before {
-		background-color: #f0f6fc;
-		border-right: 4px solid #72aee6;
-	}
-
-	.plugins .plugin-update-tr .update-message {
-		margin-right: 0;
-	}
-
-	.wp-list-table.plugins .plugin-title strong,
-	.wp-list-table.plugins .theme-title strong {
-		font-size: 1.4em;
-		line-height: 1.5;
-	}
-
-	.plugins tbody th.check-column {
-		padding: 8px 5px 0 0;
-	}
-
-	.plugins thead td.check-column,
-	.plugins tfoot td.check-column,
-	.plugins .inactive th.check-column {
-		padding-right: 9px;
-	}
-
-	/* Add New plugins page */
-	table.plugin-install .column-name,
-	table.plugin-install .column-version,
-	table.plugin-install .column-rating,
-	table.plugin-install .column-description {
-		display: block;
-		width: auto;
-	}
-
-	table.plugin-install th.column-name,
-	table.plugin-install th.column-version,
-	table.plugin-install th.column-rating,
-	table.plugin-install th.column-description {
-		display: none;
-	}
-
-	table.plugin-install td.column-name strong {
-		font-size: 1.4em;
-		line-height: 1.6em;
-	}
-
-	table.plugin-install #the-list td {
-		box-shadow: none;
-	}
-
-	table.plugin-install #the-list tr {
-		display: block;
-		box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.1);
-	}
-
-	.plugin-card {
-		margin-right: 0;
-		margin-left: 0;
-		width: 100%;
-	}
-
-	table.media .column-title .has-media-icon ~ .row-actions {
-		margin-right: 0;
-		clear: both;
+		input[type="checkbox"] {
+			margin-left: 10px;
+		}
+		[data-tippy-root] {
+			text-align: center;
+		}
 	}
 }
 
 
 // Stop cols for booking cols selector for very small screens only
 @media only screen and (max-width: 800px) {
-	.em-bookings-cols-selected {
+	.em-list-table-cols-selected {
 		.item {
 			display: block;
 		}
@@ -727,7 +1045,7 @@
 
 // Stop cols for booking cols selector for very small screens only
 @media only screen and (max-width: 380px) {
-	.em-bookings-cols-selected {
+	.em-list-table-cols-selected {
 		.item {
 			display: block;
 		}

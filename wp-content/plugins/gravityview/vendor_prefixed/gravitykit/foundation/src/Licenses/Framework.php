@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by gravityview on 14-August-2024 using {@see https://github.com/BrianHenryIE/strauss}.
+ * Modified by gravityview on 15-October-2024 using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\GravityView\Foundation\Licenses;
@@ -26,9 +26,9 @@ class Framework {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @var Framework
+	 * @var Framework|null;
 	 */
-	private static $_instance;
+	private static $_instance = null;
 
 	/**
 	 * {@LicenseManager} Class instance.
@@ -173,7 +173,7 @@ class Framework {
 		 *
 		 * @since  1.0.0
 		 *
-		 * @param $this
+		 * @param Framework $instance
 		 */
 		do_action( 'gk/foundation/licenses/initialized', $this );
 	}
@@ -217,7 +217,10 @@ class Framework {
 			]
 		);
 
-		$response = [];
+		$response = [
+			'products' => [],
+			'licenses' => [],
+		];
 
 		if ( ! $this->current_user_can( 'view_products' ) && ! $this->current_user_can( 'view_licenses' ) ) {
 			throw new Exception( esc_html__( 'You do not have permission to view this page.', 'gk-gravityview' ) );
@@ -316,11 +319,14 @@ class Framework {
 			return;
 		}
 
+		$version = filemtime( CoreHelpers::get_assets_path( $script ) );
+		$version = false !== $version ? (string) $version : false;
+
 		wp_enqueue_script(
 			self::ID,
 			CoreHelpers::get_assets_url( $script ),
 			[ 'wp-i18n' ],
-			filemtime( CoreHelpers::get_assets_path( $script ) ),
+			$version,
 			true
 		);
 
@@ -354,11 +360,14 @@ class Framework {
 			[ 'data' => $script_data ]
 		);
 
+		$version = filemtime( CoreHelpers::get_assets_path( $style ) );
+		$version = false !== $version ? (string) $version : false;
+
 		wp_enqueue_style(
 			self::ID,
 			CoreHelpers::get_assets_url( $style ),
 			[],
-			filemtime( CoreHelpers::get_assets_path( $style ) )
+			$version
 		);
 
 		// WP's forms.css interferes with our styles.

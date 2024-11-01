@@ -22,7 +22,8 @@ trait WooDataSourceTrait
         $args = [
             'post_type'      => $postTypes,
             'posts_per_page' => $perPage,
-            'offset'         => $offset
+            'offset'         => $offset,
+            'post_status'    => 'publish',
         ];
 
         if ($data['order_query']) {

@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by gravityview on 14-August-2024 using {@see https://github.com/BrianHenryIE/strauss}.
+ * Modified by gravityview on 15-October-2024 using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\GravityView\Foundation;
@@ -23,7 +23,6 @@ use GravityKit\GravityView\Foundation\Encryption\Encryption;
 use GravityKit\GravityView\Foundation\Helpers\Core as CoreHelpers;
 use GravityKit\GravityView\Foundation\Helpers\Arr;
 use GravityKit\GravityView\Foundation\WP\RESTController;
-use GravityKitFoundation;
 
 /**
  * Core class that initializes Foundation.
@@ -34,15 +33,15 @@ use GravityKitFoundation;
  * @method static TrustedLogin trustedlogin()
  * @method static HelpScout helpscout()
  * @method static GravityForms gravityforms()
- * @method static Logger logger( string $logger_name = null, string $logger_title = null )
- * @method static Settings settings()
- * @method static Licenses licenses()
+ * @method static Logger\Framework logger( string $logger_name = null, string $logger_title = null )
+ * @method static Settings\Framework settings()
+ * @method static Licenses\Framework licenses()
  * @method static Translations translations()
  * @method static AdminMenu admin_menu()
  * @method static PluginActivationHandler plugin_activation_handler()
  */
 class Core {
-	const VERSION = '1.2.17';
+	const VERSION = '1.2.19';
 
 	const ID = 'gk_foundation';
 
@@ -53,9 +52,9 @@ class Core {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @var Core
+	 * @var Core|null
 	 */
-	private static $_instance;
+	private static $_instance = null;
 
 	/**
 	 * Instance of plugin activation/deactivation handler class.
@@ -119,10 +118,12 @@ class Core {
 		add_filter(
 			'gk/foundation/get-instance',
 			function ( $passed_instance ) use ( $plugin_file ) {
-				if ( ! $passed_instance || ! defined( get_class( $passed_instance ) . '::VERSION' ) || ! is_callable( [ $passed_instance, 'get_registered_plugins' ] ) ) {
+				if ( ! is_object( $passed_instance ) || ! defined( get_class( $passed_instance ) . '::VERSION' ) || ! is_callable( [ $passed_instance, 'get_registered_plugins' ] ) ) {
+					// @phpstan-ignore-next-line
 					return $this;
 				}
 
+				// @phpstan-ignore-next-line
 				$instance_to_return = version_compare( $passed_instance::VERSION, self::VERSION, '<' ) ? $this : $passed_instance;
 
 				/**
@@ -147,6 +148,7 @@ class Core {
 				// We need to make sure that the returned instance contains a list of all registered plugins that may have come with another passed instance.
 				$registered_plugins = array_merge( $this->_registered_plugins, $passed_instance->get_registered_plugins() );
 
+				// @phpstan-ignore-next-line
 				$instance_to_return->set_registered_plugins( $registered_plugins );
 
 				return $instance_to_return;
@@ -291,9 +293,10 @@ class Core {
 			'gravityforms'    => GravityForms::get_instance(),
 		];
 
-		foreach ( $this->_components as $component => $instance ) {
-			if ( CoreHelpers::is_callable_class_method( [ $this->_components[ $component ], 'init' ] ) ) {
-				$this->_components[ $component ]->init();
+		foreach ( $this->_components as $instance ) {
+			if ( CoreHelpers::is_callable_class_method( [ $instance, 'init' ] ) ) {
+				/** @phpstan-ignore-next-line */
+				$instance->init();
 			}
 		}
 
@@ -318,7 +321,7 @@ class Core {
 		 *
 		 * @since  1.0.0
 		 *
-		 * @param $this
+		 * @param Core $instance
 		 */
 		do_action( 'gk/foundation/initialized', $this );
 	}
@@ -449,7 +452,7 @@ HTML;
 							'type'        => 'select',
 							'value'       => $top_level_menu_action_value,
 							'choices'     => $top_level_menu_action_choices,
-							'title'       => esc_html__( 'GravityKit Menu Action', 'gk-gravityview' ),
+							'title'       => esc_html__( 'GravityKit Menu Page', 'gk-gravityview' ),
 							'description' => esc_html__( 'Select the page to open when clicking the GravityKit menu.', 'gk-gravityview' ),
 						],
 						[
@@ -666,7 +669,7 @@ HTML;
 		// Ajax logic was moved to a GravityKit\Foundation\WP\AjaxRouter in 1.0.11
 		// TODO: remove when other plugins are updated not to use GravityKitFoundation::get_ajax_params().
 		if ( 'get_ajax_params' === $name ) {
-			return $this->_components['ajax_router']->get_ajax_params( Arr::get( $arguments, 0, '' ) );
+			return $this->ajax_router()->get_ajax_params( $arguments[0] ?? '' );
 		}
 
 		if ( ! isset( $this->_components[ $name ] ) ) {
@@ -678,6 +681,7 @@ HTML;
 				$logger_name  = isset( $arguments[0] ) ? $arguments[0] : null;
 				$logger_title = isset( $arguments[1] ) ? $arguments[1] : null;
 
+				/** @phpstan-ignore-next-line */
 				return call_user_func_array( [ $this->_components[ $name ], 'get_instance' ], [ $logger_name, $logger_title ] );
 			default:
 				return $this->_components[ $name ];
@@ -697,6 +701,7 @@ HTML;
 	public static function __callStatic( $name, array $arguments = [] ) {
 		$instance = apply_filters( 'gk/foundation/get-instance', null );
 
+		/** @phpstan-ignore-next-line */
 		return call_user_func_array( [ $instance, $name ], $arguments );
 	}
 
@@ -735,7 +740,7 @@ HTML;
 	 *
 	 * @since 1.2.0
 	 *
-	 * @return array{version: string, source: array, registered_plugins: array, loaded_by_foundation_message: string, display_loaded_by_foundation_message: bool}
+	 * @return array{version: string, source_plugin: array, registered_plugins: array, loaded_by_message: string, show_loaded_by_message: bool}
 	 */
 	public function get_foundation_information(): array {
 		$foundation_source = Arr::first(
@@ -808,7 +813,7 @@ HTML;
 				}
 			}
 
-			return ( preg_match( "/const version = '([^']+)';/i", file_get_contents( $foundation_core ), $matches ) ) ? $matches[1] : null;
+			return ( preg_match( "/const version = '([^']+)';/i", file_get_contents( $foundation_core ) ?: '', $matches ) ) ? $matches[1] : null;
 
 		}
 

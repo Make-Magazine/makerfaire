@@ -128,8 +128,12 @@ class GP_Perk {
 			$perk = new $perk_class( $perk_file );
 		}
 
-		if ( ! is_a( $perk, 'GP_Perk' ) ) {
+		if ( ! is_a( $perk, 'GP_Perk' ) && isset( $perk->perk ) ) {
 			$perk = $perk->perk;
+		}
+
+		if ( ! is_a( $perk, 'GP_Perk' ) ) {
+			return new WP_Error( 'not_a_perk', sprintf( __( '%s is not a perk.', 'gravityperks' ), $perk_file ) );
 		}
 
 		return $perk;
@@ -717,11 +721,7 @@ class GP_Perk {
 
 	function get_settings() {
 		ob_start();
-		if ( ! $this->is_old_school() ) {
-			$this->parent->perk_settings( $this );
-		} else {
-			$this->settings();
-		}
+		$this->settings();
 		return ob_get_clean();
 	}
 

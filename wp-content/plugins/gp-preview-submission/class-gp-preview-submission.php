@@ -1,19 +1,42 @@
 <?php
 
-class GP_Preview_Submission extends GWPerk {
+if ( ! class_exists( 'GP_Plugin' ) ) {
+	return;
+}
 
-	public $version                   = GP_PREVIEW_SUBMISSION_VERSION;
-	public $min_gravity_perks_version = '2.0.11';
-	public $min_gravity_forms_version = '2.4';
-	public $min_wp_version            = '3.7';
+class GP_Preview_Submission extends GP_Plugin {
 
-	private static $instance = null;
+	private static $_instance = null;
 
-	public static function get_instance( $perk_file ) {
-		if ( null == self::$instance ) {
-			self::$instance = new self( $perk_file );
+	protected $_version     = GP_PREVIEW_SUBMISSION_VERSION;
+	protected $_path        = 'gp-preview-submission/gp-preview-submission.php';
+	protected $_full_path   = __FILE__;
+	protected $_slug        = 'gp-preview-submission';
+	protected $_title       = 'Gravity Forms Preview Submission';
+	protected $_short_title = 'Preview Submission';
+	
+	public static function get_instance() {
+		if( self::$_instance == null ) {
+			self::$_instance = isset ( self::$perk ) ? new self ( new self::$perk ) : new self();
 		}
-		return self::$instance;
+		return self::$_instance;
+	}
+
+	public function minimum_requirements() {
+		return array(
+			'gravityforms' => array(
+				'version' => '2.4',
+			),
+			'wordpress'    => array(
+				'version' => '3.7',
+			),
+			'plugins'      => array(
+				'gravityperks/gravityperks.php' => array(
+					'name'    => 'Gravity Perks',
+					'version' => '2.0.11',
+				),
+			),
+		);
 	}
 
 	public function init() {
@@ -140,3 +163,5 @@ class GP_Preview_Submission extends GWPerk {
 function gp_preview_submission() {
 	return GP_Preview_Submission::get_instance( null );
 }
+
+GFAddOn::register( 'GP_Preview_Submission' );

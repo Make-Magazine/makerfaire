@@ -1,32 +1,49 @@
 <?php
 
-class GP_Copy_Cat extends GWPerk {
+if ( ! class_exists( 'GP_Plugin' ) ) {
+	return;
+}
 
-	public $version                      = GP_COPY_CAT_VERSION;
-	protected $min_perks_version         = '1.0.6';
-	protected $min_gravity_forms_version = '1.9.3';
+class GP_Copy_Cat extends GP_Plugin {
+
+	private static $_instance = null;
+
+	protected $_version     = GP_COPY_CAT_VERSION;
+	protected $_path        = 'gwcopycat/gwcopycat.php';
+	protected $_full_path   = __FILE__;
+	protected $_slug        = 'gp-copy-cat';
+	protected $_title       = 'Gravity Forms Copy Cat';
+	protected $_short_title = 'Copy Cat';
+
+	public static function get_instance() {
+		if( self::$_instance == null ) {
+			self::$_instance = isset ( self::$perk ) ? new self ( new self::$perk ) : new self();
+		}
+		return self::$_instance;
+	}
+
+	public function minimum_requirements() {
+		return array(
+			'gravityforms' => array(
+				'version' => '1.9.3',
+			),
+			'plugins'      => array(
+				'gravityperks/gravityperks.php' => array(
+					'name'    => 'Gravity Perks',
+					'version' => '1.0.6',
+				),
+			),
+		);
+	}	
 
 	public function init() {
+		parent::init();
 
-		load_plugin_textdomain( 'gwcopycat', false, basename( dirname( __file__ ) ) . '/languages/' );
+		load_plugin_textdomain( 'gp-copy-cat', false, basename( dirname( __file__ ) ) . '/languages/' );
 
-		$this->register_scripts();
-
-		add_filter( 'gform_enqueue_scripts', array( $this, 'enqueue_form_scripts' ) );
 		add_action( 'gform_register_init_scripts', array( $this, 'register_init_scripts' ) );
 		add_filter( 'gform_pre_render', array( $this, 'modify_frontend_form' ) );
 
-	}
-
-	public function register_scripts() {
-		wp_register_script( 'gp-copy-cat', $this->get_base_url() . '/js/gp-copy-cat.js', array( 'jquery', 'gform_gravityforms' ), $this->version );
-		$this->register_noconflict_script( 'gp-copy-cat' );
-	}
-
-	public function enqueue_form_scripts( $form ) {
-		if ( $this->has_copy_cat_field( $form ) ) {
-			wp_enqueue_script( 'gp-copy-cat' );
-		}
 	}
 
 	public function register_init_scripts( $form ) {
@@ -62,6 +79,33 @@ class GP_Copy_Cat extends GWPerk {
 
 	}
 
+	/**
+	 * Return the scripts which should be enqueued.
+	 *
+	 * @return array
+	 */
+	public function scripts() {
+		$min = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG || isset( $_GET['gform_debug'] ) ? '' : '.min';
+
+		$scripts = array(
+			// Frontend
+			array(
+				'handle'    => 'gp-copy-cat-frontend',
+				'src'       => $this->get_base_url() . '/js/gp-copy-cat' . $min . '.js',
+				'version'   => $this->_version,
+				'deps'      => array(
+					'jquery',
+					'gform_gravityforms',
+				),
+				'enqueue' => array(
+					array( $this, 'has_copy_cat_field' ),
+				),
+			),
+		);
+
+		return array_merge( parent::scripts(), $scripts );
+	}
+
 	public function modify_frontend_form( $form ) {
 
 		if ( ! $this->has_copy_cat_field( $form ) ) {
@@ -93,6 +137,10 @@ class GP_Copy_Cat extends GWPerk {
 	function get_copy_cat_fields( $form ) {
 
 		$copy_fields = array();
+
+		if ( ! $form ) {
+			return $copy_fields;
+		}
 
 		foreach ( $form['fields'] as &$field ) {
 
@@ -187,3 +235,5 @@ class GP_Copy_Cat extends GWPerk {
 }
 
 class GWCopyCat extends GP_Copy_Cat { }
+
+GFAddOn::register( 'GP_Copy_Cat' );

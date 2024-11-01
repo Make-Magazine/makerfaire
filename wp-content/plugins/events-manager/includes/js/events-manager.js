@@ -181,8 +181,7 @@ jQuery(document).ready( function($){
 					this.em_timepicker('remove');
 				}
 			}); //clear all em_timepickers - consequently, also other click/blur/change events, recreate the further down
-			em_setup_datepicker(slot);
-			em_setup_timepicker(slot);
+			em_setup_ui_elements(slot);
 			$('html, body').animate({ scrollTop: slot.offset().top - 30 }); //sends user to form
 			check_ticket_sortability();
 		});
@@ -320,265 +319,6 @@ jQuery(document).ready( function($){
 		};
 		check_ticket_sortability();
 	}
-	//Manageing Bookings
-	let bookings_tables = $('.em-bookings-table');
-	if( bookings_tables.length > 0 ){
-		load_ui_css = true;
-		//Pagination link clicks
-		$(document).on('click', '.em-bookings-table .tablenav-pages a', function(){
-			var el = $(this);
-			var form = el.closest('.em-bookings-table form.bookings-filter');
-			//get page no from url, change page, submit form
-			var match = el.attr('href').match(/#[0-9]+/);
-			if( match != null && match.length > 0){
-				var pno = match[0].replace('#','');
-				form.find('input[name=pno]').val(pno);
-			}else{
-				// new way
-				let url = new URL(el.attr('href'));
-				if( url.searchParams.has('paged') ){
-					form.find('input[name=pno]').val( url.searchParams.get('paged'));
-					form.find('input[name=paged]').val( url.searchParams.get('paged') );
-				}else{
-					form.find('input[name=pno]').val(1);
-					form.find('input[name=paged]').val(1);
-				}
-			}
-			form.trigger('submit');
-			return false;
-		});
-		$(document).on('change', '.em-bookings-table .tablenav-pages input[name=paged]', function(e){
-			var el = $(this);
-			var form = el.closest('.em-bookings-table form.bookings-filter');
-			var last = form.find('.tablenav-pages a.last-page');
-			if( last.length > 0 ){
-				// check val isn't more than last page
-				let url = new URL(last.attr('href'));
-				if( url.searchParams.has('paged') ){
-					let lastPage = parseInt(url.searchParams.get('paged'));
-					if( parseInt(this.value) > lastPage ){
-						this.value = lastPage;
-					}
-				}
-			}else{
-				// make sure it's less than current page, we're on last page already
-				let lastPage = form.find('input[name=pno]').val();
-				if( lastPage && parseInt(this.value) > parseInt(lastPage) ){
-					this.value = lastPage;
-					e.preventDefault();
-					return false;
-				}
-			}
-			form.find('input[name=pno]').val(this.value);
-			form.trigger('submit');
-		});
-
-		//Settings & Export Modal
-		$(document).on('click', '.em-bookings-table-trigger', function(e){
-			e.preventDefault();
-			let modal = $(this.getAttribute('rel'));
-			modal.find('input[name=show_tickets]').each(check_tickets_columns_export);
-			openModal( modal );
-		});
-		$(document).on('submit', '.em-bookings-table-settings form', function(e){
-			e.preventDefault();
-			//we know we'll deal with cols, so wipe hidden value from main
-			let $form = $(this);
-			let modal = $form.closest('.em-modal');
-			let form = $($form.attr('rel'));
-			let match = form.find("[name=cols]").val('');
-			let booking_form_cols = $form.find('.em-bookings-cols-selected .item');
-			$.each( booking_form_cols, function(i,item_match){
-				//item_match = $(item_match);
-				if( !item_match.classList.contains('hidden') ){
-					if( match.val() !== ''){
-						match.val(match.val()+','+item_match.getAttribute('data-value'));
-					}else{
-						match.val(item_match.getAttribute('data-value'));
-					}
-				}
-			});
-			//sync row count
-			let limit = $form.find('select[name="limit"]').val();
-			form.find('[name="limit"]').val(limit);
-			//submit main form
-			modal.trigger('submitted'); //hook into this with bind()
-			form.trigger('submit');
-			closeModal(modal);
-		});
-		$(document).on('submit', '.em-bookings-table-export form', function(e){
-			let $table_form = $(this.getAttribute('rel'));
-			var $form_filters = $(this).find('.em-bookings-table-filters').empty();
-			let filters = $table_form.find('.em-bookings-table-filter').clone();
-			filters.appendTo($form_filters);
-		});
-		let check_tickets_columns_export = function(){
-			let $this = $(this);
-			let form = $this.closest('form');
-			let ticket_data = form.find('[data-type="ticket"]');
-			if( $this.is(':checked') ){
-				ticket_data.show().find('input').val(1);
-			}else{
-				ticket_data.hide().find('input').val(0);
-			}
-		}
-		$(document).on('click', '.em-bookings-table-export input[name=show_tickets]', check_tickets_columns_export);
-
-		$(document).on('keypress', '.em-bookings-table .tablenav .actions input[type="text"]', function(e){
-			let keycode = (e.keyCode ? e.keyCode : e.which);
-			if( keycode === 13 ){
-				$(this).closest('form').submit();
-			}
-		});
-
-		$(document).on('click', '.em-bookings-table button.em-bookings-table-bulk-action', function( e ){
-			e.preventDefault();
-			let $form = $(this).closest('form');
-			let action = $form.find('select.bulk-action-selector').val();
-			EM.bulk_action = true;
-			if( action === 'delete' ){
-				if( !confirm(EM.booking_delete) ){ return false; }
-			}
-			let rows = $form.find('tbody .check-column input:checked');
-			// find all checked items and perform action on them. future interations can check if action is available to row.
-			rows.each( function(){
-				// check if sibling has the relevant action
-				let actions = $(this.parentElement).find('a.em-bookings-'+ action);
-				actions.trigger('click');
-			});
-			EM.bulk_action = false;
-		})
-
-		// Sorting
-		$(document).on('click', '.em-bookings-table th[scope="col"].sortable a, .em-bookings-table th[scope="col"].sorted a', function(e){
-			e.preventDefault();
-			// add args to form and submit it
-			let params = (new URL(this.href)).searchParams;
-			let $form = $(this).closest('form');
-			if( params.get('orderby') ){
-				$form.find('input[name="orderby"]').val( params.get('orderby') );
-				let order = params.get('order') ? params.get('order') : 'asc';
-				$form.find('input[name="order"]').val( order );
-				$form.submit();
-			}
-		});
-
-		// anything requiring extra setup
-		let resetup_bookings_table = function( table ){
-			em_setup_tippy(table);
-			em_setup_selectize(table);
-		}
-		let setup_bookings_table = function( table ) {
-			table.find(".em-bookings-cols-sortable").sortable().disableSelection();
-			let breakpoints = {
-				'small' : 600,
-				'large' : false,
-			}
-			const bookings_table_ro = EM_ResizeObserver( breakpoints, table.toArray() );
-		}
-
-		bookings_tables.each( function(){
-			setup_bookings_table( $(this) );
-		});
-
-		//Widgets and filter submissions
-		$(document).on('submit', '.em-bookings-table form.bookings-filter', function(e){
-			var el = $(this);
-			//append loading spinner
-			let root = el.parents('.em-bookings-table').first();
-			root.find('.table-wrap').first().append('<div id="em-loading" />');
-			//ajax call
-			$.post( EM.ajaxurl, el.serializeArray(), function(data){
-				let $data = $(data);
-				if( !root.hasClass('frontend') ) {
-					// remove modals as they are supplied again on the backend
-					root.find('.em-bookings-table-trigger').each( function(){
-						let modal = $(this.getAttribute('rel'));
-						modal.remove();
-					});
-				}
-				root.replaceWith($data);
-				// re-setup bookings table
-				setup_bookings_table($data);
-				resetup_bookings_table($data);
-				// fire hook
-				jQuery(document).triggerHandler('em_bookings_filtered', [$data, root, el]);
-			});
-			return false;
-		});
-		// Action links (approve/reject etc.)
-		$(document).on('click', '.em-bookings-approve,.em-bookings-reject,.em-bookings-unapprove,.em-bookings-delete,.em-bookings-ajax-action', function(){
-			let el = $(this);
-			if( el.hasClass('em-bookings-delete') && (!('bulk_action' in EM) || !EM.bulk_action) ){
-				if( !confirm(EM.booking_delete) ){ return false; }
-			}
-			let url = em_ajaxify( el.attr('href') );
-			let td = el.parents('td').first();
-			if( td.length > 0 && (td.hasClass('column-actions') || td.hasClass('em-bt-col-actions')) ){
-				td.html(EM.txt_loading);
-				td.load( url );
-			}else{
-				// set up a custom url action to retrieve a row afterwards
-				let dropdown = el.closest('[data-tippy-root], .em-tooltip-ddm-content');
-				if( dropdown.length > 0 ) {
-					if( '_tippy' in dropdown[0] ) {
-						dropdown[0]._tippy.hide();
-					}
-					let tr = el.closest('tr');
-					if( url.match(/^\//) ){
-						url = window.location.origin + url;
-					}
-					let params = (new URL(url)).searchParams;
-					let formData = new FormData(tr.closest('form')[0]);
-					formData.set('action', 'em_bookings_table_row');
-					formData.set('row_action', params.get('action'));
-					formData.set('booking_id', params.get('booking_id'));
-					let cols = el.closest('form').find('[name="cols"]').val();
-					tr.addClass('loading');
-					$.ajax({
-						url: EM.ajaxurl,
-						data: formData,
-						processData: false,
-						contentType: false,
-						type: 'POST',
-						success: function (data) {
-							let $data = $(data);
-							$data.addClass('faded-out');
-							tr.replaceWith( $data ).delay(200);
-							resetup_bookings_table( $data );
-							$data.fadeIn();
-							$data.removeClass('faded-out');
-						}
-					});
-				}
-			}
-			return false;
-		});
-	}
-	//Old Bookings Table - depreciating soon
-	if( $('.em_bookings_events_table').length > 0 ){
-		//Widgets and filter submissions
-		$(document).on('submit', '.em_bookings_events_table form', function(e){
-			var el = $(this);
-			var url = em_ajaxify( el.attr('action') );
-			el.parents('.em_bookings_events_table').find('.table-wrap').first().append('<div id="em-loading" />');
-			$.get( url, el.serializeArray(), function(data){
-				el.parents('.em_bookings_events_table').first().replaceWith(data);
-			});
-			return false;
-		});
-		//Pagination link clicks
-		$(document).on('click', '.em_bookings_events_table .tablenav-pages a', function(){
-			var el = $(this);
-			var url = em_ajaxify( el.attr('href') );
-			el.parents('.em_bookings_events_table').find('.table-wrap').first().append('<div id="em-loading" />');
-			$.get( url, function(data){
-				el.parents('.em_bookings_events_table').first().replaceWith(data);
-			});
-
-			return false;
-		});
-	}
 
 	//Manual Booking
 	$(document).on('click', 'a.em-booking-button', function(e){
@@ -699,10 +439,6 @@ jQuery(document).ready( function($){
 		em_setup_datepicker('body');
 	}
 	if( load_ui_css ) em_load_jquery_css();
-	// Datepicker - new
-	if( $('.em-datepicker').length > 0 ){
-		em_setup_datepicker('body');
-	}
 
 	//previously in em-admin.php
 	$('#em-wrapper input.select-all').on('change', function(){
@@ -905,15 +641,25 @@ jQuery(document).ready( function($){
 
 /**
  * Sets up external UI libraries and adds them to elements within the supplied container. This can be a jQuery or DOM element, subfunctions will either handle accordingly or this function will ensure it's the right one to pass on..
- * @param container
+ * @param jQuery|DOMElement container
  */
-function em_setup_ui_elements ( container ) {
+function em_setup_ui_elements ( $container ) {
+	let container = ( $container instanceof jQuery ) ? $container[0] : $container;
 	// Selectize
-	em_setup_selectize( container );
+	em_setup_selectize( $container );
 	// Tippy
-	em_setup_tippy( container );
+	em_setup_tippy( $container );
 	// Moment JS
-	em_setup_moment_times( container );
+	em_setup_moment_times( $container );
+	// Date & Time Pickers
+	if( container.querySelector('.em-datepicker') ){
+		em_setup_datepicker( container );
+	}
+	if( container.querySelector(".em-time-input") ){
+		em_setup_timepicker( $container );
+	}
+	// Phone numbers
+	em_setup_phone_inputs( container );
 }
 
 /* Local JS Timezone related placeholders */
@@ -1004,6 +750,708 @@ var em_ajaxify = function(url){
 	}
 	return url;
 };
+
+// WP List Tables front-end stuff
+const setupListTable = function( listTable ) {
+	// handle checks of multiple items using shift
+	const checkboxes = listTable.querySelectorAll( 'tbody .check-column input[type="checkbox"]' );
+	const listTableForm = listTable.querySelector('form.em-list-table-form');
+	let lastChecked;
+
+	//Pagination link clicks
+	listTable.querySelectorAll('.tablenav-pages a').forEach( el => {
+		el.addEventListener('click', function ( e ) {
+			e.preventDefault();
+			//get page no from url, change page, submit form
+			let match = el.href.match(/#[0-9]+/);
+			if ( match != null && match.length > 0 ) {
+				let pno = match[0].replace('#', '');
+				listTableForm.querySelector('input[name=pno]').val(pno);
+			} else {
+				// new way
+				let url = new URL(el.href);
+				if ( url.searchParams.has('paged') ) {
+					listTableForm.querySelectorAll('input[name=pno], input[name=paged]').forEach( el => el.value = url.searchParams.get('paged') );
+				} else {
+					listTableForm.querySelectorAll('input[name=pno], input[name=paged]').forEach( el => el.value = 1 );
+				}
+			}
+			listTableForm.requestSubmit();
+			return false;
+		});
+	});
+	// Pagination - Input page number
+	listTable.querySelectorAll('.tablenav-pages input[name=paged]').forEach( function ( input ){
+		input.addEventListener('change', function (e) {
+			e.preventDefault();
+			let last = listTableForm.querySelector('.tablenav-pages a.last-page');
+			if ( last ) {
+				// check val isn't more than last page
+				let url = new URL(last.href);
+				if ( url.searchParams.has('paged') ) {
+					let lastPage = parseInt(url.searchParams.get('paged'));
+					if ( parseInt(input.value) > lastPage ) {
+						input.value = lastPage;
+					}
+				}
+			} else {
+				// make sure it's less than current page, we're on last page already
+				let lastPage = listTableForm.querySelector('input[name=pno]');
+				if (lastPage && lastPage.value && parseInt(input.value) > parseInt(lastPage.value)) {
+					input.value = lastPage.value;
+					e.preventDefault();
+					return false;
+				}
+			}
+			listTableForm.querySelectorAll('input[name=pno]').forEach( el => el.value = input.value );
+			listTableForm.requestSubmit();
+			return false;
+		});
+	});
+
+	// handle checkboxes
+	listTable.addEventListener('click', function(e){
+		// handle selecting all checkboxes
+		if( e.target.matches('.manage-column.column-cb input') ){
+			listTable.querySelectorAll('.check-column input').forEach( function( checkbox ){
+				checkbox.checked = e.target.checked;
+				checkbox.closest('tr').classList.toggle('selected', e.target.checked);
+				// enable/disable bulk actions filter
+				listTable.querySelector('.tablenav .bulkactions-input').querySelectorAll('input,select,button').forEach( function(el){
+					e.target.checked ? el.removeAttribute('disabled') : el.setAttribute('disabled', true);
+					e.target.checked ? el.classList.remove('disabled') : el.classList.add('disabled', true);
+				});
+			});
+		} else if ( e.target.matches('tbody .check-column input[type="checkbox"]') ) {
+			// handle multiple checks
+			let inBetween = false;
+			if ( e.shiftKey ) {
+				checkboxes.forEach(checkbox => {
+					if ( checkbox === e.target || checkbox === lastChecked ) {
+						inBetween = !inBetween;
+					}
+					if ( inBetween || checkbox === lastChecked ) {
+						checkbox.checked = lastChecked.checked;
+					}
+					checkbox.closest('tr').classList.toggle('selected', checkbox.checked);
+				});
+			} else {
+				e.target.closest('tr').classList.toggle('selected', e.target.checked);
+			}
+			// enable/disable bulk actions filter
+			let somethingSelected = e.target.checked || listTable.querySelectorAll( 'tbody .check-column input[type="checkbox"]:checked' ).length > 0;
+			listTable.querySelector('.tablenav .bulkactions-input').querySelectorAll('input,select,button').forEach( function(el){
+				somethingSelected ? el.removeAttribute('disabled') : el.setAttribute('disabled', true);
+				somethingSelected ? el.classList.remove('disabled') : el.classList.add('disabled', true);
+			});
+			lastChecked = e.target;
+		} else if ( e.target.closest('tbody td.column-primary') ) {
+			// handle row expand/collapse
+			if ( e.target.matches('a[href],button:not(.toggle-row)') ) return true; // allow links to pass
+			e.preventDefault();
+			let rowExpandTrigger = e.target.closest('td.column-primary');
+			let row = rowExpandTrigger.closest('tr');
+			if( row.classList.contains('expanded') ) {
+				row.classList.remove('expanded');
+				row.classList.add('collapsed');
+				rowExpandTrigger.querySelector('button.toggle-row').classList.remove('expanded');
+			} else {
+				row.classList.add('expanded');
+				row.classList.remove('collapsed');
+				rowExpandTrigger.querySelector('button.toggle-row').classList.add('expanded');
+			}
+		}
+	});
+	// disable filter since no checkboxes initially selected
+	listTable.querySelectorAll('.tablenav .bulkactions-input').forEach( (el) => {
+		el.querySelectorAll('input,select,button').forEach(function (el) {
+			el.setAttribute('disabled', true);
+			el.classList.add('disabled', true);
+		})
+	});
+
+	// Sorting by headers
+	listTable.querySelector('thead').addEventListener('click', function( e ) {
+		// get th element
+		let th = e.target.tagName.toLowerCase() === 'th' ? e.target : e.target.closest('th');
+		if( th && (th.classList.contains('sorted') || th.classList.contains('sortable')) ) {
+			e.preventDefault();
+			// add args to form and submit it
+			let params = ( new URL( th.querySelector('a').href) ).searchParams;
+			if ( params.get('orderby') ) {
+				listTableForm.querySelector('input[name="orderby"]').value = params.get('orderby');
+				let order = params.get('order') ? params.get('order') : 'asc';
+				listTableForm.querySelector('input[name="order"]').value = order;
+				listTableForm.requestSubmit();
+			}
+		}
+	});
+
+	// show/hide filters trigger
+	let filterTrigger = listTable.querySelector('button.filters-trigger');
+	if( filterTrigger ) {
+		filterTrigger.addEventListener('click', function(e){
+			e.preventDefault();
+			if( filterTrigger.classList.contains('hidden') ) {
+				listTable.querySelectorAll('div.actions.filters').forEach( filter => filter.classList.remove('hidden') );
+				filterTrigger.classList.remove('hidden');
+				filterTrigger.setAttribute('aria-label', filterTrigger.dataset.labelHide);
+				if( '_tippy' in filterTrigger ){
+					filterTrigger._tippy.setContent( filterTrigger.dataset.labelHide );
+				}
+			} else {
+				listTable.querySelectorAll('div.actions.filters').forEach( filter => filter.classList.add('hidden') );
+				filterTrigger.classList.add('hidden');
+				filterTrigger.setAttribute('aria-label', filterTrigger.dataset.labelShow);
+				if( '_tippy' in filterTrigger ){
+					filterTrigger._tippy.setContent( filterTrigger.dataset.labelShow );
+				}
+			}
+		});
+		listTable.addEventListener('em_resize', function(){
+			if( listTable.classList.contains('size-small') ) {
+				filterTrigger.classList.remove('hidden'); // force hide click
+				filterTrigger.click();
+			}
+		});
+	}
+
+	// EXPAND/COLLAPSE - RESPONSIVE
+	// handle expand/collapse in responsive mode when clicking the expand/collapse (all)
+	let expandTrigger = listTable.querySelector('button.small-expand-trigger');
+	if( expandTrigger ) {
+		// detect click and add expand class to table, expanded class to trigger
+		expandTrigger.addEventListener('click', function(e){
+			e.preventDefault();
+			if( expandTrigger.classList.contains('expanded') ) {
+				listTable.querySelectorAll('tbody tr.expanded, tbody button.toggle-row.expanded').forEach( el => el.classList.remove('expanded') );
+				listTable.classList.remove('expanded');
+				expandTrigger.classList.remove('expanded');
+			} else {
+				listTable.querySelectorAll('tbody tr, tbody button.toggle-row').forEach( el => {
+					el.classList.add('expanded');
+					el.classList.remove('collapsed');
+				});
+				listTable.classList.add('expanded');
+				expandTrigger.classList.add('expanded');
+			}
+		});
+	}
+
+	// handle filters when pressing enter, submitting a search
+	listTable.querySelectorAll('.tablenav .actions input[type="text"]').forEach( function (input) {
+		input.addEventListener('keypress', function (e) {
+			let keycode = (e.keyCode ? e.keyCode : e.which);
+			if (keycode === 13) {
+				e.preventDefault();
+				listTableForm.requestSubmit();
+			}
+		});
+	});
+
+	// handle size breakpoints
+	let breakpoints = {
+		'xsmall' : 465,
+		'small' : 640,
+		'medium' : 930,
+		'large' : false,
+	}
+	// submissions
+	EM_ResizeObserver( breakpoints, [ listTable ] );
+
+	//Widgets and filter submissions
+	listTableForm.addEventListener('submit', function (e) {
+		e.preventDefault();
+		//append loading spinner
+		listTable.classList.add('em-working');
+		let loadingDiv = document.createElement('div');
+		loadingDiv.id = 'em-loading';
+		listTable.append(loadingDiv);
+		listTable.querySelectorAll('.em-list-table-error-notice').forEach( el => el.remove() );
+		//ajax call
+		fetch( EM.ajaxurl, { method: 'POST', body: new FormData(listTableForm) } ).then( function( response ) {
+			if ( response.ok ) {
+				return response.text();
+			} else {
+				throw new Error('Network Response ' + response.status);
+			}
+		}).then( function( data ) {
+			if ( !data ) {
+				throw new Error('Empty string received');
+			}
+			if (!listTable.classList.contains('frontend')) {
+				// remove modals as they are supplied again on the backend
+				listTableForm.querySelectorAll('.em-list-table-trigger').forEach(function ( trigger ) {
+					let modal = document.querySelector(trigger.rel);
+					if( modal ) {
+						modal.remove();
+					}
+				});
+			}
+			// get new data as DOM object
+			let wrapper = document.createElement('div');
+			wrapper.innerHTML = data;
+			let newListTable = wrapper.firstElementChild;
+			// replace old table with new table
+			listTable.replaceWith( newListTable );
+			// fire hook - note that form and data should not be used! This is for backward compatibility with an old jQuery hook being fired. Expect future consequences if you use them, obtain everything from listTable or prevListTable!
+			document.dispatchEvent( new CustomEvent('em_list_table_filtered', { detail: { prevListTable: listTable, listTable: newListTable, form: newListTable.firstElementChild, data: data } }) );
+		}).catch( function( error ) {
+			let div = document.createElement('div');
+			div.innerHTML = '<p>There was an unexpected error retrieving table data with error <code>' + error.message + '</code>, please try again or contact an administrator.</p>';
+			div.setAttribute('class', 'em-warning error em-list-table-error-notice');
+			listTable.querySelector('.table-wrap').before(div);
+			loadingDiv.remove();
+			listTable.classList.remove('em-working');
+		});
+		return false;
+	});
+
+	//Settings & Export Modal
+
+	/**
+	 * Handle trigger of settings and export modals.
+	 */
+	listTable.querySelectorAll('.em-list-table-trigger').forEach( trigger => {
+		trigger.addEventListener('click', function (e) {
+			e.preventDefault();
+			let modal = document.querySelector( trigger.getAttribute('rel') );
+			openModal(modal);
+		});
+	});
+
+	/**
+	 * Handle submission of settings forms, by copying over hidden input values such as cols and limit to main form.
+	 */
+	listTable.querySelectorAll('.em-list-table-settings form').forEach( form => {
+		form.addEventListener('submit', function (e) {
+			e.preventDefault();
+			//we know we'll deal with cols, so wipe hidden value from main
+			let modal = form.closest('.em-modal');
+			let match = listTableForm.querySelector("[name=cols]");
+			match.value = '';
+			let tableCols = form.querySelectorAll('.em-list-table-cols-selected .item');
+			tableCols.forEach( function (item_match) {
+				if (!item_match.classList.contains('hidden')) {
+					if (match.value !== '') {
+						match.value = match.value + ',' + item_match.getAttribute('data-value');
+					} else {
+						match.value = item_match.getAttribute('data-value');
+					}
+				}
+			});
+			// sync row count
+			let limit = form.querySelector('select[name="limit"]');
+			if( limit ) {
+				listTableForm.querySelector('[name="limit"]').value = limit.value;
+			}
+			// sync custom inputs
+			form.querySelectorAll('[data-setting]').forEach( function( input ) {
+				listTableForm.querySelectorAll('[name="'+input.name+'"]').forEach( el => el.remove() );
+				let persisted = input.cloneNode(true);
+				persisted.classList.add('hidden')
+				listTableForm.appendChild( persisted );
+			});
+			closeModal(modal);
+			// send events out
+			modal.dispatchEvent( new CustomEvent('submitted') );
+			listTable.dispatchEvent( new CustomEvent( 'em_list_table_settings_submitted', {
+				detail: {
+					listTableForm: listTableForm,
+					form: form,
+					modal: modal
+				},
+				bubbles: true
+			}) );
+			// submit main form
+			listTableForm.requestSubmit();
+		});
+	});
+
+	/**
+	 * Handle submission of export forms, by copying over filters and hidden inputs with the data-persist attribute from main list table form.
+	 */
+	listTable.querySelectorAll('.em-list-table-export > form').forEach( function( exportForm ) {
+		exportForm.addEventListener('submit', function(e) {
+			var formFilters = this.querySelector('.em-list-table-filters');
+			if ( formFilters ) {
+				// get all filter inputs in main list table form and copy over so export inherits all filters to output right results
+				let filters = listTableForm.querySelectorAll('.em-list-table-filters [name]');
+				formFilters.innerHTML = ''; // Empty the filters, none to copy over
+				if( filters ) {
+					filters.forEach( function( filter ) {
+						formFilters.appendChild( filter.cloneNode(true) );
+					});
+				}
+				let peristentData = listTableForm.querySelectorAll('[data-persist]');
+				if( peristentData ) {
+					peristentData.forEach( function( filter ) {
+						formFilters.appendChild( filter.cloneNode(true) );
+					});
+				}
+			}
+		});
+	});
+
+	// sortables
+	listTable.querySelectorAll(".em-list-table-cols-sortable").forEach( function(sortable) {
+		Sortable.create( sortable );
+	});
+
+	// add trigger
+	document.dispatchEvent( new CustomEvent('em_list_table_setup', { detail: { listTable: listTable, listTableForm: listTableForm } }) );
+
+	// add extra listeners that we might want to block such as in bulk actions and row actions
+
+	/* ----------------- Row/Bulk Action Handlers ----------------- */
+
+	const actionMessages = JSON.parse( listTableForm.dataset.actionMessages );
+	let isBulkAction = false;
+
+	listTable.addEventListener('click', function( e ) {
+		if( e.target.matches('a[data-row_action]') ) {
+			e.preventDefault();
+			let el = e.target;
+			let tr = el.closest('tr');
+
+			if( !isBulkAction ) {
+				let confirmation = []
+				// check if we need to confirm something specific
+				if ( el.dataset.confirmation && el.dataset.confirmation in actionMessages ) {
+					confirmation.push( actionMessages[el.dataset.confirmation] );
+				}
+				// check context of action and warn then propagate if upstream
+				if ( el.dataset.row_action in actionMessages ) {
+					confirmation.push( actionMessages[el.dataset.row_action] );
+				}
+
+				if ( confirmation.length > 0 ) {
+					if ( !confirm( confirmation.join("\n\n") ) ) {
+						return false;
+					}
+				}
+			}
+
+			// close dropdown if applicable
+			let dropdown = el.closest('[data-tippy-root], .em-tooltip-ddm-content');
+			if ( dropdown ) {
+				if ( '_tippy' in dropdown ) {
+					dropdown._tippy.hide();
+				}
+			}
+
+			// handle upstream rows, add a loading class to them so they don't get double-tapped, no checks necessary here since we have clicked a single row item
+			if( el.dataset.upstream ) {
+				// block any same upstream_id row so it's loading already pending refresh
+				listTable.querySelectorAll('tr[data-id="' + tr.dataset.id + '"]').forEach( tr => tr.classList.add('loading') );
+			}
+
+			// prep and fetch/refresh
+			let formData = new FormData( listTableForm );
+			for( const [key, value] of Object.entries(el.dataset) ) {
+				formData.set(key, value);
+			}
+			formData.set('view', listTable.dataset.view);
+			formData.set('action', listTable.dataset.basename + '_row');
+			listTableRowAction( tr, formData );
+
+			return false; // stop propagation
+		}
+	});
+
+	// Action links (approve/reject etc.) - circumvent if a warning is required
+	listTable.addEventListener( 'click', function( e ) {
+		if( e.target.matches('a[data-row_action]') ) {
+			e.preventDefault();
+		}
+	});
+
+	listTable.querySelectorAll('button.em-list-table-bulk-action').forEach( function( button ) {
+		button.addEventListener('click', function (e) {
+			e.preventDefault(); // override default
+			let actionSelector = listTableForm.querySelector('select.bulk-action-selector');
+			let action = actionSelector.options[actionSelector.selectedIndex];
+			
+			// check if we need to confirm
+			if ( action.dataset.confirm ) {
+				if ( !confirm( action.dataset.confirm ) ) {
+					isBulkAction = false; // just in case
+					return false;
+				}
+			}
+
+			isBulkAction = true;
+			// find all checked items and perform action on them if the action actually exists for that row (e.g. you can't re-approve an approved booking)
+			let rows = listTableForm.querySelectorAll('tbody .check-column input:checked');
+			rows.forEach( function ( checkbox ) {
+				let actionTrigger = checkbox.parentElement.querySelector('[data-row_action="' + action.value + '"]');
+				// check if sibling has the relevant action
+				if( actionTrigger ) {
+					let tr = checkbox.closest('tr');
+					if ( actionTrigger.dataset.upstream ) {
+						// check if not already in an upstream process, proceed if not
+						if ( !tr.classList.contains('loading') ) { // if loading, already in upstream from another row
+							// trigger the first booking id row in this table, it'll handle upstream stuff
+							actionTrigger.click();
+						}
+					} else {
+						// regular action, just click it
+						actionTrigger.click();
+					}
+				}
+			});
+			isBulkAction = false;
+		});
+	});
+
+
+	// add a listener to refresh related booking rows if upstream
+	listTable.addEventListener('em_list_table_row_action_complete', function(e){
+		if ( e.detail.upstream ) {
+			// find any rows other than the current one and trigger a refresh
+			let currentRow = e.detail.currentRow;
+			let formData = e.detail.formData;
+			if( formData.get('row_action') === 'delete' ) {
+				let feedback = currentRow.querySelector('.column-primary span.em-icon-trash.em-tooltip');
+				if ( feedback ) {
+					listTable.querySelectorAll('tr[data-id="' + formData.get('row_id') + '"]').forEach( function( tr ) {
+						// apply to all rows of same booking_id except the one we just updated
+						if ( tr !== currentRow ) {
+							let td = tr.querySelector('.column-primary');
+							td.prepend(feedback.cloneNode(true));
+							em_setup_tippy(td);
+						}
+						tr.classList.remove('faded-out');
+						tr.classList.remove('loading');
+					});
+				}
+			} else if( formData.get('row_action') !== 'refresh' ) {
+				let feedback = currentRow.querySelector('.column-primary span.em-icon.em-tooltip').getAttribute('aria-label');
+				formData.set('row_action', 'refresh'); // this is a special action that just refreshes the row
+				formData.set('feedback', feedback);
+				listTable.querySelectorAll('tr[data-id="' + formData.get('row_id') + '"]').forEach( function( tr ) {
+					// apply to all rows of same booking_id except the one we just updated
+					if( tr !== currentRow ) {
+						listTableRowAction(tr, formData);
+						// delete current booking_id and reset isUpstreamAction if we're done
+						delete isUpstreamAction[e.detail.booking_id];
+						if (Object.keys(isUpstreamAction).length) {
+							isUpstreamAction = false;
+						}
+					}
+				});
+			}
+		}
+	});
+
+	// setup rows with actions if there are any
+	listTable.querySelectorAll('td.column-actions a').forEach( (action) => {
+		action.classList.add('em-tooltip');
+		action.setAttribute('aria-label', action.innerText);
+	});
+}
+
+let listTableRowAction = function( tr, formData, upstream = false ){
+	let listTable = tr.closest('.em-list-table');
+	tr.classList.add('loading');
+	formData.set('row_id', tr.dataset.id );
+	fetch( EM.ajaxurl, { method: 'post', body : formData } ).then( function( response ) {
+		return response.text();
+	}).then( function( html ) {
+		tr.classList.add('faded-out');
+		if ( formData.get('row_action') === 'delete' ) {
+			// the text provided is the icon, nothing else
+			tr.querySelectorAll('th.check-column input[type="checkbox"], .em-list-table-actions').forEach( el => el.remove() );
+			let td = tr.querySelector('.column-primary');
+			let wrapper = document.createElement('div');
+			wrapper.innerHTML = html;
+			let icon = wrapper.firstElementChild;
+			em_setup_tippy(wrapper); // no actions to set up
+			td.prepend(icon);
+		} else {
+			tr.innerHTML = html
+			setupListTableExtras(tr);
+		}
+		tr.classList.remove('faded-out');
+		tr.classList.remove('loading');
+		listTable.dispatchEvent( new CustomEvent('em_list_table_row_action_complete', { detail: { currentRow: tr, formData: formData, upstream: upstream } } ) );
+	});
+}
+
+const setupListTableExtras = function( listTable ) {
+	// setup rows with actions if there are any
+	listTable.querySelectorAll('td.column-actions a').forEach( (action) => {
+		action.classList.add('em-tooltip');
+		action.setAttribute('aria-label', action.innerText);
+	});
+	// remove tooltips within tooltips in cell tooltips
+	listTable.querySelectorAll('td .em-list-table-col-tooltip .em-list-table-col-tooltip').forEach( (subtip) => {
+		subtip.querySelectorAll('.em-tooltip').forEach( el => el.remove() );
+		subtip.querySelectorAll('.em-tooltip-content').forEach( el => el.classList.remove('hidden') );
+	});
+	// set up tippy, selectize etc.
+	em_setup_tippy( listTable );
+	em_setup_selectize( listTable );
+}
+
+document.addEventListener('em_list_table_filtered', function(e){
+	setupListTable( e.detail.listTable );
+	// re-setup tippy, selectize etc.
+	setupListTableExtras( e.detail.listTable );
+});
+
+// init
+document.addEventListener('DOMContentLoaded', function() {
+	// add back-compat stuff
+	document.querySelectorAll('.em_obj div.tablenav').forEach( function( tablenav ){
+		let em_obj = tablenav.closest('.em_obj');
+		em_obj.classList.add('em-list-table','legacy', 'frontend');
+		em_obj.querySelector('& > form').classList.add('em-list-table-form');
+	});
+	// find tables
+	document.querySelectorAll('.em-list-table').forEach( listTable => setupListTable(listTable) );
+});
+
+// add extra setup to bookings list table
+document.addEventListener('em_list_table_setup'  , function(e){
+	let listTable = e.detail.listTable;
+	let listTableForm = e.detail.listTableForm;
+	if( listTable.classList.contains('em-bookings-table') ) {
+
+		// handle submitting the settings modal form with booking-speficic extras
+		listTable.addEventListener('em_list_table_settings_submitted', function(e){
+			let form = e.detail.form;
+			let listTableForm = e.detail.listTableForm;
+			// get the views ddm and sync it to the table filter
+			let views_select = form.querySelector('select[name="view"]');
+			if ( views_select ) {
+				let view_radio = listTableForm.querySelector('[name="view"][value="' + views_select.value + '"]');
+				if( view_radio ) {
+					view_radio.checked = true; // this doesn't trigger an event as we don't want that
+				}
+				let view_option = listTableForm.querySelector('button.em-bookings-table-view-option[data-view]');
+				if ( view_option ) {
+					view_option.setAttribute('data-view', views_select.value);
+					view_option.innerText = views_select.options[views_select.selectedIndex].innerText;
+				}
+			}
+		});
+
+		// setup views dropdown to switch between different booking table views
+		let views_ddm_options = {
+			theme : 'light-border',
+			allowHTML : true,
+			interactive : true,
+			trigger : 'manual',
+			placement : 'bottom',
+			zIndex : 1000000,
+			touch: true,
+		};
+		let tooltip_vars = { theme : 'light-border', appendTo : 'parent', touch : false, };
+
+		// TODO unify this with the search view dropdown JS to remove redundant code
+		listTable.querySelectorAll('.em-bookings-table-views-trigger').forEach( function( trigger ){
+			tooltip_vars.content = trigger.parentElement.getAttribute('aria-label');
+			let views_tooltip = tippy(trigger.parentElement, tooltip_vars);
+			let views_content = trigger.parentElement.querySelector('.em-bookings-table-views-options');
+			let views_content_parent = views_content.parentElement;
+			let tippy_content = document.createElement('div');
+			views_ddm_options.content = tippy_content;
+			let views_ddm = tippy(trigger, views_ddm_options);
+			views_ddm.setProps({
+				onShow(instance){
+					views_tooltip.disable();
+					tippy_content.append(views_content);
+				},
+				onShown(instance){ // keyboard support
+					views_content.querySelector('input:checked').focus();
+				},
+				onHidden(instance){
+					views_tooltip.enable();
+					if( views_content.parentElement !== views_content_parent ) {
+						views_content_parent.append(views_content);
+					}
+				}
+			});
+			let tippy_listener = function(e){
+				if( e.type === 'keydown' && !(e.which === 13 || e.which === 40) ) return false;
+				e.preventDefault();
+				e.stopPropagation();
+				trigger._tippy.show();
+				views_tooltip.hide();
+			}
+			trigger.addEventListener('click', tippy_listener);
+			trigger.addEventListener('keydown', tippy_listener);
+			trigger.firstElementChild.addEventListener('focus', function(e){
+				views_ddm.hide();
+				views_tooltip.enable();
+				views_tooltip.show();
+			});
+			trigger.firstElementChild.addEventListener('blur', function(){
+				views_tooltip.hide();
+			});
+
+			// TODO Remove this dependence on jQuery. Copied it from the search.js file, but it seems that even a vanilla document.addEventListener('blur') isn't intercepting these blur/focus events.
+			let $ = jQuery;
+			$views = $(listTable).find('.em-bookings-table-views');
+			$views.on('focus blur', '.em-bookings-table-views-options input', function(){
+				if( document.activeElement === this ){
+					this.parentElement.classList.add('focused');
+				}else{
+					this.parentElement.classList.remove('focused');
+				}
+			});
+
+			$views.on('keydown click', '.em-bookings-table-views-options input', function( e ){
+				// get relevant vars
+				if( e.type === 'keydown' && e.which !== 13 ){
+					if ( [37, 38, 39, 40].indexOf(e.which) !== -1 ) {
+						if (e.which === 38) {
+							if (this.parentElement.previousElementSibling) {
+								this.parentElement.previousElementSibling.focus();
+							}
+						} else if (e.which === 40) {
+							if (this.parentElement.nextElementSibling) {
+								this.parentElement.nextElementSibling.focus();
+							}
+						}
+						return false;
+					} else if ( e.which === 9 ) {
+						// focus out
+						views_ddm.hide();
+					}
+					return true;
+				}
+				this.checked = true;
+				let input = $(this);
+				// mark label selected
+				input.closest('fieldset').find('label').removeClass('checked');
+				input.parent().addClass('checked');
+				// get other reference elements we need
+				let views_wrapper = $(this).closest('.em-bookings-table-views');
+				let view_type = this.value;
+				let trigger = views_wrapper.children('.em-bookings-table-views-trigger');
+				let trigger_option = trigger.children('.em-search-view-option');
+				// change view, if different
+				if( view_type !== trigger_option.attr('data-view') ){
+					trigger_option.attr('data-view', this.value).text(this.parentElement.innerText);
+					// remove cols value if it's just a switch in view, so we get default cols (if there is one)
+					listTableForm.querySelector('input[name="cols"][type="hidden"]').value = '';
+					// set the view type and trigger a form submit
+					listTableForm.requestSubmit();
+				}
+				views_ddm.hide();
+			});
+		});
+	}
+});
+
+// backcompat for em_bookings_filtered jQuery trigger
+document.addEventListener('em_list_table_filtered', function( e ){
+	if( e.detail.listTable.classList.contains('em-bookings-table') && window.jQuery ) {
+		jQuery(document).triggerHandler('em_bookings_filtered', [jQuery(e.detail.data), e.detail.listTable, jQuery(e.detail.form)]); // backwards compatibility
+	}
+})
 
 function em_setup_datepicker(wrap){
 	wrap = jQuery(wrap);
@@ -1289,7 +1737,7 @@ let em_close_other_selectized = function(){
 	});
 }
 
-document.addEventListener('DOMContentLoaded', function(){
+document.addEventListener('events_manager_js_loaded', function(){
 	Selectize.define('multidropdown', function( options ) {
 		if( !this.$input.hasClass('multidropdown') ) return;
 		let s = this;
@@ -1394,9 +1842,30 @@ function em_setup_selectize( container_element ){
 
 	container.find('.em-selectize.selectize-control').on( 'click', em_close_other_selectized );
 
+	let optionRender = function (item, escape) {
+		let html = '<div class="option"';
+		if( 'data' in item ){
+			// any key/value object pairs wrapped in a 'data' key within JSON object in the data-data attribute is added automatically as a data-key="value" attribute
+			Object.entries(item.data).forEach( function( item_data ){
+				html += ' data-'+ escape(item_data[0]) + '="'+ escape(item_data[1]) +'"';
+			});
+		}
+		html +=	'>';
+		if( this.$input.hasClass('checkboxes') ){
+			html += item.text.replace(/^(\s+)?/i, '$1<span></span> ');
+		}else{
+			html += item.text;
+		}
+		html += '</div>';
+		return html;
+	};
+
 	// Selectize General
 	container.find('select:not([multiple]).em-selectize, .em-selectize select:not([multiple])').selectize({
 		selectOnTab : false,
+		render: {
+			option: optionRender,
+		},
 	});
 	container.find('select[multiple].em-selectize, .em-selectize select[multiple]').selectize({
 		selectOnTab : false,
@@ -1407,23 +1876,7 @@ function em_setup_selectize( container_element ){
 			item: function (item, escape) {
 				return '<div class="item"><span>' + item.text.replace(/^\s+/i, '') + '</span></div>';
 			},
-			option : function (item, escape) {
-				let html = '<div class="option"';
-				if( 'data' in item ){
-					// any key/value object pairs wrapped in a 'data' key within JSON object in the data-data attribute is added automatically as a data-key="value" attribute
-					Object.entries(item.data).forEach( function( item_data ){
-						html += ' data-'+ escape(item_data[0]) + '="'+ escape(item_data[1]) +'"';
-					});
-				}
-				html +=	'>';
-				if( this.$input.hasClass('checkboxes') ){
-					html += item.text.replace(/^(\s+)?/i, '$1<span></span> ');
-				}else{
-					html += item.text;
-				}
-				html += '</div>';
-				return html;
-			},
+			option : optionRender,
 			optgroup : function (item, escape) {
 				let html = '<div class="optgroup" data-group="' + escape(item.label) + '"';
 				if( 'data' in item ){
@@ -1466,11 +1919,11 @@ function em_setup_selectize( container_element ){
 		}
 	});
 
-	// Sortables - selectize and sorting
-	container.find('.em-bookings-table-modal .em-bookings-table-cols').each( function(){
+	// Sortables - selectize and sorting columns, usually in list tables
+	container.find('.em-list-table-modal .em-list-table-cols').each( function(){
 		let parent = jQuery(this);
-		let sortables = jQuery(this).find('.em-bookings-cols-sortable');
-		container.find('.em-selectize.always-open').each( function() {
+		let sortables = jQuery(this).find('.em-list-table-cols-sortable');
+		parent.find('.em-selectize.always-open').each( function() {
 			//extra behaviour for selectize column picker
 			if ('selectize' in this) {
 				let selectize = this.selectize;
@@ -1481,12 +1934,15 @@ function em_setup_selectize( container_element ){
 					let type = option.attr('data-type');
 					col.appendTo(sortables);
 					col.attr('data-type', type);
+					if( option.attr('data-header') ) {
+						col.children('span:first-child').text( option.attr('data-header') );
+					}
 					jQuery('<input type="hidden" name="cols[' + value + ']" value="1">').appendTo(col);
 				});
 				selectize.on('item_remove', function (value) {
 					parent.find('.item[data-value="'+ value +'"]').remove();
 				});
-				parent.on('click', '.em-bookings-cols-selected .item .remove', function(){
+				parent.on('click', '.em-list-table-cols-selected .item .remove', function(){
 					let value = this.parentElement.getAttribute('data-value');
 					selectize.removeItem(value, true);
 				});
@@ -1501,7 +1957,7 @@ function em_setup_tippy( container_element ){
 		theme : 'light-border',
 		appendTo : 'parent',
 		content(reference) {
-			if( 's' in reference.dataset && reference.dataset.content.match(/^[.#][a-zA-Z0-9]+/) ){
+			if( reference.dataset.content ){
 				try {
 					let content = container[0].querySelector(reference.dataset.content);
 					if (content) {
@@ -1518,7 +1974,7 @@ function em_setup_tippy( container_element ){
 		allowHTML : true,
 	};
 	jQuery(document).trigger('em-tippy-vars',[tooltip_vars, container]);
-	tippy('.em-tooltip', tooltip_vars);
+	container.find('.em-tooltip').each( ( i, tooltip ) => tippy( tooltip, tooltip_vars ) );
 	// Set up Tippy DDMs
 	let tippy_ddm_options = {
 		theme : 'light-border',
@@ -1892,6 +2348,7 @@ let openModal = function( modal, onOpen = null ){
 	setTimeout( function(){
 		modal.addClass('active').find('.em-modal-popup').addClass('active');
 		jQuery(document).triggerHandler('em_modal_open', [modal]);
+		document.dispatchEvent( new CustomEvent('em_modal_open', { detail: { modal: modal } }) );
 		if( typeof onOpen === 'function' ){
 			setTimeout( onOpen, 200); // timeout allows css transition
 		}
@@ -2811,7 +3268,7 @@ jQuery(document).ready( function($){
 
 	const em_calendar_init = function( calendar ){
 		calendar = $(calendar);
-		if( !calendar.attr('id') || !calendar.attr('id').match(/^em-calendar-[0-9+]$/) ){
+		if( !calendar.attr('id') || !calendar.attr('id').match(/^em-calendar-[0-9]+$/) ){
 			calendar.attr('id', 'em-calendar-' + Math.floor(Math.random() * 10000)); // retroactively add id to old templates
 		}
 		calendar.find('a').off("click");
@@ -2820,19 +3277,31 @@ jQuery(document).ready( function($){
 			const el = $(this);
 			if( el.data('disabled') == 1 || el.attr('href') === '') return; // do nothing if disabled or no link provided
 			el.closest('.em-calendar').prepend('<div class="loading" id="em-loading"></div>');
-			let url = em_ajaxify(el.attr('href'));
+			let url = el.attr('href');
 			const view_id = el.closest('[data-view-id]').data('view-id');
-			const calendar_id = calendar.attr('id').replace('em-calendar-', '');
-			const custom_data = $('form#em-view-custom-data-calendar-'+ calendar_id);
+			const custom_data = $('form#em-view-custom-data-calendar-'+ view_id);
 			let form_data = new FormData();
-			form_data.set('id', view_id);
 			if( custom_data.length > 0 ){
 				form_data = new FormData(custom_data[0]);
-				let url_params = new URL(url, window.location.origin).searchParams;
+				let $URL = new URL(url, window.location.origin);
+				let url_params = $URL.searchParams;
 				for (const [key, value] of url_params.entries()) {
-					form_data.set(key, value);
+					if( key === 'mo' ) {
+						form_data.set('month', value);
+					} else if ( key === 'yr' ) {
+						form_data.set('year', value);
+					} else {
+						form_data.set(key, value);
+					}
 				}
+				// remove mo and yr from URL
+				$URL.searchParams.delete('mo');
+				$URL.searchParams.delete('yr');
+				url = $URL.toString();
 			}
+			form_data.set('id', view_id);
+			form_data.set('ajaxCalendar', 1); // AJAX trigger
+			form_data.set('em_ajax', 1); // AJAX trigger
 			// check advanced trigger
 			if( calendar.hasClass('with-advanced') ){
 				form_data.set('has_advanced_trigger', 1);
@@ -3068,7 +3537,7 @@ let EM_View_Updater = function( element, html ){
 			element.replaceWith(view);
 		}
 	}
-	em_setup_ui_elements( view );
+	em_setup_ui_elements( view[0] );
 	return view;
 }
 
@@ -3089,7 +3558,11 @@ let EM_ResizeObserver = function( breakpoints, elements ){
 						for (let breakpoint_name of Object.keys(breakpoints)) {
 							if (breakpoint_name !== name) el.classList.remove('size-' + breakpoint_name);
 						}
-						el.classList.add('size-' + name);
+						// add class and trigger event only once
+						if(	!el.classList.contains('size-' + name) ) {
+							el.classList.add('size-' + name);
+							el.dispatchEvent( new CustomEvent('em_resize') );
+						}
 						break;
 					}
 				}
@@ -3254,15 +3727,8 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 // phone numbers
-window.addEventListener('load', function(){
-	// enable for now only in beta if EM_PHONE_INTL_ENABLED PHP Constant is true
-	if ( !EM.phone ) return false;
-
-	/*!
-	 * International Telephone Input v18.2.1
-	 * https://github.com/jackocnr/intl-tel-input.git
-	 */
-	(function(factory){if(typeof module==="object"&&module.exports)module.exports=factory();else window.intlTelInput=factory()})(function(undefined){"use strict";return function(){var allCountries=[["Afghanistan (‫افغانستان‬‎)","af","93"],["Albania (Shqipëri)","al","355"],["Algeria (‫الجزائر‬‎)","dz","213"],["American Samoa","as","1",5,["684"]],["Andorra","ad","376"],["Angola","ao","244"],["Anguilla","ai","1",6,["264"]],["Antigua and Barbuda","ag","1",7,["268"]],["Argentina","ar","54"],["Armenia (Հայաստան)","am","374"],["Aruba","aw","297"],["Ascension Island","ac","247"],["Australia","au","61",0],["Austria (Österreich)","at","43"],["Azerbaijan (Azərbaycan)","az","994"],["Bahamas","bs","1",8,["242"]],["Bahrain (‫البحرين‬‎)","bh","973"],["Bangladesh (বাংলাদেশ)","bd","880"],["Barbados","bb","1",9,["246"]],["Belarus (Беларусь)","by","375"],["Belgium (België)","be","32"],["Belize","bz","501"],["Benin (Bénin)","bj","229"],["Bermuda","bm","1",10,["441"]],["Bhutan (འབྲུག)","bt","975"],["Bolivia","bo","591"],["Bosnia and Herzegovina (Босна и Херцеговина)","ba","387"],["Botswana","bw","267"],["Brazil (Brasil)","br","55"],["British Indian Ocean Territory","io","246"],["British Virgin Islands","vg","1",11,["284"]],["Brunei","bn","673"],["Bulgaria (България)","bg","359"],["Burkina Faso","bf","226"],["Burundi (Uburundi)","bi","257"],["Cambodia (កម្ពុជា)","kh","855"],["Cameroon (Cameroun)","cm","237"],["Canada","ca","1",1,["204","226","236","249","250","263","289","306","343","354","365","367","368","382","387","403","416","418","428","431","437","438","450","584","468","474","506","514","519","548","579","581","584","587","604","613","639","647","672","683","705","709","742","753","778","780","782","807","819","825","867","873","902","905"]],["Cape Verde (Kabu Verdi)","cv","238"],["Caribbean Netherlands","bq","599",1,["3","4","7"]],["Cayman Islands","ky","1",12,["345"]],["Central African Republic (République centrafricaine)","cf","236"],["Chad (Tchad)","td","235"],["Chile","cl","56"],["China (中国)","cn","86"],["Christmas Island","cx","61",2,["89164"]],["Cocos (Keeling) Islands","cc","61",1,["89162"]],["Colombia","co","57"],["Comoros (‫جزر القمر‬‎)","km","269"],["Congo (DRC) (Jamhuri ya Kidemokrasia ya Kongo)","cd","243"],["Congo (Republic) (Congo-Brazzaville)","cg","242"],["Cook Islands","ck","682"],["Costa Rica","cr","506"],["Côte d’Ivoire","ci","225"],["Croatia (Hrvatska)","hr","385"],["Cuba","cu","53"],["Curaçao","cw","599",0],["Cyprus (Κύπρος)","cy","357"],["Czech Republic (Česká republika)","cz","420"],["Denmark (Danmark)","dk","45"],["Djibouti","dj","253"],["Dominica","dm","1",13,["767"]],["Dominican Republic (República Dominicana)","do","1",2,["809","829","849"]],["Ecuador","ec","593"],["Egypt (‫مصر‬‎)","eg","20"],["El Salvador","sv","503"],["Equatorial Guinea (Guinea Ecuatorial)","gq","240"],["Eritrea","er","291"],["Estonia (Eesti)","ee","372"],["Eswatini","sz","268"],["Ethiopia","et","251"],["Falkland Islands (Islas Malvinas)","fk","500"],["Faroe Islands (Føroyar)","fo","298"],["Fiji","fj","679"],["Finland (Suomi)","fi","358",0],["France","fr","33"],["French Guiana (Guyane française)","gf","594"],["French Polynesia (Polynésie française)","pf","689"],["Gabon","ga","241"],["Gambia","gm","220"],["Georgia (საქართველო)","ge","995"],["Germany (Deutschland)","de","49"],["Ghana (Gaana)","gh","233"],["Gibraltar","gi","350"],["Greece (Ελλάδα)","gr","30"],["Greenland (Kalaallit Nunaat)","gl","299"],["Grenada","gd","1",14,["473"]],["Guadeloupe","gp","590",0],["Guam","gu","1",15,["671"]],["Guatemala","gt","502"],["Guernsey","gg","44",1,["1481","7781","7839","7911"]],["Guinea (Guinée)","gn","224"],["Guinea-Bissau (Guiné Bissau)","gw","245"],["Guyana","gy","592"],["Haiti","ht","509"],["Honduras","hn","504"],["Hong Kong (香港)","hk","852"],["Hungary (Magyarország)","hu","36"],["Iceland (Ísland)","is","354"],["India (भारत)","in","91"],["Indonesia","id","62"],["Iran (‫ایران‬‎)","ir","98"],["Iraq (‫العراق‬‎)","iq","964"],["Ireland","ie","353"],["Isle of Man","im","44",2,["1624","74576","7524","7924","7624"]],["Israel (‫ישראל‬‎)","il","972"],["Italy (Italia)","it","39",0],["Jamaica","jm","1",4,["876","658"]],["Japan (日本)","jp","81"],["Jersey","je","44",3,["1534","7509","7700","7797","7829","7937"]],["Jordan (‫الأردن‬‎)","jo","962"],["Kazakhstan (Казахстан)","kz","7",1,["33","7"]],["Kenya","ke","254"],["Kiribati","ki","686"],["Kosovo","xk","383"],["Kuwait (‫الكويت‬‎)","kw","965"],["Kyrgyzstan (Кыргызстан)","kg","996"],["Laos (ລາວ)","la","856"],["Latvia (Latvija)","lv","371"],["Lebanon (‫لبنان‬‎)","lb","961"],["Lesotho","ls","266"],["Liberia","lr","231"],["Libya (‫ليبيا‬‎)","ly","218"],["Liechtenstein","li","423"],["Lithuania (Lietuva)","lt","370"],["Luxembourg","lu","352"],["Macau (澳門)","mo","853"],["Madagascar (Madagasikara)","mg","261"],["Malawi","mw","265"],["Malaysia","my","60"],["Maldives","mv","960"],["Mali","ml","223"],["Malta","mt","356"],["Marshall Islands","mh","692"],["Martinique","mq","596"],["Mauritania (‫موريتانيا‬‎)","mr","222"],["Mauritius (Moris)","mu","230"],["Mayotte","yt","262",1,["269","639"]],["Mexico (México)","mx","52"],["Micronesia","fm","691"],["Moldova (Republica Moldova)","md","373"],["Monaco","mc","377"],["Mongolia (Монгол)","mn","976"],["Montenegro (Crna Gora)","me","382"],["Montserrat","ms","1",16,["664"]],["Morocco (‫المغرب‬‎)","ma","212",0],["Mozambique (Moçambique)","mz","258"],["Myanmar (Burma) (မြန်မာ)","mm","95"],["Namibia (Namibië)","na","264"],["Nauru","nr","674"],["Nepal (नेपाल)","np","977"],["Netherlands (Nederland)","nl","31"],["New Caledonia (Nouvelle-Calédonie)","nc","687"],["New Zealand","nz","64"],["Nicaragua","ni","505"],["Niger (Nijar)","ne","227"],["Nigeria","ng","234"],["Niue","nu","683"],["Norfolk Island","nf","672"],["North Korea (조선 민주주의 인민 공화국)","kp","850"],["North Macedonia (Северна Македонија)","mk","389"],["Northern Mariana Islands","mp","1",17,["670"]],["Norway (Norge)","no","47",0],["Oman (‫عُمان‬‎)","om","968"],["Pakistan (‫پاکستان‬‎)","pk","92"],["Palau","pw","680"],["Palestine (‫فلسطين‬‎)","ps","970"],["Panama (Panamá)","pa","507"],["Papua New Guinea","pg","675"],["Paraguay","py","595"],["Peru (Perú)","pe","51"],["Philippines","ph","63"],["Poland (Polska)","pl","48"],["Portugal","pt","351"],["Puerto Rico","pr","1",3,["787","939"]],["Qatar (‫قطر‬‎)","qa","974"],["Réunion (La Réunion)","re","262",0],["Romania (România)","ro","40"],["Russia (Россия)","ru","7",0],["Rwanda","rw","250"],["Saint Barthélemy","bl","590",1],["Saint Helena","sh","290"],["Saint Kitts and Nevis","kn","1",18,["869"]],["Saint Lucia","lc","1",19,["758"]],["Saint Martin (Saint-Martin (partie française))","mf","590",2],["Saint Pierre and Miquelon (Saint-Pierre-et-Miquelon)","pm","508"],["Saint Vincent and the Grenadines","vc","1",20,["784"]],["Samoa","ws","685"],["San Marino","sm","378"],["São Tomé and Príncipe (São Tomé e Príncipe)","st","239"],["Saudi Arabia (‫المملكة العربية السعودية‬‎)","sa","966"],["Senegal (Sénégal)","sn","221"],["Serbia (Србија)","rs","381"],["Seychelles","sc","248"],["Sierra Leone","sl","232"],["Singapore","sg","65"],["Sint Maarten","sx","1",21,["721"]],["Slovakia (Slovensko)","sk","421"],["Slovenia (Slovenija)","si","386"],["Solomon Islands","sb","677"],["Somalia (Soomaaliya)","so","252"],["South Africa","za","27"],["South Korea (대한민국)","kr","82"],["South Sudan (‫جنوب السودان‬‎)","ss","211"],["Spain (España)","es","34"],["Sri Lanka (ශ්‍රී ලංකාව)","lk","94"],["Sudan (‫السودان‬‎)","sd","249"],["Suriname","sr","597"],["Svalbard and Jan Mayen","sj","47",1,["79"]],["Sweden (Sverige)","se","46"],["Switzerland (Schweiz)","ch","41"],["Syria (‫سوريا‬‎)","sy","963"],["Taiwan (台灣)","tw","886"],["Tajikistan","tj","992"],["Tanzania","tz","255"],["Thailand (ไทย)","th","66"],["Timor-Leste","tl","670"],["Togo","tg","228"],["Tokelau","tk","690"],["Tonga","to","676"],["Trinidad and Tobago","tt","1",22,["868"]],["Tunisia (‫تونس‬‎)","tn","216"],["Turkey (Türkiye)","tr","90"],["Turkmenistan","tm","993"],["Turks and Caicos Islands","tc","1",23,["649"]],["Tuvalu","tv","688"],["U.S. Virgin Islands","vi","1",24,["340"]],["Uganda","ug","256"],["Ukraine (Україна)","ua","380"],["United Arab Emirates (‫الإمارات العربية المتحدة‬‎)","ae","971"],["United Kingdom","gb","44",0],["United States","us","1",0],["Uruguay","uy","598"],["Uzbekistan (Oʻzbekiston)","uz","998"],["Vanuatu","vu","678"],["Vatican City (Città del Vaticano)","va","39",1,["06698"]],["Venezuela","ve","58"],["Vietnam (Việt Nam)","vn","84"],["Wallis and Futuna (Wallis-et-Futuna)","wf","681"],["Western Sahara (‫الصحراء الغربية‬‎)","eh","212",1,["5288","5289"]],["Yemen (‫اليمن‬‎)","ye","967"],["Zambia","zm","260"],["Zimbabwe","zw","263"],["Åland Islands","ax","358",1,["18"]]];for(var i=0;i<allCountries.length;i++){var c=allCountries[i];allCountries[i]={name:c[0],iso2:c[1],dialCode:c[2],priority:c[3]||0,areaCodes:c[4]||null}}"use strict";function _objectSpread(target){for(var i=1;i<arguments.length;i++){var source=arguments[i]!=null?Object(arguments[i]):{};var ownKeys=Object.keys(source);if(typeof Object.getOwnPropertySymbols==="function"){ownKeys.push.apply(ownKeys,Object.getOwnPropertySymbols(source).filter(function(sym){return Object.getOwnPropertyDescriptor(source,sym).enumerable}))}ownKeys.forEach(function(key){_defineProperty(target,key,source[key])})}return target}function _defineProperty(obj,key,value){key=_toPropertyKey(key);if(key in obj){Object.defineProperty(obj,key,{value:value,enumerable:true,configurable:true,writable:true})}else{obj[key]=value}return obj}function _classCallCheck(instance,Constructor){if(!(instance instanceof Constructor)){throw new TypeError("Cannot call a class as a function")}}function _defineProperties(target,props){for(var i=0;i<props.length;i++){var descriptor=props[i];descriptor.enumerable=descriptor.enumerable||false;descriptor.configurable=true;if("value"in descriptor)descriptor.writable=true;Object.defineProperty(target,_toPropertyKey(descriptor.key),descriptor)}}function _createClass(Constructor,protoProps,staticProps){if(protoProps)_defineProperties(Constructor.prototype,protoProps);if(staticProps)_defineProperties(Constructor,staticProps);Object.defineProperty(Constructor,"prototype",{writable:false});return Constructor}function _toPropertyKey(arg){var key=_toPrimitive(arg,"string");return typeof key==="symbol"?key:String(key)}function _toPrimitive(input,hint){if(typeof input!=="object"||input===null)return input;var prim=input[Symbol.toPrimitive];if(prim!==undefined){var res=prim.call(input,hint||"default");if(typeof res!=="object")return res;throw new TypeError("@@toPrimitive must return a primitive value.")}return(hint==="string"?String:Number)(input)}var intlTelInputGlobals={getInstance:function getInstance(input){var id=input.getAttribute("data-intl-tel-input-id");return window.intlTelInputGlobals.instances[id]},instances:{},documentReady:function documentReady(){return document.readyState==="complete"}};if(typeof window==="object"){window.intlTelInputGlobals=intlTelInputGlobals}var id=0;var defaults={allowDropdown:true,autoInsertDialCode:false,autoPlaceholder:"polite",customContainer:"",customPlaceholder:null,dropdownContainer:null,excludeCountries:[],formatOnDisplay:true,geoIpLookup:null,hiddenInput:"",initialCountry:"",localizedCountries:null,nationalMode:true,onlyCountries:[],placeholderNumberType:"MOBILE",preferredCountries:["us","gb"],separateDialCode:false,showFlags:true,utilsScript:""};var regionlessNanpNumbers=["800","822","833","844","855","866","877","880","881","882","883","884","885","886","887","888","889"];var forEachProp=function forEachProp(obj,callback){var keys=Object.keys(obj);for(var i=0;i<keys.length;i++){callback(keys[i],obj[keys[i]])}};var forEachInstance=function forEachInstance(method){forEachProp(window.intlTelInputGlobals.instances,function(key){window.intlTelInputGlobals.instances[key][method]()})};var Iti=function(){function Iti(input,options){var _this=this;_classCallCheck(this,Iti);this.id=id++;this.telInput=input;this.activeItem=null;this.highlightedItem=null;var customOptions=options||{};this.options={};forEachProp(defaults,function(key,value){_this.options[key]=customOptions.hasOwnProperty(key)?customOptions[key]:value});this.hadInitialPlaceholder=Boolean(input.getAttribute("placeholder"))}_createClass(Iti,[{key:"_init",value:function _init(){var _this2=this;if(this.options.nationalMode){this.options.autoInsertDialCode=false}if(this.options.separateDialCode){this.options.autoInsertDialCode=false}var forceShowFlags=this.options.allowDropdown&&!this.options.separateDialCode;if(!this.options.showFlags&&forceShowFlags){this.options.showFlags=true}this.isMobile=/Android.+Mobile|webOS|iPhone|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);if(this.isMobile){document.body.classList.add("iti-mobile");if(!this.options.dropdownContainer){this.options.dropdownContainer=document.body}}this.isRTL=!!this.telInput.closest("[dir=rtl]");if(typeof Promise!=="undefined"){var autoCountryPromise=new Promise(function(resolve,reject){_this2.resolveAutoCountryPromise=resolve;_this2.rejectAutoCountryPromise=reject});var utilsScriptPromise=new Promise(function(resolve,reject){_this2.resolveUtilsScriptPromise=resolve;_this2.rejectUtilsScriptPromise=reject});this.promise=Promise.all([autoCountryPromise,utilsScriptPromise])}else{this.resolveAutoCountryPromise=this.rejectAutoCountryPromise=function(){};this.resolveUtilsScriptPromise=this.rejectUtilsScriptPromise=function(){}}this.selectedCountryData={};this._processCountryData();this._generateMarkup();this._setInitialState();this._initListeners();this._initRequests()}},{key:"_processCountryData",value:function _processCountryData(){this._processAllCountries();this._processCountryCodes();this._processPreferredCountries();if(this.options.localizedCountries){this._translateCountriesByLocale()}if(this.options.onlyCountries.length||this.options.localizedCountries){this.countries.sort(this._countryNameSort)}}},{key:"_addCountryCode",value:function _addCountryCode(iso2,countryCode,priority){if(countryCode.length>this.countryCodeMaxLen){this.countryCodeMaxLen=countryCode.length}if(!this.countryCodes.hasOwnProperty(countryCode)){this.countryCodes[countryCode]=[]}for(var i=0;i<this.countryCodes[countryCode].length;i++){if(this.countryCodes[countryCode][i]===iso2){return}}var index=priority!==undefined?priority:this.countryCodes[countryCode].length;this.countryCodes[countryCode][index]=iso2}},{key:"_processAllCountries",value:function _processAllCountries(){if(this.options.onlyCountries.length){var lowerCaseOnlyCountries=this.options.onlyCountries.map(function(country){return country.toLowerCase()});this.countries=allCountries.filter(function(country){return lowerCaseOnlyCountries.indexOf(country.iso2)>-1})}else if(this.options.excludeCountries.length){var lowerCaseExcludeCountries=this.options.excludeCountries.map(function(country){return country.toLowerCase()});this.countries=allCountries.filter(function(country){return lowerCaseExcludeCountries.indexOf(country.iso2)===-1})}else{this.countries=allCountries}}},{key:"_translateCountriesByLocale",value:function _translateCountriesByLocale(){for(var i=0;i<this.countries.length;i++){var iso=this.countries[i].iso2.toLowerCase();if(this.options.localizedCountries.hasOwnProperty(iso)){this.countries[i].name=this.options.localizedCountries[iso]}}}},{key:"_countryNameSort",value:function _countryNameSort(a,b){if(a.name<b.name){return-1}if(a.name>b.name){return 1}return 0}},{key:"_processCountryCodes",value:function _processCountryCodes(){this.countryCodeMaxLen=0;this.dialCodes={};this.countryCodes={};for(var i=0;i<this.countries.length;i++){var c=this.countries[i];if(!this.dialCodes[c.dialCode]){this.dialCodes[c.dialCode]=true}this._addCountryCode(c.iso2,c.dialCode,c.priority)}for(var _i=0;_i<this.countries.length;_i++){var _c=this.countries[_i];if(_c.areaCodes){var rootCountryCode=this.countryCodes[_c.dialCode][0];for(var j=0;j<_c.areaCodes.length;j++){var areaCode=_c.areaCodes[j];for(var k=1;k<areaCode.length;k++){var partialDialCode=_c.dialCode+areaCode.substr(0,k);this._addCountryCode(rootCountryCode,partialDialCode);this._addCountryCode(_c.iso2,partialDialCode)}this._addCountryCode(_c.iso2,_c.dialCode+areaCode)}}}}},{key:"_processPreferredCountries",value:function _processPreferredCountries(){this.preferredCountries=[];for(var i=0;i<this.options.preferredCountries.length;i++){var countryCode=this.options.preferredCountries[i].toLowerCase();var countryData=this._getCountryData(countryCode,false,true);if(countryData){this.preferredCountries.push(countryData)}}}},{key:"_createEl",value:function _createEl(name,attrs,container){var el=document.createElement(name);if(attrs){forEachProp(attrs,function(key,value){return el.setAttribute(key,value)})}if(container){container.appendChild(el)}return el}},{key:"_generateMarkup",value:function _generateMarkup(){if(!this.telInput.hasAttribute("autocomplete")&&!(this.telInput.form&&this.telInput.form.hasAttribute("autocomplete"))){this.telInput.setAttribute("autocomplete","off")}var _this$options=this.options,allowDropdown=_this$options.allowDropdown,separateDialCode=_this$options.separateDialCode,showFlags=_this$options.showFlags,customContainer=_this$options.customContainer,hiddenInput=_this$options.hiddenInput,dropdownContainer=_this$options.dropdownContainer;var parentClass="iti";if(allowDropdown){parentClass+=" iti--allow-dropdown"}if(separateDialCode){parentClass+=" iti--separate-dial-code"}if(showFlags){parentClass+=" iti--show-flags"}if(customContainer){parentClass+=" ".concat(customContainer)}var wrapper=this._createEl("div",{class:parentClass});this.telInput.parentNode.insertBefore(wrapper,this.telInput);var showFlagsContainer=allowDropdown||showFlags||separateDialCode;if(showFlagsContainer){this.flagsContainer=this._createEl("div",{class:"iti__flag-container"},wrapper)}wrapper.appendChild(this.telInput);if(showFlagsContainer){this.selectedFlag=this._createEl("div",_objectSpread({class:"iti__selected-flag"},allowDropdown&&{role:"combobox","aria-haspopup":"listbox","aria-controls":"iti-".concat(this.id,"__country-listbox"),"aria-expanded":"false","aria-label":"Telephone country code"}),this.flagsContainer)}if(showFlags){this.selectedFlagInner=this._createEl("div",{class:"iti__flag"},this.selectedFlag)}if(this.selectedFlag&&this.telInput.disabled){this.selectedFlag.setAttribute("aria-disabled","true")}if(separateDialCode){this.selectedDialCode=this._createEl("div",{class:"iti__selected-dial-code"},this.selectedFlag)}if(allowDropdown){if(!this.telInput.disabled){this.selectedFlag.setAttribute("tabindex","0")}this.dropdownArrow=this._createEl("div",{class:"iti__arrow"},this.selectedFlag);this.countryList=this._createEl("ul",{class:"iti__country-list iti__hide",id:"iti-".concat(this.id,"__country-listbox"),role:"listbox","aria-label":"List of countries"});if(this.preferredCountries.length){this._appendListItems(this.preferredCountries,"iti__preferred",true);this._createEl("li",{class:"iti__divider",role:"separator","aria-disabled":"true"},this.countryList)}this._appendListItems(this.countries,"iti__standard");if(dropdownContainer){this.dropdown=this._createEl("div",{class:"iti iti--container"});this.dropdown.appendChild(this.countryList)}else{this.flagsContainer.appendChild(this.countryList)}}if(hiddenInput){var hiddenInputName=hiddenInput;var name=this.telInput.getAttribute("name");if(name){var i=name.lastIndexOf("[");if(i!==-1){hiddenInputName="".concat(name.substr(0,i),"[").concat(hiddenInputName,"]")}}this.hiddenInput=this._createEl("input",{type:"hidden",name:hiddenInputName});wrapper.appendChild(this.hiddenInput)}}},{key:"_appendListItems",value:function _appendListItems(countries,className,preferred){var tmp="";for(var i=0;i<countries.length;i++){var c=countries[i];var idSuffix=preferred?"-preferred":"";tmp+="<li class='iti__country ".concat(className,"' tabIndex='-1' id='iti-").concat(this.id,"__item-").concat(c.iso2).concat(idSuffix,"' role='option' data-dial-code='").concat(c.dialCode,"' data-country-code='").concat(c.iso2,"' aria-selected='false'>");if(this.options.showFlags){tmp+="<div class='iti__flag-box'><div class='iti__flag iti__".concat(c.iso2,"'></div></div>")}tmp+="<span class='iti__country-name'>".concat(c.name,"</span>");tmp+="<span class='iti__dial-code'>+".concat(c.dialCode,"</span>");tmp+="</li>"}this.countryList.insertAdjacentHTML("beforeend",tmp)}},{key:"_setInitialState",value:function _setInitialState(){var attributeValue=this.telInput.getAttribute("value");var inputValue=this.telInput.value;var useAttribute=attributeValue&&attributeValue.charAt(0)==="+"&&(!inputValue||inputValue.charAt(0)!=="+");var val=useAttribute?attributeValue:inputValue;var dialCode=this._getDialCode(val);var isRegionlessNanp=this._isRegionlessNanp(val);var _this$options2=this.options,initialCountry=_this$options2.initialCountry,autoInsertDialCode=_this$options2.autoInsertDialCode;if(dialCode&&!isRegionlessNanp){this._updateFlagFromNumber(val)}else if(initialCountry!=="auto"){if(initialCountry){this._setFlag(initialCountry.toLowerCase())}else{if(dialCode&&isRegionlessNanp){this._setFlag("us")}else{this.defaultCountry=this.preferredCountries.length?this.preferredCountries[0].iso2:this.countries[0].iso2;if(!val){this._setFlag(this.defaultCountry)}}}if(!val&&autoInsertDialCode){this.telInput.value="+".concat(this.selectedCountryData.dialCode)}}if(val){this._updateValFromNumber(val)}}},{key:"_initListeners",value:function _initListeners(){this._initKeyListeners();if(this.options.autoInsertDialCode){this._initBlurListeners()}if(this.options.allowDropdown){this._initDropdownListeners()}if(this.hiddenInput){this._initHiddenInputListener()}}},{key:"_initHiddenInputListener",value:function _initHiddenInputListener(){var _this3=this;this._handleHiddenInputSubmit=function(){_this3.hiddenInput.value=_this3.getNumber()};if(this.telInput.form){this.telInput.form.addEventListener("submit",this._handleHiddenInputSubmit)}}},{key:"_getClosestLabel",value:function _getClosestLabel(){var el=this.telInput;while(el&&el.tagName!=="LABEL"){el=el.parentNode}return el}},{key:"_initDropdownListeners",value:function _initDropdownListeners(){var _this4=this;this._handleLabelClick=function(e){if(_this4.countryList.classList.contains("iti__hide")){_this4.telInput.focus()}else{e.preventDefault()}};var label=this._getClosestLabel();if(label){label.addEventListener("click",this._handleLabelClick)}this._handleClickSelectedFlag=function(){if(_this4.countryList.classList.contains("iti__hide")&&!_this4.telInput.disabled&&!_this4.telInput.readOnly){_this4._showDropdown()}};this.selectedFlag.addEventListener("click",this._handleClickSelectedFlag);this._handleFlagsContainerKeydown=function(e){var isDropdownHidden=_this4.countryList.classList.contains("iti__hide");if(isDropdownHidden&&["ArrowUp","Up","ArrowDown","Down"," ","Enter"].indexOf(e.key)!==-1){e.preventDefault();e.stopPropagation();_this4._showDropdown()}if(e.key==="Tab"){_this4._closeDropdown()}};this.flagsContainer.addEventListener("keydown",this._handleFlagsContainerKeydown)}},{key:"_initRequests",value:function _initRequests(){var _this5=this;if(this.options.utilsScript&&!window.intlTelInputUtils){if(window.intlTelInputGlobals.documentReady()){window.intlTelInputGlobals.loadUtils(this.options.utilsScript)}else{window.addEventListener("load",function(){window.intlTelInputGlobals.loadUtils(_this5.options.utilsScript)})}}else{this.resolveUtilsScriptPromise()}if(this.options.initialCountry==="auto"){this._loadAutoCountry()}else{this.resolveAutoCountryPromise()}}},{key:"_loadAutoCountry",value:function _loadAutoCountry(){if(window.intlTelInputGlobals.autoCountry){this.handleAutoCountry()}else if(!window.intlTelInputGlobals.startedLoadingAutoCountry){window.intlTelInputGlobals.startedLoadingAutoCountry=true;if(typeof this.options.geoIpLookup==="function"){this.options.geoIpLookup(function(countryCode){window.intlTelInputGlobals.autoCountry=countryCode.toLowerCase();setTimeout(function(){return forEachInstance("handleAutoCountry")})},function(){return forEachInstance("rejectAutoCountryPromise")})}}}},{key:"_initKeyListeners",value:function _initKeyListeners(){var _this6=this;this._handleKeyupEvent=function(){if(_this6._updateFlagFromNumber(_this6.telInput.value)){_this6._triggerCountryChange()}};this.telInput.addEventListener("keyup",this._handleKeyupEvent);this._handleClipboardEvent=function(){setTimeout(_this6._handleKeyupEvent)};this.telInput.addEventListener("cut",this._handleClipboardEvent);this.telInput.addEventListener("paste",this._handleClipboardEvent)}},{key:"_cap",value:function _cap(number){var max=this.telInput.getAttribute("maxlength");return max&&number.length>max?number.substr(0,max):number}},{key:"_initBlurListeners",value:function _initBlurListeners(){var _this7=this;this._handleSubmitOrBlurEvent=function(){_this7._removeEmptyDialCode()};if(this.telInput.form){this.telInput.form.addEventListener("submit",this._handleSubmitOrBlurEvent)}this.telInput.addEventListener("blur",this._handleSubmitOrBlurEvent)}},{key:"_removeEmptyDialCode",value:function _removeEmptyDialCode(){if(this.telInput.value.charAt(0)==="+"){var numeric=this._getNumeric(this.telInput.value);if(!numeric||this.selectedCountryData.dialCode===numeric){this.telInput.value=""}}}},{key:"_getNumeric",value:function _getNumeric(s){return s.replace(/\D/g,"")}},{key:"_trigger",value:function _trigger(name){var e=document.createEvent("Event");e.initEvent(name,true,true);this.telInput.dispatchEvent(e)}},{key:"_showDropdown",value:function _showDropdown(){this.countryList.classList.remove("iti__hide");this.selectedFlag.setAttribute("aria-expanded","true");this._setDropdownPosition();if(this.activeItem){this._highlightListItem(this.activeItem,false);this._scrollTo(this.activeItem,true)}this._bindDropdownListeners();this.dropdownArrow.classList.add("iti__arrow--up");this._trigger("open:countrydropdown")}},{key:"_toggleClass",value:function _toggleClass(el,className,shouldHaveClass){if(shouldHaveClass&&!el.classList.contains(className)){el.classList.add(className)}else if(!shouldHaveClass&&el.classList.contains(className)){el.classList.remove(className)}}},{key:"_setDropdownPosition",value:function _setDropdownPosition(){var _this8=this;if(this.options.dropdownContainer){this.options.dropdownContainer.appendChild(this.dropdown)}if(!this.isMobile){var pos=this.telInput.getBoundingClientRect();var windowTop=window.pageYOffset||document.documentElement.scrollTop;var inputTop=pos.top+windowTop;var dropdownHeight=this.countryList.offsetHeight;var dropdownFitsBelow=inputTop+this.telInput.offsetHeight+dropdownHeight<windowTop+window.innerHeight;var dropdownFitsAbove=inputTop-dropdownHeight>windowTop;this._toggleClass(this.countryList,"iti__country-list--dropup",!dropdownFitsBelow&&dropdownFitsAbove);if(this.options.dropdownContainer){var extraTop=!dropdownFitsBelow&&dropdownFitsAbove?0:this.telInput.offsetHeight;this.dropdown.style.top="".concat(inputTop+extraTop,"px");this.dropdown.style.left="".concat(pos.left+document.body.scrollLeft,"px");this._handleWindowScroll=function(){return _this8._closeDropdown()};window.addEventListener("scroll",this._handleWindowScroll)}}}},{key:"_getClosestListItem",value:function _getClosestListItem(target){var el=target;while(el&&el!==this.countryList&&!el.classList.contains("iti__country")){el=el.parentNode}return el===this.countryList?null:el}},{key:"_bindDropdownListeners",value:function _bindDropdownListeners(){var _this9=this;this._handleMouseoverCountryList=function(e){var listItem=_this9._getClosestListItem(e.target);if(listItem){_this9._highlightListItem(listItem,false)}};this.countryList.addEventListener("mouseover",this._handleMouseoverCountryList);this._handleClickCountryList=function(e){var listItem=_this9._getClosestListItem(e.target);if(listItem){_this9._selectListItem(listItem)}};this.countryList.addEventListener("click",this._handleClickCountryList);var isOpening=true;this._handleClickOffToClose=function(){if(!isOpening){_this9._closeDropdown()}isOpening=false};document.documentElement.addEventListener("click",this._handleClickOffToClose);var query="";var queryTimer=null;this._handleKeydownOnDropdown=function(e){e.preventDefault();if(e.key==="ArrowUp"||e.key==="Up"||e.key==="ArrowDown"||e.key==="Down"){_this9._handleUpDownKey(e.key)}else if(e.key==="Enter"){_this9._handleEnterKey()}else if(e.key==="Escape"){_this9._closeDropdown()}else if(/^[a-zA-ZÀ-ÿа-яА-Я ]$/.test(e.key)){if(queryTimer){clearTimeout(queryTimer)}query+=e.key.toLowerCase();_this9._searchForCountry(query);queryTimer=setTimeout(function(){query=""},1e3)}};document.addEventListener("keydown",this._handleKeydownOnDropdown)}},{key:"_handleUpDownKey",value:function _handleUpDownKey(key){var next=key==="ArrowUp"||key==="Up"?this.highlightedItem.previousElementSibling:this.highlightedItem.nextElementSibling;if(next){if(next.classList.contains("iti__divider")){next=key==="ArrowUp"||key==="Up"?next.previousElementSibling:next.nextElementSibling}this._highlightListItem(next,true)}}},{key:"_handleEnterKey",value:function _handleEnterKey(){if(this.highlightedItem){this._selectListItem(this.highlightedItem)}}},{key:"_searchForCountry",value:function _searchForCountry(query){for(var i=0;i<this.countries.length;i++){if(this._startsWith(this.countries[i].name,query)){var listItem=this.countryList.querySelector("#iti-".concat(this.id,"__item-").concat(this.countries[i].iso2));this._highlightListItem(listItem,false);this._scrollTo(listItem,true);break}}}},{key:"_startsWith",value:function _startsWith(a,b){return a.substr(0,b.length).toLowerCase()===b}},{key:"_updateValFromNumber",value:function _updateValFromNumber(originalNumber){var number=originalNumber;if(this.options.formatOnDisplay&&window.intlTelInputUtils&&this.selectedCountryData){var useNational=this.options.nationalMode||number.charAt(0)!=="+"&&!this.options.separateDialCode;var _intlTelInputUtils$nu=intlTelInputUtils.numberFormat,NATIONAL=_intlTelInputUtils$nu.NATIONAL,INTERNATIONAL=_intlTelInputUtils$nu.INTERNATIONAL;var format=useNational?NATIONAL:INTERNATIONAL;number=intlTelInputUtils.formatNumber(number,this.selectedCountryData.iso2,format)}number=this._beforeSetNumber(number);this.telInput.value=number}},{key:"_updateFlagFromNumber",value:function _updateFlagFromNumber(originalNumber){var number=originalNumber;var selectedDialCode=this.selectedCountryData.dialCode;var isNanp=selectedDialCode==="1";if(number&&isNanp&&number.charAt(0)!=="+"){if(number.charAt(0)!=="1"){number="1".concat(number)}number="+".concat(number)}if(this.options.separateDialCode&&selectedDialCode&&number.charAt(0)!=="+"){number="+".concat(selectedDialCode).concat(number)}var dialCode=this._getDialCode(number,true);var numeric=this._getNumeric(number);var countryCode=null;if(dialCode){var countryCodes=this.countryCodes[this._getNumeric(dialCode)];var alreadySelected=countryCodes.indexOf(this.selectedCountryData.iso2)!==-1&&numeric.length<=dialCode.length-1;var isRegionlessNanpNumber=selectedDialCode==="1"&&this._isRegionlessNanp(numeric);if(!isRegionlessNanpNumber&&!alreadySelected){for(var j=0;j<countryCodes.length;j++){if(countryCodes[j]){countryCode=countryCodes[j];break}}}}else if(number.charAt(0)==="+"&&numeric.length){countryCode=""}else if(!number||number==="+"){countryCode=this.defaultCountry}if(countryCode!==null){return this._setFlag(countryCode)}return false}},{key:"_isRegionlessNanp",value:function _isRegionlessNanp(number){var numeric=this._getNumeric(number);if(numeric.charAt(0)==="1"){var areaCode=numeric.substr(1,3);return regionlessNanpNumbers.indexOf(areaCode)!==-1}return false}},{key:"_highlightListItem",value:function _highlightListItem(listItem,shouldFocus){var prevItem=this.highlightedItem;if(prevItem){prevItem.classList.remove("iti__highlight")}this.highlightedItem=listItem;this.highlightedItem.classList.add("iti__highlight");this.selectedFlag.setAttribute("aria-activedescendant",listItem.getAttribute("id"));if(shouldFocus){this.highlightedItem.focus()}}},{key:"_getCountryData",value:function _getCountryData(countryCode,ignoreOnlyCountriesOption,allowFail){var countryList=ignoreOnlyCountriesOption?allCountries:this.countries;for(var i=0;i<countryList.length;i++){if(countryList[i].iso2===countryCode){return countryList[i]}}if(allowFail){return null}throw new Error("No country data for '".concat(countryCode,"'"))}},{key:"_setFlag",value:function _setFlag(countryCode){var _this$options3=this.options,allowDropdown=_this$options3.allowDropdown,separateDialCode=_this$options3.separateDialCode,showFlags=_this$options3.showFlags;var prevCountry=this.selectedCountryData.iso2?this.selectedCountryData:{};this.selectedCountryData=countryCode?this._getCountryData(countryCode,false,false):{};if(this.selectedCountryData.iso2){this.defaultCountry=this.selectedCountryData.iso2}if(showFlags){this.selectedFlagInner.setAttribute("class","iti__flag iti__".concat(countryCode))}this._setSelectedCountryFlagTitleAttribute(countryCode,separateDialCode);if(separateDialCode){var dialCode=this.selectedCountryData.dialCode?"+".concat(this.selectedCountryData.dialCode):"";this.selectedDialCode.innerHTML=dialCode;var selectedFlagWidth=this.selectedFlag.offsetWidth||this._getHiddenSelectedFlagWidth();if(this.isRTL){this.telInput.style.paddingRight="".concat(selectedFlagWidth+6,"px")}else{this.telInput.style.paddingLeft="".concat(selectedFlagWidth+6,"px")}}this._updatePlaceholder();if(allowDropdown){var prevItem=this.activeItem;if(prevItem){prevItem.classList.remove("iti__active");prevItem.setAttribute("aria-selected","false")}if(countryCode){var nextItem=this.countryList.querySelector("#iti-".concat(this.id,"__item-").concat(countryCode,"-preferred"))||this.countryList.querySelector("#iti-".concat(this.id,"__item-").concat(countryCode));nextItem.setAttribute("aria-selected","true");nextItem.classList.add("iti__active");this.activeItem=nextItem}}return prevCountry.iso2!==countryCode}},{key:"_setSelectedCountryFlagTitleAttribute",value:function _setSelectedCountryFlagTitleAttribute(countryCode,separateDialCode){if(!this.selectedFlag){return}var title;if(countryCode&&!separateDialCode){title="".concat(this.selectedCountryData.name,": +").concat(this.selectedCountryData.dialCode)}else if(countryCode){title=this.selectedCountryData.name}else{title="Unknown"}this.selectedFlag.setAttribute("title",title)}},{key:"_getHiddenSelectedFlagWidth",value:function _getHiddenSelectedFlagWidth(){var containerClone=this.telInput.parentNode.cloneNode();containerClone.style.visibility="hidden";document.body.appendChild(containerClone);var flagsContainerClone=this.flagsContainer.cloneNode();containerClone.appendChild(flagsContainerClone);var selectedFlagClone=this.selectedFlag.cloneNode(true);flagsContainerClone.appendChild(selectedFlagClone);var width=selectedFlagClone.offsetWidth;containerClone.parentNode.removeChild(containerClone);return width}},{key:"_updatePlaceholder",value:function _updatePlaceholder(){var shouldSetPlaceholder=this.options.autoPlaceholder==="aggressive"||!this.hadInitialPlaceholder&&this.options.autoPlaceholder==="polite";if(window.intlTelInputUtils&&shouldSetPlaceholder){var numberType=intlTelInputUtils.numberType[this.options.placeholderNumberType];var placeholder=this.selectedCountryData.iso2?intlTelInputUtils.getExampleNumber(this.selectedCountryData.iso2,this.options.nationalMode,numberType):"";placeholder=this._beforeSetNumber(placeholder);if(typeof this.options.customPlaceholder==="function"){placeholder=this.options.customPlaceholder(placeholder,this.selectedCountryData)}this.telInput.setAttribute("placeholder",placeholder)}}},{key:"_selectListItem",value:function _selectListItem(listItem){var flagChanged=this._setFlag(listItem.getAttribute("data-country-code"));this._closeDropdown();this._updateDialCode(listItem.getAttribute("data-dial-code"));this.telInput.focus();var len=this.telInput.value.length;this.telInput.setSelectionRange(len,len);if(flagChanged){this._triggerCountryChange()}}},{key:"_closeDropdown",value:function _closeDropdown(){this.countryList.classList.add("iti__hide");this.selectedFlag.setAttribute("aria-expanded","false");this.selectedFlag.removeAttribute("aria-activedescendant");this.dropdownArrow.classList.remove("iti__arrow--up");document.removeEventListener("keydown",this._handleKeydownOnDropdown);document.documentElement.removeEventListener("click",this._handleClickOffToClose);this.countryList.removeEventListener("mouseover",this._handleMouseoverCountryList);this.countryList.removeEventListener("click",this._handleClickCountryList);if(this.options.dropdownContainer){if(!this.isMobile){window.removeEventListener("scroll",this._handleWindowScroll)}if(this.dropdown.parentNode){this.dropdown.parentNode.removeChild(this.dropdown)}}this._trigger("close:countrydropdown")}},{key:"_scrollTo",value:function _scrollTo(element,middle){var container=this.countryList;var windowTop=window.pageYOffset||document.documentElement.scrollTop;var containerHeight=container.offsetHeight;var containerTop=container.getBoundingClientRect().top+windowTop;var containerBottom=containerTop+containerHeight;var elementHeight=element.offsetHeight;var elementTop=element.getBoundingClientRect().top+windowTop;var elementBottom=elementTop+elementHeight;var newScrollTop=elementTop-containerTop+container.scrollTop;var middleOffset=containerHeight/2-elementHeight/2;if(elementTop<containerTop){if(middle){newScrollTop-=middleOffset}container.scrollTop=newScrollTop}else if(elementBottom>containerBottom){if(middle){newScrollTop+=middleOffset}var heightDifference=containerHeight-elementHeight;container.scrollTop=newScrollTop-heightDifference}}},{key:"_updateDialCode",value:function _updateDialCode(newDialCodeBare){var inputVal=this.telInput.value;var newDialCode="+".concat(newDialCodeBare);var newNumber;if(inputVal.charAt(0)==="+"){var prevDialCode=this._getDialCode(inputVal);if(prevDialCode){newNumber=inputVal.replace(prevDialCode,newDialCode)}else{newNumber=newDialCode}this.telInput.value=newNumber}else if(this.options.autoInsertDialCode){if(inputVal){newNumber=newDialCode+inputVal}else{newNumber=newDialCode}this.telInput.value=newNumber}}},{key:"_getDialCode",value:function _getDialCode(number,includeAreaCode){var dialCode="";if(number.charAt(0)==="+"){var numericChars="";for(var i=0;i<number.length;i++){var c=number.charAt(i);if(!isNaN(parseInt(c,10))){numericChars+=c;if(includeAreaCode){if(this.countryCodes[numericChars]){dialCode=number.substr(0,i+1)}}else{if(this.dialCodes[numericChars]){dialCode=number.substr(0,i+1);break}}if(numericChars.length===this.countryCodeMaxLen){break}}}}return dialCode}},{key:"_getFullNumber",value:function _getFullNumber(){var val=this.telInput.value.trim();var dialCode=this.selectedCountryData.dialCode;var prefix;var numericVal=this._getNumeric(val);if(this.options.separateDialCode&&val.charAt(0)!=="+"&&dialCode&&numericVal){prefix="+".concat(dialCode)}else{prefix=""}return prefix+val}},{key:"_beforeSetNumber",value:function _beforeSetNumber(originalNumber){var number=originalNumber;if(this.options.separateDialCode){var dialCode=this._getDialCode(number);if(dialCode){dialCode="+".concat(this.selectedCountryData.dialCode);var start=number[dialCode.length]===" "||number[dialCode.length]==="-"?dialCode.length+1:dialCode.length;number=number.substr(start)}}return this._cap(number)}},{key:"_triggerCountryChange",value:function _triggerCountryChange(){this._trigger("countrychange")}},{key:"handleAutoCountry",value:function handleAutoCountry(){if(this.options.initialCountry==="auto"){this.defaultCountry=window.intlTelInputGlobals.autoCountry;if(!this.telInput.value){this.setCountry(this.defaultCountry)}this.resolveAutoCountryPromise()}}},{key:"handleUtils",value:function handleUtils(){if(window.intlTelInputUtils){if(this.telInput.value){this._updateValFromNumber(this.telInput.value)}this._updatePlaceholder()}this.resolveUtilsScriptPromise()}},{key:"destroy",value:function destroy(){var form=this.telInput.form;if(this.options.allowDropdown){this._closeDropdown();this.selectedFlag.removeEventListener("click",this._handleClickSelectedFlag);this.flagsContainer.removeEventListener("keydown",this._handleFlagsContainerKeydown);var label=this._getClosestLabel();if(label){label.removeEventListener("click",this._handleLabelClick)}}if(this.hiddenInput&&form){form.removeEventListener("submit",this._handleHiddenInputSubmit)}if(this.options.autoInsertDialCode){if(form){form.removeEventListener("submit",this._handleSubmitOrBlurEvent)}this.telInput.removeEventListener("blur",this._handleSubmitOrBlurEvent)}this.telInput.removeEventListener("keyup",this._handleKeyupEvent);this.telInput.removeEventListener("cut",this._handleClipboardEvent);this.telInput.removeEventListener("paste",this._handleClipboardEvent);this.telInput.removeAttribute("data-intl-tel-input-id");var wrapper=this.telInput.parentNode;wrapper.parentNode.insertBefore(this.telInput,wrapper);wrapper.parentNode.removeChild(wrapper);delete window.intlTelInputGlobals.instances[this.id]}},{key:"getExtension",value:function getExtension(){if(window.intlTelInputUtils){return intlTelInputUtils.getExtension(this._getFullNumber(),this.selectedCountryData.iso2)}return""}},{key:"getNumber",value:function getNumber(format){if(window.intlTelInputUtils){var iso2=this.selectedCountryData.iso2;return intlTelInputUtils.formatNumber(this._getFullNumber(),iso2,format)}return""}},{key:"getNumberType",value:function getNumberType(){if(window.intlTelInputUtils){return intlTelInputUtils.getNumberType(this._getFullNumber(),this.selectedCountryData.iso2)}return-99}},{key:"getSelectedCountryData",value:function getSelectedCountryData(){return this.selectedCountryData}},{key:"getValidationError",value:function getValidationError(){if(window.intlTelInputUtils){var iso2=this.selectedCountryData.iso2;return intlTelInputUtils.getValidationError(this._getFullNumber(),iso2)}return-99}},{key:"isValidNumber",value:function isValidNumber(){var val=this._getFullNumber().trim();return window.intlTelInputUtils?intlTelInputUtils.isValidNumber(val,this.selectedCountryData.iso2):null}},{key:"isPossibleNumber",value:function isPossibleNumber(){var val=this._getFullNumber().trim();return window.intlTelInputUtils?intlTelInputUtils.isPossibleNumber(val,this.selectedCountryData.iso2):null}},{key:"setCountry",value:function setCountry(originalCountryCode){var countryCode=originalCountryCode.toLowerCase();if(this.selectedCountryData.iso2!==countryCode){this._setFlag(countryCode);this._updateDialCode(this.selectedCountryData.dialCode);this._triggerCountryChange()}}},{key:"setNumber",value:function setNumber(number){var flagChanged=this._updateFlagFromNumber(number);this._updateValFromNumber(number);if(flagChanged){this._triggerCountryChange()}}},{key:"setPlaceholderNumberType",value:function setPlaceholderNumberType(type){this.options.placeholderNumberType=type;this._updatePlaceholder()}}]);return Iti}();intlTelInputGlobals.getCountryData=function(){return allCountries};var injectScript=function injectScript(path,handleSuccess,handleFailure){var script=document.createElement("script");script.onload=function(){forEachInstance("handleUtils");if(handleSuccess){handleSuccess()}};script.onerror=function(){forEachInstance("rejectUtilsScriptPromise");if(handleFailure){handleFailure()}};script.className="iti-load-utils";script.async=true;script.src=path;document.body.appendChild(script)};intlTelInputGlobals.loadUtils=function(path){if(!window.intlTelInputUtils&&!window.intlTelInputGlobals.startedLoadingUtilsScript){window.intlTelInputGlobals.startedLoadingUtilsScript=true;if(typeof Promise!=="undefined"){return new Promise(function(resolve,reject){return injectScript(path,resolve,reject)})}injectScript(path)}return null};intlTelInputGlobals.defaults=defaults;intlTelInputGlobals.version="18.2.1";return function(input,options){var iti=new Iti(input,options);iti._init();input.setAttribute("data-intl-tel-input-id",iti.id);window.intlTelInputGlobals.instances[iti.id]=iti;return iti}}()});
+let em_setup_phone_inputs = function(){};
+if ( EM.phone ) {
 
 	let getCountry = function() {
 		var timezones = {
@@ -3638,7 +4104,7 @@ window.addEventListener('load', function(){
 			"Brazil/DeNoronha": {},
 			"Brazil/East": {},
 			"Brazil/West": {},
-			CET: {},
+			CET: { c : ["XK"] },
 			CST6CDT: {},
 			"Canada/Atlantic": {},
 			"Canada/Central": {},
@@ -3656,7 +4122,7 @@ window.addEventListener('load', function(){
 			EST5EDT: {},
 			Egypt: {},
 			Eire: {},
-			"Etc/GMT": {},
+			"Etc/GMT": { c : ["AC"] },
 			"Etc/GMT+0": {},
 			"Etc/GMT+1": {},
 			"Etc/GMT+10": {},
@@ -3757,7 +4223,7 @@ window.addEventListener('load', function(){
 			Factory: {},
 			GB: { c : ["GB"] },
 			"GB-Eire": { c : ["GB"] },
-			GMT: {},
+			GMT: { c : ["AC"] },
 			"GMT+0": {},
 			"GMT-0": {},
 			GMT0: {},
@@ -3873,8 +4339,18 @@ window.addEventListener('load', function(){
 		return timezones[timezone].c[0];
 	}
 
-	document.querySelectorAll('form.em-booking-form').forEach( function( booking_form ){
-		booking_form.querySelectorAll('[type="tel"]').forEach( function(input){
+	let utilsScriptLoaded;
+
+	em_setup_phone_inputs = async function ( container, overriding_options = {} ) {
+		if ( !EM.phone ) return false;
+		if( !utilsScriptLoaded ) {
+			import( EM.url + '/includes/external/intl-tel-input/js/intlTelInputWithUtils.js' ).then( () => {
+				utilsScriptLoaded = true;
+				em_setup_phone_inputs( container );
+			});
+			return false;
+		} // on initial load, we wait for scripts to load
+		container.querySelectorAll('input.em-phone-intl[type="tel"]').forEach( function(input){
 			// change name and allow a hidden field for submission
 			let alt = document.createElement('input');
 			let name = input.name;
@@ -3898,28 +4374,41 @@ window.addEventListener('load', function(){
 			}
 			input.after(alt);
 
-			let options = Object.assign({
-				utilsScript: EM.url + '/includes/external/intl-tel-input/js/utils.js',
+			let default_options = Object.assign({
+				autoPlaceholder: 'aggressive',
 				separateDialCode : true,
 			}, EM.phone.options);
+			let options = Object.assign( default_options, overriding_options );
 
-			if( EM.phone.detectJS ) {
+			if( EM.phone.detectJS || options.detectJS ) {
 				let country = getCountry();
 				if( country ) {
 					options.initialCountry = country;
 				} else if ( EM.phone.initialCountry ) {
 					options.initialCountry = EM.phone.initialCountry;
 				}
-			} else if ( EM.phone.initialCountry ) {
-				options.initialCountry = EM.phone.initialCountry;
+			}
+			if( options.onlyCountries ) {
+				if( Array.isArray(options.onlyCountries) && options.onlyCountries.length > 0 ) {
+					// make sure initial country is not excluded
+					if (!options.onlyCountries.includes(options.initialCountry && options.initialCountry)) {
+						options.onlyCountries.push(options.initialCountry);
+					}
+				} else {
+					options.onlyCountries = [];
+				}
 			}
 
-			let iti = window.intlTelInput( input, options);
+			let iti = EM.intlTelInput( input, options);
+			let pixels = parseInt( input.style.paddingLeft.replace('px', '') ); // pad this an extra px
+			input.style.setProperty('padding-left', pixels + 'px', 'important' );
+
+			// do some basic inline validation
 			input.addEventListener('change', function( e ){
 				alt.value = iti.getNumber();
 				if ( input.value.trim() ) {
 					let wrapper = input.closest('.iti')
-					if ( iti.isPossibleNumber() ) {
+					if ( iti.isValidNumber() ) {
 						wrapper.classList.remove("invalid-number");
 						if ( wrapper.nextElementSibling && wrapper.nextElementSibling.classList.contains('em-inline-error') ) {
 							wrapper.nextElementSibling.remove();
@@ -3941,18 +4430,20 @@ window.addEventListener('load', function(){
 					}
 				}
 			});
-			// create a hidden input and populate it on change
+			
+			// trigger changes
 			input.addEventListener('countrychange', function( e ){
 				alt.value = iti.getNumber();
 				// check input padding inline style and set it to important
 				if( input.getAttribute('style') ) {
-					input.setAttribute('style', input.getAttribute('style').replace('px', 'px !important'));
+					let pixels = parseInt(input.style.paddingLeft.replace('px', '')); // pad this an extra px
+					input.style.setProperty('padding-left', pixels + 'px', 'important' );
 				}
 			});
-		});
-	});
 
-});
+		});
+	};
+}
 
 /*!
  * jquery-timepicker v1.13.16 - Copyright (c) 2020 Jon Thornton - https://www.jonthornton.com/jquery-timepicker/
@@ -3988,8 +4479,20 @@ window.addEventListener('load', function(){
 Selectize.define("click2deselect",function(options){var self=this;var setup=self.setup;this.setup=function(){setup.apply(self,arguments);let just_added;self.$dropdown.each(function(){this.addEventListener("click",function(e){let target=e.target.matches(".selected[data-selectable]")?e.target:e.target.closest(".selected[data-selectable]");if(target!==null){let value=target.getAttribute("data-value");if(value!==just_added){self.removeItem(value);self.refreshItems();self.refreshOptions()}}just_added=false;return false})});self.on("item_remove",function(value){self.getOption(value).removeClass("selected")});self.on("item_add",function(value){just_added=value})}});
 
 /*!
- * International Telephone Input v18.2.1
- * https://github.com/jackocnr/intl-tel-input.git
+ * jQuery UI Touch Punch 0.2.3
+ *
+ * Copyright 2011–2014, Dave Furfero
+ * Dual licensed under the MIT or GPL Version 2 licenses.
+ *
+ * Depends:
+ *  jquery.ui.widget.js
+ *  jquery.ui.mouse.js
  */
-(function(factory){if(typeof module==="object"&&module.exports)module.exports=factory();else window.intlTelInput=factory()})(function(undefined){"use strict";return function(){var allCountries=[["Afghanistan (‫افغانستان‬‎)","af","93"],["Albania (Shqipëri)","al","355"],["Algeria (‫الجزائر‬‎)","dz","213"],["American Samoa","as","1",5,["684"]],["Andorra","ad","376"],["Angola","ao","244"],["Anguilla","ai","1",6,["264"]],["Antigua and Barbuda","ag","1",7,["268"]],["Argentina","ar","54"],["Armenia (Հայաստան)","am","374"],["Aruba","aw","297"],["Ascension Island","ac","247"],["Australia","au","61",0],["Austria (Österreich)","at","43"],["Azerbaijan (Azərbaycan)","az","994"],["Bahamas","bs","1",8,["242"]],["Bahrain (‫البحرين‬‎)","bh","973"],["Bangladesh (বাংলাদেশ)","bd","880"],["Barbados","bb","1",9,["246"]],["Belarus (Беларусь)","by","375"],["Belgium (België)","be","32"],["Belize","bz","501"],["Benin (Bénin)","bj","229"],["Bermuda","bm","1",10,["441"]],["Bhutan (འབྲུག)","bt","975"],["Bolivia","bo","591"],["Bosnia and Herzegovina (Босна и Херцеговина)","ba","387"],["Botswana","bw","267"],["Brazil (Brasil)","br","55"],["British Indian Ocean Territory","io","246"],["British Virgin Islands","vg","1",11,["284"]],["Brunei","bn","673"],["Bulgaria (България)","bg","359"],["Burkina Faso","bf","226"],["Burundi (Uburundi)","bi","257"],["Cambodia (កម្ពុជា)","kh","855"],["Cameroon (Cameroun)","cm","237"],["Canada","ca","1",1,["204","226","236","249","250","263","289","306","343","354","365","367","368","382","387","403","416","418","428","431","437","438","450","584","468","474","506","514","519","548","579","581","584","587","604","613","639","647","672","683","705","709","742","753","778","780","782","807","819","825","867","873","902","905"]],["Cape Verde (Kabu Verdi)","cv","238"],["Caribbean Netherlands","bq","599",1,["3","4","7"]],["Cayman Islands","ky","1",12,["345"]],["Central African Republic (République centrafricaine)","cf","236"],["Chad (Tchad)","td","235"],["Chile","cl","56"],["China (中国)","cn","86"],["Christmas Island","cx","61",2,["89164"]],["Cocos (Keeling) Islands","cc","61",1,["89162"]],["Colombia","co","57"],["Comoros (‫جزر القمر‬‎)","km","269"],["Congo (DRC) (Jamhuri ya Kidemokrasia ya Kongo)","cd","243"],["Congo (Republic) (Congo-Brazzaville)","cg","242"],["Cook Islands","ck","682"],["Costa Rica","cr","506"],["Côte d’Ivoire","ci","225"],["Croatia (Hrvatska)","hr","385"],["Cuba","cu","53"],["Curaçao","cw","599",0],["Cyprus (Κύπρος)","cy","357"],["Czech Republic (Česká republika)","cz","420"],["Denmark (Danmark)","dk","45"],["Djibouti","dj","253"],["Dominica","dm","1",13,["767"]],["Dominican Republic (República Dominicana)","do","1",2,["809","829","849"]],["Ecuador","ec","593"],["Egypt (‫مصر‬‎)","eg","20"],["El Salvador","sv","503"],["Equatorial Guinea (Guinea Ecuatorial)","gq","240"],["Eritrea","er","291"],["Estonia (Eesti)","ee","372"],["Eswatini","sz","268"],["Ethiopia","et","251"],["Falkland Islands (Islas Malvinas)","fk","500"],["Faroe Islands (Føroyar)","fo","298"],["Fiji","fj","679"],["Finland (Suomi)","fi","358",0],["France","fr","33"],["French Guiana (Guyane française)","gf","594"],["French Polynesia (Polynésie française)","pf","689"],["Gabon","ga","241"],["Gambia","gm","220"],["Georgia (საქართველო)","ge","995"],["Germany (Deutschland)","de","49"],["Ghana (Gaana)","gh","233"],["Gibraltar","gi","350"],["Greece (Ελλάδα)","gr","30"],["Greenland (Kalaallit Nunaat)","gl","299"],["Grenada","gd","1",14,["473"]],["Guadeloupe","gp","590",0],["Guam","gu","1",15,["671"]],["Guatemala","gt","502"],["Guernsey","gg","44",1,["1481","7781","7839","7911"]],["Guinea (Guinée)","gn","224"],["Guinea-Bissau (Guiné Bissau)","gw","245"],["Guyana","gy","592"],["Haiti","ht","509"],["Honduras","hn","504"],["Hong Kong (香港)","hk","852"],["Hungary (Magyarország)","hu","36"],["Iceland (Ísland)","is","354"],["India (भारत)","in","91"],["Indonesia","id","62"],["Iran (‫ایران‬‎)","ir","98"],["Iraq (‫العراق‬‎)","iq","964"],["Ireland","ie","353"],["Isle of Man","im","44",2,["1624","74576","7524","7924","7624"]],["Israel (‫ישראל‬‎)","il","972"],["Italy (Italia)","it","39",0],["Jamaica","jm","1",4,["876","658"]],["Japan (日本)","jp","81"],["Jersey","je","44",3,["1534","7509","7700","7797","7829","7937"]],["Jordan (‫الأردن‬‎)","jo","962"],["Kazakhstan (Казахстан)","kz","7",1,["33","7"]],["Kenya","ke","254"],["Kiribati","ki","686"],["Kosovo","xk","383"],["Kuwait (‫الكويت‬‎)","kw","965"],["Kyrgyzstan (Кыргызстан)","kg","996"],["Laos (ລາວ)","la","856"],["Latvia (Latvija)","lv","371"],["Lebanon (‫لبنان‬‎)","lb","961"],["Lesotho","ls","266"],["Liberia","lr","231"],["Libya (‫ليبيا‬‎)","ly","218"],["Liechtenstein","li","423"],["Lithuania (Lietuva)","lt","370"],["Luxembourg","lu","352"],["Macau (澳門)","mo","853"],["Madagascar (Madagasikara)","mg","261"],["Malawi","mw","265"],["Malaysia","my","60"],["Maldives","mv","960"],["Mali","ml","223"],["Malta","mt","356"],["Marshall Islands","mh","692"],["Martinique","mq","596"],["Mauritania (‫موريتانيا‬‎)","mr","222"],["Mauritius (Moris)","mu","230"],["Mayotte","yt","262",1,["269","639"]],["Mexico (México)","mx","52"],["Micronesia","fm","691"],["Moldova (Republica Moldova)","md","373"],["Monaco","mc","377"],["Mongolia (Монгол)","mn","976"],["Montenegro (Crna Gora)","me","382"],["Montserrat","ms","1",16,["664"]],["Morocco (‫المغرب‬‎)","ma","212",0],["Mozambique (Moçambique)","mz","258"],["Myanmar (Burma) (မြန်မာ)","mm","95"],["Namibia (Namibië)","na","264"],["Nauru","nr","674"],["Nepal (नेपाल)","np","977"],["Netherlands (Nederland)","nl","31"],["New Caledonia (Nouvelle-Calédonie)","nc","687"],["New Zealand","nz","64"],["Nicaragua","ni","505"],["Niger (Nijar)","ne","227"],["Nigeria","ng","234"],["Niue","nu","683"],["Norfolk Island","nf","672"],["North Korea (조선 민주주의 인민 공화국)","kp","850"],["North Macedonia (Северна Македонија)","mk","389"],["Northern Mariana Islands","mp","1",17,["670"]],["Norway (Norge)","no","47",0],["Oman (‫عُمان‬‎)","om","968"],["Pakistan (‫پاکستان‬‎)","pk","92"],["Palau","pw","680"],["Palestine (‫فلسطين‬‎)","ps","970"],["Panama (Panamá)","pa","507"],["Papua New Guinea","pg","675"],["Paraguay","py","595"],["Peru (Perú)","pe","51"],["Philippines","ph","63"],["Poland (Polska)","pl","48"],["Portugal","pt","351"],["Puerto Rico","pr","1",3,["787","939"]],["Qatar (‫قطر‬‎)","qa","974"],["Réunion (La Réunion)","re","262",0],["Romania (România)","ro","40"],["Russia (Россия)","ru","7",0],["Rwanda","rw","250"],["Saint Barthélemy","bl","590",1],["Saint Helena","sh","290"],["Saint Kitts and Nevis","kn","1",18,["869"]],["Saint Lucia","lc","1",19,["758"]],["Saint Martin (Saint-Martin (partie française))","mf","590",2],["Saint Pierre and Miquelon (Saint-Pierre-et-Miquelon)","pm","508"],["Saint Vincent and the Grenadines","vc","1",20,["784"]],["Samoa","ws","685"],["San Marino","sm","378"],["São Tomé and Príncipe (São Tomé e Príncipe)","st","239"],["Saudi Arabia (‫المملكة العربية السعودية‬‎)","sa","966"],["Senegal (Sénégal)","sn","221"],["Serbia (Србија)","rs","381"],["Seychelles","sc","248"],["Sierra Leone","sl","232"],["Singapore","sg","65"],["Sint Maarten","sx","1",21,["721"]],["Slovakia (Slovensko)","sk","421"],["Slovenia (Slovenija)","si","386"],["Solomon Islands","sb","677"],["Somalia (Soomaaliya)","so","252"],["South Africa","za","27"],["South Korea (대한민국)","kr","82"],["South Sudan (‫جنوب السودان‬‎)","ss","211"],["Spain (España)","es","34"],["Sri Lanka (ශ්‍රී ලංකාව)","lk","94"],["Sudan (‫السودان‬‎)","sd","249"],["Suriname","sr","597"],["Svalbard and Jan Mayen","sj","47",1,["79"]],["Sweden (Sverige)","se","46"],["Switzerland (Schweiz)","ch","41"],["Syria (‫سوريا‬‎)","sy","963"],["Taiwan (台灣)","tw","886"],["Tajikistan","tj","992"],["Tanzania","tz","255"],["Thailand (ไทย)","th","66"],["Timor-Leste","tl","670"],["Togo","tg","228"],["Tokelau","tk","690"],["Tonga","to","676"],["Trinidad and Tobago","tt","1",22,["868"]],["Tunisia (‫تونس‬‎)","tn","216"],["Turkey (Türkiye)","tr","90"],["Turkmenistan","tm","993"],["Turks and Caicos Islands","tc","1",23,["649"]],["Tuvalu","tv","688"],["U.S. Virgin Islands","vi","1",24,["340"]],["Uganda","ug","256"],["Ukraine (Україна)","ua","380"],["United Arab Emirates (‫الإمارات العربية المتحدة‬‎)","ae","971"],["United Kingdom","gb","44",0],["United States","us","1",0],["Uruguay","uy","598"],["Uzbekistan (Oʻzbekiston)","uz","998"],["Vanuatu","vu","678"],["Vatican City (Città del Vaticano)","va","39",1,["06698"]],["Venezuela","ve","58"],["Vietnam (Việt Nam)","vn","84"],["Wallis and Futuna (Wallis-et-Futuna)","wf","681"],["Western Sahara (‫الصحراء الغربية‬‎)","eh","212",1,["5288","5289"]],["Yemen (‫اليمن‬‎)","ye","967"],["Zambia","zm","260"],["Zimbabwe","zw","263"],["Åland Islands","ax","358",1,["18"]]];for(var i=0;i<allCountries.length;i++){var c=allCountries[i];allCountries[i]={name:c[0],iso2:c[1],dialCode:c[2],priority:c[3]||0,areaCodes:c[4]||null}}"use strict";function _objectSpread(target){for(var i=1;i<arguments.length;i++){var source=arguments[i]!=null?Object(arguments[i]):{};var ownKeys=Object.keys(source);if(typeof Object.getOwnPropertySymbols==="function"){ownKeys.push.apply(ownKeys,Object.getOwnPropertySymbols(source).filter(function(sym){return Object.getOwnPropertyDescriptor(source,sym).enumerable}))}ownKeys.forEach(function(key){_defineProperty(target,key,source[key])})}return target}function _defineProperty(obj,key,value){key=_toPropertyKey(key);if(key in obj){Object.defineProperty(obj,key,{value:value,enumerable:true,configurable:true,writable:true})}else{obj[key]=value}return obj}function _classCallCheck(instance,Constructor){if(!(instance instanceof Constructor)){throw new TypeError("Cannot call a class as a function")}}function _defineProperties(target,props){for(var i=0;i<props.length;i++){var descriptor=props[i];descriptor.enumerable=descriptor.enumerable||false;descriptor.configurable=true;if("value"in descriptor)descriptor.writable=true;Object.defineProperty(target,_toPropertyKey(descriptor.key),descriptor)}}function _createClass(Constructor,protoProps,staticProps){if(protoProps)_defineProperties(Constructor.prototype,protoProps);if(staticProps)_defineProperties(Constructor,staticProps);Object.defineProperty(Constructor,"prototype",{writable:false});return Constructor}function _toPropertyKey(arg){var key=_toPrimitive(arg,"string");return typeof key==="symbol"?key:String(key)}function _toPrimitive(input,hint){if(typeof input!=="object"||input===null)return input;var prim=input[Symbol.toPrimitive];if(prim!==undefined){var res=prim.call(input,hint||"default");if(typeof res!=="object")return res;throw new TypeError("@@toPrimitive must return a primitive value.")}return(hint==="string"?String:Number)(input)}var intlTelInputGlobals={getInstance:function getInstance(input){var id=input.getAttribute("data-intl-tel-input-id");return window.intlTelInputGlobals.instances[id]},instances:{},documentReady:function documentReady(){return document.readyState==="complete"}};if(typeof window==="object"){window.intlTelInputGlobals=intlTelInputGlobals}var id=0;var defaults={allowDropdown:true,autoInsertDialCode:false,autoPlaceholder:"polite",customContainer:"",customPlaceholder:null,dropdownContainer:null,excludeCountries:[],formatOnDisplay:true,geoIpLookup:null,hiddenInput:"",initialCountry:"",localizedCountries:null,nationalMode:true,onlyCountries:[],placeholderNumberType:"MOBILE",preferredCountries:["us","gb"],separateDialCode:false,showFlags:true,utilsScript:""};var regionlessNanpNumbers=["800","822","833","844","855","866","877","880","881","882","883","884","885","886","887","888","889"];var forEachProp=function forEachProp(obj,callback){var keys=Object.keys(obj);for(var i=0;i<keys.length;i++){callback(keys[i],obj[keys[i]])}};var forEachInstance=function forEachInstance(method){forEachProp(window.intlTelInputGlobals.instances,function(key){window.intlTelInputGlobals.instances[key][method]()})};var Iti=function(){function Iti(input,options){var _this=this;_classCallCheck(this,Iti);this.id=id++;this.telInput=input;this.activeItem=null;this.highlightedItem=null;var customOptions=options||{};this.options={};forEachProp(defaults,function(key,value){_this.options[key]=customOptions.hasOwnProperty(key)?customOptions[key]:value});this.hadInitialPlaceholder=Boolean(input.getAttribute("placeholder"))}_createClass(Iti,[{key:"_init",value:function _init(){var _this2=this;if(this.options.nationalMode){this.options.autoInsertDialCode=false}if(this.options.separateDialCode){this.options.autoInsertDialCode=false}var forceShowFlags=this.options.allowDropdown&&!this.options.separateDialCode;if(!this.options.showFlags&&forceShowFlags){this.options.showFlags=true}this.isMobile=/Android.+Mobile|webOS|iPhone|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);if(this.isMobile){document.body.classList.add("iti-mobile");if(!this.options.dropdownContainer){this.options.dropdownContainer=document.body}}this.isRTL=!!this.telInput.closest("[dir=rtl]");if(typeof Promise!=="undefined"){var autoCountryPromise=new Promise(function(resolve,reject){_this2.resolveAutoCountryPromise=resolve;_this2.rejectAutoCountryPromise=reject});var utilsScriptPromise=new Promise(function(resolve,reject){_this2.resolveUtilsScriptPromise=resolve;_this2.rejectUtilsScriptPromise=reject});this.promise=Promise.all([autoCountryPromise,utilsScriptPromise])}else{this.resolveAutoCountryPromise=this.rejectAutoCountryPromise=function(){};this.resolveUtilsScriptPromise=this.rejectUtilsScriptPromise=function(){}}this.selectedCountryData={};this._processCountryData();this._generateMarkup();this._setInitialState();this._initListeners();this._initRequests()}},{key:"_processCountryData",value:function _processCountryData(){this._processAllCountries();this._processCountryCodes();this._processPreferredCountries();if(this.options.localizedCountries){this._translateCountriesByLocale()}if(this.options.onlyCountries.length||this.options.localizedCountries){this.countries.sort(this._countryNameSort)}}},{key:"_addCountryCode",value:function _addCountryCode(iso2,countryCode,priority){if(countryCode.length>this.countryCodeMaxLen){this.countryCodeMaxLen=countryCode.length}if(!this.countryCodes.hasOwnProperty(countryCode)){this.countryCodes[countryCode]=[]}for(var i=0;i<this.countryCodes[countryCode].length;i++){if(this.countryCodes[countryCode][i]===iso2){return}}var index=priority!==undefined?priority:this.countryCodes[countryCode].length;this.countryCodes[countryCode][index]=iso2}},{key:"_processAllCountries",value:function _processAllCountries(){if(this.options.onlyCountries.length){var lowerCaseOnlyCountries=this.options.onlyCountries.map(function(country){return country.toLowerCase()});this.countries=allCountries.filter(function(country){return lowerCaseOnlyCountries.indexOf(country.iso2)>-1})}else if(this.options.excludeCountries.length){var lowerCaseExcludeCountries=this.options.excludeCountries.map(function(country){return country.toLowerCase()});this.countries=allCountries.filter(function(country){return lowerCaseExcludeCountries.indexOf(country.iso2)===-1})}else{this.countries=allCountries}}},{key:"_translateCountriesByLocale",value:function _translateCountriesByLocale(){for(var i=0;i<this.countries.length;i++){var iso=this.countries[i].iso2.toLowerCase();if(this.options.localizedCountries.hasOwnProperty(iso)){this.countries[i].name=this.options.localizedCountries[iso]}}}},{key:"_countryNameSort",value:function _countryNameSort(a,b){if(a.name<b.name){return-1}if(a.name>b.name){return 1}return 0}},{key:"_processCountryCodes",value:function _processCountryCodes(){this.countryCodeMaxLen=0;this.dialCodes={};this.countryCodes={};for(var i=0;i<this.countries.length;i++){var c=this.countries[i];if(!this.dialCodes[c.dialCode]){this.dialCodes[c.dialCode]=true}this._addCountryCode(c.iso2,c.dialCode,c.priority)}for(var _i=0;_i<this.countries.length;_i++){var _c=this.countries[_i];if(_c.areaCodes){var rootCountryCode=this.countryCodes[_c.dialCode][0];for(var j=0;j<_c.areaCodes.length;j++){var areaCode=_c.areaCodes[j];for(var k=1;k<areaCode.length;k++){var partialDialCode=_c.dialCode+areaCode.substr(0,k);this._addCountryCode(rootCountryCode,partialDialCode);this._addCountryCode(_c.iso2,partialDialCode)}this._addCountryCode(_c.iso2,_c.dialCode+areaCode)}}}}},{key:"_processPreferredCountries",value:function _processPreferredCountries(){this.preferredCountries=[];for(var i=0;i<this.options.preferredCountries.length;i++){var countryCode=this.options.preferredCountries[i].toLowerCase();var countryData=this._getCountryData(countryCode,false,true);if(countryData){this.preferredCountries.push(countryData)}}}},{key:"_createEl",value:function _createEl(name,attrs,container){var el=document.createElement(name);if(attrs){forEachProp(attrs,function(key,value){return el.setAttribute(key,value)})}if(container){container.appendChild(el)}return el}},{key:"_generateMarkup",value:function _generateMarkup(){if(!this.telInput.hasAttribute("autocomplete")&&!(this.telInput.form&&this.telInput.form.hasAttribute("autocomplete"))){this.telInput.setAttribute("autocomplete","off")}var _this$options=this.options,allowDropdown=_this$options.allowDropdown,separateDialCode=_this$options.separateDialCode,showFlags=_this$options.showFlags,customContainer=_this$options.customContainer,hiddenInput=_this$options.hiddenInput,dropdownContainer=_this$options.dropdownContainer;var parentClass="iti";if(allowDropdown){parentClass+=" iti--allow-dropdown"}if(separateDialCode){parentClass+=" iti--separate-dial-code"}if(showFlags){parentClass+=" iti--show-flags"}if(customContainer){parentClass+=" ".concat(customContainer)}var wrapper=this._createEl("div",{class:parentClass});this.telInput.parentNode.insertBefore(wrapper,this.telInput);var showFlagsContainer=allowDropdown||showFlags||separateDialCode;if(showFlagsContainer){this.flagsContainer=this._createEl("div",{class:"iti__flag-container"},wrapper)}wrapper.appendChild(this.telInput);if(showFlagsContainer){this.selectedFlag=this._createEl("div",_objectSpread({class:"iti__selected-flag"},allowDropdown&&{role:"combobox","aria-haspopup":"listbox","aria-controls":"iti-".concat(this.id,"__country-listbox"),"aria-expanded":"false","aria-label":"Telephone country code"}),this.flagsContainer)}if(showFlags){this.selectedFlagInner=this._createEl("div",{class:"iti__flag"},this.selectedFlag)}if(this.selectedFlag&&this.telInput.disabled){this.selectedFlag.setAttribute("aria-disabled","true")}if(separateDialCode){this.selectedDialCode=this._createEl("div",{class:"iti__selected-dial-code"},this.selectedFlag)}if(allowDropdown){if(!this.telInput.disabled){this.selectedFlag.setAttribute("tabindex","0")}this.dropdownArrow=this._createEl("div",{class:"iti__arrow"},this.selectedFlag);this.countryList=this._createEl("ul",{class:"iti__country-list iti__hide",id:"iti-".concat(this.id,"__country-listbox"),role:"listbox","aria-label":"List of countries"});if(this.preferredCountries.length){this._appendListItems(this.preferredCountries,"iti__preferred",true);this._createEl("li",{class:"iti__divider",role:"separator","aria-disabled":"true"},this.countryList)}this._appendListItems(this.countries,"iti__standard");if(dropdownContainer){this.dropdown=this._createEl("div",{class:"iti iti--container"});this.dropdown.appendChild(this.countryList)}else{this.flagsContainer.appendChild(this.countryList)}}if(hiddenInput){var hiddenInputName=hiddenInput;var name=this.telInput.getAttribute("name");if(name){var i=name.lastIndexOf("[");if(i!==-1){hiddenInputName="".concat(name.substr(0,i),"[").concat(hiddenInputName,"]")}}this.hiddenInput=this._createEl("input",{type:"hidden",name:hiddenInputName});wrapper.appendChild(this.hiddenInput)}}},{key:"_appendListItems",value:function _appendListItems(countries,className,preferred){var tmp="";for(var i=0;i<countries.length;i++){var c=countries[i];var idSuffix=preferred?"-preferred":"";tmp+="<li class='iti__country ".concat(className,"' tabIndex='-1' id='iti-").concat(this.id,"__item-").concat(c.iso2).concat(idSuffix,"' role='option' data-dial-code='").concat(c.dialCode,"' data-country-code='").concat(c.iso2,"' aria-selected='false'>");if(this.options.showFlags){tmp+="<div class='iti__flag-box'><div class='iti__flag iti__".concat(c.iso2,"'></div></div>")}tmp+="<span class='iti__country-name'>".concat(c.name,"</span>");tmp+="<span class='iti__dial-code'>+".concat(c.dialCode,"</span>");tmp+="</li>"}this.countryList.insertAdjacentHTML("beforeend",tmp)}},{key:"_setInitialState",value:function _setInitialState(){var attributeValue=this.telInput.getAttribute("value");var inputValue=this.telInput.value;var useAttribute=attributeValue&&attributeValue.charAt(0)==="+"&&(!inputValue||inputValue.charAt(0)!=="+");var val=useAttribute?attributeValue:inputValue;var dialCode=this._getDialCode(val);var isRegionlessNanp=this._isRegionlessNanp(val);var _this$options2=this.options,initialCountry=_this$options2.initialCountry,autoInsertDialCode=_this$options2.autoInsertDialCode;if(dialCode&&!isRegionlessNanp){this._updateFlagFromNumber(val)}else if(initialCountry!=="auto"){if(initialCountry){this._setFlag(initialCountry.toLowerCase())}else{if(dialCode&&isRegionlessNanp){this._setFlag("us")}else{this.defaultCountry=this.preferredCountries.length?this.preferredCountries[0].iso2:this.countries[0].iso2;if(!val){this._setFlag(this.defaultCountry)}}}if(!val&&autoInsertDialCode){this.telInput.value="+".concat(this.selectedCountryData.dialCode)}}if(val){this._updateValFromNumber(val)}}},{key:"_initListeners",value:function _initListeners(){this._initKeyListeners();if(this.options.autoInsertDialCode){this._initBlurListeners()}if(this.options.allowDropdown){this._initDropdownListeners()}if(this.hiddenInput){this._initHiddenInputListener()}}},{key:"_initHiddenInputListener",value:function _initHiddenInputListener(){var _this3=this;this._handleHiddenInputSubmit=function(){_this3.hiddenInput.value=_this3.getNumber()};if(this.telInput.form){this.telInput.form.addEventListener("submit",this._handleHiddenInputSubmit)}}},{key:"_getClosestLabel",value:function _getClosestLabel(){var el=this.telInput;while(el&&el.tagName!=="LABEL"){el=el.parentNode}return el}},{key:"_initDropdownListeners",value:function _initDropdownListeners(){var _this4=this;this._handleLabelClick=function(e){if(_this4.countryList.classList.contains("iti__hide")){_this4.telInput.focus()}else{e.preventDefault()}};var label=this._getClosestLabel();if(label){label.addEventListener("click",this._handleLabelClick)}this._handleClickSelectedFlag=function(){if(_this4.countryList.classList.contains("iti__hide")&&!_this4.telInput.disabled&&!_this4.telInput.readOnly){_this4._showDropdown()}};this.selectedFlag.addEventListener("click",this._handleClickSelectedFlag);this._handleFlagsContainerKeydown=function(e){var isDropdownHidden=_this4.countryList.classList.contains("iti__hide");if(isDropdownHidden&&["ArrowUp","Up","ArrowDown","Down"," ","Enter"].indexOf(e.key)!==-1){e.preventDefault();e.stopPropagation();_this4._showDropdown()}if(e.key==="Tab"){_this4._closeDropdown()}};this.flagsContainer.addEventListener("keydown",this._handleFlagsContainerKeydown)}},{key:"_initRequests",value:function _initRequests(){var _this5=this;if(this.options.utilsScript&&!window.intlTelInputUtils){if(window.intlTelInputGlobals.documentReady()){window.intlTelInputGlobals.loadUtils(this.options.utilsScript)}else{window.addEventListener("load",function(){window.intlTelInputGlobals.loadUtils(_this5.options.utilsScript)})}}else{this.resolveUtilsScriptPromise()}if(this.options.initialCountry==="auto"){this._loadAutoCountry()}else{this.resolveAutoCountryPromise()}}},{key:"_loadAutoCountry",value:function _loadAutoCountry(){if(window.intlTelInputGlobals.autoCountry){this.handleAutoCountry()}else if(!window.intlTelInputGlobals.startedLoadingAutoCountry){window.intlTelInputGlobals.startedLoadingAutoCountry=true;if(typeof this.options.geoIpLookup==="function"){this.options.geoIpLookup(function(countryCode){window.intlTelInputGlobals.autoCountry=countryCode.toLowerCase();setTimeout(function(){return forEachInstance("handleAutoCountry")})},function(){return forEachInstance("rejectAutoCountryPromise")})}}}},{key:"_initKeyListeners",value:function _initKeyListeners(){var _this6=this;this._handleKeyupEvent=function(){if(_this6._updateFlagFromNumber(_this6.telInput.value)){_this6._triggerCountryChange()}};this.telInput.addEventListener("keyup",this._handleKeyupEvent);this._handleClipboardEvent=function(){setTimeout(_this6._handleKeyupEvent)};this.telInput.addEventListener("cut",this._handleClipboardEvent);this.telInput.addEventListener("paste",this._handleClipboardEvent)}},{key:"_cap",value:function _cap(number){var max=this.telInput.getAttribute("maxlength");return max&&number.length>max?number.substr(0,max):number}},{key:"_initBlurListeners",value:function _initBlurListeners(){var _this7=this;this._handleSubmitOrBlurEvent=function(){_this7._removeEmptyDialCode()};if(this.telInput.form){this.telInput.form.addEventListener("submit",this._handleSubmitOrBlurEvent)}this.telInput.addEventListener("blur",this._handleSubmitOrBlurEvent)}},{key:"_removeEmptyDialCode",value:function _removeEmptyDialCode(){if(this.telInput.value.charAt(0)==="+"){var numeric=this._getNumeric(this.telInput.value);if(!numeric||this.selectedCountryData.dialCode===numeric){this.telInput.value=""}}}},{key:"_getNumeric",value:function _getNumeric(s){return s.replace(/\D/g,"")}},{key:"_trigger",value:function _trigger(name){var e=document.createEvent("Event");e.initEvent(name,true,true);this.telInput.dispatchEvent(e)}},{key:"_showDropdown",value:function _showDropdown(){this.countryList.classList.remove("iti__hide");this.selectedFlag.setAttribute("aria-expanded","true");this._setDropdownPosition();if(this.activeItem){this._highlightListItem(this.activeItem,false);this._scrollTo(this.activeItem,true)}this._bindDropdownListeners();this.dropdownArrow.classList.add("iti__arrow--up");this._trigger("open:countrydropdown")}},{key:"_toggleClass",value:function _toggleClass(el,className,shouldHaveClass){if(shouldHaveClass&&!el.classList.contains(className)){el.classList.add(className)}else if(!shouldHaveClass&&el.classList.contains(className)){el.classList.remove(className)}}},{key:"_setDropdownPosition",value:function _setDropdownPosition(){var _this8=this;if(this.options.dropdownContainer){this.options.dropdownContainer.appendChild(this.dropdown)}if(!this.isMobile){var pos=this.telInput.getBoundingClientRect();var windowTop=window.pageYOffset||document.documentElement.scrollTop;var inputTop=pos.top+windowTop;var dropdownHeight=this.countryList.offsetHeight;var dropdownFitsBelow=inputTop+this.telInput.offsetHeight+dropdownHeight<windowTop+window.innerHeight;var dropdownFitsAbove=inputTop-dropdownHeight>windowTop;this._toggleClass(this.countryList,"iti__country-list--dropup",!dropdownFitsBelow&&dropdownFitsAbove);if(this.options.dropdownContainer){var extraTop=!dropdownFitsBelow&&dropdownFitsAbove?0:this.telInput.offsetHeight;this.dropdown.style.top="".concat(inputTop+extraTop,"px");this.dropdown.style.left="".concat(pos.left+document.body.scrollLeft,"px");this._handleWindowScroll=function(){return _this8._closeDropdown()};window.addEventListener("scroll",this._handleWindowScroll)}}}},{key:"_getClosestListItem",value:function _getClosestListItem(target){var el=target;while(el&&el!==this.countryList&&!el.classList.contains("iti__country")){el=el.parentNode}return el===this.countryList?null:el}},{key:"_bindDropdownListeners",value:function _bindDropdownListeners(){var _this9=this;this._handleMouseoverCountryList=function(e){var listItem=_this9._getClosestListItem(e.target);if(listItem){_this9._highlightListItem(listItem,false)}};this.countryList.addEventListener("mouseover",this._handleMouseoverCountryList);this._handleClickCountryList=function(e){var listItem=_this9._getClosestListItem(e.target);if(listItem){_this9._selectListItem(listItem)}};this.countryList.addEventListener("click",this._handleClickCountryList);var isOpening=true;this._handleClickOffToClose=function(){if(!isOpening){_this9._closeDropdown()}isOpening=false};document.documentElement.addEventListener("click",this._handleClickOffToClose);var query="";var queryTimer=null;this._handleKeydownOnDropdown=function(e){e.preventDefault();if(e.key==="ArrowUp"||e.key==="Up"||e.key==="ArrowDown"||e.key==="Down"){_this9._handleUpDownKey(e.key)}else if(e.key==="Enter"){_this9._handleEnterKey()}else if(e.key==="Escape"){_this9._closeDropdown()}else if(/^[a-zA-ZÀ-ÿа-яА-Я ]$/.test(e.key)){if(queryTimer){clearTimeout(queryTimer)}query+=e.key.toLowerCase();_this9._searchForCountry(query);queryTimer=setTimeout(function(){query=""},1e3)}};document.addEventListener("keydown",this._handleKeydownOnDropdown)}},{key:"_handleUpDownKey",value:function _handleUpDownKey(key){var next=key==="ArrowUp"||key==="Up"?this.highlightedItem.previousElementSibling:this.highlightedItem.nextElementSibling;if(next){if(next.classList.contains("iti__divider")){next=key==="ArrowUp"||key==="Up"?next.previousElementSibling:next.nextElementSibling}this._highlightListItem(next,true)}}},{key:"_handleEnterKey",value:function _handleEnterKey(){if(this.highlightedItem){this._selectListItem(this.highlightedItem)}}},{key:"_searchForCountry",value:function _searchForCountry(query){for(var i=0;i<this.countries.length;i++){if(this._startsWith(this.countries[i].name,query)){var listItem=this.countryList.querySelector("#iti-".concat(this.id,"__item-").concat(this.countries[i].iso2));this._highlightListItem(listItem,false);this._scrollTo(listItem,true);break}}}},{key:"_startsWith",value:function _startsWith(a,b){return a.substr(0,b.length).toLowerCase()===b}},{key:"_updateValFromNumber",value:function _updateValFromNumber(originalNumber){var number=originalNumber;if(this.options.formatOnDisplay&&window.intlTelInputUtils&&this.selectedCountryData){var useNational=this.options.nationalMode||number.charAt(0)!=="+"&&!this.options.separateDialCode;var _intlTelInputUtils$nu=intlTelInputUtils.numberFormat,NATIONAL=_intlTelInputUtils$nu.NATIONAL,INTERNATIONAL=_intlTelInputUtils$nu.INTERNATIONAL;var format=useNational?NATIONAL:INTERNATIONAL;number=intlTelInputUtils.formatNumber(number,this.selectedCountryData.iso2,format)}number=this._beforeSetNumber(number);this.telInput.value=number}},{key:"_updateFlagFromNumber",value:function _updateFlagFromNumber(originalNumber){var number=originalNumber;var selectedDialCode=this.selectedCountryData.dialCode;var isNanp=selectedDialCode==="1";if(number&&isNanp&&number.charAt(0)!=="+"){if(number.charAt(0)!=="1"){number="1".concat(number)}number="+".concat(number)}if(this.options.separateDialCode&&selectedDialCode&&number.charAt(0)!=="+"){number="+".concat(selectedDialCode).concat(number)}var dialCode=this._getDialCode(number,true);var numeric=this._getNumeric(number);var countryCode=null;if(dialCode){var countryCodes=this.countryCodes[this._getNumeric(dialCode)];var alreadySelected=countryCodes.indexOf(this.selectedCountryData.iso2)!==-1&&numeric.length<=dialCode.length-1;var isRegionlessNanpNumber=selectedDialCode==="1"&&this._isRegionlessNanp(numeric);if(!isRegionlessNanpNumber&&!alreadySelected){for(var j=0;j<countryCodes.length;j++){if(countryCodes[j]){countryCode=countryCodes[j];break}}}}else if(number.charAt(0)==="+"&&numeric.length){countryCode=""}else if(!number||number==="+"){countryCode=this.defaultCountry}if(countryCode!==null){return this._setFlag(countryCode)}return false}},{key:"_isRegionlessNanp",value:function _isRegionlessNanp(number){var numeric=this._getNumeric(number);if(numeric.charAt(0)==="1"){var areaCode=numeric.substr(1,3);return regionlessNanpNumbers.indexOf(areaCode)!==-1}return false}},{key:"_highlightListItem",value:function _highlightListItem(listItem,shouldFocus){var prevItem=this.highlightedItem;if(prevItem){prevItem.classList.remove("iti__highlight")}this.highlightedItem=listItem;this.highlightedItem.classList.add("iti__highlight");this.selectedFlag.setAttribute("aria-activedescendant",listItem.getAttribute("id"));if(shouldFocus){this.highlightedItem.focus()}}},{key:"_getCountryData",value:function _getCountryData(countryCode,ignoreOnlyCountriesOption,allowFail){var countryList=ignoreOnlyCountriesOption?allCountries:this.countries;for(var i=0;i<countryList.length;i++){if(countryList[i].iso2===countryCode){return countryList[i]}}if(allowFail){return null}throw new Error("No country data for '".concat(countryCode,"'"))}},{key:"_setFlag",value:function _setFlag(countryCode){var _this$options3=this.options,allowDropdown=_this$options3.allowDropdown,separateDialCode=_this$options3.separateDialCode,showFlags=_this$options3.showFlags;var prevCountry=this.selectedCountryData.iso2?this.selectedCountryData:{};this.selectedCountryData=countryCode?this._getCountryData(countryCode,false,false):{};if(this.selectedCountryData.iso2){this.defaultCountry=this.selectedCountryData.iso2}if(showFlags){this.selectedFlagInner.setAttribute("class","iti__flag iti__".concat(countryCode))}this._setSelectedCountryFlagTitleAttribute(countryCode,separateDialCode);if(separateDialCode){var dialCode=this.selectedCountryData.dialCode?"+".concat(this.selectedCountryData.dialCode):"";this.selectedDialCode.innerHTML=dialCode;var selectedFlagWidth=this.selectedFlag.offsetWidth||this._getHiddenSelectedFlagWidth();if(this.isRTL){this.telInput.style.paddingRight="".concat(selectedFlagWidth+6,"px")}else{this.telInput.style.paddingLeft="".concat(selectedFlagWidth+6,"px")}}this._updatePlaceholder();if(allowDropdown){var prevItem=this.activeItem;if(prevItem){prevItem.classList.remove("iti__active");prevItem.setAttribute("aria-selected","false")}if(countryCode){var nextItem=this.countryList.querySelector("#iti-".concat(this.id,"__item-").concat(countryCode,"-preferred"))||this.countryList.querySelector("#iti-".concat(this.id,"__item-").concat(countryCode));nextItem.setAttribute("aria-selected","true");nextItem.classList.add("iti__active");this.activeItem=nextItem}}return prevCountry.iso2!==countryCode}},{key:"_setSelectedCountryFlagTitleAttribute",value:function _setSelectedCountryFlagTitleAttribute(countryCode,separateDialCode){if(!this.selectedFlag){return}var title;if(countryCode&&!separateDialCode){title="".concat(this.selectedCountryData.name,": +").concat(this.selectedCountryData.dialCode)}else if(countryCode){title=this.selectedCountryData.name}else{title="Unknown"}this.selectedFlag.setAttribute("title",title)}},{key:"_getHiddenSelectedFlagWidth",value:function _getHiddenSelectedFlagWidth(){var containerClone=this.telInput.parentNode.cloneNode();containerClone.style.visibility="hidden";document.body.appendChild(containerClone);var flagsContainerClone=this.flagsContainer.cloneNode();containerClone.appendChild(flagsContainerClone);var selectedFlagClone=this.selectedFlag.cloneNode(true);flagsContainerClone.appendChild(selectedFlagClone);var width=selectedFlagClone.offsetWidth;containerClone.parentNode.removeChild(containerClone);return width}},{key:"_updatePlaceholder",value:function _updatePlaceholder(){var shouldSetPlaceholder=this.options.autoPlaceholder==="aggressive"||!this.hadInitialPlaceholder&&this.options.autoPlaceholder==="polite";if(window.intlTelInputUtils&&shouldSetPlaceholder){var numberType=intlTelInputUtils.numberType[this.options.placeholderNumberType];var placeholder=this.selectedCountryData.iso2?intlTelInputUtils.getExampleNumber(this.selectedCountryData.iso2,this.options.nationalMode,numberType):"";placeholder=this._beforeSetNumber(placeholder);if(typeof this.options.customPlaceholder==="function"){placeholder=this.options.customPlaceholder(placeholder,this.selectedCountryData)}this.telInput.setAttribute("placeholder",placeholder)}}},{key:"_selectListItem",value:function _selectListItem(listItem){var flagChanged=this._setFlag(listItem.getAttribute("data-country-code"));this._closeDropdown();this._updateDialCode(listItem.getAttribute("data-dial-code"));this.telInput.focus();var len=this.telInput.value.length;this.telInput.setSelectionRange(len,len);if(flagChanged){this._triggerCountryChange()}}},{key:"_closeDropdown",value:function _closeDropdown(){this.countryList.classList.add("iti__hide");this.selectedFlag.setAttribute("aria-expanded","false");this.selectedFlag.removeAttribute("aria-activedescendant");this.dropdownArrow.classList.remove("iti__arrow--up");document.removeEventListener("keydown",this._handleKeydownOnDropdown);document.documentElement.removeEventListener("click",this._handleClickOffToClose);this.countryList.removeEventListener("mouseover",this._handleMouseoverCountryList);this.countryList.removeEventListener("click",this._handleClickCountryList);if(this.options.dropdownContainer){if(!this.isMobile){window.removeEventListener("scroll",this._handleWindowScroll)}if(this.dropdown.parentNode){this.dropdown.parentNode.removeChild(this.dropdown)}}this._trigger("close:countrydropdown")}},{key:"_scrollTo",value:function _scrollTo(element,middle){var container=this.countryList;var windowTop=window.pageYOffset||document.documentElement.scrollTop;var containerHeight=container.offsetHeight;var containerTop=container.getBoundingClientRect().top+windowTop;var containerBottom=containerTop+containerHeight;var elementHeight=element.offsetHeight;var elementTop=element.getBoundingClientRect().top+windowTop;var elementBottom=elementTop+elementHeight;var newScrollTop=elementTop-containerTop+container.scrollTop;var middleOffset=containerHeight/2-elementHeight/2;if(elementTop<containerTop){if(middle){newScrollTop-=middleOffset}container.scrollTop=newScrollTop}else if(elementBottom>containerBottom){if(middle){newScrollTop+=middleOffset}var heightDifference=containerHeight-elementHeight;container.scrollTop=newScrollTop-heightDifference}}},{key:"_updateDialCode",value:function _updateDialCode(newDialCodeBare){var inputVal=this.telInput.value;var newDialCode="+".concat(newDialCodeBare);var newNumber;if(inputVal.charAt(0)==="+"){var prevDialCode=this._getDialCode(inputVal);if(prevDialCode){newNumber=inputVal.replace(prevDialCode,newDialCode)}else{newNumber=newDialCode}this.telInput.value=newNumber}else if(this.options.autoInsertDialCode){if(inputVal){newNumber=newDialCode+inputVal}else{newNumber=newDialCode}this.telInput.value=newNumber}}},{key:"_getDialCode",value:function _getDialCode(number,includeAreaCode){var dialCode="";if(number.charAt(0)==="+"){var numericChars="";for(var i=0;i<number.length;i++){var c=number.charAt(i);if(!isNaN(parseInt(c,10))){numericChars+=c;if(includeAreaCode){if(this.countryCodes[numericChars]){dialCode=number.substr(0,i+1)}}else{if(this.dialCodes[numericChars]){dialCode=number.substr(0,i+1);break}}if(numericChars.length===this.countryCodeMaxLen){break}}}}return dialCode}},{key:"_getFullNumber",value:function _getFullNumber(){var val=this.telInput.value.trim();var dialCode=this.selectedCountryData.dialCode;var prefix;var numericVal=this._getNumeric(val);if(this.options.separateDialCode&&val.charAt(0)!=="+"&&dialCode&&numericVal){prefix="+".concat(dialCode)}else{prefix=""}return prefix+val}},{key:"_beforeSetNumber",value:function _beforeSetNumber(originalNumber){var number=originalNumber;if(this.options.separateDialCode){var dialCode=this._getDialCode(number);if(dialCode){dialCode="+".concat(this.selectedCountryData.dialCode);var start=number[dialCode.length]===" "||number[dialCode.length]==="-"?dialCode.length+1:dialCode.length;number=number.substr(start)}}return this._cap(number)}},{key:"_triggerCountryChange",value:function _triggerCountryChange(){this._trigger("countrychange")}},{key:"handleAutoCountry",value:function handleAutoCountry(){if(this.options.initialCountry==="auto"){this.defaultCountry=window.intlTelInputGlobals.autoCountry;if(!this.telInput.value){this.setCountry(this.defaultCountry)}this.resolveAutoCountryPromise()}}},{key:"handleUtils",value:function handleUtils(){if(window.intlTelInputUtils){if(this.telInput.value){this._updateValFromNumber(this.telInput.value)}this._updatePlaceholder()}this.resolveUtilsScriptPromise()}},{key:"destroy",value:function destroy(){var form=this.telInput.form;if(this.options.allowDropdown){this._closeDropdown();this.selectedFlag.removeEventListener("click",this._handleClickSelectedFlag);this.flagsContainer.removeEventListener("keydown",this._handleFlagsContainerKeydown);var label=this._getClosestLabel();if(label){label.removeEventListener("click",this._handleLabelClick)}}if(this.hiddenInput&&form){form.removeEventListener("submit",this._handleHiddenInputSubmit)}if(this.options.autoInsertDialCode){if(form){form.removeEventListener("submit",this._handleSubmitOrBlurEvent)}this.telInput.removeEventListener("blur",this._handleSubmitOrBlurEvent)}this.telInput.removeEventListener("keyup",this._handleKeyupEvent);this.telInput.removeEventListener("cut",this._handleClipboardEvent);this.telInput.removeEventListener("paste",this._handleClipboardEvent);this.telInput.removeAttribute("data-intl-tel-input-id");var wrapper=this.telInput.parentNode;wrapper.parentNode.insertBefore(this.telInput,wrapper);wrapper.parentNode.removeChild(wrapper);delete window.intlTelInputGlobals.instances[this.id]}},{key:"getExtension",value:function getExtension(){if(window.intlTelInputUtils){return intlTelInputUtils.getExtension(this._getFullNumber(),this.selectedCountryData.iso2)}return""}},{key:"getNumber",value:function getNumber(format){if(window.intlTelInputUtils){var iso2=this.selectedCountryData.iso2;return intlTelInputUtils.formatNumber(this._getFullNumber(),iso2,format)}return""}},{key:"getNumberType",value:function getNumberType(){if(window.intlTelInputUtils){return intlTelInputUtils.getNumberType(this._getFullNumber(),this.selectedCountryData.iso2)}return-99}},{key:"getSelectedCountryData",value:function getSelectedCountryData(){return this.selectedCountryData}},{key:"getValidationError",value:function getValidationError(){if(window.intlTelInputUtils){var iso2=this.selectedCountryData.iso2;return intlTelInputUtils.getValidationError(this._getFullNumber(),iso2)}return-99}},{key:"isValidNumber",value:function isValidNumber(){var val=this._getFullNumber().trim();return window.intlTelInputUtils?intlTelInputUtils.isValidNumber(val,this.selectedCountryData.iso2):null}},{key:"isPossibleNumber",value:function isPossibleNumber(){var val=this._getFullNumber().trim();return window.intlTelInputUtils?intlTelInputUtils.isPossibleNumber(val,this.selectedCountryData.iso2):null}},{key:"setCountry",value:function setCountry(originalCountryCode){var countryCode=originalCountryCode.toLowerCase();if(this.selectedCountryData.iso2!==countryCode){this._setFlag(countryCode);this._updateDialCode(this.selectedCountryData.dialCode);this._triggerCountryChange()}}},{key:"setNumber",value:function setNumber(number){var flagChanged=this._updateFlagFromNumber(number);this._updateValFromNumber(number);if(flagChanged){this._triggerCountryChange()}}},{key:"setPlaceholderNumberType",value:function setPlaceholderNumberType(type){this.options.placeholderNumberType=type;this._updatePlaceholder()}}]);return Iti}();intlTelInputGlobals.getCountryData=function(){return allCountries};var injectScript=function injectScript(path,handleSuccess,handleFailure){var script=document.createElement("script");script.onload=function(){forEachInstance("handleUtils");if(handleSuccess){handleSuccess()}};script.onerror=function(){forEachInstance("rejectUtilsScriptPromise");if(handleFailure){handleFailure()}};script.className="iti-load-utils";script.async=true;script.src=path;document.body.appendChild(script)};intlTelInputGlobals.loadUtils=function(path){if(!window.intlTelInputUtils&&!window.intlTelInputGlobals.startedLoadingUtilsScript){window.intlTelInputGlobals.startedLoadingUtilsScript=true;if(typeof Promise!=="undefined"){return new Promise(function(resolve,reject){return injectScript(path,resolve,reject)})}injectScript(path)}return null};intlTelInputGlobals.defaults=defaults;intlTelInputGlobals.version="18.2.1";return function(input,options){var iti=new Iti(input,options);iti._init();input.setAttribute("data-intl-tel-input-id",iti.id);window.intlTelInputGlobals.instances[iti.id]=iti;return iti}}()});
+!function(a){function f(a,b){if(!(a.originalEvent.touches.length>1)){a.preventDefault();var c=a.originalEvent.changedTouches[0],d=document.createEvent("MouseEvents");d.initMouseEvent(b,!0,!0,window,1,c.screenX,c.screenY,c.clientX,c.clientY,!1,!1,!1,!1,0,null),a.target.dispatchEvent(d)}}if(a.support.touch="ontouchend"in document,a.support.touch){var e,b=a.ui.mouse.prototype,c=b._mouseInit,d=b._mouseDestroy;b._touchStart=function(a){var b=this;!e&&b._mouseCapture(a.originalEvent.changedTouches[0])&&(e=!0,b._touchMoved=!1,f(a,"mouseover"),f(a,"mousemove"),f(a,"mousedown"))},b._touchMove=function(a){e&&(this._touchMoved=!0,f(a,"mousemove"))},b._touchEnd=function(a){e&&(f(a,"mouseup"),f(a,"mouseout"),this._touchMoved||f(a,"click"),e=!1)},b._mouseInit=function(){var b=this;b.element.bind({touchstart:a.proxy(b,"_touchStart"),touchmove:a.proxy(b,"_touchMove"),touchend:a.proxy(b,"_touchEnd")}),c.call(b)},b._mouseDestroy=function(){var b=this;b.element.unbind({touchstart:a.proxy(b,"_touchStart"),touchmove:a.proxy(b,"_touchMove"),touchend:a.proxy(b,"_touchEnd")}),d.call(b)}}}(jQuery);
+
+/*! Sortable 1.15.2 - MIT | git://github.com/SortableJS/Sortable.git */
+!function(t,e){"object"==typeof exports&&"undefined"!=typeof module?module.exports=e():"function"==typeof define&&define.amd?define(e):(t=t||self).Sortable=e()}(this,function(){"use strict";function e(e,t){var n,o=Object.keys(e);return Object.getOwnPropertySymbols&&(n=Object.getOwnPropertySymbols(e),t&&(n=n.filter(function(t){return Object.getOwnPropertyDescriptor(e,t).enumerable})),o.push.apply(o,n)),o}function I(o){for(var t=1;t<arguments.length;t++){var i=null!=arguments[t]?arguments[t]:{};t%2?e(Object(i),!0).forEach(function(t){var e,n;e=o,t=i[n=t],n in e?Object.defineProperty(e,n,{value:t,enumerable:!0,configurable:!0,writable:!0}):e[n]=t}):Object.getOwnPropertyDescriptors?Object.defineProperties(o,Object.getOwnPropertyDescriptors(i)):e(Object(i)).forEach(function(t){Object.defineProperty(o,t,Object.getOwnPropertyDescriptor(i,t))})}return o}function o(t){return(o="function"==typeof Symbol&&"symbol"==typeof Symbol.iterator?function(t){return typeof t}:function(t){return t&&"function"==typeof Symbol&&t.constructor===Symbol&&t!==Symbol.prototype?"symbol":typeof t})(t)}function a(){return(a=Object.assign||function(t){for(var e=1;e<arguments.length;e++){var n,o=arguments[e];for(n in o)Object.prototype.hasOwnProperty.call(o,n)&&(t[n]=o[n])}return t}).apply(this,arguments)}function i(t,e){if(null==t)return{};var n,o=function(t,e){if(null==t)return{};for(var n,o={},i=Object.keys(t),r=0;r<i.length;r++)n=i[r],0<=e.indexOf(n)||(o[n]=t[n]);return o}(t,e);if(Object.getOwnPropertySymbols)for(var i=Object.getOwnPropertySymbols(t),r=0;r<i.length;r++)n=i[r],0<=e.indexOf(n)||Object.prototype.propertyIsEnumerable.call(t,n)&&(o[n]=t[n]);return o}function r(t){return function(t){if(Array.isArray(t))return l(t)}(t)||function(t){if("undefined"!=typeof Symbol&&null!=t[Symbol.iterator]||null!=t["@@iterator"])return Array.from(t)}(t)||function(t,e){if(t){if("string"==typeof t)return l(t,e);var n=Object.prototype.toString.call(t).slice(8,-1);return"Map"===(n="Object"===n&&t.constructor?t.constructor.name:n)||"Set"===n?Array.from(t):"Arguments"===n||/^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)?l(t,e):void 0}}(t)||function(){throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.")}()}function l(t,e){(null==e||e>t.length)&&(e=t.length);for(var n=0,o=new Array(e);n<e;n++)o[n]=t[n];return o}function t(t){if("undefined"!=typeof window&&window.navigator)return!!navigator.userAgent.match(t)}var y=t(/(?:Trident.*rv[ :]?11\.|msie|iemobile|Windows Phone)/i),w=t(/Edge/i),s=t(/firefox/i),u=t(/safari/i)&&!t(/chrome/i)&&!t(/android/i),n=t(/iP(ad|od|hone)/i),c=t(/chrome/i)&&t(/android/i),d={capture:!1,passive:!1};function h(t,e,n){t.addEventListener(e,n,!y&&d)}function f(t,e,n){t.removeEventListener(e,n,!y&&d)}function p(t,e){if(e&&(">"===e[0]&&(e=e.substring(1)),t))try{if(t.matches)return t.matches(e);if(t.msMatchesSelector)return t.msMatchesSelector(e);if(t.webkitMatchesSelector)return t.webkitMatchesSelector(e)}catch(t){return}}function P(t,e,n,o){if(t){n=n||document;do{if(null!=e&&(">"!==e[0]||t.parentNode===n)&&p(t,e)||o&&t===n)return t}while(t!==n&&(t=(i=t).host&&i!==document&&i.host.nodeType?i.host:i.parentNode))}var i;return null}var g,m=/\s+/g;function k(t,e,n){var o;t&&e&&(t.classList?t.classList[n?"add":"remove"](e):(o=(" "+t.className+" ").replace(m," ").replace(" "+e+" "," "),t.className=(o+(n?" "+e:"")).replace(m," ")))}function R(t,e,n){var o=t&&t.style;if(o){if(void 0===n)return document.defaultView&&document.defaultView.getComputedStyle?n=document.defaultView.getComputedStyle(t,""):t.currentStyle&&(n=t.currentStyle),void 0===e?n:n[e];o[e=!(e in o||-1!==e.indexOf("webkit"))?"-webkit-"+e:e]=n+("string"==typeof n?"":"px")}}function v(t,e){var n="";if("string"==typeof t)n=t;else do{var o=R(t,"transform")}while(o&&"none"!==o&&(n=o+" "+n),!e&&(t=t.parentNode));var i=window.DOMMatrix||window.WebKitCSSMatrix||window.CSSMatrix||window.MSCSSMatrix;return i&&new i(n)}function b(t,e,n){if(t){var o=t.getElementsByTagName(e),i=0,r=o.length;if(n)for(;i<r;i++)n(o[i],i);return o}return[]}function O(){var t=document.scrollingElement;return t||document.documentElement}function X(t,e,n,o,i){if(t.getBoundingClientRect||t===window){var r,a,l,s,c,u,d=t!==window&&t.parentNode&&t!==O()?(a=(r=t.getBoundingClientRect()).top,l=r.left,s=r.bottom,c=r.right,u=r.height,r.width):(l=a=0,s=window.innerHeight,c=window.innerWidth,u=window.innerHeight,window.innerWidth);if((e||n)&&t!==window&&(i=i||t.parentNode,!y))do{if(i&&i.getBoundingClientRect&&("none"!==R(i,"transform")||n&&"static"!==R(i,"position"))){var h=i.getBoundingClientRect();a-=h.top+parseInt(R(i,"border-top-width")),l-=h.left+parseInt(R(i,"border-left-width")),s=a+r.height,c=l+r.width;break}}while(i=i.parentNode);return o&&t!==window&&(o=(e=v(i||t))&&e.a,t=e&&e.d,e&&(s=(a/=t)+(u/=t),c=(l/=o)+(d/=o))),{top:a,left:l,bottom:s,right:c,width:d,height:u}}}function Y(t,e,n){for(var o=M(t,!0),i=X(t)[e];o;){var r=X(o)[n];if(!("top"===n||"left"===n?r<=i:i<=r))return o;if(o===O())break;o=M(o,!1)}return!1}function B(t,e,n,o){for(var i=0,r=0,a=t.children;r<a.length;){if("none"!==a[r].style.display&&a[r]!==Ft.ghost&&(o||a[r]!==Ft.dragged)&&P(a[r],n.draggable,t,!1)){if(i===e)return a[r];i++}r++}return null}function F(t,e){for(var n=t.lastElementChild;n&&(n===Ft.ghost||"none"===R(n,"display")||e&&!p(n,e));)n=n.previousElementSibling;return n||null}function j(t,e){var n=0;if(!t||!t.parentNode)return-1;for(;t=t.previousElementSibling;)"TEMPLATE"===t.nodeName.toUpperCase()||t===Ft.clone||e&&!p(t,e)||n++;return n}function E(t){var e=0,n=0,o=O();if(t)do{var i=v(t),r=i.a,i=i.d}while(e+=t.scrollLeft*r,n+=t.scrollTop*i,t!==o&&(t=t.parentNode));return[e,n]}function M(t,e){if(!t||!t.getBoundingClientRect)return O();var n=t,o=!1;do{if(n.clientWidth<n.scrollWidth||n.clientHeight<n.scrollHeight){var i=R(n);if(n.clientWidth<n.scrollWidth&&("auto"==i.overflowX||"scroll"==i.overflowX)||n.clientHeight<n.scrollHeight&&("auto"==i.overflowY||"scroll"==i.overflowY)){if(!n.getBoundingClientRect||n===document.body)return O();if(o||e)return n;o=!0}}}while(n=n.parentNode);return O()}function D(t,e){return Math.round(t.top)===Math.round(e.top)&&Math.round(t.left)===Math.round(e.left)&&Math.round(t.height)===Math.round(e.height)&&Math.round(t.width)===Math.round(e.width)}function S(e,n){return function(){var t;g||(1===(t=arguments).length?e.call(this,t[0]):e.apply(this,t),g=setTimeout(function(){g=void 0},n))}}function H(t,e,n){t.scrollLeft+=e,t.scrollTop+=n}function _(t){var e=window.Polymer,n=window.jQuery||window.Zepto;return e&&e.dom?e.dom(t).cloneNode(!0):n?n(t).clone(!0)[0]:t.cloneNode(!0)}function C(t,e){R(t,"position","absolute"),R(t,"top",e.top),R(t,"left",e.left),R(t,"width",e.width),R(t,"height",e.height)}function T(t){R(t,"position",""),R(t,"top",""),R(t,"left",""),R(t,"width",""),R(t,"height","")}function L(n,o,i){var r={};return Array.from(n.children).forEach(function(t){var e;P(t,o.draggable,n,!1)&&!t.animated&&t!==i&&(e=X(t),r.left=Math.min(null!==(t=r.left)&&void 0!==t?t:1/0,e.left),r.top=Math.min(null!==(t=r.top)&&void 0!==t?t:1/0,e.top),r.right=Math.max(null!==(t=r.right)&&void 0!==t?t:-1/0,e.right),r.bottom=Math.max(null!==(t=r.bottom)&&void 0!==t?t:-1/0,e.bottom))}),r.width=r.right-r.left,r.height=r.bottom-r.top,r.x=r.left,r.y=r.top,r}var K="Sortable"+(new Date).getTime();function x(){var e,o=[];return{captureAnimationState:function(){o=[],this.options.animation&&[].slice.call(this.el.children).forEach(function(t){var e,n;"none"!==R(t,"display")&&t!==Ft.ghost&&(o.push({target:t,rect:X(t)}),e=I({},o[o.length-1].rect),!t.thisAnimationDuration||(n=v(t,!0))&&(e.top-=n.f,e.left-=n.e),t.fromRect=e)})},addAnimationState:function(t){o.push(t)},removeAnimationState:function(t){o.splice(function(t,e){for(var n in t)if(t.hasOwnProperty(n))for(var o in e)if(e.hasOwnProperty(o)&&e[o]===t[n][o])return Number(n);return-1}(o,{target:t}),1)},animateAll:function(t){var c=this;if(!this.options.animation)return clearTimeout(e),void("function"==typeof t&&t());var u=!1,d=0;o.forEach(function(t){var e=0,n=t.target,o=n.fromRect,i=X(n),r=n.prevFromRect,a=n.prevToRect,l=t.rect,s=v(n,!0);s&&(i.top-=s.f,i.left-=s.e),n.toRect=i,n.thisAnimationDuration&&D(r,i)&&!D(o,i)&&(l.top-i.top)/(l.left-i.left)==(o.top-i.top)/(o.left-i.left)&&(t=l,s=r,r=a,a=c.options,e=Math.sqrt(Math.pow(s.top-t.top,2)+Math.pow(s.left-t.left,2))/Math.sqrt(Math.pow(s.top-r.top,2)+Math.pow(s.left-r.left,2))*a.animation),D(i,o)||(n.prevFromRect=o,n.prevToRect=i,e=e||c.options.animation,c.animate(n,l,i,e)),e&&(u=!0,d=Math.max(d,e),clearTimeout(n.animationResetTimer),n.animationResetTimer=setTimeout(function(){n.animationTime=0,n.prevFromRect=null,n.fromRect=null,n.prevToRect=null,n.thisAnimationDuration=null},e),n.thisAnimationDuration=e)}),clearTimeout(e),u?e=setTimeout(function(){"function"==typeof t&&t()},d):"function"==typeof t&&t(),o=[]},animate:function(t,e,n,o){var i,r;o&&(R(t,"transition",""),R(t,"transform",""),i=(r=v(this.el))&&r.a,r=r&&r.d,i=(e.left-n.left)/(i||1),r=(e.top-n.top)/(r||1),t.animatingX=!!i,t.animatingY=!!r,R(t,"transform","translate3d("+i+"px,"+r+"px,0)"),this.forRepaintDummy=t.offsetWidth,R(t,"transition","transform "+o+"ms"+(this.options.easing?" "+this.options.easing:"")),R(t,"transform","translate3d(0,0,0)"),"number"==typeof t.animated&&clearTimeout(t.animated),t.animated=setTimeout(function(){R(t,"transition",""),R(t,"transform",""),t.animated=!1,t.animatingX=!1,t.animatingY=!1},o))}}}var A=[],N={initializeByDefault:!0},W={mount:function(e){for(var t in N)!N.hasOwnProperty(t)||t in e||(e[t]=N[t]);A.forEach(function(t){if(t.pluginName===e.pluginName)throw"Sortable: Cannot mount plugin ".concat(e.pluginName," more than once")}),A.push(e)},pluginEvent:function(e,n,o){var t=this;this.eventCanceled=!1,o.cancel=function(){t.eventCanceled=!0};var i=e+"Global";A.forEach(function(t){n[t.pluginName]&&(n[t.pluginName][i]&&n[t.pluginName][i](I({sortable:n},o)),n.options[t.pluginName]&&n[t.pluginName][e]&&n[t.pluginName][e](I({sortable:n},o)))})},initializePlugins:function(n,o,i,t){for(var e in A.forEach(function(t){var e=t.pluginName;(n.options[e]||t.initializeByDefault)&&((t=new t(n,o,n.options)).sortable=n,t.options=n.options,n[e]=t,a(i,t.defaults))}),n.options){var r;n.options.hasOwnProperty(e)&&(void 0!==(r=this.modifyOption(n,e,n.options[e]))&&(n.options[e]=r))}},getEventProperties:function(e,n){var o={};return A.forEach(function(t){"function"==typeof t.eventProperties&&a(o,t.eventProperties.call(n[t.pluginName],e))}),o},modifyOption:function(e,n,o){var i;return A.forEach(function(t){e[t.pluginName]&&t.optionListeners&&"function"==typeof t.optionListeners[n]&&(i=t.optionListeners[n].call(e[t.pluginName],o))}),i}};function z(t){var e=t.sortable,n=t.rootEl,o=t.name,i=t.targetEl,r=t.cloneEl,a=t.toEl,l=t.fromEl,s=t.oldIndex,c=t.newIndex,u=t.oldDraggableIndex,d=t.newDraggableIndex,h=t.originalEvent,f=t.putSortable,p=t.extraEventProperties;if(e=e||n&&n[K]){var g,m=e.options,t="on"+o.charAt(0).toUpperCase()+o.substr(1);!window.CustomEvent||y||w?(g=document.createEvent("Event")).initEvent(o,!0,!0):g=new CustomEvent(o,{bubbles:!0,cancelable:!0}),g.to=a||n,g.from=l||n,g.item=i||n,g.clone=r,g.oldIndex=s,g.newIndex=c,g.oldDraggableIndex=u,g.newDraggableIndex=d,g.originalEvent=h,g.pullMode=f?f.lastPutMode:void 0;var v,b=I(I({},p),W.getEventProperties(o,e));for(v in b)g[v]=b[v];n&&n.dispatchEvent(g),m[t]&&m[t].call(e,g)}}function G(t,e){var n=(o=2<arguments.length&&void 0!==arguments[2]?arguments[2]:{}).evt,o=i(o,U);W.pluginEvent.bind(Ft)(t,e,I({dragEl:V,parentEl:Z,ghostEl:$,rootEl:Q,nextEl:J,lastDownEl:tt,cloneEl:et,cloneHidden:nt,dragStarted:gt,putSortable:st,activeSortable:Ft.active,originalEvent:n,oldIndex:ot,oldDraggableIndex:rt,newIndex:it,newDraggableIndex:at,hideGhostForTarget:Rt,unhideGhostForTarget:Xt,cloneNowHidden:function(){nt=!0},cloneNowShown:function(){nt=!1},dispatchSortableEvent:function(t){q({sortable:e,name:t,originalEvent:n})}},o))}var U=["evt"];function q(t){z(I({putSortable:st,cloneEl:et,targetEl:V,rootEl:Q,oldIndex:ot,oldDraggableIndex:rt,newIndex:it,newDraggableIndex:at},t))}var V,Z,$,Q,J,tt,et,nt,ot,it,rt,at,lt,st,ct,ut,dt,ht,ft,pt,gt,mt,vt,bt,yt,wt=!1,Et=!1,Dt=[],St=!1,_t=!1,Ct=[],Tt=!1,xt=[],Ot="undefined"!=typeof document,Mt=n,At=w||y?"cssFloat":"float",Nt=Ot&&!c&&!n&&"draggable"in document.createElement("div"),It=function(){if(Ot){if(y)return!1;var t=document.createElement("x");return t.style.cssText="pointer-events:auto","auto"===t.style.pointerEvents}}(),Pt=function(t,e){var n=R(t),o=parseInt(n.width)-parseInt(n.paddingLeft)-parseInt(n.paddingRight)-parseInt(n.borderLeftWidth)-parseInt(n.borderRightWidth),i=B(t,0,e),r=B(t,1,e),a=i&&R(i),l=r&&R(r),s=a&&parseInt(a.marginLeft)+parseInt(a.marginRight)+X(i).width,t=l&&parseInt(l.marginLeft)+parseInt(l.marginRight)+X(r).width;if("flex"===n.display)return"column"===n.flexDirection||"column-reverse"===n.flexDirection?"vertical":"horizontal";if("grid"===n.display)return n.gridTemplateColumns.split(" ").length<=1?"vertical":"horizontal";if(i&&a.float&&"none"!==a.float){e="left"===a.float?"left":"right";return!r||"both"!==l.clear&&l.clear!==e?"horizontal":"vertical"}return i&&("block"===a.display||"flex"===a.display||"table"===a.display||"grid"===a.display||o<=s&&"none"===n[At]||r&&"none"===n[At]&&o<s+t)?"vertical":"horizontal"},kt=function(t){function l(r,a){return function(t,e,n,o){var i=t.options.group.name&&e.options.group.name&&t.options.group.name===e.options.group.name;if(null==r&&(a||i))return!0;if(null==r||!1===r)return!1;if(a&&"clone"===r)return r;if("function"==typeof r)return l(r(t,e,n,o),a)(t,e,n,o);e=(a?t:e).options.group.name;return!0===r||"string"==typeof r&&r===e||r.join&&-1<r.indexOf(e)}}var e={},n=t.group;n&&"object"==o(n)||(n={name:n}),e.name=n.name,e.checkPull=l(n.pull,!0),e.checkPut=l(n.put),e.revertClone=n.revertClone,t.group=e},Rt=function(){!It&&$&&R($,"display","none")},Xt=function(){!It&&$&&R($,"display","")};Ot&&!c&&document.addEventListener("click",function(t){if(Et)return t.preventDefault(),t.stopPropagation&&t.stopPropagation(),t.stopImmediatePropagation&&t.stopImmediatePropagation(),Et=!1},!0);function Yt(t){if(V){t=t.touches?t.touches[0]:t;var e=(i=t.clientX,r=t.clientY,Dt.some(function(t){var e=t[K].options.emptyInsertThreshold;if(e&&!F(t)){var n=X(t),o=i>=n.left-e&&i<=n.right+e,e=r>=n.top-e&&r<=n.bottom+e;return o&&e?a=t:void 0}}),a);if(e){var n,o={};for(n in t)t.hasOwnProperty(n)&&(o[n]=t[n]);o.target=o.rootEl=e,o.preventDefault=void 0,o.stopPropagation=void 0,e[K]._onDragOver(o)}}var i,r,a}function Bt(t){V&&V.parentNode[K]._isOutsideThisEl(t.target)}function Ft(t,e){if(!t||!t.nodeType||1!==t.nodeType)throw"Sortable: `el` must be an HTMLElement, not ".concat({}.toString.call(t));this.el=t,this.options=e=a({},e),t[K]=this;var n,o,i={group:null,sort:!0,disabled:!1,store:null,handle:null,draggable:/^[uo]l$/i.test(t.nodeName)?">li":">*",swapThreshold:1,invertSwap:!1,invertedSwapThreshold:null,removeCloneOnHide:!0,direction:function(){return Pt(t,this.options)},ghostClass:"sortable-ghost",chosenClass:"sortable-chosen",dragClass:"sortable-drag",ignore:"a, img",filter:null,preventOnFilter:!0,animation:0,easing:null,setData:function(t,e){t.setData("Text",e.textContent)},dropBubble:!1,dragoverBubble:!1,dataIdAttr:"data-id",delay:0,delayOnTouchOnly:!1,touchStartThreshold:(Number.parseInt?Number:window).parseInt(window.devicePixelRatio,10)||1,forceFallback:!1,fallbackClass:"sortable-fallback",fallbackOnBody:!1,fallbackTolerance:0,fallbackOffset:{x:0,y:0},supportPointer:!1!==Ft.supportPointer&&"PointerEvent"in window&&!u,emptyInsertThreshold:5};for(n in W.initializePlugins(this,t,i),i)n in e||(e[n]=i[n]);for(o in kt(e),this)"_"===o.charAt(0)&&"function"==typeof this[o]&&(this[o]=this[o].bind(this));this.nativeDraggable=!e.forceFallback&&Nt,this.nativeDraggable&&(this.options.touchStartThreshold=1),e.supportPointer?h(t,"pointerdown",this._onTapStart):(h(t,"mousedown",this._onTapStart),h(t,"touchstart",this._onTapStart)),this.nativeDraggable&&(h(t,"dragover",this),h(t,"dragenter",this)),Dt.push(this.el),e.store&&e.store.get&&this.sort(e.store.get(this)||[]),a(this,x())}function jt(t,e,n,o,i,r,a,l){var s,c,u=t[K],d=u.options.onMove;return!window.CustomEvent||y||w?(s=document.createEvent("Event")).initEvent("move",!0,!0):s=new CustomEvent("move",{bubbles:!0,cancelable:!0}),s.to=e,s.from=t,s.dragged=n,s.draggedRect=o,s.related=i||e,s.relatedRect=r||X(e),s.willInsertAfter=l,s.originalEvent=a,t.dispatchEvent(s),c=d?d.call(u,s,a):c}function Ht(t){t.draggable=!1}function Lt(){Tt=!1}function Kt(t){return setTimeout(t,0)}function Wt(t){return clearTimeout(t)}Ft.prototype={constructor:Ft,_isOutsideThisEl:function(t){this.el.contains(t)||t===this.el||(mt=null)},_getDirection:function(t,e){return"function"==typeof this.options.direction?this.options.direction.call(this,t,e,V):this.options.direction},_onTapStart:function(e){if(e.cancelable){var n=this,o=this.el,t=this.options,i=t.preventOnFilter,r=e.type,a=e.touches&&e.touches[0]||e.pointerType&&"touch"===e.pointerType&&e,l=(a||e).target,s=e.target.shadowRoot&&(e.path&&e.path[0]||e.composedPath&&e.composedPath()[0])||l,c=t.filter;if(!function(t){xt.length=0;var e=t.getElementsByTagName("input"),n=e.length;for(;n--;){var o=e[n];o.checked&&xt.push(o)}}(o),!V&&!(/mousedown|pointerdown/.test(r)&&0!==e.button||t.disabled)&&!s.isContentEditable&&(this.nativeDraggable||!u||!l||"SELECT"!==l.tagName.toUpperCase())&&!((l=P(l,t.draggable,o,!1))&&l.animated||tt===l)){if(ot=j(l),rt=j(l,t.draggable),"function"==typeof c){if(c.call(this,e,l,this))return q({sortable:n,rootEl:s,name:"filter",targetEl:l,toEl:o,fromEl:o}),G("filter",n,{evt:e}),void(i&&e.cancelable&&e.preventDefault())}else if(c=c&&c.split(",").some(function(t){if(t=P(s,t.trim(),o,!1))return q({sortable:n,rootEl:t,name:"filter",targetEl:l,fromEl:o,toEl:o}),G("filter",n,{evt:e}),!0}))return void(i&&e.cancelable&&e.preventDefault());t.handle&&!P(s,t.handle,o,!1)||this._prepareDragStart(e,a,l)}}},_prepareDragStart:function(t,e,n){var o,i=this,r=i.el,a=i.options,l=r.ownerDocument;n&&!V&&n.parentNode===r&&(o=X(n),Q=r,Z=(V=n).parentNode,J=V.nextSibling,tt=n,lt=a.group,ct={target:Ft.dragged=V,clientX:(e||t).clientX,clientY:(e||t).clientY},ft=ct.clientX-o.left,pt=ct.clientY-o.top,this._lastX=(e||t).clientX,this._lastY=(e||t).clientY,V.style["will-change"]="all",o=function(){G("delayEnded",i,{evt:t}),Ft.eventCanceled?i._onDrop():(i._disableDelayedDragEvents(),!s&&i.nativeDraggable&&(V.draggable=!0),i._triggerDragStart(t,e),q({sortable:i,name:"choose",originalEvent:t}),k(V,a.chosenClass,!0))},a.ignore.split(",").forEach(function(t){b(V,t.trim(),Ht)}),h(l,"dragover",Yt),h(l,"mousemove",Yt),h(l,"touchmove",Yt),h(l,"mouseup",i._onDrop),h(l,"touchend",i._onDrop),h(l,"touchcancel",i._onDrop),s&&this.nativeDraggable&&(this.options.touchStartThreshold=4,V.draggable=!0),G("delayStart",this,{evt:t}),!a.delay||a.delayOnTouchOnly&&!e||this.nativeDraggable&&(w||y)?o():Ft.eventCanceled?this._onDrop():(h(l,"mouseup",i._disableDelayedDrag),h(l,"touchend",i._disableDelayedDrag),h(l,"touchcancel",i._disableDelayedDrag),h(l,"mousemove",i._delayedDragTouchMoveHandler),h(l,"touchmove",i._delayedDragTouchMoveHandler),a.supportPointer&&h(l,"pointermove",i._delayedDragTouchMoveHandler),i._dragStartTimer=setTimeout(o,a.delay)))},_delayedDragTouchMoveHandler:function(t){t=t.touches?t.touches[0]:t;Math.max(Math.abs(t.clientX-this._lastX),Math.abs(t.clientY-this._lastY))>=Math.floor(this.options.touchStartThreshold/(this.nativeDraggable&&window.devicePixelRatio||1))&&this._disableDelayedDrag()},_disableDelayedDrag:function(){V&&Ht(V),clearTimeout(this._dragStartTimer),this._disableDelayedDragEvents()},_disableDelayedDragEvents:function(){var t=this.el.ownerDocument;f(t,"mouseup",this._disableDelayedDrag),f(t,"touchend",this._disableDelayedDrag),f(t,"touchcancel",this._disableDelayedDrag),f(t,"mousemove",this._delayedDragTouchMoveHandler),f(t,"touchmove",this._delayedDragTouchMoveHandler),f(t,"pointermove",this._delayedDragTouchMoveHandler)},_triggerDragStart:function(t,e){e=e||"touch"==t.pointerType&&t,!this.nativeDraggable||e?this.options.supportPointer?h(document,"pointermove",this._onTouchMove):h(document,e?"touchmove":"mousemove",this._onTouchMove):(h(V,"dragend",this),h(Q,"dragstart",this._onDragStart));try{document.selection?Kt(function(){document.selection.empty()}):window.getSelection().removeAllRanges()}catch(t){}},_dragStarted:function(t,e){var n;wt=!1,Q&&V?(G("dragStarted",this,{evt:e}),this.nativeDraggable&&h(document,"dragover",Bt),n=this.options,t||k(V,n.dragClass,!1),k(V,n.ghostClass,!0),Ft.active=this,t&&this._appendGhost(),q({sortable:this,name:"start",originalEvent:e})):this._nulling()},_emulateDragOver:function(){if(ut){this._lastX=ut.clientX,this._lastY=ut.clientY,Rt();for(var t=document.elementFromPoint(ut.clientX,ut.clientY),e=t;t&&t.shadowRoot&&(t=t.shadowRoot.elementFromPoint(ut.clientX,ut.clientY))!==e;)e=t;if(V.parentNode[K]._isOutsideThisEl(t),e)do{if(e[K])if(e[K]._onDragOver({clientX:ut.clientX,clientY:ut.clientY,target:t,rootEl:e})&&!this.options.dragoverBubble)break}while(e=(t=e).parentNode);Xt()}},_onTouchMove:function(t){if(ct){var e=this.options,n=e.fallbackTolerance,o=e.fallbackOffset,i=t.touches?t.touches[0]:t,r=$&&v($,!0),a=$&&r&&r.a,l=$&&r&&r.d,e=Mt&&yt&&E(yt),a=(i.clientX-ct.clientX+o.x)/(a||1)+(e?e[0]-Ct[0]:0)/(a||1),l=(i.clientY-ct.clientY+o.y)/(l||1)+(e?e[1]-Ct[1]:0)/(l||1);if(!Ft.active&&!wt){if(n&&Math.max(Math.abs(i.clientX-this._lastX),Math.abs(i.clientY-this._lastY))<n)return;this._onDragStart(t,!0)}$&&(r?(r.e+=a-(dt||0),r.f+=l-(ht||0)):r={a:1,b:0,c:0,d:1,e:a,f:l},r="matrix(".concat(r.a,",").concat(r.b,",").concat(r.c,",").concat(r.d,",").concat(r.e,",").concat(r.f,")"),R($,"webkitTransform",r),R($,"mozTransform",r),R($,"msTransform",r),R($,"transform",r),dt=a,ht=l,ut=i),t.cancelable&&t.preventDefault()}},_appendGhost:function(){if(!$){var t=this.options.fallbackOnBody?document.body:Q,e=X(V,!0,Mt,!0,t),n=this.options;if(Mt){for(yt=t;"static"===R(yt,"position")&&"none"===R(yt,"transform")&&yt!==document;)yt=yt.parentNode;yt!==document.body&&yt!==document.documentElement?(yt===document&&(yt=O()),e.top+=yt.scrollTop,e.left+=yt.scrollLeft):yt=O(),Ct=E(yt)}k($=V.cloneNode(!0),n.ghostClass,!1),k($,n.fallbackClass,!0),k($,n.dragClass,!0),R($,"transition",""),R($,"transform",""),R($,"box-sizing","border-box"),R($,"margin",0),R($,"top",e.top),R($,"left",e.left),R($,"width",e.width),R($,"height",e.height),R($,"opacity","0.8"),R($,"position",Mt?"absolute":"fixed"),R($,"zIndex","100000"),R($,"pointerEvents","none"),Ft.ghost=$,t.appendChild($),R($,"transform-origin",ft/parseInt($.style.width)*100+"% "+pt/parseInt($.style.height)*100+"%")}},_onDragStart:function(t,e){var n=this,o=t.dataTransfer,i=n.options;G("dragStart",this,{evt:t}),Ft.eventCanceled?this._onDrop():(G("setupClone",this),Ft.eventCanceled||((et=_(V)).removeAttribute("id"),et.draggable=!1,et.style["will-change"]="",this._hideClone(),k(et,this.options.chosenClass,!1),Ft.clone=et),n.cloneId=Kt(function(){G("clone",n),Ft.eventCanceled||(n.options.removeCloneOnHide||Q.insertBefore(et,V),n._hideClone(),q({sortable:n,name:"clone"}))}),e||k(V,i.dragClass,!0),e?(Et=!0,n._loopId=setInterval(n._emulateDragOver,50)):(f(document,"mouseup",n._onDrop),f(document,"touchend",n._onDrop),f(document,"touchcancel",n._onDrop),o&&(o.effectAllowed="move",i.setData&&i.setData.call(n,o,V)),h(document,"drop",n),R(V,"transform","translateZ(0)")),wt=!0,n._dragStartId=Kt(n._dragStarted.bind(n,e,t)),h(document,"selectstart",n),gt=!0,u&&R(document.body,"user-select","none"))},_onDragOver:function(n){var o,i,r,t,e,a=this.el,l=n.target,s=this.options,c=s.group,u=Ft.active,d=lt===c,h=s.sort,f=st||u,p=this,g=!1;if(!Tt){if(void 0!==n.preventDefault&&n.cancelable&&n.preventDefault(),l=P(l,s.draggable,a,!0),O("dragOver"),Ft.eventCanceled)return g;if(V.contains(n.target)||l.animated&&l.animatingX&&l.animatingY||p._ignoreWhileAnimating===l)return A(!1);if(Et=!1,u&&!s.disabled&&(d?h||(i=Z!==Q):st===this||(this.lastPutMode=lt.checkPull(this,u,V,n))&&c.checkPut(this,u,V,n))){if(r="vertical"===this._getDirection(n,l),o=X(V),O("dragOverValid"),Ft.eventCanceled)return g;if(i)return Z=Q,M(),this._hideClone(),O("revert"),Ft.eventCanceled||(J?Q.insertBefore(V,J):Q.appendChild(V)),A(!0);var m=F(a,s.draggable);if(m&&(S=n,c=r,x=X(F((D=this).el,D.options.draggable)),D=L(D.el,D.options,$),!(c?S.clientX>D.right+10||S.clientY>x.bottom&&S.clientX>x.left:S.clientY>D.bottom+10||S.clientX>x.right&&S.clientY>x.top)||m.animated)){if(m&&(t=n,e=r,C=X(B((_=this).el,0,_.options,!0)),_=L(_.el,_.options,$),e?t.clientX<_.left-10||t.clientY<C.top&&t.clientX<C.right:t.clientY<_.top-10||t.clientY<C.bottom&&t.clientX<C.left)){var v=B(a,0,s,!0);if(v===V)return A(!1);if(E=X(l=v),!1!==jt(Q,a,V,o,l,E,n,!1))return M(),a.insertBefore(V,v),Z=a,N(),A(!0)}else if(l.parentNode===a){var b,y,w,E=X(l),D=V.parentNode!==a,S=(S=V.animated&&V.toRect||o,x=l.animated&&l.toRect||E,_=(e=r)?S.left:S.top,t=e?S.right:S.bottom,C=e?S.width:S.height,v=e?x.left:x.top,S=e?x.right:x.bottom,x=e?x.width:x.height,!(_===v||t===S||_+C/2===v+x/2)),_=r?"top":"left",C=Y(l,"top","top")||Y(V,"top","top"),v=C?C.scrollTop:void 0;if(mt!==l&&(y=E[_],St=!1,_t=!S&&s.invertSwap||D),0!==(b=function(t,e,n,o,i,r,a,l){var s=o?t.clientY:t.clientX,c=o?n.height:n.width,t=o?n.top:n.left,o=o?n.bottom:n.right,n=!1;if(!a)if(l&&bt<c*i){if(St=!St&&(1===vt?t+c*r/2<s:s<o-c*r/2)?!0:St)n=!0;else if(1===vt?s<t+bt:o-bt<s)return-vt}else if(t+c*(1-i)/2<s&&s<o-c*(1-i)/2)return function(t){return j(V)<j(t)?1:-1}(e);if((n=n||a)&&(s<t+c*r/2||o-c*r/2<s))return t+c/2<s?1:-1;return 0}(n,l,E,r,S?1:s.swapThreshold,null==s.invertedSwapThreshold?s.swapThreshold:s.invertedSwapThreshold,_t,mt===l)))for(var T=j(V);(w=Z.children[T-=b])&&("none"===R(w,"display")||w===$););if(0===b||w===l)return A(!1);vt=b;var x=(mt=l).nextElementSibling,D=!1,S=jt(Q,a,V,o,l,E,n,D=1===b);if(!1!==S)return 1!==S&&-1!==S||(D=1===S),Tt=!0,setTimeout(Lt,30),M(),D&&!x?a.appendChild(V):l.parentNode.insertBefore(V,D?x:l),C&&H(C,0,v-C.scrollTop),Z=V.parentNode,void 0===y||_t||(bt=Math.abs(y-X(l)[_])),N(),A(!0)}}else{if(m===V)return A(!1);if((l=m&&a===n.target?m:l)&&(E=X(l)),!1!==jt(Q,a,V,o,l,E,n,!!l))return M(),m&&m.nextSibling?a.insertBefore(V,m.nextSibling):a.appendChild(V),Z=a,N(),A(!0)}if(a.contains(V))return A(!1)}return!1}function O(t,e){G(t,p,I({evt:n,isOwner:d,axis:r?"vertical":"horizontal",revert:i,dragRect:o,targetRect:E,canSort:h,fromSortable:f,target:l,completed:A,onMove:function(t,e){return jt(Q,a,V,o,t,X(t),n,e)},changed:N},e))}function M(){O("dragOverAnimationCapture"),p.captureAnimationState(),p!==f&&f.captureAnimationState()}function A(t){return O("dragOverCompleted",{insertion:t}),t&&(d?u._hideClone():u._showClone(p),p!==f&&(k(V,(st||u).options.ghostClass,!1),k(V,s.ghostClass,!0)),st!==p&&p!==Ft.active?st=p:p===Ft.active&&st&&(st=null),f===p&&(p._ignoreWhileAnimating=l),p.animateAll(function(){O("dragOverAnimationComplete"),p._ignoreWhileAnimating=null}),p!==f&&(f.animateAll(),f._ignoreWhileAnimating=null)),(l===V&&!V.animated||l===a&&!l.animated)&&(mt=null),s.dragoverBubble||n.rootEl||l===document||(V.parentNode[K]._isOutsideThisEl(n.target),t||Yt(n)),!s.dragoverBubble&&n.stopPropagation&&n.stopPropagation(),g=!0}function N(){it=j(V),at=j(V,s.draggable),q({sortable:p,name:"change",toEl:a,newIndex:it,newDraggableIndex:at,originalEvent:n})}},_ignoreWhileAnimating:null,_offMoveEvents:function(){f(document,"mousemove",this._onTouchMove),f(document,"touchmove",this._onTouchMove),f(document,"pointermove",this._onTouchMove),f(document,"dragover",Yt),f(document,"mousemove",Yt),f(document,"touchmove",Yt)},_offUpEvents:function(){var t=this.el.ownerDocument;f(t,"mouseup",this._onDrop),f(t,"touchend",this._onDrop),f(t,"pointerup",this._onDrop),f(t,"touchcancel",this._onDrop),f(document,"selectstart",this)},_onDrop:function(t){var e=this.el,n=this.options;it=j(V),at=j(V,n.draggable),G("drop",this,{evt:t}),Z=V&&V.parentNode,it=j(V),at=j(V,n.draggable),Ft.eventCanceled||(St=_t=wt=!1,clearInterval(this._loopId),clearTimeout(this._dragStartTimer),Wt(this.cloneId),Wt(this._dragStartId),this.nativeDraggable&&(f(document,"drop",this),f(e,"dragstart",this._onDragStart)),this._offMoveEvents(),this._offUpEvents(),u&&R(document.body,"user-select",""),R(V,"transform",""),t&&(gt&&(t.cancelable&&t.preventDefault(),n.dropBubble||t.stopPropagation()),$&&$.parentNode&&$.parentNode.removeChild($),(Q===Z||st&&"clone"!==st.lastPutMode)&&et&&et.parentNode&&et.parentNode.removeChild(et),V&&(this.nativeDraggable&&f(V,"dragend",this),Ht(V),V.style["will-change"]="",gt&&!wt&&k(V,(st||this).options.ghostClass,!1),k(V,this.options.chosenClass,!1),q({sortable:this,name:"unchoose",toEl:Z,newIndex:null,newDraggableIndex:null,originalEvent:t}),Q!==Z?(0<=it&&(q({rootEl:Z,name:"add",toEl:Z,fromEl:Q,originalEvent:t}),q({sortable:this,name:"remove",toEl:Z,originalEvent:t}),q({rootEl:Z,name:"sort",toEl:Z,fromEl:Q,originalEvent:t}),q({sortable:this,name:"sort",toEl:Z,originalEvent:t})),st&&st.save()):it!==ot&&0<=it&&(q({sortable:this,name:"update",toEl:Z,originalEvent:t}),q({sortable:this,name:"sort",toEl:Z,originalEvent:t})),Ft.active&&(null!=it&&-1!==it||(it=ot,at=rt),q({sortable:this,name:"end",toEl:Z,originalEvent:t}),this.save())))),this._nulling()},_nulling:function(){G("nulling",this),Q=V=Z=$=J=et=tt=nt=ct=ut=gt=it=at=ot=rt=mt=vt=st=lt=Ft.dragged=Ft.ghost=Ft.clone=Ft.active=null,xt.forEach(function(t){t.checked=!0}),xt.length=dt=ht=0},handleEvent:function(t){switch(t.type){case"drop":case"dragend":this._onDrop(t);break;case"dragenter":case"dragover":V&&(this._onDragOver(t),function(t){t.dataTransfer&&(t.dataTransfer.dropEffect="move");t.cancelable&&t.preventDefault()}(t));break;case"selectstart":t.preventDefault()}},toArray:function(){for(var t,e=[],n=this.el.children,o=0,i=n.length,r=this.options;o<i;o++)P(t=n[o],r.draggable,this.el,!1)&&e.push(t.getAttribute(r.dataIdAttr)||function(t){var e=t.tagName+t.className+t.src+t.href+t.textContent,n=e.length,o=0;for(;n--;)o+=e.charCodeAt(n);return o.toString(36)}(t));return e},sort:function(t,e){var n={},o=this.el;this.toArray().forEach(function(t,e){e=o.children[e];P(e,this.options.draggable,o,!1)&&(n[t]=e)},this),e&&this.captureAnimationState(),t.forEach(function(t){n[t]&&(o.removeChild(n[t]),o.appendChild(n[t]))}),e&&this.animateAll()},save:function(){var t=this.options.store;t&&t.set&&t.set(this)},closest:function(t,e){return P(t,e||this.options.draggable,this.el,!1)},option:function(t,e){var n=this.options;if(void 0===e)return n[t];var o=W.modifyOption(this,t,e);n[t]=void 0!==o?o:e,"group"===t&&kt(n)},destroy:function(){G("destroy",this);var t=this.el;t[K]=null,f(t,"mousedown",this._onTapStart),f(t,"touchstart",this._onTapStart),f(t,"pointerdown",this._onTapStart),this.nativeDraggable&&(f(t,"dragover",this),f(t,"dragenter",this)),Array.prototype.forEach.call(t.querySelectorAll("[draggable]"),function(t){t.removeAttribute("draggable")}),this._onDrop(),this._disableDelayedDragEvents(),Dt.splice(Dt.indexOf(this.el),1),this.el=t=null},_hideClone:function(){nt||(G("hideClone",this),Ft.eventCanceled||(R(et,"display","none"),this.options.removeCloneOnHide&&et.parentNode&&et.parentNode.removeChild(et),nt=!0))},_showClone:function(t){"clone"===t.lastPutMode?nt&&(G("showClone",this),Ft.eventCanceled||(V.parentNode!=Q||this.options.group.revertClone?J?Q.insertBefore(et,J):Q.appendChild(et):Q.insertBefore(et,V),this.options.group.revertClone&&this.animate(V,et),R(et,"display",""),nt=!1)):this._hideClone()}},Ot&&h(document,"touchmove",function(t){(Ft.active||wt)&&t.cancelable&&t.preventDefault()}),Ft.utils={on:h,off:f,css:R,find:b,is:function(t,e){return!!P(t,e,t,!1)},extend:function(t,e){if(t&&e)for(var n in e)e.hasOwnProperty(n)&&(t[n]=e[n]);return t},throttle:S,closest:P,toggleClass:k,clone:_,index:j,nextTick:Kt,cancelNextTick:Wt,detectDirection:Pt,getChild:B},Ft.get=function(t){return t[K]},Ft.mount=function(){for(var t=arguments.length,e=new Array(t),n=0;n<t;n++)e[n]=arguments[n];(e=e[0].constructor===Array?e[0]:e).forEach(function(t){if(!t.prototype||!t.prototype.constructor)throw"Sortable: Mounted plugin must be a constructor function, not ".concat({}.toString.call(t));t.utils&&(Ft.utils=I(I({},Ft.utils),t.utils)),W.mount(t)})},Ft.create=function(t,e){return new Ft(t,e)};var zt,Gt,Ut,qt,Vt,Zt,$t=[],Qt=!(Ft.version="1.15.2");function Jt(){$t.forEach(function(t){clearInterval(t.pid)}),$t=[]}function te(){clearInterval(Zt)}var ee,ne=S(function(n,t,e,o){if(t.scroll){var i,r=(n.touches?n.touches[0]:n).clientX,a=(n.touches?n.touches[0]:n).clientY,l=t.scrollSensitivity,s=t.scrollSpeed,c=O(),u=!1;Gt!==e&&(Gt=e,Jt(),zt=t.scroll,i=t.scrollFn,!0===zt&&(zt=M(e,!0)));var d=0,h=zt;do{var f=h,p=X(f),g=p.top,m=p.bottom,v=p.left,b=p.right,y=p.width,w=p.height,E=void 0,D=void 0,S=f.scrollWidth,_=f.scrollHeight,C=R(f),T=f.scrollLeft,p=f.scrollTop,D=f===c?(E=y<S&&("auto"===C.overflowX||"scroll"===C.overflowX||"visible"===C.overflowX),w<_&&("auto"===C.overflowY||"scroll"===C.overflowY||"visible"===C.overflowY)):(E=y<S&&("auto"===C.overflowX||"scroll"===C.overflowX),w<_&&("auto"===C.overflowY||"scroll"===C.overflowY)),T=E&&(Math.abs(b-r)<=l&&T+y<S)-(Math.abs(v-r)<=l&&!!T),p=D&&(Math.abs(m-a)<=l&&p+w<_)-(Math.abs(g-a)<=l&&!!p);if(!$t[d])for(var x=0;x<=d;x++)$t[x]||($t[x]={});$t[d].vx==T&&$t[d].vy==p&&$t[d].el===f||($t[d].el=f,$t[d].vx=T,$t[d].vy=p,clearInterval($t[d].pid),0==T&&0==p||(u=!0,$t[d].pid=setInterval(function(){o&&0===this.layer&&Ft.active._onTouchMove(Vt);var t=$t[this.layer].vy?$t[this.layer].vy*s:0,e=$t[this.layer].vx?$t[this.layer].vx*s:0;"function"==typeof i&&"continue"!==i.call(Ft.dragged.parentNode[K],e,t,n,Vt,$t[this.layer].el)||H($t[this.layer].el,e,t)}.bind({layer:d}),24))),d++}while(t.bubbleScroll&&h!==c&&(h=M(h,!1)));Qt=u}},30),c=function(t){var e=t.originalEvent,n=t.putSortable,o=t.dragEl,i=t.activeSortable,r=t.dispatchSortableEvent,a=t.hideGhostForTarget,t=t.unhideGhostForTarget;e&&(i=n||i,a(),e=e.changedTouches&&e.changedTouches.length?e.changedTouches[0]:e,e=document.elementFromPoint(e.clientX,e.clientY),t(),i&&!i.el.contains(e)&&(r("spill"),this.onSpill({dragEl:o,putSortable:n})))};function oe(){}function ie(){}oe.prototype={startIndex:null,dragStart:function(t){t=t.oldDraggableIndex;this.startIndex=t},onSpill:function(t){var e=t.dragEl,n=t.putSortable;this.sortable.captureAnimationState(),n&&n.captureAnimationState();t=B(this.sortable.el,this.startIndex,this.options);t?this.sortable.el.insertBefore(e,t):this.sortable.el.appendChild(e),this.sortable.animateAll(),n&&n.animateAll()},drop:c},a(oe,{pluginName:"revertOnSpill"}),ie.prototype={onSpill:function(t){var e=t.dragEl,t=t.putSortable||this.sortable;t.captureAnimationState(),e.parentNode&&e.parentNode.removeChild(e),t.animateAll()},drop:c},a(ie,{pluginName:"removeOnSpill"});var re,ae,le,se,ce,ue=[],de=[],he=!1,fe=!1,pe=!1;function ge(n,o){de.forEach(function(t,e){e=o.children[t.sortableIndex+(n?Number(e):0)];e?o.insertBefore(t,e):o.appendChild(t)})}function me(){ue.forEach(function(t){t!==le&&t.parentNode&&t.parentNode.removeChild(t)})}return Ft.mount(new function(){function t(){for(var t in this.defaults={scroll:!0,forceAutoScrollFallback:!1,scrollSensitivity:30,scrollSpeed:10,bubbleScroll:!0},this)"_"===t.charAt(0)&&"function"==typeof this[t]&&(this[t]=this[t].bind(this))}return t.prototype={dragStarted:function(t){t=t.originalEvent;this.sortable.nativeDraggable?h(document,"dragover",this._handleAutoScroll):this.options.supportPointer?h(document,"pointermove",this._handleFallbackAutoScroll):t.touches?h(document,"touchmove",this._handleFallbackAutoScroll):h(document,"mousemove",this._handleFallbackAutoScroll)},dragOverCompleted:function(t){t=t.originalEvent;this.options.dragOverBubble||t.rootEl||this._handleAutoScroll(t)},drop:function(){this.sortable.nativeDraggable?f(document,"dragover",this._handleAutoScroll):(f(document,"pointermove",this._handleFallbackAutoScroll),f(document,"touchmove",this._handleFallbackAutoScroll),f(document,"mousemove",this._handleFallbackAutoScroll)),te(),Jt(),clearTimeout(g),g=void 0},nulling:function(){Vt=Gt=zt=Qt=Zt=Ut=qt=null,$t.length=0},_handleFallbackAutoScroll:function(t){this._handleAutoScroll(t,!0)},_handleAutoScroll:function(e,n){var o,i=this,r=(e.touches?e.touches[0]:e).clientX,a=(e.touches?e.touches[0]:e).clientY,t=document.elementFromPoint(r,a);Vt=e,n||this.options.forceAutoScrollFallback||w||y||u?(ne(e,this.options,t,n),o=M(t,!0),!Qt||Zt&&r===Ut&&a===qt||(Zt&&te(),Zt=setInterval(function(){var t=M(document.elementFromPoint(r,a),!0);t!==o&&(o=t,Jt()),ne(e,i.options,t,n)},10),Ut=r,qt=a)):this.options.bubbleScroll&&M(t,!0)!==O()?ne(e,this.options,M(t,!1),!1):Jt()}},a(t,{pluginName:"scroll",initializeByDefault:!0})}),Ft.mount(ie,oe),Ft.mount(new function(){function t(){this.defaults={swapClass:"sortable-swap-highlight"}}return t.prototype={dragStart:function(t){t=t.dragEl;ee=t},dragOverValid:function(t){var e=t.completed,n=t.target,o=t.onMove,i=t.activeSortable,r=t.changed,a=t.cancel;i.options.swap&&(t=this.sortable.el,i=this.options,n&&n!==t&&(t=ee,ee=!1!==o(n)?(k(n,i.swapClass,!0),n):null,t&&t!==ee&&k(t,i.swapClass,!1)),r(),e(!0),a())},drop:function(t){var e,n,o=t.activeSortable,i=t.putSortable,r=t.dragEl,a=i||this.sortable,l=this.options;ee&&k(ee,l.swapClass,!1),ee&&(l.swap||i&&i.options.swap)&&r!==ee&&(a.captureAnimationState(),a!==o&&o.captureAnimationState(),n=ee,t=(e=r).parentNode,l=n.parentNode,t&&l&&!t.isEqualNode(n)&&!l.isEqualNode(e)&&(i=j(e),r=j(n),t.isEqualNode(l)&&i<r&&r++,t.insertBefore(n,t.children[i]),l.insertBefore(e,l.children[r])),a.animateAll(),a!==o&&o.animateAll())},nulling:function(){ee=null}},a(t,{pluginName:"swap",eventProperties:function(){return{swapItem:ee}}})}),Ft.mount(new function(){function t(o){for(var t in this)"_"===t.charAt(0)&&"function"==typeof this[t]&&(this[t]=this[t].bind(this));o.options.avoidImplicitDeselect||(o.options.supportPointer?h(document,"pointerup",this._deselectMultiDrag):(h(document,"mouseup",this._deselectMultiDrag),h(document,"touchend",this._deselectMultiDrag))),h(document,"keydown",this._checkKeyDown),h(document,"keyup",this._checkKeyUp),this.defaults={selectedClass:"sortable-selected",multiDragKey:null,avoidImplicitDeselect:!1,setData:function(t,e){var n="";ue.length&&ae===o?ue.forEach(function(t,e){n+=(e?", ":"")+t.textContent}):n=e.textContent,t.setData("Text",n)}}}return t.prototype={multiDragKeyDown:!1,isMultiDrag:!1,delayStartGlobal:function(t){t=t.dragEl;le=t},delayEnded:function(){this.isMultiDrag=~ue.indexOf(le)},setupClone:function(t){var e=t.sortable,t=t.cancel;if(this.isMultiDrag){for(var n=0;n<ue.length;n++)de.push(_(ue[n])),de[n].sortableIndex=ue[n].sortableIndex,de[n].draggable=!1,de[n].style["will-change"]="",k(de[n],this.options.selectedClass,!1),ue[n]===le&&k(de[n],this.options.chosenClass,!1);e._hideClone(),t()}},clone:function(t){var e=t.sortable,n=t.rootEl,o=t.dispatchSortableEvent,t=t.cancel;this.isMultiDrag&&(this.options.removeCloneOnHide||ue.length&&ae===e&&(ge(!0,n),o("clone"),t()))},showClone:function(t){var e=t.cloneNowShown,n=t.rootEl,t=t.cancel;this.isMultiDrag&&(ge(!1,n),de.forEach(function(t){R(t,"display","")}),e(),ce=!1,t())},hideClone:function(t){var e=this,n=(t.sortable,t.cloneNowHidden),t=t.cancel;this.isMultiDrag&&(de.forEach(function(t){R(t,"display","none"),e.options.removeCloneOnHide&&t.parentNode&&t.parentNode.removeChild(t)}),n(),ce=!0,t())},dragStartGlobal:function(t){t.sortable;!this.isMultiDrag&&ae&&ae.multiDrag._deselectMultiDrag(),ue.forEach(function(t){t.sortableIndex=j(t)}),ue=ue.sort(function(t,e){return t.sortableIndex-e.sortableIndex}),pe=!0},dragStarted:function(t){var e,n=this,t=t.sortable;this.isMultiDrag&&(this.options.sort&&(t.captureAnimationState(),this.options.animation&&(ue.forEach(function(t){t!==le&&R(t,"position","absolute")}),e=X(le,!1,!0,!0),ue.forEach(function(t){t!==le&&C(t,e)}),he=fe=!0)),t.animateAll(function(){he=fe=!1,n.options.animation&&ue.forEach(function(t){T(t)}),n.options.sort&&me()}))},dragOver:function(t){var e=t.target,n=t.completed,t=t.cancel;fe&&~ue.indexOf(e)&&(n(!1),t())},revert:function(t){var n,o,e=t.fromSortable,i=t.rootEl,r=t.sortable,a=t.dragRect;1<ue.length&&(ue.forEach(function(t){r.addAnimationState({target:t,rect:fe?X(t):a}),T(t),t.fromRect=a,e.removeAnimationState(t)}),fe=!1,n=!this.options.removeCloneOnHide,o=i,ue.forEach(function(t,e){e=o.children[t.sortableIndex+(n?Number(e):0)];e?o.insertBefore(t,e):o.appendChild(t)}))},dragOverCompleted:function(t){var e,n=t.sortable,o=t.isOwner,i=t.insertion,r=t.activeSortable,a=t.parentEl,l=t.putSortable,t=this.options;i&&(o&&r._hideClone(),he=!1,t.animation&&1<ue.length&&(fe||!o&&!r.options.sort&&!l)&&(e=X(le,!1,!0,!0),ue.forEach(function(t){t!==le&&(C(t,e),a.appendChild(t))}),fe=!0),o||(fe||me(),1<ue.length?(o=ce,r._showClone(n),r.options.animation&&!ce&&o&&de.forEach(function(t){r.addAnimationState({target:t,rect:se}),t.fromRect=se,t.thisAnimationDuration=null})):r._showClone(n)))},dragOverAnimationCapture:function(t){var e=t.dragRect,n=t.isOwner,t=t.activeSortable;ue.forEach(function(t){t.thisAnimationDuration=null}),t.options.animation&&!n&&t.multiDrag.isMultiDrag&&(se=a({},e),e=v(le,!0),se.top-=e.f,se.left-=e.e)},dragOverAnimationComplete:function(){fe&&(fe=!1,me())},drop:function(t){var e=t.originalEvent,n=t.rootEl,o=t.parentEl,i=t.sortable,r=t.dispatchSortableEvent,a=t.oldIndex,l=t.putSortable,s=l||this.sortable;if(e){var c,u,d,h=this.options,f=o.children;if(!pe)if(h.multiDragKey&&!this.multiDragKeyDown&&this._deselectMultiDrag(),k(le,h.selectedClass,!~ue.indexOf(le)),~ue.indexOf(le))ue.splice(ue.indexOf(le),1),re=null,z({sortable:i,rootEl:n,name:"deselect",targetEl:le,originalEvent:e});else{if(ue.push(le),z({sortable:i,rootEl:n,name:"select",targetEl:le,originalEvent:e}),e.shiftKey&&re&&i.el.contains(re)){var p=j(re),t=j(le);if(~p&&~t&&p!==t)for(var g,m=p<t?(g=p,t):(g=t,p+1);g<m;g++)~ue.indexOf(f[g])||(k(f[g],h.selectedClass,!0),ue.push(f[g]),z({sortable:i,rootEl:n,name:"select",targetEl:f[g],originalEvent:e}))}else re=le;ae=s}pe&&this.isMultiDrag&&(fe=!1,(o[K].options.sort||o!==n)&&1<ue.length&&(c=X(le),u=j(le,":not(."+this.options.selectedClass+")"),!he&&h.animation&&(le.thisAnimationDuration=null),s.captureAnimationState(),he||(h.animation&&(le.fromRect=c,ue.forEach(function(t){var e;t.thisAnimationDuration=null,t!==le&&(e=fe?X(t):c,t.fromRect=e,s.addAnimationState({target:t,rect:e}))})),me(),ue.forEach(function(t){f[u]?o.insertBefore(t,f[u]):o.appendChild(t),u++}),a===j(le)&&(d=!1,ue.forEach(function(t){t.sortableIndex!==j(t)&&(d=!0)}),d&&(r("update"),r("sort")))),ue.forEach(function(t){T(t)}),s.animateAll()),ae=s),(n===o||l&&"clone"!==l.lastPutMode)&&de.forEach(function(t){t.parentNode&&t.parentNode.removeChild(t)})}},nullingGlobal:function(){this.isMultiDrag=pe=!1,de.length=0},destroyGlobal:function(){this._deselectMultiDrag(),f(document,"pointerup",this._deselectMultiDrag),f(document,"mouseup",this._deselectMultiDrag),f(document,"touchend",this._deselectMultiDrag),f(document,"keydown",this._checkKeyDown),f(document,"keyup",this._checkKeyUp)},_deselectMultiDrag:function(t){if(!(void 0!==pe&&pe||ae!==this.sortable||t&&P(t.target,this.options.draggable,this.sortable.el,!1)||t&&0!==t.button))for(;ue.length;){var e=ue[0];k(e,this.options.selectedClass,!1),ue.shift(),z({sortable:this.sortable,rootEl:this.sortable.el,name:"deselect",targetEl:e,originalEvent:t})}},_checkKeyDown:function(t){t.key===this.options.multiDragKey&&(this.multiDragKeyDown=!0)},_checkKeyUp:function(t){t.key===this.options.multiDragKey&&(this.multiDragKeyDown=!1)}},a(t,{pluginName:"multiDrag",utils:{select:function(t){var e=t.parentNode[K];e&&e.options.multiDrag&&!~ue.indexOf(t)&&(ae&&ae!==e&&(ae.multiDrag._deselectMultiDrag(),ae=e),k(t,e.options.selectedClass,!0),ue.push(t))},deselect:function(t){var e=t.parentNode[K],n=ue.indexOf(t);e&&e.options.multiDrag&&~n&&(k(t,e.options.selectedClass,!1),ue.splice(n,1))}},eventProperties:function(){var n=this,o=[],i=[];return ue.forEach(function(t){var e;o.push({multiDragElement:t,index:t.sortableIndex}),e=fe&&t!==le?-1:fe?j(t,":not(."+n.options.selectedClass+")"):j(t),i.push({multiDragElement:t,index:e})}),{items:r(ue),clones:[].concat(de),oldIndicies:o,newIndicies:i}},optionListeners:{multiDragKey:function(t){return"ctrl"===(t=t.toLowerCase())?t="Control":1<t.length&&(t=t.charAt(0).toUpperCase()+t.substr(1)),t}}})}),Ft});
+
+// final JS calls after everything has been loaded
+document.dispatchEvent( new CustomEvent('events_manager_js_loaded') );
 //# sourceMappingURL=events-manager.js.map

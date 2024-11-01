@@ -95,6 +95,7 @@ class ProMarkerFilter extends MarkerFilter
 			$placeholders = implode(',', array_fill(0, count($ids), "%d"));
 			
 			$query->where['mashup_ids'] = "map_id IN ($placeholders)";
+
 			
 			foreach($ids as $id)
 				$query->params[] = $id;

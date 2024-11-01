@@ -18,6 +18,15 @@ abstract class BatchedOperation extends Crud
 	public static function runAll()
 	{
 		global $wpdb;
+
+		if(!is_admin()){
+			/* We usually operate batches on any page, really a user should be waiting for it to complete import, but
+			 * sometimes that's not an option, so now, it will only continue in admin
+			 * 
+			 * If we do at some point move to handling the status updates via REST, this may need to change, but I think it's better this way for now
+			 */
+			return; 
+		}
 		
 		$subclasses = BatchedOperation::getSubclasses();
 

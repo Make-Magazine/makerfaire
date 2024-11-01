@@ -34,39 +34,39 @@ msgstr ""
 msgid "Envato Elements requires WordPress version %s+. Because you are using an earlier version, the plugin is currently NOT ACTIVE."
 msgstr ""
 
-#: inc/backend/class-welcome.php:32, inc/backend/class-welcome.php:44
+#: inc/backend/class-welcome.php:35, inc/backend/class-welcome.php:47
 msgid "Envato Elements"
 msgstr ""
 
-#: inc/backend/class-welcome.php:33
+#: inc/backend/class-welcome.php:36
 msgid "Elements"
 msgstr ""
 
-#: inc/backend/class-welcome.php:45
+#: inc/backend/class-welcome.php:48
 msgid "Welcome"
 msgstr ""
 
-#: inc/backend/class-welcome.php:53, inc/backend/class-welcome.php:54
+#: inc/backend/class-welcome.php:56, inc/backend/class-welcome.php:57
 msgid "Template Kits"
 msgstr ""
 
-#: inc/backend/class-welcome.php:62, inc/backend/class-welcome.php:63
+#: inc/backend/class-welcome.php:65, inc/backend/class-welcome.php:66
 msgid "Free Kits"
 msgstr ""
 
-#: inc/backend/class-welcome.php:71, inc/backend/class-welcome.php:72
+#: inc/backend/class-welcome.php:74, inc/backend/class-welcome.php:75
 msgid "Free Blocks"
 msgstr ""
 
-#: inc/backend/class-welcome.php:80, inc/backend/class-welcome.php:81
+#: inc/backend/class-welcome.php:83, inc/backend/class-welcome.php:84
 msgid "Installed Kits"
 msgstr ""
 
-#: inc/backend/class-welcome.php:89, inc/backend/class-welcome.php:90
+#: inc/backend/class-welcome.php:92, inc/backend/class-welcome.php:93
 msgid "Photos"
 msgstr ""
 
-#: inc/backend/class-welcome.php:98, inc/backend/class-welcome.php:99
+#: inc/backend/class-welcome.php:101, inc/backend/class-welcome.php:102
 msgid "Settings"
 msgstr ""
 

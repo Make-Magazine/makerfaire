@@ -3,9 +3,9 @@ Contributors: celomitan
 Donate link: https://wordpressfoundation.org/donate/
 Tags: elementor, blog, slide, pricing, menu
 Requires at least: 6.0
-Tested up to: 6.5.5
+Tested up to: 6.6.2
 Requires PHP: 7.0
-Stable tag: 1.3.6
+Stable tag: 1.3.9
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -69,6 +69,21 @@ Not yet
 5. Three colors heading
 
 == Changelog ==
+
+= 1.3.9 =
+* Bug fix: button with icon styles
+
+
+= 1.3.8 =
+* Security issue fixing
+* Improvement: Adding icon border and padding ( icon list widget )
+
+= 1.3.7 =
+* Security issue fixing
+* Improvement: Adding post term placeholder ( post term widget )
+* Improvement: Adding meta placeholder ( post meta widget )
+* Improvement: Adding image placeholder ( featured image widget )
+
 = 1.3.6 =
 * Security issue fixing
 

@@ -10,10 +10,12 @@ use WP_Rocket\Engine\Optimization\DynamicLists\DefaultLists\DataManager;
 use WP_Rocket\Engine\Optimization\RegexTrait;
 use WP_Rocket\Engine\Optimization\RUCSS\Database\Queries\UsedCSS as UsedCSS_Query;
 use WP_Rocket\Engine\Optimization\RUCSS\Jobs\Manager;
+use WP_Rocket\Engine\Support\CommentTrait;
 
 class UsedCSS {
 	use RegexTrait;
 	use CSSTrait;
+	use CommentTrait;
 
 	/**
 	 * UsedCss Query instance.
@@ -165,7 +167,7 @@ class UsedCSS {
 			$this->used_css_query->update_last_accessed( (int) $used_css->id );
 		}
 
-		return $html;
+		return $this->add_meta_comment( 'remove_unused_css', $html );
 	}
 
 	/**
@@ -475,10 +477,7 @@ class UsedCSS {
 		 *
 		 * @param array $excluded_fonts_preload List of fonts to exclude from preload
 		 */
-		$exclude_fonts_preload = apply_filters( 'rocket_exclude_rucss_fonts_preload', [] );
-		if ( ! is_array( $exclude_fonts_preload ) ) {
-			$exclude_fonts_preload = [];
-		}
+		$exclude_fonts_preload = wpm_apply_filters_typed( 'array', 'rocket_exclude_rucss_fonts_preload', [] );
 
 		$urls = [];
 

@@ -19,6 +19,8 @@ return array(
     'GravityKit\\AdvancedFilter\\QueryFilters\\Filter\\Visitor\\CurrentUserVisitor' => $baseDir . '/vendor_prefixed/gravitykit/query-filters/src/Filter/Visitor/CurrentUserVisitor.php',
     'GravityKit\\AdvancedFilter\\QueryFilters\\Filter\\Visitor\\DisableAdminVisitor' => $baseDir . '/vendor_prefixed/gravitykit/query-filters/src/Filter/Visitor/DisableAdminVisitor.php',
     'GravityKit\\AdvancedFilter\\QueryFilters\\Filter\\Visitor\\DisableFiltersVisitor' => $baseDir . '/vendor_prefixed/gravitykit/query-filters/src/Filter/Visitor/DisableFiltersVisitor.php',
+    'GravityKit\\AdvancedFilter\\QueryFilters\\Filter\\Visitor\\EntryAware' => $baseDir . '/vendor_prefixed/gravitykit/query-filters/src/Filter/Visitor/EntryAware.php',
+    'GravityKit\\AdvancedFilter\\QueryFilters\\Filter\\Visitor\\EntryAwareFilterVisitor' => $baseDir . '/vendor_prefixed/gravitykit/query-filters/src/Filter/Visitor/EntryAwareFilterVisitor.php',
     'GravityKit\\AdvancedFilter\\QueryFilters\\Filter\\Visitor\\FilterVisitor' => $baseDir . '/vendor_prefixed/gravitykit/query-filters/src/Filter/Visitor/FilterVisitor.php',
     'GravityKit\\AdvancedFilter\\QueryFilters\\Filter\\Visitor\\ProcessDateVisitor' => $baseDir . '/vendor_prefixed/gravitykit/query-filters/src/Filter/Visitor/ProcessDateVisitor.php',
     'GravityKit\\AdvancedFilter\\QueryFilters\\Filter\\Visitor\\ProcessFieldTypeVisitor' => $baseDir . '/vendor_prefixed/gravitykit/query-filters/src/Filter/Visitor/ProcessFieldTypeVisitor.php',

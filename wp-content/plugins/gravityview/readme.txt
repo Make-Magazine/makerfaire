@@ -1,8 +1,8 @@
 === GravityView ===
 Tags: gravity forms, directory, gravity forms directory
 Requires at least: 4.7
-Tested up to: 6.6.0
-Requires PHP: 7.2.0
+Tested up to: 6.6.2
+Requires PHP: 7.4.0
 Stable tag: trunk
 Contributors: The GravityKit Team
 License: GPL 3 or higher
@@ -20,6 +20,88 @@ Beautifully display your Gravity Forms entries. Learn more on [gravitykit.com](h
 3. Follow the instructions
 
 == Changelog ==
+
+= 2.30.1 on October 15, 2024 =
+
+This hotfix release resolves an issue with the Multiple Forms extension.
+
+#### 🐛 Fixed
+* Fatal error in the View editor when using joined data from multiple forms.
+
+= 2.30 on October 14, 2024 =
+
+This release adds the ability to change the entry creator from the Edit Entry screen, improves upload handling, fixes various bugs, and updates internal components.
+
+#### 🚀 Added
+* Entry creator can now be changed from the Edit Entry screen.
+* `{now}`, `{yesterday}`, and `{tomorrow}` relative date merge tags.
+
+#### ✨ Improved
+* Handling of multi-file uploads on the Edit Entry screen.
+
+#### 🐛 Fixed
+* Entry loading inside a lightbox did not work in some cases when BuddyPress was active.
+* Resending notifications from the Entries screen did not work when sending to all entries filtered by approval status.
+* Conflict with the Wordfence plugin caused a fatal error when redirecting users after deleting an entry.
+* Fatal error when rendering a GravityView View field with a non-existent View ID.
+* Survey field (Rating type) values were displayed in reverse order when a View was embedded inside another View.
+* Unexpected scrolling in the View editor after adding a field.
+* PHP notice when rendering a View with a field associated with an inactive add-on.
+* Entry duplication not working on the Entries page.
+
+#### 🔧 Updated
+* [Foundation](https://www.gravitykit.com/foundation/) to version 1.2.19.
+
+= 2.29 on October 1, 2024 =
+
+This release introduces a much-requested [lightbox feature](https://docs.gravitykit.com/article/1020-opening-and-editing-entry-details-in-a-lightbox-modal-popup) for displaying and editing entries, settings for customizing View URLs, new options for [displaying Name field initials](https://docs.gravitykit.com/article/1021-show-name-fields-as-initials) and Custom Content fields in full width, and a merge tag modifier to show date field values in a human-readable format. Several bugs have also been fixed.
+
+#### 🚀 Added
+* Ability to edit and display entries inside a lightbox.
+* Global and individual View settings to customize the URL structure for all or specific Views.
+* `:human` merge tag modifier for date fields to display in human-readable format (e.g., `10 minutes ago`, `5 days from now`).
+* Option to display the Name field value as initials.
+* Option to display Custom Content field full width on the Single Entry screen.
+
+#### 🐛 Fixed
+* Clearing search removed all URL query parameters and, in some cases, redirected to the homepage.
+* Searching the View added duplicate search parameters to the URL.
+* PHP 8.2 deprecation notice related to dynamic property creation.
+* Entries not displaying when a View using DataTables was embedded in a Single Entry page with the List layout.
+* PHP warning when displaying a View with an Event field without an active Gravity Forms Event Fields Add-On.
+* Sorting entries in random order was not working.
+* Multi Select field values starting with a square bracket were not displayed as selected on the Edit Entry screen.
+
+#### 🔧 Updated
+* [Foundation](https://www.gravitykit.com/foundation/) to version 1.2.18.
+
+#### 💻 Developer Updates
+* Added `gk/gravityview/field/name/display` filter to modify the Name field display value.
+* Added `gk/gravityview/permalinks/reserved-terms` filter to modify the list of reserved terms that are excluded from permalinks.
+
+= 2.28 on August 29, 2024 =
+
+This update adds support for plain-text URLs in entry moderation merge tags, and fixes several bugs, including critical errors in the View editor. Starting with this version, PHP 7.4 or newer is required.
+
+**Note: GravityView now requires PHP 7.4 or newer.**
+
+#### 🚀 Added
+* Modifier for entry moderation merge tags to output plain-text URLs (e.g., `{gv_approve_entry:url}`).
+
+#### 🐛 Fixed
+* "Text domain not found" error when trying to install a layout during the View creation process.
+* Fatal error in the View editor when the user does not have the necessary capabilities to install plugins.
+* Merge tag support in the Source URL "Link Text" field setting.
+* Deprecated filter notice when using GravityView Maps 3.1.0 or newer.
+* PHP 8.2 deprecation notice due to passing an empty value to `htmlspecialchars()` and creating dynamic class properties.
+* The maximum number of files allowed in the File Upload field was not respected when editing an entry.
+* Sorting the View by the Name field yielded incorrect results.
+
+#### 🔧 Updated
+* [TrustedLogin](https://www.trustedlogin.com/) to version 1.9.0.
+
+#### 💻 Developer Updates
+* Added `gk/gravityview/view/entries/query/sorting-parameters` filter to modify the sorting parameters applied during the retrieval of View entries.
 
 = 2.27.1 on August 14, 2024 =
 

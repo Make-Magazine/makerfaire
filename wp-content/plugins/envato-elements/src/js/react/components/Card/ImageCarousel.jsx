@@ -1,5 +1,4 @@
 import React from 'react'
-import buildElementsImageUrl from '../../utils/buildElementsImageUrl'
 import styles from './ImageCarousel.module.scss'
 import Slider from 'react-slick'
 
@@ -37,18 +36,18 @@ const sliderSettings = {
   prevArrow: <PrevArrow />
 }
 
-const ImageCarousel = ({ coverImage = null, imageUrls = [], galleryImages = [] }) => {
+const ImageCarousel = ({ coverImageUrls = null, imageUrls = [], galleryImageUrls = [] }) => {
   const imageGallery = []
-  if (coverImage) {
-    imageGallery.push(buildElementsImageUrl({ imageData: coverImage, sizes: ['w632', 'w900'] }))
+  if (coverImageUrls) {
+    imageGallery.push(coverImageUrls.w900 || coverImageUrls.w632)
   }
   if (imageUrls.length) {
     imageGallery.push(...imageUrls)
   }
 
-  if (galleryImages.length) {
-    galleryImages.forEach(image => {
-      imageGallery.push(buildElementsImageUrl({ imageData: image, sizes: ['w632', 'w900'] }))
+  if (galleryImageUrls.length) {
+    galleryImageUrls.forEach(image => {
+      imageGallery.push(image.w900 || image.w632)
     })
   }
 

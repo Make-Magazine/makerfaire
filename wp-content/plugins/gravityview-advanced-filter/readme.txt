@@ -1,7 +1,7 @@
 === GravityView - Advanced Filter Extension ===
 Tags: GravityView, Gravity Forms, filtering, conditional logic
 Requires at least: 4.4
-Tested up to: 6.5.0
+Tested up to: 6.6.1
 Contributors: GravityKit
 License: GPLv3 or later
 
@@ -14,6 +14,21 @@ Filter which entries are shown in a View based on their values.
 3. Follow the instructions
 
 == Changelog ==
+
+= 4.0.3 on September 11, 2024 =
+
+This update resolves an issue where it was not possible to completely remove filters from a View.
+
+#### 🐛 Fixed
+* Removing all filters or the last one caused them to reappear after saving the View.
+
+= 4.0.2 on August 29, 2024 =
+
+This release fixes an issue with field comparisons involving merge tags and addresses a PHP 8.2 deprecation notice.
+
+#### 🐛 Fixed
+* Incorrect results returned when comparing two fields, with the second field's value provided by a merge tag (e.g., "Field A is greater than {Field B:2}").
+* PHP 8.2 deprecation notice due to passing a `null` value to json_decode().
 
 = 4.0.1 on April 16, 2024 =
 
@@ -341,6 +356,3 @@ Fixed: With Gravity Forms 2.3, when using "Created By" filters, the search mode 
 = 1.0.0 on August 4, 2014 =
 
 * Liftoff!
-
-
-= 1717000843-4249 =

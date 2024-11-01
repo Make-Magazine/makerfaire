@@ -249,6 +249,14 @@ class Gum_Elementor_Widget_Post_adjacent extends Widget_Base {
 
   protected function render() {
 
+    $post = get_post();
+
+    if( $post->post_type !='post'){
+
+      return $this->__displayDemo();
+    }
+
+
     $settings = $this->get_settings_for_display();
     extract( $settings );
 
@@ -260,7 +268,7 @@ class Gum_Elementor_Widget_Post_adjacent extends Widget_Base {
     $post_id = $next_post->ID;
     $link_label = $next_post->post_title;
 
-    $this->add_render_attribute( 'link_wrapper', 'class', ['adjacent-post', $post_type] );
+    $this->add_render_attribute( 'link_wrapper', 'class', ['adjacent-post', sanitize_html_class( $post_type )] );
     $this->add_link_attributes( 'link_wrapper', array('url'=>get_permalink($post_id)) );
 
     if( $post_label == 'custom' && $post_label_custom !=''){
@@ -270,6 +278,28 @@ class Gum_Elementor_Widget_Post_adjacent extends Widget_Base {
     echo '<a '.$this->get_render_attribute_string( 'link_wrapper' ).'>'.$link_label.'</a>';
 
   }
+
+  protected function __displayDemo() {
+
+    if(!is_admin()) return;
+
+    $settings = $this->get_settings_for_display();
+    extract( $settings );
+
+    $link_label =  $post_type == 'next'?  esc_html__( 'Next Post', 'gum-elementor-addon' ) : esc_html__( 'Previous Post', 'gum-elementor-addon' );
+
+    $this->add_render_attribute( 'link_wrapper', 'class', ['adjacent-post', $post_type] );
+    $this->add_link_attributes( 'link_wrapper', array('url'=>'') );
+
+    if( $post_label == 'custom' && $post_label_custom !=''){
+      $link_label = esc_html( $post_label_custom );
+    }
+
+    echo '<a '.$this->get_render_attribute_string( 'link_wrapper' ).'>'.$link_label.'</a>';
+
+  }
+
+
 
   protected function content_template() {
 

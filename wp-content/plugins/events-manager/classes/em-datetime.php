@@ -62,6 +62,18 @@ class EM_DateTime extends DateTime {
 		}
 	}
 	
+	/**
+	 * Shortcut for creating a EM_DateTime instance and having it returned for chained methods.
+	 *
+	 * @param $time
+	 * @param $timezone
+	 *
+	 * @return EM_DateTime
+	 */
+	public static function create( $time = 'now', $timezone = null ){
+		return new EM_DateTime($time, $timezone);
+	}
+	
 	#[\ReturnTypeWillChange]
 	/**
 	 * {@inheritDoc}

@@ -14,7 +14,7 @@ $container = apply_filters( 'gravityview-diy/container', 'div', $gravityview );
 ?>
 
 <?php if ( $container ) { ?>
-<<?php echo $container; ?> class="<?php gv_container_class( 'gv-diy-container gv-diy-multiple-container', true, $gravityview ); ?>">
+<<?php echo $container; ?> id="<?php echo esc_attr( $gravityview->view->get_anchor_id() ); ?>" class="<?php gv_container_class( 'gv-diy-container gv-diy-multiple-container', true, $gravityview ); ?>">
 <?php } ?>
 
 	<?php gravityview_header( $gravityview );

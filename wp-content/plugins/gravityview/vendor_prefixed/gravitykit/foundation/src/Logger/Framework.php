@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by gravityview on 14-August-2024 using {@see https://github.com/BrianHenryIE/strauss}.
+ * Modified by gravityview on 15-October-2024 using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\GravityView\Foundation\Logger;
@@ -52,9 +52,9 @@ class Framework implements LoggerInterface {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @var MonologLogger
+	 * @var MonologLogger|null
 	 */
-	private $_logger;
+	private $_logger = null;
 
 	/**
 	 * Unique logger ID.
@@ -451,7 +451,7 @@ HTML;
 			[
 				'[link]'          => '<a href="' . $download_link . '" class="font-medium underline text-blue-700 hover:text-blue-600">',
 				'[/link]'         => '</a>',
-				'[size]'          => size_format( filesize( $log_file ), 2 ),
+				'[size]'          => size_format( filesize( $log_file ) ?: 0, 2 ),
 				'[date_modified]' => date_i18n( 'Y-m-d @ H:i:s', filemtime( $log_file ) ),
 			]
 		);
@@ -498,7 +498,12 @@ HTML;
 			return $new_settings;
 		}
 
-		$this->_logger->getHandlers()[0]->close();
+		$handlers = $this->_logger->getHandlers();
+
+		if ( isset( $handlers[0] ) && method_exists( $handlers[0], 'close' ) ) {
+			// @phpstan-ignore-next-line
+			$handlers[0]->close();
+		}
 
 		wp_delete_file( $this->get_log_file() );
 
@@ -547,6 +552,7 @@ HTML;
 		}
 
 		if ( CoreHelpers::is_callable_class_method( [ $this->_logger, $name ] ) ) {
+			/** @phpstan-ignore-next-line */
 			return call_user_func_array( [ $this->_logger, $name ], $arguments );
 		}
 	}

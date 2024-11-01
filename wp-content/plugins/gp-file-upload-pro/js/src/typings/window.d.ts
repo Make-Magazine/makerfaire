@@ -11,6 +11,11 @@ declare global {
 				[string: string]: string
 			}
 		}
+		GPFUP_CONSTANTS: {
+			STRINGS: {
+				[key: string]: string
+			}
+		}
 		gfMultiFileUploader: {
 			uploaders: { [name: string]: Plupload.Uploader }
 			setup: Function
@@ -18,7 +23,7 @@ declare global {
 		}
 		gformDeleteUploadedFile: (formId: string, fieldId: string, deleteButton: HTMLElement) => void
 		mOxie: any
-		gform_gravityforms: {
+		gform_gravityforms?: {
 			strings: { [string: string]: string }
 		}
 		gform: any

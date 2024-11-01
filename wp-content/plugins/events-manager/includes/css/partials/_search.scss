@@ -472,23 +472,6 @@ button.em-clickable.em-search-advanced-trigger {
 		}
 	}
 
-	&.em-modal footer {
-		display: grid;
-		grid-template-columns: 1fr 1fr;
-		align-items: center;
-
-		div:first-child {
-			justify-self: start;
-		}
-		div:last-child {
-			justify-self: end;
-		}
-		button.button {
-			margin-bottom : 0 !important;
-			padding-bottom : 0 !important;
-		}
-	}
-
 	&.em-search-advanced-inline {
 		footer {
 			text-align: right;

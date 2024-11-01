@@ -1,7 +1,7 @@
 === GravityView - DataTables Layout ===
 Tags: gravityview
 Requires at least: 4.4
-Tested up to: 6.5
+Tested up to: 6.6.2
 Stable tag: trunk
 Contributors: The GravityKit Team
 License: GPL 3 or higher
@@ -16,24 +16,56 @@ Display entries in a dynamic table powered by DataTables & GravityView.
 
 == Changelog ==
 
+= 3.5 on October 1, 2024 =
+
+This update introduces a new option to control table state persistence and fixes several bugs affecting table display, export functionality, and field filters.
+
+#### 🚀 Added
+* Option to enable/disable table state persistence (saving pagination, sorting, etc.).
+
+#### 🐛 Fixed
+* Loading message not disappearing after an empty Ajax response.
+* Incorrect header labels in copied/exported data when columns are hidden.
+* Multi Select field filter appeared as a text input instead of a dropdown.
+* View was not hidden when the corresponding option was enabled in the Multiple Entries settings.
+* Clearing search when using client-side processing did not refresh the table.
+
+= 3.4 on August 28, 2024 =
+
+This update adds  support for the Gravity Forms Chained Selects add-on, improves sorting and filtering behavior, and fixes several bugs.
+
+#### 🚀 Added
+* Support for the Gravity Forms Chained Selects add-on.
+
+#### ✨ Improved
+* Sorting arrows are hidden from column headers when fields are not sortable.
+
+#### 🐛 Fixed
+* Sorting for text and date fields when the "Data Processing Mode" option is set to "preloaded".
+* Drop Down field filter escaped special characters, such as "&", in the displayed options.
+* Creating a new View from inside the Gravity Forms form editor prevented the selection of the View type.
+* Filtering by a Checkbox field with multiple values selected did not return the expected results.
+* The View was hidden despite there being entries when the "No Entries Behavior" was set to "Hide the View".
+* Exporting or copying table data with field filters that use a drop-down list included all available options in the header label for that field.
+
 = 3.3.7 on May 15, 2024 =
 
 This release addresses issues with date range filtering and field dropdowns while adding support for future GravityView functionality.
 
 #### 🚀 Added
-- Support for a future GravityView ability to define a different layout for Single Entry screens.
+* Support for a future GravityView ability to define a different layout for Single Entry screens.
 
 #### 🐛 Fixed
-- Date range filtering not working with Gravity Forms Date fields.
-- Row Group field dropdown not reflecting the current setting when the selected field uses a custom label.
+* Date range filtering not working with Gravity Forms Date fields.
+* Row Group field dropdown not reflecting the current setting when the selected field uses a custom label.
 
 = 3.3.6 on March 19, 2024 =
 
 This update makes the Scroller extension work with the FixedColumns and FixedHeader extensions, and fixes the preview of GravityView's Gutenberg blocks that use the DataTables layout.
 
 #### 🐛 Fixed
-- Scroller extension can now be used with the FixedColumns and FixedHeader extensions.
-- Resolved an issue preventing GravityView's Gutenberg blocks for Views from previewing when using the DataTables layout.
+* Scroller extension can now be used with the FixedColumns and FixedHeader extensions.
+* Resolved an issue preventing GravityView's Gutenberg blocks for Views from previewing when using the DataTables layout.
 
 __Developer Updates:__
 
@@ -44,59 +76,59 @@ __Developer Updates:__
 This update fixes an issue with exporting, printing, or copying table data in responsive mode, enhancing your data management capabilities.
 
 #### 🐛 Fixed
-- Table data grouped under a single column in responsive mode now exports, prints, and copies as expected.
+* Table data grouped under a single column in responsive mode now exports, prints, and copies as expected.
 
 = 3.3.4 on March 4, 2024 =
 
 This release fixes issues related to pagination, auto-update functionality, entry note submission, and more.
 
 #### 🐛 Fixed
-- Pagination is no longer limited to a single page when the View includes a "Created By" field.
-- Auto-update functionality is now working.
-- Entry note submission is now working as expected.
-- Resolved an issue with text escaping when there are no entries or search results.
-- Hidden columns are now excluded when exporting, printing, or copying table data.
+* Pagination is no longer limited to a single page when the View includes a "Created By" field.
+* Auto-update functionality is now working.
+* Entry note submission is now working as expected.
+* Resolved an issue with text escaping when there are no entries or search results.
+* Hidden columns are now excluded when exporting, printing, or copying table data.
 
 = 3.3.3 on February 29, 2024 =
 
 This release fixes issues with date sorting, search bar operability in multi-View setups, and "Created By" field filtering.
 
 #### Fixed 🐛
-- Incorrect results when sorting by date with client-side processing enabled and field filters disabled.
-- Search bar of a non-DataTables View not working when  placed on the same page with the DataTables View.
-- "Created By" field filtering issue when the field is configured to display values other than the user's ID.
+* Incorrect results when sorting by date with client-side processing enabled and field filters disabled.
+* Search bar of a non-DataTables View not working when  placed on the same page with the DataTables View.
+* "Created By" field filtering issue when the field is configured to display values other than the user's ID.
 
 This release ensures that the "number of entries per page" setting is respected for existing Views prior to updating to version 3.3, and improves the styling of field filters.
 
 #### 🐛 Fixed
-- Number of entries per page setting not being respected for existing Views after updating to version 3.3.
+* Number of entries per page setting not being respected for existing Views after updating to version 3.3.
 
 #### ✨ Improved
-- Styling of field filters.
+* Styling of field filters.
 
 = 3.3.1 on February 16, 2024 =
 
 This release addresses minor issues in client-side processing mode introduced in version 3.3.
 
 #### 🐛 Fixed
-- Field filters now trigger only a single Ajax request when client-side processing is enabled.
-- Disabling DataTables' [search filter](https://docs.gravitykit.com/article/201-how-to-disable-the-datatables-search-filter) no longer disables field filtering if client-side processing is enabled.
+* Field filters now trigger only a single Ajax request when client-side processing is enabled.
+* Disabling DataTables' [search filter](https://docs.gravitykit.com/article/201-how-to-disable-the-datatables-search-filter) no longer disables field filtering if client-side processing is enabled.
 
 = 3.3 on February 14, 2024 =
 
 💌 This lovely release introduces client-side processing for DataTables, offering instant filtering, sorting, and pagination directly in your browser. Enjoy powerful new filtering options and enhanced compatibility with GravityWiz's Populate Anything Add-On.
 
 #### 🚀 Added
-- Support for client-side processing in DataTables, enabling instant filtering, sorting, and pagination without server interaction.
+* Support for client-side processing in DataTables, enabling instant filtering, sorting, and pagination without server interaction.
   - This major update makes working with your data faster and more efficient.
   - [Learn more about the new client-side processing feature](https://www.gravitykit.com/announcing-datatables-3-3/).
-- The ability to configure per-column filtering in the View settings.
-- Support for GravityWiz's Populate Anything Add-On in field filters that use the "Select" input type.
+* The ability to configure per-column filtering in the View settings.
+* Support for GravityWiz's Populate Anything Add-On in field filters that use the "Select" input type.
 
 #### 🐛 Fixed
-- A JavaScript error occurring when attempting to group rows by field values containing certain characters.
-- The appearance of HTML tables nested within View fields.
-- The footer calculation result not being hidden when the associated column was hidden.
+* A JavaScript error occurring when attempting to group rows by field values containing certain characters.
+* The appearance of HTML tables nested within View fields.
+* The footer calculation result not being hidden when the associated column was hidden.
 
 = 3.2 on June 29, 2023 =
 
@@ -485,6 +517,3 @@ __Developer Notes:__
 
 = 1.0.0 on July 24 =
 * Liftoff!
-
-
-= 1717000852-4249 =

@@ -208,17 +208,27 @@ class Elementor_Petro_Slides_Widget extends Widget_Base {
       'icon_align',
       [
         'label' => esc_html__( 'Icon Position', 'gum-elementor-addon' ),
-        'type' => Controls_Manager::SELECT,
-        'default' => 'left',
+        'type' => Controls_Manager::CHOOSE,
         'options' => [
-          'left' => esc_html__( 'Before', 'gum-elementor-addon' ),
-          'right' => esc_html__( 'After', 'gum-elementor-addon' ),
+          'row' => [
+            'title' => esc_html__( 'Left', 'gum-elementor-addon' ),
+            'icon' => 'eicon-h-align-left',
+          ],
+          'row-reverse' => [
+            'title' => esc_html__( 'Right', 'gum-elementor-addon' ),
+            'icon' => 'eicon-h-align-right',
+          ],
         ],
         'condition' => [
           'selected_icon[value]!' => '',
         ],
+        'default' => 'row',
+        'selectors' => [
+            '{{WRAPPER}} {{CURRENT_ITEM}} .primary-button .elementor-button-content-wrapper' => 'flex-direction: {{VALUE}};'
+        ],
       ]
     );
+
 
     $repeater->add_control(
       'button_link',
@@ -268,17 +278,27 @@ class Elementor_Petro_Slides_Widget extends Widget_Base {
       'icon_r_align',
       [
         'label' => esc_html__( 'Icon Position', 'gum-elementor-addon' ),
-        'type' => Controls_Manager::SELECT,
-        'default' => 'left',
+        'type' => Controls_Manager::CHOOSE,
         'options' => [
-          'left' => esc_html__( 'Before', 'gum-elementor-addon' ),
-          'right' => esc_html__( 'After', 'gum-elementor-addon' ),
+          'row' => [
+            'title' => esc_html__( 'Left', 'gum-elementor-addon' ),
+            'icon' => 'eicon-h-align-left',
+          ],
+          'row-reverse' => [
+            'title' => esc_html__( 'Right', 'gum-elementor-addon' ),
+            'icon' => 'eicon-h-align-right',
+          ],
         ],
         'condition' => [
           'selected_r_icon[value]!' => '',
         ],
+        'default' => 'row',
+        'selectors' => [
+            '{{WRAPPER}} {{CURRENT_ITEM}} .secondary-button .elementor-button-content-wrapper' => 'flex-direction: {{VALUE}};'
+        ],
       ]
     );
+
 
     $repeater->add_control(
       'button_r_link',
@@ -1126,6 +1146,7 @@ class Elementor_Petro_Slides_Widget extends Widget_Base {
           '{{WRAPPER}} .elementor-button.primary-button .elementor-align-icon-right' => 'margin-left: {{SIZE}}{{UNIT}};',
           '{{WRAPPER}} .elementor-button.primary-button .elementor-align-icon-left' => 'margin-right: {{SIZE}}{{UNIT}};',
           '{{WRAPPER}} .elementor-button.primary-button .elementor-button-text' => '-webkit-box-flex: 0;flex-grow: 0;',
+          '{{WRAPPER}} .elementor-button.primary-button .elementor-button-content-wrapper' => 'gap: {{SIZE}}{{UNIT}};',
         ],
       ]
     );
@@ -1190,6 +1211,7 @@ class Elementor_Petro_Slides_Widget extends Widget_Base {
           '{{WRAPPER}} .elementor-button.secondary-button .elementor-align-icon-right' => 'margin-left: {{SIZE}}{{UNIT}};',
           '{{WRAPPER}} .elementor-button.secondary-button .elementor-align-icon-left' => 'margin-right: {{SIZE}}{{UNIT}};',
           '{{WRAPPER}} .elementor-button.secondary-button .elementor-button-text' => '-webkit-box-flex: 0;flex-grow: 0;',
+          '{{WRAPPER}} .elementor-button.secondary-button .elementor-button-content-wrapper' => 'gap: {{SIZE}}{{UNIT}};',
         ],
       ]
     );
@@ -1857,7 +1879,7 @@ class Elementor_Petro_Slides_Widget extends Widget_Base {
         $this->add_inline_editing_attributes( $slide_title_key );
         $this->add_render_attribute( $slide_title_key , 'class', 'caption-heading' );
 
-        $title = sprintf('<h2 %1$s>%2$s</h2>', $this->get_render_attribute_string( $slide_title_key ), esc_html($title));
+        $title = sprintf('<h2 %1$s>%2$s</h2>', $this->get_render_attribute_string( $slide_title_key ), esc_html($title) );
 
       }
 
@@ -2055,7 +2077,7 @@ class Elementor_Petro_Slides_Widget extends Widget_Base {
       'icon-r-align' => [
         'class' => [
           'elementor-button-icon',
-          'elementor-align-icon-' . $slide['icon_r_align'],
+          'elementor-align-icon-' . sanitize_html_class($slide['icon_r_align']),
         ],
       ],
     ] );
@@ -2070,7 +2092,7 @@ class Elementor_Petro_Slides_Widget extends Widget_Base {
         <?php if ( $is_new || $migrated ) :
           Icons_Manager::render_icon( $slide['selected_r_icon'], [ 'aria-hidden' => 'true' ] );
         else : ?>
-          <i class="<?php echo esc_attr( $slide['r_icon'] ); ?>" aria-hidden="true"></i>
+          <i class="<?php esc_attr_e( $slide['r_icon'] ); ?>" aria-hidden="true"></i>
         <?php endif; ?>
       </span>
       <?php endif; ?>

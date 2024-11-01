@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by gravityview on 14-August-2024 using {@see https://github.com/BrianHenryIE/strauss}.
+ * Modified by gravityview on 15-October-2024 using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\GravityView\Foundation\Licenses;
@@ -10,6 +10,7 @@ namespace GravityKit\GravityView\Foundation\Licenses;
 use GravityKit\GravityView\Foundation\Logger\Framework as LoggerFramework;
 use GravityKit\GravityView\Foundation\Helpers\Arr;
 use Exception;
+use ReflectionClass;
 
 class EDD {
 	/**
@@ -17,9 +18,9 @@ class EDD {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @var EDD
+	 * @var EDD|null
 	 */
-	private static $_instance;
+	private static $_instance = null;
 
 	/**
 	 * Returns class instance.
@@ -46,7 +47,7 @@ class EDD {
 	public function init() {
 		add_filter( 'pre_set_site_transient_update_plugins', [ $this, 'check_for_product_updates' ], 999 );
 		add_filter( 'plugins_api', [ $this, 'display_product_information' ], 999, 3 );
-		add_filter( 'admin_init', [ $this, 'disable_legacy_edd_updater' ], 999 );
+		add_action( 'admin_init', [ $this, 'disable_legacy_edd_updater' ], 999 );
 	}
 
 	/**
@@ -62,7 +63,15 @@ class EDD {
 		$filters_to_remove = [ 'pre_set_site_transient_update_plugins', 'plugins_api', 'after_plugin_row', 'admin_init' ];
 
 		$legacy_edd_check = function () {
-			return isset( $this->api_url ) && preg_match( '/gravity(view|kit)\.com?/', $this->api_url );
+			if ( ! property_exists( $this, 'api_url' ) ) {
+				return false;
+			}
+
+			$api_url_property = ( new ReflectionClass( $this ) )->getProperty( 'api_url' );
+
+			$api_url = $api_url_property->isStatic() ? $this::$api_url : $this->api_url;
+
+			return preg_match( '/gravity(view|kit)\.com?/', $api_url );
 		};
 
 		$remove_filter = function ( $filter ) use ( $wp_filter, $legacy_edd_check ) {
@@ -91,7 +100,7 @@ class EDD {
 		foreach ( array_keys( $wp_filter ) as $filter ) {
 			foreach ( $filters_to_remove as $filter_to_remove ) {
 				// Older EDD_SL_Plugin_Updater class uses 'after_plugin_row_{plugin_file}' filter, so we can't just check for 'after_plugin_row'.
-				if ( strpos( $filter, $filter_to_remove ) !== false ) {
+				if ( strpos( (string) $filter, $filter_to_remove ) !== false ) {
 					$remove_filter( $filter );
 				}
 			}
@@ -142,6 +151,7 @@ class EDD {
 			$wp_product_data = $this->format_product_data( $product );
 
 			if ( $product['update_available'] ) {
+				// @phpstan-ignore-next-line
 				$transient_data->response[ $product_path ] = $wp_product_data;
 			}
 		}
@@ -230,7 +240,7 @@ class EDD {
 			return $result;
 		}
 
-		if ( 'plugin_information' !== $action ) {
+		if ( 'plugin_information' !== $action || empty( $args->slug ) ) {
 			return $result;
 		}
 
