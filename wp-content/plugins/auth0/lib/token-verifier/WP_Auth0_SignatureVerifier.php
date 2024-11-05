@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Contains Trait WP_Auth0_SignatureVerifier.
  *
@@ -15,7 +16,8 @@ use Lcobucci\JWT\Token;
  *
  * @codeCoverageIgnore - Classes are adapted from the PHP SDK and tested there.
  */
-abstract class WP_Auth0_SignatureVerifier {
+abstract class WP_Auth0_SignatureVerifier
+{
 
 
 	/**
@@ -39,14 +41,15 @@ abstract class WP_Auth0_SignatureVerifier {
 	 *
 	 * @return boolean
 	 */
-	abstract protected function checkSignature( Token $parsedToken) : bool;
+	abstract protected function checkSignature(Token $parsedToken): bool;
 
 	/**
 	 * SignatureVerifier constructor.
 	 *
 	 * @param string $alg
 	 */
-	public function __construct( string $alg ) {
+	public function __construct(string $alg)
+	{
 		$this->alg    = $alg;
 		$this->parser = new Parser();
 	}
@@ -62,26 +65,27 @@ abstract class WP_Auth0_SignatureVerifier {
 	 * @throws WP_Auth0_InvalidIdTokenException If token algorithm does not match the validator.
 	 * @throws WP_Auth0_InvalidIdTokenException If token algorithm signature cannot be validated.
 	 */
-	final public function verifyAndDecode( string $token ) : Token {
+	final public function verifyAndDecode(string $token): Token
+	{
 		try {
-			$parsedToken = $this->parser->parse( $token );
-		} catch ( InvalidArgumentException $e ) {
-			throw new WP_Auth0_InvalidIdTokenException( 'ID token could not be decoded' );
+			$parsedToken = $this->parser->parse($token);
+		} catch (InvalidArgumentException $e) {
+			throw new WP_Auth0_InvalidIdTokenException('ID token could not be decoded');
 		}
 
-		$tokenAlg = $parsedToken->getHeader( 'alg', false );
-		if ( $tokenAlg !== $this->alg ) {
+		$tokenAlg = $parsedToken->getHeader('alg', false);
+		if ($tokenAlg !== $this->alg) {
 			throw new WP_Auth0_InvalidIdTokenException(
-				sprintf(
+				esc_html(sprintf(
 					'Signature algorithm of "%s" is not supported. Expected the ID token to be signed with "%s".',
 					$tokenAlg,
 					$this->alg
-				)
+				))
 			);
 		}
 
-		if ( ! $this->checkSignature( $parsedToken ) ) {
-			throw new WP_Auth0_InvalidIdTokenException( 'Invalid ID token signature' );
+		if (!$this->checkSignature($parsedToken)) {
+			throw new WP_Auth0_InvalidIdTokenException('Invalid ID token signature');
 		}
 
 		return $parsedToken;

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Contains the WP_Auth0_ErrorLog class.
  *
@@ -10,7 +11,8 @@
  * Class WP_Auth0_ErrorLog.
  * Handles error log CRUD actions and hooks.
  */
-class WP_Auth0_ErrorLog {
+class WP_Auth0_ErrorLog
+{
 
 	/**
 	 * Option name used to store the error log.
@@ -32,7 +34,8 @@ class WP_Auth0_ErrorLog {
 	 *
 	 * @see WP_Auth0_Settings_Section::init_menu()
 	 */
-	public function render_settings_page() {
+	public function render_settings_page()
+	{
 		include WPA0_PLUGIN_DIR . 'templates/a0-error-log.php';
 	}
 
@@ -41,10 +44,11 @@ class WP_Auth0_ErrorLog {
 	 *
 	 * @return array
 	 */
-	public function get() {
-		$log = get_option( self::OPTION_NAME );
+	public function get()
+	{
+		$log = get_option(self::OPTION_NAME);
 
-		if ( empty( $log ) ) {
+		if (empty($log)) {
 			$log = [];
 		}
 
@@ -58,31 +62,32 @@ class WP_Auth0_ErrorLog {
 	 *
 	 * @return bool
 	 */
-	public function add( array $new_entry ) {
+	public function add(array $new_entry)
+	{
 		$log = $this->get();
 
 		// Prepare the last error log entry to compare with the new one.
 		$last_entry = null;
-		if ( ! empty( $log ) ) {
+		if (!empty($log)) {
 			// Get the last error logged.
 			$last_entry = $log[0];
 
 			// Remove date and count fields so it can be compared with the new error.
-			$last_entry = array_diff_key( $last_entry, array_flip( [ 'date', 'count' ] ) );
+			$last_entry = array_diff_key($last_entry, array_flip(['date', 'count']));
 		}
 
-		if ( serialize( $last_entry ) === serialize( $new_entry ) ) {
+		if (serialize($last_entry) === serialize($new_entry)) {
 			// New error and last error are the same so set the current time and increment the counter.
 			$log[0]['date']  = time();
-			$log[0]['count'] = isset( $log[0]['count'] ) ? intval( $log[0]['count'] ) + 1 : 2;
+			$log[0]['count'] = isset($log[0]['count']) ? intval($log[0]['count']) + 1 : 2;
 		} else {
 			// New error is not a repeat to set required fields.
 			$new_entry['date']  = time();
 			$new_entry['count'] = 1;
-			array_unshift( $log, $new_entry );
+			array_unshift($log, $new_entry);
 		}
 
-		return $this->update( $log );
+		return $this->update($log);
 	}
 
 	/**
@@ -90,8 +95,9 @@ class WP_Auth0_ErrorLog {
 	 *
 	 * @return bool
 	 */
-	public function clear() {
-		return update_option( self::OPTION_NAME, [] );
+	public function clear()
+	{
+		return update_option(self::OPTION_NAME, []);
 	}
 
 	/**
@@ -99,8 +105,9 @@ class WP_Auth0_ErrorLog {
 	 *
 	 * @return bool
 	 */
-	public function delete() {
-		return delete_option( self::OPTION_NAME );
+	public function delete()
+	{
+		return delete_option(self::OPTION_NAME);
 	}
 
 	/**
@@ -110,16 +117,18 @@ class WP_Auth0_ErrorLog {
 	 *
 	 * @return bool
 	 */
-	private function update( array $log ) {
-		if ( count( $log ) > self::ERROR_LOG_ENTRY_LIMIT ) {
-			array_pop( $log );
+	private function update(array $log)
+	{
+		if (count($log) > self::ERROR_LOG_ENTRY_LIMIT) {
+			array_pop($log);
 		}
-		return update_option( self::OPTION_NAME, $log );
+		return update_option(self::OPTION_NAME, $log);
 	}
 
-	public static function check_is_disabled() {
-		$flag = wp_auth0_get_option( 'disable_logging' );
-		if ( is_bool( $flag ) ) {
+	public static function check_is_disabled()
+	{
+		$flag = wp_auth0_get_option('disable_logging');
+		if (is_bool($flag)) {
 			return $flag;
 		}
 		return false;
@@ -133,36 +142,37 @@ class WP_Auth0_ErrorLog {
 	 *
 	 * @return bool
 	 */
-	public static function insert_error( $section, $error ) {
+	public static function insert_error($section, $error)
+	{
 
-		if ( self::check_is_disabled() ) {
+		if (self::check_is_disabled()) {
 			return false;
 		}
 
 		$new_entry = [
 			'section' => $section,
 			'code'    => 'unknown_code',
-			'message' => __( 'Unknown error message', 'wp-auth0' ),
+			'message' => esc_html__('Unknown error message', 'wp-auth0'),
 		];
 
-		if ( $error instanceof WP_Error ) {
+		if ($error instanceof WP_Error) {
 			$new_entry['code']    = $error->get_error_code();
 			$new_entry['message'] = $error->get_error_message();
-		} elseif ( $error instanceof Exception ) {
+		} elseif ($error instanceof Exception) {
 			$new_entry['code']    = $error->getCode();
 			$new_entry['message'] = $error->getMessage();
-		} elseif ( is_array( $error ) && ! empty( $error['response'] ) ) {
-			if ( ! empty( $error['response']['code'] ) ) {
-				$new_entry['code'] = sanitize_text_field( $error['response']['code'] );
+		} elseif (is_array($error) && !empty($error['response'])) {
+			if (!empty($error['response']['code'])) {
+				$new_entry['code'] = sanitize_text_field($error['response']['code']);
 			}
-			if ( ! empty( $error['response']['message'] ) ) {
-				$new_entry['message'] = sanitize_text_field( $error['response']['message'] );
+			if (!empty($error['response']['message'])) {
+				$new_entry['message'] = sanitize_text_field($error['response']['message']);
 			}
 		} else {
-			$new_entry['message'] = is_object( $error ) || is_array( $error ) ? serialize( $error ) : $error;
+			$new_entry['message'] = is_object($error) || is_array($error) ? serialize($error) : $error;
 		}
 
-		do_action( 'auth0_insert_error', $new_entry, $error, $section );
-		return ( new self() )->add( $new_entry );
+		do_action('auth0_insert_error', $new_entry, $error, $section);
+		return (new self())->add($new_entry);
 	}
 }

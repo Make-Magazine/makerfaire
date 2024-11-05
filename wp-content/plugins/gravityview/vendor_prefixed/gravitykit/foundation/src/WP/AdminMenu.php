@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by gravityview on 15-October-2024 using {@see https://github.com/BrianHenryIE/strauss}.
+ * Modified by gravityview on 04-November-2024 using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\GravityView\Foundation\WP;
@@ -75,6 +75,36 @@ class AdminMenu {
 	}
 
 	/**
+	 * Determines whether the GravityKit menu should be initialized.
+	 *
+	 * @since 1.2.20
+	 *
+	 * @return bool
+	 */
+	public static function should_initialize() {
+		$should_initialize = false;
+
+		foreach (Core::get_instance()->get_registered_plugins() as $plugin) {
+			if ( ! ( $plugin['no_admin_menu'] ?? false ) ) {
+				$should_initialize = true;
+
+				break;
+			}
+		}
+
+		/**
+		 * Controls whether the GravityKit top-level menu should be initialized.
+		 *
+		 * @filter `gk/foundation/admin-menu/initialize`
+		 *
+		 * @since  1.2.20
+		 *
+		 * @param bool $should_initialize
+		 */
+		return apply_filters( 'gk/foundation/admin-menu/initialize', $should_initialize );
+	}
+
+	/**
 	 * Configures GravityKit top-level menu and submenu items in WP admin.
 	 *
 	 * @since 1.0.0
@@ -86,6 +116,10 @@ class AdminMenu {
 	 */
 	public function add_admin_menu() {
 		global $menu, $submenu;
+
+		if ( ! self::should_initialize() ) {
+			return;
+		}
 
 		// Make sure we're not adding a duplicate top-level menu.
 		if ( strpos( wp_json_encode( $menu ?: [] ) ?: '', self::WP_ADMIN_MENU_SLUG ) !== false ) {

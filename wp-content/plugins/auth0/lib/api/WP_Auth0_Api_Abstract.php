@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Contains WP_Auth0_Api_Abstract.
  *
@@ -10,7 +11,8 @@
 /**
  * Class WP_Auth0_Api_Abstract for API calls.
  */
-abstract class WP_Auth0_Api_Abstract {
+abstract class WP_Auth0_Api_Abstract
+{
 
 	/**
 	 * WP cache key.
@@ -109,14 +111,15 @@ abstract class WP_Auth0_Api_Abstract {
 	 * @param WP_Auth0_Options $options - WP_Auth0_Options instance.
 	 * @param string|null      $domain - Domain to use.
 	 */
-	public function __construct( WP_Auth0_Options $options, $domain = null ) {
+	public function __construct(WP_Auth0_Options $options, $domain = null)
+	{
 		$this->options = $options;
 
 		// Required settings in the plugin.
-		$this->domain        = $domain ?: $this->options->get( 'domain' );
-		$this->client_id     = $this->options->get( 'client_id' );
-		$this->client_secret = $this->options->get( 'client_secret' );
-		$this->organization  = $this->options->get( 'organization' );
+		$this->domain        = $domain ?: $this->options->get('domain');
+		$this->client_id     = $this->options->get('client_id');
+		$this->client_secret = $this->options->get('client_secret');
+		$this->organization  = $this->options->get('organization');
 
 		// Headers sent with every request.
 		$this->headers = static::get_info_headers();
@@ -127,16 +130,17 @@ abstract class WP_Auth0_Api_Abstract {
 	 *
 	 * @return array
 	 */
-	public static function get_info_headers() {
+	public static function get_info_headers()
+	{
 		$header_value = [
 			'name'    => 'wp-auth0',
 			'version' => WPA0_VERSION,
 			'env'     => [
 				'php' => phpversion(),
-				'wp'  => get_bloginfo( 'version' ),
+				'wp'  => get_bloginfo('version'),
 			],
 		];
-		return [ 'Auth0-Client' => base64_encode( wp_json_encode( $header_value ) ) ];
+		return ['Auth0-Client' => base64_encode(wp_json_encode($header_value))];
 	}
 
 	/**
@@ -153,7 +157,7 @@ abstract class WP_Auth0_Api_Abstract {
 	 *
 	 * @return mixed
 	 */
-	abstract protected function handle_response( $method );
+	abstract protected function handle_response($method);
 
 	/**
 	 * Set the remote path to call.
@@ -162,8 +166,9 @@ abstract class WP_Auth0_Api_Abstract {
 	 *
 	 * @return $this
 	 */
-	protected function set_path( $path ) {
-		$this->remote_path = $this->clean_path( $path );
+	protected function set_path($path)
+	{
+		$this->remote_path = $this->clean_path($path);
 		return $this;
 	}
 
@@ -174,9 +179,10 @@ abstract class WP_Auth0_Api_Abstract {
 	 *
 	 * @return bool
 	 */
-	protected function set_bearer( $scope ) {
+	protected function set_bearer($scope)
+	{
 
-		if ( ! $this->api_client_creds instanceof WP_Auth0_Api_Client_Credentials ) {
+		if (!$this->api_client_creds instanceof WP_Auth0_Api_Client_Credentials) {
 			return false;
 		}
 
@@ -184,18 +190,18 @@ abstract class WP_Auth0_Api_Abstract {
 		$api_token = $cc_api::get_stored_token();
 
 		// No stored API token so need to get a new one.
-		if ( ! $api_token ) {
+		if (!$api_token) {
 			$api_token = $this->api_client_creds->call();
 		}
 
 		// No token to use, error recorded in previous steps.
-		if ( ! $api_token ) {
+		if (!$api_token) {
 			return false;
 		}
 
-		if ( $cc_api::check_stored_scope( $scope ) ) {
+		if ($cc_api::check_stored_scope($scope)) {
 			// Scope exists, add to the header and cache.
-			$this->add_header( 'Authorization', 'Bearer ' . $api_token );
+			$this->add_header('Authorization', 'Bearer ' . $api_token);
 			return true;
 		}
 
@@ -205,7 +211,7 @@ abstract class WP_Auth0_Api_Abstract {
 			new WP_Error(
 				'insufficient_scope',
 				// translators: The $scope var here is a machine term and should not be translated.
-				sprintf( __( 'API token does not include the scope %s.', 'wp-auth0' ), $scope )
+				sprintf(esc_html__('API token does not include the scope %s.', 'wp-auth0'), $scope)
 			)
 		);
 
@@ -219,7 +225,8 @@ abstract class WP_Auth0_Api_Abstract {
 	 *
 	 * @return $this
 	 */
-	protected function send_audience() {
+	protected function send_audience()
+	{
 		$this->body['audience'] = 'https://' . $this->domain . '/api/v2/';
 		return $this;
 	}
@@ -229,7 +236,8 @@ abstract class WP_Auth0_Api_Abstract {
 	 *
 	 * @return $this
 	 */
-	protected function send_client_id() {
+	protected function send_client_id()
+	{
 		$this->body['client_id'] = $this->client_id;
 		return $this;
 	}
@@ -239,7 +247,8 @@ abstract class WP_Auth0_Api_Abstract {
 	 *
 	 * @return $this
 	 */
-	protected function send_client_secret() {
+	protected function send_client_secret()
+	{
 		$this->body['client_secret'] = $this->client_secret;
 		return $this;
 	}
@@ -249,7 +258,8 @@ abstract class WP_Auth0_Api_Abstract {
 	 *
 	 * @return $this
 	 */
-	protected function send_organization() {
+	protected function send_organization()
+	{
 		$this->body['organization'] = $this->organization;
 		return $this;
 	}
@@ -262,8 +272,9 @@ abstract class WP_Auth0_Api_Abstract {
 	 *
 	 * @return $this
 	 */
-	protected function add_header( $header, $value ) {
-		$this->headers[ $header ] = $value;
+	protected function add_header($header, $value)
+	{
+		$this->headers[$header] = $value;
 		return $this;
 	}
 
@@ -275,8 +286,9 @@ abstract class WP_Auth0_Api_Abstract {
 	 *
 	 * @return $this
 	 */
-	protected function add_body( $key, $value ) {
-		$this->body[ $key ] = $value;
+	protected function add_body($key, $value)
+	{
+		$this->body[$key] = $value;
 		return $this;
 	}
 
@@ -285,7 +297,8 @@ abstract class WP_Auth0_Api_Abstract {
 	 *
 	 * @return string
 	 */
-	protected function build_url() {
+	protected function build_url()
+	{
 		return 'https://' . $this->domain . '/' . $this->remote_path;
 	}
 
@@ -294,8 +307,9 @@ abstract class WP_Auth0_Api_Abstract {
 	 *
 	 * @return $this
 	 */
-	protected function get() {
-		return $this->request( 'GET' );
+	protected function get()
+	{
+		return $this->request('GET');
 	}
 
 	/**
@@ -303,8 +317,9 @@ abstract class WP_Auth0_Api_Abstract {
 	 *
 	 * @return $this
 	 */
-	protected function post() {
-		return $this->add_header( 'Content-Type', 'application/json' )->request( 'POST' );
+	protected function post()
+	{
+		return $this->add_header('Content-Type', 'application/json')->request('POST');
 	}
 
 	/**
@@ -312,8 +327,9 @@ abstract class WP_Auth0_Api_Abstract {
 	 *
 	 * @return $this
 	 */
-	protected function delete() {
-		return $this->request( 'DELETE' );
+	protected function delete()
+	{
+		return $this->request('DELETE');
 	}
 
 	/**
@@ -321,8 +337,9 @@ abstract class WP_Auth0_Api_Abstract {
 	 *
 	 * @return $this
 	 */
-	protected function patch() {
-		return $this->add_header( 'Content-Type', 'application/json' )->request( 'PATCH' );
+	protected function patch()
+	{
+		return $this->add_header('Content-Type', 'application/json')->request('PATCH');
 	}
 
 	/**
@@ -333,9 +350,10 @@ abstract class WP_Auth0_Api_Abstract {
 	 *
 	 * @return bool - True if there was a WP_Error, false if not.
 	 */
-	protected function handle_wp_error( $method ) {
-		if ( $this->response instanceof WP_Error ) {
-			WP_Auth0_ErrorLog::insert_error( $method, $this->response );
+	protected function handle_wp_error($method)
+	{
+		if ($this->response instanceof WP_Error) {
+			WP_Auth0_ErrorLog::insert_error($method, $this->response);
 			return true;
 		}
 		return false;
@@ -350,36 +368,37 @@ abstract class WP_Auth0_Api_Abstract {
 	 *
 	 * @return bool - True if there was an error, false if not.
 	 */
-	protected function handle_failed_response( $method, $success_code = 200 ) {
+	protected function handle_failed_response($method, $success_code = 200)
+	{
 
-		if ( $this->response_code === $success_code ) {
+		if ($this->response_code === $success_code) {
 			return false;
 		}
 
-		$response_body = json_decode( $this->response_body, true );
-		$message       = __( 'Error returned', 'wp-auth0' );
+		$response_body = json_decode($this->response_body, true);
+		$message       = esc_html__('Error returned', 'wp-auth0');
 
-		if ( isset( $response_body['statusCode'] ) ) {
+		if (isset($response_body['statusCode'])) {
 
-			if ( isset( $response_body['message'] ) ) {
-				$message .= ' - ' . sanitize_text_field( $response_body['message'] );
+			if (isset($response_body['message'])) {
+				$message .= ' - ' . sanitize_text_field($response_body['message']);
 			}
-			if ( isset( $response_body['errorCode'] ) ) {
-				$message .= ' [' . sanitize_text_field( $response_body['errorCode'] ) . ']';
+			if (isset($response_body['errorCode'])) {
+				$message .= ' [' . sanitize_text_field($response_body['errorCode']) . ']';
 			}
-			WP_Auth0_ErrorLog::insert_error( $method, new WP_Error( $response_body['statusCode'], $message ) );
+			WP_Auth0_ErrorLog::insert_error($method, new WP_Error($response_body['statusCode'], $message));
 			return true;
 		}
 
-		if ( isset( $response_body['error'] ) ) {
-			if ( isset( $response_body['error_description'] ) ) {
-				$message .= ' - ' . sanitize_text_field( $response_body['error_description'] );
+		if (isset($response_body['error'])) {
+			if (isset($response_body['error_description'])) {
+				$message .= ' - ' . sanitize_text_field($response_body['error_description']);
 			}
-			WP_Auth0_ErrorLog::insert_error( $method, new WP_Error( $response_body['error'], $message ) );
+			WP_Auth0_ErrorLog::insert_error($method, new WP_Error($response_body['error'], $message));
 			return true;
 		}
 
-		WP_Auth0_ErrorLog::insert_error( $method, $this->response_body );
+		WP_Auth0_ErrorLog::insert_error($method, $this->response_body);
 		return true;
 	}
 
@@ -392,17 +411,18 @@ abstract class WP_Auth0_Api_Abstract {
 	 *
 	 * @codeCoverageIgnore - Tested by individual HTTP methods in TestApiAbstract::testHttpRequests()
 	 */
-	private function request( $method ) {
+	private function request($method)
+	{
 		$remote_url = $this->build_url();
 		$http_args  = [
 			'headers' => $this->headers,
 			'method'  => $method,
-			'body'    => ! empty( $this->body ) ? json_encode( $this->body ) : null,
+			'body'    => !empty($this->body) ? json_encode($this->body) : null,
 		];
 
-		$this->response      = wp_remote_request( $remote_url, $http_args );
-		$this->response_code = (int) wp_remote_retrieve_response_code( $this->response );
-		$this->response_body = wp_remote_retrieve_body( $this->response );
+		$this->response      = wp_remote_request($remote_url, $http_args);
+		$this->response_code = (int) wp_remote_retrieve_response_code($this->response);
+		$this->response_body = wp_remote_retrieve_body($this->response);
 
 		return $this;
 	}
@@ -416,9 +436,10 @@ abstract class WP_Auth0_Api_Abstract {
 	 *
 	 * @codeCoverageIgnore
 	 */
-	private function clean_path( $path ) {
-		if ( ! empty( $path[0] ) && '/' === $path[0] ) {
-			$path = substr( $path, 1 );
+	private function clean_path($path)
+	{
+		if (!empty($path[0]) && '/' === $path[0]) {
+			$path = substr($path, 1);
 		}
 		return $path;
 	}

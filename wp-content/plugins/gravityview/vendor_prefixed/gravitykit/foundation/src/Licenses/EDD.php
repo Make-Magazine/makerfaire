@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by gravityview on 15-October-2024 using {@see https://github.com/BrianHenryIE/strauss}.
+ * Modified by gravityview on 04-November-2024 using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\GravityView\Foundation\Licenses;
@@ -63,12 +63,20 @@ class EDD {
 		$filters_to_remove = [ 'pre_set_site_transient_update_plugins', 'plugins_api', 'after_plugin_row', 'admin_init' ];
 
 		$legacy_edd_check = function () {
-			if ( ! property_exists( $this, 'api_url' ) ) {
+			try {
+				$reflection = new ReflectionClass( get_class( $this ) );
+
+				if ( ! $reflection->hasProperty( 'api_url' ) ) {
+					return false;
+				}
+
+				$api_url_property = $reflection->getProperty( 'api_url' );
+			} catch ( Exception $e ) {
 				return false;
 			}
 
-			$api_url_property = ( new ReflectionClass( $this ) )->getProperty( 'api_url' );
-
+			// $this is not an instance of EDD, but a bound class (see $remove_filter below).
+			// @phpstan-ignore-next-line
 			$api_url = $api_url_property->isStatic() ? $this::$api_url : $this->api_url;
 
 			return preg_match( '/gravity(view|kit)\.com?/', $api_url );
@@ -247,7 +255,7 @@ class EDD {
 		$product = Arr::first(
 			$products,
 			function ( $product ) use ( $args ) {
-				return $product['slug'] === $args->slug;
+				return ! ( $product['third-party'] ?? '' ) && $product['slug'] === $args->slug;
 			}
 		);
 

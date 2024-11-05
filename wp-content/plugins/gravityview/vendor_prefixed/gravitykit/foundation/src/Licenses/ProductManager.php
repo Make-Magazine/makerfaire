@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by gravityview on 15-October-2024 using {@see https://github.com/BrianHenryIE/strauss}.
+ * Modified by gravityview on 04-November-2024 using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\GravityView\Foundation\Licenses;
@@ -15,6 +15,7 @@ use GravityKit\GravityView\Foundation\Logger\Framework as LoggerFramework;
 use GravityKit\GravityView\Foundation\Encryption\Encryption;
 use GravityKit\GravityView\Foundation\Helpers\Core as CoreHelpers;
 use GravityKit\GravityView\Foundation\Licenses\WP\WPUpgraderSkin;
+use GravityKit\GravityView\Foundation\WP\AdminMenu;
 use Plugin_Upgrader;
 use stdClass;
 
@@ -706,7 +707,9 @@ class ProductManager {
 
 		foreach ( $products as $product ) {
 			$product_id = Arr::get( $product, 'info.id' );
-			$sections   = unserialize( Arr::get( $product, 'readme.sections', '' ) ); // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.serialize_unserialize
+			$sections   = unserialize( Arr::get( $product, 'readme.sections', [] ) ); // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.serialize_unserialize
+			$banners    = unserialize( Arr::get( $product, 'readme.banners', [] ) ); // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.serialize_unserialize
+			$icons      = unserialize( Arr::get( $product, 'readme.icons', [] ) ); // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.serialize_unserialize
 
 			if ( ! Arr::get( $product, 'info.category_slug' ) || 'bundles' === Arr::get( $product, 'info.category_slug' ) ) {
 				continue;
@@ -735,12 +738,12 @@ class ProductManager {
 					'download_link'      => esc_url_raw( $product['info']['download_link'] ?? $product_schema['download_link'] ),
 					'icon'               => esc_url_raw( $product['info']['icon'] ?? $product_schema['icon'] ),
 					'icons'              => [
-						'1x' => esc_url_raw( $product['icons']['1x'] ?? $product_schema['icons']['1x'] ),
-						'2x' => esc_url_raw( $product['icons']['2x'] ?? $product_schema['icons']['2x'] ),
+						'1x' => esc_url_raw( $icons['1x'] ?? $product_schema['icons']['1x'] ),
+						'2x' => esc_url_raw( $icons['2x'] ?? $product_schema['icons']['2x'] ),
 					],
 					'banners'            => [
-						'low'  => esc_url_raw( $product['banners']['low'] ?? $product_schema['banners']['low'] ),
-						'high' => esc_url_raw( $product['banners']['high'] ?? $product_schema['banners']['low'] ),
+						'low'  => esc_url_raw( $banners['low'] ?? $product_schema['banners']['low'] ),
+						'high' => esc_url_raw( $banners['high'] ?? $product_schema['banners']['low'] ),
 					],
 					'sections'           => [
 						'description' => Arr::get( $sections, 'description', $product_schema['sections']['description'] ),
@@ -943,6 +946,8 @@ class ProductManager {
 
 		$products_history = ProductHistoryManager::get_instance()->get_products_history();
 
+		$products['normalized'] = [];
+
 		// Supplement API response with additional data that can change between or during requests (e.g., activation status, etc.).
 		foreach ( $products['raw'] as $product ) {
 			if ( ! isset( $product['text_domain'] ) ) {
@@ -1090,9 +1095,14 @@ class ProductManager {
 	 * @return void
 	 */
 	public function update_manage_your_kit_submenu_badge_count() {
+		if ( ! AdminMenu::should_initialize() ) {
+			return;
+		}
+
 		if ( ! Framework::get_instance()->current_user_can( 'install_products' ) ) {
 			return;
 		}
+
 		try {
 			$products_data = $this->get_products_data();
 		} catch ( Exception $e ) {

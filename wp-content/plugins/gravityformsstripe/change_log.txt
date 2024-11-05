@@ -1,3 +1,8 @@
+### 5.9.0 | 2024-11-04
+- Updated the Stripe field configuration message to use the alert component for better UI and consistency.
+- Fixed dynamic object properties deprecation notices in PHP 8.2.
+- Fixed an issue where GF_Stripe_API::get_payment_intent can return an unexpected value and cause a fatal error.
+
 ### 5.8.0 | 2024-10-07
 - Added support for the new form validation placement setting.
 - Updated the Stripe field to support the new form theme asset loading system from GFAddOn.

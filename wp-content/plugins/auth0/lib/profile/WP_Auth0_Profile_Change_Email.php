@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Contains class WP_Auth0_Profile_Change_Email.
  *
@@ -10,7 +11,8 @@
 /**
  * Class WP_Auth0_Profile_Change_Email.
  */
-class WP_Auth0_Profile_Change_Email {
+class WP_Auth0_Profile_Change_Email
+{
 
 	/**
 	 * Usermeta key used when updating the email address at Auth0.
@@ -29,7 +31,8 @@ class WP_Auth0_Profile_Change_Email {
 	 *
 	 * @param WP_Auth0_Api_Change_Email $api_change_email - WP_Auth0_Api_Change_Email instance.
 	 */
-	public function __construct( WP_Auth0_Api_Change_Email $api_change_email ) {
+	public function __construct(WP_Auth0_Api_Change_Email $api_change_email)
+	{
 		$this->api_change_email = $api_change_email;
 	}
 
@@ -44,65 +47,66 @@ class WP_Auth0_Profile_Change_Email {
 	 *
 	 * @return boolean
 	 */
-	public function update_email( $wp_user_id, $old_user_data ) {
+	public function update_email($wp_user_id, $old_user_data)
+	{
 
 		// Exit if this is not an Auth0 user.
-		$auth0_id = WP_Auth0_UsersRepo::get_meta( $wp_user_id, 'auth0_id' );
-		if ( empty( $auth0_id ) ) {
+		$auth0_id = WP_Auth0_UsersRepo::get_meta($wp_user_id, 'auth0_id');
+		if (empty($auth0_id)) {
 			return false;
 		}
 
 		// Exit if this is not a database strategy user.
-		if ( 'auth0' !== WP_Auth0_Users::get_strategy( $auth0_id ) ) {
+		if ('auth0' !== WP_Auth0_Users::get_strategy($auth0_id)) {
 			return false;
 		}
 
-		$wp_user = get_user_by( 'id', $wp_user_id );
+		$wp_user = get_user_by('id', $wp_user_id);
 
 		$current_email = $wp_user->data->user_email;
 		$old_email     = $old_user_data->data->user_email;
 
 		// No email address changes, exit.
-		if ( $old_email === $current_email ) {
+		if ($old_email === $current_email) {
 			return false;
 		}
 
 		// Set a flag so the Get User call to other processes know the email is in the process of changing.
-		WP_Auth0_UsersRepo::update_meta( $wp_user_id, self::UPDATED_EMAIL, $current_email );
+		WP_Auth0_UsersRepo::update_meta($wp_user_id, self::UPDATED_EMAIL, $current_email);
 
 		// Attempt to update the email address at Auth0.
 		// For custom database setups, this will trigger a Get User script call from Auth0.
 		// See: WP_Auth0_Routes::migration_ws_get_user()
-		if ( $this->api_change_email->call( $auth0_id, $current_email ) ) {
-			WP_Auth0_UsersRepo::delete_meta( $wp_user_id, self::UPDATED_EMAIL );
+		if ($this->api_change_email->call($auth0_id, $current_email)) {
+			WP_Auth0_UsersRepo::delete_meta($wp_user_id, self::UPDATED_EMAIL);
 			return true;
 		}
 
 		// Past this point, email update with Auth0 has failed so we need to revert changes saved in WP.
 		// Remove the pending email address change flags so it can be tried again.
-		delete_user_meta( $wp_user_id, '_new_email' );
-		WP_Auth0_UsersRepo::delete_meta( $wp_user_id, self::UPDATED_EMAIL );
+		delete_user_meta($wp_user_id, '_new_email');
+		WP_Auth0_UsersRepo::delete_meta($wp_user_id, self::UPDATED_EMAIL);
 
 		// Suppress the notification for email change.
-		add_filter( 'email_change_email', [ $this, 'suppress_email_change_notification' ], 100 );
+		add_filter('email_change_email', [$this, 'suppress_email_change_notification'], 100);
 
 		// Remove this method from profile_update, which is called by wp_update_user, to avoid an infinite loop.
-		remove_action( 'profile_update', 'wp_auth0_profile_change_email', 100 );
+		remove_action('profile_update', 'wp_auth0_profile_change_email', 100);
 
 		// Revert the email address to previous.
 		$wp_user->data->user_email = $old_email;
-		wp_update_user( $wp_user );
+		wp_update_user($wp_user);
 
 		// Revert hooks from above.
-		add_action( 'profile_update', 'wp_auth0_profile_change_email', 100, 2 );
-		remove_filter( 'email_change_email', [ $this, 'suppress_email_change_notification' ], 100 );
+		add_action('profile_update', 'wp_auth0_profile_change_email', 100, 2);
+		remove_filter('email_change_email', [$this, 'suppress_email_change_notification'], 100);
 
 		// Can't set a custom message here so redirect with an error for WP to pick up.
-		if ( in_array( $GLOBALS['pagenow'], [ 'user-edit.php', 'profile.php' ] ) ) {
-			$redirect_url = admin_url( $GLOBALS['pagenow'] );
-			$redirect_url = add_query_arg( 'user_id', $wp_user_id, $redirect_url );
-			$redirect_url = add_query_arg( 'error', 'new-email', $redirect_url );
-			wp_safe_redirect( $redirect_url );
+		if (in_array($GLOBALS['pagenow'], ['user-edit.php', 'profile.php'])) {
+			$redirect_url = admin_url($GLOBALS['pagenow']);
+			$redirect_url = add_query_arg('user_id', $wp_user_id, $redirect_url);
+			$redirect_url = add_query_arg('error', 'new-email', $redirect_url);
+			wp_safe_redirect($redirect_url);
 			exit;
 		}
 
@@ -118,10 +122,11 @@ class WP_Auth0_Profile_Change_Email {
 	 *
 	 * @see wp_update_user()
 	 */
-	public function suppress_email_change_notification( array $email ) {
+	public function suppress_email_change_notification(array $email)
+	{
 		$email['to']      = null;
 		$email['message'] = null;
-		$email['subject'] = __( 'Email suppressed - Auth0 email change failed.', 'wp-auth0' );
+		$email['subject'] = esc_html__('Email suppressed - Auth0 email change failed.', 'wp-auth0');
 		return $email;
 	}
 }

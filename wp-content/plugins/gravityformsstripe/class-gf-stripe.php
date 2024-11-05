@@ -503,7 +503,6 @@ class GFStripe extends GFPaymentAddOn {
 				'version' => $version,
 				'enqueue' => array(
 					array( 'admin_page'  => array( 'form_editor' ) ),
-					array( $this, 'frontend_style_callback' ),
 				),
 			);
 			$styles[] = array(
@@ -3654,18 +3653,18 @@ class GFStripe extends GFPaymentAddOn {
 			$stripe_response = $this->api->get_payment_intent( $intent_id );
 		} else {
 			$stripe_response = $this->get_stripe_js_response();
+			if ( ! $stripe_response ) {
+				$stripe_response = new WP_Error( 'get_stripe_js_response', 'get_stripe_js_response() = null' );
+			}
 		}
 
-		if ( ! $stripe_response ) {
-			$this->log_error( __METHOD__ . '(): Stripe.js response is empty.' );
+		if ( is_wp_error( $stripe_response ) ) {
+			$this->log_error( __METHOD__ . '(): Could not retrieve payment intent.' );
 
 			return $this->authorization_error( esc_html__( 'Your payment attempt has failed. Please enter your card details and try again.', 'gravityformsstripe' ) );
 		}
 
-		if (
-				! is_wp_error( $stripe_response )
-				&& ( $payment_element_enabled || $this->is_payment_intent( $stripe_response->id ) )
-		) {
+		if ( $payment_element_enabled || $this->is_payment_intent( $stripe_response->id ) ) {
 			$result = $this->api->get_payment_intent( $stripe_response->id );
 			if ( ! is_wp_error( $result ) ) {
 				$currency        = rgar( $entry, 'currency' );
@@ -4406,17 +4405,21 @@ class GFStripe extends GFPaymentAddOn {
 			$response  = $this->api->get_payment_intent( $intent_id );
 		} else {
 			$response = $this->get_stripe_js_response();
+			if ( ! $response ) {
+				$response = new WP_Error( 'get_stripe_js_response', 'get_stripe_js_response() = null' );
+			}
+		}
+
+		if ( is_wp_error( $response ) ) {
+			$this->log_error( __METHOD__ . '(): There is no Stripe response from which to get a payment intent.' );
+
+			return array(
+				'is_success'    => false,
+				'error_message' => esc_html__( 'Cannot get payment intent.', 'gravityformsstripe' ),
+			);
 		}
 
 		if ( $payment_element_enabled || $this->is_payment_intent( $response->id ) ) {
-			if ( ! $response ) {
-				$this->log_error( __METHOD__ . '(): There is no Stripe response from which to get a payment intent.' );
-
-				return array(
-					'is_success'    => false,
-					'error_message' => esc_html__( 'Cannot get payment intent.', 'gravityformsstripe' ),
-				);
-			}
 			$intent = $this->api->get_payment_intent( $response->id );
 
 			if ( is_wp_error( $intent ) ) {
@@ -8072,7 +8075,7 @@ class GFStripe extends GFPaymentAddOn {
 			$payment = $this->api->get_charge( $transaction_id );
 		}
 
-		if ( ! $payment ) {
+		if ( is_wp_error( $payment ) ) {
 			wp_send_json_error( array( 'message' => __( 'Unable to find payment on Stripe', 'gravityformsstripe' ) ) );
 		}
 

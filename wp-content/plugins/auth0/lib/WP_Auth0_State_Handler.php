@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Contains WP_Auth0_State_Handler.
  *
@@ -8,7 +9,8 @@
 /**
  * Class WP_Auth0_State_Handler for handling state storage and verification.
  */
-final class WP_Auth0_State_Handler extends WP_Auth0_Nonce_Handler {
+final class WP_Auth0_State_Handler extends WP_Auth0_Nonce_Handler
+{
 
 	/**
 	 * State cookie name used for storage and verification.
@@ -29,7 +31,8 @@ final class WP_Auth0_State_Handler extends WP_Auth0_Nonce_Handler {
 	 *
 	 * @return string
 	 */
-	public static function get_storage_cookie_name() {
-		return apply_filters( 'auth0_state_cookie_name', self::STATE_COOKIE_NAME );
+	public static function get_storage_cookie_name()
+	{
+		return apply_filters('auth0_state_cookie_name', self::STATE_COOKIE_NAME);
 	}
 }

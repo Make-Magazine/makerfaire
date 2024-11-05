@@ -8,6 +8,7 @@ use Elementor\Core\Base\Traits\Shared_Widget_Controls_Trait;
 use Elementor\Group_Control_Box_Shadow;
 use Elementor\Group_Control_Typography;
 use Elementor\Modules\FloatingButtons\Classes\Render\Contact_Buttons_Core_Render;
+use Elementor\Modules\FloatingButtons\Documents\Floating_Buttons;
 use Elementor\Plugin;
 use Elementor\Repeater;
 use Elementor\Utils;
@@ -19,18 +20,31 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 
 	const TAB_ADVANCED = 'advanced-tab-floating-buttons';
 
-	public function show_in_panel() {
+	public function show_in_panel(): bool {
 		return false;
 	}
 
-	public function get_style_depends(): array {
-		if ( Plugin::$instance->experiments->is_feature_active( 'e_font_icon_svg' ) ) {
-			return parent::get_style_depends();
-		}
-		return [ 'elementor-icons-fa-solid', 'elementor-icons-fa-brands', 'elementor-icons-fa-regular' ];
+	public function get_group_name(): string {
+		return 'floating-buttons';
 	}
 
-	public function hide_on_search() {
+	public function get_style_depends(): array {
+		$widget_name = $this->get_name();
+
+		$style_depends = Plugin::$instance->experiments->is_feature_active( 'e_font_icon_svg' )
+			? parent::get_style_depends()
+			: [ 'elementor-icons-fa-solid', 'elementor-icons-fa-brands', 'elementor-icons-fa-regular' ];
+
+		$style_depends[] = 'widget-contact-buttons-base';
+
+		if ( 'contact-buttons' !== $widget_name ) {
+			$style_depends[] = "widget-{$widget_name}";
+		}
+
+		return $style_depends;
+	}
+
+	public function hide_on_search(): bool {
 		return true;
 	}
 
@@ -78,6 +92,7 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 						],
 						'default' => Social_Network_Provider::WHATSAPP,
 					],
+					'chat_aria_label' => Floating_Buttons::get_title(),
 					'defaults' => [
 						'mail' => null,
 						'mail_subject' => null,
@@ -91,6 +106,7 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 							'is_external' => true,
 						],
 					],
+					'has_accessible_name' => true,
 				],
 				'top_bar_section' => [
 					'section_name' => esc_html__( 'Top Bar', 'elementor' ),
@@ -157,6 +173,7 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 							'contact_icon_platform' => Social_Network_Provider::MESSENGER,
 						],
 					],
+					'has_accessible_name' => true,
 				],
 				'send_button_section' => [
 					'section_name' => esc_html__( 'Send Button', 'elementor' ),
@@ -438,6 +455,21 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 			]
 		);
 
+		if ( $config['content']['chat_button_section']['has_accessible_name'] ) {
+			$this->add_control(
+				'chat_aria_label',
+				[
+					'label' => esc_html__( 'Accessible name', 'elementor' ),
+					'type' => Controls_Manager::TEXT,
+					'default' => $config['content']['chat_button_section']['chat_aria_label'],
+					'placeholder' => esc_html__( 'Add accessible name', 'elementor' ),
+					'dynamic' => [
+						'active' => true,
+					],
+				],
+			);
+		}
+
 		if ( $config['content']['chat_button_section']['has_platform'] ) {
 
 			$this->add_control(
@@ -679,6 +711,21 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 			]
 		);
 
+		if ( $config['content']['contact_section']['has_accessible_name'] ) {
+			$this->add_control(
+				'contact_aria_label',
+				[
+					'label' => esc_html__( 'Accessible name', 'elementor' ),
+					'type' => Controls_Manager::TEXT,
+					'default' => $config['content']['chat_button_section']['chat_aria_label'],
+					'placeholder' => esc_html__( 'Add accessible name', 'elementor' ),
+					'dynamic' => [
+						'active' => true,
+					],
+				],
+			);
+		}
+
 		if ( $config['content']['contact_section']['has_cta_text'] ) {
 			$this->add_control(
 				'contact_cta_text',
@@ -687,6 +734,7 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 					'type' => Controls_Manager::TEXT,
 					'default' => esc_html__( 'Start conversation:', 'elementor' ),
 					'placeholder' => esc_html__( 'Type your text here', 'elementor' ),
+					'label_block' => true,
 				]
 			);
 		}
@@ -699,7 +747,7 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 						'type' => Controls_Manager::ALERT,
 						'alert_type' => 'info',
 						'content' => sprintf(
-							__( 'Add between <b>%1$d</b> to <b>%2$d</b> icons', 'elementor' ),
+							__( 'Add between <b>%1$d</b> to <b>%2$d</b> contact buttons', 'elementor' ),
 							$config['content']['contact_section']['platform']['min_items'],
 							$config['content']['contact_section']['platform']['limit']
 						),
@@ -712,7 +760,7 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 						'type' => Controls_Manager::ALERT,
 						'alert_type' => 'info',
 						'content' => sprintf(
-							__( 'Add up to <b>%d</b> icons', 'elementor' ),
+							__( 'Add up to <b>%d</b> contact buttons', 'elementor' ),
 							$config['content']['contact_section']['platform']['limit']
 						),
 					]
@@ -1090,7 +1138,15 @@ JS;
 							'icon' => 'eicon-h-align-right',
 						],
 					],
+					'selectors' => [
+						'{{WRAPPER}} .e-contact-buttons__chat-button svg' => 'order: {{VALUE}};',
+					],
+					'selectors_dictionary' => [
+						'start' => '-1',
+						'end' => '2',
+					],
 					'default' => 'start',
+					'mobile_default' => 'start',
 					'toggle' => true,
 				]
 			);
@@ -2871,7 +2927,7 @@ JS;
 				]
 			);
 
-			$this->add_responsive_control(
+			$this->add_control(
 				'advanced_horizontal_position',
 				[
 					'label' => esc_html__( 'Horizontal Position', 'elementor' ),
@@ -2925,7 +2981,7 @@ JS;
 				);
 			}
 
-			$this->add_responsive_control(
+			$this->add_control(
 				'advanced_vertical_position',
 				[
 					'label' => esc_html__( 'Vertical Position', 'elementor' ),

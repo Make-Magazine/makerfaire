@@ -631,6 +631,12 @@ class GF_Stripe_Payment_Element {
 			$request_client_secret = rgget( 'setup_intent_client_secret' );
 		} elseif ( strpos( $intent_id, 'pi' ) === 0 ) {
 			$intent = $api->get_payment_intent( $intent_id, array( 'expand' => array( 'payment_method' ) ) );
+			
+			if ( is_wp_error( $intent ) ) {
+				gf_stripe()->log_debug( __METHOD__ . '() - Payment intent returned the following WP_Error: ' . $intent->get_error_message() );
+				return false;
+			}
+
 			$request_client_secret = rgget( 'payment_intent_client_secret' );
 		} else {
 			gf_stripe()->log_debug( __METHOD__ . '() - Invalid intent id. Aborting tracking id:' . rgget( 'tracking_id' ) . ', for form : "' . rgar( $form, 'title' ) . '" (id: ' . rgar( $form, 'id' ) . ') , feed : "' . rgars( $feed, 'meta/feedName' ) . '" (id: ' . rgar( $feed, 'id' ) . ')' );

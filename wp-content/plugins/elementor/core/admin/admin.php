@@ -739,6 +739,24 @@ class Admin extends App {
 		Plugin::$instance->common->add_template( ELEMENTOR_PATH . 'includes/admin-templates/new-template.php' );
 	}
 
+	public function add_new_floating_elements_template() {
+		Plugin::$instance->common->add_template( ELEMENTOR_PATH . 'includes/admin-templates/new-floating-elements.php' );
+	}
+
+	public function enqueue_new_floating_elements_scripts() {
+		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
+
+		wp_enqueue_script(
+			'elementor-floating-elements-modal',
+			ELEMENTOR_ASSETS_URL . 'js/floating-elements-modal' . $suffix . '.js',
+			[],
+			ELEMENTOR_VERSION,
+			true
+		);
+
+		wp_set_script_translations( 'elementor-floating-elements-modal', 'elementor' );
+	}
+
 	/**
 	 * @access public
 	 */
@@ -779,6 +797,20 @@ class Admin extends App {
 		);
 
 		wp_set_script_translations( 'elementor-beta-tester', 'elementor' );
+	}
+
+	public function init_floating_elements() {
+		$screens = [
+			'elementor_library_page_e-floating-buttons' => true,
+			'edit-e-floating-buttons' => true,
+		];
+
+		if ( ! isset( $screens[ get_current_screen()->id ] ) ) {
+			return;
+		}
+
+		add_action( 'admin_head', [ $this, 'add_new_floating_elements_template' ] );
+		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_new_floating_elements_scripts' ] );
 	}
 
 	/**
@@ -873,6 +905,7 @@ class Admin extends App {
 		add_action( 'admin_action_elementor_new_post', [ $this, 'admin_action_new_post' ] );
 
 		add_action( 'current_screen', [ $this, 'init_new_template' ] );
+		add_action( 'current_screen', [ $this, 'init_floating_elements' ] );
 		add_action( 'current_screen', [ $this, 'init_beta_tester' ] );
 
 		add_action( 'in_plugin_update_message-' . ELEMENTOR_PLUGIN_BASE, function( $plugin_data ) {
@@ -992,9 +1025,14 @@ class Admin extends App {
 
 	public function register_ajax_hints( $ajax_manager ) {
 		$ajax_manager->register_ajax_action( 'elementor_image_optimization_campaign', [ $this, 'ajax_set_image_optimization_campaign' ] );
+		$ajax_manager->register_ajax_action( 'elementor_core_site_mailer_campaign', [ $this, 'ajax_site_mailer_campaign' ] );
 	}
 
 	public function ajax_set_image_optimization_campaign( $request ) {
+		if ( ! current_user_can( 'install_plugins' ) ) {
+			return;
+		}
+
 		if ( empty( $request['source'] ) ) {
 			return;
 		}
@@ -1006,5 +1044,23 @@ class Admin extends App {
 		];
 
 		set_transient( 'elementor_image_optimization_campaign', $campaign_data, 30 * DAY_IN_SECONDS );
+	}
+
+	public function ajax_site_mailer_campaign( $request ) {
+		if ( ! current_user_can( 'install_plugins' ) ) {
+			return;
+		}
+
+		if ( empty( $request['source'] ) ) {
+			return;
+		}
+
+		$campaign_data = [
+			'source' => sanitize_key( $request['source'] ),
+			'campaign' => 'sm-plg',
+			'medium' => 'wp-dash',
+		];
+
+		set_transient( 'elementor_site_mailer_campaign', $campaign_data, 30 * DAY_IN_SECONDS );
 	}
 }

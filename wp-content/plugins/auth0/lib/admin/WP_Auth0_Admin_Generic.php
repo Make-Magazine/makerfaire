@@ -1,6 +1,7 @@
 <?php
 
-class WP_Auth0_Admin_Generic {
+class WP_Auth0_Admin_Generic
+{
 
 	const ERROR_FIELD_STYLE = 'border: 1px solid red;';
 
@@ -15,14 +16,15 @@ class WP_Auth0_Admin_Generic {
 	 *
 	 * @var array
 	 */
-	protected $actions_middlewares = [ 'basic_validation' ];
+	protected $actions_middlewares = ['basic_validation'];
 
 	/**
 	 * WP_Auth0_Admin_Generic constructor.
 	 *
 	 * @param WP_Auth0_Options $options
 	 */
-	public function __construct( WP_Auth0_Options $options ) {
+	public function __construct(WP_Auth0_Options $options)
+	{
 		$this->options      = $options;
 		$this->_option_name = $options->get_options_name();
 	}
@@ -34,8 +36,9 @@ class WP_Auth0_Admin_Generic {
 	 * @param string $id - settings screen id
 	 * @param array  $options - array of settings fields
 	 */
-	protected function init_option_section( $section_name, $id, $options ) {
-		$options_name = $this->_option_name . '_' . strtolower( $id );
+	protected function init_option_section($section_name, $id, $options)
+	{
+		$options_name = $this->_option_name . '_' . strtolower($id);
 		$section_id   = "wp_auth0_{$id}_settings_section";
 
 		add_settings_section(
@@ -45,12 +48,12 @@ class WP_Auth0_Admin_Generic {
 			$options_name
 		);
 
-		$options = apply_filters( 'auth0_settings_fields', $options, $id );
+		$options = apply_filters('auth0_settings_fields', $options, $id);
 
-		foreach ( $options as $setting ) {
-			$callback = function_exists( $setting['function'] )
+		foreach ($options as $setting) {
+			$callback = function_exists($setting['function'])
 				? $setting['function']
-				: [ $this, $setting['function'] ];
+				: [$this, $setting['function']];
 
 			add_settings_field(
 				$setting['id'],
@@ -60,16 +63,17 @@ class WP_Auth0_Admin_Generic {
 				$section_id,
 				[
 					'label_for' => $setting['id'],
-					'opt_name'  => isset( $setting['opt'] ) ? $setting['opt'] : null,
+					'opt_name'  => isset($setting['opt']) ? $setting['opt'] : null,
 				]
 			);
 		}
 	}
 
-	public function input_validator( $input ) {
+	public function input_validator($input)
+	{
 
-		foreach ( $this->actions_middlewares as $action ) {
-			$input = $this->$action( $input );
+		foreach ($this->actions_middlewares as $action) {
+			$input = $this->$action($input);
 		}
 
 		return $input;
@@ -81,7 +85,8 @@ class WP_Auth0_Admin_Generic {
 	 * @param string $error - Translated error message.
 	 * @param string $type - Notice type, "error" by default or "updated".
 	 */
-	protected function add_validation_error( $error, $type = 'error' ) {
+	protected function add_validation_error($error, $type = 'error')
+	{
 		add_settings_error(
 			$this->_option_name,
 			$this->_option_name,
@@ -97,22 +102,25 @@ class WP_Auth0_Admin_Generic {
 	 * @param string $input_name - input name attribute
 	 * @param string $expand_id - id of a field that should be hidden until this switch is active
 	 */
-	protected function render_switch( $id, $input_name, $expand_id = '' ) {
-		$value = $this->options->get( $input_name );
-		if ( $field_is_const = $this->options->has_constant_val( $input_name ) ) {
-			$this->render_const_notice( $input_name );
+	protected function render_switch($id, $input_name, $expand_id = '')
+	{
+		$value = $this->options->get($input_name);
+
+		if ($field_is_const = $this->options->has_constant_val($input_name)) {
+			$this->render_const_notice($input_name);
 		}
-		printf(
+
+		echo wp_kses(sprintf(
 			'<div class="a0-switch"><input type="checkbox" name="%s[%s]" id="%s" data-expand="%s" value="1" %s %s>
 			<label for="%s"></label></div>',
-			esc_attr( $this->_option_name ),
-			esc_attr( $input_name ),
-			esc_attr( $id ),
-			! empty( $expand_id ) ? esc_attr( $expand_id ) : '',
-			checked( empty( $value ), false, false ),
+			esc_attr($this->_option_name),
+			esc_attr($input_name),
+			esc_attr($id),
+			!empty($expand_id) ? esc_attr($expand_id) : '',
+			checked(empty($value), false, false),
 			$field_is_const ? 'disabled' : '',
-			esc_attr( $id )
-		);
+			esc_attr($id)
+		), ['div' => ['class' => true], 'input' => ['type' => true, 'name' => true, 'id' => true, 'data-expand' => true, 'value' => true, 'checked' => true, 'disabled' => true], 'label' => ['for' => true]]);
 	}
 
 	/**
@@ -125,29 +133,30 @@ class WP_Auth0_Admin_Generic {
 	 * @param string $style - inline CSS
 	 * @param string $grouping - A string representing a one or more items in a grouping of related settings that will have their visibility toggled by a switch state.
 	 */
-	protected function render_text_field( $id, $input_name, $type = 'text', $placeholder = '', $style = '', $grouping = '' ) {
-		$value = $this->options->get( $input_name );
+	protected function render_text_field($id, $input_name, $type = 'text', $placeholder = '', $style = '', $grouping = '')
+	{
+		$value = $this->options->get($input_name);
 
 		// Secure fields are not output by default; validation keeps last value if a new one is not entered
-		if ( 'password' === $type ) {
-			$value = empty( $value ) ? '' : __( '[REDACTED]', 'wp-auth0' );
+		if ('password' === $type) {
+			$value = empty($value) ? '' : esc_html__('[REDACTED]', 'wp-auth0');
 			$type  = 'text';
 		}
-		if ( $field_is_const = $this->options->has_constant_val( $input_name ) ) {
-			$this->render_const_notice( $input_name );
+		if ($field_is_const = $this->options->has_constant_val($input_name)) {
+			$this->render_const_notice($input_name);
 		}
-		printf(
-			'<input data-group="%s" type="%s" name="%s[%s]" id="%s" value="%s" placeholder="%s" style="%s" %s>',
-			esc_attr( $grouping ),
-			esc_attr( $type ),
-			esc_attr( $this->_option_name ),
-			esc_attr( $input_name ),
-			esc_attr( $id ),
-			esc_attr( $value ),
-			$placeholder ? esc_attr( $placeholder ) : '',
-			$style ? esc_attr( $style ) : '',
+		echo wp_kses(sprintf(
+			'<input data-group="%s" type="%s" name="%s[%s]" id="%s" value="%s" placeholder="%s" style="%s" %s />',
+			esc_attr($grouping),
+			esc_attr($type),
+			esc_attr($this->_option_name),
+			esc_attr($input_name),
+			esc_attr($id),
+			esc_attr($value),
+			$placeholder ? esc_attr($placeholder) : '',
+			$style ? esc_attr($style) : '',
 			$field_is_const ? 'disabled' : ''
-		);
+		), ['input' => ['data-group' => true, 'type' => true, 'name' => true, 'id' => true, 'value' => true, 'placeholder' => true, 'style' => true, 'disabled' => true]]);
 	}
 
 	/**
@@ -156,20 +165,21 @@ class WP_Auth0_Admin_Generic {
 	 * @param string $id - input id attribute
 	 * @param string $input_name - input name attribute
 	 */
-	protected function render_textarea_field( $id, $input_name ) {
-		$value = $this->options->get( $input_name );
-		if ( $field_is_const = $this->options->has_constant_val( $input_name ) ) {
-			$this->render_const_notice( $input_name );
+	protected function render_textarea_field($id, $input_name)
+	{
+		$value = $this->options->get($input_name);
+		if ($field_is_const = $this->options->has_constant_val($input_name)) {
+			$this->render_const_notice($input_name);
 		}
-		printf(
+		echo wp_kses(sprintf(
 			'<textarea name="%s[%s]" id="%s" rows="%d" class="code" %s>%s</textarea>',
-			esc_attr( $this->_option_name ),
-			esc_attr( $input_name ),
-			esc_attr( $id ),
+			esc_attr($this->_option_name),
+			esc_attr($input_name),
+			esc_attr($id),
 			$this->_textarea_rows,
 			$field_is_const ? 'disabled' : '',
-			esc_textarea( $value )
-		);
+			esc_textarea($value)
+		), ['textarea' => ['name' => true, 'id' => true, 'rows' => true, 'class' => true, 'disabled' => true]]);
 	}
 
 	/**
@@ -181,28 +191,31 @@ class WP_Auth0_Admin_Generic {
 	 * @param int|float|string $curr_value - Current option value.
 	 * @param bool             $vert - True to use vertical orientation for buttons.
 	 */
-	protected function render_radio_buttons( array $buttons, $id, $input_name, $curr_value, $vert = false ) {
-		if ( $field_is_const = $this->options->has_constant_val( $input_name ) ) {
-			$this->render_const_notice( $input_name );
+	protected function render_radio_buttons(array $buttons, $id, $input_name, $curr_value, $vert = false)
+	{
+		if ($field_is_const = $this->options->has_constant_val($input_name)) {
+			$this->render_const_notice($input_name);
 		}
-		foreach ( $buttons as $index => $button ) {
+
+		foreach ($buttons as $index => $button) {
 			$id_attr = $id . '_' . $index;
-			$label   = is_array( $button ) ? $button['label'] : ucfirst( $button );
-			$value   = is_array( $button ) ? $button['value'] : $button;
-			$desc    = isset( $button['desc'] ) ? '<p class="description">' . $button['desc'] . '</p>' : '';
-			printf(
+			$label   = is_array($button) ? $button['label'] : ucfirst($button);
+			$value   = is_array($button) ? $button['value'] : $button;
+			$desc    = isset($button['desc']) ? '<p class="description">' . $button['desc'] . '</p>' : '';
+
+			echo wp_kses(sprintf(
 				'%s<label for="%s"><input type="radio" name="%s[%s]" id="%s" value="%s" %s %s>%s</label> %s',
 				$vert ? '<div class="a0-vert-radio">' : '',
-				esc_attr( $id_attr ),
-				esc_attr( $this->_option_name ),
-				esc_attr( $input_name ),
-				esc_attr( $id_attr ),
-				esc_attr( $value ),
-				checked( $value === $curr_value, true, false ),
+				esc_attr($id_attr),
+				esc_attr($this->_option_name),
+				esc_attr($input_name),
+				esc_attr($id_attr),
+				esc_attr($value),
+				checked($value === $curr_value, true, false),
 				$field_is_const ? 'disabled' : '',
-				sanitize_text_field( $label ),
+				sanitize_text_field($label),
 				$vert ? $desc . '</div>' : ''
-			);
+			), ['label' => ['for' => true], 'input' => ['type' => true, 'name' => true, 'id' => true, 'value' => true, 'checked' => true, 'disabled' => true], 'div' => ['class' => true], 'code' => ['class' => true], 'a' => ['href' => true, 'target' => true], 'span' => ['class' => true], 'br' => []]);
 		}
 	}
 
@@ -211,9 +224,10 @@ class WP_Auth0_Admin_Generic {
 	 *
 	 * @param string $text - description text to display
 	 */
-	protected function render_field_description( $text ) {
-		$period = ! in_array( $text[ strlen( $text ) - 1 ], [ '.', ':' ] ) ? '.' : '';
-		printf( '<div class="subelement"><span class="description">%s%s</span></div>', $text, $period );
+	protected function render_field_description($text)
+	{
+		$period = !in_array($text[strlen($text) - 1], ['.', ':']) ? '.' : '';
+		echo wp_kses(sprintf('<div class="subelement"><span class="description">%s%s</span></div>', $text, $period), ['div' => ['class' => true], 'span' => ['class' => true], 'a' => ['href' => true, 'target' => true], 'code' => ['class' => true]]);
 	}
 
 	/**
@@ -221,12 +235,13 @@ class WP_Auth0_Admin_Generic {
 	 *
 	 * @param string $input_name - Input name for the field, used as option key.
 	 */
-	protected function render_const_notice( $input_name ) {
-		printf(
+	protected function render_const_notice($input_name)
+	{
+		echo wp_kses(sprintf(
 			'<p class="const-setting-notice"><span class="description">%s <code>%s</code></span></p>',
-			__( 'Value is set in the constant ', 'wp-auth0' ),
-			$this->options->get_constant_name( $input_name )
-		);
+			esc_html__('Value is set in the constant ', 'wp-auth0'),
+			$this->options->get_constant_name($input_name)
+		), ['p' => ['class' => true], 'span' => ['class' => true]], ['code' => []]);
 	}
 
 	/**
@@ -236,12 +251,13 @@ class WP_Auth0_Admin_Generic {
 	 *
 	 * @return string
 	 */
-	protected function get_dashboard_link( $path = '' ) {
-		return sprintf(
+	protected function get_dashboard_link($path = '')
+	{
+		return wp_kses(sprintf(
 			'<a href="https://manage.auth0.com/#/%s" target="_blank">%s</a>',
 			$path,
-			__( 'Auth0 dashboard', 'wp-auth0' )
-		);
+			esc_html__('Auth0 dashboard', 'wp-auth0')
+		), ['a' => ['href' => true, 'target' => true]]);
 	}
 
 	/**
@@ -252,10 +268,11 @@ class WP_Auth0_Admin_Generic {
 	 *
 	 * @return string
 	 */
-	protected function get_docs_link( $path, $text = '' ) {
-		$path = '/' === $path[0] ? substr( $path, 1 ) : $path;
-		$text = empty( $text ) ? __( 'here', 'wp-auth0' ) : sanitize_text_field( $text );
-		return sprintf( '<a href="https://auth0.com/docs/%s" target="_blank">%s</a>', $path, $text );
+	protected function get_docs_link($path, $text = '')
+	{
+		$path = '/' === $path[0] ? substr($path, 1) : $path;
+		$text = empty($text) ? esc_html__('here', 'wp-auth0') : sanitize_text_field($text);
+		return wp_kses(sprintf('<a href="https://auth0.com/docs/%s" target="_blank">%s</a>', $path, $text), ['a' => ['href' => true, 'target' => true]]);
 	}
 
 	/**
@@ -265,33 +282,36 @@ class WP_Auth0_Admin_Generic {
 	 *
 	 * @return bool
 	 */
-	protected function sanitize_switch_val( $val ) {
-		return in_array( $val, [ 1, '1', true ], true ) ? true : false;
+	protected function sanitize_switch_val($val)
+	{
+		return in_array($val, [1, '1', true], true) ? true : false;
 	}
 
-	protected function sanitize_text_val( $val ) {
-		return sanitize_text_field( trim( strval( $val ) ) );
+	protected function sanitize_text_val($val)
+	{
+		return sanitize_text_field(trim(strval($val)));
 	}
 
-	protected function sanitize_query_parameters( $val ) {
-		$val = trim( strval( $val ) );
+	protected function sanitize_query_parameters($val)
+	{
+		$val = trim(strval($val));
 
-		if ( strlen( $val ) === 0 ) {
+		if (strlen($val) === 0) {
 			return '';
 		}
 
-		parse_str( $val, $parsed );
+		parse_str($val, $parsed);
 		$sanitized = [];
 
-		foreach ( $parsed as $key => $value ) {
-			$sanitized[ $this->sanitize_text_val( $key ) ] = $this->sanitize_text_val( $value );
+		foreach ($parsed as $key => $value) {
+			$sanitized[$this->sanitize_text_val($key)] = $this->sanitize_text_val($value);
 		}
 
 		return http_build_query(
 			array_filter(
 				$sanitized,
-				function( $var ) {
-						return ( $var !== null && $var !== false && trim( $var ) !== '' );
+				function ($var) {
+					return ($var !== null && $var !== false && trim($var) !== '');
 				}
 			)
 		);

@@ -75,6 +75,20 @@ class Widget_Social_Icons extends Widget_Base {
 	}
 
 	/**
+	 * Get style dependencies.
+	 *
+	 * Retrieve the list of style dependencies the widget requires.
+	 *
+	 * @since 3.24.0
+	 * @access public
+	 *
+	 * @return array Widget style dependencies.
+	 */
+	public function get_style_depends(): array {
+		return [ 'widget-social-icons', 'e-apple-webkit' ];
+	}
+
+	/**
 	 * Register social icons widget controls.
 	 *
 	 * Adds different input fields to allow the user to change and customize the widget settings.
@@ -263,8 +277,8 @@ class Widget_Social_Icons extends Widget_Base {
 				'type' => Controls_Manager::SELECT,
 				'default' => 'rounded',
 				'options' => [
-					'rounded' => esc_html__( 'Rounded', 'elementor' ),
 					'square' => esc_html__( 'Square', 'elementor' ),
+					'rounded' => esc_html__( 'Rounded', 'elementor' ),
 					'circle' => esc_html__( 'Circle', 'elementor' ),
 				],
 				'prefix_class' => 'elementor-shape-',

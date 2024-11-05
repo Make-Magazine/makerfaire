@@ -122,4 +122,8 @@ html[dir="rtl"] .gravity-theme .ginput_stripe_creditcard .cc-cvc-placeholder, ht
 		padding-right: 16px;
 	}
 
+html[dir="rtl"] .gf_entry_wrap .gform_wrapper table input.cc-cardnumber {
+	float: none !important;
+}
+
 /*# sourceMappingURL=theme.css.map */

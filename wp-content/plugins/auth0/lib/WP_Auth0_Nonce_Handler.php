@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Contains WP_Auth0_Nonce_Handler.
  *
@@ -8,7 +9,8 @@
 /**
  * Class WP_Auth0_Nonce_Handler for generating and storing nonce-type values.
  */
-class WP_Auth0_Nonce_Handler {
+class WP_Auth0_Nonce_Handler
+{
 
 	/**
 	 * Cookie name used for storage and verification.
@@ -42,28 +44,34 @@ class WP_Auth0_Nonce_Handler {
 	/**
 	 * Private to prevent cloning.
 	 */
-	private function __clone() {}
+	private function __clone()
+	{
+	}
 
-	public function __wakeup() {}
+	public function __wakeup()
+	{
+	}
 
 	/**
 	 * WP_Auth0_Nonce_Handler constructor.
 	 * Private to prevent new instances of this class.
 	 */
-	private function __construct() {
+	private function __construct()
+	{
 		$this->init();
 	}
 
 	/**
 	 * Start-up process to make sure we have something stored.
 	 */
-	protected function init() {
+	protected function init()
+	{
 		// If a NONCE_COOKIE_NAME is not defined then we don't need to persist the nonce value.
-		if ( defined( static::NONCE_COOKIE_NAME ) && isset( $_COOKIE[ static::get_storage_cookie_name() ] ) ) {
+		if (defined(static::NONCE_COOKIE_NAME) && isset($_COOKIE[static::get_storage_cookie_name()])) {
 			// Have a cookie, don't want to generate a new one.
 			// TODO: validate whether we need to persist this value and sanitize if so.
 			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput
-			$this->unique = $_COOKIE[ static::get_storage_cookie_name() ];
+			$this->unique = $_COOKIE[static::get_storage_cookie_name()];
 		} else {
 			// No cookie, need to create one.
 			$this->unique = $this->generate_unique();
@@ -75,8 +83,9 @@ class WP_Auth0_Nonce_Handler {
 	 *
 	 * @return WP_Auth0_State_Handler|WP_Auth0_Nonce_Handler
 	 */
-	final public static function get_instance() {
-		if ( is_null( static::$_instance ) ) {
+	final public static function get_instance()
+	{
+		if (is_null(static::$_instance)) {
 			static::$_instance = new static();
 		}
 		return static::$_instance;
@@ -87,7 +96,8 @@ class WP_Auth0_Nonce_Handler {
 	 *
 	 * @return string
 	 */
-	public function get_unique() {
+	public function get_unique()
+	{
 		return $this->unique;
 	}
 
@@ -96,7 +106,8 @@ class WP_Auth0_Nonce_Handler {
 	 *
 	 * @return integer
 	 */
-	public function get_cookie_exp() {
+	public function get_cookie_exp()
+	{
 		return time() + self::COOKIE_EXPIRES;
 	}
 
@@ -107,11 +118,12 @@ class WP_Auth0_Nonce_Handler {
 	 *
 	 * @return bool
 	 */
-	public function set_cookie( $value = null ) {
-		if ( is_null( $value ) ) {
+	public function set_cookie($value = null)
+	{
+		if (is_null($value)) {
 			$value = $this->unique;
 		}
-		return $this->handle_cookie( static::get_storage_cookie_name(), $value, $this->get_cookie_exp() );
+		return $this->handle_cookie(static::get_storage_cookie_name(), $value, $this->get_cookie_exp());
 	}
 
 	/**
@@ -121,9 +133,10 @@ class WP_Auth0_Nonce_Handler {
 	 *
 	 * @return bool
 	 */
-	public function validate( $value ) {
+	public function validate($value)
+	{
 		$cookie_name = static::get_storage_cookie_name();
-		$valid       = isset( $_COOKIE[ $cookie_name ] ) ? $_COOKIE[ $cookie_name ] === $value : false;
+		$valid       = isset($_COOKIE[$cookie_name]) ? $_COOKIE[$cookie_name] === $value : false;
 		$this->reset();
 		return $valid;
 	}
@@ -133,11 +146,12 @@ class WP_Auth0_Nonce_Handler {
 	 *
 	 * @return string|null
 	 */
-	public function get_once() {
+	public function get_once()
+	{
 		$cookie_name = static::get_storage_cookie_name();
 		// Null coalescing validates the input variable.
 		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotValidated
-		$value = $_COOKIE[ $cookie_name ] ?? null;
+		$value = $_COOKIE[$cookie_name] ?? null;
 		$this->reset();
 		return $value;
 	}
@@ -147,8 +161,9 @@ class WP_Auth0_Nonce_Handler {
 	 *
 	 * @return bool
 	 */
-	public function reset() {
-		return $this->handle_cookie( static::get_storage_cookie_name(), '', 0 );
+	public function reset()
+	{
+		return $this->handle_cookie(static::get_storage_cookie_name(), '', 0);
 	}
 
 	/**
@@ -160,8 +175,9 @@ class WP_Auth0_Nonce_Handler {
 	 *
 	 * @return string
 	 */
-	public function generate_unique( $bytes = 32 ) {
-		return bin2hex( random_bytes( $bytes ) );
+	public function generate_unique($bytes = 32)
+	{
+		return bin2hex(random_bytes($bytes));
 	}
 
 	/**
@@ -173,21 +189,22 @@ class WP_Auth0_Nonce_Handler {
 	 *
 	 * @return bool
 	 */
-	protected function handle_cookie( $cookie_name, $cookie_value, $cookie_exp, $cookie_domain = null ) {
+	protected function handle_cookie($cookie_name, $cookie_value, $cookie_exp, $cookie_domain = null)
+	{
 		$options = WP_Auth0_Options::Instance();
-		$cookie_domain ??= $options->get( 'cookie_domain' ) ?? '';
+		$cookie_domain ??= $options->get('cookie_domain') ?? '';
 		$cookie_domain = trim($cookie_domain);
 
 		if ('' === $cookie_domain) {
-			$cookie_domain = trim($options->get( 'cookie_domain' ) ?? '');
+			$cookie_domain = trim($options->get('cookie_domain') ?? '');
 		}
 
-		if ( $cookie_exp <= time() ) {
-			unset( $_COOKIE[ $cookie_name ] );
-			return setcookie( $cookie_name, $cookie_value, 0, '/', $cookie_domain ?? '' );
+		if ($cookie_exp <= time()) {
+			unset($_COOKIE[$cookie_name]);
+			return setcookie($cookie_name, $cookie_value, 0, '/', $cookie_domain ?? '');
 		} else {
-			$_COOKIE[ $cookie_name ] = $cookie_value;
-			return setcookie( $cookie_name, $cookie_value, $cookie_exp, '/', $cookie_domain ?? '', false, true );
+			$_COOKIE[$cookie_name] = $cookie_value;
+			return setcookie($cookie_name, $cookie_value, $cookie_exp, '/', $cookie_domain ?? '', false, true);
 		}
 	}
 
@@ -196,7 +213,8 @@ class WP_Auth0_Nonce_Handler {
 	 *
 	 * @return string
 	 */
-	public static function get_storage_cookie_name() {
-		return apply_filters( 'auth0_nonce_cookie_name', static::NONCE_COOKIE_NAME );
+	public static function get_storage_cookie_name()
+	{
+		return apply_filters('auth0_nonce_cookie_name', static::NONCE_COOKIE_NAME);
 	}
 }

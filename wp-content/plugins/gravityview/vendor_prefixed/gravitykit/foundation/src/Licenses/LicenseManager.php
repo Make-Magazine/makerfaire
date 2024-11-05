@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by gravityview on 15-October-2024 using {@see https://github.com/BrianHenryIE/strauss}.
+ * Modified by gravityview on 04-November-2024 using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\GravityView\Foundation\Licenses;
@@ -17,6 +17,7 @@ use GravityKit\GravityView\Foundation\Encryption\Encryption;
 use GravityKit\GravityView\Foundation\Helpers\Arr;
 use GFForms;
 use GFFormsModel;
+use GravityKit\GravityView\Foundation\WP\AdminMenu;
 
 class LicenseManager {
 	const EDD_LICENSES_API_ENDPOINT = 'https://www.gravitykit.com';
@@ -1014,6 +1015,10 @@ class LicenseManager {
 	 * @return void
 	 */
 	public function update_manage_your_kit_submenu_badge_count() {
+		if ( ! AdminMenu::should_initialize() ) {
+			return;
+		}
+
 		if ( ! Framework::get_instance()->current_user_can( 'manage_licenses' ) ) {
 			return;
 		}

@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by gravityview on 15-October-2024 using {@see https://github.com/BrianHenryIE/strauss}.
+ * Modified by gravityview on 04-November-2024 using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\GravityView\Foundation\Licenses\WP;
@@ -13,6 +13,7 @@ use GravityKit\GravityView\Foundation\Licenses\Framework;
 use GravityKit\GravityView\Foundation\Settings\Framework as SettingsFramework;
 use GravityKit\GravityView\Foundation\Licenses\ProductManager;
 use GravityKit\GravityView\Foundation\Licenses\LicenseManager;
+use GravityKit\GravityView\Foundation\WP\AdminMenu;
 
 /**
  * Manages the display of GK products on the Plugins page.
@@ -174,6 +175,8 @@ JS;
 	public function modify_product_action_links( $links, $plugin_path, $plugin_data ) {
 		static $products;
 
+		$modify_links_with_admin_menu_functionality = AdminMenu::should_initialize();
+
 		if ( ! $products ) {
 			$products = ProductManager::get_instance()->get_products_data();
 
@@ -190,7 +193,7 @@ JS;
 		}
 
 		// If this is a grouped entry for GravityKit products, display custom links and return early.
-		if ( isset( $plugin_data['GravityKitGroup'] ) ) {
+		if ( $modify_links_with_admin_menu_functionality && isset( $plugin_data['GravityKitGroup'] ) ) {
 			return [
 				'manage'           => sprintf(
 					'<a href="%s">%s</a>',
@@ -229,7 +232,7 @@ JS;
 					}
 				*/
 				// Modify Activate link for products that have unmet dependencies.
-				if ( ! $product['checked_dependencies'][ $product['installed_version'] ]['status'] ) {
+				if ( $modify_links_with_admin_menu_functionality && ! $product['checked_dependencies'][ $product['installed_version'] ]['status'] ) {
 					$links['activate'] = sprintf(
 						'<a href="%s" title="%s">%s</a>',
 						esc_url_raw( add_query_arg( [ 'action' => 'activate' ], Framework::get_instance()->get_link_to_product_search( $product['id'] ) ) ),
@@ -261,7 +264,7 @@ JS;
 			}
 
 			// Modify Deactivate link for products that are required by other products to be active.
-			if ( $product['active'] && ! empty( $product['required_by'] ) && isset( $links['deactivate'] ) ) {
+			if ( $modify_links_with_admin_menu_functionality && $product['active'] && ! empty( $product['required_by'] ) && isset( $links['deactivate'] ) ) {
 				$deactivation_link = ( preg_match( '/href="([^"]*)"/', $links['deactivate'], $matches ) ? $matches[1] : '' );
 
 				if ( $deactivation_link ) {
@@ -311,15 +314,17 @@ JS;
 			);
 		}
 
-		$foundation_info = Core::get_instance()->get_foundation_information();
+		if ( $modify_links_with_admin_menu_functionality ) {
+			$foundation_info = Core::get_instance()->get_foundation_information();
 
-		if ( ( $product && count( $products ) > 1 ) || ( count( $products ) && $plugin_data && $plugin_data['TextDomain'] === $foundation_info['source_plugin']['TextDomain'] ) ) {
-			$gk_links['enable_grouping'] = sprintf(
-				'<a href="%s" title="%s">%s</a>',
-				esc_url_raw( add_query_arg( [ 'gk_enable_grouping' => 1 ], admin_url( 'plugins.php' ) ) ),
-				esc_html__( 'Aggregate all GravityKit products into a single entry on the Plugins page for a cleaner view and easier management.', 'gk-gravityview' ),
-				esc_html__( 'Group', 'gk-gravityview' )
-			);
+			if ( ( $product && count( $products ) > 1 ) || ( count( $products ) && $plugin_data && $plugin_data['TextDomain'] === $foundation_info['source_plugin']['TextDomain'] ) ) {
+				$gk_links['enable_grouping'] = sprintf(
+					'<a href="%s" title="%s">%s</a>',
+					esc_url_raw( add_query_arg( [ 'gk_enable_grouping' => 1 ], admin_url( 'plugins.php' ) ) ),
+					esc_html__( 'Aggregate all GravityKit products into a single entry on the Plugins page for a cleaner view and easier management.', 'gk-gravityview' ),
+					esc_html__( 'Group', 'gk-gravityview' )
+				);
+			}
 		}
 
 		$merged_links = array_merge( $links, $gk_links );
@@ -518,14 +523,14 @@ JS;
 				[
 					'[products_with_updates]' => count( $has_updates ),
 					'[link]'                  => '<a href="' . esc_url_raw(
-                        add_query_arg(
-                            [
-								'page'   => Framework::ID,
-								'filter' => 'update-available',
-							],
-                            admin_url( 'admin.php' )
-                        )
-                    ) . '">',
+							add_query_arg(
+								[
+									'page'   => Framework::ID,
+									'filter' => 'update-available',
+								],
+								admin_url( 'admin.php' )
+							)
+						) . '">',
 					'[/link]'                 => '</a>',
 				]
 			);
@@ -636,14 +641,14 @@ JS;
 				[
 					'[unlicensed]' => count( $unlicensed_products ),
 					'[link]'       => '<a href="' . esc_url_raw(
-                        add_query_arg(
-                            [
-								'page'   => Framework::ID,
-								'filter' => 'unlicensed',
-							],
-                            admin_url( 'admin.php' )
-                        )
-                    ) . '">',
+							add_query_arg(
+								[
+									'page'   => Framework::ID,
+									'filter' => 'unlicensed',
+								],
+								admin_url( 'admin.php' )
+							)
+						) . '">',
 					'[/link]'      => '</a>',
 				]
 			);
@@ -751,7 +756,7 @@ HTML;
 			$should_group = SettingsFramework::get_instance()->get_plugin_setting( Core::ID, 'group_gk_products' );
 		};
 
-		return $should_group;
+		return $should_group && AdminMenu::should_initialize();
 	}
 
 	/**

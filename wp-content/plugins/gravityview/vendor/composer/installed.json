@@ -241,12 +241,12 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:GravityKit/Foundation.git",
-                "reference": "a0876b3985cec34fdb69553863ae5da9ddb31c6e"
+                "reference": "0cdeccc210f45f09887569107004d99a27d95a52"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/GravityKit/Foundation/zipball/a0876b3985cec34fdb69553863ae5da9ddb31c6e",
-                "reference": "a0876b3985cec34fdb69553863ae5da9ddb31c6e",
+                "url": "https://api.github.com/repos/GravityKit/Foundation/zipball/0cdeccc210f45f09887569107004d99a27d95a52",
+                "reference": "0cdeccc210f45f09887569107004d99a27d95a52",
                 "shasum": ""
             },
             "require": {
@@ -273,7 +273,7 @@
                 "szepeviktor/phpstan-wordpress": "^1.3",
                 "wp-coding-standards/wpcs": "^2.3"
             },
-            "time": "2024-10-13T16:39:26+00:00",
+            "time": "2024-11-01T15:30:25+00:00",
             "type": "library",
             "extra": {
                 "strauss": {
@@ -346,7 +346,7 @@
                 }
             ],
             "support": {
-                "source": "https://github.com/GravityKit/Foundation/tree/v1.2.19",
+                "source": "https://github.com/GravityKit/Foundation/tree/v1.2.20",
                 "issues": "https://github.com/GravityKit/Foundation/issues"
             },
             "install-path": "../gravitykit/foundation"

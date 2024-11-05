@@ -351,13 +351,13 @@ class GF_Field_Stripe_CreditCard extends GF_Field {
 		} elseif ( gf_stripe()->is_stripe_checkout_enabled() ) {
 			// Display the Stripe Checkout error.
 			/* translators: 1. Open div tag 2. Close div tag */
-			$stripe_checkout_enabled_error = esc_html__( '%1$sThe Stripe Card field cannot work when the Payment Collection Method is set to Stripe Payment Form (Stripe Checkout).%2$s' );
+			$stripe_checkout_enabled_error = $is_form_editor ? esc_html__( 'Incompatible Payment Collection Method%1$sTo use the Stripe field, set your Payment Collection Method to Stripe Field, or to continue using the Stripe Payment Form (Stripe Checkout), remove the Stripe field.%2$s', 'gravityformsstripe' ) : esc_html__( '%1$sIncompatible Payment Collection Method: To use the Stripe field, set your Payment Collection Method to Stripe Field, or to continue using the Stripe Payment Form (Stripe Checkout), remove the Stripe field.%2$s', 'gravityformsstripe' );
 			$card_error                    = $this->get_card_error_message( $stripe_checkout_enabled_error );
 			$hide_cardholder_name          = true;
 		} elseif ( $no_stripe_feed ) {
 			// Display the no Stripe feed error.
 			/* translators: 1. Open div tag 2. Close div tag */
-			$no_stripe_feed_error = esc_html__( '%1$sPlease check if you have activated a Stripe feed for your form.%2$s' );
+			$no_stripe_feed_error = $is_form_editor ? esc_html__( 'Feed Required%1$sTo use the Stripe field, please create a Stripe feed for this form.%2$s', 'gravityformsstripe' ) : esc_html__( '%1$sFeed Required: To use the Stripe field, please create a Stripe feed for this form.%2$s', 'gravityformsstripe' );
 			$card_error           = $this->get_card_error_message( $no_stripe_feed_error );
 			$hide_cardholder_name = true;
 		} elseif ( $this->enableMultiplePaymentMethods && gf_stripe()->is_stripe_connect_enabled() === true ) {
@@ -438,10 +438,14 @@ class GF_Field_Stripe_CreditCard extends GF_Field {
 		$api_key        = gf_stripe()->get_publishable_api_key();
 		$no_stripe_feed = ! gf_stripe()->has_feed( $form_id );
 
-		$warning = $this->admin_field_validation_check( $api_key, $no_stripe_feed, $form_id );
+		$warning = $this->admin_field_validation_check( $api_key, $no_stripe_feed, $form_id, true );
 
 		if ( $warning !== true ) {
-			return $warning;
+			return array(
+				'type'             => 'notice',
+				'content'          => $warning,
+				'icon_helper_text' => __( 'This field requires additional configuration', 'gravityformsstripe' ),
+			);
 		}
 
 		return '';
@@ -450,15 +454,17 @@ class GF_Field_Stripe_CreditCard extends GF_Field {
 	/**
 	 * Check API Key, Stripe Checkout, and Feed Settings for admin validation.
 	 *
+	 * @since 5.9 Added $is_editor_sidebar param.
 	 * @since 3.9
 	 *
 	 * @param string $api_key        The Stripe API key
 	 * @param bool   $no_stripe_feed If no Stripe feed has been setup.
 	 * @param int    $form_id        GF Form ID.
+	 * @param bool   $is_editor_sidebar If the validation is for the form editor sidebar.
 	 *
 	 * @return bool|string True if passes validation, error string if failed.
 	 */
-	private function admin_field_validation_check( $api_key, $no_stripe_feed, $form_id ) {
+	private function admin_field_validation_check( $api_key, $no_stripe_feed, $form_id, $is_editor_sidebar = false ) {
 		$settings_url = add_query_arg(
 			array(
 				'page'    => 'gf_settings',
@@ -469,15 +475,15 @@ class GF_Field_Stripe_CreditCard extends GF_Field {
 
 		// Display errors if there is no API key.
 		if ( empty( $api_key ) ) {
-			return $this->get_card_error_message( $this->get_api_error_message(), $settings_url );
+			return $this->get_card_error_message( $this->get_api_error_message(), $settings_url, $is_editor_sidebar );
 		}
 
 		// Display the Stripe Checkout error.
 		if ( gf_stripe()->is_stripe_checkout_enabled() ) {
 			/* translators: 1. Open div tag 2. Close div tag 3. Open link tag 4. Close link tag */
-			$stripe_checkout_enabled_error = esc_html__( '%1$sThe Stripe Card field cannot work when the %3$sPayment Collection Method%4$s is set to Stripe Payment Form (Stripe Checkout).%2$s', 'gravityformsstripe' );
+			$stripe_checkout_enabled_error = esc_html__( 'Incompatible Payment Collection Method%1$s To use the Stripe field, set your %3$sPayment Collection Method%4$s to Stripe Field, or to continue using the Stripe Payment Form (Stripe Checkout), remove the Stripe field.%2$s', 'gravityformsstripe' );
 
-			return $this->get_card_error_message( $stripe_checkout_enabled_error, $settings_url );
+			return $this->get_card_error_message( $stripe_checkout_enabled_error, $settings_url, $is_editor_sidebar );
 		}
 
 		// Display the no Stripe feed error.
@@ -493,9 +499,9 @@ class GF_Field_Stripe_CreditCard extends GF_Field {
 			);
 
 			/* translators: 1. Open div tag 2. Close div tag 3. Open link tag 4. Close link tag */
-			$no_stripe_feed_error = esc_html__( '%1$sPlease check if you have activated a %3$sStripe feed%4$s for your form.%2$s', 'gravityformsstripe' );
+			$no_stripe_feed_error = esc_html__( 'Feed Required%1$s To use the Stripe field, please create a %3$sStripe feed%4$s for this form.%2$s', 'gravityformsstripe' );
 
-			return $this->get_card_error_message( $no_stripe_feed_error, $feed_url );
+			return $this->get_card_error_message( $no_stripe_feed_error, $feed_url, $is_editor_sidebar );
 		}
 
 		return true;
@@ -579,7 +585,7 @@ class GF_Field_Stripe_CreditCard extends GF_Field {
 		$field_content = parent::get_field_content( $value, $force_frontend_label, $form );
 
 		if ( ! GFCommon::is_ssl() && ! $is_admin ) {
-			$field_content = "<div class='gfield_creditcard_warning_message'><span>" . esc_html__( 'This page is unsecured. Do not enter a real credit card number! Use this field only for testing purposes. ', 'gravityformsstripe' ) . '</span></div>' . $field_content;
+			$field_content = "<div class='gfield_description gfield_validation_message gfield_creditcard_warning_message'><span>" . esc_html__( 'This page is unsecured. Do not enter a real credit card number! Use this field only for testing purposes. ', 'gravityformsstripe' ) . '</span></div>' . $field_content;
 		}
 
 		return $field_content;
@@ -726,19 +732,43 @@ class GF_Field_Stripe_CreditCard extends GF_Field {
 	/**
 	 * Display the Stripe Card error message.
 	 *
+	 * @since 5.9 Updated to support different types/contexts of messages.
 	 * @since 3.5
 	 *
 	 * @param string $message The error message.
-	 * @param string $url     The settings URL.
+	 * @param string $url The error message URL.
+	 * @param bool $is_editor_sidebar Whether the error message is displayed in the form editor sidebar.
 	 *
 	 * @return string
 	 */
-	private function get_card_error_message( $message, $url = '' ) {
-		if ( $url ) {
-			return sprintf( $message, '<div class="gform_stripe_card_error gfield_description validation_message gfield_validation_message">', '</div>', '<a href="' . esc_attr( $url ) . '" target="_blank">', '</a>' );
+	private function get_card_error_message( $message, $url = '', $is_editor_sidebar = false ) {
+		$classes = $url ? ' gform_stripe_card_error' : '';
+
+		// Form Editor Sidebar Messages
+		if ( $is_editor_sidebar ) {
+			return sprintf( $message, '<div class="gform-spacing gform-spacing--top-1">', '</div>', '<a href="' . esc_attr( $url ) . '" target="_blank">', '</a>' );
 		}
 
-		return sprintf( $message, '<div class="gfield_description validation_message gfield_validation_message">', '</div>', '', '' );
+		// Form Editor Messages
+		if ( $this->is_form_editor() ) {
+			return '
+				<div class="ginput_container ginput_container_addon_message ginput_container_addon_message_stripe'. $classes .'">
+		            <div class="gform-alert gform-alert--info gform-alert--theme-cosmos gform-spacing gform-spacing--bottom-0 gform-theme__disable">
+		                <span
+		                    class="gform-icon gform-icon--information-simple gform-icon--preset-active gform-icon-preset--status-info gform-alert__icon"
+		                    aria-hidden="true"
+		                ></span>
+		                <div class="gform-alert__message-wrap">
+		                    <div class="gform-alert__message">
+		                        '. sprintf( $message, '<div class="gform-spacing gform-spacing--top-1">', '</div>', '<a href="' . esc_attr( $url ) . '" target="_blank">', '</a>' ) .'
+		                    </div>
+		                </div>
+		            </div>
+		        </div>';
+		}
+
+		// Frontend Messages
+		return sprintf( $message, '<div class="gfield_description validation_message gfield_validation_message">', '</div>', '<a href="' . esc_attr( $url ) . '" target="_blank">', '</a>' );
 	}
 
 	/**
@@ -749,12 +779,14 @@ class GF_Field_Stripe_CreditCard extends GF_Field {
 	 * @return string
 	 */
 	private function get_api_error_message() {
+		$is_form_editor = $this->is_form_editor();
+
 		if ( gf_stripe()->is_stripe_connect_enabled() ) {
 			/* translators: 1. Open div tag 2. Close div tag 3. Open link tag 4. Close link tag */
-			$api_key_error = esc_html__( '%1$sPlease check your %3$sStripe API Settings%4$s. Click the "Connect with Stripe" button to use Stripe.%2$s', 'gravityformsstripe' );
+			$api_key_error = $is_form_editor ? esc_html__( 'Configuration Required%1$sTo use the Stripe field, please configure your %3$sStripe Settings%4$s.%2$s', 'gravityformsstripe' ) : esc_html__( '%1$sConfiguration Required: To use the Stripe field, please configure your %3$sStripe Settings%4$s.%2$s', 'gravityformsstripe' );
 		} else {
 			/* translators: 1. Open div tag 2. Close div tag 3. Open link tag 4. Close link tag */
-			$api_key_error = esc_html__( '%1$sPlease check your %3$sStripe API Settings%4$s. Your Publishable Key is empty.%2$s', 'gravityformsstripe' );
+			$api_key_error = $is_form_editor ? esc_html__( 'Configuration Required%1$sPlease check your %3$sStripe API Settings%4$s. Your Publishable Key is empty.%2$s', 'gravityformsstripe' ) : esc_html__( '%1$sConfiguration Required: Please check your %3$sStripe API Settings%4$s. Your Publishable Key is empty.%2$s', 'gravityformsstripe' );
 		}
 
 		return $api_key_error;

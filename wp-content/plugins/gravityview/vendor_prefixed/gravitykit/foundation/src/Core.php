@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by gravityview on 15-October-2024 using {@see https://github.com/BrianHenryIE/strauss}.
+ * Modified by gravityview on 04-November-2024 using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\GravityView\Foundation;
@@ -41,7 +41,7 @@ use GravityKit\GravityView\Foundation\WP\RESTController;
  * @method static PluginActivationHandler plugin_activation_handler()
  */
 class Core {
-	const VERSION = '1.2.19';
+	const VERSION = '1.2.20';
 
 	const ID = 'gk_foundation';
 
@@ -96,23 +96,29 @@ class Core {
 	 * Class constructor.
 	 *
 	 * @since 1.0.0
+	 * @since 1.2.20 Added $arguments parameter.
 	 *
 	 * @param string $plugin_file Absolute path to the main plugin file.
+	 * @param array  $arguments Optional arguments to set/override the default configuration.
 	 *
 	 * @return void
 	 */
-	private function __construct( $plugin_file ) {
+	private function __construct( $plugin_file, $arguments = [] ) {
 		$this->_plugin_activation_handler = new PluginActivationHandler();
 
 		$this->_plugin_activation_handler->register_hooks( $plugin_file );
 
 		$this->_registered_plugins = [
-			$plugin_file => [
-				'plugin_file'        => $plugin_file,
-				'text_domain'        => CoreHelpers::get_plugin_data( $plugin_file )['TextDomain'],
-				'foundation_version' => self::VERSION,
-				'loads_foundation'   => true,
-			],
+			$plugin_file => array_merge(
+				[
+					'plugin_file'        => $plugin_file,
+					'text_domain'        => CoreHelpers::get_plugin_data( $plugin_file )['TextDomain'],
+					'foundation_version' => self::VERSION,
+					'loads_foundation'   => true,
+					'no_admin_menu'      => false,
+				],
+				$arguments
+			),
 		];
 
 		add_filter(
@@ -178,12 +184,14 @@ class Core {
 	 * Registers class instance.
 	 *
 	 * @since 1.0.0
+	 * @since 1.2.20 Added $arguments parameter.
 	 *
 	 * @param string $plugin_file Absolute path to the main plugin file.
+	 * @param array  $arguments   Optional arguments to set/override the default configuration.
 	 *
 	 * @return void
 	 */
-	public static function register( $plugin_file ) {
+	public static function register( $plugin_file, $arguments = [] ) {
 		if ( wp_doing_ajax() &&
 		     ( LicensesFramework::AJAX_ROUTER === ( $_REQUEST['ajaxRouter'] ?? '' ) ) && // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		     version_compare( $_REQUEST['frontendFoundationVersion'] ?? 0, self::VERSION, '<' ) // phpcs:ignore WordPress.Security.NonceVerification.Recommended
@@ -192,15 +200,19 @@ class Core {
 		}
 
 		if ( is_null( self::$_instance ) ) {
-			self::$_instance = new self( $plugin_file );
+			self::$_instance = new self( $plugin_file, $arguments );
 		} elseif ( ! isset( self::$_instance->_registered_plugins[ $plugin_file ] ) ) {
-			self::$_instance->_registered_plugins[ $plugin_file ] = [
-				'plugin_file'        => $plugin_file,
-				'text_domain'        => CoreHelpers::get_plugin_data( $plugin_file )['TextDomain'],
-				'foundation_version' => self::$_instance->get_plugin_foundation_version( $plugin_file ),
-				'has_foundation'     => false,
-				'loads_foundation'   => false,
-			];
+			self::$_instance->_registered_plugins[ $plugin_file ] = array_merge(
+				[
+					'plugin_file'        => $plugin_file,
+					'text_domain'        => CoreHelpers::get_plugin_data( $plugin_file )['TextDomain'],
+					'foundation_version' => self::$_instance->get_plugin_foundation_version( $plugin_file ),
+					'has_foundation'     => false,
+					'loads_foundation'   => false,
+					'no_admin_menu'      => false,
+				],
+				$arguments
+			);
 		}
 	}
 

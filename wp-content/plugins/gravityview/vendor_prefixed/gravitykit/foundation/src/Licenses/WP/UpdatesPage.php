@@ -2,13 +2,14 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by gravityview on 15-October-2024 using {@see https://github.com/BrianHenryIE/strauss}.
+ * Modified by gravityview on 04-November-2024 using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\GravityView\Foundation\Licenses\WP;
 
 use GravityKit\GravityView\Foundation\Licenses\Framework;
 use GravityKit\GravityView\Foundation\Licenses\ProductManager;
+use GravityKit\GravityView\Foundation\WP\AdminMenu;
 use WP_Error;
 
 /**
@@ -70,6 +71,10 @@ class UpdatesPage {
 	 */
 	public function modify_display_of_updates_table() {
 		if ( ! $this->is_updates_page() ) {
+			return;
+		}
+
+		if ( ! AdminMenu::should_initialize() ) {
 			return;
 		}
 
@@ -153,6 +158,10 @@ JS;
 	 */
 	public function prevent_update( $response, $args ) {
 		if ( is_wp_error( $response ) || ! isset( $args['plugin'] ) ) {
+			return $response;
+		}
+
+		if ( ! AdminMenu::should_initialize() ) {
 			return $response;
 		}
 

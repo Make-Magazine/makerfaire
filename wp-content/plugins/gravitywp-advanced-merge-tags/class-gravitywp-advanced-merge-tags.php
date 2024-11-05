@@ -20,6 +20,7 @@ use GFAPI;
 use GF_Field;
 use GF_Fields;
 use DateTime;
+use GF_Field_Number;
 use GFCommon;
 use GravityWP\LicenseHandler;
 
@@ -208,7 +209,7 @@ class GravityWP_Advanced_Merge_Tags extends GFAddOn {
 	public function init() {
 		// Init license handler.
 		if ( $this->_gwp_license_handler === null ) {
-			$this->_gwp_license_handler = new GravityWP\LicenseHandler\LicenseHandler( __CLASS__ , plugin_dir_path( __FILE__ ) . 'gravitywp-advanced-merge-tags.php' );
+			$this->_gwp_license_handler = new GravityWP\LicenseHandler\LicenseHandler( __CLASS__, plugin_dir_path( __FILE__ ) . 'gravitywp-advanced-merge-tags.php' );
 		}
 		parent::init();
 
@@ -254,7 +255,7 @@ class GravityWP_Advanced_Merge_Tags extends GFAddOn {
 	public function scripts() {
 
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		$min = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG || isset( $_GET['gform_debug'] ) ? '' : '.min';
+		$min = ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) || isset( $_GET['gform_debug'] ) ? '' : '.min';
 
 		$scripts = array(
 			array(
@@ -626,6 +627,7 @@ class GravityWP_Advanced_Merge_Tags extends GFAddOn {
 			'gwp_sanitize',
 			'gwp_user_role',
 			'gwp_json_get',
+			'gwp_censor',
 		);
 	}
 
@@ -651,6 +653,7 @@ class GravityWP_Advanced_Merge_Tags extends GFAddOn {
 			'gwp_post_id',
 			'gwp_user',
 			'gwp_get_matched_entry_value',
+			'gwp_calculate',
 		);
 	}
 
@@ -944,12 +947,6 @@ class GravityWP_Advanced_Merge_Tags extends GFAddOn {
 		 */
 		$gwp_merge_tags = self::get_supported_regular_mergetags();
 
-		/**
-		 * Advanced Merge Tags with attributes
-		 */
-		$atts_merge_tags_regex = '/{%s(.*?)}/ism'; // Regex pattern for Advanced Mergetags.
-		$gwp_atts_merge_tags   = self::get_supported_advanced_mergetags();
-
 		/* process Merge Tags without attributes */
 		foreach ( $gwp_merge_tags as $gwp_merge_tag ) {
 
@@ -963,10 +960,22 @@ class GravityWP_Advanced_Merge_Tags extends GFAddOn {
 			}
 		}
 
+		/**
+		 * Advanced Merge Tags with attributes
+		 */
+		$atts_merge_tags_regex = '/{%s(.*?)}/ism'; // Regex pattern for Advanced Mergetags.
+		$gwp_atts_merge_tags   = self::get_supported_advanced_mergetags();
+
 		/* process Merge Tags with attributes */
 		foreach ( $gwp_atts_merge_tags as $gwp_atts_merge_tag ) {
 
-			preg_match_all( sprintf( $atts_merge_tags_regex, $gwp_atts_merge_tag ), $text, $matches, PREG_SET_ORDER );
+			if ( $gwp_atts_merge_tag === 'gwp_calculate' ) {
+				// use an experimental pattern that can capture nested {} characters.
+				preg_match_all( sprintf( '/{%s((?:[^{}]|\{[^{}]*\})*)\}/ism', $gwp_atts_merge_tag ), $text, $matches, PREG_SET_ORDER );
+			} else {
+				// use default, battle tested, pattern.
+				preg_match_all( sprintf( $atts_merge_tags_regex, $gwp_atts_merge_tag ), $text, $matches, PREG_SET_ORDER );
+			}
 
 			$method = 'mergetag_' . $gwp_atts_merge_tag;
 
@@ -1604,7 +1613,11 @@ class GravityWP_Advanced_Merge_Tags extends GFAddOn {
 			// mock a field object.
 			$field = new GF_Field( array( 'type' => 'entry_property' ) );
 		}
-		self::process_amt_modifiers( $value, $modifier_atts[0], $value, $input_id, $modifier_atts, $field, $value, $form, $entry, $url_encode, $esc_html, $nl2br, $format );
+		// prevent double nl2br and esc_html in $this->process_amt_modifiers. $this->gwp_process_mergetags() will format the output.
+		$nl2br2      = false;
+		$esc_html2   = false;
+		$url_encode2 = false;
+		self::process_amt_modifiers( $value, $modifier_atts[0], $value, $input_id, $modifier_atts, $field, $value, $form, $entry, $url_encode2, $esc_html2, $format, $nl2br2 );
 
 		return $value;
 	}
@@ -1799,6 +1812,60 @@ class GravityWP_Advanced_Merge_Tags extends GFAddOn {
 			$field = new GF_Field( array( 'type' => 'user_property' ) );
 			self::process_amt_modifiers( $value, $modifier_atts[0], $value, $input_id, $modifier_atts, $field, $value, $form, $entry, $url_encode, $esc_html, $nl2br, $format );
 		}
+
+		return $value;
+	}
+
+	/**
+	 * Process gwp_calculate Merge Tag.
+	 *
+	 * Returns the result of a calculation formula and format the number.
+	 *
+	 * @since 1.0
+	 *
+	 * @param array<mixed> $mergetag_atts Contains the Merge Tags attributes.
+	 * @param array<mixed> $form The form array.
+	 * @param array<mixed> $entry The entry array.
+	 * @param bool         $url_encode Whether to URL encode the output.
+	 * @param bool         $esc_html Whether to escape HTML entities in the output.
+	 * @param bool         $nl2br Whether to convert newlines to HTML line breaks in the output.
+	 * @param string       $format The format of the output.
+	 *
+	 * @return string
+	 */
+	public static function mergetag_gwp_calculate( $mergetag_atts, $form, $entry, $url_encode, $esc_html, $nl2br, $format ) {
+		$atts = shortcode_atts(
+			array(
+				'formula'       => '',
+				'number_format' => 'decimal_point',
+				'thousands_sep' => 'true',
+				'currency'      => '',
+			),
+			$mergetag_atts
+		);
+
+		if ( empty( $entry ) ) {
+			return gravitywp_advanced_merge_tags()->gwp_error_handler( esc_html__( 'no entry available', 'gravitywpadvancedmergetags' ), __METHOD__, print_r( $mergetag_atts, true ) );
+		}
+
+		// Convert merge tags with advanced modifiers. This might break the formula if the output is not numeric. But we leave that to the responsibility of the user.
+		$formula = self::gwp_process_modifiers( $atts['formula'], $form, $entry, false, false, false, 'text' );
+
+		// Create a number field with type calculation. This allows us to use GFCommon::calculate.
+		$field = new GF_Field_Number(
+			array(
+				'enableCalculation'  => true,
+				'calculationFormula' => $formula,
+				'numberFormat'       => $atts['number_format'],
+				'type'               => 'calculation',
+			)
+		);
+
+		$value = GFCommon::calculate( $field, $form, $entry );
+
+		$include_thousands_sep = $atts['thousands_sep'] !== 'false';
+
+		$value = GFCommon::format_number( $value, $atts['number_format'], $atts['currency'], $include_thousands_sep );
 
 		return $value;
 	}
@@ -2247,6 +2314,82 @@ class GravityWP_Advanced_Merge_Tags extends GFAddOn {
 	}
 
 	/**
+	 * Process gwp_censor modifier.
+	 *
+	 * Mergetag-modifier: gwp_censor -> Modifier to censor blacklisted words using a specified character or a fixed-length string.
+	 *
+	 * @since 1.6
+	 *
+	 * @param string       $value The current merge tag value to be filtered.
+	 * @param string       $merge_tag If the merge tag being executed is an individual field merge tag.
+	 * @param array<mixed> $modifier_atts Array of the modifier attributes.
+	 * @param GF_Field     $field The current field.
+	 * @param mixed        $raw_value The raw value submitted for this field.
+	 * @param string       $format Whether the text is formatted as html or text.
+	 * @param array<mixed> $form The form object.
+	 * @param array<mixed> $entry The entry array.
+	 *
+	 * @return string Return the value after censorship
+	 */
+	public static function modifier_gwp_censor( $value, $merge_tag, $modifier_atts, $field, $raw_value, $format, $form, $entry ) {
+		$atts = shortcode_atts(
+			array(
+				'0'           => null,    // Contains the modifier (without attributes).
+				'mask_char'   => '*',     // Character used for replacement.
+				'ignore_case' => 'true',  // Perform case-insensitive search.
+				'mask_string' => '',      // Fixed length string to use for replacement.
+				'partial'     => 'false', // show first/last letter.
+			),
+			$modifier_atts
+		);
+
+		// Get disallowed keys from WordPress settings.
+		$disallowed_keys = explode( "\n", get_option( 'disallowed_keys' ) );
+
+		// Prepare regex pattern for each disallowed word.
+		foreach ( $disallowed_keys as &$key ) {
+			$key = trim( $key );
+			if ( ! empty( $key ) ) {
+				$key = preg_quote( $key, '/' );
+			}
+		}
+
+		// Check if case-insensitive search is enabled.
+		$regex_modifier = ( $atts['ignore_case'] == 'true' ) ? 'i' : '';
+
+		$pattern = '/\b(' . implode( '|', $disallowed_keys ) . ')\b/' . $regex_modifier;
+
+		// Perform replacement based on disallowed words.
+		$value = preg_replace_callback(
+			$pattern,
+			function ( $matches ) use ( $atts ) {
+				$word_length = strlen( $matches[0] );
+
+				if ( $atts['partial'] === 'true' ) {
+					$word_length = $word_length - 2;
+				}
+
+				// Use mask string if defined and not empty.
+				if ( ! empty( $atts['mask_string'] ) ) {
+					$return = $atts['mask_string'];
+				} else {
+					// Replace all characters in the word with the mask_char.
+					$return = str_repeat( $atts['mask_char'], $word_length );
+				}
+
+				if ( $atts['partial'] === 'true' ) {
+					$return = substr( $matches[0], 0, 1 ) . $return . substr( $matches[0], -1, 1 );
+				}
+				return $return;
+			},
+			$value
+		);
+
+		return $value;
+	}
+
+
+	/**
 	 * Process gwp_append modifier.
 	 *
 	 * Mergetag-modifier: gwp_append -> Modifier to add content before or behind value if the value is not empty.
@@ -2470,54 +2613,54 @@ class GravityWP_Advanced_Merge_Tags extends GFAddOn {
 	 *
 	 * @since 1.2.5
 	 *
-	 * @param array<mixed> $atts Array with attributes.
+	 * @param array<mixed> $mergetag_atts Array with attributes.
 	 *
 	 * @return string $token A unique id of a certain length.
 	 */
-	public static function mergetag_gwp_generate_token( $atts ) {
+	public static function mergetag_gwp_generate_token( $mergetag_atts ) {
+		$atts = shortcode_atts(
+			array(
+				'charset' => 'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890',
+				'length'  => '16',
+				'unique'  => 'false',
+				'prefix'  => '',
+				'postfix' => '',
+				'retries' => '10',
+			),
+			$mergetag_atts
+		);
 
-		$default_charset = 'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890';
-
-		// Save modifier parameters if available or assign default parameter values.
-		$charset        = $atts['charset'] ?? $default_charset;
-		$length         = isset( $atts['length'] ) ? (int) $atts['length'] : 16;
-		$unique         = $atts['unique'] ?? 'false';
+		$charset        = $atts['charset'];
+		$length         = intval( $atts['length'] );
+		$unique         = $atts['unique'];
+		$retries        = max( absint( $atts['retries'] ), 1 ); // Ensure minimum retries of 1.
 		$token          = '';
-		$random_pos     = '';
 		$charset_length = strlen( $charset );
 
-		// Return error if length is not an integer.
-		if ( ! ( $length ) ) {
-			return gravitywp_advanced_merge_tags()->gwp_error_handler( esc_html__( 'length is not an integer', 'gravitywpadvancedmergetags' ), __METHOD__, print_r( $atts, true ) );
+		if ( ! is_int( $length ) || $length < 8 ) {
+			return gravitywp_advanced_merge_tags()->gwp_error_handler( esc_html__( 'Invalid length', 'gravitywpadvancedmergetags' ), __METHOD__, print_r( $atts, true ) );
 		}
 
-		// Return error if length is less than 8.
-		if ( $length < 8 ) {
-			return gravitywp_advanced_merge_tags()->gwp_error_handler( esc_html__( 'minimum length is 8 characters', 'gravitywpadvancedmergetags' ), __METHOD__, print_r( $atts, true ) );
+		for ( $i = 0; $i < $length; $i++ ) {
+			$random_pos = random_int( 0, $charset_length - 1 );
+			$token     .= $charset[ $random_pos ];
 		}
 
-		// Build unique id.
-		for ( $i = 1; $i <= $length; $i++ ) {
-			$random_pos = random_int( 0, $charset_length );
+		$token = $atts['prefix'] . $token . $atts['postfix'];
 
-			$token .= $charset[ $random_pos ];
-		}
-
-		// If parameter is set, check if generates unique id is unique.
 		if ( $unique === 'true' ) {
-			$is_unique = self::check_unique( $token );
-
-			// Generate a new id if id is not unique. If after 10 attempts no unique value is generated, return error.
-			if ( $is_unique === false ) {
-				$atts['counter'] = isset( $atts['counter'] ) ? ++$atts['counter'] : 1;
-				if ( $atts['counter'] === 10 ) {
-					return gravitywp_advanced_merge_tags()->gwp_error_handler( esc_html__( 'could not generate a unique token with these attributes', 'gravitywpadvancedmergetags' ), __METHOD__, print_r( $atts, true ) );
+			if ( ! self::check_unique( $token ) ) {
+				$mergetag_atts['counter'] = isset( $mergetag_atts['counter'] ) ? ++$mergetag_atts['counter'] : 1;
+				if ( $mergetag_atts['counter'] >= $retries ) {
+					return gravitywp_advanced_merge_tags()->gwp_error_handler( esc_html__( 'Could not generate a unique token.', 'gravitywpadvancedmergetags' ), __METHOD__, print_r( $atts, true ) );
 				}
-				$token = self::mergetag_gwp_generate_token( $atts );
+				$token = self::mergetag_gwp_generate_token( $mergetag_atts );
 			}
 		}
-		return( $token );
+
+		return $token;
 	}
+
 
 	/**
 	 * Retrieves the user roles based on a field value with user_login, user_email or user_id.
@@ -3185,6 +3328,6 @@ class GravityWP_Advanced_Merge_Tags extends GFAddOn {
  * @since  1.0
  * @return GravityWP_Advanced_Merge_Tags An instance of the GravityWP_Advanced_Merge_Tags class
  */
-function gravitywp_advanced_merge_tags() {
+function gravitywp_advanced_merge_tags() { // phpcs:ignore Universal.Files.SeparateFunctionsFromOO.Mixed
 	return GravityWP_Advanced_Merge_Tags::get_instance();
 }

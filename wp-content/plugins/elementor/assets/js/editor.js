@@ -1,4 +1,4 @@
-/*! elementor - v3.23.0 - 05-08-2024 */
+/*! elementor - v3.25.0 - 03-11-2024 */
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
@@ -5419,7 +5419,7 @@ var Load = /*#__PURE__*/function (_$e$modules$CommandIn) {
         // The issue is that the css-parser is depends upon cache and cache is not available during this time.
         return $e.data.get('globals/index').then(function () {
           if (setAsInitial) {
-            // There is no need to attach preview when the iframe is reloaded. It will be triggerred
+            // There is no need to attach preview when the iframe is reloaded. It will be triggered
             // automatically after the iframe finishes loading (see `EditorBase.onPreviewLoaded()`).
             elementor.reloadPreview();
             return Promise.resolve();
@@ -6718,9 +6718,9 @@ module.exports = Marionette.Behavior.extend({
     if (hasDefault) {
       return false;
     }
-    var isFeatureAvalibleToUser = elementor.helpers.hasPro() && !elementor.helpers.hasProAndNotConnected(),
+    var isFeatureAvailableToUser = elementor.helpers.hasPro() && !elementor.helpers.hasProAndNotConnected(),
       hasTags = this.getOption('tags').length > 0;
-    return !isFeatureAvalibleToUser || hasTags;
+    return !isFeatureAvailableToUser || hasTags;
   },
   renderTools: function renderTools() {
     var _this = this;
@@ -9581,7 +9581,8 @@ var _default = /*#__PURE__*/function (_BaseManager) {
       ui_theme: _this.onUIThemeChanged,
       panel_width: _this.onPanelWidthChanged,
       edit_buttons: _this.onEditButtonsChanged,
-      show_hidden_elements: _this.onShowHiddenElementsChange
+      show_hidden_elements: _this.onShowHiddenElementsChange,
+      show_launchpad_checklist: _this.toggleChecklistIconVisibility
     };
     return _this;
   }
@@ -9591,6 +9592,13 @@ var _default = /*#__PURE__*/function (_BaseManager) {
       return {
         darkModeLinkID: 'elementor-editor-dark-mode-css'
       };
+    }
+  }, {
+    key: "toggleChecklistIconVisibility",
+    value: function toggleChecklistIconVisibility(switcherValue) {
+      var shouldShow = 'yes' === switcherValue;
+      this.addMixpanelTrackingChecklist(shouldShow);
+      $e.run('checklist/toggle-icon', shouldShow);
     }
   }, {
     key: "onUIThemeChanged",
@@ -9630,6 +9638,25 @@ var _default = /*#__PURE__*/function (_BaseManager) {
     key: "onShowHiddenElementsChange",
     value: function onShowHiddenElementsChange() {
       elementorFrontend.elements.$body.toggleClass('e-preview--show-hidden-elements');
+    }
+  }, {
+    key: "addMixpanelTrackingChecklist",
+    value: function addMixpanelTrackingChecklist(shouldShow) {
+      var name = shouldShow ? 'checklistShow' : 'checklistHide';
+      var postId = elementor.getPreviewContainer().document.config.id;
+      var postTitle = elementor.getPreviewContainer().model.attributes.settings.attributes.post_title;
+      var postTypeTitle = elementor.getPreviewContainer().document.config.post_type_title;
+      var documentType = elementor.getPreviewContainer().document.config.type;
+      return elementor.editorEvents.dispatchEvent(elementor.editorEvents.config.names.elementorEditor.userPreferences[name], {
+        location: elementor.editorEvents.config.locations.elementorEditor,
+        secondaryLocation: elementor.editorEvents.config.secondaryLocations.userPreferences,
+        trigger: elementor.editorEvents.config.triggers.toggleClick,
+        element: elementor.editorEvents.config.elements.toggle,
+        postId: postId,
+        postTitle: postTitle,
+        postTypeTitle: postTypeTitle,
+        documentType: documentType
+      });
     }
   }]);
   return _default;
@@ -10391,8 +10418,6 @@ var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/inte
 var _typeof2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/typeof */ "../node_modules/@babel/runtime/helpers/typeof.js"));
 var _defineProperty2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/defineProperty */ "../node_modules/@babel/runtime/helpers/defineProperty.js"));
 var _component = _interopRequireDefault(__webpack_require__(/*! ./component */ "../assets/dev/js/editor/components/template-library/component.js"));
-function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { (0, _defineProperty2.default)(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
 var TemplateLibraryCollection = __webpack_require__(/*! elementor-templates/collections/templates */ "../assets/dev/js/editor/components/template-library/collections/templates.js"),
   TemplateLibraryManager;
 TemplateLibraryManager = function TemplateLibraryManager() {
@@ -10640,7 +10665,6 @@ TemplateLibraryManager = function TemplateLibraryManager() {
     self.showTemplates();
   };
   this.loadTemplates = function (onUpdate) {
-    var _this = this;
     self.layout.showLoadingView();
     var query = {
         source: this.getFilter('source')
@@ -10652,34 +10676,14 @@ TemplateLibraryManager = function TemplateLibraryManager() {
       options.refresh = true;
     }
     $e.data.get('library/templates', query, options).then(function (result) {
-      templatesCollection = new TemplateLibraryCollection(_this.filterOutInactiveExperiments(result.data.templates));
+      templatesCollection = new TemplateLibraryCollection(result.data.templates);
       if (result.data.config) {
-        config = _this.filterOutExperimentsCategories(result.data.config);
+        config = result.data.config;
       }
       self.layout.hideLoadingView();
       if (onUpdate) {
         onUpdate();
       }
-    });
-  };
-  this.filterOutExperimentsCategories = function (configData) {
-    var _configData$block;
-    if (elementorCommon.config.experimentalFeatures['link-in-bio']) {
-      return configData;
-    }
-    var dataToReturn = _objectSpread({}, configData);
-    dataToReturn.block.categories = configData === null || configData === void 0 ? void 0 : (_configData$block = configData.block) === null || _configData$block === void 0 ? void 0 : _configData$block.categories.filter(function (category) {
-      return category !== 'Link in Bio';
-    });
-    return dataToReturn;
-  };
-  this.filterOutInactiveExperiments = function (templates) {
-    if (elementorCommon.config.experimentalFeatures['link-in-bio']) {
-      return templates;
-    }
-    return templates.filter(function (template) {
-      var subtype = template.subtype;
-      return subtype !== 'Link in Bio';
     });
   };
   this.showTemplates = function () {
@@ -11490,7 +11494,7 @@ TemplateLibraryTemplateView = Marionette.ItemView.extend({
     if (elementor.config.library_connect.base_access_tier !== this.model.get('accessTier')) {
       classes += ' elementor-template-library-pro-template';
     }
-    return classes;
+    return elementor.hooks.applyFilters('elementor/editor/template-library/template/classes', classes, this);
   },
   attributes: function attributes() {
     var userAccessTier = elementor.config.library_connect.current_access_tier;
@@ -27677,10 +27681,12 @@ var _component4 = _interopRequireDefault(__webpack_require__(/*! ./data/globals/
 var _controlConditions = _interopRequireDefault(__webpack_require__(/*! ./utils/control-conditions */ "../assets/dev/js/editor/utils/control-conditions.js"));
 var _module5 = _interopRequireDefault(__webpack_require__(/*! elementor/modules/promotions/assets/js/editor/module */ "../modules/promotions/assets/js/editor/module.js"));
 var _module6 = _interopRequireDefault(__webpack_require__(/*! elementor/modules/editor-events/assets/js/editor/module */ "../modules/editor-events/assets/js/editor/module.js"));
-var _module7 = _interopRequireDefault(__webpack_require__(/*! elementor/modules/floating-buttons/assets/js/editor/module */ "../modules/floating-buttons/assets/js/editor/module.js"));
-var _module8 = _interopRequireDefault(__webpack_require__(/*! elementor/modules/link-in-bio/assets/js/editor/module */ "../modules/link-in-bio/assets/js/editor/module.js"));
+var _module7 = _interopRequireDefault(__webpack_require__(/*! elementor/modules/floating-buttons/assets/js/floating-buttons/editor/module */ "../modules/floating-buttons/assets/js/floating-buttons/editor/module.js"));
+var _module8 = _interopRequireDefault(__webpack_require__(/*! elementor/modules/floating-buttons/assets/js/floating-bars/editor/module */ "../modules/floating-buttons/assets/js/floating-bars/editor/module.js"));
+var _module9 = _interopRequireDefault(__webpack_require__(/*! elementor/modules/link-in-bio/assets/js/editor/module */ "../modules/link-in-bio/assets/js/editor/module.js"));
 var elementTypes = _interopRequireWildcard(__webpack_require__(/*! ./elements/types */ "../assets/dev/js/editor/elements/types/index.js"));
 var _elementBase = _interopRequireDefault(__webpack_require__(/*! ./elements/types/base/element-base */ "../assets/dev/js/editor/elements/types/base/element-base.js"));
+var _fontVariables = __webpack_require__(/*! ./utils/font-variables */ "../assets/dev/js/editor/utils/font-variables.js");
 function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function _getRequireWildcardCache(nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
 function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || _typeof3(obj) !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
@@ -27928,7 +27934,7 @@ var EditorBase = /*#__PURE__*/function (_Marionette$Applicati) {
         if (!this.widgetsCache[widgetType]) {
           return false;
         }
-        if (!this.widgetsCache[widgetType].commonMerged) {
+        if (!this.widgetsCache[widgetType].commonMerged && !this.widgetsCache[widgetType].atomic_controls) {
           var _this$widgetsCache$wi;
           jQuery.extend(this.widgetsCache[widgetType].controls, this.widgetsCache.common.controls);
           this.widgetsCache[widgetType].controls = elementor.hooks.applyFilters('elements/widget/controls/common', this.widgetsCache[widgetType].controls, widgetType, this.widgetsCache[widgetType]);
@@ -28058,12 +28064,11 @@ var EditorBase = /*#__PURE__*/function (_Marionette$Applicati) {
       if (elementorCommon.config.experimentalFeatures['landing-pages']) {
         this.modules.landingLibraryPageModule = new _module3.default();
       }
-      if (elementorCommon.config.experimentalFeatures['floating-buttons']) {
+      if (elementorCommon.config.experimentalFeatures.container) {
         this.modules.floatingButtonsLibraryModule = new _module7.default();
       }
-      if (elementorCommon.config.experimentalFeatures['link-in-bio']) {
-        this.modules.linkInBioLibraryModule = new _module8.default();
-      }
+      this.modules.linkInBioLibraryModule = new _module9.default();
+      this.modules.floatingBarsLibraryModule = new _module8.default();
       this.modules.elementsColorPicker = new _module4.default();
       this.modules.promotionModule = new _module5.default();
 
@@ -28074,6 +28079,7 @@ var EditorBase = /*#__PURE__*/function (_Marionette$Applicati) {
 
       // TODO: Remove, BC Since 2.9.0.
       elementor.saver = $e.components.get('document/save');
+      new _fontVariables.FontVariables();
       _events.default.dispatch(elementorCommon.elements.$window, 'elementor/init-components', null, 'elementor:init-components');
     }
 
@@ -30502,6 +30508,7 @@ BaseElementView = BaseContainer.extend({
   allowRender: true,
   toggleEditTools: false,
   renderAttributes: {},
+  isRendering: false,
   className: function className() {
     var classes = 'elementor-element elementor-element-edit-mode ' + this.getElementUniqueID();
     if (this.toggleEditTools) {
@@ -30603,11 +30610,7 @@ BaseElementView = BaseContainer.extend({
           return !elementor.selection.isMultiple();
         },
         callback: function callback() {
-          return $e.run('panel/editor/open', {
-            model: _this.options.model,
-            // Todo: remove on merge router
-            view: _this,
-            // Todo: remove on merge router
+          return $e.run('document/elements/select', {
             container: _this.getContainer()
           });
         }
@@ -31059,43 +31062,34 @@ BaseElementView = BaseContainer.extend({
     }
     this.renderHTML();
   },
-  isAtomicDynamic: function isAtomicDynamic(dataBinding, changedControl) {
-    return !!(dataBinding.el.hasAttribute('data-binding-dynamic') && elementorCommon.config.experimentalFeatures.e_nested_atomic_repeaters) && dataBinding.el.getAttribute('data-binding-setting') === changedControl;
+  isAtomicDynamic: function isAtomicDynamic(changedSettings, dataBinding, changedControl) {
+    return '__dynamic__' in changedSettings && dataBinding.el.hasAttribute('data-binding-dynamic') && elementorCommon.config.experimentalFeatures.e_nested_atomic_repeaters && dataBinding.el.getAttribute('data-binding-setting') === changedControl;
   },
-  getDynamicValue: function getDynamicValue(settings, bindingSetting) {
+  getDynamicValue: function getDynamicValue(settings, changedControlKey, bindingSetting) {
+    var _this3 = this;
     return (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee() {
-      var _settings$attributes, _settings$attributes2, _settings$attributes3;
-      var dynamicSettings, changedDataForRemovedItem, changedDataForAddedItem, valueToParse;
+      var dynamicSettings, valueToParse;
       return _regenerator.default.wrap(function _callee$(_context) {
         while (1) switch (_context.prev = _context.next) {
           case 0:
             dynamicSettings = {
               active: true
-            }, changedDataForRemovedItem = (_settings$attributes = settings.attributes) === null || _settings$attributes === void 0 ? void 0 : _settings$attributes[bindingSetting], changedDataForAddedItem = (_settings$attributes2 = settings.attributes) === null || _settings$attributes2 === void 0 ? void 0 : (_settings$attributes3 = _settings$attributes2.__dynamic__) === null || _settings$attributes3 === void 0 ? void 0 : _settings$attributes3[bindingSetting], valueToParse = changedDataForAddedItem || changedDataForRemovedItem;
-            if (!valueToParse) {
-              _context.next = 11;
+            }, valueToParse = _this3.getChangedData(settings, changedControlKey, bindingSetting);
+            if (valueToParse) {
+              _context.next = 3;
               break;
             }
-            _context.prev = 2;
-            return _context.abrupt("return", elementor.dynamicTags.parseTagsText(valueToParse, dynamicSettings, elementor.dynamicTags.getTagDataContent));
+            return _context.abrupt("return", settings.attributes[changedControlKey]);
+          case 3:
+            _context.next = 5;
+            return _this3.getDataFromCacheOrBackend(valueToParse, dynamicSettings);
+          case 5:
+            return _context.abrupt("return", _context.sent);
           case 6:
-            _context.prev = 6;
-            _context.t0 = _context["catch"](2);
-            _context.next = 10;
-            return new Promise(function (resolve) {
-              elementor.dynamicTags.refreshCacheFromServer(function () {
-                resolve();
-              });
-            });
-          case 10:
-            return _context.abrupt("return", !_.isEmpty(elementor.dynamicTags.cache) ? elementor.dynamicTags.parseTagsText(valueToParse, dynamicSettings, elementor.dynamicTags.getTagDataContent) : false);
-          case 11:
-            return _context.abrupt("return", settings.attributes[bindingSetting]);
-          case 12:
           case "end":
             return _context.stop();
         }
-      }, _callee, null, [[2, 6]]);
+      }, _callee);
     }))();
   },
   findUniqueKey: function findUniqueKey(obj1, obj2) {
@@ -31133,7 +31127,7 @@ BaseElementView = BaseContainer.extend({
    * UPDATE: Support for dynamics has experimentally been added in v3.23
    */
   linkDataBindings: function linkDataBindings() {
-    var _this3 = this;
+    var _this4 = this;
     /**
      * @type {Array.<DataBinding>}
      */
@@ -31150,7 +31144,7 @@ BaseElementView = BaseContainer.extend({
       // To support nested data-binding bypass nested data-binding that are not part of the current.
       if (jQuery(current).closest('.elementor-element').data('id') === id) {
         if (current.dataset.bindingType) {
-          _this3.dataBindings.push({
+          _this4.dataBindings.push({
             el: current,
             dataset: current.dataset
           });
@@ -31170,26 +31164,25 @@ BaseElementView = BaseContainer.extend({
    */
   renderDataBindings: function renderDataBindings(settings, dataBindings) {
     var _this$dataBindings,
-      _this4 = this;
+      _this5 = this;
     if (!((_this$dataBindings = this.dataBindings) !== null && _this$dataBindings !== void 0 && _this$dataBindings.length)) {
       return false;
     }
     var changed = false;
     var renderDataBinding = /*#__PURE__*/function () {
       var _ref = (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee2(dataBinding) {
-        var _settings$changed, _settings$_previousAt;
         var bindingSetting, changedControl, change, dynamicValue;
         return _regenerator.default.wrap(function _callee2$(_context2) {
           while (1) switch (_context2.prev = _context2.next) {
             case 0:
-              bindingSetting = dataBinding.dataset.bindingSetting, changedControl = _this4.findUniqueKey(settings === null || settings === void 0 ? void 0 : (_settings$changed = settings.changed) === null || _settings$changed === void 0 ? void 0 : _settings$changed.__dynamic__, settings === null || settings === void 0 ? void 0 : (_settings$_previousAt = settings._previousAttributes) === null || _settings$_previousAt === void 0 ? void 0 : _settings$_previousAt.__dynamic__)[0] || Object.keys(settings.changed)[0];
+              bindingSetting = dataBinding.dataset.bindingSetting, changedControl = _this5.getChangedDynamicControlKey(settings);
               change = settings.changed[bindingSetting];
-              if (!_this4.isAtomicDynamic(dataBinding, changedControl)) {
+              if (!_this5.isAtomicDynamic(settings.changed, dataBinding, changedControl)) {
                 _context2.next = 7;
                 break;
               }
               _context2.next = 5;
-              return _this4.getDynamicValue(settings, bindingSetting);
+              return _this5.getDynamicValue(settings, changedControl, bindingSetting);
             case 5:
               dynamicValue = _context2.sent;
               if (dynamicValue) {
@@ -31232,6 +31225,8 @@ BaseElementView = BaseContainer.extend({
               });
               if ((container === null || container === void 0 ? void 0 : (_container$parent = container.parent) === null || _container$parent === void 0 ? void 0 : _container$parent.children.indexOf(container)) + 1 === parseInt(dataBinding.dataset.bindingIndex)) {
                 changed = renderDataBinding(dataBinding);
+              } else if (dataBindings.indexOf(dataBinding) + 1 === this.getRepeaterItemActiveIndex()) {
+                changed = this.tryHandleDynamicCoverSettings(dataBinding, settings);
               }
             }
             break;
@@ -31260,15 +31255,19 @@ BaseElementView = BaseContainer.extend({
    * @param {Object} settings
    */
   renderOnChange: function renderOnChange(settings) {
-    var _this5 = this;
+    var _this6 = this;
     if (!this.allowRender) {
+      return;
+    }
+    if (this.isRendering) {
+      this.isRendering = false;
       return;
     }
     var renderResult = this.renderDataBindings(settings, this.dataBindings);
     if (renderResult instanceof Promise) {
       renderResult.then(function (result) {
         if (!result) {
-          _this5.renderChanges(settings);
+          _this6.renderChanges(settings);
         }
       });
     }
@@ -31303,7 +31302,7 @@ BaseElementView = BaseContainer.extend({
     BaseContainer.prototype.render.apply(this, arguments);
   },
   onRender: function onRender() {
-    var _this6 = this;
+    var _this7 = this;
     this.linkDataBindings();
     this.renderUI();
     this.runReadyTrigger();
@@ -31324,9 +31323,9 @@ BaseElementView = BaseContainer.extend({
 
     // Defer to wait for all of the children to render.
     setTimeout(function () {
-      _this6.initDraggable();
-      _this6.dispatchElementLifeCycleEvent('rendered');
-      elementorFrontend.elements.$window.on('elementor/elements/link-data-bindings', _this6.linkDataBindings.bind(_this6));
+      _this7.initDraggable();
+      _this7.dispatchElementLifeCycleEvent('rendered');
+      elementorFrontend.elements.$window.on('elementor/elements/link-data-bindings', _this7.linkDataBindings.bind(_this7));
     });
   },
   dispatchElementLifeCycleEvent: function dispatchElementLifeCycleEvent(eventType) {
@@ -31408,7 +31407,7 @@ BaseElementView = BaseContainer.extend({
     elementorFrontend.elements.window.document.activeElement.blur();
   },
   onDestroy: function onDestroy() {
-    var _this7 = this;
+    var _this8 = this;
     if (this.dataBindings) {
       delete this.dataBindings;
     }
@@ -31418,7 +31417,7 @@ BaseElementView = BaseContainer.extend({
 
     // Defer so the event is fired after the element is removed from the DOM.
     setTimeout(function () {
-      return _this7.dispatchElementLifeCycleEvent('destroyed');
+      return _this8.dispatchElementLifeCycleEvent('destroyed');
     });
   },
   // eslint-disable-next-line jsdoc/require-returns-check
@@ -31453,7 +31452,7 @@ BaseElementView = BaseContainer.extend({
    * Initialize the Droppable instance.
    */
   initDraggable: function initDraggable() {
-    var _this8 = this;
+    var _this9 = this;
     if (!elementor.userCan('design')) {
       return;
     }
@@ -31464,20 +31463,20 @@ BaseElementView = BaseContainer.extend({
     }
     this.$el.html5Draggable({
       onDragStart: function onDragStart(e) {
-        var _this8$options$dragga;
+        var _this9$options$dragga;
         e.stopPropagation();
-        if (_this8.getContainer().isLocked()) {
+        if (_this9.getContainer().isLocked()) {
           e.originalEvent.preventDefault();
           return;
         }
 
         // Need to stop this event when the element is absolute since it clashes with this one.
         // See `behaviors/widget-draggable.js`.
-        if ((_this8$options$dragga = _this8.options.draggable) !== null && _this8$options$dragga !== void 0 && _this8$options$dragga.isActive) {
+        if ((_this9$options$dragga = _this9.options.draggable) !== null && _this9$options$dragga !== void 0 && _this9$options$dragga.isActive) {
           return;
         }
-        var helper = _this8.getDraggableHelper();
-        _this8.$el[0].appendChild(helper);
+        var helper = _this9.getDraggableHelper();
+        _this9.$el[0].appendChild(helper);
 
         // Set the x & y coordinates of the helper the same as the legacy jQuery sortable.
         e.originalEvent.dataTransfer.setDragImage(helper, 25, 20);
@@ -31487,15 +31486,113 @@ BaseElementView = BaseContainer.extend({
         setTimeout(function () {
           helper.remove();
         });
-        _this8.onDragStart(e);
-        elementor.channels.editor.reply('element:dragged', _this8);
+        _this9.onDragStart(e);
+        elementor.channels.editor.reply('element:dragged', _this9);
       },
       onDragEnd: function onDragEnd(e) {
         e.stopPropagation();
-        _this8.onDragEnd(e);
+        _this9.onDragEnd(e);
       },
       groups: ['elementor-element']
     });
+  },
+  getDataFromCacheOrBackend: function getDataFromCacheOrBackend(valueToParse, dynamicSettings) {
+    return (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee3() {
+      return _regenerator.default.wrap(function _callee3$(_context3) {
+        while (1) switch (_context3.prev = _context3.next) {
+          case 0:
+            _context3.prev = 0;
+            return _context3.abrupt("return", elementor.dynamicTags.parseTagsText(valueToParse, dynamicSettings, elementor.dynamicTags.getTagDataContent));
+          case 4:
+            _context3.prev = 4;
+            _context3.t0 = _context3["catch"](0);
+            _context3.next = 8;
+            return new Promise(function (resolve) {
+              elementor.dynamicTags.refreshCacheFromServer(function () {
+                resolve();
+              });
+            });
+          case 8:
+            return _context3.abrupt("return", !_.isEmpty(elementor.dynamicTags.cache) ? elementor.dynamicTags.parseTagsText(valueToParse, dynamicSettings, elementor.dynamicTags.getTagDataContent) : false);
+          case 9:
+          case "end":
+            return _context3.stop();
+        }
+      }, _callee3, null, [[0, 4]]);
+    }))();
+  },
+  getChangedDynamicControlKey: function getChangedDynamicControlKey(settings) {
+    var _settings$changed, _settings$_previousAt;
+    var changedControlKey = this.findUniqueKey(settings === null || settings === void 0 ? void 0 : (_settings$changed = settings.changed) === null || _settings$changed === void 0 ? void 0 : _settings$changed.__dynamic__, settings === null || settings === void 0 ? void 0 : (_settings$_previousAt = settings._previousAttributes) === null || _settings$_previousAt === void 0 ? void 0 : _settings$_previousAt.__dynamic__)[0];
+    if (changedControlKey) {
+      return changedControlKey;
+    }
+    return Object.keys(settings.changed)[0] !== '__dynamic__' ? Object.keys(settings.changed)[0] : Object.keys(settings.changed.__dynamic__)[0];
+  },
+  getChangedDataForRemovedItem: function getChangedDataForRemovedItem(settings, changedControlKey, bindingSetting) {
+    var _settings$attributes, _settings$attributes$, _settings$attributes2;
+    return ((_settings$attributes = settings.attributes) === null || _settings$attributes === void 0 ? void 0 : (_settings$attributes$ = _settings$attributes[changedControlKey]) === null || _settings$attributes$ === void 0 ? void 0 : _settings$attributes$[bindingSetting]) || ((_settings$attributes2 = settings.attributes) === null || _settings$attributes2 === void 0 ? void 0 : _settings$attributes2[changedControlKey]);
+  },
+  getChangedDataForAddedItem: function getChangedDataForAddedItem(settings, changedControlKey, bindingSetting) {
+    var _settings$attributes3, _settings$attributes4, _settings$attributes5, _settings$attributes6, _settings$attributes7;
+    return ((_settings$attributes3 = settings.attributes) === null || _settings$attributes3 === void 0 ? void 0 : (_settings$attributes4 = _settings$attributes3.__dynamic__) === null || _settings$attributes4 === void 0 ? void 0 : (_settings$attributes5 = _settings$attributes4[changedControlKey]) === null || _settings$attributes5 === void 0 ? void 0 : _settings$attributes5[bindingSetting]) || ((_settings$attributes6 = settings.attributes) === null || _settings$attributes6 === void 0 ? void 0 : (_settings$attributes7 = _settings$attributes6.__dynamic__) === null || _settings$attributes7 === void 0 ? void 0 : _settings$attributes7[changedControlKey]);
+  },
+  getChangedData: function getChangedData(settings, changedControlKey, bindingSetting) {
+    var changedDataForRemovedItem = this.getChangedDataForRemovedItem(settings, changedControlKey, bindingSetting),
+      changedDataForAddedItem = this.getChangedDataForAddedItem(settings, changedControlKey, bindingSetting);
+    return changedDataForAddedItem || changedDataForRemovedItem;
+  },
+  /**
+   * Function getTitleWithAdvancedValues().
+   *
+   * Renders before / after / fallback for dynamic item titles.
+   *
+   * @param {Object} settings
+   * @param {string} text
+   */
+  getTitleWithAdvancedValues: function getTitleWithAdvancedValues(settings, text) {
+    var attributes = settings.attributes,
+      previousAttributes = settings._previousAttributes;
+    if (this.compareSettings(attributes, previousAttributes, 'fallback')) {
+      text = text.replace(new RegExp(previousAttributes.fallback), '');
+    }
+    if (!text || attributes.fallback === text) {
+      return attributes.fallback || '';
+    }
+    if (this.compareSettings(attributes, previousAttributes, 'before')) {
+      text = text.replace(previousAttributes.before, '');
+    }
+    if (this.compareSettings(attributes, previousAttributes, 'after')) {
+      text = text.replace(new RegExp(previousAttributes.after + '$'), '');
+    }
+    if (!text) {
+      return attributes.fallback || '';
+    }
+    var newBefore = this.getNewSettingsValue(attributes, previousAttributes, 'before'),
+      newAfter = this.getNewSettingsValue(attributes, previousAttributes, 'after');
+    text = newBefore + text;
+    text += newAfter;
+    return text;
+  },
+  compareSettings: function compareSettings(attributes, previousAttributes, key) {
+    return previousAttributes[key] && previousAttributes[key] !== attributes[key];
+  },
+  getNewSettingsValue: function getNewSettingsValue(attributes, previousAttributes, key) {
+    return previousAttributes[key] !== attributes[key] ? attributes[key] || '' : '';
+  },
+  getRepeaterItemActiveIndex: function getRepeaterItemActiveIndex() {
+    return this.getContainer().renderer.view.model.changed.editSettings.changed.activeItemIndex || this.getContainer().renderer.view.model.changed.editSettings.attributes.activeItemIndex;
+  },
+  tryHandleDynamicCoverSettings: function tryHandleDynamicCoverSettings(dataBinding, settings) {
+    if (!this.isAdvancedDynamicSettings(settings.attributes)) {
+      return false;
+    }
+    this.isRendering = true;
+    dataBinding.el.textContent = this.getTitleWithAdvancedValues(settings, dataBinding.el.textContent);
+    return true;
+  },
+  isAdvancedDynamicSettings: function isAdvancedDynamicSettings(attributes) {
+    return 'before' in attributes && 'after' in attributes && 'fallback' in attributes;
   }
 });
 module.exports = BaseElementView;
@@ -32970,6 +33067,9 @@ var ContainerView = BaseElementView.extend({
     return "".concat(BaseElementView.prototype.className.apply(this), " e-con ").concat(isNestedClassName);
   },
   filterSettings: function filterSettings(newItem) {
+    if ('container' !== (newItem === null || newItem === void 0 ? void 0 : newItem.elType)) {
+      return;
+    }
     var parentContainer = this;
     if (parentContainer.isBoxedWidth()) {
       newItem.settings.content_width = 'full';
@@ -34616,9 +34716,9 @@ var _default = /*#__PURE__*/function (_Marionette$ItemView) {
       return 'elementor-empty-view';
     }
   }, {
-    key: "onRendr",
-    value: function onRendr() {
-      this.$el.css('padding-inline-start', this.getOption('indent'));
+    key: "onRender",
+    value: function onRender() {
+      this.$el.css('padding-inline-start', this.getOption('indent') + 'px');
     }
   }]);
   return _default;
@@ -35208,6 +35308,12 @@ var _default = /*#__PURE__*/function (_Marionette$LayoutVie) {
       };
     }
   }, {
+    key: "behaviors",
+    value: function behaviors() {
+      var behaviors = {};
+      return elementor.hooks.applyFilters('navigator/layout/behaviors', behaviors, this);
+    }
+  }, {
     key: "events",
     value: function events() {
       return {
@@ -35322,7 +35428,7 @@ var _default = /*#__PURE__*/function (_BaseRegion) {
       customPosition: {
         title: __('Custom Positioning', 'elementor'),
         icon: 'cursor-move',
-        settingKeys: ['_position', '_element_width'],
+        settingKeys: ['_position'],
         section: '_section_position'
       }
     };
@@ -37383,7 +37489,7 @@ PanelElementsLayoutView = Marionette.LayoutView.extend({
         editable: false
       });
     });
-    if (elementorCommon.config.experimentalFeatures.container_grid) {
+    if (elementorCommon.config.experimentalFeatures.container) {
       jQuery.each(elementor.config.elementsPresets, function (index, widget) {
         var originalWidget = elementor.widgetsCache[widget.replacements.custom.originalWidget],
           replacements = widget.replacements,
@@ -39136,9 +39242,7 @@ var ContainerHelper = /*#__PURE__*/function () {
   }, {
     key: "openEditMode",
     value: function openEditMode(container) {
-      $e.run('panel/editor/open', {
-        model: container.model,
-        view: container.view,
+      $e.run('document/elements/select', {
         container: container
       });
     }
@@ -39288,8 +39392,14 @@ module.exports = elementorModules.Module.extend({
     }
     return action.isEnabled ? action.isEnabled() : true;
   },
+  isActionVisible: function isActionVisible(action) {
+    if ('function' === typeof action.isVisible) {
+      return action.isVisible();
+    }
+    return false !== action.isVisible;
+  },
   runAction: function runAction(action) {
-    if (!this.isActionEnabled(action)) {
+    if (!this.isActionEnabled(action) || !this.isActionVisible(action)) {
       return;
     }
     action.callback();
@@ -39330,7 +39440,7 @@ module.exports = elementorModules.Module.extend({
       self.toggleGroupVisibility(group, isGroupVisible);
       if (isGroupVisible) {
         group.actions.forEach(function (action) {
-          var isActionVisible = false !== action.isVisible;
+          var isActionVisible = self.isActionVisible(action);
           self.toggleActionVisibility(action, isActionVisible);
           self.updateActionTitle(action);
           if (isActionVisible) {
@@ -39968,6 +40078,172 @@ exports["default"] = FilesUploadHandler;
 
 /***/ }),
 
+/***/ "../assets/dev/js/editor/utils/font-variables.js":
+/*!*******************************************************!*\
+  !*** ../assets/dev/js/editor/utils/font-variables.js ***!
+  \*******************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports.FontVariables = void 0;
+var _slicedToArray2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/slicedToArray */ "../node_modules/@babel/runtime/helpers/slicedToArray.js"));
+var _classCallCheck2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "../node_modules/@babel/runtime/helpers/classCallCheck.js"));
+var _createClass2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/createClass */ "../node_modules/@babel/runtime/helpers/createClass.js"));
+var FontVariables = /*#__PURE__*/function () {
+  function FontVariables() {
+    (0, _classCallCheck2.default)(this, FontVariables);
+    this.init();
+  }
+  (0, _createClass2.default)(FontVariables, [{
+    key: "init",
+    value: function init() {
+      var _this = this;
+      $e.routes.on('run:after', function (component, route, args) {
+        if ('panel/editor' !== component.getNamespace()) {
+          return;
+        }
+        _this.onTypographyControlOpen(args);
+      });
+      $e.commands.on('run:after', function (_component, command, args) {
+        if ('document/elements/settings' !== command) {
+          return;
+        }
+        _this.onControlChanged(args);
+      });
+    }
+  }, {
+    key: "onTypographyControlOpen",
+    value: function onTypographyControlOpen(args) {
+      var _this2 = this;
+      if (!(args !== null && args !== void 0 && args.activeControl)) {
+        return;
+      }
+      var currentPageView = elementor.getPanelView().getCurrentPageView();
+      var mainTypographyControl = currentPageView.collection.find(function (model) {
+        return args.activeControl === model.get('name') && 'typography' === model.get('groupType');
+      });
+      if (!mainTypographyControl) {
+        return;
+      }
+      var currentGroupPrefix = mainTypographyControl.get('groupPrefix');
+      var allTypographyControls = currentPageView.collection.filter(function (model) {
+        return currentGroupPrefix === model.get('groupPrefix');
+      });
+      var fontControlModel = allTypographyControls.find(function (model) {
+        return currentGroupPrefix === model.get('groupPrefix') && 'font' === model.get('type');
+      });
+      var settingName = fontControlModel.get('name');
+      var controlValue = elementor.getCurrentElement().model.get('settings').get(settingName);
+      if (!controlValue) {
+        return;
+      }
+      var fontOptions = this.getFontOptions(controlValue);
+      if (!fontOptions) {
+        return;
+      }
+      var _loop = function _loop() {
+        var _Object$entries$_i = (0, _slicedToArray2.default)(_Object$entries[_i], 2),
+          fieldKey = _Object$entries$_i[0],
+          fieldData = _Object$entries$_i[1];
+        var controlKey = fontControlModel.get('groupPrefix') + fieldKey;
+        var controlData = allTypographyControls.find(function (model) {
+          return controlKey === model.get('name');
+        });
+        if (!controlData) {
+          return "continue";
+        }
+        _this2.applyFontVariableRange([], controlKey, fieldData);
+      };
+      for (var _i = 0, _Object$entries = Object.entries(fontOptions); _i < _Object$entries.length; _i++) {
+        var _ret = _loop();
+        if (_ret === "continue") continue;
+      }
+    }
+  }, {
+    key: "getCurrentControlData",
+    value: function getCurrentControlData(args) {
+      var _args$container;
+      if (!(args !== null && args !== void 0 && (_args$container = args.container) !== null && _args$container !== void 0 && _args$container.controls)) {
+        return null;
+      }
+      var currentSettingKey = this.getCurrentSettingKey(args);
+      return args.container.controls[currentSettingKey];
+    }
+  }, {
+    key: "getCurrentSettingKey",
+    value: function getCurrentSettingKey(args) {
+      var currentSettingsKeys = Object.keys(args.settings);
+      return currentSettingsKeys[0];
+    }
+  }, {
+    key: "getControlValue",
+    value: function getControlValue(args) {
+      var currentSettingKey = this.getCurrentSettingKey(args);
+      return args.settings[currentSettingKey];
+    }
+  }, {
+    key: "applyFontVariableRange",
+    value: function applyFontVariableRange(controls, controlKey, fieldData) {
+      var _this3 = this;
+      var controlView = $e.components.get('panel').getControlViewByPath(elementor.getPanelView().getCurrentPageView(), controlKey);
+      var range = controlView.model.get('range');
+      range.px.min = fieldData.min;
+      range.px.max = fieldData.max;
+      controlView.model.set('range', range);
+      controlView.render();
+      var inheritors = controlView.model.get('inheritors');
+      if (!inheritors) {
+        return;
+      }
+      inheritors.forEach(function (inheritorControlKey) {
+        _this3.applyFontVariableRange(controls, inheritorControlKey, fieldData);
+      });
+    }
+  }, {
+    key: "onControlChanged",
+    value: function onControlChanged(args) {
+      var controlData = this.getCurrentControlData(args);
+      if ('font' !== (controlData === null || controlData === void 0 ? void 0 : controlData.type)) {
+        return;
+      }
+      var controls = args.container.controls;
+      var fontOptions = this.getFontOptions(this.getControlValue(args));
+      if (!fontOptions) {
+        return;
+      }
+      for (var _i2 = 0, _Object$entries2 = Object.entries(fontOptions); _i2 < _Object$entries2.length; _i2++) {
+        var _Object$entries2$_i = (0, _slicedToArray2.default)(_Object$entries2[_i2], 2),
+          fieldKey = _Object$entries2$_i[0],
+          fieldData = _Object$entries2$_i[1];
+        var controlKey = controlData.groupPrefix + fieldKey;
+        if (!controls[controlKey]) {
+          continue;
+        }
+        this.applyFontVariableRange(controls, controlKey, fieldData);
+      }
+    }
+  }, {
+    key: "getFontOptions",
+    value: function getFontOptions(fontFamily) {
+      var _elementor$config;
+      if (!((_elementor$config = elementor.config) !== null && _elementor$config !== void 0 && _elementor$config.fontVariableRanges)) {
+        return null;
+      }
+      return elementor.config.fontVariableRanges[fontFamily];
+    }
+  }]);
+  return FontVariables;
+}();
+exports.FontVariables = FontVariables;
+
+/***/ }),
+
 /***/ "../assets/dev/js/editor/utils/heartbeat.js":
 /*!**************************************************!*\
   !*** ../assets/dev/js/editor/utils/heartbeat.js ***!
@@ -40242,7 +40518,7 @@ module.exports = {
    * @param {*}      icon       - icon control data
    * @param {*}      attributes - default {} - attributes to attach to rendered html tag
    * @param {string} tag        - default i - html tag to render
-   * @param {*}      returnType - default value - retrun type
+   * @param {*}      returnType - default value - return type
    * @return {string|undefined|*} result
    */
   renderIcon: function renderIcon(view, icon) {
@@ -42029,13 +42305,12 @@ var AddSectionBase = /*#__PURE__*/function (_Marionette$ItemView) {
   }, {
     key: "getSelectTypePreset",
     value: function getSelectTypePreset() {
-      return AddSectionBase.IS_CONTAINER_GRID_ACTIVE ? 'select-type' : 'select-container-preset';
+      return AddSectionBase.IS_CONTAINER_ACTIVE ? 'select-type' : 'select-container-preset';
     }
   }]);
   return AddSectionBase;
 }(Marionette.ItemView);
 (0, _defineProperty2.default)(AddSectionBase, "IS_CONTAINER_ACTIVE", !!elementorCommon.config.experimentalFeatures.container);
-(0, _defineProperty2.default)(AddSectionBase, "IS_CONTAINER_GRID_ACTIVE", !!elementorCommon.config.experimentalFeatures.container_grid);
 // Views.
 (0, _defineProperty2.default)(AddSectionBase, "VIEW_CHOOSE_ACTION", 'choose-action');
 (0, _defineProperty2.default)(AddSectionBase, "VIEW_CONTAINER_FLEX_PRESET", 'select-container-preset');
@@ -44390,7 +44665,7 @@ var _default = /*#__PURE__*/function (_Marionette$LayoutVie) {
     key: "isFloatingButtonLibraryClose",
     value: function isFloatingButtonLibraryClose() {
       var _elementor$config, _elementor$config2, _elementor$config2$do;
-      return window.elementor && ((_elementor$config = elementor.config) === null || _elementor$config === void 0 ? void 0 : _elementor$config.admin_floating_button_admin_url) && 'floating-buttons' === ((_elementor$config2 = elementor.config) === null || _elementor$config2 === void 0 ? void 0 : (_elementor$config2$do = _elementor$config2.document) === null || _elementor$config2$do === void 0 ? void 0 : _elementor$config2$do.type) && (this.$el.closest('.dialog-lightbox-widget-content').find('.elementor-template-library-template-floating_button').length || this.$el.closest('.dialog-lightbox-widget-content').find('#elementor-template-library-preview').length);
+      return window.elementor && ((_elementor$config = elementor.config) === null || _elementor$config === void 0 ? void 0 : _elementor$config.admin_floating_button_admin_url) && 'floating-buttons' === ((_elementor$config2 = elementor.config) === null || _elementor$config2 === void 0 ? void 0 : (_elementor$config2$do = _elementor$config2.document) === null || _elementor$config2$do === void 0 ? void 0 : _elementor$config2$do.type) && (this.$el.closest('.dialog-lightbox-widget-content').find('.elementor-template-library-template-floating_button').length || this.$el.closest('.dialog-lightbox-widget-content').find('#elementor-template-library-preview').length || this.$el.closest('.dialog-lightbox-widget-content').find('#elementor-template-library-templates-empty').length);
     }
   }]);
   return _default;
@@ -47761,7 +48036,8 @@ var eventsConfig = {
   },
   locations: {
     widgetPanel: 'Widget Panel',
-    topBar: 'Top Bar'
+    topBar: 'Top Bar',
+    elementorEditor: 'Elementor Editor'
   },
   secondaryLocations: {
     layout: 'Layout Section',
@@ -47787,14 +48063,20 @@ var eventsConfig = {
     siteSettings: 'Site Settings',
     structure: 'Structure',
     documentNameDropdown: 'Document Name dropdown',
-    responsiveControls: 'Responsive controls'
+    responsiveControls: 'Responsive controls',
+    launchpad: 'launchpad',
+    checklistHeader: 'Checklist Header',
+    checklistSteps: 'Checklist Steps',
+    userPreferences: 'User Preferences'
   },
   elements: {
     accordionSection: 'Accordion section',
     buttonIcon: 'Button Icon',
     mainCta: 'Main CTA',
+    button: 'Button',
     link: 'Link',
-    dropdown: 'Dropdown'
+    dropdown: 'Dropdown',
+    toggle: 'Toggle'
   },
   names: {
     v1: {
@@ -47826,7 +48108,17 @@ var eventsConfig = {
       siteSettings: 'top_bar_site_setting',
       structure: 'top_bar_structure',
       documentNameDropdown: 'top_bar_document_name_dropdown',
-      responsiveControls: 'top_bar_responsive_controls'
+      responsiveControls: 'top_bar_responsive_controls',
+      launchpadOn: 'top_bar_checklist_icon_show',
+      launchpadOff: 'top_bar_checklist_icon_hide'
+    },
+    // ChecklistSteps event names are generated dynamically, based on stepId and action type taken: title, action, done, undone, upgrade
+    elementorEditor: {
+      checklistHeaderClose: 'checklist_header_close_icon',
+      userPreferences: {
+        checklistShow: 'checklist_userpreferences_toggle_show',
+        checklistHide: 'checklist_userpreferences_toggle_hide'
+      }
     }
   }
 };
@@ -48472,7 +48764,7 @@ var ShowSwatches = /*#__PURE__*/function (_$e$modules$CommandBa) {
     }
 
     /**
-     * Extract colors from image and push it ot the colors array.
+     * Extract colors from image and push it to the colors array.
      *
      * @param {Object} image  - The image element to extract colors from
      * @param {string} suffix - An optional suffix for the key in the colors array.
@@ -49949,10 +50241,74 @@ module.exports = PanelElementsNoticeView;
 
 /***/ }),
 
-/***/ "../modules/floating-buttons/assets/js/editor/component.js":
-/*!*****************************************************************!*\
-  !*** ../modules/floating-buttons/assets/js/editor/component.js ***!
-  \*****************************************************************/
+/***/ "../modules/floating-buttons/assets/js/floating-bars/editor/module.js":
+/*!****************************************************************************!*\
+  !*** ../modules/floating-buttons/assets/js/floating-bars/editor/module.js ***!
+  \****************************************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports["default"] = void 0;
+var _classCallCheck2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "../node_modules/@babel/runtime/helpers/classCallCheck.js"));
+var _createClass2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/createClass */ "../node_modules/@babel/runtime/helpers/createClass.js"));
+var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/inherits */ "../node_modules/@babel/runtime/helpers/inherits.js"));
+var _possibleConstructorReturn2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "../node_modules/@babel/runtime/helpers/possibleConstructorReturn.js"));
+var _getPrototypeOf2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "../node_modules/@babel/runtime/helpers/getPrototypeOf.js"));
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = (0, _getPrototypeOf2.default)(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = (0, _getPrototypeOf2.default)(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return (0, _possibleConstructorReturn2.default)(this, result); }; }
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
+var FloatingBarsLibraryModule = /*#__PURE__*/function (_elementorModules$edi) {
+  (0, _inherits2.default)(FloatingBarsLibraryModule, _elementorModules$edi);
+  var _super = _createSuper(FloatingBarsLibraryModule);
+  function FloatingBarsLibraryModule() {
+    (0, _classCallCheck2.default)(this, FloatingBarsLibraryModule);
+    return _super.apply(this, arguments);
+  }
+  (0, _createClass2.default)(FloatingBarsLibraryModule, [{
+    key: "onElementorLoaded",
+    value: function onElementorLoaded() {
+      elementor.channels.editor.on('section:activated', this.hideAdvancedTab.bind(this));
+    }
+  }, {
+    key: "hideAdvancedTab",
+    value: function hideAdvancedTab(sectionName, editor) {
+      var _editor$model;
+      var widgetType = (editor === null || editor === void 0 ? void 0 : (_editor$model = editor.model) === null || _editor$model === void 0 ? void 0 : _editor$model.get('widgetType')) || '';
+      if (!widgetType.startsWith('floating-bars')) {
+        return;
+      }
+      var advancedTab = (editor === null || editor === void 0 ? void 0 : editor.el.querySelector('.elementor-tab-control-advanced')) || false;
+      if (advancedTab) {
+        advancedTab.style.display = 'none';
+      }
+    }
+  }, {
+    key: "onElementorInit",
+    value: function onElementorInit() {
+      var urlParams = new URLSearchParams(window.location.search);
+      if ('floating-bars' === urlParams.get('floating_element')) {
+        elementor.hooks.addFilter('elementor/editor/template-library/template/classes', function (classes) {
+          return classes.replace('elementor-template-library-template-floating_button', 'elementor-template-library-template-floating_bar');
+        }, 10, 1);
+      }
+    }
+  }]);
+  return FloatingBarsLibraryModule;
+}(elementorModules.editor.utils.Module);
+var _default = FloatingBarsLibraryModule;
+exports["default"] = _default;
+
+/***/ }),
+
+/***/ "../modules/floating-buttons/assets/js/floating-buttons/editor/component.js":
+/*!**********************************************************************************!*\
+  !*** ../modules/floating-buttons/assets/js/floating-buttons/editor/component.js ***!
+  \**********************************************************************************/
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
@@ -49969,7 +50325,7 @@ var _createClass2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtim
 var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/inherits */ "../node_modules/@babel/runtime/helpers/inherits.js"));
 var _possibleConstructorReturn2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "../node_modules/@babel/runtime/helpers/possibleConstructorReturn.js"));
 var _getPrototypeOf2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "../node_modules/@babel/runtime/helpers/getPrototypeOf.js"));
-var hooks = _interopRequireWildcard(__webpack_require__(/*! ./hooks/ */ "../modules/floating-buttons/assets/js/editor/hooks/index.js"));
+var hooks = _interopRequireWildcard(__webpack_require__(/*! ./hooks/ */ "../modules/floating-buttons/assets/js/floating-buttons/editor/hooks/index.js"));
 function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function _getRequireWildcardCache(nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
 function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || _typeof(obj) !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
 function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = (0, _getPrototypeOf2.default)(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = (0, _getPrototypeOf2.default)(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return (0, _possibleConstructorReturn2.default)(this, result); }; }
@@ -49998,10 +50354,10 @@ exports["default"] = LinksPageComponent;
 
 /***/ }),
 
-/***/ "../modules/floating-buttons/assets/js/editor/hooks/index.js":
-/*!*******************************************************************!*\
-  !*** ../modules/floating-buttons/assets/js/editor/hooks/index.js ***!
-  \*******************************************************************/
+/***/ "../modules/floating-buttons/assets/js/floating-buttons/editor/hooks/index.js":
+/*!************************************************************************************!*\
+  !*** ../modules/floating-buttons/assets/js/floating-buttons/editor/hooks/index.js ***!
+  \************************************************************************************/
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
@@ -50046,19 +50402,19 @@ Object.defineProperty(exports, "SelectLoadingButtonOnOpen", ({
     return _selectFloatingButtonOnOpen.SelectLoadingButtonOnOpen;
   }
 }));
-var _addFloatingButtonsTab = __webpack_require__(/*! ./ui/editor/documents/open/add-floating-buttons-tab */ "../modules/floating-buttons/assets/js/editor/hooks/ui/editor/documents/open/add-floating-buttons-tab.js");
-var _removeFloatingButtonsTab = __webpack_require__(/*! ./ui/editor/documents/close/remove-floating-buttons-tab */ "../modules/floating-buttons/assets/js/editor/hooks/ui/editor/documents/close/remove-floating-buttons-tab.js");
-var _openLibraryAfterDelete = __webpack_require__(/*! ./ui/editor/delete/open-library-after-delete */ "../modules/floating-buttons/assets/js/editor/hooks/ui/editor/delete/open-library-after-delete.js");
-var _select = __webpack_require__(/*! ./ui/editor/document/select */ "../modules/floating-buttons/assets/js/editor/hooks/ui/editor/document/select.js");
-var _selectFloatingButtonOnOpen = __webpack_require__(/*! ./ui/editor/documents/attach-preview/select-floating-button-on-open */ "../modules/floating-buttons/assets/js/editor/hooks/ui/editor/documents/attach-preview/select-floating-button-on-open.js");
-var _delete = __webpack_require__(/*! ./ui/editor/document/delete */ "../modules/floating-buttons/assets/js/editor/hooks/ui/editor/document/delete.js");
+var _addFloatingButtonsTab = __webpack_require__(/*! ./ui/editor/documents/open/add-floating-buttons-tab */ "../modules/floating-buttons/assets/js/floating-buttons/editor/hooks/ui/editor/documents/open/add-floating-buttons-tab.js");
+var _removeFloatingButtonsTab = __webpack_require__(/*! ./ui/editor/documents/close/remove-floating-buttons-tab */ "../modules/floating-buttons/assets/js/floating-buttons/editor/hooks/ui/editor/documents/close/remove-floating-buttons-tab.js");
+var _openLibraryAfterDelete = __webpack_require__(/*! ./ui/editor/delete/open-library-after-delete */ "../modules/floating-buttons/assets/js/floating-buttons/editor/hooks/ui/editor/delete/open-library-after-delete.js");
+var _select = __webpack_require__(/*! ./ui/editor/document/select */ "../modules/floating-buttons/assets/js/floating-buttons/editor/hooks/ui/editor/document/select.js");
+var _selectFloatingButtonOnOpen = __webpack_require__(/*! ./ui/editor/documents/attach-preview/select-floating-button-on-open */ "../modules/floating-buttons/assets/js/floating-buttons/editor/hooks/ui/editor/documents/attach-preview/select-floating-button-on-open.js");
+var _delete = __webpack_require__(/*! ./ui/editor/document/delete */ "../modules/floating-buttons/assets/js/floating-buttons/editor/hooks/ui/editor/document/delete.js");
 
 /***/ }),
 
-/***/ "../modules/floating-buttons/assets/js/editor/hooks/ui/editor/delete/open-library-after-delete.js":
-/*!********************************************************************************************************!*\
-  !*** ../modules/floating-buttons/assets/js/editor/hooks/ui/editor/delete/open-library-after-delete.js ***!
-  \********************************************************************************************************/
+/***/ "../modules/floating-buttons/assets/js/floating-buttons/editor/hooks/ui/editor/delete/open-library-after-delete.js":
+/*!*************************************************************************************************************************!*\
+  !*** ../modules/floating-buttons/assets/js/floating-buttons/editor/hooks/ui/editor/delete/open-library-after-delete.js ***!
+  \*************************************************************************************************************************/
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
@@ -50119,10 +50475,10 @@ exports["default"] = _default;
 
 /***/ }),
 
-/***/ "../modules/floating-buttons/assets/js/editor/hooks/ui/editor/document/delete.js":
-/*!***************************************************************************************!*\
-  !*** ../modules/floating-buttons/assets/js/editor/hooks/ui/editor/document/delete.js ***!
-  \***************************************************************************************/
+/***/ "../modules/floating-buttons/assets/js/floating-buttons/editor/hooks/ui/editor/document/delete.js":
+/*!********************************************************************************************************!*\
+  !*** ../modules/floating-buttons/assets/js/floating-buttons/editor/hooks/ui/editor/document/delete.js ***!
+  \********************************************************************************************************/
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
@@ -50196,10 +50552,10 @@ exports["default"] = _default;
 
 /***/ }),
 
-/***/ "../modules/floating-buttons/assets/js/editor/hooks/ui/editor/document/select.js":
-/*!***************************************************************************************!*\
-  !*** ../modules/floating-buttons/assets/js/editor/hooks/ui/editor/document/select.js ***!
-  \***************************************************************************************/
+/***/ "../modules/floating-buttons/assets/js/floating-buttons/editor/hooks/ui/editor/document/select.js":
+/*!********************************************************************************************************!*\
+  !*** ../modules/floating-buttons/assets/js/floating-buttons/editor/hooks/ui/editor/document/select.js ***!
+  \********************************************************************************************************/
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
@@ -50272,10 +50628,10 @@ exports["default"] = _default;
 
 /***/ }),
 
-/***/ "../modules/floating-buttons/assets/js/editor/hooks/ui/editor/documents/attach-preview/select-floating-button-on-open.js":
-/*!*******************************************************************************************************************************!*\
-  !*** ../modules/floating-buttons/assets/js/editor/hooks/ui/editor/documents/attach-preview/select-floating-button-on-open.js ***!
-  \*******************************************************************************************************************************/
+/***/ "../modules/floating-buttons/assets/js/floating-buttons/editor/hooks/ui/editor/documents/attach-preview/select-floating-button-on-open.js":
+/*!************************************************************************************************************************************************!*\
+  !*** ../modules/floating-buttons/assets/js/floating-buttons/editor/hooks/ui/editor/documents/attach-preview/select-floating-button-on-open.js ***!
+  \************************************************************************************************************************************************/
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
@@ -50339,10 +50695,10 @@ exports["default"] = _default;
 
 /***/ }),
 
-/***/ "../modules/floating-buttons/assets/js/editor/hooks/ui/editor/documents/close/remove-floating-buttons-tab.js":
-/*!*******************************************************************************************************************!*\
-  !*** ../modules/floating-buttons/assets/js/editor/hooks/ui/editor/documents/close/remove-floating-buttons-tab.js ***!
-  \*******************************************************************************************************************/
+/***/ "../modules/floating-buttons/assets/js/floating-buttons/editor/hooks/ui/editor/documents/close/remove-floating-buttons-tab.js":
+/*!************************************************************************************************************************************!*\
+  !*** ../modules/floating-buttons/assets/js/floating-buttons/editor/hooks/ui/editor/documents/close/remove-floating-buttons-tab.js ***!
+  \************************************************************************************************************************************/
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
@@ -50399,10 +50755,10 @@ exports["default"] = _default;
 
 /***/ }),
 
-/***/ "../modules/floating-buttons/assets/js/editor/hooks/ui/editor/documents/open/add-floating-buttons-tab.js":
-/*!***************************************************************************************************************!*\
-  !*** ../modules/floating-buttons/assets/js/editor/hooks/ui/editor/documents/open/add-floating-buttons-tab.js ***!
-  \***************************************************************************************************************/
+/***/ "../modules/floating-buttons/assets/js/floating-buttons/editor/hooks/ui/editor/documents/open/add-floating-buttons-tab.js":
+/*!********************************************************************************************************************************!*\
+  !*** ../modules/floating-buttons/assets/js/floating-buttons/editor/hooks/ui/editor/documents/open/add-floating-buttons-tab.js ***!
+  \********************************************************************************************************************************/
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
@@ -50445,13 +50801,40 @@ var FloatingButtonsAddLibraryTab = /*#__PURE__*/function (_$e$modules$hookUI$Af)
       return 'floating-buttons' === document.config.type;
     }
   }, {
+    key: "getSubtype",
+    value: function getSubtype() {
+      var urlParams = new URLSearchParams(window.location.search);
+      switch (urlParams.get('floating_element')) {
+        case 'floating-bars':
+          return 'Floating Bar';
+        case 'floating-buttons':
+          return 'Floating Button';
+        default:
+          return 'Floating Button';
+      }
+    }
+  }, {
+    key: "getTitle",
+    value: function getTitle() {
+      var urlParams = new URLSearchParams(window.location.search);
+      switch (urlParams.get('floating_element')) {
+        case 'floating-bars':
+          return __('Floating Bars', 'elementor');
+        case 'floating-buttons':
+          return __('Floating Buttons', 'elementor');
+        default:
+          return __('Floating Buttons', 'elementor');
+      }
+    }
+  }, {
     key: "apply",
     value: function apply() {
       $e.components.get('library').addTab('templates/floating-buttons', {
-        title: __('Floating Buttons', 'elementor'),
+        title: this.getTitle(),
         filter: {
           source: 'remote',
-          type: 'floating_button'
+          type: 'floating_button',
+          subtype: this.getSubtype()
         }
       }, 2);
       $e.components.get('library').removeTab('templates/blocks');
@@ -50466,10 +50849,10 @@ exports["default"] = _default;
 
 /***/ }),
 
-/***/ "../modules/floating-buttons/assets/js/editor/module.js":
-/*!**************************************************************!*\
-  !*** ../modules/floating-buttons/assets/js/editor/module.js ***!
-  \**************************************************************/
+/***/ "../modules/floating-buttons/assets/js/floating-buttons/editor/module.js":
+/*!*******************************************************************************!*\
+  !*** ../modules/floating-buttons/assets/js/floating-buttons/editor/module.js ***!
+  \*******************************************************************************/
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
@@ -50485,7 +50868,7 @@ var _createClass2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtim
 var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/inherits */ "../node_modules/@babel/runtime/helpers/inherits.js"));
 var _possibleConstructorReturn2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "../node_modules/@babel/runtime/helpers/possibleConstructorReturn.js"));
 var _getPrototypeOf2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "../node_modules/@babel/runtime/helpers/getPrototypeOf.js"));
-var _component = _interopRequireDefault(__webpack_require__(/*! ./component */ "../modules/floating-buttons/assets/js/editor/component.js"));
+var _component = _interopRequireDefault(__webpack_require__(/*! ./component */ "../modules/floating-buttons/assets/js/floating-buttons/editor/component.js"));
 function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = (0, _getPrototypeOf2.default)(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = (0, _getPrototypeOf2.default)(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return (0, _possibleConstructorReturn2.default)(this, result); }; }
 function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
 var FloatingButtonsLibraryModule = /*#__PURE__*/function (_elementorModules$edi) {
@@ -54895,7 +55278,7 @@ exports["default"] = _default;
   \************************************************/
 /***/ (function(module) {
 
-/*! @license DOMPurify 3.0.10 | (c) Cure53 and other contributors | Released under the Apache license 2.0 and Mozilla Public License 2.0 | github.com/cure53/DOMPurify/blob/3.0.10/LICENSE */
+/*! @license DOMPurify 3.1.3 | (c) Cure53 and other contributors | Released under the Apache license 2.0 and Mozilla Public License 2.0 | github.com/cure53/DOMPurify/blob/3.1.3/LICENSE */
 
 (function (global, factory) {
    true ? module.exports = factory() :
@@ -54950,6 +55333,7 @@ exports["default"] = _default;
   const objectHasOwnProperty = unapply(Object.prototype.hasOwnProperty);
   const regExpTest = unapply(RegExp.prototype.test);
   const typeErrorCreate = unconstruct(TypeError);
+  const numberIsNaN = unapply(Number.isNaN);
 
   /**
    * Creates a new function that calls the given function with a specified thisArg and arguments.
@@ -55098,7 +55482,7 @@ exports["default"] = _default;
   const mathMlDisallowed = freeze(['maction', 'maligngroup', 'malignmark', 'mlongdiv', 'mscarries', 'mscarry', 'msgroup', 'mstack', 'msline', 'msrow', 'semantics', 'annotation', 'annotation-xml', 'mprescripts', 'none']);
   const text = freeze(['#text']);
 
-  const html = freeze(['accept', 'action', 'align', 'alt', 'autocapitalize', 'autocomplete', 'autopictureinpicture', 'autoplay', 'background', 'bgcolor', 'border', 'capture', 'cellpadding', 'cellspacing', 'checked', 'cite', 'class', 'clear', 'color', 'cols', 'colspan', 'controls', 'controlslist', 'coords', 'crossorigin', 'datetime', 'decoding', 'default', 'dir', 'disabled', 'disablepictureinpicture', 'disableremoteplayback', 'download', 'draggable', 'enctype', 'enterkeyhint', 'face', 'for', 'headers', 'height', 'hidden', 'high', 'href', 'hreflang', 'id', 'inputmode', 'integrity', 'ismap', 'kind', 'label', 'lang', 'list', 'loading', 'loop', 'low', 'max', 'maxlength', 'media', 'method', 'min', 'minlength', 'multiple', 'muted', 'name', 'nonce', 'noshade', 'novalidate', 'nowrap', 'open', 'optimum', 'pattern', 'placeholder', 'playsinline', 'poster', 'preload', 'pubdate', 'radiogroup', 'readonly', 'rel', 'required', 'rev', 'reversed', 'role', 'rows', 'rowspan', 'spellcheck', 'scope', 'selected', 'shape', 'size', 'sizes', 'span', 'srclang', 'start', 'src', 'srcset', 'step', 'style', 'summary', 'tabindex', 'title', 'translate', 'type', 'usemap', 'valign', 'value', 'width', 'xmlns', 'slot']);
+  const html = freeze(['accept', 'action', 'align', 'alt', 'autocapitalize', 'autocomplete', 'autopictureinpicture', 'autoplay', 'background', 'bgcolor', 'border', 'capture', 'cellpadding', 'cellspacing', 'checked', 'cite', 'class', 'clear', 'color', 'cols', 'colspan', 'controls', 'controlslist', 'coords', 'crossorigin', 'datetime', 'decoding', 'default', 'dir', 'disabled', 'disablepictureinpicture', 'disableremoteplayback', 'download', 'draggable', 'enctype', 'enterkeyhint', 'face', 'for', 'headers', 'height', 'hidden', 'high', 'href', 'hreflang', 'id', 'inputmode', 'integrity', 'ismap', 'kind', 'label', 'lang', 'list', 'loading', 'loop', 'low', 'max', 'maxlength', 'media', 'method', 'min', 'minlength', 'multiple', 'muted', 'name', 'nonce', 'noshade', 'novalidate', 'nowrap', 'open', 'optimum', 'pattern', 'placeholder', 'playsinline', 'poster', 'preload', 'pubdate', 'radiogroup', 'readonly', 'rel', 'required', 'rev', 'reversed', 'role', 'rows', 'rowspan', 'spellcheck', 'scope', 'selected', 'shape', 'size', 'sizes', 'span', 'srclang', 'start', 'src', 'srcset', 'step', 'style', 'summary', 'tabindex', 'title', 'translate', 'type', 'usemap', 'valign', 'value', 'width', 'wrap', 'xmlns', 'slot']);
   const svg = freeze(['accent-height', 'accumulate', 'additive', 'alignment-baseline', 'ascent', 'attributename', 'attributetype', 'azimuth', 'basefrequency', 'baseline-shift', 'begin', 'bias', 'by', 'class', 'clip', 'clippathunits', 'clip-path', 'clip-rule', 'color', 'color-interpolation', 'color-interpolation-filters', 'color-profile', 'color-rendering', 'cx', 'cy', 'd', 'dx', 'dy', 'diffuseconstant', 'direction', 'display', 'divisor', 'dur', 'edgemode', 'elevation', 'end', 'fill', 'fill-opacity', 'fill-rule', 'filter', 'filterunits', 'flood-color', 'flood-opacity', 'font-family', 'font-size', 'font-size-adjust', 'font-stretch', 'font-style', 'font-variant', 'font-weight', 'fx', 'fy', 'g1', 'g2', 'glyph-name', 'glyphref', 'gradientunits', 'gradienttransform', 'height', 'href', 'id', 'image-rendering', 'in', 'in2', 'k', 'k1', 'k2', 'k3', 'k4', 'kerning', 'keypoints', 'keysplines', 'keytimes', 'lang', 'lengthadjust', 'letter-spacing', 'kernelmatrix', 'kernelunitlength', 'lighting-color', 'local', 'marker-end', 'marker-mid', 'marker-start', 'markerheight', 'markerunits', 'markerwidth', 'maskcontentunits', 'maskunits', 'max', 'mask', 'media', 'method', 'mode', 'min', 'name', 'numoctaves', 'offset', 'operator', 'opacity', 'order', 'orient', 'orientation', 'origin', 'overflow', 'paint-order', 'path', 'pathlength', 'patterncontentunits', 'patterntransform', 'patternunits', 'points', 'preservealpha', 'preserveaspectratio', 'primitiveunits', 'r', 'rx', 'ry', 'radius', 'refx', 'refy', 'repeatcount', 'repeatdur', 'restart', 'result', 'rotate', 'scale', 'seed', 'shape-rendering', 'specularconstant', 'specularexponent', 'spreadmethod', 'startoffset', 'stddeviation', 'stitchtiles', 'stop-color', 'stop-opacity', 'stroke-dasharray', 'stroke-dashoffset', 'stroke-linecap', 'stroke-linejoin', 'stroke-miterlimit', 'stroke-opacity', 'stroke', 'stroke-width', 'style', 'surfacescale', 'systemlanguage', 'tabindex', 'targetx', 'targety', 'transform', 'transform-origin', 'text-anchor', 'text-decoration', 'text-rendering', 'textlength', 'type', 'u1', 'u2', 'unicode', 'values', 'viewbox', 'visibility', 'version', 'vert-adv-y', 'vert-origin-x', 'vert-origin-y', 'width', 'word-spacing', 'wrap', 'writing-mode', 'xchannelselector', 'ychannelselector', 'x', 'x1', 'x2', 'xmlns', 'y', 'y1', 'y2', 'z', 'zoomandpan']);
   const mathMl = freeze(['accent', 'accentunder', 'align', 'bevelled', 'close', 'columnsalign', 'columnlines', 'columnspan', 'denomalign', 'depth', 'dir', 'display', 'displaystyle', 'encoding', 'fence', 'frame', 'height', 'href', 'id', 'largeop', 'length', 'linethickness', 'lspace', 'lquote', 'mathbackground', 'mathcolor', 'mathsize', 'mathvariant', 'maxsize', 'minsize', 'movablelimits', 'notation', 'numalign', 'open', 'rowalign', 'rowlines', 'rowspacing', 'rowspan', 'rspace', 'rquote', 'scriptlevel', 'scriptminsize', 'scriptsizemultiplier', 'selection', 'separator', 'separators', 'stretchy', 'subscriptshift', 'supscriptshift', 'symmetric', 'voffset', 'width', 'xmlns']);
   const xml = freeze(['xlink:href', 'xml:id', 'xlink:title', 'xml:space', 'xmlns:xlink']);
@@ -55117,7 +55501,7 @@ exports["default"] = _default;
   );
 
   const DOCTYPE_NAME = seal(/^html$/i);
-  const CUSTOM_ELEMENT = seal(/^[a-z][a-z\d]*(-[a-z\d]+)+$/i);
+  const CUSTOM_ELEMENT = seal(/^[a-z][.\w]*(-[.\w]+)+$/i);
 
   var EXPRESSIONS = /*#__PURE__*/Object.freeze({
     __proto__: null,
@@ -55132,6 +55516,24 @@ exports["default"] = _default;
     DOCTYPE_NAME: DOCTYPE_NAME,
     CUSTOM_ELEMENT: CUSTOM_ELEMENT
   });
+
+  // https://developer.mozilla.org/en-US/docs/Web/API/Node/nodeType
+  const NODE_TYPE = {
+    element: 1,
+    attribute: 2,
+    text: 3,
+    cdataSection: 4,
+    entityReference: 5,
+    // Deprecated
+    entityNode: 6,
+    // Deprecated
+    progressingInstruction: 7,
+    comment: 8,
+    document: 9,
+    documentType: 10,
+    documentFragment: 11,
+    notation: 12 // Deprecated
+  };
 
   const getGlobal = function getGlobal() {
     return typeof window === 'undefined' ? null : window;
@@ -55184,14 +55586,14 @@ exports["default"] = _default;
      * Version label, exposed for easier checks
      * if DOMPurify is up to date or not
      */
-    DOMPurify.version = '3.0.10';
+    DOMPurify.version = '3.1.3';
 
     /**
      * Array of elements that DOMPurify removed during sanitation.
      * Empty if nothing was removed.
      */
     DOMPurify.removed = [];
-    if (!window || !window.document || window.document.nodeType !== 9) {
+    if (!window || !window.document || window.document.nodeType !== NODE_TYPE.document) {
       // Not running in a browser, provide a factory function
       // so that you can pass your own Window
       DOMPurify.isSupported = false;
@@ -55326,6 +55728,11 @@ exports["default"] = _default;
      */
     let SAFE_FOR_TEMPLATES = false;
 
+    /* Output should be safe even for XML used within HTML and alike.
+     * This means, DOMPurify removes comments when containing risky content.
+     */
+    let SAFE_FOR_XML = true;
+
     /* Decide if document with <html>... should be returned */
     let WHOLE_DOCUMENT = false;
 
@@ -55412,6 +55819,9 @@ exports["default"] = _default;
     /* Keep a reference to config to pass to hooks */
     let CONFIG = null;
 
+    /* Specify the maximum element nesting depth to prevent mXSS */
+    const MAX_NESTING_DEPTH = 255;
+
     /* Ideally, do not touch anything below this line */
     /* ______________________________________________ */
 
@@ -55473,6 +55883,7 @@ exports["default"] = _default;
       ALLOW_UNKNOWN_PROTOCOLS = cfg.ALLOW_UNKNOWN_PROTOCOLS || false; // Default false
       ALLOW_SELF_CLOSE_IN_ATTR = cfg.ALLOW_SELF_CLOSE_IN_ATTR !== false; // Default true
       SAFE_FOR_TEMPLATES = cfg.SAFE_FOR_TEMPLATES || false; // Default false
+      SAFE_FOR_XML = cfg.SAFE_FOR_XML !== false; // Default true
       WHOLE_DOCUMENT = cfg.WHOLE_DOCUMENT || false; // Default false
       RETURN_DOM = cfg.RETURN_DOM || false; // Default false
       RETURN_DOM_FRAGMENT = cfg.RETURN_DOM_FRAGMENT || false; // Default false
@@ -55597,7 +56008,7 @@ exports["default"] = _default;
       CONFIG = cfg;
     };
     const MATHML_TEXT_INTEGRATION_POINTS = addToSet({}, ['mi', 'mo', 'mn', 'ms', 'mtext']);
-    const HTML_INTEGRATION_POINTS = addToSet({}, ['foreignobject', 'desc', 'title', 'annotation-xml']);
+    const HTML_INTEGRATION_POINTS = addToSet({}, ['foreignobject', 'annotation-xml']);
 
     // Certain elements are allowed in both SVG and HTML
     // namespace. We need to specify them explicitly
@@ -55811,7 +56222,7 @@ exports["default"] = _default;
     const _createNodeIterator = function _createNodeIterator(root) {
       return createNodeIterator.call(root.ownerDocument || root, root,
       // eslint-disable-next-line no-bitwise
-      NodeFilter.SHOW_ELEMENT | NodeFilter.SHOW_COMMENT | NodeFilter.SHOW_TEXT | NodeFilter.SHOW_PROCESSING_INSTRUCTION, null);
+      NodeFilter.SHOW_ELEMENT | NodeFilter.SHOW_COMMENT | NodeFilter.SHOW_TEXT | NodeFilter.SHOW_PROCESSING_INSTRUCTION | NodeFilter.SHOW_CDATA_SECTION, null);
     };
 
     /**
@@ -55821,7 +56232,11 @@ exports["default"] = _default;
      * @return {Boolean} true if clobbered, false if safe
      */
     const _isClobbered = function _isClobbered(elm) {
-      return elm instanceof HTMLFormElement && (typeof elm.nodeName !== 'string' || typeof elm.textContent !== 'string' || typeof elm.removeChild !== 'function' || !(elm.attributes instanceof NamedNodeMap) || typeof elm.removeAttribute !== 'function' || typeof elm.setAttribute !== 'function' || typeof elm.namespaceURI !== 'string' || typeof elm.insertBefore !== 'function' || typeof elm.hasChildNodes !== 'function');
+      return elm instanceof HTMLFormElement && (
+      // eslint-disable-next-line unicorn/no-typeof-undefined
+      typeof elm.__depth !== 'undefined' && typeof elm.__depth !== 'number' ||
+      // eslint-disable-next-line unicorn/no-typeof-undefined
+      typeof elm.__removalCount !== 'undefined' && typeof elm.__removalCount !== 'number' || typeof elm.nodeName !== 'string' || typeof elm.textContent !== 'string' || typeof elm.removeChild !== 'function' || !(elm.attributes instanceof NamedNodeMap) || typeof elm.removeAttribute !== 'function' || typeof elm.setAttribute !== 'function' || typeof elm.namespaceURI !== 'string' || typeof elm.insertBefore !== 'function' || typeof elm.hasChildNodes !== 'function');
     };
 
     /**
@@ -55888,6 +56303,18 @@ exports["default"] = _default;
         return true;
       }
 
+      /* Remove any ocurrence of processing instructions */
+      if (currentNode.nodeType === NODE_TYPE.progressingInstruction) {
+        _forceRemove(currentNode);
+        return true;
+      }
+
+      /* Remove any kind of possibly harmful comments */
+      if (SAFE_FOR_XML && currentNode.nodeType === NODE_TYPE.comment && regExpTest(/<[/\w]/g, currentNode.data)) {
+        _forceRemove(currentNode);
+        return true;
+      }
+
       /* Remove element if anything forbids its presence */
       if (!ALLOWED_TAGS[tagName] || FORBID_TAGS[tagName]) {
         /* Check if we have a custom element to handle */
@@ -55907,7 +56334,9 @@ exports["default"] = _default;
           if (childNodes && parentNode) {
             const childCount = childNodes.length;
             for (let i = childCount - 1; i >= 0; --i) {
-              parentNode.insertBefore(cloneNode(childNodes[i], true), getNextSibling(currentNode));
+              const childClone = cloneNode(childNodes[i], true);
+              childClone.__removalCount = (currentNode.__removalCount || 0) + 1;
+              parentNode.insertBefore(childClone, getNextSibling(currentNode));
             }
           }
         }
@@ -55928,7 +56357,7 @@ exports["default"] = _default;
       }
 
       /* Sanitize element content to be template-safe */
-      if (SAFE_FOR_TEMPLATES && currentNode.nodeType === 3) {
+      if (SAFE_FOR_TEMPLATES && currentNode.nodeType === NODE_TYPE.text) {
         /* Get the element's text content */
         content = currentNode.textContent;
         arrayForEach([MUSTACHE_EXPR, ERB_EXPR, TMPLIT_EXPR], expr => {
@@ -55958,7 +56387,7 @@ exports["default"] = _default;
     // eslint-disable-next-line complexity
     const _isValidAttribute = function _isValidAttribute(lcTag, lcName, value) {
       /* Make sure attribute cannot clobber */
-      if (SANITIZE_DOM && (lcName === 'id' || lcName === 'name') && (value in document || value in formElement)) {
+      if (SANITIZE_DOM && (lcName === 'id' || lcName === 'name') && (value in document || value in formElement || value === '__depth' || value === '__removalCount')) {
         return false;
       }
 
@@ -56062,6 +56491,12 @@ exports["default"] = _default;
           continue;
         }
 
+        /* Work around a security issue with comments inside attributes */
+        if (SAFE_FOR_XML && regExpTest(/((--!?|])>)|<\/(style|title)/i, value)) {
+          _removeAttribute(name, currentNode);
+          continue;
+        }
+
         /* Sanitize attribute content to be template-safe */
         if (SAFE_FOR_TEMPLATES) {
           arrayForEach([MUSTACHE_EXPR, ERB_EXPR, TMPLIT_EXPR], expr => {
@@ -56112,7 +56547,11 @@ exports["default"] = _default;
             /* Fallback to setAttribute() for browser-unrecognized namespaces e.g. "x-schema". */
             currentNode.setAttribute(name, value);
           }
-          arrayPop(DOMPurify.removed);
+          if (_isClobbered(currentNode)) {
+            _forceRemove(currentNode);
+          } else {
+            arrayPop(DOMPurify.removed);
+          }
         } catch (_) {}
       }
 
@@ -56139,9 +56578,32 @@ exports["default"] = _default;
         if (_sanitizeElements(shadowNode)) {
           continue;
         }
+        const parentNode = getParentNode(shadowNode);
+
+        /* Set the nesting depth of an element */
+        if (shadowNode.nodeType === NODE_TYPE.element) {
+          if (parentNode && parentNode.__depth) {
+            /*
+              We want the depth of the node in the original tree, which can
+              change when it's removed from its parent.
+            */
+            shadowNode.__depth = (shadowNode.__removalCount || 0) + parentNode.__depth + 1;
+          } else {
+            shadowNode.__depth = 1;
+          }
+        }
+
+        /*
+         * Remove an element if nested too deeply to avoid mXSS
+         * or if the __depth might have been tampered with
+         */
+        if (shadowNode.__depth >= MAX_NESTING_DEPTH || shadowNode.__depth < 0 || numberIsNaN(shadowNode.__depth)) {
+          _forceRemove(shadowNode);
+        }
 
         /* Deep shadow DOM detected */
         if (shadowNode.content instanceof DocumentFragment) {
+          shadowNode.content.__depth = shadowNode.__depth;
           _sanitizeShadowDOM(shadowNode.content);
         }
 
@@ -56217,7 +56679,7 @@ exports["default"] = _default;
            elements being stripped by the parser */
         body = _initDocument('<!---->');
         importedNode = body.ownerDocument.importNode(dirty, true);
-        if (importedNode.nodeType === 1 && importedNode.nodeName === 'BODY') {
+        if (importedNode.nodeType === NODE_TYPE.element && importedNode.nodeName === 'BODY') {
           /* Node is already a body, use as is */
           body = importedNode;
         } else if (importedNode.nodeName === 'HTML') {
@@ -56257,9 +56719,32 @@ exports["default"] = _default;
         if (_sanitizeElements(currentNode)) {
           continue;
         }
+        const parentNode = getParentNode(currentNode);
+
+        /* Set the nesting depth of an element */
+        if (currentNode.nodeType === NODE_TYPE.element) {
+          if (parentNode && parentNode.__depth) {
+            /*
+              We want the depth of the node in the original tree, which can
+              change when it's removed from its parent.
+            */
+            currentNode.__depth = (currentNode.__removalCount || 0) + parentNode.__depth + 1;
+          } else {
+            currentNode.__depth = 1;
+          }
+        }
+
+        /*
+         * Remove an element if nested too deeply to avoid mXSS
+         * or if the __depth might have been tampered with
+         */
+        if (currentNode.__depth >= MAX_NESTING_DEPTH || currentNode.__depth < 0 || numberIsNaN(currentNode.__depth)) {
+          _forceRemove(currentNode);
+        }
 
         /* Shadow DOM detected, sanitize it */
         if (currentNode.content instanceof DocumentFragment) {
+          currentNode.content.__depth = currentNode.__depth;
           _sanitizeShadowDOM(currentNode.content);
         }
 

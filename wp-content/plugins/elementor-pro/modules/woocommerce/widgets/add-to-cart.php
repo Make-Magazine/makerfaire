@@ -195,6 +195,7 @@ class Add_To_Cart extends Widget_Button {
 			$product_id = get_queried_object_id();
 		}
 
+		global $product;
 		$product = $this->get_product( $product_id );
 
 		$settings = $this->get_settings_for_display();
