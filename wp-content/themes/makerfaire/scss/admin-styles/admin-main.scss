@@ -208,9 +208,9 @@ ul#input_321 li {
 
 #faire-signs {
   margin-right: 15px;
-  font-family: "Roboto", Helvetica;
-  font-size: 14px;
-  p { font-size: 16px; }
+  font-family: Helvetica;
+  font-size: 16px;
+  p { font-size: 14px; }
   h2 {
     font-size: 32px;
   }
@@ -225,15 +225,16 @@ ul#input_321 li {
       background: #fff;
       border: 0px;
       border-bottom: solid 1px #ccc;
-      a { color:#699cc9; }
+      font-size: 16px;
       &.ui-tabs-active {
         border: solid 1px #ccc;
         border-bottom: 0px;
-        a { color:#333; }
+        a { color:#333 !important; }
       }
       a { 
         display: block;
         padding: 5px 10px;
+        color: #337ab7;
         &:focus {
           box-shadow: none;
         }
@@ -243,14 +244,18 @@ ul#input_321 li {
   .ui-accordion {
     .ui-accordion-header {
       border-color: #ccc;
-      background: #f1f1f1;
+      background: #f6f6f6;
       color: #333;
       font-weight: bold;
+      font-size: 16px;
     }
     .ui-accordion-content {
       height: 100% !important;
       .ui-widget-content {
         border: 0px;
+        a {
+          color: #337ab7;
+        }
       }
     }
   }
@@ -273,6 +278,9 @@ ul#input_321 li {
     display: flex;
     flex-wrap: wrap;
     gap: 10px;
+    .button-primary {
+      font-size: 15px;
+    }
     .right-border {
       width: 50%;
       margin-right: 15px;
