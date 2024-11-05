@@ -41,7 +41,7 @@ $type = '';
                            $filename = get_template_directory() . '/signs/' . $row->faire . '/maker/lastrun.txt';
                            $lastCreated = (file_exists($filename) ? file_get_contents($filename) : '');
                            ?>
-                           <div style="margin-left: 20px;"><p><br><br>Last created on: <?php echo $lastCreated; ?></p></div>
+                           <div style="margin-left: 20px;"><p><br>Last created on: <?php echo $lastCreated; ?></p></div>
                         </div>
 
                         <div class="is-flex">
@@ -63,7 +63,8 @@ $type = '';
                                  </div>
                               </div>
                               <br>
-                              Filter by specific form (optional):
+                              
+                              <div>Filter by specific form (optional):</div>
                               <select name="<?php echo $row->faire; ?>filterform" multiple>
                                  <?php
                                  ## Get the form information
@@ -78,7 +79,8 @@ $type = '';
                                     }
                                  }
                                  ?>
-                              </select><br>
+                              </select>
+                              <br>
                               <p><input type="checkbox" name="<?php echo $row->faire; ?>filtererror" value="error"> Include signs in error?</p>
 
                               <br/>
@@ -122,7 +124,7 @@ $type = '';
                            $filename = get_template_directory() . '/signs/' . $row->faire . '/presenter/lastrun.txt';
                            $lastCreated = (file_exists($filename) ? file_get_contents($filename) : '');
                            ?>
-                           <div style="margin-left: 20px;"><p><br><br>Last created on: <?php echo $lastCreated; ?></p></div> 
+                           <div style="margin-left: 20px;"><p><br>Last created on: <?php echo $lastCreated; ?></p></div> 
                         </div>    
 
                         <div class="is-flex">
@@ -186,7 +188,7 @@ $type = '';
                               $filename = get_template_directory() . '/signs/' . $row->faire . '/tabletags/lastrun.txt';
                               $lastCreated = (file_exists($filename) ? file_get_contents($filename) : '');
                            ?>
-                           <div style="margin-left: 20px;"><p><br><br>Last created on: <?php echo $lastCreated; ?></p></div>                        
+                           <div style="margin-left: 20px;"><p><br>Last created on: <?php echo $lastCreated; ?></p></div>                        
                         </div>           
                         <div class="is-flex">
                            <div class="right-border">

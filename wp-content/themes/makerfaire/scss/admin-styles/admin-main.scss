@@ -62,62 +62,6 @@ ul#input_321 li {
   .subsubsub, p.search-box { float: none; }
 }
 
-/* Faire Signs */
-#faire-signs {
-  .panel-heading.accordion-toggle:after {
-      content: "\f142";    /* adjust as needed, taken from bootstrap.css */
-      float: right;        /* adjust as needed */
-      color: grey;         /* adjust as needed */
-      font: 400 30px/1 dashicons;
-      position: relative;
-      top: -22px;
-  }
-  .panel-heading.accordion-toggle.collapsed:after {
-      /* symbol for "collapsed" panels */
-      content: "\f140";    /* adjust as needed, taken from bootstrap.css */
-  }
-  .panel-group .panel+.panel {
-    margin-top: 0px;
-  }
-  .right-border {
-    border-right: thin solid black;
-  }
-  .row.is-flex {
-      display: flex;
-      flex-wrap: wrap;
-  }
-  .row.is-flex > [class*='col-'] {
-      display: flex;
-      flex-direction: column;
-  }
-
-  /*
-  * And with max cross-browser enabled.
-  * Nobody should ever write this by hand.
-  * Use a preprocesser with autoprefixing.
-  */
-  .row.is-flex {
-      display: -webkit-box;
-      display: -webkit-flex;
-      display: -ms-flexbox;
-      display: flex;
-      -webkit-flex-wrap: wrap;
-      -ms-flex-wrap: wrap;
-      flex-wrap: wrap;
-  }
-
-  .row.is-flex > [class*='col-'] {
-      display: -webkit-box;
-      display: -webkit-flex;
-      display: -ms-flexbox;
-      display: flex;
-      -webkit-box-orient: vertical;
-      -webkit-box-direction: normal;
-      -webkit-flex-direction: column;
-      -ms-flex-direction: column;
-      flex-direction: column;
-  }
-}
 
 /* mf import styling */
 #importTabs {
@@ -264,6 +208,13 @@ ul#input_321 li {
 
 #faire-signs {
   margin-right: 15px;
+  font-family: "Roboto", Helvetica;
+  font-size: 14px;
+  p { font-size: 16px; }
+  h2 {
+    font-size: 24px;
+    font-weight: bold;
+  }
   .nav-tabs {
     display: flex;
     background: transparent;
@@ -271,17 +222,37 @@ ul#input_321 li {
     border-bottom: solid 1px #ccc;
     .ui-tab {
       margin-right: 15px;
-      margin-bottom: 0px;
+      margin-bottom: -1px;
+      background: #fff;
+      border: 0px;
+      border-bottom: solid 1px #ccc;
+      a { color:#699cc9; }
+      &.ui-tabs-active {
+        border: solid 1px #ccc;
+        border-bottom: 0px;
+        a { color:#333; }
+      }
       a { 
         display: block;
         padding: 5px 10px;
+        &:focus {
+          box-shadow: none;
+        }
        }
     }
   }
-  .ui-accordion .ui-accordion-content {
-    height: 100% !important;
-    .ui-widget-content {
-      border: 0px;
+  .ui-accordion {
+    .ui-accordion-header {
+      border-color: #ccc;
+      background: #f1f1f1;
+      color: #333;
+      font-weight: bold;
+    }
+    .ui-accordion-content {
+      height: 100% !important;
+      .ui-widget-content {
+        border: 0px;
+      }
     }
   }
   .pdfEntList, .updateMsg {
@@ -321,4 +292,8 @@ ul#input_321 li {
   .justify-space-between {
     justify-content: space-between;
   }
+  .right-border {
+    border-right: thin solid #333;
+  }
+
 }
