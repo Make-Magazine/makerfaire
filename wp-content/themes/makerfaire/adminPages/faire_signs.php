@@ -258,7 +258,8 @@ $type = '';
    jQuery( function() {
       jQuery( "#accordion" ).accordion({
 			collapsible: true,
-         autoHeight: false
+         autoHeight: false,
+         heightStyle: "content" 
 		});
       jQuery( "[id^='tabs']" ).tabs();
   } );
