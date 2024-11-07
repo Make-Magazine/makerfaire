@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by gravityview on 14-August-2024 using {@see https://github.com/BrianHenryIE/strauss}.
+ * Modified by gravityview on 04-November-2024 using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\GravityView\Foundation\Licenses;
@@ -17,6 +17,7 @@ use GravityKit\GravityView\Foundation\Encryption\Encryption;
 use GravityKit\GravityView\Foundation\Helpers\Arr;
 use GFForms;
 use GFFormsModel;
+use GravityKit\GravityView\Foundation\WP\AdminMenu;
 
 class LicenseManager {
 	const EDD_LICENSES_API_ENDPOINT = 'https://www.gravitykit.com';
@@ -36,9 +37,9 @@ class LicenseManager {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @var LicenseManager
+	 * @var LicenseManager|null
 	 */
-	private static $_instance;
+	private static $_instance = null;
 
 	/**
 	 * Cached licenses data object.
@@ -46,9 +47,9 @@ class LicenseManager {
 	 * @since 1.0.0
 	 * @since 1.2.0 Renamed to $licenses_data.
 	 *
-	 * @var array
+	 * @var array|null
 	 */
-	public $licenses_data;
+	public $licenses_data = null;
 
 	/**
 	 * Whether license data exists but can't be decrypted.
@@ -206,7 +207,7 @@ class LicenseManager {
 		$this->licenses_data = $licenses_data;
 
 		try {
-			$licenses_data = Encryption::get_instance()->encrypt( wp_json_encode( $licenses_data ) );
+			$licenses_data = Encryption::get_instance()->encrypt( wp_json_encode( $licenses_data ) ?: '' );
 		} catch ( Exception $e ) {
 			LoggerFramework::get_instance()->error( 'Failed to encrypt licenses data: ' . $e->getMessage() );
 
@@ -325,7 +326,7 @@ class LicenseManager {
 		}
 
 		// Response can be a multidimensional array when checking multiple licenses.
-		$response = $multiple_licenses ? $response : [ $response ];
+		$response = $multiple_licenses ? $response : [ $license => $response ];
 
 		// When checking multiple licenses (i.e., an array of keys) but there is only 1 key in the array, the response is an associative array that needs to be converted to a multidimensional array keyed by the license key.
 		if ( $multiple_licenses && 1 === count( $license ) ) {
@@ -336,12 +337,10 @@ class LicenseManager {
 
 		$license_keys = $multiple_licenses ? $license : [ $license ];
 
-		foreach ( (array) $response as $key => $data ) {
+		foreach ( (array) $response as $license_key => $data ) {
 			if ( ! isset( $data['success'] ) || ! isset( $data['license'] ) || ! isset( $data['checksum'] ) ) {
 				throw new Exception( esc_html__( 'License data received from the API is incomplete.', 'gk-gravityview' ) );
 			}
-
-			$license_key = $multiple_licenses ? $key : $license;
 
 			if ( ! in_array( $license_key, $license_keys, true ) ) {
 				LoggerFramework::get_instance()->warning( "EDD API returned unknown license key in response: {$license_key}" );
@@ -922,7 +921,7 @@ class LicenseManager {
 		$data = [];
 
 		$theme_data = wp_get_theme();
-		$theme      = $theme_data->Name . ' ' . $theme_data->Version; // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
+		$theme      = $theme_data->get( 'Name' ) . ' ' . $theme_data->get( 'Version' );
 
 		$data['php_version']   = PHP_VERSION;
 		$data['wp_version']    = get_bloginfo( 'version' );
@@ -955,15 +954,32 @@ class LicenseManager {
 		if ( ! empty( $gravityview_posts->publish ) ) {
 			$data['view_count'] = $gravityview_posts->publish;
 
-			$first  = get_posts( 'numberposts=1&post_type=gravityview&post_status=publish&order=ASC' );
-			$latest = get_posts( 'numberposts=1&post_type=gravityview&post_status=publish&order=DESC' );
+			$first = get_posts(
+                [
+					'numberposts' => 1,
+					'post_type'   => 'gravityview',
+					'post_status' => 'publish',
+					'order'       => 'ASC',
+				]
+            );
+
+			$latest = get_posts(
+                [
+					'numberposts' => 1,
+					'post_type'   => 'gravityview',
+					'post_status' => 'publish',
+					'order'       => 'DESC',
+				]
+            );
 
 			$first = array_shift( $first );
+
 			if ( $first ) {
 				$data['view_first'] = $first->post_date;
 			}
 
 			$latest = array_pop( $latest );
+
 			if ( $latest ) {
 				$data['view_latest'] = $latest->post_date;
 			}
@@ -999,6 +1015,10 @@ class LicenseManager {
 	 * @return void
 	 */
 	public function update_manage_your_kit_submenu_badge_count() {
+		if ( ! AdminMenu::should_initialize() ) {
+			return;
+		}
+
 		if ( ! Framework::get_instance()->current_user_can( 'manage_licenses' ) ) {
 			return;
 		}

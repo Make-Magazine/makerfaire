@@ -404,14 +404,14 @@ class Template_Kit_Import extends API {
 
 			// Elementor doesn't check if an image exists, it just imports
 			// HTML as an image from a 404 page. Lets try to avoid that.
-			$does_image_exist = wp_remote_head( $image_url );
+			$does_image_exist = wp_safe_remote_head( $image_url );
 
-			if ( is_wp_error( $does_image_exist ) || $does_image_exist['response']['code'] !== 200 ) {
+			if ( is_wp_error( $does_image_exist ) || (
+			    $does_image_exist['response']['code'] !== 200 && $does_image_exist['response']['code'] !== 301
+			) ) {
 				// The author provided image no longer exists!
 				// Import a placeholder instead.
-				$placeholder_url = 'https://assets.wp.envatoextensions.com/template-kits/placeholder/placeholder.png';
-				$image_url       = $placeholder_url;
-				wp_remote_head( $placeholder_url . '?kit=' . urlencode( $kit_name ) . '&image=' . urlencode( $image_url ) );
+				$image_url       = 'https://assets.wp.envatoextensions.com/template-kits/placeholder/placeholder.png';
 			}
 
 			// Reach into the Elementor plugin to use their image handling code.
@@ -423,9 +423,6 @@ class Template_Kit_Import extends API {
 			if ( $attachment && ! is_wp_error( $attachment ) ) {
 				return $this->format_success( $attachment );
 			} else {
-				$error_url = 'https://assets.wp.envatoextensions.com/template-kits/placeholder/error.png';
-				wp_remote_head( $error_url . '?kit=' . urlencode( $kit_name ) . '&image=' . urlencode( $image_url ) );
-
 				return $this->format_success(
 					[
 						'id'      => 1,

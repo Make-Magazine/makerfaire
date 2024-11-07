@@ -15,6 +15,17 @@
 		width: auto;
 	}
 
+	.dataTable tr th.sorting_disabled {
+		cursor: default;
+		padding-right: 10px;
+		padding-left: 10px;
+
+		&:before,
+		&:after {
+			content: none;
+		}
+	}
+
 	.dataTables_wrapper .dataTables_processing {
 		z-index: 100000 !important;
 		height: auto;

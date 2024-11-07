@@ -8,7 +8,7 @@
 global $allowedposttags;
 ?>
 <div class="em-tickets em-tickets-single">
-	<div class="em-ticket em-ticket-<?php echo absint($EM_Ticket->ticket_id); ?>">
+	<div class="em-ticket em-ticket-<?php echo absint($EM_Ticket->ticket_id); ?>" data-ticket-id="<?php echo absint($EM_Ticket->ticket_id); ?>">
 		<?php
 		do_action('em_booking_form_ticket_header', $EM_Ticket); //do not delete
 		/*

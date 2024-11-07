@@ -331,7 +331,7 @@ class GF_Stripe_API {
 		$response = $this->make_request( "payment_intents/{$id}", $options, 'GET', 200 );
 
 		if ( is_wp_error( $response ) ) {
-			return $response->get_error_code() == '404' ? false : $response;
+			return $response;
 		}
 
 		return new Model\PaymentIntent( $response, $this );

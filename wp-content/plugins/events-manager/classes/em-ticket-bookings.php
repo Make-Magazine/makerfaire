@@ -10,10 +10,12 @@
  * @method EM_Ticket_Booking        current()
  * @methox EM_Ticket_Booking        next()
  * @method EM_Ticket_Bookings|null  offsetGet() offsetGet(int $offset)
+ * @property $ticket_bookings       EM_Ticket_Booking[]                 Alias (sensible name) for tickets_bookings.
  *
  */
 class EM_Ticket_Bookings extends EM_Tickets_Bookings {
 	/**
+	 * Whilst it should be ticket_bookings, we use this to make it easier to extend EM_Tickets_Bookings
 	 * @var EM_Ticket_Booking[]
 	 */
 	public $tickets_bookings = array();
@@ -44,6 +46,7 @@ class EM_Ticket_Bookings extends EM_Tickets_Bookings {
 					}
 				}
 				if( !empty($is_booking_tickets_array) ){
+					// we were supplied an array of EM_Ticket_Booking objects, so we load them up
 					foreach($data as $key => $EM_Ticket_Booking ) {
 						if( $key !== 'booking' && $key !== 'ticket' ){
 							$this->tickets_bookings[$EM_Ticket_Booking->ticket_uuid] = $EM_Ticket_Booking;
@@ -57,8 +60,10 @@ class EM_Ticket_Bookings extends EM_Tickets_Bookings {
 						$this->booking = $data['booking'];
 					}elseif( $EM_Ticket_Booking->booking ){
 						$this->booking = $EM_Ticket_Booking->booking;
+						$this->booking_id = $this->booking->booking_id;
 					}elseif( $EM_Ticket_Booking->booking_id ){
-						$this->booking = em_get_booking( $EM_Ticket_Booking->booking_id );
+						// set booking_id now, get booking later if needed
+						$this->booking_id = $EM_Ticket_Booking->booking_id;
 					}
 				}else{
 					// we may have been passed an array of options we can use to create multiple single EM_Ticket_Booking objects
@@ -72,10 +77,11 @@ class EM_Ticket_Bookings extends EM_Tickets_Bookings {
 					// get a booking ID and object (if booking not made, we need a booking object reference)
 					if( !empty($ticket_booking['booking']) ){
 						$this->booking = $ticket_booking['booking'];
+						$this->booking_id = $this->booking->booking_id;
 					}elseif( !empty($ticket_booking['booking_id']) ){
-						$this->booking = em_get_booking($ticket_booking['booking_id']);
+						$this->booking_id = $ticket_booking['booking_id'];
 					}
-					if( $this->ticket_id && $this->booking ){ // booking id may not exist yet but we must have a booking reference
+					if( $this->ticket_id && $this->booking_id ){ // booking id may not exist yet but we must have a booking reference
 						// we don't necessarily need to create spaces, get_post will sort that out for us
 						if( !empty($ticket_booking['spaces']) ){
 							// create multiple single-space bookings here
@@ -84,7 +90,9 @@ class EM_Ticket_Bookings extends EM_Tickets_Bookings {
 									'ticket_id' => $this->ticket_id,
 									'booking_id' => $this->booking_id,
 								));
-								$EM_Ticket_Booking->booking = $this->booking;
+								if( $this->booking ) {
+									$EM_Ticket_Booking->booking = $this->booking;
+								}
 								$EM_Ticket_Booking->ticket = $this->ticket;
 								$this->tickets_bookings[$EM_Ticket_Booking->ticket_uuid] = $EM_Ticket_Booking;
 							}
@@ -96,12 +104,61 @@ class EM_Ticket_Bookings extends EM_Tickets_Bookings {
 		}
 	}
 	
-	// Load ticket bookings if needed
+	/**
+	 * Returns an array of individual ticket bookings (single space attendees) for given search $args. If $count is set to true, then the number of results found is returned instead.
+	 * @param $args
+	 *
+	 * @return EM_Ticket_Booking[]|int
+	 */
+	public static function get( $args, $count = false ) {
+		return parent::get( $args, $count );
+	}
+	
+	/**
+	 * @param $sql
+	 *
+	 * @return EM_Ticket_Booking[]
+	 */
+	public static function get_results( $sql ) {
+		global $wpdb;
+		$ticket_bookings = array();
+		$ticket_bookings_results = $wpdb->get_results($sql, ARRAY_A);
+		foreach( $ticket_bookings_results as $ticket_booking ){
+			$ticket_bookings[$ticket_booking['ticket_booking_id']] = new EM_Ticket_Booking($ticket_booking);
+		}
+		return $ticket_bookings;
+	}
+	
+	public static function get_built_sql( $bookings_sql, $fields, $joins, $conditions = array() ){
+		$condition = !empty($conditions) ? " WHERE " . implode(' AND ', $conditions) : '';
+		return "SELECT " . implode(', ', $fields) . " FROM " . EM_TICKETS_BOOKINGS_TABLE . " tb INNER JOIN ({$bookings_sql}) b ON b.booking_id = tb.booking_id " . implode(' ', $joins). $condition;
+	}
+	
+	public static function get_built_count_sql( $bookings_sql, $extras = array( 'joins' => [], 'conditions' => [] ) ) {
+		$joins = $extras['joins'] ?? [];
+		$condition = !empty($extras['conditions']) ? " WHERE " . implode(' AND ', $extras['conditions']) : '';
+		return "SELECT COUNT(DISTINCT ticket_booking_id) FROM " . EM_TICKETS_BOOKINGS_TABLE . " tb INNER JOIN ({$bookings_sql}) b ON b.booking_id = tb.booking_id " . implode(' ', $joins). $condition;
+	}
+	
+	/**
+	 * @return EM_Ticket_Booking|false
+	 */
+	public function get_first(){
+		$this->get_ticket_bookings();
+		return reset($this->tickets_bookings);
+	}
+	
+	/**
+	 * Load ticket bookings if not already loaded.
+	 * @param $ticket
+	 *
+	 * @return EM_Ticket_Booking[]
+	 */
 	function get_ticket_bookings( $ticket = false ){
-		if( !$this->tickets_bookings_loaded && !empty($this->booking->booking_id) ){
+		if( !$this->tickets_bookings_loaded && !empty($this->booking_id) ){
 			global $wpdb;
 			$sql = "SELECT * FROM ". EM_TICKETS_BOOKINGS_TABLE ." WHERE booking_id=%d AND ticket_id=%d";
-			$sql = $wpdb->prepare( $sql, $this->booking->booking_id, $this->ticket_id );
+			$sql = $wpdb->prepare( $sql, $this->booking_id, $this->ticket_id );
 			$ticket_bookings = $wpdb->get_results($sql, ARRAY_A);
 			foreach( $ticket_bookings as $ticket_booking ){
 				$this->tickets_bookings[$ticket_booking['ticket_uuid']] = new EM_Ticket_Booking($ticket_booking);
@@ -119,10 +176,21 @@ class EM_Ticket_Bookings extends EM_Tickets_Bookings {
 	public function __get( $var ){
 		if( $var === 'ticket_booking_price' ){
 			$this->get_price();
-		}elseif( $var === 'ticket_booking_spaces' ){
+		}elseif ( $var === 'ticket_booking_spaces' ){
 			return $this->get_spaces();
+		} elseif ( $var === 'ticket_bookings') {
+			return $this->get_ticket_bookings();
+		} elseif ( $var === 'id' ){
+			return $this->booking_id . '-' . $this->ticket_id;
 		}
 		return parent::__get( $var );
+	}
+	
+	public function __set( $prop, $value ) {
+		if( $prop === 'ticket_bookings') {
+			$this->tickets_bookings = $value;
+		}
+		parent::__set( $prop, $value );
 	}
 	
 	/**
@@ -134,7 +202,7 @@ class EM_Ticket_Bookings extends EM_Tickets_Bookings {
 	public function __call( $function, $args ){
 		$EM_Ticket_Booking = new EM_Ticket_Booking( array(
 			'ticket_id' => $this->ticket_id,
-			'booking_id' => $this->booking->booking_id
+			'booking_id' => $this->booking_id
 		));
 		// handle some functions that may cause problems if old scripts assume we're on a direct EM_Ticket_Booking
 		if( $function == 'get_price_with_taxes' ){
@@ -144,9 +212,10 @@ class EM_Ticket_Bookings extends EM_Tickets_Bookings {
 			}
 			if( !empty($args[0]) ) $price_with_taxes = $this->format_price($price_with_taxes);
 			return $price_with_taxes;
-		}elseif( method_exists($EM_Ticket_Booking, $function) ){
+		} elseif( method_exists($EM_Ticket_Booking, $function) ){
 			return $EM_Ticket_Booking->$function( $args );
 		}
+		return parent::__call( $function, $args );
 	}
 	
 	/**
@@ -267,6 +336,9 @@ class EM_Ticket_Bookings extends EM_Tickets_Bookings {
 	 */
 	function get_spaces( $force_refresh = false ){
 		if( $force_refresh || $this->spaces == 0 ){
+			if( empty($this->tickets_bookings) ) {
+				$this->get_ticket_bookings();
+			}
 			$this->spaces = count($this->tickets_bookings);
 		}
 		return apply_filters( static::$n . '_get_spaces',$this->spaces,$this);
@@ -296,7 +368,7 @@ class EM_Ticket_Bookings extends EM_Tickets_Bookings {
 	
 	public function __debugInfo(){
 		$object = clone($this);
-		$object->booking = !empty($this->booking->booking_id) ? 'Booking ID #'.$this->booking->booking_id : 'New Booking - No ID';
+		$object->booking = !empty($this->booking_id) ? 'Booking ID #'.$this->booking_id : 'New Booking - No ID';
 		$object->ticket = 'Ticket #'.$this->ticket_id . ' - ' . $this->get_ticket()->ticket_name;
 		$object->fields = 'Removed for export, uncomment from __debugInfo()';
 		$object->required_fields = 'Removed for export, uncomment from __debugInfo()';

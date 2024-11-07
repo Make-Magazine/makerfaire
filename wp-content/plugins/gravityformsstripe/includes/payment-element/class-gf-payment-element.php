@@ -112,10 +112,12 @@ class GF_Stripe_Payment_Element {
 	 * @return \Stripe\SetupIntent|\Stripe\PaymentIntent|WP_Error
 	 */
 	public function get_initial_payment_information( $feed, $form ) {
+		$currency           = strtolower( GFCommon::get_currency() );
+		$min_initial_amount = $currency === 'usd' ? 1 : $this->get_minimum_amount( $currency );
 		$intent_information = array(
 			// Instead of 1 we can calculate the minimum amount that can be charged on page load without the user changing anything.
-			'amount'   => $this->addon->get_amount_export( 1 ),
-			'currency' => strtolower( GFCommon::get_currency() ),
+			'amount'   => $this->addon->get_amount_export( $min_initial_amount ),
+			'currency' => $currency,
 		);
 
 		$intent_information['mode'] = rgars( $feed, 'meta/transactionType' ) === 'product' ? 'payment' : 'subscription';
@@ -148,6 +150,50 @@ class GF_Stripe_Payment_Element {
 		$intent_information = apply_filters( 'gform_stripe_payment_element_initial_payment_information', $intent_information, $feed, $form );
 
 		return $intent_information;
+	}
+
+	/**
+	 * Get the minimum amount that could be used to create an intent for a given currency.
+	 *
+	 * @since 5.8.0
+	 *
+	 * @param string $currency The currency code in lowercase.
+	 *
+	 * @return int The minimum amount for the currency.
+	 */
+	public function get_minimum_amount( $currency ) {
+		// Define the minimum amounts for each currency.
+		$minimum_amounts = array(
+			'usd' => 1,
+			'gbp' => 1,
+			'eur' => 1,
+			'aud' => 2,
+			'brl' => 5,
+			'cad' => 2,
+			'czk' => 22,
+			'dkk' => 7,
+			'hkd' => 8,
+			'huf' => 365,
+			'ils' => 4,
+			'jpy' => 162,
+			'myr' => 5,
+			'mxn' => 18,
+			'nzd' => 2,
+			'nok' => 11,
+			'php' => 59,
+			'pln' => 4,
+			'rub' => 90,
+			'sgd' => 2,
+			'zar' => 19,
+			'sek' => 11,
+			'chf' => 1,
+			'twd' => 33,
+			'thb' => 37,
+		);
+
+		// Multiply by 1.5 to protect from any unpredicted changes in currency exchange rates.
+		// If currency is not found (maybe using a currency addon, return 250 as a fallback, this value provides a reasonable threshold to protect from low value currencies.
+		return rgar( $minimum_amounts, strtolower( $currency ), 250 ) * 1.5;
 	}
 
 	/**
@@ -585,6 +631,12 @@ class GF_Stripe_Payment_Element {
 			$request_client_secret = rgget( 'setup_intent_client_secret' );
 		} elseif ( strpos( $intent_id, 'pi' ) === 0 ) {
 			$intent = $api->get_payment_intent( $intent_id, array( 'expand' => array( 'payment_method' ) ) );
+			
+			if ( is_wp_error( $intent ) ) {
+				gf_stripe()->log_debug( __METHOD__ . '() - Payment intent returned the following WP_Error: ' . $intent->get_error_message() );
+				return false;
+			}
+
 			$request_client_secret = rgget( 'payment_intent_client_secret' );
 		} else {
 			gf_stripe()->log_debug( __METHOD__ . '() - Invalid intent id. Aborting tracking id:' . rgget( 'tracking_id' ) . ', for form : "' . rgar( $form, 'title' ) . '" (id: ' . rgar( $form, 'id' ) . ') , feed : "' . rgars( $feed, 'meta/feedName' ) . '" (id: ' . rgar( $feed, 'id' ) . ')' );

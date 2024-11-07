@@ -2,6 +2,7 @@
 namespace ElementorPro\Modules\MegaMenu\Widgets;
 
 use ElementorPro\Base\Base_Widget_Trait;
+use ElementorPro\Modules\MegaMenu\Controls\Control_Menu_Dropdown_Animation;
 use ElementorPro\Plugin;
 use Elementor\Controls_Manager;
 use Elementor\Core\Kits\Documents\Tabs\Global_Typography;
@@ -45,6 +46,20 @@ class Mega_Menu extends Widget_Nested_Base {
 
 	public function get_keywords() {
 		return [ 'Mega Menu', 'Nested Elements' ];
+	}
+
+	/**
+	 * Get style dependencies.
+	 *
+	 * Retrieve the list of style dependencies the widget requires.
+	 *
+	 * @since 3.24.0
+	 * @access public
+	 *
+	 * @return array Widget style dependencies.
+	 */
+	public function get_style_depends(): array {
+		return [ 'widget-mega-menu' ];
 	}
 
 	/**
@@ -497,28 +512,8 @@ class Mega_Menu extends Widget_Nested_Base {
 			'open_animation',
 			[
 				'label' => esc_html__( 'Animation', 'elementor-pro' ),
-				'type' => Controls_Manager::SELECT,
-				'default' => 'none',
-				'options' => [
-					'none' => esc_html__( 'None', 'elementor-pro' ),
-					'fadeIn' => esc_html__( 'Fade in', 'elementor-pro' ), // Key must match the class from animate.css
-				],
-				'assets' => [
-					'styles' => [
-						[
-							'name' => 'e-animations',
-							'conditions' => [
-								'terms' => [
-									[
-										'name' => 'open_animation',
-										'operator' => '!==',
-										'value' => '',
-									],
-								],
-							],
-						],
-					],
-				],
+				'type' => Control_Menu_Dropdown_Animation::TYPE,
+				'default' => '',
 				'frontend_available' => true,
 			]
 		);
@@ -2448,6 +2443,7 @@ class Mega_Menu extends Widget_Nested_Base {
 							'data-binding-setting': ['item_title'],
 							'data-binding-index': menuItemCount,
 							'data-binding-dynamic': 'true',
+							'data-current-url': permalinkUrl,
 						} );
 
 						const menuItemContainerClasses = [ 'e-n-menu-title-container' ];
@@ -2518,16 +2514,12 @@ class Mega_Menu extends Widget_Nested_Base {
 	}
 
 	protected function get_initial_config(): array {
-		if ( Plugin::elementor()->experiments->is_feature_active( 'e_nested_atomic_repeaters' ) ) {
-			return array_merge( parent::get_initial_config(), [
-				'support_improved_repeaters' => true,
-				'target_container' => [ '.e-n-menu-heading' ],
-				'node' => 'li',
-				'is_interlaced' => true,
-			] );
-		}
-
-		return parent::get_initial_config();
+		return array_merge( parent::get_initial_config(), [
+			'support_improved_repeaters' => true,
+			'target_container' => [ '.e-n-menu-heading' ],
+			'node' => 'li',
+			'is_interlaced' => true,
+		] );
 	}
 
 	// Any update in this function should be updated also in the content_template function too

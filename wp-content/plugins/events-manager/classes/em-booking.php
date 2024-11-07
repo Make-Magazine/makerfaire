@@ -391,6 +391,50 @@ class EM_Booking extends EM_Object{
 		return apply_filters('em_booking_save', false, $this, false);
 	}
 	
+	
+	/**
+	 * Gets the user meta for this booking, which may reside withih the booking context or in the user meta context.
+	 *
+	 * Returns null if not defined.
+	 *
+	 * @param $meta_key
+	 *
+	 * @return mixed
+	 */
+	public function get_user_meta( $meta_key ) {
+		if( $this->person_id == 0 ) {
+			$meta_value = $this->booking_meta['registration'][ $meta_key ] ?? null;
+		} else {
+			$meta_value = get_user_meta( $this->person_id, $meta_key, true );
+			if( $meta_value === '' ) $meta_value = null;
+		}
+		return apply_filters('em_booking_get_user_meta', $meta_value, $meta_key, $this);
+	}
+	
+	/**
+	 * Gets meta stored in booking meta, useful especially for data that may require interception such as at a multiple booking level.
+	 *
+	 * @param $meta_key
+	 *
+	 * @return mixed|null
+	 */
+	public function get_meta( $meta_key ) {
+		$meta_value = $this->booking_meta[$meta_key] ?? null;
+		return apply_filters('em_booking_get_meta', $meta_value, $meta_key, $this);
+	}
+	
+	public function update_user_meta( $meta_key, $meta_value ) {
+		global $wpdb;
+		// set the meta in booking object first
+		$this->booking_meta['registration'][$meta_key] = $meta_key;
+		// check if this is in no-user mode, if so we save directly to the DB, otherwise we save it directly to the usermeta table
+		if( $this->person_id === 0 ) {
+			$wpdb->update( EM_BOOKINGS_META_TABLE, array('meta_key' => '_registration|'.$meta_key, 'meta_value' => $meta_value), array('booking_id' => $this->booking_id) );
+		} else {
+			update_user_meta( $this->person_id, $meta_key, $meta_value );
+		}
+	}
+	
 	/**
 	 * Update a specific key value in the booking meta data, or create one if it doesn't exist. If set to null it'll remove that value
 	 * @param $meta_key
@@ -420,7 +464,7 @@ class EM_Booking extends EM_Object{
 			// sequential arrays are stored with same key value so only one delete key needed - we can't do an if( array_keys($meta_value) !== range(0, count($meta_value) - 1) ) { check because legacy strings with sequentials store the number in the key
 			$meta_delete_keys[] = "'". $wpdb->_real_escape('_'.$meta_key.'|') . "'";
 			// delete previous values so we insert new ones
-			$result = $wpdb->query( $wpdb->prepare('DELETE FROM '. EM_BOOKINGS_META_TABLE .' WHERE booking_id=%d AND meta_key IN ('. implode(',', $meta_delete_keys) .')', $this->booking_id) );
+			$result = $wpdb->query( $wpdb->prepare('DELETE FROM '. EM_BOOKINGS_META_TABLE .' WHERE booking_id=%d AND (meta_key LIKE %s OR meta_key LIKE %s)', $this->booking_id) );
 		}else{
 			$result = $wpdb->delete( EM_BOOKINGS_META_TABLE, array('booking_id' => $this->booking_id, 'meta_key' => $meta_key) );
 		}
@@ -1023,7 +1067,7 @@ class EM_Booking extends EM_Object{
 	    if( $registration ){
 		    $this->booking_meta['registration'] = array_merge($this->booking_meta['registration'], $user_data);	//in case someone else added stuff
 	    }
-	    $registration = apply_filters('em_booking_get_person_post', $registration, $this);
+	    $registration = apply_filters('em_booking_get_person_post', $registration, $this, $user_data);
 	    if( $registration ){
 	        $this->feedback_message = __('Personal details have successfully been modified.', 'events-manager');
 	    }
@@ -1046,12 +1090,13 @@ class EM_Booking extends EM_Object{
 		}
 		?>
 		<table class="em-form-fields">
-			<tr><th><?php _e('Name','events-manager'); ?> : </th><td><input type="text" name="user_name" value="<?php echo esc_attr($name); ?>" /></td></tr>
-			<tr><th><?php _e('Email','events-manager'); ?> : </th><td><input type="text" name="user_email" value="<?php echo esc_attr($email); ?>" /></td></tr>
-			<tr><th><?php _e('Phone','events-manager'); ?> : </th><td><input type="tel" name="dbem_phone" value="<?php echo esc_attr($phone); ?>" /></td></tr>
+			<tr><th><?php _e('Name','events-manager'); ?> : </th><td><input type="text" name="user_name" value="<?php echo esc_attr($name); ?>" ></td></tr>
+			<tr><th><?php _e('Email','events-manager'); ?> : </th><td><input type="text" name="user_email" value="<?php echo esc_attr($email); ?>" ></td></tr>
+			<tr><th><?php _e('Phone','events-manager'); ?> : </th><td><input type="tel" name="dbem_phone" value="<?php echo esc_attr($phone); ?>" ></td></tr>
+			<?php do_action('em_booking_get_person_editor_bottom', $this ); ?>
 		</table>
 		<?php
-		return apply_filters('em_booking_get_person_editor', ob_get_clean(), $this);
+		return apply_filters('em_booking_get_person_editor', ob_get_clean(), $this );
 	}
 
 	/**
@@ -1087,6 +1132,7 @@ class EM_Booking extends EM_Object{
 				$this->feedback_message = sprintf(__('%s deleted', 'events-manager'), __('Booking','events-manager'));
 				$wpdb->delete( EM_META_TABLE, array('meta_key'=>'booking-note', 'object_id' => $this->booking_id), array('%s','%d'));
 				$wpdb->delete( EM_BOOKINGS_META_TABLE, array('booking_id'=> $this->booking_id), array('%d'));
+				$this->deleted = true;
 				do_action('em_booking_deleted', $this);
 			}else{
 				$this->add_error(sprintf(__('%s could not be deleted', 'events-manager'), __('Booking','events-manager')));
@@ -1281,6 +1327,15 @@ class EM_Booking extends EM_Object{
 	}
 	
 	/**
+	 * Returns true if booking is approved, i.e. confirmed. Takes into account that pending bookings may be auto-approved.
+	 * @return bool
+	 */
+	function is_approved() {
+		$result = $this->booking_status == 1 || ($this->booking_status == 0 && !get_option('dbem_bookings_approval'));
+		return apply_filters('em_booking_is_approved', $result, $this);
+	}
+	
+	/**
 	 * Set RSVP status to given number. Null sets booking to unconfirmed.
 	 *
 	 * @param null|int $status
@@ -1365,36 +1420,39 @@ class EM_Booking extends EM_Object{
 	 */
 	public function can_rsvp( $status ) {
 		$result = false;
-		if( get_option( 'dbem_bookings_rsvp' ) ) {
-			// check if we're changing the RSVP or doing anew with a specific status
-			if ( $this->booking_rsvp_status !== null && $this->can_change_rsvp() ) {
-				$can_rsvp = true;
-			} else {
-				$rsvpable_booking_statuses = apply_filters( 'em_booking_rsvpable_booking_statuses', array( 0, 1 ) );
-				if ( $this->booking_status === 3 && get_option( 'dbem_bookings_rsvp_sync_cancel' ) && $this->can_uncancel() ) {
-					$rsvpable_booking_statuses[] = 3;
-				}
-				$can_rsvp = in_array( $this->booking_status, $rsvpable_booking_statuses );
-			}
-			// general RSVP possible, now go deeper
-			if ( $can_rsvp ) {
-				if ( $status === null ) { // unconfirm
-					$result = $this->can_manage(); // we cannot unconfirm unless an admin
-				} elseif ( $status === 0 ) { // cancel
-					if ( get_option( 'dbem_bookings_rsvp_sync_cancel' ) && $this->booking_rsvp_status !== $status ) {
-						$result = $this->can_cancel();
-					} else {
-						$result = true;
+		if( $this->is_approved() ) {
+			if( get_option( 'dbem_bookings_rsvp' ) ) {
+				// check if we're changing the RSVP or doing anew with a specific status
+				if ( $this->booking_rsvp_status !== null && $this->can_change_rsvp() ) {
+					$can_rsvp = true;
+				} else {
+					$rsvpable_booking_statuses = apply_filters( 'em_booking_rsvpable_booking_statuses', array( 0, 1 ) );
+					if ( $this->booking_status === 3 && get_option( 'dbem_bookings_rsvp_sync_cancel' ) && $this->can_uncancel() ) {
+						$rsvpable_booking_statuses[] = 3;
 					}
-				} elseif ( $status === 1 ) { // confirm
-					$result = true;
-				} elseif ( $status === 2 ) { // maybe
-					if ( get_option( 'dbem_bookings_rsvp_maybe' ) ) {
-						$result = true;
-					}
+					$can_rsvp = in_array( $this->booking_status, $rsvpable_booking_statuses );
 				}
-				if( $result ){
-					$result = $this->booking_rsvp_status === $status ? null : true;
+				// general RSVP possible, now go deeper
+				if ( $can_rsvp ) {
+					if( $status !== null ) $status = absint( $status );
+					if ( $status === null ) { // unconfirm
+						$result = $this->can_manage(); // we cannot unconfirm unless an admin
+					} elseif ( $status === 0 ) { // cancel
+						if ( get_option( 'dbem_bookings_rsvp_sync_cancel' ) && $this->booking_rsvp_status !== $status ) {
+							$result = $this->can_cancel();
+						} else {
+							$result = true;
+						}
+					} elseif ( $status === 1 ) { // confirm
+						$result = true;
+					} elseif ( $status === 2 ) { // maybe
+						if ( get_option( 'dbem_bookings_rsvp_maybe' ) ) {
+							$result = true;
+						}
+					}
+					if( $result ){
+						$result = $this->booking_rsvp_status === $status ? null : true;
+					}
 				}
 			}
 		}
@@ -1526,6 +1584,9 @@ class EM_Booking extends EM_Object{
 			switch( $result ){
 				case '#_BOOKINGID':
 					$replace = $this->booking_id;
+					break;
+				case '#_BOOKING_UUID':
+					$replace = $this->booking_uuid;
 					break;
 				case '#_RESPNAME' : //deprecated
 				case '#_BOOKINGNAME':

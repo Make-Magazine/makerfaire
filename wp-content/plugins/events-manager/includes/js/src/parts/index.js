@@ -181,8 +181,7 @@ jQuery(document).ready( function($){
 					this.em_timepicker('remove');
 				}
 			}); //clear all em_timepickers - consequently, also other click/blur/change events, recreate the further down
-			em_setup_datepicker(slot);
-			em_setup_timepicker(slot);
+			em_setup_ui_elements(slot);
 			$('html, body').animate({ scrollTop: slot.offset().top - 30 }); //sends user to form
 			check_ticket_sortability();
 		});
@@ -320,265 +319,6 @@ jQuery(document).ready( function($){
 		};
 		check_ticket_sortability();
 	}
-	//Manageing Bookings
-	let bookings_tables = $('.em-bookings-table');
-	if( bookings_tables.length > 0 ){
-		load_ui_css = true;
-		//Pagination link clicks
-		$(document).on('click', '.em-bookings-table .tablenav-pages a', function(){
-			var el = $(this);
-			var form = el.closest('.em-bookings-table form.bookings-filter');
-			//get page no from url, change page, submit form
-			var match = el.attr('href').match(/#[0-9]+/);
-			if( match != null && match.length > 0){
-				var pno = match[0].replace('#','');
-				form.find('input[name=pno]').val(pno);
-			}else{
-				// new way
-				let url = new URL(el.attr('href'));
-				if( url.searchParams.has('paged') ){
-					form.find('input[name=pno]').val( url.searchParams.get('paged'));
-					form.find('input[name=paged]').val( url.searchParams.get('paged') );
-				}else{
-					form.find('input[name=pno]').val(1);
-					form.find('input[name=paged]').val(1);
-				}
-			}
-			form.trigger('submit');
-			return false;
-		});
-		$(document).on('change', '.em-bookings-table .tablenav-pages input[name=paged]', function(e){
-			var el = $(this);
-			var form = el.closest('.em-bookings-table form.bookings-filter');
-			var last = form.find('.tablenav-pages a.last-page');
-			if( last.length > 0 ){
-				// check val isn't more than last page
-				let url = new URL(last.attr('href'));
-				if( url.searchParams.has('paged') ){
-					let lastPage = parseInt(url.searchParams.get('paged'));
-					if( parseInt(this.value) > lastPage ){
-						this.value = lastPage;
-					}
-				}
-			}else{
-				// make sure it's less than current page, we're on last page already
-				let lastPage = form.find('input[name=pno]').val();
-				if( lastPage && parseInt(this.value) > parseInt(lastPage) ){
-					this.value = lastPage;
-					e.preventDefault();
-					return false;
-				}
-			}
-			form.find('input[name=pno]').val(this.value);
-			form.trigger('submit');
-		});
-
-		//Settings & Export Modal
-		$(document).on('click', '.em-bookings-table-trigger', function(e){
-			e.preventDefault();
-			let modal = $(this.getAttribute('rel'));
-			modal.find('input[name=show_tickets]').each(check_tickets_columns_export);
-			openModal( modal );
-		});
-		$(document).on('submit', '.em-bookings-table-settings form', function(e){
-			e.preventDefault();
-			//we know we'll deal with cols, so wipe hidden value from main
-			let $form = $(this);
-			let modal = $form.closest('.em-modal');
-			let form = $($form.attr('rel'));
-			let match = form.find("[name=cols]").val('');
-			let booking_form_cols = $form.find('.em-bookings-cols-selected .item');
-			$.each( booking_form_cols, function(i,item_match){
-				//item_match = $(item_match);
-				if( !item_match.classList.contains('hidden') ){
-					if( match.val() !== ''){
-						match.val(match.val()+','+item_match.getAttribute('data-value'));
-					}else{
-						match.val(item_match.getAttribute('data-value'));
-					}
-				}
-			});
-			//sync row count
-			let limit = $form.find('select[name="limit"]').val();
-			form.find('[name="limit"]').val(limit);
-			//submit main form
-			modal.trigger('submitted'); //hook into this with bind()
-			form.trigger('submit');
-			closeModal(modal);
-		});
-		$(document).on('submit', '.em-bookings-table-export form', function(e){
-			let $table_form = $(this.getAttribute('rel'));
-			var $form_filters = $(this).find('.em-bookings-table-filters').empty();
-			let filters = $table_form.find('.em-bookings-table-filter').clone();
-			filters.appendTo($form_filters);
-		});
-		let check_tickets_columns_export = function(){
-			let $this = $(this);
-			let form = $this.closest('form');
-			let ticket_data = form.find('[data-type="ticket"]');
-			if( $this.is(':checked') ){
-				ticket_data.show().find('input').val(1);
-			}else{
-				ticket_data.hide().find('input').val(0);
-			}
-		}
-		$(document).on('click', '.em-bookings-table-export input[name=show_tickets]', check_tickets_columns_export);
-
-		$(document).on('keypress', '.em-bookings-table .tablenav .actions input[type="text"]', function(e){
-			let keycode = (e.keyCode ? e.keyCode : e.which);
-			if( keycode === 13 ){
-				$(this).closest('form').submit();
-			}
-		});
-
-		$(document).on('click', '.em-bookings-table button.em-bookings-table-bulk-action', function( e ){
-			e.preventDefault();
-			let $form = $(this).closest('form');
-			let action = $form.find('select.bulk-action-selector').val();
-			EM.bulk_action = true;
-			if( action === 'delete' ){
-				if( !confirm(EM.booking_delete) ){ return false; }
-			}
-			let rows = $form.find('tbody .check-column input:checked');
-			// find all checked items and perform action on them. future interations can check if action is available to row.
-			rows.each( function(){
-				// check if sibling has the relevant action
-				let actions = $(this.parentElement).find('a.em-bookings-'+ action);
-				actions.trigger('click');
-			});
-			EM.bulk_action = false;
-		})
-
-		// Sorting
-		$(document).on('click', '.em-bookings-table th[scope="col"].sortable a, .em-bookings-table th[scope="col"].sorted a', function(e){
-			e.preventDefault();
-			// add args to form and submit it
-			let params = (new URL(this.href)).searchParams;
-			let $form = $(this).closest('form');
-			if( params.get('orderby') ){
-				$form.find('input[name="orderby"]').val( params.get('orderby') );
-				let order = params.get('order') ? params.get('order') : 'asc';
-				$form.find('input[name="order"]').val( order );
-				$form.submit();
-			}
-		});
-
-		// anything requiring extra setup
-		let resetup_bookings_table = function( table ){
-			em_setup_tippy(table);
-			em_setup_selectize(table);
-		}
-		let setup_bookings_table = function( table ) {
-			table.find(".em-bookings-cols-sortable").sortable().disableSelection();
-			let breakpoints = {
-				'small' : 600,
-				'large' : false,
-			}
-			const bookings_table_ro = EM_ResizeObserver( breakpoints, table.toArray() );
-		}
-
-		bookings_tables.each( function(){
-			setup_bookings_table( $(this) );
-		});
-
-		//Widgets and filter submissions
-		$(document).on('submit', '.em-bookings-table form.bookings-filter', function(e){
-			var el = $(this);
-			//append loading spinner
-			let root = el.parents('.em-bookings-table').first();
-			root.find('.table-wrap').first().append('<div id="em-loading" />');
-			//ajax call
-			$.post( EM.ajaxurl, el.serializeArray(), function(data){
-				let $data = $(data);
-				if( !root.hasClass('frontend') ) {
-					// remove modals as they are supplied again on the backend
-					root.find('.em-bookings-table-trigger').each( function(){
-						let modal = $(this.getAttribute('rel'));
-						modal.remove();
-					});
-				}
-				root.replaceWith($data);
-				// re-setup bookings table
-				setup_bookings_table($data);
-				resetup_bookings_table($data);
-				// fire hook
-				jQuery(document).triggerHandler('em_bookings_filtered', [$data, root, el]);
-			});
-			return false;
-		});
-		// Action links (approve/reject etc.)
-		$(document).on('click', '.em-bookings-approve,.em-bookings-reject,.em-bookings-unapprove,.em-bookings-delete,.em-bookings-ajax-action', function(){
-			let el = $(this);
-			if( el.hasClass('em-bookings-delete') && (!('bulk_action' in EM) || !EM.bulk_action) ){
-				if( !confirm(EM.booking_delete) ){ return false; }
-			}
-			let url = em_ajaxify( el.attr('href') );
-			let td = el.parents('td').first();
-			if( td.length > 0 && (td.hasClass('column-actions') || td.hasClass('em-bt-col-actions')) ){
-				td.html(EM.txt_loading);
-				td.load( url );
-			}else{
-				// set up a custom url action to retrieve a row afterwards
-				let dropdown = el.closest('[data-tippy-root], .em-tooltip-ddm-content');
-				if( dropdown.length > 0 ) {
-					if( '_tippy' in dropdown[0] ) {
-						dropdown[0]._tippy.hide();
-					}
-					let tr = el.closest('tr');
-					if( url.match(/^\//) ){
-						url = window.location.origin + url;
-					}
-					let params = (new URL(url)).searchParams;
-					let formData = new FormData(tr.closest('form')[0]);
-					formData.set('action', 'em_bookings_table_row');
-					formData.set('row_action', params.get('action'));
-					formData.set('booking_id', params.get('booking_id'));
-					let cols = el.closest('form').find('[name="cols"]').val();
-					tr.addClass('loading');
-					$.ajax({
-						url: EM.ajaxurl,
-						data: formData,
-						processData: false,
-						contentType: false,
-						type: 'POST',
-						success: function (data) {
-							let $data = $(data);
-							$data.addClass('faded-out');
-							tr.replaceWith( $data ).delay(200);
-							resetup_bookings_table( $data );
-							$data.fadeIn();
-							$data.removeClass('faded-out');
-						}
-					});
-				}
-			}
-			return false;
-		});
-	}
-	//Old Bookings Table - depreciating soon
-	if( $('.em_bookings_events_table').length > 0 ){
-		//Widgets and filter submissions
-		$(document).on('submit', '.em_bookings_events_table form', function(e){
-			var el = $(this);
-			var url = em_ajaxify( el.attr('action') );
-			el.parents('.em_bookings_events_table').find('.table-wrap').first().append('<div id="em-loading" />');
-			$.get( url, el.serializeArray(), function(data){
-				el.parents('.em_bookings_events_table').first().replaceWith(data);
-			});
-			return false;
-		});
-		//Pagination link clicks
-		$(document).on('click', '.em_bookings_events_table .tablenav-pages a', function(){
-			var el = $(this);
-			var url = em_ajaxify( el.attr('href') );
-			el.parents('.em_bookings_events_table').find('.table-wrap').first().append('<div id="em-loading" />');
-			$.get( url, function(data){
-				el.parents('.em_bookings_events_table').first().replaceWith(data);
-			});
-
-			return false;
-		});
-	}
 
 	//Manual Booking
 	$(document).on('click', 'a.em-booking-button', function(e){
@@ -699,10 +439,6 @@ jQuery(document).ready( function($){
 		em_setup_datepicker('body');
 	}
 	if( load_ui_css ) em_load_jquery_css();
-	// Datepicker - new
-	if( $('.em-datepicker').length > 0 ){
-		em_setup_datepicker('body');
-	}
 
 	//previously in em-admin.php
 	$('#em-wrapper input.select-all').on('change', function(){
@@ -905,15 +641,25 @@ jQuery(document).ready( function($){
 
 /**
  * Sets up external UI libraries and adds them to elements within the supplied container. This can be a jQuery or DOM element, subfunctions will either handle accordingly or this function will ensure it's the right one to pass on..
- * @param container
+ * @param jQuery|DOMElement container
  */
-function em_setup_ui_elements ( container ) {
+function em_setup_ui_elements ( $container ) {
+	let container = ( $container instanceof jQuery ) ? $container[0] : $container;
 	// Selectize
-	em_setup_selectize( container );
+	em_setup_selectize( $container );
 	// Tippy
-	em_setup_tippy( container );
+	em_setup_tippy( $container );
 	// Moment JS
-	em_setup_moment_times( container );
+	em_setup_moment_times( $container );
+	// Date & Time Pickers
+	if( container.querySelector('.em-datepicker') ){
+		em_setup_datepicker( container );
+	}
+	if( container.querySelector(".em-time-input") ){
+		em_setup_timepicker( $container );
+	}
+	// Phone numbers
+	em_setup_phone_inputs( container );
 }
 
 /* Local JS Timezone related placeholders */

@@ -1,7 +1,7 @@
 === GravityEdit ===
 Tags: gravity forms, inline edit, gravityview
 Requires at least: 5.1
-Tested up to: 6.6.1
+Tested up to: 6.6.2
 Contributors: The GravityKit Team
 License: GPL 2
 Requires PHP: 7.2.0
@@ -19,6 +19,17 @@ Inline Editing is a powerful way to quickly make changes to a form entry without
 3. Set your license key
 
 == Changelog ==
+
+= 2.1.1 on October 1, 2024 =
+
+This update resolves issues with the DIY Layout and inline editing on the Entries page.
+
+#### 🐛 Fixed
+* Enabling inline editing caused DIY Layout markup to render incorrectly, resulting in empty values when editing fields.
+* Checkbox fields were not editable on the Entries page when more than 10 field choices were displayed as table columns.
+
+#### 🔧 Updated
+* [Foundation](https://www.gravitykit.com/foundation/) and [TrustedLogin](https://www.trustedlogin.com/) to versions 1.2.18 and 1.9.0, respectively.
 
 = 2.1.0 on August 16, 2024 =
 

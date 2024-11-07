@@ -1,24 +1,58 @@
 <?php
 
-class GP_Read_Only extends GWPerk {
+if ( ! class_exists( 'GP_Plugin' ) ) {
+	return;
+}
 
-	public $version                      = GP_READ_ONLY_VERSION;
-	protected $min_gravity_perks_version = '1.0-beta-3';
-	protected $min_gravity_forms_version = '2.4';
-	protected $min_wp_version            = '3.0';
+class GP_Read_Only extends GP_Plugin {
+
+	private static $_instance = null;
+
+	protected $_version     = GP_READ_ONLY_VERSION;
+	protected $_path        = 'gwreadonly/gwreadonly.php';
+	protected $_full_path   = __FILE__;
+	protected $_slug        = 'gp-read-only';
+	protected $_title       = 'Gravity Forms Read Only';
+	protected $_short_title = 'Read Only';
+
+	public static function get_instance() {
+		if ( self::$_instance == null ) {
+			self::$_instance = isset ( self::$perk ) ? new self ( new self::$perk ) : new self();
+		}
+		return self::$_instance;
+	}
+
+	public function minimum_requirements() {
+		return array(
+			'gravityforms' => array(
+				'version' => '2.4',
+			),
+			'wordpress'    => array(
+				'version' => '3.0',
+			),
+			'plugins'      => array(
+				'gravityperks/gravityperks.php' => array(
+					'name'    => 'Gravity Perks',
+					'version' => '1.0-beta-3',
+				),
+			),
+		);
+	}
 
 	private $unsupported_field_types  = array( 'hidden', 'html', 'captcha', 'page', 'section', 'form', 'fileupload' );
 	private $disable_attr_field_types = array( 'radio', 'select', 'checkbox', 'multiselect', 'time', 'date', 'name', 'address', 'workflow_user', 'workflow_role', 'workflow_assignee_select', 'consent' );
 
 	public function init() {
 
+		parent::init();
+
 		load_plugin_textdomain( 'gwreadonly', false, basename( dirname( __file__ ) ) . '/languages/' );
 
-		$this->add_tooltip( $this->key( 'readonly' ), __( '<h6>Read-only</h6> Set field as "readonly". Read-only fields will be visible on the form but cannot be modified by the user.', 'gravityperks' ) );
-		$this->enqueue_field_settings();
+		$this->perk->enqueue_field_settings();
 
 		// Actions
-		add_action( 'gform_enqueue_scripts', array( $this, 'enqueue_form_styles' ) );
+		add_action( 'gperk_field_settings', array( $this, 'field_settings_ui' ) );
+		add_action( 'gform_editor_js', array( $this, 'field_settings_js' ) );
 
 		// Filters
 		add_filter( 'gform_field_input', array( $this, 'read_only_input' ), 11, 5 );
@@ -61,13 +95,30 @@ class GP_Read_Only extends GWPerk {
 
 	}
 
-	function enqueue_form_styles( $form ) {
-		if ( ! $this->should_enqueue_frontend( $form ) ) {
-			return;
-		}
+	/**
+	 * Return the stylesheets which should be enqueued.
+	 *
+	 * @return array
+	 */
+	public function styles() {
+		$min = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG || isset( $_GET['gform_debug'] ) ? '' : '.min';
 
-		wp_enqueue_style( 'gwreadonly', $this->get_base_url() . '/css/gwreadonly.css', array(), $this->version );
-	}
+		$styles = array(
+
+			array(
+				'handle'  => 'gwreadonly',
+				'src'     => $this->get_base_url() . '/css/gwreadonly.css',
+				'version' => $this->_version,
+				'enqueue' => array(
+					array(
+						array( $this, 'should_enqueue_frontend' ),
+					),
+				),
+			),
+		);
+
+		return array_merge( parent::styles(), $styles );
+	}	
 
 	/**
 	 * Determine if frontend scripts/styles should be enqueued. Loop through fields and check if read only is enabled
@@ -127,18 +178,18 @@ class GP_Read_Only extends GWPerk {
 			return false;
 		}
 
-		return ! ! rgar( $field, $this->key( 'enable' ) );
+		return ! ! rgar( $field, $this->perk->key( 'enable' ) );
 	}
 
 	public function field_settings_ui() {
 		?>
 
-		<li class="<?php echo $this->key( 'field_setting' ); ?> field_setting" style="display:none;">
-			<input type="checkbox" id="<?php echo $this->key( 'field_checkbox' ); ?>" value="1" onclick="SetFieldProperty('<?php echo $this->key( 'enable' ); ?>', this.checked)">
+		<li class="<?php echo $this->perk->key( 'field_setting' ); ?> field_setting" style="display:none;">
+			<input type="checkbox" id="<?php echo $this->perk->key( 'field_checkbox' ); ?>" value="1" onclick="SetFieldProperty('<?php echo $this->perk->key( 'enable' ); ?>', this.checked)">
 
-			<label class="inline" for="<?php echo $this->key( 'field_checkbox' ); ?>">
+			<label class="inline" for="<?php echo $this->perk->key( 'field_checkbox' ); ?>">
 				<?php _e( 'Read-only', 'gravityperks' ); ?>
-				<?php gform_tooltip( $this->key( 'readonly' ) ); ?>
+				<?php gform_tooltip( $this->perk->key( 'readonly' ) ); ?>
 			</label>
 		</li>
 
@@ -162,13 +213,13 @@ class GP_Read_Only extends GWPerk {
 				});
 
 				$(document).bind('gform_load_field_settings', function(event, field, form) {
-					$("#<?php echo $this->key( 'field_checkbox' ); ?>").prop( 'checked', field["<?php echo $this->key( 'enable' ); ?>"] === true );
+					$("#<?php echo $this->perk->key( 'field_checkbox' ); ?>").prop( 'checked', field["<?php echo $this->perk->key( 'enable' ); ?>"] === true );
 
 					// If calculation is enabled, we typically don't need this Perk since the input will be read-only
 					// However, in the case of the product field with a quantity field, the quantity field won't
 					// be read-only.
 					if( ! isReadOnlyFieldType( GetInputType( field ) ) || (isCalcEnabled( field ) && field.type !== 'product') ) {
-						field["<?php echo $this->key( 'enable' ); ?>"] = false;
+						field["<?php echo $this->perk->key( 'enable' ); ?>"] = false;
 						$('.gwreadonly_field_setting').hide();
 					}
 				});
@@ -191,12 +242,15 @@ class GP_Read_Only extends GWPerk {
 
 	public function read_only_input( $input_html, $field, $value, $entry_id, $form_id ) {
 
+		$form  = GFAPI::get_form( $form_id );
+		$entry = GFAPI::get_entry( $entry_id );
+
 		if ( $field->is_entry_detail() ) {
 			return $input_html;
 		}
 
 		$input_type = RGFormsModel::get_input_type( $field );
-		if ( in_array( $input_type, $this->unsupported_field_types ) || ! rgar( $field, $this->key( 'enable' ) ) ) {
+		if ( in_array( $input_type, $this->unsupported_field_types ) || ! rgar( $field, $this->perk->key( 'enable' ) ) ) {
 			return $input_html;
 		}
 
@@ -236,7 +290,7 @@ class GP_Read_Only extends GWPerk {
 				break;
 			case 'list':
 				// Remove add/remove buttons.
-				$input_html = preg_replace( '/<(?:td|div) class=\'gfield_list_icons\'>[\s\S]+?<\/(?:td|div)>/', '', $input_html );
+				$input_html = preg_replace( '/<(?:td|div) class=\'gfield_list_icons(?: gform-grid-col)?\'>[\s\S]+?<\/(?:td|div)>/', '', $input_html );
 				// Remove add/remove column header.
 				$input_html = str_replace( '<div class="gfield_header_item gfield_header_item--icons">&nbsp;</div>', '', $input_html );
 				$search     = array(
@@ -297,7 +351,7 @@ class GP_Read_Only extends GWPerk {
 		if ( in_array( $input_type, $this->disable_attr_field_types ) ) {
 
 			// Use $value if we have it as it'll likely be from dynamic population (e.g. query param or shortcode).
-			$value           = ! rgblank( $value ) ? $value : $this->get_field_value( $field );
+			$value           = ! rgblank( $value ) ? $value : $this->get_field_value( $form, $entry, $field['id'] );
 			$hc_input_markup = '';
 
 			if ( is_array( $field['inputs'] ) ) {
@@ -479,9 +533,11 @@ class GP_Read_Only extends GWPerk {
 		$this->process_hidden_captures( $form );
 	}
 
-	public function get_field_value( $field ) {
+	public function get_field_value( $form, $entry, $field_id ) {
 
+		$field        = GFAPI::get_field( $form, $field_id );
 		$field_values = $submitted_values = false;
+		$entry = null;
 
 		if ( isset( $_GET['gf_token'] ) ) {
 			$incomplete_submission_info = GFFormsModel::get_draft_submission_values( $_GET['gf_token'] );
@@ -494,14 +550,15 @@ class GP_Read_Only extends GWPerk {
 		}
 
 		if ( function_exists( 'gravityview' ) && gravityview()->request->is_edit_entry() ) {
-			$gv_entry = gravityview()->request->is_edit_entry();
-			$value    = rgar( $gv_entry->as_entry(), $field->id );
+			$entry = gravityview()->request->is_edit_entry()->as_entry();
+			$value = rgar( $entry, $field->id );
 		} elseif (
 			method_exists( 'GP_Entry_Blocks\GF_Queryer', 'attach_to_current_block' )
 			&& GP_Entry_Blocks\GF_Queryer::attach_to_current_block()
 			&& GP_Entry_Blocks\GF_Queryer::attach_to_current_block()->is_edit_entry()
 		) {
-			$value = rgar( GP_Entry_Blocks\GF_Queryer::attach_to_current_block()->entry, $field->id );
+			$entry = GP_Entry_Blocks\GF_Queryer::attach_to_current_block()->entry;
+			$value = rgar( $entry, $field->id );
 		} elseif ( is_array( $submitted_values ) ) {
 			$value = $submitted_values[ $field->id ];
 		} else {
@@ -530,8 +587,11 @@ class GP_Read_Only extends GWPerk {
 					$index++;
 				}
 
-				if ( rgar( $choice, 'isSelected' ) ) {
-					$full_input_id            = sprintf( '%d.%d', $field['id'], $index );
+				$full_input_id = sprintf( '%d.%d', $field['id'], $index );
+
+				if ( $entry ) {
+					$values[ $full_input_id ] = rgar( $entry, $full_input_id );
+				} else if ( rgar( $choice, 'isSelected' ) ) {
 					$values[ $full_input_id ] = $this->get_choice_value( $choice, $field );
 				}
 
@@ -593,6 +653,18 @@ class GP_Read_Only extends GWPerk {
 		return $input_id;
 	}
 
+	/**
+	 * Adds tooltips for the settings.
+	 *
+	 * @param array $tooltips An array with the existing tooltips.
+	 */
+	public function tooltips( $tooltips ) {
+		$tooltips[ $this->perk->key( 'readonly' ) ] = __( '<h6>Read-only</h6> Set field as "readonly". Read-only fields will be visible on the form but cannot be modified by the user.', 'gravityperks' );
+		return $tooltips;
+	}
+
 }
 
 class GWReadOnly extends GP_Read_Only { };
+
+GFAddOn::register( 'GP_Read_Only' );

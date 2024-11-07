@@ -3,7 +3,7 @@
         'name' => '__root__',
         'pretty_version' => 'dev-main',
         'version' => 'dev-main',
-        'reference' => 'a3a3bf7cc37b17276f7f50344584ca4044a29fab',
+        'reference' => '6878c899b86149bc63990566381db1353bbaad88',
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -13,7 +13,7 @@
         '__root__' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
-            'reference' => 'a3a3bf7cc37b17276f7f50344584ca4044a29fab',
+            'reference' => '6878c899b86149bc63990566381db1353bbaad88',
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
@@ -49,12 +49,10 @@
         'gravitykit/foundation' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
-            'reference' => 'bc93c59a099e9b367cb6e3e562b25dbaec64a924',
+            'reference' => '93d00cfd445c3485f6adb099164fc03d16bd42db',
             'type' => 'library',
             'install_path' => __DIR__ . '/../gravitykit/foundation',
-            'aliases' => array(
-                0 => '9999999-dev',
-            ),
+            'aliases' => array(),
             'dev_requirement' => false,
         ),
         'illuminate/container' => array(
@@ -163,9 +161,9 @@
             'dev_requirement' => false,
         ),
         'symfony/polyfill-mbstring' => array(
-            'pretty_version' => 'v1.30.0',
-            'version' => '1.30.0.0',
-            'reference' => 'fd22ab50000ef01661e2a31d850ebaa297f8e03c',
+            'pretty_version' => 'v1.31.0',
+            'version' => '1.31.0.0',
+            'reference' => '85181ba99b2345b0ef10ce42ecac37612d9fd341',
             'type' => 'library',
             'install_path' => __DIR__ . '/../symfony/polyfill-mbstring',
             'aliases' => array(),
@@ -187,9 +185,9 @@
             ),
         ),
         'trustedlogin/client' => array(
-            'pretty_version' => 'v1.8.0',
-            'version' => '1.8.0.0',
-            'reference' => '3ba476906afe0b98f551f080ee0cd92d5d9c8830',
+            'pretty_version' => 'v1.9.0',
+            'version' => '1.9.0.0',
+            'reference' => 'b913058ae57b512a7766f449ab8d55952500fe72',
             'type' => 'library',
             'install_path' => __DIR__ . '/../trustedlogin/client',
             'aliases' => array(),

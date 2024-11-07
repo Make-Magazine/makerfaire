@@ -8,33 +8,42 @@ class Dashboard {
 	
 	public static function init() {
 		if( get_option('dbem_booking_charts_wpdashboard') ){
-			add_action( 'wp_dashboard_setup', array( get_called_class(), 'wp_dashboard_setup') );
-			add_action( 'admin_print_scripts', array( get_called_class(), 'admin_print_scripts'), 10, 1 );
+			add_action( 'wp_dashboard_setup', array( static::class, 'wp_dashboard_setup') );
+			add_action( 'admin_print_scripts', array( static::class, 'enqueue_scripts'), 10, 1 );
 		}
-		add_action( 'wp_ajax_em_chart_bookings', array( get_called_class(), 'ajax'), 10, 1 );
+		if( get_option('dbem_booking_charts_frontend') && !is_admin() ){
+			add_action( 'em_enqueue_scripts', array( static::class, 'enqueue_scripts'), 10, 1 );
+		}
+		add_action( 'wp_ajax_em_chart_bookings', array( static::class, 'ajax'), 10, 1 );
 	}
 
 	public static function wp_dashboard_setup() {
-		wp_add_dashboard_widget('em_booking_stats', __('Events Manager Bookings', 'events-manager'), array( get_called_class(), 'stats_widget'));
+		wp_add_dashboard_widget('em_booking_stats', __('Events Manager Bookings', 'events-manager'), array( static::class, 'stats_widget'));
 	}
 	
-	public static function admin_print_scripts( $hook_suffix = false ){
-		$screen = get_current_screen();
-		if ( $screen->id == 'dashboard' ) {
+	public static function enqueue_scripts( $hook_suffix = false ){
+		if( is_admin() ) {
+			$screen = get_current_screen();
+			if ( $screen->id == 'dashboard' ) {
+				$min = \EM_Scripts_and_Styles::min_suffix();
+				wp_enqueue_script( 'chart-js', EM_DIR_URI . '/includes/external/chartjs/chart.umd' . $min . '.js', array(), EM_VERSION );
+				\EM_Scripts_and_Styles::admin_enqueue( true );
+				//wp_enqueue_script( 'chart-js', 'https://cdn.jsdelivr.net/npm/chart.js@4.0.1/dist/chart.umd.min.js', array(), EM_VERSION);
+				//wp_enqueue_script( 'chart-js-utils', 'https://www.chartjs.org/samples/2.9.4/utils.js', array());
+			} elseif ( !empty( $_REQUEST['page'] ) && $_REQUEST['page'] == 'events-manager-bookings' ) {
+				// we need to call this before enqueue, otherwise it'll get enqueued at footer and possibly dependent EM stuff isn't loaded
+				$min = \EM_Scripts_and_Styles::min_suffix();
+				wp_enqueue_script( 'chart-js', EM_DIR_URI . '/includes/external/chartjs/chart.umd' . $min . '.js', array( 'moment' ), EM_VERSION );
+			} elseif ( $hook_suffix === true ) {
+				// we need to call this before enqueue, otherwise it'll get enqueued at footer and possibly dependent EM stuff isn't loaded
+				$min = \EM_Scripts_and_Styles::min_suffix();
+				wp_enqueue_script( 'chart-js', EM_DIR_URI . '/includes/external/chartjs/chart.umd' . $min . '.js', array(), EM_VERSION, true );
+				\EM_Scripts_and_Styles::admin_enqueue( true );
+			}
+		} elseif ( get_option( 'dbem_booking_charts_frontend' ) ) {
+			// we assume it's the bookings admin page if this class was loaded
 			$min = \EM_Scripts_and_Styles::min_suffix();
-			wp_enqueue_script( 'chart-js', EM_DIR_URI . '/includes/external/chartjs/chart.umd'.$min.'.js', array(), EM_VERSION);
-			\EM_Scripts_and_Styles::admin_enqueue(true);
-			//wp_enqueue_script( 'chart-js', 'https://cdn.jsdelivr.net/npm/chart.js@4.0.1/dist/chart.umd.min.js', array(), EM_VERSION);
-			//wp_enqueue_script( 'chart-js-utils', 'https://www.chartjs.org/samples/2.9.4/utils.js', array());
-		}elseif( !empty($_REQUEST['page']) && $_REQUEST['page'] == 'events-manager-bookings' ){
-			// we need to call this before enqueue, otherwise it'll get enqueued at footer and possibly dependent EM stuff isn't loaded
-			$min = \EM_Scripts_and_Styles::min_suffix();
-			wp_enqueue_script( 'chart-js', EM_DIR_URI . '/includes/external/chartjs/chart.umd'.$min.'.js', array('moment'), EM_VERSION);
-		}elseif( $hook_suffix === true ){
-			// we need to call this before enqueue, otherwise it'll get enqueued at footer and possibly dependent EM stuff isn't loaded
-			$min = \EM_Scripts_and_Styles::min_suffix();
-			wp_enqueue_script( 'chart-js', EM_DIR_URI . '/includes/external/chartjs/chart.umd'.$min.'.js', array(), EM_VERSION, true);
-			\EM_Scripts_and_Styles::admin_enqueue(true);
+			wp_enqueue_script( 'chart-js', EM_DIR_URI . '/includes/external/chartjs/chart.umd' . $min . '.js', array( 'moment' ), EM_VERSION );
 		}
 	}
 	
@@ -210,7 +219,7 @@ class Dashboard {
 			return array(); // no permissions for bookings, should have not even got here!
 		}elseif( !current_user_can('manage_others_bookings') ) {
 			// get current user bookings
-			$conditions['owner'] = $wpdb->prepare( ' event_id IN (SELECT event_id FROM ' . EM_EVENTS_TABLE . ' WHERE owner_id=%d ', get_current_user_id() );
+			$conditions['owner'] = $wpdb->prepare( ' event_id IN (SELECT event_id FROM ' . EM_EVENTS_TABLE . ' WHERE event_owner=%d )', get_current_user_id() );
 		}
 		if( !empty($args['event']) ){
 			$EM_Event = em_get_event($args['event']);
@@ -227,8 +236,8 @@ class Dashboard {
 		// determine unit of measurement
 		$selectors = array();
 		$averages = array(
-			'spaces' => 'AVG(booking_spaces) AS spaces_avg',
-			'price' => 'AVG(booking_price) AS price_avg',
+			'spaces_avg' => 'AVG(booking_spaces) AS spaces_avg',
+			'price_avg' => 'AVG(booking_price) AS price_avg',
 		);
 		$summaries = array(
 			'spaces' => 'SUM(booking_spaces) AS spaces',
@@ -709,10 +718,15 @@ class Dashboard {
 			$sql = 'SELECT ' . implode( ', ', $summaries) .' , '. implode( ', ', $averages ) . ' FROM ' . EM_BOOKINGS_TABLE . $where;
 			$booking_data = $wpdb->get_row( $sql, ARRAY_A );
 			// clean null data to 0 and add to stats
-			foreach ( $booking_data as $k => $v ) {
-				if( $v === null ) {
-					$booking_data[ $k ] = 0;
+			if( $booking_data ) {
+				foreach ( $booking_data as $k => $v ) {
+					if ( $v === null ) {
+						$booking_data[ $k ] = 0;
+					}
 				}
+			} else {
+				$keys = array_merge( array_keys($summaries), array_keys($averages) );
+				$booking_data = array_combine( $keys, array_fill(0, count($keys), 0)  );
 			}
 			$stats->stats[$stack] = $booking_data;
 		}
@@ -1084,8 +1098,8 @@ class Dashboard {
 			<?php static::output_chart( $args, $stats ); ?>
 		</div>
 		<?php
-		add_action('wp_footer', array(get_called_class(), 'js_footer'));
-		add_action('admin_footer', array(get_called_class(), 'js_footer'));
+		add_action('wp_footer', array(static::class, 'js_footer'));
+		add_action('admin_footer', array(static::class, 'js_footer'));
 	}
 	
 	public static function output_chart( $args, $stats = null ){

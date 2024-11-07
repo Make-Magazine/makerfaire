@@ -8,7 +8,7 @@ abstract class GravityView_Inline_Edit_Render {
 	 *
 	 * @var array $forms
 	 */
-	protected $forms = [];
+	protected $forms = array();
 
 	/**
 	 * Instance of this class.
@@ -36,7 +36,7 @@ abstract class GravityView_Inline_Edit_Render {
 
 		// If the single instance hasn't been set, set it now.
 		if ( ! isset( self::$instance[ $classname ] ) ) {
-			self::$instance[ $classname ] = new $classname;
+			self::$instance[ $classname ] = new $classname();
 		}
 
 		return self::$instance[ $classname ];
@@ -46,7 +46,6 @@ abstract class GravityView_Inline_Edit_Render {
 	 * GravityView_Inline_Edit_Render constructor.
 	 *
 	 * @since 1.0
-	 *
 	 */
 	private function __construct() {
 
@@ -104,7 +103,7 @@ abstract class GravityView_Inline_Edit_Render {
 		$source = null;
 
 		// Apply 'gform_pre_render' filter and cache result
-		static $filtered_forms = [];
+		static $filtered_forms = array();
 
 		if ( isset( $form['id'] ) && ! in_array( $form['id'], $filtered_forms ) ) {
 			$filtered_forms[] = $form['id'];
@@ -133,14 +132,19 @@ abstract class GravityView_Inline_Edit_Render {
 			return $output;
 		}
 
-		//End the party early if the field isn't supported
+		// End the party early if the field isn't supported
 		$supported_fields = GravityView_Inline_Edit::get_instance()->get_supported_fields();
 
-		//Don't use inline edit for single inputs of a multi-column field
+		// Don't use inline edit for single inputs of a multi-column field
 		if ( ! in_array( $input_type, $supported_fields ) ||
-		     ( 'list' === $input_type && $gf_field->enableColumns && ! empty( $input_id ) )
+			 ( 'list' === $input_type && $gf_field->enableColumns && ! empty( $input_id ) )
 		) {
 			if ( 'entry_link' == $input_type ) {
+				return $output;
+			}
+
+			// Don't add disabled class for fields like 'custom' in DIY layout.
+			if ( $context && 'diy' === $context->view->settings->get( 'template' ) && 'custom' === $input_type ) {
 				return $output;
 			}
 
@@ -169,9 +173,9 @@ abstract class GravityView_Inline_Edit_Render {
 			$wrapper_attributes['data-allow-html'] = 'true';
 		}
 
-		//Disable inline edit for number fields with calculation
+		// Disable inline edit for number fields with calculation
 		if ( $gf_field && $gf_field->has_calculation() ) {
-			return "<div class='gv-inline-edit-live gv-inline-edit-live-{$entry['id']}-{$entry['form_id']}-{$field_id}'>" . $output . "</div>";
+			return "<div class='gv-inline-edit-live gv-inline-edit-live-{$entry['id']}-{$entry['form_id']}-{$field_id}'>" . $output . '</div>';
 		}
 
 		/**
@@ -192,7 +196,7 @@ abstract class GravityView_Inline_Edit_Render {
 		 * @param array $field_settings GravityView field settings array.
 		 * @param null|\GV\Template_Context $context The GravityView Template Context, if available.
 		 */
-		$wrapper_attributes = apply_filters( "gravityview-inline-edit/wrapper-attributes", $wrapper_attributes, $input_type, $gf_field_id, $entry, $form, $gf_field, $output, $field_settings, $context );
+		$wrapper_attributes = apply_filters( 'gravityview-inline-edit/wrapper-attributes', $wrapper_attributes, $input_type, $gf_field_id, $entry, $form, $gf_field, $output, $field_settings, $context );
 
 		/**
 		 * @filter `gravityview-inline-edit/{$input_type}-wrapper-attributes` Modify the attributes being added to an inline editable link for a specific input type
@@ -226,11 +230,14 @@ abstract class GravityView_Inline_Edit_Render {
 		}
 
 		// Return <tag atts>output</tag>
-		return strtr( '<{tag} {atts}>{output}</{tag}>', array(
-			'{tag}'    => $tag_name,
-			'{atts}'   => $atts_output,
-			'{output}' => $output,
-		) );
+		return strtr(
+			'<{tag} {atts}>{output}</{tag}>',
+			array(
+				'{tag}'    => $tag_name,
+				'{atts}'   => $atts_output,
+				'{output}' => $output,
+			)
+		);
 	}
 
 	/**

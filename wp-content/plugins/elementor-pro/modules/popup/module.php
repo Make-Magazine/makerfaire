@@ -64,6 +64,7 @@ class Module extends Module_Base {
 		}
 
 		add_filter( 'elementor/finder/categories', [ $this, 'add_finder_items' ] );
+		add_filter( 'elementor_pro/frontend/localize_settings', [ $this, 'localize_settings' ] );
 	}
 
 	public function disable_editing() {
@@ -155,15 +156,6 @@ class Module extends Module_Base {
 
 	public function register_ajax_actions( Ajax $ajax ) {
 		$ajax->register_ajax_action( 'pro_popup_save_display_settings', [ $this, 'save_display_settings' ] );
-	}
-
-	/**
-	 * @deprecated 3.1.0
-	 */
-	public function localize_settings() {
-		Plugin::elementor()->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.1.0' );
-
-		return [];
 	}
 
 	/**
@@ -269,5 +261,11 @@ class Module extends Module_Base {
 		$this->has_popups = $existing_popups->post_count > 0;
 
 		return $this->has_popups;
+	}
+
+	public function localize_settings( array $settings ): array {
+		$settings['popup']['hasPopUps'] = $this->has_popups();
+
+		return $settings;
 	}
 }

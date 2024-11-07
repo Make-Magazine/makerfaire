@@ -200,7 +200,9 @@ class EM_Object {
 		//ORDER BY, GROUP BY and GROUP BY ORDER ensure we have a valid array, splitting by commas if present
 		foreach( array('orderby', 'groupby', 'groupby_orderby') as $orderby_arg ){
 			if( !is_array($defaults[$orderby_arg]) && preg_match('/,/', $defaults[$orderby_arg]) ) {
+				$defaults[$orderby_arg] = str_replace( [' asc', ' desc'], [' ASC', ' DESC'], $defaults[$orderby_arg]); // uppercase ordering so we can correct later
 				$defaults[$orderby_arg] = str_replace(' ', '', $defaults[$orderby_arg]);
+				$defaults[$orderby_arg] = str_replace( ['ASC', 'DESC'], [' ASC', ' DESC'], $defaults[$orderby_arg]); // correct removed spaces
 				$defaults[$orderby_arg] = explode(',', $defaults[$orderby_arg]);
 			}elseif( !empty($defaults[$orderby_arg]) && !is_array($defaults[$orderby_arg]) ){
 				$defaults[$orderby_arg] = array($defaults[$orderby_arg]);
@@ -208,7 +210,7 @@ class EM_Object {
 			if( is_array($defaults[$orderby_arg]) ) $defaults[$orderby_arg] = array_values($defaults[$orderby_arg]); //reset array keys because we want an index 0 present
 		}
 		//TODO should we clean format of malicious code over here and run everything through this?
-		$defaults['array'] = ($defaults['array'] == true);
+		$defaults['array'] = is_array($defaults['array']) ? $defaults['array'] : ($defaults['array'] == true);
 		$defaults['pagination'] = ($defaults['pagination'] == true);
 		$defaults['limit'] = (is_numeric($defaults['limit'])) ? $defaults['limit']:$super_defaults['limit'];
 		$defaults['offset'] = (is_numeric($defaults['offset'])) ? $defaults['offset']:$super_defaults['offset'];
@@ -997,6 +999,8 @@ class EM_Object {
 					//maybe cases we're given an array where keys are shortcut names e.g. id => event_id - this way will be deprecated at one point
 					$x_by[] = $accepted_fields[$field];
 				}elseif( in_array($field,$accepted_fields) ){
+					$x_by[] = $field;
+				}elseif( array_key_exists( $key, $accepted_fields) ){
 					$x_by[] = $field;
 				}else{
 					unset($x_by[$key]);

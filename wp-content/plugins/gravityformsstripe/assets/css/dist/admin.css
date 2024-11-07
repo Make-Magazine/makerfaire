@@ -81,4 +81,16 @@ AND ANY CHANGES MADE HERE WILL BE OVERWRITTEN.
 		display: none;
 	}
 
+/* Added to fix a display problem between Stripe 5.8 and versions of Gravity Forms prior to 2.9. Can eventually be removed. */
+
+.gform-admin .gform_wrapper.gravity-theme .gform_stripe_card_error {
+	font-size: 0.875rem;
+}
+
+/* Added to fix a display problem between Stripe 5.8 and versions of Gravity Forms prior to 2.9. Can eventually be removed. */
+
+.gform-admin .editor-sidebar .gform-text.gform-alert__message .gform_stripe_card_error {
+	font-size: 0.875rem;
+}
+
 /*# sourceMappingURL=admin.css.map */

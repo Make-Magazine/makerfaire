@@ -7,7 +7,7 @@
  * @copyright 2021 Katz Web Services, Inc.
  *
  * @license GPL-2.0-or-later
- * Modified by gravityview on 14-August-2024 using {@see https://github.com/BrianHenryIE/strauss}.
+ * Modified by gravityview on 04-November-2024 using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\GravityView\Foundation\ThirdParty\TrustedLogin;
@@ -148,7 +148,7 @@ final class Admin {
 					$this,
 					'admin_menu_auth_link_page',
 				),
-				$menu_priority
+				(int) $menu_priority
 			);
 		}
 
@@ -304,6 +304,9 @@ final class Admin {
 
 		$menu_title = $this->config->get_setting( 'menu/title', esc_html__( 'Grant Support Access', 'gk-gravityview' ) );
 
+		$menu_position = $this->config->get_setting( 'menu/position', null );
+		$menu_position = is_null( $menu_position ) ? null : (float) $menu_position;
+
 		// If empty (null or empty string), add top-level menu.
 		if ( empty( $parent_slug ) ) {
 			add_menu_page(
@@ -313,7 +316,7 @@ final class Admin {
 				$menu_slug,
 				array( $this->form, 'print_auth_screen' ),
 				$this->config->get_setting( 'menu/icon_url', '' ),
-				$this->config->get_setting( 'menu/position', null )
+				$menu_position
 			);
 
 			return;
@@ -326,7 +329,7 @@ final class Admin {
 			'create_users',
 			$menu_slug,
 			array( $this->form, 'print_auth_screen' ),
-			$this->config->get_setting( 'menu/position', null )
+			$menu_position
 		);
 	}
 

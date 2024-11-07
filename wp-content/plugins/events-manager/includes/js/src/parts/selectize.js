@@ -8,7 +8,7 @@ let em_close_other_selectized = function(){
 	});
 }
 
-document.addEventListener('DOMContentLoaded', function(){
+document.addEventListener('events_manager_js_loaded', function(){
 	Selectize.define('multidropdown', function( options ) {
 		if( !this.$input.hasClass('multidropdown') ) return;
 		let s = this;
@@ -113,9 +113,30 @@ function em_setup_selectize( container_element ){
 
 	container.find('.em-selectize.selectize-control').on( 'click', em_close_other_selectized );
 
+	let optionRender = function (item, escape) {
+		let html = '<div class="option"';
+		if( 'data' in item ){
+			// any key/value object pairs wrapped in a 'data' key within JSON object in the data-data attribute is added automatically as a data-key="value" attribute
+			Object.entries(item.data).forEach( function( item_data ){
+				html += ' data-'+ escape(item_data[0]) + '="'+ escape(item_data[1]) +'"';
+			});
+		}
+		html +=	'>';
+		if( this.$input.hasClass('checkboxes') ){
+			html += item.text.replace(/^(\s+)?/i, '$1<span></span> ');
+		}else{
+			html += item.text;
+		}
+		html += '</div>';
+		return html;
+	};
+
 	// Selectize General
 	container.find('select:not([multiple]).em-selectize, .em-selectize select:not([multiple])').selectize({
 		selectOnTab : false,
+		render: {
+			option: optionRender,
+		},
 	});
 	container.find('select[multiple].em-selectize, .em-selectize select[multiple]').selectize({
 		selectOnTab : false,
@@ -126,23 +147,7 @@ function em_setup_selectize( container_element ){
 			item: function (item, escape) {
 				return '<div class="item"><span>' + item.text.replace(/^\s+/i, '') + '</span></div>';
 			},
-			option : function (item, escape) {
-				let html = '<div class="option"';
-				if( 'data' in item ){
-					// any key/value object pairs wrapped in a 'data' key within JSON object in the data-data attribute is added automatically as a data-key="value" attribute
-					Object.entries(item.data).forEach( function( item_data ){
-						html += ' data-'+ escape(item_data[0]) + '="'+ escape(item_data[1]) +'"';
-					});
-				}
-				html +=	'>';
-				if( this.$input.hasClass('checkboxes') ){
-					html += item.text.replace(/^(\s+)?/i, '$1<span></span> ');
-				}else{
-					html += item.text;
-				}
-				html += '</div>';
-				return html;
-			},
+			option : optionRender,
 			optgroup : function (item, escape) {
 				let html = '<div class="optgroup" data-group="' + escape(item.label) + '"';
 				if( 'data' in item ){
@@ -185,11 +190,11 @@ function em_setup_selectize( container_element ){
 		}
 	});
 
-	// Sortables - selectize and sorting
-	container.find('.em-bookings-table-modal .em-bookings-table-cols').each( function(){
+	// Sortables - selectize and sorting columns, usually in list tables
+	container.find('.em-list-table-modal .em-list-table-cols').each( function(){
 		let parent = jQuery(this);
-		let sortables = jQuery(this).find('.em-bookings-cols-sortable');
-		container.find('.em-selectize.always-open').each( function() {
+		let sortables = jQuery(this).find('.em-list-table-cols-sortable');
+		parent.find('.em-selectize.always-open').each( function() {
 			//extra behaviour for selectize column picker
 			if ('selectize' in this) {
 				let selectize = this.selectize;
@@ -200,12 +205,15 @@ function em_setup_selectize( container_element ){
 					let type = option.attr('data-type');
 					col.appendTo(sortables);
 					col.attr('data-type', type);
+					if( option.attr('data-header') ) {
+						col.children('span:first-child').text( option.attr('data-header') );
+					}
 					jQuery('<input type="hidden" name="cols[' + value + ']" value="1">').appendTo(col);
 				});
 				selectize.on('item_remove', function (value) {
 					parent.find('.item[data-value="'+ value +'"]').remove();
 				});
-				parent.on('click', '.em-bookings-cols-selected .item .remove', function(){
+				parent.on('click', '.em-list-table-cols-selected .item .remove', function(){
 					let value = this.parentElement.getAttribute('data-value');
 					selectize.removeItem(value, true);
 				});

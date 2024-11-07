@@ -45,7 +45,6 @@ function em_clean_shortcode_args( $args, $format = '' ) {
  */
 function em_get_calendar_shortcode( $args, $format='' ) {
 	$args = em_clean_shortcode_args( (array) $args, $format );
-	$args['ajax'] = true;
 	return EM_Calendar::output( $args );
 }
 add_shortcode('events_calendar', 'em_get_calendar_shortcode');

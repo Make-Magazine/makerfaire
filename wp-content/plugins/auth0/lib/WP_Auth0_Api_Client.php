@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Contains Class WP_Auth0_Api_Client class.
  *
@@ -10,7 +11,8 @@
 /**
  * Class WP_Auth0_Api_Client
  */
-class WP_Auth0_Api_Client {
+class WP_Auth0_Api_Client
+{
 
 	const DEFAULT_CLIENT_ALG = 'RS256';
 
@@ -31,14 +33,15 @@ class WP_Auth0_Api_Client {
 	 *
 	 * @return string
 	 */
-	private static function get_endpoint( $path = '', $domain = '' ) {
+	private static function get_endpoint($path = '', $domain = '')
+	{
 
-		if ( empty( $domain ) ) {
-			$domain = wp_auth0_get_option( 'domain' );
+		if (empty($domain)) {
+			$domain = wp_auth0_get_option('domain');
 		}
 
-		if ( ! empty( $path[0] ) && '/' === $path[0] ) {
-			$path = substr( $path, 1 );
+		if (!empty($path[0]) && '/' === $path[0]) {
+			$path = substr($path, 1);
 		}
 
 		return "https://{$domain}/{$path}";
@@ -53,22 +56,23 @@ class WP_Auth0_Api_Client {
 	 *
 	 * @return string|array
 	 */
-	public static function get_connect_info( $opt = '' ) {
+	public static function get_connect_info($opt = '')
+	{
 
-		if ( is_null( self::$connect_info ) ) {
+		if (is_null(self::$connect_info)) {
 			self::$connect_info = [
-				'domain'        => wp_auth0_get_option( 'domain' ),
-				'client_id'     => wp_auth0_get_option( 'client_id' ),
-				'client_secret' => wp_auth0_get_option( 'client_secret' ),
+				'domain'        => wp_auth0_get_option('domain'),
+				'client_id'     => wp_auth0_get_option('client_id'),
+				'client_secret' => wp_auth0_get_option('client_secret'),
 				'app_token'     => null,
-				'audience'      => self::get_endpoint( 'api/v2/' ),
+				'audience'      => self::get_endpoint('api/v2/'),
 			];
 		}
 
-		if ( empty( $opt ) ) {
+		if (empty($opt)) {
 			return self::$connect_info;
 		} else {
-			return ! empty( self::$connect_info[ $opt ] ) ? self::$connect_info[ $opt ] : '';
+			return !empty(self::$connect_info[$opt]) ? self::$connect_info[$opt] : '';
 		}
 	}
 
@@ -82,15 +86,16 @@ class WP_Auth0_Api_Client {
 	 *
 	 * @return array
 	 */
-	private static function get_headers( $token = '', $content_type = 'application/json' ) {
+	private static function get_headers($token = '', $content_type = 'application/json')
+	{
 
 		$headers = WP_Auth0_Api_Abstract::get_info_headers();
 
-		if ( ! empty( $token ) ) {
+		if (!empty($token)) {
 			$headers['Authorization'] = "Bearer {$token}";
 		}
 
-		if ( ! empty( $content_type ) ) {
+		if (!empty($content_type)) {
 			$headers['Content-Type'] = $content_type;
 		}
 
@@ -105,7 +110,8 @@ class WP_Auth0_Api_Client {
 	 *
 	 * @return mixed
 	 */
-	public static function signup_user( $domain, $data ) {
+	public static function signup_user($domain, $data)
+	{
 
 		$endpoint = "https://$domain/dbconnections/signup";
 
@@ -117,21 +123,21 @@ class WP_Auth0_Api_Client {
 			$endpoint,
 			[
 				'headers' => $headers,
-				'body'    => json_encode( $data ),
+				'body'    => json_encode($data),
 			]
 		);
 
-		if ( $response instanceof WP_Error ) {
-			WP_Auth0_ErrorLog::insert_error( __METHOD__, $response );
+		if ($response instanceof WP_Error) {
+			WP_Auth0_ErrorLog::insert_error(__METHOD__, $response);
 			return false;
 		}
 
-		if ( $response['response']['code'] !== 200 ) {
-			WP_Auth0_ErrorLog::insert_error( __METHOD__, $response['body'] );
+		if ($response['response']['code'] !== 200) {
+			WP_Auth0_ErrorLog::insert_error(__METHOD__, $response['body']);
 			return false;
 		}
 
-		return json_decode( $response['body'] );
+		return json_decode($response['body']);
 	}
 
 	/**
@@ -139,7 +145,8 @@ class WP_Auth0_Api_Client {
 	 *
 	 * @return array
 	 */
-	public static function get_required_scopes() {
+	public static function get_required_scopes()
+	{
 		return [
 			'read:users',
 			'update:users',
@@ -158,7 +165,8 @@ class WP_Auth0_Api_Client {
 	 *
 	 * @return bool|object|array
 	 */
-	public static function create_client( $domain, $app_token, $name ) {
+	public static function create_client($domain, $app_token, $name)
+	{
 
 		$options = WP_Auth0_Options::Instance();
 
@@ -175,7 +183,7 @@ class WP_Auth0_Api_Client {
 			'web_origins'         => $options->get_web_origins(),
 
 			// Force SSL, will not work without it
-			'cross_origin_loc'    => add_query_arg( 'auth0fallback', '1', site_url( 'index.php', 'https' ) ),
+			'cross_origin_loc'    => add_query_arg('auth0fallback', '1', site_url('index.php', 'https')),
 			'cross_origin_auth'   => true,
 
 			// A set of URLs that are valid to redirect to after logout from Auth0
@@ -201,24 +209,24 @@ class WP_Auth0_Api_Client {
 		];
 
 		$response = wp_remote_post(
-			self::get_endpoint( 'api/v2/clients', $domain ),
+			self::get_endpoint('api/v2/clients', $domain),
 			[
-				'headers' => self::get_headers( $app_token ),
-				'body'    => json_encode( $payload ),
+				'headers' => self::get_headers($app_token),
+				'body'    => json_encode($payload),
 			]
 		);
 
-		if ( $response instanceof WP_Error ) {
-			WP_Auth0_ErrorLog::insert_error( __METHOD__, $response->get_error_message() );
+		if ($response instanceof WP_Error) {
+			WP_Auth0_ErrorLog::insert_error(__METHOD__, $response->get_error_message());
 			return false;
 		}
 
-		if ( $response['response']['code'] != 201 ) {
-			WP_Auth0_ErrorLog::insert_error( __METHOD__, $response['body'] );
+		if ($response['response']['code'] != 201) {
+			WP_Auth0_ErrorLog::insert_error(__METHOD__, $response['body']);
 			return false;
 		}
 
-		return json_decode( $response['body'] );
+		return json_decode($response['body']);
 	}
 
 
@@ -230,50 +238,50 @@ class WP_Auth0_Api_Client {
 	 *
 	 * @return array|bool|mixed|object
 	 */
-	public static function create_client_grant( $app_token, $client_id ) {
+	public static function create_client_grant($app_token, $client_id)
+	{
 
 		$data = [
 			'client_id' => $client_id,
-			'audience'  => self::get_connect_info( 'audience' ),
+			'audience'  => self::get_connect_info('audience'),
 			'scope'     => self::get_required_scopes(),
 		];
 
 		$response = wp_remote_post(
-			self::get_endpoint( 'api/v2/client-grants' ),
+			self::get_endpoint('api/v2/client-grants'),
 			[
-				'headers' => self::get_headers( $app_token ),
-				'body'    => json_encode( $data ),
+				'headers' => self::get_headers($app_token),
+				'body'    => json_encode($data),
 			]
 		);
 
-		if ( $response instanceof WP_Error ) {
-			WP_Auth0_ErrorLog::insert_error( __METHOD__, $response );
+		if ($response instanceof WP_Error) {
+			WP_Auth0_ErrorLog::insert_error(__METHOD__, $response);
 			return false;
 		}
 
-		if ( 409 === $response['response']['code'] ) {
+		if (409 === $response['response']['code']) {
 
 			// Client grant from WP-created client to Management API already exists
 			WP_Auth0_ErrorLog::insert_error(
 				__METHOD__,
-				sprintf(
+				esc_html(sprintf(
 					// translators: placeholders are machine names stored for this WP instance and must be included.
-					__( 'A client grant for %1$s to %2$s already exists. Make sure this grant at least includes %3$s.', 'wp-auth0' ),
-					self::get_connect_info( 'client_id' ),
-					self::get_connect_info( 'audience' ),
-					implode( ', ', self::get_required_scopes() )
-				)
+					esc_html__('A client grant for %1$s to %2$s already exists. Make sure this grant at least includes %3$s.', 'wp-auth0'),
+					self::get_connect_info('client_id'),
+					self::get_connect_info('audience'),
+					implode(', ', self::get_required_scopes())
+				))
 			);
 
-			return json_decode( $response['body'] );
+			return json_decode($response['body']);
+		} elseif ($response['response']['code'] != 201) {
 
-		} elseif ( $response['response']['code'] != 201 ) {
-
-			WP_Auth0_ErrorLog::insert_error( __METHOD__, $response['body'] );
+			WP_Auth0_ErrorLog::insert_error(__METHOD__, $response['body']);
 			return false;
 		}
 
-		return json_decode( $response['body'] );
+		return json_decode($response['body']);
 	}
 
 	/**
@@ -285,7 +293,8 @@ class WP_Auth0_Api_Client {
 	 *
 	 * @return mixed
 	 */
-	public static function create_connection( $domain, $app_token, $payload ) {
+	public static function create_connection($domain, $app_token, $payload)
+	{
 		$endpoint = "https://$domain/api/v2/connections";
 
 		$headers = WP_Auth0_Api_Abstract::get_info_headers();
@@ -298,21 +307,21 @@ class WP_Auth0_Api_Client {
 			[
 				'method'  => 'POST',
 				'headers' => $headers,
-				'body'    => json_encode( $payload ),
+				'body'    => json_encode($payload),
 			]
 		);
 
-		if ( $response instanceof WP_Error ) {
-			WP_Auth0_ErrorLog::insert_error( __METHOD__, $response );
+		if ($response instanceof WP_Error) {
+			WP_Auth0_ErrorLog::insert_error(__METHOD__, $response);
 			return false;
 		}
 
-		if ( $response['response']['code'] != 201 ) {
-			WP_Auth0_ErrorLog::insert_error( __METHOD__, $response['body'] );
+		if ($response['response']['code'] != 201) {
+			WP_Auth0_ErrorLog::insert_error(__METHOD__, $response['body']);
 			return false;
 		}
 
-		return json_decode( $response['body'] );
+		return json_decode($response['body']);
 	}
 
 	/**
@@ -325,14 +334,15 @@ class WP_Auth0_Api_Client {
 	 *
 	 * @return array|bool|mixed|object
 	 */
-	public static function search_connection( $domain, $app_token, $strategy = null, $name = null ) {
+	public static function search_connection($domain, $app_token, $strategy = null, $name = null)
+	{
 
 		$add_queries = [];
-		if ( $strategy ) {
+		if ($strategy) {
 			$add_queries['strategy'] = $strategy;
 		}
 
-		if ( $name ) {
+		if ($name) {
 			$add_queries['name'] = $name;
 		}
 
@@ -341,27 +351,27 @@ class WP_Auth0_Api_Client {
 		$headers['Authorization'] = "Bearer $app_token";
 
 		$response = wp_remote_get(
-			add_query_arg( $add_queries, 'https://' . $domain . '/api/v2/connections' ),
+			add_query_arg($add_queries, 'https://' . $domain . '/api/v2/connections'),
 			[
 				'headers' => $headers,
 			]
 		);
 
-		if ( $response instanceof WP_Error ) {
-			WP_Auth0_ErrorLog::insert_error( __METHOD__, $response );
+		if ($response instanceof WP_Error) {
+			WP_Auth0_ErrorLog::insert_error(__METHOD__, $response);
 			return false;
 		}
 
-		if ( $response['response']['code'] != 200 ) {
-			WP_Auth0_ErrorLog::insert_error( __METHOD__, $response['body'] );
+		if ($response['response']['code'] != 200) {
+			WP_Auth0_ErrorLog::insert_error(__METHOD__, $response['body']);
 			return false;
 		}
 
-		if ( $response['response']['code'] >= 300 ) {
+		if ($response['response']['code'] >= 300) {
 			return false;
 		}
 
-		return json_decode( $response['body'] );
+		return json_decode($response['body']);
 	}
 
 	/**
@@ -375,7 +385,8 @@ class WP_Auth0_Api_Client {
 	 *
 	 * @return bool|object
 	 */
-	public static function update_connection( $domain, $app_token, $id, $payload ) {
+	public static function update_connection($domain, $app_token, $id, $payload)
+	{
 		$endpoint = "https://$domain/api/v2/connections/$id";
 
 		$headers = WP_Auth0_Api_Abstract::get_info_headers();
@@ -383,12 +394,12 @@ class WP_Auth0_Api_Client {
 		$headers['Authorization'] = "Bearer $app_token";
 		$headers['content-type']  = 'application/json';
 
-		unset( $payload->name );
-		unset( $payload->strategy );
-		unset( $payload->id );
+		unset($payload->name);
+		unset($payload->strategy);
+		unset($payload->id);
 
-		if ( ! empty( $payload->enabled_clients ) ) {
-			$payload->enabled_clients = array_values( $payload->enabled_clients );
+		if (!empty($payload->enabled_clients)) {
+			$payload->enabled_clients = array_values($payload->enabled_clients);
 		}
 
 		$response = wp_remote_post(
@@ -396,25 +407,25 @@ class WP_Auth0_Api_Client {
 			[
 				'method'  => 'PATCH',
 				'headers' => $headers,
-				'body'    => json_encode( $payload ),
+				'body'    => json_encode($payload),
 			]
 		);
 
-		if ( $response instanceof WP_Error ) {
-			WP_Auth0_ErrorLog::insert_error( __METHOD__, $response );
+		if ($response instanceof WP_Error) {
+			WP_Auth0_ErrorLog::insert_error(__METHOD__, $response);
 			return false;
 		}
 
-		if ( $response['response']['code'] != 200 ) {
-			WP_Auth0_ErrorLog::insert_error( __METHOD__, $response['body'] );
+		if ($response['response']['code'] != 200) {
+			WP_Auth0_ErrorLog::insert_error(__METHOD__, $response['body']);
 			return false;
 		}
 
-		if ( $response['response']['code'] >= 300 ) {
+		if ($response['response']['code'] >= 300) {
 			return false;
 		}
 
-		return json_decode( $response['body'] );
+		return json_decode($response['body']);
 	}
 
 	/**
@@ -422,7 +433,8 @@ class WP_Auth0_Api_Client {
 	 *
 	 * @return array
 	 */
-	public static function ConsentRequiredScopes() {
+	public static function ConsentRequiredScopes()
+	{
 		return [
 			'create:clients',
 			'create:client_grants',
@@ -439,7 +451,8 @@ class WP_Auth0_Api_Client {
 	 *
 	 * @return array
 	 */
-	public static function get_client_grant_types() {
+	public static function get_client_grant_types()
+	{
 
 		return [
 			'authorization_code',

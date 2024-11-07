@@ -160,7 +160,7 @@ class Settings extends API {
 
 		// Check API connectivity.
 		try {
-			$response      = wp_remote_get( 'https://api.extensions.envato.com', [
+			$response      = wp_safe_remote_get( 'https://api.extensions.envato.com', [
 				'user-agent' => 'Mozilla/5.0 (Envato Elements ' . ENVATO_ELEMENTS_VER . ';) ' . home_url(),
 				'timeout'    => 5,
 			] );
@@ -188,7 +188,7 @@ class Settings extends API {
 
 		// Check content API connectivity.
 		try {
-			$response      = wp_remote_get( 'https://assets.wp.envatoextensions.com/template-kits/ping.json', [
+			$response      = wp_safe_remote_get( 'https://assets.wp.envatoextensions.com/template-kits/ping.json', [
 				'user-agent' => 'Mozilla/5.0 (Envato Elements ' . ENVATO_ELEMENTS_VER . ';) ' . home_url(),
 				'timeout'    => 5,
 			] );

@@ -2,7 +2,7 @@
 /**
  * @license MIT
  *
- * Modified by gravitykit on 16-April-2024 using {@see https://github.com/BrianHenryIE/strauss}.
+ * Modified by gravitykit on 11-September-2024 using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\AdvancedFilter\QueryFilters\Filter\Visitor;
@@ -16,7 +16,9 @@ use GravityView_API;
  * Replaces merge tag on filter values.
  * @since 2.0.0
  */
-final class ProcessMergeTagsVisitor implements FilterVisitor {
+final class ProcessMergeTagsVisitor implements EntryAwareFilterVisitor {
+	use EntryAware;
+
 	/**
 	 * The form repository.
 	 * @since 2.0.0
@@ -51,7 +53,7 @@ final class ProcessMergeTagsVisitor implements FilterVisitor {
 
 		$form = $this->getForm( $filter );
 
-		$filter->set_value( self::process_merge_tags( $filter->value(), $form ) );
+		$filter->set_value( self::process_merge_tags( $filter->value(), $form, $this->entry ) );
 	}
 
 	/**

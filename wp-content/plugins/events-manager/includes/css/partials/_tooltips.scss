@@ -26,5 +26,20 @@ button.input.em-tooltip-ddm[aria-expanded="true"] {
 		width : 100%;
 	}
 
+	section {
+		&:not(:first-child) {
+			padding-top: 5px;
+			margin-top: 5px;
+			border-top: 1px solid #dedede;
+		}
+		&:not(:last-child) {
+			border-bottom: 1px solid #dedede;
+			margin-bottom: 5px;
+			padding-bottom: 5px;
+		}
+		+ section {
+			border-top : 0 !important;
+		}
+	}
 
 }

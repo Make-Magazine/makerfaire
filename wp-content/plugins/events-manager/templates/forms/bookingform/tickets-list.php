@@ -23,7 +23,7 @@ $collumns = $EM_Tickets->get_ticket_collumns(); //array of collumn type => title
 	<?php foreach( $EM_Tickets->tickets as $EM_Ticket ): /* @var $EM_Ticket EM_Ticket */ ?>
 		<?php if( $EM_Ticket->is_displayable() ): ?>
 		<?php do_action('em_booking_form_tickets_loop_header', $EM_Ticket); //do not delete ?>
-			<tr class="em-ticket em-ticket-<?php echo $EM_Ticket->ticket_id; ?>">
+			<tr class="em-ticket em-ticket-<?php echo $EM_Ticket->ticket_id; ?>" data-ticket-id="<?php echo absint($EM_Ticket->ticket_id); ?>">
 				<?php foreach( $collumns as $type => $name ): ?>
 					<?php
 					//output collumn by type, or call a custom action

@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by gravityview on 14-August-2024 using {@see https://github.com/BrianHenryIE/strauss}.
+ * Modified by gravityview on 04-November-2024 using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\GravityView\Foundation\State;
@@ -19,6 +19,7 @@ final class UserStateManager implements StateManager {
 	 * The user.
      *
 	 * @since 1.2.14
+	 *
 	 * @var WP_User|null
 	 */
 	private $user;
@@ -153,7 +154,7 @@ final class UserStateManager implements StateManager {
 			$user = wp_get_current_user();
 		}
 
-		if ( ! $user || ! $user->exists() ) {
+		if ( ! $user->exists() ) {
 			return;
 		}
 

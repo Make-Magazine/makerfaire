@@ -393,19 +393,43 @@ class Gum_Elementor_Widget_blog_featured_image extends Widget_Base {
     if( empty( $post )) return '';
 
     $thumb_id = get_post_thumbnail_id( $post->ID );
-    if(!$thumb_id) return '';
+    if(!$thumb_id && is_admin()) {
+
+      $image_url = GUM_ELEMENTOR_URL.'css/placeholder.jpg';
+
+      $this->add_render_attribute( 'wrapper', 'class', 'blog-featureimage' );
+      $this->add_render_attribute( 'wrapper', 'style', 'background-image: url('.esc_attr( $image_url ).')' );
+     ?><div <?php $this->print_render_attribute_string( 'wrapper' ); ?>><img src="<?php esc_attr_e( $image_url ); ?>" /></div><?php
+
+    }
+    elseif(!$thumb_id){ return ''; }
+    else{
 
     $image = ['id' => $thumb_id ];
     $settings['thumbnail'] = $image;
 
     $image_url = Group_Control_Image_Size::get_attachment_image_src( $thumb_id , 'thumbnail', $settings);
 
-    if ( empty( $image_url ) )return; 
+    if ( empty( $image_url ) && !is_admin()) return '';
+    if($image_url!==''){
 
     $this->add_render_attribute( 'wrapper', 'class', 'blog-featureimage' );
     $this->add_render_attribute( 'wrapper', 'style', 'background-image: url('.esc_attr( $image_url ).')' );
 
     ?><div <?php $this->print_render_attribute_string( 'wrapper' ); ?>><?php printf( '<img src="%s" title="%s" alt="%s" />', esc_attr( $image_url ), Control_Media::get_image_title( $thumb_id ), Control_Media::get_image_alt( $thumb_id ) );?></div><?php
+
+    }
+    else{
+
+      $image_url = GUM_ELEMENTOR_URL.'css/placeholder.jpg';
+
+      $this->add_render_attribute( 'wrapper', 'class', 'blog-featureimage' );
+      $this->add_render_attribute( 'wrapper', 'style', 'background-image: url('.esc_attr( $image_url ).')' );
+
+    ?><div <?php $this->print_render_attribute_string( 'wrapper' ); ?>><img src="<?php esc_attr_e( $image_url ); ?>" /></div><?php
+    }
+
+    }
 
   }
 }

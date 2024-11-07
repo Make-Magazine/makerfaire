@@ -90,13 +90,15 @@
 			var singleColumnField = false;
 			var $el = $( element );
 			var isEntryView = $el.parents( 'table.gf_entries' ).length;
-
 			if ( inputID ) {
-				//sourceData indexes start at 0 so we need to decrement inputID
-				singleColumnField = sourceData[ ( inputID - 1 ) ];
+				// Source Data indices start at 0 so we need to decrement the input ID.
+				// We also need to account for that Gravity Form does not have any input IDs that are divisible by 10.
+				var groupNumber = Math.floor( ( inputID - 1 ) / 10 );
+				var index = inputID - 1 - groupNumber;
+
+				singleColumnField = sourceData[ ( index ) ];
 
 				if ( value.length > 0 && value.indexOf( singleColumnField.value ) >= 0 ) {
-
 					// `tick` is default
 					switch ( choiceDisplay ) {
 						case 'label':

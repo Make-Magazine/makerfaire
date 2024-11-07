@@ -1680,7 +1680,7 @@ class Gum_Elementor_Widget_Post_related extends Widget_Base {
       'readmore_icon_align' => [
         'class' => [
           'elementor-button-icon',
-          'elementor-align-icon-' . $settings['readmore_icon_align'],
+          'elementor-align-icon-' . sanitize_html_class($settings['readmore_icon_align']),
         ],
       ],
     ] );
@@ -1690,14 +1690,14 @@ class Gum_Elementor_Widget_Post_related extends Widget_Base {
 
     $readmore_button_align = isset( $settings['readmore_button_align'] ) ? $settings['readmore_button_align'] : '';
 
-    ?><div class="elementor-button-wrap<?php print ' button-align-'.$readmore_button_align ;?>"><a <?php echo $this->get_render_attribute_string( 'button-'.$index ); ?>>
+    ?><div class="elementor-button-wrap<?php print ' button-align-'.esc_attr($readmore_button_align) ;?>"><a <?php echo $this->get_render_attribute_string( 'button-'.$index ); ?>>
           <span class="elementor-button-content-wrapper">
       <?php if ( ! empty( $settings['readmore_icon']['value'] ) ) : ?>
       <span <?php echo $this->get_render_attribute_string( 'readmore_icon_align' ); ?>>
           <?php Icons_Manager::render_icon( $settings['readmore_icon'], [ 'aria-hidden' => 'true' ] ); ?>
       </span>
       <?php endif; ?>
-      <span <?php echo $this->get_render_attribute_string( $index );?>><?php echo esc_html($settings['readmore_label']); ?></span>
+      <span <?php echo $this->get_render_attribute_string( $index );?>><?php esc_html_e($settings['readmore_label']); ?></span>
     </span>
   </a></div><?php
 

@@ -445,17 +445,6 @@ class GP_Populate_Anything extends GP_Plugin {
 	 * @return bool
 	 */
 	public function should_enqueue_frontend_scripts( $form ) {
-		// Do not enqueue if we're inside the Elementor editor. For some reason with the add-on framework, our scripts
-		// are getting enqueued while gform_gravityforms is not.
-		if (
-			class_exists( '\Elementor\Plugin' )
-			// @phpstan-ignore-next-line
-			&& method_exists( '\Elementor\Plugin', 'instance' )
-			&& \Elementor\Plugin::$instance->editor->is_edit_mode()
-		) {
-			return false;
-		}
-
 		/* form_has_lmts() is dependent on the LMT whitelist being populated. */
 		$this->live_merge_tags->populate_lmt_whitelist( $form );
 
@@ -777,7 +766,7 @@ class GP_Populate_Anything extends GP_Plugin {
 					if ( $filter_value_exploded[0] === 'gf_field' ) {
 						$dependent_fields[] = $filter_value_exploded[1];
 					} elseif ( preg_match_all( '/{\w+:gf_field_(\d+)}/', rgar( $filter, 'value' ), $field_matches ) ) {
-						if ( count( $field_matches ) && ! empty( $field_matches[1] ) ) {
+						if ( ! empty( $field_matches[1] ) ) {
 							$dependent_fields = $field_matches[1];
 						}
 					}
@@ -1657,7 +1646,7 @@ class GP_Populate_Anything extends GP_Plugin {
 				$filter_value = rgar( $filter, 'value' );
 
 				if ( preg_match_all( '/{\w+:gf_field_(\d+)}/', $filter_value, $field_matches ) ) {
-					if ( count( $field_matches ) && ! empty( $field_matches[1] ) ) {
+					if ( ! empty( $field_matches[1] ) ) {
 						$dependent_fields[ $filter_group_index ] = array_merge( $dependent_fields[ $filter_group_index ], $field_matches[1] );
 					}
 				} elseif ( strpos( $filter_value, 'gf_field:' ) === 0 ) {
@@ -4167,6 +4156,14 @@ class GP_Populate_Anything extends GP_Plugin {
 		 */
 		if ( get_option( 'gppa_ajax_network_debug' ) ) {
 			sleep( 1 );
+		}
+
+		/*
+		 * Reset field values to prevent conflicts. Sometimes if entries are loaded beforehand (such as with GSPC), this
+		 * variable can already have contents based on existing entries.
+		 */
+		if ( isset( $GLOBALS['gppa-field-values'] ) ) {
+			$GLOBALS['gppa-field-values'] = array();
 		}
 
 		$data = self::maybe_decode_json( WP_REST_Server::get_raw_data() );

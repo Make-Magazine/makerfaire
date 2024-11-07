@@ -5,7 +5,7 @@ gw_multi_file_merge_tag()->register_settings( array(
 		array(
 			'file_types' => array( 'jpg', 'jpeg', 'png', 'gif' ),
 			'markup'     => '<div class="gw-image grid-image">
-                                <a href="{url}" class="gravityview-fancybox gw-image-link"><img src="{url}" width="100%" /></a>
+                                <a href="{url}" class="gravityview-fancybox gw-image-link" data-fancybox="gallery-296-36-{entry_id}" rel="gv-field-296-36-{entry_id}"><img src="{url}" width="100%" /></a>
                             </div>'
 		),
 		array(

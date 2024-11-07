@@ -73,7 +73,8 @@ class MSP_List_Table extends Axiom_List_Table {
                         'page'      => sanitize_text_field( $_GET['page'] ),
                         'action'    => 'duplicate',
                         'slider_id' => $item['ID'],
-                        'paged'     => $paged
+                        'paged'     => $paged,
+                        'nonce' 	=> wp_create_nonce('duplicate-slider')
                     )
                 )),
                 __('duplicate')
@@ -88,7 +89,8 @@ class MSP_List_Table extends Axiom_List_Table {
                         'page'      => sanitize_text_field( $_GET['page'] ),
                         'action'    => 'delete',
                         'slider_id' => $item['ID'],
-                        'paged'     => $paged
+                        'paged'     => $paged,
+                        'nonce' 	=> wp_create_nonce('delete-slider')
                     )
                 )),
                 wp_slash(
@@ -121,7 +123,7 @@ class MSP_List_Table extends Axiom_List_Table {
         $slider_id = isset( $_REQUEST['slider_id'] ) ? sanitize_text_field( $_REQUEST['slider_id'] ) : '';
 
         // check if a delete request recieved
-        if( current_user_can( 'delete_masterslider' ) && 'delete' === $this->current_action() ) {
+        if( current_user_can( 'delete_masterslider' ) && 'delete' === $this->current_action() && isset( $_REQUEST['nonce'] ) && wp_verify_nonce( $_REQUEST['nonce'], 'delete-slider') ) {
 
             global $mspdb;
             $mspdb->delete_slider( $slider_id );
@@ -135,7 +137,7 @@ class MSP_List_Table extends Axiom_List_Table {
         }
 
         // check if a duplicate request recieved
-        if( current_user_can( 'duplicate_masterslider' ) && 'duplicate' === $this->current_action() ) {
+        if( current_user_can( 'duplicate_masterslider' ) && 'duplicate' === $this->current_action() && isset( $_REQUEST['nonce'] ) && wp_verify_nonce( $_REQUEST['nonce'], 'duplicate-slider') ) {
 
             global $mspdb;
             $mspdb->duplicate_slider( $slider_id );

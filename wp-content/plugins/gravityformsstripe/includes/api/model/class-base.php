@@ -7,6 +7,7 @@ namespace Gravity_Forms_Stripe\API\Model;
  *
  * @since 5.5.0
  */
+#[\AllowDynamicProperties]
 class Base implements \ArrayAccess {
 
 	/**

@@ -10,20 +10,18 @@
  * @param {string} email - User email address, provided on login.
  * @param {function} callback - Function to call when the script has completed.
  */
-function getByEmail (email, callback) {
-
-  var request = require('request');
+function getByEmail(email, callback) {
+  var request = require("request");
 
   request.post(
-    configuration.endpointUrl + 'migration-ws-get-user',
+    configuration.endpointUrl + "migration-ws-get-user",
     {
       form: {
         username: email,
-        access_token: configuration.migrationToken
-      }
+        access_token: configuration.migrationToken,
+      },
     },
-    function(error, response, body) {
-
+    function (error, response, body) {
       // Error encountered during HTTP request, exit.
       if (error) {
         return callback(error);
@@ -32,19 +30,20 @@ function getByEmail (email, callback) {
       var wpUser = JSON.parse(body);
 
       // Error returned from WordPress or no data, exit.
-      if (wpUser.error || ! wpUser.data) {
+      if (wpUser.error || !wpUser.data) {
         return callback(null);
       }
 
       // Use WordPress profile data to populate Auth0 account.
       var profile = {
-        user_id: configuration.userNamespace + '|' + wpUser.data.ID,
+        user_id: configuration.userNamespace + "|" + wpUser.data.ID,
         username: wpUser.data.user_login,
         email: wpUser.data.user_email,
         name: wpUser.data.display_name,
-        email_verified: true
+        email_verified: true,
       };
 
       callback(null, profile);
-    });
+    }
+  );
 }

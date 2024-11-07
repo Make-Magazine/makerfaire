@@ -458,7 +458,7 @@ class GV_Extension_DataTables_Data {
 
 		gravityview()->log->debug( '[DataTables] Ajax request answer', array( 'data' => $output ) );
 
-		$json = function_exists( 'wp_json_encode' ) ? wp_json_encode( $output ) : json_encode( $output );
+		$json = wp_json_encode( $output );
 
 		// End prevent error output
 		$errors = ob_get_clean();
@@ -913,12 +913,12 @@ class GV_Extension_DataTables_Data {
 			$loading_text = $loading_text ? '<div class="dataTables_processing_text">' . $loading_text . '</div>' : null;
 
 			// Otherwise, load default English text with filters.
-			$language = array(
-				'processing'  => $loading_text,
-				'zeroRecords' => esc_html( $no_entries_text ),
-				'emptyTable'  => esc_html( $no_results_text ),
-			);
-
+			$language = [
+				'processing'          => $loading_text,
+				'zeroRecords'         => esc_html( $no_entries_text ),
+				'emptyTable'          => esc_html( $no_results_text ),
+				'emptyServerResponse' => esc_html__( 'The server returned an empty response. Check the server logs for more details.', 'gv-datatables' ),
+			];
 		}
 
 		/**
@@ -1060,11 +1060,13 @@ class GV_Extension_DataTables_Data {
 	 * @return array Array of settings formatted as DataTables options array. {@see https://datatables.net/reference/option/}
 	 */
 	public function get_datatables_script_configuration( $post, $view ) {
+		// View DataTables settings
+		$dt_settings = get_post_meta( $post->ID, '_gravityview_datatables_settings', true );
 
 		$ajax_settings = array(
 			'action'            => 'gv_datatables_data',
 			'view_id'           => $view->ID,
-			'post_id'           => $post->ID,
+			'post_id'           => $post->ID ?? $view->get_post()->ID,
 			'nonce'             => wp_create_nonce( 'gravityview_datatables_data' ),
 			'getData'           => empty( $_GET ) ? false : json_encode( (array) $_GET ), // Pass URL args to $_POST request
 			'hideUntilSearched' => $view->settings->get( 'hide_until_searched' ),
@@ -1086,7 +1088,7 @@ class GV_Extension_DataTables_Data {
 			'serverSide'    => true,
 			'retrieve'      => true,
 			// Only initialize each table once
-			'stateSave'     => gravityview()->request->is_search() ? false : ! isset( $_GET['cache'] ),
+			'stateSave' => ( 1 === (int) ( $dt_settings['save_state'] ?? 1 ) ) && ! isset( $_GET['cache'] ),
 			// On refresh (and on single entry view, then clicking "go back"), save the page you were on.
 			'stateDuration' => - 1,
 			// Only save the state for the session. Use to time in seconds (like the DAY_IN_SECONDS WordPress constant) if you want to modify.
@@ -1119,19 +1121,26 @@ class GV_Extension_DataTables_Data {
 
 			$field_config = $field->as_configuration();
 
-			$field_type = $field->type;
+			$type       = 'string'; // See https://datatables.net/reference/option/columns.type.
+			$field_type = $field->type; // This is the GF/GV field type that we use in the UI to configure filters/etc.
 
-			if ( in_array( $field_id, [ 'date_created', 'date_updated', 'payment_date' ] ) ) {
+			if ( in_array( $field_type, [ 'date', 'date_created', 'date_updated', 'payment_date' ] ) ) {
 				$field_type = 'date';
+				$type       = 'num';
 			}
 
-			$field_column = array(
-				'name'      => 'gv_' . $field_id,
-				'width'     => $this->get_column_width( $field_config ),
-				'form_id'   => rgar( $field_config, 'form_id' ),
-				'className' => gravityview_sanitize_html_class( \GV\Utils::get( $field_config, 'custom_class', '' ) ),
-				'type'      => $field_type,
-			);
+			if ( 'number' === $field_type ) {
+				$type = 'num';
+			}
+
+			$field_column = [
+				'name'       => 'gv_' . $field_id,
+				'width'      => $this->get_column_width( $field_config ),
+				'form_id'    => rgar( $field_config, 'form_id' ),
+				'className'  => gravityview_sanitize_html_class( \GV\Utils::get( $field_config, 'custom_class', '' ) ),
+				'type'       => $type,
+				'field_type' => $field_type,
+			];
 
 			/**
 			 * Check if fields are sortable. If not, set `orderable` to false.

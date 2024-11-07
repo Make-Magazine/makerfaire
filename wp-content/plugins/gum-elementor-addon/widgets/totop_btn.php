@@ -478,7 +478,7 @@ class Gum_Elementor_Totop_Btn_Widget extends Widget_Base {
 
     extract( $settings );
 
-    $this->add_render_attribute( 'wrapper', ['class' => ['totop', 'bottom-'.$button_align],'id'=>'totop_btn'] );
+    $this->add_render_attribute( 'wrapper', ['class' => ['totop', 'bottom-'.sanitize_html_class($button_align)],'id'=>'totop_btn'] );
     $top_html =  '<span></span>';
 
 

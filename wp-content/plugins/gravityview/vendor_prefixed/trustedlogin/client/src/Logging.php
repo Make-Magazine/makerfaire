@@ -7,10 +7,13 @@
  * @copyright 2021 Katz Web Services, Inc.
  *
  * @license GPL-2.0-or-later
- * Modified by gravityview on 14-August-2024 using {@see https://github.com/BrianHenryIE/strauss}.
+ * Modified by gravityview on 04-November-2024 using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\GravityView\Foundation\ThirdParty\TrustedLogin;
+
+use WP_Filesystem_Base;
+use WP_Filesystem;
 
 /**
  * Handles all logging for the client.
@@ -238,10 +241,15 @@ class Logging {
 	 */
 	private function prevent_directory_browsing( $dirpath ) {
 		// phpcs:disable Generic.Commenting.DocComment.MissingShort
-		/** @global \WP_Filesystem_Base $wp_filesystem */
+		/** @global WP_Filesystem_Base $wp_filesystem */
 		global $wp_filesystem;
 
-		if ( ! $wp_filesystem instanceof \WP_Filesystem_Base ) {
+		if ( empty( $wp_filesystem ) ) {
+			require_once ABSPATH . '/wp-admin/includes/file.php';
+			WP_Filesystem();
+		}
+
+		if ( ! $wp_filesystem instanceof WP_Filesystem_Base ) {
 			$this->log( 'Unable to initialize WP_Filesystem.', __METHOD__, 'error' );
 			return false;
 		}

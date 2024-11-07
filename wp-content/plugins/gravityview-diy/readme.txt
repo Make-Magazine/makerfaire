@@ -1,7 +1,7 @@
 === GravityView DIY ===
 Tags: gravityview
 Requires at least: 4.4
-Tested up to: 5.6
+Tested up to: 6.7
 Stable tag: trunk
 Contributors: The GravityView Team
 License: GPL 2 or higher
@@ -20,6 +20,24 @@ DIY is a different kind of View layout: the purpose is to allow designers and de
 
 == Changelog ==
 
+= 2.5.1 on November 1, 2024 =
+
+This hotfix restores the ability to set labels for fields in the DIY layout.
+
+#### 🐛 Fixed
+* Field labels could not be configured in the DIY layout.
+
+= 2.5 on September 5, 2024 =
+
+This update resolves minor bugs and removes an unused setting from the UI.
+
+#### ✨ Improved
+* Removed the unused "Label" property from the field settings modal in the View editor.
+
+#### 🐛 Fixed
+* After performing a search, the page did not scroll to the View's position because of a missing anchor ID.
+* PHP 8.2 deprecation notice related to dynamic property creation.
+
 = 2.4 on January 5, 2023 =
 
 * Added: Support for Custom Content fields on the Edit Entry screen (this requires GravityView 2.16.5 or newer)
@@ -35,7 +53,7 @@ DIY is a different kind of View layout: the purpose is to allow designers and de
 
 = 2.2 on May 25, 2020 =
 
-* Warning: **this update changes the HTML structure of Before and After output!** [Read more here](https://docs.gravityview.co/article/718-version-2-2)
+* Warning: **this update changes the HTML structure of Before and After output!** [Read more here](https://docs.gravitykit.com/article/718-version-2-2)
 * Fixed: Incorrect wrapping of output tags
 * Updated French translation
 
@@ -49,8 +67,8 @@ DIY is a different kind of View layout: the purpose is to allow designers and de
 
 = 2.1.1 on November 1, 2018 =
 
-* Fixed: Added "Go Back" link to Single Entry screen ([here's how to remove](https://docs.gravityview.co/article/469-diy-layout-remove-the-back-link))
-* Fixed: Not working with GravityView [Ratings & Reviews extension](https://gravityview.co/extensions/ratings-reviews/) in Multiple Entries context
+* Fixed: Added "Go Back" link to Single Entry screen ([here's how to remove](https://docs.gravitykit.com/article/469-diy-layout-remove-the-back-link))
+* Fixed: Not working with GravityView [Ratings & Reviews extension](https://www.gravitykit.com/extensions/ratings-reviews/) in Multiple Entries context
 * Fixed: HTML Container Tag preview label disappares when closing the field settings modal
 * Improved: Appearance of error message when GravityView is not available
 * Updated translations - thank you, translators!
@@ -88,5 +106,3 @@ __Developer Notes:__
 = 1.0 on January 16, 2018 =
 
 * Launch!
-
-= 1688753365-4249 =

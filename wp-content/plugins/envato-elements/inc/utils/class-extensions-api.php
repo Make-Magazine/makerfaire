@@ -116,12 +116,12 @@ class Extensions_API extends Base {
 			// So we cannot just hard code it to false, we have to try both. SSL first, then broken SSL if that fails.
 			$http_args['sslverify'] = $sslverify;
 			if ( $method == 'GET' ) {
-				$response = wp_remote_get( $this->api_endpoint . $endpoint, $http_args );
+				$response = wp_safe_remote_get( $this->api_endpoint . $endpoint, $http_args );
 			} else {
 				$http_args['headers']['Content-Type'] = 'application/json';
 				$http_args['body']                    = json_encode( $body_args );
 				$http_args['data_format']             = 'body';
-				$response                             = wp_remote_post( $this->api_endpoint . $endpoint, $http_args );
+				$response                             = wp_safe_remote_post( $this->api_endpoint . $endpoint, $http_args );
 			}
 			if ( $response && ! is_wp_error( $response ) ) {
 				break;

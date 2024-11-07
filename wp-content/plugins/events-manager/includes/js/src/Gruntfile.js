@@ -2,6 +2,8 @@ module.exports = function(grunt) {
 
 	let sources = [
 		'parts/index.js',
+		'parts/list-table.js',
+		'parts/list-table-bookings.js',
 		'parts/datepicker.js',
 		'parts/timepicker.js',
 		'parts/selectize.js',
@@ -11,7 +13,8 @@ module.exports = function(grunt) {
 		'parts/search.js',
 		'parts/calendar.js',
 		'parts/phone.js',
-		'parts/externals.js'
+		'parts/externals.js',
+		'parts/final.js'
 	];
 
 	// Project configuration.

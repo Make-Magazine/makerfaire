@@ -1,4 +1,5 @@
 <?php
+
 namespace GV;
 
 /** If this file is called directly, abort. */
@@ -24,16 +25,16 @@ class Entry_DIY_Template extends Entry_Template {
 	/**
 	 * Entry_DIY_Template constructor.
 	 */
-	public function __construct(  Entry $entry, View $view, Request $request ) {
-		parent::__construct(  $entry, $view, $request );
+	public function __construct( Entry $entry, View $view, Request $request ) {
+		parent::__construct( $entry, $view, $request );
 
-		add_action( 'gravityview/template/diy/single/before', array( __CLASS__, 'back_link' ) );
+		add_action( 'gravityview/template/diy/single/before', [ __CLASS__, 'back_link' ] );
 	}
 
 	/**
 	 * Add the back link to the entry
 	 *
-	 * @see https://gist.github.com/zackkatz/97c6159782cc26344851803e31399acc to remove
+	 * @see   https://gist.github.com/zackkatz/97c6159782cc26344851803e31399acc to remove
 	 *
 	 * @since 2.1
 	 *
@@ -46,21 +47,21 @@ class Entry_DIY_Template extends Entry_Template {
 	/**
 	 * Output the field in the diy view.
 	 *
-	 * @param \GV\Field $field The field to output.
-	 * @param \GV\Entry $entry The entry.
-	 * @param array $extras Extra stuff, like wpautop, etc.
+	 * @param \GV\Field $field  The field to output.
+	 * @param \GV\Entry $entry  The entry.
+	 * @param array     $extras Extra stuff, like wpautop, etc.
 	 *
 	 * @return string
 	 */
-	public function the_field( \GV\Field $field, $extras = array() ) {
-		$form = $this->view->form;
+	public function the_field( \GV\Field $field, $extras = [] ) {
+		$form  = $this->view->form;
 		$entry = method_exists( $this->entry, 'from_field' ) ? $this->entry->from_field( $field ) : $this->entry;
 
 		$context = Template_Context::from_template( $this, compact( 'field' ) );
 
 		$renderer = new Field_Renderer();
-		$source = is_numeric( $field->ID ) ? ( GF_Form::by_id( $field->form_id ) ? : $this->view->form ) : new Internal_Source();
-		
+		$source   = is_numeric( $field->ID ) ? ( GF_Form::by_id( $field->form_id ) ?: $this->view->form ) : new Internal_Source();
+
 		$value = $renderer->render( $field, $this->view, $source, $entry, $this->request );
 
 		/**
@@ -71,25 +72,27 @@ class Entry_DIY_Template extends Entry_Template {
 
 		/**
 		 * @filter `gravityview/template/field/label` Override the field label.
-		 * @since 2.0
-		 * @param[in,out] string $label The label to override.
+		 * @since  2.0
+		 *
+		 * @param  [in,out] string $label The label to override.
 		 * @param \GV\Template_Context $context The context.
 		 */
 		$label = apply_filters( 'gravityview/template/field/label', $label, $context );
 
 		/**
 		 * @filter `gravityview/template/table/entry/hide_empty`
-		 * @param boolean $hide_empty Should the row be hidden if the value is empty? Default: don't hide.
-		 * @param \GV\Template_Context $context The context ;) Love it, cherish it. And don't you dare modify it!
+		 *
+		 * @param boolean              $hide_empty Should the row be hidden if the value is empty? Default: don't hide.
+		 * @param \GV\Template_Context $context    The context ;) Love it, cherish it. And don't you dare modify it!
 		 */
 		$hide_empty = apply_filters( 'gravityview/render/hide-empty-zone', Utils::get( $extras, 'hide_empty', $this->view->settings->get( 'hide_empty', false ) ), $context );
 
 		$extras = array_merge( $extras, compact( 'hide_empty', 'value', 'label' ) );
 
 		$extras['wrapper_class'] = false;
-		$extras['label_markup'] = '';
-		$extras['wpautop'] = false;
-		$extras['markup'] = '{{ value }}';
+		$extras['label_markup']  = '';
+		$extras['wpautop']       = false;
+		$extras['markup']        = '{{ value }}';
 
 		return \gravityview_field_output( $extras, $context );
 	}
@@ -99,7 +102,7 @@ class Entry_DIY_Template extends Entry_Template {
 	 *
 	 * Modify of the class of a row.
 	 *
-	 * @param string $class The class.
+	 * @param string    $class The class.
 	 * @param \GV\Entry $entry The entry.
 	 * @param \GV\Template_Context The context.
 	 *
@@ -107,19 +110,23 @@ class Entry_DIY_Template extends Entry_Template {
 	 */
 	public static function entry_class( $class, $entry, $context ) {
 		/**
-		 * @filter `gravityview_entry_class` Modify the class applied to the entry row.
-		 * @param string $class Existing class.
-		 * @param array $entry Current entry being displayed
-		 * @param \GravityView_View $this Current GravityView_View object
+		 * @filter     `gravityview_entry_class` Modify the class applied to the entry row.
 		 * @deprecated Use `gravityview/template/diy/entry/class`
+		 *
+		 * @param array             $entry Current entry being displayed
+		 * @param \GravityView_View $this  Current GravityView_View object
+		 * @param string            $class Existing class.
+		 *
 		 * @return string The modified class.
 		 */
 		$class = apply_filters( 'gravityview_entry_class', $class, $entry->as_entry(), \GravityView_View::getInstance() );
 
 		/**
 		 * @filter `gravityview/template/diy/entry/class` Modify the class aplied to the entry row.
+		 *
 		 * @param string $class The existing class.
 		 * @param \GV\Template_Context The context.
+		 *
 		 * @return string The modified class.
 		 */
 		return apply_filters( 'gravityview/template/diy/entry/class', $class, Template_Context::from_template( $context->template, compact( 'entry' ) ) );
@@ -135,17 +142,19 @@ class Entry_DIY_Template extends Entry_Template {
 	public static function single_before( $context ) {
 		/**
 		 * @action `gravityview/template/diy/single/before`
-		 * @since 2.0
+		 * @since  2.0
+		 *
 		 * @param \GV\Template_Context $context The template context.
 		 */
 		do_action( 'gravityview/template/diy/single/before', $context );
 
 		/**
-		* @action `gravityview_diy_single_before`
-		* @deprecated Use `gravityview/template/diy/single/before`
-		* @since 1.0
-		* @param \GravityView_View $gravityview_view Current GravityView_View object.
-		*/
+		 * @action     `gravityview_diy_single_before`
+		 * @deprecated Use `gravityview/template/diy/single/before`
+		 * @since      1.0
+		 *
+		 * @param \GravityView_View $gravityview_view Current GravityView_View object.
+		 */
 		do_action( 'gravityview_diy_single_before', \GravityView_View::getInstance() /** ugh! */ );
 	}
 
@@ -159,17 +168,19 @@ class Entry_DIY_Template extends Entry_Template {
 	public static function single_after( $context ) {
 		/**
 		 * @action `gravityview/template/diy/single/after`
-		 * @since 2.0
+		 * @since  2.0
+		 *
 		 * @param \GV\Template_Context $context The template context.
 		 */
 		do_action( 'gravityview/template/diy/single/after', $context );
 
 		/**
-		* @action `gravityview_diy_single_after`
-		* @deprecated Use `gravityview/template/diy/single/after`
-		* @since 1.0
-		* @param \GravityView_View $gravityview_view Current GravityView_View object.
-		*/
+		 * @action     `gravityview_diy_single_after`
+		 * @deprecated Use `gravityview/template/diy/single/after`
+		 * @since      1.0
+		 *
+		 * @param \GravityView_View $gravityview_view Current GravityView_View object.
+		 */
 		do_action( 'gravityview_diy_single_after', \GravityView_View::getInstance() /** ugh! */ );
 	}
 
@@ -178,7 +189,7 @@ class Entry_DIY_Template extends Entry_Template {
 	 *
 	 * @since 2.1
 	 *
-	 * @param \GV\Entry $entry The current entry
+	 * @param \GV\Entry            $entry   The current entry
 	 * @param \GV\Template_Context $context The 2.0 context.
 	 *
 	 * @return void
@@ -186,7 +197,8 @@ class Entry_DIY_Template extends Entry_Template {
 	public static function entry_before( $entry, $context ) {
 		/**
 		 * @action `gravityview/template/diy/entry/before`
-		 * @since 2.1
+		 * @since  2.1
+		 *
 		 * @param \GV\Template_Context $context The template context.
 		 */
 		do_action( 'gravityview/template/diy/entry/before', $context );
@@ -197,7 +209,7 @@ class Entry_DIY_Template extends Entry_Template {
 	 *
 	 * @since 2.1
 	 *
-	 * @param \GV\Entry $entry The current entry
+	 * @param \GV\Entry            $entry   The current entry
 	 * @param \GV\Template_Context $context The 2.0 context.
 	 *
 	 * @return void
@@ -205,7 +217,8 @@ class Entry_DIY_Template extends Entry_Template {
 	public static function entry_after( $entry, $context ) {
 		/**
 		 * @action `gravityview/template/diy/entry/after`
-		 * @since 2.1
+		 * @since  2.1
+		 *
 		 * @param \GV\Template_Context $context The template context.
 		 */
 		do_action( 'gravityview/template/diy/entry/after', $context );

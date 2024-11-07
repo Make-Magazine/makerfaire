@@ -17,12 +17,25 @@ function ApplyCouponCode(formId) {
 
         function (response) {
             var couponInfo = jQuery.parseJSON(response);
+            var couponContainer = document.getElementById(`gf_coupons_container_${formId}`);
+			var couponFieldContainer = couponContainer.parentElement;
+			var couponValidation = couponFieldContainer.querySelector('.gf_coupon_invalid');
 
-            jQuery('#gf_coupons_container_' + formId + ' .gf_coupon_invalid').remove();
+			if (couponValidation) {
+				couponContainer.parentElement.querySelector('.gf_coupon_invalid').remove();
+			}
+
             jQuery('#gf_coupon_code_' + formId).val('');
 
-            if (!couponInfo['is_valid']) {
-                jQuery('#gf_coupons_container_' + formId + ' #gf_coupon_info').prepend("<div class='gf_coupon_invalid gfield_description gfield_validation_message'><span>" + couponInfo['invalid_reason'] + '</span></div>');
+            if ( ! couponInfo['is_valid'] ) {
+                const validationPlacement = getValidationPlacement( formId );
+                const errorMessage        = "<div class='gf_coupon_invalid gfield_description gfield_validation_message'>" + couponInfo['invalid_reason'] + "</div>";
+
+                if (validationPlacement === 'below') {
+	                couponFieldContainer.insertAdjacentHTML('beforeend', errorMessage);
+                } else {
+                    couponContainer.insertAdjacentHTML('beforebegin', errorMessage);
+                }
             } else {
 
                 window['gf_coupons' + formId] = couponInfo['coupons'];
@@ -52,6 +65,24 @@ function ApplyCouponCode(formId) {
 
         }
     );
+}
+
+/**
+ * Determines the validation placement for a given form ID.
+ *
+ * @param {number} formId - The ID of the form.
+ * @returns {string} - Returns 'above' if the field has the 'field_validation_above' class, otherwise 'below'.
+ */
+function getValidationPlacement( formId ) {
+    let validationPlacement = null;
+    const field             = gform.utils.getNode( `#gf_coupons_container_${ formId }`, document, true ).parentElement;
+
+    if ( field && gform.utils.hasClassFromArray( field, [ 'field_validation_above' ] ) ) {
+        validationPlacement = 'above';
+    } else {
+        validationPlacement = 'below';
+    }
+    return validationPlacement;
 }
 
 /**
@@ -99,7 +130,7 @@ function PopulateDiscountInfo(price, formId) {
         safeCode = coupon.code.replace(/[^A-Za-z0-9]/g, '');
 
         couponDetails += '<tr class="gf_coupon_item gfield_description" id="gf_coupon_' + safeCode + '"><td class="gf_coupon_name_container">' +
-        '   <a href="javascript:void(0);" class="remove-coupon gform-theme__no-reset--el" aria-label="Remove coupon" onclick="DeleteCoupon(\'' + coupon['code'] + '\' , \'' + formId + '\');">[Remove]</a>' +
+        '   <a href="javascript:void(0);" class="remove-coupon gform-theme__no-reset--el" aria-label="' + gform_coupon_script_strings.remove_button_aria_label + '" onclick="DeleteCoupon(\'' + coupon['code'] + '\' , \'' + formId + '\');">[' + gform_coupon_script_strings.remove_button_label + ']</a>' +
         '   <span class="gf_coupon_name gform-field-label gform-field-label--type-sub-large">' + coupon['name'] + '</span>' +
         '</td><td class="gf_coupon_discount_container">' +
         '   <span class="gf_coupon_discount gform-field-label gform-field-label--type-sub-large">-' + currency.toMoney(couponDiscount,true) + '</span>' +

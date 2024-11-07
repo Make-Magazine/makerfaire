@@ -26,17 +26,6 @@ AND ANY CHANGES MADE HERE WILL BE OVERWRITTEN.
 ----------------------------------------------------------------
 */
 
-/*
-NOTE:
-Within the var() functions below, when two custom properties are specified, the first
-value is the updated Theme Framework CSS API property and the second value is the
-deprecated CSS API property.
-
-Deprecated version (core): 2.8
-End of support version (core): 2.9
-Deprecated version (stripe): 5.2.2
-*/
-
 /* Stripe Card Element */
 
 .gform-theme--foundation .gfield--type-stripe_creditcard-card .StripeElement {
@@ -55,8 +44,7 @@ Deprecated version (stripe): 5.2.2
 /* Stripe Payment Element */
 
 .gform-theme--foundation .gfield--type-stripe_creditcard-payment-element .StripeElement--link {
-			margin-block-end: var(--gform-theme-field-row-gap);
-			margin-block-end: var(--gf-field-gap-y, var(--gform-theme-field-row-gap));
+			margin-block-end: var(--gf-field-gap-y);
 		}
 
 .gform-theme--foundation .gfield--type-stripe_creditcard-payment-element #stripe-payment-link:not(.visible) {

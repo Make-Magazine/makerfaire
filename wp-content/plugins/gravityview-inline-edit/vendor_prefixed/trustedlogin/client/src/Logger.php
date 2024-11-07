@@ -9,7 +9,7 @@
  * @link    https://github.com/katzgrau/KLogger
  *
  * @license GPL-2.0-or-later
- * Modified by __root__ on 16-August-2024 using Strauss.
+ * Modified by __root__ on 01-October-2024 using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 
@@ -83,7 +83,7 @@ class Logger {
 	/**
 	 * Current minimum logging threshold
 	 *
-	 * @var integer
+	 * @var string
 	 * @phpcs suppress WordPress.NamingConventions.ValidVariableName.PropertyNotSnakeCase
 	 */
 	protected $logLevelThreshold = self::DEBUG;
@@ -116,7 +116,7 @@ class Logger {
 	/**
 	 * This holds the file handle for this instance's log file
 	 *
-	 * @var resource
+	 * @var resource|false
 	 * @phpcs suppress WordPress.NamingConventions.ValidVariableName.PropertyNotSnakeCase
 	 */
 	private $fileHandle;

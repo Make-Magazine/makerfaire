@@ -1918,7 +1918,8 @@ if(!function_exists('wpgmza_migrate_spatial_data'))
 		$wpdb->query("UPDATE ".$wpgmza_tblname." SET latlng={$wpgmza->spatialFunctionPrefix}PointFromText(CONCAT('POINT(', CAST(lat AS DECIMAL(18,10)), ' ', CAST(lng AS DECIMAL(18,10)), ')'))");
 	}
 	
-	add_action('init', 'wpgmza_migrate_spatial_data', 1);
+	/* Edited: 2024-10-10 - We have been doing this in basic, on upgrade, for years, so running this on init is very inefficient */
+	// add_action('init', 'wpgmza_migrate_spatial_data', 1);
 }
 
 function wpgmza_upload_base64_image()

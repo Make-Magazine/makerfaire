@@ -9,10 +9,12 @@ use WP_Rocket\Engine\Media\AboveTheFold\Context\Context;
 use WP_Rocket\Engine\Optimization\RegexTrait;
 use WP_Rocket\Engine\Optimization\UrlTrait;
 use WP_Rocket\Engine\Common\PerformanceHints\Frontend\ControllerInterface;
+use WP_Rocket\Engine\Support\CommentTrait;
 
 class Controller implements ControllerInterface {
 	use RegexTrait;
 	use UrlTrait;
+	use CommentTrait;
 
 	/**
 	 * Options instance
@@ -61,7 +63,9 @@ class Controller implements ControllerInterface {
 			return $html;
 		}
 
-		return $this->preload_lcp( $html, $row );
+		$html = $this->preload_lcp( $html, $row );
+
+		return $this->add_meta_comment( 'oci', $html );
 	}
 
 	/**
@@ -237,15 +241,11 @@ class Controller implements ControllerInterface {
 	 * @param object $lcp LCP Object.
 	 * @return array
 	 */
-	private function generate_lcp_link_tag_with_sources( $lcp ): array {
+	private function generate_lcp_link_tag_with_sources( object $lcp ): array {
 		$pairs = [
 			'tags'    => '',
 			'sources' => [],
 		];
-
-		if ( ! $lcp && ! is_object( $lcp ) ) {
-			return $pairs;
-		}
 
 		$tag       = '';
 		$start_tag = '<link rel="preload" data-rocket-preload as="image" ';
@@ -296,10 +296,6 @@ class Controller implements ControllerInterface {
 	 * @return array
 	 */
 	private function get_atf_sources( array $atfs ): array {
-		if ( ! $atfs && ! is_array( $atfs ) ) {
-			return [];
-		}
-
 		$sources = [];
 
 		foreach ( $atfs as $atf ) {
@@ -441,11 +437,7 @@ class Controller implements ControllerInterface {
 		 *
 		 * @param array $formats Array of elements
 		 */
-		$elements = apply_filters( 'rocket_atf_elements', $elements );
-
-		if ( ! is_array( $elements ) ) {
-			$elements = $default_elements;
-		}
+		$elements = wpm_apply_filters_typed( 'array', 'rocket_atf_elements', $default_elements );
 
 		$elements = array_filter( $elements, 'is_string' );
 

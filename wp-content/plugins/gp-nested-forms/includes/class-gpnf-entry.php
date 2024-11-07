@@ -14,6 +14,8 @@ class GPNF_Entry {
 
 	protected $_entry;
 	protected $_entry_id;
+	protected $_total;
+	public $id;
 
 	public function __construct( $entry ) {
 
@@ -23,6 +25,8 @@ class GPNF_Entry {
 		} else {
 			$this->_entry_id = $entry;
 		}
+
+		$this->id = $this->_entry_id;
 
 	}
 
@@ -187,14 +191,10 @@ class GPNF_Entry {
 
 		// If parent entry ID not passed, get the temporary hash from the session.
 		if ( ! $parent_entry_id ) {
-
 			$session = new GPNF_Session( $parent_form_id );
-			if ( ! $session->has_data() ) {
-				return;
+			if ( $session->has_data() ) {
+				$parent_entry_id = $session->get( 'hash' );
 			}
-
-			$parent_entry_id = $session->get( 'hash' );
-
 		}
 
 		// Set either temporary parent hashcode or actual parent entry ID
@@ -241,6 +241,10 @@ class GPNF_Entry {
 		$total        = GFCommon::get_order_total( $form, $this->_entry );
 		$this->_total = $total;
 
+	}
+
+	public function get_total() {
+		return $this->_total;
 	}
 
 	public function set_created_by( $parent_entry_id ) {

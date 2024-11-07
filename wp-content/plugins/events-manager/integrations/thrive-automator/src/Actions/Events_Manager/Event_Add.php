@@ -77,7 +77,8 @@ class Event_Add extends Action {
 		$EM_Event->event_end_date = $end->getDate();
 		$EM_Event->event_end_time = $end->getTime();
 		// disable privacy consent
-		remove_action('em_event_validate', 'em_data_privacy_cpt_validate', 10);
+		remove_action('em_event_validate', ['\EM\Consent\Privacy', 'cpt_validate'], 10);
+		remove_action('em_event_validate', ['\EM\Consent\Comms', 'cpt_validate'], 10);
 		// validate and publish
 		if( $EM_Event->validate() ){
 			$event_status_map = [

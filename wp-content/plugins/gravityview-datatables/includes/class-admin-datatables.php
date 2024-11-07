@@ -72,12 +72,37 @@ class GV_Extension_DataTables_Admin {
 	 * @return void
 	 */
 	function render_metabox( $post ) {
-
 		// Use nonce for verification
 		wp_nonce_field( 'gravityview_dt_settings', 'gravityview_dt_settings_nonce' );
 
 		// View DataTables settings
 		$settings = get_post_meta( $post->ID, '_gravityview_datatables_settings', true );
+
+		?>
+		<table class="form-table">
+			<caption><?php esc_html_e( 'Browser Cache', 'gv-datatables' ); ?></caption>
+			<tr valign="top">
+				<td colspan="2">
+					<?php
+					echo GravityView_Render_Settings::render_field_option(
+						'datatables_settings[save_state]',
+						array(
+							'label'   => esc_html__( 'Save Table State', 'gv-datatables' ),
+							'desc'    => esc_html__( 'Preserve the table\'s pagination and sorting settings across page reloads.', 'gv-datatables' ),
+							'tooltip' => true,
+							'article' => array(
+								'id'  => '66fc52f2eb6616597e566569',
+								'url' => 'https://docs.gravitykit.com/article/1022-datatables-setting-save-table-state',
+							),
+							'type'    => 'checkbox',
+						),
+						$settings['save_state'] ?? 1
+					);
+					?>
+				</td>
+			</tr>
+		</table>
+		<?php
 
 		/**
 		 * Hook: gravityview_dt_default_settings.

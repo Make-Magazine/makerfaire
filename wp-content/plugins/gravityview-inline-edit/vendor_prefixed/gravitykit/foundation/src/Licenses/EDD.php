@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by __root__ on 16-August-2024 using Strauss.
+ * Modified by __root__ on 01-October-2024 using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 
@@ -63,7 +63,7 @@ class EDD {
 		$filters_to_remove = [ 'pre_set_site_transient_update_plugins', 'plugins_api', 'after_plugin_row', 'admin_init' ];
 
 		$legacy_edd_check = function () {
-			return isset( $this->api_url ) && preg_match( '/gravity(view|kit)\.com?/', $this->api_url );
+			return property_exists( $this, 'api_url' ) && preg_match( '/gravity(view|kit)\.com?/', $this->api_url );
 		};
 
 		$remove_filter = function ( $filter ) use ( $wp_filter, $legacy_edd_check ) {

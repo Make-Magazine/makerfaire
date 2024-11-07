@@ -18,7 +18,7 @@ class EM_Widget_Calendar extends WP_Widget {
     		'long_events' => 0,
     		'category' => 0,
 		    'scope' => 'all',
-		    'calendar_size' => 'auto',
+		    'calendar_size' => get_option('dbem_calendar_default', 'auto'),
     	);
     	$widget_ops = array('description' => __( "Display your events in a calendar widget.", 'events-manager') );
         parent::__construct(false, $name = __('Events Calendar','events-manager'), $widget_ops);	

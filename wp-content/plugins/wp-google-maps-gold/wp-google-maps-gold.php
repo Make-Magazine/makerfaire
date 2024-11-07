@@ -3,7 +3,7 @@
 Plugin Name: WP Go Maps - Gold Add-on
 Plugin URI: http://www.wpgmaps.com
 Description: This is the Gold add-on for WP Go Maps. This enables mass-marker support (marker clustering)
-Version: 5.2.5
+Version: 5.2.6
 Author: WP Go Maps
 Author URI: http://www.wpgmaps.com
 Requires Plugins: wp-google-maps, wp-google-maps-pro
@@ -16,6 +16,14 @@ Requires Plugins: wp-google-maps, wp-google-maps-pro
 */
 
 /*
+ * 5.2.6
+ * Added menu icon to map editor for marker clustering (Atlas Novus)
+ * Improved caching reliability and performance (beta) (Requires Pro update)
+ * Improved error handling within the caching module to prevent unknown errors (beta)
+ * Fixed issue where caching settings area would crash if caching failed outright. Division by zero error (beta)
+ * Fixed issue where caching settings would show map count instead of marker count. Now shows both along with performance improvements
+ * Fixed issue where update controller would not return expected data causing an index error within logs on some environments
+ * 
  * 5.2.5
  * Added plugin dependencies
  * Improved tracking devices table layout, specifically when empty

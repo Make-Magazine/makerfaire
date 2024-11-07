@@ -3,7 +3,7 @@
 Plugin Name: WP Go Maps - Pro Add-on
 Plugin URI: http://www.wpgmaps.com
 Description: This is the Pro add-on for WP Go Maps. The Pro add-on enables you to add descriptions, pictures, links and custom icons to your markers as well as allows you to download your markers to a CSV file for quick editing and re-upload them when complete.
-Version: 9.0.30
+Version: 9.0.32
 Author: WP Go Maps
 Author URI: http://www.wpgmaps.com
 Requires Plugins: wp-google-maps
@@ -16,6 +16,29 @@ Requires Plugins: wp-google-maps
 */
 
 /*
+ * 9.0.32 - 2024-10-25
+ * Fixed issue where simple shortcodes would not function as expected within info-windows
+ * Fixed issue where old image references were made in CSS file, which could lead to issues with preloading assets
+ * 
+ * 9.0.31 - 2024-10-14
+ * Added a note to the Woo Commerce product editor setting explaining that it does not work with the beta Product editor (Atlas Novus)
+ * Added ability to disable carousel marker listing autoplay within the settings area
+ * Added datatables performance mode option which excludes some columns from the search (Performance)
+ * Fixed issue where import schedule would be autoloaded, which could lead to performance issues in some cases. Will self resolve on next schedule update
+ * Fixed issue with divi frontend builder loading our modules when they are not needed
+ * Fixed issue with Airtable importer where array field values would not be reduced, and caused import issues
+ * Fixed issue with Airtable importer where additional columns would not be ignored when invalid 
+ * Fixed issue where mashup marker listings would only load markers from the primary/parent map
+ * Fixed issue where grip marker listing would not function with mashups
+ * Fixed issue where store locator title search placholder would not update as expected (Atlas Novus)
+ * Fixed issue where marker icons were being refreshed by a second database query when loaded to the map, which leads to slower load times. Avg 35% load improvement for large datasets (Performance)
+ * Fixed issue where marker custom fields would be queried twice during marker initialization, which leads to slower load times. Avg 25% load improvement for large datasets (Performance)
+ * Fixed issue where batch importer would run in the background on any page, including REST and frontend, which could lead to slower load times (Performance)
+ * Fixed issue where ratings module would be initialized on each marker, without checking if they were enabled. Only relevant with Gold add-on. Avg 13% load improvement for large datasets (Performance)
+ * Fixed issue where store locator search would run on a map without a store locator, if another map is present on the page, with store locator enabled
+ * Fixed issue where legacy V7 data migrator was running on every map load, this is handled by basic, on upgrade. (Performance)
+ * Moved marker listing pagination style option to the datatables settings panel within the map editor to prevent confusion
+ * 
  * 9.0.30 - 2024-06-13
  * Added ability to enable marker labels (beta)
  * Added support for AdvancedMarkerElement module, improving performance slightly (beta) (Google Maps)
@@ -402,7 +425,7 @@ function wpgmaps_pro_90_notice() {
 if(version_compare((string) $fromVersion, '9.0.0', '<')){ } else {
 
 	/* Thrive Patch - When in Thrive editor, we stop loading Pro as it conflicts in a strange, and difficult to trace way */
-	if(!empty($_GET['tve'])){
+	if(!empty($_GET['tve']) || !empty($_GET['et_fb'])){
 		return;
 	}
 

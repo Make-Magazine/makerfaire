@@ -9,7 +9,7 @@
  * @link    https://github.com/katzgrau/KLogger
  *
  * @license GPL-2.0-or-later
- * Modified by gravityview on 14-August-2024 using {@see https://github.com/BrianHenryIE/strauss}.
+ * Modified by gravityview on 04-November-2024 using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\GravityView\Foundation\ThirdParty\TrustedLogin;
@@ -82,7 +82,7 @@ class Logger {
 	/**
 	 * Current minimum logging threshold
 	 *
-	 * @var integer
+	 * @var string
 	 * @phpcs suppress WordPress.NamingConventions.ValidVariableName.PropertyNotSnakeCase
 	 */
 	protected $logLevelThreshold = self::DEBUG;
@@ -115,7 +115,7 @@ class Logger {
 	/**
 	 * This holds the file handle for this instance's log file
 	 *
-	 * @var resource
+	 * @var resource|false
 	 * @phpcs suppress WordPress.NamingConventions.ValidVariableName.PropertyNotSnakeCase
 	 */
 	private $fileHandle;

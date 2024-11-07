@@ -110,15 +110,12 @@ function useNotesActionProps() {
       const extendedWindow = window;
       const config = extendedWindow?.elementor?.editorEvents?.config;
       if (config) {
-        extendedWindow.elementor.editorEvents.dispatchEvent(
-          config.names.topBar.notes,
-          {
-            location: config.locations.topBar,
-            secondaryLocation: config.secondaryLocations.notes,
-            trigger: config.triggers.toggleClick,
-            element: config.elements.buttonIcon
-          }
-        );
+        extendedWindow.elementor.editorEvents.dispatchEvent(config.names.topBar.notes, {
+          location: config.locations.topBar,
+          secondaryLocation: config.secondaryLocations.notes,
+          trigger: config.triggers.toggleClick,
+          element: config.elements.buttonIcon
+        });
       }
       (0,_elementor_editor_v1_adapters__WEBPACK_IMPORTED_MODULE_2__.__privateRunCommand)("notes/toggle");
     },

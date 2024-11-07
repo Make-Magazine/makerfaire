@@ -272,6 +272,9 @@
 	&.em-selectize.checkboxes {
 		.selectize-dropdown {
 			div.option {
+				display: grid;
+				grid-template-columns: repeat(auto-fit, minmax(25px, max-content));
+				align-items: baseline;
 				> span:first-child {
 					display: inline-block;
 					width: 15px;

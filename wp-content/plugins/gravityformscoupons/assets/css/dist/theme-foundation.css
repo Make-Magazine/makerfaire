@@ -14,7 +14,7 @@ Theme dependencies:
 - Gravity Forms Theme Foundation: gravity-forms-theme-foundation.css
 
 Gravity Forms is a Rocketgenius project
-copyright 2008-2023 Rocketgenius Inc.
+copyright 2008-2024 Rocketgenius Inc.
 https://www.rocketgenius.com
 this may not be re-distributed without the
 express written permission of the author.
@@ -26,23 +26,11 @@ AND ANY CHANGES MADE HERE WILL BE OVERWRITTEN.
 ----------------------------------------------------------------
 */
 
-/*
-NOTE:
-Within the var() functions below, when two custom properties are specified, the first
-value is the updated Theme Framework CSS API property and the second value is the
-deprecated CSS API property.
-
-Deprecated version (core): 2.8
-End of support version (core): 2.9
-Deprecated version (coupons): 3.2.1
-*/
-
 .gform-theme--foundation .gfield--type-coupon .ginput_container_coupon {
 		align-items: center;
 		display: flex;
 		flex-wrap: wrap;
-		gap: var(--gform-theme-field-col-gap);
-		gap: var(--gf-field-gap-x, var(--gform-theme-field-col-gap));
+		gap: var(--gf-field-gap-x);
 	}
 
 /*# sourceMappingURL=theme-foundation.css.map */

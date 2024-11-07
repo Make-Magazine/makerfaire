@@ -62,64 +62,14 @@ ul#input_321 li {
   .subsubsub, p.search-box { float: none; }
 }
 
-/* Faire Signs */
-#faire-signs {
-  .panel-heading.accordion-toggle:after {
-      content: "\f142";    /* adjust as needed, taken from bootstrap.css */
-      float: right;        /* adjust as needed */
-      color: grey;         /* adjust as needed */
-      font: 400 30px/1 dashicons;
-      position: relative;
-      top: -22px;
-  }
-  .panel-heading.accordion-toggle.collapsed:after {
-      /* symbol for "collapsed" panels */
-      content: "\f140";    /* adjust as needed, taken from bootstrap.css */
-  }
-  .panel-group .panel+.panel {
-    margin-top: 0px;
-  }
-  .right-border {
-    border-right: thin solid black;
-  }
-  .row.is-flex {
-      display: flex;
-      flex-wrap: wrap;
-  }
-  .row.is-flex > [class*='col-'] {
-      display: flex;
-      flex-direction: column;
-  }
 
-  /*
-  * And with max cross-browser enabled.
-  * Nobody should ever write this by hand.
-  * Use a preprocesser with autoprefixing.
-  */
-  .row.is-flex {
-      display: -webkit-box;
-      display: -webkit-flex;
-      display: -ms-flexbox;
-      display: flex;
-      -webkit-flex-wrap: wrap;
-      -ms-flex-wrap: wrap;
-      flex-wrap: wrap;
-  }
-
-  .row.is-flex > [class*='col-'] {
-      display: -webkit-box;
-      display: -webkit-flex;
-      display: -ms-flexbox;
-      display: flex;
-      -webkit-box-orient: vertical;
-      -webkit-box-direction: normal;
-      -webkit-flex-direction: column;
-      -ms-flex-direction: column;
-      flex-direction: column;
-  }
+/* mf import styling */
+#importTabs {
+  border:0px !important;
+  background:none;
+  display:flex;
+  flex-direction:column;
 }
-
-/* bootstrap override */
 #tab_mf_custom_import_entries {
   padding: 0 5px;
   .bullet,
@@ -132,20 +82,19 @@ ul#input_321 li {
   h4 {
     font-size: 1.6em;
   }
-  .nav-tabs {
-    margin: 19px 0px 18px;
-  }
   .padd td, .padd th {
     padding: 10px 0;
   }
   .border td, .border th {
     border: thin solid lightgrey;
   }
+  table {
+    border-collapse: collapse 
+  }
   tr, td, th {
     vertical-align: text-top;
-  }
-  .tab-content {
-    margin: 10px 15px;
+    padding: 5px;
+    text-align: left;
   }
   .required {
     color: red;
@@ -174,6 +123,21 @@ ul#input_321 li {
   &:hover {
     background-color: #2b5d73;
     border-color: #214859;
+  }
+}
+
+//entry page resource adding tables
+.resources-group {
+  h4 {
+    color: #333;
+    background-color: #f5f5f5;
+    padding: 20px 15px;
+    margin: 0px;
+    border-top-left-radius: 3px;
+    border-top-right-radius: 3px;
+  }
+  table {
+    border-collapse: collapse;
   }
 }
 
@@ -243,8 +207,100 @@ ul#input_321 li {
 }
 
 #faire-signs {
+  margin-right: 15px;
+  font-family: Helvetica !important;
+  font-size: 16px;
+  p { font-size: 14px; }
+  h2 {
+    font-size: 32px;
+  }
+  .nav-tabs {
+    display: flex;
+    background: transparent;
+    border: 0px;
+    border-bottom: solid 1px #ccc;
+    .ui-tab {
+      margin-right: 15px;
+      margin-bottom: -1px;
+      background: #fff;
+      border: 0px;
+      border-bottom: solid 1px #ccc;
+      font-size: 16px;
+      &.ui-tabs-active {
+        border: solid 1px #ccc;
+        border-bottom: 0px;
+        a { color:#333 !important; }
+      }
+      a { 
+        display: block;
+        padding: 5px 10px;
+        color: #337ab7;
+        &:focus {
+          box-shadow: none;
+        }
+       }
+    }
+  }
+  .ui-accordion {
+    .ui-accordion-header {
+      border-color: #ccc;
+      background: #f6f6f6;
+      color: #333;
+      font-weight: bold;
+      font-size: 16px;
+    }
+    .ui-accordion-content {
+      //height: 100% !important;
+      .ui-widget-content {
+        border: 0px;
+        a {
+          color: #337ab7;
+        }
+      }
+    }
+  }
   .pdfEntList, .updateMsg {
     color: red;
     font-size: 20px;
   }
+  h4 {
+    font-size: 16px;
+  }
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    label { font-weight: bold; }
+    .form-control {
+      margin: 10px 0px;
+    }
+  }
+  .is-flex {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    .button-primary {
+      font-size: 15px;
+    }
+    .right-border {
+      width: 50%;
+      margin-right: 15px;
+      @media screen and (max-width:630px) {
+        width: 100%;
+        border: 0px;
+        input {
+          margin: 0px;
+        }
+      }
+      .is-flex {
+        padding-right: 20px;
+      }
+    }
+  }
+  .justify-space-between {
+    justify-content: space-between;
+  }
+  .right-border {
+    border-right: thin solid #333;
+  }
+
 }

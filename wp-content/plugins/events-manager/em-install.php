@@ -611,7 +611,7 @@ function em_add_options() {
 		'dbem_category_event_list_order' => 'ASC',
 		'dbem_category_event_single_format' => '#_EVENTLINK - #_EVENTDATES - #_EVENTTIMES',
 		'dbem_category_no_event_message' => __('No events in this category', 'events-manager'),
-		'dbem_category_default_color' => '#a8d144',
+		'dbem_category_default_color' => '#80b538',
 		//Tags page options
 		'dbem_tags_default_limit' => 10,
 		'dbem_tags_default_orderby' => 'name',
@@ -741,6 +741,7 @@ function em_add_options() {
 			'dbem_bookings_form_hide_dynamic' => get_option('dbem_version', false) === false, //show login form on booking area
 			'dbem_bookings_summary' => 1,
 			'dbem_bookings_summary_taxes_itemized' => !get_option('dbem_bookings_tax_auto_add', 0),
+			'dbem_bookings_summary_subtotal_exc_taxes' => false,
 			'dbem_bookings_summary_free' => 1,
 			'dbem_bookings_summary_message' => __('Please select at least one space to proceed with your booking.', 'events-manager'),
 			'dbem_bookings_anonymous' => 1,
@@ -823,6 +824,7 @@ function em_add_options() {
 			'dbem_booking_charts_wpdashboard' => true,
 			'dbem_booking_charts_dashboard' => true,
 			'dbem_booking_charts_event' => true,
+			'dbem_booking_charts_frontend' => !$already_installed,
 		//BP Settings
 		'dbem_bp_events_list_format_header' => '<ul class="em-events-list">',
 		'dbem_bp_events_list_format' => '<li>#_EVENTLINK - #_EVENTDATES - #_EVENTTIMES<ul><li>#_LOCATIONLINK - #_LOCATIONADDRESS, #_LOCATIONTOWN</li></ul></li>',
@@ -905,10 +907,13 @@ function em_add_options() {
 	    'dbem_conditional_recursions' => 2,
         //data privacy/protection
         'dbem_data_privacy_consent_text' => esc_html__('I consent to my submitted data being collected and stored as outlined by the site %s.','events-manager'),
+		'dbem_data_privacy_consent_bookings_error' => esc_html__('You must allow us to collect and store your data in order for us to process your booking.', 'events-manager'),
+		'dbem_data_privacy_consent_cpt_error' => esc_html__('Please check the consent box so we can collect and store your submitted information.', 'events-manager'),
         'dbem_data_privacy_consent_remember' => 1,
 		'dbem_data_privacy_consent_events' => 1,
 		'dbem_data_privacy_consent_locations' => 1,
 		'dbem_data_privacy_consent_bookings' => 1,
+		'dbem_data_privacy_consent_default' => 1,
 		'dbem_data_privacy_export_events' => 1,
 		'dbem_data_privacy_export_locations' => 1,
 		'dbem_data_privacy_export_bookings' => 1,
@@ -916,12 +921,29 @@ function em_add_options() {
 		'dbem_data_privacy_erase_locations' => 1,
 		'dbem_data_privacy_erase_bookings' => 1,
 		'dbem_advanced_formatting' => 0,
+		// Comms consent
+		'dbem_data_comms_consent_required' => 0,
+		'dbem_data_comms_consent_text' => esc_html__('I consent to the use of my provided contact information for communication purposes.','events-manager'),
+		'dbem_data_comms_consent_bookings_error' => esc_html__('You must check the box allowing us to communicate with you via your provided contact methods.', 'events-manager'),
+		'dbem_data_comms_consent_cpt_error' => esc_html__('Please check the communications consent box so we can contact you if necessary.', 'events-manager'),
+		'dbem_data_comms_consent_remember' => 1,
+		'dbem_data_comms_consent_events' => 0,
+		'dbem_data_comms_consent_locations' => 0,
+		'dbem_data_comms_consent_bookings' => 0,
+		'dbem_data_comms_consent_default' => 1,
 		// security options
 		'dbem_shortcodes_decode_content' => $already_installed && version_compare( get_option('dbem_version', 0), '6.4.8', '<'),
 		'dbem_shortcodes_kses_decoded_content' => 1,
 		'dbem_shortcodes_allow_format_params' => $already_installed,
 		'dbem_shortcodes_decode_params' => $already_installed,
-	);
+		// phone numbers
+		'dbem_phone_default_country' => '',
+		'dbem_phone_show_selected_code' => 1,
+		'dbem_phone_show_flags' => 1,
+		'dbem_phone_detect' => 1,
+		'dbem_phone_countries_include' => [],
+		'dbem_phone_countries_exclude' => [],
+);
 	
 	//do date js according to locale:
 	$locale_code = substr ( get_locale (), 0, 2 );
@@ -963,7 +985,7 @@ function em_upgrade_current_installation(){
 		update_site_option('dbem_data', $data);
 	}
 	// temp promo
-	if( time() < 1721044800 && ( version_compare($current_version, '6.4.7', '<') || !empty($data['admin-modals']['review-nudge']) )  ) {
+	if( time() < 1729857600 && ( version_compare($current_version, '6.6.3', '<') || !empty($data['admin-modals']['review-nudge']) )  ) {
 		if( empty($data['admin-modals']) ) $data['admin-modals'] = array();
 		$data['admin-modals']['promo-popup'] = true;
 		update_site_option('dbem_data', $data);
@@ -972,6 +994,8 @@ function em_upgrade_current_installation(){
 	// Check EM Pro update min
 	if( defined('EMP_VERSION') && EMP_VERSION < EM_PRO_MIN_VERSION && !defined('EMP_DISABLE_WARNINGS') ) {
 		$message = esc_html__('There is a newer version of Events Manager Pro which is recommended for this current version of Events Manager as new features have been added. Please go to the plugin website and download the latest update.','events-manager');
+		$message .= ' ' . sprintf(__('<a href="%s">Visit our blog</a> for the latest news about recent updates.','events-manager'), 'https://wp-events-plugin.com/blog/');
+		
 		$EM_Admin_Notice = new EM_Admin_Notice(array('name' => 'em-pro-updates', 'who' => 'admin', 'where' => 'all', 'message' => "$message"));
 		EM_Admin_Notices::add($EM_Admin_Notice, is_multisite());
 	}
@@ -1593,10 +1617,95 @@ function em_upgrade_current_installation(){
 			$message = 'Events Manager 6.4.10 automatically disables minified JS files from being loaded, which addresses a false positive security threat from Avast Anti-Virus. For more information, please <a target="_blank" href="https://wp-events-plugin.com/blog/2024/07/03/false-positive-avast-anti-virus-security-threats/">check our blog post</a>';
 			EM_Admin_Notices::add(new EM_Admin_Notice(array( 'name' => 'v-update', 'who' => 'admin', 'what' => 'warning', 'where' => 'all', 'message' => $message )), is_multisite());
 		}
-		if( version_compare( $current_version, '6.4.11', '<') ){
+		if( version_compare( $current_version, '6.4.10', '<') ){
 			// remove flag for admin notice
-			$message = 'Events Manager 6.4.11 introduces some security options related to shortcodes, this is particularly important for sites where untrusted users contribute content via shortcode. Please <a target="_blank" href="https://wp-events-plugin.com/blog/2024/07/06/shortcode-security-updates/">check our blog post</a> for more details on how best to proceed.';
-			EM_Admin_Notices::add(new EM_Admin_Notice(array( 'name' => 'shortcode-security-update-6-4-11', 'who' => 'admin', 'what' => 'warning', 'where' => 'all', 'message' => $message )), is_multisite());
+			$message = 'Events Manager 6.4.10 introduces some security options related to shortcodes, this is particularly important for sites where untrusted users contribute content via shortcode. Please <a target="_blank" href="https://wp-events-plugin.com/blog/2024/07/07/shortcode-security-updates/">check our blog post</a> for more details on how best to proceed.';
+			EM_Admin_Notices::add(new EM_Admin_Notice(array( 'name' => 'shortcode-security-update-6-4-10', 'who' => 'admin', 'what' => 'warning', 'where' => 'all', 'message' => $message )), is_multisite());
+		}
+		if( version_compare( $current_version, '6.5', '<') ){
+			// migrate user booking tables view to new List_Table key format
+			$wpdb->query('UPDATE ' . $wpdb->usermeta . ' SET meta_key = REPLACE(meta_key, "em_bookings_view", "em_bookings_table_settings") WHERE meta_key LIKE "em_bookings_view%"');
+			// merge all user views into one, we're going to assume that 99.9% of cases have a small number of users with saved mata like this and can do it in one run
+			$settings = $wpdb->get_results('SELECT umeta_id, user_id, meta_key, meta_value FROM ' . $wpdb->usermeta . ' WHERE meta_key LIKE "em_bookings_table_settings%" ORDER by meta_key ASC', ARRAY_A);
+			foreach( $settings as $setting ) {
+				// if it's just em_booking_table_settings then we break it down and add it to em_bookings_table_settings, if it's em_bookings_table_settings we convert it to an array and save
+				if( $setting['meta_key'] === 'em_bookings_table_settings' ) {
+					$cols = maybe_unserialize( $setting['meta_value'] );
+					$cols = is_array($cols) ? $cols : array();
+					if( empty($cols['cols']) || !is_array($cols['cols'])) {
+						$new_setting = array(
+							'cols' => $cols
+						);
+						update_user_meta( $setting['user_id'], 'em_bookings_table_settings', $new_setting );
+					}
+				} else {
+					$cols = maybe_unserialize( $setting['meta_value'] );
+					$cols = is_array($cols) ? $cols : array();
+					$context = strtolower( str_replace('em_bookings_table_settings-EM_', '', $setting['meta_key']) );
+					$meta = get_user_meta( $setting['user_id'], 'em_bookings_table_settings', true );
+					// add or update setting
+					if ( empty($meta) ) {
+						$meta = array(
+							'cols' => array(),
+							'contexts' => array(
+								$context => array(
+									'cols' => $cols,
+								),
+							),
+						);
+					} elseif ( !empty($meta['cols']) && is_array($meta['cols']) ) {
+						if ( empty($meta['contexts']) ) {
+							$meta['contexts'] = array(
+								$context => array(
+									'cols' => $cols,
+								),
+							);
+						} else {
+							$meta['contexts'][$context] = array(
+								'cols' => $cols,
+							);
+						}
+					} else {
+						$meta = array(
+							'cols' => $meta,
+							'contexts' => array(
+								$context => array(
+									'cols' => $cols,
+								),
+							),
+						);
+					}
+					update_user_meta( $setting['user_id'], 'em_bookings_table_settings', $meta );
+					// delete the old meta, whilst deleting stuff is never ideal, it's low-risk as it's just a view preference
+					$wpdb->delete( $wpdb->usermeta, array( 'umeta_id' => $setting['umeta_id'] ) );
+				}
+			}
+			wp_cache_flush_group('user');
+			$message = 'Events Manager 6.5 introduces completely revamped booking admin tables, now included in front-end admin areas along with graphs! Enable charts in <em>Events > Settings > Bookings > Chart Options</em>. <a target="_blank" href="https://wp-events-plugin.com/blog/2024/07/29/events-manager-6-5-pro-3-3/">check our blog post</a>';
+			EM_Admin_Notices::add(new EM_Admin_Notice(array( 'name' => 'v-update', 'who' => 'admin', 'what' => 'warning', 'where' => 'all', 'message' => $message )), is_multisite());
+		}
+		if( version_compare( $current_version, '6.6', '<') ){ // 6.6. update
+			// remove flag for admin notice
+			$message = 'Events Manager 6.6 introduces a new phone number field input with international support and number validation, along with an additional communications consent checkbox! Please <a target="_blank" href="https://em.cm/update-6-6/">check our release post</a> for more details!';
+			EM_Admin_Notices::add(new EM_Admin_Notice(array( 'name' => 'v-update', 'who' => 'admin', 'what' => 'warning', 'where' => 'all', 'message' => $message )), is_multisite());
+			// update all booking meta keys 'consent' to 'privacy_consent' and post meta '_consent_given' to '_privacy_consent_given'
+			$wpdb->query('UPDATE ' . $wpdb->postmeta . ' SET meta_key = "_em_data_privacy_consent" WHERE meta_key = "_consent_given" AND post_id IN (SELECT post_id FROM '. $wpdb->posts .' WHERE post_type="'. EM_POST_TYPE_EVENT .'")');
+			$wpdb->query('UPDATE ' . EM_BOOKINGS_META_TABLE . ' SET meta_key = "_registration_em_data_privacy_consent" WHERE meta_key = "consent"');
+			$wpdb->query('UPDATE ' . EM_BOOKINGS_META_TABLE . ' SET meta_key = "_registration_em_data_privacy_consent" WHERE meta_key = "privacy_consent"');
+			// let's rename all the meta we know doesn't belonw with underscores, registration, attendees, coupon and booking
+			foreach( ['registration', 'attendees', 'coupon', 'booking', 'zoom', 'test', 'discounts', 'surcharges'] as $field ) {
+				$sql = 'UPDATE ' . EM_BOOKINGS_META_TABLE . ' SET meta_key = CONCAT("_'.$field.'|", SUBSTRING(meta_key, '. (strlen($field) + 3) .')) WHERE meta_key LIKE "\_' . $field . '\_%"';
+				$wpdb->query($sql);
+			}
+			// change Kosovo to XK instead of KV
+			foreach ( ['dbem_location_default_country', 'dbem_search_form_default_country'] as $opt ) {
+				if ( get_option($opt) == 'KV' ) {
+					update_option($opt, 'XK' );
+				}
+			}
+			// change any reference of KV to XK in location and postmeta tables
+			$wpdb->update( EM_LOCATIONS_TABLE, ['location_country' => 'XK'], ['location_country' => 'KV']);
+			$wpdb->update( $wpdb->postmeta, ['meta_value' => 'XK'], ['meta_key' => '_location_country', 'meta_value' => 'KV']);
 		}
 	}
 }

@@ -4,7 +4,7 @@ Tags: gravity forms, gravityforms, mergetags, merge tags
 Requires at least: 3.0.1
 Tested up to: 6.6
 Requires PHP: 7.0
-Stable tag: 1.6.2
+Stable tag: 1.7.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -30,6 +30,16 @@ This plugin provides advanced functionality to the default Gravity Forms Number 
 Upload the plugin files to the `/wp-content/plugins/gravitywp-advanced-merge-tags` directory, or install the plugin through the WordPress plugins screen directly.
 
 == Changelog ==
+= 1.7.1 =
+- Added more features to {gwp_generate_token}.
+
+= 1.7 =
+- Implemented {gwp_calculate} merge tag.
+- Implemented gwp_censor modifier.
+
+= 1.6.3 =
+- Fixed an issue where the gwp_get_matched_entry_value merge tag applies newline characters to html breaks twice in confirmation messages.
+
 = 1.6.2 =
 - Fixed an issue regarding the frequency of update checks to increase performance.
 
@@ -45,7 +55,7 @@ Upload the plugin files to the `/wp-content/plugins/gravitywp-advanced-merge-tag
 - Fix advanced merge tag modifiers with quoted parameters not working when used in the post content.
 
 = 1.5.1 =
-- Implemented {gwp_matched_entry_value} merge tag.
+- Implemented {gwp_get_matched_entry_value} merge tag.
 - Implemented {gwp_gview_advanced_filter} merge tag for generating filter conditions for GravityKit Advanced Filters.
 - Change gwp_get_matched_entries_value 'value' parameter to 'return_value' to allow filter parameters such as 'filter1', 'operator1', and 'value1'. If no 'return_value' parameter is found it will fallback to 'value' to maintain backwards compatibility.
 - Fix some potential PHP warnings.

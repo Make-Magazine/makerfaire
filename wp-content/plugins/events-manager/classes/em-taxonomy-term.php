@@ -115,7 +115,7 @@ class EM_Taxonomy_Term extends EM_Object {
 	
 	public function get_color(){
 		if( empty($this->term_id) ) {
-			$this->color = get_option('dbem_'.$this->option_name.'_default_color', '#FFFFFF');
+			$this->color = get_option('dbem_'.$this->option_name.'_default_color', '#80b538');
 		} else {
 			if( empty($this->color) ){
 				$color = wp_cache_get($this->term_id, 'em_'.$this->option_name.'_colors');
@@ -124,7 +124,7 @@ class EM_Taxonomy_Term extends EM_Object {
 				}else{
 					global $wpdb;
 					$color = $wpdb->get_var('SELECT meta_value FROM '.EM_META_TABLE." WHERE object_id='{$this->term_id}' AND meta_key='". $this->option_name ."-bgcolor' LIMIT 1");
-					$this->color = ($color != '') ? $color:get_option('dbem_'.$this->option_name.'_default_color', '#FFFFFF');
+					$this->color = ($color != '') ? $color:get_option('dbem_'.$this->option_name.'_default_color', '#80b538');
 					wp_cache_set($this->term_id, $this->color, 'em_'.$this->option_name.'_colors');
 				}
 			}

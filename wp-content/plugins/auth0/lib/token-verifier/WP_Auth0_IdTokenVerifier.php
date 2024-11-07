@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Contains Trait WP_Auth0_IdTokenVerifier.
  *
@@ -12,7 +13,8 @@
  *
  * @codeCoverageIgnore - Classes are adapted from the PHP SDK and tested there.
  */
-final class WP_Auth0_IdTokenVerifier {
+final class WP_Auth0_IdTokenVerifier
+{
 
 	/**
 	 * Token issuer base URL expected.
@@ -49,7 +51,8 @@ final class WP_Auth0_IdTokenVerifier {
 	 * @param string                     $audience Token audience expected.
 	 * @param WP_Auth0_SignatureVerifier $verifier Token signature verifier.
 	 */
-	public function __construct( string $issuer, string $audience, WP_Auth0_SignatureVerifier $verifier ) {
+	public function __construct(string $issuer, string $audience, WP_Auth0_SignatureVerifier $verifier)
+	{
 		$this->issuer   = $issuer;
 		$this->audience = $audience;
 		$this->verifier = $verifier;
@@ -62,7 +65,8 @@ final class WP_Auth0_IdTokenVerifier {
 	 *
 	 * @return void
 	 */
-	public function setLeeway( int $newLeeway ) {
+	public function setLeeway(int $newLeeway)
+	{
 		$this->leeway = $newLeeway;
 	}
 
@@ -84,16 +88,17 @@ final class WP_Auth0_IdTokenVerifier {
 	 *      - Token algorithm is not supported
 	 *      - Any claim-based test fails
 	 */
-	public function verify( string $token, array $options = [] ) : array {
-		if ( empty( $token ) ) {
-			throw new WP_Auth0_InvalidIdTokenException( 'ID token is required but missing' );
+	public function verify(string $token, array $options = []): array
+	{
+		if (empty($token)) {
+			throw new WP_Auth0_InvalidIdTokenException('ID token is required but missing');
 		}
 
-		$verifiedToken = $this->verifier->verifyAndDecode( $token );
+		$verifiedToken = $this->verifier->verifyAndDecode($token);
 
 		$claims = [];
-		foreach ( $verifiedToken->getClaims() as $claim => $value ) {
-			$claims[ $claim ] = $value->getValue();
+		foreach ($verifiedToken->getClaims() as $claim => $value) {
+			$claims[$claim] = $value->getValue();
 		}
 
 		/*
@@ -101,17 +106,17 @@ final class WP_Auth0_IdTokenVerifier {
 		 */
 
 		$tokenIss = $claims['iss'] ?? false;
-		if ( ! $tokenIss || ! is_string( $tokenIss ) ) {
-			throw new WP_Auth0_InvalidIdTokenException( 'Issuer (iss) claim must be a string present in the ID token' );
+		if (!$tokenIss || !is_string($tokenIss)) {
+			throw new WP_Auth0_InvalidIdTokenException('Issuer (iss) claim must be a string present in the ID token');
 		}
 
-		if ( $tokenIss !== $this->issuer ) {
+		if ($tokenIss !== $this->issuer) {
 			throw new WP_Auth0_InvalidIdTokenException(
-				sprintf(
+				esc_html(sprintf(
 					'Issuer (iss) claim mismatch in the ID token; expected "%s", found "%s"',
 					$this->issuer,
 					$tokenIss
-				)
+				))
 			);
 		}
 
@@ -120,8 +125,8 @@ final class WP_Auth0_IdTokenVerifier {
 		 */
 
 		$tokenSub = $claims['sub'] ?? false;
-		if ( ! $tokenSub || ! is_string( $tokenSub ) ) {
-			throw new WP_Auth0_InvalidIdTokenException( 'Subject (sub) claim must be a string present in the ID token' );
+		if (!$tokenSub || !is_string($tokenSub)) {
+			throw new WP_Auth0_InvalidIdTokenException('Subject (sub) claim must be a string present in the ID token');
 		}
 
 		/*
@@ -129,27 +134,27 @@ final class WP_Auth0_IdTokenVerifier {
 		 */
 
 		$tokenAud = $claims['aud'] ?? false;
-		if ( ! $tokenAud || ( ! is_string( $tokenAud ) && ! is_array( $tokenAud ) ) ) {
+		if (!$tokenAud || (!is_string($tokenAud) && !is_array($tokenAud))) {
 			throw new WP_Auth0_InvalidIdTokenException(
 				'Audience (aud) claim must be a string or array of strings present in the ID token'
 			);
 		}
 
-		if ( is_array( $tokenAud ) && ! in_array( $this->audience, $tokenAud ) ) {
+		if (is_array($tokenAud) && !in_array($this->audience, $tokenAud)) {
 			throw new WP_Auth0_InvalidIdTokenException(
-				sprintf(
+				esc_html(sprintf(
 					'Audience (aud) claim mismatch in the ID token; expected "%s" was not one of "%s"',
 					$this->audience,
-					implode( ', ', $tokenAud )
-				)
+					implode(', ', $tokenAud)
+				))
 			);
-		} elseif ( is_string( $tokenAud ) && $tokenAud !== $this->audience ) {
+		} elseif (is_string($tokenAud) && $tokenAud !== $this->audience) {
 			throw new WP_Auth0_InvalidIdTokenException(
-				sprintf(
+				esc_html(sprintf(
 					'Audience (aud) claim mismatch in the ID token; expected "%s", found "%s"',
 					$this->audience,
 					$tokenAud
-				)
+				))
 			);
 		}
 
@@ -161,43 +166,43 @@ final class WP_Auth0_IdTokenVerifier {
 		$leeway = $options['leeway'] ?? $this->leeway;
 
 		$tokenExp = $claims['exp'] ?? false;
-		if ( ! $tokenExp || ! is_int( $tokenExp ) ) {
-			throw new WP_Auth0_InvalidIdTokenException( 'Expiration Time (exp) claim must be a number present in the ID token' );
+		if (!$tokenExp || !is_int($tokenExp)) {
+			throw new WP_Auth0_InvalidIdTokenException('Expiration Time (exp) claim must be a number present in the ID token');
 		}
 
 		$expireTime = $tokenExp + $leeway;
-		if ( $now > $expireTime ) {
+		if ($now > $expireTime) {
 			throw new WP_Auth0_InvalidIdTokenException(
-				sprintf(
+				esc_html(sprintf(
 					'Expiration Time (exp) claim error in the ID token; current time (%d) is after expiration time (%d)',
 					$now,
 					$expireTime
-				)
+				))
 			);
 		}
 
 		$tokenIat = $claims['iat'] ?? false;
-		if ( ! $tokenIat || ! is_int( $tokenIat ) ) {
-			throw new WP_Auth0_InvalidIdTokenException( 'Issued At (iat) claim must be a number present in the ID token' );
+		if (!$tokenIat || !is_int($tokenIat)) {
+			throw new WP_Auth0_InvalidIdTokenException('Issued At (iat) claim must be a number present in the ID token');
 		}
 
 		/*
 		 * Nonce check
 		 */
 
-		if ( ! empty( $options['nonce'] ) ) {
+		if (!empty($options['nonce'])) {
 			$tokenNonce = $claims['nonce'] ?? false;
-			if ( ! $tokenNonce || ! is_string( $tokenNonce ) ) {
-				throw new WP_Auth0_InvalidIdTokenException( 'Nonce (nonce) claim must be a string present in the ID token' );
+			if (!$tokenNonce || !is_string($tokenNonce)) {
+				throw new WP_Auth0_InvalidIdTokenException('Nonce (nonce) claim must be a string present in the ID token');
 			}
 
-			if ( $tokenNonce !== $options['nonce'] ) {
+			if ($tokenNonce !== $options['nonce']) {
 				throw new WP_Auth0_InvalidIdTokenException(
-					sprintf(
+					esc_html(sprintf(
 						'Nonce (nonce) claim mismatch in the ID token; expected "%s", found "%s"',
 						$options['nonce'],
 						$tokenNonce
-					)
+					))
 				);
 			}
 		}
@@ -206,21 +211,21 @@ final class WP_Auth0_IdTokenVerifier {
 		 * Authorized party check
 		 */
 
-		if ( is_array( $tokenAud ) && count( $tokenAud ) > 1 ) {
+		if (is_array($tokenAud) && count($tokenAud) > 1) {
 			$tokenAzp = $claims['azp'] ?? false;
-			if ( ! $tokenAzp || ! is_string( $tokenAzp ) ) {
+			if (!$tokenAzp || !is_string($tokenAzp)) {
 				throw new WP_Auth0_InvalidIdTokenException(
 					'Authorized Party (azp) claim must be a string present in the ID token when Audience (aud) claim has multiple values'
 				);
 			}
 
-			if ( $tokenAzp !== $this->audience ) {
+			if ($tokenAzp !== $this->audience) {
 				throw new WP_Auth0_InvalidIdTokenException(
-					sprintf(
+					esc_html(sprintf(
 						'Authorized Party (azp) claim mismatch in the ID token; expected "%s", found "%s"',
 						$this->audience,
 						$tokenAzp
-					)
+					))
 				);
 			}
 		}
@@ -231,18 +236,18 @@ final class WP_Auth0_IdTokenVerifier {
 
 		$expectedOrganization = $options['org_id'] ?? null;
 
-		if ( null !== $expectedOrganization && '' !== $expectedOrganization ) {
-			if ( ! isset( $claims['org_id'] ) || ! is_string( $claims['org_id'] ) ) {
-				throw new WP_Auth0_InvalidIdTokenException( 'Organization Id (org_id) claim must be a string present in the ID token' );
+		if (null !== $expectedOrganization && '' !== $expectedOrganization) {
+			if (!isset($claims['org_id']) || !is_string($claims['org_id'])) {
+				throw new WP_Auth0_InvalidIdTokenException('Organization Id (org_id) claim must be a string present in the ID token');
 			}
 
-			if ( $claims['org_id'] !== $expectedOrganization ) {
+			if ($claims['org_id'] !== $expectedOrganization) {
 				throw new WP_Auth0_InvalidIdTokenException(
-					sprintf(
+					esc_html(sprintf(
 						'Organization Id (org_id) claim value mismatch in the ID token; expected "%s", found "%s"',
 						$expectedOrganization,
 						$claims['org_id']
-					)
+					))
 				);
 			}
 		}
@@ -251,9 +256,9 @@ final class WP_Auth0_IdTokenVerifier {
 		 * Authentication time check
 		 */
 
-		if ( ! empty( $options['max_age'] ) ) {
+		if (!empty($options['max_age'])) {
 			$tokenAuthTime = $claims['auth_time'] ?? false;
-			if ( ! $tokenAuthTime || ! is_int( $tokenAuthTime ) ) {
+			if (!$tokenAuthTime || !is_int($tokenAuthTime)) {
 				throw new WP_Auth0_InvalidIdTokenException(
 					'Authentication Time (auth_time) claim must be a number present in the ID token when Max Age (max_age) is specified'
 				);
@@ -261,13 +266,13 @@ final class WP_Auth0_IdTokenVerifier {
 
 			$authValidUntil = $tokenAuthTime + $options['max_age'] + $leeway;
 
-			if ( $now > $authValidUntil ) {
+			if ($now > $authValidUntil) {
 				throw new WP_Auth0_InvalidIdTokenException(
-					sprintf(
+					esc_html(sprintf(
 						'Authentication Time (auth_time) claim in the ID token indicates that too much time has passed since the last end-user authentication. Current time (%d) is after last auth at %d',
 						$now,
 						$authValidUntil
-					)
+					))
 				);
 			}
 		}

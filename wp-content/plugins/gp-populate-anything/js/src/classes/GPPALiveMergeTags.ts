@@ -419,7 +419,7 @@ export default class GPPALiveMergeTags {
 								.find( '.chosen-container' ).length
 						) {
 							const inputID = $el.parent().attr( 'id' );
-							$( ( '#{0}' as any ).gformFormat( inputID ) ).trigger(
+							$(`#${inputID}`).trigger(
 								'chosen:updated'
 							);
 						}

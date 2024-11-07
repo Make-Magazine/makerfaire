@@ -3,20 +3,6 @@
  */
 (function ($) {
 
-	/*
-	 * String.format was deprecated in GF 2.7.1 and will be removed in GF 2.8 in favor of String.prototype.gformFormat.
-	 *
-	 * As we support older versions of GF, we need to add String.prototype.gformFormat if it doesn't exist.
-	 */
-	if (!String.prototype.gformFormat) {
-		String.prototype.gformFormat = function () {
-			var args = arguments;
-			return this.replace(/{(\d+)}/g, function (match, number) {
-				return typeof args[number] !== 'undefined' ? args[number] : match;
-			});
-		};
-	}
-
 	window.gwCopyObj = function (args) {
 
 		var self = this;
@@ -40,7 +26,7 @@
 			 */
 			gform.addFilter('gpcc_copied_value', function(value, $targetElem, field) {
 				if (
-					$( '#input_{0}_{1}'.gformFormat( self.formId, field.source ) ).hasClass( 'ginput_total' )
+					$( '#input_' + self.formId + '_' + field.source ).hasClass( 'ginput_total' )
 					|| $targetElem.hasClass( 'ginput_quantity' )
 				) {
 					var numberFormat = gf_get_field_number_format( field.source, self.formId );
@@ -57,7 +43,7 @@
 				return value;
 			});
 
-			var $formWrapper = $( '#gform_wrapper_{0}'.gformFormat( self.formId ) );
+			var $formWrapper = $( '#gform_wrapper_' + self.formId );
 
 			$formWrapper.off( 'click.gpcopycat' );
 			$formWrapper.on(
@@ -184,7 +170,7 @@
 
 						triggerIds.push( fieldSettings[i].trigger );
 
-						var $trigger = $( '#field_{0}_{1}'.gformFormat( formId, fieldSettings[i].trigger ) ).find( 'input, textarea, select' );
+						var $trigger = $( '#field_' + formId + '_' + fieldSettings[i].trigger ).find( 'input, textarea, select' );
 
 						// Skip processing copy for a Hidden Field.
 						if ( $trigger.parents('.gfield').attr( 'data-conditional-logic' ) == 'hidden' ) {
@@ -412,7 +398,10 @@
 							value          = null;
 
 						targetValues[i] = $targetElem.val();
-
+						if ( $targetElem.is( ':radio' ) && $targetElem.parent().hasClass( 'image-choices-choice' ) ) {
+							// Deselect previously selected GF Image Choices' radio buttons
+							$targetElem.parent().removeClass('image-choices-choice-selected');
+						}
 						if (isCheckable) {
 							// NOTE: this is how this should technically work but I don't think anyone is targeting individual
 							// inputs for a checkbox or radio button field... so I'm going to wait until I have a real world
@@ -508,17 +497,17 @@
 						}
 
 						// Copy Cat for Advanced Phone Field.
-						if ( $( $targetElem.parent()[0] ).hasClass( 'iti--separate-dial-code' ) ) {
-							var targetFieldID   = $targetElem[0].id.replace( 'input', '' )
-							var targetFieldName = 'gp_advanced_phone_field' + targetFieldID;
+						if (
+						    $( $targetElem.parent()[0] ).hasClass( 'iti--separate-dial-code' ) ||
+						    $( $targetElem.parent()[0] ).hasClass( 'iti--inline-dropdown' )
+						) {
+							var targetInputID   = $targetElem[0].id.replace( 'input', '' )
+							var targetFieldName = 'gp_advanced_phone_field' + targetInputID;
 							var targetValue;
 
-							var targetId = targetFieldID.split( '_' ).pop();
-							var sourceId = self.getSourceFieldIdByTarget( targetId, false );
-
-							var sourceFieldID   = '_' + self.formId + '_' + sourceId;
-							var sourceElemId    = '#field' + sourceFieldID;
-							var sourceFieldName = 'gp_advanced_phone_field' + sourceFieldID;
+							var sourceInputID   = '_' + self.formId + '_' + sourceFieldId;
+							var sourceElemId    = '#field' + sourceInputID;
+							var sourceFieldName = 'gp_advanced_phone_field' + sourceInputID;
 
 							if ( typeof window[sourceFieldName] !== 'undefined' ) {
 								// Source is also Advanced Phone Field Type.
@@ -563,6 +552,16 @@
 								.change()
 								// @hack trigger chosen:updated on every change since it doesn't "hurt" anything to do so; alternative is checking if chosen is activated
 								.trigger( 'chosen:updated' );
+
+							/*
+							 * Trigger native change event on the element, jQuery.change() and .trigger('change') do
+							 * not work.
+							 *
+							 * GF is moving more this direction and this is needed after GF 2.9 for
+							 * `handleProductChange`
+							 */
+							var event = new Event( 'change', { bubbles: true } );
+							this.dispatchEvent( event );
 						}
 					} );
 				}
@@ -724,7 +723,7 @@
 
 			// Many 3rd parties add additional non-capturable inputs to the List field. Let's filter those out.
 			if (isListField) {
-				group = group.filter( '[name="input_{0}[]"]'.gformFormat( fieldId ) );
+				group = group.filter( '[name="input_' + fieldId + '[]"]' );
 			}
 
 			// Handle input-specific fields (excluding List fields).
@@ -927,7 +926,7 @@
 			if (typeof $input == 'object') {
 				var fieldId = $input.attr( 'name' ).match( /(\d+)/ )[0], // returns '34' from 'input_34[]'
 					$group  = $input.parents( '.gfield_list_group' ),
-					$inputs = $group.find( '[name="input_{0}[]"]'.gformFormat( fieldId ) ),
+					$inputs = $group.find( '[name="input_' + fieldId + '[]"]' );
 					$groups = $input.parents( '.gfield_list_container' ).find( '.gfield_list_group' ),
 					column  = $inputs.index( $input ) + 1,
 					row     = $groups.index( $group ) + 1;

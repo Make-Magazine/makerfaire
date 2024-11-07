@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by gravityview on 14-August-2024 using {@see https://github.com/BrianHenryIE/strauss}.
+ * Modified by gravityview on 04-November-2024 using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\GravityView\Foundation\Settings;
@@ -71,7 +71,10 @@ class SettingsValidator {
 	 * Adds custom validation rules (these match custom Yup rules added in the UI).
 	 *
 	 * @since 1.0.0
+	 *
 	 * @see   `UI/src/lib/validation.js`
+	 *
+	 * @return void
 	 */
 	private function add_custom_validation_rules() {
 		$this->validator_factory->extend(

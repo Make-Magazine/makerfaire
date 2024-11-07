@@ -452,6 +452,15 @@ class Module extends Module_Base {
 		] );
 	}
 
+	/**
+	 * Get the base URL for assets.
+	 *
+	 * @return string
+	 */
+	public function get_assets_base_url(): string {
+		return ELEMENTOR_PRO_URL;
+	}
+
 	public function __construct() {
 		parent::__construct();
 

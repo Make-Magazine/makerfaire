@@ -6,7 +6,6 @@ use ElementorPro\Core\Admin\Admin;
 use ElementorPro\Core\App\App;
 use ElementorPro\Core\Connect;
 use ElementorPro\Core\Compatibility\Compatibility;
-use Elementor\Core\Responsive\Files\Frontend as FrontendFile;
 use Elementor\Utils;
 use ElementorPro\Core\Editor\Editor;
 use ElementorPro\Core\Integrations\Integrations_Manager;
@@ -16,6 +15,9 @@ use ElementorPro\Core\Preview\Preview;
 use ElementorPro\Core\Upgrade\Manager as UpgradeManager;
 use ElementorPro\License\API;
 use ElementorPro\License\Updater;
+use ElementorPro\Core\Container\Container;
+use ElementorProDeps\DI\Container as DIContainer;
+use Exception;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -93,6 +95,14 @@ class Plugin {
 	public $php_api;
 
 	/**
+	 * Container instance for managing dependencies.
+	 *
+	 * @since 3.25.0
+	 * @var DIContainer
+	 */
+	private static $container;
+
+	/**
 	 * Throw error on object clone
 	 *
 	 * The whole idea of the singleton design pattern is that there is a single
@@ -133,13 +143,26 @@ class Plugin {
 
 	/**
 	 * @return Plugin
+	 * @throws Exception
 	 */
-	public static function instance() {
+	public static function instance(): Plugin {
 		if ( is_null( self::$_instance ) ) {
 			self::$_instance = new self();
+			self::$container = Container::get_instance();
 		}
 
 		return self::$_instance;
+	}
+
+	/**
+	 * Get the Elementor Pro container or resolve a dependency.
+	 */
+	public function get_elementor_pro_container( $abstract = null ): DIContainer {
+		if ( is_null( $abstract ) ) {
+			return self::$container;
+		}
+
+		return self::$container->make( $abstract );
 	}
 
 	public function autoload( $class ) {
@@ -177,30 +200,9 @@ class Plugin {
 		}
 	}
 
-	public function enqueue_styles() {
-		$suffix = $this->get_assets_suffix();
-
-		$direction_suffix = is_rtl() ? '-rtl' : '';
-
-		$frontend_file_name_base = $this->is_optimized_css_mode() ? 'frontend-lite' : 'frontend';
-
-		$frontend_file_name = $frontend_file_name_base . $direction_suffix . $suffix . '.css';
-
-		$has_custom_file = self::elementor()->breakpoints->has_custom_breakpoints();
-
-		$frontend_file_url = $this->get_frontend_file_url( $frontend_file_name, $has_custom_file );
-
-		wp_enqueue_style(
-			'elementor-pro',
-			$frontend_file_url,
-			[],
-			$has_custom_file ? null : ELEMENTOR_PRO_VERSION
-		);
-	}
-
-	public function get_frontend_file_url( $frontend_file_name, $custom_file ) {
+	public static function get_frontend_file_url( $frontend_file_name, $custom_file ) {
 		if ( $custom_file ) {
-			$frontend_file = $this->get_frontend_file( $frontend_file_name );
+			$frontend_file = self::get_frontend_file( $frontend_file_name );
 
 			$frontend_file_url = $frontend_file->get_url();
 		} else {
@@ -210,9 +212,9 @@ class Plugin {
 		return $frontend_file_url;
 	}
 
-	public function get_frontend_file_path( $frontend_file_name, $custom_file ) {
+	public static function get_frontend_file_path( $frontend_file_name, $custom_file ) {
 		if ( $custom_file ) {
-			$frontend_file = $this->get_frontend_file( $frontend_file_name );
+			$frontend_file = self::get_frontend_file( $frontend_file_name );
 
 			$frontend_file_path = $frontend_file->get_path();
 		} else {
@@ -257,6 +259,9 @@ class Plugin {
 			'urls' => [
 				'assets' => $assets_url,
 				'rest' => get_rest_url(),
+			],
+			'settings' => [
+				'lazy_load_background_images' => ( '1' === get_option( 'elementor_lazy_load_background_images', '1' ) ),
 			],
 		];
 
@@ -396,7 +401,7 @@ class Plugin {
 		return $frontend_depends;
 	}
 
-	private function get_responsive_templates_path() {
+	private static function get_responsive_templates_path() {
 		return ELEMENTOR_PRO_ASSETS_PATH . 'css/templates/';
 	}
 
@@ -421,6 +426,7 @@ class Plugin {
 		add_action( 'elementor/preview/enqueue_scripts', [ $this, 'register_preview_scripts' ] );
 
 		add_action( 'elementor/frontend/before_enqueue_scripts', [ $this, 'enqueue_frontend_scripts' ] );
+		// TODO: Load popup styling only when needed [ED-16076]
 		add_action( 'elementor/frontend/after_enqueue_styles', [ $this, 'enqueue_styles' ] );
 
 		add_filter( 'elementor/core/breakpoints/get_stylesheet_template', [ $this, 'get_responsive_stylesheet_templates' ] );
@@ -435,16 +441,34 @@ class Plugin {
 		}, 11 /** After Elementor Core (Library) */ );
 	}
 
-	private function is_optimized_css_mode() {
-		$is_optimized_css_loading = self::elementor()->experiments->is_feature_active( 'e_optimized_css_loading' );
+	// TODO: Load popup styling only when needed [ED-16076]
+	public function enqueue_styles(): void {
+		$suffix = $this->get_assets_suffix();
 
-		return ! Utils::is_script_debug() && $is_optimized_css_loading && ! self::elementor()->preview->is_preview_mode();
+		wp_enqueue_style(
+			'e-popup-style',
+			ELEMENTOR_PRO_URL . 'assets/css/conditionals/popup' . $suffix . '.css',
+			null,
+			ELEMENTOR_PRO_VERSION
+		);
 	}
 
 	private function get_assets() {
 		$suffix = $this->get_assets_suffix();
 
 		return [
+			'styles' => [
+				'e-motion-fx' => [
+					'src' => ELEMENTOR_PRO_URL . 'assets/css/modules/motion-fx' . $suffix . '.css',
+					'version' => ELEMENTOR_PRO_VERSION,
+					'dependencies' => [],
+				],
+				'e-sticky' => [
+					'src' => ELEMENTOR_PRO_URL . 'assets/css/modules/sticky' . $suffix . '.css',
+					'version' => ELEMENTOR_PRO_VERSION,
+					'dependencies' => [],
+				],
+			],
 			'scripts' => [
 				'e-sticky' => [
 					'src' => ELEMENTOR_PRO_URL . 'assets/lib/sticky/jquery.sticky' . $suffix . '.js',
@@ -471,6 +495,7 @@ class Plugin {
 
 	/**
 	 * Plugin constructor.
+	 * @throws Exception
 	 */
 	private function __construct() {
 		spl_autoload_register( [ $this, 'autoload' ] );
@@ -512,7 +537,7 @@ class Plugin {
 		return defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
 	}
 
-	private function get_frontend_file( $frontend_file_name ) {
+	private static function get_frontend_file( $frontend_file_name ) {
 		$template_file_path = self::get_responsive_templates_path() . $frontend_file_name;
 
 		return self::elementor()->frontend->get_frontend_file( $frontend_file_name, 'custom-pro-', $template_file_path );

@@ -19,6 +19,8 @@ class GFCoupons extends GFFeedAddOn {
 	protected $_title = 'Coupons Add-On';
 	protected $_short_title = 'Coupons';
 	protected $_coupon_feed_id = '';
+	protected $_enable_theme_layer = true;
+	protected $_asset_min;
 
 	// Members plugin integration
 	protected $_capabilities = array(
@@ -44,8 +46,10 @@ class GFCoupons extends GFFeedAddOn {
 	public static function get_instance() {
 		if ( self::$_instance == null ) {
 			self::$_instance = new GFCoupons();
+			if ( ! isset( self::$_instance->_asset_min ) ) {
+				self::$_instance->_asset_min = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG || isset( $_GET['gform_debug'] ) ? '' : '.min';
+			}
 		}
-
 		return self::$_instance;
 	}
 
@@ -55,15 +59,19 @@ class GFCoupons extends GFFeedAddOn {
 	 * @return array
 	 */
 	public function scripts() {
-		$min     = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG || isset( $_GET['gform_debug'] ) ? '' : '.min';
+
 		$scripts = array(
 			array(
 				'handle'  => 'gform_coupon_script',
-				'src'     => $this->get_base_url() . "/js/coupons{$min}.js",
+				'src'     => $this->get_base_url() . "/js/coupons{$this->_asset_min}.js",
 				'version' => $this->_version,
 				'deps'    => array( 'jquery', 'gform_json', 'gform_gravityforms' ),
 				'enqueue' => array( array( 'field_types' => array( 'coupon' ) ) ),
-				'strings' => array( 'ajaxurl' => admin_url( 'admin-ajax.php' ) ),
+				'strings' => array(
+					'ajaxurl' => admin_url( 'admin-ajax.php' ),
+					'remove_button_label' => esc_html__( 'Remove', 'gravityformscoupons' ),
+					'remove_button_aria_label' => esc_html__( 'Remove coupon', 'gravityformscoupons' ),
+				),
 			),
 			array(
 				'handle'  => 'gform_form_admin',
@@ -84,23 +92,91 @@ class GFCoupons extends GFFeedAddOn {
 	 * @return array
 	 */
 	public function styles() {
-		$min    = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG || isset( $_GET['gform_debug'] ) ? '' : '.min';
+
 		$styles = array(
 			array(
-				'handle'  => 'gform_coupon_style',
-				'src'     => $this->get_base_url() . "/assets/css/dist/theme{$min}.css",
-				'version' => $this->_version,
-				'enqueue' => array( array( 'field_types' => array( 'coupon' ) ) ),
-			),
-			array(
 				'handle'  => $this->is_gravityforms_supported( '2.5-beta' ) ? 'gform_coupon_admin' : 'gform_admin',
-				'src'     => $this->get_base_url() . "/assets/css/dist/admin{$min}.css",
+				'src'     => $this->get_base_url() . "/assets/css/dist/admin{$this->_asset_min}.css",
 				'version' => $this->_version,
 				'enqueue' => array( array( 'admin_page' => array( 'plugin_page' ) ) ),
 			),
 		);
 
+		if ( ! $this->supports_theme_enqueuing() ) {
+			$styles[] = array(
+				'handle'  => 'gform_coupon_style',
+				'src'     => $this->get_base_url() . "/assets/css/dist/theme{$this->_asset_min}.css",
+				'version' => $this->_version,
+				'enqueue' => array(
+                    array( 'admin_page'  => array( 'form_editor', 'block_editor' ) ),
+                    array( 'field_types' => array( 'coupon' ) ) ),
+			);
+			$styles[] = array(
+				'handle'  => 'gravity_forms_coupon_theme_foundation',
+				'src'     => $this->get_base_url() . "/assets/css/dist/theme-foundation{$this->_asset_min}.css",
+				'version' => $this->_version,
+				'enqueue' => array(
+					array( 'admin_page'  => array( 'form_editor', 'block_editor' ) ),
+					array( 'field_types' => array( 'coupon' ) ),
+				),
+			);
+			$styles[] = array(
+				'handle'  => 'gravity_forms_coupon_theme_framework',
+				'src'     => $this->get_base_url() . "/assets/css/dist/theme-framework{$this->_asset_min}.css",
+				'version' => $this->_version,
+				'enqueue' => array(
+					array( 'admin_page'  => array( 'form_editor', 'block_editor' ) ),
+					array( 'field_types' => array( 'coupon' ) ),
+				),
+			);
+		}
+
 		return array_merge( parent::styles(), $styles );
+	}
+
+	/**
+	 * Whether or not the Base Add-on class supports theme enqueuing logic (only available in Gravity Forms 2.9+)
+	 *
+	 * @since 3.4.0
+	 */
+	public function supports_theme_enqueuing() {
+		return is_callable( array( $this, 'get_theme_layer_styles' ) );
+	}
+
+	/**
+	 * Theme layer method to enqueue styles. Styles returned by this method will be enqueued.
+	 *
+	 * @since 3.4.0
+	 *
+	 * @param array $form           The current form object.
+	 * @param bool  $ajax           Wether or not the form was embedded with AJAX enabled.
+	 * @param array $settings       An array of theme layer settings for the form.
+	 * @param array $block_settings An array of custom styles specified in the block or in the shortcode.
+	 *
+	 * @return array Returns an array of styles to enqueue. In the format supported by the theme layer's set_style() method.
+	 */
+	public function theme_layer_styles( $form, $ajax, $settings, $embed_settings = array() ) {
+		return $this->supports_theme_enqueuing() ? $this->get_theme_layer_styles( $form, 'coupon' ) : array();
+	}
+
+	/**
+	 * Get the themes that should be enqueued for the add-on. Uses the base class method and removes theme.css from the entry pages.
+	 *
+	 * @since 3.4.0
+	 *
+	 * @param array        $form        The current form object to enqueue styles for.
+	 * @param string|array $field_types The field type associated with the add-on. Themes will only be enqueued on the frontend if the form has a field with the specified field type.
+	 *
+	 * @return array Returns and array of theme slugs to enqueue.
+	 */
+	public function get_themes_to_enqueue ( $form, $field_types = '' ) {
+		$themes = parent::get_themes_to_enqueue( $form, $field_types );
+
+		// Removing gravity theme from entry pages.
+		if ( in_array( GFForms::get_page(), array( 'entry_detail', 'entry_detail_edit' ) ) ) {
+			$themes = array_diff( $themes, array('gravity-theme') );
+		}
+		return $themes;
 	}
 
 	/**
@@ -119,24 +195,6 @@ class GFCoupons extends GFFeedAddOn {
 
 
 	// # UPDATE PRODUCT INFO -------------------------------------------------------------------------------------------
-
-	public function pre_init() {
-
-		parent::pre_init();
-
-		require_once 'includes/theme-layers/class-gf-coupons-theme-layer-handler.php';
-
-		$handler = new GF_Coupons_Theme_Layer_Handler( $this );
-
-		/**
-		 * Initialize the Theme Layer Handler on init.
-		 *
-		 * @since 1.0
-		 */
-		add_action( 'init', function () use ( $handler ) {
-			$handler->handle();
-		}, 0, 0 );
-	}
 
 	/**
 	 * Plugin starting point. Handles hooks and loading of language files.

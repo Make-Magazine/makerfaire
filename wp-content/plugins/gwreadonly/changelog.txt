@@ -1,6 +1,15 @@
 
 # Changelog
 
+## 1.9.24 | September 11, 2024
+
+- Refactored to use `GP_Plugin` as the base PHP class.
+
+## 1.9.23 | September 5, 2024
+
+- Fixed issue where List field Add/Remove buttons were visible if using the Gravity Forms Theme Framework.
+- Fixed issue where selected read-only checkbox values are not preserved after editing an entry with GravityView.
+
 ## 1.9.22 | July 9, 2024
 
 - Fixed an issue with read-only Time fields not submitting the AM/PM values.

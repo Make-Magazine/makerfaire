@@ -52,11 +52,19 @@ class MarkerCache implements GenericCache {
         /* Get the marker data and cache it */
         $data = $this->load();
         if(empty($data)){
-            /* Data is empty, meaning cache file is invalid */
-            $data = $this->query();
-            if(!empty($data)){
-                /* Store the cache data */
-                $this->store($data);
+            try{
+                /* Data is empty, meaning cache file is invalid */
+                $data = $this->query();
+                if(!empty($data)){
+                    /* Store the cache data */
+                    $this->store($data);
+                }
+            } catch (\Exception $ex){
+                /* General Failure */
+                $data = false;
+            } catch (\Error $err){
+                /* General Failure */
+                $data = false;
             }
         }
 
@@ -132,7 +140,7 @@ class MarkerCache implements GenericCache {
         $time->end = floor(microtime(true) * 1000);
         $time->delta = $time->end - $time->start;
 
-        if(!empty($data->info)){
+        if(!empty($data) && !empty($data->info)){
             $data->info->filetime = $time->delta;
             $data->info->fromFile = $this->fromFile;
             return $data->info;
@@ -163,12 +171,17 @@ class MarkerCache implements GenericCache {
         $time->delta = $time->end - $time->start;
 
         if(!empty($this->queryData->data)){
+            $recordsTotal = 0;
+            foreach($this->queryData->data as $subset){
+                $recordsTotal += count($subset);
+            }
             return (object) array(
                 'info' => (object) array(
                     'updated' => date("Y-m-d H:i"),
                     'batchSize' => self::BATCH_SIZE,
                     'batches' => $this->queryData->batches,
                     'total' => count($this->queryData->data),
+                    'recordsTotal' => $recordsTotal,
                     'runtime' => $time->delta
                 ),
                 'data' => $this->queryData->data

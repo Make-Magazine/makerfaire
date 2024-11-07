@@ -383,12 +383,26 @@ class ImportAIRTABLES extends Import
 				foreach($required_fields as $field_name){
 
 					$field_value = (isset($fields[$field_name]) ? $fields[$field_name] : null);
-					
-					if(function_exists('iconv') && function_exists('mb_detect_encoding') && function_exists('mb_detect_order')){
-						$field_value = iconv(mb_detect_encoding($field_value, mb_detect_order(), true), "UTF-8", $field_value);
-					}
 
-					$fields[$field_name] = $field_value;
+					if(!is_array($field_value) && !is_object($field_value)){
+						if(!is_string($field_value)){
+							$field_value = "{$field_value}";
+						}
+
+						if(function_exists('iconv') && function_exists('mb_detect_encoding') && function_exists('mb_detect_order')){
+							$field_value = iconv(mb_detect_encoding($field_value, mb_detect_order(), true), "UTF-8", $field_value);
+						}
+
+						$fields[$field_name] = $field_value;
+					} else {
+						if(is_array($field_value)){
+							$field_value = array_shift($field_value);
+							$fields[$field_name] = $field_value;
+						} else {
+							$this->log("Ignoring column {$field_name} - Not parseable");
+							$this->log("-> " . json_encode($field_value));
+						}
+					}
 				}
 				
 				if(empty($this->options['keep_map_id'])){
@@ -398,6 +412,18 @@ class ImportAIRTABLES extends Import
 				// Remove ID field
 				if (isset($fields['id'])) {
 					unset($fields['id']);
+				}
+
+				foreach($fields as $fieldKey => $fieldValue){
+					if(!in_array($fieldKey, $required_fields)){
+						if(is_array($fieldValue)){
+							$fields[$fieldKey] = array_shift($fieldValue);
+						} else if(is_scalar($fieldValue)){
+							$fields[$fieldKey] = $fieldValue;
+						} else {
+							unset($fields[$fieldKey]);
+						}
+					}
 				}
 
 				$instance = Marker::createInstance();

@@ -52,19 +52,7 @@ class EM_Events extends EM_Object {
 		$offset = ( $limit != "" && is_numeric($args['offset']) ) ? "OFFSET {$args['offset']}" : '';
 		
 		//Get fields that we can use in ordering and grouping, which can be event and location (excluding ambiguous) fields
-		$EM_Event = new EM_Event();
-		$EM_Location = new EM_Location();
-		$event_fields = array_keys($EM_Event->fields);
-		$location_fields = array(); //will contain location-specific fields, not ambiguous ones
-		foreach( array_keys($EM_Location->fields) as $field_name ){
-			if( !in_array($field_name, $event_fields) ) $location_fields[] = $field_name;
-		}
-		if( get_option('dbem_locations_enabled') ){
-			$accepted_fields = array_merge($event_fields, $location_fields);
-		}else{
-			//if locations disabled then we don't accept location-specific fields
-			$accepted_fields = $event_fields;
-		}
+		$accepted_fields = static::get_sql_accepted_fields();
 		
 		//Start SQL statement
 		
@@ -88,6 +76,8 @@ class EM_Events extends EM_Object {
 		}
 		
 		//check if we need to join a location table for this search, which is necessary if any location-specific are supplied, or if certain arguments such as orderby contain location fields
+		$EM_Location = new EM_Location();
+		$location_fields = array_intersect($accepted_fields, array_keys($EM_Location->fields));
 		if( !empty($args['groupby']) || (defined('EM_DISABLE_OPTIONAL_JOINS') && EM_DISABLE_OPTIONAL_JOINS) ){
 			$location_specific_args = array('town', 'state', 'country', 'region', 'near', 'geo', 'search');
 			$join_locations = false;
@@ -646,13 +636,30 @@ $limit $offset";
 		return apply_filters( 'em_events_build_sql_conditions', $conditions, $args );
 	}
 	
+	public static function get_sql_accepted_fields() {
+		$EM_Event = new EM_Event();
+		$EM_Location = new EM_Location();
+		$event_fields = array_keys($EM_Event->fields);
+		$location_fields = array(); //will contain location-specific fields, not ambiguous ones
+		foreach( array_keys($EM_Location->fields) as $field_name ){
+			if( !in_array($field_name, $event_fields) ) $location_fields[] = $field_name;
+		}
+		if( get_option('dbem_locations_enabled') ){
+			$accepted_fields = array_merge($event_fields, $location_fields);
+		}else{
+			//if locations disabled then we don't accept location-specific fields
+			$accepted_fields = $event_fields;
+		}
+		$accepted_fields[] = 'event_date_modified';
+		$accepted_fields[] = 'event_date_created';
+		return $accepted_fields;
+	}
+	
 	/**
 	 * Overrides EM_Object method to clean ambiguous fields and apply a filter to result.
 	 * @see EM_Object::build_sql_orderby()
 	 */
 	public static function build_sql_orderby( $args, $accepted_fields, $default_order = 'ASC' ){
-	    $accepted_fields[] = 'event_date_modified';
-	    $accepted_fields[] = 'event_date_created';
 	    $orderby = parent::build_sql_orderby($args, $accepted_fields, get_option('dbem_events_default_order'));
 		$orderby = self::build_sql_ambiguous_fields_helper($orderby); //fix ambiguous fields
 		return apply_filters( 'em_events_build_sql_orderby', $orderby, $args, $accepted_fields, $default_order );
@@ -663,8 +670,6 @@ $limit $offset";
 	 * @see EM_Object::build_sql_groupby()
 	 */
 	public static function build_sql_groupby( $args, $accepted_fields, $groupby_order = false, $default_order = 'ASC' ){
-	    $accepted_fields[] = 'event_date_modified';
-	    $accepted_fields[] = 'event_date_created';
 		$groupby = parent::build_sql_groupby($args, $accepted_fields);
 		//fix ambiguous fields and give them scope of events table
 		$groupby = self::build_sql_ambiguous_fields_helper($groupby);
@@ -676,8 +681,6 @@ $limit $offset";
 	 * @see EM_Object::build_sql_groupby_orderby()
 	 */
 	public static function build_sql_groupby_orderby($args, $accepted_fields, $default_order = 'ASC' ){
-	    $accepted_fields[] = 'event_date_modified';
-	    $accepted_fields[] = 'event_date_created';
 	    $group_orderby = parent::build_sql_groupby_orderby($args, $accepted_fields, get_option('dbem_events_default_order'));
 		//fix ambiguous fields and give them scope of events table
 		$group_orderby = self::build_sql_ambiguous_fields_helper($group_orderby);

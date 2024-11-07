@@ -27,9 +27,27 @@ class EM_Person extends WP_User{
 			parent::__construct($person_id);
 		}
 		$this->phone = get_metadata('user', $this->ID, 'dbem_phone', true); //extra field for EM
+		$this->phone_validity = true; // by default no validation, until EM\Phone
+		if( $this->phone && EM\Phone::is_enabled() ) {
+			// parse number ot make sure it's valid
+			$number = EM\Phone::parse( $this->phone );
+			if( $number ) {
+				$this->phone = $number;
+				$this->phone_validity = true;
+			} else {
+				$this->phone_validity = false;
+			}
+		}
 		do_action('em_person',$this, $person_id, $username);
 	}
 	
+	/**
+	 * //TODO : refactor this to handle no-user bookings too
+	 * @param $ids_only
+	 * @param $status
+	 *
+	 * @return mixed|null
+	 */
 	function get_bookings($ids_only = false, $status= false){
 		global $wpdb;
 		$status_condition = $blog_condition = '';
@@ -98,7 +116,18 @@ class EM_Person extends WP_User{
 						<tr><th><?php _e('Name','events-manager'); ?> : </th><th><a href="<?php echo $this->get_bookings_url(); ?>"><?php echo $this->get_name(); ?></a></th></tr>
 						<?php endif; ?>
 						<tr><th><?php _e('Email','events-manager'); ?> : </th><td><?php echo $this->user_email; ?></td></tr>
-						<tr><th><?php _e('Phone','events-manager'); ?> : </th><td><?php echo esc_html($this->phone); ?></td></tr>
+						<tr>
+							<th><?php _e('Phone','events-manager'); ?> : </th>
+							<td>
+								<?php
+									if( !$this->phone_validity ) {
+										echo '<span class="em-icon em-icon-warning em-tooltip" aria-label="'. esc_attr__('Invalid Number', 'events-manager') .'"></span>';
+									}
+									echo esc_html($this->phone);
+								?>
+							</td>
+						</tr>
+						<?php do_action('em_person_display_summary_bottom', $this); ?>
 					</table>
 				</td>
 			</tr>

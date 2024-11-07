@@ -413,7 +413,7 @@ class GP_Multi_Page_Navigation extends GWPerk {
 		} elseif ( $this->is_activate_on_first_page( $form ) ) {
 			$validation_result['failed_validation_page'] = $this->get_first_page_with_validation_error( $form );
 			add_filter( 'gform_validation_message_' . $form['id'], array( $this, 'modify_validation_message' ), 10, 2 );
-		} elseif ( $this->is_page_resubmission( $form ) ) {
+		} elseif ( $this->is_page_resubmission( $form ) && $this->get_target_page( $validation_result['form'] ) !== 0 ) {
 			/*
 			 * If the user navigates to an earlier page, in 'progression' or 'last_reached' mode, and then uses the page
 			 * navigation to move forward in the form, we need to validate all pages between the page they navigated

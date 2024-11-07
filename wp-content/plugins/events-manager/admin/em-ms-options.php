@@ -78,60 +78,7 @@ function em_ms_admin_options_page() {
 	global $save_button;
 	$save_button = '<tr><th>&nbsp;</th><td><p class="submit" style="margin:0px; padding:0px; text-align:right;"><input type="submit" class="button-primary" name="Submit" value="'. __( 'Save Changes', 'events-manager') .' ('. __('All','events-manager') .')" /></p></td></tr>';
 	//Do some multisite checking here for reuse
-	?>	
-	<script type="text/javascript" charset="utf-8"><?php include(EM_DIR.'/includes/js/admin-settings.js'); ?></script>
-	<script type="text/javascript" charset="utf-8">
-		jQuery(document).ready(function($){
-			//events
-			$('input[name="dbem_ms_global_events"]').on('change', function(){
-				if( $('input:radio[name="dbem_ms_global_events"]:checked').val() == 1 ){
-					$("tr#dbem_ms_global_events_links_row").show();
-					$('input:radio[name="dbem_ms_global_events_links"]:checked').trigger('change');
-				}else{
-					$("tr#dbem_ms_global_events_links_row, tr#dbem_ms_events_slug_row").hide();					
-				}
-			}).first().trigger('change');
-			$('input[name="dbem_ms_global_events_links"]').on('change', function(){
-				if( $('input:radio[name="dbem_ms_global_events_links"]:checked').val() == 1 ){
-					$("tr#dbem_ms_events_slug_row").hide();	
-				}else{				
-					$("tr#dbem_ms_events_slug_row").show();
-				}
-			}).first().trigger('change');
-			//locations
-			$('input[name="dbem_ms_mainblog_locations"]').on('change', function(){
-				if( $('input:radio[name="dbem_ms_mainblog_locations"]:checked').val() == 1 ){
-					$("tbody.em-global-locations").hide();
-				}else{
-					$("tbody.em-global-locations").show();					
-				}
-			}).first().trigger('change');
-			$('input[name="dbem_ms_global_locations"]').on('change', function(){
-				if( $('input:radio[name="dbem_ms_global_locations"]:checked').val() == 1 ){
-					$("tr#dbem_ms_global_locations_links_row").show();
-					$('input:radio[name="dbem_ms_global_locations_links"]:checked').trigger('change');
-				}else{
-					$("tr#dbem_ms_global_locations_links_row, tr#dbem_ms_locations_slug_row").hide();					
-				}
-			}).first().trigger('change');
-			$('input[name="dbem_ms_global_locations_links"]').on('change', function(){
-				if( $('input:radio[name="dbem_ms_global_locations_links"]:checked').val() == 1 ){
-					$("tr#dbem_ms_locations_slug_row").hide();	
-				}else{
-					$("tr#dbem_ms_locations_slug_row").show();				
-				}
-			});		
-			//MS Mode selection hiders 
-			$('input[name="dbem_ms_global_table"]').on('change', function(){ //global
-				if( $('input:radio[name="dbem_ms_global_table"]:checked').val() == 1 ){
-					$("tbody.em-global-options").show();
-					$('input:radio[name="dbem_ms_mainblog_locations"]:checked').trigger('change');
-				}else{
-					$("tbody.em-global-options").hide();					
-				}
-			}).first().trigger('change');	
-		});
-	</script>
+	?>
 	<style type="text/css">.postbox h3 { cursor:pointer; }</style>
 	<div class="wrap <?php if(empty($tabs_enabled)) echo 'tabs-active' ?>">
 		<div id='icon-options-general' class='icon32'><br /></div>

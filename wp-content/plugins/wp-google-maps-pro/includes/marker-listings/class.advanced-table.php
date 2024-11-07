@@ -175,6 +175,8 @@ class AdvancedTable extends \WPGMZA\MarkerDataTable
 	 */
 	protected function getSearchClause($input_params, &$query_params, $exclude_columns=null)
 	{
+		global $wpgmza;
+
 		if(!$exclude_columns)
 			$exclude_columns = array();
 		
@@ -186,14 +188,30 @@ class AdvancedTable extends \WPGMZA\MarkerDataTable
 			return "";
 		
 		$exclude_columns = array_merge($exclude_columns, $this->getCustomFieldColumnNames());
+
+		if(!empty($wpgmza->settings->enable_datatables_performance_mode)){
+			/* Performance mode enabled, exclude more columns */
+			$exclude_columns[] = 'icon';
+			$exclude_columns[] = 'link';
+			$exclude_columns[] = 'category';
+			$exclude_columns[] = 'description';
+		}
 		
 		$sql = \WPGMZA\MarkerDataTable::getSearchClause($input_params, $query_params, $exclude_columns);
 		
 		if(empty($sql))
 			return $sql;
 		
-		// TODO: This will be implemented as a trait in the future, when we drop support for PHP 5.3
-		$sql = \WPGMZA\ProAdminMarkerDataTable::appendCategoryAndCustomFieldSearchClauses($sql, $input_params, $query_params);
+		if(empty($wpgmza->settings->enable_datatables_performance_mode)){
+			/* 
+			 * Edited: 2024-10-10
+			 * 
+			 * This is now controlled by a setting, to allow this to be excluded from searches, to improve query time on big datasets
+			 * that use custom fields, but do not need them to be indexed
+			*/
+			// TODO: This will be implemented as a trait in the future, when we drop support for PHP 5.3
+			$sql = \WPGMZA\ProAdminMarkerDataTable::appendCategoryAndCustomFieldSearchClauses($sql, $input_params, $query_params);
+		}
 		
 		return $sql;
 	}

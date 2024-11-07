@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Contains class WP_Auth0_Admin_Advanced.
  *
@@ -11,7 +12,8 @@
  * Class WP_Auth0_Admin_Advanced.
  * All setting fields and validations for wp-admin > Auth0 > Settings > Advanced tab.
  */
-class WP_Auth0_Admin_Advanced extends WP_Auth0_Admin_Generic {
+class WP_Auth0_Admin_Advanced extends WP_Auth0_Admin_Generic
+{
 
 	/**
 	 * AJAX nonce action for the rotate token endpoint.
@@ -33,8 +35,9 @@ class WP_Auth0_Admin_Advanced extends WP_Auth0_Admin_Generic {
 	 * @param WP_Auth0_Options $options - WP_Auth0_Options instance.
 	 * @param WP_Auth0_Routes  $router - WP_Auth0_Routes instance.
 	 */
-	public function __construct( WP_Auth0_Options $options, WP_Auth0_Routes $router ) {
-		parent::__construct( $options );
+	public function __construct(WP_Auth0_Options $options, WP_Auth0_Routes $router)
+	{
+		parent::__construct($options);
 		$this->router                = $router;
 		$this->actions_middlewares[] = 'migration_ws_validation';
 		$this->actions_middlewares[] = 'migration_ips_validation';
@@ -46,52 +49,53 @@ class WP_Auth0_Admin_Advanced extends WP_Auth0_Admin_Generic {
 	 * @see \WP_Auth0_Admin::init_admin
 	 * @see \WP_Auth0_Admin_Generic::init_option_section
 	 */
-	public function init() {
+	public function init()
+	{
 		$options = [
 			[
-				'name'     => __( 'Require Verified Email', 'wp-auth0' ),
+				'name'     => esc_html__('Require Verified Email', 'wp-auth0'),
 				'opt'      => 'requires_verified_email',
 				'id'       => 'wpa0_verified_email',
 				'function' => 'render_verified_email',
 			],
 			[
-				'name'     => __( 'Skip Strategies', 'wp-auth0' ),
+				'name'     => esc_html__('Skip Strategies', 'wp-auth0'),
 				'opt'      => 'skip_strategies',
 				'id'       => 'wpa0_skip_strategies',
 				'function' => 'render_skip_strategies',
 			],
 			[
-				'name'     => __( 'Remember User Session', 'wp-auth0' ),
+				'name'     => esc_html__('Remember User Session', 'wp-auth0'),
 				'opt'      => 'remember_users_session',
 				'id'       => 'wpa0_remember_users_session',
 				'function' => 'render_remember_users_session',
 			],
 			[
-				'name'     => __( 'Login Redirection URL', 'wp-auth0' ),
+				'name'     => esc_html__('Login Redirection URL', 'wp-auth0'),
 				'opt'      => 'default_login_redirection',
 				'id'       => 'wpa0_default_login_redirection',
 				'function' => 'render_default_login_redirection',
 			],
 			[
-				'name'     => __( 'Force HTTPS Callback', 'wp-auth0' ),
+				'name'     => esc_html__('Force HTTPS Callback', 'wp-auth0'),
 				'opt'      => 'force_https_callback',
 				'id'       => 'wpa0_force_https_callback',
 				'function' => 'render_force_https_callback',
 			],
 			[
-				'name'     => __( 'Auto Provisioning', 'wp-auth0' ),
+				'name'     => esc_html__('Auto Provisioning', 'wp-auth0'),
 				'opt'      => 'auto_provisioning',
 				'id'       => 'wpa0_auto_provisioning',
 				'function' => 'render_auto_provisioning',
 			],
 			[
-				'name'     => __( 'User Migration Endpoints', 'wp-auth0' ),
+				'name'     => esc_html__('User Migration Endpoints', 'wp-auth0'),
 				'opt'      => 'migration_ws',
 				'id'       => 'wpa0_migration_ws',
 				'function' => 'render_migration_ws',
 			],
 			[
-				'name'     => __( 'Migration IPs Whitelist', 'wp-auth0' ),
+				'name'     => esc_html__('Migration IPs Whitelist', 'wp-auth0'),
 				'opt'      => 'migration_ips_filter',
 				'id'       => 'wpa0_migration_ws_ips_filter',
 				'function' => 'render_migration_ws_ips_filter',
@@ -103,26 +107,26 @@ class WP_Auth0_Admin_Advanced extends WP_Auth0_Admin_Generic {
 				'function' => 'render_migration_ws_ips',
 			],
 			[
-				'name'     => __( 'Valid Proxy IP', 'wp-auth0' ),
+				'name'     => esc_html__('Valid Proxy IP', 'wp-auth0'),
 				'opt'      => 'valid_proxy_ip',
 				'id'       => 'wpa0_valid_proxy_ip',
 				'function' => 'render_valid_proxy_ip',
 			],
 			[
-				'name'     => __( 'Cookie Domain', 'wp-auth0' ),
+				'name'     => esc_html__('Cookie Domain', 'wp-auth0'),
 				'opt'      => 'cookie_domain',
 				'id'       => 'wpa0_cookie_domain',
 				'function' => 'render_cookie_domain',
 			],
 			[
-				'name'     => __( 'Disable Auth0 logging in Wordpress', 'wp-auth0' ),
+				'name'     => esc_html__('Disable Auth0 logging in Wordpress', 'wp-auth0'),
 				'opt'      => 'disable_logging',
 				'id'       => 'wpa0_disable_logging',
 				'function' => 'render_disable_logging',
 			],
 		];
 
-		$this->init_option_section( '', 'advanced', $options );
+		$this->init_option_section('', 'advanced', $options);
 	}
 
 	/**
@@ -134,12 +138,13 @@ class WP_Auth0_Admin_Advanced extends WP_Auth0_Admin_Generic {
 	 * @see WP_Auth0_Admin_Generic::init_option_section()
 	 * @see add_settings_field()
 	 */
-	public function render_verified_email( $args = [] ) {
-		$this->render_switch( $args['label_for'], $args['opt_name'], 'wpa0_skip_strategies' );
+	public function render_verified_email($args = [])
+	{
+		$this->render_switch($args['label_for'], $args['opt_name'], 'wpa0_skip_strategies');
 		$this->render_field_description(
-			__( 'Require new users to both provide and verify their email before logging in. ', 'wp-auth0' ) .
-			__( 'An email address is verified manually by an email from Auth0 or automatically by the provider. ', 'wp-auth0' ) .
-			__( 'This will disallow logins from social connections that do not provide email (like Twitter)', 'wp-auth0' )
+			esc_html__('Require new users to both provide and verify their email before logging in. ', 'wp-auth0') .
+				esc_html__('An email address is verified manually by an email from Auth0 or automatically by the provider. ', 'wp-auth0') .
+				esc_html__('This will disallow logins from social connections that do not provide email (like Twitter)', 'wp-auth0')
 		);
 	}
 
@@ -154,13 +159,14 @@ class WP_Auth0_Admin_Advanced extends WP_Auth0_Admin_Generic {
 	 *
 	 * @since 3.8.0
 	 */
-	public function render_skip_strategies( $args = [] ) {
-		$this->render_text_field( $args['label_for'], $args['opt_name'], 'text', 'e.g. "twitter,ldap"' );
+	public function render_skip_strategies($args = [])
+	{
+		$this->render_text_field($args['label_for'], $args['opt_name'], 'text', 'e.g. "twitter,ldap"');
 		$this->render_field_description(
-			__( 'Enter one or more strategies, separated by commas, to skip email verification. ', 'wp-auth0' ) .
-			__( 'You can find the strategy under the "Connection Name" field in the Auth0 dashboard. ', 'wp-auth0' ) .
-			__( 'Leave this field blank to require email for all strategies. ', 'wp-auth0' ) .
-			__( 'This could introduce a security risk and should be used sparingly, if at all', 'wp-auth0' )
+			esc_html__('Enter one or more strategies, separated by commas, to skip email verification. ', 'wp-auth0') .
+				esc_html__('You can find the strategy under the "Connection Name" field in the Auth0 dashboard. ', 'wp-auth0') .
+				esc_html__('Leave this field blank to require email for all strategies. ', 'wp-auth0') .
+				esc_html__('This could introduce a security risk and should be used sparingly, if at all', 'wp-auth0')
 		);
 	}
 
@@ -173,11 +179,12 @@ class WP_Auth0_Admin_Advanced extends WP_Auth0_Admin_Generic {
 	 * @see WP_Auth0_Admin_Generic::init_option_section()
 	 * @see add_settings_field()
 	 */
-	public function render_remember_users_session( $args = [] ) {
-		$this->render_switch( $args['label_for'], $args['opt_name'] );
+	public function render_remember_users_session($args = [])
+	{
+		$this->render_switch($args['label_for'], $args['opt_name']);
 		$this->render_field_description(
-			__( 'A user session by default is kept for two days. ', 'wp-auth0' ) .
-			__( 'Enabling this setting will extend that and make the session be kept for 14 days', 'wp-auth0' )
+			esc_html__('A user session by default is kept for two days. ', 'wp-auth0') .
+				esc_html__('Enabling this setting will extend that and make the session be kept for 14 days', 'wp-auth0')
 		);
 	}
 
@@ -190,11 +197,12 @@ class WP_Auth0_Admin_Advanced extends WP_Auth0_Admin_Generic {
 	 * @see WP_Auth0_Admin_Generic::init_option_section()
 	 * @see add_settings_field()
 	 */
-	public function render_default_login_redirection( $args = [] ) {
-		$this->render_text_field( $args['label_for'], $args['opt_name'] );
+	public function render_default_login_redirection($args = [])
+	{
+		$this->render_text_field($args['label_for'], $args['opt_name']);
 		$this->render_field_description(
-			__( 'URL where successfully logged-in users are redirected when using the wp-login.php page. ', 'wp-auth0' ) .
-			__( 'This can be overridden with the <code>redirect_to</code> URL parameter', 'wp-auth0' )
+			esc_html__('URL where successfully logged-in users are redirected when using the wp-login.php page. ', 'wp-auth0') .
+				wp_kses(__('This can be overridden with the <code>redirect_to</code> URL parameter', 'wp-auth0'), ['code' => []])
 		);
 	}
 
@@ -207,11 +215,12 @@ class WP_Auth0_Admin_Advanced extends WP_Auth0_Admin_Generic {
 	 * @see WP_Auth0_Admin_Generic::init_option_section()
 	 * @see add_settings_field()
 	 */
-	public function render_force_https_callback( $args = [] ) {
-		$this->render_switch( $args['label_for'], $args['opt_name'] );
+	public function render_force_https_callback($args = [])
+	{
+		$this->render_switch($args['label_for'], $args['opt_name']);
 		$this->render_field_description(
-			__( 'Forces the plugin to use HTTPS for the callback URL when a site supports both; ', 'wp-auth0' ) .
-			__( 'if disabled, the protocol from the WordPress home URL will be used', 'wp-auth0' )
+			esc_html__('Forces the plugin to use HTTPS for the callback URL when a site supports both; ', 'wp-auth0') .
+				esc_html__('if disabled, the protocol from the WordPress home URL will be used', 'wp-auth0')
 		);
 	}
 
@@ -224,11 +233,12 @@ class WP_Auth0_Admin_Advanced extends WP_Auth0_Admin_Generic {
 	 * @see WP_Auth0_Admin_Generic::init_option_section()
 	 * @see add_settings_field()
 	 */
-	public function render_auto_provisioning( $args = [] ) {
-		$this->render_switch( $args['label_for'], $args['opt_name'] );
+	public function render_auto_provisioning($args = [])
+	{
+		$this->render_switch($args['label_for'], $args['opt_name']);
 		$this->render_field_description(
-			__( 'Create new users in the WordPress database when signups are off. ', 'wp-auth0' ) .
-			__( 'Signups will not be allowed but successful Auth0 logins will add the user in WordPress', 'wp-auth0' )
+			esc_html__('Create new users in the WordPress database when signups are off. ', 'wp-auth0') .
+				esc_html__('Signups will not be allowed but successful Auth0 logins will add the user in WordPress', 'wp-auth0')
 		);
 	}
 
@@ -241,11 +251,12 @@ class WP_Auth0_Admin_Advanced extends WP_Auth0_Admin_Generic {
 	 * @see WP_Auth0_Admin_Generic::init_option_section()
 	 * @see add_settings_field()
 	 */
-	public function render_disable_logging( $args = [] ) {
-		$this->render_switch( $args['label_for'], $args['opt_name'] );
+	public function render_disable_logging($args = [])
+	{
+		$this->render_switch($args['label_for'], $args['opt_name']);
 		$this->render_field_description(
-			__( 'Disables Auth0 logging within WordPress. ', 'wp-auth0' ) .
-			__( 'If enabled, Auth0 logging will be disabled in WordPress. Other Auth0 logs are unaffected by this switch', 'wp-auth0' )
+			esc_html__('Disables Auth0 logging within WordPress. ', 'wp-auth0') .
+				esc_html__('If enabled, Auth0 logging will be disabled in WordPress. Other Auth0 logs are unaffected by this switch', 'wp-auth0')
 		);
 	}
 
@@ -258,10 +269,11 @@ class WP_Auth0_Admin_Advanced extends WP_Auth0_Admin_Generic {
 	 * @see WP_Auth0_Admin_Generic::init_option_section()
 	 * @see add_settings_field()
 	 */
-	public function render_cookie_domain( $args = [] ) {
-		$this->render_text_field( $args['label_for'], $args['opt_name'] );
+	public function render_cookie_domain($args = [])
+	{
+		$this->render_text_field($args['label_for'], $args['opt_name']);
 		$this->render_field_description(
-			__( 'Overrides the default domain assignment for cookie storage. Use with caution.', 'wp-auth0' )
+			esc_html__('Overrides the default domain assignment for cookie storage. Use with caution.', 'wp-auth0')
 		);
 	}
 
@@ -274,45 +286,46 @@ class WP_Auth0_Admin_Advanced extends WP_Auth0_Admin_Generic {
 	 * @see WP_Auth0_Admin_Generic::init_option_section()
 	 * @see add_settings_field()
 	 */
-	public function render_migration_ws( $args = [] ) {
-		$value = $this->options->get( $args['opt_name'] );
-		$this->render_switch( $args['label_for'], $args['opt_name'] );
+	public function render_migration_ws($args = [])
+	{
+		$value = $this->options->get($args['opt_name']);
+		$this->render_switch($args['label_for'], $args['opt_name']);
 
-		if ( $value ) {
+		if ($value) {
 			$this->render_field_description(
-				__( 'User migration endpoints activated. ', 'wp-auth0' ) .
-				__( 'See below for the token to use. ', 'wp-auth0' ) .
-				__( 'The custom database scripts need to be configured manually as described ', 'wp-auth0' ) .
-				$this->get_docs_link( 'cms/wordpress/user-migration' )
+				esc_html__('User migration endpoints activated. ', 'wp-auth0') .
+					esc_html__('See below for the token to use. ', 'wp-auth0') .
+					esc_html__('The custom database scripts need to be configured manually as described ', 'wp-auth0') .
+					$this->get_docs_link('cms/wordpress/user-migration')
 			);
-			$this->render_field_description( 'Migration token:' );
-			if ( $this->options->has_constant_val( 'migration_token' ) ) {
-				$this->render_const_notice( 'migration_token' );
+			$this->render_field_description('Migration token:');
+			if ($this->options->has_constant_val('migration_token')) {
+				$this->render_const_notice('migration_token');
 			}
 
-			$migration_token = $this->options->get( 'migration_token' );
+			$migration_token = $this->options->get('migration_token');
 			printf(
 				'<code class="code-block" id="auth0_migration_token" disabled>%s</code><br>',
-				$migration_token ? sanitize_text_field( $migration_token ) : __( 'No migration token', 'wp-auth0' )
+				esc_html($migration_token ? sanitize_text_field($migration_token) : esc_html__('No migration token', 'wp-auth0'))
 			);
 
-			if ( ! $this->options->has_constant_val( 'migration_token' ) ) {
-				printf(
+			if (!$this->options->has_constant_val('migration_token')) {
+				echo wp_kses(sprintf(
 					'<button id="%s" class="button button-secondary" data-confirm-msg="%s">%s</button>',
-					esc_attr( self::ROTATE_TOKEN_NONCE_ACTION ),
+					esc_attr(self::ROTATE_TOKEN_NONCE_ACTION),
 					esc_attr(
-						__( 'This will change your migration token immediately. ', 'wp-auth0' ) .
-						__( 'The new token must be changed in the custom scripts for your database Connection. ', 'wp-auth0' ) .
-						__( 'Continue?', 'wp-auth0' )
+						esc_html__('This will change your migration token immediately. ', 'wp-auth0') .
+							esc_html__('The new token must be changed in the custom scripts for your database Connection. ', 'wp-auth0') .
+							esc_html__('Continue?', 'wp-auth0')
 					),
-					__( 'Generate New Migration Token', 'wp-auth0' )
-				);
+					esc_html__('Generate New Migration Token', 'wp-auth0')
+				), ['button' => ['id' => true, 'class' => true, 'data-confirm-msg' => true]]);
 			}
 		} else {
 			$this->render_field_description(
-				__( 'User migration endpoints deactivated. ', 'wp-auth0' ) .
-				__( 'Custom database connections can be deactivated in the ', 'wp-auth0' ) .
-				$this->get_dashboard_link( 'connections/database' )
+				esc_html__('User migration endpoints deactivated. ', 'wp-auth0') .
+					esc_html__('Custom database connections can be deactivated in the ', 'wp-auth0') .
+					$this->get_dashboard_link('connections/database')
 			);
 		}
 	}
@@ -326,8 +339,9 @@ class WP_Auth0_Admin_Advanced extends WP_Auth0_Admin_Generic {
 	 * @see WP_Auth0_Admin_Generic::init_option_section()
 	 * @see add_settings_field()
 	 */
-	public function render_migration_ws_ips_filter( $args = [] ) {
-		$this->render_switch( $args['label_for'], $args['opt_name'], 'wpa0_migration_ws_ips' );
+	public function render_migration_ws_ips_filter($args = [])
+	{
+		$this->render_switch($args['label_for'], $args['opt_name'], 'wpa0_migration_ws_ips');
 	}
 
 	/**
@@ -339,14 +353,15 @@ class WP_Auth0_Admin_Advanced extends WP_Auth0_Admin_Generic {
 	 * @see WP_Auth0_Admin_Generic::init_option_section()
 	 * @see add_settings_field()
 	 */
-	public function render_migration_ws_ips( $args = [] ) {
-		$ip_check = new WP_Auth0_Ip_Check( WP_Auth0_Options::Instance() );
-		$this->render_textarea_field( $args['label_for'], $args['opt_name'] );
+	public function render_migration_ws_ips($args = [])
+	{
+		$ip_check = new WP_Auth0_Ip_Check(WP_Auth0_Options::Instance());
+		$this->render_textarea_field($args['label_for'], $args['opt_name']);
 		$this->render_field_description(
-			__( 'Only requests from these IPs will be allowed to access the migration endpoints. ', 'wp-auth0' ) .
-			__( 'Separate multiple IPs with commas. ', 'wp-auth0' ) .
-			__( 'The following Auth0 IPs are automatically whitelisted: ', 'wp-auth0' ) .
-			'<br><br><code>' . $ip_check->get_ips_by_domain( null, '</code> <code>' ) . '</code>'
+			esc_html__('Only requests from these IPs will be allowed to access the migration endpoints. ', 'wp-auth0') .
+				esc_html__('Separate multiple IPs with commas. ', 'wp-auth0') .
+				esc_html__('The following Auth0 IPs are automatically whitelisted: ', 'wp-auth0') .
+				'<br><br><code>' . $ip_check->get_ips_by_domain(null, '</code> <code>') . '</code>'
 		);
 	}
 
@@ -359,10 +374,11 @@ class WP_Auth0_Admin_Advanced extends WP_Auth0_Admin_Generic {
 	 * @see WP_Auth0_Admin_Generic::init_option_section()
 	 * @see add_settings_field()
 	 */
-	public function render_valid_proxy_ip( $args = [] ) {
-		$this->render_text_field( $args['label_for'], $args['opt_name'] );
+	public function render_valid_proxy_ip($args = [])
+	{
+		$this->render_text_field($args['label_for'], $args['opt_name']);
 		$this->render_field_description(
-			__( 'Whitelist for proxy and load balancer IPs to enable logins and migration webservices', 'wp-auth0' )
+			esc_html__('Whitelist for proxy and load balancer IPs to enable logins and migration webservices', 'wp-auth0')
 		);
 	}
 
@@ -373,20 +389,21 @@ class WP_Auth0_Admin_Advanced extends WP_Auth0_Admin_Generic {
 	 *
 	 * @return array
 	 */
-	public function basic_validation( array $input ) {
-		$input['requires_verified_email']   = $this->sanitize_switch_val( $input['requires_verified_email'] ?? null );
-		$input['skip_strategies']           = $this->sanitize_text_val( $input['skip_strategies'] ?? null );
-		$input['remember_users_session']    = $this->sanitize_switch_val( $input['remember_users_session'] ?? null );
-		$input['default_login_redirection'] = $this->validate_login_redirect( $input['default_login_redirection'] ?? null );
-		$input['force_https_callback']      = $this->sanitize_switch_val( $input['force_https_callback'] ?? null );
-		$input['auto_provisioning']         = $this->sanitize_switch_val( $input['auto_provisioning'] ?? null );
+	public function basic_validation(array $input)
+	{
+		$input['requires_verified_email']   = $this->sanitize_switch_val($input['requires_verified_email'] ?? null);
+		$input['skip_strategies']           = $this->sanitize_text_val($input['skip_strategies'] ?? null);
+		$input['remember_users_session']    = $this->sanitize_switch_val($input['remember_users_session'] ?? null);
+		$input['default_login_redirection'] = $this->validate_login_redirect($input['default_login_redirection'] ?? null);
+		$input['force_https_callback']      = $this->sanitize_switch_val($input['force_https_callback'] ?? null);
+		$input['auto_provisioning']         = $this->sanitize_switch_val($input['auto_provisioning'] ?? null);
 		// `migration_ws` is sanitized in $this->migration_ws_validation() below.
 		// `migration_token` is sanitized in $this->migration_ws_validation() below.
-		$input['migration_ips_filter'] = $this->sanitize_switch_val( $input['migration_ips_filter'] ?? null );
+		$input['migration_ips_filter'] = $this->sanitize_switch_val($input['migration_ips_filter'] ?? null);
 		// `migration_ips` is sanitized in $this->migration_ips_validation() below.
-		$input['valid_proxy_ip']        = ( isset( $input['valid_proxy_ip'] ) ? $input['valid_proxy_ip'] : null );
-		$input['cookie_domain']   = $this->sanitize_text_val( $input['cookie_domain'] ?? null );
-		$input['disable_logging'] = $this->sanitize_switch_val( $input['disable_logging'] ?? null );
+		$input['valid_proxy_ip']        = (isset($input['valid_proxy_ip']) ? $input['valid_proxy_ip'] : null);
+		$input['cookie_domain']   = $this->sanitize_text_val($input['cookie_domain'] ?? null);
+		$input['disable_logging'] = $this->sanitize_switch_val($input['disable_logging'] ?? null);
 		return $input;
 	}
 
@@ -398,15 +415,16 @@ class WP_Auth0_Admin_Advanced extends WP_Auth0_Admin_Generic {
 	 *
 	 * @return array
 	 */
-	public function migration_ws_validation( array $input ) {
-		$input['migration_ws']    = $this->sanitize_switch_val( $input['migration_ws'] ?? null );
-		$input['migration_token'] = $this->options->get( 'migration_token' );
+	public function migration_ws_validation(array $input)
+	{
+		$input['migration_ws']    = $this->sanitize_switch_val($input['migration_ws'] ?? null);
+		$input['migration_token'] = $this->options->get('migration_token');
 
-		if ( empty( $input['migration_token'] ) ) {
+		if (empty($input['migration_token'])) {
 			$input['migration_token'] = wp_auth0_generate_token();
 		}
 
-		if ( $input['migration_ws'] ) {
+		if ($input['migration_ws']) {
 			$this->router->setup_rewrites();
 			flush_rewrite_rules();
 		}
@@ -422,25 +440,26 @@ class WP_Auth0_Admin_Advanced extends WP_Auth0_Admin_Generic {
 	 *
 	 * @return array
 	 */
-	public function migration_ips_validation( array $input ) {
+	public function migration_ips_validation(array $input)
+	{
 
-		if ( empty( $input['migration_ips'] ) ) {
+		if (empty($input['migration_ips'])) {
 			$input['migration_ips'] = '';
 			return $input;
 		}
 
-		$ip_addresses = explode( ',', $this->sanitize_text_val( $input['migration_ips'] ) );
-		$ip_addresses = array_map( 'trim', $ip_addresses );
-		$ip_addresses = array_filter( $ip_addresses );
-		$ip_addresses = array_unique( $ip_addresses );
+		$ip_addresses = explode(',', $this->sanitize_text_val($input['migration_ips']));
+		$ip_addresses = array_map('trim', $ip_addresses);
+		$ip_addresses = array_filter($ip_addresses);
+		$ip_addresses = array_unique($ip_addresses);
 
-		if ( ! empty( $input['domain'] ) ) {
+		if (!empty($input['domain'])) {
 			$ip_check      = new WP_Auth0_Ip_Check();
-			$whitelist_ips = $ip_check->get_ips_by_domain( $input['domain'], null );
-			$ip_addresses  = array_diff( $ip_addresses, $whitelist_ips );
+			$whitelist_ips = $ip_check->get_ips_by_domain($input['domain'], null);
+			$ip_addresses  = array_diff($ip_addresses, $whitelist_ips);
 		}
 
-		$input['migration_ips'] = implode( ', ', $ip_addresses );
+		$input['migration_ips'] = implode(', ', $ip_addresses);
 		return $input;
 	}
 
@@ -452,35 +471,36 @@ class WP_Auth0_Admin_Advanced extends WP_Auth0_Admin_Generic {
 	 *
 	 * @return string
 	 */
-	public function validate_login_redirect( $new_url, $existing_url = null ) {
-		$new_redirect_url = esc_url_raw( strtolower( $new_url ) );
-		$old_redirect_url = $existing_url ?? $this->options->get( 'default_login_redirection' );
+	public function validate_login_redirect($new_url, $existing_url = null)
+	{
+		$new_redirect_url = esc_url_raw(strtolower($new_url));
+		$old_redirect_url = $existing_url ?? $this->options->get('default_login_redirection');
 
 		// No change so no validation needed.
-		if ( $new_redirect_url === strtolower( $old_redirect_url ) ) {
+		if ($new_redirect_url === strtolower($old_redirect_url)) {
 			return $new_url;
 		}
 
 		$home_url = home_url();
 
 		// Set the default redirection URL to be the homepage.
-		if ( empty( $new_redirect_url ) ) {
+		if (empty($new_redirect_url)) {
 			return $home_url;
 		}
 
 		// Allow subdomains within the same domain.
-		$home_domain     = $this->get_domain( $home_url );
-		$redirect_domain = $this->get_domain( $new_redirect_url );
-		if ( $home_domain === $redirect_domain ) {
+		$home_domain     = $this->get_domain($home_url);
+		$redirect_domain = $this->get_domain($new_redirect_url);
+		if ($home_domain === $redirect_domain) {
 			return $new_url;
 		}
 
 		// If we get here, the redirect URL is a page outside of the WordPress install.
-		$error = __( 'Advanced > "Login Redirection URL" cannot point to another site.', 'wp-auth0' );
-		$this->add_validation_error( $error );
+		$error = esc_html__('Advanced > "Login Redirection URL" cannot point to another site.', 'wp-auth0');
+		$this->add_validation_error($error);
 
 		// Either revert to the previous (validated) value or set as the homepage.
-		return ! empty( $old_redirect_url ) ? $old_redirect_url : $home_url;
+		return !empty($old_redirect_url) ? $old_redirect_url : $home_url;
 	}
 
 	/**
@@ -490,11 +510,12 @@ class WP_Auth0_Admin_Advanced extends WP_Auth0_Admin_Generic {
 	 *
 	 * @return mixed|string
 	 */
-	private function get_domain( $url ) {
-		$host_pieces = explode( '.', wp_parse_url( $url, PHP_URL_HOST ) );
-		$domain      = array_pop( $host_pieces );
-		if ( count( $host_pieces ) ) {
-			$domain = array_pop( $host_pieces ) . '.' . $domain;
+	private function get_domain($url)
+	{
+		$host_pieces = explode('.', wp_parse_url($url, PHP_URL_HOST));
+		$domain      = array_pop($host_pieces);
+		if (count($host_pieces)) {
+			$domain = array_pop($host_pieces) . '.' . $domain;
 		}
 		return $domain;
 	}

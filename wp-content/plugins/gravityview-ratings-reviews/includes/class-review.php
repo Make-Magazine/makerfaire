@@ -1125,12 +1125,13 @@ class GravityView_Ratings_Reviews_Review extends GravityView_Ratings_Reviews_Com
 			return [];
 		}
 
-		$view     = gravityview()->request->is_view();
+		$views = GravityView_View_Data::getInstance()->views->all();
+		$view = reset( $views );
+
 		$view_settings = $view ? $view->settings->all() : [];
-		$limit_one_review_per_person = 0;
-		if ( isset( $view_settings['limit_one_review_per_person'] ) ) {
-			$limit_one_review_per_person = (int) $view_settings['limit_one_review_per_person'];
-		}
+
+		$limit_one_review_per_person = (int) ( $view_settings['limit_one_review_per_person'] ?? 0 );
+		$limit_one_review_per_person = GFCommon::current_user_can_any( [ 'manage_options', 'moderate_comments' ] ) ? 0 : $limit_one_review_per_person;
 
 		$vars = [
 			'comment_label_when_reply'      => __( 'Comment', 'gravityview-ratings-reviews' ),

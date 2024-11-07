@@ -3,10 +3,10 @@ Contributors: msykes, pxlite, nutsmuggler, netweblogic
 Donate link: https://wp-events-plugin.com
 Tags: events, calendar, tickets, bookings, appointments
 Text Domain: events-manager
-Requires at least: 5.2
+Requires at least: 5.3
 Tested up to: 6.6
-Stable tag: 6.4.10.1
-Requires PHP: 5.3
+Stable tag: 6.6.3
+Requires PHP: 7.0
 License: GPLv2
 
 Fully featured events calendar, booking registration (RSVP), recurring events, locations management, Google Maps
@@ -15,7 +15,7 @@ Fully featured events calendar, booking registration (RSVP), recurring events, l
 
 Events Manager is a full-featured event calendar, bookings and registration management plugin for WordPress based on the principles of flexibility, reliability and powerful features!
 
-** Limited-Time Offer - Up to 30% our current price plans! [Get Pro Now](https://wp-events-plugin.com/pricing/?utm_source=repo&utm_medium=readme&utm_campaign=promo2024-02) **
+**Limited-Time Offer - Up to 30% our current price plans! [Get Pro Now](http://em.cm/promo2024-09-readme)**
 
 * [Demo](https://eventsmanager.site)
 * [Documentation](http://wp-events-plugin.com/documentation/)
@@ -85,7 +85,7 @@ We have a premium [Pro add-on for Events Manager](http://eventsmanagerpro.com/go
  * Manage bookings on your phone
  * Check In/Out users
 * Waitlists
-* Automation (NEW!) - ultimate flexibility in automation!
+* Automation - ultimate flexibility in automation!
  * Triggers:
   * X time before/after events start
   * When a booking status changes
@@ -93,6 +93,8 @@ We have a premium [Pro add-on for Events Manager](http://eventsmanagerpro.com/go
  * Actions
   * Send Webhook (Zapier, MS Automation and many other services)
   * Send Email
+  * Send WhatsApp, SMS, Telegram notifications
+* WhatsApp, SMS, Telegram integration and interactive flows
 * Coupon Codes
 * Custom booking email per event and gateway
 * Faster support via private Pro forums
@@ -163,7 +165,117 @@ See our [FAQ](http://wp-events-plugin.com/documentation/faq/) page for helps wit
 18. Grid view for displaying your upcoming events at a glance
 
 == Changelog ==
-= 6.4.10.2 (Dev) =
+= 6.6.3 =
+* Fixed JS error preventing full bookings table admin AJAX functionality in certain languages such as French.
+* Fixed SQL ordering issues causing empty attendee and ticket views in bookings admin area.
+* Added 'booking' array arg to em_bookings_table_get_booking_allowed_actions filter.
+* Fixed WPML error when duplicating an event.
+
+= 6.6.2 =
+* Added aria-label to ticket selection.
+* Disabled phone module for PHP versions 8.0 due to compatibility issues.
+* Fixed consent not passing validation if marked required yet checked.
+* Fixed ordering issues in booking admin tables, including the inability to order booking fields in a ticket view.
+* Fixed general orderby failing to apply if passed with an ASC or DESC definition.
+* Fixed status filtering issues in booking admin tables.
+* Changed some PHP array declarations to bracket shortform.
+
+= 6.6.1 =
+* fixed some initial phone number display issues overlapping country selectors on front-end
+* fixed fatal error in settings page
+
+= 6.6 =
+* Added communications consent. Ask or require users to consent to being contacted, with history of last acceptance or revocation accross all bookings/user (if admin has caps)
+* Added international phone number input field and validation, see the Phone Numbers section on Settings > General
+* Fixed bookings not showing in bookings table when in Multisite Global Mode
+* Fixed scope filter saving issues in booking/event-booking admin tables
+* Changed default scope to 'future' for booking/event-booking admin tables
+* Transitioned known booking meta keys from legacy to new format for storage, with plans to phase out support for previous format of _x_... for arrays, opting for _x|... instead ('registration', 'attendees', 'coupon', 'booking', 'zoom', 'test', 'discounts', 'surcharges')
+* Updated countries list to include more translations, file-separated storage for optimal loading, and extra missing countries - Kosovans, we've migrated the KV country code to the more recognized XK code including migrating previous location data
+* Moved admin-settings.js into external included file rather than inline.
+* Transitioned phone numbers into real feature.
+* Added example real-time input in settings.
+* Added `EM_Booking->get_meta()`, `EM_Booking->update_user_meta()`, and `EM_Booking->get_user_meta()`.
+* Added `em_bookings_get_sql_orderby_joins` filter for custom ordering options.
+* Added `EM_DateTime::create()` for chaining quick dates.
+* Added `em_person_display_summary_bottom` action.
+* Updated intlTelInput to 23.0.8.
+* Fixed selectize.js not allowing custom data- properties in non-multiple selectize dropdowns.
+* Fixed JS modal.remove() JS error in list tables introduced in dev versions.
+* Moved all JS UI setups (datepicker, time, tippy, phone, selectize) into `em_setup_ui_elements()` for easy reloading in containers.
+* Added `em_nouser_booking_details_modified` action.
+* Moved data privacy/consent into own classes folder with parent/child structure and standardized functionality between privacy/comms consent.
+* Transitioned known booking meta keys into newer piped format to break up arrays rather than underscores including (registration, attendees, coupon, booking, zoom, test, discounts, surcharges).
+* Fixed some display issues on view person bookings admin page.
+* Fixed PHP warnings on empty graphs in booking dashboards.
+* Fixed empty graph data when viewing booking data as event admins without manage_others_bookings capabilities.
+* Added more WP_Screen compatibility on front-end in case other plugins load template.php but not WP_Class which results in a fatal error.
+* Fixed backend events with bookings admin tables linking to front-end.
+* Fixed PHP notices on bookings admin tables.
+* Fixed $location_fields fatal PHP errors when loading maps and location-dependent event search queries.
+* Added option to exclude taxes from subtotal in booking summary pricing.
+* Added `EM_Bookings` search by `booking_id`.
+* Fixed `EM_Booking->can_rsvp()` occasionally providing incorrect result if number types are strings, as well as check to make sure booking is approved.
+* Added requirements check class.
+* Added `events_manager_plugin_loaded` action for loading any EM-dependent plugins early on in `plugins_loaded`.
+* Improved consent options including better `EM_Person` consent checks and a default to consented option if user already active (in development).
+* Fixed rows setting not getting saved.
+* Fixed summary issues showing empty summary section, fixed typo in new option from last commit (in development).
+
+= 6.5.2 =
+* Fixed fatal error on dashboard with Charts widget enabled.
+* Fixed 'array_key_exists' fatal error (not reproduced) on bookings dashboard in limited cases - pending further confirmation to reproduce/fix potential underlying issue.
+* Fixed JS issues preventing event links from being clicked on the 'events with bookings' list table.
+* Minor CSS fixes showing button outlines when clicked.
+* Fixed rare calendar issue preventing future months from showing events.
+* Removed all unnecessary query string params aside from yr/mo in calendar navigation links.
+* Fixed calendar search trigger not working when default search is set to inline mode.
+* Fixed rare selectize JS issue not being initialized properly due to jQuery firing before DOMContentLoaded.
+* Fixed settings/tags/taxonomies having white as default color as opposed to the settings page default and also defaulting to #80b538 avoiding white-on-white display issues.
+* Added ordering to savable filtering options.
+
+= 6.5.1 =
+* Fixed hard-coded naming of bookings table for SQL query affecting list table searches on WP installs with custom DB prefixes.
+* Fixed PHP warning on bookings list tables.
+* Fixed some default settings not saving properly.
+* Added `em_bookings_table_get_item_limits` filter to add/modify custom limits, applicable to other tables such as `em_transactions_table_get_item_limits`.
+* Fixed status filter not working in bookings admin table.
+* Fixed fatal PHP error when grouping events in shortcode (bug introduced in 6.5).
+* Fixed "Ticket Spaces" column not ordered due to naming conflict with `ticket_spaces` db field name.
+* Changed "Ticket Spaces" column key from `ticket_spaces` to `ticket_booking_spaces`, the "Ticket Spaces" column index is now "Ticket Capacity".
+
+= 6.5 =
+* Added multi-array support for EM_Bookings_Table::get_booking_actions() allowing for separate sections of actions
+* Removed em-bookings-action and em-bookings-action-X classes from booking actions links in preference of data- attributes and an em-list-bookings-row-action
+* Added sortable ticket columns to bookings admin tables
+* Improved bookings table search input allowing more search options, including user name and email
+* Fixed bug where em_bookings_get_sql_conditions filter is called twice in EM_Bookings_Table::get_sql_conditions()
+* Changed minimum PHP requirement to 7.0 due to use of shortcut array syntax, null coalescing and ternary operators
+* Added sanitization/decoding options for shortcode format content due to security implications.
+* Fixed bug in calendar widget preventing saving/loading on widget area.
+* Added calendar_size option to calendar widget.
+* Fixed PHP warning when calendar_size is undefined.
+* Added medium calendar size options to widget and settings ddms (in development).
+* Added .em-loading and .em-working (wrapper) classes for more cross-theme compatibility when loading something via AJAX.
+* Moved .em-warning into scss.
+* Removed legacy search form CSS from events_manager.css.
+* Updated and rewritten EM_List_Tables to provide base table functionality for other data tables, support front-end and advanced ordering/searching capabilities.
+* Updated Bookings and Event with Bookings tables to unify front/back-end, added new views (tickets, attendees), sortable columns, responsiveness and much more.
+* Unified/standardized exporting of list tables to support exporting for any EM_List_Table-extended tables.
+* Added #_BOOKING_UUID placeholder.
+* Added EM_Bookings::get(), EM_Ticket_Bookings::get() and EM_Tickets_Bookings::get() search functionality with advanced ordering capabilities.
+* Added EM_Events::get_accepted_fields() for SQL ordering detection.
+* Transitioned out of jQueryUI sortable for booking tables to a vanilla JS alternative - [Sortable 1.15.2](https://github.com/SortableJS/Sortable).
+* Removed all outdated tables in events-manager/admin/bookings folder.
+* Added booking dashboard charts support for front-end with option to specifically enable/disable in settings.
+* Added default calendar size option.
+* Fixed calendar JS errors when switching months.
+* Added custom event for modal opens.
+* Fixed tippy regeneration issues due to uncontained calls to tippy().
+* Fixed tooltips referencing external elements via the data-content attribute not displaying that content accordingly.
+* Fixed privacy nag issues when editing bookings already made in the past before enabling privacy settings.
+
+= 6.4.10.2 =
 * added default calendar size option to settings page
 * fixed bug in calendar widget preventing saving/loading on widget area
 * added calendar_size option to calendar widget

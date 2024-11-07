@@ -351,16 +351,44 @@ class Gum_Elementor_Widget_blog_grid extends Widget_Base {
       'readmore_icon_align',
       [
         'label' => esc_html__( 'Icon Position', 'gum-elementor-addon' ),
-        'type' => Controls_Manager::SELECT,
-        'default' => 'left',
+        'type' => Controls_Manager::CHOOSE,
         'options' => [
-          'left' => esc_html__( 'Before', 'gum-elementor-addon' ),
-          'right' => esc_html__( 'After', 'gum-elementor-addon' ),
+          'row' => [
+            'title' => esc_html__( 'Left', 'gum-elementor-addon' ),
+            'icon' => 'eicon-h-align-left',
+          ],
+          'row-reverse' => [
+            'title' => esc_html__( 'Right', 'gum-elementor-addon' ),
+            'icon' => 'eicon-h-align-right',
+          ],
         ],
         'condition' => [
           'show_readmore' => 'yes',
           'readmore_icon[value]!' => '',
         ],
+        'selectors' => [
+            '{{WRAPPER}} .elementor-button-content-wrapper' => 'flex-direction: {{VALUE}};'
+        ],
+      ]
+    );
+
+    $this->add_control(
+      'readmore_icon_indent',
+      [
+        'label' => esc_html__( 'Icon Spacing', 'gum-elementor-addon' ),
+        'type' => Controls_Manager::SLIDER,
+        'range' => [
+          'px' => [
+            'max' => 100,
+          ],
+        ],
+        'default' =>['value'=>5, 'unit'=>'px'],
+        'selectors' => [
+          '{{WRAPPER}} .elementor-button .elementor-align-icon-right' => 'margin-left: {{SIZE}}{{UNIT}};margin-right:0;',
+          '{{WRAPPER}} .elementor-button .elementor-align-icon-left' => 'margin-right: {{SIZE}}{{UNIT}};margin-left: 0;',
+          '{{WRAPPER}} .elementor-button .elementor-button-content-wrapper' => 'gap:{{SIZE}}{{UNIT}};'
+        ],
+        'condition' => ['show_readmore!' => '','readmore_label!' => '','readmore_icon[value]!' => ''],
       ]
     );
 
@@ -3304,24 +3332,6 @@ class Gum_Elementor_Widget_blog_grid extends Widget_Base {
       ]
     );
 
-    $this->add_control(
-      'readmore_icon_indent',
-      [
-        'label' => esc_html__( 'Spacing', 'gum-elementor-addon' ),
-        'type' => Controls_Manager::SLIDER,
-        'range' => [
-          'px' => [
-            'max' => 100,
-          ],
-        ],
-        'default' =>['value'=>5, 'unit'=>'px'],
-        'selectors' => [
-          '{{WRAPPER}} .elementor-button .elementor-align-icon-right' => 'margin-left: {{SIZE}}{{UNIT}};',
-          '{{WRAPPER}} .elementor-button .elementor-align-icon-left' => 'margin-right: {{SIZE}}{{UNIT}};',
-        ],
-        'condition' => ['show_readmore!' => '','readmore_label!' => '','readmore_icon[value]!' => ''],
-      ]
-    );
 
 
     $this->add_control(
@@ -3905,7 +3915,7 @@ class Gum_Elementor_Widget_blog_grid extends Widget_Base {
     wp_reset_postdata();
 
   
-    $col_class = 'grid-post grid-col-'.$grid_layout.' image-position-'.$image_position;
+    $col_class = 'grid-post grid-col-'.absint($grid_layout).' image-position-'.sanitize_html_class($image_position);
 
     if($image_totop === 'yes'){
       $col_class.=' mobile-force-ontop';
@@ -4019,11 +4029,11 @@ class Gum_Elementor_Widget_blog_grid extends Widget_Base {
 
     ob_start();
 ?>
-<article id="post-<?php print esc_attr($post_id); ?>" <?php post_class(); ?>>
+<article id="post-<?php esc_attr_e($post_id); ?>" <?php post_class(); ?>>
     <?php if($image_url!=''):?>
   <div class="post-top">
     <?php if($title_position == 'before'){ print $top_meta.$post_title.$mid_meta; } ?>
-    <div class="blog-image" style="background-image: url('<?php print $image_url; ?>');"><?php print $image_html;?></div>
+    <div class="blog-image" style="background-image: url('<?php esc_attr_e($image_url); ?>');"><?php print $image_html;?></div>
     <?php if($title_position == 'after'){ print $top_meta.$post_title.$mid_meta; } ?>
   </div>
     <?php endif;?>
@@ -4117,7 +4127,7 @@ class Gum_Elementor_Widget_blog_grid extends Widget_Base {
       'readmore_icon_align' => [
         'class' => [
           'elementor-button-icon',
-          'elementor-align-icon-' . $settings['readmore_icon_align'],
+          'elementor-align-icon-' . sanitize_html_class($settings['readmore_icon_align']),
         ],
       ],
     ] );
@@ -4127,14 +4137,14 @@ class Gum_Elementor_Widget_blog_grid extends Widget_Base {
 
     $readmore_button_align = isset( $settings['readmore_button_align'] ) ? $settings['readmore_button_align'] : '';
 
-    ?><div class="elementor-button-wrap<?php print ' button-align-'.$readmore_button_align ;?>"><a <?php echo $this->get_render_attribute_string( 'button-'.$index ); ?>>
+    ?><div class="elementor-button-wrap<?php print ' button-align-'.esc_attr($readmore_button_align) ;?>"><a <?php echo $this->get_render_attribute_string( 'button-'.$index ); ?>>
           <span class="elementor-button-content-wrapper">
       <?php if ( ! empty( $settings['readmore_icon']['value'] ) ) : ?>
       <span <?php echo $this->get_render_attribute_string( 'readmore_icon_align' ); ?>>
           <?php Icons_Manager::render_icon( $settings['readmore_icon'], [ 'aria-hidden' => 'true' ] ); ?>
       </span>
       <?php endif; ?>
-      <span <?php echo $this->get_render_attribute_string( $index );?>><?php echo esc_html($settings['readmore_label']); ?></span>
+      <span <?php echo $this->get_render_attribute_string( $index );?>><?php esc_html_e($settings['readmore_label']); ?></span>
     </span>
   </a></div><?php
 

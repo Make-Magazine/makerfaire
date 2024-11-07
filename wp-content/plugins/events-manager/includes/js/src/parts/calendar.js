@@ -5,7 +5,7 @@ jQuery(document).ready( function($){
 
 	const em_calendar_init = function( calendar ){
 		calendar = $(calendar);
-		if( !calendar.attr('id') || !calendar.attr('id').match(/^em-calendar-[0-9+]$/) ){
+		if( !calendar.attr('id') || !calendar.attr('id').match(/^em-calendar-[0-9]+$/) ){
 			calendar.attr('id', 'em-calendar-' + Math.floor(Math.random() * 10000)); // retroactively add id to old templates
 		}
 		calendar.find('a').off("click");
@@ -14,19 +14,31 @@ jQuery(document).ready( function($){
 			const el = $(this);
 			if( el.data('disabled') == 1 || el.attr('href') === '') return; // do nothing if disabled or no link provided
 			el.closest('.em-calendar').prepend('<div class="loading" id="em-loading"></div>');
-			let url = em_ajaxify(el.attr('href'));
+			let url = el.attr('href');
 			const view_id = el.closest('[data-view-id]').data('view-id');
-			const calendar_id = calendar.attr('id').replace('em-calendar-', '');
-			const custom_data = $('form#em-view-custom-data-calendar-'+ calendar_id);
+			const custom_data = $('form#em-view-custom-data-calendar-'+ view_id);
 			let form_data = new FormData();
-			form_data.set('id', view_id);
 			if( custom_data.length > 0 ){
 				form_data = new FormData(custom_data[0]);
-				let url_params = new URL(url, window.location.origin).searchParams;
+				let $URL = new URL(url, window.location.origin);
+				let url_params = $URL.searchParams;
 				for (const [key, value] of url_params.entries()) {
-					form_data.set(key, value);
+					if( key === 'mo' ) {
+						form_data.set('month', value);
+					} else if ( key === 'yr' ) {
+						form_data.set('year', value);
+					} else {
+						form_data.set(key, value);
+					}
 				}
+				// remove mo and yr from URL
+				$URL.searchParams.delete('mo');
+				$URL.searchParams.delete('yr');
+				url = $URL.toString();
 			}
+			form_data.set('id', view_id);
+			form_data.set('ajaxCalendar', 1); // AJAX trigger
+			form_data.set('em_ajax', 1); // AJAX trigger
 			// check advanced trigger
 			if( calendar.hasClass('with-advanced') ){
 				form_data.set('has_advanced_trigger', 1);
@@ -262,7 +274,7 @@ let EM_View_Updater = function( element, html ){
 			element.replaceWith(view);
 		}
 	}
-	em_setup_ui_elements( view );
+	em_setup_ui_elements( view[0] );
 	return view;
 }
 
@@ -283,7 +295,11 @@ let EM_ResizeObserver = function( breakpoints, elements ){
 						for (let breakpoint_name of Object.keys(breakpoints)) {
 							if (breakpoint_name !== name) el.classList.remove('size-' + breakpoint_name);
 						}
-						el.classList.add('size-' + name);
+						// add class and trigger event only once
+						if(	!el.classList.contains('size-' + name) ) {
+							el.classList.add('size-' + name);
+							el.dispatchEvent( new CustomEvent('em_resize') );
+						}
 						break;
 					}
 				}

@@ -1,4 +1,4 @@
-/*! elementor-pro - v3.23.0 - 05-08-2024 */
+/*! elementor-pro - v3.25.0 - 03-11-2024 */
 "use strict";
 (self["webpackChunkelementor_pro"] = self["webpackChunkelementor_pro"] || []).push([["elements-handlers"],{
 
@@ -67,7 +67,7 @@ const extendDefaultHandlers = defaultHandlers => {
     ...handlers
   };
 };
-elementorProFrontend.on('elementor-pro/modules/init:before', () => {
+elementorProFrontend.on('elementor-pro/modules/init/before', () => {
   elementorFrontend.hooks.addFilter('elementor-pro/frontend/handlers', extendDefaultHandlers);
 });
 
@@ -426,11 +426,13 @@ exports["default"] = void 0;
 class _default extends elementorModules.Module {
   constructor() {
     super();
-    if (elementorFrontend.config.experimentalFeatures['floating-buttons']) {
+    if (elementorFrontend.config.experimentalFeatures.container) {
       ['contact-buttons-var-1', 'contact-buttons-var-3', 'contact-buttons-var-4', 'contact-buttons-var-5', 'contact-buttons-var-6', 'contact-buttons-var-7', 'contact-buttons-var-8', 'contact-buttons-var-9'].forEach(handler => {
-        elementorFrontend.elementsHandler.attachHandler(handler, () => __webpack_require__.e(/*! import() | contact-buttons */ "contact-buttons").then(__webpack_require__.bind(__webpack_require__, /*! ./handlers/contact-buttons */ "../modules/floating-buttons/assets/js/frontend/handlers/contact-buttons.js")));
+        elementorFrontend.elementsHandler.attachHandler(handler, () => Promise.all(/*! import() | contact-buttons */[__webpack_require__.e("modules_floating-buttons_assets_js_shared_frontend_handlers_click-tracking_js"), __webpack_require__.e("contact-buttons")]).then(__webpack_require__.bind(__webpack_require__, /*! ./handlers/contact-buttons */ "../modules/floating-buttons/assets/js/frontend/handlers/contact-buttons.js")));
       });
-      elementorFrontend.elementsHandler.attachHandler('contact-buttons-var-10', () => __webpack_require__.e(/*! import() | contact-buttons-var-10 */ "contact-buttons-var-10").then(__webpack_require__.bind(__webpack_require__, /*! ./handlers/contact-buttons-v10 */ "../modules/floating-buttons/assets/js/frontend/handlers/contact-buttons-v10.js")));
+      elementorFrontend.elementsHandler.attachHandler('contact-buttons-var-10', () => Promise.all(/*! import() | contact-buttons-var-10 */[__webpack_require__.e("modules_floating-buttons_assets_js_shared_frontend_handlers_click-tracking_js"), __webpack_require__.e("contact-buttons-var-10")]).then(__webpack_require__.bind(__webpack_require__, /*! ./handlers/contact-buttons-v10 */ "../modules/floating-buttons/assets/js/frontend/handlers/contact-buttons-v10.js")));
+      elementorFrontend.elementsHandler.attachHandler('floating-bars-var-2', () => Promise.all(/*! import() | floating-bars-var-2 */[__webpack_require__.e("modules_floating-buttons_assets_js_shared_frontend_handlers_click-tracking_js"), __webpack_require__.e("floating-bars-var-2")]).then(__webpack_require__.bind(__webpack_require__, /*! ./handlers/floating-bars-v2 */ "../modules/floating-buttons/assets/js/frontend/handlers/floating-bars-v2.js")));
+      elementorFrontend.elementsHandler.attachHandler('floating-bars-var-3', () => Promise.all(/*! import() | floating-bars-var-3 */[__webpack_require__.e("modules_floating-buttons_assets_js_shared_frontend_handlers_click-tracking_js"), __webpack_require__.e("floating-bars-var-3")]).then(__webpack_require__.bind(__webpack_require__, /*! ./handlers/floating-bars-v3 */ "../modules/floating-buttons/assets/js/frontend/handlers/floating-bars-v3.js")));
     }
   }
 }
@@ -746,7 +748,7 @@ class BaseFilterFrontendModule extends elementorModules.Module {
     const widgetFilters = this.loopWidgetsStore.getConsolidatedFilters(widgetId),
       helpers = this.getFilterHelperAttributes(filterId);
     const data = {
-      post_id: elementorFrontend.config.post.id || this.getClosestDataElementorId(document.querySelector(`.elementor-element-${widgetId}`)),
+      post_id: this.getClosestDataElementorId(document.querySelector(`.elementor-element-${widgetId}`)) || elementorFrontend.config.post.id,
       widget_filters: widgetFilters,
       widget_id: widgetId,
       pagination_base_url: helpers.baseUrl
@@ -769,8 +771,8 @@ class BaseFilterFrontendModule extends elementorModules.Module {
    * @return {string} elementor id of parent
    */
   getClosestDataElementorId(element) {
-    const closestParent = element.closest('[data-elementor-id]');
-    return closestParent ? closestParent.getAttribute('data-elementor-id') : 0;
+    const closestParent = element?.closest('[data-elementor-id]');
+    return closestParent ? closestParent.getAttribute('data-elementor-id') : null;
   }
 
   /**
@@ -839,7 +841,7 @@ class BaseFilterFrontendModule extends elementorModules.Module {
         newWidgetContainer = this.createElementFromHTMLString(response.data);
       widget.replaceChild(newWidgetContainer, existingWidgetContainer);
       this.handleElementHandlers(newWidgetContainer);
-      if (elementorFrontend.config.experimentalFeatures.e_lazyload) {
+      if (ElementorProFrontendConfig.settings.lazy_load_background_images) {
         document.dispatchEvent(new Event('elementor/lazyload/observe'));
       }
       elementorFrontend.elementsHandler.runReadyTrigger(document.querySelector(`.elementor-element-${widgetId}`));
@@ -851,7 +853,6 @@ class BaseFilterFrontendModule extends elementorModules.Module {
 
     // TODO: Deal with pagination. Do we need to manually add the query string to the pagination links?
   }
-
   handleElementHandlers(newWidgetMarkup) {
     const loopItems = newWidgetMarkup.querySelectorAll('.e-loop-item');
     (0, _runElementHandlers.default)(loopItems);
@@ -1480,9 +1481,12 @@ class _default extends elementorModules.Module {
     elementorFrontend.hooks.addAction('elementor/frontend/documents-manager/init-classes', this.addDocumentClass);
     elementorFrontend.elementsHandler.attachHandler('form', () => __webpack_require__.e(/*! import() | popup */ "popup").then(__webpack_require__.bind(__webpack_require__, /*! ./handlers/forms-action */ "../modules/popup/assets/js/frontend/handlers/forms-action.js")));
     elementorFrontend.on('components:init', () => this.onFrontendComponentsInit());
-    if (!elementorFrontend.isEditMode() && !elementorFrontend.isWPPreviewMode()) {
+    if (this.shouldSetViewsAndSessions()) {
       this.setViewsAndSessions();
     }
+  }
+  shouldSetViewsAndSessions() {
+    return !elementorFrontend.isEditMode() && !elementorFrontend.isWPPreviewMode() && ElementorProFrontendConfig.popup.hasPopUps;
   }
   addDocumentClass(documentsManager) {
     documentsManager.addDocumentClass('popup', _document.default);
@@ -1924,7 +1928,6 @@ class TimesUtils {
       // Week in seconds
       month: 2628288 // Month in seconds
     };
-
     return timeFrames[timeFrame];
   }
   setExpiration(name, value, timeFrame) {

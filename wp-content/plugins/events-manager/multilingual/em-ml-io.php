@@ -412,7 +412,7 @@ class EM_ML_IO {
 		if( $result ){
 			$EM_Event = $EM_Tickets->get_event();
 			//if this is a recurring event, we should save all the ticket meta to the equivalent tickets belonging to the recurrences
-			if( $EM_Event->is_recurring() ){
+			if( $EM_Event instanceof EM_Event && $EM_Event->is_recurring() ){
 				$EM_Event = EM_ML::get_original($EM_Event); //get original event recurrence, not the translation (even though the bookings object points to the same data) just in case
 				//we need to update ticket meta fields so they have translation data
 				foreach( $EM_Event->get_bookings()->get_tickets() as $EM_Ticket ){ /* @var EM_Ticket $EM_Ticket */

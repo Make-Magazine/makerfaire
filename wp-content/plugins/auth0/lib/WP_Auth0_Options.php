@@ -1,6 +1,7 @@
 <?php
 
-class WP_Auth0_Options {
+class WP_Auth0_Options
+{
 
 	/**
 	 * Name used in options table option_name column.
@@ -32,12 +33,13 @@ class WP_Auth0_Options {
 	 * WP_Auth0_Options constructor.
 	 * Finds and stores all constant-defined settings values.
 	 */
-	public function __construct() {
-		$option_keys = $this->get_defaults( true );
-		foreach ( $option_keys as $key ) {
-			$setting_const = $this->get_constant_name( $key );
-			if ( defined( $setting_const ) ) {
-				$this->constant_opts[ $key ] = constant( $setting_const );
+	public function __construct()
+	{
+		$option_keys = $this->get_defaults(true);
+		foreach ($option_keys as $key) {
+			$setting_const = $this->get_constant_name($key);
+			if (defined($setting_const)) {
+				$this->constant_opts[$key] = constant($setting_const);
 			}
 		}
 	}
@@ -45,8 +47,9 @@ class WP_Auth0_Options {
 	/**
 	 * @return WP_Auth0_Options
 	 */
-	public static function Instance() {
-		if ( null === self::$_instance ) {
+	public static function Instance()
+	{
+		if (null === self::$_instance) {
 			self::$_instance = new self();
 		}
 		return self::$_instance;
@@ -59,10 +62,11 @@ class WP_Auth0_Options {
 	 *
 	 * @return string
 	 */
-	public function get_constant_name( $key ) {
+	public function get_constant_name($key)
+	{
 		// NOTE: the add_filter call must load before WP_Auth0::init() so it cannot be used in a theme.
-		$constant_prefix = apply_filters( 'auth0_settings_constant_prefix', 'AUTH0_ENV_' );
-		return $constant_prefix . strtoupper( $key );
+		$constant_prefix = apply_filters('auth0_settings_constant_prefix', 'AUTH0_ENV_');
+		return $constant_prefix . strtoupper($key);
 	}
 
 	/**
@@ -72,8 +76,9 @@ class WP_Auth0_Options {
 	 *
 	 * @return boolean
 	 */
-	public function has_constant_val( $key ) {
-		return isset( $this->constant_opts[ $key ] );
+	public function has_constant_val($key)
+	{
+		return isset($this->constant_opts[$key]);
 	}
 
 	/**
@@ -83,8 +88,9 @@ class WP_Auth0_Options {
 	 *
 	 * @return string|null
 	 */
-	public function get_constant_val( $key ) {
-		return $this->has_constant_val( $key ) ? constant( $this->get_constant_name( $key ) ) : null;
+	public function get_constant_val($key)
+	{
+		return $this->has_constant_val($key) ? constant($this->get_constant_name($key)) : null;
 	}
 
 	/**
@@ -92,8 +98,9 @@ class WP_Auth0_Options {
 	 *
 	 * @return array
 	 */
-	public function get_all_constant_keys() {
-		return array_keys( $this->constant_opts );
+	public function get_all_constant_keys()
+	{
+		return array_keys($this->constant_opts);
 	}
 
 	/**
@@ -101,7 +108,8 @@ class WP_Auth0_Options {
 	 *
 	 * @return string
 	 */
-	public function get_options_name() {
+	public function get_options_name()
+	{
 		return $this->_options_name;
 	}
 
@@ -110,17 +118,18 @@ class WP_Auth0_Options {
 	 *
 	 * @return array
 	 */
-	public function get_options() {
-		if ( empty( $this->_opts ) ) {
-			$options = get_option( $this->_options_name, [] );
+	public function get_options()
+	{
+		if (empty($this->_opts)) {
+			$options = get_option($this->_options_name, []);
 			// Brand new install, no saved options so get all defaults.
-			if ( empty( $options ) || ! is_array( $options ) ) {
+			if (empty($options) || !is_array($options)) {
 				$options = $this->defaults();
 			}
 
 			// Check for constant overrides and replace.
-			if ( ! empty( $this->constant_opts ) ) {
-				$options = array_replace_recursive( $options, $this->constant_opts );
+			if (!empty($this->constant_opts)) {
+				$options = array_replace_recursive($options, $this->constant_opts);
 			}
 			$this->_opts = $options;
 		}
@@ -137,10 +146,11 @@ class WP_Auth0_Options {
 	 *
 	 * @link https://auth0.com/docs/cms/wordpress/extending#wp_auth0_get_option
 	 */
-	public function get( $key, $default = null ) {
+	public function get($key, $default = null)
+	{
 		$options = $this->get_options();
-		$value   = isset( $options[ $key ] ) ? $options[ $key ] : $default;
-		return apply_filters( 'wp_auth0_get_option', $value, $key );
+		$value   = isset($options[$key]) ? $options[$key] : $default;
+		return apply_filters('wp_auth0_get_option', $value, $key);
 	}
 
 	/**
@@ -153,19 +163,20 @@ class WP_Auth0_Options {
 	 *
 	 * @return bool
 	 */
-	public function set( $key, $value, $should_update = true ) {
+	public function set($key, $value, $should_update = true)
+	{
 
 		// Cannot set a setting that is being overridden by a constant.
-		if ( $this->has_constant_val( $key ) ) {
+		if ($this->has_constant_val($key)) {
 			return false;
 		}
 
 		$options         = $this->get_options();
-		$options[ $key ] = $value;
+		$options[$key] = $value;
 		$this->_opts     = $options;
 
 		// No database update so process completed successfully.
-		if ( ! $should_update ) {
+		if (!$should_update) {
 			return true;
 		}
 
@@ -177,15 +188,16 @@ class WP_Auth0_Options {
 	 *
 	 * @param string $key - Option key name to remove.
 	 */
-	public function remove( $key ) {
+	public function remove($key)
+	{
 
 		// Cannot remove a setting that is being overridden by a constant.
-		if ( $this->has_constant_val( $key ) ) {
+		if ($this->has_constant_val($key)) {
 			return;
 		}
 
 		$options = $this->get_options();
-		unset( $options[ $key ] );
+		unset($options[$key]);
 		$this->_opts = $options;
 	}
 
@@ -194,19 +206,21 @@ class WP_Auth0_Options {
 	 *
 	 * @return bool
 	 */
-	public function update_all() {
+	public function update_all()
+	{
 		$options = $this->get_options();
 
-		foreach ( $this->get_all_constant_keys() as $key ) {
-			unset( $options[ $key ] );
+		foreach ($this->get_all_constant_keys() as $key) {
+			unset($options[$key]);
 		}
-		return update_option( $this->_options_name, $options );
+		return update_option($this->_options_name, $options);
 	}
 
 	/**
 	 * Save the options array for the first time.
 	 */
-	public function save() {
+	public function save()
+	{
 		$this->get_options();
 		$this->update_all();
 	}
@@ -216,14 +230,16 @@ class WP_Auth0_Options {
 	 *
 	 * @return bool
 	 */
-	public function delete() {
-		return delete_option( $this->_options_name );
+	public function delete()
+	{
+		return delete_option($this->_options_name);
 	}
 
 	/**
 	 * Reset options to defaults.
 	 */
-	public function reset() {
+	public function reset()
+	{
 		$this->_opts = null;
 		$this->delete();
 		$this->save();
@@ -236,18 +252,21 @@ class WP_Auth0_Options {
 	 *
 	 * @return array
 	 */
-	public function get_defaults( $keys_only = false ) {
+	public function get_defaults($keys_only = false)
+	{
 		$default_opts = $this->defaults();
-		return $keys_only ? array_keys( $default_opts ) : $default_opts;
+		return $keys_only ? array_keys($default_opts) : $default_opts;
 	}
 
-	public function is_wp_registration_enabled() {
-		return is_multisite() ? users_can_register_signup_filter() : get_site_option( 'users_can_register' );
+	public function is_wp_registration_enabled()
+	{
+		return is_multisite() ? users_can_register_signup_filter() : get_site_option('users_can_register');
 	}
 
-	public function get_default( $key ) {
+	public function get_default($key)
+	{
 		$defaults = $this->defaults();
-		return $defaults[ $key ];
+		return $defaults[$key];
 	}
 
 	/**
@@ -255,20 +274,21 @@ class WP_Auth0_Options {
 	 *
 	 * @return array
 	 */
-	public function get_web_origins() {
-		$home_url_parsed = wp_parse_url( home_url() );
-		$home_url_origin = ! empty( $home_url_parsed['path'] )
-			? str_replace( $home_url_parsed['path'], '', home_url() )
+	public function get_web_origins()
+	{
+		$home_url_parsed = wp_parse_url(home_url());
+		$home_url_origin = !empty($home_url_parsed['path'])
+			? str_replace($home_url_parsed['path'], '', home_url())
 			: home_url();
 
-		$site_url_parsed = wp_parse_url( site_url() );
-		$site_url_origin = ! empty( $site_url_parsed['path'] )
-			? str_replace( $site_url_parsed['path'], '', site_url() )
+		$site_url_parsed = wp_parse_url(site_url());
+		$site_url_origin = !empty($site_url_parsed['path'])
+			? str_replace($site_url_parsed['path'], '', site_url())
 			: site_url();
 
 		return $home_url_origin === $site_url_origin
-			? [ $home_url_origin ]
-			: [ $home_url_origin, $site_url_origin ];
+			? [$home_url_origin]
+			: [$home_url_origin, $site_url_origin];
 	}
 
 	/**
@@ -278,12 +298,13 @@ class WP_Auth0_Options {
 	 *
 	 * @return string
 	 */
-	public function get_wp_auth0_url( $protocol = null ) {
-		if ( is_null( $protocol ) && $this->get( 'force_https_callback' ) ) {
+	public function get_wp_auth0_url($protocol = null)
+	{
+		if (is_null($protocol) && $this->get('force_https_callback')) {
 			$protocol = 'https';
 		}
-		$site_url = site_url( 'index.php', $protocol );
-		return add_query_arg( 'auth0', 1, $site_url );
+		$site_url = site_url('index.php', $protocol);
+		return add_query_arg('auth0', 1, $site_url);
 	}
 
 	/**
@@ -291,9 +312,10 @@ class WP_Auth0_Options {
 	 *
 	 * @return string
 	 */
-	public function get_lock_url() {
-		$cdn_url = $this->get( 'cdn_url' );
-		return ( $cdn_url && $this->get( 'custom_cdn_url' ) ) ? $cdn_url : WPA0_LOCK_CDN_URL;
+	public function get_lock_url()
+	{
+		$cdn_url = $this->get('cdn_url');
+		return ($cdn_url && $this->get('custom_cdn_url')) ? $cdn_url : WPA0_LOCK_CDN_URL;
 	}
 
 	/**
@@ -301,10 +323,11 @@ class WP_Auth0_Options {
 	 *
 	 * @return string
 	 */
-	public function get_auth_domain() {
-		$domain = $this->get( 'custom_domain' );
-		if ( empty( $domain ) ) {
-			$domain = $this->get( 'domain' );
+	public function get_auth_domain()
+	{
+		$domain = $this->get('custom_domain');
+		if (empty($domain)) {
+			$domain = $this->get('domain');
 		}
 		return $domain;
 	}
@@ -314,8 +337,9 @@ class WP_Auth0_Options {
 	 *
 	 * @return string
 	 */
-	public function get_auth_organization() {
-		return $this->get( 'organization', '' );
+	public function get_auth_organization()
+	{
+		return $this->get('organization', '');
 	}
 
 	/**
@@ -323,10 +347,11 @@ class WP_Auth0_Options {
 	 *
 	 * @return array
 	 */
-	public function get_lock_connections() {
-		$connections = $this->get( 'lock_connections' );
-		$connections = empty( $connections ) ? [] : explode( ',', $connections );
-		return array_map( 'trim', $connections );
+	public function get_lock_connections()
+	{
+		$connections = $this->get('lock_connections');
+		$connections = empty($connections) ? [] : explode(',', $connections);
+		return array_map('trim', $connections);
 	}
 
 	/**
@@ -334,14 +359,15 @@ class WP_Auth0_Options {
 	 *
 	 * @param string $connection - connection name to add
 	 */
-	public function add_lock_connection( $connection ) {
+	public function add_lock_connection($connection)
+	{
 		$connections = $this->get_lock_connections();
 
 		// Add if it doesn't exist already
-		if ( ! array_key_exists( $connection, $connections ) ) {
+		if (!array_key_exists($connection, $connections)) {
 			$connections[] = $connection;
-			$connections   = implode( ',', $connections );
-			$this->set( 'lock_connections', $connections );
+			$connections   = implode(',', $connections);
+			$this->set('lock_connections', $connections);
 		}
 	}
 
@@ -355,17 +381,18 @@ class WP_Auth0_Options {
 	 *
 	 * @since 3.8.0
 	 */
-	public function strategy_skips_verified_email( $strategy ) {
-		$skip_strategies = trim( $this->get( 'skip_strategies' ) );
+	public function strategy_skips_verified_email($strategy)
+	{
+		$skip_strategies = trim($this->get('skip_strategies'));
 
 		// No strategies to skip.
-		if ( empty( $skip_strategies ) ) {
+		if (empty($skip_strategies)) {
 			return false;
 		}
 
-		$skip_strategies = explode( ',', $skip_strategies );
-		$skip_strategies = array_map( 'trim', $skip_strategies );
-		return in_array( $strategy, $skip_strategies );
+		$skip_strategies = explode(',', $skip_strategies);
+		$skip_strategies = array_map('trim', $skip_strategies);
+		return in_array($strategy, $skip_strategies);
 	}
 
 	/**
@@ -373,7 +400,8 @@ class WP_Auth0_Options {
 	 *
 	 * @return array
 	 */
-	protected function defaults() {
+	protected function defaults()
+	{
 		return [
 
 			// System

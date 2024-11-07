@@ -31,6 +31,20 @@ class Testimonial_Carousel extends Base {
 		return [ 'testimonial', 'carousel', 'image' ];
 	}
 
+	/**
+	 * Get style dependencies.
+	 *
+	 * Retrieve the list of style dependencies the widget requires.
+	 *
+	 * @since 3.24.0
+	 * @access public
+	 *
+	 * @return array Widget style dependencies.
+	 */
+	public function get_style_depends(): array {
+		return [ 'e-swiper', 'widget-testimonial-carousel', 'widget-carousel-module-base' ];
+	}
+
 	protected function register_controls() {
 		parent::register_controls();
 

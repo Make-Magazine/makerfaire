@@ -7,4 +7,5 @@ $baseDir = dirname($vendorDir);
 
 return array(
     'Lcobucci\\JWT\\' => array($vendorDir . '/auth0/php-jwt/src'),
+    'Composer\\Installers\\' => array($vendorDir . '/composer/installers/src/Composer/Installers'),
 );

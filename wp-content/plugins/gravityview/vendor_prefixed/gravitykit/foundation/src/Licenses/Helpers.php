@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by gravityview on 14-August-2024 using {@see https://github.com/BrianHenryIE/strauss}.
+ * Modified by gravityview on 04-November-2024 using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\GravityView\Foundation\Licenses;
@@ -40,13 +40,9 @@ class Helpers {
 
 		$body = wp_remote_retrieve_body( $response );
 
-		if ( is_wp_error( $body ) ) {
-			throw new Exception( $response->get_error_message() );
-		}
+		$response = json_decode( $body, true );
 
-		try {
-			$response = json_decode( $body, true );
-		} catch ( Exception $e ) {
+		if ( json_last_error() !== JSON_ERROR_NONE ) {
 			throw new Exception( esc_html__( 'Unable to process remote request. Invalid response body.', 'gk-gravityview' ) );
 		}
 

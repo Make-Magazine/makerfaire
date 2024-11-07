@@ -501,7 +501,7 @@ class GWPreviewConfirmation {
 					// We'll assume posted values are correct since they will be re-validated on submission regardless.
 					case 'calculation':
 					case 'number':
-						if ( ! $field->has_calculation() ) {
+						if ( ! $field->has_calculation() || $field->inputType == 'calculation' ) {
 							break;
 						}
 						$is_product = $field['type'] == 'product';

@@ -7,22 +7,22 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:GravityKit/Query-Filters.git",
-                "reference": "811a57c0cfc5cce382a21715d975f7a1fa65e634"
+                "reference": "c7d17bb4bcf8e2acaa0b98c3d772df733fd351e7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/GravityKit/Query-Filters/zipball/811a57c0cfc5cce382a21715d975f7a1fa65e634",
-                "reference": "811a57c0cfc5cce382a21715d975f7a1fa65e634",
+                "url": "https://api.github.com/repos/GravityKit/Query-Filters/zipball/c7d17bb4bcf8e2acaa0b98c3d772df733fd351e7",
+                "reference": "c7d17bb4bcf8e2acaa0b98c3d772df733fd351e7",
                 "shasum": ""
             },
             "require": {
                 "php": ">=7.2"
             },
             "require-dev": {
-                "phpunit/phpunit": "^7.0",
+                "phpunit/phpunit": "~8.5",
                 "yoast/phpunit-polyfills": "^1.1.0"
             },
-            "time": "2024-04-16T15:49:51+00:00",
+            "time": "2024-08-29T16:01:19+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -46,7 +46,7 @@
             ],
             "description": "Advanced filtering functionality for Gravity Forms' GF_Query and form fields.",
             "support": {
-                "source": "https://github.com/GravityKit/Query-Filters/tree/v2.1.1",
+                "source": "https://github.com/GravityKit/Query-Filters/tree/develop",
                 "issues": "https://github.com/GravityKit/Query-Filters/issues"
             },
             "install-path": "../gravitykit/query-filters"

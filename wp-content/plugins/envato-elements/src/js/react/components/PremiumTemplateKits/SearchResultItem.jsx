@@ -11,7 +11,7 @@ const SearchResultItem = ({ item }) => {
   const { getDownloadedItemId } = useGlobalConfig()
   return (
     <ItemCard
-      Images={<ImageCarousel coverImage={item.cover_image} galleryImages={item.preview_images} />}
+      Images={<ImageCarousel coverImageUrls={item.cover_image_urls} galleryImageUrls={item.preview_images_urls} />}
       Buttons={(
         <ButtonWrapper>
           <InstallPremiumTemplateKitButton

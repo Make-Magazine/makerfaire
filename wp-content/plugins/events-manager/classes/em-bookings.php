@@ -655,15 +655,241 @@ class EM_Bookings extends EM_Object implements Iterator, ArrayAccess {
 	}
 	
 	/**
+	 * Generates an SQL statement, which would be used to search for bookings via EM_Bookings::get()
+	 *
+	 * @param array $args Search args.
+	 * @param bool $count Whether to return a count SQL statement or a full SQL statement.
+	 * @param bool $filter_args Whether to run $args through filters. ONLY set to false if you ran $args through EM_Bookings::get_default_search() already, this is meant to prevent duplicating the process.
+	 *
+	 * @return mixed|null
+	 */
+	public static function get_sql( $args, $count = false, $filter_args = true ){
+		global $wpdb;
+		$bookings_table = EM_BOOKINGS_TABLE;
+		$events_table = EM_EVENTS_TABLE;
+		$sql_parts = array(
+			'statement' => array(
+				'select' => '',
+				'join' => '',
+				'where' => '',
+				'groupby' => '',
+				'orderby' => '',
+				'limit' => '',
+				'offset' => '',
+			),
+			'data' => array(
+				'selectors' => '',
+				'joins' => array(),
+				'conditions' => array(),
+				'orderbys' => array(),
+				'groupbys' => array(),
+			),
+		);
+		
+		if( $filter_args ) {
+			$args = self::get_default_search($args);
+		}
+		if( !$count ) {
+			$sql_parts['statement']['limit'] = ( $args['limit'] && is_numeric($args['limit'])) ? "LIMIT {$args['limit']}" : '';
+			$sql_parts['statement']['offset'] = ( $sql_parts['statement']['limit'] != "" && is_numeric($args['offset']) ) ? "OFFSET {$args['offset']}" : '';
+		}
+		
+		//Get the default conditions
+		$sql_parts['data']['conditions'] = self::build_sql_conditions($args);
+		//Put it all together
+		$sql_parts['statement']['where'] = ( count($sql_parts['data']['conditions']) > 0 ) ? " WHERE " . implode ( " AND ", $sql_parts['data']['conditions'] ):'';
+		
+		//Get ordering instructions
+		$accepted_fields = self::get_sql_accepted_fields();
+		$sql_parts['data']['orderbys'] = self::build_sql_orderby($args, $accepted_fields['orderby']);
+		//Now, build orderby sql
+		$sql_parts['statement']['orderby'] = ( count($sql_parts['data']['orderbys']) > 0 ) ? 'ORDER BY '. implode(', ', $sql_parts['data']['orderbys']) : 'ORDER BY booking_date';
+		//Selectors
+		if( $count ){
+			$sql_parts['data']['selectors'] = 'COUNT(DISTINCT '. EM_BOOKINGS_TABLE . '.booking_id)';
+		}elseif( is_array($args['array']) ){
+			$sql_parts['data']['selectors'] = implode(',', $args['array']);
+		}else{
+			$sql_parts['data']['selectors'] = '*';
+		}
+		$sql_parts['statement']['select'] = "SELECT {$sql_parts['data']['selectors']} FROM $bookings_table";
+		
+		//check if we need to join a location table for this search, which is necessary if any location-specific are supplied, or if certain arguments such as orderby contain location fields
+		$table_joins = array();
+		$required_tables = EM_MS_GLOBAL ? array(EM_EVENTS_TABLE) : array(); // we always need to join events table to determine blog id when in MS Global mode
+		$join_check_queue = array_keys($accepted_fields['tables']);
+		do {
+			$table_name = reset($join_check_queue); // rather than current, because we keep shifting things off the beginning on each loop, avoiding pointer issues
+			$table_data = $accepted_fields['tables'][$table_name];
+			$join_table = false;
+			if( in_array($table_name, $required_tables) ){
+				$join_table = true;
+			}
+			if( !$join_table ) {
+				foreach( $table_data['args'] as $arg ) {
+					$ignore_arg_values = array();
+					if( isset($table_data['ignore_args'][$arg]) ){
+						$ignore_arg_values = is_array($table_data['ignore_args'][$arg]) ? $table_data['ignore_args'][$arg] : array($table_data['ignore_args'][$arg]);
+					}
+					if ( !empty($args[$arg]) && !in_array( $args[$arg] , $ignore_arg_values ) ) {
+						$join_table = true;
+					}elseif( !empty($table_data['empty_args'][$arg]) && isset($args[$arg]) ) {
+						// it could either be an array of 'legit' empty values vs any empty value meaning this table-specific arg isn't used, therefore no join needed
+						if( is_array($table_data['empty_args'][$arg]) ){
+							$join_table = in_array($args[$arg], $table_data['empty_args'][$arg]);
+						}elseif( $args[$arg] !== $table_data['empty_args'][$arg] ){
+							$join_table = true;
+						}
+					}
+					unset($ignore_arg_values);
+				}
+				//check ordering and grouping arguments for precense of location fields requiring a join
+				if( !$join_table ){
+					foreach( array('groupby', 'orderby', 'groupby_orderby') as $arg ){
+						if( !is_array($args[$arg]) ) continue; //ignore this argument if set to false
+						//we assume all these arguments are now array thanks to self::get_search_defaults() cleaning it up
+						foreach( $args[$arg] as $field_name ){
+							if( !empty($table_data['fields']) && in_array($field_name, $table_data['fields']) ){
+								$join_table = true;
+								break; //we join, no need to keep searching
+							}elseif( !empty($table_data['orderby_extras'][$field_name]) ){ // TODO this will never be reached because orderby_extras are commented out further down... experimental - 3rd pty developers - don't try to extend!
+								// account for meta joins, which requires a cheeky condition insertion here instead
+								$joined_tables[$table_name] = $wpdb->prepare($table_data['join'], $table_data['orderby_extras'][$field_name]);
+								$join_table = true;
+								break; //we join, no need to keep searching
+							}
+						}
+					}
+				}
+			}
+			if( $join_table ){
+				// check if there's any other required joins
+				if ( !empty($table_data['requires']) ) {
+					// add required table to join check queue and as a required table, if not already added
+					$table_dependencies = is_array( $table_data['requires'] ) ? $table_data['requires'] : array( $table_data['requires'] );
+					// supports arrays for multiple tables required
+					foreach ( $table_dependencies as $required_table ) {
+						if ( !in_array($required_table, $required_tables) ) {
+							// add to required joins for later checks
+							$required_tables[] = $required_table;
+						}
+						if ( empty($joined_tables[$required_table]) && !in_array($required_table, $join_check_queue)  ) {
+							// add to the queue if not already there, even if alraedy processed earlier but not joined
+							$join_check_queue[] = $required_table;
+						}
+					}
+				}
+				// join the table here
+				$table_joins[$table_name] = $table_data['join'];
+			}
+			array_shift( $join_check_queue );
+		} while ( !empty($join_check_queue) );
+		
+		// build joins, adding required tables first (to avoid dependency issues, in order, and then subsequent joins to end of the $joins array
+		$joins = array();
+		foreach ( $required_tables as $table_name ) {
+			$joins[$table_name] = $table_joins[$table_name];
+		}
+		// now add the rest of the joins
+		foreach ( $table_joins as $table_name => $table_join ) {
+			if( empty($joins[$table_name]) ) $joins[$table_name] = $table_joins[$table_name];
+		}
+		
+		// special join... if we are ordering by user meta, because we need to account for guest bookings stored in bookings meta vs real users in user meta
+		$bookings_table = EM_BOOKINGS_TABLE;
+		if( !empty($args['orderby']) ) {
+			$array_meta_intersect = array_intersect( $args['orderby'], array_keys($accepted_fields['orderby_user_meta']) );
+			$array_data_intersect = array_intersect( $args['orderby'], array_keys($accepted_fields['orderby_user_data']) );
+			$array_booking_meta_intersect = array_intersect( $args['orderby'], array_keys($accepted_fields['orderby_booking_meta']) );
+			if ( in_array( 'user_name', $args['orderby'] ) ) {
+				// a nuts order to join by name
+				// here we add a special join where we concat first and last names, because we'll always have a combo of those two even if user_name is saved, but not necessarily the other way around
+				// however, we also need to account for some bookings which may have just used the full 'user_name' when saving, so we add that to the end of the union
+				$joins['field.user_name'] = "
+					LEFT JOIN (
+						SELECT b.booking_id AS user_name_bid, user_name FROM {$bookings_table} b LEFT JOIN (
+							SELECT wm1.user_id, CONCAT(wm1.meta_value,' ',wm2.meta_value) as user_name FROM {$wpdb->usermeta} wm1
+							LEFT JOIN {$wpdb->usermeta} wm2 ON wm1.user_id=wm2.user_id AND wm2.meta_key='last_name'
+							WHERE wm1.meta_key='first_name'
+						) um ON um.user_id = b.person_id WHERE user_id IS NOT NULL AND user_name != ' '
+						UNION
+						SELECT b.booking_id AS user_name_bid, CONCAT(bm1.meta_value,' ',bm2.meta_value) as user_name FROM " . EM_BOOKINGS_TABLE . " b
+							LEFT JOIN " . EM_BOOKINGS_META_TABLE . " bm1 ON bm1.booking_id = b.booking_id AND (bm1.meta_key='_registration_first_name' OR bm1.meta_key='_registration|first_name')
+							LEFT JOIN " . EM_BOOKINGS_META_TABLE . " bm2 ON bm2.booking_id = b.booking_id AND (bm2.meta_key='_registration_last_name' OR bm2.meta_key='_registration|last_name')
+						WHERE bm1.meta_key IS NOT NULL OR bm2.meta_key IS NOT NULL
+						UNION
+						SELECT b.booking_id AS user_name_bid, bm1.meta_value FROM " . EM_BOOKINGS_TABLE . " b
+							LEFT JOIN " . EM_BOOKINGS_META_TABLE . " bm1 ON bm1.booking_id = b.booking_id AND (bm1.meta_key='_registration_user_name' OR bm1.meta_key='_registration|user_name')
+						WHERE bm1.meta_key IS NOT NULL
+					) user_name ON user_name.user_name_bid = {$bookings_table}.booking_id
+				";
+			} elseif ( !empty($array_data_intersect) ) {
+				// we're looking for data in wp_users table or otherwise in wp_usermeta if no-user
+				$field = current($array_data_intersect);
+				$field_key = $accepted_fields['orderby_user_data'][$field]; // this may be different to the orderby key
+				$joins[ 'field.' . $field ] = "
+					LEFT JOIN (
+						SELECT booking_id AS {$field}_bid, {$field_key} FROM {$bookings_table}
+                            LEFT JOIN {$wpdb->users} ON ID = person_id
+                            WHERE {$field} IS NOT NULL
+						UNION
+						SELECT b.booking_id AS {$field}_bid, meta_value AS {$field_key} FROM " . EM_BOOKINGS_TABLE . " b
+							LEFT JOIN " . EM_BOOKINGS_META_TABLE . " bm1 ON bm1.booking_id = b.booking_id AND (bm1.meta_key='_registration_{$field_key}' OR bm1.meta_key='_registration|{$field_key}')
+						WHERE bm1.meta_value IS NOT NULL
+					) {$field} ON {$field}.{$field}_bid = {$bookings_table}.booking_id
+				";
+			} elseif ( !empty($array_meta_intersect) ) {
+				// we're looking for data that may be in the wp_usermeta table or in booking meta if no-user
+				$field = current( $array_meta_intersect );
+				$field_key = $accepted_fields['orderby_user_meta'][$field]; // this may be different to the orderby key
+				if( !empty($accepted_fields['orderby'][$field]) ) {
+					$joins[ 'field.' . $field ] = "
+						LEFT JOIN (
+							SELECT b.booking_id AS {$field}_bid, meta_value AS {$field_key} FROM {$bookings_table} b LEFT JOIN (
+								SELECT wm1.user_id, meta_value FROM {$wpdb->usermeta} wm1
+								WHERE wm1.meta_key='{$field_key}'
+							) um ON um.user_id = b.person_id WHERE meta_value IS NOT NULL
+							UNION
+							SELECT b.booking_id AS {$field}_bid, meta_value AS {$field_key} FROM " . EM_BOOKINGS_TABLE . " b
+								LEFT JOIN " . EM_BOOKINGS_META_TABLE . " bm1 ON bm1.booking_id = b.booking_id AND  (bm1.meta_key='_registration_{$field_key}' OR bm1.meta_key='_registration|{$field_key}')
+							WHERE bm1.meta_value IS NOT NULL
+						) {$field} ON {$field}.{$field}_bid = {$bookings_table}.booking_id
+					";
+				}
+			} elseif ( !empty($array_booking_meta_intersect) ) {
+				// order by booking-specific fields
+				$field = current($array_booking_meta_intersect);
+				$field_key = $accepted_fields['orderby_booking_meta'][$field]; // this may be different to the orderby key
+				$joins[ 'field.' . $field ] = "
+					LEFT JOIN (
+						SELECT booking_id AS {$field}_bid, meta_value AS {$field_key} FROM " . EM_BOOKINGS_META_TABLE . " WHERE meta_key='_booking_{$field_key}' OR meta_key='_booking|{$field_key}'
+					) {$field} ON {$field}.{$field}_bid = {$bookings_table}.booking_id
+				";
+			} else {
+				$joins = apply_filters('em_bookings_get_sql_orderby_joins', $joins, [ 'args' => $args, 'count' => $count, 'filter_args' => $filter_args ]);
+			}
+		}
+		// we will also add a group by if not in a count
+		if( !$count ) {
+			$sql_parts['data']['groupbys'][] = 'booking_id';
+			$sql_parts['statement']['groupby'] = ' GROUP BY ' . implode( ', ', $sql_parts['data']['groupbys'] );
+		}
+		//plugins can override this optional joining behaviour here in case they add custom WHERE conditions or something like that
+		$sql_parts['data']['joins'] = apply_filters('em_bookings_get_optional_joins', $joins, $args, $accepted_fields);
+		$sql_parts['statement']['join'] = implode("\r\n", $sql_parts['data']['joins']);
+		// return SQL parts, we use a different filter name to function because it's already taken in earlier versions
+		return apply_filters('em_bookings_get_sql_parts', $sql_parts, [ 'args' => $args, 'count' => $count, 'filter_args' => $filter_args ]);
+	}
+	
+	/**
 	 * Get bookings that match the array of arguments passed.
-	 * @return array 
+	 * @return EM_Bookings|array
 	 * @static
 	 */
 	public static function get( $args = array(), $count = false ){
-		global $wpdb,$current_user;
+		global $wpdb;
 		$bookings_table = EM_BOOKINGS_TABLE;
 		$events_table = EM_EVENTS_TABLE;
-		$locations_table = EM_LOCATIONS_TABLE;
 		
 		//Quick version, we can accept an array of IDs, which is easy to retrieve
 		if( self::array_is_numeric($args) ){ //Array of numbers, assume they are event IDs to retreive
@@ -682,97 +908,19 @@ class EM_Bookings extends EM_Object implements Iterator, ArrayAccess {
 		
 		//We assume it's either an empty array or array of search arguments to merge with defaults			
 		$args = self::get_default_search($args);
-		$limit = ( $args['limit'] && is_numeric($args['limit'])) ? "LIMIT {$args['limit']}" : '';
-		$offset = ( $limit != "" && is_numeric($args['offset']) ) ? "OFFSET {$args['offset']}" : '';
 		
-		//Get the default conditions
-		$conditions = self::build_sql_conditions($args);
-		//Put it all together
-		$where = ( count($conditions) > 0 ) ? " WHERE " . implode ( " AND ", $conditions ):'';
-		
-		//Get ordering instructions
-		$accepted_fields = self::get_sql_accepted_fields();
-		$orderby = self::build_sql_orderby($args, $accepted_fields['orderby']);
-		//Now, build orderby sql
-		$orderby_sql = ( count($orderby) > 0 ) ? 'ORDER BY '. implode(', ', $orderby) : 'ORDER BY booking_date';
-		//Selectors
+		//If we're only counting results, remove orderby and avoid complex joins
 		if( $count ){
-			$selectors = 'COUNT(*)';
-		}elseif( is_array($args['array']) ){
-			$selectors = implode(',', $args['array']);
-		}else{
-			$selectors = '*';
-		}
+			$args['orderby'] = false;
+ 		}
 		
-		//check if we need to join a location table for this search, which is necessary if any location-specific are supplied, or if certain arguments such as orderby contain location fields
-		$optional_joins = array();
-		$required_joins = array();
-		foreach( $accepted_fields['tables'] as $table_name => $table_data ){
-			$join_table = false;
-			if( $table_name == EM_EVENTS_TABLE ) $join_table = true; // temporary whilst we work out some kinks with metadata
-			if( in_array($table_name, $required_joins) ){
-				$join_table = true;
-			}
-			foreach( $table_data['args'] as $arg ) {
-				$ignore_arg_values = array();
-				if( isset($table_data['ignore_args'][$arg]) ){
-					$ignore_arg_values = is_array($table_data['ignore_args'][$arg]) ? $table_data['ignore_args'][$arg] : array($table_data['ignore_args'][$arg]);
-				}
-				if ( !empty($args[$arg]) && !in_array($args[$arg], $ignore_arg_values) ) {
-					$join_table = true;
-				}elseif( !empty($table_data['empty_args'][$arg]) && isset($args[$arg]) ) {
-					// it could either be an array of 'legit' empty values vs any empty value meaning this table-specific arg isn't used, therefore no join needed
-					if( is_array($table_data['empty_args'][$arg]) ){
-						$join_table = in_array($args[$arg], $table_data['empty_args'][$arg]);
-					}elseif( $args[$arg] !== $table_data['empty_args'][$arg] ){
-						$join_table = true;
-					}
-				}
-				unset($ignore_arg_values);
-			}
-			//check ordering and grouping arguments for precense of location fields requiring a join
-			if( !$join_table ){
-				foreach( array('groupby', 'orderby', 'groupby_orderby') as $arg ){
-					if( !is_array($args[$arg]) ) continue; //ignore this argument if set to false
-					//we assume all these arguments are now array thanks to self::get_search_defaults() cleaning it up
-					foreach( $args[$arg] as $field_name ){
-						if( !empty($accepted_fields['tables'][$table_name]['fields']) && in_array($field_name, $accepted_fields['tables'][$table_name]['fields']) ){
-							$join_table = true;
-							break; //we join, no need to keep searching
-						}elseif( !empty($table_data['orderby_extras'][$field_name]) ){
-							// account for meta joins, which requires a cheeky condition insertion here instead
-							$optional_joins[$table_name] = $wpdb->prepare($table_data['join'], $table_data['orderby_extras'][$field_name]);
-							$join_table = true;
-							break; //we join, no need to keep searching
-						}
-					}
-				}
-			}
-			if( $join_table ){
-				// check if there's any other required joins
-				if( !empty($table_data['requires']) ) {
-					$required_joins[] = $table_data['requires'];
-				}
-				if( empty($optional_joins[$table_name]) ) {
-					$optional_joins[ $table_name ] = $table_data['join'];
-				}
-			}
-		}
-		//plugins can override this optional joining behaviour here in case they add custom WHERE conditions or something like that
-		$optional_joins = apply_filters('em_bookings_get_optional_joins', array_reverse($optional_joins), $args, $accepted_fields);
-		
-		//Create the SQL statement and execute
-		$sql = apply_filters('em_bookings_get_sql',"
-			SELECT $selectors FROM $bookings_table
-			". implode("\r\n", $optional_joins)."
-			$where
-			$orderby_sql
-			$limit $offset
-		", $args);
+		// build the SQL
+		$sql_parts = static::get_sql( $args, $count, false );
+		$sql = apply_filters('em_bookings_get_sql', implode("\r\n", $sql_parts['statement']), $args, $sql_parts);
 		
 		//If we're only counting results, return the number of results
 		if( $count ){
-			return apply_filters('em_bookings_get_count', $wpdb->get_var($sql), $args);		
+			return apply_filters('em_bookings_get_count', $wpdb->get_var($sql), $args);
 		}
 		$results = $wpdb->get_results($sql, ARRAY_A);
 
@@ -899,9 +1047,9 @@ class EM_Bookings extends EM_Object implements Iterator, ArrayAccess {
 				),
 				EM_EVENTS_TABLE => array(
 					// accepted args that would require events table to be joined
-					'args' => array('scope', 'timezone', 'status', 'recurring', 'private', 'private_only', 'post_id', 'mode', 'has_location', 'no_location', 'event_location_type', 'has_event_location', 'category', 'tag', 'event_status','recurrence', 'recurrences', 'month', 'year', 'owner', 'language'),
+					'args' => array('scope', 'timezone', 'recurring', 'private', 'private_only', 'post_id', 'mode', 'has_location', 'no_location', 'event_location_type', 'has_event_location', 'category', 'tag', 'event_status','recurrence', 'recurrences', 'month', 'year', 'owner', 'language'),
 					// any args that may have a specific empty value that still means it's 'set', could also be an array of empty value types
-					'empty_args' => array('status' => false ),
+					'empty_args' => array(),
 					// any args here that match the value or that within the array of values will be considered as ignored, for example scope 'all' doesn't actually require any SQL conditions
 					'ignore_args' => array('scope' => 'all'),
 					// the JOIN SQL required to join this table
@@ -921,8 +1069,23 @@ class EM_Bookings extends EM_Object implements Iterator, ArrayAccess {
 				EM_TICKETS_BOOKINGS_META_TABLE => 'ticket_booking_meta',
 			),
 			'orderby' => array_combine(array_keys($EM_Booking->fields), array_keys($EM_Booking->fields)), // maps field names to absolute DB field names
+			// these are mapped further down to a orderby_key => db_key format and then merged into orderby, in this case just making the value the key as well
+			'orderby_user_data' => ['user_email'], // mapped further down, see comment above
+ 			'orderby_user_meta' => ['user_name', 'first_name', 'last_name', 'dbem_phone'], // mapped further down, see comment above
+			'orderby_booking_meta' => [], // mapped further down, see comment above
 		);
 		$accepted_fields['orderby']['booking_date'] = 'booking_date'; // not covered in fields array
+		// map the orderby fields to the actual db fields
+		foreach( ['orderby_user_meta', 'orderby_user_data', 'orderby_booking_meta'] as $orderby_key ) {
+			$accepted_fields[$orderby_key] = array_combine( $accepted_fields[$orderby_key], $accepted_fields[$orderby_key] ); // make it an array of identical key/values, simlar to orderby
+			$accepted_fields[$orderby_key] = apply_filters('em_bookings_sql_fields_'.$orderby_key, $accepted_fields[$orderby_key]); // allow plugins to add to these fields
+			if( $orderby_key === 'orderby_booking_meta') {
+				// if we add booking meta to orderby, we prefix both sides with the full search name (i.e. prefixed with booking_meta), because we do this to avoid clashes in DB names and when applying to ORDER BY we'll have inconsistent names
+				$accepted_fields['orderby'] = $accepted_fields['orderby'] + array_combine( array_keys($accepted_fields[$orderby_key]), array_keys($accepted_fields[$orderby_key]) );
+			} else {
+				$accepted_fields['orderby'] = $accepted_fields['orderby'] + $accepted_fields[ $orderby_key ]; // merge the two array so we can order by all these items
+			}
+		}
 		// reserved field names that the main object here has right to, other tables use full or prefix with type to map orderby fields
 		$reserved_field_names = array(
 			'spaces', 'post_id', 'blog_id', 'post_content', 'content', 'slug', 'name', 'owner', 'status', 'private', 'language', 'parent', 'translation', 'attributes', 'date_created', 'date_modified',
@@ -949,36 +1112,11 @@ class EM_Bookings extends EM_Object implements Iterator, ArrayAccess {
 				}
 			}
 		}
-		return $accepted_fields;
-		$event_fields = $EM_Event->get_fields(true);
-		$location_fields = $EM_Location->get_fields(true); //will contain location-specific fields, not ambiguous ones
-		// location fields will clash, so they may need special treatment
-		foreach( $location_fields as $field_key => $field_name ){
-			if( in_array($field_name, $event_fields) ){
-				// event takes priority
-				unset($location_fields[$field_key]);
-			}
-			if( empty($event_fields[$field_name]) ){ // map it in entire long-handed name
-				$location_fields[$field_name] = $field_name;
-			}else{
-				$location_fields['location_'.$field_name] = EM_LOCATIONS_TABLE.'.'.$field_name;
-			}
-		}
-		$accepted_fields['tables'] = array(
-			EM_BOOKINGS_TABLE => $EM_Booking->get_fields(true),
-			EM_EVENTS_TABLE => $event_fields,
-			EM_LOCATIONS_TABLE => $location_fields,
-		);
-		$accepted_fields['orderby']['date'] = 'booking_date';
-		if( get_option('dbem_locations_enabled') ){
-			$accepted_fields = array_merge($location_fields, $event_fields, $accepted_fields);
-		}else{
-			//if locations disabled then we don't accept location-specific fields
-			$accepted_fields = array_merge($event_fields, $accepted_fields);
-		}
+		return apply_filters( 'em_bookings_get_sql_accepted_fields', $accepted_fields );
 	}
 	
 	public static function build_sql_groupby_orderby( $args, $accepted_fields, $default_order = 'ASC' ) {
+		
 		return parent::build_sql_groupby_orderby( $args, $accepted_fields, $default_order ); // TODO: Change the autogenerated stub
 	}
 	
@@ -994,7 +1132,7 @@ class EM_Bookings extends EM_Object implements Iterator, ArrayAccess {
 	 */
 	public static function build_sql_conditions( $args = array() ){
 		global $wpdb;
-		$conditions = apply_filters( 'em_bookings_build_sql_conditions', parent::build_sql_conditions($args), $args );
+		$conditions = parent::build_sql_conditions($args);
 		if( is_numeric($args['status']) ){
 			$conditions['status'] = 'booking_status='.$args['status'];
 		}elseif( self::array_is_numeric($args['status']) && count($args['status']) > 0 ){
@@ -1027,17 +1165,30 @@ class EM_Bookings extends EM_Object implements Iterator, ArrayAccess {
 		}
 		if( empty($conditions['event']) && $args['event'] === false ){
 			$conditions['event'] = EM_BOOKINGS_TABLE.'.event_id != 0';
+		} elseif ( !empty($conditions['event']) ) {
+			// we always include the bookings table, we don't always include the events table now
+			$conditions['event'] = str_replace( EM_EVENTS_TABLE . '.event_id', EM_BOOKINGS_TABLE . '.event_id', $conditions['event']);
 		}
 		if( !empty($args['search']) ){
-			$conditions['search'] = $wpdb->prepare(EM_BOOKINGS_TABLE.'.person_id IN (SELECT user_id FROM '.$wpdb->usermeta ." WHERE meta_value LIKE %s)", '%'.$args['search'].'%');
-			$conditions['search'] .= ' OR ' . $wpdb->prepare(EM_BOOKINGS_TABLE.'.booking_id IN (SELECT booking_id FROM '.EM_BOOKINGS_META_TABLE." WHERE meta_value LIKE %s)", '%'.$args['search'].'%');
-			$conditions['search'] = '('.$conditions['search'].')';
+			// escape the value directly, because otherwise it messes up with % marks in prepare
+			$search = '%' . $wpdb->_real_escape($args['search']) . '%';
+			$search_conditions = array();
+			$search_conditions[] = EM_BOOKINGS_TABLE.'.person_id IN (SELECT user_id FROM '.$wpdb->usermeta ." WHERE meta_value LIKE '$search' AND meta_key NOT LIKE '%_settings')";
+			$search_conditions[] = EM_BOOKINGS_TABLE.'.booking_id IN (SELECT booking_id FROM '.EM_BOOKINGS_META_TABLE." WHERE meta_value LIKE '$search')";
+			$search_conditions[] = EM_BOOKINGS_TABLE.'.person_id IN (SELECT ID FROM '.$wpdb->users." WHERE user_nicename LIKE '$search' OR user_email LIKE '$search' OR display_name LIKE '$search' OR user_login LIKE '$search')";
+			if( preg_match('/^[a-zA-Z0-9]{32}$/', $args['search']) ) {
+				$search_conditions[] = EM_BOOKINGS_TABLE . '.booking_id IN (SELECT booking_id FROM ' . EM_TICKETS_BOOKINGS_TABLE . " WHERE ticket_uuid = '{$args['search']}')";
+			}
+			$conditions['search'] = '('. implode(' OR ', $search_conditions) . ')';
 		}
 		if( is_numeric($args['ticket_id']) ){
 			$EM_Ticket = new EM_Ticket($args['ticket_id']);
 			if( $EM_Ticket->can_manage() ){
 				$conditions['ticket'] = EM_BOOKINGS_TABLE.'.booking_id IN (SELECT booking_id FROM '.EM_TICKETS_BOOKINGS_TABLE." WHERE ticket_id='{$args['ticket_id']}')";
 			}
+		}
+		if( !empty($args['booking_id']) && static::array_is_numeric($args['booking_id']) ) {
+			$conditions['ticket'] = EM_BOOKINGS_TABLE.'.booking_id IN ('.implode(',', $args['booking_id']).')';
 		}
 		return apply_filters('em_bookings_build_sql_conditions', $conditions, $args);
 	}
@@ -1056,7 +1207,9 @@ class EM_Bookings extends EM_Object implements Iterator, ArrayAccess {
 			'person' => true, //to add later, search by person's bookings...
 			'blog' => get_current_blog_id(),
 			'ticket_id' => false,
-			'array' => false //returns an array of results if true, if an array or text it's assumed an array of specific table fields or single field name requested 
+			'array' => false, //returns an array of results if true, if an array or text it's assumed an array of specific table fields or single field name requested
+			'country' => false, // experimeenal, if you see this and want more locatiion booking searches, let us know!
+			'booking_id' => [],
 		);
 		//sort out whether defaults were supplied or just the array of search values
 		if( empty($array) ){
@@ -1064,27 +1217,8 @@ class EM_Bookings extends EM_Object implements Iterator, ArrayAccess {
 		}else{
 			$defaults = array_merge($defaults, $array_or_defaults);
 		}
-		//clean up array value
-		if( !empty($array['array']) ){
-			$EM_Booking = new EM_Booking();
-			if( is_array($array['array']) ){
-				$clean_arg = array();
-				foreach( $array['array'] as $k => $field ){
-					if( array_key_exists($field, $EM_Booking->fields) ){
-						$clean_arg[] = $field;
-					}
-				}
-				$array['array'] = !empty($clean_arg) ? $clean_arg : true; //if invalid args given, just return all fields
-			}elseif( is_string($array['array']) && array_key_exists($array['array'], $EM_Booking->fields) ){
-				$array['array'] = array($array['array']);
-			}else{
-				$array['array'] = true;
-			}
-		}else{
-			$array['array'] = false;
-		}
 		//figure out default owning permissions
-		if( !current_user_can('edit_others_events') ){
+		if( !current_user_can('edit_others_events') || !isset($defaults['owner']) ){
 			$defaults['owner'] = get_current_user_id();
 		}else{
 			$defaults['owner'] = false;
@@ -1094,7 +1228,46 @@ class EM_Bookings extends EM_Object implements Iterator, ArrayAccess {
 			    $array['blog'] = false;
 			}
 		}
-		return apply_filters('em_bookings_get_default_search', parent::get_default_search($defaults,$array), $array, $defaults);
+		$search_defaults = parent::get_default_search($defaults,$array);
+		//clean up array value, which could be an actual array for EM_Bookings
+		if( !empty($array['array']) ){
+			$EM_Booking = new EM_Booking();
+			if( is_array($array['array']) ){
+				$clean_arg = array();
+				foreach( $array['array'] as $k => $field ){
+					if( array_key_exists($field, $EM_Booking->fields) ){
+						$clean_arg[] = $field;
+					}
+				}
+				$search_defaults['array'] = !empty($clean_arg) ? $clean_arg : true; //if invalid args given, just return all fields
+			}elseif( is_string($array['array']) && array_key_exists($array['array'], $EM_Booking->fields) ){
+				$search_defaults['array'] = array($array['array']);
+			}else{
+				$search_defaults['array'] = true;
+			}
+		}else{
+			$search_defaults['array'] = false;
+		}
+		// clean up the orderby, we cannot allow more than one custom user meta ordering to avoid crazy SQL statements
+		// regualr fields in the bookings table are fine, but user meta fields will bloat with joins
+		if( !empty($search_defaults['orderby']) ){
+			$EM_Booking = $EM_Booking ?? new EM_Booking();
+			$clean_orderby = array();
+			$custom_fields = 0;
+			foreach( $search_defaults['orderby'] as $orderby ){
+				if( array_key_exists($orderby, $EM_Booking->fields) ){
+					$clean_orderby[] = $orderby;
+				} elseif( $custom_fields === 0 ) {
+					$clean_orderby[] = $orderby;
+					$custom_fields++;
+				}
+			}
+			$search_defaults['orderby'] = !empty($clean_orderby) ? $clean_orderby : false;
+		}
+		// allow to filter by booking_id
+		$search_defaults = static::clean_id_atts($search_defaults, ['booking_id']);
+		// return the search defaults
+		return apply_filters('em_bookings_get_default_search', $search_defaults, $array, $defaults);
 	}
 
 	//Iterator Implementation - if we iterate this object, we automatically invoke the load() function first

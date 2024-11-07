@@ -60,6 +60,11 @@ export default class GPFUPField {
 	public storage: Storage;
 
 	get strings(): { [key: string]: string } {
+		const strings = {
+			...(window.gform_gravityforms?.strings || {}),
+			...window.GPFUP_CONSTANTS.STRINGS
+		};
+
 		/**
 		 * Filter the localized strings used on the File Uploader.
 		 *
@@ -70,10 +75,7 @@ export default class GPFUPField {
 		 * @param int           fieldId   		The current uploader field ID
 		 * @param {GPFUPField}	gpfupInstance 	Current File Upload Pro class instance
 		 */
-		return window.gform.applyFilters('gpfup_strings', {
-			...window.gform_gravityforms.strings,
-			...window.GPFUP_CONSTANTS.STRINGS
-		}, this.formId, this.fieldId, this);
+		return window.gform.applyFilters('gpfup_strings', strings, this.formId, this.fieldId, this);
 	}
 
 	get Uploader(): Plupload.Uploader {

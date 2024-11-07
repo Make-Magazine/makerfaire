@@ -474,27 +474,43 @@ class Gum_Elementor_Widget_Post_term extends Widget_Base {
 
     $post = get_post();
 
-    if( empty( $post ) || $post->post_type !='post') return '';
+    if( empty( $post )) return '';
 
     $post_id = $post->ID;
 
     $taxonomy = $term_type =='tags' ? 'post_tag' :'category';
     $terms = get_the_terms( $post_id, $taxonomy );
 
-    if( ! $terms ) return '';
+    if( ! $terms ) {
 
-    $rows_html = array();
-    $this->add_render_attribute( 'list_wrapper', 'class', 'posts-term');
+      if(is_admin()){
 
-    foreach ($terms as $index => $term ) {
+        $this->add_render_attribute( 'list_wrapper', 'class', 'posts-term');
 
-          $rows_html[] = '<li class="list-term">'. ( $term_linked=='yes' ? sprintf('<a href="%s"><span class="meta-text">%s</span></a>', get_term_link($term->term_id), $term->name) : sprintf('<span class="meta-text">%s</span>',$term->name) ).'</li>';
-       
+        $rows_html = array(
+          '<li class="list-term">'. ( $term_linked=='yes' ?  '<a href="#"><span class="meta-text">'.esc_html__( 'This post', 'gum-elementor-addon' ).'</span></a>' : '<span class="meta-text">'.esc_html__( 'This post', 'gum-elementor-addon' ).'</span>').'</li>',
+          '<li class="list-term">'. ( $term_linked=='yes' ?  '<a href="#"><span class="meta-text">'.esc_html__( 'No term', 'gum-elementor-addon' ).'</span></a>' : '<span class="meta-text">'.esc_html__( 'No term', 'gum-elementor-addon' ).'</span>').'</li>',
+          '<li class="list-term">'. ( $term_linked=='yes' ?  '<a href="#"><span class="meta-text">'.esc_html__( 'Example only', 'gum-elementor-addon' ).'</span></a>' : '<span class="meta-text">'.esc_html__( 'Example only', 'gum-elementor-addon' ).'</span>').'</li>' );
+
+      echo '<ul '.$this->get_render_attribute_string( 'list_wrapper' ).'>'.join('<li class="term-divider"><span>'.esc_html($separator).'</span></li>',$rows_html).'</ul>';
+
       }
 
-    echo '<ul '.$this->get_render_attribute_string( 'list_wrapper' ).'>'.join('<li class="term-divider"><span>'.esc_html($separator).'</span></li>',$rows_html).'</ul>';
+      return '';
 
+    }else{
 
+      $rows_html = array();
+      $this->add_render_attribute( 'list_wrapper', 'class', 'posts-term');
+
+      foreach ($terms as $index => $term ) {
+
+            $rows_html[] = '<li class="list-term">'. ( $term_linked=='yes' ? sprintf('<a href="%s"><span class="meta-text">%s</span></a>', get_term_link($term->term_id), $term->name) : sprintf('<span class="meta-text">%s</span>',$term->name) ).'</li>';
+         
+        }
+
+      echo '<ul '.$this->get_render_attribute_string( 'list_wrapper' ).'>'.join('<li class="term-divider"><span>'.esc_html($separator).'</span></li>',$rows_html).'</ul>';
+    }
   }
 
   protected function content_template() {
@@ -1238,7 +1254,13 @@ class Gum_Elementor_Widget_Post_meta extends Widget_Base {
             $category = $categories[0];
             $meta_type = $category->name;
             $meta_url = get_category_link( $category->term_id );
+          }else{
+            if( is_admin()){
+              $meta_type = esc_html__( 'Category', 'gum-elementor-addon' );
+              $meta_url = '#';             
+            }
           }
+
           break;
         case 'categories':
         default:

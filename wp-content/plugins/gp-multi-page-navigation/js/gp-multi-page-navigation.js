@@ -198,6 +198,16 @@
 					return;
 				}
 
+				/*
+				 * If the page that we're submitting to is 0 (end of the form), go straight to submit handler.
+				 *
+				 * GPPT will not do any handling for the resubmit/next page with errors buttons.
+				 */
+				if ( page == 0 ) {
+					$form.submit();
+					return;
+				}
+
 				// Get the index for the next page.
 				var $activeSlides = self.$formElem
 					.find('.swiper-slide:not(.swiper-slide-disabled');

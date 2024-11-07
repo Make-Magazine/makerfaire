@@ -34,6 +34,8 @@ class ComposerStaticInit747f57f9c9334e6a2ba87ca9a1263dc9
         'GravityKit\\AdvancedFilter\\QueryFilters\\Filter\\Visitor\\CurrentUserVisitor' => __DIR__ . '/../..' . '/vendor_prefixed/gravitykit/query-filters/src/Filter/Visitor/CurrentUserVisitor.php',
         'GravityKit\\AdvancedFilter\\QueryFilters\\Filter\\Visitor\\DisableAdminVisitor' => __DIR__ . '/../..' . '/vendor_prefixed/gravitykit/query-filters/src/Filter/Visitor/DisableAdminVisitor.php',
         'GravityKit\\AdvancedFilter\\QueryFilters\\Filter\\Visitor\\DisableFiltersVisitor' => __DIR__ . '/../..' . '/vendor_prefixed/gravitykit/query-filters/src/Filter/Visitor/DisableFiltersVisitor.php',
+        'GravityKit\\AdvancedFilter\\QueryFilters\\Filter\\Visitor\\EntryAware' => __DIR__ . '/../..' . '/vendor_prefixed/gravitykit/query-filters/src/Filter/Visitor/EntryAware.php',
+        'GravityKit\\AdvancedFilter\\QueryFilters\\Filter\\Visitor\\EntryAwareFilterVisitor' => __DIR__ . '/../..' . '/vendor_prefixed/gravitykit/query-filters/src/Filter/Visitor/EntryAwareFilterVisitor.php',
         'GravityKit\\AdvancedFilter\\QueryFilters\\Filter\\Visitor\\FilterVisitor' => __DIR__ . '/../..' . '/vendor_prefixed/gravitykit/query-filters/src/Filter/Visitor/FilterVisitor.php',
         'GravityKit\\AdvancedFilter\\QueryFilters\\Filter\\Visitor\\ProcessDateVisitor' => __DIR__ . '/../..' . '/vendor_prefixed/gravitykit/query-filters/src/Filter/Visitor/ProcessDateVisitor.php',
         'GravityKit\\AdvancedFilter\\QueryFilters\\Filter\\Visitor\\ProcessFieldTypeVisitor' => __DIR__ . '/../..' . '/vendor_prefixed/gravitykit/query-filters/src/Filter/Visitor/ProcessFieldTypeVisitor.php',

@@ -71,162 +71,168 @@ function mf_custom_import_entries() {
   ?>
 
   <h3>MakerFaire Entry Import</h3>
+  <div id="importTabs">
+    <ul class="nav nav-tabs">
+      <li class="active"><a data-toggle="tab" href="#import">File Import</a></li>
+      <!--<li><a data-toggle="tab" href="#home">Basic Info</a></li>-->
+      <li><a data-toggle="tab" href="#location">Location</a></li>
+      <li><a data-toggle="tab" href="#sponsor">Sponsor</a></li>
+      <li><a data-toggle="tab" href="#entry">Entry</a></li>
+      <li><a data-toggle="tab" href="#ribbons">Ribbon</a></li>
+    </ul>
 
-  <ul class="nav nav-tabs">
-    <li class="active"><a data-toggle="tab" href="#import">File Import</a></li>
-    <!--<li><a data-toggle="tab" href="#home">Basic Info</a></li>-->
-    <li><a data-toggle="tab" href="#location">Location</a></li>
-    <li><a data-toggle="tab" href="#sponsor">Sponsor</a></li>
-    <li><a data-toggle="tab" href="#entry">Entry</a></li>
-    <li><a data-toggle="tab" href="#ribbons">Ribbon</a></li>
-  </ul>
+    <div class="tab-content">
+      <div id="import" class="tab-pane fade in active">
+        <span class="required"><?php echo $error;?></span>
+        <br/>
+        <b>** Note: Ensure your uploaded file matches the layout in the tabs.  Your file will be rejected if it does not **</b>
+        <hr>
+        <form method="post" enctype="multipart/form-data" style="margin-top:10px;">
+          <?php wp_nonce_field( 'gf_import_forms', 'gf_import_forms_nonce' ); ?>
+          <table class="padd" width="80%">
+            <tr>
+              <td>Type of Import:</td>
+              <td>
+                <input type="radio" name="importType" value="location" checked> Location Import &nbsp;<a href="/wp-content/themes/makerfaire/devScripts/location_import.csv" download>Example</a><br>
+                <input type="radio" name="importType" value="sponsor"> Sponsor Import &nbsp;<a href="/wp-content/themes/makerfaire/devScripts/sponsor_upload_example.csv" download>Example</a><br>
+                <input type="radio" name="importType" value="entry"> Entry Import &nbsp;<a href="/wp-content/themes/makerfaire/devScripts/entry_upload_example.csv" download>Example</a><br>
+                <input type="radio" name="importType" value="ribbon"> Ribbon Import &nbsp;<a href="/wp-content/themes/makerfaire/devScripts/ribbon_import_example.csv" download>Example</a>
+              </td>
+            </tr>
+            <tr>
+              <td>File to upload:<br/><small><i>Must be CSV file</i></small></td>
+              <td>
+                <input type="file" name="fileToUpload" id="fileToUpload">
+                <input type="submit" value="<?php esc_html_e( 'Import', 'gravityforms' ) ?>" name="import_mf_data" class="button button-large button-primary" />
+              </td>
+            </tr>
+          </table>
+        </form>
+      </div>
 
-  <div class="tab-content">
-    <div id="import" class="tab-pane fade in active">
-      <span class="required"><?php echo $error;?></span>
-      <br/>
-      <b>** Note: Ensure your uploaded file matches the layout in the tabs.  Your file will be rejected if it does not **</b>
-      <hr>
-      <form method="post" enctype="multipart/form-data" style="margin-top:10px;">
-        <?php wp_nonce_field( 'gf_import_forms', 'gf_import_forms_nonce' ); ?>
-        <table class="padd" width="80%">
+      <div id="location" class="tab-pane fade">
+        <h3>Location Import Layout</h3>
+        <a href="/wp-content/themes/makerfaire/devScripts/location_import.csv" download>Example</a>
+        <hr>
+        <table class="table border" width="100%">
           <tr>
-            <td>Type of Import:</td>
-            <td>
-              <input type="radio" name="importType" value="location" checked> Location Import &nbsp;<a href="/wp-content/themes/makerfaire/devScripts/location_import.csv" download>Example</a><br>
-              <input type="radio" name="importType" value="sponsor"> Sponsor Import &nbsp;<a href="/wp-content/themes/makerfaire/devScripts/sponsor_upload_example.csv" download>Example</a><br>
-              <input type="radio" name="importType" value="entry"> Entry Import &nbsp;<a href="/wp-content/themes/makerfaire/devScripts/entry_upload_example.csv" download>Example</a><br>
-              <input type="radio" name="importType" value="ribbon"> Ribbon Import &nbsp;<a href="/wp-content/themes/makerfaire/devScripts/ribbon_import_example.csv" download>Example</a>
-            </td>
+            <th>entry_id</th>
+            <th>subarea_id</th>
+            <th>location</th>
+            <th>final_space_size</th>
+            <th>exposure</th>
+            <th>conf_l_notes</th>
+            <th>form_id</th>
           </tr>
           <tr>
-            <td>File to upload:<br/><small><i>Must be CSV file</i></small></td>
-            <td>
-              <input type="file" name="fileToUpload" id="fileToUpload">
-              <input type="submit" value="<?php esc_html_e( 'Import', 'gravityforms' ) ?>" name="import_mf_data" class="button button-large button-primary" />
-            </td>
+            <td>Required<br/>Numeric</td>
+            <td>Required<br/>Numeric</td>
+            <td></td>
+            <td>Space Size Attribute<br/>updates/adds<br/><i>(if blank will set review status to not ready)</i></td>
+            <td>Exposure Attribute<br/>updates/adds</td>
+            <td>Confirmation Comment<br/>updates/adds</td>
+            <td>Required<br/>Numeric</td>
           </tr>
         </table>
-      </form>
-    </div>
+      </div>
 
-    <div id="location" class="tab-pane fade">
-      <h3>Location Import Layout</h3>
-      <a href="/wp-content/themes/makerfaire/devScripts/location_import.csv" download>Example</a>
-      <hr>
-      <table class="table border" width="100%">
-        <tr>
-          <th>entry_id</th>
-          <th>subarea_id</th>
-          <th>location</th>
-          <th>final_space_size</th>
-          <th>exposure</th>
-          <th>conf_l_notes</th>
-          <th>form_id</th>
-        </tr>
-        <tr>
-          <td>Required<br/>Numeric</td>
-          <td>Required<br/>Numeric</td>
-          <td></td>
-          <td>Space Size Attribute<br/>updates/adds<br/><i>(if blank will set review status to not ready)</i></td>
-          <td>Exposure Attribute<br/>updates/adds</td>
-          <td>Confirmation Comment<br/>updates/adds</td>
-          <td>Required<br/>Numeric</td>
-        </tr>
-      </table>
-    </div>
+      <div id="sponsor" class="tab-pane fade">
+        <h3>Sponsor Import Layout</h3>
+        <a href="/wp-content/themes/makerfaire/devScripts/sponsor_upload_example.csv" download>Example</a>
+        <hr>
 
-    <div id="sponsor" class="tab-pane fade">
-      <h3>Sponsor Import Layout</h3>
-      <a href="/wp-content/themes/makerfaire/devScripts/sponsor_upload_example.csv" download>Example</a>
-      <hr>
+        <table class="table border" width="100%">
+          <tr><th>Field Names/Field ID</th><th>Verification</th><th>description</th><th>Required</th></tr>
+          <tr><td>entry_creator</td><td>Numeric</td><td>userID to associate this entry to</td><td>Yes</td></tr>
+          <tr><td>form_id</td><td>Numeric</td><td>Sponsors/ Exhibits</td><td>Yes</td></tr></tr>
+          <tr><td>link_entry_id</td><td>Numeric</td><td>Used to link to a parent entry</td><td></td></tr>
+          <tr><td>16</td><td>Non Blank</td><td>Public Description (limit to 250 characters</td><td>Yes</td></tr>
+          <tr><td>22</td><td>Non Blank</td><td>Photo URL</td><td>Yes</td></tr>
+          <tr><td>96.3</td><td>Non Blank</td><td>Contact First Name</td><td>Yes</td></tr>
+          <tr><td>96.6</td><td></td><td>Contact Last Name</td><td>Yes</td></tr>
+          <tr><td>98</td><td>Non Blank</td><td>Contact Email</td><td>Yes</td></tr>
+          <tr><td>151</td><td>Non Blank</td><td>Project Name</td><td>Yes</td></tr>
+          <tr><td>303</td><td>Non Blank</td><td>Status to set the entry to. (ie. Accepted)</td><td>Yes</td></tr>
+        </table>
+        Additional fields can be added to the import by entering that field ID in the first row. This must be a valid field for the form you are inputing and the format must match the field.
+      </div>
 
-      <table class="table border" width="100%">
-        <tr><th>Field Names/Field ID</th><th>Verification</th><th>description</th><th>Required</th></tr>
-        <tr><td>entry_creator</td><td>Numeric</td><td>userID to associate this entry to</td><td>Yes</td></tr>
-        <tr><td>form_id</td><td>Numeric</td><td>Sponsors/ Exhibits</td><td>Yes</td></tr></tr>
-        <tr><td>link_entry_id</td><td>Numeric</td><td>Used to link to a parent entry</td><td></td></tr>
-        <tr><td>16</td><td>Non Blank</td><td>Public Description (limit to 250 characters</td><td>Yes</td></tr>
-        <tr><td>22</td><td>Non Blank</td><td>Photo URL</td><td>Yes</td></tr>
-        <tr><td>96.3</td><td>Non Blank</td><td>Contact First Name</td><td>Yes</td></tr>
-        <tr><td>96.6</td><td></td><td>Contact Last Name</td><td>Yes</td></tr>
-        <tr><td>98</td><td>Non Blank</td><td>Contact Email</td><td>Yes</td></tr>
-        <tr><td>151</td><td>Non Blank</td><td>Project Name</td><td>Yes</td></tr>
-        <tr><td>303</td><td>Non Blank</td><td>Status to set the entry to. (ie. Accepted)</td><td>Yes</td></tr>
-      </table>
-      Additional fields can be added to the import by entering that field ID in the first row. This must be a valid field for the form you are inputing and the format must match the field.
-    </div>
+      <div id="entry" class="tab-pane fade">
+        <h3>Entry Import Layout</h3>
+        <a href="/wp-content/themes/makerfaire/devScripts/entry_upload_example.csv" download>Example</a>
+        <hr>
+        <i>Row 1 contains field names or ID's and Row 2 is the start of data. The data must match the format listed for that field in the form you are importing into.</i>
+          <br/>
 
-    <div id="entry" class="tab-pane fade">
-      <h3>Entry Import Layout</h3>
-      <a href="/wp-content/themes/makerfaire/devScripts/entry_upload_example.csv" download>Example</a>
-      <hr>
-      <i>Row 1 contains field names or ID's and Row 2 is the start of data. The data must match the format listed for that field in the form you are importing into.</i>
+        <table class="table border" width="100%">
+          <tr><th>Field Names/Field ID</th><th>Verification</th><th>description</th><th>Required</th></tr>
+          <tr><td>entry_creator</td><td>Numeric</td><td>userID to associate this entry to</td><td>Yes</td></tr>
+          <tr><td>form_id</td><td>Numeric</td><td>Sponsors/ Exhibits</td><td>Yes</td></tr></tr>
+          <tr><td>link_entry_id</td><td>Numeric</td><td>Used to link to a parent entry</td><td>Optional</td></tr>
+          <tr><td>16</td><td>Non Blank</td><td>Public Description (limit to 250 characters</td><td>Yes</td></tr>
+          <tr><td>22</td><td>Non Blank</td><td>Photo URL</td><td>Yes</td></tr>
+          <tr><td>96.3</td><td>Non Blank</td><td>Contact First Name</td><td>Yes</td></tr>
+          <tr><td>96.6</td><td></td><td>Contact Last Name</td><td>Yes</td></tr>
+          <tr><td>98</td><td>Non Blank</td><td>Contact Email</td><td>Yes</td></tr>
+          <tr><td>151</td><td>Non Blank</td><td>Project Name</td><td>Yes</td></tr>
+          <tr><td>303</td><td>Non Blank</td><td>Status to set the entry to</td><td>Yes</td></tr>
+          <tr><td>101.3</td><td>Non Blank</td><td>Contact City</td><td>Yes</td></tr>
+          <tr><td>101.4</td><td>Non Blank</td><td>Contact State (full state name)</td><td>Yes</td></tr>
+          <tr><td>101.5</td><td>Non Blank</td><td>Contact Zip</td><td>Yes</td></tr>
+          <tr><td>101.6</td><td>Non Blank</td><td>Contact Country (ie United States)</td><td>Yes</td></tr>
+          <tr><td>320</td><td>Numeric</td><td>Primary Category</td><td>Yes</td></tr>
+          <tr><td>287</td><td>Non Blank</td><td>What inspired you to make this project?</td><td>Yes</td></tr>
+          <tr><td>160.3</td><td>Non Blank</td><td>Maker 1 - First Name</td><td>Yes</td></tr>
+          <tr><td>160.6</td><td></td><td>Maker 1 - Last Name</td><td>Yes</td></tr>
+          <tr><td>161</td><td>Non Blank</td><td>Maker 1 - Email (must be unique)</td><td>Yes</td></tr>
+          <tr><td>217</td><td>Non Blank</td><td>Maker 1 - Photo URL</td><td>Yes</td></tr>
+          <tr><td>234</td><td>Non Blank</td><td>Maker 1 - Bio</td><td>Yes</td></tr>
+          <tr><td>369.1</td><td>Non Blank</td><td>Maker 1 - Address</td><td>Yes</td></tr>
+          <tr><td>369.3</td><td>Non Blank</td><td>Maker 1 - City</td><td>Yes</td></tr>
+          <tr><td>369.4</td><td>Non Blank</td><td>Maker 1 - State (full state name)</td><td>Yes</td></tr>
+          <tr><td>369.5</td><td>Non Blank</td><td>Maker 1 - Zip</td><td>Yes</td></tr>
+          <tr><td>369.6</td><td>Non Blank</td><td>Maker 1 - Country (ie United States)</td><td>Yes</td></tr>
+          <tr><td>443</td><td>Non Blank</td><td>Maker 1 - Role in project</td><td>Yes</td></tr>
+          <tr><td>310</td><td>Non Blank</td><td>Maker 1 Age range<br/><i>must match one of the options from the form</i></td><td>Yes</td></tr>
+        </table>
         <br/>
-
-      <table class="table border" width="100%">
-        <tr><th>Field Names/Field ID</th><th>Verification</th><th>description</th><th>Required</th></tr>
-        <tr><td>entry_creator</td><td>Numeric</td><td>userID to associate this entry to</td><td>Yes</td></tr>
-        <tr><td>form_id</td><td>Numeric</td><td>Sponsors/ Exhibits</td><td>Yes</td></tr></tr>
-        <tr><td>link_entry_id</td><td>Numeric</td><td>Used to link to a parent entry</td><td>Optional</td></tr>
-        <tr><td>16</td><td>Non Blank</td><td>Public Description (limit to 250 characters</td><td>Yes</td></tr>
-        <tr><td>22</td><td>Non Blank</td><td>Photo URL</td><td>Yes</td></tr>
-        <tr><td>96.3</td><td>Non Blank</td><td>Contact First Name</td><td>Yes</td></tr>
-        <tr><td>96.6</td><td></td><td>Contact Last Name</td><td>Yes</td></tr>
-        <tr><td>98</td><td>Non Blank</td><td>Contact Email</td><td>Yes</td></tr>
-        <tr><td>151</td><td>Non Blank</td><td>Project Name</td><td>Yes</td></tr>
-        <tr><td>303</td><td>Non Blank</td><td>Status to set the entry to</td><td>Yes</td></tr>
-        <tr><td>101.3</td><td>Non Blank</td><td>Contact City</td><td>Yes</td></tr>
-        <tr><td>101.4</td><td>Non Blank</td><td>Contact State (full state name)</td><td>Yes</td></tr>
-        <tr><td>101.5</td><td>Non Blank</td><td>Contact Zip</td><td>Yes</td></tr>
-        <tr><td>101.6</td><td>Non Blank</td><td>Contact Country (ie United States)</td><td>Yes</td></tr>
-        <tr><td>320</td><td>Numeric</td><td>Primary Category</td><td>Yes</td></tr>
-        <tr><td>287</td><td>Non Blank</td><td>What inspired you to make this project?</td><td>Yes</td></tr>
-        <tr><td>160.3</td><td>Non Blank</td><td>Maker 1 - First Name</td><td>Yes</td></tr>
-        <tr><td>160.6</td><td></td><td>Maker 1 - Last Name</td><td>Yes</td></tr>
-        <tr><td>161</td><td>Non Blank</td><td>Maker 1 - Email (must be unique)</td><td>Yes</td></tr>
-        <tr><td>217</td><td>Non Blank</td><td>Maker 1 - Photo URL</td><td>Yes</td></tr>
-        <tr><td>234</td><td>Non Blank</td><td>Maker 1 - Bio</td><td>Yes</td></tr>
-        <tr><td>369.1</td><td>Non Blank</td><td>Maker 1 - Address</td><td>Yes</td></tr>
-        <tr><td>369.3</td><td>Non Blank</td><td>Maker 1 - City</td><td>Yes</td></tr>
-        <tr><td>369.4</td><td>Non Blank</td><td>Maker 1 - State (full state name)</td><td>Yes</td></tr>
-        <tr><td>369.5</td><td>Non Blank</td><td>Maker 1 - Zip</td><td>Yes</td></tr>
-        <tr><td>369.6</td><td>Non Blank</td><td>Maker 1 - Country (ie United States)</td><td>Yes</td></tr>
-        <tr><td>443</td><td>Non Blank</td><td>Maker 1 - Role in project</td><td>Yes</td></tr>
-        <tr><td>310</td><td>Non Blank</td><td>Maker 1 Age range<br/><i>must match one of the options from the form</i></td><td>Yes</td></tr>
-      </table>
-      <br/>
-      Additional fields can be added to the import by entering that field ID in the first row. This must be a valid field for the form you are inputing and the format must match the field.
-      <br/>
-      For more information on the field layouts, please go to (where 999 is the form you are importing into):<br/>
-      <a href="http://makerfaire.com/wp-content/themes/makerfaire/devScripts/formFields.php?formID=9">http://makerfaire.com/wp-content/themes/makerfaire/devScripts/formFields.php?formID=999</a><br/>
-    </div>
-    <div id="ribbons" class="tab-pane fade">
-      <h3>Ribbon Import Layout</h3>
-      <a href="/wp-content/themes/makerfaire/devScripts/ribbon_import_example.csv" download>Example</a>
-      <hr>
-      <table class="table border" width="100%">
-        <tr>
-          <th>Event&nbsp;<span class="required">*</span></i></th>
-          <th>Year&nbsp;<span class="required">*</span></th>
-          <th>Issuer</th>
-          <th>Ribbon Type&nbsp;<span class="required">*</span></th>
-          <th>Entry ID&nbsp;<span class="required">*</span></th>
-          <th>Exhibit Name</th>
-          <th>Notes</th>
-        </tr>
-        <tr>
-          <td>ie:New York,<br/>Bay Area</td>
-          <td>4&nbsp;digit</td>
-          <td>Name of person giving the ribbon</td>
-          <td>blue = 0<br/>red = 1</td>
-          <td>Numeric</td>
-          <td>Will overwrite the exhibit name in the database</td>
-          <td></td>
-        </tr>
-      </table>
+        Additional fields can be added to the import by entering that field ID in the first row. This must be a valid field for the form you are inputing and the format must match the field.
+        <br/>
+        For more information on the field layouts, please go to (where 999 is the form you are importing into):<br/>
+        <a href="http://makerfaire.com/wp-content/themes/makerfaire/devScripts/formFields.php?formID=9">http://makerfaire.com/wp-content/themes/makerfaire/devScripts/formFields.php?formID=999</a><br/>
+      </div>
+      <div id="ribbons" class="tab-pane fade">
+        <h3>Ribbon Import Layout</h3>
+        <a href="/wp-content/themes/makerfaire/devScripts/ribbon_import_example.csv" download>Example</a>
+        <hr>
+        <table class="table border" width="100%">
+          <tr>
+            <th>Event&nbsp;<span class="required">*</span></i></th>
+            <th>Year&nbsp;<span class="required">*</span></th>
+            <th>Issuer</th>
+            <th>Ribbon Type&nbsp;<span class="required">*</span></th>
+            <th>Entry ID&nbsp;<span class="required">*</span></th>
+            <th>Exhibit Name</th>
+            <th>Notes</th>
+          </tr>
+          <tr>
+            <td>ie:New York,<br/>Bay Area</td>
+            <td>4&nbsp;digit</td>
+            <td>Name of person giving the ribbon</td>
+            <td>blue = 0<br/>red = 1</td>
+            <td>Numeric</td>
+            <td>Will overwrite the exhibit name in the database</td>
+            <td></td>
+          </tr>
+        </table>
+      </div>
     </div>
   </div>
+  <script>
+    jQuery( function() {
+      jQuery( "#importTabs" ).tabs();
+    });
+  </script>
 
   <?php
   GFExport::page_footer();
@@ -246,16 +252,12 @@ function mf_custom_import_entries() {
             <tbody>
               <tr valign="top">
                 <th scope="row">
-                  <label for="export_form">Select a Form</label> 
+                  <label for="mfexportdata">Select a Form</label> 
                 </th>
                 <td>
-                  <div class="dropdown">
-                    <button class="btn btn-default dropdown-toggle" type="button" id="mfexportdata" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                      Select Form
-                      <span class="caret"></span>
-                    </button>                    
-                  
-                    <ul class="dropdown-menu" aria-labelledby="mfexportdata">
+                  <fieldset>               
+                    <select name="mfexportdata" id="mfexportdata" aria-labelledby="mfexportdata">
+                      <option>Select Form</option>
                       <?php
                       //create a crypt key to pass to entriesExport.php to avoid outside from accessing
                       //$date  = date('mdY');
@@ -263,11 +265,17 @@ function mf_custom_import_entries() {
                       $crypt = 'abcd';
                       $forms = RGFormsModel::get_forms( 1, 'title' );
                       foreach ( $forms as $form ) { ?>
-                        <li><a href="/wp-content/themes/makerfaire/devScripts/entriesExport.php?formID=<?php echo absint( $form->id ).'&auth='.$crypt; ?>"><?php echo esc_html( $form->title ); ?></a></li>
+                        <option value="/wp-content/themes/makerfaire/devScripts/entriesExport.php?formID=<?php echo absint( $form->id ).'&auth='.$crypt; ?>"><?php echo esc_html( $form->title ); ?></option>
                         <?php
                       }
                       ?>
-                    </ul>
+                    </select>
+                    <script>
+                      jQuery('#mfexportdata').on('change', function (e) {
+                          var optionSelected = jQuery("option:selected", this);
+                          window.location = this.value;
+                      });
+                    </script>
                   </div>  
                 </td>
               </tr>

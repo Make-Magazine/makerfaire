@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Contains Trait WP_Auth0_SymmetricVerifier.
  *
@@ -15,7 +16,8 @@ use Lcobucci\JWT\Token;
  *
  * @codeCoverageIgnore - Classes are adapted from the PHP SDK and tested there.
  */
-final class WP_Auth0_SymmetricVerifier extends WP_Auth0_SignatureVerifier {
+final class WP_Auth0_SymmetricVerifier extends WP_Auth0_SignatureVerifier
+{
 
 
 	/**
@@ -30,9 +32,10 @@ final class WP_Auth0_SymmetricVerifier extends WP_Auth0_SignatureVerifier {
 	 *
 	 * @param string $clientSecret Client secret for the application.
 	 */
-	public function __construct( string $clientSecret ) {
+	public function __construct(string $clientSecret)
+	{
 		$this->clientSecret = $clientSecret;
-		parent::__construct( 'HS256' );
+		parent::__construct('HS256');
 	}
 
 	/**
@@ -42,8 +45,9 @@ final class WP_Auth0_SymmetricVerifier extends WP_Auth0_SignatureVerifier {
 	 *
 	 * @return boolean
 	 */
-	protected function checkSignature( Token $token ) : bool {
-		return $token->verify( new HsSigner(), $this->clientSecret );
+	protected function checkSignature(Token $token): bool
+	{
+		return $token->verify(new HsSigner(), $this->clientSecret);
 	}
 
 	/**
@@ -51,7 +55,8 @@ final class WP_Auth0_SymmetricVerifier extends WP_Auth0_SignatureVerifier {
 	 *
 	 * @return string
 	 */
-	protected function getAlgorithm() : string {
+	protected function getAlgorithm(): string
+	{
 		return 'HS256';
 	}
 }

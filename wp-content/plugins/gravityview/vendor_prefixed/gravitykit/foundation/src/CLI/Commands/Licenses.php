@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by gravityview on 14-August-2024 using {@see https://github.com/BrianHenryIE/strauss}.
+ * Modified by gravityview on 04-November-2024 using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\GravityView\Foundation\CLI\Commands;
@@ -104,6 +104,7 @@ class Licenses extends AbstractCommand {
 			if ( ! $license['_raw']['success'] ) {
 				WP_CLI::error( "License {$key} is invalid.", false );
 
+				// @phpstan-ignore-next-line
 				continue;
 			}
 
@@ -117,6 +118,7 @@ class Licenses extends AbstractCommand {
 	 * @since      1.2.0
 	 *
 	 * @param array $args       Command arguments.
+	 * @param array $assoc_args Command associative arguments.
 	 *
 	 * @subcommand activate
 	 *
@@ -136,7 +138,7 @@ class Licenses extends AbstractCommand {
 	 *
 	 * @return void
 	 */
-	public function activate( array $args ) {
+	public function activate( array $args, array $assoc_args ) {
 		if ( ! isset( $args[0] ) ) {
 			WP_CLI::error( 'Please provide a license key.' );
 		}
@@ -157,9 +159,7 @@ class Licenses extends AbstractCommand {
 			WP_CLI::line( "Activating {$key}…" );
 
 			if ( isset( $licenses[ $key ] ) ) {
-				WP_CLI::warning( "License is already activate.\n", false );
-
-				continue;
+				WP_CLI::warning( "License is already activate.\n" );
 			}
 
 			try {
@@ -171,12 +171,14 @@ class Licenses extends AbstractCommand {
 			} catch ( \Exception $e ) {
 				WP_CLI::error( $e->getMessage() . "\n", false );
 
+				// @phpstan-ignore-next-line
 				$error = true;
 			}
 		}
 
+		// @phpstan-ignore-next-line
 		if ( $error ) {
-			WP_CLI::error();
+			WP_CLI::error( '' );
 		}
 	}
 
@@ -185,7 +187,7 @@ class Licenses extends AbstractCommand {
 	 *
 	 * @since      1.2.0
 	 *
-	 * @param array $args       Command arguments.
+	 * @param array $args Command arguments.
 	 *
 	 * @subcommand deactivate
 	 *
@@ -226,7 +228,7 @@ class Licenses extends AbstractCommand {
 			WP_CLI::line( "Deactivating {$key}…" );
 
 			if ( ! isset( $licenses[ $key ] ) ) {
-				WP_CLI::warning( "License is not active.\n", false );
+				WP_CLI::warning( "License is not active.\n" );
 
 				continue;
 			}
@@ -237,11 +239,15 @@ class Licenses extends AbstractCommand {
 				WP_CLI::success( "License deactivated.\n" );
 			} catch ( \Exception $e ) {
 				WP_CLI::error( $e->getMessage() . "\n", false );
+
+				// @phpstan-ignore-next-line
+				$error = true;
 			}
 		}
 
+		// @phpstan-ignore-next-line
 		if ( $error ) {
-			WP_CLI::error();
+			WP_CLI::error( '' );
 		}
 	}
 

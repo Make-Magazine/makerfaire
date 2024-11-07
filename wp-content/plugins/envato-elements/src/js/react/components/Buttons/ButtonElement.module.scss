@@ -24,38 +24,23 @@
   }
 }
 
-.ghost {
-  @extend .button;
-
-  background: #fff;
-  border: 1px solid #81b441;
-  color: #81b441;
-
-  &:active,
-  &:focus,
-  &:hover {
-    background: #639623;
-    border-color: #639623;
-    color: #fff;
-  }
-}
-
 .primary {
   @extend .button;
 
-  background: #81b441;
-  border: 1px solid #81b441;
-  color: #fff;
+  background: #9cee69;
+  border: 1px solid #9cee69;
+  color: #1a4200;
 
   &:active,
   &:focus,
   &:hover {
-    background: #639623;
-    border-color: #639623;
-    color: #fff;
+    background: #6cc832;
+    border-color: #6cc832;
+    color: #1a4200;
   }
 }
 
+.ghost,
 .secondary {
   @extend .button;
 

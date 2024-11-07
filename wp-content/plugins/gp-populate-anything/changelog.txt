@@ -1,5 +1,30 @@
 # Changelog
 
+## 2.1.13 | October 16, 2024
+
+- Fixed issue where filter values from fields that are empty strings could be converted to `null` on object types that do not support `null` as a special value.
+- Added support for option groups in the form field settings Object Type selector.
+
+## 2.1.12 | October 9, 2024
+
+- Removed definition and usage of `String.prototype.gformFormat()` on the frontend to resolve conflicts with Elementor in some situations.
+
+## 2.1.11 | October 1, 2024
+
+- Added [`gppa_ajax_form_field_values`](https://gravitywiz.com/documentation/gppa_ajax_form_field_values/) JS filter hook.
+
+## 2.1.10 | September 11, 2024
+
+- Fixed an issue where radio choices with a value of `0` were treated as blank values when the radio field is referenced using a Live Merge Tag.
+
+## 2.1.9 | September 5, 2024
+
+- Fixed an issue where dynamically populated checkbox fields on multi-page forms could be unchecked on page navigation.
+
+## 2.1.8 | August 27, 2024
+
+- Fixed issue where Populate Anything's internal tracking of values could already be partially populated when refreshing fields dynamically in certain setups. This could cause field values to not get dynamically updated correctly.
+
 ## 2.1.7 | August 14, 2024
 
 - Fixed issue with `{embed_url}` and `{embed_post}` not working in Live Merge Tags when fields are refreshed dynamically.

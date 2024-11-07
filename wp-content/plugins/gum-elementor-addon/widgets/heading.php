@@ -100,7 +100,7 @@ class Gum_Elementor_Widget_Heading extends Widget_Base {
           'the_title' => esc_html__( 'Page Title', 'gum-elementor-addon' ),
           'site_title' => esc_html__( 'Site Title', 'gum-elementor-addon' ),
           'site_tagline' => esc_html__( 'Site Tagline', 'gum-elementor-addon' ),
-          'site_year' => esc_html__( 'Year', 'gum-elementor-addon' )
+          'site_year' => esc_html__( 'Current Year', 'gum-elementor-addon' )
         ],
         'default' => 'text'
       ]
@@ -1016,15 +1016,15 @@ class Gum_Elementor_Widget_Heading extends Widget_Base {
     $this->add_render_attribute( 'section_heading', 'class', 'section-main-title' );
 
     if ( ! empty( $font_size ) ) {
-      $this->add_render_attribute( 'section_heading', 'class', 'size-' . $font_size );
+      $this->add_render_attribute( 'section_heading', 'class', 'size-' . sanitize_html_class($font_size) );
     }
 
     if( ! empty( $line_position )){
-      $this->add_render_attribute( 'heading_container', 'class', 'decor-' . $line_position );      
+      $this->add_render_attribute( 'heading_container', 'class', 'decor-' . sanitize_html_class($line_position) );      
     }
 
     if( ! empty( $line_align )){
-      $this->add_render_attribute( 'heading_container', 'class', 'decorpos-' . $line_align );      
+      $this->add_render_attribute( 'heading_container', 'class', 'decorpos-' . sanitize_html_class($line_align) );      
     }
 
 

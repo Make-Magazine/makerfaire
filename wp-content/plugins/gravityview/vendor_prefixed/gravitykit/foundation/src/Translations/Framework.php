@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by gravityview on 14-August-2024 using {@see https://github.com/BrianHenryIE/strauss}.
+ * Modified by gravityview on 04-November-2024 using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\GravityView\Foundation\Translations;
@@ -22,9 +22,9 @@ class Framework {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @var Framework
+	 * @var Framework|null;
 	 */
-	private static $_instance;
+	private static $_instance = null;
 
 	/**
 	 * Logger class instance.
@@ -159,7 +159,7 @@ class Framework {
 		 *
 		 * @since  1.0.0
 		 *
-		 * @param $this
+		 * @param Framework $instance
 		 */
 		do_action( 'gk/foundation/translations/initialized', $this );
 	}
@@ -385,7 +385,7 @@ JS;
 
 		$plugin_data = get_plugin_data( $plugin_file );
 
-		if ( ! isset( $plugin_data['TextDomain'] ) || $this->is_en_locale() || ! $this->can_install_languages() ) {
+		if ( $this->is_en_locale() || ! $this->can_install_languages() ) {
 			return;
 		}
 

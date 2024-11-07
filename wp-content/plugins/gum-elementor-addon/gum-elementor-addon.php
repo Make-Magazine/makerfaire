@@ -4,14 +4,16 @@ defined('ABSPATH') or die();
  * Plugin Name: Gum Elementor Addon
  * Plugin URI: http://themegum.com/
  * Description: Addon widget for Elementor. Slideshow, pricing table, icon list, recent post, blog term, post term, post share, post meta, post related, post adjacent, blog grid, post slider,navigation menu, image box, popover and to top button
- * Version: 1.3.6
+ * Version: 1.3.9
  * Author: TemeGUM
  * Author URI: http://themegum.com
  * Domain Path: /languages/
  * Text Domain: gum-elementor-addon
+ * License: GPLv3 or later
+ * License URI: https://www.gnu.org/licenses/gpl-3.0.html
  * Requires at least: 3.7
- * Tested up to: 6.5.5
- * Elementor tested up to: 3.22.3
+ * Tested up to: 6.6.2
+ * Elementor tested up to: 3.24.2
  */
 
 require_once plugin_dir_path(__FILE__). '/helper.php';
@@ -55,6 +57,7 @@ final class Gum_Elementor_Addon{
 
       require_once( GUM_ELEMENTOR_DIR."widgets/section.php" );
       require_once( GUM_ELEMENTOR_DIR."widgets/icon_list.php" );
+      require_once( GUM_ELEMENTOR_DIR."widgets/image_box.php" );
       require_once( GUM_ELEMENTOR_DIR."widgets/accordion.php" );
       require_once( GUM_ELEMENTOR_DIR."widgets/counter.php" );
       require_once( GUM_ELEMENTOR_DIR."widgets/progress.php" );

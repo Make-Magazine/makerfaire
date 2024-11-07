@@ -22,6 +22,12 @@ class GP_Nested_Forms extends GP_Plugin {
 
 	private static $instance = null;
 
+	/**
+	 * @var array|null $entry_being_edited Stores the entry being edited so we can access the entry prior to it being
+	 *  updated.
+	 */
+	public $entry_being_edited = null;
+
 	public static function get_instance() {
 
 		if ( self::$instance === null ) {
@@ -1914,7 +1920,7 @@ class GP_Nested_Forms extends GP_Plugin {
 
 		$entry = new GPNF_Entry( $entry );
 		$entry->set_total();
-		$field_values['total'] = $entry->_total;
+		$field_values['total'] = $entry->get_total();
 
 		return $field_values;
 	}
@@ -2940,11 +2946,16 @@ class GP_Nested_Forms extends GP_Plugin {
 			$entry_id = $this->get_posted_entry_id();
 			$this->handle_existing_images_submission( $form, $entry_id );
 
+			$this->entry_being_edited = GFAPI::get_entry( $entry_id );
+
 			// Force Gravity Forms to fetch data from the post when evaluating conditional logic while re-saving the entry.
 			add_filter( 'gform_use_post_value_for_conditional_logic_save_entry', '__return_true' );
 
 			add_filter( 'gform_entry_post_save', array( $this, 'refresh_product_cache_and_update_total' ), 10, 2 );
 			add_filter( 'gform_entry_post_save', array( $this, 'delete_conditional_logic_field_values' ), 10, 2 );
+
+			// Run before other perks like GP Media Library change the new entry.
+			add_filter( 'gform_entry_post_save', array( $this, 'delete_removed_uploaded_files' ), 5, 2 );
 
 		}
 
@@ -3041,6 +3052,120 @@ class GP_Nested_Forms extends GP_Plugin {
 		}
 
 		return $entry;
+	}
+
+	/**
+	 * When editing entries with `gform_entry_id_pre_save_lead` hook, when files are removed from File Upload field,
+	 * Gravity Forms does not handle deleting them.
+	 *
+	 * @param array $entry
+	 * @param array $form
+	 *
+	 * @return array
+	 */
+	public function delete_removed_uploaded_files( $entry, $form ) {
+		if ( empty( $this->entry_being_edited ) || is_wp_error( $this->entry_being_edited ) ) {
+			return $entry;
+		}
+
+		$existing_entry  = $this->entry_being_edited;
+		$files_to_delete = array();
+		$attachment_ids = array();
+
+		foreach ( $form['fields'] as $field ) {
+			if ( $field->get_input_type() !== 'fileupload' ) {
+				continue;
+			}
+
+			$input_name = "input_{$field['id']}";
+
+			/*
+			 * If the field is a Single File Upload, the value will be a string with the URL. Multi-file upload fields
+			 * will have an array of URLs.
+			 */
+			if ( ! rgar( $field, 'multipleFiles' ) ) {
+				$entry_value          = $entry[ $field['id'] ];
+				$existing_entry_value = $existing_entry[ $field['id'] ];
+
+				if ( $entry_value !== $existing_entry_value && ! empty( $existing_entry_value ) ) {
+					$files_to_delete[] = $existing_entry_value;
+				}
+
+				if ( function_exists( 'gp_media_library' ) && gp_media_library()->is_applicable_field( $field ) ) {
+					$attachment_ids[] = gp_media_library()->get_file_ids( $entry['id'], $field['id'] );
+				}
+			} else {
+				/**
+				 * Do an array intersect to get the files that were removed by comparing $entry with
+				 *  $existing_entry.
+				 */
+				$entry_value          = json_decode( $entry[ $field['id'] ] );
+				$existing_entry_value = json_decode( $existing_entry[ $field['id'] ] );
+
+				$files_to_delete = array_merge( $files_to_delete, array_diff( $existing_entry_value, $entry_value ) );
+
+				if ( function_exists( 'gp_media_library' ) && gp_media_library()->is_applicable_field( $field ) ) {
+					// $file_ids will have the same indexes as $existing_entry_value. Figure out the indexes of the files that were removed.
+					$file_ids = gp_media_library()->get_file_ids( $entry['id'], $field['id'] );
+
+					foreach ( $existing_entry_value as $index => $url ) {
+						if ( ! in_array( $url, $entry_value ) ) {
+							$attachment_ids[] = $file_ids[ $index ];
+						}
+					}
+				}
+			}
+		}
+
+		unset( $this->entry_being_edited );
+
+		if ( ! empty( $files_to_delete ) ) {
+			foreach ( $files_to_delete as $file_to_delete ) {
+				$this->delete_physical_file( $file_to_delete, $entry['id'] );
+			}
+		}
+
+		if ( ! empty( $attachment_ids ) ) {
+			foreach ( $attachment_ids as $attachment_id ) {
+				wp_delete_attachment( $attachment_id, true );
+			}
+		}
+
+		return $entry;
+	}
+
+	/**
+	 * Duplicate of GFFormsModel::delete_physical_file() due to it being a private method.
+	 *
+	 * @param $file_url
+	 * @param $entry_id
+	 *
+	 * @return void
+	 */
+	public function delete_physical_file( $file_url, $entry_id ) {
+
+		$ary = explode( '|:|', $file_url );
+		$url = rgar( $ary, 0 );
+		if ( empty( $url ) ) {
+			return;
+		}
+
+		$file_path = GFFormsModel::get_physical_file_path( $url, $entry_id );
+
+		/**
+		 * Allow the file path to be overridden so files stored outside the /wp-content/uploads/gravity_forms/ directory can be deleted.
+		 *
+		 * @since 2.2.3.1
+		 *
+		 * @param string $file_path The path of the file to be deleted.
+		 * @param string $url       The URL of the file to be deleted.
+		 */
+		$file_path = apply_filters( 'gform_file_path_pre_delete_file', $file_path, $url );
+
+		if ( file_exists( $file_path ) ) {
+			unlink( $file_path );
+			gform_delete_meta( $entry_id, GF_Field_FileUpload::get_file_upload_path_meta_key_hash( $url ) );
+		}
 	}
 
 	public function has_pricing_field( $form ) {
@@ -3231,7 +3356,7 @@ class GP_Nested_Forms extends GP_Plugin {
 	}
 
 	public function is_nested_form_edit_submission() {
-		return $this->is_nested_form_submission() && rgpost( 'gpnf_mode' ) == 'edit';
+		return $this->is_nested_form_submission() && rgpost( 'gpnf_mode' ) == 'edit' && GPNF_Entry::can_current_user_edit_entry( GFAPI::get_entry( $this->get_posted_entry_id() ) );
 	}
 
 	public function get_parent_form_id() {

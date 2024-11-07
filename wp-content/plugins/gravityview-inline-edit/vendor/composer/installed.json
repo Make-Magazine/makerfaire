@@ -241,12 +241,12 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:GravityKit/Foundation.git",
-                "reference": "bc93c59a099e9b367cb6e3e562b25dbaec64a924"
+                "reference": "93d00cfd445c3485f6adb099164fc03d16bd42db"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/GravityKit/Foundation/zipball/bc93c59a099e9b367cb6e3e562b25dbaec64a924",
-                "reference": "bc93c59a099e9b367cb6e3e562b25dbaec64a924",
+                "url": "https://api.github.com/repos/GravityKit/Foundation/zipball/93d00cfd445c3485f6adb099164fc03d16bd42db",
+                "reference": "93d00cfd445c3485f6adb099164fc03d16bd42db",
                 "shasum": ""
             },
             "require": {
@@ -267,8 +267,7 @@
                 "phpcompatibility/phpcompatibility-wp": "*",
                 "wp-coding-standards/wpcs": "^2.3"
             },
-            "time": "2024-07-22T23:20:16+00:00",
-            "default-branch": true,
+            "time": "2024-09-12T23:42:51+00:00",
             "type": "library",
             "extra": {
                 "strauss": {
@@ -305,6 +304,9 @@
                 "prefix_vendor": [
                     "@php tools/strauss.phar"
                 ],
+                "test:unit": [
+                    "vendor/bin/pest --group=unit"
+                ],
                 "post_update_install": [
                     "./composer_post_update_install.sh"
                 ],
@@ -329,7 +331,7 @@
                 }
             ],
             "support": {
-                "source": "https://github.com/GravityKit/Foundation/tree/v1.2.17",
+                "source": "https://github.com/GravityKit/Foundation/tree/main",
                 "issues": "https://github.com/GravityKit/Foundation/issues"
             },
             "install-path": "../gravitykit/foundation"
@@ -997,21 +999,21 @@
         },
         {
             "name": "symfony/polyfill-mbstring",
-            "version": "v1.30.0",
-            "version_normalized": "1.30.0.0",
+            "version": "v1.31.0",
+            "version_normalized": "1.31.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/polyfill-mbstring.git",
-                "reference": "fd22ab50000ef01661e2a31d850ebaa297f8e03c"
+                "reference": "85181ba99b2345b0ef10ce42ecac37612d9fd341"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/polyfill-mbstring/zipball/fd22ab50000ef01661e2a31d850ebaa297f8e03c",
-                "reference": "fd22ab50000ef01661e2a31d850ebaa297f8e03c",
+                "url": "https://api.github.com/repos/symfony/polyfill-mbstring/zipball/85181ba99b2345b0ef10ce42ecac37612d9fd341",
+                "reference": "85181ba99b2345b0ef10ce42ecac37612d9fd341",
                 "shasum": ""
             },
             "require": {
-                "php": ">=7.1"
+                "php": ">=7.2"
             },
             "provide": {
                 "ext-mbstring": "*"
@@ -1019,7 +1021,7 @@
             "suggest": {
                 "ext-mbstring": "For best performance"
             },
-            "time": "2024-06-19T12:30:46+00:00",
+            "time": "2024-09-09T11:45:10+00:00",
             "type": "library",
             "extra": {
                 "thanks": {
@@ -1060,7 +1062,7 @@
                 "shim"
             ],
             "support": {
-                "source": "https://github.com/symfony/polyfill-mbstring/tree/v1.30.0"
+                "source": "https://github.com/symfony/polyfill-mbstring/tree/v1.31.0"
             },
             "funding": [
                 {
@@ -1150,17 +1152,17 @@
         },
         {
             "name": "trustedlogin/client",
-            "version": "v1.8.0",
-            "version_normalized": "1.8.0.0",
+            "version": "v1.9.0",
+            "version_normalized": "1.9.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/trustedlogin/client.git",
-                "reference": "3ba476906afe0b98f551f080ee0cd92d5d9c8830"
+                "reference": "b913058ae57b512a7766f449ab8d55952500fe72"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/trustedlogin/client/zipball/3ba476906afe0b98f551f080ee0cd92d5d9c8830",
-                "reference": "3ba476906afe0b98f551f080ee0cd92d5d9c8830",
+                "url": "https://api.github.com/repos/trustedlogin/client/zipball/b913058ae57b512a7766f449ab8d55952500fe72",
+                "reference": "b913058ae57b512a7766f449ab8d55952500fe72",
                 "shasum": ""
             },
             "require-dev": {
@@ -1175,7 +1177,7 @@
                 "wp-coding-standards/wpcs": "^3.0",
                 "yoast/phpunit-polyfills": "^1.0.0"
             },
-            "time": "2024-07-18T15:45:05+00:00",
+            "time": "2024-08-26T01:13:42+00:00",
             "bin": [
                 "bin/build-sass"
             ],
@@ -1206,7 +1208,7 @@
             ],
             "support": {
                 "issues": "https://github.com/trustedlogin/client/issues",
-                "source": "https://github.com/trustedlogin/client/tree/v1.8.0"
+                "source": "https://github.com/trustedlogin/client/tree/v1.9.0"
             },
             "install-path": "../trustedlogin/client"
         }

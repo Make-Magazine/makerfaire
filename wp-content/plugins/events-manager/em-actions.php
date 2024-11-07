@@ -559,6 +559,7 @@ function em_init_actions_start() {
 					$EM_Booking->is_no_user() && $EM_Booking->get_person_post() && 
 			    	$EM_Booking->update_meta('registration', $EM_Booking->booking_meta['registration'])
 				){
+					do_action('em_nouser_booking_details_modified', $EM_Booking);
 					$EM_Notices->add_confirm( $EM_Booking->feedback_message, true );
 					$redirect = !empty($_REQUEST['redirect_to']) ? $_REQUEST['redirect_to'] : em_wp_get_referer();
 					wp_safe_redirect( $redirect );
@@ -712,76 +713,6 @@ function em_init_actions_start() {
 			exit();
 		}
 	}
-	//Export CSV - WIP
-	if( !empty($_REQUEST['action']) && $_REQUEST['action'] == 'export_bookings_csv' && wp_verify_nonce($_REQUEST['_emnonce'], 'export_bookings_csv')){
-		if( !empty($_REQUEST['event_id']) ){
-			$EM_Event = em_get_event( absint($_REQUEST['event_id']) );
-		}
-		//sort out cols
-		if( !empty($_REQUEST['cols']) && is_array($_REQUEST['cols']) ){
-			$cols = array();
-			foreach($_REQUEST['cols'] as $col => $active){
-				if( $active ){ $cols[] = $col; }
-			}
-			$_REQUEST['cols'] = $cols;
-		}
-		$_REQUEST['limit'] = 0;
-		
-		// set up output objects, http headers, etc.
-		$show_tickets = !empty($_REQUEST['show_tickets']);
-		$EM_Bookings_Table = new EM_Bookings_Table($show_tickets);
-		$EM_Bookings_Table->limit = 150; //if you're having server memory issues, try messing with this number
-		$EM_Bookings = $EM_Bookings_Table->get_bookings();
-		$handle = fopen("php://output", "w");
-		$delimiter = !defined('EM_CSV_DELIMITER') ? ',' : EM_CSV_DELIMITER;
-		$delimiter = apply_filters('em_csv_delimiter', $delimiter);
-		
-		//generate bookings export according to search request
-		header("Content-Type: application/octet-stream; charset=utf-8");
-		$file_name = !empty($EM_Event->event_slug) ? $EM_Event->event_slug:get_bloginfo();
-		header("Content-Disposition: Attachment; filename=".sanitize_title($file_name)."-bookings-export.csv");
-		do_action('em_csv_header_output');
-		echo "\xEF\xBB\xBF"; // UTF-8 for MS Excel (a little hacky... but does the job)
-		
-		// csv headers
-		if ( !defined('EM_CSV_DISABLE_HEADERS') || !EM_CSV_DISABLE_HEADERS ) {
-			if( !empty($_REQUEST['event_id']) ) {
-				fputcsv($handle, array( __('Event','events-manager') . ' : ' . $EM_Event->event_name ), $delimiter);
-				if( $EM_Event->location_id > 0 ) {
-					fputcsv($handle, array( __('Where','events-manager') . ' - ' . $EM_Event->get_location()->location_name ), $delimiter);
-				}
-				fputcsv($handle, array( __('When','events-manager') . ' : ' . $EM_Event->output('#_EVENTDATES - #_EVENTTIMES') ), $delimiter);
-			}
-			$EM_DateTime = new EM_DateTime(current_time('timestamp'));
-			fputcsv($handle, array( sprintf(__('Exported booking on %s','events-manager'), $EM_DateTime->format('D d M Y h:i')) ), $delimiter);
-			fputcsv($handle, array(), $delimiter);
-		}
-		
-		// Header and Rows
-		fputcsv($handle, $EM_Bookings_Table->get_headers(true), $delimiter);
-		while( !empty($EM_Bookings->bookings) ){
-			foreach( $EM_Bookings->bookings as $EM_Booking ) { /* @var EM_Booking $EM_Booking */
-				//Display all values
-				if( $show_tickets ){
-					foreach($EM_Booking->get_tickets_bookings() as $EM_Ticket_Bookings){ /* @var EM_Ticket_Bookings $EM_Ticket_Bookings */
-						// since we're splitting by ticket type, we don't need individual EM_Ticket_Booking objects, but the wrapper object
-						$EM_Bookings_Table->ticket = $EM_Ticket_Bookings->get_ticket();
-						$row = $EM_Bookings_Table->get_row_csv($EM_Booking);
-						fputcsv($handle, $row, $delimiter);
-						$EM_Bookings_Table->ticket = null;
-					}
-				}else{
-					$row = $EM_Bookings_Table->get_row_csv($EM_Booking);
-					fputcsv($handle, $row, $delimiter);
-				}
-			}
-			//reiterate loop
-			$EM_Bookings_Table->offset += $EM_Bookings_Table->limit;
-			$EM_Bookings = $EM_Bookings_Table->get_bookings();
-		}
-		fclose($handle);
-		exit();
-	}
 }
 
 /**
@@ -789,51 +720,19 @@ function em_init_actions_start() {
  * @return void
  */
 function em_init_actions(){
-	if( !did_action('wp_loaded') ){
-		add_action('wp_loaded', 'em_init_actions_start', 11);
-	}else{
-		em_init_actions_start();
+	if( defined('DOING_AJAX') && DOING_AJAX && !empty($_REQUEST['action']) ){
+		//add ajax action filter so it runs after AJAX actions, preventing em_init_actions_start from overriding legit AJAX functions
+		add_action('wp_ajax_nopriv_' . $_REQUEST['action'], 'em_init_actions_start', 999999);
+		add_action('wp_ajax_' . $_REQUEST['action'], 'em_init_actions_start', 999999);
+	} else {
+		if ( !did_action( 'wp_loaded' ) ) {
+			add_action( 'wp_loaded', 'em_init_actions_start', 11 );
+		} else {
+			em_init_actions_start();
+		}
 	}
 }
 add_action('init', 'em_init_actions', 11);
-
-/**
- * Handles AJAX Bookings admin table filtering, view changes and pagination
- */
-function em_ajax_bookings_table(){
-	if( !empty($_REQUEST['_emnonce']) && check_admin_referer('em_bookings_table', '_emnonce') ){
-		$EM_Bookings_Table = new EM_Bookings_Table();
-		$EM_Bookings_Table->display();
-	}else{
-		check_admin_referer('em_bookings_table');
-		$EM_Bookings_Table = new EM_Bookings_Table();
-		if( !empty($_REQUEST['table_id']) ) { // so modals work linked to the ID
-			$EM_Bookings_Table->uid = $EM_Bookings_Table->id . '-' . absint($_REQUEST['table_id']);
-		}
-		$EM_Bookings_Table->output_table();
-	}
-	exit();
-}
-add_action('wp_ajax_em_bookings_table','em_ajax_bookings_table');
-
-function em_ajax_bookings_table_row(){
-	if( !empty($_REQUEST['_emnonce']) && check_admin_referer('em_bookings_table', '_emnonce') && !empty($_REQUEST['row_action']) ){
-		$allowed_actions = array('bookings_approve'=>'approve','bookings_reject'=>'reject','bookings_unapprove'=>'unapprove', 'bookings_delete'=>'delete');
-		$EM_Booking = ( !empty($_REQUEST['booking_id']) ) ? em_get_booking($_REQUEST['booking_id']) : em_get_booking();
-		if( array_key_exists($_REQUEST['row_action'], $allowed_actions) && $EM_Booking->can_manage('manage_bookings','manage_others_bookings') ){
-			//Event Admin only actions
-			$action = $allowed_actions[$_REQUEST['row_action']];
-			$result = $EM_Booking->$action();
-			if( !$result ){
-				$EM_Booking->feedback_message = '<span style="color:red">'.$EM_Booking->feedback_message.'</span>';
-			}
-			$EM_Bookings_Table = new EM_Bookings_Table();
-			$EM_Bookings_Table->single_row( $EM_Booking );
-			die();
-		}
-	}
-}
-add_action('wp_ajax_em_bookings_table_row','em_ajax_bookings_table_row');
 
 /**
  * Handles AJAX Searching and Pagination for events, locations, tags and categories

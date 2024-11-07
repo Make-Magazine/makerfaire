@@ -588,7 +588,7 @@ function import_cron_import( $schedule_id ) {
 		if ( $id < 1 || get_post_meta( $id, '_wp_attachment_context', true ) !== 'wpgmaps-import' ) {
 
 			$import_schedule[ $schedule_id ]['last_run_message'] .= __( 'Importing not allowed. File is not a valid WP Go Maps import upload.', 'wp-google-maps' );
-			update_option( 'wpgmza_import_schedule', $import_schedule );
+			update_option( 'wpgmza_import_schedule', $import_schedule, false );
 			return;
 
 		}
@@ -648,7 +648,7 @@ function import_cron_import( $schedule_id ) {
 				$import_schedule[ $schedule_id ]['last_log'] = $import->getLogText();
 				$import_schedule[ $schedule_id ]['last_response'] = $import->getLoggedResponse();
 				
-				update_option( 'wpgmza_import_schedule', $import_schedule );
+				update_option( 'wpgmza_import_schedule', $import_schedule, false );
 				
 				return;
 
@@ -659,7 +659,7 @@ function import_cron_import( $schedule_id ) {
 				$import_schedule[ $schedule_id ]['last_log'] = $import->getLogText();
 				$import_schedule[ $schedule_id ]['last_response'] = $import->getLoggedResponse();
 				
-				update_option( 'wpgmza_import_schedule', $import_schedule );
+				update_option( 'wpgmza_import_schedule', $import_schedule, false );
 				
 				return;
 
@@ -671,7 +671,7 @@ function import_cron_import( $schedule_id ) {
 	}
 
 	$import_schedule[ $schedule_id ]['last_run_message'] .= __( 'Unable to import file.', 'wp-google-maps' );
-	update_option( 'wpgmza_import_schedule', $import_schedule );
+	update_option( 'wpgmza_import_schedule', $import_schedule, false );
 
 }
 
@@ -958,7 +958,7 @@ function import_ajax_schedule() {
 				'import_url' => $import_file_url,
 		) ) + $import_schedule;
 
-		update_option( 'wpgmza_import_schedule', $import_schedule );
+		update_option( 'wpgmza_import_schedule', $import_schedule, false );
 
 		if ( false === $next_run ) {
 
@@ -1007,7 +1007,7 @@ function import_ajax_delete_schedule() {
 	if ( false === $next_run ) {
 
 		unset( $import_schedule[ $_POST['schedule_id'] ] );
-		update_option( 'wpgmza_import_schedule', $import_schedule );
+		update_option( 'wpgmza_import_schedule', $import_schedule, false );
 		wp_send_json_success( array(
 			'schedule_id' => $_POST['schedule_id'],
 		) );

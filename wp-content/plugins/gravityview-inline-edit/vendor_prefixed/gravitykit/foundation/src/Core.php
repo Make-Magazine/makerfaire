@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by __root__ on 16-August-2024 using Strauss.
+ * Modified by __root__ on 01-October-2024 using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 
@@ -43,7 +43,7 @@ use GravityKitFoundation;
  * @method static PluginActivationHandler plugin_activation_handler()
  */
 class Core {
-	const VERSION = '1.2.17';
+	const VERSION = '1.2.18';
 
 	const ID = 'gk_foundation';
 

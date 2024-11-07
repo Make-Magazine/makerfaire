@@ -18,14 +18,7 @@ class Gum_Elementor_Widget_Icon_List{
 
       add_action( 'elementor/element/icon-list/section_icon_style/after_section_end', array( $this, 'register_section_icon_style_controls') , 999 );
       add_action( 'elementor/element/icon-list/section_text_style/after_section_end', array( $this, 'register_section_text_style_controls') , 999 );
-
-      add_action( 'elementor/element/icon-box/section_style_icon/after_section_end', array( $this, 'register_section_iconbox_style_controls') , 999 );
-      add_action( 'elementor/element/icon-box/section_style_content/after_section_end', array( $this, 'register_section_style_content_controls') , 999 );
-      add_action( 'elementor/element/image-box/section_style_content/after_section_end', array( $this, 'register_section_style_content_controls') , 999 );
-
-      add_action( 'elementor/element/icon-box/section_icon/after_section_end', array( $this, 'register_section_strech_box_controls') , 999 );
-      add_action( 'elementor/element/image-box/section_image/after_section_end', array( $this, 'register_section_strech_box_controls') , 999 );
-
+      
       add_action( 'elementor/element/before_section_start', [ $this, 'enqueue_script' ] );
 
   }
@@ -70,8 +63,7 @@ class Gum_Elementor_Widget_Icon_List{
       Group_Control_Border::get_type(),
       [
         'name' => 'icon_border',
-        'selector' => '{{WRAPPER}} .elementor-icon-list-icon',
-        'condition' => ['icon_self_align' => 'center'],
+        'selector' => '{{WRAPPER}} .elementor-icon-list-icon'
       ]
     );
 
@@ -85,7 +77,7 @@ class Gum_Elementor_Widget_Icon_List{
         'selectors' => [
           '{{WRAPPER}} .elementor-icon-list-item:hover .elementor-icon-list-icon' => 'border-color: {{VALUE}};',
         ],
-        'condition' => ['icon_self_align' => 'center','icon_border_border!' => ''],
+        'condition' => ['icon_border_border!' => ''],
       ]
     );
 
@@ -98,7 +90,7 @@ class Gum_Elementor_Widget_Icon_List{
         'selectors' => [
           '{{WRAPPER}} .elementor-icon-list-icon' => 'background-color: {{VALUE}};',
         ],
-        'condition' => ['icon_self_align' => 'center','icon_border_border!' => ''],
+        'condition' => ['icon_border_border!' => ''],
       ]
     );
 
@@ -111,7 +103,7 @@ class Gum_Elementor_Widget_Icon_List{
         'selectors' => [
           '{{WRAPPER}} .elementor-icon-list-item:hover .elementor-icon-list-icon' => 'background-color: {{VALUE}};',
         ],
-        'condition' => ['icon_self_align' => 'center','icon_border_border!' => ''],
+        'condition' => ['icon_border_border!' => ''],
       ]
     );
 
@@ -125,7 +117,7 @@ class Gum_Elementor_Widget_Icon_List{
         'selectors' => [
           '{{WRAPPER}} .elementor-icon-list-icon' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
         ],
-        'condition' => ['icon_self_align' => 'center','icon_border_border!' => ''],
+        'condition' => ['icon_border_border!' => ''],
       ]
     );
 
@@ -139,7 +131,7 @@ class Gum_Elementor_Widget_Icon_List{
         'selectors' => [
           '{{WRAPPER}} .elementor-icon-list-icon' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
         ],
-        'condition' => ['icon_self_align' => 'center','icon_border_border!' => ''],
+        'condition' => ['icon_border_border!' => ''],
       ]
     );
 
@@ -210,274 +202,6 @@ class Gum_Elementor_Widget_Icon_List{
         'default' => '',
         'devices' => ['tablet','mobile'],
         'prefix_class' => 'elementor-icon-list-text-%s-hidden-',
-      ]
-    );
-
-    $element->end_injection();
-
-
-  }
-
-  function register_section_style_content_controls( Controls_Stack $element ){
-
-
-    $element->update_responsive_control(
-      'title_bottom_space',
-      [
-        'label' => esc_html__( 'Spacing', 'elementor' ),
-        'type' => Controls_Manager::SLIDER,
-        'range' => [
-          'px' => [
-            'min' => 0,
-            'max' => 100,
-          ],
-        ],
-        'selectors' => [
-          '{{WRAPPER}} .elementor-icon-box-title' => 'margin-bottom: {{SIZE}}{{UNIT}};margin-top: 0;',
-          '{{WRAPPER}} .elementor-image-box-title' => 'margin-bottom: {{SIZE}}{{UNIT}};margin-top: 0;',
-        ],
-        'condition' => [
-          'title_inline[value]!' => 'inline',
-        ],
-      ]
-    );
-
-    $element->start_injection( [
-      'of' => 'title_bottom_space',
-    ] );
-
-    $element->add_responsive_control(
-      'title_right_space',
-      [
-        'label' => esc_html__( 'Spacing', 'gum-elementor-addon' ),
-        'type' => Controls_Manager::SLIDER,
-        'range' => [
-          'px' => [
-            'min' => 0,
-            'max' => 100,
-          ],
-          'em' => [
-            'min' => 0,
-            'max' => 10,
-          ],
-        ],
-        'selectors' => [
-          '{{WRAPPER}} .elementor-icon-box-title' => 'margin-right: {{SIZE}}{{UNIT}};margin-top: 0;',
-          '{{WRAPPER}} .elementor-image-box-title' => 'margin-right: {{SIZE}}{{UNIT}};margin-top: 0;',
-        ],
-        'size_units' => [ 'px' ,'em' ],
-        'default'=>['size'=>'0.5','unit'=>'em'],
-        'condition' => [
-           'title_inline[value]' => 'inline',
-        ],
-      ]
-    );
-
-    $element->end_injection();
-
-
-    $element->start_injection( [
-      'of' => 'title_color',
-    ] );
-
-    $element->add_control(
-      'title_hover_color',
-      [
-        'label' => esc_html__( 'Hover Color', 'gum-elementor-addon' ),
-        'type' => Controls_Manager::COLOR,
-        'default' => '',
-        'selectors' => [
-          '{{WRAPPER}} .elementor-icon-box-title:hover,{{WRAPPER}} .elementor-icon-box-title:hover a' => 'color: {{VALUE}}!important;',
-          '{{WRAPPER}} .elementor-image-box-title:hover,{{WRAPPER}} .elementor-image-box-title:hover a' => 'color: {{VALUE}}!important;',
-        ],
-        'condition' => [
-          'link[url]!' => '',
-        ],
-      ]
-    );
-
-    $element->add_control(
-      'boxhover_title_color',
-      [
-        'label' => esc_html__( 'On Box Hover', 'gum-elementor-addon' ),
-        'type' => Controls_Manager::COLOR,
-        'default' => '',
-        'selectors' => [
-          '{{WRAPPER}}:hover .elementor-icon-box-title' => 'color: {{VALUE}};',
-          '{{WRAPPER}}:hover .elementor-image-box-title' => 'color: {{VALUE}};',
-        ],
-      ]
-    );
-
-    $element->end_injection();
-
-    $element->start_injection( [
-      'of' => 'description_color',
-    ] );
-
-
-    $element->add_control(
-      'boxhover_description_color',
-      [
-        'label' => esc_html__( 'On Box Hover', 'gum-elementor-addon' ),
-        'type' => Controls_Manager::COLOR,
-        'default' => '',
-        'selectors' => [
-          '{{WRAPPER}}:hover .elementor-icon-box-description' => 'color: {{VALUE}};',
-          '{{WRAPPER}}:hover .elementor-image-box-description' => 'color: {{VALUE}};',
-        ],
-      ]
-    );
-
-    $element->end_injection();
-
-
-  }
-
-
-  function register_section_iconbox_style_controls( Controls_Stack $element ) {
-
-
-    $element->update_control(
-      'hover_primary_color',
-      [
-        'label' => esc_html__( 'Primary Color', 'elementor' ),
-        'type' => Controls_Manager::COLOR,
-        'default' => '',
-        'selectors' => [
-          '{{WRAPPER}}.elementor-view-stacked:hover .elementor-icon:hover' => 'background-color: {{VALUE}};',
-          '{{WRAPPER}}.elementor-view-framed:hover .elementor-icon:hover, {{WRAPPER}}.elementor-view-default:hover .elementor-icon:hover' => 'fill: {{VALUE}}; color: {{VALUE}}!important; border-color: {{VALUE}};',
-        ],
-      ]
-    );
-
-    $element->update_control(
-      'hover_secondary_color',
-      [
-        'label' => esc_html__( 'Secondary Color', 'elementor' ),
-        'type' => Controls_Manager::COLOR,
-        'default' => '',
-        'condition' => [
-          'view!' => 'default',
-        ],
-        'selectors' => [
-          '{{WRAPPER}}.elementor-view-framed:hover .elementor-icon:hover' => 'background-color: {{VALUE}}',
-          '{{WRAPPER}}.elementor-view-stacked:hover .elementor-icon:hover' => 'fill: {{VALUE}}; color: {{VALUE}}',
-        ],
-      ]
-    );
-
-
-    $element->start_injection( [
-      'of' => 'icon_space',
-    ] );
-
-
-    /**
-    * - Add icon vertical position
-    *
-    */
-
-    $element->add_responsive_control(
-      'icon_top_margin',
-      [
-        'label' => esc_html__( 'Top Offset', 'gum-elementor-addon' ),
-        'type' => Controls_Manager::SLIDER,
-        'default' => [
-          'size' => '',
-        ],
-        'range' => [
-          'px' => [
-            'min' => 0,
-            'max' => 100,
-          ],
-        ],
-        'selectors' => [
-          '{{WRAPPER}} .elementor-icon-box-icon' => 'margin-top: {{SIZE}}{{UNIT}}',
-        ],
-      ]
-    );
-
-    $element->end_injection();
-
-
-    $element->start_injection( [
-      'of' => 'border_radius',
-    ] );
-
-    $element->add_control(
-      'boxheading_title',
-      [
-        'label' => esc_html__( 'On Box Hover', 'gum-elementor-addon' ),
-        'type' => Controls_Manager::HEADING,
-        'separator' => 'before',
-      ]
-    );
-
-    $element->add_control(
-      'boxhover_icon_color',
-      [
-        'label' => esc_html__( 'Primary Color', 'elementor' ),
-        'type' => Controls_Manager::COLOR,
-        'default' => '',
-        'selectors' => [
-          '{{WRAPPER}}.elementor-view-stacked:hover .elementor-icon' => 'background-color: {{VALUE}};',
-          '{{WRAPPER}}.elementor-view-framed:hover .elementor-icon, {{WRAPPER}}.elementor-view-default:hover .elementor-icon' => 'fill: {{VALUE}}; color: {{VALUE}}; border-color: {{VALUE}};',
-        ],
-      ]
-    );
-
-    $element->add_control(
-      'boxhover_icon_secondcolor',
-      [
-        'label' => esc_html__( 'Secondary Color', 'elementor' ),
-        'type' => Controls_Manager::COLOR,
-        'default' => '',
-        'condition' => [
-          'view!' => 'default',
-        ],
-        'selectors' => [
-          '{{WRAPPER}}.elementor-view-framed:hover .elementor-icon' => 'background-color: {{VALUE}};',
-          '{{WRAPPER}}.elementor-view-stacked:hover .elementor-icon' => 'fill: {{VALUE}}; color: {{VALUE}};',
-        ],
-      ]
-    );
-
-    $element->end_injection();
-
-  }
-
-  function register_section_strech_box_controls( Controls_Stack $element ){
-
-    $element->start_injection( [
-      'of' => 'title_size',
-    ] );
-
-    $element->add_control(
-      'title_inline',
-      [
-        'label' => esc_html__( 'Title Display', 'gum-elementor-addon' ),
-        'type' => Controls_Manager::SELECT,
-        'options' => [
-          '' => esc_html__( 'Default', 'gum-elementor-addon' ),
-          'inline' => esc_html__( 'Inline', 'gum-elementor-addon' ),
-        ],
-        'selectors' => [
-          '{{WRAPPER}} .elementor-icon-box-title,{{WRAPPER}} .elementor-image-box-title' => 'display: {{VALUE}}',
-          '{{WRAPPER}} .elementor-icon-box-description,{{WRAPPER}} .elementor-image-box-description' => 'display: {{VALUE}}',
-        ],
-      ]
-    );
-
-    $element->add_control(
-      'box_strech',
-      [
-        'label' => esc_html__( 'Stretch Box', 'gum-elementor-addon' ),
-        'type' => Controls_Manager::SWITCHER,
-        'label_on' => esc_html__( 'Yes', 'gum-elementor-addon' ),
-        'label_off' => esc_html__( 'No', 'gum-elementor-addon' ),
-        'default' => '',
-        'prefix_class' => 'elementor-boxstretch-',
       ]
     );
 

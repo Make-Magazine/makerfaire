@@ -493,7 +493,7 @@ class Gum_Elementor_Widget_Blog_term extends Widget_Base {
     if( ! $terms ) return '';
 
     $rows_html = array();
-    $this->add_render_attribute( 'list_wrapper', 'class', array( 'blog-term', 'mode-'.sanitize_text_field($term_type )));
+    $this->add_render_attribute( 'list_wrapper', 'class', array( 'blog-term', 'mode-'.sanitize_html_class($term_type )));
 
     foreach ($terms as $index => $term ) {
 

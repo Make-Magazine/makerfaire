@@ -16,6 +16,9 @@
 &.pixelbones {
     @import "normalize";
 
+	--button-padding: 0 30px;
+	--input-padding: 6px 10px;
+
     /* Base Styles
     –––––––––––––––––––––––––––––––––––––––––––––––––– */
     scroll-behavior: smooth !important;
@@ -132,7 +135,7 @@
 	.input .button, .input button, .input input[type="submit"], .input input[type="reset"], .input input[type="button"] {
         display: inline-block;
         height: 38px !important;
-        padding: 0 30px !important;
+        padding: var(--button-padding) !important;
         color: var(--text-color-softer) !important;
         text-align: center !important;
         font-size: 11px !important;
@@ -154,13 +157,26 @@
 	    }
     }
 
-	.input .button:hover, .input button:hover, .input input[type="submit"]:hover, .input input[type="reset"]:hover, .input input[type="button"]:hover,
-	&.input .button:hover, &.input button:hover, &.input input[type="submit"]:hover, &.input input[type="reset"]:hover, &.input input[type="button"]:hover,
-    .button.input:focus, button.input:focus, input[type="submit"].input:focus, input[type="reset"].input:focus, input[type="button"].input:focus {
-        color: var(--text-color-normal) !important;
-        border-color: var(--text-color-softer) !important;
-        outline: 0 !important;
-    }
+	.input {
+		.button, button, input[type="submit"], input[type="reset"], input[type="button"], &.button,
+		button#{&}, input[type="submit"]#{&}, input[type="reset"]#{&}, input[type="button"]#{&} {
+			&:hover, &:focus {
+				color: var(--text-color-normal) !important;
+				border-color: var(--text-color-softer) !important;
+				outline: 0 !important;
+			}
+		}
+	}
+	&.input {
+		.button, button, input[type="submit"], input[type="reset"], input[type="button"], &.button {
+			&:hover, &:focus {
+				color: var(--text-color-normal) !important;
+				border-color: var(--text-color-softer) !important;
+				outline: 0 !important;
+			}
+		}
+	}
+
 	&.input .button.button-primary, &.input button.button-primary, &.input input[type="submit"].button-primary, &.input input[type="reset"].button-primary, &.input input[type="button"].button-primary,
 	.input .button.button-primary, .input button.button-primary, .input input[type="submit"].button-primary, .input input[type="reset"].button-primary, .input input[type="button"].button-primary,
     .button.button-primary.input, button.button-primary.input, input[type="submit"].button-primary.input, input[type="reset"].button-primary.input, input[type="button"].button-primary.input {
@@ -226,7 +242,7 @@
 	    select:not([multiple]) {
 	        width: 100% !important;
 	        height: 38px !important;
-	        padding: 6px 10px !important; /* The 6px vertically centers text on FF, ignored by Webkit */
+	        padding: var(--input-padding) !important; /* The 6px vertically centers text on FF, ignored by Webkit */
 	        border-radius: 4px !important;
 	        @include reset-input( var(--background-color-inputs) );
 
@@ -248,7 +264,7 @@
 			background-position-x: calc(100% - 5px) !important;
 			background-size: 20px 20px !important;
 			cursor: pointer !important;
-			vertical-align: middle !important;
+			vertical-align: top !important;
 			&:focus {
 				background-image : url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 15 15'%3E%3Cpath stroke='%23000' stroke-linecap='square' d='m10.5 8.5-3-3-3 3'/%3E%3C/svg%3E") !important;
 			}

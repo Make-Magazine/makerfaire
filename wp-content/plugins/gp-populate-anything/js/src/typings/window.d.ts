@@ -38,6 +38,8 @@ declare global {
 			label: string
 		}
 		supportsNullFilterValue?: boolean
+		optionGroupId?: string
+		optionGroupLabel?: string
 	}
 
 	interface Window {
