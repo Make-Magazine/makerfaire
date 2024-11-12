@@ -67,7 +67,7 @@ echo '<?xml version="1.0" encoding="'.get_option('blog_charset').'"?'.'>';
                         <dc:creator></dc:creator>
                         <guid isPermaLink="true"><?php the_guid(); ?></guid>                        
                         <description><![CDATA[<img src="<?php echo $ribbonPhoto; ?>" /><?php echo $entry['entry_desc']; ?>]]></description>
-                        <content:encoded><![CDATA[<img src="<?php echo $project_photo; ?>" /><?php echo $entry['entry_desc']; ?>]]></content:encoded>                        
+                        <content:encoded><![CDATA[<img src="<?php echo $project_photo; ?>" />]]></content:encoded>                        
                 </item>
         <?php } ?>
 </channel>
