@@ -1,42 +1,32 @@
 <?php
 /*
-Custom RSS Template - faire_projects
-pulls form specific entries for a faire based on form id
+Custom RSS Template - faire_ribbons
+pulls ribbon data and entries for a specific faire based on form id
 */
-global $wpdb;
 
 $form_id = (isset($_GET['form_id'])?$_GET['form_id']:'');
 if($form_id!=''){
-    $search_criteria = array(
-        'status'        => 'active',
-        'field_filters' => array(
-            'mode' => 'all',
-            array(
-                'key'       => '303',
-                'value'     => 'Accepted'
-            ),
-            array(
-                'key'       => '304',
-                'value'     => 'Featured Maker'
-            ),
-            array(
-                'key'       => '304', 
-                'operator'  => 'IS NOT', 
-                'value'     => 'no-public-view'
-            )
-            
-        )
-    );
-    $sorting = array( 'key' => '10', 'direction' => 'RAND' );
-    $entries = GFAPI::get_entries($form_id, $search_criteria );
+    global $wpdb;
+    
+    $sql = 'SELECT entry_id, wp_mf_ribbons.project_name as ribbon_proj_name, 
+    (select meta_value from wp_gf_entry_meta where meta_key="151" and wp_gf_entry_meta.entry_id=wp_mf_ribbons.entry_id) as entry_title, 
+    wp_mf_ribbons.project_photo as ribbon_proj_photo, 
+    (select meta_value from wp_gf_entry_meta where meta_key="22" and wp_gf_entry_meta.entry_id=wp_mf_ribbons.entry_id) as entry_photo, 
+    (select meta_value from wp_gf_entry_meta where meta_key="16" and wp_gf_entry_meta.entry_id=wp_mf_ribbons.entry_id) as entry_desc, 
+    SUM(case when ribbonType = 0 then numRibbons else 0 end) as blue_ribbon_cnt 
+    FROM `wp_mf_ribbons` 
+    left outer join wp_gf_entry on wp_gf_entry.id=entry_id 
+    where wp_gf_entry.form_id='.$form_id.' 
+    group by entry_id ORDER BY rand() limit 10;';
+    
+    $entries = $wpdb->get_results($sql,ARRAY_A);
 }else{
     $entries = array();
 }
-// randomize entries, as the feed seems static and not updating every hour
-shuffle($entries);
 
-$postCount = 5; // The number of posts to show in the feed
-//$posts = query_posts('showposts=' . $postCount);
+// randomize entries, as the feed seems static and not updating every hour
+//shuffle($entries);
+
 header('Content-Type: '.feed_content_type('rss-http').'; charset='.get_option('blog_charset'), true);
 echo '<?xml version="1.0" encoding="'.get_option('blog_charset').'"?'.'>';
 ?>
@@ -59,7 +49,7 @@ echo '<?xml version="1.0" encoding="'.get_option('blog_charset').'"?'.'>';
         <sy:updateFrequency><?php echo apply_filters( 'rss_update_frequency', '1' ); ?></sy:updateFrequency>
         <?php do_action('rss2_head'); ?>
         <?php foreach($entries as $entry){ 
-                $project_photo = (isset($entry['22']) ? $entry['22'] : '');
+                $project_photo = (isset($entry['ribbon_proj_photo']) ? $entry['ribbon_proj_photo'] : $entry['entry_photo']);
                 //for BA24, the single photo was changed to a multi image which messed things up a bit
                 $photo = json_decode($project_photo);
                 if (is_array($photo)) {
@@ -67,13 +57,13 @@ echo '<?xml version="1.0" encoding="'.get_option('blog_charset').'"?'.'>';
                 }               
             ?>
                 <item>
-                        <title><?php echo $entry['151']; ?></title>
+                        <title><?php echo ($entry['ribbon_proj_name']!='' ? $entry['ribbon_proj_name'] : $entry['entry_title']); ?></title>
                         <link>https://makerfaire.com/maker/entry/<?php echo $entry['id']; ?></link>
                         <pubDate><?php echo $entry['date_created']; ?></pubDate>
-                        <dc:creator><?php echo $entry['96.3'].' '.$entry['96.6']; ?></dc:creator>
+                        <dc:creator></dc:creator>
                         <guid isPermaLink="false"><?php the_guid(); ?></guid>
-                        <description><![CDATA[<img src="<?php echo $project_photo; ?>" /><?php echo $entry['16']; ?>]]></description>
-                        <content:encoded><![CDATA[<img src="<?php echo $project_photo; ?>" /><?php echo $entry['16']; ?>]]></content:encoded>                        
+                        <description><![CDATA[<img src="<?php echo $project_photo; ?>" /><?php echo $entry['entry_desc']; ?>]]></description>
+                        <content:encoded><![CDATA[<img src="<?php echo $project_photo; ?>" /><?php echo $entry['entry_desc']; ?>]]></content:encoded>                        
                 </item>
         <?php } ?>
 </channel>

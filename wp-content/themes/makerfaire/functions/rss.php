@@ -67,11 +67,19 @@ function add_rss_tags() {
     }    
 } 
 
-/* Custom RSS feed to pull MF entries for a specific faire */
+/* Custom RSS feed */
 add_action('init', 'mfRSS');
 function mfRSS(){
-        add_feed('faire_projects', 'mfRSSFunc');
+    add_feed('faire_projects', 'mfRSSProjects');
+    add_feed('faire_ribbons', 'mfRSSRibbons');
 }
-function mfRSSFunc(){
-        get_template_part('mf_rss', 'faire_projects');
+
+//custom RSS feed to return MF entries for a specific faire
+function mfRSSProjects(){
+    get_template_part('mf_rss', 'faire_projects');    
+}
+
+//custom RSS feed to return data from the faire ribbons page
+function mfRSSRibbons(){
+    get_template_part('mf_rss', 'faire_ribbons');    
 }
