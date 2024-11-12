@@ -71,9 +71,9 @@ echo '<?xml version="1.0" encoding="'.get_option('blog_charset').'"?'.'>';
                         <link>https://makerfaire.com/maker/entry/<?php echo $entry['id']; ?></link>
                         <pubDate><?php echo $entry['date_created']; ?></pubDate>
                         <dc:creator><?php echo $entry['96.3'].' '.$entry['96.6']; ?></dc:creator>
-                        <guid isPermaLink="false"><?php the_guid(); ?></guid>
-                        <description><![CDATA[<img src="<?php echo $project_photo; ?>" /><?php echo $entry['16']; ?>]]></description>
-                        <content:encoded><![CDATA[<img src="<?php echo $project_photo; ?>" /><?php echo $entry['16']; ?>]]></content:encoded>                        
+                        <guid isPermaLink="true"><?php the_guid(); ?></guid>
+                        <description><![CDATA[<img src="<?php echo $project_photo; ?>" />]]></description>
+                        <content:encoded><![CDATA[<?php echo $entry['16']; ?>]]></content:encoded>                        
                 </item>
         <?php } ?>
 </channel>

@@ -8,7 +8,7 @@ $form_id = (isset($_GET['form_id'])?$_GET['form_id']:'');
 if($form_id!=''){
     global $wpdb;
     
-    $sql = 'SELECT entry_id, wp_mf_ribbons.project_name as ribbon_proj_name, 
+    $sql = 'SELECT entry_id, wp_mf_ribbons.project_name as ribbon_proj_name, date_created,
     (select meta_value from wp_gf_entry_meta where meta_key="151" and wp_gf_entry_meta.entry_id=wp_mf_ribbons.entry_id) as entry_title, 
     wp_mf_ribbons.project_photo as ribbon_proj_photo, 
     (select meta_value from wp_gf_entry_meta where meta_key="22" and wp_gf_entry_meta.entry_id=wp_mf_ribbons.entry_id) as entry_photo, 
@@ -39,7 +39,7 @@ echo '<?xml version="1.0" encoding="'.get_option('blog_charset').'"?'.'>';
         xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
         <?php do_action('rss2_ns'); ?>>
 <channel>
-        <title><?php bloginfo_rss('name'); ?> - Feed</title>
+        <title><?php bloginfo_rss('name'); ?> - Ribbon Winners Feed</title>
         <atom:link href="<?php self_link(); ?>" rel="self" type="application/rss+xml" />
         <link><?php bloginfo_rss('url') ?></link>
         <description><?php bloginfo_rss('description') ?></description>
@@ -55,14 +55,18 @@ echo '<?xml version="1.0" encoding="'.get_option('blog_charset').'"?'.'>';
                 if (is_array($photo)) {
                     $project_photo = $photo[0];
                 }               
+                $blue_ribbon_cnt = (is_numeric($entry['blue_ribbon_cnt'])?$entry['blue_ribbon_cnt']:0);
+                if($blue_ribbon_cnt !==0){
+                    $ribbonPhoto = '<div style="background-image: url(https://makerfaire.com/images/blue-ribbon.png)">'.$blue_ribbon_cnt.'</div>';
+                }
             ?>
                 <item>
                         <title><?php echo ($entry['ribbon_proj_name']!='' ? $entry['ribbon_proj_name'] : $entry['entry_title']); ?></title>
-                        <link>https://makerfaire.com/maker/entry/<?php echo $entry['id']; ?></link>
+                        <link>https://makerfaire.com/maker/entry/<?php echo $entry['entry_id']; ?></link>
                         <pubDate><?php echo $entry['date_created']; ?></pubDate>
                         <dc:creator></dc:creator>
-                        <guid isPermaLink="false"><?php the_guid(); ?></guid>
-                        <description><![CDATA[<img src="<?php echo $project_photo; ?>" /><?php echo $entry['entry_desc']; ?>]]></description>
+                        <guid isPermaLink="true"><?php the_guid(); ?></guid>                        
+                        <description><![CDATA[<img src="<?php echo $ribbonPhoto; ?>" /><?php echo $entry['entry_desc']; ?>]]></description>
                         <content:encoded><![CDATA[<img src="<?php echo $project_photo; ?>" /><?php echo $entry['entry_desc']; ?>]]></content:encoded>                        
                 </item>
         <?php } ?>
