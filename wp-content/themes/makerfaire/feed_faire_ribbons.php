@@ -62,7 +62,7 @@ echo '<?xml version="1.0" encoding="'.get_option('blog_charset').'"?'.'>';
                         <pubDate><?php echo $entry['date_created']; ?></pubDate>
                         <dc:creator></dc:creator>
                         <guid isPermaLink="true"><?php the_guid(); ?></guid>                        
-                        <description><![CDATA[<?php echo $entry['location']; ?>]]></description>
+                        <description><![CDATA[Maker Faire <?php echo $entry['location']; ?>]]></description>
                         <content:encoded><![CDATA[<img src="<?php echo $project_photo; ?>" />]]></content:encoded>                        
                 </item>
         <?php } ?>
