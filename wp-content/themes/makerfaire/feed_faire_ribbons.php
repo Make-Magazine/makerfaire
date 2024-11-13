@@ -55,8 +55,7 @@ echo '<?xml version="1.0" encoding="'.get_option('blog_charset').'"?'.'>';
                 if (is_array($photo)) {
                     $project_photo = $photo[0];
                 }               
-                $blue_ribbon_cnt = (is_numeric($entry['blue_ribbon_cnt'])?$entry['blue_ribbon_cnt']:0);                
-                $ribbonPhoto = ($blue_ribbon_cnt !==0?'<div style="background-image: url(https://makerfaire.com/images/blue-ribbon.png)">'.$blue_ribbon_cnt.'</div>':'');                
+                
             ?>
                 <item>
                         <title><?php echo ($entry['ribbon_proj_name']!='' ? $entry['ribbon_proj_name'] : $entry['entry_title']); ?></title>
@@ -64,7 +63,7 @@ echo '<?xml version="1.0" encoding="'.get_option('blog_charset').'"?'.'>';
                         <pubDate><?php echo $entry['date_created']; ?></pubDate>
                         <dc:creator></dc:creator>
                         <guid isPermaLink="true"><?php the_guid(); ?></guid>                        
-                        <description><![CDATA[<?php echo $ribbonPhoto; ?><?php echo $entry['entry_desc']; ?>]]></description>
+                        <description><![CDATA[<?php echo $entry['entry_desc']; ?>]]></description>
                         <content:encoded><![CDATA[<img src="<?php echo $project_photo; ?>" />]]></content:encoded>                        
                 </item>
         <?php } ?>
