@@ -8,11 +8,10 @@ $form_id = (isset($_GET['form_id'])?$_GET['form_id']:'');
 if($form_id!=''){
     global $wpdb;
     
-    $sql = 'SELECT entry_id, wp_mf_ribbons.project_name as ribbon_proj_name, date_created,
+    $sql = 'SELECT entry_id, wp_mf_ribbons.project_name as ribbon_proj_name, date_created, wp_mf_ribbons.location, 
     (select meta_value from wp_gf_entry_meta where meta_key="151" and wp_gf_entry_meta.entry_id=wp_mf_ribbons.entry_id) as entry_title, 
     wp_mf_ribbons.project_photo as ribbon_proj_photo, 
     (select meta_value from wp_gf_entry_meta where meta_key="22" and wp_gf_entry_meta.entry_id=wp_mf_ribbons.entry_id) as entry_photo, 
-    (select meta_value from wp_gf_entry_meta where meta_key="16" and wp_gf_entry_meta.entry_id=wp_mf_ribbons.entry_id) as entry_desc, 
     SUM(case when ribbonType = 0 then numRibbons else 0 end) as blue_ribbon_cnt 
     FROM `wp_mf_ribbons` 
     left outer join wp_gf_entry on wp_gf_entry.id=entry_id 
@@ -63,7 +62,7 @@ echo '<?xml version="1.0" encoding="'.get_option('blog_charset').'"?'.'>';
                         <pubDate><?php echo $entry['date_created']; ?></pubDate>
                         <dc:creator></dc:creator>
                         <guid isPermaLink="true"><?php the_guid(); ?></guid>                        
-                        <description><![CDATA[<?php echo $entry['entry_desc']; ?>]]></description>
+                        <description><![CDATA[<?php echo $entry['location']; ?>]]></description>
                         <content:encoded><![CDATA[<img src="<?php echo $project_photo; ?>" />]]></content:encoded>                        
                 </item>
         <?php } ?>
