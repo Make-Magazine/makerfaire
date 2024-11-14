@@ -76,25 +76,25 @@ if (isset($entry->errors)) {
     //set defaults
     $faire = $show_sched = $faireShort = $faire_end = $url_sub_path = $faire_dates = '';
     $faire_name = $faireShort = $faire_start = $faire_end = $faire_year = '';
-    $timeZone = 'America/Los_Angeles'; 
-    
+    $timeZone = 'America/Los_Angeles';
+
     if ($form_id != '') {
         $formSQL = "select faire_name, faire, id, show_sched, start_dt, end_dt, url_path, time_zone "
-                 . "from wp_mf_faire "
-                 . "where FIND_IN_SET ($form_id, wp_mf_faire.form_ids)> 0 "
-                 . "order by ID DESC limit 1";
+            . "from wp_mf_faire "
+            . "where FIND_IN_SET ($form_id, wp_mf_faire.form_ids)> 0 "
+            . "order by ID DESC limit 1";
 
         $results = $wpdb->get_row($formSQL);
 
-        if ($wpdb->num_rows > 0) {            
-            $faire_name = $results->faire_name;            
-            $faireShort = $results->faire;            
+        if ($wpdb->num_rows > 0) {
+            $faire_name = $results->faire_name;
+            $faireShort = $results->faire;
             $show_sched = $results->show_sched;
             $faire_start = $results->start_dt;
             $faire_end = $results->end_dt;
             $faire_year = substr($faire_start, 0, 4);
             $faire_dates = date_format(date_create($faire_start), "F jS") . "-" . date_format(date_create($faire_end), "jS");
-            $url_sub_path = $results->url_path;            
+            $url_sub_path = $results->url_path;
             $timeZone = $results->time_zone;
         }
     }
@@ -107,7 +107,7 @@ if (isset($entry->errors)) {
     if (isset($entry['320']) && $entry['320'] != '') {
         $mainCategory = get_term($entry['320']);
         $mainCategoryName = (isset($mainCategory->name) ? $mainCategory->name : '');
-        if(isset($mainCategory->taxonomy)) {
+        if (isset($mainCategory->taxonomy)) {
             $mainCategoryIconType = get_field('icon_type', $mainCategory->taxonomy . '_' . $mainCategory->term_id);
             // get the mainCategory icon from the mf category taxonomy, if indeed one is set
             if ($mainCategoryIconType == "uploaded_icon") {
@@ -165,15 +165,15 @@ if (isset($entry->errors)) {
     $proj_photo_size = !empty($project_photo) ? @getimagesize($project_photo) : array(750, 500);
 
     // these are the images we're using for the responsive image sources
-    if(is_array($proj_photo_size) && $proj_photo_size[1] > 0 && $proj_photo_size[0]/$proj_photo_size[1] < 1.77777) {
+    if (is_array($proj_photo_size) && $proj_photo_size[1] > 0 && $proj_photo_size[0] / $proj_photo_size[1] < 1.77777) {
         $project_photo_large  = legacy_get_resized_remote_image_url($project_photo, 1050, 700);
-        $project_photo_largish= legacy_get_resized_remote_image_url($project_photo, 840, 560);
+        $project_photo_largish = legacy_get_resized_remote_image_url($project_photo, 840, 560);
         $project_photo_medium = legacy_get_resized_remote_image_url($project_photo, 765, 510);
         $project_photo_small  = legacy_get_resized_remote_image_url($project_photo, 420, 280);
     } else {
         //for very wide, short images
         $project_photo_large  = legacy_get_fit_remote_image_url($project_photo, 1050, 700);
-        $project_photo_largish= legacy_get_fit_remote_image_url($project_photo, 840, 560);
+        $project_photo_largish = legacy_get_fit_remote_image_url($project_photo, 840, 560);
         $project_photo_medium = legacy_get_fit_remote_image_url($project_photo, 765, 510);
         $project_photo_small  = legacy_get_fit_remote_image_url($project_photo, 420, 280);
     }
@@ -209,7 +209,7 @@ if (isset($entry->errors)) {
     $friday = (isset($entry['879.3']) && !empty($entry['879.3'])  ? 1 : 0); // is it on friday only
     $satSun = (isset($entry['879.2']) && !empty($entry['879.2'])  ? 1 : 0); // is it on Sat & Sunday only
     $location = $scheduleOutput = "";
-    if($show_sched){
+    if ($show_sched) {
         $scheduleOutput = display_entry_schedule($entry);
     }
 
@@ -226,7 +226,7 @@ if (isset($entry->errors)) {
  *   Display edit functionality
  */
 $makerEdit = false;
-if ($editEntry == 'edit') {
+if ($editEntry == 'edit') {    
     //check if logged in user has access to this entry
     $current_user = wp_get_current_user();
 
@@ -235,7 +235,7 @@ if ($editEntry == 'edit') {
 
     //instantiate the model
     $maker = new maker($current_user->user_email);
-    if ($maker->check_entry_access($entry) || $adminView) {
+    if ($maker->check_entry_access($entry) || $adminView) {        
         $makerEdit = true;
     }
 }
@@ -320,7 +320,7 @@ foreach ($entry as $key => $field) {
 
 // if edit entry is true, this means the user viewing the entry is the user who created the entry and should be able to see it
 if ($makerEdit) {
-    $validEntry = true;    
+    $validEntry = true;
 }
 
 // Project Inline video
@@ -376,103 +376,24 @@ if (!$displayMakers) {
         <input type="hidden" id="faire_tz" value="<?php echo $timeZone; ?>" />
     <?php
     }
-    // If there is edit in the url, they get all these options          
-    if ($makerEdit) {
-
-    ?>
+    // If there is edit in the url AND the user has access to edit the entry, they get all these options          
+    if ($makerEdit) {        
+        ?>
         <script>
             jQuery(function() {
-                autoOpen = false;
-                //if there is an error on the submission, auto open the modal
-                if (jQuery(".gv-error").length) {
-                    autoOpen = true;
-                } else if (jQuery(".gv-notice").length) {
-                    jQuery("#dialog-refresh").dialog({
-                        dialogClass: 'update-message',
-                        modal: true,
-                        position: {
-                            my: "top",
-                            at: "top",
-                            of: ".entry-page"
-                        },
-                    });
-                }
-                dialog = jQuery("#dialog-form").dialog({
-                    autoOpen: autoOpen,
-                    resizable: false,
-                    width: 'auto',
-                    height: "auto",
-                    modal: true,
-                    position: {
-                        my: "top",
-                        at: "top",
-                        of: ".entry-page"
-                    },
-                    
-                    open: function(event, ui) {
-                        jQuery('.ui-widget-overlay').bind('click', function() {
-                            jQuery('#dialog-form').dialog('close');
-                        });
-                    }
-                });
-
-                //open dialog/modal
-                jQuery("#edit-photos").on("click", function() {
-                    jQuery("#dialog-form").dialog("open");
-                });
-
-                jQuery(".gv-button-cancel").bind('click', function() {
-                    jQuery('#dialog-form').dialog('close');
-                });
-
                 jQuery(".suggestions-toggle i").bind('click', function() {
-                    jQuery('body').toggleClass( "hide-suggestions" );
+                    jQuery('body').toggleClass("hide-suggestions");
                     jQuery(this).toggleClass('fa-toggle-on').toggleClass('fa-toggle-off');
                 });
             });
         </script>
-        <div class="makerEditHead">
-            <!-- empty span to center the above text -->
-            <span class="suggestions-toggle">
-                Show suggestions:
-                <i class="fa fa-toggle-on"></i>
-            </span>
 
-            <span style="font-size: 30px;">
-                <i>This is a preview of your public entry page.</i>
-            </span>
-
-            <?php
-            if (isset($form['gv_id_update_public_info']) && $form['gv_id_update_public_info'] != '') {
-            ?>
-                <button id="edit-photos">Edit Public Info</button>                          
-            <?php
-            } else {
-            ?>
-                <!-- empty span to center the above text -->
-                <span>&nbsp;</span>
-            <?php
-
-            }
-            ?>
-
-            <!--
-            <a class="pull-left" target="_blank" href="/maker-sign/<?php echo $entryId ?>/<?php echo $faireShort; ?>/">
-                <i class="far fa-file-image" aria-hidden="true"></i>View Your Maker Sign
-            </a>-->
-
-        </div>
-        <hr />
-        <div id="dialog-form" title="Update Public Information">
-            <?php
-            echo do_shortcode('[gventry entry_id="' . $entryId . '" view_id="' . $form['gv_id_update_public_info'] . '" edit="1"]');
-            ?>
-        </div>
-
-        <div id="dialog-refresh" style="display:none;">
-            <b>Entry Updated.</b> <a href=".">Refresh page to see changes.</a>
-        </div>
-    <?php
+        <?php
+        if (isset($form['gv_id_update_public_info']) && $form['gv_id_update_public_info'] != '') {   
+            //echo '<div class="makerEditHead">';         
+            echo do_shortcode('[gventry entry_id="'.$entryId.'" view_id="'.$form['gv_id_update_public_info'].'"]');
+            //echo '</div>';         
+        }        
     }
 
     if ($validEntry) {
