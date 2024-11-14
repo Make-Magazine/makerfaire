@@ -389,10 +389,10 @@ if (!$displayMakers) {
         </script>
 
         <?php
-        if (isset($form['gv_id_update_public_info']) && $form['gv_id_update_public_info'] != '') {   
-            //echo '<div class="makerEditHead">';         
-            echo do_shortcode('[gventry entry_id="'.$entryId.'" view_id="'.$form['gv_id_update_public_info'].'"]');
-            //echo '</div>';         
+        if (isset($form['gv_id_update_public_info']) && $form['gv_id_update_public_info'] != '') {  
+            //shortcodes do not trigger enqueues so we have to manually trigger the loading of styles 
+            do_action('gform_enqueue_scripts', $form, TRUE); 
+            echo do_shortcode('[gventry entry_id="'.$entryId.'" view_id="'.$form['gv_id_update_public_info'].'"]');            
         }        
     }
 

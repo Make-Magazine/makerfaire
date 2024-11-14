@@ -189,7 +189,7 @@ function remove_unnecessary_styles() {
 add_action('wp_print_styles', 'remove_unnecessary_styles', PHP_INT_MAX); // we want this to happen absolutely last
 
 // Load custom gravity forms js and css for all forms
-function gravity_scripts($form, $is_ajax) {
+function gravity_scripts($form) {
     $my_theme = wp_get_theme();
     $my_version = $my_theme->get('Version');
     wp_enqueue_script('make-gravityformsallforms', get_stylesheet_directory_uri() . '/js/standalone/gravityformsallforms.js', array('jquery'), $my_version);
