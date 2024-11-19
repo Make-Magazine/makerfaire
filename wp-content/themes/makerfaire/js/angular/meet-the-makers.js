@@ -95,6 +95,14 @@ mtm.controller('mtmMakers', ['$scope', '$sce', '$filter', '$http', function ($sc
         $scope.makerSearch.flag = "Featured Maker";
     }
 
+    $scope.changeView = function (view) {
+        jQuery('body').removeClass (function (index, className) {
+            return (className.match (/(\S*)view\s+/g) || []).join(' ');
+        });
+        jQuery('body').addClass(view + "view");
+        $scope.layout = view;
+    };
+
     //call to MF custom rest API
 
     //console.log('pulling makerfaire data');

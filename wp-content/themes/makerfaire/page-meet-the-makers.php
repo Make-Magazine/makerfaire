@@ -150,45 +150,45 @@ $faireName = (isset($results[0]->faire_name)?$results[0]->faire_name:'');
             </div>
 
             <div class="mtm-filter-view">
-                <a ng-class="{active: layout == 'list'}" ng-click="layout = 'list'" class="mtm-filter-l pointer-on-hover box list" title="List View"><i class="fas fa-bars" aria-hidden="true"></i></a>
-                <a ng-class="{active: layout == 'grid'}" ng-click="layout = 'grid'" class="mtm-filter-g pointer-on-hover box gallery" title="Grid View"><i class="far fa-grid-2" aria-hidden="true"></i></a>
-                <a ng-show="makers[0].name" ng-class="{active: layout == 'maker'}" ng-click="layout = 'maker'" class="mtm-filter-m pointer-on-hover box maker" title="Maker View"><i class="fas fa-user" aria-hidden="true"></i></a>
+                <a ng-class="{active: layout == 'list'}" ng-click="changeView('list')" class="mtm-filter-l pointer-on-hover box list" title="List View"><i class="fas fa-bars" aria-hidden="true"></i></a>
+                <a ng-class="{active: layout == 'grid'}" ng-click="changeView('grid')" class="mtm-filter-g pointer-on-hover box gallery" title="Grid View"><i class="far fa-grid-2" aria-hidden="true"></i></a>
+                <a ng-show="makers[0].name" ng-class="{active: layout == 'maker'}" ng-click="changeView('maker')" class="mtm-filter-m pointer-on-hover box maker" title="Maker View"><i class="fas fa-user" aria-hidden="true"></i></a>
             </div>
 
         </div>
 
         <div class="mtm-results container-fluid" mtm-scroll="loadMore()">
-            <div ng-show="!makers.length" class="mtm-results-cont loading">
-                <div class="ng-scope mf-card"><a href="javascript:void();" style="pointer-events:none;">
-                    <article class="mtm-maker"> <div class="mtm-image" style="background-image:url(https://makerfaire.com/wp-content/themes/makerfaire/images/stripe_bg1.gif);"></div> <div class="mtm-text"> <h3>Loading...</h3> <div class="mtm-detail-items"> <div class="mtm-detail-item"><span><i class="fa fa-circle-user"></i></span> <p>&nbsp;</p> </div> <div class="mtm-detail-item"><span><i class="fa fa-rocket"></i></span> <p>&nbsp;</p> </div> <div class="mtm-detail-item"><span><i class="fa fa-tent-double-peak"></i></span> <p>&nbsp;</p> </div> </div> <div class="read-more-link">More</div> </div> </article>
-                </a></div>
-                <div class="ng-scope mf-card"><a href="javascript:void();" style="pointer-events:none;">
-                    <article class="mtm-maker"> <div class="mtm-image" style="background-image:url(https://makerfaire.com/wp-content/themes/makerfaire/images/stripe_bg1.gif);"></div> <div class="mtm-text"> <h3>Loading...</h3> <div class="mtm-detail-items"> <div class="mtm-detail-item"><span><i class="fa fa-circle-user"></i></span> <p>&nbsp;</p> </div> <div class="mtm-detail-item"><span><i class="fa fa-rocket"></i></span> <p>&nbsp;</p> </div> <div class="mtm-detail-item"><span><i class="fa fa-tent-double-peak"></i></span> <p>&nbsp;</p> </div> </div> <div class="read-more-link">More</div> </div> </article>
-                </a></div>
-                <div class="ng-scope mf-card"><a href="javascript:void();" style="pointer-events:none;">
-                    <article class="mtm-maker"> <div class="mtm-image" style="background-image:url(https://makerfaire.com/wp-content/themes/makerfaire/images/stripe_bg1.gif);"></div> <div class="mtm-text"> <h3>Loading...</h3> <div class="mtm-detail-items"> <div class="mtm-detail-item"><span><i class="fa fa-circle-user"></i></span> <p>&nbsp;</p> </div> <div class="mtm-detail-item"><span><i class="fa fa-rocket"></i></span> <p>&nbsp;</p> </div> <div class="mtm-detail-item"><span><i class="fa fa-tent-double-peak"></i></span> <p>&nbsp;</p> </div> </div> <div class="read-more-link">More</div> </div> </article>
-                </a></div>
-                <div class="ng-scope mf-card"><a href="javascript:void();" style="pointer-events:none;">
-                    <article class="mtm-maker"> <div class="mtm-image" style="background-image:url(https://makerfaire.com/wp-content/themes/makerfaire/images/stripe_bg1.gif);"></div> <div class="mtm-text"> <h3>Loading...</h3> <div class="mtm-detail-items"> <div class="mtm-detail-item"><span><i class="fa fa-circle-user"></i></span> <p>&nbsp;</p> </div> <div class="mtm-detail-item"><span><i class="fa fa-rocket"></i></span> <p>&nbsp;</p> </div> <div class="mtm-detail-item"><span><i class="fa fa-tent-double-peak"></i></span> <p>&nbsp;</p> </div> </div> <div class="read-more-link">More</div> </div> </article>
-                </a></div>
-                <div class="ng-scope mf-card"><a href="javascript:void();" style="pointer-events:none;">
-                    <article class="mtm-maker"> <div class="mtm-image" style="background-image:url(https://makerfaire.com/wp-content/themes/makerfaire/images/stripe_bg1.gif);"></div> <div class="mtm-text"> <h3>Loading...</h3> <div class="mtm-detail-items"> <div class="mtm-detail-item"><span><i class="fa fa-circle-user"></i></span> <p>&nbsp;</p> </div> <div class="mtm-detail-item"><span><i class="fa fa-rocket"></i></span> <p>&nbsp;</p> </div> <div class="mtm-detail-item"><span><i class="fa fa-tent-double-peak"></i></span> <p>&nbsp;</p> </div> </div> <div class="read-more-link">More</div> </div> </article>
-                </a></div>
-                <div class="ng-scope mf-card"><a href="javascript:void();" style="pointer-events:none;">
-                    <article class="mtm-maker"> <div class="mtm-image" style="background-image:url(https://makerfaire.com/wp-content/themes/makerfaire/images/stripe_bg1.gif);"></div> <div class="mtm-text"> <h3>Loading...</h3> <div class="mtm-detail-items"> <div class="mtm-detail-item"><span><i class="fa fa-circle-user"></i></span> <p>&nbsp;</p> </div> <div class="mtm-detail-item"><span><i class="fa fa-rocket"></i></span> <p>&nbsp;</p> </div> <div class="mtm-detail-item"><span><i class="fa fa-tent-double-peak"></i></span> <p>&nbsp;</p> </div> </div> <div class="read-more-link">More</div> </div> </article>
-                </a></div>
-                <div class="ng-scope mf-card"><a href="javascript:void();" style="pointer-events:none;">
-                    <article class="mtm-maker"> <div class="mtm-image" style="background-image:url(https://makerfaire.com/wp-content/themes/makerfaire/images/stripe_bg1.gif);"></div> <div class="mtm-text"> <h3>Loading...</h3> <div class="mtm-detail-items"> <div class="mtm-detail-item"><span><i class="fa fa-circle-user"></i></span> <p>&nbsp;</p> </div> <div class="mtm-detail-item"><span><i class="fa fa-rocket"></i></span> <p>&nbsp;</p> </div> <div class="mtm-detail-item"><span><i class="fa fa-tent-double-peak"></i></span> <p>&nbsp;</p> </div> </div> <div class="read-more-link">More</div> </div> </article>
-                </a></div>
-                <div class="ng-scope mf-card"><a href="javascript:void();" style="pointer-events:none;">
-                    <article class="mtm-maker"> <div class="mtm-image" style="background-image:url(https://makerfaire.com/wp-content/themes/makerfaire/images/stripe_bg1.gif);"></div> <div class="mtm-text"> <h3>Loading...</h3> <div class="mtm-detail-items"> <div class="mtm-detail-item"><span><i class="fa fa-circle-user"></i></span> <p>&nbsp;</p> </div> <div class="mtm-detail-item"><span><i class="fa fa-rocket"></i></span> <p>&nbsp;</p> </div> <div class="mtm-detail-item"><span><i class="fa fa-tent-double-peak"></i></span> <p>&nbsp;</p> </div> </div> <div class="read-more-link">More</div> </div> </article>
-                </a></div>
-                <div class="ng-scope mf-card"><a href="javascript:void();" style="pointer-events:none;">
-                    <article class="mtm-maker"> <div class="mtm-image" style="background-image:url(https://makerfaire.com/wp-content/themes/makerfaire/images/stripe_bg1.gif);"></div> <div class="mtm-text"> <h3>Loading...</h3> <div class="mtm-detail-items"> <div class="mtm-detail-item"><span><i class="fa fa-circle-user"></i></span> <p>&nbsp;</p> </div> <div class="mtm-detail-item"><span><i class="fa fa-rocket"></i></span> <p>&nbsp;</p> </div> <div class="mtm-detail-item"><span><i class="fa fa-tent-double-peak"></i></span> <p>&nbsp;</p> </div> </div> <div class="read-more-link">More</div> </div> </article>
-                </a></div>
-                <div class="ng-scope mf-card"><a href="javascript:void();" style="pointer-events:none;">
-                    <article class="mtm-maker"> <div class="mtm-image" style="background-image:url(https://makerfaire.com/wp-content/themes/makerfaire/images/stripe_bg1.gif);"></div> <div class="mtm-text"> <h3>Loading...</h3> <div class="mtm-detail-items"> <div class="mtm-detail-item"><span><i class="fa fa-circle-user"></i></span> <p>&nbsp;</p> </div> <div class="mtm-detail-item"><span><i class="fa fa-rocket"></i></span> <p>&nbsp;</p> </div> <div class="mtm-detail-item"><span><i class="fa fa-tent-double-peak"></i></span> <p>&nbsp;</p> </div> </div> <div class="read-more-link">More</div> </div> </article>
-                </a></div>
+            <div ng-show="!makers.length" class="card-deck loading">
+                <div class="ng-scope card">
+                    <div class="card-header" style="background-image:url(https://makerfaire.com/wp-content/themes/makerfaire/images/stripe_bg1.gif);"></div> <div class="card-body"> <div class="card-text"> <h3 class="card-title">Loading...</h3> <div class="card-detail-items"> <div class="card-detail-item"><span><i class="fa fa-circle-user"></i></span> <p>&nbsp;</p> </div> <div class="card-detail-item"><span><i class="fa fa-rocket"></i></span> <p>&nbsp;</p> </div> <div class="card-detail-item"><span><i class="fa fa-tent-double-peak"></i></span> <p>&nbsp;</p> </div> </div> </div> </div> <div class="card-footer"> <a href="#" class="read-more-link no-link">More</a> </div>
+                </div>
+                <div class="ng-scope card">
+                    <div class="card-header" style="background-image:url(https://makerfaire.com/wp-content/themes/makerfaire/images/stripe_bg1.gif);"></div> <div class="card-body"> <div class="card-text"> <h3 class="card-title">Loading...</h3> <div class="card-detail-items"> <div class="card-detail-item"><span><i class="fa fa-circle-user"></i></span> <p>&nbsp;</p> </div> <div class="card-detail-item"><span><i class="fa fa-rocket"></i></span> <p>&nbsp;</p> </div> <div class="card-detail-item"><span><i class="fa fa-tent-double-peak"></i></span> <p>&nbsp;</p> </div> </div> </div> </div> <div class="card-footer"> <a href="#" class="read-more-link no-link">More</a> </div>
+                </div>
+                <div class="ng-scope card">
+                    <div class="card-header" style="background-image:url(https://makerfaire.com/wp-content/themes/makerfaire/images/stripe_bg1.gif);"></div> <div class="card-body"> <div class="card-text"> <h3 class="card-title">Loading...</h3> <div class="card-detail-items"> <div class="card-detail-item"><span><i class="fa fa-circle-user"></i></span> <p>&nbsp;</p> </div> <div class="card-detail-item"><span><i class="fa fa-rocket"></i></span> <p>&nbsp;</p> </div> <div class="card-detail-item"><span><i class="fa fa-tent-double-peak"></i></span> <p>&nbsp;</p> </div> </div> </div> </div> <div class="card-footer"> <a href="#" class="read-more-link no-link">More</a> </div>
+                </div>
+                <div class="ng-scope card">
+                    <div class="card-header" style="background-image:url(https://makerfaire.com/wp-content/themes/makerfaire/images/stripe_bg1.gif);"></div> <div class="card-body"> <div class="card-text"> <h3 class="card-title">Loading...</h3> <div class="card-detail-items"> <div class="card-detail-item"><span><i class="fa fa-circle-user"></i></span> <p>&nbsp;</p> </div> <div class="card-detail-item"><span><i class="fa fa-rocket"></i></span> <p>&nbsp;</p> </div> <div class="card-detail-item"><span><i class="fa fa-tent-double-peak"></i></span> <p>&nbsp;</p> </div> </div> </div> </div> <div class="card-footer"> <a href="#" class="read-more-link no-link">More</a> </div>
+                </div>
+                <div class="ng-scope card">
+                    <div class="card-header" style="background-image:url(https://makerfaire.com/wp-content/themes/makerfaire/images/stripe_bg1.gif);"></div> <div class="card-body"> <div class="card-text"> <h3 class="card-title">Loading...</h3> <div class="card-detail-items"> <div class="card-detail-item"><span><i class="fa fa-circle-user"></i></span> <p>&nbsp;</p> </div> <div class="card-detail-item"><span><i class="fa fa-rocket"></i></span> <p>&nbsp;</p> </div> <div class="card-detail-item"><span><i class="fa fa-tent-double-peak"></i></span> <p>&nbsp;</p> </div> </div> </div> </div> <div class="card-footer"> <a href="#" class="read-more-link no-link">More</a> </div>
+                </div>
+                <div class="ng-scope card">
+                    <div class="card-header" style="background-image:url(https://makerfaire.com/wp-content/themes/makerfaire/images/stripe_bg1.gif);"></div> <div class="card-body"> <div class="card-text"> <h3 class="card-title">Loading...</h3> <div class="card-detail-items"> <div class="card-detail-item"><span><i class="fa fa-circle-user"></i></span> <p>&nbsp;</p> </div> <div class="card-detail-item"><span><i class="fa fa-rocket"></i></span> <p>&nbsp;</p> </div> <div class="card-detail-item"><span><i class="fa fa-tent-double-peak"></i></span> <p>&nbsp;</p> </div> </div> </div> </div> <div class="card-footer"> <a href="#" class="read-more-link no-link">More</a> </div>
+                </div>
+                <div class="ng-scope card">
+                    <div class="card-header" style="background-image:url(https://makerfaire.com/wp-content/themes/makerfaire/images/stripe_bg1.gif);"></div> <div class="card-body"> <div class="card-text"> <h3 class="card-title">Loading...</h3> <div class="card-detail-items"> <div class="card-detail-item"><span><i class="fa fa-circle-user"></i></span> <p>&nbsp;</p> </div> <div class="card-detail-item"><span><i class="fa fa-rocket"></i></span> <p>&nbsp;</p> </div> <div class="card-detail-item"><span><i class="fa fa-tent-double-peak"></i></span> <p>&nbsp;</p> </div> </div> </div> </div> <div class="card-footer"> <a href="#" class="read-more-link no-link">More</a> </div>
+                </div>
+                <div class="ng-scope card">
+                    <div class="card-header" style="background-image:url(https://makerfaire.com/wp-content/themes/makerfaire/images/stripe_bg1.gif);"></div> <div class="card-body"> <div class="card-text"> <h3 class="card-title">Loading...</h3> <div class="card-detail-items"> <div class="card-detail-item"><span><i class="fa fa-circle-user"></i></span> <p>&nbsp;</p> </div> <div class="card-detail-item"><span><i class="fa fa-rocket"></i></span> <p>&nbsp;</p> </div> <div class="card-detail-item"><span><i class="fa fa-tent-double-peak"></i></span> <p>&nbsp;</p> </div> </div> </div> </div> <div class="card-footer"> <a href="#" class="read-more-link no-link">More</a> </div>
+                </div>
+                <div class="ng-scope card">
+                    <div class="card-header" style="background-image:url(https://makerfaire.com/wp-content/themes/makerfaire/images/stripe_bg1.gif);"></div> <div class="card-body"> <div class="card-text"> <h3 class="card-title">Loading...</h3> <div class="card-detail-items"> <div class="card-detail-item"><span><i class="fa fa-circle-user"></i></span> <p>&nbsp;</p> </div> <div class="card-detail-item"><span><i class="fa fa-rocket"></i></span> <p>&nbsp;</p> </div> <div class="card-detail-item"><span><i class="fa fa-tent-double-peak"></i></span> <p>&nbsp;</p> </div> </div> </div> </div> <div class="card-footer"> <a href="#" class="read-more-link no-link">More</a> </div>
+                </div>
+                <div class="ng-scope card">
+                    <div class="card-header" style="background-image:url(https://makerfaire.com/wp-content/themes/makerfaire/images/stripe_bg1.gif);"></div> <div class="card-body"> <div class="card-text"> <h3 class="card-title">Loading...</h3> <div class="card-detail-items"> <div class="card-detail-item"><span><i class="fa fa-circle-user"></i></span> <p>&nbsp;</p> </div> <div class="card-detail-item"><span><i class="fa fa-rocket"></i></span> <p>&nbsp;</p> </div> <div class="card-detail-item"><span><i class="fa fa-tent-double-peak"></i></span> <p>&nbsp;</p> </div> </div> </div> </div> <div class="card-footer"> <a href="#" class="read-more-link no-link">More</a> </div>
+                </div>
                 <div class="loading-container">
                     <img src="https://make.co/wp-content/universal-assets/v2/images/makey-spinner.gif" />
                     <span class="sr-only"><?php _e("Loading", 'makerfaire') ?>...</span>
@@ -196,19 +196,20 @@ $faireName = (isset($results[0]->faire_name)?$results[0]->faire_name:'');
             </div>
             <div class="no-results" ng-if="(makers|filter:makerSearch).length == 0">No Results for your search and filter terms</div>
             <!-- Grid View -->
-            <div ng-if="layout == 'grid'" class="mtm-results-cont">
-                <div class="mf-card" ng-repeat="maker in makers| filter : makerSearch | limitTo: limit">
-
-                    <article class="mtm-maker">
-                        <div class="mtm-image">
-                            <a href="{{maker.link}}">
-                                <img src="{{maker.large_img_url}}" on-error="/wp-content/themes/makerfaire/images/default-mtm-image.jpg" alt="{{maker.name}} Photo" />
-                            </a>
-                        </div>
-                        <div class="mtm-text">
-                            <h3> <a href="{{maker.link}}">{{maker.name}}</a></h3>
-                            <div class="mtm-detail-items">
-                                <div class="mtm-detail-item" ng-show="maker.makerList.length">
+            <div ng-if="layout == 'grid'" class="card-deck">
+                <div class="card" ng-repeat="maker in makers| filter : makerSearch | limitTo: limit">
+                    <div class="card-header">
+                        <a href="{{maker.link}}">
+                            <img src="{{maker.large_img_url}}" on-error="/wp-content/themes/makerfaire/images/default-mtm-image.jpg" class="card-image" alt="{{maker.name}} Photo" />
+                        </a>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-text">
+                            <h3 class="card-title">
+                                <a href="{{maker.link}}">{{maker.name}}</a>
+                            </h3>
+                            <div class="card-detail-items">
+                                <div class="card-detail-item" ng-show="maker.makerList.length">
                                     <span>
                                         <a href="{{maker.link}}">
                                             <i class="fa fa-circle-user"></i></a>
@@ -216,15 +217,14 @@ $faireName = (isset($results[0]->faire_name)?$results[0]->faire_name:'');
                                     <p>
                                         <a href="{{maker.link}}" ng-bind-html="trust(maker.makerList)"></a>
                                     </p>
-
                                 </div>
-                                <div class="mtm-detail-item">
+                                <div class="card-detail-item">
                                     <span ng-bind-html="maker.main_cat_icon"></span>
                                     <p>
                                         <a href="?category={{maker.category_id_refs[0]}}">{{maker.category_id_refs[0]}}</a>
                                     </p>
                                 </div>
-                                <div class="mtm-detail-item">
+                                <div class="card-detail-item">
                                     <span>
                                         <a href="?type={{maker.typeString}}">
                                             <i class="fa {{maker.types[0].toLowerCase()}}"></i>
@@ -235,16 +235,17 @@ $faireName = (isset($results[0]->faire_name)?$results[0]->faire_name:'');
                                     </p>
                                 </div>
                             </div>
-                            <div class="read-more-link"><a href="{{maker.link}}">More</a></div>
                         </div>
-                    </article>
-
+                    </div>
+                    <div class="card-footer">
+                        <a href="{{maker.link}}" class="read-more-link">More</a>
+                    </div>
                 </div>
                 <div class="clearfix"></div>
             </div>
 
             <!-- List View -->
-            <div ng-if="layout == 'list'" class="mtm-results-cont-list container">
+            <div ng-if="layout == 'list'" class="mtm-results-cont-list">
                 <div class="filter-alpha-wrapper">
                     <span class="filterAlpha" ng-repeat="searchLetter in alphabet.split('') track by $index">
                         <a href="" target="none" class="pointer-on-hover" ng-click="setLetter(searchLetter)">{{ searchLetter}}</a>
@@ -252,105 +253,104 @@ $faireName = (isset($results[0]->faire_name)?$results[0]->faire_name:'');
                     <span class="filterAlpha"><a href="" class="pointer-on-hover" ng-click="setLetter('')">Reset</a></span>
                 </div>
 
-                <div ng-repeat="maker in makers| filter : makerSearch | orderBy: 'name' | startsWithLetter:letter">
+                <div class="card-deck" ng-repeat="maker in makers| filter : makerSearch | orderBy: 'name' | startsWithLetter:letter">
 
-                    <article class="mtm-maker">
-                        <div class="mtm-image">
+                    <div class="card">
+                        <div class="card-header">
                             <a href="{{maker.link}}">
-                                <img src="{{maker.small_img_url}}" on-error="/wp-content/themes/makerfaire/images/default-mtm-image.jpg" alt="{{maker.name}} Photo" />
+                                <img src="{{maker.small_img_url}}" on-error="/wp-content/themes/makerfaire/images/default-mtm-image.jpg" class="card-image" alt="{{maker.name}} Photo" />
                             </a>
                         </div>
-                        <div class="mtm-text">
-                            <a href="{{maker.link}}">
-                                <h3>{{maker.name}}</h3>
+                        <div class="card-body">
+                            <div class="card-text">
+                                <h3 class="card-title"><a href="{{maker.link}}">{{maker.name}}</a></h3>
                                 <h4 ng-bind-html="trust(maker.makerList)"></h4>
-                                <p class="description">{{maker.description}}</p>
-                            </a>
-                            <div class="mtm-detail-items">
-                                <div class="mtm-detail-item">
-                                    <span>
-                                        <a href="{{maker.link}}">
-                                            <i class="fa fa-plus"></i>
-                                        </a>
-                                    </span>
-                                    <p>
-                                        <a href="{{maker.link}}">More</a>
-                                    </p>
-                                </div>
-                                <div class="mtm-detail-item">
-                                    <span ng-bind-html="maker.main_cat_icon"></span>
-                                    <p>
-                                        <a href="?category={{maker.category_id_refs[0]}}">
-                                            {{maker.category_id_refs[0]}}
-                                        </a>
-                                    </p>
-                                </div>
-                                <div class="mtm-detail-item">
-                                    <span>
-                                        <a href="?type={{maker.typeString}}">
-                                            <i class="fa {{maker.types[0].toLowerCase()}}"></i>
-                                        </a>
-                                    </span>
-                                    <p>
-                                        <a href="?type={{maker.typeString}}">
-                                            {{maker.typeString}}
-                                        </a>
-                                    </p>
+                                <p class="desc truncated">{{maker.description}}</p>
+                                <div class="card-detail-items item-row">
+                                    <div class="card-detail-item">
+                                        <span>
+                                            <a href="{{maker.link}}">
+                                                <i class="fa fa-plus"></i>
+                                            </a>
+                                        </span>
+                                        <p>
+                                            <a href="{{maker.link}}">More</a>
+                                        </p>
+                                    </div>
+                                    <div class="card-detail-item">
+                                        <span ng-bind-html="maker.main_cat_icon"></span>
+                                        <p>
+                                            <a href="?category={{maker.category_id_refs[0]}}">
+                                                {{maker.category_id_refs[0]}}
+                                            </a>
+                                        </p>
+                                    </div>
+                                    <div class="card-detail-item">
+                                        <span>
+                                            <a href="?type={{maker.typeString}}">
+                                                <i class="fa {{maker.types[0].toLowerCase()}}"></i>
+                                            </a>
+                                        </span>
+                                        <p>
+                                            <a href="?type={{maker.typeString}}">
+                                                {{maker.typeString}}
+                                            </a>
+                                        </p>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </article>
+                    </div>
                 </div>
                 <div class="clearfix"></div>
             </div>
 
             <!-- Maker View -->
-            <div ng-if="layout == 'maker'" class="mtm-results-cont maker-view">
+            <div ng-if="layout == 'maker'" class="mtm-results-cont maker-view card-deck square-grid">
 
-                <div class="mf-card" ng-repeat="maker in makers| filter : makerSearch | limitTo: limit">
+                <div class="card" ng-repeat="maker in makers| filter : makerSearch | limitTo: limit">
 
-                    <article class="mtm-maker">
-                        <div class="mtm-image">
+                        <div class="card-header">
                             <a href="{{maker.link}}">
-                                <img ng-src="{{maker.maker_photo}}" on-error="/wp-content/themes/makerfaire/images/default-makey-medium.jpg" alt="{{maker.name}} Photo" />
+                                <img ng-src="{{maker.maker_photo}}" on-error="/wp-content/themes/makerfaire/images/default-makey-medium.jpg" alt="{{maker.name}} Photo" class="card-image" />
                             </a>
                         </div>
-                        <div class="mtm-text">
-                            <a href="{{maker.link}}">
-                                <h4 ng-bind-html="trust(maker.makerList)"></h4>
-                            </a>
-                            <div class="mtm-detail-items">
-                                <div class="mtm-detail-item" ng-show="maker.maker_location">
-                                    <span>
-                                        <a href="{{maker.link}}">
-                                            <i class="fa fa-earth-americas"></i>
-                                        </a>
-                                    </span>
-                                    <p>
-                                        <a href="{{maker.link}}">{{maker.maker_location}}</a>
-                                    </p>
-                                </div>
-                                <div class="mtm-detail-item">
-                                    <span ng-bind-html="maker.main_cat_icon"></span>
-                                    <p>
-                                        <a href="?layout=maker&category={{maker.category_id_refs[0]}}">{{maker.category_id_refs[0]}}</a>
-                                    </p>
-                                </div>
-                                <div class="mtm-detail-item">
-                                    <span>
-                                        <a href="{{maker.link}}">
-                                            <i class="fa fa-plus"></i>
-                                        </a>
-                                    </span>
-                                    <p>
-                                        <a href="{{maker.link}}">More {{maker.typeString}} details</a>
-                                    </p>
+                        <div class="card-body">
+                            <div class="card-text">
+                                <a href="{{maker.link}}">
+                                    <h4 ng-bind-html="trust(maker.makerList)"></h4>
+                                </a>
+                                <div class="card-detail-items">
+                                    <div class="card-detail-item" ng-show="maker.maker_location">
+                                        <span>
+                                            <a href="{{maker.link}}">
+                                                <i class="fa fa-earth-americas"></i>
+                                            </a>
+                                        </span>
+                                        <p>
+                                            <a href="{{maker.link}}">{{maker.maker_location}}</a>
+                                        </p>
+                                    </div>
+                                    <div class="card-detail-item">
+                                        <span ng-bind-html="maker.main_cat_icon"></span>
+                                        <p>
+                                            <a href="?layout=maker&category={{maker.category_id_refs[0]}}">{{maker.category_id_refs[0]}}</a>
+                                        </p>
+                                    </div>
+                                    <div class="card-detail-item">
+                                        <span>
+                                            <a href="{{maker.link}}">
+                                                <i class="fa fa-plus"></i>
+                                            </a>
+                                        </span>
+                                        <p>
+                                            <a href="{{maker.link}}">More {{maker.typeString}} details</a>
+                                        </p>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </article>
                 </div>
-                <div class="clearfix"></div>
             </div>
 
         </div>

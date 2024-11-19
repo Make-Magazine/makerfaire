@@ -101,25 +101,33 @@ foreach ($yearSql as $year) {
               </div>
 
               <div class="mtm-filter-view">
-                <a ng-class="{active: layout == 'list'}" ng-click="layout = 'list'" class="mtm-filter-l pointer-on-hover box list" title="List View"><i class="fas fa-bars" aria-hidden="true"></i></a>
-                <a ng-class="{active: layout == 'grid'}" ng-click="layout = 'grid'" class="mtm-filter-g pointer-on-hover box gallery" title="Grid View"><i class="far fa-grid-2" aria-hidden="true"></i></a>
+                <a ng-class="{active: layout == 'list'}" ng-click="changeView('list')" class="mtm-filter-l pointer-on-hover box list" title="List View"><i class="fas fa-bars" aria-hidden="true"></i></a>
+                <a ng-class="{active: layout == 'grid'}" ng-click="changeView('grid')" class="mtm-filter-g pointer-on-hover box gallery" title="Grid View"><i class="far fa-grid-2" aria-hidden="true"></i></a>
               </div>
             </div>
 
             <!-- Default view and no ribbon data found-->
-            <div ng-show="!ribbons.length" class="mtm-results-cont loading">
-                <div class="ng-scope mf-card"><a href="javascript:void();" style="pointer-events:none;">
-                    <article class="mtm-maker"> <div class="mtm-image" style="background-image:url(https://makerfaire.com/wp-content/themes/makerfaire/images/stripe_bg1.gif);"></div> <div class="mtm-text"> <h3>Loading...</h3> <div class="mtm-detail-items"> <div class="mtm-detail-item"><span><i class="fa fa-circle-user"></i></span> <p>&nbsp;</p> </div> <div class="mtm-detail-item"><span><i class="fa fa-rocket"></i></span> <p>&nbsp;</p> </div> <div class="mtm-detail-item"><span><i class="fa fa-tent-double-peak"></i></span> <p>&nbsp;</p> </div> </div> <div class="read-more-link">More</div> </div> </article>
-                </a></div>
-                <div class="ng-scope mf-card"><a href="javascript:void();" style="pointer-events:none;">
-                    <article class="mtm-maker"> <div class="mtm-image" style="background-image:url(https://makerfaire.com/wp-content/themes/makerfaire/images/stripe_bg1.gif);"></div> <div class="mtm-text"> <h3>Loading...</h3> <div class="mtm-detail-items"> <div class="mtm-detail-item"><span><i class="fa fa-circle-user"></i></span> <p>&nbsp;</p> </div> <div class="mtm-detail-item"><span><i class="fa fa-rocket"></i></span> <p>&nbsp;</p> </div> <div class="mtm-detail-item"><span><i class="fa fa-tent-double-peak"></i></span> <p>&nbsp;</p> </div> </div> <div class="read-more-link">More</div> </div> </article>
-                </a></div>
-                <div class="ng-scope mf-card"><a href="javascript:void();" style="pointer-events:none;">
-                    <article class="mtm-maker"> <div class="mtm-image" style="background-image:url(https://makerfaire.com/wp-content/themes/makerfaire/images/stripe_bg1.gif);"></div> <div class="mtm-text"> <h3>Loading...</h3> <div class="mtm-detail-items"> <div class="mtm-detail-item"><span><i class="fa fa-circle-user"></i></span> <p>&nbsp;</p> </div> <div class="mtm-detail-item"><span><i class="fa fa-rocket"></i></span> <p>&nbsp;</p> </div> <div class="mtm-detail-item"><span><i class="fa fa-tent-double-peak"></i></span> <p>&nbsp;</p> </div> </div> <div class="read-more-link">More</div> </div> </article>
-                </a></div>
-                <div class="ng-scope mf-card"><a href="javascript:void();" style="pointer-events:none;">
-                    <article class="mtm-maker"> <div class="mtm-image" style="background-image:url(https://makerfaire.com/wp-content/themes/makerfaire/images/stripe_bg1.gif);"></div> <div class="mtm-text"> <h3>Loading...</h3> <div class="mtm-detail-items"> <div class="mtm-detail-item"><span><i class="fa fa-circle-user"></i></span> <p>&nbsp;</p> </div> <div class="mtm-detail-item"><span><i class="fa fa-rocket"></i></span> <p>&nbsp;</p> </div> <div class="mtm-detail-item"><span><i class="fa fa-tent-double-peak"></i></span> <p>&nbsp;</p> </div> </div> <div class="read-more-link">More</div> </div> </article>
-                </a></div>                
+            <div ng-show="!ribbons.length" class="card-deck loading">
+                <div class="ng-scope card">
+                    <div class="card-header" style="background-image:url(https://makerfaire.com/wp-content/themes/makerfaire/images/stripe_bg1.gif);"></div> 
+                    <div class="card-body"> <div class="card-text"> <h3 class="card-title text-center"> <a href="#" class="no-link">Loading Project...</a></h3> <h4> <a href="#" class="no-link">Loading Faire</a></h4> <div class="card-detail-items"> <div class="card-detail-item"> <span> <a href="#" class="no-link"> <i class="fa fa-circle-user"></i> </a> </span> <p> <a href="#" class="no-link">Loading Maker</a> </p> </div> </div> </div> </div>
+                    <div class="card-footer"> <a href="#" class="read-more-link no-link">More</a> </div>
+                </div>
+                <div class="ng-scope card">
+                    <div class="card-header" style="background-image:url(https://makerfaire.com/wp-content/themes/makerfaire/images/stripe_bg1.gif);"></div> 
+                    <div class="card-body"> <div class="card-text"> <h3 class="card-title text-center"> <a href="#" class="no-link">Loading Project...</a></h3> <h4> <a href="#" class="no-link">Loading Faire</a></h4> <div class="card-detail-items"> <div class="card-detail-item"> <span> <a href="#" class="no-link"> <i class="fa fa-circle-user"></i> </a> </span> <p> <a href="#" class="no-link">Loading Maker</a> </p> </div> </div> </div> </div>
+                    <div class="card-footer"> <a href="#" class="read-more-link no-link">More</a> </div>
+                </div>
+                <div class="ng-scope card">
+                    <div class="card-header" style="background-image:url(https://makerfaire.com/wp-content/themes/makerfaire/images/stripe_bg1.gif);"></div> 
+                    <div class="card-body"> <div class="card-text"> <h3 class="card-title text-center"> <a href="#" class="no-link">Loading Project...</a></h3> <h4> <a href="#" class="no-link">Loading Faire</a></h4> <div class="card-detail-items"> <div class="card-detail-item"> <span> <a href="#" class="no-link"> <i class="fa fa-circle-user"></i> </a> </span> <p> <a href="#" class="no-link">Loading Maker</a> </p> </div> </div> </div> </div>
+                    <div class="card-footer"> <a href="#" class="read-more-link no-link">More</a> </div>
+                </div>
+                <div class="ng-scope card">
+                    <div class="card-header" style="background-image:url(https://makerfaire.com/wp-content/themes/makerfaire/images/stripe_bg1.gif);"></div> 
+                    <div class="card-body"> <div class="card-text"> <h3 class="card-title text-center"> <a href="#" class="no-link">Loading Project...</a></h3> <h4> <a href="#" class="no-link">Loading Faire</a></h4> <div class="card-detail-items"> <div class="card-detail-item"> <span> <a href="#" class="no-link"> <i class="fa fa-circle-user"></i> </a> </span> <p> <a href="#" class="no-link">Loading Maker</a> </p> </div> </div> </div> </div>
+                    <div class="card-footer"> <a href="#" class="read-more-link no-link">More</a> </div>
+                </div>              
                 <div class="loading-container">
                     <img src="https://make.co/wp-content/universal-assets/v2/images/makey-spinner.gif" />
                     <span class="sr-only"><?php _e("Loading", 'makerfaire') ?>...</span>
@@ -128,51 +136,52 @@ foreach ($yearSql as $year) {
             <div class="no-results" ng-if="ribbons.length && (ribbons|filter:query).length == 0">I'm sorry. There are no winners found.</div>
 
             <!-- Grid View -->
-            <div ng-if="layout == 'grid'" class="mtm-results-cont">
-              <div class="mf-card" dir-paginate="ribbon in ribbons| filter:query | itemsPerPage: 100" current-page="currentPage">
-                <article class="mtm-maker">
-                  <div class="mtm-image projImg">
+            <div ng-if="layout == 'grid'" class="mtm-results-cont card-deck">
+              <div class="card" dir-paginate="ribbon in ribbons| filter:query | itemsPerPage: 100" current-page="currentPage">
+                <div class="card-header">
                     <a href="{{ribbon.link}}">
-                      <img src="{{ribbon.project_photo}}" on-error="/wp-content/themes/makerfaire/images/default-mtm-image.jpg" alt="{{maker.name}} Photo" />
+                      <img src="{{ribbon.project_photo}}" on-error="/wp-content/themes/makerfaire/images/default-mtm-image.jpg" alt="{{maker.name}} Photo" class="card-image" />
                     </a>
-                    <div class="ribbons">
-                      <div class="blueRibbon" ng-if="ribbon.blueCount > 0">
-                        {{ribbon.blueCount}}
-                      </div>
-                      <div class="redRibbon" ng-if="ribbon.redCount > 0">
-                        {{ribbon.redCount}}
-                      </div>
-                    </div>
+                </div>
+                <div class="ribbons">
+                  <div class="blueRibbon" ng-if="ribbon.blueCount > 0">
+                    {{ribbon.blueCount}}
                   </div>
-                  <div class="mtm-text">
-                    <h3> <a href="{{ribbon.link}}">{{ribbon.project_name}}</a></h3>
+                  <div class="redRibbon" ng-if="ribbon.redCount > 0">
+                    {{ribbon.redCount}}
+                  </div>
+                </div>
+                <div class="card-body">
+                  <div class="card-text">
+                    <h3 class="card-title text-center"> <a href="{{ribbon.link}}">{{ribbon.project_name}}</a></h3>
                     <h4> <a href="{{ribbon.link}}">{{ribbon.location}} {{ribbon.faireYear}}</a></h4>
-                    <div class="mtm-detail-items">
-                      <div class="mtm-detail-item" ng-show="ribbon.maker_name.length">
+                    <div class="card-detail-items">
+                      <div class="card-detail-item" ng-show="ribbon.maker_name.length">
                         <span>
                           <a href="{{ribbon.link}}">
-                            <i class="fa fa-circle-user"></i></a>
+                            <i class="fa fa-circle-user"></i>
+                          </a>
                         </span>
                         <p>
                           <a href="{{ribbon.link}}">{{ribbon.maker_name}}</a>
                         </p>
                       </div>                     
                     </div>
-                    <div class="read-more-link"><a href="{{ribbon.link}}">More</a></div>
                   </div>
-                </article>
-
+                </div>
+                <div class="card-footer">
+                  <a href="{{ribbon.link}}" class="read-more-link">More</a>
+                </div>
               </div>
               <div class="clearfix"></div>
             </div>
 
             <!-- List View -->
-            <div ng-if="layout == 'list'" class="mtm-results-cont-list container">
-              <div class="mf-card" dir-paginate="ribbon in ribbons| filter:query |orderBy: 'project_name' |itemsPerPage: 100" current-page="currentPage">              
-                <article class="mtm-maker">
-                  <div class="mtm-image projImg">
+            <div ng-if="layout == 'list'" class="mtm-results-cont-list card-deck">
+              <div class="card" dir-paginate="ribbon in ribbons| filter:query |orderBy: 'project_name' |itemsPerPage: 100" current-page="currentPage">              
+                  <div class="card-header">
                     <a href="{{ribbon.link}}">
-                      <img src="{{ribbon.project_photo}}" on-error="/wp-content/themes/makerfaire/images/default-mtm-image.jpg" alt="{{ribbon.project_name}} Photo" />
+                      <img src="{{ribbon.project_photo}}" on-error="/wp-content/themes/makerfaire/images/default-mtm-image.jpg" alt="{{ribbon.project_name}} Photo" class="card-image" />
                     </a>
                     <div class="ribbons">
                       <div class="blueRibbon" ng-if="ribbon.blueCount > 0">
@@ -183,26 +192,27 @@ foreach ($yearSql as $year) {
                       </div>
                     </div>
                   </div>
-                  <div class="mtm-text">
-                    <a href="{{ribbon.link}}">
-                      <h3>{{ribbon.project_name}}</h3>
-                      <h4>{{ribbon.maker_name}}</h4>
-                      <!--<p class="description">{{maker.description}}</p>-->
-                    </a>
-                    <div class="mtm-detail-items">
-                      <div class="mtm-detail-item">
-                        <span>
-                          <a href="{{ribbon.link}}">
-                            <i class="fa fa-plus"></i>
-                          </a>
-                        </span>
-                        <p>
-                          <a href="{{ribbon.link}}">More</a>
-                        </p>
-                      </div>                      
+                  <div class="card-body">
+                    <div class="card-text">
+                      <a href="{{ribbon.link}}">
+                        <h3 class="card-title">{{ribbon.project_name}}</h3>
+                        <h4>{{ribbon.maker_name}}</h4>
+                        <!--<p class="description">{{maker.description}}</p>-->
+                      </a>
+                      <div class="card-detail-items">
+                        <div class="card-detail-item">
+                          <span>
+                            <a href="{{ribbon.link}}">
+                              <i class="fa fa-plus"></i>
+                            </a>
+                          </span>
+                          <p>
+                            <a href="{{ribbon.link}}">More</a>
+                          </p>
+                        </div>                      
+                      </div>
                     </div>
                   </div>
-                </article>
               </div>
               <div class="clearfix"></div>
             </div>

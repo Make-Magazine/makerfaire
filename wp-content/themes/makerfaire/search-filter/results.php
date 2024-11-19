@@ -24,7 +24,7 @@ if ( $query->have_posts() ) {
 
     </div>
 
-    <div class="result-items">
+    <div class="card-deck">
     <?php
 
         while ($query->have_posts()) {         
@@ -32,7 +32,7 @@ if ( $query->have_posts() ) {
             $faire_id = $post_id = get_the_ID();
             $postType = get_post_type($query->post_type);
             
-            $result_text_style = "";
+            $result_card_style = "";
             if($postType == "projects") {
                 $faire_info = get_field("faire_information");
                 $faire_id   = (isset($faire_info['faire_post'])?$faire_info['faire_post']:'');
@@ -49,7 +49,7 @@ if ( $query->have_posts() ) {
 
             //Faire Badge                
             $faire_badge       = (isset($producerSection['circular_faire_logo']['url']) ? $producerSection['circular_faire_logo']["sizes"]["thumbnail"]: "/wp-content/themes/makerfaire/images/default-badge-thumb.png");                    
-            $result_text_style = 'style="background-image:url(' . $faire_badge . ');"';
+            $result_card_style = 'style="background-image:url(' . $faire_badge . ');"';
 
             //featured image            
             $image_alt      = get_post_meta( get_post_thumbnail_id(), '_wp_attachment_image_alt', true );   
@@ -99,71 +99,77 @@ if ( $query->have_posts() ) {
             }
                         
             ?>
-            <div class="result-item mf-card <?php echo $postType; ?>">
+            <div class="card <?php echo $postType; ?><?php if($postType == "projects") { ?> column-3<?php } ?>" <?php echo $result_card_style; ?>>
                 <?php if ( has_post_thumbnail() ) { ?>
-                        <div class="result-image">
+                        <div class="card-header">
 							<a href="<?php echo $permalink; ?>">
-								<img srcset="<?php echo $featured_image_400_300; ?> 400w, <?php echo $featured_image_600_400; ?> 1199w, <?php echo $featured_image_400_300; ?>" sizes="(max-width: 400px) 400px, (max-width: 1199px) 1199px, 1200px" src="<?php echo $featured_image_400_300; ?>" alt="<?php echo $image_alt; ?>" />
+								<img class="card-image" srcset="<?php echo $featured_image_400_300; ?> 400w, <?php echo $featured_image_600_400; ?> 1199w, <?php echo $featured_image_400_300; ?>" sizes="(max-width: 400px) 400px, (max-width: 1199px) 1199px, 1200px" src="<?php echo $featured_image_400_300; ?>" alt="<?php echo $image_alt; ?>" />
 							</a>
                         </div>
                 <?php } ?>
-                <div class="results-text" <?php echo $result_text_style; ?>>
-                    <h2><a href="<?php echo $permalink; ?>"><?php echo $title; ?></a></h2>
-                    <?php if($postType == "event" || $postType == "faire") { ?>
-                        <?php if(!empty($faire_location)){ ?>
-                            <div class="result-detail">
-                                <?php echo $faire_location; ?>
-                            </div>
+                <div class="card-body">
+                    <div class="card-text">
+                        <h3 class="card-title">
+                            <a href="<?php echo $permalink; ?>"><?php echo $title; ?></a>
+                        </h3>
+                        <div class="card-detail-items">
+                        <?php if($postType == "event" || $postType == "faire") { ?>
+                            <?php if(!empty($faire_location)){ ?>
+                                <div class="card-detail-item">
+                                    <p><?php echo $faire_location; ?></p>
+                                </div>
+                            <?php } ?>
+                            <?php if(!empty($faire_countries[$faire_country])){ ?>
+                                <div class="card-detail-item">
+                                    <p><?php echo $faire_countries[$faire_country]; ?></p>
+                                </div>
+                            <?php } ?>
+                            <?php if(!empty($faire_date)){ ?>
+                                <div class="card-detail-item">
+                                    <p><?php echo $faire_date; ?></p>
+                                </div>
+                            <?php } ?>
                         <?php } ?>
-                        <?php if(!empty($faire_countries[$faire_country])){ ?>
-                            <div class="result-detail">
-                                <?php echo $faire_countries[$faire_country]; ?>
-                            </div>
-                        <?php } ?>
-                        <?php if(!empty($faire_date)){ ?>
-                            <div class="result-detail">
-                                <?php echo $faire_date; ?>
-                            </div>
-                        <?php } ?>
-                        <div class="result-detail">
-                            <a class="sf-learn-more" href="<?php echo $permalink; ?>">More</a>
-                        </div>
-                    <?php } ?>
-                    <?php if($postType == "projects") { ?>
-                        <?php if(!empty($faire_name)){ ?>
-                            <div class="result-detail">
-                                <b>Faire:</b>&nbsp;<?php echo $faire_name; ?>
-                            </div>
-                        <?php } ?>
-                        <?php if(!empty($maker_name)){ ?>
-                            <div class="result-detail">
-                                <b>Maker<span></span>:</b>&nbsp;<?php echo $maker_name; ?>
-                            </div>
-                        <?php } ?>
-                        <?php if(!empty($project_location)){ ?>
-                            <div class="result-detail">
-                                <span class="one-line">
+                        <?php if($postType == "projects") { ?>
+                            <?php if(!empty($faire_name)){ ?>
+                                <div class="card-detail-item">
+                                    <p><b>Faire:</b>&nbsp;<?php echo $faire_name; ?></p>
+                                </div>
+                            <?php } ?>
+                            <?php if(!empty($maker_name)){ ?>
+                                <div class="card-detail-item">
+                                    <p><b>Maker:</b>&nbsp;<?php echo $maker_name; ?></p>
+                                </div>
+                            <?php } ?>
+                            <?php if(!empty($project_location)){ ?>
+                                <div class="card-detail-item">
+                                    <p>
                                     <?php
                                     echo (empty($project_state) && empty($project_country) ? '&nbsp;':'<b>Home: </b>');
                                     echo (!empty($project_state) ? $project_state : "");                
                                     echo (!empty($project_state) && !empty($project_country) ? ', ':'');
                                     echo (!empty($project_country) ? $project_country : "");                
                                     ?>
-                                </span>
-                            </div>
+                                    </p>
+                                </div>
+                            <?php } ?>
+                            <?php /* if(!empty($categories)){ ?>
+                                <div class="result-detail">
+                                    <?php echo $categories; ?>
+                                </div>
+                            <?php } */ ?>
+                            <?php if(!empty($excerpt)){ ?>
+                                <div class="card-detail-item desc">
+                                    <span class="truncated"><?php echo strip_tags(html_entity_decode($excerpt)); ?></span>
+                                </div>
+                            <?php } ?>
                         <?php } ?>
-                        <?php /* if(!empty($categories)){ ?>
-                            <div class="result-detail">
-                                <?php echo $categories; ?>
-                            </div>
-                        <?php } */ ?>
-                        <?php if(!empty($excerpt)){ ?>
-                            <div class="result-detail desc">
-                                <span class="truncated"><?php echo strip_tags(html_entity_decode($excerpt)); ?></span>
-                            </div>
-                        <?php } ?>
-                        <div class="result-detail"><a href="<?php echo $permalink; ?>" class="sf-learn-more">More</a></div>
-                    <?php } ?>
+                        </div>
+                        <a href="https://makerfaire.local/yearbook/2023-projects/vans-rv12is-light-sport-aircraft-fuselage-build/" class="read-more-link">More</a>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <a href="<?php echo $permalink; ?>" class="read-more-link">More</a>
                 </div>
             </div>
     <?php } ?>

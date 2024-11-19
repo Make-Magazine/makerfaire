@@ -58,6 +58,13 @@
           faires.sort();
           $scope.faires = faires;
 
+          $scope.changeView = function (view) {
+              jQuery('body').removeClass (function (index, className) {
+                  return (className.match (/(\S*)view\s+/g) || []).join(' ');
+              });
+              jQuery('body').addClass(view + "view");
+              $scope.layout = view;
+          };
           
           $scope.blueCount = function(arr) {
             return $filter('blueCount')
@@ -74,6 +81,8 @@
     };
 
   }]);
+
+  
 
   function shuffle(array) {
     var currentIndex = array.length,
