@@ -59,9 +59,7 @@
           $scope.faires = faires;
 
           $scope.changeView = function (view) {
-              jQuery('body').removeClass (function (index, className) {
-                  return (className.match (/(\S*)view\s+/g) || []).join(' ');
-              });
+            jQuery('body').removeClass ("listview", "gridview");
               jQuery('body').addClass(view + "view");
               $scope.layout = view;
           };
