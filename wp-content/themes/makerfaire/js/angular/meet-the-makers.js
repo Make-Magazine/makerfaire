@@ -96,9 +96,7 @@ mtm.controller('mtmMakers', ['$scope', '$sce', '$filter', '$http', function ($sc
     }
 
     $scope.changeView = function (view) {
-        jQuery('body').removeClass (function (index, className) {
-            return (className.match (/(\S*)view\s+/g) || []).join(' ');
-        });
+        jQuery('body').removeClass ("listview", "gridview", "makerview");
         jQuery('body').addClass(view + "view");
         $scope.layout = view;
     };
