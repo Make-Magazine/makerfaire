@@ -99,7 +99,7 @@ if ( $query->have_posts() ) {
             }
                         
             ?>
-            <div class="card <?php echo $postType; ?><?php if($postType == "projects") { ?> column-3<?php } ?>" <?php echo $result_card_style; ?>>
+            <div class="card <?php echo $postType; ?>" <?php echo $result_card_style; ?>>
                 <?php if ( has_post_thumbnail() ) { ?>
                         <div class="card-header">
 							<a href="<?php echo $permalink; ?>">
@@ -165,7 +165,7 @@ if ( $query->have_posts() ) {
                             <?php } ?>
                         <?php } ?>
                         </div>
-                        <a href="https://makerfaire.local/yearbook/2023-projects/vans-rv12is-light-sport-aircraft-fuselage-build/" class="read-more-link">More</a>
+                        <a href="<?php echo $permalink; ?>" class="read-more-link">More</a>
                     </div>
                 </div>
                 <div class="card-footer">

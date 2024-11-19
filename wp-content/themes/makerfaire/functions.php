@@ -71,7 +71,7 @@ function load_scripts() {
     // space time for timezone hijinks
     wp_enqueue_script('spacetime', 'https://unpkg.com/spacetime', array(), false, true);
     // select 2 for styling select
-    wp_enqueue_script('select2', 'https://makerfaire.local/wp-content/plugins//search-filter-pro/public/assets/js/select2.min.js', array(), false, true);
+    wp_enqueue_script('select2', WP_PLUGIN_URL . '/search-filter-pro/public/assets/js/select2.min.js', array(), false, true);
     // font awesome 6
     wp_enqueue_script('fontawesome', 'https://kit.fontawesome.com/b9da6f1400.js', array(), "", true);
     // Libraries concatenated by our npm build

@@ -28,7 +28,7 @@ foreach ($yearSql as $year) {
     </div>
   <?php endif; ?>
 
-  <div class="mtm ng-cloak" ng-app="ribbonApp">
+  <div class="ng-cloak" ng-app="ribbonApp">
     <div class="row">
       <div class="content col-xs-12">
         <?php if (have_posts()) : while (have_posts()) : the_post(); ?>
@@ -42,7 +42,7 @@ foreach ($yearSql as $year) {
         <?php endif; ?>
         <!-- start blue ribbon data -->
         <div>
-          <div ng-controller="ribbonController" class="my-controller mtm-results container-fluid" ng-init='loadData(<?php echo $firstYear; ?>, [<?php echo $yearJSON; ?>])'>
+          <div ng-controller="ribbonController" class="my-controller container-fluid" ng-init='loadData(<?php echo $firstYear; ?>, [<?php echo $yearJSON; ?>])'>
             <!-- Filters-->
             <div class="mtm-filter-wrap" ng-cloak>
               <!-- Text Search -->
@@ -136,7 +136,7 @@ foreach ($yearSql as $year) {
             <div class="no-results" ng-if="ribbons.length && (ribbons|filter:query).length == 0">I'm sorry. There are no winners found.</div>
 
             <!-- Grid View -->
-            <div ng-if="layout == 'grid'" class="mtm-results-cont card-deck">
+            <div ng-if="layout == 'grid'" class="card-deck">
               <div class="card" dir-paginate="ribbon in ribbons| filter:query | itemsPerPage: 100" current-page="currentPage">
                 <div class="card-header">
                     <a href="{{ribbon.link}}">
@@ -177,7 +177,7 @@ foreach ($yearSql as $year) {
             </div>
 
             <!-- List View -->
-            <div ng-if="layout == 'list'" class="mtm-results-cont-list card-deck">
+            <div ng-if="layout == 'list'" class="card-deck">
               <div class="card" dir-paginate="ribbon in ribbons| filter:query |orderBy: 'project_name' |itemsPerPage: 100" current-page="currentPage">              
                   <div class="card-header">
                     <a href="{{ribbon.link}}">

@@ -59,7 +59,7 @@
           $scope.faires = faires;
 
           $scope.changeView = function (view) {
-            jQuery('body').removeClass ("listview", "gridview");
+            jQuery('body').removeClass ("listview gridview");
               jQuery('body').addClass(view + "view");
               $scope.layout = view;
           };
