@@ -437,13 +437,13 @@ ul.bulletless {
 	}
 }
 .fancybox__container {
-    z-index: 9999;
+    z-index: 9999 !important;
     .fancybox__content {
         border-radius: 5px;
         padding: 10px 36px;
         .carousel__button {
-            top: 0px;
-            color: #333;
+            top: 0px !important;
+            color: #333 !important;
         }
     }
 }
