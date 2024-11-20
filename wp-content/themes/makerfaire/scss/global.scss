@@ -436,6 +436,17 @@ ul.bulletless {
 		margin-bottom: 20px;
 	}
 }
+.fancybox__container {
+    z-index: 9999;
+    .fancybox__content {
+        border-radius: 5px;
+        padding: 10px 36px;
+        .carousel__button {
+            top: 0px;
+            color: #333;
+        }
+    }
+}
 
 .owl-carousel {
   ul {
