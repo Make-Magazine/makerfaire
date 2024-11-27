@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by gravityview on 04-November-2024 using {@see https://github.com/BrianHenryIE/strauss}.
+ * Modified by gravityview on 26-November-2024 using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\GravityView\Foundation\Helpers;
@@ -183,6 +183,7 @@ class Core {
 				'text_domain'       => $plugin['TextDomain'],
 				'active'            => is_plugin_active( $path ),
 				'network_activated' => is_plugin_active_for_network( $path ),
+				'has_admin_menu'    => false, // @TODO: possibly handle this differently.
 				'free'              => true, // @TODO: possibly handle this differently.
 				'has_update'        => false, // @TODO: detect if there's an update available.
 				'download_link'     => null, // @TODO: get the download link if there's an update available.
@@ -267,6 +268,7 @@ class Core {
 	 * @see   https://github.com/WordPress/wordpress-develop/blob/2bb5679d666474d024352fa53f07344affef7e69/src/wp-admin/includes/plugin.php#L72-L118
 	 *
 	 * @since 1.0.0
+	 * @since 1.2.21 Set the $translate parameter to false by default.
 	 *
 	 * @param string $plugin_file Absolute path to the main plugin file.
 	 * @param bool   $markup      (optional) If the returned data should have HTML markup applied. Default is true.
@@ -274,7 +276,7 @@ class Core {
 	 *
 	 * @return array<string, mixed> Associative array of plugin data.
 	 */
-	public static function get_plugin_data( $plugin_file, $markup = true, $translate = true ) {
+	public static function get_plugin_data( $plugin_file, $markup = true, $translate = false ) {
 		if ( ! function_exists( 'get_plugin_data' ) ) {
 			require_once ABSPATH . 'wp-admin/includes/plugin.php';
 		}

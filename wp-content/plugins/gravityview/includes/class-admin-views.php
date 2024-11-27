@@ -29,6 +29,9 @@ class GravityView_Admin_Views {
 	function __construct() {
 		add_action( 'save_post', array( $this, 'save_postdata' ) );
 
+		// Remove unnecessary noise from the Views overview page.
+		add_action( 'current_screen', [ $this, 'disable_views_overview_notices' ] );
+
 		// set the blocklist field types across the entire plugin
 		add_filter( 'gravityview_blocklist_field_types', array( $this, 'default_field_blocklist' ), 10, 2 );
 
@@ -72,6 +75,50 @@ class GravityView_Admin_Views {
 		add_action( 'gk/gravityview/admin-views/row/before', [ $this, 'render_actions' ], 5, 4 );
 		add_action( 'gk/gravityview/admin-views/view/after-zone', [ $this, 'render_add_row' ], 5, 4 );
 		add_filter( 'gk/gravityview/admin-views/view/is-dynamic', [ $this, 'add_dynamic_widgets' ], 0, 3 );
+	}
+
+	/**
+	 * Disables all notices and footer text on the Views overview page.
+	 *
+	 * @since $ver$
+	 *
+	 * @return void
+	 */
+	public function disable_views_overview_notices() {
+		if ( ! $this->is_views_overview_page() ) {
+			return;
+		}
+		add_action(
+			'admin_enqueue_scripts',
+			function () {
+				remove_all_actions( 'admin_notices' );
+			}
+		);
+		add_filter(
+			'admin_enqueue_scripts',
+			function () {
+				remove_all_filters( 'update_footer' );
+			}
+		);
+		add_action(
+			'admin_footer_text',
+			function () {
+				return '';
+			}
+		);
+	}
+
+	/**
+	 * Checks if the current page is the Views overview page.
+	 *
+	 * @since $ver$
+	 *
+	 * @return bool
+	 */
+	public function is_views_overview_page(): bool {
+		$screen = get_current_screen();
+
+		return $screen && View::POST_TYPE === $screen->post_type && 'edit' === $screen->base;
 	}
 
 	/**
@@ -1090,7 +1137,7 @@ HTML;
 			/**
 			 * Triggers before a row is rendered in the View editor.
 			 *
-			 * @since  $ver$
+			 * @since  2.31.0
 			 *
 			 * @action `gk/gravityview/admin-views/row/before`
 			 *
@@ -1213,7 +1260,7 @@ HTML;
 				/**
 				 * Triggers after a row is rendered in the View editor.
 				 *
-				 * @since  $ver$
+				 * @since  2.31.0
 				 *
 				 * @action `gk/gravityview/admin-views/row/before`
 				 *
@@ -1233,7 +1280,7 @@ HTML;
 	/**
 	 * Renders the row actions.
      *
-	 * @since $ver$
+	 * @since 2.31.0
 	 *
      * @param bool $is_dynamic Whether the rows are actionable.
 	 */
@@ -1272,7 +1319,7 @@ HTML;
 		/**
 		 * Modifies the actions rendered in the View editor.
 		 *
-		 * @since  $ver$
+		 * @since  2.31.0
 		 *
 		 * @filter `gk/gravityview/admin-views/rows-actions`
 		 *
@@ -1479,7 +1526,7 @@ HTML;
 			 * Modifies the template area's before rendering.
 			 *
 			 * @filter `gk/gravityview/admin-views/view/template/active-areas`
-			 * @since $ver$
+			 * @since 2.31.0
 
 			 * @param array $template_areas The template areas.
 			 * @param string $template_id Template ID.
@@ -1519,7 +1566,7 @@ HTML;
 	/**
 	 * Returns an "add row" button for a template zone.
      *
-	 * @since $ver$
+	 * @since 2.31.0
 	 *
      * @param string $template_id The template ID.
      * @param string $type The object type (widget or field).)
@@ -1595,7 +1642,7 @@ HTML;
 	/**
      * Returns whether the widgets should be dynamic; based on the plugin setting.
      *
-	 * @since $ver$
+	 * @since 2.31.0
 	 *
 	 * @param bool   $is_dynamic Whether the zone is dynamic.
      * @param string $_ The template ID (unused))
@@ -1890,7 +1937,7 @@ HTML;
 	/**
 	 * Returns whether the zone is dynamic.
      *
-	 * @since $ver$
+	 * @since 2.31.0
 	 *
      * @param string $template_id The template ID.
      * @param string $type The type.
@@ -1902,7 +1949,7 @@ HTML;
 		 * Modifies whether the zone is sortable.
 		 *
 		 * @filter `gk/gravityview/view/template/active-areas`
-		 * @since $ver$
+		 * @since 2.31.0
 
 		 * @param bool $is_dynamic Whether area is dynamic, meaning sortable / deletable / acionable.
 		 * @param string $template_id Template ID.

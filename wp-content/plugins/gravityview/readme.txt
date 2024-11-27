@@ -21,6 +21,38 @@ Beautifully display your Gravity Forms entries. Learn more on [gravitykit.com](h
 
 == Changelog ==
 
+= develop =
+
+#### 🐛 Fixed
+* Merge tags in redirect URLs were not processed after editing or deleting an entry in the lightbox.
+
+= 2.32 on November 21, 2024 =
+
+This release adds a new form notification option for updated entries, resolves file upload issues on the Edit Entry screen, and includes developer-focused enhancements.
+
+#### 🚀 Added
+* New notification option for forms, triggered when an entry is updated.
+
+#### 🐛 Fixed
+* File upload field issues on the Edit Entry screen:
+  - Delete/download icons not displaying in Gravity Forms 2.9+;
+  - Unable to select files for upload when the form field's "Multiple Files" setting was enabled without a "Maximum Number of Files" value.
+
+#### 🔧 Updated
+* [Foundation](https://www.gravitykit.com/foundation/) to version 1.2.21.
+
+#### 💻 Developer Updates
+* Added `gk/gravityview/view/entries/join-conditions` filter to modify the join conditions applied when retrieving View entries.
+* Added `gk/gravityview/template/options` filter to programmatically modify field settings in the View editor.
+* Added `gravityview/row-added` JavaScript event, triggered when a new row is added to a widget or field area.
+
+= 2.31.1 on November 8, 2024 =
+
+This hotfix release resolves display issues with certain View layouts.
+
+#### 🐛 Fixed
+* Rendering issue affecting certain View layouts, such as Maps, introduced in the previous release.
+
 = 2.31 on November 4, 2024 =
 
 This release introduces [flexible widget positioning](https://docs.gravitykit.com/article/1027-dynamic-widget-placement?utm_source=gravityview&utm_medium=changelog&utm_campaign=release) in Views, enhances entry-in-a-lightbox functionality, and adds support for the Gravity Forms 2.9+ Image Choice field. It also addresses compatibility issues with LiteSpeed, Divi, and LifterLMS, along with various other fixes and improvements.
