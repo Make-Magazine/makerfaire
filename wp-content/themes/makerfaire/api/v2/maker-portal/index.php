@@ -162,12 +162,19 @@ function getAllEntries($email, $formID = '', $page = '', $years = '') {
       );
     }
 
-    $return['data'][$faire_name] =
-      array(
-        'faire_end_dt'    => $faire_end_dt,   
-        'gv_edit'         => (isset($form['gv_id_update_public_info']) && $form['gv_id_update_public_info'] != ''?TRUE:FALSE),
-        'entries'         => $return_entries
-      );
+    
+    $today = date("Y/m/d H:i:s");    
+    
+    //only return faire data if there are entries OR if we are prior to a faire
+    if ($today < $faire_end_dt || !empty($return_entries)) {
+      
+      $return['data'][$faire_name] =      
+        array(
+          'faire_end_dt'    => $faire_end_dt,   
+          'gv_edit'         => (isset($form['gv_id_update_public_info']) && $form['gv_id_update_public_info'] != ''?TRUE:FALSE),
+          'entries'         => $return_entries
+        );
+    }    
   }
   return $return;
 }

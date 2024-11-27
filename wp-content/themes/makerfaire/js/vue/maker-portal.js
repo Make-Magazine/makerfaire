@@ -13,14 +13,7 @@ new Vue({
     watch: {
         // when makers data has fully loaded from the axios call, this will run
         faire_entries: function () {
-            this.showData = true;
-            //if no data was found for this user, prompt them to apply
-            if (this.faire_entries.length === 0) {
-                $loadingMsg = "I'm sorry. We could not find any entries for your email (" + email + ").<br/>Please submit one <a href='https://makerfaire.com/bay-area/apply'>HERE</a>";
-            } else {
-                $loadingMsg = '';
-            }
-            document.getElementById("loadingMsg").innerHTML = $loadingMsg;
+            this.showData = true;            
         }
     },
     methods: {
