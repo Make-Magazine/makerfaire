@@ -41,16 +41,18 @@ $faireName = (isset($results[0]->faire_name)?$results[0]->faire_name:'');
 <div class="mtm" ng-app="mtm">
     <div ng-controller="mtmMakers">
         <?php if(empty($the_content)){ ?>
-            <h1 class="page-title text-center">Meet the Makers</h1>
-            <h2 class="page-title text-center"><span ng-if="layout == 'maker'">Faces of </span><?php echo $faireName ?></h2>
+            <header>
+                <h1 class="page-title text-center">Meet the Makers</h1>
+                <h2 class="page-title text-center"><span ng-if="layout == 'maker'">Faces of </span><?php echo $faireName ?></h2>
+        </header>
         <?php } ?>
         <input type="hidden" id="forms2use" value="<?php echo $faire_forms_trimmed; ?>" />
         <input type="hidden" id="mtm-faire" value="<?php echo $faire; ?>" />
         <input type="hidden" id="noMakerText" value="<?php echo $noMakerText; ?>" />
 
-        <div class="mtm-filter-wrap" ng-cloak>
+        <form class="mtm-filter-wrap" ng-cloak role="nav">
             <div class="search-wrapper">
-                <input ng-model="makerSearch.$" id="mtm-search-input" class="form-control" placeholder="<?php _e("Search...", 'makerfaire') ?>" type="text">
+                <input ng-model="makerSearch.$" role="search" id="mtm-search-input" class="form-control" placeholder="<?php _e("Search...", 'makerfaire') ?>" type="text">
             </div>
 
             <!-- Weekend Filter -->
@@ -130,14 +132,14 @@ $faireName = (isset($results[0]->faire_name)?$results[0]->faire_name:'');
                 <label>Featured Makers</label>
                 <ul class="nav nav-pills">
                     <li class="nav-item">
-                        <button ng-class="{'ng-hide':showFeatured == 'Featured Maker'}" type="button" ng-click="makerSearch.flag = 'Featured Maker';showFeatured = 'Featured Maker';" class="btn btn-default" ng-hide="showFeatured">&nbsp;</button>
+                        <button ng-class="{'ng-hide':showFeatured == 'Featured Maker'}" type="button" ng-click="makerSearch.flag = 'Featured Maker';showFeatured = 'Featured Maker';" class="btn btn-default" ng-hide="showFeatured" aria-label="Show Featured">&nbsp;</button>
                     </li>
                     <li class="nav-item">
-                        <button ng-init="showFeatured = makerSearch.flag" ng-class="{'ng-hide':showFeatured == ''}" type="button" ng-click="makerSearch.flag = '';showFeatured = '';" class="btn btn-default"><i class="fa fa-check"></i></button>
+                        <button ng-init="showFeatured = makerSearch.flag" ng-class="{'ng-hide':showFeatured == ''}" type="button" ng-click="makerSearch.flag = '';showFeatured = '';" class="btn btn-default" aria-label="Show Featured"><i class="fa fa-check"></i></button>
                     </li>
                 </ul>
             </div>
-            <div class="faux-checkbox" style='display:none'>
+            <div class="faux-checkbox" style='display:none' >
                 <label>Hands-On Activities</label>
                 <ul class="nav nav-pills">
                     <li class="nav-item">
@@ -155,7 +157,7 @@ $faireName = (isset($results[0]->faire_name)?$results[0]->faire_name:'');
                 <a ng-show="makers[0].name" ng-class="{active: layout == 'maker'}" ng-click="changeView('maker')" class="mtm-filter-m pointer-on-hover box maker" title="Maker View"><i class="fas fa-user" aria-hidden="true"></i></a>
             </div>
 
-        </div>
+        </form>
 
         <div class="mtm-results container-fluid" mtm-scroll="loadMore()">
             <div ng-show="!makers.length" class="card-deck loading">
@@ -211,7 +213,7 @@ $faireName = (isset($results[0]->faire_name)?$results[0]->faire_name:'');
                             <div class="card-detail-items">
                                 <div class="card-detail-item" ng-show="maker.makerList.length">
                                     <span>
-                                        <a href="{{maker.link}}">
+                                        <a href="{{maker.link}}" aria-label="Maker">
                                             <i class="fa fa-circle-user"></i></a>
                                     </span>
                                     <p>
@@ -219,14 +221,14 @@ $faireName = (isset($results[0]->faire_name)?$results[0]->faire_name:'');
                                     </p>
                                 </div>
                                 <div class="card-detail-item">
-                                    <span ng-bind-html="maker.main_cat_icon"></span>
+                                    <span ng-bind-html="trustedHTML(maker.main_cat_icon)"></span>
                                     <p>
                                         <a href="?category={{maker.category_id_refs[0]}}">{{maker.category_id_refs[0]}}</a>
                                     </p>
                                 </div>
                                 <div class="card-detail-item">
                                     <span>
-                                        <a href="?type={{maker.typeString}}">
+                                        <a href="?type={{maker.typeString}}" aria-label="Project Type">
                                             <i class="fa {{maker.types[0].toLowerCase()}}"></i>
                                         </a>
                                     </span>
@@ -269,7 +271,7 @@ $faireName = (isset($results[0]->faire_name)?$results[0]->faire_name:'');
                                 <div class="card-detail-items item-row">
                                     <div class="card-detail-item">
                                         <span>
-                                            <a href="{{maker.link}}">
+                                            <a href="{{maker.link}}" aria-label="Maker">
                                                 <i class="fa fa-plus"></i>
                                             </a>
                                         </span>
@@ -287,7 +289,7 @@ $faireName = (isset($results[0]->faire_name)?$results[0]->faire_name:'');
                                     </div>
                                     <div class="card-detail-item">
                                         <span>
-                                            <a href="?type={{maker.typeString}}">
+                                            <a href="?type={{maker.typeString}}" aria-label="Project Type">
                                                 <i class="fa {{maker.types[0].toLowerCase()}}"></i>
                                             </a>
                                         </span>
@@ -323,7 +325,7 @@ $faireName = (isset($results[0]->faire_name)?$results[0]->faire_name:'');
                                 <div class="card-detail-items">
                                     <div class="card-detail-item" ng-show="maker.maker_location">
                                         <span>
-                                            <a href="{{maker.link}}">
+                                            <a href="{{maker.link}}" aria-label="Maker Location">
                                                 <i class="fa fa-earth-americas"></i>
                                             </a>
                                         </span>
@@ -339,7 +341,7 @@ $faireName = (isset($results[0]->faire_name)?$results[0]->faire_name:'');
                                     </div>
                                     <div class="card-detail-item">
                                         <span>
-                                            <a href="{{maker.link}}">
+                                            <a href="{{maker.link}}" aria-label="Maker">
                                                 <i class="fa fa-plus"></i>
                                             </a>
                                         </span>
