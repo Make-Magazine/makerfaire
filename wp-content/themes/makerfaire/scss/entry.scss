@@ -388,11 +388,14 @@
 	}
 	
 }
+.dialog-body .gv-edit-entry-wrapper {
+	padding: 10px 36px;
+}
 .cropper__lightbox {
 	bottom: auto;
 	padding: 5vh;
 	background: #333;
-	.button {
+	button {
 		background: #005e9a;
 		&.gpfup__crop {
 		margin-left: 0px;
