@@ -108,3 +108,32 @@
     padding: 10px;
     align-items: center;
 }
+
+
+.page-template-page-entry {
+    // styles for the gravityview image crop tool to make it work better on the maker entry edit pages
+    .fancybox__content {
+      padding: 0px;
+      .gv-edit-entry-wrapper {
+        padding: 10px 36px;
+      }
+    }
+    .cropper__lightbox {
+        bottom: auto;
+        padding: 5vh;
+        background: #333;
+        .button {
+          background: #005e9a;
+          &.gpfup__crop {
+            margin-left: 0px;
+          }
+        }
+        .gpfup__cancel {
+          background: #EB002A;
+        }
+    }
+    // don't show the extra message about max images
+    .gpfup__droparea .gpfup__droprea--maxed {
+      display: none;
+    }
+}
