@@ -1,4 +1,4 @@
-/*! elementor - v3.25.0 - 03-11-2024 */
+/*! elementor - v3.25.0 - 24-11-2024 */
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
@@ -13549,7 +13549,7 @@ var _default = /*#__PURE__*/function (_ControlBaseDataView) {
         $colorPreview = this.createColorPreviewBox(globalData.value),
         $colorTitle = jQuery('<span>', {
           class: 'e-global__color-title'
-        }).html(globalData.title),
+        }).html(_.escape(globalData.title)),
         $colorHex = jQuery('<span>', {
           class: 'e-global__color-hex'
         }).html(globalData.value);
@@ -15615,7 +15615,7 @@ var ControlPopoverStarterView = /*#__PURE__*/function (_ControlChooseView) {
         'data-global-id': globalData.id,
         title: globalData.title
       });
-      $typographyPreview.html(globalData.title).css(this.buildPreviewItemCSS(globalData.value));
+      $typographyPreview.html(_.escape(globalData.title)).css(this.buildPreviewItemCSS(globalData.value));
       return $typographyPreview;
     }
   }, {
@@ -27936,7 +27936,16 @@ var EditorBase = /*#__PURE__*/function (_Marionette$Applicati) {
         }
         if (!this.widgetsCache[widgetType].commonMerged && !this.widgetsCache[widgetType].atomic_controls) {
           var _this$widgetsCache$wi;
-          jQuery.extend(this.widgetsCache[widgetType].controls, this.widgetsCache.common.controls);
+          var commonControls = this.widgetsCache.common.controls;
+
+          /**
+           * Filter widgets common controls.
+           *
+           * @param array  commonControls - An array of the default common controls.
+           * @param string widgetType     - The widget type.
+           */
+          commonControls = elementor.hooks.applyFilters('elements/widget/controls/common/default', commonControls, widgetType);
+          jQuery.extend(this.widgetsCache[widgetType].controls, commonControls);
           this.widgetsCache[widgetType].controls = elementor.hooks.applyFilters('elements/widget/controls/common', this.widgetsCache[widgetType].controls, widgetType, this.widgetsCache[widgetType]);
 
           // TODO: Move this code to own file.
@@ -40973,7 +40982,14 @@ module.exports = {
   },
   sanitizeUrl: function sanitizeUrl(url) {
     var isValidUrl = !!url ? (0, _dompurify.isValidAttribute)('a', 'href', url) : false;
-    return isValidUrl ? url : '';
+    if (!isValidUrl) {
+      return '';
+    }
+    try {
+      return encodeURI(url);
+    } catch (e) {
+      return '';
+    }
   }
 };
 

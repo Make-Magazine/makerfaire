@@ -1,5 +1,13 @@
 # Elementor Pro - by Elementor.com
 
+#### 3.25.4 - 2024-11-20
+
+* Tweak: Improved Global Widget loading method to enhance performance
+
+#### 3.25.3 - 2024-11-13
+
+* Fix: Nested Elements are activated even when the Container experiment is inactive
+
 #### 3.25.2 - 2024-11-03
 
 * Fix: Styling issues affecting popup layout when using a Dynamic Tag to open the popup

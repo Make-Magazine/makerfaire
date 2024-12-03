@@ -4,7 +4,7 @@ Tags: page builder, editor, landing page, drag-and-drop, elementor,
 Requires at least: 6.3
 Tested up to: 6.7
 Requires PHP: 7.4
-Stable tag: 3.25.4
+Stable tag: 3.25.10
 Beta tag: 3.25.0-beta3
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -346,6 +346,38 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 6. **Motion Effects** - Add entrance animations and transitions to any element in your website to captivate visitors.
 
 == Changelog ==
+
+= 3.25.10 - 2024-11-24 =
+
+* Security Fix: Improved code security enforcement in Typography control
+* Fix: Link URL actions not functioning as expected inside the editor
+
+= 3.25.9 - 2024-11-20 =
+
+* Fix: 3D Rotate transform is not functioning as expected when the Optimized Control Loading feature is activated
+
+= 3.25.8 - 2024-11-19 =
+
+* Security Fix: Improved code security enforcement in Icon widget
+
+= 3.25.7 - 2024-11-18 =
+
+* Security Fix: Improved code security enforcement in Post functionality
+
+= 3.25.6 - 2024-11-13 =
+
+* Tweak: Updated `eicons` library to v5.32.0
+* Tweak: Adjusted Kit import flow to allow extendability
+* Tweak: Added extendability functionality to the common Advanced Tab controls
+* Fix: PHP error appears when an undefined color or typography value is used in Site Settings
+* Fix: Permanently deleting a global widget causes a fatal error on pages where it is used
+* Fix: Nested Elements are activated even when the Container experiment is inactive
+
+= 3.25.5 - 2024-11-12 =
+
+* Security Fix: Improved code security enforcement in Post functionality
+* Security Fix: Improved code security enforcement in Floating Elements
+* Security Fix: Improved code security enforcement in Import and Export functionality
 
 = 3.25.4 - 2024-11-03 =
 
