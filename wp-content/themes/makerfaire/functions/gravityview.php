@@ -39,3 +39,14 @@ add_filter( 'gravityview/edit_entry/field_value', function ( $value, $field ) {
 
 	return $value;
 }, 10, 2 );
+
+//modify the edit entry success message
+add_filter('gravityview/edit_entry/success', 'update_gv_return_link', 10, 3 );
+function update_gv_return_link( $entry_updated_message, $view_id, $entry ) {
+	
+	if(is_array($entry) && isset($entry['id'])){
+		$entry_updated_message = 'Entry Updated. <button onclick="top.location.href = \'/maker/entry/'.$entry['id']	.'/edit/\';">Return to Entry</button>';		
+	}
+		
+  return $entry_updated_message;
+}
