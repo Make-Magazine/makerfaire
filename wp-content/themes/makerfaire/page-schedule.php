@@ -319,7 +319,7 @@ if ($schedule_ids_trimmed && $schedule_ids_trimmed != '') { //display the new sc
 
                                     <div class="stage-track">Stage</div>
                                     <a href="#" style="pointer-events: none;">
-                                        <div class="sched-img" style="background-image:url(https://makerfaire.com/wp-content/themes/makerfaire/images/stripe_bg1.gif);"></div>
+                                        <div class="sched-img" role="img" aria-label="Dummy Event" style="background-image:url(https://makerfaire.com/wp-content/themes/makerfaire/images/stripe_bg1.gif);"></div>
                                     </a>
                                     <div class="sched-wrapper">
                                     </div>
@@ -347,7 +347,7 @@ if ($schedule_ids_trimmed && $schedule_ids_trimmed != '') { //display the new sc
 
                                 <div class="stage-track stage-{{schedule.stageOrder}} area-{{schedule.stageClass}}">{{schedule.nicename}}</div>
                                 <a href="/maker/entry/{{schedule.id}}">
-                                    <div class="sched-img" style="background-image:url({{schedule.thumb_img_url}});"></div>
+                                    <div class="sched-img" role="img" aria-label="{{schedule.name}} Photo" style="background-image:url({{schedule.thumb_img_url}});"></div>
                                 </a>
                                 <div class="sched-wrapper">
                                     <div class="sched-meta">
