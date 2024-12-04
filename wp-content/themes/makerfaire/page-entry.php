@@ -157,7 +157,7 @@ if (isset($entry->errors)) {
     $project_gallery = (isset($entry['878']) ? json_decode($entry['878']) : '');
 
     //if the main project photo isn't set but the photo gallery is, use the first image in the photo gallery
-    if ($project_photo == '' && is_array($project_gallery)) {
+    if ($project_photo == '' && is_array($project_gallery) && !empty($project_gallery)) {
         $project_photo = $project_gallery[0];
     }
 
@@ -381,6 +381,51 @@ if (!$displayMakers) {
         ?>
         <script>
             jQuery(function() {
+                //function to open edit in a modal 
+                autoOpen = false;
+                //if there is an error on the submission, auto open the modal
+                if (jQuery(".gv-error").length) {
+                    autoOpen = true;
+                } else if (jQuery(".gv-notice").length) {
+                    jQuery("#dialog-refresh").dialog({
+                        dialogClass: 'update-message',
+                        modal: true,
+                        position: {
+                            my: "top",
+                            at: "top",
+                            of: ".entry-page"
+                        },
+                    });
+                }
+                dialog = jQuery("#dialog-form").dialog({
+                    autoOpen: autoOpen,
+                    resizable: false,
+                    width: 'auto',
+                    height: "auto",
+                    modal: true,
+                    position: {
+                        my: "top",
+                        at: "top",
+                        of: ".entry-page"
+                    },
+                    
+                    open: function(event, ui) {
+                        jQuery('.ui-widget-overlay').bind('click', function() {
+                            jQuery('#dialog-form').dialog('close');
+                        });
+                    }
+                });
+
+                //open dialog/modal
+                jQuery("#edit-photos").on("click", function() {
+                    jQuery("#dialog-form").dialog("open");
+                });
+
+                jQuery(".gv-button-cancel").bind('click', function() {
+                    jQuery('#dialog-form').dialog('close');
+                });
+                //end function to display edit in a modal
+
                 jQuery(".suggestions-toggle i").bind('click', function() {
                     jQuery('body').toggleClass("hide-suggestions");
                     jQuery(this).toggleClass('fa-toggle-on').toggleClass('fa-toggle-off');
@@ -388,12 +433,50 @@ if (!$displayMakers) {
             });
         </script>
 
+        <!--code to place gravity view form in a modal-->
+        <div class="makerEditHead">
+            <!-- empty span to center the above text -->
+            <span class="suggestions-toggle">
+                Show suggestions:
+                <i class="fa fa-toggle-on"></i>
+            </span>
+
+            <span style="font-size: 30px;">
+                <i>This is a preview of your public entry page.</i>
+            </span>
         <?php
+            if (isset($form['gv_id_update_public_info']) && $form['gv_id_update_public_info'] != '') {   
+                ?>
+                <button id="edit-photos">Edit Public Info</button>                          
+                <?php
+            } else {
+                ?>
+                <!-- empty span to center the above text -->
+                <span>&nbsp;</span>
+                <?php
+            }    
+        ?>
+                </div>
+        <hr />
+        <div id="dialog-form" title="Update Public Information">
+            <?php
+            echo do_shortcode('[gventry entry_id="' . $entryId . '" view_id="' . $form['gv_id_update_public_info'] . '" edit="1"]');
+            ?>
+        </div>
+
+        <div id="dialog-refresh" style="display:none;">
+            <b>Entry Updated.</b> <a href=".">Refresh page to see changes.</a>
+        </div>
+
+        <?php        
+        //code to use gravity view open edit link in a modal
+        //commented out until the cropping tool works with this
+        /*
         if (isset($form['gv_id_update_public_info']) && $form['gv_id_update_public_info'] != '') {  
             //shortcodes do not trigger enqueues so we have to manually trigger the loading of styles 
             do_action('gform_enqueue_scripts', $form, TRUE); 
             echo do_shortcode('[gventry entry_id="'.$entryId.'" view_id="'.$form['gv_id_update_public_info'].'"]');            
-        }        
+        } */       
     }
 
     if ($validEntry) {
