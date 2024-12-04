@@ -4,7 +4,6 @@
  *
  */
 $showcaseResults = showcase($entryId, $makerEdit); // this will also tell us if this is a parent or child of a showcase
-$showEditMakey = false;
 
 $imageClass = "project-image";
 if($proj_photo_size && ($proj_photo_size[0]/$proj_photo_size[1] > 1.77777)) {
@@ -67,20 +66,15 @@ if($proj_photo_size && ($proj_photo_size[0]/$proj_photo_size[1] > 1.77777)) {
                         <?php } ?>
                         <?php if(isset($mainCategoryName) && $mainCategoryName != '') { ?><span class="entry-box-item" aria-label="Main Category"><a href="/<?php echo $url_sub_path; ?>/meet-the-makers/?category=<?php echo $mainCategoryName; ?>" class="icon-link"><?php echo $mainCategoryIcon; ?><span><?php echo $mainCategoryName; ?></span></a></span><?php } ?>
                         <?php if(!empty($ribbons)) { ?><span class="entry-box-item" aria-label="Ribbon"><a href="/ribbons/"><i class="fa fa-award" aria-hidden="true"></i>Ribbon Recipient</a></span><?php } ?>
-                        <?php if($faire_end > date("Y-m-d j:i:s")) { ?>
+                        <?php if($in_faire) { ?>
                             <!--<span class="entry-box-item" aria-label="Tickets"><a href="/<?php echo $url_sub_path; ?>/buy-tickets/" class="icon-link"><i class="fa fa-ticket" aria-hidden="true"></i><span>Buy Tickets</span></a></span>-->
                         <?php } ?>
                     </div>
                     <?php if(isset($project_short) && $project_short != '') { ?>
-                        <p class="project-description"><?php echo nl2br($project_short); 
-                            if (isset($form['gv_id_update_public_info']) && $form['gv_id_update_public_info'] != '') {
-                                if(strlen($project_short) < 200 && $makerEdit) { 
-                                    $showEditMakey = true;
-                                    ?>
-                                    <span class="edit-message">Consider <a href="#" onclick="document.getElementById('edit-photos').click();return false;">editing</a> your Project Description to be at least 350 characters to help fillout your page better.</span>
+                        <p class="project-description">
                             <?php 
-                                } 
-                            }
+                            echo nl2br($project_short); 
+                            echo $proj_desc_sugg;                            
                             ?>
                         </p>
                     <?php } ?>
@@ -93,8 +87,7 @@ if($proj_photo_size && ($proj_photo_size[0]/$proj_photo_size[1] > 1.77777)) {
                     </div>
                 <?php
                 }                   
-                if(!empty($video) || !empty($video2)) {
-                    
+                if(!empty($video) || !empty($video2)) {                    
                     echo $video;  //project Video
                     echo $video2; //field386
                 } 
@@ -149,11 +142,9 @@ if($proj_photo_size && ($proj_photo_size[0]/$proj_photo_size[1] > 1.77777)) {
                             <?php } ?>
                     <?php } ?>
                     </div>
-                <?php } else if($makerEdit && empty($video) && empty($video2)) { 
-                    $showEditMakey = true;
-                    ?>
-                    <span class="edit-message">Please <a href="#" onclick="document.getElementById('edit-photos').click();return false;">edit your project</a> to add additional photos or a video.</span>
-                <?php } ?>
+                <?php } else {
+                        echo $gallery_video_sugg;
+                    }?>
             </div>
         </div>
     </section>
@@ -192,17 +183,14 @@ if($proj_photo_size && ($proj_photo_size[0]/$proj_photo_size[1] > 1.77777)) {
                 </div>
                 <div class="big-column">
                     <h2><?php echo($maker['firstname'] . " " . $maker['lastname']); ?></h2>
-                    <p class="maker-description"><?php echo($maker['bio']);
-                    if (isset($form['gv_id_update_public_info']) && $form['gv_id_update_public_info'] != '') {
-                        if(strlen($maker['bio']) < 200 && $makerEdit) { 
-                            $showEditMakey = true;
-                            ?>
-                            <span class="edit-message">Consider <a href="#" onclick="document.getElementById('edit-photos').click();return false;">editing</a> your Bio or Group/Company description to be at least 200 characters to help fillout your page better.</span>                        
-                            <?php 
-                        } 
-                    } ?>
+                    <p class="maker-description">
+                        <?php 
+                        echo $maker['bio'];
+                        echo $makerBioSugg;
+                        ?>
+                    </p>
                 </div>
-            <?php 
+                <?php 
                 }
             } ?>
         </section>
@@ -258,18 +246,19 @@ if($proj_photo_size && ($proj_photo_size[0]/$proj_photo_size[1] > 1.77777)) {
         </section>
     <?php } ?>  
 
-    <?php if($showEditMakey == true) { ?>
+    <?php if($showEditMakey == true) { ?>        
         <a id="editMakey" href="#" onclick="document.getElementById('edit-photos').click();return false;">
             <img src="/wp-content/themes/makerfaire/images/more-info-makey.png" width="203px" height="254px" alt="Edit your entry!" title="Click here to edit your entry details to make this page the best it can be!" />
         </a>
-    <?php } ?>
-    
-    <?php
+    <?php 
+    }
     /* <section id="sponsorSection">
         <?php 
             $slideshowShortcode = "[sponsor_slideshow faire_id=" . $faireShort . " url=https://" . $_SERVER['SERVER_NAME'] . "/" . $url_sub_path . "/sponsors/]";
             echo(do_shortcode($slideshowShortcode)); 
         ?>
-    </section> */ ?>
+    </section> */ 
+
+    ?>
 
 </main>

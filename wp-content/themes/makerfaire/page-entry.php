@@ -74,8 +74,8 @@ if (isset($entry->errors)) {
     }
 
     //set defaults
-    $faire = $show_sched = $faireShort = $faire_end = $url_sub_path = $faire_dates = '';
-    $faire_name = $faireShort = $faire_start = $faire_end = $faire_year = '';
+    $faire = $show_sched = $faireShort = $url_sub_path = $faire_dates = '';
+    $faire_name = $faire_start = $faire_end = $faire_year = '';
     $timeZone = 'America/Los_Angeles';
 
     if ($form_id != '') {
@@ -98,6 +98,8 @@ if (isset($entry->errors)) {
             $timeZone = $results->time_zone;
         }
     }
+
+    $in_faire = ($faire_end > date("Y-m-d j:i:s") ? TRUE : FALSE);
 
     // build array of categories
     $mainCategoryName = '';
@@ -234,8 +236,8 @@ if ($editEntry == 'edit') {
     require_once(get_template_directory() . '/models/maker.php');
 
     //instantiate the model
-    $maker = new maker($current_user->user_email);
-    if ($maker->check_entry_access($entry) || $adminView) {        
+    $makerObj = new maker($current_user->user_email);
+    if ($makerObj->check_entry_access($entry) || $adminView) {        
         $makerEdit = true;
     }
 }
@@ -321,6 +323,29 @@ foreach ($entry as $key => $field) {
 // if edit entry is true, this means the user viewing the entry is the user who created the entry and should be able to see it
 if ($makerEdit) {
     $validEntry = true;
+    $makerBioSugg = $proj_desc_sugg = $gallery_video_sugg = '';
+    $showEditMakey = false;
+
+    //determine if we show suggestions to the user to edit certain sections of their entry
+    if (isset($form['gv_id_update_public_info']) && $form['gv_id_update_public_info'] != '' && $in_faire){
+        //Maker Bio -         
+        if(strlen($makers[0]['bio']) < 200) { 
+            $showEditMakey = true;
+            $makerBioSugg = '<span class="edit-message">Consider <a href="#" onclick="document.getElementById(\'edit-photos\').click();return false;">editing</a> your Bio or Group/Company description to be at least 200 characters to help fillout your page better.</span>';                                   
+        } 
+
+        //project description        
+        if(strlen($project_short) < 350) { 
+            $showEditMakey = true;
+            $proj_desc_sugg = '<span class="edit-message">Consider <a href="#" onclick="document.getElementById(\'edit-photos\').click();return false;">editing</a> your Project Description to be at least 350 characters to help fillout your page better.</span>';        
+        } 
+
+        //gallery or videos
+        if(isset($project_gallery) && empty($project_gallery) && empty($video) && empty($video2)) {             
+            $showEditMakey = true;
+            $gallery_video_sugg = '<span class="edit-message">Please <a href="#" onclick="document.getElementById(\'edit-photos\').click();return false;">edit your project</a> to add additional photos or a video.</span>';
+        } 
+    }    
 }
 
 // Project Inline video
@@ -437,8 +462,15 @@ if (!$displayMakers) {
         <div class="makerEditHead">
             <!-- empty span to center the above text -->
             <span class="suggestions-toggle">
-                Show suggestions:
-                <i class="fa fa-toggle-on"></i>
+                <?php 
+                //only showt the toggle if there are suggestions being made
+                if($showEditMakey){
+                    ?>
+                    Show suggestions:
+                    <i class="fa fa-toggle-on"></i>
+                    <?php
+                }
+                ?>
             </span>
 
             <span style="font-size: 30px;">
