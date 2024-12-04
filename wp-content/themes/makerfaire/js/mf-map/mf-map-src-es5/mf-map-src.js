@@ -487,7 +487,7 @@ jQuery(document).ready(function () {
         var gMarkerIcon = {
           path: google.maps.SymbolPath.CIRCLE,
           scale: 6,
-          fillOpacity: 1,
+          fillOpacity: 2,
           strokeOpacity: 0
         };
         this.markers = this.filteredData.map(function (location, i) {
@@ -513,7 +513,8 @@ jQuery(document).ready(function () {
           var marker = new google.maps.Marker({
             icon: gMarkerIcon,
             position: latLng,
-            label: ''
+            label: '',
+            title: location.faire_name
           });
           marker.addListener('click', function () {
             // for faires that have a start and end date

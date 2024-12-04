@@ -123,11 +123,11 @@ get_header();
 			<div class="social-links reversed">
 				<?php foreach ($socialLinks as $link) {
 					if($link) {
-						echo('<a class="link" href="' . $link . '"></a>');
+						echo('<a class="link" aria-label="Social Link" href="' . $link . '"></a>');
 					}
 				} ?>
 				<?php if($faire_link != ''){ ?>
-					<a class="link fa fa-link" href="<?php echo $faire_link; ?>" target="_blank"></a>
+					<a class="link fa fa-link" aria-label="Website Link"  href="<?php echo $faire_link; ?>" target="_blank"></a>
 				<?php } ?>				
 			</div>
 		</div>

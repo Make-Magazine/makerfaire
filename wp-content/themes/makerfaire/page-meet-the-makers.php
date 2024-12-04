@@ -50,7 +50,7 @@ $faireName = (isset($results[0]->faire_name)?$results[0]->faire_name:'');
         <input type="hidden" id="mtm-faire" value="<?php echo $faire; ?>" />
         <input type="hidden" id="noMakerText" value="<?php echo $noMakerText; ?>" />
 
-        <form class="mtm-filter-wrap" ng-cloak role="nav">
+        <form class="mtm-filter-wrap" ng-cloak role="form">
             <div class="search-wrapper">
                 <input ng-model="makerSearch.$" role="search" id="mtm-search-input" class="form-control" placeholder="<?php _e("Search...", 'makerfaire') ?>" type="text">
             </div>
@@ -192,7 +192,7 @@ $faireName = (isset($results[0]->faire_name)?$results[0]->faire_name:'');
                     <div class="card-header" style="background-image:url(https://makerfaire.com/wp-content/themes/makerfaire/images/stripe_bg1.gif);"></div> <div class="card-body"> <div class="card-text"> <h3 class="card-title">Loading...</h3> <div class="card-detail-items"> <div class="card-detail-item"><span><i class="fa fa-circle-user"></i></span> <p>&nbsp;</p> </div> <div class="card-detail-item"><span><i class="fa fa-rocket"></i></span> <p>&nbsp;</p> </div> <div class="card-detail-item"><span><i class="fa fa-tent-double-peak"></i></span> <p>&nbsp;</p> </div> </div> </div> </div> <div class="card-footer"> <a href="#" class="read-more-link no-link">More</a> </div>
                 </div>
                 <div class="loading-container">
-                    <img src="https://make.co/wp-content/universal-assets/v2/images/makey-spinner.gif" />
+                    <img src="https://make.co/wp-content/universal-assets/v2/images/makey-spinner.gif" alt="Makers are loading!" />
                     <span class="sr-only"><?php _e("Loading", 'makerfaire') ?>...</span>
                 </div>
             </div>
