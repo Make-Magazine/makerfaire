@@ -76,6 +76,9 @@ h4.featured {
 		margin-bottom: 0px;
 		.form-control {
 			width: 100% !important;
+			&::placeholder {
+				color: #666;
+			}
 		}
 	}
 	.timezone-wrapper {
@@ -440,6 +443,9 @@ h4.featured {
 					display: -webkit-box;
 					-webkit-line-clamp: 3;
 					-webkit-box-orient: vertical;
+					a {
+						text-decoration: underline;
+					}
 				}
 			}
 
