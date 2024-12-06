@@ -1,13 +1,43 @@
 <?php
-
-use ParagonIE\Sodium\Core\Curve25519\Ge\P2;
-
 include '../../../../wp-load.php';
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+global $wpdb;
+$delete = (isset($_GET['delete'])?TRUE:FALSE);
+
+$output = 'start of update<br/>';
+$userSQL = "SELECT user_id, wp_users.user_email, meta_key, meta_value as auth0_obj 
+FROM `wp_usermeta` 
+left outer join wp_users on wp_usermeta.user_id = wp_users.id 
+where meta_key like '%auth0_obj%' 
+ORDER BY `wp_usermeta`.`user_id` ASC";
+
+$users = $wpdb->get_results($userSQL,ARRAY_A);
+$count = 0;
+foreach ($users as $user) {    
+    $auth0_user_data = json_decode($user['auth0_obj'], true);
+    if (isset($auth0_user_data['identities'])) {
+        foreach ($auth0_user_data['identities'] as $identity) {
+            if ($identity['connection'] != "DB-Make-Community" && $identity['connection'] != 'google-oauth2') {
+                $wp_prefix = substr($user['meta_key'],0,5);
+                $output.= $user['user_id'].' ('.$user['user_email'] . ') found on "' . $identity['connection'] . 
+                '" meta_key = '.$user['meta_key'] .'<br/>';
+                $count++;
+                if($delete){        
+                    //base site
+                    wp_auth0_delete_auth0_object($user['user_id']);                                
+                    if($wp_prefix !== 'wp_au'){                        
+                        //subdomains
+                        delete_user_meta($user['user_id'], $wp_prefix . 'auth0_id');
+                        delete_user_meta($user['user_id'], $wp_prefix . 'auth0_obj');
+                        delete_user_meta($user['user_id'], $wp_prefix . 'last_update');
+                        delete_user_meta($user['user_id'], $wp_prefix . 'auth0_transient_email_update');                       
+                    }
+                    
+                }                
+            }
+        }
+    }
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -18,29 +48,10 @@ include '../../../../wp-load.php';
     <body>
       
     <?php
-    echo 'start of code<br/>';
-    $offset=(isset($_GET['offset'])?$_GET['offset']:0);
-    $number=(isset($_GET['number'])?$_GET['number']:5000);
-    $users = get_users(array('offset'=>$offset, 'number'=>$number));
-    foreach($users as $user){
-        if( isset($user->ID) && $user->ID != 0 ) {            
-            $user_meta = get_user_meta($user->ID);
-            if(isset($user_meta['wp_auth0_obj'])) {
-                //user data has been stored in multiple places over the lifespan of auth0. need to check everywhere
-                $auth0_user_data = json_decode($user_meta['wp_auth0_obj'][0], true);
-                if(isset($auth0_user_data['identities'])){
-                    foreach($auth0_user_data['identities'] as $identity){                    
-                        if($identity['connection'] == "Username-Password-Authentication"){
-                            echo $auth0_user_data['email'].' found on "Username-Password-Authentication"<br/>';
-                            wp_auth0_delete_auth0_object( $user->ID );
-                        }
-                    }
-                }                        
-            }
-        }
-    }
     
-    echo 'end of code';
+    echo 'Found '.$count.' users to update<br/>';
+    echo '<hr>';
+    echo $output;    
     ?>
     </body>
 </html>
