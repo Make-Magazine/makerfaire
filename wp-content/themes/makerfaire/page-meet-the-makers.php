@@ -213,7 +213,7 @@ $faireName = (isset($results[0]->faire_name)?$results[0]->faire_name:'');
                             <div class="card-detail-items">
                                 <div class="card-detail-item" ng-show="maker.makerList.length">
                                     <span>
-                                        <a href="{{maker.link}}" aria-label="Maker">
+                                        <a href="{{maker.link}}" aria-label="Maker" title="Maker Icon">
                                             <i class="fa fa-circle-user"></i></a>
                                     </span>
                                     <p>
@@ -228,7 +228,7 @@ $faireName = (isset($results[0]->faire_name)?$results[0]->faire_name:'');
                                 </div>
                                 <div class="card-detail-item">
                                     <span>
-                                        <a href="?type={{maker.typeString}}" aria-label="Project Type">
+                                        <a href="?type={{maker.typeString}}" aria-label="Project Type" title="Project Type Icon">
                                             <i class="fa {{maker.types[0].toLowerCase()}}"></i>
                                         </a>
                                     </span>
