@@ -2,6 +2,7 @@
 include '../../../../wp-load.php';
 global $wpdb;
 $delete = (isset($_GET['delete'])?TRUE:FALSE);
+$deleteall = (isset($_GET['deleteall'])?TRUE:FALSE);
 
 $output = 'start of update<br/>';
 $userSQL = "SELECT user_id, wp_users.user_email, meta_key, meta_value as auth0_obj 
@@ -16,12 +17,12 @@ foreach ($users as $user) {
     $auth0_user_data = json_decode($user['auth0_obj'], true);
     if (isset($auth0_user_data['identities'])) {
         foreach ($auth0_user_data['identities'] as $identity) {
-            if ($identity['connection'] != "DB-Make-Community" && $identity['connection'] != 'google-oauth2') {
+            if (($identity['connection'] != "DB-Make-Community" && $identity['connection'] != 'google-oauth2') || $deleteall) {
                 $wp_prefix = substr($user['meta_key'],0,5);
                 $output.= $user['user_id'].' ('.$user['user_email'] . ') found on "' . $identity['connection'] . 
                 '" meta_key = '.$user['meta_key'] .'<br/>';
                 $count++;
-                if($delete){        
+                if($delete || $deleteall){                     
                     //base site
                     wp_auth0_delete_auth0_object($user['user_id']);                                
                     if($wp_prefix !== 'wp_au'){                        
