@@ -12,62 +12,28 @@ if($proj_photo_size && ($proj_photo_size[0]/$proj_photo_size[1] > 1.77777)) {
 ?>
 <main class="wrapper-fluid">
     <section id="topSection">
-        <div class="big-column">
-            <?php // if proj_photo_size is false, the project photo does not exist
-            if(!$proj_photo_size) { ?>
-                <picture class="exhibit-picture">
-                    <img src="/wp-content/themes/makerfaire/images/default-featured-image.jpg"
-                         alt="<?php echo $project_title; ?> project image" />
-                </picture>
-            <?php } elseif( isset($proj_photo_size[0]) && $proj_photo_size[0] > 900 ) { ?>
-                <picture class="exhibit-picture <?php echo $imageClass; ?>">
-                    <source media="(max-width: 420px)" srcset="<?php echo $project_photo_small; ?>">
-                    <source media="(max-width: 1200px)" srcset="<?php echo $project_photo_medium; ?>">
-                    <source media="(max-width: 1500px)" srcset="<?php echo $project_photo_largish; ?>">
-                    <img src="<?php echo $project_photo_large; ?>" 
-                         alt="<?php echo $project_title; ?> project image"
-                         onerror="this.onerror=null;this.src='/wp-content/themes/makerfaire/images/default-featured-image.jpg';this.srcset=''"
-                         data-photo="<?php echo $project_photo; ?>">
-                </picture>
-            <?php } elseif(isset($proj_photo_size[0]) && $proj_photo_size[0] > 420 ) { ?>
-                <picture class="exhibit-picture small-picture <?php echo $imageClass; ?>">
-                    <source media="(max-width: 420px)" srcset="<?php echo $project_photo_small; ?>">
-                    <img src="<?php echo $project_photo_medium; ?>" 
-                         alt="<?php echo $project_title; ?> project image"
-                         onerror="this.onerror=null;this.src='/wp-content/themes/makerfaire/images/default-featured-image.jpg';this.srcset=''"
-                         data-photo="<?php echo $project_photo; ?>">
-                </picture>
-            <?php } else { ?>
-                <picture class="exhibit-picture small-picture <?php echo $imageClass; ?>">
-                    <img src="<?php echo $project_photo_small; ?>"
-                         alt="<?php echo $project_title; ?> project image"
-                         onerror="this.onerror=null;this.src='/wp-content/themes/makerfaire/images/default-featured-image.jpg';this.srcset=''"
-                         data-photo="<?php echo $project_photo; ?>">
-                </picture>
-            <?php } ?>
-        </div>
         <div class="small-column">
             <div class="small-column-wrapper">
                 <div class="entry-box">
                     <h1 class="project-title"><?php echo $project_title; ?></h1>
-                    <h3 class="faireName"><a href="/<?php echo $url_sub_path; ?>"><?php echo $faire_name;?></a></h3>
-                    <h4 class="faireDate"><?php echo $faire_dates; ?></h4>
-                    <div class="entry-box-items">
-                        <?php if(isset($location) && trim($location) != '' && count(array_intersect($exhibit_type, array("Exhibit", "Sponsor", "Startup Sponsor"))) > 0) { ?><span class="entry-box-item" aria-label="Location"><i class="fa fa-map-signs" aria-hidden="true"></i><?php echo $location; ?></span><?php } ?>
-                        <?php if(isset($friday) && $friday == 1 && count(array_intersect($exhibit_type, array("Exhibit", "Sponsor", "Startup Sponsor"))) > 0) { ?><span class="entry-box-item" aria-label="Calendar Detail"><i class="fa fa-calendar-days" aria-hidden="true"></i>Friday Only</span><?php } ?>
-                        <?php if(isset($satSun) && $satSun == 1 && count(array_intersect($exhibit_type, array("Exhibit", "Sponsor", "Startup Sponsor"))) > 0) { ?><span class="entry-box-item" aria-label="Calendar Detail"><i class="fa fa-calendar-days" aria-hidden="true"></i>Sat & Sun</span><?php } ?>
+                    <h2 class="faireName"><a href="/<?php echo $url_sub_path; ?>"><?php echo $faire_name;?></a></h2>
+                    <h3 class="faireDate"><?php echo $faire_dates; ?></h3>
+                    <div class="entry-box-items" role="list">
+                        <?php if(isset($location) && trim($location) != '' && count(array_intersect($exhibit_type, array("Exhibit", "Sponsor", "Startup Sponsor"))) > 0) { ?><span class="entry-box-item" role="listitem" aria-label="Location"><i class="fa fa-map-signs" aria-hidden="true"></i><?php echo $location; ?></span><?php } ?>
+                        <?php if(isset($friday) && $friday == 1 && count(array_intersect($exhibit_type, array("Exhibit", "Sponsor", "Startup Sponsor"))) > 0) { ?><span class="entry-box-item" role="listitem" aria-label="Calendar Detail"><i class="fa fa-calendar-days" aria-hidden="true"></i>Friday Only</span><?php } ?>
+                        <?php if(isset($satSun) && $satSun == 1 && count(array_intersect($exhibit_type, array("Exhibit", "Sponsor", "Startup Sponsor"))) > 0) { ?><span class="entry-box-item" role="listitem" aria-label="Calendar Detail"><i class="fa fa-calendar-days" aria-hidden="true"></i>Sat & Sun</span><?php } ?>
                         <?php if(!empty($exhibit_type)) { ?>
-                            <span class="entry-box-item" aria-label="Exhibit Type"  >
+                            <span class="entry-box-item" role="listitem" aria-label="Exhibit Type"  >
                                 <?php /* <a href="/<?php echo $url_sub_path; ?>/meet-the-makers/?type=<?php echo reset($exhibit_type); ?>"> */ ?>
                                     <i class="fa <?php echo strtolower(reset($exhibit_type)); ?>"></i>
                                     <?php echo implode(" & ",$exhibit_type); ?>
                                 <?php /* </a> */ ?>
                             </span>
                         <?php } ?>
-                        <?php if(isset($mainCategoryName) && $mainCategoryName != '') { ?><span class="entry-box-item" aria-label="Main Category"><a href="/<?php echo $url_sub_path; ?>/meet-the-makers/?category=<?php echo $mainCategoryName; ?>" class="icon-link"><?php echo $mainCategoryIcon; ?><span><?php echo $mainCategoryName; ?></span></a></span><?php } ?>
-                        <?php if(!empty($ribbons)) { ?><span class="entry-box-item" aria-label="Ribbon"><a href="/ribbons/"><i class="fa fa-award" aria-hidden="true"></i>Ribbon Recipient</a></span><?php } ?>
-                        <?php if($in_faire) { ?>
-                            <!--<span class="entry-box-item" aria-label="Tickets"><a href="/<?php echo $url_sub_path; ?>/buy-tickets/" class="icon-link"><i class="fa fa-ticket" aria-hidden="true"></i><span>Buy Tickets</span></a></span>-->
+                        <?php if(isset($mainCategoryName) && $mainCategoryName != '') { ?><span class="entry-box-item" role="listitem" aria-label="Main Category"><a href="/<?php echo $url_sub_path; ?>/meet-the-makers/?category=<?php echo $mainCategoryName; ?>" class="icon-link"><?php echo $mainCategoryIcon; ?><span><?php echo $mainCategoryName; ?></span></a></span><?php } ?>
+                        <?php if(!empty($ribbons)) { ?><span class="entry-box-item" role="listitem" aria-label="Ribbon"><a href="/ribbons/"><i class="fa fa-award" aria-hidden="true"></i>Ribbon Recipient</a></span><?php } ?>
+                        <?php if($faire_end > date("Y-m-d j:i:s")) { ?>
+                            <!--<span class="entry-box-item" role="listitem" aria-label="Tickets"><a href="/<?php echo $url_sub_path; ?>/buy-tickets/" class="icon-link"><i class="fa fa-ticket" aria-hidden="true"></i><span>Buy Tickets</span></a></span>-->
                         <?php } ?>
                     </div>
                     <?php if(isset($project_short) && $project_short != '') { ?>
@@ -146,6 +112,40 @@ if($proj_photo_size && ($proj_photo_size[0]/$proj_photo_size[1] > 1.77777)) {
                         echo $gallery_video_sugg;
                     }?>
             </div>
+        </div>
+        <div class="big-column">
+            <?php // if proj_photo_size is false, the project photo does not exist
+            if(!$proj_photo_size) { ?>
+                <picture class="exhibit-picture">
+                    <img src="/wp-content/themes/makerfaire/images/default-featured-image.jpg"
+                         alt="<?php echo $project_title; ?> project image" />
+                </picture>
+            <?php } elseif( isset($proj_photo_size[0]) && $proj_photo_size[0] > 900 ) { ?>
+                <picture class="exhibit-picture <?php echo $imageClass; ?>">
+                    <source media="(max-width: 420px)" srcset="<?php echo $project_photo_small; ?>">
+                    <source media="(max-width: 1200px)" srcset="<?php echo $project_photo_medium; ?>">
+                    <source media="(max-width: 1500px)" srcset="<?php echo $project_photo_largish; ?>">
+                    <img src="<?php echo $project_photo_large; ?>" 
+                         alt="<?php echo $project_title; ?> project image"
+                         onerror="this.onerror=null;this.src='/wp-content/themes/makerfaire/images/default-featured-image.jpg';this.srcset=''"
+                         data-photo="<?php echo $project_photo; ?>">
+                </picture>
+            <?php } elseif(isset($proj_photo_size[0]) && $proj_photo_size[0] > 420 ) { ?>
+                <picture class="exhibit-picture small-picture <?php echo $imageClass; ?>">
+                    <source media="(max-width: 420px)" srcset="<?php echo $project_photo_small; ?>">
+                    <img src="<?php echo $project_photo_medium; ?>" 
+                         alt="<?php echo $project_title; ?> project image"
+                         onerror="this.onerror=null;this.src='/wp-content/themes/makerfaire/images/default-featured-image.jpg';this.srcset=''"
+                         data-photo="<?php echo $project_photo; ?>">
+                </picture>
+            <?php } else { ?>
+                <picture class="exhibit-picture small-picture <?php echo $imageClass; ?>">
+                    <img src="<?php echo $project_photo_small; ?>"
+                         alt="<?php echo $project_title; ?> project image"
+                         onerror="this.onerror=null;this.src='/wp-content/themes/makerfaire/images/default-featured-image.jpg';this.srcset=''"
+                         data-photo="<?php echo $project_photo; ?>">
+                </picture>
+            <?php } ?>
         </div>
     </section>
     <?php if ($dispMakerInfo && $showcase != 'parent') { ?>

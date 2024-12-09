@@ -22,7 +22,7 @@ form.searchandfilter {
                 input {
                     padding-left: 10px;
                     &::placeholder {
-                        color: #999;
+                        color: #666;
                         font-size: 16px;
                         font-weight: 300;
                         opacity: 1;
@@ -40,7 +40,7 @@ form.searchandfilter {
                     font-size: 16px;
                     .chosen-single {
                         background: #fff;
-                        color: #999;
+                        color: #666;
                         padding-top: 5px;
                         span { font-weight: 300; }
                         &> div {
@@ -64,7 +64,7 @@ form.searchandfilter {
                     content: "\f002";
                     top: 15px;
                     left: 8px;
-                    color: #999;
+                    color: #666;
                 }
             }
             &.sf-field-sort_order {

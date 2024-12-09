@@ -159,7 +159,7 @@ foreach ($yearSql as $year) {
                       <div class="card-detail-item" ng-show="ribbon.maker_name.length">
                         <span>
                           <a href="{{ribbon.link}}">
-                            <i class="fa fa-circle-user"></i>
+                            <i class="fa fa-circle-user" aria-label="Maker" title="Maker Icon"></i>
                           </a>
                         </span>
                         <p>
@@ -184,10 +184,10 @@ foreach ($yearSql as $year) {
                       <img src="{{ribbon.project_photo}}" on-error="/wp-content/themes/makerfaire/images/default-mtm-image.jpg" alt="{{ribbon.project_name}} Photo" class="card-image" />
                     </a>
                     <div class="ribbons">
-                      <div class="blueRibbon" ng-if="ribbon.blueCount > 0">
+                      <div class="blueRibbon" aria-label="Blue Ribbon Count" ng-if="ribbon.blueCount > 0">
                         {{ribbon.blueCount}}
                       </div>
-                      <div class="redRibbon" ng-if="ribbon.redCount > 0">
+                      <div class="redRibbon" aria-label="Red Ribbon Count" ng-if="ribbon.redCount > 0">
                         {{ribbon.redCount}}
                       </div>
                     </div>

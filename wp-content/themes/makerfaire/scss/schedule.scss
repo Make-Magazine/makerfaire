@@ -68,11 +68,17 @@ h4.featured {
 			margin-bottom: -56px;
 		}
 	}
+	.read-more-btn {
+		text-decoration: underline;
+	}
 	.mtm-filter-wrap {
 		padding: 0px;
 		margin-bottom: 0px;
 		.form-control {
 			width: 100% !important;
+			&::placeholder {
+				color: #666;
+			}
 		}
 	}
 	.timezone-wrapper {
@@ -254,7 +260,7 @@ h4.featured {
 
 	.sched-table {
 		.sched-header {
-			color: #888;
+			color: #6f6f6f;
 			font-size: 16px;
 			font-weight: 400;
 			margin-left: 0;
@@ -437,6 +443,9 @@ h4.featured {
 					display: -webkit-box;
 					-webkit-line-clamp: 3;
 					-webkit-box-orient: vertical;
+					a {
+						text-decoration: underline;
+					}
 				}
 			}
 

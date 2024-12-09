@@ -618,9 +618,12 @@ b, strong {
       position: absolute;
       top: 6px;
       left: 8px;
-      color: #999;
+      color: #666;
   }
   input {
       padding-left: 30px;
+      &::placeholder {
+        color:#666;
+      }
   }
 }

@@ -121,7 +121,10 @@ mtm.controller('mtmMakers', ['$scope', '$sce', '$filter', '$http', function ($sc
         .finally(function () {
             //console.log($scope.makers);
         });
-
+    
+    $scope.trustedHTML = function(html_code) {
+        return $sce.trustAsHtml(html_code);
+    };
 
     $scope.setLocFilter = function (location) {
         $scope.makerSearch.location = location;

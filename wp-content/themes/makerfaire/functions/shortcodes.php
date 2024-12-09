@@ -48,7 +48,7 @@ function make_rss_func($atts) {
 	
     $return = '    
     <div class="container rss-feed">
-        <h2>' . $a['title'] . ' News from <img class="logo" src="https://make.co/wp-content/universal-assets/v2/images/make_logo.svg" /> Magazine</h2>
+        <h2>' . $a['title'] . ' News from <img class="logo" src="https://make.co/wp-content/universal-assets/v2/images/make_logo.svg" title="Make:" /> Magazine</h2>
         <div class="row posts-feeds-wrapper">';
 
 

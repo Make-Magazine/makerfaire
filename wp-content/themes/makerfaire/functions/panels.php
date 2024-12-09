@@ -1547,7 +1547,7 @@ function getFaireList() {
 
             $name = isset($row->faire_nicename) ? $row->faire_nicename : $row->faire_name;
             $output .= "<li><a href='$row->faire_url'>";
-            $output .= "<img src='$row->faire_image'>";
+            $output .= "<img src='$row->faire_image' alt='$name'>";
             $output .= "<p>$row->event_dt</p>";
             $output .= "<h3>$name</h3>";
             $output .= "</a></li>";
@@ -1577,7 +1577,7 @@ function getCFMList() {
     foreach ($featuredRows as $row) {
         if ($row->cfm_image) {
             $output .= "<li><a href='$row->cfm_url'>";
-            $output .= "<img src='$row->cfm_image'>";
+            $output .= "<img src='$row->cfm_image' alt='$row->faire_name'>";
             $output .= "</a></li>";
             if (++$i == $featured_faire_limit)
                 break;
