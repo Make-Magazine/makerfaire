@@ -148,12 +148,16 @@
 
 		<?php } // end cookie law if  ?>
 
-        <a name="topofpage"></a>
-
+        <a name="topofpage"></a>    
 		<?php
+        //get auth0 login modal
+        $auth0_modal = do_shortcode('[auth0 show_as_modal="1" modal_trigger_name="Log In"]');
+
 		// Universal Nav
-		echo basicCurl(UNIVERSAL_MAKEHUB_ASSET_URL_PREFIX . '/wp-content/universal-assets/v2/page-elements/universal-topnav.html');
-         
+		$uni_nav =  basicCurl(UNIVERSAL_MAKEHUB_ASSET_URL_PREFIX . '/wp-content/universal-assets/v2/page-elements/universal-topnav.html');
+        
+        echo str_replace("{{auth0_login_modal}}",$auth0_modal,$uni_nav); 
+        
         //from the individual entry page, used to set the subnav on maker/entry pages
         global $faire_name;
         if(!isset($faire_name)){
