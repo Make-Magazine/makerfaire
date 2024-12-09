@@ -15,28 +15,23 @@ $users = $wpdb->get_results($userSQL,ARRAY_A);
 $count = 0;
 foreach ($users as $user) {    
     $auth0_user_data = json_decode($user['auth0_obj'], true);
+
+
+
     if (isset($auth0_user_data['identities'])) {
         foreach ($auth0_user_data['identities'] as $identity) {
             if (($identity['connection'] != "DB-Make-Community" && $identity['connection'] != 'google-oauth2') || $deleteall) {
                 $wp_prefix = substr($user['meta_key'],0,5);
                 $output.= $user['user_id'].' ('.$user['user_email'] . ') found on "' . $identity['connection'] . 
                 '" meta_key = '.$user['meta_key'] .'<br/>';
-                $count++;
-                if($delete || $deleteall){                     
-                    //base site
-                    wp_auth0_delete_auth0_object($user['user_id']);                                
-                    if($wp_prefix !== 'wp_au'){                        
-                        //subdomains
-                        delete_user_meta($user['user_id'], $wp_prefix . 'auth0_id');
-                        delete_user_meta($user['user_id'], $wp_prefix . 'auth0_obj');
-                        delete_user_meta($user['user_id'], $wp_prefix . 'last_update');
-                        delete_user_meta($user['user_id'], $wp_prefix . 'auth0_transient_email_update');                       
-                    }
-                    
-                }                
+                $count++;                                
             }
         }
     }
+    if($deleteall){
+        //base site
+        wp_auth0_delete_auth0_object($user['user_id']);                                
+    }    
 }
 
 ?>

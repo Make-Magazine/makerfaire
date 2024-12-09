@@ -321,10 +321,11 @@ foreach ($entry as $key => $field) {
 }
 
 // if edit entry is true, this means the user viewing the entry is the user who created the entry and should be able to see it
+$makerBioSugg = $proj_desc_sugg = $gallery_video_sugg = '';
+$showEditMakey = false;
+
 if ($makerEdit) {
-    $validEntry = true;
-    $makerBioSugg = $proj_desc_sugg = $gallery_video_sugg = '';
-    $showEditMakey = false;
+    $validEntry = true;        
 
     //determine if we show suggestions to the user to edit certain sections of their entry
     if (isset($form['gv_id_update_public_info']) && $form['gv_id_update_public_info'] != '' && $in_faire){
