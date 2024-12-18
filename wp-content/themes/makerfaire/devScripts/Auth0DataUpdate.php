@@ -4,7 +4,7 @@ global $wpdb;
 $delete = (isset($_GET['delete'])?TRUE:FALSE);
 $deleteall = (isset($_GET['deleteall'])?TRUE:FALSE);
 
-$output = 'start of update<br/>';
+$output = '';
 $userSQL = "SELECT user_id, wp_users.user_email, meta_key, meta_value as auth0_obj 
 FROM `wp_usermeta` 
 left outer join wp_users on wp_usermeta.user_id = wp_users.id 
@@ -15,8 +15,6 @@ $users = $wpdb->get_results($userSQL,ARRAY_A);
 $count = 0;
 foreach ($users as $user) {    
     $auth0_user_data = json_decode($user['auth0_obj'], true);
-
-
 
     if (isset($auth0_user_data['identities'])) {
         foreach ($auth0_user_data['identities'] as $identity) {
@@ -42,12 +40,12 @@ foreach ($users as $user) {
       <meta charset="UTF-8">
     </head>
     <body>
-      
-    <?php
-    
+    <p>Start of update</p>
+    <?php    
     echo 'Found '.$count.' users to update<br/>';
     echo '<hr>';
     echo $output;    
     ?>
+    <p>End of update</p>
     </body>
 </html>
