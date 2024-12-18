@@ -40,6 +40,7 @@ function getRibbons($year){
       $location       = $ribbon['location'];
       $year           = $ribbon['year'];      
 
+      $post_id = $ribbon['post_id'];
       //entries from 2015 and forward are in the correct format and post_id will be 0
       if($post_id==0){
         $link           = "/maker/entry/". $entry_id;
