@@ -102,7 +102,7 @@
 				color: #7289da;
 			}
 		}
-		&[href*="mastodon" i], &[href*=".social"] {
+		&[href*="mastodon" i], &[href*=".social/@"] {
 			&::before {
 				font-family: "Font Awesome 6 Brands";
 				content: "\f4f6";

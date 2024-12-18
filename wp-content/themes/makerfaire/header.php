@@ -81,20 +81,6 @@
 			})(window,document,'script','dataLayer','GTM-PCDDDV');</script>
 			<!-- End Google Tag Manager -->
 
-			<!-- Global site tag (gtag.js) - Google Analytics (Universal) -->
-			<script async src="https://www.googletagmanager.com/gtag/js?id=UA-51157-7"></script>
-			<script>
-				function gtag(){dataLayer.push(arguments);}
-				gtag('js', new Date());
-
-				gtag('config', 'UA-51157-7', {
-					send_page_view: false
-				});
-				gtag('event', 'page_view', {
-					page_path: location.pathname + location.search + location.hash,
-					send_to: 'UA-51157-7'
-				})
-			</script>
 			<!-- Google tag (gtag.js) GA4 -->
 			<script async src="https://www.googletagmanager.com/gtag/js?id=G-51PP9YXQ8B"></script>
 			<script>
