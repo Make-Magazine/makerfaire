@@ -43,7 +43,7 @@ function featuredtoRSS($content) {
             $content  = '<div>' . get_the_post_thumbnail($post->ID, 'thumbnail', array('style' => 'margin-bottom: 15px;')) . '</div>';                     
             
             //return the first 500 characeters of the exhibit description
-            $content .= substr(html_entity_decode(get_field("exhibit_description", $post->ID), ENT_QUOTES, get_bloginfo("")),0,500);                        
+            $content .= substr(html_entity_decode(get_field("exhibit_description", $post->ID), ENT_QUOTES, get_bloginfo("charset")),0,500);                        
             
         }        
     }    

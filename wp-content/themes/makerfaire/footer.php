@@ -28,7 +28,7 @@
                 interval: 4000
             });
         });
-    });
+    });        
 </script>
 
 <?php
@@ -102,9 +102,6 @@ if (!isset($_COOKIE['cookielawinfo-checkbox-non-necessary']) || $_COOKIE['cookie
 
 <?php wp_footer(); ?>
 
-
-
-<iframe id="auth0Logout" style="display: none;" ></iframe>
 </div> <!-- end of .site-container -->
 </body>
 

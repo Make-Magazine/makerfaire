@@ -4,8 +4,6 @@ add_action( 'gform_after_submission', 'mf_after_gf_submission', 10, 2 );
 add_action('gform_post_add_entry', 'mf_after_gf_submission', 10, 2 ); 
 
 function mf_after_gf_submission( $entry, $form ){
-    create_makeco_user( $entry, $form ); // /functions/gravity_forms/create_makeco_user.php
-
     //process supplemental form logic	
 	update_original_data($entry, $form); // /functions/gravity_forms/supplemental_forms.php
 
