@@ -1,3 +1,6 @@
+@use "sass:color";
+@use "style";
+
 /* maker admin e.g. makerfaire.com/maker-portal */
 .maker-portal {
   margin-bottom: 100px;
@@ -405,11 +408,11 @@
     }
     .ticket-btn {
       text-decoration: none;
-      border-top: solid 8px $color-blue;
+      border-top: solid 8px style.$color-blue;
       display: block;
       padding: 10px;
       border-radius: 5px;
-      color: $color-blue;
+      color: style.$color-blue;
       margin-top: 15px;
       margin-bottom: 10px;
       box-shadow: 0px 10px 20px -5px rgba(0,0,0,.5);
@@ -466,7 +469,7 @@
       color: inherit;
 
       &:hover {
-        background-color: darken(white, 2%);
+        background-color: color.adjust(white, $lightness: -2%);
       }
     }
 

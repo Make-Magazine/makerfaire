@@ -1,3 +1,4 @@
+@use "sass:color";
 .flagship-faire-wrp {
    background-size: cover;
    .flagship-badge {
@@ -167,7 +168,7 @@
         margin-top: 18px;
       }*/
       &:hover {
-         color: darken(#00AEEF, 10%)
+         color: color.adjust(#00AEEF, $lightness: -10%)
       }
       img {
          margin-right: 5px;

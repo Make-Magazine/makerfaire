@@ -1,3 +1,5 @@
+@use "style";
+
 .page-template-page-meet-the-makers .site-content {
     overflow-x: hidden;
 }
@@ -186,7 +188,7 @@
                     border: solid 1px #6A6A6A;
                 }
                 &:focus {outline:0;}
-                .fa { color: $color-blue; }
+                .fa { color: style.$color-blue; }
             }
         }
     }

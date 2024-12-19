@@ -6,29 +6,29 @@ $color-navy: 		#151733;
 $color-grey: 		#333;
 $color-light-grey: 	#f1f1f1;
 
-@import "global";
-@import "makerfaire-map";
-@import "yearbook-events"; //for yearbook
-@import "yearbook-projects"; //for yearbook
-@import "featured-faire-landing-page";
-@import "flagship-faire-landing-page";
-@import "invoice";
-@import "maker-portal";
-@import "maker-week-page";
-@import "meet-the-makers";
-@import "navigation";
-@import "entry";
-@import "custom-panels";
-@import "press-center";
-@import "quora";
-@import "ribbon-icon-badge";
-@import "ribbons";
-@import "schedule";
-@import "search-and-filter";
-@import "shortcodes";
-@import "sidebar";
-@import "social-media";
-@import "sponsors";
-@import "toolkits";
-@import "featured-presenter-grid";
-@import "elementor";
+@use "global";
+@use "makerfaire-map";
+@use "yearbook-events"; //for yearbook
+@use "yearbook-projects"; //for yearbook
+@use "featured-faire-landing-page";
+@use "flagship-faire-landing-page";
+@use "invoice";
+@use "maker-portal";
+@use "maker-week-page";
+@use "meet-the-makers";
+@use "navigation";
+@use "entry";
+@use "custom-panels";
+@use "press-center";
+@use "quora";
+@use "ribbon-icon-badge";
+@use "ribbons";
+@use "schedule";
+@use "search-and-filter";
+@use "shortcodes";
+@use "sidebar";
+@use "social-media";
+@use "sponsors";
+@use "toolkits";
+@use "featured-presenter-grid";
+@use "elementor";

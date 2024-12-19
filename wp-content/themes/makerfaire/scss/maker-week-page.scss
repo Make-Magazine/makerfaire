@@ -1,3 +1,4 @@
+@use "sass:color";
 #makerfaire .maker-week-page {
   .maker-week-hero {
     background: #1FB8ED;
@@ -53,7 +54,7 @@
         width: 100%;
         padding: 7px;
         &:hover {
-          background: darken(#1FB8ED, 10%);
+          background: color.adjust(#1FB8ED, $lightness: -10%);
         }
       }
     }
