@@ -8,8 +8,7 @@ get_header();
 	<?php	
 	while ( have_posts() ) : the_post(); 
 		$faire_id 	= get_the_ID();
-		$faire_name = get_the_title();
-		//$EM_Event 	= new stdClass();
+		$faire_name = get_the_title();		
 						
 		// Dates
 		$start_date = get_field("start_date", $faire_id);
