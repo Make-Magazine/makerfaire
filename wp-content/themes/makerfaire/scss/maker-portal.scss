@@ -1,5 +1,5 @@
 @use "sass:color";
-@use "style";
+@use "variables";
 
 /* maker admin e.g. makerfaire.com/maker-portal */
 .maker-portal {
@@ -408,11 +408,11 @@
     }
     .ticket-btn {
       text-decoration: none;
-      border-top: solid 8px style.$color-blue;
+      border-top: solid 8px variables.$color-blue;
       display: block;
       padding: 10px;
       border-radius: 5px;
-      color: style.$color-blue;
+      color: variables.$color-blue;
       margin-top: 15px;
       margin-bottom: 10px;
       box-shadow: 0px 10px 20px -5px rgba(0,0,0,.5);

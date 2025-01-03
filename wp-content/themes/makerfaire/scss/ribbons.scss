@@ -39,7 +39,7 @@
   
   .box {
     color: #085a7e;
-    padding: 10px;
+    padding: 5px 10px;
     border: thin solid grey;
     float: left;
     width: 7em;
@@ -48,6 +48,8 @@
       padding: 0 5px;
     }
   }
+
+  .card-deck { margin-bottom: 15px; }
   
   p.noData {
     text-align: center;

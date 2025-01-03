@@ -1,12 +1,5 @@
-// style.scss
-$color-red: 		#ea002a;
-$color-blue: 		#005E9A;
-$color-light-blue: 	#3fafed;
-$color-navy: 		#151733;
-$color-grey: 		#333;
-$color-light-grey: 	#f1f1f1;
-
 @use "global";
+@use "variables";
 @use "makerfaire-map";
 @use "yearbook-events"; //for yearbook
 @use "yearbook-projects"; //for yearbook

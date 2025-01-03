@@ -1,4 +1,4 @@
-@use "style";
+@use "variables";
 
 .page-template-page-meet-the-makers .site-content {
     overflow-x: hidden;
@@ -102,10 +102,9 @@
 			}
 		}
     }
+    .search-wrapper { flex: 1; }
     .form-control {
-        width: auto !important;
         flex: 1;
-        min-width: 200px !important;
         font-size: 16px;
         @media screen and (max-width: 600px) {
             min-width: 100% !important;
@@ -188,7 +187,7 @@
                     border: solid 1px #6A6A6A;
                 }
                 &:focus {outline:0;}
-                .fa { color: style.$color-blue; }
+                .fa { color: variables.$color-blue; }
             }
         }
     }
