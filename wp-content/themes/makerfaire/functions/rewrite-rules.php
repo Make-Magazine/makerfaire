@@ -30,7 +30,7 @@ add_filter('rewrite_rules_array', 'maker_url_vars');
 function mf_add_rewrite_rules( $rules ) {
   $new = array();
   $new['yearbook/([^/]+)-projects/(.+)/?$'] = 'index.php?faire_year=$matches[1]&projects=$matches[2]';  
-  $new['yearbook/([^/]+)-faires/(.+)/?$']   = 'index.php?faire_year=$matches[1]&event=$matches[2]';  
+  $new['yearbook/([^/]+)-faires/(.+)/?$']   = 'index.php?faire_year=$matches[1]&yb_faires=$matches[2]';  
   return array_merge( $new, $rules ); // Ensure our rules come first
 }
 add_filter( 'rewrite_rules_array', 'mf_add_rewrite_rules' );
@@ -42,33 +42,21 @@ add_filter( 'rewrite_rules_array', 'mf_add_rewrite_rules' );
  * @param WP_Post object $post The post object
  * @return str
  */
-function mf_filter_post_type_link( $link, $post ) {
+function mf_filter_post_type_link( $post_link, $id=0 ) {
+  $post = get_post( $id );
   if ( $post->post_type == 'projects' ) {
     $faireData = get_field("faire_information", $post->ID);				
     $faire_year = (isset($faireData["faire_year"]) ? $faireData["faire_year"] : '');
-    $link = str_replace( '%faire_year%', $faire_year, $link );    
-  }elseif ( $post->post_type == 'event' ) {    
-    $event_start_date = get_post_meta( $post->ID, '_event_start_date', true );
-    $faire_year = date('Y', strtotime($event_start_date));            
-    $link = str_replace( '%faire_year%', $faire_year, $link );    
+    return str_replace( '%faire_year%', $faire_year, $post_link );    
+  }elseif ( $post->post_type == 'yb_faires' ) {    
+    $start_date = get_field("start_date", $post->ID);			
+    $faire_year = date('Y', strtotime($start_date));	 
+    
+    return str_replace( '%faire_year%', $faire_year, $post_link );    
   }
-  return $link;
+  return $post_link;
 }
 add_filter( 'post_type_link', 'mf_filter_post_type_link', 10, 2 );
-
-/*
-  add_action( 'wp_loaded','my_flush_rules' );
-
-  // flush_rules() if our rules are not yet included
-  function my_flush_rules(){
-  $rules = get_option( 'rewrite_rules' );
-
-  if ( ! isset( $rules['maker/entry/(\d*)/?'] ) || ! isset( $rules['([^/]*)/meet-the-makers/topics/([^/]*)/?'] )) {
-  global $wp_rewrite;
-  $wp_rewrite->flush_rules();
-  }
-
-  } */
 
 
 /* Query Vars */
@@ -92,7 +80,7 @@ function makerfaire_register_query_var( $vars ) {
 function custom_rewrite_tag() {
   global $wp_rewrite;
 
-  //change the CPT structure of projects cpt to include the faire year
+  //change the CPT structure of yearbook projects cpt to include the faire year
   $projects_structure = 'yearbook/%faire_year%-projects/%projects%';
   $wp_rewrite->add_rewrite_tag("%projects%", '([^/]+)', "project=");
   $wp_rewrite->add_permastruct('projects', $projects_structure, false);

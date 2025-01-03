@@ -361,13 +361,15 @@
                         "id": ""
                     },
                     "post_type": [
-                        "event"
+                        "yb_faires"
                     ],
                     "post_status": "",
                     "taxonomy": "",
                     "return_format": "id",
                     "multiple": 0,
                     "allow_null": 0,
+                    "allow_in_bindings": 1,
+                    "bidirectional": 0,
                     "ui": 1,
                     "bidirectional_target": []
                 }
@@ -520,5 +522,5 @@
     "active": true,
     "description": "",
     "show_in_rest": 0,
-    "modified": 1707850519
+    "modified": 1735850644
 }

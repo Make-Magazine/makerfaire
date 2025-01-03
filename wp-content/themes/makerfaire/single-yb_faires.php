@@ -9,17 +9,16 @@ get_header();
 	while ( have_posts() ) : the_post(); 
 		$faire_id 	= get_the_ID();
 		$faire_name = get_the_title();
-		$EM_Event 	= em_get_event($faire_id, 'post_id');
+		//$EM_Event 	= new stdClass();
 						
 		// Dates
-		$faire_year 			= date('Y', strtotime($EM_Event->event_start_date));
-		$faire_date 			= date("F Y", strtotime($EM_Event->event_start_date));
+		$start_date = get_field("start_date", $faire_id);
+		$faire_year = date('Y', strtotime($start_date));
+		$faire_date = date('F Y', strtotime($start_date));		
 
-		//faire location
-		$event_location 		= $EM_Event->get_location();
-		$faire_countries 		= em_get_countries();
-		$faire_country 			= (isset($event_location->location_country)?$event_location->location_country:'');
-	
+		//faire location				
+		$faire_country = get_field("country", $faire_id);
+
 		// ACF Data
 		//hero section
 		$topSection 			= get_field('top_section');
@@ -112,7 +111,7 @@ get_header();
 		<div class="faire-info-box">
 			<div class="striped-background"></div>
 			<h5 class="faire-date"><?php echo strtoupper($faire_date); ?></h5>
-			<h4 class="faire-country"><?php echo (isset($faire_countries[$faire_country])?$faire_countries[$faire_country]:''); ?></h4>
+			<h4 class="faire-country"><?php echo $faire_country->name; ?></h4>
 			<div class="blue-spacer"></div>
 			<?php if($faire_num_projects != ''){?>
 				<h3 class="faire-stat">Projects: <?php echo number_format($faire_num_projects); ?></h3>

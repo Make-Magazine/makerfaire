@@ -141,9 +141,7 @@ function remove_unnecessary_scripts() {
     }
     if(is_page_template('page-entry.php')) {
         wp_deregister_script('spacetime');
-        wp_dequeue_script('spacetime');
-        wp_deregister_script('events-manager');
-        wp_dequeue_script('events-manager');
+        wp_dequeue_script('spacetime');        
     }
 }
 add_action('wp_print_scripts', 'remove_unnecessary_scripts', PHP_INT_MAX); // we want this to happen absolutely last

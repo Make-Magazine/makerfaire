@@ -61,17 +61,18 @@ if ( $query->have_posts() ) {
             //permalink
             $permalink = get_permalink($post_id);
             
-            if($postType == "event" || $postType == "faire") {                                                 
+            if($postType == "yb_faires" || $postType == "faire") {                                                 
                 //set faire year
-                $event_id = get_post_meta($faire_id, '_event_id');                
-                $EM_Event = new EM_Event( $event_id[0] );
-                $faire_year = date('Y', strtotime($EM_Event->event_start_date));
-                $faire_date = date("F Y", strtotime($EM_Event->event_start_date));
+                $start_date = get_field("start_date", $faire_id);
+		        $faire_year = date('Y', strtotime($start_date));
+                $faire_date = date('F Y', strtotime($start_date));
+                
+                $event_id = get_post_meta($faire_id, '_event_id');                                
 
                 //set faire location information
-                $EM_Location = $EM_Event->get_location();
-                $faire_city  = $EM_Location->location_town;
-                $faire_state = $EM_Location->location_state;                                
+                //$EM_Location = $EM_Event->get_location();
+                $faire_city  = '';//$EM_Location->location_town;
+                $faire_state = '';//$EM_Location->location_state;                                
                                
                 //populate faire location with city and state
                 $faire_location  = ''; 
@@ -79,8 +80,8 @@ if ( $query->have_posts() ) {
                 $faire_location .= (!empty($faire_city) && !empty($faire_state) ? ', ':'');
                 $faire_location .= (!empty($faire_state) ? $faire_state : "");                   
 
-                $faire_countries = em_get_countries();
-                $faire_country = $EM_Location->location_country;                
+                //$faire_countries = em_get_countries();
+                $faire_country = get_field("country", $faire_id);
 
                 //set default alt tag text if none is set
                 $image_alt = !empty($image_alt) ? $image_alt : "Maker Faire " . $faire_year . " " . get_the_title() . " Featured Image";        
@@ -119,9 +120,9 @@ if ( $query->have_posts() ) {
                                     <p><?php echo $faire_location; ?></p>
                                 </div>
                             <?php } ?>
-                            <?php if(!empty($faire_countries[$faire_country])){ ?>
+                            <?php if(!empty($faire_country)){ ?>
                                 <div class="card-detail-item">
-                                    <p><?php echo $faire_countries[$faire_country]; ?></p>
+                                    <p><?php echo $faire_country; ?></p>
                                 </div>
                             <?php } ?>
                             <?php if(!empty($faire_date)){ ?>
