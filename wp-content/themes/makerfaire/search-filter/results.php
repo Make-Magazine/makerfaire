@@ -69,10 +69,9 @@ if ( $query->have_posts() ) {
 
                 $event_id = get_post_meta($faire_id, '_event_id');                                
 
-                //set faire location information
-                //$EM_Location = $EM_Event->get_location();
-                $faire_city  = '';//$EM_Location->location_town;
-                $faire_state = '';//$EM_Location->location_state;                                
+                //set faire location information                
+                $faire_city  = get_field("faire_city", $faire_id);
+                $faire_state = get_field("faire_state", $faire_id);
                                
                 //populate faire location with city and state
                 $faire_location  = ''; 
