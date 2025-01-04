@@ -61,13 +61,11 @@ if ( $query->have_posts() ) {
             //permalink
             $permalink = get_permalink($post_id);
             
-            if($postType == "yb_faires" || $postType == "faire") {                                                 
+            if($postType == "yb_faires") {                                                 
                 //set faire year
                 $start_date = get_field("start_date", $faire_id);                
 		        $faire_year = date('Y', strtotime($start_date));
-                $faire_date = date('F Y', strtotime($start_date));                
-
-                $event_id = get_post_meta($faire_id, '_event_id');                                
+                $faire_date = date('F Y', strtotime($start_date));                                                
 
                 //set faire location information                
                 $faire_city  = get_field("faire_city", $faire_id);
@@ -113,7 +111,7 @@ if ( $query->have_posts() ) {
                             <a href="<?php echo $permalink; ?>"><?php echo $title; ?></a>
                         </h3>
                         <div class="card-detail-items">
-                        <?php if($postType == "yb_faires" || $postType == "faire") { ?>
+                        <?php if($postType == "yb_faires") { ?>
                             <?php if(!empty($faire_location)){ ?>
                                 <div class="card-detail-item">
                                     <p><?php echo $faire_location; ?></p>
