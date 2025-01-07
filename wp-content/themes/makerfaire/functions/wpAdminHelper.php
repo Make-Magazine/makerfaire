@@ -17,8 +17,6 @@ function make_remove_dashboard_widgets() {
   remove_meta_box( 'dashboard_activity', 'dashboard', 'normal' );
   //Jetpack
   remove_meta_box( 'jetpack_summary_widget', 'dashboard', 'normal' );
-  //event manager
-  remove_meta_box( 'em_booking_stats', 'dashboard', 'normal' );
   
   //yoast
   remove_meta_box( 'wpseo-dashboard-overview', 'dashboard', 'normal' );

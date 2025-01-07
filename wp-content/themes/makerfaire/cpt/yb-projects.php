@@ -3,8 +3,7 @@
 add_action('init', 'register_cpt_projects');
 
 //Register the projects custom post type
-function register_cpt_projects()
-{
+function register_cpt_projects() {
 	//define labels
 	$labels = array(
 		"name" => __("Projects",  'makerfaire'),
@@ -15,6 +14,7 @@ function register_cpt_projects()
 		"edit_item" => __("Edit Project", 'makerfaire'),
 		"view_item" => __("View Project", 'makerfaire'),
 		"view_items" => __("View Projects", 'makerfaire'),
+		"add_new"    => __("Add New Project", 'makerfaire'),
 		"add_new_item" => __("Add New Project", 'makerfaire'),
 
 		"new_item" => __("New Project",	 'makerfaire'),
@@ -43,11 +43,10 @@ function register_cpt_projects()
 		'labels' => $labels,
 		'hierarchical' => true,
 		'supports' => array('title', 'editor', 'excerpt', 'author', 'thumbnail', 'custom-fields', 'page-attributes'),
-		'taxonomies' => array('mf-project-cat', 'mf-year-cat', 'regions'),
+		'taxonomies' => array('mf-project-cat', 'mf-year-tax', 'regions'),
 		'public' => true,
 		'menu_icon' => "https:\/\/global.makerfaire.com\/favicon-16x16.png",
-		'show_ui' => true,
-		//'show_in_menu' => 'edit.php?post_type=event',
+		'show_ui' => true,		
 		'show_in_menu' => true,
 		'show_in_nav_menus' => true,
 		'show_in_rest' => true,
@@ -65,8 +64,7 @@ function register_cpt_projects()
 }
 
 add_action('init', 'register_taxonomy_projects_cpt');
-function register_taxonomy_projects_cpt()
-{
+function register_taxonomy_projects_cpt() {
 	//Add the Project Category
 	register_taxonomy(
 		'mf-project-cat',
@@ -89,10 +87,8 @@ function register_taxonomy_projects_cpt()
 				'menu_name' => __('Project Categories', 'makerfaire'),
 			),
 			'public' => true,
-			'show_in_nav_menus' => false,
-			'show_in_menu' => 'edit.php?post_type=event',
-			'hierarchical' => true,
-			//'rewrite' => array( 'slug' => 'project-categories', 'with_front' => false ),
+			'show_in_nav_menus' => false,			
+			'hierarchical' => true,			
 			'query_var' => true,
 			'show_in_rest' => true,
 			'show_admin_column' => true
@@ -115,7 +111,7 @@ function register_taxonomy_projects_cpt()
 				'add_new_item' => __('Add New Faire Year', 'makerfaire'),
 				'new_item_name' => __('New Faire Year', 'makerfaire'),
 				'menu_name' => __('Years', 'makerfaire')
-			),
+			),		
 			'public' => true,
 			'hierarchical' => false,
 			'show_in_nav_menus' => false,
@@ -135,7 +131,7 @@ function projects_posts_columns($columns) {
 		'exhibit_photo' 	=> __('Photo', 'makerfaire'),
 		'taxonomy-mf-project-cat' => __('Project Categories', 'makerfaire'),
 		'faire_name' 		=> __('Faire', 'makerfaire'),
-		//'faire_year' => __( 'Faire Year', 'makerfaire' ),					
+		'faire_year' 		=> __( 'Faire Year', 'makerfaire' ),					
 		'faire_region'	 	=> __('Maker Region', 'makerfaire'),
 		'faire_country'	 	=> __('Maker Country', 'makerfaire'),
 		'first_maker_name'	=> __('Maker', 'makerfaire'),
@@ -147,7 +143,8 @@ function projects_posts_columns($columns) {
 add_action('manage_projects_posts_custom_column', 'projects_content_column', 10, 2);
 function projects_content_column($column, $post_id) {
 	$faireData 			= get_field("faire_information", $post_id);
-	$faire_id 			= (isset($faireData['faire_post'])?$faireData['faire_post']:'');			
+	$faire_id 			= (isset($faireData['faire_post']) ? $faireData['faire_post']:'');				
+	$faire_year      	= (isset($faireData["faire_year"]) ? $faireData["faire_year"]:2023);
 	$project_location 	= get_field("project_location", $post_id);
 	$maker_data 		= get_field("maker_data");
 
@@ -161,7 +158,7 @@ function projects_content_column($column, $post_id) {
 			echo ($faire_id!='' ? get_the_title($faire_id):'');
 			break;
 		case 'faire_year':
-			echo (isset($faireData["faire_year"]) ? $faireData["faire_year"] : '');
+			echo $faire_year;
 			break;
 		case 'faire_country':
 			echo (isset($project_location["country"]) ? $project_location["country"] : '');
@@ -174,7 +171,7 @@ function projects_content_column($column, $post_id) {
 			if (isset($project_location["region"]) && isset($project_location["region"]->name)) {
 				echo $project_location["region"]->name;
 			}
-			break;
+			break;		
 	}
 }
 
@@ -251,7 +248,7 @@ if (is_admin()) {
 	});
 
 			
-	// filter by faire and country
+	// filter by faire
 	add_action('pre_get_posts','projects_faire_filter_results');
 	
 	function  projects_faire_filter_results($query) {
