@@ -297,7 +297,8 @@ class CsvProvider
         }
 
         try {
-            $reader = Reader::createFromString($response['body'])->fetchAll();
+            $sanitizedData = wp_kses($response['body'], ninja_tables_allowed_html_tags());
+            $reader = Reader::createFromString($sanitizedData)->fetchAll();
         } catch (\Exception $exception) {
             return array();
         }
@@ -350,16 +351,17 @@ class CsvProvider
             return $response;
         }
 
-        $headers = $response['headers'];
+		$headers            = $response['headers'];
+		$headersContentType = [ 'application/octet-stream', 'application/binary' ];
 
-        if (
-            strpos($headers['content-type'], 'csv') !== false ||
-            $headers['content-type'] == 'application/octet-stream' ||
-            $headers['content-type'] == 'application/binary'
-        ) {
-            $headers = Reader::createFromString(
-                $response['body']
-            )->fetchOne();
+        if (strpos($url, '.csv') === strlen($url) - strlen('.csv')) {
+            $headersContentType[] = 'text/plain';
+        }
+
+		if ( strpos( $headers['content-type'], 'csv' ) !== false || in_array( $headers['content-type'], $headersContentType )) {
+
+            $sanitizedData = wp_kses($response['body'], ninja_tables_allowed_html_tags());
+			$headers = Reader::createFromString($sanitizedData)->fetchOne();
 
             $formattedHeader = array();
             foreach ($headers as $header) {
