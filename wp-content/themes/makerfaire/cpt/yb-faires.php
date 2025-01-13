@@ -184,7 +184,7 @@ function yb_faires_posts_columns($columns) {
 	$columns = array(
 		'cb' 				=> $columns['cb'],
 		'title' 			=> __('Faire'),
-		'start_date' 		=> __('Faire Start', 'makerfaire'),
+		'faire_year' 		=> __('Faire Year', 'makerfaire'),
 		'faire_region' 		=> __('Region', 'makerfaire'),
 		'faire_country' 	=> __('Country', 'makerfaire'),
 	);
@@ -196,9 +196,9 @@ add_action('manage_yb_faires_posts_custom_column', 'yb_faires_content_column', 1
 function yb_faires_content_column($column, $post_id) {
 	// faire column
 	switch ($column) {
-		case 'start_date':
+		case 'faire_year':
 			$start_date = get_field("start_date", $post_id);
-			echo date('m/d/Y', strtotime($start_date));
+			echo date('Y', strtotime($start_date));
 			break;
 		case 'faire_country':
 			$faire_country = get_field("country", $post_id);
@@ -214,7 +214,7 @@ function yb_faires_content_column($column, $post_id) {
 //add columns to be sortable
 add_filter('manage_edit-yb_faires_sortable_columns', 'yb_faires_sortable_columns');
 function yb_faires_sortable_columns($columns) {
-	$columns['start_date'] 		 = 'start_date';
+	$columns['faire_year'] 		 = 'faire_year';
 
 	//country and region sorting doesn't work as they are taxonomy id's not name
 	//$columns['faire_country']  = 'faire_country';
@@ -234,7 +234,7 @@ function mf_yb_faires_admin_data($query) {
 		//check sort parameter
 		if ($orderby = $query->get('orderby')) {
 			switch ($orderby) {
-				case 'start_date':
+				case 'faire_year':
 					$query->set('meta_key', 'start_date');
 					$query->set('orderby', 'meta_value');
 					break;
@@ -269,7 +269,7 @@ function mf_yb_faires_admin_data($query) {
 		if(!empty($meta_query)){
 			$meta_query['relation'] = 'AND';
 			$query->query_vars['meta_query'] = $meta_query;			
-			error_log(print_r($query->query_vars['meta_query'],TRUE));
+			//error_log(print_r($query->query_vars['meta_query'],TRUE));
 		}		
 		
 	}
