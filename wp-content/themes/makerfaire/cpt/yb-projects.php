@@ -42,7 +42,7 @@ function register_cpt_projects() {
 	$args = array(
 		'labels' => $labels,
 		'hierarchical' => true,
-		'supports' => array('title', 'editor', 'excerpt', 'author', 'thumbnail', 'custom-fields', 'page-attributes'),
+		'supports' => array('title', 'editor', 'excerpt',  'thumbnail', 'custom-fields', 'page-attributes'),
 		'taxonomies' => array('mf-project-cat', 'mf-year-tax', 'regions'),
 		'public' => true,
 		'menu_icon' => "https:\/\/global.makerfaire.com\/favicon-16x16.png",
