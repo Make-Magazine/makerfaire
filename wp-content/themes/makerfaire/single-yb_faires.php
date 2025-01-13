@@ -21,7 +21,7 @@ get_header();
 		// ACF Data
 		//hero section
 		$topSection 			= get_field('top_section');
-		$hero_bg 				= isset($topSection['hero_image']['url']) 	          ? $topSection['hero_image']['url'] : get_stylesheet_directory_uri()."/images/faire-page-hero-img-default.png"; 				
+		//$hero_bg 				= isset($topSection['hero_image']['url']) 	          ? $topSection['hero_image']['url'] : get_stylesheet_directory_uri()."/images/faire-page-hero-img-default.png"; 				
 		
 		$faire_logo 	 		= isset($topSection['horizontal_faire_logo']['url'])  ? $topSection['horizontal_faire_logo']['sizes']['medium_large'] : ''; 
 		$faire_logo_alt			= !empty($topSection['horizontal_faire_logo']['alt']) ? $topSection['horizontal_faire_logo']['alt'] : "Maker Faire " . $faire_name . " Logo"; 
@@ -76,15 +76,6 @@ get_header();
 
 		$linkToProjects = (isset($projects) && !empty($projects) ? '/yearbook/'.$faire_year.'-projects?_sfm_faire_information_faire_post='.$faire_id : '');
 	?>
-    <section id="eventHeader" class="hero-header" style="background-image:url('<?php echo $hero_bg; ?>')">
-	    <div class="logo-wrapper">			
-			<?php if(!empty($faire_logo)) { ?>
-				<img id="faireLogo" src="<?php echo $faire_logo; ?>" alt="<?php echo $faire_logo_alt; ?>" />
-			<?php } else {	?>
-				<h1 class="single-post-title">Maker Faire <?php the_title(); ?></h1>
-			<?php } ?>
-		</div>
-	</section>
 
 	<nav class="eoy-breadcrumbs">			
 		<a href="/yearbook/<?php echo $faire_year; ?>-faires">All Faires</a> <?php if($linkToProjects !='') echo '/ <a href="'.$linkToProjects.'">Faire Projects</a>';?>
@@ -109,6 +100,14 @@ get_header();
 		</div>
 		<div class="faire-info-box">
 			<div class="striped-background"></div>
+			<div class="logo-wrapper">
+				<?php if(!empty($faire_logo)) { ?>
+					<img id="faireLogo" src="<?php echo $faire_logo; ?>" alt="<?php echo $faire_logo_alt; ?>" />
+					<h1 class="single-post-title">Maker Faire <?php the_title(); ?></h1>
+				<?php } else {	?>
+					<h1 class="single-post-title">Maker Faire <?php the_title(); ?></h1>
+				<?php } ?>
+			</div>
 			<h5 class="faire-date"><?php echo strtoupper($faire_date); ?></h5>
 			<h4 class="faire-country"><?php echo $faire_country->name; ?></h4>
 			<div class="blue-spacer"></div>
