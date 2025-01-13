@@ -66,8 +66,8 @@ function add_rss_tags() {
         echo '<faire_name>' . get_the_title($faireData["faire_post"]).'</faire_name>';
     }    
 } 
-
 /* Custom RSS feed */
+/*
 add_action('init', 'mfRSS');
 function mfRSS(){
     add_feed('faire_projects', 'mfRSSProjects');
@@ -82,4 +82,20 @@ function mfRSSProjects(){
 //custom RSS feed to return data from the faire ribbons page
 function mfRSSRibbons(){
     get_template_part('feed_faire_ribbons', 'faire_ribbons');    
-}
+}*/
+
+add_action( 'init', function () {
+    add_rewrite_rule(
+        '^feed/(faire_projects|faire_ribbons)/?$',
+        'index.php?feed=$matches[1]',
+        'top'
+    );
+} );
+
+add_action( 'do_feed_faire_ribbons', function () {    
+    get_template_part('feed_faire_ribbons', 'faire_ribbons');    
+} );
+
+add_action( 'do_feed_faire_projects', function () {    
+    get_template_part('feed_faire_projects', 'faire_projects');    
+} );

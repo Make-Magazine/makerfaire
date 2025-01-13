@@ -33,6 +33,7 @@ function makerfaire_category_init() {
         ),
     ) );
     //Make Project Categories
+    /*
     register_taxonomy( 'makeprojects_category', array( 'post', 'page' ), array(
         'hierarchical'            => true,
         'public'                  => true,
@@ -64,7 +65,7 @@ function makerfaire_category_init() {
             'choose_from_most_used'      =>  __( 'Choose from the most used makeprojects categories', 'makerfaire' ),
             'menu_name'                  =>  __( 'MP Categories', 'makerfaire' ),
         ),
-    ) );
+    ) );*/
     
 }
 add_action( 'init', 'makerfaire_category_init' );
@@ -101,6 +102,7 @@ function prelim_loc_init() {
     ) );
     
     //        New York
+    /*
     register_taxonomy( 'ny_prelim_loc', array( 'post', 'page' ), array(
         'hierarchical'            => false,
         'show_in_nav_menus'       => true,
@@ -127,14 +129,14 @@ function prelim_loc_init() {
             'choose_from_most_used'      =>  __( 'Choose from the most used NY Preliminary Locations', 'makerfaire' ),
             'menu_name'                  =>  __( 'NY Prelim Locs', 'makerfaire' ),
         ),
-    ) );
+    ) );*/
 }
 add_action( 'init', 'prelim_loc_init' );
 
 function get_CPT_name($category){
     $cat_id = (int) $category;
     if($cat_id!=0){
-        $typeArr = array('makerfaire_category','ny_prelim_loc','ba_prelim_loc','makeprojects_category');
+        $typeArr = array('makerfaire_category','ba_prelim_loc');
         
         foreach($typeArr as $type){
             $cat = get_term( $cat_id, $type );

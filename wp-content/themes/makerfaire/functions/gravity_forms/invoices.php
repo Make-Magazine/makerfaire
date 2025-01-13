@@ -3,7 +3,7 @@
 /**
  *	Register Invoice Type
  */
-add_action('init', 'mf_invoice_cpt');
+//add_action('init', 'mf_invoice_cpt');
 function mf_invoice_cpt() {
   $labels = array(
     'name'                => _x('Invoice', 'post type general name', 'makerfaire'),
