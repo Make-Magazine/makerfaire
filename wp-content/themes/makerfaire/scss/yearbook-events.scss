@@ -31,21 +31,20 @@
             margin-bottom: 20px;
          }
          .faire-country {
-            font-size: 32px;
+            font-size: 26px;
             margin: 0px 0 15px;
          }
          .blue-spacer {
             margin-bottom: 20px;
          }
          .faire-stat {
-            font-size: 50px;
             font-family: "Roboto Bold";
             margin: 0px;
          }
          .social-links.reversed {
             margin-top: auto;
             display: flex;
-            margin-bottom: 20px;
+            margin-bottom: 10px;
          }
       }
       .faire-video {
@@ -189,6 +188,29 @@
          color: #fff;
       }
    }
+   .logo-wrapper {
+      max-width: 300px;
+      margin: 5px 0px 10px;
+      h1 { 
+         position: absolute;
+         z-index: 9;
+         color: #fff;
+         text-shadow: 1px 1px 3px black;
+         font-size: 24px;
+         overflow: hidden;
+      }
+      #faireLogo {
+         position: relative;
+         z-index: 99;
+         //max-width: 400px;
+         width: 100%;
+      }
+   }
+   
+   .eoy-breadcrumbs {
+      text-align: left;
+      margin: 15px;
+   }
 }
 
 .striped-background {
@@ -248,48 +270,5 @@
          min-width: 100%;
          min-height: 100%
       }
-   }
-}
-
-.hero-header {
-   background-repeat: no-repeat;
-   background-size: cover;
-   height: 320px;
-   display: flex;
-   flex-direction: column;
-   justify-content: center;
-   align-items: center;
-   margin-bottom: 15px;
-   position: relative;
-   .logo-wrapper {
-      display: flex;
-      justify-content: center;
-      min-height: 75px;
-      h1 { 
-         position: absolute;
-         z-index: 9;
-         color: #fff;
-         text-shadow: 1px 1px 3px black;
-         /*max-height: 35px;*/
-         overflow: hidden;
-      }
-      #faireLogo {
-         position: relative;
-         z-index: 99;
-         max-width: 600px;
-         width: 100%;
-      }
-   }
-}
-
-.eoy-breadcrumbs {
-   text-align: center;
-   margin: 0px 0px 15px;
-   z-index: 99;
-   position: relative;
-   font-size: 18px;
-   font-weight: 500;
-   a {
-      color: #000;
    }
 }

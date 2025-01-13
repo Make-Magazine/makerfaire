@@ -165,7 +165,7 @@ class PlaceholderParserHandler
                 if ($city['dst'] == $isDst && $city['offset'] == $utcOffset) {
                     $timezoneId = $city['timezone_id'];
                     if ($timezoneId) {
-                        $timezone = timezone_name_from_abbr('', $timezoneId, 0);
+                        $timezone = timezone_name_from_abbr('', (int)$timezoneId, 0);
                     }
                     if ($timezone) return ($timezone);
                 }

@@ -200,3 +200,50 @@
 		}
 	}
 }
+
+.eoy-breadcrumbs {
+	text-align: center;
+	margin: 0px 0px 15px;
+	z-index: 99;
+	position: relative;
+	font-size: 18px;
+	font-weight: 500;
+	a {
+	   color: #000;
+	}
+ }
+
+.hero-header {
+	background-repeat: no-repeat;
+	background-size: cover;
+	height: 320px;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	margin-bottom: 15px;
+	position: relative;
+}
+
+.single-projects, .single-yb_faires {
+	.logo-wrapper {
+		display: flex;
+		justify-content: center;
+		min-height: 50px;
+		h1 { 
+			position: absolute;
+			z-index: 9;
+			color: #fff;
+			text-shadow: 1px 1px 3px black;
+			/*max-height: 35px;*/
+			overflow: hidden;
+		}
+		#faireLogo {
+			position: relative;
+			z-index: 99;
+			max-width: 600px;
+			width: 100%;
+			height: auto;
+		}
+	}
+}

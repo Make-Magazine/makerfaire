@@ -90,8 +90,9 @@ $editing = isset($table_vars['editing']) ? $table_vars['editing'] : null;
                                         NINJAPROPLUGIN_URL . 'assets/libs/datepicker/css/pikaday.css', array(),
                                         NINJAPROPLUGIN_VERSION);
 
-                                    $dateTimeFormat = (isset($column['timeFormat']) && $column['timeFormat']) ? $column['dateFormat'] . ' ' . $column['timeFormat'] : $column['dateFormat'];
-                                    ?>
+                                      $dateTimeFormat = ($column['showTime'] === 'false' || !$column['showTime']) ? $column['dateFormat'] : $column['dateFormat'] . ' ' . $column['timeFormat'];
+
+	                                ?>
                                     <input name="<?php echo $column['key']; ?>"
                                            data-date_format="<?php echo $dateTimeFormat; ?>"
                                            data-show_time="<?php echo @$column['showTime']; ?>"

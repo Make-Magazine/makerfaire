@@ -44,7 +44,7 @@ trait GoogleSheetTrait
             $firstRow = $xpath->query('//table//tbody//tr')->item(0);
             if ($firstRow) {
                 foreach ($firstRow->getElementsByTagName('td') as $index => $node) {
-                    $headerName = trim($node->nodeValue);
+                    $headerName = wp_kses(trim($node->nodeValue), ninja_tables_allowed_html_tags());
                     if ( ! $headerName) {
                         $headerName = 'nt_header_' . $index;
                     }
@@ -164,7 +164,10 @@ trait GoogleSheetTrait
             }
 
             if ($this->escapeZero($newRow) && (count($newRow) === count($validColumns))) {
-                $result[] = array_combine($validColumns, $newRow);
+                $sanitizedRow = array_map(function ($rowValue) {
+                    return wp_kses($rowValue, ninja_tables_allowed_html_tags());
+                }, $newRow);
+                $result[] = array_combine($validColumns, $sanitizedRow);
             }
 
         }
