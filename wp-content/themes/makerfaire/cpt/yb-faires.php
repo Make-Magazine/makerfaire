@@ -52,9 +52,8 @@ function mf_yearbook_custom_post_type() {
 		'query_var' => true,
 		'can_export' => true,
 		'capability_type' => 'post',
-		'menu_position' => 25,
-		//'rewrite' => false
-		'rewrite' => array('slug' => 'yearbook/%faire_year%-faires')
+		'menu_position' => 25,		
+		'rewrite' => array('slug' => 'yearbook/faires')
 	);
 
 	register_post_type('yb_faires', $args);
