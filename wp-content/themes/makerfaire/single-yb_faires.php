@@ -130,6 +130,14 @@ get_header();
 		</div>
 	</section>
 
+	<?php // if there is content, that will be the faire's short description
+		$content = get_the_content();
+		if($content != "") { ?>
+			<section id="faireDescription">
+				<?php echo $content; ?>
+			</section>
+	<?php } ?>
+
 	<section id="faireProjects">
 		<?php if(isset($projects) && !empty($projects)) { ?>
 			<h2>Projects</h2>

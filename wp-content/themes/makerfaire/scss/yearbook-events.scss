@@ -91,6 +91,12 @@
          }
       }
    }
+   #faireDescription {
+      text-align: center;
+      padding: 25px 15px 0px;
+      font-size: 18px;
+      p { font-size: 18px; }
+   }
    #faireProjects {
       margin-bottom: 20px;
       display: flex;
@@ -191,6 +197,7 @@
    .logo-wrapper {
       max-width: 300px;
       margin: 5px 0px 10px;
+      overflow: hidden;
       h1 { 
          position: absolute;
          z-index: 9;

@@ -16,7 +16,7 @@
                 "class": "",
                 "id": ""
             },
-            "default_value": "merchandise",
+            "default_value": "",
             "maxlength": "",
             "allow_in_bindings": 0,
             "placeholder": "merchandise",
@@ -42,5 +42,5 @@
     "active": true,
     "description": "",
     "show_in_rest": 0,
-    "modified": 1736808009
+    "modified": 1736892742
 }
