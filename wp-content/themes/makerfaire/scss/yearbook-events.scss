@@ -48,6 +48,11 @@
          }
       }
       .faire-video {
+         text-align: center;
+         blockquote {
+            margin: 0 auto !important;
+         }
+         iframe, blockquote { border: 0px !important; }
          img {
             width: 100%;
          }
