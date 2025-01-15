@@ -131,7 +131,7 @@ function projects_posts_columns($columns) {
 		'exhibit_photo' 	=> __('Photo', 'makerfaire'),
 		'taxonomy-mf-project-cat' => __('Project Categories', 'makerfaire'),
 		'faire_name' 		=> __('Faire', 'makerfaire'),
-		'faire_year' 		=> __( 'Faire Year', 'makerfaire' ),					
+		'faire_year' 		=> __('Faire Year', 'makerfaire' ),					
 		'faire_region'	 	=> __('Maker Region', 'makerfaire'),
 		'faire_country'	 	=> __('Maker Country', 'makerfaire'),
 		'first_maker_name'	=> __('Maker', 'makerfaire'),
@@ -209,7 +209,7 @@ if (is_admin()) {
 
 		//only add filter to projects
 		if ($post_type == 'projects') {			
-			//query database to get a list of faires 
+			//Filter by Faire
 			$faires = array();			
 			$query_faires = $wpdb->get_results("select distinct(meta_value) faire_id, ".
 				"(select post_title from wp_posts faire_post where faire_post.id=faire_id) as faire_name ".
@@ -243,7 +243,38 @@ if (is_admin()) {
 				?>
 			</select>
 		<?php
+			/** Find unique faire year based on faire start date */
+			$query = "select distinct meta_value 
+			from wp_postmeta 
+			left outer join wp_posts on wp_postmeta.post_id = wp_posts.ID 
+			where meta_key in ('faire_information_faire_year') 
+			and wp_posts.post_status<>'trash'
+			and wp_posts.post_type='projects'
+			and meta_value!= ''
+			ORDER BY meta_value ASC;";
+			$results = $wpdb->get_col($query);
 
+			/** Ensure there are years to show */
+			if (!empty($results)) {
+				$options = array();
+				// get selected option if there is one selected
+				$selectedYear = (isset($_GET['filter_faire_year']) && $_GET['filter_faire_year'] != '') ? $_GET['filter_faire_year'] : -1;
+
+				/** Grab all of the options that should be shown */
+				$options[] = sprintf('<option value="-1">%1$s</option>', __('All Years', 'Makerfaire'));
+				foreach ($results as $result) {
+					if ($result == $selectedYear) {
+						$options[] = sprintf('<option value="%1$s" selected>%2$s</option>', esc_attr($result), $result);
+					} else {
+						$options[] = sprintf('<option value="%1$s">%2$s</option>', esc_attr($result), $result);
+					}
+				}
+
+				/** Add the faire year filter */
+				echo '<select class="" id="filter_faire_year" name="filter_faire_year">';
+				echo join("\n", $options);
+				echo '</select>';
+			}
 		}
 	});
 
@@ -257,15 +288,23 @@ if (is_admin()) {
 		
 		if ( is_admin() && 
 			'projects' == $post_type &&
-			'edit.php' == $pagenow && 
-			isset( $_GET['admin_filter_faire'] ) && 
-			$_GET['admin_filter_faire'] != '' ) {
-				
-			$faire_id                  	   	   = $_GET['admin_filter_faire'];
+			'edit.php' == $pagenow) {
 			
-			$query->query_vars['meta_key']     = 'faire_information_faire_post';
-			$query->query_vars['meta_value']   = $faire_id;
-			$query->query_vars['meta_compare'] = '=';
+			//filter by faire
+			if(isset( $_GET['admin_filter_faire'] ) && $_GET['admin_filter_faire'] != '' ) {				
+				$faire_id                  	   	   = $_GET['admin_filter_faire'];
+				
+				$query->query_vars['meta_key']     = 'faire_information_faire_post';
+				$query->query_vars['meta_value']   = $faire_id;
+				$query->query_vars['meta_compare'] = '=';
+			}
+
+			//filter by faire year
+			if(isset( $_GET['filter_faire_year'] ) && $_GET['filter_faire_year'] != '' ) {								
+				$query->query_vars['meta_key']     = 'faire_information_faire_year';
+				$query->query_vars['meta_value']   = $_GET['filter_faire_year'];
+				$query->query_vars['meta_compare'] = '=';
+			}
 		}		
 	}
 }

@@ -18,10 +18,8 @@ get_header();
 		//faire location				
 		$faire_country = get_field("country", $faire_id);
 
-		// ACF Data
-		//hero section
-		$topSection 			= get_field('top_section');
-		//$hero_bg 				= isset($topSection['hero_image']['url']) 	          ? $topSection['hero_image']['url'] : get_stylesheet_directory_uri()."/images/faire-page-hero-img-default.png"; 				
+		// Faire Horizontal logo		
+		$topSection 			= get_field('top_section');		
 		
 		$faire_logo 	 		= isset($topSection['horizontal_faire_logo']['url'])  ? $topSection['horizontal_faire_logo']['sizes']['medium_large'] : ''; 
 		$faire_logo_alt			= !empty($topSection['horizontal_faire_logo']['alt']) ? $topSection['horizontal_faire_logo']['alt'] : "Maker Faire " . $faire_name . " Logo"; 
