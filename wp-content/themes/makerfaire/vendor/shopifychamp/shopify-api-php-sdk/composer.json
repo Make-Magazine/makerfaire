@@ -1,0 +1,27 @@
+{
+    "name": "shopifychamp/shopify-api-php-sdk",
+    "description": "PHP SDK to connect with Shopify Custom, Public and Private App using REST Api and Graphql",
+    "keywords": ["shopify", "sdk", "rest api", "graphql", "php", "public app", "private app"],
+    "license": "MIT",
+    "type": "library",
+    "homepage": "https://github.com/shopifychamp/shopify-api-php-sdk",
+    "authors": [
+        {
+            "name": "Kshitij Verma",
+            "email": "kshitijverma1012@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=7.0",
+        "rdx/graphql-query" : "^1.1"
+    },
+    "require-dev":{
+        "guzzlehttp/guzzle": "^6.3.1|^7.0.1",
+        "phpunit/phpunit": "^6.5"
+    },
+    "autoload": {
+        "psr-4": {
+            "Shopify\\": "src/"
+        }
+    }
+}
