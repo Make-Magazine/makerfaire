@@ -150,25 +150,30 @@ function set_yearbook_meta_desc($description) {
 		$project_title   = get_the_title();
 		return 'Maker Faire ' . $faire_name . " " . $faire_year . ' - ' . $project_title . ' - ' . html_entity_decode(get_field("exhibit_description"));
 	} elseif ($post_type == 'yb_faires') {
-		$faire_name = get_the_title();
-		$faire_id 	= get_the_ID();
+		$content 	= get_the_content();
+		if($content != "") {
+			return $content;
+		} else {
+			$faire_name = get_the_title();
+			$faire_id 	= get_the_ID();
+			
+			// Dates
+			$start_date = get_field("start_date", $faire_id);
+			$faire_year = date('Y', strtotime($start_date));
 
-		// Dates
-		$start_date = get_field("start_date", $faire_id);
-		$faire_year = date('Y', strtotime($start_date));
+			//faire location		
+			$faire_countries 		= ''; //tbd set this
+			$faire_country 			= ''; //tbd set this
 
-		//faire location		
-		$faire_countries 		= ''; //tbd set this
-		$faire_country 			= ''; //tbd set this
+			$faireInfo 				= get_field('faire_info');
+			$faire_num_attendees 	= (isset($faireInfo['number_of_attendees']) ? $faireInfo['number_of_attendees'] : '');
+			$faire_num_projects 	= (isset($faireInfo['number_of_attendees']) ? $faireInfo['number_of_projects'] : '');
 
-		$faireInfo 				= get_field('faire_info');
-		$faire_num_attendees 	= (isset($faireInfo['number_of_attendees']) ? $faireInfo['number_of_attendees'] : '');
-		$faire_num_projects 	= (isset($faireInfo['number_of_attendees']) ? $faireInfo['number_of_projects'] : '');
-
-		return 'Maker Faire ' . $faire_name . ' ' . $faire_year .
-			(isset($faire_countries[$faire_country]) ? ' - ' . $faire_countries[$faire_country] : '') .
-			($faire_num_projects  != '' ? ' - Projects: ' . number_format($faire_num_projects) : '') .
-			($faire_num_attendees != '' ? ' - Participants: ' . number_format($faire_num_attendees) : '');
+			return 'Maker Faire ' . $faire_name . ' ' . $faire_year .
+				(isset($faire_countries[$faire_country]) ? ' - ' . $faire_countries[$faire_country] : '') .
+				($faire_num_projects  != '' ? ' - Projects: ' . number_format($faire_num_projects) : '') .
+				($faire_num_attendees != '' ? ' - Participants: ' . number_format($faire_num_attendees) : '');
+		}
 	}
 	return $description;
 }

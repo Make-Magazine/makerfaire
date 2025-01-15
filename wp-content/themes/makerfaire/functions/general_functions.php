@@ -107,9 +107,25 @@ function parse_yturl($url) {
  *  @return  true if we are good
  */
 function is_valid_video($url) {
-  if ((preg_match('#^(?:https?://)?(?:www\.)?(?:youtu\.be/|youtube\.com(?:/embed/|/v/|/shorts/|/playlist\?list=|/watch))(.*?)#x', $url) || preg_match('#^https?://(.+\.)?vimeo\.com/.*#', $url))) {
+  if ((preg_match('#^(?:https?://)?(?:www\.)?(?:youtu\.be/|youtube\.com(?:/embed/|/v/|/shorts/|/playlist\?list=|/watch))(.*?)#x', $url) || preg_match('#^https?://(.+\.)?vimeo\.com/.*#', $url) || preg_match('#^https?://(.+\.)?facebook\.com/.*#', $url) || preg_match('#^https?://(.+\.)?instagram\.com/.*#', $url) || preg_match('#^https?://(.+\.)?tiktok\.com/.*#', $url))) {
     return true;
   }
+}
+
+function getFacebookVideoId($url) {
+    $pattern = '/(?:https?:\/\/)?(?:www\.)?facebook\.com\/(?:.*?\/)?(?:video\.php\?v=|reel\/|videos\/|watch\/?\?v=)(\d+)/i';
+    
+    if (preg_match($pattern, $url, $matches)) {
+        return $matches[1];
+    }
+    return null;
+}
+function getTikTokVideoId($url) {
+  $pattern = '/(?:https?:\/\/)?(?:www\.)?tiktok\.com\/(?:@[\w.-]+\/video\/|v\/|embed\/)(\d+)/i';
+  if (preg_match($pattern, $url, $matches)) {
+      return $matches[1];
+  }
+  return null;
 }
 
 // turn a normal url into a youtube embed url
@@ -132,7 +148,6 @@ function getYoutubeEmbedUrl($url) {
     return;
   }
 }
-
 
 /**
  * Allow HTML in WordPress Custom Menu Descriptions
