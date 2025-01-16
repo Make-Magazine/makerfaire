@@ -45,10 +45,10 @@ function make_rss_func($atts) {
 	} else {
 		$a['feed'] = 'https://makezine.com/feed/';
 	}
-	
+	$title = ($a['title'] != "") ? $a['title'] : 'News from <img class="logo" src="https://make.co/wp-content/universal-assets/v2/images/make_logo.svg" title="Make:" /> Magazine';
     $return = '    
     <div class="container rss-feed">
-        <h2>' . $a['title'] . ' News from <img class="logo" src="https://make.co/wp-content/universal-assets/v2/images/make_logo.svg" title="Make:" /> Magazine</h2>
+        <h2>' . $title . ' </h2>
         <div class="row posts-feeds-wrapper">';
 
 
