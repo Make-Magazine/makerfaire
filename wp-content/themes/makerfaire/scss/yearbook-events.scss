@@ -10,8 +10,10 @@
       &> div {
          flex: 50%;
          position: relative;
+         max-width: 50%;
          @media screen and (max-width: 981px) {
             flex: 100%;
+            max-width: 100%;;
          }
       }
    }
@@ -47,16 +49,6 @@
             margin-bottom: 10px;
          }
       }
-      .faire-video {
-         text-align: center;
-         blockquote {
-            margin: 0 auto !important;
-         }
-         iframe, blockquote { border: 0px !important; }
-         img {
-            width: 100%;
-         }
-      }
    }
    #producerInfo {
       margin-bottom: 20px;
@@ -86,21 +78,27 @@
             .producer-details-inner-wrap {
                background: #fff;
                padding: 15px 25px;
+               margin: 0px 15px;
                min-width: 350px;
                min-height: 200px;
                display: flex;
                flex-direction: column;
                justify-content: center;
                h3 { margin-top: 0px; }
+               .producer-detail {
+                  overflow: hidden;
+                  white-space: nowrap;
+                  -webkit-mask-image: linear-gradient(90deg, #fff 85%, transparent);
+               }
             }
          }
       }
    }
    #faireDescription {
       text-align: center;
-      padding: 25px 15px 0px;
-      font-size: 18px;
-      p { font-size: 18px; }
+      padding: 25px 30px 0px;
+      font-size: 20px;
+      p { font-size: 20px; }
    }
    #faireProjects {
       margin-bottom: 20px;
@@ -282,5 +280,16 @@
          min-width: 100%;
          min-height: 100%
       }
+   }
+}
+
+.faire-video, .project-video {
+   text-align: center;
+   blockquote {
+      margin: 0 auto !important;
+   }
+   iframe, blockquote { border: 0px !important; }
+   img {
+      width: 100%;
    }
 }
