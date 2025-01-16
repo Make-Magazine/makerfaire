@@ -47,16 +47,6 @@
             margin-bottom: 10px;
          }
       }
-      .faire-video {
-         text-align: center;
-         blockquote {
-            margin: 0 auto !important;
-         }
-         iframe, blockquote { border: 0px !important; }
-         img {
-            width: 100%;
-         }
-      }
    }
    #producerInfo {
       margin-bottom: 20px;
@@ -282,5 +272,16 @@
          min-width: 100%;
          min-height: 100%
       }
+   }
+}
+
+.faire-video, .project-video {
+   text-align: center;
+   blockquote {
+      margin: 0 auto !important;
+   }
+   iframe, blockquote { border: 0px !important; }
+   img {
+      width: 100%;
    }
 }
