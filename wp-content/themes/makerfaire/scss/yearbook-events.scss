@@ -289,6 +289,15 @@
       margin: 0 auto !important;
    }
    iframe, blockquote { border: 0px !important; }
+   .tiktok-embed, .instagram-media {
+      width: auto !important;
+      margin: 0 auto !important;
+      iframe {
+         max-width: 100%;
+         height: 739px !important;
+         max-height: 739px !important;
+      }
+   }
    img {
       width: 100%;
    }
