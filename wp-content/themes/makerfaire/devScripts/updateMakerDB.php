@@ -14,100 +14,132 @@ $yearFilter = (isset($_GET['year']) ? $_GET['year'] : '');
 
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="UTF-8">
-    </head>
-    <body>
 
-        <?php
-        global $wpdb;        
-       
-        $blogID = 9999; //we will use blog id of 9999 for flagship    
-        $formtable = "wp_gf_form";
-        $metatable = 'wp_gf_form_meta';
-            
-        //find all forms for this blog that are not trashed
-        $formSQL = "SELECT title, formtable.date_created, form_meta.display_meta, form_meta.form_id "
-                . " FROM ".$formtable. " formtable "
-                . " left outer join ".$metatable." form_meta on formtable.id=form_meta.form_id "
-                . " WHERE is_trash=0 " .($formFilter!=''?' and id='.$formFilter:'')
-                . " and id <> 252"
+<head>
+    <meta charset="UTF-8">
+</head>
 
-                //. " WHERE is_trash=0 and year(date_created)>=2022"
-                . " ORDER BY `form_meta`.`form_id` DESC ";                    
-        
-        $formResults = $wpdb->get_results($formSQL, ARRAY_A);
-        //echo $formSQL;
-        $updArray = array();
-                    
-        //loop thru all forms in this blog
-        foreach ($formResults as $formrow) {                            
-            $form_id = $formrow['form_id'];                
-            //determine faire name from form id            
-            $formSQL = "select faire_name, start_dt from wp_mf_faire where FIND_IN_SET ($form_id, wp_mf_faire.form_ids)> 0";
-            //echo $formSQL.'<br/>';
-            $results = $wpdb->get_row($formSQL);
-            if ($wpdb->num_rows > 0) {
-                $faire = $results->faire_name;    
-                $start_dt = $results->start_dt;            
-            }else{
-                $faire = get_bloginfo('name');  
-                $start_dt = 'unknown';       
-            }
-         
+<body>
 
-            $fieldData = '';
-            $output = true;
-            $json = json_decode($formrow['display_meta']);                        
-            $form_type = (isset($json->form_type) ? $json->form_type : '');    
+    <?php
+    global $wpdb;
 
-            //only process Call for Makers forms            
-            if ($form_type == 'Master' || $form_type == 'Exhibit') {                                         
-                echo 'Form '.$formrow['title'].' FormID='.$form_id.' FormType='.$form_type  .' Faire Start= '.$start_dt.'<br/>';       
-                $count=0;
-                $entries = GFAPI::get_entries($form_id,array('status' => 'active'), null, array( 'offset' => 0, 'page_size' => 999 ), $count);                                
-                
-                if($count>999){
-                    echo 'WARNING!! More than 999 entries found. Total found = '.$count.'<br/>';
-                    die('mission aborted');
-                }
-                echo '&emsp;found '.count($entries).' entries<br/>';                        
-                $approved = 0;
+    $blogID = 9999; //we will use blog id of 9999 for flagship    
+    $formtable = "wp_gf_form";
+    $metatable = 'wp_gf_form_meta';
 
-                //loop through entries
-                foreach ($entries as $entry) {   
-                    //faire year is based on the date the entry was created
-                    $datetime = new DateTime($entry['date_created']);
-                    $faire_month = $datetime->format('m');                
-                    $faire_year = $datetime->format('Y');
-                    
-                    if($faire_month >= 11){
-                        $faire_year++;
-                    }
+    //find all forms for this blog that are not trashed
+    $formSQL = "SELECT title, formtable.date_created, form_meta.display_meta, form_meta.form_id "
+        . " FROM " . $formtable . " formtable "
+        . " left outer join " . $metatable . " form_meta on formtable.id=form_meta.form_id "
+        . " WHERE is_trash=0 " . ($formFilter != '' ? ' and id=' . $formFilter : '')
+        . " and id <> 252"
 
-                    //only pull entries for provided year
-                    if($yearFilter!='' && $faire_year!=$yearFilter){
-                        //echo '$faire_year is '.$faire_year.'<Br/>';
-                        continue;
-                    }
+        //. " WHERE is_trash=0 and year(date_created)>=2022"
+        . " ORDER BY `form_meta`.`form_id` DESC ";
 
-                    //if status is not set, chances are this is not a valid cfm entry
-                    if(isset($entry['303'])){
-                        $count++;
-                        updateMakerTables((array) $entry, $form_id, $blogID);
-                    }
-                                        
-                }
-                echo '&emsp;wrote '.$count.' entries<br/>';                  
-            
-                // die('check entries');
-            }else{
-                //echo 'Invalid Form type. FormType = '.$form_type.'<br/>';
-            }
+    $formResults = $wpdb->get_results($formSQL, ARRAY_A);
+    //echo $formSQL;
+    $updArray = array();
+
+    //loop thru all forms in this blog
+    foreach ($formResults as $formrow) {
+        $form_id = $formrow['form_id'];
+        //determine faire name from form id            
+        $formSQL = "select faire_name, start_dt from wp_mf_faire where FIND_IN_SET ($form_id, wp_mf_faire.form_ids)> 0";
+        //echo $formSQL.'<br/>';
+        $results = $wpdb->get_row($formSQL);
+        if ($wpdb->num_rows > 0) {
+            $faire = $results->faire_name;
+            $start_dt = $results->start_dt;
+        } else {
+            $faire = get_bloginfo('name');
+            $start_dt = 'unknown';
         }
 
-        ?>
-    </body>
+
+        $fieldData = '';
+        $output = true;
+        $json = json_decode($formrow['display_meta']);
+        $formType = (isset($json->form_type) ? $json->form_type : '');
+
+        //only process Call for Makers forms                        
+        if ($formType != 'Master') {
+            //echo 'invalid form type<br/>';
+            //do not write these records
+            continue;
+        }
+
+        echo 'Form ' . $formrow['title'] . ' FormID=' . $form_id . ' FormType=' . $formType  . ' Faire Start= ' . $start_dt . '<br/>';
+
+        $entries = GFAPI::get_entries($form_id, array('status' => 'active'), null, array('offset' => 0, 'page_size' => 999));
+
+        if (count($entries) > 999) {
+            echo 'WARNING!! More than 999 entries found. Total found = ' . count($entries) . '<br/>';
+            die('mission aborted');
+        }
+        echo '&emsp;found ' . count($entries) . ' entries<br/>';
+
+        $written_count = 0;
+        $entry_write_count = 0;
+        //loop through entries
+        foreach ($entries as $entry) {
+            $exhibit_type = array();
+            foreach ($entry as $key => $value) {
+                if (strpos($key, '339.') === 0) {
+                    if ($value != '') {
+                        if (stripos($value, 'sponsor') !== false) {
+                            $exhibit_type[$key] = 'Exhibit';
+                        } else {
+                            $exhibit_type[$key] = $value;
+                        }
+                    }
+                }
+            }
+
+            //$exhibit_type = array_unique($exhibit_type);
+
+            //do not write Show Management and invalid exhibit types
+            if (in_array('Show Management', $exhibit_type) || in_array('Not Sure Yet', $exhibit_type) || in_array('Other', $exhibit_type)) {
+                //do not write these records
+                //echo 'Invalid Exhibit Type - '.implode("|",$exhibit_type) . '<br/>';                    
+                continue;
+            }
+
+            //faire year is based on the date the entry was created
+            $datetime = new DateTime($entry['date_created']);
+            $faire_month = $datetime->format('m');
+            $faire_year = $datetime->format('Y');
+
+            if ($faire_month >= 11) {
+                $faire_year++;
+            }
+
+            //only pull entries for provided year
+            if ($yearFilter != '' && $faire_year != $yearFilter) {
+                //echo '$faire_year is '.$faire_year.'<Br/>';
+                continue;
+            }
+
+            //if status is not set, chances are this is not a valid cfm entry
+            if (isset($entry['303'])) {
+                $written_count = $written_count + 1;
+                updateMakerTables((array) $entry, $form_id, $blogID);
+            } else {
+                //echo 'no status set????<br/>';
+                //var_dump($entry);
+                die();
+            }
+        }
+        echo '&emsp;wrote ' . $written_count . ' entries<br/>';
+        echo '&emsp;wrote ' . $entry_write_count . ' entries<br/>';
+
+        // die('check entries');            
+    }
+
+    ?>
+</body>
+
 </html>
 
 <?php
@@ -124,65 +156,81 @@ $yearFilter = (isset($_GET['year']) ? $_GET['year'] : '');
 
 function updateMakerTables($entry, $form_id, $blog_id) {
     global $wpdb;
-    
+    global $entry_write_count;
+
     $entryID = $entry['id'];
     //echo 'adding entry id '.$entryID.'<br/>'; 
-    
+
     //build Maker and Entry Data Array
     $data = buildMakerData($entry, $form_id);
-    
+
     //if this maker is marked as do not display, exit
-    if(!$data){
+    if (!$data) {
+        //echo 'no data found for '.$entry['id'].'<br/>';
+        //var_dump($entry);
+        //die();
         return;
     }
     $makerData  = $data['maker'];
     $entryData  = $data['entry'];
-    
-    $categories = (is_array($entryData['category']) ? implode(',', $entryData['category']) : '');
 
-    if($entryData['title']==''){
+    $categories = (is_array($entryData['category']) ? implode('|', $entryData['category']) : '');
+
+    if ($entryData['title'] == '') {
         echo 'Danger Will Robinson!! No Project Title set. Abort! Abort!! ';
         //echo 'blog id = '.$blog_id.", entry id= " . $entryID . ", form id = " . $entryData['form_id'] .'<br/>';        
-        return;            
+        return;
     }
-    
+
     /*
      * Update Entry Table - wp_mf_dir_entry
-     * Fields - blog_id, entry_id, form_id, title, type, public_desc, project_photo, main_category, category, project_video, inspiration, website, social, state, country, faire_name, faire_year, status, last_change_date, 
-     
+     * Fields - blog_id, entry_id, form_id, title, type, public_desc, project_photo, main_category, category, project_video, inspiration, website, social, state, country, faire_name, faire_year, status, last_change_date,      
      */
     $wp_mf_entitysql = "insert into wp_mf_dir_entry (blog_id, entry_id, form_id, title, type, public_desc, project_photo, main_category, category, project_video, inspiration, website, social, state, country, faire_name, faire_year, status, entry_link, last_change_date) "
-            . " VALUES (".$blog_id."," . $entryID . "," . $entryData['form_id'] . ','
-            . ' "' . $entryData['title'] . '", "'.$entryData['type'].'", "'.$entryData['public_desc'].'", '
-            . ' "' . $entryData['project_photo'] . '", "'.$entryData['main_category'].'", "'. $categories.'", '
-            . ' "' . $entryData['project_video'] . '", "'.$entryData['inspiration'].'", "'.$entryData['website'].'", '
-            . ' "' . $entryData['social'] . '", "'.$entryData['state'].'", "'.$entryData['country'].'", '
-            . ' "' . $entryData['faire_name'] . '", "'.$entryData['faire_year'].'", "'.$entryData['status'].'", "'.$entryData['link'].'", now()'
-            . ') '
-            . ' ON DUPLICATE KEY UPDATE title  = "' . $entryData['title'] . '", '
-            . '                         type   = "' . $entryData['type'] . '", '
-            . '                         public_desc   = "' . $entryData['public_desc'] . '", '
-            . '                         project_photo   = "' . $entryData['project_photo'] . '", '
-            . '                         main_category   = "' . $entryData['main_category'] . '", '
-            . '                         category   = "' . $categories . '", '
-            . '                         project_video   = "' . $entryData['project_video'] . '", '
-            . '                         inspiration   = "' . $entryData['inspiration'] . '", '
-            . '                         website   = "' . $entryData['website'] . '", '
-            . '                         social   = "' . $entryData['social'] . '", '
-            . '                         state   = "' . $entryData['state'] . '", '
-            . '                         country   = "' . $entryData['country'] . '", '
-            . '                         faire_name   = "' . $entryData['faire_name'] . '", '
-            . '                         faire_year   = "' . $entryData['faire_year'] . '", '
-            . '                         status   = "' . $entryData['status'] . '", '            
-            . '                         entry_link   = "' . $entryData['link'] . '", '            
-            . '                         last_change_date    = now()';
-    
+        . " VALUES (" . $blog_id . ", " . $entryID . ", " . $entryData['form_id'] . ", "
+        . " '" . $entryData['title']            . "', "
+        . " '" . $entryData['type']             . "', "
+        . " '" . $entryData['public_desc']      . "', "
+        . " '" . $entryData['project_photo']    . "', "
+        . " '" . $entryData['main_category']    . "', "
+        . " '" . $categories                    . "', "
+        . " '" . $entryData['project_video']    . "', "
+        . " '" . $entryData['inspiration']      . "', "
+        . " '" . $entryData['website']          . "', "
+        . " '" . $entryData['social']           . "', "
+        . " '" . $entryData['state']            . "', "
+        . " '" . $entryData['country']          . "', "
+        . " '" . $entryData['faire_name']       . "', "
+        . " '" . $entryData['faire_year']       . "', "
+        . " '" . $entryData['status']           . "', "
+        . " '" . $entryData['link']             . "', now()) "
+        . " ON DUPLICATE KEY UPDATE title           = '" . $entryData['title']          . "', "
+        . "                         type            = '" . $entryData['type']           . "', "
+        . "                         public_desc     = '" . $entryData['public_desc']    . "', "
+        . "                         project_photo   = '" . $entryData['project_photo']  . "', "
+        . "                         main_category   = '" . $entryData['main_category']  . "', "
+        . "                         category        = '" . $categories                  . "', "
+        . "                         project_video   = '" . $entryData['project_video']  . "', "
+        . "                         inspiration     = '" . $entryData['inspiration']    . "', "
+        . "                         website         = '" . $entryData['website']        . "', "
+        . "                         social          = '" . $entryData['social']         . "', "
+        . "                         state           = '" . $entryData['state']          . "', "
+        . "                         country         = '" . $entryData['country']        . "', "
+        . "                         faire_name      = '" . $entryData['faire_name']     . "', "
+        . "                         faire_year      = '" . $entryData['faire_year']     . "', "
+        . "                         status          = '" . $entryData['status']         . "', "
+        . "                         entry_link      = '" . $entryData['link']           . "', "
+        . "                         last_change_date    = now()";
+
     $wpdb->query($wp_mf_entitysql);
-    
+    $entry_write_count = $entry_write_count + 1;
+    //echo $entryID.'|'.$entryData['form_id'].'|'.$blog_id.'<br/>';
+
+    //echo $wp_mf_entitysql.'<br/>';
     /*  Update Maker Table - wp_mf_dir_maker table
-        Fields: email, first_name, last_name, bio, social, photo, website, age_range, maker_id, last_change_date
+        Fields: email, first_name, last_name, bio, social, photo, website, maker_id, last_change_date
      */
-    
+
     //loop thru
     foreach ($makerData as $maker) {
         $firstName = esc_sql($maker['first_name']);
@@ -192,9 +240,8 @@ function updateMakerTables($entry, $form_id, $blog_id) {
         $social    = htmlentities($maker['social'], ENT_QUOTES);
         $photo     = htmlentities($maker['photo']);
         $website   = htmlentities($maker['website']);
-        $social    = htmlentities($maker['social'], ENT_QUOTES);
-        $age_range = esc_sql($maker['age_range']);
-        
+        $social    = htmlentities($maker['social'], ENT_QUOTES);        
+
         // maker db 
         /*  GUID
         * If this maker is already in the DB - pull the maker_id, else let's create one
@@ -203,18 +250,18 @@ function updateMakerTables($entry, $form_id, $blog_id) {
                                         FROM wp_mf_dir_maker
                                         right outer join wp_mf_dir_maker_to_entry
                                             on wp_mf_dir_maker_to_entry.maker_id=wp_mf_dir_maker.maker_id 
-                                            and blog_id=".$blog_id." 
-                                            and entry_id=".$entryID." and maker_type='".$maker['role']."'
-                                        where email = '".$email."'");
-        
-        $guid = ($wpdb->num_rows != 0 ? $guid = $results[0]->maker_id : createGUID($blog_id.$entryID.$maker['role']));
-        
-      
+                                            and blog_id=" . $blog_id . " 
+                                            and entry_id=" . $entryID . " and maker_type='" . $maker['role'] . "'
+                                        where email = '" . $email . "'");
+
+        $guid = ($wpdb->num_rows != 0 ? $guid = $results[0]->maker_id : createGUID($blog_id . $entryID . $maker['role']));
+
+
         $wp_mf_makersql = "INSERT INTO `wp_mf_dir_maker`"
-                    . " (email, first_name, last_name, bio, social, photo, website, age_range, maker_id, last_change_date) "
-                    . '  VALUES ("' . $email . '","' . $firstName . '","' . $lastName . '","' . $bio . '","' . $social . '",'
-                    . '          "' . $photo . '","' . $website . '","' . $age_range . '","' . $guid . '", now())'
-                    . '  ON DUPLICATE KEY UPDATE maker_id="' . $guid . '", last_change_date=now()';        
+            . " (email, first_name, last_name, bio, social, photo, website, maker_id, last_change_date) "
+            . '  VALUES ("' . $email . '","' . $firstName . '","' . $lastName . '","' . $bio . '","' . $social . '",'
+            . '          "' . $photo . '","' . $website . '", "' . $guid . '", now())'
+            . '  ON DUPLICATE KEY UPDATE maker_id="' . $guid . '", last_change_date=now()';
 
         //only update non blank fields
         $wp_mf_makersql .= ($firstName != '' ? ', first_name = "' . $firstName . '"' : ''); //first name
@@ -222,49 +269,49 @@ function updateMakerTables($entry, $form_id, $blog_id) {
         $wp_mf_makersql .= ($bio != '' ? ', bio        = "' . $bio . '"' : ''); //bio
         $wp_mf_makersql .= ($social != '' ? ', social      = "' . $social . '"' : ''); //social
         $wp_mf_makersql .= ($photo != '' ? ', photo      = "' . $photo . '"' : ''); //photo
-        $wp_mf_makersql .= ($website != '' ? ', website    = "' . $website . '"' : ''); //website
-        $wp_mf_makersql .= ($age_range != '' ? ', age_range  = "' . $age_range . '"' : ''); //age_range
-            
+        $wp_mf_makersql .= ($website != '' ? ', website    = "' . $website . '"' : ''); //website        
+
         $wpdb->query($wp_mf_makersql);
         //echo $wp_mf_makersql.'<br/>';
         //build maker to entry table
         //  (key is on maker_id, entry_id and maker_type.  if record already exists, no update is needed)
-        $wp_mf_maker_to_entity = 
+        $wp_mf_maker_to_entity =
             "INSERT INTO wp_mf_dir_maker_to_entry (maker_id, blog_id, entry_id, maker_type) "
-                . ' VALUES ("' . $guid . '",'.$blog_id.',' . $entryID . ',"' . $maker['role'] . '")  '
-                . ' ON DUPLICATE KEY UPDATE maker_id="' . $guid . '";';           
-        
+            . ' VALUES ("' . $guid . '",' . $blog_id . ',' . $entryID . ',"' . $maker['role'] . '")  '
+            . ' ON DUPLICATE KEY UPDATE maker_id="' . $guid . '";';
+
         //die();
         $wpdb->query($wp_mf_maker_to_entity);
     }
 } //end function
 
 //function to build the maker data table to update the wp_mf_dir_maker table
-function buildMakerData($lead, $form_id) {    
-    global $wpdb;    
-    $entry_id = $lead['id'];
+function buildMakerData($entry, $form_id) {
+    $entry_id = $entry['id'];
 
-    /* set entry information */        
-    $main_category =  (isset($lead['320']) ? get_CPT_name($lead['320']) : '');    
+    /* set entry information */
+    $main_category =  (isset($entry['320']) ? get_CPT_name($entry['320']) : '');
     $all_categories = array();
 
     //Categories (loop through all fields to find the categories)
-    foreach ($lead as $leadKey => $leadValue) {
-        if (trim($leadValue != '')) {
+    foreach ($entry as $entryKey => $entryValue) {
+        if (trim($entryValue != '')) {
             //4 additional categories
-            $pos = strpos($leadKey, '321');
+            $pos = strpos($entryKey, '321');
             if ($pos !== false) {
-                $all_categories[] = get_CPT_name($leadValue);
+                $all_categories[] = get_CPT_name($entryValue);
             }
         }
-        $pos = strpos($leadKey, '304.');
+        $pos = strpos($entryKey, '304.');
         if ($pos !== false) {
-            if ($leadValue == 'no-public-view')
+            if ($entryValue == 'no-public-view') {
+                //echo 'no-public-view set for entry '.$entry_id.'<br/>';
                 return false;
+            }
         }
     }
 
-    if($main_category=='' && is_array($all_categories) && !empty($all_categories)) {            
+    if ($main_category == '' && is_array($all_categories) && !empty($all_categories)) {
         $main_category = $all_categories[0];
     }
 
@@ -272,242 +319,112 @@ function buildMakerData($lead, $form_id) {
     $all_categories = array_unique($all_categories);
 
     //faire information   
-    global $faire_year; global $faire;    
-        
-    $project_name = (isset($lead['151']) && trim($lead['151']) != '' ? $lead['151'] : '');    
-    $status = (isset($lead['303']) ? $lead['303'] : '');    
+    global $faire_year;
+    global $faire;
 
-    $project_photo = (isset($lead['22']) ? $lead['22'] : '');    
-    //find out if there is an override image for this page
-    $overrideImg = findOverride($entry_id, 'mtm');
-    if ($overrideImg != '')
-        $project_photo = $overrideImg;
-    
-    //if the main project photo isn't set but the photo gallery is, use the first image in the photo gallery            
-    if(isset($lead['878']) && $lead['878']!=''){
-        $project_gallery = json_decode($lead['878']);
-        
-        if(is_array($project_gallery) && !empty($project_gallery)){
-            $project_photo = $project_gallery[0];        
-        }        
-    }    
-    
+    $project_name = (isset($entry['151']) && trim($entry['151']) != '' ? $entry['151'] : '');
+    $status = (isset($entry['303']) ? $entry['303'] : '');
+
+    $project_photo = (isset($entry['22']) ? $entry['22'] : '');
+    //for BA24, the single photo was changed to a multi image which messed things up a bit
+    $photo = json_decode($project_photo);
+    if (is_array($photo)) {
+        $project_photo = $photo[0];
+    }
+
+    // this returns an array of image urls from the additional images field
+    $project_gallery = (isset($entry['878']) ? json_decode($entry['878']) : '');
+
+    //if the main project photo isn't set but the photo gallery is, use the first image in the photo gallery
+    if ($project_photo == '' && is_array($project_gallery) && !empty($project_gallery)) {
+        $project_photo = $project_gallery[0];
+    }
+
+    global $exhibit_type;
     /* Entry Array */
-    $entryArray = 
-        array('entry_id'=>$entry_id, 
-            'form_id' => $form_id, 
-            'title' => htmlentities($project_name, ENT_QUOTES),  
-            'type' => '',    
-            'public_desc' => (isset($lead['16']) ? htmlentities($lead['16'], ENT_QUOTES) : ''),
-            'project_photo' => $project_photo,            
-            'main_category' => $main_category,    
-            'category'      => $all_categories,            
-            'project_video' => (isset($lead['32']) ? $lead['32'] : ''),
-            'inspiration'   => (isset($lead['287']) ? htmlentities($lead['287'], ENT_QUOTES) : ''),            
-            'website'       => (isset($lead['27']) ? $lead['27'] : ''),
-            'social'       => (isset($lead['828']) ? $lead['828'] : ''),
-            'state' => (isset($lead['101.4']) ? $lead['101.4'] : ''), //contact state
-            'country' => (isset($lead['101.6']) ? $lead['101.6'] : ''), //contact country
-            'faire_name' => $faire,
+    $entryArray =
+        array(
+            'entry_id'    => $entry_id,
+            'form_id'       => $form_id,
+            'title'         => htmlentities($project_name, ENT_QUOTES),
+            'type'          => implode("|", $exhibit_type),
+            'public_desc'   => (isset($entry['16']) ? htmlentities(addslashes($entry['16']), ENT_QUOTES) : ''),
+            'project_photo' => $project_photo,
+            'main_category' => $main_category,
+            'category'      => $all_categories,
+            'project_video' => (isset($entry['32']) ? $entry['32'] : ''),
+            'inspiration'   => (isset($entry['287']) ? htmlentities(addslashes($entry['287']), ENT_QUOTES) : ''),
+            'website'       => (isset($entry['27']) ? $entry['27'] : ''),
+            'social'        => (isset($entry['906']) ? addslashes($entry['906']) : ''),
+            'state'         => (isset($entry['101.4']) ? $entry['101.4'] : ''), //contact state
+            'country'       => (isset($entry['101.6']) ? $entry['101.6'] : ''), //contact country
+            'faire_name'    => $faire,
             'faire_year'    => $faire_year,
-            'status' => $status,
-            'link'   => get_bloginfo('url').'/maker/entry/'.$entry_id
+            'status'        => $status,
+            'link'          => get_bloginfo('url') . '/maker/entry/' . $entry_id
         );
+
     /*
      * Build Maker Array
      */
 
     $makerArray = array();
-    //Set Contact Information
-    $makerArray[] = array(
-        'first_name' => (isset($lead['96.3']) ? $lead['96.3'] : ''),
-        'last_name' => (isset($lead['96.6']) ? $lead['96.6'] : ''),
-        'bio' => '',
-        'email' => (isset($lead['98']) ? $lead['98'] : ''),        
-        'social' => '',
-        'photo' => '',
-        'website' => '',        
-        'age_range' => '',        
-        'role' => 'contact'
-    );
 
-    // First Check if this is a group or one or more makers        
-    $isGroup = (stripos($lead['105'], 'group') !== false || stripos($lead['105'], 'team') !== false?true:false);                     
+    // Maker or Group
+    $displayType = (isset($entry['105']) ? $entry['105'] : '');
 
-    if($isGroup){
-        $makerArray[] = array(
-            'first_name'    => (isset($lead['109']) ? $lead['109'] : ''),
-            'last_name'     => '',
-            'bio'           => (isset($lead['110']) ? $lead['110'] : ''),
-            'email'         => (isset($lead['98']) ? $lead['98'] : ''), //contact email
-            'social'        => '',                                    
-            'photo'         => (isset($lead['111']) ? $lead['111'] : ''),
-            'website'       => (isset($lead['112']) ? $lead['112'] : ''),
-            'age_range'     => (isset($lead['309']) ? $lead['309'] : ''),
-            'role'          => 'group'
-        );
-    }else{ //one or more makers        
-        //Maker 1        
-        $email = (isset($lead['161'])&&$lead['161']!='' ? $lead['161']:$entry_id.'-maker1@make.co');
-        //if email is set, set maker info
-        if($email!=''){
-            $social = (isset($lead['821']) ? $lead['821'] : (isset($lead['201']) ? $lead['201'] : ''));
-            $makerArray[] = array(
-                'first_name'    => (isset($lead['160.3']) ? $lead['160.3'] : ''),
-                'last_name'     => (isset($lead['160.6']) ? $lead['160.6'] : ''),
-                'bio'           => (isset($lead['234']) ? $lead['234'] : ''),
-                'email'         => $email,
-                'photo'         => (isset($lead['217']) ? $lead['217'] : ''),
-                'website'       => (isset($lead['209']) ? $lead['209'] : ''),
-                'social'        => $social,                                                    
-                'age_range'     => (isset($lead['310']) ? $lead['310'] : ''),
-                'role'          => 'maker1'
-            );            
-        }else{
-            if(isset($lead['160.3']) && $lead['160.3']!=''){
-                echo 'error!! maker 1 name is set but email is not for entry ' .$entry_id.'<br/>';                
-            }
+    $isGroup = false;
+    $isGroup = (stripos($displayType, 'group') !== false || stripos($displayType, 'team') !== false ? true : false);
+
+
+    //pull group or maker info
+    if ($isGroup) {
+        $groupname = (isset($entry['109']) ? $entry['109'] : '');
+                
+        if (isset($entry['111']) && $entry['111'] != '') {
+            $groupphoto = $entry['111'];
+        } elseif (isset($entry['217']) && $entry['217'] != '') {
+            $groupphoto = $entry['217'];
         }
 
-        //Maker 2
-        $email = (isset($lead['162']) ? $lead['162'] :$entry_id.'-maker2@make.co');
-        
-        //if email is set, set maker info
-        if($email!=''){
-            $social = (isset($lead['822']) ? $lead['822'] : (isset($lead['208']) ? $lead['208'] : ''));
-            $makerArray[] = array(
-                'first_name'    => (isset($lead['158.3']) ? $lead['158.3'] : ''),
-                'last_name'     => (isset($lead['158.6']) ? $lead['158.6'] : ''),
-                'bio'           => (isset($lead['258']) ? $lead['258'] : ''),
-                'email'         => $email,
-                'photo'         => (isset($lead['224']) ? $lead['224'] : ''),
-                'website'       => (isset($lead['216']) ? $lead['216'] : ''),
-                'social'        => $social,                                                    
-                'age_range'     => (isset($lead['311']) ? $lead['311'] : ''),
-                'role'          => 'maker2'
-            );            
-        }else{
-            if(isset($lead['158.3']) && $lead['158.3'] !=''){ 
-                echo 'error!! maker 2 name is set but email is not for entry ' .$entry_id.'<br/>';                               
-            }
+        //for BA24, the single photo was changed to a multi image which messed things up a bit
+        $photo = json_decode($groupphoto);
+        if (is_array($photo) && !empty($photo)) {
+            $groupphoto = $photo[0];
         }
 
-        //Maker 3
-        $email = (isset($lead['167']) ? $lead['167'] :$entry_id.'-maker3@make.co');
-                
-        //if email is set, set maker info
-        if($email!=''){
-            $social = (isset($lead['823']) ? $lead['823'] : (isset($lead['207']) ? $lead['207'] : ''));
-            
-            $makerArray[] = array(
-                'first_name'    => (isset($lead['155.3']) ? $lead['155.3'] : ''),
-                'last_name'     => (isset($lead['155.6']) ? $lead['155.6'] : ''),
-                'bio'           => (isset($lead['259']) ? $lead['259'] : ''),
-                'email'         => $email,
-                'photo'         => (isset($lead['223']) ? $lead['223'] : ''),
-                'website'       => (isset($lead['215']) ? $lead['215'] : ''),
-                'social'        => $social,                                                    
-                'age_range'     => (isset($lead['312']) ? $lead['312'] : ''),
-                'role'          => 'maker3'
-            );  
-        }else{
-            if(isset($lead['155.3']) && $lead['155.3']!=''){
-                echo 'error!! maker 3 name is set but email is not for entry ' .$entry_id.'<br/>';
-            }
-        }    
-
-        //Maker 4
-        $email = (isset($lead['166']) ? $lead['166'] :$entry_id.'-maker4@make.co');
-                
-        //if email is set, set maker info
-        if($email!=''){
-            $social = (isset($lead['824']) ? $lead['824'] : (isset($lead['206']) ? $lead['206'] : ''));
-            $makerArray[] = array(
-                'first_name'    => (isset($lead['156.3']) ? $lead['156.3'] : ''),
-                'last_name'     => (isset($lead['156.6']) ? $lead['156.6'] : ''),
-                'bio'           => (isset($lead['260']) ? $lead['260'] : ''),
-                'email'         => $email,
-                'photo'         => (isset($lead['222']) ? $lead['222'] : ''),
-                'website'       => (isset($lead['214']) ? $lead['214'] : ''),
-                'social'        => $social,                                                    
-                'age_range'     => (isset($lead['313']) ? $lead['313'] : ''),
-                'role'          => 'maker4'
-            );               
-        }else{
-            if(isset($lead['156.3']) && $lead['156.3']!=''){
-                echo 'error!! maker 4 name is set but email is not for entry ' .$entry_id.'<br/>';
-            }
+        $groupbio = (isset($entry['110']) ? $entry['110'] : '');
+        $groupsocial = isset($entry['828']) ? $entry['828'] : '';
+        $groupwebsite = isset($entry['112']) ? $entry['112'] : '';
+        $makerArray = array(array(
+            'first_name' => $groupname,
+            'last_name'  => null,
+            'bio'       => preg_replace('/\\\\["\']/', '"', $groupbio),
+            'email'     => (isset($entry['98']) ? $entry['98'] : ''),
+            'photo'     => $groupphoto,
+            'social'    => $groupsocial,
+            'website'   => $groupwebsite,
+            'role'      => 'group'
+        ));
+    } else {
+        // deal with the maker photo possibly being a multi image
+        $makerphoto = (isset($entry['217']) && $entry['217'] != '') ? $entry['217'] : "";
+        $photo      = json_decode($makerphoto);
+        if (is_array($photo) && !empty($photo)) {
+            $makerphoto = $photo[0];
         }
 
-        //Maker 5
-        $email = (isset($lead['165']) ? $lead['165'] :$entry_id.'-maker5@make.co');
-                
-        //if email is set, set maker info
-        if($email!=''){
-            $social = (isset($lead['825']) ? $lead['825'] : (isset($lead['205']) ? $lead['205'] : ''));
-            $makerArray[] = array(
-                'first_name'    => (isset($lead['157.3']) ? $lead['157.3'] : ''),
-                'last_name'     => (isset($lead['157.6']) ? $lead['157.6'] : ''),
-                'bio'           => (isset($lead['261']) ? $lead['261'] : ''),
-                'email'         => $email,
-                'photo'         => (isset($lead['220']) ? $lead['220'] : ''),
-                'website'       => (isset($lead['213']) ? $lead['213'] : ''),
-                'social'        => $social,                                                    
-                'age_range'     => (isset($lead['314']) ? $lead['314'] : ''),
-                'role'          => 'maker5'
-            );               
-        }else{
-            if(isset($lead['157.3']) && $lead['157.3']!=''){
-                echo 'error!! maker 5 name is set but email is not for entry ' .$entry_id.'<br/>';
-            }
-        }
-
-        //Maker 6
-        $email = (isset($lead['164']) ? $lead['164'] :$entry_id.'-maker6@make.co');
-                
-        //if email is set, set maker info
-        if($email!=''){
-            $social = (isset($lead['827']) ? $lead['827'] : (isset($lead['204']) ? $lead['204'] : ''));
-            $makerArray[] = array(
-                'first_name'    => (isset($lead['159.3']) ? $lead['159.3'] : ''),
-                'last_name'     => (isset($lead['159.6']) ? $lead['159.6'] : ''),
-                'bio'           => (isset($lead['262']) ? $lead['262'] : ''),
-                'email'         => $email,
-                'photo'         => (isset($lead['221']) ? $lead['221'] : ''),
-                'website'       => (isset($lead['211']) ? $lead['211'] : ''),
-                'social'        => $social,                                                    
-                'age_range'     => (isset($lead['315']) ? $lead['315'] : ''),
-                'role'          => 'maker6'
-            );               
-        }else{
-            if(isset($lead['159.3']) && $lead['159.3']!=''){
-                echo 'error!! maker 6 name is set but email is not for entry ' .$entry_id.'<br/>';
-            }
-        }        
-
-        //Maker 7
-        $email = (isset($lead['163']) ? $lead['163'] :$entry_id.'-maker7@make.co');
-                
-        //if email is set, set maker info
-        if($email!=''){
-            $social = (isset($lead['826']) ? $lead['826'] : (isset($lead['203']) ? $lead['203'] : ''));
-            $makerArray[] = array(
-                'first_name'    => (isset($lead['154.3']) ? $lead['154.3'] : ''),
-                'last_name'     => (isset($lead['154.6']) ? $lead['154.6'] : ''),
-                'bio'           => (isset($lead['263']) ? $lead['263'] : ''),
-                'email'         => $email,
-                'photo'         => (isset($lead['219']) ? $lead['219'] : ''),
-                'website'       => (isset($lead['212']) ? $lead['212'] : ''),
-                'social'        => $social,                                                    
-                'age_range'     => (isset($lead['316']) ? $lead['316'] : ''),
-                'role'          => 'maker7'
-            );               
-        }else{
-            if(isset($lead['154.3']) && $lead['154.3']!=''){
-                echo 'error!! maker 7 name is set but email is not for entry ' .$entry_id.'<br/>';
-            }
-        }                
-    }   
+        $makerArray = array(array(
+            'first_name' => (isset($entry['96.3']) ? $entry['96.3'] : ''),
+            'last_name'  => (isset($entry['96.6']) ? $entry['96.6'] : ''),
+            'bio'       => (isset($entry['234']) ? $entry['234'] : ''),
+            'email'     => (isset($entry['98']) ? $entry['98'] : ''),
+            'photo'     => $makerphoto,
+            'social'    => isset($entry['821']) ? $entry['821'] : '',
+            'website'   => (isset($entry['209']) ? $entry['209'] : ''),
+            'role'          => 'maker'
+        ));
+    }        
 
     $return = array('maker' => $makerArray, 'entry' => $entryArray);
     return $return;
