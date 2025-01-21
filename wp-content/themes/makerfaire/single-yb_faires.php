@@ -82,7 +82,7 @@ get_header();
 	<section id="faireInfo">
 		<div class="faire-video">
 			<?php
-			if($faire_video && is_valid_video($faire_video)) {
+			if($faire_video && filter_var($faire_video, FILTER_VALIDATE_URL) && is_valid_video($faire_video)) {
 				//global $wp_embed;
 				//echo $wp_embed->run_shortcode('[embed]' . $faire_video . '[/embed]');
 				if(stripos($faire_video,'vimeo.com') !== false) {
@@ -127,11 +127,11 @@ get_header();
 			<?php } ?>						
 			<div class="social-links reversed">
 				<?php foreach ($socialLinks as $link) {
-					if($link) {
+					if($link && filter_var($link, FILTER_VALIDATE_URL)) {
 						echo('<a class="link" aria-label="Social Link" href="' . $link . '"></a>');
 					}
 				} ?>
-				<?php if($faire_link != ''){ ?>
+				<?php if($faire_link != '' && filter_var($faire_link, FILTER_VALIDATE_URL)){ ?>
 					<a class="link fa fa-link" aria-label="Website Link"  href="<?php echo $faire_link; ?>" target="_blank"></a>
 				<?php } ?>				
 			</div>
@@ -192,10 +192,10 @@ get_header();
 						<?php if($producer_org) { ?>
 							<div class="producer-detail"><b>Producer:</b> <?php echo $producer_org; ?></div>
 						<?php } ?>
-						<?php if(!empty($contact)) { ?>
+						<?php if(!empty($contact) && filter_var($contactLink, FILTER_VALIDATE_URL)) { ?>
 							<div class="producer-detail"><b>Contact:</b> <a href="<?php echo $contactLink; ?>" target="_blank"><?php echo $contact; ?></a></div>
 						<?php } ?>
-						<?php if(!empty($faire_link)) { ?>
+						<?php if(!empty($faire_link) && filter_var($faire_link, FILTER_VALIDATE_URL)) { ?>
 							<div class="producer-detail"><b>Website:</b> <a href="<?php echo $faire_link; ?>" target="_blank"><?php echo $faire_link; ?></a></div>
 						<?php } ?>				
 					</div>
@@ -212,8 +212,8 @@ get_header();
 			<div id="highlightGallery">
 				<?php foreach($highlightImages as $image) { 
 					if(isset($image['url'])){
-					$alt = ($image['alt'] != "") ? $image['alt'] : "Maker Faire " . $faire_name . " " . $faire_year . " - " . $image['title']; ?>
-					<div class="gallery-item"><img alt="<?php echo $alt;?>"  src='<?php echo $image['sizes']['medium_large']; ?>' /></div>
+						$alt = ($image['alt'] != "") ? $image['alt'] : "Maker Faire " . $faire_name . " " . $faire_year . " - " . $image['title']; ?>
+						<div class="gallery-item"><img alt="<?php echo $alt;?>"  src='<?php echo $image['sizes']['medium_large']; ?>' /></div>
 					<?php } ?>
 				<?php } ?>
 				<?php if($photo_credit!=''){?>

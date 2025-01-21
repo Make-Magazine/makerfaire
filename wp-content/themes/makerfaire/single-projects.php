@@ -80,14 +80,14 @@ $maker_data = get_field("maker_data");
             <div class="social-links reversed">
                 <?php if (!empty($exhibit_social)) {
                     foreach ($exhibit_social as $social) {
-                        if ($social['social_url']) {
+                        if ($social['social_url'] && filter_var($social['social_url'], FILTER_VALIDATE_URL)) {
                             echo ('<a class="link" href="' . $social['social_url'] . '"></a>');
                         }
                     }
                 }
                 ?>
             </div>
-            <?php if (!empty($exhibit_website)) { ?>
+            <?php if (!empty($exhibit_website) && filter_var($exhibit_website, FILTER_VALIDATE_URL)) { ?>
                 <a class="project-link" href="<?php echo $exhibit_website; ?>" target="_blank"><?php echo $exhibit_website; ?></a>
             <?php } ?>
             <?php if (!empty($exhibit_cats)) { ?>
@@ -116,7 +116,7 @@ $maker_data = get_field("maker_data");
 
     <section id="project-highlights-section">
         <span class="striped-background"></span>
-        <?php if($exhibit_video && is_valid_video($exhibit_video)) { ?>
+        <?php if($exhibit_video && filter_var($exhibit_video, FILTER_VALIDATE_URL) && is_valid_video($exhibit_video)) { ?>
             <div class="project-video">            
                 <?php                 		
                     if(stripos($exhibit_video,'vimeo.com') !== false) {                    
@@ -188,14 +188,14 @@ $maker_data = get_field("maker_data");
                                 <?php
                                 if (!empty($maker['maker_social'])) {
                                     foreach ($maker['maker_social'] as $link) {
-                                        if ($link) {
+                                        if ($link && filter_var($link['maker_social_link'], FILTER_VALIDATE_URL)) {
                                             echo ('<a class="link" href="' . $link['maker_social_link'] . '"></a>');
                                         }
                                     }
                                 }
                                 ?>
                             </div>
-                            <?php if (!empty($maker["maker_website"])) { ?>
+                            <?php if (!empty($maker["maker_website"]) && filter_var($maker["maker_website"], FILTER_VALIDATE_URL)) { ?>
                                 <a class="maker-link" href="<?php echo $maker["maker_website"]; ?>" target="_blank"><?php echo $maker["maker_website"]; ?></a>
                             <?php } ?>
                         </div>

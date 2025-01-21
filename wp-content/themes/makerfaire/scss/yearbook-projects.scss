@@ -68,7 +68,8 @@
 					margin: 15px 0;
 				}
 				.project-categories {
-					margin-top: 15px;
+					padding-top: 15px;
+					clear: both;
 					b { font-weight: 500; }
 					span:last-of-type {
 						display: none;
@@ -207,7 +208,7 @@
 
 .eoy-breadcrumbs {
 	text-align: center;
-	margin: 0px 0px 15px;
+	margin: 15px 0px 15px;
 	z-index: 99;
 	position: relative;
 	font-size: 18px;
