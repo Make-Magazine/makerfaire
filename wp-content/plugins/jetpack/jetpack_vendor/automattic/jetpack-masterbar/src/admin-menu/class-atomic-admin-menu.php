@@ -47,7 +47,7 @@ class Atomic_Admin_Menu extends Admin_Menu {
 		);
 
 		// Add notices to the settings pages when there is a Calypso page available.
-		if ( get_option( 'wpcom_admin_interface' ) === 'wp-admin' ) {
+		if ( $this->use_wp_admin_interface() ) {
 			add_action( 'current_screen', array( $this, 'add_settings_page_notice' ) );
 		}
 	}
@@ -79,7 +79,7 @@ class Atomic_Admin_Menu extends Admin_Menu {
 		$this->remove_gutenberg_menu();
 
 		// We don't need the `My Mailboxes` when the interface is set to wp-admin or the site is a staging site,
-		if ( get_option( 'wpcom_admin_interface' ) !== 'wp-admin' && ! get_option( 'wpcom_is_staging_site' ) ) {
+		if ( ! $this->use_wp_admin_interface() && ! get_option( 'wpcom_is_staging_site' ) ) {
 			$this->add_my_mailboxes_menu();
 		}
 
@@ -322,20 +322,24 @@ class Atomic_Admin_Menu extends Admin_Menu {
 	 */
 	public function add_jetpack_menu() {
 		// This is supposed to be the same as class-admin-menu but with a different position specified for the Jetpack menu.
-		if ( 'wp-admin' === get_option( 'wpcom_admin_interface' ) ) {
+		if ( $this->use_wp_admin_interface() ) {
 			parent::create_jetpack_menu( 2, false );
 		} else {
 			parent::add_jetpack_menu();
 		}
 
+		$scan_position = $this->get_submenu_item_count( 'jetpack' ) - 1;
+
 		global $submenu;
-		$backup_submenu_label = __( 'Backup', 'jetpack-masterbar' );
-		$submenu_labels       = array_column( $submenu['jetpack'], 3 );
-		$backup_position      = array_search( $backup_submenu_label, $submenu_labels, true );
-		$scan_position        = $backup_position !== false ? $backup_position + 1 : $this->get_submenu_item_count( 'jetpack' ) - 1;
+		if ( isset( $submenu['jetpack'] ) ) {
+			$backup_submenu_label = __( 'Backup', 'jetpack-masterbar' );
+			$submenu_labels       = array_column( $submenu['jetpack'], 3 );
+			$backup_position      = array_search( $backup_submenu_label, $submenu_labels, true );
+			$scan_position        = $backup_position !== false ? $backup_position + 1 : $this->get_submenu_item_count( 'jetpack' ) - 1;
+		}
 
 		// @phan-suppress-next-line PhanTypeMismatchArgumentProbablyReal -- Core should ideally document null for no-callback arg. https://core.trac.wordpress.org/ticket/52539.
-		add_submenu_page( 'jetpack', esc_attr__( 'Scan', 'jetpack-masterbar' ), __( 'Scan', 'jetpack-masterbar' ), 'manage_options', 'https://wordpress.com/scan/history/' . $this->domain, null, $scan_position );
+		add_submenu_page( 'jetpack', esc_attr__( 'Scan', 'jetpack-masterbar' ), __( 'Scan', 'jetpack-masterbar' ), 'manage_options', 'https://wordpress.com/scan/' . $this->domain, null, $scan_position );
 
 		/**
 		 * Prevent duplicate menu items that link to Jetpack Backup.
@@ -441,7 +445,7 @@ class Atomic_Admin_Menu extends Admin_Menu {
 
 		// Hide Settings > Performance when the interface is set to wp-admin.
 		// This is due to these settings are mostly also available in Jetpack > Settings, in the Performance tab.
-		if ( get_option( 'wpcom_admin_interface' ) === 'wp-admin' ) {
+		if ( $this->use_wp_admin_interface() ) {
 			$this->hide_submenu_page( 'options-general.php', 'https://wordpress.com/settings/performance/' . $this->domain );
 		}
 	}
@@ -453,7 +457,7 @@ class Atomic_Admin_Menu extends Admin_Menu {
 		parent::add_tools_menu();
 
 		// Link the Tools menu to Available Tools when the interface is set to wp-admin.
-		if ( get_option( 'wpcom_admin_interface' ) === 'wp-admin' ) {
+		if ( $this->use_wp_admin_interface() ) {
 			// @phan-suppress-next-line PhanTypeMismatchArgumentProbablyReal -- Core should ideally document null for no-callback arg. https://core.trac.wordpress.org/ticket/52539.
 			add_submenu_page( 'tools.php', esc_attr__( 'Available Tools', 'jetpack-masterbar' ), __( 'Available Tools', 'jetpack-masterbar' ), 'edit_posts', 'tools.php', null, 0 );
 		}

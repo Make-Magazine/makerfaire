@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by __root__ on 01-October-2024 using Strauss.
+ * Modified by __root__ on 22-November-2024 using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 
@@ -22,9 +22,9 @@ class AjaxRouter {
 	 *
 	 * @since 1.0.11
 	 *
-	 * @var AjaxRouter
+	 * @var AjaxRouter|null;
 	 */
-	private static $_instance;
+	private static $_instance = null;
 
 	/**
 	 * Class constructor.
@@ -81,7 +81,7 @@ class AjaxRouter {
 	 *
 	 * @throws Exception
 	 *
-	 * @return void|mixed Send JSON response if an Ajax request or return the response as is.
+	 * @return void
 	 */
 	public function process_ajax_request() {
 		$request = wp_parse_args(
@@ -103,7 +103,7 @@ class AjaxRouter {
 		$is_valid_nonce = wp_verify_nonce( $nonce, self::WP_AJAX_ACTION );
 
 		if ( ! wp_doing_ajax() || ! $is_valid_nonce ) {
-			wp_die( false, false, [ 'response' => 403 ] );
+			wp_die( '', '', [ 'response' => 403 ] );
 		}
 
 		/**
@@ -120,7 +120,7 @@ class AjaxRouter {
 		$route_callback = Arr::get( $ajax_route_to_class_method_map, $route );
 
 		if ( ! CoreHelpers::is_callable_function( $route_callback ) && ! CoreHelpers::is_callable_class_method( $route_callback ) ) {
-			wp_die( false, false, [ 'response' => 404 ] );
+			wp_die( '', '', [ 'response' => 404 ] );
 		}
 
 		try {
@@ -170,6 +170,6 @@ class AjaxRouter {
 		 */
 		do_action( 'gk/foundation/ajax/after', $router, $route, $payload, $result );
 
-		return CoreHelpers::process_return( $result );
+		CoreHelpers::process_return( $result );
 	}
 }

@@ -2,11 +2,13 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by __root__ on 01-October-2024 using Strauss.
+ * Modified by __root__ on 22-November-2024 using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 
 namespace GravityKit\GravityEdit\Foundation\Helpers;
+
+use wpdb;
 
 class WP {
 	/**
@@ -29,6 +31,9 @@ class WP {
 	 * @return mixed|false Transient value or false if not set.
 	 */
 	public static function get_transient( string $transient ) {
+		/**
+		 * @var wpdb $wpdb
+		 */
 		global $wpdb;
 
 		if ( ! is_object( $wpdb ) ) {
@@ -44,6 +49,7 @@ class WP {
 		if ( isset( self::$transients[ self::get_transient_key_for_cache( $transient ) ] ) ) {
 			$data = self::$transients[ self::get_transient_key_for_cache( $transient ) ];
 		} else {
+			/** @phpstan-ignore-next-line */
 			$row = $wpdb->get_row( $wpdb->prepare( "SELECT option_value FROM `$wpdb->options` WHERE option_name = %s LIMIT 1", $transient ) );
 
 			if ( ! is_object( $row ) ) {
@@ -73,6 +79,9 @@ class WP {
 	 * @return bool True if the value was set, false otherwise.
 	 */
 	public static function set_transient( string $transient, $value, int $expiration = 0 ): bool {
+		/**
+		 * @var wpdb $wpdb
+		 */
 		global $wpdb;
 
 		if ( ! is_object( $wpdb ) ) {
@@ -90,6 +99,7 @@ class WP {
 		$data = self::format_transient_data( $value, $expiration );
 
 		// Insert or update the option.
+		/** @phpstan-ignore-next-line */
 		$result = $wpdb->query( $wpdb->prepare( "INSERT INTO `$wpdb->options` (`option_name`, `option_value`, `autoload`) VALUES (%s, %s, %s) ON DUPLICATE KEY UPDATE `option_name` = VALUES(`option_name`), `option_value` = VALUES(`option_value`), `autoload` = VALUES(`autoload`)", $transient, maybe_serialize( $data ), 'no' ) );
 
 		if ( $result ) {
@@ -97,9 +107,11 @@ class WP {
 			do_action( 'setted_transient', $transient, $data['value'], $data['expiration'] );
 
 			self::$transients[ self::get_transient_key_for_cache( $transient ) ] = $data;
+
+			return true;
 		}
 
-		return $result;
+		return false;
 	}
 
 	/**
@@ -138,6 +150,9 @@ class WP {
 	 * @return mixed|false Transient value or false if not set.
 	 */
 	public static function get_site_transient( string $transient ) {
+		/**
+		 * @var wpdb $wpdb
+		 */
 		global $wpdb;
 
 		if ( ! is_object( $wpdb ) ) {
@@ -159,6 +174,7 @@ class WP {
 		if ( isset( self::$transients[ self::get_transient_key_for_cache( $transient ) ] ) ) {
 			$data = self::$transients[ self::get_transient_key_for_cache( $transient ) ];
 		} else {
+			/** @phpstan-ignore-next-line */
 			$row = $wpdb->get_row( $wpdb->prepare( "SELECT meta_value FROM `$wpdb->sitemeta` WHERE meta_key = %s AND site_id = %d", $transient, $network_id ) );
 
 			if ( ! is_object( $row ) ) {
@@ -188,6 +204,9 @@ class WP {
 	 * @return bool True if the value was set, false otherwise.
 	 */
 	public static function set_site_transient( string $transient, $value, int $expiration = 0 ): bool {
+		/**
+		 * @var wpdb $wpdb
+		 */
 		global $wpdb;
 
 		if ( ! is_object( $wpdb ) ) {
@@ -211,17 +230,20 @@ class WP {
 		$network_id = get_current_network_id();
 
 		$transient_exists = $wpdb->get_var(
+			/** @phpstan-ignore-next-line */
 			$wpdb->prepare( "SELECT COUNT(*) FROM `$wpdb->sitemeta` WHERE `site_id` = %s AND `meta_key` = %s", $network_id, $transient )
 		);
 
 		// There is no unique constraint on the `sitemeta` table (unlike `options` table), so just in case let's delete existing transients.
 		if ( $transient_exists > 0 ) {
 			$wpdb->query(
+				/** @phpstan-ignore-next-line */
 				$wpdb->prepare( "DELETE FROM `$wpdb->sitemeta` WHERE `site_id` = %s AND `meta_key` = %s", $network_id, $transient )
 			);
 		}
 
 		$result = $wpdb->query(
+			/** @phpstan-ignore-next-line */
 			$wpdb->prepare( "INSERT INTO `$wpdb->sitemeta` (`site_id`, `meta_key`, `meta_value`) VALUES (%s, %s, %s)", $network_id, $transient, maybe_serialize( $data ) )
 		);
 
@@ -230,9 +252,11 @@ class WP {
 			do_action( 'setted_site_transient', $transient, $value, $expiration );
 
 			self::$transients[ self::get_transient_key_for_cache( $transient ) ] = $data;
+
+			return true;
 		}
 
-		return $result;
+		return false;
 	}
 
 	/**
@@ -245,6 +269,9 @@ class WP {
 	 * @return bool True if the transient was deleted, false otherwise.
 	 */
 	public static function delete_site_transient( string $transient ): bool {
+		/**
+		 * @var wpdb $wpdb
+		 */
 		global $wpdb;
 
 		if ( ! is_multisite() ) {
@@ -258,6 +285,7 @@ class WP {
 		$network_id = get_current_network_id();
 
 		$result = $wpdb->query(
+			/** @phpstan-ignore-next-line */
 			$wpdb->prepare( "DELETE FROM `$wpdb->sitemeta` WHERE `site_id` = %s AND `meta_key` = %s", $network_id, $transient )
 		);
 
@@ -265,9 +293,11 @@ class WP {
 			do_action( 'deleted_site_transient', $transient );
 
 			unset( self::$transients[ self::get_transient_key_for_cache( $transient ) ] );
+
+			return true;
 		}
 
-		return $result;
+		return false;
 	}
 
 	/**

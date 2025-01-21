@@ -55,8 +55,14 @@ class GPPA_Compatibility_GravityFlow {
 					$lmt->populate_lmt_whitelist( $target_form );
 					$field->content = $lmt->replace_live_merge_tags_static( $field->content, $target_form, $new_entry );
 				} elseif ( gp_populate_anything()->is_field_dynamically_populated( $field ) || $lmt->has_live_merge_tag( $field->defaultValue ) ) {
-					$hydrated_field            = gp_populate_anything()->populate_field( $field, $target_form, $new_entry );
-					$new_entry[ $field['id'] ] = $hydrated_field['field_value'];
+					$hydrated_field = gp_populate_anything()->populate_field( $field, $target_form, $new_entry );
+					if ( $field->type == 'time' ) {
+						// Time field's value should be stored in the string format- hh:mm am/pm.
+						$value                   = array_values( $hydrated_field['field_value'] );
+						$new_entry[ $field->id ] = $field->get_value_save_entry( $value, $form, 'input_' . $field->id, $entry['id'], $entry );
+					} else {
+						$new_entry[ $field['id'] ] = $hydrated_field['field_value'];
+					}
 				}
 			}
 		}

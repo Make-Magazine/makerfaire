@@ -1,6 +1,14 @@
 
 # Changelog
 
+## 1.3.16 | December 4, 2024
+
+- Added compatibility with ["None of the Above” Checkbox snippet](https://gravitywiz.com/snippet-library/gw-none-of-the-above-checkbox/).
+
+## 1.3.15 | November 18, 2024
+
+- Updated "Limit number of checked checkboxes" setting to not show if the current field is a Multi Choice or Image Choice field. These fields have built-in limit handling.
+
 ## 1.3.14 | August 27, 2024
 
 - Fixed issue where validation could be bypassed if submitting from the last page of a form that contains a Stripe Card field.

@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by __root__ on 01-October-2024 using Strauss.
+ * Modified by __root__ on 22-November-2024 using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 
@@ -23,9 +23,9 @@ class Framework {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @var Framework
+	 * @var Framework|null;
 	 */
-	private static $_instance;
+	private static $_instance = null;
 
 	/**
 	 * Logger class instance.
@@ -160,7 +160,7 @@ class Framework {
 		 *
 		 * @since  1.0.0
 		 *
-		 * @param $this
+		 * @param Framework $instance
 		 */
 		do_action( 'gk/foundation/translations/initialized', $this );
 	}
@@ -386,7 +386,7 @@ JS;
 
 		$plugin_data = get_plugin_data( $plugin_file );
 
-		if ( ! isset( $plugin_data['TextDomain'] ) || $this->is_en_locale() || ! $this->can_install_languages() ) {
+		if ( $this->is_en_locale() || ! $this->can_install_languages() ) {
 			return;
 		}
 

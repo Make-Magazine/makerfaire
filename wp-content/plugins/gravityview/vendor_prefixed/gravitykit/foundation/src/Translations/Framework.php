@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by gravityview on 26-November-2024 using {@see https://github.com/BrianHenryIE/strauss}.
+ * Modified by gravityview on 10-January-2025 using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\GravityView\Foundation\Translations;
@@ -114,7 +114,7 @@ class Framework {
 					// Minimal to no performance impact if the 2 conditions are not met.
 					$this->install_and_load_translations( $plugin_data['TextDomain'], get_locale() );
 				} else {
-					// If translations can't be installed due to permisisons but were previously installed,
+					// If translations can't be installed due to permissions but were previously installed,
 					// remap the location of the .mo file as it is stored in a folder suffixed with the blog ID.
 					add_filter(
                         'load_textdomain_mofile',
@@ -142,6 +142,8 @@ class Framework {
                         10,
                         2
                     );
+
+					$this->load_backend_translations( $plugin_data['TextDomain'], get_locale() );
 				}
 			}
 		}

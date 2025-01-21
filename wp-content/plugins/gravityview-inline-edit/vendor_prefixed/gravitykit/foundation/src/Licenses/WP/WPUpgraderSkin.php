@@ -2,12 +2,13 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by __root__ on 01-October-2024 using Strauss.
+ * Modified by __root__ on 22-November-2024 using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 
 namespace GravityKit\GravityEdit\Foundation\Licenses\WP;
 
+use WP_Error;
 use WP_Upgrader_Skin;
 use Exception;
 
@@ -70,11 +71,11 @@ class WPUpgraderSkin extends WP_Upgrader_Skin {
 	 * @return void
 	 */
 	public function error( $errors ) {
-		$output = $errors;
-
-		if ( is_wp_error( $errors ) && $errors->has_errors() ) {
+		if ( is_wp_error( $errors ) ) {
 			// One error is enough to get a sense of why the installation failed.
-			$output = $errors->get_error_messages()[0];
+			$output = $errors->get_error_messages()[0] ?? esc_html__( 'Unknown WordPress error', 'gk-gravityedit' );
+		} else {
+			$output = $errors;
 		}
 
 		throw new Exception( $output );

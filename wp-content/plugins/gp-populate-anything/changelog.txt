@@ -1,5 +1,38 @@
 # Changelog
 
+## 2.1.19 | January 15, 2025
+
+- Fixed issue with form container detection that could cause Populate Anything to not reload fields inside Gravity Forms widgets in GravityView.
+- Fixed issue where conditional logic fields in GP Email Users did not use a text input for fields with dynamically populated choices.
+- Fixed a compatibility issue with Update Posts Snippet.
+
+## 2.1.18 | January 8, 2025
+
+- Fixed validation issues in Conversational Forms that use random choice ordering.
+- Added new [`gppa_query_order_by_clauses`](https://gravitywiz.com/documentation/gppa_query_order_by_clauses/) PHP filter hook.
+- Improved compatibility with new Image Choice and Multi Choice field types when used as Live Merge Tag values.
+- Updated cache clearing in `GP_Populate_Anything::populate_nested_form` to be more specific rather than clearing the runtime cache for all forms on a page.
+
+## 2.1.17 | December 20, 2024
+
+- Fixed issue with filters having undefined operators.
+- Added new [`gppa_live_merge_tag_entry_values`](https://gravitywiz.com/documentation/gppa_live_merge_tag_entry_values/) PHP filter hook.
+
+## 2.1.16 | December 18, 2024
+
+- Added `gppa_filter_group_show_value_select` JS filter to allow optionally hiding the "value" select in filter groups.
+- Fixed issue where selecting properties in object type fitler groups could set invalid operators in some cases.
+
+## 2.1.15 | November 19, 2024
+
+- Added support for the Multiple Choice field added in Gravity Forms 2.9.
+- Added support for populating images dynamically in the Image Choice field added in Gravity Forms 2.9.
+- Fixed Live Merge Tags not populating into HTML fields on multi-page forms when resuming with a Save & Continue token.
+
+## 2.1.14 | November 7, 2024
+
+- Fixed issue with Time field values not populating correctly in Gravity Flow Form Submission steps.
+
 ## 2.1.13 | October 16, 2024
 
 - Fixed issue where filter values from fields that are empty strings could be converted to `null` on object types that do not support `null` as a special value.

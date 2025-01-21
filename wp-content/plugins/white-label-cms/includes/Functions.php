@@ -109,7 +109,7 @@ if (!function_exists('wlcms_add_js')) {
 if (!function_exists('is_wlcms_super_admin')) {
     function is_wlcms_super_admin()
     {
-        if (!current_user_can('install_plugins')) return false;
+        if (!current_user_can('manage_options')) return false;
 
         $enable_wlcms_admin = (bool) wlcms_field_setting('enable_wlcms_admin');
         if (!is_wlcms_admin() && $enable_wlcms_admin) return false;
@@ -342,7 +342,7 @@ if (!function_exists('wlcms_get_pages_by_ids')) {
 
 
 if (!function_exists('wlcms_search_pages')) {
-    function wlcms_search_pages($q)
+    function wlcms_search_pages($q = '')
     {
         $query = new \WP_Query([
             's' => wlcms_sanitize_text_field($q),

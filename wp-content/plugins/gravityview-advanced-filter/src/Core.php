@@ -10,6 +10,7 @@ use GravityKit\AdvancedFilter\QueryFilters\QueryFilters;
 use GravityView_Extension;
 use GravityView_Render_Settings;
 use GV\Core as GravityViewCore;
+use GV\Multi_Entry;
 use GV\Template_Context;
 use GV\Utils;
 use GV\View;
@@ -515,7 +516,18 @@ HTML;
 			return $field_output;
 		}
 
+		/**
+		 * Advanced filters currently only supports conditional logic on the main form.
+		 * However, a `MultiEntryWithContext` for example will return the entry from its own form.
+		 * To combat this, we temporarily force the source to be the main form.
+		 *
+		 * @since 4.0.4
+		 */
+		$_source = $context->source;
+		$context->source = $context->view->form;
 		$entry = $context->entry->as_entry();
+		$context->source = $_source;
+
 		if ( $query_filters->meets_filters( $entry ) ) {
 			return $field_output;
 		}

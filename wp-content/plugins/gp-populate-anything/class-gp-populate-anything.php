@@ -87,27 +87,7 @@ class GP_Populate_Anything extends GP_Plugin {
 		add_filter( 'gform_pre_render', array( $this, 'field_value_object_js' ) );
 		add_filter( 'gform_pre_render', array( $this, 'populate_form' ), 8, 3 );
 
-		// Remove 'object' from all field choices if it exists
-		// @TODO EXTRACT INTO CALLBACK
-		add_filter( 'gform_pre_render', function ( $form ) {
-			if ( empty( $form['fields'] ) || ! is_array( $form['fields'] ) ) {
-				return $form;
-			}
-
-			foreach ( $form['fields'] as &$field ) {
-				if ( empty( $field->choices ) || ! is_array( $field->choices ) ) {
-					continue;
-				}
-
-				foreach ( $field->choices as &$choice ) {
-					if ( isset( $choice['object'] ) ) {
-						unset( $choice['object'] );
-					}
-				}
-			}
-
-			return $form;
-		}, PHP_INT_MAX );
+		add_filter( 'gform_pre_process', array( $this, 'remove_choice_objects' ), PHP_INT_MAX );
 
 		add_filter( 'gform_pre_validation', array( $this, 'override_state_validation_for_populated_fields' ) );
 
@@ -273,8 +253,12 @@ class GP_Populate_Anything extends GP_Plugin {
 	public function populate_nested_form( $nested_form ) {
 		$nested_form = gp_populate_anything()->populate_form( $nested_form );
 
-		// Clear the form cache to prevent issues with prepopulation.
-		GFFormsModel::flush_current_forms();
+		// Clear the form cache to prevent issues with prepopulation. Available since GF 2.6, but adding check to be safe.
+		if ( method_exists( 'GFFormsModel', 'flush_current_form' ) && rgar( $nested_form, 'id' ) ) {
+			// GFFormsModel::get_form_cache_key is in 2.7+.
+			$cache_key = get_current_blog_id() . '_' . $nested_form['id'];
+			GFFormsModel::flush_current_form( $cache_key );
+		}
 
 		return $nested_form;
 	}
@@ -1802,6 +1786,41 @@ class GP_Populate_Anything extends GP_Plugin {
 	}
 
 	/**
+	 * @param $field
+	 *
+	 * check if field has persistent choices. Gravity Forms 2.9's method isn't accessible if we are on older versions.
+	 *
+	 * @return bool
+	 */
+	public function has_persistent_choices( $field ) {
+		return in_array( $field->type, array( 'multi_choice', 'image_choice' ) );
+	}
+
+	/**
+	 * Generates a hash for choices based on their values.
+	 *
+	 * GF 2.9's new Multi Choice and Image Choice fields utilize a unique key for each choice. Since GPPA choices are
+	 * dynamic, we need a way to create an idempotent key for each choice based on the value.
+	 *
+	 * Similar to Gravity Forms 2.9's JS method `GenerateUniqueFieldKey`
+	 *
+	 * @see GP_Populate_Anything::has_persistent_choices()
+	 *
+	 * @param $value mixed
+	 *
+	 * @return string
+	 *
+	 * @since 2.1.18
+	 */
+	private function hash_value_for_choice_key( $value ) {
+		if ( ! is_scalar( $value ) ) {
+			$value = serialize( $value );
+		}
+
+		return substr( md5( $value ), 0, 17 );
+	}
+
+	/**
 	 * Gets the choices for a dynamically populated field. Also used for GP Advanced Select AJAX results.
 	 *
 	 * @param GF_Field $field Current field to populate choices for.
@@ -1839,6 +1858,7 @@ class GP_Populate_Anything extends GP_Plugin {
 					// Unchecked checkboxes need to have a non-empty value otherwise they will automatically be checked by GF.
 					'value'           => apply_filters( 'gppa_missing_filter_value', $field->get_input_type() === 'checkbox', $field ),
 					'text'            => apply_filters( 'gppa_missing_filter_text', '&ndash; ' . esc_html__( 'Fill Out Other Fields', 'gp-populate-anything' ) . ' &ndash;', $field ),
+					'key'             => $this->hash_value_for_choice_key( 'missing_filter' ),
 					/*
 					 * We only want our instructive text to be selected for Drop Downs. This bit below is necessary because
 					 * Product Drop Downs do not have an empty value so the first option is not selected automatically.
@@ -1869,7 +1889,7 @@ class GP_Populate_Anything extends GP_Plugin {
 		} else {
 
 			$choices = array();
-
+			$inputs  = array();
 			foreach ( $objects as $object_index => $object ) {
 				$value = $this->process_template( $field, 'value', $object, 'choices', $objects );
 				$text  = $this->process_template( $field, 'label', $object, 'choices', $objects );
@@ -1883,8 +1903,26 @@ class GP_Populate_Anything extends GP_Plugin {
 					'text'  => $text,
 				);
 
+				$choice_key = $this->hash_value_for_choice_key( $value );
+
+				if ( $this->has_persistent_choices( $field ) ) {
+					$choice['key'] = $choice_key;
+				}
+
 				if ( rgar( $templates, 'price' ) ) {
 					$choice['price'] = $this->process_template( $field, 'price', $object, 'choices', $objects );
+				}
+
+				if ( rgar( $templates, 'image' ) ) {
+					$image_url = $this->process_template( $field, 'image', $object, 'choices', $objects );
+
+					if ( $image_url ) {
+						$attachment_id = attachment_url_to_postid( $image_url );
+
+						if ( $attachment_id ) {
+							$choice['attachment_id'] = $attachment_id;
+						}
+					}
 				}
 
 				if ( $include_object ) {
@@ -1902,6 +1940,17 @@ class GP_Populate_Anything extends GP_Plugin {
 				 * @param array     $objects An array of objects being populated as choices into the field.
 				 */
 				$choices[] = gf_apply_filters( array( 'gppa_input_choice', $field->formId, $field->id ), $choice, $field, $object, $objects );
+
+				if ( $this->has_persistent_choices( $field ) ) {
+					$input    = array(
+						'label' => $text,
+						'name'  => $text,
+						'key'   => $choice_key,
+						'id'    => $field['id'] . '.' . ( $object_index + 1 ),
+					);
+
+					$inputs[] = $input;
+				}
 			}
 		}
 
@@ -1917,6 +1966,17 @@ class GP_Populate_Anything extends GP_Plugin {
 		$choices = gf_apply_filters( array( 'gppa_input_choices', $field->formId, $field->id ), $choices, $field, $objects );
 
 		$this->_field_choices_cache[ $cache_key ] = $choices;
+
+		if ( $this->has_persistent_choices( $field ) ) {
+			$form = GFAPI::get_form( $field->formId );
+			foreach ( $form['fields'] as &$f_field ) {
+				if ( $field['id'] == $f_field['id'] && isset( $inputs ) ) {
+					$f_field->inputs = $inputs;
+				}
+			}
+
+			GFAPI::update_form( $form );
+		}
 
 		return $choices;
 
@@ -2806,7 +2866,7 @@ class GP_Populate_Anything extends GP_Plugin {
 
 			$field->gppaDisable = ! empty( $field->choices[0]['gppaErrorChoice'] );
 
-			if ( $field->get_input_type() == 'checkbox' ) {
+			if ( $field->get_input_type() == 'checkbox' && ! $this->has_persistent_choices( $field ) ) {
 				$inputs = array();
 				$index  = 1;
 
@@ -2885,7 +2945,7 @@ class GP_Populate_Anything extends GP_Plugin {
 	 */
 	public function populate_field_value( $field, $field_values, $form, $entry, $force_use_field_value ) {
 		if (
-			$field->inputs
+			$field->inputs && $field->inputType != 'radio'
 			&& ! in_array( $field->type, self::get_interpreted_multi_input_field_types(), true )
 			// Treat email fields with confirmation as interpreted multi input for Save & Continue
 			&& ! ( $field->type === 'email' && rgar( $field, 'emailConfirmEnabled' ) && $force_use_field_value )
@@ -3045,6 +3105,20 @@ class GP_Populate_Anything extends GP_Plugin {
 			foreach ( $form['fields'] as $field ) {
 				$field_value = null;
 
+				// GF 2.9 and Live Merge Tags on form load issue: For Radio Buttons, $field_values stores values by field ID (e.g., [1] => "First Choice").
+				// For Multi-Choice Radio Buttons, values are indexed with ".x" (e.g., ["2.2"] for choice ID 2 of field ID 2), not just by field ID ([2]).
+				// This inconsistency causes issues during Live Merge Tag processing.
+				if ( $field->inputType == 'radio' ) {
+					$field_id = (string) $field->id;
+					foreach ( $field_values as $key => $value ) {
+						if ( strpos( $key, $field_id . '.' ) === 0 ) {
+							$field_values[ $field_id ] = $value;
+							unset( $field_values[ $key ] );
+							break;
+						}
+					}
+				}
+
 				/**
 				 * If value is directly posted, use it.
 				 */
@@ -3111,7 +3185,7 @@ class GP_Populate_Anything extends GP_Plugin {
 		foreach ( $form['fields'] as $field ) {
 
 			$input_type = $field->get_input_type();
-			$inputs     = $field->get_entry_inputs();
+			$inputs     = $this->has_persistent_choices( $field ) ? $field->inputs : $field->get_entry_inputs();
 
 			/**
 			 * @note GP Nested Forms sets allowsPrepopulate to true on all fields in the child form.
@@ -3904,6 +3978,29 @@ class GP_Populate_Anything extends GP_Plugin {
 	}
 
 	/**
+	 * Remove object from choice for performance and security reasons.
+	 */
+	public function remove_choice_objects( $form ) {
+		if ( empty( $form['fields'] ) || ! is_array( $form['fields'] ) ) {
+			return $form;
+		}
+
+		foreach ( $form['fields'] as &$field ) {
+			if ( empty( $field->choices ) || ! is_array( $field->choices ) ) {
+				continue;
+			}
+
+			foreach ( $field->choices as &$choice ) {
+				if ( isset( $choice['object'] ) ) {
+					unset( $choice['object'] );
+				}
+			}
+		}
+
+		return $form;
+	}
+
+	/**
 	 * Conditionally run populate_form() for admin pre-render.
 	 */
 	public function populate_form_admin_pre_render( $form ) {
@@ -4615,6 +4712,11 @@ class GP_Populate_Anything extends GP_Plugin {
 				$field->validateState = false;
 			}
 
+			// Bypass state validation if the ordering is set to random. This is mostly needed for Conversational Forms.
+			if ( rgars( $field, 'gppa-choices-ordering-method' ) === 'rand' ) {
+				$field->validateState = false;
+			}
+
 			// Check for LMTs in choice based fields and skip validation as well.
 			// State validation has been expanded to more choice based fields in GF 2.5.10.1.
 			// Setting allowsRepopulate to `true` should still work, but GF recommends `validateState`.
@@ -4648,7 +4750,7 @@ class GP_Populate_Anything extends GP_Plugin {
 	 */
 	public function conditional_logic_use_text_field() {
 		// @phpstan-ignore-next-line
-		if ( ! is_callable( array( 'GFForms', 'get_page' ) ) || ! GFForms::get_page() ) {
+		if ( ( ! is_callable( array( 'GFForms', 'get_page' ) ) || ! GFForms::get_page() ) && rgget( 'page' ) !== 'gp-email-users' ) {
 			return;
 		}
 		?>

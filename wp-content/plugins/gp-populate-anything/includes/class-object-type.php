@@ -11,6 +11,27 @@ abstract class GPPA_Object_Type {
 	 */
 	public $supports_null_filter_value = false;
 
+	/**
+	 * @param array{
+	 *      populate: string,
+	 *      filter_groups: array,
+	 *      ordering: array{
+	 *          orderby: string,
+	 *          order: "asc" | "desc"
+	 *      },
+	 *      templates: array{
+	 *          value: string,
+	 *          label: string
+	 *      },
+	 *      primary_property_value: string,
+	 *      field_values: array,
+	 *      field: array,
+	 *      unique: bool,
+	 *      page: array,
+	 *      limit: int
+	 * } $args
+	 * @return array
+	 */
 	abstract public function query( $args );
 
 	abstract public function get_label();
@@ -709,7 +730,21 @@ abstract class GPPA_Object_Type {
 				$order    = '';
 			}
 
-			$query[] = "ORDER BY {$order_by} {$order}";
+			$order_clauses = array( "{$order_by} {$order}" );
+
+			/**
+			 * Filter the order clauses assigned to a query.
+			 *
+			 * @param array     $order_clauses Order Clauses.
+			 * @param array     $query_args    Query arguments.
+			 * @param \GF_Field $field         Current field.
+			 *
+			 * @since 2.1.18
+			 */
+			$order_clauses = apply_filters( 'gppa_query_order_by_clauses', $order_clauses, $query_args, $field );
+
+			// Add the order clauses to the query.
+			$query[] = 'ORDER BY ' . implode( ', ', $order_clauses );
 		}
 
 		$offset = isset( $query_args['offset'] ) ? $query_args['offset'] : null;

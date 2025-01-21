@@ -1,6 +1,10 @@
 
 # Changelog
 
+## 1.3.21 | December 10, 2024
+
+- Fixed issue with the Merge Tag selector for the HTML field content setting not showing form fields.
+
 ## 1.3.20 | October 16, 2024
 
 - Fixed an issue where Number fields with calculations were not showing correct results in some cases.

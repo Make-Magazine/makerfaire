@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by gravityview on 26-November-2024 using {@see https://github.com/BrianHenryIE/strauss}.
+ * Modified by gravityview on 10-January-2025 using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\GravityView\Foundation;
@@ -41,7 +41,7 @@ use GravityKit\GravityView\Foundation\WP\RESTController;
  * @method static PluginActivationHandler plugin_activation_handler()
  */
 class Core {
-	const VERSION = '1.2.21';
+	const VERSION = '1.2.22';
 
 	const ID = 'gk_foundation';
 

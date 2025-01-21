@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by __root__ on 01-October-2024 using Strauss.
+ * Modified by __root__ on 22-November-2024 using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 
@@ -10,6 +10,7 @@ namespace GravityKit\GravityEdit\Foundation\Licenses\WP;
 
 use GravityKit\GravityEdit\Foundation\Licenses\Framework;
 use GravityKit\GravityEdit\Foundation\Licenses\ProductManager;
+use GravityKit\GravityEdit\Foundation\WP\AdminMenu;
 use WP_Error;
 
 /**
@@ -23,9 +24,9 @@ class UpdatesPage {
 	 *
 	 * @since 1.2.0
 	 *
-	 * @var UpdatesPage
+	 * @var UpdatesPage|null;
 	 */
-	private static $_instance;
+	private static $_instance = null;
 
 	/**
 	 * Returns class instance.
@@ -56,7 +57,7 @@ class UpdatesPage {
 			return;
 		}
 
-		add_filter( 'init', [ $this, 'modify_display_of_updates_table' ] );
+		add_action( 'init', [ $this, 'modify_display_of_updates_table' ] );
 		add_filter( 'upgrader_pre_install', [ $this, 'prevent_update' ], 10, 2 );
 
 		$initialized = true;
@@ -74,10 +75,14 @@ class UpdatesPage {
 			return;
 		}
 
+		if ( ! AdminMenu::should_initialize() ) {
+			return;
+		}
+
 		$products = array_filter(
 			ProductManager::get_instance()->get_products_data( [ 'key_by' => 'path' ] ),
 			function ( $product ) {
-				return ! $product['third_party'] && $product['update_available'] && ( ! $product['checked_dependencies'][ $product['server_version'] ]['status'] ?? false );
+				return ! $product['third_party'] && $product['update_available'] && ( ! $product['checked_dependencies'][ $product['server_version'] ]['status'] );
 			}
 		);
 
@@ -154,6 +159,10 @@ JS;
 	 */
 	public function prevent_update( $response, $args ) {
 		if ( is_wp_error( $response ) || ! isset( $args['plugin'] ) ) {
+			return $response;
+		}
+
+		if ( ! AdminMenu::should_initialize() ) {
 			return $response;
 		}
 

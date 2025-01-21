@@ -1,1 +1,0 @@
-// NB: Deprecated as of 8.0.0 / Gutenberg

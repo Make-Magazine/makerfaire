@@ -1,7 +1,7 @@
 === GravityEdit ===
 Tags: gravity forms, inline edit, gravityview
 Requires at least: 5.1
-Tested up to: 6.6.2
+Tested up to: 6.7
 Contributors: The GravityKit Team
 License: GPL 2
 Requires PHP: 7.2.0
@@ -19,6 +19,16 @@ Inline Editing is a powerful way to quickly make changes to a form entry without
 3. Set your license key
 
 == Changelog ==
+
+= 2.1.2 on November 21, 2024 =
+
+This hotfix update addresses a non-critical PHP notice in WordPress 6.7 and newer.
+
+#### 🐛 Fixed
+* PHP notice in WordPress 6.7 caused by initializing product translations too early.
+
+#### 🔄 Updated
+* [Foundation](https://www.gravitykit.com/foundation/) to version 1.2.21.
 
 = 2.1.1 on October 1, 2024 =
 

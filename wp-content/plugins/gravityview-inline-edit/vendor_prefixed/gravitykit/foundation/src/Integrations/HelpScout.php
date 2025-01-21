@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by __root__ on 01-October-2024 using Strauss.
+ * Modified by __root__ on 22-November-2024 using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 
@@ -24,9 +24,9 @@ class HelpScout {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @var TrustedLogin
+	 * @var HelpScout|null
 	 */
-	private static $_instance;
+	private static $_instance = null;
 
 	/**
 	 * Class constructor.
@@ -44,7 +44,7 @@ class HelpScout {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @return TrustedLogin
+	 * @return HelpScout
 	 */
 	public static function get_instance() {
 		if ( ! self::$_instance ) {

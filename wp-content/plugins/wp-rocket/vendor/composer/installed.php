@@ -65,9 +65,9 @@
             'dev_requirement' => false,
         ),
         'wp-media/plugin-family' => array(
-            'pretty_version' => 'v1.0.2',
-            'version' => '1.0.2.0',
-            'reference' => '1b827eed34842de10fa3c94fec3a0f32b14be8bd',
+            'pretty_version' => 'v1.0.4',
+            'version' => '1.0.4.0',
+            'reference' => '83714bdfb7d98d4fe74781844c325be909db13a4',
             'type' => 'library',
             'install_path' => __DIR__ . '/../wp-media/plugin-family',
             'aliases' => array(),

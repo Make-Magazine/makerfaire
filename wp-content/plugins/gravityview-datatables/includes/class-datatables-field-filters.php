@@ -237,7 +237,7 @@ class GV_Extension_DataTables_Field_Filters extends GV_DataTables_Extension {
 		) {
 			$is_server_side = 'serverSide' === Utils::get( $dt_settings, 'processing_mode', false );
 
-			$atts['type']    = Utils::get( $dt_settings, 'date_filter_type', self::defaults( [] )['date_filter_type'] );
+			$atts['field_type'] = Utils::get( $dt_settings, 'date_filter_type', self::defaults( [] )['date_filter_type'] );
 
 			if ( $is_server_side ) {
 				$atts['type'] = 'date'; // Server-side only supports single date input, so override the UI setting in case client-side rendering was enabled before and date range was selected.

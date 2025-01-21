@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by __root__ on 01-October-2024 using Strauss.
+ * Modified by __root__ on 22-November-2024 using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 
@@ -150,13 +150,13 @@ class Products extends AbstractCommand {
 				$found = true;
 
 				if ( $product['installed'] ) {
-					WP_CLI::warning( "{$product['name']} is already installed.\n", false );
+					WP_CLI::warning( "{$product['name']} is already installed.\n" );
 
 					continue;
 				}
 
 				if ( ! $product['free'] && empty( $product['licenses'] ) ) {
-					WP_CLI::warning( "{$product['name']} is not licensed.\n", false );
+					WP_CLI::warning( "{$product['name']} is not licensed.\n" );
 
 					continue;
 				}
@@ -164,6 +164,7 @@ class Products extends AbstractCommand {
 				if ( ! isset( $assoc_args['skip-dependency-check'] ) && ( ! empty( $product['checked_dependencies']['unmet']['system'] ) || ! empty( $product['checked_dependencies']['unmet']['plugin'] ) ) ) {
 					WP_CLI::error( "{$product['name']} has unmet dependencies. Please resolve them first.\n", false );
 
+					// @phpstan-ignore-next-line
 					$this->show_unmet_dependencies( $product['checked_dependencies']['unmet'] );
 
 					$failed_products[] = $product['text_domain'];
@@ -184,19 +185,23 @@ class Products extends AbstractCommand {
 				} catch ( Exception $e ) {
 					WP_CLI::error( $e->getMessage() . "\n", false );
 
+					// @phpstan-ignore-next-line
 					$failed_products[] = $product['text_domain'];
 
 					continue;
 				}
 			}
 
+			// @phpstan-ignore-next-line
 			if ( ! $found && ! empty( $failed_products ) ) {
 				WP_CLI::error( "{$text_domain} not found.\n", false );
 
+				// @phpstan-ignore-next-line
 				$failed_products[] = $text_domain;
 			}
 		}
 
+		// @phpstan-ignore-next-line
 		if ( ! empty( $failed_products ) ) {
 			WP_CLI::error( sprintf( 'Failed to install %s.', implode( ' ', $failed_products ) ) );
 		}
@@ -252,6 +257,8 @@ class Products extends AbstractCommand {
 
 			foreach ( $products as $product ) {
 				if ( ! $product['update_available'] ) {
+					WP_CLI::warning( "{$product['name']} is up to date.\n" );
+
 					continue;
 				}
 
@@ -264,32 +271,27 @@ class Products extends AbstractCommand {
 				$found = true;
 
 				if ( ! $product['installed'] ) {
-					WP_CLI::warning( "{$product['name']} is not installed.\n", false );
+					WP_CLI::warning( "{$product['name']} is not installed.\n" );
 
 					continue;
 				}
 
 				if ( ! $product['free'] && empty( $product['licenses'] ) ) {
-					WP_CLI::warning( "{$product['name']} is not licensed.\n", false );
+					WP_CLI::warning( "{$product['name']} is not licensed.\n" );
 
 					continue;
 				}
 
 				if ( $product['has_git_folder'] && ! $assoc_args['skip-git-check'] ) {
-					WP_CLI::warning( "{$product['name']} is installed from a Git repository.\n", false );
+					WP_CLI::warning( "{$product['name']} is installed from a Git repository.\n" );
 
 					continue;
 				}
 
-				if ( ! $product['update_available'] ) {
-					WP_CLI::warning( "{$product['name']} is up to date.\n", false );
-
-					continue;
-				}
-
-				if ( ! isset( $assoc_args['skip-dependency-check'] ) && ( ! $product['checked_dependencies'][ $product['server_version'] ]['status'] ?? false ) ) {
+				if ( ! isset( $assoc_args['skip-dependency-check'] ) && ( ! $product['checked_dependencies'][ $product['server_version'] ]['status'] ) ) {
 					WP_CLI::error( "{$product['name']} has unmet dependencies. Please resolve them first.\n", false );
 
+					// @phpstan-ignore-next-line
 					$this->show_unmet_dependencies( $product['checked_dependencies'][ $product['server_version'] ]['unmet'] );
 
 					$failed_products[] = $product['text_domain'];
@@ -304,19 +306,23 @@ class Products extends AbstractCommand {
 				} catch ( Exception $e ) {
 					WP_CLI::error( $e->getMessage() . "\n", false );
 
+					// @phpstan-ignore-next-line
 					$failed_products[] = $product['text_domain'];
 
 					continue;
 				}
 			}
 
+			// @phpstan-ignore-next-line
 			if ( ! $found && ! empty( $failed_products ) ) {
 				WP_CLI::error( "{$text_domain} not found.\n", false );
 
+				// @phpstan-ignore-next-line
 				$failed_products[] = $text_domain;
 			}
 		}
 
+		// @phpstan-ignore-next-line
 		if ( ! empty( $failed_products ) ) {
 			WP_CLI::error( sprintf( 'Failed to update %s.', implode( ' ', $failed_products ) ) );
 		}
@@ -377,14 +383,15 @@ class Products extends AbstractCommand {
 				$found = true;
 
 				if ( $product['active'] ) {
-					WP_CLI::warning( "{$product['name']} is already active.\n", false );
+					WP_CLI::warning( "{$product['name']} is already active.\n" );
 
 					continue;
 				}
 
-				if ( ! isset( $assoc_args['skip-dependency-check'] ) && ( ! $product['checked_dependencies'][ $product['server_version'] ]['status'] ?? false ) ) {
+				if ( ! isset( $assoc_args['skip-dependency-check'] ) && ( ! $product['checked_dependencies'][ $product['server_version'] ]['status'] ) ) {
 					WP_CLI::error( "{$product['name']} has unmet dependencies. Please resolve them first.\n", false );
 
+					// @phpstan-ignore-next-line
 					$this->show_unmet_dependencies( $product['checked_dependencies'][ $product['server_version'] ]['unmet'] );
 
 					$failed_products[] = $product['text_domain'];
@@ -399,19 +406,23 @@ class Products extends AbstractCommand {
 				} catch ( Exception $e ) {
 					WP_CLI::error( $e->getMessage() . "\n", false );
 
+					// @phpstan-ignore-next-line
 					$failed_products[] = $product['text_domain'];
 
 					continue;
 				}
 			}
 
+			// @phpstan-ignore-next-line
 			if ( ! $found && ! empty( $failed_products ) ) {
 				WP_CLI::error( "{$text_domain} not found.\n", false );
 
+				// @phpstan-ignore-next-line
 				$failed_products[] = $text_domain;
 			}
 		}
 
+		// @phpstan-ignore-next-line
 		if ( ! empty( $failed_products ) ) {
 			WP_CLI::error( sprintf( 'Failed to activate %s.', implode( ' ', $failed_products ) ) );
 		}
@@ -472,7 +483,7 @@ class Products extends AbstractCommand {
 				$found = true;
 
 				if ( ! $product['active'] ) {
-					WP_CLI::warning( "{$product['name']} is not active.\n", false );
+					WP_CLI::warning( "{$product['name']} is not active.\n" );
 
 					continue;
 				}
@@ -480,6 +491,7 @@ class Products extends AbstractCommand {
 				if ( ! isset( $assoc_args['skip-dependency-check'] ) && ! empty( $product['required_by'] ) ) {
 					WP_CLI::error( "{$product['name']} is required by other products. Please deactivate them first.\n", false );
 
+					// @phpstan-ignore-next-line
 					foreach ( $product['required_by'] as &$required_by ) {
 						$required_by = [
 							'Name'        => $required_by['name'],
@@ -501,19 +513,23 @@ class Products extends AbstractCommand {
 				} catch ( Exception $e ) {
 					WP_CLI::error( $e->getMessage() . "\n", false );
 
+					// @phpstan-ignore-next-line
 					$failed_products[] = $product['text_domain'];
 
 					continue;
 				}
 			}
 
+			// @phpstan-ignore-next-line
 			if ( ! $found && ! empty( $failed_products ) ) {
 				WP_CLI::error( "{$text_domain} not found.\n", false );
 
+				// @phpstan-ignore-next-line
 				$failed_products[] = $text_domain;
 			}
 		}
 
+		// @phpstan-ignore-next-line
 		if ( ! empty( $failed_products ) ) {
 			WP_CLI::error( sprintf( 'Failed to deactivate %s.', implode( ' ', $failed_products ) ) );
 		}
@@ -574,13 +590,13 @@ class Products extends AbstractCommand {
 				$found = true;
 
 				if ( ! $product['installed'] ) {
-					WP_CLI::warning( "{$product['name']} is not installed.\n", false );
+					WP_CLI::warning( "{$product['name']} is not installed.\n" );
 
 					continue;
 				}
 
 				if ( $product['active'] && ! isset( $assoc_args['deactivate-before-deletion'] ) ) {
-					WP_CLI::warning( "{$product['name']} is active and needs to be deactivated first.\n", false );
+					WP_CLI::warning( "{$product['name']} is active and needs to be deactivated first.\n" );
 
 					continue;
 				} elseif ( $product['active'] ) {
@@ -589,6 +605,7 @@ class Products extends AbstractCommand {
 					} catch ( Exception $e ) {
 						WP_CLI::error( $e->getMessage() . "\n", false );
 
+						// @phpstan-ignore-next-line
 						$failed_products[] = $product['text_domain'];
 
 						continue;
@@ -602,19 +619,23 @@ class Products extends AbstractCommand {
 				} catch ( Exception $e ) {
 					WP_CLI::error( $e->getMessage() . "\n", false );
 
+					// @phpstan-ignore-next-line
 					$failed_products[] = $product['text_domain'];
 
 					continue;
 				}
 			}
 
+			// @phpstan-ignore-next-line
 			if ( ! $found && ! empty( $failed_products ) ) {
 				WP_CLI::error( "{$text_domain} not found.\n", false );
 
+				// @phpstan-ignore-next-line
 				$failed_products[] = $text_domain;
 			}
 		}
 
+		// @phpstan-ignore-next-line
 		if ( ! empty( $failed_products ) ) {
 			WP_CLI::error( sprintf( 'Failed to delete %s.', implode( ' ', $failed_products ) ) );
 		}
@@ -800,6 +821,8 @@ class Products extends AbstractCommand {
 	 * @param array $unmet_dependencies Unmet dependencies data.
 	 *
 	 * @return void
+	 *
+	 * @phpstan-ignore-next-line
 	 */
 	private function show_unmet_dependencies( $unmet_dependencies ) {
 		if ( ! empty( $unmet_dependencies['system'] ) ) {

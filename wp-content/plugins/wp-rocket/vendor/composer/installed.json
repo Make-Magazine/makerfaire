@@ -177,8 +177,8 @@
             "type": "library",
             "extra": {
                 "thanks": {
-                    "name": "symfony/polyfill",
-                    "url": "https://github.com/symfony/polyfill"
+                    "url": "https://github.com/symfony/polyfill",
+                    "name": "symfony/polyfill"
                 }
             },
             "installation-source": "dist",
@@ -371,17 +371,17 @@
         },
         {
             "name": "wp-media/plugin-family",
-            "version": "v1.0.2",
-            "version_normalized": "1.0.2.0",
+            "version": "v1.0.4",
+            "version_normalized": "1.0.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/wp-media/plugin-family.git",
-                "reference": "1b827eed34842de10fa3c94fec3a0f32b14be8bd"
+                "reference": "83714bdfb7d98d4fe74781844c325be909db13a4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/wp-media/plugin-family/zipball/1b827eed34842de10fa3c94fec3a0f32b14be8bd",
-                "reference": "1b827eed34842de10fa3c94fec3a0f32b14be8bd",
+                "url": "https://api.github.com/repos/wp-media/plugin-family/zipball/83714bdfb7d98d4fe74781844c325be909db13a4",
+                "reference": "83714bdfb7d98d4fe74781844c325be909db13a4",
                 "shasum": ""
             },
             "require-dev": {
@@ -392,7 +392,7 @@
                 "wp-coding-standards/wpcs": "^3",
                 "wp-media/phpunit": "^3"
             },
-            "time": "2024-10-25T16:27:40+00:00",
+            "time": "2024-12-30T10:08:18+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -414,7 +414,7 @@
             "description": "Organizes and displays WP Media plugin family across other members.",
             "support": {
                 "issues": "https://github.com/wp-media/plugin-family/issues",
-                "source": "https://github.com/wp-media/plugin-family/tree/v1.0.2"
+                "source": "https://github.com/wp-media/plugin-family/tree/v1.0.4"
             },
             "install-path": "../wp-media/plugin-family"
         }

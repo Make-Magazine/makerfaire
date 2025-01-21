@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by __root__ on 01-October-2024 using Strauss.
+ * Modified by __root__ on 22-November-2024 using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 
@@ -20,6 +20,7 @@ final class UserStateManager implements StateManager {
 	 * The user.
      *
 	 * @since 1.2.14
+	 *
 	 * @var WP_User|null
 	 */
 	private $user;
@@ -154,7 +155,7 @@ final class UserStateManager implements StateManager {
 			$user = wp_get_current_user();
 		}
 
-		if ( ! $user || ! $user->exists() ) {
+		if ( ! $user->exists() ) {
 			return;
 		}
 

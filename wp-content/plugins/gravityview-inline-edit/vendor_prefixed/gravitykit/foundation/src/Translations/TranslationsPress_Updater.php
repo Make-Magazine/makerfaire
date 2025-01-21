@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by __root__ on 01-October-2024 using Strauss.
+ * Modified by __root__ on 22-November-2024 using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 
@@ -81,7 +81,7 @@ class TranslationsPress_Updater {
 
 		$this->_slug = Core::get_plugin_slug_from_text_domain( $this->_text_domain );
 
-		add_action( 'upgrader_package_options', [ $this, 'modify_upgrader_package_options' ] );
+		add_filter( 'upgrader_package_options', [ $this, 'modify_upgrader_package_options' ] );
 
 		add_action( 'upgrader_process_complete', [ $this, 'on_upgrader_process_complete' ], 10, 2 );
 
@@ -95,16 +95,18 @@ class TranslationsPress_Updater {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param bool|array $result           The result object (default: false).
-	 * @param string     $translation_type The type of translations being requested.
-	 * @param object     $args             Translation API arguments.
+	 * @param bool|array   $result           The result object (default: false).
+	 * @param string       $translation_type The type of translations being requested.
+	 * @param array|object $args             Translation API arguments.
 	 *
 	 * @throws Exception
 	 *
 	 * @return bool|array
 	 */
 	public function translations_api( $result, $translation_type, $args ) {
-		if ( 'plugins' !== $translation_type || $this->_slug !== $args['slug'] ) {
+		$slug = is_array( $args ) ? $args['slug'] ?? null : $args->slug ?? null;
+
+		if ( 'plugins' !== $translation_type || $slug !== $this->_slug ) {
 			return $result;
 		}
 
@@ -402,7 +404,7 @@ class TranslationsPress_Updater {
 
 		if ( is_wp_error( $result ) ) {
 			throw new Exception(
-				$this->get_exception( 'Error extracting language package. Code: %s; Message %s.', __METHOD__, $temp_package_file->get_error_code(), $temp_package_file->get_error_message() )
+				$this->get_exception( 'Error extracting language package. Code: %s; Message %s.', __METHOD__, $result->get_error_code(), $result->get_error_message() )
 			);
 		}
 
@@ -489,7 +491,7 @@ class TranslationsPress_Updater {
 
 		foreach ( $original_translations as $original_translation ) {
 			// Get translations only for files with .js (or .js.php) extensions and only where translated data exists.
-			if ( strpos( wp_json_encode( $original_translation->getReferences() ), '.js' ) === false || ! $original_translation->getTranslation() ) {
+			if ( strpos( wp_json_encode( $original_translation->getReferences() ) ?: '', '.js' ) === false || ! $original_translation->getTranslation() ) {
 				continue;
 			}
 

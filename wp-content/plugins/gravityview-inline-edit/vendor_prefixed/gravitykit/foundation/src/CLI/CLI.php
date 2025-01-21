@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by __root__ on 01-October-2024 using Strauss.
+ * Modified by __root__ on 22-November-2024 using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 
@@ -25,9 +25,9 @@ class CLI {
 	 *
 	 * @since 1.2.0
 	 *
-	 * @var CLI
+	 * @var CLI|null;
 	 */
-	private static $_instance;
+	private static $_instance = null;
 
 	/**
 	 * Class constructor.
@@ -65,7 +65,7 @@ class CLI {
 	public static function register_commands() {
 		$commands = [];
 
-		$command_classes = glob( self::COMMANDS_FOLDER . '*.php' );
+		$command_classes = glob( self::COMMANDS_FOLDER . '*.php' ) ?: [];
 
 		foreach ( $command_classes as $class ) {
 			$class           = pathinfo( $class, PATHINFO_FILENAME );

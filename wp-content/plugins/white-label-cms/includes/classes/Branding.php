@@ -172,10 +172,14 @@ class WLCMS_Branding extends WLCMS_Previewable
         if (!isset($account_node->title)) {
             return;
         }
-
+        
         $wp_admin_bar->add_node(array(
             'id' => 'my-account',
-            'title' => str_replace('Howdy,', $admin_bar_howdy_text, $account_node->title),
+            'title' => 
+                str_replace( 
+                    str_replace(', %s', ',', __( 'Howdy, %s' )),
+                    $admin_bar_howdy_text, $account_node->title
+                ),
         ));
     }
 

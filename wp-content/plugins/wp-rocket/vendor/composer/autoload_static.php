@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInitb92765c8966e5b1389795892065d1a37
+class ComposerStaticInit085bb4d81ae56bdbfbc0558401c5ed78
 {
     public static $files = array (
         'a4a119a56e50fbb293281d9a48007e0e' => __DIR__ . '/..' . '/symfony/polyfill-php80/bootstrap.php',
@@ -150,6 +150,7 @@ class ComposerStaticInitb92765c8966e5b1389795892065d1a37
         'WPMedia\\PluginFamily\\Controller\\PluginFamily' => __DIR__ . '/..' . '/wp-media/plugin-family/src/Controller/PluginFamily.php',
         'WPMedia\\PluginFamily\\Controller\\PluginFamilyInterface' => __DIR__ . '/..' . '/wp-media/plugin-family/src/Controller/PluginFamilyInterface.php',
         'WPMedia\\PluginFamily\\Model\\PluginFamily' => __DIR__ . '/..' . '/wp-media/plugin-family/src/Model/PluginFamily.php',
+        'WPMedia\\PluginFamily\\PostInstall' => __DIR__ . '/..' . '/wp-media/plugin-family/src/PostInstall.php',
         'WP_Rocket\\Abstract_Render' => __DIR__ . '/../..' . '/inc/classes/class-abstract-render.php',
         'WP_Rocket\\Addon\\Busting\\BustingFactory' => __DIR__ . '/../..' . '/inc/deprecated/Engine/Addon/Busting/BustingFactory.php',
         'WP_Rocket\\Addon\\Busting\\FileBustingTrait' => __DIR__ . '/../..' . '/inc/deprecated/Engine/Addon/Busting/FileBustingTrait.php',
@@ -329,6 +330,7 @@ class ComposerStaticInitb92765c8966e5b1389795892065d1a37
         'WP_Rocket\\Engine\\Capabilities\\Manager' => __DIR__ . '/../..' . '/inc/Engine/Capabilities/Manager.php',
         'WP_Rocket\\Engine\\Capabilities\\ServiceProvider' => __DIR__ . '/../..' . '/inc/Engine/Capabilities/ServiceProvider.php',
         'WP_Rocket\\Engine\\Capabilities\\Subscriber' => __DIR__ . '/../..' . '/inc/Engine/Capabilities/Subscriber.php',
+        'WP_Rocket\\Engine\\Common\\AbstractFileSystem' => __DIR__ . '/../..' . '/inc/Engine/Common/AbstractFileSystem.php',
         'WP_Rocket\\Engine\\Common\\Ajax\\AjaxHandler' => __DIR__ . '/../..' . '/inc/Engine/Common/Ajax/AjaxHandler.php',
         'WP_Rocket\\Engine\\Common\\Cache\\CacheInterface' => __DIR__ . '/../..' . '/inc/Engine/Common/Cache/CacheInterface.php',
         'WP_Rocket\\Engine\\Common\\Cache\\FilesystemCache' => __DIR__ . '/../..' . '/inc/Engine/Common/Cache/FilesystemCache.php',
@@ -437,6 +439,18 @@ class ComposerStaticInitb92765c8966e5b1389795892065d1a37
         'WP_Rocket\\Engine\\Media\\AboveTheFold\\Frontend\\Subscriber' => __DIR__ . '/../..' . '/inc/Engine/Media/AboveTheFold/Frontend/Subscriber.php',
         'WP_Rocket\\Engine\\Media\\AboveTheFold\\ServiceProvider' => __DIR__ . '/../..' . '/inc/Engine/Media/AboveTheFold/ServiceProvider.php',
         'WP_Rocket\\Engine\\Media\\Emojis\\EmojisSubscriber' => __DIR__ . '/../..' . '/inc/Engine/Media/Emojis/EmojisSubscriber.php',
+        'WP_Rocket\\Engine\\Media\\Fonts\\Admin\\Data' => __DIR__ . '/../..' . '/inc/Engine/Media/Fonts/Admin/Data.php',
+        'WP_Rocket\\Engine\\Media\\Fonts\\Admin\\Settings' => __DIR__ . '/../..' . '/inc/Engine/Media/Fonts/Admin/Settings.php',
+        'WP_Rocket\\Engine\\Media\\Fonts\\Admin\\Subscriber' => __DIR__ . '/../..' . '/inc/Engine/Media/Fonts/Admin/Subscriber.php',
+        'WP_Rocket\\Engine\\Media\\Fonts\\Clean\\Clean' => __DIR__ . '/../..' . '/inc/Engine/Media/Fonts/Clean/Clean.php',
+        'WP_Rocket\\Engine\\Media\\Fonts\\Clean\\Subscriber' => __DIR__ . '/../..' . '/inc/Engine/Media/Fonts/Clean/Subscriber.php',
+        'WP_Rocket\\Engine\\Media\\Fonts\\Context\\OptimizationContext' => __DIR__ . '/../..' . '/inc/Engine/Media/Fonts/Context/OptimizationContext.php',
+        'WP_Rocket\\Engine\\Media\\Fonts\\Context\\SaasContext' => __DIR__ . '/../..' . '/inc/Engine/Media/Fonts/Context/SaasContext.php',
+        'WP_Rocket\\Engine\\Media\\Fonts\\Filesystem' => __DIR__ . '/../..' . '/inc/Engine/Media/Fonts/Filesystem.php',
+        'WP_Rocket\\Engine\\Media\\Fonts\\FontsTrait' => __DIR__ . '/../..' . '/inc/Engine/Media/Fonts/FontsTrait.php',
+        'WP_Rocket\\Engine\\Media\\Fonts\\Frontend\\Controller' => __DIR__ . '/../..' . '/inc/Engine/Media/Fonts/Frontend/Controller.php',
+        'WP_Rocket\\Engine\\Media\\Fonts\\Frontend\\Subscriber' => __DIR__ . '/../..' . '/inc/Engine/Media/Fonts/Frontend/Subscriber.php',
+        'WP_Rocket\\Engine\\Media\\Fonts\\ServiceProvider' => __DIR__ . '/../..' . '/inc/Engine/Media/Fonts/ServiceProvider.php',
         'WP_Rocket\\Engine\\Media\\ImageDimensions\\AdminSubscriber' => __DIR__ . '/../..' . '/inc/Engine/Media/ImageDimensions/AdminSubscriber.php',
         'WP_Rocket\\Engine\\Media\\ImageDimensions\\ImageDimensions' => __DIR__ . '/../..' . '/inc/Engine/Media/ImageDimensions/ImageDimensions.php',
         'WP_Rocket\\Engine\\Media\\ImageDimensions\\Subscriber' => __DIR__ . '/../..' . '/inc/Engine/Media/ImageDimensions/Subscriber.php',
@@ -638,6 +652,7 @@ class ComposerStaticInitb92765c8966e5b1389795892065d1a37
         'WP_Rocket\\ThirdParty\\Plugins\\CDN\\CloudflareFacade' => __DIR__ . '/../..' . '/inc/ThirdParty/Plugins/CDN/CloudflareFacade.php',
         'WP_Rocket\\ThirdParty\\Plugins\\ContactForm7' => __DIR__ . '/../..' . '/inc/ThirdParty/Plugins/ContactForm7.php',
         'WP_Rocket\\ThirdParty\\Plugins\\ConvertPlug' => __DIR__ . '/../..' . '/inc/ThirdParty/Plugins/ConvertPlug.php',
+        'WP_Rocket\\ThirdParty\\Plugins\\Cookie\\Termly' => __DIR__ . '/../..' . '/inc/ThirdParty/Plugins/Cookie/Termly.php',
         'WP_Rocket\\ThirdParty\\Plugins\\Ecommerce\\BigCommerce' => __DIR__ . '/../..' . '/inc/ThirdParty/Plugins/Ecommerce/BigCommerce.php',
         'WP_Rocket\\ThirdParty\\Plugins\\Ecommerce\\WooCommerceSubscriber' => __DIR__ . '/../..' . '/inc/ThirdParty/Plugins/Ecommerce/WooCommerceSubscriber.php',
         'WP_Rocket\\ThirdParty\\Plugins\\I18n\\TranslatePress' => __DIR__ . '/../..' . '/inc/ThirdParty/Plugins/I18n/TranslatePress.php',
@@ -724,10 +739,10 @@ class ComposerStaticInitb92765c8966e5b1389795892065d1a37
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInitb92765c8966e5b1389795892065d1a37::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInitb92765c8966e5b1389795892065d1a37::$prefixDirsPsr4;
-            $loader->prefixesPsr0 = ComposerStaticInitb92765c8966e5b1389795892065d1a37::$prefixesPsr0;
-            $loader->classMap = ComposerStaticInitb92765c8966e5b1389795892065d1a37::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit085bb4d81ae56bdbfbc0558401c5ed78::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit085bb4d81ae56bdbfbc0558401c5ed78::$prefixDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInit085bb4d81ae56bdbfbc0558401c5ed78::$prefixesPsr0;
+            $loader->classMap = ComposerStaticInit085bb4d81ae56bdbfbc0558401c5ed78::$classMap;
 
         }, null, ClassLoader::class);
     }

@@ -2,7 +2,7 @@
 /**
  * @license MIT
  *
- * Modified by gravitykit on 11-September-2024 using {@see https://github.com/BrianHenryIE/strauss}.
+ * Modified by gravitykit on 17-January-2025 using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\AdvancedFilter\QueryFilters\Condition;
@@ -20,12 +20,13 @@ use GravityKit\AdvancedFilter\QueryFilters\Filter\Filter;
 
 /**
  * Factory that creates a {@see GF_Query_Condition} from a set of {@see Filter}.
+ *
  * @since 2.0.0
  */
 final class ConditionFactory {
 	/**
 	 * @param Filter $filter
-	 * @param int $form_id
+	 * @param int    $form_id
 	 *
 	 * @return GF_Query_Condition|null
 	 */
@@ -42,8 +43,30 @@ final class ConditionFactory {
 	}
 
 	/**
+	 * Whether the filter is a negative search.
+	 *
+	 * @since 2.2.0
+	 *
+	 * @param Filter             $filter The filter.
+	 * @param GF_Query_Condition $where  The condition.
+	 */
+	private function is_negative_lookup( Filter $filter, GF_Query_Condition $where ): bool {
+		if ( empty( $filter->value() ) ) {
+			return GF_Query_Condition::EQ === $where->operator;
+		}
+
+		return in_array( $where->operator, [
+			GF_Query_Condition::NLIKE,
+			GF_Query_Condition::NBETWEEN,
+			GF_Query_Condition::NEQ,
+			GF_Query_Condition::NIN,
+		], true );
+	}
+
+
+	/**
 	 * @param Filter $filter
-	 * @param int $form_id
+	 * @param int    $form_id
 	 *
 	 * @return GF_Query_Condition|null
 	 */
@@ -59,9 +82,10 @@ final class ConditionFactory {
 				'value'    => $filter->equals( Filter::locked() ) ? - 1 : $filter->value(),
 				'operator' => $filter->operator(),
 			],
-			function ( $v ) {
-				return is_numeric( $v ) || ! empty( $v );
-			}
+			static function ( $v, $k ) {
+				return 'value' === $k || is_numeric( $v ) || ! empty( $v );
+			},
+			ARRAY_FILTER_USE_BOTH
 		);
 
 		$query = new GF_Query( $form_id, [ 'field_filters' => [ 'mode' => 'all', $condition ] ] );
@@ -78,32 +102,34 @@ final class ConditionFactory {
 			$where = $this->update_empty_numeric_filter_condition( $filter, $where, $field );
 		}
 
+		if ( ! is_numeric( $filter->key() ) ) {
+			return $where;
+		}
+
+		global $wpdb;
+		$sub_query = $wpdb->prepare(
+			sprintf(
+				"SELECT 1 FROM `%s` WHERE (`meta_key` LIKE %%s OR `meta_key` = %%d) AND `entry_id` = `%s`.`id`",
+				GFFormsModel::get_entry_meta_table_name(),
+				$query->_alias( null, $form_id )
+			),
+			sprintf( '%d.%%', $filter->key() ),
+			$filter->key()
+		);
+
 		// In case of a negative operator, entries without the meta key should also be excluded.
-		if (
-			is_numeric( $filter->key() )
-			&& in_array( $where->operator, [
-				GF_Query_Condition::NLIKE,
-				GF_Query_Condition::NBETWEEN,
-				GF_Query_Condition::NEQ,
-				GF_Query_Condition::NIN,
-			] )
-			&& ! empty( $filter->value() )
-		) {
-			global $wpdb;
-
-			$sub_query = $wpdb->prepare(
-				sprintf(
-					"SELECT 1 FROM `%s` WHERE (`meta_key` LIKE %%s OR `meta_key` = %%d) AND `entry_id` = `%s`.`id`",
-					GFFormsModel::get_entry_meta_table_name(),
-					$query->_alias( null, $form_id )
-				),
-				sprintf( '%d.%%', $filter->key() ),
-				$filter->key()
-			);
-
-			$where = GF_Query_Condition::_or(
+		if ( $this->is_negative_lookup( $filter, $where ) ) {
+			return GF_Query_Condition::_or(
 				$where,
 				new GF_Query_Condition( new GF_Query_Call( 'NOT EXISTS', [ $sub_query ] ) )
+			);
+		}
+
+		// In case of `isnotempty` search, the meta key MUST exist.
+		if ( empty( $filter->value() ) && GF_Query_Condition::NEQ === $where->operator ) {
+			$where = GF_Query_Condition::_and(
+				$where,
+				new GF_Query_Condition( new GF_Query_Call( 'EXISTS', [ $sub_query ] ) )
 			);
 		}
 
@@ -112,7 +138,7 @@ final class ConditionFactory {
 
 	/**
 	 * @param Filter $filter
-	 * @param int $form_id
+	 * @param int    $form_id
 	 *
 	 * @return GF_Query_Condition|null
 	 */
@@ -141,13 +167,17 @@ final class ConditionFactory {
 	/**
 	 * Updates the condition for numeric filters that compare against and empty value.
 	 *
-	 * @param Filter $filter The filter.
-	 * @param GF_Query_Condition $where The query condition.
-	 * @param GF_Field $field The field
+	 * @param Filter             $filter The filter.
+	 * @param GF_Query_Condition $where  The query condition.
+	 * @param GF_Field           $field  The field
 	 *
 	 * @return GF_Query_Condition The modified condition.
 	 */
-	private function update_empty_numeric_filter_condition( Filter $filter, GF_Query_Condition $where, GF_Field $field ): GF_Query_Condition {
+	private function update_empty_numeric_filter_condition(
+		Filter $filter,
+		GF_Query_Condition $where,
+		GF_Field $field
+	): GF_Query_Condition {
 		if (
 			'' !== $filter->value()
 			|| ! in_array( $where->operator, [
@@ -180,10 +210,11 @@ final class ConditionFactory {
 	/**
 	 * Whether the provided field is numeric.
 	 *
+	 * @since 2.0.0
+	 *
 	 * @param GF_Field $field
 	 *
 	 * @return bool
-	 * @since 2.0.0
 	 */
 	private function is_numeric_field( GF_Field $field ): bool {
 		return

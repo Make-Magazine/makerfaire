@@ -106,6 +106,11 @@ class GP_Populate_Anything_Live_Merge_Tags {
 		 * Products
 		 */
 		add_filter( 'gform_product_info', array( $this, 'replace_lmts_in_non_choice_product_labels' ), 10, 3 );
+
+		/**
+		 * Hydrate HTML field - ensure any LMTs are populated for it. Especially useful when Auto Loading form entery with GPASC.
+		 */
+		add_filter( 'gppa_hydrated_field', array( $this, 'hydrate_html_fields' ), 10, 2 );
 	}
 
 
@@ -981,7 +986,7 @@ class GP_Populate_Anything_Live_Merge_Tags {
 			if ( $field->get_input_type() === 'number' && ! rgblank( $entry_value ) ) {
 				if ( GFCommon::is_numeric( $entry_value, 'decimal_dot' ) ) {
 					$entry_values[ $input_id ] = GFCommon::clean_number( $entry_value, 'decimal_dot' );
-				} else if ( GFCommon::is_numeric( $entry_value, 'decimal_comma' ) ) {
+				} elseif ( GFCommon::is_numeric( $entry_value, 'decimal_comma' ) ) {
 					$entry_values[ $input_id ] = GFCommon::clean_number( $entry_value, 'decimal_comma' );
 				}
 				continue;
@@ -1070,6 +1075,25 @@ class GP_Populate_Anything_Live_Merge_Tags {
 
 			$entry_values[ $input_id ] = $save_value;
 		}
+
+		$raw_entry_values = $entry_values;
+
+		/**
+		 * Filter the live merge tag entry values.
+		 *
+		 * @since 2.1.17
+		 *
+		 * @param array $entry_values Live Merge Tag Entry Values.
+		 * @param array $form         The current form.
+		 */
+		$entry_values = gf_apply_filters(
+			array(
+				'gppa_live_merge_tag_entry_values',
+				$form['id'],
+			),
+			$entry_values,
+			$form
+		);
 
 		/**
 		 * Change Live Merge Tags to regular merge tags.
@@ -1445,6 +1469,24 @@ class GP_Populate_Anything_Live_Merge_Tags {
 		}
 
 		return $product_info;
+	}
+
+	/**
+	 * Populate values for Live Merge Tags in HTML field content.
+	 */
+	public function hydrate_html_fields( $field, $form ) {
+
+		$lmt      = gp_populate_anything()->live_merge_tags;
+		$gf_token = rgget( 'gf_token' );
+		// Only to be processed for an HTML field with LMT in the context of S&C.
+		if ( $field->type == 'html' && $lmt->has_live_merge_tag( $field->content ) && $gf_token ) {
+			$draft_data = GFFormsModel::get_draft_submission_values( $gf_token );
+			$data_array = json_decode( rgar( $draft_data, 'submission' ), true );
+
+			$lmt->populate_lmt_whitelist( $form );
+			$field->content = $lmt->replace_live_merge_tags_static( $field->content, $form, rgar( $data_array, 'submitted_values' ) );
+		}
+		return $field;
 	}
 
 }

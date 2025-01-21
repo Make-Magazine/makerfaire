@@ -1,1 +1,0 @@
-<li>#_EVENTLINK - #_EVENTDATES - #_EVENTTIMES</li>

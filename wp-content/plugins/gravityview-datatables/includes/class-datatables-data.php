@@ -415,10 +415,15 @@ class GV_Extension_DataTables_Data {
 						$field_id_or_meta_name = 'is_approved';
 					}
 
+					$field = GFAPI::get_field( $view->form->ID, $field_id_or_meta_name );
+
+					// Use JSON literal for fields that are stored as JSON and where certain characters are escaped in the DB (e.g., Multi-Select field with an option that contains "ä").
+					$query_literal_class = $field && 'json' === $field->storageType ? '\GF_Query_JSON_Literal' : '\GF_Query_Literal';
+
 					$condition = new \GF_Query_Condition(
 						new \GF_Query_Column( $field_id_or_meta_name ),
 						\GF_Query_Condition::LIKE,
-						new \GF_Query_Literal( '%' . sanitize_text_field( $dt_column['search']['value'] ) . '%' )
+						new $query_literal_class( '%' . sanitize_text_field( $dt_column['search']['value'] ) . '%' )
 					);
 
 					$q = $query->_introspect();

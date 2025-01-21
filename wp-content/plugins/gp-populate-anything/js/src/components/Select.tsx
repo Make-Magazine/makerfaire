@@ -31,7 +31,7 @@ const Select = ({
 	const customInputRef = useRef<HTMLInputElement>(null);
 	const mergeTagsObjRef = useRef<any>(null);
 	const inputValue =
-		typeof value === 'undefined'
+		typeof value === 'undefined' || value === null
 			? ''
 			: value.toString().replace(/^gf_custom:?/, '');
 

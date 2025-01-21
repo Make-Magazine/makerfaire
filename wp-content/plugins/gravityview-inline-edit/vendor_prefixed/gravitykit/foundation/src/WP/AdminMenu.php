@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by __root__ on 01-October-2024 using Strauss.
+ * Modified by __root__ on 22-November-2024 using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 
@@ -23,9 +23,9 @@ class AdminMenu {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @var AdminMenu
+	 * @var AdminMenu|null
 	 */
-	private static $_instance;
+	private static $_instance = null;
 
 	/**
 	 * Submenus of the top menu.
@@ -76,6 +76,36 @@ class AdminMenu {
 	}
 
 	/**
+	 * Determines whether the GravityKit menu should be initialized.
+	 *
+	 * @since 1.2.20
+	 *
+	 * @return bool
+	 */
+	public static function should_initialize() {
+		$should_initialize = false;
+
+		foreach (Core::get_instance()->get_registered_plugins() as $plugin) {
+			if ( ! ( $plugin['no_admin_menu'] ?? false ) ) {
+				$should_initialize = true;
+
+				break;
+			}
+		}
+
+		/**
+		 * Controls whether the GravityKit top-level menu should be initialized.
+		 *
+		 * @filter `gk/foundation/admin-menu/initialize`
+		 *
+		 * @since  1.2.20
+		 *
+		 * @param bool $should_initialize
+		 */
+		return apply_filters( 'gk/foundation/admin-menu/initialize', $should_initialize );
+	}
+
+	/**
 	 * Configures GravityKit top-level menu and submenu items in WP admin.
 	 *
 	 * @since 1.0.0
@@ -83,13 +113,17 @@ class AdminMenu {
 	 * @global array $menu
 	 * @global array $submenu
 	 *
-	 * @retun void
+	 * @return void
 	 */
 	public function add_admin_menu() {
 		global $menu, $submenu;
 
+		if ( ! self::should_initialize() ) {
+			return;
+		}
+
 		// Make sure we're not adding a duplicate top-level menu.
-		if ( strpos( wp_json_encode( $menu ?: [] ), self::WP_ADMIN_MENU_SLUG ) !== false ) {
+		if ( strpos( wp_json_encode( $menu ?: [] ) ?: '', self::WP_ADMIN_MENU_SLUG ) !== false ) {
 			return;
 		}
 
@@ -163,7 +197,7 @@ class AdminMenu {
 		// Add top-level menu.
 		$page_title         = esc_html__( 'GravityKit', 'gk-gravityedit' );
 		$menu_title         = esc_html__( 'GravityKit', 'gk-gravityedit' );
-		$menu_temp_position = base_convert( substr( md5( self::WP_ADMIN_MENU_SLUG ), -4 ), 16, 10 ) * 0.00001; // Taken from WP's add_menu_page() code.
+		$menu_temp_position = (float) base_convert( substr( md5( self::WP_ADMIN_MENU_SLUG ), -4 ), 16, 10 ) * 0.00001; // Taken from WP's add_menu_page() code.
 		$gk_settings        = SettingsFramework::get_instance()->get_plugin_settings( Core::ID );
 
 		/**
@@ -173,7 +207,7 @@ class AdminMenu {
 		 *
 		 * @since  1.0.0
 		 *
-		 * @param float|int $menu_position Default: position of the Gravity Forms menu (16.9) or Dashboard (2).
+		 * @param int|string|null $menu_position Default: position of the Gravity Forms menu (16.9) or Dashboard (2).
 		 */
 		$menu_position = apply_filters(
 			'gk/foundation/admin-menu/position',
@@ -185,7 +219,7 @@ class AdminMenu {
 			$menu_title,
 			$user_first_met_capability, // Use the first submenu capability that the user has met to display the main GravityKit menu.
 			self::WP_ADMIN_MENU_SLUG,
-			null,
+			function() {},
 			'data:image/svg+xml;base64,' . base64_encode( '<svg id="Artwork" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><path fill="#a7aaad" class="st0" d="M128 0C57.3 0 0 57.3 0 128s57.3 128 128 128 128-57.3 128-128S198.7 0 128 0zm0 243.2c-63.6 0-115.2-51.6-115.2-115.2S64.4 12.8 128 12.8 243.2 64.4 243.2 128 191.6 243.2 128 243.2zm7.9-172.5c-.8.1-1.4-.5-1.5-1.3V57.7c-.1-.9.4-1.8 1.3-2.1 7.8-4.2 10.6-13.9 6.4-21.7-4.2-7.8-13.9-10.6-21.7-6.4-7.8 4.2-10.6 13.9-6.4 21.7 1.5 2.7 3.7 4.9 6.4 6.4.8.3 1.4 1.2 1.3 2.1v11.4c.1.8-.4 1.5-1.2 1.6h-.3c-41 3-68.9 29.6-68.9 66.9 0 39.6 31.5 67.2 76.8 67.2s76.8-27.6 76.8-67.2c-.1-37.3-28-63.9-69-66.9zM128 182.4c-35.9 0-60.8-18.4-60.8-44.8S92.1 92.8 128 92.8s60.8 18.4 60.8 44.8-24.9 44.8-60.8 44.8zm53.8-44.8c0 22.3-22.1 37.8-53.8 37.8-5.1 0-10.2-.4-15.2-1.3-6.8-1.2-9.4-3.2-12-9.6-3.1-7.5-4.8-16.6-4.8-26.9s1.7-19.4 4.8-26.9c2.7-6.4 5.2-8.4 12-9.6 5-.9 10.1-1.3 15.2-1.3 31.7 0 53.8 15.5 53.8 37.8z"/></svg>' ), // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode
 			$menu_temp_position
 		);
@@ -343,10 +377,6 @@ JS
 				$hide_styles = [];
 
 				foreach ( $filtered_submenus as $submenu ) {
-					if ( isset( $submenu['top_level_menu_action'] ) ) {
-						$hide_styles[] = '#toplevel_page_' . self::WP_ADMIN_MENU_SLUG . ' ul.wp-submenu li:nth-child(2)';
-					}
-
 					if ( $submenu['hide'] ) {
 						$hide_styles[] = '#toplevel_page_' . self::WP_ADMIN_MENU_SLUG . ' ul.wp-submenu li a[href*="' . $submenu['id'] . '"]';
 					}
@@ -371,7 +401,7 @@ JS
 	 * @param array  $submenu  The submenu data.
 	 * @param string $position The position of the submenu. Default: 'top'.
 	 *
-	 * @retun void
+	 * @return void
 	 */
 	public static function add_submenu_item( $submenu, $position = 'top' ) {
 		if ( ! isset( $submenu['id'] ) ) {
@@ -430,7 +460,7 @@ JS
 	 *
 	 * @param string $id The submenu ID.
 	 *
-	 * @retun void
+	 * @return void
 	 */
 	public static function remove_submenu_item( $id ) {
 		global $submenu;
@@ -459,7 +489,7 @@ JS
 	 *
 	 * @global array $menu
 	 *
-	 * @retun void
+	 * @return void
 	 */
 	public static function remove_admin_menu() {
 		global $menu;
@@ -575,7 +605,7 @@ JS
 		$positions_to_renumber = array_filter(
 			$menus,
 			function ( $key ) use ( $after_position ) {
-				return preg_match( '/^' . (int) $after_position . '(\..*)?$/', $key );
+				return (bool) preg_match( '/^' . (int) $after_position . '(\..*)?$/', $key );
 			},
 			ARRAY_FILTER_USE_KEY
 		);
@@ -585,7 +615,7 @@ JS
 		$index = 0;
 
 		foreach ( $positions_to_renumber as $current_position => $value ) {
-			if ( version_compare( $after_position, $current_position ) === 0 ) {
+			if ( version_compare( (string) $after_position, (string) $current_position ) === 0 ) {
 				$menus[ (string) $current_position ] = $value;
 
 				$new_key = array_keys( $positions_to_renumber )[ $index + 1 ] ?? $current_position + 0.01;
@@ -597,7 +627,7 @@ JS
 
 			if ( ! preg_match( '/\./', $current_position ) ) {
 				$current_position = (int) $current_position;
-			} elseif ( version_compare( $after_position, $current_position ) < 0 ) {
+			} elseif ( version_compare( (string) $after_position, (string) $current_position ) < 0 ) {
 				$current_position = $current_position + 0.01;
 			}
 
