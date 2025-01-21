@@ -130,6 +130,11 @@ function getTikTokVideoId($url) {
 
 // turn a normal url into a youtube embed url
 function getYoutubeEmbedUrl($url) {
+  //If this is a youtube shorts, replace "shorts/" with "watch?v="
+  if(stripos($url,'shorts/') !== false){
+    $url = str_replace('shorts/', 'watch?v=',$url);
+  }
+
   $youtube_id = '';
   $shortUrlRegex = '/youtu.be\/([a-zA-Z0-9_-]+)\??/i';
   $longUrlRegex = '/youtube.com\/((?:embed)|(?:watch))((?:\?v\=)|(?:\/))([a-zA-Z0-9_-]+)/i';
