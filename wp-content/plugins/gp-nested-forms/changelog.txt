@@ -1,6 +1,37 @@
 
 # Changelog
 
+## 1.2 | January 14, 2025
+
+- Removed request data from GPNF’s session cookie to avoid issues where the cookie could become overloaded preventing the page from loading. NOTE: If you have custom code that relies on the request data in the session cookie, [learn how to resolve this dependency](https://gravitywiz.com/documentation/gravity-forms-nested-forms/#how-do-i-access-the-parent-form-context-when-the-child-form-is-loading).
+
+## 1.1.73 | January 7, 2025
+
+- Fixed logic concerning the display of expired child forms in GravityView causing form caching issues and preventing validation errors from showing on fields.
+- Removed usage of `String.prototype.gformFormat`.
+
+## 1.1.72 | December 19, 2024
+
+- Added additional compatibility fix for Gravity Forms 2.9.
+
+## 1.1.71 | December 10, 2024
+
+- Improved compatibility with Gravity Forms 2.9's improved initialization logic.
+
+## 1.1.70 | November 27, 2024
+
+- Added check in `GP_Nested_Forms::get_child_entry_ids_from_value()` to prevent errors if a non-string value is passed.
+
+## 1.1.69 | November 18, 2024
+
+- Fixed potential PHP warning if a Nested Form field is added to a form and the child form is not specified in the field settings.
+
+## 1.1.68 | November 5, 2024
+
+- Fixed child form styling if using Gravity Forms 2.9 or newer.
+- Added [`gpnf_nested_form_field_value`](https://gravitywiz.com/documentation/gpnf_nested_form_field_value/) PHP filter hook.
+- Added [`gpnf_export_exclude_hidden_field_inputs`](https://gravitywiz.com/documentation/gpnf_export_exclude_hidden_field_inputs) PHP filter hook.
+
 ## 1.1.67 | October 23, 2024
 
 - Added a check before initializing certain frontend logic to prevent JS errors during initialization if the form is not displayed due to restrictions (e.g. GP Limit Submissions).

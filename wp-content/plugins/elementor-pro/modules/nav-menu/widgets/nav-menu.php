@@ -43,6 +43,10 @@ class Nav_Menu extends Base_Widget {
 		return [ 'smartmenus' ];
 	}
 
+	public function has_widget_inner_wrapper(): bool {
+		return ! Plugin::elementor()->experiments->is_feature_active( 'e_optimized_markup' );
+	}
+
 	/**
 	 * Get style dependencies.
 	 *
@@ -391,7 +395,7 @@ class Nav_Menu extends Base_Widget {
 		$this->add_control(
 			'text_align',
 			[
-				'label' => esc_html__( 'Text  Align', 'elementor-pro' ),
+				'label' => esc_html__( 'Text Align', 'elementor-pro' ),
 				'type' => Controls_Manager::SELECT,
 				'default' => 'aside',
 				'options' => [
@@ -1582,7 +1586,7 @@ class Nav_Menu extends Base_Widget {
 			'class' => 'elementor-menu-toggle',
 			'role' => 'button',
 			'tabindex' => '0',
-			'aria-label' => esc_html__( 'Menu Toggle', 'elementor-pro' ),
+			'aria-label' => esc_attr__( 'Menu Toggle', 'elementor-pro' ),
 			'aria-expanded' => 'false',
 		] );
 
@@ -1654,7 +1658,6 @@ class Nav_Menu extends Base_Widget {
 				echo '</span>';
 			}
 			?>
-			<span class="elementor-screen-only"><?php echo esc_html__( 'Menu', 'elementor-pro' ); ?></span>
 		</div>
 		<?php
 	}

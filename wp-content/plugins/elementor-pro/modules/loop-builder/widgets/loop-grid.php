@@ -12,13 +12,13 @@ use ElementorPro\Modules\Woocommerce\Module as WoocommerceModule;
 use Elementor\Group_Control_Typography;
 use Elementor\Group_Control_Text_Shadow;
 use Elementor\Group_Control_Text_Stroke;
+use ElementorPro\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
 class Loop_Grid extends Base {
-
 	public function get_name() {
 		return 'loop-grid';
 	}
@@ -46,7 +46,11 @@ class Loop_Grid extends Base {
 	 * @return array Widget style dependencies.
 	 */
 	public function get_style_depends(): array {
-		return [ 'widget-loop-builder' ];
+		return [ 'widget-loop-grid' ];
+	}
+
+	public function has_widget_inner_wrapper(): bool {
+		return ! Plugin::elementor()->experiments->is_feature_active( 'e_optimized_markup' );
 	}
 
 	protected function register_layout_section() {

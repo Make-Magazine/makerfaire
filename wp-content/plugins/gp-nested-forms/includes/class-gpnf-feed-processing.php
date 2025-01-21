@@ -206,6 +206,11 @@ class GPNF_Feed_Processing {
 			}
 			foreach ( $nested_form_fields as $nested_form_field ) {
 				$nested_form = gp_nested_forms()->get_nested_form( $nested_form_field->gpnfForm );
+				//If Nested Form wasn't specified in form setup, skip it.
+				if ( ! $nested_form ) {
+					continue;
+				}
+
 				/**
 				 * Yucky ducky! Required because GFFeedAddon::add_post_payment_actions() gets the form ID directly from
 				 * this query parameter. If this ever causes issues, let's reach out to GF and see if the method can

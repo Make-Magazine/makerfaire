@@ -42,6 +42,10 @@ class Table_Of_Contents extends Base_Widget {
 		return false;
 	}
 
+	public function has_widget_inner_wrapper(): bool {
+		return ! Plugin::elementor()->experiments->is_feature_active( 'e_optimized_markup' );
+	}
+
 	/**
 	 * Get style dependencies.
 	 *
@@ -907,7 +911,7 @@ class Table_Of_Contents extends Base_Widget {
 					'tabindex' => '0',
 					'aria-controls' => $toc_id,
 					'aria-expanded' => 'true',
-					'aria-label' => esc_html__( 'Open table of contents', 'elementor-pro' ),
+					'aria-label' => esc_attr__( 'Open table of contents', 'elementor-pro' ),
 				]
 			);
 			$this->add_render_attribute(
@@ -918,7 +922,7 @@ class Table_Of_Contents extends Base_Widget {
 					'tabindex' => '0',
 					'aria-controls' => $toc_id,
 					'aria-expanded' => 'true',
-					'aria-label' => esc_html__( 'Close table of contents', 'elementor-pro' ),
+					'aria-label' => esc_attr__( 'Close table of contents', 'elementor-pro' ),
 				]
 			);
 		}
