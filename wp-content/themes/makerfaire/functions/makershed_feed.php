@@ -14,11 +14,12 @@ function build_makershed_feed_table() {
                 inner join wp_termmeta 
                 on wp_termmeta.term_id = tax.term_id 
                 WHERE tax.taxonomy = 'mf-project-cat' 
-                and wp_termmeta.meta_key = 'makershed_collection'";                     
+                and wp_termmeta.meta_key = 'makershed_collection'";    
+                                 
     $collections = $wpdb->get_results( $query , ARRAY_A );
 
     // make sure our default collection gets updated too
-    $collections[] = array("makershed_collection" => "maker-faire-wear");
+    $collections[] = array("makershed_collection" => MAKERSHED_DEFAULT_COLLECTION);
 
     foreach($collections as $collection) {
         // get just the collection name/slug
@@ -78,8 +79,12 @@ function build_makershed_feed_table() {
 function makershedOutput($collection = "maker-faire-wear", $amount = "4") {
     global $wpdb;
     $wpdb->show_errors();
+    $default_collection = MAKERSHED_DEFAULT_COLLECTION;
     // Pull products by collection, limited to the amount set, and randomize
-    $sql = "SELECT * FROM wp_makershedfeed WHERE collection LIKE '$collection' ORDER BY RAND() LIMIT ".$amount."";
+    $sql = "SELECT * FROM wp_makershedfeed 
+            WHERE ( (select count(ID) from wp_makershedfeed where collection='$collection') > 0 AND collection='$collection' ) OR 
+            ( (select count(ID) from wp_makershedfeed where collection='$collection') <= 0 AND collection='$default_collection' ) 
+            ORDER BY RAND() LIMIT ".$amount;
     $makershedProducts = $wpdb->get_results($sql); //or die($wpdb->last_error);
     
     if(!empty($makershedProducts)) {
