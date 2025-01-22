@@ -87,14 +87,18 @@ function makershedOutput($collection = "maker-faire-wear", $amount = "4") {
 
         // Start building the html output
         $makershedOutput = '<div class="related-makershed-wrapper amount-'.$amount.' ' .$collection. '">';
-        $makershedOutput .= '<h3>From the Shed:</h3>';
-            $makershedOutput .= '<div class="related-makershed-items">';
+        $makershedOutput .= '<h3>More From Make:</h3>';
+            $makershedOutput .= '<div class="related-makershed-items card-deck">';
             foreach($makershedProducts as $product) {
-                $makershedOutput .= '<a href="'.$product->link.'" class="related-makershed-item" target="_blank">';
-                $makershedOutput .= '<div class="image-square"><img src="'.$product->image.'" alt="'.$product->title.'" /></div>';
-                $makershedOutput .= '<h4>'.$product->title.'</h4>';
-                $makershedOutput .= '<div class="item-price">$'.$product->price.'</div>';
-                $makershedOutput .= '</a>';
+                $makershedOutput .= '<div class="card">';
+                    $makershedOutput .= '<a href="'.$product->link.'" class="related-makershed-item" target="_blank">';
+                        $makershedOutput .= '<div class="card-header"><img src="'.$product->image.'" alt="'.$product->title.'" /></div>';
+                        $makershedOutput .= '<div class="card-body"><div class="card-text">';
+                            $makershedOutput .= '<h4>'.$product->title.'</h4>';
+                            $makershedOutput .= '<div class="item-price">$'.$product->price.'</div>';
+                        $makershedOutput .= '</div></div>';
+                    $makershedOutput .= '</a>';
+                $makershedOutput .= '</div>';
             }
             $makershedOutput .= '</div>';
         $makershedOutput .= "</div>";
