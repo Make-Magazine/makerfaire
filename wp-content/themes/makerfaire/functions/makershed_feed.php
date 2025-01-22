@@ -38,7 +38,7 @@ function build_makershed_feed_table() {
         $query->fields('collectionByHandle');
         $query->collectionByHandle->attribute('handle', $collection);
         // ID will allow us to sort new to old
-        $products = 'products(first:20,sortKey:ID,reverse:true){edges{node{title,status,handle,variants(first: 1){edges{node{price,availableForSale}}},images(first:1){edges{node{url}}}}}}';
+        $products = 'products(first:30,sortKey:ID,reverse:true){edges{node{title,status,handle,variants(first: 1){edges{node{price,availableForSale}}},images(first:1){edges{node{url}}}}}}';
         $query->collectionByHandle->fields(['id','title',$products]);
         $graphqlString = $query->build();
         
@@ -86,7 +86,7 @@ function makershedOutput($collection = "maker-faire-wear", $amount = "4") {
         // We need to get the term for the user friendly format of the collection name
 
         // Start building the html output
-        $makershedOutput = '<div class="related-makershed-wrapper amount-'.$amount.'">';
+        $makershedOutput = '<div class="related-makershed-wrapper amount-'.$amount.' ' .$collection. '">';
         $makershedOutput .= '<h3>From the Shed:</h3>';
             $makershedOutput .= '<div class="related-makershed-items">';
             foreach($makershedProducts as $product) {
