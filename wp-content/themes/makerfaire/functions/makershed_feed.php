@@ -8,29 +8,21 @@ add_action( 'makershed_feed_cron', 'build_makershed_feed_table', 9999999 );
 function build_makershed_feed_table() {
     global $wpdb;
     $wpdb->show_errors();
-    $query = "SELECT DISTINCT 
-               t.term_id
-              FROM
-               {$wpdb->terms} t 
-              INNER JOIN 
-               {$wpdb->term_taxonomy} tax 
-              ON 
-               tax.term_id = t.term_id
-              WHERE 
-               ( tax.taxonomy = 'mf-project-cat')";                     
-    $result = $wpdb->get_results( $query , ARRAY_A );
+    $query = "SELECT distinct(wp_termmeta.meta_value) 
+                as makershed_collection 
+                FROM wp_term_taxonomy tax 
+                inner join wp_termmeta 
+                on wp_termmeta.term_id = tax.term_id 
+                WHERE tax.taxonomy = 'mf-project-cat' 
+                and wp_termmeta.meta_key = 'makershed_collection'";                     
+    $collections = $wpdb->get_results( $query , ARRAY_A );
 
-    //error_log(print_r($result, TRUE));
-    
-    $collections = array("maker-faire-wear");
-    foreach($result as $yb_category) {
-        $collections[] = get_field("makershed_collection", "mf-project-cat_" . $yb_category['term_id']);
-    }
-
-    // remove empty values, dedupe and reorder array
-    $collections = array_values(array_unique(array_filter($collections)));
+    // make sure our default collection gets updated too
+    $collections[] = array("makershed_collection" => "maker-faire-wear");
 
     foreach($collections as $collection) {
+        // get just the collection name/slug
+        $collection = $collection['makershed_collection'];
 
         // if the cron didn't specify an argument, let's get out of here. nothing to be done
         if($collection == "not-set") {
