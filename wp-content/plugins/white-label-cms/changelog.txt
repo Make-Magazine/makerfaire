@@ -1,5 +1,8 @@
 == Changelog ==
 
+= 2.7.6 =
+* Minor bug fixes
+
 = 2.7.5 =
 * Added compatibility with WordPress 6.6.1
 * Improved: Plugin security. Thanks to Rafie Muhammad (Patchstack)

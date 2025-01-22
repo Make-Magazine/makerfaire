@@ -271,7 +271,7 @@ export const createComputedSlice: StateCreator<
 				) {
 					if (
 						field.inputs &&
-						!['checkbox', 'email'].includes(inputType)
+						!['checkbox', 'radio', 'email'].includes(inputType)
 					) {
 						/*
 						 * We want to show the entire field as an option if it's a Date Drop Down.
@@ -504,6 +504,14 @@ export const createComputedSlice: StateCreator<
 						templateRows.push({
 							id: 'price',
 							label: strings.price,
+							required: true,
+						});
+					}
+
+					if (get().field?.type === 'image_choice') {
+						templateRows.push({
+							id: 'image',
+							label: strings.image,
 							required: true,
 						});
 					}

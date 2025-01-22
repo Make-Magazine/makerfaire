@@ -1,7 +1,7 @@
 === GravityView - DataTables Layout ===
 Tags: gravityview
 Requires at least: 4.4
-Tested up to: 6.6.2
+Tested up to: 6.7.1
 Stable tag: trunk
 Contributors: The GravityKit Team
 License: GPL 3 or higher
@@ -15,6 +15,15 @@ Display entries in a dynamic table powered by DataTables & GravityView.
 3. Follow the instructions
 
 == Changelog ==
+
+= 3.5.1 on January 16, 2025 =
+
+This release resolves issues with client-side filtering, date range filters, and navigation from Single Entry pages.
+
+#### 🐛 Fixed
+* Client-side filtering did not work for inputs containing special characters or accents (e.g., ä, ß, İ).
+* Date field filters set to a range were incorrectly displayed as a single input instead of two separate fields.
+* When a View is embedded in a page or post, the "Back" button on the Single Entry page using the DataTables layout did not return to the page where the View is embedded.
 
 = 3.5 on October 1, 2024 =
 

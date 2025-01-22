@@ -1,6 +1,14 @@
 
 # Changelog
 
+## 2.3.14 | December 10, 2024
+
+- Added support for displaying perk icons/banners in updates list.
+
+## 2.3.13 | November 27, 2024
+
+- Updated requirement checking logic to be simpler and to not load translations too early.
+
 ## 2.3.12 | September 19, 2024
 
 - Improved support for non-generic perk objects.

@@ -224,6 +224,12 @@ class Plugin {
 		return $frontend_file_path;
 	}
 
+	/**
+	 * @deprecated 3.26.0
+	 * @return void
+	 */
+	public function enqueue_styles(): void {}
+
 	public function enqueue_frontend_scripts() {
 		$suffix = $this->get_assets_suffix();
 
@@ -284,6 +290,31 @@ class Plugin {
 			'elementor-pro-frontend',
 			'ElementorProFrontendConfig',
 			$locale_settings
+		);
+	}
+
+	public function register_frontend_styles() {
+		$suffix = $this->get_assets_suffix();
+
+		wp_register_style(
+			'e-motion-fx',
+			ELEMENTOR_PRO_URL . 'assets/css/modules/motion-fx' . $suffix . '.css',
+			[],
+			ELEMENTOR_PRO_VERSION
+		);
+
+		wp_register_style(
+			'e-sticky',
+			ELEMENTOR_PRO_URL . 'assets/css/modules/sticky' . $suffix . '.css',
+			[],
+			ELEMENTOR_PRO_VERSION
+		);
+
+		wp_register_style(
+			'e-popup',
+			ELEMENTOR_PRO_URL . 'assets/css/conditionals/popup' . $suffix . '.css',
+			[],
+			ELEMENTOR_PRO_VERSION
 		);
 	}
 
@@ -348,6 +379,12 @@ class Plugin {
 			ELEMENTOR_PRO_VERSION,
 			true
 		);
+	}
+
+	public function enqueue_preview_styles() {
+		wp_enqueue_style( 'e-motion-fx' );
+		wp_enqueue_style( 'e-sticky' );
+		wp_enqueue_style( 'e-popup' );
 	}
 
 	public function get_responsive_stylesheet_templates( $templates ) {
@@ -422,12 +459,13 @@ class Plugin {
 	private function setup_hooks() {
 		add_action( 'elementor/init', [ $this, 'on_elementor_init' ] );
 
+		add_action( 'elementor/frontend/after_register_styles', [ $this, 'register_frontend_styles' ] );
+		add_action( 'elementor/preview/enqueue_styles', [ $this, 'enqueue_preview_styles' ] );
+
 		add_action( 'elementor/frontend/before_register_scripts', [ $this, 'register_frontend_scripts' ] );
 		add_action( 'elementor/preview/enqueue_scripts', [ $this, 'register_preview_scripts' ] );
 
 		add_action( 'elementor/frontend/before_enqueue_scripts', [ $this, 'enqueue_frontend_scripts' ] );
-		// TODO: Load popup styling only when needed [ED-16076]
-		add_action( 'elementor/frontend/after_enqueue_styles', [ $this, 'enqueue_styles' ] );
 
 		add_filter( 'elementor/core/breakpoints/get_stylesheet_template', [ $this, 'get_responsive_stylesheet_templates' ] );
 		add_action( 'elementor/document/save_version', [ $this, 'on_document_save_version' ] );
@@ -441,34 +479,10 @@ class Plugin {
 		}, 11 /** After Elementor Core (Library) */ );
 	}
 
-	// TODO: Load popup styling only when needed [ED-16076]
-	public function enqueue_styles(): void {
-		$suffix = $this->get_assets_suffix();
-
-		wp_enqueue_style(
-			'e-popup-style',
-			ELEMENTOR_PRO_URL . 'assets/css/conditionals/popup' . $suffix . '.css',
-			null,
-			ELEMENTOR_PRO_VERSION
-		);
-	}
-
 	private function get_assets() {
 		$suffix = $this->get_assets_suffix();
 
 		return [
-			'styles' => [
-				'e-motion-fx' => [
-					'src' => ELEMENTOR_PRO_URL . 'assets/css/modules/motion-fx' . $suffix . '.css',
-					'version' => ELEMENTOR_PRO_VERSION,
-					'dependencies' => [],
-				],
-				'e-sticky' => [
-					'src' => ELEMENTOR_PRO_URL . 'assets/css/modules/sticky' . $suffix . '.css',
-					'version' => ELEMENTOR_PRO_VERSION,
-					'dependencies' => [],
-				],
-			],
 			'scripts' => [
 				'e-sticky' => [
 					'src' => ELEMENTOR_PRO_URL . 'assets/lib/sticky/jquery.sticky' . $suffix . '.js',

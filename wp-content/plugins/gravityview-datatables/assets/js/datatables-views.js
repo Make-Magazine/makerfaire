@@ -1214,7 +1214,7 @@ window.gvDTFixedHeaderColumns = window.gvDTFixedHeaderColumns || {};
 
 				searchWidgetValues = form.find( supportedInputTypes ).map( function () {
 					return {
-						value: $( this ).val().toLowerCase().trim(),
+						value: $( this ).val().toLocaleLowerCase().trim(),
 						filterName: $( this ).attr( 'name' )
 					};
 				} ).get().filter( sv => sv.value !== '' );
@@ -1234,7 +1234,7 @@ window.gvDTFixedHeaderColumns = window.gvDTFixedHeaderColumns || {};
 				}
 
 				return {
-					value: ( value || columnFilterValue ).toString().toLowerCase().trim(),
+					value: ( value || columnFilterValue ).toString().toLocaleLowerCase().trim(),
 					columnIndex: column.idx,
 					column
 				};
@@ -1255,7 +1255,7 @@ window.gvDTFixedHeaderColumns = window.gvDTFixedHeaderColumns || {};
 					// Is "search everything" used or the mode is "any"? Match any values in the row.
 					if ( filterName === 'gv_search' || searchWidgetMode !== 'all' ) {
 						return shadowData[ dataIndex ].some( cellValue => {
-							cellValue = ( cellValue ?? '' ).toString().toLowerCase().trim();
+							cellValue = ( cellValue ?? '' ).toString().toLocaleLowerCase().trim();
 
 							return exactMatch ? cellValue === searchWidgetValue.replace( /"/g, '' ) : cellValue.includes( searchWidgetValue );
 						} );
@@ -1268,7 +1268,7 @@ window.gvDTFixedHeaderColumns = window.gvDTFixedHeaderColumns || {};
 
 					let cellValue = shadowData?.[ dataIndex ]?.[ column.idx ] ?? '';
 
-					cellValue = cellValue.toString().toLowerCase().trim();
+					cellValue = cellValue.toString().toLocaleLowerCase().trim();
 
 					return exactMatch ? cellValue === searchWidgetValue.replace( /"/g, '' ) : cellValue.includes( searchWidgetValue );
 				};
@@ -1284,7 +1284,7 @@ window.gvDTFixedHeaderColumns = window.gvDTFixedHeaderColumns || {};
 			return filterValues.every( ( { value: filterValue, columnIndex, column } ) => {
 				let cellValue = shadowData?.[ dataIndex ]?.[ columnIndex ] ?? ( searchData[ column.idx ] ?? '' );
 
-				cellValue = cellValue.toString().toLowerCase().trim();
+				cellValue = cellValue.toString().toLocaleLowerCase().trim();
 
 				filterValue = filterValue ?? '';
 

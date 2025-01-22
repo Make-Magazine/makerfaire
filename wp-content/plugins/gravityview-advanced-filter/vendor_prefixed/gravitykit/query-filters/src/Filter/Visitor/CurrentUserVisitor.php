@@ -2,7 +2,7 @@
 /**
  * @license MIT
  *
- * Modified by gravitykit on 11-September-2024 using {@see https://github.com/BrianHenryIE/strauss}.
+ * Modified by gravitykit on 17-January-2025 using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\AdvancedFilter\QueryFilters\Filter\Visitor;
@@ -13,6 +13,7 @@ use WP_User;
 
 /**
  * Visitor that tests if the current user has the required role(s).
+ *
  * @since 2.1.0
  */
 final class CurrentUserVisitor implements FilterVisitor {
@@ -24,6 +25,7 @@ final class CurrentUserVisitor implements FilterVisitor {
 
 	/**
 	 * Creates the step.
+	 *
 	 * @since 2.1.0
 	 */
 	public function __construct( UserRepository $user_repository ) {
@@ -47,12 +49,13 @@ final class CurrentUserVisitor implements FilterVisitor {
 		}
 
 		$this->has_required_roles( $current_user, $filter )
-			? $filter->disable()
+			? $this->make_true( $filter )
 			: $filter->lock();
 	}
 
 	/**
 	 * Normalize the filter's role(s) to an array of roles.
+	 *
 	 * @since 2.1.0
 	 *
 	 * @param Filter $filter The filter.
@@ -74,6 +77,7 @@ final class CurrentUserVisitor implements FilterVisitor {
 
 	/**
 	 * Returns whether the provided user has the required roles according to the filter.
+	 *
 	 * @since 2.1.0
 	 *
 	 * @param WP_User $user   The user.
@@ -95,5 +99,20 @@ final class CurrentUserVisitor implements FilterVisitor {
 
 		// All filters need to match.
 		return count( $result ) === count( $filter_roles );
+	}
+
+	/**
+	 * Changes the filter to something that is always true.
+	 *
+	 * @since 2.2.0
+	 *
+	 * @param Filter $filter The filter.
+	 *
+	 * @return void
+	 */
+	private function make_true( Filter $filter ) {
+		$filter->set_key( 'id' );
+		$filter->set_value( 0 );
+		$filter->set_operator( '>' );
 	}
 }

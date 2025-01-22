@@ -625,19 +625,10 @@ class Admin extends App {
 		];
 
 		$additions_actions = [];
-
-		if ( User::get_introduction_meta( 'ai_get_started' ) ) {
-			$additions_actions['ai-library'] = [
-				'title' => esc_html__( 'AI Prompts Library', 'elementor' ),
-				'link' => 'https://go.elementor.com/overview-ai-prompts-library/',
-			];
-		} else {
-			$additions_actions['ai'] = [
-				'title' => esc_html__( 'Build Smart with AI', 'elementor' ),
-				'link' => 'https://go.elementor.com/overview-widget-ai/',
-			];
-		}
-
+		$additions_actions['ai'] = [
+			'title' => esc_html__( 'Build Smart with AI', 'elementor' ),
+			'link' => 'https://go.elementor.com/overview-widget-ai/',
+		];
 		$additions_actions['go-pro'] = [
 			'title' => esc_html__( 'Upgrade', 'elementor' ),
 			'link' => 'https://go.elementor.com/go-pro-wp-overview-widget/',
@@ -734,14 +725,14 @@ class Admin extends App {
 	}
 
 	private function get_allowed_fields_for_role() {
-		$allowed_fields = array(
+		$allowed_fields = [
 			'post_title',
 			'post_content',
 			'post_excerpt',
 			'post_category',
 			'post_type',
 			'tags_input',
-		);
+		];
 
 		if ( current_user_can( 'publish_posts' ) ) {
 			$allowed_fields[] = 'post_status';

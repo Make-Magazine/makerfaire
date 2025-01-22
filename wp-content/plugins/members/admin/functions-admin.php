@@ -4,9 +4,9 @@
  *
  * @package    Members
  * @subpackage Admin
- * @author     Justin Tadlock <justintadlock@gmail.com>
- * @copyright  Copyright (c) 2009 - 2018, Justin Tadlock
- * @link       https://themehybrid.com/plugins/members
+ * @author     The MemberPress Team
+ * @copyright  Copyright (c) 2009 - 2018, The MemberPress Team
+ * @link       https://members-plugin.com/
  * @license    http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
  */
 
@@ -48,7 +48,7 @@ function members_admin_register_scripts() {
 		'label_grant_cap'  => esc_html__( 'Grant %s capability', 'members' ),
 		'label_deny_cap'   => esc_html__( 'Deny %s capability',  'members' ),
 		'ays_delete_role'  => esc_html__( 'Are you sure you want to delete this role? This is a permanent action and cannot be undone.', 'members' ),
-		'hidden_caps'      => members_get_hidden_caps()
+		'hidden_caps'      => members_get_hidden_caps(),
 	);
 
 	wp_localize_script( 'members-edit-role', 'members_i18n', $i18n );
@@ -198,7 +198,7 @@ function members_admin_header() {
 
     <div class="members-upgrade-header" id="members-upgrade-header">
     	<span id="close-members-upgrade-header">X</span>
-    	<?php _e( 'You\'re using Members. To unlock more features, consider <a href="https://memberpress.com/plans/pricing/?utm_source=members&utm_medium=link&utm_campaign=in_plugin&utm_content=pro_features">adding MemberPress.</a>' ); ?>
+    	<?php _e( 'You\'re using Members. To unlock more features, consider <a href="https://memberpress.com/plans/pricing/?utm_source=members_plugin&utm_medium=link&utm_campaign=in_plugin&utm_content=pro_features">adding MemberPress.</a>' ); ?>
     </div>
 
     <div id="members-admin-header"><img class="members-logo" src="<?php echo members_plugin()->uri . 'img/Members-header.svg'; ?>" /></div>
@@ -257,13 +257,13 @@ function members_admin_promote_links() {
       'target' => '_blank'
     ),
     array(
-      'url' => '/admin.php?page=members-about',
+      'url' => '/wp-admin/admin.php?page=members-about',
       'text' => __( 'About Us', 'members' ),
       'target' => '_blank'
     )
   );
 
-  $title = __( 'Made with ♥ by the Members Team', 'members' );
+  $title = __( 'Made with ♥ by the MemberPress Team', 'members' );
 
   require_once( members_plugin()->dir . 'admin/views/promotion.php' );
 }

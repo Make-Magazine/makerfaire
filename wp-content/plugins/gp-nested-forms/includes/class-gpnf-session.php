@@ -288,7 +288,6 @@ class GPNF_Session {
 		$data = array(
 			'action'       => 'gpnf_session',
 			'form_id'      => $form_id,
-			'request'      => self::get_session_request_vars( GFAPI::get_form( $form_id ) ),
 			'post_id'      => get_queried_object_id(),
 			'field_values' => $field_values,
 			'hash'         => ( new GPNF_Session( $form_id ) )->get_runtime_hashcode(),

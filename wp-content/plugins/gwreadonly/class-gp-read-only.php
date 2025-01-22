@@ -245,7 +245,7 @@ class GP_Read_Only extends GP_Plugin {
 		$form  = GFAPI::get_form( $form_id );
 		$entry = GFAPI::get_entry( $entry_id );
 
-		if ( $field->is_entry_detail() ) {
+		if ( $field->is_entry_detail() || GFCommon::is_form_editor() ) {
 			return $input_html;
 		}
 
@@ -358,6 +358,11 @@ class GP_Read_Only extends GP_Plugin {
 
 				switch ( $input_type ) {
 					case 'time':
+						// Check if $value is an array or a string that needs parsing.
+						if ( ! is_array( $value ) && strpos( $value, ' ' ) !== false ) {
+							$value = $this->parse_time_string( $value );
+						}
+
 						$hc_input_markup .= $this->get_hidden_capture_markup( $form_id, $field->id . '.3', is_array( $value ) ? array_pop( $value ) : $value );
 						break;
 					case 'date':
@@ -409,6 +414,19 @@ class GP_Read_Only extends GP_Plugin {
 		add_filter( 'gform_field_input', array( $this, 'read_only_input' ), 11, 5 );
 
 		return $input_html;
+	}
+
+	private function parse_time_string( $value ) {
+	    // Use a regular expression to match the time format
+	    if ( preg_match( '/^(\d{1,2}):(\d{2})(?:\s?(AM|PM))?$/i', $value, $matches ) ) {
+	        $hours   = $matches[1];
+	        $minutes = $matches[2];
+	        $ampm    = isset( $matches[3] ) ? strtoupper( $matches[3] ) : null; // AM/PM or null if not present
+	        return array( $hours, $minutes, $ampm );
+	    }
+
+	    // Return the original value if it doesn't match the expected format
+	    return $value;
 	}
 
 	public function get_hidden_capture_input_id( $form_id, $input_id ) {
@@ -601,8 +619,8 @@ class GP_Read_Only extends GP_Plugin {
 
 			$input_type = GFFormsModel::get_input_type( $field );
 
-			// if no choice is preselected and this is a select, get the first choice's value since it will be selected by default in the browser
-			if ( empty( $values ) && in_array( $input_type, array( 'select', 'workflow_user', 'workflow_role', 'workflow_assignee_select' ) ) ) {
+			// if no choice is preselected and this is a select, get the first choice's value since it will be selected by default in the browser if there is no placeholder.
+			if ( empty( $values ) && in_array( $input_type, array( 'select', 'workflow_user', 'workflow_role', 'workflow_assignee_select' ) ) && ! $field->placeholder ) {
 				$choice = reset( $choices );
 
 				$values[] = $this->get_choice_value( $choice, $field );

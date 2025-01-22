@@ -1,9 +1,9 @@
 <?php
 /**
  * Plugin Name: Members
- * Plugin URI:  https://memberpress.com/plugins/members
+ * Plugin URI:  https://members-plugin.com/
  * Description: A user and role management plugin that puts you in full control of your site's permissions. This plugin allows you to edit your roles and their capabilities, clone existing roles, assign multiple roles per user, block post content, or even make your site completely private.
- * Version:     3.2.10
+ * Version:     3.2.17
  * Requires PHP: 7.4
  * Author:      MemberPress
  * Author URI:  https://memberpress.com
@@ -24,13 +24,6 @@
  *
  * You should have received a copy of the GNU General Public License along with this program; if not,
  * write to the Free Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
- *
- * @package   Members
- * @version   3.0.2
- * @author    MemberPress <support@memberpress.com>
- * @copyright Copyright (c) 2004 - 2024, Caseproof
- * @link      https://memberpress.com/plugins/members
- * @license   http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
  */
 
 /**
@@ -106,7 +99,18 @@ final class Members_Plugin {
 	 * @access private
 	 * @return void
 	 */
-	private function __construct() {}
+	private function __construct() {
+		require_once(__DIR__ . '/vendor-prefixed/autoload.php');
+
+		if (version_compare(phpversion(), '7.4', '>=') && class_exists('\Members\Caseproof\GrowthTools\App')) {
+			$config = new \Members\Caseproof\GrowthTools\Config([
+				'parentMenuSlug' => 'members',
+				'instanceId' => 'members',
+				'menuSlug' => 'members-growth-tools',
+			]);
+			new \Members\Caseproof\GrowthTools\App($config);
+		}
+	}
 
 	/**
 	 * Magic method to output a string if trying to use the object as a string.
@@ -267,10 +271,6 @@ final class Members_Plugin {
 	 * @return void
 	 */
 	private function setup_actions() {
-
-		// Internationalize the text strings used.
-		add_action( 'plugins_loaded', array( $this, 'i18n' ), 2 );
-
 		// Migrate add-ons
 		add_action( 'plugins_loaded', array( $this, 'migrate_addons' ) );
 
@@ -279,18 +279,6 @@ final class Members_Plugin {
 
 		// Register activation hook.
 		register_activation_hook( __FILE__, array( $this, 'activation' ) );
-	}
-
-	/**
-	 * Loads the translation files.
-	 *
-	 * @since  1.0.0
-	 * @access public
-	 * @return void
-	 */
-	public function i18n() {
-
-		load_plugin_textdomain( 'members', false, trailingslashit( dirname( plugin_basename( __FILE__ ) ) ) . 'lang' );
 	}
 
 	/**

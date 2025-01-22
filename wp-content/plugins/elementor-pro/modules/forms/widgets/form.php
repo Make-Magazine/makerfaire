@@ -41,6 +41,10 @@ class Form extends Form_Base {
 		return false;
 	}
 
+	public function has_widget_inner_wrapper(): bool {
+		return ! Plugin::elementor()->experiments->is_feature_active( 'e_optimized_markup' );
+	}
+
 	/**
 	 * Get style dependencies.
 	 *
@@ -876,13 +880,13 @@ class Form extends Form_Base {
 				'frontend_available' => true,
 				'render_type' => 'none',
 				'options' => [
-					'none' => 'None',
-					'text' => 'Text',
-					'icon' => 'Icon',
-					'number' => 'Number',
-					'progress_bar' => 'Progress Bar',
-					'number_text' => 'Number & Text',
-					'icon_text' => 'Icon & Text',
+					'none' => esc_html__( 'None', 'elementor-pro' ),
+					'text' => esc_html__( 'Text', 'elementor-pro' ),
+					'icon' => esc_html__( 'Icon', 'elementor-pro' ),
+					'number' => esc_html__( 'Number', 'elementor-pro' ),
+					'progress_bar' => esc_html__( 'Progress Bar', 'elementor-pro' ),
+					'number_text' => esc_html__( 'Number & Text', 'elementor-pro' ),
+					'icon_text' => esc_html__( 'Icon & Text', 'elementor-pro' ),
 				],
 				'default' => 'number_text',
 			]
@@ -896,9 +900,9 @@ class Form extends Form_Base {
 				'frontend_available' => true,
 				'render_type' => 'none',
 				'options' => [
-					'circle' => 'Circle',
-					'square' => 'Square',
-					'rounded' => 'Rounded',
+					'circle' => esc_html__( 'Circle', 'elementor-pro' ),
+					'square' => esc_html__( 'Square', 'elementor-pro' ),
+					'rounded' => esc_html__( 'Rounded', 'elementor-pro' ),
 					'none' => 'None',
 				],
 				'default' => 'circle',
@@ -2261,8 +2265,8 @@ class Form extends Form_Base {
 			/**
 			 * Elementor form pre render.
 			 *
-			 * Fires before the from is rendered in the frontend. This hook allows
-			 * developers to add functionality before the from is rendered.
+			 * Fires before the form is rendered in the frontend. This hook allows
+			 * developers to add functionality before the form is rendered.
 			 *
 			 * @since 2.4.0
 			 *

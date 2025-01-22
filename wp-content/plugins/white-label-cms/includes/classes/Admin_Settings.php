@@ -153,8 +153,9 @@ class WLCMS_Admin_Settings
     public function search_pages()
     {
 
+        $q = isset($_GET['q']) ? $_GET['q'] : '';
         wp_send_json([
-            'results' => wlcms_search_pages($_GET['q']),
+            'results' => wlcms_search_pages($q),
             'pagination' => ['more' => false]
         ]);
         wp_die();

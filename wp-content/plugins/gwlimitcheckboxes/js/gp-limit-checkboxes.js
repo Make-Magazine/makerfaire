@@ -138,12 +138,18 @@
 
 				var $enableFields = self.getCheckboxesByFieldIds( enableFieldIds );
 
+				// Exclude fields which have 'gw-none-of-the-above' class
+				// Ref: https://gravitywiz.com/snippet-library/gw-none-of-the-above-checkbox/
+				var $excludeNota = $enableFields.filter(function() {
+					return $( this ).closest('.gw-none-of-the-above').length > 0;
+				});
+
 				// Enable applicable checkboxes.
 				$enableFields.not( '.gplc-pre-disabled, .gplc-select-all' )
 					.not( excludedInputSelectors )
+					.not( $excludeNota )
 					.attr( 'disabled', false )
 					.removeClass( 'gplc-disabled' );
-
 			}
 
 			if ( disableFieldIds.length ) {

@@ -111,6 +111,7 @@ class Manager {
 	public function set_elementor_adapter( Elementor_Adapter_Interface $elementor_adapter ): void {
 		$this->elementor_adapter = $elementor_adapter;
 	}
+
 	/**
 	 * Register template source.
 	 *

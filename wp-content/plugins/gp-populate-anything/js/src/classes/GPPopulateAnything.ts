@@ -141,7 +141,7 @@ export default class GPPopulateAnything {
 		 *
 		 * Likewise for the GravityView search widget.
 		 */
-		if ($('#wpwrap #entry_form').length || this.isGravityView()) {
+		if ($('#wpwrap #entry_form').length || this.isGravityViewSearch()) {
 			this.postRender(null, formId, 0);
 		}
 		/**
@@ -258,16 +258,13 @@ export default class GPPopulateAnything {
 		// default form element.
 		const $form = this.getFormElement();
 
-		if (this.isGravityView()) {
+		if (this.isGravityViewSearch()) {
 			inputPrefix = 'filter_';
 		}
 
 		const lastFieldValuesDataId = 'gppa-batch-ajax-last-field-values';
 
-		$form.data(
-			lastFieldValuesDataId,
-			getFormFieldValues(this.formId, !!this.isGravityView())
-		);
+		$form.data(lastFieldValuesDataId, this.getFormFieldValues());
 
 		$form.off('.gppa');
 		$form.on(
@@ -279,12 +276,23 @@ export default class GPPopulateAnything {
 					return;
 				}
 
-				const $el = $(event.target);
-
-				const inputId = String($el.attr('name')).replace(
-					new RegExp(`^${inputPrefix}`),
-					''
+				const $el = $(
+					/*
+					 * Fallback to event.currentTarget if event.target is null. Seeing this on CircleCI with one
+					 * specific test, unable to reproduce locally, but figured it's worth putting in here.
+					 */
+					event.target?.name ? event.target : event.currentTarget
 				);
+
+				const inputName = $el.attr('name');
+
+				if (!inputName) {
+					return;
+				}
+
+				const inputId = inputName
+					.replace(new RegExp(`^${inputPrefix}`), '')
+					.replace(/\[]$/g, '');
 
 				if (!inputId) {
 					return;
@@ -322,7 +330,7 @@ export default class GPPopulateAnything {
 				);
 
 				const currentFieldValues = this.processInputValuesForComparison(
-					getFormFieldValues(this.formId, !!this.isGravityView())
+					this.getFormFieldValues()
 				);
 
 				// Do not fire if values didn't change
@@ -506,10 +514,7 @@ export default class GPPopulateAnything {
 			);
 			this.triggerInputIds = [...triggerInputIds];
 
-			$form.data(
-				lastFieldValuesDataId,
-				getFormFieldValues(this.formId, !!this.isGravityView())
-			);
+			$form.data(lastFieldValuesDataId, this.getFormFieldValues());
 
 			this.bulkBatchedAjax(dependentFieldsToLoad, triggerInputIds);
 		}
@@ -669,7 +674,7 @@ export default class GPPopulateAnything {
 	getFieldFilterValues($form: JQuery, filters: fieldMapFilter[]) {
 		let prefix = 'input_';
 
-		if (this.isGravityView()) {
+		if (this.isGravityViewSearch()) {
 			prefix = 'filter_';
 		}
 
@@ -776,7 +781,7 @@ export default class GPPopulateAnything {
 				.find('#input_' + this.formId + '_' + fieldID)
 				.data('chosen');
 
-			if (this.isGravityView()) {
+			if (this.isGravityViewSearch()) {
 				const $searchBoxFilter = $form.find(
 					'#search-box-filter_' + fieldID
 				);
@@ -806,7 +811,7 @@ export default class GPPopulateAnything {
 		}
 
 		fields.sort((a, b) => {
-			const idAttrPrefix = this.isGravityView()
+			const idAttrPrefix = this.isGravityViewSearch()
 				? '[id^=search-box-filter]'
 				: '[id^=field]';
 
@@ -881,11 +886,8 @@ export default class GPPopulateAnything {
 				'field-ids': fields.map((field) => {
 					return field.field;
 				}),
-				'gravityview-meta': this.isGravityView(),
-				'field-values': getFormFieldValues(
-					this.formId,
-					!!this.isGravityView()
-				),
+				'gravityview-meta': this.isGravityViewSearch(),
+				'field-values': this.getFormFieldValues(),
 				'merge-tags': window.gppaLiveMergeTags[
 					this.formId
 				].getRegisteredMergeTags(),
@@ -959,7 +961,7 @@ export default class GPPopulateAnything {
 							$fieldContainer = $gravityflowVacationContainer;
 						}
 
-						if (this.isGravityView()) {
+						if (this.isGravityViewSearch()) {
 							const $results = $(response.fields[fieldID]);
 
 							$fieldContainer = $results
@@ -1406,7 +1408,16 @@ export default class GPPopulateAnything {
 		return $form;
 	}
 
-	isGravityView() {
+	getFormFieldValues() {
+		return getFormFieldValues(
+			this.getFormElement(),
+			this.getFormElement().hasClass('gv-widget-search')
+				? 'filter_'
+				: 'input_'
+		);
+	}
+
+	isGravityViewSearch() {
 		return this.getFormElement().hasClass('gv-widget-search');
 	}
 }

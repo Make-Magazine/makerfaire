@@ -16,7 +16,7 @@
  * and is licensed under the MIT license. For more information, see
  * <http://www.doctrine-project.org>.
  *
- * Modified by gravityview on 26-November-2024 using {@see https://github.com/BrianHenryIE/strauss}.
+ * Modified by gravityview on 10-January-2025 using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\GravityView\Doctrine\Common\Inflector;

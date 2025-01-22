@@ -317,6 +317,22 @@ class GWAPI {
 				$perk->plugin_file = 'gp-google-sheets/gp-google-sheets.php';
 			}
 
+			if ( isset( $perk->icons ) ) {
+				$icons = maybe_unserialize( $perk->icons );
+
+				if ( is_array( $icons ) && ! empty( $icons ) ) {
+					$perk->icons = $icons;
+				}
+			}
+
+			if ( isset( $perk->banners ) ) {
+				$banners = maybe_unserialize( $perk->banners );
+
+				if ( is_array( $banners ) && ! empty( $banners ) ) {
+					$perk->banners = $banners;
+				}
+			}
+
 			$perks[ $plugin_file ] = $perk;
 
 		}

@@ -2,7 +2,7 @@
 /**
  * @license MIT
  *
- * Modified by gravitykit on 11-September-2024 using {@see https://github.com/BrianHenryIE/strauss}.
+ * Modified by gravitykit on 17-January-2025 using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\AdvancedFilter\QueryFilters\Filter\Visitor;
@@ -14,6 +14,7 @@ use GravityView_API;
 
 /**
  * Replaces merge tag on filter values.
+ *
  * @since 2.0.0
  */
 final class ProcessMergeTagsVisitor implements EntryAwareFilterVisitor {
@@ -21,6 +22,7 @@ final class ProcessMergeTagsVisitor implements EntryAwareFilterVisitor {
 
 	/**
 	 * The form repository.
+	 *
 	 * @since 2.0.0
 	 * @var FormRepository
 	 */
@@ -28,6 +30,7 @@ final class ProcessMergeTagsVisitor implements EntryAwareFilterVisitor {
 
 	/**
 	 * The form object.
+	 *
 	 * @since 2.0.0
 	 * @var array
 	 */
@@ -35,6 +38,7 @@ final class ProcessMergeTagsVisitor implements EntryAwareFilterVisitor {
 
 	/**
 	 * Creates the visitor.
+	 *
 	 * @since 2.0.0
 	 */
 	public function __construct( FormRepository $form_repository, array $form = [] ) {
@@ -47,22 +51,42 @@ final class ProcessMergeTagsVisitor implements EntryAwareFilterVisitor {
 	 * @since 2.0.0
 	 */
 	public function visit_filter( Filter $filter, string $level = '0' ) {
-		if ( $filter->is_logic() || ! is_string( $filter->value() ) ) {
+		if ( $filter->is_logic() ) {
+			return;
+		}
+
+		$value        = $filter->value();
+		$has_multiple = is_array( $value );
+		if ( is_string( $value ) ) {
+			$value = [ $value ];
+		}
+
+		if ( ! is_array( $value ) ) {
 			return;
 		}
 
 		$form = $this->getForm( $filter );
 
-		$filter->set_value( self::process_merge_tags( $filter->value(), $form, $this->entry ) );
+		foreach ( $value as $i => $unprocessed ) {
+			if ( ! is_string( $unprocessed ) ) {
+				// Only process strings.
+				continue;
+			}
+
+			$value[$i] = self::process_merge_tags( $unprocessed, $form, $this->entry );
+		}
+
+		$filter->set_value( $has_multiple ? $value : reset( $value ) );
 	}
 
 	/**
 	 * Returns the proper form object.
 	 *
+	 * @since $ver4
+	 *
 	 * @param Filter $filter The filter.
 	 *
 	 * @return array
-	 * @since $ver4
 	 */
 	private function getForm( Filter $filter ): array {
 		$form = $this->form;

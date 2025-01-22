@@ -1,7 +1,7 @@
 === GravityView - Advanced Filter Extension ===
 Tags: GravityView, Gravity Forms, filtering, conditional logic
 Requires at least: 4.4
-Tested up to: 6.6.1
+Tested up to: 6.7.1
 Contributors: GravityKit
 License: GPLv3 or later
 
@@ -14,6 +14,31 @@ Filter which entries are shown in a View based on their values.
 3. Follow the instructions
 
 == Changelog ==
+
+= 4.1.0 on January 16, 2025 =
+
+This release adds support for custom filter values and merge tags in multi-value filters, and fixes several issues, including a deprecation notice in Gravity Forms 2.9.1+.
+
+#### 🚀 Added
+* Ability to define custom filter values when using the `has ANY of` or `has ALL of` operators.
+* Support for merge tag processing in filters with multiple values.
+
+#### 🐛 Fixed
+* Deprecation notice in Gravity Forms 2.9.1 or newer caused by the use of the `GFFormsModel::matches_operation()` method.
+* An issue where a missing filter value, when combined with the `has ANY of` or `has ALL of` operators, caused the user interface to break.
+
+= 4.0.4 on November 6, 2024 =
+
+This update adds new filter operators for fields with predefined choices, and resolves various filtering and logic issues.
+
+#### 🚀 Added
+* `is empty` and `is not empty` operators for fields with predefined choices.
+* Option to specify a custom value for the `contains` operator when fields have predefined choices.
+
+#### 🐛 Fixed
+* Incorrect results returned when a `Current User Role` filter option was combined with another condition using an `OR` statement.
+* PHP warning when filter condition value is left empty.
+* Field conditional logic on a field from a joined form (via Multiple Forms extension) did not work.
 
 = 4.0.3 on September 11, 2024 =
 

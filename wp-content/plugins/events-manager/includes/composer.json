@@ -1,8 +1,0 @@
-{
-  "config": {
-    "vendor-dir": "php"
-  },
-    "require": {
-        "giggsey/libphonenumber-for-php-lite": "^8.13"
-    }
-}

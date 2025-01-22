@@ -2,7 +2,7 @@
 /**
  * @license MIT
  *
- * Modified by gravitykit on 11-September-2024 using {@see https://github.com/BrianHenryIE/strauss}.
+ * Modified by gravitykit on 17-January-2025 using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\AdvancedFilter\QueryFilters\Repository;
@@ -156,7 +156,7 @@ final class DefaultRepository implements FormRepository, UserRepository {
 			class_exists( GravityView_Entry_Approval::class )
 			&& ( $approved_column = GravityView_Entry_Approval::get_approved_column( $form ) )
 		) {
-			$approved_column = intval( floor( $approved_column ) );
+			$approved_column = (int) floor( $approved_column );
 		}
 
 		$option_fields_ids = $product_fields_ids = $category_field_ids = $boolean_field_ids = $post_category_choices = [];
@@ -164,12 +164,19 @@ final class DefaultRepository implements FormRepository, UserRepository {
 		/**
 		 * @since 2.0.0
 		 */
-		if ( $boolean_fields = GFAPI::get_fields_by_type( $form, [
-			'post_category',
-			'checkbox',
-			'radio',
-			'select'
-		] ) ) {
+		if (
+			$boolean_fields = GFAPI::get_fields_by_type(
+				$form,
+				[
+					'post_category',
+					'checkbox',
+					'radio',
+					'select',
+					'multiselect',
+				],
+				true
+			)
+		) {
 			$boolean_field_ids = wp_list_pluck( $boolean_fields, 'id' );
 		}
 
@@ -215,6 +222,8 @@ final class DefaultRepository implements FormRepository, UserRepository {
 
 			if ( in_array( $filter['key'], $boolean_field_ids, false ) ) {
 				$filter['operators'][] = 'isnot';
+				$filter['operators'][] = 'isempty';
+				$filter['operators'][] = 'isnotempty';
 			}
 
 			/**
@@ -275,11 +284,17 @@ final class DefaultRepository implements FormRepository, UserRepository {
 			 * 2) Entry ID (it always exists)
 			 * 3) "any form field" ("is empty" does not work: https://github.com/gravityview/Advanced-Filter/issues/91)
 			 */
-			if ( isset( $filter['operators'] ) && ! isset( $filter['values'] ) && ! in_array( $filter['key'], [
-					'entry_id',
-					'0'
-				] ) ) {
+			if (
+				isset( $filter['operators'] )
+				&& ! isset( $filter['values'] )
+				&& ! in_array( $filter['key'], [ 'entry_id', '0' ], false )
+			) {
 				$filter['operators'] = self::add_proxy_operators( $filter['operators'], $filter['key'] );
+			}
+
+			// Filter out duplicate operators.
+			if ( isset( $filter['operators'] ) ) {
+				$filter['operators'] = array_values( array_unique( $filter['operators'] ) );
 			}
 		}
 		unset( $filter );
@@ -361,8 +376,11 @@ final class DefaultRepository implements FormRepository, UserRepository {
 	/**
 	 * Add Entry Approval Status filter option
 	 *
-	 * @return array
 	 * @since 1.4
+	 *
+	 * @param array $filters The filters to update.
+	 *
+	 * @return array The updated filters.
 	 */
 	private static function add_approval_status_filter( array $filters ): array {
 		if ( ! class_exists( GravityView_Entry_Approval_Status::class ) ) {

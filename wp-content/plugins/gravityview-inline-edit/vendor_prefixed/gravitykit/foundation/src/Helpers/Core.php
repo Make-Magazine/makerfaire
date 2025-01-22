@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by __root__ on 01-October-2024 using Strauss.
+ * Modified by __root__ on 22-November-2024 using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 
@@ -59,7 +59,7 @@ class Core {
 	 * @return string
 	 */
 	public static function get_assets_path( $file = '' ) {
-		$path = realpath( __DIR__ . '/../../assets' );
+		$path = realpath( __DIR__ . '/../../assets' ) ?: '';
 
 		return $file ? trailingslashit( $path ) . $file : $path;
 	}
@@ -90,7 +90,7 @@ class Core {
 	public static function is_network_admin() {
 		return ! wp_doing_ajax()
 			? is_network_admin()
-			: is_multisite() && strpos( wp_get_referer(), network_admin_url() ) !== false;
+			: is_multisite() && strpos( wp_get_referer() ?: '', network_admin_url() ) !== false;
 	}
 
 	/**
@@ -158,7 +158,7 @@ class Core {
 	 *
 	 * @param bool $skip_cache (optional) Whether to skip cache when getting plugins data. Default: false.
 	 *
-	 * @return array{array{name:string, author: string, path: string, plugin_file:string, installed: bool, installed_version: string, version: string, text_domain: string, active: bool, network_active: bool, free: bool, has_update: bool, download_link: string|null}}
+	 * @return array[] Array of installed plugins with their metadata.
 	 */
 	public static function get_installed_plugins( $skip_cache = false ) {
 		if ( ! function_exists( 'is_plugin_active' ) ) {
@@ -184,6 +184,7 @@ class Core {
 				'text_domain'       => $plugin['TextDomain'],
 				'active'            => is_plugin_active( $path ),
 				'network_activated' => is_plugin_active_for_network( $path ),
+				'has_admin_menu'    => false, // @TODO: possibly handle this differently.
 				'free'              => true, // @TODO: possibly handle this differently.
 				'has_update'        => false, // @TODO: detect if there's an update available.
 				'download_link'     => null, // @TODO: get the download link if there's an update available.
@@ -248,7 +249,7 @@ class Core {
 				continue;
 			}
 
-			if ( ! empty( $authors ) && ! in_array( strtolower( $plugin['author'] ?? '' ), $authors, true ) ) {
+			if ( ! empty( $authors ) && ! in_array( strtolower( $plugin['author'] ), $authors, true ) ) {
 				continue;
 			}
 
@@ -268,14 +269,15 @@ class Core {
 	 * @see   https://github.com/WordPress/wordpress-develop/blob/2bb5679d666474d024352fa53f07344affef7e69/src/wp-admin/includes/plugin.php#L72-L118
 	 *
 	 * @since 1.0.0
+	 * @since 1.2.21 Set the $translate parameter to false by default.
 	 *
 	 * @param string $plugin_file Absolute path to the main plugin file.
 	 * @param bool   $markup      (optional) If the returned data should have HTML markup applied. Default is true.
 	 * @param bool   $translate   (optional) If the returned data should be translated. Default is true.
 	 *
-	 * @return array[]
+	 * @return array<string, mixed> Associative array of plugin data.
 	 */
-	public static function get_plugin_data( $plugin_file, $markup = true, $translate = true ) {
+	public static function get_plugin_data( $plugin_file, $markup = true, $translate = false ) {
 		if ( ! function_exists( 'get_plugin_data' ) ) {
 			require_once ABSPATH . 'wp-admin/includes/plugin.php';
 		}

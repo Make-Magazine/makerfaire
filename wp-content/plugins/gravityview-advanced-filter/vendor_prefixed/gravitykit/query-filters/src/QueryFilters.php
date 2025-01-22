@@ -2,7 +2,7 @@
 /**
  * @license MIT
  *
- * Modified by gravitykit on 11-September-2024 using {@see https://github.com/BrianHenryIE/strauss}.
+ * Modified by gravitykit on 17-January-2025 using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\AdvancedFilter\QueryFilters;
@@ -83,8 +83,10 @@ class QueryFilters {
 
 	/**
 	 * Convenience create method.
-	 * @return QueryFilters
+	 *
 	 * @since 2.0.0
+	 *
+	 * @return QueryFilters
 	 */
 	public static function create(): QueryFilters {
 		return new QueryFilters();
@@ -93,13 +95,15 @@ class QueryFilters {
 	/**
 	 * Sets form on class instance.
 	 *
+	 * @since 1.0
+	 *
 	 * @param array $form GF Form.
 	 *
 	 * @return void
-	 * @throws \Exception
-	 * @internal
 	 *
-	 * @since 1.0
+	 * @throws \Exception
+	 *
+	 * @internal
 	 */
 	public function set_form( array $form ) {
 		if ( ! isset( $form['id'], $form['fields'] ) ) {
@@ -112,11 +116,13 @@ class QueryFilters {
 	/**
 	 * Creates immutable instance with form data.
 	 *
+	 * @since 2.0.0
+	 *
 	 * @param array $form The form object.
 	 *
 	 * @return QueryFilters
+	 *
 	 * @throws \Exception
-	 * @since 2.0.0
 	 */
 	public function with_form( array $form ): QueryFilters {
 		$clone = clone $this;
@@ -128,13 +134,15 @@ class QueryFilters {
 	/**
 	 * Sets filters on class instance.
 	 *
+	 * @since 1.0
+	 *
 	 * @param array $filters Field filters.
 	 *
 	 * @return void
-	 * @throws \Exception
-	 * @internal
 	 *
-	 * @since 1.0
+	 * @throws \Exception
+	 *
+	 * @internal
 	 */
 	public function set_filters( array $filters ) {
 		$this->filters = $this->filter_factory->from_array( $filters );
@@ -143,11 +151,13 @@ class QueryFilters {
 	/**
 	 * Creates immutable instance with different filters.
 	 *
+	 * @since 2.0.0
+	 *
 	 * @param array $filters Field filters.
 	 *
 	 * @return QueryFilters
+	 *
 	 * @throws \Exception
-	 * @since 2.0.0
 	 */
 	public function with_filters( array $filters ): QueryFilters {
 		$clone = clone $this;
@@ -159,9 +169,11 @@ class QueryFilters {
 	/**
 	 * Converts filters and returns GF Query conditions.
 	 *
-	 * @return GF_Query_Condition|null
-	 * @throws RuntimeException
 	 * @since 1.0
+	 *
+	 * @return GF_Query_Condition|null
+	 *
+	 * @throws RuntimeException
 	 */
 	public function get_query_conditions() {
 		if ( empty( $this->form ) ) {
@@ -181,16 +193,19 @@ class QueryFilters {
 
 	/**
 	 * The filter visitors that finalize abstract filters.
-	 * @return FilterVisitor[] The visitors.
-	 * @filter `gk/query-filters/filter/visitors` The filters to be applied to the query.
+	 *
 	 * @since  2.0.0
+	 *
+	 * @return FilterVisitor[] The visitors.
+	 *
+	 * @filter `gk/query-filters/filter/visitors` The filters to be applied to the query.
 	 */
 	private function get_filter_visitors(): array {
 		$visitors = [
 			new DisableFiltersVisitor(),
-			new CurrentUserVisitor( $this->repository ),
 			new DisableAdminVisitor( $this->repository, $this->form ),
 			new ProcessMergeTagsVisitor( $this->repository, $this->form ),
+			new CurrentUserVisitor( $this->repository ),
 			new UserIdVisitor( $this->repository, $this->form ),
 			new ProcessDateVisitor( $this->repository, $this->form ),
 			new ProcessFieldTypeVisitor( $this->repository, $this->form ),
@@ -206,54 +221,20 @@ class QueryFilters {
 	/**
 	 * Gets field filter options from Gravity Forms and modify them
 	 *
-	 * @return array|void
 	 * @see \GFCommon::get_field_filter_settings()
+	 *
+	 * @return array
 	 */
 	public function get_field_filters() {
 		return $this->repository->get_field_filters( $this->form['id'] );
 	}
 
 	/**
-	 * Adds Entry Approval Status filter option.
-	 *
-	 * @param array $filters
-	 *
-	 * @return array
-	 * @since 1.4
-	 *
-	 */
-	private static function add_approval_status_filter( array $filters ): array {
-		if ( ! class_exists( 'GravityView_Entry_Approval_Status' ) ) {
-			return $filters;
-		}
-
-		$approval_choices = GravityView_Entry_Approval_Status::get_all();
-
-		$approval_values = [];
-
-		foreach ( $approval_choices as $choice ) {
-			$approval_values[] = [
-				'text'  => $choice['label'],
-				'value' => $choice['value'],
-			];
-		}
-
-		$filters[] = [
-			'text'      => __( 'Entry Approval Status', 'gravityview-advanced-filter' ),
-			'key'       => 'is_approved',
-			'operators' => [ 'is', 'isnot' ],
-			'values'    => $approval_values,
-		];
-
-		return $filters;
-	}
-
-	/**
 	 * Creates a filter that should return zero results.
 	 *
-	 * @return array
 	 * @since 1.0
 	 *
+	 * @return array
 	 */
 	public static function get_zero_results_filter(): array {
 		return Filter::locked()->to_array();
@@ -262,17 +243,17 @@ class QueryFilters {
 	/**
 	 * Returns translation strings used in the UI.
 	 *
-	 * @return array $translations Translation strings.
 	 * @since 1.0
 	 *
+	 * @return array $translations Translation strings.
 	 */
 	private function get_translations(): array {
 		/**
 		 * @filter `gk/query-filters/translations` Modify default translation strings.
 		 *
-		 * @param array $translations Translation strings.
-		 *
 		 * @since  1.0
+		 *
+		 * @param array $translations Translation strings.
 		 *
 		 */
 		$translations = apply_filters( 'gk/query-filters/translations', [
@@ -293,6 +274,9 @@ class QueryFilters {
 			'add_condition_label'           => esc_html__( 'Add a New Condition', 'gravityview-advanced-filter' ),
 			'has_any'                       => esc_html__( 'has ANY of', 'gravityview-advanced-filter' ),
 			'has_all'                       => esc_html__( 'has ALL of', 'gravityview-advanced-filter' ),
+			'select_option'                 => esc_html__( 'Select option', 'gravityview-advanced-filter' ),
+			'create_option'                 => esc_html__( 'Create this option', 'gravityview-advanced-filter' ),
+			'duplicate_option'              => esc_html__( 'This option is already selected', 'gravityview-advanced-filter' ),
 			'add_condition'                 => esc_html__( 'Add Condition', 'gravityview-advanced-filter' ),
 			'add_created_by_user_condition' => esc_html__( 'Current User Condition', 'gravityview-advanced-filter' ),
 			'condition'                     => esc_html__( 'Condition', 'gravityview-advanced-filter' ),
@@ -335,11 +319,11 @@ class QueryFilters {
 	/**
 	 * Enqueues UI scripts.
 	 *
+	 * @since 1.0
+	 *
 	 * @param array $meta Meta data.
 	 *
 	 * @return void
-	 * @since 1.0
-	 *
 	 */
 	public function enqueue_scripts( array $meta = [] ) {
 		$script = 'assets/js/query-filters.js';
@@ -369,11 +353,11 @@ class QueryFilters {
 	/**
 	 * Enqueues UI styles.
 	 *
+	 * @since 1.0
+	 *
 	 * @param array $meta Meta data.
 	 *
 	 * @return void
-	 * @since 1.0
-	 *
 	 */
 	public static function enqueue_styles( array $meta = [] ) {
 		$style  = 'assets/css/query-filters.css';
@@ -388,11 +372,11 @@ class QueryFilters {
 	/**
 	 * Converts GF conditional logic rules to the object used by Query Filters.
 	 *
+	 * @since 1.0
+	 *
 	 * @param array $gf_conditional_logic GF conditional logic object.
 	 *
 	 * @return array Original or converted object.
-	 * @since 1.0
-	 *
 	 */
 	public function convert_gf_conditional_logic( array $gf_conditional_logic ) {
 		if ( ! isset( $gf_conditional_logic['actionType'], $gf_conditional_logic['logicType'], $gf_conditional_logic['rules'] ) ) {
@@ -456,8 +440,10 @@ class QueryFilters {
 
 	/**
 	 * The filter factory.
-	 * @return FilterFactory
+	 *
 	 * @since 2.0.0
+	 *
+	 * @return FilterFactory
 	 */
 	final public function get_filter_factory(): FilterFactory {
 		return $this->filter_factory;
@@ -466,11 +452,13 @@ class QueryFilters {
 	/**
 	 * Retrieves the finalized filters.
 	 *
-	 * @param bool  $as_unprocessed Whether to return the filters unprocessed.
+	 * @since 2.0.0
+	 *
 	 * @param array $entry          An optional entry object used as context.
 	 *
+	 * @param bool  $as_unprocessed Whether to return the filters unprocessed.
+	 *
 	 * @return Filter
-	 * @since 2.0.0
 	 */
 	final public function get_filters( bool $as_unprocessed = false, array $entry = [] ): Filter {
 		$clone = clone $this->filters;

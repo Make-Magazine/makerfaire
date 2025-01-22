@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by __root__ on 01-October-2024 using Strauss.
+ * Modified by __root__ on 22-November-2024 using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 
@@ -18,9 +18,9 @@ class GravityForms {
 	 *
 	 * @since 1.0.3
 	 *
-	 * @var GravityForms
+	 * @var GravityForms|null
 	 */
-	private static $_instance;
+	private static $_instance = null;
 
 	/**
 	 * Class constructor.
@@ -92,9 +92,9 @@ class GravityForms {
 
 				$table['items'][] = [
 					'label'                     => sprintf( '<a href="%s">%s</a>', esc_url_raw( Arr::get( $plugin_data, 'PluginURI', '' ) ), Arr::get( $plugin_data, 'Name' ) ),
-					'label_export'              => Arr::get( $plugin_data, 'Name' ),
+					'label_export'              => wp_strip_all_tags( Arr::get( $plugin_data, 'Name' ) ),
 					'value'                     => sprintf( 'by %s - %s', $author, esc_html( Arr::get( $plugin_data, 'Version' ) ) ),
-					'value_export'              => sprintf( 'by %s - %s', $author, esc_html( Arr::get( $plugin_data, 'Version' ) ) ),
+					'value_export'              => sprintf( 'by %s - %s', wp_strip_all_tags( $author ), esc_html( Arr::get( $plugin_data, 'Version' ) ) ),
 					'is_valid'                  => true, // TODO: Show validation errors if they exist.
 					'validation_message'        => '',
 					'validation_message_export' => '',

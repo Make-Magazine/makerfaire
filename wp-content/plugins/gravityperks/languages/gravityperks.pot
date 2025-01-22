@@ -2,14 +2,14 @@
 # This file is distributed under the GPL2.
 msgid ""
 msgstr ""
-"Project-Id-Version: Gravity Perks 2.3.12\n"
-"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/cloned-perk-7EcdwQA-M\n"
+"Project-Id-Version: Gravity Perks 2.3.14\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/cloned-perk-CG4kBhQP3j\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2024-09-19T18:23:59+00:00\n"
+"POT-Creation-Date: 2024-12-10T02:52:14+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.10.0\n"
 "X-Domain: gravityperks\n"
@@ -362,26 +362,11 @@ msgstr ""
 msgid "%s is not a perk."
 msgstr ""
 
-#. translators: placeholder is required WordPress plugin name
-#: model/perk.php:346
-msgid "Required WordPress plugin is missing: %s."
-msgstr ""
-
-#. translators: placeholder is required WordPress plugin name, second placeholder is required version
-#: model/perk.php:352
-msgid "Required WordPress plugin is missing: %1$s (%2$s)."
-msgstr ""
-
-#. translators: placeholders are plugin name, current plugin version, plugin name, and required version respectively
-#: model/perk.php:360
-msgid "Current %1$s version (%2$s) does not meet minimum %1$s version requirement (%3$s)."
-msgstr ""
-
 #. translators: placeholder is perk name
-#: model/perk.php:422
+#: model/perk.php:371
 msgid "Uh-oh! <strong>%s</strong> needs your attention."
 msgstr ""
 
-#: model/perk.php:799
+#: model/perk.php:748
 msgid "There was an issue deleting this perk. The perk directory was not available."
 msgstr ""

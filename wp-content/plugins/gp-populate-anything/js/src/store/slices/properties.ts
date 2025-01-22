@@ -22,6 +22,7 @@ export interface PropertiesSlice {
 
 	/* Actions */
 	getProperties: () => void;
+	getProperty: (propertyIdP: string) => GPPAProperty | null;
 	getPropertyValues: (property: string) => void;
 	setPrimaryProperty: (primaryProperty: string) => void;
 	resetPropertyValues: (keepPrimaryPropertyValues: boolean) => void;
@@ -69,6 +70,20 @@ const createPropertiesSlice: StateCreator<
 				properties: data,
 			});
 		});
+	},
+
+	getProperty(propertyId: string) {
+		const properties = get().properties;
+
+		for (const group in properties) {
+			for (const property of properties[group]) {
+				if (propertyId === property.value) {
+					return property;
+				}
+			}
+		}
+
+		return null;
 	},
 
 	getPropertyValues(property: string) {

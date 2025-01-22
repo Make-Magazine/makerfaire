@@ -19,6 +19,8 @@ class Ai extends Library {
 	const ASPECT_RATIO = 'ratio';
 	const IMAGE_RESOLUTION = 'image_resolution';
 
+	const IMAGE_BACKGROUND_COLOR = 'background_color';
+
 	const PROMPT = 'prompt';
 
 	public function get_title() {
@@ -38,19 +40,6 @@ class Ai extends Library {
 				'site_lang' => get_bloginfo( 'language' ),
 			]
 		);
-	}
-
-	public function get_cached_usage() {
-		$cache_key = 'elementor_ai_usage';
-		$cache_time = 24 * HOUR_IN_SECONDS;
-		$usage = get_site_transient( $cache_key );
-
-		if ( ! $usage ) {
-			$usage = $this->get_usage();
-			set_site_transient( $cache_key, $usage, $cache_time );
-		}
-
-		return $usage;
 	}
 
 	public function get_remote_config() {
@@ -73,6 +62,32 @@ class Ai extends Library {
 				'client_version' => $data['payload']['client_version'],
 				'client_session_id' => $data['payload']['client_session_id'],
 
+				'api_version' => ELEMENTOR_VERSION,
+				'site_lang' => get_bloginfo( 'language' ),
+			],
+			false,
+			'',
+			'json'
+		);
+	}
+
+	/**
+	 * @param array $event_data {
+	 *     @type string $name
+	 *     @type array $data
+	 *     @type array $client {
+	 *         @type string $name
+	 *         @type string $version
+	 *         @type string $session_id
+	 *     }
+	 * }
+	 */
+	public function send_event( array $event_data ) : void {
+		$this->ai_request(
+			'POST',
+			'client-events/events',
+			[
+				'payload' => $event_data,
 				'api_version' => ELEMENTOR_VERSION,
 				'site_lang' => get_bloginfo( 'language' ),
 			],
@@ -394,6 +409,74 @@ class Ai extends Library {
 			$image_file,
 			'image'
 		);
+
+		return $result;
+	}
+
+
+	private function resizeImageIfNeeded( $original_url ) {
+		try {
+			$max_file_size = 4194304;
+			$current_size = filesize( $original_url );
+
+			if ( $current_size <= $max_file_size ) {
+				return $original_url;
+			}
+
+			$image_editor = wp_get_image_editor( $original_url );
+
+			if ( is_wp_error( $image_editor ) ) {
+				return $original_url;
+			}
+
+			$dimensions = $image_editor->get_size();
+			$original_width = $dimensions['width'];
+			$original_height = $dimensions['height'];
+
+			$scaling_factor = sqrt( $max_file_size / $current_size );
+
+			$new_width = (int) ( $original_width * $scaling_factor );
+			$new_height = (int) ( $original_height * $scaling_factor );
+
+			$image_editor->resize( $new_width, $new_height, true );
+
+			$file_extension = pathinfo( $original_url, PATHINFO_EXTENSION );
+			$temp_image = tempnam( sys_get_temp_dir(), 'resized_' ) . '.' . $file_extension;
+
+			$image_editor->save( $temp_image );
+			return $temp_image;
+		} catch ( \Exception $e ) {
+			return $original_url;
+		}
+	}
+
+	public function get_unify_product_images( $image_data, $context, $request_ids ) {
+		$image_file = get_attached_file( $image_data['attachment_id'] );
+
+		if ( ! $image_file ) {
+			throw new \Exception( 'Image file not found' );
+		}
+
+		$final_path = $this->resizeImageIfNeeded( $image_file );
+
+		$result = $this->ai_request(
+			'POST',
+			'image/image-to-image/unify-product-images',
+			[
+				'aspectRatio' => $image_data['promptSettings'][ self::ASPECT_RATIO ],
+				'backgroundColor' => $image_data['promptSettings'][ self::IMAGE_BACKGROUND_COLOR ],
+				'context' => wp_json_encode( $context ),
+				'ids' => $request_ids,
+				'api_version' => ELEMENTOR_VERSION,
+				'site_lang' => get_bloginfo( 'language' ),
+			],
+			$final_path,
+			'image'
+		);
+
+		if ( $image_file !== $final_path ) {
+			unlink( $final_path );
+		}
 
 		return $result;
 	}
@@ -779,6 +862,24 @@ class Ai extends Library {
 				'api_version' => ELEMENTOR_VERSION,
 				'site_lang' => get_bloginfo( 'language' ),
 			]
+		);
+	}
+
+	public function get_animation( $data, $context, $request_ids ) {
+		return $this->ai_request(
+			'POST',
+			'text/get-motion-effect',
+			[
+				'prompt' => $data['payload']['prompt'],
+				'motionEffectType' => $data['payload']['motionEffectType'],
+				'context' => wp_json_encode( $context ),
+				'ids' => $request_ids,
+				'api_version' => ELEMENTOR_VERSION,
+				'site_lang' => get_bloginfo( 'language' ),
+			],
+			false,
+			'',
+			'json'
 		);
 	}
 

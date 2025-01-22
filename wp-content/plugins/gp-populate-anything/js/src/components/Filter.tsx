@@ -75,6 +75,9 @@ const Filter = ({
 	const updateFilter = useStore((state) => state.updateFilter);
 	const addFilter = useStore((state) => state.addFilter);
 	const removeFilter = useStore((state) => state.removeFilter);
+	const shouldFilterUseValue = useStore(
+		(state) => state.shouldFilterUseValue
+	);
 
 	const propertyValuesLoaded = filter.property in propertyValues;
 
@@ -193,61 +196,78 @@ const Filter = ({
 				))}
 			</select>
 
-			<Select
-				className="gppa-filter-value"
-				value={
-					propertiesLoaded && propertyValuesLoaded ? filter.value : ''
-				}
-				objectTypeInstance={objectTypeInstance}
-				flattenedProperties={flattenedProperties}
-				forceCustomInput={filter.operator.indexOf('like') !== -1}
-				disabled={!propertiesLoaded || !propertyValuesLoaded}
-				onChange={(value) => updateFilter(groupIndex, index, { value })}
-			>
-				{!(propertiesLoaded && propertyValuesLoaded) && (
-					<option value="" disabled hidden>
-						{strings.loadingEllipsis}
-					</option>
-				)}
-				{!filter.value && (
-					<option value="" disabled hidden>
-						&ndash; Value &ndash;
-					</option>
-				)}
-
-				<optgroup label={strings.specialValues}>
-					<option value="gf_custom">{strings.addCustomValue}</option>
-
-					{filterSpecialValues.map((option, optionIndex) => (
-						<option key={option.value} value={option.value}>
-							{option.label}
+			{shouldFilterUseValue(groupIndex, index) ? (
+				<Select
+					className="gppa-filter-value"
+					value={
+						propertiesLoaded && propertyValuesLoaded
+							? filter.value
+							: ''
+					}
+					objectTypeInstance={objectTypeInstance}
+					flattenedProperties={flattenedProperties}
+					forceCustomInput={
+						filter.operator
+							? filter.operator?.indexOf('like') !== -1
+							: false
+					}
+					disabled={!propertiesLoaded || !propertyValuesLoaded}
+					onChange={(value) =>
+						updateFilter(groupIndex, index, { value })
+					}
+				>
+					{!(propertiesLoaded && propertyValuesLoaded) && (
+						<option value="" disabled hidden>
+							{strings.loadingEllipsis}
 						</option>
-					))}
-				</optgroup>
+					)}
+					{!filter.value && (
+						<option value="" disabled hidden>
+							&ndash; Value &ndash;
+						</option>
+					)}
 
-				{filterFormFieldValues && filterFormFieldValues.length && (
-					<optgroup label={strings.formFieldValues}>
-						{filterFormFieldValues.map((option, optionIndex) => (
+					<optgroup label={strings.specialValues}>
+						<option value="gf_custom">
+							{strings.addCustomValue}
+						</option>
+
+						{filterSpecialValues.map((option, optionIndex) => (
 							<option key={option.value} value={option.value}>
-								{truncateStringMiddle(option.label)}
+								{option.label}
 							</option>
 						))}
 					</optgroup>
-				)}
 
-				{propertyValues?.[filter.property] &&
-					propertyValues[filter.property].map(
-						(option, optionIndex) => (
-							<option
-								key={option.value}
-								value={option.value}
-								disabled={option.disabled}
-							>
-								{truncateStringMiddle(option.label)}
-							</option>
-						)
+					{filterFormFieldValues && filterFormFieldValues.length && (
+						<optgroup label={strings.formFieldValues}>
+							{filterFormFieldValues.map(
+								(option, optionIndex) => (
+									<option
+										key={option.value}
+										value={option.value}
+									>
+										{truncateStringMiddle(option.label)}
+									</option>
+								)
+							)}
+						</optgroup>
 					)}
-			</Select>
+
+					{propertyValues?.[filter.property] &&
+						propertyValues[filter.property].map(
+							(option, optionIndex) => (
+								<option
+									key={option.value}
+									value={option.value}
+									disabled={option.disabled}
+								>
+									{truncateStringMiddle(option.label)}
+								</option>
+							)
+						)}
+				</Select>
+			) : null}
 
 			<div className="repeater-buttons">
 				<button

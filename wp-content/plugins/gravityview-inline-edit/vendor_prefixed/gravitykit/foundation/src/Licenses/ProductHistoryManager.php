@@ -2,13 +2,14 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by __root__ on 01-October-2024 using Strauss.
+ * Modified by __root__ on 22-November-2024 using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 
 namespace GravityKit\GravityEdit\Foundation\Licenses;
 
 use GravityKit\GravityEdit\Foundation\Helpers\Arr;
+use Plugin_Upgrader;
 
 class ProductHistoryManager {
 	const DB_OPTION_NAME = '_gk_foundation_products_history';
@@ -18,18 +19,18 @@ class ProductHistoryManager {
 	 *
 	 * @since 1.2.2
 	 *
-	 * @var string
+	 * @var array|null
 	 */
-	private $_products_history;
+	private $_products_history = null;
 
 	/**
 	 * {@PluginHistoryManager} clas instance.
 	 *
 	 * @since 1.2.2
 	 *
-	 * @var ProductHistoryManager
+	 * @var ProductHistoryManager|null
 	 */
-	private static $_instance;
+	private static $_instance = null;
 
 	/**
 	 * Returns class instance.
@@ -176,8 +177,8 @@ class ProductHistoryManager {
 	 *
 	 * @since 1.2.2
 	 *
-	 * @param WP_Upgrader $upgrader WP_Upgrader instance.
-	 * @param array       $data     WP_Upgrader data. See {@see WP_Upgrader::run()} for more information.
+	 * @param Plugin_Upgrader $upgrader WP_Upgrader instance.
+	 * @param array           $data     WP_Upgrader data. See {@see WP_Upgrader::run()} for more information.
 	 *
 	 * @return void
 	 */
@@ -206,8 +207,8 @@ class ProductHistoryManager {
 	 *
 	 * @since 1.2.2
 	 *
-	 * @param WP_Upgrader $upgrader WP_Upgrader instance.
-	 * @param array       $data     WP_Upgrader data. See {@see WP_Upgrader::run()} for more information.
+	 * @param Plugin_Upgrader $upgrader WP_Upgrader instance.
+	 * @param array           $data     WP_Upgrader data. See {@see WP_Upgrader::run()} for more information.
 	 *
 	 * @return void
 	 */

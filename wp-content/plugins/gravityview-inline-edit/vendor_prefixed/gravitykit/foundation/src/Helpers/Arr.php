@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by __root__ on 01-October-2024 using Strauss.
+ * Modified by __root__ on 22-November-2024 using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 
@@ -132,8 +132,8 @@ class Arr extends IlluminateArr {
 	 *
 	 * @since 1.0.0
 	 */
-	public static function flatten( $array, $depth = INF ) {
-		return parent::flatten( $array, $depth );
+	public static function flatten( $array, $depth = PHP_INT_MAX ) {
+		return parent::flatten( $array, $depth);
 	}
 
 	/**
@@ -142,7 +142,7 @@ class Arr extends IlluminateArr {
 	 * @since 1.0.0
 	 */
 	public static function forget( &$array, $keys ) {
-		return parent::forget( $array, $keys );
+		parent::forget( $array, $keys );
 	}
 
 	/**

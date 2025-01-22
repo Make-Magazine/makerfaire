@@ -1,1 +1,0 @@
-<ul class="em-tags-list">

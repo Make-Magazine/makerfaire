@@ -2,7 +2,7 @@
 /**
  * @license MIT
  *
- * Modified by gravitykit on 11-September-2024 using {@see https://github.com/BrianHenryIE/strauss}.
+ * Modified by gravitykit on 17-January-2025 using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\AdvancedFilter\QueryFilters\Filter;
@@ -15,12 +15,14 @@ use GravityKit\AdvancedFilter\QueryFilters\Repository\FormRepository;
 
 /**
  * Service that validates entries for a filter.
+ *
  * @since 2.0.0
  */
 final class EntryFilterService {
 
 	/**
 	 * The form repository.
+	 *
 	 * @since 2.0.0
 	 * @var FormRepository
 	 */
@@ -29,9 +31,10 @@ final class EntryFilterService {
 	/**
 	 * Creates the service.
 	 *
+	 * @since 2.0.0
+	 *
 	 * @param FormRepository $form_repository The form repository.
 	 *
-	 * @since 2.0.0
 	 */
 	public function __construct( FormRepository $form_repository ) {
 		$this->form_repository = $form_repository;
@@ -40,14 +43,16 @@ final class EntryFilterService {
 	/**
 	 * Whether an entry object meets the applied filter.
 	 *
-	 * @param array  $entry  The entry object.
+	 * @since 2.0.0
+	 *
 	 * @param Filter $filter The filter.
 	 *
+	 * @param array  $entry  The entry object.
+	 *
 	 * @return bool
-	 * @since 2.0.0
 	 */
 	public function meets_filter( array $entry, Filter $filter ): bool {
-		if (!$filter->is_enabled()) {
+		if ( ! $filter->is_enabled() ) {
 			return true;
 		}
 
@@ -61,11 +66,13 @@ final class EntryFilterService {
 	/**
 	 * Returns whether the entry meets this non-logic filter.
 	 *
-	 * @param array  $entry  The entry object.
+	 * @since 2.0.0
+	 *
 	 * @param Filter $filter The filter to handle.
 	 *
+	 * @param array  $entry  The entry object.
+	 *
 	 * @return bool
-	 * @since 2.0.0
 	 */
 	private function handle_filter( array $entry, Filter $filter ): bool {
 		if ( $filter->key() === '0' ) {
@@ -86,13 +93,13 @@ final class EntryFilterService {
 				// Find the selected option input_id.
 				foreach ( $field->choices as $i => $choice ) {
 					// Absolute match takes precedence.
-					if ( GFFormsModel::matches_operation( $choice['value'], $filter_value, 'is' ) ) {
+					if ( $this->matches_operation( $choice['value'], $filter_value, 'is' ) ) {
 						$input_id = (string) $field->inputs[ $i ]['id'];
 						break;
 					}
 
 					// Skip values that don't match at all.
-					if ( ! GFFormsModel::matches_operation( $choice['value'], $filter_value, 'contains' ) ) {
+					if ( ! $this->matches_operation( $choice['value'], $filter_value, 'contains' ) ) {
 						continue;
 					}
 
@@ -120,17 +127,19 @@ final class EntryFilterService {
 			}
 		}
 
-		return GFFormsModel::matches_operation( $entry_value, $filter_value, $filter->operator() );
+		return $this->matches_operation( $entry_value, $filter_value, $filter->operator() );
 	}
 
 	/**
 	 * Returns whether the entry meets this logic filter.
 	 *
-	 * @param array  $entry  The entry object.
+	 * @since 2.0.0
+	 *
 	 * @param Filter $filter The logic filter to handle.
 	 *
+	 * @param array  $entry  The entry object.
+	 *
 	 * @return bool
-	 * @since 2.0.0
 	 */
 	private function handle_logic( array $entry, Filter $filter ): bool {
 		foreach ( $filter->conditions() as $child_filter ) {
@@ -189,7 +198,7 @@ final class EntryFilterService {
 				}
 			}
 
-			if ( GFFormsModel::matches_operation( $entry_value, $filter_value, $filter->operator() ) ) {
+			if ( $this->matches_operation( $entry_value, $filter_value, $filter->operator() ) ) {
 				// Matched a field.
 				return true;
 			}
@@ -201,15 +210,35 @@ final class EntryFilterService {
 	/**
 	 * Converts a datetime string to a timestamp.
 	 *
+	 * @since 2.0.0
+	 *
 	 * @param string $filter_value The datetime string.
 	 *
 	 * @return int The timestamp.
 	 * @throws Exception
-	 * @since 2.0.0
 	 */
 	private function convert_date_to_timestamp( string $filter_value ): int {
 		$filter_date = new DateTimeImmutable( $filter_value );
 
 		return $filter_date->getTimestamp();
+	}
+
+	/**
+	 * Returns whether the operation matches.
+	 *
+	 * @since $ver$
+	 *
+	 * @param mixed  $value_1
+	 * @param mixed  $value_2
+	 * @param string $operation The operation.
+	 *
+	 * @return bool Whether the operation matches.
+	 */
+	private function matches_operation( $value_1, $value_2, $operation ): bool {
+		if ( method_exists( GFFormsModel::class, 'matches_conditional_operation' ) ) {
+			return GFFormsModel::matches_conditional_operation( $value_1, $value_2, $operation );
+		}
+
+		return GFFormsModel::matches_operation( $value_1, $value_2, $operation );
 	}
 }

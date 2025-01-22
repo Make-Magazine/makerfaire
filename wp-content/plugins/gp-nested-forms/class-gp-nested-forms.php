@@ -1118,6 +1118,30 @@ class GP_Nested_Forms extends GP_Plugin {
 	}
 
 	/**
+	 * Sets the child form theme to match the parent. Needed for GF 2.9+.
+	 *
+	 * @see GP_Nested_Forms::ajax_refresh_markup()
+	 * @see GP_Nested_Forms::ajax_edit_entry()
+	 *
+	 * @param string $slug The form theme slug.
+	 * @param array $form The form object.
+	 */
+	public function set_form_theme_slug_for_child( $slug, $form ) {
+		if ( ! wp_doing_ajax() ) {
+			return $slug;
+		}
+
+		// $_POST gets emptied out at this point.
+		$form_theme = rgar( $_REQUEST, 'form_theme' );
+
+		if ( empty( $form_theme ) ) {
+			return $slug;
+		}
+
+		return $form_theme;
+	}
+
+	/**
 	 * Fetch the form with the entry pre-populated, ready for editing.
 	 */
 	public function ajax_edit_entry() {
@@ -1145,6 +1169,7 @@ class GP_Nested_Forms extends GP_Plugin {
 
 		ob_start();
 
+		add_filter( 'gform_form_theme_slug', array( $this, 'set_form_theme_slug_for_child' ), 10, 2 );
 		add_filter( 'gform_pre_render_' . $form_id, array( $this, 'prepare_form_for_population' ) );
 		add_filter( 'gform_form_tag', array( $this, 'set_edit_form_action' ) );
 		add_filter( 'gwlc_is_edit_view', '__return_true' );
@@ -1204,6 +1229,8 @@ class GP_Nested_Forms extends GP_Plugin {
 			) );
 			wp_die();
 		}
+
+		add_filter( 'gform_form_theme_slug', array( $this, 'set_form_theme_slug_for_child' ), 10, 2 );
 
 		$nested_form   = GFAPI::get_form( $nested_form_id );
 		$require_login = rgar( $nested_form, 'requireLogin' );
@@ -1335,7 +1362,7 @@ class GP_Nested_Forms extends GP_Plugin {
 
 	public function get_child_entry_ids_from_value( $value ) {
 		// For child entry ids passed over URLs, the comma character may have encoded to %2C which must be decoded before processing.
-		$child_entry_ids = explode( ',', urldecode( $value ) );
+		$child_entry_ids = is_string( $value ) ? explode( ',', urldecode( $value ) ) : array();
 		foreach ( $child_entry_ids as &$child_entry_id ) {
 			// We typecast the value as an integer for consistency and to as a security measure. See PR #77.
 			$child_entry_id = (int) trim( $child_entry_id );
@@ -2178,12 +2205,15 @@ class GP_Nested_Forms extends GP_Plugin {
 			return $value;
 		}
 
-		$cache_key = "gpnf_field_value_{$field->formId}_{$field->id}_{$entry['id']}";
+		$cache_value_key   = "gpnf_field_value_{$field->formId}_{$field->id}_{$entry['id']}";
+		$cache_entries_key = "gpnf_field_entries_{$field->formId}_{$field->id}_{$entry['id']}";
 
-		$found        = null;
-		$cached_value = GFCache::get( $cache_key, $found, false );
+		$cached_value   = GFCache::get( $cache_value_key, $_unused, false );
+		$cached_entries = GFCache::get( $cache_entries_key, $_unused, false );
+
 		if ( $cached_value !== false ) {
-			return $cached_value;
+			// Filter documented below.
+			return gf_apply_filters( array( 'gpnf_nested_form_field_value', $field->formId, $field->id ), $cached_value, $field, $entry, $cached_entries );
 		}
 
 		// Turns out GFAPI::get_entries() is WAYYY faster than querying the DB directly...
@@ -2222,9 +2252,20 @@ class GP_Nested_Forms extends GP_Plugin {
 
 		$value = implode( ',', wp_list_pluck( $child_entries, 'id' ) );
 
-		GFCache::set( $cache_key, $value );
+		GFCache::set( $cache_value_key, $value );
+		GFCache::set( $cache_entries_key, $child_entries );
 
-		return $value;
+		/**
+		 * Filter the nested form field value.
+		 *
+		 * @param string                $nested_form_field_value Nested form field value.
+		 * @param \GP_Field_Nested_Form $field                   The current Nested Form field.
+		 * @param array                 $entry                   The current entry.
+		 * @param array                 $child_entries           The child entries.
+		 *
+		 * @since 1.1.68
+		 */
+		return gf_apply_filters( array( 'gpnf_nested_form_field_value', $field->formId, $field->id ), $value, $field, $entry, $child_entries );
 	}
 
 	public function should_use_static_value( $field, $entry ) {
@@ -2292,6 +2333,7 @@ class GP_Nested_Forms extends GP_Plugin {
 				'post_id'      => get_queried_object_id(),
 				'path'         => GPNF_Session::get_session_path(),
 				'field_values' => $this->get_stashed_shortcode_field_values( $form['id'] ),
+				'request'      => GPNF_Session::get_session_request_vars( GFAPI::get_form( $form['id'] ) ),
 			);
 
 			$args = array(
@@ -2591,9 +2633,7 @@ class GP_Nested_Forms extends GP_Plugin {
 	}
 
 	public function populate_field_from_session_cookie( $value, $field, $name ) {
-
-		$session = new GPNF_Session( rgar( $_REQUEST, 'gpnf_parent_form_id' ) );
-		$_value  = rgars( $session->get_cookie(), "request/{$name}" );
+		$_value = $this->get_query_arg( $name );
 		if ( $_value ) {
 			$value = $_value;
 		}
@@ -3070,7 +3110,7 @@ class GP_Nested_Forms extends GP_Plugin {
 
 		$existing_entry  = $this->entry_being_edited;
 		$files_to_delete = array();
-		$attachment_ids = array();
+		$attachment_ids  = array();
 
 		foreach ( $form['fields'] as $field ) {
 			if ( $field->get_input_type() !== 'fileupload' ) {
@@ -3551,22 +3591,9 @@ class GP_Nested_Forms extends GP_Plugin {
 	public function get_query_arg( $param ) {
 		$value = rgar( $_REQUEST, $param );
 
-		// If we didn't find a value in $_GET, let's check our session cookie
+		// If we didn't find a value in $_GET, let's check our session.
 		if ( rgblank( $value ) ) {
-			$entry_id       = rgar( $_REQUEST, 'gpnf_entry_id' );
-			$parent_form_id = rgar( $_REQUEST, 'gpnf_parent_form_id' );
-
-			/* Some AJAX requests like deleting don't send gpnf_parent_form_id. */
-			if ( ! $parent_form_id && $entry_id ) {
-				$parent_form_id = gform_get_meta( $entry_id, GPNF_Entry::ENTRY_PARENT_FORM_KEY );
-			}
-
-			if ( $parent_form_id ) {
-				$session = new GPNF_Session( $parent_form_id );
-				$cookie  = $session->get_cookie();
-				$request = rgar( $cookie, 'request' );
-				$value   = rgar( $request, $param );
-			}
+			$value = rgars( $_REQUEST, "gpnf_context/request/{$param}" );
 		}
 
 		return $value;
@@ -3656,11 +3683,30 @@ class GP_Nested_Forms extends GP_Plugin {
 	 * child form can get enqueued, such as for Rich Text Editors, etc.
 	 */
 	public function force_display_expired_nested_form( $form_args ) {
-		$is_gravityview_edit = function_exists( 'gravityview' ) && gravityview()->request->is_edit_entry();
-		$form_id             = rgar( $form_args, 'form_id' );
-		$nested_form         = $this->get_nested_form( $form_id );
+		// If we're in the context of GravityView, we need to force the display of the child form to enqueue assets.
+		if (
+			function_exists( 'gravityview' )
+			&& gravityview()->request->is_edit_entry()
+			&& class_exists( 'GravityView_frontend' )
+		) {
+			$gv_entry = GravityView_frontend::getInstance()->getEntry();
 
-		if ( wp_verify_nonce( rgpost( 'nonce' ), 'gpnf_edit_entry' ) || ( $is_gravityview_edit && $nested_form ) ) {
+			if ( $gv_entry ) {
+				$gv_entry_form = GFAPI::get_form( rgar( $gv_entry, 'form_id' ) );
+
+				// If $form_args['id'] exists in the parent form as a nested form field, allow it to be displayed.
+				if ( is_array( $gv_entry_form['fields'] ) ) {
+					foreach ( $gv_entry_form['fields'] as $field ) {
+						if ( $field->type === 'form' && $field->gpnfForm == $form_args['form_id'] ) {
+							$form_args['force_display'] = true;
+							break;
+						}
+					}
+				}
+			}
+		}
+
+		if ( wp_verify_nonce( rgpost( 'nonce' ), 'gpnf_edit_entry' ) ) {
 			$form_args['force_display'] = true;
 		}
 

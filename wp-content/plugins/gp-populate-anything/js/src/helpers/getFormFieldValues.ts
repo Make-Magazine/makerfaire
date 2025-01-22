@@ -95,25 +95,9 @@ function serializeAll(
 }
 
 export default function getFormFieldValues(
-	formId?: number | string,
-	isGravityView: boolean = false
+	$form: JQuery<HTMLFormElement>,
+	inputPrefix: string = 'input_'
 ) {
-	let $form: JQuery<HTMLFormElement> = $('#gform_' + formId);
-	let inputPrefix = 'input_';
-
-	if (isGravityView) {
-		inputPrefix = 'filter_';
-	}
-
-	/* Use entry form if we're in the Gravity Forms admin entry view. */
-	if ($('#wpwrap #entry_form').length) {
-		$form = $('#entry_form');
-	}
-
-	if (isGravityView) {
-		$form = $('.gv-widget-search');
-	}
-
 	const inputsArray = serializeAll($form).filter(
 		(value?: { name: string; value: string }) => {
 			if (!value || value.name?.indexOf(inputPrefix) !== 0) {

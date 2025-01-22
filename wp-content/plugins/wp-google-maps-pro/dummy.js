@@ -1,1 +1,0 @@
-var wpgmza_data = {};

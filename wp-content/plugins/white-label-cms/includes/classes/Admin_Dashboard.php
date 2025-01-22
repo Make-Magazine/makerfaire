@@ -221,10 +221,6 @@ class WLCMS_Admin_Dashboard extends WLCMS_Previewable
 
         $wlcms_widgets = wlcms_esc_html_deep($this->get_settings('dashboard_widgets'));
 
-        if (!$wlcms_widgets) {
-            return;
-        }
-
         if (!(isset($wp_meta_boxes['dashboard']) && is_array($wp_meta_boxes['dashboard']))) {
             return;
         }

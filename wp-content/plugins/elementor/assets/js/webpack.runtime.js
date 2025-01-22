@@ -1,4 +1,4 @@
-/*! elementor - v3.25.0 - 24-11-2024 */
+/*! elementor - v3.27.0 - 20-01-2025 */
 /******/ (() => { // webpackBootstrap
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({});
@@ -123,23 +123,23 @@
 /******/ 		// This function allow to reference async chunks
 /******/ 		__webpack_require__.u = (chunkId) => {
 /******/ 			// return url for filenames not based on template
-/******/ 			if (chunkId === "nested-title-keyboard-handler") return "" + chunkId + ".92a73d7a8a75bcb8cd67.bundle.js";
-/******/ 			if (chunkId === "lightbox") return "" + chunkId + ".2c9ae19597fcd2a76c3a.bundle.js";
-/******/ 			if (chunkId === "text-path") return "" + chunkId + ".a20877e832db83423958.bundle.js";
-/******/ 			if (chunkId === "accordion") return "" + chunkId + ".c16b88b2e8a0c50189bc.bundle.js";
-/******/ 			if (chunkId === "alert") return "" + chunkId + ".c3c6a3fdf4745bd26b7f.bundle.js";
-/******/ 			if (chunkId === "counter") return "" + chunkId + ".3f74a246dff765f39aea.bundle.js";
-/******/ 			if (chunkId === "progress") return "" + chunkId + ".6d15c16f0f5c4792940f.bundle.js";
-/******/ 			if (chunkId === "tabs") return "tabs.520bc2ed4560c561029e.bundle.js";
-/******/ 			if (chunkId === "toggle") return "" + chunkId + ".d79746a764407a0828ee.bundle.js";
-/******/ 			if (chunkId === "video") return "" + chunkId + ".817bd6a65a1542503aac.bundle.js";
-/******/ 			if (chunkId === "image-carousel") return "" + chunkId + ".9399f19d95d7300cbc2e.bundle.js";
-/******/ 			if (chunkId === "text-editor") return "" + chunkId + ".2f2f7e0ea1e16387a004.bundle.js";
-/******/ 			if (chunkId === "wp-audio") return "" + chunkId + ".b8efdc046bc9df72a075.bundle.js";
-/******/ 			if (chunkId === "nested-accordion") return "" + chunkId + ".82e5c4e9017e457a5f2e.bundle.js";
-/******/ 			if (chunkId === "contact-buttons") return "" + chunkId + ".a5e2cc7274ba4c94eb66.bundle.js";
-/******/ 			if (chunkId === "floating-bars") return "" + chunkId + ".1ebb83f158244b35bda6.bundle.js";
-/******/ 			if (chunkId === "container") return "" + chunkId + ".a7f0a15dfa05df34e1f7.bundle.js";
+/******/ 			if (chunkId === "nested-title-keyboard-handler") return "" + chunkId + ".967db65f6ba460c1f2e9.bundle.js";
+/******/ 			if (chunkId === "lightbox") return "" + chunkId + ".74688eb10c7852662847.bundle.js";
+/******/ 			if (chunkId === "text-path") return "" + chunkId + ".acb8842ac7e1cd1dfb44.bundle.js";
+/******/ 			if (chunkId === "accordion") return "" + chunkId + ".7b5b5744bdd225280eca.bundle.js";
+/******/ 			if (chunkId === "alert") return "" + chunkId + ".b696182ec6f18a35bc69.bundle.js";
+/******/ 			if (chunkId === "counter") return "" + chunkId + ".f359dee9199f5aad06c6.bundle.js";
+/******/ 			if (chunkId === "progress") return "" + chunkId + ".5d8492a023e85c6cc0e0.bundle.js";
+/******/ 			if (chunkId === "tabs") return "tabs.e808857358793ac13db5.bundle.js";
+/******/ 			if (chunkId === "toggle") return "" + chunkId + ".375da8e2f6fed12731c2.bundle.js";
+/******/ 			if (chunkId === "video") return "" + chunkId + ".e031bfad2085ca92d445.bundle.js";
+/******/ 			if (chunkId === "image-carousel") return "" + chunkId + ".1a3e0c6222562304eed5.bundle.js";
+/******/ 			if (chunkId === "text-editor") return "" + chunkId + ".bd4eccbd156d0b1fc3cf.bundle.js";
+/******/ 			if (chunkId === "wp-audio") return "" + chunkId + ".c91cab3152c3f241f266.bundle.js";
+/******/ 			if (chunkId === "nested-accordion") return "" + chunkId + ".a0f28ea648b29da812a1.bundle.js";
+/******/ 			if (chunkId === "contact-buttons") return "" + chunkId + ".c21325756a91b795f8e4.bundle.js";
+/******/ 			if (chunkId === "floating-bars") return "" + chunkId + ".7efeeb8b098e55999ff1.bundle.js";
+/******/ 			if (chunkId === "container") return "" + chunkId + ".cb1e834c5aad68e9c908.bundle.js";
 /******/ 			// return url for filenames based on template
 /******/ 			return undefined;
 /******/ 		};
@@ -165,7 +165,7 @@
 /******/ 	/* webpack/runtime/load script */
 /******/ 	(() => {
 /******/ 		var inProgress = {};
-/******/ 		var dataWebpackPrefix = "elementor:";
+/******/ 		var dataWebpackPrefix = "elementorFrontend:";
 /******/ 		// loadScript function to load a script via script tag
 /******/ 		__webpack_require__.l = (url, done, key, chunkId) => {
 /******/ 			if(inProgress[url]) { inProgress[url].push(done); return; }
@@ -225,13 +225,13 @@
 /******/ 		if (__webpack_require__.g.importScripts) scriptUrl = __webpack_require__.g.location + "";
 /******/ 		var document = __webpack_require__.g.document;
 /******/ 		if (!scriptUrl && document) {
-/******/ 			if (document.currentScript)
+/******/ 			if (document.currentScript && document.currentScript.tagName.toUpperCase() === 'SCRIPT')
 /******/ 				scriptUrl = document.currentScript.src;
 /******/ 			if (!scriptUrl) {
 /******/ 				var scripts = document.getElementsByTagName("script");
 /******/ 				if(scripts.length) {
 /******/ 					var i = scripts.length - 1;
-/******/ 					while (i > -1 && !scriptUrl) scriptUrl = scripts[i--].src;
+/******/ 					while (i > -1 && (!scriptUrl || !/^http(s?):/.test(scriptUrl))) scriptUrl = scripts[i--].src;
 /******/ 				}
 /******/ 			}
 /******/ 		}
@@ -327,7 +327,7 @@
 /******/ 			return __webpack_require__.O(result);
 /******/ 		}
 /******/ 		
-/******/ 		var chunkLoadingGlobal = self["webpackChunkelementor"] = self["webpackChunkelementor"] || [];
+/******/ 		var chunkLoadingGlobal = self["webpackChunkelementorFrontend"] = self["webpackChunkelementorFrontend"] || [];
 /******/ 		chunkLoadingGlobal.forEach(webpackJsonpCallback.bind(null, 0));
 /******/ 		chunkLoadingGlobal.push = webpackJsonpCallback.bind(null, chunkLoadingGlobal.push.bind(chunkLoadingGlobal));
 /******/ 	})();

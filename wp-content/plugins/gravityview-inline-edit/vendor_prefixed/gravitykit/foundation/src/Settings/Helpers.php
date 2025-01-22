@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by __root__ on 01-October-2024 using Strauss.
+ * Modified by __root__ on 22-November-2024 using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 
@@ -30,7 +30,7 @@ class Helpers {
 			case '<':
 				return (int) $first < (int) $second;
 			case 'pattern':
-				return preg_match( '/' . $first . '/', $second );
+				return (bool) preg_match( '/' . $first . '/', $second );
 			case '=':
 			default:
 				return $first == $second;

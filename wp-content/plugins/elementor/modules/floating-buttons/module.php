@@ -100,14 +100,12 @@ class Module extends BaseModule {
 
 		$this->register_contact_pages_cpt();
 
-		if ( ! ElementorUtils::has_pro() ) {
-			add_action( 'elementor/documents/register', function ( Documents_Manager $documents_manager ) {
-				$documents_manager->register_document_type(
-					static::FLOATING_BUTTONS_DOCUMENT_TYPE,
-					Floating_Buttons::get_class_full_name()
-				);
-			} );
-		}
+		add_action( 'elementor/documents/register', function ( Documents_Manager $documents_manager ) {
+			$documents_manager->register_document_type(
+				static::FLOATING_BUTTONS_DOCUMENT_TYPE,
+				Floating_Buttons::get_class_full_name()
+			);
+		} );
 
 		add_action( 'current_screen', function() {
 			$screen = get_current_screen();
@@ -440,8 +438,9 @@ class Module extends BaseModule {
 			'public' => true,
 			'show_in_menu' => 'edit.php?post_type=elementor_library&tabs_group=library',
 			'show_in_nav_menus' => false,
-			'capability_type' => 'page',
+			'capability_type' => 'post',
 			'taxonomies' => [ Source_Local::TAXONOMY_TYPE_SLUG ],
+			'show_in_rest' => true,
 			'supports' => [
 				'title',
 				'editor',

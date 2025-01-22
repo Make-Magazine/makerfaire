@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by __root__ on 01-October-2024 using Strauss.
+ * Modified by __root__ on 22-November-2024 using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 
@@ -13,6 +13,7 @@ use GravityKit\GravityEdit\Foundation\ThirdParty\Monolog\Handler\AbstractProcess
 use GFForms;
 use GFLogging;
 use GFAddOn;
+use KLogger;
 
 /**
  * Handler for Gravity Forms logging.
@@ -76,17 +77,17 @@ class GravityFormsHandler extends AbstractProcessingHandler {
 	 */
 	protected function write( array $record ) {
 		$monolog_to_klogger_log_level_map = [
-			'DEBUG'     => \Klogger::DEBUG,
-			'INFO'      => \Klogger::INFO,
-			'NOTICE'    => \Klogger::INFO,
-			'WARNING'   => \Klogger::WARN,
-			'ERROR'     => \Klogger::ERROR,
-			'CRITICAL'  => \Klogger::FATAL,
-			'ALERT'     => \Klogger::WARN,
-			'EMERGENCY' => \Klogger::WARN,
+			'DEBUG'     => KLogger::DEBUG,
+			'INFO'      => KLogger::INFO,
+			'NOTICE'    => KLogger::INFO,
+			'WARNING'   => KLogger::WARN,
+			'ERROR'     => KLogger::ERROR,
+			'CRITICAL'  => KLogger::FATAL,
+			'ALERT'     => KLogger::WARN,
+			'EMERGENCY' => KLogger::WARN,
 		];
 
-		\GFLogging::log_message( $this->_logger_id, $record['formatted'], $monolog_to_klogger_log_level_map[ $record['level_name'] ] );
+		GFLogging::log_message( $this->_logger_id, $record['formatted'], $monolog_to_klogger_log_level_map[ $record['level_name'] ] );
 	}
 }
 
@@ -114,6 +115,9 @@ class MockGFAddon extends GFAddOn {
 
 	/**
 	 * {@inheritdoc}
+	 *
+	 * @param string $logger_id Logger ID.
+	 * @param string $logger_title Logger title.
 	 */
 	public function __construct( $logger_id, $logger_title ) {
 		if ( ! class_exists( 'GFForms' ) || ! class_exists( 'GFLogging' ) ) {

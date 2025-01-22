@@ -78,6 +78,16 @@ class GP_Preview_Submission extends GP_Plugin {
 		?>
 
 		<script type="text/javascript">
+			jQuery(document).on('gform_load_field_settings', function(event, field) {
+
+				if( field.type != 'html' ) {
+					return;
+				}
+				jQuery('textarea#field_content').removeClass('mt-initialized');
+				document.dispatchEvent(new Event('gform/merge_tag/initialize'));
+				initMergeTagSupport();
+				jQuery('textarea#field_content').parent().find('span.gform-merge-tags-dropdown-wrapper').remove();
+			});
 
 			window.gppsDoingMergeTags = false;
 

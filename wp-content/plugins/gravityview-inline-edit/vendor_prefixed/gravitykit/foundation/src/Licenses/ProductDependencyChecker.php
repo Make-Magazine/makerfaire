@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by __root__ on 01-October-2024 using Strauss.
+ * Modified by __root__ on 22-November-2024 using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 
@@ -322,6 +322,11 @@ class ProductDependencyChecker {
 					continue;
 				}
 
+				// When a dependency product is found, it can be found under a different text domain given that we're merging regular and legacy text domains.
+				// For this reason, we need to set the dependency text domain to the one found so that further checks are done with the correct text domain.
+				$dependency_text_domain         = $dependency_product['text_domain'];
+				$dependency_data['text_domain'] = $dependency_product['text_domain'];
+
 				$dependencies_of_dependency = $this->get_dependencies_for_product_version( $dependency_data['version'], $dependency_product['dependencies'] );
 
 				if ( ! empty( $dependency_product['dependencies'] && is_null( $dependencies_of_dependency ) ) ) {
@@ -556,7 +561,7 @@ class ProductDependencyChecker {
 			return null;
 		}
 
-		$text_domains = explode( '|', $text_domain_str );
+		$text_domains = array_filter( explode( '|', $text_domain_str ) );
 
 		foreach ( $text_domains as $text_domain ) {
 			$gk_product = Arr::first(
@@ -569,16 +574,15 @@ class ProductDependencyChecker {
 			if ( $gk_product ) {
 				return ProductManager::get_instance()->normalize_product_data( $gk_product );
 			}
+
+			$non_gk_product = CoreHelpers::get_installed_plugin_by_text_domain( $text_domain, false, $author_str );
+
+			if ( $non_gk_product ) {
+				return ProductManager::get_instance()->normalize_product_data( $non_gk_product );
+			}
 		}
 
-		$non_gk_product = CoreHelpers::get_installed_plugin_by_text_domain( $text_domain_str, false, $author_str );
-
-		if ( $non_gk_product ) {
-			$non_gk_product = ProductManager::get_instance()->normalize_product_data( $non_gk_product );
-
-		}
-
-		return $non_gk_product;
+		return null;
 	}
 
 	/**

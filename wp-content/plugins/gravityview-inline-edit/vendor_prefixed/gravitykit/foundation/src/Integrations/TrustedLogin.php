@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by __root__ on 01-October-2024 using Strauss.
+ * Modified by __root__ on 22-November-2024 using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 
@@ -11,7 +11,6 @@ namespace GravityKit\GravityEdit\Foundation\Integrations;
 use GravityKit\GravityEdit\Foundation\Helpers\Arr;
 use GravityKit\GravityEdit\Foundation\Helpers\Core as CoreHelpers;
 use GravityKit\GravityEdit\Foundation\Licenses\LicenseManager;
-use GravityKit\GravityEdit\Foundation\ThirdParty\TrustedLogin\Admin as TrustedLoginAdmin;
 use GravityKit\GravityEdit\Foundation\ThirdParty\TrustedLogin\Form as TrustedLoginForm;
 use GravityKit\GravityEdit\Foundation\ThirdParty\TrustedLogin\SupportUser as TrustedLoginSupportUser;
 use GravityKit\GravityEdit\Foundation\ThirdParty\TrustedLogin\SiteAccess as TrustedLoginSiteAccess;
@@ -41,18 +40,18 @@ class TrustedLogin {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @var TrustedLoginClient
+	 * @var TrustedLoginClient|null;
 	 */
-	private $_trustedlogin_client;
+	private $_trustedlogin_client = null;
 
 	/**
 	 * Class instance.
 	 *
 	 * @since 1.0.0
 	 *
-	 * @var TrustedLogin
+	 * @var TrustedLogin|null;
 	 */
-	private static $_instance;
+	private static $_instance = null;
 
 	/**
 	 * Class constructor.
@@ -116,7 +115,7 @@ class TrustedLogin {
 		$menu_title = $page_title;
 
 		AdminMenu::add_submenu_item(
-            [
+			[
 				'page_title'         => $page_title,
 				'menu_title'         => $menu_title,
 				'capability'         => $this->_capability,
@@ -125,8 +124,8 @@ class TrustedLogin {
 				'order'              => 1,
 				'hide_admin_notices' => true,
 			],
-            'bottom'
-        );
+			'bottom'
+		);
 	}
 
 	/**

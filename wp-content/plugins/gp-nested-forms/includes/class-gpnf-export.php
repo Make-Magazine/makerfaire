@@ -81,7 +81,21 @@ class GPNF_Export {
 
 					$field_label = $header['label'];
 
+					/**
+					 * Exclude the addition of form fields hidden inputs to the parent form export setings.
+					 *
+					 * @since 1.1.68
+					 *
+					 * @param bool  $exclude_hidden_fields Indicate whether or not child fields hidden inputs should be available for export. Defaults to `false`.
+					 * @param array $form                  The current form object.
+					 */
+					$exclude_hidden_fields_inputs = gf_apply_filters( array( 'gpnf_export_exclude_hidden_field_inputs', $form['id'], $field->id ), false, $form );
+
 					foreach ( $child_field->get_entry_inputs() as $input ) {
+						if ( $exclude_hidden_fields_inputs && rgar( $input, 'isHidden' ) ) {
+							continue;
+						}
+
 						$header = sprintf( '%s (%s)', $field_label, $input['label'] );
 						$header = gf_apply_filters( array( 'gpnf_export_child_field_header', $form['id'], $field->id, $input['id'] ), $header, $form, $field, $child_field, $input );
 						$header = array(

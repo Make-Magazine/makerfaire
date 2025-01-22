@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by __root__ on 01-October-2024 using Strauss.
+ * Modified by __root__ on 22-November-2024 using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 
@@ -26,9 +26,9 @@ class Framework {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @var Framework
+	 * @var Framework|null
 	 */
-	private static $_instance;
+	private static $_instance = null;
 
 	/**
 	 * Access capabilities.
@@ -117,7 +117,7 @@ class Framework {
 		 *
 		 * @since  1.0.0
 		 *
-		 * @param $this
+		 * @param Framework $instance
 		 */
 		do_action( 'gk/foundation/settings/initialized', $this );
 	}
@@ -480,11 +480,14 @@ class Framework {
 			FoundationCore::ajax_router()->get_ajax_params( self::AJAX_ROUTER )
 		);
 
+		$version = filemtime( CoreHelpers::get_assets_path( $script ) );
+		$version = false !== $version ? (string) $version : false;
+
 		wp_enqueue_script(
 			self::ID,
 			CoreHelpers::get_assets_url( $script ),
 			[ 'wp-hooks', 'wp-i18n' ],
-			filemtime( CoreHelpers::get_assets_path( $script ) ),
+			$version,
 			true
 		);
 
@@ -494,11 +497,14 @@ class Framework {
 			[ 'data' => $script_data ]
 		);
 
+		$version = filemtime( CoreHelpers::get_assets_path( $style ) );
+		$version = false !== $version ? (string) $version : false;
+
 		wp_enqueue_style(
 			self::ID,
 			CoreHelpers::get_assets_url( $style ),
 			[],
-			filemtime( CoreHelpers::get_assets_path( $style ) )
+			$version
 		);
 
 		wp_enqueue_media();
@@ -507,7 +513,7 @@ class Framework {
 			$styles  = Arr::get( $plugin_data, 'assets.styles', [] );
 			$scripts = Arr::get( $plugin_data, 'assets.scripts', [] );
 
-			if ( empty( $styles ) || empty( $scripts ) ) {
+			if ( empty( $styles ) && empty( $scripts ) ) {
 				continue;
 			}
 
@@ -516,11 +522,14 @@ class Framework {
 					continue;
 				}
 
+				$version = filemtime( $script['file'] );
+				$version = false !== $version ? (string) $version : false;
+
 				wp_enqueue_script(
 					self::ID . '-' . md5( $script['file'] ),
 					plugin_dir_url( $script['file'] ) . basename( $script['file'] ),
 					Arr::get( $script, 'deps', [] ),
-					filemtime( $script['file'] ),
+					$version,
 					true
 				);
 			}
@@ -529,11 +538,14 @@ class Framework {
 					continue;
 				}
 
+				$version = filemtime( $style['file'] );
+				$version = false !== $version ? (string) $version : false;
+
 				wp_enqueue_style(
 					self::ID . '-' . md5( $style['file'] ),
 					plugin_dir_url( $style['file'] ) . basename( $style['file'] ),
 					Arr::get( $style, 'deps', [] ),
-					filemtime( $style['file'] )
+					$version
 				);
 			}
 
