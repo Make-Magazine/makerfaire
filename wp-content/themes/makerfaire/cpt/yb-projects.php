@@ -310,3 +310,11 @@ if (is_admin()) {
 		}
 	}
 }
+
+//modify the name of the returned post so users can tell which faire year it is for
+add_filter('acf/fields/post_object/result', 'my_acf_fields_post_object_result', 10, 4);
+function my_acf_fields_post_object_result( $text, $post, $field, $post_id ) {
+	$start_date = get_field("start_date", $post->ID);				
+    $text .= ' (' . date('Y', strtotime($start_date)) .  ')';
+    return $text;
+}
