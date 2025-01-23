@@ -39,7 +39,7 @@ function build_makershed_feed_table() {
         $query->fields('collectionByHandle');
         $query->collectionByHandle->attribute('handle', $collection);
         // ID will allow us to sort new to old
-        $products = 'products(first:30,sortKey:ID,reverse:true){edges{node{title,status,handle,variants(first: 1){edges{node{price,availableForSale}}},images(first:1){edges{node{url}}}}}}';
+        $products = 'products(first:30){edges{node{title,status,handle,variants(first: 1){edges{node{price,availableForSale}}},images(first:1){edges{node{url}}}}}}';
         $query->collectionByHandle->fields(['id','title',$products]);
         $graphqlString = $query->build();
         
