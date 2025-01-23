@@ -586,6 +586,15 @@ function th_register_cap_groups() {
     );
 }
 
+// add body classes
+function mf_body_classes( $classes ) {
+	if( is_login() ) {
+		$classes[] = "login-page";
+	}
+	return $classes;
+}
+add_filter( 'body_class', 'mf_body_classes' );
+
 /* turn off caching on gravity form pages
 function gf_wprocket()  {
     if(class_exists('WP_Rocket_Requirements_Check')) {
