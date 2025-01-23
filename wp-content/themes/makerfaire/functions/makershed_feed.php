@@ -76,7 +76,7 @@ function build_makershed_feed_table() {
 
 
 // output the makershed related products
-function makershedOutput($collection = "maker-faire-wear", $amount = "4") {
+function makershedOutput($collection = MAKERSHED_DEFAULT_COLLECTION, $amount = "4") {
     global $wpdb;
     $wpdb->show_errors();
     $default_collection = MAKERSHED_DEFAULT_COLLECTION;

@@ -224,7 +224,7 @@ $maker_data = get_field("maker_data");
 
     <?php 
         $primary_cat_id = get_primary_taxonomy_id($exhibit_id, "mf-project-cat");
-        $primary_cat_collection = get_field("makershed_collection", "mf-project-cat_" . $primary_cat_id) ? get_field("makershed_collection", "mf-project-cat_" . $primary_cat_id) : "maker-faire-wear";
+        $primary_cat_collection = get_field("makershed_collection", "mf-project-cat_" . $primary_cat_id) ? get_field("makershed_collection", "mf-project-cat_" . $primary_cat_id) : MAKERSHED_DEFAULT_COLLECTION;;
         echo makershedOutput($primary_cat_collection);
     ?>
     
