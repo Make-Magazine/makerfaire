@@ -1,0 +1,1 @@
+These files are needed for the Shopify connecting functions in functions/makershed_feed.php

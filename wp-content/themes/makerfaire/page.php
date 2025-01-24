@@ -1,7 +1,5 @@
 <?php
-/*
-Template name: Wide Template
-*/
+
 get_header(); ?>
 
 <div class="clear"></div>

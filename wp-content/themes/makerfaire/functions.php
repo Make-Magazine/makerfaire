@@ -53,6 +53,7 @@ add_filter('jetpack_enable_opengraph', '__return_false', 99);
 define('WPE_GOVERNOR', false);
 
 function load_scripts() {
+
     wp_enqueue_script("jquery");
     $my_theme = wp_get_theme();
     $my_version = $my_theme->get('Version');

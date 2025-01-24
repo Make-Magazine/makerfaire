@@ -1,0 +1,37 @@
+.related-makershed-wrapper {
+	margin: 15px;
+	margin-bottom: 25px;
+	h3 {
+		color: #333;
+		padding: 10px;
+		text-align: center;
+		font-size: 1.75rem;
+		font-family: "Roboto Bold";
+	}
+	.card-deck .card {
+		a {
+			display: flex;
+			flex-direction: column;
+		}
+		.card-header img {
+			object-position: top;
+		}
+		.card-body {
+			text-align: center;
+			font-family: "Roboto Bold";
+			display: flex;
+			flex: 1 1 auto;
+			h4 {
+				font-family: "Roboto Bold";
+			}
+			.price {
+				color: red;
+				margin-top: auto;
+				margin-bottom: 15px;
+			}
+		}
+		@media (min-width: 768px) and (max-width: 1099px) {
+			width: calc(50% - 24px);
+		}
+	}
+}
