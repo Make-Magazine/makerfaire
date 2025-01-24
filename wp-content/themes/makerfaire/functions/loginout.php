@@ -14,12 +14,15 @@ add_action('login_footer', 'login_add_footer');
 function add_logout_link( $atts ){
   return '<div class="site-content">
             <div id="logoutPrompt">
-              <div class="left-side">
+              <div>
                 <img src="https://make.co/wp-content/universal-assets/v2/images/makey-spyglass.jpg" alt="Just making sure" />
               </div>
-              <div class="right-side">
+              <div>
                 <p>You are attempting to log out of ' . get_bloginfo( 'name' ) . '</p>
-                <p>Do you really want to <a href="' . wp_logout_url( home_url() ) . '">log out?</a></p>
+                <p>Do you really want to log out?</p>
+                <div class="logout-buttons">
+                  <a onclick="history.go(-1);" class="btn universal-btn universal-btn-red">Cancel</a>
+                  <a href="' . wp_logout_url( home_url() ) . '" class="btn universal-btn">Log out</a>
               </div>
             </div>
           </div>';
