@@ -100,7 +100,7 @@ function makershedOutput($collection = MAKERSHED_DEFAULT_COLLECTION, $amount = "
                         $makershedOutput .= '<div class="card-header"><img src="'.$product->image.'" alt="'.$product->title.'" /></div>';
                         $makershedOutput .= '<div class="card-body"><div class="card-text">';
                             $makershedOutput .= '<h4>'.$product->title.'</h4>';
-                            $makershedOutput .= '<div class="item-price">$'.$product->price.'</div>';
+                            $makershedOutput .= '<div class="price">$'.$product->price.'</div>';
                         $makershedOutput .= '</div></div>';
                     $makershedOutput .= '</a>';
                 $makershedOutput .= '</div>';
