@@ -209,10 +209,10 @@ if (is_admin()) {
 
 		//only add filter to projects
 		if ($post_type == 'projects') {
-			//Filter by Faire
-			$faires = array();
+			//Filter by Faire			
 			$query_faires = $wpdb->get_results("select distinct(meta_value) faire_id, " .
-				"(select post_title from wp_posts faire_post where faire_post.id=faire_id) as faire_name " .
+				"(select post_title from wp_posts faire_post where faire_post.id=faire_id) as faire_name, " .
+				"(select year(meta_value) from wp_postmeta pm2 where pm2.post_id=faire_id and meta_key='start_date' limit 1) as faire_year ".
 				"from wp_postmeta " .
 				"left outer join wp_posts on wp_postmeta.post_id = wp_posts.id " .
 				"where meta_key = 'faire_information_faire_post' " .
@@ -232,13 +232,8 @@ if (is_admin()) {
 				<option value="" <?php echo ($current_v == '' ? ' selected="selected"' : ''); ?>>All Faires</option>
 
 				<?php
-				foreach ($faires as $value => $faire_name) {
-					printf(
-						'<option value="%s"%s>%s</option>',
-						$value,
-						$value == $current_v ? ' selected="selected"' : '',
-						$faire_name
-					);
+				foreach ($query_faires  as $faire) {
+					echo '<option value="'.$faire->faire_id.'" '.($current_v ==$faire->faire_id? ' selected="selected"' : '').'>'.$faire->faire_name.' - '.$faire->faire_year.'</option>';						
 				}
 				?>
 			</select>
@@ -314,4 +309,12 @@ if (is_admin()) {
 			}
 		}
 	}
+}
+
+//modify the name of the returned post so users can tell which faire year it is for
+add_filter('acf/fields/post_object/result', 'my_acf_fields_post_object_result', 10, 4);
+function my_acf_fields_post_object_result( $text, $post, $field, $post_id ) {
+	$start_date = get_field("start_date", $post->ID);				
+    $text .= ' (' . date('Y', strtotime($start_date)) .  ')';
+    return $text;
 }
