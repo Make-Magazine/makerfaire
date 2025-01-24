@@ -610,12 +610,22 @@ function th_register_cap_groups() {
 
 // add body classes
 function mf_body_classes( $classes ) {
+    global $post;
 	if( is_login() ) {
 		$classes[] = "login-page";
 	}
+    if (isset($post)) {
+        error_log("post is set");
+        if ($post->post_name) {
+            $classes[] = $post->post_type . '-' . $post->post_name;
+        } else {
+            $classes[] = $post->post_type . '-' . str_replace("/", "-", trim($_SERVER['REQUEST_URI'], '/'));
+        }
+    }
 	return $classes;
 }
-add_filter( 'body_class', 'mf_body_classes' );
+add_filter( 'body_class', 'mf_body_classes', 999 );
+
 
 /* turn off caching on gravity form pages
 function gf_wprocket()  {
