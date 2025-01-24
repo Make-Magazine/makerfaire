@@ -7,10 +7,12 @@ $statArray = explode(',',trim($status));
 
 $show   = (isset($_GET['show'])?$_GET['show']:'');
 
+$post_type = (isset($_GET['post_type'])?$_GET['post_type']:'page');
+
 $sql = 'SELECT ID, post_date, post_title, post_status,post_password, post_parent,post_type, post_modified, '.
        ' (select meta_value from wp_postmeta where meta_key="_wp_page_template" and post_id = wp_posts.id limit 1) as page_template '.
         'FROM `wp_posts` '.
-        'where post_type="page" and post_status in('."'" . implode("','", $statArray) . "'".') '.
+        'where post_type="'.$post_type.'" and post_status in('."'" . implode("','", $statArray) . "'".') '.
         'order by post_parent ASC, post_title ASC;';
     //echo $sql;    
 $results = $wpdb->get_results($sql, ARRAY_A);
