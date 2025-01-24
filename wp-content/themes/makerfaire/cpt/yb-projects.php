@@ -129,6 +129,7 @@ function projects_posts_columns($columns) {
 		'cb' 				=> $columns['cb'],
 		'title' 			=> __('Title'),
 		'exhibit_photo' 	=> __('Photo', 'makerfaire'),
+		'primary_category'	=> __('Primary Category', 'makerfaire'),
 		'taxonomy-mf-project-cat' => __('Project Categories', 'makerfaire'),
 		'faire_name' 		=> __('Faire', 'makerfaire'),
 		'faire_year' 		=> __('Faire Year', 'makerfaire'),
@@ -171,6 +172,11 @@ function projects_content_column($column, $post_id) {
 			if (isset($project_location["region"]) && isset($project_location["region"]->name)) {
 				echo $project_location["region"]->name;
 			}
+			break;
+		case 'primary_category':
+			$primary_cat_id = get_primary_taxonomy_id($post_id, "mf-project-cat");        	
+			$category 		= get_term( $primary_cat_id );
+			echo $category->name;						
 			break;
 	}
 }

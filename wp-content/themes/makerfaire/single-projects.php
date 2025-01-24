@@ -222,6 +222,13 @@ $maker_data = get_field("maker_data");
         </section>
     <?php } ?>
 
+    <?php 
+        $primary_cat_id = get_primary_taxonomy_id($exhibit_id, "mf-project-cat");
+        $collection_field = get_field("makershed_collection", "mf-project-cat_" . $primary_cat_id);
+        $primary_cat_collection = $collection_field  ? $collection_field  : MAKERSHED_DEFAULT_COLLECTION;
+        echo makershedOutput($primary_cat_collection);
+    ?>
+    
 </article><!--Container-->
 <script>
     jQuery(document).ready(function() {
