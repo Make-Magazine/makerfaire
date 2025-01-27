@@ -81,7 +81,7 @@ function build_makershed_feed_table() {
 
 
 // output the makershed related products
-function makershedOutput($collection = MAKERSHED_DEFAULT_COLLECTION, $amount = "4") {
+function makershedOutput($collection = MAKERSHED_DEFAULT_COLLECTION, $amount = "3") {
     global $wpdb;
     $wpdb->show_errors();
     $default_collection = MAKERSHED_DEFAULT_COLLECTION;
@@ -110,6 +110,15 @@ function makershedOutput($collection = MAKERSHED_DEFAULT_COLLECTION, $amount = "
                     $makershedOutput .= '</a>';
                 $makershedOutput .= '</div>';
             }
+            $makershedOutput .= '<div class="card">
+                                    <a href="https://subscribe.makezine.com/loading.do?omedasite=Make_subscribe&PK=M3GCT015" class="related-makershed-item" target="_blank">
+                                        <div class="card-header"><img src="https://make.co/wp-content/universal-assets/v2/images/make-magazine-covers.jpg" alt="Subscribe to Make: Magazine Today" /></div>
+                                        <div class="card-body"><div class="card-text">
+                                            <h4>Make: Magazine Subscription</h4>
+                                            <div class="price">$19.99</div>
+                                        </div></div>
+                                    </a>
+                                </div>';
             $makershedOutput .= '</div>';
         $makershedOutput .= "</div>";
         
