@@ -114,7 +114,7 @@ function makershedOutput($collection = MAKERSHED_DEFAULT_COLLECTION, $amount = "
                                     <a href="https://subscribe.makezine.com/loading.do?omedasite=Make_subscribe&PK=M3GCT015" class="related-makershed-item" target="_blank">
                                         <div class="card-header"><img src="https://make.co/wp-content/universal-assets/v2/images/make-magazine-covers.jpg" alt="Subscribe to Make: Magazine Today" /></div>
                                         <div class="card-body"><div class="card-text">
-                                            <h4>Make: Magazine Subscription</h4>
+                                            <h4>Get Make: Today!</h4>
                                             <div class="price">$19.99</div>
                                         </div></div>
                                     </a>
