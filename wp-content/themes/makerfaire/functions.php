@@ -619,7 +619,6 @@ function mf_body_classes( $classes ) {
 		$classes[] = "login-page";
 	}
     if (isset($post)) {
-        error_log("post is set");
         if ($post->post_name) {
             $classes[] = $post->post_type . '-' . $post->post_name;
         } else {
