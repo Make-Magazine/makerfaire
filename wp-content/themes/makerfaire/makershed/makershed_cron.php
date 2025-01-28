@@ -8,11 +8,11 @@ use rdx\graphqlquery\Query;
 add_action( 'makershed_feed_cron', 'build_makershed_feed_table', 9999999 );
 function build_makershed_feed_table() {
     error_log("is this thing on");
-    /* check that we are on prod, otherwise don't run any queries or graphql calls
+    // check that we are on prod, otherwise don't run any queries or graphql calls
     if(UNIVERSAL_MAKEHUB_ASSET_URL_PREFIX != "https://make.co/") {
         error_log("Makershed Table Build not run, not a production environment.");
         return;
-    }*/
+    }
     global $wpdb;
 
     $sqlquery = "SELECT distinct(wp_termmeta.meta_value) 
