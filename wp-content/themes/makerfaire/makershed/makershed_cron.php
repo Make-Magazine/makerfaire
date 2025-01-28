@@ -7,7 +7,6 @@ use rdx\graphqlquery\Query;
 // Nightly Cron job code uses argument from the cron job to run a graphQL query pulling from each makershed collection and writing to a mz database
 add_action( 'makershed_feed_cron', 'build_makershed_feed_table', 9999999 );
 function build_makershed_feed_table() {
-    error_log("is this thing on");
     // check that we are on prod, otherwise don't run any queries or graphql calls
     if(UNIVERSAL_MAKEHUB_ASSET_URL_PREFIX != "https://make.co/") {
         error_log("Makershed Table Build not run, not a production environment.");
