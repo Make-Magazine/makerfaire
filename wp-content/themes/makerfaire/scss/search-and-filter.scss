@@ -156,6 +156,8 @@ form.searchandfilter {
         display: none;
         &:first-of-type {
             display: flex;
+            position: absolute;
+            top: -50px;
         }
     }
     .filter-reset { text-align: right; margin-bottom: 5px; }
