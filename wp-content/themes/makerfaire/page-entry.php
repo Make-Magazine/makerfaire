@@ -128,8 +128,10 @@ if (isset($entry->errors)) {
     // get terms from secondary catetgories
     foreach ($entry as $key => $value) {
         if (strpos($key, '321.') !== false && $value != null) {
-            if (get_term($value)->name != $mainCategoryName) {
-                $categories[] = get_term($value)->name;
+            $cat=get_term($value);
+            
+            if (isset($cat->name) &&  $cat->name != $mainCategoryName) {
+                $categories[] = $cat->name;
             }
         }
     }
@@ -137,8 +139,6 @@ if (isset($entry->errors)) {
     if ($mainCategoryName == '' && isset($categories[0])) {
         $mainCategoryName = $categories[0];
     }
-
-    $categoryDisplay = (!empty($categories) ? display_categories($categories) : '');
 
     //get makers info
     $makers = getMakerInfo($entry);
