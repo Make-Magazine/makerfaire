@@ -18,7 +18,7 @@ function add_logout_link( $atts ){
                 <img src="https://make.co/wp-content/universal-assets/v2/images/makey-spyglass.jpg" alt="Just making sure" />
               </div>
               <div>
-                <p>You are attempting to log out of ' . get_bloginfo( 'name' ) . '</p>
+                <p>You are attempting to log out of ' . get_bloginfo( 'name' ) . '.</p>
                 <p>Do you really want to log out?</p>
                 <div class="logout-buttons">
                   <a onclick="history.go(-1);" class="btn universal-btn universal-btn-red">Cancel</a>
