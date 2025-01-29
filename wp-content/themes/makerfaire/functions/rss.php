@@ -86,7 +86,7 @@ function mfRSSRibbons(){
 
 add_action( 'init', function () {
     add_rewrite_rule(
-        '^feed/(faire_projects|faire_ribbons)/?$',
+        '^feed/(faire_projects|faire_ribbons|yb_projects)/?$',
         'index.php?feed=$matches[1]',
         'top'
     );
@@ -98,4 +98,8 @@ add_action( 'do_feed_faire_ribbons', function () {
 
 add_action( 'do_feed_faire_projects', function () {    
     get_template_part('feed_faire_projects', 'faire_projects');    
+} );
+
+add_action( 'do_feed_yb_projects', function () {    
+    get_template_part('feed_yb_projects', 'yb_projects');    
 } );
