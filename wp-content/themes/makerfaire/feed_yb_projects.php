@@ -40,7 +40,7 @@ echo '<?xml version="1.0" encoding="'.get_option('blog_charset').'"?'.'>';
         xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
         <?php do_action('rss2_ns'); ?>>
 <channel>
-        <title><?php bloginfo_rss('name'); ?> - Yearbook Projects Feed</title>
+        <title><?php bloginfo_rss('name'); ?> - <?php $year; ?> Yearbook Projects Feed</title>
         <atom:link href="<?php self_link(); ?>" rel="self" type="application/rss+xml" />
         <link><?php bloginfo_rss('url') ?></link>
         <description><?php bloginfo_rss('description') ?></description>
@@ -59,7 +59,7 @@ echo '<?xml version="1.0" encoding="'.get_option('blog_charset').'"?'.'>';
                         <pubDate><?php echo $post->post_date; ?></pubDate>
                         <dc:creator></dc:creator>
                         <guid isPermaLink="true"><?php the_guid(); ?></guid>                        
-                        <description><![CDATA[Maker Faire <?php echo htmlspecialchars($post->post_excerpt); ?>]]></description>
+                        <description><![CDATA[<?php echo htmlspecialchars($post->post_excerpt); ?>]]></description>
                         <content:encoded><![CDATA[<img src="<?php echo $project_photo; ?>" />]]></content:encoded>                        
                 </item>
         <?php } ?>
