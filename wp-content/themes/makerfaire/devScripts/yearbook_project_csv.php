@@ -32,7 +32,8 @@ $fieldHdrs = array(
     'maker_location_state',
     'maker_location_country',
     'main_category',
-    'all_categories'
+    'all_categories',
+    'mf_exhibit_link'
 );
 
 
@@ -214,7 +215,8 @@ foreach ($results as $data) {
         $data['state'],
         $data['country'],
         $main_category,
-        $all_categories        
+        $all_categories,
+        'https://makerfaire.com/maker/entry/'.$data['entry_id']       
     );
 }
 if (!$buildOutput) {
