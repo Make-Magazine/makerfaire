@@ -33,7 +33,9 @@ $fieldHdrs = array(
     'maker_location_country',
     'main_category',
     'all_categories',
-    'mf_exhibit_link'
+    'mf_exhibit_link', 
+    'original_main_cat',
+    'original_add_cats'
 );
 
 
@@ -184,6 +186,8 @@ foreach ($results as $data) {
     }*/
 
     //convert the categories using the xfef table    
+    $org_main_cat   = $data['main_category'];
+    $org_add_cat    = $data['category'];
     $main_category  = category_xref($data['main_category'], $data['entry_id']);
     $all_categories = category_xref($data['category'], $data['entry_id']);
     if ($main_category == '' && $all_categories == '' && $data['main_category'] != '' && $data['category'] != '') {
@@ -216,7 +220,9 @@ foreach ($results as $data) {
         $data['country'],
         $main_category,
         $all_categories,
-        'https://makerfaire.com/maker/entry/'.$data['entry_id']       
+        'https://makerfaire.com/maker/entry/'.$data['entry_id'],
+        $org_main_cat,
+        $org_add_cat       
     );
 }
 if (!$buildOutput) {
