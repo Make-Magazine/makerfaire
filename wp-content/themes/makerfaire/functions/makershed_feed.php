@@ -33,7 +33,7 @@ function makershedOutput($collection = MAKERSHED_DEFAULT_COLLECTION, $amount = "
                 $makershedOutput .= '</div>';
             }
             $makershedOutput .= '<div class="card">
-                                    <a href="https://subscribe.makezine.com/loading.do?omedasite=Make_subscribe&PK=M3GCT015&utm_source=makerfaire&utm_medium=yearbook&utm_campaign=makershed&utm_content=launch" class="related-makershed-item" target="_blank">
+                                    <a href="https://subscribe.makezine.com/loading.do?omedasite=Make_subscribe&PK=M3GCT015&utm_source=makerfaire.com&utm_medium=cross-site&utm_campaign=makershed_related&utm_content=yearbook_ms_widget_subscribe_link" class="related-makershed-item" target="_blank">
                                         <div class="card-header"><img src="https://make.co/wp-content/universal-assets/v2/images/make-magazine-cover-large.jpg" alt="Subscribe to Make: Magazine Today" /></div>
                                         <div class="card-body"><div class="card-text">
                                             <h4>Get <i>Make:</i> Magazine</h4>
