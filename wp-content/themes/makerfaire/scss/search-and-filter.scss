@@ -291,9 +291,8 @@ body.listview {
 
 .select2-dropdown {
     min-width: 160px;
-    position: relative;
-    left: -70px !important;
-    @media screen and (max-width: 768px) {
-        left: -110px !important;
-    }
+}
+.select2-container--open.select2-container--open:not(.select2.select2-container) {
+    left: calc(100% - 170px) !important;
+    position: absolute;
 }
