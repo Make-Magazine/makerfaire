@@ -71,7 +71,7 @@ function save_data($mysqli, $table = '', $data = '', $pkeyField = '') {
 					if ($key != $pkeyField && $key != '$$hashKey' && $key != 'sending') { // not valid table fields
 						//check for NULL on blank
 						if($value==''){																	
-							$addKey = array_search($key, array_column($tableOptions[$table]['addlFields'], 'fieldName'));								
+							$addKey = array_search($key, array_column($tableOptions[$table]['addlFields'] ?? array(), 'fieldName'));								
 							if($addKey !== false && isset($tableOptions[$table]['addlFields'][$addKey]['null_on_blank']) ){
 								if($tableOptions[$table]['addlFields'][$addKey]['null_on_blank'])	
 									$value = NULL;																		

@@ -300,7 +300,7 @@ function getMTMentries($formIDs = '', $faireID = '', $years = '') {
     $entries = array();
     foreach ($results as $result) {
         //check if the flag 'no-public-view' is set. if it is, do not return this entry
-        $flags = explode(",", $result->flags);
+        $flags = isset($result->flags) ? explode(",", $result->flags) : array();
 
         //only return Accepted entries and entries who do not have the 'no-public-view' flag set
         if ($result->entry_status === 'Accepted' && !in_array('no-public-view', $flags)) {
@@ -309,7 +309,7 @@ function getMTMentries($formIDs = '', $faireID = '', $years = '') {
             $handson = (in_array('Featured HandsOn', $flags) ? 'Featured HandsOn' : '');
 
             //project photo
-            $projPhoto = $result->proj_photo;
+            $projPhoto = isset($result->proj_photo) ? $result->proj_photo : "";
             //for BA24, the single photo was changed to a multi image which messed things up a bit
             $photo = json_decode($projPhoto);
             if (is_array($photo)) {
@@ -335,7 +335,7 @@ function getMTMentries($formIDs = '', $faireID = '', $years = '') {
             //get array of categories. set name based on category id
             $category = array();
 
-            $leadCategory = explode(',', $result->second_cat);
+            $leadCategory = isset($result->second_cat) ? explode(',', $result->second_cat) : array();
             foreach ($leadCategory as $leadCat) {
                 $value = htmlspecialchars_decode(get_CPT_name($leadCat));
                 if ($value != '') $category[] = $value;
@@ -344,7 +344,7 @@ function getMTMentries($formIDs = '', $faireID = '', $years = '') {
             if ($result->prime_cat == "-- select a makerfaire category --") {
                 $result->prime_cat = "";
             }
-            $primeCat = htmlspecialchars_decode(get_CPT_name($result->prime_cat));
+            $primeCat = isset($result->prime_cat) ? htmlspecialchars_decode(get_CPT_name($result->prime_cat)) : '';
             if ($primeCat != '')   array_unshift($category, $primeCat); // add the primary category to the start of the array
 
             $mainCategory = get_term($result->prime_cat);
@@ -531,7 +531,7 @@ where   entry.status='active'
         //determine presenter names
         $maker_name = $row->maker_fname . ($row->maker_lname!=''?' '.$row->maker_lname:'');
         $group_name = $row->group_name; 
-        $presenter_list = unserialize($row->presenter_list);
+        $presenter_list = isset($row->presenter_list) ? unserialize($row->presenter_list) : '';
       
         //if presenter list is set, use this instead of the maker name
         if(is_array($presenter_list)){         
@@ -591,7 +591,7 @@ where   entry.status='active'
         }
         //featured maker    
         $featured = '';
-        if (strpos($row->flags, "Featured Maker") === 0) {
+        if (isset($row->flags) && strpos($row->flags, "Featured Maker") === 0) {
             $featured = 'Featured';
         }
         

@@ -161,7 +161,7 @@ function get_schedule_list($location, $short_description = false, $day_set = '',
         //determine presenter names
         $maker_name = $row['maker_fname'] . ($row['maker_lname']!=''?' '.$row['maker_lname']:'');
         $group_name = $row['group_name']; 
-        $presenter_list = unserialize($row['presenter_list']);
+        $presenter_list = isset($row['presenter_list']) ? unserialize($row['presenter_list']) : '';
       
         //if presenter list is set, use this instead of the maker name
         if(is_array($presenter_list)){         
