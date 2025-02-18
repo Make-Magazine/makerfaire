@@ -356,7 +356,8 @@ function createEntList($faire, $type) {
 
                 foreach ($results as $entry) {
                     //exclude all but Exhibit, Sponsor or Startup sponsor 
-                    if (stripos($entry->exhibit_type, 'exhibit') === false && 
+                    if (isset($entry->exhibit_type) && 
+                        stripos($entry->exhibit_type, 'exhibit') === false && 
                         stripos($entry->exhibit_type, 'sponsor') === false) {
                         //if this is for tabletags, continue to write show management records
                         if($type =='tabletags' && stripos($entry->exhibit_type, 'show') === false) {
