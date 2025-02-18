@@ -17,7 +17,7 @@ class GFRMTHELPER {
   public static function buildRmtData($entry, $form) {
     global $wpdb;
 
-    $form_type = $form['form_type'];
+    $form_type = isset($form['form_type']) ? $form['form_type'] : "";
     $entryID   = $entry['id'];
     //check for a Easy Passthrough token to find original entry ID
     $ep_token = rgget('ep_token');
@@ -1202,7 +1202,7 @@ class GFRMTHELPER {
 
 function RMTchangeArray($entry, $field_id, $field_before, $field_after, $fieldLabel) {
   $form = GFAPI::get_form($entry['form_id']);
-  $form_type = $form['form_type'];
+  $form_type = (isset($form['form_type'])  ? $form['form_type'] : '');
 
   //find current user
   $current_user = wp_get_current_user();

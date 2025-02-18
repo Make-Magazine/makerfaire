@@ -181,12 +181,12 @@ function createSignZip() {
     foreach ($results as $row) {      
         if($signType=='maker'){
             //exclude all but Exhibit, Sponsor or Startup sponsor                
-            if (stripos($row->exhibit_type, 'exhibit')  === false && stripos($row->exhibit_type, 'sponsor') === false) {
+            if (isset($row->exhibit_type) && ( stripos($row->exhibit_type, 'exhibit') === false && stripos($row->exhibit_type, 'sponsor') === false) ) {
                 continue;
             }
         }elseif($signType=='presenter'){
            //only include presentations
-           if (stripos($row->exhibit_type, 'present')  === false) {
+           if (isset($row->exhibit_type) && stripos($row->exhibit_type, 'present') === false) {
             continue;
             }
             //error_log('including entry_id '.$row->entry_id.' exhibit type = '.$row->exhibit_type);
