@@ -131,7 +131,7 @@ function copy_entry_to_new_form ($fromEntry){
     $parmName = $fieldInfo['to_param'];
 
     //if parm name starts with 'field-', pull from that field id
-    $pos = strpos($parmName, 'field-');
+    $pos = strpos($parmName, 'field-') ?? false;
           
     if ($pos !== false) { //populate by field ID?
       //strip the 'field-' from the parameter name to get the field number

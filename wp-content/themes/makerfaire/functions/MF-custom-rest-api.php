@@ -596,7 +596,7 @@ where   entry.status='active'
         }
         
         //set default values for schedule type if not set
-        if (strpos($faireID, "VMF") === 0) { // special for virtual faires
+        if (isset($faireID) && strpos($faireID, "VMF") === 0) { // special for virtual faires
             if ($row->type == 'talk' || $row->type == '') {
                 $type = 'presentation';
             } else if ($row->type == 'demo') {

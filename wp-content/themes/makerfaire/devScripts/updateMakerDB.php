@@ -86,8 +86,8 @@ $yearFilter = (isset($_GET['year']) ? $_GET['year'] : '');
         foreach ($entries as $entry) {
             $exhibit_type = array();
             foreach ($entry as $key => $value) {
-                if (strpos($key, '339.') === 0) {
-                    if ($value != '') {
+                if (isset($key) && strpos($key, '339.') === 0) {
+                    if (isset($value) && $value != '') {
                         if (stripos($value, 'sponsor') !== false) {
                             $exhibit_type[$key] = 'Exhibit';
                         } else {
@@ -297,12 +297,12 @@ function buildMakerData($entry, $form_id) {
     foreach ($entry as $entryKey => $entryValue) {
         if (trim($entryValue != '')) {
             //4 additional categories
-            $pos = strpos($entryKey, '321');
+            $pos = isset($entryKey) ? strpos($entryKey, '321') : false;
             if ($pos !== false) {
                 $all_categories[] = get_CPT_name($entryValue);
             }
         }
-        $pos = strpos($entryKey, '304.');
+        $pos = isset($entryKey) ? strpos($entryKey, '304.') : false;
         if ($pos !== false) {
             if ($entryValue == 'no-public-view') {
                 //echo 'no-public-view set for entry '.$entry_id.'<br/>';

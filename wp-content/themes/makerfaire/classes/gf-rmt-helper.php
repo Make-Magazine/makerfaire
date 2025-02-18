@@ -1226,7 +1226,7 @@ function RMTchangeArray($entry, $field_id, $field_before, $field_after, $fieldLa
 
 function findFieldData($var, $entry) {
   //check if we need to set an entry field as the value
-  $pos = strpos($var, '{');
+  $pos = strpos($var, '{') ?? false;
   while ($pos !== false) {
     $endPos = strpos($var, '}');
     $field_id  = substr($var, $pos + 1, $endPos - $pos - 1);

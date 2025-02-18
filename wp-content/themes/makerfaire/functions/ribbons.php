@@ -94,8 +94,8 @@ function getRibbons($year){
                 }
             }
 
-            $field = $projData['meta_key'];
-            $value = $projData['meta_value'];
+            $field = $projData['meta_key'] ?? '';
+            $value = $projData['meta_value'] ?? '';
             if($field=='project_photo' && $project_photo ==''){
               if(is_numeric($value)){
                 $project_photo = wp_get_attachment_url( $value);
@@ -103,7 +103,7 @@ function getRibbons($year){
                 $project_photo = $value;
               }
             }
-            if($field=='project_name'  && $project_name =='')   $project_name  = $value;
+            if($field=='project_name' && $project_name =='')   $project_name  = $value;
             if(strpos($field, 'maker_name')!== false){
                 //if maker name has field_ in it, it is not a valid maker name.
                 if(strpos($value, 'field_')===false && $maker_name=='')  $maker_name = $value;

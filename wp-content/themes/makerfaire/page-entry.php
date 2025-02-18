@@ -46,8 +46,8 @@ if (isset($entry->errors)) {
 
     if ($formType == "Master") {
         foreach ($entry as $key => $value) {
-            if (strpos($key, '339.') === 0) {
-                if ($value != '') {
+            if (isset($key) && strpos($key, '339.') === 0) {
+                if (isset($value) && $value != '') {
                     if (stripos($value, 'sponsor') !== false) {
                         $exhibit_type[$key] = 'Exhibit';
                     } else {
@@ -127,7 +127,7 @@ if (isset($entry->errors)) {
 
     // get terms from secondary catetgories
     foreach ($entry as $key => $value) {
-        if (strpos($key, '321.') !== false && $value != null) {
+        if (isset($key) && strpos($key, '321.') !== false && $value != null) {
             $cat=get_term($value);
             
             if (isset($cat->name) &&  $cat->name != $mainCategoryName) {
@@ -194,7 +194,7 @@ if (isset($entry->errors)) {
         $label_287 = (is_object($field)) ? $field->label : "";
     }
     //for VMF2020 we used field 123 instead of 887
-    if (strpos($faireShort, "VMF") === 0) {
+    if (isset($faireShort) && strpos($faireShort, "VMF") === 0) {
         if (isset($entry['123'])) {
             $field_887 = $entry['123']; //What are some of the major challenges you have encountered and how did you address them?
             $field = GFFormsModel::get_field($form, 123);
@@ -273,7 +273,7 @@ $registerLink = (isset($entry[829]) ? $entry[829] : '');
 $viewNow = (isset($entry[837]) ? $entry[837] : '');
 
 //if this is a virtual faire, check if supplemental form was subimitted with links
-if (strpos($faireShort, "VMF") === 0) { // special for virtual faires
+if (isset($faireShort) && strpos($faireShort, "VMF") === 0) { // special for virtual faires
     //check if supplemental form was submitted
     $linkedSQL = 'select entry_id from wp_gf_entry_meta where meta_key="entry_id" and meta_value = ' . $entryId;
 
@@ -309,7 +309,7 @@ if (is_array($entry) && !empty($entry)) { //is this a valid entry?
 
 //check flags
 foreach ($entry as $key => $field) {
-    $pos = strpos($key, '304.');
+    $pos = strpos($key, '304.') ?? false;
     if ($pos !== false) {
         if ($field == 'no-public-view')
             $validEntry = false;

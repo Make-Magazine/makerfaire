@@ -500,11 +500,11 @@ function displayEntryFooter() {
     $faire_location = "Bay Area";
     $faire_link = "/bay-area";
 
-    if (strpos($faire, 'new-york') !== false) {
+    if (isset($faire) && strpos($faire, 'new-york') !== false) {
         $faire_location = "New York";
         $faire_link = "/new-york";
     }
-    if (strpos($faire, 'virtual') !== false) {
+    if (isset($faire) && strpos($faire, 'virtual') !== false) {
         $faire_location = "";
         $faire_link = "";
     } else {
