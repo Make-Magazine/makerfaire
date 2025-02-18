@@ -10,7 +10,7 @@ function add_main_text_before($form, $entry) {
     return;
 
 
-  if (isset($form['form_type']) && $form['form_type'] != 'Default') {a
+  if (isset($form['form_type']) && $form['form_type'] != 'Default') {
     echo gf_summary_metabox($form, $entry);
     echo gf_collapsible_sections($form, $entry);
   }
