@@ -4,7 +4,7 @@ Tags: page builder, editor, landing page, drag-and-drop, elementor,
 Requires at least: 6.3
 Tested up to: 6.7
 Requires PHP: 7.4
-Stable tag: 3.27.0
+Stable tag: 3.27.6
 Beta tag: 3.27.0-beta2
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -346,6 +346,32 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 6. **Motion Effects** - Add entrance animations and transitions to any element in your website to captivate visitors.
 
 == Changelog ==
+
+= 3.27.6 - 2025-02-18 =
+
+* Fix: Dimension Controls displayed `undefined` as a placeholder value when empty ([#30277](https://github.com/elementor/elementor/issues/30277))
+
+= 3.27.5 - 2025-02-16 =
+
+* Security Fix: Improved code security enforcement in Dimensions control
+
+= 3.27.4 - 2025-02-13 =
+
+* Fix: Preventing page saving in Gutenberg with ACF and active Elementor post settings ([#30160](https://github.com/elementor/elementor/issues/30160))
+
+= 3.27.3 - 2025-02-03 =
+
+* Tweak: Added support for Early Access fonts when using Load Google Fonts Locally experiment
+* Tweak: Updated minified `flatpickr` CSS file to v4.6.13
+* Fix: Kits could not be imported due to compatibility issue
+
+= 3.27.2 - 2025-01-27 =
+
+* Fix: Kits could not be imported due to a compatibility issue
+
+= 3.27.1 - 2025-01-23 =
+
+* Fix: Document is not being saved due to compatibility conflicts with third-party plugins ([#29970](https://github.com/elementor/elementor/issues/29970), [#29991](https://github.com/elementor/elementor/issues/29991))
 
 = 3.27.0 - 2025-01-20 =
 

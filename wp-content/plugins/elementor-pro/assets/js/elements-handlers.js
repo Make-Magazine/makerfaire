@@ -1,4 +1,4 @@
-/*! elementor-pro - v3.27.0 - 20-01-2025 */
+/*! elementor-pro - v3.27.0 - 16-02-2025 */
 "use strict";
 (self["webpackChunkelementor_pro"] = self["webpackChunkelementor_pro"] || []).push([["elements-handlers"],{
 
@@ -320,7 +320,7 @@ class ModalKeyboardHandler {
     }
   }
   setFocusToElement(element) {
-    const focusDelayToEnsureThatAllAnimationsHaveFinished = 100;
+    const focusDelayToEnsureThatAllAnimationsHaveFinished = 'popup' === this.config.modalType ? 250 : 100;
     setTimeout(() => {
       element?.focus();
     }, focusDelayToEnsureThatAllAnimationsHaveFinished);
