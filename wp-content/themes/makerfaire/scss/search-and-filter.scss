@@ -1,6 +1,5 @@
 form.searchandfilter {
     margin-top: 5px;
-    overflow-x: hidden;
     &> ul {
         display: flex;
         margin-top: 0;
@@ -98,6 +97,9 @@ form.searchandfilter {
                 z-index: 9;   
             }
         }
+    }
+    .sf-input-select {
+        min-width: 0px;
     }
     .select2-container {
         width: 100% !important;
@@ -287,6 +289,12 @@ body.listview {
         }
     }
     
+}
+
+.elementor-widget-shortcode {
+    @media screen and (max-width:768px) {
+        overflow-x: hidden;
+    }
 }
 
 .select2-dropdown {
