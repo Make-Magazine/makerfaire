@@ -24,7 +24,6 @@ function sf_yearbook() {
 	if(jQuery(".sf-field-sort_order select.sf-input-select").length) {
 		jQuery('.sf-field-sort_order select.sf-input-select').select2();
 	}
-	jQuery( ".sf-field-sort_order label .select2-selection" ).prop("title","Sort").tooltip();
 	// Listview button
 	jQuery(".sf-field-submit input").on('click', function(event){
 		event.preventDefault();

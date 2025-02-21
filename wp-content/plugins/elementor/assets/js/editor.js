@@ -1,4 +1,4 @@
-/*! elementor - v3.27.0 - 20-01-2025 */
+/*! elementor - v3.27.0 - 18-02-2025 */
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
@@ -11147,7 +11147,15 @@ TemplateLibraryCollectionView = Marionette.CompositeView.extend({
     }
   },
   getChildView: function getChildView(childModel) {
-    if ('remote' === childModel.get('source')) {
+    var activeSource = childModel.get('source') ? childModel.get('source') : 'local';
+    /**
+     * Filter template source.
+     *
+     * @param bool   isRemote     - If `true` the source is a remote source.
+     * @param string activeSource - The current template source.
+     */
+    var isRemote = elementor.hooks.applyFilters('templates/source/is-remote', activeSource !== 'local', activeSource);
+    if (isRemote) {
       return TemplateLibraryTemplateRemoteView;
     }
     return TemplateLibraryTemplateLocalView;

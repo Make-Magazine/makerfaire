@@ -285,9 +285,19 @@ body.listview {
             }
         }
     }
+    
+}
+
+.elementor-widget-shortcode {
+    @media screen and (max-width:768px) {
+        overflow-x: hidden;
+    }
 }
 
 .select2-dropdown {
     min-width: 160px;
 }
-
+.select2-container--open.select2-container--open:not(.select2.select2-container) {
+    left: calc(100% - 170px) !important;
+    position: absolute;
+}

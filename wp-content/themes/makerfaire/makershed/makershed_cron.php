@@ -60,7 +60,7 @@ function build_makershed_feed_table() {
                     continue;
                 } else {
                     // built the list with utm parameters for tracking
-                    $link = 'https://www.makershed.com/products/'. $product['node']['handle'] . '?utm_source=makerfaire&utm_medium=yearbook&utm_campaign=makershed&utm_content=launch';
+                    $link = 'https://www.makershed.com/products/'. $product['node']['handle'] . '?utm_source=makerfaire.com&utm_medium=cross-site&utm_campaign=makershed_related&utm_content=https://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
                     // insert our refreshed products into the table if it has an image
                     if(isset($product['node']['images']['edges'][0])) {
                         $wpdb->insert('wp_makershedfeed', array('title' => $product['node']['title'], 'link' => $link, 'image' => $product['node']['images']['edges'][0]['node']['url'], 'price' => $product['node']['variants']['edges'][0]['node']['price'], 'collection' => $collection));
