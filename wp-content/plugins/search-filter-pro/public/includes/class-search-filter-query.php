@@ -1403,7 +1403,7 @@ class Search_Filter_Query {
 					}
 
 					if ( $post_meta['meta_type'] == 'DATE' ) {
-						if ( $post_meta['meta_date_value_current_date'] == 1 ) {
+						if ( isset($post_meta['meta_date_value_current_date']) && $post_meta['meta_date_value_current_date'] == 1 ) {
 							$meta_query = array(
 
 								'key'     => $post_meta['meta_key'],
