@@ -356,8 +356,8 @@ function buildMakerData($entry, $form_id) {
             'inspiration'   => (isset($entry['287']) ? htmlentities(addslashes($entry['287']), ENT_QUOTES) : ''),
             'website'       => (isset($entry['27']) ? $entry['27'] : ''),
             'social'        => (isset($entry['906']) ? addslashes($entry['906']) : ''),
-            'state'         => (isset($entry['101.4']) ? $entry['101.4'] : ''), //contact state
-            'country'       => (isset($entry['101.6']) ? $entry['101.6'] : ''), //contact country
+            'state'         => (isset($entry['101.4']) ? addslashes($entry['101.4']) : ''), //contact state
+            'country'       => (isset($entry['101.6']) ? addslashes($entry['101.6']) : ''), //contact country
             'faire_name'    => $faire,
             'faire_year'    => $faire_year,
             'status'        => $status,
@@ -379,8 +379,8 @@ function buildMakerData($entry, $form_id) {
 
     //pull group or maker info
     if ($isGroup) {
-        $groupname = (isset($entry['109']) ? $entry['109'] : '');
-                
+        $groupname  = (isset($entry['109']) ? $entry['109'] : '');
+        $groupphoto = '';        
         if (isset($entry['111']) && $entry['111'] != '') {
             $groupphoto = $entry['111'];
         } elseif (isset($entry['217']) && $entry['217'] != '') {

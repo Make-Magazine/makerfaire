@@ -7,6 +7,7 @@ global $wpdb;
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
+$output = array();
 $faire_year     = isset($_GET['faire_year']) ? $_GET['faire_year'] : '';
 if ($faire_year == '' || !is_numeric($faire_year)) {
     die('Please set the faire_year variable');
@@ -153,7 +154,7 @@ foreach ($results as $data) {
     if (is_array($maker_social_array)) {
         foreach ($maker_social_array as $social) {            
             if (empty($social) || is_null($social))  continue;
-            $social_array = unserialize(html_entity_decode($social,ENT_QUOTES));                        
+            $social_array = @unserialize(html_entity_decode($social,ENT_QUOTES));                        
 
             if (is_array($social_array)) {                
                 foreach ($social_array as $social_data) {                    
@@ -270,8 +271,9 @@ function category_xref($category, $entry_id) {
         //Do not write the category if it is marked as delete
         if ($to_cat != 'DELETE') {
             if (is_null($to_cat)) {
-                echo 'For Entry ' . $entry_id . ' ' . $from_cat . '->To Cat is null<br/>';
-                $buildOutput = false;
+                $to_cat = '';
+                //echo 'For Entry ' . $entry_id . ' ' . $from_cat . '->To Cat is null<br/>';
+                //$buildOutput = false;
                 //die();
             }
             $xref_cat[] = $to_cat;
