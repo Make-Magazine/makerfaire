@@ -10,7 +10,9 @@ return [
 	'deps' => [
 		'elementor-v2-editor-props',
 		'elementor-v2-icons',
+		'elementor-v2-session',
 		'elementor-v2-ui',
+		'elementor-v2-utils',
 		'elementor-v2-wp-media',
 		'react',
 		'wp-i18n',

@@ -6,6 +6,7 @@ use Elementor\Core\Kits\Documents\Tabs\Global_Colors;
 use Elementor\Core\Kits\Documents\Tabs\Global_Typography;
 use Elementor\Group_Control_Typography;
 use Elementor\Group_Control_Text_Stroke;
+use Elementor\Group_Control_Text_Shadow;
 use Elementor\Modules\DynamicTags\Module as TagsModule;
 use Elementor\Utils;
 use ElementorPro\Base\Base_Widget;
@@ -438,6 +439,14 @@ class Animated_Headline extends Base_Widget {
 			]
 		);
 
+		$this->add_group_control(
+			Group_Control_Text_Shadow::get_type(),
+			[
+				'name' => 'title_text_shadow',
+				'selector' => '{{WRAPPER}} .elementor-headline .elementor-headline-plain-text',
+			]
+		);
+
 		$this->add_control(
 			'heading_words_style',
 			[
@@ -477,6 +486,14 @@ class Animated_Headline extends Base_Widget {
 			Group_Control_Text_Stroke::get_type(),
 			[
 				'name' => 'animated_text_stroke',
+				'selector' => '{{WRAPPER}} .elementor-headline .elementor-headline-dynamic-wrapper',
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Text_Shadow::get_type(),
+			[
+				'name' => 'animated_text_shadow',
 				'selector' => '{{WRAPPER}} .elementor-headline .elementor-headline-dynamic-wrapper',
 			]
 		);

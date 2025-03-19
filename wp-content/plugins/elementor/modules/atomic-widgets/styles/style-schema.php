@@ -6,7 +6,8 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Box_Shadow_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Border_Radius_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Border_Width_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Color_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Linked_Dimensions_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Dimensions_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Layout_Direction_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Number_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
@@ -56,6 +57,7 @@ class Style_Schema {
 				'relative',
 				'absolute',
 				'fixed',
+				'sticky',
 			]),
 			'top' => Size_Prop_Type::make(),
 			'right' => Size_Prop_Type::make(),
@@ -87,10 +89,11 @@ class Style_Schema {
 			'color' => Color_Prop_Type::make(),
 			'letter-spacing' => Size_Prop_Type::make(),
 			'word-spacing' => Size_Prop_Type::make(),
+			'line-height' => Size_Prop_Type::make(),
 			'text-align' => String_Prop_Type::make()->enum([
-				'left',
+				'start',
 				'center',
-				'right',
+				'end',
 				'justify',
 			]),
 			'font-style' => String_Prop_Type::make()->enum([
@@ -116,8 +119,8 @@ class Style_Schema {
 
 	private static function get_spacing_props() {
 		return [
-			'padding' => Linked_Dimensions_Prop_Type::make(),
-			'margin' => Linked_Dimensions_Prop_Type::make(),
+			'padding' => Union_Prop_Type::make()->add_prop_type( Dimensions_Prop_Type::make() )->add_prop_type( Size_Prop_Type::make() ),
+			'margin' => Union_Prop_Type::make()->add_prop_type( Dimensions_Prop_Type::make() )->add_prop_type( Size_Prop_Type::make() ),
 		];
 	}
 
@@ -177,7 +180,9 @@ class Style_Schema {
 				'column',
 				'column-reverse',
 			]),
-			'gap' => Gap_Prop_Type::make(),
+			'gap' => Union_Prop_Type::make()
+				->add_prop_type( Layout_Direction_Prop_Type::make() )
+				->add_prop_type( Size_Prop_Type::make() ),
 			'flex-wrap' => String_Prop_Type::make()->enum([
 				'wrap',
 				'nowrap',

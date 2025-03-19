@@ -11,6 +11,8 @@
 
 /*! @elementor/editor-responsive */
 
+/*! @elementor/editor-styles */
+
 /*! @elementor/editor-styles-repository */
 
 /*! @elementor/editor-v1-adapters */
@@ -18,6 +20,8 @@
 /*! @elementor/ui */
 
 /*! @elementor/utils */
+
+/*! @elementor/wp-media */
 
 /*! @floating-ui/core */
 
@@ -59,9 +63,17 @@
   !*** external ["elementorV2","editor"] ***!
   \*****************************************/
 
+/*!******************************************!*\
+  !*** external ["elementorV2","wpMedia"] ***!
+  \******************************************/
+
 /*!**********************************************!*\
   !*** external ["elementorV2","editorProps"] ***!
   \**********************************************/
+
+/*!***********************************************!*\
+  !*** external ["elementorV2","editorStyles"] ***!
+  \***********************************************/
 
 /*!*************************************************!*\
   !*** ./node_modules/tabbable/dist/index.esm.js ***!

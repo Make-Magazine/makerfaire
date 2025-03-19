@@ -1,4 +1,4 @@
-/*! elementor - v3.27.0 - 18-02-2025 */
+/*! elementor - v3.28.0 - 17-03-2025 */
 .elementor-hidden {
   display: none;
 }
@@ -1984,6 +1984,9 @@ body.rtl .e-con {
   flex-direction: row;
   gap: 5px;
 }
+.elementor-button-icon {
+  display: flex;
+}
 .elementor-button-icon svg {
   width: 1em;
   height: auto;
@@ -2126,10 +2129,6 @@ body.rtl .e-con {
     animation: none;
   }
 }
-.elementor-post__thumbnail__link {
-  transition: none;
-}
-
 @media (max-width: 767px) {
   .elementor .elementor-hidden-phone,
   .elementor .elementor-hidden-mobile {

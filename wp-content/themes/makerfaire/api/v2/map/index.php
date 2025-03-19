@@ -111,7 +111,7 @@ if ( $type == 'map' ) {
     $point['free_event']                = html_entity_decode(trim( (string) $row['free_event'] ));
     $point['venue_address_street']      = html_entity_decode(trim( (string) $row['venue_address_street'] ));
     $point['venue_address_city']        = html_entity_decode(trim( (string) $row['venue_address_city'] ));
-    $point['venue_address_state']       = ($row['state']!=NULL ? html_entity_decode(trim( (string) $row['state'] )): html_entity_decode(trim( $row['venue_address_state'] )));
+    $point['venue_address_state']       = isset($row['state']) ? html_entity_decode(trim($row['state'])): html_entity_decode(trim( $row['venue_address_state'] ?? '' ));
     $point['venue_address_country']     = html_entity_decode(trim( (string) $row['venue_address_country'] ));
     $point['venue_address_postal_code'] = html_entity_decode(trim( (string) $row['venue_address_postal_code'] ));
     $point['venue_address_region']      = html_entity_decode(trim( (string) $row['venue_address_region'] ));
