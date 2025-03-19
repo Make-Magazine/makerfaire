@@ -6,18 +6,18 @@
 function mf_character_fixer( $str ) {
 	$bad  = array( '""','&#039l', "\'", '&#8217;', '&#38;', '&amp;', '&quot;', '&#34;', '&#034;', '&#8211;', '&lt;', '&#8230;', 'u2018', 'u2019', 'u2014', 'u201d', 'u201c' );
 	$good = array( "'",      "'",  "'",       "&",	   '&',		'\"',     '"',     '"',      '–',       '>',    '...',     "'",     "'",     "—",     '\"',    '\"'   );
-	return str_replace( $bad, $good, $str );
+	return str_replace($bad, $good, $str ?? '');
 }
 
 function mf_convert_newlines( $str, $replace = '<br />' ) {
 	$s = array('nn-', ' nn', '.nn', '<br />rn');
-	return str_replace($s, $replace, $str);
+	return str_replace($s, $replace, $str ?? '');
 }
 
 add_filter('get_avatar','mf_change_avatar_css');
 
 function mf_change_avatar_css( $class ) {
-	$class = str_replace("class='avatar", "class='media-object img-thumbnail pull-left avatar", $class) ;
+	$class = str_replace("class='avatar", "class='media-object img-thumbnail pull-left avatar", $class ?? '') ;
 	return $class;
 }
 
@@ -40,7 +40,7 @@ function mf_featured_makers( $atts ) {
 	while ( $query->have_posts() ) :
 	$query->the_post();
 		$content = get_the_content();
-		$json = json_decode( str_replace( "\'", "'", $content ) );
+		$json = json_decode( str_replace("\'", "'", $content ?? '') );
 		if ($i == 1) {
 			$output .= '<div class="item active ' . get_the_ID() . '">';
 		} else {
@@ -131,7 +131,7 @@ function mf_get_the_maker_image( $json ) {
 function the_mf_content() {
 	if ( get_post_type() == 'mf_form' ) {
 		$content = get_the_content();
-		$json = json_decode( mf_convert_newlines( mf_character_fixer( str_replace( "\'", "'", $content ) ) ) );
+		$json = json_decode( mf_convert_newlines( mf_character_fixer( str_replace( "\'", "'", $content ?? '' ) ) ) );
 		echo '<div class="row"><div class="col-md-2">';
 		mf_the_maker_image( $json );
 		echo '</div><div class="col-md-6">';
@@ -236,12 +236,12 @@ function mf_get_terms ($term_types = array('category', 'post_tag'), $atts=array(
 		return $cats_tags;
 }
 add_filter('the_title', function($title) {
-	return str_replace('u03a9', '&#8486;', $title);
+	return str_replace('u03a9', '&#8486;', $title ?? '');
 	}
 );
 
 add_filter('the_content', function($content) {
-	return str_replace('u03a9', '&#8486;', $content);
+	return str_replace('u03a9', '&#8486;', $content ?? '');
 }
 );
 
@@ -268,7 +268,7 @@ function make_video_photo_gallery( $attr ) {
 	$i = 0;
 
 	foreach( $posts as $post ) {
-		if ( strpos( $post, 'youtu' ) ) {
+		if ( isset($post) && strpos( $post, 'youtu' ) ) {
 			$youtube = true;
 		} else {
 			$post = get_post( $post );

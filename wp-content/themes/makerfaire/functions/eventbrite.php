@@ -110,7 +110,7 @@ function genEBtickets($entryID, $testing=FALSE) {
   //Final Weekend  
   $entWkndArr = array();
   foreach ($entry as $key => $value) {
-    if (strpos($key, '879.') === 0) {
+    if (isset($key) && strpos($key, '879.') === 0) {
       $entWkndArr[$key] = $value;
     }
   }

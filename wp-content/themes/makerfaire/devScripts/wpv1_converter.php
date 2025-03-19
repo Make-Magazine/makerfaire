@@ -40,7 +40,7 @@ foreach($postData as $ID=>$post){
     //some data contains double quotes within the json field value.  This will fix it
      if(empty($jsonArray)){                    
         //left and right curly brace
-         $content = str_replace('{"',  ' ||squigDQ|| ', $content);
+         $content = str_replace('{"',  ' ||squigDQ|| ', $content ?? '');
          $content = str_replace('"}',  ' ||DQsquig|| ', $content);
          
          //colon, basic text and empty field values

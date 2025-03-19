@@ -40,7 +40,7 @@ if (isset($_POST['copyForm']) && isset($_POST['fieldList'])) {
     $form = GFAPI::get_form($form2copy);
 
     //remove any extra spaces in the field list
-    $fieldList = str_replace(' ', '', $fieldList);
+    $fieldList = str_replace(' ', '', $fieldList ?? '');
 
     //place them into an array
     $fields = explode(",", $fieldList);
@@ -57,7 +57,7 @@ if (isset($_POST['copyForm']) && isset($_POST['fieldList'])) {
         echo 'Requested Fields not found';
     } else {
         //remove any extra spaces in the form list
-        $copyForms = str_replace(' ', '', $copyForms);
+        $copyForms = str_replace(' ', '', $copyForms ?? '');
 
         //place them into an array
         $copyForms = explode(",", $copyForms);

@@ -336,7 +336,7 @@ if ( ! $gravityview->entries->count() ) {
 									<?php
 									//View Link
 									$url = do_shortcode('[gv_entry_link action="read" return="url" view_id="'.$viewID.'" entry_id="'.$entryData['id'].'"]');
-									$url = str_replace('/view/', '/', $url);  //remove view slug from URL
+									$url = str_replace('/view/', '/', $url ?? '');  //remove view slug from URL
 									/* ?><a href="<?php echo $url;?>">View Entry</a><?php */
 
 									if($dispEditPub) { ?>

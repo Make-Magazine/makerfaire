@@ -108,7 +108,7 @@ function copy_entry_to_new_form ($fromEntry){
       //where is radio?
       case 'checkbox':
         foreach($field->inputs as $key=>$input) {
-          if ($input['label']!='') {
+          if ($input['label']!='' && isset($input['id'])) {
             //we need to calculate the to parmater and add in the various decimal points
             $to_param = substr($input['id'], strpos($input['id'], ".") + 1);
             $parmsArray[] =  array('from_id' => $input['id'], 'to_param' => $field->inputName.'.'.$to_param);            
@@ -135,7 +135,7 @@ function copy_entry_to_new_form ($fromEntry){
           
     if ($pos !== false) { //populate by field ID?
       //strip the 'field-' from the parameter name to get the field number
-      $toFieldID = str_replace("field-", "", $parmName);      
+      $toFieldID = str_replace("field-", "", $parmName ?? '');      
     }else{ //are we populating by specific parameter name        
       if(isset($fieldIDarr[$parmName])){
         $toFieldID = $fieldIDarr[$parmName];
@@ -148,7 +148,7 @@ function copy_entry_to_new_form ($fromEntry){
 
     $fromFieldId = $fieldInfo['from_id'];
 
-    $toFieldID = 'input_'.str_replace('.','_',$toFieldID);
+    $toFieldID = 'input_'.str_replace('.','_',$toFieldID ?? '');
     if(isset($fromEntry[$fromFieldId])){
       $toEntry[$toFieldID] = $fromEntry[$fromFieldId];              
     }else{

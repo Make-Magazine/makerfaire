@@ -9,7 +9,7 @@ if ($findme != '') {
     echo 'looking for ' . $findme . ' '.($status!=''?' with a post_status of '.$status:'').'<br/><br/>';
 }else{
   $file_path = __DIR__;
-  $url_path = get_site_url().str_replace($_SERVER['DOCUMENT_ROOT'], '', $file_path);
+  $url_path = get_site_url().str_replace($_SERVER['DOCUMENT_ROOT'], '', $file_path ?? '');
   echo 'Please enter your search term in the URL using the findme variable. IE: '.$url_path.'/findInPostContent.php?findme=sometext<br/>';
   echo 'To limit post type, use the status variable. IE: '.$url_path.'/findInPostContent.php?findme=sometext&status=publish<br/>';
   die();

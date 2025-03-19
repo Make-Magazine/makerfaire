@@ -50,9 +50,10 @@ function mf_custom_merge_tags($merge_tags, $form_id, $fields, $element_id) {
 function mf_replace_merge_tags($text, $form, $entry, $url_encode, $esc_html, $nl2br, $format) {
     global $wpdb;
     $entry_id = (isset($entry['id']) ? $entry['id'] : '');
+    $text = isset($text) ? $text : "";
 
     //faire id
-    if (strpos($text, '{faire_id}')       !== false) {
+    if (strpos($text, '{faire_id}') !== false) {
         $sql = "select faire from wp_mf_faire where FIND_IN_SET (" . $entry['form_id'] . ",wp_mf_faire.form_ids)> 0";
         $faireId = $wpdb->get_var($sql);
         $text = str_replace('{faire_id}', $faireId, $text);
@@ -426,11 +427,11 @@ function mf_replace_merge_tags($text, $form, $entry, $url_encode, $esc_html, $nl
  * @return string
  */
 function mf_field_content($field_content, $field, $value, $lead_id, $form_id) {
-    if (strpos($field_content, '{entry_schedule}') !== false) {
+    if (isset($field_content) && strpos($field_content, '{entry_schedule}') !== false) {
         $lead = GFAPI::get_entry($lead_id);
         $schedule = get_schedule($lead);
 
-        $field_content = str_replace('{entry_schedule}', $schedule, $field_content);
+        $field_content = str_replace('{entry_schedule}', $schedule, $field_content ?? '');
     }
 
     return $field_content;

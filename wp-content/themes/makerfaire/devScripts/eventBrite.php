@@ -33,7 +33,7 @@ $curr_page = $EBdata->pagination->page_number;;
 
 echo 'Processed page '. $curr_page .' of '. $page_count.'<br/>';
 foreach($EBdata->events as $event){
-    $name = str_replace('"', '', $event->name->text);
+    $name = str_replace('"', '', $event->name->text ?? '');
     // add to the eb_events table
     $sql = "INSERT INTO `eb_events`(`org_id`, `event_id`, `event_name`, `event_status`, `event_uri`) 
         VALUES (".$orgID.",".$event->id.",\"".$name."\",\"".$event->status."\",\"".$event->resource_uri."\")";
@@ -85,8 +85,8 @@ function eb_attendee($eventID,$pageNum) {
     $curr_page = $EBdata->pagination->page_number;;
     echo 'Processed page '. $curr_page .' of '. $page_count.'<br/>';
     foreach($EBdata->attendees as $attendee){
-        $name = str_replace('"', '', $attendee->profile->name);
-        $ticket_class_name = (isset($attendee->ticket_class_name)?str_replace('"', '', $attendee->ticket_class_name):'');
+        $name = str_replace('"', '', $attendee->profile->name ?? '');
+        $ticket_class_name = str_replace('"', '', $attendee->ticket_class_name ?? '');
         $sql = "INSERT INTO `eb_attendees`(`event_id`, `name`, `email`, `ticket_class_name`, `status`, `created`) VALUES (\"".$attendee->event_id."\",
         \"".$name."\",
         \"".(isset($attendee->profile->email)?$attendee->profile->email:'')."\",

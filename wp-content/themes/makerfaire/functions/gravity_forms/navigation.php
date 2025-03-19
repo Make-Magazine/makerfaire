@@ -171,7 +171,7 @@ function buildFaireDrop(&$wp_admin_bar, $faire_id = null) {
 
     //buid the menu
     foreach ($menu_array as $key => $menu) {
-        $menuID = strtolower(str_replace(' ', '_', $key));
+        $menuID = strtolower(str_replace(' ', '_', $key ?? ''));
 
         //level 1 - Faire name
         array_push($args, array(
@@ -219,7 +219,7 @@ function buildFaireDrop(&$wp_admin_bar, $faire_id = null) {
                     array_push($args, array(
                         'id' => 'mf_admin_subchild_' . $statusRow->id,
                         'title' => $statusRow->meta_value . ' (' . $statusRow->count . ')',
-                        'href' => $adminURL . '&sort=0&dir=DESC&' . urlencode('filterField[]') . '=303|is|' . str_replace(' ', '+', $statusRow->meta_value),
+                        'href' => $adminURL . '&sort=0&dir=DESC&' . urlencode('filterField[]') . '=303|is|' . str_replace(' ', '+', $statusRow->meta_value ?? ''),
                         'meta' => array('class' => 'my-toolbar-page'),
                         'parent' => 'mf_admin_child_' . $formRow->form_id
                     ));

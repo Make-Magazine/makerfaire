@@ -104,7 +104,7 @@ function getRibbons($year){
               }
             }
             if($field=='project_name' && $project_name =='')   $project_name  = $value;
-            if(strpos($field, 'maker_name')!== false){
+            if(isset($field) && strpos($field, 'maker_name') !== false){
                 //if maker name has field_ in it, it is not a valid maker name.
                 if(strpos($value, 'field_')===false && $maker_name=='')  $maker_name = $value;
             }
@@ -148,7 +148,7 @@ function getRibbons($year){
 }
   function fixWPv1Json($content,$ID=0){
       //left and right curly brace
-       $content = str_replace('{"',  ' ||squigDQ|| ', $content);
+       $content = str_replace('{"',  ' ||squigDQ|| ', $content ?? '');
        $content = str_replace('"}',  ' ||DQsquig|| ', $content);
 
        //colon, basic text and empty field values

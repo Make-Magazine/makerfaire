@@ -142,7 +142,7 @@
 		// Universal Nav
 		$uni_nav =  basicCurl(UNIVERSAL_MAKEHUB_ASSET_URL_PREFIX . '/wp-content/universal-assets/v2/page-elements/universal-topnav.html');
         
-        echo str_replace("{{auth0_login_modal}}",$auth0_modal,$uni_nav); 
+        echo str_replace("{{auth0_login_modal}}",$auth0_modal,$uni_nav ?? 'test'); 
         
         //from the individual entry page, used to set the subnav on maker/entry pages
         global $faire_name;

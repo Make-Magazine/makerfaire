@@ -322,7 +322,7 @@ function getMTMentries($formIDs = '', $faireID = '', $years = '') {
                 $projPhoto = $overrideImg;
 
             //if the main project photo isn't set but the photo gallery is, use the first image in the photo gallery            
-            $project_gallery = (isset($result->proj_photo_gallery) ? explode(",", str_replace(array('[', ']', '"'), '', $result->proj_photo_gallery)) : '');
+            $project_gallery = explode(",", str_replace(array('[', ']', '"'), '', $result->proj_photo_gallery ?? ''));
             if ($projPhoto == '' && is_array($project_gallery)) {
                 $projPhoto = $project_gallery[0];
             }
@@ -562,7 +562,7 @@ where   entry.status='active'
             $projPhoto = $overrideImg;
 
         //if the main project photo isn't set but the photo gallery is, use the first image in the photo gallery            
-        $project_gallery = (isset($row->proj_photo_gallery) ? explode(",", str_replace(array('[', ']', '"'), '', $row->proj_photo_gallery)) : '');
+        $project_gallery = explode(",", str_replace(array('[', ']', '"'), '', $row->proj_photo_gallery ?? ''));
         if ($projPhoto == '' && is_array($project_gallery)) {
             $projPhoto = $project_gallery[0];
         }
@@ -633,7 +633,7 @@ where   entry.status='active'
             'thumb_img_url' => $fitPhoto,            
             'maker_list'    => $makerList,
             'nicename'      => $stage,
-            'stageClass'    => str_replace(' ', '-', strtolower($stage)),
+            'stageClass'    => str_replace(' ', '-', strtolower($stage) ?? ''),
             'stageOrder'    => (int) ($row->sort_order != '' ? $row->sort_order : 0),
             'category'      => $catList,
             'day'           => date_format($startDay, 'l'),

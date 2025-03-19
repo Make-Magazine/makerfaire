@@ -1,6 +1,6 @@
 <?php
 function mf_clean_title($title) {
-  $title = str_replace('&nbsp;', ' ', $title);
+  $title = str_replace('&nbsp;', ' ', $title ?? '');
   return $title;
 }
 add_filter('the_title', 'mf_clean_title', 10, 2);
@@ -132,7 +132,7 @@ function getTikTokVideoId($url) {
 function getYoutubeEmbedUrl($url) {
   //If this is a youtube shorts, replace "shorts/" with "watch?v="
   if(stripos($url,'shorts/') !== false){
-    $url = str_replace('shorts/', 'watch?v=',$url);
+    $url = str_replace('shorts/', 'watch?v=',$url ?? '');
   }
 
   $youtube_id = '';

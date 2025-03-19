@@ -4,7 +4,7 @@ Template name: Press Center Template w/Left Nav
 */
 get_header();
 $layout_type = get_field('layout_type');
-$layout_class_name = str_replace('_','-',$layout_type); // replace underscores with dashes for class name
+$layout_class_name = str_replace('_','-',$layout_type ?? ''); // replace underscores with dashes for class name
 $content_class = "content col-sm-9 " . $layout_class_name; // generate a string to use as out class for the content div
 // global $wp; // doesn't seem to be needed... delete?
 $current_slug = add_query_arg( array(), $wp->request );

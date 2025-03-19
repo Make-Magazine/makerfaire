@@ -61,7 +61,7 @@ function getAllEntries($email, $formID = '', $page = '', $years = '') {
     //get faire information
     $faire = $wpdb->get_row("SELECT * FROM wp_mf_faire where FIND_IN_SET ($formID,wp_mf_faire.form_ids)> 0 order by ID DESC limit 1");
     $faire_name   = $faire->faire_name;
-    $faire_end_dt = str_replace('-', '/', $faire->end_dt);
+    $faire_end_dt = str_replace('-', '/', $faire->end_dt ?? '');
     
     //get entry information
     $entries         = GFAPI::get_entries($formID, $search_criteria, $sorting, $paging, $total_count);
@@ -79,7 +79,7 @@ function getAllEntries($email, $formID = '', $page = '', $years = '') {
       $maker_message = do_shortcode($maker_message); //process any conditional logic  
       
       //if group, use the group name, else use the main contact name
-      if (strpos($entry['105'], 'group')  !== false) {
+      if (isset($entry['105']) && strpos($entry['105'], 'group')  !== false) {
         $maker_name = (isset($entry['109']) ? $entry['109'] : '');
       } else {
         $maker_name = (isset($entry['96.3']) ? $entry['96.3'] : '') .
@@ -204,7 +204,7 @@ function fieldOutput($fieldID, $entry, $field_array, $form, $arg = '') {
           //if the array is empty, set this back to blank
           if (empty($value))   $value = '';
         }
-        $value = str_replace('http://', 'https://', $value);
+        $value = str_replace('http://', 'https://', $value ?? '');
         break;
 
       case 'address':

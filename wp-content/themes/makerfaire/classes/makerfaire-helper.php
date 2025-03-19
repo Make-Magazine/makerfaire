@@ -85,7 +85,7 @@ function mf_display_schedule_by_area($atts) {
       }
       $scheduleData .= '</table></div>';
     }
-    $scheduleData = str_replace('||navtabs||', $navTabs, $scheduleData);
+    $scheduleData = str_replace('||navtabs||', $navTabs, $scheduleData ?? '');
     $scheduleData .= '</div>'; //close .tab-content
     $scheduleData .= '</div>'; //close .tab-pane
   }
@@ -145,7 +145,7 @@ function mf_display_schedule_by_area_old($atts) {
   $area = $atts['area'];
   $subarea = htmlspecialchars_decode( (string) $atts['subarea']);
 
-  $subarea_clean_name = strtolower(str_replace('&', '', (str_replace(' ', '', str_replace(':', '', $subarea)))));
+  $subarea_clean_name = strtolower(str_replace('&', '', (str_replace(' ', '', str_replace(':', '', $subarea ?? '')))));
   // Make sure we actually passed a valid faire...
   //if ( empty( $faire_date ) )
   //	return '<h3>Not a valid faire!</h3>';
@@ -187,7 +187,7 @@ function mf_display_schedule_by_area_old($atts) {
       $navTabs .= '<li class="' . ($day == 'saturday' ? 'active' : '') . '"><a class="text-capitalize" href="#' . str_replace(' ', '', $subarea_clean_name) . esc_attr($day) . '" data-toggle="tab">' . esc_attr($day) . '</a></li>';
 
       // Start the schedule
-      $output .= '<div id="' . str_replace(' ', '', $subarea_clean_name) . esc_attr($day) . '" class="tab-pane fade in ' . ($day == 'saturday' ? 'active' : '') . '">';
+      $output .= '<div id="' . str_replace(' ', '', $subarea_clean_name ?? '') . esc_attr($day) . '" class="tab-pane fade in ' . ($day == 'saturday' ? 'active' : '') . '">';
       $output .= '<table id="' . esc_attr($day) . '" class="table table-bordered table-schedule">';
 
       // Loop through the events and get the applications
@@ -229,7 +229,7 @@ function mf_display_schedule_by_area_old($atts) {
     }
   }
   $output .='</div>';
-  $output = str_replace('||navtabs||', $navTabs, $output);
+  $output = str_replace('||navtabs||', $navTabs, $output ?? '');
   return $output;
 }
 

@@ -162,11 +162,11 @@ if (isset($wp_version)) {
 
 	function mdwp_hide_tags($text) {
 		global $mdwp_hidden_tags, $mdwp_placeholders;
-		return str_replace($mdwp_hidden_tags, $mdwp_placeholders, $text);
+		return str_replace($mdwp_hidden_tags, $mdwp_placeholders, $text ?? '');
 	}
 	function mdwp_show_tags($text) {
 		global $mdwp_hidden_tags, $mdwp_placeholders;
-		return str_replace($mdwp_placeholders, $mdwp_hidden_tags, $text);
+		return str_replace($mdwp_placeholders, $mdwp_hidden_tags, $text ?? '');
 	}
 }
 
@@ -450,7 +450,7 @@ class Markdown_Parser {
 				  )
 				)*',
 				$nested_tags_level);
-		$content2 = str_replace('\2', '\3', $content);
+		$content2 = str_replace('\2', '\3', $content ?? '');
 
 		# First, look for nested blocks, e.g.:
 		# 	<div>
@@ -1411,7 +1411,7 @@ class Markdown_Parser {
 	# is *not* suitable for attributes enclosed in single quotes.
 	#
 		$text = $this->encodeAmpsAndAngles($text);
-		$text = str_replace('"', '&quot;', $text);
+		$text = str_replace('"', '&quot;', $text ?? '');
 		return $text;
 	}
 
@@ -1423,12 +1423,12 @@ class Markdown_Parser {
 	# no-entities mode is set.
 	#
 		if ($this->no_entities) {
-			$text = str_replace('&', '&amp;', $text);
+			$text = str_replace('&', '&amp;', $text ?? '');
 		} else {
 			# Ampersand-encoding based entirely on Nat Irons's Amputator
 			# MT plugin: <http://bumppo.net/projects/amputator/>
 			$text = preg_replace('/&(?!#?[xX]?(?:[0-9a-fA-F]+|\w+);)/',
-								'&amp;', $text);;
+								'&amp;', $text ?? '');
 		}
 		# Encode remaining <'s
 		$text = str_replace('<', '&lt;', $text);
@@ -1439,7 +1439,7 @@ class Markdown_Parser {
 
 	function doAutoLinks($text) {
 		$text = preg_replace_callback('{<((https?|ftp|dict):[^\'">\s]+)>}i',
-			array(&$this, '_doAutoLinks_url_callback'), $text);
+			array(&$this, '_doAutoLinks_url_callback'), $text ?? '');
 
 		# Email addresses: <address@domain.foo>
 		$text = preg_replace_callback('{
@@ -1915,7 +1915,7 @@ class MarkdownExtra_Parser extends Markdown_Parser {
 			if ($span) {
 				$void = $this->hashPart("", ':');
 				$newline = "$void\n";
-				$parts[0] = $void . str_replace("\n", $newline, $parts[0]) . $void;
+				$parts[0] = $void . str_replace("\n", $newline, $parts[0] ?? '') . $void;
 			}
 
 			$parsed .= $parts[0]; # Text before current tag.
@@ -2834,7 +2834,7 @@ class MarkdownExtra_Parser extends Markdown_Parser {
 				$footnote = preg_replace_callback('{F\x1Afn:(.*?)\x1A:}',
 					array(&$this, '_appendFootnotes_callback'), $footnote);
 
-				$attr = str_replace("%%", ++$num, $attr);
+				$attr = str_replace("%%", ++$num, $attr ?? '');
 				$note_id = $this->encodeAttribute($note_id);
 
 				# Add backlink to last paragraph; create new paragraph if needed.
@@ -2878,7 +2878,7 @@ class MarkdownExtra_Parser extends Markdown_Parser {
 				$attr .= " title=\"$title\"";
 			}
 
-			$attr = str_replace("%%", $num, $attr);
+			$attr = str_replace("%%", $num, $attr ?? '');
 			$node_id = $this->encodeAttribute($node_id);
 
 			return

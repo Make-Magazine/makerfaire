@@ -14,7 +14,7 @@ jQuery(document).ready(function() {
 			}
 		);
 		
-		if (typeof datetimepicker === 'function')	{
+		//if (typeof datetimepicker === 'function')	{
 			jQuery('#datetimepicker').datetimepicker({ value: '2015/04/15 05:03', step: 30 });
 			jQuery('#datetimepickerstart').datetimepicker({
 				formatTime: 'g:i a',
@@ -28,7 +28,7 @@ jQuery(document).ready(function() {
 				defaultTime: '10:00 am', 
 				step: 30,
 			});
-		}
+		//}
 		jQuery('#gf_admin_page_title').click(
 			function() {
 				window.location = "/wp-admin/admin.php?page=gf_entries&view=entry&id=20&lid=" + prompt('Enter your ID!', ' ');

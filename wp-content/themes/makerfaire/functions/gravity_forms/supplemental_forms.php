@@ -48,7 +48,7 @@ function update_original_entry($form, $origEntryID, $suppEntry) {
               //find decimal point
               $fromArr = explode('.', $fromField);
               $decPoint = $fromArr[1];
-              $inputID  = str_replace(".", "_", $fromField);
+              $inputID  = str_replace(".", "_", $fromField ?? '');
               $updValue =  (isset($_POST['input_' . $inputID]) ? $_POST['input_' . $inputID] : '');
               
               GFAPI::update_entry_field($origEntryID, (int) $updField . '.' . $decPoint, stripslashes($updValue));
@@ -61,7 +61,7 @@ function update_original_entry($form, $origEntryID, $suppEntry) {
           foreach ($field->inputs as $input) {
             $fromField =  $input['id'];
 
-            $inputID  = str_replace(".", "_", $fromField);
+            $inputID  = str_replace(".", "_", $fromField ?? '');
             $updValue =  (isset($_POST['input_' . $inputID]) ? $_POST['input_' . $inputID] : '');
             
             GFAPI::update_entry_field($origEntryID, $updField, stripslashes($updValue));
@@ -145,7 +145,7 @@ function rmt_lock_ind($text, $entry_id) {
             on wp_rmt_entry_resources.resource_id = wp_rmt_resources.id
         where wp_rmt_resources.resource_category_id = ' . $RMTcatID . ' and lockBit=1 and entry_id = ' . $entry_id);
       $mergeTag = substr($text, $startPos, $closeBracketPos - $startPos + 1);
-      $rmtLock = str_replace($mergeTag, ($lockCount > 0 ? 'Yes' : 'No'), $text);
+      $rmtLock = str_replace($mergeTag, ($lockCount > 0 ? 'Yes' : 'No'), $text ?? '');
     }
   }
 
@@ -164,7 +164,7 @@ function rmt_lock_ind($text, $entry_id) {
       //find locked value of RMT field
       $lockBit = $wpdb->get_var('SELECT lockBit FROM `wp_rmt_entry_attributes` where attribute_id = ' . $RMTid . ' and entry_id = ' . $entry_id . ' limit 1');
       $mergeTag = substr($text, $startPos, $closeBracketPos - $startPos + 1);
-      $rmtLock = str_replace($mergeTag, ($lockBit == 1 ? 'Yes' : 'No'), $text);
+      $rmtLock = str_replace($mergeTag, ($lockBit == 1 ? 'Yes' : 'No'), $text ?? '');
     }
   }
   return $rmtLock;

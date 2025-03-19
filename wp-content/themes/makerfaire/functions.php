@@ -462,7 +462,7 @@ function validate_url($url) {
     if (preg_match('/^(http|https):\\/\\/[a-z0-9_]+([\\-\\.]{1}[a-z_0-9]+)*\\.[_a-z]{2,5}' . '((:[0-9]{1,5})?\\/.*)?$/i', $url)) {
         $path = parse_url($url, PHP_URL_PATH);
         $encoded_path = array_map('urlencode', explode('/', $path));
-        $url = str_replace($path, implode('/', $encoded_path), $url);
+        $url = str_replace($path, implode('/', $encoded_path), $url ?? "");
 
         return filter_var($url, FILTER_VALIDATE_URL) ? true : false;
     } else {

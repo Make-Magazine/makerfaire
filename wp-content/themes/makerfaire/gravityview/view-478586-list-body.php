@@ -142,7 +142,7 @@ $entries   = $tableData['data'];
 
         //GV Edit Link
         $GVeditLink = do_shortcode('[gv_entry_link action="edit" return="url" view_id="478586" entry_id="'.$entryData['lead_id'].'"]');
-        $GVeditLink = str_replace('/view/', '/', $GVeditLink);  //remove view slug from URL
+        $GVeditLink = str_replace('/view/', '/', $GVeditLink ?? '');  //remove view slug from URL
 
         //RMT edit link
         $RMTeditLink = '<span class="editLink">
@@ -304,7 +304,7 @@ $entries   = $tableData['data'];
                       <?php
                       //View Link
                       $url = do_shortcode('[gv_entry_link action="read" return="url" view_id="478586" entry_id="'.$entryData['lead_id'].'"]');
-                      $url = str_replace('/view/', '/', $url);  //remove view slug from URL
+                      $url = str_replace('/view/', '/', $url ?? '');  //remove view slug from URL
                       ?><a href="<?php echo $url;?>">View Entry</a><?php
 
                       if($dispEditPub) { ?>

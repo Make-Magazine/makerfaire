@@ -249,7 +249,7 @@ $writeRule[$save_rule] = $ruleArray;
                         }else{
                             $fieldData = ' ['.$field_id.']';
                         }
-                        $rmt_field_value = str_replace($req_field, $fieldData, $rmt_field_value);
+                        $rmt_field_value = str_replace($req_field, $fieldData, $rmt_field_value ?? '');
                         $pos = strpos($rmt_field_value, '{') ?? '';
                     }
                     echo $rmt_field_value;

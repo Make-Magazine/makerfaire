@@ -446,7 +446,7 @@ function AddFont($family, $style='', $file='', $dir='')
 	// Add a TrueType, OpenType or Type1 font
 	$family = strtolower($family);
 	if($file=='')
-		$file = str_replace(' ','',$family).strtolower($style).'.php';
+		$file = str_replace(' ','',$family ?? '').strtolower($style).'.php';
 	$style = strtoupper($style);
 	if($style=='IB')
 		$style = 'BI';
@@ -484,7 +484,7 @@ function SetFont($family, $style='', $size=0)
 	if(strpos($style,'U')!==false)
 	{
 		$this->underline = true;
-		$style = str_replace('U','',$style);
+		$style = str_replace('U','',$style ?? '');
 	}
 	else
 		$this->underline = false;
@@ -1265,10 +1265,10 @@ protected function _UTF8toUTF16($s)
 	return $res;
 }
 
-protected function _escape($s)
+protected function _escape($s='')
 {
 	// Escape special characters
-	if(strpos($s,'(')!==false || strpos($s,')')!==false || strpos($s,'\\')!==false || strpos($s,"\r")!==false)
+	if(isset($s) && (strpos($s,'(')!==false || strpos($s,')')!==false || strpos($s,'\\')!==false || strpos($s,"\r")!==false) )
 		return str_replace(array('\\','(',')',"\r"), array('\\\\','\\(','\\)','\\r'), $s);
 	else
 		return $s;
@@ -1371,7 +1371,7 @@ protected function _parsepngstream($f, $file)
 		elseif($type=='tRNS')
 		{
 			// Read transparency info
-			$t = $this->_readstream($f,$n);
+			$t = $this->_readstream($f,$n) ?? '';
 			if($ct==0)
 				$trns = array(ord(substr($t,1,1)));
 			elseif($ct==2)
@@ -1599,7 +1599,7 @@ protected function _putpage($n)
 	$this->_put('endobj');
 	// Page content
 	if(!empty($this->AliasNbPages))
-		$this->pages[$n] = str_replace($this->AliasNbPages,$this->page,$this->pages[$n]);
+		$this->pages[$n] = str_replace($this->AliasNbPages,$this->page,$this->pages[$n] ?? '');
 	$this->_putstreamobject($this->pages[$n]);
 	// Link annotations
 	$this->_putlinks($n);

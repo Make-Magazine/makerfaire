@@ -36,7 +36,7 @@ foreach($postData as $ID=>$post){
          $content = $post['data']['post_content'];
          
         //left and right curly brace
-         $content = str_replace('{"',  ' ||squigDQ|| ', $content);
+         $content = str_replace('{"',  ' ||squigDQ|| ', $content ?? '');
          $content = str_replace('"}',  ' ||DQsquig|| ', $content);
          
          //colon, basic text and empty field values

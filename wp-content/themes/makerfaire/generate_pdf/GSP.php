@@ -66,7 +66,7 @@ $faire = (isset($_GET['faire']) ? $faire = $_GET['faire'] : '');
 $faireFormIDs = $wpdb->get_var('select form_ids from wp_mf_faire where faire="' . $faire . '"');
 
 //remove spaces
-$faireFormIDs = str_replace(' ', '', $faireFormIDs);
+$faireFormIDs = str_replace(' ', '', $faireFormIDs ?? '');
 $faireFormIDs = explode(',', $faireFormIDs);
 
 $form = GFAPI::get_form($form_id);
@@ -131,7 +131,7 @@ function output_data($pdf, $lead = array(), $form = array(), $fieldData = array(
       } else {
          $display_value = '';
       }
-      $display_value = str_replace('<br />', "\n", $display_value);
+      $display_value = str_replace('<br />', "\n", $display_value ?? '');
       $display_value = htmlspecialchars_decode( (string) $display_value, ENT_QUOTES);
 
       $pdf->MultiCell(0, $lineheight, $data[0] . ': ');

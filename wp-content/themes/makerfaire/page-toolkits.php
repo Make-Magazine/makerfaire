@@ -10,10 +10,10 @@ $path = $_SERVER['REQUEST_URI'];
 $urlArray = explode('/', $path);
 $location = $urlArray[1];
 $pagegroup = (isset($urlArray[2])?$urlArray[2]:''); // This is the parent, i.e. Maker Toolkit
-$pagegroupPretty = ucwords(str_replace("-"," ", $pagegroup));
+$pagegroupPretty = ucwords(str_replace("-"," ", $pagegroup ?? ''));
 
 function urlify($string) {
-	return strtolower(str_replace(" ","-",preg_replace("/[^\s{a-zA-Z0-9}]/", '', $string)));
+	return strtolower(str_replace(" ","-",preg_replace("/[^\s{a-zA-Z0-9}]/", '', $string ?? '')));
 }
 
 ?>

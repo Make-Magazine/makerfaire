@@ -23,7 +23,7 @@ if(isset($_GET['cron'])){
       break;
     case 'createSignZip':
       $area = (isset($_GET['area'])?$_GET['area']:'');
-      $area = str_replace('_',' ',$area);
+      $area = str_replace('_',' ',$area ?? '');
       createMFSignZip($area);
       break;
     case 'update_mfTables':
@@ -139,8 +139,8 @@ function createMFSignZip($area) {
       $subarea = ($row->subarea != NULL ? $row->subarea:'No-subArea');
 
       //create friendly names for file creation
-      $area = str_replace(' ','_',$area);
-      $subarea = str_replace(' ','_',$subarea);
+      $area = str_replace(' ','_',$area ?? '');
+      $subarea = str_replace(' ','_',$subarea ?? '');
       //build array output based on selected type
       if($type=='area') {
         $entries[$area][$row->entry_status][] = $row->entry_id;

@@ -57,8 +57,8 @@ class PDF extends Fpdi {
       $this->SetXY(15, 42);
    }
 
-   //function for makign text bold
-   public function WriteText($text){
+   //function for making text bold
+   public function WriteText($text = ''){
       $intPosIni = 0;
       $intPosFim = 0;
       if (strpos($text,'<')!==false && strpos($text,'[')!==false){
@@ -113,7 +113,7 @@ $faire   = (isset($_GET['faire']) ? $faire = $_GET['faire'] : '');
 $faireFormIDs = $wpdb->get_var('select form_ids from wp_mf_faire where faire="' . $faire . '"');
 
 //remove spaces
-$faireFormIDs = str_replace(' ', '', $faireFormIDs);
+$faireFormIDs = str_replace(' ', '', $faireFormIDs ?? '');
 $faireFormIDs = explode(',',$faireFormIDs);
 
 $form = GFAPI::get_form($form_id);
@@ -189,7 +189,7 @@ function output_data($pdf, $lead = array(), $form = array(), $fieldData = array(
       } else {
          $display_value = '';
       }
-      $display_value = str_replace('<br />', "\n", $display_value);
+      $display_value = str_replace('<br />', "\n", $display_value ?? '');
       $display_value = htmlspecialchars_decode( (string) $display_value, ENT_QUOTES);
       if(in_array($fieldID, array(37,19,27,20,7), true )) {
          $pdf->MultiCell(0, $lineheight, $pdf->WriteText("<" .$data[0] . '>: '));

@@ -164,7 +164,7 @@ function setCatName($value, $field, $lead, $form) {
 add_filter('gform_export_field_value', 'set_export_values', 10, 4);
 
 function set_export_values($value, $form_id, $field_id, $lead) {
-    if ($field_id == 320 || strpos($field_id, '321.') !== false) {
+    if (isset($field_id) && $field_id == 320 || strpos($field_id, '321.') !== false) {
         $value = get_CPT_name($value);
     } /*else {
         $field = GFAPI::get_field($form_id, $field_id);
@@ -220,7 +220,7 @@ function MF_resend_notifications() {
         $search_field_id = rgpost('fieldId');
 
         if (isset($_POST['fieldId']) && $_POST['fieldId'] !== '') {
-            $key = $search_field_id;
+            $key = isset($key) ? $search_field_id : "";
             $val = $search;
             $strpos_row_key = strpos($search_field_id, '|');
             if ($strpos_row_key !== false) { //multi-row
@@ -294,7 +294,7 @@ function MF_resend_notifications() {
 
 add_filter( 'template_include', 'wpm_load_script_for_template', 1000 );
 function wpm_load_script_for_template( $template ){
-	if ((strpos($template, 'page-mfscheduler.php') !== false) ) {
+	if (isset($template) && strpos($template, 'page-mfscheduler.php') !== false ) {
 		wp_enqueue_script( 'kendo-js', get_template_directory_uri() . '/lib/Kendo/built-kendo-scripts.min.js', array('jquery'));
 		wp_enqueue_style('kendo-styles', get_template_directory_uri() . '/lib/Kendo/kendo.min.css', array());
 	}
@@ -312,7 +312,7 @@ function populate_exhibit_type( $form ) {
         
         foreach($field_339['inputs'] as $input){
             if($input['label']==$field_896){                
-                $field_id = 'input_'.str_replace('.','_',$input['id']); //translate 339.4 into input_339_4
+                $field_id = 'input_'.str_replace('.','_',$input['id'] ?? ''); //translate 339.4 into input_339_4
                 $_POST[$field_id] = $field_896;
             }
         }

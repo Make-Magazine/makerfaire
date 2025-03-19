@@ -280,7 +280,7 @@ function display_categories($catArray) {
     global $url_sub_path;
     $return = '<b>Categories:</b>';
     foreach ($catArray as $value) {
-        $return .= ' <a href="/' . $url_sub_path . '/meet-the-makers/?category=' . str_replace("&amp;", "%26", $value) . '">' . $value . '</a>,';
+        $return .= ' <a href="/' . $url_sub_path . '/meet-the-makers/?category=' . str_replace("&amp;", "%26", $value ?? '') . '">' . $value . '</a>,';
     }
     return rtrim($return, ',');
 }

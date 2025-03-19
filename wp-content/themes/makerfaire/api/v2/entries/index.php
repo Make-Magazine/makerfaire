@@ -107,7 +107,7 @@ function getAllEntries($formID = '') {
     //find the title
     preg_match_all("/\[title\]\s*(.[\S\s]*?)\s*\[\/title\]/", $tab, $title_array);
     $title = (!empty($title_array[1][0]) ? $title_array[1][0] : 'tab-' . $key);
-    $tab_name = strtolower(str_replace(' ', '-', $title));
+    $tab_name = strtolower(str_replace(' ', '-', $title ?? ''));
 
     //build the tab content
     preg_match_all("/\[tab_content\]\s*(.[\S\s]*?)\s*\[\/tab_content\]/", $tab, $tab_content_arr);
@@ -152,10 +152,10 @@ function getAllEntries($formID = '') {
 
     //modify the data
     //if group, use the group name, else use the main contact name
-    if (strpos($entry['105'], 'group')  !== false) {
-      $maker_name = (isset($entry['109']) ? $entry['109'] : '');
+    if (isset($entry['105']) && strpos($entry['105'], 'group') !== false) {
+        $maker_name = (isset($entry['109']) ? $entry['109'] : '');
     } else {
-      $maker_name = (isset($entry['96.3']) ? $entry['96.3'] : '') . ' ' . (isset($entry['96.6']) ? $entry['96.6'] : '');
+        $maker_name = (isset($entry['96.3']) ? $entry['96.3'] : '') . ' ' . (isset($entry['96.6']) ? $entry['96.6'] : '');
     }
 
     //for BA24, the single photo was changed to a multi image which messed things up a bit
@@ -163,7 +163,7 @@ function getAllEntries($formID = '') {
 
     $photo = json_decode($entry['22']);
     if (is_array($photo)) {
-      $maker_photo = $photo[0];
+        $maker_photo = $photo[0];
     }
 
     $tabData = array();
@@ -191,9 +191,9 @@ function getAllEntries($formID = '') {
             foreach ($column as $field_id) {
               $arg = '';
               //check if an argument was passed
-              if (strpos($field_id, ':') !== false) {
-                $arg = str_replace(':', '', strstr($field_id, ':'));
-                $field_id = substr($field_id, 0, strpos($field_id, ":"));
+              if (isset($field_id) && strpos($field_id, ':') !== false) {
+                $arg = str_replace(':', '', strstr($field_id, ':') ?? '');
+                $field_id = substr($field_id, 0, strpos($field_id, ":") ?? '');
               }
               $fieldOutput = fieldOutput($field_id, $entry, $field_array, $form, $arg);
               if (!empty($fieldOutput))

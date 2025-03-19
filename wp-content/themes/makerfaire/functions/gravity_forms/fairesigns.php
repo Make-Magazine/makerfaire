@@ -102,7 +102,7 @@ function genTableTags($faire) {
     $sql = "select form_ids from wp_mf_faire where faire='" . $faire . "'";
     $formIds = $wpdb->get_var($sql);
     // remove any spaces
-    $formIds = str_replace(' ', '', $formIds);
+    $formIds = str_replace(' ', '', $formIds ?? '');
     $forms = explode(",", $formIds);
     foreach ($forms as $formId) {
 
@@ -283,10 +283,10 @@ function createSignZip() {
 function setGrouping($row, array &$entries, $area, $subarea, $type, $filterError) {
     // build array output based on selected type
     if ($type === 'area') {
-        $area = str_replace(' ', '_', $area);
+        $area = str_replace(' ', '_', $area ?? '');
         $entries[$area][$row->entry_status][] = $row->entry_id;
     } elseif ($type === 'subarea') {
-        $subarea = str_replace(' ', '_', $subarea);
+        $subarea = str_replace(' ', '_', $subarea ?? '');
         $entries[$area . '-' . $subarea][$row->entry_status][] = $row->entry_id;
     } elseif ($type === 'faire') {
         $entries['faire'][$row->entry_status][] = $row->entry_id;
@@ -317,7 +317,7 @@ function filterByForm($form, $row, array &$entries, $area, $subarea, $type, $fil
     //error_log("DEBUG:: Comparing form of: ". $form . " to " . $row->form_id);
     if ($form === $row->form_id) {
         setGrouping($row, $entries, $area, $subarea, $type, $filterError);
-        $form = str_replace(' ', '_', $form);
+        $form = str_replace(' ', '_', $form ?? '');
         // error_log("DEBUG:: Adding a form of: ". $form);
         $entries[$form][$row->entry_status][] = $row->entry_id;
     }
@@ -340,7 +340,7 @@ function createEntList($faire, $type) {
         $sql = "select form_ids from wp_mf_faire where faire='" . $faire . "'";
         $formIds = $wpdb->get_var($sql);
         // remove any spaces
-        $formIds = str_replace(' ', '', $formIds);
+        $formIds = str_replace(' ', '', $formIds ?? '');
         $forms = explode(",", $formIds);
 
         foreach ($forms as $formId) {

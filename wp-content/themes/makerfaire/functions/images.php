@@ -4,7 +4,7 @@ function random_pic($dir = '/uploads'){
     $files = glob($dir . '/*.*');
 	if(!empty($files)) {
     	$file = array_rand($files);
-    	return str_replace(ABSPATH, get_site_url() . '/', $files[$file]);
+    	return str_replace(ABSPATH, get_site_url() . '/', $files[$file] ?? '');
 	}
 }
 

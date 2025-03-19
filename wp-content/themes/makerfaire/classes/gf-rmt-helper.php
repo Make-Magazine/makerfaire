@@ -687,7 +687,7 @@ class GFRMTHELPER {
     if ($form_type == "Master") {
       $exhibit_type = array();
       foreach ($entry as $key => $value) {
-        if (strpos($key, '339.') === 0) {
+        if (isset($key) && strpos($key, '339.') === 0) {
           if ($value != '') {
             $exhibit_type[$key] = $value;
           }
@@ -837,9 +837,9 @@ class GFRMTHELPER {
     // Check if this is a group of makers, one maker or multiple makers
     $isGroup    = false; //default to false
     $isOneMaker = true;
-    if (isset($lead['105'])  && $lead['105'] != '') {
+    if (isset($lead['105']) && $lead['105'] != '') {
       $isGroup = (stripos($lead['105'], 'group') !== false || stripos($lead['105'], 'team') !== false ? true : false);
-      $isOneMaker = (strpos($lead['105'], 'One')    !== false ? true : false);
+      $isOneMaker = (strpos($lead['105'], 'One') !== false ? true : false);
     }
 
     /*
@@ -1113,7 +1113,7 @@ class GFRMTHELPER {
 
     //Categories (current fields in use)
     foreach ($lead as $leadKey => $leadValue) {
-      if (trim($leadValue != '')) {
+      if (isset($leadKey) && trim($leadValue != '')) {
         //4 additional categories
         $pos = strpos($leadKey, '321');
         if ($pos !== false) {
@@ -1237,7 +1237,7 @@ function findFieldData($var, $entry) {
     } else {
       $fieldData = '';
     }
-    $var = str_replace($req_field, $fieldData, $var);
+    $var = str_replace($req_field, $fieldData, $var ?? '');
     $pos = strpos($var, '{');
   }
 

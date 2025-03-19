@@ -18,8 +18,8 @@ $upcoming = ( ! empty( $_REQUEST['upcoming'] ) ? sanitize_text_field( $_REQUEST[
 $number = ( ! empty( $_REQUEST['number'] ) ? sanitize_text_field( $_REQUEST['number'] ) : null );
 $categories = ( ! empty( $_REQUEST['categories'] ) ? sanitize_text_field( $_REQUEST['categories'] ) : '' );
 // add quotes around each faire type in the $categories string so that it will work with a mySQL IN statement
-$categories = str_replace(' ', '', $categories);
-$categories_string = '"' . str_replace(',', '","', $categories) . '"';
+$categories = str_replace(' ', '', $categories ?? '');
+$categories_string = '"' . str_replace(',', '","', $categories ?? '') . '"';
 
 // Double check again we have requested this file
 if ( $type == 'map' ) {

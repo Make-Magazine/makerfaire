@@ -104,7 +104,7 @@ class maker {
     $response = '';
     $exhibit  = FALSE;
     foreach ($entry as $key => $value) {
-        if (strpos($key, '339.') === 0) {
+        if (isset($key) && strpos($key, '339.') === 0) {
             if ($value != '') {
                 if (stripos($value, 'exhibit') !== false) {
                     $exhibit=TRUE;
