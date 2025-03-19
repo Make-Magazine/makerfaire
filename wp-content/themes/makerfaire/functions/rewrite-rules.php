@@ -36,7 +36,7 @@ function makerfaire_register_query_var( $vars ) {
     $vars[] = 'faire_id';   //page-mfscheduler.php
     $vars[] = 'token';      //page-maker-checkin.php, page-mfscheduler.php, page-onsite-checkin.php, page-onsite-pinning.php
     $vars[] = 'makersign';  //classes/makerfaire-helper.php
-    $vars[] = 'loadin';  //classes/makerfaire-helper.php
+    $vars[] = 'loadin';     //classes/makerfaire-helper.php
     $vars[] = 'faire';      //generate_pdf/makersigns.php
     $vars[] = 'eid';        //generate_pdf/makersigns.php
     $vars[] = "sched_type"; //page-schedule.php

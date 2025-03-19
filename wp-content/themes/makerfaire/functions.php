@@ -159,8 +159,8 @@ function remove_unnecessary_styles() {
     if( is_page_template('page-entry.php') ) {
         wp_deregister_style('elementor-pro');
         wp_dequeue_style('elementor-pro');
-        wp_deregister_style('elementor-frontend');
-        wp_dequeue_style('elementor-frontend');
+        //wp_deregister_style('elementor-frontend');
+        //wp_dequeue_style('elementor-frontend');
         wp_deregister_style('search-filter-plugin-styles');
         wp_dequeue_style('search-filter-plugin-styles');
         wp_deregister_style('e-animations');
