@@ -15,7 +15,7 @@ function mf_custom_toolbar($form_id) {
 
       if (isset($_GET['filterField']) && is_array($_GET['filterField'])) {
          foreach ($_GET['filterField'] as $key => $value) {
-            $strpos_row_key = strpos($value, $fieldSep) ?? false;
+            $strpos_row_key = strpos($value ?? '', $fieldSep);
             if ($strpos_row_key !== false) { //multi-field filter
                $filterValues = explode($fieldSep, $value);
                $field_id = $filterValues[0];
@@ -110,7 +110,7 @@ function modify_field_display_values($value, $form_id, $field_id, $lead) {
             $thumb = GFEntryList::get_icon_url($file_path) ?? '';
 
             //replace images with an actual thumbnail of the image
-            if (strpos($thumb, 'icon_image.gif') !== false) {
+            if (strpos($thumb ?? '', 'icon_image.gif') !== false) {
                $file_path = esc_attr($file_path);
       
                $photo = legacy_get_fit_remote_image_url($file_path, 115, 115);
@@ -156,7 +156,7 @@ function multi_search_criteria_entry_list($search_criteria, $form_id) {
 
    if (isset($filterField) && is_array($filterField)) {
       foreach ($filterField as $key => $value) {
-         $strpos_row_key = strpos($value, $fieldSep) ?? false;
+         $strpos_row_key = strpos($value ?? '', $fieldSep);
      
          if ($strpos_row_key !== false) { //multi-field filter
             $filterValues = explode($fieldSep, $value);

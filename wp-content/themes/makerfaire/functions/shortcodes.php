@@ -108,8 +108,8 @@ function get_shortcode_attributes( $shortcode_tag ) {
             foreach( $matches[0] as $key => $value) {
                 // $matches[3] return the shortcode attribute as string
                 // replace space with '&' for parse_str() function
-                $get = str_replace(" ", "&" , trim( $matches[3][$key] ?? '') );
-                $get = str_replace('"', '' , $get );
+                $get = str_replace(" ", "&" , trim( $matches[3][$key] ?? '') ?? '' );
+                $get = str_replace('"', '' , $get ?? '' );
                 parse_str( $get, $sub_output );
 
                 //get all shortcode attribute keys

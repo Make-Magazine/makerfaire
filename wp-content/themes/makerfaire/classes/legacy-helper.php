@@ -22,7 +22,7 @@ function legacy_is_valid_domain( $url, $whitelisted_domains ) {
 
 	foreach( $whitelisted_domains as $whitelisted_domain ) {
 		$whitelisted_domain = '.' . $whitelisted_domain; // Prevent things like 'evilsitetime.com'
-		if( strpos( $domain, $whitelisted_domain ) === ( strlen( $domain ) - strlen( $whitelisted_domain ) ) ) {
+		if( strpos( $domain ?? '', $whitelisted_domain ) === ( strlen( $domain ) - strlen( $whitelisted_domain ) ) ) {
 			$valid = true;
 			break;
 		}

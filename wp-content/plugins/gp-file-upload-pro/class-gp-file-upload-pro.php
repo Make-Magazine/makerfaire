@@ -308,7 +308,7 @@ class GP_File_Upload_Pro extends GP_Plugin {
 
 					if ( basename( $prepopulated_file ) === $file['uploaded_filename'] ) {
 						$url          = $prepopulated_file;
-						$partial_path = str_replace( GFFormsModel::get_upload_url( $form_id ), '', $prepopulated_file );
+						$partial_path = str_replace( GFFormsModel::get_upload_url( $form_id ), '', $prepopulated_file ?? '' );
 						$path         = GFFormsModel::get_upload_path( $form_id ) . $partial_path;
 
 						break;
@@ -348,7 +348,7 @@ class GP_File_Upload_Pro extends GP_Plugin {
 				'type' => $ext_and_type['type'],
 			);
 
-			if ( strpos( $ext_and_type['type'], 'image/' ) === 0 ) {
+			if ( strpos( $ext_and_type['type'] ?? '', 'image/' ) === 0 ) {
 				$file_info['url'] = $field->get_download_url( $url );
 			}
 

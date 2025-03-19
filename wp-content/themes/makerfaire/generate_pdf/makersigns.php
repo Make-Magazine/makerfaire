@@ -198,7 +198,7 @@ function createOutput($entry_id, $pdf) {
    $project_title = preg_replace('/\v+|\\\[rn]/', '<br/>', $project_title);
 
    foreach ($entry as $key => $value) {
-      if (isset($key) && strpos($key, '339.') === 0) {
+      if (strpos($key ?? '', '339.') === 0) {
          if ($value != '') {
             if (stripos($value, 'sponsor') !== false) {
                $project_type = 'Exhibit';

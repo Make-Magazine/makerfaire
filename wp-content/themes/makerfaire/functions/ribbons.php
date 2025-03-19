@@ -104,9 +104,9 @@ function getRibbons($year){
               }
             }
             if($field=='project_name' && $project_name =='')   $project_name  = $value;
-            if(isset($field) && strpos($field, 'maker_name') !== false){
+            if(strpos($field ?? '', 'maker_name') !== false){
                 //if maker name has field_ in it, it is not a valid maker name.
-                if(strpos($value, 'field_')===false && $maker_name=='')  $maker_name = $value;
+                if(strpos($value ?? '', 'field_')===false && $maker_name=='')  $maker_name = $value;
             }
           }
           if(is_array($maker_name)){
@@ -149,74 +149,74 @@ function getRibbons($year){
   function fixWPv1Json($content,$ID=0){
       //left and right curly brace
        $content = str_replace('{"',  ' ||squigDQ|| ', $content ?? '');
-       $content = str_replace('"}',  ' ||DQsquig|| ', $content);
+       $content = str_replace('"}',  ' ||DQsquig|| ', $content ?? '');
 
        //colon, basic text and empty field values
-       $content = str_replace('","', ' ||dqCommadq|| ', $content);
-       $content = str_replace('":"', ' ||dqColondq|| ', $content);
+       $content = str_replace('","', ' ||dqCommadq|| ', $content ?? '');
+       $content = str_replace('":"', ' ||dqColondq|| ', $content ?? '');
 
-       $content = str_replace('""',  ' ||dqdq|| ', $content);
+       $content = str_replace('""',  ' ||dqdq|| ', $content ?? '');
 
        //clean up any remaining
-       $content = str_replace('":',  ' ||DQcolon|| ',$content);
-       $content = str_replace(':"',  ' ||colonDQ|| ',$content);
+       $content = str_replace('":',  ' ||DQcolon|| ',$content ?? '');
+       $content = str_replace(':"',  ' ||colonDQ|| ',$content ?? '');
 
-       $content = str_replace('["',  ' ||LBdq|| ',$content);
-       $content = str_replace('"],"',' ||dqrbcommadq|| ',$content);
-       $content = str_replace('],"', ' ||RBcommaDQ|| ',$content);
+       $content = str_replace('["',  ' ||LBdq|| ',$content ?? '');
+       $content = str_replace('"],"',' ||dqrbcommadq|| ',$content ?? '');
+       $content = str_replace('],"', ' ||RBcommaDQ|| ',$content ?? '');
 
        $precontent = $content;
        //remove extra double quotes
-       $content = str_replace('"', "'", $content);
-       $content = stripslashes($content);    //get rid of any \
+       $content = str_replace('"', "'", $content ?? '');
+       $content = stripslashes($content ?? '');    //get rid of any \
 
        //now convert the other data back
        //left and right curly brace
-       $content = str_replace(' ||squigDQ|| ', '{"',  $content);
-       $content = str_replace(' ||DQsquig|| ', '"}',  $content);
+       $content = str_replace(' ||squigDQ|| ', '{"',  $content ?? '');
+       $content = str_replace(' ||DQsquig|| ', '"}',  $content ?? '');
 
        //colon, basic text and empty field values
-       $content = str_replace(' ||dqCommadq|| ', '","', $content);
-       $content = str_replace(' ||dqColondq|| ', '":"', $content);
+       $content = str_replace(' ||dqCommadq|| ', '","', $content ?? '');
+       $content = str_replace(' ||dqColondq|| ', '":"', $content ?? '');
 
-       $content = str_replace(' ||dqdq|| ', '""',  $content);
+       $content = str_replace(' ||dqdq|| ', '""',  $content ?? '');
 
        //clean up any remaining
-       $content = str_replace(' ||DQcolon|| ','":',  $content);
-       $content = str_replace(' ||colonDQ|| ',':"',  $content);
+       $content = str_replace(' ||DQcolon|| ','":',  $content ?? '');
+       $content = str_replace(' ||colonDQ|| ',':"',  $content ?? '');
 
-       $content = str_replace(' ||LBdq|| ',       '["',  $content);
-       $content = str_replace(' ||dqrbcommadq|| ','"],"',$content);
-       $content = str_replace(' ||RBcommaDQ|| ','"],"', $content);
+       $content = str_replace(' ||LBdq|| ',       '["',  $content ?? '');
+       $content = str_replace(' ||dqrbcommadq|| ','"],"',$content ?? '');
+       $content = str_replace(' ||RBcommaDQ|| ','"],"', $content ?? '');
 
        //remove weird stuff
-       $content = str_replace('"""','""',$content);
-       $content = str_replace('[""]','[]',$content);
-       $content = str_replace('["]','[]',$content);
-       $content = str_replace("''","'",$content);
-       $content = str_replace(' ""',"'",$content);
-       $content = str_replace('"" ',"'",$content);
+       $content = str_replace('"""','""',$content ?? '');
+       $content = str_replace('[""]','[]',$content ?? '');
+       $content = str_replace('["]','[]',$content ?? '');
+       $content = str_replace("''","'",$content ?? '');
+       $content = str_replace(' ""',"'",$content ?? '');
+       $content = str_replace('"" ',"'",$content ?? '');
 
        $errorIDs = array('21749','17738','16062','15524','14121','14058','13371','11674','6621','6170','5754');
        if(in_array($ID,$errorIDs)){
-         $content = str_replace('["h","t","t","p",":""]','""',$content);
-         $content = str_replace('.""','.SngleQuot"',$content);
+         $content = str_replace('["h","t","t","p",":""]','""',$content ?? '');
+         $content = str_replace('.""','.SngleQuot"',$content ?? '');
 
          //fix for 6621
-         $content = str_replace('Raspberry Pi""]','Raspberry PiSngleQuot"]',$content);
+         $content = str_replace('Raspberry Pi""]','Raspberry PiSngleQuot"]',$content ?? '');
          //fix for 14058
-         $content = str_replace("'presenter_",'"presenter_',$content);
+         $content = str_replace("'presenter_",'"presenter_',$content ?? '');
          //fix for 14121
-         $content = str_replace('Objects":','ObjectsSngleQuot:',$content);
+         $content = str_replace('Objects":','ObjectsSngleQuot:',$content ?? '');
          //fix for 16062
-         $content = str_replace('The New Literacies""]','The New LiteraciesSngleQuot"]',$content);
+         $content = str_replace('The New Literacies""]','The New LiteraciesSngleQuot"]',$content ?? '');
          //fix for 17738
-         $content = str_replace('u2026','...',$content);
-         $content = str_replace('":u00a0n','',$content);
+         $content = str_replace('u2026','...',$content ?? '');
+         $content = str_replace('":u00a0n','',$content ?? '');
          //fix for 21749
-         $content = str_replace('""Science Bob','"SngleQuotScience Bob',$content);
+         $content = str_replace('""Science Bob','"SngleQuotScience Bob',$content ?? '');
 
-         $content = str_replace('SngleQuot',"'",$content);
+         $content = str_replace('SngleQuot',"'",$content ?? '');
        }
       return $content;
   }

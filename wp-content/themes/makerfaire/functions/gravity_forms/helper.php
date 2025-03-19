@@ -126,7 +126,7 @@ function updateChangeRPT($updates) {
     $sql = "insert into wp_mf_lead_detail_changes (user_id, lead_id, form_id, field_id, field_before, field_after,fieldLabel,status_at_update) values ";
     foreach ($updates as $update) {
         //fields 320 and 302 are set as category id's. look up the category name and save this as the before and after field
-        if ($update['field_id'] == 320 || strpos($update['field_id'], '302.') !== false) {
+        if ($update['field_id'] == 320 || strpos($update['field_id'] ?? '', '302.') !== false) {
             $update['field_before'] = get_CPT_name($update['field_before']);
             $update['field_after'] = get_CPT_name($update['field_after']);
         }
@@ -164,7 +164,7 @@ function setCatName($value, $field, $lead, $form) {
 add_filter('gform_export_field_value', 'set_export_values', 10, 4);
 
 function set_export_values($value, $form_id, $field_id, $lead) {
-    if (isset($field_id) && $field_id == 320 || strpos($field_id, '321.') !== false) {
+    if ($field_id == 320 || strpos($field_id ?? '', '321.') !== false) {
         $value = get_CPT_name($value);
     } /*else {
         $field = GFAPI::get_field($form_id, $field_id);
@@ -222,7 +222,7 @@ function MF_resend_notifications() {
         if (isset($_POST['fieldId']) && $_POST['fieldId'] !== '') {
             $key = isset($key) ? $search_field_id : "";
             $val = $search;
-            $strpos_row_key = strpos($search_field_id, '|');
+            $strpos_row_key = strpos($search_field_id ?? '', '|');
             if ($strpos_row_key !== false) { //multi-row
                 $key_array = explode('|', $search_field_id);
                 $key = $key_array[0];
@@ -294,7 +294,7 @@ function MF_resend_notifications() {
 
 add_filter( 'template_include', 'wpm_load_script_for_template', 1000 );
 function wpm_load_script_for_template( $template ){
-	if (isset($template) && strpos($template, 'page-mfscheduler.php') !== false ) {
+	if (strpos($template ?? '', 'page-mfscheduler.php') !== false ) {
 		wp_enqueue_script( 'kendo-js', get_template_directory_uri() . '/lib/Kendo/built-kendo-scripts.min.js', array('jquery'));
 		wp_enqueue_style('kendo-styles', get_template_directory_uri() . '/lib/Kendo/kendo.min.css', array());
 	}

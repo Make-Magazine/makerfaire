@@ -235,10 +235,10 @@ $writeRule[$save_rule] = $ruleArray;
                     //if this is being set from a value of a field, display that here
                     //the rmt field value can be set with multiple fields,
                     $rmt_field_value = $logic['rmt_field_value'];
-                    $pos = strpos($rmt_field_value, '{') ?? '';
+                    $pos = strpos($rmt_field_value ?? '', '{');
                     //loop through all fields and replace id with field name
                     while ($pos !== false) {
-                        $endPos = strpos($rmt_field_value, '}') ?? '';
+                        $endPos = strpos($rmt_field_value ?? '', '}');
                         $field_id  = substr($rmt_field_value, $pos+1,$endPos-$pos-1);
                         $req_field = substr($rmt_field_value, $pos,$endPos-$pos+1);
 
@@ -250,7 +250,7 @@ $writeRule[$save_rule] = $ruleArray;
                             $fieldData = ' ['.$field_id.']';
                         }
                         $rmt_field_value = str_replace($req_field, $fieldData, $rmt_field_value ?? '');
-                        $pos = strpos($rmt_field_value, '{') ?? '';
+                        $pos = strpos($rmt_field_value ?? '', '{');
                     }
                     echo $rmt_field_value;
                                             

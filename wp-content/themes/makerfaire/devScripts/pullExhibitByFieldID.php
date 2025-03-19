@@ -39,8 +39,8 @@ $formType = array('Exhibit', 'Presentaton','Performance','Startup Sponsor','Spon
             $labelpos = true;
             $descpos = true;
             if ($findme != '') {
-                $labelpos = strpos((isset($field->label) ? $field->label : ''), $findme);
-                $descpos = strpos((isset($field->description) ? $field->description : ''), $findme);
+                $labelpos = strpos($field->label ?? '', $findme);
+                $descpos = strpos($field->description ?? '', $findme);
                 //if($labelpos !== false) echo 'found in label<br/>';
                 //if($descpos !== false) echo 'found in description<br/>';
             }

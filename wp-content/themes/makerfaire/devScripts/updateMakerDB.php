@@ -86,7 +86,7 @@ $yearFilter = (isset($_GET['year']) ? $_GET['year'] : '');
         foreach ($entries as $entry) {
             $exhibit_type = array();
             foreach ($entry as $key => $value) {
-                if (isset($key) && strpos($key, '339.') === 0) {
+                if (isset($key) && strpos($key ?? '', '339.') === 0) {
                     if (isset($value) && $value != '') {
                         if (stripos($value, 'sponsor') !== false) {
                             $exhibit_type[$key] = 'Exhibit';

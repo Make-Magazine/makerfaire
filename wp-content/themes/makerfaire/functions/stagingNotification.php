@@ -9,7 +9,7 @@ function change_email_to($notification, $form, $entry) {
    // Check for our stage and dev sites	
    if (strpos($homeurl, '.wpengine.com') !== false) {
 		//if we are in the testing env, and the to email is one of our own, let it through
-		if(strpos($notification['to'], '@make.co') !== false){
+		if(strpos($notification['to'] ?? '', '@make.co') !== false){
 			return $notification;
 		}
 		// toType can be routing or email

@@ -687,7 +687,7 @@ class GFRMTHELPER {
     if ($form_type == "Master") {
       $exhibit_type = array();
       foreach ($entry as $key => $value) {
-        if (isset($key) && strpos($key, '339.') === 0) {
+        if (strpos($key ?? '', '339.') === 0) {
           if ($value != '') {
             $exhibit_type[$key] = $value;
           }
@@ -1226,9 +1226,9 @@ function RMTchangeArray($entry, $field_id, $field_before, $field_after, $fieldLa
 
 function findFieldData($var, $entry) {
   //check if we need to set an entry field as the value
-  $pos = strpos($var, '{') ?? false;
+  $pos = strpos($var ?? '', '{') ?? false;
   while ($pos !== false) {
-    $endPos = strpos($var, '}');
+    $endPos = strpos($var ?? '', '}');
     $field_id  = substr($var, $pos + 1, $endPos - $pos - 1);
     $req_field = substr($var, $pos, $endPos - $pos + 1);
     if (isset($entry[$field_id])) {
@@ -1237,8 +1237,8 @@ function findFieldData($var, $entry) {
     } else {
       $fieldData = '';
     }
-    $var = str_replace($req_field, $fieldData, $var ?? '');
-    $pos = strpos($var, '{');
+    $var = (string) str_replace($req_field, $fieldData, $var ?? '');
+    $pos = strpos($var ?? '', '{');
   }
 
   return $var;

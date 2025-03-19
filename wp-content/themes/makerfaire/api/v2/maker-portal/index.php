@@ -79,7 +79,7 @@ function getAllEntries($email, $formID = '', $page = '', $years = '') {
       $maker_message = do_shortcode($maker_message); //process any conditional logic  
       
       //if group, use the group name, else use the main contact name
-      if (isset($entry['105']) && strpos($entry['105'], 'group')  !== false) {
+      if (strpos($entry['105'] ?? '', 'group') !== false) {
         $maker_name = (isset($entry['109']) ? $entry['109'] : '');
       } else {
         $maker_name = (isset($entry['96.3']) ? $entry['96.3'] : '') .

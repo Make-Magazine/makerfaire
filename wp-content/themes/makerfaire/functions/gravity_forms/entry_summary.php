@@ -42,9 +42,7 @@ function gf_summary_metabox($form, $entry) {
 
   //starting BA23 we are now using exhibit type instead of form_type
   $exhibit_types = array_filter($entry, function ($key) {
-    if(isset($key)) {
-      return strpos($key, '339.') === 0;
-    }
+    return strpos($key ?? '', '339.') === 0;
   }, ARRAY_FILTER_USE_KEY);
 
   $exhibit_types = implode(",", array_filter($exhibit_types));
@@ -100,9 +98,7 @@ function gf_summary_metabox($form, $entry) {
 
   //starting BA23 we added a new field of final Weekend
   $finalWeekend = array_filter($entry, function ($key) {
-    if(isset($key)) {
-      return strpos($key, '879.') === 0;
-    }
+    return strpos($key ?? '', '879.') === 0;
   }, ARRAY_FILTER_USE_KEY);
 
   $finalWeekend = implode("<br/>", array_filter($finalWeekend));

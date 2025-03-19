@@ -41,76 +41,76 @@ foreach($postData as $ID=>$post){
      if(empty($jsonArray)){                    
         //left and right curly brace
          $content = str_replace('{"',  ' ||squigDQ|| ', $content ?? '');
-         $content = str_replace('"}',  ' ||DQsquig|| ', $content);
+         $content = str_replace('"}',  ' ||DQsquig|| ', $content ?? '');
          
          //colon, basic text and empty field values
-         $content = str_replace('","', ' ||dqCommadq|| ', $content);
-         $content = str_replace('":"', ' ||dqColondq|| ', $content);
+         $content = str_replace('","', ' ||dqCommadq|| ', $content ?? '');
+         $content = str_replace('":"', ' ||dqColondq|| ', $content ?? '');
 
-         $content = str_replace('""',  ' ||dqdq|| ', $content);
+         $content = str_replace('""',  ' ||dqdq|| ', $content ?? '');
         
          //clean up any remaining
-         $content = str_replace('":',  ' ||DQcolon|| ',$content);
-         $content = str_replace(':"',  ' ||colonDQ|| ',$content);        
+         $content = str_replace('":',  ' ||DQcolon|| ',$content ?? '');
+         $content = str_replace(':"',  ' ||colonDQ|| ',$content ?? '');        
         
          
-         $content = str_replace('["',  ' ||LBdq|| ',$content);
-         $content = str_replace('"],"',' ||dqrbcommadq|| ',$content);  
-         $content = str_replace('],"', ' ||RBcommaDQ|| ',$content);                                
+         $content = str_replace('["',  ' ||LBdq|| ',$content ?? '');
+         $content = str_replace('"],"',' ||dqrbcommadq|| ',$content ?? '');  
+         $content = str_replace('],"', ' ||RBcommaDQ|| ',$content ?? '');                                
          
          $precontent = $content;
          //remove extra double quotes
-         $content = str_replace('"', "'", $content);         
+         $content = str_replace('"', "'", $content ?? '');         
          $content = stripslashes($content);    //get rid of any \
          
          
          //now convert the other data back
          //left and right curly brace
-         $content = str_replace(' ||squigDQ|| ', '{"',  $content);
-         $content = str_replace(' ||DQsquig|| ', '"}',  $content);
+         $content = str_replace(' ||squigDQ|| ', '{"',  $content ?? '');
+         $content = str_replace(' ||DQsquig|| ', '"}',  $content ?? '');
          
          //colon, basic text and empty field values
-         $content = str_replace(' ||dqCommadq|| ', '","', $content);
-         $content = str_replace(' ||dqColondq|| ', '":"', $content);
+         $content = str_replace(' ||dqCommadq|| ', '","', $content ?? '');
+         $content = str_replace(' ||dqColondq|| ', '":"', $content ?? '');
 
-         $content = str_replace(' ||dqdq|| ', '""',  $content);
+         $content = str_replace(' ||dqdq|| ', '""',  $content ?? '');
         
          //clean up any remaining
-         $content = str_replace(' ||DQcolon|| ','":',  $content);
+         $content = str_replace(' ||DQcolon|| ','":',  $content ?? '');
          $content = str_replace(' ||colonDQ|| ',':"',  $content);        
         
-         $content = str_replace(' ||LBdq|| ',       '["',  $content);         
-         $content = str_replace(' ||dqrbcommadq|| ','"],"',$content);                   
-         $content = str_replace(' ||RBcommaDQ|| ','"],"', $content);
+         $content = str_replace(' ||LBdq|| ',       '["',  $content ?? '');         
+         $content = str_replace(' ||dqrbcommadq|| ','"],"',$content) ?? '';                   
+         $content = str_replace(' ||RBcommaDQ|| ','"],"', $content ?? '');
          
          //remove weird stuff 
-         $content = str_replace('"""','""',$content);
-         $content = str_replace('[""]','[]',$content);
-         $content = str_replace('["]','[]',$content);
-         $content = str_replace("''","'",$content);
-         $content = str_replace(' ""',"'",$content);
-         $content = str_replace('"" ',"'",$content);
+         $content = str_replace('"""','""',$content ?? '');
+         $content = str_replace('[""]','[]',$content ?? '');
+         $content = str_replace('["]','[]',$content ?? '');
+         $content = str_replace("''","'",$content ?? '');
+         $content = str_replace(' ""',"'",$content ?? '');
+         $content = str_replace('"" ',"'",$content ?? '');
          
          $errorIDs = array('21749','17738','16062','15524','14121','14058','13371','11674','6621','6170','5754');
          if(in_array($ID,$errorIDs)){
-           $content = str_replace('["h","t","t","p",":""]','""',$content);
-           $content = str_replace('.""','.SngleQuot"',$content);  
+           $content = str_replace('["h","t","t","p",":""]','""',$content ?? '');
+           $content = str_replace('.""','.SngleQuot"',$content ?? '');  
            
            //fix for 6621           
-           $content = str_replace('Raspberry Pi""]','Raspberry PiSngleQuot"]',$content);  
+           $content = str_replace('Raspberry Pi""]','Raspberry PiSngleQuot"]',$content ?? '');  
            //fix for 14058
-           $content = str_replace("'presenter_",'"presenter_',$content);
+           $content = str_replace("'presenter_",'"presenter_',$content ?? '');
            //fix for 14121
-           $content = str_replace('Objects":','ObjectsSngleQuot:',$content);
+           $content = str_replace('Objects":','ObjectsSngleQuot:',$content ?? '');
            //fix for 16062
-           $content = str_replace('The New Literacies""]','The New LiteraciesSngleQuot"]',$content);
+           $content = str_replace('The New Literacies""]','The New LiteraciesSngleQuot"]',$content ?? '');
            //fix for 17738
-           $content = str_replace('u2026','...',$content);
-           $content = str_replace('":u00a0n','',$content);
+           $content = str_replace('u2026','...',$content ?? '');
+           $content = str_replace('":u00a0n','',$content ?? '');
            //fix for 21749
-           $content = str_replace('""Science Bob','"SngleQuotScience Bob',$content);
+           $content = str_replace('""Science Bob','"SngleQuotScience Bob',$content ?? '');
            
-           $content = str_replace('SngleQuot',"'",$content);  
+           $content = str_replace('SngleQuot',"'",$content ?? '');  
          }
          $jsonArray = json_decode($content, true );
         
@@ -262,7 +262,8 @@ function fetch_media($file_url, $post_id) {
 			'post_status' => 'inherit',
 			'comment_status' => 'closed',
 			'ping_status' => 'closed',
-			'post_name' => sanitize_title_with_dashes(str_replace("_", "-", $new_filename)),											'post_modified' => current_time('mysql'),
+			'post_name' => sanitize_title_with_dashes(str_replace("_", "-", $new_filename?? '')),											
+            'post_modified' => current_time('mysql'),
 			'post_modified_gmt' => current_time('mysql'),
 			'post_parent' => $post_id,
 			'post_type' => 'attachment',

@@ -85,11 +85,11 @@ function faire_entries_sitemap_generate() {
 
    //determine what form this sitemap this is for
    global $wp;
-   $current_slug = add_query_arg(array(), $wp->request) ?? '';
+   $current_slug = add_query_arg(array(), $wp->request);
 
    //get form id from current sitemap name ie) form43-entries-sitemap.xml
-   $form_id = str_replace('-entries-sitemap.xml', '', $current_slug);
-   $form_id = str_replace('form-', '', $current_slug);
+   $form_id = str_replace('-entries-sitemap.xml', '', $current_slug ?? '');
+   $form_id = str_replace('form-', '', $current_slug ?? '');
 
    //retrieve list of entries   
    $entries = GFAPI::get_entries((int)$form_id, $search_criteria, null, array('offset' => 0, 'page_size' => 999));

@@ -193,7 +193,7 @@ function getAllEntries($formID = '') {
               //check if an argument was passed
               if (isset($field_id) && strpos($field_id, ':') !== false) {
                 $arg = str_replace(':', '', strstr($field_id, ':') ?? '');
-                $field_id = substr($field_id, 0, strpos($field_id, ":") ?? '');
+                $field_id = substr($field_id, 0, strpos($field_id ?? '', ":"));
               }
               $fieldOutput = fieldOutput($field_id, $entry, $field_array, $form, $arg);
               if (!empty($fieldOutput))

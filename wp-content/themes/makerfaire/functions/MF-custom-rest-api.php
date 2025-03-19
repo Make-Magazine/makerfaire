@@ -591,12 +591,12 @@ where   entry.status='active'
         }
         //featured maker    
         $featured = '';
-        if (isset($row->flags) && strpos($row->flags, "Featured Maker") === 0) {
+        if (strpos($row->flags ?? '', "Featured Maker") === 0) {
             $featured = 'Featured';
         }
         
         //set default values for schedule type if not set
-        if (isset($faireID) && strpos($faireID, "VMF") === 0) { // special for virtual faires
+        if (strpos($faireID ?? '', "VMF") === 0) { // special for virtual faires
             if ($row->type == 'talk' || $row->type == '') {
                 $type = 'presentation';
             } else if ($row->type == 'demo') {

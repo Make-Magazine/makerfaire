@@ -53,50 +53,50 @@ function mf_replace_merge_tags($text, $form, $entry, $url_encode, $esc_html, $nl
     $text = isset($text) ? $text : "";
 
     //faire id
-    if (strpos($text, '{faire_id}') !== false) {
+    if (strpos($text ?? '', '{faire_id}') !== false) {
         $sql = "select faire from wp_mf_faire where FIND_IN_SET (" . $entry['form_id'] . ",wp_mf_faire.form_ids)> 0";
         $faireId = $wpdb->get_var($sql);
-        $text = str_replace('{faire_id}', $faireId, $text);
+        $text = str_replace('{faire_id}', $faireId, $text ?? '');
     }
 
     //Entry Schedule
-    if (strpos($text, '{entry_schedule}') !== false) {
+    if (strpos($text ?? '', '{entry_schedule}') !== false) {
         $schedule = get_schedule($entry);
-        $text = str_replace('{entry_schedule}', $schedule, $text);
+        $text = str_replace('{entry_schedule}', $schedule, $text ?? '');
     }
 
     //scheduled locations {entry_loc}
-    if (strpos($text, '{entry_loc}') !== false) {
+    if (strpos($text ?? '', '{entry_loc}') !== false) {
         $schedule = get_location($entry, 'full');
-        $text = str_replace('{entry_loc}', $schedule, $text);
+        $text = str_replace('{entry_loc}', $schedule, $text ?? '');
     }
 
     //Exposure Token
-    if (strpos($text, '{final_exposure}') !== false) {
+    if (strpos($text ?? '', '{final_exposure}') !== false) {
         $exposure = get_exposure($entry);
-        $text = str_replace('{final_exposure}', $exposure, $text);
+        $text = str_replace('{final_exposure}', $exposure, $text ?? '');
     }
 
     //scheduled locations {entry_area}
-    if (strpos($text, '{entry_area}') !== false) {
+    if (strpos($text ?? '', '{entry_area}') !== false) {
         $schedule = get_location($entry, 'area');
-        $text = str_replace('{entry_area}', $schedule, $text);
+        $text = str_replace('{entry_area}', $schedule, $text ?? '');
     }
 
     //scheduled locations {entry_subarea}
-    if (strpos($text, '{entry_subarea}') !== false) {
+    if (strpos($text ?? '', '{entry_subarea}') !== false) {
         $schedule = get_location($entry, 'subarea');
-        $text = str_replace('{entry_subarea}', $schedule, $text);
+        $text = str_replace('{entry_subarea}', $schedule, $text ?? '');
     }
 
     //scheduled locations {entry_booth}
-    if (strpos($text, '{entry_booth}') !== false) {
+    if (strpos($text ?? '', '{entry_booth}') !== false) {
         $schedule = get_location($entry, 'booth');
-        $text = str_replace('{entry_booth}', $schedule, $text);
+        $text = str_replace('{entry_booth}', $schedule, $text ?? '');
     }
 
     //requested logistics     
-    if (strpos($text, '{requested_logistics}') !== false) {
+    if (strpos($text ?? '', '{requested_logistics}') !== false) {
         //find out if this entry is placed
         $exhibit_placed = gform_get_meta($entry['id'], 'expofp_placed');
 
@@ -233,11 +233,11 @@ function mf_replace_merge_tags($text, $form, $entry, $url_encode, $esc_html, $nl
                         </table>";
         }
 
-        $text = str_replace('{requested_logistics}', $reqLogistics, $text);
+        $text = str_replace('{requested_logistics}', $reqLogistics, $text ?? '');
     }
 
     //Entry Resources
-    if (strpos($text, '{entry_resources') !== false) {
+    if (strpos($text ?? '', '{entry_resources') !== false) {
         $startPos         = strpos($text, '{entry_resources'); //pos of start of merge tag
         $closeBracketPos  = strpos($text, '}', $startPos); //find the closing bracket of the merge tag
 
@@ -283,10 +283,10 @@ function mf_replace_merge_tags($text, $form, $entry, $url_encode, $esc_html, $nl
     }
 
     //individual attributes {entry_attributes:2,4,6,9}
-    if (strpos($text, '{entry_attributes') !== false) {
-        $startPos    = strpos($text, '{entry_attributes'); //pos of start of merge tag
-        $attStartPos = strpos($text, ':', $startPos);       //pos of start of attribute id's
-        $closeBracketPos = strpos($text, '}', $startPos); //find the closing bracket of the merge tag
+    if (strpos($text ?? '', '{entry_attributes') !== false) {
+        $startPos    = strpos($text ?? '', '{entry_attributes'); //pos of start of merge tag
+        $attStartPos = strpos($text ?? '', ':', $startPos);       //pos of start of attribute id's
+        $closeBracketPos = strpos($text ?? '', '}', $startPos); //find the closing bracket of the merge tag
 
         //attribute ID's will be a comma separated list between $attStartPos and $closeBracketPos
         $attIDs = substr($text, $attStartPos + 1, $closeBracketPos - $attStartPos - 1);
@@ -307,10 +307,10 @@ function mf_replace_merge_tags($text, $form, $entry, $url_encode, $esc_html, $nl
         $attTable  .= '</table>';
         //full merge tag for replace
         $mergeTag = substr($text, $startPos, $closeBracketPos - $startPos + 1);
-        $text = str_replace($mergeTag, $attTable, $text);
+        $text = str_replace($mergeTag, $attTable, $text ?? '');
     }
 
-    if (strpos($text, '{final_space_size}') !== false) {                
+    if (strpos($text ?? '', '{final_space_size}') !== false) {                
         $final_space_size = '';
         
         $AttText = get_attribute($entry, trim(2));
@@ -320,22 +320,22 @@ function mf_replace_merge_tags($text, $form, $entry, $url_encode, $esc_html, $nl
             }        
         }
                         
-        $text = str_replace('{final_space_size}', $final_space_size, $text);
+        $text = str_replace('{final_space_size}', $final_space_size, $text ?? '');
     }
 
     //attention field
-    if (strpos($text, '{CONF_COMMENT}') !== false) {
+    if (strpos($text ?? '', '{CONF_COMMENT}') !== false) {
         $sql = "SELECT comment "
             . " from wp_rmt_entry_attn,wp_rmt_attn"
             . " where entry_id = " . $entry_id
             . " and wp_rmt_attn.ID = attn_id"
             . " and token = 'CONF_COMMENT'";
         $attnText = $wpdb->get_var($sql);
-        $text = str_replace('{CONF_COMMENT}', $attnText, $text);
+        $text = str_replace('{CONF_COMMENT}', $attnText, $text ?? '');
     }
 
     //Confirmation Button 
-    if (strpos($text, '{CONF_BUTTON') !== false) {
+    if (strpos($text ?? '', '{CONF_BUTTON') !== false) {
         $suppToken  = (isset($entry['fg_easypassthrough_token']) ? $entry['fg_easypassthrough_token'] : '');
         
         // need to match multiple occurences of this button if necessary
@@ -347,14 +347,14 @@ function mf_replace_merge_tags($text, $form, $entry, $url_encode, $esc_html, $nl
                               style="border-radius:2px;border:solid 1px #eb002a;background:#eb002a;color:#fff;padding:5px 15px;height:30px;font-weight:500;text-decoration:none;">'
                             . $btnTitle . 
                           '</a>';
-            $text = str_replace($confBtn, $confBtnTxt, $text);
+            $text = str_replace($confBtn, $confBtnTxt, $text ?? '');
         }
     }
     //resource lock indicator
-    if (strpos($text, '{rmt_res_cat_lock') !== false) {
-        $startPos        = strpos($text, '{rmt_res_cat_lock'); //pos of start of merge tag
-        $RmtStartPos     = strpos($text, ':', $startPos);   //pos of start RMT field ID
-        $closeBracketPos = strpos($text, '}', $startPos);  //find the closing bracket of the merge tag
+    if (strpos($text ?? '', '{rmt_res_cat_lock') !== false) {
+        $startPos        = strpos($text ?? '', '{rmt_res_cat_lock'); //pos of start of merge tag
+        $RmtStartPos     = strpos($text ?? '', ':', $startPos);   //pos of start RMT field ID
+        $closeBracketPos = strpos($text ?? '', '}', $startPos);  //find the closing bracket of the merge tag
 
         //resource ID
         $RMTcatID = substr($text, $RmtStartPos + 1, $closeBracketPos - $RmtStartPos - 1);
@@ -368,7 +368,7 @@ function mf_replace_merge_tags($text, $form, $entry, $url_encode, $esc_html, $nl
             on wp_rmt_entry_resources.resource_id = wp_rmt_resources.id
         where wp_rmt_resources.resource_category_id = ' . $RMTcatID . ' and lockBit=1 and entry_id = ' . $entry_id);
             $mergeTag = substr($text, $startPos, $closeBracketPos - $startPos + 1);
-            $text = str_replace($mergeTag, ($lockCount > 0 ? 'Yes' : 'No'), $text);
+            $text = str_replace($mergeTag, ($lockCount > 0 ? 'Yes' : 'No'), $text ?? '');
         }
     }
 
@@ -387,12 +387,12 @@ function mf_replace_merge_tags($text, $form, $entry, $url_encode, $esc_html, $nl
             //find locked value of RMT field
             $lockBit = $wpdb->get_var('SELECT lockBit FROM `wp_rmt_entry_attributes` where attribute_id = ' . $RMTid . ' and entry_id = ' . $entry_id . ' limit 1');
             $mergeTag = substr($text, $startPos, $closeBracketPos - $startPos + 1);
-            $text = str_replace($mergeTag, ($lockBit == 1 ? 'Yes' : 'No'), $text);
+            $text = str_replace($mergeTag, ($lockBit == 1 ? 'Yes' : 'No'), $text ?? '');
         }
     }
 
     //Supplemental Form Token
-    if (strpos($text, '{supp_form_token') !== false) {
+    if (strpos($text ?? '', '{supp_form_token') !== false) {
         //pull form information for this entry
         $form = GFAPI::get_form($entry['form_id']);
 
@@ -410,7 +410,7 @@ function mf_replace_merge_tags($text, $form, $entry, $url_encode, $esc_html, $nl
         if ($entry_id != '') {
             $mf_supplemental_token = $wpdb->get_var('SELECT meta_value FROM wp_gf_entry_meta where entry_id=' . $entry_id . ' and meta_key="fg_easypassthrough_token" limit 1');
             if ($mf_supplemental_token != '') {
-                $text = str_replace('{supp_form_token}', $mf_supplemental_token, $text);
+                $text = str_replace('{supp_form_token}', $mf_supplemental_token, $text ?? '');
             }
         }
     }

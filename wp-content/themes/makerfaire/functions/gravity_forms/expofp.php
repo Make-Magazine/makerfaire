@@ -12,7 +12,7 @@ function create_expofp_exhibitor( $entry, $form ) {
     // only create the exhibit if the type is Exhibit, Sponsor, StartUp Sponsor, Show Management or ‘Not Sure Yet’
     $write_to_expofp = false;
     foreach ($entry as $key => $value) {
-        if (isset($key) && strpos($key, '339.') === 0) {
+        if (strpos($key ?? '', '339.') === 0) {
             if ($value != '') {
                 if (str_contains(strtolower($value), 'exhibit') == true || str_contains(strtolower($value), 'sponsor') == true || str_contains(strtolower($value), 'show') == true || str_contains(strtolower($value), 'not sure') == true) {
                     $write_to_expofp = true;
@@ -53,7 +53,7 @@ function update_expofp_exhibitor($form, $entry_id) {
     // only create the exhibit if the type is Exhibit, Sponsor, StartUp Sponsor, Show Management or ‘Not Sure Yet’
     $write_to_expofp = false;
     foreach ($entry as $key => $value) {
-        if (isset($key) && strpos($key, '339.') === 0) {
+        if (strpos($key ?? '', '339.') === 0) {
             if ($value != '') {
                 if (str_contains(strtolower($value), 'exhibit') == true || str_contains(strtolower($value), 'sponsor') == true || str_contains(strtolower($value), 'show') == true || str_contains(strtolower($value), 'not sure') == true) {
                     $write_to_expofp = true;
@@ -112,7 +112,7 @@ function createExpoFpExhibit($entry, $form, $expofpToken, $expofpId) {
     //check if exhibitor is a sponsor and add form type to categories
     if ($formType == "Master") {
         foreach ($entry as $key => $value) {
-            if (isset($key) && strpos($key, '339.') === 0) {
+            if (strpos($key ?? '', '339.') === 0) {
                 if ($value != '') {
                     if($value != "Presentation" && $value != "Performer" && $value != "Workshop") {
                         if (stripos($value, 'sponsor') !== false) {
@@ -160,7 +160,7 @@ function createExpoFpExhibit($entry, $form, $expofpToken, $expofpId) {
     $mainCategoryName = (isset($mainTerm->name) ? html_entity_decode($mainTerm->name):'');
     $categories[] = array("name" => $mainCategoryName);
     foreach ($entry as $key => $value) {
-        if (isset($key) && strpos($key, '321.') !== false && $value != null) {
+        if (strpos($key ?? '', '321.') !== false && $value != null) {
             $categories[] = array("name" => html_entity_decode(get_term($value)->name));
         }
     }
@@ -255,7 +255,7 @@ function updateExpoFpExhibit($entry, $form, $expofpToken, $expofpId, $exhibitor_
     //check if exhibitor is a sponsor and add form type to categories
     if ($formType == "Master") {
         foreach ($entry as $key => $value) {
-            if (isset($key) && strpos($key, '339.') === 0) {
+            if (strpos($key ?? '', '339.') === 0) {
                 if ($value != '') {
                     if($value != "Presentation" && $value != "Performer" && $value != "Workshop") {
                         if (stripos($value, 'sponsor') !== false) {
@@ -303,7 +303,7 @@ function updateExpoFpExhibit($entry, $form, $expofpToken, $expofpId, $exhibitor_
     $mainCategoryName = (isset($mainTerm->name) ? html_entity_decode($mainTerm->name):'');
     $categories[] = array("name" => $mainCategoryName);
     foreach ($entry as $key => $value) {
-        if (isset($key) && strpos($key, '321.') !== false && $value != null) {
+        if (strpos($key ?? '', '321.') !== false && $value != null) {
             $categories[] = array("name" => html_entity_decode(get_term($value)->name));
         }
     }

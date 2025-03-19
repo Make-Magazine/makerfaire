@@ -1431,7 +1431,7 @@ class Markdown_Parser {
 								'&amp;', $text ?? '');
 		}
 		# Encode remaining <'s
-		$text = str_replace('<', '&lt;', $text);
+		$text = str_replace('<', '&lt;', $text ?? '');
 
 		return $text;
 	}

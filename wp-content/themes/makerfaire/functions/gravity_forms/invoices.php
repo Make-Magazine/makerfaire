@@ -194,8 +194,8 @@ function get_invoice_services($form, $lead) {
         $calcString = $field['calculationFormula'];
 
         //field data
-        $field_data_start = strpos($calcString, '{') ?? false;
-        $field_data_end   = strpos($calcString, '}') ?? false;
+        $field_data_start = strpos($calcString ?? '', '{');
+        $field_data_end   = strpos($calcString ?? '', '}');
 
         //if the field contains {} then pull the formula data from it
         if ($field_data_start !== false && $field_data_end !== false) {

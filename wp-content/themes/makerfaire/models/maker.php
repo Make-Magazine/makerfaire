@@ -104,7 +104,7 @@ class maker {
     $response = '';
     $exhibit  = FALSE;
     foreach ($entry as $key => $value) {
-        if (isset($key) && strpos($key, '339.') === 0) {
+        if (strpos($key ?? '', '339.') === 0) {
             if ($value != '') {
                 if (stripos($value, 'exhibit') !== false) {
                     $exhibit=TRUE;
@@ -329,8 +329,8 @@ class maker {
 
       //separate out task_id from the results into form id and task id
       //ie: 166-58c17deb68af3  formID = 166   taskID = 58c17deb68af3
-      $formID  = substr($result['task_id'], 0, strpos($result['task_id'], "-"));
-      $task_id = substr($result['task_id'], strpos($result['task_id'], "-") + 1);
+      $formID  = substr($result['task_id'], 0, strpos($result['task_id'] ?? '', "-"));
+      $task_id = substr($result['task_id'], strpos($result['task_id'] ?? '', "-") + 1);
 
       //pull the associated form and look for tasks
       $form = GFAPI::get_form($formID);

@@ -128,9 +128,9 @@ function rmt_lock_ind($text, $entry_id) {
   global $wpdb;
 
   //resource lock indicator
-  if (isset($text) && strpos($text, 'rmt_res_cat_lock') !== false) {
-    $startPos        = strpos($text, 'rmt_res_cat_lock'); //pos of start of merge tag
-    $RmtStartPos     = strpos($text, ':', $startPos);   //pos of start RMT field ID
+  if (strpos($text ?? '', 'rmt_res_cat_lock') !== false) {
+    $startPos        = strpos($text ?? '', 'rmt_res_cat_lock'); //pos of start of merge tag
+    $RmtStartPos     = strpos($text ?? '', ':', $startPos);   //pos of start RMT field ID
     $closeBracketPos = strlen($text);
 
     //resource ID
@@ -151,9 +151,9 @@ function rmt_lock_ind($text, $entry_id) {
 
 
   //attribute lock indicator
-  if (isset($text) && strpos($text, 'rmt_att_lock') !== false) {
-    $startPos        = strpos($text, 'rmt_att_lock'); //pos of start of merge tag
-    $RmtStartPos     = strpos($text, ':', $startPos);   //pos of start RMT field ID
+  if (strpos($text ?? '', 'rmt_att_lock') !== false) {
+    $startPos        = strpos($text ?? '', 'rmt_att_lock'); //pos of start of merge tag
+    $RmtStartPos     = strpos($text ?? '', ':', $startPos);   //pos of start RMT field ID
     $closeBracketPos = strlen($text);
 
     //attribute ID
