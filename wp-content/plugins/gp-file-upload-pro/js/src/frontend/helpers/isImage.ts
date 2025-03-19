@@ -6,6 +6,7 @@ export default function isImage(file: File) : boolean {
 		'image/bmp',
 		'image/webp',
 		'image/svg+xml',
+		'image/heic',
 	];
 
 	// Check if the browser supports WebP before treating it as an image.

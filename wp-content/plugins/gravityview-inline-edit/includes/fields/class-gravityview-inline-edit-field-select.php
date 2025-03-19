@@ -1,12 +1,11 @@
 <?php
 
 /**
- * @file class-gravityview-inline-edit-field-select.php
+ * @file  class-gravityview-inline-edit-field-select.php
  *
  * @since 1.0
  */
 class GravityView_Inline_Edit_Field_Select extends GravityView_Inline_Edit_Field {
-
 	var $gv_field_name = 'select';
 
 	/** @var GF_Field_Select $gf_field */
@@ -17,21 +16,33 @@ class GravityView_Inline_Edit_Field_Select extends GravityView_Inline_Edit_Field
 	/**
 	 * @since 1.4.4
 	 *
-	 * @param $wrapper_attributes
-	 * @param $field_input_type
-	 * @param $field_id
-	 * @param $entry
-	 * @param $current_form
-	 * @param GF_Field_List      $gf_field
+	 * @param               $wrapper_attributes
+	 * @param               $field_input_type
+	 * @param               $field_id
+	 * @param               $entry
+	 * @param               $current_form
+	 * @param GF_Field_List $gf_field
 	 *
 	 * @return mixed
 	 */
 	public function modify_inline_edit_attributes( $wrapper_attributes, $field_input_type, $field_id, $entry, $current_form, $gf_field ) {
+		// Add a placeholder to the choices array so the user can reset the value.
+		if ( ! empty( $gf_field->placeholder ) && ! empty( $gf_field->choices ) ) {
+			$gf_field->choices = array_merge(
+				[
+					[
+						'text'  => $gf_field->placeholder,
+						'value' => null,
+					],
+				],
+				$gf_field->choices
+			);
+		}
+
 		$wrapper_attributes['data-source'] = json_encode( $gf_field->choices );
 
 		return parent::modify_inline_edit_attributes( $wrapper_attributes, $field_input_type, $field_id, $entry, $current_form, $gf_field );
 	}
-
 }
 
 new GravityView_Inline_Edit_Field_Select();

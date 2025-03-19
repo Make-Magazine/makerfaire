@@ -2,9 +2,9 @@
 Contributors: gravitywp
 Tags: gravity forms, gravityforms, mergetags, merge tags
 Requires at least: 3.0.1
-Tested up to: 6.6
+Tested up to: 6.7
 Requires PHP: 7.0
-Stable tag: 1.7.1
+Stable tag: 1.9.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -30,11 +30,47 @@ This plugin provides advanced functionality to the default Gravity Forms Number 
 Upload the plugin files to the `/wp-content/plugins/gravitywp-advanced-merge-tags` directory, or install the plugin through the WordPress plugins screen directly.
 
 == Changelog ==
+= 1.9.1 =
+- Fixed an issue introduced in 1.9, where nested mergetags in value filters where not converted.
+
+= 1.9 =
+- Implemented enhanced sort_by argument for gwp_get_matched_* modifiers.
+- Optimized the processing of search filters for gwp_get_matched_* modifiers.
+- Fix gwp_eeid returning the whole field value when a sub field is requested (like 1.1, 1.2). 
+- Minor code quality improvements.
+
+= 1.8.5 = 
+- Added wp_strip_all_tags to gwp_sanitize modifier.
+- Fix a fatal error when GravityView was deactivated when GravityView Andvanced Filter extension is still active.
+
+= 1.8.4 = 
+- Fix gwp_get_matched_entries_values getting a maximum of 20 entries.
+
+= 1.8.3 = 
+- Improved performance of the gwp_generate_token unique check.
+
+= 1.8.2 = 
+- Allow nested merge tags for timezone parameters.
+
+= 1.8.1 = 
+- Fix an issue where the gwp_hash modifier wasn't converted.
+
+= 1.8 =
+- Implemented gwp_hash merge tag.
+
+= 1.7.3 =
+- Added option to round to floor or ceil in gwp_calculate merge tag.
+
+= 1.7.2 =
+- Fixed gwp_calculate's default number_format parameter value being 'decimal_point', which doesn't work and should be 'decimal_dot'.
+- Added decimals parameter to gwp_calculate, to allow rounding.
+- Added raw parameter to gwp_calculate.
+
 = 1.7.1 =
-- Added more features to {gwp_generate_token}.
+- Added more features to *gwp_generate_token*.
 
 = 1.7 =
-- Implemented {gwp_calculate} merge tag.
+- Implemented *gwp_calculate* merge tag.
 - Implemented gwp_censor modifier.
 
 = 1.6.3 =
@@ -55,16 +91,16 @@ Upload the plugin files to the `/wp-content/plugins/gravitywp-advanced-merge-tag
 - Fix advanced merge tag modifiers with quoted parameters not working when used in the post content.
 
 = 1.5.1 =
-- Implemented {gwp_get_matched_entry_value} merge tag.
-- Implemented {gwp_gview_advanced_filter} merge tag for generating filter conditions for GravityKit Advanced Filters.
+- Implemented *gwp_get_matched_entry_value* merge tag.
+- Implemented *gwp_gview_advanced_filter* merge tag for generating filter conditions for GravityKit Advanced Filters.
 - Change gwp_get_matched_entries_value 'value' parameter to 'return_value' to allow filter parameters such as 'filter1', 'operator1', and 'value1'. If no 'return_value' parameter is found it will fallback to 'value' to maintain backwards compatibility.
 - Fix some potential PHP warnings.
 
 = 1.5 =
-- Implemented {gwp_post_id} merge tag.
-- Implemented {gwp_user} mergetag, which is similar to the GF {user} merge tag, but allows to use advanced modifiers on the output.
-- Implemented {gwp_entry} merge tag, which supports advanced modifiers on entry properties like id and status. Usage example: {gwp_entry:id:gwp_count_matched_entries form_id="2" match_id='1'}.
-- Implemented {gwp_eeid} merge tag, which allows to get entry properties / field values from the encrypted entry-id passed in the eeid url parameter. Supports regular and advanced modifiers. Example {gwp_eeid:5}, {gwp_eeid:status}
+- Implemented *gwp_post_id* merge tag.
+- Implemented *gwp_user* mergetag, which is similar to the GF *user* merge tag, but allows to use advanced modifiers on the output.
+- Implemented *gwp_entry* merge tag, which supports advanced modifiers on entry properties like id and status. Usage example: *gwp_entry:id:gwp_count_matched_entries form_id="2" match_id='1'*.
+- Implemented *gwp_eeid* merge tag, which allows to get entry properties / field values from the encrypted entry-id passed in the eeid url parameter. Supports regular and advanced modifiers. Example *gwp_eeid:5*, *gwp_eeid:status*
 - Implemented gwp_user_role modifier.
 - Implemented gwp_encrypt modifier.
 - Implemented gwp_decrypt modifier.
@@ -87,8 +123,8 @@ Upload the plugin files to the `/wp-content/plugins/gravitywp-advanced-merge-tag
 - Fix compatibility issue with GP Populate Anything Live Merge Tags, where nested merge tag modifier arguments are passed with html encoded quotes.
 
 = 1.4 =
-- Feature: Implemented support for regular GF modifiers after the advanced modifier. Example {DropdownSelect:1:gwp_substring:value start=1 length=2}.
-- Feature: It is now possible to use {DropdownSelect:1:gwp_substring start=-3} in calculations. This will use the last 3 characters from a value like 'first_choice_1.4'.
+- Feature: Implemented support for regular GF modifiers after the advanced modifier. Example *DropdownSelect:1:gwp_substring:value start=1 length=2*.
+- Feature: It is now possible to use *DropdownSelect:1:gwp_substring start=-3* in calculations. This will use the last 3 characters from a value like 'first_choice_1.4'.
 - Feature: Added gwp_url merge tag.
 - Performance improvements.
 
@@ -96,7 +132,7 @@ Upload the plugin files to the `/wp-content/plugins/gravitywp-advanced-merge-tag
 - Feature: Added gwp_generate_token merge tag.
 - Feature: Added gwp_now merge tag.
 - Feature: Added gwp_sum_matched_entries_values modifier, which allows to add up numeric values from a field for a large batch of entries.
-- Feature: it is now possible to use {text:1:gwp_word_count} in calculations.
+- Feature: it is now possible to use *text:1:gwp_word_count* in calculations.
 - Fix fatal error when gwp_date_created and gwp_date_updated merge tags are used before the entry was created.
 
 = 1.2.4 =
@@ -117,8 +153,8 @@ Upload the plugin files to the `/wp-content/plugins/gravitywp-advanced-merge-tag
 - Added support for using nested merge tags within merge tags with search filters, like filter1=created_by operator1=is value1=*|user:ID|*.
 - Search filters with invalid operators are now ignored.
 - Added support for using nested merge tags within gwp_date-* merge tags and modifiers like modify='+*|number of weeks:2|* weeks'.
-- Added support for using nested merge tags within gwp_append and gwp_replace modifiers like {Textarea:1:gwp_replace search='VARIABLE' replace='*|text:2|*'}.
-- Added plugin setting to replace field merge tags like {field:1} in text fields with administrative visibility after an entry is submitted.
+- Added support for using nested merge tags within gwp_append and gwp_replace modifiers like *Textarea:1:gwp_replace search='VARIABLE' replace='*|text:2|*'*.
+- Added plugin setting to replace field merge tags like *field:1* in text fields with administrative visibility after an entry is submitted.
 - Fix subfield values not working with advanced merge tags modifiers.
 - Apply newline to <br> conversion when outputting to html context.
 - Reworked the method for gwp_word_count modifier as str_word_count() does not work as expected in various cases. Words are now counted based on separator characters. By default:  Any whitespace character (spaces, tabs, line breaks).

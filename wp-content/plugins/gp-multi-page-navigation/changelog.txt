@@ -1,6 +1,10 @@
 
 # Changelog
 
+## 1.2.13 | February 27, 2025
+
+- Added new [`gpmpn_bypass_validation_enabled`](https://gravitywiz.com/documentation/gpmpn_bypass_validation/) PHP filter hook to allow conditional bypassing of form validation.
+
 ## 1.2.12 | October 1, 2024
 
 - Improved compatibility with GP Page Transitions.

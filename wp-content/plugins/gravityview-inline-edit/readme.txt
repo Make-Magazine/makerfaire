@@ -1,7 +1,7 @@
 === GravityEdit ===
 Tags: gravity forms, inline edit, gravityview
 Requires at least: 5.1
-Tested up to: 6.7
+Tested up to: 6.7.2
 Contributors: The GravityKit Team
 License: GPL 2
 Requires PHP: 7.2.0
@@ -19,6 +19,16 @@ Inline Editing is a powerful way to quickly make changes to a form entry without
 3. Set your license key
 
 == Changelog ==
+
+= 2.2.0 on March 13, 2025 =
+
+This update lets you reset a Drop Down field’s selection via a placeholder.
+
+#### ✨ Improved
+* The Drop Down field now displays a placeholder that can be used to clear the selected value.
+
+#### 🔄 Updated
+* [Foundation](https://www.gravitykit.com/foundation/) to version 1.2.23.
 
 = 2.1.2 on November 21, 2024 =
 

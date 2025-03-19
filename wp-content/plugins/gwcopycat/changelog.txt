@@ -1,6 +1,10 @@
 
 # Changelog
 
+## 1.4.87 | March 5, 2025
+
+- Improved compatibility with Image Choice field.
+
 ## 1.4.86 | October 30, 2024
 
 - Removed definition and usage of `String.prototype.gformFormat()` on the frontend to resolve conflicts with Elementor in some situations.

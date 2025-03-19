@@ -171,6 +171,7 @@ export default Vue.extend({
 	flex: 1;
 	margin: auto 1rem auto 0;
 	line-height: 1.2;
+    user-select: none;
 	/* Forces truncated text to be correctly truncated with flexbox. See: https://css-tricks.com/flexbox-truncated-text/ */
 	min-width: 0;
 }

@@ -135,6 +135,7 @@
 		margin: auto 1rem auto 0;
 		position: relative;
 		display: flex;
+        user-select: none;
 	}
 
 	.gpfup__preview img,

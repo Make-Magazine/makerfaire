@@ -2,11 +2,11 @@
 ----------------------------------------------------------------
 
 Gravity Forms Chained Selects Administration Styles
-http: //www.gravityforms.com
+https://www.gravityforms.com
 
 Gravity Forms is a Rocketgenius project
-copyright 2008-2022 Rocketgenius Inc.
-http: //www.rocketgenius.com
+copyright 2008-2025 Rocketgenius Inc.
+https://www.rocketgenius.com
 this may not be re-distributed without the
 express written permission of the author.
 
@@ -99,20 +99,25 @@ AND ANY CHANGES MADE HERE WILL BE OVERWRITTEN.
 	margin: 12px 0 !important;
 }
 
-.ginput_chained_selects_container span {
-		display: inline-block;
-		padding: 0 4px 0 0;
-	}
+.gform_editor.gravity-theme.gform_wrapper .ginput_chained_selects_container span {
+			display: inline-block;
+			padding: 0 4px 0 0;
+		}
 
-.ginput_chained_selects_container.vertical span {
-		display: block;
-		padding: 0 0 4px;
-	}
+.gform_editor.gravity-theme.gform_wrapper .ginput_chained_selects_container.vertical.ginput_complex.gform-grid-row.ginput_container {
+			display: block;
+		}
 
-.ginput_chained_selects_container.vertical select {
-		max-width: 100%;
-		min-width: 100px;
-	}
+.gform_editor.gravity-theme.gform_wrapper .ginput_chained_selects_container.vertical.ginput_complex.gform-grid-row.ginput_container span {
+				display: block;
+				padding: 0 0 4px;
+			}
+
+.gform_editor.gravity-theme.gform_wrapper .ginput_chained_selects_container.vertical.ginput_complex.gform-grid-row.ginput_container select {
+				max-width: 100%;
+				min-width: 100px;
+				width: auto;
+			}
 
 @media only screen and (min-width: 782px) {
 
@@ -132,7 +137,6 @@ AND ANY CHANGES MADE HERE WILL BE OVERWRITTEN.
 	.gfcs-value span {
 		display: table-cell;
 	}
-
 }
 
 /*# sourceMappingURL=admin.css.map */

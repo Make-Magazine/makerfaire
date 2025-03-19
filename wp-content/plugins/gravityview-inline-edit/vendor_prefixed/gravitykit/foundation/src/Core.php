@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by __root__ on 22-November-2024 using Strauss.
+ * Modified by __root__ on 13-March-2025 using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 
@@ -42,7 +42,7 @@ use GravityKit\GravityEdit\Foundation\WP\RESTController;
  * @method static PluginActivationHandler plugin_activation_handler()
  */
 class Core {
-	const VERSION = '1.2.21';
+	const VERSION = '1.2.23';
 
 	const ID = 'gk_foundation';
 

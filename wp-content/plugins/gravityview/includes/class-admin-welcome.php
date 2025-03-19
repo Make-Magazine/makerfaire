@@ -296,6 +296,103 @@ class GravityView_Welcome {
 				 *  - If 4.28, include to 4.26.
 				 */
 				?>
+				<h3>2.36 on March 13, 2025</h3>
+
+				<p>This update introduces a new notification event for duplicated entries, along with fixes and improvements to GravityView blocks, shortcodes, and Views using joined data from multiple forms.</p>
+
+				<h4>🚀 Added</h4>
+
+				<ul>
+					<li>New notification event "GravityView - Entry is duplicated" that runs when entries are duplicated using GravityView.</li>
+				</ul>
+
+				<h4>✨ Improved</h4>
+
+				<ul>
+					<li>Forms in the form selection filter on the Views page are now sorted alphabetically.</li>
+					<li>Security enhancements for GravityView blocks and shortcodes.</li>
+				</ul>
+
+				<h4>🐛 Fixed</h4>
+
+				<ul>
+					<li>View Details block could not be previewed when enhanced security was enabled on the View.</li>
+					<li>Adding the GravityView shortcode or View block in the block editor prevented content from being saved when the View was configured to redirect on no entries.</li>
+					<li><code>[gravityview]</code> shortcode not returning results when the <code>search_value</code> attribute contains an apostrophe.</li>
+					<li>Issues in Views using joined data (<a href="https://www.gravitykit.com/extensions/multiple-forms/">Multiple Forms</a> extension):
+						<ul>
+							<li>Single Entry layout not working in a lightbox;</li>
+							<li>Invalid <code>GravityView &gt; Edit Entry</code> link in the top admin bar when editing an entry;</li>
+							<li>PHP notice triggered when editing entries in a lightbox.</li>
+						</ul>
+					</li>
+				</ul>
+
+				<h3>2.35 on February 12, 2025</h3>
+
+				<p>This update adds random sorting to the GravityView block, improves how partial entries are handled, and fixes several issues, including a fatal error in Gravity Forms 2.9.3 or newer.</p>
+
+				<h4>🚀 Added</h4>
+
+				<ul>
+					<li>Random sorting option in the GravityView block.</li>
+				</ul>
+
+				<h4>✨ Improved</h4>
+
+				<ul>
+					<li>Partial entries no longer appear as "Unapproved" on the Entries page.</li>
+				</ul>
+
+				<h4>🐛 Fixed</h4>
+
+				<ul>
+					<li>Random sorting was not working when overriding the View sorting using the <code>sort_direction</code> shortcode attribute.</li>
+					<li>Entry notes not displaying in the DataTables extension when the first View field is a Date field.</li>
+					<li>Gravity Flow fields were displaying as available when Gravity Flow was not active.</li>
+					<li>Result Number field would not reset counts when multiple Views were displayed on the same page.</li>
+					<li>Random sorting of View entries did not work unless View caching was explicitly disabled.</li>
+					<li>Fatal error in Gravity Forms 2.9.3 or newer when editing an entry with a File Upload field.</li>
+				</ul>
+
+				<h4>🔧 Updated</h4>
+
+				<ul>
+					<li><a href="https://www.gravitykit.com/foundation/">Foundation</a> to version 1.2.23.</li>
+				</ul>
+
+				<h3>2.34.2 on February 4, 2025</h3>
+
+				<p>This release fixes a PHP notice in WordPress 6.7+ and a display issue in Views using the Layout Builder template.</p>
+
+				<h4>🐛 Fixed</h4>
+
+				<ul>
+					<li><code>function _load_textdomain_just_in_time was called incorrectly</code> PHP notice in WordPress 6.7 or newer.</li>
+					<li>Display issue caused by a malformed <code>div</code> tag in the Layout Builder View template.</li>
+				</ul>
+
+				<h3>2.34.1 on January 30, 2025</h3>
+
+				<p>This update resolves multiple issues, including problems with search bar visibility in Layout Builder, entry management in multisite environments, and non-functional entry locking and notes, among others.</p>
+
+				<h4>🐛 Fixed</h4>
+
+				<ul>
+					<li>The Search Bar would not always be visible in Views using the Layout Builder.</li>
+					<li>Users belonging to the main network site in a multisite environment couldn’t delete their own entries on subsites.</li>
+					<li>Entry locking not working.</li>
+					<li>JavaScript error preventing entry notes from being added when using the Twenty Twenty-Two theme or newer.</li>
+					<li>Using a comma in the <code>:format</code> merge tag modifier with Date fields caused partial results to be returned.</li>
+				</ul>
+
+				<h4>💻 Developer Updates</h4>
+
+				<ul>
+					<li>Added <code>gk/gravityview/edit-entry/renderer/enqueue-entry-lock-assets</code> filter to override whether to load the entry lock UI assets.</li>
+					<li>Added <code>gk/gravityview/edit-entry/renderer/entry-lock-dialog-markup</code> filter to modify the entry locking UI dialog window markup.</li>
+				</ul>
+
 				<h3>2.34 on January 9, 2025</h3>
 
 				<p>This release introduces the <a href="https://www.gravitykit.com/announcing-gravityview-2-34-all-new-layout-builder">Layout Builder</a> that allows creating custom layouts with rows and columns directly in the View editor, adds support for exporting entries by Approval Status, and includes various fixes and improvements.</p>
@@ -317,101 +414,8 @@ class GravityView_Welcome {
 
 				<ul>
 					<li>Fatal error when searching entries by Approval Status in Views joined with another form using the Multiple Forms extension.</li>
-					li>Some <a href='https://docs.gravitykit.com/article/350-merge-tag-modifiers'>merge tag modifiers</a> (e.g., <code>:maxwords</code>) not being processed.</li>
+					<li>Some <a href='https://docs.gravitykit.com/article/350-merge-tag-modifiers'>merge tag modifiers</a> (e.g., <code>:maxwords</code>) not being processed.</li>
 					<li>WordPress's timezone offset not applying to Date field output with the <code>:format</code> merge tag modifier.</li>
-				</ul>
-
-				<h3>2.33.2 on December 31, 2024</h3>
-
-				<p>This update removes debugging code from the Entry Notes field.</p>
-
-				<h4>🐛 Fixed</h4>
-
-				<ul>
-					<li>Debugging code being shown in the Entry Notes field output.</li>
-				</ul>
-
-				<h3>2.33.1 on December 30, 2024</h3>
-
-				<p>This update removes debugging code from the Entry Notes field.</p>
-
-				<h4>🐛 Fixed</h4>
-
-				<ul>
-					<li>Debugging code being shown in the Entry Notes field output.</li>
-				</ul>
-
-				<h3>2.33 on December 19, 2024</h3>
-
-				<p>This release introduces support for the Source ID meta (Gravity Forms 2.9+), adds a new User Activation field to the View editor, and includes various fixes and enhancements.</p>
-
-				<h4>🚀 Added</h4>
-
-				<ul>
-					<li>Support for the Source ID meta introduced in Gravity Forms 2.9.</li>
-					<li>New User Activation field in the View editor to activate users added by the Gravity Forms User Registration add-on.</li>
-					<li>Client-side validation of View editor settings to prevent incorrect values.</li>
-					<li><code>:initials</code> merge tag modifier for Name fields to display initials.</li>
-					<li><code>:format</code> merge tag modifier for field inputs (e.g., <code>{Event Field:1.1:format:Y-m-d}</code>).</li>
-				</ul>
-
-				<h4>🐛 Fixed</h4>
-
-				<ul>
-					<li>Merge tags in redirect URLs were not processed after editing or deleting an entry in the lightbox.</li>
-					<li>Individual Checkboxes field inputs incorrectly exported in CSV.</li>
-					<li>Custom permalinks not being used in embedded Views.</li>
-					<li>Deprecated filter notice when both the Advanced Filter extension (version 3 or newer) and Gravity Flow are active.</li>
-					<li>Labels for fields with empty values disappearing in mobile view when joining forms using the Multiple Forms extension.</li>
-					<li>Views defaulting to English instead of the site's language for users without certain capabilities.</li>
-				</ul>
-
-				<h4>🔧 Updated</h4>
-
-				<ul>
-					<li><a href="https://www.gravitykit.com/foundation/">Foundation</a> to version 1.2.22.</li>
-				</ul>
-
-				<h4>💻 Developer Updates</h4>
-
-				<ul>
-					<li>Added <code>gravityview/template/field/csv/tick</code> filter to programmatically modify the checkbox "check" output in CSV.</li>
-					<li>Added <code>gravityview/shortcode/after-processing</code> action after a <code>[gravityview]</code> shortcode is finished.</li>
-				</ul>
-
-				<h3>2.32 on November 21, 2024</h3>
-
-				<p>This release adds a new form notification option for updated entries, resolves file upload issues on the Edit Entry screen, and includes developer-focused enhancements.</p>
-
-				<h4>🚀 Added</h4>
-
-				<ul>
-					<li>New notification option for forms, triggered when an entry is updated.</li>
-				</ul>
-
-				<h4>🐛 Fixed</h4>
-
-				<ul>
-					<li>File upload field issues on the Edit Entry screen:
-						<ul>
-							<li>Delete/download icons not displaying in Gravity Forms 2.9+;</li>
-							<li>Unable to select files for upload when the form field's "Multiple Files" setting was enabled without a "Maximum Number of Files" value.</li>
-						</ul>
-					</li>
-				</ul>
-
-				<h4>🔧 Updated</h4>
-
-				<ul>
-					<li><a href="https://www.gravitykit.com/foundation/">Foundation</a> to version 1.2.21.</li>
-				</ul>
-
-				<h4>💻 Developer Updates</h4>
-
-				<ul>
-					<li>Added <code>gk/gravityview/view/entries/join-conditions</code> filter to modify the join conditions applied when retrieving View entries.</li>
-					<li>Added <code>gk/gravityview/template/options</code> filter to programmatically modify field settings in the View editor.</li>
-					<li>Added <code>gravityview/row-added</code> JavaScript event, triggered when a new row is added to a widget or field area.</li>
 				</ul>
 
 				<p style="text-align: center;">

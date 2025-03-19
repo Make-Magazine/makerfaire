@@ -1,6 +1,25 @@
 
 # Changelog
 
+## 1.2.4 | February 27, 2025
+
+- Added parent entry link to the "Entry" meta box for child entries when viewed in the Entry Details page. The template can be customized with the new [`gpnf_parent_entry_link_template`](https://gravitywiz.com/documentation/gpnf_parent_entry_link_template) filter hook.
+
+## 1.2.3 | February 19, 2025
+
+- Fixed an issue with Nested Form field labels not being correct in bulk entry exports in some situations.
+- Fixed issue where pressing enter in the parent form context would open the modal if a child entry was present.
+
+## 1.2.2 | February 12, 2025
+
+- Updated frontend JavaScript to use `GFMergeTag.parseMergeTags` if available as `getMatchGroups` will be removed in Gravity Forms 3.0.
+- Fixed an issue where Multi File Upload fields shown/hidden based on conditional logic could throw an error when editing child entries.
+
+## 1.2.1 | January 22, 2025
+
+- Fixed a compatibility issue with Gravity Forms Conversational Forms.
+- Fixed an issue with Edit Delete, and Duplicate buttons showing as disabled with form setups hiding/showing Nested Form fields using conditional logic and calculations.
+
 ## 1.2 | January 14, 2025
 
 - Removed request data from GPNF’s session cookie to avoid issues where the cookie could become overloaded preventing the page from loading. NOTE: If you have custom code that relies on the request data in the session cookie, [learn how to resolve this dependency](https://gravitywiz.com/documentation/gravity-forms-nested-forms/#how-do-i-access-the-parent-form-context-when-the-child-form-is-loading).

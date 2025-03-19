@@ -1,3 +1,10 @@
+### 1.8.0 | 2025-02-06
+- Updated assets to include minified and non-minified versions.
+- Fixed an issue where the field preview in the form editor is displaying incorrectly.
+- Fixed an issue that can cause PHP errors in the dashboard.
+- API: Added support for the new form theme asset loading system.
+
+
 ### 1.7 | 2023-11-29
 - Updated the plugin for compatibility with Gravity Forms 2.8 by removing usages of the deprecated string.format() function.
 

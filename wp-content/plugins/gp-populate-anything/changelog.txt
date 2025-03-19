@@ -1,5 +1,30 @@
 # Changelog
 
+## 2.1.24 | March 5, 2025
+
+- Added new [`gppa_bypass_populate_field`](https://gravitywiz.com/documentation/gppa_bypass_populate_field/) PHP filter hook.
+
+## 2.1.23 | February 27, 2025
+
+- Fixed issue with editing values on Entry Details page when a Product Field was present.
+
+## 2.1.22 | February 12, 2025
+
+- Fixed PHP 8 warnings.
+- Added `gppa-queued` class to forms during the debounce period before XHR loading, allowing easier detection of Populate Anything attempting to load fields/Live Merge Tags for other perks.
+- Improved compatibility with new product config in Gravity Forms 2.9+. This addresses an issue totals not updating if Option/Product fields have dynamically populated choices and filters dependent on other fields.
+- Fixed an issue where a dynamically populated field's parameter name may get overriden on form render.
+
+## 2.1.21 | February 5, 2025
+
+- Fixed an issue with Live Merge Tags not working for checkable fields in the Form Preview.
+- Added `Is Starred` as an available property when populating from Gravity Forms Entries.
+- Added additional `field_values` parameter to the `gppa_input_choices` filter hook.
+
+## 2.1.20 | January 23, 2025
+
+- Fixed issue with `gform_pre_render` logic in AJAX field refresh that could cause the field to come back as blank if `gform_pre_render` modifies the field list. This resolves an incompatibility with GS Product Configurator.
+
 ## 2.1.19 | January 15, 2025
 
 - Fixed issue with form container detection that could cause Populate Anything to not reload fields inside Gravity Forms widgets in GravityView.

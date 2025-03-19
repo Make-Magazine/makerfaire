@@ -330,6 +330,27 @@ export default Vue.extend({
 	color: white;
 }
 
+@media (max-width: 450px) {
+	.gpfup__cropper__topbar {
+		flex-wrap: wrap;/* Stack buttons on very small screens */
+	}
+
+	.cropper__lightbox button {
+		flex: 1;
+	}
+
+	.cropper__lightbox button.gpfup__crop,
+	.cropper__lightbox button.gpfup__cancel {
+		padding: 10px; /* Reduce padding for smaller screens */
+		margin: 0;
+	}
+
+	.cropper__lightbox button.gpfup__rotate_left,
+	.cropper__lightbox button.gpfup__rotate_right {
+		max-width: 60px;
+	}
+}
+
 button.gpfup__crop {
 	right: 20px;
 	margin-left: auto

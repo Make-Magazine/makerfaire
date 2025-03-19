@@ -397,7 +397,8 @@ class GFFormDisplay {
 		GFCommon::log_debug( "GFFormDisplay::upload_files(): Upload path {$form_upload_path}" );
 
 		//Creating temp folder if it does not exist
-		$target_path = $form_upload_path . '/tmp/';
+		$tmp_location  = GFFormsModel::get_tmp_upload_location( $form['id'] );
+		$target_path   = $tmp_location['path'];
 		if ( ! is_dir( $target_path ) && wp_mkdir_p( $target_path ) ) {
 			GFCommon::recursive_add_index_file( $target_path );
 		}
@@ -822,9 +823,7 @@ class GFFormDisplay {
 		// If form is legacy, return that early to avoid calculating orbital styles.
 		if ( GFCommon::is_legacy_markup_enabled( $form ) ) {
 			$slug = 'legacy';
-		} elseif ( $is_wp_dashboard || GFCommon::is_preview() ) {
-			$slug = 'gravity-theme';
-		} elseif ( GFCommon::is_form_editor() ) {
+		} elseif ( $is_wp_dashboard || GFCommon::is_preview() || GFCommon::is_form_editor() ) {
 			$slug = 'orbital';
 		} elseif ( isset( $form['theme'] ) ) {
 			$slug = $form['theme'];
@@ -1021,6 +1020,9 @@ class GFFormDisplay {
 		if ( empty( $form_args['form_id'] ) ) {
 			return self::get_form_not_found_html( $form_id, $ajax );
 		}
+
+		$form_args['display_title']       = ! isset( $form_args['display_title'] ) || ! empty( $form_args['display_title'] );
+		$form_args['display_description'] = ! isset( $form_args['display_description'] ) || ! empty( $form_args['display_description'] );
 
 		// phpcs:ignore
 		extract( $form_args );
@@ -1734,10 +1736,12 @@ class GFFormDisplay {
 
 		$footer .= $previous_button . ' ' . $button_input . ' ' . $save_button;
 
-		$tabindex = (int) $tabindex;
+		$tabindex = intval( $tabindex );
 
 		// Make sure style settings are valid JSON.
-		$is_valid_json = empty( $style_settings ) ? null : json_decode( $style_settings );
+		$style_settings = self::validate_form_styles( $style_settings );
+		$style_settings = is_array( $style_settings ) ? json_encode( $style_settings ) : null;
+		$is_valid_json  = is_string( $style_settings );
 
 		if ( $ajax ) {
 			$ajax_value = self::prepare_ajax_input_value( $form_id, $display_title, $display_description, $tabindex, $theme, $is_valid_json ? $style_settings : null );
@@ -2014,19 +2018,19 @@ class GFFormDisplay {
 	 * @return false|void
 	 */
 	public static function clean_up_files( $form, $is_submission = true ) {
+		$tmp_location  = GFFormsModel::get_tmp_upload_location( $form['id'] );
+		$target_path   = $tmp_location['path'];
+
 		if ( $is_submission ) {
 			$unique_form_id = rgpost( 'gform_unique_id' );
 			if ( ! ctype_alnum( $unique_form_id ) ) {
 				return false;
 			}
-			$target_path = GFFormsModel::get_upload_path( $form['id'] ) . '/tmp/';
 			$filename    = $unique_form_id . '_input_*';
 			$files       = GFCommon::glob( $filename, $target_path );
 			if ( is_array( $files ) ) {
 				array_map( 'unlink', $files );
 			}
-		} else {
-			$target_path = GFFormsModel::get_upload_path( $form['id'] ) . '/tmp/';
 		}
 
 		// clean up files from abandoned submissions older than 48 hours (30 days if Save and Continue is enabled)
@@ -2449,41 +2453,49 @@ class GFFormDisplay {
 			/**
 			 * Filter the value checked during duplicate value checks.
 			 *
-			 * @since TBD
+			 * @since 2.9.2
 			 *
 			 * @param string     $value   The value being checked against existing entries for duplicates.
 			 * @param \GF_Field  $field   The field being checked for duplicates.
 			 * @param int        $form_id The ID of the form being checked for duplicates.
 			 */
 			$value = apply_filters( 'gform_value_pre_duplicate_check', $value, $field, $form['id'] );
+
 			if ( GFFormsModel::is_duplicate( $form['id'], $field, $value ) ) {
-					// Invalid when the value has been used by an existing entry and duplicate values aren't allowed.
+				// Invalid when the value has been used by an existing entry and duplicate values aren't allowed.
 				$field->failed_validation = true;
+
 				switch ( $field->get_input_type() ) {
 					case 'date' :
-						$message = __( 'This date has already been taken. Please select a new date.', 'gravityforms' );
+						$message = esc_html__( 'This date has already been taken. Please select a new date.', 'gravityforms' );
 						break;
+
 					default:
-						$message = is_array( $value ) ? __( 'This field requires a unique entry and the values you entered have already been used.', 'gravityforms' ) :
-							sprintf( __( "This field requires a unique entry and '%s' has already been used", 'gravityforms' ), $value );
+						$message = is_array( $value ) ? esc_html__( 'This field requires a unique entry and the values you entered have already been used.', 'gravityforms' ) :
+							sprintf( esc_html__( "This field requires a unique entry and '%s' has already been used", 'gravityforms' ), $value );
 						break;
 				}
+
 				/**
 				 * Allows the no duplicate validation message to be customized.
-				 *
-				 * @since 1.5
-				 * @since 1.8.5 Added $field and $value params.
-				 * @since 2.7   Moved from GFFormDisplay::validate().
 				 *
 				 * @param string $message The no duplicate validation message.
 				 * @param array $form The form currently being validated.
 				 * @param GF_Field $field The field currently being validated.
 				 * @param mixed $value The value currently being validated.
+				 *
+				 * @since 1.8.5 Added $field and $value params.
+				 * @since 2.7   Moved from GFFormDisplay::validate().
+				 *
+				 * @since 1.5
 				 */
 				$field->validation_message = gf_apply_filters( array(
 					'gform_duplicate_message',
 					$form['id']
 				), $message, $form, $field, $value );
+			} else {
+				// Running the field type specific validation.
+				$field->validate( $value, $form );
 			}
 		} elseif ( self::failed_state_validation( $form['id'], $field, $value ) ) {
 			// Invalid when the field or state input values have been tampered with.
@@ -2493,7 +2505,7 @@ class GFFormDisplay {
 				'singleshipping',
 				'hiddenproduct',
 				'consent',
-			) ) ? __( 'Please enter a valid value.', 'gravityforms' ) : __( 'Invalid selection. Please select from the available choices.', 'gravityforms' );
+			) ) ? esc_html__( 'Please enter a valid value.', 'gravityforms' ) : esc_html__( 'Invalid selection. Please select from the available choices.', 'gravityforms' );
 		} else {
 			// Running the field type specific validation.
 			$field->validate( $value, $form );
@@ -5137,7 +5149,7 @@ class GFFormDisplay {
 		$args['form_id']     = absint( $args['form_id'] );
 		$args['title']       = ! isset( $args['title'] ) || ! empty( $args['title'] );
 		$args['description'] = ! isset( $args['description'] ) || ! empty( $args['description'] );
-		$args['tabindex']    = isset( $args['tabindex'] ) ? absint( $args['tabindex'] ) : 0;
+		$args['tabindex']    = isset( $args['tabindex'] ) ? intval( $args['tabindex'] ) : 0;
 		$args['theme']       = isset( $args['theme'] ) ? sanitize_text_field( $args['theme'] ) : null;
 		$args['styles']      = isset( $args['styles'] ) ? GFCommon::strip_all_tags_from_json_string( $args['styles'] ) : null;
 
@@ -5379,11 +5391,11 @@ class GFFormDisplay {
 	 *
 	 * @param mixed $styles Array or JSON string of styles.
 	 *
-	 * @return array|bool $styles
+	 * @return array|bool|null $styles
 	 */
 	public static function validate_form_styles( $styles ) {
-		if ( $styles === false ) {
-			return false;
+		if ( $styles === false || is_null( $styles ) ) {
+			return $styles;
 		}
 
 		if ( ! is_array( $styles ) ) {

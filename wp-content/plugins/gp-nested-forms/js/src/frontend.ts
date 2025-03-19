@@ -264,6 +264,17 @@ const ko = window.ko;
 				return;
 			}
 
+			/*
+			 * Modify template to ensure gpnf-row-actions buttons are NOT disabled by GF conditional logic.
+			 *
+			 * See conditional_logic.js gf_do_action() method.
+			 *
+			 * If you have buttons in your templates that are intentionally disabled, apply "gpnf-button-disabled"
+			 * as a class to prevent them from being re-enabled.
+			 */
+			self.$fieldContainer.find('.gpnf-row-actions button:not(.gpnf-button-disabled)')
+				.attr( 'disabled', false );
+
 			// Setup Knockout to handle our Nested Form field entries.
 			self.viewModel = new EntriesModel(self.prepareEntriesForKnockout(self.entries), self);
 			self.addRowIdComputedToEntries( self.viewModel.entries );
@@ -419,7 +430,10 @@ const ko = window.ko;
 			self.$modal.on( 'keypress', function( event ) {
 				self.$modal.data( 'gpnfEnterPressed', event.which === 13 );
 			} );
-			self.$modal.find( 'form' ).on( 'submit', function() {
+			self.$modal.find( 'form' ).on( 'submit', function(event) {
+				// Prevent GF 2.9.1+ form submission interception.
+				event.stopImmediatePropagation();
+
 				if ( self.$modal.data( 'gpnfEnterPressed' ) ) {
 					self.$modal.data( 'gpnfEnterPressed', false );
 					$( self.modal.modalBoxFooter ).find( '.gpnf-btn-submit, .gpnf-btn-next' ).addClass( 'gpnf-spinner' );
@@ -1037,7 +1051,14 @@ const ko = window.ko;
 				return formula;
 			}
 
-			var matches = getMatchGroups( formula, /{[^{]*?:([0-9]+):(sum|total|count|set)=?([0-9]*)}/i );
+			var matches;
+
+			if (typeof GFMergeTag.parseMergeTags !== 'function') {
+				matches = getMatchGroups( formula, /{[^{]*?:([0-9]+):(sum|total|count|set)=?([0-9]*)}/i );
+			} else {
+				matches = GFMergeTag.parseMergeTags(formula, /{[^{]*?:([0-9]+):(sum|total|count|set)=?([0-9]*)}/i );
+			}
+
 			$.each( matches, function( i, group ) {
 
 				var search            = group[0],

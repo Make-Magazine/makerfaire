@@ -516,6 +516,8 @@ export default class GPPopulateAnything {
 
 			$form.data(lastFieldValuesDataId, this.getFormFieldValues());
 
+			// Helper class to know if GPPA is about to load fields/LMTs.
+			$form.addClass('gppa-queued');
 			this.bulkBatchedAjax(dependentFieldsToLoad, triggerInputIds);
 		}
 	};
@@ -532,6 +534,8 @@ export default class GPPopulateAnything {
 
 			this.dependentFieldsToLoad = [];
 			this.triggerInputIds = [];
+
+			$form.removeClass('gppa-queued');
 
 			return this.batchedAjax(
 				$form,
@@ -632,6 +636,9 @@ export default class GPPopulateAnything {
 				}
 
 				if (this.pageConditionalLogicMap[pageNumber]) {
+					// Helper class to know if GPPA is about to load fields/LMTs.
+					this.getFormElement().addClass('gppa-queued');
+
 					this.bulkBatchedAjax(
 						this.pageConditionalLogicMap[pageNumber].map(
 							(field) => ({
@@ -918,6 +925,7 @@ export default class GPPopulateAnything {
 				merge_tag_values: ILiveMergeTagValues;
 				fields: any;
 				event_id: any;
+				config: any;
 			}) => {
 				delete this.currentBatchedAjaxRequests[ajaxRequestId];
 
@@ -1117,6 +1125,20 @@ export default class GPPopulateAnything {
 				window.gppaLiveMergeTags[this.formId].replaceMergeTagValues(
 					response.merge_tag_values
 				);
+
+				// Update product meta config, TODO update to use `updateConfig` when available.
+				if (
+					response?.config?.gform_theme_config?.common?.form
+						?.product_meta?.[this.formId] &&
+					window.gform_theme_config
+				) {
+					window.gform_theme_config.common.form.product_meta[
+						this.formId
+					] =
+						response.config.gform_theme_config.common.form.product_meta[
+							this.formId
+						];
+				}
 
 				this.runAndBindCalculationEvents();
 

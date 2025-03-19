@@ -114,6 +114,8 @@
 		data: function() {
 			return {
 				drag: false,
+				previewFilesCount: 0,
+				previewObserver: null as MutationObserver | null,
 			};
 		},
 		components: {
@@ -151,7 +153,7 @@
 			},
 			reachedMaxFiles: function() {
 				// @ts-ignore
-				return this.files.length >= this.maxFiles;
+				return (this.files.length + this.previewFilesCount) >= this.maxFiles;
 			},
 			onlyImagesAllowed: function() {
 				const extensions = this.up?.settings?.filters?.mime_types[0]?.extensions.split(',');
@@ -211,6 +213,35 @@
 				};
 			}
 		},
+		mounted() {
+			// Set initial count and observe changes
+			const $previewDiv = $(`#preview_existing_files_${this.fieldId}`);
+			if ($previewDiv.length) {
+				const previewElement = $previewDiv[0];
+				this.previewFilesCount = $previewDiv.children("div").length;
+
+				const observer = new MutationObserver((mutations) => {
+					for (const mutation of mutations) {
+						if (mutation.type === 'childList') {
+							this.previewFilesCount = $previewDiv.children("div").length;
+						}
+					}
+				});
+
+				observer.observe(previewElement, {
+					childList: true,
+				});
+
+				this.previewObserver = observer;
+			}
+		},
+
+		beforeDestroy() {
+			if (this.previewObserver) {
+				this.previewObserver.disconnect();
+			}
+		},
+
 		methods: {
 			browse: function () : void {
 				$(`#field_${this.formId}_${this.fieldId} div.moxie-shim input[type=file]`).trigger('click');
@@ -248,5 +279,9 @@
 		z-index: 2;
 		margin-bottom: -1px;
 		padding: 0;
+	}
+
+	.gv-edit-entry-wrapper ul[id^="gform_multifile_messages_"] li.gfield_validation_message {
+		display: none;
 	}
 </style>

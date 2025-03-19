@@ -142,6 +142,8 @@ class GP_Nested_Forms extends GP_Plugin {
 		add_action( 'wp', array( $this, 'handle_core_preview_ajax' ), 9 );
 		// Add support for filtering by Parent Entry ID in Entries List or and plugins like Gravity Flow Form Connector
 		add_filter( 'gform_field_filters', array( $this, 'add_parent_form_filter' ), 10, 2 );
+		// Add support for displaying Parent Entry link in Child Entry Info box.
+		add_action( 'gform_entry_info', array( $this, 'add_parent_entry_link' ), 10, 2 );
 
 		add_filter( 'gform_form_theme_slug', array( $this, 'override_gf_theme_in_preview' ), 11, 2 );
 
@@ -580,6 +582,48 @@ class GP_Nested_Forms extends GP_Plugin {
 
 		return $field_filters;
 
+	}
+
+	function add_parent_entry_link( $form_id, $entry ) {
+
+		$parent_entry_id = rgar( $entry, 'gpnf_entry_parent' );
+		$parent_form_id  = rgar( $entry, 'gpnf_entry_parent_form' );
+
+		if ( $parent_entry_id && $parent_form_id ) {
+			$parent_entry_url = add_query_arg(
+				array(
+					'page' => 'gf_entries',
+					'view' => 'entry',
+					'id'   => $parent_form_id,
+					'lid'  => $parent_entry_id,
+				),
+				admin_url( 'admin.php' )
+			);
+
+			/**
+			 * Filters the template used to render the parent entry link.
+			 *
+			 * @param string $template         The format string used to generate the parent entry link.
+			 * @param string $label            The label for the parent entry (default: "Parent Entry").
+			 * @param int    $parent_entry_id  The ID of the parent entry.
+			 * @param string $parent_entry_url The URL of the parent entry detail view.
+			 * @since 1.2.4
+			 */
+			$gpnf_parent_entry_link_template = apply_filters(
+				'gpnf_parent_entry_link_template',
+				'%1$s: <a href="%3$s">%2$s</a>',
+				'Parent Entry',
+				$parent_entry_id,
+				$parent_entry_url
+			);
+
+			echo sprintf(
+				$gpnf_parent_entry_link_template,
+				esc_html( 'Parent Entry' ), // Label
+				esc_html( $parent_entry_id ), // Parent entry ID
+				esc_url( $parent_entry_url ) // URL
+			);
+		}
 	}
 
 	public function filter_entry_list( $args ) {
@@ -3140,7 +3184,10 @@ class GP_Nested_Forms extends GP_Plugin {
 				 *  $existing_entry.
 				 */
 				$entry_value          = json_decode( $entry[ $field['id'] ] );
+				$entry_value          = is_array( $entry_value ) ? $entry_value : array();
 				$existing_entry_value = json_decode( $existing_entry[ $field['id'] ] );
+				$existing_entry_value = is_array( $existing_entry_value ) ? $existing_entry_value : array();
+				$files_to_delete      = is_array( $$files_to_delete ) ? $files_to_delete : array();
 
 				$files_to_delete = array_merge( $files_to_delete, array_diff( $existing_entry_value, $entry_value ) );
 

@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by gravityview on 10-January-2025 using {@see https://github.com/BrianHenryIE/strauss}.
+ * Modified by gravityview on 14-March-2025 using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\GravityView\Foundation\Translations;
@@ -112,7 +112,7 @@ class Framework {
 					// 1) The language is available in T15S and is not installed locally
 					// 2) T15S has updated translations
 					// Minimal to no performance impact if the 2 conditions are not met.
-					$this->install_and_load_translations( $plugin_data['TextDomain'], get_locale() );
+					$this->install_and_load_translations( $plugin_data['TextDomain'], get_user_locale() );
 				} else {
 					// If translations can't be installed due to permissions but were previously installed,
 					// remap the location of the .mo file as it is stored in a folder suffixed with the blog ID.
@@ -130,7 +130,7 @@ class Framework {
 							 */
 							$remapped_mo_file = apply_filters(
                                 "gk/foundation/translations/{$plugin_data['TextDomain']}/mo-file",
-                                self::get_translation_file_name( $plugin_data['TextDomain'], get_locale() )
+                                self::get_translation_file_name( $plugin_data['TextDomain'], get_user_locale() )
 							);
 
 							if ( $plugin_data['TextDomain'] === $text_domain && file_exists( $remapped_mo_file ) ) {
@@ -143,7 +143,7 @@ class Framework {
                         2
                     );
 
-					$this->load_backend_translations( $plugin_data['TextDomain'], get_locale() );
+					$this->load_backend_translations( $plugin_data['TextDomain'], get_user_locale() );
 				}
 			}
 		}
@@ -257,7 +257,7 @@ class Framework {
 	 */
 	public function load_backend_translations( $text_domain, $language = '' ) {
 		if ( ! $language ) {
-			$language = get_locale();
+			$language = get_user_locale();
 		}
 
 		$mo_file = $this->get_translation_file_name( $text_domain, $language );
@@ -290,7 +290,7 @@ class Framework {
 	 */
 	public function load_frontend_translations( $text_domain, $language = '', $frontend_text_domain = '' ) {
 		if ( ! $language ) {
-			$language = get_locale();
+			$language = get_user_locale();
 		}
 
 		if ( $this->is_en_locale( $language ) ) {
@@ -436,7 +436,7 @@ JS;
 	 */
 	public function is_en_locale( $locale = '' ) {
 		if ( ! $locale ) {
-			$locale = get_locale();
+			$locale = get_user_locale();
 		}
 
 		// en_EN = en_US; en_GB and en_CA can have their own "translations" due to differences in spelling.

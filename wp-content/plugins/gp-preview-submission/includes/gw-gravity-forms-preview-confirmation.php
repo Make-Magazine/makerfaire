@@ -11,7 +11,7 @@ class GWPreviewConfirmation {
 
 	public static function init() {
 
-		add_filter( 'gform_pre_render', array( __class__, 'prepop_merge_tags' ) );
+		add_filter( 'gform_pre_render', array( __class__, 'prepop_merge_tags' ), 10, 4 );
 		add_filter( 'gform_pre_render', array( __class__, 'replace_merge_tags' ) );
 		add_filter( 'gform_replace_merge_tags', array( __class__, 'product_summary_merge_tag' ), 10, 3 );
 		add_filter( 'gform_merge_tag_filter', array( __class__, 'global_modifiers' ), 10, 5 );
@@ -139,7 +139,12 @@ class GWPreviewConfirmation {
 		return $form;
 	}
 
-	public static function prepop_merge_tags( $form ) {
+	public static function prepop_merge_tags( $form, $ajax = null, $field_values = null, $context = 'form_display' ) {
+		// With GF 2.9 caching updates, gform_pre_render would get invoked for Parent Form as well on Nested Form entry submission.
+		// We need to ensure that we are only processing the Nested Form, 'form_display' and not parent form which would be 'form_config' context.
+		if ( $context == 'form_config' ) {
+			return $form;
+		}
 
 		$has_applicable_field = false;
 
@@ -485,7 +490,6 @@ class GWPreviewConfirmation {
 			}
 
 			$entry = ! empty( $entry ) ? $entry : GFFormsModel::create_lead( $form );
-			self::clear_field_value_cache( $form );
 
 			foreach ( $form['fields'] as $field ) {
 
@@ -603,16 +607,8 @@ class GWPreviewConfirmation {
 	}
 
 	public static function clear_field_value_cache( $form ) {
-
-		if ( ! class_exists( 'GFCache' ) ) {
-			return;
-		}
-
-		foreach ( $form['fields'] as &$field ) {
-			//if( GFFormsModel::get_input_type( $field ) == 'total' )
-			GFCache::delete( 'GFFormsModel::get_lead_field_value__' . $field->id );
-		}
-
+		// Gravity Forms removed caching from GFFormsModel::get_lead_field_value() in version 2.0.
+		_deprecated_function( 'GWPreviewConfirmation::clear_field_value_cache', '1.3.21' );
 	}
 
 	/**

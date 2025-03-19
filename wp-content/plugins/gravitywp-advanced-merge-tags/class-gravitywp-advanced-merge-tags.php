@@ -235,17 +235,6 @@ class GravityWP_Advanced_Merge_Tags extends GFAddOn {
 	}
 
 	/**
-	 * Hook functions in admin.
-	 *
-	 * @since 1.0.2
-	 *
-	 * @return void
-	 */
-	public function init_admin() {
-		parent::init_admin();
-	}
-
-	/**
 	 * Register scripts.
 	 *
 	 * @since  1.0
@@ -628,6 +617,7 @@ class GravityWP_Advanced_Merge_Tags extends GFAddOn {
 			'gwp_user_role',
 			'gwp_json_get',
 			'gwp_censor',
+			'gwp_hash',
 		);
 	}
 
@@ -1386,6 +1376,8 @@ class GravityWP_Advanced_Merge_Tags extends GFAddOn {
 				return trim( $value );
 			case 'absint':
 				return (string) absint( $value );
+			case 'wp_strip_all_tags':
+				return wp_strip_all_tags( $value );
 			default:
 				return sanitize_text_field( $value );
 		}
@@ -1431,39 +1423,16 @@ class GravityWP_Advanced_Merge_Tags extends GFAddOn {
 			return gravitywp_advanced_merge_tags()->gwp_error_handler( esc_html__( 'missing required argument', 'gravitywpadvancedmergetags' ), __METHOD__, print_r( $modifier_atts, true ) );
 		}
 
-		switch ( $atts['sort_order'] ) {
-			case 'asc':
-				$arg_sort_order = 'ASC';
-				break;
-			case 'rand':
-				$arg_sort_order = 'RAND';
-				break;
-			default:
-				$arg_sort_order = 'DESC';
-		}
-
 		// Prepare search criteria.
-		$search_criteria = array();
-
-		$search_criteria['status'] = 'active';
+		$search_criteria = self::atts_to_search_filter( $modifier_atts, $form, $entry );
 
 		$search_criteria['field_filters'][] = array(
 			'key'      => $atts['match_id'],
 			'operator' => 'is',
 			'value'    => is_array( $raw_value ) ? $raw_value[ $merge_tag ] : $raw_value,
 		);
-
-		// Add additional search filters.
-		if ( ! self::add_filters_to_search_criteria( $modifier_atts, $search_criteria, $form, $entry ) ) {
-			return gravitywp_advanced_merge_tags()->gwp_error_handler( esc_html__( 'incorrect search filters', 'gravitywpadvancedmergetags' ), __METHOD__, print_r( $modifier_atts, true ) );
-		}
-
 		// Sort-order.
-		$sorting = array(
-			'key'        => 'id',
-			'direction'  => $arg_sort_order,
-			'is_numeric' => true,
-		);
+		$sorting = self::atts_to_sorting( $modifier_atts );
 
 		// Offset / page size.
 		$paging = array(
@@ -1675,8 +1644,9 @@ class GravityWP_Advanced_Merge_Tags extends GFAddOn {
 		// Get the Form and create a Field object.
 		$form  = GFAPI::get_form( self::$_entry[ $entry_id ]['form_id'] );
 		$field = false;
-		if ( is_numeric( $properties[1] ) ) {
-			$field = GFAPI::get_field( $form, $properties[1] );
+		$input_id = $properties[1];
+		if ( is_numeric( $input_id ) ) {
+			$field = GFAPI::get_field( $form, $input_id );
 		}
 
 		if ( $field instanceof GF_Field ) {
@@ -1693,7 +1663,7 @@ class GravityWP_Advanced_Merge_Tags extends GFAddOn {
 		if ( isset( $properties[2] ) && strpos( $properties[2], 'gwp_' ) === 0 ) {
 			$modifier_atts    = $mergetag_atts;
 			$modifier_atts[0] = $properties[2];
-			self::process_amt_modifiers( $value, $modifier_atts[0], $value, $properties[1], $modifier_atts, $field, $value, $form, self::$_entry[ $entry_id ], $url_encode, $esc_html, $nl2br, $format );
+			self::process_amt_modifiers( $value, $modifier_atts[0], $value, $input_id, $modifier_atts, $field, $value, $form, self::$_entry[ $entry_id ], $url_encode, $esc_html, $nl2br, $format );
 		} else {
 			// prevents mergetag / shortcode injection.
 			self::gf_replace_field_variable_part3( $value, $field, $url_encode, $esc_html, $format, $nl2br );
@@ -1750,7 +1720,7 @@ class GravityWP_Advanced_Merge_Tags extends GFAddOn {
 
 		$path = isset( $_SERVER['PATH_INFO'] ) ? sanitize_text_field( wp_unslash( $_SERVER['PATH_INFO'] ) ) : '';
 		if ( empty( $path ) ) {
-			$path = parse_url( sanitize_text_field( wp_unslash( $_SERVER['REQUEST_URI'] ) ) );
+			$path = parse_url( sanitize_text_field( wp_unslash( $_SERVER['REQUEST_URI'] ) ) ); // phpcs:ignore
 			$path = $path['path'] ?? '';
 		}
 
@@ -1837,9 +1807,12 @@ class GravityWP_Advanced_Merge_Tags extends GFAddOn {
 		$atts = shortcode_atts(
 			array(
 				'formula'       => '',
-				'number_format' => 'decimal_point',
+				'number_format' => 'decimal_dot',
 				'thousands_sep' => 'true',
 				'currency'      => '',
+				'decimals'      => '',
+				'raw'           => 'false',
+				'round'         => 'round',
 			),
 			$mergetag_atts
 		);
@@ -1863,9 +1836,26 @@ class GravityWP_Advanced_Merge_Tags extends GFAddOn {
 
 		$value = GFCommon::calculate( $field, $form, $entry );
 
-		$include_thousands_sep = $atts['thousands_sep'] !== 'false';
+		// Round the number.
+		if ( $atts['decimals'] !== '' ) {
+			$decimals = intval( $atts['decimals'] );
+			switch ( strtolower( $atts['round'] ) ) {
+				case 'ceil':
+					$value = ceil( (float) $value * pow( 10, $decimals ) ) / pow( 10, $decimals );
+					break;
+				case 'floor':
+					$value = floor( (float) $value * pow( 10, $decimals ) ) / pow( 10, $decimals );
+					break;
+				default:
+					$value = round( (float) $value, $decimals );
+			}
+		}
 
-		$value = GFCommon::format_number( $value, $atts['number_format'], $atts['currency'], $include_thousands_sep );
+		if ( $atts['raw'] !== 'true' ) {
+			// Format the number.
+			$include_thousands_sep = $atts['thousands_sep'] !== 'false';
+			$value                 = GFCommon::format_number( $value, $atts['number_format'], $atts['currency'], $include_thousands_sep );
+		}
 
 		return $value;
 	}
@@ -2150,20 +2140,13 @@ class GravityWP_Advanced_Merge_Tags extends GFAddOn {
 		}
 
 		// Prepare search criteria.
-		$search_criteria = array();
-
-		$search_criteria['status'] = 'active';
+		$search_criteria = self::atts_to_search_filter( $modifier_atts, $form, $entry );
 
 		$search_criteria['field_filters'][] = array(
 			'key'      => $atts['match_id'],
 			'operator' => 'is',
 			'value'    => is_array( $raw_value ) ? $raw_value[ $merge_tag ] : $raw_value,
 		);
-
-		// Add additional search filters.
-		if ( ! self::add_filters_to_search_criteria( $modifier_atts, $search_criteria, $form, $entry ) ) {
-			return gravitywp_advanced_merge_tags()->gwp_error_handler( esc_html__( 'incorrect search filters', 'gravitywpadvancedmergetags' ), __METHOD__, print_r( $modifier_atts, true ) );
-		}
 
 		return number_format_i18n( GFAPI::count_entries( absint( $atts['form_id'] ), $search_criteria ) );
 	}
@@ -2209,20 +2192,13 @@ class GravityWP_Advanced_Merge_Tags extends GFAddOn {
 		}
 
 		// Prepare search criteria.
-		$search_criteria = array();
-
-		$search_criteria['status'] = 'active';
+		$search_criteria = self::atts_to_search_filter( $modifier_atts, $form, $entry );
 
 		$search_criteria['field_filters'][] = array(
 			'key'      => $atts['match_id'],
 			'operator' => 'is',
 			'value'    => is_array( $raw_value ) ? $raw_value[ $merge_tag ] : $raw_value,
 		);
-
-		// Add additional search filters.
-		if ( ! self::add_filters_to_search_criteria( $modifier_atts, $search_criteria, $form, $entry ) ) {
-			return gravitywp_advanced_merge_tags()->gwp_error_handler( esc_html__( 'incorrect search filters', 'gravitywpadvancedmergetags' ), __METHOD__, print_r( $modifier_atts, true ) );
-		}
 
 		$entry_ids = GFAPI::get_entry_ids( absint( $atts['form_id'] ), $search_criteria );
 
@@ -2355,7 +2331,7 @@ class GravityWP_Advanced_Merge_Tags extends GFAddOn {
 		}
 
 		// Check if case-insensitive search is enabled.
-		$regex_modifier = ( $atts['ignore_case'] == 'true' ) ? 'i' : '';
+		$regex_modifier = ( $atts['ignore_case'] === 'true' ) ? 'i' : '';
 
 		$pattern = '/\b(' . implode( '|', $disallowed_keys ) . ')\b/' . $regex_modifier;
 
@@ -2559,8 +2535,8 @@ class GravityWP_Advanced_Merge_Tags extends GFAddOn {
 			array(
 				'format'         => 'Y-m-d H:i:s',
 				'modify'         => '',
-				'timezone'       => wp_timezone_string(),
-				'field_timezone' => wp_timezone_string(),
+				'timezone'       => '',
+				'field_timezone' => '',
 				'field_format'   => false,
 			),
 			$modifier_atts
@@ -2605,6 +2581,20 @@ class GravityWP_Advanced_Merge_Tags extends GFAddOn {
 			$atts['modify'] = self::replace_nested_merge_tags( $atts['modify'], $form, $entry );
 		}
 
+		// Allow mergetags to be used as timezone string.
+		if ( $atts['timezone'] !== '' ) {
+			$atts['timezone'] = self::replace_nested_merge_tags( $atts['timezone'], $form, $entry );
+		} else {
+			$atts['timezone'] = wp_timezone_string();
+		}
+
+		// Allow mergetags to be used as field_timezone string.
+		if ( $atts['field_timezone'] !== '' ) {
+			$atts['field_timezone'] = self::replace_nested_merge_tags( $atts['field_timezone'], $form, $entry );
+		} else {
+			$atts['field_timezone'] = wp_timezone_string();
+		}
+
 		return self::modify_format_datetime( $value, $field_format, $atts['format'], $atts['modify'], $atts['field_timezone'], $atts['timezone'] );
 	}
 
@@ -2620,12 +2610,14 @@ class GravityWP_Advanced_Merge_Tags extends GFAddOn {
 	public static function mergetag_gwp_generate_token( $mergetag_atts ) {
 		$atts = shortcode_atts(
 			array(
-				'charset' => 'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890',
-				'length'  => '16',
-				'unique'  => 'false',
-				'prefix'  => '',
-				'postfix' => '',
-				'retries' => '10',
+				'charset'  => 'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890',
+				'length'   => '16',
+				'unique'   => 'false',
+				'prefix'   => '',
+				'postfix'  => '',
+				'retries'  => '10',
+				'form_id'  => '0',
+				'field_id' => '0',
 			),
 			$mergetag_atts
 		);
@@ -2649,7 +2641,7 @@ class GravityWP_Advanced_Merge_Tags extends GFAddOn {
 		$token = $atts['prefix'] . $token . $atts['postfix'];
 
 		if ( $unique === 'true' ) {
-			if ( ! self::check_unique( $token ) ) {
+			if ( ! self::check_unique( $token, absint( $atts['form_id'] ), absint( $atts['field_id'] ) ) ) {
 				$mergetag_atts['counter'] = isset( $mergetag_atts['counter'] ) ? ++$mergetag_atts['counter'] : 1;
 				if ( $mergetag_atts['counter'] >= $retries ) {
 					return gravitywp_advanced_merge_tags()->gwp_error_handler( esc_html__( 'Could not generate a unique token.', 'gravitywpadvancedmergetags' ), __METHOD__, print_r( $atts, true ) );
@@ -2661,6 +2653,56 @@ class GravityWP_Advanced_Merge_Tags extends GFAddOn {
 		return $token;
 	}
 
+	/**
+	 * Process gwp_hash modifier.
+	 *
+	 * This method generates a hash of the merge tag value using the specified algorithm
+	 * and an optional salt provided through modifier attributes.
+	 *
+	 * @param string       $value          The current merge tag value to be filtered. Replace it with any other text to change the merge tag output, or return “false” to disable this field’s merge tag output.
+	 * @param string       $merge_tag      For an individual field merge tag (e.g., {Name:3}), this contains the field's ID. Otherwise, it contains the name of the merge tag (e.g., all_fields).
+	 * @param array<mixed> $modifier_atts  Array of the modifier attributes, where $modifier_atts['0'] contains the primary modifier string.
+	 * @param GF_Field     $field          The current field object.
+	 * @param mixed        $raw_value      The raw value submitted for this field.
+	 * @param string       $format         Defines whether the text is formatted as HTML or plain text.
+	 * @param array<mixed> $form           The form data associated with the entry.
+	 * @param array<mixed> $entry          The entry data for which the merge tag is being processed.
+	 *
+	 * @return string                      Returns the hashed value if successful, otherwise the original value.
+	 */
+	public static function modifier_gwp_hash( $value, $merge_tag, $modifier_atts, $field, $raw_value, $format, $form, $entry ) {
+
+		$atts = shortcode_atts(
+			array(
+				'0'         => null,       // Contains the modifier (without attributes).
+				'algorithm' => 'sha256',   // Default hashing algorithm.
+				'salt'      => '',         // Optional salt for additional security.
+			),
+			$modifier_atts
+		);
+
+		$algorithm = $atts['algorithm'];
+		if ( $atts['salt'] !== '' ) {
+			$salt = self::replace_nested_merge_tags( $atts['salt'], $form, $entry );
+			$data = $value . $salt;
+		} else {
+			$data = $value;
+		}
+
+		// Validate algorithm.
+		if ( ! in_array( $algorithm, hash_algos(), true ) ) {
+			return gravitywp_advanced_merge_tags()->gwp_error_handler(
+				esc_html__( 'Hashing algorithm is not available.', 'gravitywpadvancedmergetags' ),
+				__METHOD__,
+				print_r( $atts, true )
+			);
+		}
+
+		// Generate hash.
+		$hash = hash( $algorithm, $data );
+
+		return $hash;
+	}
 
 	/**
 	 * Retrieves the user roles based on a field value with user_login, user_email or user_id.
@@ -2737,83 +2779,68 @@ class GravityWP_Advanced_Merge_Tags extends GFAddOn {
 	 *
 	 * @since 1.2.5
 	 *
-	 * @param string $value The value to search.
+	 * @param string $value    The value to search.
+	 * @param int    $form_id  The form's id to search in.
+	 * @param int    $field_id The field id to search in.
 	 *
-	 * @return bool $is_unique.
+	 * @return bool $is_unique True if the value is unique, false otherwise.
 	 */
-	public static function check_unique( $value ) {
-
+	public static function check_unique( $value, $form_id = 0, $field_id = 0 ) {
 		global $wpdb;
 
-		// Get entry meta table name.
+		// Get entry meta table and draft submissions table name.
 		$entry_meta_table        = GFFormsModel::get_entry_meta_table_name();
 		$draft_submissions_table = GFFormsModel::get_draft_submissions_table_name();
 
-		$queries = array();
+		// Prepare entry meta table query parts.
+		$entry_query = array(
+			'select' => 'SELECT 1',
+			'from'   => "FROM {$entry_meta_table}",
+			'where'  => $wpdb->prepare( 'WHERE meta_value = %s', $value ),
+		);
 
-		$queries['entries'] = $wpdb->prepare( "SELECT COUNT(meta_value) FROM {$entry_meta_table} WHERE meta_value LIKE %s", '%' . $value . '%' );
+		// Prepare draft submissions table query parts.
+		$draft_value = $field_id > 0 ? sprintf( '"%d":"%s"', $field_id, $value ) : sprintf( '"%s"', $value );
+		$draft_query = array(
+			'select' => 'SELECT 1',
+			'from'   => "FROM {$draft_submissions_table}",
+			'where'  => $wpdb->prepare( 'WHERE submission LIKE %s', '%' . $draft_value . '%' ),
+		);
 
-		$queries['draft_submissions'] = $wpdb->prepare( "SELECT COUNT(submission) FROM {$draft_submissions_table} WHERE submission LIKE %s", '%' . $value . '%' );
+		// Add additional conditions if form_id is specified.
+		if ( $form_id > 0 ) {
+			$form_condition        = $wpdb->prepare( ' AND form_id = %d', $form_id );
+			$entry_query['where'] .= $form_condition;
+			$draft_query['where'] .= $form_condition;
+		}
 
-		/**
-		 * If result found, value is not unique. Return false.
-		 * If no results found, value is unique. Return true.
-		 * If null, query is false. Skip query.
-		 */
+		// Add condition for field_id in entries.
+		if ( $field_id > 0 ) {
+			$entry_query['where'] .= $wpdb->prepare( ' AND CAST( meta_key as unsigned ) = %d', $field_id );
+		}
+
+		// Add LIMIT to queries.
+		$entry_query['limit'] = 'LIMIT 1';
+		$draft_query['limit'] = 'LIMIT 1';
+
+		// Construct SQL statements.
+		$queries = array(
+			'entries'           => implode( ' ', $entry_query ),
+			'draft_submissions' => implode( ' ', $draft_query ),
+		);
+
+		// Allow filtering of queries.
+		$queries = apply_filters( 'gwp_amt_check_unique_queries', $queries );
+
+		// Execute each query and check if any results are found (value is not unique).
 		foreach ( $queries as $query ) {
-
 			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
-			if ( $wpdb->get_var( $query ) > 0 ) {
+			if ( $wpdb->get_var( $query ) !== null ) {
 				return false;
 			}
 		}
-			return true;
-	}
 
-
-	/**
-	 * Helper function - Add additional field filters to a search_criteria array from an attribute array. Filters will be added to $search_criteria['field_filters'][].
-	 *
-	 * Adds all subsequent pairs of filter1, operator1, value1, etc.
-	 *
-	 * @since 1.0.2
-	 *
-	 * @param array<mixed> $attributes Parsed array of mergetag attributes.
-	 * @param array<mixed> $search_criteria Array, passed as reference.
-	 * @param array<mixed> $form The form object.
-	 * @param array<mixed> $entry The entry array.
-	 *
-	 * @return bool Returns true if successfull, false if not.
-	 */
-	public static function add_filters_to_search_criteria( array $attributes, array &$search_criteria, $form, $entry ) {
-		/* shortcode operator => GF_Query operator */
-		$supported_operators = array(
-			'is'                 => 'is',
-			'isnot'              => 'isnot',
-			'contains'           => 'contains',
-			'greater_than'       => '>',
-			'less_than'          => '<',
-			'greater_than_or_is' => '>=',
-			'less_than_or_is'    => '<=',
-		);
-
-		// Additional filters.
-		$i       = 1;
-		$success = true;
-		while ( ! empty( $attributes[ 'filter' . $i ] ) ) {
-			$operator = $supported_operators[ $attributes[ 'operator' . $i ] ] ?? '';
-			if ( ! empty( $operator ) && isset( $attributes[ 'value' . $i ] ) ) {
-				$search_criteria['field_filters'][] = array(
-					'key'      => $attributes[ 'filter' . $i ],
-					'operator' => $operator,
-					'value'    => self::replace_nested_merge_tags( $attributes[ 'value' . $i ], $form, $entry ),
-				);
-			} else {
-				$success = false;
-			}
-			++$i;
-		}
-		return $success;
+		return true; // If no results found, value is unique.
 	}
 
 	/**
@@ -2834,6 +2861,7 @@ class GravityWP_Advanced_Merge_Tags extends GFAddOn {
 		$text            = GFCommon::replace_variables( $text, $form, $entry, false, false, false, 'text' );
 		return $text;
 	}
+
 	/**
 	 * Process get_matched_entries_values modifier
 	 *
@@ -2850,10 +2878,12 @@ class GravityWP_Advanced_Merge_Tags extends GFAddOn {
 	 * @param GF_Field             $field The current field.
 	 * @param mixed                $raw_value The raw value submitted for this field.
 	 * @param string               $format Whether the text is formatted as html or text.
+	 * @param array<mixed>         $form The form Object.
+	 * @param array<mixed>         $entry The Entry.
 	 *
 	 * @return string If succesfull return the specified matched entries count, otherwise return '' or error;
 	 */
-	public static function modifier_gwp_get_matched_entries_values( $value, $merge_tag, $modifier_atts, $field, $raw_value, &$format ) {
+	public static function modifier_gwp_get_matched_entries_values( $value, $merge_tag, $modifier_atts, $field, $raw_value, &$format, $form, $entry ) {
 
 		// check required arguments.
 		if ( empty( $modifier_atts['form_id'] ) || empty( $modifier_atts['match_id'] ) ) {
@@ -2876,8 +2906,7 @@ class GravityWP_Advanced_Merge_Tags extends GFAddOn {
 		$return_format            = $modifier_atts['return_format'] ?? 'html';
 
 		// Prepare search criteria.
-		$search_criteria = self::atts_to_search_filter( $modifier_atts );
-		$sorting         = self::atts_to_sorting( $modifier_atts );
+		$search_criteria = self::atts_to_search_filter( $modifier_atts, $form, $entry );
 
 		$search_criteria['field_filters'][] = array(
 			'key'      => $match_id,
@@ -2892,8 +2921,16 @@ class GravityWP_Advanced_Merge_Tags extends GFAddOn {
 			);
 		}
 
+		$sorting = self::atts_to_sorting( $modifier_atts );
+
+		$countentries = GFAPI::count_entries( absint( $search_form_id ), $search_criteria );
+		$paging       = array(
+			'offset'    => 0,
+			'page_size' => $countentries,
+		);
+
 		// get all entries matching criteria.
-		$entry_array = GFAPI::get_entries( absint( $search_form_id ), $search_criteria, $sorting );
+		$entry_array = GFAPI::get_entries( absint( $search_form_id ), $search_criteria, $sorting, $paging );
 
 		if ( ! empty( $entry_array ) ) {
 
@@ -3006,7 +3043,7 @@ class GravityWP_Advanced_Merge_Tags extends GFAddOn {
 
 						if ( is_numeric( $row_value ) ) {
 							$row_total                   += $row_value;
-							$row_average_divider         += 1;
+							$row_average_divider         += 1; //phpcs:ignore
 							$col_values[ $i ]['total']   += $row_value;
 							$col_values[ $i ]['divider'] += 1;
 						} else {
@@ -3121,9 +3158,11 @@ class GravityWP_Advanced_Merge_Tags extends GFAddOn {
 	 * Helper function: Converts an attributes array to a search filter for GFAPI::get_entries().
 	 *
 	 * @param array<string,string> $atts array of attributes.
+	 * @param array<mixed>         $form The form Object.
+	 * @param array<mixed>         $entry The Entry.
 	 * @return array<mixed>
 	 */
-	public static function atts_to_search_filter( array $atts ) {
+	public static function atts_to_search_filter( $atts, $form, $entry ) {
 		// Prepare search criteria.
 		$search_criteria = array();
 
@@ -3144,49 +3183,52 @@ class GravityWP_Advanced_Merge_Tags extends GFAddOn {
 
 			$i = 1;
 			while ( ! empty( $atts[ 'filter' . $i ] ) ) {
-				$operator = $supported_operators[ $atts[ 'operator' . $i ] ] ?? '';
+				$operator = '';
+				if ( isset( $atts[ 'operator' . $i ] ) ) {
+					$operator = $supported_operators[ $atts[ 'operator' . $i ] ] ?? '';
+				}
 				if ( ! empty( $operator ) && isset( $atts[ 'value' . $i ] ) ) {
 					$search_criteria['field_filters'][] = array(
 						'key'      => $atts[ 'filter' . $i ],
 						'operator' => $operator,
-						'value'    => $atts[ 'value' . $i ],
+						'value'    => self::replace_nested_merge_tags( $atts[ 'value' . $i ], $form, $entry ),
 					);
 				}
 				++$i;
 			}
 		}
-
 		return $search_criteria;
 	}
 
 	/**
 	 * Helper function: Converts an attributes array to a sort_order for GFAPI::get_entries
 	 *
-	 * @param array<string,string> $atts array of attributes.
+	 * @param array<string,string> $atts Array of attributes.
 	 * @return array<string,mixed>
 	 */
 	public static function atts_to_sorting( array $atts ) {
-		// Sort-order.
-		if ( isset( $atts['sort_order'] ) ) {
-			switch ( strtolower( $atts['sort_order'] ) ) {
-				case 'asc':
-					$arg_sort_order = 'ASC';
-					break;
-				case 'rand':
-					$arg_sort_order = 'RAND';
-					break;
-				default:
-					$arg_sort_order = 'DESC';
-			}
-		} else {
-			$arg_sort_order = 'DESC';
+
+		$sort_by    = isset( $atts['sort_by'] ) ? strtolower( $atts['sort_by'] ) : 'id';
+		$sort_order = isset( $atts['sort_order'] ) ? strtolower( $atts['sort_order'] ) : 'desc';
+
+		switch ( $sort_order ) {
+			case 'asc':
+				$sort_order = 'ASC';
+				break;
+			case 'rand':
+				$sort_order = 'RAND';
+				break;
+			default:
+				$sort_order = 'DESC';
 		}
 
-		return array(
-			'key'        => 'id',
-			'direction'  => $arg_sort_order,
-			'is_numeric' => true,
+		// Default entry id sorting configuration.
+		$sorting = array(
+			'key'       => $sort_by,
+			'direction' => $sort_order,
 		);
+
+		return $sorting;
 	}
 
 	/**

@@ -15,6 +15,13 @@ Filter which entries are shown in a View based on their values.
 
 == Changelog ==
 
+= 4.1.1 on February 10, 2025 =
+
+This update resolves a potential issue affecting View filters and field conditional logic.
+
+#### 🐛 Fixed
+* A potential JavaScript conflict that could prevent configuring View filters and field conditional logic.
+
 = 4.1.0 on January 16, 2025 =
 
 This release adds support for custom filter values and merge tags in multi-value filters, and fixes several issues, including a deprecation notice in Gravity Forms 2.9.1+.

@@ -523,6 +523,10 @@ class GF_Chained_Field_Select extends GF_Field {
 
 	public static function is_value_match( $is_match, $field_value, $target_value, $operation, $source_field, $rule ) {
 
+		if ( ! $source_field ) {
+			return $is_match;
+		}
+
 		$is_input_specific = (int) $rule['fieldId'] != $rule['fieldId'];
 
 		if ( ! $is_input_specific && $source_field instanceof GF_Chained_Field_Select ) {
@@ -674,7 +678,8 @@ class GF_Chained_Field_Select extends GF_Field {
 		$classes   = array(
 				$this->chainedSelectsAlignment ? $this->chainedSelectsAlignment : 'horizontal',
 				$this->size . $class_suffix,
-				'gfield_chainedselect'
+				'gfield_chainedselect',
+				'ginput_chained_selects_container'
 		);
 		$css_class = esc_attr( trim( implode( ' ', $classes ) ) );
 		$markup = sprintf( "<div class='ginput_container ginput_complex gform-grid-row %s' id='%s'>%s</div>", $css_class, $field_html_id, $markup );

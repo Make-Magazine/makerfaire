@@ -130,6 +130,14 @@ class GPPA_Object_Type_GF_Entry extends GPPA_Object_Type {
 				'orderby'   => true,
 				'operators' => $this->supported_operators(),
 			),
+			'is_starred'     => array(
+				'label'     => esc_html__( 'Is Starred', 'gp-populate-anything' ),
+				'value'     => 'is_starred',
+				'callable'  => array( $this, 'get_col_rows' ),
+				'args'      => array( GFFormsModel::get_entry_table_name(), 'is_starred' ),
+				'orderby'   => true,
+				'operators' => $this->supported_operators(),
+			),
 		);
 
 		foreach ( $this->get_form_fields( $form_id ) as $form_field ) {

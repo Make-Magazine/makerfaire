@@ -12,7 +12,7 @@ Theme dependencies:
 - Gravity Forms Basic Theme: basic.css
 
 Gravity Forms is a Rocketgenius project
-copyright 2008-2022 Rocketgenius Inc.
+copyright 2008-2025 Rocketgenius Inc.
 https://www.rocketgenius.com
 this may not be re-distributed without the
 express written permission of the author.
@@ -28,9 +28,9 @@ AND ANY CHANGES MADE HERE WILL BE OVERWRITTEN.
 			background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTc5MiIgaGVpZ2h0PSIxNzkyIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnN2Zz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPiA8Zz4gPHBhdGggZD0ibTE2NzEsNTY2cTAsNDAgLTI4LDY4bC03MjQsNzI0bC0xMzYsMTM2cS0yOCwyOCAtNjgsMjh0LTY4LC0yOGwtMTM2LC0xMzZsLTM2MiwtMzYycS0yOCwtMjggLTI4LC02OHQyOCwtNjhsMTM2LC0xMzZxMjgsLTI4IDY4LC0yOHQ2OCwyOGwyOTQsMjk1bDY1NiwtNjU3cTI4LC0yOCA2OCwtMjh0NjgsMjhsMTM2LDEzNnEyOCwyOCAyOCw2OHoiIGZpbGw9IiMwMDAwMDAiLz4gPC9nPiA8L3N2Zz4=);
 			background-size: 16px;
 			display: inline-block;
+			inline-size: 16px;
 			opacity: 0.5;
 			vertical-align: middle;
-			inline-size: 16px;
 		}
 
 .gravity-theme.gform_wrapper .gfield_chainedselect span, .gform_legacy_markup_wrapper.gform_wrapper .gfield_chainedselect span {
@@ -46,15 +46,15 @@ AND ANY CHANGES MADE HERE WILL BE OVERWRITTEN.
 
 .gravity-theme.gform_wrapper .gfield_chainedselect.vertical.ginput_complex span, .gform_legacy_markup_wrapper.gform_wrapper .gfield_chainedselect.vertical.ginput_complex span {
 				display: block;
+				inline-size: 100%;
 				padding-block: 0 4px !important;
 				padding-inline: 0 !important;
-				inline-size: 100%;
 			}
 
 .gravity-theme.gform_wrapper .gfield_chainedselect.vertical.ginput_complex select, .gform_legacy_markup_wrapper.gform_wrapper .gfield_chainedselect.vertical.ginput_complex select {
+				inline-size: auto;
 				max-inline-size: 100%;
 				min-inline-size: 100px;
-				inline-size: auto;
 			}
 
 /*# sourceMappingURL=theme.css.map */

@@ -124,7 +124,7 @@ class GPNF_Export {
 		$field_id = array_pop( $id_bits );
 
 		foreach ( $form['fields'] as $field ) {
-			if ( $field->id == $field_id ) {
+			if ( $field->id === $field_id ) {
 				$field->set_context_property( 'use_admin_label', true );
 				return $field->get_field_label( false, null );
 			}

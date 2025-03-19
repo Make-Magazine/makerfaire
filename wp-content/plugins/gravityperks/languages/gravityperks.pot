@@ -1,15 +1,15 @@
-# Copyright (C) 2024 Gravity Wiz
+# Copyright (C) 2025 Gravity Wiz
 # This file is distributed under the GPL2.
 msgid ""
 msgstr ""
-"Project-Id-Version: Gravity Perks 2.3.14\n"
-"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/cloned-perk-CG4kBhQP3j\n"
+"Project-Id-Version: Gravity Perks 2.3.15\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/cloned-perk-OssPdxetmX\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2024-12-10T02:52:14+00:00\n"
+"POT-Creation-Date: 2025-03-05T18:31:54+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.10.0\n"
 "X-Domain: gravityperks\n"
@@ -28,7 +28,7 @@ msgstr ""
 
 #. Description of the plugin
 #: gravityperks.php
-msgid "Effortlessly install and manage small functionality enhancements (aka \"perks\") for Gravity Forms."
+msgid "Effortlessly enhance Gravity Forms with powerful add-ons (“perks”) for smarter, more flexible forms—all backed by legendary support."
 msgstr ""
 
 #. Author of the plugin

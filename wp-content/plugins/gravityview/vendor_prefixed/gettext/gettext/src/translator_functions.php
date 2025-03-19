@@ -2,7 +2,7 @@
 /**
  * @license MIT
  *
- * Modified by gravityview on 10-January-2025 using {@see https://github.com/BrianHenryIE/strauss}.
+ * Modified by gravityview on 14-March-2025 using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 use GravityKit\GravityView\Foundation\ThirdParty\Gettext\BaseTranslator;

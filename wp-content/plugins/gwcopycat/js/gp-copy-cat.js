@@ -45,24 +45,27 @@
 
 			var $formWrapper = $( '#gform_wrapper_' + self.formId );
 
-			$formWrapper.off( 'click.gpcopycat' );
-			$formWrapper.on(
-				'click.gpcopycat',
-				'.gwcopy input[type="checkbox"]',
-				function () {
-					if ($( this ).is( ':checked' )) {
-						self.copyValues( this );
-					} else {
-						self.clearValues( this );
-					}
-				}
-			);
-
 			$formWrapper.off( 'change.gpcopycat' );
 			$formWrapper.on(
 				'change.gpcopycat',
-				'.gwcopy input:not(:checkbox), .gwcopy textarea, .gwcopy select',
+				'.gwcopy input, .gwcopy textarea, .gwcopy select',
 				function () {
+					// Exclude .gfield_choice_all_toggle from triggering copy
+					if ( $( this ).closest( '.gfield_choice_all_toggle' ).length ) {
+						return;
+					}
+
+					// Checkbox-specific behavior
+					if ($( this ).is( ':checkbox' )) {
+						if ($( this ).is( ':checked' )) {
+							self.copyValues( this );
+						} else {
+							self.clearValues( this );
+						}
+
+						return;
+					}
+
 					self.copyValues( this );
 				}
 			);

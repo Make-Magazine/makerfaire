@@ -1392,7 +1392,9 @@ class GP_Populate_Anything_Live_Merge_Tags {
 			}
 
 			foreach ( $field->choices as $choice_index => &$choice ) {
-				$choice['gppaOriginalValue'] = trim( $choice['value'] );
+				// GF 2.9 renders this logic multiple times on Form Preview and that causes the value to be replaced multiple times, eventually getting emptied out.
+				// This is a workaround to prevent that from happening, ensuring we do not try to reset the 'gppaOriginalValue' is already set in the current context.
+				$choice['gppaOriginalValue'] = isset( $choice['gppaOriginalValue'] ) ? $choice['gppaOriginalValue'] : trim( $choice['value'] );
 				$choice['value']             = trim( $this->replace_live_merge_tags( $choice['value'], $form_for_lmts ) );
 
 				// Registration of text/label will happen in another method.

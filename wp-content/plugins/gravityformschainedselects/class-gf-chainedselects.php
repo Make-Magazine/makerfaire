@@ -26,6 +26,7 @@ class GFChainedSelects extends GFAddOn {
 
 	/* Theme framework */
 	protected $_enable_theme_layer = true;
+	protected $_asset_min;
 
 	/**
 	 * Get instance of this class.
@@ -38,6 +39,10 @@ class GFChainedSelects extends GFAddOn {
 
 		if ( self::$_instance == null ) {
 			self::$_instance = new self;
+
+			if ( ! isset( self::$_instance->_asset_min ) ) {
+				self::$_instance->_asset_min = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG || isset( $_GET['gform_debug'] ) ? '' : '.min';
+			}
 		}
 
 		return self::$_instance;
@@ -64,14 +69,11 @@ class GFChainedSelects extends GFAddOn {
 	 * @return array $scripts
 	 */
 	public function scripts() {
-
-		$min = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG || isset( $_GET['gform_debug'] ) ? '' : '.min';
-
 		$scripts = array(
 			array(
 				'handle'  => 'gform_chained_selects_admin',
 				'deps'    => array( 'jquery', 'backbone', 'plupload', 'gform_form_admin' ),
-				'src'     => $this->get_base_url() . "/js/admin{$min}.js",
+				'src'     => $this->get_base_url() . "/js/admin{$this->_asset_min}.js",
 				'version' => $this->_version,
 				'enqueue' => array(
 					array( 'admin_page' => array( 'form_editor', 'form_settings' ) ),
@@ -82,7 +84,7 @@ class GFChainedSelects extends GFAddOn {
 			array(
 				'handle'  => 'gform_chained_selects_admin_form_editor',
 				'deps'    => array( 'jquery', 'backbone', 'gform_form_editor', 'plupload' ),
-				'src'     => $this->get_base_url() . "/js/admin-form-editor{$min}.js",
+				'src'     => $this->get_base_url() . "/js/admin-form-editor{$this->_asset_min}.js",
 				'version' => $this->_version,
 				'enqueue' => array(
 					array( 'admin_page' => array( 'form_editor' ) ),
@@ -93,7 +95,7 @@ class GFChainedSelects extends GFAddOn {
 			array(
 				'handle'  => 'gform_chained_selects',
 				'deps'    => array( 'jquery', 'gform_gravityforms' ),
-				'src'     => $this->get_base_url() . "/js/frontend{$min}.js",
+				'src'     => $this->get_base_url() . "/js/frontend{$this->_asset_min}.js",
 				'version' => $this->_version,
 				'enqueue' => array(
 					array( $this, 'should_enqueue_frontend_script' )
@@ -123,36 +125,78 @@ class GFChainedSelects extends GFAddOn {
 	 * @return array $scripts
 	 */
 	public function styles() {
-
 		$base_url = $this->get_base_url();
-		$min      = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG || isset( $_GET['gform_debug'] ) ? '' : '.min';
-
-		$styles = array(
+		$styles   = array(
 			array(
 				'handle'  => 'gform_chained_selects_admin',
-				'src'     => $base_url . "/assets/css/dist/admin{$min}.css",
+				'src'     => $base_url . "/assets/css/dist/admin{$this->_asset_min}.css",
 				'version' => $this->_version,
 				'enqueue' => array(
 					array( 'admin_page' => array( 'form_editor', 'entry_view' ) ),
 				),
 			),
-			array(
+		);
+
+		if ( ! $this->supports_theme_enqueuing() ) {
+			$styles[] = array(
 				'handle'  => 'gform_chained_selects_theme',
-				'src'     => $base_url . "/assets/css/dist/theme{$min}.css",
+				'src'     => $base_url . "/assets/css/dist/theme{$this->_asset_min}.css",
 				'version' => $this->_version,
 				'enqueue' => array(
-					array( $this, 'should_enqueue_frontend_script' )
+					array( 'admin_page'  => array( 'form_editor', 'block_editor' ) ),
+					array( 'field_types' => array( 'chainedselect' ) ),
 				),
-			),
-		);
+			);
+			$styles[] = array(
+				'handle'  => 'gform-chainedselects-theme-framework',
+				'src'     => $base_url . "/assets/css/dist/theme-framework{$this->_asset_min}.css",
+				'version' => $this->_version,
+				'enqueue' => array(
+					array( 'admin_page'  => array( 'form_editor', 'block_editor' ) ),
+					array( 'field_types' => array( 'chainedselect' ) ),
+				),
+			);
+		}
 
 		return array_merge( parent::styles(), $styles );
 	}
 
 	/**
+	 * Helper method that returns the theme styles that should be enqueued for the add-on.
+	 * Returns an array in the format accepted by the Gravity Forms theme layer set_styles() method
+	 *
+	 * @since 1.8.0
+	 *
+	 * @param array  $form               The current form object to enqueue styles for.
+	 * @param string $field_type         The field type associated with the add-on. Styles will only be enqueued on the frontend if the form has a field with the specified field type.
+	 * @param string $gravity_theme_path The path to the gravity theme style. Optional. Only needed for add-ons that implement the gravity theme outside of the default /assets/css/dist/theme.css path.
+	 *
+	 * @return array Returns and array of styles to enqueue in the format accepted by the Gravity Forms theme layer set_styles() method.
+	 */
+	public function get_theme_layer_styles( $form, $field_type = '', $gravity_theme_path = '' ) {
+		$styles = parent::get_theme_layer_styles( $form, $field_type, $gravity_theme_path );
+
+		unset( $styles['foundation'] );
+
+		return $styles;
+	}
+
+	/**
+	 * Checks if the version of Gravity Forms used supports
+	 * the theme framework enqueuing system.
+	 *
+	 * @since 1.8.0
+	 *
+	 * @return bool
+	 */
+	public function supports_theme_enqueuing() {
+		return method_exists( 'GFAddOn', 'get_theme_layer_styles' );
+	}
+
+	/**
 	 * An array of styles to enqueue.
 	 *
-	 * @since 1.6
+	 * @since 1.6.0
 	 *
 	 * @param $form
 	 * @param $ajax
@@ -162,19 +206,7 @@ class GFChainedSelects extends GFAddOn {
 	 * @return array|\string[][]
 	 */
 	public function theme_layer_styles( $form, $ajax, $settings, $block_settings = array() ) {
-		$theme_slug = \GFFormDisplay::get_form_theme_slug( $form );
-
-		if ( $theme_slug !== 'orbital' ) {
-			return array();
-		}
-
-		$base_url = plugins_url( '', __FILE__ );
-
-		return array(
-			'framework' => array(
-				array( 'gravity_forms_chainedselects_theme_framework', "$base_url/assets/css/dist/theme-framework.css" ),
-			),
-		);
+		return $this->supports_theme_enqueuing() ? $this->get_theme_layer_styles( $form, 'chainedselect' ) : array();
 	}
 
 	public function localize_scripts() {

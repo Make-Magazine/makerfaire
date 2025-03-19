@@ -19,6 +19,7 @@
 			field.chainedSelectsAlignment = alignment;
 
 			$( '#field_' + field.id ).find( '.ginput_container' ).removeClass( 'horizontal vertical' ).addClass( alignment );
+			updateFieldPreview( field );
 
 		}
 
@@ -280,12 +281,17 @@
 
 	function updateFieldPreview( field ) {
 
+		console.log( field );
+
 		var $inputContainer = $( '#field_' + field.id + ' .ginput_container' ),
-			markup          = '';
+			alignmentClass = field.chainedSelectsAlignment === 'horizontal' ? ' gform-grid-col--size-auto' : '',
+			markup  = '';
 
 		for( var i = 0; i < field.inputs.length; i++ ) {
+			var fieldId = field.inputs[i].id;
+			var fieldIdUnderScore = fieldId.replace( '.', '_' );
 			var options = '<option>' + field.inputs[i].label + '</option>';
-			markup += '<span><select disabled="disabled">' + options + '</select></span>' + "\n";
+			markup += '<span id="input_' + field.formId + '_' + fieldIdUnderScore + '_container" class="gform-grid-col' + alignmentClass + '"><select name="input_' + fieldId + '" id="input_' + field.formId + '_' + fieldIdUnderScore + '" disabled="disabled">' + options + '</select></span>' + "\n";
 		}
 
 		$inputContainer.html( markup );

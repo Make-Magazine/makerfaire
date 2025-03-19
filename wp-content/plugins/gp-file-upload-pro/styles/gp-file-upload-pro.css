@@ -508,6 +508,23 @@
 	border-radius: 2px;
 	color: white;
 }
+@media (max-width: 450px) {
+.gpfup__cropper__topbar {
+		flex-wrap: wrap;/* Stack buttons on very small screens */
+}
+.cropper__lightbox button {
+		flex: 1;
+}
+.cropper__lightbox button.gpfup__crop,
+	.cropper__lightbox button.gpfup__cancel {
+		padding: 10px; /* Reduce padding for smaller screens */
+		margin: 0;
+}
+.cropper__lightbox button.gpfup__rotate_left,
+	.cropper__lightbox button.gpfup__rotate_right {
+		max-width: 60px;
+}
+}
 button.gpfup__crop {
 	right: 20px;
 	margin-left: auto
@@ -573,95 +590,96 @@ button.gpfup__cancel {
 
 .gpfup--images-only {}
 .gpfup__preview {
-	margin: auto 1rem auto 0;
-	position: relative;
-	display: flex;
+		margin: auto 1rem auto 0;
+		position: relative;
+		display: flex;
+        user-select: none;
 }
 .gpfup__preview img,
-.gpfup__preview-pending {
-	width: 48px;
-	height: 48px;
-	border-radius: 4px;
+	.gpfup__preview-pending {
+		width: 48px;
+		height: 48px;
+		border-radius: 4px;
 }
 .gpfup__preview img {
-	object-fit: cover;
-	background-color: rgba( 0, 0, 0, 0.5 );
+		object-fit: cover;
+		background-color: rgba( 0, 0, 0, 0.5 );
 }
 .gpfup__preview-pending {
-	background-color: rgba( 0, 0, 0, 0.1 );
-	text-align: center;
+		background-color: rgba( 0, 0, 0, 0.1 );
+		text-align: center;
 }
 .gpfup__preview-pending svg {
-	opacity: 0.5;
-	position: absolute;
-	top: 0;
-	bottom: 0;
-	left: 0;
-	right: 0;
-	margin: auto;
+		opacity: 0.5;
+		position: absolute;
+		top: 0;
+		bottom: 0;
+		left: 0;
+		right: 0;
+		margin: auto;
 }
 .gpfup--images-only .gpfup__preview {
-	width: 100px;
+		width: 100px;
 }
 .gpfup--images-only .gpfup__preview img,
-.gpfup--images-only .gpfup__preview-pending {
-	width: 100px;
-	height: 100px;
-	object-fit: cover;
+	.gpfup--images-only .gpfup__preview-pending {
+		width: 100px;
+		height: 100px;
+		object-fit: cover;
 }
 .gpfup--images-only .gpfup__upload-error-icon {
-	width: 100px;
-	text-align: center;
-	position: absolute;
-	top: 50%;
-	transform: translate(0, -50%);
+		width: 100px;
+		text-align: center;
+		position: absolute;
+		top: 50%;
+		transform: translate(0, -50%);
 }
 .gpfup--images-only .gpfup__preview--crop img {
-	height: auto;
-	object-fit: contain;
+		height: auto;
+		object-fit: contain;
 }
 .gpfup--images-only.gpfup--circle-stencil .gpfup__preview img {
-	border-radius: 50%;
+		border-radius: 50%;
 }
 .gpfup__file-icon svg,
-.gpfup__upload-error-icon svg {
-	vertical-align: middle;
+	.gpfup__upload-error-icon svg {
+		vertical-align: middle;
 }
 .gpfup__edit {
-	display: none;
-	padding: 0;
-	background: black;
-	border: 0;
-	border-radius: 50%;
-	cursor: pointer !important;
-	position: absolute;
-	width: 30px;
-	height: 30px;
-	top: 0;
-	right: 0;
-	bottom: 0;
-	left: 0;
-	margin: auto;
-	opacity: 0.5;
-	transition: opacity 0.25s ease-out;
-	line-height: 1;
+		display: none;
+		padding: 0;
+		background: black;
+		border: 0;
+		border-radius: 50%;
+		cursor: pointer !important;
+		position: absolute;
+		width: 30px;
+		height: 30px;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		left: 0;
+		margin: auto;
+		opacity: 0.5;
+		transition: opacity 0.25s ease-out;
+		line-height: 1;
 }
 .gpfup__edit path {
-	fill: white;
+		fill: white;
 }
 .gpfup__edit:hover {
-	opacity: 1.0;
+		opacity: 1.0;
 }
 .gpfup__edit:focus {
-	outline: 0;
-	border: 2px solid #fff;
+		outline: 0;
+		border: 2px solid #fff;
 }
 .gpfup__file:hover .gpfup__edit,
-.gpfup__file:focus-within .gpfup__edit {
-	display: block;
+	.gpfup__file:focus-within .gpfup__edit {
+		display: block;
 }
 .gpfup__upload-error-icon path:last-child {
-	fill: #790000;
+		fill: #790000;
 }
 
 
@@ -779,6 +797,7 @@ button.gpfup__cancel {
 	flex: 1;
 	margin: auto 1rem auto 0;
 	line-height: 1.2;
+    user-select: none;
 	/* Forces truncated text to be correctly truncated with flexbox. See: https://css-tricks.com/flexbox-truncated-text/ */
 	min-width: 0;
 }
@@ -855,6 +874,9 @@ button.gpfup__cancel {
 	z-index: 2;
 	margin-bottom: -1px;
 	padding: 0;
+}
+.gv-edit-entry-wrapper ul[id^="gform_multifile_messages_"] li.gfield_validation_message {
+	display: none;
 }
 
 

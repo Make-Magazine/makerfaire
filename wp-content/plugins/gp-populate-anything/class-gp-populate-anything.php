@@ -87,6 +87,7 @@ class GP_Populate_Anything extends GP_Plugin {
 		add_filter( 'gform_pre_render', array( $this, 'field_value_object_js' ) );
 		add_filter( 'gform_pre_render', array( $this, 'populate_form' ), 8, 3 );
 
+		add_filter( 'gform_pre_render', array( $this, 'remove_choice_objects' ), PHP_INT_MAX );
 		add_filter( 'gform_pre_process', array( $this, 'remove_choice_objects' ), PHP_INT_MAX );
 
 		add_filter( 'gform_pre_validation', array( $this, 'override_state_validation_for_populated_fields' ) );
@@ -1942,7 +1943,7 @@ class GP_Populate_Anything extends GP_Plugin {
 				$choices[] = gf_apply_filters( array( 'gppa_input_choice', $field->formId, $field->id ), $choice, $field, $object, $objects );
 
 				if ( $this->has_persistent_choices( $field ) ) {
-					$input    = array(
+					$input = array(
 						'label' => $text,
 						'name'  => $text,
 						'key'   => $choice_key,
@@ -1958,12 +1959,14 @@ class GP_Populate_Anything extends GP_Plugin {
 		 * Modify the choices to be populated into the current field.
 		 *
 		 * @since 1.0-beta-4.36
+		 * @since 2.1.21 Added `$field_values` parameter.
 		 *
-		 * @param array     $choices An array of Gravity Forms choices.
-		 * @param \GF_Field $field   The current field being populated.
-		 * @param array     $objects An array of objects being populated as choices into the field.
+		 * @param array     $choices      An array of Gravity Forms choices.
+		 * @param \GF_Field $field        The current field being populated.
+		 * @param array     $objects      An array of objects being populated as choices into the field.
+		 * @param array     $field_values An array of field values that are currently in the form.
 		 */
-		$choices = gf_apply_filters( array( 'gppa_input_choices', $field->formId, $field->id ), $choices, $field, $objects );
+		$choices = gf_apply_filters( array( 'gppa_input_choices', $field->formId, $field->id ), $choices, $field, $objects, $field_values );
 
 		$this->_field_choices_cache[ $cache_key ] = $choices;
 
@@ -1974,8 +1977,6 @@ class GP_Populate_Anything extends GP_Plugin {
 					$f_field->inputs = $inputs;
 				}
 			}
-
-			GFAPI::update_form( $form );
 		}
 
 		return $choices;
@@ -2546,6 +2547,27 @@ class GP_Populate_Anything extends GP_Plugin {
 		$field = is_subclass_of( $field, 'GF_Field' ) ? $field : GF_Fields::create( $field );
 
 		/**
+		 * Filter whether to bypass populating a dynamically populated field on form load.
+		 *
+		 * @param bool $bypass_population Whether to bypass population.
+		 * @param array $form The current form.
+		 * @param \GF_Field $field The current field being populated.
+		 * @param array $entry The current entry.
+		 * @param array $field_values The current field values.
+		 *
+		 * @since 2.1.24
+		 */
+		if ( gf_apply_filters( array( 'gppa_bypass_populate_field', $form['id'], $field->id ), false, $form, $field, $entry, $field_values ) ) {
+			return array(
+				'field'       => $field,
+				'field_value' => null,
+				'lead_id'     => rgar( $entry, 'id' ),
+				'form_id'     => rgar( $form, 'id' ),
+				'form'        => $form,
+			);
+		}
+
+		/**
 		 * Filter a field prior to hydration as a way to override how a field gets hydrated.
 		 *
 		 * @todo document
@@ -2660,10 +2682,10 @@ class GP_Populate_Anything extends GP_Plugin {
 				}
 				break;
 			case 'calculation':
-				if ( rgblank( $field_value[ "{$field->id}.1" ] ) ) {
+				if ( rgblank( rgar( $field_value, "{$field->id}.1" ) ) ) {
 					$field_value[ "{$field->id}.1" ] = $field->label;
 				}
-				if ( rgblank( $field_value[ "{$field->id}.3" ] ) && $field->disableQuantity ) {
+				if ( rgblank( rgar( $field_value, "{$field->id}.3" ) ) && $field->disableQuantity ) {
 					$quantity_field = GFCommon::get_product_fields_by_type( $form, array( 'quantity' ), $field->id );
 					if ( ! count( $quantity_field ) ) {
 						// GF-populated Single Product Quantity input values are not correctly fetched via get_value_default_if_empty()
@@ -2993,7 +3015,7 @@ class GP_Populate_Anything extends GP_Plugin {
 	 * @param array $form
 	 * @param array $field_values
 	 *
-	 * return GF_Field
+	 * @return GF_Field|null
 	 */
 	public function run_pre_render_on_field( $field, $form, $field_values = array() ) {
 		remove_filter( 'gform_pre_render', array( $this, 'populate_form' ), 8 );
@@ -3020,7 +3042,14 @@ class GP_Populate_Anything extends GP_Plugin {
 
 		add_filter( 'gform_pre_render', array( $this, 'populate_form' ), 8, 3 );
 
-		return $pseudo_form['fields'][0];
+		// If the form fields are modified, look through the pseudo-form to find the field we're looking for.
+		foreach ( $pseudo_form['fields'] as $pseudo_field ) {
+			if ( $pseudo_field->id == $field->id ) {
+				return $pseudo_field;
+			}
+		}
+
+		return null;
 	}
 
 
@@ -4492,6 +4521,13 @@ class GP_Populate_Anything extends GP_Plugin {
 				$live_merge_tags
 			);
 		}
+
+		// Update config for products to be compatible with GF 2.9+. Needed for chained choice population.
+		$data = \GFForms::get_service_container()->get( Gravity_Forms\Gravity_Forms\Config\GF_Config_Service_Provider::CONFIG_COLLECTION )->handle( false, array(
+			'form_ids' => array( $form['id'] ),
+		) );
+
+		$response['config'] = $data;
 
 		wp_send_json( apply_filters( 'gppa_get_batch_field_html_response', $response ) );
 

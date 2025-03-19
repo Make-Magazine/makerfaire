@@ -448,6 +448,20 @@ export default class GPFUPField {
 		}
 	}
 
+	getFileCount() {
+		// Get GravityView preview count.
+		const gvPreviewCount = $(`#preview_existing_files_${this.fieldId} > div`).length;
+
+		return this.Uploader.files.length + gvPreviewCount;
+	}
+
+	getMaxFileLimit() {
+		const limit = $("#gform_multifile_upload_" + this.formId + "_" + this.fieldId ).data('settings')?.gf_vars?.max_files
+
+		// If limit is 0, it's infinite.
+		return limit === 0 ? 99999 : limit;
+	}
+
 	addPluploadFilters() {
 		if (!this.Uploader) {
 			console.debug('Plupload not ready yet. Cannot add filters.');
@@ -474,7 +488,35 @@ export default class GPFUPField {
 				 */
 				if (!file.processed) {
 					(async () => {
-						const blob = file.getNative();
+						let blob = file.getNative();
+
+						// Convert to JPEG if a HEIC
+						if (file.type === 'image/heic') {
+							const heic2any = await import('heic2any');
+
+							const heicBlob = await heic2any.default({
+								blob,
+								toType: 'image/jpeg',
+							});
+
+							// Create new file object
+							const convertedHeicFile = new window.mOxie.File(null, heicBlob);
+							convertedHeicFile.name = file.name.replace(/\.heic$/i, '.jpg');
+							convertedHeicFile.id = file.id;
+
+							const image = replaceFile({
+								up,
+								$store: this.$store,
+								fieldId: this.fieldId,
+								formId: this.formId,
+								newFile: convertedHeicFile,
+								existingFile: file,
+							});
+
+							triggerUpload(up, image);
+
+							return;
+						}
 
 						const imageSize = await getImageSize(blob);
 
@@ -509,6 +551,17 @@ export default class GPFUPField {
 						const skipLoader = window.gform.applyFilters('gpfup_skip_image_loader', !requiresRotation && !this.enableCrop, this.formId, this.fieldId, this);
 
 						if (skipLoader) {
+							// Ensure we haven't reached the Plupload max number of files.
+							if (this.getFileCount() > this.getMaxFileLimit()) {
+								up.removeFile(file);
+
+								up.stop();
+								up.start();
+
+								return false;
+							}
+
+
 							file.processed = true;
 							this.$store.dispatch('storeOriginal', file);
 
@@ -646,6 +699,16 @@ export default class GPFUPField {
 							 */
 							jpegQuality: window.gform.applyFilters('gpfup_jpeg_quality', 0.92, this.formId, this.fieldId, this),
 						});
+
+						// Ensure we haven't reached the Plupload max number of files.
+						if (this.getFileCount() > this.getMaxFileLimit()) {
+							up.removeFile(file);
+
+							up.stop();
+							up.start();
+
+							return false;
+						}
 
 						const image = replaceFile({
 							up,

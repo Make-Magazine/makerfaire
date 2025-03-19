@@ -604,7 +604,19 @@ class GP_Multi_Page_Navigation extends GWPerk {
 
 	public function is_bypass_validation_enabled( $form ) {
 		$target_page = (int) GFFormDisplay::get_target_page( $form, GFFormDisplay::get_current_page( $form['id'] ), rgpost( 'gform_field_values' ) );
-		return $this->is_activate_on_first_page( $form ) && rgpost( 'gw_bypass_validation' ) && $target_page !== 0;
+		$bypass_validation = $this->is_activate_on_first_page( $form ) && rgpost( 'gw_bypass_validation' ) && $target_page !== 0;
+
+		/**
+		 * Filter the bypass validation logic.
+		 * 
+		 * @since 1.2.13
+		 *
+		 * @param bool  $bypass_validation The default bypass validation result.
+		 * @param array $form              The current Gravity Forms object.
+		 * @param int   $target_page       The target page number.
+		 */
+		return gf_apply_filters( array( 'gpmpn_bypass_validation', $form['id'] ), $bypass_validation, $form, $target_page );
+
 	}
 
 	public function was_final_submission_attempted( $form ) {

@@ -1,15 +1,15 @@
-# Copyright (C) 2024 Gravity Wiz
+# Copyright (C) 2025 Gravity Wiz
 # This file is distributed under the GPL2.
 msgid ""
 msgstr ""
-"Project-Id-Version: GP File Upload Pro 1.4.2\n"
-"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/cloned-perk-rjj3CBqq8E\n"
+"Project-Id-Version: GP File Upload Pro 1.5.4\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/cloned-perk-0sZt5CAL9h\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2024-10-17T13:54:06+00:00\n"
+"POT-Creation-Date: 2025-03-13T15:12:22+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.10.0\n"
 "X-Domain: gp-file-upload-pro\n"
