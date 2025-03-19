@@ -1,0 +1,2147 @@
+# Copyright (C) 2017 the temegum team
+# This file is distributed under the GNU General Public License v2 or later.
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Gum Elementor Addon1.0.0\n"
+"Report-Msgid-Bugs-To: support@themegum.com\n"
+"POT-Creation-Date: 2023-03-12 21:07+0700\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"PO-Revision-Date: 2020-06-01 09:40+0700\n"
+"Last-Translator: Atawai <support@themegum.com>\n"
+"Language-Team: LANGUAGE <support@themegum.com>\n"
+"X-Generator: Poedit 2.2.3\n"
+"X-Poedit-KeywordsList: __;_e;__ngettext:1,2;_n:1,2;__ngettext_noop:1,2;_n_noop:1,2;_c;_nc:4c,1,2;_x:1,2c;_nx:4c,1,2;_nx_noop:4c,1,2;_ex:1,2c;"
+"esc_attr__;esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;esc_html_x:1,2c\n"
+"X-Poedit-Basepath: ..\n"
+"Plural-Forms: nplurals=2; plural=n == 1 ? 0 : 1;\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-SearchPath-0: .\n"
+"X-Poedit-SearchPathExcluded-0: js\n"
+"X-Poedit-SearchPathExcluded-1: languages\n"
+"X-Poedit-SearchPathExcluded-2: css\n"
+
+#: gum-elementor-addon.php:125
+msgid "Gum Elementor Addon deactivated. The plugin need Elementor plugin, please install the plugin first."
+msgstr ""
+
+#: helper.php:108
+msgid "Newest Post"
+msgstr ""
+
+#: helper.php:113
+msgid "Older Post"
+msgstr ""
+
+#: helper.php:126
+msgid "Previous"
+msgstr ""
+
+#: helper.php:127 widgets/carousel_ibox.php:1852 widgets/post_slider.php:2446
+msgid "Next"
+msgstr ""
+
+#: helper.php:450
+#, php-format
+msgid "#%d (no title)"
+msgstr ""
+
+#: widgets/accordion.php:35 widgets/blog_grid.php:331 widgets/blog_grid.php:440 widgets/blog_grid.php:472 widgets/blog_grid.php:2236
+#: widgets/blog_post_meta.php:796 widgets/blog_post_meta.php:825 widgets/blog_post_related.php:236 widgets/blog_post_related.php:918
+#: widgets/blog_post_share.php:161 widgets/blog_post_share.php:431 widgets/carousel_ibox.php:163 widgets/carousel_ibox.php:2065
+#: widgets/popover_btn.php:189 widgets/post_slider.php:254 widgets/post_slider.php:363 widgets/post_slider.php:395 widgets/pricetable.php:357
+#: widgets/pricetable.php:486 widgets/pricetable.php:1379 widgets/slideshow.php:195 widgets/slideshow.php:249
+msgid "Icon"
+msgstr ""
+
+#: widgets/accordion.php:44
+msgid "Title & Description"
+msgstr ""
+
+#: widgets/accordion.php:46
+msgid "Accordion Title"
+msgstr ""
+
+#: widgets/accordion.php:57 widgets/blog_lists.php:119 widgets/blog_lists.php:716 widgets/blog_pagination.php:120
+#: widgets/blog_pagination.php:601 widgets/carousel_ibox.php:1040 widgets/carousel_ibox.php:1992 widgets/carousel_ibox.php:2576
+#: widgets/slideshow.php:116 widgets/slideshow.php:155 widgets/slideshow.php:424 widgets/slideshow.php:850
+msgid "Content"
+msgstr ""
+
+#: widgets/accordion.php:59
+msgid "Accordion Content"
+msgstr ""
+
+#: widgets/accordion.php:68
+msgid "Accordion Items"
+msgstr ""
+
+#: widgets/accordion.php:74
+msgid "Accordion #1"
+msgstr ""
+
+#: widgets/accordion.php:75 widgets/accordion.php:80 widgets/carousel_ibox.php:224 widgets/carousel_ibox.php:231 widgets/carousel_ibox.php:238
+#: widgets/popover_btn.php:288 widgets/slideshow.php:157 widgets/slideshow.php:349 widgets/slideshow.php:358 widgets/slideshow.php:367
+msgid "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo."
+msgstr ""
+
+#: widgets/accordion.php:79
+msgid "Accordion #2"
+msgstr ""
+
+#: widgets/accordion.php:99 widgets/accordion.php:323 widgets/blog_grid.php:1346 widgets/blog_grid.php:2245 widgets/blog_lists.php:391
+#: widgets/blog_lists.php:776 widgets/blog_lists.php:838 widgets/blog_lists.php:875 widgets/blog_lists.php:955 widgets/blog_pagination.php:307
+#: widgets/blog_pagination.php:674 widgets/blog_post_meta.php:208 widgets/blog_post_meta.php:855 widgets/blog_post_related.php:427
+#: widgets/blog_post_related.php:677 widgets/blog_post_related.php:794 widgets/blog_post_related.php:845 widgets/blog_post_share.php:409
+#: widgets/blog_term.php:216 widgets/carousel_ibox.php:532 widgets/carousel_ibox.php:1417 widgets/counter.php:35 widgets/icon_list.php:120
+#: widgets/popover_btn.php:638 widgets/post_slider.php:821 widgets/post_slider.php:1323 widgets/post_slider.php:1814 widgets/pricetable.php:718
+#: widgets/pricetable.php:820 widgets/pricetable.php:1038 widgets/pricetable.php:1079 widgets/pricetable.php:1150 widgets/pricetable.php:1250
+#: widgets/pricetable.php:1418 widgets/pricetable.php:1497 widgets/site_navigation.php:193 widgets/site_navigation.php:568
+#: widgets/slideshow.php:785 widgets/slideshow.php:832 widgets/slideshow.php:880 widgets/slideshow.php:908 widgets/slideshow.php:1657
+msgid "Spacing"
+msgstr ""
+
+#: widgets/accordion.php:129 widgets/accordion.php:203 widgets/blog_grid.php:821 widgets/blog_grid.php:947 widgets/blog_grid.php:1095
+#: widgets/blog_grid.php:1190 widgets/blog_grid.php:1255 widgets/blog_grid.php:2339 widgets/blog_lists.php:764 widgets/blog_lists.php:927
+#: widgets/blog_pagination.php:639 widgets/blog_post_adjacent.php:234 widgets/blog_post_related.php:608 widgets/blog_post_related.php:716
+#: widgets/blog_post_related.php:903 widgets/blog_post_share.php:397 widgets/blog_post_share.php:471 widgets/carousel_ibox.php:582
+#: widgets/carousel_ibox.php:704 widgets/carousel_ibox.php:1015 widgets/carousel_ibox.php:2234 widgets/carousel_ibox.php:2551
+#: widgets/heading.php:356 widgets/heading.php:437 widgets/heading.php:522 widgets/post_slider.php:871 widgets/post_slider.php:1053
+#: widgets/post_slider.php:1145 widgets/post_slider.php:1214 widgets/post_slider.php:1279 widgets/pricetable.php:691 widgets/pricetable.php:807
+#: widgets/pricetable.php:1026
+msgid "Hover Color"
+msgstr ""
+
+#: widgets/accordion.php:140 widgets/blog_grid.php:862 widgets/blog_grid.php:974 widgets/carousel_ibox.php:609 widgets/post_slider.php:898
+#: widgets/post_slider.php:1172 widgets/pricetable.php:626 widgets/pricetable.php:760 widgets/pricetable.php:1557
+msgid "Hover Background"
+msgstr ""
+
+#: widgets/accordion.php:151
+msgid "Active Background"
+msgstr ""
+
+#: widgets/accordion.php:170 widgets/accordion.php:272 widgets/blog_grid.php:837 widgets/blog_grid.php:926 widgets/blog_grid.php:1111
+#: widgets/blog_grid.php:1482 widgets/blog_grid.php:1716 widgets/blog_grid.php:1877 widgets/blog_grid.php:2038 widgets/blog_grid.php:2133
+#: widgets/blog_grid.php:2316 widgets/blog_grid.php:2468 widgets/blog_image.php:250 widgets/blog_lists.php:672 widgets/blog_pagination.php:564
+#: widgets/blog_post_meta.php:289 widgets/blog_post_meta.php:998 widgets/blog_post_share.php:332 widgets/blog_term.php:293
+#: widgets/carousel_ibox.php:562 widgets/carousel_ibox.php:684 widgets/carousel_ibox.php:865 widgets/carousel_ibox.php:1210
+#: widgets/carousel_ibox.php:1505 widgets/carousel_ibox.php:2213 widgets/carousel_ibox.php:2400 widgets/carousel_ibox.php:2747
+#: widgets/heading.php:676 widgets/popover_btn.php:437 widgets/popover_btn.php:529 widgets/post_slider.php:851 widgets/post_slider.php:1032
+#: widgets/post_slider.php:1122 widgets/post_slider.php:1458 widgets/post_slider.php:1642 widgets/post_slider.php:1907
+#: widgets/pricetable.php:647 widgets/pricetable.php:910 widgets/pricetable.php:1578 widgets/pricetable.php:1768 widgets/slideshow.php:1032
+#: widgets/slideshow.php:1689 widgets/toggle_period.php:278 widgets/totop_btn.php:291
+msgid "Border Radius"
+msgstr ""
+
+#: widgets/accordion.php:215 widgets/accordion.php:302 widgets/blog_grid.php:1515 widgets/blog_grid.php:2265 widgets/blog_lists.php:572
+#: widgets/blog_pagination.php:450 widgets/blog_post_meta.php:411 widgets/blog_post_meta.php:1029 widgets/blog_post_share.php:439
+#: widgets/blog_term.php:415 widgets/carousel_ibox.php:1453 widgets/heading.php:190 widgets/heading.php:609 widgets/popover_btn.php:178
+#: widgets/post_slider.php:1491 widgets/post_slider.php:1852 widgets/pricetable.php:1401 widgets/pricetable.php:1475
+#: widgets/pricetable.php:1621 widgets/site_navigation.php:404 widgets/site_navigation.php:1080 widgets/slideshow.php:1341
+#: widgets/totop_btn.php:409
+msgid "Size"
+msgstr ""
+
+#: widgets/accordion.php:235 widgets/site_navigation.php:813
+msgid "Vertical Offset"
+msgstr ""
+
+#: widgets/accordion.php:251 widgets/blog_grid.php:799 widgets/blog_grid.php:914 widgets/blog_grid.php:1134 widgets/blog_grid.php:1470
+#: widgets/blog_grid.php:1556 widgets/blog_grid.php:1704 widgets/blog_grid.php:1865 widgets/blog_grid.php:2026 widgets/blog_grid.php:2121
+#: widgets/blog_grid.php:2303 widgets/blog_grid.php:2456 widgets/blog_lists.php:412 widgets/blog_pagination.php:328
+#: widgets/blog_post_meta.php:268 widgets/blog_post_meta.php:454 widgets/blog_post_meta.php:977 widgets/blog_post_meta.php:1072
+#: widgets/blog_post_related.php:323 widgets/blog_post_related.php:446 widgets/blog_post_related.php:587 widgets/blog_post_related.php:729
+#: widgets/blog_post_related.php:883 widgets/blog_post_share.php:311 widgets/blog_term.php:272 widgets/blog_term.php:458
+#: widgets/carousel_ibox.php:550 widgets/carousel_ibox.php:853 widgets/carousel_ibox.php:1198 widgets/carousel_ibox.php:1492
+#: widgets/carousel_ibox.php:2388 widgets/carousel_ibox.php:2735 widgets/popover_btn.php:449 widgets/popover_btn.php:517
+#: widgets/post_slider.php:839 widgets/post_slider.php:1020 widgets/post_slider.php:1110 widgets/post_slider.php:1446
+#: widgets/post_slider.php:1532 widgets/post_slider.php:1630 widgets/post_slider.php:1892 widgets/pricetable.php:564 widgets/pricetable.php:703
+#: widgets/pricetable.php:926 widgets/pricetable.php:1208 widgets/pricetable.php:1533 widgets/pricetable.php:1788 widgets/progress.php:77
+#: widgets/site_navigation.php:218 widgets/site_navigation.php:514 widgets/site_navigation.php:593 widgets/site_navigation.php:797
+#: widgets/site_navigation.php:1115 widgets/slideshow.php:708 widgets/slideshow.php:1018 widgets/totop_btn.php:303
+msgid "Padding"
+msgstr ""
+
+#: widgets/accordion.php:293
+msgid "TAB ICON"
+msgstr ""
+
+#: widgets/blog_grid.php:82
+msgid "Blog Grid"
+msgstr ""
+
+#: widgets/blog_grid.php:122 widgets/blog_grid.php:129 widgets/blog_grid.php:685 widgets/blog_post_meta.php:158
+#: widgets/blog_post_related.php:172 widgets/carousel_ibox.php:295 widgets/post_slider.php:585
+msgid "Layout"
+msgstr ""
+
+#: widgets/blog_grid.php:132 widgets/carousel_ibox.php:298 widgets/carousel_ibox.php:315 widgets/carousel_ibox.php:331
+#: widgets/post_slider.php:588 widgets/post_slider.php:604 widgets/post_slider.php:620
+msgid "One Column"
+msgstr ""
+
+#: widgets/blog_grid.php:133 widgets/carousel_ibox.php:299 widgets/carousel_ibox.php:316 widgets/carousel_ibox.php:332
+#: widgets/post_slider.php:589 widgets/post_slider.php:605 widgets/post_slider.php:621
+msgid "Two Column"
+msgstr ""
+
+#: widgets/blog_grid.php:134 widgets/carousel_ibox.php:300 widgets/carousel_ibox.php:317 widgets/carousel_ibox.php:333
+#: widgets/post_slider.php:590 widgets/post_slider.php:606 widgets/post_slider.php:622
+msgid "Three Column"
+msgstr ""
+
+#: widgets/blog_grid.php:135 widgets/carousel_ibox.php:301 widgets/carousel_ibox.php:318 widgets/carousel_ibox.php:334
+#: widgets/post_slider.php:591 widgets/post_slider.php:607 widgets/post_slider.php:623
+msgid "Four Column"
+msgstr ""
+
+#: widgets/blog_grid.php:147
+msgid "Show Featured Image"
+msgstr ""
+
+#: widgets/blog_grid.php:149 widgets/blog_grid.php:186 widgets/blog_grid.php:270 widgets/blog_grid.php:307 widgets/blog_grid.php:363
+#: widgets/blog_grid.php:628 widgets/blog_grid.php:640 widgets/blog_grid.php:653 widgets/blog_grid.php:676 widgets/blog_grid.php:1301
+#: widgets/blog_grid.php:1316 widgets/blog_grid.php:1332 widgets/blog_lists.php:129 widgets/blog_lists.php:179 widgets/blog_lists.php:320
+#: widgets/blog_lists.php:331 widgets/blog_lists.php:496 widgets/blog_pagination.php:130 widgets/blog_pagination.php:180
+#: widgets/blog_pagination.php:236 widgets/blog_pagination.php:247 widgets/blog_pagination.php:412 widgets/blog_post_meta.php:150
+#: widgets/blog_post_meta.php:682 widgets/blog_post_related.php:161 widgets/blog_post_related.php:182 widgets/blog_post_related.php:205
+#: widgets/blog_post_related.php:227 widgets/blog_term.php:150 widgets/carousel_ibox.php:346 widgets/carousel_ibox.php:357
+#: widgets/heading.php:180 widgets/icon_list.php:102 widgets/icon_list.php:303 widgets/post_slider.php:170 widgets/post_slider.php:193
+#: widgets/post_slider.php:230 widgets/post_slider.php:286 widgets/post_slider.php:550 widgets/post_slider.php:565 widgets/post_slider.php:635
+#: widgets/post_slider.php:646 widgets/pricetable.php:275 widgets/pricetable.php:299 widgets/slideshow.php:458 widgets/slideshow.php:588
+#: widgets/slideshow.php:626 widgets/slideshow.php:1308
+msgid "No"
+msgstr ""
+
+#: widgets/blog_grid.php:150 widgets/blog_grid.php:187 widgets/blog_grid.php:271 widgets/blog_grid.php:308 widgets/blog_grid.php:364
+#: widgets/blog_grid.php:629 widgets/blog_grid.php:641 widgets/blog_grid.php:654 widgets/blog_grid.php:677 widgets/blog_grid.php:1302
+#: widgets/blog_grid.php:1317 widgets/blog_grid.php:1333 widgets/blog_lists.php:128 widgets/blog_lists.php:180 widgets/blog_lists.php:321
+#: widgets/blog_lists.php:332 widgets/blog_lists.php:495 widgets/blog_pagination.php:129 widgets/blog_pagination.php:181
+#: widgets/blog_pagination.php:237 widgets/blog_pagination.php:248 widgets/blog_pagination.php:411 widgets/blog_post_meta.php:149
+#: widgets/blog_post_meta.php:681 widgets/blog_post_related.php:160 widgets/blog_post_related.php:181 widgets/blog_post_related.php:204
+#: widgets/blog_post_related.php:228 widgets/blog_term.php:149 widgets/carousel_ibox.php:347 widgets/carousel_ibox.php:358
+#: widgets/heading.php:179 widgets/heading.php:271 widgets/icon_list.php:101 widgets/icon_list.php:304 widgets/post_slider.php:171
+#: widgets/post_slider.php:194 widgets/post_slider.php:231 widgets/post_slider.php:287 widgets/post_slider.php:551 widgets/post_slider.php:566
+#: widgets/post_slider.php:636 widgets/post_slider.php:647 widgets/pricetable.php:276 widgets/pricetable.php:300 widgets/slideshow.php:457
+#: widgets/slideshow.php:589 widgets/slideshow.php:627 widgets/slideshow.php:1309
+msgid "Yes"
+msgstr ""
+
+#: widgets/blog_grid.php:158 widgets/blog_lists.php:138 widgets/blog_pagination.php:139 widgets/post_slider.php:144
+msgid "Image Position"
+msgstr ""
+
+#: widgets/blog_grid.php:162 widgets/blog_grid.php:888 widgets/blog_grid.php:2075 widgets/blog_grid.php:2369 widgets/blog_image.php:106
+#: widgets/blog_lists.php:142 widgets/blog_lists.php:510 widgets/blog_pagination.php:147 widgets/blog_pagination.php:426
+#: widgets/blog_post_adjacent.php:192 widgets/blog_post_meta.php:237 widgets/blog_post_meta.php:760 widgets/blog_post_related.php:651
+#: widgets/blog_post_related.php:767 widgets/blog_post_share.php:362 widgets/blog_term.php:240 widgets/carousel_ibox.php:412
+#: widgets/carousel_ibox.php:762 widgets/carousel_ibox.php:1113 widgets/carousel_ibox.php:2296 widgets/carousel_ibox.php:2649
+#: widgets/heading.php:231 widgets/heading.php:305 widgets/icon_list.php:51 widgets/popover_btn.php:246 widgets/post_slider.php:148
+#: widgets/post_slider.php:701 widgets/post_slider.php:1084 widgets/post_slider.php:1566 widgets/pricetable.php:208 widgets/pricetable.php:212
+#: widgets/pricetable.php:581 widgets/pricetable.php:1186 widgets/pricetable.php:1224 widgets/progress.php:55 widgets/section.php:417
+#: widgets/section.php:418 widgets/slideshow.php:178 widgets/slideshow.php:292 widgets/slideshow.php:316 widgets/slideshow.php:1563
+#: widgets/toggle_period.php:159 widgets/totop_btn.php:143
+msgid "Left"
+msgstr ""
+
+#: widgets/blog_grid.php:166 widgets/blog_lists.php:146 widgets/carousel_ibox.php:445 widgets/carousel_ibox.php:736
+#: widgets/carousel_ibox.php:2268 widgets/heading.php:287 widgets/popover_btn.php:250 widgets/post_slider.php:152 widgets/post_slider.php:734
+#: widgets/section.php:532 widgets/section.php:1044
+msgid "Top"
+msgstr ""
+
+#: widgets/blog_grid.php:170 widgets/blog_grid.php:896 widgets/blog_grid.php:2083 widgets/blog_grid.php:2377 widgets/blog_image.php:114
+#: widgets/blog_lists.php:150 widgets/blog_lists.php:518 widgets/blog_pagination.php:143 widgets/blog_pagination.php:434
+#: widgets/blog_post_adjacent.php:200 widgets/blog_post_meta.php:245 widgets/blog_post_meta.php:768 widgets/blog_post_related.php:659
+#: widgets/blog_post_related.php:775 widgets/blog_post_share.php:366 widgets/blog_term.php:248 widgets/carousel_ibox.php:420
+#: widgets/carousel_ibox.php:770 widgets/carousel_ibox.php:1121 widgets/carousel_ibox.php:2304 widgets/carousel_ibox.php:2657
+#: widgets/heading.php:239 widgets/heading.php:313 widgets/icon_list.php:55 widgets/popover_btn.php:254 widgets/post_slider.php:156
+#: widgets/post_slider.php:709 widgets/post_slider.php:1092 widgets/post_slider.php:1574 widgets/pricetable.php:216 widgets/pricetable.php:589
+#: widgets/pricetable.php:1194 widgets/pricetable.php:1232 widgets/progress.php:63 widgets/section.php:417 widgets/section.php:418
+#: widgets/slideshow.php:230 widgets/slideshow.php:300 widgets/slideshow.php:324 widgets/slideshow.php:1571 widgets/toggle_period.php:167
+#: widgets/totop_btn.php:151
+msgid "Right"
+msgstr ""
+
+#: widgets/blog_grid.php:184 widgets/post_slider.php:168
+msgid "Ignore on Mobile"
+msgstr ""
+
+#: widgets/blog_grid.php:189 widgets/post_slider.php:173
+msgid "Image changed to top on mobile"
+msgstr ""
+
+#: widgets/blog_grid.php:211 widgets/post_slider.php:126 widgets/pricetable.php:162
+msgid "Title HTML Tag"
+msgstr ""
+
+#: widgets/blog_grid.php:229 widgets/pricetable.php:180
+msgid "Title Position"
+msgstr ""
+
+#: widgets/blog_grid.php:232 widgets/blog_grid.php:874 widgets/blog_post_related.php:417 widgets/carousel_ibox.php:721
+#: widgets/carousel_ibox.php:2252 widgets/post_slider.php:1071
+msgid "Content Box"
+msgstr ""
+
+#: widgets/blog_grid.php:233
+msgid "Before Image"
+msgstr ""
+
+#: widgets/blog_grid.php:234
+msgid "After Image"
+msgstr ""
+
+#: widgets/blog_grid.php:247 widgets/blog_grid.php:280 widgets/blog_lists.php:189 widgets/blog_lists.php:733 widgets/blog_pagination.php:651
+#: widgets/blog_post_related.php:213 widgets/post_slider.php:203
+msgid "Word Count"
+msgstr ""
+
+#: widgets/blog_grid.php:256 widgets/blog_grid.php:292 widgets/blog_lists.php:201 widgets/post_slider.php:215
+msgid "Suffix"
+msgstr ""
+
+#: widgets/blog_grid.php:268 widgets/blog_lists.php:177 widgets/post_slider.php:191
+msgid "Show Post Excerpt"
+msgstr ""
+
+#: widgets/blog_grid.php:305 widgets/post_slider.php:228
+msgid "Show Readmore"
+msgstr ""
+
+#: widgets/blog_grid.php:317 widgets/blog_post_adjacent.php:145 widgets/blog_post_share.php:184 widgets/blog_post_share.php:347
+#: widgets/post_slider.php:240
+msgid "Label"
+msgstr ""
+
+#: widgets/blog_grid.php:319 widgets/blog_grid.php:2060 widgets/post_slider.php:242 widgets/post_slider.php:1551
+msgid "Readmore"
+msgstr ""
+
+#: widgets/blog_grid.php:344 widgets/carousel_ibox.php:172 widgets/carousel_ibox.php:2077 widgets/popover_btn.php:198
+#: widgets/post_slider.php:267 widgets/pricetable.php:496 widgets/slideshow.php:204 widgets/slideshow.php:258
+msgid "Icon Position"
+msgstr ""
+
+#: widgets/blog_grid.php:348 widgets/carousel_ibox.php:176 widgets/carousel_ibox.php:2081 widgets/popover_btn.php:202
+#: widgets/post_slider.php:271 widgets/pricetable.php:500 widgets/slideshow.php:208 widgets/slideshow.php:262
+msgid "Before"
+msgstr ""
+
+#: widgets/blog_grid.php:349 widgets/carousel_ibox.php:177 widgets/carousel_ibox.php:2082 widgets/popover_btn.php:203
+#: widgets/post_slider.php:272 widgets/pricetable.php:501 widgets/slideshow.php:209 widgets/slideshow.php:263
+msgid "After"
+msgstr ""
+
+#: widgets/blog_grid.php:361 widgets/post_slider.php:284
+msgid "Show Meta"
+msgstr ""
+
+#: widgets/blog_grid.php:373 widgets/post_slider.php:296
+msgid "Date"
+msgstr ""
+
+#: widgets/blog_grid.php:376 widgets/blog_grid.php:394 widgets/blog_grid.php:412 widgets/blog_grid.php:432 widgets/blog_lists.php:217
+#: widgets/blog_lists.php:246 widgets/blog_lists.php:536 widgets/blog_post_meta.php:788 widgets/blog_term.php:179 widgets/carousel_ibox.php:268
+#: widgets/carousel_ibox.php:284 widgets/carousel_ibox.php:399 widgets/carousel_ibox.php:2038 widgets/carousel_ibox.php:2096
+#: widgets/heading.php:270 widgets/popover_btn.php:545 widgets/post_slider.php:299 widgets/post_slider.php:317 widgets/post_slider.php:335
+#: widgets/post_slider.php:355 widgets/post_slider.php:688 widgets/site_navigation.php:158 widgets/slideshow.php:427
+msgid "None"
+msgstr ""
+
+#: widgets/blog_grid.php:377 widgets/blog_grid.php:395 widgets/blog_grid.php:413 widgets/blog_lists.php:218 widgets/blog_lists.php:247
+#: widgets/post_slider.php:300 widgets/post_slider.php:318 widgets/post_slider.php:336 widgets/pricetable.php:329
+msgid "Before Title"
+msgstr ""
+
+#: widgets/blog_grid.php:378 widgets/blog_grid.php:396 widgets/blog_grid.php:414 widgets/blog_lists.php:219 widgets/blog_lists.php:248
+#: widgets/post_slider.php:301 widgets/post_slider.php:319 widgets/post_slider.php:337
+msgid "After Title"
+msgstr ""
+
+#: widgets/blog_grid.php:379 widgets/blog_grid.php:397 widgets/blog_grid.php:415 widgets/carousel_ibox.php:453 widgets/carousel_ibox.php:744
+#: widgets/carousel_ibox.php:2276 widgets/heading.php:288 widgets/popover_btn.php:258 widgets/post_slider.php:302 widgets/post_slider.php:320
+#: widgets/post_slider.php:338 widgets/post_slider.php:742 widgets/section.php:536 widgets/section.php:1045
+msgid "Bottom"
+msgstr ""
+
+#: widgets/blog_grid.php:391 widgets/post_slider.php:314
+msgid "Author"
+msgstr ""
+
+#: widgets/blog_grid.php:409 widgets/blog_post_meta.php:136 widgets/post_slider.php:332
+msgid "Category"
+msgstr ""
+
+#: widgets/blog_grid.php:427 widgets/blog_grid.php:1503 widgets/blog_post_meta.php:399 widgets/blog_post_meta.php:783
+#: widgets/blog_post_meta.php:1017 widgets/blog_term.php:403 widgets/post_slider.php:350 widgets/post_slider.php:1479
+#: widgets/pricetable.php:1454
+msgid "Divider"
+msgstr ""
+
+#: widgets/blog_grid.php:436 widgets/blog_grid.php:455 widgets/blog_post_meta.php:637 widgets/blog_post_meta.php:649
+#: widgets/blog_post_meta.php:792 widgets/blog_post_meta.php:809 widgets/carousel_ibox.php:200 widgets/carousel_ibox.php:2126
+#: widgets/heading.php:99 widgets/popover_btn.php:138 widgets/popover_btn.php:283 widgets/popover_btn.php:658 widgets/post_slider.php:359
+#: widgets/post_slider.php:378 widgets/pricetable.php:435
+msgid "Text"
+msgstr ""
+
+#: widgets/blog_grid.php:490 widgets/blog_lists.php:275 widgets/post_slider.php:413
+msgid "Query"
+msgstr ""
+
+#: widgets/blog_grid.php:497 widgets/post_slider.php:420
+msgid "Selection"
+msgstr ""
+
+#: widgets/blog_grid.php:500 widgets/post_slider.php:423
+msgid "Select All"
+msgstr ""
+
+#: widgets/blog_grid.php:501 widgets/blog_grid.php:537 widgets/blog_lists.php:364 widgets/blog_pagination.php:280 widgets/post_slider.php:424
+#: widgets/post_slider.php:460
+msgid "By Category"
+msgstr ""
+
+#: widgets/blog_grid.php:502 widgets/post_slider.php:425
+msgid "By Tag"
+msgstr ""
+
+#: widgets/blog_grid.php:503 widgets/post_slider.php:426
+msgid "By IDs"
+msgstr ""
+
+#: widgets/blog_grid.php:504 widgets/post_slider.php:427
+msgid "Sticky Only"
+msgstr ""
+
+#: widgets/blog_grid.php:513 widgets/post_slider.php:436
+msgid "Select Category"
+msgstr ""
+
+#: widgets/blog_grid.php:549 widgets/post_slider.php:472
+msgid "Select Tag"
+msgstr ""
+
+#: widgets/blog_grid.php:573 widgets/post_slider.php:496
+msgid "By Tags"
+msgstr ""
+
+#: widgets/blog_grid.php:586 widgets/post_slider.php:509
+msgid "Post ID"
+msgstr ""
+
+#: widgets/blog_grid.php:589 widgets/post_slider.php:512
+msgid "Type post IDs. Seperated by comma"
+msgstr ""
+
+#: widgets/blog_grid.php:601
+msgid "Post Per Page"
+msgstr ""
+
+#: widgets/blog_grid.php:614 widgets/post_slider.php:535
+msgid "Post Offset"
+msgstr ""
+
+#: widgets/blog_grid.php:626 widgets/blog_lists.php:318 widgets/blog_pagination.php:234 widgets/blog_post_related.php:158
+msgid "Featured Image Only"
+msgstr ""
+
+#: widgets/blog_grid.php:638 widgets/blog_lists.php:329 widgets/blog_pagination.php:245
+msgid "Exclude Current Post?"
+msgstr ""
+
+#: widgets/blog_grid.php:643 widgets/blog_lists.php:334 widgets/blog_pagination.php:250
+msgid "Select yes if current active post not showing in the listing."
+msgstr ""
+
+#: widgets/blog_grid.php:651 widgets/post_slider.php:563
+msgid "Exclude Previous Post"
+msgstr ""
+
+#: widgets/blog_grid.php:656 widgets/post_slider.php:568
+msgid "Exclude post from previous module"
+msgstr ""
+
+#: widgets/blog_grid.php:666 widgets/blog_grid.php:2353 widgets/slideshow.php:624 widgets/slideshow.php:1547
+msgid "Pagination"
+msgstr ""
+
+#: widgets/blog_grid.php:674
+msgid "Enable"
+msgstr ""
+
+#: widgets/blog_grid.php:688
+msgid "Paging"
+msgstr ""
+
+#: widgets/blog_grid.php:689
+msgid "Previous / Next"
+msgstr ""
+
+#: widgets/blog_grid.php:702
+msgid "Base URL"
+msgstr ""
+
+#: widgets/blog_grid.php:705
+msgid "This Page ( default )"
+msgstr ""
+
+#: widgets/blog_grid.php:706
+msgid "Blog Page"
+msgstr ""
+
+#: widgets/blog_grid.php:707 widgets/blog_post_adjacent.php:149 widgets/blog_post_share.php:204 widgets/heading.php:734 widgets/heading.php:796
+#: widgets/section.php:86 widgets/section.php:148 widgets/section.php:322 widgets/section.php:802 widgets/section.php:864
+#: widgets/slideshow.php:508 widgets/slideshow.php:549
+msgid "Custom"
+msgstr ""
+
+#: widgets/blog_grid.php:720 widgets/blog_post_adjacent.php:180 widgets/blog_post_share.php:213 widgets/carousel_ibox.php:128
+#: widgets/carousel_ibox.php:2001 widgets/heading.php:158 widgets/pricetable.php:448 widgets/slideshow.php:220 widgets/slideshow.php:274
+msgid "Link"
+msgstr ""
+
+#: widgets/blog_grid.php:728
+msgid "Select the page url for next page."
+msgstr ""
+
+#: widgets/blog_grid.php:745
+msgid "Grid Style"
+msgstr ""
+
+#: widgets/blog_grid.php:754 widgets/carousel_ibox.php:506 widgets/carousel_ibox.php:658 widgets/carousel_ibox.php:814
+#: widgets/carousel_ibox.php:2187 widgets/carousel_ibox.php:2349 widgets/post_slider.php:795
+msgid "Min Height"
+msgstr ""
+
+#: widgets/blog_grid.php:780
+msgid "Gutter Size"
+msgstr ""
+
+#: widgets/blog_grid.php:850 widgets/blog_grid.php:962 widgets/blog_grid.php:1402 widgets/blog_grid.php:1437 widgets/blog_grid.php:1619
+#: widgets/blog_grid.php:1654 widgets/blog_grid.php:1781 widgets/blog_grid.php:1815 widgets/blog_grid.php:1941 widgets/blog_grid.php:1976
+#: widgets/blog_grid.php:2176 widgets/blog_grid.php:2208 widgets/blog_grid.php:2510 widgets/blog_grid.php:2544 widgets/blog_grid.php:2590
+#: widgets/blog_lists.php:441 widgets/blog_lists.php:462 widgets/blog_pagination.php:357 widgets/blog_pagination.php:378
+#: widgets/blog_post_meta.php:325 widgets/blog_post_meta.php:360 widgets/blog_post_meta.php:910 widgets/blog_post_meta.php:945
+#: widgets/blog_post_related.php:353 widgets/blog_post_related.php:374 widgets/blog_post_related.php:475 widgets/blog_post_related.php:496
+#: widgets/blog_post_share.php:256 widgets/blog_post_share.php:278 widgets/blog_term.php:329 widgets/blog_term.php:364
+#: widgets/carousel_ibox.php:597 widgets/carousel_ibox.php:896 widgets/carousel_ibox.php:937 widgets/carousel_ibox.php:1252
+#: widgets/carousel_ibox.php:1305 widgets/carousel_ibox.php:1548 widgets/carousel_ibox.php:1617 widgets/carousel_ibox.php:2431
+#: widgets/carousel_ibox.php:2473 widgets/carousel_ibox.php:2791 widgets/carousel_ibox.php:2846 widgets/popover_btn.php:341
+#: widgets/popover_btn.php:375 widgets/popover_btn.php:501 widgets/post_slider.php:886 widgets/post_slider.php:1160
+#: widgets/post_slider.php:1378 widgets/post_slider.php:1413 widgets/post_slider.php:1686 widgets/post_slider.php:1719
+#: widgets/post_slider.php:1952 widgets/post_slider.php:2022 widgets/pricetable.php:608 widgets/pricetable.php:744 widgets/pricetable.php:883
+#: widgets/pricetable.php:1304 widgets/pricetable.php:1339 widgets/pricetable.php:1545 widgets/site_navigation.php:272
+#: widgets/site_navigation.php:303 widgets/site_navigation.php:350 widgets/site_navigation.php:646 widgets/site_navigation.php:677
+#: widgets/site_navigation.php:724 widgets/site_navigation.php:783 widgets/site_navigation.php:890 widgets/site_navigation.php:962
+#: widgets/site_navigation.php:1016 widgets/site_navigation.php:1173 widgets/site_navigation.php:1205 widgets/slideshow.php:411
+#: widgets/slideshow.php:1466 widgets/slideshow.php:1511 widgets/toggle_period.php:317 widgets/toggle_period.php:356 widgets/totop_btn.php:338
+#: widgets/totop_btn.php:372
+msgid "Background"
+msgstr ""
+
+#: widgets/blog_grid.php:884 widgets/carousel_ibox.php:758 widgets/carousel_ibox.php:2292 widgets/post_slider.php:1080
+#: widgets/pricetable.php:577 widgets/pricetable.php:1220 widgets/slideshow.php:312
+msgid "Content Align"
+msgstr ""
+
+#: widgets/blog_grid.php:892 widgets/blog_grid.php:2079 widgets/blog_grid.php:2373 widgets/blog_image.php:110 widgets/blog_lists.php:514
+#: widgets/blog_pagination.php:430 widgets/blog_post_adjacent.php:196 widgets/blog_post_meta.php:241 widgets/blog_post_meta.php:764
+#: widgets/blog_post_related.php:655 widgets/blog_post_related.php:771 widgets/blog_term.php:244 widgets/carousel_ibox.php:416
+#: widgets/carousel_ibox.php:766 widgets/carousel_ibox.php:1117 widgets/carousel_ibox.php:2300 widgets/carousel_ibox.php:2653
+#: widgets/heading.php:235 widgets/heading.php:309 widgets/post_slider.php:705 widgets/post_slider.php:1088 widgets/post_slider.php:1570
+#: widgets/pricetable.php:585 widgets/pricetable.php:1190 widgets/pricetable.php:1228 widgets/progress.php:59 widgets/section.php:370
+#: widgets/slideshow.php:296 widgets/slideshow.php:320 widgets/slideshow.php:1567 widgets/toggle_period.php:163 widgets/totop_btn.php:147
+msgid "Center"
+msgstr ""
+
+#: widgets/blog_grid.php:900 widgets/carousel_ibox.php:774 widgets/carousel_ibox.php:2308 widgets/post_slider.php:1096
+#: widgets/pricetable.php:593 widgets/pricetable.php:1236
+msgid "Justify"
+msgstr ""
+
+#: widgets/blog_grid.php:988 widgets/blog_image.php:45 widgets/blog_post_related.php:179 widgets/blog_post_related.php:555
+msgid "Featured Image"
+msgstr ""
+
+#: widgets/blog_grid.php:999 widgets/blog_grid.php:1029 widgets/blog_image.php:199 widgets/blog_post_related.php:566
+#: widgets/carousel_ibox.php:631 widgets/carousel_ibox.php:788 widgets/carousel_ibox.php:2160 widgets/carousel_ibox.php:2323
+#: widgets/post_slider.php:921 widgets/post_slider.php:951 widgets/slideshow.php:545 widgets/slideshow.php:1612 widgets/totop_btn.php:187
+msgid "Height"
+msgstr ""
+
+#: widgets/blog_grid.php:1061 widgets/post_slider.php:983
+msgid "Width (%)"
+msgstr ""
+
+#: widgets/blog_grid.php:1147 widgets/blog_grid.php:1202 widgets/blog_grid.php:1270 widgets/blog_grid.php:1685 widgets/blog_grid.php:1846
+#: widgets/blog_grid.php:2007 widgets/blog_grid.php:2108 widgets/blog_grid.php:2394 widgets/carousel_ibox.php:841
+#: widgets/carousel_ibox.php:1027 widgets/carousel_ibox.php:1080 widgets/carousel_ibox.php:1185 widgets/carousel_ibox.php:1479
+#: widgets/carousel_ibox.php:2376 widgets/carousel_ibox.php:2563 widgets/carousel_ibox.php:2616 widgets/carousel_ibox.php:2721
+#: widgets/post_slider.php:1008 widgets/post_slider.php:1226 widgets/post_slider.php:1294 widgets/post_slider.php:1617
+#: widgets/post_slider.php:1878
+msgid "Margin"
+msgstr ""
+
+#: widgets/blog_grid.php:1161 widgets/blog_lists.php:725 widgets/blog_pagination.php:610 widgets/blog_post_adjacent.php:148
+#: widgets/blog_post_related.php:639 widgets/post_slider.php:1184
+msgid "Post Title"
+msgstr ""
+
+#: widgets/blog_grid.php:1177 widgets/blog_grid.php:1239 widgets/blog_grid.php:1389 widgets/blog_grid.php:1424 widgets/blog_grid.php:1541
+#: widgets/blog_grid.php:1606 widgets/blog_grid.php:1641 widgets/blog_grid.php:1768 widgets/blog_grid.php:1802 widgets/blog_grid.php:1929
+#: widgets/blog_grid.php:1963 widgets/blog_grid.php:2164 widgets/blog_grid.php:2196 widgets/blog_grid.php:2497 widgets/blog_grid.php:2532
+#: widgets/blog_grid.php:2578 widgets/blog_lists.php:622 widgets/blog_lists.php:751 widgets/blog_lists.php:823 widgets/blog_lists.php:912
+#: widgets/blog_lists.php:992 widgets/blog_pagination.php:500 widgets/blog_pagination.php:626 widgets/blog_pagination.php:709
+#: widgets/blog_post_meta.php:312 widgets/blog_post_meta.php:347 widgets/blog_post_meta.php:438 widgets/blog_post_meta.php:897
+#: widgets/blog_post_meta.php:932 widgets/blog_post_meta.php:1056 widgets/blog_post_related.php:704 widgets/blog_post_related.php:820
+#: widgets/blog_post_related.php:871 widgets/blog_post_related.php:927 widgets/blog_post_share.php:385 widgets/blog_post_share.php:459
+#: widgets/blog_term.php:316 widgets/blog_term.php:351 widgets/blog_term.php:442 widgets/carousel_ibox.php:1002 widgets/carousel_ibox.php:1064
+#: widgets/carousel_ibox.php:1240 widgets/carousel_ibox.php:1293 widgets/carousel_ibox.php:1535 widgets/carousel_ibox.php:1570
+#: widgets/carousel_ibox.php:1604 widgets/carousel_ibox.php:2538 widgets/carousel_ibox.php:2600 widgets/carousel_ibox.php:2779
+#: widgets/carousel_ibox.php:2834 widgets/heading.php:344 widgets/heading.php:424 widgets/heading.php:509 widgets/heading.php:591
+#: widgets/popover_btn.php:329 widgets/popover_btn.php:361 widgets/popover_btn.php:579 widgets/popover_btn.php:626 widgets/popover_btn.php:668
+#: widgets/post_slider.php:1201 widgets/post_slider.php:1263 widgets/post_slider.php:1365 widgets/post_slider.php:1400
+#: widgets/post_slider.php:1517 widgets/post_slider.php:1674 widgets/post_slider.php:1707 widgets/post_slider.php:1937
+#: widgets/post_slider.php:1975 widgets/post_slider.php:2009 widgets/pricetable.php:678 widgets/pricetable.php:794 widgets/pricetable.php:867
+#: widgets/pricetable.php:1013 widgets/pricetable.php:1291 widgets/pricetable.php:1326 widgets/pricetable.php:1389 widgets/pricetable.php:1463
+#: widgets/site_navigation.php:261 widgets/site_navigation.php:292 widgets/site_navigation.php:338 widgets/site_navigation.php:635
+#: widgets/site_navigation.php:666 widgets/site_navigation.php:712 widgets/site_navigation.php:949 widgets/site_navigation.php:1003
+#: widgets/site_navigation.php:1161 widgets/site_navigation.php:1193 widgets/slideshow.php:738 widgets/slideshow.php:820
+#: widgets/slideshow.php:868 widgets/slideshow.php:1069 widgets/slideshow.php:1132 widgets/slideshow.php:1206 widgets/slideshow.php:1253
+#: widgets/slideshow.php:1450 widgets/slideshow.php:1495 widgets/slideshow.php:1723 widgets/slideshow.php:1751 widgets/toggle_period.php:303
+#: widgets/toggle_period.php:343 widgets/totop_btn.php:325 widgets/totop_btn.php:358
+msgid "Color"
+msgstr ""
+
+#: widgets/blog_grid.php:1217 widgets/blog_lists.php:799 widgets/post_slider.php:1239
+msgid "Post Excerpt"
+msgstr ""
+
+#: widgets/blog_grid.php:1287 widgets/blog_post_meta.php:584 widgets/blog_post_related.php:834 widgets/post_slider.php:1311
+msgid "Post Meta"
+msgstr ""
+
+#: widgets/blog_grid.php:1299 widgets/blog_grid.php:1575
+msgid "Date Styles"
+msgstr ""
+
+#: widgets/blog_grid.php:1314 widgets/blog_grid.php:1740
+msgid "Author Styles"
+msgstr ""
+
+#: widgets/blog_grid.php:1330 widgets/blog_grid.php:1899
+msgid "Category Styles"
+msgstr ""
+
+#: widgets/blog_grid.php:1381 widgets/blog_grid.php:1598 widgets/blog_grid.php:1761 widgets/blog_grid.php:1921 widgets/blog_grid.php:2157
+#: widgets/blog_grid.php:2490 widgets/blog_lists.php:434 widgets/blog_pagination.php:350 widgets/blog_post_meta.php:304
+#: widgets/blog_post_meta.php:889 widgets/blog_post_related.php:346 widgets/blog_post_related.php:468 widgets/blog_post_share.php:248
+#: widgets/blog_term.php:308 widgets/carousel_ibox.php:286 widgets/carousel_ibox.php:889 widgets/carousel_ibox.php:1233
+#: widgets/carousel_ibox.php:1528 widgets/carousel_ibox.php:2098 widgets/carousel_ibox.php:2423 widgets/carousel_ibox.php:2771
+#: widgets/heading.php:467 widgets/heading.php:551 widgets/popover_btn.php:322 widgets/post_slider.php:1357 widgets/post_slider.php:1666
+#: widgets/post_slider.php:1930 widgets/pricetable.php:1283 widgets/pricetable.php:1672 widgets/site_navigation.php:253
+#: widgets/site_navigation.php:627 widgets/site_navigation.php:941 widgets/slideshow.php:1050 widgets/slideshow.php:1439
+#: widgets/slideshow.php:1713 widgets/toggle_period.php:295 widgets/totop_btn.php:318
+msgid "Normal"
+msgstr ""
+
+#: widgets/blog_grid.php:1416 widgets/blog_grid.php:1633 widgets/blog_grid.php:1795 widgets/blog_grid.php:1955 widgets/blog_grid.php:2189
+#: widgets/blog_grid.php:2571 widgets/blog_lists.php:455 widgets/blog_pagination.php:371 widgets/blog_post_meta.php:339
+#: widgets/blog_post_meta.php:924 widgets/blog_post_related.php:367 widgets/blog_post_related.php:489 widgets/blog_post_share.php:270
+#: widgets/blog_term.php:343 widgets/carousel_ibox.php:930 widgets/carousel_ibox.php:1286 widgets/carousel_ibox.php:1597
+#: widgets/carousel_ibox.php:2466 widgets/carousel_ibox.php:2826 widgets/post_slider.php:1392 widgets/post_slider.php:1699
+#: widgets/post_slider.php:2002 widgets/pricetable.php:1318 widgets/pricetable.php:1704 widgets/site_navigation.php:284
+#: widgets/site_navigation.php:658 widgets/slideshow.php:1189 widgets/slideshow.php:1484 widgets/totop_btn.php:351
+msgid "Hover"
+msgstr ""
+
+#: widgets/blog_grid.php:1450 widgets/blog_grid.php:1667 widgets/blog_grid.php:1828 widgets/blog_grid.php:1989 widgets/blog_grid.php:2556
+#: widgets/blog_grid.php:2602 widgets/blog_lists.php:474 widgets/blog_pagination.php:390 widgets/blog_post_meta.php:373
+#: widgets/blog_post_meta.php:958 widgets/blog_post_related.php:386 widgets/blog_post_related.php:508 widgets/blog_post_share.php:291
+#: widgets/blog_term.php:377 widgets/carousel_ibox.php:1582 widgets/carousel_ibox.php:1630 widgets/popover_btn.php:388
+#: widgets/post_slider.php:1426 widgets/post_slider.php:1987 widgets/post_slider.php:2035 widgets/pricetable.php:1734
+#: widgets/site_navigation.php:314 widgets/site_navigation.php:362 widgets/site_navigation.php:688 widgets/site_navigation.php:736
+#: widgets/site_navigation.php:976 widgets/site_navigation.php:1029 widgets/slideshow.php:1228 widgets/slideshow.php:1276
+#: widgets/totop_btn.php:384
+msgid "Border Color"
+msgstr ""
+
+#: widgets/blog_grid.php:2071 widgets/blog_grid.php:2365 widgets/post_slider.php:1562
+msgid "Align"
+msgstr ""
+
+#: widgets/blog_grid.php:2087 widgets/blog_grid.php:2381 widgets/carousel_ibox.php:424 widgets/popover_btn.php:166 widgets/post_slider.php:713
+#: widgets/post_slider.php:1578 widgets/pricetable.php:1609 widgets/section.php:320
+msgid "Full Width"
+msgstr ""
+
+#: widgets/blog_grid.php:2219 widgets/carousel_ibox.php:948 widgets/carousel_ibox.php:1316 widgets/carousel_ibox.php:2484
+#: widgets/carousel_ibox.php:2857 widgets/post_slider.php:1730 widgets/slideshow.php:1526 widgets/slideshow.php:1766
+msgid "Border"
+msgstr ""
+
+#: widgets/blog_grid.php:2284 widgets/button.php:39 widgets/section.php:639 widgets/section.php:651
+msgid "Rotate"
+msgstr ""
+
+#: widgets/blog_grid.php:2408
+msgid "Min Width"
+msgstr ""
+
+#: widgets/blog_grid.php:2421
+msgid "Item Spacing"
+msgstr ""
+
+#: widgets/blog_grid.php:2523 widgets/carousel_ibox.php:1562 widgets/post_slider.php:1966
+msgid "Current"
+msgstr ""
+
+#: widgets/blog_image.php:85 widgets/blog_image.php:135 widgets/blog_lists.php:641 widgets/blog_pagination.php:533
+#: widgets/carousel_ibox.php:144 widgets/carousel_ibox.php:2016
+msgid "Image"
+msgstr ""
+
+#: widgets/blog_image.php:102 widgets/blog_lists.php:506 widgets/blog_pagination.php:422 widgets/blog_post_adjacent.php:188
+#: widgets/blog_post_meta.php:233 widgets/blog_post_meta.php:756 widgets/blog_post_related.php:647 widgets/blog_post_related.php:763
+#: widgets/blog_term.php:236 widgets/heading.php:227 widgets/heading.php:301 widgets/popover_btn.php:150 widgets/progress.php:51
+#: widgets/slideshow.php:288
+msgid "Alignment"
+msgstr ""
+
+#: widgets/blog_image.php:144 widgets/blog_lists.php:596 widgets/blog_lists.php:649 widgets/blog_pagination.php:474
+#: widgets/blog_pagination.php:541 widgets/carousel_ibox.php:1136 widgets/carousel_ibox.php:2672 widgets/heading.php:636
+#: widgets/popover_btn.php:480 widgets/pricetable.php:1601 widgets/section.php:315 widgets/site_navigation.php:473
+#: widgets/site_navigation.php:1062 widgets/slideshow.php:504 widgets/slideshow.php:944 widgets/slideshow.php:1632 widgets/totop_btn.php:206
+#: widgets/totop_btn.php:428
+msgid "Width"
+msgstr ""
+
+#: widgets/blog_image.php:171
+msgid "Max Width"
+msgstr ""
+
+#: widgets/blog_image.php:222
+msgid "Image Fit"
+msgstr ""
+
+#: widgets/blog_image.php:225 widgets/blog_term.php:198 widgets/heading.php:197 widgets/heading.php:466 widgets/heading.php:550
+#: widgets/section.php:319 widgets/section.php:408 widgets/site_navigation.php:126 widgets/slideshow.php:761
+msgid "Default"
+msgstr ""
+
+#: widgets/blog_image.php:226
+msgid "Cover"
+msgstr ""
+
+#: widgets/blog_image.php:227
+msgid "Contain"
+msgstr ""
+
+#: widgets/blog_lists.php:79
+msgid "Recent Posts"
+msgstr ""
+
+#: widgets/blog_lists.php:126 widgets/blog_pagination.php:127
+msgid "Show Image"
+msgstr ""
+
+#: widgets/blog_lists.php:214
+msgid "Display category?"
+msgstr ""
+
+#: widgets/blog_lists.php:220 widgets/blog_lists.php:249
+msgid "After Content"
+msgstr ""
+
+#: widgets/blog_lists.php:231
+msgid "Category prefix"
+msgstr ""
+
+#: widgets/blog_lists.php:243 widgets/blog_pagination.php:178
+msgid "Display post date?"
+msgstr ""
+
+#: widgets/blog_lists.php:250
+msgid "Before Category"
+msgstr ""
+
+#: widgets/blog_lists.php:251
+msgid "After Category"
+msgstr ""
+
+#: widgets/blog_lists.php:260
+msgid "Date Prefix"
+msgstr ""
+
+#: widgets/blog_lists.php:282 widgets/blog_pagination.php:198
+msgid "Order By"
+msgstr ""
+
+#: widgets/blog_lists.php:285 widgets/blog_pagination.php:201
+msgid "Latest Post"
+msgstr ""
+
+#: widgets/blog_lists.php:286 widgets/blog_pagination.php:202
+msgid "Most Read"
+msgstr ""
+
+#: widgets/blog_lists.php:287 widgets/blog_pagination.php:203
+msgid "Most Comment"
+msgstr ""
+
+#: widgets/blog_lists.php:296 widgets/blog_pagination.php:212 widgets/blog_post_related.php:146
+msgid "Post Count"
+msgstr ""
+
+#: widgets/blog_lists.php:309 widgets/blog_pagination.php:225
+msgid "Filter"
+msgstr ""
+
+#: widgets/blog_lists.php:340 widgets/blog_pagination.php:256
+msgid "All Category"
+msgstr ""
+
+#: widgets/blog_lists.php:341 widgets/blog_pagination.php:257
+msgid "Same This Post"
+msgstr ""
+
+#: widgets/blog_lists.php:383 widgets/blog_pagination.php:299 widgets/blog_term.php:173
+msgid "List Style"
+msgstr ""
+
+#: widgets/blog_lists.php:493 widgets/blog_pagination.php:409
+msgid "Show Divider"
+msgstr ""
+
+#: widgets/blog_lists.php:533 widgets/blog_post_meta.php:634 widgets/carousel_ibox.php:394 widgets/post_slider.php:683
+msgid "Type"
+msgstr ""
+
+#: widgets/blog_lists.php:537 widgets/popover_btn.php:546
+msgid "Solid"
+msgstr ""
+
+#: widgets/blog_lists.php:538 widgets/popover_btn.php:547
+msgid "Double"
+msgstr ""
+
+#: widgets/blog_lists.php:539 widgets/popover_btn.php:548
+msgid "Dotted"
+msgstr ""
+
+#: widgets/blog_lists.php:540 widgets/popover_btn.php:549
+msgid "Dashed"
+msgstr ""
+
+#: widgets/blog_lists.php:541 widgets/popover_btn.php:550
+msgid "Groove"
+msgstr ""
+
+#: widgets/blog_lists.php:557 widgets/blog_pagination.php:515 widgets/site_navigation.php:1101
+msgid "Line Radius"
+msgstr ""
+
+#: widgets/blog_lists.php:684 widgets/blog_pagination.php:576
+msgid "Gap with Content"
+msgstr ""
+
+#: widgets/blog_lists.php:863 widgets/blog_post_meta.php:640
+msgid "Post Category"
+msgstr ""
+
+#: widgets/blog_lists.php:942 widgets/blog_pagination.php:661 widgets/blog_post_meta.php:639
+msgid "Post Date"
+msgstr ""
+
+#: widgets/blog_pagination.php:80
+msgid "Blog Pagination"
+msgstr ""
+
+#: widgets/blog_pagination.php:191 widgets/blog_post_meta.php:624 widgets/blog_post_related.php:125
+msgid "Data"
+msgstr ""
+
+#: widgets/blog_post_adjacent.php:83
+msgid "Post Adjacent"
+msgstr ""
+
+#: widgets/blog_post_adjacent.php:123 widgets/blog_post_meta.php:125
+msgid "Term"
+msgstr ""
+
+#: widgets/blog_post_adjacent.php:131 widgets/blog_post_meta.php:133
+msgid "Source"
+msgstr ""
+
+#: widgets/blog_post_adjacent.php:134
+msgid "Previous Post"
+msgstr ""
+
+#: widgets/blog_post_adjacent.php:135 widgets/blog_post_adjacent.php:164
+msgid "Next Post"
+msgstr ""
+
+#: widgets/blog_post_adjacent.php:159
+msgid "Custom Label"
+msgstr ""
+
+#: widgets/blog_post_adjacent.php:222
+msgid "Normal Color"
+msgstr ""
+
+#: widgets/blog_post_meta.php:85
+msgid "Post Term"
+msgstr ""
+
+#: widgets/blog_post_meta.php:137
+msgid "Tags"
+msgstr ""
+
+#: widgets/blog_post_meta.php:147 widgets/blog_post_meta.php:679
+msgid "Linked"
+msgstr ""
+
+#: widgets/blog_post_meta.php:162
+msgid "Horizontal"
+msgstr ""
+
+#: widgets/blog_post_meta.php:166 widgets/carousel_ibox.php:441 widgets/post_slider.php:730
+msgid "Vertical"
+msgstr ""
+
+#: widgets/blog_post_meta.php:179
+msgid "Separator"
+msgstr ""
+
+#: widgets/blog_post_meta.php:185
+msgid "Only horizontal mode."
+msgstr ""
+
+#: widgets/blog_post_meta.php:199 widgets/blog_term.php:164
+msgid "List"
+msgstr ""
+
+#: widgets/blog_post_meta.php:638
+msgid "Post Author"
+msgstr ""
+
+#: widgets/blog_post_meta.php:655
+msgid "Text Here"
+msgstr ""
+
+#: widgets/blog_post_meta.php:665
+msgid "Prefix"
+msgstr ""
+
+#: widgets/blog_post_meta.php:692
+msgid "Your Link"
+msgstr ""
+
+#: widgets/blog_post_meta.php:698 widgets/carousel_ibox.php:133 widgets/carousel_ibox.php:2006 widgets/pricetable.php:453
+#: widgets/pricetable.php:471
+msgid "https://your-link.com"
+msgstr ""
+
+#: widgets/blog_post_meta.php:723
+msgid "Selected Info"
+msgstr ""
+
+#: widgets/blog_post_meta.php:847
+msgid "Meta"
+msgstr ""
+
+#: widgets/blog_post_related.php:85
+msgid "Post Related"
+msgstr ""
+
+#: widgets/blog_post_related.php:132
+msgid "Related In"
+msgstr ""
+
+#: widgets/blog_post_related.php:135
+msgid "Same Tag"
+msgstr ""
+
+#: widgets/blog_post_related.php:136
+msgid "Same Category"
+msgstr ""
+
+#: widgets/blog_post_related.php:137
+msgid "Same Tag or Category"
+msgstr ""
+
+#: widgets/blog_post_related.php:202 widgets/carousel_ibox.php:281 widgets/carousel_ibox.php:2093
+msgid "Show Content"
+msgstr ""
+
+#: widgets/blog_post_related.php:225
+msgid "Display post meta?"
+msgstr ""
+
+#: widgets/blog_post_related.php:255
+msgid "Box Style"
+msgstr ""
+
+#: widgets/blog_post_related.php:264
+msgid "Wide"
+msgstr ""
+
+#: widgets/blog_post_related.php:284 widgets/pricetable.php:967 widgets/slideshow.php:964
+msgid "Horizontal Spacing"
+msgstr ""
+
+#: widgets/blog_post_related.php:304 widgets/pricetable.php:941 widgets/slideshow.php:983
+msgid "Vertical Spacing"
+msgstr ""
+
+#: widgets/blog_post_related.php:405 widgets/blog_post_related.php:540 widgets/blog_post_related.php:624 widgets/site_navigation.php:529
+msgid "Box Radius"
+msgstr ""
+
+#: widgets/blog_post_related.php:523 widgets/pricetable.php:1679 widgets/pricetable.php:1711
+msgid "Text Color"
+msgstr ""
+
+#: widgets/blog_post_related.php:663 widgets/blog_post_related.php:779 widgets/heading.php:243
+msgid "Justified"
+msgstr ""
+
+#: widgets/blog_post_related.php:752
+msgid "Post Content"
+msgstr ""
+
+#: widgets/blog_post_related.php:939
+msgid "Icon Size"
+msgstr ""
+
+#: widgets/blog_post_related.php:958 widgets/icon_list.php:77
+msgid "Text Indent"
+msgstr ""
+
+#: widgets/blog_post_share.php:86
+msgid "Post Share"
+msgstr ""
+
+#: widgets/blog_post_share.php:154 widgets/blog_post_share.php:237
+msgid "Share"
+msgstr ""
+
+#: widgets/blog_post_share.php:197
+msgid "Share For"
+msgstr ""
+
+#: widgets/blog_post_share.php:200
+msgid "Facebook"
+msgstr ""
+
+#: widgets/blog_post_share.php:201
+msgid "Twitter"
+msgstr ""
+
+#: widgets/blog_post_share.php:202
+msgid "Google Plus"
+msgstr ""
+
+#: widgets/blog_post_share.php:203
+msgid "Pinterest"
+msgstr ""
+
+#: widgets/blog_post_share.php:218
+#, php-format
+msgid "https://your-link.com/shared=%s"
+msgstr ""
+
+#: widgets/blog_post_share.php:222
+#, php-format
+msgid "The link will add post permalink. Place %s as permalink placehorlder."
+msgstr ""
+
+#: widgets/blog_post_share.php:358 widgets/carousel_ibox.php:408 widgets/carousel_ibox.php:732 widgets/carousel_ibox.php:1109
+#: widgets/carousel_ibox.php:2264 widgets/carousel_ibox.php:2645 widgets/heading.php:283 widgets/icon_list.php:47 widgets/popover_btn.php:242
+#: widgets/post_slider.php:697 widgets/pricetable.php:204 widgets/pricetable.php:326 widgets/pricetable.php:1128 widgets/section.php:404
+#: widgets/slideshow.php:1320 widgets/toggle_period.php:155 widgets/totop_btn.php:139
+msgid "Position"
+msgstr ""
+
+#: widgets/blog_term.php:84
+msgid "Blog Term"
+msgstr ""
+
+#: widgets/blog_term.php:124 widgets/blog_term.php:132
+msgid "Mode"
+msgstr ""
+
+#: widgets/blog_term.php:135
+msgid "Categories"
+msgstr ""
+
+#: widgets/blog_term.php:136
+msgid "Tag Cloud"
+msgstr ""
+
+#: widgets/blog_term.php:147
+msgid "Hide Empty"
+msgstr ""
+
+#: widgets/blog_term.php:176
+msgid "Disk"
+msgstr ""
+
+#: widgets/blog_term.php:177
+msgid "Circle"
+msgstr ""
+
+#: widgets/blog_term.php:178
+msgid "Square"
+msgstr ""
+
+#: widgets/blog_term.php:195
+msgid "List Position"
+msgstr ""
+
+#: widgets/blog_term.php:199 widgets/pricetable.php:183
+msgid "Inside"
+msgstr ""
+
+#: widgets/blog_term.php:200 widgets/pricetable.php:184
+msgid "Outside"
+msgstr ""
+
+#: widgets/carousel_ibox.php:80
+msgid "imBox Carousel"
+msgstr ""
+
+#: widgets/carousel_ibox.php:118 widgets/carousel_ibox.php:498
+msgid "Carousel Item"
+msgstr ""
+
+#: widgets/carousel_ibox.php:153 widgets/carousel_ibox.php:2052 widgets/slideshow.php:185 widgets/slideshow.php:238
+msgid "Button Text"
+msgstr ""
+
+#: widgets/carousel_ibox.php:155 widgets/carousel_ibox.php:1097 widgets/carousel_ibox.php:2054 widgets/carousel_ibox.php:2634
+#: widgets/popover_btn.php:131 widgets/popover_btn.php:304 widgets/pricetable.php:1592 widgets/slideshow.php:166 widgets/slideshow.php:898
+#: widgets/slideshow.php:928 widgets/totop_btn.php:121 widgets/totop_btn.php:178
+msgid "Button"
+msgstr ""
+
+#: widgets/carousel_ibox.php:186 widgets/carousel_ibox.php:985 widgets/carousel_ibox.php:2108 widgets/carousel_ibox.php:2521
+#: widgets/heading.php:88 widgets/popover_btn.php:269 widgets/popover_btn.php:615 widgets/pricetable.php:142 widgets/pricetable.php:660
+msgid "Title"
+msgstr ""
+
+#: widgets/carousel_ibox.php:192 widgets/carousel_ibox.php:2114 widgets/heading.php:132 widgets/popover_btn.php:275
+msgid "Enter your title"
+msgstr ""
+
+#: widgets/carousel_ibox.php:215 widgets/slideshow.php:338
+msgid "Slide Items"
+msgstr ""
+
+#: widgets/carousel_ibox.php:221
+msgid "Button #1"
+msgstr ""
+
+#: widgets/carousel_ibox.php:228
+msgid "Button #2"
+msgstr ""
+
+#: widgets/carousel_ibox.php:235
+msgid "Button #3"
+msgstr ""
+
+#: widgets/carousel_ibox.php:250 widgets/post_slider.php:578 widgets/slideshow.php:396
+msgid "Settings"
+msgstr ""
+
+#: widgets/carousel_ibox.php:265 widgets/carousel_ibox.php:2035
+msgid "Show Button"
+msgstr ""
+
+#: widgets/carousel_ibox.php:269 widgets/carousel_ibox.php:2039
+msgid "Over Box"
+msgstr ""
+
+#: widgets/carousel_ibox.php:270 widgets/carousel_ibox.php:285 widgets/carousel_ibox.php:2040 widgets/carousel_ibox.php:2097
+msgid "Over Image"
+msgstr ""
+
+#: widgets/carousel_ibox.php:271 widgets/carousel_ibox.php:2041
+msgid "Over Content Box"
+msgstr ""
+
+#: widgets/carousel_ibox.php:272 widgets/carousel_ibox.php:2042
+msgid "On Content Box"
+msgstr ""
+
+#: widgets/carousel_ibox.php:302 widgets/carousel_ibox.php:319 widgets/carousel_ibox.php:335 widgets/post_slider.php:592
+#: widgets/post_slider.php:608 widgets/post_slider.php:624
+msgid "Five Column"
+msgstr ""
+
+#: widgets/carousel_ibox.php:312 widgets/post_slider.php:601
+msgid "Tablet Layout"
+msgstr ""
+
+#: widgets/carousel_ibox.php:328 widgets/post_slider.php:617
+msgid "Mobile Layout"
+msgstr ""
+
+#: widgets/carousel_ibox.php:344 widgets/post_slider.php:633 widgets/slideshow.php:455
+msgid "Autoplay"
+msgstr ""
+
+#: widgets/carousel_ibox.php:355 widgets/post_slider.php:644
+msgid "Infinity Loop"
+msgstr ""
+
+#: widgets/carousel_ibox.php:366 widgets/post_slider.php:655 widgets/slideshow.php:466
+msgid "Slide Interval"
+msgstr ""
+
+#: widgets/carousel_ibox.php:375 widgets/post_slider.php:664 widgets/slideshow.php:482
+msgid "Slide Speed"
+msgstr ""
+
+#: widgets/carousel_ibox.php:387 widgets/carousel_ibox.php:1356 widgets/post_slider.php:676 widgets/post_slider.php:1750
+#: widgets/slideshow.php:586 widgets/slideshow.php:1295
+msgid "Navigation"
+msgstr ""
+
+#: widgets/carousel_ibox.php:397 widgets/post_slider.php:686
+msgid "Arrow"
+msgstr ""
+
+#: widgets/carousel_ibox.php:398 widgets/post_slider.php:687
+msgid "Dots"
+msgstr ""
+
+#: widgets/carousel_ibox.php:449 widgets/carousel_ibox.php:740 widgets/carousel_ibox.php:2272 widgets/post_slider.php:738
+#: widgets/section.php:1043
+msgid "Middle"
+msgstr ""
+
+#: widgets/carousel_ibox.php:467 widgets/post_slider.php:756
+msgid "Left Icon"
+msgstr ""
+
+#: widgets/carousel_ibox.php:479 widgets/post_slider.php:768
+msgid "Right Icon"
+msgstr ""
+
+#: widgets/carousel_ibox.php:623 widgets/carousel_ibox.php:2152 widgets/post_slider.php:913
+msgid "Image Box"
+msgstr ""
+
+#: widgets/carousel_ibox.php:908 widgets/carousel_ibox.php:963 widgets/carousel_ibox.php:1263 widgets/carousel_ibox.php:1331
+#: widgets/carousel_ibox.php:2444 widgets/carousel_ibox.php:2499 widgets/carousel_ibox.php:2803 widgets/carousel_ibox.php:2872
+msgid "Opacity"
+msgstr ""
+
+#: widgets/carousel_ibox.php:1158 widgets/carousel_ibox.php:2694 widgets/popover_btn.php:214 widgets/post_slider.php:1590
+#: widgets/pricetable.php:1633 widgets/slideshow.php:1102 widgets/slideshow.php:1166
+msgid "Icon Spacing"
+msgstr ""
+
+#: widgets/carousel_ibox.php:1367 widgets/post_slider.php:1763
+msgid "Size Width"
+msgstr ""
+
+#: widgets/carousel_ibox.php:1392 widgets/post_slider.php:1789
+msgid "Size Height"
+msgstr ""
+
+#: widgets/carousel_ibox.php:1851 widgets/post_slider.php:2445
+msgid "Prev"
+msgstr ""
+
+#: widgets/carousel_ibox.php:1954
+msgid "imBox"
+msgstr ""
+
+#: widgets/heading.php:48 widgets/slideshow.php:134 widgets/slideshow.php:721
+msgid "Heading"
+msgstr ""
+
+#: widgets/heading.php:96
+msgid "Title Source"
+msgstr ""
+
+#: widgets/heading.php:100
+msgid "Page Title"
+msgstr ""
+
+#: widgets/heading.php:101
+msgid "Site Title"
+msgstr ""
+
+#: widgets/heading.php:102
+msgid "Site Tagline"
+msgstr ""
+
+#: widgets/heading.php:103
+msgid "Year"
+msgstr ""
+
+#: widgets/heading.php:112 widgets/heading.php:411
+msgid "Prefix Title"
+msgstr ""
+
+#: widgets/heading.php:127 widgets/heading.php:335
+msgid "Main Title"
+msgstr ""
+
+#: widgets/heading.php:133
+msgid "Heading Text Here"
+msgstr ""
+
+#: widgets/heading.php:143 widgets/heading.php:496
+msgid "Suffix Title"
+msgstr ""
+
+#: widgets/heading.php:177
+msgid "Add Link"
+msgstr ""
+
+#: widgets/heading.php:194 widgets/popover_btn.php:121 widgets/pricetable.php:124
+msgid "Extra Large"
+msgstr ""
+
+#: widgets/heading.php:195 widgets/popover_btn.php:120 widgets/pricetable.php:123
+msgid "Large"
+msgstr ""
+
+#: widgets/heading.php:196 widgets/popover_btn.php:119 widgets/pricetable.php:122
+msgid "Medium"
+msgstr ""
+
+#: widgets/heading.php:198 widgets/popover_btn.php:118 widgets/pricetable.php:121
+msgid "Small"
+msgstr ""
+
+#: widgets/heading.php:199
+msgid "Extra small"
+msgstr ""
+
+#: widgets/heading.php:207
+msgid "HTML Tag"
+msgstr ""
+
+#: widgets/heading.php:260 widgets/heading.php:267 widgets/heading.php:580
+msgid "Decoration"
+msgstr ""
+
+#: widgets/heading.php:453 widgets/heading.php:537
+msgctxt "Typography Control"
+msgid "Weight"
+msgstr ""
+
+#: widgets/heading.php:468 widgets/heading.php:552
+msgid "Bold"
+msgstr ""
+
+#: widgets/heading.php:705 widgets/section.php:59 widgets/section.php:774
+msgid "Image Mask"
+msgstr ""
+
+#: widgets/heading.php:729 widgets/section.php:81 widgets/section.php:797
+msgid "Mask Size"
+msgstr ""
+
+#: widgets/heading.php:732 widgets/section.php:84 widgets/section.php:800
+msgid "Fit"
+msgstr ""
+
+#: widgets/heading.php:733 widgets/section.php:85 widgets/section.php:801
+msgid "Fill"
+msgstr ""
+
+#: widgets/heading.php:748 widgets/section.php:99 widgets/section.php:815
+msgid "Mask Scale"
+msgstr ""
+
+#: widgets/heading.php:784 widgets/section.php:136 widgets/section.php:852
+msgid "Mask Position"
+msgstr ""
+
+#: widgets/heading.php:787 widgets/section.php:139 widgets/section.php:855
+msgid "Center Center"
+msgstr ""
+
+#: widgets/heading.php:788 widgets/section.php:140 widgets/section.php:856
+msgid "Center Left"
+msgstr ""
+
+#: widgets/heading.php:789 widgets/section.php:141 widgets/section.php:857
+msgid "Center Right"
+msgstr ""
+
+#: widgets/heading.php:790 widgets/section.php:142 widgets/section.php:858
+msgid "Top Center"
+msgstr ""
+
+#: widgets/heading.php:791 widgets/section.php:143 widgets/section.php:859
+msgid "Top Left"
+msgstr ""
+
+#: widgets/heading.php:792 widgets/section.php:144 widgets/section.php:860
+msgid "Top Right"
+msgstr ""
+
+#: widgets/heading.php:793 widgets/section.php:145 widgets/section.php:861
+msgid "Bottom Center"
+msgstr ""
+
+#: widgets/heading.php:794 widgets/section.php:146 widgets/section.php:862
+msgid "Bottom Left"
+msgstr ""
+
+#: widgets/heading.php:795 widgets/section.php:147 widgets/section.php:863
+msgid "Bottom Right"
+msgstr ""
+
+#: widgets/heading.php:810 widgets/section.php:162 widgets/section.php:878
+msgid "Mask X Position"
+msgstr ""
+
+#: widgets/heading.php:846 widgets/section.php:198 widgets/section.php:914
+msgid "Mask Y Position"
+msgstr ""
+
+#: widgets/heading.php:882 widgets/section.php:235 widgets/section.php:951
+msgid "Mask Repeat"
+msgstr ""
+
+#: widgets/heading.php:885 widgets/section.php:238 widgets/section.php:954
+msgid "No-Repeat"
+msgstr ""
+
+#: widgets/heading.php:886 widgets/section.php:239 widgets/section.php:955
+msgid "Repeat"
+msgstr ""
+
+#: widgets/heading.php:887 widgets/section.php:240 widgets/section.php:956
+msgid "Repeat-X"
+msgstr ""
+
+#: widgets/heading.php:888 widgets/section.php:241 widgets/section.php:957
+msgid "Repeat-Y"
+msgstr ""
+
+#: widgets/heading.php:889 widgets/section.php:242 widgets/section.php:958
+msgid "Round"
+msgstr ""
+
+#: widgets/heading.php:890 widgets/section.php:243 widgets/section.php:959
+msgid "Space"
+msgstr ""
+
+#: widgets/icon_list.php:99
+msgid "Text Hidden"
+msgstr ""
+
+#: widgets/icon_list.php:144 widgets/icon_list.php:164 widgets/icon_list.php:253
+msgid "On Box Hover"
+msgstr ""
+
+#: widgets/icon_list.php:186 widgets/icon_list.php:262
+msgid "Primary Color"
+msgstr ""
+
+#: widgets/icon_list.php:199 widgets/icon_list.php:275
+msgid "Secondary Color"
+msgstr ""
+
+#: widgets/icon_list.php:226
+msgid "Top Offset"
+msgstr ""
+
+#: widgets/icon_list.php:301
+msgid "Stretch Box"
+msgstr ""
+
+#: widgets/popover_btn.php:81
+msgid "Popover Button"
+msgstr ""
+
+#: widgets/popover_btn.php:117 widgets/pricetable.php:120
+msgid "Extra Small"
+msgstr ""
+
+#: widgets/popover_btn.php:143 widgets/pricetable.php:440
+msgid "Click here"
+msgstr ""
+
+#: widgets/popover_btn.php:154 widgets/popover_btn.php:158 widgets/popover_btn.php:162 widgets/pricetable.php:1605
+msgid "Centered"
+msgstr ""
+
+#: widgets/popover_btn.php:235 widgets/popover_btn.php:471
+msgid "Popup Content"
+msgstr ""
+
+#: widgets/popover_btn.php:289
+msgid "Enter your description"
+msgstr ""
+
+#: widgets/popover_btn.php:354
+msgid "Hover/Clicked"
+msgstr ""
+
+#: widgets/popover_btn.php:403 widgets/totop_btn.php:449
+msgid "Icon Rotate"
+msgstr ""
+
+#: widgets/popover_btn.php:541
+msgid "Border Type"
+msgstr ""
+
+#: widgets/popover_btn.php:561 widgets/site_navigation.php:862 widgets/site_navigation.php:920
+msgid "Border Width"
+msgstr ""
+
+#: widgets/post_slider.php:80
+msgid "Post Slider"
+msgstr ""
+
+#: widgets/post_slider.php:119 widgets/post_slider.php:787
+msgid "Slide"
+msgstr ""
+
+#: widgets/post_slider.php:523
+msgid "Post to Show"
+msgstr ""
+
+#: widgets/post_slider.php:548
+msgid "Ignore Sticky"
+msgstr ""
+
+#: widgets/post_slider.php:553
+msgid "Sticky post ignored from ordering"
+msgstr ""
+
+#: widgets/pricetable.php:84
+msgid "Price Table"
+msgstr ""
+
+#: widgets/pricetable.php:135 widgets/pricetable.php:556
+msgid "Header"
+msgstr ""
+
+#: widgets/pricetable.php:144
+msgid "Enter package name"
+msgstr ""
+
+#: widgets/pricetable.php:151 widgets/pricetable.php:775
+msgid "Package Description"
+msgstr ""
+
+#: widgets/pricetable.php:153
+msgid "Enter package description"
+msgstr ""
+
+#: widgets/pricetable.php:195 widgets/pricetable.php:843
+msgid "Badge"
+msgstr ""
+
+#: widgets/pricetable.php:197
+msgid "Add badge on table. Leave blank if not use it."
+msgstr ""
+
+#: widgets/pricetable.php:234 widgets/pricetable.php:995
+msgid "Pricing"
+msgstr ""
+
+#: widgets/pricetable.php:241
+msgid "Price"
+msgstr ""
+
+#: widgets/pricetable.php:250
+msgid "Annual Price"
+msgstr ""
+
+#: widgets/pricetable.php:253
+msgid "Pricing for 2nd period"
+msgstr ""
+
+#: widgets/pricetable.php:264 widgets/pricetable.php:1060
+msgid "Currency Symbol"
+msgstr ""
+
+#: widgets/pricetable.php:273
+msgid "Show Period"
+msgstr ""
+
+#: widgets/pricetable.php:285 widgets/pricetable.php:312 widgets/pricetable.php:1118 widgets/toggle_period.php:121
+#: widgets/toggle_period.php:199
+msgid "Period"
+msgstr ""
+
+#: widgets/pricetable.php:287 widgets/toggle_period.php:134
+msgid "Monthly"
+msgstr ""
+
+#: widgets/pricetable.php:297
+msgid "2nd Period"
+msgstr ""
+
+#: widgets/pricetable.php:314 widgets/toggle_period.php:147
+msgid "Yearly"
+msgstr ""
+
+#: widgets/pricetable.php:330
+msgid "Before Description"
+msgstr ""
+
+#: widgets/pricetable.php:331
+msgid "After Description"
+msgstr ""
+
+#: widgets/pricetable.php:346
+msgid "Price Item"
+msgstr ""
+
+#: widgets/pricetable.php:348
+msgid "Lorem ipsum dolor sit amet"
+msgstr ""
+
+#: widgets/pricetable.php:367 widgets/pricetable.php:376 widgets/pricetable.php:1173
+msgid "Price Items"
+msgstr ""
+
+#: widgets/pricetable.php:381
+msgid "Price item #1"
+msgstr ""
+
+#: widgets/pricetable.php:384
+msgid "Price item #2"
+msgstr ""
+
+#: widgets/pricetable.php:387
+msgid "Price item #3"
+msgstr ""
+
+#: widgets/pricetable.php:401
+msgid "Footer & Button"
+msgstr ""
+
+#: widgets/pricetable.php:409 widgets/pricetable.php:1523
+msgid "Footer"
+msgstr ""
+
+#: widgets/pricetable.php:411 widgets/pricetable.php:423
+msgid "Hide"
+msgstr ""
+
+#: widgets/pricetable.php:412 widgets/pricetable.php:424
+msgid "Show"
+msgstr ""
+
+#: widgets/pricetable.php:421
+msgid "Action Button"
+msgstr ""
+
+#: widgets/pricetable.php:457
+msgid "The link will active when 2nd price period activated."
+msgstr ""
+
+#: widgets/pricetable.php:466
+msgid "Annual Link"
+msgstr ""
+
+#: widgets/pricetable.php:521
+msgid "Table"
+msgstr ""
+
+#: widgets/pricetable.php:530
+msgid "Scaling"
+msgstr ""
+
+#: widgets/pricetable.php:546
+msgid "Scale the table bigger or smaller. Normal no scalling"
+msgstr ""
+
+#: widgets/pricetable.php:1098 widgets/pricetable.php:1435 widgets/section.php:448 widgets/section.php:487 widgets/section.php:550
+#: widgets/section.php:588
+msgid "Offset"
+msgstr ""
+
+#: widgets/pricetable.php:1131
+msgid "Below"
+msgstr ""
+
+#: widgets/pricetable.php:1132
+msgid "Beside"
+msgstr ""
+
+#: widgets/pricetable.php:1182
+msgid "Content Position"
+msgstr ""
+
+#: widgets/pricetable.php:1351
+msgid "Icon Color"
+msgstr ""
+
+#: widgets/pricetable.php:1363
+msgid "Divider Color"
+msgstr ""
+
+#: widgets/pricetable.php:1691 widgets/pricetable.php:1723
+msgid "Background Color"
+msgstr ""
+
+#: widgets/pricetable.php:1748
+msgid "Hover Animation"
+msgstr ""
+
+#: widgets/progress.php:31
+msgid "Tip Radius"
+msgstr ""
+
+#: widgets/section.php:45 widgets/section.php:391 widgets/section.php:760
+msgid "Please note!"
+msgstr ""
+
+#: widgets/section.php:45 widgets/section.php:760
+msgid "Image mask only actived when overlay color background not empty."
+msgstr ""
+
+#: widgets/section.php:273
+msgid "Minimum Height"
+msgstr ""
+
+#: widgets/section.php:306
+msgid "Positioning"
+msgstr ""
+
+#: widgets/section.php:321
+msgid "Inline"
+msgstr ""
+
+#: widgets/section.php:337 widgets/slideshow.php:517
+msgid "Custom Width"
+msgstr ""
+
+#: widgets/section.php:362
+msgid "Vertical Align"
+msgstr ""
+
+#: widgets/section.php:366
+msgid "Start"
+msgstr ""
+
+#: widgets/section.php:374
+msgid "End"
+msgstr ""
+
+#: widgets/section.php:391
+msgid "Custom positioning is not considered best practice for responsive web design and should not be used too frequently."
+msgstr ""
+
+#: widgets/section.php:409
+msgid "Absolute"
+msgstr ""
+
+#: widgets/section.php:410
+msgid "Fixed"
+msgstr ""
+
+#: widgets/section.php:423
+msgid "Horizontal Orientation"
+msgstr ""
+
+#: widgets/section.php:526
+msgid "Vertical Orientation"
+msgstr ""
+
+#: widgets/section.php:629
+msgid "Transform"
+msgstr ""
+
+#: widgets/section.php:672
+msgid "3D Rotate"
+msgstr ""
+
+#: widgets/section.php:674
+msgid "On"
+msgstr ""
+
+#: widgets/section.php:675
+msgid "Off"
+msgstr ""
+
+#: widgets/section.php:688
+msgid "Rotate X"
+msgstr ""
+
+#: widgets/section.php:710
+msgid "Rotate Y"
+msgstr ""
+
+#: widgets/section.php:732
+msgid "Perspective"
+msgstr ""
+
+#: widgets/section.php:993
+msgid "Reverse Elements"
+msgstr ""
+
+#: widgets/section.php:1013
+msgid "Link Hover"
+msgstr ""
+
+#: widgets/section.php:1036
+msgid "Object Position"
+msgstr ""
+
+#: widgets/site_navigation.php:83
+msgid "Site Navigation"
+msgstr ""
+
+#: widgets/site_navigation.php:116
+msgid "All Pages"
+msgstr ""
+
+#: widgets/site_navigation.php:136
+msgid "Menu"
+msgstr ""
+
+#: widgets/site_navigation.php:143
+msgid "Select Menu"
+msgstr ""
+
+#: widgets/site_navigation.php:155
+msgid "Breakpoint"
+msgstr ""
+
+#: widgets/site_navigation.php:159 widgets/site_navigation.php:772
+msgid "Mobile"
+msgstr ""
+
+#: widgets/site_navigation.php:160
+msgid "Tablet"
+msgstr ""
+
+#: widgets/site_navigation.php:176
+msgid "Menu Item"
+msgstr ""
+
+#: widgets/site_navigation.php:231 widgets/site_navigation.php:605 widgets/site_navigation.php:846 widgets/site_navigation.php:903
+#: widgets/site_navigation.php:1137
+msgid "Radius"
+msgstr ""
+
+#: widgets/site_navigation.php:331 widgets/site_navigation.php:705 widgets/site_navigation.php:996
+msgid "Active"
+msgstr ""
+
+#: widgets/site_navigation.php:378 widgets/site_navigation.php:752
+msgid "Font Weight"
+msgstr ""
+
+#: widgets/site_navigation.php:395
+msgid "CARET"
+msgstr ""
+
+#: widgets/site_navigation.php:424
+msgid "H Spacing"
+msgstr ""
+
+#: widgets/site_navigation.php:443
+msgid "V Spacing"
+msgstr ""
+
+#: widgets/site_navigation.php:465
+msgid "Dropdown"
+msgstr ""
+
+#: widgets/site_navigation.php:494
+msgid "Top Spacing"
+msgstr ""
+
+#: widgets/site_navigation.php:551 widgets/site_navigation.php:836
+msgid "MENU ITEM"
+msgstr ""
+
+#: widgets/site_navigation.php:880
+msgid "SUB MENU ITEM"
+msgstr ""
+
+#: widgets/site_navigation.php:1051
+msgid "Burger Button"
+msgstr ""
+
+#: widgets/site_navigation.php:1153
+msgid "Open Button"
+msgstr ""
+
+#: widgets/site_navigation.php:1185
+msgid "Close Button"
+msgstr ""
+
+#: widgets/slideshow.php:82
+msgid "Slideshow"
+msgstr ""
+
+#: widgets/slideshow.php:125
+msgid "Background Image"
+msgstr ""
+
+#: widgets/slideshow.php:136
+msgid "Slide Title Text"
+msgstr ""
+
+#: widgets/slideshow.php:137
+msgid "Title text can contain allowed with tag: strong, b."
+msgstr ""
+
+#: widgets/slideshow.php:145 widgets/slideshow.php:803
+msgid "Sub Heading"
+msgstr ""
+
+#: widgets/slideshow.php:187 widgets/slideshow.php:344 widgets/slideshow.php:353 widgets/slideshow.php:362
+msgid "Left Button"
+msgstr ""
+
+#: widgets/slideshow.php:240 widgets/slideshow.php:346 widgets/slideshow.php:355 widgets/slideshow.php:364
+msgid "Right Button"
+msgstr ""
+
+#: widgets/slideshow.php:343
+msgid "Slide #1"
+msgstr ""
+
+#: widgets/slideshow.php:352
+msgid "Slide #2"
+msgstr ""
+
+#: widgets/slideshow.php:361
+msgid "Slide #3"
+msgstr ""
+
+#: widgets/slideshow.php:378
+msgid "Content Layout"
+msgstr ""
+
+#: widgets/slideshow.php:381
+msgid "Heading - Text - Sub Heading - Button"
+msgstr ""
+
+#: widgets/slideshow.php:382
+msgid "Heading - Sub Heading - Text - Button"
+msgstr ""
+
+#: widgets/slideshow.php:383
+msgid "Heading - Sub Heading - Button - Text"
+msgstr ""
+
+#: widgets/slideshow.php:403
+msgid "Animation"
+msgstr ""
+
+#: widgets/slideshow.php:414
+msgid "Sliding"
+msgstr ""
+
+#: widgets/slideshow.php:415 widgets/slideshow.php:431
+msgid "Fade"
+msgstr ""
+
+#: widgets/slideshow.php:428
+msgid "From Top"
+msgstr ""
+
+#: widgets/slideshow.php:429
+msgid "From Bottom"
+msgstr ""
+
+#: widgets/slideshow.php:430
+msgid "Scale"
+msgstr ""
+
+#: widgets/slideshow.php:432
+msgid "Scale and Fade"
+msgstr ""
+
+#: widgets/slideshow.php:441
+msgid "Easing"
+msgstr ""
+
+#: widgets/slideshow.php:444
+msgid "Linear"
+msgstr ""
+
+#: widgets/slideshow.php:445
+msgid "Swing"
+msgstr ""
+
+#: widgets/slideshow.php:495
+msgid "Dimension"
+msgstr ""
+
+#: widgets/slideshow.php:507 widgets/slideshow.php:548
+msgid "Fullscreen"
+msgstr ""
+
+#: widgets/slideshow.php:558
+msgid "Custom Height"
+msgstr ""
+
+#: widgets/slideshow.php:598
+msgid "Left Arrow Icon"
+msgstr ""
+
+#: widgets/slideshow.php:610
+msgid "Right Arrow Icon"
+msgstr ""
+
+#: widgets/slideshow.php:642
+msgid "Slide Item"
+msgstr ""
+
+#: widgets/slideshow.php:651
+msgid "Content Width"
+msgstr ""
+
+#: widgets/slideshow.php:654 widgets/slideshow.php:1306
+msgid "Boxed"
+msgstr ""
+
+#: widgets/slideshow.php:655
+msgid "Fullwidth"
+msgstr ""
+
+#: widgets/slideshow.php:666
+msgid "Background Overlay"
+msgstr ""
+
+#: widgets/slideshow.php:678
+msgid "Content width"
+msgstr ""
+
+#: widgets/slideshow.php:750
+msgid "Tag Color"
+msgstr ""
+
+#: widgets/slideshow.php:752
+msgid "Color will applied to i, b, strong tag inside the title text."
+msgstr ""
+
+#: widgets/slideshow.php:771
+msgid "Tag Font Weight"
+msgstr ""
+
+#: widgets/slideshow.php:975 widgets/slideshow.php:1011
+msgid "Spacing between button."
+msgstr ""
+
+#: widgets/slideshow.php:1058 widgets/slideshow.php:1197
+msgid "Primary"
+msgstr ""
+
+#: widgets/slideshow.php:1081 widgets/slideshow.php:1145 widgets/slideshow.php:1217 widgets/slideshow.php:1265
+msgid "Backgound"
+msgstr ""
+
+#: widgets/slideshow.php:1121 widgets/slideshow.php:1243
+msgid "Secondary"
+msgstr ""
+
+#: widgets/slideshow.php:1365
+msgid "Box Size"
+msgstr ""
+
+#: widgets/slideshow.php:1388
+msgid "Left Arrow Radius"
+msgstr ""
+
+#: widgets/slideshow.php:1403
+msgid "Right Arrow Radius"
+msgstr ""
+
+#: widgets/slideshow.php:1559
+msgid "X Position"
+msgstr ""
+
+#: widgets/slideshow.php:1588
+msgid "Y Position"
+msgstr ""
+
+#: widgets/slideshow.php:1668
+msgid "Spacing between thumbnail."
+msgstr ""
+
+#: widgets/slideshow.php:1741
+msgid "Hover & Current"
+msgstr ""
+
+#: widgets/toggle_period.php:81
+msgid "Toggle Price Table"
+msgstr ""
+
+#: widgets/toggle_period.php:128
+msgid "1st Period Label"
+msgstr ""
+
+#: widgets/toggle_period.php:141
+msgid "2nd Period Label"
+msgstr ""
+
+#: widgets/toggle_period.php:182
+msgid "Section Price CSS ID (optional)"
+msgstr ""
+
+#: widgets/toggle_period.php:185
+msgid "CSS ID from price table section NOT this widget ID. You can founded on target section settings: Advanced > CSS ID"
+msgstr ""
+
+#: widgets/toggle_period.php:186
+msgid ""
+"Please make sure the ID is unique and not used elsewhere on the page this form is displayed. This field allows <code>A-z 0-9</code> & "
+"underscore chars without spaces."
+msgstr ""
+
+#: widgets/toggle_period.php:217
+msgid "Vertical Padding"
+msgstr ""
+
+#: widgets/toggle_period.php:237
+msgid "1st Period Padding"
+msgstr ""
+
+#: widgets/toggle_period.php:258
+msgid "2nd Period Padding"
+msgstr ""
+
+#: widgets/toggle_period.php:333
+msgid "Active Period"
+msgstr ""
+
+#: widgets/totop_btn.php:82
+msgid "To Top Button"
+msgstr ""
+
+#: widgets/totop_btn.php:129
+msgid "Important: This widget only one per page. Insert inside the footer section is best."
+msgstr ""
+
+#: widgets/totop_btn.php:131
+msgid "This widget only one per page. Insert inside the footer section is best."
+msgstr ""
+
+#: widgets/totop_btn.php:162
+msgid "Add Icon"
+msgstr ""
+
+#: widgets/totop_btn.php:227
+msgid "H Offset"
+msgstr ""
+
+#: widgets/totop_btn.php:257
+msgid "V Offset"
+msgstr ""

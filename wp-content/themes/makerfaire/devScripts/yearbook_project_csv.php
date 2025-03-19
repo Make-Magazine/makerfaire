@@ -1,15 +1,18 @@
 <?php
 /*
- *  This devscript creates a CSV of all fields in all forms across all global sites
+ *  This devscript creates a CSV of Yearbook specific fields for a specific year (faire_year variable) that can be used to import into the procects CPT
  */
 include 'db_connect.php';
 global $wpdb;
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
-$faire_year = isset($_GET['faire_year']) ? $_GET['faire_year'] : '';
+
+$output = array();
+$faire_year     = isset($_GET['faire_year']) ? $_GET['faire_year'] : '';
 if ($faire_year == '' || !is_numeric($faire_year)) {
     die('Please set the faire_year variable');
 }
+$entity_decode  =  isset($_GET['entity_decode']) ? FALSE : TRUE;
 
 //define the field headers
 $fieldHdrs = array(
@@ -150,9 +153,8 @@ foreach ($results as $data) {
     $link_arr = array();
     if (is_array($maker_social_array)) {
         foreach ($maker_social_array as $social) {            
-            if (empty($social))  continue;
-
-            $social_array = unserialize(html_entity_decode($social,ENT_QUOTES));
+            if (empty($social) || is_null($social))  continue;
+            $social_array = @unserialize(html_entity_decode($social,ENT_QUOTES));                        
 
             if (is_array($social_array)) {                
                 foreach ($social_array as $social_data) {                    
@@ -184,10 +186,11 @@ foreach ($results as $data) {
         echo '$maker_social='.$maker_social.' and $data[maker_social_link]='.$data['maker_social_link'].'<br/>';
         die('we are missing the maker social data for '.$data['entry_id']);   
     }*/
+    
+    $org_main_cat   = ($entity_decode?$data['main_category']:html_entity_decode($data['main_category'],ENT_QUOTES, 'UTF-8'));
+    $org_add_cat    = ($entity_decode?$data['category']:html_entity_decode($data['category'],ENT_QUOTES, 'UTF-8'));
 
-    //convert the categories using the xfef table    
-    $org_main_cat   = $data['main_category'];
-    $org_add_cat    = $data['category'];
+    //convert the categories using the xfef table        
     $main_category  = category_xref($data['main_category'], $data['entry_id']);
     $all_categories = category_xref($data['category'], $data['entry_id']);
     if ($main_category == '' && $all_categories == '' && $data['main_category'] != '' && $data['category'] != '') {
@@ -197,20 +200,20 @@ foreach ($results as $data) {
         echo '<br/>';
         $buildOutput = false;
     }
-
+   
     //build the output 
-    $output[] = array(
-        $data['title'],
+    $output[] = array(        
+        ($entity_decode?$data['title']:html_entity_decode($data['title'],ENT_QUOTES, 'UTF-8')),
         'Maker Names (not publicly visible) ' . $data['maker_or_group_name'],
         $data['project_photo'],
-        $data['public_desc'],
-        $data['project_video'],
-        $data['inspiration'],
+        ($entity_decode?$data['public_desc']:html_entity_decode($data['public_desc'],ENT_QUOTES, 'UTF-8')),
+        $data['project_video'],        
+        ($entity_decode?$data['inspiration']:html_entity_decode($data['inspiration'],ENT_QUOTES, 'UTF-8')),
         $data['website'],
         $exhibit_social,
         ($data['maker_email'] != '|' ? $data['maker_email'] : ''),
-        ($data['maker_or_group_name'] != '|' ? $data['maker_or_group_name'] : ''),
-        $data['maker_bio'],
+        ($data['maker_or_group_name'] != '|' ? $data['maker_or_group_name'] : ''),        
+        ($entity_decode?$data['maker_bio']:html_entity_decode($data['maker_bio'],ENT_QUOTES, 'UTF-8')),
         $data['maker_photo'],
         ($data['maker_website'] != '|' ? $data['maker_website'] : ''),
         $maker_social,
@@ -268,8 +271,9 @@ function category_xref($category, $entry_id) {
         //Do not write the category if it is marked as delete
         if ($to_cat != 'DELETE') {
             if (is_null($to_cat)) {
-                echo 'For Entry ' . $entry_id . ' ' . $from_cat . '->To Cat is null<br/>';
-                $buildOutput = false;
+                $to_cat = '';
+                //echo 'For Entry ' . $entry_id . ' ' . $from_cat . '->To Cat is null<br/>';
+                //$buildOutput = false;
                 //die();
             }
             $xref_cat[] = $to_cat;

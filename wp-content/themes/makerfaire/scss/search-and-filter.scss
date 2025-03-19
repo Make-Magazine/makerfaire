@@ -1,6 +1,5 @@
 form.searchandfilter {
     margin-top: 5px;
-    overflow-x: hidden;
     &> ul {
         display: flex;
         margin-top: 0;
@@ -129,6 +128,7 @@ form.searchandfilter {
             border: 0px;
             height: 40px;
             margin-top: -10px;
+            max-width: 35px;
          }
         &::after {
             font-family: "Font Awesome 6 Pro";
@@ -287,6 +287,12 @@ body.listview {
         }
     }
     
+}
+
+.elementor-widget-shortcode {
+    @media screen and (max-width:768px) {
+        overflow-x: hidden;
+    }
 }
 
 .select2-dropdown {
