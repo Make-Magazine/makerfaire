@@ -410,7 +410,7 @@ function massGenerateSigns($entList, $type, $faire) {
 
         //check if local server
         $host = $_SERVER['HTTP_HOST'];
-        if (strpos($host, '.local') > -1) {
+        if (strpos($host ?? '', '.local') > -1) {
             //do not check ssl
             curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
             curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);

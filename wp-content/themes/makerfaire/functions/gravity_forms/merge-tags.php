@@ -238,36 +238,36 @@ function mf_replace_merge_tags($text, $form, $entry, $url_encode, $esc_html, $nl
 
     //Entry Resources
     if (strpos($text ?? '', '{entry_resources') !== false) {
-        $startPos         = strpos($text, '{entry_resources'); //pos of start of merge tag
-        $closeBracketPos  = strpos($text, '}', $startPos); //find the closing bracket of the merge tag
+        $startPos         = strpos($text ?? '', '{entry_resources'); //pos of start of merge tag
+        $closeBracketPos  = strpos($text ?? '', '}', $startPos); //find the closing bracket of the merge tag
 
         //pull full merge tag
         $res_merge_tag    = substr($text, $startPos, $closeBracketPos - $startPos + 1);
 
         //exclude resources
         $excResources = ''; //default
-        $excStartPos  = strpos($res_merge_tag, 'not="'); //pos of start of excluded resource id's
+        $excStartPos  = strpos($res_merge_tag ?? '', 'not="'); //pos of start of excluded resource id's
 
         //are there resources to exclude?
         if ($excStartPos !== false) {
             $excStartPos += 5;   //add 5 to move past the not="
             //find the end of the not section
-            $excEndPos        = strpos($res_merge_tag, '"', $excStartPos);
+            $excEndPos        = strpos($res_merge_tag ?? '', '"', $excStartPos);
             $excResources     = substr($res_merge_tag, $excStartPos, $excEndPos - $excStartPos);
         }
 
         //include resources
         $incResources = ''; //default
-        $incStartPos  = strpos($res_merge_tag, ':');   //pos of start of excluded resource id's
+        $incStartPos  = strpos($res_merge_tag ?? '', ':');   //pos of start of excluded resource id's
 
         //are there specific resources to include?
         if ($incStartPos !== false) {
             $incStartPos += 1;   //add 1 to move past the :"
             //find the end of the include section
-            $incEndPos        = strpos($res_merge_tag, ' ', $incStartPos);
+            $incEndPos        = strpos($res_merge_tag ?? '', ' ', $incStartPos);
 
             //can be ended by a space or the closing bracket
-            if ($incEndPos === false) $incEndPos = strpos($res_merge_tag, '}', $incStartPos);
+            if ($incEndPos === false) $incEndPos = strpos($res_merge_tag ?? '', '}', $incStartPos);
 
             $incResources     = substr($res_merge_tag, $incStartPos, $incEndPos - $incStartPos);
         }
@@ -374,10 +374,10 @@ function mf_replace_merge_tags($text, $form, $entry, $url_encode, $esc_html, $nl
 
 
     //attribute lock indicator
-    if (strpos($text, '{rmt_att_lock') !== false) {
-        $startPos        = strpos($text, '{rmt_att_lock'); //pos of start of merge tag
-        $RmtStartPos     = strpos($text, ':', $startPos);   //pos of start RMT field ID
-        $closeBracketPos = strpos($text, '}', $startPos);  //find the closing bracket of the merge tag
+    if (strpos($text ?? '', '{rmt_att_lock') !== false) {
+        $startPos        = strpos($text ?? '', '{rmt_att_lock'); //pos of start of merge tag
+        $RmtStartPos     = strpos($text ?? '', ':', $startPos);   //pos of start RMT field ID
+        $closeBracketPos = strpos($text ?? '', '}', $startPos);  //find the closing bracket of the merge tag
 
         //attribute ID
         $RMTid = substr($text, $RmtStartPos + 1, $closeBracketPos - $RmtStartPos - 1);
@@ -427,7 +427,7 @@ function mf_replace_merge_tags($text, $form, $entry, $url_encode, $esc_html, $nl
  * @return string
  */
 function mf_field_content($field_content, $field, $value, $lead_id, $form_id) {
-    if (isset($field_content) && strpos($field_content, '{entry_schedule}') !== false) {
+    if (isset($field_content) && strpos($field_content ?? '', '{entry_schedule}') !== false) {
         $lead = GFAPI::get_entry($lead_id);
         $schedule = get_schedule($lead);
 
