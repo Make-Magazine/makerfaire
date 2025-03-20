@@ -307,7 +307,7 @@ function my_acf_flexible_content_layout_title($title, $field, $layout, $i) {
     }
     // Hero Title
     if ($columnTitle = get_sub_field('column_title')) {
-        $newTitle .= ' ' . strip_tags($columnTitle) . ' ';
+        $newTitle .= ' ' . strip_tags($columnTitle ?? '') . ' ';
     }
     if ($sponsorsURL = get_sub_field('sponsors_page_url')) {
         $newTitle .= ' Sponsors: ' . $sponsorsURL . ' ';
@@ -318,7 +318,7 @@ function my_acf_flexible_content_layout_title($title, $field, $layout, $i) {
     $newTitle .= '<div style="font-size: 12px; margin-right: 2em;">' . $title . '</div>';
     // Header Text - Maker Toolkit
     if ($headerText = get_sub_field('header_text')) {
-        $newTitle = strip_tags($headerText);
+        $newTitle = strip_tags($headerText ?? '');
     }
     return $newTitle;
 }

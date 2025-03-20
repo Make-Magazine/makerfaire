@@ -177,7 +177,7 @@ class Featured_Makers_Dynamic extends Widget_Base {
 				$href = !empty($maker['maker_url']) ? 'href="' . $maker['maker_url'] . '"' : '';
 				$return .= '<' . $markup . ' ' . $href . ' class="grid-item-desc">
 								 <div class="desc-body"><h4>' . $maker['name'] . '</h4>
-								 <p class="desc">' . strip_tags($maker['desc']) . '</p></div>';
+								 <p class="desc">' . strip_tags($maker['desc'] ?? '') . '</p></div>';
 				if (!empty($maker['maker_url'])) {
 					$return .= ' <p class="btn btn-blue read-more-link">Learn More</p>'; //<a href="' . $maker['maker_url'] . '"></a>
 				}

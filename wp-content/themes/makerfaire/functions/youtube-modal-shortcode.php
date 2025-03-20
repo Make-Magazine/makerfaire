@@ -9,7 +9,7 @@ add_shortcode('youtube-modal', 'youtube_shortcode_modal');
 function youtube_shortcode_modal($atts){  
 
   if(!isset($atts[0])) return;
-  $id = strip_tags($atts[0]);
+  $id = strip_tags($atts[0] ?? '');
   ob_start();
   ?>
 

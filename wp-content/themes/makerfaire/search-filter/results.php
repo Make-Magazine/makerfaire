@@ -158,7 +158,7 @@ if ( $query->have_posts() ) {
                             <?php } */ ?>
                             <?php if(!empty($excerpt)){ ?>
                                 <div class="card-detail-item desc">
-                                    <span class="truncated"><?php echo strip_tags(html_entity_decode($excerpt)); ?></span>
+                                    <span class="truncated"><?php echo strip_tags(html_entity_decode($excerpt) ?? ''); ?></span>
                                 </div>
                             <?php } ?>
                         <?php } ?>

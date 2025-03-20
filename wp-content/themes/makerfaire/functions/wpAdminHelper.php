@@ -111,7 +111,7 @@ function sort_admin_menu() {
 		    usort( $menu, function ( $a, $b ) {
 		        if(isset($a['5']) && $a[5]!='menu-dashboard'){
 		          // format of a submenu item is [ 'My Item', 'read', 'manage-my-items', 'My Item' ]
-		          return strcasecmp( strip_tags($a[0]), strip_tags($b[0]) );
+		          return strcasecmp( strip_tags($a[0] ?? ''), strip_tags($b[0] ?? '') );
 		        }
 		    } );
 		    //remove separators
