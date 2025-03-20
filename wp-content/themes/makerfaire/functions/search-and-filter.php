@@ -23,6 +23,6 @@ function randomise_with_pagination( $orderby ) {
         }
         // Update ORDER BY clause to use seed
         $orderby = 'RAND(' . $seed . ')';
-        return $orderby;
     }
+    return $orderby;
 }
