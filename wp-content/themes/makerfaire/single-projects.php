@@ -4,6 +4,14 @@
 //Pull faire specific information
 $faireData       = get_field("faire_information");
 $faire_year      = (isset($faireData["faire_year"]) ? $faireData["faire_year"] : '');
+//Pull associated faire post
+if (isset($faireData["faire_post"])) {
+    $faire_id   = $faireData["faire_post"];
+    $faire_name = get_the_title($faire_id);
+} else {
+    $faire_id   = '';
+    $faire_name = '';
+}
 
 //Project Information
 $project_title   = get_the_title();
@@ -24,15 +32,6 @@ $exhibit_additional_images  = get_field("additional_exhibit_images");
 $exhibit_social             = get_field("exhibit_social");
 $exhibit_website            = get_field("exhibit_website");
 $exhibit_cats               = wp_get_post_terms($exhibit_id, "mf-project-cat");
-
-//Pull associated faire post
-if (isset($faireData["faire_post"])) {
-    $faire_id   = $faireData["faire_post"];
-    $faire_name = get_the_title($faire_id);
-} else {
-    $faire_id   = '';
-    $faire_name = '';
-}
 
 $producerInfo    = get_field("producer_section", $faire_id);
 //$faire_badge     = isset($producerSection['circular_faire_logo']['url']) ? $producerSection['circular_faire_logo']["sizes"]["thumbnail"]: "/wp-content/themes/makerfaire/images/default-badge-thumb.png";                    

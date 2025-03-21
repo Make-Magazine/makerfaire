@@ -753,7 +753,7 @@ function set_exhibit_type($entry, $form) {
 //Update Final Weekend
 function set_final_weekend($entry, $form) {
   $entry_id             = $entry['id'];
-  $final_weekend_change  = $_POST['entry_final_weekend'];
+  $final_weekend_change  = $_POST['entry_final_weekend'] ?? '';
 
   $field879 = RGFormsModel::get_field($form, '879');
 
