@@ -402,7 +402,7 @@ class Elementor_mySubscription_Widget extends \Elementor\Widget_Base {
 										$mb_exp_date = getMembership($user_email);
 									} else {
 										// $mb_exp_date returns blank if the membership is not one of the premium types (Multi-Seat Membership, Premium Subscriber, School Maker Faire)
-										$mb_exp_date = json_decode(basicCurl("https://make.co/wp-json/makecommunity/v2/membership?email=" . $user_email));
+										$mb_exp_date = json_decode(basicCurl("https://make.co/wp-json/makecommunity/v2/membership?email=" . $user_email))->expiration;
 									}
 									
 

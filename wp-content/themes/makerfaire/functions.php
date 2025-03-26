@@ -109,7 +109,7 @@ function load_scripts() {
             'wp_user_email' => $user->user_email,
             'wp_user_nicename' => isset($auth0_user_data->first_name) && isset($auth0_user_data->last_name) ? $auth0_user_data->first_name . " " . $auth0_user_data->last_name : $user->display_name,
             'wp_user_avatar' => isset($auth0_user_data->picture) ? $auth0_user_data->picture : esc_url(get_avatar_url($user->user_email)),
-            'wp_user_memlevel' => isset($auth0_user_data->membership_level) ? $auth0_user_data->membership_level : "",
+            'wp_user_memlevel' => json_decode(basicCurl("https://make.co/wp-json/makecommunity/v2/membership?email=" . $user->user_email))->type
         )
     );
     //VUE files for Maker Portal
