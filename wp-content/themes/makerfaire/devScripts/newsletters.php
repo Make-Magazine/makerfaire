@@ -4,7 +4,7 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-$ac_headers = array('Api-Token: 6a90725830fc5e03e6cddebdbc550ee624b30aea80abcaf9d1c239ea6ffeb30ea2f86075');
+$ac_headers = array('Api-Token: ' . ACTIVE_CAMPAIGN_TOKEN);
 $acURL = 'https://make.api-us1.com/api/3';
 
 $message = '';
@@ -110,7 +110,7 @@ foreach ($response->lists as $list) {
 //get list of Beehiiv lists
 $beehiiv_headers = array(
     'Accept: application/json',
-    'Authorization: Bearer Ebv1c4cIol9jjEuN5P6sR6fSPObDp8g0MbmalWPHQ4HjPmg8IM3SJ6RtA8EYWGOb',
+    'Authorization: Bearer ' . BEEHIIV_TOKEN,
     'Content-Type: application/json'
 );
 $beehiiv_url = 'https://api.beehiiv.com/v2/publications';
