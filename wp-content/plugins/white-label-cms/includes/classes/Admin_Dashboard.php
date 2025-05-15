@@ -493,11 +493,13 @@ class WLCMS_Admin_Dashboard extends WLCMS_Previewable
     public function reset_welcome_dashboard()
     {
         if (!isset($_GET['wlcms-action'])) return;
-
+        
         if ($_GET['wlcms-action'] !== 'reset-welcome-dashboard') return;
+
         if (!isset($_GET['dashboard'])) return;
 
         if (!is_wlcms_super_admin()) return;
+        
         $key = sanitize_text_field($_GET['dashboard']);
 
         delete_metadata('user', 0, 'vum_hide_dashboard' . $key, '', true);

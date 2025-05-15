@@ -21,9 +21,10 @@ function addRow(repeater) {
   clone.querySelector(".pmxi-repeater-row-index").textContent = `#${index + 1}`;
 
   // Update names to match index
-  clone.querySelectorAll("input,select,textarea").forEach((input) => {
-    input.id   = input.id.replace("__index__", index);
-    input.name = input.name.replace("__index__", index);
+  clone.querySelectorAll("input,select,textarea,div").forEach((element) => {
+    for (let attr of element.attributes) {
+      attr.value = attr.value.replace("__index__", index);
+    }
   });
 
   clone.querySelectorAll("label").forEach((label) => {
@@ -98,6 +99,10 @@ function updateUI(repeater, addButton) {
  * @param {HTMLElement} repeater
  */
 export function refreshRepeater(repeater) {
+  if (repeater.classList.contains("pmxi-repeater-initialized")) return;
+
+  repeater.classList.add("pmxi-repeater-initialized");
+
   const addButton = repeater.querySelector(".pmxi-repeater-add-row");
   const switchers = getModeSwitchers(repeater);
 

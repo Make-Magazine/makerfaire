@@ -1,6 +1,10 @@
 
 # Changelog
 
+## 1.3.24 | May 14, 2025
+
+- Removed redundant check for Gravity Perks in preparation for Spellbook.
+
 ## 1.3.23 | February 5, 2025
 
 - Removed a legacy cache purging method dating back to Gravity Forms <2.0 that could cause performance issues and served no purpose anymore.

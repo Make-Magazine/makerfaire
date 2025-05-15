@@ -14,7 +14,7 @@ class GP_Preview_Submission extends GP_Plugin {
 	protected $_slug        = 'gp-preview-submission';
 	protected $_title       = 'Gravity Forms Preview Submission';
 	protected $_short_title = 'Preview Submission';
-	
+
 	public static function get_instance() {
 		if( self::$_instance == null ) {
 			self::$_instance = isset ( self::$perk ) ? new self ( new self::$perk ) : new self();
@@ -29,12 +29,6 @@ class GP_Preview_Submission extends GP_Plugin {
 			),
 			'wordpress'    => array(
 				'version' => '3.7',
-			),
-			'plugins'      => array(
-				'gravityperks/gravityperks.php' => array(
-					'name'    => 'Gravity Perks',
-					'version' => '2.0.11',
-				),
 			),
 		);
 	}

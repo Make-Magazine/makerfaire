@@ -61,14 +61,13 @@ class WoocommercePostsProvider
         ninjaTablesValidateNonce();
 
         $inputs           = $_REQUEST;
-        $tableId          = Arr::get($inputs, 'table_id', 0);
-        $query_selections = Arr::get($inputs, 'query_selections', []);
-
+        $tableId          = intval(Arr::get($inputs, 'table_id', 0));
+        $query_selections = ninja_tables_sanitize_array(Arr::get($inputs, 'query_selections', []));
 
         //$query_selections = wp_unslash($query_selections);
         update_post_meta($tableId, '_ninja_table_woo_query_selections', $query_selections);
 
-        $query_conditions = Arr::get($inputs, 'query_conditions', []);
+        $query_conditions = ninja_tables_sanitize_array(Arr::get($inputs, 'query_conditions', []));
         //$query_conditions = wp_unslash($query_conditions);
         update_post_meta($tableId, '_ninja_table_woo_query_conditions', $query_conditions);
 
@@ -123,7 +122,7 @@ class WoocommercePostsProvider
         ninjaTablesValidateNonce();
         $messages   = array();
         $inputs     = $_REQUEST;
-        $post_title = Arr::get($inputs, 'post_title', '');
+        $post_title = sanitize_text_field(Arr::get($inputs, 'post_title', ''));
         if ($post_title === '') {
             $messages['title'] = __('The title field is required.', 'ninja-tables-pro');
         }
@@ -234,8 +233,8 @@ class WoocommercePostsProvider
 
         $message = 'Table created successfully.';
 
-        $query_selections = Arr::get($inputs, 'query_selections', []);
-        $query_conditions = Arr::get($inputs, 'query_conditions', []);
+        $query_selections = ninja_tables_sanitize_array(Arr::get($inputs, 'query_selections', []));
+        $query_conditions = ninja_tables_sanitize_array(Arr::get($inputs, 'query_conditions', []));
 
         update_post_meta($tableId, '_ninja_table_woo_query_selections', $query_selections);
         update_post_meta($tableId, '_ninja_table_woo_query_conditions', $query_conditions);

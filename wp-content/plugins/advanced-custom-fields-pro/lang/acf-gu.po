@@ -12,7 +12,7 @@
 # This file is distributed under the same license as Advanced Custom Fields.
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2025-01-21T10:45:54+00:00\n"
+"PO-Revision-Date: 2025-05-08T10:20:52+00:00\n"
 "Report-Msgid-Bugs-To: http://support.advancedcustomfields.com\n"
 "Language: gu\n"
 "MIME-Version: 1.0\n"
@@ -21,9 +21,43 @@ msgstr ""
 "X-Generator: gettext\n"
 "Project-Id-Version: Advanced Custom Fields\n"
 
-#: includes/class-acf-site-health.php:291
-msgid "Update Source"
-msgstr ""
+#: src/Site_Health/Site_Health.php:517
+msgid "Number of Field Groups with Blocks and Other Locations"
+msgstr "બ્લોક્સ અને અન્ય સ્થાનો સાથે ક્ષેત્ર જૂથોની સંખ્યા"
+
+#: src/Site_Health/Site_Health.php:512
+msgid "Number of Field Groups with Multiple Block Locations"
+msgstr "બહુવિધ બ્લોક સ્થાનો સાથે ક્ષેત્ર જૂથોની સંખ્યા"
+
+#: src/Site_Health/Site_Health.php:507
+msgid "Number of Field Groups with a Single Block Location"
+msgstr "એક બ્લોક સ્થાન સાથે ક્ષેત્ર જૂથોની સંખ્યા"
+
+#: src/Site_Health/Site_Health.php:476
+msgid "All Location Rules"
+msgstr "બધા સ્થાન નિયમો"
+
+#: includes/validation.php:144
+msgid "Learn more"
+msgstr "વધુ જાણો"
+
+#: includes/validation.php:133
+msgid ""
+"ACF was unable to perform validation because the provided nonce failed "
+"verification."
+msgstr "ACF માન્યતા કરવામાં અસમર્થ હતું કારણ કે પ્રદાન કરેલ નોન્સ ચકાસણી નિષ્ફળ ગઈ."
+
+#: includes/validation.php:131
+msgid ""
+"ACF was unable to perform validation because no nonce was received by the "
+"server."
+msgstr "સર્વર દ્વારા કોઈ નોન્સ પ્રાપ્ત ન થવાને કારણે ACF માન્યતા કરવામાં અસમર્થ હતું."
+
+#. translators: This text is prepended by a link to ACF's website, and appended
+#. by a link to WP Engine's website.
+#: includes/admin/admin.php:324
+msgid "are developed and maintained by"
+msgstr "દ્વારા વિકસિત અને જાળવણી કરવામાં આવે છે"
 
 #: includes/admin/views/acf-post-type/advanced-settings.php:850
 #: includes/admin/views/acf-taxonomy/advanced-settings.php:810
@@ -59,16 +93,6 @@ msgstr ""
 "કૉલબેકને $_POST અથવા $_GET જેવા કોઈપણ સુપરગ્લોબલ્સની ઍક્સેસ વિના વિશિષ્ટ સંદર્ભમાં "
 "એક્ઝિક્યુટ કરવામાં આવશે."
 
-#: includes/class-acf-site-health.php:292
-msgid "wordpress.org"
-msgstr ""
-
-#: includes/validation.php:136
-msgid ""
-"ACF was unable to perform validation due to an invalid security nonce being "
-"provided."
-msgstr "અમાન્ય સુરક્ષા પૂરી પાડવામાં ન આવવાને કારણે ACF માન્યતા કરવામાં અસમર્થ હતું."
-
 #: includes/fields/class-acf-field.php:359
 msgid "Allow Access to Value in Editor UI"
 msgstr "સંપાદક UI માં મૂલ્યને ઍક્સેસ કરવાની મંજૂરી આપો"
@@ -87,7 +111,7 @@ msgstr ""
 "સામગ્રી સંપાદકોને બ્લોક બાઈન્ડિંગ્સ અથવા ACF શોર્ટકોડનો ઉપયોગ કરીને એડિટર UI માં ફીલ્ડ "
 "મૂલ્યને ઍક્સેસ કરવા અને પ્રદર્શિત કરવાની મંજૂરી આપો. %s"
 
-#: includes/Blocks/Bindings.php:64
+#: src/Blocks/Bindings.php:67
 msgid ""
 "The requested ACF field type does not support output in Block Bindings or "
 "the ACF shortcode."
@@ -95,7 +119,7 @@ msgstr ""
 "વિનંતી કરેલ ACF ફીલ્ડ પ્રકાર બ્લોક બાઈન્ડિંગ્સ અથવા ACF શોર્ટકોડમાં આઉટપુટને સપોર્ટ કરતું "
 "નથી."
 
-#: includes/api/api-template.php:1085 includes/Blocks/Bindings.php:72
+#: includes/api/api-template.php:1085 src/Blocks/Bindings.php:75
 msgid ""
 "The requested ACF field is not allowed to be output in bindings or the ACF "
 "Shortcode."
@@ -238,7 +262,7 @@ msgstr ""
 
 #: includes/fields/class-acf-field-icon_picker.php:667
 msgid "Spotify Icon"
-msgstr ""
+msgstr "Spotify આઇકન"
 
 #: includes/fields/class-acf-field-icon_picker.php:661
 msgid "Shortcode Icon"
@@ -797,7 +821,7 @@ msgstr ""
 msgid "Sorry, you do not have permission to do that."
 msgstr "માફ કરશો, તમને તે કરવાની પરવાનગી નથી"
 
-#: includes/class-acf-site-health.php:648
+#: src/Site_Health/Site_Health.php:715
 msgid "Blocks Using Post Meta"
 msgstr ""
 
@@ -1546,183 +1570,183 @@ msgstr ""
 msgid "Icon Picker"
 msgstr ""
 
-#: includes/class-acf-site-health.php:709
+#: src/Site_Health/Site_Health.php:776
 msgid "JSON Load Paths"
 msgstr ""
 
-#: includes/class-acf-site-health.php:703
+#: src/Site_Health/Site_Health.php:770
 msgid "JSON Save Paths"
 msgstr ""
 
-#: includes/class-acf-site-health.php:694
+#: src/Site_Health/Site_Health.php:761
 msgid "Registered ACF Forms"
 msgstr ""
 
-#: includes/class-acf-site-health.php:688
+#: src/Site_Health/Site_Health.php:755
 msgid "Shortcode Enabled"
 msgstr ""
 
-#: includes/class-acf-site-health.php:680
+#: src/Site_Health/Site_Health.php:747
 msgid "Field Settings Tabs Enabled"
 msgstr ""
 
-#: includes/class-acf-site-health.php:672
+#: src/Site_Health/Site_Health.php:739
 msgid "Field Type Modal Enabled"
 msgstr ""
 
-#: includes/class-acf-site-health.php:664
+#: src/Site_Health/Site_Health.php:731
 msgid "Admin UI Enabled"
 msgstr ""
 
-#: includes/class-acf-site-health.php:655
+#: src/Site_Health/Site_Health.php:722
 msgid "Block Preloading Enabled"
 msgstr ""
 
-#: includes/class-acf-site-health.php:643
+#: src/Site_Health/Site_Health.php:710
 msgid "Blocks Per ACF Block Version"
 msgstr ""
 
-#: includes/class-acf-site-health.php:638
+#: src/Site_Health/Site_Health.php:705
 msgid "Blocks Per API Version"
 msgstr ""
 
-#: includes/class-acf-site-health.php:611
+#: src/Site_Health/Site_Health.php:678
 msgid "Registered ACF Blocks"
 msgstr ""
 
-#: includes/class-acf-site-health.php:605
+#: src/Site_Health/Site_Health.php:672
 msgid "Light"
 msgstr ""
 
-#: includes/class-acf-site-health.php:605
+#: src/Site_Health/Site_Health.php:672
 msgid "Standard"
 msgstr "સામાન્ય"
 
-#: includes/class-acf-site-health.php:604
+#: src/Site_Health/Site_Health.php:671
 msgid "REST API Format"
 msgstr ""
 
-#: includes/class-acf-site-health.php:596
+#: src/Site_Health/Site_Health.php:663
 msgid "Registered Options Pages (PHP)"
 msgstr ""
 
-#: includes/class-acf-site-health.php:582
+#: src/Site_Health/Site_Health.php:649
 msgid "Registered Options Pages (JSON)"
 msgstr ""
 
-#: includes/class-acf-site-health.php:577
+#: src/Site_Health/Site_Health.php:644
 msgid "Registered Options Pages (UI)"
 msgstr ""
 
-#: includes/class-acf-site-health.php:547
+#: src/Site_Health/Site_Health.php:614
 msgid "Options Pages UI Enabled"
 msgstr ""
 
-#: includes/class-acf-site-health.php:539
+#: src/Site_Health/Site_Health.php:606
 msgid "Registered Taxonomies (JSON)"
 msgstr ""
 
-#: includes/class-acf-site-health.php:527
+#: src/Site_Health/Site_Health.php:594
 msgid "Registered Taxonomies (UI)"
 msgstr ""
 
-#: includes/class-acf-site-health.php:515
+#: src/Site_Health/Site_Health.php:582
 msgid "Registered Post Types (JSON)"
 msgstr ""
 
-#: includes/class-acf-site-health.php:503
+#: src/Site_Health/Site_Health.php:570
 msgid "Registered Post Types (UI)"
 msgstr ""
 
-#: includes/class-acf-site-health.php:490
+#: src/Site_Health/Site_Health.php:557
 msgid "Post Types and Taxonomies Enabled"
 msgstr ""
 
-#: includes/class-acf-site-health.php:483
+#: src/Site_Health/Site_Health.php:550
 msgid "Number of Third Party Fields by Field Type"
 msgstr ""
 
-#: includes/class-acf-site-health.php:478
+#: src/Site_Health/Site_Health.php:545
 msgid "Number of Fields by Field Type"
 msgstr ""
 
-#: includes/class-acf-site-health.php:445
+#: src/Site_Health/Site_Health.php:444
 msgid "Field Groups Enabled for GraphQL"
 msgstr ""
 
-#: includes/class-acf-site-health.php:432
+#: src/Site_Health/Site_Health.php:431
 msgid "Field Groups Enabled for REST API"
 msgstr ""
 
-#: includes/class-acf-site-health.php:420
+#: src/Site_Health/Site_Health.php:419
 msgid "Registered Field Groups (JSON)"
 msgstr ""
 
-#: includes/class-acf-site-health.php:408
+#: src/Site_Health/Site_Health.php:407
 msgid "Registered Field Groups (PHP)"
 msgstr ""
 
-#: includes/class-acf-site-health.php:396
+#: src/Site_Health/Site_Health.php:395
 msgid "Registered Field Groups (UI)"
 msgstr ""
 
-#: includes/class-acf-site-health.php:384
+#: src/Site_Health/Site_Health.php:383
 msgid "Active Plugins"
 msgstr ""
 
-#: includes/class-acf-site-health.php:358
+#: src/Site_Health/Site_Health.php:357
 msgid "Parent Theme"
 msgstr ""
 
-#: includes/class-acf-site-health.php:347
+#: src/Site_Health/Site_Health.php:346
 msgid "Active Theme"
 msgstr ""
 
-#: includes/class-acf-site-health.php:338
+#: src/Site_Health/Site_Health.php:337
 msgid "Is Multisite"
 msgstr ""
 
-#: includes/class-acf-site-health.php:333
+#: src/Site_Health/Site_Health.php:332
 msgid "MySQL Version"
 msgstr ""
 
-#: includes/class-acf-site-health.php:328
+#: src/Site_Health/Site_Health.php:327
 msgid "WordPress Version"
 msgstr ""
 
-#: includes/class-acf-site-health.php:321
+#: src/Site_Health/Site_Health.php:320
 msgid "Subscription Expiry Date"
 msgstr ""
 
-#: includes/class-acf-site-health.php:313
+#: src/Site_Health/Site_Health.php:312
 msgid "License Status"
 msgstr ""
 
-#: includes/class-acf-site-health.php:308
+#: src/Site_Health/Site_Health.php:307
 msgid "License Type"
 msgstr ""
 
-#: includes/class-acf-site-health.php:303
+#: src/Site_Health/Site_Health.php:302
 msgid "Licensed URL"
 msgstr ""
 
-#: includes/class-acf-site-health.php:297
+#: src/Site_Health/Site_Health.php:296
 msgid "License Activated"
 msgstr ""
 
-#: includes/class-acf-site-health.php:286
+#: src/Site_Health/Site_Health.php:290
 msgid "Free"
 msgstr "મફત"
 
-#: includes/class-acf-site-health.php:285
+#: src/Site_Health/Site_Health.php:289
 msgid "Plugin Type"
 msgstr ""
 
-#: includes/class-acf-site-health.php:280
+#: src/Site_Health/Site_Health.php:284
 msgid "Plugin Version"
-msgstr ""
+msgstr "પ્લગઇન સંસ્કરણ"
 
-#: includes/class-acf-site-health.php:251
+#: src/Site_Health/Site_Health.php:255
 msgid ""
 "This section contains debug information about your ACF configuration which "
 "can be useful to provide to support."
@@ -1869,7 +1893,7 @@ msgstr ""
 msgid "Relationship is equal to"
 msgstr ""
 
-#: includes/Blocks/Bindings.php:35
+#: src/Blocks/Bindings.php:38
 msgctxt "The core ACF block binding source name for fields on the current page"
 msgid "ACF Fields"
 msgstr ""
@@ -2000,7 +2024,7 @@ msgstr "4 મહિના મફત"
 #. translators: %s - A singular label for a post type or taxonomy.
 #: includes/admin/views/global/form-top.php:59
 msgid "(Duplicated from %s)"
-msgstr ""
+msgstr " (%s માંથી ડુપ્લિકેટ)"
 
 #: includes/admin/tools/class-acf-admin-tool-export.php:289
 msgid "Select Options Pages"
@@ -2038,21 +2062,21 @@ msgstr "ક્ષેત્રો ઉમેરો"
 msgid "This Field"
 msgstr "આ ક્ષેત્ર"
 
-#: includes/admin/admin.php:352
+#: includes/admin/admin.php:361
 msgid "ACF PRO"
 msgstr "એસીએફ પ્રો"
 
-#: includes/admin/admin.php:350
+#: includes/admin/admin.php:359
 msgid "Feedback"
 msgstr "પ્રતિસાદ"
 
-#: includes/admin/admin.php:348
+#: includes/admin/admin.php:357
 msgid "Support"
 msgstr "સપોર્ટ"
 
 #. translators: This text is prepended by a link to ACF's website, and appended
 #. by a link to WP Engine's website.
-#: includes/admin/admin.php:323
+#: includes/admin/admin.php:332
 msgid "is developed and maintained by"
 msgstr "દ્વારા વિકસિત અને જાળવણી કરવામાં આવે છે"
 
@@ -2630,8 +2654,8 @@ msgctxt "noun"
 msgid "Clone"
 msgstr "ક્લોન"
 
-#: includes/admin/views/global/navigation.php:86
-#: includes/class-acf-site-health.php:286 includes/fields.php:331
+#: includes/admin/views/global/navigation.php:86 includes/fields.php:331
+#: src/Site_Health/Site_Health.php:290
 msgid "PRO"
 msgstr "પ્રો"
 
@@ -4529,8 +4553,8 @@ msgstr ""
 "કસ્ટમ પોસ્ટ પ્રકાર UI સાથે નોંધાયેલ પોસ્ટ પ્રકારો અને વર્ગીકરણ આયાત કરો અને ACF સાથે તેનું "
 "સંચાલન કરો. <a href=\"%s\">પ્રારંભ કરો</a>."
 
-#: includes/admin/admin.php:46 includes/admin/admin.php:352
-#: includes/class-acf-site-health.php:250
+#: includes/admin/admin.php:46 includes/admin/admin.php:361
+#: src/Site_Health/Site_Health.php:254
 msgid "ACF"
 msgstr ""
 
@@ -4850,7 +4874,7 @@ msgstr "આ આઇટમ સક્રિય કરો"
 msgid "Move field group to trash?"
 msgstr ""
 
-#: acf.php:501 includes/admin/admin-internal-post-type-list.php:264
+#: acf.php:519 includes/admin/admin-internal-post-type-list.php:264
 #: includes/admin/post-types/admin-field-group.php:304
 #: includes/admin/post-types/admin-post-type.php:282
 #: includes/admin/post-types/admin-taxonomy.php:284
@@ -4863,7 +4887,7 @@ msgstr "નિષ્ક્રિય"
 msgid "WP Engine"
 msgstr ""
 
-#: acf.php:559
+#: acf.php:577
 msgid ""
 "Advanced Custom Fields and Advanced Custom Fields PRO should not be active "
 "at the same time. We've automatically deactivated Advanced Custom Fields PRO."
@@ -4871,26 +4895,13 @@ msgstr ""
 "અદ્યતન કસ્ટમ ફીલ્ડ્સ અને એડવાન્સ કસ્ટમ ફીલ્ડ્સ PRO એક જ સમયે સક્રિય ન હોવા જોઈએ. અમે "
 "એડવાન્સ્ડ કસ્ટમ ફીલ્ડ્સ પ્રોને આપમેળે નિષ્ક્રિય કરી દીધું છે."
 
-#: acf.php:557
+#: acf.php:575
 msgid ""
 "Advanced Custom Fields and Advanced Custom Fields PRO should not be active "
 "at the same time. We've automatically deactivated Advanced Custom Fields."
 msgstr ""
 "અદ્યતન કસ્ટમ ફીલ્ડ્સ અને એડવાન્સ કસ્ટમ ફીલ્ડ્સ PRO એક જ સમયે સક્રિય ન હોવા જોઈએ. અમે "
 "એડવાન્સ્ડ કસ્ટમ ફીલ્ડ્સને આપમેળે નિષ્ક્રિય કરી દીધા છે."
-
-#. translators: %1 plugin name, %2 the URL to the documentation on this error
-#: includes/acf-value-functions.php:376
-msgid ""
-"<strong>%1$s</strong> - We've detected one or more calls to retrieve ACF "
-"field values before ACF has been initialized. This is not supported and can "
-"result in malformed or missing data. <a href=\"%2$s\" "
-"target=\"_blank\">Learn how to fix this</a>."
-msgstr ""
-"<strong>%1$s</strong> - ACF શરૂ થાય તે પહેલાં અમે ACF ફીલ્ડ મૂલ્યો પુનઃપ્રાપ્ત કરવા માટે "
-"એક અથવા વધુ કૉલ્સ શોધી કાઢ્યા છે. આ સમર્થિત નથી અને તે ખોટા અથવા ખોવાયેલા ડેટામાં "
-"પરિણમી શકે છે. <a href=\"%2$s\" target=\"_blank\">આને કેવી રીતે ઠીક કરવું તે જાણો</"
-"a>."
 
 #: includes/fields/class-acf-field-user.php:578
 msgid "%1$s must have a user with the %2$s role."
@@ -5305,7 +5316,7 @@ msgstr "બધા %s ફોર્મેટ"
 msgid "Attachment"
 msgstr "જોડાણ"
 
-#: includes/validation.php:313
+#: includes/validation.php:323
 msgid "%s value is required"
 msgstr ""
 
@@ -5781,7 +5792,7 @@ msgstr ""
 msgid "Supports"
 msgstr ""
 
-#: includes/admin/admin.php:346
+#: includes/admin/admin.php:355
 #: includes/admin/views/browse-fields-modal.php:102
 msgid "Documentation"
 msgstr "માર્ગદર્શિકા"
@@ -5992,28 +6003,28 @@ msgstr "અજ્ઞાત"
 msgid "Field type does not exist"
 msgstr "ક્ષેત્ર પ્રકાર અસ્તિત્વમાં નથી"
 
-#: includes/forms/form-front.php:217
+#: includes/forms/form-front.php:220
 msgid "Spam Detected"
 msgstr ""
 
-#: includes/forms/form-front.php:100
+#: includes/forms/form-front.php:103
 msgid "Post updated"
 msgstr "પોસ્ટ અપડેટ થઇ ગઈ"
 
-#: includes/forms/form-front.php:99
+#: includes/forms/form-front.php:102
 msgid "Update"
 msgstr "સુધારો"
 
-#: includes/forms/form-front.php:54
+#: includes/forms/form-front.php:63
 msgid "Validate Email"
 msgstr "ઇમેઇલ માન્ય કરો"
 
-#: includes/fields.php:326 includes/forms/form-front.php:46
+#: includes/fields.php:326 includes/forms/form-front.php:55
 msgid "Content"
 msgstr "લખાણ"
 
 #: includes/admin/views/acf-post-type/advanced-settings.php:21
-#: includes/forms/form-front.php:37
+#: includes/forms/form-front.php:46
 msgid "Title"
 msgstr "શીર્ષક"
 
@@ -6078,8 +6089,8 @@ msgstr ""
 msgid "1 field requires attention"
 msgstr ""
 
-#: includes/assets.php:368 includes/validation.php:247
-#: includes/validation.php:255
+#: includes/assets.php:368 includes/validation.php:257
+#: includes/validation.php:265
 msgid "Validation failed"
 msgstr ""
 
@@ -6190,7 +6201,7 @@ msgstr "પંક્તિઓ"
 
 #: includes/fields/class-acf-field-textarea.php:22
 msgid "Text Area"
-msgstr ""
+msgstr "ટેક્સ્ટ વિસ્તાર"
 
 #: includes/fields/class-acf-field-checkbox.php:421
 msgid "Prepend an extra checkbox to toggle all choices"
@@ -6930,7 +6941,7 @@ msgstr[1] "%1$s ને ઓછામાં ઓછી %2$s પસંદગીન�
 #: includes/fields/class-acf-field-post_object.php:402
 #: includes/fields/class-acf-field-relationship.php:616
 msgid "Post ID"
-msgstr ""
+msgstr "પોસ્ટ આઈડી"
 
 #: includes/fields/class-acf-field-post_object.php:15
 #: includes/fields/class-acf-field-post_object.php:401
@@ -7099,7 +7110,7 @@ msgstr ""
 
 #: includes/fields/class-acf-field-image.php:184
 msgid "Image URL"
-msgstr ""
+msgstr "ચિત્ર યુઆરએલ"
 
 #: includes/fields/class-acf-field-image.php:183
 msgid "Image Array"
@@ -7304,17 +7315,15 @@ msgstr ""
 msgid "Message"
 msgstr "સંદેશ"
 
-#: includes/assets.php:352 includes/class-acf-site-health.php:277
-#: includes/class-acf-site-health.php:339
-#: includes/fields/class-acf-field-true_false.php:79
+#: includes/assets.php:352 includes/fields/class-acf-field-true_false.php:79
 #: includes/fields/class-acf-field-true_false.php:175
+#: src/Site_Health/Site_Health.php:281 src/Site_Health/Site_Health.php:338
 msgid "No"
 msgstr "ના"
 
-#: includes/assets.php:351 includes/class-acf-site-health.php:276
-#: includes/class-acf-site-health.php:339
-#: includes/fields/class-acf-field-true_false.php:76
+#: includes/assets.php:351 includes/fields/class-acf-field-true_false.php:76
 #: includes/fields/class-acf-field-true_false.php:159
+#: src/Site_Health/Site_Health.php:280 src/Site_Health/Site_Health.php:338
 msgid "Yes"
 msgstr "હા"
 
@@ -7453,90 +7462,90 @@ msgid "Time Picker"
 msgstr "તારીખ પીકર"
 
 #. translators: counts for inactive field groups
-#: acf.php:507
+#: acf.php:525
 msgid "Inactive <span class=\"count\">(%s)</span>"
 msgid_plural "Inactive <span class=\"count\">(%s)</span>"
 msgstr[0] "નિષ્ક્રિય <span class=\"count\">(%s)</span>"
 msgstr[1] "નિષ્ક્રિય <span class=\"count\">(%s)</span>"
 
-#: acf.php:468
+#: acf.php:486
 msgid "No Fields found in Trash"
 msgstr "ટ્રેશમાં કોઈ ફીલ્ડ મળ્યાં નથી"
 
-#: acf.php:467
+#: acf.php:485
 msgid "No Fields found"
 msgstr "કોઈ ક્ષેત્રો મળ્યાં નથી"
 
-#: acf.php:466
+#: acf.php:484
 msgid "Search Fields"
 msgstr "શોધ ક્ષેત્રો"
 
-#: acf.php:465
+#: acf.php:483
 msgid "View Field"
 msgstr "ક્ષેત્ર જુઓ"
 
-#: acf.php:464 includes/admin/views/acf-field-group/fields.php:113
+#: acf.php:482 includes/admin/views/acf-field-group/fields.php:113
 msgid "New Field"
 msgstr "નવી ફીલ્ડ"
 
-#: acf.php:463
+#: acf.php:481
 msgid "Edit Field"
 msgstr "ફીલ્ડ સંપાદિત કરો"
 
-#: acf.php:462
+#: acf.php:480
 msgid "Add New Field"
 msgstr "નવી ફીલ્ડ ઉમેરો"
 
-#: acf.php:460
+#: acf.php:478
 msgid "Field"
 msgstr "ફિલ્ડ"
 
-#: acf.php:459 includes/admin/post-types/admin-field-group.php:179
+#: acf.php:477 includes/admin/post-types/admin-field-group.php:179
 #: includes/admin/post-types/admin-field-groups.php:93
 #: includes/admin/views/acf-field-group/fields.php:32
 msgid "Fields"
 msgstr "ક્ષેત્રો"
 
-#: acf.php:434
+#: acf.php:452
 msgid "No Field Groups found in Trash"
 msgstr "ટ્રેશમાં કોઈ ફીલ્ડ જૂથો મળ્યાં નથી"
 
-#: acf.php:433
+#: acf.php:451
 msgid "No Field Groups found"
 msgstr "કોઈ ક્ષેત્ર જૂથો મળ્યાં નથી"
 
-#: acf.php:432
+#: acf.php:450
 msgid "Search Field Groups"
 msgstr "ક્ષેત્ર જૂથો શોધો"
 
-#: acf.php:431
+#: acf.php:449
 msgid "View Field Group"
 msgstr "ક્ષેત્ર જૂથ જુઓ"
 
-#: acf.php:430
+#: acf.php:448
 msgid "New Field Group"
 msgstr "નવું ક્ષેત્ર જૂથ"
 
-#: acf.php:429
+#: acf.php:447
 msgid "Edit Field Group"
 msgstr "ક્ષેત્ર જૂથ સંપાદિત કરો"
 
-#: acf.php:428
+#: acf.php:446
 msgid "Add New Field Group"
 msgstr "નવું ક્ષેત્ર જૂથ ઉમેરો"
 
-#: acf.php:427 acf.php:461
+#: acf.php:445 acf.php:479
 #: includes/admin/views/acf-post-type/advanced-settings.php:224
 #: includes/post-types/class-acf-post-type.php:93
 #: includes/post-types/class-acf-taxonomy.php:92
 msgid "Add New"
 msgstr "નવું ઉમેરો"
 
-#: acf.php:426
+#: acf.php:444
 msgid "Field Group"
 msgstr "ક્ષેત્ર જૂથ"
 
-#: acf.php:425 includes/admin/post-types/admin-field-groups.php:55
+#: acf.php:443 includes/admin/post-types/admin-field-groups.php:55
 #: includes/admin/post-types/admin-post-types.php:113
 #: includes/admin/post-types/admin-taxonomies.php:112
 msgid "Field Groups"
@@ -7553,6 +7562,6 @@ msgid "https://www.advancedcustomfields.com"
 msgstr "https://www.advancedcustomfields.com"
 
 #. Plugin Name of the plugin
-#: acf.php acf.php:93
+#: acf.php acf.php:289
 msgid "Advanced Custom Fields"
 msgstr "અદ્યતન કસ્ટમ ક્ષેત્રો"

@@ -27,7 +27,7 @@ class PMXI_Addon_Updater {
         $this->api_url  = trailingslashit( $_api_url );
         $this->api_data = urlencode_deep( $_api_data );
         $this->name     = plugin_basename( $_plugin_file );
-        $this->slug     = basename( $_plugin_file, '.php' );
+        $this->slug     = strtok($this->name, '/');//basename( $_plugin_file, '.php' );
 
         $this->version      = $_api_data['version'];
         $this->_plugin_file = $_plugin_file;
@@ -63,9 +63,13 @@ class PMXI_Addon_Updater {
      */
     public function plugin_row_meta( $links, $file ) {
         if ( $file == $this->name ) {
-            $row_meta = array(
-                'changelog' => '<a href="' . admin_url( 'plugin-install.php?tab=plugin-information&plugin=wpai-acf-add-on&section=changelog&TB_iframe=true&width=600&height=800' ) . '" class="thickbox open-plugin-details-modal" title="' . esc_attr( __( 'View WP All Import - ACF Add-On Pro Changelog', 'wp_all_import_acf_add_on' ) ) . '">' . __( 'Changelog', 'wp_all_import_acf_add_on' ) . '</a>',
-            );
+	        $admin_url = esc_url(admin_url('plugin-install.php?tab=plugin-information&plugin='.$this->slug.'&section=changelog&TB_iframe=true&width=600&height=800'));
+	        $title = esc_attr( esc_html__( 'View Changelog', 'wp_all_import_pro' ) );
+	        $text = esc_html__( 'Changelog', 'wp_all_import_pro' );
+
+	        $row_meta = array(
+		        'changelog' => "<a href=\"{$admin_url}\" class=\"thickbox open-plugin-details-modal\" title=\"{$title}\">{$text}</a>",
+	        );
 
             return array_merge( $links, $row_meta );
         }
@@ -325,6 +329,7 @@ class PMXI_Addon_Updater {
             'item_name'  => isset( $data['item_name'] ) ? $data['item_name'] : false,
             'item_id'    => isset( $data['item_id'] ) ? $data['item_id'] : false,
             'slug'       => $data['slug'],
+			'plugin'     => $this->_plugin_file,
             'author'     => $data['author'],
             'url'        => home_url(),
             'version'    => $this->version

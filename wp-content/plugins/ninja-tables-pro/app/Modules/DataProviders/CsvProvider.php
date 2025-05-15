@@ -3,6 +3,7 @@
 namespace NinjaTablesPro\App\Modules\DataProviders;
 
 use NinjaTables\App\Library\Csv\Reader;
+use NinjaTables\Framework\Support\Arr;
 use NinjaTablesPro\App\Traits\GoogleSheetTrait;
 
 class CsvProvider
@@ -17,36 +18,40 @@ class CsvProvider
         add_filter('ninja_tables_get_table_data_csv', array($this, 'getTableData'), 10, 4);
         add_filter('ninja_tables_fetching_table_rows_csv', array($this, 'data'), 10, 5);
 
-        add_action('wp_ajax_ninja_table_external_data_source_create',
-            array($this, 'createTableWithExternalDataSource'));
+        add_action(
+            'wp_ajax_ninja_table_external_data_source_create',
+            array($this, 'createTableWithExternalDataSource')
+        );
 
         add_filter('ninja_table_activated_features', function ($features) {
             $features['external_data_source'] = true;
 
             return $features;
         });
-
     }
 
     public function createTableWithExternalDataSource()
     {
-        if ( ! current_user_can(ninja_table_admin_role())) {
+        if (!current_user_can(ninja_table_admin_role())) {
             return;
         }
         ninjaTablesValidateNonce();
 
         $tableCreated = false;
-        $tableId      = isset($_REQUEST['ID']) ? $_REQUEST['ID'] : null;
-        $url          = isset($_REQUEST['remoteURL']) ? $_REQUEST['remoteURL'] : $_REQUEST['remote_url'];
+        $tableId      = intval(Arr::get($_REQUEST, 'ID'));
+        $url          = isset($_REQUEST['remoteURL']) ? Arr::get($_REQUEST, 'remoteURL') : Arr::get(
+            $_REQUEST,
+            'remote_url'
+        );
 
         $messages = array();
         // Validate Title
-        if ( ! $tableId && empty($_REQUEST['post_title'])) {
+        if (!$tableId && empty(Arr::get($_REQUEST, 'post_title'))) {
             $messages['title'] = __('The title field is required.', 'ninja-tables');
         }
 
         // Validate URL
-        if (empty($url) || ! ninja_tables_is_valid_url($url)) {
+        if (empty($url) || !ninja_tables_is_valid_url($url)) {
             $messages['url'] = __('The url field is empty or invalid.', 'ninja-tables');
         }
 
@@ -56,27 +61,38 @@ class CsvProvider
             wp_die();
         }
 
-        $type = $_REQUEST['type'];
+        $type = sanitize_text_field(Arr::get($_REQUEST, 'type', 'csv'));
 
 
         // Ensure the correct url if requesting goggle spreadsheet
-        if ($type == 'google-csv') {
-            $parsedUrl  = parse_url($url);
-            $queryIndex = '';
-            if (isset($parsedUrl['query'])) {
-                $queryIndex = $parsedUrl['query'];
+        if ($type === 'google-csv') {
+            $parsedUrl = parse_url($url);
+
+            if (!isset($parsedUrl['scheme'], $parsedUrl['host'], $parsedUrl['path'])) {
+                wp_send_json_error(['message' => __('Invalid Google Sheet URL', 'ninja-tables')], 400);
+                wp_die();
             }
-            parse_str($queryIndex, $query);
+
+            parse_str($parsedUrl['query'] ?? '', $query);
             unset($query['output']);
-            $query = build_query($query);
-            $path  = substr($parsedUrl['path'], 0, strrpos($parsedUrl['path'], '/'));
-            $url   = $parsedUrl['scheme'] . '://' . $parsedUrl['host'] . $path . '/pubhtml?' . $query;
+
+            $path = substr($parsedUrl['path'], 0, strrpos($parsedUrl['path'], '/'));
+
+            $url = esc_url_raw(
+                sprintf(
+                    '%s://%s%s/pubhtml?%s',
+                    $parsedUrl['scheme'],
+                    $parsedUrl['host'],
+                    $path,
+                    http_build_query($query)
+                )
+            );
         }
 
 
         // For csv data type (google or other)
         if (in_array($type, array('csv', 'google-csv'))) {
-            if ( ! empty($_REQUEST['get_headers_only'])) {
+            if (!empty(Arr::get($_REQUEST, 'get_headers_only'))) {
                 if ($type == 'csv') {
                     $formattedHeader = $this->getHeaderFromCsvUrl($url);
                 } else {
@@ -96,11 +112,11 @@ class CsvProvider
 
 
             $fields = array_map(function ($field) {
-                return trim($field['name']);
-            }, $_REQUEST['fields']);
+                return sanitize_text_field(trim($field['name']));
+            }, Arr::get($_REQUEST, 'fields'));
 
             // Validate Fields
-            if (empty($_REQUEST['fields'])) {
+            if (empty(Arr::get($_REQUEST, 'fields'))) {
                 $messages['fields'] = __('No fields were selected / no changes made', 'ninja-tables');
                 if (array_filter($messages)) {
                     wp_send_json_error(array('message' => $messages), 422);
@@ -130,7 +146,9 @@ class CsvProvider
 
             if ($tableId) {
                 $oldColumns = get_post_meta(
-                    $tableId, '_ninja_table_columns', true
+                    $tableId,
+                    '_ninja_table_columns',
+                    true
                 );
                 foreach ($columns as $key => $newColumn) {
                     foreach ($oldColumns as $oldColumn) {
@@ -192,7 +210,6 @@ class CsvProvider
         if ($cachedData) {
             $csvData = $cachedData;
         } else {
-
             $type = get_post_meta($tableId, '_ninja_tables_data_provider', true);
             $url  = get_post_meta($tableId, '_ninja_tables_data_provider_url', true);
 
@@ -227,7 +244,7 @@ class CsvProvider
 
     public function data($data, $tableId, $defaultSorting, $limitEntries = false, $skip = false)
     {
-        if ( ! $limitEntries && ! $skip) {
+        if (!$limitEntries && !$skip) {
             $cachedData = ninjaTableGetExternalCachedData($tableId);
             if ($cachedData) {
                 return $cachedData;
@@ -241,7 +258,6 @@ class CsvProvider
         if ($cachedData) {
             $csvData = $cachedData;
         } else {
-
             $type = get_post_meta($tableId, '_ninja_tables_data_provider', true);
             $url  = get_post_meta($tableId, '_ninja_tables_data_provider_url', true);
 
@@ -254,7 +270,6 @@ class CsvProvider
             if ($csvData) {
                 ninjaTableSetExternalCacheData($tableId, $csvData);
             }
-
         }
 
         if ($skip || $limitEntries) {
@@ -292,13 +307,12 @@ class CsvProvider
             return array();
         }
 
-        if ( ! class_exists(Reader::class)) {
+        if (!class_exists(Reader::class)) {
             return array();
         }
 
         try {
-            $sanitizedData = wp_kses($response['body'], ninja_tables_allowed_html_tags());
-            $reader = Reader::createFromString($sanitizedData)->fetchAll();
+            $reader = Reader::createFromString($response['body'])->fetchAll();
         } catch (\Exception $exception) {
             return array();
         }
@@ -307,6 +321,9 @@ class CsvProvider
         $header = array_map('trim', array_shift($reader));
 
         foreach ($reader as $row) {
+            if (count($header) !== count($row)) {
+                continue;
+            }
             $data[] = array_combine($header, $row);
         }
 
@@ -322,7 +339,7 @@ class CsvProvider
             'post_status'  => 'publish'
         );
 
-        if ( ! $postId) {
+        if (!$postId) {
             $postId = wp_insert_post($attributes);
         } else {
             $attributes['ID'] = $postId;
@@ -351,17 +368,18 @@ class CsvProvider
             return $response;
         }
 
-		$headers            = $response['headers'];
-		$headersContentType = [ 'application/octet-stream', 'application/binary' ];
+        $headers            = $response['headers'];
+        $headersContentType = ['application/octet-stream', 'application/binary'];
 
         if (strpos($url, '.csv') === strlen($url) - strlen('.csv')) {
             $headersContentType[] = 'text/plain';
         }
 
-		if ( strpos( $headers['content-type'], 'csv' ) !== false || in_array( $headers['content-type'], $headersContentType )) {
-
-            $sanitizedData = wp_kses($response['body'], ninja_tables_allowed_html_tags());
-			$headers = Reader::createFromString($sanitizedData)->fetchOne();
+        if (strpos($headers['content-type'], 'csv') !== false || in_array(
+                $headers['content-type'],
+                $headersContentType
+            )) {
+            $headers = Reader::createFromString($response['body'])->fetchOne();
 
             $formattedHeader = array();
             foreach ($headers as $header) {
@@ -370,8 +388,10 @@ class CsvProvider
 
             return $formattedHeader;
         } else {
-            return new \WP_Error(423,
-                __('Expected CSV but received invalid data type from the given url.', 'ninja-tables'));
+            return new \WP_Error(
+                423,
+                __('Expected CSV but received invalid data type from the given url.', 'ninja-tables')
+            );
         }
     }
 }

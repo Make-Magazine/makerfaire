@@ -33,21 +33,31 @@ abstract class PMXI_Addon_Base {
         $this->initEed();
 
         $this->hints = [
-            'time'        => __( 'Use any format supported by the PHP strtotime function.', 'wp_all_import_plugin' ),
-            'date'        => __( 'Use any format supported by the PHP strtotime function.', 'wp_all_import_plugin' ),
-            'datetime'    => __( 'Use any format supported by the PHP strtotime function.', 'wp_all_import_plugin' ),
-            'iconpicker'  => __( 'Specify the icon class name - e.g. fa-user.', 'wp_all_import_plugin' ),
-            'colorpicker' => __( 'Specify the hex code the color preceded with a # - e.g. #ea5f1a.', 'wp_all_import_plugin' ),
-            'media'       => __( 'Specify the URL to the image or file.', 'wp_all_import_plugin' ),
-            'post'        => __( 'Enter the ID, slug, or Title. Separate multiple entries with separator character.', 'wp_all_import_plugin' ),
-            'user'        => __( 'Enter the ID, username, or email for the existing user.', 'wp_all_import_plugin' )
+            'time'        => __( 'Use any format supported by the PHP strtotime function.', 'wp-all-import-pro' ),
+            'date'        => __( 'Use any format supported by the PHP strtotime function.', 'wp-all-import-pro' ),
+            'datetime'    => __( 'Use any format supported by the PHP strtotime function.', 'wp-all-import-pro' ),
+            'iconpicker'  => __( 'Specify the icon class name - e.g. fa-user.', 'wp-all-import-pro' ),
+            'colorpicker' => __( 'Specify the hex code the color preceded with a # - e.g. #ea5f1a.', 'wp-all-import-pro' ),
+            'media'       => __( 'Specify the URL to the image or file.', 'wp-all-import-pro' ),
+            'post'        => __( 'Enter the ID, slug, or Title. Separate multiple entries with separator character.', 'wp-all-import-pro' ),
+            'user'        => __( 'Enter the ID, username, or email for the existing user.', 'wp-all-import-pro' ),
+	        'map'         => __( 'WP All Import will first try to get your Google Maps API key from the add-on you\'re using. If that fails you must enter the key under \'Google Maps Settings\' below.')
         ];
 
         add_filter( 'wp_all_import_addon_parse', [ $this, 'registerParseFunction' ] );
         add_filter( 'wp_all_import_addon_import', [ $this, 'registerImportFunction' ] );
         add_filter( 'wp_all_import_addon_saved_post', [ $this, 'registerPostSavedFunction' ] );
+        add_filter( 'pmxi_custom_types', [ $this, 'registerCustomTypes' ], 2, 5 );
         add_filter( 'pmxi_options_options', [ $this, 'registerDefaultOptions' ] );
         add_filter( 'pmxi_save_options', [ $this, 'updateOptions' ] );
+        add_filter( 'pmxi_custom_field_to_delete', [ $this, 'canDeleteField' ], 99, 5 );
+        add_filter( 'pmxi_visible_template_sections', [ $this, 'getVisibleSections' ], 99, 2 );
+        add_filter( 'pmxi_hidden_data_to_update_options', [ $this, 'getHiddenChooseDataToUpdateOptions' ], 99, 2 );
+	    add_filter( 'pmxi_disabled_delete_missing_options', [ $this, 'getDisabledDeleteMissingOptions' ], 99, 2 );
+	    add_filter( 'pmxi_hidden_delete_missing_options', [ $this, 'getHiddenDeleteMissingOptions' ], 99, 2 );
+	    add_filter( 'pmxi_status_of_removed_options', [ $this, 'getStatusOfRemovedOptions' ], 99, 2 );
+        add_filter( 'pmxi_fire_hooks', [ $this, 'shouldFirePostHooks' ], 10, 2 );
+        add_filter( 'pmxi_types_current_type_supports_title', [ $this, 'supportsTitle' ], 99, 2 );
     }
 
     /**
@@ -59,6 +69,7 @@ abstract class PMXI_Addon_Base {
 
     /**
      * Do stuff before the plugin is activated
+     *
      * @return void
      */
     public function preflight() {
@@ -66,19 +77,32 @@ abstract class PMXI_Addon_Base {
 
         if ( is_wp_error( $results ) ) {
             $this->showErrorAndDeactivate( $results->get_error_message() );
-
-            return;
         }
     }
 
-    public function isAvailableForType( string $importType, $data ) {
-        $types           = $this->availableForTypes();
+    /**
+     * Determine if the addon can be used for the current import type.
+     *
+     * @param string $importType
+     * @param $options
+     *
+     * @return bool
+     */
+    public function isAvailableForType( string $importType, $options ) {
+        $customTypes = array_keys($this->getCustomTypes());
+        $types       = $this->availableForTypes();
+
         $unprefixedTypes = array_values( array_filter( $types, fn( $type ) => $type[0] !== '-' ) );
         // If the type is prefixed with a dash, it means the addon not available for it
         $shouldSkip = in_array( '-' . $importType, $types );
 
+
+        if ( in_array( $importType, $customTypes ) ) {
+            return true;
+        }
+
         if ( $importType === 'taxonomies' ) {
-            $taxonomy = $data['taxonomy_type'];
+            $taxonomy = $options['taxonomy_type'];
 
             return count( $unprefixedTypes ) === 0 || in_array( 'taxonomy:' . $taxonomy, $types ) || in_array( 'taxonomies', $types );
         }
@@ -91,18 +115,161 @@ abstract class PMXI_Addon_Base {
     }
 
     /**
-     * Get the post types the plugin is available for.
+     * Provide an interface for developers to create custom importers for Non-WordPress data.
+     *
+     * @param $options
+     *
+     * @return class-string<PMXI_Addon_Importer>|null
+     */
+    public function getCustomImporter( $options ) {
+        return null;
+    }
+
+    /**
+     * List of post types and taxonomies the plugin is available for.
      * Leave empty to make it available for all post types.
+     *
+     * @return string[]
      */
     public function availableForTypes() {
         return [];
     }
 
-    public function initEed() {
+    /**
+     * Was this import type created by this addon?
+     *
+     * @param string $importType
+     * @param $options
+     *
+     * @return bool
+     */
+    public function ownsImportType( string $importType, $options ) {
+        $types = array_keys( $this->getCustomTypes() );
+        return in_array( $importType, $types );
     }
 
     /**
+     * Register Custom Types that are not part of WordPress core.
+     * - This is useful for plugins that have their own data structures.
+     * - Prefix the key with the plugin slug to avoid conflicts.
+     *
+     * @return string[]
+     */
+    public function getCustomTypes() {
+        return [];
+    }
+
+    /**
+     * The function called by the add_filter hook.
+     *
+     * @return string[]
+     */
+    public function registerCustomTypes( $types, $section ) {
+        return array_merge( $types, $this->getCustomTypes() );
+    }
+
+    /**
+     * Show or hide sections based on the import type.
+     *
+     * @param $sections
+     * @param $type
+     *
+     * @return mixed
+     */
+    public function getVisibleSections( $sections, $type ) {
+        return $sections;
+    }
+
+    /**
+     * Show or hide sections based on the import type in "Choose Which Data to Update" options.
+     *
+     * @param $options
+     * @param $type
+     *
+     * @return mixed
+     */
+    public function getHiddenChooseDataToUpdateOptions( $options, $type ) {
+        return $options;
+    }
+
+	/**
+	 * Enable or Disable delete sections based on the import type in "What do you want to do with those..." options.
+	 *
+	 * @param $options
+	 * @param $type
+	 *
+	 * @return mixed
+	 */
+	public function getDisabledDeleteMissingOptions( $options, $type ) {
+		return $options;
+	}
+
+	/**
+	 * Show or hide delete sections based on the import type in "What do you want to do with those..." options.
+	 *
+	 * @param $options
+	 * @param $type
+	 *
+	 * @return mixed
+	 */
+	public function getHiddenDeleteMissingOptions( $options, $type ) {
+		return $options;
+	}
+
+	/**
+	 * Modify statuses based on the import type in "Change status of removed...".
+	 *
+	 * @param $options
+	 * @param $type
+	 *
+	 * @return mixed
+	 */
+	public function getStatusOfRemovedOptions( $options, $type ) {
+		return $options;
+	}
+
+    /**
+     * Decide if we should fire important hooks after custom fields are added.
+     * This is only applicable custom post type.
+     *
+     * @param bool $should_fire
+     * @param string $type
+     *
+     * @return bool
+     */
+    public function shouldFirePostHooks( bool $should_fire, string $type ) {
+        return $should_fire;
+    }
+
+    /**
+     * Determine if the import type supports a title field.
+     *
+     * @param bool $supports
+     * @param string $type
+     *
+     * @return bool
+     */
+    public function supportsTitle(bool $supports, string $type) {
+        return $supports;
+    }
+
+    /**
+     * @return true
+     */
+    public function isAccordionClosed(string $type, string $subtype = null) {
+        return true;
+    }
+
+    /**
+     * Allow addons to initialize their own EED classes. Empty by default.
+     *
+     * @return void
+     */
+    public function initEed() {}
+
+    /**
      * Determine if the plugin can run on the current site otherwise disable it.
+     *
      * @return bool|\WP_Error
      */
     abstract public function canRun();
@@ -131,9 +298,9 @@ abstract class PMXI_Addon_Base {
      * Import fields to the database
      */
     abstract public static function import(
-        int $postId,
+        int   $id,
         array $fields,
-        array $data,
+        array $values,
         \PMXI_Import_Record $record,
         array $post,
         $logger
@@ -216,7 +383,57 @@ abstract class PMXI_Addon_Base {
         return $options;
     }
 
+    /**
+     * @param bool $field_to_delete
+     * @param int $pid
+     * @param string $post_type
+     * @param array $options
+     * @param string $cur_meta_key
+     *
+     * @return bool
+     */
+    public function canDeleteField( $field_to_delete, $pid, $post_type, $options, $cur_meta_key ) {
+        $type    = $options['custom_type'];
+        $subtype = $options['taxonomy_type'];
+        $data    = $options[ $this->slug ] ?? null;
+        $groups  = $options[ $this->slug . '_groups' ] ?? [];
+
+        $fields = $this->getImportFields( $type, $subtype, $groups, $data );
+        $field  = $this->getFieldByKey( $fields, $cur_meta_key );
+
+        if ( ! $field ) {
+            return apply_filters( "pmxi_is_{$this->slug}_update_allowed", $field_to_delete, $cur_meta_key, $options );
+        }
+
+        $canDelete = $this->importer->canDeleteField( $field, $options );
+
+        return apply_filters( "pmxi_is_{$this->slug}_update_allowed", $canDelete, $cur_meta_key, $options );
+    }
+
+    public function getImportFields( $type, $subtype, $groups, $data ) {
+        // Filter out fields that don't exist in the parsed data
+        $fields = array_filter(
+            $this->fields( $type, $subtype ),
+            fn( $field ) => isset( $data[ $field['key'] ] )
+        );
+
+        // Filter out fields from disabled groups
+        $fields = array_filter(
+            $fields,
+            fn( $field ) => in_array( $field['group'], $groups )
+        );
+
+        return array_values( $fields );
+    }
+
     // Fields and groups helpers
+
+    public function getFieldByKey( $fields, $key ) {
+        $index = array_column( $fields, 'key' );
+        $map   = array_flip( $index );
+
+        return $fields[ $map[ $key ] ?? null ] ?? null;
+    }
 
     /**
      * @param string $groupId
@@ -301,7 +518,7 @@ trait HasError {
     public function getMissingDependencyError( $pluginName, $pluginUrl ) {
         return new \WP_Error( 'missing_dependency', __(
             sprintf( "<b>%s Plugin</b>: <a target=\"_blank\" href=\"%s\">%s</a> must be installed", $this->name(), $pluginUrl, $pluginName ),
-            'wp_all_import_plugin'
+            'wp-all-import-pro'
         ) );
     }
 }

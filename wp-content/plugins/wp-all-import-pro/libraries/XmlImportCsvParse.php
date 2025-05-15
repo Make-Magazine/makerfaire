@@ -936,6 +936,9 @@ class PMXI_CsvParser
     }
 
     function toXML( $fixBrokenSymbols = false ){
+        // Temporarily suppress deprecation warnings.
+        $currentErrorReporting = error_reporting();
+        error_reporting($currentErrorReporting & ~E_DEPRECATED);
 
         $c = 0;
         $d = ( "" != $this->delimiter ) ? $this->delimiter : $this->settings['delimiter'];
@@ -954,6 +957,10 @@ class PMXI_CsvParser
         }
 
         if ($is_html) return;
+
+        // TODO: replace when PHP 9 releases
+        $originalAutoDetectLineEndings = @ini_get('auto_detect_line_endings'); // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged
+        @ini_set('auto_detect_line_endings', true); // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged
 
         $res = fopen($this->_filename, 'rb');
 
@@ -990,7 +997,6 @@ class PMXI_CsvParser
             foreach ($keys as $key) {
                 if (empty($key) || preg_replace("%\s%", "", $key) == '') $empty_columns++;
             }
-            // Skip empty lines.
             if ($empty_columns == count($keys)) continue;
 
             if ($c == 0) {
@@ -1059,6 +1065,12 @@ class PMXI_CsvParser
         fclose($res);
         $xmlWriter->endElement();
         $xmlWriter->flush(TRUE);
+
+        // TODO: replace when PHP 9 releases
+        @ini_set('auto_detect_line_endings', $originalAutoDetectLineEndings); // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged
+
+        // Restore original error reporting level.
+        error_reporting($currentErrorReporting);
 
         return TRUE;
     }

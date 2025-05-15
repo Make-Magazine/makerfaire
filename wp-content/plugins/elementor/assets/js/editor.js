@@ -1,4 +1,4 @@
-/*! elementor - v3.28.0 - 17-03-2025 */
+/*! elementor - v3.28.0 - 22-04-2025 */
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
@@ -32099,11 +32099,14 @@ InlineEditingBehavior = Marionette.Behavior.extend({
     var key = this.getEditingSettingKey(),
       container = this.view.getContainer();
     var parts = key.split('.');
-
-    // Is it repeater?
-    if (3 === parts.length) {
-      container = container.children[parts[1]];
-      key = parts[2];
+    var isRepeaterKey = 3 === parts.length;
+    if (isRepeaterKey) {
+      var repeaterId = parts[0];
+      var repeater = container.repeaters[repeaterId];
+      var repeaterChildIndex = parts[1];
+      container = repeater.children[repeaterChildIndex];
+      var fieldToUpdate = parts[2];
+      key = fieldToUpdate;
     }
     $e.run('document/elements/settings', {
       container: container,

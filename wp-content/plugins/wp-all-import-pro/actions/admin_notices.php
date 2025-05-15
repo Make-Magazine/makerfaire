@@ -7,7 +7,7 @@ function pmxi_admin_notices() {
 		?>
 		<div class="error"><p>
 			<?php printf(
-					__('<b>%s Plugin</b>: Please update your WP All Import WooCommerce add-on to the latest version (4.0.0+)', 'wp_all_import_plugin'),
+					__('<b>%s Plugin</b>: Please update your WP All Import WooCommerce add-on to the latest version (4.0.0+)', 'wp-all-import-pro'),
 					PMWI_Plugin::getInstance()->getName()
 			) ?>
 		</p></div>
@@ -34,7 +34,7 @@ function pmxi_admin_notices() {
 		?>
 		<div class="error"><p>
 			<?php printf(
-					__('<b>%s Plugin</b>: Please update your WP All Import ACF add-on to the latest version', 'wp_all_import_plugin'),
+					__('<b>%s Plugin</b>: Please update your WP All Import ACF add-on to the latest version', 'wp-all-import-pro'),
 					PMAI_Plugin::getInstance()->getName()
 			) ?>
 		</p></div>
@@ -51,7 +51,7 @@ function pmxi_admin_notices() {
 		?>
 		<div class="error"><p>
 			<?php printf(
-					__('<b>%s Plugin</b>: Please update your WP All Import Linkcloak add-on to the latest version', 'wp_all_import_plugin'),
+					__('<b>%s Plugin</b>: Please update your WP All Import Linkcloak add-on to the latest version', 'wp-all-import-pro'),
 					PMLCA_Plugin::getInstance()->getName()
 			) ?>
 		</p></div>
@@ -68,7 +68,7 @@ function pmxi_admin_notices() {
 		?>
 		<div class="error"><p>
 			<?php printf(
-					__('<b>%s Plugin</b>: Please update your WP All Import User add-on to the latest version', 'wp_all_import_plugin'),
+					__('<b>%s Plugin</b>: Please update your WP All Import User add-on to the latest version', 'wp-all-import-pro'),
 					PMUI_Plugin::getInstance()->getName()
 			) ?>
 		</p></div>
@@ -85,7 +85,7 @@ function pmxi_admin_notices() {
 		?>
 		<div class="error"><p>
 			<?php printf(
-					__('<b>%s Plugin</b>: The WPML Add-On Plugin is no longer compatible with this version of WP All Import - please contact support@wpallimport.com and we will supply the latest version of WP All Import that is compatible with the WPML Add-On.', 'wp_all_import_plugin'),
+					__('<b>%s Plugin</b>: The WPML Add-On Plugin is no longer compatible with this version of WP All Import - please contact support@wpallimport.com and we will supply the latest version of WP All Import that is compatible with the WPML Add-On.', 'wp-all-import-pro'),
 					PMLI_Plugin::getInstance()->getName()
 			) ?>
 		</p></div>
@@ -114,10 +114,10 @@ function pmxi_admin_notices() {
 		foreach ($warnings as $code) {
 			switch ($code) {
 				case 1:
-					$m = __('<strong>Warning:</strong> your title is blank.', 'wp_all_import_plugin');
+					$m = __('<strong>Warning:</strong> your title is blank.', 'wp-all-import-pro');
 					break;
 				case 2:
-					$m = __('<strong>Warning:</strong> your content is blank.', 'wp_all_import_plugin');
+					$m = __('<strong>Warning:</strong> your content is blank.', 'wp-all-import-pro');
 					break;
 				default:
 					$m = false;

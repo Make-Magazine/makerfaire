@@ -1,4 +1,4 @@
-/*! elementor - v3.28.0 - 17-03-2025 */
+/*! elementor - v3.28.0 - 22-04-2025 */
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
@@ -517,7 +517,8 @@ var HomeScreen = function HomeScreen(props) {
       pb: 2
     }
   }, props.homeScreenData.top_with_licences && /*#__PURE__*/_react.default.createElement(_topSection.default, {
-    topData: props.homeScreenData.top_with_licences
+    topData: props.homeScreenData.top_with_licences,
+    buttonCtaUrl: props.homeScreenData.button_cta_url
   }), /*#__PURE__*/_react.default.createElement(_ui.Box, {
     sx: {
       display: 'flex',
@@ -769,13 +770,13 @@ var _Button = _interopRequireDefault(__webpack_require__(/*! @elementor/ui/Butto
 var _youtubeIcon = _interopRequireDefault(__webpack_require__(/*! ../icons/youtube-icon */ "../modules/home/assets/js/icons/youtube-icon.js"));
 var TopSection = function TopSection(_ref) {
   var props = (0, _extends2.default)({}, ((0, _objectDestructuringEmpty2.default)(_ref), _ref));
-  var topData = props.topData;
+  var topData = props.topData,
+    buttonCtaUrl = props.buttonCtaUrl;
   if (!topData) {
     return null;
   }
   var title = topData.title,
     description = topData.description,
-    buttonCtaURL = topData.button_cta_url,
     buttonCtaTitle = topData.button_cta_text,
     buttonCreatePageTitle = topData.button_create_page_title,
     youtubeEmbeddedId = topData.youtube_embed_id,
@@ -819,9 +820,10 @@ var TopSection = function TopSection(_ref) {
       gap: 1
     }
   }, /*#__PURE__*/_react.default.createElement(_Button.default, {
+    "data-testid": "e-create-button",
     variant: "contained",
     size: "small",
-    href: buttonCtaURL,
+    href: buttonCtaUrl,
     target: "_blank"
   }, ctaButtonTitle), /*#__PURE__*/_react.default.createElement(_Button.default, {
     variant: "outlined",
@@ -847,7 +849,8 @@ var TopSection = function TopSection(_ref) {
   }));
 };
 TopSection.propTypes = {
-  topData: PropTypes.object.isRequired
+  topData: PropTypes.object.isRequired,
+  buttonCtaUrl: PropTypes.string.isRequired
 };
 var _default = exports["default"] = TopSection;
 

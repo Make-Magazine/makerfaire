@@ -1,5 +1,9 @@
 == Changelog ==
 
+= 4.3.0 (2025-04-29) =
+* `[Security]` Update of Axios HTTP client
+* `[Added]` Support for WordPress 6.8
+
 = 4.2.1 (2024-04-12) =
 * `[Fixed]` Searching for content in file field when Lite Mode is active
 * `[Fixed]` UX of plugin settings page

@@ -1,4 +1,4 @@
-/*! elementor - v3.28.0 - 17-03-2025 */
+/*! elementor - v3.28.0 - 22-04-2025 */
 .elementor-hidden {
   display: none;
 }
@@ -1986,6 +1986,7 @@ body.rtl .e-con {
 }
 .elementor-button-icon {
   display: flex;
+  align-items: center;
 }
 .elementor-button-icon svg {
   width: 1em;

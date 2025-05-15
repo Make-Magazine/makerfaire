@@ -1,6 +1,14 @@
 
 # Changelog
 
+## 1.9.29 | May 14, 2025
+
+- Removed redundant check for Gravity Perks in preparation for Spellbook.
+
+## 1.9.28 | April 23, 2025
+
+- Fixed an issue where dynamically populated time fields in 24-hour format were being stored incorrectly.
+
 ## 1.9.27 | January 7, 2025
 
 - Fixed behavior for read-only Select fields that have a placeholder and set as required. It would previously select the first choice upon submission rather than keeping the placeholder.

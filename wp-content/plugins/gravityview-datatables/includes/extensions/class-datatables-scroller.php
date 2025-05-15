@@ -115,6 +115,10 @@ class GV_Extension_DataTables_Scroller extends GV_DataTables_Extension {
 	function output_config( $gravityview ) {
 	    global $post;
 
+		if ( ! $post ) {
+			return;
+		}
+
 	    // Scroller not enabled
 		if ( ! $this->get_setting( $gravityview->view->ID, 'scroller', false ) ) {
 		    return;

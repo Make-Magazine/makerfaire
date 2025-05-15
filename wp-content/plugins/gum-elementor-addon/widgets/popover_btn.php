@@ -268,6 +268,25 @@ class Popover_Regular_Btn_Widget extends Widget_Base {
       ]
     );
 
+
+    $this->add_control(
+      'pop_tag',
+      [
+        'label' => esc_html__( 'Title Tag', 'gum-elementor-addon' ),
+        'type' => Controls_Manager::SELECT,
+        'options' => [
+          'h2' => 'H2',
+          'h3' => 'H3',
+          'h4' => 'H4',
+          'h5' => 'H5',
+          'h6' => 'H6',
+          'div' => 'div',
+          'span' => 'span',
+        ],
+        'default' => 'h4',
+      ]
+    );
+
     $this->add_control(
       'pop_text',
       [
@@ -635,7 +654,7 @@ class Popover_Regular_Btn_Widget extends Widget_Base {
       [
         'label' => esc_html__( 'Title', 'gum-elementor-addon' ),
         'name' => 'typography_pop_title',
-        'selector' => '{{WRAPPER}} .popover-box h4',
+        'selector' => '{{WRAPPER}} .popover-box .pop-title',
         'separator' => 'before',
       ]
     );
@@ -648,7 +667,7 @@ class Popover_Regular_Btn_Widget extends Widget_Base {
         'type' =>  Controls_Manager::COLOR,
         'default' => '',
         'selectors' => [
-          '{{WRAPPER}} .popover-box h4' => 'color: {{VALUE}};',
+          '{{WRAPPER}} .popover-box .pop-title' => 'color: {{VALUE}};',
         ]
       ]
     );
@@ -667,7 +686,7 @@ class Popover_Regular_Btn_Widget extends Widget_Base {
           'default' => ['value'=> -1,'unit'=>'px']
         ],
         'selectors' => [
-          '{{WRAPPER}} {{WRAPPER}} .popover-box h4' => 'margin-bottom: {{SIZE}}{{UNIT}};',
+          '{{WRAPPER}} .popover-box .pop-title' => 'margin-bottom: {{SIZE}}{{UNIT}};',
         ],
         'separator' => 'after',
       ]
@@ -706,7 +725,9 @@ class Popover_Regular_Btn_Widget extends Widget_Base {
 
     extract( $settings );
 
-    $this->add_render_attribute( 'wrapper', 'class', 'popover-button-wrapper' );
+    $widgetID = "mod_". substr( $this->get_id_int(), 0, 4 );
+
+    $this->add_render_attribute( 'wrapper', ['class' => 'popover-button-wrapper','id'=>  $widgetID ]);
 
     $this->add_render_attribute( 'button', 'class', [
       'elementor-button',
@@ -723,9 +744,7 @@ class Popover_Regular_Btn_Widget extends Widget_Base {
 
     $button_html = $button_icon = '';
 
-
     if(!empty($selected_icon['value'])){
-
 
       ob_start();
       Icons_Manager::render_icon( $selected_icon, [ 'aria-hidden' => 'true' ] );
@@ -737,8 +756,36 @@ class Popover_Regular_Btn_Widget extends Widget_Base {
     $button_html .= '<span '.$this->get_render_attribute_string( 'button_text' ).'>'.esc_html($button_text).'</span>';
 
     ?>
-    <div <?php echo $this->get_render_attribute_string( 'wrapper' ); ?>><a <?php echo $this->get_render_attribute_string( 'button' ); ?> data-pop="<?php esc_attr_e($pop_title);?>" data-pop-text="<?php esc_attr_e($pop_text);?>" data-pop-align="<?php esc_attr_e($pop_align);?>"><span class="elementor-button-content-wrapper"><?php print $button_icon.$button_html; ?></span></a>
+    <div <?php echo $this->get_render_attribute_string( 'wrapper' ); ?>><a <?php echo $this->get_render_attribute_string( 'button' ); ?>><span class="elementor-button-content-wrapper"><?php print $button_icon.$button_html; ?></span></a><div class="popover-box pop-<?php esc_attr_e($pop_align);?>"><div><?php
+
+    if($pop_title!=''){
+
+      $allowed_tags = [ 'h2','h3','h4','h5','h6','div','span' ];
+
+      $title_tag = isset($pop_tag) && in_array($pop_tag, $allowed_tags) ? $pop_tag:'h4';
+
+      printf('<%1$s class="pop-title">%2$s</%1$s>',$pop_tag,esc_attr($pop_title));
+
+    }
+
+    ?><?php esc_attr_e($pop_text);?></div><span class="close-pop"></span></div>
     </div>
+<script type="text/javascript">
+jQuery(document).ready(function($){
+    'use strict';
+
+$('#<?php print esc_js($widgetID).' .popover-button';?>').on("click", function(e){
+    e.preventDefault();
+    $(this).closest('.popover-button-wrapper').toggleClass('pop-it');
+
+    $('#<?php print esc_js($widgetID).' .close-pop';?>').on('click',function(e){
+      e.preventDefault();
+      $(this).closest('.popover-button-wrapper').removeClass('pop-it');
+    });
+});    
+
+});
+</script>
 <?php
 
   }

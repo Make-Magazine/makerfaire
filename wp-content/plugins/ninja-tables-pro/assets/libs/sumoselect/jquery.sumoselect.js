@@ -281,14 +281,28 @@
                     O.selAll = $('<p class="reset-all"><span><i></i></span><label></label></p>');
                     [, , , O.selAll.find('label')[0].innerText] = settings.locale;
                     O.optDiv.addClass('resetAll');
-                    O.selAll.on('click', () => {
-                        O.selAll.removeClass('selected');
-                        O.toggSelAll(false, 1);
+
+                    // Simplified event handler with mobile support
+                    O.selAll.on('click touchstart', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+
+                        // Unselect all options directly
+                        O.E.find('option:selected').prop('selected', false);
+                        O.optDiv.find('li.opt').removeClass('selected');
+
+                        // Update UI
+                        O.setText();
+                        O.selAllState();
+                        O.callChange();
+
+                        // Close if configured
                         if (settings.closeAfterClearAll) {
                             O.hideOpts();
                         }
                     });
 
+                    // Add to the DOM with improved touch target
                     O.optDiv.prepend(O.selAll);
                 },
 
@@ -607,6 +621,7 @@
 
                 floatingList: function () {
                     var O = this;
+                    console.log(settings)
                     //called on init and also on resize.
                     //O.is_floating = true if window width is < specified float width
                     O.is_floating = $(window).width() <= settings.floatWidth;

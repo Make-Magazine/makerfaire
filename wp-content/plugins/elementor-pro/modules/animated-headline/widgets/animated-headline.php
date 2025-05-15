@@ -610,9 +610,10 @@ class Animated_Headline extends Base_Widget {
 		<#
 		var headlineClasses = 'elementor-headline',
 			tag = elementor.helpers.validateHTMLTag( settings.tag );
+		const sanitizedAnimationType = elementor.helpers.sanitize( settings.animation_type ).replaceAll(/'|"/g, '');
 
 		if ( 'rotate' === settings.headline_style ) {
-			headlineClasses += ' elementor-headline-animation-type-' + settings.animation_type;
+			headlineClasses += ' elementor-headline-animation-type-' + sanitizedAnimationType;
 
 			var isLetterAnimation = -1 !== [ 'typing', 'swirl', 'blinds', 'wave' ].indexOf( settings.animation_type );
 

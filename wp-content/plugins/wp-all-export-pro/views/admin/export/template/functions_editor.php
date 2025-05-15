@@ -31,18 +31,12 @@ $functions_content = file_get_contents($functions);
             <h3 style="font-size: 14px; line-height: normal; margin-top: 11px; color: #464646;"><?php esc_html_e('Function Editor', 'wp_all_export_plugin');?><a href="#help" class="wpallexport-help" title="<?php printf(esc_html__("Add functions here for use during your export. You can access this file at %s", "wp_all_export_plugin"), esc_html(preg_replace("%.*wp-content%", "wp-content", $functions)));?>" style="top: -1px;">?</a></h3>
         </div>
         <div class="wpallexport-collapsed-content" style="padding: 0; overflow: hidden; height: auto; display: block;">
-            <div class="wpallexport-collapsed-content-inner" style="padding-top:0;">
-
-                <textarea id="wp_all_export_code" name="wp_all_export_code"><?php echo (empty($functions_content)) ? "<?php\n\n?>": esc_textarea($functions_content);?></textarea>
-
-                <div class="input" style="margin-top: 20px;">
-
-                    <div class="input" style="display:inline-block; margin-right: 20px;">
-                        <input type="button" class="button-primary wp_all_export_save_functions" value="<?php esc_html_e("Save Functions", 'wp_all_export_plugin'); ?>"/>
-                        <div class="wp_all_export_functions_preloader"></div>
-                    </div>
-                    <div class="input wp_all_export_saving_status"></div>
-                </div>
+            <div class="wpallexport-collapsed-content-inner wpallexport-modal-container" style="padding-top:0;">
+	            <?php
+                    $wpae_editor_ref = 'wp_all_export_main_code';
+                    $wpae_editor_save_ref = 'wp_all_export_save_main_code'; 
+                    require(PMXE_Plugin::ROOT_DIR . '/views/admin/shared/function_editor.php');
+                ?>
             </div>
         </div>
     </div>

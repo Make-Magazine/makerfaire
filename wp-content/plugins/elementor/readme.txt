@@ -4,7 +4,7 @@ Tags: page builder, editor, landing page, drag-and-drop, elementor,
 Requires at least: 6.5
 Tested up to: 6.7
 Requires PHP: 7.4
-Stable tag: 3.28.0
+Stable tag: 3.28.4
 Beta tag: 3.28.0-beta3
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -348,6 +348,28 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 6. **Motion Effects** - Add entrance animations and transitions to any element in your website to captivate visitors.
 
 == Changelog ==
+
+= 3.28.4 - 2025-04-22 =
+
+* Tweak: Added Site Planner as an option in the onboarding wizard
+* Tweak: Changed the default theme to Hello Biz in the onboarding wizard
+* Tweak: Added inline editing support for controls using multiple repeaters
+
+= 3.28.3 - 2025-04-01 =
+
+* Tweak: Added Isolate object tool to Elementor AI image editing capabilities
+* Fix: Third dropdown in template display conditions not working in Theme Builder ([#30729](https://github.com/elementor/elementor/issues/30729), [#30732](https://github.com/elementor/elementor/issues/30732))
+
+= 3.28.2 - 2025-03-30 =
+
+* New: Generate logo with AI
+* Tweak: Adjusted supported attributes and elements in SVG files ([#29340](https://github.com/elementor/elementor/issues/29340), [#30132](https://github.com/elementor/elementor/issues/30132))
+* Fix: "Create a page" button is not working in Elementor Home
+* Fix: Icons in Button widgets are not vertically aligned when changing the text line-height ([#30606](https://github.com/elementor/elementor/issues/30606))
+
+= 3.28.1 - 2025-03-23 =
+
+* Fix: Font URL is not updating after domain change when "Load Google Fonts Locally" feature is activated
 
 = 3.28.0 - 2025-03-17 =
 

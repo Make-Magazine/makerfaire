@@ -1997,6 +1997,7 @@ body.rtl .e-con {
 }
 .elementor-button-icon {
   display: flex;
+  align-items: center;
 }
 .elementor-button-icon svg {
   width: 1em;

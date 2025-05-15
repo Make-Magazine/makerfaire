@@ -60,6 +60,11 @@ class GPPA_Compatibility_GravityFlow {
 						// Time field's value should be stored in the string format- hh:mm am/pm.
 						$value                   = array_values( $hydrated_field['field_value'] );
 						$new_entry[ $field->id ] = $field->get_value_save_entry( $value, $form, 'input_' . $field->id, $entry['id'], $entry );
+					} elseif ( is_array( $hydrated_field['field_value'] ) ) {
+						// For values such as Name, Address which have multiple parts to it.
+						foreach ( $hydrated_field['field_value'] as $key => $value ) {
+							$new_entry[ $key ] = $value;
+						}
 					} else {
 						$new_entry[ $field['id'] ] = $hydrated_field['field_value'];
 					}

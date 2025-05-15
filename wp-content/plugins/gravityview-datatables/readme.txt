@@ -16,6 +16,14 @@ Display entries in a dynamic table powered by DataTables & GravityView.
 
 == Changelog ==
 
+= 3.5.2 on April 9, 2025 =
+
+This release fixes a radio field filter displaying incorrectly and a PHP notice when viewing entries in a lightbox.
+
+#### 🐛 Fixed
+* Radio field filter appeared as a single radio input instead of a dropdown with values.
+* PHP notice when viewing an entry in a lightbox.
+
 = 3.5.1 on January 16, 2025 =
 
 This release resolves issues with client-side filtering, date range filters, and navigation from Single Entry pages.

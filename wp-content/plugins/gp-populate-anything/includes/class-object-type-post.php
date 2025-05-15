@@ -580,6 +580,22 @@ AND {$wpdb->term_relationships}.object_id = {$wpdb->posts}.ID
 		if ( strpos( $prop, 'meta_' ) === 0 ) {
 			$meta_key = preg_replace( '/^meta_/', '', $prop );
 
+			// Determine if the meta key is an ACF field.
+			$field_key = get_post_meta( $object->ID, '_' . $meta_key, true );
+			if ( gppa_is_acf_field( $field_key ) && function_exists( 'acf_maybe_get_field' ) && function_exists( 'get_field' ) ) {
+				$field = acf_maybe_get_field( $meta_key, $object->ID );
+				if ( $field && rgar( $field, 'return_format' ) != 'array' ) {
+					$type        = rgar( $field, 'type' );
+					$field_value = get_field( $meta_key, $object->ID );
+
+					if ( $type === 'image' ) {
+						return $this->get_acf_image_url( $field_value );
+					} else {
+						return $field_value;
+					}
+				}
+			}
+
 			// We explicitly do not set "single" to true here. This is the default behavior if we were to use $object->{$prop}
 			$meta = $object ? get_post_meta( $object->ID, $meta_key ) : null;
 
@@ -602,6 +618,32 @@ AND {$wpdb->term_relationships}.object_id = {$wpdb->posts}.ID
 
 		return $object->{$prop};
 
+	}
+
+	/**
+	 * Get the URL of an ACF image field.
+	 *
+	 * @param $field
+	 *
+	 * @return false|mixed|string|null
+	 *
+	 * @since 2.1.28
+	 */
+	public function get_acf_image_url( $field ) {
+		if ( empty( $field ) ) {
+			return '';
+		}
+
+		// ACF Image field can return an array, image url or Image ID. We need to handle all of them.
+		if ( is_array( $field ) ) {
+			$image_url = rgar( $field, 'url' );
+		} elseif ( is_numeric( $field ) ) {
+			$image_url = wp_get_attachment_url( $field );
+		} else {
+			$image_url = $field;
+		}
+
+		return esc_url_raw( $image_url );
 	}
 
 	public function get_posts() {

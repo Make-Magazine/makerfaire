@@ -1,7 +1,5 @@
 <?php
 
-// TODO: Replace this with the real addon manager
-
 namespace Wpai\AddonAPI;
 
 class PMXI_Addon_Manager {
@@ -18,5 +16,17 @@ class PMXI_Addon_Manager {
         $addons = self::get_addons();
 
         return $addons[ $addon ];
+    }
+
+    public static function get_owner_addon_for_type( $options ): ?PMXI_Addon_Base {
+        $addons = self::get_addons();
+
+        foreach ( $addons as $addon ) {
+            if ( $addon->ownsImportType( $options['custom_type'], $options ) ) {
+                return $addon;
+            }
+        }
+
+        return null;
     }
 }

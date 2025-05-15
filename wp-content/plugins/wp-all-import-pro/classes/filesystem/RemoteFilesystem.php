@@ -357,15 +357,16 @@ class RemoteFilesystem {
 
 					case ( 'oldest' ):
 
+						// Filter out any non files and filter by file type.
+						$contents = array_filter( $contents, function ( $var ) {
+							return ( isset( $var['type'] ) && $var['type'] == 'file' && isset( $var['extension'] ) && ( $var['extension'] == $this->rel_type || empty( $this->rel_type ) ) );
+						} );
+
 						// Sort by timestamp newest to oldest.
 						uasort( $contents, function ( $a, $b ) {
 							return $b['timestamp'] - $a['timestamp'];
 						} );
 
-						// Filter out any non files and filter by file type.
-						$contents = array_filter( $contents, function ( $var ) {
-							return ( isset( $var['type'] ) && $var['type'] == 'file' && isset( $var['extension'] ) && ( $var['extension'] == $this->rel_type || empty( $this->rel_type ) ) );
-						} );
 
 						$file = array_pop( $contents );
 
@@ -374,14 +375,14 @@ class RemoteFilesystem {
 
 					case ( 'newest' ):
 
-						// Sort by timestamp oldest to newest.
-						uasort( $contents, function ( $a, $b ) {
-							return $a['timestamp'] - $b['timestamp'];
-						} );
-
 						// Filter out any non files and filter by file type.
 						$contents = array_filter( $contents, function ( $var ) {
 							return ( isset( $var['type'] ) && $var['type'] == 'file' && isset( $var['extension'] ) && ( $var['extension'] == $this->rel_type || empty( $this->rel_type ) ) );
+						} );
+
+						// Sort by timestamp oldest to newest.
+						uasort( $contents, function ( $a, $b ) {
+							return $a['timestamp'] - $b['timestamp'];
 						} );
 
 						$file = array_pop( $contents );

@@ -211,6 +211,7 @@ class SchedulingApi {
 		if ( ! empty( $options['scheduling_license'] ) ) {
 			return array(
 				'Authorization' => 'License ' . \PMXI_Plugin::decode( $options['scheduling_license'] ),
+				'key' => \PMXI_Plugin::getInstance()->getOption('cron_job_key'),
 			);
 		} else {
 			//TODO: Throw custom exception

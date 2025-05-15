@@ -481,7 +481,6 @@ class Gum_Elementor_Totop_Btn_Widget extends Widget_Base {
     $this->add_render_attribute( 'wrapper', ['class' => ['totop', 'bottom-'.sanitize_html_class($button_align)],'id'=>'totop_btn'] );
     $top_html =  '<span></span>';
 
-
     if(!empty($selected_icon['value'])){
 
       ob_start();
@@ -489,8 +488,27 @@ class Gum_Elementor_Totop_Btn_Widget extends Widget_Base {
       $top_html = ob_get_clean();
     }
     ?><div <?php echo $this->get_render_attribute_string( 'wrapper' );?>><span class="totop-wrapper"><?php print $top_html; ?></span></div>
+<script type="text/javascript">
+jQuery(document).ready(function($){
+    'use strict';
+
+    $(window).on('scroll', function () {
+        var totop_offset = 10;
+
+        if($('#wpadminbar').length){ totop_offset += $('#wpadminbar').outerHeight();}
+        if ($(this).scrollTop() < totop_offset ) { $("#totop_btn").fadeOut();} else { $("#totop_btn").fadeIn();}
+    });
+
+     $("#totop_btn").on('click', function () {
+        $("body,html").animate({
+          scrollTop: 0
+        },
+       100);
+     });
+});
+
+</script>
 <?php
-    
     $gum_helper['totop_load'] = true;
 
   }

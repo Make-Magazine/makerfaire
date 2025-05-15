@@ -17,9 +17,7 @@ class Gum_Elementor_Widget_ProgressAddon{
 
 
         add_action( 'elementor/element/progress/section_progress_style/after_section_end', array( $this, 'register_section_progress_style_controls') , 999 );
-
         add_action( 'elementor/element/progress/section_title/after_section_end', array( $this, 'register_section_title_controls') , 999 );
-
         add_action( 'elementor/element/before_section_start', [ $this, 'enqueue_script' ] );
   }
 

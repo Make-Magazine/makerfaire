@@ -14,7 +14,13 @@ if ( ! function_exists('wp_all_import_get_feed_type')){
 
 		}
 
-		$headers = @get_headers($url, 1);
+		$header_context = stream_context_create([
+			'http' => [
+				'timeout' => 10
+			]
+		]);
+
+		$headers = @get_headers($url, 1, $header_context);
 
         if (empty($headers)){
             $response = wp_remote_get($url);

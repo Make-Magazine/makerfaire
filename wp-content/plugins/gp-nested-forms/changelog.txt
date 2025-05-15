@@ -1,6 +1,24 @@
 
 # Changelog
 
+## 1.2.8 | May 14, 2025
+
+- Removed redundant check for Gravity Perks in preparation for Spellbook.
+- Fixed an issue where scrolling did not work correctly in certain scenarios.
+
+## 1.2.7 | April 2, 2025
+
+- Added [`gpnf_sorted_entries`](http://gravitywiz.com/documentation/gpnf_sorted_entries/) JS filter hook.
+
+## 1.2.6 | March 27, 2025
+
+- Fixed an issue where entries from a parent form with a nested form containing a chained select were not exporting correctly. Previously, all values from the chained select were concatenated with pipes in each column; now, individual select fields will appear in their own columns.
+
+## 1.2.5 | March 19, 2025
+
+- Fixed display issue with RTL languages on mobile view, particularly with the WordPress Twenty Twenty Five theme.
+- Fixed an issue where the styles for forms in the Nested Forms modal do not load in preview for Gravity Forms 2.9.3 and beyond.
+
 ## 1.2.4 | February 27, 2025
 
 - Added parent entry link to the "Entry" meta box for child entries when viewed in the Entry Details page. The template can be customized with the new [`gpnf_parent_entry_link_template`](https://gravitywiz.com/documentation/gpnf_parent_entry_link_template) filter hook.

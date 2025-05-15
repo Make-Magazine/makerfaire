@@ -18,8 +18,8 @@ class PMXI_Admin_Addons extends PMXI_Controller_Admin {
 
         // Woocommerce add-on
         self::$premium['PMWI_Plugin'] = array(
-            'title' => __("WooCommerce Addon",'wp_all_import_plugin'),
-            'description' => __("Import Products from any XML or CSV to WooCommerce",'wp_all_import_plugin'),
+            'title' => __("WooCommerce Addon",'wp-all-import-pro'),
+            'description' => __("Import Products from any XML or CSV to WooCommerce",'wp-all-import-pro'),
             'thumbnail' => 'http://placehold.it/220x220',
             'active' => (class_exists('PMWI_Plugin') and defined('PMWI_EDITION') and PMWI_EDITION == 'paid'),
             'free_installed' => (class_exists('PMWI_Plugin') and defined('PMWI_EDITION') and PMWI_EDITION == 'free'),
@@ -29,8 +29,8 @@ class PMXI_Admin_Addons extends PMXI_Controller_Admin {
 
         // ACF add-on
         self::$premium['PMAI_Plugin'] = array(
-            'title' => __("ACF Addon",'wp_all_import_plugin'),
-            'description' => __("Import to advanced custom fields",'wp_all_import_plugin'),
+            'title' => __("ACF Addon",'wp-all-import-pro'),
+            'description' => __("Import to advanced custom fields",'wp-all-import-pro'),
             'thumbnail' => 'http://placehold.it/220x220',
             'active' => (class_exists('PMAI_Plugin') and defined('PMAI_EDITION') and PMAI_EDITION == 'paid'),
             'free_installed' => (class_exists('PMAI_Plugin') and defined('PMAI_EDITION') and PMAI_EDITION == 'free'),
@@ -40,8 +40,8 @@ class PMXI_Admin_Addons extends PMXI_Controller_Admin {
 
         // Toolset Types add-on
         self::$premium['PMTI_Plugin'] = array(
-            'title' => __("Toolset Types Addon",'wp_all_import_plugin'),
-            'description' => __("Import to toolset types",'wp_all_import_plugin'),
+            'title' => __("Toolset Types Addon",'wp-all-import-pro'),
+            'description' => __("Import to toolset types",'wp-all-import-pro'),
             'thumbnail' => 'http://placehold.it/220x220',
             'active' => (class_exists('PMTI_Plugin') and defined('PMTI_EDITION') and PMTI_EDITION == 'paid'),
             'free_installed' => (class_exists('PMTI_Plugin') and defined('PMTI_EDITION') and PMTI_EDITION == 'free'),
@@ -51,8 +51,8 @@ class PMXI_Admin_Addons extends PMXI_Controller_Admin {
 
         // WPML add-on
         self::$premium['PMLI_Plugin'] = array(
-            'title' => __("WPML Addon",'wp_all_import_plugin'),
-            'description' => __("Import to WPML",'wp_all_import_plugin'),
+            'title' => __("WPML Addon",'wp-all-import-pro'),
+            'description' => __("Import to WPML",'wp-all-import-pro'),
             'thumbnail' => 'http://placehold.it/220x220',
             'active' => (class_exists('PMLI_Plugin') and defined('PMLI_EDITION') and PMLI_EDITION == 'paid'),
             'free_installed' => (class_exists('PMLI_Plugin') and defined('PMLI_EDITION') and PMLI_EDITION == 'free'),
@@ -62,8 +62,8 @@ class PMXI_Admin_Addons extends PMXI_Controller_Admin {
 
         // User add-on
         self::$premium['PMUI_Plugin'] = array(
-            'title' => __("User Addon",'wp_all_import_plugin'),
-            'description' => __("Import Users",'wp_all_import_plugin'),
+            'title' => __("User Addon",'wp-all-import-pro'),
+            'description' => __("Import Users",'wp-all-import-pro'),
             'thumbnail' => 'http://placehold.it/220x220',
             'active' => (class_exists('PMUI_Plugin') and defined('PMUI_EDITION') and PMUI_EDITION == 'paid'),
             'free_installed' => (class_exists('PMUI_Plugin') and defined('PMUI_EDITION') and PMUI_EDITION == 'free'),
@@ -73,8 +73,8 @@ class PMXI_Admin_Addons extends PMXI_Controller_Admin {
 
         // Gravity Forms add-on
         self::$premium['PMGI_Plugin'] = array(
-            'title' => __("Gravity Forms Addon",'wp_all_import_plugin'),
-            'description' => __("Import Gravity Forms Entries",'wp_all_import_plugin'),
+            'title' => __("Gravity Forms Addon",'wp-all-import-pro'),
+            'description' => __("Import Gravity Forms Entries",'wp-all-import-pro'),
             'thumbnail' => 'http://placehold.it/220x220',
             'active' => (class_exists('PMGI_Plugin') and defined('PMGI_EDITION') and PMGI_EDITION == 'paid'),
             'free_installed' => (class_exists('PMGI_Plugin') and defined('PMGI_EDITION') and PMGI_EDITION == 'free'),
@@ -84,8 +84,8 @@ class PMXI_Admin_Addons extends PMXI_Controller_Admin {
 
         // Meta Box add-on
         self::$premium['PMMI_Plugin'] = array(
-            'title' => __("Meta Box Addon",'wp_all_import_plugin'),
-            'description' => __("Import Meta Box Custom Fields",'wp_all_import_plugin'),
+            'title' => __("Meta Box Addon",'wp-all-import-pro'),
+            'description' => __("Import Meta Box Custom Fields",'wp-all-import-pro'),
             'thumbnail' => 'http://placehold.it/220x220',
             'active' => (class_exists('PMMI_Plugin') and defined('PMMI_EDITION') and PMMI_EDITION == 'paid'),
             'free_installed' => (class_exists('PMMI_Plugin') and defined('PMMI_EDITION') and PMMI_EDITION == 'free'),
@@ -95,8 +95,8 @@ class PMXI_Admin_Addons extends PMXI_Controller_Admin {
 
         // Affiliate link cloaking add-on
         self::$premium['PMLCA_Plugin'] = array(
-            'title' => __("Link cloaking Addon",'wp_all_import_plugin'),
-            'description' => __("Affiliate link cloaking",'wp_all_import_plugin'),
+            'title' => __("Link cloaking Addon",'wp-all-import-pro'),
+            'description' => __("Affiliate link cloaking",'wp-all-import-pro'),
             'thumbnail' => 'http://placehold.it/220x220',
             'active' => (class_exists('PMLCA_Plugin') and defined('PMLCA_EDITION') and PMLCA_EDITION == 'paid'),
             'free_installed' => (class_exists('PMLCA_Plugin') and defined('PMLCA_EDITION') and PMLCA_EDITION == 'free'),
@@ -105,8 +105,8 @@ class PMXI_Admin_Addons extends PMXI_Controller_Admin {
         );
 
         self::$free['PMWI_Plugin'] = array(
-            'title' => __("WooCommerce Addon - free edition",'wp_all_import_plugin'),
-            'description' => __("Import Products from any XML or CSV to WooCommerce",'wp_all_import_plugin'),
+            'title' => __("WooCommerce Addon - free edition",'wp-all-import-pro'),
+            'description' => __("Import Products from any XML or CSV to WooCommerce",'wp-all-import-pro'),
             'thumbnail' => 'http://placehold.it/220x220',
             'active' => (class_exists('PMWI_Plugin') and defined('PMWI_EDITION') and PMWI_EDITION == 'free'),
             'paid_installed' => (class_exists('PMWI_Plugin') and defined('PMWI_EDITION') and PMWI_EDITION == 'paid'),
@@ -114,8 +114,8 @@ class PMXI_Admin_Addons extends PMXI_Controller_Admin {
             'url' => 'https://wordpress.org/plugins/woocommerce-xml-csv-product-import'
         );
         self::$free['PMWITabs_Plugin'] = array(
-            'title' => __("WooCommerce Tabs Addon",'wp_all_import_plugin'),
-            'description' => __("Import data to WooCommerce tabs",'wp_all_import_plugin'),
+            'title' => __("WooCommerce Tabs Addon",'wp-all-import-pro'),
+            'description' => __("Import data to WooCommerce tabs",'wp-all-import-pro'),
             'thumbnail' => 'http://placehold.it/220x220',
             'active' => class_exists('PMWITabs_Plugin'),
             'paid_installed' => false,

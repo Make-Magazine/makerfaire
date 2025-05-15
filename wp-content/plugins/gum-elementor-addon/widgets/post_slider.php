@@ -90,7 +90,7 @@ class Gum_Elementor_Widget_post_slider extends Widget_Base {
    * @return string Widget icon.
    */
   public function get_icon() {
-    return 'fas fa-xs fa-newspaper';
+    return 'fas fa-newspaper eicon-post-slider';
   }
 
   public function get_keywords() {

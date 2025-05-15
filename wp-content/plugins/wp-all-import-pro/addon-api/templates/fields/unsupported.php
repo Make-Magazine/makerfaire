@@ -1,7 +1,7 @@
 <p>
     <?php
     printf(
-        __('The field <b>%s</b> is currently not supported. Please contact support for more information.', 'wp_all_import_plugin'),
+        __('The field <b>%s</b> is currently not supported. Please contact support for more information.', 'wp-all-import-pro'),
         $field['type']
     );
     ?>

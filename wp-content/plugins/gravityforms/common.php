@@ -357,6 +357,17 @@ class GFCommon {
 
 		//Removing thousands separators but keeping decimal point
 		$array = str_split( $clean_number );
+
+		/**
+		 * PHP 8.2 changed the return value of str_split() when an empty string
+		 * is passed. Before it would return a single element array with an
+		 * empty string, now it returns an empty array. This `if` makes the
+		 * array consistant in all PHP Versions.
+		 */
+		if ( empty( $array ) ) {
+			$array[] = '';
+		}
+
 		for ( $i = 0, $count = sizeof( $array ); $i < $count; $i ++ ) {
 			$char = $array[ $i ];
 			if ( $char >= '0' && $char <= '9' ) {
@@ -388,7 +399,7 @@ class GFCommon {
 	}
 
 	public static function json_decode( $str, $is_assoc = true ) {
-		return json_decode( $str, $is_assoc );
+		return json_decode( (string) $str, $is_assoc );
 	}
 
 	/**
@@ -605,7 +616,7 @@ class GFCommon {
 	 * @return bool True if valid. False otherwise.
 	 */
 	public static function is_valid_url( $url ) {
-		$url = trim( $url );
+		$url = trim( (string) $url );
 
 		/***
 		 * Enables and disables RFC URL validation. Defaults to true.
@@ -1022,7 +1033,7 @@ class GFCommon {
 		$class    = 'gform_merge_tags';
 		?>
 
-		<select data-js-reload="gforms-calculation-variables" id="<?php echo esc_attr( $element_id ); ?>_variable_select" class="<?php echo esc_attr( $class ); ?>" onchange="<?php echo $onchange; ?>">
+		<select id="<?php echo esc_attr( $element_id ); ?>_variable_select" class="<?php echo esc_attr( $class ); ?>" onchange="<?php echo $onchange; ?>">
 			<option value=''><?php esc_html_e( 'Insert Merge Tag', 'gravityforms' ); ?></option>
 			<optgroup label="<?php esc_attr_e( 'Allowable form fields', 'gravityforms' ); ?>">
 				<?php foreach ( $fields as $field ) {
@@ -1289,7 +1300,7 @@ class GFCommon {
 		$text = str_replace( '{form_id}', $url_encode ? urlencode( rgar( $form, 'id' ) ) : rgar( $form, 'id' ), $text );
 
 		// Entry ID.
-		$text = str_replace( '{entry_id}', $url_encode ? urlencode( rgar( $lead, 'id' ) ) : rgar( $lead, 'id' ), $text );
+		$text = str_replace( '{entry_id}', $url_encode ? urlencode( rgar( $lead, 'id', '' ) ) : rgar( $lead, 'id', '' ), $text );
 
 		if ( false !== strpos( $text, '{entry_url}' ) ) {
 			// Entry URL.
@@ -1311,7 +1322,7 @@ class GFCommon {
 		}
 
 		// Post ID.
-		$text = str_replace( '{post_id}', $url_encode ? urlencode( rgar( $lead, 'post_id' ) ) : rgar( $lead, 'post_id' ), $text );
+		$text = str_replace( '{post_id}', $url_encode ? urlencode( rgar( $lead, 'post_id', '' ) ) : rgar( $lead, 'post_id', '' ), $text );
 
 		// Admin email.
 		if ( false !== strpos( $text, '{admin_email}' ) ) {
@@ -3506,7 +3517,7 @@ Content-Type: text/html;
 			return $return_keys_on_empty ? $date_info : array();
 		}
 
-		$position = substr( $format, 0, 3 );
+		$position = substr( (string) $format, 0, 3 );
 
 		if ( is_array( $date ) ) {
 
@@ -4072,11 +4083,11 @@ Content-Type: text/html;
 
 		$preview_link = sprintf(
 			'
-				<a 
-					aria-label="%s" 
-					href="%s" 
-					class="%s gform-button--icon-leading" 
-					target="%s" 
+				<a
+					aria-label="%s"
+					href="%s"
+					class="%s gform-button--icon-leading"
+					target="%s"
 					rel="noopener"
 				><i class="gform-button__icon gform-common-icon gform-common-icon--eye"></i>%s</a>
 				',
@@ -5297,7 +5308,7 @@ Content-Type: text/html;
 
 		return $number;
 	}
-	
+
 	/**
 	 * Gets the calculation value for a specific field.
 	 *
@@ -5689,7 +5700,7 @@ Content-Type: text/html;
 		$gf_vars['DeleteForm']         = esc_html__("You are about to move this form to the trash. 'Cancel' to abort. 'OK' to delete.", 'gravityforms');
         $gf_vars['DeleteCustomChoice'] = esc_html__("Delete this custom choice list? 'Cancel' to abort. 'OK' to delete.", 'gravityforms');
 
-		$gf_vars['FieldAdded'] = esc_html__( ' field added to form', 'gravityforms' );
+		$gf_vars['FieldAdded'] = '&nbsp;' . esc_html__( 'field added to form', 'gravityforms' ); // Added field to form
 
         if ( ( is_admin() && rgget( 'id' ) ) || ( self::is_form_editor() && rgpost( 'form_id' ) ) ) {
 
@@ -6102,9 +6113,7 @@ Content-Type: text/html;
 			return;
 		}
 
-		$hooks_javascript = self::get_hooks_javascript_code();
-
-		echo '<script type="text/javascript">' . $hooks_javascript . '</script>';
+		echo self::get_inline_script_tag( self::get_hooks_javascript_code(), false );
 	}
 
 	/**
@@ -7107,7 +7116,7 @@ Content-Type: text/html;
 	public static function encode_shortcodes( $string ) {
 		$find    = array( '[', ']' );
 		$replace = array( '&#91;', '&#93;' );
-		$string  = str_replace( $find, $replace, $string );
+		$string  = str_replace( $find, $replace, (string) $string );
 
 		return $string;
 	}

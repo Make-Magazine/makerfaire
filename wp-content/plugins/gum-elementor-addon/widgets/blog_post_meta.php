@@ -692,6 +692,21 @@ class Gum_Elementor_Widget_Post_meta extends Widget_Base {
 
 
     $repeater->add_control(
+      'meta_avatar',
+      [
+        'label' => esc_html__( 'Show Avatar', 'gum-elementor-addon' ),
+        'type' => Controls_Manager::SWITCHER,
+        'label_off' => esc_html__( 'No', 'gum-elementor-addon' ),
+        'label_on' => esc_html__( 'Yes', 'gum-elementor-addon' ),
+        'default' => 'no',
+        'condition' => [
+          'meta_type[value]' => 'author',
+        ],
+      ]
+    );
+
+
+    $repeater->add_control(
       'meta_icon',
       [
         'label' => esc_html__( 'Icon', 'gum-elementor-addon' ),
@@ -699,8 +714,6 @@ class Gum_Elementor_Widget_Post_meta extends Widget_Base {
         'fa4compatibility' => 'icon',
       ]
     );
-
-
 
     $repeater->add_control(
       'meta_linked',
@@ -1056,7 +1069,6 @@ class Gum_Elementor_Widget_Post_meta extends Widget_Base {
         ]
     );
 
-
     $this->add_group_control(
      Group_Control_Border::get_type(),
       [
@@ -1076,7 +1088,6 @@ class Gum_Elementor_Widget_Post_meta extends Widget_Base {
         ],
       ]
     );
-
 
     $this->add_control(
       'icon_style_heading',
@@ -1209,6 +1220,75 @@ class Gum_Elementor_Widget_Post_meta extends Widget_Base {
         ]
     );
 
+  $this->end_controls_section();
+  
+  $this->start_controls_section(
+      'avatar_style',
+      [
+        'label' => esc_html__( 'Avatar Author', 'gum-elementor-addon' ),
+        'tab'   => Controls_Manager::TAB_STYLE,
+      ]
+    );    
+
+
+
+    $this->add_responsive_control(
+      'author_avatar_width',
+      [
+        'label' => esc_html__( 'Width', 'gum-elementor-addon' ),
+        'type' => Controls_Manager::SLIDER,
+        'range' => [
+         'px' => [
+            'max' => 1000,
+          ],
+        ],  
+        'default'=>['size'=>'','unit'=>'px'],
+        'size_units' => [ 'px','%' ],
+        'selectors' => [
+          '{{WRAPPER}} .list-meta .author-avatar img' => 'width: {{SIZE}}{{UNIT}};',
+        ],
+       ]
+    );
+
+
+
+    $this->add_responsive_control(
+      'author_avatar_margin',
+      [
+        'label' => esc_html__( 'Spacing', 'gum-elementor-addon' ),
+        'type' => Controls_Manager::SLIDER,
+        'range' => [
+         'px' => [
+            'max' => 1000,
+          ],
+        ],  
+        'default'=>['size'=>'','unit'=>'px'],
+        'size_units' => [ 'px','%' ],
+        'selectors' => [
+          '{{WRAPPER}} .list-meta .author-avatar' => 'margin-right: {{SIZE}}{{UNIT}};',
+        ],
+       ]
+    );
+
+    $this->add_group_control(
+     Group_Control_Border::get_type(),
+      [
+        'name' => 'author_avatar_border',
+        'selector' => '{{WRAPPER}} .list-meta .author-avatar img',
+      ]
+    );
+
+    $this->add_responsive_control(
+      'author_avatar_radius',
+      [
+        'label' => esc_html__( 'Border Radius', 'gum-elementor-addon' ),
+        'type' => Controls_Manager::DIMENSIONS,
+        'size_units' => [ 'px', '%' ],
+        'selectors' => [
+          '{{WRAPPER}} .list-meta .author-avatar img' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+        ],
+      ]
+    );
     
     $this->end_controls_section();
 
@@ -1245,6 +1325,8 @@ class Gum_Elementor_Widget_Post_meta extends Widget_Base {
         case 'author':
           $meta_type = get_the_author_meta('nickname', $author_id);
           $meta_url = $meta_linked=='yes' ? get_the_author_meta('url',$author_id) : '';
+            
+            if( isset($list['meta_avatar']) && $list['meta_avatar'] =='yes' && $avatar_url = get_avatar_url($author_id, 100)){ $meta_icon_html = '<div class="author-avatar"><img src="'.esc_url($avatar_url).'" /></div>';}
 
           break;
         case 'category':
@@ -1271,9 +1353,9 @@ class Gum_Elementor_Widget_Post_meta extends Widget_Base {
       if( isset($list['meta_icon'] ) ){
 
         if ( 'svg' === $list['meta_icon']['library'] ) {
-          $meta_icon_html = Icons_Manager::render_uploaded_svg_icon( $list['meta_icon']['value'] );
+          $meta_icon_html .= Icons_Manager::render_uploaded_svg_icon( $list['meta_icon']['value'] );
         } else {
-          $meta_icon_html = Icons_Manager::render_font_icon( $list['meta_icon'], [ 'aria-hidden' => 'true' ], 'i' );
+          $meta_icon_html .= Icons_Manager::render_font_icon( $list['meta_icon'], [ 'aria-hidden' => 'true' ], 'i' );
         }
       }
 

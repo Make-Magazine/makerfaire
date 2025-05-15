@@ -1,4 +1,4 @@
-<div class="pmxi-repeater-row">
+<div class="pmxi-repeater-row" data-test="repeater-row">
     <header class="pmxi-repeater-row-header">
         <span class="pmxi-repeater-row-index">#<?php echo intval($row_index) + 1; ?></span>
         <button class="pmxi-repeater-remove-row button-link" type="button" aria-label="Remove row">
@@ -9,7 +9,7 @@
     </header>
 
     <?php foreach ($subfields as $subfield) { ?>
-        <div class="pmxi-repeater-field" data-key="<?php echo $subfield['key']; ?>" data-type="<?php echo $subfield['type']; ?>">
+        <div class="pmxi-repeater-field" data-test="repeater-row-field" data-key="<?php echo $subfield['key']; ?>" data-type="<?php echo $subfield['type']; ?>">
             <?php
             \Wpai\AddonAPI\PMXI_Addon_Field::from(
                 $subfield,

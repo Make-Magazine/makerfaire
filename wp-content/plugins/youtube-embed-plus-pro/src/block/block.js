@@ -37,11 +37,11 @@ import debounce from "lodash/debounce";
  */
 registerBlockType("epyt/youtube", {
 	// Block name. Block names must be string that contains a namespace prefix. Example: my-plugin/my-custom-block.
-	title: __("YouTube Wizard"), // Block title.
+	title: __("EmbedPlus for YouTube Wizard"), // Block title.
 	// <defs><style>.epytcls-1{fill:red;}.epytcls-2{fill-rule:evenodd;fill:url(#radial-gradient);}.epytcls-3{fill:#31aaff;}.epytcls-4{fill:#fff;}</style><radialGradient id="radial-gradient" cx="193" cy="85.85" r="77.53" gradientUnits="userSpaceOnUse"><stop offset="0.17" stop-color="#fff"/><stop offset="0.68" stop-color="#31aaff"/></radialGradient></defs>
 	icon: (
 		<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 292.89 282.69">
-			<title>YouTube Wizard Icon</title>
+			<title>EmbedPlus for YouTube Wizard Icon</title>
 			<g id="Layer_2" data-name="Layer 2">
 				<g id="Слой_1" data-name="Слой 1">
 					<g id="g5360">
@@ -164,7 +164,7 @@ registerBlockType("epyt/youtube", {
 							height="20"
 							className="dashicon"
 						>
-							<title>YouTube Wizard Icon</title>
+							<title>EmbedPlus for YouTube Wizard Icon</title>
 							<g id="Layer_2" data-name="Layer 2">
 								<g id="Слой_1" data-name="Слой 1">
 									<g id="g5360">
@@ -191,36 +191,34 @@ registerBlockType("epyt/youtube", {
 								</g>
 							</g>
 						</svg>
-						YouTube Wizard
+						EmbedPlus for YouTube Wizard
 					</div>
-					<div className={this.props.isSelected ? "" : "epytblock__faded--off"}>
-						<div className="components-placeholder__instructions">
-							Click the button below to easily embed a video, playlist, channel,
-							gallery, or live stream.
-						</div>
-						<div className="components-placeholder__fieldset">
-							<div>
-								<Button isPrimary onClick={ this.showModal }>
-									Open Wizard
-								</Button>
-								{this.state.show ? (
-									<Modal
-										title="YouTube Wizard"
-										className="epytblock epytblock__modal"
-										onRequestClose={ this.hideModal }
-										shouldCloseOnClickOutside={false}
-									>
-										<iframe
-											title="YouTube Wizard"
-											src={
-												window._EPYTA_.wizhref +
-												"&clientId=" +
-												this.props.clientId
-											}
-										/>
-									</Modal>
-								) : null}
-							</div>
+					<div className="components-placeholder__instructions">
+						Click the button below to easily embed a video, playlist, channel,
+						gallery, or live stream.
+					</div>
+					<div className="components-placeholder__fieldset">
+						<div>
+							<Button isPrimary onClick={this.showModal}>
+								Open Wizard
+							</Button>
+							{this.state.show ? (
+								<Modal
+									title="EmbedPlus for YouTube Wizard"
+									className="epytblock epytblock__modal"
+									onRequestClose={this.hideModal}
+									shouldCloseOnClickOutside={false}
+								>
+									<iframe
+										title="EmbedPlus for YouTube Wizard"
+										src={
+											window._EPYTA_.wizhref +
+											"&clientId=" +
+											this.props.clientId
+										}
+									/>
+								</Modal>
+							) : null}
 						</div>
 					</div>
 				</div>

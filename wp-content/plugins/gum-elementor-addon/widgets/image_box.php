@@ -242,6 +242,108 @@ class Gum_Elementor_Widget_Image_Box{
   function register_section_style_content_controls( Controls_Stack $element ){
 
 
+    $element->start_injection( [
+      'of' => 'section_style_content',
+    ] );
+
+
+    $element->add_responsive_control(
+      'content_padding',
+      [
+          'label' => esc_html__( 'Padding', 'gum-elementor-addon' ),
+          'type' => Controls_Manager::DIMENSIONS,
+          'size_units' => [ 'px', '%', 'em' ],
+          'selectors' => [
+              '{{WRAPPER}} .elementor-icon-box-content,{{WRAPPER}} .elementor-image-box-content' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+          ],
+      ]
+    );
+
+
+    $element->add_control(
+      'content_radius',
+      [
+        'label' => esc_html__( 'Border Radius', 'gum-elementor-addon' ),
+        'type' => Controls_Manager::DIMENSIONS,
+        'size_units' => [ 'px', '%' ],
+        'selectors' => [
+          '{{WRAPPER}} .elementor-icon-box-content,{{WRAPPER}} .elementor-image-box-content' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+        ],
+      ]
+    );
+    
+    $element->add_group_control(
+     Group_Control_Border::get_type(),
+      [
+        'name' => 'content_border',
+        'selector' => '{{WRAPPER}} .elementor-icon-box-content,{{WRAPPER}} .elementor-image-box-content',
+      ]
+    );
+
+    $element->start_controls_tabs( 'tabs_content_style' );
+
+
+    $element->start_controls_tab(
+      'tab_content_normal',
+      [
+        'label' => esc_html__( 'Normal', 'gum-elementor-addon' ),
+      ]
+    );
+
+
+    $element->add_control(
+      'content_box_background',
+      [
+        'label' => esc_html__( 'Background', 'gum-elementor-addon' ),
+        'type' => Controls_Manager::COLOR,
+        'selectors' => [
+          '{{WRAPPER}} .elementor-icon-box-content,{{WRAPPER}} .elementor-image-box-content' => 'background-color: {{VALUE}};',
+        ],
+      ]
+    );
+
+    $element->end_controls_tab();
+
+    $element->start_controls_tab(
+      'tab_content_hover',
+      [
+        'label' => esc_html__( 'Hover', 'gum-elementor-addon' ),
+      ]
+    );
+
+    $element->add_control(
+      'content_box_background_hover',
+      [
+        'label' => esc_html__( 'Background', 'gum-elementor-addon' ),
+        'type' => Controls_Manager::COLOR,
+        'selectors' => [
+          '{{WRAPPER}}:hover .elementor-icon-box-content, {{WRAPPER}}:focus .elementor-icon-box-content' => 'background-color: {{VALUE}};',
+          '{{WRAPPER}}:hover .elementor-image-box-content, {{WRAPPER}}:focus .elementor-image-box-content' => 'background-color: {{VALUE}};',
+        ],
+      ]
+    );
+
+    $element->add_control(
+      'content_box_hover_border_color',
+      [
+        'label' => esc_html__( 'Border', 'gum-elementor-addon' ),
+        'type' => Controls_Manager::COLOR,
+        'condition' => [
+          'content_border_border!' => '',
+        ],
+        'selectors' => [
+          '{{WRAPPER}}:hover .elementor-icon-box-content, {{WRAPPER}}:focus .elementor-icon-box-content' => 'border-color: {{VALUE}};',
+          '{{WRAPPER}}:hover .elementor-image-box-content, {{WRAPPER}}:focus .elementor-image-box-content' => 'border-color: {{VALUE}};',
+        ],
+      ]
+    );
+
+    $element->end_controls_tab();
+    $element->end_controls_tabs();
+
+    $element->end_injection();
+
+
     $element->update_responsive_control(
       'title_bottom_space',
       [

@@ -79,9 +79,7 @@ class OrderQuery
 	            $postList      = new \PMXE_Post_List();
 	            $postListTable = $postList->getTable();
 
-	            $excludeSubQuery = " AND {$wpdb->prefix}wc_orders.id NOT IN (
-                    SELECT post_id FROM {$postListTable} WHERE export_id = %d AND iteration < %d
-                )";
+	            $excludeSubQuery = "{$wpdb->prefix}wc_orders.id NOT IN (SELECT post_id FROM {$postListTable} WHERE export_id = %d AND iteration < %d)";
 	            $defaultQuery   .= $this->get_exclude_query_where($wpdb->prepare( $excludeSubQuery, $export->id, $export->iteration ));
             }
         }
@@ -111,9 +109,8 @@ class OrderQuery
 
     public function get_exclude_query_where($postsToExclude)
     {
-        global $wpdb;
 
-        return " AND ({$wpdb->prefix}wc_orders.id NOT IN (" . implode(',', $postsToExclude) . "))";
+        return " AND (" . $postsToExclude . ")";
 
     }
 

@@ -19,7 +19,7 @@ class SortableController extends Controller
 
         static::migrateDatabaseIfNeeded($tableName);
 
-        $tableId = intval($_REQUEST['table_id']);
+        $tableId = intval($request->getSafe('table_id'));
 
         // The post meta table would have a flag that the data of
         // the table is migrated to use for the manual sorting.
@@ -56,7 +56,7 @@ class SortableController extends Controller
             $perPage        = isset($_REQUEST['per_page']) ? intval($_REQUEST['per_page']) : 10;
             $currentPage    = isset($_REQUEST['page']) ? intval($_REQUEST['page']) : 1;
             $skip           = $perPage * ($currentPage - 1);
-            $search         = esc_attr($_REQUEST['search']);
+            $search = $request->getSafe('search', 'sanitize_text_field', '');
             $dataSourceType = ninja_table_get_data_provider($tableId);
             $data           = TableItem::getItems($tableId, $perPage, $currentPage, $skip, $search, $dataSourceType);
 
@@ -70,9 +70,9 @@ class SortableController extends Controller
         global $wpdb;
         $tableName = $wpdb->prefix . static::$tableName;
 
-        $id          = intval($_REQUEST['id']);
-        $tableId     = intval($_REQUEST['table_id']);
-        $newPosition = intval($_REQUEST['newPosition']);
+        $id          = $request->getSafe('id', 'intval');
+        $tableId     = $request->getSafe('table_id', 'intval');
+        $newPosition = $request->getSafe('newPosition', 'intval');
         $oldPosition = NinjaTableItem::find($id)->position;
 
         // Initially make the target item's position `0`, so that
@@ -127,7 +127,7 @@ class SortableController extends Controller
         $perPage        = isset($_REQUEST['per_page']) ? intval($_REQUEST['per_page']) : 10;
         $currentPage    = isset($_REQUEST['page']) ? intval($_REQUEST['page']) : 1;
         $skip           = $perPage * ($currentPage - 1);
-        $search         = esc_attr($_REQUEST['search']);
+        $search         = $request->getSafe('search', 'sanitize_text_field', '');
         $dataSourceType = ninja_table_get_data_provider($tableId);
         $data           = TableItem::getItems($tableId, $perPage, $currentPage, $skip, $search, $dataSourceType);
 

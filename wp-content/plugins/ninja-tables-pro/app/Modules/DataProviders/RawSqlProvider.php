@@ -2,6 +2,8 @@
 
 namespace NinjaTablesPro\App\Modules\DataProviders;
 
+use NinjaTables\Framework\Support\Arr;
+
 class RawSqlProvider
 {
     public $provider = 'raw_sql';
@@ -45,7 +47,7 @@ class RawSqlProvider
 
     public function createTable()
     {
-        if ( ! current_user_can(ninja_table_admin_role())) {
+        if (!current_user_can(ninja_table_admin_role())) {
             return;
         }
         ninjaTablesValidateNonce();
@@ -57,17 +59,13 @@ class RawSqlProvider
             ], 423);
         }
 
-        $sql = wp_unslash($_REQUEST['sql']);
+        $sql = wp_unslash(sanitize_textarea_field(Arr::get($_REQUEST, 'sql', '')));
 
-        $connectionType = 'local';
-        if (isset($_REQUEST['connection_type'])) {
-            $connectionType = $_REQUEST['connection_type'];
-        }
 
-        $connection_details = [];
+        $connectionType = sanitize_text_field(Arr::get($_REQUEST, 'connection_type', 'local'));
 
         if ($connectionType == 'external') {
-            $connection_details = $_REQUEST['connection_details'];
+            $connection_details = ninja_tables_sanitize_array(Arr::get($_REQUEST, 'connection_details', []));
             $this->validateRemoteConnection($connection_details);
             $this->validateSql($sql, false, $connection_details);
         } else {
@@ -77,7 +75,7 @@ class RawSqlProvider
 
         // Validate Title
         $messages = array();
-        if (empty($_REQUEST['post_title'])) {
+        if (empty(Arr::get($_REQUEST, 'post_title'))) {
             $messages[] = __('The title field is required.', 'ninja-tables');
             wp_send_json_error(array('message' => $messages), 422);
             wp_die();
@@ -100,12 +98,11 @@ class RawSqlProvider
         wp_send_json_success(
             array('table_id' => $tableId)
         );
-
     }
 
     public function updateSQL()
     {
-        if ( ! current_user_can(ninja_table_admin_role())) {
+        if (!current_user_can(ninja_table_admin_role())) {
             return;
         }
 
@@ -118,16 +115,17 @@ class RawSqlProvider
             ], 423);
         }
 
-        $tableId = absint($_REQUEST['table_id']);
+        $tableId = absint(Arr::get($_REQUEST, 'table_id'));
 
         if (isset($_REQUEST['connection_details'])) {
+            $connectionDetails = ninja_tables_sanitize_array(Arr::get($_REQUEST, 'connection_details'));
 
-            $this->validateRemoteConnection($_REQUEST['connection_details']);
+            $this->validateRemoteConnection($connectionDetails);
 
-            update_post_meta($tableId, '_ninja_tables_sql_connection_details', $_REQUEST['connection_details']);
+            update_post_meta($tableId, '_ninja_tables_sql_connection_details', $connectionDetails);
         }
 
-        $sql = wp_unslash($_REQUEST['sql']);
+        $sql = wp_unslash(sanitize_textarea_field(Arr::get($_REQUEST, 'sql', '')));
         $this->validateSql($sql, $tableId);
 
         update_post_meta($tableId, '_ninja_table_raw_sql_query', $sql);
@@ -142,7 +140,7 @@ class RawSqlProvider
     private function validateRemoteConnection($connection)
     {
         $connect = $this->getRemoteDB($connection);
-        if ( ! $connect) {
+        if (!$connect) {
             wp_send_json_error(array(
                 'message' => array('Provided SQL Connection details is not valid'),
                 'error'   => $connect
@@ -158,8 +156,10 @@ class RawSqlProvider
         $connectionData = false;
         ob_start();
         $dbHost         = $connection['db_host'] . ':' . $connection['db_host_port'];
-        $connectionData = new \wpdb($connection['db_username'], $connection['db_userpassword'], $connection['db_name'],
-            $dbHost);
+        $connectionData = new \wpdb(
+            $connection['db_username'], $connection['db_userpassword'], $connection['db_name'],
+            $dbHost
+        );
         $errors         = ob_get_clean();
 
         if ($errors) {
@@ -172,10 +172,12 @@ class RawSqlProvider
     public function validateSql($sql, $tableId = false, $connectionDetails = false)
     {
         $low_sql       = strtolower($sql);
-        $hasBadKeyWord = strpos($low_sql, 'delete ') !== false || strpos($low_sql,
-                'update ') !== false || strpos($low_sql, 'insert ') !== false;
+        $hasBadKeyWord = strpos($low_sql, 'delete ') !== false || strpos(
+                                                                      $low_sql,
+                                                                      'update '
+                                                                  ) !== false || strpos($low_sql, 'insert ') !== false;
         $hasSelect     = strpos($low_sql, 'select ') !== false;
-        if ($hasBadKeyWord || ! $hasSelect) {
+        if ($hasBadKeyWord || !$hasSelect) {
             wp_send_json_error(array(
                 'message' => array('SQL is not valid'),
                 'error'   => 'We could not validate your provided SQL. Please try another SQL.'
@@ -239,8 +241,8 @@ class RawSqlProvider
         $db  = $this->getDb($tableId);
         $sql = $this->parseTableSQL($sql, $tableId);
         $row = $db->get_row($sql);
-        if ( ! $row) {
-            if ( ! class_exists('\PHPSQLParser\PHPSQLParser')) {
+        if (!$row) {
+            if (!class_exists('\PHPSQLParser\PHPSQLParser')) {
                 require_once NINJAPROPLUGIN_PATH . '/app/Library/load.php';
             }
             $parser = new \PHPSQLParser\PHPSQLParser($sql, true);
@@ -292,7 +294,7 @@ class RawSqlProvider
     public function getTableSettings($table)
     {
         $connectionType = get_post_meta($table->ID, '_ninja_tables_sql_connection_type', true);
-        if ( ! $connectionType) {
+        if (!$connectionType) {
             $connectionType = 'local';
         }
         $table->isEditable                 = false;
@@ -390,7 +392,7 @@ class RawSqlProvider
             'post_status'  => 'publish'
         );
 
-        if ( ! $postId) {
+        if (!$postId) {
             $postId = wp_insert_post($attributes);
         } else {
             $attributes['ID'] = $postId;
@@ -436,7 +438,7 @@ class RawSqlProvider
 
     public function getRemoteSQLDetails()
     {
-        if ( ! current_user_can(ninja_table_admin_role())) {
+        if (!current_user_can(ninja_table_admin_role())) {
             return;
         }
 

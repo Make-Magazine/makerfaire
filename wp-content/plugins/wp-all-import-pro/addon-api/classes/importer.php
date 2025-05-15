@@ -48,7 +48,7 @@ class PMXI_Addon_Importer {
         return $field['type'] === 'repeater' || ( $field['args']['is_cloneable'] ?? false );
     }
 
-    /* 
+    /*
      * Return data for the given record index
      */
     public function unwrapValue( $field, $value, $index ) {
@@ -114,7 +114,9 @@ class PMXI_Addon_Importer {
 
     /**
      * Simplify import data
-     * TODO: Can we make this more functional?
+     * TODO: Make this more functional
+     *
+     * @return array|null
      */
     public function simplify( array $importData, array $parsedData ) {
         $options = $importData['import']['options'];
@@ -127,17 +129,17 @@ class PMXI_Addon_Importer {
         );
 
         if ( ! $this->addon->isAvailableForType( $type, $options ) ) {
-            return;
+            return null;
         }
 
         if ( $importData['logger'] ) {
-            call_user_func( $importData['logger'], __( sprintf( '<strong>%s:</strong>', strtoupper( $this->addon->name() ) ), 'wp_all_import_plugin' ) );
+            call_user_func( $importData['logger'], __( sprintf( '<strong>%s:</strong>', strtoupper( $this->addon->name() ) ), 'wp-all-import-pro' ) );
         }
 
         if ( ! array_key_exists( $this->addon->slug, $options ) ) {
-            call_user_func( $importData['logger'], __( 'No options found for this addon, skipping...', 'wp_all_import_plugin' ) );
+            call_user_func( $importData['logger'], __( 'No options found for this addon, skipping...', 'wp-all-import-pro' ) );
 
-            return;
+            return null;
         }
 
         $import_options = $options[ $this->addon->slug ];
@@ -146,19 +148,22 @@ class PMXI_Addon_Importer {
         $groups         = $options[ $this->addon->slug . '_groups' ];
 
         if ( empty( $parsedData ) ) {
-            return;
+            return null;
         }
 
         $data    = [];
         $post_id = $importData['pid'];
         $index   = $importData['i'];
+
         $fields  = $this->getImportFields( $type, $subtype, $groups, $parsedData );
 
-        foreach ( $fields as $field ) {
+        foreach ( $fields as $field_index => $field ) {
             $field_slug  = $field['key'];
             $field_value = $this->unwrapValue( $field, $parsedData[ $field_slug ], $index );
 
             if ( ! $this->canUpdateField( $field, $options ) ) {
+	            call_user_func( $importData['logger'], __( '- Field `'.$field['key'].'` skipped due to import settings.', 'wp-all-import-pro' ) );
+				unset($fields[$field_index]);
                 continue;
             }
 
@@ -178,7 +183,7 @@ class PMXI_Addon_Importer {
                         $subfield_switcher = $switchers[ $field_slug ]['rows'][ $rowIndex ][ $subfield_slug ] ?? 'no';
 
                         if ( $subfield_switcher == 'yes' ) {
-                            $field_value['rows'][ $rowIndex ][ $subfield_slug ] = $multiples[ $field_slug ]['rows'][ $rowIndex ][ $subfield_slug ];
+                            $field_value['rows'][ $rowIndex ][ $subfield_slug ] = $multiples[ $field_slug ]['rows'][ $rowIndex ][ $subfield_slug ] ?? 0;
                         }
                     }
                 }
@@ -201,7 +206,7 @@ class PMXI_Addon_Importer {
                 $field_value,
                 $importData,
                 $importData['logger'],
-                $import_options[ $field_slug ]
+                $import_options[ $field_slug ] ?? []
             );
 
             // Cast the value to a new value if a cast class exists
@@ -243,61 +248,77 @@ class PMXI_Addon_Importer {
 
         // If no fields are found, skip the import
         if ( empty( $data ) ) {
-            call_user_func( $importData['logger'], __( 'No options found for this addon, skipping...', 'wp_all_import_plugin' ) );
+            call_user_func( $importData['logger'], __( 'No options found for this addon, skipping...', 'wp-all-import-pro' ) );
 
-            return;
+            return null;
         }
 
         return [ $post_id, $fields, $data, $importData['import'], $importData['articleData'], $importData['logger'] ];
     }
 
-    /**
-     * @param string $meta_key
-     * @param array $import_options
-     *
-     * @return bool
-     */
-    public function canUpdateField( $field, $import_options ) {
-        $options = $import_options['update_addons'][ $this->addon->slug ] ?? null;
 
-        // Support for old templates
-        if ( ! isset( $options ) ) {
-            return true;
-        }
+	/**
+	 * @param $field
+	 * @param array $import_options
+	 *
+	 * @return bool
+	 */
+	public function canDeleteField( $field, $import_options ) {
+		if ( $import_options['is_keep_former_posts'] === 'yes' ) {
+			return false;
+		}
 
-        if ( $import_options['update_all_data'] === 'yes' ) {
-            return true;
-        }
+		return $this->canUpdateField( $field, $import_options );
+	}
 
-        if ( ! $options['is_update'] ) {
-            return false;
-        }
 
-        if ( $options['update_logic'] === "full_update" ) {
-            return true;
-        }
+	/**
+	 * @param $field
+	 * @param array $import_options
+	 *
+	 * @return bool
+	 */
+	public function canUpdateField( $field, $import_options ) {
+		$rules = $import_options['update_addons'][ $this->addon->slug ] ?? null;
 
-        if (
-            $options['update_logic'] === "only" &&
-            ! empty( $options['fields_list'] ) &&
-            is_array( $options['fields_list'] ) &&
-            in_array( $field['key'], $options['fields_list'] )
-        ) {
-            return true;
-        }
+		// Support for old templates
+		if ( ! isset( $rules ) ) {
+			return true;
+		}
 
-        if (
-            $options['update_logic'] === "all_except" &&
-            (
-                empty( $options['fields_list'] ) ||
-                ! in_array( $field['key'], $options['fields_list'] )
-            )
-        ) {
-            return true;
-        }
+		if ( $import_options['update_all_data'] === 'yes' ) {
+			return true;
+		}
 
-        return false;
-    }
+		if ( ! $rules['is_update'] ) {
+			return false;
+		}
+
+		if ( $rules['update_logic'] === "full_update" ) {
+			return true;
+		}
+
+		if (
+			$rules['update_logic'] === "only" &&
+			! empty( $rules['fields_list'] ) &&
+			is_array( $rules['fields_list'] ) &&
+			in_array( $field['key'], $rules['fields_list'] )
+		) {
+			return true;
+		}
+
+		if (
+			$rules['update_logic'] === "all_except" &&
+			(
+				empty( $rules['fields_list'] ) ||
+				! in_array( $field['key'], $rules['fields_list'] )
+			)
+		) {
+			return true;
+		}
+
+		return false;
+	}
 
     public static function from( PMXI_Addon_Base $addon ) {
         return new static( $addon );

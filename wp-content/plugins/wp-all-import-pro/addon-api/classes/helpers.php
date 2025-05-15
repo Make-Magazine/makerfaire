@@ -37,6 +37,7 @@ function pipe( $value, $callbacks ) {
  * @param array $data
  * @param string|null $defaultView
  * @param bool $echo
+ * @param string|null $path
  *
  * @return string|null
  * @throws \Exception
@@ -93,12 +94,12 @@ function searchExistingInAttachedFile( $url, $post_id, $file_type, $importData, 
     $targetDir = $uploads['path'];
 
     if ( empty( $attch ) ) {
-        $logger and call_user_func( $logger, sprintf( __( '- Searching for existing image `%s` by `_wp_attached_file` `%s`...', 'wp_all_import_plugin' ), $url, $image_name ) );
+        $logger and call_user_func( $logger, sprintf( __( '- Searching for existing image `%s` by `_wp_attached_file` `%s`...', 'wp-all-import-pro' ), $url, $image_name ) );
         $attch = wp_all_import_get_image_from_gallery( $image_name, $targetDir, $file_type );
     }
 
     if ( ! empty( $attch ) ) {
-        $logger and call_user_func( $logger, sprintf( __( '- Existing image was found by `_wp_attached_file` ...', 'wp_all_import_plugin' ), $url ) );
+        $logger and call_user_func( $logger, sprintf( __( '- Existing image was found by `_wp_attached_file` ...', 'wp-all-import-pro' ), $url ) );
         $imageRecord = new \PMXI_Image_Record();
         $imageRecord->getBy( [
             'attachment_id' => $attch->ID
@@ -128,22 +129,22 @@ function searchExistingImage( $url, $post_id, $mode, $file_type, $import_data, $
     switch ( $mode ) {
         case 'by_url':
             // trying to find existing image in images table
-            $logger and call_user_func( $logger, sprintf( __( '- Searching for existing image `%s` by URL...', 'wp_all_import_plugin' ), rawurldecode( $url ) ) );
+            $logger and call_user_func( $logger, sprintf( __( '- Searching for existing image `%s` by URL...', 'wp-all-import-pro' ), rawurldecode( $url ) ) );
             $attch = $imageList->getExistingImageByUrl( $url );
 
             if ( $attch ) {
-                $logger and call_user_func( $logger, sprintf( __( 'Existing image was found by URL `%s`...', 'wp_all_import_plugin' ), $url ) );
+                $logger and call_user_func( $logger, sprintf( __( 'Existing image was found by URL `%s`...', 'wp-all-import-pro' ), $url ) );
 
                 return $attch->ID;
             }
 
             break;
         default:
-            $logger and call_user_func( $logger, sprintf( __( '- Searching for existing image `%s` by Filename...', 'wp_all_import_plugin' ), rawurldecode( $url ) ) );
+            $logger and call_user_func( $logger, sprintf( __( '- Searching for existing image `%s` by Filename...', 'wp-all-import-pro' ), rawurldecode( $url ) ) );
             $attch = $imageList->getExistingImageByFilename( basename( $url ) );
 
             if ( $attch ) {
-                $logger and call_user_func( $logger, sprintf( __( 'Existing image was found by Filename `%s`...', 'wp_all_import_plugin' ), basename( $url ) ) );
+                $logger and call_user_func( $logger, sprintf( __( 'Existing image was found by Filename `%s`...', 'wp-all-import-pro' ), basename( $url ) ) );
 
                 return $attch->ID;
             }

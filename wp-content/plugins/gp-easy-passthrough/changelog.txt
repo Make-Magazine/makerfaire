@@ -1,6 +1,14 @@
 
 # Changelog
 
+## 1.9.35 | April 17, 2025
+
+- Fixed issue where an unsupported field type (Consent) was mappable on the feed.
+
+## 1.9.34 | April 10, 2025
+
+- Added support for passthrough with dynamic value population for Multi Select field.
+
 ## 1.9.33 | July 9, 2024
 
 - Updated Easy Passthrough to send `nocache_headers()` and set `DONOTCACHEPAGE` if the `ep_token` query parameter is set.

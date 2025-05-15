@@ -2,14 +2,14 @@
 # This file is distributed under the GPLv2 or later
 msgid ""
 msgstr ""
-"Project-Id-Version: GravityView - DataTables Layout 3.5.1\n"
+"Project-Id-Version: GravityView - DataTables Layout 3.5.2\n"
 "Report-Msgid-Bugs-To: https://www.gravitykit.com/support\n"
 "Last-Translator: GravityKit <support@gravitykit.com>\n"
 "Language-Team: GravityKit <support@gravitykit.com>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2025-01-17T00:12:38+00:00\n"
+"POT-Creation-Date: 2025-04-09T22:35:23+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.10.0\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -165,11 +165,11 @@ msgctxt "Placeholders inside [] are not to be translated."
 msgid "Date to filter the [field name] field"
 msgstr ""
 
-#: includes/class-datatables-field-filters.php:324
+#: includes/class-datatables-field-filters.php:326
 msgid "Is Starred"
 msgstr ""
 
-#: includes/class-datatables-field-filters.php:328
+#: includes/class-datatables-field-filters.php:330
 msgid "Not Starred"
 msgstr ""
 

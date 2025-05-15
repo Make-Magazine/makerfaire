@@ -25,7 +25,7 @@ class PMXI_Addon_Rest {
             if ( ! $request->get_param( $param ) ) {
                 return new \WP_Error(
                     'missing_param',
-                    __( sprintf( "Missing %s parameter", $param ), 'wp_all_import_plugin' ),
+                    __( sprintf( "Missing %s parameter", $param ), 'wp-all-import-pro' ),
                     [ 'status' => 400 ]
                 );
             }
@@ -34,7 +34,7 @@ class PMXI_Addon_Rest {
         if ( ! PMXI_Addon_Manager::get_addon( $addon ) ) {
             return new \WP_Error(
                 'addon_not_found',
-                __( 'Addon not found', 'wp_all_import_plugin' ),
+                __( 'Addon not found', 'wp-all-import-pro' ),
                 [ 'status' => 400 ]
             );
         }

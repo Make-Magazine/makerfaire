@@ -6,14 +6,19 @@ class PMXI_Addon_Post_Field extends PMXI_Addon_Field {
 
     static $repeater_path = 'value';
 
-    public function beforeImport($postId, $value, $data, $logger, $rawData) {
-        global $wpdb;
-
-        $post_ids = [];
+    public function parseDelimitedValues($value) {
         $delimiter = $value['delim'] ?? ',';
         $values = explode($delimiter, $value['value'] ?? '');
         $values = array_filter($values);
         $values = array_map('trim', $values);
+        return $values;
+    }
+
+    public function beforeImport($postId, $value, $data, $logger, $rawData) {
+        global $wpdb;
+
+        $post_ids = [];
+        $values = $this->parseDelimitedValues($value);
         $post_types = $this->args['search_post_type'] ?? [$data['articleData']['post_type']];
 
         if (empty($values)) {
@@ -44,6 +49,10 @@ class PMXI_Addon_Post_Field extends PMXI_Addon_Field {
             if ($relation) {
                 $post_ids[] = (string) $relation->ID;
             }
+        }
+
+        if (empty($this->multiple)) {
+            return array_shift($post_ids);
         }
 
         return $post_ids;

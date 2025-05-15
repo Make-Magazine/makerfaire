@@ -1059,8 +1059,8 @@ class GV_Extension_DataTables_Data {
 	 *
 	 * @since 1.3.3
 	 *
-	 * @param WP_Post  $post Current View or post/page where View is embedded
-	 * @param View $view The View
+	 * @param WP_Post $post Current View or post/page where View is embedded
+	 * @param View    $view The View
 	 *
 	 * @return array Array of settings formatted as DataTables options array. {@see https://datatables.net/reference/option/}
 	 */
@@ -1297,7 +1297,6 @@ class GV_Extension_DataTables_Data {
 	 * @internal
 	 */
 	public function extend_view( $gravityview ) {
-
 		if ( 'datatables_table' != $gravityview->view->settings->get( 'template' ) ) {
 			return;
 		}
@@ -1315,6 +1314,11 @@ class GV_Extension_DataTables_Data {
 		}
 
 		global $post;
+
+		if ( ! $post ) {
+			return;
+		}
+
 		static $_printed_scripts = array();
 
 		$script_config_json = json_encode( $this->get_datatables_script_configuration( $post, $gravityview->view ) );

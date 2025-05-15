@@ -6,7 +6,7 @@
         tinymce.PluginManager.add('epyt_mce_wizard_button', function (editor, url)
         {
             editor.addButton('epyt_mce_wizard_button', {
-                title: 'YouTube Wizard',
+                title: 'EmbedPlus for YouTube Wizard',
                 icon: 'icon epyt_mce_wizard_button--icon',
                 onclick: function () // mousedown? touch?
                 {
@@ -19,7 +19,7 @@
                     }
                     setTimeout(function ()
                     {
-                        tb_show('YouTube Wizard', window._EPYTA_.wizhref);
+                        tb_show('EmbedPlus for YouTube Wizard', window._EPYTA_.wizhref);
                         window._EPYTA_.widen_ytprefs_wiz();
                     }, 600);
                 }

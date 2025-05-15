@@ -66,7 +66,7 @@ class GP_Populate_Anything_Live_Merge_Tags {
 			add_filter( $wrapper_filter, array( $this, 'preserve_product_field_label' ), 98, 2 );
 			add_filter( $wrapper_filter, array( $this, 'replace_live_merge_tag_attr' ), 99, 2 );
 			add_filter( $wrapper_filter, array( $this, 'replace_live_merge_tag_non_attr' ), 99, 2 );
-			add_filter( $wrapper_filter, array( $this, 'unescape_live_merge_tags' ), 99 );
+			add_filter( $wrapper_filter, array( $this, 'unescape_live_merge_tags' ), 100 );
 			add_filter( $wrapper_filter, array( $this, 'add_localization_attr_variable' ), 99, 2 );
 			add_filter( $wrapper_filter, array( $this, 'restore_escapes' ), 100, 2 );
 		}
@@ -983,7 +983,7 @@ class GP_Populate_Anything_Live_Merge_Tags {
 				continue;
 			}
 
-			if ( $field->get_input_type() === 'number' && ! rgblank( $entry_value ) ) {
+			if ( $field->get_input_type() === 'number' && ! rgblank( $entry_value ) && is_scalar( $entry_value ) ) {
 				if ( GFCommon::is_numeric( $entry_value, 'decimal_dot' ) ) {
 					$entry_values[ $input_id ] = GFCommon::clean_number( $entry_value, 'decimal_dot' );
 				} elseif ( GFCommon::is_numeric( $entry_value, 'decimal_comma' ) ) {
@@ -1481,7 +1481,7 @@ class GP_Populate_Anything_Live_Merge_Tags {
 		$lmt      = gp_populate_anything()->live_merge_tags;
 		$gf_token = rgget( 'gf_token' );
 		// Only to be processed for an HTML field with LMT in the context of S&C.
-		if ( $field->type == 'html' && $lmt->has_live_merge_tag( $field->content ) && $gf_token ) {
+		if ( $field->type == 'html' && $lmt->has_live_merge_tag( $field->content ) && $gf_token && isset( $form['pagination'] ) ) {
 			$draft_data = GFFormsModel::get_draft_submission_values( $gf_token );
 			$data_array = json_decode( rgar( $draft_data, 'submission' ), true );
 

@@ -287,6 +287,18 @@ class GravityWP_Advanced_Merge_Tags extends GFAddOn {
 	private function has_calculation_with_advanced_mergetags( $form ) {
 
 		foreach ( $form['fields'] as &$field ) {
+			// check for List Number Format Calculations.
+			if ( $field->type === 'list' && isset( $field->choices ) && is_array( $field->choices ) ) {
+				foreach ( $field->choices as $column ) {
+					if ( isset( $column['isNumberEnableCalculation'] ) && $column['isNumberEnableCalculation']
+					&& isset( $column['isNumberCalculationFormula'] )
+					&& strpos( $column['isNumberCalculationFormula'], ':gwp_' ) !== false
+					) {
+						return true;
+					}
+				}
+			}
+			// Check regular field calculations.
 			if ( $field->has_calculation() && strpos( $field->calculationFormula, ':gwp_' ) !== false ) {
 				return true;
 			}
@@ -1642,8 +1654,8 @@ class GravityWP_Advanced_Merge_Tags extends GFAddOn {
 		}
 
 		// Get the Form and create a Field object.
-		$form  = GFAPI::get_form( self::$_entry[ $entry_id ]['form_id'] );
-		$field = false;
+		$form     = GFAPI::get_form( self::$_entry[ $entry_id ]['form_id'] );
+		$field    = false;
 		$input_id = $properties[1];
 		if ( is_numeric( $input_id ) ) {
 			$field = GFAPI::get_field( $form, $input_id );

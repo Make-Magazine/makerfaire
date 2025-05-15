@@ -283,8 +283,88 @@
 	};
 
 	if ( ! $('body.wpallexport-plugin').length) return; // do not execute any code if we are not on plugin page
+	
+    $('.wp_all_export_send_to_codebox').on('click', async function (event) {
+		
+		$target = $(event.target);
+		
+        var isCodeBoxActive = $('input[name="is_wp_codebox_active"]').val();
 
-	// fix layout position
+        if (isCodeBoxActive === '0') {
+            $('.cross-sale-notice.codebox').slideDown();
+        } else {
+			if($target.hasClass('wp_all_export_code')) {
+				var code = editor.codemirror.getValue();;
+			} else {
+				var code = main_editor.codemirror.getValue();
+			}
+
+			await wpae_save_functions(code);
+
+            $('.wp_all_export_functions_preloader').show();
+
+            $.ajax({
+                url: ajaxurl,
+                type: 'POST',
+                data: {
+                    action: 'wpae_send_to_codebox',
+                    security: wp_all_export_security,
+                    code: code
+                },
+                dataType: 'json',
+                success: function (response) {
+					$('.functions_editor_container').slideUp(300, function () {
+						$(this).html(response.html).fadeIn(300, function() {
+							const $element = $(this);
+							setTimeout(() => {
+								$element.fadeOut(300);
+							}, 3000);
+						});
+					});
+
+                    $('.wpae_function_editor_buttons').fadeOut(400);
+					$('.wpae_go_to_codebox').fadeIn(400);
+                },
+                error: function () {
+                    alert('An error occurred while sending to CodeBox.');
+                },
+                complete: function () {
+                    $('.wp_all_export_functions_preloader').hide();
+                }
+            });
+        }
+    });
+
+    $('.wp_all_export_revert_functions').on('click', function () {
+        if (confirm('Are you sure you want to revert to the previous functions file?')) {
+
+            $('.wp_all_export_functions_preloader').show();
+
+            $.ajax({
+                url: ajaxurl,
+                type: 'POST',
+                data: {
+                    action: 'wpae_send_to_codebox',
+                    security: wp_all_export_security,
+                    codeboxaction: 'revert'
+                },
+                dataType: 'json',
+                success: function (response) {
+                    alert(response.html);
+                    location.reload();
+                },
+                error: function () {
+                    alert('An error occurred while reverting the functions file.');
+                },
+                complete: function () {
+                    $('.wp_all_export_functions_preloader').hide();
+                }
+            });
+        }
+    });
+
+
+    // fix layout position
 	setTimeout(function () {
 		$('table.wpallexport-layout').length && $('table.wpallexport-layout td.left h2:first-child').css('margin-top',  $('.wrap').offset().top - $('table.wpallexport-layout').offset().top);
 	}, 10);
@@ -2013,7 +2093,9 @@
                 $addAnotherForm.show();
 
                 setTimeout(function () {
-                    editor.refresh();
+					if(editor) {
+						editor.refresh();
+					}
                 }, 1);
 
                 $('.wpallexport-overlay').show();
@@ -2021,8 +2103,12 @@
                 var availableDataHeight = $('.wp-all-export-edit-column.cc').height() - 200;
                 $addAnotherForm.find('.wpallexport-pointer-data.available-data').css('max-height', availableDataHeight);
 
-                var editor = $('#wp_all_export_code + .CodeMirror').get(0).CodeMirror;
-                editor.refresh();
+				var editorElement = $('#wp_all_export_code + .CodeMirror').get(0);
+
+				if (editorElement && editorElement.CodeMirror) {
+					var editor = editorElement.CodeMirror;
+					editor.refresh();
+				}
             }
 		});
 
@@ -2592,21 +2678,21 @@
 		else
 			$('#wp_all_export_value').show();
 	});
-    // saving & validating function editor
-    $('.wp_all_export_save_functions').on('click', function(){
-
-
-    	var data = $(this).hasClass('wp_all_export_save_main_code') ? main_editor.codemirror.getValue() : editor.codemirror.getValue();
-
-    	var request = {
+	
+	function wpae_save_functions(data = ''){
+		if( data === '') {
+			data = $(this).hasClass('wp_all_export_save_main_code') ? main_editor.codemirror.getValue() : editor.codemirror.getValue();
+		}
+		
+		var request = {
 			action: 'save_functions',
 			data: data,
 			security: wp_all_export_security
-	    };
-	    $('.wp_all_export_functions_preloader').show();
-	    $('.wp_all_export_saving_status').removeClass('error updated').html('');
+		};
+		$('.wp_all_export_functions_preloader').show();
+		$('.wp_all_export_saving_status').removeClass('error updated').html('');
 
-		$.ajax({
+		return $.ajax({
 			type: 'POST',
 			url: get_valid_ajaxurl(),
 			data: request,
@@ -2633,6 +2719,15 @@
 			},
 			dataType: "json"
 		});
+	}
+	
+    // saving & validating function editor
+    $('.wp_all_export_save_functions').on('click', function(){
+
+		$('.cross-sale-notice.codebox').slideUp();
+		
+		wpae_save_functions.call(this);
+
     });
     // auot-generate zapier API key
     $('input[name=pmxe_generate_zapier_api_key]').on('click', function(e){

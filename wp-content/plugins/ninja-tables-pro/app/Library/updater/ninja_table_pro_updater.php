@@ -15,7 +15,7 @@ new NinjaTableUpdateChecker(array(
     // Also need to change in readme.txt and plugin header.
     'version'         => NINJAPROPLUGIN_VERSION,
     // The main URL of your store for license verification
-    'store_url'       => 'https://apiv2.wpmanageninja.com/plugin',
+    'store_url'       => 'https://api3.wpmanageninja.com/plugin',
     'store_site'      => 'https://wpmanageninja.com',
     // Your name
     'author'          => 'WP Manage Ninja',
@@ -35,9 +35,9 @@ new NinjaTableUpdateChecker(array(
     // If using add_menu_page, this is the parent slug to add a submenu item underneath.
     'activate_url'    => admin_url('?page=ninja_tables#/tools/licensing'),
     // The translatable title of the plugin
-    'plugin_title'    => __('Ninja Tables Pro', 'ninja-tables-pro'),
+    'plugin_title'    => 'Ninja Tables Pro',
     'menu_slug'       => 'ninja_tables',
-    'menu_title'      => __('Ninja Tables Pro', 'ninja-tables-pro'),
+    'menu_title'      => 'Ninja Tables Pro',
     // How much time (in seconds) the updater won't check the license.
     'cache_time'      => 48 * 60 * 60
 ));

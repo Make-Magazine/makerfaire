@@ -18,14 +18,22 @@ class ExtraShortCodeHandler
             'alt_color' => '#dddddd',
             'max'       => 5
         ), $atts);
-        if ($data['value'] > $data['max']) {
-            $data['max'] = $data['value'];
-        }
-        $reminder = $data['max'] - $data['value'];
 
-        return '<span class="nt_review_icon">' . $this->getIcons($data['value'], 'fooicon-star',
-                $data['color']) . $this->getIcons($reminder, 'fooicon-star-o',
-                $data['alt_color']) . '<span style="display: none !important;">' . $data['value'] . '</span></span>';
+        $value     = intval($data['value']);
+        $max       = intval($data['max']);
+        $color     = sanitize_text_field($data['color']);
+        $alt_color = sanitize_text_field($data['alt_color']);
+
+        if ($value > $max) {
+            $max = $value;
+        }
+
+        $reminder = $max - $value;
+
+        return '<span class="nt_review_icon">' .
+               $this->getIcons($value, 'star', $color) .
+               $this->getIcons($reminder, 'star-o', $alt_color) .
+               '<span style="display: none !important;">' . esc_html($value) . '</span></span>';
     }
 
     public function icon($atts)
@@ -36,36 +44,40 @@ class ExtraShortCodeHandler
             'icon'   => 'star'
         ), $atts);
 
-        if ( ! $data['icon']) {
+        $number = intval($data['number']);
+        $color  = sanitize_text_field($data['color']);
+        $icon   = sanitize_text_field($data['icon']);
+
+        if (!$icon) {
             return '';
         }
-        $icon = $data['icon'];
 
-        return '<span class="nt_icon">' . $this->getIcons($data['number'], $icon,
-                $data['color']) . '<span style="display: none !important;">' . $data['icon'] . '</span></span>';
+        return '<span class="nt_icon">' .
+               $this->getIcons($number, $icon, $color) .
+               '<span style="display: none !important;">' . esc_html($icon) . '</span></span>';
     }
 
     private function getIcons($number, $icon_class, $color)
     {
+        $html       = '';
+        $icon_class = sanitize_text_field($icon_class);
+        $color      = sanitize_text_field($color);
 
-        $html = '';
-        $i    = 0;
-        // I need to use img tag and src attribute to get the image from the server
-        for ($i; $i < $number; $i++) {
-            $icon_dir = NINJA_TABLES_DIR_PATH . 'assets/libs/icons/'.$icon_class.'.svg';
+        for ($i = 0; $i < $number; $i++) {
+            $icon_dir = NINJA_TABLES_DIR_PATH . 'assets/libs/icons/' . $icon_class . '.svg';
             if (file_exists($icon_dir)) {
-                $icon_url = NINJA_TABLES_DIR_URL . 'assets/libs/icons/'.$icon_class.'.svg';
+                $icon_url = NINJA_TABLES_DIR_URL . 'assets/libs/icons/' . $icon_class . '.svg';
 
-                $html .= '<span class="'.$icon_class.'" style="
-            display: inline-block;
-  width: 20px;
-  height: 20px;
-  background-color: ' . $color . ';
-  -webkit-mask-image: url(' . $icon_url . ') !important;
-  mask-image: url(' . $icon_url . ') !important;
-"> </span>';
+                $html .= '<span class="' . esc_attr($icon_class) . '" style="
+                    display: inline-block;
+                    width: 20px;
+                    height: 20px;
+                    background-color: ' . esc_attr($color) . ';
+                    -webkit-mask-image: url(' . esc_url($icon_url) . ') !important;
+                    mask-image: url(' . esc_url($icon_url) . ') !important;
+                "> </span>';
             }
-            }
+        }
 
         return $html;
     }

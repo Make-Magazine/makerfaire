@@ -18,6 +18,7 @@ class Gum_Elementor_Widget_Accordion{
 
         add_action( 'elementor/element/accordion/section_title/after_section_end', array( $this, 'register_tabtitle_icon_style_controls') , 999 );
         add_action( 'elementor/element/before_section_start', array( $this, 'enqueue_script' ) );
+
         add_action( 'elementor/element/accordion/section_toggle_style_icon/after_section_end', array( $this, 'register_toggle_style_icon_controls') , 999 );
         add_action( 'elementor/element/accordion/section_toggle_style_title/after_section_end', array( $this, 'register_toggle_style_title_controls') , 999 );
         add_action( 'elementor/element/accordion/section_toggle_style_content/after_section_end', array( $this, 'register_toggle_style_content_controls') , 999 );
@@ -293,6 +294,20 @@ class Gum_Elementor_Widget_Accordion{
       ]
     );
 
+
+    $element->add_control(
+      'toggle_title_active_bdcolor',
+      [
+        'label' => esc_html__( 'Active Border Color', 'gum-elementor-addon' ),
+        'type' => Controls_Manager::COLOR,
+        'default' => '',
+        'selectors' => [
+          '{{WRAPPER}} .elementor-accordion-item .elementor-tab-title.elementor-active' => 'border-color: {{VALUE}}!important;',
+        ],
+        'condition' => ['toggle_title_border_border!' => '']
+      ]
+    );   
+
     $element->end_injection();
 
 
@@ -313,6 +328,30 @@ class Gum_Elementor_Widget_Accordion{
         'type' => Controls_Manager::COLOR,
         'selectors' => [
           '{{WRAPPER}} .elementor-tab-title:hover .elementor-accordion-icon i:before,{{WRAPPER}} .elementor-tab-title:hover .elementor-accordion-icon svg' => 'color: {{VALUE}}!important;fill: {{VALUE}}!important;',
+        ],
+      ]
+    );
+
+
+    $element->add_control(
+      'icon_bgcolor',
+      [
+        'label' => esc_html__( 'Background', 'gum-elementor-addon' ),
+        'type' => Controls_Manager::COLOR,
+        'selectors' => [
+          '{{WRAPPER}} .elementor-tab-title .elementor-accordion-icon i,{{WRAPPER}} .elementor-tab-title .elementor-accordion-icon svg' => 'background: {{VALUE}}!important;',
+        ],
+      ]
+    );
+
+
+    $element->add_control(
+      'icon_active_bgcolor',
+      [
+        'label' => esc_html__( 'Active Background', 'gum-elementor-addon' ),
+        'type' => Controls_Manager::COLOR,
+        'selectors' => [
+          '{{WRAPPER}} .elementor-tab-title.elementor-active .elementor-accordion-icon i,{{WRAPPER}} .elementor-tab-title.elementor-active .elementor-accordion-icon svg' => 'background: {{VALUE}}!important;',
         ],
       ]
     );
@@ -345,12 +384,30 @@ class Gum_Elementor_Widget_Accordion{
         'type' => Controls_Manager::SLIDER,
         'range' => [
           'px' => [
-            'min' => -100,
-            'max' => 100,
+            'min' => -200,
+            'max' => 200,
           ],
         ],
         'selectors' => [
           '{{WRAPPER}} .elementor-accordion-icon span' => 'margin-top: {{SIZE}}{{UNIT}};',
+        ],
+      ]
+    );
+
+    $element->add_responsive_control(
+      'icon_h_offset',
+      [
+        'label' => esc_html__( 'Horizontal Offset', 'gum-elementor-addon' ),
+        'type' => Controls_Manager::SLIDER,
+        'range' => [
+          'px' => [
+            'min' => -200,
+            'max' => 200,
+          ],
+        ],
+        'selectors' => [
+          '{{WRAPPER}} .elementor-accordion-icon.elementor-accordion-icon-left' => 'margin-left: {{SIZE}}{{UNIT}};',
+          '{{WRAPPER}} .elementor-accordion-icon.elementor-accordion-icon-right' => 'margin-right: {{SIZE}}{{UNIT}};',
         ],
       ]
     );
@@ -362,6 +419,20 @@ class Gum_Elementor_Widget_Accordion{
         'selector' => '{{WRAPPER}} .elementor-accordion-icon span i',
       ]
     );
+
+
+    $element->add_control(
+      'toggle_icon_active_bdcolor',
+      [
+        'label' => esc_html__( 'Active Border Color', 'gum-elementor-addon' ),
+        'type' => Controls_Manager::COLOR,
+        'default' => '',
+        'selectors' => [
+          '{{WRAPPER}} .elementor-tab-title.elementor-active .elementor-accordion-icon span i' => 'border-color: {{VALUE}}!important;',
+        ],
+        'condition' => ['toggle_icon_border_border!' => '']
+      ]
+    );   
 
 
     $element->add_responsive_control(
@@ -497,7 +568,9 @@ class Gum_Elementor_Widget_Accordion{
               <?php } ?>
               </span>
             <?php endif; ?>
-            <a class="elementor-accordion-title" href=""><?php esc_html_e($item['tab_title']); 
+            <a class="elementor-accordion-title" tabindex="0"><?php 
+
+            print wp_kses_split($item['tab_title'],array('b'=>array(),'strong'=>array()), array()); 
 
             $iconHTML = '';
 

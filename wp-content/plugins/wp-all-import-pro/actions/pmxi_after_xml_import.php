@@ -31,7 +31,7 @@ function pmxi_pmxi_after_xml_import( $import_id, $import )
         delete_option('wp_all_import_taxonomies_hierarchy_' . $import_id);
     }
     if ( ! in_array($import->options['custom_type'], array('taxonomies', 'import_users', 'shop_customer', 'comments', 'woo_reviews')) ) {
-        $custom_type = get_post_type_object( $import->options['custom_type'] );
+        $custom_type = wp_all_import_custom_type( $import->options['custom_type'] );
         if ( ! empty($custom_type) && $custom_type->hierarchical ){
             $parent_posts = get_option('wp_all_import_posts_hierarchy_' . $import_id);
             if (!empty($parent_posts)){

@@ -1,7 +1,7 @@
 === GravityView ===
 Tags: gravity forms, directory, gravity forms directory
 Requires at least: 4.7
-Tested up to: 6.7.2
+Tested up to: 6.8
 Requires PHP: 7.4.0
 Stable tag: trunk
 Contributors: The GravityKit Team
@@ -20,6 +20,73 @@ Beautifully display your Gravity Forms entries. Learn more on [gravitykit.com](h
 3. Follow the instructions
 
 == Changelog ==
+
+= 2.39.1 on April 25, 2025 =
+
+This hotfix resolves a fatal error that occurred when updating the plugin from version 2.38 or earlier.
+
+#### 🐛 Fixed
+* Fatal error when updating the plugin from version 2.38 or earlier.
+
+#### 🔧 Updated
+* [Foundation](https://www.gravitykit.com/foundation/) to version 1.2.25.
+
+= 2.39 on April 24, 2025 =
+
+This update speeds up form loading in the View editor, fixes GravityEdit compatibility and translation issues in WordPress 6.8, and includes other fixes and improvements.
+
+#### ✨ Improved
+* Faster form fetching in the Data Source dropdown in the View editor.
+* Expand/contract button is no longer shown in View editor warning dialogs.
+
+#### 🐛 Fixed
+* Compatibility issue with GravityEdit when using the Layout Builder template.
+* PHP notice in WordPress 6.8 caused by initializing product translations too early.
+
+#### 🔧 Updated
+* [Foundation](https://www.gravitykit.com/foundation/) to version 1.2.24.
+
+#### 💻 Developer Updates
+* The `$forms` array passed to the `gravityview/metaboxes/data-source/before` and `gravityview/metaboxes/data-source/after` filters now includes only form IDs as keys and titles as values, instead of full form objects.
+* The `gk/gravityview/common/get_forms` filter is no longer applied to forms shown in the Data Source dropdown.
+* Added `gk/gravityview/lightbox/entry/link` filter to modify the markup of Single Entry and Edit Entry links that open in a lightbox.
+
+= 2.38 on April 9, 2025 =
+
+This release adds a new setting for Edit Entry locking and fixes issues with multi-page form entry editing, shortcode rendering inside the Layout Builder template, entry locking, and more.
+
+#### 🚀 Added
+* View editor setting to control how frequently requests to take control of a locked entry are checked when Edit Locking is enabled.
+
+#### 🐛 Fixed
+* Navigation between pages in multi-page forms was broken when editing entries.
+* GravityView View field in the Single Entry layout may not display results when accessed from a paginated View.
+* `[gv_entry_link]` shortcode was not rendering inside the Custom Content field when using the Layout Builder template.
+* Fatal error when a Chained Selects Add-On search field was added to the Search Bar, then removed from the connected form.
+* Entry locking not working in certain cases.
+* Browser performance issue when a View is rendered in the Elementor preview area.
+
+#### 💻 Developer Updates
+* Added `gk/gravityview/edit-entry/user-can-edit-field` filter to allow modifying field visibility in Edit Entry.
+
+= 2.37 on March 24, 2025 =
+
+This release enhances dialogs in the View editor, improves button and link positioning on the Edit Entry page, and resolves missing settings, embed issues in page builders, unsaved changes warnings, and more.
+
+#### 🚀 Added
+* Expand/contract button to field and widget settings in the View editor.
+  - When the dialog is expanded, the code editor will expand to the full width of the dialog.
+
+#### ✨ Improved
+* The display of action buttons/links on the Edit Entry page.
+
+#### 🐛 Fixed
+* Missing settings in the View editor for customizing next/previous page button text on the Edit Entry screen.
+* Missing hooks in the Layout Builder template prevented extensions like Ratings & Reviews from working.
+* Broken Entry Edit link inside the lightbox when viewing a single entry.
+* Settings text may not wrap correctly in the View editor.
+* The "Are you sure you want to leave this page?" unsaved changes warning appears after opening field settings and navigating away from the Edit View page, even if no changes were made.
+* Embedding a View via a page builder (e.g., Elementor) prevented a GravityView View field in the Single Entry layout from rendering.
 
 = 2.36 on March 13, 2025 =
 
@@ -2469,7 +2536,7 @@ __Developer Notes:__
 * Fixed: Address fields displayed hidden inputs
 * Fixed: Merge Tag dropdown list can be too wide when field names are long
 * Fixed: When sorting, recent entries disappeared from results
-* Fixed: Searches that included apostrophes  or ampersands returned no results
+* Fixed: Searches that included apostrophes or ampersands returned no results
 * Fixed: Zero values not set in fields while in Edit Entry
 * Fixed: Re-calculate fields where calculation is enabled after entry is updated
 * Fixed: Warning message when Number fields not included in custom Edit Entry configurations

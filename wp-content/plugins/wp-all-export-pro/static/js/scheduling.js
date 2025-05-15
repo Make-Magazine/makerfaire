@@ -475,7 +475,7 @@
         let license = $('#add-subscription-field').val();
 
         if (license) {
-            $('#activate-license .loader').show();
+            $('.activate-button-group .loader').show();
             $('#activate-license').prop('disabled', true);
 
             $.ajax({
@@ -492,7 +492,7 @@
                     if (response.success) {
                         hasActiveLicense = true;
                         $('#scheduling-subscribe-group').hide();
-                        $('#activate-license .loader').hide();
+                        $('.activate-button-group .loader').hide();
                         $('#activate-license').prop('disabled', false);
                         $('#scheduling-schedule-input').show();
                         $('#subscribe-button svg.success').show();
@@ -515,46 +515,52 @@
                         $subscriptionField = $('#add-subscription-field');
                         $subscriptionField.val('');
                         $subscriptionField.css('border-color', 'red');
-                        $('#activate-license .loader').hide();
+                        $('.activate-button-group .loader').hide();
                         $('#activate-license').prop('disabled', false);
                         let licenseResponse = response.license || 'invalid';
                         $('.license-overlay').remove();
 
-                        // Create dynamic overlay for license error message.
-                        let $overlay = $('<div class="license-overlay"></div>');
-                        $overlay.html('<span style="">License error:</span><span style="margin-left:5px;font-weight:500;">'+licenseResponse+'</span>');
+                        // Check for "active sites limit reached" error
+                        if (licenseResponse === 'active sites limit reached') {
+                            openActiveSitesLimitModal(response); // Open additional modal
+                        } else {
+                            // Create dynamic overlay for license error message.
+                            let $overlay = $('<div class="license-overlay"></div>');
+                            $overlay.html('<span style="">License error:</span><span style="margin-left:5px;font-weight:500;">' + licenseResponse + '</span>');
 
-                        $subscriptionField.parent().css('position', 'relative');
-                        $subscriptionField.after($overlay);
 
-                        $overlay.css({
-                            position: 'absolute',
-                            top: $subscriptionField.position().top + 'px',
-                            left: $subscriptionField.position().left + 'px',
-                            width: $subscriptionField.outerWidth() - 20,
-                            height: $subscriptionField.outerHeight(),
-                            background: 'rgba(255, 255, 255, 0.9)',
-                            color: $subscriptionField.css('color'),
-                            fontSize: 14 + 'px',
-                            fontFamily: $subscriptionField.css('font-family'),
-                            fontStyle: $subscriptionField.css('font-style'),
-                            lineHeight: $subscriptionField.css('line-height'),
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'start',
-                            padding: '0 10px',
-                            border: '1px solid red',
-                            borderRadius: '4px',
-                            pointerEvents: 'none',
-                            zIndex: 1000,
-                        });
+                            $subscriptionField.parent().css('position', 'relative');
+                            $subscriptionField.after($overlay);
 
-                        // Remove the overlay after 2.5 seconds.
-                        setTimeout(() => {
-                            $overlay.fadeOut(300, function () {
-                                $(this).remove();
+                            $overlay.css({
+                                position: 'absolute',
+                                top: $subscriptionField.position().top + 'px',
+                                left: $subscriptionField.position().left + 'px',
+                                width: $subscriptionField.outerWidth() - 20,
+                                height: $subscriptionField.outerHeight(),
+                                background: 'rgba(255, 255, 255, 0.9)',
+                                color: $subscriptionField.css('color'),
+                                fontSize: 14 + 'px',
+                                fontFamily: $subscriptionField.css('font-family'),
+                                fontStyle: $subscriptionField.css('font-style'),
+                                lineHeight: $subscriptionField.css('line-height'),
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'start',
+                                padding: '0 10px',
+                                border: '1px solid red',
+                                borderRadius: '4px',
+                                pointerEvents: 'none',
+                                zIndex: 9999999,
                             });
-                        }, 2500);
+
+                            // Remove the overlay after 2.5 seconds.
+                            setTimeout(() => {
+                                $overlay.fadeOut(300, function () {
+                                    $(this).remove();
+                                });
+                            }, 2500);
+                        }
                     }
                 }
             });
@@ -563,6 +569,96 @@
         }else{
             $('#add-subscription-field').css('border-color', 'red');
         }
+    });
+
+    /**
+     * Check settings page for Scheduling license limit reached
+     */
+
+    // Ensure this is the correct page for the plugin
+    if ($('body').hasClass('wpallexport-plugin') && window.location.search.includes('page=pmxe-admin-settings')) {
+
+        // Check if the license error div exists
+        let $licenseStatus = $('.license-status.inline.error');
+        let siteLimit = $('input[name="scheduling_license_limit"]').val(); // Fetch value of the hidden input
+
+        // Ensure both the error div exists and contains "active sites limit reached"
+        if ($licenseStatus.length && $licenseStatus.text().trim() === 'active sites limit reached' && siteLimit) {
+
+            // Trigger the modal with the limit value
+            openActiveSitesLimitModal({
+                license_limit: parseInt(siteLimit, 10),
+            });
+        }
+    }
+
+    /**
+     * Function to display modal when active sites limit reached
+     */
+    function openActiveSitesLimitModal(response) {
+        let license_limit = response.license_limit;
+        let expiration = response.expires;
+        let renewalDate = new Date(expiration * 1000).toLocaleDateString();
+
+        $('.active-sites-limit-modal-overlay').show();
+        $('.active-sites-limit-modal').show();
+
+        $('[id^="limit-"]').each(function () {
+            const limitValue = parseInt($(this).attr('id').replace('limit-', ''), 10);
+
+            if (license_limit >= limitValue) {
+                $(this).hide();
+            } else {
+                $(this).show();
+            }
+        });
+
+        $('#cta-text').text(function(index, text) {
+            return text.replace('{{renewal_date}}', renewalDate);
+        });
+
+        // Center modal dynamically in case of resizing
+        centerModal('.active-sites-limit-modal');
+
+        // Add click event handlers
+        $('.active-sites-limit-modal-overlay').on('click', function () {
+            $('.active-sites-limit-modal-overlay').hide();
+        });
+
+        // Close the modal if clicking on the overlay
+        $('.active-sites-limit-modal-overlay').on('click', function () {
+            $('.active-sites-limit-modal-overlay').hide();
+        });
+
+        // Prevent closing the modal when clicking inside the modal itself
+        $('.active-sites-limit-modal').on('click', function (e) {
+            if (!$(e.target).is('#subscribe-upgrade')) {
+                e.stopPropagation();
+            }
+        });
+
+        $('.manage-license-button').on('click', function () {
+            window.open('https://www.wpallimport.com/licenses', '_blank'); // Redirect to license management
+        });
+    }
+
+    /**
+     * Function to dynamically center a modal on screen
+     */
+    function centerModal(selector) {
+        const $modal = $(selector);
+        const windowWidth = $(window).width();
+        const windowHeight = $(window).height();
+
+        $modal.css({
+            position: 'fixed',
+            top: (windowHeight - $modal.outerHeight()) / 2 + 'px',
+            left: (windowWidth - $modal.outerWidth()) / 2 + 'px'
+        });
+    }
+
+    $(document).on('click', '#subscribe-upgrade', function(event){
+        schedulingSubscribeHandler(event, 'input[name="upgrade_pricing_plan"]:checked', 'upgrade');
     });
 
     $(document).on('click', '#scheduling-already-licensed', function (event) {
@@ -586,22 +682,36 @@
         }
     });
 
-    window.schedulingSubscribeHandler = function (event) {
-        let selectedPlan = $('input[name="pricing_plan"]:checked').val();
+    window.schedulingSubscribeHandler = function (event, target = 'input[name="pricing_plan"]:checked', type = 'subscribe') {
+        let selectedPlan = $(target).val();
         let url = '';
 
         switch (selectedPlan) {
             case 'single_site':
-                url = 'https://www.wpallimport.com/scheduling/1-site';
+                if(type === 'subscribe') {
+                    url = 'https://www.wpallimport.com/scheduling/1-site';
+                }
                 break;
             case 'three_sites':
-                url = 'https://www.wpallimport.com/scheduling/3-sites';
+                if(type === 'subscribe') {
+                    url = 'https://www.wpallimport.com/scheduling/3-sites';
+                }else{
+                    url = 'https://www.wpallimport.com/scheduling/upgrade-3-sites';
+                }
                 break;
             case 'ten_sites':
-                url = 'https://www.wpallimport.com/scheduling/10-sites';
+                if(type === 'subscribe') {
+                    url = 'https://www.wpallimport.com/scheduling/10-sites';
+                }else{
+                    url = 'https://www.wpallimport.com/scheduling/upgrade-10-sites';
+                }
                 break;
             case 'unlimited_sites':
-                url = 'https://www.wpallimport.com/scheduling/unlimited-sites';
+                if(type === 'subscribe') {
+                    url = 'https://www.wpallimport.com/scheduling/unlimited-sites';
+                }else{
+                    url = 'https://www.wpallimport.com/scheduling/upgrade-unlimited-sites';
+                }
                 break;
             default:
                 break;
@@ -612,7 +722,7 @@
             window.open(url, '_blank');
             event.stopPropagation();
         }
-    }
+    };
 
     $(document).on('click', '#subscribe', function(event){
         schedulingSubscribeHandler(event)

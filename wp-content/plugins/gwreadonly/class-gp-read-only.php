@@ -30,12 +30,6 @@ class GP_Read_Only extends GP_Plugin {
 			'wordpress'    => array(
 				'version' => '3.0',
 			),
-			'plugins'      => array(
-				'gravityperks/gravityperks.php' => array(
-					'name'    => 'Gravity Perks',
-					'version' => '1.0-beta-3',
-				),
-			),
 		);
 	}
 
@@ -118,7 +112,7 @@ class GP_Read_Only extends GP_Plugin {
 		);
 
 		return array_merge( parent::styles(), $styles );
-	}	
+	}
 
 	/**
 	 * Determine if frontend scripts/styles should be enqueued. Loop through fields and check if read only is enabled
@@ -530,8 +524,8 @@ class GP_Read_Only extends GP_Plugin {
 	}
 
 	private function is_empty_hidden_capture( $full_input_id, $field ) {
-		// For a time field, ensure all 3 values are stored (Hours - Minutes - AM/PM).
-		if ( $field->type == 'time' && is_array( $_POST[ "input_{$full_input_id}" ] ) && count( $_POST[ "input_{$full_input_id}" ] ) != 3 ) {
+		// For a time field, ensure all 3 values are stored (Hours - Minutes - AM/PM), but not for 24 hour format.
+		if ( $field->type == 'time' && $field->timeFormat != '24' && is_array( $_POST[ "input_{$full_input_id}" ] ) && count( $_POST[ "input_{$full_input_id}" ] ) != 3 ) {
 			return true;
 		}
 

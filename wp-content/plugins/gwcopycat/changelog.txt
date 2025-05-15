@@ -1,6 +1,30 @@
 
 # Changelog
 
+## 1.4.93 | May 14, 2025
+
+- Removed redundant check for Gravity Perks in preparation for Spellbook.
+
+## 1.4.92 | May 7, 2025
+
+- Fixed an issue with Auto List field losing it's row count on Copy Cat trigger.
+
+## 1.4.91 | April 30, 2025
+
+- Fixed issue where toggling checkbox options cleared all copied values when using conditional copying.
+
+## 1.4.90 | April 10, 2025
+
+- Added index-based copying support for Multi Select field.
+
+## 1.4.89 | April 2, 2025
+
+- Added index-based copying support for dropdowns.
+
+## 1.4.88 | March 27, 2025
+
+- Added `gp_copy_cat()` function for getting the singleton instance of Copy Cat.
+
 ## 1.4.87 | March 5, 2025
 
 - Improved compatibility with Image Choice field.

@@ -69,8 +69,8 @@ class GP_Limit_Checkboxes extends GWPerk {
 			}
 
 			$group = array(
-				'min'    => $field->{$this->key( 'minimum_limit' )},
-				'max'    => $field->{$this->key( 'maximum_limit' )},
+				'min'    => $field->{$this->key( 'enable' )} ? $field->{$this->key( 'minimum_limit' )} : "",
+				'max'    => $field->{$this->key( 'enable' )} ? $field->{$this->key( 'maximum_limit' )} : "",
 				'fields' => array( $field->id ),
 			);
 
@@ -223,6 +223,11 @@ class GP_Limit_Checkboxes extends GWPerk {
 
 				foreach ( $group['fields'] as $field_id ) {
 
+					$field = GFAPI::get_field( $form, $field_id );
+					if ( ! GFFormDisplay::is_field_validation_supported( $field ) ) {
+						continue;
+					}
+
 					$slug    = 'field_over_max';
 					$message = array( _n( 'You may only select %s item.', 'You may only select %s items.', $group['max'], 'gp-limit-checkboxes' ) );
 
@@ -242,6 +247,11 @@ class GP_Limit_Checkboxes extends GWPerk {
 			if ( $this->is_group_under_min( $group, $form ) ) {
 
 				foreach ( $group['fields'] as $field_id ) {
+
+					$field = GFAPI::get_field( $form, $field_id );
+					if ( ! GFFormDisplay::is_field_validation_supported( $field ) ) {
+						continue;
+					}
 
 					$slug    = 'field_under_min';
 					$message = array( _n( 'You must select at least %s item.', 'You must select at least %s items.', $group['min'], 'gp-limit-checkboxes' ) );
@@ -281,7 +291,7 @@ class GP_Limit_Checkboxes extends GWPerk {
 
 		foreach ( $form['fields'] as $field ) {
 
-			if ( ! $this->should_field_be_validated( $form, $field ) ) {
+			if ( ! $this->should_field_be_validated( $form, $field ) || ! GFFormDisplay::is_field_validation_supported( $field ) ) {
 				continue;
 			}
 
@@ -433,7 +443,8 @@ class GP_Limit_Checkboxes extends GWPerk {
 
 	public function should_field_be_validated( $form, $field ) {
 
-		if ( ! $this->is_applicable_field( $field ) ) {
+		if ( ! $this->is_applicable_field( $field ) || $field->hidden || $field->is_field_hidden ) {
+			// Skip validation if the field is not applicable, hidden, or conditionally hidden.
 			return false;
 		}
 
@@ -447,9 +458,26 @@ class GP_Limit_Checkboxes extends GWPerk {
 			return false;
 		}
 
-		if ( GFFormsModel::is_field_hidden( $form, $field, array() ) ) {
-			return false;
+		$span_limit_fields  = array();
+		$span_fields_hidden = false;
+		
+		// Check if the field is part of a group and if so, check if any of the fields in the group are hidden.
+		if ( ! empty( $field->gwlimitcheckboxes_span_multiple_fields ) && is_array( $field->gwlimitcheckboxes_span_limit_fields ) ) {
+			$span_limit_fields = $field->gwlimitcheckboxes_span_limit_fields;
+		
+			foreach ( $span_limit_fields as $span_field_id ) {
+				$span_field = GFAPI::get_field( $form, $span_field_id );
+		
+				if ( ! GFFormsModel::is_field_hidden( $form, $span_field, array() ) ) {
+					$span_fields_hidden = true;
+					break;
+				}
+			}
 		}
+		
+		if ( GFFormsModel::is_field_hidden( $form, $field, array() ) && ! $span_fields_hidden ) {
+			return false;
+		}		
 
 		return true;
 	}
@@ -630,7 +658,27 @@ class GP_Limit_Checkboxes extends GWPerk {
 	}
 
 	public function is_applicable_field( $field ) {
-		return $field->get_input_type() === 'checkbox' && rgar( $field, $this->key( 'enable' ) ) && GFFormDisplay::is_field_validation_supported( $field );
+		return $field->get_input_type() === 'checkbox' && ( rgar( $field, $this->key( 'enable' ) ) || $this->is_span_limit_field( $field ) );
+	}
+
+	private function is_span_limit_field( $field ) {
+		$form = GFAPI::get_form( $field->formId );
+
+		foreach ( $form['fields'] as $form_field ) {
+			if ( $form_field->id == $field->id ) {
+				continue;
+			}
+
+			// Check if the field is a checkbox and if it has the span limit enabled.
+			$span_limit_fields = $form_field->{$this->key( 'span_limit_fields' )};
+			if ( ! is_array( $span_limit_fields ) ) {
+				$span_limit_fields = ! empty( $span_limit_fields ) ? (array) $span_limit_fields : [];
+			}
+			if ( $form_field->get_input_type() === 'checkbox' && rgar( $form_field, $this->key( 'enable' ) ) && in_array( $field->id, $span_limit_fields ) ) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 

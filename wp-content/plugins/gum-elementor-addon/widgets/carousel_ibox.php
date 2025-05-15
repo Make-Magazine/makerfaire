@@ -1643,56 +1643,6 @@ class Gum_Elementor_Widget_imagebox_carousel extends Widget_Base {
     );  
 
     $this->add_responsive_control(
-      'pagination_item_width',
-      [
-        'label' => esc_html__( 'Size Width', 'gum-elementor-addon' ),
-        'type' => Controls_Manager::SLIDER,
-        'range' => [
-          'px' => [
-            'min' => 0,
-            'max' => 200,
-            'step'=> 1
-          ],
-        ],
-        'default' => [
-          'size' => '12',
-          'unit' => 'px'
-        ],
-        'selectors' => [
-          '{{WRAPPER}} .owl-dots .owl-dot span' => 'width: {{SIZE}}{{UNIT}};',
-        ],
-        'condition' => [
-          'pagination_align!' => 'stretch',
-        ],
-      ]
-    );
-
-    $this->add_responsive_control(
-      'pagination_item_height',
-      [
-        'label' => esc_html__( 'Size Height', 'gum-elementor-addon' ),
-        'type' => Controls_Manager::SLIDER,
-        'range' => [
-          'px' => [
-            'min' => 0,
-            'max' => 200,
-            'step'=> 1
-          ],
-        ],
-        'default' => [
-          'size' => '12',
-          'unit' => 'px'
-        ],
-        'selectors' => [
-          '{{WRAPPER}} .owl-dots .owl-dot span' => 'height: {{SIZE}}{{UNIT}};',
-        ],
-        'condition' => [
-          'pagination_align!' => 'stretch',
-        ]
-      ]
-    );
-
-    $this->add_responsive_control(
       'pagination_item_spacing',
       [
         'label' => esc_html__( 'Spacing', 'gum-elementor-addon' ),
@@ -1718,6 +1668,7 @@ class Gum_Elementor_Widget_imagebox_carousel extends Widget_Base {
         ]
       ]
     );
+
 
     $this->add_group_control(
       Group_Control_Typography::get_type(),
@@ -1836,6 +1787,58 @@ class Gum_Elementor_Widget_imagebox_carousel extends Widget_Base {
       ]
     );
 
+
+    $this->add_responsive_control(
+      'pagination_item_width',
+      [
+        'label' => esc_html__( 'Width', 'gum-elementor-addon' ),
+        'type' => Controls_Manager::SLIDER,
+        'range' => [
+          'px' => [
+            'min' => 0,
+            'max' => 200,
+            'step'=> 1
+          ],
+        ],
+        'default' => [
+          'size' => '12',
+          'unit' => 'px'
+        ],
+        'selectors' => [
+          '{{WRAPPER}} .owl-dots .owl-dot span' => 'width: {{SIZE}}{{UNIT}};',
+        ],
+        'condition' => [
+          'slide_navigation' => 'dot'
+        ],
+      ]
+    );
+
+    $this->add_responsive_control(
+      'pagination_item_height',
+      [
+        'label' => esc_html__( 'Height', 'gum-elementor-addon' ),
+        'type' => Controls_Manager::SLIDER,
+        'range' => [
+          'px' => [
+            'min' => 0,
+            'max' => 200,
+            'step'=> 1
+          ],
+        ],
+        'default' => [
+          'size' => '12',
+          'unit' => 'px'
+        ],
+        'selectors' => [
+          '{{WRAPPER}} .owl-dots .owl-dot span' => 'height: {{SIZE}}{{UNIT}};',
+        ],
+        'condition' => [
+          'slide_navigation' => 'dot'
+        ]
+      ]
+    );
+
+
     $this->end_controls_tab();
     $this->start_controls_tab(
       'tab_pagination_current',
@@ -1869,6 +1872,58 @@ class Gum_Elementor_Widget_imagebox_carousel extends Widget_Base {
         'condition' => ['pagination_border_border!' => '']
       ]
     );   
+
+
+    $this->add_responsive_control(
+      'pagination_curite_width',
+      [
+        'label' => esc_html__( 'Width', 'gum-elementor-addon' ),
+        'type' => Controls_Manager::SLIDER,
+        'range' => [
+          'px' => [
+            'min' => 0,
+            'max' => 200,
+            'step'=> 1
+          ],
+        ],
+        'default' => [
+          'size' => '',
+          'unit' => 'px'
+        ],
+        'selectors' => [
+          '{{WRAPPER}} .owl-dots .owl-dot.active span' => 'width: {{SIZE}}{{UNIT}};',
+        ],
+        'condition' => [
+          'slide_navigation' => 'dot'
+        ]
+      ]
+    );
+    
+
+    $this->add_responsive_control(
+      'pagination_curitem_height',
+      [
+        'label' => esc_html__( 'Height', 'gum-elementor-addon' ),
+        'type' => Controls_Manager::SLIDER,
+        'range' => [
+          'px' => [
+            'min' => 0,
+            'max' => 200,
+            'step'=> 1
+          ],
+        ],
+        'default' => [
+          'size' => '',
+          'unit' => 'px'
+        ],
+        'selectors' => [
+          '{{WRAPPER}} .owl-dots .owl-dot.active span' => 'height: {{SIZE}}{{UNIT}};',
+        ],
+        'condition' => [
+          'slide_navigation' => 'dot'
+        ]
+      ]
+    );
 
     $this->end_controls_tab();
 
@@ -3564,4 +3619,435 @@ class Gum_Elementor_Widget_imagebox extends Widget_Base {
 // Register widget
 \Elementor\Plugin::instance()->widgets_manager->register_widget_type( new Gum_Elementor_Widget_imagebox() );
 
+
+class Gum_Elementor_Widget_Image_Carousel{
+
+
+  public function __construct( $data = [], $args = null ) {
+
+      add_action( 'elementor/element/image-carousel/section_style_navigation/after_section_end', array( $this, 'register_section_heading_style_dots_controls') , 999 );
+
+  }
+
+  public function register_section_heading_style_dots_controls( Controls_Stack $element ) {
+
+    $element->remove_control('dots_color');
+
+    $element->start_injection( [
+      'of' => 'arrows_position',
+    ] );
+
+    $element->add_control(
+      'arrows_valign',
+      [
+        'label' => esc_html__( 'Position', 'elementor' ),
+        'type' => Controls_Manager::CHOOSE,
+        'options' => [
+          'top' => [
+            'title' => esc_html__( 'Start', 'elementor' ),
+            'icon' => 'eicon-v-align-top',
+          ],
+          'center' => [
+            'title' => esc_html__( 'Center', 'elementor' ),
+            'icon' => 'eicon-v-align-middle',
+          ],
+          'bottom' => [
+            'title' => esc_html__( 'End', 'elementor' ),
+            'icon' => 'eicon-v-align-bottom',
+          ],
+        ],
+        'condition' => [
+          'navigation' => [ 'arrows', 'both' ],
+        ],
+        'prefix_class' => 'elementor-arrows-valign-',
+      ]
+    );
+
+
+    $element->add_responsive_control(
+      'arrows_offset',
+      [
+        'label' => esc_html__( 'Location', 'elementor' ),
+        'type' => Controls_Manager::SLIDER,
+        'size_units' => [ 'px', 'em', '%' ],
+        'range' => [
+          'px' => [
+            'max' => 600,
+          ],
+        ],
+        'selectors' => [
+          '{{WRAPPER}} .elementor-swiper-button.elementor-swiper-button-prev'=> 'left:{{SIZE}}{{UNIT}};',
+          '{{WRAPPER}} .elementor-swiper-button.elementor-swiper-button-next' => 'right: {{SIZE}}{{UNIT}};',
+        ],
+        'condition' => [
+          'navigation' => [ 'arrows', 'both' ],
+        ],
+      ]
+    );
+
+
+    $element->end_injection();
+
+
+    $element->start_injection( [
+      'of' => 'arrows_color',
+    ] );
+
+
+    $element->add_control(
+      'arrows_hcolor',
+      [
+        'label' => esc_html__( 'Color Hover', 'elementor' ),
+        'type' => Controls_Manager::COLOR,
+        'selectors' => [
+          '{{WRAPPER}} .elementor-swiper-button:hover' => 'color: {{VALUE}};',
+          '{{WRAPPER}} .elementor-swiper-button:hover svg' => 'fill: {{VALUE}};',
+        ],
+        'condition' => [
+          'navigation' => [ 'arrows', 'both' ],
+        ],
+      ]
+    );
+
+
+    $element->add_control(
+      'arrows_bgcolor',
+      [
+        'label' => esc_html__( 'Background', 'elementor' ),
+        'type' => Controls_Manager::COLOR,
+        'selectors' => [
+          '{{WRAPPER}} .elementor-swiper-button' => 'background: {{VALUE}};'
+        ],
+        'condition' => [
+          'navigation' => [ 'arrows', 'both' ],
+        ],
+      ]
+    );
+
+    $element->add_control(
+      'arrows_hover_bgcolor',
+      [
+        'label' => esc_html__( 'Background Hover', 'elementor' ),
+        'type' => Controls_Manager::COLOR,
+        'selectors' => [
+          '{{WRAPPER}} .elementor-swiper-button:hover' => 'background: {{VALUE}};'
+        ],
+        'condition' => [
+          'navigation' => [ 'arrows', 'both' ],
+        ],
+      ]
+    );
+
+    $element->add_group_control(
+      Group_Control_Border::get_type(),
+      [
+        'name' => 'arrows_border',
+        'selector' => '{{WRAPPER}} .elementor-swiper-button',
+        'condition' => [
+          'navigation' => array('arrows', 'both'),
+        ],
+      ]
+    );
+
+    $element->add_control(
+      'arrows_curitem_bdcolor',
+      [
+        'label' => esc_html__( 'Border Color Hover', 'gum-elementor-addon' ),
+        'type' => Controls_Manager::COLOR,
+        'default' => '',
+        'selectors' => [
+          '{{WRAPPER}} .elementor-swiper-button:hover' => 'border-color: {{VALUE}};',
+        ],
+        'condition' => ['navigation' => array('arrows', 'both'),'arrows_border_border!' => '']
+      ]
+    );   
+
+    $element->add_control(
+      'arrows_radius',
+      [
+        'label' => esc_html__( 'Border Radius', 'gum-elementor-addon' ),
+        'type' => Controls_Manager::DIMENSIONS,
+        'size_units' => [ 'px', '%' ],
+        'selectors' => [
+          '{{WRAPPER}} .elementor-swiper-button' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+        ],
+        'condition' => [
+          'navigation' => array('arrows', 'both'),
+        ],
+
+      ]
+    );
+
+
+    $element->add_responsive_control(
+      'arrows_padding',
+      [
+          'label' => esc_html__( 'Padding', 'gum-elementor-addon' ),
+          'type' => Controls_Manager::DIMENSIONS,
+          'size_units' => [ 'px', '%', 'em' ],
+          'selectors' => [
+              '{{WRAPPER}} .elementor-swiper-button' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+          ],
+      ]
+    );
+
+
+    $element->end_injection();
+
+
+    $element->start_injection( [
+      'of' => 'dots_position',
+    ] );
+
+    $element->add_responsive_control(
+      'dots_align',
+      [
+        'label' => esc_html__( 'Align', 'gum-elementor-addon' ),
+        'type' => Controls_Manager::CHOOSE,
+        'options' => [
+          'left' => [
+            'title' => esc_html__( 'Left', 'gum-elementor-addon' ),
+            'icon' => 'eicon-h-align-left',
+          ],
+          'center' => [
+            'title' => esc_html__( 'Center', 'gum-elementor-addon' ),
+            'icon' => 'eicon-h-align-center',
+          ],
+          'right' => [
+            'title' => esc_html__( 'Right', 'gum-elementor-addon' ),
+            'icon' => 'eicon-h-align-right',
+          ],
+        ],
+        'default' => '',
+        'selectors' => [
+            '{{WRAPPER}} .swiper-pagination' => 'text-align: {{VALUE}};',
+        ],
+        'condition' => ['navigation' => array('dots', 'both')]
+      ]
+    );
+
+
+    $element->end_injection();
+
+    $element->start_injection( [
+      'of' => 'dots_gap',
+        'condition' => [
+          'navigation' => array('dots', 'both'),
+        ],
+    ] );
+
+
+    $element->add_group_control(
+      Group_Control_Border::get_type(),
+      [
+        'name' => 'dots_border',
+        'selector' => '{{WRAPPER}} .swiper-pagination-bullet',
+        'condition' => [
+          'navigation' => array('dots', 'both'),
+        ],
+      ]
+    );
+
+
+    $element->add_control(
+      'dots_radius',
+      [
+        'label' => esc_html__( 'Border Radius', 'gum-elementor-addon' ),
+        'type' => Controls_Manager::DIMENSIONS,
+        'size_units' => [ 'px', '%' ],
+        'selectors' => [
+          '{{WRAPPER}} .swiper-pagination-bullet' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+        ],
+        'condition' => [
+          'navigation' => array('dots', 'both'),
+        ],
+
+      ]
+    );
+
+    $element->add_responsive_control(
+      'dots_hight',
+      [
+        'label' => esc_html__( 'Height', 'elementor' ),
+        'type' => Controls_Manager::SLIDER,
+        'size_units' => [ 'px', 'em', 'rem', 'custom' ],
+        'range' => [
+          'px' => [
+            'max' => 200,
+          ],
+        ],
+        'selectors' => [
+          '{{WRAPPER}} .swiper-pagination-bullet' => 'height: {{SIZE}}{{UNIT}};',
+        ],
+        'condition' => [
+          'navigation' => array('dots', 'both'),
+        ],
+      ]
+    );
+
+    $element->end_injection();
+
+
+    $element->update_responsive_control(
+      'dots_size',
+      [
+        'label' => esc_html__( 'Width', 'elementor' ),
+        'type' => Controls_Manager::SLIDER,
+        'size_units' => [ 'px', 'em', 'rem', 'custom' ],
+        'range' => [
+          'px' => [
+            'max' => 200,
+          ],
+        ],
+        'selectors' => [
+          '{{WRAPPER}} .swiper-pagination-bullet' => 'width: {{SIZE}}{{UNIT}};',
+        ],
+        'condition' => [
+          'navigation' => array('dots', 'both'),
+        ],
+      ]
+    );
+
+
+    $element->start_injection( [
+      'of' => 'dots_inactive_color',
+    ] );
+
+
+    $element->start_controls_tabs( 'tabs_pagination_style' );
+
+    $element->start_controls_tab(
+      'tab_dots_active',
+      [
+        'label' => esc_html__( 'Active', 'gum-elementor-addon' ),
+      ]
+    );
+
+
+    $element->add_responsive_control(
+      'dots_active_hight',
+      [
+        'label' => esc_html__( 'Height', 'elementor' ),
+        'type' => Controls_Manager::SLIDER,
+        'size_units' => [ 'px', 'em', 'rem', 'custom' ],
+        'range' => [
+          'px' => [
+            'max' => 200,
+          ],
+        ],
+        'selectors' => [
+          '{{WRAPPER}} .swiper-pagination-bullet.swiper-pagination-bullet-active' => 'height: {{SIZE}}{{UNIT}};',
+        ],
+        'condition' => [
+          'navigation' => array('dots', 'both'),
+        ],
+      ]
+    );
+
+
+    $element->add_responsive_control(
+      'dots_active_size',
+      [
+        'label' => esc_html__( 'Width', 'elementor' ),
+        'type' => Controls_Manager::SLIDER,
+        'size_units' => [ 'px', 'em', 'rem', 'custom' ],
+        'range' => [
+          'px' => [
+            'max' => 200,
+          ],
+        ],
+        'selectors' => [
+          '{{WRAPPER}} .swiper-pagination-bullet.swiper-pagination-bullet-active' => 'width: {{SIZE}}{{UNIT}};',
+        ],
+        'condition' => [
+          'navigation' => array('dots', 'both'),
+        ],
+      ]
+    );
+
+
+    $element->add_control(
+      'dots_active_color',
+      [
+        'label' => esc_html__( 'Color', 'elementor' ),
+        'type' => Controls_Manager::COLOR,
+        'selectors' => [
+          '{{WRAPPER}} .swiper-pagination-bullet' => 'background: {{VALUE}}; opacity: 1',
+        ],
+        'condition' => [
+          'navigation' => [ 'dots', 'both' ],
+        ],
+      ]
+    );
+
+
+    $element->add_control(
+      'dots_curitem_bdcolor',
+      [
+        'label' => esc_html__( 'Border Color', 'gum-elementor-addon' ),
+        'type' => Controls_Manager::COLOR,
+        'default' => '',
+        'selectors' => [
+          '{{WRAPPER}} .swiper-pagination-bullet.swiper-pagination-bullet-active' => 'border-color: {{VALUE}};',
+        ],
+        'condition' => ['navigation' => array('dots', 'both'),'dots_border_border!' => '']
+      ]
+    );   
+
+    $element->end_controls_tab();
+
+    $element->start_controls_tab(
+      'tab_dots_hover',
+      [
+        'label' => esc_html__( 'Hover', 'gum-elementor-addon' ),
+      ]
+    );
+
+
+    $element->add_control(
+      'dots_hover_color',
+      [
+        'label' => esc_html__( 'Color', 'elementor' ),
+        'type' => Controls_Manager::COLOR,
+        'selectors' => [
+          '{{WRAPPER}} .swiper-pagination-bullet:hover' => 'background: {{VALUE}}; opacity: 1',
+        ],
+        'condition' => [
+          'navigation' => [ 'dots', 'both' ],
+        ],
+      ]
+    );
+
+
+    $element->add_control(
+      'dots_hover_bdcolor',
+      [
+        'label' => esc_html__( 'Border Color', 'gum-elementor-addon' ),
+        'type' => Controls_Manager::COLOR,
+        'default' => '',
+        'selectors' => [
+          '{{WRAPPER}} .swiper-pagination-bullet:hover' => 'border-color: {{VALUE}};',
+        ],
+        'condition' => ['navigation' => array('dots', 'both'),'dots_border_border!' => '']
+      ]
+    );   
+
+    $element->end_controls_tab();
+    $element->end_controls_tabs();
+
+    $element->end_injection();
+
+
+  }
+
+
+  public function enqueue_script( ) {
+
+    wp_enqueue_style( 'gum-elementor-addon',GUM_ELEMENTOR_URL."css/style.css",array());
+
+  }
+
+}
+
+new \Elementor\Gum_Elementor_Widget_Image_Carousel();
 ?>

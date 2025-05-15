@@ -143,6 +143,7 @@ class WLCMS_Admin_Core
         if (isset($_POST['wlcms-action']) && $_POST['wlcms-action'] == 'reset') {
             return;
         }
+        
         //  nonce checking
         if (!isset($_POST['wlcms-settings_nonce'])
             || !wp_verify_nonce($_POST['wlcms-settings_nonce'], 'wlcms-settings-action')) {

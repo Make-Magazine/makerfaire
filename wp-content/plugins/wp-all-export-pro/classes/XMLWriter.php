@@ -48,7 +48,7 @@ class PMXE_XMLWriter extends XMLWriter
 
         if (!empty($article)) {
             foreach ($article as $key => $value) {
-                if (!is_array($value) && strpos($value, '#delimiter#') !== FALSE) {
+                if (!empty($value) && !is_array($value) && strpos($value, '#delimiter#') !== FALSE) {
                     $article[$key] = explode('#delimiter#', $value);
                 }
             }
@@ -166,6 +166,8 @@ class PMXE_XMLWriter extends XMLWriter
             }
 
             foreach ($article as $key => $value) {
+				$value = $value ?? '';
+
                 switch ($key) {
                     case 'id':
                         $node_tpl = str_replace('{'.$key.'}', '{' . $value . '}', $node_tpl);

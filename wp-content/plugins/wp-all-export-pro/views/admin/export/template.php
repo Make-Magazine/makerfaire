@@ -583,22 +583,9 @@ if($is_rapid_addon_export) {
                         <div class="wpallexport-collapsed-content" style="padding: 0;">
                             <div class="wpallexport-collapsed-content-inner">
 
-                                <textarea id="wp_all_export_main_code"
-                                          name="wp_all_export_main_code"><?php echo (empty($functions_content)) ? "<?php\n\n?>" : esc_textarea($functions_content); ?></textarea>
-
-                                <div class="input" style="margin-top: 10px;">
-
-                                    <div class="input" style="display:inline-block; margin-right: 20px;">
-                                        <input type="button"
-                                               class="button-primary wp_all_export_save_functions wp_all_export_save_main_code"
-                                               value="<?php esc_html_e("Save Functions", 'wp_all_export_plugin'); ?>"/>
-                                        <a href="#help" class="wpallexport-help"
-                                           title="<?php printf(esc_html__("Add functions here for use during your export. You can access this file at %s", "wp_all_export_plugin"), preg_replace("%.*wp-content%", "wp-content", $functions)); ?>"
-                                           style="top: 3px;">?</a>
-                                        <div class="wp_all_export_functions_preloader"></div>
-                                    </div>
-                                    <div class="input wp_all_export_saving_status"></div>
-                                </div>
+	                            <?php
+                                    require(PMXE_Plugin::ROOT_DIR . '/views/admin/shared/function_editor.php');
+                                ?>
                             </div>
                         </div>
                     </div>

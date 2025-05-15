@@ -36,7 +36,54 @@ class GP_Multi_Page_Navigation extends GWPerk {
 		add_filter( 'shortcode_atts_gravityforms', array( $this, 'stash_shortcode_page_attr' ), 10, 4 );
 		add_filter( 'gform_pre_render', array( $this, 'set_page' ) );
 
+		add_filter( 'gform_progress_steps', array( $this, 'sync_completed_step_markup' ), 10, 2 );
 	}
+
+	public function sync_completed_step_markup( $steps, $form ) {
+		if ( ! $this->is_navigation_enabled( $form ) ) {
+			return $steps;
+		}
+
+		$page_validity = $this->get_page_validity( $form );
+		$pages_visited = $this->get_pages_visited( $form );
+
+		$incomplete_steps = array();
+		foreach ( $page_validity as $page_number => $validity ) {
+			if ( ! $validity || ! in_array( $page_number, $pages_visited, true ) ) {
+				$incomplete_steps[] = $page_number;
+			}
+		}
+
+		if ( count( $incomplete_steps ) === 0 ) {
+			return $steps;
+		}
+
+		// Remove the 'gf_step_completed' class from div elements that are not yet completed.
+		// Completed is defined as having ALL visible required fields filled out AND the page must
+		// have been visited.
+		$step_id_group = implode( '|', $incomplete_steps );
+		$step_id_group = '(?:' . $step_id_group . ')';
+
+		$pattern = '/<div\s+[^>]*id=["\']gf_step_\d+_' . $step_id_group . '["\'][^>]*class=["\']([^"\']*gf_step_completed[^"\']*)["\'][^>]*>/i';
+
+		$steps = preg_replace_callback($pattern, function( $matches ) {
+			// Get the full class attribute value
+			$classes = $matches[1];
+
+			// Remove the gf_step_completed class while preserving other classes
+			$classes = preg_replace( '/(^|\s)gf_step_completed(\s|$)/', ' ', $classes );
+			$classes = trim( preg_replace( '/\s+/', ' ', $classes ) ); // Clean up extra spaces
+
+			// Replace the original class attribute with the modified one
+			$replacement = str_replace( "class=\"{$matches[1]}\"", "class=\"{$classes}\"", $matches[0] );
+			$replacement = str_replace( "class='{$matches[1]}'", "class='{$classes}'", $replacement );
+
+			return $replacement;
+		}, $steps);
+
+		return $steps;
+	}
+
 
 	public function stash_shortcode_page_attr( $out, $pairs, $atts ) {
 
@@ -300,10 +347,17 @@ class GP_Multi_Page_Navigation extends GWPerk {
 	}
 
 	public function enqueue_form_scripts( $form ) {
+		$gpmn_asset_file = include( plugin_dir_path( __FILE__ ) . 'js/built/gp-multi-page-navigation.asset.php' );
 
 		if ( $this->is_navigation_enabled( $form ) ) {
+			wp_enqueue_script(
+				'gp-multi-page-navigation',
+				$this->get_base_url() . '/js/built/gp-multi-page-navigation.js',
+				// array( 'jquery' ),
+				$gpmn_asset_file['dependencies'],
+				$gpmn_asset_file['version'],
+			);
 
-			wp_enqueue_script( 'gp-multi-page-navigation', $this->get_base_url() . '/js/gp-multi-page-navigation.js', array( 'jquery' ), $this->version );
 			wp_enqueue_style( 'gp-multi-page-navigation', $this->get_base_url() . '/css/gp-multi-page-navigation.css', array(), $this->version );
 
 			$this->register_noconflict_script( 'gp-multi-page-navigation' );
@@ -340,9 +394,56 @@ class GP_Multi_Page_Navigation extends GWPerk {
 			$inputs .= sprintf( '<input id="gw_error_pages_count" name="gw_error_pages_count" value="%d" type="hidden" />', $error_pages_count );
 		}
 
+		$pages_visited           = array();
+		$pages_visited_namespace = 'gpmpn_pages_visited_' . $form['id'];
+		if ( ! empty( $_POST[ $pages_visited_namespace ] ) ) {
+			$pages_visited = json_decode( stripslashes( $_POST[ $pages_visited_namespace ] ), true );
+		}
+
+		$pages_visited[]    = GFFormDisplay::get_current_page( $form['id'] );
+		$pages_visited      = array_unique( $pages_visited );
+		$pages_visited_json = json_encode( $pages_visited );
+
+		$inputs .= sprintf(
+			'<input id="%1$s" name="%1$s" value="%2$s" type="hidden" />',
+			$pages_visited_namespace,
+			$pages_visited_json
+		);
+
+		$_POST[ $pages_visited_namespace ] = $pages_visited_json;
+
 		$form_tag .= $inputs;
 
 		return $form_tag;
+	}
+
+	public function get_page_validity( $form ) {
+		remove_filter( 'gform_validation', array( $this, 'maybe_bypass_validation' ), 20, 2 );
+
+		$last_page     = count( $form['pagination']['pages'] );
+		$page_validity = array();
+
+		$c = 1;
+		while ( $c <= $last_page ) {
+			$field_values        = array();
+			$f                   = $form;
+			$page_validity[ $c ] = GFFormDisplay::validate( $f, $field_values, $c );
+			$c++;
+		}
+
+		add_filter( 'gform_validation', array( $this, 'maybe_bypass_validation' ), 20, 2 );
+
+		return $page_validity;
+	}
+
+	public function get_pages_visited( $form ) {
+		$pages_visited = json_decode( stripslashes( $_POST[ 'gpmpn_pages_visited_' . $form['id'] ] ), true );
+
+		if ( ! is_array( $pages_visited ) ) {
+			$pages_visited = array();
+		}
+
+		return $pages_visited;
 	}
 
 	public function register_init_scripts( $form ) {
@@ -351,8 +452,12 @@ class GP_Multi_Page_Navigation extends GWPerk {
 			return;
 		}
 
-		$page_number = GFFormDisplay::get_current_page( $form['id'] );
-		$last_page   = count( $form['pagination']['pages'] );
+		$last_page = count( $form['pagination']['pages'] );
+
+		$page_validity = $this->get_page_validity( $form );
+
+		// $pages_visited = json_decode( stripslashes( $_POST['gpmpn_pages_visited'] ), true );
+		$pages_visited = $this->get_pages_visited( $form );
 
 		$args = array(
 			'formId'                                 => $form['id'],
@@ -389,6 +494,8 @@ class GP_Multi_Page_Navigation extends GWPerk {
 			 * @param array $form The current form.
 			 */
 			'enableSubmissionFromLastPageWithErrors' => apply_filters( 'gpmpn_enable_submission_from_last_page_with_errors', true, $form ),
+			'pageValidity'                           => $page_validity,
+			'pagesVisited'                           => $pages_visited,
 		);
 
 		$script = 'new GPMultiPageNavigation( ' . json_encode( $args ) . ' );';
@@ -603,12 +710,12 @@ class GP_Multi_Page_Navigation extends GWPerk {
 	}
 
 	public function is_bypass_validation_enabled( $form ) {
-		$target_page = (int) GFFormDisplay::get_target_page( $form, GFFormDisplay::get_current_page( $form['id'] ), rgpost( 'gform_field_values' ) );
+		$target_page       = (int) GFFormDisplay::get_target_page( $form, GFFormDisplay::get_current_page( $form['id'] ), rgpost( 'gform_field_values' ) );
 		$bypass_validation = $this->is_activate_on_first_page( $form ) && rgpost( 'gw_bypass_validation' ) && $target_page !== 0;
 
 		/**
 		 * Filter the bypass validation logic.
-		 * 
+		 *
 		 * @since 1.2.13
 		 *
 		 * @param bool  $bypass_validation The default bypass validation result.

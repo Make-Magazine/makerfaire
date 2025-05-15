@@ -84,7 +84,7 @@ class PMXI_Model_List extends PMXI_Model {
 			foreach ($result as $i => $row) {
 				foreach ($row as $k => $v) {
 					if (is_serialized($v)) {
-						$result[$i][$k] = unserialize($v);
+						$result[$i][$k] = \pmxi_maybe_unserialize($v);
 					}
 				}
 			}

@@ -47,6 +47,11 @@ class PMXI_Addon_View {
         $input     = new \PMXI_Input();
         $import_id = $input->get( 'id' ) ?? $input->get( 'import_id' );
 
+        // Get import ID from CLI arguments.
+        if ( empty( $import_id ) && \PMXI_Plugin::getInstance()->isCli() ) {
+            $import_id = wp_all_import_get_import_id();
+        }
+
         if ( ! empty( $import_id ) ) {
             $import->getById( $import_id );
         }

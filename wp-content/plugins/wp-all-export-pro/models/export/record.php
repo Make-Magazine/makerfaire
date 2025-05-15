@@ -32,7 +32,7 @@ class PMXE_Export_Record extends PMXE_Model_Record {
         $functions = $wp_uploads['basedir'] . DIRECTORY_SEPARATOR . WP_ALL_EXPORT_UPLOADS_BASE_DIRECTORY . DIRECTORY_SEPARATOR . 'functions.php';
 	    $functions = apply_filters( 'wp_all_export_functions_file_path', $functions );
         if (@file_exists($functions)) {
-            require_once $functions;
+	        \Wpae\Integrations\CodeBox::requireFunctionsFile();
         }
 
         XmlExportEngine::$exportOptions  	 = $this->options;

@@ -16,9 +16,14 @@ class TableEditorHandler
 
     public function addEditorDom($table, $table_vars)
     {
-        if ( ! empty($table_vars['editing']['enabled']) && $table_vars['editing']['enabled']) {
-            wp_enqueue_script('ninja-tables-pro', NINJAPROPLUGIN_URL . 'assets/js/ninja-tables-pro.js', array('jquery'),
-                NINJAPROPLUGIN_VERSION, true);
+        if (!empty($table_vars['editing']['enabled']) && $table_vars['editing']['enabled']) {
+            wp_enqueue_script(
+                'ninja-tables-pro',
+                NINJAPROPLUGIN_URL . 'assets/js/ninja-tables-pro.js',
+                array('jquery'),
+                NINJAPROPLUGIN_VERSION,
+                true
+            );
             $table_id       = $table->ID;
             $requiredFields = $this->getRequiredFields($table_id);
             $editableFields = $this->getEditableFields($table_id);
@@ -30,7 +35,7 @@ class TableEditorHandler
     private function getRequiredFields($tableId)
     {
         $editPref = get_post_meta($tableId, '_ninja_table_frontedit_pref', true);
-        if ($editPref && ! empty($editPref['required_items'])) {
+        if ($editPref && !empty($editPref['required_items'])) {
             $requiredFields = array_filter($editPref['required_items'], function ($val) {
                 return $val == 'yes';
             });
@@ -47,7 +52,7 @@ class TableEditorHandler
     private function getEditableFields($tableId)
     {
         $editPref = get_post_meta($tableId, '_ninja_table_frontedit_pref', true);
-        if ($editPref && ! empty($editPref['editing_items'])) {
+        if ($editPref && !empty($editPref['editing_items'])) {
             $fields = array_filter($editPref['editing_items'], function ($val) {
                 return $val == 'yes';
             });
@@ -61,7 +66,7 @@ class TableEditorHandler
     public function routeUpdateRow()
     {
         ninjaTablesValidateNonce('ninja_table_public_nonce');
-        $tableId = intval($_REQUEST['table_id']);
+        $tableId = intval(Arr::get($_REQUEST, 'table_id'));
         $rowId   = false;
 
         if (isset($_REQUEST['row_id']) && intval($_REQUEST['row_id'])) {
@@ -87,7 +92,7 @@ class TableEditorHandler
 
         $errors = array();
         foreach ($validRequiredFields as $requiredField) {
-            if ( ! isset($values[$requiredField]) || $values[$requiredField] == '') {
+            if (!isset($values[$requiredField]) || $values[$requiredField] == '') {
                 $errors[$requiredField] = $allColumnArray[$requiredField] . __(' is required', 'ninja-tables-pro');
             }
         }
@@ -117,13 +122,13 @@ class TableEditorHandler
         $userId   = get_current_user_id();
         $settings = get_post_meta($tableId, '_ninja_table_frontedit_settings', true);
 
-        if ( ! $userId && $operation == 'update') {
+        if (!$userId && $operation == 'update') {
             $this->errorResponse(__('Sorry! You do not have permission to edit this data', 'ninja-table-pro'));
 
             return;
         }
 
-        if ( ! $this->hasEditingPermission($tableId, $userId, $settings)) {
+        if (!$this->hasEditingPermission($tableId, $userId, $settings)) {
             $this->errorResponse(__('Sorry! You do not have permission to edit this data', 'ninja-table-pro'));
 
             return;
@@ -162,7 +167,7 @@ class TableEditorHandler
             $preRow = NinjaTableItem::where('table_id', $tableId)
                                     ->where('id', $rowId)
                                     ->first();
-            if ( ! $preRow) {
+            if (!$preRow) {
                 $this->errorResponse('No record found to update, Please try again');
             }
             $prevValues = json_decode($preRow->value, true);
@@ -224,13 +229,13 @@ class TableEditorHandler
 
     public function getSettings()
     {
-        if ( ! ninja_table_admin_role()) {
+        if (!ninja_table_admin_role()) {
             return;
         }
 
         ninjaTablesValidateNonce();
 
-        $tableId = intval($_REQUEST['table_id']);
+        $tableId = intval(Arr::get($_REQUEST, 'table_id'));
         // check if the table is editable
         $defaultSettings = array(
             'allow_frontend'      => 'no',
@@ -253,7 +258,7 @@ class TableEditorHandler
         );
 
         $settings = get_post_meta($tableId, '_ninja_table_frontedit_settings', true);
-        if ( ! $settings || ! is_array($settings)) {
+        if (!$settings || !is_array($settings)) {
             $settings = $defaultSettings;
         } else {
             $settings = wp_parse_args($settings, $defaultSettings);
@@ -261,7 +266,7 @@ class TableEditorHandler
 
         $editPref = get_post_meta($tableId, '_ninja_table_frontedit_pref', true);
 
-        if ( ! $editPref || ! is_array($editPref)) {
+        if (!$editPref || !is_array($editPref)) {
             $editPref = $defaultEditPref;
         } else {
             $editPref = wp_parse_args($editPref, $defaultEditPref);
@@ -269,7 +274,7 @@ class TableEditorHandler
 
         $formattedPref = array();
         foreach ($editPref as $prefKey => $pref) {
-            if ( ! $pref) {
+            if (!$pref) {
                 $pref = (object)$pref;
             }
             $formattedPref[$prefKey] = $pref;
@@ -295,7 +300,7 @@ class TableEditorHandler
 
     public function updateSettings()
     {
-        if ( ! ninja_table_admin_role()) {
+        if (!ninja_table_admin_role()) {
             return;
         }
         ninjaTablesValidateNonce();
@@ -308,7 +313,7 @@ class TableEditorHandler
         $appearance_settings = wp_unslash(Arr::get($_REQUEST, 'appearance_settings'));
         if ($settings['allow_frontend'] == 'yes') {
             // Do Validation Here for editing
-            if ( ! count($editing_items)) {
+            if (!count($editing_items)) {
                 $this->errorResponse(__('Please check which columns can be edit at frontend', 'ninja-tables-pro'), 400);
 
                 return;
@@ -316,9 +321,11 @@ class TableEditorHandler
                 $fields = array_filter($editing_items, function ($val) {
                     return $val == 'yes';
                 });
-                if ( ! count($fields)) {
-                    $this->errorResponse(__('Please check which columns can be edit at frontend', 'ninja-tables-pro'),
-                        400);
+                if (!count($fields)) {
+                    $this->errorResponse(
+                        __('Please check which columns can be edit at frontend', 'ninja-tables-pro'),
+                        400
+                    );
 
                     return;
                 }
@@ -338,7 +345,10 @@ class TableEditorHandler
 
         // Assign Orphaned Data to current user as owner
         global $wpdb;
-        $wpdb->query("UPDATE " . $wpdb->prefix . "ninja_table_items SET owner_id = " . get_current_user_id() . " WHERE table_id = " . $tableId . " AND owner_id IS NULL");
+        $wpdb->query(
+            "UPDATE " . $wpdb->prefix . "ninja_table_items SET owner_id = " . get_current_user_id(
+            ) . " WHERE table_id = " . $tableId . " AND owner_id IS NULL"
+        );
 
         wp_send_json_success(array(
             'message' => __('Settings successfully updated', 'ninja-tables-pro')
@@ -348,8 +358,8 @@ class TableEditorHandler
     public function routeDeleteRow()
     {
         ninjaTablesValidateNonce('ninja_table_public_nonce');
-        $tableId  = intval($_POST['table_id']);
-        $rowId    = intval($_POST['row_id']);
+        $tableId  = intval(Arr::get($_POST, 'table_id'));
+        $rowId    = intval(Arr::get($_POST, 'row_id'));
         $provider = ninja_table_get_data_provider($tableId);
         $this->checkRowDeletePermission($tableId, $rowId);
         do_action('ninja_table_delete_row_data_' . $provider, $rowId, $tableId);
@@ -380,7 +390,7 @@ class TableEditorHandler
         $userId   = get_current_user_id();
         $settings = get_post_meta($tableId, '_ninja_table_frontedit_settings', true);
 
-        if ( ! $this->hasDeletePermission($tableId, $userId, $settings)) {
+        if (!$this->hasDeletePermission($tableId, $userId, $settings)) {
             $this->errorResponse(__('Sorry! You do not have permission to edit this data', 'ninja-table-pro'));
 
             return;
@@ -454,21 +464,23 @@ class TableEditorHandler
         if (current_user_can('administrator')) {
             return true;
         }
-        if ( ! $userId) {
+        if (!$userId) {
             $userId = get_current_user_id();
         }
-        if ( ! $settings) {
+        if (!$settings) {
             $settings = get_post_meta($tableId, '_ninja_table_frontedit_settings', true);
         }
 
-        if (Arr::get($settings, 'allow_frontend') != 'yes' || ! Arr::get($settings,
-                'user_roles_editing')) {
+        if (Arr::get($settings, 'allow_frontend') != 'yes' || !Arr::get(
+                $settings,
+                'user_roles_editing'
+            )) {
             return false;
         }
 
         $editingRoles = Arr::get($settings, 'user_roles_editing');
 
-        if ( ! $editingRoles) {
+        if (!$editingRoles) {
             return false;
         }
 
@@ -478,7 +490,7 @@ class TableEditorHandler
             }
         }
 
-        if ( ! $userId && in_array('__public_users__', $editingRoles)) {
+        if (!$userId && in_array('__public_users__', $editingRoles)) {
             return true;
         }
 
@@ -487,17 +499,17 @@ class TableEditorHandler
 
     private function hasDeletePermission($tableId, $userId = false, $settings = false)
     {
-        if ( ! $userId) {
+        if (!$userId) {
             $userId = get_current_user_id();
         }
-        if ( ! $userId) {
+        if (!$userId) {
             return false;
         }
-        if ( ! $settings) {
+        if (!$settings) {
             $settings = get_post_meta($tableId, '_ninja_table_frontedit_settings', true);
         }
 
-        if ( ! $settings || ! Arr::get($settings, 'user_roles_deleting')) {
+        if (!$settings || !Arr::get($settings, 'user_roles_deleting')) {
             return false;
         }
 

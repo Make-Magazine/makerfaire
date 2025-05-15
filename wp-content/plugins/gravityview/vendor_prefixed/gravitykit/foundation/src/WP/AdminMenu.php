@@ -2,13 +2,14 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by gravityview on 14-March-2025 using {@see https://github.com/BrianHenryIE/strauss}.
+ * Modified by gravityview on 25-April-2025 using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\GravityView\Foundation\WP;
 
 use GravityKit\GravityView\Foundation\Core;
 use GravityKit\GravityView\Foundation\Helpers\Arr;
+use GravityKit\GravityView\Foundation\Helpers\Core as CoreHelpers;
 use GravityKit\GravityView\Foundation\Settings\Framework as SettingsFramework;
 
 /**
@@ -614,7 +615,7 @@ JS
 		$index = 0;
 
 		foreach ( $positions_to_renumber as $current_position => $value ) {
-			if ( version_compare( (string) $after_position, (string) $current_position ) === 0 ) {
+			if ( CoreHelpers::version_compare( (string) $after_position, (string) $current_position ) === 0 ) {
 				$menus[ (string) $current_position ] = $value;
 
 				$new_key = array_keys( $positions_to_renumber )[ $index + 1 ] ?? $current_position + 0.01;
@@ -626,7 +627,7 @@ JS
 
 			if ( ! preg_match( '/\./', $current_position ) ) {
 				$current_position = (int) $current_position;
-			} elseif ( version_compare( (string) $after_position, (string) $current_position ) < 0 ) {
+			} elseif ( CoreHelpers::version_compare( (string) $after_position, (string) $current_position ) < 0 ) {
 				$current_position = $current_position + 0.01;
 			}
 

@@ -170,10 +170,13 @@ class PMXI_Addon_Field {
 
     /**
      * Transform the field's value before saving it
+     *
      * @param int $postId
      * @param mixed $value
      * @param array $data
      * @param callable $logger
+     * @param $rawData
+     *
      * @return mixed
      */
     public function beforeImport($postId, $value, array $data, $logger, $rawData) {

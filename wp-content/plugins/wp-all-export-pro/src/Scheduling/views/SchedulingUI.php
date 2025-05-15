@@ -114,6 +114,7 @@ $schedulingExportOptions = $export->options;
                 <div style="height: 35px; margin-top: 30px;" id="subscribe-filler">&nbsp;</div>
 				<?php if (!$hasActiveLicense) {
                     require_once(PMXE_Plugin::ROOT_DIR . '/src/Scheduling/views/SchedulingSubscribeUI.php');
+                    require_once(PMXE_Plugin::ROOT_DIR . '/src/Scheduling/views/SchedulingActiveSitesLimitUI.php');
 				} ?>
             </div>
         </div>

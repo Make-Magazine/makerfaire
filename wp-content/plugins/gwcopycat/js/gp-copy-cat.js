@@ -352,10 +352,11 @@
 						//targetInputIndex = self.getListInputIndex( targetFieldId, true ),
 						//perRow           = targetGroup.parents( '.ginput_list' ).find( '.gfield_list_group:first-child .gfield_list_cell' ).length,
 						rowsRequired = Math.floor( (sourceRowCount - targetRowCount) ),// / ( targetInputIndex.column ? 1 : perRow ) );
-						maxRows      = self.getMaxRowCount( targetGroup );
+						maxRows      = self.getMaxRowCount( targetGroup ),
+						targetField  = $( '#field_' + self.formId + '_' + parseInt( targetFieldId, 10 ) );
 
-					if (rowsRequired < 0 && targetRowCount > 1) {
-						// Remove rows from target List field that do not have corresponding source values.
+					if (rowsRequired < 0 && targetRowCount > 1 && ! targetField.hasClass( 'gp-auto-list-field' )) {
+						// Remove rows from target List field that do not have corresponding source values (except for Auto List Field).
 						targetGroup.each(
 							function () {
 								var _sourceValues = getObjectValues( sourceValues );
@@ -585,6 +586,9 @@
 			var fieldId = $( elem ).parents( '.gfield' ).attr( 'id' ).replace( 'field_' + self.formId + '_', '' );
 			var fields  = self.getFieldSettings( fieldId );
 
+			// Extract the input index (e.g., "1.1") from the element's name attribute.
+			var inputIndex = $( elem ).attr( 'name' ) ? $( elem ).attr( 'name' ).split( '_' ).pop() : '';
+
 			for (var i = 0; i < fields.length; i++) {
 
 				var field        = fields[i],
@@ -592,6 +596,11 @@
 					targetGroup  = self.getFieldGroup( field, 'target' ),
 					sourceGroup  = self.getFieldGroup( field, 'source' ),
 					isListtoList = self.isListField( targetGroup ) && self.isListField( sourceGroup );
+
+				// Match the field condition with the extracted input index.
+				if (field.condition && field.condition !== inputIndex) {
+					continue;
+				}
 
 				/**
 				 * Handle clearing copied values manually
@@ -737,7 +746,23 @@
 
 				// some fields (like email with confirmation enabled) have multiple inputs but the first input has no HTML ID (input_1_1 vs input_1_1_1)
 				if (filteredGroup.length <= 0) {
-					group = group.filter( '#input_' + formId + '_' + rawFieldId );
+					var selectElement = group.filter( '#input_' + formId + '_' + fieldId );
+				
+					// Check if it's a multi-select field.
+					if ( selectElement.length > 0 && selectElement.is( 'select[multiple]' ) ) {
+						var optionIndex = parseInt( inputId, 10 ) - 1, // rawFieldId format is 6.1, 6.2, etc.
+							selectedOption = selectElement.find( 'option' ).eq( optionIndex );
+						
+						// Ensure the option exists and is selected.
+						if ( selectedOption.length && selectedOption.is( ':selected' ) ) {
+							group = selectedOption;
+						} else {
+							// Empty for no match.
+							group = $();
+						}
+					} else {
+						group = selectElement;
+					}
 				} else {
 					group = filteredGroup;
 				}
@@ -1001,6 +1026,17 @@
 	 *                 that the field type has "sub inputs" (e.g. checkboxes, radio buttons, address fields etc).
 	 */
 	function doesFormInputHaveValue( formId, fieldId, inputId ) {
+		// Handle select (dropdown fields).
+		var element = $( `#input_${formId}_${fieldId}` );
+		if ( element.length && element.is( 'select' ) ) {
+
+			var $validOptions = element.find( 'option:not(.gf_placeholder)' );
+			var selectedIndex = $validOptions.index( element.find( 'option:selected' ) );
+			if ( selectedIndex == inputId ) {
+				return true;
+			}
+		}
+
 		var rcheckableType = /^(?:checkbox|radio)$/i;
 
 		var $form = $( '#gform_' + formId );

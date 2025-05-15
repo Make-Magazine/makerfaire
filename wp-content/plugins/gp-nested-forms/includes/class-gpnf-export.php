@@ -268,6 +268,16 @@ class GPNF_Export {
 					$values[] = $field->get_value_export( $nested_form_entry, $input['id'], false, true );
 				}
 
+				$nested_field = GFFormsModel::get_field( $nested_form_id, $nested_field_id );
+				$parts        = explode( '.', $nested_field_id );
+
+				// Handle getting value for a specific input from a ChainedSelect field
+				if ( rgar( $parts, 1 ) && $nested_field->get_input_type() === 'chainedselect' ) {
+					$nested_field_sub_id = $parts[1] - 1;
+					return rgar( $values, $nested_field_sub_id );
+				}
+
+				// Handle getting value for all inputs of the ChainedSelect field
 				return implode( '|', $values );
 			}
 		}

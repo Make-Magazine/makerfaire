@@ -370,14 +370,16 @@
             var(--_c) bottom;
     background-size: 5px 5px;
     animation: l7 1s infinite;
+    z-index: 2;
 }
 @keyframes l7 {to{transform: rotate(.5turn)}}
 
 .wpallexport-plugin .activate-button-group #activate-license:disabled {
-    background-color: #ccc !important;
-    color: #666666 !important;
+    background-color: #fff !important;
+    color: #444 !important;
     cursor: not-allowed;
-    opacity: 0.6;
+    opacity: 0.9;
+    border: 1px solid #ccc !important;
 }
 
 
@@ -922,3 +924,58 @@
     display: none;
 }
 
+.wpallexport-plugin .active-sites-limit-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.7);
+    z-index: 999999;
+}
+
+.wpallexport-plugin .active-sites-limit-modal {
+    background-color: #fff;
+    border-radius: 8px;
+    max-width: 550px;
+    padding: 20px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+    position: relative;
+    margin: 0 auto;
+}
+
+.wpallexport-plugin .active-sites-limit-modal h2 {
+    margin: 0 0 10px;
+}
+
+.wpallexport-plugin .active-sites-limit-modal p {
+    font-size: 14px;
+    margin: 0 0 20px;
+}
+
+.wpallexport-plugin .active-sites-limit-modal button {
+    box-shadow: none;
+    border: none;
+    border-radius: 3px;
+    vertical-align:bottom !important;
+    height: 40px;
+    line-height: 39px;
+    padding: 0 36px;
+    font-size: 14px;
+    background-color: #425f9a;
+    color: #fff;
+    width: 260px;
+}
+
+.wpallexport-plugin .active-sites-limit-modal button.close-limit-modal {
+    background-color: #f44336;
+}
+
+.wpallexport-plugin .active-sites-limit-modal button:hover {
+    opacity: 0.9;
+}
+
+.wpallexport-plugin .active-sites-limit-modal .tiered-pricing-options {
+    position: relative;
+    margin: 0 auto;
+}

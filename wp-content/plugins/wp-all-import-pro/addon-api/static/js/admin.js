@@ -22,4 +22,17 @@ addEventListener("DOMContentLoaded", () => {
     if (!event.target.closest(".pmxi-switcher")) return;
     onSwitcherChange(event.target);
   });
+
+  // Reveal some elements on change
+  addEventListener("change", (event) => {
+    if (!event.target.matches(".pmxi-reveal-on-change")) return;
+
+    const target = document.querySelector(`#${event.target.dataset.target}`);
+
+    if (event.target.checked) {
+      target.removeAttribute("hidden");
+    } else {
+      target.setAttribute("hidden", "");
+    }
+  });
 });

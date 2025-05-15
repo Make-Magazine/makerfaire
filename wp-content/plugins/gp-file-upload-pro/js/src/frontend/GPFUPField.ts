@@ -3,6 +3,7 @@ import Vue from 'vue';
 import GPFUP from './GPFUP.vue';
 import GPFUPStore from './stores/GPFUPStore';
 import isImage from "./helpers/isImage";
+import { getFileType } from "./helpers/isImage";
 import Storage from './classes/Storage';
 import debounce from 'debounce';
 import sortHidddenGFInput from "./helpers/sortHidddenGFInput";
@@ -490,8 +491,10 @@ export default class GPFUPField {
 					(async () => {
 						let blob = file.getNative();
 
+						const fileType = getFileType(file);
+
 						// Convert to JPEG if a HEIC
-						if (file.type === 'image/heic') {
+						if (fileType === 'image/heic') {
 							const heic2any = await import('heic2any');
 
 							const heicBlob = await heic2any.default({

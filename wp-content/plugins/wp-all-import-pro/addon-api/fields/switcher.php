@@ -70,8 +70,8 @@ class PMXI_Addon_Switcher_Field extends PMXI_Addon_Field {
             'switcher_name' => $name,
             'switcher_value' => $this->getSwitcherValue(),
 
-            'yes_label' => __('Select value for all records', 'wp_all_import_plugin'),
-            'no_label' => __('Set with XPath', 'wp_all_import_plugin'),
+            'yes_label' => __('Select value for all records', 'wp-all-import-pro'),
+            'no_label' => __('Set with XPath', 'wp-all-import-pro'),
 
             'yes_input' => $this->getView($yes_type, $yes_params),
             'no_input' => view('fields/text', $params, null, false),

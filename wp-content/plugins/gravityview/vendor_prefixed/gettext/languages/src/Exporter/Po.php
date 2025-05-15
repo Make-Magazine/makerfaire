@@ -2,7 +2,7 @@
 /**
  * @license MIT
  *
- * Modified by gravityview on 14-March-2025 using {@see https://github.com/BrianHenryIE/strauss}.
+ * Modified by gravityview on 25-April-2025 using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\GravityView\Foundation\ThirdParty\Gettext\Languages\Exporter;
@@ -24,9 +24,9 @@ class Po extends Exporter
     /**
      * {@inheritdoc}
      *
-     * @see \GravityKit\GravityView\Foundation\ThirdParty\Gettext\Languages\Exporter\Exporter::toStringDo()
+     * @see \GravityKit\GravityView\Foundation\ThirdParty\Gettext\Languages\Exporter\Exporter::toStringDoWithOptions()
      */
-    protected static function toStringDo($languages)
+    protected static function toStringDoWithOptions($languages, array $options)
     {
         if (count($languages) !== 1) {
             throw new Exception('The ' . get_called_class() . ' exporter can only export one language');

@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by gravityview on 14-March-2025 using {@see https://github.com/BrianHenryIE/strauss}.
+ * Modified by gravityview on 25-April-2025 using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\GravityView\Foundation\Helpers;
@@ -356,5 +356,32 @@ class Core {
 	 */
 	public static function is_cli() {
 		return php_sapi_name() === 'cli';
+	}
+
+	/**
+	 * Compares two version strings after trimming any trailing Git-style commit hashes.
+	 * Uses PHP's built-in version_compare() function.
+	 *
+	 * @since 1.2.24
+	 *
+	 * @param mixed       $version1 First version to compare. Will be cast to string.
+	 * @param mixed       $version2 Second version to compare. Will be cast to string.
+	 * @param string|null $operator (optional) Comparison operator.
+	 *
+	 * @return int|bool Returns -1, 0, or 1 if no operator is given; otherwise, returns a boolean.
+	 */
+	public static function version_compare( $version1, $version2, $operator = null ) {
+		$sanitize = function ( $version ) {
+			$version = trim( (string) $version );
+
+			return preg_replace( '/-[a-zA-Z0-9]{7,40}$/', '', $version );
+		};
+
+		$clean1 = $sanitize( $version1 );
+		$clean2 = $sanitize( $version2 );
+
+		return $operator
+			? version_compare( $clean1, $clean2, $operator )
+			: version_compare( $clean1, $clean2 );
 	}
 }

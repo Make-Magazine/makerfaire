@@ -735,6 +735,15 @@ const ko = window.ko;
 				}
 			} );
 
+			gform.addFilter('gform_file_upload_markup', function( html, file, up, strings, imagesUrl, response ) {
+				// hijack the filter to also resize the modal when a preview is added.
+				requestAnimationFrame(() => {
+					self.modal.checkOverflow();
+				});
+
+				return html;
+			});
+
 			// Use .bind() to ensure that the "this" context is set correctly.
 			gform.addAction( 'gform_list_post_item_add', self.modal.checkOverflow.bind(self.modal), 10, self.getNamespace() );
 			gform.addAction( 'gform_list_post_item_delete', self.modal.checkOverflow.bind(self.modal), 10, self.getNamespace() );
@@ -753,9 +762,15 @@ const ko = window.ko;
 		};
 
 		self.addRowIdComputedToEntries = function( entries ) {
-			for ( var i = 0; i < entries().length; i++ ) {
-				entries.splice( i, 1, self.addRowIdComputedToEntry( entries()[i] ) );
+			// Get the actual array from the observable.
+			var entriesArray = entries();
+
+			for (var i = 0; i < entriesArray.length; i++) {
+				entriesArray.splice( i, 1, self.addRowIdComputedToEntry( entriesArray[i] ) );
 			}
+
+			// Update the observable array.
+			entries( entriesArray );
 
 			return entries;
 		};
@@ -911,7 +926,7 @@ const ko = window.ko;
 					}
 
 					// Success!
-					self.viewModel.entries.remove(function (currItem) {
+					self.viewModel.entriesRaw.remove( function (currItem) {
 						return currItem.id === item.id || currItem === item;
 					} );
 
@@ -1437,14 +1452,15 @@ const ko = window.ko;
 				var replacementIndex = entryEditing.index();
 
 				// remove old entry, add updated
-				gpnf.viewModel.entries.remove( function( item ) { return item.id == entry.id } );
-				gpnf.viewModel.entries.splice( replacementIndex, 0, entry );
+				gpnf.viewModel.entriesRaw.remove( function( item ) { return item.id == entry.id } );
+				gpnf.viewModel.entriesRaw.splice( replacementIndex, 0, entry );
 
 			}
 			// add
 			else {
 
-				gpnf.viewModel.entries.push( entry );
+				gpnf.viewModel.entriesRaw.push( entry );
+
 
 				/**
 				 * Filter to determine if the child form HTML should be refreshed after adding entries.
@@ -1493,7 +1509,26 @@ const ko = window.ko;
 
 		var self = this;
 
-		self.entries = ko.observableArray( entries );
+		self.entriesRaw = ko.observableArray( entries );
+
+		self.entries = ko.pureComputed({
+			read: function () {
+				/**
+				 * Filter to sort entries.
+				 *
+				 * @since 1.2.7
+				 *
+				 * @param {array} entries The entries to sort.
+				 * @param {int}   formId  The parent form ID.
+				 * @param {int}   fieldId The field ID of the Nested Form field.
+				 * @param {object} gpnf   The current instance of the GPNestedForms object.
+				 */
+				return gform.applyFilters( 'gpnf_sorted_entries', self.entriesRaw(), gpnf.formId, gpnf.fieldId, gpnf );
+			},
+			write: function (newEntries) {
+				self.entriesRaw( newEntries );
+			}
+		});
 
 		/**
 		 * Trigger change event on the form when entries change. This helps notify other plugins that the form has

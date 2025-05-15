@@ -272,7 +272,9 @@ class GV_Extension_DataTables_Field_Filters extends GV_DataTables_Extension {
 		if ( $gf_field && ! empty( $gf_field->choices ) ) {
 			$choices = $gf_field->choices;
 
-			if ( 'chainedselect' === $gf_field->type ) {
+			if ( 'radio' === $gf_field->type ) {
+				$atts['field_type'] = 'select';
+			} elseif ( 'chainedselect' === $gf_field->type ) {
 				$choices = array_map( function ( $entry ) use ( $field ) {
 					$value = $entry->as_entry()[ $field->ID ] ?? '';
 

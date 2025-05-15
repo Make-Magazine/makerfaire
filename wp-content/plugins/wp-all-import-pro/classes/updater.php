@@ -93,7 +93,7 @@ if( ! class_exists('PMXI_Updater') ) {
             if ( $file == $this->name ) {
                 $plugin = preg_replace("%\\/%", "", str_replace(basename($file), '', $file));
                 $row_meta = array(
-                    'changelog'    => '<a href="' . admin_url( 'plugin-install.php?tab=plugin-information&plugin='. $plugin .'&section=changelog&TB_iframe=true&width=600&height=800' ) . '" class="thickbox open-plugin-details-modal" title="' . esc_attr( __( 'View WP All Import Pro Changelog', 'wp_all_import_plugin' ) ) . '">' . __( 'Changelog', 'wp_all_import_plugin' ) . '</a>',
+                    'changelog'    => '<a href="' . admin_url( 'plugin-install.php?tab=plugin-information&plugin='. $plugin .'&section=changelog&TB_iframe=true&width=600&height=800' ) . '" class="thickbox open-plugin-details-modal" title="' . esc_attr( __( 'View WP All Import Pro Changelog', 'wp-all-import-pro' ) ) . '">' . __( 'Changelog', 'wp-all-import-pro' ) . '</a>',
                 );
 
                 return array_merge( $links, $row_meta );
@@ -292,7 +292,7 @@ if( ! class_exists('PMXI_Updater') ) {
                 $changelog_link = self_admin_url('plugin-install.php?tab=plugin-information&plugin='. $this->slug .'&section=changelog&TB_iframe=true&width=772&height=412');
                 if (!empty($version_info->php_version) && version_compare( $this->php_version, $version_info->php_version, '<')) {
                     $new_version = "<span class=\"wp-all-import-pro-new-version-notice\">" . sprintf(
-                        __('WP All Import '. $version_info->new_version .' requires PHP %1s or greater, you are using PHP %2s. Please contact your host and tell them to update your server to at least PHP %1s.', 'wp_all_import_plugin'),
+                        __('WP All Import '. $version_info->new_version .' requires PHP %1s or greater, you are using PHP %2s. Please contact your host and tell them to update your server to at least PHP %1s.', 'wp-all-import-pro'),
                         $version_info->php_version,
                         $this->php_version,
                         $version_info->php_version
@@ -300,17 +300,17 @@ if( ! class_exists('PMXI_Updater') ) {
                 } elseif ( empty( $version_info->download_link ) ) {
                     if ($shiny_updates) $update_msg_classes .= ' post-shiny-updates';
                     $new_version = "<span class=\"wp-all-import-pro-new-version-notice\">" . sprintf(
-                        __( 'A new version of WP All Import Pro is available. <strong>A valid license is required to enable updates - enter your license key on the <a href="%1$s">Licenses</a> page.</strong>', 'wp_all_import_plugin' ),
+                        __( 'A new version of WP All Import Pro is available. <strong>A valid license is required to enable updates - enter your license key on the <a href="%1$s">Licenses</a> page.</strong>', 'wp-all-import-pro' ),
                         esc_url(admin_url('admin.php?page=pmxi-admin-settings'))
                     ) . "</span>";
                     $new_version .= "<span class=\"wp-all-import-pro-licence-error-notice\">" . sprintf(
-                        __( 'If you don\'t have a license, please see <a href="%1$s" target="_blank">details & pricing</a>. If you do have a license, you can access it at the <a href="%2$s" target="_blank">customer portal</a>.', 'wp_all_import_plugin'),
+                        __( 'If you don\'t have a license, please see <a href="%1$s" target="_blank">details & pricing</a>. If you do have a license, you can access it at the <a href="%2$s" target="_blank">customer portal</a>.', 'wp-all-import-pro'),
                         esc_url( 'http://www.wpallimport.com/order-now/' ),
                         esc_url( 'http://www.wpallimport.com/portal/' )
                     ) . "</span>";
                 } else {
                     $new_version = "<span class=\"wp-all-import-pro-new-version-notice\">" . sprintf(
-                        __( 'There is a new version of WP All Import Pro available. <a target="_blank" class="thickbox" href="%1$s">View version %2$s details</a> or <a href="%3$s" class="update-link">update now</a>.', 'wp_all_import_plugin' ),
+                        __( 'There is a new version of WP All Import Pro available. <a target="_blank" class="thickbox" href="%1$s">View version %2$s details</a> or <a href="%3$s" class="update-link">update now</a>.', 'wp-all-import-pro' ),
                         esc_url( $changelog_link ),
                         esc_html( $version_info->new_version ),
                         esc_url( wp_nonce_url( self_admin_url( 'update.php?action=upgrade-plugin&plugin=' ) . $this->name, 'upgrade-plugin_' . $this->name ) )

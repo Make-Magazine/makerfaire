@@ -1,6 +1,19 @@
 
 # Changelog
 
+## 1.3.19 | May 14, 2025
+
+- Fixed compatibility issue with Safari where checkbox limits were not being rendered under certain conditions.
+- Fixed an issue with incorrect checkbox count over a checkbox span.
+
+## 1.3.18 | April 24, 2025
+
+- Fixed a fatal error that occurred under specific conditions when processing checkbox limits.
+
+## 1.3.17 | April 23, 2025
+
+- Fixed an issue where validation for a field with grouped checkboxes failed when the field was hidden due to conditional logic.
+
 ## 1.3.16 | December 4, 2024
 
 - Added compatibility with ["None of the Above” Checkbox snippet](https://gravitywiz.com/snippet-library/gw-none-of-the-above-checkbox/).

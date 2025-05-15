@@ -16,11 +16,13 @@ export default function isImage(file: File) : boolean {
 		return false;
 	}
 
-	if (file.type === 'image/webp' && !supports.webp) {
+	const fileType = getFileType(file);
+
+	if (fileType === 'image/webp' && !supports.webp) {
 		return false;
 	}
 
-	return file.type.indexOf('image/') === 0 && supportedImageTypes.includes(file.type);
+	return fileType.indexOf('image/') === 0 && supportedImageTypes.includes(fileType);
 }
 
 /**
@@ -40,4 +42,19 @@ export function checkBrowserSupport() : { canvas: boolean, webp: boolean } {
 			webp: false,
 		}
 	}
+}
+
+/**
+ * Get the file type from the file object.
+ */
+export function getFileType(file: File): string {
+	let fileType = file.type || '';
+	// This is needed because HEIC mime type is an empty string on Windows, etc.
+	if (!fileType && file.name) {
+		const extension = file.name.split('.').pop()?.toLowerCase();
+		if (extension === 'heic') {
+			fileType = 'image/heic';
+		}
+	}
+	return fileType;
 }

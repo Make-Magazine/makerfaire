@@ -72,6 +72,7 @@ if(!defined('ABSPATH')) {
                                    value="<?php esc_html_e('Activate License', 'wp_all_export_plugin'); ?>"/>
                             <?php if ( !empty( $_POST['scheduling_license'] ) ) { ?>
                                 <div class="license-status inline error"><?php echo esc_html($post['scheduling_license_status']); ?></div>
+                                <input type="hidden" name="scheduling_license_limit" value="<?php echo get_option('wpai_wpae_scheduling_license_site_limit', 0); ?>">
                             <?php } ?>
                         <?php } ?>
 
@@ -79,6 +80,7 @@ if(!defined('ABSPATH')) {
                     <?php
                     $scheduling = \Wpae\Scheduling\Scheduling::create();
                     if (!($scheduling->checkLicense()['success'] ?? false)) {
+	                    require_once(PMXE_Plugin::ROOT_DIR . '/src/Scheduling/views/SchedulingActiveSitesLimitUI.php');
                         ?>
                         <p class="description"><?php echo wp_kses_post(__('A license key is required to use Automatic Scheduling. If you have already subscribed, <a href="https://www.wpallimport.com/portal/automatic-scheduling/" target="_blank">click here to access your license key</a>.<br>If you don\'t have a license, <a class="scheduling-subscribe-link" href="#">click here to subscribe</a>.', 'wp_all_export_plugin')); ?></p>
                         <?php
@@ -289,6 +291,7 @@ if(!defined('ABSPATH')) {
                         <?php } else { ?>
                             <?php if ( !empty( $_POST['scheduling_license'] ) ) { ?>
                                 <div class="license-status inline error"><?php echo $post['scheduling_license_status']; ?></div>
+                                <input type="hidden" name="scheduling_license_limit" value="<?php echo get_option('wpai_wpae_scheduling_license_site_limit', 0); ?>">
                             <?php } ?>
                         <?php } ?>
 
@@ -296,6 +299,7 @@ if(!defined('ABSPATH')) {
                     <?php
                     $scheduling = \Wpae\Scheduling\Scheduling::create();
                     if (!($scheduling->checkLicense()['success'] ?? false)) {
+	                    require_once(PMXE_Plugin::ROOT_DIR . '/src/Scheduling/views/SchedulingActiveSitesLimitUI.php');
                         ?>
                         <p class="description"><?php echo wp_kses_post(__('A license key is required to use Automatic Scheduling. If you have already subscribed, <a href="https://www.wpallimport.com/portal/automatic-scheduling/" target="_blank">click here to access your license key</a>.<br>If you don\'t have a license, <a class="scheduling-subscribe-link" href="#">click here to subscribe</a>.', 'wp_all_export_plugin')); ?></p>
                         <?php
@@ -323,24 +327,8 @@ $functions_content = file_get_contents($functions);
 <div class="function-editor">
     <h3><?php esc_html_e('Function Editor', 'pmxe_plugin') ?></h3>
 
-    <textarea id="wp_all_export_code"
-            name="wp_all_export_code"><?php echo (empty($functions_content)) ? "<?php\n\n?>" : esc_textarea($functions_content); ?></textarea>
-
-    <div class="input" style="margin-top: 10px;">
-
-        <div class="input" style="display:inline-block; margin-right: 20px;">
-            <input type="button" class="button-primary wp_all_export_save_functions"
-                value="<?php esc_html_e("Save Functions", 'wp_all_export_plugin'); ?>"/>
-            <a href="#help" class="wpallexport-help"
-            title="<?php printf(__("Add functions here for use during your export. You can access this file at %s", "wp_all_export_plugin"), preg_replace("%.*wp-content%", "wp-content", $functions)); ?>"
-            style="top: 0;">?</a>
-            <div class="wp_all_export_functions_preloader"></div>
-        </div>
-        <div class="input wp_all_export_saving_status">
-
-        </div>
-
-    </div>
+	<?php require_once(PMXE_Plugin::ROOT_DIR . '/views/admin/shared/function_editor.php');?>
+    
 </div>
 <hr/>
 <form name="client-mode-settings" method="post" action="" class="client-mode-settings">

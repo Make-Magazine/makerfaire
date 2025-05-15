@@ -15,6 +15,10 @@
 		width: auto;
 	}
 
+	.dataTables_filter input[type="search"] {
+		width: auto;
+	}
+
 	.dataTable tr th.sorting_disabled {
 		cursor: default;
 		padding-right: 10px;

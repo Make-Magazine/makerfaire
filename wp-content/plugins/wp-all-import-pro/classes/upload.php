@@ -47,11 +47,11 @@ if ( ! class_exists( 'PMXI_Upload' ) ) {
 			$csv_path = '';
 
 			if ( empty( $this->file ) ) {
-				$this->errors->add( 'form-validation', __( 'Please specify a file to import.<br/><br/>If you are uploading the file from your computer, please wait for it to finish uploading (progress bar at 100%), before trying to continue.', 'wp_all_import_plugin' ) );
+				$this->errors->add( 'form-validation', __( 'Please specify a file to import.<br/><br/>If you are uploading the file from your computer, please wait for it to finish uploading (progress bar at 100%), before trying to continue.', 'wp-all-import-pro' ) );
 			} elseif ( ! is_file( $this->file ) ) {
-				$this->errors->add( 'form-validation', __( 'Uploaded file is empty', 'wp_all_import_plugin' ) );
+				$this->errors->add( 'form-validation', __( 'Uploaded file is empty', 'wp-all-import-pro' ) );
 			} elseif ( ! preg_match( '%\W(xml|gzip|zip|csv|tsv|gz|json|txt|dat|psv|sql|xls|xlsx)$%i', trim( basename( $this->file ) ) ) ) {
-				$this->errors->add( 'form-validation', __( 'Uploaded file must be XML, CSV, ZIP, GZIP, GZ, JSON, SQL, TXT, DAT or PSV', 'wp_all_import_plugin' ) );
+				$this->errors->add( 'form-validation', __( 'Uploaded file must be XML, CSV, ZIP, GZIP, GZ, JSON, SQL, TXT, DAT or PSV', 'wp-all-import-pro' ) );
 			} elseif ( preg_match( '%\W(zip)$%i', trim( basename( $this->file ) ) ) ) {
 
 				if ( ! class_exists( 'WpaiPclZip' ) ) {
@@ -63,7 +63,7 @@ if ( ! class_exists( 'PMXI_Upload' ) ) {
 				// Attempt to extract files.
 				$v_result_list = $archive->extract( WPAI_PCLZIP_OPT_PATH, $this->uploadsPath, WPAI_PCLZIP_OPT_REPLACE_NEWER, WPAI_PCLZIP_OPT_EXTRACT_DIR_RESTRICTION, $this->uploadsPath, WPAI_PCLZIP_OPT_EXTRACT_EXT_RESTRICTIONS, array( 'php', 'phtml', 'htaccess' ) );
 				if ( empty( $v_result_list ) || ! is_array( $v_result_list ) && $v_result_list < 1 ) {
-					$this->errors->add( 'form-validation', __( 'WP All Import couldn\'t find a file to import inside your ZIP.<br/><br/>Either the .ZIP file is broken, or doesn\'t contain a file with an extension of  XML, CSV, PSV, DAT, or TXT. <br/>Please attempt to unzip your .ZIP file on your computer to ensure it is a valid .ZIP file which can actually be unzipped, and that it contains a file which WP All Import can import.', 'wp_all_import_plugin' ) );
+					$this->errors->add( 'form-validation', __( 'WP All Import couldn\'t find a file to import inside your ZIP.<br/><br/>Either the .ZIP file is broken, or doesn\'t contain a file with an extension of  XML, CSV, PSV, DAT, or TXT. <br/>Please attempt to unzip your .ZIP file on your computer to ensure it is a valid .ZIP file which can actually be unzipped, and that it contains a file which WP All Import can import.', 'wp-all-import-pro' ) );
 				} else {
 					$filePath         = '';
 					$decodedTemplates = array();
@@ -79,7 +79,7 @@ if ( ! class_exists( 'PMXI_Upload' ) ) {
 									$decodedTemplates = json_decode( $templates, true );
 									$templateOptions  = empty( $decodedTemplates[0] ) ? current( $decodedTemplates ) : $decodedTemplates;
 									if ( ! empty( $templateOptions ) and isset( $templateOptions[0]['_import_type'] ) and $templateOptions[0]['_import_type'] == 'url' ) {
-										$options = maybe_unserialize( $templateOptions[0]['options'] );
+										$options = \pmxi_maybe_unserialize( $templateOptions[0]['options'] );
 										return array(
 											'filePath'     => $templateOptions[0]['_import_url'],
 											'bundle'       => $bundle,
@@ -117,7 +117,7 @@ if ( ! class_exists( 'PMXI_Upload' ) ) {
 					}
 
 					if ( $this->uploadsPath === false ) {
-						$this->errors->add( 'form-validation', __( 'WP All Import can\'t access your WordPress uploads folder.', 'wp_all_import_plugin' ) );
+						$this->errors->add( 'form-validation', __( 'WP All Import can\'t access your WordPress uploads folder.', 'wp-all-import-pro' ) );
 					}
 
 					if ( empty( $filePath ) ) {
@@ -136,7 +136,7 @@ if ( ! class_exists( 'PMXI_Upload' ) ) {
 							}
 							$zip->close();
 						} else {
-							$this->errors->add( 'form-validation', __( 'WP All Import couldn\'t find a file to import inside your ZIP.<br/><br/>Either the .ZIP file is broken, or doesn\'t contain a file with an extension of  XML, CSV, PSV, DAT, or TXT. <br/>Please attempt to unzip your .ZIP file on your computer to ensure it is a valid .ZIP file which can actually be unzipped, and that it contains a file which WP All Import can import.', 'wp_all_import_plugin' ) );
+							$this->errors->add( 'form-validation', __( 'WP All Import couldn\'t find a file to import inside your ZIP.<br/><br/>Either the .ZIP file is broken, or doesn\'t contain a file with an extension of  XML, CSV, PSV, DAT, or TXT. <br/>Please attempt to unzip your .ZIP file on your computer to ensure it is a valid .ZIP file which can actually be unzipped, and that it contains a file which WP All Import can import.', 'wp-all-import-pro' ) );
 						}
 					}
 					// Detect if file is very large
@@ -152,7 +152,7 @@ if ( ! class_exists( 'PMXI_Upload' ) ) {
 			} elseif ( preg_match( '%\W(csv|txt|dat|psv|tsv)$%i', trim( $this->file ) ) ) { // If CSV file uploaded
 
 				if ( $this->uploadsPath === false ) {
-					$this->errors->add( 'form-validation', __( 'WP All Import can\'t access your WordPress uploads folder.', 'wp_all_import_plugin' ) );
+					$this->errors->add( 'form-validation', __( 'WP All Import can\'t access your WordPress uploads folder.', 'wp-all-import-pro' ) );
 				}
 				$filePath = $this->file;
 				$source   = array(
@@ -218,11 +218,11 @@ if ( ! class_exists( 'PMXI_Upload' ) ) {
 				$is_json  = wp_all_import_is_json( $json_str );
 
 				if ( is_wp_error( $is_json ) ) {
-					$this->errors->add( 'form-validation', $is_json->get_error_message(), 'wp_all_import_plugin' );
+					$this->errors->add( 'form-validation', $is_json->get_error_message(), 'wp-all-import-pro' );
 				} else {
 					$xml_data = wp_all_import_json_to_xml( json_decode( $json_str, true ) );
 					if ( empty( $xml_data ) ) {
-						$this->errors->add( 'form-validation', __( 'Can not import this file. JSON to XML conversion failed.', 'wp_all_import_plugin' ) );
+						$this->errors->add( 'form-validation', __( 'Can not import this file. JSON to XML conversion failed.', 'wp-all-import-pro' ) );
 					} else {
 						$jsontmpname = $this->uploadsPath . '/' . wp_all_import_url_title( wp_unique_filename( $this->uploadsPath, str_replace( 'json', 'xml', basename( $this->file ) ) ) );
 						//@unlink($this->file);
@@ -273,7 +273,7 @@ if ( ! class_exists( 'PMXI_Upload' ) ) {
 				$templateOptions = empty( $decodedTemplates[0] ) ? current( $decodedTemplates ) : $decodedTemplates;
 			}
 
-			$options = ( empty( $templateOptions[0]['options'] ) ) ? false : maybe_unserialize( $templateOptions[0]['options'] );
+			$options = ( empty( $templateOptions[0]['options'] ) ) ? false : \pmxi_maybe_unserialize( $templateOptions[0]['options'] );
 
 			if ( ! empty( $options['root_element'] ) ) {
 				$this->root_element = $options['root_element'];
@@ -306,11 +306,11 @@ if ( ! class_exists( 'PMXI_Upload' ) ) {
 			$bundleFiles = array();
 
 			if ( empty( $this->file ) ) {
-				$this->errors->add( 'form-validation', __( 'Please specify a file to import.', 'wp_all_import_plugin' ) );
+				$this->errors->add( 'form-validation', __( 'Please specify a file to import.', 'wp-all-import-pro' ) );
 			} elseif ( ! preg_match( '%^https?://%i', $this->file ) ) {
-				$this->errors->add( 'form-validation', __( 'The URL to your file is not valid.<br/><br/>Please make sure the URL starts with http:// or https://. To import from https://, your server must have OpenSSL installed.' ), 'wp_all_import_plugin' );
+				$this->errors->add( 'form-validation', __( 'The URL to your file is not valid.<br/><br/>Please make sure the URL starts with http:// or https://. To import from https://, your server must have OpenSSL installed.' ), 'wp-all-import-pro' );
 			} elseif ( ! is_writeable( $this->uploadsPath ) ) {
-				$this->errors->add( 'form-validation', __( 'Uploads folder ' . $this->uploadsPath . ' is not writable.' ), 'wp_all_import_plugin' );
+				$this->errors->add( 'form-validation', __( 'Uploads folder ' . $this->uploadsPath . ' is not writable.' ), 'wp-all-import-pro' );
 			}
 
 			$this->file = trim( $this->file );
@@ -335,7 +335,7 @@ if ( ! class_exists( 'PMXI_Upload' ) ) {
 							$this->errors->add( 'form-validation', $request->get_error_message() );
 						}
 						if ( ! file_exists( $tmpname ) ) {
-							$this->errors->add( 'form-validation', __( 'Failed upload ZIP archive', 'wp_all_import_plugin' ) );
+							$this->errors->add( 'form-validation', __( 'Failed upload ZIP archive', 'wp-all-import-pro' ) );
 						}
 					}
 
@@ -348,7 +348,7 @@ if ( ! class_exists( 'PMXI_Upload' ) ) {
 					// Attempt to extract files.
 					$v_result_list = $archive->extract( WPAI_PCLZIP_OPT_PATH, $this->uploadsPath, WPAI_PCLZIP_OPT_REPLACE_NEWER, WPAI_PCLZIP_OPT_EXTRACT_DIR_RESTRICTION, $this->uploadsPath, WPAI_PCLZIP_OPT_EXTRACT_EXT_RESTRICTIONS, array( 'php', 'phtml', 'htaccess' ) );
 					if ( empty( $v_result_list ) || ! is_array( $v_result_list ) && $v_result_list < 1 ) {
-						$this->errors->add( 'form-validation', __( 'WP All Import couldn\'t find a file to import inside your ZIP.<br/><br/>Either the .ZIP file is broken, or doesn\'t contain a file with an extension of  XML, CSV, PSV, DAT, or TXT. <br/>Please attempt to unzip your .ZIP file on your computer to ensure it is a valid .ZIP file which can actually be unzipped, and that it contains a file which WP All Import can import.', 'wp_all_import_plugin' ) );
+						$this->errors->add( 'form-validation', __( 'WP All Import couldn\'t find a file to import inside your ZIP.<br/><br/>Either the .ZIP file is broken, or doesn\'t contain a file with an extension of  XML, CSV, PSV, DAT, or TXT. <br/>Please attempt to unzip your .ZIP file on your computer to ensure it is a valid .ZIP file which can actually be unzipped, and that it contains a file which WP All Import can import.', 'wp-all-import-pro' ) );
 					} else {
 						$filePath = '';
 						if ( ! empty( $v_result_list ) ) {
@@ -387,7 +387,7 @@ if ( ! class_exists( 'PMXI_Upload' ) ) {
 						}
 
 						if ( $this->uploadsPath === false ) {
-							$this->errors->add( 'form-validation', __( 'WP All Import can\'t access your WordPress uploads folder.', 'wp_all_import_plugin' ) );
+							$this->errors->add( 'form-validation', __( 'WP All Import can\'t access your WordPress uploads folder.', 'wp-all-import-pro' ) );
 						}
 
 						if ( empty( $filePath ) ) {
@@ -406,7 +406,7 @@ if ( ! class_exists( 'PMXI_Upload' ) ) {
 								}
 								$zip->close();
 							} else {
-								$this->errors->add( 'form-validation', __( 'WP All Import couldn\'t find a file to import inside your ZIP.<br/><br/>Either the .ZIP file is broken, or doesn\'t contain a file with an extension of  XML, CSV, PSV, DAT, or TXT. <br/>Please attempt to unzip your .ZIP file on your computer to ensure it is a valid .ZIP file which can actually be unzipped, and that it contains a file which WP All Import can import.', 'wp_all_import_plugin' ) );
+								$this->errors->add( 'form-validation', __( 'WP All Import couldn\'t find a file to import inside your ZIP.<br/><br/>Either the .ZIP file is broken, or doesn\'t contain a file with an extension of  XML, CSV, PSV, DAT, or TXT. <br/>Please attempt to unzip your .ZIP file on your computer to ensure it is a valid .ZIP file which can actually be unzipped, and that it contains a file which WP All Import can import.', 'wp-all-import-pro' ) );
 							}
 						}
 						// Detect if file is very large
@@ -433,7 +433,7 @@ if ( ! class_exists( 'PMXI_Upload' ) ) {
 					$filePath = wp_all_import_get_url( $this->file, $this->uploadsPath, 'csv' );
 					if ( ! is_wp_error( $filePath ) ) {
 						if ( ! file_exists( $filePath ) ) {
-							$this->errors->add( 'form-validation', __( 'WP All Import was not able to download your file.<br/><br/>Please make sure the URL to your file is valid.<br/>You can test this by pasting it into your browser.<br/>Other reasons for this error can include some server setting on your host restricting access to this particular URL or external URLs in general, or some setting on the server hosting the file you are trying to access preventing your server from accessing it.', 'wp_all_import_plugin' ) );
+							$this->errors->add( 'form-validation', __( 'WP All Import was not able to download your file.<br/><br/>Please make sure the URL to your file is valid.<br/>You can test this by pasting it into your browser.<br/>Other reasons for this error can include some server setting on your host restricting access to this particular URL or external URLs in general, or some setting on the server hosting the file you are trying to access preventing your server from accessing it.', 'wp-all-import-pro' ) );
 						}
 						// Detect if file is very large
 						include_once PMXI_Plugin::ROOT_DIR . '/libraries/XmlImportCsvParse.php';
@@ -464,11 +464,11 @@ if ( ! class_exists( 'PMXI_Upload' ) ) {
 					$json_str = str_replace( "\xEF\xBB\xBF", '', $json_str );
 					$is_json  = wp_all_import_is_json( $json_str );
 					if ( is_wp_error( $is_json ) ) {
-						$this->errors->add( 'form-validation', $is_json->get_error_message(), 'wp_all_import_plugin' );
+						$this->errors->add( 'form-validation', $is_json->get_error_message(), 'wp-all-import-pro' );
 					} else {
 						$xml_data = wp_all_import_json_to_xml( json_decode( $json_str, true ) );
 						if ( empty( $xml_data ) ) {
-							$this->errors->add( 'form-validation', __( 'Can not import this file. JSON to XML convertation failed.', 'wp_all_import_plugin' ) );
+							$this->errors->add( 'form-validation', __( 'Can not import this file. JSON to XML conversion failed.', 'wp-all-import-pro' ) );
 						} else {
 							$tmpname = $this->uploadsPath . '/' . wp_all_import_url_title( wp_unique_filename( $this->uploadsPath, str_replace( 'json', 'xml', basename( $filePath ) ) ) );
 							file_put_contents( $tmpname, $xml_data );
@@ -513,10 +513,10 @@ if ( ! class_exists( 'PMXI_Upload' ) ) {
 						}
 					}
 
-					if ( ! is_wp_error( $fileInfo ) ) {
+					if ( ! is_wp_error( $fileInfo ) && false !== $fileInfo ) {
 						$filePath = $fileInfo['localPath'];
 						if ( ! file_exists( $filePath ) ) {
-							$this->errors->add( 'form-validation', __( 'WP All Import was not able to download your file.<br/><br/>Please make sure the URL to your file is valid.<br/>You can test this by pasting it into your browser.<br/>Other reasons for this error can include some server setting on your host restricting access to this particular URL or external URLs in general, or some setting on the server hosting the file you are trying to access preventing your server from accessing it.', 'wp_all_import_plugin' ) );
+							$this->errors->add( 'form-validation', __( 'WP All Import was not able to download your file.<br/><br/>Please make sure the URL to your file is valid.<br/>You can test this by pasting it into your browser.<br/>Other reasons for this error can include some server setting on your host restricting access to this particular URL or external URLs in general, or some setting on the server hosting the file you are trying to access preventing your server from accessing it.', 'wp-all-import-pro' ) );
 						}
 						// Detect if file is very large
 						$source           = array(
@@ -547,11 +547,11 @@ if ( ! class_exists( 'PMXI_Upload' ) ) {
 								$is_json  = wp_all_import_is_json( $json_str );
 
 								if ( is_wp_error( $is_json ) ) {
-									$this->errors->add( 'form-validation', $is_json->get_error_message(), 'wp_all_import_plugin' );
+									$this->errors->add( 'form-validation', $is_json->get_error_message(), 'wp-all-import-pro' );
 								} else {
 									$xml_data = wp_all_import_json_to_xml( json_decode( $json_str, true ) );
 									if ( empty( $xml_data ) ) {
-										$this->errors->add( 'form-validation', __( 'Can not import this file. JSON to XML convertation failed.', 'wp_all_import_plugin' ) );
+										$this->errors->add( 'form-validation', __( 'Can not import this file. JSON to XML conversion failed.', 'wp-all-import-pro' ) );
 									} else {
 										$tmpname = $this->uploadsPath . '/' . wp_all_import_url_title( wp_unique_filename( $this->uploadsPath, str_replace( 'json', 'xml', basename( $filePath ) ) ) );
 										file_put_contents( $tmpname, $xml_data );
@@ -570,7 +570,9 @@ if ( ! class_exists( 'PMXI_Upload' ) ) {
 								break;
 						}
 					} else {
-						$this->errors->add( 'form-validation', $fileInfo->get_error_message() );
+						$error = ($fileInfo) ? $fileInfo->get_error_message() : 'No data was returned. This can happen if you try to download from a private IP or if an unknown error has occurred.';
+
+						$this->errors->add( 'form-validation', $error );
 					}
 				}
 			}
@@ -587,7 +589,7 @@ if ( ! class_exists( 'PMXI_Upload' ) ) {
 				$templateOptions = empty( $decodedTemplates[0] ) ? current( $decodedTemplates ) : $decodedTemplates;
 			}
 
-			$options = ( empty( $templateOptions[0]['options'] ) ) ? false : maybe_unserialize( $templateOptions[0]['options'] );
+			$options = ( empty( $templateOptions[0]['options'] ) ) ? false : \pmxi_maybe_unserialize( $templateOptions[0]['options'] );
 
 			if ( ! empty( $options['root_element'] ) ) {
 				$this->root_element = $options['root_element'];
@@ -627,11 +629,11 @@ if ( ! class_exists( 'PMXI_Upload' ) ) {
 			$to   = $this->uploadsPath . DIRECTORY_SEPARATOR . basename( $this->file );
 
 			if ( empty( $this->file ) ) {
-				$this->errors->add( 'form-validation', __( 'Please specify a file to import.', 'wp_all_import_plugin' ) );
+				$this->errors->add( 'form-validation', __( 'Please specify a file to import.', 'wp-all-import-pro' ) );
 			} elseif ( preg_match( '%\W(zip)$%i', trim( $this->file ) ) ) {
 
 				if ( $this->uploadsPath === false ) {
-					$this->errors->add( 'form-validation', __( 'WP All Import can\'t access your WordPress uploads folder.', 'wp_all_import_plugin' ) );
+					$this->errors->add( 'form-validation', __( 'WP All Import can\'t access your WordPress uploads folder.', 'wp-all-import-pro' ) );
 				}
 
 				if ( $this->errors->get_error_codes() ) {
@@ -653,7 +655,7 @@ if ( ! class_exists( 'PMXI_Upload' ) ) {
 				// Attempt to extract files.
 				$v_result_list = $archive->extract( WPAI_PCLZIP_OPT_PATH, $this->uploadsPath, WPAI_PCLZIP_OPT_REPLACE_NEWER, WPAI_PCLZIP_OPT_EXTRACT_DIR_RESTRICTION, $this->uploadsPath, WPAI_PCLZIP_OPT_EXTRACT_EXT_RESTRICTIONS, array( 'php', 'phtml', 'htaccess' ) );
 				if ( empty( $v_result_list ) || ! is_array( $v_result_list ) && $v_result_list < 1 ) {
-					$this->errors->add( 'form-validation', __( 'WP All Import couldn\'t find a file to import inside your ZIP.<br/><br/>Either the .ZIP file is broken, or doesn\'t contain a file with an extension of  XML, CSV, PSV, DAT, or TXT. <br/>Please attempt to unzip your .ZIP file on your computer to ensure it is a valid .ZIP file which can actually be unzipped, and that it contains a file which WP All Import can import.', 'wp_all_import_plugin' ) );
+					$this->errors->add( 'form-validation', __( 'WP All Import couldn\'t find a file to import inside your ZIP.<br/><br/>Either the .ZIP file is broken, or doesn\'t contain a file with an extension of  XML, CSV, PSV, DAT, or TXT. <br/>Please attempt to unzip your .ZIP file on your computer to ensure it is a valid .ZIP file which can actually be unzipped, and that it contains a file which WP All Import can import.', 'wp-all-import-pro' ) );
 				} else {
 					$filePath = '';
 					if ( ! empty( $v_result_list ) ) {
@@ -692,7 +694,7 @@ if ( ! class_exists( 'PMXI_Upload' ) ) {
 					}
 
 					if ( $this->uploadsPath === false ) {
-						$this->errors->add( 'form-validation', __( 'WP All Import can\'t access your WordPress uploads folder.', 'wp_all_import_plugin' ) );
+						$this->errors->add( 'form-validation', __( 'WP All Import can\'t access your WordPress uploads folder.', 'wp-all-import-pro' ) );
 					}
 
 					if ( empty( $filePath ) ) {
@@ -711,7 +713,7 @@ if ( ! class_exists( 'PMXI_Upload' ) ) {
 							}
 							$zip->close();
 						} else {
-							$this->errors->add( 'form-validation', __( 'WP All Import couldn\'t find a file to import inside your ZIP.<br/><br/>Either the .ZIP file is broken, or doesn\'t contain a file with an extension of  XML, CSV, PSV, DAT, or TXT. <br/>Please attempt to unzip your .ZIP file on your computer to ensure it is a valid .ZIP file which can actually be unzipped, and that it contains a file which WP All Import can import.', 'wp_all_import_plugin' ) );
+							$this->errors->add( 'form-validation', __( 'WP All Import couldn\'t find a file to import inside your ZIP.<br/><br/>Either the .ZIP file is broken, or doesn\'t contain a file with an extension of  XML, CSV, PSV, DAT, or TXT. <br/>Please attempt to unzip your .ZIP file on your computer to ensure it is a valid .ZIP file which can actually be unzipped, and that it contains a file which WP All Import can import.', 'wp-all-import-pro' ) );
 						}
 					}
 					// Detect if file is very large
@@ -730,10 +732,10 @@ if ( ! class_exists( 'PMXI_Upload' ) ) {
 			} elseif ( preg_match( '%\W(csv|txt|dat|psv|tsv)$%i', trim( $this->file ) ) ) {
 
 				if ( $this->uploadsPath === false ) {
-					$this->errors->add( 'form-validation', __( 'WP All Import can\'t access your WordPress uploads folder.', 'wp_all_import_plugin' ) );
+					$this->errors->add( 'form-validation', __( 'WP All Import can\'t access your WordPress uploads folder.', 'wp-all-import-pro' ) );
 				}
 				if ( ! @file_exists( $from ) ) {
-					$this->errors->add( 'form-validation', __( 'File doesn\'t exist.', 'wp_all_import_plugin' ) );
+					$this->errors->add( 'form-validation', __( 'File doesn\'t exist.', 'wp-all-import-pro' ) );
 				}
 
 				if ( $this->errors->get_error_codes() ) {
@@ -765,7 +767,7 @@ if ( ! class_exists( 'PMXI_Upload' ) ) {
 				$this->root_element = 'node';
 			} elseif ( preg_match( '%\W(json)$%i', trim( $this->file ) ) ) {
 				if ( $this->uploadsPath === false ) {
-					$this->errors->add( 'form-validation', __( 'WP All Import can\'t access your WordPress uploads folder.', 'wp_all_import_plugin' ) );
+					$this->errors->add( 'form-validation', __( 'WP All Import can\'t access your WordPress uploads folder.', 'wp-all-import-pro' ) );
 				}
 				if ( $this->errors->get_error_codes() ) {
 					return $this->errors;
@@ -785,11 +787,11 @@ if ( ! class_exists( 'PMXI_Upload' ) ) {
 				$json_str = str_replace( "\xEF\xBB\xBF", '', $json_str );
 				$is_json  = wp_all_import_is_json( $json_str );
 				if ( is_wp_error( $is_json ) ) {
-					$this->errors->add( 'form-validation', $is_json->get_error_message(), 'wp_all_import_plugin' );
+					$this->errors->add( 'form-validation', $is_json->get_error_message(), 'wp-all-import-pro' );
 				} else {
 					$xml_data = wp_all_import_json_to_xml( json_decode( $json_str, true ) );
 					if ( empty( $xml_data ) ) {
-						$this->errors->add( 'form-validation', __( 'Can not import this file. JSON to XML convertation failed.', 'wp_all_import_plugin' ) );
+						$this->errors->add( 'form-validation', __( 'Can not import this file. JSON to XML conversion failed.', 'wp-all-import-pro' ) );
 					} else {
 						$jsontmpname = $this->uploadsPath . '/' . wp_all_import_url_title( wp_unique_filename( $this->uploadsPath, str_replace( 'json', 'xml', basename( $filePath ) ) ) );
 						file_put_contents( $jsontmpname, $xml_data );
@@ -800,7 +802,7 @@ if ( ! class_exists( 'PMXI_Upload' ) ) {
 			} elseif ( preg_match( '%\W(sql)$%i', trim( $this->file ) ) ) {
 
 				if ( $this->uploadsPath === false ) {
-					$this->errors->add( 'form-validation', __( 'WP All Import can\'t access your WordPress uploads folder.', 'wp_all_import_plugin' ) );
+					$this->errors->add( 'form-validation', __( 'WP All Import can\'t access your WordPress uploads folder.', 'wp-all-import-pro' ) );
 				}
 				if ( $this->errors->get_error_codes() ) {
 					return $this->errors;
@@ -828,7 +830,7 @@ if ( ! class_exists( 'PMXI_Upload' ) ) {
 			} elseif ( preg_match( '%\W(xls|xlsx)$%i', trim( $this->file ) ) ) {
 
 				if ( $this->uploadsPath === false ) {
-					$this->errors->add( 'form-validation', __( 'WP All Import can\'t access your WordPress uploads folder.', 'wp_all_import_plugin' ) );
+					$this->errors->add( 'form-validation', __( 'WP All Import can\'t access your WordPress uploads folder.', 'wp-all-import-pro' ) );
 				}
 				if ( $this->errors->get_error_codes() ) {
 					return $this->errors;
@@ -851,7 +853,7 @@ if ( ! class_exists( 'PMXI_Upload' ) ) {
 			} else {
 
 				if ( $this->uploadsPath === false ) {
-					$this->errors->add( 'form-validation', __( 'WP All Import can\'t access your WordPress uploads folder.', 'wp_all_import_plugin' ) );
+					$this->errors->add( 'form-validation', __( 'WP All Import can\'t access your WordPress uploads folder.', 'wp-all-import-pro' ) );
 				}
 				if ( $this->errors->get_error_codes() ) {
 					return $this->errors;
@@ -910,7 +912,7 @@ if ( ! class_exists( 'PMXI_Upload' ) ) {
 				$templateOptions = empty( $decodedTemplates[0] ) ? current( $decodedTemplates ) : $decodedTemplates;
 			}
 
-			$options = ( empty( $templateOptions[0]['options'] ) ) ? false : maybe_unserialize( $templateOptions[0]['options'] );
+			$options = ( empty( $templateOptions[0]['options'] ) ) ? false : \pmxi_maybe_unserialize( $templateOptions[0]['options'] );
 
 			if ( ! empty( $options['root_element'] ) ) {
 				$this->root_element = $options['root_element'];
@@ -936,7 +938,7 @@ if ( ! class_exists( 'PMXI_Upload' ) ) {
 			if ( preg_match( '%\W(csv|txt|dat|psv|tsv)$%i', trim( $filePath ) ) ) { // If CSV file found in archieve
 
 				if ( $this->uploadsPath === false ) {
-					$this->errors->add( 'form-validation', __( 'WP All Import can\'t access your WordPress uploads folder.', 'wp_all_import_plugin' ) );
+					$this->errors->add( 'form-validation', __( 'WP All Import can\'t access your WordPress uploads folder.', 'wp-all-import-pro' ) );
 				}
 
 				include_once PMXI_Plugin::ROOT_DIR . '/libraries/XmlImportCsvParse.php';
@@ -960,13 +962,13 @@ if ( ! class_exists( 'PMXI_Upload' ) ) {
 				$is_json  = wp_all_import_is_json( $json_str );
 
 				if ( is_wp_error( $is_json ) ) {
-					$this->errors->add( 'form-validation', $is_json->get_error_message(), 'wp_all_import_plugin' );
+					$this->errors->add( 'form-validation', $is_json->get_error_message(), 'wp-all-import-pro' );
 				} else {
 
 					$xml_data = wp_all_import_json_to_xml( json_decode( $json_str, true ) );
 
 					if ( empty( $xml_data ) ) {
-						$this->errors->add( 'form-validation', __( 'Can not import this file. JSON to XML convertation failed.', 'wp_all_import_plugin' ) );
+						$this->errors->add( 'form-validation', __( 'Can not import this file. JSON to XML conversion failed.', 'wp-all-import-pro' ) );
 					} else {
 						$jsontmpname = $this->uploadsPath . '/' . wp_all_import_url_title( wp_unique_filename( $this->uploadsPath, str_replace( 'json', 'xml', basename( $filePath ) ) ) );
 						file_put_contents( $jsontmpname, $xml_data );

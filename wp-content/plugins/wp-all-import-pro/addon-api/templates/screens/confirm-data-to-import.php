@@ -16,13 +16,13 @@ use Wpai\AddonAPI\PMXI_Addon_Base;
             <?php
             switch ( $post['update_logic'] ) {
                 case 'full_update':
-                    printf(esc_html__( 'all %s fields', 'wp_all_import_plugin' ), $addon->name());
+                    printf(esc_html__( 'all %s fields', 'wp-all-import-pro' ), $addon->name());
                     break;
                 case 'only':
-                    printf( __( 'only these %s fields : %s', 'wp_all_import_plugin' ), $addon->name(), $post['fields_only_list'] );
+                    printf( __( 'only these %s fields : %s', 'wp-all-import-pro' ), $addon->name(), $post['fields_only_list'] );
                     break;
                 case 'all_except':
-                    printf( __( 'all %s fields except these: %s', 'wp_all_import_plugin' ), $addon->name(), $post['fields_except_list'] );
+                    printf( __( 'all %s fields except these: %s', 'wp-all-import-pro' ), $addon->name(), $post['fields_except_list'] );
                     break;
             } ?>
         </li>

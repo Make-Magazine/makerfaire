@@ -1,5 +1,46 @@
 # Changelog
 
+## 2.1.32 | May 14, 2025
+
+- Removed redundant check for Gravity Perks in preparation for Spellbook.
+- Fixed a scenario where Multi Choice fields would not populate.
+
+## 2.1.31 | May 7, 2025
+
+- Fixed an issue where the submit/next button remained clickable during AJAX requests, potentially causing an infinite loading spinner.
+- Fixed an issue with ACF custom fields and `array` return type.
+- Fixed Live Merge Tags not populating into HTML fields when resuming with a Save & Continue token.
+
+## 2.1.30 | April 24, 2025
+
+- Fixed regression concerning populating from ACF custom fields.
+
+## 2.1.29 | April 23, 2025
+
+- Added support to populate image choices using ACF image field.
+- Fixed an issue where the submit/next button remained clickable during AJAX requests, potentially causing an infinite loading spinner.
+- Fixed an issue where Name or Address fields were not being populated on form load within a Gravity Flow step.
+- Fixed an issue where the label was saved instead of the value for a dynamically populated dropdown field after using the inline edit operator.
+
+## 2.1.28 | April 17, 2025
+
+- Improved support for Multiple Choice and Image Choice fields.
+- Fixed a compatibility issue between GP Populate Anything and GP Advanced Phone Field.
+- Added new `$template` parameter to `GP_Populate_Anything::process_template()` for passing arbitrary string templates.
+
+## 2.1.27 | April 10, 2025
+
+- Fixed an issue where Live Merge Tags in Nested Forms did not populate correctly with Save & Continue enabled.
+- Fixed compatibility regression with GP Conditional Pricing.
+
+## 2.1.26 | April 2, 2025
+
+- Fixed an issue where the placeholder of a dynamically populated dropdown field was duplicated on the GravityView Multi Entry view when using Inline Edit to edit the entry.
+
+## 2.1.25 | March 27, 2025
+
+- Fixed compatibility issue with GravityView DIY layout and `{pricing_fields}` merge tag.
+
 ## 2.1.24 | March 5, 2025
 
 - Added new [`gppa_bypass_populate_field`](https://gravitywiz.com/documentation/gppa_bypass_populate_field/) PHP filter hook.

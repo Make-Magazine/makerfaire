@@ -82,6 +82,7 @@ class Module extends BaseModule {
 				'ai_toggle_favorite_history_item' => [ $this, 'ajax_ai_toggle_favorite_history_item' ],
 				'ai_get_product_image_unification' => [ $this, 'ajax_ai_get_product_image_unification' ],
 				'ai_get_animation' => [ $this, 'ajax_ai_get_animation' ],
+				'ai_get_image_to_image_isolate_objects' => [ $this, 'ajax_ai_get_product_image_unification' ],
 			];
 
 			foreach ( $handlers as $tag => $callback ) {
@@ -1017,10 +1018,6 @@ class Module extends BaseModule {
 			throw new \Exception( 'Missing prompt settings' );
 		}
 
-		if ( ! $app->is_connected() ) {
-			throw new \Exception( 'not_connected' );
-		}
-
 		if ( empty( $data['payload']['mask'] ) ) {
 			throw new \Exception( 'Missing Mask' );
 		}
@@ -1311,7 +1308,21 @@ class Module extends BaseModule {
 			throw new \Exception( 'Not Allowed to Upload images' );
 		}
 
+		$uploads_manager = new \Elementor\Core\Files\Uploads_Manager();
+		if ( $uploads_manager::are_unfiltered_uploads_enabled() ) {
+			Plugin::$instance->uploads_manager->set_elementor_upload_state( true );
+			add_filter( 'wp_handle_sideload_prefilter', [ Plugin::$instance->uploads_manager, 'handle_elementor_upload' ] );
+			add_filter( 'image_sideload_extensions', function( $extensions ) {
+				$extensions[] = 'svg';
+				return $extensions;
+			});
+		}
+
 		$attachment_id = media_sideload_image( $image_url, $parent_post_id, $image_title, 'id' );
+
+		if ( is_wp_error( $attachment_id ) ) {
+			return new \WP_Error( 'upload_error', $attachment_id->get_error_message() );
+		}
 
 		if ( ! empty( $attachment_id['error'] ) ) {
 			return new \WP_Error( 'upload_error', $attachment_id['error'] );
@@ -1397,7 +1408,9 @@ class Module extends BaseModule {
 	}
 
 	public function ajax_ai_get_product_image_unification( $data ): array {
-		$data['editor_post_id'] = $data['payload']['postId'];
+		if ( ! empty( $data['payload']['postId'] ) ) {
+			$data['editor_post_id'] = $data['payload']['postId'];
+		}
 		$this->verify_upload_permissions( $data );
 
 		$app = $this->get_ai_app();
@@ -1420,6 +1433,7 @@ class Module extends BaseModule {
 		$result = $app->get_unify_product_images( [
 			'promptSettings' => $data['payload']['settings'],
 			'attachment_id' => $data['payload']['image']['id'],
+			'featureIdentifier' => $data['payload']['featureIdentifier'] ?? '',
 		], $context, $request_ids );
 
 		$this->throw_on_error( $result );

@@ -42,12 +42,26 @@ const toggleSubmitButton = ($form: JQuery, disabled: boolean): void => {
 			e.preventDefault();
 			return false;
 		});
+		getSubmitButton($form)
+			.prop('disabled', true)
+			.attr('inert', 'true')
+			.css('pointer-events', 'none'); // Force unclickable.
 	} else {
 		$form.off('submit.gppa').removeClass(formClass);
+		getSubmitButton($form)
+			.prop('disabled', false)
+			.removeAttr('inert')
+			.css('pointer-events', ''); // Reset pointer events.
 	}
-
-	getSubmitButton($form).prop('disabled', disabled);
 };
+
+// Ensure submit button is not disabled when gf_input_change is fired if form has 'gppa-navigation-disabled'.
+window.gform.addAction('gform_input_change', (_elem: any, formId: any) => {
+	const $form = jQuery(`#gform_${formId}`);
+	if ($form.hasClass('gppa-navigation-disabled')) {
+		disableSubmitButton($form);
+	}
+});
 
 const disableSubmitButton = ($form: JQuery): void =>
 	toggleSubmitButton($form, true);

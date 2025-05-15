@@ -17,12 +17,16 @@ export function onSwitcherChange(switcher) {
 
     parent.classList.add("active");
     target.style.display = "block";
+
+    container.classList.add(`is-switcher-${switcher.id}`);
   } else {
     const clearEl = target.querySelector(".clear-on-switch");
     if (clearEl) clearEl.value = "";
 
     parent.classList.remove("active");
     target.style.display = "none";
+
+    container.classList.remove(`is-switcher-${switcher.id}`);
   }
 }
 

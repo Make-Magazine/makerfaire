@@ -3,8 +3,8 @@ Contributors: wpmanageninja, techjewel, adreastrian, heera, csesumonpro, sakibmd
 Tags: Table, table builder, datatable, tables, spreadsheet
 Requires at least: 6.0
 Requires PHP: 7.4
-Tested up to: 6.7
-Stable tag: 5.0.16
+Tested up to: 6.8
+Stable tag: 5.0.18
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -406,7 +406,26 @@ Ninja Tables [customer support](https://wpmanageninja.com/support-tickets/#/) te
 == Changelog ==
 We released several updates for Ninja Tables in the years of development. These include improvements to the existing features and some wonderful additions to help you design tables more effectively.
 
-### What's New on 5.0.16?
+### What's New on 5.0.18?
+
+= 5.0.18 (Date: April 16, 2025) =
+* Fixes: Text domain loading issue.
+* Improved: Rendering of the `nt_icon` and `nt_ratings` shortcodes.
+* Security: Applied important security patches
+
+= 5.0.17 (Date: April 09, 2025) =
+* Update: Ninja Tables Framework v2.10.41
+* Update: License API endpoint
+* Security: Updated Framework Library
+* Added: First column sticky option
+* Fixes: Hide empty items on responsive breakpoint issue
+* Fixes: Order by date column issue
+* Fixes: Colspan issue in frontend editing
+* Fixes: Multi-select dropdown filter last item disappear issue on mobile
+* Fixes: Clear all multi-select filter issue on mobile
+* Fixes: Show time issue in frontend editing
+* Fixes: Formatted text issue in drag & drop table
+* Fixes: Duplicate td id issue in drag & drop table
 
 = 5.0.16 (Date: January 01, 2025) =
 * Fixes: Csv & google sheet import XSS issue

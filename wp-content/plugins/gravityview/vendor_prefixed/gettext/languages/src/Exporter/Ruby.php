@@ -2,7 +2,7 @@
 /**
  * @license MIT
  *
- * Modified by gravityview on 14-March-2025 using {@see https://github.com/BrianHenryIE/strauss}.
+ * Modified by gravityview on 25-April-2025 using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\GravityView\Foundation\ThirdParty\Gettext\Languages\Exporter;
@@ -22,9 +22,9 @@ class Ruby extends Exporter
     /**
      * {@inheritdoc}
      *
-     * @see \GravityKit\GravityView\Foundation\ThirdParty\Gettext\Languages\Exporter\Exporter::toStringDo()
+     * @see \GravityKit\GravityView\Foundation\ThirdParty\Gettext\Languages\Exporter\Exporter::toStringDoWithOptions()
      */
-    protected static function toStringDo($languages)
+    protected static function toStringDoWithOptions($languages, array $options)
     {
         $lines = array();
         $lines[] = 'PLURAL_RULES = {';

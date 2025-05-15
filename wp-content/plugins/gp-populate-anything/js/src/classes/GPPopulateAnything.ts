@@ -276,13 +276,9 @@ export default class GPPopulateAnything {
 					return;
 				}
 
-				const $el = $(
-					/*
-					 * Fallback to event.currentTarget if event.target is null. Seeing this on CircleCI with one
-					 * specific test, unable to reproduce locally, but figured it's worth putting in here.
-					 */
-					event.target?.name ? event.target : event.currentTarget
-				);
+				// It's important to not use currentTarget here, otherwise elements that were not interacted with by
+				// the user can cause some bizarre reloading behavior, especially with GPCP.
+				const $el = $(event.target);
 
 				const inputName = $el.attr('name');
 
@@ -620,7 +616,7 @@ export default class GPPopulateAnything {
 					return;
 				}
 
-				if (!currentPage.isUpdated || !currentPage.isVisible) {
+				if (!currentPage.isVisible) {
 					return;
 				}
 

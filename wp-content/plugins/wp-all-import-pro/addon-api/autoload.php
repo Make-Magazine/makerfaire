@@ -28,7 +28,9 @@ class PMXI_Addon_Autoloader {
     }
 
     public function autoload($class) {
-        if (!str_contains($class, 'PMXI_Addon_')) return;
+		if ( strpos( $class, 'PMXI_Addon_' ) === false ) {
+			return;
+		}
 
         $parts = explode('\\', $class);
         $className = end($parts);

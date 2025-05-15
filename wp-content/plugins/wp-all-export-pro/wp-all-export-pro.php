@@ -3,7 +3,7 @@
 Plugin Name: WP All Export Pro
 Plugin URI: http://www.wpallimport.com/export/
 Description: Export any post type to a CSV or XML file. Edit the exported data, and then re-import it later using WP All Import.
-Version: 1.9.3
+Version: 1.9.8
 Author: Soflyy
 */
 
@@ -46,7 +46,7 @@ if (class_exists('PMXE_Plugin') and PMXE_EDITION == "free") {
      */
     define('PMXE_PREFIX', 'pmxe_');
 
-    define('PMXE_VERSION', '1.9.3');
+    define('PMXE_VERSION', '1.9.8');
 
     define('PMXE_EDITION', 'paid');
 
@@ -276,6 +276,8 @@ if (class_exists('PMXE_Plugin') and PMXE_EDITION == "free") {
 
             // register autoloading method
             spl_autoload_register(array($this, 'autoload'));
+			
+			require_once 'vendor/autoload.php';
 
             require_once self::ROOT_DIR . '/addon-api/autoload.php';
 
@@ -1256,7 +1258,7 @@ Some of the features you used in WP All Export Pro now require paid add-ons. If 
 	    }
     }
 
-    add_action('admin_init', 'wp_all_export_pro_updater', 0);
+    add_action('plugins_loaded', 'wp_all_export_pro_updater', 0);
 
     // Include the api front controller
     include_once('wpae_api.php');

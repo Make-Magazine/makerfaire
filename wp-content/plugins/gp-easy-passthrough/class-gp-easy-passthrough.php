@@ -592,8 +592,7 @@ class GP_Easy_Passthrough extends GP_Feed_Plugin {
 			$inputs = $field->get_entry_inputs();
 
 			// If field has inputs, add each input to field map.
-			if ( $inputs && $input_type != 'stripe_creditcard' ) {
-
+			if ( $inputs && ! in_array( $input_type, array( 'stripe_creditcard', 'consent' ), true ) ) {
 				// Add checkboxes to the field map.
 				if ( ! empty( $field->choices ) && $field->get_input_type() === 'checkbox' ) {
 					$field_map[] = array(
@@ -650,7 +649,7 @@ class GP_Easy_Passthrough extends GP_Feed_Plugin {
 					$column_index++;
 
 				}
-			} elseif ( ! in_array( $input_type, array( 'fileupload', 'stripe_creditcard' ) ) ) {
+			} elseif ( ! in_array( $input_type, array( 'fileupload', 'stripe_creditcard', 'consent' ) ) ) {
 
 				// Add field to field map.
 				$field_map[] = array(
@@ -1658,12 +1657,14 @@ class GP_Easy_Passthrough extends GP_Feed_Plugin {
 												   && $target_field->get_input_type() === 'checkbox'
 												   && absint( $source_field_id ) === $source_field_id
 												   && absint( $target_field_id ) === $target_field_id;
+						$is_dyn_multiselect      = $target_field->get_input_type() === 'multiselect'
+												   && rgar( $target_field, 'gppa-choices-enabled' );
 					}
 
 					// Get field value.
 					if ( $source_field && ( $is_signature || $is_product_to_product || $is_quiz_to_quiz || $is_survey_to_survey ) ) {
 						$field_value = rgar( $source_entry, $source_field_id );
-					} elseif ( $source_field && $is_checkbox_to_checkbox ) {
+					} elseif ( $source_field && ( $is_checkbox_to_checkbox || $is_dyn_multiselect ) ) {
 						$field_value = array();
 
 						foreach ( $source_entry as $input_key => $value ) {

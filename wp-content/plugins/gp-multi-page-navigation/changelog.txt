@@ -1,6 +1,10 @@
 
 # Changelog
 
+## 1.3 | May 14, 2025
+
+- Added better step validation so that pages which are not valid or visited yet are not marked as complete.
+
 ## 1.2.13 | February 27, 2025
 
 - Added new [`gpmpn_bypass_validation_enabled`](https://gravitywiz.com/documentation/gpmpn_bypass_validation/) PHP filter hook to allow conditional bypassing of form validation.

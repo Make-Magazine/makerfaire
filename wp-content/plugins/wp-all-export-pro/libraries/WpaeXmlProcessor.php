@@ -356,6 +356,8 @@ class WpaeXmlProcessor
     private function checkIfFunctionExists($functionName)
     {
         if (!function_exists($functionName) && $functionName != 'array') {
+			// Log the function name before throwing an exception as it's not always logged as part of the exception.
+	        error_log('User supplied function ' . $functionName . ' does not exist.');
             throw new WpaeMethodNotFoundException($functionName);
         }
     }
@@ -533,6 +535,12 @@ class WpaeXmlProcessor
 
         $sanitizedSnippet = str_replace(WpaeXmlProcessor::SNIPPET_DELIMITER, '"', $sanitizedSnippet);
         $functionName = $this->sanitizeFunctionName($sanitizedSnippet);
+
+		// Failsafe if we no longer have a function to process after sanitizing.
+		if(empty($functionName))
+		{
+			return '';
+		}
 
         $this->checkIfFunctionExists($functionName);
 

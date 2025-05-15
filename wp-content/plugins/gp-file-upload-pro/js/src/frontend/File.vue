@@ -6,7 +6,7 @@
 		              :only-images-allowed="onlyImagesAllowed"/>
 
 		<div class="gpfup__file-info">
-			<div class="gpfup__filename">{{ file.name }}</div>
+			<div class="gpfup__filename" v-html="getFileName(file)"></div>
 			<div class="gpfup__filesize">{{ getSize(file) }}</div>
 
 			<template v-if="!existingFile">
@@ -98,6 +98,21 @@ export default Vue.extend({
 		},
 		isImage: function (file: MOxieFile): boolean {
 			return isImage(file);
+		},
+		getFileName: function (file: MOxieFile): string {
+			/**
+			 * This filter allows to modify the file name markup.
+			 *
+			 * @param {string}     fileName  The file name.
+			 * @param {number}     formId    The form ID.
+			 * @param {number}     fieldId   The field ID.
+			 * @param {MOxieFile}  file      The file object.
+			 *
+			 * @since 1.5.5
+			 */
+			let fileName = window.gform.applyFilters('gpfup_filename_markup', file.name, this.formId, this.fieldId, file);
+
+			return fileName;
 		},
 		deleteFile: function (file: MOxieFile, event: Event): void {
 			try {

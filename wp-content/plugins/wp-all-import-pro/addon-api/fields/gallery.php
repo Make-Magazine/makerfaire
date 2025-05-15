@@ -10,7 +10,7 @@ class PMXI_Addon_Gallery_Field extends PMXI_Addon_Field {
 
     public static function isImage($url) {
         $ext = pmxi_getExtensionFromStr($url);
-        $exts = ['jpeg', 'jpg', 'png', 'gif', 'svg', 'webp'];
+        $exts = explode('|',wp_all_import_supported_image_extensions());
 
         if (in_array($ext, $exts)) return true;
 
@@ -26,7 +26,7 @@ class PMXI_Addon_Gallery_Field extends PMXI_Addon_Field {
         $search_logic = $value['search_logic'] ?? 'by_url';
         $search_in_gallery = empty($value['search_in_media']) ? 0 : 1;
         $only_append_new = $value['only_append_new'] ?? false;
-        $post_type = $data['articleData']['post_type'];
+        $post_type = $data['articleData']['post_type'] ?? false;
 
         $current_ids = currentValue($post_type, $postId, $this->key, []);
 

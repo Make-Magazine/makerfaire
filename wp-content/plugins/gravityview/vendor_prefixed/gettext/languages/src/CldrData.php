@@ -2,7 +2,7 @@
 /**
  * @license MIT
  *
- * Modified by gravityview on 14-March-2025 using {@see https://github.com/BrianHenryIE/strauss}.
+ * Modified by gravityview on 25-April-2025 using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\GravityView\Foundation\ThirdParty\Gettext\Languages;
@@ -311,6 +311,8 @@ class CldrData
             );
             $knownMissingLanguages = array(
                 'guw' => 'Gun',
+                'hnj' => 'Hmong Njua',
+                'lld' => 'Dolomitic Ladin',
                 'nah' => 'Nahuatl',
                 'smi' => 'Sami',
             );

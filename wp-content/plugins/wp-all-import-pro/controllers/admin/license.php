@@ -15,7 +15,7 @@ class PMXI_Admin_License extends PMXI_Controller_Admin {
 		$this->data['addons'] = $addons->get_premium_addons();*/
 
 		$this->data['addons']['PMXI_Plugin'] = array(
-			'title' => __('WP All Import', 'wp_all_import_plugin'),
+			'title' => __('WP All Import', 'wp-all-import-pro'),
 			'active' => (class_exists('PMXI_Plugin') and defined('PMXI_EDITION') and PMXI_EDITION == 'paid')
 		);
 
@@ -40,7 +40,7 @@ class PMXI_Admin_License extends PMXI_Controller_Admin {
 
 				isset( $_POST['pmxi_license_deactivate'] ) and $this->deactivate_licenses();
 
-				wp_redirect(esc_url_raw(add_query_arg('pmxi_nt', urlencode(__('Licenses saved', 'wp_all_import_plugin')), $this->baseUrl))); die();
+				wp_redirect(esc_url_raw(add_query_arg('pmxi_nt', urlencode(__('Licenses saved', 'wp-all-import-pro')), $this->baseUrl))); die();
 			}
 
 		}		

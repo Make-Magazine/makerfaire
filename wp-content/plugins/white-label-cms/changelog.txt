@@ -1,5 +1,8 @@
 == Changelog ==
 
+= 2.7.7 =
+* Minor bug fixes
+
 = 2.7.6 =
 * Minor bug fixes
 

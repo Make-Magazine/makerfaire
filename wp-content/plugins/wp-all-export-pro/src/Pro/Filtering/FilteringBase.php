@@ -278,7 +278,7 @@ abstract class FilteringBase implements FilteringInterface
     public function getExportId(){
         $input  = new \PMXE_Input();
 		// Don't use the GET value if it's a real time export as it is probably wrong.
-	    if( ! (isset(\XmlExportEngine::$exportOptions['do_not_generate_file_on_new_records']) && ! \XmlExportEngine::$exportOptions['do_not_generate_file_on_new_records']) ){
+	    if( ! (isset(\XmlExportEngine::$exportOptions['do_not_generate_file_on_new_records']) &&  \XmlExportEngine::$exportOptions['do_not_generate_file_on_new_records']) ){
 		    $export_id = $input->get('id', 0);
 	    }
 

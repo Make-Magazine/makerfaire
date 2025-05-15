@@ -712,9 +712,3 @@ body.logged-in.epyt-edit-posts .epyt-livestream-advice .epyt-livestream-advice-c
     font-family: sans-serif;
     display: block;
 }
-
-/********* YTVI */
-.ytvi-story-container {
-    display: block;
-    max-width: 100%;
-}

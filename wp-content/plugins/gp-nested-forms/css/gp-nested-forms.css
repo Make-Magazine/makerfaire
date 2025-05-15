@@ -173,8 +173,10 @@
 	/* Hide table headers (but not display: none;, for accessibility) */
 	form:not(.gpnf-disable-responsive-table) .gpnf-nested-entries thead tr {
 		position: absolute;
-		top: -9999px;
-		left: -9999px;
+		clip: rect(1px, 1px, 1px, 1px);
+		overflow: hidden;
+		height: 1px;
+		width: 1px;
 	}
 
 	form:not(.gpnf-disable-responsive-table) .gpnf-nested-entries tr {

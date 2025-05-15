@@ -11,7 +11,7 @@ class CustomFilterController extends Controller
 
     public function index()
     {
-        $tableId          = intval($_REQUEST['table_id']);
+        $tableId          = intval(Arr::get($_REQUEST, 'table_id'));
         $table_filters    = $this->getCustomFilters($tableId, array());
         $formattedFilters = array();
 
@@ -22,7 +22,7 @@ class CustomFilterController extends Controller
 
         $filterStyling = get_post_meta($tableId, '_ninja_custom_filter_styling', true);
 
-        if ( ! $filterStyling) {
+        if (!$filterStyling) {
             $filterStyling = array();
         }
 
@@ -43,17 +43,17 @@ class CustomFilterController extends Controller
 
     public function store()
     {
-        $tableId = intval($_REQUEST['table_id']);
-        $filters = wp_unslash(Arr::get($_REQUEST, 'ninja_filters', []));
+        $tableId = intval(Arr::get($_REQUEST, 'table_id'));
+        $filters = wp_unslash(ninja_tables_sanitize_array(Arr::get($_REQUEST, 'ninja_filters', [])));
         $this->updateFilters($tableId, $filters);
 
         if (isset($_REQUEST['filter_styling'])) {
-            $filterAppearance = wp_unslash($_REQUEST['filter_styling']);
+            $filterAppearance = wp_unslash(ninja_tables_sanitize_array(Arr::get($_REQUEST, 'filter_styling')));
             update_post_meta($tableId, '_ninja_custom_filter_styling', $filterAppearance);
         }
 
         if (isset($_REQUEST['table_buttons'])) {
-            $tableButtons = wp_unslash($_REQUEST['table_buttons']);
+            $tableButtons = wp_unslash(ninja_tables_sanitize_array(Arr::get($_REQUEST, 'table_buttons')));
             update_post_meta($tableId, '_ninja_custom_table_buttons', $tableButtons);
         }
 

@@ -6,21 +6,18 @@ class PMXI_Addon_Parser {
     use Singleton;
 
     public PMXI_Addon_Base $addon;
-    public array $data;
+    public array $options;
+    public array $data = [];
     public array $defaults;
 
     public function __construct(
         $addon,
-        $data,
+        $options,
         $defaults
     ) {
         $this->addon    = $addon;
-        $this->data     = $data;
+        $this->options  = $options;
         $this->defaults = $defaults;
-    }
-
-    public function getValueFromXml( $xml, $cxpath, $xpath, $file ) {
-        return \XmlImportParser::factory( $xml, $cxpath, (string) $xpath, $file )->parse();
     }
 
     public function transformArray( $xml, $cxpath, $value ) {
@@ -42,7 +39,7 @@ class PMXI_Addon_Parser {
      * Extracted from https://github.com/soflyy/wp-all-import-rapid-addon/blob/master/rapid-addon.php#L985
      */
     public function transform() {
-        extract( $this->data );
+        extract( $this->options );
 
         $data   = [];
         $slug   = $this->addon->slug;

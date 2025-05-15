@@ -1,9 +1,9 @@
 <?php
 /*
-  Plugin Name: YouTube WordPress Plugin Pro by Embed Plus
+  Plugin Name: Embed Plus for YouTube Pro
   Plugin URI: https://www.embedplus.com/dashboard/pro-easy-video-analytics.aspx
   Description: YouTube Embed Plugin. Embed a YouTube channel gallery, playlist gallery, YouTube live stream. Lite embeds with defer JavaScript and facade options
-  Version: 14.2.1.2
+  Version: 14.2.2.1
   Author: Embed Plus for YouTube Team
   Author URI: https://www.embedplus.com
   Requires at least: 4.5
@@ -11,7 +11,7 @@
 
 /*
   Embed Plus Plugin for YouTube Pro
-  Copyright (C) 2023 EmbedPlus.com
+  Copyright (C) 2025 EmbedPlus.com
 
  */
 
@@ -22,7 +22,7 @@ class YouTubePrefsPro
 
     public static $folder_name = 'youtube-embed-plus-pro';
     public static $curltimeout = 30;
-    public static $version = '14.2.1.2';
+    public static $version = '14.2.2.1';
     public static $opt_version = 'version';
     public static $opt_free_migrated = 'free_migrated';
     public static $optembedwidth = null;
@@ -159,41 +159,6 @@ class YouTubePrefsPro
     public static $dft_gdpr_consent_message = '';
     public static $no_streams = 'NO STREAMS';
     ///////////////////////////////////////////////////////////////////////////////////////////////////
-    public static $vi_default_date = ''; // date('Y-m-d H:i:s', strtotime('2000-01-01'));
-    public static $vi_last_category_update_interval = '1 hour';
-    public static $vi_script_tag_done = false;
-    public static $vi_dft_js_settings = array(
-        //"adUnitType" => "NATIVE_VIDEO_UNIT",
-        "divId" => "ytvi_story_container",
-        "language" => "en-us",
-        "iabCategory" => "",
-        "font" => "Arial",
-        "fontSize" => 12,
-        "keywords" => "",
-        "textColor" => "#000000",
-        "backgroundColor" => "#ffffff",
-        "vioptional1" => "",
-        "vioptional2" => "",
-        "vioptional3" => "",
-        "float" => true,
-        //"logoUrl" => "",
-        "dfpSupport" => true,
-        "sponsoredText" => "",
-        "poweredByText" => ""
-    );
-    public static $opt_vi_active = 'vi_active';
-    public static $opt_vi_hide_monetize_tab = 'vi_hide_monetize_tab';
-    public static $opt_vi_endpoints = 'vi_endpoints';
-    public static $opt_vi_token = 'vi_token';
-    public static $opt_vi_last_login = 'vi_last_login';
-    public static $opt_vi_last_category_update = 'vi_last_category_update';
-    public static $opt_vi_adstxt = 'vi_adstxt';
-    public static $opt_vi_js_settings = 'vi_js_settings';
-    public static $opt_vi_js_script = 'vi_js_script';
-    public static $opt_vi_js_posttypes = 'vi_js_posttypes';
-    public static $opt_vi_js_position = 'vi_js_position';
-    public static $opt_vi_show_gdpr_authorization = 'vi_show_gdpr_authorization';
-    public static $opt_vi_show_privacy_button = 'vi_show_privacy_button';
     ///////////////////////////////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -217,7 +182,6 @@ class YouTubePrefsPro
         self::$boilerplate_api_error_message = __(' Please make sure you performed the <a href="https://www.youtube.com/watch?v=ZCfrNvu6nMc" target="_blank">steps in this video</a> to create and save a proper server API key.', 'text_domain');
         self::$dft_gdpr_consent_message = __('<p><strong>Please accept YouTube cookies to play this video.</strong> By accepting you will be accessing content from YouTube, a service provided by an external third party.</p><p><a href="https://policies.google.com/privacy" target="_blank">YouTube privacy policy</a></p><p>If you accept this notice, your choice will be saved and the page will refresh.</p>', 'text_domain');
 
-        self::$vi_default_date = date('Y-m-d H:i:s', strtotime('2000-01-01'));
         register_deactivation_hook(__FILE__, array(self::class, 'on_deactivation'));
         add_action('admin_init', array(self::class, 'check_double_plugin_warning'));
         add_action('admin_notices', array(self::class, 'check_free_version'));
@@ -337,7 +301,6 @@ class YouTubePrefsPro
             add_action("wp_footer", array(self::class, 'livestream_advice_template'));
             
             /////////////////////////////////////
-            include_once(EPYTVI_INCLUDES_PATH . 'vi_actions.php');
             include_once(EPYTGB_INCLUDES_PATH . 'gutenberg_hooks.php');
         }
     }
@@ -1537,22 +1500,6 @@ class YouTubePrefsPro
                         }
                         ?>
                     </div>
-                    <?php
-                    if (false && current_user_can('manage_options') && !self::vi_logged_in() && !(bool) (self::$alloptions[self::$opt_vi_hide_monetize_tab]))
-                    {
-                        ?>
-                        <h3 id="h3_vi_monetize"> <a href="#"> Earn money embedding videos. </a></h3>
-                        <div class="h3_vi_monetize-content">
-                            <div class="vi-registration-box">
-                                <?php
-                                include_once(EPYTVI_INCLUDES_PATH . 'vi_registration_form.php');
-                                include_once(EPYTVI_INCLUDES_PATH . 'vi_login_success.php');
-                                ?>
-                            </div>
-                        </div>
-                        <?php
-                    }
-                    ?>
                     <h3 class="header-go"> <a href="<?php echo admin_url('admin.php?page=youtube-ep-analytics-dashboard'); ?>"><?php _e('Check my performance, blocked countries, deleted videos, etc.', 'text_domain'); ?> </a></h3>
                     <div class="header-go-content"></div>
 
@@ -2094,12 +2041,6 @@ class YouTubePrefsPro
         ?>
         <a href="<?php echo esc_attr($wizhref); ?>" class="thickbox button ytprefs_media_link" id="ytprefs_wiz_button" title="<?php _e('Visual YouTube Search Tool and Wizard - For easier embedding', 'text_domain'); ?>"><span></span> <?php _e('YouTube', 'text_domain'); ?></a>
         <?php
-        if (current_user_can('manage_options') && self::vi_logged_in())
-        {
-            ?>
-            <a class="button ytprefs_vi_embed_shortcode" id="ytprefs_wiz_button_vi" title="Embed vi video ad"><span></span> Video Ad</a>
-            <?php
-        }
     }
 
     public static function check_double_plugin_warning()
@@ -2141,7 +2082,7 @@ class YouTubePrefsPro
                             echo '<a class="epxout">&times;</a>';
                         }
                         ?>
-                        <?php _e('Seems like you have two different YouTube plugins by the EmbedPlus Team installed', 'text_domain'); ?>: <b><img alt="<?php _e('YouTube Icon', 'text_domain'); ?>" src="<?php echo plugins_url('images/youtubeicon16.png', __FILE__) ?>" /> <?php _e('YouTube', 'text_domain'); ?></b> <?php _e('and', 'text_domain'); ?> <b><img alt="<?php _e('YouTube Icon', 'text_domain'); ?>" src="<?php echo plugins_url('images/btn_embedpluswiz.png', __FILE__) ?>" /> <?php _e('Advanced YouTube Embed.', 'text_domain'); ?></b> <?php _e('We strongly suggest keeping only the one you prefer, so that they don\'t conflict with each other while trying to create your embeds.', 'text_domain'); ?>
+                        <?php _e('Seems like you have two different YouTube plugins by the EmbedPlus Team installed', 'text_domain'); ?>: <b><img alt="<?php _e('YouTube Icon', 'text_domain'); ?>" src="<?php echo plugins_url('images/youtubeicon16.png', __FILE__) ?>" /> <?php _e('Embed Plus for YouTube', 'text_domain'); ?></b> <?php _e('and', 'text_domain'); ?> <b><img alt="<?php _e('YouTube Icon', 'text_domain'); ?>" src="<?php echo plugins_url('images/btn_embedpluswiz.png', __FILE__) ?>" /> <?php _e('Advanced YouTube Embed.', 'text_domain'); ?></b> <?php _e('We strongly suggest keeping only the one you prefer, so that they don\'t conflict with each other while trying to create your embeds.', 'text_domain'); ?>
                     </p>
                 </div>
 
@@ -2352,20 +2293,6 @@ class YouTubePrefsPro
         $_onboarded = 0;
         $_old_script_method = 0;
 
-        $_vi_active = 0;
-        $_vi_hide_monetize_tab = 0;
-        $_vi_endpoints = '';
-        $_vi_token = '';
-        $_vi_last_login = self::$vi_default_date;
-        $_vi_last_category_update = self::$vi_default_date;
-        $_vi_adstxt = '';
-        $_vi_js_settings = self::$vi_dft_js_settings;
-        $_vi_js_script = '';
-        $_vi_js_posttypes = array();
-        $_vi_js_position = 'top';
-        $_vi_show_gdpr_authorization = 1;
-        $_vi_show_privacy_button = 0;
-
         $_free_migrated = 0;
 
         if ($arroptions == false || (is_array($arroptions) && isset($arroptions[self::$opt_free_migrated]) && $arroptions[self::$opt_free_migrated] == 0))
@@ -2496,20 +2423,6 @@ class YouTubePrefsPro
             $_show_pointer = self::tryget($arroptions, self::$opt_show_pointer, $_show_pointer);
             $_onboarded = 0; // self::tryget($arroptions, self::$opt_onboarded, $_onboarded);
 
-            $_vi_active = self::tryget($arroptions, self::$opt_vi_active, $_vi_active);
-            $_vi_hide_monetize_tab = self::tryget($arroptions, self::$opt_vi_hide_monetize_tab, $_vi_hide_monetize_tab);
-            $_vi_endpoints = self::tryget($arroptions, self::$opt_vi_endpoints, $_vi_endpoints);
-            $_vi_token = self::tryget($arroptions, self::$opt_vi_token, $_vi_token);
-            $_vi_last_login = self::tryget($arroptions, self::$opt_vi_last_login, $_vi_last_login);
-            $_vi_last_category_update = self::tryget($arroptions, self::$opt_vi_last_category_update, $_vi_last_category_update);
-            $_vi_adstxt = self::tryget($arroptions, self::$opt_vi_adstxt, $_vi_adstxt);
-            $_vi_js_settings = self::tryget($arroptions, self::$opt_vi_js_settings, self::$vi_dft_js_settings);
-            $_vi_js_script = self::tryget($arroptions, self::$opt_vi_js_script, $_vi_js_script);
-            $_vi_js_posttypes = self::tryget($arroptions, self::$opt_vi_js_posttypes, $_vi_js_posttypes);
-            $_vi_js_position = self::tryget($arroptions, self::$opt_vi_js_position, $_vi_js_position);
-            $_vi_show_gdpr_authorization = self::tryget($arroptions, self::$opt_vi_show_gdpr_authorization, $_vi_show_gdpr_authorization);
-            $_vi_show_privacy_button = self::tryget($arroptions, self::$opt_vi_show_privacy_button, $_vi_show_privacy_button);
-
             $_free_migrated = self::tryget($arroptions, self::$opt_free_migrated, 0);
         }
         else
@@ -2615,19 +2528,6 @@ class YouTubePrefsPro
             self::$opt_show_pointer => $_show_pointer,
             self::$opt_onboarded => $_onboarded,
             self::$opt_old_script_method => $_old_script_method,
-            self::$opt_vi_active => $_vi_active,
-            self::$opt_vi_hide_monetize_tab => $_vi_hide_monetize_tab,
-            self::$opt_vi_endpoints => $_vi_endpoints,
-            self::$opt_vi_token => $_vi_token,
-            self::$opt_vi_last_login => $_vi_last_login,
-            self::$opt_vi_last_category_update => $_vi_last_category_update,
-            self::$opt_vi_adstxt => $_vi_adstxt,
-            self::$opt_vi_js_settings => $_vi_js_settings,
-            self::$opt_vi_js_script => $_vi_js_script,
-            self::$opt_vi_js_posttypes => $_vi_js_posttypes,
-            self::$opt_vi_js_position => $_vi_js_position,
-            self::$opt_vi_show_gdpr_authorization => $_vi_show_gdpr_authorization,
-            self::$opt_vi_show_privacy_button => $_vi_show_privacy_button,
             self::$opt_free_migrated => $_free_migrated
         );
 
@@ -4365,28 +4265,26 @@ class YouTubePrefsPro
     {
         if (self::$alloptions[self::$opt_pro] && strlen(trim(self::$alloptions[self::$opt_pro])) > 0)
         {
-            self::$admin_page_hooks[] = add_menu_page(__('YouTube Settings', 'text_domain'), __('YouTube PRO', 'text_domain'), 'manage_options', 'youtube-my-preferences', array(self::class, 'ytprefs_show_options'), 'dashicons-video-alt3', '10.000392854349');
+            self::$admin_page_hooks[] = add_menu_page(__('EmbedPlus for YouTube Settings', 'text_domain'), __('YouTube PRO', 'text_domain'), 'manage_options', 'youtube-my-preferences', array(self::class, 'ytprefs_show_options'), 'dashicons-video-alt3', '10.000392854349');
             self::$admin_page_hooks[] = add_submenu_page('youtube-my-preferences', '', '', 'manage_options', 'youtube-my-preferences', array(self::class, 'ytprefs_show_options'));
-            self::$admin_page_hooks[] = add_submenu_page('youtube-my-preferences', __('YouTube Analytics Dashboard', 'text_domain'), '<span class="wp-menu-image dashicons-before dashicons-chart-line"></span> ' . __('PRO Analytics', 'text_domain'), 'manage_options', 'youtube-ep-analytics-dashboard', array(self::class, 'epstats_show_options'));
-
-            include_once(EPYTVI_INCLUDES_PATH . 'vi_admin_menu.php');
+            self::$admin_page_hooks[] = add_submenu_page('youtube-my-preferences', __('Analytics Dashboard', 'text_domain'), '<span class="wp-menu-image dashicons-before dashicons-chart-line"></span> ' . __('PRO Analytics', 'text_domain'), 'manage_options', 'youtube-ep-analytics-dashboard', array(self::class, 'epstats_show_options'));
         }
         else
         {
-            self::$admin_page_hooks[] = add_menu_page(__('YouTube Settings', 'text_domain'), __('YouTube', 'text_domain'), 'manage_options', 'youtube-my-preferences', array(self::class, 'ytprefs_show_options'), 'dashicons-video-alt3', '10.000392854349');
+            self::$admin_page_hooks[] = add_menu_page(__('EmbedPlus for YouTube Settings', 'text_domain'), __('YouTube', 'text_domain'), 'manage_options', 'youtube-my-preferences', array(self::class, 'ytprefs_show_options'), 'dashicons-video-alt3', '10.000392854349');
             self::$admin_page_hooks[] = add_submenu_page('youtube-my-preferences', '', '', 'manage_options', 'youtube-my-preferences', array(self::class, 'ytprefs_show_options'));
         }
         self::$admin_page_hooks[] = add_submenu_page('youtube-my-preferences_nomenu', __('YouTube Posts', 'text_domain'), __('YouTube Posts', 'text_domain'), 'manage_options', 'youtube-ep-glance', array(self::class, 'glance_page'));
-        self::$admin_page_hooks[] = self::$wizard_hook = add_submenu_page('youtube-my-preferences_nomenu', __('YouTube Wizard', 'text_domain'), __('YouTube Wizard', 'text_domain'), 'edit_posts', 'youtube-ep-wizard', array(self::class, 'wizard'));
-        self::$admin_page_hooks[] = self::$onboarding_hook = add_submenu_page('youtube-my-preferences_nomenu', __('YouTube Setup', 'text_domain'), __('YouTube Setup', 'text_domain'), 'manage_options', 'youtube-ep-onboarding', array(self::class, 'ytprefs_show_onboarding'));
+        self::$admin_page_hooks[] = self::$wizard_hook = add_submenu_page('youtube-my-preferences_nomenu', __('EmbedPlus for YouTube Wizard', 'text_domain'), __('Wizard', 'text_domain'), 'edit_posts', 'youtube-ep-wizard', array(self::class, 'wizard'));
+        self::$admin_page_hooks[] = self::$onboarding_hook = add_submenu_page('youtube-my-preferences_nomenu', __('EmbedPlus for YouTube Setup', 'text_domain'), __('Setup', 'text_domain'), 'manage_options', 'youtube-ep-onboarding', array(self::class, 'ytprefs_show_onboarding'));
     }
 
     public static function remove_stats_validation()
     {
         if (isset(self::$alloptions[self::$opt_pro]) && strlen(self::$alloptions[self::$opt_pro]) > 8)
         {
-            $stats_validate_file = self::vi_get_home_path() . 'embedplus' . strtolower(self::$alloptions[self::$opt_pro]) . '.html';
-            $stats_validate_file_upper = self::vi_get_home_path() . 'embedplus' . strtoupper(self::$alloptions[self::$opt_pro]) . '.html';
+            $stats_validate_file = self::epstats_get_home_path() . 'embedplus' . strtolower(self::$alloptions[self::$opt_pro]) . '.html';
+            $stats_validate_file_upper = self::epstats_get_home_path() . 'embedplus' . strtoupper(self::$alloptions[self::$opt_pro]) . '.html';
             if (file_exists($stats_validate_file) && is_writable($stats_validate_file))
             {
                 @unlink($stats_validate_file);
@@ -4406,6 +4304,27 @@ class YouTubePrefsPro
         {
             return true;
         }
+    }
+    
+    public static function epstats_get_home_path()
+    {
+        $abs_root = get_home_path();
+        if (strlen($abs_root) <= 1)
+        {
+            $abs_root = trailingslashit(str_replace('\\', '/', ABSPATH));
+            $url_path = parse_url(site_url());
+            if (isset($url_path['path']))
+            {
+                $relpath = trailingslashit($url_path['path']);
+                $relpath_length = strlen($relpath);
+                $path_intersect = substr($abs_root, -$relpath_length);
+                if ($path_intersect === $relpath)
+                {
+                    $abs_root = trailingslashit(substr($abs_root, 0, strlen($abs_root) - $relpath_length));
+                }
+            }
+        }
+        return $abs_root;
     }
 
     public static function epstats_show_options()
@@ -4830,11 +4749,7 @@ class YouTubePrefsPro
         $new_pointer_content = '<h3>' . __('New Update') . '</h3>'; // ooopointer
 
         $new_pointer_content .= '<p>'; // ooopointer
-        $new_pointer_content .= "This update addresses issues with the channel-based automatic live stream detection/loading feature for the Pro version, and provides better compatibility with PHP 8.3+ for both Free and Pro versions.";
-        if (self::vi_logged_in())
-        {
-            $new_pointer_content .= "<br><br><strong>Note:</strong> You are currently logged into the vi intelligence feature. vi support is being deprecated in the next version, so we recommend taking the vi ads down from your site. Please contact ext@embedplus.com for questions.";
-        }
+        $new_pointer_content .= "This version fixes a bug in the Analytics Dashboard feature for Pro versions.";
         $new_pointer_content .= '</p>';
 
         return array(
@@ -4864,23 +4779,6 @@ class YouTubePrefsPro
             <a class="nav-tab" href="#jumpwiz">Wizard</a>
             <a class="nav-tab" href="#jumpgallery">Galleries</a>
             <a class="nav-tab" href="#jumpprosettings">PRO Settings</a>
-            <?php
-            if (false)//(!(bool) (self::$alloptions[self::$opt_vi_hide_monetize_tab]) && self::vi_ever_logged_in())
-            {
-                if (self::vi_logged_in())
-                {
-                    ?>
-                    <a class="nav-tab href-link nav-tab-invalid" href="<?php echo admin_url('admin.php?page=youtube-ep-vi') ?>">Monetize</a>
-                    <?php
-                }
-                else
-                {
-                    ?>
-                    <a class="nav-tab nav-tab-invalid" href="#jumpmonetize">Monetize</a>
-                    <?php
-                }
-            }
-            ?>
             <a class="nav-tab" href="#jumpperformance">Performance</a>
             <a class="nav-tab" href="#jumpcompat">Compatibility</a>
             <a class="nav-tab" href="#jumpprivacy">Security & Privacy</a>
@@ -5162,7 +5060,7 @@ class YouTubePrefsPro
         </style>        
 
         <div class="wrap wrap-ytprefs">
-            <h1><span class="dashicons-before dashicons-video-alt3"></span> <?php echo __('YouTube Settings') ?></h1>
+            <h1><span class="dashicons-before dashicons-video-alt3"></span> <?php echo __('EmbedPlus for YouTube Settings') ?></h1>
             <?php
             self::settings_nav();
             ?>
@@ -5661,10 +5559,6 @@ class YouTubePrefsPro
                                     Show admin notice of new plugin features after updates.
                                 </label>
                             </p>
-                            <p class="<?php echo self::vi_logged_in() || !empty($all[self::$opt_vi_active]) || !self::vi_ever_logged_in() ? 'hidden' : '' ?>">
-                                <input name="<?php echo self::$opt_vi_hide_monetize_tab; ?>" id="<?php echo self::$opt_vi_hide_monetize_tab; ?>" <?php checked($all[self::$opt_vi_hide_monetize_tab], 1); ?> type="checkbox" class="checkbox">
-                                <label for="<?php echo self::$opt_vi_hide_monetize_tab; ?>"><b class="chktitle">Hide "Monetize" Feature:</b> (deprecated) Hide the tab(s) for the deprecated video intelligence feature.</label>
-                            </p>
                             <div id="not_live_content_scroll" class="p">
                                 <br>
                                 <h3>Live Stream Options <sup class="orange">new</sup></h3>
@@ -5731,7 +5625,7 @@ class YouTubePrefsPro
                         <p>
                             <input name="<?php echo self::$opt_restrict_wizard; ?>" id="<?php echo self::$opt_restrict_wizard; ?>" <?php checked($all[self::$opt_restrict_wizard], 1); ?> type="checkbox" class="checkbox">
                             <label for="<?php echo self::$opt_restrict_wizard; ?>">
-                                <b class="chktitle">Restrict Wizard Button:</b> Select which roles can use the YouTube wizard button. For example, you may wish to hide the button from contributors submitting content on the front end.
+                                <b class="chktitle">Restrict Wizard Button:</b> Select which roles can use the EmbedPlus for YouTube wizard button. For example, you may wish to hide the button from contributors submitting content on the front end.
                             </label>
                             <br>
                             <span id="box_restrict_wizard" class="chx">
@@ -5855,7 +5749,7 @@ class YouTubePrefsPro
                         <h3>Classic Editor</h3>
                         <img class="wiztab-screenshots" src="<?php echo plugins_url('images/ss-wiz-classic.png', __FILE__) ?>">
                         <p>
-                            Simply click the YouTube wizard button found above 
+                            Simply click the EmbedPlus for YouTube wizard button found above 
                             your post editor to start the wizard (see image to the right to locate this button).  There, you'll have several options for different types of embeds.
                             Each embed code will have an "Insert Into Editor" button that you can click to directly embed the desired video link to your post without having to copy and paste.
                         </p>
@@ -5863,7 +5757,7 @@ class YouTubePrefsPro
                         <h3>Widgets</h3>
                         <img class="wiztab-screenshots" src="<?php echo plugins_url('images/ss-wiz-widget.png', __FILE__) ?>">
                         <p>
-                            To insert a video in a widget area, use the Text widget that comes with WordPress. Simply click the YouTube wizard button found above 
+                            To insert a video in a widget area, use the Text widget that comes with WordPress. Simply click the EmbedPlus for YouTube wizard button found above 
                             the widget textbox to start the wizard (see image to the right to locate this button).  There, you'll have several options for different types of embeds.
                             Each embed code will have an "Insert Into Editor" button that you can click to directly embed the desired video link to your post without having to copy and paste.
                         </p>
@@ -5871,7 +5765,7 @@ class YouTubePrefsPro
                         <h3>Gutenberg Block Editor</h3>
                         <img class="wiztab-screenshots" src="<?php echo plugins_url('images/ss-wiz-gbblock.png', __FILE__) ?>">
                         <p>
-                            Click on the (+) sign for the block editor list. The YouTube Wizard block is located under the "Embeds" category (make sure you choose "YouTube <strong>Wizard</strong>" not "YouTube").
+                            Click on the (+) sign for the block editor list. The EmbedPlus for YouTube Wizard block is located under the "Embeds" category (make sure you choose "YouTube <strong>Wizard</strong>" not "YouTube").
                             Then your page will show a placeholder where you can launch the wizard. In the wizard, you'll have several options for different types of embeds.
                             Each embed code will have an "Insert Into Editor" button that you can click to directly embed the desired video link to your post without having to copy and paste.
                             You'll also be able to preview and interact with your embed without having to view the page on the front end.
@@ -6419,37 +6313,6 @@ class YouTubePrefsPro
                         </div>
 
                     </section>
-                    <?php
-                    if (!(bool) (self::$alloptions[self::$opt_vi_hide_monetize_tab]))
-                    {
-                        ?>
-                        <section class="pattern" id="jumpmonetize">
-
-                            <?php
-                            //self::vi_monetize_title();
-                            if (self::vi_script_setup_done())
-                            {
-                                echo '<h2>';
-                                self::vi_print_toggle_button();
-                                echo '</h2>';
-                            }
-                            ?>
-
-                            <?php
-                            if (!self::vi_logged_in())
-                            {
-                                echo '<div class="vi-registration-box">';
-                                include_once(EPYTVI_INCLUDES_PATH . 'vi_registration_form.php');
-                                include_once(EPYTVI_INCLUDES_PATH . 'vi_login_success.php');
-                                echo '</div>';
-                            }
-                            else
-                            {
-                                include_once(EPYTVI_INCLUDES_PATH . 'vi_login_complete.php');
-                            }
-                            ?>
-                        </section>
-                    <?php } ?>
                     <section class="pattern" id="jumpcompat">
                         <h2>Compatibility Settings</h2>
                         <p>
@@ -7088,20 +6951,6 @@ class YouTubePrefsPro
                         }
 
                     });
-                    jQuery('.vi-not-interested').on('click', function (e)
-                    {
-                        //e.preventDefault();
-                        jQuery('a.nav-tab[href="#jumpdefaults"]').trigger('click');
-                        setTimeout(function ()
-                        {
-                            var scrollNext = jQuery('#vi_hide_monetize_tab').offset().top - 20;
-                            $('html, body').animate({
-                                scrollTop: scrollNext
-                            }, 500, function ()
-                            {
-                            });
-                        }, 500);
-                    });
 
                     jQuery('#<?php echo self::$opt_schemaorg; ?>').on('change', function ()
                     {
@@ -7297,7 +7146,7 @@ class YouTubePrefsPro
             })(jQuery);
         </script>
 
-        <a href="<?php echo esc_attr(admin_url('admin.php?page=youtube-ep-onboarding') . '&random=' . rand(1, 1000) . '&TB_iframe=true&width=950&height=800'); ?>" class="thickbox ytprefs-onboarding-launch" id="ytprefs-onboarding-launch" title="YouTube Setup Guide"></a>
+        <a href="<?php echo esc_attr(admin_url('admin.php?page=youtube-ep-onboarding') . '&random=' . rand(1, 1000) . '&TB_iframe=true&width=950&height=800'); ?>" class="thickbox ytprefs-onboarding-launch" id="ytprefs-onboarding-launch" title="EmbedPlus for YouTube Setup Guide"></a>
 
         <?php
         if (function_exists('add_thickbox'))
@@ -7373,7 +7222,6 @@ class YouTubePrefsPro
         $new_options[self::$opt_gallery_showdsc] = self::postchecked(self::$opt_gallery_showdsc) ? 1 : 0;
         $new_options[self::$opt_gallery_limit_dsc] = self::postchecked(self::$opt_gallery_limit_dsc) ? 1 : 0;
         $new_options[self::$opt_gallery_collapse_grid] = self::postchecked(self::$opt_gallery_collapse_grid) ? 1 : 0;
-        $new_options[self::$opt_vi_hide_monetize_tab] = self::postchecked(self::$opt_vi_hide_monetize_tab) ? 1 : 0;
 
         $new_options[self::$opt_cc_lang_pref] = sanitize_title($_POST[self::$opt_cc_lang_pref]);
 
@@ -7931,7 +7779,7 @@ class YouTubePrefsPro
         ?>
         <div class="wrap wrap-ytprefs-onboarding">
             <div class="ytprefs-ob-title">
-                YouTube Setup Guide
+                EmbedPlus for YouTube Setup Guide
             </div>
             <div class="relative">
                 <div class="ytprefs-ob-step ytprefs-ob-step1 active-step">
@@ -8239,25 +8087,6 @@ class YouTubePrefsPro
                 </div>
                 <div class="ytprefs-ob-step ytprefs-ob-step4">
                     <div class="ytprefs-ob-content">
-                        <?php
-                        if (!self::vi_logged_in() && !self::vi_script_setup_done())
-                        {
-                            echo '<div class="vi-registration-box">';
-                            include_once(EPYTVI_INCLUDES_PATH . 'vi_registration_form.php');
-                            include_once(EPYTVI_INCLUDES_PATH . 'vi_login_success.php');
-                            echo '</div>';
-                        }
-                        else
-                        {
-                            ?>
-                            <h2>Monetization</h2>
-                            <p class="ytprefs-ob-success">
-                                Hooray! You have already signed up for the <a href="<?php echo admin_url('admin.php?page=youtube-ep-vi') ?>" target="_blank">video ad monetization feature</a>.
-                            </p>
-                            <?php
-                        }
-                        ?>
-
                         <div class="ytprefs-ob-nav">
                             <button type="button" class="button-secondary ytprefs-ob-nav-prev">&laquo; Previous</button>
                             <button type="button" class="button-primary ytprefs-ob-nav-close">Finish</button>
@@ -8358,9 +8187,7 @@ class YouTubePrefsPro
                     'stopMobileBuffer' => self::$alloptions[self::$opt_stop_mobile_buffer] == '1' ? true : false,
                     'facade_mode' => self::$alloptions[self::$opt_facade_mode] == '1' ? true : false,
                     'not_live_on_channel' => self::$alloptions[self::$opt_not_live_on_channel] == '1' ? true : false,
-                    'not_live_showtime' => intval(self::$alloptions[self::$opt_not_live_showtime]),
-                    'vi_active' => false, //self::$alloptions[self::$opt_vi_active] == '1' ? true : false,
-                    'vi_js_posttypes' => array() // self::$alloptions[self::$opt_vi_js_posttypes]
+                    'not_live_showtime' => intval(self::$alloptions[self::$opt_not_live_showtime])
                 );
 
                 if (isset(self::$alloptions[self::$opt_pro]) && strlen(trim(self::$alloptions[self::$opt_pro])) > 8 && isset(self::$alloptions[self::$opt_dashpre]) && self::$alloptions[self::$opt_dashpre] == '1')
@@ -8434,12 +8261,8 @@ class YouTubePrefsPro
         {
             wp_enqueue_style('__ytprefs_admin__alertify_css', plugins_url('styles/alertify/alertify' . self::$min . '.css', __FILE__), array(), self::$version);
             wp_enqueue_style('__ytprefs_admin__alertify_theme_css', plugins_url('styles/alertify/themes/default' . self::$min . '.css', __FILE__), array(), self::$version);
-            wp_enqueue_style('__ytprefs_admin__vi_css', plugins_url('styles/ytvi-admin' . self::$min . '.css', __FILE__), array(), self::$version);
             wp_enqueue_script('__ytprefs_admin__alertify_js', plugins_url('scripts/alertify/alertify' . self::$min . '.js', __FILE__), array(), self::$version);
             wp_enqueue_script('__ytprefs_admin__alertify_defaults_js', plugins_url('scripts/alertify/alertify-defaults' . self::$min . '.js', __FILE__), array(), self::$version);
-//            wp_enqueue_script('__ytprefs_admin__moment_js', plugins_url('scripts/chartjs/moment' . self::$min . '.js', __FILE__), array(), self::$version);
-//            wp_enqueue_script('__ytprefs_admin__chart_js', plugins_url('scripts/chartjs/chart' . self::$min . '.js', __FILE__), array('__ytprefs_admin__moment_js'), self::$version);
-//            wp_enqueue_script('__ytprefs_admin__chart_deferred_js', plugins_url('scripts/chartjs/chartjs-plugin-deferred' . self::$min . '.js', __FILE__), array('__ytprefs_admin__chart_js'), self::$version);
         }
 
         wp_enqueue_style('embedplusyoutube', plugins_url() . '/youtube-embed-plus-pro/scripts/embedplus_mce' . self::$min . '.css', array(), self::$version);
@@ -8450,12 +8273,9 @@ class YouTubePrefsPro
             'manage_options' => current_user_can('manage_options'),
             'security' => wp_create_nonce('embedplus-nonce'),
             'onboarded' => self::$alloptions[self::$opt_onboarded],
-            'vi_logged_in' => self::vi_logged_in(),
             'epbase' => self::$epbase,
             'admin_url' => admin_url(),
-            'vi_js_settings' => self::$alloptions[self::$opt_vi_js_settings],
             'admin_url_ytprefs' => admin_url('admin.php?page=youtube-my-preferences'),
-            'admin_url_vi' => admin_url('admin.php?page=youtube-ep-vi')
                 //'epblogwidth' => self::get_blogwidth(),
                 //'epprokey' => self::$alloptions[self::$opt_pro],
                 //'epbasesite' => self::$epbase,
@@ -8543,7 +8363,6 @@ class YouTubePrefsPro
 
     public static function on_deactivation()
     {
-        self::vi_cron_stop();
     }
 
     private static function update_option_set($new_options)
@@ -8553,2433 +8372,6 @@ class YouTubePrefsPro
         update_option(self::$opt_alloptions, $all);
         self::$alloptions = get_option(self::$opt_alloptions);
     }
-
-    private static function vi_remote_get($endpoint, $options = array())
-    {
-        $params = $options + array(
-            'headers' => array('Authorization' => self::$alloptions[self::$opt_vi_token]),
-            'timeout' => self::$curltimeout
-        );
-        return wp_remote_get($endpoint, $params);
-    }
-
-    private static function vi_remote_post($endpoint, $options = array())
-    {
-        $params = $options + array(
-            'headers' => array('Content-Type' => 'application/json', 'Authorization' => self::$alloptions[self::$opt_vi_token]),
-            'timeout' => self::$curltimeout
-        );
-//        if (self::$alloptions[self::$opt_debugmode])
-//        {
-//            echo $endpoint . '<br>' . self::vi_debug_json($params);
-//        }
-        return wp_remote_post($endpoint, $params);
-    }
-
-    private static function vi_remote_post_anon($endpoint, $options = array())
-    {
-        $params = $options + array(
-            'headers' => array('Content-Type' => 'application/json'),
-            'timeout' => self::$curltimeout
-        );
-        return wp_remote_post($endpoint, $params);
-    }
-
-    private static function vi_cache_endpoints_valid(&$apiResult)
-    {
-        $messages = array();
-
-
-        if (is_wp_error($apiResult))
-        {
-            $messages[] = $apiResult->get_error_message();
-        }
-        else
-        {
-            $jsonResult = json_decode($apiResult['body']);
-
-            if (!empty($jsonResult->error))
-            {
-                $messages[] = $jsonResult->error;
-            }
-
-            if (!filter_input(INPUT_POST, 'email', FILTER_VALIDATE_EMAIL))
-            {
-                $messages[] = "Please enter a valid email address.";
-            }
-
-            if (isset($jsonResult->status) && strcasecmp($jsonResult->status, 'ok') == 0 && isset($jsonResult->data) && is_object($jsonResult->data))
-            {
-                $apiResult = $jsonResult;
-            }
-        }
-        if (empty($messages))
-        {
-            return true;
-        }
-        return $messages;
-    }
-
-    public static function vi_cache_endpoints()
-    {
-        $result = array();
-        $apiResult = wp_remote_get(EPYTVI_ENDPOINTS_URL, array('timeout' => self::$curltimeout));
-        $valid = self::vi_cache_endpoints_valid($apiResult);
-        if ($valid === true)
-        {
-            $new_options = array(
-                self::$opt_vi_endpoints => $apiResult->data
-            );
-
-            self::update_option_set($new_options);
-
-            $post_email = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL);
-            if (!empty($post_email))
-            {
-                $result['type'] = 'success';
-                $result['data'] = $apiResult->data;
-                $result['signupURLParams'] = $apiResult->data->signupURL . '?aid=WP_embedplus&email=' . filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL) . '&domain=' . site_url();
-            }
-        }
-        else
-        {
-            $result['type'] = 'error';
-            $result['message'] = implode('<br/>', $valid);
-        }
-
-        return $result;
-    }
-
-    public static function vi_cache_endpoints_ajax()
-    {
-        $result = array();
-        if (self::is_ajax() && self::ajax_referer() && current_user_can('manage_options'))
-        {
-            $result = self::vi_cache_endpoints();
-        }
-        else
-        {
-            $result['type'] = 'error';
-            $result['message'] = 'Sorry, there was a problem submitting the data.';
-        }
-
-        $result['message'] = wp_kses_post($result['message']);
-        echo json_encode($result);
-        die();
-    }
-
-    public static function vi_notice_login_reminder()
-    {
-        if (filter_has_var(INPUT_COOKIE, 'vi_signup_attempt'))
-        {
-            $screen = get_current_screen();
-            $date_string = filter_input(INPUT_COOKIE, 'vi_signup_attempt', FILTER_SANITIZE_STRING);
-            $date_attempt = strtotime($date_string);
-            $date_wait = strtotime($date_string . ' + 7 days');
-
-            if (time() > $date_wait &&
-                    !self::vi_logged_in() &&
-                    in_array($screen->id, array('toplevel_page_youtube-my-preferences'))
-            )
-            {
-                ?>
-                <div class="notice notice-warning is-dismissible vi_notice_login_reminder">
-                    <p>
-                        It looks like you may have signed up for the vi monetization feature, but haven't completed the settings to receive revenue. Click the "Monetize" tab below to login and continue.
-                    </p>
-                </div>
-                <script>
-                    (function ($)
-                    {
-                        $(document).ready(function ()
-                        {
-                            $('.vi_notice_login_reminder').on('click', '.notice-dismiss', function ()
-                            {
-                                document.cookie = 'vi_signup_attempt=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
-                            });
-                        });
-                    })(jQuery);
-                </script>
-                <?php
-            }
-        }
-    }
-
-    private static function vi_login_valid(&$input)
-    {
-        $messages = array();
-        if (empty($input['email']))
-        {
-            $messages[] = 'Please enter your email.';
-        }
-        if (empty($input['password']))
-        {
-            $messages[] = 'Please enter your vi password.';
-        }
-
-        if (empty($messages))
-        {
-            return true;
-        }
-        return $messages;
-    }
-
-    private static function vi_login_api_valid(&$apiResult)
-    {
-        $messages = array();
-        if (is_wp_error($apiResult))
-        {
-            $messages[] = $apiResult->get_error_message();
-        }
-        else
-        {
-            $jsonResult = json_decode($apiResult['body']);
-
-            if (!empty($jsonResult->error))
-            {
-                $messages[] = $jsonResult->error->message . ": " . (is_string($jsonResult->error->description) ? $jsonResult->error->description : json_encode($jsonResult->error->description));
-            }
-
-            if (isset($jsonResult->status) && strcasecmp($jsonResult->status, 'ok') == 0 && isset($jsonResult->data) && strlen($jsonResult->data) > 0)
-            {
-                $apiResult = $jsonResult;
-            }
-        }
-        if (empty($messages))
-        {
-            return true;
-        }
-
-        return $messages;
-    }
-
-    private static function vi_adstxt_api_valid(&$apiResult)
-    {
-        $messages = array();
-        if (is_wp_error($apiResult))
-        {
-            $messages[] = $apiResult->get_error_message();
-        }
-        else
-        {
-            $jsonResult = json_decode($apiResult['body']);
-
-            if (!empty($jsonResult->error))
-            {
-                $messages[] = implode(': ', array($jsonResult->error->message, $jsonResult->error->description));
-            }
-
-            if (isset($jsonResult->status) && strcasecmp($jsonResult->status, 'ok') == 0 && isset($jsonResult->data) && strlen($jsonResult->data) > 0)
-            {
-                $apiResult = $jsonResult;
-            }
-        }
-        if (empty($messages))
-        {
-            return true;
-        }
-        return $messages;
-    }
-
-    public static function vi_login()
-    {
-        $result = array();
-        $default = array(
-            'email' => '',
-            'password' => ''
-        );
-        $input = shortcode_atts($default, stripslashes_deep($_POST));
-        $valid = self::vi_login_valid($input);
-        if ($valid === true)
-        {
-            self::vi_cache_endpoints();
-            $loginAPI = self::$alloptions[self::$opt_vi_endpoints]->loginAPI . '?affiliateId=WP_embedplus';
-            $inputAuth = array(
-                'email' => $input['email'],
-                'password' => $input['password']
-            );
-            $apiResult = self::vi_remote_post_anon($loginAPI, array(
-                        'body' => json_encode($inputAuth)
-            ));
-            $valid = self::vi_login_api_valid($apiResult);
-
-            if ($valid === true)
-            {
-                $result['type'] = 'success';
-
-
-                $new_options = array(
-                    self::$opt_vi_token => $apiResult->data,
-                    self::$opt_vi_last_login => date('Y-m-d H:i:s')
-                );
-
-                self::update_option_set($new_options);
-            }
-            else
-            {
-                $result['type'] = 'error';
-                $result['message'] = implode('<br/>', $valid);
-            }
-        }
-        else
-        {
-            $result['type'] = 'error';
-            $result['message'] = implode('<br/>', $valid);
-        }
-
-        if ($result['type'] === 'success')
-        {
-            self::vi_db_init_schema();
-        }
-        return $result;
-    }
-
-    public static function vi_login_ajax()
-    {
-        $result = array();
-        if (self::is_ajax() && self::ajax_referer() && current_user_can('manage_options'))
-        {
-            $result = self::vi_login();
-        }
-        else
-        {
-            $result['type'] = 'error';
-            $result['message'] = 'Sorry, there was a problem submitting the data.';
-        }
-
-        $result['message'] = wp_kses_post($result['message']);
-        echo json_encode($result);
-        die();
-    }
-
-    public static function vi_logout_ajax()
-    {
-        $result = array();
-        if (self::is_ajax() && self::ajax_referer() && current_user_can('manage_options'))
-        {
-            self::vi_cron_stop();
-
-            $new_options = array(
-                self::$opt_vi_token => ''
-            );
-
-            self::update_option_set($new_options);
-            $result['type'] = 'success';
-            $result['url'] = admin_url('admin.php?page=youtube-my-preferences');
-        }
-        else
-        {
-            $result['type'] = 'error';
-            $result['message'] = 'Sorry, there was a problem submitting the data.';
-        }
-        echo json_encode($result);
-        die();
-    }
-
-    public static function vi_toggle_ajax()
-    {
-        $result = array();
-        if (self::is_ajax() && self::ajax_referer() && current_user_can('manage_options'))
-        {
-            $new_options = array(
-                self::$opt_vi_active => self::$alloptions[self::$opt_vi_active] ? 0 : 1
-            );
-
-            self::update_option_set($new_options);
-            $result['type'] = 'success';
-            $result['button_text'] = self::$alloptions[self::$opt_vi_active] ? 'On' : 'Off';
-        }
-        else
-        {
-            $result['type'] = 'error';
-            $result['message'] = 'Sorry, there was a problem submitting the data.';
-        }
-        echo json_encode($result);
-        die();
-    }
-
-    public static function vi_hide_feature_ajax()
-    {
-        $result = array();
-        if (self::is_ajax() && self::ajax_referer() && current_user_can('manage_options'))
-        {
-            $new_options = array(
-                self::$opt_vi_hide_monetize_tab => 1
-            );
-
-            self::update_option_set($new_options);
-            $result['type'] = 'success';
-            $result['url'] = admin_url('admin.php?page=youtube-my-preferences');
-        }
-        else
-        {
-            $result['type'] = 'error';
-            $result['message'] = 'Sorry, there was a network error. Please try again, or turn off this feature using the "Hide Monetize Feature" checkbox on the "Defaults" tab of the YouTube settings. If the issue persists, please contact ext@embedplus.com';
-        }
-        echo json_encode($result);
-        die();
-    }
-
-    public static function vi_cover_prompt_yes()
-    {
-        return filter_input(INPUT_COOKIE, 'vi_cover_prompt_yes', FILTER_SANITIZE_NUMBER_INT) == 1;
-    }
-
-    public static function vi_cron_stop()
-    {
-        $timestamp = wp_next_scheduled('ytvi_cron_cache_js_hook');
-        if ($timestamp !== false)
-        {
-            wp_unschedule_event($timestamp, 'ytvi_cron_cache_js_hook');
-        }
-    }
-
-    private static function vi_reports_valid(&$apiResult)
-    {
-        $messages = array();
-        if (is_wp_error($apiResult))
-        {
-            $messages[] = $apiResult->get_error_message();
-        }
-        else
-        {
-            $jsonResult = json_decode($apiResult['body']);
-
-            //$messages[] = $apiResult['body']; // COMMENT
-
-            if (!empty($jsonResult->error))
-            {
-                $messages[] = $jsonResult->error->message . ": " . $jsonResult->error->description;
-            }
-
-            if (isset($jsonResult->status) && strcasecmp($jsonResult->status, 'ok') == 0 && isset($jsonResult->data))
-            {
-                $apiResult = $jsonResult;
-            }
-        }
-        if (empty($messages))
-        {
-            return true;
-        }
-
-        return $messages;
-    }
-
-    public static function vi_reports_ajax()
-    {
-        $result = array();
-        if (self::is_ajax() && self::ajax_referer() && current_user_can('manage_options'))
-        {
-            $revenueResult = self::vi_remote_get(self::$alloptions[self::$opt_vi_endpoints]->revenueAPI);
-            $revenue_valid = self::vi_reports_valid($revenueResult);
-            if ($revenue_valid === true)
-            {
-                $result['data'] = $revenueResult->data;
-                $result['type'] = 'success';
-            }
-            else
-            {
-                $result['type'] = 'error';
-                $result['message'] = wp_kses_post(implode('<br/>', $revenue_valid));
-            }
-        }
-        else
-        {
-            $result['type'] = 'error';
-            $result['message'] = 'Sorry, there was a problem retrieving the data.';
-        }
-        echo json_encode($result);
-        die();
-    }
-
-    private static function vi_cache_user_adstxt()
-    {
-        $adsTxtAPI = self::$alloptions[self::$opt_vi_endpoints]->adsTxtAPI;
-        $iabResult = self::vi_remote_get($adsTxtAPI);
-        $iab_valid = self::vi_adstxt_api_valid($iabResult);
-        if ($iab_valid === true)
-        {
-            $new_options = array(
-                self::$opt_vi_adstxt => $iabResult->data
-            );
-
-            self::update_option_set($new_options);
-            return $iabResult->data;
-        }
-        return false;
-    }
-
-    private static function vi_adstxt_status()
-    {
-        $user_adstxt = self::vi_cache_user_adstxt();
-        $current_adstxt = false;
-        if ($user_adstxt === false)
-        {
-            return array(
-                'code' => -1,
-                'message' => 'Sorry, your publisher ads.txt info could not be retrieved. Please wait a few minutes and try again. Your ads.txt verification file will enable you to make money through vi. <a href="https://www.vi.ai/publisherfaq/?aid=WP_embedplus&utm_source=Wordpress&utm_medium=WP_embedplus" target="_blank">FAQ &raquo;</a>'
-            );
-        }
-        else
-        {
-            $user_adstxt = preg_replace('~\R~u', PHP_EOL, $user_adstxt);
-        }
-
-        $adstxt_file = self::vi_get_home_path() . 'ads.txt';
-        $adstxt_url = self::base_url() . '/ads.txt';
-
-        $adstxt_http = wp_remote_get($adstxt_url, array('timeout' => self::$curltimeout));
-        if (!is_wp_error($adstxt_http) && in_array(wp_remote_retrieve_response_code($adstxt_http), array(200, 301, 302, 304)))
-        {
-            $current_adstxt = wp_remote_retrieve_body($adstxt_http);
-        }
-        if (empty($current_adstxt))
-        {
-            $current_adstxt = file_get_contents($adstxt_file);
-        }
-
-        if (!empty($current_adstxt))
-        {
-            $current_adstxt = preg_replace('~\R~u', PHP_EOL, $current_adstxt);
-            // append
-            if (is_writable($adstxt_file))
-            {
-                if (stripos($current_adstxt, '# 41b5eef6') === false)
-                {
-                    $to_write = PHP_EOL . $user_adstxt;
-                    file_put_contents($adstxt_file, $to_write, FILE_APPEND);
-                    return array(
-                        'code' => 1,
-                        'before_adstxt' => $current_adstxt,
-                        'after_adstxt' => $current_adstxt . $to_write,
-                        'message' => 'You successfully validated your account. Your <a target="_blank" href="' . site_url() . '/ads.txt">ads.txt</a> file has been updated, which enables you to make money through vi. <a href="' . esc_url(admin_url('admin.php?page=youtube-ep-vi#jumpfaq')) . '" target="_blank">FAQ &raquo;</a>'
-                    );
-                }
-                else if ($current_adstxt !== $user_adstxt)
-                {
-                    $current_adstxt_lines = preg_split('/\r\n|\r|\n/', $current_adstxt);
-                    $current_adstxt_lines = array_filter($current_adstxt_lines, array(self::class, 'vi_not_vi_adstxt_line'));
-                    $former_adstxt = implode(PHP_EOL, $current_adstxt_lines);
-
-                    $new_adstxt = $former_adstxt . (strlen($former_adstxt) > 0 ? PHP_EOL : '') . $user_adstxt;
-                    if ($current_adstxt === $new_adstxt)
-                    {
-                        return array(
-                            'code' => 2,
-                            'message' => 'You successfully validated your account.'
-                        );
-                    }
-                    else
-                    {
-                        file_put_contents($adstxt_file, $new_adstxt);
-
-                        return array(
-                            'code' => 1,
-                            'before_adstxt' => $current_adstxt,
-                            'after_adstxt' => $new_adstxt,
-                            'message' => 'You successfully validated your account. Your <a target="_blank" href="' . site_url() . '/ads.txt">ads.txt</a> file has been updated, which enables you to make money through vi. <a href="' . esc_url(admin_url('admin.php?page=youtube-ep-vi#jumpfaq')) . '" target="_blank">FAQ &raquo;</a>'
-                        );
-                    }
-                }
-                else
-                {
-                    return array(
-                        'code' => 2,
-                        'message' => 'You successfully validated your account.'
-                    );
-                }
-            }
-            else
-            {
-                if (stripos($current_adstxt, $user_adstxt) === false) // $user_adstxt
-                {
-                    return array(
-                        'code' => 0,
-                        'message' => 'Sorry, your current ads.txt file could not be automatically be updated. Please first <a class="button-secondary" href="' .
-                        admin_url('admin.php') . '?ytvi_adstxt_download=1&key=' . urlencode(self::$alloptions[self::$opt_vi_token]) . '">download this updated ads.txt</a> file and upload it to your site root, then try logging in again. Your ads.txt verification file will enable you to make money through vi. <a href="https://www.vi.ai/publisherfaq/?aid=WP_embedplus&utm_source=Wordpress&utm_medium=WP_embedplus" target="_blank">FAQ &raquo;</a>'
-                    );
-                }
-                else
-                {
-                    return array(
-                        'code' => 2,
-                        'message' => 'You successfully validated your account.'
-                    );
-                }
-            }
-        }
-        else
-        {
-            // create
-            if ((!file_exists($adstxt_file) && is_writable(self::vi_get_home_path())) || (file_exists($adstxt_file) && is_writable($adstxt_file)))
-            {
-                file_put_contents($adstxt_file, self::$alloptions[self::$opt_vi_adstxt], FILE_APPEND);
-
-                return array(
-                    'code' => 1,
-                    'before_adstxt' => $current_adstxt,
-                    'after_adstxt' => self::$alloptions[self::$opt_vi_adstxt],
-                    'message' => 'You successfully validated your account. Your <a target="_blank" href="' . site_url() . '/ads.txt">ads.txt</a> file has been created, which enables you to make money through vi. <a href="' . esc_url(admin_url('admin.php?page=youtube-ep-vi#jumpfaq')) . '" target="_blank">FAQ &raquo;</a>'
-                );
-            }
-            else
-            {
-                return array(
-                    'code' => 0,
-                    'message' => 'Sorry, your ads.txt verification file could not automatically be created. Please first <a class="button-secondary" href="' .
-                    admin_url('admin.php') . '?ytvi_adstxt_download=1&key=' . urlencode(self::$alloptions[self::$opt_vi_token]) . '">download this ads.txt</a> file and upload it to your site root, then try logging in again. Your ads.txt verification file will enable you to make money through vi. <a href="https://www.vi.ai/publisherfaq/?aid=WP_embedplus&utm_source=Wordpress&utm_medium=WP_embedplus" target="_blank">FAQ &raquo;</a>'
-                );
-            }
-        }
-    }
-
-    public static function vi_adstxt_status_soft_ajax()
-    {
-        $result = array();
-        if (self::is_ajax() && self::ajax_referer() && current_user_can('manage_options'))
-        {
-            $default = array(
-                'current_adstxt' => ''
-            );
-            $input = shortcode_atts($default, stripslashes_deep($_POST));
-            $result = self::vi_adstxt_status_soft($input['current_adstxt']);
-
-            if (isset($result['code']) && intval($result['code']) < 0)
-            {
-                $result['token'] = self::$alloptions[self::$opt_vi_token];
-            }
-        }
-        else
-        {
-            $result['type'] = 'error';
-            $result['message'] = 'Sorry, there was a problem verifying your ads.txt file. Please try again.';
-        }
-
-        $result['message'] = wp_kses_post($result['message']);
-        echo json_encode($result);
-        die();
-    }
-
-    private static function vi_adstxt_status_soft($current_adstxt)
-    {
-        $adstxt_url = self::base_url() . '/ads.txt';
-        $adstxt_note = ' <strong>Note:</strong> If you already have an ads.txt file at ' . $adstxt_url . ', you will just need to add in the additional lines found in the download.';
-        $user_adstxt = self::vi_cache_user_adstxt();
-        $current_adstxt = empty($current_adstxt) ? false : $current_adstxt;
-        if ($user_adstxt === false)
-        {
-            return array(
-                'code' => -1,
-                'message' => 'For your security, a quick reauthentication is needed to begin setting up your ads.txt file. First, log out of this Ads Settings page with the "Logout" button right above and then log back in with your vi login and password. Then come back to this tab for next steps. Your ads.txt verification file will enable you to make money through vi. <a href="https://www.vi.ai/publisherfaq/?aid=WP_embedplus&utm_source=Wordpress&utm_medium=WP_embedplus" target="_blank">FAQ &raquo;</a>'
-            );
-        }
-        else
-        {
-            $user_adstxt = preg_replace('~\R~u', PHP_EOL, $user_adstxt);
-        }
-
-        if (!empty($current_adstxt))
-        {
-            $current_adstxt = preg_replace('~\R~u', PHP_EOL, $current_adstxt);
-
-            // append / update manually
-            if (stripos($current_adstxt, $user_adstxt) === false)
-            {
-                if (stripos($current_adstxt, '# 41b5eef6') !== false) // update
-                {
-                    return array(
-                        'code' => 0,
-                        'message' => 'Looks like video intelligence has just updated its ad delivery partners. To get the most revenue out of your ads, open up your '
-                        . ' <a href="' . self::base_url() . '/ads.txt" target="_blank">ads.txt</a> file and replace the vi lines (ending in # 41b5eef6) with the new lines you see below. Then, refresh this page. '
-                        . ' Please do not reorder or double space the below lines. '
-                        . ' <strong>If we helped you with your ads.txt in the past, feel free to contact us to help out again with this update.</strong> '
-                        . '<code># video intelligence (vi.ai) ads.txt lines begin here:' . PHP_EOL . $user_adstxt . PHP_EOL . '# video intelligence (vi.ai) ads.txt lines end</code>'
-                    );
-                }
-                else // add
-                {
-                    return array(
-                        'code' => 0,
-                        'message' => 'In your current <a href="' . self::base_url() . '/ads.txt" target="_blank">ads.txt</a> file, just add in the additional lines you see below. Then, refresh this page.'
-                        . ' Please do not reorder or double space the below lines. '
-                        . '<code># video intelligence (vi.ai) ads.txt lines begin here:' . PHP_EOL . $user_adstxt . PHP_EOL . '# video intelligence (vi.ai) ads.txt lines end</code>'
-                    );
-                }
-            }
-            else
-            {
-                return array(
-                    'code' => 2,
-                    'message' => '<p class="adstxt-verify-message-valid">You successfully validated your ads.txt file.</p>'
-                );
-            }
-        }
-        else
-        {
-            // create manually
-            return array(
-                'code' => 0,
-                'message' => 'You can <a class="button button-small" href="' . admin_url('admin.php') . '?ytvi_adstxt_download=1&key=' . urlencode(self::$alloptions[self::$opt_vi_token]) . '">download this ads.txt</a> file and upload it to your site root (or copy the same text below). Then, refresh this page to verify.'
-                . ' Please do not reorder or double space the below lines. '
-                . '<code># video intelligence (vi.ai) ads.txt lines begin here:' . PHP_EOL . $user_adstxt . PHP_EOL . '# video intelligence (vi.ai) ads.txt lines end</code>'
-            );
-        }
-    }
-
-    private static function vi_not_vi_adstxt_line($line)
-    {
-        return stripos($line, '# 41b5eef6') === false;
-    }
-
-    public static function vi_get_home_path()
-    {
-        $abs_root = get_home_path();
-        if (strlen($abs_root) <= 1)
-        {
-            $abs_root = trailingslashit(str_replace('\\', '/', ABSPATH));
-            $url_path = parse_url(site_url());
-            if (isset($url_path['path']))
-            {
-                $relpath = trailingslashit($url_path['path']);
-                $relpath_length = strlen($relpath);
-                $path_intersect = substr($abs_root, -$relpath_length);
-                if ($path_intersect === $relpath)
-                {
-                    $abs_root = trailingslashit(substr($abs_root, 0, strlen($abs_root) - $relpath_length));
-                }
-            }
-        }
-        return $abs_root;
-    }
-
-    public static function vi_adstxt_lookup()
-    {
-        $request = esc_url_raw(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH));
-        if ('/ads.txt' === $request)
-        {
-            if (function_exists('tenup_display_ads_txt'))
-            {
-                $post_id = get_option('adstxt_post');
-                if (!empty($post_id))
-                {
-                    $post = get_post($post_id);
-                    header('Content-Type: text/plain');
-                    echo esc_html($post->post_content);
-                    die();
-                }
-            }
-        }
-    }
-
-    public static function vi_adstxt_download()
-    {
-        $inp_key = filter_input(INPUT_GET, 'key');
-        if (filter_input(INPUT_GET, 'ytvi_adstxt_download') == 1 && !empty($inp_key))
-        {
-            $key = urldecode(filter_input(INPUT_GET, 'key', FILTER_DEFAULT));
-            self::$alloptions[self::$opt_vi_token] = $key;
-            $user_adstxt = self::vi_cache_user_adstxt();
-            $adstxt_file = self::vi_get_home_path() . 'ads.txt';
-            $current_adstxt = file_exists($adstxt_file) ? file_get_contents($adstxt_file) : '';
-
-            $current_adstxt_lines = preg_split('/\r\n|\r|\n/', $current_adstxt);
-            $current_adstxt_lines = array_filter($current_adstxt_lines, array(self::class, 'vi_not_vi_adstxt_line'));
-            $former_adstxt = implode(PHP_EOL, $current_adstxt_lines);
-
-            $new_adstxt = $former_adstxt . (strlen($former_adstxt) > 0 ? PHP_EOL : '') . ($user_adstxt === false ? '' : $user_adstxt);
-
-            $new_adstxt = '# video intelligence (vi.ai) ads.txt lines begin here:' . PHP_EOL . $new_adstxt . PHP_EOL . '# video intelligence (vi.ai) ads.txt lines end';
-
-            header("Expires: 0");
-            header("Cache-Control: no-cache, no-store, must-revalidate");
-            header('Cache-Control: pre-check=0, post-check=0, max-age=0', false);
-            header("Pragma: no-cache");
-            header("Content-Disposition:attachment; filename=ads.txt");
-            header("Content-Type: application/force-download");
-
-            echo $new_adstxt;
-
-            exit();
-        }
-    }
-
-    public static function vi_logged_in()
-    {
-        return !empty(self::$alloptions[self::$opt_vi_token]);
-    }
-
-    public static function vi_settings_nav()
-    {
-        ?>
-        <h3 class="nav-tab-wrapper">
-            <a class="nav-tab nav-tab-active" href="#jumphowitworks">How It Works</a>
-            <a class="nav-tab" href="#jumpdescription">Video Categories</a>
-            <a class="nav-tab" href="#jumpappearance">Appearance</a>
-            <a class="nav-tab" href="#jumpplacement">Placement</a>
-            <a class="nav-tab nav-tab-adstxt" href="#jumpadstxt">Ads.txt Verification &nbsp;</a>
-            <a class="nav-tab" href="#jumpperformance">Revenue Reporting</a>
-            <a class="nav-tab" href="#jumprevenue">Profile Settings</a>
-            <a class="nav-tab" href="#jumpviprivacy">Privacy</a>
-            <a class="nav-tab" href="#jumpfaq">FAQs</a>
-            <a class="nav-tab" href="#jumpsupport">Support</a>
-        </h3>
-        <?php
-    }
-
-    private static function vi_cache_js_valid(&$apiResult)
-    {
-        $messages = array();
-        if (is_wp_error($apiResult))
-        {
-            $messages[] = $apiResult->get_error_message();
-        }
-        else
-        {
-            $jsonResult = json_decode($apiResult['body']);
-
-            if (!empty($jsonResult->error))
-            {
-                //$messages[] = implode(': ', array('vi API - ' . self::vi_debug_json($apiResult)));
-                $messages[] = 'If the issue is not resolved, please contact support at ext@embedplus.com and we will get you going. (Error code ' . wp_remote_retrieve_response_code($apiResult) . ', v' . self::$version .
-                        ' - <em>' . implode(': ', array($jsonResult->error->message, is_string($jsonResult->error->description) ? $jsonResult->error->description : json_encode($jsonResult->error->description))) . '</em>)';
-            }
-
-            if (isset($jsonResult->status) && strcasecmp($jsonResult->status, 'ok') == 0 && isset($jsonResult->data) && strlen($jsonResult->data) > 0)
-            {
-                $apiResult = $jsonResult;
-            }
-        }
-        if (empty($messages))
-        {
-            return true;
-        }
-        return $messages;
-    }
-
-    private static function vi_cache_js($options)
-    {
-        $readonly = array(
-            'domain' => parse_url(site_url(), PHP_URL_HOST),
-            'adUnitType' => 'NATIVE_VIDEO_UNIT',
-            'logoUrl' => 'https://example.com/logo.jpg'
-        );
-        $options = $readonly + $options;
-        $jsTagAPI = self::$alloptions[self::$opt_vi_endpoints]->jsTagAPI;
-
-        $iabCategoryList = explode(',', $options['iabCategory']);
-
-        $matches = array();
-        if (isset(self::$alloptions[self::$opt_vi_js_script]) && preg_match('/IAB_Category[ ]*:([^,]+),/i', self::$alloptions[self::$opt_vi_js_script], $matches))
-        {
-            $currCategory = array(trim($matches[1]));
-            $iabCategoryList = array_diff($iabCategoryList, $currCategory);
-        }
-
-        $options['iabCategory'] = $iabCategoryList[array_rand($iabCategoryList)];
-
-        $apiResult = self::vi_remote_post($jsTagAPI, array(
-                    'body' => json_encode($options)
-        ));
-        //$js_valid = array(self::vi_debug_json($options));
-        $js_valid = self::vi_cache_js_valid($apiResult);
-        if ($js_valid === true)
-        {
-            $mod_data = $apiResult->data;
-
-            $new_options = array(
-                self::$opt_vi_js_script => $mod_data,
-                self::$opt_vi_last_category_update => date('Y-m-d H:i:s')
-            );
-
-            self::update_option_set($new_options);
-        }
-
-        return $js_valid;
-    }
-
-    public static function vi_debug_json($json)
-    {
-        return '<pre>' . json_encode($json, JSON_PRETTY_PRINT) . '</pre>';
-    }
-
-    public static function vi_script_setup_done()
-    {
-        if (empty(self::$alloptions[self::$opt_vi_js_script]))
-        {
-            return false;
-        }
-        return true;
-    }
-
-    public static function vi_admin_dashboard_valid(&$item)
-    {
-        $messages = array();
-
-        $all_post_types = get_post_types(array('public' => true), 'names');
-
-        foreach ($item[self::$opt_vi_js_posttypes] as $pt)
-        {
-            if (!in_array($pt, $all_post_types))
-            {
-                $messages[] = 'Please choose only valid post types for your ad to appear in.';
-            }
-        }
-
-        if (!in_array($item[self::$opt_vi_js_position], array('top', 'bottom')))
-        {
-            $messages[] = 'Please choose a valid placement position.';
-        }
-
-        $item[self::$opt_vi_js_settings]['keywords'] = substr(sanitize_text_field(str_replace(array('\'', '"'), '', $item[self::$opt_vi_js_settings]['keywords'])), 0, 200);
-
-        $item[self::$opt_vi_js_settings]['iabCategory'] = sanitize_text_field($item[self::$opt_vi_js_settings]['iabCategory']);
-        if (empty($item[self::$opt_vi_js_settings]['iabCategory']))
-        {
-            $messages[] = 'Please choose at least one IAB category under Video Categories.';
-        }
-        $item[self::$opt_vi_js_settings]['language'] = sanitize_text_field($item[self::$opt_vi_js_settings]['language']);
-        if (empty($item[self::$opt_vi_js_settings]['language']))
-        {
-            $item[self::$opt_vi_js_settings]['language'] = 'en-us';
-        }
-
-        $item[self::$opt_vi_js_settings]['backgroundColor'] = sanitize_hex_color($item[self::$opt_vi_js_settings]['backgroundColor']);
-        if (empty($item[self::$opt_vi_js_settings]['backgroundColor']))
-        {
-            $item[self::$opt_vi_js_settings]['backgroundColor'] = '#ffffff';
-        }
-
-        $item[self::$opt_vi_js_settings]['textColor'] = sanitize_hex_color($item[self::$opt_vi_js_settings]['textColor']);
-        if (empty($item[self::$opt_vi_js_settings]['textColor']))
-        {
-            $item[self::$opt_vi_js_settings]['textColor'] = '#000000';
-        }
-
-        $item[self::$opt_vi_js_settings]['font'] = sanitize_text_field($item[self::$opt_vi_js_settings]['font']);
-        if (empty($item[self::$opt_vi_js_settings]['font']))
-        {
-            $item[self::$opt_vi_js_settings]['font'] = 'Arial';
-        }
-
-        if (!is_numeric($item[self::$opt_vi_js_settings]['fontSize']) || intval($item[self::$opt_vi_js_settings]['fontSize']) < 0)
-        {
-            $item[self::$opt_vi_js_settings]['fontSize'] = 12;
-        }
-
-        if (empty($messages))
-        {
-            $js = self::vi_cache_js($item[self::$opt_vi_js_settings]);
-            if ($js === true)
-            {
-                $item[self::$opt_vi_js_script] = self::$alloptions[self::$opt_vi_js_script];
-            }
-            else
-            {
-                $messages[] = 'For your security, a quick re-authentication is required to save your most recent customizations. Simply log out of this Ads Settings page with the "Logout" button right above and then log back in with your vi login and password. ';
-                $messages = array_merge($messages, $js);
-            }
-        }
-
-        if (empty($messages))
-        {
-            return true;
-        }
-
-        return $messages;
-    }
-
-    public static function vi_print_toggle_button()
-    {
-        ?>
-        <button style="z-index: 10" <?php echo self::vi_script_setup_done() ? '' : ' disabled '; ?> class="button-primary ytvi-btn-toggle <?php echo self::$alloptions[self::$opt_vi_active] ? 'ytvi-btn-active' : 'ytvi-btn-inactive' ?>">
-            vi ads are: <strong><?php echo self::$alloptions[self::$opt_vi_active] ? 'On' : 'Off' ?></strong>
-            <?php
-            if (!self::vi_script_setup_done())
-            {
-                ?>
-                <div class="ytvi-notyet">
-                    <h3>Before you can turn on your ads:</h3>
-                    <ol class="list-ol">
-                        <li>Complete the <em>Video Categories, Appearance, and Placement</em> tabs.</li>
-                        <li>Then click on the <strong>Save Changes</strong> button in the bottom right of this screen.</li>
-                        <li>Then click the top right button to turn vi ads on.</li>
-                    </ol>
-                    <p>
-                        Once your ads are on, complete the <em>Ads.txt</em> tab to have your ads start earning revenue. Then the <em>Profile</em> tab shows you how to receive payments.
-                    </p>
-                </div>
-                <?php
-            }
-            ?>
-        </button>
-        <?php
-    }
-
-    public static function vi_admin_dashboard()
-    {
-        if (!current_user_can('manage_options'))
-        {
-            wp_die(__('You do not have sufficient permissions to access this page.'));
-        }
-
-        $message = '';
-        $notice = '';
-
-        $item = array(
-            self::$opt_vi_js_settings => self::$alloptions[self::$opt_vi_js_settings],
-            self::$opt_vi_js_script => self::$alloptions[self::$opt_vi_js_script],
-            self::$opt_vi_js_posttypes => self::$alloptions[self::$opt_vi_js_posttypes],
-            self::$opt_vi_js_position => self::$alloptions[self::$opt_vi_js_position],
-            self::$opt_vi_show_gdpr_authorization => self::$alloptions[self::$opt_vi_show_gdpr_authorization],
-            self::$opt_vi_show_privacy_button => self::$alloptions[self::$opt_vi_show_privacy_button]
-        );
-
-        if (wp_verify_nonce(filter_input(INPUT_POST, 'nonce'), basename(__FILE__)))
-        {
-            $post_vars = stripslashes_deep($_POST);
-            if (!array_key_exists(self::$opt_vi_js_posttypes, $post_vars))
-            {
-                $post_vars[self::$opt_vi_js_posttypes] = array();
-            }
-            $post_vars = shortcode_atts($item, $post_vars);
-
-            $item[self::$opt_vi_js_settings] = $post_vars[self::$opt_vi_js_settings] + $item[self::$opt_vi_js_settings];
-            $item[self::$opt_vi_js_posttypes] = $post_vars[self::$opt_vi_js_posttypes];
-            $item[self::$opt_vi_js_position] = $post_vars[self::$opt_vi_js_position];
-            $item[self::$opt_vi_show_gdpr_authorization] = self::postchecked(self::$opt_vi_show_gdpr_authorization) ? 1 : 0;
-            $item[self::$opt_vi_show_privacy_button] = self::postchecked(self::$opt_vi_show_privacy_button) ? 1 : 0;
-
-            $item_valid = self::vi_admin_dashboard_valid($item);
-
-            //$item_valid = array('<pre>_post: ' . print_r(stripslashes_deep($_POST), true) . '</pre>', '<pre>item: ' . print_r($item, true) . '</pre>');
-
-            if ($item_valid === true)
-            {
-                self::update_option_set($item);
-
-                $message = 'Settings were successfully saved. Now you can turn on vi ads above. Note: changes may take a few minutes to appear on your website. If you are using a separate caching plugin, <strong>you need to reset your cache</strong> to see any changes.';
-            }
-            else
-            {
-                $notice = wp_kses_post(implode('<br/>', $item_valid));
-            }
-        }
-        ?>
-        <div class="wrap wrap-vi wrap-vi-settings">
-            <h1><img class="yt-admin-icon" src="<?php echo plugins_url(self::$folder_name . '/images/icon-monetize-dark.svg') ?>" />
-                Video Ad Settings
-                <a class="button-secondary ytvi-btn-logout">Logout of vi settings</a>
-                <?php self::vi_print_toggle_button(); ?>
-            </h1>
-            <div class="update-nag notice">                
-                <p>This feature is being deprecated in the next version. Please contact ext@embedplus.com for questions.</p>
-            </div>
-            <br>
-            <div class="updated ytvi-msg-congrats">
-                <p>
-                    Congrats! Ads are now on. Here are some tips to maximize your fill rate and therefore revenue:   
-                </p>
-                <ul class="list-ul">
-                    <li>Visibility - The higher the player is placed, the greater the demand and fill rate. Inserting it near the top or middle of your pages are best.</li>
-                    <li>Ad Unit Size - The recommended minimum width for the player is 336px </li>
-                    <li>Give vi.ai about 2-3 weeks to optimize their inventory for your site</li>
-                    <li>Contact us for help if you have any questions: ext@embedplus.com</li>
-                </ul>
-            </div>
-            <?php
-            if (!empty($notice))
-            {
-                ?>
-                <div id="notice" class="error"><p><?php echo wp_kses_post($notice) ?></p></div>
-                <?php
-            }
-            if (!empty($message))
-            {
-                ?>
-                <div id="message" class="updated"><p><?php echo wp_kses_post($message) ?></p></div>
-                <?php
-            }
-
-            self::vi_settings_nav();
-
-//            echo '<pre>';
-//            print_r(_get_cron_array());
-//            echo '</pre>';
-            ?>
-
-            <form id="form" method="POST">
-                <input type="hidden" name="nonce" value="<?php echo wp_create_nonce(basename(__FILE__)) ?>"/>
-                <section class="pattern" id="jumphowitworks">
-                    <h2>How It Works</h2>
-                    <p>Before you begin, please turn off any ad blocker extensions you may have, so that you will see how your ads look. Then follow the steps below:</p>
-                    <br>
-                    <div class="vi-how-works" data-jump="#jumpdescription">
-                        <div class="vi-num">1</div>
-                        <img src="<?php echo plugins_url(self::$folder_name . '/images/icon-hw-description.png') ?>"/>
-                        <h3>Video Categories</h3>
-                        <p>
-                            Categorize your site to help match with the right ads.
-                        </p>
-                    </div>
-                    <div class="vi-how-works" data-jump="#jumpappearance">
-                        <div class="vi-num">2</div>
-                        <img src="<?php echo plugins_url(self::$folder_name . '/images/icon-hw-appearance.png') ?>"/>
-                        <h3>Appearance</h3>
-                        <p>
-                            Customize how the ad player should look.
-                        </p>
-                    </div>
-                    <div class="vi-how-works" data-jump="#jumpplacement">
-                        <div class="vi-num">3</div>
-                        <img src="<?php echo plugins_url(self::$folder_name . '/images/icon-hw-placement.png') ?>"/>
-                        <h3>Placement</h3>
-                        <p>
-                            Decide where the ad player should be placed.
-                        </p>
-                    </div>
-                    <div class="vi-how-works" data-jump="#nojump">
-                        <div class="vi-num">4</div>
-                        <img src="<?php echo plugins_url(self::$folder_name . '/images/icon-hw-turnon.png') ?>"/>
-                        <h3>Turn It On</h3>
-                        <p>
-                            Click the colored button at the top right of this page to make the ad player visible.
-                        </p>
-                    </div>
-                    <div class="vi-how-works" data-jump="#jumpadstxt">
-                        <div class="vi-num">5</div>
-                        <img src="<?php echo plugins_url(self::$folder_name . '/images/icon-hw-adstxt.png') ?>"/>
-                        <h3>Ads.txt Verification</h3>
-                        <p>
-                            Verify your ads.txt file to start earning revenue.
-                        </p>
-                    </div>
-                    <div class="vi-how-works" data-jump="#jumpperformance">
-                        <div class="vi-num">6</div>
-                        <img src="<?php echo plugins_url(self::$folder_name . '/images/icon-hw-performance.png') ?>"/>
-                        <h3>Revenue Reporting</h3>
-                        <p>
-                            View reports on your CPM, revenue, and more.
-                        </p>
-                    </div>
-                    <div class="vi-how-works" data-jump="#jumprevenue">
-                        <div class="vi-num">7</div>
-                        <img src="<?php echo plugins_url(self::$folder_name . '/images/icon-hw-revenue.png') ?>"/>
-                        <h3>Profile Settings</h3>
-                        <p>
-                            Collect your earnings in a few days via PayPal or bank transfer.
-                        </p>
-                    </div>
-                </section>
-
-                <section class="pattern" id="jumpdescription">
-                    <div class="adstxt-help">
-                        <img src="<?php echo plugins_url(self::$folder_name . '/images/adstxt-help.png') . '?ver=' . self::$version; ?>"/>
-                        Trouble getting content that fits your site, even with the proper settings above/below? Contact support at <strong><a href="mailto:ext@embedplus.com">ext@embedplus.com</a></strong>
-                    </div>
-                    <h2><span class="vi-num">1</span> Video Categories (Multiple Allowed)</h2>
-                    <p>
-                        Your video ad will be optimized to relate to your site's content and the one or more categories you select below. Note that the quality of the matches improves over time. 
-                    </p>
-                    <p>
-                        <strong>Tip:</strong> select more than one category to add variety to your video ads.
-                        If you select more than one, you must stay logged in to this settings page for your categories to automatically add variety to your ads.
-                    </p>
-                    <table cellspacing="2" cellpadding="5" style="width: 100%;" class="form-table">
-                        <tbody>
-                            <tr class="form-field">
-                                <th valign="top" scope="row">
-                                    <label for="<?php echo self::$opt_vi_js_settings ?>[iabCategory]">IAB Categories</label>
-                                    <small>Select the categories that most fit your website. You can select up to 4. </small>
-                                </th>
-                                <td>
-                                    <strong>Filter by:</strong>
-                                    <select class="iab-cat-parent">
-                                        <option value="">Choose Filter</option>
-                                        <option value="IAB1">Arts & Entertainment</option>
-                                        <option value="IAB2">Automotive</option>
-                                        <option value="IAB3">Business</option>
-                                        <!--                                        <option value="IAB4">Careers</option>-->
-                                        <!--                                        <option value="IAB5">Education</option>-->
-                                        <!--                                        <option value="IAB6">Family & Parenting</option>-->
-                                        <option value="IAB7">Health & Fitness</option>
-                                        <option value="IAB8">Food & Drink</option>
-                                        <option value="IAB9">Hobbies & Interests</option>
-                                        <option value="IAB10">Home & Garden</option>
-                                        <option value="IAB11">Law, Gov't & Politics</option>
-                                        <option value="IAB12">News</option>
-                                        <!--                                        <option value="IAB13">Personal Finance</option>-->
-                                        <!--                                        <option value="IAB14">Society</option>-->
-                                        <option value="IAB15">Science</option>
-                                        <option value="IAB16">Pets</option>
-                                        <option value="IAB17">Sports</option>
-                                        <option value="IAB18">Style & Fashion</option>
-                                        <option value="IAB19">Technology & Computing</option>
-                                        <option value="IAB20">Travel</option>
-                                        <!--                                        <option value="IAB21">Real Estate</option>-->
-                                        <option value="IAB22">Shopping</option>
-                                        <!--                                        <option value="IAB23">Religion & Spirituality</option>-->
-                                        <option value="IAB24">Uncategorized</option>
-                                        <option value="IAB25">Non-Standard Content</option>
-                                    </select>
-                                    <div class="iab-cat-child-box hidden">
-                                        <strong>Then choose category:</strong>
-                                        <select class="iab-cat-child" disabled>
-                                            <option value="">Select Category:</option>
-                                            <option value="IAB1">Arts & Entertainment (All)</option>
-                                            <option value="IAB1-1">Books & Literature</option>
-                                            <option value="IAB1-2">Celebrity Fan/Gossip</option>
-                                            <option value="IAB1-3">Fine Art</option>
-                                            <option value="IAB1-4">Humor</option>
-                                            <option value="IAB1-5">Movies</option>
-                                            <option value="IAB1-6">Music</option>
-                                            <option value="IAB1-7">Television</option>
-                                            <option value="IAB2">Automotive (All)</option>
-                                            <option value="IAB2-1">Auto Parts</option>
-                                            <option value="IAB2-2">Auto Repair</option>
-                                            <option value="IAB2-3">Buying/Selling Cars</option>
-                                            <option value="IAB2-4">Car Culture</option>
-                                            <option value="IAB2-5">Certified Pre-Owned</option>
-                                            <option value="IAB2-6">Convertible</option>
-                                            <option value="IAB2-7">Coupe</option>
-                                            <option value="IAB2-8">Crossover</option>
-                                            <option value="IAB2-9">Diesel</option>
-                                            <option value="IAB2-10">Electric Vehicle</option>
-                                            <option value="IAB2-11">Hatchback</option>
-                                            <option value="IAB2-12">Hybrid</option>
-                                            <option value="IAB2-13">Luxury</option>
-                                            <option value="IAB2-14">MiniVan</option>
-                                            <option value="IAB2-15">Mororcycles</option>
-                                            <option value="IAB2-16">Off-Road Vehicles</option>
-                                            <option value="IAB2-17">Performance Vehicles</option>
-                                            <option value="IAB2-18">Pickup</option>
-                                            <option value="IAB2-19">Road-Side Assistance</option>
-                                            <option value="IAB2-20">Sedan</option>
-                                            <option value="IAB2-21">Trucks & Accessories</option>
-                                            <option value="IAB2-22">Vintage Cars</option>
-                                            <option value="IAB2-23">Wagon</option>
-                                            <option value="IAB3">Business (All)</option>
-                                            <option value="IAB3-1">Advertising</option>
-                                            <option value="IAB3-2">Agriculture</option>
-                                            <option value="IAB3-3">Biotech/Biomedical</option>
-                                            <option value="IAB3-4">Business Software</option>
-                                            <option value="IAB3-5">Construction</option>
-                                            <option value="IAB3-6">Forestry</option>
-                                            <option value="IAB3-7">Government</option>
-                                            <option value="IAB3-8">Green Solutions</option>
-                                            <option value="IAB3-9">Human Resources</option>
-                                            <option value="IAB3-10">Logistics</option>
-                                            <option value="IAB3-11">Marketing</option>
-                                            <option value="IAB3-12">Metals</option>
-                                            <option value="IAB4">Careers (All)</option>
-                                            <option value="IAB4-1">Career Planning</option>
-                                            <option value="IAB4-2">College</option>
-                                            <option value="IAB4-3">Financial Aid</option>
-                                            <option value="IAB4-4">Job Fairs</option>
-                                            <option value="IAB4-5">Job Search</option>
-                                            <option value="IAB4-6">Resume Writing/Advice</option>
-                                            <option value="IAB4-7">Nursing</option>
-                                            <option value="IAB4-8">Scholarships</option>
-                                            <option value="IAB4-9">Telecommuting</option>
-                                            <option value="IAB4-10">U.S. Military</option>
-                                            <option value="IAB4-11">Career Advice</option>
-                                            <option value="IAB5">Education (All)</option>
-                                            <option value="IAB5-1">7-12 Education</option>
-                                            <option value="IAB5-2">Adult Education</option>
-                                            <option value="IAB5-3">Art History</option>
-                                            <option value="IAB5-4">Colledge Administration</option>
-                                            <option value="IAB5-5">College Life</option>
-                                            <option value="IAB5-6">Distance Learning</option>
-                                            <option value="IAB5-7">English as a 2nd Language</option>
-                                            <option value="IAB5-8">Language Learning</option>
-                                            <option value="IAB5-9">Graduate School</option>
-                                            <option value="IAB5-10">Homeschooling</option>
-                                            <option value="IAB5-11">Homework/Study Tips</option>
-                                            <option value="IAB5-12">K-6 Educators</option>
-                                            <option value="IAB5-13">Private School</option>
-                                            <option value="IAB5-14">Special Education</option>
-                                            <option value="IAB5-15">Studying Business</option>
-                                            <option value="IAB6">Family & Parenting (All)</option>
-                                            <option value="IAB6-1">Adoption</option>
-                                            <option value="IAB6-2">Babies & Toddlers</option>
-                                            <option value="IAB6-3">Daycare/Pre School</option>
-                                            <option value="IAB6-4">Family Internet</option>
-                                            <option value="IAB6-5">Parenting – K-6 Kids</option>
-                                            <option value="IAB6-6">Parenting teens</option>
-                                            <option value="IAB6-7">Pregnancy</option>
-                                            <option value="IAB6-8">Special Needs Kids</option>
-                                            <option value="IAB6-9">Eldercare</option>
-                                            <option value="IAB7">Health & Fitness (All)</option>
-                                            <option value="IAB7-1">Exercise</option>
-                                            <option value="IAB7-2">A.D.D.</option>
-                                            <option value="IAB7-3">AIDS/HIV</option>
-                                            <option value="IAB7-4">Allergies</option>
-                                            <option value="IAB7-5">Alternative Medicine</option>
-                                            <option value="IAB7-6">Arthritis</option>
-                                            <option value="IAB7-7">Asthma</option>
-                                            <option value="IAB7-8">Autism/PDD</option>
-                                            <option value="IAB7-9">Bipolar Disorder</option>
-                                            <option value="IAB7-10">Brain Tumor</option>
-                                            <option value="IAB7-11">Cancer</option>
-                                            <option value="IAB7-12">Cholesterol</option>
-                                            <option value="IAB7-13">Chronic Fatigue Syndrome</option>
-                                            <option value="IAB7-14">Chronic Pain</option>
-                                            <option value="IAB7-15">Cold & Flu</option>
-                                            <option value="IAB7-16">Deafness</option>
-                                            <option value="IAB7-17">Dental Care</option>
-                                            <option value="IAB7-18">Depression</option>
-                                            <option value="IAB7-19">Dermatology</option>
-                                            <option value="IAB7-20">Diabetes</option>
-                                            <option value="IAB7-21">Epilepsy</option>
-                                            <option value="IAB7-22">GERD/Acid Reflux</option>
-                                            <option value="IAB7-23">Headaches/Migraines</option>
-                                            <option value="IAB7-24">Heart Disease</option>
-                                            <option value="IAB7-25">Herbs for Health</option>
-                                            <option value="IAB7-26">Holistic Healing</option>
-                                            <option value="IAB7-27">IBS/Crohn's Disease</option>
-                                            <option value="IAB7-28">Incest/Abuse Support</option>
-                                            <option value="IAB7-29">Incontinence</option>
-                                            <option value="IAB7-30">Infertility</option>
-                                            <option value="IAB7-31">Men's Health</option>
-                                            <option value="IAB7-32">Nutrition</option>
-                                            <option value="IAB7-33">Orthopedics</option>
-                                            <option value="IAB7-34">Panic/Anxiety Disorders</option>
-                                            <option value="IAB7-35">Pediatrics</option>
-                                            <option value="IAB7-36">Physical Therapy</option>
-                                            <option value="IAB7-37">Psychology/Psychiatry</option>
-                                            <option value="IAB7-38">Senor Health</option>
-                                            <option value="IAB7-39">Sexuality</option>
-                                            <option value="IAB7-40">Sleep Disorders</option>
-                                            <option value="IAB7-41">Smoking Cessation</option>
-                                            <option value="IAB7-42">Substance Abuse</option>
-                                            <option value="IAB7-43">Thyroid Disease</option>
-                                            <option value="IAB7-44">Weight Loss</option>
-                                            <option value="IAB7-45">Women's Health</option>
-                                            <option value="IAB8">Food & Drink (All)</option>
-                                            <option value="IAB8-1">American Cuisine</option>
-                                            <option value="IAB8-2">Barbecues & Grilling</option>
-                                            <option value="IAB8-3">Cajun/Creole</option>
-                                            <option value="IAB8-4">Chinese Cuisine</option>
-                                            <option value="IAB8-5">Cocktails/Beer</option>
-                                            <option value="IAB8-6">Coffee/Tea</option>
-                                            <option value="IAB8-7">Cuisine-Specific</option>
-                                            <option value="IAB8-8">Desserts & Baking</option>
-                                            <option value="IAB8-9">Dining Out</option>
-                                            <option value="IAB8-10">Food Allergies</option>
-                                            <option value="IAB8-11">French Cuisine</option>
-                                            <option value="IAB8-12">Health/Lowfat Cooking</option>
-                                            <option value="IAB8-13">Italian Cuisine</option>
-                                            <option value="IAB8-14">Japanese Cuisine</option>
-                                            <option value="IAB8-15">Mexican Cuisine</option>
-                                            <option value="IAB8-16">Vegan</option>
-                                            <option value="IAB8-17">Vegetarian</option>
-                                            <option value="IAB8-18">Wine</option>
-                                            <option value="IAB9">Hobbies & Interests (All)</option>
-                                            <option value="IAB9-1">Art/Technology</option>
-                                            <option value="IAB9-2">Arts & Crafts</option>
-                                            <option value="IAB9-3">Beadwork</option>
-                                            <option value="IAB9-4">Birdwatching</option>
-                                            <option value="IAB9-5">Board Games/Puzzles</option>
-                                            <option value="IAB9-6">Candle & Soap Making</option>
-                                            <option value="IAB9-7">Card Games</option>
-                                            <option value="IAB9-8">Chess</option>
-                                            <option value="IAB9-9">Cigars</option>
-                                            <option value="IAB9-10">Collecting</option>
-                                            <option value="IAB9-11">Comic Books</option>
-                                            <option value="IAB9-12">Drawing/Sketching</option>
-                                            <option value="IAB9-13">Freelance Writing</option>
-                                            <option value="IAB9-14">Genealogy</option>
-                                            <option value="IAB9-15">Getting Published</option>
-                                            <option value="IAB9-16">Guitar</option>
-                                            <option value="IAB9-17">Home Recording</option>
-                                            <option value="IAB9-18">Investors & Patents</option>
-                                            <option value="IAB9-19">Jewelry Making</option>
-                                            <option value="IAB9-20">Magic & Illusion</option>
-                                            <option value="IAB9-21">Needlework</option>
-                                            <option value="IAB9-22">Painting</option>
-                                            <option value="IAB9-23">Photography</option>
-                                            <option value="IAB9-24">Radio</option>
-                                            <option value="IAB9-25">Roleplaying Games</option>
-                                            <option value="IAB9-26">Sci-Fi & Fantasy</option>
-                                            <option value="IAB9-27">Scrapbooking</option>
-                                            <option value="IAB9-28">Screenwriting</option>
-                                            <option value="IAB9-29">Stamps & Coins</option>
-                                            <option value="IAB9-30">Video & Computer Games</option>
-                                            <option value="IAB9-31">Woodworking</option>
-                                            <option value="IAB10">Home & Garden (All)</option>
-                                            <option value="IAB10-1">Appliances</option>
-                                            <option value="IAB10-2">Entertaining</option>
-                                            <option value="IAB10-3">Environmental Safety</option>
-                                            <option value="IAB10-4">Gardening</option>
-                                            <option value="IAB10-5">Home Repair</option>
-                                            <option value="IAB10-6">Home Theater</option>
-                                            <option value="IAB10-7">Interior Decorating</option>
-                                            <option value="IAB10-8">Landscaping</option>
-                                            <option value="IAB10-9">Remodeling & Construction</option>
-                                            <option value="IAB11">Law, Gov't & Politics (All)</option>
-                                            <option value="IAB11-1">Immigration</option>
-                                            <option value="IAB11-2">Legal Issues</option>
-                                            <option value="IAB11-3">U.S. Government Resources</option>
-                                            <option value="IAB11-4">Politics</option>
-                                            <option value="IAB11-5">Commentary</option>
-                                            <option value="IAB12">News (All)</option>
-                                            <option value="IAB12-1">International News</option>
-                                            <option value="IAB12-2">National News</option>
-                                            <option value="IAB12-3">Local News</option>
-                                            <option value="IAB13">Personal Finance (All)</option>
-                                            <option value="IAB13-1">Beginning Investing</option>
-                                            <option value="IAB13-2">Credit/Debt & Loans</option>
-                                            <option value="IAB13-3">Financial News</option>
-                                            <option value="IAB13-4">Financial Planning</option>
-                                            <option value="IAB13-5">Hedge Fund</option>
-                                            <option value="IAB13-6">Insurance</option>
-                                            <option value="IAB13-7">Investing</option>
-                                            <option value="IAB13-8">Mutual Funds</option>
-                                            <option value="IAB13-9">Options</option>
-                                            <option value="IAB13-10">Retirement Planning</option>
-                                            <option value="IAB13-11">Stocks</option>
-                                            <option value="IAB13-12">Tax Planning</option>
-                                            <option value="IAB14">Society (All)</option>
-                                            <option value="IAB14-1">Dating</option>
-                                            <option value="IAB14-2">Divorce Support</option>
-                                            <option value="IAB14-3">Gay Life</option>
-                                            <option value="IAB14-4">Marriage</option>
-                                            <option value="IAB14-5">Senior Living</option>
-                                            <option value="IAB14-6">Teens</option>
-                                            <option value="IAB14-7">Weddings</option>
-                                            <option value="IAB14-8">Ethnic Specific</option>
-                                            <option value="IAB15">Science (All)</option>
-                                            <option value="IAB15-1">Astrology</option>
-                                            <option value="IAB15-2">Biology</option>
-                                            <option value="IAB15-3">Chemistry</option>
-                                            <option value="IAB15-4">Geology</option>
-                                            <option value="IAB15-5">Paranormal Phenomena</option>
-                                            <option value="IAB15-6">Physics</option>
-                                            <option value="IAB15-7">Space/Astronomy</option>
-                                            <option value="IAB15-8">Geography</option>
-                                            <option value="IAB15-9">Botany</option>
-                                            <option value="IAB15-10">Weather</option>
-                                            <option value="IAB16">Pets (All)</option>
-                                            <option value="IAB16-1">Aquariums</option>
-                                            <option value="IAB16-2">Birds</option>
-                                            <option value="IAB16-3">Cats</option>
-                                            <option value="IAB16-4">Dogs</option>
-                                            <option value="IAB16-5">Large Animals</option>
-                                            <option value="IAB16-6">Reptiles</option>
-                                            <option value="IAB16-7">Veterinary Medicine</option>
-                                            <option value="IAB17">Sports (All)</option>
-                                            <option value="IAB17-1">Auto Racing</option>
-                                            <option value="IAB17-2">Baseball</option>
-                                            <option value="IAB17-3">Bicycling</option>
-                                            <option value="IAB17-4">Bodybuilding</option>
-                                            <option value="IAB17-5">Boxing</option>
-                                            <option value="IAB17-6">Canoeing/Kayaking</option>
-                                            <option value="IAB17-7">Cheerleading</option>
-                                            <option value="IAB17-8">Climbing</option>
-                                            <option value="IAB17-9">Cricket</option>
-                                            <option value="IAB17-10">Figure Skating</option>
-                                            <option value="IAB17-11">Fly Fishing</option>
-                                            <option value="IAB17-12">Football</option>
-                                            <option value="IAB17-13">Freshwater Fishing</option>
-                                            <option value="IAB17-14">Game & Fish</option>
-                                            <option value="IAB17-15">Golf</option>
-                                            <option value="IAB17-16">Horse Racing</option>
-                                            <option value="IAB17-17">Horses</option>
-                                            <option value="IAB17-18">Hunting/Shooting</option>
-                                            <option value="IAB17-19">Inline Skating</option>
-                                            <option value="IAB17-20">Martial Arts</option>
-                                            <option value="IAB17-21">Mountain Biking</option>
-                                            <option value="IAB17-22">NASCAR Racing</option>
-                                            <option value="IAB17-23">Olympics</option>
-                                            <option value="IAB17-24">Paintball</option>
-                                            <option value="IAB17-25">Power & Motorcycles</option>
-                                            <option value="IAB17-26">Pro Basketball</option>
-                                            <option value="IAB17-27">Pro Ice Hockey</option>
-                                            <option value="IAB17-28">Rodeo</option>
-                                            <option value="IAB17-29">Rugby</option>
-                                            <option value="IAB17-30">Running/Jogging</option>
-                                            <option value="IAB17-31">Sailing</option>
-                                            <option value="IAB17-32">Saltwater Fishing</option>
-                                            <option value="IAB17-33">Scuba Diving</option>
-                                            <option value="IAB17-34">Skateboarding</option>
-                                            <option value="IAB17-35">Skiing</option>
-                                            <option value="IAB17-36">Snowboarding</option>
-                                            <option value="IAB17-37">Surfing/Bodyboarding</option>
-                                            <option value="IAB17-38">Swimming</option>
-                                            <option value="IAB17-39">Table Tennis/Ping-Pong</option>
-                                            <option value="IAB17-40">Tennis</option>
-                                            <option value="IAB17-41">Volleyball</option>
-                                            <option value="IAB17-42">Walking</option>
-                                            <option value="IAB17-43">Waterski/Wakeboard</option>
-                                            <option value="IAB17-44">World Soccer</option>
-                                            <option value="IAB18">Style & Fashion (All)</option>
-                                            <option value="IAB18-1">Beauty</option>
-                                            <option value="IAB18-2">Body Art</option>
-                                            <option value="IAB18-3">Fashion</option>
-                                            <option value="IAB18-4">Jewelry</option>
-                                            <option value="IAB18-5">Clothing</option>
-                                            <option value="IAB18-6">Accessories</option>
-                                            <option value="IAB19">Technology & Computing (All)</option>
-                                            <option value="IAB19-1">3-D Graphics</option>
-                                            <option value="IAB19-2">Animation</option>
-                                            <option value="IAB19-3">Antivirus Software</option>
-                                            <option value="IAB19-4">C/C++</option>
-                                            <option value="IAB19-5">Cameras & Camcorders</option>
-                                            <option value="IAB19-6">Cell Phones</option>
-                                            <option value="IAB19-7">Computer Certification</option>
-                                            <option value="IAB19-8">Computer Networking</option>
-                                            <option value="IAB19-9">Computer Peripherals</option>
-                                            <option value="IAB19-10">Computer Reviews</option>
-                                            <option value="IAB19-11">Data Centers</option>
-                                            <option value="IAB19-12">Databases</option>
-                                            <option value="IAB19-13">Desktop Publishing</option>
-                                            <option value="IAB19-14">Desktop Video</option>
-                                            <option value="IAB19-15">Email</option>
-                                            <option value="IAB19-16">Graphics Software</option>
-                                            <option value="IAB19-17">Home Video/DVD</option>
-                                            <option value="IAB19-18">Internet Technology</option>
-                                            <option value="IAB19-19">Java</option>
-                                            <option value="IAB19-20">JavaScript</option>
-                                            <option value="IAB19-21">Mac Support</option>
-                                            <option value="IAB19-22">MP3/MIDI</option>
-                                            <option value="IAB19-23">Net Conferencing</option>
-                                            <option value="IAB19-24">Net for Beginners</option>
-                                            <option value="IAB19-25">Network Security</option>
-                                            <option value="IAB19-26">Palmtops/PDAs</option>
-                                            <option value="IAB19-27">PC Support</option>
-                                            <option value="IAB19-28">Portable</option>
-                                            <option value="IAB19-29">Entertainment</option>
-                                            <option value="IAB19-30">Shareware/Freeware</option>
-                                            <option value="IAB19-31">Unix</option>
-                                            <option value="IAB19-32">Visual Basic</option>
-                                            <option value="IAB19-33">Web Clip Art</option>
-                                            <option value="IAB19-34">Web Design/HTML</option>
-                                            <option value="IAB19-35">Web Search</option>
-                                            <option value="IAB19-36">Windows</option>
-                                            <option value="IAB20">Travel (All)</option>
-                                            <option value="IAB20-1">Adventure Travel</option>
-                                            <option value="IAB20-2">Africa</option>
-                                            <option value="IAB20-3">Air Travel</option>
-                                            <option value="IAB20-4">Australia & New Zealand</option>
-                                            <option value="IAB20-5">Bed & Breakfasts</option>
-                                            <option value="IAB20-6">Budget Travel</option>
-                                            <option value="IAB20-7">Business Travel</option>
-                                            <option value="IAB20-8">By US Locale</option>
-                                            <option value="IAB20-9">Camping</option>
-                                            <option value="IAB20-10">Canada</option>
-                                            <option value="IAB20-11">Caribbean</option>
-                                            <option value="IAB20-12">Cruises</option>
-                                            <option value="IAB20-13">Eastern Europe</option>
-                                            <option value="IAB20-14">Europe</option>
-                                            <option value="IAB20-15">France</option>
-                                            <option value="IAB20-16">Greece</option>
-                                            <option value="IAB20-17">Honeymoons/Getaways</option>
-                                            <option value="IAB20-18">Hotels</option>
-                                            <option value="IAB20-19">Italy</option>
-                                            <option value="IAB20-20">Japan</option>
-                                            <option value="IAB20-21">Mexico & Central America</option>
-                                            <option value="IAB20-22">National Parks</option>
-                                            <option value="IAB20-23">South America</option>
-                                            <option value="IAB20-24">Spas</option>
-                                            <option value="IAB20-25">Theme Parks</option>
-                                            <option value="IAB20-26">Traveling with Kids</option>
-                                            <option value="IAB20-27">United Kingdom</option>
-                                            <option value="IAB21">Real Estate (All)</option>
-                                            <option value="IAB21-1">Apartments</option>
-                                            <option value="IAB21-2">Architects</option>
-                                            <option value="IAB21-3">Buying/Selling Homes</option>
-                                            <option value="IAB22">Shopping (All)</option>
-                                            <option value="IAB22-1">Contests & Freebies</option>
-                                            <option value="IAB22-2">Couponing</option>
-                                            <option value="IAB22-3">Comparison</option>
-                                            <option value="IAB22-4">Engines</option>
-                                            <option value="IAB23">Religion & Spirituality (All)</option>
-                                            <option value="IAB23-1">Alternative Religions</option>
-                                            <option value="IAB23-2">Atheism/Agnosticism</option>
-                                            <option value="IAB23-3">Buddhism</option>
-                                            <option value="IAB23-4">Catholicism</option>
-                                            <option value="IAB23-5">Christianity</option>
-                                            <option value="IAB23-6">Hinduism</option>
-                                            <option value="IAB23-7">Islam</option>
-                                            <option value="IAB23-8">Judaism</option>
-                                            <option value="IAB23-9">Latter-Day Saints</option>
-                                            <option value="IAB23-10">Pagan/Wiccan</option>
-                                            <option value="IAB24">Uncategorized (All)</option>
-                                            <option value="IAB25">Non-Standard Content (All)</option>
-                                            <option value="IAB25-1">Unmoderated UGC</option>
-                                            <option value="IAB25-2">Extreme Graphic/Explicit Violence</option>
-                                            <option value="IAB25-3">Pornography</option>
-                                            <option value="IAB25-4">Profane Content</option>
-                                            <option value="IAB25-5">Hate Content</option>
-                                            <option value="IAB25-6">Under Construction</option>
-                                            <option value="IAB25-7">Incentivized</option>
-                                        </select>
-                                    </div>
-                                    <input class="iab-cat-tags" type="hidden" name="<?php echo self::$opt_vi_js_settings ?>[iabCategory]" id="<?php echo self::$opt_vi_js_settings ?>[iabCategory]" value="<?php echo esc_attr($item[self::$opt_vi_js_settings]['iabCategory']) ?>" />
-                                    <br>
-                                    <br>
-                                    <p><strong>Your Selected Categories:</strong></p>
-                                    <div class="iab-cat-tags-display"></div>
-                                </td>
-                            </tr>
-                            <tr class="form-field <?php echo empty($item[self::$opt_vi_js_settings]['keywords']) ? ' hidden ' : '' ?>">
-                                <th valign="top" scope="row">
-                                    <label for="<?php echo self::$opt_vi_js_settings ?>[keywords]">Keywords</label>
-                                    <small>Enter a few keywords that describe topics your visitors are likely to be interested in. <strong>Separate by commas.</strong>
-                                        Tip: Try to avoid terms that have multiple meanings; e.g., just the word "record" can refer to music records and even sports records.</small>
-                                </th>
-                                <td>
-                                    <input id="<?php echo self::$opt_vi_js_settings ?>[keywords]" name="<?php echo self::$opt_vi_js_settings ?>[keywords]" value="<?php echo esc_attr($item[self::$opt_vi_js_settings]['keywords']) ?>"
-                                           type="text" maxlength="200" placeholder="Example: cooking, baking, food, recipes, kitchen">
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </section>
-
-
-                <section class="pattern" id="jumpappearance">
-                    <h2><span class="vi-num">2</span> Appearance</h2>
-
-                    <p>Customize your ad unit's visual appearance below.</p>
-                    <div class="vi-story-demo">
-
-                        <h3>
-                            Appearance Demo
-                        </h3>
-                        <div class="vi-story-demo--box">
-                            <div class="vi-story-demo--screen">
-                                <span>AD + CONTENT</span>
-                            </div>
-                            <div class="vi-story-demo--info">
-                                <div class="vi-story-demo--title">
-                                    Example vi Story Title Text
-                                </div>
-                                <div class="vi-story-demo--featured">
-                                    <span>featured by</span> <img src="<?php echo plugins_url(self::$folder_name . '/images/vi_logo.svg') ?>"/>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <table cellspacing="2" cellpadding="5" class="form-table form-table--vi-appearance">
-                        <tbody>
-
-
-                            <tr class="form-field">
-                                <th valign="top" scope="row">
-                                    <label for="<?php echo self::$opt_vi_js_settings ?>[backgroundColor]">Background Color</label>
-                                    <small>Select a background color that will enable the ad to blend in with your site's theme.</small>
-                                </th>
-                                <td>
-                                    <input id="<?php echo self::$opt_vi_js_settings ?>[backgroundColor]" name="<?php echo self::$opt_vi_js_settings ?>[backgroundColor]" value="<?php echo esc_attr($item[self::$opt_vi_js_settings]['backgroundColor']) ?>"
-                                           type="text" maxlength="7" class="ytvi-color-field">
-                                </td>
-                            </tr>
-                            <tr class="form-field">
-                                <th valign="top" scope="row">
-                                    <label for="<?php echo self::$opt_vi_js_settings ?>[textColor]">Text Color</label>
-                                    <small>Select a text color that will enable the ad to blend in with your site's theme.</small>
-                                </th>
-                                <td>
-                                    <input id="<?php echo self::$opt_vi_js_settings ?>[textColor]" name="<?php echo self::$opt_vi_js_settings ?>[textColor]" value="<?php echo esc_attr($item[self::$opt_vi_js_settings]['textColor']) ?>"
-                                           type="text" maxlength="7" class="ytvi-color-field">
-                                </td>
-                            </tr>
-                            <tr class="form-field">
-                                <th valign="top" scope="row">
-                                    <label for="<?php echo self::$opt_vi_js_settings ?>[font]">Font Family</label>
-                                    <small>Select the font that matches your site's theme the most.</small>
-                                </th>
-                                <td>
-                                    <select name="<?php echo self::$opt_vi_js_settings ?>[font]" id="<?php echo self::$opt_vi_js_settings ?>[font]" required>
-                                        <?php
-                                        $all_fonts = array(
-                                            'Arial',
-                                            'Arial Black',
-                                            'Comic Sans MS',
-                                            'Courier New',
-                                            'Georgia',
-                                            'Impact',
-                                            'Lucida Console',
-                                            'Lucida Sans Unicode',
-                                            'Palatino Linotype',
-                                            'Tahoma',
-                                            'Times New Roman',
-                                            'Trebuchet MS',
-                                            'Verdana'
-                                        );
-                                        foreach ($all_fonts as $font)
-                                        {
-                                            ?>
-                                            <option <?php selected($item[self::$opt_vi_js_settings]['font'], $font) ?> value="<?php echo esc_attr($font) ?>"><?php echo esc_attr($font) ?></option>
-                                            <?php
-                                        }
-                                        ?>
-                                    </select>
-                                </td>
-                            </tr>
-                            <tr class="form-field">
-                                <th valign="top" scope="row">
-                                    <label for="<?php echo self::$opt_vi_js_settings ?>[fontSize]">Font Size</label>
-                                    <small>Select the font size for your ad.</small>
-                                </th>
-                                <td>
-                                    <select name="<?php echo self::$opt_vi_js_settings ?>[fontSize]" id="<?php echo self::$opt_vi_js_settings ?>[fontSize]" required>
-                                        <?php
-                                        $all_font_sizes = array(
-                                            8, 9, 10, 11, 12, 14, 16, 18, 20, 22, 24, 26, 28, 36
-                                        );
-                                        foreach ($all_font_sizes as $fsize)
-                                        {
-                                            ?>
-                                            <option <?php selected($item[self::$opt_vi_js_settings]['fontSize'], $fsize) ?> value="<?php echo esc_attr($fsize) ?>"><?php echo esc_attr($fsize . 'px') ?></option>
-                                            <?php
-                                        }
-                                        ?>
-                                    </select>
-                                </td>
-                            </tr>
-
-                            <?php
-                            if (!empty(self::$alloptions[self::$opt_vi_endpoints]->languages))
-                            {
-                                ?>
-                                <tr class="form-field">
-                                    <th valign="top" scope="row">
-                                        <label for="<?php echo self::$opt_vi_js_settings ?>[language]">Language</label>
-                                        <small>Select from the available list of languages.</small>
-                                    </th>
-                                    <td>
-                                        <select name="<?php echo self::$opt_vi_js_settings ?>[language]" id="<?php echo self::$opt_vi_js_settings ?>[language]" required>
-                                            <?php
-                                            $all_languages = array();
-                                            foreach (self::$alloptions[self::$opt_vi_endpoints]->languages as $lang)
-                                            {
-                                                $l = get_object_vars($lang);
-                                                $all_languages = $l + $all_languages;
-                                            }
-                                            foreach ($all_languages as $lang_key => $lang_val)
-                                            {
-                                                ?>
-                                                <option <?php selected($item[self::$opt_vi_js_settings]['language'], $lang_key) ?> value="<?php echo esc_attr($lang_key) ?>"><?php echo esc_attr($lang_val) ?></option>
-                                                <?php
-                                            }
-                                            ?>
-                                        </select>
-                                    </td>
-                                </tr>
-                                <?php
-                            }
-                            ?>
-                        </tbody>
-                    </table>
-                    <div class="clearboth"></div>
-                    <h3>Sizing Tips</h3>
-                    <p>The video ad's player will be as large as the container it’s in. If you’d like to change the default size to something smaller, you’ll just need to add some CSS to your website's theme as follows:</p>
-                    <ol class="list-ol">
-                        <li>
-                            You'll be using your site's theme customizer. In the WordPress admin menu on the left, go to <em>Appearance > <a target="_blank" href="<?php echo admin_url('customize.php?return=') . urlencode(admin_url()) ?>">Customize</a></em>.
-                        </li>
-                        <li>
-                            On the customizer page, scroll down in the left menu to "Additional CSS" and click on it.
-                        </li>
-                        <li>
-                            You'll have a textbox to paste in the following CSS (change 480 to your desired max width in pixels):
-                            <br><br>
-                            <div class="code pre"><?php echo ".ytvi-story-container {
-max-width: 480px;
-margin: 0 auto;
-}" ?></div>
-                        </li>
-                        <li>
-                            When done, click on the "Publish" button at the top to save your change, and then the X to close the theme customizer.
-                        </li>                        
-                    </ol>
-                </section>
-
-
-                <section class="pattern" id="jumpplacement">
-                    <h2><span class="vi-num">3</span> Placement</h2>
-                    <p>
-                        You can choose to place your ad <strong>automatically</strong>, or <strong>manually</strong> using a shortcode, or in a specific spot in your <strong>theme</strong> code. Each method is explained below.
-                    </p>
-                    <p>
-                        After you finish choosing your placement preferences below, 1) Click on "Save Changes", and 2) <strong class="vi-red">turn on</strong> the ads using the button at the top of this screen.
-                    </p>
-                    <p>
-                        <strong>Note: The ad player will auto-fit to its container when loaded.</strong>
-                    </p>
-
-                    <h3>Automatic: Top or Bottom</h3>
-                    <p>
-                        You can have your ad automatically placed at the top or bottom of your post content--right above your first paragraph (top), or right under your last paragraph (bottom).
-                        For optimal revenue, we recommend using the "Top" option:
-                    </p>
-                    <ul>
-                        <li><label><input type="radio" name="<?php echo self::$opt_vi_js_position ?>" value="top" <?php checked($item[self::$opt_vi_js_position] == 'top') ?> /> Top (recommended for highest fill rate)</label></li>
-                        <li><label><input type="radio" name="<?php echo self::$opt_vi_js_position ?>" value="bottom" <?php checked($item[self::$opt_vi_js_position] == 'bottom') ?> /> Bottom</label></li>
-                    </ul>
-                    <p>
-                        Next, just check which types of posts you desire to have the ad appear, and the plugin will take care of the rest. 
-                        You'll start seeing the ads on your pages after pressing the "Save Changes" button on the bottom right, and turning "ON" vi ads with the top right button.
-                    </p>
-
-                    <ul>
-                        <?php
-                        $all_post_types = get_post_types(array('public' => true), 'objects');
-                        foreach ($all_post_types as $pt)
-                        {
-                            ?>
-                            <li><label><input type="checkbox" name="<?php echo self::$opt_vi_js_posttypes ?>[]" value="<?php echo esc_attr($pt->name); ?>" <?php checked(in_array($pt->name, $item[self::$opt_vi_js_posttypes])) ?> /> <?php echo esc_html($pt->label); ?></label></li>
-                            <?php
-                        }
-                        ?>                    
-                    </ul>
-                    <p>
-                        Note that only one ad can appear on a page, but if you'd like more control of exactly <em>where</em> it's placed, see the "Manual" or "Theme Code" directions in the next sections.
-                    </p>
-                    <h3>Manual: Shortcode or Gutenberg Block</h3>
-                    <p>
-                        If you didn't select any of the automatic options above, you can manually insert your ad in text widgets, and in specific posts or pages. 
-                        See the below screenshot to find the button you can use to manually embed the ad code.
-                        (or, use this shortcode directly: <code>[embed-vi-ad]</code>).
-                        <strong>We're quite happy to help you if you aren't sure what to do</strong>, especially due the newness of the new Gutenberg editor.  <strong>Just email us at ext@embedplus.com</strong>
-                    </p>
-                    <p>
-                        By the way, if you did make an automatic selection above, do not make any manual insertions. Skip the remaining options on this page, since only one ad code/script is allowed per page and the above has got you covered. 
-                    </p>
-                    <img class="ss-vi-wizbutton" src="<?php echo plugins_url(self::$folder_name . '/images/ss-vi-wizbutton.png') . '?ver=' . self::$version; ?>"/>                    
-
-                    <h3>Theme Code (advanced)</h3>
-                    <p>You can also position the ad directly in your theme code. Copy the PHP code below and paste it where you would like it to appear in your theme.</p>
-                    <p><code>echo do_shortcode("[embed-vi-ad]");</code></p>
-                </section>
-
-
-                <section class="pattern" id="jumpadstxt">
-                    <div class="adstxt-help">
-                        <img src="<?php echo plugins_url(self::$folder_name . '/images/adstxt-help.png') . '?ver=' . self::$version; ?>"/>
-                        <p>
-                            Trouble with your ads.txt verification? Contact support at <strong><a href="mailto:ext@embedplus.com">ext@embedplus.com</a></strong>
-                        </p>                        
-                    </div>
-                    <h2><span class="vi-num">5</span> Ads.txt Verification</h2>
-                    <p>
-                        In order for your ads to start generating revenue, verify your ads.txt file.
-                    </p>
-                    <div class="adstxt-verify-message">
-
-                    </div>
-
-                    <p>
-                        Are you also running Google Adsense ads on your site?  If so, also add the following line which is <a href="https://support.google.com/adsense/answer/7532444?hl=en" target="_blank">recommended by Google</a> for ads.txt files (replace the <code>0000000000000000</code> with your actual publisher ID as provided by Google).
-                    </p>
-                    <p>
-                        <code class="adstxt-block">google.com, pub-0000000000000000, DIRECT, f08c47fec0942fa0</code>
-                    </p>                    
-                </section>
-
-
-                <section class="pattern" id="jumpperformance">
-                    <h2><span class="vi-num">6</span> Revenue Reporting</h2>
-                    <div class="vi-report">
-                        <div class="vi-total-earnings">
-                            <h3>Total Earnings</h3>
-                            <div class="vi-total-earnings-num"></div>
-                        </div>
-                        <div class="vi-report-graph">
-                            <div class="vi-report-canvas-box">
-                                <canvas id="vi-report-canvas"></canvas>
-                            </div>
-                        </div>
-                        <div class="clearboth"></div>
-                        <p>
-                            To view more detailed reports on your ad's performance and stats,
-                            <a class="button-secondary align-middle" target="_blank" href="<?php echo esc_url(trailingslashit(self::$alloptions[self::$opt_vi_endpoints]->dashboardURL) . 'scar/' . self::$alloptions[self::$opt_vi_token]); ?>">click here</a> 
-                            to automatically login to your vi account. Then click on the "Reports" tab as shown below.
-                        </p>
-                        <p>
-                            <img class="ss-vi-img" src="<?php echo plugins_url(self::$folder_name . '/images/ss-vi-dashreports.png'); ?>"/>
-                        </p>
-
-                    </div>
-                    <div class="vi-report-error hide">
-                        <div class="vi-total-earnings-error">
-                            <h3>Total Earnings</h3>
-                            <div class="vi-total-earnings-num-error">No Data</div>
-                        </div>
-                        <div class="vi-report-graph-error">
-                            <h3>Monthly Earnings Graph</h3>
-                            <div class="vi-report-canvas-box-error">
-                                <br>
-                                <br>
-                                No Data
-                            </div>
-                        </div>
-                        <div class="clearboth"></div>
-                        <p>
-                            Trouble showing the reports? Please try again later, or contact support at <strong><a href="mailto:ext@embedplus.com">ext@embedplus.com</a></strong>
-                        </p>
-                    </div>
-
-                </section>
-
-                <section class="pattern" id="jumprevenue">
-                    <h2><span class="vi-num">7</span> Profile Settings</h2>
-                    <p>
-                        To enter where you would like to receive your payments,
-                        <a class="button-secondary align-middle" target="_blank" href="<?php echo esc_url(trailingslashit(self::$alloptions[self::$opt_vi_endpoints]->dashboardURL) . 'scar/' . self::$alloptions[self::$opt_vi_token]); ?>">click here</a> 
-                        to automatically login to your dashboard on vi.ai. Your deposit options, which include bank transfer or PayPal, are found in the "Settings" tab:
-                    </p>
-                    <p>
-                        <img class="ss-vi-img" src="<?php echo plugins_url(self::$folder_name . '/images/ss-vi-dashrevenue.png'); ?>"/>
-                    </p>
-                    <p>
-                        Trouble automatically logging in? <a target="_blank" href="<?php echo esc_url(self::$alloptions[self::$opt_vi_endpoints]->dashboardURL); ?>">Manually login here</a> using the email you signed up with.
-                    </p>
-                </section>
-
-                <section class="pattern" id="jumpviprivacy">
-                    <h2>Privacy</h2>
-                    <p>
-                        <label>
-                            <input type="checkbox" id="<?php echo self::$opt_vi_show_gdpr_authorization ?>" name="<?php echo self::$opt_vi_show_gdpr_authorization ?>" value="1" <?php checked($item[self::$opt_vi_show_gdpr_authorization] == 1) ?> />
-                            <strong>Show Privacy/GDPR Popup</strong> - Use the <a href="https://advertisingconsent.eu/" target="_blank">IAB approved</a> method to gain consent from your EU visitors before video intelligence cookies or ad content is loaded.
-                        </label>
-                    </p>
-                    <p class="opt_<?php echo self::$opt_vi_show_privacy_button ?>" style="<?php echo $item[self::$opt_vi_show_gdpr_authorization] == 1 ? '' : 'display: none;' ?>">
-                        <label>
-                            <input type="checkbox" name="<?php echo self::$opt_vi_show_privacy_button ?>" value="1" <?php checked($item[self::$opt_vi_show_privacy_button] == 1) ?> />
-                            <strong>Show Privacy Settings Button</strong> - Checking this will also display a floating button ("vi Privacy Settings") on pages where vi ads are shown. Users can click on it to reevaluate consent without to having to manually manage cookies from their browser settings.
-                        </label>
-                    </p>
-                </section>
-
-                <section class="pattern" id="jumpfaq">
-                    <h2>FAQs</h2>
-
-                    <ul class="list-ul">
-                        <li>
-                            <h3>What kind of video ad unit am I embedding?</h3>
-                            <p>It's a unique type of ad unit called a "vi story," which is essentially a video ad wrapped with engaging content related to your website. <a target="_blank" href="<?php echo esc_url(self::$alloptions[self::$opt_vi_endpoints]->demoPageURL); ?>">View a demo here</a> (be sure to turn off ad-blocker to preview the demo).</p>
-                            <p>Your ad unit will display content from quality sources like:</p>
-                            <p class="vi-ad-source-row">
-                                <img class="vi-ad-source" src="<?php echo plugins_url(self::$folder_name . '/images/vi-source-billboard.png') ?>"/>
-                                <img class="vi-ad-source" src="<?php echo plugins_url(self::$folder_name . '/images/vi-source-nowthis.png') ?>"/>
-                                <img class="vi-ad-source" src="<?php echo plugins_url(self::$folder_name . '/images/vi-source-bonnier.png') ?>"/>
-                                <img class="vi-ad-source" src="<?php echo plugins_url(self::$folder_name . '/images/vi-source-cbc.png') ?>"/>
-                                <img class="vi-ad-source" src="<?php echo plugins_url(self::$folder_name . '/images/vi-source-thetelegraph.png') ?>"/>
-                                <img class="vi-ad-source" src="<?php echo plugins_url(self::$folder_name . '/images/vi-source-itn.png') ?>"/>
-                            </p>
-                        </li>
-                        <li>
-                            <h3>Why embed an ad unit that also includes a story, rather than just an ad?</h3>
-                            <p>Simply put, advertisers pay more for video advertising when it's matched with video content. With both, you'll increase your visitors' time-on-site and even command up to 10x higher CPM than regular display advertising.</p>
-                        </li>
-                        <li>
-                            <h3>What is my ads.txt file for?</h3>
-                            <p>
-                                This is an industry standard (IAB-approved) text file that aims to prevent unauthorized inventory sales. 
-                                Basically, it helps increase your revenue by verifying to ad buyers that you have a valid site that they are buying ad space for.
-                            </p>
-                        </li>
-                        <li>
-                            <h3>What is the best place to put my ad?</h3>
-                            <p>
-                                To optimize your revenue, we strongly recommend embedding the ad "above the fold" when possible (lower placements tend to yield much less revenue). In general, the higher the placement, the better engagement and revenue.
-                                The automatic placement options place the ad at the top of your content area for you, but keep this tip in mind whenever you manually embed the ad. 
-                            </p>
-                        </li>
-                        <li>
-                            <h3>Why are there no ads, even though I added the code (manually or automatically)?</h3>
-                            <p>
-                                It's likely that you've added more than one ad script/code to your pages.
-                                Perhaps you selected the automatic placement on a post/page but also inserted a separate piece of code/script manually.
-                                At this time, only one ad is allowed per page. If you insert more, then no ads might be visible.
-                            </p>
-                        </li>
-                        <li>
-                            <h3>Is this video intelligence (vi) monetization feature compatible with Google Adsense?</h3>
-                            <p>
-                                Yes.  Many publishers are in fact running both Adsense and vi at the same time.  Like vi, Google Adsense recommends that you have an  <a href="https://support.google.com/adsense/answer/7532444?hl=en" target="_blank">ads.txt in your root folder</a>.
-                                Therefore, you should also include the following line in your ads.txt -- either before or after the lines you inserted for vi (replace the <code>0000000000000000</code> with the actual publisher ID provided by Google):
-                            </p>
-                            <p>
-                                <code>google.com, pub-0000000000000000, DIRECT, f08c47fec0942fa0</code>
-                            </p>
-                        </li>
-                        <li>
-                            <h3>How do I resize the ad?</h3>
-                            <p>The video ad's player will be as large as the container it’s in. If you’d like to change the default size to something smaller, you’ll just need to add some CSS to your website's theme as follows:</p>
-                            <ol class="list-ol">
-                                <li>
-                                    You'll be using your site's theme customizer. In the WordPress admin menu on the left, go to <em>Appearance > <a target="_blank" href="<?php echo admin_url('customize.php?return=') . urlencode(admin_url()) ?>">Customize</a></em>.
-                                </li>
-                                <li>
-                                    On the customizer page, scroll down in the left menu to "Additional CSS" and click on it.
-                                </li>
-                                <li>
-                                    You'll have a textbox to paste in the following CSS (change 480 to your desired max width in pixels):
-                                    <br><br>
-                                    <div class="code pre"><?php echo ".ytvi-story-container {
-max-width: 480px;
-margin: 0 auto;
-}" ?></div>
-                                </li>
-                                <li>
-                                    When done, click on the "Publish" button at the top to save your change, and then the X to close the theme customizer.
-                                </li>                        
-                            </ol>
-                        </li>
-                        <li>
-                            <h3>I don't want my ad to follow me as I scroll.</h3>
-                            <p>
-                                This is a feature that greatly increases your rate of revenue. If you would like to turn if off, please <a href="#jumpsupport">contact support</a>.
-                            </p>
-                        </li>
-                        <li>
-                            <h3>When will I start seeing ads within the vi story?</h3>
-                            <p>
-                                It can vary depending on which countries the bulk of your traffic is coming from. For most countries it takes about 1 to 2 days.  If you have questions, email us at ext@embedplus.com
-                            </p>
-                        </li>
-                        <li>
-                            <h3>How do I change the number of ads that are shown for each vi story I embed?</h3>
-                            <p>
-                                vi manages the maximum number of ads and time between them based on each publisher. This is to optimize the fill rates and monetization.  If you would like some custom settings, please <a href="#jumpsupport">contact support</a>.
-                            </p>
-                        </li>
-                        <li>
-                            <h3>Why am I seeing ads that do not match my site's topics?</h3>
-                            <ol>
-                                <li>Wait for 24 hours to give the video intelligence service time to learn more about your site.</li>
-                                <li>Check each category and its subcategories to see if there is a better fit for your site’s topics than your initial selections.</li>
-                                <li>If you're still not seeing well-matched ads, it’s likely that your site’s topics are very specific or they are based on categories in which vi.ai is still building inventory.  In the meantime, try and find other categories that you think will be of interest to your audience.</li>
-                                <li>If all else fails, please <a href="#jumpsupport">contact support</a>.</li>
-                            </ol>
-                        </li>
-                    </ul>
-                    <p><strong>To see a comprehensive list of FAQs, <a target="_blank" href="https://www.vi.ai/publisherfaq/?aid=WP_embedplus&utm_source=Wordpress&utm_medium=WP_embedplus">please visit vi FAQs</a>.</strong></p>
-                </section>
-
-                <section class="pattern" id="jumpsupport">
-
-                    <h2>Earnings & Payment Support</h2>
-                    <p>
-                        For issues on the advertising program, your earnings, and <img class="vi-logo-text" alt="vi: video intelligence" src="<?php echo plugins_url(self::$folder_name . '/images/vi_logo.svg') ?>"/>: please contact <strong><a href="mailto:ext@embedplus.com">ext@embedplus.com</a></strong>.
-                    </p>
-                </section>
-
-
-                <div class="save-changes-follow"> <?php self::vi_save_changes_button(!empty($message)); ?> </div>
-            </form>
-        </div>
-        <?php
-    }
-
-    public static function vi_monetize_title()
-    {
-        ?>
-        Join over 40,000 publishers making money embedding high quality video ads
-        <?php
-    }
-
-    public static function vi_admin_dashboard_pre()
-    {
-        if (!current_user_can('manage_options'))
-        {
-            wp_die(__('You do not have sufficient permissions to access this page.'));
-        }
-        ?>
-
-        <div class="wrap wrap-vi wrap-vi-settings-pre">
-            <?php
-            //self::vi_monetize_title();
-            if (self::vi_script_setup_done())
-            {
-                echo '<h1>';
-                self::vi_print_toggle_button();
-                echo '</h1>';
-            }
-            ?>
-
-            <div class="vi-registration-box">
-                <?php
-                include_once(EPYTVI_INCLUDES_PATH . 'vi_registration_form.php');
-                include_once(EPYTVI_INCLUDES_PATH . 'vi_login_success.php');
-                ?>
-            </div>
-        </div>
-        <?php
-    }
-
-    public static function vi_save_changes_button($submitted)
-    {
-        $button_label = 'Save Changes';
-        if ($submitted)
-        {
-            $button_label = 'Changes Saved';
-            ?>
-            <script type="text/javascript">
-                jQuery(document).ready(function ()
-                {
-                    setTimeout(function ()
-                    {
-                        jQuery('input.ytvi-admin-submit').val('Save Changes');
-                    }, 3000);
-                });
-
-            </script>
-            <?php
-        }
-        ?>
-        <p class="submit">
-            <input type="submit" name="Submit" class="button-primary ytvi-admin-submit" value="<?php _e($button_label) ?>" />
-            <em>If you're using a separate caching plugin and you do not see your changes after saving, <strong class="orange">you need to reset your cache.</strong></em>
-        </p>
-        <?php
-    }
-
-    public static function vi_script_tag()
-    {
-        if (!self::$vi_script_tag_done && self::$alloptions[self::$opt_vi_active] && self::vi_script_setup_done())
-        {
-            if (stripos(self::$alloptions[self::$opt_vi_js_settings]['iabCategory'], ',') > 0 && self::vi_logged_in())
-            {
-                $last_category_update = strtotime(self::$alloptions[self::$opt_vi_last_category_update]);
-                $last_category_update_plus = strtotime(self::$alloptions[self::$opt_vi_last_category_update] . ' + ' . self::$vi_last_category_update_interval);
-                if ($last_category_update_plus < time())
-                {
-                    $success = self::vi_cache_js(self::$alloptions[self::$opt_vi_js_settings]);
-                    if ($success !== true)
-                    {
-                        self::vi_token_expire();
-                    }
-                }
-            }
-
-            self::$vi_script_tag_done = true;
-            $scriptTag = '<div class="ytvi-story-container" id="ytvi_story_container"><script class="ytvi-story-script" type="text/javascript">' .
-                    self::$alloptions[self::$opt_vi_js_script] .
-                    '</script></div>';
-            return $scriptTag;
-        }
-        return '';
-    }
-
-    public static function vi_js_placement($content)
-    {
-        //$mainquery = is_main_query();
-
-        if (!self::$vi_script_tag_done && self::$alloptions[self::$opt_vi_active] && self::vi_script_setup_done())
-        {
-            if (!empty(self::$alloptions[self::$opt_vi_js_posttypes]))
-            {
-                $singular = is_singular(self::$alloptions[self::$opt_vi_js_posttypes]);
-                if ($singular && in_the_loop())
-                {
-                    return self::$alloptions[self::$opt_vi_js_position] == 'top' ? self::vi_script_tag() . $content : $content . self::vi_script_tag();
-                }
-            }
-        }
-
-        return $content;
-    }
-
-    public static function vi_js_shortcode($atts, $content = null)
-    {
-        return self::vi_script_tag();
-    }
-
-    public static function wp_insert_vi_api_is_eu()
-    {
-        $userIp = $_SERVER["REMOTE_ADDR"];
-        if (defined('VI_EU_TEST'))
-        {
-            $userIp = '185.216.33.82'; // force EU for testing
-        }
-        $isEU = get_transient('wp_insert_vi_api_is_eu_' . $userIp);
-        if ($isEU === false)
-        {
-            try
-            {
-                $response = wp_remote_get(
-                        'http://gdpr-check.net/gdpr/is-eu?ip=' . $userIp, array('timeout' => 15)
-                );
-                if (!is_wp_error($response))
-                {
-                    if (200 == wp_remote_retrieve_response_code($response))
-                    {
-                        $responseBody = json_decode($response['body']);
-                        if ((json_last_error() == JSON_ERROR_NONE))
-                        {
-                            if ((isset($responseBody->is_eu)) && ($responseBody->is_eu == '1'))
-                            {
-                                delete_transient('wp_insert_vi_api_is_eu_' . $userIp);
-                                set_transient('wp_insert_vi_api_is_eu_' . $userIp, '1', WEEK_IN_SECONDS);
-                                return true;
-                            }
-                            else
-                            {
-                                delete_transient('wp_insert_vi_api_is_eu_' . $userIp);
-                                set_transient('wp_insert_vi_api_is_eu_' . $userIp, '0', WEEK_IN_SECONDS);
-                                return false;
-                            }
-                        }
-                        else
-                        {
-                            return false;
-                        }
-                    }
-                    else
-                    {
-                        return false;
-                    }
-                }
-            }
-            catch (Exception $ex)
-            {
-                return false;
-            }
-        }
-        else
-        {
-            if ($isEU == '1')
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
-    }
-
-    public static function wp_insert_vi_gdpr_popup_init()
-    {
-        if ((bool) self::$alloptions[self::$opt_vi_show_gdpr_authorization] || defined('VI_EU_TEST'))
-        {
-            add_action('init', array(self::class, 'wp_insert_vi_gdpr_data_init'));
-            add_action('wp_enqueue_scripts', array(self::class, 'wp_insert_vi_gdpr_popup_wp_enqueue'));
-            add_action('wp_footer', array(self::class, 'wp_insert_vi_gdpr_popup_wp_footer'));
-        }
-    }
-
-    public static function wp_insert_vi_gdpr_popup_wp_enqueue()
-    {
-        wp_enqueue_style('wp_insert_vi_gdpr_css', plugins_url('styles/ytvi-gdpr' . self::$min . '.css', __FILE__), array(), self::$version);
-        wp_enqueue_script('wp_insert_vi_gdpr_js', plugins_url('scripts/ytvi-gdpr' . self::$min . '.js', __FILE__), array('jquery'), self::$version, true);
-    }
-
-    public static function wp_insert_vi_gdpr_popup_wp_footer()
-    {
-        $showViConsent = true;
-        $isEU = self::wp_insert_vi_api_is_eu();
-
-        if (isset($_COOKIE['Viconsent']))
-        {
-            $showViConsent = false;
-        }
-
-        $labels = array();
-
-        $viConsentPopupContent = isset(self::$alloptions[self::$opt_vi_endpoints]->consentPopupContent) ? self::$alloptions[self::$opt_vi_endpoints]->consentPopupContent : false;
-        if ($viConsentPopupContent != false)
-        {
-            $lang = isset(self::$alloptions[self::$opt_vi_js_settings]['language']) ? self::$alloptions[self::$opt_vi_js_settings]['language'] : 'en-us';
-            switch ($lang)
-            {
-                case 'de-de':
-                    $labels['popupContent'] = $viConsentPopupContent->es;
-                    $labels['accept'] = 'acepto';
-                    $labels['donotaccept'] = 'no acepto';
-                    $labels['showPurposes'] = 'Mostrar propósitos';
-                    $labels['showVendors'] = 'Mostrar vendedores';
-
-                    break;
-                case 'fr-fr':
-                    $labels['popupContent'] = $viConsentPopupContent->fr;
-                    $labels['accept'] = 'J’accepte';
-                    $labels['donotaccept'] = 'Je n’accepte pas';
-                    $labels['showPurposes'] = 'Plus de details';
-                    $labels['showVendors'] = 'Montrez les vendeurs';
-                    break;
-                case 'en-us':
-                default:
-                    $labels['popupContent'] = $viConsentPopupContent->en;
-                    $labels['accept'] = 'I accept';
-                    $labels['donotaccept'] = 'I do not accept';
-                    $labels['showPurposes'] = 'View purposes';
-                    $labels['showVendors'] = 'View vendors';
-                    break;
-            }
-        }
-        ?>
-
-        <div id="wp_insert_vi_consent_popup_wrapper" style="display: none;">
-            <div id="wp_insert_vi_consent_popup_wrapper2">
-                <div id="wp_insert_vi_consent_popup_message">
-                    <?php echo wp_kses_post($labels['popupContent']); ?>
-                </div>
-                <div id="wp_insert_vi_consent_popup_actions_wrapper">
-                    <input id="wp_insert_vi_consent_popup_disagree_btn" type="button" value="<?php echo $labels['donotaccept'] ?>" onclick="wp_insert_vi_consent_popup_disagree()" />
-                    <input id="wp_insert_vi_consent_popup_agree_btn"  type="button" value="<?php echo $labels['accept'] ?>" onclick="wp_insert_vi_consent_popup_agree()" />
-                </div>
-                <!--            <div id="wp_insert_vi_consent_popup_links_wrapper">-->                
-                <!--            </div>-->
-                <input id="wp_insert_vi_consent_popup_is_eu" type="hidden" value="<?php echo $isEU ?>" />
-                <input id="wp_insert_vi_consent_popup_url" type="hidden" value="<?php echo esc_attr(trailingslashit(get_bloginfo('url'))) ?>" />
-                <input id="wp_insert_vi_consent_popup_auth" type="hidden" value="<?php echo wp_create_nonce('wp_insert_vi_consent') ?>" />
-                <input id="wp_insert_vi_consent_popup_vendor_list_version" type="hidden" value="<?php echo esc_attr(self::$alloptions[self::$opt_vi_endpoints]->vendorListVersion) ?>" />
-                <?php
-                $purposesBinary = '000000000000000000000000';
-                $purposes = self::$alloptions[self::$opt_vi_endpoints]->purposes;
-                if (isset($purposes) && (count($purposes) > 0))
-                {
-                    foreach ($purposes as $purpose)
-                    {
-                        $purposesBinary = substr_replace($purposesBinary, '1', ((24 - (int) $purpose->id) + 1), 1);
-                    }
-                }
-                ?>
-                <input id="wp_insert_vi_consent_popup_vendor_list_purposes" type="hidden" value="<?php echo esc_attr($purposesBinary) ?>" />
-            </div>
-        </div>
-        <!--        <div id="wp_insert_vi_consent_popup_overlay" style="display: none;"></div>-->
-        <?php
-        if ((bool) self::$alloptions[self::$opt_vi_show_privacy_button])
-        {
-            ?>
-            <span id="wp_insert_vi_consent_popup_settings_button" onclick="wp_insert_vi_consent_popup_settings()" unselectable="on" style="display: none;">vi Privacy settings</span>
-            <?php
-        }
-    }
-
-    public static function wp_insert_vi_gdpr_data_init()
-    {
-        if (isset($_GET['wp_insert_vi_consent']) && ($_GET['wp_insert_vi_consent'] != ''))
-        {
-            check_ajax_referer('wp_insert_vi_consent', 'wp_insert_vi_consent');
-
-            global $wpdb;
-            $table_name = $wpdb->prefix . 'vi_consent_logs';
-            $query = $wpdb->prepare("SHOW TABLES LIKE %s", $wpdb->esc_like($table_name));
-            if ($wpdb->get_var($query) != $table_name)
-            {
-                self::vi_db_init_schema();
-            }
-
-            $viconsent = array(
-                'id' => 0,
-                'viconsent' => (isset($_COOKIE['Viconsent']) ? $_COOKIE['Viconsent'] : ''),
-                'date_created' => date('Y-m-d H:i:s')
-            );
-
-            $result = $wpdb->insert($table_name, $viconsent);
-            die();
-        }
-    }
-
-    public static function vi_db_init_schema()
-    {
-        try
-        {
-            global $wpdb;
-            $charset_collate = $wpdb->get_charset_collate();
-
-            $sql = "CREATE TABLE " . $wpdb->prefix . 'vi_consent_logs' . " (
-  id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  viconsent varchar(1000) NOT NULL DEFAULT '',
-  date_created datetime NOT NULL,
-  PRIMARY KEY  (id)
-) $charset_collate;";
-            require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
-            dbDelta($sql);
-        }
-        catch (Exception $ex)
-        {
-            
-        }
-    }
-
-    public static function vi_cron_interval($schedules)
-    {
-        $schedules['ytvi_fifteen_days'] = array(
-            'interval' => 1296000,
-            'display' => esc_html__('Every 15 Days'),
-        );
-
-        $schedules['ytvi_two_minutes'] = array(
-            'interval' => 120,
-            'display' => esc_html__('Every 2 Minutes'),
-        );
-
-        return $schedules;
-    }
-
-    public static function vi_cron_cache_js()
-    {
-        
-    }
-
-    public static function vi_ever_logged_in()
-    {
-        return self::$alloptions[self::$opt_vi_last_login] != self::$vi_default_date;
-    }
-
-    public static function vi_last_login_valid()
-    {
-        $last_login = strtotime(self::$alloptions[self::$opt_vi_last_login]);
-        $last_login_plus = strtotime(self::$alloptions[self::$opt_vi_last_login] . ' + 29 days');
-        //$last_login_plus = strtotime(self::$alloptions[self::$opt_vi_last_login] . ' + 2 minutes');
-        if ($last_login_plus < time())
-        {
-            return false;
-        }
-        return true;
-    }
-
-    public static function vi_token_expire()
-    {
-        try
-        {
-            self::vi_cron_stop();
-            if (self::vi_logged_in() && !self::vi_last_login_valid())
-            {
-                self::update_option_set(array(
-                    self::$opt_vi_token => ''
-                ));
-            }
-            else if (self::vi_logged_in() && filter_input(INPUT_SERVER, 'REQUEST_METHOD') != 'POST' && ((is_admin() && filter_input(INPUT_GET, 'page') == 'youtube-ep-vi') || !is_admin())
-            ) // (&& not $_POSTing anything, && on monetize page) || NOT admin page...e.g. category randomization
-            {
-                $adsTxtAPI = self::$alloptions[self::$opt_vi_endpoints]->adsTxtAPI;
-                $tokenCheck = self::vi_remote_get($adsTxtAPI);
-                $tokenCheck_valid = self::vi_adstxt_api_valid($tokenCheck);
-                if ($tokenCheck_valid !== true) // do a token check. if invalid, then:
-                {
-                    self::update_option_set(array(
-                        self::$opt_vi_token => false
-                    ));
-
-                    if (is_admin())
-                    {
-                        wp_safe_redirect(admin_url('admin.php?page=youtube-ep-vi'));
-                        exit;
-                    }
-                }
-            }
-        }
-        catch (Exception $ex)
-        {
-            
-        }
-    }
-
-    /////////////////////////////////////////////////////////////////////////////////////////////////////
-    /////////////////////////////////////////////////////////////////////////////////////////////////////
-    /////////////////////////////////////////////////////////////////////////////////////////////////////
-    /////////////////////////////////////////////////////////////////////////////////////////////////////
-
 
     public static function gb_block_assets()
     {
@@ -11018,7 +8410,6 @@ margin: 0 auto;
                     self::$version
             );
 
-            //wp_enqueue_style('__ytprefs_admin__vi_css', plugins_url('styles/ytvi-admin' . self::$min . '.css', __FILE__), array(), self::$version);
             // Tiny MCE
             wp_enqueue_style('__ytprefs_admin__tinymce_css', plugins_url('styles/epyt_mce_wizard_button' . self::$min . '.css', __FILE__), array(), self::$version);
         }
@@ -11088,10 +8479,7 @@ margin: 0 auto;
 
 // constants
 define('EPYT_BASE_URL', rtrim(plugins_url('', __FILE__), "\\/") . '/');
-define('EPYTVI_INCLUDES_PATH', rtrim(dirname(__FILE__), "\\/") . '/includes/vi/');
 define('EPYTGB_INCLUDES_PATH', rtrim(dirname(__FILE__), "\\/") . '/includes/gutenberg/');
-if (!defined('EPYTVI_ENDPOINTS_URL'))
-    define('EPYTVI_ENDPOINTS_URL', 'https://dashboard-api.vidint.net/v1/api/widget/settings');
 
 $youtubeplgplus_pro = new YouTubePrefsPro();
 require rtrim(dirname(__FILE__), "\\/") . '/plugin-update-checker/plugin-update-checker.php';

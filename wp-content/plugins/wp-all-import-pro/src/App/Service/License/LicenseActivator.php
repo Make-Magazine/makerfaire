@@ -69,7 +69,8 @@ class LicenseActivator
                 $api_params = array(
                     'edd_action' => 'check_license',
                     'license' => PMXI_Plugin::decode($options[$licenseField]),
-                    'item_name' => urlencode($productName)
+                    'item_name' => urlencode($productName),
+                    'url' => home_url()
                 );
 
                 // Call the custom API.
@@ -79,6 +80,9 @@ class LicenseActivator
                     return false;
 
                 $license_data = json_decode(wp_remote_retrieve_body($response));
+				if('scheduling_license' == $licenseField){
+					update_option('wpai_wpae_scheduling_license_site_limit', $license_data->license_limit ?? 0);
+				}
 
                 return $license_data->license;
 

@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.5.6 | May 14, 2025
+
+- Removed redundant check for Gravity Perks in preparation for Spellbook.
+- Fixed support for previewing and cropping HEIC files on some platforms.
+
+## 1.5.5 | March 19, 2025
+
+- Added support for modifying the filename markup using the [gpfup_filename_markup](https://gravitywiz.com/documentation/gpfup_filename_markup/) JavaScript filter hook.
+
 ## 1.5.4 | March 13, 2025
 
 - Fixed an issue where dragging uploads to sort them would highlight the files you drag over.

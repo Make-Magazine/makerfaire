@@ -40,6 +40,9 @@ class LicenseActivator
 
             // decode the license data
             $license_data = json_decode(wp_remote_retrieve_body($response));
+	        if('scheduling_license' == $licenseField){
+		        update_option('wpai_wpae_scheduling_license_site_limit', $license_data->license_limit ?? 0);
+	        }
 
             // $license_data->license will be either "active" or "inactive"
 

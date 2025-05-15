@@ -72,8 +72,9 @@
 		<span class="button-and-text-container" id="scheduling-button-and-text-container">
                                         <span class="register-site-group hidden" id="register-site-group">
                                             <span class="activate-button-group">
-                                                <button class="activate-license" id="activate-license"><span class="loader" style="position: absolute;left: 55px;bottom: 59px;display:none;"></span>Activate License
+                                                <button class="activate-license" id="activate-license">Activate License
                                                 </button>
+                                                <span class="loader" style="position: absolute;left: 55px;bottom: 58px;display:none;"></span>
                                             </span>
                                             <span class="activate-license-entry-group">
                                                 <input type="password" id="add-subscription-field"

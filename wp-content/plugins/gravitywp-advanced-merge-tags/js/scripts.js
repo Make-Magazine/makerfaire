@@ -14,33 +14,9 @@ const GWPAdvancedMergeTags = [];
 		 */
 		self.init = function() {
 			// Convert the gwp modifier that are supported for calculations. This should match the backend function.
-			gform.addFilter( 'gform_merge_tag_value_pre_calculation', function( value, mergeTagArr, isVisible, formulaField, formId ) {
-				// gwp_word_count modifier.
-				if ( typeof ( mergeTagArr[ 4 ] ) === 'string' && mergeTagArr[ 4 ].startsWith( 'gwp_word_count' ) ) {
-					const inputId = mergeTagArr[ 1 ];
-					let regex = /[^\s]+/g;
-					regex = gform.applyFilters( 'gravitywp_advancedmergetags_wordcount_regex', regex, value, inputId, formulaField, formId );
-
-					const words = value.match( regex );
-					let wordCount = words === null ? 0 : words.length;
-					wordCount = gform.applyFilters( 'gravitywp_advancedmergetags_wordcount_result', wordCount, words, value, inputId, formulaField, formId );
-
-					return wordCount;
-				}
-
-				// gwp_substring modifier.
-				if ( typeof ( mergeTagArr[ 4 ] ) === 'string' && mergeTagArr[ 4 ].startsWith( 'gwp_substring' ) ) {
-					const atts = self.parseMergetagsAtts( mergeTagArr[ 4 ] );
-					if ( ! self.hasRequiredAtts( atts.named, [ 'start' ] ) ) {
-						return value;
-					}
-
-					return self.substr( value, atts.named.start, atts.named.length );
-				}
-
-				// return unmodified value.
-				return value;
-			} );
+			gform.addFilter( 'gform_merge_tag_value_pre_calculation', self.convertModifiers );
+			// support for List Number Format fields.
+			gform.addFilter( 'gf_list_col_merge_tag_value_pre_calculation', self.convertModifiers , 11);
 
 			// Tinymce editor changes are not bound to trigger calculation events. When a tinymce is found for this input we bind it to the calculation event.
 			gform.addAction( 'gform_post_calculation_events', function( match, formulaField, formId, calcObj ) {
@@ -69,6 +45,52 @@ const GWPAdvancedMergeTags = [];
 				}
 			} );
 		};
+
+		/**
+		 * Converts advanced modifiers.
+		 *
+		 * This function processes custom merge tags to apply specific transformations based on 
+		 * recognized modifiers, including 'gwp_word_count' and 'gwp_substring'. The function utilizes
+		 * predefined filters to customize the behavior of these transformations.
+		 *
+		 * @param {string} value - The initial value that the modifiers will act upon.
+		 * @param {Array} mergeTagArr - An array representing the structure of the merge tag parts.
+		 * @param {boolean} isVisible - Indicates whether the merge tag is visible or not.
+		 * @param {string} formulaField - The field where the formula is applied, used contextually.
+		 * @param {number} formId - The ID of the form being evaluated, useful for fetching form-specific settings.
+		 *
+		 * @returns {number|string} The transformed value after applying the appropriate modifier logic: 
+		 *                          - Returns a word count if 'gwp_word_count' modifier is applied. 
+		 *                          - Returns a substring if 'gwp_substring' modifier is applied.
+		 *                          - Returns the original value if no known modifier is found.
+		 */
+		self.convertModifiers = function( value, mergeTagArr, isVisible, formulaField, formId ) {
+			// gwp_word_count modifier.
+			if ( typeof ( mergeTagArr[ 4 ] ) === 'string' && mergeTagArr[ 4 ].startsWith( 'gwp_word_count' ) ) {
+				const inputId = mergeTagArr[ 1 ];
+				let regex = /[^\s]+/g;
+				regex = gform.applyFilters( 'gravitywp_advancedmergetags_wordcount_regex', regex, value, inputId, formulaField, formId );
+
+				const words = value.match( regex );
+				let wordCount = words === null ? 0 : words.length;
+				wordCount = gform.applyFilters( 'gravitywp_advancedmergetags_wordcount_result', wordCount, words, value, inputId, formulaField, formId );
+
+				return wordCount;
+			}
+
+			// gwp_substring modifier.
+			if ( typeof ( mergeTagArr[ 4 ] ) === 'string' && mergeTagArr[ 4 ].startsWith( 'gwp_substring' ) ) {
+				const atts = self.parseMergetagsAtts( mergeTagArr[ 4 ] );
+				if ( ! self.hasRequiredAtts( atts.named, [ 'start' ] ) ) {
+					return value;
+				}
+
+				return self.substr( value, atts.named.start, atts.named.length );
+			}
+
+			// return unmodified value.
+			return value;
+		}
 
 		/**
 		 * Parses a string of merge tags and their associated attributes into an object with two properties: `named` and `numeric`.

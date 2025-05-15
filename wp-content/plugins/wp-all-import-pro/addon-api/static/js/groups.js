@@ -125,6 +125,17 @@ function afterGroupLoaded(container) {
     selected.classList.remove("selected");
   });
 
+  // Reveal some elements on page load
+  const revealOnLoad = document.querySelectorAll(".pmxi-reveal-on-change");
+
+  revealOnLoad.forEach((element) => {
+    const target = document.querySelector(`#${element.dataset.target}`);
+
+    if (element.checked) {
+      target.removeAttribute("hidden");
+    }
+  });
+
   // Search in media logic
   refreshShowSearchInMedia(container);
 }

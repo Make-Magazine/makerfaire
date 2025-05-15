@@ -27,12 +27,6 @@ class GP_Copy_Cat extends GP_Plugin {
 			'gravityforms' => array(
 				'version' => '1.9.3',
 			),
-			'plugins'      => array(
-				'gravityperks/gravityperks.php' => array(
-					'name'    => 'Gravity Perks',
-					'version' => '1.0.6',
-				),
-			),
 		);
 	}	
 
@@ -189,12 +183,12 @@ class GP_Copy_Cat extends GP_Plugin {
 						$if_condition_form_id  = array_shift( $if_condition_pieces );
 						$if_condition_field_id = $if_condition_pieces[1] == 0 ? $if_condition_pieces[0] : implode( '.', $if_condition_pieces );
 					}
-	
+
 					$if_condition_field = null;
 					if ( ! empty( $if_condition_field_id ) ) {
 						$if_condition_field = GFFormsModel::get_field( $form, intval( $if_condition_field_id ) );
 					}
-	
+
 					if ( empty( $if_condition_field ) ) {
 						$if_condition_field_id = null;
 					}
@@ -235,5 +229,9 @@ class GP_Copy_Cat extends GP_Plugin {
 }
 
 class GWCopyCat extends GP_Copy_Cat { }
+
+function gp_copy_cat() {
+	return GP_Copy_Cat::get_instance();
+}
 
 GFAddOn::register( 'GP_Copy_Cat' );

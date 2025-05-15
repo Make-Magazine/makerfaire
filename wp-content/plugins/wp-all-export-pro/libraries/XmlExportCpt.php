@@ -20,10 +20,10 @@ final class XmlExportCpt
 		$article = array();
 
 		if(!isset($entry->ID)) {
-			$entryId = $entry->order_id ?? $entry->id;
+			$entryId = is_array($exportOptions['cpt'] ?? '') && in_array('shop_order', $exportOptions['cpt']) ? $entry->order_id ?? $entry->id : $entry->id;
 			$entry->ID = $entry->id;
 		} else {
-			$entryId = $entry->order_id ?? $entry->ID;
+			$entryId = is_array($exportOptions['cpt'] ?? '') && in_array('shop_order', $exportOptions['cpt']) ? $entry->order_id ?? $entry->id ?? $entry->ID : $entry->id ?? $entry->ID;
 		}
 
 		// associate exported post with import
@@ -372,7 +372,7 @@ final class XmlExportCpt
 
 								// Retrieve meta from *wc_orders_meta table if order export and HPOS enabled. Ensure a valid order
 								// object is returned.
-								if ( $pType === 'shop_order' && PMXE_Plugin::hposEnabled() && $order = wc_get_order( $entry->order_id ?? $entry->ID )) {
+								if ( $pType === 'shop_order' && PMXE_Plugin::hposEnabled() && $order = wc_get_order( $entryId )) {
 
 									$metaName = 'get' . $fieldValue;
 
@@ -385,7 +385,7 @@ final class XmlExportCpt
 
 								// Retrieve meta from *postmeta table if no value was found above.
 								if ( empty( $cur_meta_values ) ) {
-									$cur_meta_values = get_post_meta( $entry->order_id ?? $entry->ID, $fieldValue );
+									$cur_meta_values = get_post_meta( $entryId, $fieldValue );
 								}
 
 								if (!empty($cur_meta_values) and is_array($cur_meta_values)) {

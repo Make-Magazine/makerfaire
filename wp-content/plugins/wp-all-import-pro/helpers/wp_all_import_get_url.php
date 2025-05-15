@@ -24,7 +24,7 @@ if (!function_exists('wp_all_import_get_url')) {
 
         $is_valid = FALSE;
 
-        $is_curl_download_only = apply_filters('wp_all_import_curl_download_only', false, $filePath);
+        $is_curl_download_only = apply_filters('wp_all_import_curl_download_only', true, $filePath);
 
         if ( ! $is_curl_download_only ){
 
@@ -86,7 +86,7 @@ if (!function_exists('wp_all_import_get_url')) {
 
             $request = get_file_curl($filePath, $localPath);
 
-            if ( ! is_wp_error($request) ) {
+            if ( ! is_wp_error($request) && false !== $request ) {
 
                 if ( ! $type ) {
                     if ($contentEncoding == 'gzip') {

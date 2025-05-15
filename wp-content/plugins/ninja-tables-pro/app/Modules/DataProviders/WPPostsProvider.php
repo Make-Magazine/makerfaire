@@ -26,48 +26,47 @@ class WPPostsProvider
 
     public function createTable()
     {
-        if ( ! current_user_can(ninja_table_admin_role())) {
+        if (!current_user_can(ninja_table_admin_role())) {
             return;
         }
         ninjaTablesValidateNonce();
         $messages = array();
-        if ( ! ($tableId = $_REQUEST['tableId'])) {
-            // Validate Title
-            if (empty($_REQUEST['post_title'])) {
+
+        $tableId = intval(Arr::get($_REQUEST, 'tableId'));
+
+        if (!$tableId) {
+            if (empty(sanitize_text_field(Arr::get($_REQUEST, 'post_title', '')))) {
                 $messages['title'] = __('The title field is required.', 'ninja-tables-pro');
             }
         }
 
-        // Validate Columns
-        $fields = isset($_REQUEST['data']['columns']) ? $_REQUEST['data']['columns'] : array();
+        $fields = ninja_tables_sanitize_array(Arr::get($_REQUEST, 'data.columns', []));
         $fields = array_filter($fields);
-        if ( ! ($fields = ninja_tables_sanitize_array($fields))) {
+
+        if (!$fields) {
             $messages['columns'] = __('No columns were selected.', 'ninja-tables-pro');
         }
 
-        // If Validation failed
         if (array_filter($messages)) {
             wp_send_json_error(array('message' => $messages), 422);
             wp_die();
         }
 
-
         if ($tableId) {
             $oldColumns = get_post_meta($tableId, '_ninja_table_columns', true);
 
-            $oldColumnOriginalNames = array_filter(array_map(function ($col) {
-                return $col['original_name'];
-            }, $oldColumns));
+            $oldColumnOriginalNames = array_filter(
+                array_map(function ($col) {
+                    return $col['original_name'];
+                }, $oldColumns)
+            );
 
             $oldColumns = array_filter($oldColumns, function ($col) use ($fields) {
-                return in_array($col['original_name'], $fields) ||
-                       // We have to check and keep the dynamic columns here.
-                       array_key_exists('wp_post_custom_data_type', $col);
+                return in_array($col['original_name'], $fields) || array_key_exists('wp_post_custom_data_type', $col);
             });
 
             $fields = array_diff($fields, $oldColumnOriginalNames);
         }
-
 
         $headers = ninja_table_format_header($fields);
 
@@ -85,14 +84,12 @@ class WPPostsProvider
                 'enable_html_content' => false,
                 'contentAlign'        => null,
                 'textAlign'           => null,
-
-                // These are new attributes
                 'source_type'         => $sourceType,
                 'original_name'       => $column
             );
             if ($sourceType == 'post_data') {
-                $columnData['permalinked'] = ($column == 'post_title' || $column == 'ID' || $column == 'post_author') ? 'yes' : 'no';
-                if ($column == 'post_author') {
+                $columnData['permalinked'] = in_array($column, ['post_title', 'ID', 'post_author']) ? 'yes' : 'no';
+                if ($column === 'post_author') {
                     $columnData['filter_permalinked'] = 'yes';
                 }
             } elseif ($sourceType == 'tax_data') {
@@ -109,28 +106,34 @@ class WPPostsProvider
             $message = 'Table updated successfully.';
         } else {
             $tableId = $this->saveTable();
-
             update_post_meta($tableId, '_ninja_wp_posts_query_extra', $this->getQueryExtra($tableId));
-
             $message = 'Table created successfully.';
         }
 
-        update_post_meta($tableId, '_ninja_table_wpposts_ds_post_types', Arr::get($_REQUEST, 'data.post_types'));
-        update_post_meta($tableId, '_ninja_table_wpposts_ds_where', Arr::get($_REQUEST, 'data.where'));
+        update_post_meta(
+            $tableId,
+            '_ninja_table_wpposts_ds_post_types',
+            sanitize_text_field(Arr::get($_REQUEST, 'data.post_types'))
+        );
+        update_post_meta(
+            $tableId,
+            '_ninja_table_wpposts_ds_where',
+            sanitize_text_field(Arr::get($_REQUEST, 'data.where'))
+        );
         update_post_meta($tableId, '_ninja_table_wpposts_ds_meta_query', Arr::get($_REQUEST, 'data.metas'));
         update_post_meta($tableId, '_ninja_table_columns', $columns);
         update_post_meta($tableId, '_ninja_tables_data_provider', 'wp-posts');
 
-        if (isset($_REQUEST['data']['current_user_posts'])) {
-
-            if ( ! is_array($_REQUEST['data']['query_extra'])) {
+        if (Arr::get($_REQUEST, 'data.current_user_posts')) {
+            if (!is_array(Arr::get($_REQUEST, 'data.query_extra'))) {
                 $_REQUEST['data']['query_extra'] = array();
             }
-
-            $_REQUEST['data']['query_extra']['current_user_posts'] = $_REQUEST['data']['current_user_posts'];
+            $_REQUEST['data']['query_extra']['current_user_posts'] = sanitize_text_field(
+                Arr::get($_REQUEST, 'data.current_user_posts')
+            );
         }
 
-        if (isset($_REQUEST['data']['query_extra'])) {
+        if (Arr::get($_REQUEST, 'data.query_extra')) {
             update_post_meta($tableId, '_ninja_wp_posts_query_extra', $_REQUEST['data']['query_extra']);
         }
 
@@ -158,9 +161,9 @@ class WPPostsProvider
 
     public function getTableData($data, $tableId, $perPage = -1, $offset = 0)
     {
-        if ($perPage == -1) {
+        if ($perPage === -1) {
             $queryExtra = $this->getQueryExtra($tableId);
-            if (isset($queryExtra['query_limit']) && $queryExtra['query_limit']) {
+            if (!empty($queryExtra['query_limit'])) {
                 $perPage = intval($queryExtra['query_limit']);
             }
         }
@@ -177,25 +180,20 @@ class WPPostsProvider
             );
         }
 
-        return array(
-            $newData,
-            $total
-        );
+        return array($newData, $total);
     }
 
     public function data($data, $tableId, $defaultSorting, $limitEntries = false, $skip = false)
     {
-
         global $ninja_table_current_rendering_table;
 
         $perPage    = -1;
         $queryExtra = $this->getQueryExtra($tableId);
+
         if ($limitEntries) {
             $perPage = $limitEntries;
-        } else {
-            if (isset($queryExtra['query_limit']) && $queryExtra['query_limit']) {
-                $perPage = intval($queryExtra['query_limit']);
-            }
+        } elseif (!empty(Arr::get($queryExtra, 'query_limit'))) {
+            $perPage = intval($queryExtra['query_limit']);
         }
 
         return $this->getPosts($tableId, $perPage, $skip);
@@ -205,48 +203,43 @@ class WPPostsProvider
     {
         $columns           = get_post_meta($tableId, '_ninja_table_columns', true);
         $formatted_columns = array();
-        foreach ($columns as $column) {
-            $type         = $this->get($column, 'source_type');
-            $originalName = $this->get($column, 'original_name');
-            $columnKey    = $this->get($column, 'key');
-            $dataType     = $this->get($column, 'wp_post_custom_data_type');
-            $dataValue    = $this->get($column, 'wp_post_custom_data_value');
 
-            $formatted_columns[$columnKey] = array(
-                'type'                      => ($originalName == 'post_author') ? 'author_data' : $type,
-                'original_name'             => $originalName,
-                'key'                       => $columnKey,
-                'permalinked'               => $this->get($column, 'permalinked'),
-                'permalink_target'          => $this->get($column, 'permalink_target'),
-                'filter_permalinked'        => $this->get($column, 'filter_permalinked'),
-                'taxonomy_separator'        => $this->get($column, 'taxonomy_separator'),
-                'wp_post_custom_data_type'  => $dataType,
-                'wp_post_custom_data_value' => $dataValue,
-                'column_settings'           => $column
+        foreach ($columns as $column) {
+            $formatted_columns[$column['key']] = array(
+                'type'                      => ($column['original_name'] === 'post_author') ? 'author_data' : $column['source_type'],
+                'original_name'             => $column['original_name'],
+                'key'                       => $column['key'],
+                'permalinked'               => $column['permalinked'] ?? '',
+                'permalink_target'          => $column['permalink_target'] ?? '',
+                'filter_permalinked'        => $column['filter_permalinked'] ?? '',
+                'taxonomy_separator'        => $column['taxonomy_separator'] ?? '',
+                'wp_post_custom_data_type'  => $column['wp_post_custom_data_type'] ?? '',
+                'wp_post_custom_data_value' => $column['wp_post_custom_data_value'] ?? '',
+                'column_settings'           => $column,
             );
         }
 
-        $where = get_post_meta($tableId, '_ninja_table_wpposts_ds_where', true);
-
-        $metas = get_post_meta($tableId, '_ninja_table_wpposts_ds_meta_query', true);
-
-        $post_types = get_post_meta($tableId, '_ninja_table_wpposts_ds_post_types', true);
-
-        return $this->buildWPQuery(
-            compact('tableId', 'formatted_columns', 'where', 'post_types', 'offset', 'per_page', 'metas')
-        );
+        return $this->buildWPQuery([
+            'tableId'           => $tableId,
+            'formatted_columns' => $formatted_columns,
+            'where'             => get_post_meta($tableId, '_ninja_table_wpposts_ds_where', true),
+            'post_types'        => get_post_meta($tableId, '_ninja_table_wpposts_ds_post_types', true),
+            'offset'            => $offset,
+            'per_page'          => $per_page,
+            'metas'             => get_post_meta($tableId, '_ninja_table_wpposts_ds_meta_query', true),
+        ]);
     }
 
     protected function saveTable($postId = null)
     {
         $attributes = array(
-            'post_title'   => sanitize_text_field($this->get($_REQUEST, 'post_title')),
-            'post_content' => wp_kses_post($this->get($_REQUEST, 'post_content')),
+            'post_title'   => sanitize_text_field(Arr::get($_REQUEST, 'post_title')),
+            'post_content' => wp_kses_post(Arr::get($_REQUEST, 'post_content')),
             'post_type'    => 'ninja-table',
-            'post_status'  => 'publish'
+            'post_status'  => 'publish',
         );
 
-        if ( ! $postId) {
+        if (!$postId) {
             $postId = wp_insert_post($attributes);
         } else {
             $attributes['ID'] = $postId;

@@ -241,17 +241,18 @@ class WLCMS_Settings
             return;
         }
 
+
+        if (!isset($_GET['wlcms-action']) || (isset($_GET['wlcms-action']) && $_GET['wlcms-action'] != 'export')) {
+            return;
+        }
+
         if (!wp_verify_nonce($_REQUEST['_wlcms_anonce'], 'wlcms-action-nonce')) {
 
             WLCMS_Queue('Sorry, your nonce did not verify.', 'error');
             wp_redirect(wlcms()->admin_url());
             exit;
         }
-
-        if (!isset($_GET['wlcms-action']) || (isset($_GET['wlcms-action']) && $_GET['wlcms-action'] != 'export')) {
-            return;
-        }
-
+        
         $settings = $this->getAll();
 
         if (!is_array($settings)) {
@@ -273,6 +274,10 @@ class WLCMS_Settings
             return false;
         }
 
+        if ($_GET['wlcms-action'] != 'reset') {
+            return;
+        }
+
         if (!wp_verify_nonce($_REQUEST['_wlcms_anonce'], 'wlcms-action-nonce')) {
 
             WLCMS_Queue('Sorry, your nonce did not verify.', 'error');
@@ -280,9 +285,6 @@ class WLCMS_Settings
             exit;
         }
 
-        if ($_GET['wlcms-action'] != 'reset') {
-            return;
-        }
 
         delete_option("wlcms_options");
         $wpdb->get_results($wpdb->prepare("DELETE FROM $wpdb->options WHERE option_name LIKE %s", 'wlcms_o_%'));

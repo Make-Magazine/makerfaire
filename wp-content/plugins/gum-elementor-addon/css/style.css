@@ -329,6 +329,7 @@ ul.gum-menu{
 .popover-box .close-pop:before,.popover-box .close-pop:after{	content: '';position: absolute;left: 50%;top: 50%;bottom: auto;right: auto;background: #333; width: 2px;	height: 20px;}
 .popover-box .close-pop:before{ -webkit-transform: translate(-50%, -50%) rotate(45deg); -ms-transform: translate(-50%, -50%) rotate(45deg);-o-transform: translate(-50%, -50%) rotate(45deg);transform: translate(-50%, -50%) rotate(45deg);}
 .popover-box .close-pop:after{ -webkit-transform:  translate(-50%, -50%) rotate(-45deg); -ms-transform:  translate(-50%, -50%) rotate(-45deg);-o-transform:  translate(-50%, -50%) rotate(-45deg);transform:  translate(-50%, -50%) rotate(-45deg);}
+.popover-box .pop-title{ display: block; }
 
 @media (max-width: 767px) { .popover-box{ max-width: 100%;}}
 @media (min-width: 768px) {
@@ -475,18 +476,16 @@ ul.gum-menu{
 
 /*  post meta widget */
 .elementor-widget-gum_post_meta .posts-meta,
-article .posts-meta{
- list-style: none; padding: 0; margin: 0;
-}
-
-.elementor-widget-gum_post_meta .posts-meta li,article .posts-meta li{ display: inline-block;}
+article .posts-meta{ list-style: none; padding: 0; margin: 0; display: -webkit-box; display: -ms-flexbox; display: flex; align-items: center; flex-wrap: wrap; }
+.elementor-widget-gum_post_meta .posts-meta li,.elementor-widget-gum_post_meta .posts-meta li a,article .posts-meta li{ display: inline-flex; align-items: center;}
 .elementor-widget-gum_post_meta .posts-meta li.meta-divider,article .posts-meta li.meta-divider{ padding: 0 0.5em; vertical-align: middle;line-height: 1;}
 .elementor-widget-gum_post_meta .posts-meta li.meta-divider span,article .posts-meta li.meta-divider span{ line-height: 1;}
 
 .elementor-widget-gum_posts_grid .posts-meta .author_meta .author-avatar{ text-align:center; }
 .elementor-widget-gum_posts_grid .posts-meta .author_meta .author-avatar img{ margin-left:auto; margin-right: auto; }
-.elementor-widget-gum_posts_grid:where(.author_meta_avatar_position-left,.author_meta_avatar_position-right) .posts-meta .author_meta{ display: inline-flex; align-items: center; line-height:1; }
-.elementor-widget-gum_posts_grid:where(.author_meta_avatar_position-left,.author_meta_avatar_position-right) .posts-meta .author_meta{ display: inline-flex; align-items: center;  }
+.elementor-widget-gum_posts_grid:where(.author_meta_avatar_position-left,.author_meta_avatar_position-right) .posts-meta .author_meta{ line-height:1; }
+.elementor-widget-gum_posts_grid:where(:not(.author_meta_avatar_position-left,.author_meta_avatar_position-right)) .posts-meta .author_meta{ display: inline-block;  }
+.elementor-widget-gum_posts_grid:where(:not(.author_meta_avatar_position-left,.author_meta_avatar_position-right)) .author-avatar{ width: 100%;  }
 .elementor-widget-gum_posts_grid.author_meta_avatar_position-right .posts-meta .author_meta .author-avatar{ order:99;   }
 
 /* post term widget */
@@ -733,6 +732,7 @@ article .posts-meta{
   cursor: pointer;
   vertical-align: middle;
   text-align: center;
+  display: none;
   background: rgba(0, 0, 0, 0.0);
   -webkit-transition: background-color 0.4s ease;
   -o-transition: background-color 0.4s ease;
@@ -928,3 +928,16 @@ section.e-transform{
       -ms-flex-order: 1;
           order: 1;
 }
+
+.elementor-widget-image-carousel.elementor-arrows-valign-top .elementor-swiper-button{ top: 0!important; }
+.elementor-widget-image-carousel.elementor-arrows-valign-bottom .elementor-swiper-button{ bottom: 0; top: auto !important; }
+
+/* circle bar module */
+
+.elementor-widget-gum_circle_bar .elementor-widget-container{ width:100%; }
+.elementor-widget-gum_circle_bar .circle-bar-outer{ position: relative; width: 100%; margin-left: auto; margin-right: auto; }
+.elementor-widget-gum_circle_bar.canvas-position-left .circle-bar-outer{ margin-left: 0; }
+.elementor-widget-gum_circle_bar.canvas-position-right .circle-bar-outer{ margin-right: 0; }
+.elementor-widget-gum_circle_bar .bar-color{color:#ef1e25;}
+.elementor-widget-gum_circle_bar .circle-bar-label{ position: absolute; left:50%; top: 50%; text-align: center; z-index:1; -webkit-transform: translate(-50%,-50%); -ms-transform: translate(-50%,-50%); -o-transform: translate(-50%,-50%);transform: translate(-50%,-50%);  }
+.elementor-widget-gum_circle_bar .bar-background{color:#f2f2f2;}

@@ -89,8 +89,7 @@ $editing = isset($table_vars['editing']) ? $table_vars['editing'] : null;
                                     wp_enqueue_style('pickaday.css',
                                         NINJAPROPLUGIN_URL . 'assets/libs/datepicker/css/pikaday.css', array(),
                                         NINJAPROPLUGIN_VERSION);
-
-                                      $dateTimeFormat = ($column['showTime'] === 'false' || !$column['showTime']) ? $column['dateFormat'] : $column['dateFormat'] . ' ' . $column['timeFormat'];
+                                    $dateTimeFormat = ( ! isset($column['showTime']) || $column['showTime'] === 'false') ? $column['dateFormat'] : $column['dateFormat'] . ' ' . $column['timeFormat'];
 
 	                                ?>
                                     <input name="<?php echo $column['key']; ?>"

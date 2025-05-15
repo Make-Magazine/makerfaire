@@ -48,12 +48,6 @@ class GP_Nested_Forms extends GP_Plugin {
 			'wordpress'    => array(
 				'version' => '4.9',
 			),
-			'plugins'      => array(
-				'gravityperks/gravityperks.php' => array(
-					'name'    => 'Gravity Perks',
-					'version' => '2.2.3',
-				),
-			),
 		);
 	}
 
@@ -3780,9 +3774,9 @@ class GP_Nested_Forms extends GP_Plugin {
 	public function override_gf_theme_in_preview( $slug, $form ) {
 		/*
 		 * If the slug is already gravity-theme, we don't need to change it. We're also only here to change the slug
-		 * in AJAX contexts.
+		 * in AJAX contexts (for GF version prior to 2.9.3).
 		 */
-		if ( $slug === 'gravity-theme' || ! wp_doing_ajax() ) {
+		if ( $slug === 'gravity-theme' || ! wp_doing_ajax() || version_compare( GFCommon::$version, '2.9.3', '>=' ) ) {
 			return $slug;
 		}
 

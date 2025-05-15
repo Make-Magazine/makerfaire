@@ -231,6 +231,10 @@
   max-width: 25rem;
 }
 
+.pmxi-switcher-target--expanded {
+  max-width: none;
+}
+
 /* Toggle */
 
 .pxmi-addon-toggle {
@@ -348,4 +352,54 @@
   padding: 0 10px;
   font-size: 14px;
   color: var(--primary-color);
+}
+
+/* Helpers */
+.pmxi-addon-two-columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+/* Map Field */
+
+.is-switcher-jetengine_location_manual .pmxi-addon-map-settings {
+  display: none;
+}
+
+.pmxi-addon-map-settings {
+  max-width: 25rem;
+  margin-top: 6px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+.pmxi-addon-map-settings-header {
+  > label {
+    color: #40acad!important;
+    font-size: 12px;
+    width: 100%;
+    font-weight: bold;
+    cursor: pointer;
+    margin: 0!important;
+    padding: 8px 13px 6px;
+    background: url('../../../static/img/ui_4.0/collapser.png') no-repeat 98% -30px;
+    box-sizing: border-box;
+    height: 30px;
+    line-height: 1;
+  }
+
+  input[type="checkbox"] {
+    display: none;
+  }
+
+  input[type="checkbox"]:checked + label {
+    background-position-y: 0;
+  }
+}
+
+.pmxi-addon-map-settings-content {
+  padding: 0 13px 13px;
+  background-color: #fff;
 }
