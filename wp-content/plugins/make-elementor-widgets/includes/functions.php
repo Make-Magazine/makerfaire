@@ -89,7 +89,7 @@ function makewidget_rss_output($rss, $settings) {
 
         //set image
         if (strpos($settings['rss_url'], 'youtube.com/feeds') !== false && $enclosure = $item->get_enclosure()) {
-            $image = '<img src="' . legacy_get_resized_remote_image_urll($enclosure->get_thumbnail(), 600, 400) . '" alt="'.$title.'"  />';
+            $image = '<img src="' . legacy_get_resized_remote_image_url($enclosure->get_thumbnail(), 600, 400) . '" alt="'.$title.'"  />';
         } else {
             $image = '<img src="' . legacy_get_resized_remote_image_url(get_first_image_url($item->get_content()), 600, 400) . '" alt="'.$title.'" />';
         }
