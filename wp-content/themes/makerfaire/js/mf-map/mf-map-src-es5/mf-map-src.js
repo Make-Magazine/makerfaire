@@ -144,14 +144,14 @@ jQuery(document).ready(function () {
         });
         this.years = numRevSort(this.years);
 
-        /* // filter out the past faires
+        // filter out the past faires
         this.tableData = this.outputData.filter(function (values) {
-        var endDate = new Date(values.event_end_dt);
-        endDate.setDate(endDate.getDate() + 1);
-        if (endDate > currentDate) {
-        	return values;
-        }
-        });*/
+          //var endDate = new Date(values.event_end_dt);
+          //endDate.setDate(endDate.getDate() + 1);
+          //if (endDate > currentDate) {
+          return values;
+          //}
+        });
         // this.filteredData = this.tableData; // filtered Data is used to draw the map
         // Run the type filter at the start
         this.filteredData = this.tableData.filter(function (values) {
