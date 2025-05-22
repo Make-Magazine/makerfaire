@@ -1,6 +1,7 @@
 
 jQuery(document).ready(function () {
 	var currentDate = new Date();
+	var firstDayOfYear = new Date(currentDate.getFullYear(), 0, 1); // January is month 0
 	var oneYearAgo = new Date(new Date().setFullYear(new Date().getFullYear() - 1));
 	var firstLoaded = true; // we only want to sort by date on the first load, otherwise keep their selected sorting order
 	var typeFilters = ["Featured", "Flagship", "Mini", "School"];	
@@ -142,11 +143,11 @@ jQuery(document).ready(function () {
 				
 				// filter out the past faires
 				this.tableData = this.outputData.filter(function (values) {
-					//var endDate = new Date(values.event_end_dt);
-					//endDate.setDate(endDate.getDate() + 1);
-					//if (endDate > currentDate) {
+					var endDate = new Date(values.event_end_dt);
+					endDate.setDate(endDate.getDate() + 1);
+					if (endDate > firstDayOfYear) {
 						return values;
-					//}
+					}
 				});
 				// this.filteredData = this.tableData; // filtered Data is used to draw the map
 				// Run the type filter at the start
