@@ -3,7 +3,7 @@
 jQuery(document).ready(function () {
   var currentDate = new Date();
   var firstDayOfYear = new Date(currentDate.getFullYear(), 0, 1); // January is month 0
-  var oneYearAgo = new Date(new Date().setFullYear(new Date().getFullYear() - 1));
+
   var firstLoaded = true; // we only want to sort by date on the first load, otherwise keep their selected sorting order
   var typeFilters = ["Featured", "Flagship", "Mini", "School"];
   Vue.use(VueTables.ClientTable);
@@ -70,7 +70,7 @@ jQuery(document).ready(function () {
         }
       },
       filterVal: '',
-      pastFaires: false,
+      showAll: false,
       currentLocation: false,
       types: [{
         name: "Global",
@@ -85,7 +85,7 @@ jQuery(document).ready(function () {
         name: "School",
         description: "K-12 Faires (closed to general public)"
       }],
-      buttonMessage: "Show Past Faires",
+      buttonMessage: "Show All Faires Ever",
       map: null,
       markerCluster: null,
       mapDefaultZoom: 2,
@@ -367,28 +367,31 @@ jQuery(document).ready(function () {
         });
         this.addMarkers();
       },
-      // past faires filter
-      psFilter: function psFilter(data) {
+      // show all faires filter
+      allFilter: function allFilter(data) {
         var searchString = this.filterVal.toLowerCase(); // remember the search string
-
         //This indicator is backwards, when it's true you don't show past faires
-        if (this.pastFaires == true) {
-          //show current faires										
-          this.buttonMessage = "Show Past Faires";
+        if (this.showAll == true) {
+          //show the year of faires that was last selected			
+          var savedYear = new Date(jQuery("#faire-filter select").val(), 0, 1);
+          var endOfSavedYear = new Date(jQuery("#faire-filter select").val(), 0, 365);
+          jQuery("#faire-filter").css("display", "block");
+          this.buttonMessage = "Show All Faires Ever";
           this.tableData = this.outputData.filter(function (values) {
             var endDate = new Date(values.event_end_dt);
             endDate.setDate(endDate.getDate() + 1);
-            if (endDate > currentDate) {
+            if (endOfSavedYear > endDate && endDate > savedYear) {
               return values;
             }
           });
         } else {
           //show past faires										
-          this.buttonMessage = "Show Upcoming Faires";
+          this.buttonMessage = "Show Faires by Year";
+          jQuery("#faire-filter").css("display", "none");
           this.tableData = this.outputData.filter(function (values) {
             var endDate = new Date(values.event_end_dt);
             endDate.setDate(endDate.getDate() + 1);
-            if (endDate > oneYearAgo) {
+            if (endDate > 0) {
               // this shows 365 days of faires, to show more just return all values
               return values;
             }
@@ -537,7 +540,7 @@ jQuery(document).ready(function () {
   jQuery("label[for=Mini] span").html("Community");
   jQuery("label[for=Flagship] span").html("Global");
   //jQuery("input#School").click(); // uncheck Schools to start with
-  jQuery("#pastFaires").on("click", function () {
+  jQuery("#showAll").on("click", function () {
     jQuery('html, body').animate({
       scrollTop: 0
     }, 'slow');

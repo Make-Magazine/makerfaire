@@ -81,11 +81,10 @@ get_header();
             </div>
          </div>
 
-         <!--
-         <div id="past-faires-btn">  
-                                      
-				<label><input class="form-control input-sm" type="checkbox" id="pastFaires" name="pastFaires" ref="filterField" v-model="pastFaires" @input="psFilter"><span>{{buttonMessage}}</span></label>
-			</div>-->
+         
+         <div id="show-all-btn">                        
+				<label><input class="form-control input-sm" type="checkbox" id="showAll" name="showAlls" ref="filterField" v-model="showAll" @input="allFilter"><span>{{buttonMessage}}</span></label>
+			</div>
       </div>  <!-- end map-table-wrapper -->
 
    </div>
