@@ -53,8 +53,12 @@ if ( $type == 'map' ) {
   $limit = '';
   // if the api has an upcoming parameter set to true, we only want to return faire's past our current date
   if($upcoming == true) {
+	  $where .= 'event_start_dt >= CURDATE()';
 	  $order .= '`wp_mf_global_faire`.`event_start_dt` ASC';
 	  // when categories are set, we are limiting the faire to the set types (e.g. Mini, Featured, Flagship or School)
+	  if(!empty($categories)) {
+		  $where .= ' AND ';
+	  }
   }
   // when categories are set, we are limiting the faire to the set types (e.g. Mini, Featured, Flagship or School)
   if(!empty($categories)) {
