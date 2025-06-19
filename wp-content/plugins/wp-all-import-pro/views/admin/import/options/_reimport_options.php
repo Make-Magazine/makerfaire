@@ -42,7 +42,7 @@
 	<input type="checkbox" id="is_not_keep_former_posts" name="is_keep_former_posts" value="no" <?php echo "yes" != $post['is_keep_former_posts'] ? 'checked="checked"': '' ?> class="switcher" />
 	<label for="is_not_keep_former_posts"><?php printf(__('Update existing %s with the data in this import file', 'wp-all-import-pro'), $cpt_name) ?></label>
 	<?php if ( $this->isWizard and "new" == $post['wizard_type'] and empty(PMXI_Plugin::$session->deligate)): ?>
-	<a href="#help" class="wpallimport-help" style="position: relative; top: -2px;" title="<?php printf(__('These options will only be used if you run this import again later. All data is imported the first time you run an import.<br/><br/>Note that WP All Import will only update/remove %s created by this import. If you want to match to %s that already exist on this site, use Existing Items in Step 1.', 'wp-all-import-pro'), $cpt_name, $cpt_name) ?>">?</a>
+	<a href="#help" class="wpallimport-help" style="position: relative; top: -2px;" title="<?php printf(__('These options will only be used if you run this import again later. All data is imported the first time you run an import.<br/><br/>Note that WP All Import will only update/remove %s created by this import. If you want to match to %s that already exist on this site, use Existing Items on the Data Source screen.', 'wp-all-import-pro'), $cpt_name, $cpt_name) ?>">?</a>
 	<?php endif; ?>
 	<div class="switcher-target-is_not_keep_former_posts" style="padding-left:17px;">
 

@@ -274,9 +274,8 @@ trait HasError {
     }
 
     public function getMissingDependencyError( $pluginName, $pluginUrl ) {
-        return new \WP_Error( 'missing_dependency', __(
-            sprintf( "<b>%s Export Add-on Plugin</b>: <a target=\"_blank\" href=\"%s\">%s</a> must be installed", $this->name(), $pluginUrl, $pluginName ),
-            'wp_all_import_plugin'
-        ) );
+        return new \WP_Error( 'missing_dependency', 
+            sprintf( "<b>%s Export Add-on Plugin</b>: <a target=\"_blank\" href=\"%s\">%s</a> must be installed", $this->name(), $pluginUrl, $pluginName )
+        );
     }
 }

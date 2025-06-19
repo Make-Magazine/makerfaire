@@ -50,7 +50,7 @@ class Where implements HookableInterface {
 
 		$list   = [];
 		$list[] = $this->get_acf_conditions( $query->query_vars['s'] );
-		$list[] = $this->get_default_wordpress_conditions( $query->query_vars['s'] );
+		$list[] = $this->get_default_wordpress_conditions( $query );
 
 		if ( in_array( 'file', $this->config[ Options::OPTION_FIELDS_TYPES ] ) && ! $this->config[ Options::OPTION_MODE_LITE ] ) {
 			$list[] = $this->get_file_conditions( $query->query_vars['s'] );
@@ -79,9 +79,9 @@ class Where implements HookableInterface {
 		);
 	}
 
-	private function get_default_wordpress_conditions( string $words ): string {
-		$words   = ! $this->config[ Options::OPTION_WHOLE_PHRASES ] ? explode( ' ', $words ) : [ $words ];
-		$columns = apply_filters( 'acfbs_search_post_object_fields', [ 'post_title', 'post_content', 'post_excerpt' ] );
+	private function get_default_wordpress_conditions( \WP_Query $query ): string {
+		$words   = ! $this->config[ Options::OPTION_WHOLE_PHRASES ] ? explode( ' ', $query->query_vars['s'] ) : [ $query->query_vars['s'] ];
+		$columns = apply_filters( 'post_search_columns', [ 'post_title', 'post_excerpt', 'post_content' ], $query->query_vars['s'], $query );
 		if ( ! $columns ) {
 			return '';
 		}

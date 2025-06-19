@@ -33,11 +33,13 @@ class ImportController extends Controller
         if ($format == 'dragAndDrop') {
             return $this->extracted($request->all());
         } else {
-            if ($format == 'csv') {
+            $fileExtension = strtolower(pathinfo($_FILES['file']['name'], PATHINFO_EXTENSION));
+
+            if ($fileExtension === 'csv' && $format == 'csv') {
                 $this->uploadTableCsv($doUnicode);
-            } elseif ($format == 'json') {
+            } elseif ($fileExtension === 'json' && $format == 'json') {
                 $this->uploadTableJson();
-            } elseif ($format == 'ninjaJson') {
+            } elseif ($fileExtension === 'json' && $format == 'ninjaJson') {
                 $this->uploadTableNinjaJson();
             }
 
@@ -77,7 +79,7 @@ class ImportController extends Controller
         $data = file_get_contents($tmpName);
 
         if ($doUnicode && $doUnicode == 'yes') {
-            $data = utf8_encode($data);
+            $data = mb_convert_encoding($data, 'UTF-8', 'ISO-8859-1');
         }
 
         try {
@@ -192,10 +194,10 @@ class ImportController extends Controller
         }
 
         // validation
-        if ( ! $content['post'] || ! $content['columns'] || ! $content['settings']) {
+        if ( ! Arr::get($content, 'post') || ! Arr::get($content, 'columns') || ! Arr::get($content, 'settings')) {
             $this->json([
                 'message' => __(
-                    'You have a faulty JSON file. Please export a new one.',
+                    'Please upload a JSON file exported from Ninja Tables',
                     'ninja-tables'
                 )
             ], 423);
@@ -203,7 +205,7 @@ class ImportController extends Controller
 
 
         $tableAttributes = array(
-            'post_title'   => Sanitizer::sanitizeTitle($content['post']['post_title']),
+            'post_title'   => Sanitizer::ksesPost($content['post']['post_title']),
             'post_content' => wp_kses_post($content['post']['post_content']),
             'post_type'    => $this->cpt_name,
             'post_status'  => 'publish'
@@ -307,8 +309,8 @@ class ImportController extends Controller
 
         $data = file_get_contents($tmpName);
 
-        if (Arr::get($request->all(), 'do_unicode') && $request->do_unicode == 'yes') {
-            $data = utf8_encode($data);
+        if (Arr::get($request->all(), 'do_unicode') === 'yes') {
+            $data = mb_convert_encoding($data, 'UTF-8', 'ISO-8859-1');
         }
 
         try {

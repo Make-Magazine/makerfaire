@@ -113,7 +113,7 @@ class CsvProvider
 
             $fields = array_map(function ($field) {
                 return sanitize_text_field(trim($field['name']));
-            }, Arr::get($_REQUEST, 'fields'));
+            }, (array) Arr::get($_REQUEST, 'fields'));
 
             // Validate Fields
             if (empty(Arr::get($_REQUEST, 'fields'))) {

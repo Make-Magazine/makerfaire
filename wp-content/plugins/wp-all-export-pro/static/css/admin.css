@@ -4707,8 +4707,10 @@ input label {
 
 
 .wpallexport-plugin .cross-sale-notice.codebox{
-    background-color: #fff;
+    background-color: #122031;
     padding:20px;
+    font-family: 'Inter';
+	color: #fff;
 }
 
 .wpallexport-plugin .wpallexport-collapsed-content-inner .cross-sale-notice.codebox{
@@ -4756,6 +4758,7 @@ input label {
 
 .wpallexport-plugin .cross-sale-notice.codebox h1{
     margin:0;
+    color: #fff;
 }
 
 .wpallexport-plugin .cross-sale-notice.codebox p{
@@ -4773,7 +4776,7 @@ input label {
 }
 
 .wpallexport-plugin .cross-sale-notice.codebox a {
-    background-color: rgb(255, 197, 20);
+    background-color: #859eff;
     color: #000;
     padding: 10px 20px;
     text-decoration: none;

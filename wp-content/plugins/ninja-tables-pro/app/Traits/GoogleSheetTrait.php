@@ -67,24 +67,7 @@ trait GoogleSheetTrait
      */
     private function getRemoteContents($url)
     {
-        $allowUrlFopen = intval(ini_get('allow_url_fopen'));
-
-        if ($allowUrlFopen == 1) {
-            return file_get_contents($url);
-        } else {
-            $ch = curl_init();
-
-            curl_setopt($ch, CURLOPT_AUTOREFERER, true);
-            curl_setopt($ch, CURLOPT_HEADER, 0);
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-            curl_setopt($ch, CURLOPT_URL, $url);
-            curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-
-            $data = curl_exec($ch);
-            curl_close($ch);
-
-            return $data;
-        }
+        return ninjaTablesGetRemoteContent($url);
     }
 
     private function getDataFromUrl($url, $tableColumns)

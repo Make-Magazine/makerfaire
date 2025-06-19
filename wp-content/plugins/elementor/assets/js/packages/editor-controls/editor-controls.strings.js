@@ -1,27 +1,38 @@
-__( 'System', 'elementor' );
-__( 'Google Fonts', 'elementor' );
-__( 'Custom Fonts', 'elementor' );
-__( 'Stroke Width', 'elementor' );
-__( 'Stroke Color', 'elementor' );
-__( 'Link Inputs', 'elementor' );
+__( 'SVG', 'elementor' );
+__( 'Preview SVG', 'elementor' );
+__( 'Select SVG', 'elementor' );
+__( 'Upload', 'elementor' );
+__( 'Stroke width', 'elementor' );
+__( 'Stroke color', 'elementor' );
+// translators: %s: Tooltip title.
+__( 'Link %s', 'elementor' );
+// translators: %s: Tooltip title.
+__( 'Unlink %s', 'elementor' );
 __( 'Top', 'elementor' );
+__( 'Left', 'elementor' );
 __( 'Right', 'elementor' );
 __( 'Bottom', 'elementor' );
+__( 'Right', 'elementor' );
 __( 'Left', 'elementor' );
+__( 'Learn More', 'elementor' );
 __( 'Link', 'elementor' );
-__( 'Toggle Link', 'elementor' );
-__( 'Open in new tab', 'elementor' );
-__( 'Select Image', 'elementor' );
-__( 'Upload Image', 'elementor' );
-__( 'Image Resolution', 'elementor' );
-__( 'Link Inputs', 'elementor' );
+__( 'Toggle link', 'elementor' );
+__( 'Open in a new tab', 'elementor' );
+__( 'Take me there', 'elementor' );
+__( 'To add a link to this container,', 'elementor' );
+__( 'first remove the link from the elements inside of it.', 'elementor' );
+__( 'To add a link to this element,', 'elementor' );
+__( 'first remove the link from its parent container.', 'elementor' );
+__( 'Select image', 'elementor' );
+__( 'Upload', 'elementor' );
+__( 'Image resolution', 'elementor' );
+__( 'Image', 'elementor' );
+// translators: %s: Tooltip title.
+__( 'Link %s', 'elementor' );
+// translators: %s: Tooltip title.
+__( 'Unlink %s', 'elementor' );
 __( 'Column', 'elementor' );
 __( 'Row', 'elementor' );
-__( 'Font Family', 'elementor' );
-__( 'Search', 'elementor' );
-__( 'Sorry, nothing matched', 'elementor' );
-__( 'Clear the filters', 'elementor' );
-__( 'and try again.', 'elementor' );
 __( 'Mixed', 'elementor' );
 __( 'Box shadow', 'elementor' );
 __( 'Color', 'elementor' );
@@ -32,41 +43,70 @@ __( 'Horizontal', 'elementor' );
 __( 'Vertical', 'elementor' );
 __( 'Blur', 'elementor' );
 __( 'Spread', 'elementor' );
+__( 'Auto', 'elementor' );
+__( 'Custom', 'elementor' );
 __( 'Add item', 'elementor' );
+__( 'Duplicate', 'elementor' );
+__( 'Show', 'elementor' );
+__( 'Hide', 'elementor' );
+__( 'Remove', 'elementor' );
 __( 'Open item', 'elementor' );
-__( 'Duplicate item', 'elementor' );
-__( 'Enable item', 'elementor' );
-__( 'Disable item', 'elementor' );
-__( 'Remove item', 'elementor' );
+__( 'Font Family', 'elementor' );
+__( 'Search', 'elementor' );
+__( 'Sorry, nothing matched', 'elementor' );
+__( 'Try something else.', 'elementor' );
+__( 'Clear & try again', 'elementor' );
+__( 'Enable Unfiltered Uploads', 'elementor' );
+__(
+	'Before you enable unfiltered files upload, note that such files include a security risk. Elementor does run a process to remove possible malicious code, but there is still risk involved when using such files.',
+	'elementor'
+);
+__( "Sorry, you can't upload that file yet", 'elementor' );
+__(
+	'This is because this file type may pose a security risk. To upload them anyway, ask the site administrator to enable unfiltered file uploads.',
+	'elementor'
+);
+__( 'Failed to enable unfiltered files upload.', 'elementor' );
+__(
+	'You can try again, if the problem persists, please contact support.',
+	'elementor'
+);
+__( 'Cancel', 'elementor' );
+__( 'Enable', 'elementor' );
+__( 'Got it', 'elementor' );
 __( 'Color', 'elementor' );
+__( 'Thumbnail - 150 x 150', 'elementor' );
+__( 'Medium - 300 x 300', 'elementor' );
+__( 'Large 1024 x 1024', 'elementor' );
+__( 'Full', 'elementor' );
 __( 'Overlay', 'elementor' );
 __( 'Background Overlay', 'elementor' );
 __( 'Image', 'elementor' );
+__( 'Gradient', 'elementor' );
 __( 'Color', 'elementor' );
+__( 'Linear Gradient', 'elementor' );
+__( 'Radial Gradient', 'elementor' );
+__( 'Resolution', 'elementor' );
 __( 'Auto', 'elementor' );
 __( 'Cover', 'elementor' );
 __( 'Contain', 'elementor' );
+__( 'Custom', 'elementor' );
 __( 'Size', 'elementor' );
-__( 'Thumbnail - 150 x 150', 'elementor' );
-__( 'Medium - 300 x 300', 'elementor' );
-__( 'Medium Large - 768 x 768' ), value: 'medium_large' },
-	{ label: __( 'Large 1024 x 1024', 'elementor' );
-__( 'Full', 'elementor' );
-__( 'Resolution', 'elementor' );
 __( 'Repeat', 'elementor' );
 __( 'Repeat-x', 'elementor' );
 __( 'Repeat-y', 'elementor' );
-__( 'No-Repeat', 'elementor' );
+__( 'No-repeat', 'elementor' );
 __( 'Repeat', 'elementor' );
-__( 'Center Center', 'elementor' );
-__( 'Center Left', 'elementor' );
-__( 'Center Right', 'elementor' );
-__( 'Top Center', 'elementor' );
-__( 'Top Left', 'elementor' );
-__( 'Top Right', 'elementor' );
-__( 'Bottom Center', 'elementor' );
-__( 'Bottom Left', 'elementor' );
-__( 'Bottom Right', 'elementor' );
+__( 'Center center', 'elementor' );
+__( 'Center left', 'elementor' );
+__( 'Center right', 'elementor' );
+__( 'Top center', 'elementor' );
+__( 'Top left', 'elementor' );
+__( 'Top right', 'elementor' );
+__( 'Bottom center', 'elementor' );
+__( 'Bottom left', 'elementor' );
+__( 'Bottom right', 'elementor' );
+__( 'Custom', 'elementor' );
 __( 'Position', 'elementor' );
 __( 'Fixed', 'elementor' );
 __( 'Scroll', 'elementor' );

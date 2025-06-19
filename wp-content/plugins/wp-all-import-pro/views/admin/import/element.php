@@ -42,7 +42,7 @@
 				<?php $this->error() ?>
 			<?php endif ?>
 		</div>
-		<input type="submit" class="button button-primary button-hero wpallimport-large-button" value="<?php _e('Continue to Step 3', 'wp-all-import-pro'); ?>" style="position:absolute; top:45px; right:10px;"/>
+		<input type="submit" class="button button-primary button-hero wpallimport-large-button" value="<?php _e('Continue to Setup Import', 'wp-all-import-pro'); ?>" style="position:absolute; top:45px; right:10px;"/>
 	</div>
 
 	<div class="wpallimport-content-section wpallimport-elements-preloader">
@@ -146,11 +146,11 @@
 	<hr>
 
 	<p class="wpallimport-submit-buttons" style="text-align:center;">
-		<a href="<?php echo esc_url(add_query_arg('action', 'index', $this->baseUrl)); ?>" class="back rad3"><?php _e('Back to Step 1','wp-all-import-pro');?></a>
+		<a href="<?php echo esc_url(add_query_arg('action', 'index', $this->baseUrl)); ?>" class="back rad3"><?php _e('Back to Data Source','wp-all-import-pro');?></a>
 		&nbsp;
 		<input type="hidden" name="is_submitted" value="1" />
 		<?php wp_nonce_field('choose-elements', '_wpnonce_choose-elements') ?>
-		<input type="submit" class="button button-primary button-hero wpallimport-large-button" value="<?php _e('Continue to Step 3', 'wp-all-import-pro'); ?>" />
+		<input type="submit" class="button button-primary button-hero wpallimport-large-button" value="<?php _e('Continue to Setup Import', 'wp-all-import-pro'); ?>" />
 	</p>
 	<a href="http://soflyy.com/" target="_blank" class="wpallimport-created-by"><?php _e('Created by', 'wp-all-import-pro'); ?> <span></span></a>
 

@@ -3,7 +3,7 @@
   Plugin Name: Embed Plus for YouTube Pro
   Plugin URI: https://www.embedplus.com/dashboard/pro-easy-video-analytics.aspx
   Description: YouTube Embed Plugin. Embed a YouTube channel gallery, playlist gallery, YouTube live stream. Lite embeds with defer JavaScript and facade options
-  Version: 14.2.2.1
+  Version: 14.2.3
   Author: Embed Plus for YouTube Team
   Author URI: https://www.embedplus.com
   Requires at least: 4.5
@@ -22,7 +22,7 @@ class YouTubePrefsPro
 
     public static $folder_name = 'youtube-embed-plus-pro';
     public static $curltimeout = 30;
-    public static $version = '14.2.2.1';
+    public static $version = '14.2.3';
     public static $opt_version = 'version';
     public static $opt_free_migrated = 'free_migrated';
     public static $optembedwidth = null;
@@ -40,7 +40,6 @@ class YouTubePrefsPro
     public static $opt_cc_lang_pref = 'cc_lang_pref';
     public static $opt_iv_load_policy = 'iv_load_policy';
     public static $opt_loop = 'loop';
-    public static $opt_modestbranding = 'modestbranding';
     public static $opt_rel = 'rel';
     public static $opt_fs = 'fs';
     public static $opt_playsinline = 'playsinline';
@@ -119,6 +118,7 @@ class YouTubePrefsPro
     public static $opt_gallery_showdsc = 'gallery_showdsc';
     public static $opt_gallery_thumbcrop = 'gallery_thumbcrop';
     public static $opt_gallery_disptype = 'gallery_disptype';
+    public static $opt_gallery_exclude_shorts = 'gallery_exclude_shorts';
     public static $opt_not_live_content = 'not_live_content';
     public static $opt_not_live_on = 'not_live_on';
     public static $opt_not_live_showtime = 'not_live_showtime';
@@ -215,7 +215,6 @@ class YouTubePrefsPro
                 self::$opt_cc_lang_pref,
                 self::$opt_iv_load_policy,
                 self::$opt_loop,
-                self::$opt_modestbranding,
                 self::$opt_rel,
                 self::$opt_fs,
                 self::$opt_playsinline,
@@ -1651,7 +1650,6 @@ class YouTubePrefsPro
                                 <label><input ng-click="cc_load_policyChange()" <?php checked($wiz_defaults[self::$opt_cc_load_policy], 1); ?> id="chkCC" type="checkbox" name="chkCC"><?php _e('Turn on closed-captioning', 'text_domain'); ?></label>
                                 <label><input ng-click="iv_load_policyChange()" <?php checked($wiz_defaults[self::$opt_iv_load_policy], 1); ?> id="chkAnn" type="checkbox" name="chkAnn"><?php _e('Show Annotations', 'text_domain'); ?></label>
                                 <label><input ng-click="loopChange()" <?php checked($wiz_defaults[self::$opt_loop], 1); ?> id="chkLoop" type="checkbox" name="chkLoop"><?php _e('Loop the video', 'text_domain'); ?></label>
-                                <label><input ng-click="modestbrandingChange()" <?php checked($wiz_defaults[self::$opt_modestbranding], 1); ?> id="chkModest" type="checkbox" name="chkModest"><?php _e('Modest branding: Hide YouTube logo while playing', 'text_domain'); ?></label>
                                 <p>
                                     <?php _e('Show related videos after playing', 'text_domain'); ?>:
                                     <label><input type="radio" ng-model="model.rel" value="1" convert-to-number><?php _e('Show related videos', 'text_domain'); ?></label>
@@ -2203,7 +2201,6 @@ class YouTubePrefsPro
         $_cc_lang_pref = '';
         $_iv_load_policy = 1;
         $_loop = 0;
-        $_modestbranding = 0;
         $_rel = 1;
         $_fs = 1;
         $_theme = 'dark';
@@ -2278,6 +2275,7 @@ class YouTubePrefsPro
         $_gallery_showdsc = 0;
         $_gallery_thumbcrop = 'box';
         $_gallery_disptype = 'default';
+        $_gallery_exclude_shorts = 0;
         $_not_live_content = '';
         $_not_live_on = 0;
         $_not_live_showtime = 180;
@@ -2330,7 +2328,6 @@ class YouTubePrefsPro
             $_cc_lang_pref = self::tryget($arroptions, self::$opt_cc_lang_pref, $_cc_lang_pref);
             $_iv_load_policy = self::tryget($arroptions, self::$opt_iv_load_policy, 1);
             $_loop = self::tryget($arroptions, self::$opt_loop, 0);
-            $_modestbranding = self::tryget($arroptions, self::$opt_modestbranding, 0);
             $_rel = self::tryget($arroptions, self::$opt_rel, 1);
             $_fs = self::tryget($arroptions, self::$opt_fs, 1);
             $_playsinline = self::tryget($arroptions, self::$opt_playsinline, 0);
@@ -2403,6 +2400,7 @@ class YouTubePrefsPro
             $_gallery_style = self::tryget($arroptions, self::$opt_gallery_style, 'grid');
             $_gallery_thumbcrop = self::tryget($arroptions, self::$opt_gallery_thumbcrop, 'box');
             $_gallery_disptype = self::tryget($arroptions, self::$opt_gallery_disptype, 'default');
+            $_gallery_exclude_shorts = self::tryget($arroptions, self::$opt_gallery_exclude_shorts, 0);
             $_gallery_channelsub = self::tryget($arroptions, self::$opt_gallery_channelsub, $_gallery_channelsub);
             $_gallery_channelsublink = self::tryget($arroptions, self::$opt_gallery_channelsublink, $_gallery_channelsublink);
             $_gallery_channelsubtext = self::tryget($arroptions, self::$opt_gallery_channelsubtext, $_gallery_channelsubtext);
@@ -2439,7 +2437,6 @@ class YouTubePrefsPro
             self::$opt_cc_lang_pref => $_cc_lang_pref,
             self::$opt_iv_load_policy => $_iv_load_policy,
             self::$opt_loop => $_loop,
-            self::$opt_modestbranding => $_modestbranding,
             self::$opt_rel => $_rel,
             self::$opt_fs => $_fs,
             self::$opt_playsinline => $_playsinline,
@@ -2511,6 +2508,7 @@ class YouTubePrefsPro
             self::$opt_gallery_style => $_gallery_style,
             self::$opt_gallery_thumbcrop => $_gallery_thumbcrop,
             self::$opt_gallery_disptype => $_gallery_disptype,
+            self::$opt_gallery_exclude_shorts => $_gallery_exclude_shorts,
             self::$opt_gallery_pagesize => $_gallery_pagesize,
             self::$opt_gallery_limit_dsc => $_gallery_limit_dsc,
             self::$opt_gallery_length_dsc => $_gallery_length_dsc,
@@ -2658,6 +2656,77 @@ class YouTubePrefsPro
             return self::get_html(array($content), $currfilter == 'widget_text' ? false : true, false);
         }
         return '';
+    }
+
+    public static function is_short($item, $video_id, $uploads_playlist_id)
+    {
+        if (self::compare_vid_date($item->snippet->publishedAt, '2021-03-18') < 0)
+        {
+            return false;
+        }
+        $max_shorts_check = 200;
+        $cache_key = self::$spdcprefix . '_shorts_max_' . $max_shorts_check . '_channel_' . $uploads_playlist_id;
+        $shorts_cache = get_transient($cache_key);
+        if ($shorts_cache === false)
+        {
+            // Get shorts playlist ID for filtering
+            $shorts_playlist_id = str_replace('UU', 'UUSH', $uploads_playlist_id);
+            $shorts_cache = self::get_shorts_video_ids($shorts_playlist_id, $max_shorts_check);
+            // Cache the results
+            set_transient($cache_key, $shorts_cache, 6 * HOUR_IN_SECONDS);
+        }
+        return in_array($video_id, $shorts_cache);
+    }
+
+    public static function get_shorts_video_ids($shorts_playlist_id, $max_shorts = 200)
+    {
+        $url = "https://www.googleapis.com/youtube/v3/playlistItems";
+        $shorts_ids = array();
+        $next_page_token = '';
+        $fetched = 0;
+        
+        do {
+            $params = array(
+                'part' => 'snippet',
+                'playlistId' => $shorts_playlist_id,
+                'maxResults' => min(50, $max_shorts - $fetched), // YouTube API max is 50 per request
+                'key' => self::$alloptions[self::$opt_apikey]
+            );
+            
+            if ($next_page_token) {
+                $params['pageToken'] = $next_page_token;
+            }
+            
+            $api_endpoint = $url . '?' . http_build_query($params);
+            $response = wp_remote_get($api_endpoint, array('timeout' => self::$curltimeout, 'headers' => array('referer' => site_url())));
+            
+            if (is_wp_error($response)) {
+                break;
+            }
+            
+            $body = wp_remote_retrieve_body($response);
+            $data = json_decode($body, true);
+            
+            if (!isset($data['items'])) {
+                break;
+            }
+            
+            foreach ($data['items'] as $item) {
+                if (isset($item['snippet']['resourceId']['videoId'])) {
+                    $shorts_ids[] = $item['snippet']['resourceId']['videoId'];
+                    $fetched++;
+                }
+                
+                if ($fetched >= $max_shorts) {
+                    break 2; // Break out of both loops
+                }
+            }
+            
+            $next_page_token = isset($data['nextPageToken']) ? $data['nextPageToken'] : '';
+            
+        } while ($next_page_token && $fetched < $max_shorts);
+        
+        return $shorts_ids;
     }
 
     public static function apply_prefs_shortcode_embedplusvideo($atts, $content = null)
@@ -2842,7 +2911,8 @@ class YouTubePrefsPro
 
         if (isset($jsonResult->items) && $jsonResult->items != null && is_array($jsonResult->items))
         {
-            if (strpos($options->playlistId, 'UU') === 0)
+            $is_channel_uploads_playlist = strpos($options->playlistId, 'UU') === 0;
+            if ($is_channel_uploads_playlist)
             {
                 // sort only channels
                 usort($jsonResult->items, array(self::class, 'compare_vid_date')); // sorts in place                
@@ -2860,6 +2930,11 @@ class YouTubePrefsPro
                 $thumb->privacyStatus = isset($item->status->privacyStatus) ? $item->status->privacyStatus : null;
 
                 if ($thumb->privacyStatus == 'private' && self::$alloptions[self::$opt_gallery_hideprivate] == 1)
+                {
+                    continue;
+                }
+
+                if ($is_channel_uploads_playlist && self::$alloptions[self::$opt_gallery_exclude_shorts] == 1 && self::is_short($item, $thumb->id, $options->playlistId))
                 {
                     continue;
                 }
@@ -3928,6 +4003,21 @@ class YouTubePrefsPro
         return "T{$hours}H{$minutes}M{$seconds}S";
     }
 
+    public static function durationToSeconds(string $duration)
+    {
+        $interval = new DateInterval($duration);
+
+        $daysInSeconds = $interval->d * 86400;
+        $hoursInSeconds = $interval->h * 3600;
+        $minutesInSeconds = $interval->i * 60;
+        $seconds = $interval->s;
+
+        // Handle weeks (DateInterval supports it, though not always set)
+        $weeksInSeconds = isset($interval->w) ? $interval->w * 604800 : 0;
+
+        return $weeksInSeconds + $daysInSeconds + $hoursInSeconds + $minutesInSeconds + $seconds;
+}
+
     public static function init_dimensions($url, $urlkvp, $finalparams)
     {
         // get default dimensions; try embed size in settings, then try theme's content width, then just 480px
@@ -4749,7 +4839,7 @@ class YouTubePrefsPro
         $new_pointer_content = '<h3>' . __('New Update') . '</h3>'; // ooopointer
 
         $new_pointer_content .= '<p>'; // ooopointer
-        $new_pointer_content .= "This version fixes a bug in the Analytics Dashboard feature for Pro versions.";
+        $new_pointer_content .= "This version removes the modest branding option which has been deprecated by Google. Also, pro users can experiment with the beta feature for filtering out YouTube Shorts from galleries.";
         $new_pointer_content .= '</p>';
 
         return array(
@@ -5239,10 +5329,6 @@ class YouTubePrefsPro
                                 <label for="<?php echo self::$opt_loop; ?>"><?php _e('<b class="chktitle">Looping:</b> Loop all your videos. Note: this feature is incompatible with the "hide related videos" feature.') ?></label>
                             </p>
                             <p>
-                                <input name="<?php echo self::$opt_modestbranding; ?>" id="<?php echo self::$opt_modestbranding; ?>" <?php checked($all[self::$opt_modestbranding], 1); ?> type="checkbox" class="checkbox">
-                                <label for="<?php echo self::$opt_modestbranding; ?>"><?php _e('<b class="chktitle">Modest Branding:</b> No YouTube logo will be shown on the control bar.  Instead, as required by YouTube, the logo will only show as a watermark when the video is paused/stopped.') ?></label>
-                            </p>
-                            <p>
                                 <label>
                                     <b class="chktitle">Related Videos:</b>
                                     Show or hide related and recommended videos at the end of playback.
@@ -5265,7 +5351,7 @@ class YouTubePrefsPro
                             </p>
                             <p>
                                 <input name="<?php echo self::$opt_color; ?>" id="<?php echo self::$opt_color; ?>" <?php checked($all[self::$opt_color], 'red'); ?> type="checkbox" class="checkbox">
-                                <label for="<?php echo self::$opt_color; ?>"><?php _e('<b class="chktitle">Red Progress Bar:</b> Use the red progress bar (uncheck to use a white progress bar). Note: Using white will disable the modestbranding option.') ?></label>
+                                <label for="<?php echo self::$opt_color; ?>"><?php _e('<b class="chktitle">Red Progress Bar:</b> Use the red progress bar (uncheck to use a white progress bar).') ?></label>
                             </p>
                             <p>
                                 <input name="<?php echo self::$opt_defaultdims; ?>" id="<?php echo self::$opt_defaultdims; ?>" <?php checked($all[self::$opt_defaultdims], 1); ?> type="checkbox" class="checkbox">                        
@@ -5930,7 +6016,13 @@ class YouTubePrefsPro
                             </p>
                             <p>
                                 <input name="<?php echo self::$opt_gallery_hideprivate; ?>" id="<?php echo self::$opt_gallery_hideprivate; ?>" <?php checked($all[self::$opt_gallery_hideprivate], 1); ?> type="checkbox" class="checkbox">
-                                <label for="<?php echo self::$opt_gallery_hideprivate; ?>"><b class="chktitle">Hide Private Thumbnails:</b> Hide thumbnails for videos in a playlist that cannot be embedded yet. Note: This may make some page sizes look uneven.</label>
+                                <label for="<?php echo self::$opt_gallery_hideprivate; ?>"><b class="chktitle">Hide Private Thumbnails:</b> Hide thumbnails for videos in a playlist that cannot be embedded yet. 
+                            Because private videos are being removed dynamically, some gallery page sizes may have fewer or more thumbnails.</label>
+                            </p>
+                            <p>
+                                <input name="<?php echo self::$opt_gallery_exclude_shorts; ?>" id="<?php echo self::$opt_gallery_exclude_shorts; ?>" <?php checked($all[self::$opt_gallery_exclude_shorts], 1); ?> type="checkbox" class="checkbox">
+                                <label for="<?php echo self::$opt_gallery_exclude_shorts; ?>"><b class="chktitle">Exclude Shorts:</b> <sup class="orange">beta</sup> Exclude YouTube Shorts videos from galleries. This will filter out videos that are considered "YouTube Shorts" based on their characteristics.
+                            Because shorts are being removed dynamically, some gallery page sizes may have fewer or more thumbnails. Note: currently this feature removes up to the latest 200 max shorts, to preserve YouTube API quota.</label>
                             </p>
                             <p>
                                 <input name="<?php echo self::$opt_gallery_autonext; ?>" id="<?php echo self::$opt_gallery_autonext; ?>" <?php checked($all[self::$opt_gallery_autonext], 1); ?> type="checkbox" class="checkbox">
@@ -6476,10 +6568,9 @@ class YouTubePrefsPro
                         _e("<li><strong>cc_load_policy</strong> - Set this to 1 to turn on closed captioning (or 0 to leave them off). <em>Example: http://www.youtube.com/watch?v=quwebVjAEJA<strong>&cc_load_policy=1</strong></em> </li>");
                         _e("<li><strong>iv_load_policy</strong> - Set this to 3 to turn off annotations (or 1 to show them). <em>Example: http://www.youtube.com/watch?v=quwebVjAEJA<strong>&iv_load_policy=3</strong></em> </li>");
                         _e("<li><strong>loop</strong> - Set this to 1 to loop the video (or 0 to not loop). <em>Example: http://www.youtube.com/watch?v=quwebVjAEJA<strong>&loop=1</strong></em> </li>");
-                        _e("<li><strong>modestbranding</strong> - Set this to 1 to remove the YouTube logo while playing (or 0 to show the logo). <em>Example: http://www.youtube.com/watch?v=quwebVjAEJA<strong>&modestbranding=1</strong></em> </li>");
                         _e("<li><strong>rel</strong> - Set this to 0 to not show related videos at the end of playing (or 1 to show them). <em>Example: http://www.youtube.com/watch?v=quwebVjAEJA<strong>&rel=0</strong></em> </li>");
                         _e("<li><strong>fs</strong> - Set this to 0 to hide the fullscreen button (or 1 to show it). <em>Example: http://www.youtube.com/watch?v=quwebVjAEJA<strong>&fs=0</strong></em> </li>");
-                        _e("<li><strong>color</strong> - Set this to 'white' to make the player have a white progress bar (or 'red' for a red progress bar). Note: Using white will disable the modestbranding option. <em>Example: http://www.youtube.com/watch?v=quwebVjAEJA<strong>&color=white</strong></em> </li>");
+                        _e("<li><strong>color</strong> - Set this to 'white' to make the player have a white progress bar (or 'red' for a red progress bar). <em>Example: http://www.youtube.com/watch?v=quwebVjAEJA<strong>&color=white</strong></em> </li>");
                         _e("<li><strong>controls</strong> - Set this to 0 to completely hide the video controls (or 1 to show it). <em>Example: http://www.youtube.com/watch?v=quwebVjAEJA<strong>&controls=0</strong></em> </li>");
                         _e("<li><strong>playsinline</strong> - Set this to 1 to allow videos play inline with the page on iOS browsers. (Set to 0 to have iOS launch videos in fullscreen instead). <em>Example: http://www.youtube.com/watch?v=quwebVjAEJA<strong>&playsinline=1</strong></em> </li>");
                         _e("<li><strong>origin</strong> - Set this to 1 to add the 'origin' parameter for extra JavaScript security. <em>Example: http://www.youtube.com/watch?v=quwebVjAEJA<strong>&origin=1</strong></em> </li>");
@@ -6552,11 +6643,6 @@ class YouTubePrefsPro
                             </div>
                         </div>
                         <p><?php _e('Note: Since the YouTube player is loaded in its own iframe from YouTube\'s servers, browser restrictions prevent this plugin from directly deferring the JS inside the iframe. However, you can use facade mode above, or the lazy loading feature <a href="#jumpprosettings">described here &raquo;</a> to further improve your page speeds.', 'youtube-embed-plus-pro'); ?></p>
-                        <!--                        <div style="width: 50%">
-                                                    <div class="epyt-fitvid">
-                                                        <iframe allow="encrypted-media" allowfullscreen="" src="https://www.youtube-nocookie.com/embed/?autoplay=0&amp;cc_load_policy=0&amp;iv_load_policy=1&amp;loop=0&amp;modestbranding=0&amp;fs=1&amp;playsinline=0&amp;controls=1&amp;color=red&amp;rel=1&amp;autohide=2&amp;theme=dark&amp;"></iframe>
-                                                    </div>
-                                                </div>-->
                     </section>
 
                     <div class="save-changes-follow"> <?php self::save_changes_button(isset($_POST[$ytprefs_submitted]) && $_POST[$ytprefs_submitted] == 'Y'); ?> </div>
@@ -7173,7 +7259,6 @@ class YouTubePrefsPro
         $new_options[self::$opt_cc_load_policy] = self::postchecked(self::$opt_cc_load_policy) ? 1 : 0;
         $new_options[self::$opt_iv_load_policy] = self::postchecked(self::$opt_iv_load_policy) ? 1 : 3;
         $new_options[self::$opt_loop] = self::postchecked(self::$opt_loop) ? 1 : 0;
-        $new_options[self::$opt_modestbranding] = self::postchecked(self::$opt_modestbranding) ? 1 : 0;
         $new_options[self::$opt_fs] = self::postchecked(self::$opt_fs) ? 1 : 0;
         $new_options[self::$opt_playsinline] = self::postchecked(self::$opt_playsinline) ? 1 : 0;
         $new_options[self::$opt_origin] = self::postchecked(self::$opt_origin) ? 1 : 0;
@@ -7212,6 +7297,7 @@ class YouTubePrefsPro
         $new_options[self::$opt_not_live_on_channel] = self::postchecked(self::$opt_not_live_on_channel) ? 1 : 0;
         $new_options[self::$opt_live_chat] = self::postchecked(self::$opt_live_chat) ? 1 : 0;
         $new_options[self::$opt_gallery_hideprivate] = self::postchecked(self::$opt_gallery_hideprivate) ? 1 : 0;
+        $new_options[self::$opt_gallery_exclude_shorts] = self::postchecked(self::$opt_gallery_exclude_shorts) ? 1 : 0;
         $new_options[self::$opt_gallery_showtitle] = self::postchecked(self::$opt_gallery_showtitle) ? 1 : 0;
         $new_options[self::$opt_gallery_showpaging] = self::postchecked(self::$opt_gallery_showpaging) ? 1 : 0;
         $new_options[self::$opt_gallery_autonext] = self::postchecked(self::$opt_gallery_autonext) ? 1 : 0;
@@ -7604,7 +7690,6 @@ class YouTubePrefsPro
         $messages = array();
         try
         {
-            $input[self::$opt_modestbranding] = intval($input[self::$opt_modestbranding]);
             $input[self::$opt_responsive] = intval($input[self::$opt_responsive]);
             $input[self::$opt_responsive_all] = intval($input[self::$opt_responsive_all]);
             $input[self::$opt_defer_js] = intval($input[self::$opt_defer_js]);
@@ -7644,7 +7729,6 @@ class YouTubePrefsPro
         $result = array();
         $default = array(
             self::$opt_rel => 1,
-            self::$opt_modestbranding => 0,
             self::$opt_responsive => 0,
             self::$opt_responsive_all => 0,
             self::$opt_defer_js => 0,
@@ -7895,10 +7979,6 @@ class YouTubePrefsPro
                                         </span>
                                     </label>
                                 </div>
-                            </div>
-                            <div class="ytprefs-ob-setting yob-single yob-gallery yob-standalone yob-live">
-                                <input value="1" name="<?php echo self::$opt_modestbranding; ?>" id="<?php echo self::$opt_modestbranding; ?>" <?php checked($all[self::$opt_modestbranding], 1); ?> type="checkbox" class="checkbox">
-                                <label for="<?php echo self::$opt_modestbranding; ?>"><?php _e('<b class="chktitle">Modest Branding:</b> No YouTube logo will be shown on the control bar.  Instead, as required by YouTube, the logo will only show as a watermark when the video is paused/stopped.') ?></label>
                             </div>
                             <div class="ytprefs-ob-setting yob-single yob-gallery yob-standalone yob-live">
                                 <input value="1" name="<?php echo self::$opt_responsive; ?>" id="<?php echo self::$opt_responsive; ?>" <?php checked($all[self::$opt_responsive], 1); ?> type="checkbox" class="checkbox">

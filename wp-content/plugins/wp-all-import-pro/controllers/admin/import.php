@@ -85,7 +85,7 @@ class PMXI_Admin_Import extends PMXI_Controller_Admin {
 		if ('preview' == $action or 'tag' == $action or 'preview_images' == $action or 'preview_taxonomies' == $action or 'preview_images' == $action) return true;
 
 		if ( ! PMXI_Plugin::$session->get('xpath', false) or empty($elements) or ! $elements->length) {
-			$this->errors->add('form-validation', __('There are no elements to import based on your XPath.<br/><br/>If you are in Step 2, you probably specified filtering options that don’t match any elements present in your file.<br/>If you are seeing this error elsewhere, it means that while the XPath expression for your initial import matched some elements in your file previously, there are now zero elements in the file that match this expression.<br/>You can edit the XPath for your import by going to the Manage Imports -> Import Settings page.', 'wp-all-import-pro'));
+			$this->errors->add('form-validation', __('There are no elements to import based on your XPath.<br/><br/>If you are on the Create Filters screen, you probably specified filtering options that don’t match any elements present in your file.<br/>If you are seeing this error elsewhere, it means that while the XPath expression for your initial import matched some elements in your file previously, there are now zero elements in the file that match this expression.<br/>You can edit the XPath for your import by going to the Manage Imports -> Import Settings page.', 'wp-all-import-pro'));
 			wp_redirect_or_javascript(esc_url_raw(add_query_arg('action', 'element', $this->baseUrl))); die();
 		}
 
@@ -137,6 +137,7 @@ class PMXI_Admin_Import extends PMXI_Controller_Admin {
 			'root_element' => '',
 			'downloaded' => '',
 			'auto_generate' => 0,
+			'go_to_create_filters' => 0,
 			'template' => false	,
             'taxonomy_type' => ''
 		);
@@ -280,7 +281,7 @@ class PMXI_Admin_Import extends PMXI_Controller_Admin {
 
 			@set_time_limit(0);
 			$deligate = $this->input->get('deligate', false);
-			$redirect_to_template = false;
+			$redirect_to_template = empty($post['go_to_create_filters']);
 			$importRecord = new PMXI_Import_Record();
 
 			switch ( $deligate ) {
@@ -636,7 +637,7 @@ class PMXI_Admin_Import extends PMXI_Controller_Admin {
 				PMXI_Plugin::$session->set('count', $this->data['node_list_count']);
 			}
 			if ( ! $this->data['node_list_count']) {
-				$this->errors->add('form-validation', __('There are no elements to import based on your XPath.<br/><br/>If you are in Step 2, you probably specified filtering options that don’t match any elements present in your file.<br/>If you are seeing this error elsewhere, it means that while the XPath expression for your initial import matched some elements in your file previously, there are now zero elements in the file that match this expression.<br/>You can edit the XPath for your import by going to the Manage Imports -> Import Settings page.', 'wp-all-import-pro'));
+				$this->errors->add('form-validation', __('There are no elements to import based on your XPath.<br/><br/>If you are on the Create Filters screen, you probably specified filtering options that don’t match any elements present in your file.<br/>If you are seeing this error elsewhere, it means that while the XPath expression for your initial import matched some elements in your file previously, there are now zero elements in the file that match this expression.<br/>You can edit the XPath for your import by going to the Manage Imports -> Import Settings page.', 'wp-all-import-pro'));
 			}
 		}
 

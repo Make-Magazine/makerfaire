@@ -1,4 +1,4 @@
-/*! elementor - v3.28.0 - 22-04-2025 */
+/*! elementor - v3.29.0 - 04-06-2025 */
 .elementor-hidden {
   display: none;
 }
@@ -69,6 +69,7 @@
   --e-a-bg-info:	#F0F7FF;
   --e-a-bg-danger:	#FEF1F4;
   --e-a-bg-warning:	#FFFBEB;
+  --e-a-bg-chip:	#F1F2F3;
   --e-a-color-txt:	#515962;
   --e-a-color-txt-muted:	#818A96;
   --e-a-color-txt-disabled:	#BABFC5;
@@ -508,6 +509,15 @@ body:not(.elementor-device-mobile) .elementor-control.elementor-control-responsi
 }
 .elementor-panel-heading-title {
   font-weight: bold;
+}
+.elementor-panel-heading-category-chip {
+  margin-inline-start: auto;
+  background-color: var(--e-a-bg-chip);
+  border-radius: 100px;
+  padding: 5px 8px;
+}
+.elementor-panel-heading-category-chip i {
+  margin-inline-start: 4px;
 }
 .elementor-panel-heading-promotion {
   margin-inline-start: auto;
@@ -3699,6 +3709,10 @@ html.elementor-html {
   text-align: center;
   padding: 10px 0;
 }
+.elementor-element.elementor-widget-empty[data-atomic] .elementor-widget-empty-icon {
+  background-color: rgb(243, 243, 244);
+  width: 100%;
+}
 .elementor-element:not(:hover):not(.elementor-element-editable) > .elementor-element-overlay .elementor-editor-element-settings {
   display: none;
 }
@@ -3826,6 +3840,13 @@ html.elementor-html {
 .elementor-widget-placeholder {
   height: 10px;
   animation-name: placeholder-widget;
+}
+.elementor-widget-placeholder.is-logical {
+  margin-top: var(--e-placeholder-margin-top);
+  margin-bottom: var(--e-placeholder-margin-bottom);
+  margin-inline-start: var(--e-placeholder-margin-inline-start);
+  width: var(--e-placeholder-width);
+  min-width: 200px;
 }
 
 .elementor-draggable-over:not([data-dragged-element=section]):not([data-dragged-is-inner=true]) > .elementor-empty-view > .elementor-first-add:after,
@@ -3958,7 +3979,8 @@ html.elementor-html {
 
 .elementor-editor-section-settings,
 .elementor-editor-container-settings,
-.elementor-editor-div-block-settings {
+.elementor-editor-e-flexbox-settings,
+.elementor-editor-e-div-block-settings {
   height: 24px;
   top: 1px;
   left: 50%;
@@ -3971,17 +3993,20 @@ html.elementor-html {
 }
 .elementor-editor-section-settings i.eicon-handle,
 .elementor-editor-container-settings i.eicon-handle,
-.elementor-editor-div-block-settings i.eicon-handle {
+.elementor-editor-e-flexbox-settings i.eicon-handle,
+.elementor-editor-e-div-block-settings i.eicon-handle {
   font-size: 16px;
 }
 .elementor-editor-section-settings .elementor-editor-element-setting:hover,
 .elementor-editor-container-settings .elementor-editor-element-setting:hover,
-.elementor-editor-div-block-settings .elementor-editor-element-setting:hover {
+.elementor-editor-e-flexbox-settings .elementor-editor-element-setting:hover,
+.elementor-editor-e-div-block-settings .elementor-editor-element-setting:hover {
   background-color: var(--e-p-border-section-hover);
 }
 .elementor-editor-section-settings .elementor-editor-element-setting:first-child,
 .elementor-editor-container-settings .elementor-editor-element-setting:first-child,
-.elementor-editor-div-block-settings .elementor-editor-element-setting:first-child {
+.elementor-editor-e-flexbox-settings .elementor-editor-element-setting:first-child,
+.elementor-editor-e-div-block-settings .elementor-editor-element-setting:first-child {
   border-start-start-radius: 5px;
   border-start-end-radius: 0;
   border-end-start-radius: 0;
@@ -3989,7 +4014,8 @@ html.elementor-html {
 }
 .elementor-editor-section-settings .elementor-editor-element-setting:first-child:before,
 .elementor-editor-container-settings .elementor-editor-element-setting:first-child:before,
-.elementor-editor-div-block-settings .elementor-editor-element-setting:first-child:before {
+.elementor-editor-e-flexbox-settings .elementor-editor-element-setting:first-child:before,
+.elementor-editor-e-div-block-settings .elementor-editor-element-setting:first-child:before {
   content: "";
   position: absolute;
   top: 2px;
@@ -4002,12 +4028,14 @@ html.elementor-html {
 }
 .elementor-editor-section-settings .elementor-editor-element-setting:first-child:hover:before,
 .elementor-editor-container-settings .elementor-editor-element-setting:first-child:hover:before,
-.elementor-editor-div-block-settings .elementor-editor-element-setting:first-child:hover:before {
+.elementor-editor-e-flexbox-settings .elementor-editor-element-setting:first-child:hover:before,
+.elementor-editor-e-div-block-settings .elementor-editor-element-setting:first-child:hover:before {
   border-inline-end-color: var(--e-p-border-section-hover);
 }
 .elementor-editor-section-settings .elementor-editor-element-setting:last-child,
 .elementor-editor-container-settings .elementor-editor-element-setting:last-child,
-.elementor-editor-div-block-settings .elementor-editor-element-setting:last-child {
+.elementor-editor-e-flexbox-settings .elementor-editor-element-setting:last-child,
+.elementor-editor-e-div-block-settings .elementor-editor-element-setting:last-child {
   border-start-start-radius: 0;
   border-start-end-radius: 5px;
   border-end-start-radius: 0;
@@ -4015,7 +4043,8 @@ html.elementor-html {
 }
 .elementor-editor-section-settings .elementor-editor-element-setting:last-child:after,
 .elementor-editor-container-settings .elementor-editor-element-setting:last-child:after,
-.elementor-editor-div-block-settings .elementor-editor-element-setting:last-child:after {
+.elementor-editor-e-flexbox-settings .elementor-editor-element-setting:last-child:after,
+.elementor-editor-e-div-block-settings .elementor-editor-element-setting:last-child:after {
   content: "";
   position: absolute;
   top: 2px;
@@ -4028,27 +4057,25 @@ html.elementor-html {
 }
 .elementor-editor-section-settings .elementor-editor-element-setting:last-child:hover:after,
 .elementor-editor-container-settings .elementor-editor-element-setting:last-child:hover:after,
-.elementor-editor-div-block-settings .elementor-editor-element-setting:last-child:hover:after {
+.elementor-editor-e-flexbox-settings .elementor-editor-element-setting:last-child:hover:after,
+.elementor-editor-e-div-block-settings .elementor-editor-element-setting:last-child:hover:after {
   border-inline-start-color: var(--e-p-border-section-hover);
 }
 
-.e-handles-inside > .elementor-element-overlay > .elementor-editor-element-settings,
-.elementor-section--handles-inside > .elementor-element-overlay > .elementor-editor-element-settings {
+.e-handles-inside > .elementor-element-overlay > .elementor-editor-element-settings {
   transform: translateX(-50%);
   border-start-start-radius: 0;
   border-start-end-radius: 0;
   border-end-start-radius: 5px;
   border-end-end-radius: 5px;
 }
-.e-handles-inside > .elementor-element-overlay > .elementor-editor-element-settings .elementor-editor-element-setting:first-child,
-.elementor-section--handles-inside > .elementor-element-overlay > .elementor-editor-element-settings .elementor-editor-element-setting:first-child {
+.e-handles-inside > .elementor-element-overlay > .elementor-editor-element-settings .elementor-editor-element-setting:first-child {
   border-start-start-radius: 0;
   border-start-end-radius: 0;
   border-end-start-radius: 5px;
   border-end-end-radius: 0;
 }
-.e-handles-inside > .elementor-element-overlay > .elementor-editor-element-settings .elementor-editor-element-setting:first-child:before,
-.elementor-section--handles-inside > .elementor-element-overlay > .elementor-editor-element-settings .elementor-editor-element-setting:first-child:before {
+.e-handles-inside > .elementor-element-overlay > .elementor-editor-element-settings .elementor-editor-element-setting:first-child:before {
   top: 0;
   border-block-start: 0 none transparent;
   border-block-end: 22px solid transparent;
@@ -4056,15 +4083,13 @@ html.elementor-html {
   border-inline-end: 12px solid var(--e-p-border-section);
   transition: var(--e-a-transition-hover);
 }
-.e-handles-inside > .elementor-element-overlay > .elementor-editor-element-settings .elementor-editor-element-setting:last-child,
-.elementor-section--handles-inside > .elementor-element-overlay > .elementor-editor-element-settings .elementor-editor-element-setting:last-child {
+.e-handles-inside > .elementor-element-overlay > .elementor-editor-element-settings .elementor-editor-element-setting:last-child {
   border-start-start-radius: 0;
   border-start-end-radius: 0;
   border-end-start-radius: 0;
   border-end-end-radius: 5px;
 }
-.e-handles-inside > .elementor-element-overlay > .elementor-editor-element-settings .elementor-editor-element-setting:last-child:after,
-.elementor-section--handles-inside > .elementor-element-overlay > .elementor-editor-element-settings .elementor-editor-element-setting:last-child:after {
+.e-handles-inside > .elementor-element-overlay > .elementor-editor-element-settings .elementor-editor-element-setting:last-child:after {
   top: 0;
   border-block-start: 0 none transparent;
   border-block-end: 22px solid transparent;
@@ -4404,6 +4429,17 @@ html.elementor-html {
   font-size: 20px;
   display: block;
   padding: 2px;
+}
+
+.e-div-block-base:has(> .elementor-empty-view),
+.e-flexbox-base:has(> .elementor-empty-view) {
+  display: grid !important;
+  grid-template-rows: minmax(100%, 100px);
+}
+.e-div-block-base:has(> .elementor-empty-view) > .elementor-empty-view,
+.e-flexbox-base:has(> .elementor-empty-view) > .elementor-empty-view {
+  height: auto;
+  grid-row: 1/-1;
 }
 
 body.rtl .e-con.e-grid.e-con--row .elementor-widget-placeholder.e-dragging-right, body.rtl .e-con.e-grid.e-con--row > .e-con-inner .elementor-widget-placeholder.e-dragging-right {

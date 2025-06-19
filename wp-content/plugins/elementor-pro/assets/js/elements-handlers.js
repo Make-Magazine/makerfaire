@@ -1,4 +1,4 @@
-/*! elementor-pro - v3.28.0 - 05-05-2025 */
+/*! elementor-pro - v3.29.0 - 04-06-2025 */
 "use strict";
 (self["webpackChunkelementor_pro"] = self["webpackChunkelementor_pro"] || []).push([["elements-handlers"],{
 
@@ -2673,7 +2673,7 @@ exports["default"] = void 0;
 class _default extends elementorModules.Module {
   constructor() {
     super();
-    elementorFrontend.elementsHandler.attachHandler('table-of-contents', () => Promise.all(/*! import() | table-of-contents */[__webpack_require__.e("vendors-node_modules_dompurify_dist_purify_js"), __webpack_require__.e("table-of-contents")]).then(__webpack_require__.bind(__webpack_require__, /*! ./handlers/table-of-contents */ "../modules/table-of-contents/assets/js/frontend/handlers/table-of-contents.js")));
+    elementorFrontend.elementsHandler.attachHandler('table-of-contents', () => Promise.all(/*! import() | table-of-contents */[__webpack_require__.e("vendors-node_modules_dompurify_dist_purify_cjs_js"), __webpack_require__.e("table-of-contents")]).then(__webpack_require__.bind(__webpack_require__, /*! ./handlers/table-of-contents */ "../modules/table-of-contents/assets/js/frontend/handlers/table-of-contents.js")));
   }
 }
 exports["default"] = _default;

@@ -32,17 +32,19 @@ abstract class PMXI_Addon_Base {
         $this->importer = PMXI_Addon_Importer::from( $this );
         $this->initEed();
 
-        $this->hints = [
-            'time'        => __( 'Use any format supported by the PHP strtotime function.', 'wp-all-import-pro' ),
-            'date'        => __( 'Use any format supported by the PHP strtotime function.', 'wp-all-import-pro' ),
-            'datetime'    => __( 'Use any format supported by the PHP strtotime function.', 'wp-all-import-pro' ),
-            'iconpicker'  => __( 'Specify the icon class name - e.g. fa-user.', 'wp-all-import-pro' ),
-            'colorpicker' => __( 'Specify the hex code the color preceded with a # - e.g. #ea5f1a.', 'wp-all-import-pro' ),
-            'media'       => __( 'Specify the URL to the image or file.', 'wp-all-import-pro' ),
-            'post'        => __( 'Enter the ID, slug, or Title. Separate multiple entries with separator character.', 'wp-all-import-pro' ),
-            'user'        => __( 'Enter the ID, username, or email for the existing user.', 'wp-all-import-pro' ),
-	        'map'         => __( 'WP All Import will first try to get your Google Maps API key from the add-on you\'re using. If that fails you must enter the key under \'Google Maps Settings\' below.')
-        ];
+		add_action('init', function() {
+			$this->hints = [
+				'time'        => __( 'Use any format supported by the PHP strtotime function.', 'wp-all-import-pro' ),
+				'date'        => __( 'Use any format supported by the PHP strtotime function.', 'wp-all-import-pro' ),
+				'datetime'    => __( 'Use any format supported by the PHP strtotime function.', 'wp-all-import-pro' ),
+				'iconpicker'  => __( 'Specify the icon class name - e.g. fa-user.', 'wp-all-import-pro' ),
+				'colorpicker' => __( 'Specify the hex code the color preceded with a # - e.g. #ea5f1a.', 'wp-all-import-pro' ),
+				'media'       => __( 'Specify the URL to the image or file.', 'wp-all-import-pro' ),
+				'post'        => __( 'Enter the ID, slug, or Title. Separate multiple entries with separator character.', 'wp-all-import-pro' ),
+				'user'        => __( 'Enter the ID, username, or email for the existing user.', 'wp-all-import-pro' ),
+				'map'         => __( 'WP All Import will first try to get your Google Maps API key from the add-on you\'re using. If that fails you must enter the key under \'Google Maps Settings\' below.' )
+			];
+		});
 
         add_filter( 'wp_all_import_addon_parse', [ $this, 'registerParseFunction' ] );
         add_filter( 'wp_all_import_addon_import', [ $this, 'registerImportFunction' ] );

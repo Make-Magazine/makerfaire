@@ -15,6 +15,7 @@ function pmxi_admin_menu() {
 			array('pmxi-admin-manage' ,  __('Manage Imports', 'wp-all-import-pro')),
 			array('pmxi-admin-settings',  __('Settings', 'wp-all-import-pro')),
 			//array('pmxi-admin-license',  __('Licenses', 'wp-all-import-pro')),
+			array('pmxi-admin-partners',  __('Partner Discounts', 'wp-all-import-pro')),	
 			array('pmxi-admin-history',  __('History', 'wp-all-import-pro'))
 			/*array('pmxi-admin-addons',  __('Add-ons', 'wp-all-import-pro')), */			
 		);

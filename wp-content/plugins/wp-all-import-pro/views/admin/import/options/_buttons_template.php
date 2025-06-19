@@ -7,7 +7,7 @@
 	
 	<?php if ($isWizard): ?>
 
-		<a href="<?php echo apply_filters('pmxi_options_back_link', esc_url(add_query_arg('action', 'template', $this->baseUrl), $isWizard)); ?>" class="back rad3"><?php _e('Back to Step 3', 'wp-all-import-pro') ?></a>
+		<a href="<?php echo apply_filters('pmxi_options_back_link', esc_url(add_query_arg('action', 'template', $this->baseUrl), $isWizard)); ?>" class="back rad3"><?php _e('Back to Setup Import', 'wp-all-import-pro') ?></a>
 
 		<?php if (isset($source_type) and in_array($source_type, array('url', 'ftp', 'file'))): ?>
             <input type="hidden" disabled="disabled" name="save_only" value="Save Only" <?php _e('Save Only', 'wp-all-import-pro') ?> id="save_only_field" />

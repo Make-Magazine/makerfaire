@@ -1771,7 +1771,7 @@ class PMXI_Import_Record extends PMXI_Model_Record {
                                         $comment_post_found = true;
                                     }
                                 }
-                                
+
                             }
                         }
                     }
@@ -3401,10 +3401,10 @@ class PMXI_Import_Record extends PMXI_Model_Record {
 					if ( ! empty($articleData['post_type']) && !in_array($articleData['post_type'], array('taxonomies', 'comments', 'woo_reviews', 'gf_entries')) && ('page' == $articleData['post_type'] || version_compare($wp_version, '4.7.0', '>=')) && wp_all_import_is_update_cf('_wp_page_template', $this->options) && ( !empty($this->options['page_template']) || "no" == $this->options['is_multiple_page_template']) ){
 						update_post_meta($pid, '_wp_page_template', ("no" == $this->options['is_multiple_page_template']) ? $page_template[$i] : $this->options['page_template']);
 					}
-					
+
 					// Core images
 					$attachmentHandler->importCore();
-					
+
                     // [comments] - Temporary disabled.
                     if ( false && ! empty($comments['content']) && !in_array($this->options['custom_type'], ['comments', 'woo_reviews', 'taxonomies', 'import_users']) ) {
                         $logger and call_user_func($logger, __('<b>COMMENTS:</b>', 'wp-all-import-pro'));
@@ -3474,9 +3474,27 @@ class PMXI_Import_Record extends PMXI_Model_Record {
 
 								$assign_taxes = array();
 
-								if ($this->options['update_categories_logic'] == "add_new" and !empty($existing_taxonomies[$tx_name][$i])){
-									$assign_taxes = $existing_taxonomies[$tx_name][$i];
-									unset($existing_taxonomies[$tx_name][$i]);
+								if ($this->options['update_categories_logic'] == "add_new"){
+									// Always get the current taxonomies from the database to include any that were added by previous records
+									$txes_list = get_the_terms($pid, $tx_name);
+									if (!is_wp_error($txes_list) && !empty($txes_list)){
+										$txes_new = array();
+										foreach ($txes_list as $t) {
+											$txes_new[] = $t->term_taxonomy_id;
+										}
+										$assign_taxes = $txes_new;
+									}
+
+									// Also include any existing taxonomies from the import data if available
+									if (!empty($existing_taxonomies[$tx_name][$i])){
+										if (empty($assign_taxes)) {
+											$assign_taxes = $existing_taxonomies[$tx_name][$i];
+										} else {
+											// Merge with existing taxonomies, avoiding duplicates
+											$assign_taxes = array_unique(array_merge($assign_taxes, $existing_taxonomies[$tx_name][$i]));
+										}
+										unset($existing_taxonomies[$tx_name][$i]);
+									}
 								}
 								elseif(!empty($existing_taxonomies[$tx_name][$i])){
 									unset($existing_taxonomies[$tx_name][$i]);

@@ -1019,6 +1019,11 @@
 			$('input[name^=auto_generate]').val('1');
 			$(this).parents('form:first').submit();
 		});
+
+		$('a.create-filters-step').on('click', function(){
+			$('input[name^=go_to_create_filters]').val('1');
+			$(this).parents('form:first').submit();
+		});
 	});
 	//[/End Step 1]
 

@@ -296,11 +296,6 @@ window._EPYTWIZ_ = window._EPYTWIZ_ || {};
                         $scope.model.loop = parseInt($scope.model.loop) === 0 ? 1 : 0;
                     };
 
-                    $scope.modestbrandingChange = function ()
-                    {
-                        $scope.model.modestbranding = parseInt($scope.model.modestbranding) === 0 ? 1 : 0;
-                    };
-
                     $scope.fsChange = function ()
                     {
                         $scope.model.fs = parseInt($scope.model.fs) === 0 ? 1 : 0;
@@ -488,11 +483,6 @@ window._EPYTWIZ_ = window._EPYTWIZ_ || {};
                         if ($scope.model.fs != $scope.myytdefaults.fs)
                         {
                             paramsyt += "&fs=" + $scope.model.fs;
-                        }
-
-                        if ($scope.model.modestbranding != $scope.myytdefaults.modestbranding)
-                        {
-                            paramsyt += "&modestbranding=" + $scope.model.modestbranding;
                         }
 
                         if ($scope.model.controls != $scope.myytdefaults.controls)

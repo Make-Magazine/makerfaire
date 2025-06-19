@@ -66,3 +66,9 @@
 	esc_html__( 'Manage Functions in WPCodeBox', 'text-domain' )
 );
 ?>
+
+<?php
+if(!\Wpae\Integrations\CodeBox::isCodeBoxInstalled()){
+	\Wpae\Ads\AdManager::display('Wpcb');
+}
+?>

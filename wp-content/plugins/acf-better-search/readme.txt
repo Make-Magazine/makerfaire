@@ -5,7 +5,7 @@ Tags: acf search, advanced custom fields, better search, extended search, search
 Requires at least: 5.0
 Tested up to: 6.8
 Requires PHP: 7.0
-Stable tag: 4.3.0
+Stable tag: 4.3.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -94,6 +94,10 @@ This is all very important to us and allows us to do even better things for you!
 1. Screenshot of the options panel
 
 == Changelog ==
+
+= 4.3.1 (2025-05-29) =
+* `[Removed]` Filter `acfbs_search_post_object_fields` to select post fields using to search
+* `[Added]` Filter `post_search_columns` to change the columns to search in a WP_Query search
 
 = 4.3.0 (2025-04-29) =
 * `[Security]` Update of Axios HTTP client

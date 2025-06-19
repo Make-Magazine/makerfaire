@@ -101,7 +101,7 @@
                         <div class="wpallimport-collapsed closed wpallimport-section scheduling">
                             <div class="wpallimport-content-section">
                                 <div class="wpallimport-collapsed-header <?php if(!$import->canBeScheduled()) { ?> disabled<?php } ?>"
-									<?php if(!$import->canBeScheduled()) { ?> title="<?php _e("To run this import on a schedule you must use the 'Download from URL' or 'Use existing file' options in Step 1.", 'wp-all-import-pro');?>" <?php }?>>
+									<?php if(!$import->canBeScheduled()) { ?> title="<?php _e("To run this import on a schedule you must use the 'Download from URL' or 'Use existing file' options on the Data Source screen.", 'wp-all-import-pro');?>" <?php }?>>
                                     <h3 id="scheduling-title"><?php _e('Scheduling Options','wp-all-import-pro');?>
 										<?php if(!$import->canBeScheduled()) { ?>
                                             <a href="#help" class="wpallimport-help" style="position: relative; top: -2px; margin-left: 0; width: 20px; height: 20px;"  title="<?php _e("To run this import on a schedule you must use the 'Download from URL' or 'Use existing file' option on the Import Settings page.", 'wp-all-import-pro');?>">?</a>

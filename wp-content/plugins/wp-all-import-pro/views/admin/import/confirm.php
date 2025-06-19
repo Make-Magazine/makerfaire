@@ -411,7 +411,7 @@
         <input type="submit" class="rad10" value="<?php _e('Confirm & Run Import', 'wp-all-import-pro') ?>" />
 		<p>
 		<?php if ($isWizard): ?>
-			<a href="<?php echo apply_filters('pmxi_options_back_link', esc_url(add_query_arg('action', 'options', $this->baseUrl)), $isWizard); ?>"><?php _e('or go back to Step 4', 'wp-all-import-pro') ?></a>
+			<a href="<?php echo apply_filters('pmxi_options_back_link', esc_url(add_query_arg('action', 'options', $this->baseUrl)), $isWizard); ?>"><?php _e('or go back to Import Settings', 'wp-all-import-pro') ?></a>
 		<?php else:?>
 			<a href="<?php echo apply_filters('pmxi_options_back_link', esc_url(remove_query_arg('id', remove_query_arg('action', $this->baseUrl))), $isWizard); ?>"><?php _e('or go back to Manage Imports', 'wp-all-import-pro') ?></a>
 		<?php endif; ?>

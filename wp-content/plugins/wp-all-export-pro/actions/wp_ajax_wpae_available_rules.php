@@ -106,6 +106,9 @@ function pmxe_wp_ajax_wpae_available_rules(){
 			<option value="not_contains"><?php esc_html_e("doesn't contain", 'wp_all_export_plugin'); ?></option>
 			<option value="is_empty"><?php esc_html_e('is empty', 'wp_all_export_plugin'); ?></option>
 			<option value="is_not_empty"><?php esc_html_e('is not empty', 'wp_all_export_plugin'); ?></option>
+
+            <option value="is_in_list"><?php esc_html_e('is in list (comma separated)', 'wp_all_export_plugin'); ?></option>
+            <option value="is_not_in_list"><?php esc_html_e('is not in list (comma separated)', 'wp_all_export_plugin'); ?></option>
 			<?php
 		}
 	?>

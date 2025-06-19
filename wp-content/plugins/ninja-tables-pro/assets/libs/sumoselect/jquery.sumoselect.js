@@ -621,7 +621,6 @@
 
                 floatingList: function () {
                     var O = this;
-                    console.log(settings)
                     //called on init and also on resize.
                     //O.is_floating = true if window width is < specified float width
                     O.is_floating = $(window).width() <= settings.floatWidth;

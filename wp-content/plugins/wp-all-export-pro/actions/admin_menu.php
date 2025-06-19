@@ -16,6 +16,7 @@ function pmxe_admin_menu() {
 		add_submenu_page('pmxe-admin-home', esc_html__('Export to XML', 'wp_all_export_plugin') . ' &lsaquo; ' . __('WP All Export', 'wp_all_export_plugin'), __('New Export', 'wp_all_export_plugin'), PMXE_Plugin::$capabilities, 'pmxe-admin-export', array(PMXE_Plugin::getInstance(), 'adminDispatcher'));
 		add_submenu_page('pmxe-admin-home', esc_html__('Manage Exports', 'wp_all_export_plugin') . ' &lsaquo; ' . __('WP All Export', 'wp_all_export_plugin'), __('Manage Exports', 'wp_all_export_plugin'), PMXE_Plugin::$capabilities, 'pmxe-admin-manage', array(PMXE_Plugin::getInstance(), 'adminDispatcher'));
 		add_submenu_page('pmxe-admin-home', esc_html__('Settings', 'wp_all_export_plugin') . ' &lsaquo; ' . __('WP All Export', 'wp_all_export_plugin'), __('Settings', 'wp_all_export_plugin'), PMXE_Plugin::$capabilities, 'pmxe-admin-settings', array(PMXE_Plugin::getInstance(), 'adminDispatcher'));
+		add_submenu_page('pmxe-admin-home', __('Partner Discounts', 'wp_all_export_plugin') . ' &lsaquo; ' . __('WP All Export', 'wp_all_export_plugin'), __('Partner Discounts', 'wp_all_export_plugin'), PMXE_Plugin::$capabilities, 'pmxe-admin-partners', array(PMXE_Plugin::getInstance(), 'adminDispatcher'));
 
 	} elseif (!current_user_can( PMXE_Plugin::$capabilities ) && current_user_can(PMXE_Plugin::CLIENT_MODE_CAP)) {
 

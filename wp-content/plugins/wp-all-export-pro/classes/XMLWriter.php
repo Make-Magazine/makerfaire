@@ -113,6 +113,11 @@ class PMXE_XMLWriter extends XMLWriter
     {
         if (in_array(XmlExportEngine::$exportOptions['xml_template_type'], array('custom', 'XmlGoogleMerchants'))) return true;
 
+        // Fix for "0" values - convert to string to ensure they're properly processed
+        if ($value === 0 || $value === "0") {
+            $value = "0";
+        }
+
         $cdataStrategyFactory = new CdataStrategyFactory();
 
         if (!isset(XmlExportEngine::$exportOptions['custom_xml_cdata_logic'])) {

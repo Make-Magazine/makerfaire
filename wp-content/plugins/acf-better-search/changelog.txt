@@ -1,5 +1,9 @@
 == Changelog ==
 
+= 4.3.1 (2025-05-29) =
+* `[Removed]` Filter `acfbs_search_post_object_fields` to select post fields using to search
+* `[Added]` Filter `post_search_columns` to change the columns to search in a WP_Query search
+
 = 4.3.0 (2025-04-29) =
 * `[Security]` Update of Axios HTTP client
 * `[Added]` Support for WordPress 6.8

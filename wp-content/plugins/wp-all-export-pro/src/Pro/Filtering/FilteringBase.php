@@ -229,6 +229,16 @@ abstract class FilteringBase implements FilteringInterface
                 $q = "IS NOT NULL ";
                 if ($table_alias) $q .= " AND $table_alias.meta_value <> '' ";
                 break;
+	        case 'is_in_list':
+		        $values = array_map('trim', explode(',', $value));
+		        $values = array_map('esc_sql', $values);
+		        $q = "IN ('" . implode("','", $values) . "')";
+		        break;
+	        case 'is_not_in_list':
+		        $values = array_map('trim', explode(',', $value));
+		        $values = array_map('esc_sql', $values);
+		        $q = "NOT IN ('" . implode("','", $values) . "')";
+		        break;
             default:
                 # code...
                 break;

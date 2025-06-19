@@ -1,5 +1,22 @@
 # Elementor Pro - by Elementor.com
 
+#### 3.29.2 - 2025-06-04
+
+* Tweak: Added selectors to Menu widget for compatibility with Optimized Markup experiment
+
+#### 3.29.1 - 2025-05-28
+
+* Security Fix: Improved code security enforcement in Animated Headline widget
+* Security Fix: Improved code security enforcement in Price Table widget
+
+#### 3.29.0 - 2025-05-19
+
+* New: Introduced Cloud Templates - save, manage, and reuse your templates across all your sites from a single cloud library
+* Tweak: Improved accessibility with `role` attributes in Share Buttons widget
+* Tweak: Improved accessibility by grouping content with `role=region` in the Video Playlist widget
+* Fix: Focus color is not applied correctly for accessibility in WordPress Menu widget ([#24239](https://github.com/elementor/elementor/issues/24239))
+* Fix: Common scripts loaded late when using the Theme Builder
+
 #### 3.28.4 - 2025-05-05
 
 * Fix: Empty results appeared on the frontend when using the Taxonomy Filter with the 'Avoid Duplicates' option in Loop Grid widget

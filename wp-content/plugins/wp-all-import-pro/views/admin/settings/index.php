@@ -254,7 +254,7 @@
 				<th scope="row"><label><?php _e('Add Port To URL', 'wp-all-import-pro'); ?></label></th>
 				<td>
 					<input type="text" class="regular-text" name="port" value="<?php echo esc_attr($post['port']); ?>"/>
-					<p class="description"><?php _e('Specify the port number to add if you\'re having problems continuing to Step 2 and are running things on a custom port. Default is blank.', 'wp-all-import-pro'); ?></p>
+					<p class="description"><?php _e('Specify the port number to add if you\'re having problems continuing to Create Filters or Setup Import and are running things on a custom port. Default is blank.', 'wp-all-import-pro'); ?></p>
 				</td>
 			</tr>
 			<tr>

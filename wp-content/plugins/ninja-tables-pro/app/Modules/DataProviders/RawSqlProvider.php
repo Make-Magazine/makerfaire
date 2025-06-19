@@ -59,10 +59,12 @@ class RawSqlProvider
             ], 423);
         }
 
-        $sql = wp_unslash(sanitize_textarea_field(Arr::get($_REQUEST, 'sql', '')));
+        $sql = wp_unslash((Arr::get($_REQUEST, 'sql', '')));
 
 
         $connectionType = sanitize_text_field(Arr::get($_REQUEST, 'connection_type', 'local'));
+
+        $connection_details = [];
 
         if ($connectionType == 'external') {
             $connection_details = ninja_tables_sanitize_array(Arr::get($_REQUEST, 'connection_details', []));
@@ -125,7 +127,7 @@ class RawSqlProvider
             update_post_meta($tableId, '_ninja_tables_sql_connection_details', $connectionDetails);
         }
 
-        $sql = wp_unslash(sanitize_textarea_field(Arr::get($_REQUEST, 'sql', '')));
+        $sql = wp_unslash(Arr::get($_REQUEST, 'sql', ''));
         $this->validateSql($sql, $tableId);
 
         update_post_meta($tableId, '_ninja_table_raw_sql_query', $sql);

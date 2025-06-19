@@ -226,11 +226,11 @@
 						<input type="hidden" name="security" value="<?php echo wp_create_nonce( "wp_all_import_preview" ); ?>" />
 
 						<?php if ($this->isWizard):?>
-							<a href="<?php echo esc_url(add_query_arg('action', 'element', $this->baseUrl)); ?>" class="back rad3" style="float:none;"><?php _e('Back to Step 2', 'wp-all-import-pro') ?></a>
+							<a href="<?php echo esc_url(add_query_arg('action', 'element', $this->baseUrl)); ?>" class="back rad3" style="float:none;"><?php _e('Back to Create Filters', 'wp-all-import-pro') ?></a>
 						<?php else: ?>
 							<a href="<?php echo esc_url(remove_query_arg('id', remove_query_arg('action', $this->baseUrl))); ?>" class="back rad3" style="float:none;"><?php _e('Back to Manage Imports', 'wp-all-import-pro') ?></a>
 						<?php endif; ?>
-						<input type="submit" class="button button-primary button-hero wpallimport-large-button" value="<?php _e( ($this->isWizard) ? 'Continue to Step 4' : 'Update Template', 'wp-all-import-pro') ?>" />
+						<input type="submit" class="button button-primary button-hero wpallimport-large-button" value="<?php _e( ($this->isWizard) ? 'Continue to Import Settings' : 'Update Template', 'wp-all-import-pro') ?>" />
 					</div>
 
 				</div>

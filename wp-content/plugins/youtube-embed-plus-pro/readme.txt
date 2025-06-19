@@ -54,7 +54,6 @@ You can even get an embedder-centric analytics dashboard that adds view tracking
 * cc_load_policy - Set this to 1 to turn on closed captioning (or 0 to leave them off). Example: `"http://www.youtube.com/watch?v=quwebVjAEJA&cc_load_policy=1"`
 * iv_load_policy - Set this to 3 to turn off annotations (or 1 to show them). Example: `"http://www.youtube.com/watch?v=quwebVjAEJA&iv_load_policy=3"`
 * loop - Set this to 1 to loop the video (or 0 to not loop). Example: `"http://www.youtube.com/watch?v=quwebVjAEJA&loop=1"`
-* modestbranding - Set this to 1 to remove the YouTube logo while playing (or 0 to show the logo). Example: `"http://www.youtube.com/watch?v=quwebVjAEJA&modestbranding=1"`
 * rel - Set this to 0 to not show related videos at the end of playing (or 1 to show them). Example: `"http://www.youtube.com/watch?v=quwebVjAEJA&rel=0"`
 
 You can also start and end each individual video at particular times. Like the above, each option should begin with '&'

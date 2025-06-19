@@ -352,7 +352,7 @@
 											<a class="wpallimport-help" href="#help" style="position: relative; top: -2px;" title="<?php _e('The New Items option is commonly used to import new posts or products to your site without touching the existing records.<br/><br/>If the import is later run again with modified data, WP All Import will only update/remove posts created by this import.', 'wp-all-import-pro'); ?>">?</a>
 										</div>
 										<div class="wpallimport-existing-records"><?php _e('and update some or all of their data.', 'wp-all-import-pro'); ?>
-											<a class="wpallimport-help" href="#help" style="position: relative; top: -2px;" title="<?php _e('The Existing Items option is commonly used to update existing products with new stock quantities while leaving all their other data alone, update properties on your site with new pricing, etc. <br/><br/> In Step 4, you will map the records in your file to the existing items on your site and specify which data points will be updated and which will be left alone.', 'wp-all-import-pro'); ?>">?</a>
+											<a class="wpallimport-help" href="#help" style="position: relative; top: -2px;" title="<?php _e('The Existing Items option is commonly used to update existing products with new stock quantities while leaving all their other data alone, update properties on your site with new pricing, etc. <br/><br/> On the Import Settings screen, you will map the records in your file to the existing items on your site and specify which data points will be updated and which will be left alone.', 'wp-all-import-pro'); ?>">?</a>
 										</div>
 									</div>
                                     <select name="custom_type_selector" id="custom_type_selector" class="wpallimport-post-types">
@@ -508,15 +508,25 @@
 						<a class="button button-primary button-hero wpallimport-large-button wpallimport-notify-read-more" href="https://www.wpallimport.com/documentation/problems-with-import-files/" target="_blank"><?php _e('Read More', 'wp-all-import-pro');?></a>
 					</div>
 
-					<p class="wpallimport-submit-buttons">
-						<input type="hidden" name="custom_type" value="<?php echo $post['custom_type'];?>">
-						<input type="hidden" name="is_submitted" value="1" />
-						<input type="hidden" name="auto_generate" value="0" />
-
-						<?php wp_nonce_field('choose-file', '_wpnonce_choose-file'); ?>
-						<a href="javascript:void(0);" class="back rad3 auto-generate-template" style="float:none; background: #e4e6e6; padding: 0 50px;"><?php _e('Skip to Step 4', 'wp-all-import-pro'); ?></a>
-						<input type="submit" class="button button-primary button-hero wpallimport-large-button" value="<?php _e('Continue to Step 2', 'wp-all-import-pro') ?>" id="advanced_upload"/>
-					</p>
+					<div class="wpallimport-submit-buttons">
+                        <div class="wpallimport-submit-button-container" style="display:flex; justify-content: center; padding:20px; gap:10px;">
+                            <input type="hidden" name="custom_type" value="<?php echo $post['custom_type'];?>">
+                            <input type="hidden" name="is_submitted" value="1" />
+                            <input type="hidden" name="auto_generate" value="0" />
+                            <input type="hidden" name="go_to_create_filters" value="0" />
+    
+                            <?php wp_nonce_field('choose-file', '_wpnonce_choose-file'); ?>
+                            <a href="javascript:void(0);" class="back rad3 auto-generate-template" style="float:none; background: #e4e6e6; padding: 0 50px;"><?php _e('Skip to Import Settings', 'wp-all-import-pro'); ?></a>
+                            <div style="display: flex; flex-direction: column; align-items: center;">
+                                <a href="javascript:void(0);" class="back rad3 create-filters-step" style="float:none; background: #e4e6e6; padding: 0 50px;"><?php _e('Create Filters', 'wp-all-import-pro'); ?></a>
+                                <span style="display: block; text-align: center; margin-top: 5px; font-size: 10px; font-weight:500; color:#777;"><?php _e('Limit What\'s Imported', 'wp-all-import-pro'); ?></span>
+                            </div>
+                            <div style="display: flex; flex-direction: column; align-items: center;">
+                                <input type="submit" class="button button-primary button-hero wpallimport-large-button" value="<?php _e('Set Up Import', 'wp-all-import-pro') ?>" id="advanced_upload"/>
+                                <span style="display: block; text-align: center; margin-top: 5px; font-size: 10px; font-weight:500; color:#777;"><?php _e('Import Everything', 'wp-all-import-pro'); ?></span>
+                            </div>
+                        </div>
+					</div>
 
 					<table><tr><td class="wpallimport-note"></td></tr></table>
 				</form>

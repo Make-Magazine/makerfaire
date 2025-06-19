@@ -1,4 +1,4 @@
-/*! elementor - v3.28.0 - 22-04-2025 */
+/*! elementor - v3.29.0 - 04-06-2025 */
 /******/ (() => { // webpackBootstrap
 /******/ 	"use strict";
 /*!*******************************************************!*\
@@ -18,7 +18,7 @@ window.elementor.start();
 if (!((_window$elementorV = window.elementorV2) !== null && _window$elementorV !== void 0 && _window$elementorV.editor)) {
   throw new Error('The "@elementor/editor" package was not loaded.');
 }
-window.elementorV2.editor.init(document.getElementById('elementor-editor-wrapper-v2'));
+window.elementorV2.editor.start(document.getElementById('elementor-editor-wrapper-v2'));
 /******/ })()
 ;
 //# sourceMappingURL=editor-loader-v2.js.map
