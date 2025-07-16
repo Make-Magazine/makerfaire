@@ -4,7 +4,7 @@ Tags: gravity forms, gravityforms, mergetags, merge tags
 Requires at least: 3.0.1
 Tested up to: 6.7
 Requires PHP: 7.0
-Stable tag: 1.9.2
+Stable tag: 1.9.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -30,6 +30,9 @@ This plugin provides advanced functionality to the default Gravity Forms Number 
 Upload the plugin files to the `/wp-content/plugins/gravitywp-advanced-merge-tags` directory, or install the plugin through the WordPress plugins screen directly.
 
 == Changelog ==
+= 1.9.3 =
+- Allow access to matched entry values during a cron event.
+
 = 1.9.2 =
 - Added support for gwp_substring and gwp_word_count modifiers when used in List Number Format calculations.
 

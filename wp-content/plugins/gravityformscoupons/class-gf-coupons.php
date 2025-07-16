@@ -227,9 +227,12 @@ class GFCoupons extends GFFeedAddOn {
 			return $product_info;
 		}
 
-		$total = GFCommon::get_total( $product_info );
+		$coupons = $this->get_coupons_by_codes( $coupon_codes, $form );
+		if ( empty( $coupons ) ) {
+			return $product_info;
+		}
 
-		$coupons   = $this->get_coupons_by_codes( $coupon_codes, $form );
+		$total     = GFCommon::get_total( $product_info );
 		$discounts = $this->get_discounts( $coupons, $total, $discount_total, $entry );
 
 		foreach ( $coupons as $coupon ) {
@@ -1504,6 +1507,10 @@ class GFCoupons extends GFFeedAddOn {
 		$discount_total = 0;
 		$discounts      = array();
 
+		if ( empty( $coupons ) ) {
+			return $discounts;
+		}
+
 		foreach ( $coupons as $coupon ) {
 
 			$discount = $this->get_discount( $coupon, $total, $entry );
@@ -1567,6 +1574,9 @@ class GFCoupons extends GFFeedAddOn {
 	 * @return array
 	 */
 	public function sort_coupons( $coupons ) {
+		if ( empty( $coupons ) ) {
+			return array();
+		}
 
 		$sorted = array( 'cart_flat' => array(), 'cart_percentage' => array() );
 

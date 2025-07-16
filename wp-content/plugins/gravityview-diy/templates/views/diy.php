@@ -39,9 +39,13 @@ $container = apply_filters( 'gravityview-diy/container', 'div', $gravityview );
 		} else {
 			?>
 			<div class="gv-diy-view gv-no-results">
-				<div class="gv-diy-view-title">
-					<h3><?php echo gv_no_results( true, $gravityview ); ?></h3>
-				</div>
+				<?php if( $gravityview->view->settings->get( 'no_entries_form' ) ){
+					echo gv_no_results( true, $gravityview );
+				} else { ?>
+					<div class="gv-diy-view-title">
+						<h3><?php echo gv_no_results( true, $gravityview ); ?></h3>
+					</div>
+				<?php } ?>
 			</div>
 			<?php
 		}

@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by __root__ on 13-March-2025 using Strauss.
+ * Modified by __root__ on 09-June-2025 using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 
@@ -42,7 +42,7 @@ use GravityKit\GravityEdit\Foundation\WP\RESTController;
  * @method static PluginActivationHandler plugin_activation_handler()
  */
 class Core {
-	const VERSION = '1.2.23';
+	const VERSION = '1.2.25';
 
 	const ID = 'gk_foundation';
 
@@ -131,7 +131,7 @@ class Core {
 				}
 
 				// @phpstan-ignore-next-line
-				$instance_to_return = version_compare( $passed_instance::VERSION, self::VERSION, '<' ) ? $this : $passed_instance;
+				$instance_to_return = CoreHelpers::version_compare( $passed_instance::VERSION, self::VERSION, '<' ) ? $this : $passed_instance;
 
 				/**
 				 * Controls whether the Foundation standalone plugin instance should always be returned regardless of the version.
@@ -195,10 +195,12 @@ class Core {
 	public static function register( $plugin_file, $arguments = [] ) {
 		if ( wp_doing_ajax() &&
 		     ( LicensesFramework::AJAX_ROUTER === ( $_REQUEST['ajaxRouter'] ?? '' ) ) && // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		     version_compare( $_REQUEST['frontendFoundationVersion'] ?? 0, self::VERSION, '<' ) // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		     CoreHelpers::version_compare( $_REQUEST['frontendFoundationVersion'] ?? 0, self::VERSION, '<' ) // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		) {
 			return;
 		}
+
+		$text_domain = CoreHelpers::get_plugin_data( $plugin_file )['TextDomain'];
 
 		if ( is_null( self::$_instance ) ) {
 			self::$_instance = new self( $plugin_file, $arguments );
@@ -206,7 +208,7 @@ class Core {
 			self::$_instance->_registered_plugins[ $plugin_file ] = array_merge(
 				[
 					'plugin_file'        => $plugin_file,
-					'text_domain'        => CoreHelpers::get_plugin_data( $plugin_file )['TextDomain'],
+					'text_domain'        => $text_domain,
 					'foundation_version' => self::$_instance->get_plugin_foundation_version( $plugin_file ),
 					'has_foundation'     => false,
 					'loads_foundation'   => false,
@@ -215,6 +217,19 @@ class Core {
 				$arguments
 			);
 		}
+
+		add_filter(
+			'doing_it_wrong_trigger_error',
+			function ( $trigger_error, $function_name, $message ) use ( $text_domain ) {
+				if ( '_load_textdomain_just_in_time' === $function_name && false !== strpos( $message, "<code>{$text_domain}" ) ) {
+					return false;
+				}
+
+				return $trigger_error;
+			},
+			10,
+			3
+		);
 	}
 
 	/**
@@ -292,10 +307,10 @@ class Core {
 		}
 
 		$this->_components = [
+			'translations'    => TranslationsFramework::get_instance(),
 			'newsletter'      => NewsletterSignup::get_instance(),
 			'settings'        => SettingsFramework::get_instance(),
 			'licenses'        => LicensesFramework::get_instance(),
-			'translations'    => TranslationsFramework::get_instance(),
 			'logger'          => LoggerFramework::get_instance(),
 			'admin_menu'      => AdminMenu::get_instance(),
 			'ajax_router'     => AjaxRouter::get_instance(),
@@ -394,7 +409,7 @@ class Core {
 				$general_settings = [];
 
 				// TODO: This is a temporary notice. To be removed once GravityView is updated to v2.16.
-				if ( defined( 'GV_PLUGIN_VERSION' ) && version_compare( GV_PLUGIN_VERSION, '2.16', '<' ) ) {
+				if ( defined( 'GV_PLUGIN_VERSION' ) && CoreHelpers::version_compare( GV_PLUGIN_VERSION, '2.16', '<' ) ) {
 					$notice_1 = esc_html__( 'You are using a version of GravityView that does not yet support the new GravityKit settings framework.', 'gk-gravityedit' );
 
 					$notice_2 = strtr(

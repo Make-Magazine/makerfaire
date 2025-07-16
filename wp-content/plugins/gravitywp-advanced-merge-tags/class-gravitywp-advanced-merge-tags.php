@@ -443,8 +443,8 @@ class GravityWP_Advanced_Merge_Tags extends GFAddOn {
 						'type'          => 'radio',
 						'default_value' => 'access_denied',
 						'choices'       => $this->get_access_choices( 'form' ),
-						/* translators: 1. Open strong tag 2. Close strong tag */
-						'description'   => sprintf( esc_html__( 'Who is allowed to see the entry values of this form when retrieved using an advanced merge tag.', 'gravitywpadvancedmergetags' ), '<strong>', '</strong>' ),
+						'description'   => esc_html__( 'Who is allowed to see the entry values of this form when retrieved using an advanced merge tag.', 'gravitywpadvancedmergetags' )
+											. '<br>' . esc_html__( 'Note: The logged in user check will be ignored when the merge tag is executed during a WP cron event.', 'gravitywpadvancedmergetags' ),
 					),
 					array(
 						'name'        => 'access_field_level',
@@ -464,7 +464,7 @@ class GravityWP_Advanced_Merge_Tags extends GFAddOn {
 							'title'        => esc_html__( 'Access', 'gravitywpadvancedmergetags' ),
 							'allow_custom' => false,
 						),
-						'description' => sprintf( esc_html__( 'Add the fields which can be accessed.', 'gravitywpadvancedmergetags' ), '<strong>', '</strong>' ),
+						'description' => esc_html__( 'Add the fields which can be accessed.', 'gravitywpadvancedmergetags' ),
 					),
 				),
 			),
@@ -480,7 +480,7 @@ class GravityWP_Advanced_Merge_Tags extends GFAddOn {
 			),
 		);
 
-		return $settings;
+			return $settings;
 	}
 
 	/**
@@ -3276,7 +3276,10 @@ class GravityWP_Advanced_Merge_Tags extends GFAddOn {
 		// Return the value if allowed.
 		switch ( $access_level ) {
 			case 'logged_in':
-				if ( is_user_logged_in() ) {
+				// Always allow when triggered by cron, because then the logged-in user is not set.
+				if ( is_user_logged_in()
+					|| ( defined( 'DOING_CRON' ) && DOING_CRON ) // Allow retrieving the value during a cron event, when the entry was created by a logged-in user.
+					) {
 					return rgar( $entry, $field_id );
 				}
 				break;

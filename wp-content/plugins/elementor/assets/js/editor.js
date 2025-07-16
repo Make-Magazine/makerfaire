@@ -1,4 +1,4 @@
-/*! elementor - v3.29.0 - 04-06-2025 */
+/*! elementor - v3.30.0 - 09-07-2025 */
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
@@ -18162,6 +18162,9 @@ var _controlsStack = _interopRequireDefault(__webpack_require__(/*! elementor-vi
 module.exports = Marionette.CompositeView.extend({
   template: Marionette.TemplateCache.get('#tmpl-elementor-repeater-row'),
   className: 'elementor-repeater-fields',
+  attributes: {
+    role: 'listitem'
+  },
   ui: function ui() {
     return {
       duplicateButton: '.elementor-repeater-tool-duplicate',
@@ -32872,8 +32875,11 @@ BaseElementView = BaseContainer.extend({
     }
   },
   getHandlesOverlay: function getHandlesOverlay() {
-    var elementType = this.getElementType(),
-      $handlesOverlay = jQuery('<div>', {
+    var elementType = this.getElementType();
+    if (!elementor.userCan('design') && elementType !== 'widget') {
+      return;
+    }
+    var $handlesOverlay = jQuery('<div>', {
         class: 'elementor-element-overlay'
       }),
       $overlayList = jQuery('<ul>', {
@@ -32882,9 +32888,10 @@ BaseElementView = BaseContainer.extend({
       editButtonsEnabled = elementor.getPreferences('edit_buttons'),
       elementData = elementor.getElementData(this.model);
     var editButtons = this.getEditButtons();
+    var shouldShowEditButtons = editButtonsEnabled || 'widget' === elementType;
 
-    // We should only allow external modification to edit buttons if the user enabled edit buttons.
-    if (editButtonsEnabled) {
+    // We should only allow external modification to edit buttons if the user enabled edit buttons or it's a widget.
+    if (shouldShowEditButtons) {
       /**
        * Filter edit buttons.
        *
@@ -33664,6 +33671,16 @@ BaseElementView = BaseContainer.extend({
     });
   },
   handleAnchorClick: function handleAnchorClick(event) {
+    var _this$model;
+    var anchor = event.target.closest('a');
+    var hash = (anchor === null || anchor === void 0 ? void 0 : anchor.getAttribute('href')) || ((_this$model = this.model) === null || _this$model === void 0 || (_this$model = _this$model.get('settings')) === null || _this$model === void 0 || (_this$model = _this$model.get('link')) === null || _this$model === void 0 ? void 0 : _this$model.url) || '';
+    if (hash && hash.startsWith('#')) {
+      var _event$target;
+      var scrollTargetElem = (_event$target = event.target) === null || _event$target === void 0 ? void 0 : _event$target.ownerDocument.querySelector(hash);
+      if (scrollTargetElem) {
+        scrollTargetElem.scrollIntoView();
+      }
+    }
     if (elementor.helpers.isElementAtomic(this.getContainer().id)) {
       event.preventDefault();
     }
@@ -34001,7 +34018,7 @@ module.exports = Marionette.Behavior.extend({
         actions: [{
           name: 'navigator',
           icon: 'eicon-navigator',
-          title: elementorCommon.config.experimentalFeatures.editor_v2 ? __('Structure', 'elementor') : __('Navigator', 'elementor'),
+          title: __('Structure', 'elementor'),
           shortcut: controlSign + '+I',
           callback: function callback() {
             return $e.route('navigator', {
@@ -38935,7 +38952,7 @@ module.exports = Marionette.ItemView.extend({
       // Force exit if device mode is already desktop
       elementor.exitDeviceMode();
     } else {
-      var deviceView = 'default' === elementor.getPreferences('default_device_view') ? 'desktop' : elementor.getPreferences('default_device_view');
+      var deviceView = 'desktop';
       elementor.changeDeviceMode(deviceView);
       if ('desktop' === deviceView) {
         elementor.enterDeviceMode();
@@ -42864,7 +42881,6 @@ module.exports = {
   },
   // The target parameter = 'editor'/'preview'. Defaults to 'preview' for backwards compatibility.
   enqueueFont: function enqueueFont(font) {
-    var _elementorCommon$conf;
     var target = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'preview';
     if ($e.devTools) {
       $e.devTools.log.info("enqueueFont font: '".concat(font, "', target: '").concat(target, "'"));
@@ -42890,7 +42906,7 @@ module.exports = {
           fontUrl += '&subset=' + subsets[elementor.config.locale];
         }
         enqueueOptions.crossOrigin = true;
-        if ((_elementorCommon$conf = elementorCommon.config.experimentalFeatures) !== null && _elementorCommon$conf !== void 0 && _elementorCommon$conf.e_local_google_fonts && 'preview' === target) {
+        if ('preview' === target) {
           elementorCommon.ajax.addRequest('enqueue_google_fonts', {
             data: {
               font_name: font
@@ -50246,7 +50262,10 @@ var DivBlockEmptyView = exports["default"] = /*#__PURE__*/function (_Marionette$
 
 var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
 var _toConsumableArray2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/toConsumableArray */ "../node_modules/@babel/runtime/helpers/toConsumableArray.js"));
+var _defineProperty2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/defineProperty */ "../node_modules/@babel/runtime/helpers/defineProperty.js"));
 var _divBlockEmptyView = _interopRequireDefault(__webpack_require__(/*! ./container/div-block-empty-view */ "../modules/atomic-widgets/assets/js/editor/container/div-block-empty-view.js"));
+function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
+function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { (0, _defineProperty2.default)(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
 var BaseElementView = elementor.modules.elements.views.BaseElement;
 var DivBlockView = BaseElementView.extend({
   template: Marionette.TemplateCache.get('#tmpl-elementor-e-div-block-content'),
@@ -50271,6 +50290,19 @@ var DivBlockView = BaseElementView.extend({
     var ui = BaseElementView.prototype.ui.apply(this, arguments);
     ui.percentsTooltip = '> .elementor-element-overlay .elementor-column-percents-tooltip';
     return ui;
+  },
+  attributes: function attributes() {
+    var attr = BaseElementView.prototype.attributes.apply(this);
+    var local = {};
+    var cssId = this.model.getSetting('_cssid');
+    if (cssId) {
+      local.id = cssId.value;
+    }
+    var href = this.getHref();
+    if (href) {
+      local.href = href;
+    }
+    return _objectSpread(_objectSpread({}, attr), local);
   },
   // TODO: Copied from `views/column.js`.
   attachElContent: function attachElContent() {
@@ -50304,6 +50336,14 @@ var DivBlockView = BaseElementView.extend({
       this.$el.attr('class', this.className());
       return;
     }
+    if (changed._cssid) {
+      if (changed._cssid.value) {
+        this.$el.attr('id', changed._cssid.value);
+      } else {
+        this.$el.removeAttr('id');
+      }
+      return;
+    }
     this.$el.addClass(this.getClasses());
     if (this.isTagChanged(changed)) {
       this.rerenderEntireView();
@@ -50320,19 +50360,11 @@ var DivBlockView = BaseElementView.extend({
   onRender: function onRender() {
     var _this = this;
     BaseElementView.prototype.onRender.apply(this, arguments);
-    this.handleLink();
 
     // Defer to wait for everything to render.
     setTimeout(function () {
       _this.droppableInitialize();
     });
-  },
-  handleLink: function handleLink() {
-    var href = this.getHref();
-    if (!href) {
-      return;
-    }
-    this.$el.attr('href', href);
   },
   haveLink: function haveLink() {
     var _this$model$getSettin;
@@ -50553,8 +50585,12 @@ var DivBlockView = BaseElementView.extend({
     this.addSectionView = addSectionView;
   },
   getClasses: function getClasses() {
-    var _this$options;
-    return ((_this$options = this.options) === null || _this$options === void 0 || (_this$options = _this$options.model) === null || _this$options === void 0 || (_this$options = _this$options.getSetting('classes')) === null || _this$options === void 0 ? void 0 : _this$options.value) || [];
+    var _window, _window$get, _this$options;
+    var transformer = (_window = window) === null || _window === void 0 || (_window = _window.elementorV2) === null || _window === void 0 || (_window = _window.editorCanvas) === null || _window === void 0 || (_window = _window.settingsTransformersRegistry) === null || _window === void 0 || (_window$get = _window.get) === null || _window$get === void 0 ? void 0 : _window$get.call(_window, 'classes');
+    if (!transformer) {
+      return [];
+    }
+    return transformer(((_this$options = this.options) === null || _this$options === void 0 || (_this$options = _this$options.model) === null || _this$options === void 0 || (_this$options = _this$options.getSetting('classes')) === null || _this$options === void 0 ? void 0 : _this$options.value) || []);
   },
   getClassString: function getClassString() {
     var classes = this.getClasses();

@@ -45,7 +45,7 @@ class GP_Multi_Page_Navigation extends GWPerk {
 		}
 
 		$page_validity = $this->get_page_validity( $form );
-		$pages_visited = $this->get_pages_visited( $form );
+		$pages_visited = $this->get_pages_visited_from_post( $form );
 
 		$incomplete_steps = array();
 		foreach ( $page_validity as $page_number => $validity ) {
@@ -394,15 +394,20 @@ class GP_Multi_Page_Navigation extends GWPerk {
 			$inputs .= sprintf( '<input id="gw_error_pages_count" name="gw_error_pages_count" value="%d" type="hidden" />', $error_pages_count );
 		}
 
-		$pages_visited           = array();
-		$pages_visited_namespace = 'gpmpn_pages_visited_' . $form['id'];
-		if ( ! empty( $_POST[ $pages_visited_namespace ] ) ) {
-			$pages_visited = json_decode( stripslashes( $_POST[ $pages_visited_namespace ] ), true );
-		}
+		/**
+		 * Pages visited tracking
+		 */
+		$pages_visited = $this->get_pages_visited_from_post( $form );
+
+		// track the pages visited _not including_ the current page. this is used down the request line
+		// by get_page_validity() to determine if validation errors should be applied to form fields.
+		$_POST['gpmpn_previously_visited_pages'] = $pages_visited;
 
 		$pages_visited[]    = GFFormDisplay::get_current_page( $form['id'] );
 		$pages_visited      = array_unique( $pages_visited );
-		$pages_visited_json = json_encode( $pages_visited );
+		$pages_visited_json = htmlspecialchars( json_encode( $pages_visited ) );
+
+		$pages_visited_namespace = 'gpmpn_pages_visited_' . $form['id'];
 
 		$inputs .= sprintf(
 			'<input id="%1$s" name="%1$s" value="%2$s" type="hidden" />',
@@ -412,32 +417,110 @@ class GP_Multi_Page_Navigation extends GWPerk {
 
 		$_POST[ $pages_visited_namespace ] = $pages_visited_json;
 
+		/**
+		 * Page validity tracking
+		 */
+		$page_validity = $this->get_page_validity( $form );
+
+		$page_validity_json      = htmlspecialchars( json_encode( $page_validity ) );
+		$page_validity_namespace = 'gpmpn_page_validity_' . $form['id'];
+
+		$inputs .= sprintf(
+			'<input id="%1$s" name="%1$s" value="%2$s" type="hidden" />',
+			$page_validity_namespace,
+			$page_validity_json
+		);
+
 		$form_tag .= $inputs;
 
 		return $form_tag;
 	}
 
+	public function override_target_page( $page_number, $form, $current_page, $field_values ) {
+		// return infinity so that the GFFormDisplay::validate(); never detects that the last page
+		// is being validated.
+		return INF;
+	}
+
+	public function does_field_have_value_in_post( $field ) {
+		if ( $field->inputs ) {
+			$ids = array_map( function( $input ) {
+				return str_replace( '.', '_', $input['id'] );
+			}, $field->inputs );
+		} else {
+			$ids = array( $field->id );
+		}
+
+		$has_value = false;
+
+		foreach ( $ids as $id ) {
+			$value = rgpost( "input_{$id}" );
+
+			if ( ! empty( $value ) ) {
+				$has_value = true;
+				break;
+			}
+		}
+
+		return $has_value;
+	}
+
 	public function get_page_validity( $form ) {
-		remove_filter( 'gform_validation', array( $this, 'maybe_bypass_validation' ), 20, 2 );
+		remove_filter( 'gform_validation', array( $this, 'maybe_bypass_validation' ), 20 );
 
 		$last_page     = count( $form['pagination']['pages'] );
 		$page_validity = array();
 
+		// Deep clone the form array to ensure we don't affect any state managed by Gravity Forms
+		// json_encode/json_decode handles nested arrays AND objects properly
+		$form_copy = unserialize( serialize( $form ) );
+
+		// Override the target page to ensure that GFFormDisplay::validate() doesn't
+		// ever detect that the last page is being validated. If the last page is detected,
+		// it causes individual page validation to NOT be applied independantly of other
+		// pages.
+		add_filter( 'gform_target_page', array( $this, 'override_target_page' ), 10, 4 );
+
 		$c = 1;
 		while ( $c <= $last_page ) {
 			$field_values        = array();
-			$f                   = $form;
-			$page_validity[ $c ] = GFFormDisplay::validate( $f, $field_values, $c );
+			$page_validity[ $c ] = GFFormDisplay::validate( $form_copy, $field_values, $c );
 			$c++;
 		}
 
-		add_filter( 'gform_validation', array( $this, 'maybe_bypass_validation' ), 20, 2 );
+		$previously_visited_pages = rgar( $_POST, 'gpmpn_previously_visited_pages', array() );
+
+		foreach ( $form_copy['fields'] as &$field ) {
+			if (
+				$field->failed_validation
+				&& $this->does_field_have_value_in_post( $field )
+				&& in_array( $field->pageNumber, $previously_visited_pages, true )
+			) {
+				foreach ( $form['fields'] as &$original_field ) {
+					if ( $field->id === $original_field->id ) {
+						$original_field->failed_validation  = true;
+						$original_field->validation_message = $field->validation_message;
+						break;
+					}
+				}
+			}
+		}
+
+		remove_filter( 'gform_target_page', array( $this, 'override_target_page' ), 10 );
+
+		add_filter( 'gform_validation', array( $this, 'maybe_bypass_validation' ), 20 );
 
 		return $page_validity;
 	}
 
-	public function get_pages_visited( $form ) {
-		$pages_visited = json_decode( stripslashes( $_POST[ 'gpmpn_pages_visited_' . $form['id'] ] ), true );
+	public function get_pages_visited_from_post( $form ) {
+		$maybe_json = rgpost( 'gpmpn_pages_visited_' . $form['id'], true );
+
+		try {
+			$pages_visited = json_decode( $maybe_json );
+		} catch ( Exception $e ) {
+			// noop, string was not valid JSON
+		}
 
 		if ( ! is_array( $pages_visited ) ) {
 			$pages_visited = array();
@@ -453,11 +536,6 @@ class GP_Multi_Page_Navigation extends GWPerk {
 		}
 
 		$last_page = count( $form['pagination']['pages'] );
-
-		$page_validity = $this->get_page_validity( $form );
-
-		// $pages_visited = json_decode( stripslashes( $_POST['gpmpn_pages_visited'] ), true );
-		$pages_visited = $this->get_pages_visited( $form );
 
 		$args = array(
 			'formId'                                 => $form['id'],
@@ -494,8 +572,6 @@ class GP_Multi_Page_Navigation extends GWPerk {
 			 * @param array $form The current form.
 			 */
 			'enableSubmissionFromLastPageWithErrors' => apply_filters( 'gpmpn_enable_submission_from_last_page_with_errors', true, $form ),
-			'pageValidity'                           => $page_validity,
-			'pagesVisited'                           => $pages_visited,
 		);
 
 		$script = 'new GPMultiPageNavigation( ' . json_encode( $args ) . ' );';
@@ -514,9 +590,8 @@ class GP_Multi_Page_Navigation extends GWPerk {
 
 		if ( $this->is_bypass_validation_enabled( $form ) ) {
 			$validation_result['is_valid'] = true;
-			foreach ( $form['fields'] as &$field ) {
-				$field->failed_validation = false;
-			}
+
+			$form = $this->remove_validation_errors( $form );
 		} elseif ( $this->is_activate_on_first_page( $form ) ) {
 			$validation_result['failed_validation_page'] = $this->get_first_page_with_validation_error( $form );
 			add_filter( 'gform_validation_message_' . $form['id'], array( $this, 'modify_validation_message' ), 10, 2 );

@@ -7,7 +7,24 @@ use NinjaTablesPro\App\Models\NinjaTableItem;
 
 class TableEditorHandler
 {
-    public static function savedCustomCode($data)
+
+    public function register()
+    {
+        add_action('ninja_tables_custom_code_before_save', [$this, 'savedCustomCode']);
+        add_action('ninja_tables_after_table_print', [$this, 'addEditorDom'], 10, 2);
+        add_action('wp_ajax_ninja_table_pro_update_row', [$this, 'routeUpdateRow']);
+        add_action('wp_ajax_nopriv_ninja_table_pro_update_row', [$this, 'routeUpdateRow']);
+
+        add_action('ninja_table_update_row_data_default', [$this, 'updateRowDefaultTable'], 10, 3);
+
+        add_action('wp_ajax_ninja_table_pro_get_editing_settings', [$this, 'getSettings']);
+        add_action('wp_ajax_ninja_table_pro_update_editing_settings', [$this, 'updateSettings']);
+
+        add_action('wp_ajax_ninja_table_pro_delete_row', [$this, 'routeDeleteRow']);
+        add_action('ninja_table_delete_row_data_default', [$this, 'deleteRowDefaultTable'], 10, 2);
+    }
+
+    public function savedCustomCode($data)
     {
         $tableId = intval($data['table_id']);
         $js      = $data['custom_js'];

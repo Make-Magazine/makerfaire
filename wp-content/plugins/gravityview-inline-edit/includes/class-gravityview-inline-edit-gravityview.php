@@ -52,6 +52,7 @@ final class GravityView_Inline_Edit_GravityView extends GravityView_Inline_Edit_
 
 		add_filter( 'gravityview-inline-edit/checkbox-wrapper-attributes', array( $this, 'modify_attributes_add_choice_display' ), 10, 9 );
 		add_filter( 'gravityview-inline-edit/radio-wrapper-attributes', array( $this, 'modify_attributes_add_choice_display' ), 10, 9 );
+		add_filter( 'gravityview-inline-edit/image_choice-wrapper-attributes', array( $this, 'modify_attributes_add_choice_display' ), 10, 9 );
 
 		add_filter( 'gravityview/render/container/class', array( $this, 'add_container_class' ), 10, 2 );
 		add_action( 'gravityview/template/header', array( $this, 'maybe_add_inline_edit_toggle_button' ) );

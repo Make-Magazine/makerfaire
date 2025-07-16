@@ -1,3 +1,7 @@
+### 3.5.0 | 2025-07-15
+- Added support for the new Products Javascript API by adding the total discount amount to the products state object.
+- Fixed PHP warnings that can occur if a submitted coupon is deleted between the coupon code passing validation and the entry being saved.
+
 ### 3.4.0 | 2024-10-09
 - Added support for the form validation placement setting.
 - Updated the style enqueuing logic to be compatible with Gravity Forms 2.9.0.

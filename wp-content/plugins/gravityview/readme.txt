@@ -1,7 +1,7 @@
 === GravityView ===
 Tags: gravity forms, directory, gravity forms directory
 Requires at least: 4.7
-Tested up to: 6.8
+Tested up to: 6.8.1
 Requires PHP: 7.4.0
 Stable tag: trunk
 Contributors: The GravityKit Team
@@ -21,6 +21,62 @@ Beautifully display your Gravity Forms entries. Learn more on [gravitykit.com](h
 
 == Changelog ==
 
+= 2.42 on July 10, 2025 =
+
+This update delivers a major overhaul of the Search Bar widget, offering significantly more flexibility in how search fields are displayed and configured, along with new developer features and improved template handling for easier customization.
+
+#### 🚀 Added
+* A new `search_visible_fields` setting that restricts "Search Everything" searches to visible View fields.
+* The Search Bar widget can now be configured with different row types, just like the Layout Builder.
+* Advanced search fields are shown in a collapsible section, hidden by default for a cleaner interface.
+* A dedicated Search Button field for more flexible placement.
+* Added a Search Mode field (can be hidden or shown as radio buttons).
+* Hide individual search fields based on user role.
+* Sieving can now be set on a per-field basis for choice search fields.
+* More granular control over search fields with specific settings for each one.
+
+#### 💻 Developer Updates
+* Added `gk/gravityview/widget/search/visible_fields_only` filter to modify whether "Search Everything" searches are limited for a View.
+* Added a fourth `$data` attribute to `\GravityView_View::render()` for setting a `$data` global in View templates.
+* Updated Search Bar templates to use the new global `$data` variable instead of `$gravityview_view`:
+  - `$gravityview_view->search_fields` → `$data['search_fields']`
+  - `$gravityview_view->permalink_fields` → `$data['permalink_fields']`
+  - `$gravityview_view->search_layout` → `$data['search_layout']`
+  - `$gravityview_view->search_mode` → `$data['search_mode']`
+  - `$gravityview_view->search_class` → `$data['search_class']`
+  - `$gravityview_view->search_clear` → `$data['search_clear']`
+* Added `gk/gravityview/search/additional-reserved-args` filter to add additional reserved arguments for the Search Bar widget.
+
+= 2.41 on July 3, 2025 =
+
+This release adds a GravityBoard widget for embedding boards in Views, resolves issues with block rendering and Chained Selects fields, fixes Single and Edit Entry not working in membership plugins, and alerts users to potential conflicts with Formidable Views.
+
+#### 🚀 Added
+* [GravityBoard](https://www.gravitykit.com/products/gravityboard/) widget to embed a board in a View.
+
+#### 🐛 Fixed
+* For some users, adding a Chained Selects Add-On field to the Search Bar causes JavaScript code to be visible and the field would not work as expected.
+* When "Preview as shortcode" was enabled in the View editor, some blocks would not render properly on the frontend.
+* Added a compatibility notice when using Formidable Views and GravityView at the same time.
+* Single Entry and Edit Entry were not working when Views were embedded in some plugin membership pages. These plugins include LearnDash, BuddyBoss and BuddyPress, Ultimate Member, and WooCommerce Account Pages.
+
+#### 💻 Developer Updates
+* `requires` and `requires-not` field setting conditional display were not working correctly for radio buttons.
+* Added `GVCommon::is_rest_request()` method to check if the current request is a REST request, a clone of the `wp_is_serving_rest_request()` function.
+* CSS files are now versioned using `filemtime()` instead of the plugin version, ensuring browsers always load the latest styles after updates.
+
+= 2.40 on May 29, 2025 =
+
+This release fixes issues with editing entries that include File Upload fields and downloading files with spaces in their filenames, corrects CSV export of Survey Add-On values, and adds support for the `{get}` merge tag inside the `[gv_entry_link]` shortcode.
+
+#### 🚀 Added
+* Support for the `{get}` merge tag inside the `[gv_entry_link]` shortcode.
+
+#### 🐛 Fixed
+* Multiple issues with the File Upload field on the Edit Entry screen.
+* CSV export of Survey Add-On fields now correctly outputs data values instead of raw HTML markup.
+* Filenames with spaces in File Upload field links were incorrectly encoded, preventing files from opening or downloading. Thanks, Jake!
+
 = 2.39.1 on April 25, 2025 =
 
 This hotfix resolves a fatal error that occurred when updating the plugin from version 2.38 or earlier.
@@ -34,6 +90,9 @@ This hotfix resolves a fatal error that occurred when updating the plugin from v
 = 2.39 on April 24, 2025 =
 
 This update speeds up form loading in the View editor, fixes GravityEdit compatibility and translation issues in WordPress 6.8, and includes other fixes and improvements.
+
+#### 🐛 Fixed
+* Uploaded files are kept on the Edit Entry form if validation fails.
 
 #### ✨ Improved
 * Faster form fetching in the Data Source dropdown in the View editor.

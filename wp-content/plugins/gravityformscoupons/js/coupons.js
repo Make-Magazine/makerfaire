@@ -139,6 +139,12 @@ function PopulateDiscountInfo(price, formId) {
 
     jQuery('#gf_coupons_container_' + formId + ' #gf_coupon_info').html('<table>' + couponDetails + '</table>');
 
+    // Updating products state object with the total discount amount.
+    if ( window.gform.state ) {
+        const products = window.gform.state.get( formId, 'products' );
+        products.discount = totalDiscount;
+        window.gform.state.set( formId, 'products', products );
+    }
     return totalDiscount;
 }
 

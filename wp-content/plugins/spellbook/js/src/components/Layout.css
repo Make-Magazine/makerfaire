@@ -1,0 +1,103 @@
+.spellbook-app {
+	position: fixed;
+	height: calc(100vh - 32px);
+	width: calc(100% - 160px);
+    container-type: size;
+    container-name: spellbook;
+}
+
+/* Folded menu state */
+body.folded .spellbook-app {
+	width: calc(100% - 36px);
+}
+
+/* WordPress auto-fold breakpoint */
+@media screen and (max-width: 960px) {
+    .spellbook-app {
+        width: calc(100% - 36px);
+    }
+}
+
+@container spellbook (max-width: 900px) {
+    /* Container-specific styles */
+}
+
+@container spellbook (max-height: 560px) {
+    .gform-router-nav-bar__item-link {
+        height: 1.875rem !important;
+        padding: .375rem .5rem !important;
+    }
+
+    .gform-router-nav-bar__item-text {
+        font-size: var(--gform-font-size-text-xs);
+    }
+}
+
+/* WordPress tablet breakpoint */
+@media screen and (max-width: 782px) {
+	.spellbook-app {
+		width: 100%;
+		position: relative;
+		height: auto;
+		margin-left: 0;
+	}
+
+	/* When mobile menu is opened */
+	.wp-responsive-open .spellbook-app {
+		margin-left: -20px;
+	}
+}
+
+/* WordPress mobile breakpoint */
+@media screen and (max-width: 600px) {
+	.spellbook-app {
+		margin-left: 0;
+	}
+
+	.wp-responsive-open .spellbook-app {
+		margin-left: 0;
+	}
+}
+
+/* Adjust admin bar spacing on mobile */
+@media screen and (max-width: 782px) {
+	.spellbook-app {
+		height: calc(100vh - 46px); /* WordPress mobile admin bar height */
+	}
+}
+
+.forms_page_gwp_perks #wpcontent {
+	padding-left: 0;
+}
+
+.forms_page_gwp_perks #wpfooter {
+	display: none !important;
+}
+
+.spellbook-admin .gform-modular-sidebar__content {
+    background: #f7f9fc;
+}
+
+.spellbook-app__content {
+	padding-block: 1.5rem 6rem;
+	padding-inline: 1.5rem;
+}
+
+/* Global button styles */
+.spellbook-app__content .gform-button--primary-new {
+	height: 34px !important;
+	background: #902EEF;
+	border: 0 !important;
+}
+
+.spellbook-app__content .gform-button--primary-new:hover {
+	background: #561c8f;
+}
+
+.spellbook-app__content .gform-button--primary-new:disabled {
+	background: #bc82f5;
+}
+
+.spellbook-app__content .gform-input {
+	height: 34px
+}

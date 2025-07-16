@@ -22,6 +22,7 @@ class GPNF_GravityFlow {
 		add_filter( 'gpnf_submitted_entry_ids', array( $this, 'get_submitted_entry_ids' ), 10, 3 );
 		add_filter( 'gravityflow_permission_granted_entry_detail', array( $this, 'can_user_view_child_entry' ), 10, 4 );
 		add_filter( 'gform_field_input', array( $this, 'enable_editing_pricing_field' ), 10, 5 );
+		add_action( 'gravityflow_pre_restart_workflow', array( $this, 'process_restart_workflow' ), 10, 2 );
 
 	}
 
@@ -230,6 +231,16 @@ class GPNF_GravityFlow {
 		}
 
 		return $input;
+	}
+
+	/**
+	 * Ensure to handle the parent entry submission when restarting a workflow.
+	 *
+	 * @param array $entry Current entry.
+	 * @param array $form  Current form object.
+	 */
+	public function process_restart_workflow( $entry, $form ) {
+		gp_nested_forms()->handle_parent_submission( $entry, $form );
 	}
 
 }

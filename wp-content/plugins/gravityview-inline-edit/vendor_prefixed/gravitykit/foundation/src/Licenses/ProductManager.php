@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by __root__ on 13-March-2025 using Strauss.
+ * Modified by __root__ on 09-June-2025 using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 
@@ -205,7 +205,7 @@ class ProductManager {
 				// Check if the installed product comes with a newer version of the Foundation, which will be loaded if another Ajax request is made.
 				$product_foundation_version = Core::get_instance()->get_plugin_foundation_version( $product['plugin_file'] );
 
-				$backend_foundation_version = version_compare(
+				$backend_foundation_version = CoreHelpers::version_compare(
 					Core::VERSION,
 					$product_foundation_version ?? '0',
 					'<'
@@ -219,7 +219,7 @@ class ProductManager {
 			'products'         => $this->ajax_get_products_data(),
 			'activation_error' => $activation_error,
             'ui_action'        => [
-                'reload' => version_compare( $backend_foundation_version, $payload['frontend_foundation_version'], '<>' ) || $product['has_admin_menu'],
+                'reload' => CoreHelpers::version_compare( $backend_foundation_version, $payload['frontend_foundation_version'], '<>' ) || $product['has_admin_menu'],
             ],
 		];
 	}
@@ -347,7 +347,7 @@ class ProductManager {
 				// Check if the updated product comes with a newer version of the Foundation, which will be loaded if another Ajax request is made.
 				$product_foundation_version = Core::get_instance()->get_plugin_foundation_version( $product['plugin_file'], true );
 
-				$backend_foundation_version = version_compare(
+				$backend_foundation_version = CoreHelpers::version_compare(
 					Core::VERSION,
 					$product_foundation_version,
 					'<'
@@ -361,7 +361,7 @@ class ProductManager {
             'products'         => $this->ajax_get_products_data(),
             'activation_error' => $activation_error,
             'ui_action'        => [
-                'reload' => version_compare( $backend_foundation_version, $payload['frontend_foundation_version'], '<>' ) || ( $product['has_admin_menu'] && $product['active'] && ! $activation_error ),
+                'reload' => CoreHelpers::version_compare( $backend_foundation_version, $payload['frontend_foundation_version'], '<>' ) || ( $product['has_admin_menu'] && $product['active'] && ! $activation_error ),
             ],
         ];
 	}
@@ -553,7 +553,7 @@ class ProductManager {
 		// Check if the activated product comes with a newer version of the Foundation, which will be loaded if another Ajax request is made.
 		$product_foundation_version = Core::get_instance()->get_plugin_foundation_version( $product['plugin_file'] );
 
-		$backend_foundation_version = version_compare(
+		$backend_foundation_version = CoreHelpers::version_compare(
 			Core::VERSION,
 			$product_foundation_version ?? '0',
 			'<'
@@ -562,7 +562,7 @@ class ProductManager {
         return [
             'products'  => $this->ajax_get_products_data(),
             'ui_action' => [
-                'reload' => version_compare( $backend_foundation_version, $payload['frontend_foundation_version'], '<>' ) || $product['has_admin_menu'],
+                'reload' => CoreHelpers::version_compare( $backend_foundation_version, $payload['frontend_foundation_version'], '<>' ) || $product['has_admin_menu'],
             ],
         ];
 	}
@@ -638,7 +638,7 @@ class ProductManager {
         return [
             'products'  => $this->ajax_get_products_data(),
             'ui_action' => [
-                'reload'   => version_compare( $backend_foundation_version, $payload['frontend_foundation_version'], '<>' ) || $product['has_admin_menu'],
+                'reload'   => CoreHelpers::version_compare( $backend_foundation_version, $payload['frontend_foundation_version'], '<>' ) || $product['has_admin_menu'],
                 'redirect' => ! $backend_foundation_version ? [
                     'url'            => CoreHelpers::is_network_admin() ? network_admin_url( 'plugins.php' ) : admin_url( 'plugins.php' ),
                     'loader_title'   => esc_html__( 'Redirecting to the Plugins page…', 'gk-gravityedit' ),
@@ -978,7 +978,7 @@ class ProductManager {
 					'installed'         => ! is_null( $installed_product ),
 					'installed_version' => $installed_product['version'] ?? $product['installed_version'],
 					'active'            => $installed_product['active'] ?? $product['active'],
-					'update_available'  => $installed_product && version_compare( $installed_product['version'], $product['server_version'], '<' ),
+					'update_available'  => $installed_product && CoreHelpers::version_compare( $installed_product['version'], $product['server_version'], '<' ),
 					'path'              => $installed_product['path'] ?? $product['path'],
 					'plugin_file'       => $installed_product['plugin_file'] ?? $product['plugin_file'],
 					'network_activated' => $installed_product['network_activated'] ?? $product['network_activated'],

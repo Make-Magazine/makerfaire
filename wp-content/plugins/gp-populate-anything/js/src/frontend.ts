@@ -84,3 +84,37 @@ window.gform.addAction('gpnf_init_nested_form', (formId: any) => {
 window.gform.addAction('gppa_register_form', (formId: number) => {
 	maybeRegisterForm(formId);
 });
+
+/**
+ * This is a workaround for the issue where the conditional logic action
+ * does not trigger the input event on the field.
+ *
+ * @since 2.1.32
+ */
+window.gform.addAction('gform_post_conditional_logic_field_action', function(
+	_formId: any,
+	action: string,
+	targetId: any,
+	defaultValues:
+		| string
+		| number
+		| string[]
+		| ((this: HTMLElement, index: number, value: string) => string),
+	isInit: any
+) {
+	// More specific selector to target only Gravity Forms fields and avoid unrelated inputs - fixes a Firefox issue (see HS#84251).
+	const $targetField = jQuery(targetId).find('input[name^="input_"]');
+
+	if (
+		$targetField.length &&
+		defaultValues &&
+		typeof defaultValues === 'string' &&
+		action === 'show'
+	) {
+		// Trigger the input and change events.
+		if (!$targetField.val()) {
+			$targetField.val(defaultValues);
+		}
+		$targetField.trigger('input').trigger('change');
+	}
+});

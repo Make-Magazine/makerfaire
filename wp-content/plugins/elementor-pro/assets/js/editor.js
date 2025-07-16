@@ -1,4 +1,4 @@
-/*! elementor-pro - v3.29.0 - 04-06-2025 */
+/*! elementor-pro - v3.30.0 - 01-07-2025 */
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
@@ -3265,7 +3265,7 @@ class GlobalWidgetLoadTemplates extends $e.modules.hookData.After {
     });
   }
   addTemplateToCache(id) {
-    const container = elementor.getPreviewContainer().findChildrenRecursive(i => parseInt(i.model.get('templateID')) === parseInt(id));
+    const container = elementor.getPreviewContainer().children.findRecursive(i => parseInt(i.model.get('templateID')) === parseInt(id));
     if (!container) {
       return this.component.notLoadedTemplatesIds.push(id);
     }
@@ -6101,7 +6101,7 @@ module.exports = elementor.modules.controls.Repeater.extend({
     }
   },
   onRender() {
-    this.ui.btnAddRow.text(__('Add Condition', 'elementor-pro'));
+    this.ui.btnAddRow.text(__('Add condition', 'elementor-pro'));
   }
 });
 

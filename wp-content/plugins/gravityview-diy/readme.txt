@@ -1,7 +1,7 @@
 === GravityView DIY ===
 Tags: gravityview
 Requires at least: 4.4
-Tested up to: 6.7
+Tested up to: 6.8.1
 Stable tag: trunk
 Contributors: The GravityView Team
 License: GPL 2 or higher
@@ -19,6 +19,13 @@ DIY is a different kind of View layout: the purpose is to allow designers and de
 3. Follow the instructions
 
 == Changelog ==
+
+= 2.5.2 on July 3, 2025 =
+
+This update fixes markup issues when displaying a form after no entries are found.
+
+#### 🐛 Fixed
+* Displaying a form when no entries are found was incorrectly wrapped in an `<h3>` tag, leading to styling issues.
 
 = 2.5.1 on November 1, 2024 =
 

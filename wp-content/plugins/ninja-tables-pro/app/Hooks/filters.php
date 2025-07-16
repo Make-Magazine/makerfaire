@@ -13,34 +13,12 @@
  * @var $app NinjaTablesPro\App\Application
  */
 
-use NinjaTablesPro\App\Hooks\Handlers\PositionHandler;
-use NinjaTablesPro\App\Hooks\Handlers\TableHandler;
 use NinjaTablesPro\App\Hooks\Handlers\PlaceholderParserHandler;
 
-//admin filters
-$app->addFilter('ninja_tables_item_attributes', [PositionHandler::class, 'make']);
-$app->addFilter('ninja_tables_import_table_data', [PositionHandler::class, 'maker'], 10, 2);
+$app->addFilter('ninja_parse_placeholder', [PlaceholderParserHandler::class, 'parse']);
 
-
-// public filters
-$app->addFilter('ninja_table_column_attributes', [TableHandler::class, 'addOriginalColumn'], 10, 3);
-$app->addFilter('ninja_table_own_data_filter_query', [TableHandler::class, 'ownDataFilter'], 10, 2);
-$app->addFilter('ninja_tables_total_size_query', [TableHandler::class, 'ownDataTotalFilter'], 10, 2);
-
-$app->addFilter('ninja_table_activated_features', function ($features) {
+add_filter('ninja_table_activated_features', function ($features) {
     $features['ninja_table_front_editor'] = true;
+
     return $features;
 });
-
-$app->addFilter('ninja_table_admin_role', function ($permission) {
-   return get_option('_ninja_tables_permission', $permission);
-});
-
-$app->addFilter('ninja_table_js_config', [TableHandler::class, 'ninjaTableJsConfig'], 10, 2);
-$app->addFilter('ninja_table_column_attributes', [TableHandler::class, 'ninjaTableColumnAttributes'], 10, 2);
-$app->addFilter('ninja_tables_shortcode_defaults', [TableHandler::class, 'ninjaTablesShortcodeDefaults']);
-$app->addFilter('ninja_tables_rendering_table_settings', [TableHandler::class, 'ninjaTablesRenderingTableSettings'], 10,
-    2);
-$app->addFilter('ninja_table_rendering_table_vars', [TableHandler::class, 'ninjaTableRenderingTableVars'], 10, 3);
-$app->addFilter('ninja_parse_placeholder', [PlaceholderParserHandler::class, 'parse']);
-$app->addFilter('ninja_tables_get_public_data', [TableHandler::class, 'ninjaTableGetPublicData'], 11, 1);

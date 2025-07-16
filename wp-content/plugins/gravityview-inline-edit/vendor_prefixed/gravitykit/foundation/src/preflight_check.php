@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by __root__ on 13-March-2025 using Strauss.
+ * Modified by __root__ on 09-June-2025 using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 
@@ -95,7 +95,7 @@ function is_disabled_via_url( $plugin_file ) {
 function meets_min_php_version_requirement( $plugin_file, $min_php_version = MIN_PHP_VERSION, $show_notice = true ) {
 	$plugin_data = Helpers\Core::get_plugin_data( $plugin_file );
 
-	$meets_requirement = (bool) version_compare( phpversion(), $min_php_version, '>=' );
+	$meets_requirement = (bool) Helpers\Core::version_compare( phpversion(), $min_php_version, '>=' );
 
 	if ( ! $show_notice ) {
 		return $meets_requirement;

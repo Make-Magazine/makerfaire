@@ -3,18 +3,19 @@
  * Plugin Name: Elementor Pro
  * Description: Elevate your designs and unlock the full power of Elementor. Gain access to dozens of Pro widgets and kits, Theme Builder, Pop Ups, Forms and WooCommerce building capabilities.
  * Plugin URI: https://go.elementor.com/wp-dash-wp-plugins-author-uri/
- * Version: 3.29.2
+ * Version: 3.30.0
  * Author: Elementor.com
  * Author URI: https://go.elementor.com/wp-dash-wp-plugins-author-uri/
  * Text Domain: elementor-pro
- * Elementor tested up to: 3.29.0
+ * Requires Plugins: elementor
+ * Elementor tested up to: 3.30.0
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-define( 'ELEMENTOR_PRO_VERSION', '3.29.2' );
+define( 'ELEMENTOR_PRO_VERSION', '3.30.0' );
 
 /**
  * All versions should be `major.minor`, without patch, in order to compare them properly.
@@ -22,8 +23,8 @@ define( 'ELEMENTOR_PRO_VERSION', '3.29.2' );
  * (e.g. Core 3.15.0-beta1 and Core 3.15.0-cloud2 should be fine when requiring 3.15, while
  * requiring 3.15.2 is not allowed)
  */
-define( 'ELEMENTOR_PRO_REQUIRED_CORE_VERSION', '3.27' );
-define( 'ELEMENTOR_PRO_RECOMMENDED_CORE_VERSION', '3.29' );
+define( 'ELEMENTOR_PRO_REQUIRED_CORE_VERSION', '3.28' );
+define( 'ELEMENTOR_PRO_RECOMMENDED_CORE_VERSION', '3.30' );
 
 define( 'ELEMENTOR_PRO__FILE__', __FILE__ );
 define( 'ELEMENTOR_PRO_PLUGIN_BASE', plugin_basename( ELEMENTOR_PRO__FILE__ ) );

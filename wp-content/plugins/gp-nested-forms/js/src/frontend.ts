@@ -1198,6 +1198,7 @@ const ko = window.ko;
 			$inputs.each(function () {
 				var $this = $( this );
 				var value = $this.data( 'gpnf-value' );
+				var inputType = $this.attr('type');
 
 				if ( ! value) {
 					return true;
@@ -1270,6 +1271,27 @@ const ko = window.ko;
 
 					// Convert array of values to string.
 					parentValue = parentValue.join(', ');
+
+					// Convert to number if the input type is number.
+					if (inputType === 'number') {
+						if (window.gf_global?.gfcalc?.[self.formId]) {
+							const fieldId = Number(inputId.split('.').pop());
+							const gfcalc = window.gf_global.gfcalc[self.formId];
+							const formulaField = gfcalc.formulaFields.find(
+								(field) => field.field_id === fieldId
+							);
+
+							parentValue = gfcalc.cleanNumber(
+								parentValue,
+								self.formId,
+								fieldId,
+								formulaField,
+							);
+						} else {
+							const currency = new gform.Currency(window.gf_global?.gf_currency_config);
+							parentValue = currency.toNumber(parentValue);
+						}
+					}
 
 					/**
 					 * Filter the value of the parent merge tag before it is replaced in the field.

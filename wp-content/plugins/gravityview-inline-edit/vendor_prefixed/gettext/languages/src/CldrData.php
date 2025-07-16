@@ -2,7 +2,7 @@
 /**
  * @license MIT
  *
- * Modified by __root__ on 13-March-2025 using Strauss.
+ * Modified by __root__ on 09-June-2025 using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 
@@ -312,6 +312,8 @@ class CldrData
             );
             $knownMissingLanguages = array(
                 'guw' => 'Gun',
+                'hnj' => 'Hmong Njua',
+                'lld' => 'Dolomitic Ladin',
                 'nah' => 'Nahuatl',
                 'smi' => 'Sami',
             );

@@ -2,7 +2,7 @@
 /**
  * @license MIT
  *
- * Modified by __root__ on 13-March-2025 using Strauss.
+ * Modified by __root__ on 09-June-2025 using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 
@@ -23,9 +23,9 @@ class Php extends Exporter
     /**
      * {@inheritdoc}
      *
-     * @see \GravityKit\GravityEdit\Foundation\ThirdParty\Gettext\Languages\Exporter\Exporter::toStringDo()
+     * @see \GravityKit\GravityEdit\Foundation\ThirdParty\Gettext\Languages\Exporter\Exporter::toStringDoWithOptions()
      */
-    protected static function toStringDo($languages)
+    protected static function toStringDoWithOptions($languages, array $options)
     {
         $lines = array();
         $lines[] = '<?php';

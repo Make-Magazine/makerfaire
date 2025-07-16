@@ -16,10 +16,20 @@ class PositionHandler
      *
      * @return array $attributes
      */
+
+    public function register()
+    {
+        add_filter('ninja_tables_item_attributes', [$this, 'make']);
+        add_filter('ninja_tables_import_table_data', [$this, 'maker'], 10, 2);
+        add_filter('ninja_table_admin_role', function ($permission) {
+            return get_option('_ninja_tables_permission', $permission);
+        });
+    }
+
     public static function make($attributes)
     {
         global $wpdb;
-        $tableId   = Arr::get($attributes, 'table_id');
+        $tableId = Arr::get($attributes, 'table_id');
         // If position is provided from the client then it is safe
         // to assume that the data is migrated for the table
         if (isset($_REQUEST['position'])) {

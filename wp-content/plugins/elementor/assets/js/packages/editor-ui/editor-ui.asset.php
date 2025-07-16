@@ -12,6 +12,7 @@ return [
 		'elementor-v2-icons',
 		'elementor-v2-ui',
 		'react',
+		'react-dom',
 		'wp-i18n',
 	],
 ];

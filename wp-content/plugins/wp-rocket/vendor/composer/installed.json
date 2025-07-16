@@ -157,23 +157,23 @@
         },
         {
             "name": "symfony/polyfill-php80",
-            "version": "v1.31.0",
-            "version_normalized": "1.31.0.0",
+            "version": "v1.32.0",
+            "version_normalized": "1.32.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/polyfill-php80.git",
-                "reference": "60328e362d4c2c802a54fcbf04f9d3fb892b4cf8"
+                "reference": "0cc9dd0f17f61d8131e7df6b84bd344899fe2608"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/polyfill-php80/zipball/60328e362d4c2c802a54fcbf04f9d3fb892b4cf8",
-                "reference": "60328e362d4c2c802a54fcbf04f9d3fb892b4cf8",
+                "url": "https://api.github.com/repos/symfony/polyfill-php80/zipball/0cc9dd0f17f61d8131e7df6b84bd344899fe2608",
+                "reference": "0cc9dd0f17f61d8131e7df6b84bd344899fe2608",
                 "shasum": ""
             },
             "require": {
                 "php": ">=7.2"
             },
-            "time": "2024-09-09T11:45:10+00:00",
+            "time": "2025-01-02T08:10:11+00:00",
             "type": "library",
             "extra": {
                 "thanks": {
@@ -220,7 +220,7 @@
                 "shim"
             ],
             "support": {
-                "source": "https://github.com/symfony/polyfill-php80/tree/v1.31.0"
+                "source": "https://github.com/symfony/polyfill-php80/tree/v1.32.0"
             },
             "funding": [
                 {
@@ -371,17 +371,17 @@
         },
         {
             "name": "wp-media/plugin-family",
-            "version": "v1.0.4",
-            "version_normalized": "1.0.4.0",
+            "version": "v1.0.5",
+            "version_normalized": "1.0.5.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/wp-media/plugin-family.git",
-                "reference": "83714bdfb7d98d4fe74781844c325be909db13a4"
+                "reference": "38432a1bde4776b5b4a37654ca6efba7ec6d9453"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/wp-media/plugin-family/zipball/83714bdfb7d98d4fe74781844c325be909db13a4",
-                "reference": "83714bdfb7d98d4fe74781844c325be909db13a4",
+                "url": "https://api.github.com/repos/wp-media/plugin-family/zipball/38432a1bde4776b5b4a37654ca6efba7ec6d9453",
+                "reference": "38432a1bde4776b5b4a37654ca6efba7ec6d9453",
                 "shasum": ""
             },
             "require-dev": {
@@ -392,7 +392,7 @@
                 "wp-coding-standards/wpcs": "^3",
                 "wp-media/phpunit": "^3"
             },
-            "time": "2024-12-30T10:08:18+00:00",
+            "time": "2025-07-14T16:44:29+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -414,9 +414,67 @@
             "description": "Organizes and displays WP Media plugin family across other members.",
             "support": {
                 "issues": "https://github.com/wp-media/plugin-family/issues",
-                "source": "https://github.com/wp-media/plugin-family/tree/v1.0.4"
+                "source": "https://github.com/wp-media/plugin-family/tree/v1.0.5"
             },
             "install-path": "../wp-media/plugin-family"
+        },
+        {
+            "name": "wp-media/wp-mixpanel",
+            "version": "v1.0.0",
+            "version_normalized": "1.0.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/wp-media/wp-mixpanel.git",
+                "reference": "3c84868d0fddedf5f2dad752f527acf1b2a90f1e"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/wp-media/wp-mixpanel/zipball/3c84868d0fddedf5f2dad752f527acf1b2a90f1e",
+                "reference": "3c84868d0fddedf5f2dad752f527acf1b2a90f1e",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.3"
+            },
+            "require-dev": {
+                "php-stubs/wordpress-tests-stubs": "^6.5",
+                "phpcompatibility/phpcompatibility-wp": "^2.0",
+                "phpstan/extension-installer": "^1.3",
+                "phpstan/phpstan-mockery": "^2.0",
+                "phpstan/phpstan-phpunit": "^2.0",
+                "roave/security-advisories": "dev-master",
+                "szepeviktor/phpstan-wordpress": "^2.0",
+                "wp-coding-standards/wpcs": "^3",
+                "wp-media/phpunit": "^3"
+            },
+            "time": "2025-07-09T12:21:36+00:00",
+            "type": "library",
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "WPMedia\\Mixpanel\\": "src/"
+                },
+                "classmap": [
+                    "src/Classes/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPL-3.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "WP Media",
+                    "homepage": "https://github.com/wp-media/wp-mixpanel",
+                    "role": "Developer"
+                }
+            ],
+            "description": "WordPress Mixpanel Integration",
+            "support": {
+                "issues": "https://github.com/wp-media/wp-mixpanel/issues",
+                "source": "https://github.com/wp-media/wp-mixpanel/tree/v1.0.0"
+            },
+            "install-path": "../wp-media/wp-mixpanel"
         }
     ],
     "dev": false,

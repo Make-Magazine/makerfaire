@@ -1,0 +1,11 @@
+.spellbook-admin .gform-modular-sidebar__primary-sidebar {
+    border-right: 1px solid #ecedf8;
+    inline-size: 95px;
+	background: #fff;
+}
+
+@container spellbook (max-width: 900px) {
+    .spellbook-admin .gform-modular-sidebar__primary-sidebar {
+        inline-size: 70px;
+    }
+}

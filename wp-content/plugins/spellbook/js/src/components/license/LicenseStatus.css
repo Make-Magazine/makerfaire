@@ -1,0 +1,19 @@
+.license-status--expired {
+	display: flex;
+	width: fit-content;
+	align-items: center;
+	gap: 0.25rem;
+
+	background-color: rgb(251, 216, 208) !important;
+    color: #dd301d !important;
+    border: 1px solid rgb(241, 183, 170);
+	box-shadow: 0 1px 4px rgba(18, 25, 97, 0.0779552);
+	padding-inline: 7px;
+	padding-block: 3px;
+	border-radius: 3px;
+}
+
+.license-status--expired svg {
+	flex-shrink: 0;
+	fill: #d32f2f;
+}

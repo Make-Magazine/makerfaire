@@ -1,0 +1,36 @@
+.gform-router-nav-bar {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.gform-router-nav-bar__list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1rem 0;
+}
+
+.gform-admin .gform-router-nav-bar__list.gform-router-nav-bar__list--bottom {
+    margin-top: auto;
+}
+
+/* Handle text switching at different sizes */
+.spellbook-app__nav-bar-item .nav-text-short {
+    display: none;
+}
+
+@container spellbook ((max-width: 900px) or (max-height: 560px)) {
+    .spellbook-app__nav-bar-item .nav-text-full {
+        display: none;
+    }
+
+    .spellbook-app__nav-bar-item .nav-text-short {
+        display: inline;
+    }
+
+    .gform-router-nav-bar__item-link {
+        height: 1.875rem !important;
+        padding: .375rem .5rem !important;
+    }
+}

@@ -1,8 +1,5 @@
 __( 'class', 'elementor' );
 __( 'classes', 'elementor' );
-__( 'More actions', 'elementor' );
-__( 'Rename', 'elementor' );
-__( 'Delete', 'elementor' );
 __( 'There are no global classes yet.', 'elementor' );
 __(
 				'CSS classes created in the editor panel will appear here. Once they are available, you can arrange their hierarchy, rename them, or delete them as needed.',
@@ -16,12 +13,13 @@ __(
 					);
 __( 'Not now', 'elementor' );
 __( 'Delete', 'elementor' );
+__( 'Search', 'elementor' );
 __( 'Class Manager', 'elementor' );
 __( 'Save changes', 'elementor' );
 __( 'You have unsaved changes', 'elementor' );
 __( 'You have unsaved changes in the Class Manager.', 'elementor' );
 __( 'To avoid losing your updates, save your changes before leaving.', 'elementor' );
-__( 'Cancel', 'elementor' );
+__( 'Discard', 'elementor' );
 __( 'Save & Continue', 'elementor' );
 __( 'Something went wrong', 'elementor' );
 __( 'Class Manager', 'elementor' );
@@ -33,6 +31,9 @@ __(
 					'Remember, when editing an item within a specific class, any changes you make will apply across all elements in that class.',
 					'elementor'
 				);
+__( 'Sorry, nothing matched', 'elementor' );
+__( 'Try something else.', 'elementor' );
+__( 'Clear & try again', 'elementor' );
 __( 'Class Manager', 'elementor' );
 __( 'You have unsaved changes', 'elementor' );
 __(
@@ -41,3 +42,6 @@ __(
 							);
 __( 'Stay here', 'elementor' );
 __( 'Save & Continue', 'elementor' );
+__( 'More actions', 'elementor' );
+__( 'Rename', 'elementor' );
+__( 'Delete', 'elementor' );

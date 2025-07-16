@@ -1,4 +1,4 @@
-/*! elementor - v3.29.0 - 04-06-2025 */
+/*! elementor - v3.30.0 - 09-07-2025 */
 .elementor-hidden {
   display: none;
 }
@@ -2755,67 +2755,57 @@ body:not(.elementor-device-mobile) .elementor-control.elementor-control-responsi
 
 .elementor-visual-choice-choices {
   display: grid;
-  -moz-column-gap: 4px;
-       column-gap: 4px;
-  row-gap: 4px;
+  gap: 8px;
   grid-template-columns: repeat(var(--elementor-visual-choice-columns), 1fr);
-  height: -moz-fit-content;
-  height: fit-content;
   text-align: center;
-  border-spacing: 1px;
   border-radius: var(--e-a-border-radius);
   overflow: hidden;
 }
 
 .elementor-visual-choice-element {
-  align-items: center;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  align-items: center;
   justify-content: center;
-  padding: 4px;
+  gap: 8px;
   width: auto;
 }
-.elementor-visual-choice-element input {
-  display: none;
-}
-.elementor-visual-choice-element input.e-visual-choice-placeholder + .elementor-visual-choice-label, .elementor-visual-choice-element input:checked + .elementor-visual-choice-label {
-  border: 2px solid var(--e-a-bg-active-bold);
-  background-color: var(--e-a-bg-active-bold);
-  border-radius: 3px;
-  opacity: 1;
-}
-.elementor-visual-choice-element input:not(:checked) + .elementor-visual-choice-label {
-  opacity: 0.7;
-}
-.elementor-visual-choice-element input:hover + .elementor-visual-choice-label {
-  opacity: 1;
-  transform: scale(1.05);
-  background-color: var(--e-a-bg-hover);
-}
-.elementor-visual-choice-label {
-  border-block-start: var(--e-a-border-bold);
-  border-block-end: var(--e-a-border-bold);
-  border-inline-start: var(--e-a-border-bold);
-  border-inline-end: none;
+.elementor-visual-choice-element-image label {
+  border: var(--e-a-border-bold);
+  border-radius: var(--e-a-border-radius);
   font-size: 12px;
   transition: var(--e-a-transition-hover);
   cursor: pointer;
   overflow: hidden;
   padding: 8px;
 }
-.elementor-visual-choice-label:nth-child(2) {
-  border-start-start-radius: var(--e-a-border-radius);
-  border-end-start-radius: var(--e-a-border-radius);
+.elementor-visual-choice-element-image input.e-visual-choice-placeholder + label, .elementor-visual-choice-element-image input:checked + label, .elementor-visual-choice-element-image input:hover + label {
+  background-color: var(--e-a-bg-active-bold);
+  opacity: 1;
 }
-.elementor-visual-choice-label:last-child {
-  border-inline-end: var(--e-a-border-bold);
-  border-start-end-radius: var(--e-a-border-radius);
-  border-end-end-radius: var(--e-a-border-radius);
+.elementor-visual-choice-element-image input:checked + label {
+  border-color: var(--e-a-color-primary-bold);
 }
-.elementor-visual-choice-image {
-  height: auto;
+.elementor-visual-choice-element-image input:not(:checked) + label {
+  background-color: var(--e-a-color-white);
+  opacity: 0.5;
+}
+.elementor-visual-choice-element-image img {
   width: 100%;
+  height: auto;
+}
+.elementor-visual-choice-element-button {
+  grid-column: span var(--elementor-visual-choice-columns);
+}
+.elementor-visual-choice-element-button label {
+  width: -moz-fit-content;
+  width: fit-content;
+}
+.elementor-visual-choice-element-button input:checked + .elementor-button, .elementor-visual-choice-element-button input:hover + .elementor-button {
+  background-color: var(--e-a-bg-active-bold);
+}
+.elementor-visual-choice-element-button input:checked + .elementor-button {
+  border-color: var(--e-a-color-primary-bold);
 }
 
 .elementor-label-inline .elementor-visual-choice-choices {
@@ -3986,6 +3976,10 @@ html.elementor-html {
   display: none;
 }
 
+.e-youtube-base iframe {
+  pointer-events: none;
+}
+
 .elementor-editor-section-settings,
 .elementor-editor-container-settings,
 .elementor-editor-e-flexbox-settings,
@@ -3999,6 +3993,9 @@ html.elementor-html {
   border-start-end-radius: 5px;
   border-end-start-radius: 0;
   border-end-end-radius: 0;
+  stroke: transparent;
+  stroke-width: 0;
+  -webkit-text-stroke: 0 transparent;
 }
 .elementor-editor-section-settings i.eicon-handle,
 .elementor-editor-container-settings i.eicon-handle,
@@ -4333,6 +4330,9 @@ html.elementor-html {
   width: 100%;
   height: 100%;
   min-height: 100px;
+  stroke: transparent;
+  stroke-width: 0;
+  -webkit-text-stroke: 0 transparent;
 }
 .e-con .elementor-empty-view .elementor-first-add {
   width: auto;
@@ -4440,15 +4440,11 @@ html.elementor-html {
   padding: 2px;
 }
 
-.e-div-block-base:has(> .elementor-empty-view),
-.e-flexbox-base:has(> .elementor-empty-view) {
-  display: grid !important;
-  grid-template-rows: minmax(100%, 100px);
+.e-div-block-base:has(.elementor-empty-view), .e-flexbox-base:has(.elementor-empty-view) {
+  min-height: 120px;
 }
-.e-div-block-base:has(> .elementor-empty-view) > .elementor-empty-view,
-.e-flexbox-base:has(> .elementor-empty-view) > .elementor-empty-view {
-  height: auto;
-  grid-row: 1/-1;
+.e-div-block-base > .elementor-empty-view.elementor-empty-view, .e-flexbox-base > .elementor-empty-view.elementor-empty-view {
+  min-height: inherit;
 }
 
 body.rtl .e-con.e-grid.e-con--row .elementor-widget-placeholder.e-dragging-right, body.rtl .e-con.e-grid.e-con--row > .e-con-inner .elementor-widget-placeholder.e-dragging-right {

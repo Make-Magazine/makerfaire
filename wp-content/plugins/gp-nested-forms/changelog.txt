@@ -1,6 +1,15 @@
 
 # Changelog
 
+## 1.2.10 | June 11, 2025
+
+- Fixed an issue with Nested Entries Notifications not getting sent when edited via GravityView.
+
+## 1.2.9 | May 22, 2025
+
+- Fixed a compatibility issue with Gravity Flow Workflow Steps on Nested Entries.
+- Fixed populating number field using parent merge tag.
+
 ## 1.2.8 | May 14, 2025
 
 - Removed redundant check for Gravity Perks in preparation for Spellbook.

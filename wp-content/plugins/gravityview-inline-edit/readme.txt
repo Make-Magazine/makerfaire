@@ -1,7 +1,7 @@
 === GravityEdit ===
 Tags: gravity forms, inline edit, gravityview
 Requires at least: 5.1
-Tested up to: 6.7.2
+Tested up to: 6.8.1
 Contributors: The GravityKit Team
 License: GPL 2
 Requires PHP: 7.2.0
@@ -19,6 +19,21 @@ Inline Editing is a powerful way to quickly make changes to a form entry without
 3. Set your license key
 
 == Changelog ==
+
+= 2.3.0 on June 9, 2025 =
+
+This release introduces inline editing for Image Choice fields and resolves issues with duplicate dropdown placeholders and PHP notices.
+
+#### 🚀 Added
+* Support for the Image Choice field inline editing.
+
+#### 🐛 Fixed
+* Placeholder text in Drop Down fields is no longer duplicated when form field values are updated.
+* PHP notice in WordPress 6.8 caused by initializing product translations too early.
+* PHP deprecation notice related to the use of `gform_form_settings` filter.
+
+#### 🔄 Updated
+* [Foundation](https://www.gravitykit.com/foundation/) to version 1.2.25.
 
 = 2.2.0 on March 13, 2025 =
 

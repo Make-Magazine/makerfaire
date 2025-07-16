@@ -4,8 +4,6 @@
 
 /*! @elementor/editor-controls */
 
-/*! @elementor/editor-current-user */
-
 /*! @elementor/editor-documents */
 
 /*! @elementor/editor-elements */
@@ -127,10 +125,6 @@
 /*!***************************************************!*\
   !*** external ["elementorV2","editorV1Adapters"] ***!
   \***************************************************/
-
-/*!****************************************************!*\
-  !*** external ["elementorV2","editorCurrentUser"] ***!
-  \****************************************************/
 
 /*!*********************************************************!*\
   !*** external ["elementorV2","editorStylesRepository"] ***!

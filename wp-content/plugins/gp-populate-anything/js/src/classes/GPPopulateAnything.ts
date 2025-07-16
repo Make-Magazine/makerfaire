@@ -58,6 +58,9 @@ export default class GPPopulateAnything {
 		[fieldIds: string]: JQuery.jqXHR;
 	} = {};
 
+	// Note: This is used to store the last input ID that was changed.
+	private lastInputId: string | undefined;
+
 	// eslint-disable-next-line no-shadow
 	constructor(public formId: formID, public fieldMap: fieldMap) {
 		if ('GPPA_POSTED_VALUES_' + formId in window) {
@@ -329,10 +332,21 @@ export default class GPPopulateAnything {
 					this.getFormFieldValues()
 				);
 
-				// Do not fire if values didn't change
+				const lastDependencies = this.lastInputId
+					? JSON.stringify(this.getDependentFields(this.lastInputId))
+					: [];
+
+				const currentDependencies = inputId
+					? JSON.stringify(this.getDependentFields(inputId))
+					: [];
+
+				// Skip if field values and dependencies haven't changed.
+				// Dependencies must be checked due to cascading population (e.g., A → B → C).
+				// If A changes but B retains its previous value, C may falsely assume B is unchanged and fail to update properly. (See HS#83298)
 				if (
 					JSON.stringify(lastFieldValues) ===
-					JSON.stringify(currentFieldValues)
+						JSON.stringify(currentFieldValues) &&
+					lastDependencies === currentDependencies
 				) {
 					// eslint-disable-next-line no-console
 					console.debug(
@@ -340,6 +354,9 @@ export default class GPPopulateAnything {
 					);
 					return;
 				}
+
+				// Set the last input ID to the current one so we can compare dependencies on next run.
+				this.lastInputId = inputId;
 
 				/**
 				 * Override when fields and Live Merge Tag values are refreshed when dependent inputs change.
@@ -611,8 +628,17 @@ export default class GPPopulateAnything {
 				},
 				formId: number
 			) => {
-				// eslint-disable-next-line eqeqeq
-				if (formId != this.formId || !this.gfPageConditionalLogic) {
+				const $form = $('#gform_' + formId);
+				const isAjax =
+					$form.attr('target') === 'gform_ajax_frame_' + formId;
+
+				// Ensure we only run this for the current form and that the page conditional logic is set.
+				if (
+					// eslint-disable-next-line eqeqeq
+					formId != this.formId ||
+					!this.gfPageConditionalLogic ||
+					isAjax
+				) {
 					return;
 				}
 
@@ -877,6 +903,11 @@ export default class GPPopulateAnything {
 			);
 		}
 
+		const currentMergeTagValues = {
+			...window.gppaLiveMergeTags[this.formId].currentMergeTagValues,
+			...window[`GPPA_CURRENT_LIVE_MERGE_TAG_VALUES_FORM_${this.formId}`],
+		};
+
 		const data = window.gform.applyFilters(
 			'gppa_batch_field_html_ajax_data',
 			{
@@ -898,8 +929,7 @@ export default class GPPopulateAnything {
 				 * JSON is used here due to issues with modifiers causing merge tags to be truncated in $_REQUEST and $_POST
 				 */
 				'lmt-nonces': window.gppaLiveMergeTags[this.formId].whitelist,
-				'current-merge-tag-values':
-					window.gppaLiveMergeTags[this.formId].currentMergeTagValues,
+				'current-merge-tag-values': currentMergeTagValues,
 				security: window.GPPA.NONCE,
 				show_admin_fields_in_ajax:
 					window[`GPPA_FORM_${this.formId}`]

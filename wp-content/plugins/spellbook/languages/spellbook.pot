@@ -1,0 +1,354 @@
+# Copyright (C) 2025 Gravity Wiz
+# This file is distributed under the GPL2.
+msgid ""
+msgstr ""
+"Project-Id-Version: Spellbook 3.0.10\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/cloned-perk-UWKh0Me9-_\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2025-07-16T18:48:21+00:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"X-Generator: WP-CLI 2.10.0\n"
+"X-Domain: spellbook\n"
+
+#. Plugin Name of the plugin
+#: spellbook.php
+#: class-gravityperks.php:204
+#: class-gravityperks.php:1177
+#: class-gravityperks.php:1445
+msgid "Spellbook"
+msgstr ""
+
+#. Plugin URI of the plugin
+#. Author URI of the plugin
+#: spellbook.php
+msgid "https://gravitywiz.com/"
+msgstr ""
+
+#. Description of the plugin
+#: spellbook.php
+msgid "Spellbook will allow you to install and update all other Gravity Wiz plugins directly from your WordPress admin. It feels like magic. ✨"
+msgstr ""
+
+#. Author of the plugin
+#: spellbook.php
+msgid "Gravity Wiz"
+msgstr ""
+
+#: admin/manage_perks.php:50
+msgid "Settings saved successfully."
+msgstr ""
+
+#: admin/manage_perks.php:52
+msgid "Settings were not saved."
+msgstr ""
+
+#: admin/manage_perks.php:56
+msgid "%s Settings"
+msgstr ""
+
+#: admin/manage_perks.php:91
+msgid "Save Settings"
+msgstr ""
+
+#: class-gravityperks.php:248
+msgid "Auto-updates disabled; enter %s license in Spellbook to enable."
+msgstr ""
+
+#: class-gravityperks.php:253
+msgid "Auto-updates disabled; register %s in Spellbook."
+msgstr ""
+
+#: class-gravityperks.php:258
+msgid "Auto-updates disabled; %s license has expired."
+msgstr ""
+
+#: class-gravityperks.php:263
+msgid "Auto-updates disabled; free plugins require a license or email to enable auto-updates."
+msgstr ""
+
+#: class-gravityperks.php:499
+msgid "Current Gravity Forms version (%1$s) does not meet minimum Gravity Forms version requirement (%2$s)."
+msgstr ""
+
+#: class-gravityperks.php:502
+msgid "Gravity Forms %1$s or greater is required. Activate it now or %2$spurchase it today!%3$s"
+msgstr ""
+
+#: class-gravityperks.php:508
+msgid "%1$s requires WordPress %2$s or greater. You must upgrade WordPress in order to use this perk."
+msgstr ""
+
+#: class-gravityperks.php:511
+msgid "Spellbook requires WordPress %1$s or greater. You must upgrade WordPress in order to use Spellbook."
+msgstr ""
+
+#: class-gravityperks.php:516
+msgid "%1$s requires Spellbook %2$s or greater. Activate it now or %3$spurchase it today!%4$s"
+msgstr ""
+
+#: class-gravityperks.php:560
+msgid "Enter your license for %1$s in <a href=\"%2$s\">Spellbook</a> to receive access to automatic upgrades and support for this %3$s. Need a license key? <a href=\"%4$s\" target=\"_blank\">Purchase one now.</a>"
+msgstr ""
+
+#: class-gravityperks.php:576
+msgid "Register %1$s in <a href=\"%2$s\">Spellbook</a> to receive access to automatic upgrades and support for this %3$s."
+msgstr ""
+
+#: class-gravityperks.php:587
+msgid "Your license for %1$s has expired. <a href=\"%2$s\" target=\"_blank\">Renew</a> to receive access to automatic upgrades and support for this %3$s."
+msgstr ""
+
+#: class-gravityperks.php:602
+#: class-gravityperks.php:830
+msgid "Updating free plugins in Spellbook requires a license or email. <a href=\"%1$s\" target=\"_blank\">Enter in Spellbook</a>"
+msgstr ""
+
+#: class-gravityperks.php:809
+msgid "Your %1$s license is invalid or missing. <a href=\"%2$s\" target=\"_blank\">Enter in Spellbook</a> or <a href=\"%3$s\" target=\"_blank\">Buy License</a>."
+msgstr ""
+
+#: class-gravityperks.php:817
+msgid "%s is unregistered. <a href=\"%s\" target=\"_blank\">Register in Spellbook</a>"
+msgstr ""
+
+#: class-gravityperks.php:822
+msgid "Your %1$s license has expired. <a href=\"%2$s\" target=\"_blank\">Renew License</a>"
+msgstr ""
+
+#: class-gravityperks.php:853
+msgid "<strong>Uh-oh!</strong> We ran into a problem when updating your Gravity Wiz plugins."
+msgstr ""
+
+#: class-gravityperks.php:854
+msgid "<strong>Uh-oh!</strong> We ran into some problems when updating your Gravity Wiz plugins."
+msgstr ""
+
+#: class-gravityperks.php:870
+msgid "Manage in Spellbook"
+msgstr ""
+
+#: class-gravityperks.php:971
+msgid "<strong>Spellbook</strong> must be network activated before a <strong>perk</strong> can be network activated."
+msgstr ""
+
+#: class-gravityperks.php:1079
+msgid "Oops! Your site is having some trouble communicating with our API."
+msgstr ""
+
+#: class-gravityperks.php:1080
+msgid "Let's get this fixed."
+msgstr ""
+
+#: class-gravityperks.php:1415
+msgid "Does this page look strange? Your PHP version is out-of-date. <strong>Please upgrade.</strong>"
+msgstr ""
+
+#: class-gravityperks.php:1509
+#: class-gravityperks.php:1513
+msgid "Perks"
+msgstr ""
+
+#: includes/api/class-rest-license-controller.php:170
+msgid "The provided license key is invalid."
+msgstr ""
+
+#: includes/api/class-rest-license-controller.php:171
+msgid "The provided license key does not match this product."
+msgstr ""
+
+#: includes/api/class-rest-license-controller.php:179
+msgid "License key is valid"
+msgstr ""
+
+#: includes/api/class-rest-license-controller.php:197
+msgid "Failed to deactivate license."
+msgstr ""
+
+#: includes/api/class-rest-license-controller.php:204
+msgid "License deactivated successfully"
+msgstr ""
+
+#: includes/api/class-rest-license-controller.php:221
+msgid "Failed to register product."
+msgstr ""
+
+#: includes/api/class-rest-license-controller.php:231
+msgid "Product registered successfully"
+msgstr ""
+
+#: includes/api/class-rest-license-controller.php:253
+msgid "Failed to deregister product."
+msgstr ""
+
+#: includes/api/class-rest-license-controller.php:260
+msgid "Product deregistered successfully"
+msgstr ""
+
+#: includes/api/class-rest-products-controller.php:134
+msgid "Plugin is not installed."
+msgstr ""
+
+#: includes/api/class-rest-products-controller.php:143
+#: includes/api/class-rest-products-controller.php:320
+#: includes/api/class-rest-products-controller.php:523
+msgid "This plugin can only be managed from the network admin's Plugins page."
+msgstr ""
+
+#: includes/api/class-rest-products-controller.php:173
+msgid "Failed to remove plugin."
+msgstr ""
+
+#: includes/api/class-rest-products-controller.php:228
+msgid "Plugin is already installed."
+msgstr ""
+
+#: includes/api/class-rest-products-controller.php:237
+msgid "No download URL available for this plugin."
+msgstr ""
+
+#: includes/api/class-rest-products-controller.php:280
+msgid "Plugin installation failed for an unknown reason."
+msgstr ""
+
+#: includes/api/class-rest-products-controller.php:311
+msgid "Plugin is already inactive."
+msgstr ""
+
+#: includes/api/class-rest-products-controller.php:358
+msgid "Plugin is already active."
+msgstr ""
+
+#: includes/api/class-rest-products-controller.php:367
+msgid "Plugin must be installed before it can be activated."
+msgstr ""
+
+#: includes/api/class-rest-products-controller.php:468
+#: includes/api/class-rest-products-controller.php:493
+#: includes/api/class-rest-products-controller.php:680
+msgid "Plugin not found."
+msgstr ""
+
+#: includes/api/class-rest-products-controller.php:514
+msgid "Plugin must be installed before it can be updated."
+msgstr ""
+
+#: includes/api/class-rest-products-controller.php:538
+msgid "No update available for this plugin."
+msgstr ""
+
+#: includes/api/class-rest-products-controller.php:587
+msgid "Plugin update failed for an unknown reason."
+msgstr ""
+
+#: includes/api/class-rest-products-controller.php:598
+msgid "Plugin updated but reactivation failed: "
+msgstr ""
+
+#: includes/api/class-rest-products-controller.php:752
+msgid "Unique identifier for the plugin."
+msgstr ""
+
+#: includes/api/class-rest-products-controller.php:757
+msgid "Plugin name."
+msgstr ""
+
+#: includes/api/class-rest-products-controller.php:761
+msgid "Plugin version."
+msgstr ""
+
+#: includes/api/class-rest-products-controller.php:765
+msgid "Available update version."
+msgstr ""
+
+#: includes/api/class-rest-products-controller.php:769
+msgid "Plugin slug."
+msgstr ""
+
+#: includes/api/class-rest-products-controller.php:773
+msgid "Plugin file path."
+msgstr ""
+
+#: includes/api/class-rest-products-controller.php:777
+msgid "Plugin file path (alias for backwards compatibility)."
+msgstr ""
+
+#: includes/api/class-rest-products-controller.php:781
+msgid "Plugin homepage URL."
+msgstr ""
+
+#: includes/api/class-rest-products-controller.php:786
+msgid "Documentation URL."
+msgstr ""
+
+#: includes/api/class-rest-products-controller.php:791
+msgid "Plugin sections including description and changelog."
+msgstr ""
+
+#: includes/api/class-rest-products-controller.php:799
+msgid "Plugin banner images."
+msgstr ""
+
+#: includes/api/class-rest-products-controller.php:813
+msgid "Plugin icons."
+msgstr ""
+
+#: includes/api/class-rest-products-controller.php:827
+msgid "Plugin categories."
+msgstr ""
+
+#: includes/api/class-rest-products-controller.php:832
+msgid "Whether the plugin is installed."
+msgstr ""
+
+#: includes/api/class-rest-products-controller.php:836
+msgid "Whether the plugin is active."
+msgstr ""
+
+#: includes/api/class-rest-products-controller.php:840
+msgid "Plugin type."
+msgstr ""
+
+#: includes/api/class-rest-products-controller.php:845
+msgid "Last updated date."
+msgstr ""
+
+#: includes/api/class-rest-products-controller.php:849
+msgid "Download URL for the plugin."
+msgstr ""
+
+#: includes/api/class-rest-products-controller.php:854
+msgid "Whether the plugin has settings."
+msgstr ""
+
+#: includes/class-gwapi.php:294
+msgid "<strong>Important Note!</strong> GP Google Sheets has been converted to GC Google Sheets"
+msgstr ""
+
+#: includes/class-gwapi.php:298
+msgid "GC Google Sheets has been activated."
+msgstr ""
+
+#: model/perk.php:95
+msgid "The file for this perk does not exist."
+msgstr ""
+
+#: model/perk.php:120
+msgid "There is no class for this perk."
+msgstr ""
+
+#: model/perk.php:136
+msgid "%s is not a perk."
+msgstr ""
+
+#. translators: placeholder is perk name
+#: model/perk.php:371
+msgid "Uh-oh! <strong>%s</strong> needs your attention."
+msgstr ""
+
+#: model/perk.php:650
+msgid "There was an issue deleting this perk. The perk directory was not available."
+msgstr ""

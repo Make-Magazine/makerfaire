@@ -201,7 +201,7 @@ const Filter = ({
 					className="gppa-filter-value"
 					value={
 						propertiesLoaded && propertyValuesLoaded
-							? filter.value
+							? filter.value ?? ''
 							: ''
 					}
 					objectTypeInstance={objectTypeInstance}

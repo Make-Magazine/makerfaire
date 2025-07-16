@@ -28,15 +28,29 @@ class GravityView_Inline_Edit_Field_Select extends GravityView_Inline_Edit_Field
 	public function modify_inline_edit_attributes( $wrapper_attributes, $field_input_type, $field_id, $entry, $current_form, $gf_field ) {
 		// Add a placeholder to the choices array so the user can reset the value.
 		if ( ! empty( $gf_field->placeholder ) && ! empty( $gf_field->choices ) ) {
-			$gf_field->choices = array_merge(
-				[
+			// Check if placeholder already exists in choices.
+			$placeholder_exists = false;
+
+			foreach ( $gf_field->choices as $choice ) {
+				if ( $choice['text'] === $gf_field->placeholder && $choice['value'] === null ) {
+					$placeholder_exists = true;
+
+					break;
+				}
+			}
+
+			// Only add placeholder if it doesn't already exist
+			if ( ! $placeholder_exists ) {
+				$gf_field->choices = array_merge(
 					[
-						'text'  => $gf_field->placeholder,
-						'value' => null,
+						[
+							'text'  => $gf_field->placeholder,
+							'value' => null,
+						],
 					],
-				],
-				$gf_field->choices
-			);
+					$gf_field->choices
+				);
+			}
 		}
 
 		$wrapper_attributes['data-source'] = json_encode( $gf_field->choices );

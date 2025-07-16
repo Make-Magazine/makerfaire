@@ -1,5 +1,42 @@
 # Changelog
 
+## 2.1.40 | July 2, 2025
+
+- Fixed an issue where List fields with dynamically populated values would not populate correctly when the field was conditionally shown.
+- Fixed an issue where Product field failed to populate with decimal comma values when filtered by a query string field and conditionally shown.
+- Fixed an issue where the Field Value Object type would not populate on form load if the referenced field had dynamic population with a preselected choice.
+
+## 2.1.39 | June 24, 2025
+
+- Fixed issue where ampersands in dynamically populated values from ACF posts could be incorrectly encoded.
+
+## 2.1.38 | June 17, 2025
+
+- Fixed an issue where differing source and target date formats caused issues with dynamic value population.
+- Fixed an issue where some values got lost on page load of multi page forms in Elementor.
+
+## 2.1.36 | June 11, 2025
+
+- Fixed an issue where field values containing an ampersand could be incorrectly encoded, resulting in unexpected behavior when dynamically populating fields.
+- Fixed an issue where dynamic population failed to function correctly in certain scenarios on Gravity Flow with Firefox.
+
+## 2.1.35 | June 4, 2025
+
+- Added new [`gppa_field_has_posted_value`](https://gravitywiz.com/documentation/gppa_field_has_posted_value/) PHP filter hook.
+- Fixed an issue where dynamically populating fields containing an ampersand would prevent other fields from populating as expected.
+
+## 2.1.34 | May 28, 2025
+
+- Fixed an issue where cascading population would not fetch correct results when a dependency field was rendered and the previous choice selected was the same as the new choice selected.
+- Fixed an issue where dynamically populated fields with conditional logic would not update when their filter field was another conditionally hidden field.
+
+## 2.1.33 | May 22, 2025
+
+- Fixed an issue where conditionally hidden fields could load on form render and trigger dynamic population prematurely.
+- Fixed an issue where Live Merge Tags could become out of sync with field values in certain scenarios.
+- Fixed an issue where manually unchecking a dynamically populated field would not remove the preselected default value, causing it to remain selected.
+- Fixed an issue where filter values containing special characters were not correctly populated in dynamic population filters.
+
 ## 2.1.32 | May 14, 2025
 
 - Removed redundant check for Gravity Perks in preparation for Spellbook.

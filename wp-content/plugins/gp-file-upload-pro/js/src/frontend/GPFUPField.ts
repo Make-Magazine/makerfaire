@@ -495,12 +495,13 @@ export default class GPFUPField {
 
 						// Convert to JPEG if a HEIC
 						if (fileType === 'image/heic') {
-							const heic2any = await import('heic2any');
-
-							const heicBlob = await heic2any.default({
+							const { heicTo } = await import('heic-to/csp');
+							const outputBuffer = await heicTo({
 								blob,
-								toType: 'image/jpeg',
+								type: 'image/jpeg'
 							});
+
+							const heicBlob = new Blob([outputBuffer], { type: 'image/jpeg' });
 
 							// Create new file object
 							const convertedHeicFile = new window.mOxie.File(null, heicBlob);

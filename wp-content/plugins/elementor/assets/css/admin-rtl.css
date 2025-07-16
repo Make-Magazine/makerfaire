@@ -1,4 +1,4 @@
-/*! elementor - v3.29.0 - 04-06-2025 */
+/*! elementor - v3.30.0 - 09-07-2025 */
 .elementor-button,
 .e-btn,
 #elementor-deactivate-feedback-modal .dialog-skip,
@@ -1996,6 +1996,13 @@ fieldset:disabled a.e-button {
   font-size: 16px;
   margin: 20px 0 25px;
 }
+.tab-import-export-kit__container .description {
+  font-size: 16px;
+  margin: 8px 0 8px;
+}
+.tab-import-export-kit__container .action-buttons {
+  margin-block-start: 20px;
+}
 .tab-import-export-kit__info {
   font-size: 14px;
 }
@@ -2007,6 +2014,10 @@ fieldset:disabled a.e-button {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
+}
+.tab-import-export-kit__box.action-buttons {
+  justify-content: end;
+  gap: 12px;
 }
 .tab-import-export-kit__box h2 {
   font-size: 28px;

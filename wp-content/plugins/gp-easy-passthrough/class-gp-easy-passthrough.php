@@ -219,6 +219,10 @@ class GP_Easy_Passthrough extends GP_Feed_Plugin {
 
 		add_filter( 'gform_field_map_choices', array( $this, 'append_checkbox_name' ), 10, 4 );
 
+		add_action( 'gform_after_submission', array( $this, 'duplicate_passed_through_files' ), 10, 2 );
+
+		add_filter( 'gform_validate_required_file_exists', array( $this, 'maybe_override_file_upload_validation' ), 10, 3 );
+
 		/**
 		 * Delete GPEP cookie when users log out.
 		 *
@@ -233,6 +237,7 @@ class GP_Easy_Passthrough extends GP_Feed_Plugin {
 
 		add_action( 'gravityview/duplicate-entry/duplicated', array( $this, 'gv_update_token_for_duplicate_entry' ), 10, 2 );
 	}
+
 
 	/**
 	* Register needed hooks.
@@ -649,7 +654,7 @@ class GP_Easy_Passthrough extends GP_Feed_Plugin {
 					$column_index++;
 
 				}
-			} elseif ( ! in_array( $input_type, array( 'fileupload', 'stripe_creditcard', 'consent' ) ) ) {
+			} elseif ( ! in_array( $input_type, array( 'stripe_creditcard', 'consent' ) ) ) {
 
 				// Add field to field map.
 				$field_map[] = array(
@@ -977,7 +982,7 @@ class GP_Easy_Passthrough extends GP_Feed_Plugin {
 		if ( ! defined( 'DONOTCACHEPAGE' ) ) {
 			define( 'DONOTCACHEPAGE', 'true' );
 		}
-		
+
 		nocache_headers();
 
 		// Get token.
@@ -1046,9 +1051,157 @@ class GP_Easy_Passthrough extends GP_Feed_Plugin {
 
 	}
 
+	public function get_gform_uploaded_files_from_post() {
+		$gfom_uploaded_files_original = rgpost( 'gform_uploaded_files' );
 
+		if ( empty( $gfom_uploaded_files_original ) ) {
+			// If no uploaded files are present, return an empty array.
+			return array();
+		}
 
+		$gform_uploaded_files = json_decode(
+			stripslashes( $gfom_uploaded_files_original ),
+			true
+		);
 
+		return $gform_uploaded_files;
+	}
+
+	public function duplicate_passed_through_files( $entry, $form ) {
+		$gform_uploaded_files = $this->get_gform_uploaded_files_from_post();
+
+		$field_values = $this->get_field_values( $form['id'] );
+
+		foreach ( $form['fields'] as $field ) {
+			if ( $field->get_input_type() !== 'fileupload' ) {
+				continue;
+			}
+
+			if ( $field->multipleFiles ) {
+				$input_name = 'input_' . $field->id;
+
+				$field_value = rgar( $entry, $field->id );
+
+				$file_urls = array();
+				try {
+					$val = json_decode( $field_value, true );
+					if ( is_array( $val ) ) {
+						$file_urls = $val;
+					}
+				} catch ( Exception $e ) {
+					// NOOP
+				}
+
+				foreach ( rgar( $gform_uploaded_files, $input_name, array() ) as $uploaded_file ) {
+					if ( ! rgar( $uploaded_file, 'gpep_is_passed_through' ) ) {
+						// only passed through files have the url and path set.
+						// this file wasn't passed through and willbe handled by GF.
+						continue;
+					}
+
+					$original_file_path = $uploaded_file['path'];
+					if ( ! file_exists( $original_file_path ) ) {
+						// If the original file does not exist, skip.
+						continue;
+					}
+
+					$original_path_info = pathinfo( $uploaded_file['path'] );
+
+					$new_file_info = GFFormsModel::get_file_upload_path( $form['id'], $original_path_info['basename'] );
+					if ( $new_file_info === false ) {
+						$this->log_debug( __METHOD__ . '(): Failed to get file upload path for form ' . $form['id'] . ' and file ' . $original_path_info['basename'] );
+						continue;
+					}
+
+					list( 'path' => $new_file_path, 'url' => $new_file_url ) = $new_file_info;
+
+					$success = copy( $original_file_path, $new_file_path );
+					if ( ! $success ) {
+						$this->log_debug( __METHOD__ . '(): Failed to copy file from ' . $original_file_path . ' to ' . $new_file_path . ' for field ' . $field->id );
+						continue;
+					}
+
+					$file_urls[] = $new_file_url;
+				}
+
+				$file_urls = array_unique( $file_urls );
+				gform_update_meta( $entry['id'], $field->id, json_encode( $file_urls ) );
+			} else {
+				$input_name = 'input_' . $field->id;
+
+				if (
+					isset( $_FILES[ $input_name ] )
+					&& ! empty( $_FILES[ $input_name ]['name'] )
+					&& ! empty( $_FILES[ $input_name ]['tmp_name'] )
+					&& file_exists( $_FILES[ $input_name ]['tmp_name'] )
+					&& rgars( $_FILES, $input_name . '/error' ) === 0
+				) {
+					// note: $gform_uploaded_files[ $input_name ] will also be null
+
+					// If a new file is uploaded, do not duplicate the passed through file.
+					continue;
+				}
+
+				$file_data = rgar( $gform_uploaded_files, $input_name );
+				if ( empty( $file_data ) ) {
+					// If no file data is present, skip.
+					continue;
+				}
+
+				$original_file_url = rgar( $field_values, $field->id );
+				if ( empty( $original_file_url ) ) {
+					// If no field value is present, skip.
+					continue;
+				}
+
+				$original_file_url  = trim( $original_file_url );
+				$original_file_path = str_replace( WP_CONTENT_URL, WP_CONTENT_DIR, $original_file_url );
+
+				$original_path_info = pathinfo( $original_file_path );
+
+				if ( ! file_exists( $original_file_path ) ) {
+					// If the original file does not exist, skip.
+					continue;
+				}
+
+				$new_file_info = GFFormsModel::get_file_upload_path( $form['id'], $original_path_info['basename'] );
+
+				if ( $new_file_info === false ) {
+					$this->log_debug( __METHOD__ . '(): Failed to get file upload path for form ' . $form['id'] . ' and file ' . $original_path_info['basename'] );
+					continue;
+				}
+
+				list( 'path' => $new_file_path, 'url' => $new_file_url ) = $new_file_info;
+
+				$success = copy( $original_file_path, $new_file_path );
+				if ( ! $success ) {
+					$this->log_debug( __METHOD__ . '(): Failed to copy file from ' . $original_file_path . ' to ' . $new_file_path . ' for field ' . $field->id );
+					continue;
+				}
+
+				gform_update_meta( $entry['id'], $field->id, $new_file_url );
+			}
+		}
+	}
+
+	public function maybe_override_file_upload_validation( $should_validate, $file, $file_field_instance ) {
+		$gform_uploaded_files = $this->get_gform_uploaded_files_from_post();
+		$input_name           = 'input_' . $file_field_instance->id;
+
+		if (
+			! empty( $gform_uploaded_files[ $input_name ] )
+			&& $file_field_instance->multipleFiles === true
+			&& array_reduce( $gform_uploaded_files[ $input_name ], function ( $carry, $item ) {
+				return $carry || rgar( $item, 'gpep_is_passed_through' ) === true;
+			}, false ) === true
+		) {
+			// If the input contains passed through files, do not validate the files as they will be copied from
+			// the original entry in a later step.
+			$should_validate = false;
+		}
+
+		return $should_validate;
+	}
 
 	// # FORM RENDER ---------------------------------------------------------------------------------------------------
 
@@ -1214,7 +1367,66 @@ class GP_Easy_Passthrough extends GP_Feed_Plugin {
 					}
 
 					break;
+				case 'fileupload':
+					$is_multiple      = $field->multipleFiles;
+					$form_id          = $form['id'];
+					$file_upload_data = array();
 
+					if ( empty( $field_values ) ) {
+						// If no field values are set, skip.
+						break;
+					}
+
+					$value = rgar( $field_values, $field->id );
+
+					if ( $is_multiple ) {
+						$files = explode( ',', $value );
+					} else {
+						$files = array( $value );
+					}
+
+					if ( is_array( $files ) ) {
+						foreach ( $files as $file ) {
+							$file = trim( $file );
+
+							// Convert URL to real path.
+							$path_info     = pathinfo( $file );
+							$old_file_path = str_replace( WP_CONTENT_URL, WP_CONTENT_DIR, $file );
+
+							// Skip if the file doesn't exist.
+							if ( ! file_exists( $old_file_path ) ) {
+								break;
+							}
+
+							$file_upload_data[] = array(
+								'uploaded_filename'      => $path_info['basename'],
+								'temp_filename'          => $path_info['basename'],
+								'url'                    => $path_info['dirname'] . '/' . $path_info['basename'],
+								'path'                   => $old_file_path,
+								'gpep_is_passed_through' => true,
+							);
+						}
+					}
+
+					if ( empty( $file_upload_data ) ) {
+						// If no files were found, skip.
+						break;
+					}
+
+					// Ensure uploaded files array exists.
+					if ( ! isset( GFFormsModel::$uploaded_files[ $form_id ] ) ) {
+						GFFormsModel::$uploaded_files[ $form_id ] = array();
+					}
+
+					$input_name = 'input_' . $field->id;
+					// Check if this field's key has been set in the $uploaded_files array, if not add this file (otherwise, a new image may have been uploaded so don't overwrite).
+					if ( ! isset( GFFormsModel::$uploaded_files[ $form_id ][ $input_name ] ) ) {
+						GFFormsModel::$uploaded_files[ $form_id ][ $input_name ] = $is_multiple
+							? $file_upload_data
+							: $file_upload_data[0]['uploaded_filename'];
+					}
+
+					break;
 				case 'date':
 					$date_array = rgar( $field_values, $field->id );
 
@@ -1292,7 +1504,7 @@ class GP_Easy_Passthrough extends GP_Feed_Plugin {
 
 							if ( ! $parameter_value || ! $prefer_dynamic_population ) {
 								$field->allowsPrepopulate = true;
-								$input['name'] = $this->passthrough_value( $form['id'], $input['id'], rgar( $field_values, (string) $input['id'] ) );
+								$input['name']            = $this->passthrough_value( $form['id'], $input['id'], rgar( $field_values, (string) $input['id'] ) );
 							}
 
 							// Unset reference to prevent unexpected changes where $input is referenced elsewhere in this function.
@@ -1499,7 +1711,7 @@ class GP_Easy_Passthrough extends GP_Feed_Plugin {
 					continue;
 				}
 
-				$has_token         = ! empty( $this->current_token );
+				$has_token = ! empty( $this->current_token );
 				/**
 				 * Filter whether multiple tokens can be used to populate a form.
 				 *
@@ -2093,7 +2305,7 @@ class GP_Easy_Passthrough extends GP_Feed_Plugin {
 	public function gv_update_token_for_duplicate_entry( $duplicated_entry, $entry ) {
 		gform_delete_meta( $duplicated_entry['id'], 'fg_easypassthrough_token' );
 		$duplicated_entry['fg_easypassthrough_token'] = gp_easy_passthrough()->get_entry_token( $duplicated_entry );
-		GFAPI::update_entry( $duplicated_entry);
+		GFAPI::update_entry( $duplicated_entry );
 	}
 
 	/**

@@ -195,8 +195,35 @@
 		 */
 		self.setInlineEditableFields = function () {
 			$( '.gv-inline-editable-view [class^=gv-inline-editable-field]' ).each( function ( i, val ) {
-
 				self.initializeEditableField( $( this ) );
+				$(this).addClass('editable-click');
+				
+				// Manually toggle the editable field so we can wait 2 seconds after it closes to show the next one to fix the placement issue
+				$( this ).on( 'click', function( e ) {
+					var $clicked = $( this );
+
+					if ( $clicked.hasClass( 'editable-disabled' ) ) {
+						return;
+					}
+
+					e.preventDefault();
+
+					var $open = $( '.editable-open' );
+					// Something else is open → close it, then open the clicked one
+					if ( $open.length ) {
+						$open.editable( 'toggle' );
+
+						$( document ).one( 'hidden.bs.popover', function() {
+							$clicked.editable( 'toggle' );
+						} );
+						return;
+					}
+
+					// Nothing is open → just open it
+					$clicked.editable( 'toggle' );
+				  
+				  
+				} );
 			} );
 		};
 
@@ -229,6 +256,7 @@
 				},
 				display: null,
 				savenochange: true,
+				toggle: 'manual'
 			};
 
 			// This is a datepicker field
@@ -406,7 +434,7 @@
 
 			// We're in Entries. The first column has a link, so we need to move the form up one level.
 			if ( 'inline' === editable.options.mode ) {
-				if ( editable.container.$element.parents( '.column-primary' ).length ) {
+				if ( editable.container.$element.parents( '.column-primary' ).length && editable.container.$tip ) {
 					editable.container.$tip.insertBefore( editable.container.$element.parent() );
 				}
 			}
@@ -424,6 +452,14 @@
 					$( this ).addClass( 'edited-input' );
 				} );
 			}
+
+			// Fix for Checkboxes, Radio and Image choices fields popovers not showing fully if the count of elements is too high
+			$( '.gv-editable-popover .popover-content' ).each( function () {
+				var $checkboxContainer = $( this ).find( '.ginput_container_checkbox, .ginput_container_radio' );
+				if ( $checkboxContainer.length > 0 ) {
+					$checkboxContainer.addClass( 'gfield-big-list-scroller' );
+				}
+			} );
 
 		};
 

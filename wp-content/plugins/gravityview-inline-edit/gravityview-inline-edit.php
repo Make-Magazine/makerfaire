@@ -3,7 +3,7 @@
  * Plugin Name: GravityEdit
  * Plugin URI:  https://www.gravitykit.com/extensions/gravityview-inline-edit/
  * Description: Edit your fields inline in Gravity Forms and GravityView.
- * Version:     2.2.0
+ * Version:     2.3.0
  * Author:      GravityKit
  * Author URI:  https://www.gravitykit.com/
  * Text Domain: gk-gravityedit
@@ -25,7 +25,7 @@ if ( ! GravityKit\GravityEdit\Foundation\should_load( __FILE__ ) ) {
  *
  * @since 1.0
  */
-define( 'GRAVITYEDIT_VERSION', '2.2.0' );
+define( 'GRAVITYEDIT_VERSION', '2.3.0' );
 
 /** @define "GRAVITYEDIT_DIR" "./" The absolute path to the plugin directory */
 define( 'GRAVITYEDIT_DIR', plugin_dir_path( __FILE__ ) );
@@ -49,21 +49,13 @@ require_once  GRAVITYEDIT_DIR . 'vendor_prefixed/autoload.php';
 
 GravityKit\GravityEdit\Foundation\Core::register( GRAVITYEDIT_FILE );
 
-/**
- * Load GravityEdit. Wrapper function to make sure GravityView_Extension has loaded.
- *
- * @since 1.0
- *
- * @return void
- */
-function gravityedit_load() {
+add_action( 'after_setup_theme', function () {
 	require_once GRAVITYEDIT_DIR . 'class-gravityview-inline-edit.php';
 	require_once GRAVITYEDIT_DIR . 'includes/class-gravityview-inline-edit-settings.php';
 
-	// Won't be loaded if `GFForms` doesn't exist
-	if ( class_exists( 'GravityView_Inline_Edit_GFAddon' ) ) {
-		GravityView_Inline_Edit::get_instance( GRAVITYEDIT_VERSION, GravityView_Inline_Edit_GFAddon::get_instance() );
+	if ( ! class_exists( 'GravityView_Inline_Edit_GFAddon' ) ) {
+		return;
 	}
-}
 
-add_action( 'plugins_loaded', 'gravityedit_load', 20 );
+	GravityView_Inline_Edit::get_instance( GRAVITYEDIT_VERSION, GravityView_Inline_Edit_GFAddon::get_instance() );
+} );

@@ -38,7 +38,10 @@ final class GravityView_Inline_Edit_Gravity_Forms extends GravityView_Inline_Edi
 
 		add_filter( 'gform_pre_form_settings_save', array( $this, 'pre_form_settings_save' ) );
 		add_filter( 'gform_tooltips', array( $this, 'tooltips' ) );
-		add_filter( 'gform_form_settings', array( $this, 'form_settings' ), 10, 2 );
+
+		if ( ! self::is_GF_25() ) {
+			add_filter( 'gform_form_settings', array( $this, 'form_settings' ), 10, 2 );
+		}
 
 		// Set priority to 19 so it runs before the "Inline Edit Behavior" settings added by Entry Revisions 1.1
 		add_filter( 'gform_form_settings_fields', array( $this, 'add_settings_field' ), 19, 2 );
@@ -148,18 +151,14 @@ final class GravityView_Inline_Edit_Gravity_Forms extends GravityView_Inline_Edi
 	 *
 	 * @since 1.0
 	 *
+	 * @todo Deprecate when minimum GF version is set to 2.5+
+	 *
 	 * @param array $form_settings The form settings.
 	 * @param array $form The Form Object.
 	 *
 	 * @return array $form_settings with the Enable Inline Edit setting added
 	 */
 	public function form_settings( $form_settings, $form = array() ) {
-
-		/** If running GF 2.5, no need to modify the form settings. Instead, we use {@see add_settings_field()}. */
-		if ( self::is_GF_25() ) {
-			return $form_settings;
-		}
-
 		$tr_enable_inline_edit = '
         <tr>
             <th>

@@ -249,7 +249,7 @@ class GP_Limit_Checkboxes extends GWPerk {
 				foreach ( $group['fields'] as $field_id ) {
 
 					$field = GFAPI::get_field( $form, $field_id );
-					if ( ! GFFormDisplay::is_field_validation_supported( $field ) ) {
+					if ( ! $field || ! GFFormDisplay::is_field_validation_supported( $field ) ) {
 						continue;
 					}
 

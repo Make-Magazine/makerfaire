@@ -1475,7 +1475,7 @@
   padding-inline-start: var(--padding-inline-start);
   padding-inline-end: var(--padding-inline-end);
 }
-.e-con:not(.e-div-block-base) {
+.e-con:where(:not(.e-div-block-base)) {
   transition: background var(--background-transition, 0.3s), border var(--border-transition, 0.3s), box-shadow var(--border-transition, 0.3s), transform var(--e-con-transform-transition-duration, 0.4s);
 }
 .e-con {
@@ -1966,7 +1966,7 @@ body.rtl .e-con {
   min-height: 72px;
 }
 
-.elementor-element:not(.e-div-block-base) .elementor-widget-container, .elementor-element:not(.e-div-block-base):not(:has(.elementor-widget-container)) {
+.elementor-element:where(:not(.e-con)):where(:not(.e-div-block-base)) .elementor-widget-container, .elementor-element:where(:not(.e-con)):where(:not(.e-div-block-base)):not(:has(.elementor-widget-container)) {
   transition: background 0.3s, border 0.3s, border-radius 0.3s, box-shadow 0.3s, transform var(--e-transform-transition-duration, 400ms);
 }
 

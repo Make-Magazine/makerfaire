@@ -259,7 +259,8 @@ final class GravityView_Inline_Edit_Scripts {
 			'textarea',
 			'url',
 			'file',
-			'entry_tags'
+			'entry_tags',
+			'image_choice',
 		);
 
 		foreach ( $custom_inline_edit_field_types as $custom_field ) {

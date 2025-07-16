@@ -516,6 +516,35 @@ final class GravityView_Inline_Edit_AJAX {
 				$field_validate                = $post_value;
 				$values_to_update[ $field_id ] = $currency->to_money( $post_value );
 				break;
+			case 'image_choice':
+				if ( ! $gf_field instanceof GF_Field_Radio ) {
+					// Multiple selection (checkbox) behavior
+					$choice_number = 1;
+					foreach ( $gf_field->choices as $i => $choice ) {
+						if ( $choice_number % 10 === 0 ) { // Skip numbers ending in 0
+							++$choice_number;
+						}
+
+						$_id = $field_id . '.' . $choice_number;
+
+						if ( ! in_array( $choice['value'], (array) $post_value ) && '' !== $entry[ $_id ] ) {
+							$values_to_update[ $_id ] = '';
+						}
+
+						if ( in_array( $choice['value'], (array) $post_value ) && '' === $entry[ $_id ] ) {
+							$values_to_update[ $_id ] = $choice['value'];
+						}
+
+						++$choice_number;
+					}
+				} else {
+					// Single selection (radio) behavior
+					$value = is_array( $post_value ) ? $post_value[0] : $post_value;
+					$values_to_update[ $field_id ] = $value;
+				}
+
+				$field_validate = $values_to_update;
+				break;
 			default:
 				$field_validate                = $post_value;
 				$values_to_update[ $field_id ] = $field_validate;
@@ -647,6 +676,16 @@ final class GravityView_Inline_Edit_AJAX {
 			}
 
 			return true;
+		}
+
+		// Get all values for the image choice field so we can pass it to the validation, because it doesn't pass existing values to the $field_value
+		if ( $gf_field instanceof \GF_Field_Checkbox && $gf_field->type === 'image_choice') {
+
+			foreach ( $gf_field->inputs as $input ) {
+				$values[ $input['id'] ] = $entry[ $input['id'] ];
+			}
+
+			$field_value = array_filter( array_merge( $values, $field_value ) );
 		}
 
 		// Bypass validation for decimal format.

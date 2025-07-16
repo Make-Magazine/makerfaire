@@ -3,7 +3,7 @@
  * Plugin Name:         GravityView - DIY Layout
  * Plugin URI:          https://www.gravitykit.com/products/diy-layout/
  * Description:         Designers & developers: build your own GravityView layouts...styles not included!
- * Version:             2.5.1
+ * Version:             2.5.2
  * Author:              GravityView
  * Author URI:          https://www.gravitykit.com
  * Text Domain:         gravityview-diy
@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 } // Exit if accessed directly
 
-define( 'GRAVITYVIEW_DIY_VERSION', '2.5.1' );
+define( 'GRAVITYVIEW_DIY_VERSION', '2.5.2' );
 
 add_action( 'plugins_loaded', 'gv_extension_diy_load' );
 

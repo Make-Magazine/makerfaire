@@ -1743,7 +1743,7 @@ class GP_Populate_Anything extends GP_Plugin {
 	}
 
 	public function has_field_value( $field_id, $field_values ) {
-		return ! $this->is_empty( $this->get_field_value_from_field_values( $field_id, $field_values ) );
+		return ! $this->is_empty( $this->get_field_value_from_field_values( $field_id, $field_values, array() ) );
 	}
 
 	/**
@@ -1754,10 +1754,24 @@ class GP_Populate_Anything extends GP_Plugin {
 	 *
 	 * @param string|float|int $field_id
 	 * @param array $field_values
+	 * @param array $field
 	 *
 	 * @return bool|string
 	 */
-	public function get_field_value_from_field_values( $field_id, $field_values ) {
+	public function get_field_value_from_field_values( $field_id, $field_values, $field ) {
+
+		if ( $field ) {
+			$form         = GFAPI::get_form( rgar( $field, 'formId' ) );
+			$target_field = GFAPI::get_field( $form, $field_id );
+			$logic        = $target_field->conditionalLogic;
+			$evaluate_cl  = GFCommon::evaluate_conditional_logic( $logic, $form, $field_values );
+			$is_hidden    = ( $evaluate_cl && rgar( $logic, 'actionType' ) == 'hide' ) || ( ! $evaluate_cl && rgar( $logic, 'actionType' ) == 'show' );
+
+			// If the field is hidden, we don't want to populate it.
+			if ( $is_hidden ) {
+				return '';
+			}
+		}
 
 		$is_input_specific = (int) $field_id != $field_id;
 		$value             = '';
@@ -2638,6 +2652,18 @@ class GP_Populate_Anything extends GP_Plugin {
 		$field       = $this->populate_field_choices( $field, $field_values, $preselected_choice_value );
 		$field_value = $this->populate_field_value( $field, $field_values, $form, $entry, $force_use_field_value );
 
+		$currency      = new RGCurrency( GFCommon::get_currency() );
+		$number_format = rgar( $currency, 'decimal_separator' ) === '.' ? 'decimal_dot' : 'decimal_comma';
+
+		// If the field is a product field, we need to ensure that the value is formatted correctly.
+		if ( $field->type === 'product' && $number_format === 'decimal_comma' ) {
+			// Convert the field value to a decimal comma format.
+			$index = $field->id . '.2';
+			if ( isset( $field_value[ $index ] ) && is_numeric( $field_value[ $index ] ) ) {
+				$field_value[ $index ] = GFCommon::format_number( $field_value[ $index ], 'decimal_comma' );
+			}
+		}
+
 		if ( in_array( $field->type, self::get_multi_selectable_choice_field_types(), true ) || self::is_multi_selectable_choice_field_types( $field ) ) {
 			$selected_choices_value = $this->get_selected_choices( $field, $field_values );
 		}
@@ -2965,6 +2991,44 @@ class GP_Populate_Anything extends GP_Plugin {
 				}
 
 				$field->inputs = $inputs;
+			}
+
+			// Only set preselected value if there is no posted value for this field
+			$has_posted_value = false;
+			if ( is_array( $field_values ) && ! $field->allowsPrepopulate ) {
+				// For checkboxes, check if any input for this field has a value
+				foreach ( $field_values as $key => $val ) {
+					if ( (string) $key === (string) $field->id || strpos( (string) $key, $field->id . '.' ) === 0 ) {
+						if ( ! rgblank( $val ) ) {
+							$has_posted_value = true;
+							break;
+						}
+					}
+				}
+			}
+
+			/**
+			 * Filter whether the posted value check should be considered true for a dynamically populated field.
+			 *
+			 * This filter allows you to override the default logic that determines if a field has a posted value,
+			 * which controls whether Populate Anything should use the posted value or dynamically populate the field.
+			 * By default, the check is true if a value is present, but you can force it to false to always use dynamic population.
+			 *
+			 * @param bool     $has_posted_value Whether the field has a posted value (default logic).
+			 * @param GF_Field $field            The field object being checked.
+			 * @param array    $field_values     The current field values.
+			 *
+			 * @since 2.1.35
+			 */
+			$has_posted_value = gf_apply_filters(
+				array( 'gppa_field_has_posted_value', $field->formId, $field->id ),
+				$has_posted_value,
+				$field,
+				$field_values
+			);
+
+			if ( $has_posted_value ) {
+				return $field;
 			}
 
 			/**
@@ -4130,6 +4194,13 @@ class GP_Populate_Anything extends GP_Plugin {
 
 		// Add filter.
 		add_filter( 'gform_field_value_' . $filter_name, function( $val ) use ( $value ) {
+			// If the value is serialized, unserialize it so that it displays correctly in the form.
+			// Otherwise, the serialized value will be displayed as a string.
+			// This is specifically the case for List fields.
+			if ( is_serialized( $value ) ) {
+				$value = maybe_unserialize( $value );
+			}
+
 			return $value;
 		} );
 

@@ -1,0 +1,184 @@
+.license-bar-all {
+    position: relative;
+    background: radial-gradient(ellipse 50.04% 360.95% at 100.09% 50.21%, rgba(144, 46, 239, 0.24) 0%, rgba(7, 28, 38, 0.24) 100%), #071C26;
+    border-radius: 3px;
+	box-shadow: 0 2px 2px rgba(58, 58, 87, 0.0596411);
+    overflow: hidden;
+    font-family: inter, -apple-system, blinkmacsystemfont, "Segoe UI", roboto, oxygen-sans, ubuntu, cantarell, "Helvetica Neue", sans-serif;
+    margin-bottom: 20px;
+    padding: 24px;
+    display: flex;
+    gap: 24px;
+}
+
+.license-bar-all .spellbook-section {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    min-height: 0;
+}
+
+@container spellbook (max-width: 960px) {
+    .license-bar-all {
+        flex-direction: column;
+    }
+}
+
+.license-bar-all .spellbook-section-title {
+    color: white;
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 20px;
+    margin: 0;
+    padding: 0;
+}
+
+.license-bar-all .spellbook-form-container {
+    display: flex;
+    flex-direction: row;
+    gap: 8px;
+	flex-wrap: wrap;
+}
+
+.license-bar-all .spellbook-input-group {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+    width: 100%;
+}
+
+@container spellbook (min-width: 1100px) {
+    .license-bar-all .spellbook-section:last-child .spellbook-input-group {
+        flex-wrap: nowrap;
+    }
+}
+
+.license-bar-all .spellbook-input-wrapper {
+    flex: 1;
+    min-width: 0;
+}
+
+.license-bar-all .spellbook-form-input {
+    padding: 8px 16px;
+    border-radius: 4px;
+    border: 1px solid #D4ECF7;
+    background: transparent;
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 14px;
+    min-height: 0;
+    box-shadow: none;
+	flex: 1;
+}
+
+/* Brighter placeholder text */
+.license-bar-all .spellbook-form-input::placeholder {
+    color: rgba(255, 255, 255, 0.45);
+}
+
+/* Override WordPress focus styles */
+.license-bar-all .spellbook-form-input:focus {
+    border: 1px solid #bc82f5 !important;
+    box-shadow: 0 0 0 1px #bc82f5 !important;
+    outline: none !important;
+}
+
+/* Adjust width for registration form inputs */
+.license-bar-all .spellbook-section:last-child .spellbook-form-input {
+    min-width: 200px;
+    max-width: 300px;
+}
+
+.license-bar-all .spellbook-form-button {
+    padding: 8px 16px;
+    background: #902EEF;
+    border-radius: 4px;
+    color: white;
+    border: none;
+    font-size: 14px;
+    line-height: 14px;
+    cursor: pointer;
+    white-space: nowrap;
+    min-height: 0;
+    box-shadow: none;
+    display: flex;
+    align-items: center;
+	flex: 0;
+}
+
+.license-bar-all .spellbook-license-link {
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 16.8px;
+    margin-top: 8px;
+}
+
+.license-bar-all .spellbook-license-link .spellbook-error-message {
+	color:rgb(226, 97, 97);
+}
+
+.license-bar-all .spellbook-license-link span {
+    color: #D4ECF7;
+}
+
+.license-bar-all .spellbook-license-link a {
+    color: #d3abf9;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.license-bar-all .spellbook-vertical-divider {
+    width: 1px;
+    background: rgba(255, 255, 255, 0.16);
+    margin: 0;
+}
+
+.license-bar-all .spellbook-stars-background {
+    position: absolute;
+    right: -44px;
+    top: 0;
+    width: 171.65px;
+    height: 133.20px;
+    opacity: 0.16;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.license-bar-all .spellbook-star-large {
+    position: absolute;
+    left: 38.45px;
+    top: 0;
+    width: 88px;
+    height: 134px;
+}
+
+.license-bar-all .spellbook-star-small {
+    position: absolute;
+    left: 0;
+    top: 5.55px;
+    width: 31px;
+    height: 31px;
+}
+
+/* Reset any WordPress default styles */
+.license-bar-all h2 {
+    margin: 0;
+    padding: 0;
+}
+
+.license-bar-all input,
+.license-bar-all button {
+    min-height: 0;
+    box-shadow: none;
+}
+
+/* Ensure consistent heights */
+.license-bar-all .spellbook-form-input,
+.license-bar-all .spellbook-form-button {
+    height: 36px;
+    box-sizing: border-box;
+}

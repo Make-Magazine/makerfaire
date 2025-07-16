@@ -191,11 +191,14 @@ class GFActiveCampaign extends GFFeedAddOn {
 	/**
 	 * Process the feed, subscribe the user to the list.
 	 *
-	 * @param array $feed The feed object to be processed.
-	 * @param array $entry The entry object currently being processed.
-	 * @param array $form The form object currently being processed.
+	 * @since 1.0
+	 * @since 2.2 Updated return values for consistency with other add-ons, and so the framework can save the feed status to the entry meta.
 	 *
-	 * @return bool|void
+	 * @param array $feed  The feed object to be processed.
+	 * @param array $entry The entry object currently being processed.
+	 * @param array $form  The form object currently being processed.
+	 *
+	 * @return WP_Error|array
 	 */
 	public function process_feed( $feed, $entry, $form ) {
 
@@ -203,11 +206,9 @@ class GFActiveCampaign extends GFFeedAddOn {
 
 		/* If API instance is not initialized, exit. */
 		if ( ! $this->initialize_api() ) {
+			$this->add_feed_error( esc_html__( 'Feed was not processed because API was not initialized.', 'gravityformsactivecampaign' ), $feed, $entry, $form );
 
-			$this->log_error( __METHOD__ . '(): Failed to set up the API.' );
-
-			return;
-
+			return new WP_Error( 'api_not_initialized', 'API was not initialized.' );
 		}
 
 		/* Setup mapped fields array. */
@@ -215,14 +216,14 @@ class GFActiveCampaign extends GFFeedAddOn {
 
 		/* Setup contact array. */
 		$contact = array(
-			'email'      => $this->get_field_value( $form, $entry, rgar( $mapped_fields, 'email' ) ),
+			'email' => $this->get_field_value( $form, $entry, rgar( $mapped_fields, 'email' ) ),
 		);
 
 		/* If the email address is invalid or empty, exit. */
 		if ( GFCommon::is_invalid_or_empty_email( $contact['email'] ) ) {
-			$this->log_error( __METHOD__ . '(): Aborting. Invalid email address: ' . rgar( $contact, 'email' ) );
+			$this->add_feed_error( sprintf( esc_html__( "Feed was not processed because '%s' is not a valid email address.", 'gravityformsactivecampaign' ), rgar( $contact, 'email' ) ), $feed, $entry, $form );
 
-			return;
+			return new WP_Error( 'invalid_email', 'Invalid email address.' );
 		}
 
 		/**
@@ -326,14 +327,15 @@ class GFActiveCampaign extends GFFeedAddOn {
 		$sync_contact = $this->api->sync_contact( $contact );
 
 		if ( is_wp_error( $sync_contact ) ) {
-			$this->log_error( __METHOD__ . "(): {$contact['email']} was not added; code: {$sync_contact->get_error_code()}; message: {$sync_contact->get_error_message()}" );
+			$this->add_feed_error( sprintf( esc_html__( "'%s' was not added; code: %s; message: %s", 'gravityformsactivecampaign' ), rgar( $contact, 'email' ), $sync_contact->get_error_code(), $sync_contact->get_error_message() ), $feed, $entry, $form );
 
-			return false;
+			return $sync_contact;
 		}
 
 		if ( $sync_contact['result_code'] == 1 ) {
 
 			$this->log_debug( __METHOD__ . "(): {$contact['email']} has been added; {$sync_contact['result_message']}." );
+			$this->add_note( rgar( $entry, 'id' ), sprintf( esc_html__( 'Contact added: %s.', 'gravityformsactivecampaign' ), rgar( $sync_contact, 'subscriber_id' ) ), 'success' );
 
 			/* Add note. */
 			if( rgars( $feed, 'meta/note' ) ) {
@@ -372,16 +374,14 @@ class GFActiveCampaign extends GFFeedAddOn {
 
 			}
 
-			return true;
-
 		} else {
 
-			$this->log_error( __METHOD__ . "(): {$contact['email']} was not added; {$sync_contact['result_message']}" );
+			$this->add_feed_error( sprintf( esc_html__( "'%s' was not added; message: %s", 'gravityformsactivecampaign' ), rgar( $contact, 'email' ), rgar( $sync_contact, 'result_message' ) ), $feed, $entry, $form );
 
-			return false;
-
+			return new WP_Error( 'misc_error', rgar( $sync_contact, 'result_message' ) );
 		}
 
+		return $entry;
 	}
 
 	// # ADMIN FUNCTIONS -----------------------------------------------------------------------------------------------

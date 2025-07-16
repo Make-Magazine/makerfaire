@@ -1,0 +1,482 @@
+# Copyright (C) 2023 Gravity Wiz
+# This file is distributed under the GPL2.
+msgid ""
+msgstr ""
+"Project-Id-Version: Gravity Perks 2.3.4\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/cloned-perk-"
+"OssPdxetmX\n"
+"POT-Creation-Date: 2025-03-05T18:31:54+00:00\n"
+"PO-Revision-Date: 2025-05-05 11:55-0400\n"
+"Last-Translator: Rafael Soler <info@rafaelsoler.es>\n"
+"Language-Team: \n"
+"Language: es_ES\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 3.6\n"
+"X-Domain: gravityperks\n"
+
+#. Plugin Name of the plugin
+#: gravityperks.php gravityperks.php:1665
+msgid "Gravity Perks"
+msgstr "Gravity Perks"
+
+#. Plugin URI of the plugin
+#. Author URI of the plugin
+#: gravityperks.php
+msgid "https://gravitywiz.com/"
+msgstr "https://gravitywiz.com"
+
+#. Description of the plugin
+#: gravityperks.php
+msgid ""
+"Effortlessly enhance Gravity Forms with powerful add-ons (“perks”) for "
+"smarter, more flexible forms—all backed by legendary support."
+msgstr ""
+"Mejora tus Gravity Forms sin esfuerzo con potentes complementos («perks») "
+"para conseguir formularios más inteligentes y flexibles, todo ello "
+"respaldado por una atención al cliente increíble."
+
+#. Author of the plugin
+#: gravityperks.php
+msgid "Gravity Wiz"
+msgstr "Gravity Wiz"
+
+#: admin/manage_perks.php:137 admin/manage_perks.php:876 gravityperks.php:200
+#: gravityperks.php:768
+msgid "Manage Perks"
+msgstr "Administrar Perks"
+
+#: admin/manage_perks.php:139 admin/manage_perks.php:882
+msgid "Install Perks"
+msgstr "Instalar Perks"
+
+#: admin/manage_perks.php:162
+msgid "Active Perks"
+msgstr "Perks activos"
+
+#: admin/manage_perks.php:177
+msgid "Inactive Perks"
+msgstr "Perks inactivos"
+
+#: admin/manage_perks.php:196
+msgid "You don't have any perks installed."
+msgstr "No tienes ningún Perk instalado."
+
+#: admin/manage_perks.php:197
+msgid "Let's go install some perks!"
+msgstr "¡Instalemos algunos Perks!"
+
+#: admin/manage_perks.php:232 admin/manage_perks.php:407
+#: admin/manage_perks.php:422 admin/manage_perks.php:1016
+msgid "%s Documentation"
+msgstr "Documentación de %s"
+
+#: admin/manage_perks.php:233
+msgid "View Documentation"
+msgstr "Ver documentación"
+
+#: admin/manage_perks.php:245
+msgid "Install Perk"
+msgstr "Instalar Perk"
+
+#: admin/manage_perks.php:248
+msgid "Deregister"
+msgstr "Eliminar registro"
+
+#: admin/manage_perks.php:253
+msgid "Upgrade License"
+msgstr "Actualizar licencia"
+
+#: admin/manage_perks.php:259 admin/manage_perks.php:732
+msgid "Buy License"
+msgstr "Comprar licencia"
+
+#: admin/manage_perks.php:309
+msgid "Registered Perks"
+msgstr "Perks registrados"
+
+#: admin/manage_perks.php:326
+msgid "Unregistered Perks"
+msgstr "Perks no registrados"
+
+#: admin/manage_perks.php:342
+msgid ""
+"Holy cow. You must really love perks.<br /><strong>You've installed them "
+"all</strong>!"
+msgstr ""
+"Madre mía. Realmente te deben gustar los Perks.<br /><strong>¡Los has "
+"instalado todos!</strong>"
+
+#: admin/manage_perks.php:409 admin/manage_perks.php:423
+msgid "Docs"
+msgstr "Documentos"
+
+#: admin/manage_perks.php:412 admin/manage_perks.php:699
+msgid "Deactivate"
+msgstr "Desactivar"
+
+#: admin/manage_perks.php:416
+msgid "Settings"
+msgstr "Ajustes"
+
+#: admin/manage_perks.php:438
+msgid "Are you sure you want to delete this perk and all of its data?"
+msgstr "¿Estás seguro de que quieres eliminar este Perk y todos sus datos?"
+
+#: admin/manage_perks.php:439
+msgid "Uninstall"
+msgstr "Desinstalar"
+
+#: admin/manage_perks.php:467
+msgid ""
+"<b>This perk is unregistered.</b><br>You will not receive updates for it."
+msgstr ""
+"<b>Este Perk no está registrado.</b><br>No recibirás actualizaciones para él."
+
+#: admin/manage_perks.php:534
+msgid ""
+"You must purchase or register your license to take advantage of automatic "
+"upgrades."
+msgstr ""
+"Debes comprar o registrar la licencia para aprovechar las actualizaciones "
+"automáticas."
+
+#: admin/manage_perks.php:541
+msgid ""
+"<h6>Network Activated Perk</h6>This perk is network activated. You can "
+"deactivate this perk from the Network Admin Plugins page."
+msgstr ""
+"<h6>Perk activado por la red</h6>Este Perk está activado por red. Puedes "
+"desactivar este Perk desde la página de administración de plugins de red."
+
+#: admin/manage_perks.php:541
+msgid "Network Activated"
+msgstr "Activado en red"
+
+#: admin/manage_perks.php:559 admin/manage_perks.php:663
+msgid "There was an error managing this perk."
+msgstr "Se ha producido un error al administrar este Perk."
+
+#: admin/manage_perks.php:574
+msgid ""
+"You do not have sufficient permissions to activate plugins for this site."
+msgstr "No tienes permisos suficientes para activar plugins de este sitio."
+
+#: admin/manage_perks.php:590
+msgid "There was an error activating this perk."
+msgstr "Se ha producido un error al activar este Perk."
+
+#: admin/manage_perks.php:613
+msgid ""
+"You do not have sufficient permissions to deactivate plugins for this site."
+msgstr ""
+"No tienes permisos suficientes para desactivar los plugins de este sitio."
+
+#: admin/manage_perks.php:619
+msgid "This perk can only be managed from the network admin's Plugins page."
+msgstr ""
+"Este Perk solo se puede administrar desde la página del administrador de "
+"plugins de red."
+
+#: admin/manage_perks.php:637
+msgid "You do not have sufficient permissions to delete plugins for this site."
+msgstr "No tienes permisos suficientes para eliminar plugins de este sitio."
+
+#: admin/manage_perks.php:699
+msgid ""
+"Are you sure you wish to deactivate your Gravity Perks license on this site?"
+msgstr ""
+"¿Estás seguro de que quieres desactivar tu licencia de Gravity Perks en este "
+"sitio?"
+
+#: admin/manage_perks.php:702
+msgid "Upgrade"
+msgstr "Actualizar"
+
+#: admin/manage_perks.php:705
+msgid "Manage"
+msgstr "Gestionar"
+
+#: admin/manage_perks.php:714
+msgid "Refresh"
+msgstr "Actualizar"
+
+#: admin/manage_perks.php:727
+msgid "Get Support"
+msgstr "Obtener asistencia"
+
+#: admin/manage_perks.php:736
+msgid "Register License"
+msgstr "Registrar licencia"
+
+#: admin/manage_perks.php:770
+msgid "Oops! That doesn't appear to be a valid license."
+msgstr "¡Vaya! Parece que esa licencia no es válida."
+
+#: admin/manage_perks.php:776
+msgid "Oops! You have reached your license's site limit of %d site(s)."
+msgstr ""
+"¡Vaya! Has alcanzado el límite de sitios de tu licencia de %d sitio(s)."
+
+#: admin/manage_perks.php:778
+msgid "Oops! You have reached your license's site limit."
+msgstr "¡Vaya! Has alcanzado el límite de sitios de tu licencia."
+
+#: admin/manage_perks.php:781
+msgid "Upgrade Now"
+msgstr "Mejorar ahora"
+
+#: admin/manage_perks.php:794
+msgid "Perk successfully deregistered."
+msgstr "El Perk se ha dado de baja correctamente."
+
+#: admin/manage_perks.php:803
+msgid "Perk successfully registered."
+msgstr "El Perk se ha registrado correctamente."
+
+#: admin/manage_perks.php:820
+msgid "License successfully deactivated."
+msgstr "Licencia desactivada con éxito."
+
+#: admin/manage_perks.php:828
+msgid "License successfully refreshed."
+msgstr "Licencia actualizada correctamente."
+
+#: admin/manage_perks.php:877
+msgid ""
+"Welcome to the <strong>Manage Perks</strong> page. Here you can activate/"
+"deactivate installed perks, view documentation, modify a perk\\'s global "
+"settings and also delete unwanted perks."
+msgstr ""
+"Bienvenido a la página <strong>Gestionar Perks</strong>. Aquí puedes activar/"
+"desactivar los Perks instalados, consultar la documentación, modificar la "
+"configuración global de un Perk y eliminar los Perks no deseados."
+
+#: admin/manage_perks.php:883
+msgid ""
+"The <strong>Install Perks</strong> page provides you a complete list of "
+"perks available for installation. Just click the <em>Install</em> button on "
+"any listed perk to automatically download and install."
+msgstr ""
+"La página <strong>Instalar Perks</strong> proporciona una lista completa de "
+"Perks disponibles para su instalación. Simplemente haz clic en el botón "
+"<em>Instalar</em> en cualquier Perk listado para descargarlo e instalarlo "
+"automáticamente."
+
+#: admin/manage_perks.php:890
+msgid "Buy a License"
+msgstr "Comprar una licencia"
+
+#: admin/manage_perks.php:891
+msgid ""
+"Buy a license to receive unlimited access to <strong>all perks</strong> "
+"along with automatic upgrades and support."
+msgstr ""
+"Compra una licencia para recibir acceso ilimitado a <strong>todos los Perks</"
+"strong> junto con mejoras automáticas y atención al cliente."
+
+#: admin/manage_perks.php:902
+msgid "Need Help? Get Support!"
+msgstr "¿Necesitas ayuda? ¡Contacta con atención al cliente!"
+
+#: admin/manage_perks.php:903
+msgid ""
+"One of the best perks of your Gravity Perks license is premium support! If "
+"you\\'ve got a question or problem, get in touch. We are eager to help!"
+msgstr ""
+"Una de las ventajas de la licencia de Gravity Perks es la asistencia "
+"prémium. Si tienes alguna pregunta o problema, ponte en contacto con "
+"nosotros. ¡Estamos deseando ayudarte!"
+
+#: admin/manage_perks.php:1082
+msgid "Settings saved successfully."
+msgstr "Ajustes guardados correctamente."
+
+#: admin/manage_perks.php:1084
+msgid "Settings were not saved."
+msgstr "Los ajustes no se guardaron."
+
+#: admin/manage_perks.php:1088
+msgid "%s Settings"
+msgstr "Ajustes de %s"
+
+#: admin/manage_perks.php:1123
+msgid "Save Settings"
+msgstr "Guardar ajustes"
+
+#: gravityperks.php:267
+msgid "Register Gravity Perks to enable auto-updates."
+msgstr "Registra Gravity Perks para habilitar las actualizaciones automáticas."
+
+#: gravityperks.php:509
+msgid ""
+"Current Gravity Forms version (%1$s) does not meet minimum Gravity Forms "
+"version requirement (%2$s)."
+msgstr ""
+"La versión actual de Gravity Forms (%1$s) no cumple con el requisito mínimo "
+"de versión de Gravity Forms (%2$s)."
+
+#: gravityperks.php:512
+msgid ""
+"Gravity Forms %1$s or greater is required. Activate it now or %2$spurchase "
+"it today!%3$s"
+msgstr ""
+"Se requiere Gravity Forms %1$s o superior. ¡Actívalo ahora o %2$scómpralo "
+"hoy mismo! %3$s"
+
+#: gravityperks.php:518
+msgid ""
+"%1$s requires WordPress %2$s or greater. You must upgrade WordPress in order "
+"to use this perk."
+msgstr ""
+"%1$s requiere WordPress %2$s o superior. Debes actualizar WordPress para "
+"poder utilizar este Perk."
+
+#: gravityperks.php:521
+msgid ""
+"Gravity Perks requires WordPress %1$s or greater. You must upgrade WordPress "
+"in order to use Gravity Perks."
+msgstr ""
+"Gravity Perks requiere WordPress %1$s o superior. Debes actualizar WordPress "
+"para utilizar Gravity Perks."
+
+#: gravityperks.php:526
+msgid ""
+"%1$s requires Gravity Perks %2$s or greater. Activate it now or %3$spurchase "
+"it today!%4$s"
+msgstr ""
+"%1$s requiere Gravity Perks %2$s o superior. ¡Actívalo ahora o %3$scompralo "
+"hoy mismo! %4$s"
+
+#: gravityperks.php:531
+msgid ""
+"%1$sRegister%2$s your copy of Gravity Perks to receive access to automatic "
+"upgrades and support for this perk. Need a license key? %3$sPurchase one now."
+"%2$s"
+msgstr ""
+"%1$s Registra%2$s la copia de Gravity Perks para recibir acceso a "
+"actualizaciones automáticas y atención al cliente para este Perk. ¿Necesitas "
+"una clave de licencia? %3$s Compra una ahora. %2$s"
+
+#: gravityperks.php:534
+msgid ""
+"%1$sRegister%2$s your copy of Gravity Perks to receive access to automatic "
+"upgrades and support. Need a license key? %3$sPurchase one now.%2$s"
+msgstr ""
+"%1$s Registra%2$s la copia de Gravity Perks para recibir acceso a "
+"actualizaciones automáticas y soporte. ¿Necesitas una clave de licencia? "
+"%3$s Compra una ahora. %2$s"
+
+#: gravityperks.php:765
+msgid "Back to Manage Perks"
+msgstr "Volver a gestionar Perks"
+
+#: gravityperks.php:772
+msgid "Activate Perk"
+msgstr "Activar Perk"
+
+#: gravityperks.php:934
+msgid ""
+"<strong>Gravity Perks</strong> must be network activated before a "
+"<strong>perk</strong> can be network activated."
+msgstr ""
+"Los <strong>Gravity Perks</strong> deben activarse en red antes de que se "
+"pueda activar un <strong>Perk</strong> en la red."
+
+#: gravityperks.php:974
+msgid "No, Return to Manage Perks page"
+msgstr "No, volver a la página para administrar Perks"
+
+#: gravityperks.php:1071
+msgid "Oops! Your site is having some trouble communicating with our API."
+msgstr "¡Vaya! Tu sitio tiene problemas para comunicarse con nuestra API."
+
+#: gravityperks.php:1072
+msgid "Let's get this fixed."
+msgstr "Vamos a solucionarlo."
+
+#: gravityperks.php:1258 gravityperks.php:1280 gravityperks.php:1733
+#: gravityperks.php:1737
+msgid "Perks"
+msgstr "Perks"
+
+#: gravityperks.php:1304
+msgid "Return to Perks Page"
+msgstr "Volver a la página de Perks"
+
+#: gravityperks.php:1509
+msgid "Welcome to Gravity Perks"
+msgstr "Bienvenido/a a Gravity Perks"
+
+#: gravityperks.php:1510
+msgid ""
+"Ready to get started? Click the <strong>Perks</strong> link (to the left) to "
+"take a quick tour."
+msgstr ""
+"¿Listo para empezar? Haz clic en el enlace <strong>Perks</strong> (a la "
+"izquierda) para realizar un recorrido rápido."
+
+#: gravityperks.php:1596
+msgid ""
+"Does this page look strange? Your PHP version is out-of-date. <strong>Please "
+"upgrade.</strong>"
+msgstr ""
+"¿Esta página se ve rara? La versión de php está desactualizada. <strong>Por "
+"favor, actualízala.</strong>"
+
+#: includes/class-gwapi.php:213
+msgid ""
+"<strong>Important Note!</strong> GP Google Sheets has been converted to GC "
+"Google Sheets"
+msgstr ""
+"<strong>Nota importante</strong> GP Google Sheets se ha convertido en GC "
+"Google Sheets"
+
+#: includes/class-gwapi.php:217
+msgid "GC Google Sheets has been activated."
+msgstr "Se ha activado GC Google Sheets."
+
+#: model/perk.php:95
+msgid "The file for this perk does not exist."
+msgstr "El archivo de este Perk no existe."
+
+#: model/perk.php:120
+msgid "There is no class for this perk."
+msgstr "No hay clase para este Perk."
+
+#: model/perk.php:136
+msgid "%s is not a perk."
+msgstr "%s no es un Perk."
+
+#. translators: placeholder is perk name
+#: model/perk.php:371
+msgid "Uh-oh! <strong>%s</strong> needs your attention."
+msgstr "¡Oh! <strong>%s</strong> necesita tu atención."
+
+#: model/perk.php:748
+msgid ""
+"There was an issue deleting this perk. The perk directory was not available."
+msgstr ""
+"Hubo un problema al eliminar este Perk. El directorio de Perks no estaba "
+"disponible."
+
+#~ msgid ""
+#~ "Effortlessly install and manage small functionality enhancements (aka "
+#~ "\"perks\") for Gravity Forms."
+#~ msgstr ""
+#~ "Instala y gestiona sin esfuerzo pequeñas mejoras de funcionalidad "
+#~ "(también conocidas como \"Perks\") para Gravity Forms."
+
+#~ msgid "Required WordPress plugin is missing: %s."
+#~ msgstr "Falta un plugin de WordPress obligatorio: %s."
+
+#~ msgid "Required WordPress plugin is missing: %1$s (%2$s)."
+#~ msgstr "Falta el plugin de WordPress requerido: %1$s (%2$s)."
+
+#~ msgid ""
+#~ "Current %1$s version (%2$s) does not meet minimum %1$s version "
+#~ "requirement (%3$s)."
+#~ msgstr ""
+#~ "La versión %1$s actual (%2$s) no cumple con el requisito mínimo de %1$s "
+#~ "versión (%3$s)."

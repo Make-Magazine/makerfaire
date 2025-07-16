@@ -1,4 +1,4 @@
-/*! elementor - v3.29.0 - 04-06-2025 */
+/*! elementor - v3.30.0 - 09-07-2025 */
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
@@ -594,7 +594,10 @@ var AtomicContainer = exports["default"] = /*#__PURE__*/function (_elementor$mod
 
 var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
 var _toConsumableArray2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/toConsumableArray */ "../node_modules/@babel/runtime/helpers/toConsumableArray.js"));
+var _defineProperty2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/defineProperty */ "../node_modules/@babel/runtime/helpers/defineProperty.js"));
 var _divBlockEmptyView = _interopRequireDefault(__webpack_require__(/*! ./container/div-block-empty-view */ "../modules/atomic-widgets/assets/js/editor/container/div-block-empty-view.js"));
+function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
+function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { (0, _defineProperty2.default)(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
 var BaseElementView = elementor.modules.elements.views.BaseElement;
 var DivBlockView = BaseElementView.extend({
   template: Marionette.TemplateCache.get('#tmpl-elementor-e-div-block-content'),
@@ -619,6 +622,19 @@ var DivBlockView = BaseElementView.extend({
     var ui = BaseElementView.prototype.ui.apply(this, arguments);
     ui.percentsTooltip = '> .elementor-element-overlay .elementor-column-percents-tooltip';
     return ui;
+  },
+  attributes: function attributes() {
+    var attr = BaseElementView.prototype.attributes.apply(this);
+    var local = {};
+    var cssId = this.model.getSetting('_cssid');
+    if (cssId) {
+      local.id = cssId.value;
+    }
+    var href = this.getHref();
+    if (href) {
+      local.href = href;
+    }
+    return _objectSpread(_objectSpread({}, attr), local);
   },
   // TODO: Copied from `views/column.js`.
   attachElContent: function attachElContent() {
@@ -652,6 +668,14 @@ var DivBlockView = BaseElementView.extend({
       this.$el.attr('class', this.className());
       return;
     }
+    if (changed._cssid) {
+      if (changed._cssid.value) {
+        this.$el.attr('id', changed._cssid.value);
+      } else {
+        this.$el.removeAttr('id');
+      }
+      return;
+    }
     this.$el.addClass(this.getClasses());
     if (this.isTagChanged(changed)) {
       this.rerenderEntireView();
@@ -668,19 +692,11 @@ var DivBlockView = BaseElementView.extend({
   onRender: function onRender() {
     var _this = this;
     BaseElementView.prototype.onRender.apply(this, arguments);
-    this.handleLink();
 
     // Defer to wait for everything to render.
     setTimeout(function () {
       _this.droppableInitialize();
     });
-  },
-  handleLink: function handleLink() {
-    var href = this.getHref();
-    if (!href) {
-      return;
-    }
-    this.$el.attr('href', href);
   },
   haveLink: function haveLink() {
     var _this$model$getSettin;
@@ -901,8 +917,12 @@ var DivBlockView = BaseElementView.extend({
     this.addSectionView = addSectionView;
   },
   getClasses: function getClasses() {
-    var _this$options;
-    return ((_this$options = this.options) === null || _this$options === void 0 || (_this$options = _this$options.model) === null || _this$options === void 0 || (_this$options = _this$options.getSetting('classes')) === null || _this$options === void 0 ? void 0 : _this$options.value) || [];
+    var _window, _window$get, _this$options;
+    var transformer = (_window = window) === null || _window === void 0 || (_window = _window.elementorV2) === null || _window === void 0 || (_window = _window.editorCanvas) === null || _window === void 0 || (_window = _window.settingsTransformersRegistry) === null || _window === void 0 || (_window$get = _window.get) === null || _window$get === void 0 ? void 0 : _window$get.call(_window, 'classes');
+    if (!transformer) {
+      return [];
+    }
+    return transformer(((_this$options = this.options) === null || _this$options === void 0 || (_this$options = _this$options.model) === null || _this$options === void 0 || (_this$options = _this$options.getSetting('classes')) === null || _this$options === void 0 ? void 0 : _this$options.value) || []);
   },
   getClassString: function getClassString() {
     var classes = this.getClasses();

@@ -1,0 +1,36 @@
+/* Badge styles */
+.gform-tabs__tab-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 4px;
+    margin-left: 1px;
+    border-radius: 9px;
+    font-size: 11px;
+    line-height: 1;
+    color: white;
+}
+
+.gform-tabs__tab-badge--unregistered {
+    background: #B73C22;
+}
+
+.gform-tabs__tab-badge--update {
+    background: #B77B1B;
+}
+
+.spellbook-app__filter-bar {
+    margin-bottom: 1rem;
+}
+
+.spellbook-app__filter-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.spellbook-app__filter-buttons button {
+    margin: 0;
+}

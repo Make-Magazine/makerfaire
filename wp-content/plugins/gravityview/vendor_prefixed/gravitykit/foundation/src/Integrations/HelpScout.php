@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by gravityview on 25-April-2025 using {@see https://github.com/BrianHenryIE/strauss}.
+ * Modified by gravityview on 11-July-2025 using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\GravityView\Foundation\Integrations;

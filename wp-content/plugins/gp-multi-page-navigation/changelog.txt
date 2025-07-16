@@ -1,6 +1,14 @@
 
 # Changelog
 
+## 1.3.1 | May 22, 2025
+
+- Added better validation to fields which have already been viewed and do not have valid values.
+- Fixed issue with page step indicators not showing correct validity if form was submitted with validation errors.
+- Fixed issue where pages would not be correctly marked as "completed" if GP Page Transitions is active.
+- Fixed styling issue with step indicators when GP Page Transitions is active.
+- Fixed issue where form validation errors might be displayed before an attempted form submission.
+
 ## 1.3 | May 14, 2025
 
 - Added better step validation so that pages which are not valid or visited yet are not marked as complete.

@@ -4,7 +4,7 @@ Tags: Table, table builder, datatable, tables, spreadsheet
 Requires at least: 6.0
 Requires PHP: 7.4
 Tested up to: 6.8
-Stable tag: 5.0.20
+Stable tag: 5.2.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -406,7 +406,12 @@ Ninja Tables [customer support](https://wpmanageninja.com/support-tickets/#/) te
 == Changelog ==
 We released several updates for Ninja Tables in the years of development. These include improvements to the existing features and some wonderful additions to help you design tables more effectively.
 
-### What's New on 5.0.19?
+= 5.2.2 (Date: July 10, 2025) =
+* Fixes: advanced filter
+
+= 5.2.1 (Date: July 09, 2025) =
+* Compatibility Release with New Ninja Tables Framework v2
+* Updated Framework with Security Improvements
 
 = 5.0.20 (Date: June 17, 2025) =
 * Fixes: Csv import warning for php version >= 8.0

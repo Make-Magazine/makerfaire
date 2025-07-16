@@ -7,9 +7,29 @@ use NinjaTables\Framework\Support\Sanitizer;
 
 class TableHandler
 {
+
+    public function register()
+    {
+        add_action('ninja_tables_loaded_boot_script', [$this, 'loadFormulaParser']);
+        add_action('ninja_tables_item_attributes', [$this, 'ninjaTablesItemAttributes'], 10, 1);
+        add_action('ninja_tables_load_lightbox', [$this, 'ninjaTablesLoadLightbox']);
+        add_action('ninja_tables_require_formulajs', [$this, 'loadFormulaParser']);
+        // filters
+        add_filter('ninja_table_column_attributes', [$this, 'addOriginalColumn'], 10, 3);
+        add_filter('ninja_table_own_data_filter_query', [$this, 'ownDataFilter'], 10, 2);
+        add_filter('ninja_tables_total_size_query', [$this, 'ownDataTotalFilter'], 10, 2);
+
+        add_filter('ninja_table_js_config', [$this, 'ninjaTableJsConfig'], 10, 2);
+        add_filter('ninja_table_column_attributes', [$this, 'ninjaTableColumnAttributes'], 10, 2);
+        add_filter('ninja_tables_shortcode_defaults', [$this, 'ninjaTablesShortcodeDefaults']);
+        add_filter('ninja_tables_rendering_table_settings', [$this, 'ninjaTablesRenderingTableSettings'], 10, 2);
+        add_filter('ninja_table_rendering_table_vars', [$this, 'ninjaTableRenderingTableVars'], 10, 3);
+        add_filter('ninja_tables_get_public_data', [$this, 'ninjaTableGetPublicData'], 11, 1);
+    }
+
     public function ninjaTableJsConfig($config, $filter)
     {
-        if ( ! empty($config['shortCodeData']['get_filter'])) {
+        if (!empty($config['shortCodeData']['get_filter'])) {
             $filter_var = $config['shortCodeData']['get_filter'];
             if (isset($_GET[$filter_var])) {
                 $filter = Sanitizer::sanitizeTextField($_GET[$filter_var]);
@@ -42,17 +62,23 @@ class TableHandler
             $conditions = $originalColumn['conditions'];
 
             foreach ($conditions as $conditionIndex => $condition) {
-                $conditions[$conditionIndex]['conditionalValue']  = apply_filters('ninja_parse_placeholder',
-                    $conditions[$conditionIndex]['conditionalValue']);
-                $conditions[$conditionIndex]['conditionalValue2'] = apply_filters('ninja_parse_placeholder',
-                    $conditions[$conditionIndex]['conditionalValue2']);
+                $conditions[$conditionIndex]['conditionalValue']  = apply_filters(
+                    'ninja_parse_placeholder',
+                    $conditions[$conditionIndex]['conditionalValue']
+                );
+                $conditions[$conditionIndex]['conditionalValue2'] = apply_filters(
+                    'ninja_parse_placeholder',
+                    $conditions[$conditionIndex]['conditionalValue2']
+                );
             }
             $formatted_column['conditions'] = $conditions;
         }
 
         if (isset($originalColumn['transformed_value']) && $originalColumn['transformed_value']) {
-            $originalColumn['transformed_value'] = apply_filters('ninja_parse_placeholder',
-                $originalColumn['transformed_value']);
+            $originalColumn['transformed_value'] = apply_filters(
+                'ninja_parse_placeholder',
+                $originalColumn['transformed_value']
+            );
         }
 
         if (isset($originalColumn['transformed_value'])) {
@@ -64,8 +90,13 @@ class TableHandler
 
     public function ninjaTablesShortcodeDefaults($defaults)
     {
-        wp_register_script('ninja-tables-pro', NINJAPROPLUGIN_URL . 'assets/js/ninja-tables-pro.js', array('footable'),
-            NINJAPROPLUGIN_VERSION, true);
+        wp_register_script(
+            'ninja-tables-pro',
+            NINJAPROPLUGIN_URL . 'assets/js/ninja-tables-pro.js',
+            array('footable'),
+            NINJAPROPLUGIN_VERSION,
+            true
+        );
         $defaults['per_page']            = null;
         $defaults['search']              = null;
         $defaults['sorting']             = null;
@@ -107,7 +138,7 @@ class TableHandler
         }
 
         if (isset($shortCodeData['logged_in_only']) && $shortCodeData['logged_in_only'] !== null && $shortCodeData['logged_in_only']) {
-            if ( ! is_user_logged_in()) {
+            if (!is_user_logged_in()) {
                 return array();
             }
         }
@@ -124,7 +155,7 @@ class TableHandler
             $settings['filter_column'] = $filterColumns;
         }
 
-        if (isset($shortCodeData['columns']) && ! empty($shortCodeData['columns']) && $shortCodeData['columns'] != 'all') {
+        if (isset($shortCodeData['columns']) && !empty($shortCodeData['columns']) && $shortCodeData['columns'] != 'all') {
             $columns = explode(',', $shortCodeData['columns']);
             if ($columns) {
                 $columns                  = array_flip($columns);
@@ -170,9 +201,13 @@ class TableHandler
         }
 
         if (Arr::get($tableArray, 'settings.sticky_header') == 'yes') {
-            wp_enqueue_script('jquery.stickytableheaders',
-                NINJAPROPLUGIN_URL . 'assets/libs/stickyheaders/jquery.stickytableheaders.min.js', array('jquery'),
-                '0.1.24', true);
+            wp_enqueue_script(
+                'jquery.stickytableheaders',
+                NINJAPROPLUGIN_URL . 'assets/libs/stickyheaders/jquery.stickytableheaders.min.js',
+                array('jquery'),
+                '0.1.24',
+                true
+            );
             $table_vars['settings']['sticky_header']        = true;
             $table_vars['settings']['sticky_header_offset'] = Arr::get($tableArray, 'settings.sticky_header_offset');
         }
@@ -182,9 +217,12 @@ class TableHandler
 
     public function loadFormulaParser()
     {
-        wp_enqueue_script('formula-parser',
+        wp_enqueue_script(
+            'formula-parser',
             NINJAPROPLUGIN_URL . "assets/libs/formula/formula-parser.min.js",
-            array('jquery'), '3.0.1', false
+            array('jquery'),
+            '3.0.1',
+            false
         );
     }
 
@@ -197,19 +235,18 @@ class TableHandler
     public function ninjaTableGetPublicData($data)
     {
         global $ninja_table_current_rendering_table;
-        if ( ! $ninja_table_current_rendering_table || ! isset($ninja_table_current_rendering_table['shortCodeData']['sf_column']) || ! $ninja_table_current_rendering_table['shortCodeData']['sf_column']) {
+        if (!$ninja_table_current_rendering_table || !isset($ninja_table_current_rendering_table['shortCodeData']['sf_column']) || !$ninja_table_current_rendering_table['shortCodeData']['sf_column']) {
             return $data;
         }
         $sFilter = $ninja_table_current_rendering_table['shortCodeData']['sf_filter'];
         $sColumn = $ninja_table_current_rendering_table['shortCodeData']['sf_column'];
         $sfMatch = $ninja_table_current_rendering_table['shortCodeData']['sf_match'];
-        if ( ! $sFilter || ! $sColumn) {
+        if (!$sFilter || !$sColumn) {
             return $data;
         }
         $sFilter = apply_filters('ninja_parse_placeholder', $sFilter);
         $newData = array_filter($data, function ($array) use ($sFilter, $sColumn, $sfMatch) {
-
-            if ( ! isset($array[$sColumn])) {
+            if (!isset($array[$sColumn])) {
                 return false;
             }
 
@@ -236,7 +273,7 @@ class TableHandler
     {
         $values = json_decode($attributes['value'], true);
 
-        if (isset($values['created_at']) && ! $values['created_at']) {
+        if (isset($values['created_at']) && !$values['created_at']) {
             $values['created_at'] = date('Y-m-d h:i A', current_time('timestamp'));
             $attributes['value']  = json_encode($values, JSON_UNESCAPED_UNICODE);
         }
@@ -253,11 +290,13 @@ class TableHandler
     {
         // Check if the table actually has fronend editing
         $settings = get_post_meta($tableId, '_ninja_table_frontedit_settings', true);
-        if ($settings && Arr::get($settings, 'allow_frontend') == 'yes' && Arr::get($settings,
-                'own_data_only') == 'yes') {
-            if ( ! current_user_can('administrator')) {
+        if ($settings && Arr::get($settings, 'allow_frontend') == 'yes' && Arr::get(
+                $settings,
+                'own_data_only'
+            ) == 'yes') {
+            if (!current_user_can('administrator')) {
                 $currentUserId = get_current_user_id();
-                if ( ! $currentUserId) {
+                if (!$currentUserId) {
                     $currentUserId = -1;
                 }
                 $query->where('owner_id', $currentUserId);
@@ -269,9 +308,11 @@ class TableHandler
 
     public function ownDataTotalFilter($query, $tableVars)
     {
-        if (isset($tableVars['editing']) && $tableVars['editing']['own_data_only'] == 'yes' && ! current_user_can('administrator')) {
+        if (isset($tableVars['editing']) && $tableVars['editing']['own_data_only'] == 'yes' && !current_user_can(
+                'administrator'
+            )) {
             $currentUserId = get_current_user_id();
-            if ( ! $currentUserId) {
+            if (!$currentUserId) {
                 $currentUserId = -1;
             }
             $query->where('owner_id', $currentUserId);
@@ -296,11 +337,11 @@ class TableHandler
             return;
         }
 
-        $fileUrl = sanitize_url($fileUrl);
+        $fileUrl  = sanitize_url($fileUrl);
         $fileName = basename($fileUrl);
         header('Content-Type: application/octet-stream');
         header("Content-Transfer-Encoding: Binary");
-        header("Content-disposition: attachment; filename=\"".$fileName."\"");
+        header("Content-disposition: attachment; filename=\"" . $fileName . "\"");
         readfile($fileUrl);
         exit;
     }

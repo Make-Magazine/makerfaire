@@ -8,7 +8,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * Modified by __root__ on 13-March-2025 using Strauss.
+ * Modified by __root__ on 09-June-2025 using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 
@@ -986,7 +986,7 @@ final class Mbstring
 
     public static function mb_rtrim(string $string, ?string $characters = null, ?string $encoding = null): string
     {
-        return self::mb_internal_trim('{[%s]+$}D', $string, $characters, $encoding, __FUNCTION__);
+        return self::mb_internal_trim('{[%s]+$}Du', $string, $characters, $encoding, __FUNCTION__);
     }
 
     private static function mb_internal_trim(string $regex, string $string, ?string $characters, ?string $encoding, string $function): string

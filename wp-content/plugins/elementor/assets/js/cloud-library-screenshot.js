@@ -1,4 +1,4 @@
-/*! elementor - v3.29.0 - 04-06-2025 */
+/*! elementor - v3.30.0 - 09-07-2025 */
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
@@ -409,11 +409,12 @@ var Screenshot = /*#__PURE__*/function (_elementorModules$Vie) {
   return (0, _createClass2.default)(Screenshot, [{
     key: "getDefaultSettings",
     value: function getDefaultSettings() {
+      var _ElementorScreenshotC, _ElementorScreenshotC2;
       return _objectSpread({
         empty_content_headline: 'Empty Content.',
         crop: {
-          width: 1200,
-          height: 1500
+          width: ((_ElementorScreenshotC = ElementorScreenshotConfig) === null || _ElementorScreenshotC === void 0 || (_ElementorScreenshotC = _ElementorScreenshotC.crop) === null || _ElementorScreenshotC === void 0 ? void 0 : _ElementorScreenshotC.width) || 1200,
+          height: ((_ElementorScreenshotC2 = ElementorScreenshotConfig) === null || _ElementorScreenshotC2 === void 0 || (_ElementorScreenshotC2 = _ElementorScreenshotC2.crop) === null || _ElementorScreenshotC2 === void 0 ? void 0 : _ElementorScreenshotC2.height) || 1500
         },
         excluded_external_css_urls: ['https://kit-pro.fontawesome.com'],
         external_images_urls: ['https://i.ytimg.com' // Youtube images domain.
@@ -463,7 +464,7 @@ var Screenshot = /*#__PURE__*/function (_elementorModules$Vie) {
   }, {
     key: "captureScreenshot",
     value: function captureScreenshot() {
-      if (!this.elements.$elementor.length) {
+      if (!this.elements.$elementor.length && !this.getSettings('kit_id')) {
         elementorCommon.helpers.consoleWarn('Screenshots: The content of this page is empty, the module will create a fake conent just for this screenshot.');
         this.createFakeContent();
       }
@@ -561,6 +562,11 @@ var Screenshot = /*#__PURE__*/function (_elementorModules$Vie) {
     value: function removeUnnecessaryElements() {
       var _this3 = this;
       var currentHeight = 0;
+
+      // We need to keep all elements as for Kit we render the entire homepage
+      if (this.getSettings('kit_id')) {
+        return;
+      }
       this.elements.$sections.filter(function (index, el) {
         var shouldBeRemoved = false;
         if (currentHeight >= _this3.getSettings('crop.height')) {
@@ -643,6 +649,10 @@ var Screenshot = /*#__PURE__*/function (_elementorModules$Vie) {
         _this4.log('Creating screenshot with "dom-to-image"');
         return domtoimage.toPng(document.body, {
           imagePlaceholder: _this4.getSettings('image_placeholder')
+        }).catch(function () {
+          return html2canvas(document.body).then(function (canvas) {
+            return canvas.toDataURL('image/png');
+          });
         });
       });
     }
@@ -712,17 +722,15 @@ var Screenshot = /*#__PURE__*/function (_elementorModules$Vie) {
     key: "save",
     value: function save(canvas) {
       var _this5 = this;
-      var isTemplate = this.getSettings('template_id');
-      var endpoint = isTemplate ? 'save_template_screenshot' : 'screenshot_save';
-      var data = _objectSpread(_objectSpread({}, isTemplate ? {
-        template_id: this.getSettings('template_id')
-      } : {
-        post_id: this.getSettings('post_id')
-      }), {}, {
-        screenshot: canvas.toDataURL('image/png')
-      });
+      var _this$getSaveAction = this.getSaveAction(),
+        key = _this$getSaveAction.key,
+        action = _this$getSaveAction.action;
+      var data = (0, _defineProperty2.default)((0, _defineProperty2.default)({}, key, this.getSettings(key)), "screenshot", canvas.toDataURL('image/png'));
       return new Promise(function (resolve, reject) {
-        elementorCommon.ajax.addRequest(endpoint, {
+        if ('kit_id' === key) {
+          return resolve(data.screenshot);
+        }
+        elementorCommon.ajax.addRequest(action, {
           data: data,
           success: function success(url) {
             _this5.log("Screenshot created: ".concat(encodeURI(url)));
@@ -747,24 +755,29 @@ var Screenshot = /*#__PURE__*/function (_elementorModules$Vie) {
       return new Promise(function (resolve, reject) {
         var templateId = _this6.getSettings('template_id');
         var postId = _this6.getSettings('post_id');
-        var route = templateId ? 'template_screenshot_failed' : 'screenshot_failed';
-        var data = templateId ? {
-          template_id: templateId,
-          error: e.message || e.toString()
-        } : {
-          post_id: postId
-        };
-        elementorCommon.ajax.addRequest(route, {
-          data: data,
-          success: function success() {
-            _this6.log("Marked as failed.");
-            resolve();
-          },
-          error: function error() {
-            _this6.log('Failed to mark this screenshot as failed.');
-            reject();
-          }
-        });
+        var kitId = _this6.getSettings('kit_id');
+        if (kitId) {
+          resolve();
+        } else {
+          var route = templateId ? 'template_screenshot_failed' : 'screenshot_failed';
+          var data = templateId ? {
+            template_id: templateId,
+            error: e.message || e.toString()
+          } : {
+            post_id: postId
+          };
+          elementorCommon.ajax.addRequest(route, {
+            data: data,
+            success: function success() {
+              _this6.log("Marked as failed.");
+              resolve();
+            },
+            error: function error() {
+              _this6.log('Failed to mark this screenshot as failed.');
+              reject();
+            }
+          });
+        }
       });
     }
 
@@ -816,9 +829,9 @@ var Screenshot = /*#__PURE__*/function (_elementorModules$Vie) {
       var imageUrl = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
       clearTimeout(this.timeoutTimer);
       this.timeoutTimer = null;
-      var templateId = this.getSettings('template_id');
-      var postId = this.getSettings('post_id');
-      var message = templateId ? 'library/capture-screenshot-done' : 'capture-screenshot-done';
+      var _this$getSaveAction2 = this.getSaveAction(),
+        message = _this$getSaveAction2.message,
+        key = _this$getSaveAction2.key;
 
       // Send the message to the parent window and not to the top.
       // e.g: The `Theme builder` is loaded into an iFrame so the message of the screenshot
@@ -826,7 +839,7 @@ var Screenshot = /*#__PURE__*/function (_elementorModules$Vie) {
       window.parent.postMessage({
         name: message,
         success: success,
-        id: templateId ? templateId : postId,
+        id: this.getSettings(key),
         imageUrl: imageUrl
       }, '*');
       this.log("Screenshot ".concat(success ? 'Succeed' : 'Failed', "."), 'timeEnd');
@@ -852,6 +865,30 @@ var Screenshot = /*#__PURE__*/function (_elementorModules$Vie) {
         // eslint-disable-next-line no-console
         console[timerMethod](this.getSettings('timer_label'));
       }
+    }
+  }, {
+    key: "getSaveAction",
+    value: function getSaveAction() {
+      var config = this.getSettings();
+      if (config.kit_id) {
+        return {
+          message: 'kit-screenshot-done',
+          action: 'update_kit_preview',
+          key: 'kit_id'
+        };
+      }
+      if (config.template_id) {
+        return {
+          message: 'library/capture-screenshot-done',
+          action: 'save_template_screenshot',
+          key: 'template_id'
+        };
+      }
+      return {
+        message: 'capture-screenshot-done',
+        action: 'screenshot_save',
+        key: 'post_id'
+      };
     }
   }]);
 }(elementorModules.ViewModule);

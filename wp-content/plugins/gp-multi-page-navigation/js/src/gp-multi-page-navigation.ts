@@ -20,7 +20,7 @@ class GPMultiPageNavigation {
 	activationType: string;
 	labels: { [key: string]: string };
 	enableSubmissionFromLastPageWithErrors: boolean;
-	pageValidity: { [key: number]: boolean };
+	pageValidity: { [key: number]: boolean } = {};
 	pagesVisited: Set<number>;
 	addedButtons: string[];
 	$footer?: JQuery;
@@ -37,8 +37,8 @@ class GPMultiPageNavigation {
 		this.activationType = args.activationType;
 		this.labels = args.labels;
 		this.enableSubmissionFromLastPageWithErrors = args.enableSubmissionFromLastPageWithErrors;
-		this.pageValidity = args.pageValidity || {};
-		this.pagesVisited = new Set(args.pagesVisited || []);
+		this.pagesVisited = this.getPagesVisitedFromHiddenInput();
+		this.pageValidity = this.getPageValidityFromHiddenInput();
 		this.addedButtons = [];
 
 		this.init();
@@ -46,7 +46,7 @@ class GPMultiPageNavigation {
 
 	init(): void {
 		window.gform.addAction('gppt_before_transition', (curr, next, gppt) => {
-			if (!gppt.validatePages) {
+			if (!gppt.validatePage) {
 				/**
 				 * Older version of GPPT do not have the validatePage method.
 				 * Skipping this validation step will not cause issues, it just
@@ -61,9 +61,9 @@ class GPMultiPageNavigation {
 			// currentPageRealIndex is 0 based and returns the index of the page being moved to.
 			const currentPageIndex: number = gppt.getCurrentPageRealIndex() + 1;
 
-			const pagesVisited = this.getPagesVisited();
+			const pagesVisited = this.getPagesVisitedFromHiddenInput();
 			pagesVisited.add(currentPageIndex);
-			this.setPagesVisited(pagesVisited);
+			this.setPagesVisitedHiddenInput(pagesVisited);
 
 			this.pagesVisited.forEach((pageId) => {
 				this.pageValidity[pageId] = gppt.validatePage(pageId);
@@ -131,7 +131,7 @@ class GPMultiPageNavigation {
 		return `#gpmpn_pages_visited_${this.formId}`;
 	}
 
-	getPagesVisited(): Set<number> {
+	getPagesVisitedFromHiddenInput(): Set<number> {
 		let pagesVisited = new Set<number>();
 
 		try {
@@ -147,10 +147,30 @@ class GPMultiPageNavigation {
 		return pagesVisited;
 	}
 
-	setPagesVisited(pagesVisited: Set<number>): void {
+	setPagesVisitedHiddenInput(pagesVisited: Set<number>): void {
 		this.pagesVisited = pagesVisited;
 		const pagesVisitedString = JSON.stringify(Array.from(pagesVisited));
 		$(this.getPagesVisitedInputId()).val(pagesVisitedString);
+	}
+
+	getPageValidityInputId(): string {
+		return `#gpmpn_page_validity_${this.formId}`;
+	}
+
+	getPageValidityFromHiddenInput(): { [key: number]: boolean } {
+		let pageValidity = {};
+
+		try {
+			const maybeJSON = $(this.getPageValidityInputId()).val() as string;
+			const parsed = JSON.parse(maybeJSON);
+			if (typeof parsed === 'object') {
+				pageValidity = parsed;
+			}
+		} catch (e) {
+			// no-op
+		}
+
+		return pageValidity;
 	}
 
 
@@ -190,7 +210,7 @@ class GPMultiPageNavigation {
 
 			if (stepNumber != this.getCurrentPage()) {
 				const existingLink = $('a[href="#' + stepNumber + '"]');
-				if (!existingLink.length || !$(this).hasClass('gpmpn-step-linked')) {
+				if (!existingLink.length || !$(el).hasClass('gpmpn-step-linked')) {
 					$(el).html(this.getPageLinkMarkup(stepNumber, $(el).html() || '')).addClass('gpmpn-step-linked');
 				}
 			} else {

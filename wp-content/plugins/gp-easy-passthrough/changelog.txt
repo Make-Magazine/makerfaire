@@ -1,6 +1,14 @@
 
 # Changelog
 
+## 1.10.1 | July 2, 2025
+
+- Fixed potential PHP warning when duplicating passed through files.
+
+## 1.10 | June 26, 2025
+
+- Added support for File Upload fields.
+
 ## 1.9.35 | April 17, 2025
 
 - Fixed issue where an unsupported field type (Consent) was mappable on the feed.

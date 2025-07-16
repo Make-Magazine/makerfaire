@@ -507,7 +507,9 @@ class Form extends Form_Base {
 				'label' => esc_html__( 'Form Name', 'elementor-pro' ),
 				'type' => Controls_Manager::TEXT,
 				'default' => esc_html__( 'New Form', 'elementor-pro' ),
-				'placeholder' => esc_html__( 'Form Name', 'elementor-pro' ),
+				'dynamic' => [
+					'active' => true,
+				],
 			]
 		);
 
@@ -2341,6 +2343,7 @@ class Form extends Form_Base {
 
 		if ( ! empty( $instance['form_name'] ) ) {
 			$this->add_render_attribute( 'form', 'name', $instance['form_name'] );
+			$this->add_render_attribute( 'form', 'aria-label', $instance['form_name'] );
 		}
 
 		if ( 'custom' === $instance['form_validation'] ) {

@@ -1,6 +1,10 @@
 
 # Changelog
 
+## 1.3.20 | May 22, 2025
+
+- Fixed a fatal error that could occur on forms using checkbox limit span across multiple fields.
+
 ## 1.3.19 | May 14, 2025
 
 - Fixed compatibility issue with Safari where checkbox limits were not being rendered under certain conditions.

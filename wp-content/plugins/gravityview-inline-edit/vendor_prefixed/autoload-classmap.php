@@ -520,7 +520,6 @@ return array(
    'GravityKit\GravityEdit\Foundation\ThirdParty\Gettext\Languages\CldrData' => $strauss_src . '/gettext/languages/src/CldrData.php',
    'GravityKit\GravityEdit\Foundation\ThirdParty\Gettext\Languages\FormulaConverter' => $strauss_src . '/gettext/languages/src/FormulaConverter.php',
    'GravityKit\GravityEdit\Foundation\ThirdParty\Gettext\Languages\Exporter\Ruby' => $strauss_src . '/gettext/languages/src/Exporter/Ruby.php',
-   'GravityKit\GravityEdit\Foundation\ThirdParty\Gettext\Languages\Exporter\Docs' => $strauss_src . '/gettext/languages/src/Exporter/Docs.php',
    'GravityKit\GravityEdit\Foundation\ThirdParty\Gettext\Languages\Exporter\Xml' => $strauss_src . '/gettext/languages/src/Exporter/Xml.php',
    'GravityKit\GravityEdit\Foundation\ThirdParty\Gettext\Languages\Exporter\Html' => $strauss_src . '/gettext/languages/src/Exporter/Html.php',
    'GravityKit\GravityEdit\Foundation\ThirdParty\Gettext\Languages\Exporter\Prettyjson' => $strauss_src . '/gettext/languages/src/Exporter/Prettyjson.php',

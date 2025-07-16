@@ -2,7 +2,7 @@
 /**
  * @license MIT
  *
- * Modified by __root__ on 13-March-2025 using Strauss.
+ * Modified by __root__ on 09-June-2025 using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 
@@ -18,6 +18,16 @@ class Json extends Exporter
     public static function getDescription()
     {
         return 'Build a compressed JSON-encoded file';
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @see \GravityKit\GravityEdit\Foundation\ThirdParty\Gettext\Languages\Exporter\Exporter::supportsFormulasWithAndWithoutParenthesis()
+     */
+    public static function supportsFormulasWithAndWithoutParenthesis()
+    {
+        return true;
     }
 
     /**
@@ -41,9 +51,9 @@ class Json extends Exporter
     /**
      * {@inheritdoc}
      *
-     * @see \GravityKit\GravityEdit\Foundation\ThirdParty\Gettext\Languages\Exporter\Exporter::toStringDo()
+     * @see \GravityKit\GravityEdit\Foundation\ThirdParty\Gettext\Languages\Exporter\Exporter::toStringDoWithOptions()
      */
-    protected static function toStringDo($languages)
+    protected static function toStringDoWithOptions($languages, array $options)
     {
         $list = array();
         foreach ($languages as $language) {
@@ -61,7 +71,14 @@ class Json extends Exporter
             if (isset($language->baseLanguage)) {
                 $item['baseLanguage'] = $language->baseLanguage;
             }
-            $item['formula'] = $language->formula;
+            if (!empty($options['both-formulas'])) {
+                $item['formulas'] = array(
+                    'standard' => $language->buildFormula(true),
+                    'php' => $language->formula,
+                );
+            } else {
+                $item['formula'] = $language->formula;
+            }
             $item['plurals'] = count($language->categories);
             $item['cases'] = array();
             $item['examples'] = array();

@@ -114,8 +114,53 @@ abstract class GPPA_Object_Type {
 		add_filter( 'gppa_object_type_query_' . $this->id, array( $this, 'maybe_add_offset_to_query' ), 10, 2 );
 	}
 
+	// Normalizes date values between mapping and target forms by converting array dates to string format when necessary, ensuring consistent filtering and population.
+	private function maybe_stringify_array_date( $filter_value, $primary_property_value, $filter, $field ) {
+		if ( $primary_property_value && is_array( $filter_value ) && rgar( $filter, 'property' ) && is_scalar( $filter['property'] ) && strpos( $filter['property'], 'gf_field' ) == 0 && is_scalar( $filter['value'] ) && strpos( $filter['value'], 'gf_field' ) == 0 ) {
+			$source_form = GFAPI::get_form( $primary_property_value );
+			if ( ! $source_form ) {
+				return $filter_value;
+			}
+			$source_field_id = null;
+			if ( preg_match( '/^gf_field_(\d+)$/', $filter['property'], $matches ) ) {
+				$source_field_id = (int) $matches[1];
+			}
+			$source_field = GFAPI::get_field( $source_form, $source_field_id );
+
+			$target_field_id = null;
+			if ( preg_match( '/^gf_field:(\d+)$/', $filter['value'], $matches ) ) {
+				$target_field_id = (int) $matches[1];
+			}
+			$target_field = GFAPI::get_field( $field->formId, $target_field_id );
+
+			// if both source and target field are date fields, and target field is not a datepicker, convert the date to a string in the designated format.
+			if ( $source_field && $target_field && $source_field->type === 'date' && $target_field->type === 'date' && $target_field->dateType != 'datepicker' ) {
+				if ( array_keys( $filter_value ) !== range( 0, count( $filter_value ) - 1 ) ) {
+					$filter_value = array_values( $filter_value );
+					switch ( $target_field->dateFormat ) {
+						case 'mdy':
+							$filter_value = array( $filter_value[0], $filter_value[1], $filter_value[2] );
+							break;
+						case 'dmy':
+							$filter_value = array( $filter_value[1], $filter_value[0], $filter_value[2] );
+							break;
+						case 'ymd':
+							$filter_value = array( $filter_value[2], $filter_value[0], $filter_value[1] );
+							break;
+					}
+				}
+
+				$filter_value = GFCommon::date_display( $filter_value, $source_field->dateFormat, $target_field->dateFormat );
+			}
+		}
+
+		return $filter_value;
+	}
+
 	public function parse_date_in_filter_value( $filter_value, $field_values, $primary_property_value, $filter, $ordering, $field, $property ) {
 		$property_id = ! empty( $property['group'] ) ? $property['group'] . '_' . $property['value'] : $property['value'];
+
+		$filter_value = $this->maybe_stringify_array_date( $filter_value, $primary_property_value, $filter, $field );
 
 		/**
 		 * @todo This should be documented and potentially be made into a generic gppa_parse_filter_value_as_date.
@@ -229,7 +274,7 @@ abstract class GPPA_Object_Type {
 
 		$value_exploded = explode( ':', $value );
 		$input_id       = $value_exploded[1];
-		$value          = gp_populate_anything()->get_field_value_from_field_values( $input_id, $field_values );
+		$value          = gp_populate_anything()->get_field_value_from_field_values( $input_id, $field_values, $field );
 
 		/**
 		 * Strip price from pricing fields if the current field is a product field.

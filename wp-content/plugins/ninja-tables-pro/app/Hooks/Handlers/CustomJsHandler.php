@@ -6,6 +6,11 @@ use NinjaTables\Framework\Support\Arr;
 
 class CustomJsHandler
 {
+    public function register()
+    {
+        add_action('ninja_tables_drag_and_drop_after_table_print', [$this, 'dragAndDropTableCustomJS'], 10, 1);
+        add_action('ninja_tables_after_table_print', [$this, 'ninjaTablesAfterTablePrint']);
+    }
     public $ninja_table_after_print = [];
 
     public function dragAndDropTableCustomJS($tableId)
@@ -44,7 +49,7 @@ class CustomJsHandler
                         var $ = jQuery;
                         var tableConfig = params.tableConfig;
 
-                        jQuery('.nt_force_download').on('click', function (e) {
+                        jQuery('.nt_force_download_').on('click', function (e) {
                             e.preventDefault();
                             console.log('hello');
                             const url = $(this).attr('href');

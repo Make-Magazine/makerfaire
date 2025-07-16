@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by __root__ on 13-March-2025 using Strauss.
+ * Modified by __root__ on 09-June-2025 using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 
@@ -388,7 +388,7 @@ class ProductDependencyChecker {
 
 		// If there are multiple versions of the same dependency required by more than one product, use the highest version as the required version.
 		$highest_required_version = Arr::get( $unmet_dependencies, "{$dependency_text_domain}.required_version" );
-		$highest_required_version = version_compare( $highest_required_version ?? 0, $dependency_data['version'], '<' ) ? $dependency_data['version'] : $highest_required_version;
+		$highest_required_version = $this->compare_product_versions( $highest_required_version ?? 0, $dependency_data['version'], '<' ) ? $dependency_data['version'] : $highest_required_version;
 
 		$unmet_dependency = [
 			'name'              => $dependency_product['name'],
@@ -420,7 +420,7 @@ class ProductDependencyChecker {
 
 					break;
 				// Low version.
-				case version_compare( $dependency_product['server_version'] ?? 0, $highest_required_version, '<' ):
+				case $this->compare_product_versions( $dependency_product['server_version'] ?? 0, $highest_required_version, '<' ):
 					$unmet_dependency['reason']     = self::FAILURE_OLDER_VERSION;
 					$unmet_dependency['resolvable'] = false;
 
@@ -452,14 +452,14 @@ class ProductDependencyChecker {
 						break;
 				*/
 				// Low version and no update available OR Update available but low version.
-				case ! $dependency_product['update_available'] && version_compare( $dependency_product['installed_version'] ?? 0, $highest_required_version, '<' ):
-				case $dependency_product['update_available'] && version_compare( $dependency_product['server_version'] ?? 0, $highest_required_version, '<' ):
+				case ! $dependency_product['update_available'] && $this->compare_product_versions( $dependency_product['installed_version'] ?? 0, $highest_required_version, '<' ):
+				case $dependency_product['update_available'] && $this->compare_product_versions( $dependency_product['server_version'] ?? 0, $highest_required_version, '<' ):
 					$unmet_dependency['reason']     = self::FAILURE_OLDER_VERSION;
 					$unmet_dependency['resolvable'] = false;
 
 					break;
 				// Update available and the version is >= than the one required.
-				case $dependency_product['update_available'] && ( version_compare( $dependency_product['installed_version'] ?? 0, $highest_required_version, '<' ) && version_compare( $dependency_product['server_version'] ?? 0, $highest_required_version, '>=' ) ):
+				case $dependency_product['update_available'] && ( $this->compare_product_versions( $dependency_product['installed_version'] ?? 0, $highest_required_version, '<' ) && $this->compare_product_versions( $dependency_product['server_version'] ?? 0, $highest_required_version, '>=' ) ):
 					$unmet_dependency['reason']     = self::FAILURE_OLDER_VERSION;
 					$unmet_dependency['resolvable'] = true;
 
@@ -499,7 +499,7 @@ class ProductDependencyChecker {
 
 		// If there are multiple versions of the same dependency required by more than one product, use the highest version as the required version.
 		$highest_required_version = Arr::get( $unmet_dependencies, "{$dependency_name}.required_version" );
-		$highest_required_version = version_compare( $highest_required_version ?? 0, $dependency_data['version'], '<' ) ? $dependency_data['version'] : $highest_required_version;
+		$highest_required_version = $this->compare_product_versions( $highest_required_version ?? 0, $dependency_data['version'], '<' ) ? $dependency_data['version'] : $highest_required_version;
 
 		$unmet_dependency = [
 			'name'              => $dependency_name,
@@ -552,7 +552,7 @@ class ProductDependencyChecker {
 	 * @since 1.2.12 Added $author_str parameter.
 	 *
 	 * @param string $text_domain_str Text domain(s). Optionally pipe-separated (e.g. 'gravityview|gk-gravityview').
-	 * @param string $author_str (optional) Product author(s). Optionally pipe-separated (e.g. 'GravityView|GravityKit|Katz Web Services, Inc.').
+	 * @param string $author_str      (optional) Product author(s). Optionally pipe-separated (e.g. 'GravityView|GravityKit|Katz Web Services, Inc.').
 	 *
 	 * @return array|null
 	 */
@@ -575,7 +575,7 @@ class ProductDependencyChecker {
 				return ProductManager::get_instance()->normalize_product_data( $gk_product );
 			}
 
-			$non_gk_product = CoreHelpers::get_installed_plugin_by_text_domain( $text_domain, false, $author_str );
+			$non_gk_product = $this->get_product_by_text_domain( $text_domain, false, $author_str );
 
 			if ( $non_gk_product ) {
 				return ProductManager::get_instance()->normalize_product_data( $non_gk_product );
@@ -605,7 +605,7 @@ class ProductDependencyChecker {
 		$compatible_version = array_filter(
 			$dependencies_versions,
 			function ( $dependency_version ) use ( $product_version ) {
-				return version_compare( $dependency_version, $product_version, '<=' );
+				return (bool) $this->compare_product_versions( $dependency_version, $product_version ?? '', '<=' );
 			}
 		);
 
@@ -616,5 +616,48 @@ class ProductDependencyChecker {
 		$compatible_version = max( $compatible_version );
 
 		return $dependencies[ $compatible_version ] ?? null;
+	}
+
+	/**
+	 * Retrieves information about an installed plugin by its text domain.
+	 * This is a thin wrapper around {@see CoreHelpers::get_installed_plugin_by_text_domain()} to facilitate test stubbing.
+	 *
+	 * @since 1.2.24
+	 *
+	 * @param string $text_domain Text domain.
+	 * @param bool   $skip_cache  (optional) Whether to skip the cache. Default is false.
+	 * @param string $author_str  (optional) Product author(s). Optionally pipe-separated (e.g. 'GravityView|GravityKit|Katz Web Services, Inc.').
+	 *
+	 * @return array|null
+	 */
+	protected function get_product_by_text_domain( string $text_domain, bool $skip_cache = false, string $author_str = '' ) {
+		return CoreHelpers::get_installed_plugin_by_text_domain(
+			$text_domain,
+			$skip_cache,
+			$author_str
+		);
+	}
+
+	/**
+	 * Compares product versions.
+	 * This is a thin wrapper around {@see CoreHelpers::version_compare()} for backward compatibility with older Foundation versions and to facilitate test stubbing.
+	 *
+	 * @since 1.2.25
+	 *
+	 * @param mixed       $version1 First version to compare.
+	 * @param mixed       $version2 Second version to compare.
+	 * @param string|null $operator (optional) Comparison operator.
+	 *
+	 * @return int|bool Returns -1, 0, or 1 if no operator is given; otherwise, returns a boolean.
+	 */
+	protected function compare_product_versions( $version1, $version2, $operator = null ) {
+		/** @phpstan-ignore-next-line */
+		$compare = is_callable( [ 'GravityKit\GravityEdit\Foundation\Helpers\Core', 'version_compare' ] )
+			? [ 'GravityKit\GravityEdit\Foundation\Helpers\Core', 'version_compare' ]
+			: 'version_compare';
+
+		return null !== $operator
+			? call_user_func( $compare, $version1, $version2, $operator )
+			: call_user_func( $compare, $version1, $version2 );
 	}
 }

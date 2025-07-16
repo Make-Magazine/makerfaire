@@ -5769,38 +5769,56 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-const StyledAlert = (0,_styles__WEBPACK_IMPORTED_MODULE_1__.styled)(_mui_material_Alert__WEBPACK_IMPORTED_MODULE_2__["default"])(({ theme, severity, color, variant }) => {
-  const variantsStyle = getVariantsStyle(severity, color, variant, theme);
+const StyledAlert = (0,_styles__WEBPACK_IMPORTED_MODULE_1__.styled)(_mui_material_Alert__WEBPACK_IMPORTED_MODULE_2__["default"])(({
+  theme,
+  severity,
+  color,
+  variant,
+  ownerState
+}) => {
+  const isSmall = ownerState.size === "small";
+  const variantsStyle = getVariantsColorStyle(severity, color, variant, theme);
+  const actionsStyle = getActionsStyle(ownerState, theme);
+  const titleTypography = isSmall ? {
+    ...theme.typography.caption,
+    fontWeight: theme.typography.subtitle2.fontWeight,
+    lineHeight: theme.typography.subtitle2.lineHeight
+  } : theme.typography.subtitle2;
+  const messageTypography = isSmall ? { ...theme.typography.caption, lineHeight: theme.typography.body2.lineHeight } : {};
   return {
     borderRadius: theme.shape.borderRadius * theme.shape.__unstableBorderRadiusMultipliers[2],
-    padding: theme.spacing(1.5, 2),
+    padding: isSmall ? theme.spacing(1.5) : theme.spacing(1.5, 2),
     "& .MuiAlert-message": {
       width: "100%",
       padding: 0,
-      minHeight: "31px",
+      minHeight: isSmall ? "28px" : "31px",
       display: "flex",
       flexDirection: "row",
       flexWrap: "wrap",
-      gap: theme.spacing(1.5)
+      gap: isSmall ? theme.spacing(1) : theme.spacing(1.5),
+      ...messageTypography
     },
     "& .MuiAlertTitle-root": {
       marginBottom: 0,
       lineHeight: "inherit",
-      marginRight: theme.spacing(0.5),
-      ...theme.typography.subtitle2,
-      marginTop: 0
+      marginRight: isSmall ? theme.spacing(0.25) : theme.spacing(0.5),
+      marginTop: 0,
+      ...titleTypography
     },
     "& .MuiAlert-icon": {
-      padding: 0,
-      paddingTop: theme.spacing(0.5)
+      fontSize: isSmall ? "18px" : "22px",
+      padding: isSmall ? theme.spacing(0.25) : 0,
+      paddingTop: isSmall ? "5px" : theme.spacing(0.5),
+      marginRight: isSmall ? theme.spacing(0.5) : theme.spacing(1.5)
     },
     "& .MuiAlert-action": {
-      padding: 0,
-      marginLeft: theme.spacing(1)
+      padding: isSmall ? theme.spacing(0.25, 0, 0) : 0,
+      marginLeft: isSmall ? theme.spacing(0.5) : theme.spacing(1)
     },
     "&.MuiAlert-filledWarning": {
       color: theme.palette.common.white
     },
+    ...actionsStyle,
     ...variantsStyle
   };
 });
@@ -5825,18 +5843,19 @@ const StyledAlertContentInnerContainer = (0,_styles__WEBPACK_IMPORTED_MODULE_1__
 const AlertContent = ({ children, ...props }) => {
   return /* @__PURE__ */ react__WEBPACK_IMPORTED_MODULE_0___default().createElement(StyledAlertContent, { ...props }, /* @__PURE__ */ react__WEBPACK_IMPORTED_MODULE_0___default().createElement(StyledAlertContentInnerContainer, null, children));
 };
-const StyledAlertActions = (0,_styles__WEBPACK_IMPORTED_MODULE_1__.styled)("div")(({ theme }) => ({
+const StyledAlertActions = (0,_styles__WEBPACK_IMPORTED_MODULE_1__.styled)("div")(({ theme, ownerState }) => ({
   display: "flex",
   alignItems: "flex-start",
   flexWrap: "wrap",
-  gap: theme.spacing(1)
+  gap: ownerState.size === "small" ? theme.spacing(0.5) : theme.spacing(1)
 }));
 const defaultProps = {
   closeText: "Close",
-  severity: "success"
+  severity: "success",
+  size: "medium"
 };
 const Alert = react__WEBPACK_IMPORTED_MODULE_0___default().forwardRef((inProps, ref) => {
-  const { onClose, action, secondaryAction, children, ...props } = { ...defaultProps, ...inProps };
+  const { onClose, action, secondaryAction, children, size, ...props } = { ...defaultProps, ...inProps };
   const hasActions = Boolean(action || secondaryAction);
   return /* @__PURE__ */ react__WEBPACK_IMPORTED_MODULE_0___default().createElement(
     StyledAlert,
@@ -5856,21 +5875,24 @@ const Alert = react__WEBPACK_IMPORTED_MODULE_0___default().forwardRef((inProps, 
           onClick: onClose,
           slotProps: {
             icon: {
-              fontSize: "small"
+              fontSize: size === "small" ? "tiny" : "small"
             }
           },
           title: props.closeText,
           "aria-label": props.closeText
         }
-      ) : false
+      ) : false,
+      ownerState: {
+        size
+      }
     },
     /* @__PURE__ */ react__WEBPACK_IMPORTED_MODULE_0___default().createElement(AlertContent, { className: classNames.content }, children),
-    hasActions && /* @__PURE__ */ react__WEBPACK_IMPORTED_MODULE_0___default().createElement(StyledAlertActions, { className: classNames.actions }, secondaryAction, action)
+    hasActions && /* @__PURE__ */ react__WEBPACK_IMPORTED_MODULE_0___default().createElement(StyledAlertActions, { className: classNames.actions, ownerState: { size } }, secondaryAction, action)
   );
 });
 Alert.defaultProps = defaultProps;
 var Alert_default = Alert;
-function getVariantsStyle(severity, color, variant, theme) {
+function getVariantsColorStyle(severity, color, variant, theme) {
   const semanticColor = color || severity;
   if (!semanticColor) {
     return {};
@@ -5930,6 +5952,24 @@ function getVariantsStyle(severity, color, variant, theme) {
       [_styles_theme_config_constants__WEBPACK_IMPORTED_MODULE_5__.LINK_PSEUDO_SELECTORS]: {
         color: theme.palette[semanticColor].main
       }
+    }
+  };
+}
+function getActionsStyle(ownerState, theme) {
+  if (ownerState.size !== "small") {
+    return {};
+  }
+  return {
+    "& .MuiButtonBase-root.MuiButton-root": {
+      fontSize: theme.typography.caption.fontSize,
+      letterSpacing: theme.typography.caption.letterSpacing,
+      lineHeight: 1
+    },
+    "& .MuiButtonBase-root.MuiButton-contained": {
+      padding: "8px 9px"
+    },
+    "& .MuiButtonBase-root.MuiButton-outlined": {
+      padding: "7px 9px"
     }
   };
 }
@@ -9177,7 +9217,7 @@ const StyledPopper = (0,_styles__WEBPACK_IMPORTED_MODULE_3__.styled)(
     minWidth: 80,
     maxWidth: "initial",
     backgroundColor: theme.palette.background.paper,
-    borderRadius: theme.shape.borderRadius * theme.shape.__unstableBorderRadiusMultipliers[2],
+    borderRadius: theme.shape.borderRadius * theme.shape.__unstableBorderRadiusMultipliers[3],
     color: theme.palette.text.primary,
     // The shadow angle should guarantee that the arrow is visible clearly.
     boxShadow: "0px 0px 10px 4px rgba(0,0,0,0.03),6px 0px 10px 4px rgba(0,0,0,0.03),-6px 0px 10px 4px rgba(0,0,0,0.03),0px 6px 10px 4px rgba(0,0,0,0.03)"
@@ -13424,7 +13464,19 @@ const getCustomTheme = (customTheme, dark = false, rtl = false) => {
     const cachedTheme = themeCacheMap.get(cacheKey);
     return cachedTheme;
   }
-  const themeArgs = {};
+  const themeArgs = {
+    // These typography customizations exist in theme-config/base.ts and are currently applied to all themes.
+    // We need to evaluate whether they can be removed in the future (this is also related to the CardHeader title variant being changed from subtitle2 to subtitle1).
+    typography: {
+      subtitle1: {
+        fontWeight: 500,
+        lineHeight: 1.3
+      },
+      subtitle2: {
+        lineHeight: 1.3
+      }
+    }
+  };
   if (rtl) {
     themeArgs.direction = "rtl";
   }
@@ -13488,7 +13540,8 @@ const ThemeProvider = (0,_emotion_react__WEBPACK_IMPORTED_MODULE_11__.w)(
     const isDarkMode = currentColorScheme === "auto" && prefersDarkMode || currentColorScheme === "dark";
     const currentOverrides = (0,_theme_config_overrides__WEBPACK_IMPORTED_MODULE_15__.getOverrides)(overrides, themeConfig?.overrides);
     const themeName = unstableThemeV0?.name || palette || themeConfig?.themeName;
-    let theme = unstableThemeV0 ? getCustomTheme(unstableThemeV0, isDarkMode, rtl) : getTheme({
+    const customTheme = unstableThemeV0 || themeConfig?.customTheme;
+    let theme = customTheme ? getCustomTheme(customTheme, isDarkMode, rtl) : getTheme({
       rtl,
       isDarkMode,
       palette: palette || themeConfig?.themeName
@@ -13496,7 +13549,7 @@ const ThemeProvider = (0,_emotion_react__WEBPACK_IMPORTED_MODULE_11__.w)(
     if (currentOverrides) {
       theme = mergeThemeWithOverrides(theme, currentOverrides);
     }
-    return /* @__PURE__ */ react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_context_theme_config_provider__WEBPACK_IMPORTED_MODULE_12__.ThemeConfigProvider, { value: { colorScheme, themeName, overrides: currentOverrides } }, /* @__PURE__ */ react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material_styles__WEBPACK_IMPORTED_MODULE_16__["default"], { theme }, children));
+    return /* @__PURE__ */ react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_context_theme_config_provider__WEBPACK_IMPORTED_MODULE_12__.ThemeConfigProvider, { value: { colorScheme, themeName, overrides: currentOverrides, customTheme } }, /* @__PURE__ */ react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_mui_material_styles__WEBPACK_IMPORTED_MODULE_16__["default"], { theme }, children));
   }
 );
 
@@ -13630,8 +13683,14 @@ function defineCustomTheme(customTheme, dark) {
   if (customTheme.shadows) {
     validTheme.shadows = customTheme.shadows;
   }
+  if (customTheme.shape) {
+    validTheme.shape = customTheme.shape;
+  }
   if (customTheme.typography) {
     validTheme.typography = ensureAllowedTypography(customTheme.typography);
+  }
+  if (customTheme.zIndex) {
+    validTheme.zIndex = customTheme.zIndex;
   }
   return validTheme;
 }
@@ -13640,12 +13699,12 @@ function ensureAllowedTypography(typographyConfig = {}) {
     return {};
   }
   const typographySchema = {
-    h1: ["fontFamily", "fontSize"],
-    h2: ["fontFamily", "fontSize"],
-    h3: ["fontFamily", "fontSize"],
-    h4: ["fontFamily", "fontSize"],
-    h5: ["fontFamily", "fontSize"],
-    h6: ["fontFamily", "fontSize"],
+    h1: ["fontFamily", "fontSize", "fontWeight"],
+    h2: ["fontFamily", "fontSize", "fontWeight"],
+    h3: ["fontFamily", "fontSize", "fontWeight"],
+    h4: ["fontFamily", "fontSize", "fontWeight"],
+    h5: ["fontFamily", "fontSize", "fontWeight"],
+    h6: ["fontFamily", "fontSize", "fontWeight"],
     subtitle1: ["fontFamily"],
     subtitle2: ["fontFamily"],
     body1: ["fontFamily"],
@@ -16169,10 +16228,10 @@ const styled = (component, inOptions) => {
   if (!inOptions?.shouldForwardProp) {
     return styledWithCustomDefaultTheme(component, inOptions);
   }
-  const shouldForwardPropSource = inOptions.shouldForwardProp;
+  const customShouldForwardProp = inOptions.shouldForwardProp;
   const options = { ...inOptions };
   options.shouldForwardProp = (prop) => {
-    return rootShouldForwardProp(prop) ?? shouldForwardPropSource(prop) ?? true;
+    return rootShouldForwardProp(prop) && customShouldForwardProp(prop);
   };
   return styledWithCustomDefaultTheme(component, options);
 };
@@ -17834,6 +17893,15 @@ __webpack_require__.r(__webpack_exports__);
 
 const { slots, classNames } = (0,_styles__WEBPACK_IMPORTED_MODULE_2__.createSlots)("FloatingActionBar", ["actions", "popper"]);
 const PopperRoot = (0,_styles__WEBPACK_IMPORTED_MODULE_3__.styled)(_Popper__WEBPACK_IMPORTED_MODULE_4__["default"], slots.popper)({});
+const allowedPositions = /* @__PURE__ */ new Set([
+  "top",
+  "bottom",
+  "top-start",
+  "top-end",
+  "bottom-start",
+  "bottom-end"
+]);
+const PLACEMENT_DEFAULT = "top-end";
 const Actions = (0,_styles__WEBPACK_IMPORTED_MODULE_3__.styled)(
   "div",
   slots.actions
@@ -17924,7 +17992,7 @@ const FloatingActionBar = (0,react__WEBPACK_IMPORTED_MODULE_0__.forwardRef)((inP
       role: "presentation",
       ...popperDisplayProps,
       className: classNames.popper,
-      placement: placement === "bottom-start" ? "bottom-start" : "top-end",
+      placement: allowedPositions.has(placement) ? placement : PLACEMENT_DEFAULT,
       modifiers: [
         /**
          * Popper is using translate3d by default in order to calculate the position of the popper.

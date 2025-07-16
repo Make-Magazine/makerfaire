@@ -1,0 +1,37 @@
+.spellbook-admin .spellbook-app__header {
+    background: #fff;
+    block-size: 62px;
+    border-bottom: 1px solid #ecedf8;
+    display: flex;
+    inline-size: 100%
+}
+
+.spellbook-admin .spellbook-app__header-logo {
+    align-items: center;
+    background: #902EEF;
+    block-size: 62px;
+    border-right: 1px solid #ecedf8;
+    display: flex;
+    inline-size: 95px;
+    justify-content: center;
+	overflow: hidden;
+}
+
+@container spellbook (max-width: 900px) {
+    .spellbook-admin .spellbook-app__header-logo {
+        inline-size: 70px;
+    }
+}
+
+.spellbook-admin .spellbook-app__header-logo svg {
+	width: 46px;
+	height: auto;
+}
+
+.spellbook-admin .spellbook-app__header-main {
+    align-items: center;
+    block-size: 62px;
+    display: flex;
+    justify-content: space-between;
+    padding: 0 16px
+}

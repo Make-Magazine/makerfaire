@@ -1,0 +1,266 @@
+.license-bar-suite {
+    padding: 1rem;
+    position: relative;
+    background: white;
+    box-shadow: 0 2px 2px rgba(58, 58, 87, 0.0596411);
+    border-radius: 3px;
+    outline: 1px solid #d4d4e4;
+    overflow: hidden;
+    font-family: inter, -apple-system, blinkmacsystemfont, "Segoe UI", roboto, oxygen-sans, ubuntu, cantarell, "Helvetica Neue", sans-serif;
+    margin-bottom: 20px;
+}
+
+/* Unactivated state */
+.license-bar-suite .spellbook-license {
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+	flex-wrap: wrap;
+    gap: 24px;
+}
+
+.license-bar-suite .spellbook-form-container {
+    flex: 3;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    min-height: 30px;
+}
+
+@container spellbook (min-width: 1100px) {
+    .license-bar-suite .spellbook-form-container {
+        flex-wrap: nowrap;
+    }
+
+	.license-bar-suite .spellbook-license {
+		flex-wrap: nowrap;
+	}
+}
+
+.spellbook-error-message {
+	color: #d32f2f;
+}
+
+.license-bar-suite .spellbook-form-input {
+    flex: 1;
+	max-width: 330px;
+    padding: 6px 12px;
+    border-radius: 3px;
+    border: 1px solid #9092b0;
+    background: transparent;
+    color: #757575;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 14px;
+    min-height: 0;
+    box-shadow: none;
+    height: 34px;
+    box-sizing: border-box;
+}
+
+.license-bar-suite .spellbook-form-input::placeholder {
+    color: #757575;
+}
+
+.license-bar-suite .spellbook-form-input:focus {
+    border: 1px solid #bc82f5 !important;
+    box-shadow: 0 0 0 1px #bc82f5 !important;
+    outline: none !important;
+}
+
+.license-bar-suite .spellbook-form-button {
+    padding: 8px 16px;
+    background: #902EEF;
+    border-radius: 3px;
+    color: white;
+    border: none;
+    font-size: 14px;
+    line-height: 14px;
+    cursor: pointer;
+    white-space: nowrap;
+    min-height: 0;
+    box-shadow: none;
+    height: 34px;
+    box-sizing: border-box;
+}
+
+.license-bar-suite .spellbook-form-button:hover {
+	background: #561c8f;
+}
+
+.license-bar-suite .spellbook-form-button:disabled {
+	background: #bc82f5;
+}
+
+.license-bar-suite .spellbook-link-button {
+	color: #902EEF;
+	background: transparent;
+	border: none;
+	font-size: 14px;
+	font-weight: 400;
+	line-height: 14px;
+	cursor: pointer;
+	text-decoration: underline;
+	padding: 0;
+}
+
+.license-bar-suite a:hover,
+.license-bar-suite .spellbook-link-button:hover {
+	text-decoration: none;
+}
+
+.license-bar-suite .spellbook-links {
+    flex: 1;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 6px;
+    height: 30px;
+}
+
+.license-bar-suite a {
+    color: #902EEF;
+    font-weight: 400;
+    text-decoration: underline;
+}
+
+.license-bar-suite .spellbook-vertical-divider {
+    width: 1px;
+    height: 16px;
+    background: #E0E0E0;
+    margin: 0;
+}
+
+/* Stars background (only for unactivated state) */
+.license-bar-suite .spellbook-stars-background {
+    position: absolute;
+    right: -44px;
+    top: 0;
+    width: 171.65px;
+    height: 133.20px;
+    opacity: 0.10;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.license-bar-suite .spellbook-star-large {
+    position: absolute;
+    left: 38.45px;
+    top: 0;
+}
+
+.license-bar-suite .spellbook-star-large svg {
+    width: 88px;
+    height: 78px;
+}
+
+.license-bar-suite .spellbook-star-small {
+    position: absolute;
+    left: 0;
+    top: 5.55px;
+}
+
+.license-bar-suite .spellbook-star-small svg {
+    width: 31px;
+    height: 31px;
+}
+
+/* Activated state */
+.license-bar-suite--activated {
+    display: flex;
+    align-items: center;
+    gap: 0 16px;
+	padding: 0 12px 0 0;
+	font-size: 14px;
+}
+
+.license-bar-suite--activated .suite-icon {
+	padding: 8px 10px 8px 6px;
+	width: 40px;
+	height: 40px;
+	border-radius: 0 30px 30px 0;
+}
+
+.license-bar-suite--activated .suite-icon--perk {
+	background: #F0F9F4;
+}
+
+.license-bar-suite--activated .suite-icon--perk path[opacity="0.08"] {
+	display: none;
+}
+
+.license-bar-suite--activated .suite-icon--connect {
+	background: #FFEFED;
+}
+
+.license-bar-suite--activated .suite-icon--connect path[opacity="0.1"] {
+	display: none;
+}
+
+.license-bar-suite--activated .suite-icon--shop {
+	background: #F1F8FB;
+}
+
+.license-bar-suite--activated .suite-icon--shop svg {
+	margin-top: -3px;
+}
+
+.license-bar-suite--activated .suite-icon--shop path[opacity="0.08"] {
+	display: none;
+}
+
+.license-bar-suite--activated .spellbook-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.license-bar-suite--activated .spellbook-title {
+    font-weight: 500;
+    color: #1d2327;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.license-bar-suite--activated .spellbook-usage {
+    color: #757575;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.license-bar-suite--activated .spellbook-usage a {
+    color: #902EEF;
+    text-decoration: underline;
+}
+
+/* Right side */
+.license-bar-suite__right {
+	display: flex;
+	align-items: center;
+	gap: 1rem;
+	margin-left: auto;
+	margin-right: .5rem;
+}
+
+@container spellbook (max-width: 800px) {
+    .license-bar-suite--activated .spellbook-usage,
+    .license-bar-suite__right .spellbook-upgrade,
+    .license-bar-suite__right .spellbook-renew {
+        display: none;
+    }
+
+    .license-bar-suite__right {
+        gap: 0;
+    }
+}
+
+/* Reset any WordPress default styles */
+.license-bar-suite input,
+.license-bar-suite button {
+    min-height: 0;
+    box-shadow: none;
+}

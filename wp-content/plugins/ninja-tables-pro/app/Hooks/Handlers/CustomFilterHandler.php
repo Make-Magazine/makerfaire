@@ -9,6 +9,11 @@ class CustomFilterHandler
 {
     use CustomFilter;
 
+    public function register()
+    {
+        add_filter('ninja_table_rendering_table_vars', [$this, 'ninjaTableRenderingTableVars'], 100, 2);
+    }
+
     public function ninjaTableRenderingTableVars($tableVars, $tableId)
     {
         $tableVars = $this->addAdvancedFilter($tableVars, $tableId);

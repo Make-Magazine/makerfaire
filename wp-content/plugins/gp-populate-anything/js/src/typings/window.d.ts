@@ -15,7 +15,7 @@ declare global {
 	type GPPAFilter = {
 		property: string
 		operator: string
-		value: string
+		value: string | null
 	}
 
 	interface String {
