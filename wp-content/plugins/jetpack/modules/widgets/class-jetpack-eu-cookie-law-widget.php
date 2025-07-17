@@ -11,7 +11,7 @@ use Automattic\Jetpack\Assets;
  * Disable direct access/execution to/of the widget code.
  */
 if ( ! defined( 'ABSPATH' ) ) {
-	exit;
+	exit( 0 );
 }
 
 if ( ! class_exists( 'Jetpack_EU_Cookie_Law_Widget' ) ) {
@@ -217,6 +217,7 @@ if ( ! class_exists( 'Jetpack_EU_Cookie_Law_Widget' ) ) {
 		 * @html-template-var array $instance
 		 *
 		 * @param array $instance Previously saved values from database.
+		 * @return string|void
 		 */
 		public function form( $instance ) {
 			$instance = wp_parse_args( $instance, $this->defaults() );

@@ -1,6 +1,10 @@
 
 # Changelog
 
+## 1.2.11 | July 16, 2025
+
+- Fixed an issue where populating a child field from a parent field could fail if the parent field has calculations enabled.
+
 ## 1.2.10 | June 11, 2025
 
 - Fixed an issue with Nested Entries Notifications not getting sent when edited via GravityView.

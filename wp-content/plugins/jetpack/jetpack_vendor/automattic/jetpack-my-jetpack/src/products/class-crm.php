@@ -40,6 +40,13 @@ class Crm extends Product {
 	public static $plugin_slug = 'zero-bs-crm';
 
 	/**
+	 * The category of the product
+	 *
+	 * @var string
+	 */
+	public static $category = 'management';
+
+	/**
 	 * Whether this product requires a user connection
 	 *
 	 * @var string
@@ -84,7 +91,7 @@ class Crm extends Product {
 	 * @return string
 	 */
 	public static function get_description() {
-		return __( 'Strengthen customer relationships and grow your business', 'jetpack-my-jetpack' );
+		return __( 'All of the tools you need to grow your business.', 'jetpack-my-jetpack' );
 	}
 
 	/**

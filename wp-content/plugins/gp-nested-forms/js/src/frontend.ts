@@ -1281,12 +1281,14 @@ const ko = window.ko;
 								(field) => field.field_id === fieldId
 							);
 
-							parentValue = gfcalc.cleanNumber(
-								parentValue,
-								self.formId,
-								fieldId,
-								formulaField,
-							);
+							if ( formulaField ) {
+								parentValue = gfcalc.cleanNumber(
+									parentValue,
+									self.formId,
+									fieldId,
+									formulaField,
+								);
+							}
 						} else {
 							const currency = new gform.Currency(window.gf_global?.gf_currency_config);
 							parentValue = currency.toNumber(parentValue);

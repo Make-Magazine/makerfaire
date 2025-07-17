@@ -33,6 +33,13 @@ class Stats extends Module_Product {
 	public static $module_name = 'stats';
 
 	/**
+	 * The category of the product
+	 *
+	 * @var string
+	 */
+	public static $category = 'growth';
+
+	/**
 	 * The Plugin slug associated with stats
 	 *
 	 * @var string|null
@@ -98,7 +105,7 @@ class Stats extends Module_Product {
 	 * @return string
 	 */
 	public static function get_description() {
-		return __( 'The simplest way to track visitor insights and unlock your site’s growth', 'jetpack-my-jetpack' );
+		return __( 'Clear, concise, and actionable analysis of your site performance.', 'jetpack-my-jetpack' );
 	}
 
 	/**
@@ -292,6 +299,10 @@ class Stats extends Module_Product {
 	 * @return ?string
 	 */
 	public static function get_purchase_url() {
+		$status = static::get_status();
+		if ( $status === Products::STATUS_NEEDS_FIRST_SITE_CONNECTION ) {
+			return null;
+		}
 		// The returning URL could be customized by changing the `redirect_uri` param with relative path.
 		return sprintf(
 			'%s#!/stats/purchase/%d?from=jetpack-my-jetpack%s&redirect_uri=%s',
