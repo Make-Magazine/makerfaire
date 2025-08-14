@@ -1,3 +1,12 @@
+:root {
+  --direction-multiplier: 1;
+}
+
+html[dir=rtl],
+body.rtl {
+  --direction-multiplier: -1;
+}
+
 .elementor-hidden {
   display: none;
 }
@@ -1735,9 +1744,9 @@ body.rtl .e-con {
   font-family: "eicons";
   font-size: 15px;
   position: absolute;
-  top: 50%;
+  inset-block-start: 50%;
+  inset-inline-end: 10px;
   transform: translateY(-50%);
-  right: 10px;
   pointer-events: none;
   text-shadow: 0 0 3px rgba(0, 0, 0, 0.3);
 }

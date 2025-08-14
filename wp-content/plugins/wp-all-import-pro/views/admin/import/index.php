@@ -6,6 +6,14 @@
 	var plugin_url = '<?php echo WP_ALL_IMPORT_ROOT_URL; ?>';
 </script>
 
+<!-- Fullscreen drag overlay -->
+<div id="wpallimport-fullscreen-drag-overlay" class="wpallimport-fullscreen-drag-overlay" style="display: none;">
+	<div class="wpallimport-drag-message">
+		<span class="wpallimport-drag-icon"></span>
+		<span class="wpallimport-drag-text"><?php _e('Drop your file anywhere to upload', 'wp-all-import-pro'); ?></span>
+	</div>
+</div>
+
 <table class="wpallimport-layout wpallimport-step-1">
 	<tr>
 		<td class="left">
@@ -38,23 +46,34 @@
 						<div class="clear"></div>
 
 						<div class="wpallimport-import-types">
-							<?php if (empty($_GET['deligate'])): ?>
+							<?php if (empty($_GET['deligate'] ?? '')): ?>
 							<h2><?php _e('First, specify how you want to import your data', 'wp-all-import-pro'); ?></h2>
 							<?php else: ?>
 							<h2 style="margin-bottom: 10px;"><?php _e('First, specify previously exported file', 'wp-all-import-pro'); ?></h2>
 							<h2 class="wp_all_import_subheadline"><?php _e('The data in this import file can be modified, but the structure of the file (column/element names) should not change.', 'wp-all-import-pro'); ?></h2>
 							<?php endif; ?>
-							<a class="wpallimport-import-from wpallimport-upload-type <?php echo ('upload' == $post['type']) ? 'selected' : '' ?>" rel="upload_type" href="javascript:void(0);">
+							<div id="wpallimport-drag-drop-area" class="wpallimport-drag-drop-area">
+							<a class="wpallimport-import-from wpallimport-upload-type <?php echo ('upload' == $post['type']) ? 'selected' : '' ?>" rel="upload_type" id="file_upload_type" href="javascript:void(0);">
 								<span class="wpallimport-icon"></span>
-								<span class="wpallimport-icon-label"><?php _e('Upload a file', 'wp-all-import-pro'); ?></span>
+								<div class="wpallimport-text-content">
+									<span class="wpallimport-icon-label"><?php _e('Upload a file', 'wp-all-import-pro'); ?></span>
+									<span class="wpallimport-helper-text"><?php _e('Or simply drag and drop', 'wp-all-import-pro'); ?></span>
+								</div>
 							</a>
+							</div>
 							<a class="wpallimport-import-from wpallimport-url-type <?php echo ('url' == $post['type'] || 'ftp' == $post['type']) ? 'selected' : '' ?>" rel="url_type" href="javascript:void(0);">
 								<span class="wpallimport-icon"></span>
-								<span class="wpallimport-icon-label"><?php _e('Download a file', 'wp-all-import-pro'); ?></span>
+								<div class="wpallimport-text-content">
+									<span class="wpallimport-icon-label"><?php _e('Download a file', 'wp-all-import-pro'); ?></span>
+									<span class="wpallimport-helper-text"><?php _e('From FTP or any URL', 'wp-all-import-pro'); ?></span>
+								</div>
 							</a>
 							<a class="wpallimport-import-from wpallimport-file-type <?php echo 'file' == $post['type'] ? 'selected' : '' ?>" rel="file_type" href="javascript:void(0);">
 								<span class="wpallimport-icon"></span>
-								<span class="wpallimport-icon-label"><?php _e('Use existing file', 'wp-all-import-pro'); ?></span>
+								<div class="wpallimport-text-content">
+									<span class="wpallimport-icon-label"><?php _e('Use existing file', 'wp-all-import-pro'); ?></span>
+									<span class="wpallimport-helper-text"><?php _e('Previously uploaded data', 'wp-all-import-pro'); ?></span>
+								</div>
 							</a>
 						</div>
 
@@ -130,6 +149,14 @@
 									var existing_file_sizes = <?php echo json_encode($sizes) ?>;
 								</script>
 
+								<h2 class="wpallimport-file-selector-label">
+									<?php _e('Select Import File', 'wp-all-import-pro'); ?>
+									<?php
+									$tooltip_text = sprintf(__('Upload files to <strong>%s</strong> and they will appear in this list', 'wp-all-import-pro'), $upload_dir['basedir'] . $files_directory);
+									?>
+									<a href="#" class="wpallimport-help" title="<?php echo esc_attr($tooltip_text); ?>" style="position: relative; top: -2px;">?</a>
+								</h2>
+
 								<select id="file_selector">
 									<option value=""><?php _e('Select a previously uploaded file', 'wp-all-import-pro'); ?></option>
 									<?php foreach ($local_files as $file) :?>
@@ -138,16 +165,11 @@
 								</select>
 
 								<input type="hidden" name="file" value="<?php echo esc_attr($post['file']); ?>"/>
-
-								<div class="wpallimport-note" style="margin: 0 auto; font-size: 13px;">
-									<?php printf(__('Upload files to <strong>%s</strong> and they will appear in this list', 'wp-all-import-pro'), $upload_dir['basedir'] . $files_directory) ?>
-									<span></span>
-								</div>
 							</div>
 						</div>
 						<div id="wpallimport-url-upload-status"></div>
 
-						<?php if (empty($_GET['deligate'])): ?>
+						<?php if (empty($_GET['deligate'] ?? '')): ?>
 
                         <div class="wpallimport-download-resource-step-two">
                             <div class="wpallimport-download-resource wpallimport-download-resource-step-two-url">
@@ -157,7 +179,7 @@
                                     <a class="wpallimport-download-from-url rad4" href="javascript:void(0);"><?php _e('Download', 'wp-all-import-pro'); ?></a>
                                     <span class="img_preloader" style="top:0; left: 5px; visibility: hidden; display: inline;"></span>
                                 </div>
-                                <div class="wpallimport-note" style="margin: 20px auto 0; font-size: 13px;">
+                                <div class="wpallimport-note" style="font-size: 13px; margin: 20px auto 40px;">
                                     <?php _e('<strong>Hint:</strong> After you create this import, you can schedule it to run automatically, on a pre-defined schedule, with cron jobs.', 'wp-all-import-pro'); ?>
                                     <span></span>
                                 </div>
@@ -253,20 +275,9 @@
 
 							<div class="wpallimport-choose-post-type">
 
-								<input type="hidden" name="wizard_type" value="<?php echo $post['wizard_type']; ?>"/>
+								<input type="hidden" name="wizard_type" value="new"/>
 
-								<h2 style="margin-top:0;"><?php _e('Import data from this import file into...', 'wp-all-import-pro'); ?></h2>
-
-								<div class="wpallimport-choose-data-type">
-									<a class="wpallimport-import-to rad4 wpallimport-to-new-items <?php if ($post['wizard_type'] == 'new') echo 'wpallimport-import-to-checked'; ?>" rel="new" href="javascript:void(0);">
-										<span class="wpallimport-import-to-title"><?php _e('New Items', 'wp-all-import-pro'); ?></span>
-										<span class="wpallimport-import-to-arrow"></span>
-									</a>
-									<a class="wpallimport-import-to rad4 wpallimport-to-existing-items <?php if ($post['wizard_type'] == 'matching') echo 'wpallimport-import-to-checked'; ?>" rel="matching" href="javascript:void(0);">
-										<span class="wpallimport-import-to-title"><?php _e('Existing Items', 'wp-all-import-pro'); ?></span>
-										<span class="wpallimport-import-to-arrow"></span>
-									</a>
-								</div>
+								<h2><?php _e('Create or modify...', 'wp-all-import-pro'); ?></h2>
 
 								<?php
 
@@ -343,18 +354,6 @@
 
 								?>
 								<div class="wpallimport-choose-import-direction">
-									<div class="wpallimport-extra-text-left">
-										<div class="wpallimport-new-records"><?php _e('Create new', 'wp-all-import-pro'); ?></div>
-										<div class="wpallimport-existing-records"><?php _e('Import to existing', 'wp-all-import-pro'); ?></div>
-									</div>
-									<div class="wpallimport-extra-text-right">
-										<div class="wpallimport-new-records"><?php _e('for each record in my data file.', 'wp-all-import-pro'); ?>
-											<a class="wpallimport-help" href="#help" style="position: relative; top: -2px;" title="<?php _e('The New Items option is commonly used to import new posts or products to your site without touching the existing records.<br/><br/>If the import is later run again with modified data, WP All Import will only update/remove posts created by this import.', 'wp-all-import-pro'); ?>">?</a>
-										</div>
-										<div class="wpallimport-existing-records"><?php _e('and update some or all of their data.', 'wp-all-import-pro'); ?>
-											<a class="wpallimport-help" href="#help" style="position: relative; top: -2px;" title="<?php _e('The Existing Items option is commonly used to update existing products with new stock quantities while leaving all their other data alone, update properties on your site with new pricing, etc. <br/><br/> On the Import Settings screen, you will map the records in your file to the existing items on your site and specify which data points will be updated and which will be left alone.', 'wp-all-import-pro'); ?>">?</a>
-										</div>
-									</div>
                                     <select name="custom_type_selector" id="custom_type_selector" class="wpallimport-post-types">
 
                                     <?php
@@ -369,7 +368,7 @@
                                     $known_imgs     = array( 'post', 'page', 'product', 'import_users', 'shop_order', 'shop_coupon', 'shop_customer', 'users', 'comments', 'taxonomies', 'woo_reviews', 'gf_entries' );
                                     $all_posts      = array_merge( $sorted_cpt, $hidden_post_types );
                                     $all_posts      = apply_filters( 'pmxi_custom_types', $all_posts, 'all_types' );
-                                    $ordered_posts  = array( 'post', 'page', 'taxonomies', 'comments', 'import_users', 'shop_order', 'shop_coupon', 'product', 'woo_reviews', 'shop_customer');
+                                    $ordered_posts  = array( 'post', 'page', 'product', 'shop_order', 'shop_coupon', 'woo_reviews', 'shop_customer', 'import_users', 'taxonomies', 'comments', 'gf_entries');
 
                                     foreach ( $all_posts as $key => $post_obj ) {
                                         if ( ! in_array( $key, $ordered_posts ) ) {
@@ -419,7 +418,7 @@
                                     </select>
 									<div class="taxonomy_to_import_wrapper">
 										<input type="hidden" name="taxonomy_type" value="<?php echo $post['taxonomy_type'];?>">
-										<h2 style="margin: 30px 0 -10px 0;"><?php _e('Select taxonomy to import into...', 'wp-all-import-pro');?> <a class="wpallimport-help" href="#help" style="position: relative; top: -2px;" title="Hover over each entry to view the taxonomy slug.">?</a></h2>
+										<h2><?php _e('Select taxonomy to import into...', 'wp-all-import-pro');?> <a class="wpallimport-help" href="#help" style="position: relative; top: -2px;" title="Hover over each entry to view the taxonomy slug.">?</a></h2>
 										<select id="taxonomy_to_import">
 											<option value=""><?php _e('Select Taxonomy', 'wp-all-import-pro'); ?></option>
 											<?php $options = wp_all_import_get_taxonomies(); ?>

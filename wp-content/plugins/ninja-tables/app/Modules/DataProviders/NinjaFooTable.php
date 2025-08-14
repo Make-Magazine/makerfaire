@@ -491,6 +491,16 @@ class NinjaFooTable
 
         $tableCaption = get_post_meta($table_id, '_ninja_table_caption', true);
 
+        $appearanceSettings = get_post_meta($table_id, '_ninja_table_woo_appearance_settings', false);
+           
+        if ($appearanceSettings) {
+            // Convert indexed array to associative if needed
+            $configSettings['appearance_settings'] = is_array($appearanceSettings) && array_keys($appearanceSettings) === range(0, count($appearanceSettings) - 1)
+                ? array_values($appearanceSettings)[0]
+                : $appearanceSettings;
+        }
+        
+
         $table_vars = array(
             'table_id'         => $table_id,
             'title'            => $table->post_title,

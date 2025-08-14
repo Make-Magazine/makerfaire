@@ -23,7 +23,7 @@
     <input type="checkbox" id="is_delete_missing" name="is_delete_missing" value="1" <?php echo $post['is_delete_missing'] ? 'checked="checked"': '' ?> class="switcher" data-backups-prompt="<?php if (empty($backups_prompt)): ?>disabled<?php else: ?>enabled<?php endif?>"/>
     <label for="is_delete_missing"><?php printf(__('Remove or modify %s that are not present in this import file', 'wp-all-import-pro'), $cpt_name) ?></label> <a href="https://www.youtube.com/watch?v=djC1IvYtDDY&ab_channel=WPAllImport" target="_blank" class="video-embed" style="position: relative; top: -2px;"></a>
 </div>
-<div class="switcher-target-is_delete_missing" style="padding-left:17px;">
+<div class="switcher-target-is_delete_missing" style="padding-left:24px;">
 
     <h4><?php printf(__('Which %s do you want to remove or modify?', 'wp-all-import-pro'), $cpt_name); ?></h4>
     <input type="radio" id="delete_missing_logic_import" name="delete_missing_logic" value="import" <?php echo 'all' != $post['delete_missing_logic'] ? 'checked="checked"': '' ?>/>
@@ -191,12 +191,12 @@
 
 
     <div class="switcher-target-delete_missing_action_remove" style="padding-left:26px;">
-        <div class="input" style="margin-left: 4px;">
+        <div class="input">
             <input type="hidden" name="is_delete_attachments" value="0" />
             <input type="checkbox" id="is_delete_attachments" name="is_delete_attachments" value="1" <?php echo $post['is_delete_attachments'] ? 'checked="checked"': '' ?>/>
             <label for="is_delete_attachments"><?php printf(__('Delete files attached to removed %s', 'wp-all-import-pro'), $cpt_name); ?></label>
         </div>
-        <div class="input" style="margin-left: 4px;">
+        <div class="input">
             <input type="hidden" name="is_delete_imgs" value="0" />
             <input type="checkbox" id="is_delete_imgs" name="is_delete_imgs" value="1" <?php echo $post['is_delete_imgs'] ? 'checked="checked"': '' ?>/>
             <label for="is_delete_imgs"><?php printf(__('Delete images attached to removed %s', 'wp-all-import-pro'), $cpt_name); ?></label>

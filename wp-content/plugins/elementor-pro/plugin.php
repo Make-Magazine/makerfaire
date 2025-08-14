@@ -1,6 +1,7 @@
 <?php
 namespace ElementorPro;
 
+use ElementorPro\Core\Maintenance;
 use ElementorPro\Core\PHP_Api;
 use ElementorPro\Core\Admin\Admin;
 use ElementorPro\Core\App\App;
@@ -507,6 +508,8 @@ class Plugin {
 
 			$this->license_admin->register_actions();
 		}
+
+		Maintenance::init();
 
 		// The `Updater` class is responsible for adding some updates related filters, including auto updates, and since
 		// WP crons don't run on admin mode, it should not depend on it.

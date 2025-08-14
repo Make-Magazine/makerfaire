@@ -13,6 +13,10 @@ function wp_all_export_get_cpt_name($cpt = array(), $count = 2, $post = array())
 		{
 			$cptName = ($count > 1) ? __('Customers', 'wp_all_export_plugin') : __('Customer', 'wp_all_export_plugin');
 		}
+		elseif (in_array('shop_guest_customer', $cpt))
+		{
+			$cptName = ($count > 1) ? __('Guest Customers', 'wp_all_export_plugin') : __('Guest Customer', 'wp_all_export_plugin');
+		}
 		elseif (in_array('comments', $cpt))
 		{
 			$cptName = ($count > 1) ? __('Comments', 'wp_all_export_plugin') : __('Comment', 'wp_all_export_plugin');

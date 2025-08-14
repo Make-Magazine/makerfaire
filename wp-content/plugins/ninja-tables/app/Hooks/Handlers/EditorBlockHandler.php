@@ -19,7 +19,6 @@ class EditorBlockHandler
 
     public function initNinjaMceButtons()
     {
-
         if ( ! user_can_richedit()) {
             return;
         }
@@ -84,7 +83,7 @@ class EditorBlockHandler
         foreach ($tables as $table) {
             $formatted[] = array(
                 'text'        => esc_attr($table->post_title),
-                'value'       => $table->ID,
+                'value'       => intval($table->ID),
                 'data_source' => esc_attr(ninja_table_get_data_provider($table->ID))
             );
         }

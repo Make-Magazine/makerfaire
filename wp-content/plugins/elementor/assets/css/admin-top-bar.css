@@ -1,4 +1,4 @@
-/*! elementor - v3.30.0 - 09-07-2025 */
+/*! elementor - v3.31.0 - 11-08-2025 */
 #e-dashboard-widget-admin-top-bar {
   position: absolute;
   opacity: 0;
@@ -6,13 +6,13 @@
 }
 
 #e-admin-top-bar-root {
-  right: 0;
   font-family: var(--e-a-font-family);
   background: var(--e-a-bg-default);
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.03);
   display: none;
   position: absolute;
-  top: 0;
+  inset-block-start: 0;
+  inset-inline-end: 0;
   width: calc(100% - 160px);
   z-index: 1;
 }

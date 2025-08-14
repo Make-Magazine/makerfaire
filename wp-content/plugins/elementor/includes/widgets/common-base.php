@@ -276,8 +276,7 @@ class Widget_Common_Base extends Widget_Base {
 		];
 
 		return [
-			$mask_selectors['default'] => $rules,
-			$mask_selectors['image'] => $rules,
+			$mask_selectors['default'] . ', ' . $mask_selectors['image'] => $rules,
 		];
 	}
 
@@ -1111,7 +1110,7 @@ class Widget_Common_Base extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		$this->add_responsive_control(
 			'_mask_image',
 			[
 				'label' => esc_html__( 'Image', 'elementor' ),

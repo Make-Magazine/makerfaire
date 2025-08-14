@@ -65,6 +65,13 @@ final Class XmlCsvExport
                 $articles = apply_filters('wp_all_export_csv_rows', $articles, XmlExportEngine::$exportOptions, XmlExportEngine::$exportID);
                 if (!$preview) do_action('pmxe_exported_post', $customer->ID, XmlExportEngine::$exportRecord);
             }
+        } elseif (XmlExportEngine::$is_woo_guest_customer_export) { // exporting WooCommerce Guest Customers
+
+            foreach (XmlExportEngine::$exportQuery->results as $guest_customer) {
+                $articles[] = XmlExportWooCommerceGuestCustomer::prepare_data($guest_customer, XmlExportEngine::$exportOptions, false, $acfs, XmlExportEngine::$implode, $preview);
+                $articles = apply_filters('wp_all_export_csv_rows', $articles, XmlExportEngine::$exportOptions, XmlExportEngine::$exportID);
+                if (!$preview) do_action('pmxe_exported_post', $guest_customer->customer_id, XmlExportEngine::$exportRecord);
+            }
         } elseif (XmlExportEngine::$is_comment_export) {  // exporting comments
             global $wp_version;
 
@@ -357,7 +364,7 @@ final Class XmlCsvExport
             endforeach;
 
         }
-        if (XmlExportEngine::$is_woo_customer_export) // exporting WordPress users
+        if (XmlExportEngine::$is_woo_customer_export) // exporting WooCommerce Customers
         {
             foreach (XmlExportEngine::$exportQuery->results as $customer) :
 
@@ -386,6 +393,39 @@ final Class XmlCsvExport
                 }
 
                 if (!$preview) do_action('pmxe_exported_post', $customer->ID, XmlExportEngine::$exportRecord);
+
+            endforeach;
+
+        }
+        if (XmlExportEngine::$is_woo_guest_customer_export) // exporting WooCommerce Guest Customers
+        {
+            foreach (XmlExportEngine::$exportQuery->results as $guest_customer) :
+
+                $is_export_record = apply_filters('wp_all_export_xml_rows', true, $guest_customer, XmlExportEngine::$exportOptions, XmlExportEngine::$exportID);
+
+                if (!$is_export_record) continue;
+
+                if (!$is_custom_xml) {
+                    // add additional information before each node
+                    self::before_xml_node($xmlWriter, $guest_customer->customer_id);
+
+                    $xmlWriter->startElement(self::$node_xml_tag);
+
+                    XmlExportWooCommerceGuestCustomer::prepare_data($guest_customer, XmlExportEngine::$exportOptions, $xmlWriter, $acfs, XmlExportEngine::$implode, $preview);
+
+                    $xmlWriter->closeElement(); // end post
+
+                    // add additional information after each node
+                    self::after_xml_node($xmlWriter, $guest_customer->customer_id);
+                } else {
+                    $articles = array();
+                    $articles[] = XmlExportWooCommerceGuestCustomer::prepare_data($guest_customer, XmlExportEngine::$exportOptions, $xmlWriter, $acfs, XmlExportEngine::$implode, $preview);
+                    $articles = apply_filters('wp_all_export_csv_rows', $articles, XmlExportEngine::$exportOptions, XmlExportEngine::$exportID);
+
+                    $xmlWriter->writeArticle($articles);
+                }
+
+                if (!$preview) do_action('pmxe_exported_post', $guest_customer->customer_id, XmlExportEngine::$exportRecord);
 
             endforeach;
 

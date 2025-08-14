@@ -62,6 +62,7 @@ function pmxe_wp_ajax_wpae_filtering_count(){
 
     XmlExportEngine::$is_user_export = ( 'users' == $post['cpt'] ) ? true : false;
     XmlExportEngine::$is_woo_customer_export = ( 'shop_customer' == $post['cpt'] ) ? true : false;
+    XmlExportEngine::$is_woo_guest_customer_export = ( 'shop_guest_customer' == $post['cpt'] ) ? true : false;
 	XmlExportEngine::$is_comment_export = ( 'comments' == $post['cpt'] ) ? true : false;
 	XmlExportEngine::$is_woo_review_export = ( 'shop_review' == $post['cpt'] ) ? true : false;
 	XmlExportEngine::$is_taxonomy_export = ( 'taxonomies' == $post['cpt'] ) ? true : false;
@@ -204,7 +205,7 @@ function pmxe_wp_ajax_wpae_filtering_count(){
 	}
 	else
 	{
-		if ( 'users' == $post['cpt'] or 'shop_customer' == $post['cpt'] )
+		if ( 'users' == $post['cpt'] or 'shop_customer' == $post['cpt'] or 'shop_guest_customer' == $post['cpt'] )
 		{
 
 		    if( 'shop_customer' == $post['cpt'] ){
@@ -214,6 +215,35 @@ function pmxe_wp_ajax_wpae_filtering_count(){
 			    if ( ! empty($totalQuery->results)){
 				    $total_records = $totalQuery->get_total();
 			    }
+            } elseif( 'shop_guest_customer' == $post['cpt'] ){
+
+		        // get total guest customers
+		        global $wpdb;
+
+		        // Check if WooCommerce customer lookup table exists
+		        $table_exists = $wpdb->get_var("SHOW TABLES LIKE '{$wpdb->prefix}wc_customer_lookup'");
+		        if ($table_exists) {
+		            $where_clause = "user_id IS NULL";
+
+		            // Apply basic filtering if needed
+		            if (!empty($post['export_only_customers_that_made_purchases'])) {
+		                $where_clause .= " AND order_count > 0";
+		            }
+
+		            // Apply advanced filtering rules if they exist
+		            $whereclause = PMXE_Plugin::$session->get('whereclause');
+		            if (!empty($whereclause)) {
+		                $where_clause .= $whereclause;
+		            }
+
+		            $guest_count = $wpdb->get_var("
+		                SELECT COUNT(*) FROM {$wpdb->prefix}wc_customer_lookup
+		                WHERE {$where_clause}
+		            ");
+		            if ($guest_count !== null) {
+		                $total_records = intval($guest_count);
+		            }
+		        }
             }else {
 			    // get total users
 			    $totalQuery = new WP_User_Query( array( 'orderby' => 'ID', 'order' => 'ASC', 'number' => 10 ) );
@@ -223,13 +253,44 @@ function pmxe_wp_ajax_wpae_filtering_count(){
 		    }
 
 			ob_start();
-			// get users depends on filters
-			add_action('pre_user_query', 'wp_all_export_pre_user_query', 10, 1);
-			$exportQuery = new WP_User_Query( array( 'orderby' => 'ID', 'order' => 'ASC', 'number' => 10 ));
-			if ( ! empty($exportQuery->results)){
-				$foundRecords = $exportQuery->get_total();
+
+			if ($post['cpt'] === 'shop_guest_customer') {
+				// Handle guest customers separately
+				global $wpdb;
+
+				// Check if WooCommerce customer lookup table exists
+				$table_exists = $wpdb->get_var("SHOW TABLES LIKE '{$wpdb->prefix}wc_customer_lookup'");
+				if ($table_exists) {
+					$where_clause = "user_id IS NULL";
+
+					// Apply basic filtering if needed
+					if (!empty($post['export_only_customers_that_made_purchases'])) {
+						$where_clause .= " AND order_count > 0";
+					}
+
+					// Apply advanced filtering rules if they exist
+					$whereclause = PMXE_Plugin::$session->get('whereclause');
+					if (!empty($whereclause)) {
+						$where_clause .= $whereclause;
+					}
+
+					$guest_count = $wpdb->get_var("
+						SELECT COUNT(*) FROM {$wpdb->prefix}wc_customer_lookup
+						WHERE {$where_clause}
+					");
+					if ($guest_count !== null) {
+						$foundRecords = intval($guest_count);
+					}
+				}
+			} else {
+				// get users depends on filters
+				add_action('pre_user_query', 'wp_all_export_pre_user_query', 10, 1);
+				$exportQuery = new WP_User_Query( array( 'orderby' => 'ID', 'order' => 'ASC', 'number' => 10 ));
+				if ( ! empty($exportQuery->results)){
+					$foundRecords = $exportQuery->get_total();
+				}
+				remove_action('pre_user_query', 'wp_all_export_pre_user_query');
 			}
-			remove_action('pre_user_query', 'wp_all_export_pre_user_query');
 			ob_get_clean();
 		}
 		elseif( 'comments' == $post['cpt'] )

@@ -42,9 +42,9 @@ switch ($post_type) {
 	<input type="checkbox" id="is_not_keep_former_posts" name="is_keep_former_posts" value="no" <?php echo "yes" != $post['is_keep_former_posts'] ? 'checked="checked"': '' ?> class="switcher" />
 	<label for="is_not_keep_former_posts"><?php printf(__('Update existing %s with the data in this import file', 'wp-all-import-pro'), $cpt_name); ?></label>
 	<?php if ( $this->isWizard and "new" == $post['wizard_type'] and empty(PMXI_Plugin::$session->deligate)): ?>
-	<a href="#help" class="wpallimport-help" style="position: relative; top: -2px;" title="<?php _e('These options will only be used if you run this import again later. All data is imported the first time you run an import.<br/><br/>Note that WP All Import will only update/remove posts created by this import. If you want to match to posts that already exist on this site, use Existing Items on the Data Source screen.', 'wp-all-import-pro') ?>">?</a>
+	<a href="#help" class="wpallimport-help" style="position: relative; top: -2px;" title="<?php _e('These options will only be used if you run this import again later. All data is imported the first time you run an import.<br/><br/>Note that WP All Import will only update/remove posts created by this import. If you want to match to posts that already exist on this site, change the setting above to "Search for and update all posts on this site".', 'wp-all-import-pro') ?>">?</a>
 	<?php endif; ?>
-	<div class="switcher-target-is_not_keep_former_posts" style="padding-left:17px;">
+	<div class="switcher-target-is_not_keep_former_posts" style="padding-left:20px;">
 
         <div class="input" style="margin-left: 4px;">
             <input type="hidden" name="is_selective_hashing" value="0" />
@@ -58,7 +58,7 @@ switch ($post_type) {
 
 		<input type="radio" id="update_choosen_data" class="switcher" name="update_all_data" value="no" <?php echo 'no' == $post['update_all_data'] ? 'checked="checked"': '' ?>/>
 		<label for="update_choosen_data"><?php _e('Choose which data to update', 'wp-all-import-pro' )?></label><br>
-		<div class="switcher-target-update_choosen_data"  style="padding-left:27px;">
+		<div class="switcher-target-update_choosen_data"  style="padding-left:28px;">
 			<div class="input">
 				<h4 class="wpallimport-trigger-options wpallimport-select-all" rel="<?php _e("Unselect All", "wp-all-import-pro"); ?>"><?php _e("Select All", "wp-all-import-pro"); ?></h4>
 			</div>
@@ -153,7 +153,7 @@ switch ($post_type) {
 				<input type="checkbox" id="is_update_custom_fields" name="is_update_custom_fields" value="1" <?php echo $post['is_update_custom_fields'] ? 'checked="checked"': '' ?>  class="switcher"/>
 				<label for="is_update_custom_fields"><?php printf(__('%s Meta', 'wp-all-import-pro'), $custom_type->labels->singular_name); ?></label>
 				<!--a href="#help" class="wpallimport-help" title="<?php _e('If Keep Comment Meta box is checked, it will keep all Comment Meta, and add any new Comment Meta specified in Comment Meta section, as long as they do not overwrite existing fields. If \'Only keep this Comment Meta\' is specified, it will only keep the specified fields.', 'wp-all-import-pro') ?>">?</a-->
-				<div class="switcher-target-is_update_custom_fields" style="padding-left:17px;">
+				<div class="switcher-target-is_update_custom_fields" style="padding-left:20px;">
 					<div class="input">
 						<input type="radio" id="update_custom_fields_logic_full_update" name="update_custom_fields_logic" value="full_update" <?php echo ( "full_update" == $post['update_custom_fields_logic'] ) ? 'checked="checked"': '' ?> class="switcher"/>
 						<label for="update_custom_fields_logic_full_update"><?php printf(__('Update all %s Meta', 'wp-all-import-pro'), $custom_type->labels->singular_name); ?></label>
@@ -161,7 +161,7 @@ switch ($post_type) {
 					<div class="input">
 						<input type="radio" id="update_custom_fields_logic_only" name="update_custom_fields_logic" value="only" <?php echo ( "only" == $post['update_custom_fields_logic'] ) ? 'checked="checked"': '' ?> class="switcher"/>
 						<label for="update_custom_fields_logic_only"><?php printf(__('Update only these %s Meta, leave the rest alone', 'wp-all-import-pro'), $custom_type->labels->singular_name); ?></label>
-						<div class="switcher-target-update_custom_fields_logic_only pmxi_choosen" style="padding-left:17px;">
+						<div class="switcher-target-update_custom_fields_logic_only pmxi_choosen" style="padding-left:20px;">
 							<span class="hidden choosen_values"><?php if (!empty($existing_meta_keys)) echo esc_html(implode(',', $existing_meta_keys));?></span>
 							<input class="choosen_input" value="<?php if (!empty($post['custom_fields_list']) and "only" == $post['update_custom_fields_logic']) echo esc_html(implode(',', $post['custom_fields_list'])); ?>" type="hidden" name="custom_fields_only_list"/>
 						</div>
@@ -169,7 +169,7 @@ switch ($post_type) {
 					<div class="input">
 						<input type="radio" id="update_custom_fields_logic_all_except" name="update_custom_fields_logic" value="all_except" <?php echo ( "all_except" == $post['update_custom_fields_logic'] ) ? 'checked="checked"': '' ?> class="switcher"/>
 						<label for="update_custom_fields_logic_all_except"><?php printf(__('Leave these fields alone, update all other %s Meta', 'wp-all-import-pro'), $custom_type->labels->singular_name); ?></label>
-						<div class="switcher-target-update_custom_fields_logic_all_except pmxi_choosen" style="padding-left:17px;">
+						<div class="switcher-target-update_custom_fields_logic_all_except pmxi_choosen" style="padding-left:20px;">
 							<span class="hidden choosen_values"><?php if (!empty($existing_meta_keys)) echo esc_html(implode(',', $existing_meta_keys));?></span>
 							<input class="choosen_input" value="<?php if (!empty($post['custom_fields_list']) and "all_except" == $post['update_custom_fields_logic']) echo esc_html(implode(',', $post['custom_fields_list'])); ?>" type="hidden" name="custom_fields_except_list"/>
 						</div>

@@ -371,17 +371,17 @@
         },
         {
             "name": "wp-media/plugin-family",
-            "version": "v1.0.5",
-            "version_normalized": "1.0.5.0",
+            "version": "v1.0.6",
+            "version_normalized": "1.0.6.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/wp-media/plugin-family.git",
-                "reference": "38432a1bde4776b5b4a37654ca6efba7ec6d9453"
+                "reference": "ab5067661eef2d04f645d74de797ae2193d8c58f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/wp-media/plugin-family/zipball/38432a1bde4776b5b4a37654ca6efba7ec6d9453",
-                "reference": "38432a1bde4776b5b4a37654ca6efba7ec6d9453",
+                "url": "https://api.github.com/repos/wp-media/plugin-family/zipball/ab5067661eef2d04f645d74de797ae2193d8c58f",
+                "reference": "ab5067661eef2d04f645d74de797ae2193d8c58f",
                 "shasum": ""
             },
             "require-dev": {
@@ -392,7 +392,7 @@
                 "wp-coding-standards/wpcs": "^3",
                 "wp-media/phpunit": "^3"
             },
-            "time": "2025-07-14T16:44:29+00:00",
+            "time": "2025-07-21T12:25:10+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -414,23 +414,23 @@
             "description": "Organizes and displays WP Media plugin family across other members.",
             "support": {
                 "issues": "https://github.com/wp-media/plugin-family/issues",
-                "source": "https://github.com/wp-media/plugin-family/tree/v1.0.5"
+                "source": "https://github.com/wp-media/plugin-family/tree/v1.0.6"
             },
             "install-path": "../wp-media/plugin-family"
         },
         {
             "name": "wp-media/wp-mixpanel",
-            "version": "v1.0.0",
-            "version_normalized": "1.0.0.0",
+            "version": "v1.1.1",
+            "version_normalized": "1.1.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/wp-media/wp-mixpanel.git",
-                "reference": "3c84868d0fddedf5f2dad752f527acf1b2a90f1e"
+                "reference": "0646d525f0624b13c336ff2829713d9a37192c46"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/wp-media/wp-mixpanel/zipball/3c84868d0fddedf5f2dad752f527acf1b2a90f1e",
-                "reference": "3c84868d0fddedf5f2dad752f527acf1b2a90f1e",
+                "url": "https://api.github.com/repos/wp-media/wp-mixpanel/zipball/0646d525f0624b13c336ff2829713d9a37192c46",
+                "reference": "0646d525f0624b13c336ff2829713d9a37192c46",
                 "shasum": ""
             },
             "require": {
@@ -447,7 +447,7 @@
                 "wp-coding-standards/wpcs": "^3",
                 "wp-media/phpunit": "^3"
             },
-            "time": "2025-07-09T12:21:36+00:00",
+            "time": "2025-08-04T16:14:18+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -472,7 +472,7 @@
             "description": "WordPress Mixpanel Integration",
             "support": {
                 "issues": "https://github.com/wp-media/wp-mixpanel/issues",
-                "source": "https://github.com/wp-media/wp-mixpanel/tree/v1.0.0"
+                "source": "https://github.com/wp-media/wp-mixpanel/tree/v1.1.1"
             },
             "install-path": "../wp-media/wp-mixpanel"
         }

@@ -36,6 +36,7 @@ trait WooDataSourceTrait
 
         $args  = apply_filters('ninja_table_post_table_args', $args, $data);
         $args  = apply_filters('ninja_table_post_table_args_' . $tableId, $args, $data);
+        
         $query = (new \WP_Query($args));
         $posts = $query->posts;
 

@@ -597,6 +597,9 @@ class PMXE_Admin_Export extends PMXE_Controller_Admin
             } elseif (in_array('shop_customer', $post_types)) {
                 $friendly_name = 'Customers Export - ' . date("Y F d H:i");
                 return $friendly_name;
+            } elseif (in_array('shop_guest_customer', $post_types)) {
+                $friendly_name = 'Guest Customers Export - ' . date("Y F d H:i");
+                return $friendly_name;
             } elseif (in_array('comments', $post_types)) {
                 $friendly_name = 'Comments Export - ' . date("Y F d H:i");
                 return $friendly_name;

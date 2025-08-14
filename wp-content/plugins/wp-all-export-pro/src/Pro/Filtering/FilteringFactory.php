@@ -45,6 +45,14 @@ class FilteringFactory
             throw new AddonNotFoundException(\__('The User Export Add-On Pro is required to run this export. If you already own it, you can download the add-on here: <a href="https://www.wpallimport.com/portal/downloads" target="_blank">https://www.wpallimport.com/portal/downloads</a>', 'wp_all_export_plugin'));
         }
 
+        if (\XmlExportEngine::$is_woo_guest_customer_export && $addonService->isUserAddonActive()){
+
+            return new FilteringGuestCustomers();
+        } else if(\XmlExportEngine::$is_woo_guest_customer_export && !$addonService->isUserAddonActive()) {
+
+            throw new AddonNotFoundException(\__('The User Export Add-On Pro is required to run this export. If you already own it, you can download the add-on here: <a href="https://www.wpallimport.com/portal/downloads" target="_blank">https://www.wpallimport.com/portal/downloads</a>', 'wp_all_export_plugin'));
+        }
+
 
         if(isset (\XmlExportEngine::$exportOptions['cpt']) && 'product' === \XmlExportEngine::$exportOptions['cpt'] && !$addonService->isWooCommerceAddonActive() && !$addonService->isWooCommerceProductAddonActive() && \class_exists('WooCommerce')) {
             throw new AddonNotFoundException(\__('The WooCommerce Export Add-On Pro is required to run this export. If you already own it, you can download the add-on here: <a href="https://www.wpallimport.com/portal/downloads" target="_blank">https://www.wpallimport.com/portal/downloads</a>', 'wp_all_export_plugin'));

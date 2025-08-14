@@ -747,6 +747,18 @@ class PMXI_Admin_Settings extends PMXI_Controller_Admin {
 
 			$errors = new WP_Error;
 
+			// Check if alternative Excel processing is requested
+			if (!empty($_POST['use_alternative_excel']) && $_POST['use_alternative_excel'] === '1') {
+				global $wp_all_import_force_alternative_excel;
+				$wp_all_import_force_alternative_excel = true;
+
+				// Store in session for later use when import is created
+				if (!empty(PMXI_Plugin::$session)) {
+					PMXI_Plugin::$session->set('use_alternative_excel_processing', true);
+					PMXI_Plugin::$session->save_data();
+				}
+			}
+
 			$uploader = new PMXI_Upload($filePath, $errors, rtrim(str_replace(basename($filePath), '', $filePath), '/'));
 
 			$upload_result = $uploader->upload();

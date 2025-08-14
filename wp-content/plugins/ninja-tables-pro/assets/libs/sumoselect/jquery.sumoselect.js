@@ -39,7 +39,7 @@
             triggerChangeCombined: true,  // im multi select mode whether to trigger change event on individual selection or combined selection.
             selectAll: false,             // to display select all button in multiselect mode.|| also select all will not be available on mobile devices.
 
-            search: false,                // to display input for filtering content. selectAlltext will be input text placeholder
+            search: true,                // to display input for filtering content. selectAlltext will be input text placeholder
             searchText: 'Search...',      // placeholder for search input
             searchFn: function(haystack, needle) { // search function
                 return haystack.toLowerCase().indexOf(needle.toLowerCase()) < 0;
@@ -75,7 +75,7 @@
 
                 createElems: function () {
                     var O = this;
-                    O.E.wrap('<div class="SumoSelect" tabindex="0" role="button" aria-expanded="false">');
+                    O.E.wrap('<div class="SumoSelect" style="min-width: 150px" tabindex="0" role="button" aria-expanded="false">');
                     O.select = O.E.parent();
                     O.caption = $('<span>');
                     O.CaptionCont = $('<p class="CaptionCont SelectBox" ><label><i></i></label></p>')

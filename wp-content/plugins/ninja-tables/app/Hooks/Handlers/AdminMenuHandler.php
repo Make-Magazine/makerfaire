@@ -4,6 +4,8 @@ namespace NinjaTables\App\Hooks\Handlers;
 
 use NinjaTables\App\App;
 use NinjaTables\App\Modules\I18nStrings;
+use NinjaTables\Framework\Support\Arr;
+use NinjaTables\Framework\Support\Sanitizer;
 
 class AdminMenuHandler
 {
@@ -142,7 +144,8 @@ class AdminMenuHandler
 
     public function enqueueAssets()
     {
-        if (isset($_GET['page']) && $_GET['page'] == 'ninja_tables') {
+       $page = Sanitizer::sanitizeTextField(Arr::get($_GET, 'page'));
+        if ($page === 'ninja_tables') {
             $this->enqueueStyles();
             $this->enqueueScripts();
         }

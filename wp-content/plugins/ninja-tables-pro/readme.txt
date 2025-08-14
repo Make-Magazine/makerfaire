@@ -4,7 +4,7 @@ Tags: Table, table builder, datatable, tables, spreadsheet
 Requires at least: 6.0
 Requires PHP: 7.4
 Tested up to: 6.8
-Stable tag: 5.2.2
+Stable tag: 5.2.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -405,6 +405,13 @@ Ninja Tables [customer support](https://wpmanageninja.com/support-tickets/#/) te
 
 == Changelog ==
 We released several updates for Ninja Tables in the years of development. These include improvements to the existing features and some wonderful additions to help you design tables more effectively.
+
+= 5.2.3 (Date: August 01, 2025) =
+ * Fixes: Google Sheets data fetching issue
+ * Fixes: Row hover border color issue
+ * Fixes: List icon changing issue on list type change in drag & drop table
+ * Added: WooCommerce products comparison
+ * Added: WooCommerce bulk add to cart feature
 
 = 5.2.2 (Date: July 10, 2025) =
 * Fixes: advanced filter

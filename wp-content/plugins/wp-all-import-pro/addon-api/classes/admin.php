@@ -20,8 +20,8 @@ class PMXI_Addon_Admin {
         wp_enqueue_script( 'pmxi-datepicker', 'https://cdn.jsdelivr.net/npm/air-datepicker@3.3.5/air-datepicker.min.js' );
         wp_enqueue_style( 'pmxi-datepicker', 'https://cdn.jsdelivr.net/npm/air-datepicker@3.3.5/air-datepicker.min.css' );
 
-        wp_enqueue_style( 'pmxi-addon-admin-style', $this->url . '/static/css/admin.css' );
-        wp_enqueue_script( 'pmxi-addon-admin-script', $this->url . '/static/js/admin.js' );
+        wp_enqueue_style( 'pmxi-addon-admin-style', $this->url . '/static/css/admin.css', array(), PMXI_VERSION );
+        wp_enqueue_script( 'pmxi-addon-admin-script', $this->url . '/static/js/admin.js', array(), PMXI_VERSION );
         wp_localize_script( 'pmxi-addon-admin-script', 'pmxiAddon', [
             'ajaxUrl' => get_rest_url( null, 'wp-all-import/v1/addon/fields' ),
         ] );

@@ -44,7 +44,7 @@ class CustomFilterController extends Controller
     public function store()
     {
         $tableId = intval(Arr::get($_REQUEST, 'table_id'));
-        $filters = wp_unslash(ninja_tables_sanitize_array(Arr::get($_REQUEST, 'ninja_filters', [])));
+        $filters = wp_unslash($this->sanitizeCustomFilterData(Arr::get($_REQUEST, 'ninja_filters', [])));
         $this->updateFilters($tableId, $filters);
 
         if (isset($_REQUEST['filter_styling'])) {
@@ -60,5 +60,18 @@ class CustomFilterController extends Controller
         wp_send_json_success(array(
             'message' => __('Filters successfully updated', 'ninja_table_pro')
         ));
+    }
+
+    private function sanitizeCustomFilterData($array)
+    {
+        foreach ($array as $key => $value) {
+            if (is_array($value)) {
+                $array[$key] = $this->sanitizeCustomFilterData($value);
+            } else {
+                $array[$key] = sanitize_text_field($value);
+            }
+        }
+
+        return $array;
     }
 }

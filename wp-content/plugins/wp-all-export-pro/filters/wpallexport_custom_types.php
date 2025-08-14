@@ -16,7 +16,7 @@ function pmxe_wpallexport_custom_types($custom_types)
 		if ( ! empty($custom_types['product_variation'])) unset($custom_types['product_variation']);
 		if ( ! empty($custom_types['shop_order_refund'])) unset($custom_types['shop_order_refund']);		
 
-		$order = array('shop_order', 'shop_coupon', 'shop_customer', 'product');
+		$order = array('shop_order', 'shop_coupon', 'shop_customer', 'shop_guest_customer', 'product');
 
 		$ordered_custom_types = array();
 
@@ -30,6 +30,12 @@ function pmxe_wpallexport_custom_types($custom_types)
 				$ordered_custom_types['shop_customer'] = new stdClass();
 				$ordered_custom_types['shop_customer']->labels = new stdClass();
 				$ordered_custom_types['shop_customer']->labels->name = esc_html__('WooCommerce Customers','wp_all_export_plugin');
+			}
+			elseif ($type == 'shop_guest_customer')
+			{
+				$ordered_custom_types['shop_guest_customer'] = new stdClass();
+				$ordered_custom_types['shop_guest_customer']->labels = new stdClass();
+				$ordered_custom_types['shop_guest_customer']->labels->name = esc_html__('WooCommerce Guest Customers','wp_all_export_plugin');
 			}
 			else
 			{

@@ -50,23 +50,57 @@
     color: <?php echo esc_attr($colors['table_color_header_secondary']); ?> !important;
     }
     <?php if($colors['table_color_header_border']) : ?>
-        <?php echo esc_attr($css_prefix); ?>:not(.hide_all_borders) tr.footable-header th, <?php echo esc_attr($css_prefix); ?>:not(.hide_all_borders) tbody tr th {
+        <?php echo esc_attr($css_prefix); ?>:not(.hide_all_borders) tr.footable-header th,
+        <?php echo esc_attr($css_prefix); ?>:not(.hide_all_borders) tbody tr th {
         border-color: <?php echo esc_attr($colors['table_color_header_border']); ?> !important;
         }
+
+        <?php if(!isset($colors['table_color_border']) || !$colors['table_color_border']) : ?>
+            <?php echo esc_attr($css_prefix); ?>:not(.hide_all_borders) tr.footable-header th:first-child,
+            <?php echo esc_attr($css_prefix); ?>:not(.hide_all_borders) tbody tr th:first-child {
+            border-left: 1px solid <?php echo esc_attr($colors['table_color_header_border']); ?>;
+            }
+            <?php echo esc_attr($css_prefix); ?>:not(.hide_all_borders) tr.footable-header th:last-child,
+            <?php echo esc_attr($css_prefix); ?>:not(.hide_all_borders) tbody tr th:last-child {
+            border-right: 1px solid <?php echo esc_attr($colors['table_color_header_border']); ?>;
+            }
+        <?php endif; ?>
     <?php endif; ?>
 
     <?php if(isset($colors['table_color_border']) && $colors['table_color_border']) : ?>
         <?php echo esc_attr($css_prefix); ?>:not(.hide_all_borders) tbody tr td {
         border-color: <?php echo esc_attr($colors['table_color_border']); ?> !important;
         }
+        <?php echo esc_attr($css_prefix); ?>:not(.hide_all_borders) tbody tr:last-child td {
+        border-bottom: 1px solid <?php echo esc_attr($colors['table_color_border']); ?> !important;
+        }
     <?php endif; ?>
     <?php echo esc_attr($css_prefix); ?> tbody tr:hover {
     background-color: <?php echo esc_attr($colors['table_color_primary_hover']); ?> !important;
     color: <?php echo esc_attr($colors['table_color_secondary_hover']); ?> !important;
     }
-    <?php echo esc_attr($css_prefix); ?> tbody tr:hover td {
-    border-color: <?php echo esc_attr($colors['table_color_border_hover']); ?> !important;
-    }
+<!--    --><?php //if($colors['table_color_border_hover'] !== '') { ?>
+<!--        --><?php //echo esc_attr($css_prefix); ?><!-- tbody tr td {-->
+<!--        border-top: 1px solid transparent;-->
+<!--        border-bottom: 1px solid transparent;-->
+<!--        }-->
+<!--        --><?php //echo esc_attr($css_prefix); ?><!-- tbody tr td:first-child {-->
+<!--        border-left: 1px solid transparent;-->
+<!--        }-->
+<!--        --><?php //echo esc_attr($css_prefix); ?><!-- tbody tr td:last-child {-->
+<!--        border-right: 1px solid transparent;-->
+<!--        }-->
+<!--        --><?php //echo esc_attr($css_prefix); ?><!-- tbody tr:hover td {-->
+<!--        border-color: --><?php //echo esc_attr($colors['table_color_border_hover']); ?><!--;-->
+<!--        }-->
+<!--        --><?php //echo esc_attr($css_prefix); ?><!-- tbody tr:hover td:first-child {-->
+<!--        border-left: 1px solid --><?php //echo esc_attr($colors['table_color_border_hover']); ?><!--;-->
+<!--        }-->
+<!--        --><?php //echo esc_attr($css_prefix); ?><!-- tbody tr:hover td:last-child {-->
+<!--        border-right: 1px solid --><?php //echo esc_attr($colors['table_color_border_hover']); ?><!--;-->
+<!--        }-->
+<!--    --><?php //} ?>
+
     <?php if(isset($colors['alternate_color_status']) && $colors['alternate_color_status'] == 'yes'): ?>
         <?php echo esc_attr($css_prefix); ?> tbody tr:nth-child(even) {
         background-color: <?php echo esc_attr($colors['table_alt_color_primary']); ?> !important;

@@ -3,7 +3,7 @@
 Plugin Name: WP All Export - ACF Export Add-On Pro
 Plugin URI: http://www.wpallimport.com/
 Description: Export ACF data from WordPress. Requires WP All Export Pro.
-Version: 1.0.5
+Version: 1.0.6
 Author: Soflyy
 */
 
@@ -25,7 +25,7 @@ define('PMAE_ROOT_URL', rtrim(plugin_dir_url(__FILE__), '/'));
  */
 define('PMAE_PREFIX', 'pmae_');
 
-define('PMAE_VERSION', '1.0.5');
+define('PMAE_VERSION', '1.0.6');
 
 if ( class_exists('PMAE_Plugin') and PMAE_EDITION == "free"){
 
@@ -227,10 +227,19 @@ else {
 
 	// retrieve our license key from the DB
     $wpae_acf_addon_options = get_option('PMXE_Plugin_Options');
-	
-	if (!empty($wpae_acf_addon_options['info_api_url'])){
+
+	// Favor new API URL, but fallback to old if needed.
+	if( !empty($wpae_acf_addon_options['info_api_url_new'])){
+		$api_url = $wpae_acf_addon_options['info_api_url_new'];
+	}elseif( !empty($wpae_acf_addon_options['info_api_url'])){
+		$api_url = $wpae_acf_addon_options['info_api_url'];
+	}else{
+		$api_url = null;
+	}
+
+	if (!empty($api_url)){
 		// setup the updater
-		$updater = new PMAE_Updater( $wpae_acf_addon_options['info_api_url'], __FILE__, array(
+		$updater = new PMAE_Updater( $api_url, __FILE__, array(
 				'version' 	=> PMAE_VERSION,		// current version number
 				'license' 	=> false, // license key (used get_option above to retrieve from DB)
 				'item_name' => PMAE_Plugin::getEddName(), 	// name of this plugin

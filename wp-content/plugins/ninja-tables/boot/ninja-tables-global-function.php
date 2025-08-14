@@ -1051,7 +1051,7 @@ function ninjaTablesGetShortCodeIds($content)
  */
 function ninjaTablesValidateNonce($key = 'ninja_table_admin_nonce')
 {
-    $nonce = \NinjaTables\Framework\Support\Arr::get($_REQUEST, $key);
+    $nonce = sanitize_text_field(\NinjaTables\Framework\Support\Arr::get($_REQUEST, $key));
 
     if ( ! wp_verify_nonce($nonce, $key)) {
         $errors = apply_filters('ninja_tables_nonce_error', [

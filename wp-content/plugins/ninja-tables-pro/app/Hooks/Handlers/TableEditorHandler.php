@@ -26,8 +26,8 @@ class TableEditorHandler
 
     public function savedCustomCode($data)
     {
-        $tableId = intval($data['table_id']);
-        $js      = $data['custom_js'];
+        $tableId = intval(Arr::get($data, 'table_id'));
+        $js      = Arr::get($data, 'custom_js', '');
         update_post_meta($tableId, '_ninja_tables_custom_js', $js);
     }
 
@@ -173,10 +173,13 @@ class TableEditorHandler
         $columns        = ninja_table_get_table_columns($tableId, 'admin');
         $allColumnArray = array();
         $imageTypes     = [];
+
         foreach ($columns as $column) {
-            $allColumnArray[$column['key']] = $column['name'];
-            if ($column['data_type'] == 'image') {
-                $imageTypes[$column['key']] = $column;
+            $columnKey                  = Arr::get($column, 'key');
+            $allColumnArray[$columnKey] = Arr::get($column, 'name');
+
+            if (Arr::get($column, 'data_type') === 'image') {
+                $imageTypes[$columnKey] = $column;
             }
         }
 
@@ -301,7 +304,7 @@ class TableEditorHandler
         $roles     = get_editable_roles();
         foreach ($roles as $key => $role) {
             if ($key != 'administrator') {
-                $userRoles[$key] = $role['name'];
+                $userRoles[$key] = Arr::get($role, 'name');
             }
         }
         $editingUserRoles                     = $userRoles;
@@ -488,10 +491,7 @@ class TableEditorHandler
             $settings = get_post_meta($tableId, '_ninja_table_frontedit_settings', true);
         }
 
-        if (Arr::get($settings, 'allow_frontend') != 'yes' || !Arr::get(
-                $settings,
-                'user_roles_editing'
-            )) {
+        if (Arr::get($settings, 'allow_frontend') != 'yes' || !Arr::get($settings, 'user_roles_editing')) {
             return false;
         }
 

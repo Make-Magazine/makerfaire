@@ -11,8 +11,8 @@ class TableItemsController extends Controller
 {
     public function index(Request $request, $id)
     {
-        $perPage     = Arr::get($request->all(), 'per_page', 10);
-        $currentPage = Arr::get($request->all(), 'page', 1);
+        $perPage     = intval(Arr::get($request->all(), 'per_page', 10));
+        $currentPage = intval(Arr::get($request->all(), 'page', 1));
         $skip        = $perPage * ($currentPage - 1);
         $tableId     = intval($id);
         $search      = Sanitizer::sanitizeTextField(Arr::get($request->all(), 'search'));

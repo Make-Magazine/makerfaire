@@ -1,4 +1,4 @@
-/*! elementor - v3.30.0 - 09-07-2025 */
+/*! elementor - v3.31.0 - 11-08-2025 */
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
@@ -319,6 +319,37 @@ function EmptyComponent() {
 
 /***/ }),
 
+/***/ "../assets/dev/js/editor/utils/element-types.js":
+/*!******************************************************!*\
+  !*** ../assets/dev/js/editor/utils/element-types.js ***!
+  \******************************************************/
+/***/ ((module) => {
+
+"use strict";
+
+
+var ELEMENT_TYPES = {
+  SECTION: 'section',
+  CONTAINER: 'container',
+  DIV_BLOCK: 'e-div-block',
+  FLEXBOX: 'e-flexbox'
+};
+
+/**
+ * Returns an array of all available element types.
+ *
+ * @return {string[]} Array of element type strings.
+ */
+var getAllElementTypes = function getAllElementTypes() {
+  return Object.values(ELEMENT_TYPES);
+};
+module.exports = {
+  ELEMENT_TYPES: ELEMENT_TYPES,
+  getAllElementTypes: getAllElementTypes
+};
+
+/***/ }),
+
 /***/ "../assets/dev/js/utils/react.js":
 /*!***************************************!*\
   !*** ../assets/dev/js/utils/react.js ***!
@@ -336,8 +367,7 @@ exports["default"] = void 0;
 var React = _interopRequireWildcard(__webpack_require__(/*! react */ "react"));
 var ReactDOM = _interopRequireWildcard(__webpack_require__(/*! react-dom */ "react-dom"));
 var _client = __webpack_require__(/*! react-dom/client */ "../node_modules/react-dom/client.js");
-function _getRequireWildcardCache(e) { if ("function" != typeof WeakMap) return null; var r = new WeakMap(), t = new WeakMap(); return (_getRequireWildcardCache = function _getRequireWildcardCache(e) { return e ? t : r; })(e); }
-function _interopRequireWildcard(e, r) { if (!r && e && e.__esModule) return e; if (null === e || "object" != _typeof(e) && "function" != typeof e) return { default: e }; var t = _getRequireWildcardCache(r); if (t && t.has(e)) return t.get(e); var n = { __proto__: null }, a = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var u in e) if ("default" !== u && {}.hasOwnProperty.call(e, u)) { var i = a ? Object.getOwnPropertyDescriptor(e, u) : null; i && (i.get || i.set) ? Object.defineProperty(n, u, i) : n[u] = e[u]; } return n.default = e, t && t.set(e, n), n; }
+function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function _interopRequireWildcard(e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, default: e }; if (null === e || "object" != _typeof(e) && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (var _t in e) "default" !== _t && {}.hasOwnProperty.call(e, _t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, _t)) && (i.get || i.set) ? o(f, _t, i) : f[_t] = e[_t]); return f; })(e, t); }
 /**
  * Support conditional rendering of a React App to the DOM, based on the React version.
  * We use `createRoot` when available, but fallback to `ReactDOM.render` for older versions.
@@ -394,8 +424,7 @@ var _possibleConstructorReturn2 = _interopRequireDefault(__webpack_require__(/*!
 var _getPrototypeOf2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "../node_modules/@babel/runtime/helpers/getPrototypeOf.js"));
 var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/inherits */ "../node_modules/@babel/runtime/helpers/inherits.js"));
 var hooks = _interopRequireWildcard(__webpack_require__(/*! ./hooks */ "../modules/atomic-widgets/assets/js/editor/hooks/index.js"));
-function _getRequireWildcardCache(e) { if ("function" != typeof WeakMap) return null; var r = new WeakMap(), t = new WeakMap(); return (_getRequireWildcardCache = function _getRequireWildcardCache(e) { return e ? t : r; })(e); }
-function _interopRequireWildcard(e, r) { if (!r && e && e.__esModule) return e; if (null === e || "object" != _typeof(e) && "function" != typeof e) return { default: e }; var t = _getRequireWildcardCache(r); if (t && t.has(e)) return t.get(e); var n = { __proto__: null }, a = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var u in e) if ("default" !== u && {}.hasOwnProperty.call(e, u)) { var i = a ? Object.getOwnPropertyDescriptor(e, u) : null; i && (i.get || i.set) ? Object.defineProperty(n, u, i) : n[u] = e[u]; } return n.default = e, t && t.set(e, n), n; }
+function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function _interopRequireWildcard(e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, default: e }; if (null === e || "object" != _typeof(e) && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (var _t in e) "default" !== _t && {}.hasOwnProperty.call(e, _t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, _t)) && (i.get || i.set) ? o(f, _t, i) : f[_t] = e[_t]); return f; })(e, t); }
 function _callSuper(t, o, e) { return o = (0, _getPrototypeOf2.default)(o), (0, _possibleConstructorReturn2.default)(t, _isNativeReflectConstruct() ? Reflect.construct(o, e || [], (0, _getPrototypeOf2.default)(t).constructor) : o.apply(t, e)); }
 function _isNativeReflectConstruct() { try { var t = !Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); } catch (t) {} return (_isNativeReflectConstruct = function _isNativeReflectConstruct() { return !!t; })(); }
 var Component = exports["default"] = /*#__PURE__*/function (_$e$modules$Component) {
@@ -596,6 +625,7 @@ var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/inte
 var _toConsumableArray2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/toConsumableArray */ "../node_modules/@babel/runtime/helpers/toConsumableArray.js"));
 var _defineProperty2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/defineProperty */ "../node_modules/@babel/runtime/helpers/defineProperty.js"));
 var _divBlockEmptyView = _interopRequireDefault(__webpack_require__(/*! ./container/div-block-empty-view */ "../modules/atomic-widgets/assets/js/editor/container/div-block-empty-view.js"));
+var _elementTypes = __webpack_require__(/*! elementor-editor/utils/element-types */ "../assets/dev/js/editor/utils/element-types.js");
 function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
 function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { (0, _defineProperty2.default)(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
 var BaseElementView = elementor.modules.elements.views.BaseElement;
@@ -624,9 +654,11 @@ var DivBlockView = BaseElementView.extend({
     return ui;
   },
   attributes: function attributes() {
+    var _this$model$getSettin, _this$model$getSettin2;
     var attr = BaseElementView.prototype.attributes.apply(this);
     var local = {};
     var cssId = this.model.getSetting('_cssid');
+    var customAttributes = (_this$model$getSettin = (_this$model$getSettin2 = this.model.getSetting('attributes')) === null || _this$model$getSettin2 === void 0 ? void 0 : _this$model$getSettin2.value) !== null && _this$model$getSettin !== void 0 ? _this$model$getSettin : [];
     if (cssId) {
       local.id = cssId.value;
     }
@@ -634,6 +666,14 @@ var DivBlockView = BaseElementView.extend({
     if (href) {
       local.href = href;
     }
+    customAttributes.forEach(function (attribute) {
+      var _attribute$value, _attribute$value2;
+      var key = (_attribute$value = attribute.value) === null || _attribute$value === void 0 || (_attribute$value = _attribute$value.key) === null || _attribute$value === void 0 ? void 0 : _attribute$value.value;
+      var value = (_attribute$value2 = attribute.value) === null || _attribute$value2 === void 0 || (_attribute$value2 = _attribute$value2.value) === null || _attribute$value2 === void 0 ? void 0 : _attribute$value2.value;
+      if (key && value) {
+        local[key] = value;
+      }
+    });
     return _objectSpread(_objectSpread({}, attr), local);
   },
   // TODO: Copied from `views/column.js`.
@@ -658,13 +698,37 @@ var DivBlockView = BaseElementView.extend({
     return width.toFixed(1) + '%';
   },
   renderOnChange: function renderOnChange(settings) {
+    var _this = this;
     var changed = settings.changedAttributes();
+    setTimeout(function () {
+      _this.updateHandlesPosition();
+    });
     if (!changed) {
       return;
     }
     BaseElementView.prototype.renderOnChange.apply(this, settings);
+    if (changed.attributes) {
+      var _this$model$getSettin3;
+      var preserveAttrs = ['id', 'class', 'href'];
+      var $elAttrs = this.$el[0].attributes;
+      for (var i = $elAttrs.length - 1; i >= 0; i--) {
+        var attrName = $elAttrs[i].name;
+        if (!preserveAttrs.includes(attrName)) {
+          this.$el.removeAttr(attrName);
+        }
+      }
+      var attrs = ((_this$model$getSettin3 = this.model.getSetting('attributes')) === null || _this$model$getSettin3 === void 0 ? void 0 : _this$model$getSettin3.value) || [];
+      attrs.forEach(function (attribute) {
+        var _attribute$value3, _attribute$value4;
+        var key = attribute === null || attribute === void 0 || (_attribute$value3 = attribute.value) === null || _attribute$value3 === void 0 || (_attribute$value3 = _attribute$value3.key) === null || _attribute$value3 === void 0 ? void 0 : _attribute$value3.value;
+        var value = attribute === null || attribute === void 0 || (_attribute$value4 = attribute.value) === null || _attribute$value4 === void 0 || (_attribute$value4 = _attribute$value4.value) === null || _attribute$value4 === void 0 ? void 0 : _attribute$value4.value;
+        if (key && value) {
+          _this.$el.attr(key, value);
+        }
+      });
+      return;
+    }
     if (changed.classes) {
-      // Rebuild the whole class attribute to remove previous outdated classes
       this.$el.attr('class', this.className());
       return;
     }
@@ -690,25 +754,26 @@ var DivBlockView = BaseElementView.extend({
     parent.addChild(this.model, DivBlockView, this._index);
   },
   onRender: function onRender() {
-    var _this = this;
+    var _this2 = this;
     BaseElementView.prototype.onRender.apply(this, arguments);
 
     // Defer to wait for everything to render.
     setTimeout(function () {
-      _this.droppableInitialize();
+      _this2.droppableInitialize();
+      _this2.updateHandlesPosition();
     });
   },
   haveLink: function haveLink() {
-    var _this$model$getSettin;
-    return !!((_this$model$getSettin = this.model.getSetting('link')) !== null && _this$model$getSettin !== void 0 && (_this$model$getSettin = _this$model$getSettin.value) !== null && _this$model$getSettin !== void 0 && (_this$model$getSettin = _this$model$getSettin.destination) !== null && _this$model$getSettin !== void 0 && _this$model$getSettin.value);
+    var _this$model$getSettin4;
+    return !!((_this$model$getSettin4 = this.model.getSetting('link')) !== null && _this$model$getSettin4 !== void 0 && (_this$model$getSettin4 = _this$model$getSettin4.value) !== null && _this$model$getSettin4 !== void 0 && (_this$model$getSettin4 = _this$model$getSettin4.destination) !== null && _this$model$getSettin4 !== void 0 && _this$model$getSettin4.value);
   },
   getHref: function getHref() {
     if (!this.haveLink()) {
       return;
     }
-    var _this$model$getSettin2 = this.model.getSetting('link').value.destination,
-      $$type = _this$model$getSettin2.$$type,
-      value = _this$model$getSettin2.value;
+    var _this$model$getSettin5 = this.model.getSetting('link').value.destination,
+      $$type = _this$model$getSettin5.$$type,
+      value = _this$model$getSettin5.value;
     var isPostId = 'number' === $$type;
     var hrefPrefix = isPostId ? elementor.config.home_url + '/?p=' : '';
     return hrefPrefix + value;
@@ -723,7 +788,7 @@ var DivBlockView = BaseElementView.extend({
    */
   getContextMenuGroups: function getContextMenuGroups() {
     var _elementorCommon$conf,
-      _this2 = this;
+      _this3 = this;
     var groups = BaseElementView.prototype.getContextMenuGroups.apply(this, arguments),
       transferGroupClipboardIndex = groups.indexOf(_.findWhere(groups, {
         name: 'clipboard'
@@ -736,7 +801,7 @@ var DivBlockView = BaseElementView.extend({
         shortcut: (_elementorCommon$conf = elementorCommon.config.experimentalFeatures) !== null && _elementorCommon$conf !== void 0 && _elementorCommon$conf['cloud-library'] ? "<span class=\"elementor-context-menu-list__item__shortcut__new-badge\">".concat(__('New', 'elementor'), "</span>") : '',
         callback: this.saveAsTemplate.bind(this),
         isEnabled: function isEnabled() {
-          return !_this2.getContainer().isLocked();
+          return !_this3.getContainer().isLocked();
         }
       }]
     });
@@ -769,7 +834,7 @@ var DivBlockView = BaseElementView.extend({
     };
   },
   getDroppableOptions: function getDroppableOptions() {
-    var _this3 = this;
+    var _this4 = this;
     var items = '> .elementor-element, > .elementor-empty-view .elementor-first-add';
     return {
       axis: null,
@@ -781,7 +846,7 @@ var DivBlockView = BaseElementView.extend({
       placeholderClass: 'elementor-sortable-placeholder elementor-widget-placeholder',
       hasDraggingOnChildClass: 'e-dragging-over',
       getDropContainer: function getDropContainer() {
-        return _this3.getContainer();
+        return _this4.getContainer();
       },
       onDropping: function onDropping(side, event) {
         event.stopPropagation();
@@ -791,25 +856,35 @@ var DivBlockView = BaseElementView.extend({
         var draggedView = elementor.channels.editor.request('element:dragged'),
           draggedElement = draggedView === null || draggedView === void 0 ? void 0 : draggedView.getContainer().view.el,
           containerElement = event.currentTarget.parentElement,
-          elements = Array.from((containerElement === null || containerElement === void 0 ? void 0 : containerElement.querySelectorAll(':scope > .elementor-element')) || []),
-          targetIndex = elements.indexOf(event.currentTarget);
-        if (_this3.isPanelElement(draggedView, draggedElement)) {
-          _this3.onDrop(event, {
+          elements = Array.from((containerElement === null || containerElement === void 0 ? void 0 : containerElement.querySelectorAll(':scope > .elementor-element')) || []);
+        var targetIndex = elements.indexOf(event.currentTarget);
+        if (_this4.isPanelElement(draggedView, draggedElement)) {
+          if (_this4.draggingOnBottomOrRightSide(side) && !_this4.emptyViewIsCurrentlyBeingDraggedOver()) {
+            targetIndex++;
+          }
+          _this4.onDrop(event, {
             at: targetIndex
           });
           return;
         }
-        if (_this3.isParentElement(draggedView.getContainer().id)) {
+        if (_this4.isParentElement(draggedView.getContainer().id)) {
           return;
         }
-        var selfIndex = elements.indexOf(draggedElement);
-        if (targetIndex === selfIndex) {
+        if (_this4.emptyViewIsCurrentlyBeingDraggedOver()) {
+          _this4.moveDroppedItem(draggedView, 0);
           return;
         }
-        var dropIndex = _this3.getDropIndex(containerElement, side, targetIndex, selfIndex);
-        _this3.moveDroppedItem(draggedView, dropIndex);
+        _this4.moveExistingElement(side, draggedView, containerElement, elements, targetIndex, draggedElement);
       }
     };
+  },
+  moveExistingElement: function moveExistingElement(side, draggedView, containerElement, elements, targetIndex, draggedElement) {
+    var selfIndex = elements.indexOf(draggedElement);
+    if (targetIndex === selfIndex) {
+      return;
+    }
+    var dropIndex = this.getDropIndex(containerElement, side, targetIndex, selfIndex);
+    this.moveDroppedItem(draggedView, dropIndex);
   },
   isPanelElement: function isPanelElement(draggedView, draggedElement) {
     return !draggedView || !draggedElement;
@@ -890,6 +965,9 @@ var DivBlockView = BaseElementView.extend({
   draggingOnBottomOrRightSide: function draggingOnBottomOrRightSide(side) {
     return ['bottom', 'right'].includes(side);
   },
+  emptyViewIsCurrentlyBeingDraggedOver: function emptyViewIsCurrentlyBeingDraggedOver() {
+    return this.$el.find('> .elementor-empty-view > .elementor-first-add.elementor-html5dnd-current-element').length > 0;
+  },
   /**
    * Toggle the `New Section` view when clicking the `add` button in the edit tools.
    *
@@ -933,6 +1011,23 @@ var DivBlockView = BaseElementView.extend({
     var _this$options2, _Object$keys$;
     var baseStyles = elementor.helpers.getAtomicWidgetBaseStyles((_this$options2 = this.options) === null || _this$options2 === void 0 ? void 0 : _this$options2.model);
     return (_Object$keys$ = Object.keys(baseStyles !== null && baseStyles !== void 0 ? baseStyles : {})[0]) !== null && _Object$keys$ !== void 0 ? _Object$keys$ : '';
+  },
+  isOverflowHidden: function isOverflowHidden() {
+    var elementStyles = window.getComputedStyle(this.el);
+    var overflowStyles = [elementStyles.overflowX, elementStyles.overflowY, elementStyles.overflow];
+    return overflowStyles.includes('hidden') || overflowStyles.includes('auto');
+  },
+  updateHandlesPosition: function updateHandlesPosition() {
+    var elementType = this.$el.data('element_type');
+    var isElement = (0, _elementTypes.getAllElementTypes)().includes(elementType);
+    if (!isElement) {
+      return;
+    }
+    if (this.isOverflowHidden()) {
+      this.$el.addClass('e-handles-inside');
+    } else {
+      this.$el.removeClass('e-handles-inside');
+    }
   }
 });
 module.exports = DivBlockView;
@@ -1198,6 +1293,7 @@ var _toConsumableArray2 = _interopRequireDefault(__webpack_require__(/*! @babel/
 
 /**
  * return all recursively nested elements in a flat array
+ *
  * @param {Container} model
  * @return {Container[]}
  */
@@ -1275,6 +1371,7 @@ function isClassesProp(prop) {
 
 /**
  * Update the style id of the container.
+ *
  * @param {Container} container
  */
 function updateStyleId(container) {
@@ -1326,6 +1423,7 @@ function updateElementsStyleIdsInsideOut(styledElements) {
 
 /**
  * Get a container - iterate over its children, find all styled atomic widgets and update their style ids
+ *
  * @param {Container} container
  */
 function regenerateLocalStyleIds(container) {
@@ -1336,72 +1434,6 @@ function regenerateLocalStyleIds(container) {
   });
   updateElementsStyleIdsInsideOut(styledElements);
 }
-
-/***/ }),
-
-/***/ "../node_modules/react-dom/client.js":
-/*!*******************************************!*\
-  !*** ../node_modules/react-dom/client.js ***!
-  \*******************************************/
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-"use strict";
-
-
-var m = __webpack_require__(/*! react-dom */ "react-dom");
-if (false) {} else {
-  var i = m.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED;
-  exports.createRoot = function(c, o) {
-    i.usingClientEntryPoint = true;
-    try {
-      return m.createRoot(c, o);
-    } finally {
-      i.usingClientEntryPoint = false;
-    }
-  };
-  exports.hydrateRoot = function(c, h, o) {
-    i.usingClientEntryPoint = true;
-    try {
-      return m.hydrateRoot(c, h, o);
-    } finally {
-      i.usingClientEntryPoint = false;
-    }
-  };
-}
-
-
-/***/ }),
-
-/***/ "react":
-/*!************************!*\
-  !*** external "React" ***!
-  \************************/
-/***/ ((module) => {
-
-"use strict";
-module.exports = React;
-
-/***/ }),
-
-/***/ "react-dom":
-/*!***************************!*\
-  !*** external "ReactDOM" ***!
-  \***************************/
-/***/ ((module) => {
-
-"use strict";
-module.exports = ReactDOM;
-
-/***/ }),
-
-/***/ "@wordpress/i18n":
-/*!**************************!*\
-  !*** external "wp.i18n" ***!
-  \**************************/
-/***/ ((module) => {
-
-"use strict";
-module.exports = wp.i18n;
 
 /***/ }),
 
@@ -1781,6 +1813,73 @@ function _unsupportedIterableToArray(r, a) {
   }
 }
 module.exports = _unsupportedIterableToArray, module.exports.__esModule = true, module.exports["default"] = module.exports;
+
+/***/ }),
+
+/***/ "../node_modules/react-dom/client.js":
+/*!*******************************************!*\
+  !*** ../node_modules/react-dom/client.js ***!
+  \*******************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+var m = __webpack_require__(/*! react-dom */ "react-dom");
+if (false) // removed by dead control flow
+{} else {
+  var i = m.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED;
+  exports.createRoot = function(c, o) {
+    i.usingClientEntryPoint = true;
+    try {
+      return m.createRoot(c, o);
+    } finally {
+      i.usingClientEntryPoint = false;
+    }
+  };
+  exports.hydrateRoot = function(c, h, o) {
+    i.usingClientEntryPoint = true;
+    try {
+      return m.hydrateRoot(c, h, o);
+    } finally {
+      i.usingClientEntryPoint = false;
+    }
+  };
+}
+
+
+/***/ }),
+
+/***/ "@wordpress/i18n":
+/*!**************************!*\
+  !*** external "wp.i18n" ***!
+  \**************************/
+/***/ ((module) => {
+
+"use strict";
+module.exports = wp.i18n;
+
+/***/ }),
+
+/***/ "react":
+/*!************************!*\
+  !*** external "React" ***!
+  \************************/
+/***/ ((module) => {
+
+"use strict";
+module.exports = React;
+
+/***/ }),
+
+/***/ "react-dom":
+/*!***************************!*\
+  !*** external "ReactDOM" ***!
+  \***************************/
+/***/ ((module) => {
+
+"use strict";
+module.exports = ReactDOM;
 
 /***/ })
 

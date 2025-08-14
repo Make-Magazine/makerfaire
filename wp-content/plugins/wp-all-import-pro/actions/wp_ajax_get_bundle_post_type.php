@@ -49,12 +49,15 @@ function pmxi_wp_ajax_get_bundle_post_type(){
 
 						$decodedTemplates = json_decode($templates, true);
 
-						$templateOptions = empty($decodedTemplates[0]) ? current($decodedTemplates) : $decodedTemplates;
+						// Check if JSON decode was successful and result is not null
+						if ($decodedTemplates !== null && is_array($decodedTemplates)) {
+							$templateOptions = empty($decodedTemplates[0]) ? current($decodedTemplates) : $decodedTemplates;
 
-						$options = (empty($templateOptions[0]['options'])) ? false : \pmxi_maybe_unserialize($templateOptions[0]['options']);
+							$options = (empty($templateOptions[0]['options'])) ? false : \pmxi_maybe_unserialize($templateOptions[0]['options']);
 
-						$response['post_type'] = ( ! empty($options) ) ? $options['custom_type'] : false;
-                        $response['taxonomy_type'] = ( ! empty($options) && isset($options['taxonomy_type'])) ? $options['taxonomy_type'] : false;
+							$response['post_type'] = ( ! empty($options) ) ? $options['custom_type'] : false;
+	                        $response['taxonomy_type'] = ( ! empty($options) && isset($options['taxonomy_type'])) ? $options['taxonomy_type'] : false;
+						}
 					}
 				}
 			}

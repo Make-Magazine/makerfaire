@@ -45,7 +45,7 @@ trait GoogleSheetTrait
             if ($firstRow) {
                 foreach ($firstRow->getElementsByTagName('td') as $index => $node) {
                     $headerName = wp_kses(trim($node->nodeValue), ninja_tables_allowed_html_tags());
-                    if ( ! $headerName) {
+                    if (!$headerName) {
                         $headerName = 'nt_header_' . $index;
                     }
                     $columns[$headerName] = $headerName;
@@ -90,7 +90,7 @@ trait GoogleSheetTrait
             if ($firstRow) {
                 foreach ($firstRow->getElementsByTagName('td') as $index => $node) {
                     $headerName = trim($node->nodeValue);
-                    if ( ! $headerName) {
+                    if (!$headerName) {
                         $headerName = 'nt_header_' . $index;
                     }
 
@@ -101,12 +101,11 @@ trait GoogleSheetTrait
                     }
                 }
             }
-
         } catch (\Exception $e) {
             return new \WP_Error(423, $e->getMessage());
         }
 
-        if ( ! $columns) {
+        if (!$columns) {
             return new \WP_Error(423, 'No Columns found');
         }
 
@@ -120,7 +119,7 @@ trait GoogleSheetTrait
             }
             $newRow = [];
 
-            if ( ! $row) {
+            if (!$row) {
                 continue;
             }
             foreach ($row->getElementsByTagName('td') as $columnIndex => $td) {
@@ -140,7 +139,7 @@ trait GoogleSheetTrait
                 } else {
                     $innerHTML = $td->nodeValue;
                 }
-                if ($innerHTML != '0' && ! $innerHTML) {
+                if ($innerHTML != '0' && !$innerHTML) {
                     $innerHTML = ''; // adding empty string
                 }
                 $newRow[] = $innerHTML;
@@ -150,9 +149,8 @@ trait GoogleSheetTrait
                 $sanitizedRow = array_map(function ($rowValue) {
                     return wp_kses($rowValue, ninja_tables_allowed_html_tags());
                 }, $newRow);
-                $result[] = array_combine($validColumns, $sanitizedRow);
+                $result[]     = array_combine($validColumns, $sanitizedRow);
             }
-
         }
 
         return $result;
@@ -162,26 +160,52 @@ trait GoogleSheetTrait
     {
         $status = apply_filters('ninja_tables_google_sheet_escape_zero_value', true);
 
-        if ( ! $status) {
+        if (!$status) {
             return true;
         }
 
         return array_filter($newRow);
     }
 
-    private function sanitizeGoogleUrl($url)
+    public function sanitizeGoogleUrl($url)
     {
-        if (strpos($url, 'pubhtml')) {
+        if (strpos($url, '/pubhtml/sheet?') !== false) {
             return $url;
         }
 
-        $parsedUrl = parse_url($url);
-        parse_str($parsedUrl['query'], $query);
-        unset($query['output']);
-        $query = build_query($query);
-        $path  = substr($parsedUrl['path'], 0, strrpos($parsedUrl['path'], '/'));
-        $url   = $parsedUrl['scheme'] . '://' . $parsedUrl['host'] . $path . '/pubhtml?' . $query;
+        $spreadsheetId = null;
+        if (preg_match('/\/spreadsheets\/d\/(?:e\/)?([a-zA-Z0-9-_]+)/', $url, $matches)) {
+            $spreadsheetId = $matches[1];
+        }
 
-        return $url;
+        if (!$spreadsheetId) {
+            return $url;
+        }
+
+        $gid = '0';
+        if (preg_match('/(?:#|\?|&)gid=(\d+)/', $url, $gidMatches)) {
+            $gid = $gidMatches[1];
+        } elseif (strpos($url, '/pubhtml') !== false) {
+            $firstGid = $this->getGidFromURl($url);
+            if ($firstGid) {
+                $gid = $firstGid;
+            }
+        }
+
+        $basePath = (strpos($url, 'spreadsheets/d/e') === false) ? "d" : "d/e";
+
+        return "https://docs.google.com/spreadsheets/{$basePath}/{$spreadsheetId}/pubhtml/sheet?headers=false&gid={$gid}";
+    }
+
+
+    public function getGidFromURl($url)
+    {
+        $html = $this->getRemoteContents($url);
+
+        if (preg_match('/gid: "(\d+)",/', $html, $matches)) {
+            return $matches[1];
+        }
+
+        return false;
     }
 }

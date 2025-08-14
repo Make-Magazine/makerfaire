@@ -12,7 +12,7 @@ class AjaxHandler
             'get-all-data' => 'getAllData',
         );
 
-        $requestedRoute = esc_attr($_REQUEST['target_action']);
+        $requestedRoute = sanitize_key(Arr::get($_REQUEST, 'target_action'));
 
         if (isset($validRoutes[$requestedRoute])) {
             $this->{$validRoutes[$requestedRoute]}();
@@ -48,11 +48,11 @@ class AjaxHandler
             wp_send_json_success([], 200);
         }
 
-        $skip  = Arr::get($_REQUEST, 'skip_rows', 0);
-        $limit = Arr::get($_REQUEST, 'limit_rows', false);
+        $skip  = intval(Arr::get($_REQUEST, 'skip_rows', 0));
+        $limit = intval(Arr::get($_REQUEST, 'limit_rows', 0));
 
         if (!$limit && !$skip && isset($_REQUEST['chunk_number'])) {
-            $chunkNumber = Arr::get($_REQUEST, 'chunk_number', 0);
+            $chunkNumber = intval(Arr::get($_REQUEST, 'chunk_number', 0));
             $perChunk    = ninjaTablePerChunk($tableId);
             $skip        = $chunkNumber * $perChunk;
             $limit       = $perChunk;

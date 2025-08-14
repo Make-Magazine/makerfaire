@@ -407,11 +407,34 @@ class PMXI_Admin_Import extends PMXI_Controller_Admin {
 				if ( ! empty($post['template'])) {
 					$templates = json_decode($post['template'], true);
 					$template_options = \pmxi_maybe_unserialize($templates[0]['options']);
+
+					// Use the custom_type from the template if it exists and the form submission is the default 'post'
+					// This handles the case where bundle skip flow submits before AJAX completes
+					if (!empty($template_options['custom_type']) && $post['custom_type'] == 'post') {
+						$post['custom_type'] = $template_options['custom_type'];
+					}
+
 					$template_options['type'] 	     = ($post['custom_type'] == 'page') ? 'page' : 'post';
 					$template_options['custom_type'] = $post['custom_type'];
 					$template_options['wizard_type'] = $post['wizard_type'];
 					if ($post['wizard_type'] == 'new') {
 						$template_options['create_new_records'] = 1;
+					}
+					// Ensure duplicate_matching is set correctly based on wizard_type for WP All Export bundle
+					if ($post['wizard_type'] == 'new') {
+						// For new items, use auto matching (unique identifier)
+						$template_options['duplicate_matching'] = 'auto';
+					} elseif ($post['wizard_type'] == 'matching') {
+						// For existing items, use manual matching (title, custom field, etc.)
+						$template_options['duplicate_matching'] = 'manual';
+
+						// For product imports, default to SKU matching if custom field is selected but not configured
+						if ($post['custom_type'] == 'product' &&
+							isset($post['duplicate_indicator']) && $post['duplicate_indicator'] == 'custom field' &&
+							(empty($post['custom_duplicate_name']) || empty($post['custom_duplicate_value']))) {
+							$template_options['duplicate_indicator'] = 'custom field';
+							$template_options['custom_duplicate_name'] = '_sku';
+						}
 					}
 					$this->data['post'] = $template_options;
 					PMXI_Plugin::$session->set('options', $template_options);
@@ -437,10 +460,10 @@ class PMXI_Admin_Import extends PMXI_Controller_Admin {
 				if ( empty($xml) ) {
 					$this->errors->add('upload-validation', __('Please confirm you are importing a valid feed.<br/> Often, feed providers distribute feeds with invalid data, improperly wrapped HTML, line breaks where they should not be, faulty character encodings, syntax errors in the XML, and other issues.<br/><br/>WP All Import has checks in place to automatically fix some of the most common problems, but we can’t catch every single one.<br/><br/>It is also possible that there is a bug in WP All Import, and the problem is not with the feed.<br/><br/>If you need assistance, please contact support – <a href="mailto:support@wpallimport.com">support@wpallimport.com</a> – with your XML/CSV file. We will identify the problem and release a bug fix if necessary.', 'wp-all-import-pro'));
 					$this->data['upload_validation'] = true;
-				} elseif( $redirect_to_template ) {
-					wp_redirect(esc_url_raw(add_query_arg('action', 'template', $this->baseUrl))); die();
 				} elseif( $post['auto_generate'] ) {
 					wp_redirect(esc_url_raw(add_query_arg('action', 'options', $this->baseUrl))); die();
+				} elseif( $redirect_to_template ) {
+					wp_redirect(esc_url_raw(add_query_arg('action', 'template', $this->baseUrl))); die();
 				} else {
 					wp_redirect(esc_url_raw(add_query_arg('action', 'element', $this->baseUrl))); die();
 				}
@@ -1430,6 +1453,21 @@ class PMXI_Admin_Import extends PMXI_Controller_Admin {
 
 			$DefaultOptions = (isset(PMXI_Plugin::$session->options)) ? array_replace_recursive($default, PMXI_Plugin::$session->options) : $default;
 
+			// Apply WooCommerce product defaults after session merge if values are still empty
+			if ($DefaultOptions['custom_type'] == "product" and class_exists('PMWI_Plugin')) {
+				if (empty($DefaultOptions['duplicate_indicator'])) {
+					$DefaultOptions['duplicate_indicator'] = 'custom field';
+				}
+				if (empty($DefaultOptions['custom_duplicate_name'])) {
+					$DefaultOptions['custom_duplicate_name'] = '_sku';
+				}
+			}
+
+			// Apply alternative Excel processing setting from session if available
+			if (PMXI_Plugin::$session->get('use_alternative_excel_processing')) {
+				$DefaultOptions['use_alternative_excel_processing'] = 1;
+			}
+
             $DefaultOptions['xpath'] = '';
 
 			$post = $this->input->post( apply_filters('pmxi_options_options', $DefaultOptions, $this->isWizard) );
@@ -1470,6 +1508,26 @@ class PMXI_Admin_Import extends PMXI_Controller_Admin {
 			$this->errors->add('form-validation', sprintf(__('You\'ve reached your max_input_vars limit of %d. Please increase this.', 'wp-all-import-pro'), $max_input_vars));
 		}
 
+		// Ensure duplicate_matching is set correctly based on wizard_type
+		if (isset($post['wizard_type'])) {
+			if ($post['wizard_type'] == 'new') {
+				// For new items, use auto matching (unique identifier)
+				$post['duplicate_matching'] = 'auto';
+			} elseif ($post['wizard_type'] == 'matching') {
+				// For existing items, use manual matching (title, custom field, etc.)
+				$post['duplicate_matching'] = 'manual';
+
+				// For product imports, default to SKU matching if custom field is selected but not configured
+				if ($post['custom_type'] == 'product' &&
+					isset($post['duplicate_indicator']) && $post['duplicate_indicator'] == 'custom field' &&
+					(empty($post['custom_duplicate_name']) || empty($post['custom_duplicate_value']))) {
+					$post['duplicate_indicator'] = 'custom field';
+					$post['custom_duplicate_name'] = '_sku';
+					// Don't set custom_duplicate_value - let user specify the SKU field from their import file
+				}
+			}
+		}
+
 		$this->data['post'] =& $post;
 
 		PMXI_Plugin::$session->set('options', $post);
@@ -1498,6 +1556,25 @@ class PMXI_Admin_Import extends PMXI_Controller_Admin {
                 if ($this->isWizard) {
                     $template_options['delimiter'] = PMXI_Plugin::$session->is_csv;
                 }
+
+				// Ensure duplicate_matching is set correctly based on wizard_type for template loading
+				if (isset($post['wizard_type'])) {
+					if ($post['wizard_type'] == 'new') {
+						// For new items, use auto matching (unique identifier)
+						$template_options['duplicate_matching'] = 'auto';
+					} elseif ($post['wizard_type'] == 'matching') {
+						// For existing items, use manual matching (title, custom field, etc.)
+						$template_options['duplicate_matching'] = 'manual';
+
+						// For product imports, default to SKU matching if custom field is selected but not configured
+						if ($post['custom_type'] == 'product' &&
+							isset($post['duplicate_indicator']) && $post['duplicate_indicator'] == 'custom field' &&
+							(empty($post['custom_duplicate_name']) || empty($post['custom_duplicate_value']))) {
+							$template_options['duplicate_indicator'] = 'custom field';
+							$template_options['custom_duplicate_name'] = '_sku';
+						}
+					}
+				}
 
 				$this->data['post'] = $template_options;
 				PMXI_Plugin::$session->set('is_loaded_template', $load_template);
@@ -1623,11 +1700,21 @@ class PMXI_Admin_Import extends PMXI_Controller_Admin {
 
                         if(!PMXI_Plugin::$session->get('update_previous')) {
                             $import = new PMXI_Import_Record();
+
+                            // Check if alternative Excel processing was used during upload
+                            $import_options = $DefaultOptions + PMXI_Plugin::$session->options;
+                            if (PMXI_Plugin::$session->get('use_alternative_excel_processing')) {
+                                $import_options['use_alternative_excel_processing'] = 1;
+                                // Clear the session flag
+                                PMXI_Plugin::$session->set('use_alternative_excel_processing', false);
+                                PMXI_Plugin::$session->save_data();
+                            }
+
                             $import->set(
                                 (empty(PMXI_Plugin::$session->source) ? array() : PMXI_Plugin::$session->source)
                                 + array(
                                     'xpath' => PMXI_Plugin::$session->xpath,
-                                    'options' => $DefaultOptions + PMXI_Plugin::$session->options,
+                                    'options' => $import_options,
                                     'count' => PMXI_Plugin::$session->count,
                                     'friendly_name' => wp_all_import_clear_xss(PMXI_Plugin::$session->options['friendly_name']),
                                     'feed_type' => PMXI_Plugin::$session->feed_type,
@@ -1813,11 +1900,20 @@ class PMXI_Admin_Import extends PMXI_Controller_Admin {
 
 				$friendly_name = ( ! empty(PMXI_Plugin::$session->options['friendly_name']) ) ? PMXI_Plugin::$session->options['friendly_name'] : '';
 
+                // Check if alternative Excel processing was used during upload
+                $import_options = PMXI_Plugin::$session->options;
+                if (PMXI_Plugin::$session->get('use_alternative_excel_processing')) {
+                    $import_options['use_alternative_excel_processing'] = 1;
+                    // Clear the session flag
+                    PMXI_Plugin::$session->set('use_alternative_excel_processing', false);
+                    PMXI_Plugin::$session->save_data();
+                }
+
                 $import->set(
                     (empty(PMXI_Plugin::$session->source) ? array() : PMXI_Plugin::$session->source)
                     + array(
                         'xpath' => PMXI_Plugin::$session->xpath,
-                        'options' => PMXI_Plugin::$session->options,
+                        'options' => $import_options,
                         'count' => PMXI_Plugin::$session->count,
                         'friendly_name' => wp_all_import_clear_xss($friendly_name),
                         'feed_type' => PMXI_Plugin::$session->feed_type,
@@ -1902,6 +1998,25 @@ class PMXI_Admin_Import extends PMXI_Controller_Admin {
 
 		}
 
+		// Ensure duplicate_matching is set correctly based on wizard_type
+		if (isset($post['wizard_type'])) {
+			if ($post['wizard_type'] == 'new') {
+				// For new items, use auto matching (unique identifier)
+				$post['duplicate_matching'] = 'auto';
+			} elseif ($post['wizard_type'] == 'matching') {
+				// For existing items, use manual matching (title, custom field, etc.)
+				$post['duplicate_matching'] = 'manual';
+
+				// For product imports, default to SKU matching if custom field is selected but not configured
+				if ($post['custom_type'] == 'product' &&
+					isset($post['duplicate_indicator']) && $post['duplicate_indicator'] == 'custom field' &&
+					(empty($post['custom_duplicate_name']) || empty($post['custom_duplicate_value']))) {
+					$post['duplicate_indicator'] = 'custom field';
+					$post['custom_duplicate_name'] = '_sku';
+				}
+			}
+		}
+
 		$this->data['post'] =& $post;
 
 		PMXI_Plugin::$session->set('options', $post);
@@ -1944,33 +2059,70 @@ class PMXI_Admin_Import extends PMXI_Controller_Admin {
 					}
 				}
 			}
-			if ('manual' != $post['duplicate_matching'] and '' == $post['unique_key']) {
-				$this->errors->add('form-validation', __('Unique ID is currently empty and must be set. If you are not sure what to use as a Unique ID, click Auto-detect.', 'wp-all-import-pro'));
-			} elseif ('manual' != $post['duplicate_matching']) {
-				$this->_validate_template($post['unique_key'], __('Post Unique Key', 'wp-all-import-pro'));
-			}
-			if ( 'manual' == $post['duplicate_matching'] and 'custom field' == $post['duplicate_indicator']){
-				if ('' == $post['custom_duplicate_name'])
-					$this->errors->add('form-validation', __('Custom field name must be specified.', 'wp-all-import-pro'));
-				if ('' == $post['custom_duplicate_value'])
-					$this->errors->add('form-validation', __('Custom field value must be specified.', 'wp-all-import-pro'));
-			}
-			if ( 'manual' == $post['duplicate_matching'] ){
-				if ( 'pid' == $post['duplicate_indicator'] && '' == $post['pid_xpath'] ){
-					if ($post['custom_type'] == 'gf_entries') {
-						$this->errors->add('form-validation', __('Entry ID must be specified.', 'wp-all-import-pro'));
-					} else {
-						$this->errors->add('form-validation', __('Post ID must be specified.', 'wp-all-import-pro'));
-					}
-                }
-                if ( 'taxonomies' == $post['custom_type'] ){
-                    if ( 'title' == $post['duplicate_indicator'] && '' == $post['title_xpath'] ){
-                        $this->errors->add('form-validation', __('Term name must be specified.', 'wp-all-import-pro'));
-                    }
-                    if ( 'slug' == $post['duplicate_indicator'] && '' == $post['slug_xpath'] ){
-                        $this->errors->add('form-validation', __('Term slug must be specified.', 'wp-all-import-pro'));
-                    }
-                }
+			// Validate based on wizard_type selection
+			if (isset($post['wizard_type']) && $post['wizard_type'] == 'new') {
+				// For new items, validate unique_key requirements (duplicate_matching should be 'auto')
+				if ('manual' != $post['duplicate_matching'] and '' == $post['unique_key']) {
+					$this->errors->add('form-validation', __('Unique ID is currently empty and must be set. If you are not sure what to use as a Unique ID, click Auto-detect.', 'wp-all-import-pro'));
+				} elseif ('manual' != $post['duplicate_matching']) {
+					$this->_validate_template($post['unique_key'], __('Post Unique Key', 'wp-all-import-pro'));
+				}
+			} elseif (isset($post['wizard_type']) && $post['wizard_type'] == 'matching') {
+				// For existing items, validate manual duplicate matching requirements
+				if ( 'manual' == $post['duplicate_matching'] and 'custom field' == $post['duplicate_indicator']){
+					if ('' == $post['custom_duplicate_name'])
+						$this->errors->add('form-validation', __('Custom field name must be specified.', 'wp-all-import-pro'));
+					if ('' == $post['custom_duplicate_value'])
+						$this->errors->add('form-validation', __('Custom field value must be specified.', 'wp-all-import-pro'));
+				}
+				if ( 'manual' == $post['duplicate_matching'] ){
+					if ( 'pid' == $post['duplicate_indicator'] && '' == $post['pid_xpath'] ){
+						if ($post['custom_type'] == 'gf_entries') {
+							$this->errors->add('form-validation', __('Entry ID must be specified.', 'wp-all-import-pro'));
+						} else {
+							$this->errors->add('form-validation', __('Post ID must be specified.', 'wp-all-import-pro'));
+						}
+	                }
+	                if ( 'taxonomies' == $post['custom_type'] ){
+	                    if ( 'title' == $post['duplicate_indicator'] && '' == $post['title_xpath'] ){
+	                        $this->errors->add('form-validation', __('Term name must be specified.', 'wp-all-import-pro'));
+	                    }
+	                    if ( 'slug' == $post['duplicate_indicator'] && '' == $post['slug_xpath'] ){
+	                        $this->errors->add('form-validation', __('Term slug must be specified.', 'wp-all-import-pro'));
+	                    }
+	                }
+				}
+			} else {
+				// Fallback for cases where wizard_type is not set (backward compatibility)
+				// Apply the original validation logic
+				if ('manual' != $post['duplicate_matching'] and '' == $post['unique_key']) {
+					$this->errors->add('form-validation', __('Unique ID is currently empty and must be set. If you are not sure what to use as a Unique ID, click Auto-detect.', 'wp-all-import-pro'));
+				} elseif ('manual' != $post['duplicate_matching']) {
+					$this->_validate_template($post['unique_key'], __('Post Unique Key', 'wp-all-import-pro'));
+				}
+				if ( 'manual' == $post['duplicate_matching'] and 'custom field' == $post['duplicate_indicator']){
+					if ('' == $post['custom_duplicate_name'])
+						$this->errors->add('form-validation', __('Custom field name must be specified.', 'wp-all-import-pro'));
+					if ('' == $post['custom_duplicate_value'])
+						$this->errors->add('form-validation', __('Custom field value must be specified.', 'wp-all-import-pro'));
+				}
+				if ( 'manual' == $post['duplicate_matching'] ){
+					if ( 'pid' == $post['duplicate_indicator'] && '' == $post['pid_xpath'] ){
+						if ($post['custom_type'] == 'gf_entries') {
+							$this->errors->add('form-validation', __('Entry ID must be specified.', 'wp-all-import-pro'));
+						} else {
+							$this->errors->add('form-validation', __('Post ID must be specified.', 'wp-all-import-pro'));
+						}
+	                }
+	                if ( 'taxonomies' == $post['custom_type'] ){
+	                    if ( 'title' == $post['duplicate_indicator'] && '' == $post['title_xpath'] ){
+	                        $this->errors->add('form-validation', __('Term name must be specified.', 'wp-all-import-pro'));
+	                    }
+	                    if ( 'slug' == $post['duplicate_indicator'] && '' == $post['slug_xpath'] ){
+	                        $this->errors->add('form-validation', __('Term slug must be specified.', 'wp-all-import-pro'));
+	                    }
+	                }
+				}
 			}
 
 			// Categories/taxonomies logic

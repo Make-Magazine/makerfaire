@@ -6,6 +6,11 @@ use NinjaTables\Framework\Support\Arr;
 
 class DynamicConfig
 {
+    public static function isTruthy($value)
+    {
+        return $value === true || $value === '1';
+    }
+
     public static function getTableDataInfo($data_from_db, $updated_column_properties, $updated_row_properties)
     {
         $updatedDataRow = self::getRowStyle($data_from_db, $updated_row_properties); //row style updated
@@ -57,26 +62,25 @@ class DynamicConfig
         $static_config['general']['options']['table_alignment']['value']                                             = $general['table_alignment']['value'];
         $static_config['general']['options']['cell_min_auto_width']['value']                                         = $general['cell_min_auto_width']['value'];
         $static_config['general']['options']['container_max_height']['value']                                        = $general['container_max_height']['value'];
-        $static_config['general']['options']['columns_rows_separate']['value']                                       = $general['columns_rows_separate']['value'];
+        $static_config['general']['options']['columns_rows_separate']['value']                                       = self::isTruthy($general['columns_rows_separate']['value']);
         $static_config['general']['options']['columns_rows_separate']['childs']['space_between_column']['value']     = $general['columns_rows_separate']['childs']['space_between_column']['value'];
         $static_config['general']['options']['columns_rows_separate']['childs']['space_between_row']['value']        = $general['columns_rows_separate']['childs']['space_between_row']['value'];
-        $static_config['general']['options']['container_max_width_switch']['value']                                  = $general['container_max_width_switch']['value'];
+        $static_config['general']['options']['container_max_width_switch']['value']                                  = self::isTruthy($general['container_max_width_switch']['value']);
         $static_config['general']['options']['container_max_width_switch']['childs']['container_max_width']['value'] = $general['container_max_width_switch']['childs']['container_max_width']['value'];
 
         $static_config['background']['options']['header_background']['value']   = $background['header_background']['value'];
         $static_config['background']['options']['even_row_background']['value'] = $background['even_row_background']['value'];
         $static_config['background']['options']['odd_row_background']['value']  = $background['odd_row_background']['value'];
 
-        $static_config['sticky']['options']['first_row_sticky']['value']    = $sticky['first_row_sticky']['value'];
-        $static_config['sticky']['options']['first_column_sticky']['value'] = $sticky['first_column_sticky']['value'];
+        $static_config['sticky']['options']['first_row_sticky']['value']    = self::isTruthy($sticky['first_row_sticky']['value']);
+        $static_config['sticky']['options']['first_column_sticky']['value'] = self::isTruthy($sticky['first_column_sticky']['value']);
 
         $static_config['accessibility']['options']['table_role']['value'] = $accessibility['table_role']['value'];
 
-
         $static_config['border']['options']['table_border']['value']                                  = $border['table_border']['value'];
         $static_config['border']['options']['border_color']['value']                                  = $border['border_color']['value'];
-        $static_config['border']['options']['inner_border']['value']                                  = $border['inner_border']['value'];
-        $static_config['border']['options']['inner_border']['childs']['header_inner_border']['value'] = $border['inner_border']['childs']['header_inner_border']['value'];
+        $static_config['border']['options']['inner_border']['value']                                  = self::isTruthy($border['inner_border']['value']);
+        $static_config['border']['options']['inner_border']['childs']['header_inner_border']['value'] = self::isTruthy($border['inner_border']['childs']['header_inner_border']['value']);
         $static_config['border']['options']['inner_border']['childs']['inner_border_color']['value']  = $border['inner_border']['childs']['inner_border_color']['value'];
         $static_config['border']['options']['inner_border']['childs']['inner_border_size']['value']   = $border['inner_border']['childs']['inner_border_size']['value'];
 
@@ -97,16 +101,16 @@ class DynamicConfig
         $mobileSettings = Arr::get($dynamic_responsive, 'responsive_settings.options.devices.mobile');
         $tabletSettings = Arr::get($dynamic_responsive, 'responsive_settings.options.devices.tablet');
 
-        $static_config['general']['options']['enable_responsive_table']['value'] = $general['enable_responsive_table']['value'];
+        $static_config['general']['options']['enable_responsive_table']['value'] = self::isTruthy($general['enable_responsive_table']['value']);
 
-        $static_config['mode_options']['options']['devices']['mobile']['disable_breakpoint']['value'] = $mobile['disable_breakpoint']['value'];
-        $static_config['mode_options']['options']['devices']['mobile']['top_row_as_header']['value']  = $mobile['top_row_as_header']['value'];
+        $static_config['mode_options']['options']['devices']['mobile']['disable_breakpoint']['value'] = self::isTruthy($mobile['disable_breakpoint']['value']);
+        $static_config['mode_options']['options']['devices']['mobile']['top_row_as_header']['value']  = self::isTruthy($mobile['top_row_as_header']['value']);
         $static_config['mode_options']['options']['devices']['mobile']['items_per_row']['value']      = Arr::get($mobile, 'items_per_row.value', 1);
         $static_config['mode_options']['options']['devices']['mobile']['cell_border']['value']        = Arr::get($mobile, 'cell_border.value', 5);
         $static_config['mode_options']['options']['devices']['mobile']['cell_direction']['value']     = Arr::get($mobile, 'cell_direction.value', 'row');
 
-        $static_config['mode_options']['options']['devices']['tablet']['disable_breakpoint']['value'] = $tablet['disable_breakpoint']['value'];
-        $static_config['mode_options']['options']['devices']['tablet']['top_row_as_header']['value']  = $tablet['top_row_as_header']['value'];
+        $static_config['mode_options']['options']['devices']['tablet']['disable_breakpoint']['value'] = self::isTruthy($tablet['disable_breakpoint']['value']);
+        $static_config['mode_options']['options']['devices']['tablet']['top_row_as_header']['value']  = self::isTruthy($tablet['top_row_as_header']['value']);
         $static_config['mode_options']['options']['devices']['tablet']['items_per_row']['value']      = Arr::get($tablet, 'items_per_row.value', 2);
         $static_config['mode_options']['options']['devices']['tablet']['cell_border']['value']        = Arr::get($tablet, 'cell_border.value', 5);
         $static_config['mode_options']['options']['devices']['tablet']['cell_direction']['value']     = Arr::get($tablet, 'cell_direction.value', 'row');

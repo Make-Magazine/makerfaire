@@ -38,18 +38,6 @@
 
 								<input type="hidden" name="custom_type" value="<?php echo $post['custom_type'];?>">
 
-								<?php if ( 'taxonomies' == $post['custom_type'] ):?>
-									<div class="wp_all_import_change_taxonomy_type">
-										<input type="hidden" name="taxonomy_type" value="<?php echo $post['taxonomy_type'];?>">
-										<select id="taxonomy_to_import">
-											<option value=""><?php _e('Select Taxonomy', 'wp_all_export_plugin'); ?></option>
-											<?php $options = wp_all_import_get_taxonomies(); ?>
-											<?php foreach ($options as $slug => $name):?>
-												<option value="<?php echo $slug;?>" <?php if ($post['taxonomy_type'] == $slug):?>selected="selected"<?php endif;?>><?php echo $name;?></option>
-											<?php endforeach;?>
-										</select>
-									</div>
-								<?php else: ?>
 								<?php
 									$hiddenPosts = array(
 										'attachment',
@@ -130,10 +118,10 @@
                                     ?>
 
                                     <?php
-                                    $known_imgs     = array( 'post', 'page', 'product', 'import_users', 'shop_order', 'shop_coupon', 'shop_customer', 'users', 'comments', 'taxonomies', 'woo_reviews' );
+                                    $known_imgs     = array( 'post', 'page', 'product', 'import_users', 'shop_order', 'shop_coupon', 'shop_customer', 'users', 'comments', 'taxonomies', 'woo_reviews', 'gf_entries' );
                                     $all_posts      = array_merge( $sorted_cpt, $hidden_post_types );
                                     $all_posts      = apply_filters( 'pmxi_custom_types', $all_posts, 'all_types' );
-                                    $ordered_posts  = array( 'post', 'page', 'taxonomies', 'comments', 'import_users', 'shop_order', 'shop_coupon', 'product', 'woo_reviews', 'shop_customer' );
+                                    $ordered_posts  = array( 'post', 'page', 'product', 'shop_order', 'shop_coupon', 'woo_reviews', 'shop_customer', 'import_users', 'taxonomies', 'comments', 'gf_entries' );
 
                                     foreach ( $all_posts as $key => $post_obj ) {
                                         if ( ! in_array( $key, $ordered_posts ) ) {
@@ -182,6 +170,21 @@
                                     }
                                     ?>
                                     </select>
+
+									<!-- Always render taxonomy wrapper for JavaScript show/hide functionality -->
+									<div class="taxonomy_to_import_wrapper" style="display: <?php echo ('taxonomies' == $post['custom_type']) ? 'block' : 'none'; ?>;">
+										<div class="wp_all_import_change_taxonomy_type">
+											<input type="hidden" name="taxonomy_type" value="<?php echo $post['taxonomy_type'];?>">
+											<h2><?php _e('Select taxonomy to import into...', 'wp-all-import-pro');?> <a class="wpallimport-help" href="#help" style="position: relative; top: -2px;" title="Hover over each entry to view the taxonomy slug.">?</a></h2>
+											<select id="taxonomy_to_import">
+												<option value=""><?php _e('Select Taxonomy', 'wp-all-import-pro'); ?></option>
+												<?php $options = wp_all_import_get_taxonomies(); ?>
+												<?php foreach ($options as $slug => $name):?>
+													<option value="<?php echo $slug;?>" <?php if ($post['taxonomy_type'] == $slug):?>selected="selected"<?php endif;?>><?php echo $name;?></option>
+												<?php endforeach;?>
+											</select>
+										</div>
+									</div>
 
                                     <?php
                                     // *****************************************************
@@ -240,10 +243,20 @@
 								<h4><?php _e('Downloads', 'wp-all-import-pro'); ?></h4>
 
 								<div class="input">
-									<button class="button button-primary download_import_template" rel="<?php echo esc_url(add_query_arg(array('page' => 'pmxi-admin-manage', 'id' => intval($_GET['id']), 'action' => 'get_template', '_wpnonce' => wp_create_nonce( '_wpnonce-download_template' )), $this->baseUrl)); ?>" style="background-image: none;"><?php _e('Import Template', 'wp-all-import-pro'); ?></button>
-									<button class="button button-primary download_import_bundle" rel="<?php echo esc_url(add_query_arg(array('page' => 'pmxi-admin-manage', 'id' => intval($_GET['id']), 'action' => 'bundle', '_wpnonce' => wp_create_nonce( '_wpnonce-download_bundle' )), $this->baseUrl)); ?>" style="background-image: none;"><?php _e('Import Bundle', 'wp-all-import-pro'); ?></button>
+									<?php
+									// Get import ID safely - use import object if available, otherwise fallback to GET parameter
+									$import_id = 0;
+									if (isset($import) && !empty($import->id)) {
+										$import_id = intval($import->id);
+									} elseif (isset($_GET['id']) && !empty($_GET['id'])) {
+										$import_id = intval($_GET['id']);
+									}
+									?>
+									<?php if ($import_id > 0): ?>
+									<button class="button button-primary download_import_template" rel="<?php echo esc_url(add_query_arg(array('page' => 'pmxi-admin-manage', 'id' => $import_id, 'action' => 'get_template', '_wpnonce' => wp_create_nonce( '_wpnonce-download_template' )), $this->baseUrl)); ?>" style="background-image: none;"><?php _e('Import Template', 'wp-all-import-pro'); ?></button>
+									<button class="button button-primary download_import_bundle" rel="<?php echo esc_url(add_query_arg(array('page' => 'pmxi-admin-manage', 'id' => $import_id, 'action' => 'bundle', '_wpnonce' => wp_create_nonce( '_wpnonce-download_bundle' )), $this->baseUrl)); ?>" style="background-image: none;"><?php _e('Import Bundle', 'wp-all-import-pro'); ?></button>
+									<?php endif; ?>
 								</div>
-							<?php endif; ?>
 							<h4><?php _e('Other', 'wp-all-import-pro'); ?></h4>
 							<div class="input">
 								<input type="hidden" name="is_import_specified" value="0" />
@@ -279,6 +292,12 @@
 									<input type="checkbox" id="xml_reader_engine" class="fix_checkbox" name="xml_reader_engine" value="1" <?php echo $post['xml_reader_engine'] ? 'checked="checked"': '' ?>/>
 									<label for="xml_reader_engine"><?php _e('Use StreamReader instead of XMLReader to parse import file', 'wp-all-import-pro') ?> <a href="#help" class="wpallimport-help" style="position:relative; top:0;" title="<?php _e('XMLReader is much faster, but has a bug that sometimes prevents certain records from being imported with import files that contain special cases.', 'wp-all-import-pro'); ?>">?</a></label>
 								<?php endif; ?>
+							</div>
+
+							<div class="input">
+								<input type="hidden" name="use_alternative_excel_processing" value="0" />
+								<input type="checkbox" id="use_alternative_excel_processing" name="use_alternative_excel_processing" value="1" class="fix_checkbox" <?php echo $post['use_alternative_excel_processing'] ? 'checked="checked"': '' ?>/>
+								<label for="use_alternative_excel_processing"><?php _e('Use alternative Excel processing method', 'wp-all-import-pro') ?> <a href="#help" class="wpallimport-help" style="position:relative; top:0;" title="<?php _e('Enable this option if you experience memory issues or errors when importing Excel files. This uses a different processing method that can handle problematic Excel files.', 'wp-all-import-pro'); ?>">?</a></label>
 							</div>
 
 							<div class="input" style="margin-top: 15px;">

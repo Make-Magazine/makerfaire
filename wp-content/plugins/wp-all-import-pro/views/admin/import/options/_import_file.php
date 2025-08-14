@@ -124,6 +124,14 @@
 									var existing_file_sizes = <?php echo json_encode($sizes) ?>;
 								</script>
 
+								<h2 class="wpallimport-file-selector-label">
+									<?php _e('Select Import File', 'wp-all-import-pro'); ?>
+									<?php
+									$tooltip_text = sprintf(__('Upload files to <strong>%s</strong> and they will appear in this list', 'wp-all-import-pro'), $upload_dir['basedir'] . $files_directory);
+									?>
+									<a href="#" class="wpallimport-help" title="<?php echo esc_attr(wp_strip_all_tags($tooltip_text)); ?>" style="position: relative; top: -2px;">?</a>
+								</h2>
+
 								<select name="" id="file_selector">
 									<option value=""><?php _e('Select a previously uploaded file', 'wp-all-import-pro'); ?></option>
 									<?php foreach ($local_files as $file) :?>
@@ -136,9 +144,6 @@
 								<script type="text/javascript">
 									var existing_file_sizes = <?php echo json_encode($sizes) ?>;
 								</script>
-								<div class="wpallimport-note" style="width:60%; margin: 0 auto; ">
-									<?php printf(__('Upload files to <strong>%s</strong> and they will appear in this list', 'wp-all-import-pro'), $upload_dir['basedir'] . $files_directory) ?>
-								</div>
 							</div>
 						</div>
 

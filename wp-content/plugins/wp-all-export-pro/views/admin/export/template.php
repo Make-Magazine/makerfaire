@@ -190,7 +190,7 @@ if($is_rapid_addon_export) {
 								</div>
 
                                 <!-- Warning Messages -->
-                                <?php if ( (($addons->isWooCommerceAddonActive() || $addons->isWooCommerceOrderAddonActive()) && ! XmlExportWooCommerceOrder::$is_active) && ! XmlExportComment::$is_active && ! XmlExportTaxonomy::$is_active ) : ?>
+                                <?php if ( (($addons->isWooCommerceAddonActive() || $addons->isWooCommerceOrderAddonActive()) && ! XmlExportWooCommerceOrder::$is_active) && ! XmlExportComment::$is_active && ! XmlExportTaxonomy::$is_active && ! XmlExportEngine::$is_woo_guest_customer_export ) : ?>
                                     <div class="wp-all-export-warning" <?php if ( empty($post['ids']) or count($post['ids']) > 1 ) echo 'style="display:none;"'; ?>>
                                         <p></p>
                                         <input type="hidden" id="warning_template" value="<?php esc_html_e("Warning: without %s you won't be able to re-import this data back to this site using WP All Import.", "wp_all_export_plugin"); ?>"/>

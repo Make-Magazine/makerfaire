@@ -6,7 +6,9 @@ $.fn.wplupload  = function($options) {
 	var $up, $defaults = {
 		runtimes : 'gears,browserplus,html5,flash,silverlight,html4',
 		browse_button_hover: 'hover',
-		browse_button_active: 'active'
+		browse_button_active: 'active',
+		drop_element: 'wpallimport-drag-drop-area',
+		dragdrop: true,
 	};
 
 	$options = $.extend({}, $defaults, $options);
@@ -21,15 +23,53 @@ $.fn.wplupload  = function($options) {
 				// Create a progress bar containing the filename
 				$('#progress').css({'visibility':'visible', 'display':'block'});
 				$('#select-files').hide();
+
+				// Hide drag-drop overlay and remove fullscreen extension when upload starts
+				$('#wpallimport-fullscreen-drag-overlay').hide();
+				$('#wpallimport-drag-drop-area').removeClass('fullscreen-active');
 			})
 		});
 
 		$up.init();
 
 		$up.bind('Error', function(up, err) {
+			// Check if this is an Excel file and we haven't tried alternative processing yet
+			var file = err.file;
+			var isExcelFile = file && file.name && /\.(xls|xlsx)$/i.test(file.name);
+			var hasTriedAlternative = file && (file.wpai_tried_alternative || false);
+
+			if (isExcelFile && !hasTriedAlternative) {
+				// Mark that we've tried alternative processing for this file
+				file.wpai_tried_alternative = true;
+
+				// Show retry message
+				$('#progressbar').html('<span>Retrying with alternative Excel processing method...</span>');
+				$('#progress').show();
+
+				// Set flag for alternative Excel processing
+				$up.settings.multipart_params.use_alternative_excel = '1';
+
+				// Reset file status and retry
+				setTimeout(function() {
+					file.status = plupload.QUEUED;
+					file.percent = 0;
+					file.loaded = 0;
+					$up.start();
+				}, 1000);
+
+				return; // Don't show error yet
+			}
+
 			//$('#upload_process').html(err.message);
 			//$('.wpallimport-header').next('.clear').after(err.message);
 			$('.error-upload-rejected').show();
+
+			// Reset drag-drop state on error
+			$('#wpallimport-fullscreen-drag-overlay').hide();
+			$('#wpallimport-drag-drop-area').removeClass('fullscreen-active');
+			if (typeof window.isDragDropUpload !== 'undefined') {
+				window.isDragDropUpload = false;
+			}
 		});
 
 		$up.bind('FilesAdded', function(up, files) {
@@ -69,6 +109,32 @@ $.fn.wplupload  = function($options) {
 
 			if (r.OK === 0)
 			{
+				// Check if this is an Excel file and we haven't tried alternative processing yet
+				var isExcelFile = file.name && /\.(xls|xlsx)$/i.test(file.name);
+				var hasTriedAlternative = file.wpai_tried_alternative || false;
+
+				if (isExcelFile && !hasTriedAlternative) {
+					// Mark that we've tried alternative processing for this file
+					file.wpai_tried_alternative = true;
+
+					// Show retry message
+					$('#progressbar').html('<span>Retrying with alternative Excel processing method...</span>');
+					$('#progress').show();
+
+					// Set flag for alternative Excel processing
+					$up.settings.multipart_params.use_alternative_excel = '1';
+
+					// Reset file status and retry
+					setTimeout(function() {
+						file.status = plupload.QUEUED;
+						file.percent = 0;
+						file.loaded = 0;
+						$up.start();
+					}, 1000);
+
+					return; // Don't show error yet
+				}
+
 				$('.wpallimport-choose-file').find('.wpallimport-submit-buttons').hide();
 				$('.wpallimport-import-from.selected').click();
 				$('#wpallimport-url-upload-status').html('');
@@ -83,6 +149,32 @@ $.fn.wplupload  = function($options) {
 			else
 			{
 				if (r.error !== null){
+
+					// Check if this is an Excel file and we haven't tried alternative processing yet
+					var isExcelFile = file.name && /\.(xls|xlsx)$/i.test(file.name);
+					var hasTriedAlternative = file.wpai_tried_alternative || false;
+
+					if (isExcelFile && !hasTriedAlternative) {
+						// Mark that we've tried alternative processing for this file
+						file.wpai_tried_alternative = true;
+
+						// Show retry message
+						$('#progressbar').html('<span>Retrying with alternative Excel processing method...</span>');
+						$('#progress').show();
+
+						// Set flag for alternative Excel processing
+						$up.settings.multipart_params.use_alternative_excel = '1';
+
+						// Reset file status and retry
+						setTimeout(function() {
+							file.status = plupload.QUEUED;
+							file.percent = 0;
+							file.loaded = 0;
+							$up.start();
+						}, 1000);
+
+						return; // Don't show error yet
+					}
 
 					$('.wpallimport-choose-file').find('.wpallimport-submit-buttons').hide();
 					$('.wpallimport-import-from.selected').click();
@@ -105,23 +197,36 @@ $.fn.wplupload  = function($options) {
 				}
 				else{
 
+					// Check if this was a successful retry with alternative Excel processing
+					var isExcelFile = file.name && /\.(xls|xlsx)$/i.test(file.name);
+					var hasTriedAlternative = file.wpai_tried_alternative || false;
+					var usedAlternative = $up.settings.multipart_params.use_alternative_excel === '1';
+
+					if (isExcelFile && hasTriedAlternative && usedAlternative) {
+						// Reset the flag for future uploads
+						$up.settings.multipart_params.use_alternative_excel = '0';
+						// Check the alternative Excel processing checkbox on the page
+						$('#use_alternative_excel_processing').prop('checked', true);
+					}
+
 					if (r.post_type)
 					{
-						var index = $('#custom_type_selector li:has(input[value="'+ r.post_type +'"])').index();
-						if (index != -1)
+						// Find the option with the matching value
+						var $option = $('#custom_type_selector option[value="'+ r.post_type +'"]');
+						if ($option.length)
 						{
-							$('#custom_type_selector').ddslick('select', {index: index });
+							$('#custom_type_selector').val(r.post_type).trigger('change');
 
 							if (r.taxonomy_type){
-								var tindex = $('#taxonomy_to_import li:has(input[value="'+ r.taxonomy_type +'"])').index();
-								if (tindex != -1){
-									$('#taxonomy_to_import').ddslick('select', {index: tindex });
+								var $taxOption = $('#taxonomy_to_import option[value="'+ r.taxonomy_type +'"]');
+								if ($taxOption.length){
+									$('#taxonomy_to_import').val(r.taxonomy_type).trigger('change');
 								}
 							}
 							if (r.gravity_form_title){
-								var tindex = $('#gravity_form_to_import li:has(input[value="'+ r.gravity_form_title +'"])').index();
-								if (tindex != -1){
-									$('#gravity_form_to_import').ddslick('select', {index: tindex });
+								var $gfOption = $('#gravity_form_to_import option[value="'+ r.gravity_form_title +'"]');
+								if ($gfOption.length){
+									$('#gravity_form_to_import').val(r.gravity_form_title).trigger('change');
 								}
 							}
 
@@ -152,6 +257,7 @@ $.fn.wplupload  = function($options) {
 					$('#filepath').val(r.name);
 
 					$('#progressbar').html('<span>Upload Complete</span> - ' + file.name + ' (' + ( (file.size / (1024*1024) >= 1) ? (file.size / (1024*1024)).toFixed(2) + 'mb' : (file.size / (1024)).toFixed(2) + 'kb') + ')');
+					$('.wpallimport-import-types').find('h2').slideUp();
 
 					setTimeout(function() {
 
@@ -185,6 +291,11 @@ $.fn.wplupload  = function($options) {
 		$up.bind('UploadComplete', function(up) {
 			$('#cancel-upload').attr('disabled', 'disabled');
 			$('#advanced_upload').show();
+
+			// Reset drag-drop state
+			if (typeof window.isDragDropUpload !== 'undefined') {
+				window.isDragDropUpload = false;
+			}
 		});
 
 		$('#cancel-upload').on('click', function() {

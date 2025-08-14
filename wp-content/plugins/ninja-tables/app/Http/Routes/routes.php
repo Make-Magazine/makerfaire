@@ -23,6 +23,7 @@ $router->withPolicy('UserPolicy')->group(function ($router) {
 
         $route->prefix('/{id}')->group(function ($route) {
             $route->get('/', [TablesController::class, 'delete'])->int('id');
+            $route->delete('/bulk-delete-columns', [TablesController::class, 'bulkDeleteColumns'])->int('id');
             $route->post('/duplicate', [TablesController::class, 'duplicate'])->int('id');
             $route->get('/table-inner-html', [TablesController::class, 'tableInnerHtml'])->int('id');
             $route->get('drag_and_drop_html', [TablesController::class, 'dragAndDropHtml'])->int('id');

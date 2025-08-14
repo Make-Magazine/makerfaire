@@ -1,5 +1,21 @@
-.tipsy { padding: 5px; font-size: 0.85em; position: absolute; z-index: 100000; line-height: 1.3em; max-width: 320px;}
-  .tipsy-inner { padding: 2px 4px 2px 4px; background-color: white; border: 1px solid #333;}
+.tipsy { 
+  padding: 5px; 
+  font-size: 0.85em; 
+  position: absolute; 
+  z-index: 100000; 
+  line-height: 1.3em; 
+  max-width: 320px;
+  max-width: min(320px, 90vw);
+}
+  .tipsy-inner { 
+    padding: 6px 8px; 
+    background-color: white; 
+    border: 1px solid #333; 
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    word-break: normal;
+    line-height: 1.4;
+  }
   .tipsy-arrow { position: absolute; background: url('images/tipsy.gif') no-repeat top left; width: 9px; height: 5px; }
   .tipsy-n .tipsy-arrow { top: 0; left: 50%; margin-left: -4px; }
     .tipsy-nw .tipsy-arrow { top: 0; left: 10px; }

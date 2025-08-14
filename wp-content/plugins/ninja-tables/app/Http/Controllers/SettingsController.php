@@ -14,7 +14,9 @@ class SettingsController extends Controller
 
     public function getTableSettings(Request $request, $id)
     {
-        $table = get_post($tableID = intval($id));
+        $tableID = intval($id);
+        $table   = get_post($tableID);
+
         if ( ! $table || $table->post_type != $this->cptName) {
             $this->sendError(array(
                 'message' => __('No Table Found'),

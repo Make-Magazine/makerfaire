@@ -1,4 +1,4 @@
-/*! elementor - v3.30.0 - 09-07-2025 */
+/*! elementor - v3.31.0 - 11-08-2025 */
 .elementor-button,
 .e-btn,
 #elementor-deactivate-feedback-modal .dialog-skip,
@@ -231,69 +231,225 @@
   background: transparent;
   color: var(--e-a-color-primary-bold);
 }
-.elementor-button.e-primary.e-btn-txt:hover, .dialog-type-confirm .dialog-buttons-wrapper .elementor-button.e-btn-txt.dialog-button.dialog-take_over:hover,
-.dialog-type-alert .dialog-buttons-wrapper .elementor-button.e-btn-txt.dialog-button.dialog-take_over:hover, .dialog-type-confirm .dialog-buttons-wrapper .elementor-button.e-primary.dialog-button.dialog-cancel:hover, .dialog-type-confirm .dialog-buttons-wrapper .elementor-button.dialog-button.dialog-cancel.dialog-take_over:hover,
+.elementor-button.e-primary.e-btn-txt:hover, #elementor-deactivate-feedback-modal .elementor-button.e-primary.dialog-skip:hover, #elementor-deactivate-feedback-modal .elementor-button.e-btn-txt.dialog-submit:hover, #elementor-deactivate-feedback-modal .elementor-button.dialog-submit.dialog-skip:hover, .dialog-type-confirm .dialog-buttons-wrapper .elementor-button.e-btn-txt.dialog-button.dialog-take_over:hover, .dialog-type-confirm .dialog-buttons-wrapper #elementor-deactivate-feedback-modal .elementor-button.dialog-button.dialog-take_over.dialog-skip:hover, #elementor-deactivate-feedback-modal .dialog-type-confirm .dialog-buttons-wrapper .elementor-button.dialog-button.dialog-take_over.dialog-skip:hover,
+.dialog-type-alert .dialog-buttons-wrapper .elementor-button.e-btn-txt.dialog-button.dialog-take_over:hover,
+.dialog-type-alert .dialog-buttons-wrapper #elementor-deactivate-feedback-modal .elementor-button.dialog-button.dialog-take_over.dialog-skip:hover,
+#elementor-deactivate-feedback-modal .dialog-type-alert .dialog-buttons-wrapper .elementor-button.dialog-button.dialog-take_over.dialog-skip:hover, .dialog-type-confirm .dialog-buttons-wrapper .elementor-button.e-primary.dialog-button.dialog-cancel:hover, .dialog-type-confirm .dialog-buttons-wrapper #elementor-deactivate-feedback-modal .elementor-button.dialog-button.dialog-cancel.dialog-submit:hover, #elementor-deactivate-feedback-modal .dialog-type-confirm .dialog-buttons-wrapper .elementor-button.dialog-button.dialog-cancel.dialog-submit:hover, .dialog-type-confirm .dialog-buttons-wrapper .elementor-button.dialog-button.dialog-cancel.dialog-take_over:hover,
 .dialog-type-alert .dialog-buttons-wrapper .elementor-button.e-primary.dialog-button.dialog-cancel:hover,
-.dialog-type-alert .dialog-buttons-wrapper .elementor-button.dialog-button.dialog-cancel.dialog-take_over:hover, .dialog-type-confirm .dialog-buttons-wrapper .elementor-button.e-btn-txt.dialog-button.dialog-ok:hover, .dialog-type-confirm .dialog-buttons-wrapper .elementor-button.dialog-button.dialog-ok.dialog-cancel:hover,
+.dialog-type-alert .dialog-buttons-wrapper #elementor-deactivate-feedback-modal .elementor-button.dialog-button.dialog-cancel.dialog-submit:hover,
+#elementor-deactivate-feedback-modal .dialog-type-alert .dialog-buttons-wrapper .elementor-button.dialog-button.dialog-cancel.dialog-submit:hover,
+.dialog-type-alert .dialog-buttons-wrapper .elementor-button.dialog-button.dialog-cancel.dialog-take_over:hover, .dialog-type-confirm .dialog-buttons-wrapper .elementor-button.e-btn-txt.dialog-button.dialog-ok:hover, .dialog-type-confirm .dialog-buttons-wrapper #elementor-deactivate-feedback-modal .elementor-button.dialog-button.dialog-ok.dialog-skip:hover, #elementor-deactivate-feedback-modal .dialog-type-confirm .dialog-buttons-wrapper .elementor-button.dialog-button.dialog-ok.dialog-skip:hover, .dialog-type-confirm .dialog-buttons-wrapper .elementor-button.dialog-button.dialog-ok.dialog-cancel:hover,
 .dialog-type-alert .dialog-buttons-wrapper .elementor-button.e-btn-txt.dialog-button.dialog-ok:hover,
-.dialog-type-alert .dialog-buttons-wrapper .elementor-button.dialog-button.dialog-ok.dialog-cancel:hover, .elementor-button.e-primary.e-btn-txt:focus, .dialog-type-confirm .dialog-buttons-wrapper .elementor-button.e-btn-txt.dialog-button.dialog-take_over:focus,
-.dialog-type-alert .dialog-buttons-wrapper .elementor-button.e-btn-txt.dialog-button.dialog-take_over:focus, .dialog-type-confirm .dialog-buttons-wrapper .elementor-button.e-primary.dialog-button.dialog-cancel:focus, .dialog-type-confirm .dialog-buttons-wrapper .elementor-button.dialog-button.dialog-cancel.dialog-take_over:focus,
+.dialog-type-alert .dialog-buttons-wrapper #elementor-deactivate-feedback-modal .elementor-button.dialog-button.dialog-ok.dialog-skip:hover,
+#elementor-deactivate-feedback-modal .dialog-type-alert .dialog-buttons-wrapper .elementor-button.dialog-button.dialog-ok.dialog-skip:hover,
+.dialog-type-alert .dialog-buttons-wrapper .elementor-button.dialog-button.dialog-ok.dialog-cancel:hover, .elementor-button.e-primary.e-btn-txt:focus, #elementor-deactivate-feedback-modal .elementor-button.e-primary.dialog-skip:focus, #elementor-deactivate-feedback-modal .elementor-button.e-btn-txt.dialog-submit:focus, #elementor-deactivate-feedback-modal .elementor-button.dialog-submit.dialog-skip:focus, .dialog-type-confirm .dialog-buttons-wrapper .elementor-button.e-btn-txt.dialog-button.dialog-take_over:focus, .dialog-type-confirm .dialog-buttons-wrapper #elementor-deactivate-feedback-modal .elementor-button.dialog-button.dialog-take_over.dialog-skip:focus, #elementor-deactivate-feedback-modal .dialog-type-confirm .dialog-buttons-wrapper .elementor-button.dialog-button.dialog-take_over.dialog-skip:focus,
+.dialog-type-alert .dialog-buttons-wrapper .elementor-button.e-btn-txt.dialog-button.dialog-take_over:focus,
+.dialog-type-alert .dialog-buttons-wrapper #elementor-deactivate-feedback-modal .elementor-button.dialog-button.dialog-take_over.dialog-skip:focus,
+#elementor-deactivate-feedback-modal .dialog-type-alert .dialog-buttons-wrapper .elementor-button.dialog-button.dialog-take_over.dialog-skip:focus, .dialog-type-confirm .dialog-buttons-wrapper .elementor-button.e-primary.dialog-button.dialog-cancel:focus, .dialog-type-confirm .dialog-buttons-wrapper #elementor-deactivate-feedback-modal .elementor-button.dialog-button.dialog-cancel.dialog-submit:focus, #elementor-deactivate-feedback-modal .dialog-type-confirm .dialog-buttons-wrapper .elementor-button.dialog-button.dialog-cancel.dialog-submit:focus, .dialog-type-confirm .dialog-buttons-wrapper .elementor-button.dialog-button.dialog-cancel.dialog-take_over:focus,
 .dialog-type-alert .dialog-buttons-wrapper .elementor-button.e-primary.dialog-button.dialog-cancel:focus,
-.dialog-type-alert .dialog-buttons-wrapper .elementor-button.dialog-button.dialog-cancel.dialog-take_over:focus, .dialog-type-confirm .dialog-buttons-wrapper .elementor-button.e-btn-txt.dialog-button.dialog-ok:focus, .dialog-type-confirm .dialog-buttons-wrapper .elementor-button.dialog-button.dialog-ok.dialog-cancel:focus,
+.dialog-type-alert .dialog-buttons-wrapper #elementor-deactivate-feedback-modal .elementor-button.dialog-button.dialog-cancel.dialog-submit:focus,
+#elementor-deactivate-feedback-modal .dialog-type-alert .dialog-buttons-wrapper .elementor-button.dialog-button.dialog-cancel.dialog-submit:focus,
+.dialog-type-alert .dialog-buttons-wrapper .elementor-button.dialog-button.dialog-cancel.dialog-take_over:focus, .dialog-type-confirm .dialog-buttons-wrapper .elementor-button.e-btn-txt.dialog-button.dialog-ok:focus, .dialog-type-confirm .dialog-buttons-wrapper #elementor-deactivate-feedback-modal .elementor-button.dialog-button.dialog-ok.dialog-skip:focus, #elementor-deactivate-feedback-modal .dialog-type-confirm .dialog-buttons-wrapper .elementor-button.dialog-button.dialog-ok.dialog-skip:focus, .dialog-type-confirm .dialog-buttons-wrapper .elementor-button.dialog-button.dialog-ok.dialog-cancel:focus,
 .dialog-type-alert .dialog-buttons-wrapper .elementor-button.e-btn-txt.dialog-button.dialog-ok:focus,
+.dialog-type-alert .dialog-buttons-wrapper #elementor-deactivate-feedback-modal .elementor-button.dialog-button.dialog-ok.dialog-skip:focus,
+#elementor-deactivate-feedback-modal .dialog-type-alert .dialog-buttons-wrapper .elementor-button.dialog-button.dialog-ok.dialog-skip:focus,
 .dialog-type-alert .dialog-buttons-wrapper .elementor-button.dialog-button.dialog-ok.dialog-cancel:focus,
 .e-btn.e-primary.e-btn-txt:hover,
+#elementor-deactivate-feedback-modal .e-btn.e-primary.dialog-skip:hover,
+#elementor-deactivate-feedback-modal .e-primary.e-btn-txt.dialog-skip:hover,
 #elementor-deactivate-feedback-modal .e-primary.dialog-skip:hover,
+#elementor-deactivate-feedback-modal .e-btn.e-btn-txt.dialog-submit:hover,
+#elementor-deactivate-feedback-modal .e-btn.dialog-submit.dialog-skip:hover,
+#elementor-deactivate-feedback-modal .e-btn-txt.dialog-submit.dialog-skip:hover,
+#elementor-deactivate-feedback-modal .dialog-submit.dialog-skip:hover,
+#elementor-deactivate-feedback-modal .e-primary.e-btn-txt.dialog-submit:hover,
+#elementor-deactivate-feedback-modal .e-primary.dialog-submit.dialog-skip:hover,
 #elementor-deactivate-feedback-modal .e-btn-txt.dialog-submit:hover,
 #elementor-deactivate-feedback-modal .dialog-submit.dialog-skip:hover,
 .dialog-type-confirm .dialog-buttons-wrapper .e-btn.e-btn-txt.dialog-button.dialog-take_over:hover,
+.dialog-type-confirm .dialog-buttons-wrapper #elementor-deactivate-feedback-modal .e-btn.dialog-button.dialog-take_over.dialog-skip:hover,
+#elementor-deactivate-feedback-modal .dialog-type-confirm .dialog-buttons-wrapper .e-btn.dialog-button.dialog-take_over.dialog-skip:hover,
+.dialog-type-confirm .dialog-buttons-wrapper #elementor-deactivate-feedback-modal .e-btn-txt.dialog-button.dialog-take_over.dialog-skip:hover,
 .dialog-type-confirm .dialog-buttons-wrapper #elementor-deactivate-feedback-modal .dialog-button.dialog-take_over.dialog-skip:hover,
+#elementor-deactivate-feedback-modal .dialog-type-confirm .dialog-buttons-wrapper .e-btn-txt.dialog-button.dialog-take_over.dialog-skip:hover,
 #elementor-deactivate-feedback-modal .dialog-type-confirm .dialog-buttons-wrapper .dialog-button.dialog-take_over.dialog-skip:hover,
+.dialog-type-confirm .dialog-buttons-wrapper #elementor-deactivate-feedback-modal .e-btn-txt.dialog-button.dialog-take_over.dialog-submit:hover,
+.dialog-type-confirm .dialog-buttons-wrapper #elementor-deactivate-feedback-modal .dialog-button.dialog-take_over.dialog-submit.dialog-skip:hover,
+#elementor-deactivate-feedback-modal .dialog-type-confirm .dialog-buttons-wrapper .e-btn-txt.dialog-button.dialog-take_over.dialog-submit:hover,
+#elementor-deactivate-feedback-modal .dialog-type-confirm .dialog-buttons-wrapper .dialog-button.dialog-take_over.dialog-submit.dialog-skip:hover,
 .dialog-type-alert .dialog-buttons-wrapper .e-btn.e-btn-txt.dialog-button.dialog-take_over:hover,
+.dialog-type-alert .dialog-buttons-wrapper #elementor-deactivate-feedback-modal .e-btn.dialog-button.dialog-take_over.dialog-skip:hover,
+#elementor-deactivate-feedback-modal .dialog-type-alert .dialog-buttons-wrapper .e-btn.dialog-button.dialog-take_over.dialog-skip:hover,
+.dialog-type-alert .dialog-buttons-wrapper #elementor-deactivate-feedback-modal .e-btn-txt.dialog-button.dialog-take_over.dialog-skip:hover,
 .dialog-type-alert .dialog-buttons-wrapper #elementor-deactivate-feedback-modal .dialog-button.dialog-take_over.dialog-skip:hover,
+#elementor-deactivate-feedback-modal .dialog-type-alert .dialog-buttons-wrapper .e-btn-txt.dialog-button.dialog-take_over.dialog-skip:hover,
 #elementor-deactivate-feedback-modal .dialog-type-alert .dialog-buttons-wrapper .dialog-button.dialog-take_over.dialog-skip:hover,
+.dialog-type-alert .dialog-buttons-wrapper #elementor-deactivate-feedback-modal .e-btn-txt.dialog-button.dialog-take_over.dialog-submit:hover,
+.dialog-type-alert .dialog-buttons-wrapper #elementor-deactivate-feedback-modal .dialog-button.dialog-take_over.dialog-submit.dialog-skip:hover,
+#elementor-deactivate-feedback-modal .dialog-type-alert .dialog-buttons-wrapper .e-btn-txt.dialog-button.dialog-take_over.dialog-submit:hover,
+#elementor-deactivate-feedback-modal .dialog-type-alert .dialog-buttons-wrapper .dialog-button.dialog-take_over.dialog-submit.dialog-skip:hover,
 .dialog-type-confirm .dialog-buttons-wrapper .e-btn.e-primary.dialog-button.dialog-cancel:hover,
+.dialog-type-confirm .dialog-buttons-wrapper #elementor-deactivate-feedback-modal .e-primary.dialog-button.dialog-cancel.dialog-skip:hover,
+#elementor-deactivate-feedback-modal .dialog-type-confirm .dialog-buttons-wrapper .e-primary.dialog-button.dialog-cancel.dialog-skip:hover,
+.dialog-type-confirm .dialog-buttons-wrapper #elementor-deactivate-feedback-modal .e-btn.dialog-button.dialog-cancel.dialog-submit:hover,
+.dialog-type-confirm .dialog-buttons-wrapper #elementor-deactivate-feedback-modal .dialog-button.dialog-cancel.dialog-submit.dialog-skip:hover,
+#elementor-deactivate-feedback-modal .dialog-type-confirm .dialog-buttons-wrapper .e-btn.dialog-button.dialog-cancel.dialog-submit:hover,
+#elementor-deactivate-feedback-modal .dialog-type-confirm .dialog-buttons-wrapper .dialog-button.dialog-cancel.dialog-submit.dialog-skip:hover,
+.dialog-type-confirm .dialog-buttons-wrapper #elementor-deactivate-feedback-modal .e-primary.dialog-button.dialog-cancel.dialog-submit:hover,
 .dialog-type-confirm .dialog-buttons-wrapper #elementor-deactivate-feedback-modal .dialog-button.dialog-cancel.dialog-submit:hover,
+#elementor-deactivate-feedback-modal .dialog-type-confirm .dialog-buttons-wrapper .e-primary.dialog-button.dialog-cancel.dialog-submit:hover,
 #elementor-deactivate-feedback-modal .dialog-type-confirm .dialog-buttons-wrapper .dialog-button.dialog-cancel.dialog-submit:hover,
 .dialog-type-confirm .dialog-buttons-wrapper .e-btn.dialog-button.dialog-cancel.dialog-take_over:hover,
+.dialog-type-confirm .dialog-buttons-wrapper #elementor-deactivate-feedback-modal .dialog-button.dialog-cancel.dialog-take_over.dialog-skip:hover,
+#elementor-deactivate-feedback-modal .dialog-type-confirm .dialog-buttons-wrapper .dialog-button.dialog-cancel.dialog-take_over.dialog-skip:hover,
+.dialog-type-confirm .dialog-buttons-wrapper #elementor-deactivate-feedback-modal .dialog-button.dialog-cancel.dialog-take_over.dialog-submit:hover,
+#elementor-deactivate-feedback-modal .dialog-type-confirm .dialog-buttons-wrapper .dialog-button.dialog-cancel.dialog-take_over.dialog-submit:hover,
 .dialog-type-alert .dialog-buttons-wrapper .e-btn.e-primary.dialog-button.dialog-cancel:hover,
+.dialog-type-alert .dialog-buttons-wrapper #elementor-deactivate-feedback-modal .e-primary.dialog-button.dialog-cancel.dialog-skip:hover,
+#elementor-deactivate-feedback-modal .dialog-type-alert .dialog-buttons-wrapper .e-primary.dialog-button.dialog-cancel.dialog-skip:hover,
+.dialog-type-alert .dialog-buttons-wrapper #elementor-deactivate-feedback-modal .e-btn.dialog-button.dialog-cancel.dialog-submit:hover,
+.dialog-type-alert .dialog-buttons-wrapper #elementor-deactivate-feedback-modal .dialog-button.dialog-cancel.dialog-submit.dialog-skip:hover,
+#elementor-deactivate-feedback-modal .dialog-type-alert .dialog-buttons-wrapper .e-btn.dialog-button.dialog-cancel.dialog-submit:hover,
+#elementor-deactivate-feedback-modal .dialog-type-alert .dialog-buttons-wrapper .dialog-button.dialog-cancel.dialog-submit.dialog-skip:hover,
+.dialog-type-alert .dialog-buttons-wrapper #elementor-deactivate-feedback-modal .e-primary.dialog-button.dialog-cancel.dialog-submit:hover,
 .dialog-type-alert .dialog-buttons-wrapper #elementor-deactivate-feedback-modal .dialog-button.dialog-cancel.dialog-submit:hover,
+#elementor-deactivate-feedback-modal .dialog-type-alert .dialog-buttons-wrapper .e-primary.dialog-button.dialog-cancel.dialog-submit:hover,
 #elementor-deactivate-feedback-modal .dialog-type-alert .dialog-buttons-wrapper .dialog-button.dialog-cancel.dialog-submit:hover,
 .dialog-type-alert .dialog-buttons-wrapper .e-btn.dialog-button.dialog-cancel.dialog-take_over:hover,
+.dialog-type-alert .dialog-buttons-wrapper #elementor-deactivate-feedback-modal .dialog-button.dialog-cancel.dialog-take_over.dialog-skip:hover,
+#elementor-deactivate-feedback-modal .dialog-type-alert .dialog-buttons-wrapper .dialog-button.dialog-cancel.dialog-take_over.dialog-skip:hover,
+.dialog-type-alert .dialog-buttons-wrapper #elementor-deactivate-feedback-modal .dialog-button.dialog-cancel.dialog-take_over.dialog-submit:hover,
+#elementor-deactivate-feedback-modal .dialog-type-alert .dialog-buttons-wrapper .dialog-button.dialog-cancel.dialog-take_over.dialog-submit:hover,
 .dialog-type-confirm .dialog-buttons-wrapper .e-btn.e-btn-txt.dialog-button.dialog-ok:hover,
+.dialog-type-confirm .dialog-buttons-wrapper #elementor-deactivate-feedback-modal .e-btn.dialog-button.dialog-ok.dialog-skip:hover,
+#elementor-deactivate-feedback-modal .dialog-type-confirm .dialog-buttons-wrapper .e-btn.dialog-button.dialog-ok.dialog-skip:hover,
+.dialog-type-confirm .dialog-buttons-wrapper #elementor-deactivate-feedback-modal .e-btn-txt.dialog-button.dialog-ok.dialog-skip:hover,
 .dialog-type-confirm .dialog-buttons-wrapper #elementor-deactivate-feedback-modal .dialog-button.dialog-ok.dialog-skip:hover,
+#elementor-deactivate-feedback-modal .dialog-type-confirm .dialog-buttons-wrapper .e-btn-txt.dialog-button.dialog-ok.dialog-skip:hover,
 #elementor-deactivate-feedback-modal .dialog-type-confirm .dialog-buttons-wrapper .dialog-button.dialog-ok.dialog-skip:hover,
+.dialog-type-confirm .dialog-buttons-wrapper #elementor-deactivate-feedback-modal .e-btn-txt.dialog-button.dialog-ok.dialog-submit:hover,
+.dialog-type-confirm .dialog-buttons-wrapper #elementor-deactivate-feedback-modal .dialog-button.dialog-ok.dialog-submit.dialog-skip:hover,
+#elementor-deactivate-feedback-modal .dialog-type-confirm .dialog-buttons-wrapper .e-btn-txt.dialog-button.dialog-ok.dialog-submit:hover,
+#elementor-deactivate-feedback-modal .dialog-type-confirm .dialog-buttons-wrapper .dialog-button.dialog-ok.dialog-submit.dialog-skip:hover,
 .dialog-type-confirm .dialog-buttons-wrapper .e-btn.dialog-button.dialog-ok.dialog-cancel:hover,
+.dialog-type-confirm .dialog-buttons-wrapper #elementor-deactivate-feedback-modal .dialog-button.dialog-ok.dialog-cancel.dialog-skip:hover,
+#elementor-deactivate-feedback-modal .dialog-type-confirm .dialog-buttons-wrapper .dialog-button.dialog-ok.dialog-cancel.dialog-skip:hover,
+.dialog-type-confirm .dialog-buttons-wrapper #elementor-deactivate-feedback-modal .dialog-button.dialog-ok.dialog-cancel.dialog-submit:hover,
+#elementor-deactivate-feedback-modal .dialog-type-confirm .dialog-buttons-wrapper .dialog-button.dialog-ok.dialog-cancel.dialog-submit:hover,
 .dialog-type-alert .dialog-buttons-wrapper .e-btn.e-btn-txt.dialog-button.dialog-ok:hover,
+.dialog-type-alert .dialog-buttons-wrapper #elementor-deactivate-feedback-modal .e-btn.dialog-button.dialog-ok.dialog-skip:hover,
+#elementor-deactivate-feedback-modal .dialog-type-alert .dialog-buttons-wrapper .e-btn.dialog-button.dialog-ok.dialog-skip:hover,
+.dialog-type-alert .dialog-buttons-wrapper #elementor-deactivate-feedback-modal .e-btn-txt.dialog-button.dialog-ok.dialog-skip:hover,
 .dialog-type-alert .dialog-buttons-wrapper #elementor-deactivate-feedback-modal .dialog-button.dialog-ok.dialog-skip:hover,
+#elementor-deactivate-feedback-modal .dialog-type-alert .dialog-buttons-wrapper .e-btn-txt.dialog-button.dialog-ok.dialog-skip:hover,
 #elementor-deactivate-feedback-modal .dialog-type-alert .dialog-buttons-wrapper .dialog-button.dialog-ok.dialog-skip:hover,
+.dialog-type-alert .dialog-buttons-wrapper #elementor-deactivate-feedback-modal .e-btn-txt.dialog-button.dialog-ok.dialog-submit:hover,
+.dialog-type-alert .dialog-buttons-wrapper #elementor-deactivate-feedback-modal .dialog-button.dialog-ok.dialog-submit.dialog-skip:hover,
+#elementor-deactivate-feedback-modal .dialog-type-alert .dialog-buttons-wrapper .e-btn-txt.dialog-button.dialog-ok.dialog-submit:hover,
+#elementor-deactivate-feedback-modal .dialog-type-alert .dialog-buttons-wrapper .dialog-button.dialog-ok.dialog-submit.dialog-skip:hover,
 .dialog-type-alert .dialog-buttons-wrapper .e-btn.dialog-button.dialog-ok.dialog-cancel:hover,
+.dialog-type-alert .dialog-buttons-wrapper #elementor-deactivate-feedback-modal .dialog-button.dialog-ok.dialog-cancel.dialog-skip:hover,
+#elementor-deactivate-feedback-modal .dialog-type-alert .dialog-buttons-wrapper .dialog-button.dialog-ok.dialog-cancel.dialog-skip:hover,
+.dialog-type-alert .dialog-buttons-wrapper #elementor-deactivate-feedback-modal .dialog-button.dialog-ok.dialog-cancel.dialog-submit:hover,
+#elementor-deactivate-feedback-modal .dialog-type-alert .dialog-buttons-wrapper .dialog-button.dialog-ok.dialog-cancel.dialog-submit:hover,
 .e-btn.e-primary.e-btn-txt:focus,
+#elementor-deactivate-feedback-modal .e-btn.e-primary.dialog-skip:focus,
+#elementor-deactivate-feedback-modal .e-primary.e-btn-txt.dialog-skip:focus,
 #elementor-deactivate-feedback-modal .e-primary.dialog-skip:focus,
+#elementor-deactivate-feedback-modal .e-btn.e-btn-txt.dialog-submit:focus,
+#elementor-deactivate-feedback-modal .e-btn.dialog-submit.dialog-skip:focus,
+#elementor-deactivate-feedback-modal .e-btn-txt.dialog-submit.dialog-skip:focus,
+#elementor-deactivate-feedback-modal .dialog-submit.dialog-skip:focus,
+#elementor-deactivate-feedback-modal .e-primary.e-btn-txt.dialog-submit:focus,
+#elementor-deactivate-feedback-modal .e-primary.dialog-submit.dialog-skip:focus,
 #elementor-deactivate-feedback-modal .e-btn-txt.dialog-submit:focus,
 #elementor-deactivate-feedback-modal .dialog-submit.dialog-skip:focus,
 .dialog-type-confirm .dialog-buttons-wrapper .e-btn.e-btn-txt.dialog-button.dialog-take_over:focus,
+.dialog-type-confirm .dialog-buttons-wrapper #elementor-deactivate-feedback-modal .e-btn.dialog-button.dialog-take_over.dialog-skip:focus,
+#elementor-deactivate-feedback-modal .dialog-type-confirm .dialog-buttons-wrapper .e-btn.dialog-button.dialog-take_over.dialog-skip:focus,
+.dialog-type-confirm .dialog-buttons-wrapper #elementor-deactivate-feedback-modal .e-btn-txt.dialog-button.dialog-take_over.dialog-skip:focus,
 .dialog-type-confirm .dialog-buttons-wrapper #elementor-deactivate-feedback-modal .dialog-button.dialog-take_over.dialog-skip:focus,
+#elementor-deactivate-feedback-modal .dialog-type-confirm .dialog-buttons-wrapper .e-btn-txt.dialog-button.dialog-take_over.dialog-skip:focus,
 #elementor-deactivate-feedback-modal .dialog-type-confirm .dialog-buttons-wrapper .dialog-button.dialog-take_over.dialog-skip:focus,
+.dialog-type-confirm .dialog-buttons-wrapper #elementor-deactivate-feedback-modal .e-btn-txt.dialog-button.dialog-take_over.dialog-submit:focus,
+.dialog-type-confirm .dialog-buttons-wrapper #elementor-deactivate-feedback-modal .dialog-button.dialog-take_over.dialog-submit.dialog-skip:focus,
+#elementor-deactivate-feedback-modal .dialog-type-confirm .dialog-buttons-wrapper .e-btn-txt.dialog-button.dialog-take_over.dialog-submit:focus,
+#elementor-deactivate-feedback-modal .dialog-type-confirm .dialog-buttons-wrapper .dialog-button.dialog-take_over.dialog-submit.dialog-skip:focus,
 .dialog-type-alert .dialog-buttons-wrapper .e-btn.e-btn-txt.dialog-button.dialog-take_over:focus,
+.dialog-type-alert .dialog-buttons-wrapper #elementor-deactivate-feedback-modal .e-btn.dialog-button.dialog-take_over.dialog-skip:focus,
+#elementor-deactivate-feedback-modal .dialog-type-alert .dialog-buttons-wrapper .e-btn.dialog-button.dialog-take_over.dialog-skip:focus,
+.dialog-type-alert .dialog-buttons-wrapper #elementor-deactivate-feedback-modal .e-btn-txt.dialog-button.dialog-take_over.dialog-skip:focus,
 .dialog-type-alert .dialog-buttons-wrapper #elementor-deactivate-feedback-modal .dialog-button.dialog-take_over.dialog-skip:focus,
+#elementor-deactivate-feedback-modal .dialog-type-alert .dialog-buttons-wrapper .e-btn-txt.dialog-button.dialog-take_over.dialog-skip:focus,
 #elementor-deactivate-feedback-modal .dialog-type-alert .dialog-buttons-wrapper .dialog-button.dialog-take_over.dialog-skip:focus,
+.dialog-type-alert .dialog-buttons-wrapper #elementor-deactivate-feedback-modal .e-btn-txt.dialog-button.dialog-take_over.dialog-submit:focus,
+.dialog-type-alert .dialog-buttons-wrapper #elementor-deactivate-feedback-modal .dialog-button.dialog-take_over.dialog-submit.dialog-skip:focus,
+#elementor-deactivate-feedback-modal .dialog-type-alert .dialog-buttons-wrapper .e-btn-txt.dialog-button.dialog-take_over.dialog-submit:focus,
+#elementor-deactivate-feedback-modal .dialog-type-alert .dialog-buttons-wrapper .dialog-button.dialog-take_over.dialog-submit.dialog-skip:focus,
 .dialog-type-confirm .dialog-buttons-wrapper .e-btn.e-primary.dialog-button.dialog-cancel:focus,
+.dialog-type-confirm .dialog-buttons-wrapper #elementor-deactivate-feedback-modal .e-primary.dialog-button.dialog-cancel.dialog-skip:focus,
+#elementor-deactivate-feedback-modal .dialog-type-confirm .dialog-buttons-wrapper .e-primary.dialog-button.dialog-cancel.dialog-skip:focus,
+.dialog-type-confirm .dialog-buttons-wrapper #elementor-deactivate-feedback-modal .e-btn.dialog-button.dialog-cancel.dialog-submit:focus,
+.dialog-type-confirm .dialog-buttons-wrapper #elementor-deactivate-feedback-modal .dialog-button.dialog-cancel.dialog-submit.dialog-skip:focus,
+#elementor-deactivate-feedback-modal .dialog-type-confirm .dialog-buttons-wrapper .e-btn.dialog-button.dialog-cancel.dialog-submit:focus,
+#elementor-deactivate-feedback-modal .dialog-type-confirm .dialog-buttons-wrapper .dialog-button.dialog-cancel.dialog-submit.dialog-skip:focus,
+.dialog-type-confirm .dialog-buttons-wrapper #elementor-deactivate-feedback-modal .e-primary.dialog-button.dialog-cancel.dialog-submit:focus,
 .dialog-type-confirm .dialog-buttons-wrapper #elementor-deactivate-feedback-modal .dialog-button.dialog-cancel.dialog-submit:focus,
+#elementor-deactivate-feedback-modal .dialog-type-confirm .dialog-buttons-wrapper .e-primary.dialog-button.dialog-cancel.dialog-submit:focus,
 #elementor-deactivate-feedback-modal .dialog-type-confirm .dialog-buttons-wrapper .dialog-button.dialog-cancel.dialog-submit:focus,
 .dialog-type-confirm .dialog-buttons-wrapper .e-btn.dialog-button.dialog-cancel.dialog-take_over:focus,
+.dialog-type-confirm .dialog-buttons-wrapper #elementor-deactivate-feedback-modal .dialog-button.dialog-cancel.dialog-take_over.dialog-skip:focus,
+#elementor-deactivate-feedback-modal .dialog-type-confirm .dialog-buttons-wrapper .dialog-button.dialog-cancel.dialog-take_over.dialog-skip:focus,
+.dialog-type-confirm .dialog-buttons-wrapper #elementor-deactivate-feedback-modal .dialog-button.dialog-cancel.dialog-take_over.dialog-submit:focus,
+#elementor-deactivate-feedback-modal .dialog-type-confirm .dialog-buttons-wrapper .dialog-button.dialog-cancel.dialog-take_over.dialog-submit:focus,
 .dialog-type-alert .dialog-buttons-wrapper .e-btn.e-primary.dialog-button.dialog-cancel:focus,
+.dialog-type-alert .dialog-buttons-wrapper #elementor-deactivate-feedback-modal .e-primary.dialog-button.dialog-cancel.dialog-skip:focus,
+#elementor-deactivate-feedback-modal .dialog-type-alert .dialog-buttons-wrapper .e-primary.dialog-button.dialog-cancel.dialog-skip:focus,
+.dialog-type-alert .dialog-buttons-wrapper #elementor-deactivate-feedback-modal .e-btn.dialog-button.dialog-cancel.dialog-submit:focus,
+.dialog-type-alert .dialog-buttons-wrapper #elementor-deactivate-feedback-modal .dialog-button.dialog-cancel.dialog-submit.dialog-skip:focus,
+#elementor-deactivate-feedback-modal .dialog-type-alert .dialog-buttons-wrapper .e-btn.dialog-button.dialog-cancel.dialog-submit:focus,
+#elementor-deactivate-feedback-modal .dialog-type-alert .dialog-buttons-wrapper .dialog-button.dialog-cancel.dialog-submit.dialog-skip:focus,
+.dialog-type-alert .dialog-buttons-wrapper #elementor-deactivate-feedback-modal .e-primary.dialog-button.dialog-cancel.dialog-submit:focus,
 .dialog-type-alert .dialog-buttons-wrapper #elementor-deactivate-feedback-modal .dialog-button.dialog-cancel.dialog-submit:focus,
+#elementor-deactivate-feedback-modal .dialog-type-alert .dialog-buttons-wrapper .e-primary.dialog-button.dialog-cancel.dialog-submit:focus,
 #elementor-deactivate-feedback-modal .dialog-type-alert .dialog-buttons-wrapper .dialog-button.dialog-cancel.dialog-submit:focus,
 .dialog-type-alert .dialog-buttons-wrapper .e-btn.dialog-button.dialog-cancel.dialog-take_over:focus,
+.dialog-type-alert .dialog-buttons-wrapper #elementor-deactivate-feedback-modal .dialog-button.dialog-cancel.dialog-take_over.dialog-skip:focus,
+#elementor-deactivate-feedback-modal .dialog-type-alert .dialog-buttons-wrapper .dialog-button.dialog-cancel.dialog-take_over.dialog-skip:focus,
+.dialog-type-alert .dialog-buttons-wrapper #elementor-deactivate-feedback-modal .dialog-button.dialog-cancel.dialog-take_over.dialog-submit:focus,
+#elementor-deactivate-feedback-modal .dialog-type-alert .dialog-buttons-wrapper .dialog-button.dialog-cancel.dialog-take_over.dialog-submit:focus,
 .dialog-type-confirm .dialog-buttons-wrapper .e-btn.e-btn-txt.dialog-button.dialog-ok:focus,
+.dialog-type-confirm .dialog-buttons-wrapper #elementor-deactivate-feedback-modal .e-btn.dialog-button.dialog-ok.dialog-skip:focus,
+#elementor-deactivate-feedback-modal .dialog-type-confirm .dialog-buttons-wrapper .e-btn.dialog-button.dialog-ok.dialog-skip:focus,
+.dialog-type-confirm .dialog-buttons-wrapper #elementor-deactivate-feedback-modal .e-btn-txt.dialog-button.dialog-ok.dialog-skip:focus,
 .dialog-type-confirm .dialog-buttons-wrapper #elementor-deactivate-feedback-modal .dialog-button.dialog-ok.dialog-skip:focus,
+#elementor-deactivate-feedback-modal .dialog-type-confirm .dialog-buttons-wrapper .e-btn-txt.dialog-button.dialog-ok.dialog-skip:focus,
 #elementor-deactivate-feedback-modal .dialog-type-confirm .dialog-buttons-wrapper .dialog-button.dialog-ok.dialog-skip:focus,
+.dialog-type-confirm .dialog-buttons-wrapper #elementor-deactivate-feedback-modal .e-btn-txt.dialog-button.dialog-ok.dialog-submit:focus,
+.dialog-type-confirm .dialog-buttons-wrapper #elementor-deactivate-feedback-modal .dialog-button.dialog-ok.dialog-submit.dialog-skip:focus,
+#elementor-deactivate-feedback-modal .dialog-type-confirm .dialog-buttons-wrapper .e-btn-txt.dialog-button.dialog-ok.dialog-submit:focus,
+#elementor-deactivate-feedback-modal .dialog-type-confirm .dialog-buttons-wrapper .dialog-button.dialog-ok.dialog-submit.dialog-skip:focus,
 .dialog-type-confirm .dialog-buttons-wrapper .e-btn.dialog-button.dialog-ok.dialog-cancel:focus,
+.dialog-type-confirm .dialog-buttons-wrapper #elementor-deactivate-feedback-modal .dialog-button.dialog-ok.dialog-cancel.dialog-skip:focus,
+#elementor-deactivate-feedback-modal .dialog-type-confirm .dialog-buttons-wrapper .dialog-button.dialog-ok.dialog-cancel.dialog-skip:focus,
+.dialog-type-confirm .dialog-buttons-wrapper #elementor-deactivate-feedback-modal .dialog-button.dialog-ok.dialog-cancel.dialog-submit:focus,
+#elementor-deactivate-feedback-modal .dialog-type-confirm .dialog-buttons-wrapper .dialog-button.dialog-ok.dialog-cancel.dialog-submit:focus,
 .dialog-type-alert .dialog-buttons-wrapper .e-btn.e-btn-txt.dialog-button.dialog-ok:focus,
+.dialog-type-alert .dialog-buttons-wrapper #elementor-deactivate-feedback-modal .e-btn.dialog-button.dialog-ok.dialog-skip:focus,
+#elementor-deactivate-feedback-modal .dialog-type-alert .dialog-buttons-wrapper .e-btn.dialog-button.dialog-ok.dialog-skip:focus,
+.dialog-type-alert .dialog-buttons-wrapper #elementor-deactivate-feedback-modal .e-btn-txt.dialog-button.dialog-ok.dialog-skip:focus,
 .dialog-type-alert .dialog-buttons-wrapper #elementor-deactivate-feedback-modal .dialog-button.dialog-ok.dialog-skip:focus,
+#elementor-deactivate-feedback-modal .dialog-type-alert .dialog-buttons-wrapper .e-btn-txt.dialog-button.dialog-ok.dialog-skip:focus,
 #elementor-deactivate-feedback-modal .dialog-type-alert .dialog-buttons-wrapper .dialog-button.dialog-ok.dialog-skip:focus,
-.dialog-type-alert .dialog-buttons-wrapper .e-btn.dialog-button.dialog-ok.dialog-cancel:focus {
+.dialog-type-alert .dialog-buttons-wrapper #elementor-deactivate-feedback-modal .e-btn-txt.dialog-button.dialog-ok.dialog-submit:focus,
+.dialog-type-alert .dialog-buttons-wrapper #elementor-deactivate-feedback-modal .dialog-button.dialog-ok.dialog-submit.dialog-skip:focus,
+#elementor-deactivate-feedback-modal .dialog-type-alert .dialog-buttons-wrapper .e-btn-txt.dialog-button.dialog-ok.dialog-submit:focus,
+#elementor-deactivate-feedback-modal .dialog-type-alert .dialog-buttons-wrapper .dialog-button.dialog-ok.dialog-submit.dialog-skip:focus,
+.dialog-type-alert .dialog-buttons-wrapper .e-btn.dialog-button.dialog-ok.dialog-cancel:focus,
+.dialog-type-alert .dialog-buttons-wrapper #elementor-deactivate-feedback-modal .dialog-button.dialog-ok.dialog-cancel.dialog-skip:focus,
+#elementor-deactivate-feedback-modal .dialog-type-alert .dialog-buttons-wrapper .dialog-button.dialog-ok.dialog-cancel.dialog-skip:focus,
+.dialog-type-alert .dialog-buttons-wrapper #elementor-deactivate-feedback-modal .dialog-button.dialog-ok.dialog-cancel.dialog-submit:focus,
+#elementor-deactivate-feedback-modal .dialog-type-alert .dialog-buttons-wrapper .dialog-button.dialog-ok.dialog-cancel.dialog-submit:focus {
   background: var(--e-a-bg-primary);
 }
 .elementor-button.go-pro, .elementor-button.e-accent,
@@ -2520,7 +2676,7 @@ fieldset:disabled a.e-button {
   align-items: center;
   align-content: center;
   margin: auto;
-  transform: translate(-10px, 40px);
+  transform: translate(calc(-10px * var(--direction-multiplier)), 40px);
   text-align: center;
   font-family: var(--e-a-font-family);
 }
@@ -2550,22 +2706,22 @@ fieldset:disabled a.e-button {
   text-align: start;
 }
 .e-feature-promotion_data ul > li {
-  margin-block-start: 0;
-  margin-inline-end: 9px;
-  margin-block-end: 8px;
-  margin-inline-start: 8px;
   display: flex;
   font-size: 1rem;
   line-height: 21px;
   color: var(--e-black);
+  margin-block-start: 0;
+  margin-block-end: 8px;
+  margin-inline-start: 8px;
+  margin-inline-end: 9px;
 }
 .e-feature-promotion_data ul > li:before {
   content: url("data:image/svg+xml,%3Csvg width='25' height='24' viewBox='0 0 25 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill-rule='evenodd' clip-rule='evenodd' d='M21.5201 6.46967C21.813 6.76256 21.813 7.23744 21.5201 7.53033L11.5201 17.5303C11.2272 17.8232 10.7523 17.8232 10.4594 17.5303L5.45942 12.5303C5.16652 12.2374 5.16652 11.7626 5.45942 11.4697C5.75231 11.1768 6.22718 11.1768 6.52008 11.4697L10.9897 15.9393L20.4594 6.46967C20.7523 6.17678 21.2272 6.17678 21.5201 6.46967Z' fill='%230C0D0E'/%3E%3C/svg%3E%0A");
   font-size: 1.4rem;
   margin-block-start: -3px;
-  margin-inline-end: 9px;
   margin-block-end: 0;
   margin-inline-start: -9px;
+  margin-inline-end: 9px;
 }
 .e-feature-promotion_data > .go-pro {
   display: flex;
@@ -2584,10 +2740,6 @@ fieldset:disabled a.e-button {
   aspect-ratio: 16/9;
   width: 608px;
   border: none;
-}
-
-body.rtl .e-feature-promotion {
-  transform: translateX(10px);
 }
 
 @media (max-width: 1410px) {

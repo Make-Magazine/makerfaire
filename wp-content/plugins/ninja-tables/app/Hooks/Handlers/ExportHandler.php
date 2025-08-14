@@ -15,7 +15,12 @@ class ExportHandler
             return;
         }
 
-        $tableId    = intval(Arr::get($_REQUEST, 'table_id'));
+        $tableId = intval(Arr::get($_REQUEST, 'table_id'));
+
+        if ( ! $tableId) {
+            return;
+        }
+
         $format     = Sanitizer::sanitizeTextField(Arr::get($_REQUEST, 'format'));
         $tableTitle = get_the_title($tableId);
         $fileName   = Sanitizer::sanitizeTitle($tableTitle);

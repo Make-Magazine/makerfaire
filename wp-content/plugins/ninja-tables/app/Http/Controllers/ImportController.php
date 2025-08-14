@@ -33,7 +33,16 @@ class ImportController extends Controller
         if ($format == 'dragAndDrop') {
             return $this->extracted($request->all());
         } else {
-            $fileExtension = strtolower(pathinfo($_FILES['file']['name'], PATHINFO_EXTENSION));
+            if ( ! isset($_FILES['file'])) {
+                return $this->sendError([
+                    'errors'  => array(),
+                    'message' => __('Please upload a file.', 'ninja-tables')
+                ], 423);
+            }
+
+            $fileName  = Sanitizer::sanitizeTextField(Arr::get($_FILES, 'file.name'));
+
+            $fileExtension = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
 
             if ($fileExtension === 'csv' && $format == 'csv') {
                 $this->uploadTableCsv($doUnicode);

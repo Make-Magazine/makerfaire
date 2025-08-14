@@ -180,7 +180,48 @@ function pmxe_wp_ajax_wpallexport()
 
 
             }
+            else if (XmlExportEngine::$is_woo_guest_customer_export) {
+                // Handle guest customer export using custom query
+                global $wpdb;
 
+                // Check if WooCommerce customer lookup table exists
+                $table_exists = $wpdb->get_var("SHOW TABLES LIKE '{$wpdb->prefix}wc_customer_lookup'");
+                if (!$table_exists) {
+                    $exportQuery = new stdClass();
+                    $exportQuery->results = array();
+                    $exportQuery->total_users = 0;
+                } else {
+                    // Start with base guest customer condition
+                    $where_clause = "user_id IS NULL";
+
+                    // Apply basic filtering if needed
+                    if (!empty($exportOptions['export_only_customers_that_made_purchases'])) {
+                        $where_clause .= " AND order_count > 0";
+                    }
+
+                    // Apply advanced filtering rules if they exist
+                    $whereclause = PMXE_Plugin::$session->get('whereclause');
+                    if (!empty($whereclause)) {
+                        $where_clause .= $whereclause;
+                    }
+
+                    $guest_customers = $wpdb->get_results("
+                        SELECT * FROM {$wpdb->prefix}wc_customer_lookup
+                        WHERE {$where_clause}
+                        ORDER BY customer_id ASC
+                        LIMIT {$posts_per_page} OFFSET {$export->exported}
+                    ");
+
+                    $total_count = $wpdb->get_var("
+                        SELECT COUNT(*) FROM {$wpdb->prefix}wc_customer_lookup
+                        WHERE {$where_clause}
+                    ");
+
+                    $exportQuery = new stdClass();
+                    $exportQuery->results = $guest_customers ?: array();
+                    $exportQuery->total_users = intval($total_count);
+                }
+            }
             else {
 
 
@@ -289,6 +330,9 @@ function pmxe_wp_ajax_wpallexport()
             if (XmlExportEngine::$is_user_export || XmlExportEngine::$is_woo_customer_export) {
                 $foundPosts = $exportQuery->get_total();
                 $postCount = count($exportQuery->get_results());
+            } elseif (XmlExportEngine::$is_woo_guest_customer_export) {
+                $foundPosts = $exportQuery->total_users;
+                $postCount = count($exportQuery->results);
             } else {
 
                 $foundPosts = $exportQuery->found_posts;

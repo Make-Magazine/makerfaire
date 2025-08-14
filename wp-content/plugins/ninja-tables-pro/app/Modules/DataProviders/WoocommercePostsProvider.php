@@ -30,8 +30,8 @@ class WoocommercePostsProvider
         add_action('wp_ajax_ninja_table_woocommerece_get_options', array($this, 'getWooSettings'));
         add_action('wp_ajax_ninja_table_save_query_settings_woo_table', array($this, 'saveQuerySettings'));
         add_action('wp_ajax_ninja_table_wp_woo_get_custom_field_options', array($this, 'getCustomFieldOptions'));
-        add_action('wp_ajax_ninja_table_wp_woo_add_to_cart', array($this, 'addToCart'));
-        add_action('wp_ajax_nopriv_ninja_table_wp_woo_add_to_cart', array($this, 'addToCart'));
+        add_action('wp_ajax_ninja_table_wp_woo_add_to_cart', array($this, 'addToCartAjax'));
+        add_action('wp_ajax_nopriv_ninja_table_wp_woo_add_to_cart', array($this, 'addToCartAjax'));
 
 
         add_action('ninja_rendering_table_wp_woo', array($this, 'addFrontendAsset'), 10, 1);
@@ -243,7 +243,8 @@ class WoocommercePostsProvider
             'show_cart_before_table' => 'yes',
             'show_cart_after_table'  => 'yes',
             'show_cart_button'       => 'yes',
-            'show_checkout_button'   => 'yes'
+            'show_checkout_button'   => 'yes',
+            'show_bulk_actions'      => 'yes',
         ];
 
         update_post_meta($tableId, '_ninja_table_woo_appearance_settings', $appearanceSettings);
@@ -301,7 +302,6 @@ class WoocommercePostsProvider
         if ( ! $appearanceSettings) {
             $appearanceSettings = (object)[];
         }
-
 
         $table->query_selections    = $querySelections;
         $table->query_conditions    = $queryConditions;
@@ -517,6 +517,8 @@ class WoocommercePostsProvider
     {
         wp_enqueue_script('ninjatable_woo_script', NINJAPROPLUGIN_URL . 'assets/js/woo_table_frontend.js', array('jquery'),
             NINJAPROPLUGIN_VERSION, true);
+        wp_enqueue_script('ninjatable_comparison_script', NINJAPROPLUGIN_URL . 'assets/js/ninja_table_comparison.js', array('jquery'),
+            NINJAPROPLUGIN_VERSION, true);
 
         $appreanceSettings = get_post_meta($tableArray['table_id'], '_ninja_table_woo_appearance_settings', true);
 
@@ -621,53 +623,273 @@ class WoocommercePostsProvider
         return $fragments;
     }
 
-    public function addToCart()
+
+    public function addToCartAjax()
     {
-        ob_start();
-        $product_id = absint(Arr::get($_POST, 'product_id'));
-        $product    = wc_get_product($product_id);
-
-        if ($product->get_type() === 'simple') {
-            \WC_AJAX::add_to_cart();
-        } elseif ($product->get_type() === 'variable') {
-            $qty            = Arr::get($_POST, 'quantity');
-            $product_id     = apply_filters('woocommerce_add_to_cart_product_id', $product_id);
-            $quantity       = empty($qty) ? 1 : apply_filters('woocommerce_stock_amount', $qty);
-            $variation_id   = Arr::get($_POST, 'variation_id');
-            $variation      = Arr::get($_POST, 'attributes');
-            $cart_item_data = $_POST;
-            unset($cart_item_data['quantity']);
-
-            $passed_validation = apply_filters('woocommerce_add_to_cart_validation', true, $product_id, $quantity);
-
-            if ($passed_validation && WC()->cart->add_to_cart($product_id, $quantity, $variation_id, $variation,
-                    $cart_item_data)) {
-                do_action('woocommerce_ajax_added_to_cart', $product_id);
-                if (get_option('woocommerce_cart_redirect_after_add') == 'yes') {
-                    wc_add_to_cart_message($product_id);
-                }
-                global $woocommerce;
-                $items = $woocommerce->cart->get_cart();
-                wc_setcookie('woocommerce_items_in_cart', count($items));
-                wc_setcookie('woocommerce_cart_hash', md5(json_encode($items)));
-                do_action('woocommerce_set_cart_cookies', true);
-                // Return fragments
-                wp_send_json_success([
-                    'fragments'  => $this->customCartRefreshFragment(),
-                    'cart_items' => $woocommerce->cart->get_cart()
-                ], 200);
+        // Validate and sanitize input
+        $products = ninja_tables_sanitize_array(Arr::get($_POST, 'products', []));
+        $products = $this->validateProductsInput($products);
+        if (empty($products)) {
+            wp_send_json_error(['message' => 'No valid products provided'], 400);
+            return;
+        }
+    
+        $results = [
+            'success' => [],
+            'errors' => []
+        ];
+    
+        // Process each product
+        foreach ($products as $product) {
+            $result = $this->addToCart($product);
+            
+            if ($result['success']) {
+                $results['success'][] = Arr::get($product, 'product_id', 0);
             } else {
-                // If there was an error adding to the cart, redirect to the product page to show any errors
-                $data = array(
-                    'error'       => true,
-                    'product_url' => apply_filters('woocommerce_cart_redirect_after_error', get_permalink($product_id),
-                        $product_id)
-                );
-                wp_send_json_error($data);
+                $results['errors'][] = [
+                    'product_id' => Arr::get($product, 'product_id', 0),
+                    'message' => Arr::get($result, 'message', '')
+                ];
             }
         }
+    
+        // Return response based on overall success
+        if (empty(Arr::get($results, 'errors'))) {
+            wp_send_json_success([
+                'message' => 'All products added successfully',
+                'fragments' => $this->customCartRefreshFragment(),
+                'cart_items' => WC()->cart->get_cart(),
+                'added_products' => Arr::get($results, 'success', [])
+            ], 200);
+        } else {
+            $status_code = empty(Arr::get($results, 'success')) ? 400 : 207; // 207 for partial success
+            wp_send_json_error([
+                'message' => 'Some products could not be added',
+                'errors' => Arr::get($results, 'errors', []),
+                'success' => Arr::get($results, 'success', [])
+            ], $status_code);
+        }
     }
-
+    
+    public function addToCart($product)
+    {
+        try {
+            // Validate product data
+            $validation_result = $this->validateProductData($product);
+            if (!Arr::get($validation_result, 'valid')) {
+                return [
+                    'success' => false,
+                    'message' => Arr::get($validation_result, 'message', '')
+                ];
+            }
+    
+            $product_id = absint(Arr::get($product, 'product_id', 0));
+            $wc_product = wc_get_product($product_id);
+            
+            if (!$wc_product || !$wc_product->is_purchasable()) {
+                return [
+                    'success' => false,
+                    'message' => __('Product is not available for purchase', 'ninja-tables-pro')
+                ];
+            }
+    
+            // Handle different product types
+            switch ($wc_product->get_type()) {
+                case 'simple':
+                    return $this->addSimpleProductToCart($product, $wc_product);
+                
+                case 'variable':
+                    return $this->addVariableProductToCart($product, $wc_product);
+                
+                default:
+                    return [
+                        'success' => false,
+                        'message' => __('Product type not supported', 'ninja-tables-pro')
+                    ];
+            }
+    
+        } catch (Exception $e) {
+            error_log('Add to cart error: ' . $e->getMessage());
+            return [
+                'success' => false,
+                'message' => __('An error occurred while adding the product to cart', 'ninja-tables-pro')
+            ];
+        }
+    }
+    
+    private function validateProductsInput($products)
+    {
+        if (!is_array($products)) {
+            return [];
+        }
+    
+        $validated_products = [];
+        foreach ($products as $product) {
+            if (Arr::get($product, 'product_id') && is_numeric(Arr::get($product, 'product_id'))) {
+                $validated_products[] = array_map('sanitize_text_field', $product);
+            }
+        }
+    
+        return $validated_products;
+    }
+    
+    private function validateProductData($product)
+    {
+        // Check required fields
+        if (empty(Arr::get($product, 'product_id')) || !is_numeric(Arr::get($product, 'product_id'))) {
+            return [
+                'valid' => false,
+                'message' => __('Invalid product ID', 'ninja-tables-pro')
+            ];
+        }
+    
+        // Validate quantity
+        $quantity = Arr::get($product, 'quantity', 1);
+        if ($quantity <= 0) {
+            return [
+                'valid' => false,
+                'message' => __('Invalid quantity', 'ninja-tables-pro')
+            ];
+        }
+    
+        return ['valid' => true];
+    }
+    
+    private function addSimpleProductToCart($product, $wc_product)
+    {
+        $product_id = absint(Arr::get($product, 'product_id', 0));
+        $quantity = Arr::get($product, 'quantity', 1);
+        
+        // Apply filters for validation
+        $passed_validation = apply_filters(
+            'woocommerce_add_to_cart_validation', 
+            true, 
+            $product_id, 
+            $quantity
+        );
+    
+        if (!$passed_validation) {
+            return [
+                'success' => false,
+                'message' => __('Product validation failed', 'ninja-tables-pro')
+            ];
+        }
+    
+        // Check stock
+        if (!$wc_product->has_enough_stock($quantity)) {
+            return [
+                'success' => false,
+                'message' => __('Insufficient stock', 'ninja-tables-pro')
+            ];
+        }
+    
+        $cart_item_key = WC()->cart->add_to_cart($product_id, $quantity);
+        
+        if ($cart_item_key) {
+            do_action('woocommerce_ajax_added_to_cart', $product_id);
+            $this->updateCartCookies();
+            
+            return [
+                'success' => true,
+                'message' => __('Product added successfully', 'ninja-tables-pro'),
+                'cart_item_key' => $cart_item_key
+            ];
+        }
+    
+        return [
+            'success' => false,
+            'message' => __('Failed to add product to cart', 'ninja-tables-pro')
+        ];
+    }
+    
+    private function addVariableProductToCart($product, $wc_product)
+    {
+        $product_id = absint(Arr::get($product, 'product_id', 0));
+        $quantity = Arr::get($product, 'quantity', 1);
+        $variation_id = Arr::get($product, 'variation_id', 0);
+        $variation_data = Arr::get($product, 'attributes', []);
+    
+        // Validate variation
+        if (!$variation_id) {
+            return [
+                'success' => false,
+                'message' => __('Variation ID is required for variable products', 'ninja-tables-pro')
+            ];
+        }
+    
+        $variation = wc_get_product($variation_id);
+        if (!$variation || !$variation->is_purchasable()) {
+            return [
+                'success' => false,
+                'message' => __('Selected variation is not available', 'ninja-tables-pro')
+            ];
+        }
+    
+        // Apply filters for validation
+        $passed_validation = apply_filters(
+            'woocommerce_add_to_cart_validation', 
+            true, 
+            $product_id, 
+            $quantity, 
+            $variation_id, 
+            $variation_data
+        );
+    
+        if (!$passed_validation) {
+            return [
+                'success' => false,
+                'message' => __('Product validation failed', 'ninja-tables-pro')
+            ];
+        }
+    
+        // Check stock
+        if (!$variation->has_enough_stock($quantity)) {
+            return [
+                'success' => false,
+                'message' => __('Insufficient stock for selected variation', 'ninja-tables-pro')
+            ];
+        }
+    
+        // Prepare cart item data
+        $cart_item_data = array_diff_key($product, array_flip(['product_id', 'quantity', 'variation_id', 'attributes']));
+    
+        $cart_item_key = WC()->cart->add_to_cart(
+            $product_id, 
+            $quantity, 
+            $variation_id, 
+            $variation_data, 
+            $cart_item_data
+        );
+    
+        if ($cart_item_key) {
+            do_action('woocommerce_ajax_added_to_cart', $product_id);
+            $this->updateCartCookies();
+            
+            return [
+                'success' => true,
+                'message' => __('Variable product added successfully', 'ninja-tables-pro'),
+                'cart_item_key' => $cart_item_key
+            ];
+        }
+    
+        return [
+            'success' => false,
+            'message' => __('Failed to add variable product to cart', 'ninja-tables-pro')
+        ];
+    }
+    
+    private function updateCartCookies()
+    {
+        if (get_option('woocommerce_cart_redirect_after_add') === 'yes') {
+            wc_add_to_cart_message(array_keys(WC()->cart->get_cart()));
+        }
+    
+        $cart_items = WC()->cart->get_cart();
+        wc_setcookie('woocommerce_items_in_cart', count($cart_items));
+        wc_setcookie('woocommerce_cart_hash', WC()->cart->get_cart_hash());
+        
+        do_action('woocommerce_set_cart_cookies', true);
+    }
     public function customCartRefreshFragment()
     {
         ob_start();

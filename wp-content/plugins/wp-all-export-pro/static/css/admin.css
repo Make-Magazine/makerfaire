@@ -1930,6 +1930,14 @@ a.wpallexport-import-to-format span.wpallexport-import-to-title {
 	color: #555;
 	margin-top: 2px;
 }
+
+.wpallexport-plugin #file_selector .dd-option .dashicon-shop_guest_customer:before,
+.wpallexport-plugin #file_selector .dd-selected .dashicon-shop_guest_customer:before{
+	font-family: "WooCommerce";
+	content: "\e03d";
+	color: #555;
+	margin-top: 2px;
+}
 .wpallexport-plugin #file_selector .dd-option .dashicon-cpt:before,
 .wpallexport-plugin #file_selector .dd-selected .dashicon-cpt:before{
 	font-family: "dashicons";

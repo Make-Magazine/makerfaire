@@ -1,4 +1,4 @@
-/*! elementor - v3.30.0 - 09-07-2025 */
+/*! elementor - v3.31.0 - 11-08-2025 */
 /******/ (() => { // webpackBootstrap
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({});
@@ -123,8 +123,8 @@
 /******/ 		// This function allow to reference async chunks
 /******/ 		__webpack_require__.u = (chunkId) => {
 /******/ 			// return url for filenames not based on template
-/******/ 			if (chunkId === "lightbox") return "" + chunkId + ".74688eb10c7852662847.bundle.js";
-/******/ 			if (chunkId === "text-path") return "" + chunkId + ".795be0048f5240994e8b.bundle.js";
+/******/ 			if (chunkId === "lightbox") return "" + chunkId + ".875994a349be8712b41c.bundle.js";
+/******/ 			if (chunkId === "text-path") return "" + chunkId + ".ffadd93cf796f64a4d61.bundle.js";
 /******/ 			if (chunkId === "accordion") return "" + chunkId + ".7b5b5744bdd225280eca.bundle.js";
 /******/ 			if (chunkId === "alert") return "" + chunkId + ".b696182ec6f18a35bc69.bundle.js";
 /******/ 			if (chunkId === "counter") return "" + chunkId + ".f359dee9199f5aad06c6.bundle.js";
@@ -243,7 +243,7 @@
 /******/ 		// When supporting browsers where an automatic publicPath is not supported you must specify an output.publicPath manually via configuration
 /******/ 		// or pass an empty string ("") and set the __webpack_public_path__ variable from your code to use your own logic.
 /******/ 		if (!scriptUrl) throw new Error("Automatic publicPath is not supported in this browser");
-/******/ 		scriptUrl = scriptUrl.replace(/#.*$/, "").replace(/\?.*$/, "").replace(/\/[^\/]+$/, "/");
+/******/ 		scriptUrl = scriptUrl.replace(/^blob:/, "").replace(/#.*$/, "").replace(/\?.*$/, "").replace(/\/[^\/]+$/, "/");
 /******/ 		__webpack_require__.p = scriptUrl;
 /******/ 	})();
 /******/ 	

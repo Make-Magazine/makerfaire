@@ -14,7 +14,7 @@ function pmxi_wp_ajax_wp_all_import_api(){
 
     $request = new \Wpai\Http\Request(file_get_contents('php://input'));
 
-    $q = $_GET['q'];
+    $q = $_GET['q'] ?? '';
     $routeParts = explode('/', $q);
     $controller = 'Wpai\\App\\Controller\\'.ucwords($routeParts[0]).'Controller';
     $action = ucwords($routeParts[1]).'Action';

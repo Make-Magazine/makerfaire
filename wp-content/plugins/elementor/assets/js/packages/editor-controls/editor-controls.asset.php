@@ -13,7 +13,6 @@ return [
 		'elementor-v2-editor-props',
 		'elementor-v2-editor-responsive',
 		'elementor-v2-editor-ui',
-		'elementor-v2-editor-v1-adapters',
 		'elementor-v2-env',
 		'elementor-v2-http-client',
 		'elementor-v2-icons',

@@ -6,6 +6,7 @@
             "key": "field_61254b0d2d9ca",
             "label": "Active\/Inactive",
             "name": "activeinactive",
+            "aria-label": "",
             "type": "radio",
             "instructions": "",
             "required": 0,
@@ -30,6 +31,7 @@
             "key": "field_61255f192b82b",
             "label": "Type",
             "name": "type",
+            "aria-label": "",
             "type": "select",
             "instructions": "Type of Maker Faire you would like to display (you can select multiple options)",
             "required": 0,
@@ -51,12 +53,15 @@
             "ui": 0,
             "return_format": "value",
             "ajax": 0,
-            "placeholder": ""
+            "placeholder": "",
+            "create_options": 0,
+            "save_options": 0
         },
         {
             "key": "field_6126759dda1e7",
             "label": "Past or Future Faires",
             "name": "past_or_future",
+            "aria-label": "",
             "type": "radio",
             "instructions": "Choose whether to show Faires before or after current date",
             "required": 0,
@@ -82,8 +87,9 @@
             "key": "field_612675cada1e8",
             "label": "Number",
             "name": "number",
+            "aria-label": "",
             "type": "number",
-            "instructions": "Max number of Faires to show",
+            "instructions": "Max number of Faires to display",
             "required": 0,
             "conditional_logic": 0,
             "wrapper": {
@@ -92,12 +98,13 @@
                 "id": ""
             },
             "default_value": "",
-            "placeholder": "",
-            "prepend": "",
-            "append": "",
             "min": "",
             "max": "",
-            "step": ""
+            "allow_in_bindings": 1,
+            "placeholder": "",
+            "step": "",
+            "prepend": "",
+            "append": ""
         }
     ],
     "location": [
@@ -117,5 +124,6 @@
     "hide_on_screen": "",
     "active": true,
     "description": "",
-    "modified": 1629917868
+    "show_in_rest": 0,
+    "modified": 1755198883
 }

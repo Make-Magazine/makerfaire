@@ -222,7 +222,7 @@ class ReviewsUI
                         <button data-review="bad"><?php esc_html_e('Bad', 'wp-all-import-plugin'); ?></button>
                     </div>
                 </div>
-                <div id="wpai-review">
+                <div id="wpai-review" style="display: none;">
                     <h1><?php esc_html_e('That is great to hear, thank you for the feedback!', 'wp-all-import-plugin'); ?></h1>
                     <p>
                         <?php esc_html_e("Would you be willing to do us a small favor? Unhappy customers are quick to publicly complain, but happy customers rarely speak up and share their good experiences.", 'wp-all-import-plugin'); ?>
@@ -235,7 +235,7 @@ class ReviewsUI
                         </a>
                     </div>
                 </div>
-                <div id="wpai-feedback">
+                <div id="wpai-feedback" style="display: none;">
                     <div class="wpai-review-form">
                         <h1><?php esc_html_e('Thank you for your feedback, it really helps us improve our products.', 'wp-all-import-plugin'); ?></h1>
                         <p><?php esc_html_e('If you could improve one thing about WP All Import, what would it be?', 'wp-all-import-plugin'); ?></p>

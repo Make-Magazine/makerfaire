@@ -96,6 +96,59 @@ class PMXE_Export_Record extends PMXE_Model_Record {
                 add_action('pre_user_query', 'wp_all_export_pre_user_query', 10, 1);
                 $exportQuery = eval('return new WP_User_Query(array(' . $this->options['wp_query'] . ', \'offset\' => ' . $this->exported . ', \'number\' => ' . $this->options['records_per_iteration'] . '));');
                 remove_action('pre_user_query', 'wp_all_export_pre_user_query');
+
+
+            }
+            elseif (XmlExportEngine::$is_woo_guest_customer_export)
+            {
+                if(!XmlExportEngine::get_addons_service()->isUserAddonActive()) {
+                    throw new \Wpae\App\Service\Addons\AddonNotFoundException('The User Export Add-On Pro is required to run this export. If you already own it, you can download the add-on here: <a href="https://www.wpallimport.com/portal/downloads" target="_blank">https://www.wpallimport.com/portal/downloads</a>');
+                }
+
+                // Query guest customers from WooCommerce customer lookup table
+                global $wpdb;
+
+                // Check if WooCommerce customer lookup table exists
+                $table_exists = $wpdb->get_var("SHOW TABLES LIKE '{$wpdb->prefix}wc_customer_lookup'");
+                if (!$table_exists) {
+                    $exportQuery = new stdClass();
+                    $exportQuery->results = array();
+                    $exportQuery->total_users = 0;
+                } else {
+                    // Start with base guest customer condition
+                    $where_clause = "user_id IS NULL";
+
+                    // Apply basic filtering if needed
+                    if (!empty($this->options['export_only_customers_that_made_purchases'])) {
+                        $where_clause .= " AND order_count > 0";
+                    }
+
+                    // Apply advanced filtering rules if they exist
+                    $whereclause = PMXE_Plugin::$session->get('whereclause');
+                    if (!empty($whereclause)) {
+                        // The filtering system generates WHERE clauses that start with " AND "
+                        // We need to append them to our base condition
+                        $where_clause .= $whereclause;
+                    }
+                    $offset = $this->exported;
+                    $limit = $this->options['records_per_iteration'];
+
+                    $guest_customers = $wpdb->get_results("
+                        SELECT * FROM {$wpdb->prefix}wc_customer_lookup
+                        WHERE {$where_clause}
+                        ORDER BY customer_id ASC
+                        LIMIT {$limit} OFFSET {$offset}
+                    ");
+
+                    $total_count = $wpdb->get_var("
+                        SELECT COUNT(*) FROM {$wpdb->prefix}wc_customer_lookup
+                        WHERE {$where_clause}
+                    ");
+
+                    $exportQuery = new stdClass();
+                    $exportQuery->results = $guest_customers ?: array();
+                    $exportQuery->total_users = intval($total_count);
+                }
             }
             elseif (XmlExportEngine::$is_comment_export || XmlExportEngine::$is_woo_review_export )
             {
@@ -127,17 +180,70 @@ class PMXE_Export_Record extends PMXE_Model_Record {
             $this->set(array( 'options' => XmlExportEngine::$exportOptions ))->update();
             // [\ Update where clause]
 
-            if ( in_array('users', $this->options['cpt']) or in_array('shop_customer', $this->options['cpt']))
+            if ( in_array('users', $this->options['cpt']) or in_array('shop_customer', $this->options['cpt']) or in_array('shop_guest_customer', $this->options['cpt']))
             {
-                add_action('pre_user_query', 'wp_all_export_pre_user_query', 10, 1);
+                if (in_array('shop_guest_customer', $this->options['cpt'])) {
+                    // Handle guest customers separately
+                    global $wpdb;
 
-                if($post_id) {
-                    $exportQuery = new WP_User_Query(array('search' => $post_id, 'search_columns' => ['ID'], 'orderby' => 'ID', 'order' => 'ASC'));
+                    // Check if WooCommerce customer lookup table exists
+                    $table_exists = $wpdb->get_var("SHOW TABLES LIKE '{$wpdb->prefix}wc_customer_lookup'");
+                    if (!$table_exists) {
+                        $exportQuery = new stdClass();
+                        $exportQuery->results = array();
+                        $exportQuery->total_users = 0;
+                    } else {
+                        $where_conditions = array("user_id IS NULL");
+
+                        // Apply filtering if needed
+                        if (!empty($this->options['export_only_customers_that_made_purchases'])) {
+                            $where_conditions[] = "order_count > 0";
+                        }
+
+                        $where_clause = implode(' AND ', $where_conditions);
+
+                        if($post_id) {
+                            // Search for specific guest customer by ID
+                            $guest_customers = $wpdb->get_results("
+                                SELECT * FROM {$wpdb->prefix}wc_customer_lookup
+                                WHERE {$where_clause} AND customer_id = {$post_id}
+                                ORDER BY customer_id ASC
+                            ");
+                        } else {
+                            $offset = $this->exported;
+                            $limit = $this->options['records_per_iteration'];
+
+                            $guest_customers = $wpdb->get_results("
+                                SELECT * FROM {$wpdb->prefix}wc_customer_lookup
+                                WHERE {$where_clause}
+                                ORDER BY customer_id ASC
+                                LIMIT {$limit} OFFSET {$offset}
+                            ");
+                        }
+
+                        $total_count = $wpdb->get_var("
+                            SELECT COUNT(*) FROM {$wpdb->prefix}wc_customer_lookup
+                            WHERE {$where_clause}
+                        ");
+
+                        $exportQuery = new stdClass();
+                        $exportQuery->results = $guest_customers ?: array();
+                        $exportQuery->total_users = intval($total_count);
+                    }
                 } else {
-                    $exportQuery = new WP_User_Query(array('orderby' => 'ID', 'order' => 'ASC', 'number' => $this->options['records_per_iteration'], 'offset' => $this->exported));
-                }
+                    // Handle regular users and registered customers
+                    add_action('pre_user_query', 'wp_all_export_pre_user_query', 10, 1);
 
-                remove_action('pre_user_query', 'wp_all_export_pre_user_query');
+                    if($post_id) {
+                        $exportQuery = new WP_User_Query(array('search' => $post_id, 'search_columns' => ['ID'], 'orderby' => 'ID', 'order' => 'ASC'));
+                    } else {
+                        $exportQuery = new WP_User_Query(array('orderby' => 'ID', 'order' => 'ASC', 'number' => $this->options['records_per_iteration'], 'offset' => $this->exported));
+                    }
+
+                    remove_action('pre_user_query', 'wp_all_export_pre_user_query');
+
+
+                }
             }
             elseif ( in_array('comments', $this->options['cpt']))
             {
@@ -464,6 +570,9 @@ class PMXE_Export_Record extends PMXE_Model_Record {
                 if (XmlExportEngine::$is_user_export || XmlExportEngine::$is_woo_customer_export) {
                     $foundPosts = $exportQuery->get_total();
                     $postCount = count($exportQuery->get_results());
+                } elseif (XmlExportEngine::$is_woo_guest_customer_export) {
+                    $foundPosts = $exportQuery->total_users;
+                    $postCount = count($exportQuery->results);
                 } else {
                     $foundPosts = $exportQuery->found_posts;
                     $postCount = $exportQuery->post_count;

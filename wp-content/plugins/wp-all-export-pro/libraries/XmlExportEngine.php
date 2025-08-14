@@ -38,6 +38,7 @@ if (!class_exists('XmlExportEngine')) {
         public static $woo_refund_export;
         public static $user_export = false;
         public static $woo_customer_export = false;
+        public static $woo_guest_customer_export = false;
         public static $comment_export;
         public static $woo_review_export = false;
         public static $taxonomy_export;
@@ -218,6 +219,7 @@ if (!class_exists('XmlExportEngine')) {
 
         public static $is_user_export = false;
         public static $is_woo_customer_export = false;
+        public static $is_woo_guest_customer_export = false;
         public static $is_comment_export = false;
         public static $is_taxonomy_export = false;
         public static $is_woo_review_export = false;
@@ -395,7 +397,7 @@ if (!class_exists('XmlExportEngine')) {
 				        : array( $this->post['cpt'] );
 		        }
 
-		        if (!in_array('users',$postTypes) && !in_array('shop_customer',$postTypes) && !in_array('comments',$postTypes) && !in_array('shop_review',$postTypes) && !empty($this->post['exportquery']) && !empty($this->post['exportquery']->query['post_type'])) {
+		        if (!in_array('users',$postTypes) && !in_array('shop_customer',$postTypes) && !in_array('shop_guest_customer',$postTypes) && !in_array('comments',$postTypes) && !in_array('shop_review',$postTypes) && !empty($this->post['exportquery']) && is_object($this->post['exportquery']) && property_exists($this->post['exportquery'], 'query') && !empty($this->post['exportquery']->query['post_type'])) {
 			        $exportqueryPostType = is_array($this->post['exportquery']->query['post_type']) ? $this->post['exportquery']->query['post_type'] : [$this->post['exportquery']->query['post_type']];
 		        } else if (!empty($this->post['wp_query_selector']) && 'wp_query' == $this->post['wp_query_selector']){
                     // TODO: Add other edge case post types for WP_Query initial Step 2 load.
@@ -431,6 +433,8 @@ if (!class_exists('XmlExportEngine')) {
 
 		        self::$is_woo_customer_export = ( in_array( 'shop_customer', self::$post_types ) ) ? true : false;
 
+		        self::$is_woo_guest_customer_export = ( in_array( 'shop_guest_customer', self::$post_types ) ) ? true : false;
+
 		        self::$is_comment_export = ( in_array( 'comments', self::$post_types ) ) ? true : false;
 
 		        self::$is_woo_review_export = ( in_array( 'shop_review', self::$post_types ) ) ? true : false;
@@ -450,7 +454,7 @@ if (!class_exists('XmlExportEngine')) {
                 self::$is_comment_export = ('wp_comment_query' == $this->post['wp_query_selector']);
             }
 
-            if (!self::$is_user_export && !self::$is_woo_customer_export && !self::$is_comment_export && !self::$is_woo_review_export && !self::$is_taxonomy_export) {
+            if (!self::$is_user_export && !self::$is_woo_customer_export && !self::$is_woo_guest_customer_export && !self::$is_comment_export && !self::$is_woo_review_export && !self::$is_taxonomy_export) {
                 add_filter("wp_all_export_filters", array(&$this, "filter_export_filters"), 10, 1);
 
                 // When WPML is active and at least one post in the export has a trid
@@ -527,6 +531,7 @@ if (!class_exists('XmlExportEngine')) {
 
             PMXE_Plugin::$session->set('is_user_export', self::$is_user_export);
             PMXE_Plugin::$session->set('is_woo_customer_export', self::$is_woo_customer_export);
+            PMXE_Plugin::$session->set('is_woo_guest_customer_export', self::$is_woo_guest_customer_export);
             PMXE_Plugin::$session->set('is_comment_export', self::$is_comment_export);
             PMXE_Plugin::$session->set('is_taxonomy_export', self::$is_taxonomy_export);
             PMXE_Plugin::$session->set('is_woo_review_export', self::$is_woo_review_export);
@@ -600,7 +605,7 @@ if (!class_exists('XmlExportEngine')) {
 	        }
 
             // Prepare existing taxonomies
-            if ((('advanced' == $this->post['export_type'] && in_array('product', $post_types)) || 'specific' == $this->post['export_type']) && !self::$is_user_export && !self::$is_woo_customer_export && !self::$is_comment_export && !self::$is_woo_review_export && !self::$is_taxonomy_export) {
+            if ((('advanced' == $this->post['export_type'] && in_array('product', $post_types)) || 'specific' == $this->post['export_type']) && !self::$is_user_export && !self::$is_woo_customer_export && !self::$is_woo_guest_customer_export && !self::$is_comment_export && !self::$is_woo_review_export && !self::$is_taxonomy_export) {
 
                 $this->_existing_taxonomies = wp_all_export_get_existing_taxonomies_by_cpt($post_types[0]);
                 $this->_existing_meta_keys = wp_all_export_get_existing_meta_by_cpt($post_types[0]);
@@ -693,6 +698,13 @@ if (!class_exists('XmlExportEngine')) {
 
                 // Prepare existing WooCommerce Customers data
                 self::$woo_customer_export->init($this->_existing_meta_keys);
+
+            } elseif (self::$is_woo_guest_customer_export) {
+
+                // Prepare existing WooCommerce Guest Customers data
+                if (self::$woo_guest_customer_export) {
+                    self::$woo_guest_customer_export->init($this->_existing_meta_keys);
+                }
 
             }
 
@@ -809,7 +821,7 @@ if (!class_exists('XmlExportEngine')) {
                 }
             }
 
-            if (!self::$is_comment_export && !self::$is_woo_review_export && self::get_addons_service()->isAcfAddonActive()) {
+            if (!self::$is_comment_export && !self::$is_woo_review_export && !self::$is_woo_guest_customer_export && self::get_addons_service()->isAcfAddonActive()) {
                 self::$acf_export->get_fields_options($fields, $field_keys);
             }
 
@@ -1019,7 +1031,7 @@ if (!class_exists('XmlExportEngine')) {
                 }
             }
 
-            if (!self::$is_comment_export && !self::$is_woo_review_export) {
+            if (!self::$is_comment_export && !self::$is_woo_review_export && !self::$is_woo_guest_customer_export) {
                 $this->render_ACF($i);
             }
 
@@ -1323,7 +1335,7 @@ if (!class_exists('XmlExportEngine')) {
                         endif;
                     }
 
-                    if (!self::$is_comment_export && !self::$is_woo_review_export) {
+                    if (!self::$is_comment_export && !self::$is_woo_review_export && !self::$is_woo_guest_customer_export) {
 
                         $disable_acf = apply_filters('wp_all_export_disable_acf', false);
 

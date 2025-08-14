@@ -222,7 +222,7 @@ if ( ! class_exists('XmlExportACF') )
 
 			$put_to_csv = true;
 
-			$field_name    = (!empty($exportOptions['cc_label'][$ID])) ? $exportOptions['cc_label'][$ID] : '';
+			$field_name    = (!empty($exportOptions['cc_label'][$ID])) ? $exportOptions['cc_label'][$ID] : ($exportOptions['name'] ?? '');
 			$field_options = (!empty($exportOptions['cc_options'][$ID])) ? unserialize($exportOptions['cc_options'][$ID]) : $exportOptions;
 			$field_settings = (!empty($exportOptions['cc_settings'][$ID])) ? json_decode($exportOptions['cc_settings'][$ID], true) : false;
 
@@ -314,6 +314,9 @@ if ( ! class_exists('XmlExportACF') )
 								if (!empty($gallery_item_url)){
 									$v[] = $gallery_item_url;
 								}
+							}
+							elseif ( gettype( $item ) == 'string' ) {
+								$v[] = $item;
 							}
 						}
 						$field_value = implode($implode_delimiter, $v);
@@ -539,6 +542,11 @@ if ( ! class_exists('XmlExportACF') )
 
 						if ( ! empty($field_options['multiple'])){
 							$v = array();
+
+                            if( !is_array($field_value) ){
+                                $field_value = [$field_value];
+                            }
+
 							foreach ($field_value as $key => $pid) {
 
 								if (is_numeric($pid)){
@@ -572,6 +580,9 @@ if ( ! class_exists('XmlExportACF') )
 					case 'relationship':
 
 						$v = array();
+
+                        $field_value = is_array($field_value) ? $field_value : [$field_value];
+
 						foreach ($field_value as $key => $pid) {
 							$entry = get_post($pid);
 							if ($entry)
@@ -596,7 +607,7 @@ if ( ! class_exists('XmlExportACF') )
 									}
 								}
 								else{
-									$v[] = $user->user_email;
+									$v[] = is_array($user) ? $user['user_email'] : ($user->user_email ?? '');
 								}
 							}
 							$field_value = implode($implode_delimiter, $v);
@@ -610,7 +621,8 @@ if ( ! class_exists('XmlExportACF') )
 								}
 							}
 							else{
-								$field_value = $field_value['user_email'];
+
+								$field_value = is_array($field_value) ? $field_value['user_email'] : ($field_value->user_email ?? '');
 							}
 						}
 
@@ -673,18 +685,20 @@ if ( ! class_exists('XmlExportACF') )
 
 					case 'select':
 
-						if ( ! empty($field_options['multiple']))
-						{
-						    if(!is_array($field_value)) {
-                                $field_value = implode($implode_delimiter, $field_value);
-                            } else {
-						        $field_value = implode($implode_delimiter, array_map(function($value) {
-						            return maybe_serialize($value);
+                        if ( ! empty($field_options['multiple']))
+                        {
+                            if(is_array($field_value)) {
+                                $field_value = implode($implode_delimiter, array_map(function($value) {
+                                    return maybe_serialize($value);
                                 }, $field_value));
                             }
-						}
+                        }
 
-						break;
+                        if(is_array($field_value)) {
+                            $field_value = implode($implode_delimiter, $field_value);
+                        }
+
+                        break;
 
 					case 'checkbox':
                         if ( is_array($field_value)) {
@@ -760,7 +774,9 @@ if ( ! class_exists('XmlExportACF') )
 										$implode_delimiter
 									);
 
-									$acfs[$element_name][] = $element_name . '_' . $sub_field_name;
+                                    if(!isset($acfs[$element_name]) || is_array($acfs[$element_name])) {
+	                                    $acfs[ $element_name ][] = $element_name . '_' . $sub_field_name;
+                                    }
 
 									if(is_array($sub_field_value) && empty($sub_field_value)) {
 									    $sub_field_value = '';
@@ -812,6 +828,14 @@ if ( ! class_exists('XmlExportACF') )
                                         $sub_field_value = '';
                                     }
 
+									if ( $sub_field_value === "0" || $sub_field_value === 0 ) {
+										$sub_field_value = "0";
+									}
+
+                                    if(is_array($sub_field_value)){
+                                        $sub_field_value = json_encode($sub_field_value);
+                                    }
+
                                     $article[$element_name . '_' . $sub_field_name] = ($preview) ? trim(preg_replace('~[\r\n]+~', ' ', htmlspecialchars($sub_field_value))) : $sub_field_value;                                }
                             }
                         }
@@ -832,9 +856,13 @@ if ( ! class_exists('XmlExportACF') )
                             $blocks = parse_blocks($entry->post_content);
 
                             foreach ($blocks as $block) {
-                                if (strpos($block['blockName'], 'acf/') !== false) {
+                                if (!empty($block['blockName']) && strpos($block['blockName'], 'acf/') !== false) {
                                     if(isset($block['attrs']['data']) && $block['attrs']['data']) {
                                         acf_setup_meta($block['attrs']['data'], $pid);
+                                        // acf_setup_meta will only retain the data added via the last call of it. We must ensure our target field is in that call.
+	                                    if(array_key_exists($field_name, $block['attrs']['data'])){
+		                                    break;
+	                                    }
                                     }
                                 }
                             }
@@ -955,6 +983,17 @@ if ( ! class_exists('XmlExportACF') )
 													}
 												}
 												break;
+                                            case 'flexible_content':
+                                                if( !empty($sub_field_value)){
+
+                                                    if(is_array($sub_field_value)) {
+	                                                    $rowValues[ $sub_field_name ][] = print_r( $sub_field_value, true );
+                                                    }else{
+                                                        $rowValues[ $sub_field_name ][] = $sub_field_value;
+                                                    }
+
+                                                }
+                                                break;
 											default:
 												$sub_field_name = empty($sub_field['name']) ? str_replace("-","_", sanitize_title($sub_field['label'])) : $sub_field['name'];
 												$rowValues[$sub_field_name][] = apply_filters('pmxe_acf_field', pmxe_filter( (is_array($sub_field_value)) ? implode($exportOptions['delimiter'], $sub_field_value) : $sub_field_value, $fieldSnipped), $sub_field_name, $pid);
@@ -1112,10 +1151,12 @@ if ( ! class_exists('XmlExportACF') )
 												if ($is_xml_export && $sub_field['value'] != 'gallery')
 												{
 													// apply filters
-													$v = apply_filters( "acf/format_value", $v, $pid, $sub_field );
-													$v = apply_filters( "acf/format_value/type={$sub_field['type']}", $v, $pid, $sub_field );
-													$v = apply_filters( "acf/format_value/name={$sub_field['_name']}", $v, $pid, $sub_field );
-													$v = apply_filters( "acf/format_value/key={$sub_field['key']}", $v, $pid, $sub_field );
+                                                    // version 6.2.5 of ACF requires a 4th parameter for these for
+                                                    // $escape_html (boolean)
+													$v = apply_filters( "acf/format_value", $v, $pid, $sub_field, false );
+													$v = apply_filters( "acf/format_value/type={$sub_field['type']}", $v, $pid, $sub_field, false );
+													$v = apply_filters( "acf/format_value/name={$sub_field['_name']}", $v, $pid, $sub_field, false );
+													$v = apply_filters( "acf/format_value/key={$sub_field['key']}", $v, $pid, $sub_field, false );
 												}
 											}
 
@@ -1221,12 +1262,28 @@ if ( ! class_exists('XmlExportACF') )
 
 			if ($put_to_csv)
 			{
-				$val = apply_filters('pmxe_acf_field', pmxe_filter( ( ! empty($field_value) ) ? maybe_serialize($field_value) : '', $fieldSnipped), $field_name, $pid);
+				$val = apply_filters(
+					'pmxe_acf_field',
+					pmxe_filter(
+						( ! empty($field_value) || $field_value === 0 || $field_value === "0" )
+							? ( (!is_serialized($field_value))
+							? maybe_serialize($field_value)
+							: $field_value )
+							: '',
+						$fieldSnipped
+					),
+					$field_name,
+					$pid
+				);
 
 				if ($is_xml_export)
 				{
 					$elementOpenResponse = $xmlWriter->beginElement($element_name_ns, $element_name, null);
 					if($elementOpenResponse) {
+                        // Ensure "0" values are properly handled
+                        if($val === 0 || $val === "0") {
+                            $val = "0";
+                        }
                         $xmlWriter->writeData($val, $element_name);
                         $xmlWriter->closeElement();
                     }
@@ -1314,36 +1371,51 @@ if ( ! class_exists('XmlExportACF') )
 
 					foreach ($this->_acf_groups as $key => $group)
 					{
+						$rules_array          = array();
 						$is_acf_group_visible = false;
-						if (!empty($group['location'])){
-							foreach ( $group['location'] as $locationRule ){
-								$rule = array_shift($locationRule);
-								if ( XmlExportEngine::$is_user_export && $rule['param'] == 'user_form'){
-									$is_acf_group_visible = true;
-									break;
+						$rules                = false;
+
+						if ( ! empty( $group['location'] ) && is_array( $group['location'] ) && ! isset( $group['location']['rules'] ) ) {
+							$rules_array = $group['location'];
+						} elseif ( ! empty( $group['location'] ) && is_array( $group['location'] ) && isset( $group['location']['rules'] ) && is_array( $group['location']['rules'] ) ) {
+							$rules_array = $group['location']['rules'];
+							$rules       = true;
+						}
+
+						if ( ! empty( $rules_array ) ) {
+
+							foreach ( $rules_array as $locationRuleOuter ){
+
+								if ( $rules === false ) {
+									$rule_details = $locationRuleOuter;
+								} else {
+									$rule_details = [$locationRuleOuter];
 								}
-								elseif ( XmlExportEngine::$is_taxonomy_export && $rule['param'] == 'taxonomy'){
-									$is_acf_group_visible = true;
-									break;
-								}
-								elseif ( 'specific' == XmlExportEngine::$exportOptions['export_type'] && $rule['param'] == 'post_type'){
-									if ( $rule['operator'] == '==' && in_array($rule['value'], XmlExportEngine::$post_types)){
+
+								foreach($rule_details as $rule) {
+
+									if ( XmlExportEngine::$is_user_export && $rule['param'] == 'user_form' ) {
+										$is_acf_group_visible = true;
+										break;
+									} elseif ( XmlExportEngine::$is_taxonomy_export && $rule['param'] == 'taxonomy' ) {
+										$is_acf_group_visible = true;
+										break;
+									} elseif ( 'specific' == XmlExportEngine::$exportOptions['export_type'] && $rule['param'] == 'post_type' ) {
+										if ( $rule['operator'] == '==' && in_array( $rule['value'], XmlExportEngine::$post_types ) ) {
+											$is_acf_group_visible = true;
+											break;
+										} elseif ( $rule['operator'] != '==' && ! in_array( $rule['value'], XmlExportEngine::$post_types ) ) {
+											$is_acf_group_visible = true;
+											break;
+										}
+									} elseif ( 'advanced' == XmlExportEngine::$exportOptions['export_type'] ) {
+										$is_acf_group_visible = true;
+										break;
+									} // Include local ACF blocks field groups except when exporting Users.
+                                    elseif ( ! XmlExportEngine::$is_user_export && $rule['param'] == 'block' ) {
 										$is_acf_group_visible = true;
 										break;
 									}
-									elseif ( $rule['operator'] != '==' && ! in_array($rule['value'], XmlExportEngine::$post_types)){
-										$is_acf_group_visible = true;
-										break;
-									}
-								}
-								elseif( 'advanced' == XmlExportEngine::$exportOptions['export_type']){
-									$is_acf_group_visible = true;
-									break;
-								}
-								// Include local ACF blocks field groups except when exporting Users.
-                                elseif( !XmlExportEngine::$is_user_export && $rule['param'] == 'block'){
-									$is_acf_group_visible = true;
-									break;
 								}
 							}
 						}
@@ -1424,9 +1496,6 @@ if ( ! class_exists('XmlExportACF') )
 					</optgroup>
 					<?php
 				}
-				?>
-				</div>
-				<?php
 			}
 		}
 

@@ -8,6 +8,7 @@ use NinjaTables\Database\Migrations\NinjaTableItemsMigrator;
 use NinjaTables\Framework\Request\Request;
 use NinjaTables\Framework\Support\Arr;
 use NinjaTables\Framework\Support\Sanitizer;
+use NinjaTables\App\Models\NinjaTableItem;
 
 class TablesController extends Controller
 {
@@ -182,5 +183,29 @@ class TablesController extends Controller
         return [
             'html' => do_shortcode('[ninja_table_builder id="' . $tableId . '"]')
         ];
+    }
+
+    public function bulkDeleteColumns(Request $request, $id)
+    {
+        $deletableKeys = Arr::get($request->all(), 'deletable_keys', []);
+
+        $getAllColumns = get_post_meta($id, '_ninja_table_columns', true);
+
+        $filteredColumns = array_values(array_filter($getAllColumns, function ($column) use ($deletableKeys) {
+            return ! in_array($column['key'], $deletableKeys);
+        }));
+
+        update_post_meta($id, '_ninja_table_columns', $filteredColumns);
+
+        if (empty($filteredColumns)) {
+            NinjaTableItem::where('table_id', $id)->delete();
+        }
+
+        return $this->sendSuccess([
+            'data' => [
+                'message' => __('Columns deleted successfully.', 'ninja-tables'),
+                'columns' => $filteredColumns
+            ]
+        ], 200);
     }
 }
