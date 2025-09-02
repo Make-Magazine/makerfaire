@@ -6,18 +6,21 @@
 
 @font-face {
 	font-family: 'Roboto';
-	src: url('../fonts/Roboto-Regular.ttf');
-   font-display: fallback;
-}
-@font-face { // This is why we need a universal style guide
-	font-family: "Roboto Light";
-	src: url("../fonts/Roboto-Light.ttf");
-	font-display: fallback;
+	src: url('../fonts/Roboto-Regular.woff2') format('woff2'),
+       url('../fonts/Roboto-Regular.woff') format('woff');
+	font-display: swap;
 }
 @font-face {
-	font-family: "Roboto Bold";
-	src: url("../fonts/Roboto-Bold.ttf");
-	font-display: fallback;
+	font-family: 'Roboto Light';
+	src:  url('../fonts/Roboto-Light.woff2') format('woff2'),
+       url('../fonts/Roboto-Light.woff') format('woff');
+	font-display: swap;
+}
+@font-face {
+	font-family: 'Roboto Bold';
+	src:  url('../fonts/Roboto-Bold.woff2') format('woff2'),
+       url('../fonts/Roboto-Bold.woff') format('woff');
+	font-display: swap;
 }
 body {
   font-weight: 300;
