@@ -87,6 +87,10 @@ get_header();
   <input type="hidden" id="user_email" value="<?php echo $user_email; ?>" />
   <div class="row">
     <h1 style="text-align:center">Hello <?php echo $user_email; ?></h1>
+    <div style="text-align:center;padding:25px;margin:30px auto;background:#eb002a;font-weight:bold;color:#fff;border:solid 1px #999;border-radius:15px;max-width:1100px;">
+      <h1>THIS IS NOT THE MAKER PORTAL YOU ARE LOOKING FOR</h1>
+      <h2><a href="https://bayarea.makerfaire.com/#/?showSignIn=true" style="color:#fff;">Sign into your Maker Faire Bay Area 2025 Exhibitor Space here.</a></h2>
+</div>
 
     <h4 v-if="!showData" id="loadingMsg">Please wait while we retrieve your submitted entries. <img src="https://make.co/wp-content/universal-assets/v2/images/makey-spinner.gif" /></h4>
     
@@ -97,7 +101,7 @@ get_header();
         <div v-if="Date.now() < new Date(faire.faire_end_dt) || faire.entries.length!=0" class="help-message">Have questions? Email us at <a href="mailto:makers@make.co">makers@make.co</a></div>
       </div>
       <span v-if="Date.now() < new Date(faire.faire_end_dt) && faire.entries.length==0">
-        I'm sorry. We could not find any entries for your email.<br />Please submit one <a href='https://makerfaire.com/bay-area/apply'>HERE</a>
+        <!-- I'm sorry. We could not find any entries for your email.<br />Please submit one <a href='https://makerfaire.com/bay-area/apply'>HERE</a> -->
       </span>
 
       <b-card :id="entry.project_id" v-for="entry in faire.entries" :key="entry.project_id" style="margin-bottom:50px;">
