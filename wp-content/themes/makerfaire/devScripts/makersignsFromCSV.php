@@ -12,121 +12,515 @@
   </head>
   <body>
 
-    <h2>Update Form entries</h2>
+    <h2>Upload a CSV to generate Maker Signs</h2>
     <form method="post" enctype="multipart/form-data">
-      Select File to upload:
-      <input type="file" name="fileToUpload" id="fileToUpload">
-      <input type="submit" value="Upload" name="submit">
+        Select File to upload:
+        <input type="file" name="fileToUpload" id="fileToUpload">
+        <label for="faire">Faire Directory</label>
+        <input type="text" name="faire" id="faire">
+        <br />
+        <input type="submit" value="Upload" name="submit">
     </form>
-    <br/>Do not upload more than 15 records at a time.<br/>
-    It will time out!<br /><br/>
-    <ul>
-        <li>Note: File format should be CSV</li>
-        <li>Row 1: Field ID's</li>
-        <li>Row 2: Field Names</li>
-        <li>Row 3: Start of Data</li>
-        <li>Column A: Faire ID</li>
-        <li>Column B: Form ID</li>
-    </ul>
+    
   </body>
 </html>
 <?php
 include 'db_connect.php';
 
-
+const DPI = 96;
+const MM_IN_INCH = 25.4;
+//image sizes
+const MAX_WIDTH = 450;
+const MAX_HEIGHT = 450;
 
 if (isset($_POST["submit"]) ) {
-  $csv = [];
- if ( isset($_FILES["fileToUpload"])) {
-    //if there was an error uploading the file
-    if ($_FILES["fileToUpload"]["error"] > 0) {
-        echo "Return Code: " . $_FILES["fileToUpload"]["error"] . "<br />";
 
+    // require FPDF
+    require_once ('../generate_pdf/fpdf/fpdf.php');
+    // require clipping
+    require ('../generate_pdf/fpdf/clipping.php');
+    $csv = [];
+    if ( isset($_FILES["fileToUpload"])) {
+        //if there was an error uploading the file
+        if ($_FILES["fileToUpload"]["error"] > 0) {
+            echo "Return Code: " . $_FILES["fileToUpload"]["error"] . "<br />";
+        } else {
+            //save the file
+            $target_dir = "uploads/";
+            if(!file_exists($target_dir)){
+                mkdir("uploads/", 0777);
+            }
+            $target_file = $target_dir . basename($_FILES["fileToUpload"]["name"]).date('dmyhi');
+
+            $name = $_FILES['fileToUpload']['name'];
+            $nameArr = explode('.', $name);
+
+            $ext = strtolower(end($nameArr));
+
+            $type = $_FILES['fileToUpload']['type'];
+            $tmpName = $_FILES['fileToUpload']['tmp_name'];
+
+            //Print File Details
+            echo "<div style='padding:10px;border-radius:10px;border:solid 1px #333;margin:15px;background:#f1f1f1;'>";
+            echo "Upload: "    . $name . "<br />";
+            echo "Type: "      . $type . "<br />";
+            echo "Size: "      . ($_FILES["fileToUpload"]["size"] / 1024) . " Kb<br />";
+            echo "Temp file: " . $tmpName . "<br />";
+            //Save file to server
+            //if file already exists
+            $savedFile = "/dataUpload/upload/" . $name;
+            $savedFile = $target_file;
+            if (file_exists($savedFile)) {
+                echo $name . " already exists. ";
+            }else {
+                if ($_FILES['fileToUpload']['error'] == UPLOAD_ERR_OK) {
+                    //Store file in directory
+                    if( move_uploaded_file($tmpName, $savedFile) ) {
+                    echo "Stored in: " . $savedFile . "<br />";
+                    } else {
+                    echo "Not uploaded<br/>";
+                    }
+                }
+            }
+            echo "</div>";
+
+            $rows   = array_map('str_getcsv', file($savedFile));
+            $header = array_shift($rows);
+            foreach($rows as $row) {
+                $csv[] = array_combine($header, $row);
+            }
+        }
     } else {
-      //save the file
-      $target_dir = "uploads/";
-      if(!file_exists($target_dir)){
-          mkdir("uploads/", 0777);
-      }
-      $target_file = $target_dir . basename($_FILES["fileToUpload"]["name"]).date('dmyhi');
-
-      $name = $_FILES['fileToUpload']['name'];
-      $nameArr = explode('.', $name);
-
-      $ext = strtolower(end($nameArr));
-
-      $type = $_FILES['fileToUpload']['type'];
-      $tmpName = $_FILES['fileToUpload']['tmp_name'];
-
-      //Print File Details
-      echo "Upload: "    . $name . "<br />";
-      echo "Type: "      . $type . "<br />";
-      echo "Size: "      . ($_FILES["fileToUpload"]["size"] / 1024) . " Kb<br />";
-      echo "Temp file: " . $tmpName . "<br />";
-
-      //Save file to server
-       //if file already exists
-      $savedFile = "/dataUpload/upload/" . $name;
-      $savedFile = $target_file;
-       if (file_exists($savedFile)) {
-        echo $name . " already exists. ";
-       }else {
-        if ($_FILES['fileToUpload']['error'] == UPLOAD_ERR_OK) {
-          //Store file in directory
-          if( move_uploaded_file($tmpName, $savedFile) ) {
-            echo "Stored in: " . $savedFile . "<br />";
-          } else {
-            echo "Not uploaded<br/>";
-          }
-        }
-      }
-
-      if(($handle = fopen($savedFile, 'r')) !== FALSE) {
-        // necessary if a large csv file
-        set_time_limit(0);
-        $row = 0;
-        while(($data = fgetcsv($handle, 0, ',')) !== FALSE) {
-          // number of fields in the csv
-          foreach($data as $value){
-            $csv[$row][] = trim($value);
-          }
-          // inc the row
-          $row++;
-        }
-        fclose($handle);
-      }
+        echo "No file selected <br />";
     }
-  } else {
-    echo "No file selected <br />";
-  }
 
-  //row 0 contains field id's
-  //row 1 contains field names
-  $fieldIDs = $csv[0];
-  //$catKey = array_search('147.44', $fieldIDs);
-
-  unset($csv[0]);
-  unset($csv[1]);
-  $tableData = [];
-  $APIdata   = [];
-  $catArray  = [];
 
   foreach ($csv as $rowData){
-    $faire = $rowData[0];
-    $form  = $rowData[1];
-    unset($rowData[0]);
-    unset($rowData[1]);
-    if(trim($faire)!='' && trim($form)!=''){
-      //echo 'For ' .$faire .' setting form '.$form.'<br/>';
-      $data  = array('form_id'=>$form,'status'=>'active',"id" => "","date_created" => "");
-      foreach($rowData as $key => $value){
-        if($fieldIDs[$key] != ''  && $value !=''){
-          $data[$fieldIDs[$key]] = htmlentities($value);
-          //echo 'Setting field '.$fieldIDs[$key]. ' to '.htmlspecialchars($value).'<br/>';
+    echo '<pre>';
+    print_r($rowData);
+    echo '</pre>';
+    // Instanciation of inherited class
+    try {
+        $pdf = new PDF_Clipping();;
+        $pdf->AddFont('Benton Sans', 'B', 'bentonsans-bold-webfont.php');
+        $pdf->AddFont('Benton Sans', '', 'bentonsans-regular-webfont.php');
+        $pdf->AddFont('FontAwesome1','','FontAwesome47-P1.php'); // https://drive.google.com/file/d/1Y3NlxBZtXPcFUIwiLeQWzdzdoSe9f6xo/view?pli=1
+        $pdf->AddFont('FontAwesome2','','FontAwesome47-P2.php'); // https://drive.google.com/file/d/1XjjEyhkcD0mO6FTf0w9XHB4bwjMCL2ij/view
+        $pdf->AddFont('FontAwesome3','','FontAwesome47-P3.php'); // https://drive.google.com/file/d/10WBuA63DMbNPRWjKSKJpVSk4I1OPwh2R/view
+        $pdf->AddFont('FontAwesome4','','FontAwesome47-P4.php'); // https://drive.google.com/file/d/1lPeh5IGXY8Re6nNXEU7i0Wf63o97Svx0/view
+        $pdf->AddPage('P', array(288, 576));
+        $pdf->SetFont('Benton Sans', '', 12);
+        $pdf->Image('../generate_pdf/pdf_layouts/signBackground2024.png', 0, 0, 288, 576); // background image
+        
+        $pdf->SetMargins(20,139,22); //left, top, right
+
+        
+        // get the boothname, if one isn't set return an error
+        $booth_slug = str_replace(' ', '-', strtolower($rowData['Project Name']));
+
+        if (isset($booth_slug) && $booth_slug != '') {
+            $faire = $_POST['faire'];
+
+            $resizeImage = createOutput($rowData, $pdf);
+
+            // error_log("Resize Image: $resizeImage for $booth_slug");
+
+                $validFile = get_template_directory() . '/signs/' . $faire . '/maker/' . $booth_slug . '.pdf';
+                $errorFile = get_template_directory() . '/signs/' . $faire . '/maker/error/' . $booth_slug . '.pdf';
+
+                if ($resizeImage) {
+                    $filename = $validFile;
+                    // If the file exists in the error log - delete it  
+                    if (file_exists($errorFile)) {
+                        unlink(realpath($errorFile));
+                    }
+                } else {
+                    $filename = $errorFile;
+                    // If the file exists in the regular path - delete it    
+                    if (file_exists($validFile)) {
+                        unlink(realpath($validFile));
+                    }
+                }
+
+                $dirname = dirname($filename);
+                error_log($dirname);
+                
+                if (!is_dir($dirname)) {
+                    error_log("directory");
+                    mkdir($dirname, 0755, true);
+                }
+                if (ob_get_contents())
+                    ob_clean();
+                error_log($filename);
+                $pdf->Output($filename, 'F');
+
+
+
+            //error_log('after writing pdf '.date('h:i:s'),0);
+        } else {
+            echo 'No Entry ID submitted';
         }
-      }
-      $APIdata[] = $data;
+            
+    } catch (Exception $e) {
+        error_log("Unable to create PDF due to: " . $e);
     }
   }
-  $childID = call_api ($APIdata, $form);
+
+  exit();
+}
+
+
+
+function createOutput($rowData, $pdf) {
+   // Initialize the variable that the image was resized
+   $resizeImage = 1;
+
+   $project_photo = $rowData["Image Url"];
+   $project_title = $rowData["Project Name"];
+   $project_short = $rowData["Exhibit Description (to appear publicly on the website)"];
+   $project_title = preg_replace('/\v+|\\\[rn]/', '<br/>', $project_title);
+   $project_category = $rowData["Pick the category that best fits your project."];
+   $project_subarea = $rowData["Area"];
+   $project_booth = $rowData["Booth Name"];
+   $project_code = $rowData["BackstageExhibitorID"];
+   $project_id = $rowData["Unified Form ID"];
+
+   // Field from Gravity form which is maker image or group image
+   /*$group_photo = ($entry['111'] ? $entry['111'] : '');
+   $maker_photo = (($entry['217'] && !empty($entry['217']) && $entry['217'] != "[]" && $entry['217'] != '[]') ? $entry['217'] : $group_photo);
+
+   $photo = json_decode($maker_photo);
+
+   if (is_array($photo) && !empty($photo)) {
+      $maker_photo = $photo[0];
+   } else { // it's the final default image if no maker or group photo is found
+      $maker_photo = get_template_directory().'/images/default-makey-medium.png';
+   }*/
+
+
+   
+   /***************************************************************************
+    * Project Title
+    * auto adjust the font so the text will fit
+    ***************************************************************************/
+   $pdf->setTextColor(43, 143, 192);
+   $pdf->SetXY(16, 258);
+
+   // auto adjust the font so the text will fit
+   //$x = 72; // set the starting font size
+   $pdf->SetFont('Benton Sans', 'B', 32);
+
+   /* Cycle thru decreasing the font size until it's width is lower than the max width */
+   /*while ($pdf->GetStringWidth(utf8_decode($project_title)) > 410) {
+      $x = $x-.1; // Decrease the variable which holds the font size
+      $pdf->SetFont('Benton Sans', 'B', $x);
+   }
+   $lineHeight = $x * 0.2645833333333 * 1.5;*/
+
+   /* Output the title at the required font size */
+   $pdf->MultiCell(250, 18, $project_title, 0, 'L', false, 2);
+
+    /***************************************************************************
+    * field 16 - short description
+    * auto adjust the font so the text will fit
+    ***************************************************************************/   
+    $pdf->SetXY(16, 340);
+    $pdf->setTextColor(51, 51, 51);
+
+    // auto adjust the font so the text will fit
+    $sx = 24; // set the starting font size
+    $pdf->SetFont('Benton Sans', '', $sx);
+ 
+    // Cycle thru decreasing the font size until it's width is lower than the max width
+    /* while ($pdf->GetStringWidth(utf8_decode($project_short)) > 1500) {
+       $sx = $sx - .1; // Decrease the variable which holds the font size
+       $pdf->SetFont('Benton Sans', '', $sx);
+    }*/
+ 
+    $lineHeight = $sx * 0.2645833333333 * 1.8;
+ 
+    // the last parameter here will limit the amount of lines and end with an ellipsis
+    $pdf->MultiCell(250, $lineHeight, $project_short, 0, 'L', false, 6);
+
+   /***************************************************************************
+    * Location / Booth    
+    ***************************************************************************/
+    $pdf->setTextColor(245, 20, 0);
+    $pdf->SetFont('FontAwesome4', '', 26);
+    $pdf->Text(18, 312, chr(0x003D));
+    $pdf->setTextColor(51, 51, 51);
+    $pdf->SetFont('Benton Sans', '', 26);
+    $pdf->Text(32, 312, $project_subarea);
+    //$pdf->setTextColor(245, 20, 0);
+    //$pdf->SetFont('Benton Sans', '', 42);
+    //$pdf->Text(21, 267, $project_booth); // no longer showing booth
+
+    /***************************************************************************
+    * Type  
+    **************************************************************************
+    $pdf->setTextColor(245, 20, 0);
+    $pdf->SetFont('FontAwesome1', '', 26);
+    $pdf->Text(18, 310, chr(0x0031));
+    $pdf->setTextColor(51, 51, 51);
+    $pdf->SetFont('Benton Sans', '', 26);
+    $pdf->Text(32, 310, $project_type);*/
+
+    /***************************************************************************
+    * Category  
+    ***************************************************************************/
+    $pdf->setTextColor(245, 20, 0);
+    $pdf->SetFont('FontAwesome2', '', 26);
+    $pdf->Text(18, 325, chr(0x0078));
+    $pdf->setTextColor(51, 51, 51);
+    $pdf->SetFont('Benton Sans', '', 26);
+    $pdf->Text(32, 325, $project_category);
+ 
+     
+   /***************************************************************************
+    * QR code    
+    ***************************************************************************/
+
+   $entryURL = 'https://bayarea.makerfaire.com/#/booth/'.$project_code.'/';
+   $QR_Code = 'https://quickchart.io/qr?text=' . urlencode($entryURL) . '&dark=d82a2e&margin=5&size=150';
+   
+   $pdf->Image($QR_Code,163,445,105,null,image_type_to_extension(IMAGETYPE_PNG,false));
+
+   /***************************************************************************
+    * Project ID
+    ***************************************************************************/
+    $pdf->SetFont('Benton Sans', '', 18);
+    $pdf->setTextColor(91, 91, 91);
+    $pdf->SetXY(203, 540);
+    $pdf->MultiCell(115, 15, $project_code, 0, 'L');
+    
+          
+   /***************************************************************************
+    * field 22 - project photo
+    * image should never be larger than 450x450
+    ***************************************************************************/
+   if ($project_photo != '') {      
+      $photo_extension = pathinfo($project_photo, PATHINFO_EXTENSION);
+      if ($photo_extension) {
+         //fit image onto pdf
+         
+         //$project_photo = legacy_get_fit_remote_image_url( stripslashes($project_photo), 1200, 800, 0);
+         addZohoImageToPDF($pdf, $project_id, "Primary_Project_Photo", 0, 44.23, "1000.e6274d3259d610e4492686ff260ab4bd.94c74ead15159f38f00f9d0ed51ef3ef", 288, 192);
+
+         $pdf->Image($project_photo, 0, 44.23, 288, 192, $photo_extension);
+
+
+      } else {
+         error_log("Unable to find the image for entry $project_title for $project_photo");
+         $resizeImage = 0;
+      }
+   } else {
+      error_log("Missing image for $project_title");
+      $resizeImage = 0;
+   }
+
+
+   /***************************************************************************
+    * field 217 - Maker photo
+    * image should never be larger than 450x450
+    ***************************************************************************/
+   /*
+    if ($maker_photo != '') {      
+      $photo_extension = pathinfo($maker_photo, PATHINFO_EXTENSION);
+      if ($photo_extension) {
+         //fit image onto pdf
+         
+         $maker_photo = stripslashes($maker_photo);
+
+         $pdf->ClippingRoundedRect(15.5,439.5,116.5,117.5,13.5,true);
+         $pdf->Image($maker_photo,15,439,118,null,$photo_extension);
+         
+         //list($width, $height) = resizeToFit($maker_photo);
+                           
+         //$pdf->Image($maker_photo, 15, 439, $width, $height, $photo_extension);
+      } else {
+         error_log("Unable to find the Maker Photo for entry $entry_id for $maker_photo");
+         $resizeImage = 0;
+      }
+   } else {
+      error_log("Missing image for $entry_id");
+      $resizeImage = 0;
+   }*/
+   
+   /***************************************************************************
+    * maker info, use a background of white to overlay any long images or text
+    ***************************************************************************/
+   /*$pdf->setTextColor(0, 0, 0);
+   $pdf->SetFont('Benton Sans', 'B', 40);
+
+   $pdf->SetXY(50, 145.5);
+   if (!empty($groupbio)) {
+      // auto adjust the font so the text will fit
+      $sx = 40; // set the starting font size
+      // Cycle thru decreasing the font size until it's width is lower than the max width
+      while ($pdf->GetStringWidth(utf8_decode($groupname)) > 450) {
+         $sx = $sx - .1; // Decrease the variable which holds the font size
+         $pdf->SetFont('Benton Sans', 'B', $sx);
+      }
+
+      $lineHeight = $sx * 0.2645833333333 * 1.5;
+
+      $pdf->MultiCell(0, $lineHeight, $groupname, 0, 'L', true);
+
+      $pdf->setTextColor(0);
+      $pdf->SetFont('Benton Sans', '', 24);
+
+      // auto adjust the font so the text will fit
+      $x = 24; // set the starting font size
+
+      // Cycle thru decreasing the font size until it's width is lower than the max width 
+      while ($pdf->GetStringWidth($groupbio) > 850) {
+         $x = $x -.1; // Decrease the variable which holds the font size
+         $pdf->SetFont('Benton Sans', '', $x);
+      }
+      $lineHeight = $x * 0.2645833333333 * 1.5;
+      $pdf->MultiCell(0, $lineHeight, $groupbio, 0, 'L', true);
+   } else { 
+      $makerList = implode(', ', $makers);
+      $pdf->SetFont('Benton Sans', 'B', 38);
+
+      // auto adjust the font so the text will fit
+      $x = 50; // set the starting font size
+
+      // Cycle thru decreasing the font size until it's width is lower than the max width 
+      while ($pdf->GetStringWidth(utf8_decode($makerList)) > 450) {
+         $x = $x -.1; // Decrease the variable which holds the font size
+         $pdf->SetFont('Benton Sans', '', $x);
+      }
+      $lineHeight = $x * 0.2645833333333 * 1.5;
+      $pdf->MultiCell(120, $lineHeight, strtoupper($makerList), 0, 'L', false);
+      // if size of makers is 1, then display maker bio
+         if (sizeof($makers) == 1) {
+         $pdf->setTextColor(0);
+         $pdf->SetFont('Benton Sans', '', 24);
+
+         // auto adjust the font so the text will fit
+         $x = 24; // set the starting font size
+         // Cycle thru decreasing the font size until it's width is lower than the max width 
+         while ($pdf->GetStringWidth($bio) > 900) {
+            $x = $x-.1; // Decrease the variable which holds the font size
+            $pdf->SetFont('Benton Sans', '', $x);
+         }
+
+         $lineHeight = $x * 0.2645833333333 * 1.5;
+         $pdf->MultiCell(0, $lineHeight, $bio, 0, 'L', true);
+      }
+   //}*/
+   return $resizeImage;
+}
+
+function filterText($text) {
+   try {
+      $string = iconv('UTF-8', 'windows-1252//IGNORE', $text);
+   } catch (Exception $e) {
+      error_log("Unable to convert $text due to: " + $e);
+      ini_set('mbstring.substitute_character', "none");
+      $string = mb_convert_encoding($text, 'UTF-8', 'windows-1252');
+   }
+
+   // now translate any unicode stuff...
+   $conv = array(
+       "&amp;" => "&",
+       "&#039;" => "'"
+   );
+   return strtr($string, $conv);
+}
+
+function pixelsToMM($val) {
+   return $val * MM_IN_INCH / DPI;
+}
+
+function resizeToFit($imgFilename) {
+   list($width, $height) = getimagesize($imgFilename);
+   
+   $widthScale = MAX_WIDTH / $width;
+   $heightScale = MAX_HEIGHT / $height;
+   $scale = min($widthScale, $heightScale);
+
+   return array(
+       round(pixelsToMM($scale * $width)),
+       round(pixelsToMM($scale * $height))
+   );
+}
+
+/**
+ * Add a Zoho Creator image field to a PDF using API-signed URL
+ *
+ * @param object $pdf        PDF object (FPDF, TCPDF, etc.)
+ * @param string $recordId   Zoho Creator record ID
+ * @param string $fieldName  Image field API name
+ * @param float  $x          X position on PDF
+ * @param float  $y          Y position on PDF
+ * @param float  $w          Width on PDF (0 to auto scale)
+ * @param float  $h          Height on PDF (0 to auto scale)
+ * @param string $oauth      Zoho OAuth token
+ */
+function addZohoImageToPDF($pdf, $recordId, $fieldName, $x, $y, $oauth, $w = 0, $h = 0) {
+    $api_url = "https://creator.zoho.com/api/v2/gillian_make/make-co-registrations/report/Unified_Form_Table_Tag_Source/$recordId";
+
+    // Fetch record
+    $ch = curl_init($api_url);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, ["Authorization: Zoho-oauthtoken $oauth"]);
+    $response = curl_exec($ch);
+    $info = curl_getinfo($ch);
+    curl_close($ch);
+
+    if (!$response || $info['http_code'] != 200) {
+        error_log("Failed to fetch Zoho record: HTTP " . $info['http_code']);
+        return false;
+    }
+
+    $data = json_decode($response, true);
+
+    if (!isset($data['data'][$fieldName])) {
+        error_log("Image field not found or no URL in Zoho record.");
+        return false;
+    }
+
+    $image_api_url = "https://creator.zoho.com" . $data['data'][$fieldName];
+    error_log($image_api_url);
+
+    // Download image
+    $ch = curl_init($image_api_url);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, ["Authorization: Zoho-oauthtoken $oauth"]);
+    $image_data = curl_exec($ch);
+    $image_info = curl_getinfo($ch);
+    curl_close($ch);
+
+    if (!$image_data || strpos($image_info['content_type'], 'image') === false) {
+        error_log("Failed to download image or invalid content type: " . $image_info['content_type']);
+        return false;
+    }
+    // Remove any charset suffix
+    $content_type = $image_info['content_type'];
+    $content_type = explode(';', $content_type)[0];
+    $mime_map = [
+        'image/jpeg' => '.jpg',
+        'image/jpg'  => '.jpg',
+        'image/png'  => '.png',
+        'image/gif'  => '.gif',
+        'image/webp' => '.webp'
+    ];
+
+    if (!isset($mime_map[$content_type])) {
+        error_log("Unsupported image type: $content_type");
+        return false;
+    }
+
+    $ext = $mime_map[$content_type];
+    error_log($ext);
+    $tmpfile = tempnam(sys_get_temp_dir(), 'zoho_img_') . $ext;
+    file_put_contents($tmpfile, $image_data);
+
+    $pdf->Image($tmpfile, $x, $y, $w, $h);
+    unlink($tmpfile);
+
+    return true;
 }
