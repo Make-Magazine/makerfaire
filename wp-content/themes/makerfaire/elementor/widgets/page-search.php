@@ -61,12 +61,14 @@ class Page_Search extends Widget_Base {
 			mark.current {
 				background: orange;
 			}
+			.elementor-widget-page_search {
+				position: absolute;
+				top: -100px;
+				right: 15px;
+			}
 			.make-searchbar {
-				position: fixed;
 				flex-wrap: wrap;
 				display: flex;
-				top: 155px;
-				right: 0px;
 				z-index: 99999;
 				padding: 15px;
 				background: #f1f1f1;

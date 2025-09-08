@@ -125,36 +125,32 @@ if (isset($_POST["submit"]) ) {
 
             // error_log("Resize Image: $resizeImage for $booth_slug");
 
-                $validFile = get_template_directory() . '/signs/' . $faire . '/maker/' . $booth_slug . '.pdf';
-                $errorFile = get_template_directory() . '/signs/' . $faire . '/maker/error/' . $booth_slug . '.pdf';
+            $validFile = get_template_directory() . '/signs/' . $faire . '/maker/' . $booth_slug . '.pdf';
+            $errorFile = get_template_directory() . '/signs/' . $faire . '/maker/error/' . $booth_slug . '.pdf';
 
-                if ($resizeImage) {
-                    $filename = $validFile;
-                    // If the file exists in the error log - delete it  
-                    if (file_exists($errorFile)) {
-                        unlink(realpath($errorFile));
-                    }
-                } else {
-                    $filename = $errorFile;
-                    // If the file exists in the regular path - delete it    
-                    if (file_exists($validFile)) {
-                        unlink(realpath($validFile));
-                    }
+            if ($resizeImage) {
+                $filename = $validFile;
+                // If the file exists in the error log - delete it  
+                if (file_exists($errorFile)) {
+                    unlink(realpath($errorFile));
                 }
-
-                $dirname = dirname($filename);
-                error_log($dirname);
-                
-                if (!is_dir($dirname)) {
-                    error_log("directory");
-                    mkdir($dirname, 0755, true);
+            } else {
+                $filename = $errorFile;
+                // If the file exists in the regular path - delete it    
+                if (file_exists($validFile)) {
+                    unlink(realpath($validFile));
                 }
-                if (ob_get_contents())
-                    ob_clean();
-                error_log($filename);
-                $pdf->Output($filename, 'F');
+            }
 
-
+            $dirname = dirname($filename);
+            
+            if (!is_dir($dirname)) {
+                error_log("directory");
+                mkdir($dirname, 0755, true);
+            }
+            if (ob_get_contents())
+                ob_clean();
+            $pdf->Output($filename, 'F');
 
             //error_log('after writing pdf '.date('h:i:s'),0);
         } else {
@@ -172,33 +168,24 @@ if (isset($_POST["submit"]) ) {
 
 
 function createOutput($rowData, $pdf) {
-   // Initialize the variable that the image was resized
-   $resizeImage = 1;
+    // Initialize the variable that the image was resized
+    $resizeImage = 1;
 
-   $project_photo = $rowData["Image Url"];
-   $project_title = $rowData["Project Name"];
-   $project_short = $rowData["Exhibit Description (to appear publicly on the website)"];
-   $project_title = preg_replace('/\v+|\\\[rn]/', '<br/>', $project_title);
-   $project_category = $rowData["Pick the category that best fits your project."];
-   $project_subarea = $rowData["Area"];
-   $project_booth = $rowData["Booth Name"];
-   $project_code = $rowData["BackstageExhibitorID"];
-   $project_id = $rowData["Unified Form ID"];
+    $project_image = $rowData["Your Photo"];
+    $project_title = $rowData["Project Name"];
+    $project_short = $rowData["Exhibit Description (to appear publicly on the website)"];
+    $project_title = preg_replace('/\v+|\\\[rn]/', '<br/>', $project_title);
+    $project_category = $rowData["Pick the category that best fits your project."];
+    $project_subarea = $rowData["Area"];
+    $project_booth = $rowData["Booth Name"];
+    $project_code = $rowData["BackstageExhibitorID"];
+    $project_id = $rowData["Unified Form ID"];
 
-   // Field from Gravity form which is maker image or group image
-   /*$group_photo = ($entry['111'] ? $entry['111'] : '');
-   $maker_photo = (($entry['217'] && !empty($entry['217']) && $entry['217'] != "[]" && $entry['217'] != '[]') ? $entry['217'] : $group_photo);
+    $maker_photo = !empty($rowData["Your Photo"]) ? $rowData["Your Photo"] : $rowData["Group Photo"];
+    if(!empty($maker_photo)) {
+        $maker_photo = get_template_directory().'/images/default-makey-medium.png';
+    }
 
-   $photo = json_decode($maker_photo);
-
-   if (is_array($photo) && !empty($photo)) {
-      $maker_photo = $photo[0];
-   } else { // it's the final default image if no maker or group photo is found
-      $maker_photo = get_template_directory().'/images/default-makey-medium.png';
-   }*/
-
-
-   
    /***************************************************************************
     * Project Title
     * auto adjust the font so the text will fit
@@ -286,7 +273,7 @@ function createOutput($rowData, $pdf) {
    $pdf->Image($QR_Code,163,445,105,null,image_type_to_extension(IMAGETYPE_PNG,false));
 
    /***************************************************************************
-    * Project ID
+    * Project Code
     ***************************************************************************/
     $pdf->SetFont('Benton Sans', '', 18);
     $pdf->setTextColor(91, 91, 91);
@@ -295,22 +282,16 @@ function createOutput($rowData, $pdf) {
     
           
    /***************************************************************************
-    * field 22 - project photo
+    * project photo
     * image should never be larger than 450x450
     ***************************************************************************/
-   if ($project_photo != '') {      
-      $photo_extension = pathinfo($project_photo, PATHINFO_EXTENSION);
+   if ($project_image != '') {      
+      $photo_extension = pathinfo($project_image, PATHINFO_EXTENSION);
       if ($photo_extension) {
-         //fit image onto pdf
-         
-         //$project_photo = legacy_get_fit_remote_image_url( stripslashes($project_photo), 1200, 800, 0);
-         addZohoImageToPDF($pdf, $project_id, "Primary_Project_Photo", 0, 44.23, "1000.e6274d3259d610e4492686ff260ab4bd.94c74ead15159f38f00f9d0ed51ef3ef", 288, 192);
-
-         $pdf->Image($project_photo, 0, 44.23, 288, 192, $photo_extension);
-
-
+         //fit image onto pdf // Zoho Access Token needs to be refreshed every hour in Postman
+         addZohoImageToPDF($pdf, $project_id, "Primary_Project_Photo", $photo_extension, 0, 44.23, "1000.73cc17a06b6f9e3ea71820c25de1ec25.c76dfc3a6c5afc14393c86814ab8b12e", 288, 192, 1200, 800);
       } else {
-         error_log("Unable to find the image for entry $project_title for $project_photo");
+         error_log("Unable to find the image for entry $project_title for $project_image");
          $resizeImage = 0;
       }
    } else {
@@ -320,31 +301,31 @@ function createOutput($rowData, $pdf) {
 
 
    /***************************************************************************
-    * field 217 - Maker photo
+    * Maker photo
     * image should never be larger than 450x450
     ***************************************************************************/
-   /*
-    if ($maker_photo != '') {      
+    if ($maker_photo != '') {    
       $photo_extension = pathinfo($maker_photo, PATHINFO_EXTENSION);
       if ($photo_extension) {
          //fit image onto pdf
-         
          $maker_photo = stripslashes($maker_photo);
 
          $pdf->ClippingRoundedRect(15.5,439.5,116.5,117.5,13.5,true);
-         $pdf->Image($maker_photo,15,439,118,null,$photo_extension);
+         if(!empty($rowData["Group Photo"])) {
+            addZohoImageToPDF($pdf, $project_id, "Group_Photo", $photo_extension, 15, 439, "1000.73cc17a06b6f9e3ea71820c25de1ec25.c76dfc3a6c5afc14393c86814ab8b12e", 118);
+         } else {
+            addZohoImageToPDF($pdf, $project_id, "Your_Photo", $photo_extension, 15, 439, "1000.73cc17a06b6f9e3ea71820c25de1ec25.c76dfc3a6c5afc14393c86814ab8b12e", 118);
+         }
+         //$pdf->Image($maker_photo,15,439,118,null,$photo_extension);
          
-         //list($width, $height) = resizeToFit($maker_photo);
-                           
-         //$pdf->Image($maker_photo, 15, 439, $width, $height, $photo_extension);
       } else {
-         error_log("Unable to find the Maker Photo for entry $entry_id for $maker_photo");
+         error_log("Unable to find the Maker Photo for entry $project_title for $maker_photo");
          $resizeImage = 0;
       }
    } else {
-      error_log("Missing image for $entry_id");
+      error_log("Missing image for $project_title");
       $resizeImage = 0;
-   }*/
+   }
    
    /***************************************************************************
     * maker info, use a background of white to overlay any long images or text
@@ -459,10 +440,11 @@ function resizeToFit($imgFilename) {
  * @param float  $h          Height on PDF (0 to auto scale)
  * @param string $oauth      Zoho OAuth token
  */
-function addZohoImageToPDF($pdf, $recordId, $fieldName, $x, $y, $oauth, $w = 0, $h = 0) {
+function addZohoImageToPDF($pdf, $recordId, $fieldName, $ext, $x, $y, $oauth, $w = 0, $h = 0, $cropX = 800, $cropY = 800) {
+    // Build API URL for the record
     $api_url = "https://creator.zoho.com/api/v2/gillian_make/make-co-registrations/report/Unified_Form_Table_Tag_Source/$recordId";
 
-    // Fetch record
+    // Fetch record from Zoho
     $ch = curl_init($api_url);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_HTTPHEADER, ["Authorization: Zoho-oauthtoken $oauth"]);
@@ -476,17 +458,21 @@ function addZohoImageToPDF($pdf, $recordId, $fieldName, $x, $y, $oauth, $w = 0, 
     }
 
     $data = json_decode($response, true);
-
     if (!isset($data['data'][$fieldName])) {
-        error_log("Image field not found or no URL in Zoho record.");
+        error_log("Image field not found: $fieldName");
+        return false;
+    }
+    $image_path = $data['data'][$fieldName];
+
+    if (empty($image_path)) {
+        error_log("Image field is empty for field: $fieldName");
         return false;
     }
 
-    $image_api_url = "https://creator.zoho.com" . $data['data'][$fieldName];
-    error_log($image_api_url);
+    $image_url = "https://creator.zoho.com" . $image_path;
 
-    // Download image
-    $ch = curl_init($image_api_url);
+    // Download image via cURL with OAuth
+    $ch = curl_init($image_url);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
     curl_setopt($ch, CURLOPT_HTTPHEADER, ["Authorization: Zoho-oauthtoken $oauth"]);
@@ -494,33 +480,98 @@ function addZohoImageToPDF($pdf, $recordId, $fieldName, $x, $y, $oauth, $w = 0, 
     $image_info = curl_getinfo($ch);
     curl_close($ch);
 
+    // Verify downloaded content is an image
     if (!$image_data || strpos($image_info['content_type'], 'image') === false) {
         error_log("Failed to download image or invalid content type: " . $image_info['content_type']);
-        return false;
-    }
-    // Remove any charset suffix
-    $content_type = $image_info['content_type'];
-    $content_type = explode(';', $content_type)[0];
-    $mime_map = [
-        'image/jpeg' => '.jpg',
-        'image/jpg'  => '.jpg',
-        'image/png'  => '.png',
-        'image/gif'  => '.gif',
-        'image/webp' => '.webp'
-    ];
-
-    if (!isset($mime_map[$content_type])) {
-        error_log("Unsupported image type: $content_type");
+        error_log("Downloaded content length: " . strlen($image_data));
         return false;
     }
 
-    $ext = $mime_map[$content_type];
-    error_log($ext);
-    $tmpfile = tempnam(sys_get_temp_dir(), 'zoho_img_') . $ext;
+    // Save to temporary local file
+    $tmpfile = tempnam(sys_get_temp_dir(), 'zoho_img_') . "." . $ext;
     file_put_contents($tmpfile, $image_data);
 
-    $pdf->Image($tmpfile, $x, $y, $w, $h);
-    unlink($tmpfile);
+    if (!file_exists($tmpfile) || filesize($tmpfile) === 0) {
+        error_log("Downloaded image file is missing or empty: $tmpfile");
+        return false;
+    }
 
+    // Add image to PDF
+    try {
+        $cropped_image = cropImageToBox($tmpfile, $cropX, $cropY);
+        $pdf->Image($cropped_image, $x, $y, $w, $h);
+    } catch (Exception $e) {
+        error_log("FPDF failed to add image: " . $e->getMessage());
+        unlink($tmpfile);
+        return false;
+    }
+    unlink($tmpfile);
     return true;
+}
+
+function cropImageToBox($sourceFile, $targetWidth, $targetHeight) {
+    // Load image
+    $info = getimagesize($sourceFile);
+    $mime = $info['mime'];
+
+    switch ($mime) {
+        case 'image/jpeg':
+        case 'image/jpg':
+            $img = imagecreatefromjpeg($sourceFile);
+            break;
+        case 'image/png':
+            $img = imagecreatefrompng($sourceFile);
+            break;
+        case 'image/gif':
+            $img = imagecreatefromgif($sourceFile);
+            break;
+        case 'image/webp':
+            $img = imagecreatefromwebp($sourceFile);
+            break;
+        default:
+            return false;
+    }
+
+    $origWidth = imagesx($img);
+    $origHeight = imagesy($img);
+
+    // Compute aspect ratios
+    $srcRatio = $origWidth / $origHeight;
+    $targetRatio = $targetWidth / $targetHeight;
+
+    if ($srcRatio > $targetRatio) {
+        // Source is wider → crop width
+        $newHeight = $origHeight;
+        $newWidth = $origHeight * $targetRatio;
+        $srcX = ($origWidth - $newWidth) / 2;
+        $srcY = 0;
+    } else {
+        // Source is taller → crop height
+        $newWidth = $origWidth;
+        $newHeight = $origWidth / $targetRatio;
+        $srcX = 0;
+        $srcY = ($origHeight - $newHeight) / 2;
+    }
+
+    // Create new blank image
+    $dst = imagecreatetruecolor($targetWidth, $targetHeight);
+
+    // Preserve transparency for PNG/GIF/WebP
+    if ($mime === 'image/png' || $mime === 'image/gif' || $mime === 'image/webp') {
+        imagecolortransparent($dst, imagecolorallocatealpha($dst, 0, 0, 0, 127));
+        imagealphablending($dst, false);
+        imagesavealpha($dst, true);
+    }
+
+    // Copy cropped and resize
+    imagecopyresampled($dst, $img, 0, 0, $srcX, $srcY, $targetWidth, $targetHeight, $newWidth, $newHeight);
+
+    // Save to temp file
+    $tmpfile = tempnam(sys_get_temp_dir(), 'crop_') . '.png'; // use PNG for generality
+    imagepng($dst, $tmpfile);
+
+    imagedestroy($img);
+    imagedestroy($dst);
+
+    return $tmpfile;
 }
