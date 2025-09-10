@@ -115,7 +115,7 @@ if (isset($_POST["submit"]) ) {
         $pdf->SetMargins(20,139,22); //left, top, right
 
         
-        // get the boothname, if one isn't set return an error
+        // get the Project name to use as a slug, if one isn't set return an error
         $booth_slug = str_replace(' ', '-', strtolower($rowData['Project Name']));
 
         if (isset($booth_slug) && $booth_slug != '') {
@@ -154,7 +154,7 @@ if (isset($_POST["submit"]) ) {
 
             //error_log('after writing pdf '.date('h:i:s'),0);
         } else {
-            echo 'No Entry ID submitted';
+            echo 'No Booth Slug submitted';
         }
             
     } catch (Exception $e) {

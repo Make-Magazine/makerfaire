@@ -8,22 +8,38 @@ $year  = (isset($_GET['faire_year'])?$_GET['faire_year']:date("Y",strtotime("-1 
 $count = (isset($_GET['count'])?$_GET['count']:10);
 
 if($year!='') {
-    $args = array(
-        'post_type'		=> 'projects',
-        'post_status'	=> 'publish',
-        'orderby' 		=> 'rand',
-        'order'			=> 'asc',
-        'posts_per_page'=> $count,
-        'meta_query' => array(
+    // to get around caches, we are counting all posts within this period, and then running a random offset to truly randomize in a way order_by rand won't do
+    $total_query = new WP_Query(array(
+        'post_type'      => 'projects',
+        'post_status'    => 'publish',
+        'fields'         => 'ids',
+        'posts_per_page' => $count,
+        'meta_query'     => array(
             array(
-                'key' => 'faire_information_faire_year',
-                'value' => $year,
+                'key'     => 'faire_information_faire_year',
+                'value'   => $year,
                 'compare' => '='
-            )                   
+            ),
+        ),
+    ));
+    $total = $total_query->found_posts;
 
+    $offset = ($total > 1) ? rand(0, $total - 1) : 0;
+
+    $args = array(
+        'post_type'      => 'projects',
+        'post_status'    => 'publish',
+        'posts_per_page' => $count,
+        'offset'         => $offset,
+        'meta_query'     => array(
+            array(
+                'key'     => 'faire_information_faire_year',
+                'value'   => $year,
+                'compare' => '='
+            ),
         ),
     );
-    $query = new WP_Query( $args );
+    $query = new WP_Query($args);
     $posts = $query->posts;
 }
 
