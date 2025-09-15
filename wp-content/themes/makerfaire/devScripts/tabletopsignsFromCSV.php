@@ -173,9 +173,9 @@ function createOutput($rowData, $pdf) {
     $subarea = $rowData["Area"];
     $booth = $rowData["Booth Name"];
     $chairs = $rowData["Number of Chairs"] ? $rowData["Number of Chairs"] : 0;
-    $tables = $rowData["Number of Tables"] ? $rowData["Number of Tables"] : 0;;
-    $elec_120V = $rowData["Elec_120V"] ? $rowData["Elec_120V"] : 0;;
-    error_log(print_r($rowData, TRUE));
+    $tables = $rowData["Number of Tables"] ? $rowData["Number of Tables"] : 0;
+    $elec_120V = $rowData["Elec_120V"] ? $rowData["Elec_120V"] : 0;
+    $other_resources = $rowData["Exhibitor Resources"] ? true : ($rowData["Sponsor Order Payment"] ? true : false);
 
     $pdf->SetXY(4, 62);
     $x = 25;    // set the starting font size
@@ -191,22 +191,36 @@ function createOutput($rowData, $pdf) {
     /* Output the title at the required font size */
     $pdf->MultiCell(0, $lineHeight, $project_title,0,'C');
 
-    $location = "Zone: " . $zone . " - Area: " . $subarea . " - Booth: " . $booth;
-    $pdf->SetXY(100, 80);
-    $pdf->SetFont( 'Benton Sans','B',14);
+    $pdf->SetXY(4, 15);
+    $pdf->SetFont( 'Benton Sans','B',72);
     $lineHeight = 14*0.2645833333333*1.3;
-    $pdf->Cell( 0, 10, $location, 0, 0, 'R' );
+    $pdf->Cell( 0, 10, $booth, 0, 0, 'C' );
+
+    $location = "Zone: " . $zone . " - Area: " . $subarea;
+    $pdf->SetXY(4, 35);
+    $pdf->SetFont( 'Benton Sans','B',24);
+    $lineHeight = 14*0.2645833333333*1.3;
+    $pdf->Cell( 0, 10, $location, 0, 0, 'C' );
 
     //Resource information
     $pdf->SetXY(100, 87);
     $pdf->SetFont('Benton Sans','',14);
     $lineHeight = 15*0.2645833333333*1.3;
 
+    $resources = "Basic Resources:";
     $resources = "Chairs - " . $chairs . "\n";
     $resources .= "Tables - " . $tables . "\n";
     $resources .= "Elec 120V - " . $elec_120V . "\n";
-    error_log($resources);
+
     $pdf->MultiCell(0, $lineHeight, $resources,0,'R');
+
+    if($other_resources == true) {
+        $pdf->SetXY(100, 107);
+        $pdf->SetFont( 'Benton Sans','B',14);
+        //$pdf->SetTextColor(255, 0, 0);
+        $lineHeight = 14*0.2645833333333*1.3;
+        $pdf->Cell( 0, 10, "See Reports for additional resources needed", 0, 0, 'R' );
+    }
     
     $file = $zone . "_" . str_replace(' ', '-', strtolower($subarea)) . "_" . str_replace(' ', '-', strtolower($project_title));
     return $file;
