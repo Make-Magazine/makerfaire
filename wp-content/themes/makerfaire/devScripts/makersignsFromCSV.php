@@ -84,8 +84,16 @@ if (isset($_POST["submit"]) ) {
             }
             echo "</div>";
 
-            $rows   = array_map('str_getcsv', file($savedFile));
+            $rows = [];
+            if (($handle = fopen($savedFile, "r")) !== FALSE) {
+                while (($data = fgetcsv($handle)) !== FALSE) {
+                    $rows[] = $data;
+                }
+                fclose($handle);
+            }
             $header = array_shift($rows);
+            //error_log(print_r($rows, TRUE));
+            //error_log(print_r($header, TRUE));
             foreach($rows as $row) {
                 $csv[] = array_combine($header, $row);
             }
@@ -108,9 +116,9 @@ if (isset($_POST["submit"]) ) {
         $pdf->AddFont('FontAwesome2','','FontAwesome47-P2.php'); // https://drive.google.com/file/d/1XjjEyhkcD0mO6FTf0w9XHB4bwjMCL2ij/view
         $pdf->AddFont('FontAwesome3','','FontAwesome47-P3.php'); // https://drive.google.com/file/d/10WBuA63DMbNPRWjKSKJpVSk4I1OPwh2R/view
         $pdf->AddFont('FontAwesome4','','FontAwesome47-P4.php'); // https://drive.google.com/file/d/1lPeh5IGXY8Re6nNXEU7i0Wf63o97Svx0/view
-        $pdf->AddPage('P', array(288, 576));
+        $pdf->AddPage('P', array(381, 381));
         $pdf->SetFont('Benton Sans', '', 12);
-        $pdf->Image('../generate_pdf/pdf_layouts/signBackground2024.png', 0, 0, 288, 576); // background image
+        $pdf->Image('../generate_pdf/pdf_layouts/signBackground2025.png', 0, 0, 381, 381); // background image
         
         $pdf->SetMargins(20,139,22); //left, top, right
 
@@ -171,7 +179,7 @@ function createOutput($rowData, $pdf) {
     // Initialize the variable that the image was resized
     $resizeImage = 1;
 
-    $project_image = $rowData["Your Photo"];
+    $project_image = $rowData["Primary Project Photo"];
     $project_title = $rowData["Project Name"];
     $project_short = $rowData["Exhibit Description (to appear publicly on the website)"];
     $project_title = preg_replace('/\v+|\\\[rn]/', '<br/>', $project_title);
@@ -180,38 +188,61 @@ function createOutput($rowData, $pdf) {
     $project_booth = $rowData["Booth Name"];
     $project_code = $rowData["BackstageExhibitorID"];
     $project_id = $rowData["Unified Form ID"];
+    $name = !empty($rowData["Group Name*"]) ? $rowData["Group Name*"] : $rowData["Name"];
 
-    $maker_photo = !empty($rowData["Your Photo"]) ? $rowData["Your Photo"] : $rowData["Group Photo"];
+    /*$maker_photo = !empty($rowData["Your Photo"]) ? $rowData["Your Photo"] : $rowData["Group Photo"];
     if(!empty($maker_photo)) {
         $maker_photo = get_template_directory().'/images/default-makey-medium.png';
-    }
+    }*/
 
    /***************************************************************************
     * Project Title
     * auto adjust the font so the text will fit
     ***************************************************************************/
-   $pdf->setTextColor(43, 143, 192);
-   $pdf->SetXY(16, 258);
+   $pdf->setTextColor(245, 73, 39);
+   $pdf->SetXY(20, 40);
 
    // auto adjust the font so the text will fit
-   //$x = 72; // set the starting font size
-   $pdf->SetFont('Benton Sans', 'B', 32);
+   $x = 72; // set the starting font size
+   $pdf->SetFont('Benton Sans', 'B', 72);
 
    /* Cycle thru decreasing the font size until it's width is lower than the max width */
    /*while ($pdf->GetStringWidth(utf8_decode($project_title)) > 410) {
       $x = $x-.1; // Decrease the variable which holds the font size
       $pdf->SetFont('Benton Sans', 'B', $x);
-   }
-   $lineHeight = $x * 0.2645833333333 * 1.5;*/
+   } */
+   $lineHeight = $x * 0.2645833333333 * 1.5;
 
    /* Output the title at the required font size */
-   $pdf->MultiCell(250, 18, $project_title, 0, 'L', false, 2);
+   $pdf->MultiCell(340, $lineHeight, strtoupper($project_title), 0, 'C');
 
     /***************************************************************************
-    * field 16 - short description
+    * Maker / Group Name
+    * auto adjust the font so the text will fit
+    ***************************************************************************/
+   $pdf->setTextColor(0, 0, 0);
+   $pdf->SetXY(21, 140);
+
+   // auto adjust the font so the text will fit
+   $x = 52; // set the starting font size
+   $pdf->SetFont('Benton Sans', '', 52);
+
+   /* Cycle thru decreasing the font size until it's width is lower than the max width */
+   /*while ($pdf->GetStringWidth(utf8_decode($project_title)) > 410) {
+      $x = $x-.1; // Decrease the variable which holds the font size
+      $pdf->SetFont('Benton Sans', 'B', $x);
+   } */
+   $lineHeight = $x * 0.2645833333333 * 1.5;
+
+   /* Output the title at the required font size */
+   $name = str_replace(" ", "\n", strtoupper($name));
+   $pdf->MultiCell(340, $lineHeight, $name, 0, 'L');
+
+    /***************************************************************************
+    * short description
     * auto adjust the font so the text will fit
     ***************************************************************************/   
-    $pdf->SetXY(16, 340);
+    /*$pdf->SetXY(16, 340);
     $pdf->setTextColor(51, 51, 51);
 
     // auto adjust the font so the text will fit
@@ -224,20 +255,21 @@ function createOutput($rowData, $pdf) {
        $pdf->SetFont('Benton Sans', '', $sx);
     }*/
  
-    $lineHeight = $sx * 0.2645833333333 * 1.8;
+    //$lineHeight = $sx * 0.2645833333333 * 1.8;
  
     // the last parameter here will limit the amount of lines and end with an ellipsis
-    $pdf->MultiCell(250, $lineHeight, $project_short, 0, 'L', false, 6);
+    //$pdf->MultiCell(250, $lineHeight, $project_short, 0, 'L', false, 6);
 
    /***************************************************************************
     * Location / Booth    
     ***************************************************************************/
-    $pdf->setTextColor(245, 20, 0);
-    $pdf->SetFont('FontAwesome4', '', 26);
-    $pdf->Text(18, 312, chr(0x003D));
-    $pdf->setTextColor(51, 51, 51);
-    $pdf->SetFont('Benton Sans', '', 26);
-    $pdf->Text(32, 312, $project_subarea);
+    //$pdf->setTextColor(245, 20, 0);
+    //$pdf->SetFont('FontAwesome4', '', 26);
+    //$pdf->Text(21, 267, chr(0x003D));
+    $pdf->SetXY(21, 247);
+    $pdf->setTextColor(255, 255, 255);
+    $pdf->SetFont('Benton Sans', '', 42);
+    $pdf->MultiCell(340, str_replace("_", "\n", strtoupper($project_subarea)), 100, "L");
     //$pdf->setTextColor(245, 20, 0);
     //$pdf->SetFont('Benton Sans', '', 42);
     //$pdf->Text(21, 267, $project_booth); // no longer showing booth
@@ -255,30 +287,32 @@ function createOutput($rowData, $pdf) {
     /***************************************************************************
     * Category  
     ***************************************************************************/
-    $pdf->setTextColor(245, 20, 0);
+    /*$pdf->setTextColor(245, 20, 0);
     $pdf->SetFont('FontAwesome2', '', 26);
     $pdf->Text(18, 325, chr(0x0078));
     $pdf->setTextColor(51, 51, 51);
     $pdf->SetFont('Benton Sans', '', 26);
-    $pdf->Text(32, 325, $project_category);
+    $pdf->Text(32, 325, $project_category);*/
  
      
    /***************************************************************************
     * QR code    
     ***************************************************************************/
-
-   $entryURL = 'https://bayarea.makerfaire.com/#/booth/'.$project_code.'/';
-   $QR_Code = 'https://quickchart.io/qr?text=' . urlencode($entryURL) . '&dark=d82a2e&margin=5&size=150';
+    $pdf->setTextColor(255, 255, 255);
+    $pdf->SetFont('Benton Sans', '', 33);
+    $pdf->Text(21, 297, "Learn More");
+    $entryURL = 'https://bayarea.makerfaire.com/#/booth/'.$project_code.'/';
+    $QR_Code = 'https://quickchart.io/qr?text=' . urlencode($entryURL) . '&dark=333333&margin=5&size=150';
+    $pdf->Image($QR_Code,20,305,65,null,image_type_to_extension(IMAGETYPE_PNG,false));
    
-   $pdf->Image($QR_Code,163,445,105,null,image_type_to_extension(IMAGETYPE_PNG,false));
 
    /***************************************************************************
     * Project Code
     ***************************************************************************/
-    $pdf->SetFont('Benton Sans', '', 18);
+    /*$pdf->SetFont('Benton Sans', '', 18);
     $pdf->setTextColor(91, 91, 91);
     $pdf->SetXY(203, 540);
-    $pdf->MultiCell(115, 15, $project_code, 0, 'L');
+    $pdf->MultiCell(115, 15, $project_code, 0, 'L');*/
     
           
    /***************************************************************************
@@ -289,7 +323,7 @@ function createOutput($rowData, $pdf) {
       $photo_extension = pathinfo($project_image, PATHINFO_EXTENSION);
       if ($photo_extension) {
          //fit image onto pdf // Zoho Access Token needs to be refreshed every hour in Postman
-         addZohoImageToPDF($pdf, $project_id, "Primary_Project_Photo", $photo_extension, 0, 44.23, "1000.73cc17a06b6f9e3ea71820c25de1ec25.c76dfc3a6c5afc14393c86814ab8b12e", 288, 192, 1200, 800);
+         addZohoImageToPDF($pdf, $project_id, "Primary_Project_Photo", "1000.9828517f5a8d08d70782340472d03dc8.49ebfbe9f771aef2577b2d806c67e222", 257, 220, 83, 'center');
       } else {
          error_log("Unable to find the image for entry $project_title for $project_image");
          $resizeImage = 0;
@@ -299,11 +333,13 @@ function createOutput($rowData, $pdf) {
       $resizeImage = 0;
    }
 
+    $pdf->Image('../generate_pdf/pdf_layouts/mareIslandMakey.png', 265, 230, 100, 132); // branding
 
    /***************************************************************************
     * Maker photo
     * image should never be larger than 450x450
     ***************************************************************************/
+   /*
     if ($maker_photo != '') {    
       $photo_extension = pathinfo($maker_photo, PATHINFO_EXTENSION);
       if ($photo_extension) {
@@ -312,9 +348,9 @@ function createOutput($rowData, $pdf) {
 
          $pdf->ClippingRoundedRect(15.5,439.5,116.5,117.5,13.5,true);
          if(!empty($rowData["Group Photo"])) {
-            addZohoImageToPDF($pdf, $project_id, "Group_Photo", $photo_extension, 15, 439, "1000.73cc17a06b6f9e3ea71820c25de1ec25.c76dfc3a6c5afc14393c86814ab8b12e", 118);
+            addZohoImageToPDF($pdf, $project_id, "Group_Photo", "1000.15890933f6edace510db5cb75f7c7faa.65e10b87d3bd59df63b46343d4ab1539", 15, 439, 118);
          } else {
-            addZohoImageToPDF($pdf, $project_id, "Your_Photo", $photo_extension, 15, 439, "1000.73cc17a06b6f9e3ea71820c25de1ec25.c76dfc3a6c5afc14393c86814ab8b12e", 118);
+            addZohoImageToPDF($pdf, $project_id, "Your_Photo", "1000.15890933f6edace510db5cb75f7c7faa.65e10b87d3bd59df63b46343d4ab1539" 15, 439, 118);
          }
          //$pdf->Image($maker_photo,15,439,118,null,$photo_extension);
          
@@ -325,7 +361,7 @@ function createOutput($rowData, $pdf) {
    } else {
       error_log("Missing image for $project_title");
       $resizeImage = 0;
-   }
+   }*/
    
    /***************************************************************************
     * maker info, use a background of white to overlay any long images or text
@@ -440,11 +476,12 @@ function resizeToFit($imgFilename) {
  * @param float  $h          Height on PDF (0 to auto scale)
  * @param string $oauth      Zoho OAuth token
  */
-function addZohoImageToPDF($pdf, $recordId, $fieldName, $ext, $x, $y, $oauth, $w = 0, $h = 0, $cropX = 800, $cropY = 800) {
-    // Build API URL for the record
-    $api_url = "https://creator.zoho.com/api/v2/gillian_make/make-co-registrations/report/Unified_Form_Table_Tag_Source/$recordId";
 
-    // Fetch record from Zoho
+function addZohoImageToPDF($pdf, $recordId, $fieldName, $oauth, $circleX, $circleY, $circleR, $focus = 'center') {
+    // Build API URL for the record
+    $api_url = "https://creator.zoho.com/api/v2/gillian_make/make-co-registrations/report/Unified_Form_Maker_Sign_Source/$recordId";
+
+    // Fetch record metadata
     $ch = curl_init($api_url);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_HTTPHEADER, ["Authorization: Zoho-oauthtoken $oauth"]);
@@ -458,20 +495,15 @@ function addZohoImageToPDF($pdf, $recordId, $fieldName, $ext, $x, $y, $oauth, $w
     }
 
     $data = json_decode($response, true);
-    if (!isset($data['data'][$fieldName])) {
-        error_log("Image field not found: $fieldName");
+    //error_log(print_r($data, TRUE));
+    if (!isset($data['data'][$fieldName]) || empty($data['data'][$fieldName])) {
+        error_log("Image field missing or empty: $fieldName");
         return false;
     }
-    $image_path = $data['data'][$fieldName];
+    $image_url = "https://creator.zoho.com" . $data['data'][$fieldName];
+    //error_log($image_url);
 
-    if (empty($image_path)) {
-        error_log("Image field is empty for field: $fieldName");
-        return false;
-    }
-
-    $image_url = "https://creator.zoho.com" . $image_path;
-
-    // Download image via cURL with OAuth
+    // Download image binary via cURL with OAuth
     $ch = curl_init($image_url);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
@@ -480,34 +512,100 @@ function addZohoImageToPDF($pdf, $recordId, $fieldName, $ext, $x, $y, $oauth, $w
     $image_info = curl_getinfo($ch);
     curl_close($ch);
 
-    // Verify downloaded content is an image
-    if (!$image_data || strpos($image_info['content_type'], 'image') === false) {
-        error_log("Failed to download image or invalid content type: " . $image_info['content_type']);
-        error_log("Downloaded content length: " . strlen($image_data));
+    if (!$image_data) {
+        error_log("No image data returned from $image_url");
         return false;
     }
 
-    // Save to temporary local file
+    // Detect actual type using finfo
+    $finfo = new finfo(FILEINFO_MIME_TYPE);
+    $mime  = $finfo->buffer($image_data);
+
+    switch ($mime) {
+        case 'image/jpeg': $ext = 'jpg'; break;
+        case 'image/png':  $ext = 'png'; break;
+        case 'image/gif':  $ext = 'gif'; break;
+        case 'image/webp': $ext = 'webp'; break;
+        default:
+            error_log("Unsupported image type: $mime from $image_url");
+            return false;
+    }
+
+    // Save temp file
     $tmpfile = tempnam(sys_get_temp_dir(), 'zoho_img_') . "." . $ext;
     file_put_contents($tmpfile, $image_data);
 
     if (!file_exists($tmpfile) || filesize($tmpfile) === 0) {
-        error_log("Downloaded image file is missing or empty: $tmpfile");
+        error_log("Temp image file missing/empty: $tmpfile");
         return false;
     }
 
-    // Add image to PDF
+    // Place into PDF with circle crop
     try {
-        $cropped_image = cropImageToBox($tmpfile, $cropX, $cropY);
-        $pdf->Image($cropped_image, $x, $y, $w, $h);
+        list($img_w, $img_h) = getimagesize($tmpfile);
+
+        $circle_diameter = $circleR * 2;
+
+        // Scale to cover circle
+        $scale = max($circle_diameter / $img_w, $circle_diameter / $img_h);
+        $new_w = $img_w * $scale;
+        $new_h = $img_h * $scale;
+
+        // Default center offsets
+        $offsetX = $circleX - ($new_w / 2);
+        $offsetY = $circleY - ($new_h / 2);
+
+        // Adjust offsets based on $focus
+        switch (strtolower($focus)) {
+            case 'top':
+                $offsetY = $circleY - $circleR; // align top of circle
+                break;
+            case 'bottom':
+                $offsetY = $circleY - ($new_h - $circleR); // align bottom
+                break;
+            case 'left':
+                $offsetX = $circleX - $circleR;
+                break;
+            case 'right':
+                $offsetX = $circleX - ($new_w - $circleR);
+                break;
+            case 'topleft':
+                $offsetX = $circleX - $circleR;
+                $offsetY = $circleY - $circleR;
+                break;
+            case 'topright':
+                $offsetX = $circleX - ($new_w - $circleR);
+                $offsetY = $circleY - $circleR;
+                break;
+            case 'bottomleft':
+                $offsetX = $circleX - $circleR;
+                $offsetY = $circleY - ($new_h - $circleR);
+                break;
+            case 'bottomright':
+                $offsetX = $circleX - ($new_w - $circleR);
+                $offsetY = $circleY - ($new_h - $circleR);
+                break;
+            case 'center':
+            default:
+                // already centered
+                break;
+        }
+
+        // Clip to circle and draw
+        $pdf->ClippingCircle($circleX, $circleY, $circleR, false);
+        $pdf->Image($tmpfile, $offsetX, $offsetY, $new_w, $new_h, strtoupper($ext));
+        $pdf->UnsetClipping();
+
     } catch (Exception $e) {
         error_log("FPDF failed to add image: " . $e->getMessage());
         unlink($tmpfile);
         return false;
     }
+
     unlink($tmpfile);
     return true;
 }
+
 
 function cropImageToBox($sourceFile, $targetWidth, $targetHeight) {
     // Load image
