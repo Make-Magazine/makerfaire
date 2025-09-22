@@ -102,10 +102,7 @@ if (isset($_POST["submit"]) ) {
         echo "No file selected <br />";
     }
 
-    $batch_of = 25;
-    $batch = array_chunk($csv, $batch_of);
-    foreach($batch as $b) {
-        foreach ($b as $rowData){
+        foreach ($csv as $rowData){
             echo '<pre>';
             print_r($rowData);
             echo '</pre>';
@@ -173,11 +170,11 @@ if (isset($_POST["submit"]) ) {
                 error_log("Unable to create PDF due to: " . $e);
             }
         }
-        sleep(25);
+     
     }
 
     exit();
-}
+
 
 
 
@@ -330,7 +327,7 @@ function createOutput($rowData, $pdf) {
         $photo_extension = pathinfo($project_image, PATHINFO_EXTENSION);
         if ($photo_extension) {
             //fit image onto pdf // Zoho Access Token needs to be refreshed every hour in Postman
-            addZohoImageToPDF($pdf, $project_id, "Primary_Project_Photo", "1000.0b802af7c6040fc870f5656371f20374.6893db9002830bed23e43e360d5b9ecb", 257, 220, 83, 'center');
+            addZohoImageToPDF($pdf, $project_id, "Primary_Project_Photo", "1000.0fac1aab05d9772f81ca093cd444992c.718c9f78b3207b68ae041dafc5d3e773", 257, 220, 83, 'center');
         } else {
             error_log("Unable to find the image for entry $project_title for $project_image");
             $resizeImage = 0;
