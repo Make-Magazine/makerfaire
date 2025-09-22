@@ -102,75 +102,81 @@ if (isset($_POST["submit"]) ) {
         echo "No file selected <br />";
     }
 
+    $batch_of = 25;
+    $batch = array_chunk($csv, $batch_of);
+    foreach($batch as $b) {
+        foreach ($b as $rowData){
+            echo '<pre>';
+            print_r($rowData);
+            echo '</pre>';
+            // Instanciation of inherited class
+            try {
+                $pdf = new PDF_Clipping();;
+                $pdf->AddFont('Benton Sans', 'B', 'bentonsans-bold-webfont.php');
+                $pdf->AddFont('Benton Sans', '', 'bentonsans-regular-webfont.php');
+                $pdf->AddFont('FontAwesome1','','FontAwesome47-P1.php'); // https://drive.google.com/file/d/1Y3NlxBZtXPcFUIwiLeQWzdzdoSe9f6xo/view?pli=1
+                $pdf->AddFont('FontAwesome2','','FontAwesome47-P2.php'); // https://drive.google.com/file/d/1XjjEyhkcD0mO6FTf0w9XHB4bwjMCL2ij/view
+                $pdf->AddFont('FontAwesome3','','FontAwesome47-P3.php'); // https://drive.google.com/file/d/10WBuA63DMbNPRWjKSKJpVSk4I1OPwh2R/view
+                $pdf->AddFont('FontAwesome4','','FontAwesome47-P4.php'); // https://drive.google.com/file/d/1lPeh5IGXY8Re6nNXEU7i0Wf63o97Svx0/view
+                $pdf->AddPage('P', array(381, 381));
+                $pdf->SetFont('Benton Sans', '', 12);
+                $pdf->Image('../generate_pdf/pdf_layouts/signBackground2025.png', 0, 0, 381, 381); // background image
+                
+                $pdf->SetMargins(20,139,22); //left, top, right
 
-  foreach ($csv as $rowData){
-    echo '<pre>';
-    print_r($rowData);
-    echo '</pre>';
-    // Instanciation of inherited class
-    try {
-        $pdf = new PDF_Clipping();;
-        $pdf->AddFont('Benton Sans', 'B', 'bentonsans-bold-webfont.php');
-        $pdf->AddFont('Benton Sans', '', 'bentonsans-regular-webfont.php');
-        $pdf->AddFont('FontAwesome1','','FontAwesome47-P1.php'); // https://drive.google.com/file/d/1Y3NlxBZtXPcFUIwiLeQWzdzdoSe9f6xo/view?pli=1
-        $pdf->AddFont('FontAwesome2','','FontAwesome47-P2.php'); // https://drive.google.com/file/d/1XjjEyhkcD0mO6FTf0w9XHB4bwjMCL2ij/view
-        $pdf->AddFont('FontAwesome3','','FontAwesome47-P3.php'); // https://drive.google.com/file/d/10WBuA63DMbNPRWjKSKJpVSk4I1OPwh2R/view
-        $pdf->AddFont('FontAwesome4','','FontAwesome47-P4.php'); // https://drive.google.com/file/d/1lPeh5IGXY8Re6nNXEU7i0Wf63o97Svx0/view
-        $pdf->AddPage('P', array(381, 381));
-        $pdf->SetFont('Benton Sans', '', 12);
-        $pdf->Image('../generate_pdf/pdf_layouts/signBackground2025.png', 0, 0, 381, 381); // background image
-        
-        $pdf->SetMargins(20,139,22); //left, top, right
+                
+                // get the Project name to use as a slug, if one isn't set return an error
+                $booth_slug = str_replace(array('/', ' '), '-', strtolower($rowData['Project Name']));
+                $project_area = str_replace(array('/', ' '), '-', strtolower($rowData["Area"]));
+                $project_zone = str_replace(array('/', ' '), '-', strtolower($rowData["Zone"]));
 
-        
-        // get the Project name to use as a slug, if one isn't set return an error
-        $booth_slug = str_replace(' ', '-', strtolower($rowData['Project Name']));
+                if (isset($booth_slug) && $booth_slug != '') {
+                    $faire = $_POST['faire'];
 
-        if (isset($booth_slug) && $booth_slug != '') {
-            $faire = $_POST['faire'];
+                    $resizeImage = createOutput($rowData, $pdf);
 
-            $resizeImage = createOutput($rowData, $pdf);
+                    // error_log("Resize Image: $resizeImage for $booth_slug");
 
-            // error_log("Resize Image: $resizeImage for $booth_slug");
+                    $validFile = get_template_directory() . '/signs/' . $faire . '/maker/' . $project_zone . "_" . $project_area . "_" . $booth_slug . '.pdf';
+                    $errorFile = get_template_directory() . '/signs/' . $faire . '/maker/error/' . $project_zone . "_" . $project_area . "_" .$booth_slug . '.pdf';
 
-            $validFile = get_template_directory() . '/signs/' . $faire . '/maker/' . $booth_slug . '.pdf';
-            $errorFile = get_template_directory() . '/signs/' . $faire . '/maker/error/' . $booth_slug . '.pdf';
+                    if ($resizeImage) {
+                        $filename = $validFile;
+                        // If the file exists in the error log - delete it  
+                        if (file_exists($errorFile)) {
+                            unlink(realpath($errorFile));
+                        }
+                    } else {
+                        $filename = $errorFile;
+                        // If the file exists in the regular path - delete it    
+                        if (file_exists($validFile)) {
+                            unlink(realpath($validFile));
+                        }
+                    }
 
-            if ($resizeImage) {
-                $filename = $validFile;
-                // If the file exists in the error log - delete it  
-                if (file_exists($errorFile)) {
-                    unlink(realpath($errorFile));
+                    $dirname = dirname($filename);
+                    
+                    if (!is_dir($dirname)) {
+                        error_log("directory");
+                        mkdir($dirname, 0755, true);
+                    }
+                    if (ob_get_contents())
+                        ob_clean();
+                    $pdf->Output($filename, 'F');
+
+                    //error_log('after writing pdf '.date('h:i:s'),0);
+                } else {
+                    echo 'No Booth Slug submitted';
                 }
-            } else {
-                $filename = $errorFile;
-                // If the file exists in the regular path - delete it    
-                if (file_exists($validFile)) {
-                    unlink(realpath($validFile));
-                }
+                    
+            } catch (Exception $e) {
+                error_log("Unable to create PDF due to: " . $e);
             }
-
-            $dirname = dirname($filename);
-            
-            if (!is_dir($dirname)) {
-                error_log("directory");
-                mkdir($dirname, 0755, true);
-            }
-            if (ob_get_contents())
-                ob_clean();
-            $pdf->Output($filename, 'F');
-
-            //error_log('after writing pdf '.date('h:i:s'),0);
-        } else {
-            echo 'No Booth Slug submitted';
         }
-            
-    } catch (Exception $e) {
-        error_log("Unable to create PDF due to: " . $e);
+        sleep(25);
     }
-  }
 
-  exit();
+    exit();
 }
 
 
@@ -225,7 +231,7 @@ function createOutput($rowData, $pdf) {
 
    // auto adjust the font so the text will fit
    $x = 52; // set the starting font size
-   $pdf->SetFont('Benton Sans', '', 52);
+   $pdf->SetFont('Benton Sans', '', $x);
 
    /* Cycle thru decreasing the font size until it's width is lower than the max width */
    /*while ($pdf->GetStringWidth(utf8_decode($project_title)) > 410) {
@@ -235,8 +241,8 @@ function createOutput($rowData, $pdf) {
    $lineHeight = $x * 0.2645833333333 * 1.5;
 
    /* Output the title at the required font size */
-   $name = str_replace(" ", "\n", strtoupper($name));
-   $pdf->MultiCell(340, $lineHeight, $name, 0, 'L');
+   //$name = str_replace(" ", "\n", strtoupper($name));
+   //$pdf->MultiCell(340, $lineHeight, $name, 0, 'L');
 
     /***************************************************************************
     * short description
@@ -266,10 +272,11 @@ function createOutput($rowData, $pdf) {
     //$pdf->setTextColor(245, 20, 0);
     //$pdf->SetFont('FontAwesome4', '', 26);
     //$pdf->Text(21, 267, chr(0x003D));
-    $pdf->SetXY(21, 247);
+    $pdf->SetXY(21, 237);
     $pdf->setTextColor(255, 255, 255);
     $pdf->SetFont('Benton Sans', '', 42);
-    $pdf->MultiCell(340, str_replace("_", "\n", strtoupper($project_subarea)), 100, "L");
+    $lineHeight = 42 * 0.2645833333333 * 1.5;
+    $pdf->MultiCell(340, $lineHeight, str_replace("_", "\n", strtoupper($project_subarea)), 100, "L");
     //$pdf->setTextColor(245, 20, 0);
     //$pdf->SetFont('Benton Sans', '', 42);
     //$pdf->Text(21, 267, $project_booth); // no longer showing booth
@@ -315,23 +322,23 @@ function createOutput($rowData, $pdf) {
     $pdf->MultiCell(115, 15, $project_code, 0, 'L');*/
     
           
-   /***************************************************************************
+    /***************************************************************************
     * project photo
     * image should never be larger than 450x450
     ***************************************************************************/
-   if ($project_image != '') {      
-      $photo_extension = pathinfo($project_image, PATHINFO_EXTENSION);
-      if ($photo_extension) {
-         //fit image onto pdf // Zoho Access Token needs to be refreshed every hour in Postman
-         addZohoImageToPDF($pdf, $project_id, "Primary_Project_Photo", "1000.9828517f5a8d08d70782340472d03dc8.49ebfbe9f771aef2577b2d806c67e222", 257, 220, 83, 'center');
-      } else {
-         error_log("Unable to find the image for entry $project_title for $project_image");
-         $resizeImage = 0;
-      }
-   } else {
-      error_log("Missing image for $project_title");
-      $resizeImage = 0;
-   }
+    if ($project_image != '') {      
+        $photo_extension = pathinfo($project_image, PATHINFO_EXTENSION);
+        if ($photo_extension) {
+            //fit image onto pdf // Zoho Access Token needs to be refreshed every hour in Postman
+            addZohoImageToPDF($pdf, $project_id, "Primary_Project_Photo", "1000.0b802af7c6040fc870f5656371f20374.6893db9002830bed23e43e360d5b9ecb", 257, 220, 83, 'center');
+        } else {
+            error_log("Unable to find the image for entry $project_title for $project_image");
+            $resizeImage = 0;
+        }
+    } else {
+        error_log("Missing image for $project_title");
+        $resizeImage = 0;
+    }
 
     $pdf->Image('../generate_pdf/pdf_layouts/mareIslandMakey.png', 265, 230, 100, 132); // branding
 
@@ -526,6 +533,7 @@ function addZohoImageToPDF($pdf, $recordId, $fieldName, $oauth, $circleX, $circl
         case 'image/png':  $ext = 'png'; break;
         case 'image/gif':  $ext = 'gif'; break;
         case 'image/webp': $ext = 'webp'; break;
+        case 'image/heic': $ext = 'heic'; break;
         default:
             error_log("Unsupported image type: $mime from $image_url");
             return false;
@@ -538,6 +546,34 @@ function addZohoImageToPDF($pdf, $recordId, $fieldName, $oauth, $circleX, $circl
     if (!file_exists($tmpfile) || filesize($tmpfile) === 0) {
         error_log("Temp image file missing/empty: $tmpfile");
         return false;
+    }
+
+    // Convert unsupported formats to PNG
+    if ($ext === 'webp') {
+        $im = imagecreatefromwebp($tmpfile);
+        if ($im) {
+            $pngFile = preg_replace('/\.webp$/', '.png', $tmpfile);
+            imagepng($im, $pngFile);
+            imagedestroy($im);
+            unlink($tmpfile); // remove original webp
+            $tmpfile = $pngFile;
+            $ext = 'png';
+        }
+    } elseif ($ext === 'heic') {
+        try {
+            $imagick = new Imagick($tmpfile);
+            $pngFile = preg_replace('/\.heic$/', '.png', $tmpfile);
+            $imagick->setImageFormat('png');
+            $imagick->writeImage($pngFile);
+            $imagick->clear();
+            $imagick->destroy();
+            unlink($tmpfile); // remove original heic
+            $tmpfile = $pngFile;
+            $ext = 'png';
+        } catch (Exception $e) {
+            error_log("HEIC conversion failed: " . $e->getMessage());
+            return false;
+        }
     }
 
     // Place into PDF with circle crop

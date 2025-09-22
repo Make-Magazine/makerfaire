@@ -167,6 +167,10 @@ class Util {
 	 */
 	public static function grunion_contact_form_set_block_template_attribute( $template ) {
 		global $_wp_current_template_content;
+		if ( ! is_string( $template ) ) {
+			return $template;
+		}
+
 		if ( 'template-canvas.php' === basename( $template ) ) {
 			Contact_Form::style_on();
 			$_wp_current_template_content = self::grunion_contact_form_apply_block_attribute(
@@ -326,6 +330,11 @@ class Util {
 	 * @return string
 	 */
 	public static function grunion_contact_form_apply_block_attribute( $content, $new_attr ) {
+		if ( ! is_string( $content ) ) {
+			// If the content is not a string, we cannot process it.
+			return $content;
+		}
+
 		if ( false === stripos( $content, 'wp:jetpack/contact-form' ) ) {
 			return $content;
 		}

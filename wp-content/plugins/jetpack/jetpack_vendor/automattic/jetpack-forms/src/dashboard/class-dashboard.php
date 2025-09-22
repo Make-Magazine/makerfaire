@@ -17,6 +17,10 @@ use Automattic\Jetpack\Status;
 use Automattic\Jetpack\Status\Host;
 use Automattic\Jetpack\Tracking;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit( 0 );
+}
+
 /**
  * Handles the Jetpack Forms dashboard.
  */
@@ -225,8 +229,10 @@ class Dashboard {
 			'hasAI'                   => $has_ai,
 			'enableIntegrationsTab'   => self::$show_integrations,
 			'renderMigrationPage'     => $this->switch->is_jetpack_forms_announcing_new_menu(),
-			'dashboardURL'            => $this->switch->get_forms_admin_url(),
+			'dashboardURL'            => add_query_arg( 'jetpack_forms_migration_announcement_seen', 'yes', $this->switch->get_forms_admin_url() ),
+			'isMailpoetEnabled'       => Jetpack_Forms::is_mailpoet_enabled(),
 		);
+
 		if ( ! empty( $extra_config ) ) {
 			$config = array_merge( $config, $extra_config );
 		}

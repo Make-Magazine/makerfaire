@@ -7,6 +7,10 @@
 
 namespace Automattic\Jetpack\UnauthFileUpload;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit( 0 );
+}
+
 add_action( 'wp_ajax_jetpack_unauth_file_download', __NAMESPACE__ . '\handle_file_download' );
 add_filter( 'jetpack_unauth_file_upload_get_file', __NAMESPACE__ . '\get_file_content', 10, 2 );
 add_filter( 'jetpack_unauth_file_download_url', __NAMESPACE__ . '\filter_get_download_url', 10, 2 );
@@ -93,7 +97,7 @@ function handle_file_download() {
 
 	// Output file content and exit
 	echo $file['content']; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Binary file data
-	exit;
+	exit( 0 );
 }
 
 /**

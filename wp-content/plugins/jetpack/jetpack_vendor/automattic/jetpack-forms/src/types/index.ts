@@ -1,3 +1,6 @@
+import type { ILanguage } from '../contact-form/libs/date-picker/interfaces';
+import type { ReactNode } from 'react';
+
 /**
  * Describes an integration (plugin or service) available for Jetpack Forms.
  */
@@ -22,6 +25,8 @@ export interface Integration {
 	version?: string | null;
 	/** The URL to the integration's settings page, if available. */
 	settingsUrl?: string | null;
+	/** A URL to learn about the integration, if available. */
+	marketingUrl?: string | null;
 	/** Additional details about the integration. */
 	details: Record< string, unknown >;
 }
@@ -97,6 +102,8 @@ export interface JPFormsBlocksDefaults {
 	formsResponsesUrl?: string;
 	/** The URL for spam form responses. */
 	formsResponsesSpamUrl?: string;
+	/** Whether MailPoet integration is enabled. */
+	isMailPoetEnabled?: boolean;
 }
 
 /**
@@ -112,6 +119,15 @@ declare global {
 			tracks?: {
 				recordEvent: ( event: string, props?: Record< string, unknown > ) => void;
 			};
+		};
+		MSStream?: unknown;
+		ajaxurl?: string;
+		jpDatePicker?: {
+			lang: ILanguage;
+			offset: string;
+		};
+		jetpackForms?: {
+			generateStyleVariables: ( formNode: HTMLElement ) => Record< string, string >;
 		};
 	}
 }
@@ -132,15 +148,50 @@ export type IntegrationCardData = Partial< Integration > & {
 	/** Tooltip to show when the toggle is disabled. */
 	toggleDisabledTooltip?: string;
 	/** Badge or element to show in the header for setup state. */
-	setupBadge?: React.ReactNode;
+	setupBadge?: ReactNode;
 	/** Function to refresh the integration status. */
 	refreshStatus?: () => void;
 	/** Event name for tracking analytics. */
 	trackEventName?: string;
 	/** Message to show when the integration is not installed. */
-	notInstalledMessage?: React.ReactNode;
+	notInstalledMessage?: ReactNode;
 	/** Message to show when the integration is not activated. */
-	notActivatedMessage?: React.ReactNode;
+	notActivatedMessage?: ReactNode;
 	/** Whether the card is in a loading state. */
 	isLoading?: boolean;
+};
+
+/**
+ * Represents a Gutenberg block
+ */
+export type Block = {
+	attributes?: {
+		[ key: string ]: unknown;
+	};
+	clientId?: string;
+	innerBlocks?: Block[];
+	isValid?: boolean;
+	name?: string;
+	originalContent?: string;
+};
+
+/**
+ * Dispatch actions for the block editor store.
+ */
+export type BlockEditorStoreDispatch = {
+	insertBlock: ( block: Block, index: number, parentClientId: string ) => void;
+	removeBlock: ( clientId: string, isInnerBlock?: boolean ) => void;
+};
+
+/**
+ * Select actions for the block editor store.
+ */
+export type BlockEditorStoreSelect = {
+	getBlock: ( clientId: string ) => Block;
+	getBlocks: ( clientId: string ) => Block[];
+	hasSelectedInnerBlock: ( clientId: string, isInnerBlock: boolean ) => boolean;
+	getBlockRootClientId: ( clientId: string ) => string;
+	getSelectedBlock: () => Block;
+	getBlockIndex: ( clientId: string ) => number;
+	getBlockParentsByBlockName: ( clientId: string, blockName: string ) => string[];
 };

@@ -11,7 +11,11 @@ const MailPoetDashboardCard = ( {
 	data,
 	refreshStatus,
 }: SingleIntegrationCardProps ) => {
-	const { isConnected: mailpoetActiveWithKey = false, settingsUrl = '' } = data || {};
+	const {
+		isConnected: mailpoetActiveWithKey = false,
+		settingsUrl = '',
+		marketingUrl = '',
+	} = data || {};
 
 	const cardData: IntegrationCardData = {
 		...data,
@@ -25,7 +29,7 @@ const MailPoetDashboardCard = ( {
 				'jetpack-forms'
 			),
 			{
-				a: <ExternalLink href={ 'https://wordpress.org/plugins/mailpoet/' } />,
+				a: <ExternalLink href={ marketingUrl } />,
 			}
 		),
 		notActivatedMessage: __(
@@ -52,7 +56,7 @@ const MailPoetDashboardCard = ( {
 					<p className="integration-card__description">
 						{ createInterpolateElement(
 							__(
-								'MailPoet is active. There is one step left. Please add your <a>MailPoet key</a>.',
+								'MailPoet is active. There is one step left. Please complete <a>MailPoet setup</a>.',
 								'jetpack-forms'
 							),
 							{
@@ -68,7 +72,7 @@ const MailPoetDashboardCard = ( {
 							rel="noopener noreferrer"
 							__next40pxDefaultSize={ true }
 						>
-							{ __( 'Add MailPoet key', 'jetpack-forms' ) }
+							{ __( 'Complete MailPoet setup', 'jetpack-forms' ) }
 						</Button>
 						<Button variant="tertiary" onClick={ refreshStatus } __next40pxDefaultSize={ true }>
 							{ __( 'Refresh status', 'jetpack-forms' ) }
@@ -80,11 +84,9 @@ const MailPoetDashboardCard = ( {
 					<p className="integration-card__description">
 						{ __( 'You can now send marketing emails with MailPoet.', 'jetpack-forms' ) }
 					</p>
-					<div className="integration-card__links">
-						<Button variant="link" href={ settingsUrl } target="_blank" rel="noopener noreferrer">
-							{ __( 'View MailPoet dashboard', 'jetpack-forms' ) }
-						</Button>
-					</div>
+					<Button variant="link" href={ settingsUrl } target="_blank" rel="noopener noreferrer">
+						{ __( 'View MailPoet dashboard', 'jetpack-forms' ) }
+					</Button>
 				</div>
 			) }
 		</IntegrationCard>
