@@ -327,7 +327,7 @@ function createOutput($rowData, $pdf) {
         $photo_extension = pathinfo($project_image, PATHINFO_EXTENSION);
         if ($photo_extension) {
             //fit image onto pdf // Zoho Access Token needs to be refreshed every hour in Postman
-            addZohoImageToPDF($pdf, $project_id, "Primary_Project_Photo", "1000.0fac1aab05d9772f81ca093cd444992c.718c9f78b3207b68ae041dafc5d3e773", 257, 220, 83, 'center');
+            addZohoImageToPDF($pdf, $project_id, "Primary_Project_Photo", "1000.2ce0175172617d443489e5ee917b007f.a030b57402acf78067cf478cf299b547", 257, 220, 83, 'center');
         } else {
             error_log("Unable to find the image for entry $project_title for $project_image");
             $resizeImage = 0;
