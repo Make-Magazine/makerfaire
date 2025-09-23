@@ -327,7 +327,11 @@ function createOutput($rowData, $pdf) {
         $photo_extension = pathinfo($project_image, PATHINFO_EXTENSION);
         if ($photo_extension) {
             //fit image onto pdf // Zoho Access Token needs to be refreshed every hour in Postman
-            addZohoImageToPDF($pdf, $project_id, "Primary_Project_Photo", "1000.2ce0175172617d443489e5ee917b007f.a030b57402acf78067cf478cf299b547", 257, 220, 83, 'center');
+            if(str_contains($project_image, "https://makerfaire.com")) {
+                addZohoImageToPDF($pdf, $project_id, $project_image, "1000.4919c8cc03b34931535ac891abbff204.8be3704df1a3f7034c1a160d0e3f873a", 257, 220, 83, 'center');
+            } else {
+                addZohoImageToPDF($pdf, $project_id, "Primary_Project_Photo", "1000.4919c8cc03b34931535ac891abbff204.8be3704df1a3f7034c1a160d0e3f873a", 257, 220, 83, 'center');
+            }
         } else {
             error_log("Unable to find the image for entry $project_title for $project_image");
             $resizeImage = 0;
@@ -337,7 +341,7 @@ function createOutput($rowData, $pdf) {
         $resizeImage = 0;
     }
 
-    $pdf->Image('../generate_pdf/pdf_layouts/mareIslandMakey.png', 265, 230, 100, 132); // branding
+    $pdf->Image('../generate_pdf/pdf_layouts/mareIslandMakey.png', 265, 260, 100); // branding
 
    /***************************************************************************
     * Maker photo
@@ -482,94 +486,99 @@ function resizeToFit($imgFilename) {
  */
 
 function addZohoImageToPDF($pdf, $recordId, $fieldName, $oauth, $circleX, $circleY, $circleR, $focus = 'center') {
-    // Build API URL for the record
-    $api_url = "https://creator.zoho.com/api/v2/gillian_make/make-co-registrations/report/Unified_Form_Maker_Sign_Source/$recordId";
+    if(str_contains($fieldName, "https://makerfaire.com")) {
+        $tmpfile = $fieldName;
+        $ext = pathinfo($fieldName, PATHINFO_EXTENSION);
+    } else {
+        // Build API URL for the record
+        $api_url = "https://creator.zoho.com/api/v2/gillian_make/make-co-registrations/report/Unified_Form_Maker_Sign_Source/$recordId";
 
-    // Fetch record metadata
-    $ch = curl_init($api_url);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_HTTPHEADER, ["Authorization: Zoho-oauthtoken $oauth"]);
-    $response = curl_exec($ch);
-    $info = curl_getinfo($ch);
-    curl_close($ch);
+        // Fetch record metadata
+        $ch = curl_init($api_url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, ["Authorization: Zoho-oauthtoken $oauth"]);
+        $response = curl_exec($ch);
+        $info = curl_getinfo($ch);
+        curl_close($ch);
 
-    if (!$response || $info['http_code'] != 200) {
-        error_log("Failed to fetch Zoho record: HTTP " . $info['http_code']);
-        return false;
-    }
-
-    $data = json_decode($response, true);
-    //error_log(print_r($data, TRUE));
-    if (!isset($data['data'][$fieldName]) || empty($data['data'][$fieldName])) {
-        error_log("Image field missing or empty: $fieldName");
-        return false;
-    }
-    $image_url = "https://creator.zoho.com" . $data['data'][$fieldName];
-    //error_log($image_url);
-
-    // Download image binary via cURL with OAuth
-    $ch = curl_init($image_url);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-    curl_setopt($ch, CURLOPT_HTTPHEADER, ["Authorization: Zoho-oauthtoken $oauth"]);
-    $image_data = curl_exec($ch);
-    $image_info = curl_getinfo($ch);
-    curl_close($ch);
-
-    if (!$image_data) {
-        error_log("No image data returned from $image_url");
-        return false;
-    }
-
-    // Detect actual type using finfo
-    $finfo = new finfo(FILEINFO_MIME_TYPE);
-    $mime  = $finfo->buffer($image_data);
-
-    switch ($mime) {
-        case 'image/jpeg': $ext = 'jpg'; break;
-        case 'image/png':  $ext = 'png'; break;
-        case 'image/gif':  $ext = 'gif'; break;
-        case 'image/webp': $ext = 'webp'; break;
-        case 'image/heic': $ext = 'heic'; break;
-        default:
-            error_log("Unsupported image type: $mime from $image_url");
+        if (!$response || $info['http_code'] != 200) {
+            error_log("Failed to fetch Zoho record: HTTP " . $info['http_code']);
             return false;
-    }
-
-    // Save temp file
-    $tmpfile = tempnam(sys_get_temp_dir(), 'zoho_img_') . "." . $ext;
-    file_put_contents($tmpfile, $image_data);
-
-    if (!file_exists($tmpfile) || filesize($tmpfile) === 0) {
-        error_log("Temp image file missing/empty: $tmpfile");
-        return false;
-    }
-
-    // Convert unsupported formats to PNG
-    if ($ext === 'webp') {
-        $im = imagecreatefromwebp($tmpfile);
-        if ($im) {
-            $pngFile = preg_replace('/\.webp$/', '.png', $tmpfile);
-            imagepng($im, $pngFile);
-            imagedestroy($im);
-            unlink($tmpfile); // remove original webp
-            $tmpfile = $pngFile;
-            $ext = 'png';
         }
-    } elseif ($ext === 'heic') {
-        try {
-            $imagick = new Imagick($tmpfile);
-            $pngFile = preg_replace('/\.heic$/', '.png', $tmpfile);
-            $imagick->setImageFormat('png');
-            $imagick->writeImage($pngFile);
-            $imagick->clear();
-            $imagick->destroy();
-            unlink($tmpfile); // remove original heic
-            $tmpfile = $pngFile;
-            $ext = 'png';
-        } catch (Exception $e) {
-            error_log("HEIC conversion failed: " . $e->getMessage());
+
+        $data = json_decode($response, true);
+        //error_log(print_r($data, TRUE));
+        if (!isset($data['data'][$fieldName]) || empty($data['data'][$fieldName])) {
+            error_log("Image field missing or empty: $fieldName");
             return false;
+        }
+        $image_url = "https://creator.zoho.com" . $data['data'][$fieldName];
+        //error_log($image_url);
+
+        // Download image binary via cURL with OAuth
+        $ch = curl_init($image_url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, ["Authorization: Zoho-oauthtoken $oauth"]);
+        $image_data = curl_exec($ch);
+        $image_info = curl_getinfo($ch);
+        curl_close($ch);
+
+        if (!$image_data) {
+            error_log("No image data returned from $image_url");
+            return false;
+        }
+
+        // Detect actual type using finfo
+        $finfo = new finfo(FILEINFO_MIME_TYPE);
+        $mime  = $finfo->buffer($image_data);
+
+        switch ($mime) {
+            case 'image/jpeg': $ext = 'jpg'; break;
+            case 'image/png':  $ext = 'png'; break;
+            case 'image/gif':  $ext = 'gif'; break;
+            case 'image/webp': $ext = 'webp'; break;
+            case 'image/heic': $ext = 'heic'; break;
+            default:
+                error_log("Unsupported image type: $mime from $image_url");
+                return false;
+        }
+
+        // Save temp file
+        $tmpfile = tempnam(sys_get_temp_dir(), 'zoho_img_') . "." . $ext;
+        file_put_contents($tmpfile, $image_data);
+
+        if (!file_exists($tmpfile) || filesize($tmpfile) === 0) {
+            error_log("Temp image file missing/empty: $tmpfile");
+            return false;
+        }
+
+        // Convert unsupported formats to PNG
+        if ($ext === 'webp') {
+            $im = imagecreatefromwebp($tmpfile);
+            if ($im) {
+                $pngFile = preg_replace('/\.webp$/', '.png', $tmpfile);
+                imagepng($im, $pngFile);
+                imagedestroy($im);
+                unlink($tmpfile); // remove original webp
+                $tmpfile = $pngFile;
+                $ext = 'png';
+            }
+        } elseif ($ext === 'heic') {
+            try {
+                $imagick = new Imagick($tmpfile);
+                $pngFile = preg_replace('/\.heic$/', '.png', $tmpfile);
+                $imagick->setImageFormat('png');
+                $imagick->writeImage($pngFile);
+                $imagick->clear();
+                $imagick->destroy();
+                unlink($tmpfile); // remove original heic
+                $tmpfile = $pngFile;
+                $ext = 'png';
+            } catch (Exception $e) {
+                error_log("HEIC conversion failed: " . $e->getMessage());
+                return false;
+            }
         }
     }
 
@@ -626,6 +635,10 @@ function addZohoImageToPDF($pdf, $recordId, $fieldName, $oauth, $circleX, $circl
 
         // Clip to circle and draw
         $pdf->ClippingCircle($circleX, $circleY, $circleR, false);
+        /*error_log($tmpfile);
+        error_log($offsetX);
+        error_log($circleX);
+        error_log($ext);*/
         $pdf->Image($tmpfile, $offsetX, $offsetY, $new_w, $new_h, strtoupper($ext));
         $pdf->UnsetClipping();
 
@@ -634,8 +647,9 @@ function addZohoImageToPDF($pdf, $recordId, $fieldName, $oauth, $circleX, $circl
         unlink($tmpfile);
         return false;
     }
-
-    unlink($tmpfile);
+    if(!str_contains($fieldName, "https://makerfaire.com")) {
+        unlink($tmpfile);
+    }
     return true;
 }
 
