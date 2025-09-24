@@ -328,10 +328,12 @@ function createOutput($rowData, $pdf) {
         if ($photo_extension) {
             //fit image onto pdf // Zoho Access Token needs to be refreshed every hour in Postman
             if(str_contains($project_image, "https://makerfaire.com")) {
-                addZohoImageToPDF($pdf, $project_id, $project_image, "1000.0fe63cc6444edbbbd6e1ef273b37f7b6.2330aff2353fbb977a460f27d9f61332", 257, 220, 83, 'center');
+                $image = $project_image;
             } else {
-                addZohoImageToPDF($pdf, $project_id, "Primary_Project_Photo", "1000.0fe63cc6444edbbbd6e1ef273b37f7b6.2330aff2353fbb977a460f27d9f61332", 257, 220, 83, 'center');
+                $image = "Primary_Project_Photo";
             }
+            addZohoImageToPDF($pdf, $project_id, $image, "1000.07f873f313d1ecfe1dfeb9a50870f93d.da66ad724d380a9aff57fcfa1b82c3d8", 257, 220, 83, 'center');
+
         } else {
             error_log("Unable to find the image for entry $project_title for $project_image");
             $resizeImage = 0;
