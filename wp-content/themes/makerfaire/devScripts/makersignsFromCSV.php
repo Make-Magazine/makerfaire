@@ -332,7 +332,7 @@ function createOutput($rowData, $pdf) {
             } else {
                 $image = "Primary_Project_Photo";
             }
-            addZohoImageToPDF($pdf, $project_id, $image, "1000.07f873f313d1ecfe1dfeb9a50870f93d.da66ad724d380a9aff57fcfa1b82c3d8", 257, 220, 83, 'center');
+            addZohoImageToPDF($pdf, $project_id, $image, "1000.29a08a05d2ea257e6c8f71245693ac5b.d36e153aac9ea421b3b1e21303da6dbe", 257, 220, 83, 'center');
 
         } else {
             error_log("Unable to find the image for entry $project_title for $project_image");
