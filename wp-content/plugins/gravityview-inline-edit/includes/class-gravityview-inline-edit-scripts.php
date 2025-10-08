@@ -158,7 +158,9 @@ final class GravityView_Inline_Edit_Scripts {
 			'showinputs'         => false,
 			'emptytext'          => esc_html__( 'Empty', 'gk-gravityedit' ),
 			'searchforuserstext' => esc_html__( 'Search for users', 'gk-gravityedit' ),
+			'multipleFileWarning' => esc_html__( '⚠️ Uploading files will overwrite existing ones.', 'gk-gravityedit' ),
 			'nofieldstext'       => $no_fields_text,
+			'week_starts_on'     => (int) get_option( 'start_of_week', 0 ), // WordPress week start setting (0 = Sunday, 1 = Monday, etc.)
 		);
 
 		/**

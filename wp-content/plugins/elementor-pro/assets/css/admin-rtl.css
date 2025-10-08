@@ -1,9 +1,9 @@
-/*! elementor-pro - v3.31.0 - 10-08-2025 */
+/*! elementor-pro - v3.32.0 - 29-09-2025 */
 .wrap.elementor-admin-page-license .elementor-license-box {
   max-width: 600px;
   background: white;
   margin: 20px 0;
-  padding: 20px 20px;
+  padding: 20px;
 }
 .wrap.elementor-admin-page-license .elementor-license-box h3 {
   display: flex;
@@ -43,7 +43,7 @@
 }
 .wrap.elementor-admin-page-license .elementor-license-box .e-row-divider-bottom {
   padding-block-end: 15px;
-  border-block-end: 1px solid #eeeeee;
+  border-block-end: 1px solid #eee;
 }
 .wrap.elementor-admin-page-license .elementor-license-box .elementor-upgrade-link {
   color: #93003f;
@@ -74,7 +74,7 @@
   background-color: #93003f;
   color: #ffffff;
   margin: 3px 10px 0;
-  padding: 5px 0px;
+  padding: 5px 0;
   display: block;
   text-align: center;
   border-radius: 3px;
@@ -407,7 +407,7 @@ span.font-variations-count {
   display: none;
 }
 .elementor-metabox-content .repeater-block {
-  background: #ffffff;
+  background: #fff;
   color: #3f444b;
   padding: 20px;
   margin-block-end: 2px;
@@ -434,7 +434,7 @@ span.font-variations-count {
 .elementor-metabox-content .repeater-block .elementor-field-file {
   display: flex;
   align-items: center;
-  background-color: #ffffff;
+  background-color: #fff;
   padding: 10px 20px;
   margin-block-end: 10px;
   box-shadow: 0 3px 5px rgba(0, 0, 0, 0.05);
@@ -589,17 +589,14 @@ span.font-variations-count {
   background-color: #fff;
 }
 .post-type-elementor_icons div#elementor-custom-icons-metabox .inside {
-  margin-block-start: 10px;
-  margin-block-end: 20px;
+  margin-block: 10px 20px;
 }
 .post-type-elementor_icons div#elementor-custom-icons-metabox .elementor-metabox-content {
   background-color: #fff;
 }
 .post-type-elementor_icons div#elementor-custom-icons-metabox .elementor-custom-icons-metabox {
-  padding-block-start: 4px;
-  padding-block-end: 10px;
-  padding-inline-start: 10px;
-  padding-inline-end: 10px;
+  padding-block: 4px 10px;
+  padding-inline: 10px;
 }
 @media (max-width: 1025px) {
   .post-type-elementor_icons div#elementor-custom-icons-metabox .elementor-custom-icons-metabox {
@@ -656,10 +653,8 @@ span.font-variations-count {
   background-color: #F9FAFA;
 }
 .post-type-elementor_icons div#elementor-custom-icons-metabox.elementor--has-icons .elementor-metabox-content .elementor-custom-icons-metabox {
-  padding-block-start: 4px;
-  padding-block-end: 0;
-  padding-inline-start: 10px;
-  padding-inline-end: 10px;
+  padding-block: 4px 0;
+  padding-inline: 10px;
 }
 .post-type-elementor_icons div#elementor-custom-icons-metabox.elementor--has-icons .elementor-icon-set-header {
   height: 50px;
@@ -677,8 +672,7 @@ span.font-variations-count {
   }
 }
 .post-type-elementor_icons div#elementor-custom-icons-metabox.elementor--has-icons .elementor-icon-set-header div {
-  padding-inline-end: 10px;
-  padding-inline-start: 10px;
+  padding-inline: 10px;
 }
 @media (max-width: 1025px) {
   .post-type-elementor_icons div#elementor-custom-icons-metabox.elementor--has-icons .elementor-icon-set-header div {
@@ -732,18 +726,15 @@ span.font-variations-count {
   font-weight: 500;
   line-height: 1;
   text-align: end;
-  padding-block-start: 10px;
-  padding-block-end: 10px;
+  padding-block: 10px;
   padding-inline-end: 35px;
 }
 .post-type-elementor_icons div#elementor-custom-icons-metabox ul {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(105px, 1fr));
   grid-gap: 20px;
-  padding-block-start: 15px;
-  padding-block-end: 0;
-  padding-inline-start: 35px;
-  padding-inline-end: 35px;
+  padding-block: 15px 0;
+  padding-inline: 35px;
   overflow-y: auto;
   max-height: 575px;
 }

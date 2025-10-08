@@ -836,6 +836,14 @@ class GP_Populate_Anything_Live_Merge_Tags {
 
 			$span        = '<span data-gppa-live-merge-tag="' . esc_attr( $this->escape_live_merge_tags( $full_match ) ) . '">' . $populated_merge_tag . '</span>';
 			$form_string = str_replace( $full_match, $span, $form_string );
+
+			$this->register_lmt_on_page( $form['id'], 'data-gppa-live-merge-tag' );
+			$this->add_current_lmt_value( $form['id'], $full_match, $populated_merge_tag );
+		}
+
+		// Special case for paging setup with LMT: Replace `gf_step_page_name` with `gf_step_label`, because GF updateProgressBar logic pollutes the LMT values.
+		if ( strpos( $form_string, 'gf_step_page_name' ) !== false ) {
+			$form_string = str_replace( 'gf_step_page_name', 'gf_step_label', $form_string );
 		}
 
 		return $form_string;
@@ -1480,8 +1488,9 @@ class GP_Populate_Anything_Live_Merge_Tags {
 
 		$lmt      = gp_populate_anything()->live_merge_tags;
 		$gf_token = rgget( 'gf_token' );
+
 		// Only to be processed for an HTML field with LMT in the context of S&C.
-		if ( $field->type == 'html' && $lmt->has_live_merge_tag( $field->content ) && $gf_token && isset( $form['pagination'] ) ) {
+		if ( $field->type == 'html' && $lmt->has_live_merge_tag( $field->content ) && isset( $form['pagination'] ) && function_exists( 'gp_advanced_save_and_continue' ) && gp_advanced_save_and_continue()->settings->should_auto_load_draft( $form ) ) {
 			$draft_data = GFFormsModel::get_draft_submission_values( $gf_token );
 			$data_array = json_decode( rgar( $draft_data, 'submission' ), true );
 

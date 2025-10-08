@@ -78,6 +78,7 @@ final class Modules_Manager {
 			'floating-buttons',
 			'search',
 			'cloud-library',
+			'variables',
 		];
 
 		foreach ( $modules as $module_name ) {

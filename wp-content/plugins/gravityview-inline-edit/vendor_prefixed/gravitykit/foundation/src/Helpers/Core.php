@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by __root__ on 09-June-2025 using Strauss.
+ * Modified by __root__ on 11-September-2025 using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 
@@ -24,7 +24,10 @@ class Core {
 	 * @return void|mixed Send JSON response if an Ajax request or return the response as is.
 	 */
 	public static function process_return( $return_object = true ) {
-		$is_error = $return_object instanceof Exception;
+		// Treat WP_Error objects the same way we treat Exceptions when returning a response.
+		$is_wp_error  = function_exists( 'is_wp_error' ) && is_wp_error( $return_object );
+		$is_exception = $return_object instanceof Exception;
+		$is_error     = $is_wp_error || $is_exception;
 
 		if ( wp_doing_ajax() ) {
 			$buffer = ob_get_clean();
@@ -35,14 +38,30 @@ class Core {
 				header( 'GravityKit: ' . wp_json_encode( $buffer ) );
 			}
 
-			if ( $is_error ) {
-				wp_send_json_error( $return_object->getMessage() );
-			} else {
+			if ( ! $is_error ) {
 				wp_send_json_success( $return_object );
+			}
+
+			if ( $is_wp_error ) {
+				// Build a consistent error payload for WP_Error responses.
+				$payload = [
+					'code'    => $return_object->get_error_code(),
+					'message' => $return_object->get_error_message(),
+					'data'    => $return_object->get_error_data(),
+				];
+
+				// Allow custom HTTP status via `status` key inside error data.
+				$status = is_array( $payload['data'] ) && isset( $payload['data']['status'] )
+					? (int) $payload['data']['status']
+					: 400;
+
+				wp_send_json_error( $payload, $status );
+			} else { // Exception.
+				wp_send_json_error( $return_object->getMessage() );
 			}
 		}
 
-		if ( $is_error ) {
+		if ( $is_exception ) {
 			throw new Exception( $return_object->getMessage() );
 		}
 

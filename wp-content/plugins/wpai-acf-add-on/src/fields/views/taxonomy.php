@@ -30,7 +30,9 @@
                         ) );
                         if (!empty($terms)){
                             foreach ($terms as $term){
-                                $field['choices'][$term->term_id] = $term->name;
+	                            if(!empty($term->term_id) && !empty($term->name)) {
+		                            $field['choices'][ $term->term_id ] = $term->name;
+	                            }
                             }
                         }
                     } elseif( $field['field_type'] == 'multi_select' ) {
@@ -45,7 +47,9 @@
                         ) );
                         if (!empty($terms)){
                             foreach ($terms as $term){
-                                $field['choices'][$term->term_id] = $term->name;
+                                if(!empty($term->term_id) && !empty($term->name)) {
+	                                $field['choices'][ $term->term_id ] = $term->name;
+                                }
                             }
                         }
                     }

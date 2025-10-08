@@ -105,7 +105,7 @@
 			background: transparent;
 		}
 
-		&:after {
+		&::after {
 			font-family: eicons;
 			content: '\e8ad';
 			font-size: $e-site-editor-input-wrapper-select-arrow-font-size;
@@ -140,7 +140,7 @@
 	&__input-wrapper--condition-type {
 		position: relative;
 
-		&:before {
+		&::before {
 			font-family: eicons;
 			position: absolute;
 			transform: translateY(-50%);
@@ -162,13 +162,13 @@
 		}
 
 		&[data-elementor-condition-type="include"] {
-			&:before {
+			&::before {
 				content: '\e8cc';
 			}
 		}
 
 		&[data-elementor-condition-type="exclude"] {
-			&:before {
+			&::before {
 				content: '\e8cd';
 			}
 		}

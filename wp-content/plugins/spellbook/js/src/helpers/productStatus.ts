@@ -80,6 +80,11 @@ export const isProductRegistered = (
         }
     }
 
+    // GSPC is automatically registered when license is valid
+    if (product.type === 'shop' && license?.valid) {
+        return true;
+    }
+
     if (!license?.registered_products) {
         return false;
     }

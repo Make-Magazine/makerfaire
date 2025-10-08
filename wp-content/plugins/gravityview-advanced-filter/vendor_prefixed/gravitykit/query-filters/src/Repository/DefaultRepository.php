@@ -2,7 +2,7 @@
 /**
  * @license MIT
  *
- * Modified by gravitykit on 10-February-2025 using {@see https://github.com/BrianHenryIE/strauss}.
+ * Modified by gravitykit on 25-September-2025 using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\AdvancedFilter\QueryFilters\Repository;
@@ -19,18 +19,86 @@ use WP_User;
 
 /**
  * Default repository backed by WordPress and GravityView.
+ *
  * @since 2.0.0
  */
 final class DefaultRepository implements FormRepository, UserRepository {
 	/**
 	 * Micro cache for forms.
+	 *
 	 * @since 2.0.0
 	 * @var array<int, array>
 	 */
 	private $forms = [];
 
 	/**
+	 * Prepends the current user's ID to the field filters.
+	 *
+	 * @since $ver$
+	 *
+	 * @param array             $field_filters     Original field filters.
+	 * @param array<int|string> $pa_user_field_ids The Populate Anything Field IDs with a user source.
+	 *
+	 * @return array Updated field filters.
+	 */
+	private static function prepend_pa_current_user_options( array $field_filters, array $pa_user_field_ids ): array {
+		foreach ( $field_filters as $i => $filter ) {
+			if ( ! in_array( $filter['key'], $pa_user_field_ids, false ) ) {
+				continue;
+			}
+
+			if ( ! isset( $filter['values'] ) ) {
+				$filter['values'] = [];
+			}
+
+			array_unshift(
+				$filter['values'],
+				[
+					'value' => '{user:ID}',
+					'text'  => esc_html__( 'Currently Logged-in User', 'gravityview-advanced-filter' ),
+				],
+				[
+					'value' => '{user:ID:disabled_admin}',
+					'text'  => esc_html__(
+						'Currently Logged-in User (Disabled for Administrators)',
+						'gravityview-advanced-filter'
+					),
+				]
+			);
+
+			$field_filters[ $i ] = $filter;
+		}
+
+		return $field_filters;
+	}
+
+	/**
+	 * Ensures the form ID is set for all filters.
+	 *
+	 * @since $ver$
+	 *
+	 * @param array $field_filters The field filters.
+	 *
+	 * @param int   $form_id       The form ID.
+	 *
+	 * @return array The field filters with the Form ID.
+	 */
+	private static function ensure_form_id( array $field_filters, int $form_id ): array {
+		return array_map(
+			static function ( $filter ) use ( $form_id ) {
+				if ( ! isset( $filter['form_id'] ) ) {
+					$filter['form_id'] = $form_id;
+				}
+
+				return $filter;
+			},
+			$field_filters
+		);
+	}
+
+	/**
 	 * Adds current user's role filter.
+	 *
 	 * @since 2.1.0
 	 *
 	 * @param array $field_filters The current filters.
@@ -113,9 +181,121 @@ final class DefaultRepository implements FormRepository, UserRepository {
 	}
 
 	/**
+	 * Returns an array of relative date choices for date fields.
+	 *
+	 * @since $ver$
+	 *
+	 * @param int $form_id The form ID.
+	 *
+	 * @return array<int, array{text: string, value: string, operators?: string[]}> An array of relative date choices.
+	 */
+	private static function get_relative_date_choices( int $form_id ): array {
+		$start_of_week = (int) get_option( 'start_of_week', 1 ); // 0=Sunday .. 6=Saturday.
+		$week_labels   = [
+			__( 'Sunday', 'gravityview-advanced-filter' ),
+			__( 'Monday', 'gravityview-advanced-filter' ),
+			__( 'Tuesday', 'gravityview-advanced-filter' ),
+			__( 'Wednesday', 'gravityview-advanced-filter' ),
+			__( 'Thursday', 'gravityview-advanced-filter' ),
+			__( 'Friday', 'gravityview-advanced-filter' ),
+			__( 'Saturday', 'gravityview-advanced-filter' ),
+		];
+
+		$week_keywords       = [ 'sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday' ];
+		$start_of_week_name  = $week_keywords[ $start_of_week ];
+		$start_of_week_label = $week_labels[ $start_of_week ];
+
+		$this_week_value = sprintf(
+			$start_of_week === 1
+				? '%s this week'
+				: 'last %s',
+			$start_of_week_name
+		);
+
+		$this_week_label = sprintf(
+			esc_html__( 'This week (starting %s)', 'gravityview-advanced-filter' ),
+			$start_of_week_label
+		);
+
+		$choices = [
+			[
+				'text'  => esc_html__( 'Today', 'gravityview-advanced-filter' ),
+				'value' => 'today',
+			],
+			[
+				'text'  => esc_html__( 'Yesterday', 'gravityview-advanced-filter' ),
+				'value' => 'yesterday',
+			],
+			[
+				'text'  => esc_html__( 'Tomorrow', 'gravityview-advanced-filter' ),
+				'value' => 'tomorrow',
+			],
+			[
+				'text'      => esc_html__( 'Past year', 'gravityview-advanced-filter' ),
+				'value'     => '-1 year',
+				'operators' => [ '>', '<' ],
+			],
+			[
+				'text'      => esc_html__( 'Past month', 'gravityview-advanced-filter' ),
+				'value'     => '-1 month',
+				'operators' => [ '>', '<' ],
+			],
+			[
+				'text'      => esc_html__( 'Past week', 'gravityview-advanced-filter' ),
+				'value'     => '-1 week',
+				'operators' => [ '>', '<' ],
+			],
+			[
+				'text'      => $this_week_label,
+				'value'     => $this_week_value,
+				'operators' => [ '>', '<' ],
+			],
+			[
+				'text'      => esc_html__( 'This month', 'gravityview-advanced-filter' ),
+				'value'     => 'first day of this month',
+				'operators' => [ '>', '<' ],
+			],
+			[
+				'text'      => esc_html__( 'This year', 'gravityview-advanced-filter' ),
+				'value'     => 'first day of january this year',
+				'operators' => [ '>', '<' ],
+			],
+			[
+				'text'      => esc_html__( 'Next week (start)', 'gravityview-advanced-filter' ),
+				// Respect the site's week start.
+				'value'     => sprintf( '%s next week', $start_of_week_name ),
+				'operators' => [ '>', '<' ],
+			],
+			[
+				'text'      => esc_html__( 'Next month (start)', 'gravityview-advanced-filter' ),
+				'value'     => 'first day of next month',
+				'operators' => [ '>', '<' ],
+			],
+			[
+				'text'      => esc_html__( 'Next year (start)', 'gravityview-advanced-filter' ),
+				'value'     => 'first day of january next year',
+				'operators' => [ '>', '<' ],
+			],
+
+		];
+
+		/**
+		 * @filter `gk/query-filters/relative-date-choices` Modify available relative date choices for date fields.
+		 *
+		 * If the `operators` key is empty for a choice it will be applied to all operators.
+		 *
+		 * @since  $ver$
+		 *
+		 * @param array<int, array{text: string, value: string, operators?: string[]}> $choices Array of relative date choices.
+		 *
+		 */
+		return apply_filters( 'gk/query-filters/relative-date-choices', $choices, $form_id );
+	}
+
+	/**
 	 * @inheritDoc
-	 * @return array{key: string, text: string, operators: string[], preventMultiple: bool, values: array, cssClass: string }[] The field filter options.
 	 * @since 2.0.0
+	 * @return array{key: string, text: string, operators: string[], preventMultiple: bool, values: array, cssClass: string }[] The field filter options.
 	 */
 	public function get_field_filters( int $form_id ): array {
 		$form = GFAPI::get_form( $form_id );
@@ -126,6 +306,7 @@ final class DefaultRepository implements FormRepository, UserRepository {
 		// Adding default pre render hook for plugins to update the fields before choice retrieval.
 		$form = gf_apply_filters( [ 'gform_pre_render', $form_id ], $form, false, [] );
 
+		$populate_anything = null;
 		// Remove conditional logic filter from populate anything, to allow prefilling of the choices.
 		if ( function_exists( 'gp_populate_anything' ) ) {
 			$populate_anything = gp_populate_anything();
@@ -159,7 +340,7 @@ final class DefaultRepository implements FormRepository, UserRepository {
 			$approved_column = (int) floor( $approved_column );
 		}
 
-		$option_fields_ids = $product_fields_ids = $category_field_ids = $boolean_field_ids = $post_category_choices = [];
+		$option_fields_ids = $product_fields_ids = $category_field_ids = $boolean_field_ids = $post_category_choices = $gppa_user_field_ids = [];
 
 		/**
 		 * @since 2.0.0
@@ -186,13 +367,12 @@ final class DefaultRepository implements FormRepository, UserRepository {
 		 * @since 2.0.0
 		 */
 		if ( $category_fields = GFAPI::get_fields_by_type( $form, [ 'post_category' ] ) ) {
-
 			$category_field_ids = wp_list_pluck( $category_fields, 'id' );
 
 			/**
 			 * @since 1.0.12
 			 */
-			$post_category_choices = gravityview_get_terms_choices();
+			$post_category_choices = $this->get_term_choices();
 		}
 
 		// 1.0.14
@@ -205,9 +385,14 @@ final class DefaultRepository implements FormRepository, UserRepository {
 			$product_fields_ids = wp_list_pluck( $product_fields, 'id' );
 		}
 
-		// Add currently logged-in user option
+		// Check for Populate Anything field IDs.
+		if ( null !== $populate_anything ) {
+			$gppa_user_field_ids = $this->get_populate_anything_user_fields( $form['fields'] ?? [] );
+		}
+
+		// Add currently logged-in user option.
 		foreach ( $field_filters as &$filter ) {
-			// Add negative match to approval column
+			// Add negative match to approval column.
 			if ( $approved_column && $filter['key'] === $approved_column ) {
 				$filter['operators'][] = 'isnot';
 				continue;
@@ -270,6 +455,9 @@ final class DefaultRepository implements FormRepository, UserRepository {
 					// Add to the beginning on the value options
 					array_unshift( $filter['values'], $user_filter );
 				}
+
+				$filter['operators'][] = 'isempty';
+				$filter['operators'][] = 'isnotempty';
 			}
 
 			if ( ! empty( $filter['filters'] ) ) {
@@ -292,6 +480,11 @@ final class DefaultRepository implements FormRepository, UserRepository {
 				$filter['operators'] = self::add_proxy_operators( $filter['operators'], $filter['key'] );
 			}
 
+			// Add relative date choices to date fields.
+			if ( isset( $filter['cssClass'] ) && strpos( $filter['cssClass'], 'datepicker' ) !== false ) {
+				$filter['values'] = self::get_relative_date_choices( $form_id );
+			}
+
 			// Filter out duplicate operators.
 			if ( isset( $filter['operators'] ) ) {
 				$filter['operators'] = array_values( array_unique( $filter['operators'] ) );
@@ -301,6 +494,9 @@ final class DefaultRepository implements FormRepository, UserRepository {
 
 		$field_filters = self::add_approval_status_filter( $field_filters );
 		$field_filters = self::add_current_user_roles_filter( $field_filters );
+		if ( null !== $populate_anything && ! empty( $gppa_user_field_ids ) ) {
+			$field_filters = self::prepend_pa_current_user_options( $field_filters, $gppa_user_field_ids );
+		}
 
 		usort( $field_filters, function ( $a, $b ) {
 			return strcmp( $a['text'], $b['text'] );
@@ -309,25 +505,29 @@ final class DefaultRepository implements FormRepository, UserRepository {
 		/**
 		 * @filter `gk/query-filters/field-filters` Modify available field filters.
 		 *
-		 * @param array $field_filters configured filters
+		 * @since  2.0.0
+		 *
 		 * @param int   $form_id       The form ID.
 		 *
-		 * @since  2.0.0
+		 * @param array $field_filters configured filters
 		 */
-		return apply_filters( 'gk/query-filters/field-filters', $field_filters, $form_id );
+		$field_filters = (array) apply_filters( 'gk/query-filters/field-filters', $field_filters, $form_id );
+
+		return self::ensure_form_id( $field_filters, $form_id );
 	}
 
 	/**
 	 * Get user role choices formatted in a way used by GravityView and Gravity Forms input choices
 	 *
+	 * @since 2.0.0
+	 *
 	 * @param bool $exclude_any_role Whether to exclude the "any role" option.
 	 *
 	 * @return array Multidimensional array with `text` (Role Name) and `value` (Role ID) keys.
-	 * @since 2.0.0
 	 */
 	private static function get_user_role_choices( bool $exclude_any_role = false ): array {
-		$user_role_choices              = [];
-		$editable_roles                 = get_editable_roles();
+		$user_role_choices = [];
+		$editable_roles    = get_editable_roles();
 
 		if ( ! $exclude_any_role ) {
 			$editable_roles['current_user'] = [
@@ -348,14 +548,17 @@ final class DefaultRepository implements FormRepository, UserRepository {
 	}
 
 	/**
-	 * When "is" and "is not" are combined with an empty value, they become "is empty" and "is not empty", respectively.
+	 * When "is" and "is not" are combined with an empty value, they become "is empty" and "is not empty",
+	 * respectively.
 	 *
-	 * Let's add these 2 proxy operators for a better UX. Exclusions: Entry ID and fields with predefined values (e.g., Payment Status).
-	 *
-	 * @param array  $operators  The operators.
-	 * @param string $filter_key The filter key.
+	 * Let's add these 2 proxy operators for a better UX. Exclusions: Entry ID and fields with predefined values (e.g.,
+	 * Payment Status).
 	 *
 	 * @since 2.0.0
+	 *
+	 * @param string $filter_key The filter key.
+	 *
+	 * @param array  $operators  The operators.
 	 */
 	private static function add_proxy_operators( array $operators, string $filter_key ): array {
 		if ( 'date_created' === $filter_key ) {
@@ -368,6 +571,13 @@ final class DefaultRepository implements FormRepository, UserRepository {
 
 		if ( 'date_updated' === $filter_key || in_array( 'isnot', $operators, true ) ) {
 			$operators[] = 'isnotempty';
+		}
+
+		// Add "does not contain" operator when "contains" is present.
+		if ( in_array( 'contains', $operators, true ) && ! in_array( 'ncontains', $operators, true ) ) {
+			$offset = array_search( 'contains', $operators, true );
+			// Insert "does not contain" operator directly after "contains" operator.
+			array_splice( $operators, $offset + 1, 0, [ 'ncontains' ] );
 		}
 
 		return $operators;
@@ -423,16 +633,17 @@ final class DefaultRepository implements FormRepository, UserRepository {
 		/**
 		 * @filter `gk/query-filters/admin-capabilities` Customise the capabilities that define an Administrator able to view entries in frontend when filtered by "Created By".
 		 *
-		 * @param array $capabilities List of admin capabilities.
+		 * @since  1.0
+		 *
 		 * @param array $form         GF form.
 		 *
-		 * @since  1.0
+		 * @param array $capabilities List of admin capabilities.
 		 */
 		$view_all_entries_caps = apply_filters(
 			'gk/query-filters/admin-capabilities',
 			[
 				'manage_options',
-				'gravityforms_view_entries'
+				'gravityforms_view_entries',
 			],
 			$form
 		);
@@ -445,5 +656,83 @@ final class DefaultRepository implements FormRepository, UserRepository {
 		}
 
 		return false;
+	}
+
+	/**
+	 * Returns fields that have Populate Anything enabled with user IDs.
+	 *
+	 * @since $ver$
+	 *
+	 * @param array $fields The form fields.
+	 *
+	 * @return array<string|int> The field IDs.
+	 */
+	private function get_populate_anything_user_fields( array $fields ): array {
+		$gppa_user_field_ids = [];
+		foreach ( $fields as $field ) {
+			// Only Populate Anything enabled fields.
+			if (
+				empty( $field->{'gppa-choices-enabled'} )
+				&& empty( $field->{'gppa-values-enabled'} )
+			) {
+				continue;
+			}
+
+			if (
+				// Only user sources.
+				'user' !== ( $field->{'gppa-choices-object-type'} ?? null )
+				// Only values stored as user ID.
+				|| 'ID' !== ( $field->{'gppa-choices-templates'}['value'] ?? null )
+			) {
+				continue;
+			}
+
+			$gppa_user_field_ids[] = $field->id;
+		}
+
+		return $gppa_user_field_ids;
+	}
+
+	/**
+	 * Get categories formatted in a way used by GravityView and Gravity Forms input choices
+	 *
+	 * @since $ver$
+	 *
+	 * @param array $args Arguments array as used by the get_terms() function.
+	 *
+	 * @return array{text:string, value:string}[] The choices.
+	 */
+	private function get_term_choices( array $args = [] ): array {
+		if ( function_exists( 'gravityview_get_terms_choices' ) ) {
+			return gravityview_get_terms_choices( $args );
+		}
+
+		$defaults = [
+			'type'         => 'post',
+			'child_of'     => 0,
+			'number'       => 1000, // Set a reasonable max limit
+			'orderby'      => 'name',
+			'order'        => 'ASC',
+			'hide_empty'   => 0,
+			'hierarchical' => 1,
+			'taxonomy'     => 'category',
+			'fields'       => 'id=>name',
+		];
+
+		$args  = wp_parse_args( $args, $defaults );
+		$terms = get_terms( $args['taxonomy'], $args );
+
+		$choices = [];
+
+		if ( is_array( $terms ) ) {
+			foreach ( $terms as $term_id => $term_name ) {
+				$choices[] = [
+					'text'  => $term_name,
+					'value' => $term_id,
+				];
+			}
+		}
+
+		return $choices;
 	}
 }

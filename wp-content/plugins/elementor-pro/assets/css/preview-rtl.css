@@ -1,8 +1,8 @@
-/*! elementor-pro - v3.31.0 - 10-08-2025 */
+/*! elementor-pro - v3.32.0 - 29-09-2025 */
 *[data-editable-elementor-document] {
   position: relative;
 }
-*[data-editable-elementor-document]:before, *[data-editable-elementor-document]:after {
+*[data-editable-elementor-document]::before, *[data-editable-elementor-document]::after {
   content: "";
   display: table;
 }
@@ -14,7 +14,7 @@
   display: none;
   border: 2px solid var(--e-a-color-primary, #F3BAFD);
 }
-*[data-editable-elementor-document] .elementor-document-handle:before {
+*[data-editable-elementor-document] .elementor-document-handle::before {
   content: "";
   position: absolute;
   background: var(--e-a-color-primary, #F3BAFD);
@@ -37,17 +37,17 @@
   gap: 8px;
   border-radius: 0 0 3px 3px;
 }
-*[data-editable-elementor-document] .elementor-document-handle__inner:before, *[data-editable-elementor-document] .elementor-document-handle__inner:after {
+*[data-editable-elementor-document] .elementor-document-handle__inner::before, *[data-editable-elementor-document] .elementor-document-handle__inner::after {
   content: "";
   position: absolute;
   border: solid transparent;
 }
-*[data-editable-elementor-document] .elementor-document-handle__inner:before {
+*[data-editable-elementor-document] .elementor-document-handle__inner::before {
   right: calc(100% - 1px);
   border-inline-end-color: var(--e-a-color-primary, #F3BAFD);
   border-width: 0 14px 30px 0;
 }
-*[data-editable-elementor-document] .elementor-document-handle__inner:after {
+*[data-editable-elementor-document] .elementor-document-handle__inner::after {
   left: calc(100% - 1px);
   border-inline-start-color: var(--e-a-color-primary, #F3BAFD);
   border-width: 0 0 30px 14px;
@@ -77,26 +77,26 @@
   transform: translateX(-50%) translateY(-100%);
   border-radius: 3px 3px 0 0;
 }
-.elementor-editor-active *[data-editable-elementor-document][data-elementor-type=single] > .elementor-document-handle:before {
+.elementor-editor-active *[data-editable-elementor-document][data-elementor-type=single] > .elementor-document-handle::before {
   border-width: 30px 14px 0 0;
 }
-.elementor-editor-active *[data-editable-elementor-document][data-elementor-type=single] > .elementor-document-handle:after {
+.elementor-editor-active *[data-editable-elementor-document][data-elementor-type=single] > .elementor-document-handle::after {
   border-width: 30px 0 0 14px;
 }
 
 [data-elementor-post-type=elementor_library] > .elementor-document-handle {
   border: 2px solid var(--e-p-border-global, #5EEAD4);
 }
-[data-elementor-post-type=elementor_library] > .elementor-document-handle:before {
+[data-elementor-post-type=elementor_library] > .elementor-document-handle::before {
   background-color: var(--e-p-border-global, #5EEAD4);
 }
 [data-elementor-post-type=elementor_library] > .elementor-document-handle .elementor-document-handle__inner {
   background-color: var(--e-p-border-global, #5EEAD4);
 }
-[data-elementor-post-type=elementor_library] > .elementor-document-handle .elementor-document-handle__inner:before {
+[data-elementor-post-type=elementor_library] > .elementor-document-handle .elementor-document-handle__inner::before {
   border-inline-end-color: var(--e-p-border-global, #5EEAD4);
 }
-[data-elementor-post-type=elementor_library] > .elementor-document-handle .elementor-document-handle__inner:after {
+[data-elementor-post-type=elementor_library] > .elementor-document-handle .elementor-document-handle__inner::after {
   border-inline-start-color: var(--e-p-border-global, #5EEAD4);
 }
 

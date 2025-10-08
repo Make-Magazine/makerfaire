@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInitbf93452b5ab38908300fd84a4c8af40e
+class ComposerStaticInitdeb6914806110b4d6da15f2180e66a38
 {
     public static $files = array (
         'a4a119a56e50fbb293281d9a48007e0e' => __DIR__ . '/..' . '/symfony/polyfill-php80/bootstrap.php',
@@ -323,6 +323,26 @@ class ComposerStaticInitbf93452b5ab38908300fd84a4c8af40e
         'WP_Rocket\\Engine\\Admin\\DomainChange\\ServiceProvider' => __DIR__ . '/../..' . '/inc/Engine/Admin/DomainChange/ServiceProvider.php',
         'WP_Rocket\\Engine\\Admin\\DomainChange\\Subscriber' => __DIR__ . '/../..' . '/inc/Engine/Admin/DomainChange/Subscriber.php',
         'WP_Rocket\\Engine\\Admin\\Metaboxes\\PostEditOptionsSubscriber' => __DIR__ . '/../..' . '/inc/Engine/Admin/Metaboxes/PostEditOptionsSubscriber.php',
+        'WP_Rocket\\Engine\\Admin\\PerformanceMonitoring\\AJAX\\Controller' => __DIR__ . '/../..' . '/inc/Engine/Admin/PerformanceMonitoring/AJAX/Controller.php',
+        'WP_Rocket\\Engine\\Admin\\PerformanceMonitoring\\APIHandler\\APIClient' => __DIR__ . '/../..' . '/inc/Engine/Admin/PerformanceMonitoring/APIHandler/APIClient.php',
+        'WP_Rocket\\Engine\\Admin\\PerformanceMonitoring\\Context\\PerformanceMonitoringContext' => __DIR__ . '/../..' . '/inc/Engine/Admin/PerformanceMonitoring/Context/PerformanceMonitoringContext.php',
+        'WP_Rocket\\Engine\\Admin\\PerformanceMonitoring\\Controller' => __DIR__ . '/../..' . '/inc/Engine/Admin/PerformanceMonitoring/Controller.php',
+        'WP_Rocket\\Engine\\Admin\\PerformanceMonitoring\\Database\\Queries\\PerformanceMonitoring' => __DIR__ . '/../..' . '/inc/Engine/Admin/PerformanceMonitoring/Database/Queries/PerformanceMonitoring.php',
+        'WP_Rocket\\Engine\\Admin\\PerformanceMonitoring\\Database\\Rows\\PerformanceMonitoring' => __DIR__ . '/../..' . '/inc/Engine/Admin/PerformanceMonitoring/Database/Rows/PerformanceMonitoring.php',
+        'WP_Rocket\\Engine\\Admin\\PerformanceMonitoring\\Database\\Schemas\\PerformanceMonitoring' => __DIR__ . '/../..' . '/inc/Engine/Admin/PerformanceMonitoring/Database/Schemas/PerformanceMonitoring.php',
+        'WP_Rocket\\Engine\\Admin\\PerformanceMonitoring\\Database\\Tables\\PerformanceMonitoring' => __DIR__ . '/../..' . '/inc/Engine/Admin/PerformanceMonitoring/Database/Tables/PerformanceMonitoring.php',
+        'WP_Rocket\\Engine\\Admin\\PerformanceMonitoring\\GlobalScore' => __DIR__ . '/../..' . '/inc/Engine/Admin/PerformanceMonitoring/GlobalScore.php',
+        'WP_Rocket\\Engine\\Admin\\PerformanceMonitoring\\Jobs\\Factory' => __DIR__ . '/../..' . '/inc/Engine/Admin/PerformanceMonitoring/Jobs/Factory.php',
+        'WP_Rocket\\Engine\\Admin\\PerformanceMonitoring\\Jobs\\Manager' => __DIR__ . '/../..' . '/inc/Engine/Admin/PerformanceMonitoring/Jobs/Manager.php',
+        'WP_Rocket\\Engine\\Admin\\PerformanceMonitoring\\Managers\\Plan' => __DIR__ . '/../..' . '/inc/Engine/Admin/PerformanceMonitoring/Managers/Plan.php',
+        'WP_Rocket\\Engine\\Admin\\PerformanceMonitoring\\PageHandlerTrait' => __DIR__ . '/../..' . '/inc/Engine/Admin/PerformanceMonitoring/PageHandlerTrait.php',
+        'WP_Rocket\\Engine\\Admin\\PerformanceMonitoring\\Queue\\Queue' => __DIR__ . '/../..' . '/inc/Engine/Admin/PerformanceMonitoring/Queue/Queue.php',
+        'WP_Rocket\\Engine\\Admin\\PerformanceMonitoring\\Render' => __DIR__ . '/../..' . '/inc/Engine/Admin/PerformanceMonitoring/Render.php',
+        'WP_Rocket\\Engine\\Admin\\PerformanceMonitoring\\ServiceProvider' => __DIR__ . '/../..' . '/inc/Engine/Admin/PerformanceMonitoring/ServiceProvider.php',
+        'WP_Rocket\\Engine\\Admin\\PerformanceMonitoring\\Settings\\Controller' => __DIR__ . '/../..' . '/inc/Engine/Admin/PerformanceMonitoring/Settings/Controller.php',
+        'WP_Rocket\\Engine\\Admin\\PerformanceMonitoring\\Settings\\Subscriber' => __DIR__ . '/../..' . '/inc/Engine/Admin/PerformanceMonitoring/Settings/Subscriber.php',
+        'WP_Rocket\\Engine\\Admin\\PerformanceMonitoring\\Subscriber' => __DIR__ . '/../..' . '/inc/Engine/Admin/PerformanceMonitoring/Subscriber.php',
+        'WP_Rocket\\Engine\\Admin\\PerformanceMonitoring\\URLLimit\\Subscriber' => __DIR__ . '/../..' . '/inc/Engine/Admin/PerformanceMonitoring/URLLimit/Subscriber.php',
         'WP_Rocket\\Engine\\Admin\\ServiceProvider' => __DIR__ . '/../..' . '/inc/Engine/Admin/ServiceProvider.php',
         'WP_Rocket\\Engine\\Admin\\Settings\\AdminBarMenuTrait' => __DIR__ . '/../..' . '/inc/Engine/Admin/Settings/AdminBarMenuTrait.php',
         'WP_Rocket\\Engine\\Admin\\Settings\\DataClearingTrait' => __DIR__ . '/../..' . '/inc/Engine/Admin/Settings/DataClearingTrait.php',
@@ -374,7 +394,6 @@ class ComposerStaticInitbf93452b5ab38908300fd84a4c8af40e
         'WP_Rocket\\Engine\\Common\\Head\\ElementTrait' => __DIR__ . '/../..' . '/inc/Engine/Common/Head/ElementTrait.php',
         'WP_Rocket\\Engine\\Common\\Head\\ServiceProvider' => __DIR__ . '/../..' . '/inc/Engine/Common/Head/ServiceProvider.php',
         'WP_Rocket\\Engine\\Common\\Head\\Subscriber' => __DIR__ . '/../..' . '/inc/Engine/Common/Head/Subscriber.php',
-        'WP_Rocket\\Engine\\Common\\JobManager\\APIHandler\\APIClient' => __DIR__ . '/../..' . '/inc/Engine/Common/JobManager/APIHandler/APIClient.php',
         'WP_Rocket\\Engine\\Common\\JobManager\\APIHandler\\AbstractAPIClient' => __DIR__ . '/../..' . '/inc/Engine/Common/JobManager/APIHandler/AbstractAPIClient.php',
         'WP_Rocket\\Engine\\Common\\JobManager\\APIHandler\\AbstractSafeAPIClient' => __DIR__ . '/../..' . '/inc/Engine/Common/JobManager/APIHandler/AbstractSafeAPIClient.php',
         'WP_Rocket\\Engine\\Common\\JobManager\\AbstractFactory\\SaasFactory' => __DIR__ . '/../..' . '/inc/Engine/Common/JobManager/AbstractFactory/SaasFactory.php',
@@ -594,6 +613,7 @@ class ComposerStaticInitbf93452b5ab38908300fd84a4c8af40e
         'WP_Rocket\\Engine\\Optimization\\Minify\\ProcessorInterface' => __DIR__ . '/../..' . '/inc/Engine/Optimization/Minify/ProcessorInterface.php',
         'WP_Rocket\\Engine\\Optimization\\QueryString\\Remove' => __DIR__ . '/../..' . '/inc/deprecated/Engine/Optimization/QueryString/Remove.php',
         'WP_Rocket\\Engine\\Optimization\\QueryString\\RemoveSubscriber' => __DIR__ . '/../..' . '/inc/deprecated/Engine/Optimization/QueryString/RemoveSubscriber.php',
+        'WP_Rocket\\Engine\\Optimization\\RUCSS\\APIHandler\\APIClient' => __DIR__ . '/../..' . '/inc/Engine/Optimization/RUCSS/APIHandler/APIClient.php',
         'WP_Rocket\\Engine\\Optimization\\RUCSS\\Admin\\Database' => __DIR__ . '/../..' . '/inc/Engine/Optimization/RUCSS/Admin/Database.php',
         'WP_Rocket\\Engine\\Optimization\\RUCSS\\Admin\\OptionSubscriber' => __DIR__ . '/../..' . '/inc/Engine/Optimization/RUCSS/Admin/OptionSubscriber.php',
         'WP_Rocket\\Engine\\Optimization\\RUCSS\\Admin\\Settings' => __DIR__ . '/../..' . '/inc/Engine/Optimization/RUCSS/Admin/Settings.php',
@@ -797,10 +817,10 @@ class ComposerStaticInitbf93452b5ab38908300fd84a4c8af40e
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInitbf93452b5ab38908300fd84a4c8af40e::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInitbf93452b5ab38908300fd84a4c8af40e::$prefixDirsPsr4;
-            $loader->prefixesPsr0 = ComposerStaticInitbf93452b5ab38908300fd84a4c8af40e::$prefixesPsr0;
-            $loader->classMap = ComposerStaticInitbf93452b5ab38908300fd84a4c8af40e::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInitdeb6914806110b4d6da15f2180e66a38::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInitdeb6914806110b4d6da15f2180e66a38::$prefixDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInitdeb6914806110b4d6da15f2180e66a38::$prefixesPsr0;
+            $loader->classMap = ComposerStaticInitdeb6914806110b4d6da15f2180e66a38::$classMap;
 
         }, null, ClassLoader::class);
     }

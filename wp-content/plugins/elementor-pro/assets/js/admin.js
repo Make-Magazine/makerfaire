@@ -1,4 +1,4 @@
-/*! elementor-pro - v3.31.0 - 10-08-2025 */
+/*! elementor-pro - v3.32.0 - 29-09-2025 */
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
@@ -25,6 +25,7 @@ class Module extends elementorModules.Module {
   }];
   onInit() {
     this.assignMenuItemActions();
+    this.assignProLicenseActivateEvent();
   }
   assignMenuItemActions() {
     window.addEventListener('DOMContentLoaded', () => {
@@ -38,6 +39,28 @@ class Module extends elementorModules.Module {
           window.open(item.external_url, '_blank');
         });
       });
+    });
+  }
+  assignProLicenseActivateEvent() {
+    window.addEventListener('DOMContentLoaded', () => {
+      const activateButton = document.querySelector('.button-primary[href*="elementor-connect"]');
+      if (activateButton) {
+        activateButton.addEventListener('click', () => {
+          if (!window.elementorCommon?.config?.experimentalFeatures?.editor_events) {
+            return;
+          }
+          const eventsManager = window.elementorCommon?.eventsManager || {};
+          const dispatchEvent = eventsManager.dispatchEvent?.bind(eventsManager);
+          const eventName = 'pro_license_activate';
+          const eventData = {
+            app_type: 'editor',
+            location: 'Elementor WP-admin pages',
+            secondaryLocation: 'license page',
+            trigger: 'click'
+          };
+          dispatchEvent?.(eventName, eventData);
+        });
+      }
     });
   }
 }

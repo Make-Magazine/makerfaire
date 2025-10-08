@@ -1,7 +1,7 @@
 === GravityView - Advanced Filter Extension ===
 Tags: GravityView, Gravity Forms, filtering, conditional logic
 Requires at least: 4.4
-Tested up to: 6.7.1
+Tested up to: 6.8.2
 Contributors: GravityKit
 License: GPLv3 or later
 
@@ -14,6 +14,33 @@ Filter which entries are shown in a View based on their values.
 3. Follow the instructions
 
 == Changelog ==
+
+= 4.3.0 on September 25, 2025 =
+
+This release adds conditional filtering on joined forms with the Multiple Forms extension and enhances conditional logic for Views and fields, along with related bug fixes.
+
+#### 🚀 Added
+* Conditional filtering on joined forms (requires [Multiple Forms](https://www.gravitykit.com/products/multiple-forms/) 0.6.0 or newer).
+* Support for using merge tags in text inputs.
+* Automatic "Currently Logged-in User" options for Populate Anything fields using WordPress users as a source.
+
+#### 🐛 Fixed
+* Errors when using Consent field sub-inputs in conditional logic.
+* Filters using `{user:}` and `{created_by:}` merge tags are now treated as no-match when the user is logged out.
+
+= 4.2.0 on August 28, 2025 =
+
+This update improves View and field conditional logic.
+
+#### 🚀 Added
+* Ability to search fields by "does not contain".
+* Predefined options (e.g., Today, Tomorrow, etc.) for Date fields.
+
+#### ✨ Improved
+* Created By field now support `is empty` and `is not empty` operators.
+
+#### 🐛 Fixed
+* Filtering  not working with radio button fields and Survey field Likert scales.
 
 = 4.1.1 on February 10, 2025 =
 
@@ -102,7 +129,7 @@ This update resolves an issue with the Merge Tag picker disappearing in the View
 
 = 3.0.3 on January 24, 2024 =
 
-This release introduces support for the Gravity PDF shortcode in the field conditional Logic, and addresses a PHP 8.1+ deprecation notice.
+This release introduces support for the Gravity PDF shortcode in the field conditional logic, and addresses a PHP 8.1+ deprecation notice.
 
 #### 🚀 Added
 * Added support for the Gravity PDF shortcode (`[gravitypdf]`) in the Empty Field Content area under field conditional Logic.

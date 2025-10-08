@@ -5,11 +5,14 @@ use Elementor\Core\Documents_Manager;
 use Elementor\Core\Utils\Promotions\Filtered_Promotions_Manager;
 use Elementor\Element_Base;
 use Elementor\TemplateLibrary\Source_Local;
+use Elementor\App\Modules\ImportExportCustomization\Utils as ImportExportCustomizationUtils;
 use ElementorPro\Base\Module_Base;
 use ElementorPro\Modules\GlobalWidget\Documents\Widget;
+use ElementorPro\Modules\GlobalWidget\ImportExportCustomization;
 use ElementorPro\Plugin;
 use ElementorPro\License\API;
 use ElementorPro\Modules\Tiers\Module as Tiers;
+use Elementor\Core\Base\Document;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -31,6 +34,9 @@ class Module extends Module_Base {
 
 	public function __construct() {
 		parent::__construct();
+
+		$this->add_component( 'import_export_import', new ImportExportCustomization\Import() );
+		$this->add_component( 'import_export_export', new ImportExportCustomization\Export() );
 
 		$this->add_hooks();
 
@@ -250,6 +256,7 @@ class Module extends Module_Base {
 		return $data;
 	}
 
+
 	private function add_hooks() {
 		add_action( 'elementor/documents/register', [ $this, 'register_documents' ] );
 		add_action( 'elementor/template-library/after_save_template', [ $this, 'set_template_widget_type_meta' ], 10, 2 );
@@ -266,5 +273,7 @@ class Module extends Module_Base {
 		add_filter( 'elementor/document/save/data', function ( $data, $document ) {
 			return $this->get_document_data( $data, $document );
 		}, 10, 2 );
+		add_filter( 'elementor/import-export-customization/export/templates_data', [ $this->get_component( 'import_export_export' ), 'add_global_widgets_to_export' ], 10, 3 );
+		add_filter( 'elementor/import-export-customization/import/templates_result', [ $this->get_component( 'import_export_import' ), 'add_global_widgets_to_import' ], 10, 4 );
 	}
 }

@@ -500,6 +500,42 @@ function wpai_wp_enqueue_code_editor( $args ) {
         }
     }
 
+    if (!function_exists('wp_all_import_get_allowed_zip_extensions')) {
+        /**
+         * Get allowed file extensions for zip extraction (whitelist approach)
+         * @return array
+         */
+        function wp_all_import_get_allowed_zip_extensions() {
+            // Data file extensions
+            $data_extensions = array(
+                'xml', 'csv', 'txt', 'json', 'sql', 'dat', 'psv', 'tsv','xls','xlsx'
+            );
+
+            // Get image extensions from WordPress and plugin
+            $image_extensions = array();
+            if (function_exists('wp_all_import_supported_image_extensions')) {
+                $supported_image_extensions = wp_all_import_supported_image_extensions();
+                if ($supported_image_extensions) {
+                    $image_extensions = explode('|', $supported_image_extensions);
+                }
+            }
+
+            // Additional common image extensions not covered by the function
+            $additional_image_extensions = array(
+                'jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp', 'avif', 'ico', 'tiff', 'tif'
+            );
+
+            // Merge all allowed extensions
+            $allowed_extensions = array_merge($data_extensions, $image_extensions, $additional_image_extensions);
+
+            // Remove duplicates and empty values
+            $allowed_extensions = array_filter(array_unique($allowed_extensions));
+
+            // Apply filter to allow customization
+            return apply_filters('wp_all_import_allowed_zip_extensions', $allowed_extensions);
+        }
+    }
+
 if (!function_exists('pmxi_encode_parenthesis')) {
 	function pmxi_encode_parenthesis($input) {
 		return strtr($input, [

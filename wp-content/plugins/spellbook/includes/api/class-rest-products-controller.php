@@ -40,6 +40,21 @@ class GravityPerks_REST_Products_Controller extends WP_REST_Controller {
 			],
 		] );
 
+		register_rest_route( $this->namespace, '/' . $this->rest_base . '/(?P<id>[\d]+)/details', [
+			[
+				'methods'             => WP_REST_Server::READABLE,
+				'callback'            => [ $this, 'get_product_details' ],
+				'permission_callback' => [ $this, 'check_permission' ],
+				'args'               => [
+					'id' => [
+						'required'          => true,
+						'type'             => 'integer',
+						'minimum'          => 1,
+					],
+				],
+			],
+		] );
+
 		// Register plugin management endpoints
 		register_rest_route( $this->namespace, '/' . $this->rest_base . '/(?P<id>[\w-]+)/activate', [
 			[
@@ -682,8 +697,41 @@ class GravityPerks_REST_Products_Controller extends WP_REST_Controller {
 		);
 	}
 
+	/**
+	 * Get detailed product information including changelog
+	 *
+	 * @param WP_REST_Request $request Request object
+	 * @return WP_REST_Response|WP_Error Response object or WP_Error
+	 */
+	public function get_product_details( $request ) {
+		$product_id = (int) $request['id'];
+
+		// Get detailed product data with changelog
+		$detailed_product = $this->api->get_product( $product_id );
+		if ( is_wp_error( $detailed_product ) ) {
+			return $detailed_product;
+		}
+
+		if ( ! $detailed_product ) {
+			return new WP_Error(
+				'plugin_details_not_found',
+				__( 'Plugin details not found.', 'spellbook' ),
+				[ 'status' => 404 ]
+			);
+		}
+
+		return rest_ensure_response( $this->prepare_product_for_response( $detailed_product, $request ) );
+	}
+
 	public function is_installed( $product ) {
 		return GWPerk::is_installed( $product->plugin_file );
+	}
+
+	public function is_deprecated( $product ) {
+		if ( in_array( 'deprecated', $product->categories, true ) ) {
+			return true;
+		}
+		return false;
 	}
 
 	public function prepare_product_for_response( $product, $request ) {
@@ -715,6 +763,7 @@ class GravityPerks_REST_Products_Controller extends WP_REST_Controller {
 			'is_legacy_free_plugin' => $is_legacy_free_plugin,
 			'is_installed'  => GWPerk::is_installed( $product->plugin_file ) || $is_legacy_free_plugin,
 			'is_active'     => is_plugin_active( $product->plugin_file ),
+			'is_deprecated' => $this->is_deprecated( $product ),
 			/*
 			 * Performance Note: Loading perk classes to check for settings is expensive.
 			 * We're keeping this for now since only a few perks like GP Better User Activation
@@ -732,6 +781,7 @@ class GravityPerks_REST_Products_Controller extends WP_REST_Controller {
 		 */
 		$plugins_with_settings = array(
 			'gp-better-user-activation/gp-better-user-activation.php',
+			'gwexpandtextareas/gwexpandtextareas.php',
 		);
 
 		if ( ! in_array( $plugin_file, $plugins_with_settings, true ) ) {

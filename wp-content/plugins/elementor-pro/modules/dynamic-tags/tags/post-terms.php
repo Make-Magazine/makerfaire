@@ -90,7 +90,7 @@ class Post_Terms extends Tag {
 	public function render() {
 		$settings = $this->get_settings();
 
-		if ( 'yes' === $settings['link'] ) {
+		if ( 'yes' === $settings['link'] || true === $settings['link'] ) {
 			$value = get_the_term_list( get_the_ID(), $settings['taxonomy'], '', $settings['separator'] );
 		} else {
 			$terms = get_the_terms( get_the_ID(), $settings['taxonomy'] );

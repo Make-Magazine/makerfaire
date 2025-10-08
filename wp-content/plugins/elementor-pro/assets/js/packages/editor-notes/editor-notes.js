@@ -33,9 +33,10 @@ function useNotesActionProps() {
     icon: _elementor_icons__WEBPACK_IMPORTED_MODULE_1__.MessageIcon,
     onClick: () => {
       const extendedWindow = window;
-      const config = extendedWindow?.elementor?.editorEvents?.config;
+      const eventsManager = extendedWindow?.elementorCommon?.eventsManager || extendedWindow?.elementor?.editorEvents;
+      const config = eventsManager?.config;
       if (config) {
-        extendedWindow.elementor.editorEvents.dispatchEvent(config.names.topBar.notes, {
+        eventsManager.dispatchEvent(config.names.topBar.notes, {
           location: config.locations.topBar,
           secondaryLocation: config.secondaryLocations.notes,
           trigger: config.triggers.toggleClick,

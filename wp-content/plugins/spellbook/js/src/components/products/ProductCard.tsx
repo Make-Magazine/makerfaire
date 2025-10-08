@@ -17,7 +17,7 @@ import { Modal } from '@wordpress/components';
 import PluginSettingsFrame from './PluginSettingsFrame';
 import type { BaseProduct, LicensedProductType, LicenseData, LicenseResponse } from '../../types';
 import './ProductCard.css';
-import { useProductMutations } from '../../hooks/api/useProducts';
+import { useProductMutations, useProductDetails } from '../../hooks/api/useProducts';
 import { useLicenseMutations } from '../../hooks/api/useLicenses';
 import { canRegisterProduct, canUpdateProduct, isProductRegistered, getLicenseForProduct } from '../../helpers/productStatus';
 import { addUtmParams } from '../../helpers/urls';
@@ -112,6 +112,15 @@ const ProductCard = memo(<T extends BaseProduct>({ product }: ProductCardProps<T
 	const isUnregistered = useUnregisteredStatus(product);
 	const { data: licenses } = product.type === 'free' ? { data: null } : useAllLicenses();
 	const mutations = useProductMutations();
+	const { data: productDetails, isLoading: isLoadingDetails, refetch: fetchProductDetails } = useProductDetails(product.ID);
+
+	const handleChangelogClick = () => {
+		// Fetch product details if we don't have changelog data
+		if (!productDetails?.sections?.changelog) {
+			fetchProductDetails();
+		}
+		setIsChangelogModalOpen(true);
+	};
 
 	const handleToggle = () => {
 		if (is_active) {
@@ -153,7 +162,7 @@ const ProductCard = memo(<T extends BaseProduct>({ product }: ProductCardProps<T
 		<>
 			<div className="product-card__tags">
 				{product.version && (
-					<button onClick={() => setIsChangelogModalOpen(true)}>
+					<button onClick={handleChangelogClick}>
 						<Tag
 							content={`v${product.version}`}
 							size="text-xxs"
@@ -164,7 +173,7 @@ const ProductCard = memo(<T extends BaseProduct>({ product }: ProductCardProps<T
 					</button>
 				)}
 				{product.has_update && product.is_installed && (
-					<button onClick={() => setIsChangelogModalOpen(true)}>
+					<button onClick={handleChangelogClick}>
 						<Tag
 							content={`v${product.new_version} AVAILABLE`}
 							size="text-xxs"
@@ -362,7 +371,17 @@ const ProductCard = memo(<T extends BaseProduct>({ product }: ProductCardProps<T
 					className="changelog-modal"
 				>
 					<div>
-						<div dangerouslySetInnerHTML={{ __html: product.sections.changelog }} />
+						{isLoadingDetails ? (
+							<div className="changelog-modal__loading">
+								{__('Loading changelog...', 'spellbook')}
+							</div>
+						) : productDetails?.sections?.changelog ? (
+							<div dangerouslySetInnerHTML={{ __html: productDetails.sections.changelog }} />
+						) : (
+							<div className="changelog-modal__error">
+								{__('Changelog not available', 'spellbook')}
+							</div>
+						)}
 					</div>
 				</Modal>
 			)}

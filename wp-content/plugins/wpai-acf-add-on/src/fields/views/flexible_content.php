@@ -196,7 +196,7 @@
                                 // add width attr
                                 $attr = "";
 
-                                if( count($field['layouts'][$key - 1]['sub_fields']) > 1 && isset($sub_field['column_width']) && $sub_field['column_width'] )
+                                if( !empty($field['layouts'][$key - 1]['sub_fields']) && count($field['layouts'][$key - 1]['sub_fields']) > 1 && isset($sub_field['column_width']) && $sub_field['column_width'] )
                                 {
                                     $attr = 'width="' . $sub_field['column_width'] . '%"';
                                 }

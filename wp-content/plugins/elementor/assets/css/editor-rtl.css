@@ -1,4 +1,4 @@
-/*! elementor - v3.31.0 - 11-08-2025 */
+/*! elementor - v3.32.0 - 05-10-2025 */
 .elementor-control-unit-1 {
   width: 27px;
 }
@@ -196,9 +196,10 @@ body.elementor-navigator--dock-hint:after {
 }
 .e-control-tool i {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translateX(-50%) translateY(-50%);
+  position: absolute;
+  inset-block-start: 50%;
+  inset-inline-start: 50%;
+  transform: translate(calc(-50% * var(--direction-multiplier)), -50%);
   color: var(--e-a-color-txt-default);
   font-size: 13px;
 }
@@ -209,9 +210,9 @@ i.eicon-tilted {
 
 .elementor-loader-wrapper {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  inset-block-start: 50%;
+  inset-inline-start: 50%;
+  transform: translate(calc(-50% * var(--direction-multiplier)), -50%);
   width: 300px;
   display: flex;
   flex-direction: column;
@@ -901,8 +902,7 @@ select {
   position: absolute;
   box-shadow: var(--e-a-popover-shadow);
   border-radius: var(--e-a-border-radius);
-  left: 0;
-  right: 0;
+  inset-inline: 0;
   margin: -4px auto 5px;
   padding-block-start: 15px;
   width: 90%;
@@ -1291,8 +1291,8 @@ select {
 }
 .elementor-panel .elementor-panel-footer-sub-menu-wrapper {
   position: absolute;
-  bottom: 100%;
-  left: 0;
+  inset-block-end: 100%;
+  inset-inline-start: 0;
   width: 100%;
   background-color: #1f2124;
   padding: 10px;
@@ -1361,7 +1361,7 @@ body.elementor-panel-loading #elementor-panel-state-loading {
 #elementor-panel-elements-search-area {
   background-color: var(--e-a-bg-default);
   position: sticky;
-  top: 0;
+  inset-block-start: 0;
   padding: 15px;
   z-index: 1;
 }
@@ -1392,6 +1392,18 @@ body.elementor-panel-loading #elementor-panel-state-loading {
 #elementor-panel-elements-search-input:focus {
   border-color: var(--e-a-border-color-focus);
   padding-inline-end: 15px;
+}
+
+.e-free-badge-container {
+  flex-grow: 1;
+  margin-inline-start: 10px;
+  margin-inline-end: 10px;
+}
+.e-free-badge-container .e-free-badge {
+  border-radius: var(--e-a-border-radius);
+  background-color: var(--e-a-btn-bg);
+  color: var(--e-a-btn-color-invert);
+  padding: 3px 5px;
 }
 
 .elementor-panel .elementor-element {
@@ -1426,6 +1438,9 @@ body.elementor-panel-loading #elementor-panel-state-loading {
 .elementor-panel .elementor-element:hover > .eicon-lock, .elementor-panel .elementor-element:focus > .eicon-lock {
   color: var(--e-a-color-accent);
 }
+.elementor-panel .elementor-element:hover > .eicon-plug, .elementor-panel .elementor-element:focus > .eicon-plug {
+  color: var(--e-a-color-info);
+}
 .elementor-panel .elementor-element .icon {
   font-size: 28px;
   padding-block-start: 15px;
@@ -1439,7 +1454,7 @@ body.elementor-panel-loading #elementor-panel-state-loading {
 .elementor-panel .elementor-element .title {
   font-size: 12px;
 }
-.elementor-panel .elementor-element > .eicon-lock {
+.elementor-panel .elementor-element > .eicon-lock, .elementor-panel .elementor-element .eicon-plug {
   position: absolute;
   inset-block-start: 5px;
   inset-inline-end: 5px;
@@ -1583,14 +1598,14 @@ body.elementor-panel-loading #elementor-panel-state-loading {
 
 #elementor-panel-get-pro-elements-sticky {
   position: sticky;
-  bottom: 0;
+  inset-block-end: 0;
   font-size: 14px;
   font-weight: 400;
   line-height: 1.6;
   margin-block-end: -10px;
 }
 #elementor-panel-get-pro-elements-sticky .elementor-get-pro-sticky-message {
-  margin-top: -14px;
+  margin-block-start: -14px;
   min-height: 40px;
   display: block;
   padding: 9px min(35px, 5%);
@@ -1607,7 +1622,7 @@ body.elementor-panel-loading #elementor-panel-state-loading {
   color: var(--e-a-btn-bg-accent);
 }
 #elementor-panel-get-pro-elements-sticky img {
-  margin-left: 17px;
+  margin-inline-start: 17px;
 }
 
 #elementor-panel-notice-wrapper .elementor-panel-notice {
@@ -1636,8 +1651,8 @@ body.e-has-notification .elementor-panel-menu-item.elementor-panel-menu-item-not
   border-radius: 50%;
   width: 8px;
   height: 8px;
-  top: 5px;
-  right: 5px;
+  inset-block-start: 5px;
+  inset-inline-end: 5px;
 }
 
 .media-modal.wp-core-ui {
@@ -1925,7 +1940,7 @@ body:not(.elementor-device-mobile) .elementor-control.elementor-control-responsi
 .elementor-control-responsive-switchers__holder {
   position: absolute;
   width: 100%;
-  top: 0;
+  inset-block-start: 0;
   background-color: var(--e-a-bg-default);
   border-radius: var(--e-a-border-radius);
   transition: 0.15s;
@@ -2248,7 +2263,7 @@ body:not(.elementor-device-mobile) .elementor-control.elementor-control-responsi
 .elementor-control-responsive-switchers__holder {
   position: absolute;
   width: 100%;
-  top: 0;
+  inset-block-start: 0;
   background-color: var(--e-a-bg-default);
   border-radius: var(--e-a-border-radius);
   transition: 0.15s;
@@ -2526,7 +2541,7 @@ body:not(.elementor-device-mobile) .elementor-control.elementor-control-responsi
 .elementor-control-responsive-switchers__holder {
   position: absolute;
   width: 100%;
-  top: 0;
+  inset-block-start: 0;
   background-color: var(--e-a-bg-default);
   border-radius: var(--e-a-border-radius);
   transition: 0.15s;
@@ -2794,9 +2809,9 @@ body:not(.elementor-device-mobile) .elementor-control.elementor-control-responsi
 
 .elementor-control-type-icons .elementor-control-media__preview > * {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  inset-block-start: 50%;
+  inset-inline-start: 50%;
+  transform: translate(calc(-50% * var(--direction-multiplier)), -50%);
 }
 .elementor-control-type-icons .elementor-control-media__preview i {
   font-size: 70px;
@@ -3014,7 +3029,7 @@ body:not(.elementor-device-mobile) .elementor-control.elementor-control-responsi
   content: "\e90e";
   position: absolute;
   transform: translateY(-50%);
-  top: 50%;
+  inset-block-start: 50%;
   inset-inline-start: 13px;
 }
 .e-global__color {
@@ -3157,9 +3172,9 @@ body:not(.elementor-device-mobile) .elementor-control.elementor-control-responsi
 }
 .elementor-control-media .eicon-plus-circle {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  inset-block-start: 50%;
+  inset-inline-start: 50%;
+  transform: translate(calc(-50% * var(--direction-multiplier)), -50%);
   color: var(--e-a-color-white);
   font-size: 20px;
 }
@@ -3184,9 +3199,9 @@ body:not(.elementor-device-mobile) .elementor-control.elementor-control-responsi
 }
 .elementor-control-media-area .eicon-video-camera {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  inset-block-start: 50%;
+  inset-inline-start: 50%;
+  transform: translate(calc(-50% * var(--direction-multiplier)), -50%);
   color: rgba(255, 255, 255, 0.7);
   font-size: 21px;
 }
@@ -3204,16 +3219,15 @@ body:not(.elementor-device-mobile) .elementor-control.elementor-control-responsi
   pointer-events: none;
 }
 .elementor-control-media .elementor-control-media__content:not(:hover) .elementor-control-media__tools {
-  bottom: -30px;
+  inset-block-end: -30px;
 }
 .elementor-control-media__content {
   transition: all 0.2s ease-in-out;
 }
 .elementor-control-media__tools {
   position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
+  inset-block-end: 0;
+  inset-inline: 0;
   height: 27px;
   transition: all 0.2s ease-in-out;
 }
@@ -3629,7 +3643,7 @@ body:not(.elementor-device-mobile) .elementor-control.elementor-control-responsi
 .elementor-control-type-slider--handles-range .elementor-slider .noUi-handle:after {
   content: "";
   position: absolute;
-  top: 2px;
+  inset-block-start: 2px;
   height: 12px;
   width: 11px;
   transform: rotate(45deg);
@@ -3729,7 +3743,7 @@ body:not(.elementor-device-mobile) .elementor-control.elementor-control-responsi
 }
 .elementor-slider .noUi-tooltip {
   position: absolute;
-  top: calc(100% + 5px);
+  inset-block-start: calc(100% + 5px);
   left: calc(50% - 4px);
   transform: translateX(-50%);
   font-size: 10px;
@@ -3818,7 +3832,7 @@ body:not(.elementor-device-mobile) .elementor-control.elementor-control-responsi
 }
 .elementor-control-type-switcher .elementor-switch-label:before, .elementor-control-type-switcher .elementor-switch-label:after {
   position: absolute;
-  top: 0;
+  inset-block-start: 0;
   width: 50%;
   text-align: center;
   line-height: 20px;
@@ -3826,12 +3840,12 @@ body:not(.elementor-device-mobile) .elementor-control.elementor-control-responsi
 }
 .elementor-control-type-switcher .elementor-switch-label:before {
   content: attr(data-off);
-  right: 5px;
+  inset-inline-end: 5px;
   color: var(--e-a-color-txt-muted);
 }
 .elementor-control-type-switcher .elementor-switch-label:after {
   content: attr(data-on);
-  left: 5px;
+  inset-inline-start: 5px;
   color: var(--e-a-btn-color);
   opacity: 0;
 }
@@ -3846,17 +3860,17 @@ body:not(.elementor-device-mobile) .elementor-control.elementor-control-responsi
 }
 .elementor-control-type-switcher .elementor-switch-handle {
   position: absolute;
-  top: 1px;
-  left: 1px;
+  inset-block-start: 1px;
+  inset-inline-start: 1px;
   width: 18px;
   height: 18px;
   background: white;
   border-radius: 10px;
-  transition: left 0.15s ease-out;
+  transition: inset-inline-start 0.15s ease-out;
 }
 .elementor-control-type-switcher .elementor-switch-input:checked ~ .elementor-switch-handle {
-  left: initial;
-  right: 1px;
+  inset-inline-start: initial;
+  inset-inline-end: 1px;
 }
 
 .elementor-control-type-tabs {
@@ -3991,8 +4005,8 @@ body:not(.elementor-device-mobile) .elementor-control.elementor-control-responsi
 .elementor-control-type-url .elementor-control-url-autocomplete-spinner {
   display: none;
   position: absolute;
-  top: 5px;
-  right: 0;
+  inset-block-start: 5px;
+  inset-inline-end: 0;
   width: 10px;
   height: 10px;
   font-size: 10px;
@@ -4334,9 +4348,9 @@ body:not(.elementor-device-mobile) .elementor-control.elementor-control-responsi
 
 #elementor-panel-revisions-loading {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  inset-block-start: 50%;
+  inset-inline-start: 50%;
+  transform: translate(calc(-50% * var(--direction-multiplier)), -50%);
 }
 #elementor-panel-revisions-loading .eicon-loading {
   font-size: 50px;
@@ -5108,7 +5122,7 @@ body.e-is-device-mode:not(.elementor-device-desktop) #elementor-preview-responsi
 }
 #elementor-template-library-templates[data-template-source=cloud] .toolbar-container .quota-progress-info i, #elementor-template-library-templates[data-template-source=empty] .toolbar-container .quota-progress-info i {
   font-size: 14px;
-  margin-left: 5px;
+  margin-inline-start: 5px;
 }
 #elementor-template-library-templates[data-template-source=cloud] .toolbar-container .progress-bar-container, #elementor-template-library-templates[data-template-source=empty] .toolbar-container .progress-bar-container {
   width: 200px;
@@ -5264,7 +5278,7 @@ body.e-is-device-mode:not(.elementor-device-desktop) #elementor-preview-responsi
   height: 100px;
   position: relative;
   border-radius: 3px;
-  margin-bottom: 4px;
+  margin-block-end: 4px;
   overflow: hidden;
 }
 #elementor-template-library-templates[data-template-view=grid] #elementor-template-library-templates-container .elementor-template-library-template-view-grid .elementor-template-library-template-thumbnail img {
@@ -5398,10 +5412,10 @@ body.e-is-device-mode:not(.elementor-device-desktop) #elementor-preview-responsi
 }
 #elementor-template-library-templates .elementor-template-library-local-column-1 input[type=checkbox] {
   position: relative;
-  top: 3px;
+  inset-block-start: 3px;
 }
 #elementor-template-library-templates .elementor-template-library-local-column-1 input[type=checkbox]:checked {
-  top: 0px;
+  inset-block-start: 0px;
 }
 #elementor-template-library-templates .bulk-selection-item-checkbox:checked,
 #elementor-template-library-templates #bulk-select-all:checked {
@@ -5531,7 +5545,7 @@ label.elementor-template-library-order-label:hover {
 }
 
 #elementor-template-library-create-new-folder-dialog .elementor-create-folder-template-dialog__p {
-  margin-bottom: 10px;
+  margin-block-end: 10px;
 }
 
 #elementor-template-library-filter-text-wrapper {
@@ -5545,7 +5559,7 @@ label.elementor-template-library-order-label:hover {
   transform: translateY(-50%);
 }
 #elementor-template-library-filter-text-wrapper i.eicon-loading.eicon-animation-spin {
-  top: 25%;
+  inset-block-start: 25%;
 }
 
 #elementor-template-library-filter-text {
@@ -5648,9 +5662,9 @@ label.elementor-template-library-order-label:hover {
 .elementor-template-library-template-remote .elementor-template-library-template-preview i {
   font-size: 20px;
   position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  inset-block-start: 50%;
+  inset-inline-start: 50%;
+  transform: translate(calc(-50% * var(--direction-multiplier)), -50%);
 }
 .elementor-template-library-template-remote .elementor-template-library-template-footer {
   display: flex;
@@ -6086,7 +6100,7 @@ label.elementor-template-library-order-label:hover {
 }
 #elementor-template-library-save-template-form .cloud-library-form-inputs .source-selections input[type=checkbox]:checked {
   background: #69727D;
-  top: -3px;
+  inset-block-start: -3px;
   position: relative;
 }
 #elementor-template-library-save-template-form .cloud-library-form-inputs .source-selections-input {
@@ -6102,11 +6116,11 @@ label.elementor-template-library-order-label:hover {
 #elementor-template-library-save-template-form .cloud-library-form-inputs .source-selections-input #cloud,
 #elementor-template-library-save-template-form .cloud-library-form-inputs .source-selections-input #local {
   position: relative;
-  top: 2px;
+  inset-block-start: 2px;
 }
 #elementor-template-library-save-template-form .cloud-library-form-inputs .source-selections-input #cloud:checked,
 #elementor-template-library-save-template-form .cloud-library-form-inputs .source-selections-input #local:checked {
-  top: -2px;
+  inset-block-start: -2px;
 }
 #elementor-template-library-save-template-form .cloud-library-form-inputs .source-selections-input .eicon-ellipsis-h {
   vertical-align: bottom;
@@ -6137,7 +6151,7 @@ label.elementor-template-library-order-label:hover {
 #elementor-template-library-save-template-form .cloud-library-form-inputs .cloud-folder-selection-dropdown {
   display: none;
   position: absolute;
-  top: 40px;
+  inset-block-start: 40px;
   background-color: var(--e-a-bg-default);
   min-width: 187px;
   overflow: auto;
@@ -6295,9 +6309,9 @@ label.elementor-template-library-order-label:hover {
 
 .elementor-template-library-blank-footer {
   position: absolute;
-  bottom: 70px;
-  left: 50%;
-  transform: translateX(-50%);
+  inset-block-end: 70px;
+  inset-inline-start: 50%;
+  transform: translateX(calc(-50% * var(--direction-multiplier)));
   font-style: italic;
   color: var(--e-a-color-txt-muted);
 }
@@ -6374,8 +6388,8 @@ label.elementor-template-library-order-label:hover {
   padding: 20px 20px 0px 20px;
 }
 #elementor-library--infotip__dialog:after {
-  top: 100%;
-  border-top-color: var(--e-a-bg-default);
+  inset-block-start: 100%;
+  border-block-start-color: var(--e-a-bg-default);
 }
 
 #elementor-library--connect_infotip__dialog {
@@ -6385,8 +6399,8 @@ label.elementor-template-library-order-label:hover {
   padding: 20px;
 }
 #elementor-library--connect_infotip__dialog:after {
-  bottom: 100%;
-  border-bottom-color: var(--e-a-bg-default);
+  inset-block-end: 100%;
+  border-block-end-color: var(--e-a-bg-default);
 }
 
 .elementor-tags-list {
@@ -7003,7 +7017,7 @@ iframe + #elementor-navigator__header__title, #elementor-navigator__ai-titles + 
   z-index: 91;
 }
 .elementor-navigator__element__indicators:not(:hover) {
-  transform: translateX(calc(100% * var(--direction-multiplier) - var(--e-editor-navigator-indicator-width)));
+  transform: translateX(calc(100% * var(--direction-multiplier) - var(--e-editor-navigator-indicator-width) * var(--direction-multiplier)));
 }
 .elementor-navigator__element__indicator {
   height: 100%;
@@ -7032,7 +7046,7 @@ iframe + #elementor-navigator__header__title, #elementor-navigator__ai-titles + 
 .e-notice-bar {
   position: absolute;
   width: 100%;
-  bottom: 0;
+  inset-block-end: 0;
   display: flex;
   align-items: center;
   height: 40px;
@@ -7281,9 +7295,9 @@ body:not(.elementor-device-desktop) #e-notice-bar {
   align-items: center;
   width: 100%;
   position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  inset-block-start: 50%;
+  inset-inline-start: 50%;
+  transform: translate(calc(-50% * var(--direction-multiplier)), -50%);
   padding: 1px;
 }
 .elementor-icons-manager__tab__item__icon {
@@ -7329,9 +7343,10 @@ body:not(.elementor-device-desktop) #e-notice-bar {
 .pickr .pcr-button:before, .pickr .pcr-button:after {
   height: 12px;
   width: 12px;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  position: absolute;
+  inset-block-start: 50%;
+  inset-inline-start: 50%;
+  transform: translate(calc(-50% * var(--direction-multiplier)), -50%);
 }
 
 .pcr-app {
@@ -7473,7 +7488,7 @@ body:not(.elementor-device-desktop) #e-notice-bar {
 
 .select2-selection__arrow {
   height: 27px;
-  top: 0;
+  inset-block-start: 0;
 }
 
 .select2-results__option[aria-selected=true] {
@@ -7534,9 +7549,8 @@ label.e-scrubbing-over {
   margin: 0;
   height: 100px;
   position: absolute;
-  top: -60px;
-  left: 0;
-  right: 0;
+  inset-block-start: -60px;
+  inset-inline: 0;
 }
 #elementor-paste-area-dialog #elementor-paste-area-dialog__input:focus {
   border-color: transparent;

@@ -2,7 +2,7 @@
 /**
  * @license MIT
  *
- * Modified by gravitykit on 10-February-2025 using {@see https://github.com/BrianHenryIE/strauss}.
+ * Modified by gravitykit on 25-September-2025 using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\AdvancedFilter\QueryFilters;
@@ -13,6 +13,7 @@ use GravityKit\AdvancedFilter\QueryFilters\Condition\ConditionFactory;
 use GravityKit\AdvancedFilter\QueryFilters\Filter\EntryFilterService;
 use GravityKit\AdvancedFilter\QueryFilters\Filter\Filter;
 use GravityKit\AdvancedFilter\QueryFilters\Filter\FilterFactory;
+use GravityKit\AdvancedFilter\QueryFilters\Filter\FilterIdGenerator;
 use GravityKit\AdvancedFilter\QueryFilters\Filter\RandomFilterIdGenerator;
 use GravityKit\AdvancedFilter\QueryFilters\Filter\Visitor\CurrentUserVisitor;
 use GravityKit\AdvancedFilter\QueryFilters\Filter\Visitor\DisableAdminVisitor;
@@ -223,10 +224,33 @@ class QueryFilters {
 	 *
 	 * @see \GFCommon::get_field_filter_settings()
 	 *
+	 * @param int|null $form_id The form ID.
+	 *
 	 * @return array
 	 */
-	public function get_field_filters() {
-		return $this->repository->get_field_filters( $this->form['id'] );
+	public function get_field_filters( ?int $form_id = null ): array {
+		return $this->repository->get_field_filters( $form_id ?? $this->form['id'] );
+	}
+
+	/**
+	 * Returns the forms for the Query filters.
+	 *
+	 * @since  $ver$
+	 *
+	 * @param int|null $form_id The form ID.
+	 *
+	 * @return array{id:string, title:string}[] The forms.
+	 *
+	 * @filter `gk/query-filters/forms` Modify the forms.*
+	 *
+	 * @internal
+	 */
+	public function get_forms( ?int $form_id = null ): array {
+		$form = $this->repository->get_form( $form_id ?? $this->form['id'] ?? null );
+
+		$forms = $form ? [ [ 'id' => $form['id'], 'title' => $form['title'] ] ] : [];
+
+		return apply_filters( 'gk/query-filters/forms', $forms, $this->form['id'] );
 	}
 
 	/**
@@ -307,6 +331,11 @@ class QueryFilters {
 			),
 			'custom_is_operator_input'      => esc_html__( 'Custom Choice', 'gravityview-advanced-filter' ),
 			'untitled'                      => esc_html__( 'Untitled', 'gravityview-advanced-filter' ),
+			'form_fields'                   => esc_html__( 'Form Fields', 'gravityview-advanced-filter' ),
+			'entry_properties'              => esc_html__( 'Entry Properties', 'gravityview-advanced-filter' ),
+			'non_field_data'                => esc_html__( 'Non-Field Data', 'gravityview-advanced-filter' ),
+			'select_field'                  => esc_html__( 'Select Field', 'gravityview-advanced-filter' ),
+			'select_form'                   => esc_html__( 'Select Form', 'gravityview-advanced-filter' ),
 			'field_not_available'           => esc_html__(
 				'Form field ID #%d is no longer available. Please remove this condition.',
 				'gravityview-advanced-filter'
@@ -339,6 +368,7 @@ class QueryFilters {
 			$handle,
 			$variable_name,
 			[
+				'forms'                     => $meta['forms'] ?? $this->get_forms(),
 				'fields'                    => $meta['fields'] ?? $this->get_field_filters(),
 				'conditions'                => $meta['conditions'] ?? [],
 				'targetElementSelector'     => $meta['target_element_selector'] ?? '#gk-query-filters',
@@ -348,6 +378,13 @@ class QueryFilters {
 				'maxNestingLevel'           => (int) ( $meta['max_nesting_level'] ?? 2 ),
 			]
 		);
+
+		// Add a temporary metatag to force merge tag support for this page.
+		add_action( 'admin_head',
+			$cb = static function () use ( &$cb ) {
+				remove_action( 'admin_head', $cb );
+				echo '<meta class="merge-tag-support mt-initialized" style="display:none" />';
+			} );
 	}
 
 	/**
@@ -378,47 +415,42 @@ class QueryFilters {
 	 *
 	 * @return array Original or converted object.
 	 */
-	public function convert_gf_conditional_logic( array $gf_conditional_logic ) {
+	public static function convert_gf_conditional_logic(
+		array $gf_conditional_logic,
+		?FilterIdGenerator $id_generator = null
+	) {
 		if ( ! isset( $gf_conditional_logic['actionType'], $gf_conditional_logic['logicType'], $gf_conditional_logic['rules'] ) ) {
 			return $gf_conditional_logic;
+		}
+
+		if ( ! isset( $id_generator ) ) {
+			$id_generator = new RandomFilterIdGenerator();
 		}
 
 		$conditions = [];
 
 		foreach ( $gf_conditional_logic['rules'] as $rule ) {
 			$conditions[] = [
-				'_id'      => wp_generate_password( 4, false ),
+				'_id'      => $id_generator->get_id(),
 				'key'      => $rule['fieldId'] ?? null,
 				'operator' => $rule['operator'] ?? null,
 				'value'    => $rule['value'] ?? null,
 			];
 		}
 
+		// Outer group.
 		$query_filters_conditional_logic = [
-			'_id'        => wp_generate_password( 4, false ),
-			'mode'       => Filter::MODE_AND,
+			'_id'        => $id_generator->get_id(),
+			// Mode is the inverse of the actual condition group mode.
+			'mode'       => 'all' === $gf_conditional_logic['logicType'] ? Filter::MODE_OR : Filter::MODE_AND,
 			'conditions' => [],
 		];
 
-		if ( 'all' === $gf_conditional_logic['logicType'] ) {
-			foreach ( $conditions as $condition ) {
-				$query_filters_conditional_logic['conditions'][] = [
-					'_id'        => wp_generate_password( 4, false ),
-					'mode'       => Filter::MODE_OR,
-					'conditions' => [
-						$condition,
-					],
-				];
-			}
-		} else {
-			$query_filters_conditional_logic['conditions'] = [
-				[
-					'_id'        => wp_generate_password( 4, false ),
-					'mode'       => Filter::MODE_OR,
-					'conditions' => $conditions,
-				],
-			];
-		}
+		$query_filters_conditional_logic['conditions'][] = [
+			'_id'        => $id_generator->get_id(),
+			'mode'       => 'all' === $gf_conditional_logic['logicType'] ? Filter::MODE_AND : Filter::MODE_OR,
+			'conditions' => $conditions,
+		];
 
 		return $query_filters_conditional_logic;
 	}

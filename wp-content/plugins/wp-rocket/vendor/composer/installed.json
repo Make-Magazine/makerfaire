@@ -2,20 +2,21 @@
     "packages": [
         {
             "name": "berlindb/core",
-            "version": "2.0.1",
-            "version_normalized": "2.0.1.0",
+            "version": "dev-master",
+            "version_normalized": "dev-master",
             "source": {
                 "type": "git",
                 "url": "https://github.com/berlindb/core.git",
-                "reference": "7dcddaddcffb69c58800d2fb3f6f169791cab1f7"
+                "reference": "4d5f7386f99464cf89d121878a7a25b014eddefe"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/berlindb/core/zipball/7dcddaddcffb69c58800d2fb3f6f169791cab1f7",
-                "reference": "7dcddaddcffb69c58800d2fb3f6f169791cab1f7",
+                "url": "https://api.github.com/repos/berlindb/core/zipball/4d5f7386f99464cf89d121878a7a25b014eddefe",
+                "reference": "4d5f7386f99464cf89d121878a7a25b014eddefe",
                 "shasum": ""
             },
-            "time": "2022-03-10T21:12:11+00:00",
+            "time": "2024-10-14T18:35:55+00:00",
+            "default-branch": true,
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -30,7 +31,7 @@
             "description": "A collection of PHP classes and functions that aims to provide an ORM-like experience and interface to WordPress database tables.",
             "support": {
                 "issues": "https://github.com/berlindb/core/issues",
-                "source": "https://github.com/berlindb/core/tree/2.0.1"
+                "source": "https://github.com/berlindb/core/tree/master"
             },
             "install-path": "../berlindb/core"
         },
@@ -157,8 +158,8 @@
         },
         {
             "name": "symfony/polyfill-php80",
-            "version": "v1.32.0",
-            "version_normalized": "1.32.0.0",
+            "version": "v1.33.0",
+            "version_normalized": "1.33.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/polyfill-php80.git",
@@ -220,7 +221,7 @@
                 "shim"
             ],
             "support": {
-                "source": "https://github.com/symfony/polyfill-php80/tree/v1.32.0"
+                "source": "https://github.com/symfony/polyfill-php80/tree/v1.33.0"
             },
             "funding": [
                 {
@@ -229,6 +230,10 @@
                 },
                 {
                     "url": "https://github.com/fabpot",
+                    "type": "github"
+                },
+                {
+                    "url": "https://github.com/nicolas-grekas",
                     "type": "github"
                 },
                 {
@@ -420,17 +425,17 @@
         },
         {
             "name": "wp-media/wp-mixpanel",
-            "version": "v1.1.1",
-            "version_normalized": "1.1.1.0",
+            "version": "v1.3.0",
+            "version_normalized": "1.3.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/wp-media/wp-mixpanel.git",
-                "reference": "0646d525f0624b13c336ff2829713d9a37192c46"
+                "reference": "402d47230c2118c0cd40e64b0aa8d936b30d4e4f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/wp-media/wp-mixpanel/zipball/0646d525f0624b13c336ff2829713d9a37192c46",
-                "reference": "0646d525f0624b13c336ff2829713d9a37192c46",
+                "url": "https://api.github.com/repos/wp-media/wp-mixpanel/zipball/402d47230c2118c0cd40e64b0aa8d936b30d4e4f",
+                "reference": "402d47230c2118c0cd40e64b0aa8d936b30d4e4f",
                 "shasum": ""
             },
             "require": {
@@ -447,7 +452,7 @@
                 "wp-coding-standards/wpcs": "^3",
                 "wp-media/phpunit": "^3"
             },
-            "time": "2025-08-04T16:14:18+00:00",
+            "time": "2025-10-06T10:12:28+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -472,7 +477,7 @@
             "description": "WordPress Mixpanel Integration",
             "support": {
                 "issues": "https://github.com/wp-media/wp-mixpanel/issues",
-                "source": "https://github.com/wp-media/wp-mixpanel/tree/v1.1.1"
+                "source": "https://github.com/wp-media/wp-mixpanel/tree/v1.3.0"
             },
             "install-path": "../wp-media/wp-mixpanel"
         }

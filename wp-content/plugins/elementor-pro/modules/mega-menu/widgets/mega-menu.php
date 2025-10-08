@@ -2457,13 +2457,13 @@ class Mega_Menu extends Widget_Nested_Base {
 
 						const menuItemContainerClasses = [ 'e-n-menu-title-container' ];
 
-						if ( !! item.item_link.url ) {
+						if ( !! item.item_link?.url ) {
 							menuItemContainerClasses.push( 'e-link', 'e-focus' );
 						}
 
 						view.addRenderAttribute( menuItemTitleContainerLinkKey, {
 							'class': menuItemContainerClasses,
-							'href': elementor.helpers.sanitizeUrl( item.item_link.url ),
+							'href': elementor.helpers.sanitizeUrl( item.item_link?.url ),
 							'aria-current': 'page',
 						} );
 
@@ -2587,13 +2587,13 @@ class Mega_Menu extends Widget_Nested_Base {
 
 		const menuItemContainerClasses = [ 'e-n-menu-title-container' ];
 
-		if ( !! data.item_link.url ) {
+		if ( !! data.item_link?.url ) {
 			menuItemContainerClasses.push( 'e-link', 'e-focus' );
 		}
 
 		view.addRenderAttribute( menuItemTitleContainerLinkKey, {
 			'class': menuItemContainerClasses,
-			'href': elementor.helpers.sanitizeUrl( data.item_link.url ),
+			'href': elementor.helpers.sanitizeUrl( data.item_link?.url ),
 			'aria-current': 'page',
 		}, null, true );
 

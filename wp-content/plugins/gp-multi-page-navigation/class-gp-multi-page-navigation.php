@@ -10,6 +10,10 @@ class GP_Multi_Page_Navigation extends GWPerk {
 
 	private $_default_page = false;
 
+	private $previously_visited_pages = array();
+
+	private $pages_visited = array();
+
 	public function init() {
 
 		load_plugin_textdomain( 'gp-multi-page-navigation', false, basename( dirname( __file__ ) ) . '/languages/' );
@@ -401,7 +405,7 @@ class GP_Multi_Page_Navigation extends GWPerk {
 
 		// track the pages visited _not including_ the current page. this is used down the request line
 		// by get_page_validity() to determine if validation errors should be applied to form fields.
-		$_POST['gpmpn_previously_visited_pages'] = $pages_visited;
+		$this->previously_visited_pages[ $form['id'] ] = $pages_visited;
 
 		$pages_visited[]    = GFFormDisplay::get_current_page( $form['id'] );
 		$pages_visited      = array_unique( $pages_visited );
@@ -415,7 +419,7 @@ class GP_Multi_Page_Navigation extends GWPerk {
 			$pages_visited_json
 		);
 
-		$_POST[ $pages_visited_namespace ] = $pages_visited_json;
+		$this->pages_visited[ $form['id'] ] = $pages_visited;
 
 		/**
 		 * Page validity tracking
@@ -488,7 +492,7 @@ class GP_Multi_Page_Navigation extends GWPerk {
 			$c++;
 		}
 
-		$previously_visited_pages = rgar( $_POST, 'gpmpn_previously_visited_pages', array() );
+		$previously_visited_pages = $this->previously_visited_pages[ $form['id'] ];
 
 		foreach ( $form_copy['fields'] as &$field ) {
 			if (
@@ -514,16 +518,22 @@ class GP_Multi_Page_Navigation extends GWPerk {
 	}
 
 	public function get_pages_visited_from_post( $form ) {
-		$maybe_json = rgpost( 'gpmpn_pages_visited_' . $form['id'], true );
-
-		try {
-			$pages_visited = json_decode( $maybe_json );
-		} catch ( Exception $e ) {
-			// noop, string was not valid JSON
-		}
+		$pages_visited = rgar( $this->pages_visited, $form['id'], array() );
 
 		if ( ! is_array( $pages_visited ) ) {
 			$pages_visited = array();
+		}
+
+		$maybe_json = rgpost( 'gpmpn_pages_visited_' . $form['id'], true );
+		try {
+			$pages_visited_2 = json_decode( $maybe_json );
+			if ( ! is_array( $pages_visited_2 ) ) {
+				$pages_visited_2 = array();
+			}
+			// merge pages_visited array with the one from the post data
+			$pages_visited = array_merge( $pages_visited, $pages_visited_2 );
+		} catch ( Exception $e ) {
+			// noop, string was not valid JSON
 		}
 
 		return $pages_visited;

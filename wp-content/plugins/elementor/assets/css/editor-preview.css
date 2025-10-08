@@ -1,4 +1,4 @@
-/*! elementor - v3.31.0 - 11-08-2025 */
+/*! elementor - v3.32.0 - 05-10-2025 */
 :root {
   --direction-multiplier: 1;
 }
@@ -276,8 +276,7 @@ body.rtl {
   position: absolute;
   box-shadow: var(--e-a-popover-shadow);
   border-radius: var(--e-a-border-radius);
-  left: 0;
-  right: 0;
+  inset-inline: 0;
   margin: -4px auto 5px;
   padding-block-start: 15px;
   width: 90%;
@@ -575,7 +574,7 @@ body:not(.elementor-device-mobile) .elementor-control.elementor-control-responsi
 .elementor-control-responsive-switchers__holder {
   position: absolute;
   width: 100%;
-  top: 0;
+  inset-block-start: 0;
   background-color: var(--e-a-bg-default);
   border-radius: var(--e-a-border-radius);
   transition: 0.15s;
@@ -898,7 +897,7 @@ body:not(.elementor-device-mobile) .elementor-control.elementor-control-responsi
 .elementor-control-responsive-switchers__holder {
   position: absolute;
   width: 100%;
-  top: 0;
+  inset-block-start: 0;
   background-color: var(--e-a-bg-default);
   border-radius: var(--e-a-border-radius);
   transition: 0.15s;
@@ -1176,7 +1175,7 @@ body:not(.elementor-device-mobile) .elementor-control.elementor-control-responsi
 .elementor-control-responsive-switchers__holder {
   position: absolute;
   width: 100%;
-  top: 0;
+  inset-block-start: 0;
   background-color: var(--e-a-bg-default);
   border-radius: var(--e-a-border-radius);
   transition: 0.15s;
@@ -1444,9 +1443,9 @@ body:not(.elementor-device-mobile) .elementor-control.elementor-control-responsi
 
 .elementor-control-type-icons .elementor-control-media__preview > * {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  inset-block-start: 50%;
+  inset-inline-start: 50%;
+  transform: translate(calc(-50% * var(--direction-multiplier)), -50%);
 }
 .elementor-control-type-icons .elementor-control-media__preview i {
   font-size: 70px;
@@ -1664,7 +1663,7 @@ body:not(.elementor-device-mobile) .elementor-control.elementor-control-responsi
   content: "\e90e";
   position: absolute;
   transform: translateY(-50%);
-  top: 50%;
+  inset-block-start: 50%;
   inset-inline-start: 13px;
 }
 .e-global__color {
@@ -1807,9 +1806,9 @@ body:not(.elementor-device-mobile) .elementor-control.elementor-control-responsi
 }
 .elementor-control-media .eicon-plus-circle {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  inset-block-start: 50%;
+  inset-inline-start: 50%;
+  transform: translate(calc(-50% * var(--direction-multiplier)), -50%);
   color: var(--e-a-color-white);
   font-size: 20px;
 }
@@ -1834,9 +1833,9 @@ body:not(.elementor-device-mobile) .elementor-control.elementor-control-responsi
 }
 .elementor-control-media-area .eicon-video-camera {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  inset-block-start: 50%;
+  inset-inline-start: 50%;
+  transform: translate(calc(-50% * var(--direction-multiplier)), -50%);
   color: rgba(255, 255, 255, 0.7);
   font-size: 21px;
 }
@@ -1854,16 +1853,15 @@ body:not(.elementor-device-mobile) .elementor-control.elementor-control-responsi
   pointer-events: none;
 }
 .elementor-control-media .elementor-control-media__content:not(:hover) .elementor-control-media__tools {
-  bottom: -30px;
+  inset-block-end: -30px;
 }
 .elementor-control-media__content {
   transition: all 0.2s ease-in-out;
 }
 .elementor-control-media__tools {
   position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
+  inset-block-end: 0;
+  inset-inline: 0;
   height: 27px;
   transition: all 0.2s ease-in-out;
 }
@@ -2279,7 +2277,7 @@ body:not(.elementor-device-mobile) .elementor-control.elementor-control-responsi
 .elementor-control-type-slider--handles-range .elementor-slider .noUi-handle:after {
   content: "";
   position: absolute;
-  top: 2px;
+  inset-block-start: 2px;
   height: 12px;
   width: 11px;
   transform: rotate(45deg);
@@ -2379,7 +2377,7 @@ body:not(.elementor-device-mobile) .elementor-control.elementor-control-responsi
 }
 .elementor-slider .noUi-tooltip {
   position: absolute;
-  top: calc(100% + 5px);
+  inset-block-start: calc(100% + 5px);
   left: calc(50% - 4px);
   transform: translateX(-50%);
   font-size: 10px;
@@ -2468,7 +2466,7 @@ body:not(.elementor-device-mobile) .elementor-control.elementor-control-responsi
 }
 .elementor-control-type-switcher .elementor-switch-label:before, .elementor-control-type-switcher .elementor-switch-label:after {
   position: absolute;
-  top: 0;
+  inset-block-start: 0;
   width: 50%;
   text-align: center;
   line-height: 20px;
@@ -2476,12 +2474,12 @@ body:not(.elementor-device-mobile) .elementor-control.elementor-control-responsi
 }
 .elementor-control-type-switcher .elementor-switch-label:before {
   content: attr(data-off);
-  right: 5px;
+  inset-inline-end: 5px;
   color: var(--e-a-color-txt-muted);
 }
 .elementor-control-type-switcher .elementor-switch-label:after {
   content: attr(data-on);
-  left: 5px;
+  inset-inline-start: 5px;
   color: var(--e-a-btn-color);
   opacity: 0;
 }
@@ -2496,17 +2494,17 @@ body:not(.elementor-device-mobile) .elementor-control.elementor-control-responsi
 }
 .elementor-control-type-switcher .elementor-switch-handle {
   position: absolute;
-  top: 1px;
-  left: 1px;
+  inset-block-start: 1px;
+  inset-inline-start: 1px;
   width: 18px;
   height: 18px;
   background: white;
   border-radius: 10px;
-  transition: left 0.15s ease-out;
+  transition: inset-inline-start 0.15s ease-out;
 }
 .elementor-control-type-switcher .elementor-switch-input:checked ~ .elementor-switch-handle {
-  left: initial;
-  right: 1px;
+  inset-inline-start: initial;
+  inset-inline-end: 1px;
 }
 
 .elementor-control-type-tabs {
@@ -2641,8 +2639,8 @@ body:not(.elementor-device-mobile) .elementor-control.elementor-control-responsi
 .elementor-control-type-url .elementor-control-url-autocomplete-spinner {
   display: none;
   position: absolute;
-  top: 5px;
-  right: 0;
+  inset-block-start: 5px;
+  inset-inline-end: 0;
   width: 10px;
   height: 10px;
   font-size: 10px;
@@ -3169,11 +3167,11 @@ body:not(.elementor-device-mobile) .elementor-control.elementor-control-responsi
   font-family: var(--e-a-font-family);
   font-size: 13px;
   font-weight: 500;
-  position: absolute;
-  left: 50%;
-  top: 50%;
   color: var(--e-a-color-white);
-  transform: translate(-50%, -50%);
+  position: absolute;
+  inset-block-start: 50%;
+  inset-inline-start: 50%;
+  transform: translate(calc(-50% * var(--direction-multiplier)), -50%);
 }
 .elementor-editor-active .elementor-select-preset-list .elementor-preset svg {
   height: 50px;
@@ -3268,16 +3266,16 @@ body.elementor-editor-active .elementor.elementor-edit-mode .elementor-element.e
   z-index: 9999;
 }
 .pen-menu:after {
-  top: 100%;
   content: "";
   position: absolute;
   border: 6px solid transparent;
   border-block-start-color: #3f444b;
-  left: 50%;
+  inset-block-start: 100%;
+  inset-inline-start: 50%;
   transform: translateX(-50%);
 }
 .pen-menu-below:after {
-  top: 0;
+  inset-block-start: 0;
   transform: translateX(-50%) translateY(-100%) rotate(180deg);
 }
 .pen-icon {
@@ -3925,10 +3923,7 @@ html.elementor-html {
   pointer-events: none;
 }
 
-.elementor-editor-section-settings,
-.elementor-editor-container-settings,
-.elementor-editor-e-flexbox-settings,
-.elementor-editor-e-div-block-settings {
+.elementor-editor-element-overlay-settings {
   height: 24px;
   top: 1px;
   left: 50%;
@@ -3942,31 +3937,19 @@ html.elementor-html {
   stroke-width: 0;
   -webkit-text-stroke: 0 transparent;
 }
-.elementor-editor-section-settings i.eicon-handle,
-.elementor-editor-container-settings i.eicon-handle,
-.elementor-editor-e-flexbox-settings i.eicon-handle,
-.elementor-editor-e-div-block-settings i.eicon-handle {
+.elementor-editor-element-overlay-settings i.eicon-handle {
   font-size: 16px;
 }
-.elementor-editor-section-settings .elementor-editor-element-setting:hover,
-.elementor-editor-container-settings .elementor-editor-element-setting:hover,
-.elementor-editor-e-flexbox-settings .elementor-editor-element-setting:hover,
-.elementor-editor-e-div-block-settings .elementor-editor-element-setting:hover {
+.elementor-editor-element-overlay-settings .elementor-editor-element-setting:hover {
   background-color: var(--e-p-border-section-hover);
 }
-.elementor-editor-section-settings .elementor-editor-element-setting:first-child,
-.elementor-editor-container-settings .elementor-editor-element-setting:first-child,
-.elementor-editor-e-flexbox-settings .elementor-editor-element-setting:first-child,
-.elementor-editor-e-div-block-settings .elementor-editor-element-setting:first-child {
+.elementor-editor-element-overlay-settings .elementor-editor-element-setting:first-child {
   border-start-start-radius: 5px;
   border-start-end-radius: 0;
   border-end-start-radius: 0;
   border-end-end-radius: 0;
 }
-.elementor-editor-section-settings .elementor-editor-element-setting:first-child:before,
-.elementor-editor-container-settings .elementor-editor-element-setting:first-child:before,
-.elementor-editor-e-flexbox-settings .elementor-editor-element-setting:first-child:before,
-.elementor-editor-e-div-block-settings .elementor-editor-element-setting:first-child:before {
+.elementor-editor-element-overlay-settings .elementor-editor-element-setting:first-child:before {
   content: "";
   position: absolute;
   inset-block-start: 2px;
@@ -3977,25 +3960,16 @@ html.elementor-html {
   border-inline-end: 12px solid var(--e-p-border-section);
   transition: var(--e-a-transition-hover);
 }
-.elementor-editor-section-settings .elementor-editor-element-setting:first-child:hover:before,
-.elementor-editor-container-settings .elementor-editor-element-setting:first-child:hover:before,
-.elementor-editor-e-flexbox-settings .elementor-editor-element-setting:first-child:hover:before,
-.elementor-editor-e-div-block-settings .elementor-editor-element-setting:first-child:hover:before {
+.elementor-editor-element-overlay-settings .elementor-editor-element-setting:first-child:hover:before {
   border-inline-end-color: var(--e-p-border-section-hover);
 }
-.elementor-editor-section-settings .elementor-editor-element-setting:last-child,
-.elementor-editor-container-settings .elementor-editor-element-setting:last-child,
-.elementor-editor-e-flexbox-settings .elementor-editor-element-setting:last-child,
-.elementor-editor-e-div-block-settings .elementor-editor-element-setting:last-child {
+.elementor-editor-element-overlay-settings .elementor-editor-element-setting:last-child {
   border-start-start-radius: 0;
   border-start-end-radius: 5px;
   border-end-start-radius: 0;
   border-end-end-radius: 0;
 }
-.elementor-editor-section-settings .elementor-editor-element-setting:last-child:after,
-.elementor-editor-container-settings .elementor-editor-element-setting:last-child:after,
-.elementor-editor-e-flexbox-settings .elementor-editor-element-setting:last-child:after,
-.elementor-editor-e-div-block-settings .elementor-editor-element-setting:last-child:after {
+.elementor-editor-element-overlay-settings .elementor-editor-element-setting:last-child:after {
   content: "";
   position: absolute;
   inset-block-start: 2px;
@@ -4006,10 +3980,7 @@ html.elementor-html {
   border-inline-end: 0 none transparent;
   transition: var(--e-a-transition-hover);
 }
-.elementor-editor-section-settings .elementor-editor-element-setting:last-child:hover:after,
-.elementor-editor-container-settings .elementor-editor-element-setting:last-child:hover:after,
-.elementor-editor-e-flexbox-settings .elementor-editor-element-setting:last-child:hover:after,
-.elementor-editor-e-div-block-settings .elementor-editor-element-setting:last-child:hover:after {
+.elementor-editor-element-overlay-settings .elementor-editor-element-setting:last-child:hover:after {
   border-inline-start-color: var(--e-p-border-section-hover);
 }
 
@@ -4095,6 +4066,7 @@ html.elementor-html {
   border-start-end-radius: 0;
   border-end-start-radius: 0;
   border-end-end-radius: 3px;
+  transform: none;
   overflow: hidden;
 }
 .elementor-editor-column-settings .elementor-editor-element-setting {
@@ -4110,10 +4082,7 @@ html.elementor-html {
 .elementor-column-placeholder:before, .elementor-column-placeholder:after {
   content: "";
   position: absolute;
-  top: 10px;
-  bottom: 10px;
-  right: 10px;
-  left: 10px;
+  inset: 10px;
 }
 .elementor-column-placeholder:before {
   border: 1px solid var(--e-p-border-column);
@@ -4126,7 +4095,7 @@ html.elementor-html {
   position: absolute;
   display: none;
   pointer-events: none;
-  top: 50%;
+  inset-block-start: 50%;
   transform: translateY(-50%);
   color: #fff;
   font-size: 10px;
@@ -4247,10 +4216,7 @@ html.elementor-html {
 .elementor-section > .elementor-element-overlay:after,
 .e-con > .elementor-element-overlay:after {
   position: absolute;
-  left: 1px;
-  right: 1px;
-  top: 1px;
-  bottom: 1px;
+  inset: 1px;
   outline: 1px solid var(--e-p-border-con);
   animation: section-outline 0.75s;
 }
@@ -4385,10 +4351,10 @@ html.elementor-html {
   padding: 2px;
 }
 
-.e-div-block-base:has(.elementor-empty-view), .e-flexbox-base:has(.elementor-empty-view) {
+.e-atomic-element:has(.elementor-empty-view) {
   min-height: 120px;
 }
-.e-div-block-base > .elementor-empty-view.elementor-empty-view, .e-flexbox-base > .elementor-empty-view.elementor-empty-view {
+.e-atomic-element > .elementor-empty-view.elementor-empty-view {
   min-height: inherit;
 }
 

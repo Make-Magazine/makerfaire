@@ -12,6 +12,7 @@ use ElementorPro\License\API;
 use ElementorPro\Modules\CustomCode\AdminMenuItems\Custom_Code_Menu_Item;
 use ElementorPro\Modules\CustomCode\AdminMenuItems\Custom_Code_Promotion_Menu_Item;
 use ElementorPro\Modules\CustomCode\ImportExport\Import_Export as Custom_Code_Import_Export;
+use ElementorPro\Modules\CustomCode\ImportExportCustomization\Import_Export_Customization as Custom_Code_Import_Export_Customization;
 use ElementorPro\Modules\ThemeBuilder\Classes\Conditions_Manager;
 use ElementorPro\Modules\ThemeBuilder\Classes\Locations_Manager;
 use ElementorPro\Plugin;
@@ -63,6 +64,10 @@ class Module extends Module_Base {
 
 			add_action( 'elementor/theme/register_locations', function ( $location_manager ) {
 				return $this->register_location( $location_manager );
+			} );
+
+			add_action( 'init', function () {
+				$this->register_rest_meta_fields();
 			} );
 		}
 
@@ -154,9 +159,10 @@ class Module extends Module_Base {
 			'show_in_menu' => false,
 			'show_in_nav_menus' => false,
 			'exclude_from_search' => true,
+			'show_in_rest' => true,
 			'capability_type' => 'post',
 			'hierarchical' => false,
-			'supports' => [ 'title', 'author' ],
+			'supports' => [ 'title', 'author', 'custom-fields' ],
 			'capabilities' => [
 				'publish_posts' => 'manage_options',
 				'edit_posts' => 'manage_options',
@@ -449,7 +455,86 @@ class Module extends Module_Base {
 		elementor_theme_do_location( $location );
 	}
 
+	private function register_rest_meta_fields() {
+		$this->register_rest_meta_location();
+		$this->register_rest_meta_priority();
+		$this->register_rest_meta_code();
+	}
+
+	private function register_rest_meta_location() {
+		$enum = [
+			Custom_Code_Metabox::OPTION_LOCATION_HEAD,
+			Custom_Code_Metabox::OPTION_LOCATION_BODY_START,
+			Custom_Code_Metabox::OPTION_LOCATION_BODY_END,
+		];
+		register_meta( 'post', '_elementor_' . Custom_Code_Metabox::FIELD_LOCATION, [
+			'object_subtype'   => self::CPT,
+			'show_in_rest'     => [
+				'schema' => [
+					'type' => 'string',
+					'enum' => $enum,
+				],
+			],
+			'single'           => true,
+			'type'             => 'string',
+			'sanitize_callback' => 'sanitize_text_field',
+			'auth_callback'    => function( $allowed, $meta_key, $object_id ) {
+				$post = get_post( $object_id );
+				if ( ! $post || self::CPT !== $post->post_type ) {
+					return false;
+				}
+				return current_user_can( self::CAPABILITY );
+			},
+			'default' => Custom_Code_Metabox::DEFAULT_LOCATION,
+		] );
+	}
+
+	private function register_rest_meta_priority() {
+		register_meta( 'post', '_elementor_' . Custom_Code_Metabox::FIELD_PRIORITY, [
+			'object_subtype'   => self::CPT,
+			'show_in_rest'     => [
+				'schema' => [ 'type' => 'integer' ],
+			],
+			'single'           => true,
+			'type'             => 'integer',
+			'sanitize_callback' => 'absint',
+			'auth_callback'    => function( $allowed, $meta_key, $object_id ) {
+				$post = get_post( $object_id );
+				if ( ! $post || self::CPT !== $post->post_type ) {
+					return false;
+				}
+				return current_user_can( self::CAPABILITY );
+			},
+			'default' => Custom_Code_Metabox::DEFAULT_PRIORITY,
+		] );
+	}
+
+	private function register_rest_meta_code() {
+		register_meta( 'post', '_elementor_' . Custom_Code_Metabox::FIELD_CODE, [
+			'object_subtype'   => self::CPT,
+			'show_in_rest'     => [
+				'schema' => [ 'type' => 'string' ],
+			],
+			'single'           => true,
+			'type'             => 'string',
+			'auth_callback'    => function( $allowed, $meta_key, $object_id ) {
+				$post = get_post( $object_id );
+				if ( ! $post || self::CPT !== $post->post_type ) {
+					return false;
+				}
+				return current_user_can( self::CAPABILITY );
+			},
+			'sanitize_callback' => function( $value ) {
+				if ( ! current_user_can( 'unfiltered_html' ) ) {
+					return wp_kses_post( $value );
+				}
+				return $value;
+			},
+		] );
+	}
+
 	private function register_import_export() {
 		( new Custom_Code_Import_Export() )->register_hooks();
+		( new Custom_Code_Import_Export_Customization() )->register_hooks();
 	}
 }

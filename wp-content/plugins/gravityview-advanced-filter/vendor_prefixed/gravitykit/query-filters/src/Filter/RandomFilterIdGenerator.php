@@ -2,13 +2,14 @@
 /**
  * @license MIT
  *
- * Modified by gravitykit on 10-February-2025 using {@see https://github.com/BrianHenryIE/strauss}.
+ * Modified by gravitykit on 25-September-2025 using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\AdvancedFilter\QueryFilters\Filter;
 
 /**
  * Filter id generator that returns a random id.
+ *
  * @since 2.0.0
  */
 final class RandomFilterIdGenerator implements FilterIdGenerator {
@@ -17,6 +18,16 @@ final class RandomFilterIdGenerator implements FilterIdGenerator {
 	 * @since 2.0.0
 	 */
 	public function get_id(): string {
-		return wp_generate_password( 9, false );
+		// Generate a cryptographically secure random ID.
+		$characters       = '0123456789abcdefghijklmnopqrstuvwxyz';
+		$charactersLength = strlen( $characters );
+		$randomString     = '';
+
+		for ( $i = 0; $i < 9; $i ++ ) {
+			// Use random_int for cryptographically secure randomness
+			$randomString .= $characters[ random_int( 0, $charactersLength - 1 ) ];
+		}
+
+		return $randomString;
 	}
 }

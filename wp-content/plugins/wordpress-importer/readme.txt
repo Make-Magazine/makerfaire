@@ -3,9 +3,9 @@ Contributors: wordpressdotorg
 Donate link: https://wordpressfoundation.org/donate/
 Tags: importer, wordpress
 Requires at least: 5.2
-Tested up to: 6.7.2
-Requires PHP: 5.6
-Stable tag: 0.8.4
+Tested up to: 6.8
+Requires PHP: 7.2
+Stable tag: 0.9.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -40,24 +40,34 @@ If you would prefer to do things manually then follow these instructions:
 
 == Changelog ==
 
+= 0.9.3 =
+* Rewrite attachment URLs to the new URL structure
+
+= 0.9.2 =
+* Rewrite site URLs in block attributes.
+
+= 0.9.1 =
+* Add support for rewriting site URLs in post content and excerpts.
+
+= 0.9.0 =
+* Introduce a new XML parser class `WXR_Parser_XML_Processor` that replaces the
+  deprecated `WXR_Parser_Regex` class.
+
 = 0.8.4 =
 * Fix a bug on deserialization of untrusted input.
 * Update compatibility tested-up-to to WordPress 6.7.2.
 
 = 0.8.3 =
-
 * Update compatibility tested-up-to to WordPress 6.7.
 * Update call to `post_exists` to include `post_type` in the query
 * PHP 8.4 compatibility fixes.
 
 = 0.8.2 =
-
 * Update compatibility tested-up-to to WordPress 6.4.2.
 * Update doc URL references.
 * Adjust workflow triggers.
 
 = 0.8.1 =
-
 * Update compatibility tested-up-to to WordPress 6.2.
 * Update paths to build status badges.
 

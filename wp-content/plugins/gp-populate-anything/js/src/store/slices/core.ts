@@ -61,7 +61,11 @@ export const createCoreSlice: StateCreator<
 		get().setOrderingMethod(f('ordering-method'));
 		get().setFilterGroups(f('filter-groups'));
 		get().setTemplates(f('templates'));
-		get().setUniqueResults(f('unique-results'));
+		get().setUniqueResults(
+			typeof f('unique-results') === 'undefined'
+				? true
+				: f('unique-results')
+		);
 	},
 
 	postImportFieldSettings() {

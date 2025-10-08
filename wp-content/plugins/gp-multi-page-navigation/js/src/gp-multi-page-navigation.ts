@@ -70,6 +70,15 @@ class GPMultiPageNavigation {
 			});
 		});
 
+		window.gform.utils.addAsyncFilter('gform/submission/pre_submission', async (data: any) => {
+			// If all pages are valid, reset page validity to prevent submission issues.
+			const allValid = Object.values(this.pageValidity).every(Boolean);
+			if (allValid) {
+				this.pagesVisited = new Set<number>();
+			}
+			return data;
+		});
+
 		window.gform.addAction('gppt_after_transition', (gppt) => {
 			this.updateUI();
 			$('input#gw_page_progression').val(gppt.currentPage);

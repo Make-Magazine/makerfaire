@@ -4,18 +4,8 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit9b6c5e93c8723be56466334ea2a3a43d
+class ComposerStaticInit0f446cb115bbc6ad72d07a9a6d771d49
 {
-    public static $prefixesPsr0 = array (
-        'P' => 
-        array (
-            'Parsedown' => 
-            array (
-                0 => __DIR__ . '/..' . '/erusev/parsedown',
-            ),
-        ),
-    );
-
     public static $classMap = array (
         'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
     );
@@ -23,8 +13,7 @@ class ComposerStaticInit9b6c5e93c8723be56466334ea2a3a43d
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixesPsr0 = ComposerStaticInit9b6c5e93c8723be56466334ea2a3a43d::$prefixesPsr0;
-            $loader->classMap = ComposerStaticInit9b6c5e93c8723be56466334ea2a3a43d::$classMap;
+            $loader->classMap = ComposerStaticInit0f446cb115bbc6ad72d07a9a6d771d49::$classMap;
 
         }, null, ClassLoader::class);
     }

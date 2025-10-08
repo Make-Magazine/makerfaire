@@ -1,4 +1,4 @@
-/*! elementor - v3.31.0 - 11-08-2025 */
+/*! elementor - v3.32.0 - 05-10-2025 */
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
@@ -770,6 +770,9 @@ var StyledElementorLogo = (0, _ui.styled)(ElementorLogo)(function (_ref) {
   };
 });
 var DialogHeader = function DialogHeader(props) {
+  var hideAiBetaLogo = props.hideAiBetaLogo,
+    onClose = props.onClose,
+    children = props.children;
   return /*#__PURE__*/_react.default.createElement(_ui.AppBar, {
     sx: {
       fontWeight: 'normal'
@@ -778,7 +781,7 @@ var DialogHeader = function DialogHeader(props) {
     position: "relative"
   }, /*#__PURE__*/_react.default.createElement(_ui.Toolbar, {
     variant: "dense"
-  }, /*#__PURE__*/_react.default.createElement(StyledElementorLogo, {
+  }, !hideAiBetaLogo && /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, /*#__PURE__*/_react.default.createElement(StyledElementorLogo, {
     sx: {
       mr: 1
     }
@@ -796,17 +799,17 @@ var DialogHeader = function DialogHeader(props) {
     sx: {
       ml: 1
     }
-  }), /*#__PURE__*/_react.default.createElement(_ui.Stack, {
+  })), /*#__PURE__*/_react.default.createElement(_ui.Stack, {
     direction: "row",
     spacing: 1,
     alignItems: "center",
     sx: {
-      ml: 'auto'
+      ml: hideAiBetaLogo ? 0 : 'auto'
     }
-  }, props.children, /*#__PURE__*/_react.default.createElement(_ui.IconButton, {
+  }, children, /*#__PURE__*/_react.default.createElement(_ui.IconButton, {
     size: "small",
     "aria-label": "close",
-    onClick: props.onClose,
+    onClick: onClose,
     sx: {
       '&.MuiButtonBase-root': {
         mr: -1
@@ -816,6 +819,7 @@ var DialogHeader = function DialogHeader(props) {
 };
 DialogHeader.propTypes = {
   onClose: _propTypes.default.func.isRequired,
+  hideAiBetaLogo: _propTypes.default.bool,
   children: _propTypes.default.oneOfType([_propTypes.default.arrayOf(_propTypes.default.node), _propTypes.default.node])
 };
 var _default = exports["default"] = DialogHeader;
@@ -6322,6 +6326,7 @@ var PageContent = function PageContent(_ref) {
       sx: {
         m: 0,
         maxHeight: 'media' === type ? '95vh' : '76vh',
+        minHeight: '80vh',
         height: 'auto'
       }
     }
@@ -6459,7 +6464,8 @@ var PageContent = function PageContent(_ref) {
     return /*#__PURE__*/_react.default.createElement(_promptDialog.default, (0, _extends2.default)({
       onClose: onCloseAnimationDialog
     }, codePromptDialogStyleProps), /*#__PURE__*/_react.default.createElement(_promptDialog.default.Header, {
-      onClose: onCloseAnimationDialog
+      onClose: onCloseAnimationDialog,
+      hideAiBetaLogo: additionalOptions === null || additionalOptions === void 0 ? void 0 : additionalOptions.hideAiBetaLogo
     }, maybeRenderUpgradeChip()), /*#__PURE__*/_react.default.createElement(_promptDialog.default.Content, {
       className: "e-ai-dialog-content",
       dividers: true
@@ -6486,8 +6492,9 @@ var PageContent = function PageContent(_ref) {
   }, promptDialogStyleProps), /*#__PURE__*/_react.default.createElement(_promptHistoryContext.PromptHistoryProvider, {
     historyType: _historyTypes.HISTORY_TYPES.TEXT
   }, /*#__PURE__*/_react.default.createElement(_promptHistoryActionContext.PromptHistoryActionProvider, null, /*#__PURE__*/_react.default.createElement(_promptDialog.default.Header, {
-    onClose: onClose
-  }, /*#__PURE__*/_react.default.createElement(_promptHistory.default, null), maybeRenderUpgradeChip()), /*#__PURE__*/_react.default.createElement(_promptDialog.default.Content, {
+    onClose: onClose,
+    hideAiBetaLogo: additionalOptions === null || additionalOptions === void 0 ? void 0 : additionalOptions.hideAiBetaLogo
+  }, !(additionalOptions !== null && additionalOptions !== void 0 && additionalOptions.withoutHistory) && /*#__PURE__*/_react.default.createElement(_promptHistory.default, null), maybeRenderUpgradeChip()), /*#__PURE__*/_react.default.createElement(_promptDialog.default.Content, {
     className: "e-ai-dialog-content",
     dividers: true
   }, /*#__PURE__*/_react.default.createElement(_formText.default, {
@@ -11302,6 +11309,11 @@ var ViewBackButton = function ViewBackButton(_ref) {
     props = (0, _objectWithoutProperties2.default)(_ref, _excluded);
   var _useLocation = (0, _locationContext.useLocation)(),
     back = _useLocation.back;
+  var _useGlobalSettings = (0, _globalSettingsContext.useGlobalSettings)(),
+    hideBackButton = _useGlobalSettings.hideBackButton;
+  if (hideBackButton) {
+    return null;
+  }
   return /*#__PURE__*/_react.default.createElement(_backButton.default, (0, _extends2.default)({
     onClick: function onClick(e) {
       e.preventDefault();
@@ -11421,9 +11433,9 @@ ErrorMessage.propTypes = {
   sx: _propTypes.default.object
 };
 var ViewPanel = function ViewPanel(props) {
-  var _useGlobalSettings = (0, _globalSettingsContext.useGlobalSettings)(),
-    hasSubscription = _useGlobalSettings.hasSubscription,
-    usagePercentage = _useGlobalSettings.usagePercentage;
+  var _useGlobalSettings2 = (0, _globalSettingsContext.useGlobalSettings)(),
+    hasSubscription = _useGlobalSettings2.hasSubscription,
+    usagePercentage = _useGlobalSettings2.usagePercentage;
   return /*#__PURE__*/_react.default.createElement(_panel.default, null, /*#__PURE__*/_react.default.createElement(_usageMessages.default, {
     hasSubscription: hasSubscription,
     usagePercentage: usagePercentage,
@@ -11461,7 +11473,7 @@ var _default = exports["default"] = View;
 Object.defineProperty(exports, "__esModule", ({
   value: true
 }));
-exports.LOCATIONS = exports.IMAGE_PROMPT_SETTINGS = exports.IMAGE_PROMPT_CATEGORIES = exports.IMAGE_PLACEHOLDERS_HOSTS = exports.IMAGE_ASPECT_RATIO = exports.FEATURE_IDENTIFIER = void 0;
+exports.LOCATIONS = exports.IMAGE_PROMPT_SETTINGS = exports.IMAGE_PROMPT_CATEGORIES = exports.IMAGE_PLACEHOLDERS_HOSTS = exports.IMAGE_ASPECT_RATIO = exports.FEATURE_IDENTIFIER = exports.AI_EVENTS = void 0;
 var _i18n = __webpack_require__(/*! @wordpress/i18n */ "@wordpress/i18n");
 var LOCATIONS = exports.LOCATIONS = {
   RESIZE: 'resize',
@@ -11606,6 +11618,10 @@ var IMAGE_ASPECT_RATIO = exports.IMAGE_ASPECT_RATIO = {
 };
 var IMAGE_PLACEHOLDERS_HOSTS = exports.IMAGE_PLACEHOLDERS_HOSTS = {
   WIREFRAME: 'gene-\\d+\\.live\\.strattic\\.io'
+};
+var AI_EVENTS = exports.AI_EVENTS = {
+  MODAL_CLOSED: 'elementor:ai:modal-closed',
+  SHOW_MODAL: 'elementor:ai:show-modal'
 };
 
 /***/ }),
@@ -12441,7 +12457,8 @@ var FormMedia = function FormMedia(_ref2) {
   var globalSettings = {
     initialImageType: (additionalOptions === null || additionalOptions === void 0 ? void 0 : additionalOptions.defaultImageType) || '',
     hasSubscription: hasSubscription,
-    usagePercentage: usagePercentage
+    usagePercentage: usagePercentage,
+    hideBackButton: additionalOptions === null || additionalOptions === void 0 ? void 0 : additionalOptions.hideBackButton
   };
   var globalActions = {
     state: state,
@@ -12466,7 +12483,8 @@ var FormMedia = function FormMedia(_ref2) {
   }, DialogProps), /*#__PURE__*/_react.default.createElement(_promptDialog.default.Header, {
     onClose: function onClose() {
       return onCloseIntent();
-    }
+    },
+    hideAiBetaLogo: additionalOptions === null || additionalOptions === void 0 ? void 0 : additionalOptions.hideAiBetaLogo
   }, !additionalOptions.withoutHistory && /*#__PURE__*/_react.default.createElement(_promptHistory.default, null), maybeRenderUpgradeChip()), /*#__PURE__*/_react.default.createElement(_ui.Divider, null), /*#__PURE__*/_react.default.createElement(_globalSettingsContext.GlobalSettingsProvider, {
     settings: globalSettings
   }, /*#__PURE__*/_react.default.createElement(_globalActionsContext.GlobalActionsProvider, {
@@ -12548,6 +12566,11 @@ var MediaOutlet = function MediaOutlet(_ref) {
     current = _useLocation.current,
     navigate = _useLocation.navigate;
   (0, _react.useEffect)(function () {
+    var hasExplicitLocation = (additionalOptions === null || additionalOptions === void 0 ? void 0 : additionalOptions.location) && additionalOptions.location !== _constants.LOCATIONS.GENERATE;
+    if (hasExplicitLocation) {
+      navigate(additionalOptions.location);
+      return;
+    }
     if (editImage.url) {
       var wireframeHostRegex = new RegExp(_constants.IMAGE_PLACEHOLDERS_HOSTS.WIREFRAME);
       var isWireframeHost = wireframeHostRegex.test(new URL(editImage.url).host);
@@ -12559,7 +12582,7 @@ var MediaOutlet = function MediaOutlet(_ref) {
         navigate(_constants.LOCATIONS.GENERATE);
       }
     }
-  }, [editImage.id, editImage.url, editImage.source]);
+  }, [editImage.id, editImage.url, editImage.source, additionalOptions === null || additionalOptions === void 0 ? void 0 : additionalOptions.location]);
   (0, _promptHistoryActionContext.useSubscribeOnPromptHistoryAction)([{
     type: _promptHistoryActionContext.ACTION_TYPES.RESTORE,
     handler: function handler() {
@@ -13864,7 +13887,7 @@ var InPaintingContent = function InPaintingContent(_ref3) {
     alignSelf: "center",
     justifyContent: "center",
     sx: {
-      mb: 2.5
+      marginBottom: '20px !important'
     }
   }, /*#__PURE__*/_react.default.createElement(_ui.Stack, {
     direction: "row",
@@ -16179,6 +16202,7 @@ var onConnect = exports.onConnect = function onConnect(data) {
   elementorCommon.config.library_connect.is_connected = true;
   elementorCommon.config.library_connect.current_access_level = data.kits_access_level || data.access_level || 0;
   elementorCommon.config.library_connect.current_access_tier = data.access_tier;
+  elementorCommon.config.library_connect.plan_type = data.plan_type;
 };
 var getUiConfig = exports.getUiConfig = function getUiConfig() {
   var _elementor, _elementor$getPrefere;

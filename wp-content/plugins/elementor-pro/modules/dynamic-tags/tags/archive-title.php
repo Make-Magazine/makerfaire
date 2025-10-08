@@ -52,9 +52,10 @@ class Archive_Title extends Tag {
 	}
 
 	private function render_post() {
-		$include_context = 'yes' === $this->get_settings( 'include_context' );
+		$include_context = $this->get_settings( 'include_context' );
+		$is_included = 'yes' === $include_context || true === $include_context;
 
-		$title = Utils::get_page_title( $include_context );
+		$title = Utils::get_page_title( $is_included );
 
 		echo wp_kses_post( $title );
 	}

@@ -1,9 +1,8 @@
 <?php
 namespace Elementor;
-
 /**
  * @package     WordPress
- * @subpackage  Gum Elementor Addon
+ * @subpackage  Gum Addon for Elementor
  * @author      support@themegum.com
  * @since       1.2.7
 */

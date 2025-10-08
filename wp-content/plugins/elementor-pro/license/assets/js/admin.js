@@ -12,6 +12,7 @@ export default class Module extends elementorModules.Module {
 
 	onInit() {
 		this.assignMenuItemActions();
+		this.assignProLicenseActivateEvent();
 	}
 
 	assignMenuItemActions() {
@@ -28,6 +29,33 @@ export default class Module extends elementorModules.Module {
 					window.open( item.external_url, '_blank' );
 				} );
 			} );
+		} );
+	}
+
+	assignProLicenseActivateEvent() {
+		window.addEventListener( 'DOMContentLoaded', () => {
+			const activateButton = document.querySelector( '.button-primary[href*="elementor-connect"]' );
+
+			if ( activateButton ) {
+				activateButton.addEventListener( 'click', () => {
+					if ( ! window.elementorCommon?.config?.experimentalFeatures?.editor_events ) {
+						return;
+					}
+
+					const eventsManager = window.elementorCommon?.eventsManager || {};
+					const dispatchEvent = eventsManager.dispatchEvent?.bind( eventsManager );
+
+					const eventName = 'pro_license_activate';
+					const eventData = {
+						app_type: 'editor',
+						location: 'Elementor WP-admin pages',
+						secondaryLocation: 'license page',
+						trigger: 'click',
+					};
+
+					dispatchEvent?.( eventName, eventData );
+				} );
+			}
 		} );
 	}
 }

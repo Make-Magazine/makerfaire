@@ -1,6 +1,28 @@
 
 # Changelog
 
+## 3.0.15 | September 17, 2025
+
+- Fixed some styling issues with plugin cards in the Spellbook UI.
+- Fixed inline warning not showing in the plugin row if Gravity Forms was not activated.
+
+## 3.0.14 | September 3, 2025
+
+- Fixed an issue where registration button would incorrectly show for GS Product Configurator with valid Gravity Shop license.
+
+## 3.0.13 | August 20, 2025
+
+- Removed Markdown parser for changelogs to reduce plugin size and PHP notices. Changelogs are now sent as HTML from the API and sanitized before being rendered.
+
+## 3.0.12 | July 31, 2025
+
+- Fixed issue preventing changelogs from loading when clicking version numbers inside Spellbook.
+
+## 3.0.11 | July 30, 2025
+
+- Added logic to ensure deprecated perks are now hidden in Spellbook unless already installed.
+- Fixed issue where the Settings button for GP Expand Textareas was missing in the Spellbook interface.
+
 ## 3.0.10 | July 16, 2025
 
 - Added support for calling uninstall methods in `GFAddOn`-based products.

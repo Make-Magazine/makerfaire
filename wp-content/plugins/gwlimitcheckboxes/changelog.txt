@@ -1,6 +1,10 @@
 
 # Changelog
 
+## 1.3.21 | October 2, 2025
+
+- Added support for Gravity Forms 2.9 Multi Choice and Image Choice fields.
+
 ## 1.3.20 | May 22, 2025
 
 - Fixed a fatal error that could occur on forms using checkbox limit span across multiple fields.

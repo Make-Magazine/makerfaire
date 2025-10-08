@@ -2433,29 +2433,60 @@ class GP_Nested_Forms extends GP_Plugin {
 			/**
 			 * Filter the arguments that will be used to initialized the nested forms frontend script.
 			 *
-			 * @since 1.0
-			 *
-			 * @param array $args {
-			 *
-			 *     @var int    $formId              The current form ID.
-			 *     @var int    $fieldId             The field ID of the Nested Form field.
-			 *     @var int    $nestedFormId        The form ID of the nested form.
-			 *     @var string $modalTitle          The title to be displayed in the modal header.
-			 *     @var string $editModalTitle      The title to be displayed in the modal header when editing an existing entry.
-			 *     @var array  $displayFields       The fields which will be displayed in the Nested Forms entries view.
-			 *     @var array  $entries             An array of modified entries, including only their display values.
-			 *     @var string $ajaxUrl             The URL to which AJAX requests will be posted.
-			 *     @var int    $modalWidth          The default width of the modal; defaults to 700.
-			 *     @var mixed  $modalHeight         The default height of the modal; defaults to 'auto' which will automatically size the modal based on its contents.
-			 *     @var string $modalClass          The class that will be attached to the modal for styling.
-			 *     @var string $modalHeaderColor    A HEX color that will be set as the default background color of the modal header.
-			 *     @var bool   $hasConditionalLogic Indicate whether the current form has conditional logic enabled.
-			 *     @var bool   $hasConditionalLogic Indicate whether the current form has conditional logic enabled.
-			 *     @var bool   $enableFocusTrap     Whether the nested form should use a focus trap when open to prevent tabbing outside the nested form.
-			 *
-			 * }
+			 * @param array{
+			 *     formId: int, // The current form ID.
+			 *     fieldId: int, // The field ID of the Nested Form field.
+			 *     nestedFormId: int, // The form ID of the nested form.
+			 *     displayFields: array, // The fields which will be displayed in the Nested Forms entries view.
+			 *     entries: array, // An array of modified entries, including only their display values.
+			 *     ajaxUrl: string, // The URL to which AJAX requests will be posted.
+			 *     modalLabels: array{
+			 *         title: string, // The title to be displayed in the modal header.
+			 *         editTitle: string, // The title to be displayed in the modal header when editing an existing entry.
+			 *         submit: string|false, // The text to be displayed inside Submit button.
+			 *         editSubmit: string|false, // The text to be displayed inside Submit button when editing an entry.
+			 *         cancel: string, // The text to be displayed inside Cancel button.
+			 *         delete: string, // The text to be displayed inside Delete button.
+			 *         confirmAction: string, // The question to be displayed when confirming an action.
+			 *         closeScreenReaderLabel: string, // The close button label for screen readers.
+			 *     }, // The labels for the modal.
+			 *     modalColors: array{
+			 *         primary: string, // A HEX color that will be set as the default background color of the Add and Edit Entry buttons.
+			 *         secondary: string, // A HEX color that will be set as the default background color for Cancel button.
+			 *         danger: string, // A HEX color that will be set as the default background color for Delete and Are you sure? buttons.
+			 *     }, // The colors for the modal.
+			 *     modalHeaderColor: string, // A HEX color that will be set as the default background color of the modal header.
+			 *     modalClass: string, // The class that will be attached to the modal for styling.
+			 *     modalStickyFooter: bool, // Whether the footer should stick to the bottom of the modal.
+			 *     entryLimitMin: int, // The minimum number of entries that can be submitted for this field.
+			 *     entryLimitMax: int, // The maximum number of entries that can be submitted for this field.
+			 *     sessionData: array, // Default session data for the field.
+			 *     spinnerUrl: string, // The URL to the loading spinner image.
+			 *     modalTitle: string, // The title to be displayed in the modal header (deprecated).
+			 *     editModalTitle: string, // The title to be displayed in the modal header when editing an existing entry (deprecated).
+			 *     modalWidth: int, // The default width of the modal; defaults to 700.
+			 *     modalHeight: string|int, // The default height of the modal; defaults to 'auto' which will automatically size the modal based on its contents.
+			 *     hasConditionalLogic: bool, // Indicate whether the current form has conditional logic enabled.
+			 *     isGF25: bool, // Whether Gravity Forms version is 2.5 or higher.
+			 *     enableFocusTrap: bool, // Whether the nested form should use a focus trap when open to prevent tabbing outside the nested form.
+			 *     ajaxContext: array, // Context data for AJAX requests including post_id, path, field_values, and request.
+			 * } $args The arguments that will be used to initialized the nested forms frontend script.
 			 * @param GF_Field $field The current Nested Form field.
-			 * @param array    $form  The current form.
+			 * @param array $form The current form.
+			 *
+			 * @usage gpnf_init_script_args Filter applied globally to all forms and fields
+			 * @usage gpnf_init_script_args_FORMID Filter applied to all fields for a specific form
+			 * @usage gpnf_init_script_args_FORMID_FIELDID Filter applied to a specific form and field
+			 *
+			 * @example Change Modal Title and Submit Button
+			 * By default, the submit button label will be the same as the modal title, "Add {Item}" and "Edit {Item}" respectively. Use this snippet to change the title and submit button labels for both the Add and Edit modals.
+			 * <github-file>snippet-library/gp-nested-forms/gpnf-change-modal-title-and-submit-button.php</github-file>
+			 *
+			 * @example Unstick the Modal Footer
+			 * By default, the Nested Forms field modal has "sticky" footer. It will keep the footer visible on longer forms by sticking it to the bottom of the screen. Use this snippet to "unstick" the footer and it will appear at the bottom of the form.
+			 * <github-file>snippet-library/gp-nested-forms/gpnf-unstick-the-modal-footer.php</github-file>
+			 *
+			 * @since 1.0
 			 */
 			$args = gf_apply_filters( array( 'gpnf_init_script_args', $form['id'], $field->id ), $args, $field, $form );
 

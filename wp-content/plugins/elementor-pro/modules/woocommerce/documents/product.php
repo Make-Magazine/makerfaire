@@ -3,6 +3,7 @@ namespace ElementorPro\Modules\Woocommerce\Documents;
 
 use Elementor\Controls_Manager;
 use ElementorPro\Modules\ThemeBuilder\Documents\Single_Base;
+use ElementorPro\Modules\ThemeBuilder\Documents\Theme_Document;
 use ElementorPro\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -10,12 +11,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Product extends Single_Base {
+	const EXPORT_GROUP = 'product';
 
 	public static function get_properties() {
 		$properties = parent::get_properties();
 
 		$properties['location'] = 'single';
 		$properties['condition_type'] = 'product';
+		$properties['export_group'] = Theme_Document::EXPORT_GROUP;
 
 		return $properties;
 	}

@@ -33,15 +33,21 @@ class Export_Runner extends Export_Runner_Base {
 		}
 
 		$snippets_data = [];
+		$manifest = [];
 
 		foreach ( $code_snippets as $snippet ) {
-			$snippets_data[] = $this->prepare_snippet_data( $snippet );
+			$data = $this->prepare_snippet_data( $snippet );
+			$snippets_data[] = $data;
+			$manifest[ $snippet['custom-code'] ][ $snippet->ID ] = $data;
 		}
 
 		return [
 			'files' => [
 				'path' => Import_Export::FILE_NAME,
 				'data' => $snippets_data,
+			],
+			'manifest' => [
+				$manifest,
 			],
 		];
 	}

@@ -2,7 +2,7 @@
 /**
  * @license MIT
  *
- * Modified by gravitykit on 10-February-2025 using {@see https://github.com/BrianHenryIE/strauss}.
+ * Modified by gravitykit on 25-September-2025 using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\AdvancedFilter\QueryFilters\Filter;
@@ -75,13 +75,18 @@ final class EntryFilterService {
 	 * @return bool
 	 */
 	private function handle_filter( array $entry, Filter $filter ): bool {
+		// Check the correct entry when it is a multi-entry.
+		if ( isset( $entry['_multi'] ) && $filter->form_id() ) {
+			return $this->handle_filter( $entry['_multi'][ $filter->form_id() ] ?? [], $filter );
+		}
+
 		if ( $filter->key() === '0' ) {
 			return $this->matched_any_field( $entry, $filter );
 		}
 
 		// Todo: register multiple validators, and pick the one can handle the filter and field.
 		$field_id = is_numeric( $filter->key() ) ? (int) $filter->key() : $filter->key();
-		$field    = $this->form_repository->get_field( $entry['form_id'] ?? 0, $field_id );
+		$field    = $this->form_repository->get_field( $filter->form_id() ?: $entry['form_id'] ?? 0, $field_id );
 
 		$entry_value  = $entry[ $filter->key() ] ?? '';
 		$filter_value = $filter->value();
@@ -89,7 +94,6 @@ final class EntryFilterService {
 		if ( $field ) {
 			if ( $field->inputs && $field->choices ) {
 				$input_id = null;
-
 				// Find the selected option input_id.
 				foreach ( $field->choices as $i => $choice ) {
 					// Absolute match takes precedence.
@@ -104,6 +108,13 @@ final class EntryFilterService {
 					}
 
 					$input_id = (string) $field->inputs[ $i ]['id'];
+				}
+
+				if (
+					! isset( $entry[ $input_id ] )
+					|| ( isset( $entry[ $field_id ] ) && '' === $entry[ $input_id ] )
+				) {
+					$input_id = $field_id; // Try the field ID as a backup. Radio needs this for example.
 				}
 
 				$entry_value = $entry[ $input_id ] ?? '';
@@ -235,6 +246,10 @@ final class EntryFilterService {
 	 * @return bool Whether the operation matches.
 	 */
 	private function matches_operation( $value_1, $value_2, $operation ): bool {
+		if ( in_array( $operation, [ 'ncontains', 'notcontains' ], true ) ) {
+			return ! $this->matches_operation( $value_1, $value_2, 'contains' );
+		}
+
 		if ( method_exists( GFFormsModel::class, 'matches_conditional_operation' ) ) {
 			return GFFormsModel::matches_conditional_operation( $value_1, $value_2, $operation );
 		}

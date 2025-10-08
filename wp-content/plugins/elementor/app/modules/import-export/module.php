@@ -12,6 +12,7 @@ use Elementor\Plugin;
 use Elementor\Tools;
 use Elementor\Utils as ElementorUtils;
 use Elementor\App\Modules\ImportExport\Utils as ImportExportUtils;
+use Elementor\Modules\CloudKitLibrary\Module as CloudKitLibrary;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -134,12 +135,15 @@ class Module extends BaseModule {
 	 * Render the import/export tab content.
 	 */
 	private function render_import_export_tab_content() {
+		$is_cloud_kits_available = CloudKitLibrary::get_app()->check_eligibility()['is_eligible'];
+
 		$content_data = [
 			'export' => [
 				'title' => esc_html__( 'Export this website', 'elementor' ),
 				'button' => [
 					'url' => Plugin::$instance->app->get_base_url() . '#/export',
 					'text' => esc_html__( 'Export', 'elementor' ),
+					'id' => 'elementor-import-export__export',
 				],
 				'description' => esc_html__( 'You can download this website as a .zip file, or upload it to the library.', 'elementor' ),
 			],
@@ -148,15 +152,17 @@ class Module extends BaseModule {
 				'button' => [
 					'url' => Plugin::$instance->app->get_base_url() . '#/import',
 					'text' => esc_html__( 'Import', 'elementor' ),
+					'id' => 'elementor-import-export__import',
 				],
 				'description' => esc_html__( 'You can import design and settings from a .zip file or choose from the library.', 'elementor' ),
 			],
 		];
 
-		if ( Plugin::$instance->experiments->is_feature_active( 'cloud-library' ) ) {
+		if ( $is_cloud_kits_available ) {
 			$content_data['import']['button_secondary'] = [
 				'url' => Plugin::$instance->app->get_base_url() . '#/kit-library/cloud',
 				'text' => esc_html__( 'Import from library', 'elementor' ),
+				'id' => 'elementor-import-export__import_from_library',
 			];
 		}
 
@@ -172,6 +178,7 @@ class Module extends BaseModule {
 		if ( $should_show_revert_section ) {
 			if ( ! empty( $penultimate_imported_kit ) ) {
 				$revert_text = sprintf(
+					/* translators: 1: Last imported kit title, 2: Last imported kit date, 3: Line break <br>, 4: Penultimate imported kit title, 5: Penultimate imported kit date. */
 					esc_html__( 'Remove all the content and site settings that came with "%1$s" on %2$s %3$s and revert to the site setting that came with "%4$s" on %5$s.', 'elementor' ),
 					! empty( $last_imported_kit['kit_title'] ) ? $last_imported_kit['kit_title'] : esc_html__( 'imported kit', 'elementor' ),
 					gmdate( $date_format, $last_imported_kit['start_timestamp'] ),
@@ -181,6 +188,7 @@ class Module extends BaseModule {
 				);
 			} else {
 				$revert_text = sprintf(
+					/* translators: 1: Last imported kit title, 2: Last imported kit date, 3: Line break <br>. */
 					esc_html__( 'Remove all the content and site settings that came with "%1$s" on %2$s.%3$s Your original site settings will be restored.', 'elementor' ),
 					! empty( $last_imported_kit['kit_title'] ) ? $last_imported_kit['kit_title'] : esc_html__( 'imported kit', 'elementor' ),
 					gmdate( $date_format, $last_imported_kit['start_timestamp'] ),
@@ -234,41 +242,28 @@ class Module extends BaseModule {
 	}
 
 	private function print_item_content( $data ) {
-		$is_cloud_kits_feature_active = Plugin::$instance->experiments->is_feature_active( 'cloud-library' );
-
-		if ( $is_cloud_kits_feature_active ) { ?>
-			<div class="tab-import-export-kit__container">
-				<div class="tab-import-export-kit__box">
-					<h2><?php ElementorUtils::print_unescaped_internal_string( $data['title'] ); ?></h2>
-				</div>
-				<p class="description"><?php ElementorUtils::print_unescaped_internal_string( $data['description'] ); ?></p>
-
-				<?php if ( ! empty( $data['link'] ) ) : ?>
-					<a href="<?php ElementorUtils::print_unescaped_internal_string( $data['link']['url'] ); ?>" target="_blank"><?php ElementorUtils::print_unescaped_internal_string( $data['link']['text'] ); ?></a>
-				<?php endif; ?>
-				<div class="tab-import-export-kit__box action-buttons">
-					<?php if ( ! empty( $data['button_secondary'] ) ) : ?>
-						<a href="<?php ElementorUtils::print_unescaped_internal_string( $data['button_secondary']['url'] ); ?>" class="elementor-button e-btn-txt e-btn-txt-border">
-							<?php ElementorUtils::print_unescaped_internal_string( $data['button_secondary']['text'] ); ?>
-						</a>
-					<?php endif; ?>
-					<a href="<?php ElementorUtils::print_unescaped_internal_string( $data['button']['url'] ); ?>" class="elementor-button e-primary">
-						<?php ElementorUtils::print_unescaped_internal_string( $data['button']['text'] ); ?>
-					</a>
-				</div>
+		?>
+		<div class="tab-import-export-kit__container">
+			<div class="tab-import-export-kit__box">
+				<h2><?php ElementorUtils::print_unescaped_internal_string( $data['title'] ); ?></h2>
 			</div>
-		<?php } else { ?>
-			<div class="tab-import-export-kit__container">
-				<div class="tab-import-export-kit__box">
-					<h2><?php ElementorUtils::print_unescaped_internal_string( $data['title'] ); ?></h2>
-					<a href="<?php ElementorUtils::print_unescaped_internal_string( $data['button']['url'] ); ?>" class="elementor-button e-primary">
-						<?php ElementorUtils::print_unescaped_internal_string( $data['button']['text'] ); ?>
-					</a>
-				</div>
-				<p><?php ElementorUtils::print_unescaped_internal_string( $data['description'] ); ?></p>
+			<p class="description"><?php ElementorUtils::print_unescaped_internal_string( $data['description'] ); ?></p>
+
+			<?php if ( ! empty( $data['link'] ) ) : ?>
 				<a href="<?php ElementorUtils::print_unescaped_internal_string( $data['link']['url'] ); ?>" target="_blank"><?php ElementorUtils::print_unescaped_internal_string( $data['link']['text'] ); ?></a>
+			<?php endif; ?>
+			<div class="tab-import-export-kit__box action-buttons">
+				<?php if ( ! empty( $data['button_secondary'] ) ) : ?>
+					<a href="<?php ElementorUtils::print_unescaped_internal_string( $data['button_secondary']['url'] ); ?>" class="elementor-button e-btn-txt e-btn-txt-border">
+						<?php ElementorUtils::print_unescaped_internal_string( $data['button_secondary']['text'] ); ?>
+					</a>
+				<?php endif; ?>
+				<a <?php ElementorUtils::print_html_attributes( [ 'id' => $data['button']['id'] ] ); ?> href="<?php ElementorUtils::print_unescaped_internal_string( $data['button']['url'] ); ?>" class="elementor-button e-primary">
+					<?php ElementorUtils::print_unescaped_internal_string( $data['button']['text'] ); ?>
+				</a>
 			</div>
-		<?php }
+		</div>
+		<?php
 	}
 
 	private function get_revert_href(): string {
@@ -480,9 +475,11 @@ class Module extends BaseModule {
 
 		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_scripts' ] );
 
-		$page_id = Tools::PAGE_ID;
+		if ( ! Plugin::$instance->experiments->is_feature_active( 'import-export-customization' ) ) {
+			$page_id = Tools::PAGE_ID;
 
-		add_action( "elementor/admin/after_create_settings/{$page_id}", [ $this, 'register_settings_tab' ] );
+			add_action( "elementor/admin/after_create_settings/{$page_id}", [ $this, 'register_settings_tab' ] );
+		}
 
 		// TODO 18/04/2023 : This needs to be moved to the runner itself after https://elementor.atlassian.net/browse/HTS-434 is done.
 		if ( self::IMPORT_PLUGINS_ACTION === ElementorUtils::get_super_global_value( $_SERVER, 'HTTP_X_ELEMENTOR_ACTION' ) ) {

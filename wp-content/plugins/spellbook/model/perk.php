@@ -580,16 +580,10 @@ class GP_Perk {
 
 	function perk_settings() { }
 
-	/**
-	* Include Markdown and run the perk documentation through it before outputting it to the screen.
-	*
-	*/
 	function display_documentation() {
 		_deprecated_function( __method__, '1.2.18.8' );
-		echo GWPerks::markdown( $this->get_documentation() );
+		// no-op
 	}
-
-
 
 	// PERK SETTINGS API //
 

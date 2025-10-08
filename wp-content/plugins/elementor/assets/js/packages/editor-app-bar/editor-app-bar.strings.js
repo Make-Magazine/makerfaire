@@ -5,7 +5,6 @@ __( 'Elementor Logo', 'elementor' );
 __( 'Integrations', 'elementor' );
 __( 'User Preferences', 'elementor' );
 __( 'Theme Builder', 'elementor' );
-__( 'Structure', 'elementor' );
 __( 'Site Settings', 'elementor' );
 __( 'Save Changes', 'elementor' );
 __( 'Switch Device', 'elementor' );
@@ -13,6 +12,7 @@ __( 'Switch Device', 'elementor' );
 __( '%s (%dpx and up)', 'elementor' );
 // translators: %s: Breakpoint label, %d: Breakpoint size.
 __( '%s (up to %dpx)', 'elementor' );
+__( 'Structure', 'elementor' );
 __( 'Keyboard Shortcuts', 'elementor' );
 __( 'History', 'elementor' );
 __( 'Finder', 'elementor' );
@@ -30,3 +30,5 @@ __( 'Submit', 'elementor' );
 __( 'Preview Changes', 'elementor' );
 /* translators: %s: Post type label. */
 __( '%s Settings', 'elementor' );
+__( 'My Elementor', 'elementor' );
+__( 'Connect my account', 'elementor' );

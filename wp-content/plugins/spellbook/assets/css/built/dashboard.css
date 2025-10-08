@@ -336,6 +336,27 @@ body.folded .spellbook-app {
 	padding-top: 1rem;
 }
 
+/* Prevents overflow of text, etc. */
+.spellbook-app__product-card-grid-item .gform-grid--item {
+	max-width: 100%;
+}
+
+/* Horizontal alignment of bottom container items */
+.spellbook-app__product-card-grid-item .gform-card__bottom-container {
+	display: flex;
+	justify-content: space-between;
+}
+
+/* Helps with vertical alignment of bottom container items */
+.spellbook-app__product-card-grid-item .gform-card__bottom-container .gform-grid--item {
+	display: flex;
+}
+
+/* Helps with vertical alignment of bottom container items */
+.spellbook-app__product-card-grid-item .gform-card__bottom-container > .gform-grid {
+	flex: 1;
+}
+
 .gform-card__top-container-description {
 	margin: 0;
 }
@@ -401,6 +422,16 @@ body.folded .spellbook-app {
 
 .gform-card--integration .gform-text.gform-text--color-dark-red {
 	color: #af2718 !important;
+}
+
+.changelog-modal__loading,
+.changelog-modal__error {
+    padding: 2rem;
+    text-align: center;
+}
+
+.changelog-modal__error {
+    color: #666;
 }
 
 .gform-grid--container.spellbook-app__product-card-grid {

@@ -102,19 +102,64 @@ window.gform.addAction('gform_post_conditional_logic_field_action', function(
 		| ((this: HTMLElement, index: number, value: string) => string),
 	isInit: any
 ) {
-	// More specific selector to target only Gravity Forms fields and avoid unrelated inputs - fixes a Firefox issue (see HS#84251).
-	const $targetField = jQuery(targetId).find('input[name^="input_"]');
+	// Normalize conditional logic defaults to prevent malformed field values.
+	patchConditionalLogicDefaults();
+
+	const $targetField = jQuery(targetId).find('input, select, textarea');
 
 	if (
 		$targetField.length &&
 		defaultValues &&
 		typeof defaultValues === 'string' &&
-		action === 'show'
+		action === 'show' &&
+		!$targetField.data('gppa-triggered') // Early exit if already triggered
 	) {
+		$targetField.data('gppa-triggered', true);
+
 		// Trigger the input and change events.
-		if (!$targetField.val()) {
+		if (!$targetField.val() && !$targetField.is('[type="file"]')) {
 			$targetField.val(defaultValues);
 		}
 		$targetField.trigger('input').trigger('change');
 	}
 });
+
+/**
+ * Fixes an issue where conditionally shown List fields in GravityView edit mode
+ * could display raw serialized array data as default values when unhidden.
+ * Cleans up and normalizes Gravity Forms conditional logic defaults to prevent
+ * malformed field values.
+ *
+ * @since 2.1.43
+ */
+function patchConditionalLogicDefaults() {
+	// Filter out empty items as GF stores these in an array for some reason.
+	// The result is that if only a config for form id `5` is present, then
+	// there will be four empty items in the array before `5`.
+	const formConfigs = window.gf_form_conditional_logic.filter(Boolean);
+
+	const regex = new RegExp(/^[a-z]:[1-9]:{[a-z]:[0-9];[a-z]:[0-9]:"";}$/);
+	for (const formConfig of formConfigs) {
+		let { defaults } = formConfig;
+
+		defaults = Object.entries(defaults).reduce(
+			(res: { [key: string]: any }, curr) => {
+				const [key, defaultValue] = curr;
+
+				if (
+					typeof defaultValue === 'string' &&
+					regex.test(defaultValue)
+				) {
+					res[key] = '';
+				} else {
+					res[key] = defaultValue;
+				}
+
+				return res;
+			},
+			{} as { [key: string]: any }
+		);
+
+		formConfig.defaults = defaults;
+	}
+}

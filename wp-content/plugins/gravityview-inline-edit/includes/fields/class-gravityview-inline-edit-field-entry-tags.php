@@ -32,6 +32,11 @@ class GravityView_Inline_Edit_Field_EntryTags extends GravityView_Inline_Edit_Fi
 	 * @return array
 	 */
 	public function modify_inline_edit_attributes( $wrapper_attributes, $field_input_type, $field_id, $entry, $current_form, $gf_field ) {
+
+		if ( ! class_exists( 'EntryTagField' ) ) {
+			return $wrapper_attributes;
+		}
+
 		$field_value = rgar( $entry, $field_id );
 
 		$wrapper_attributes['data-source'] = json_encode( $gf_field->choices );

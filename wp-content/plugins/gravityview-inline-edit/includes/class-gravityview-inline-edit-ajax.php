@@ -189,6 +189,9 @@ final class GravityView_Inline_Edit_AJAX {
 
 		$view_id = (int) rgpost( 'view_id' );
 
+		// Clear the cache for this entry.
+		do_action( 'gravityview_clear_entry_cache', $entry_id );
+
 		// If View ID isn't set, we're inside Gravity Forms entry list.
 		// Also, fallback if GravityView functions aren't available!
 		if ( empty( $view_id ) || ! function_exists( 'gravityview_get_files_array' ) || ! class_exists( '\GV\View' ) ) {
@@ -429,24 +432,30 @@ final class GravityView_Inline_Edit_AJAX {
 					}
 				} else {
 					$choice_number = 1;
-					foreach ( $gf_field->choices as $i => $choice ) {
+					$choices 						= $gf_field->choices;
+					if ( 'lookup' === $gf_field->type ) {
+						$choices = $gf_field->get_lookup_choices();
+					}
+
+					foreach ( $choices as $i => $choice ) {
 						if ( $choice_number % 10 === 0 ) { // hack to skip numbers ending in 0. so that 5.1 doesn't conflict with 5.10
+								++$choice_number;
+							}
+
+							$_id = $field_id . '.' . $choice_number;
+
+							if ( ! in_array( $choice['value'], (array) $post_value ) && '' !== $entry[ $_id ] ) {
+								$values_to_update[ $_id ] = '';
+							}
+
+							if ( in_array( $choice['value'], (array) $post_value ) && '' === $entry[ $_id ] ) {
+								$values_to_update[ $_id ] = $choice['value'];
+							}
+
 							++$choice_number;
 						}
-
-						$_id = $field_id . '.' . $choice_number;
-
-						if ( ! in_array( $choice['value'], (array) $post_value ) && '' !== $entry[ $_id ] ) {
-							$values_to_update[ $_id ] = '';
-						}
-
-						if ( in_array( $choice['value'], (array) $post_value ) && '' === $entry[ $_id ] ) {
-							$values_to_update[ $_id ] = $choice['value'];
-						}
-
-						++$choice_number;
 					}
-				}
+
 				$field_validate = $values_to_update;
 				break;
 			case 'multiselect':

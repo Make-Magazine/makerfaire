@@ -2,10 +2,10 @@
 namespace ElementorPro\Modules\AssetsManager;
 
 use ElementorPro\Base\Module_Base;
-use ElementorPro\Modules\AssetsManager\AssetTypes;
 use ElementorPro\Modules\AssetsManager\AssetTypes\Fonts\ImportExport\Import_Export as Fonts_Import_Export;
+use ElementorPro\Modules\AssetsManager\AssetTypes\Fonts\ImportExportCustomization\Import_Export_Customization as Fonts_Import_Export_Customization;
 use ElementorPro\Modules\AssetsManager\AssetTypes\Icons\ImportExport\Import_Export as Icons_Import_Export;
-use ElementorPro\Plugin;
+use ElementorPro\Modules\AssetsManager\AssetTypes\Icons\ImportExportCustomization\Import_Export_Customization as Icons_Import_Export_Customization;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -46,6 +46,8 @@ class Module extends Module_Base {
 
 	private function register_import_export() {
 		( new Fonts_Import_Export() )->register_hooks();
+		( new Fonts_Import_Export_Customization() )->register_hooks();
 		( new Icons_Import_Export() )->register_hooks();
+		( new Icons_Import_Export_Customization() )->register_hooks();
 	}
 }

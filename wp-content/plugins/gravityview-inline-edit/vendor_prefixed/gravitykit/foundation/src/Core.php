@@ -2,13 +2,14 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by __root__ on 09-June-2025 using Strauss.
+ * Modified by __root__ on 11-September-2025 using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 
 namespace GravityKit\GravityEdit\Foundation;
 
 use GravityKit\GravityEdit\Foundation\Components\NewsletterSignup;
+use GravityKit\GravityEdit\Foundation\Components\SecureDownload;
 use GravityKit\GravityEdit\Foundation\Integrations\GravityForms;
 use GravityKit\GravityEdit\Foundation\Integrations\HelpScout;
 use GravityKit\GravityEdit\Foundation\Integrations\TrustedLogin;
@@ -24,6 +25,7 @@ use GravityKit\GravityEdit\Foundation\Encryption\Encryption;
 use GravityKit\GravityEdit\Foundation\Helpers\Core as CoreHelpers;
 use GravityKit\GravityEdit\Foundation\Helpers\Arr;
 use GravityKit\GravityEdit\Foundation\WP\RESTController;
+use GravityKit\GravityEdit\Foundation\Notices\NoticeManager as Notices;
 
 /**
  * Core class that initializes Foundation.
@@ -34,15 +36,17 @@ use GravityKit\GravityEdit\Foundation\WP\RESTController;
  * @method static TrustedLogin trustedlogin()
  * @method static HelpScout helpscout()
  * @method static GravityForms gravityforms()
- * @method static Logger\Framework logger( string $logger_name = null, string $logger_title = null )
- * @method static Settings\Framework settings()
- * @method static Licenses\Framework licenses()
- * @method static Translations translations()
+ * @method static LoggerFramework logger( string $logger_name = null, string $logger_title = null )
+ * @method static SettingsFramework settings()
+ * @method static LicensesFramework licenses()
+ * @method static TranslationsFramework translations()
  * @method static AdminMenu admin_menu()
  * @method static PluginActivationHandler plugin_activation_handler()
+ * @method static Notices notices()
+ * @method static SecureDownload secure_download()
  */
 class Core {
-	const VERSION = '1.2.25';
+	const VERSION = '1.3.1';
 
 	const ID = 'gk_foundation';
 
@@ -315,10 +319,12 @@ class Core {
 			'admin_menu'      => AdminMenu::get_instance(),
 			'ajax_router'     => AjaxRouter::get_instance(),
 			'rest_controller' => RESTController::get_instance(),
+			'notices'         => Notices::get_instance(),
 			'encryption'      => Encryption::get_instance(),
 			'trustedlogin'    => TrustedLogin::get_instance(),
 			'helpscout'       => HelpScout::get_instance(),
 			'gravityforms'    => GravityForms::get_instance(),
+			'secure_download' => SecureDownload::get_instance(),
 		];
 
 		foreach ( $this->_components as $instance ) {

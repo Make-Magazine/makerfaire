@@ -1,4 +1,4 @@
-/*! elementor - v3.31.0 - 11-08-2025 */
+/*! elementor - v3.32.0 - 05-10-2025 */
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
@@ -389,12 +389,17 @@ var AiBehavior = exports["default"] = /*#__PURE__*/function (_Marionette$Behavio
   }, {
     key: "getElementToRender",
     value: function getElementToRender(rootElement, colorScheme, isRTL) {
-      var _this = this;
+      var _this = this,
+        _this$getOption;
       var onClose = function onClose() {
         _this.handleClose();
         rootElement.remove();
+        var onCloseCallback = _this.getOption('onCloseCallback');
+        if (onCloseCallback) {
+          onCloseCallback();
+        }
       };
-      if ('post_featured_image' === this.options.context.controlName) {
+      if ('post_featured_image' === ((_this$getOption = this.getOption('context')) === null || _this$getOption === void 0 ? void 0 : _this$getOption.controlName)) {
         var FEATURED_IMAGE_RATIO = '4:3';
         return /*#__PURE__*/_react2.default.createElement(_components.AIMediaGenerateApp, {
           onClose: onClose,
@@ -436,8 +441,8 @@ var AiBehavior = exports["default"] = /*#__PURE__*/function (_Marionette$Behavio
   }, {
     key: "getAiButtonLabel",
     value: function getAiButtonLabel() {
-      var _this$getOption;
-      var defaultValue = (_this$getOption = this.getOption('additionalOptions')) === null || _this$getOption === void 0 ? void 0 : _this$getOption.defaultValue;
+      var _this$getOption2;
+      var defaultValue = (_this$getOption2 = this.getOption('additionalOptions')) === null || _this$getOption2 === void 0 ? void 0 : _this$getOption2.defaultValue;
       var currentValue = this.getOption('getControlValue')();
       var isMedia = 'media' === this.getOption('type');
       var isDefaultValue = !isMedia && defaultValue === currentValue || isMedia && (currentValue === null || currentValue === void 0 ? void 0 : currentValue.url) === (defaultValue === null || defaultValue === void 0 ? void 0 : defaultValue.url);
@@ -1415,6 +1420,9 @@ var StyledElementorLogo = (0, _ui.styled)(ElementorLogo)(function (_ref) {
   };
 });
 var DialogHeader = function DialogHeader(props) {
+  var hideAiBetaLogo = props.hideAiBetaLogo,
+    onClose = props.onClose,
+    children = props.children;
   return /*#__PURE__*/_react.default.createElement(_ui.AppBar, {
     sx: {
       fontWeight: 'normal'
@@ -1423,7 +1431,7 @@ var DialogHeader = function DialogHeader(props) {
     position: "relative"
   }, /*#__PURE__*/_react.default.createElement(_ui.Toolbar, {
     variant: "dense"
-  }, /*#__PURE__*/_react.default.createElement(StyledElementorLogo, {
+  }, !hideAiBetaLogo && /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, /*#__PURE__*/_react.default.createElement(StyledElementorLogo, {
     sx: {
       mr: 1
     }
@@ -1441,17 +1449,17 @@ var DialogHeader = function DialogHeader(props) {
     sx: {
       ml: 1
     }
-  }), /*#__PURE__*/_react.default.createElement(_ui.Stack, {
+  })), /*#__PURE__*/_react.default.createElement(_ui.Stack, {
     direction: "row",
     spacing: 1,
     alignItems: "center",
     sx: {
-      ml: 'auto'
+      ml: hideAiBetaLogo ? 0 : 'auto'
     }
-  }, props.children, /*#__PURE__*/_react.default.createElement(_ui.IconButton, {
+  }, children, /*#__PURE__*/_react.default.createElement(_ui.IconButton, {
     size: "small",
     "aria-label": "close",
-    onClick: props.onClose,
+    onClick: onClose,
     sx: {
       '&.MuiButtonBase-root': {
         mr: -1
@@ -1461,6 +1469,7 @@ var DialogHeader = function DialogHeader(props) {
 };
 DialogHeader.propTypes = {
   onClose: _propTypes.default.func.isRequired,
+  hideAiBetaLogo: _propTypes.default.bool,
   children: _propTypes.default.oneOfType([_propTypes.default.arrayOf(_propTypes.default.node), _propTypes.default.node])
 };
 var _default = exports["default"] = DialogHeader;
@@ -7040,7 +7049,7 @@ Object.defineProperty(exports, "__esModule", ({
   value: true
 }));
 exports["default"] = void 0;
-var _react = _interopRequireDefault(__webpack_require__(/*! react */ "react"));
+var _objectWithoutProperties2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/objectWithoutProperties */ "../node_modules/@babel/runtime/helpers/objectWithoutProperties.js"));
 var _regenerator = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/regenerator */ "../node_modules/@babel/runtime/regenerator/index.js"));
 var _defineProperty2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/defineProperty */ "../node_modules/@babel/runtime/helpers/defineProperty.js"));
 var _classCallCheck2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "../node_modules/@babel/runtime/helpers/classCallCheck.js"));
@@ -7052,7 +7061,8 @@ var _asyncToGenerator2 = _interopRequireDefault(__webpack_require__(/*! @babel/r
 var _aiBehavior = _interopRequireDefault(__webpack_require__(/*! ./ai-behavior */ "../modules/ai/assets/js/editor/ai-behavior.js"));
 var _i18n = __webpack_require__(/*! @wordpress/i18n */ "@wordpress/i18n");
 var _constants = __webpack_require__(/*! ./pages/form-media/constants */ "../modules/ai/assets/js/editor/pages/form-media/constants/index.js");
-var _react2 = _interopRequireDefault(__webpack_require__(/*! elementor-utils/react */ "../assets/dev/js/utils/react.js"));
+var _react = _interopRequireDefault(__webpack_require__(/*! elementor-utils/react */ "../assets/dev/js/utils/react.js"));
+var _react2 = _interopRequireDefault(__webpack_require__(/*! react */ "react"));
 var _layoutAppWrapper = _interopRequireDefault(__webpack_require__(/*! ./layout-app-wrapper */ "../modules/ai/assets/js/editor/layout-app-wrapper.js"));
 var _aiGetStartedConnect = __webpack_require__(/*! ./ai-get-started-connect */ "../modules/ai/assets/js/editor/ai-get-started-connect.js");
 var _editorIntegration = __webpack_require__(/*! ./utils/editor-integration */ "../modules/ai/assets/js/editor/utils/editor-integration.js");
@@ -7060,6 +7070,8 @@ var _api = __webpack_require__(/*! ./api */ "../modules/ai/assets/js/editor/api/
 var _requestsIds = __webpack_require__(/*! ./context/requests-ids */ "../modules/ai/assets/js/editor/context/requests-ids.js");
 var _applyAiTitlesToNavigatorBehaviour = _interopRequireDefault(__webpack_require__(/*! ./integration/navigator/apply-ai-titles-to-navigator-behaviour */ "../modules/ai/assets/js/editor/integration/navigator/apply-ai-titles-to-navigator-behaviour.js"));
 var _aiPromotion = __webpack_require__(/*! ./utils/ai-promotion */ "../modules/ai/assets/js/editor/utils/ai-promotion.js");
+var _excluded = ["modalType", "location", "imageId", "imageUrl", "context"],
+  _excluded2 = ["modalType", "location", "imageId", "imageUrl", "context", "isExternalTrigger"];
 function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
 function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { (0, _defineProperty2.default)(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
 function _callSuper(t, o, e) { return o = (0, _getPrototypeOf2.default)(o), (0, _possibleConstructorReturn2.default)(t, _isNativeReflectConstruct() ? Reflect.construct(o, e || [], (0, _getPrototypeOf2.default)(t).constructor) : o.apply(t, e)); }
@@ -7118,6 +7130,7 @@ var Module = exports["default"] = /*#__PURE__*/function (_elementorModules$edi) 
     value: function onElementorInit() {
       elementor.hooks.addFilter('controls/base/behaviors', this.registerControlBehavior.bind(this));
       elementor.hooks.addFilter('navigator/layout/behaviors', this.registerNavigatorBehavior.bind(this));
+      window.addEventListener(_constants.AI_EVENTS.SHOW_MODAL, this.handleAIModalEvent.bind(this));
       $e.routes.on('run:after', function (component, route) {
         if ('panel/global/settings-site-identity' === route) {
           (0, _aiPromotion.addAiPromotionForSiteLogo)();
@@ -7134,10 +7147,10 @@ var Module = exports["default"] = /*#__PURE__*/function (_elementorModules$edi) 
             var _getUiConfig = (0, _editorIntegration.getUiConfig)(),
               colorScheme = _getUiConfig.colorScheme,
               isRTL = _getUiConfig.isRTL;
-            var _ReactUtils$render = _react2.default.render(/*#__PURE__*/_react.default.createElement(_layoutAppWrapper.default, {
+            var _ReactUtils$render = _react.default.render(/*#__PURE__*/_react2.default.createElement(_layoutAppWrapper.default, {
                 isRTL: isRTL,
                 colorScheme: colorScheme
-              }, /*#__PURE__*/_react.default.createElement(_aiGetStartedConnect.AiGetStartedConnect, {
+              }, /*#__PURE__*/_react2.default.createElement(_aiGetStartedConnect.AiGetStartedConnect, {
                 onClose: function onClose() {
                   unmount();
                   rootElement.remove();
@@ -7225,7 +7238,7 @@ var Module = exports["default"] = /*#__PURE__*/function (_elementorModules$edi) 
             controlView: view,
             additionalOptions: {
               defaultValue: view.options.model.get('default'),
-              defaultImageType: (aiOptions === null || aiOptions === void 0 ? void 0 : aiOptions.category) || _constants.IMAGE_PROMPT_CATEGORIES[1].key
+              defaultImageType: (aiOptions === null || aiOptions === void 0 ? void 0 : aiOptions.category) || Object.keys(_constants.IMAGE_PROMPT_CATEGORIES)[1]
             },
             context: this.getContextData(view, controlType)
           };
@@ -7316,6 +7329,88 @@ var Module = exports["default"] = /*#__PURE__*/function (_elementorModules$edi) 
     value: function isAiImageGenerationEnabled(mediaTypes, controlType) {
       return mediaTypes.length && mediaTypes.includes('image') && !controlType.includes('media-preview');
     }
+  }, {
+    key: "handleAIModalEvent",
+    value: function handleAIModalEvent(event) {
+      var _event$detail = event.detail,
+        modalType = _event$detail.modalType,
+        location = _event$detail.location,
+        imageId = _event$detail.imageId,
+        imageUrl = _event$detail.imageUrl,
+        context = _event$detail.context,
+        additionalParams = (0, _objectWithoutProperties2.default)(_event$detail, _excluded);
+      var targetLocation = location || modalType;
+      this.showAIModal(_objectSpread({
+        modalType: modalType,
+        location: targetLocation,
+        imageId: imageId,
+        imageUrl: imageUrl,
+        context: context,
+        isExternalTrigger: true
+      }, additionalParams));
+    }
+  }, {
+    key: "showAIModal",
+    value: function () {
+      var _showAIModal = (0, _asyncToGenerator2.default)(/*#__PURE__*/_regenerator.default.mark(function _callee2(_ref3) {
+        var _location$toUpperCase;
+        var modalType, location, imageId, imageUrl, context, isExternalTrigger, additionalParams, aiBehavior;
+        return _regenerator.default.wrap(function (_context2) {
+          while (1) switch (_context2.prev = _context2.next) {
+            case 0:
+              modalType = _ref3.modalType, location = _ref3.location, imageId = _ref3.imageId, imageUrl = _ref3.imageUrl, context = _ref3.context, isExternalTrigger = _ref3.isExternalTrigger, additionalParams = (0, _objectWithoutProperties2.default)(_ref3, _excluded2);
+              aiBehavior = new _aiBehavior.default({
+                type: 'media',
+                controlType: 'media',
+                onCloseCallback: function onCloseCallback() {
+                  window.dispatchEvent(new CustomEvent(_constants.AI_EVENTS.MODAL_CLOSED, {
+                    detail: {
+                      success: false,
+                      error: 'User closed the modal manually without selecting an image'
+                    }
+                  }));
+                },
+                getControlValue: function getControlValue() {
+                  if (imageId || imageUrl) {
+                    return {
+                      id: imageId ? parseInt(imageId, 10) : '',
+                      url: imageUrl || '',
+                      source: imageId ? 'id' : 'url'
+                    };
+                  }
+                },
+                setControlValue: function setControlValue(image) {
+                  window.dispatchEvent(new CustomEvent(_constants.AI_EVENTS.MODAL_CLOSED, {
+                    detail: _objectSpread({
+                      modalType: modalType,
+                      location: location,
+                      success: true
+                    }, image)
+                  }));
+                },
+                additionalOptions: _objectSpread({
+                  defaultImageType: Object.keys(_constants.IMAGE_PROMPT_CATEGORIES)[1],
+                  location: _constants.LOCATIONS[location === null || location === void 0 || (_location$toUpperCase = location.toUpperCase()) === null || _location$toUpperCase === void 0 ? void 0 : _location$toUpperCase.replace('-', '_')] || location,
+                  isExternalTrigger: isExternalTrigger,
+                  hideBackButton: isExternalTrigger,
+                  withoutHistory: isExternalTrigger,
+                  hideAiBetaLogo: isExternalTrigger
+                }, additionalParams)
+              });
+              aiBehavior.onAiButtonClick({
+                stopPropagation: function stopPropagation() {}
+              });
+            case 1:
+            case "end":
+              return _context2.stop();
+          }
+        }, _callee2);
+      }));
+      function showAIModal(_x) {
+        return _showAIModal.apply(this, arguments);
+      }
+      return showAIModal;
+    }()
   }]);
 }(elementorModules.editor.utils.Module);
 
@@ -7433,6 +7528,7 @@ var PageContent = function PageContent(_ref) {
       sx: {
         m: 0,
         maxHeight: 'media' === type ? '95vh' : '76vh',
+        minHeight: '80vh',
         height: 'auto'
       }
     }
@@ -7570,7 +7666,8 @@ var PageContent = function PageContent(_ref) {
     return /*#__PURE__*/_react.default.createElement(_promptDialog.default, (0, _extends2.default)({
       onClose: onCloseAnimationDialog
     }, codePromptDialogStyleProps), /*#__PURE__*/_react.default.createElement(_promptDialog.default.Header, {
-      onClose: onCloseAnimationDialog
+      onClose: onCloseAnimationDialog,
+      hideAiBetaLogo: additionalOptions === null || additionalOptions === void 0 ? void 0 : additionalOptions.hideAiBetaLogo
     }, maybeRenderUpgradeChip()), /*#__PURE__*/_react.default.createElement(_promptDialog.default.Content, {
       className: "e-ai-dialog-content",
       dividers: true
@@ -7597,8 +7694,9 @@ var PageContent = function PageContent(_ref) {
   }, promptDialogStyleProps), /*#__PURE__*/_react.default.createElement(_promptHistoryContext.PromptHistoryProvider, {
     historyType: _historyTypes.HISTORY_TYPES.TEXT
   }, /*#__PURE__*/_react.default.createElement(_promptHistoryActionContext.PromptHistoryActionProvider, null, /*#__PURE__*/_react.default.createElement(_promptDialog.default.Header, {
-    onClose: onClose
-  }, /*#__PURE__*/_react.default.createElement(_promptHistory.default, null), maybeRenderUpgradeChip()), /*#__PURE__*/_react.default.createElement(_promptDialog.default.Content, {
+    onClose: onClose,
+    hideAiBetaLogo: additionalOptions === null || additionalOptions === void 0 ? void 0 : additionalOptions.hideAiBetaLogo
+  }, !(additionalOptions !== null && additionalOptions !== void 0 && additionalOptions.withoutHistory) && /*#__PURE__*/_react.default.createElement(_promptHistory.default, null), maybeRenderUpgradeChip()), /*#__PURE__*/_react.default.createElement(_promptDialog.default.Content, {
     className: "e-ai-dialog-content",
     dividers: true
   }, /*#__PURE__*/_react.default.createElement(_formText.default, {
@@ -12545,6 +12643,11 @@ var ViewBackButton = function ViewBackButton(_ref) {
     props = (0, _objectWithoutProperties2.default)(_ref, _excluded);
   var _useLocation = (0, _locationContext.useLocation)(),
     back = _useLocation.back;
+  var _useGlobalSettings = (0, _globalSettingsContext.useGlobalSettings)(),
+    hideBackButton = _useGlobalSettings.hideBackButton;
+  if (hideBackButton) {
+    return null;
+  }
   return /*#__PURE__*/_react.default.createElement(_backButton.default, (0, _extends2.default)({
     onClick: function onClick(e) {
       e.preventDefault();
@@ -12664,9 +12767,9 @@ ErrorMessage.propTypes = {
   sx: _propTypes.default.object
 };
 var ViewPanel = function ViewPanel(props) {
-  var _useGlobalSettings = (0, _globalSettingsContext.useGlobalSettings)(),
-    hasSubscription = _useGlobalSettings.hasSubscription,
-    usagePercentage = _useGlobalSettings.usagePercentage;
+  var _useGlobalSettings2 = (0, _globalSettingsContext.useGlobalSettings)(),
+    hasSubscription = _useGlobalSettings2.hasSubscription,
+    usagePercentage = _useGlobalSettings2.usagePercentage;
   return /*#__PURE__*/_react.default.createElement(_panel.default, null, /*#__PURE__*/_react.default.createElement(_usageMessages.default, {
     hasSubscription: hasSubscription,
     usagePercentage: usagePercentage,
@@ -12704,7 +12807,7 @@ var _default = exports["default"] = View;
 Object.defineProperty(exports, "__esModule", ({
   value: true
 }));
-exports.LOCATIONS = exports.IMAGE_PROMPT_SETTINGS = exports.IMAGE_PROMPT_CATEGORIES = exports.IMAGE_PLACEHOLDERS_HOSTS = exports.IMAGE_ASPECT_RATIO = exports.FEATURE_IDENTIFIER = void 0;
+exports.LOCATIONS = exports.IMAGE_PROMPT_SETTINGS = exports.IMAGE_PROMPT_CATEGORIES = exports.IMAGE_PLACEHOLDERS_HOSTS = exports.IMAGE_ASPECT_RATIO = exports.FEATURE_IDENTIFIER = exports.AI_EVENTS = void 0;
 var _i18n = __webpack_require__(/*! @wordpress/i18n */ "@wordpress/i18n");
 var LOCATIONS = exports.LOCATIONS = {
   RESIZE: 'resize',
@@ -12849,6 +12952,10 @@ var IMAGE_ASPECT_RATIO = exports.IMAGE_ASPECT_RATIO = {
 };
 var IMAGE_PLACEHOLDERS_HOSTS = exports.IMAGE_PLACEHOLDERS_HOSTS = {
   WIREFRAME: 'gene-\\d+\\.live\\.strattic\\.io'
+};
+var AI_EVENTS = exports.AI_EVENTS = {
+  MODAL_CLOSED: 'elementor:ai:modal-closed',
+  SHOW_MODAL: 'elementor:ai:show-modal'
 };
 
 /***/ }),
@@ -13684,7 +13791,8 @@ var FormMedia = function FormMedia(_ref2) {
   var globalSettings = {
     initialImageType: (additionalOptions === null || additionalOptions === void 0 ? void 0 : additionalOptions.defaultImageType) || '',
     hasSubscription: hasSubscription,
-    usagePercentage: usagePercentage
+    usagePercentage: usagePercentage,
+    hideBackButton: additionalOptions === null || additionalOptions === void 0 ? void 0 : additionalOptions.hideBackButton
   };
   var globalActions = {
     state: state,
@@ -13709,7 +13817,8 @@ var FormMedia = function FormMedia(_ref2) {
   }, DialogProps), /*#__PURE__*/_react.default.createElement(_promptDialog.default.Header, {
     onClose: function onClose() {
       return onCloseIntent();
-    }
+    },
+    hideAiBetaLogo: additionalOptions === null || additionalOptions === void 0 ? void 0 : additionalOptions.hideAiBetaLogo
   }, !additionalOptions.withoutHistory && /*#__PURE__*/_react.default.createElement(_promptHistory.default, null), maybeRenderUpgradeChip()), /*#__PURE__*/_react.default.createElement(_ui.Divider, null), /*#__PURE__*/_react.default.createElement(_globalSettingsContext.GlobalSettingsProvider, {
     settings: globalSettings
   }, /*#__PURE__*/_react.default.createElement(_globalActionsContext.GlobalActionsProvider, {
@@ -13791,6 +13900,11 @@ var MediaOutlet = function MediaOutlet(_ref) {
     current = _useLocation.current,
     navigate = _useLocation.navigate;
   (0, _react.useEffect)(function () {
+    var hasExplicitLocation = (additionalOptions === null || additionalOptions === void 0 ? void 0 : additionalOptions.location) && additionalOptions.location !== _constants.LOCATIONS.GENERATE;
+    if (hasExplicitLocation) {
+      navigate(additionalOptions.location);
+      return;
+    }
     if (editImage.url) {
       var wireframeHostRegex = new RegExp(_constants.IMAGE_PLACEHOLDERS_HOSTS.WIREFRAME);
       var isWireframeHost = wireframeHostRegex.test(new URL(editImage.url).host);
@@ -13802,7 +13916,7 @@ var MediaOutlet = function MediaOutlet(_ref) {
         navigate(_constants.LOCATIONS.GENERATE);
       }
     }
-  }, [editImage.id, editImage.url, editImage.source]);
+  }, [editImage.id, editImage.url, editImage.source, additionalOptions === null || additionalOptions === void 0 ? void 0 : additionalOptions.location]);
   (0, _promptHistoryActionContext.useSubscribeOnPromptHistoryAction)([{
     type: _promptHistoryActionContext.ACTION_TYPES.RESTORE,
     handler: function handler() {
@@ -15107,7 +15221,7 @@ var InPaintingContent = function InPaintingContent(_ref3) {
     alignSelf: "center",
     justifyContent: "center",
     sx: {
-      mb: 2.5
+      marginBottom: '20px !important'
     }
   }, /*#__PURE__*/_react.default.createElement(_ui.Stack, {
     direction: "row",
@@ -17480,6 +17594,7 @@ var onConnect = exports.onConnect = function onConnect(data) {
   elementorCommon.config.library_connect.is_connected = true;
   elementorCommon.config.library_connect.current_access_level = data.kits_access_level || data.access_level || 0;
   elementorCommon.config.library_connect.current_access_tier = data.access_tier;
+  elementorCommon.config.library_connect.plan_type = data.plan_type;
 };
 var getUiConfig = exports.getUiConfig = function getUiConfig() {
   var _elementor, _elementor$getPrefere;

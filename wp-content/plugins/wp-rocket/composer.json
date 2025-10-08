@@ -41,7 +41,7 @@
 	],
 	"require": {
 		"php": ">=7.3",
-		"berlindb/core": "^2.0",
+		"berlindb/core": "dev-master",
 		"cloudflare/cf-ip-rewrite": "^1.0",
 		"voku/simple_html_dom": "^4.8",
 		"wp-media/apply-filters-typed": "^1.0",

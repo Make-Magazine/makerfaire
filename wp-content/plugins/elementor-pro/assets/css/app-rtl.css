@@ -1,4 +1,4 @@
-/*! elementor-pro - v3.31.0 - 10-08-2025 */
+/*! elementor-pro - v3.32.0 - 29-09-2025 */
 :root {
   --color-box-shadow-color: rgba(0, 0, 0, 0.05);
 }
@@ -232,7 +232,7 @@
   outline: none;
   background: transparent;
 }
-.e-site-editor-conditions__input-wrapper:after {
+.e-site-editor-conditions__input-wrapper::after {
   font-family: eicons;
   content: "\e8ad";
   font-size: 0.75rem;
@@ -261,7 +261,7 @@
 .e-site-editor-conditions__input-wrapper--condition-type {
   position: relative;
 }
-.e-site-editor-conditions__input-wrapper--condition-type:before {
+.e-site-editor-conditions__input-wrapper--condition-type::before {
   font-family: eicons;
   position: absolute;
   transform: translateY(-50%);
@@ -279,10 +279,10 @@
   border-inline-end: 1px solid;
   border-color: var(--e-site-editor-input-wrapper-border-color);
 }
-.e-site-editor-conditions__input-wrapper--condition-type[data-elementor-condition-type=include]:before {
+.e-site-editor-conditions__input-wrapper--condition-type[data-elementor-condition-type=include]::before {
   content: "\e8cc";
 }
-.e-site-editor-conditions__input-wrapper--condition-type[data-elementor-condition-type=exclude]:before {
+.e-site-editor-conditions__input-wrapper--condition-type[data-elementor-condition-type=exclude]::before {
   content: "\e8cd";
 }
 
@@ -353,8 +353,7 @@
   margin: 0 auto;
   align-items: center;
   border-block-start: 1px solid var(--hr-color);
-  padding-block-start: 1rem;
-  padding-block-end: 1rem;
+  padding-block: 1rem;
   padding-inline: 1.875rem;
 }
 

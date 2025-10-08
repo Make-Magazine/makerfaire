@@ -1,6 +1,18 @@
 
 # Changelog
 
+## 1.3.4 | August 27, 2025
+
+- Fixed an issue where forms using the "Steps" progress indicator and GP Page Transitions "Soft Validation" would not redirect to the confirmation page or URL after submission.
+
+## 1.3.3 | August 6, 2025
+
+- Fixed an issue where default choices in Checkbox, Dropdown, and Multi Select fields were not being properly honored when using page navigation.
+
+## 1.3.2 | July 23, 2025
+
+- Fixed an issue where default choices in Checkbox fields were not being honored when using page navigation.
+
 ## 1.3.1 | May 22, 2025
 
 - Added better validation to fields which have already been viewed and do not have valid values.

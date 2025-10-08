@@ -2185,10 +2185,15 @@ class GravityWP_Advanced_Merge_Tags extends GFAddOn {
 
 		$atts = shortcode_atts(
 			array(
-				'0'         => null,   // Contains the modifier (without attributes).
-				'form_id'   => null,   // Which form-entries to search.
-				'match_id'  => null,   // Entry property value to match the Merge Tag value with.
-				'return_id' => null,   // field id to sum.
+				'0'             => null,   // Contains the modifier (without attributes).
+				'form_id'       => null,   // Which form-entries to search.
+				'match_id'      => null,   // Entry property value to match the Merge Tag value with.
+				'return_id'     => null,   // field id to sum.
+				'number_format' => '',
+				'currency'      => '',
+				'thousand_sep'  => '',
+				'raw'           => 'false',
+
 			),
 			$modifier_atts
 		);
@@ -2234,9 +2239,24 @@ class GravityWP_Advanced_Merge_Tags extends GFAddOn {
 			return '0';
 		}
 
-		$result    = rgars( $result, '0/result_value', '0' );
-		$precision = strlen( substr( strrchr( $result, '.' ), 1 ) );
-		return number_format_i18n( $result, $precision );
+		$result = rgars( $result, '0/result_value', '0' );
+
+		// user wants the raw value (for example for further calculations).
+		if ( $atts['raw'] === 'true' ) {
+			return (string) $result;
+		}
+
+		if ( $atts['number_format'] !== '' || $atts['thousand_sep'] !== '' ) {
+			// user wants to decide how to format the number. Use decimal_dot as default if not set.
+			$number_format = $atts['number_format'] === '' ? 'decimal_dot' : $atts['number_format'];
+			$result        = GFCommon::format_number( $result, $number_format, $atts['currency'], $atts['thousand_sep'] );
+		} else {
+			// default formatting, using WordPress number_format_i18n to output localized format.
+			$precision = strlen( substr( strrchr( $result, '.' ), 1 ) );
+			$result    = number_format_i18n( $result, $precision );
+		}
+
+		return $result;
 	}
 
 	/**

@@ -222,7 +222,7 @@ class Paypal_Button extends Payment_Button {
 	}
 
 	// Render the payment button.
-	protected function render_button( Widget_Base $instance = null, $tag = 'a' ) {
+	protected function render_button( ?Widget_Base $instance = null, $tag = 'a' ) {
 		switch ( $this->get_api_method() ) {
 			case 'legacy':
 				$this->render_legacy_form();

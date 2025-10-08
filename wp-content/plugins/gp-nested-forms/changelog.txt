@@ -1,6 +1,18 @@
 
 # Changelog
 
+## 1.2.14 | September 17, 2025
+
+- Fixed an issue where copying a parent Radio field with the "Other" option via the `{Parent}` merge tag would incorrectly transfer "gf_other_choice" instead of the user-defined text.
+
+## 1.2.13 | September 10, 2025
+
+- Added JS hooks for Nested Form Modals opening and closing: [`gpnf_modal_opened`](http://gravitywiz.com/documentation/gpnf_modal_opened) and [`gpnf_modal_closed`](http://gravitywiz.com/documentation/gpnf_modal_closed).
+
+## 1.2.12 | August 27, 2025
+
+- Added Polish translations.
+
 ## 1.2.11 | July 16, 2025
 
 - Fixed an issue where populating a child field from a parent field could fail if the parent field has calculations enabled.

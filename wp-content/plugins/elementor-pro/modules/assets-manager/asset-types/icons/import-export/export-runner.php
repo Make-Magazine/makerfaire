@@ -33,11 +33,13 @@ class Export_Runner extends Export_Runner_Base {
 		}
 
 		$icon_sets_data = [];
+		$manifest = [];
 
 		foreach ( $icon_sets as $icon_set ) {
 			$icon_set_data = $this->prepare_icon_set_data( $icon_set );
 			if ( $icon_set_data ) {
 				$icon_sets_data[] = $icon_set_data;
+				$manifest['custom-icons'][ $icon_set->ID ] = $icon_set_data;
 			}
 		}
 
@@ -45,6 +47,9 @@ class Export_Runner extends Export_Runner_Base {
 			'files' => [
 				'path' => Import_Export::FILE_NAME,
 				'data' => $icon_sets_data,
+			],
+			'manifest' => [
+				$manifest,
 			],
 		];
 	}

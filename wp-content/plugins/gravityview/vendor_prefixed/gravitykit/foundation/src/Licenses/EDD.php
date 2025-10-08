@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by gravityview on 11-July-2025 using {@see https://github.com/BrianHenryIE/strauss}.
+ * Modified by gravityview on 02-October-2025 using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\GravityView\Foundation\Licenses;
@@ -150,18 +150,12 @@ class EDD {
 		}
 
 		foreach ( $products_data as $product ) {
-			if ( ! $product['installed'] || $product['third_party'] ) {
+			if ( ! $product['update_available'] || ! $product['installed'] || $product['third_party'] ) {
 				continue;
 			}
 
-			$product_path = $product['path'];
-
-			$wp_product_data = $this->format_product_data( $product );
-
-			if ( $product['update_available'] ) {
-				// @phpstan-ignore-next-line
-				$transient_data->response[ $product_path ] = $wp_product_data;
-			}
+			// @phpstan-ignore-next-line
+			$transient_data->response[ $product['path'] ] = $this->format_product_data( $product );
 		}
 
 		$checked = true;

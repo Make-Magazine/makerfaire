@@ -42,20 +42,64 @@ final class ACFService{
             'return_format'		=> 'value',
             'save_terms' => 0
         ];
-        // Apply filters to field value.
+
+        // Apply filters to field value
+        // acf/update_value is provided by the Advanced Custom Fields plugin
         $value = apply_filters( "acf/update_value", $value, $pid, $fieldData, $value );
         $cf_value = apply_filters('pmxi_acf_custom_field', $value, $pid, $name);
 
+        // Check for empty select values
+        $is_empty_select = false;
+        if (is_array($cf_value) && count($cf_value) == 1) {
+            if (empty($cf_value[0])) {
+                $is_empty_select = true;
+            }
+        }
+
+        // Check if this is a WooCommerce order and HPOS is enabled
+        if ($field->getImportType() === 'shop_order' && self::is_woocommerce_hpos_enabled()) {
+            // Use ACF's HPOS-compatible functions for WooCommerce orders
+            if (function_exists('update_field')) {
+                $post_id = 'woo_order_' . $pid;
+                update_field($name, $cf_value, $post_id);
+            } else {
+                // Fallback to direct WooCommerce order meta if ACF functions aren't available
+                if (function_exists('wc_get_order')) {
+                    $order = wc_get_order($pid);
+                    if ($order) {
+                        $order->update_meta_data($name, $cf_value);
+                        $order->save();
+                    }
+                }
+            }
+            return;
+        }
+
+        // For all other cases, use the standard meta update functions
         switch ($field->getImportType()) {
             case 'import_users':
             case 'shop_customer':
-                update_user_meta($pid, $name, $cf_value);
+                if ( $is_empty_select ) {
+                    update_user_meta($pid, $name, '');
+                } else {
+                    update_user_meta($pid, $name, $cf_value);
+                }
                 break;
+
             case 'taxonomies':
-                update_term_meta($pid, $name, $cf_value);
+                if ( $is_empty_select ) {
+                    update_term_meta($pid, $name, '');
+                } else {
+                    update_term_meta($pid, $name, $cf_value);
+                }
                 break;
+
             default:
-                update_post_meta($pid, $name, $cf_value);
+                if ( $is_empty_select ) {
+                    update_post_meta($pid, $name, '');
+                } else {
+                    update_post_meta($pid, $name, $cf_value);
+                }
                 break;
         }
     }
@@ -70,7 +114,25 @@ final class ACFService{
      * @return mixed
      */
     public static function get_post_meta(Field $field, $pid, $name) {
-        switch ($field->getImportType()) {
+        // Check if this is a WooCommerce order and HPOS is enabled
+        if ($field->getImportType() === 'shop_order' && self::is_woocommerce_hpos_enabled()) {
+            // Use ACF's HPOS-compatible functions for WooCommerce orders
+            if (function_exists('get_field')) {
+                $post_id = 'woo_order_' . $pid;
+                return get_field($name, $post_id);
+            } else {
+                // Fallback to direct WooCommerce order meta if ACF functions aren't available
+                if (function_exists('wc_get_order')) {
+                    $order = wc_get_order($pid);
+                    if ($order) {
+                        return $order->get_meta($name, true);
+                    }
+                }
+            }
+            return null;
+        }
+
+        switch ( $field->getImportType() ) {
             case 'import_users':
             case 'shop_customer':
                 $value = get_user_meta($pid, $name, TRUE);
@@ -83,6 +145,34 @@ final class ACFService{
                 break;
         }
         return $value;
+    }
+
+    /**
+     * Check if WooCommerce HPOS is enabled and ACF Pro HPOS support is available
+     *
+     * @return bool
+     */
+    public static function is_woocommerce_hpos_enabled() {
+        // Check if WooCommerce is active and HPOS is enabled
+        if (!function_exists('wc_get_container') || !class_exists('\Automattic\WooCommerce\Utilities\OrderUtil')) {
+            return false;
+        }
+
+        // Check if HPOS is enabled
+        if (!method_exists('\Automattic\WooCommerce\Utilities\OrderUtil', 'custom_orders_table_usage_is_enabled')) {
+            return false;
+        }
+
+        if (!\Automattic\WooCommerce\Utilities\OrderUtil::custom_orders_table_usage_is_enabled()) {
+            return false;
+        }
+
+        // Check if ACF Pro HPOS support is available
+        if (!class_exists('ACF\Pro\Meta\WooOrder')) {
+            return false;
+        }
+
+        return true;
     }
 
     /**

@@ -1,6 +1,35 @@
 # Elementor Pro - by Elementor.com
 
-#### 3.31.2 - 2025-08-07
+#### 3.32.2 - 2025-09-29
+
+* Fix: Exported taxonomies are not displayed correctly on the summary page in Website Templates export
+* Fix: Certain taxonomies are not exported as expected in Website Templates export
+
+#### 3.32.1 - 2025-09-16
+
+* Fix: Theme Builder fails to load when containers are disabled
+* Fix: Popup and single product templates not imported or exported as expected
+
+#### 3.32.0 - 2025-09-15
+
+* New: Introducing Size Variables to store and reuse numeric values across spacing, typography, layout, and borders - Editor V4
+* New: Introducing granular Transitions with property-level control for advanced micro-animations - Editor V4
+* New: Added granular content selection for Website Templates import and export, including pages, menus, post types, and taxonomies
+* Tweak: Enhanced accessibility of background images in Slides widget with proper aria attributes ([#23543](https://github.com/elementor/elementor/issues/23543), [#31063](https://github.com/elementor/elementor/issues/31063))
+* Tweak: Added REST API support for the Custom Code feature
+* Tweak: Moved Background control from Content tab to Style tab in Flip Box widget
+* Tweak: Removed SVG icons from the accessibility tree in Share Buttons widget
+* Tweak: Removed dropdown indicator icons from the accessibility tree in WordPress Menu widget
+* Fix: PHP 8.4 deprecation notices when running with `WP_DEBUG` enabled
+* Fix: Reduced-motion preferences are not applied to Animated Headline widget
+* Fix: Reduced-motion preferences are not applied in Motion Effects
+* Fix: Added required PHP and WordPress versions to the plugin header
+
+#### 3.31.3 - 2025-09-08
+
+* Security Fix: Improved code security enforcement in WordPress Menu widget
+
+#### 3.31.2 - 2025-08-10
 
 * Tweak: Improved release version functionality
 

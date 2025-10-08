@@ -128,7 +128,7 @@ function InitializeEditor() {
 	jQuery( '.field_settings' ).accordion( gform.options.jqEditorAccordions );
 	jQuery( '#add_fields_menu .panel-block-tabs__wrapper' ).accordion( gform.options.jqAddFieldAccordions );
 	jQuery( '.panel-block-tabs' ).find( '.panel-block-tabs__toggle' ).each( function( i, element ) {
-		jQuery( element ).append( '<i></i>' );
+		jQuery( element ).append( '<i aria-hidden="true"></i>' );
 	} );
 	ResetFieldAccordions();
 
@@ -252,35 +252,17 @@ function InitializeFieldSettings(){
 		});
 
 	//add onclick event to disable placeholder when the rich text editor is on
-	jQuery('#field_rich_text_editor').on('click keypress', function(){
+	jQuery('#field_rich_text_editor').on( 'click keypress', function() {
 			var field = GetSelectedField();
-			if (this.checked ){
-				var disablePlaceHolder = true;
-
-				//see if a field is using this in conditional logic and warn it will not work with rich text editor
-				if ( HasConditionalLogicDependency(field.id,field.value) ){
-					gform.instances.dialogConfirmAsync(gf_vars.conditionalLogicWarningTitle, gf_vars.conditionalLogicRichTextEditorWarning).then((confirmed) => {
-						if (!confirmed) {
-							jQuery('#field_rich_text_editor').prop('checked', false);
-							disablePlaceHolder = false;
-						}
-						if (disablePlaceHolder) {
-							jQuery('#field_placeholder, #field_placeholder_textarea').prop('disabled', true);
-							jQuery('span#placeholder_warning').css('display', 'block');
-						}
-					});
-				}
-
-				if (disablePlaceHolder){
-					jQuery('#field_placeholder, #field_placeholder_textarea').prop('disabled', true);
-					jQuery('span#placeholder_warning').css('display','block');
-				}
+			if ( this.checked ) {
+				conditionalLogicWarningDependency( field )
+				SetFieldAccessibilityWarning( 'rich_text_editor_setting', 'above' );
+			} else {
+				jQuery( '#field_placeholder, #field_placeholder_textarea').prop( 'disabled', false );
+				jQuery( 'span#placeholder_warning').css('display','none' );
+				ResetFieldAccessibilityWarning( 'rich_text_editor_setting' );
 			}
-			else{
-				jQuery('#field_placeholder, #field_placeholder_textarea').prop('disabled', false);
-				jQuery('span#placeholder_warning').css('display','none');
-			}
-		});
+	});
 
 	jQuery('.prepopulate_field_setting')
 		.on('input propertychange', '.field_input_name', function(){
@@ -528,6 +510,39 @@ function InitializeFieldSettings(){
 }
 
 /**
+ * Checks if the given field is a dependency in conditional logic and warns the user if enabling the rich text editor may break logic.
+ * If a dependency is found, prompts the user for confirmation.
+ * If not confirmed, disables the rich text editor and resets accessibility warnings.
+ * Disables the placeholder input and shows a warning if the rich text editor is enabled.
+ *
+ * @since 2.9.19
+ *
+ * @param {Object} field The field object to check for conditional logic dependencies.
+ *
+ * @returns {Promise}
+ *
+ **/
+async function conditionalLogicWarningDependency( field ) {
+	const hasDependency = await HasConditionalLogicDependency( field.id, field.value );
+
+	if (hasDependency) {
+		const confirmed = await gform.instances.dialogConfirmAsync(
+			gf_vars.conditionalLogicWarningTitle,
+			gf_vars.conditionalLogicRichTextEditorWarning
+		)
+		if ( ! confirmed ) {
+			jQuery( '#field_rich_text_editor' ).prop( 'checked', false );
+			ToggleRichTextEditor( false );
+			ResetFieldAccessibilityWarning( 'rich_text_editor_setting' );
+			return;
+		}
+	}
+
+	jQuery( '#field_placeholder, #field_placeholder_textarea' ).prop( 'disabled', true );
+	jQuery( 'span#placeholder_warning' ).css( 'display', 'block' );
+}
+
+/**
  * Filters out the Hide Default Margins option when labels are top-aligned.
  *
  * @since 2.5
@@ -688,6 +703,7 @@ function LoadFieldSettings() {
 	jQuery("#field_default_value").val(field.defaultValue == undefined ? "" : field.defaultValue);
 	jQuery("#field_default_value_textarea").val(field.defaultValue == undefined ? "" : field.defaultValue);
 	jQuery("#field_autocomplete_attribute").val(field.autocompleteAttribute);
+	jQuery("#field_display_columns").val(field.displayColumns == undefined ? "1" : field.displayColumns);
 	jQuery("#field_description").val(field.description == undefined ? "" : field.description);
 	jQuery("#field_description").attr('placeholder', field.descriptionPlaceholder == undefined ? "" : field.descriptionPlaceholder);
 	jQuery("#field_checkbox_label").val(field.checkboxLabel == undefined ? "" : field.checkboxLabel);
@@ -907,6 +923,7 @@ function LoadFieldSettings() {
 	ToggleInputMaskOptions(true);
 
 	InitAutocompleteOptions(true);
+	InitDisplayInColumns( true )
 
 	if (inputType == "creditcard") {
 		field = UpgradeCreditCardField(field);
@@ -1239,6 +1256,9 @@ function LoadFieldSettings() {
 		SetFieldAccessibilityWarning('multiselect', 'above');
 	}
 
+	if (field.useRichTextEditor === true) {
+		SetFieldAccessibilityWarning( 'rich_text_editor_setting', 'above' );
+	}
 	if (field.labelPlacement === 'hidden_label') {
 		SetFieldAccessibilityWarning('label_placement_setting', 'above');
 	}
@@ -1286,6 +1306,13 @@ function LoadFieldSettings() {
 		jQuery( "#choice_alignment_vertical" ).prop( "checked", true );
 	}
 
+	if (field.displayAlignment == "horizontal" || field.displayAlignment == undefined) {
+		jQuery( "#display_choice_alignment_horizontal" ).prop( "checked", true );
+
+	} else if (field.displayAlignment == "vertical") {
+		jQuery( "#display_choice_alignment_vertical" ).prop( "checked", true );
+	}
+
 	SetProductField(field);
 
 	Placeholders.enable();
@@ -1312,6 +1339,13 @@ function getAllFieldSettings(field) {
 	}
 
 	var settingsArray = allSettings.split(', ');
+
+	// Remove display_choices_columns_setting from the image choice and multiple choice fields
+	if (field.type === 'image_choice' || field.type === 'multi_choice') {
+		settingsArray = settingsArray.filter(function(setting) {
+			return setting !== '.display_choices_columns_setting';
+		});
+	}
 
 	/**
 	 * gform_editor_field_settings
@@ -1922,6 +1956,26 @@ function ToggleAutocompleteAttribute( isInit ) {
 function InitAutocompleteOptions( isInit ) {
 	jQuery( '#field_enable_autocomplete' ).prop( "checked", field.enableAutocomplete ? true : false );
 	ToggleAutocompleteAttribute( true) ;
+}
+
+// handles the display in columns setting.
+function SetDisplayInColumns( isInit, value ) {
+	SetFieldProperty('enableDisplayInColumns', value)
+	ToggleDisplayInColumns( isInit );
+}
+
+function ToggleDisplayInColumns( isInit ) {
+	if( jQuery( "#field_display_in_columns" ).is( ":checked" ) ) {
+		jQuery( "#display_in_columns_container" ).show();
+	}
+	else{
+		jQuery( "#display_in_columns_container" ).hide();
+	}
+}
+
+function InitDisplayInColumns( isInit ) {
+	jQuery( '#field_display_in_columns' ).prop( "checked", field.enableDisplayInColumns ? true : false );
+	ToggleDisplayInColumns( true );
 }
 
 function HasPostContentField(){

@@ -1134,7 +1134,30 @@ class GP_Populate_Anything extends GP_Plugin {
 
 		// Check if we need to start with a non-unique query.
 		if ( ! isset( $this->_field_objects_cache[ $query_cache_hash ] ) ) {
-			$this->_field_objects_cache[ $query_cache_hash ] = $object_type_instance->query( $args, $field );
+			/**
+			 * Filter the objects returned from the object type's query method.
+			 *
+			 * @param array $objects The objects returned from the object type's query method.
+			 * @param GPPA_Object_Type $object_type_instance The current GPPA object type instance
+			 * @param array{
+			 * 	 populate: string, // What is being populated. Either 'choices', 'values'.
+			 *   filter_groups: array, // Filters for querying/fetching the objects.
+			 *   ordering: array, // Ordering settings for querying/fetching (includes 'orderby' and 'order').
+			 *   templates: array, // Templates to determine how choices/values will utilize the returned objects.
+			 *   primary_property_value?: string, // Current primary property value used for querying the objects. (Not all object types use primary properties.)
+			 *   field_values?: string, // Current field values used in query.
+			 *   field: GF_Field, // Current field.
+			 *   unique: bool, // Return only unique results.
+			 *   page?: int, // Which page of results to query.
+			 *   limit?: int, // Maximum number of results to return.
+			 * }
+			 */
+			$this->_field_objects_cache[ $query_cache_hash ] = apply_filters(
+				'gppa_object_type_query_results',
+				$object_type_instance->query( $args, $field ),
+				$object_type_instance,
+				$args,
+			);
 		}
 
 		// If we're not returning unique results, we can just return the results.
@@ -1623,7 +1646,7 @@ class GP_Populate_Anything extends GP_Plugin {
 	 * be formatted numbers with currency.
 	 */
 	public function maybe_add_currency_to_price( $template_value, $field, $template, $populate, $object, $object_type, $objects ) {
-		if ( rgar( $field, 'type' ) !== 'product' || $template !== 'price' ) {
+		if ( rgar( $field, 'type' ) !== 'product' ) {
 			return $template_value;
 		}
 
@@ -1928,6 +1951,21 @@ class GP_Populate_Anything extends GP_Plugin {
 				array(
 					// Unchecked checkboxes need to have a non-empty value otherwise they will automatically be checked by GF.
 					'value'           => apply_filters( 'gppa_no_choices_value', $field->get_input_type() === 'checkbox', $field ),
+					/**
+					 * Filter the field text (or label) for choice-based fields that are dynamically populated but have no available objects based on the current filters.
+					 *
+					 * @param string   $label The choice label. Default: '– No Results –'
+					 * @param GF_Field $field Current field.
+					 *
+					 * @usage gppa_no_choices_text Filter applied globally to all fields
+					 *
+					 * @example Change No Choices Text
+					 * This example shows how to change the text displayed when no choices are available
+					 * for dynamically populated fields.
+					 * <github-file>snippet-library/gp-populate-anything/gppa-change-no-choices-text.php</github-file>
+					 *
+					 * @since 1.0
+					 */
 					'text'            => apply_filters( 'gppa_no_choices_text', '&ndash; ' . esc_html__( 'No Results', 'gp-populate-anything' ) . ' &ndash;', $field ),
 					'isSelected'      => false,
 					'gppaErrorChoice' => 'no_choices',
@@ -1979,14 +2017,22 @@ class GP_Populate_Anything extends GP_Plugin {
 				}
 
 				/**
-				 * Modify the choice to be populated into the current field.
+				 * Modify the current choice that's being populated into the current field.
+				 *
+				 * @param array     $choice  The current choice being populated.
+				 * @param \GF_Field $field   The current field being populated.
+				 * @param array     $object  The current object being populated into the current choice.
+				 * @param array     $objects An array of objects being populated as choices into the field.
+				 *
+				 * @usage gppa_input_choice Filter applied to all fields on all forms
+				 * @usage gppa_input_choice_FORMID Filter applied to all fields on a specific form
+				 * @usage gppa_input_choice_FORMID_FIELDID Filter applied to a specific field on a specific form
+				 *
+				 * @example Add a custom choice template to choices
+				 * Add a choice template named `image` to choices. This pairs well with the gppa_template_rows JavaScript filter.
+				 * <github-file>snippet-library/gp-populate-anything/gppa-add-a-custom-choice-template.php</github-file>
 				 *
 				 * @since 1.0-beta-4.116
-				 *
-				 * @param array     $choice  The current choice being modified.
-				 * @param \GF_Field $field   The current field being populated.
-				 * @param array     $object  The current object being populated into the choice.
-				 * @param array     $objects An array of objects being populated as choices into the field.
 				 */
 				$choices[] = gf_apply_filters( array( 'gppa_input_choice', $field->formId, $field->id ), $choice, $field, $object, $objects );
 
@@ -4110,7 +4156,7 @@ class GP_Populate_Anything extends GP_Plugin {
 				foreach ( $hydrated_value as $input_id => $input_value ) {
 					$GLOBALS['gppa-field-values'][ $field->formId ][ $input_id ] = $input_value;
 				}
-			} else {
+			} elseif ( $hydrated_value ) {
 				$GLOBALS['gppa-field-values'][ $field->formId ][ $field->id ] = $hydrated_value;
 			}
 

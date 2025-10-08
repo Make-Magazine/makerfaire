@@ -1,5 +1,13 @@
 __( 'class', 'elementor' );
 __( 'classes', 'elementor' );
+__( 'Convert to global class', 'elementor' );
+__( 'Sorry, nothing matched.', 'elementor' );
+__( 'Try something else.', 'elementor' );
+__( 'Sorry, nothing matched', 'elementor' );
+__( 'Clear your input and try something else.', 'elementor' );
+__( 'Sorry, nothing matched that search.', 'elementor' );
+__( 'Clear the filters and try something else.', 'elementor' );
+__( 'Clear & try again', 'elementor' );
 __( 'There are no global classes yet.', 'elementor' );
 __(
 				'CSS classes created in the editor panel will appear here. Once they are available, you can arrange their hierarchy, rename them, or delete them as needed.',
@@ -18,7 +26,6 @@ __( 'Delete this class?', 'elementor' );
 __( 'Deleting', 'elementor' );
 __( 'Not now', 'elementor' );
 __( 'Delete', 'elementor' );
-__( 'Search', 'elementor' );
 __( 'Class Manager', 'elementor' );
 __( 'Save changes', 'elementor' );
 __( 'You have unsaved changes', 'elementor' );
@@ -36,9 +43,6 @@ __(
 					'Remember, when editing an item within a specific class, any changes you make will apply across all elements in that class.',
 					'elementor'
 				);
-__( 'Sorry, nothing matched', 'elementor' );
-__( 'Try something else.', 'elementor' );
-__( 'Clear & try again', 'elementor' );
 __( 'Class Manager', 'elementor' );
 __( 'You have unsaved changes', 'elementor' );
 __(
@@ -60,3 +64,11 @@ __( 'Popup', 'elementor' );
 __( 'Header', 'elementor' );
 __( 'Footer', 'elementor' );
 __( 'Locator', 'elementor' );
+__( 'Search', 'elementor' );
+__( 'Unused', 'elementor' );
+__( 'Empty', 'elementor' );
+__( 'On this page', 'elementor' );
+__( 'Filters', 'elementor' );
+__( 'Clear all', 'elementor' );
+__( 'Filters', 'elementor' );
+__( 'Clear Filters', 'elementor' );

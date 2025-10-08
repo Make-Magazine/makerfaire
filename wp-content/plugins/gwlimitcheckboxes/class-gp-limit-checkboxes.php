@@ -537,9 +537,8 @@ class GP_Limit_Checkboxes extends GWPerk {
 			<script>
 				(function($) {
 					$(document).bind('gform_load_field_settings', function(e, field, form) {
-						// We only want to allow checkbox variant field types. 
-						// Update Gravity Forms 2.9 - We are not supporting Multi Choice & Image Choice fields right now for Limit Checkbox capabilities.
-						if ((field.type != 'checkbox' && field.inputType != 'checkbox') || field.type == 'multi_choice' || field.type == 'image_choice') {
+						// We only want to allow checkbox variant field types.
+						if (field.type != 'checkbox' && field.inputType != 'checkbox') {
 							$('.<?php echo $this->key( 'setting' ); ?>').hide();
 							return;
 						} else {

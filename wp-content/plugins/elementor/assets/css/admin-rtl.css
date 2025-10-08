@@ -1,4 +1,4 @@
-/*! elementor - v3.31.0 - 11-08-2025 */
+/*! elementor - v3.32.0 - 05-10-2025 */
 .elementor-button,
 .e-btn,
 #elementor-deactivate-feedback-modal .dialog-skip,
@@ -700,9 +700,9 @@ body .block-editor #elementor-switch-mode .button i {
 }
 #elementor-editor .elementor-loader-wrapper {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  inset-block-start: 50%;
+  inset-inline-start: 50%;
+  transform: translate(calc(-50% * var(--direction-multiplier)), -50%);
   width: 300px;
   display: flex;
   flex-direction: column;
@@ -2759,6 +2759,98 @@ fieldset:disabled a.e-button {
     aspect-ratio: 16/9;
   }
 }
+.wrap.elementor-admin-page-license .elementor-license-box {
+  max-width: 600px;
+  background: white;
+  margin: 20px 0;
+  padding: 20px 20px;
+}
+.wrap.elementor-admin-page-license .elementor-license-box h3 {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+  padding-block-end: 20px;
+  border-block-end: 1px solid #eee;
+}
+.wrap.elementor-admin-page-license .elementor-license-box h3 span {
+  flex-grow: 1;
+  padding-inline-start: 5px;
+}
+.wrap.elementor-admin-page-license .elementor-license-box h3 small {
+  font-size: 13px;
+  font-weight: normal;
+}
+.wrap.elementor-admin-page-license .elementor-license-box label {
+  display: block;
+  font-size: 1.3em;
+  font-weight: 600;
+  margin: 1em 0;
+}
+.wrap.elementor-admin-page-license .elementor-license-box .button {
+  height: 30px;
+  margin-inline-start: 15px;
+  margin-block-end: 0;
+}
+.wrap.elementor-admin-page-license .elementor-license-box p.description {
+  margin: 10px 0;
+}
+.wrap.elementor-admin-page-license .elementor-license-box .e-row-stretch, .wrap.elementor-admin-page-license .elementor-license-box.e-row-stretch {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.wrap.elementor-admin-page-license .elementor-license-box .e-row-divider-bottom {
+  padding-block-end: 15px;
+  border-block-end: 1px solid #eeeeee;
+}
+.wrap.elementor-admin-page-license .elementor-license-box .elementor-upgrade-link {
+  color: #93003f;
+  border-color: #93003f;
+}
+.wrap.elementor-admin-page-license .elementor-license-box .elementor-upgrade-link:hover {
+  color: #fff;
+  background-color: #93003f;
+}
+.wrap.elementor-admin-page-license .elementor-license-box.elementor-pro-connect-promotion {
+  display: flex;
+  flex-direction: row;
+  gap: 40px;
+  justify-content: start;
+  align-items: center;
+}
+.wrap.elementor-admin-page-license .elementor-license-box.elementor-pro-connect-promotion h2 {
+  line-height: 24px;
+}
+.wrap.elementor-admin-page-license .elementor-license-box.elementor-pro-connect-promotion .elementor-box-action {
+  justify-content: flex-start;
+}
+.wrap.elementor-admin-page-license .elementor-license-box.elementor-pro-connect-promotion .button-upgrade {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-inline: 0;
+  margin-block-start: 10px;
+  color: #fff;
+  background-color: #93003f;
+  border: 0;
+}
+.wrap.elementor-admin-page-license .elementor-license-box.elementor-pro-connect-promotion > img {
+  width: 45%;
+}
+.wrap.elementor-admin-page-license .elementor-box-action {
+  display: flex;
+  justify-content: flex-end;
+}
+.wrap.elementor-admin-page-license .elementor-box-action .elementor-manually-link {
+  color: #72777c;
+  margin-inline-end: 15px;
+}
+.wrap.elementor-admin-page-license .elementor-box-action .elementor-manually-link:hover {
+  color: inherit;
+}
+
 .elementor-control-notice {
   display: flex;
   justify-content: flex-start;

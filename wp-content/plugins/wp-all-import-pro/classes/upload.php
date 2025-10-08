@@ -60,8 +60,11 @@ if ( ! class_exists( 'PMXI_Upload' ) ) {
 
 				$archive = new WpaiPclZip( $this->file );
 
-				// Attempt to extract files.
-				$v_result_list = $archive->extract( WPAI_PCLZIP_OPT_PATH, $this->uploadsPath, WPAI_PCLZIP_OPT_REPLACE_NEWER, WPAI_PCLZIP_OPT_EXTRACT_DIR_RESTRICTION, $this->uploadsPath, WPAI_PCLZIP_OPT_EXTRACT_EXT_RESTRICTIONS, array( 'php', 'phtml', 'htaccess' ) );
+				// Get allowed file extensions (whitelist approach)
+				$allowed_extensions = wp_all_import_get_allowed_zip_extensions();
+
+				// Attempt to extract files with whitelist restrictions
+				$v_result_list = $archive->extract( WPAI_PCLZIP_OPT_PATH, $this->uploadsPath, WPAI_PCLZIP_OPT_REPLACE_NEWER, WPAI_PCLZIP_OPT_EXTRACT_DIR_RESTRICTION, $this->uploadsPath, WPAI_PCLZIP_OPT_EXTRACT_WHITELIST_RESTRICTIONS, $allowed_extensions );
 				if ( empty( $v_result_list ) || ! is_array( $v_result_list ) && $v_result_list < 1 ) {
 					$this->errors->add( 'form-validation', __( 'WP All Import couldn\'t find a file to import inside your ZIP.<br/><br/>Either the .ZIP file is broken, or doesn\'t contain a file with an extension of  XML, CSV, PSV, DAT, or TXT. <br/>Please attempt to unzip your .ZIP file on your computer to ensure it is a valid .ZIP file which can actually be unzipped, and that it contains a file which WP All Import can import.', 'wp-all-import-pro' ) );
 				} else {
@@ -345,8 +348,11 @@ if ( ! class_exists( 'PMXI_Upload' ) ) {
 
 					$archive = new WpaiPclZip( $tmpname );
 
-					// Attempt to extract files.
-					$v_result_list = $archive->extract( WPAI_PCLZIP_OPT_PATH, $this->uploadsPath, WPAI_PCLZIP_OPT_REPLACE_NEWER, WPAI_PCLZIP_OPT_EXTRACT_DIR_RESTRICTION, $this->uploadsPath, WPAI_PCLZIP_OPT_EXTRACT_EXT_RESTRICTIONS, array( 'php', 'phtml', 'htaccess' ) );
+					// Get allowed file extensions (whitelist approach)
+					$allowed_extensions = wp_all_import_get_allowed_zip_extensions();
+
+					// Attempt to extract files with whitelist restrictions
+					$v_result_list = $archive->extract( WPAI_PCLZIP_OPT_PATH, $this->uploadsPath, WPAI_PCLZIP_OPT_REPLACE_NEWER, WPAI_PCLZIP_OPT_EXTRACT_DIR_RESTRICTION, $this->uploadsPath, WPAI_PCLZIP_OPT_EXTRACT_WHITELIST_RESTRICTIONS, $allowed_extensions );
 					if ( empty( $v_result_list ) || ! is_array( $v_result_list ) && $v_result_list < 1 ) {
 						$this->errors->add( 'form-validation', __( 'WP All Import couldn\'t find a file to import inside your ZIP.<br/><br/>Either the .ZIP file is broken, or doesn\'t contain a file with an extension of  XML, CSV, PSV, DAT, or TXT. <br/>Please attempt to unzip your .ZIP file on your computer to ensure it is a valid .ZIP file which can actually be unzipped, and that it contains a file which WP All Import can import.', 'wp-all-import-pro' ) );
 					} else {
@@ -652,8 +658,11 @@ if ( ! class_exists( 'PMXI_Upload' ) ) {
 
 				$archive = new WpaiPclZip( $zipfilePath );
 
-				// Attempt to extract files.
-				$v_result_list = $archive->extract( WPAI_PCLZIP_OPT_PATH, $this->uploadsPath, WPAI_PCLZIP_OPT_REPLACE_NEWER, WPAI_PCLZIP_OPT_EXTRACT_DIR_RESTRICTION, $this->uploadsPath, WPAI_PCLZIP_OPT_EXTRACT_EXT_RESTRICTIONS, array( 'php', 'phtml', 'htaccess' ) );
+				// Get allowed file extensions (whitelist approach)
+				$allowed_extensions = wp_all_import_get_allowed_zip_extensions();
+
+				// Attempt to extract files with whitelist restrictions
+				$v_result_list = $archive->extract( WPAI_PCLZIP_OPT_PATH, $this->uploadsPath, WPAI_PCLZIP_OPT_REPLACE_NEWER, WPAI_PCLZIP_OPT_EXTRACT_DIR_RESTRICTION, $this->uploadsPath, WPAI_PCLZIP_OPT_EXTRACT_WHITELIST_RESTRICTIONS, $allowed_extensions );
 				if ( empty( $v_result_list ) || ! is_array( $v_result_list ) && $v_result_list < 1 ) {
 					$this->errors->add( 'form-validation', __( 'WP All Import couldn\'t find a file to import inside your ZIP.<br/><br/>Either the .ZIP file is broken, or doesn\'t contain a file with an extension of  XML, CSV, PSV, DAT, or TXT. <br/>Please attempt to unzip your .ZIP file on your computer to ensure it is a valid .ZIP file which can actually be unzipped, and that it contains a file which WP All Import can import.', 'wp-all-import-pro' ) );
 				} else {

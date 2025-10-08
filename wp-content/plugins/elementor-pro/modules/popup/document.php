@@ -10,6 +10,7 @@ use ElementorPro\Modules\Popup\DisplaySettings\Timing;
 use ElementorPro\Modules\Popup\DisplaySettings\Triggers;
 use ElementorPro\Modules\ThemeBuilder\Documents\Theme_Section_Document;
 use ElementorPro\Modules\ThemeBuilder\Module as ThemeBuilderModule;
+use ElementorPro\Modules\ThemeBuilder\Documents\Theme_Document;
 use ElementorPro\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -37,6 +38,7 @@ class Document extends Theme_Section_Document {
 		$properties['support_kit'] = true;
 		$properties['support_site_editor'] = false;
 		$properties['support_lazyload'] = false;
+		$properties['export_group'] = Theme_Document::EXPORT_GROUP;
 
 		return $properties;
 	}

@@ -1,4 +1,4 @@
-/*! elementor - v3.31.0 - 11-08-2025 */
+/*! elementor - v3.32.0 - 05-10-2025 */
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
@@ -137,11 +137,11 @@ var editorAppBarLink = exports.editorAppBarLink = function editorAppBarLink() {
           });
         },
         onClick: function onClick() {
-          elementor.editorEvents.dispatchEvent(elementor.editorEvents.config.names.topBar.whatsNew, {
-            location: elementor.editorEvents.config.locations.topBar,
-            secondaryLocation: elementor.editorEvents.config.secondaryLocations['whats-new'],
-            trigger: elementor.editorEvents.config.triggers.click,
-            element: elementor.editorEvents.config.elements.buttonIcon
+          elementorCommon.eventsManager.dispatchEvent(elementorCommon.eventsManager.config.names.topBar.whatsNew, {
+            location: elementorCommon.eventsManager.config.locations.topBar,
+            secondaryLocation: elementorCommon.eventsManager.config.secondaryLocations['whats-new'],
+            trigger: elementorCommon.eventsManager.config.triggers.click,
+            element: elementorCommon.eventsManager.config.elements.buttonIcon
           });
           setIsRead(true);
           elementorNotifications.is_unread = false;

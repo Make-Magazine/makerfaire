@@ -2,7 +2,7 @@
 /**
  * @license MIT
  *
- * Modified by gravitykit on 10-February-2025 using {@see https://github.com/BrianHenryIE/strauss}.
+ * Modified by gravitykit on 25-September-2025 using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\AdvancedFilter\QueryFilters\Sql;
@@ -26,7 +26,7 @@ final class SqlAdjustmentCallbacks {
 		// $match[0] = `table_name`.`date_updated|date_created|payment_date` = ''
 		// $match[1] = `table_name`.`date_updated|date_created|payment_date`
 		// $match[2] = `table_name`
-		preg_match( "/((`\w+`)\.`(?:date_updated|date_created|payment_date)`) !?= ''/ism", $query['where'] ?? null, $match );
+		preg_match( "/((`\w+`)\.`(?:date_updated|date_created|payment_date)`) !?= ''/im", $query['where'] ?? null, $match );
 
 		if ( empty( $query['where'] ) || ! $match ) {
 			return $query;
@@ -35,15 +35,15 @@ final class SqlAdjustmentCallbacks {
 		$operator      = strpos( $match[0], '!=' ) !== false ? '!=' : '=';
 		$new_condition = sprintf( 'UNIX_TIMESTAMP(%s) %s 0', $match[1], $operator );
 
-		// Change "date_updated = ''" to "UNIX_TIMESTAMP(date_updated) = 0" (or "!= 0) depending on the operator
+		// Change "date_updated = ''" to "UNIX_TIMESTAMP(date_updated) = 0" (or "!= 0) depending on the operator.
 		$query['where'] = str_replace( $match[0], $new_condition, $query['where'] );
 
 		if ( strpos( $match[0], 'date_updated' ) !== false ) {
-			// Add "OR date_updated = date_created" condition
+			// Add the "OR date_updated = date_created" condition.
 			if ( '=' === $operator ) {
 				$query['where'] = str_replace( $new_condition, sprintf( '(%s OR %s = %s.`date_created`)', $new_condition, $match[1], $match[2] ), $query['where'] );
 			} else {
-				// Add "AND date_updated != date_created" condition
+				// Add the "AND date_updated != date_created" condition.
 				$query['where'] = str_replace( $new_condition, sprintf( '(%s AND %s != %s.`date_created`)', $new_condition, $match[1], $match[2] ), $query['where'] );
 			}
 		}

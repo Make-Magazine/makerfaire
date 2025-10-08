@@ -211,7 +211,7 @@ class Search_Filter_Admin_License_Server {
 				'expires' => $expires,
 				'status'  => $request_response['license'],
 				'error'   => isset( $request_response['error'] ) ? $request_response['error'] : '',
-			),
+			)
 		);
 
 		return $is_healthy;

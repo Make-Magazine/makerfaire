@@ -496,7 +496,7 @@ abstract class Payment_Button extends Widget_Button {
 	}
 
 	// Render the checkout button.
-	protected function render_button( Widget_Base $instance = null, $tag = 'a' ) {
+	protected function render_button( ?Widget_Base $instance = null, $tag = 'a' ) {
 		$this->add_render_attribute( 'button', 'class', 'elementor-payment-button' );
 
 		?>
@@ -558,9 +558,9 @@ abstract class Payment_Button extends Widget_Button {
 		view.addRenderAttribute( 'icon', 'class', 'elementor-button-icon' );
 		view.addRenderAttribute( 'text', 'class', 'elementor-button-text' );
 
-		if ( '' !== settings.link.url ) {
+		if ( '' !== settings.link?.url ) {
 			view.addRenderAttribute( 'button', 'class', 'elementor-button-link' );
-			view.addRenderAttribute( 'button', 'href', elementor.helpers.sanitizeUrl( settings.link.url ) );
+			view.addRenderAttribute( 'button', 'href', elementor.helpers.sanitizeUrl( settings.link?.url ) );
 		} else {
 			view.addRenderAttribute( 'button', 'role', 'button' );
 		}

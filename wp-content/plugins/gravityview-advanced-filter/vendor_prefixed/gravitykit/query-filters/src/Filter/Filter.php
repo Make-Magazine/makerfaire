@@ -2,7 +2,7 @@
 /**
  * @license MIT
  *
- * Modified by gravitykit on 10-February-2025 using {@see https://github.com/BrianHenryIE/strauss}.
+ * Modified by gravitykit on 25-September-2025 using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\AdvancedFilter\QueryFilters\Filter;
@@ -13,15 +13,20 @@ use RuntimeException;
 
 /**
  * Entity that represents a single Filter.
+ *
  * @since 2.0.0
+ *
+ * @todo  To filter Multiple Forms we need an optional form_id.
  */
 final class Filter {
 	const MODE_AND = 'and';
-	const MODE_OR = 'or';
+	const MODE_OR  = 'or';
 
 	/**
 	 * Map of virtual operators to GF_Query operators
+	 *
 	 * @since 2.0.0
+	 *
 	 * @var array
 	 */
 	private static $_proxy_operators_map = [
@@ -31,62 +36,88 @@ final class Filter {
 
 	/**
 	 * The entity ID.
-	 * @since $ver4
+	 *
+	 * @since 2.0.0
+	 *
 	 * @var string
 	 */
 	private $id;
 
 	/**
+	 * The form ID.
+	 *
+	 * @since $ver$
+	 *
+	 * @var int|null
+	 */
+	private $form_id = null;
+
+	/**
 	 * The field key.
+	 *
 	 * @since 2.0.0
+	 *
 	 * @var string|int|null
 	 */
 	private $key;
 
 	/**
 	 * The filter version.
+	 *
 	 * @since 2.0.0
+	 *
 	 * @var int
 	 */
 	private $version;
 
 	/**
 	 * The mode.
+	 *
 	 * @since 2.0.0
+	 *
 	 * @var string
 	 */
 	private $mode;
 
 	/**
 	 * The filter value.
+	 *
 	 * @since 2.0.0
+	 *
 	 * @var mixed
 	 */
 	private $value = null;
 
 	/**
 	 * The operator for the filter.
+	 *
 	 * @since 2.0.0
+	 *
 	 * @var string
 	 */
 	private $operator;
 
 	/**
 	 * Nested filters for this filter.
+	 *
 	 * @since 2.0.0
+	 *
 	 * @var Filter[]
 	 */
 	private $conditions = [];
 
 	/**
 	 * Whether the current filter is enabled.
+	 *
 	 * @since 2.0.0
+	 *
 	 * @var bool
 	 */
 	private $is_enabled = true;
 
 	/**
 	 * Creates a filter instance.
+	 *
 	 * @since 2.0.0
 	 */
 	private function __construct() {
@@ -95,14 +126,16 @@ final class Filter {
 	/**
 	 * Creates a filter from an array.
 	 *
+	 * @since 2.0.0
+	 *
 	 * @param array $filter The filter array.
 	 *
 	 * @return self The filter.
-	 * @since 2.0.0
 	 */
 	public static function from_array( array $filter ): self {
 		$instance = new self();
 		$instance->set_id( $filter['_id'] ?? '' );
+		$instance->form_id = isset( $filter['form_id'] ) ? (int) $filter['form_id'] : null;
 
 		if ( isset( $filter['key'] ) ) {
 			$instance->set_key( $filter['key'] ?? '' );
@@ -143,8 +176,10 @@ final class Filter {
 
 	/**
 	 * Formats the filter as an array.
-	 * @return array
+	 *
 	 * @since 2.0.0
+	 *
+	 * @return array
 	 */
 	public function to_array(): array {
 		if ( ! $this->is_enabled() ) {
@@ -154,6 +189,7 @@ final class Filter {
 		return array_filter(
 			[
 				'_id'        => $this->id,
+				'form_id'    => $this->form_id,
 				'version'    => $this->version,
 				'mode'       => $this->mode,
 				'key'        => $this->key,
@@ -174,6 +210,7 @@ final class Filter {
 
 	/**
 	 * Set this filter as enabled.
+	 *
 	 * @since 2.0.0
 	 */
 	public function disable() {
@@ -182,6 +219,7 @@ final class Filter {
 
 	/**
 	 * Set this filter as enabled.
+	 *
 	 * @since 2.0.0
 	 */
 	public function enable() {
@@ -190,8 +228,10 @@ final class Filter {
 
 	/**
 	 * Whether the current filter is enabled.
-	 * @return bool
+	 *
 	 * @since 2.0.0
+	 *
+	 * @return bool
 	 */
 	public function is_enabled(): bool {
 		return $this->is_enabled;
@@ -226,6 +266,7 @@ final class Filter {
 
 	/**
 	 * A filter that is designed to not match anything.
+	 *
 	 * @since 2.0.0
 	 */
 	public static function locked(): Filter {
@@ -244,8 +285,10 @@ final class Filter {
 
 	/**
 	 * Locks the current filter, making the query not return any results.
-	 * @return void
+	 *
 	 * @since 2.0.0
+	 *
+	 * @return void
 	 */
 	public function lock() {
 		if ( $this->is_logic() ) {
@@ -264,6 +307,7 @@ final class Filter {
 
 	/**
 	 * Whether this filter is a logic group.
+	 *
 	 * @since 2.0.0
 	 */
 	public function is_logic(): bool {
@@ -272,8 +316,10 @@ final class Filter {
 
 	/**
 	 * Sets the mode for the filter.
-	 * @return void
+	 *
 	 * @since 2.0.0
+	 *
+	 * @return void
 	 */
 	private function set_mode( string $mode ) {
 		$mode = strtolower( $mode );
@@ -292,8 +338,10 @@ final class Filter {
 
 	/**
 	 * Returns the filter mode.
-	 * @return string
+	 *
 	 * @since 2.0.0
+	 *
+	 * @return string
 	 */
 	public function mode(): string {
 		if ( ! $this->is_logic() ) {
@@ -306,10 +354,11 @@ final class Filter {
 	/**
 	 * Sets the ID.
 	 *
+	 * @since 2.0.0
+	 *
 	 * @param string $id The id.
 	 *
 	 * @return void
-	 * @since 2.0.0
 	 */
 	private function set_id( string $id ) {
 		if ( trim( $id ) === '' ) {
@@ -322,10 +371,11 @@ final class Filter {
 	/**
 	 * Sets the field key.
 	 *
+	 * @since 2.0.0
+	 *
 	 * @param string $key The field key.
 	 *
 	 * @return void
-	 * @since 2.0.0
 	 */
 	public function set_key( string $key ) {
 		if ( trim( $key ) === '' ) {
@@ -337,8 +387,10 @@ final class Filter {
 
 	/**
 	 * Returns the child filters.
-	 * @return Filter[]
+	 *
 	 * @since 2.0.0
+	 *
+	 * @return Filter[]
 	 */
 	public function conditions(): array {
 		if ( ! $this->is_logic() ) {
@@ -351,15 +403,19 @@ final class Filter {
 	/**
 	 * Sets the conditions, and upgrades them to filters instances.
 	 *
+	 * @since 2.0.0
+	 *
 	 * @param array $conditions The conditions.
 	 *
 	 * @return void
-	 * @since 2.0.0
 	 */
 	private function set_conditions( array $conditions ) {
 		if ( ! $conditions ) {
 			throw new InvalidArgumentException( 'A logic filter needs at least one condition.' );
 		}
+
+		$mode           = '';
+		$sub_conditions = [];
 
 		foreach ( $conditions as $filter ) {
 			if ( is_array( $filter ) ) {
@@ -382,9 +438,10 @@ final class Filter {
 				$filter->set_mode( $mode );
 			}
 
-			if ( ! $filter->is_logic() && $filter->key === null ) {
+			if ( null === $filter->key && ! $filter->is_logic() ) {
 				continue;
 			}
+
 			$this->conditions[] = $filter;
 		}
 	}
@@ -392,10 +449,11 @@ final class Filter {
 	/**
 	 * Sets the version.
 	 *
+	 * @since 2.0.0
+	 *
 	 * @param int $version The version.
 	 *
 	 * @return void
-	 * @since 2.0.0
 	 */
 	private function set_version( int $version ) {
 		if ( $version < 1 ) {
@@ -407,8 +465,10 @@ final class Filter {
 
 	/**
 	 * Returns the value of this filter.
-	 * @return mixed
+	 *
 	 * @since 2.0.0
+	 *
+	 * @return mixed
 	 */
 	public function value() {
 		$this->guard_logical_getter( __FUNCTION__ );
@@ -419,10 +479,11 @@ final class Filter {
 	/**
 	 * Sets the value for the filter.
 	 *
+	 * @since 2.0.0
+	 *
 	 * @param mixed $value The value of the filter.
 	 *
 	 * @return void
-	 * @since 2.0.0
 	 */
 	public function set_value( $value ) {
 		if ( $this->is_logic() ) {
@@ -433,9 +494,24 @@ final class Filter {
 	}
 
 	/**
+	 * Returns the form ID.
+	 *
+	 * @since $ver$
+	 *
+	 * @return int The form ID, or 0 if not provided.
+	 */
+	public function form_id(): int {
+		$this->guard_logical_getter( __FUNCTION__ );
+
+		return (int) $this->form_id;
+	}
+
+	/**
 	 * Returns the key of the filter.
-	 * @return string
+	 *
 	 * @since 2.0.0
+	 *
+	 * @return string
 	 */
 	public function key(): string {
 		$this->guard_logical_getter( __FUNCTION__ );
@@ -443,11 +519,12 @@ final class Filter {
 		return (string) $this->key;
 	}
 
-
 	/**
 	 * Returns the key of the filter.
-	 * @return string
+	 *
 	 * @since 2.0.0
+	 *
+	 * @return string
 	 */
 	public function operator(): string {
 		$this->guard_logical_getter( __FUNCTION__ );
@@ -460,10 +537,11 @@ final class Filter {
 	/**
 	 * Guards against calling getter on logical filter.
 	 *
+	 * @since 2.0.0
+	 *
 	 * @param string $method_name The getter method name.
 	 *
 	 * @return void
-	 * @since 2.0.0
 	 */
 	private function guard_logical_getter( string $method_name ) {
 		if ( $this->is_logic() ) {
@@ -474,10 +552,11 @@ final class Filter {
 	/**
 	 * Sets the operator for the filter.
 	 *
+	 * @since 2.0.0
+	 *
 	 * @param string $operator The operator.
 	 *
 	 * @return void
-	 * @since 2.0.0
 	 */
 	public function set_operator( string $operator ) {
 		$this->operator = strtolower( $operator );
@@ -491,10 +570,11 @@ final class Filter {
 	/**
 	 * Whether this filter is equal to another filter.
 	 *
+	 * @since 2.0.0
+	 *
 	 * @param Filter $other The other filter to test against.
 	 *
 	 * @return bool Whether the filters are considered the same.
-	 * @since 2.0.0
 	 */
 	public function equals( Filter $other ): bool {
 		if ( $this->id === $other->id ) {
@@ -519,8 +599,10 @@ final class Filter {
 
 	/**
 	 * Helper method to debug filter objects more easily.
-	 * @return array The debug info.
+	 *
 	 * @since 2.0.0
+	 *
+	 * @return array The debug info.
 	 */
 	public function __debugInfo() {
 		return $this->to_array();

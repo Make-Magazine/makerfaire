@@ -8,12 +8,14 @@ use Elementor\Core\Admin\Menu\Main as MainMenu;
 use Elementor\Core\App\App;
 use Elementor\Core\Base\Document;
 use Elementor\TemplateLibrary\Source_Local;
+use Elementor\App\Modules\ImportExportCustomization\Utils as ImportExportCustomizationUtils;
 use ElementorPro\Base\Module_Base;
 use ElementorPro\Core\Utils;
 use ElementorPro\Modules\ThemeBuilder\AdminMenuItems\Theme_Builder_Menu_Item;
 use ElementorPro\Modules\ThemeBuilder\Classes;
 use ElementorPro\Modules\ThemeBuilder\Documents\Single;
 use ElementorPro\Modules\ThemeBuilder\Documents\Theme_Document;
+use ElementorPro\Modules\ThemeBuilder\ImportExportCustomization;
 use ElementorPro\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -435,6 +437,10 @@ class Module extends Module_Base {
 
 		require __DIR__ . '/api.php';
 
+		$this->add_component( 'import_export_import', new ImportExportCustomization\Import() );
+		$this->add_component( 'import_export_export', new ImportExportCustomization\Export() );
+		$this->add_component( 'import_export_revert', new ImportExportCustomization\Revert() );
+
 		$this->add_component( 'theme_support', new Classes\Theme_Support() );
 		$this->add_component( 'conditions', new Classes\Conditions_Manager() );
 		$this->add_component( 'templates_types', new Classes\Templates_Types_Manager() );
@@ -491,5 +497,9 @@ class Module extends Module_Base {
 
 		// Common
 		add_filter( 'elementor/finder/categories', [ $this, 'add_finder_items' ] );
+
+		add_filter( 'elementor/import-export-customization/export/templates_data', [ $this->get_component( 'import_export_export' ), 'add_theme_builder_to_export' ], 10, 3 );
+		add_filter( 'elementor/import-export-customization/import/templates_result', [ $this->get_component( 'import_export_import' ), 'add_theme_builder_to_import' ], 10, 4 );
+		add_action( 'elementor/import-export-customization/revert/templates', [ $this->get_component( 'import_export_revert' ), 'revert_theme_builder_templates_conditions' ], 10, 1 );
 	}
 }

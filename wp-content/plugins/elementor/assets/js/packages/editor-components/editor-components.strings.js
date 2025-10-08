@@ -1,0 +1,12 @@
+__( 'Components', 'elementor' );
+__( 'Component saved successfully as: %1$s (ID: %2$s)', 'elementor' );
+__( 'Failed to save component. Please try again.', 'elementor' );
+__( 'Save as a component', 'elementor' );
+__( 'Name', 'elementor' );
+__( 'Cancel', 'elementor' );
+__( 'Creating…', 'elementor' );
+__( 'Create', 'elementor' );
+__( 'Component name is too long. Please keep it under 50 characters.', 'elementor' );
+__( 'Component name already exists', 'elementor' );
+__( 'Component name is required.', 'elementor' );
+__( 'Component name is too short. Please enter at least 2 characters.', 'elementor' );

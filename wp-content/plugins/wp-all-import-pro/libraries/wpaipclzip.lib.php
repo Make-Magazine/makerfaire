@@ -155,6 +155,7 @@ if (!class_exists('WpaiPclZip')):
 	define('WPAI_PCLZIP_OPT_TEMP_FILE_OFF', 77022);
 	define('WPAI_PCLZIP_OPT_ADD_TEMP_FILE_OFF', 77022); // alias
 	define('WPAI_PCLZIP_OPT_EXTRACT_EXT_RESTRICTIONS', 77023);
+	define('WPAI_PCLZIP_OPT_EXTRACT_WHITELIST_RESTRICTIONS', 77024);
 
 // ----- File description attributes
 	define('WPAI_PCLZIP_ATT_FILE_NAME', 79001);
@@ -719,7 +720,8 @@ define('WPAI_PCLZIP_CB_POST_DELETE', 78008);
 						WPAI_PCLZIP_OPT_TEMP_FILE_THRESHOLD => 'optional',
 						WPAI_PCLZIP_OPT_TEMP_FILE_ON => 'optional',
 						WPAI_PCLZIP_OPT_TEMP_FILE_OFF => 'optional',
-						WPAI_PCLZIP_OPT_EXTRACT_EXT_RESTRICTIONS => 'optional'
+						WPAI_PCLZIP_OPT_EXTRACT_EXT_RESTRICTIONS => 'optional',
+						WPAI_PCLZIP_OPT_EXTRACT_WHITELIST_RESTRICTIONS => 'optional'
 					));
 					if ($v_result != 1) {
 						return 0;
@@ -870,7 +872,8 @@ define('WPAI_PCLZIP_CB_POST_DELETE', 78008);
 						WPAI_PCLZIP_OPT_TEMP_FILE_THRESHOLD => 'optional',
 						WPAI_PCLZIP_OPT_TEMP_FILE_ON => 'optional',
 						WPAI_PCLZIP_OPT_TEMP_FILE_OFF => 'optional',
-						WPAI_PCLZIP_OPT_EXTRACT_EXT_RESTRICTIONS => 'optional'
+						WPAI_PCLZIP_OPT_EXTRACT_EXT_RESTRICTIONS => 'optional',
+						WPAI_PCLZIP_OPT_EXTRACT_WHITELIST_RESTRICTIONS => 'optional'
 					));
 					if ($v_result != 1) {
 						return 0;
@@ -1210,7 +1213,8 @@ define('WPAI_PCLZIP_CB_POST_DELETE', 78008);
 		public function errorCode()
 		{
 			if (WPAI_PCLZIP_ERROR_EXTERNAL == 1) {
-				return(PclErrorCode());
+				// External error handling not implemented - fallback to internal
+				return($this->error_code);
 			} else {
 				return($this->error_code);
 			}
@@ -1270,7 +1274,12 @@ define('WPAI_PCLZIP_CB_POST_DELETE', 78008);
 		public function errorInfo($p_full = false)
 		{
 			if (WPAI_PCLZIP_ERROR_EXTERNAL == 1) {
-				return(PclErrorString());
+				// External error handling not implemented - fallback to internal
+				if ($p_full) {
+					return($this->errorName(true)." : ".$this->error_string);
+				} else {
+					return($this->error_string." [code ".$this->error_code."]");
+				}
 			} else {
 				if ($p_full) {
 					return($this->errorName(true)." : ".$this->error_string);
@@ -1461,6 +1470,7 @@ define('WPAI_PCLZIP_CB_POST_DELETE', 78008);
 					// ----- Look for options that request an array or string for value
 					case WPAI_PCLZIP_OPT_BY_NAME:
 					case WPAI_PCLZIP_OPT_EXTRACT_EXT_RESTRICTIONS:
+					case WPAI_PCLZIP_OPT_EXTRACT_WHITELIST_RESTRICTIONS:
 						// ----- Check the number of parameters
 						if (($i+1) >= $p_size) {
 							// ----- Error log
@@ -3191,6 +3201,27 @@ define('WPAI_PCLZIP_CB_POST_DELETE', 78008);
 					}
 				}
 
+				// ----- Only allow files with whitelisted file extensions
+				if( ($v_extract) && isset($p_options[WPAI_PCLZIP_OPT_EXTRACT_WHITELIST_RESTRICTIONS]) ){
+
+					$v_extract = false; // Default to not extracting
+
+					// Process each allowed extension.
+					foreach($p_options[WPAI_PCLZIP_OPT_EXTRACT_WHITELIST_RESTRICTIONS] as $ext){
+						// Standardize extension.
+						$ext = strtolower(trim($ext, '. '));
+
+						// Determine stored extension.
+						$stored_ext = strtolower( pathinfo($v_header['stored_filename'], PATHINFO_EXTENSION) );
+
+						// Determine if extension is allowed.
+						if ($ext === $stored_ext) {
+							$v_extract = true;
+							break;
+						}
+					}
+				}
+
 				// ----- Check compression method
 				if (($v_extract) && (($v_header['compression'] != 8) && ($v_header['compression'] != 0))) {
 					$v_header['status'] = 'unsupported_compression';
@@ -4832,7 +4863,9 @@ define('WPAI_PCLZIP_CB_POST_DELETE', 78008);
 		public function privErrorLog($p_error_code = 0, $p_error_string = '')
 		{
 			if (WPAI_PCLZIP_ERROR_EXTERNAL == 1) {
-				PclError($p_error_code, $p_error_string);
+				// External error handling not implemented - fallback to internal
+				$this->error_code = $p_error_code;
+				$this->error_string = $p_error_string;
 			} else {
 				$this->error_code = $p_error_code;
 				$this->error_string = $p_error_string;
@@ -4848,7 +4881,9 @@ define('WPAI_PCLZIP_CB_POST_DELETE', 78008);
 		public function privErrorReset()
 		{
 			if (WPAI_PCLZIP_ERROR_EXTERNAL == 1) {
-				PclErrorReset();
+				// External error handling not implemented - fallback to internal
+				$this->error_code = 0;
+				$this->error_string = '';
 			} else {
 				$this->error_code = 0;
 				$this->error_string = '';

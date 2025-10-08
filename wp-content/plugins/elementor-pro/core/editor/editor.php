@@ -14,9 +14,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Editor extends App {
-	const EDITOR_V2_PACKAGES = [
+	const EDITOR_V4_PACKAGES = [
 		'editor-documents-extended',
+		'editor-controls-extended',
 		'editor-site-navigation-extended',
+		'editor-editing-panel-extended',
 	];
 
 	/**
@@ -118,7 +120,7 @@ class Editor extends App {
 				return ELEMENTOR_PRO_ASSETS_PATH . "js/packages/{$name}/{$name}.asset.php";
 			} );
 
-		$packages = apply_filters( 'elementor-pro/editor/v2/packages', self::EDITOR_V2_PACKAGES );
+		$packages = apply_filters( 'elementor-pro/editor/v2/packages', self::EDITOR_V4_PACKAGES );
 
 		foreach ( $packages as $package ) {
 			$assets_config->load( $package );

@@ -82,7 +82,7 @@ class GPPA_Object_Type_User extends GPPA_Object_Type {
 		add_filter( 'gppa_object_type_user_filter_group_meta', array( $this, 'process_filter_meta' ), 10, 2 );
 		add_filter( 'gppa_object_type_user_filter_group_bp_xprofile', array( $this, 'process_filter_bp_xprofile' ), 10, 2 );
 
-		add_filter( 'gppa_object_type_query_user', array( $this, 'maybe_add_primary_blog_where' ), 10, 2 );
+		add_filter( 'gppa_object_type_query_user', array( $this, 'maybe_add_site_capabilities_where' ), 10, 2 );
 	}
 
 	public function process_filter_default( $query_builder_args, $args ) {
@@ -352,13 +352,18 @@ class GPPA_Object_Type_User extends GPPA_Object_Type {
 	public function get_current_blog_user_ids() {
 		global $wpdb;
 
+		$blog_id          = get_current_blog_id();
+		$capabilities_key = $wpdb->get_blog_prefix( $blog_id ) . 'capabilities';
+
+		// Get users by site-specific capabilities instead of primary_blog meta
+		// This ensures users assigned to multiple sites are found on all their sites
 		return $wpdb->get_col(
 			$wpdb->prepare(
 				"SELECT DISTINCT {$wpdb->users}.ID
 						FROM {$wpdb->users}
 						LEFT JOIN {$wpdb->usermeta} AS um ON ( {$wpdb->users}.ID = um.user_id )
-						WHERE um.meta_key = 'primary_blog' AND um.meta_value = %d",
-				get_current_blog_id()
+						WHERE um.meta_key = %s",
+				$capabilities_key
 			)
 		);
 	}
@@ -551,24 +556,28 @@ class GPPA_Object_Type_User extends GPPA_Object_Type {
 
 	}
 
-	public function add_primary_blog_where( $query_builder_args, $index = null ) {
+	public function add_site_capabilities_where( $query_builder_args, $index = null ) {
 
 		global $wpdb;
 
+		$blog_id          = get_current_blog_id();
+		$capabilities_key = $wpdb->get_blog_prefix( $blog_id ) . 'capabilities';
+
+		// Check for site-specific capabilities instead of primary_blog meta
+		// This ensures users assigned to multiple sites show up on all their sites
 		$where = $wpdb->prepare(
-			'( um_primary_blog.meta_key = %s AND um_primary_blog.meta_value = %d )',
-			'primary_blog',
-			get_current_blog_id()
+			'( um_capabilities.meta_key = %s )',
+			$capabilities_key
 		);
 
-		$query_builder_args['where'][ $index ]['primary_blog'] = $where;
-		$query_builder_args['joins']['primary_blog']           = "LEFT JOIN {$wpdb->usermeta} um_primary_blog ON ( {$wpdb->users}.ID = um_primary_blog.user_id )";
+		$query_builder_args['where'][ $index ]['site_capabilities'] = $where;
+		$query_builder_args['joins']['site_capabilities']           = "LEFT JOIN {$wpdb->usermeta} um_capabilities ON ( {$wpdb->users}.ID = um_capabilities.user_id )";
 
 		return $query_builder_args;
 
 	}
 
-	public function maybe_add_primary_blog_where( $query_builder_args, $args ) {
+	public function maybe_add_site_capabilities_where( $query_builder_args, $args ) {
 
 		/** @var string */
 		$populate = null;
@@ -608,12 +617,12 @@ class GPPA_Object_Type_User extends GPPA_Object_Type {
 		}
 
 		if ( ! is_array( $query_builder_args['where'] ) || ! count( $query_builder_args['where'] ) ) {
-			return $this->add_primary_blog_where( $query_builder_args );
+			return $this->add_site_capabilities_where( $query_builder_args );
 
 		}
 
 		foreach ( $query_builder_args['where'] as $filter_group_index => $filter_group_wheres ) {
-			$query_builder_args = $this->add_primary_blog_where( $query_builder_args, $filter_group_index );
+			$query_builder_args = $this->add_site_capabilities_where( $query_builder_args, $filter_group_index );
 		}
 
 		return $query_builder_args;

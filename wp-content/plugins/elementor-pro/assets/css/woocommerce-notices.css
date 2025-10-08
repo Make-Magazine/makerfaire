@@ -1,13 +1,13 @@
-/*! elementor-pro - v3.31.0 - 10-08-2025 */
+/*! elementor-pro - v3.32.0 - 29-09-2025 */
 .elementor-editor-preview .woocommerce-notices-wrapper {
-  padding: 2em 2em 0.3em 2em;
+  padding: 2em 2em 0.3em;
 }
 .elementor-editor-preview .woocommerce-notices-wrapper.elementor-loading {
   opacity: 0.3;
 }
 
 .e-wc-message-notice .woocommerce-message {
-  border: 0px solid #000000;
+  border: 0 solid #000000;
   border-top: 3px solid var(--message-message-icon-color, #95AC3C);
   background-color: #FAFBF5;
   color: var(--message-message-text-color, #3f444b);
@@ -18,14 +18,13 @@
   color: var(--notice-message-normal-links-color, #3f444b);
   text-decoration: underline;
   font-size: 16px;
-  line-height: 24px;
   font-family: Roboto;
   font-weight: 400;
   line-height: 24px;
   text-transform: none;
   text-shadow: none;
   font-style: normal;
-  letter-spacing: 0px;
+  letter-spacing: 0;
 }
 .e-wc-message-notice .woocommerce-message a:not([class]):hover,
 .e-wc-message-notice .woocommerce-message .restore-item:hover {
@@ -47,7 +46,7 @@
   text-transform: none;
   text-shadow: none;
   font-style: normal;
-  letter-spacing: 0px;
+  letter-spacing: 0;
   font-family: Roboto, sans-serif;
 }
 .e-wc-message-notice .woocommerce-message .button:hover {
@@ -65,7 +64,7 @@
   color: var(--info-buttons-normal-text-color, #3F84B9);
 }
 .e-wc-info-notice .woocommerce-info {
-  border: 0px solid #000000;
+  border: 0 solid #000000;
   border-top: 3px solid var(--info-message-icon-color, #3F84B9);
   background-color: #F6F9FB;
   color: var(--info-message-text-color, #3f444b);
@@ -87,7 +86,7 @@
   text-transform: none;
   text-shadow: none;
   font-style: normal;
-  letter-spacing: 0px;
+  letter-spacing: 0;
   font-family: Roboto, sans-serif;
 }
 .e-wc-info-notice .woocommerce-info .button:hover {
@@ -105,7 +104,7 @@
   color: var(--error-message-text-color, #3f444b);
 }
 .e-wc-error-notice .woocommerce-error {
-  border: 0px solid #000000;
+  border: 0 solid #000000;
   border-top: 3px solid var(--error-message-icon-color, #b81c23);
   background-color: #F9F2F5;
   color: var(--error-message-text-color, #3f444b);
@@ -115,14 +114,13 @@
   color: var(--error-message-normal-links-color, #3f444b);
   text-decoration: underline;
   font-size: 16px;
-  line-height: 24px;
   font-family: Roboto;
   font-weight: 400;
   line-height: 1;
   text-transform: none;
   text-shadow: none;
   font-style: normal;
-  letter-spacing: 0px;
+  letter-spacing: 0;
 }
 .e-wc-error-notice .woocommerce-error .wc-backward:hover {
   color: var(--error-message-hover-links-color, #3f444b);

@@ -2,14 +2,14 @@
 # This file is distributed under the GPL2.
 msgid ""
 msgstr ""
-"Project-Id-Version: GP Populate Anything 2.1.40\n"
-"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/cloned-perk-fawAuHNSGb\n"
+"Project-Id-Version: GP Populate Anything 2.1.47\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/cloned-perk-lmSlinN20b\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2025-07-09T17:42:10+00:00\n"
+"POT-Creation-Date: 2025-10-02T03:29:33+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.10.0\n"
 "X-Domain: gp-populate-anything\n"
@@ -254,17 +254,17 @@ msgstr ""
 msgid "Too many values to display."
 msgstr ""
 
-#: class-gp-populate-anything.php:1909
-#: class-gp-populate-anything.php:4990
-#: includes/class-live-merge-tags.php:1342
+#: class-gp-populate-anything.php:1932
+#: class-gp-populate-anything.php:5036
+#: includes/class-live-merge-tags.php:1350
 msgid "Fill Out Other Fields"
 msgstr ""
 
-#: class-gp-populate-anything.php:1931
+#: class-gp-populate-anything.php:1969
 msgid "No Results"
 msgstr ""
 
-#: class-gp-populate-anything.php:3508
+#: class-gp-populate-anything.php:3554
 msgid "Please fill out other fields."
 msgstr ""
 
@@ -348,47 +348,47 @@ msgstr ""
 msgid "Post Meta"
 msgstr ""
 
-#: includes/class-object-type-post.php:448
+#: includes/class-object-type-post.php:460
 msgid "Author"
 msgstr ""
 
-#: includes/class-object-type-post.php:455
+#: includes/class-object-type-post.php:467
 msgid "Post Status"
 msgstr ""
 
-#: includes/class-object-type-post.php:461
+#: includes/class-object-type-post.php:473
 msgid "Post Title"
 msgstr ""
 
-#: includes/class-object-type-post.php:483
+#: includes/class-object-type-post.php:495
 msgid "Post Content"
 msgstr ""
 
-#: includes/class-object-type-post.php:489
+#: includes/class-object-type-post.php:501
 msgid "Post Excerpt"
 msgstr ""
 
-#: includes/class-object-type-post.php:496
+#: includes/class-object-type-post.php:508
 msgid "Post Name (Slug)"
 msgstr ""
 
-#: includes/class-object-type-post.php:503
+#: includes/class-object-type-post.php:515
 msgid "Post ID"
 msgstr ""
 
-#: includes/class-object-type-post.php:525
+#: includes/class-object-type-post.php:537
 msgid "Post Type"
 msgstr ""
 
-#: includes/class-object-type-post.php:532
+#: includes/class-object-type-post.php:544
 msgid "Post Date"
 msgstr ""
 
-#: includes/class-object-type-post.php:539
+#: includes/class-object-type-post.php:551
 msgid "Parent Post"
 msgstr ""
 
-#: includes/class-object-type-post.php:545
+#: includes/class-object-type-post.php:557
 msgid "Featured Image URL"
 msgstr ""
 

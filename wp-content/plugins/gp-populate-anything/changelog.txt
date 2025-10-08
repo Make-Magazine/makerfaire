@@ -1,5 +1,40 @@
 # Changelog
 
+## 2.1.47 | October 2, 2025
+
+- Fixed an issue where users assigned to multiple sites in multisite installations would not appear when using the User Object to populate choice fields on subsites other than their primary blog.
+- Fixed an edge case where post titles containing ampersands were not properly matched when filtering.
+
+## 2.1.46 | September 23, 2025
+
+- Fixed an issue where dynamically populated fields using Post object type would return incomplete results when filtering by taxonomies with is_in operator on comma-separated string.
+- Fixed an issue where Live Merge Tags did not display values correctly if a user’s profile language differed from the site language, resolving inconsistent locale-based merge tag processing.
+
+## 2.1.45 | September 10, 2025
+
+- Fixed an issue where Live Merge Tags on page labels did not display correctly when using the Progress Bar pagination type in Gravity Forms.
+- Fixed an issue where Live Merge Tags in labels and HTML fields were not working in AJAX-loaded forms.
+- Added [`gppa_object_type_query_results`](https://gravitywiz.com/documentation/gppa_object_type_query_results) PHP filter hook.
+
+## 2.1.44 | August 20, 2025
+
+- Fixed an issue where conditional logic between mutually dependent fields could cause repeated events.
+
+## 2.1.43 | August 13, 2025
+
+- Fixed an issue where conditionally shown List fields were populated with raw array data when editing entries via GravityView.
+- Fixed an issue where "Only show unique results" checkbox was not checked by default.
+
+## 2.1.42 | August 6, 2025
+
+- Fixed an issue where Live Merge Tags would stop updating on multi-page forms when resuming a saved form.
+- Fixed a compatibility issue with Image Hopper addon.
+
+## 2.1.41 | July 30, 2025
+
+- Fixed an issue where cascading population would not trigger for a field that is conditionally shown and dependent on another field.
+- Fixed an issue where Product fields were displaying incorrect prices when dynamically populated with decimal values.
+
 ## 2.1.40 | July 2, 2025
 
 - Fixed an issue where List fields with dynamically populated values would not populate correctly when the field was conditionally shown.

@@ -130,7 +130,15 @@ class GPPA_Object_Type_Post extends GPPA_Object_Type {
 		// phpcs:ignore WordPress.PHP.DontExtract.extract_extract
 		extract( $args );
 
-		$query_builder_args['where'][ $filter_group_index ][] = $this->build_where_clause( $wpdb->posts, rgar( $property, 'value' ), $filter['operator'], $filter_value );
+		// Escape filter value to prevent issues with quotes or ampersands in string values.
+		if ( is_scalar( $filter_value ) ) {
+			$where_raw     = $this->build_where_clause( $wpdb->posts, rgar( $property, 'value' ), $filter['operator'], $filter_value );
+			$where_escaped = $this->build_where_clause( $wpdb->posts, rgar( $property, 'value' ), $filter['operator'], htmlspecialchars( $filter_value, ENT_NOQUOTES, 'UTF-8' ) );
+			// Use OR between raw and escaped value
+			$query_builder_args['where'][ $filter_group_index ][] = '(' . $where_raw . ' OR ' . $where_escaped . ')';
+		} else {
+			$query_builder_args['where'][ $filter_group_index ][] = $this->build_where_clause( $wpdb->posts, rgar( $property, 'value' ), $filter['operator'], $filter_value );
+		}
 
 		return $query_builder_args;
 
@@ -310,7 +318,11 @@ class GPPA_Object_Type_Post extends GPPA_Object_Type {
 		 * Convert single filter_value to array to add support for is_in and is_not_in
 		 */
 		if ( ! is_array( $filter_value ) ) {
-			$filter_value = array( $filter_value );
+			if ( in_array( $filter['operator'], array( 'is_in', 'is_not_in' ) ) ) {
+				$filter_value = $this->get_sql_value( $filter['operator'], $filter_value );
+			} else {
+				$filter_value = array( $filter_value );
+			}
 		}
 
 		$term_taxonomy_ids = array();

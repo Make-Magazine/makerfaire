@@ -67,7 +67,7 @@ const storeToFieldSettingsMapping = (state: GPPAState) => {
 		[fieldSettingsPrefix + 'ordering-method']: state.orderingMethod,
 		[fieldSettingsPrefix + 'filter-groups']: state.filterGroups,
 		[fieldSettingsPrefix + 'templates']: state.templates,
-		[fieldSettingsPrefix + 'unique-results']: state.uniqueResults,
+		[fieldSettingsPrefix + 'unique-results']: Boolean(state.uniqueResults),
 	};
 };
 

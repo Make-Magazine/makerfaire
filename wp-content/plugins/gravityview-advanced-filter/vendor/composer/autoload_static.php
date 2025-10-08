@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit747f57f9c9334e6a2ba87ca9a1263dc9
+class ComposerStaticInit67820c4c72a56def1ee779a931315811
 {
     public static $prefixLengthsPsr4 = array (
         'G' => 
@@ -23,6 +23,8 @@ class ComposerStaticInit747f57f9c9334e6a2ba87ca9a1263dc9
     public static $classMap = array (
         'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
         'GravityKit\\AdvancedFilter\\Core' => __DIR__ . '/../..' . '/src/Core.php',
+        'GravityKit\\AdvancedFilter\\QueryFilters\\Aggregate\\Field' => __DIR__ . '/../..' . '/vendor_prefixed/gravitykit/query-filters/src/Aggregate/Field.php',
+        'GravityKit\\AdvancedFilter\\QueryFilters\\Aggregate\\Query' => __DIR__ . '/../..' . '/vendor_prefixed/gravitykit/query-filters/src/Aggregate/Query.php',
         'GravityKit\\AdvancedFilter\\QueryFilters\\Clock\\Clock' => __DIR__ . '/../..' . '/vendor_prefixed/gravitykit/query-filters/src/Clock/Clock.php',
         'GravityKit\\AdvancedFilter\\QueryFilters\\Clock\\SystemClock' => __DIR__ . '/../..' . '/vendor_prefixed/gravitykit/query-filters/src/Clock/SystemClock.php',
         'GravityKit\\AdvancedFilter\\QueryFilters\\Condition\\ConditionFactory' => __DIR__ . '/../..' . '/vendor_prefixed/gravitykit/query-filters/src/Condition/ConditionFactory.php',
@@ -51,9 +53,9 @@ class ComposerStaticInit747f57f9c9334e6a2ba87ca9a1263dc9
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit747f57f9c9334e6a2ba87ca9a1263dc9::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInit747f57f9c9334e6a2ba87ca9a1263dc9::$prefixDirsPsr4;
-            $loader->classMap = ComposerStaticInit747f57f9c9334e6a2ba87ca9a1263dc9::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit67820c4c72a56def1ee779a931315811::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit67820c4c72a56def1ee779a931315811::$prefixDirsPsr4;
+            $loader->classMap = ComposerStaticInit67820c4c72a56def1ee779a931315811::$classMap;
 
         }, null, ClassLoader::class);
     }

@@ -28,7 +28,7 @@ function pmai_is_acf_update_allowed($cur_meta_key, $options ){
 				foreach ($options['acf_list'] as $key => $acf_field) {
 				    $tmp_field = explode(" ", $acf_field);
 					$field_name = trim(array_shift($tmp_field), "[]");
-					if ( $cur_meta_key == $field_name or $cur_meta_key == "_" . $field_name or preg_match('%'.$field_name.'_[0-9]{1,}_%', $cur_meta_key) or strpos($cur_meta_key, '_' . $field_name . '_') === 0 or preg_match('%.*_[0-9]{1,}_'.$field_name.'$%', $cur_meta_key)){
+					if ( $cur_meta_key == $field_name or $cur_meta_key == "_" . $field_name or preg_match('%'.$field_name.'_[0-9]{1,}_%', $cur_meta_key) or strpos($cur_meta_key, '_' . $field_name . '_') === 0 or preg_match('%.*_[0-9]{1,}_'.$field_name.'$%', $cur_meta_key) || (substr($field_name, -strlen($cur_meta_key)) === $cur_meta_key)){
 						$is_acf_update_allowed = true;					
 						break;
 					}				

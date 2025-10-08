@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by gravityview on 11-July-2025 using {@see https://github.com/BrianHenryIE/strauss}.
+ * Modified by gravityview on 02-October-2025 using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\GravityView\Foundation\WP;
@@ -200,6 +200,13 @@ class AdminMenu {
 		$menu_temp_position = (float) base_convert( substr( md5( self::WP_ADMIN_MENU_SLUG ), -4 ), 16, 10 ) * 0.00001; // Taken from WP's add_menu_page() code.
 		$gk_settings        = SettingsFramework::get_instance()->get_plugin_settings( Core::ID );
 
+		$saved_menu_position = self::get_menu_position_by_id( $gk_settings['top_level_menu_position'] ?? '' );
+
+		// If saved menu position doesn't exist, fall back to Media (or GF position if GF is active).
+		if ( null === $saved_menu_position ) {
+			$saved_menu_position = class_exists( 'GFForms' ) ? apply_filters( 'gform_menu_position', '16.9' ) : self::get_menu_position_by_id( 'upload.php' );
+		}
+
 		/**
 		 * Controls the position after which the top-level GravityKit admin menu will be added.
 		 *
@@ -207,11 +214,11 @@ class AdminMenu {
 		 *
 		 * @since  1.0.0
 		 *
-		 * @param int|string|null $menu_position Default: position of the Gravity Forms menu (16.9) or Dashboard (2).
+		 * @param int|string|null $menu_position Default: position of the Gravity Forms menu (16.9) or Media.
 		 */
 		$menu_position = apply_filters(
 			'gk/foundation/admin-menu/position',
-			self::get_menu_position_by_id( $gk_settings['top_level_menu_position'] ?? '' )
+			$saved_menu_position
 		);
 
 		add_menu_page(

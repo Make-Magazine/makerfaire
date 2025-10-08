@@ -2,14 +2,14 @@
 # This file is distributed under the GPL2.
 msgid ""
 msgstr ""
-"Project-Id-Version: GP Nested Forms 1.2.11\n"
-"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/cloned-perk-X_CakOgsg9\n"
+"Project-Id-Version: GP Nested Forms 1.2.14\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/cloned-perk-A70Ps0_8tv\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2025-07-16T18:49:48+00:00\n"
+"POT-Creation-Date: 2025-09-17T15:06:30+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.10.0\n"
 "X-Domain: gp-nested-forms\n"
@@ -249,7 +249,7 @@ msgstr ""
 msgid "Close"
 msgstr ""
 
-#: class-gp-nested-forms.php:3659
+#: class-gp-nested-forms.php:3690
 msgid "Row ID"
 msgstr ""
 

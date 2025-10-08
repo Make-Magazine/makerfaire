@@ -1,4 +1,4 @@
-/*! elementor-pro - v3.31.0 - 10-08-2025 */
+/*! elementor-pro - v3.32.0 - 29-09-2025 */
 /******/ (() => { // webpackBootstrap
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({});
@@ -87,7 +87,7 @@
 /******/ 			if (chunkId === "vendors-node_modules_dompurify_dist_purify_cjs_js") return "8b11be0d97d58e135d30.bundle.js";
 /******/ 			if (chunkId === "stripe-button") return "" + chunkId + ".cb4b1cf19f1c46430f76.bundle.js";
 /******/ 			if (chunkId === "progress-tracker") return "" + chunkId + ".fd1d31a26340ed74e10a.bundle.js";
-/******/ 			if (chunkId === "animated-headline") return "" + chunkId + ".375998d4790797e91f21.bundle.js";
+/******/ 			if (chunkId === "animated-headline") return "" + chunkId + ".32baaa2ad2ea939224d5.bundle.js";
 /******/ 			if (chunkId === "media-carousel") return "" + chunkId + ".04412cb9b4479aa37408.bundle.js";
 /******/ 			if (chunkId === "carousel") return "" + chunkId + ".298f1fc9c115422aad0e.bundle.js";
 /******/ 			if (chunkId === "countdown") return "" + chunkId + ".6e87ca40d36793d92aea.bundle.js";
@@ -95,7 +95,7 @@
 /******/ 			if (chunkId === "form") return "form.a7e78a23dbf43d6f2639.bundle.js";
 /******/ 			if (chunkId === "gallery") return "" + chunkId + ".b7d55bc976e04f751975.bundle.js";
 /******/ 			if (chunkId === "lottie") return "" + chunkId + ".a02a01f29c0733918ac7.bundle.js";
-/******/ 			if (chunkId === "nav-menu") return "" + chunkId + ".e135a0d0f766c7f455ff.bundle.js";
+/******/ 			if (chunkId === "nav-menu") return "" + chunkId + ".f1ec837bbdc0a90accc6.bundle.js";
 /******/ 			if (chunkId === "popup") return "" + chunkId + ".996738ad83c089bcc0b9.bundle.js";
 /******/ 			if (chunkId === "load-more") return "" + chunkId + ".f5ecc1c66872d0bd2d17.bundle.js";
 /******/ 			if (chunkId === "posts") return "" + chunkId + ".e99f84b83c36d4568ffe.bundle.js";

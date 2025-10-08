@@ -2,7 +2,7 @@
 /**
  * @license MIT
  *
- * Modified by gravitykit on 10-February-2025 using {@see https://github.com/BrianHenryIE/strauss}.
+ * Modified by gravitykit on 25-September-2025 using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\AdvancedFilter\QueryFilters\Filter\Visitor;
@@ -79,7 +79,8 @@ final class ProcessFieldTypeVisitor implements FilterVisitor {
 	private function get_form(): array {
 		$form = $this->form;
 
-		// todo: can this be removed, or is $filter['form_id'] a legit use case?
+		// todo: This can not be removed. The filter should have an optional form_id for Multiple Forms.
+
 
 //		if ( isset( $filter['form_id'] ) ) {
 //			$form = GFAPI::get_form( $filter['form_id'] );

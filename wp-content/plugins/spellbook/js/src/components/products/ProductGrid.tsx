@@ -21,7 +21,7 @@ const ProductGrid = ({ products, type }: ProductGridProps) => {
                 columnSpacing={5}
                 rowSpacing={6}
             >
-                {Object.values(products).map(product => (
+                {Object.values(products).filter(product => !(product.is_deprecated && !product.is_installed)).map(product => (
                     <Grid
 						elementType="div"
                         item

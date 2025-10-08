@@ -2,7 +2,7 @@
 /**
  * @license MIT
  *
- * Modified by gravitykit on 10-February-2025 using {@see https://github.com/BrianHenryIE/strauss}.
+ * Modified by gravitykit on 25-September-2025 using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\AdvancedFilter\QueryFilters\Filter\Visitor;
@@ -67,16 +67,120 @@ final class ProcessMergeTagsVisitor implements EntryAwareFilterVisitor {
 
 		$form = $this->getForm( $filter );
 
+		// Track the original value to detect merge tag processing.
+		$original_values = $value;
+
 		foreach ( $value as $i => $unprocessed ) {
 			if ( ! is_string( $unprocessed ) ) {
 				// Only process strings.
 				continue;
 			}
 
-			$value[$i] = self::process_merge_tags( $unprocessed, $form, $this->entry );
+			$value[ $i ] = self::process_merge_tags( $unprocessed, $form, $this->entry );
 		}
 
-		$filter->set_value( $has_multiple ? $value : reset( $value ) );
+		$final_value = $has_multiple ? $value : reset( $value );
+
+		// Set the resolved value first
+		$filter->set_value( $final_value );
+
+		// Fix for contains-type operators with empty values after merge tag processing.
+		// When user merge tags resolve to empty for logged-out users, these operators
+		// should not match any entries. This must be called AFTER set_value() so that
+		// if the filter is locked, the lock sentinel value is not overwritten.
+		$this->handle_empty_contains_values( $filter, $original_values );
+	}
+
+	/**
+	 * Handles filters with empty values and contains-type operators.
+	 *
+	 * When a filter value becomes empty after merge tag processing (e.g., {user:*} for logged-out users),
+	 * contains-type operators should treat this as "no match" rather than "match everything".
+	 *
+	 * @since $ver$
+	 *
+	 * @param Filter $filter          The filter to check.
+	 * @param array  $original_values The original filter values before processing.
+	 *
+	 * @return void
+	 */
+	private function handle_empty_contains_values( Filter $filter, array $original_values ) {
+		// Get the operator.
+		$operator        = $filter->operator();
+		$processed_value = $filter->value();
+
+		// Check if we processed user or created_by merge tags.
+		// These are the merge tags that resolve to empty for logged-out users.
+		$had_user_merge_tags = false;
+		foreach ( $original_values as $original ) {
+			if ( is_string( $original )
+			     && (
+				     strpos( $original, '{user:' ) !== false
+				     || strpos( $original, '{user}' ) !== false
+				     || strpos( $original, '{created_by:' ) !== false
+				     || strpos( $original, '{created_by}' ) !== false
+			     )
+			) {
+				$had_user_merge_tags = true;
+				break;
+			}
+		}
+
+		// Only apply special handling if we actually processed user/created_by merge tags.
+		if ( ! $had_user_merge_tags ) {
+			return;
+		}
+
+		// If the value is empty and the operator is a "contains"-type operator.
+		if (
+			$this->is_value_empty( $processed_value )
+			&& $this->is_contains_type_operator( $operator )
+		) {
+			// We need to ensure this filter doesn't match anything.
+			$filter->lock();
+		}
+	}
+
+	/**
+	 * Checks if a value is effectively empty.
+	 *
+	 * @since $ver$
+	 *
+	 * @param mixed $value The value to check.
+	 *
+	 * @return bool Whether the value is empty.
+	 */
+	private function is_value_empty( $value ): bool {
+		if ( is_array( $value ) ) {
+			// For array values, check if all elements are empty.
+			return empty( array_filter( $value, static function ( $v ) {
+				return $v !== '' && $v !== null;
+			} ) );
+		}
+
+		return $value === '' || $value === null;
+	}
+
+	/**
+	 * Checks if an operator is a contains-type operator that should not match when value is empty.
+	 *
+	 * @since $ver$
+	 *
+	 * @param string $operator The operator to check.
+	 *
+	 * @return bool Whether the operator is a contains-type operator.
+	 */
+	private function is_contains_type_operator( string $operator ): bool {
+		$contains_type_operators = [
+			'contains',
+			'starts_with',
+			'ends_with',
+			'in',
+			// Note: 'ncontains', 'notcontains', and 'not_in' are NOT included here
+			// because they have inverse logic (should match everything when value is empty).
+		];
+
+		return in_array( $operator, $contains_type_operators, true );
 	}
 
 	/**

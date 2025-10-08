@@ -2,13 +2,14 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by __root__ on 09-June-2025 using Strauss.
+ * Modified by __root__ on 11-September-2025 using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 
 namespace GravityKit\GravityEdit\Foundation\State;
 
 use WP_User;
+use GravityKit\GravityEdit\Foundation\Exceptions\BaseException;
 
 /**
  * A state manager scoped to a provided user.
@@ -29,8 +30,11 @@ final class UserStateManager implements StateManager {
 	 * The meta key used on the user object that stores the state.
      *
 	 * @since 1.2.14
+	 * @since 1.3.0 Changed from const to private property.
+	 *
+	 * @var string
 	 */
-	private const META_KEY = 'gk_state';
+	private $meta_key = 'gk_state';
 
 	/**
 	 * Internal state that is managed by an array state.
@@ -44,12 +48,16 @@ final class UserStateManager implements StateManager {
 	 * Initializes the manager.
      *
 	 * @since 1.2.14
+	 * @since 1.3.0 Added $meta_key parameter.
 	 *
-	 * @param WP_User|null $user An (option) user object.
+	 * @param WP_User|null $user (optional) User object.
+	 * @param string       $meta_key (optional) Meta key to use for storage. Default: `gk_state`.
 	 */
-	public function __construct( WP_User $user = null ) {
-		$this->set_user( $user );
+	public function __construct( ?WP_User $user = null, $meta_key = 'gk_state' ) {
+		$this->meta_key       = $meta_key;
 		$this->internal_state = new ArrayStateManager();
+
+		$this->set_user( $user );
 		$this->initialize();
 	}
 
@@ -62,6 +70,8 @@ final class UserStateManager implements StateManager {
 	 *
 	 * @param string $key   The key of the state.
 	 * @param mixed  $value The (optional) value of the state.
+	 *
+	 * @throws BaseException When persistence fails.
 	 */
 	public function add( string $key, $value = null ): void {
 		$this->internal_state->add( $key, $value );
@@ -101,6 +111,7 @@ final class UserStateManager implements StateManager {
 	 * @param string $key The key to remove.
 	 *
 	 * @return void
+	 * @throws BaseException When persistence fails.
 	 */
 	public function remove( string $key ): void {
 		$this->internal_state->remove( $key );
@@ -121,7 +132,7 @@ final class UserStateManager implements StateManager {
 			return;
 		}
 
-		$result               = get_user_meta( $this->user->ID, self::META_KEY, true );
+		$result               = get_user_meta( $this->user->ID, $this->meta_key, true );
 		$this->internal_state = new ArrayStateManager( $result ?: [] );
 	}
 
@@ -131,14 +142,29 @@ final class UserStateManager implements StateManager {
 	 * @since 1.2.14
 	 *
 	 * @return void
+	 * @throws BaseException When user meta update fails.
 	 */
 	private function save(): void {
 		if ( ! $this->user ) {
-			return;
+			throw new BaseException(
+				'user_state_save_failed',
+				'Cannot save state: no user provided',
+				[ 'meta_key' => $this->meta_key ]
+			);
 		}
 
 		$state = $this->internal_state->all();
-		update_user_meta( $this->user->ID, self::META_KEY, $state, null );
+
+		if ( ! update_user_meta( $this->user->ID, $this->meta_key, $state, null ) ) {
+			throw new BaseException(
+				'user_state_save_failed',
+				'Failed to save user state to meta table',
+				[
+					'user_id'  => $this->user->ID,
+					'meta_key' => $this->meta_key,
+				]
+			);
+		}
 	}
 
 	/**

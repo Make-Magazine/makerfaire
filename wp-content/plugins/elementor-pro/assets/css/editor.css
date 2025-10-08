@@ -1,4 +1,4 @@
-/*! elementor-pro - v3.31.0 - 10-08-2025 */
+/*! elementor-pro - v3.32.0 - 29-09-2025 */
 .elementor-panel .elementor-control .e-control-error {
   color: #F59E0B;
 }
@@ -204,7 +204,7 @@
   background-color: var(--e-a-bg-active);
   color: var(--e-a-color-txt-accent);
 }
-.elementor-publish__tab.elementor-active:after {
+.elementor-publish__tab.elementor-active::after {
   content: "";
   position: absolute;
   inset-block-start: 0;
@@ -239,7 +239,7 @@
   background-color: transparent;
   padding: 0;
 }
-#elementor-theme-builder-conditions .elementor-control:before {
+#elementor-theme-builder-conditions .elementor-control::before {
   content: none;
 }
 #elementor-theme-builder-conditions .elementor-control select {
@@ -250,22 +250,22 @@
 #elementor-theme-builder-conditions .elementor-control-type-query {
   width: 100px;
 }
-#elementor-theme-builder-conditions .elementor-control-type-select .elementor-control-input-wrapper:after {
+#elementor-theme-builder-conditions .elementor-control-type-select .elementor-control-input-wrapper::after {
   inset-inline-end: 10px;
 }
 #elementor-theme-builder-conditions .elementor-control-type {
   width: 120px;
 }
-#elementor-theme-builder-conditions .elementor-control-type[data-elementor-condition-type=include] .elementor-control-input-wrapper:before {
+#elementor-theme-builder-conditions .elementor-control-type[data-elementor-condition-type=include] .elementor-control-input-wrapper::before {
   content: "\e8cc";
 }
-#elementor-theme-builder-conditions .elementor-control-type[data-elementor-condition-type=exclude] .elementor-control-input-wrapper:before {
+#elementor-theme-builder-conditions .elementor-control-type[data-elementor-condition-type=exclude] .elementor-control-input-wrapper::before {
   content: "\e8cd";
 }
 #elementor-theme-builder-conditions .elementor-control-type[data-elementor-condition-type=exclude] select, #elementor-theme-builder-conditions .elementor-control-type[data-elementor-condition-type=include] select {
   padding-inline-start: 33px;
 }
-#elementor-theme-builder-conditions .elementor-control-type .elementor-control-input-wrapper:before {
+#elementor-theme-builder-conditions .elementor-control-type .elementor-control-input-wrapper::before {
   font-family: eicons;
   position: absolute;
   inset-block-start: 50%;
@@ -326,7 +326,7 @@
   height: 30px;
 }
 #elementor-theme-builder-conditions .select2-selection__arrow b {
-  border-width: 4px 4px 0 4px;
+  border-width: 4px 4px 0;
   margin-block-start: 2px;
   margin-inline-start: -7px;
 }
@@ -399,7 +399,7 @@
   text-transform: capitalize;
 }
 
-.elementor-editor-popup .elementor-tab-control-settings a:before {
+.elementor-editor-popup .elementor-tab-control-settings a::before {
   content: "\e922";
 }
 

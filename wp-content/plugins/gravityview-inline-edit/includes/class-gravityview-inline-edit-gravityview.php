@@ -53,6 +53,7 @@ final class GravityView_Inline_Edit_GravityView extends GravityView_Inline_Edit_
 		add_filter( 'gravityview-inline-edit/checkbox-wrapper-attributes', array( $this, 'modify_attributes_add_choice_display' ), 10, 9 );
 		add_filter( 'gravityview-inline-edit/radio-wrapper-attributes', array( $this, 'modify_attributes_add_choice_display' ), 10, 9 );
 		add_filter( 'gravityview-inline-edit/image_choice-wrapper-attributes', array( $this, 'modify_attributes_add_choice_display' ), 10, 9 );
+		add_filter( 'gravityview-inline-edit/select-wrapper-attributes', array( $this, 'modify_attributes_add_choice_display' ), 10, 9 );
 
 		add_filter( 'gravityview/render/container/class', array( $this, 'add_container_class' ), 10, 2 );
 		add_action( 'gravityview/template/header', array( $this, 'maybe_add_inline_edit_toggle_button' ) );
@@ -228,7 +229,6 @@ final class GravityView_Inline_Edit_GravityView extends GravityView_Inline_Edit_
 	 * @return bool True: User can edit this entry. False: Nope.
 	 */
 	public function filter_can_edit_entry( $can_edit, $entry_id = 0, $form_id = 0, $view_id = null ) {
-
 		// Edit all entries from a form
 		if ( $form_id && GVCommon::has_cap( 'gravityview_edit_form_entries', $form_id ) ) {
 			return true;
@@ -237,6 +237,10 @@ final class GravityView_Inline_Edit_GravityView extends GravityView_Inline_Edit_
 		// Edit specific entry
 		if ( $entry_id && GVCommon::has_cap( 'gravityview_edit_entry', $entry_id ) ) {
 			return true;
+		}
+
+		if ( ! is_user_logged_in() ) {
+			return false;
 		}
 
 		if ( $entry_id && class_exists( 'GravityView_Edit_Entry' ) ) {

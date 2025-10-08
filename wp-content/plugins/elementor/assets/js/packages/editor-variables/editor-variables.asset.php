@@ -13,6 +13,7 @@ return [
 		'elementor-v2-editor-controls',
 		'elementor-v2-editor-current-user',
 		'elementor-v2-editor-editing-panel',
+		'elementor-v2-editor-panels',
 		'elementor-v2-editor-props',
 		'elementor-v2-editor-ui',
 		'elementor-v2-editor-v1-adapters',

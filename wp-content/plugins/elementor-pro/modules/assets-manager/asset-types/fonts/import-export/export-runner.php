@@ -34,11 +34,13 @@ class Export_Runner extends Export_Runner_Base {
 		}
 
 		$fonts_data = [];
+		$manifest_data = [];
 
 		foreach ( $fonts as $font_family => $font_type ) {
 			$font_data = $this->prepare_font_data( $font_family );
 			if ( $font_data ) {
 				$fonts_data[] = $font_data;
+				$manifest['custom-fonts'][ $font_family ] = $font_data;
 			}
 		}
 
@@ -46,6 +48,9 @@ class Export_Runner extends Export_Runner_Base {
 			'files' => [
 				'path' => Import_Export::FILE_NAME,
 				'data' => $fonts_data,
+			],
+			'manifest' => [
+				$manifest_data,
 			],
 		];
 	}

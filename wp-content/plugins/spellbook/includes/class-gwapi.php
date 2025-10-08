@@ -114,6 +114,10 @@ class GWAPI {
 
 		if ( ! $transient ) {
 			$transient = 'spellbook_gwapi_' . $action;
+
+			if ( ! empty( $api_params ) ) {
+				$transient .= '_' . md5( wp_json_encode( $api_params ) );
+			}
 		}
 
 		// Suffix transient with the current Gravity Perks version in case behavior changes between versions.

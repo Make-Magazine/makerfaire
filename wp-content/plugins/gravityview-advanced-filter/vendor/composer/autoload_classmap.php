@@ -8,6 +8,8 @@ $baseDir = dirname($vendorDir);
 return array(
     'Composer\\InstalledVersions' => $vendorDir . '/composer/InstalledVersions.php',
     'GravityKit\\AdvancedFilter\\Core' => $baseDir . '/src/Core.php',
+    'GravityKit\\AdvancedFilter\\QueryFilters\\Aggregate\\Field' => $baseDir . '/vendor_prefixed/gravitykit/query-filters/src/Aggregate/Field.php',
+    'GravityKit\\AdvancedFilter\\QueryFilters\\Aggregate\\Query' => $baseDir . '/vendor_prefixed/gravitykit/query-filters/src/Aggregate/Query.php',
     'GravityKit\\AdvancedFilter\\QueryFilters\\Clock\\Clock' => $baseDir . '/vendor_prefixed/gravitykit/query-filters/src/Clock/Clock.php',
     'GravityKit\\AdvancedFilter\\QueryFilters\\Clock\\SystemClock' => $baseDir . '/vendor_prefixed/gravitykit/query-filters/src/Clock/SystemClock.php',
     'GravityKit\\AdvancedFilter\\QueryFilters\\Condition\\ConditionFactory' => $baseDir . '/vendor_prefixed/gravitykit/query-filters/src/Condition/ConditionFactory.php',

@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by __root__ on 09-June-2025 using Strauss.
+ * Modified by __root__ on 11-September-2025 using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 
@@ -23,7 +23,7 @@ class Encryption {
 	 *
 	 * @var array<string, Encryption>
 	 */
-	private static $_instances = [];
+	private static $instances = [];
 
 	/**
 	 * Secret key used to encrypt license key.
@@ -32,50 +32,84 @@ class Encryption {
 	 *
 	 * @var string
 	 */
-	private $_secret_key;
+	private $secret_key;
+
+	/**
+	 * Options for encryption.
+	 *
+	 * @since 1.3.0
+	 *
+	 * @var array
+	 */
+	private $options;
+
+	/**
+	 * Returns default options for encryption.
+	 *
+	 * @since 1.3.0
+	 *
+	 * @return array
+	 */
+	protected function get_default_options() {
+		return array(
+			'base64_variant'              => SODIUM_BASE64_VARIANT_ORIGINAL,
+			'crypto_secretbox_keybytes'   => SODIUM_CRYPTO_SECRETBOX_KEYBYTES,
+			'crypto_secretbox_noncebytes' => SODIUM_CRYPTO_SECRETBOX_NONCEBYTES,
+			'hash_algo'                   => 'sha256',
+		);
+	}
 
 	/**
 	 * Class constructor.
 	 *
 	 * @since 1.0.0
+	 * @since 1.3.0 Added $options parameter.
 	 *
 	 * @param string $secret_key (optional) Secret key to be used for encryption. Default: wp_salt() value.
+	 * @param array  $options    (optional) Options for encryption. Default: empty array.
 	 *
 	 * @return void
 	 */
-	private function __construct( $secret_key = '' ) {
+	private function __construct( $secret_key = '', $options = array() ) {
 		$this->require_sodium();
 
 		if ( ! $secret_key ) {
 			$secret_key = defined( 'GRAVITYKIT_SECRET_KEY' ) ? GRAVITYKIT_SECRET_KEY : wp_salt();
 		}
 
-		if ( strlen( $secret_key ) < SODIUM_CRYPTO_SECRETBOX_KEYBYTES ) {
-			$secret_key = hash_hmac( 'sha256', $secret_key, self::DEFAULT_NONCE );
+		// Set default options first so we can use them for key length validation.
+		$this->options = wp_parse_args( $options, $this->get_default_options() );
+
+		if ( strlen( $secret_key ) < $this->options['crypto_secretbox_keybytes'] ) {
+			$secret_key = hash_hmac( $this->options['hash_algo'], $secret_key, self::DEFAULT_NONCE );
 		}
 
-		if ( strlen( $secret_key ) > SODIUM_CRYPTO_SECRETBOX_KEYBYTES ) {
-			$secret_key = mb_substr( $secret_key, 0, SODIUM_CRYPTO_SECRETBOX_KEYBYTES, '8bit' );
+		if ( strlen( $secret_key ) > $this->options['crypto_secretbox_keybytes'] ) {
+			$secret_key = mb_substr( $secret_key, 0, $this->options['crypto_secretbox_keybytes'], '8bit' );
 		}
 
-		$this->_secret_key = $secret_key;
+		$this->secret_key = $secret_key;
 	}
 
 	/**
 	 * Returns class instance based on the secret key.
 	 *
 	 * @since 1.0.0
+	 * @since 1.3.0 Added $options parameter.
 	 *
 	 * @param string $secret_key (optional) Secret key to be used for encryption. Default: wp_salt() value.
+	 * @param array  $options    (optional) Options for encryption. Default: empty array.
 	 *
 	 * @return Encryption
 	 */
-	public static function get_instance( $secret_key = '' ) {
-		if ( ! isset( self::$_instances[ $secret_key ] ) ) {
-			self::$_instances[ $secret_key ] = new self( $secret_key );
+	public static function get_instance( $secret_key = '', $options = array() ) {
+		$cache_key = $secret_key . '_' . md5( wp_json_encode( $options ) ?: '' );
+
+		if ( ! isset( self::$instances[ $cache_key ] ) ) {
+			self::$instances[ $cache_key ] = new self( $secret_key, $options );
 		}
 
-		return self::$_instances[ $secret_key ];
+		return self::$instances[ $cache_key ];
 	}
 
 	/**
@@ -102,17 +136,17 @@ class Encryption {
 			return false;
 		}
 
-		if ( strlen( $nonce ) < SODIUM_CRYPTO_SECRETBOX_NONCEBYTES ) {
-			$nonce = hash_hmac( 'sha256', $nonce, self::DEFAULT_NONCE );
+		if ( strlen( $nonce ) < $this->options['crypto_secretbox_noncebytes'] ) {
+			$nonce = hash_hmac( $this->options['hash_algo'], $nonce, self::DEFAULT_NONCE ) ?: $nonce;
 		}
 
-		if ( strlen( $nonce ) > SODIUM_CRYPTO_SECRETBOX_KEYBYTES ) {
-			$nonce = mb_substr( $nonce, 0, SODIUM_CRYPTO_SECRETBOX_NONCEBYTES, '8bit' );
+		if ( strlen( $nonce ) > $this->options['crypto_secretbox_noncebytes'] ) {
+			$nonce = mb_substr( $nonce, 0, $this->options['crypto_secretbox_noncebytes'], '8bit' );
 		}
 
 		try {
-			$encrypted = sodium_crypto_secretbox( $data, $nonce, $this->_secret_key );
-			$encrypted = sodium_bin2base64( $nonce . $encrypted, SODIUM_BASE64_VARIANT_ORIGINAL );
+			$encrypted = sodium_crypto_secretbox( $data, $nonce, $this->secret_key );
+			$encrypted = sodium_bin2base64( $nonce . $encrypted, $this->options['base64_variant'] );
 			if ( extension_loaded( 'sodium' ) || extension_loaded( 'libsodium' ) ) {
 				sodium_memzero( $nonce );
 			}
@@ -136,16 +170,16 @@ class Encryption {
 	 */
 	public function decrypt( $data ) {
 		try {
-			$encrypted = sodium_base642bin( $data, SODIUM_BASE64_VARIANT_ORIGINAL );
+			$encrypted = sodium_base642bin( $data, $this->options['base64_variant'] );
 		} catch ( Exception $e ) {
 			return null;
 		}
 
-		$nonce     = mb_substr( $encrypted, 0, SODIUM_CRYPTO_SECRETBOX_NONCEBYTES, '8bit' );
-		$encrypted = mb_substr( $encrypted, SODIUM_CRYPTO_SECRETBOX_NONCEBYTES, null, '8bit' );
+		$nonce     = mb_substr( $encrypted, 0, $this->options['crypto_secretbox_noncebytes'], '8bit' );
+		$encrypted = mb_substr( $encrypted, $this->options['crypto_secretbox_noncebytes'], null, '8bit' );
 
 		try {
-			$decrypted = sodium_crypto_secretbox_open( $encrypted, $nonce, $this->_secret_key );
+			$decrypted = sodium_crypto_secretbox_open( $encrypted, $nonce, $this->secret_key );
 		} catch ( Exception $e ) {
 			return null;
 		}
@@ -169,11 +203,11 @@ class Encryption {
 	 * @return string The hash.
 	 */
 	public function hash( $data ) {
-		return hash_hmac( 'sha256', $data, self::DEFAULT_NONCE );
+		return hash_hmac( $this->options['hash_algo'], $data, self::DEFAULT_NONCE );
 	}
 
 	/**
-	 * Returns a random 24-byte nonce.
+	 * Returns a random nonce.
 	 *
 	 * @since 1.0.0
 	 *
@@ -182,7 +216,8 @@ class Encryption {
 	 * @return string
 	 */
 	public function get_random_nonce() {
-		return random_bytes( SODIUM_CRYPTO_SECRETBOX_NONCEBYTES );
+		$length = (int) $this->options['crypto_secretbox_noncebytes'];
+		return random_bytes( $length > 0 ? $length : SODIUM_CRYPTO_SECRETBOX_NONCEBYTES );
 	}
 
 	/**

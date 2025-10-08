@@ -572,7 +572,7 @@ abstract class Base extends Base_Widget {
 		$this->end_controls_section();
 	}
 
-	protected function print_slider( array $settings = null ) {
+	protected function print_slider( ?array $settings = null ) {
 		if ( null === $settings ) {
 			$settings = $this->get_settings_for_display();
 		}

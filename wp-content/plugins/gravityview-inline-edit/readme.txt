@@ -1,7 +1,7 @@
 === GravityEdit ===
 Tags: gravity forms, inline edit, gravityview
 Requires at least: 5.1
-Tested up to: 6.8.1
+Tested up to: 6.8.2
 Contributors: The GravityKit Team
 License: GPL 2
 Requires PHP: 7.2.0
@@ -19,6 +19,56 @@ Inline Editing is a powerful way to quickly make changes to a form entry without
 3. Set your license key
 
 == Changelog ==
+
+= 2.5.1 on September 11, 2025 =
+
+This update fixes broken thumbnails after file uploads and a possible fatal error triggered when a View has an Entry Tags field without the required plugin active.
+
+#### 🐛 Fixed
+* Cache not clearing after file uploads, which caused broken thumbnails on refresh.
+* Fatal error when inline editing was active on a View with an Entry Tags field and the [Gravity Forms Entry Tags](https://www.gravitykit.com/products/gravity-forms-entry-tags/) plugin was not active.
+
+#### 💻 Developer Updates
+* Removed early `is_user_logged_in()` return to allow for the `gravityview/capabilities/allow_logged_out` and `gravityview/edit_entry/user_can_edit_entry` filters to be applied when checking whether inline editing is enabled on the frontend.
+
+#### 🔧 Updated
+* [Foundation](https://www.gravitykit.com/foundation/) to version 1.3.1:
+  - New GravityKit global settings for logging configuration (level, type, cleanup schedule, retention);
+  - A unified way to display admin notices across all GravityKit products;
+  - Performance improvements and bug fixes.
+
+= 2.5.0 on August 28, 2025 =
+
+This release introduces a warning when file uploads may overwrite existing files and resolves several conflicts and display issues.
+
+#### ✨ Improved
+* A warning is displayed when uploading files may overwrite existing ones.
+
+#### 🐛 Fixed
+* Conflict with GravityActions that prevented updating entry's creator on the Gravity Forms Entries pages.
+* Popover positioning issue when editing Created By field values.
+* Display issues on the Gravity Forms Entries page when GravityEdit is enabled.
+
+#### 🔧 Updated
+* [Foundation](https://www.gravitykit.com/foundation/) to version 1.3.1:
+  - New GravityKit global settings for logging configuration (level, type, cleanup schedule, retention);
+  - A unified way to display admin notices across all GravityKit products;
+  - Performance improvements and bug fixes.
+
+= 2.4.0 on July 24, 2025 =
+
+This release adds inline editing support for the [Gravity Forms Dynamic Lookup](https://www.gravitykit.com/products/gravity-forms-dynamic-lookup/) extension and resolves multiple issues with Select and Checkboxes fields.
+
+#### 🚀 Added
+* Support for inline editing of Gravity Forms Dynamic Lookup fields across all three types (dropdown, radio and checkbox).
+
+#### 🐛 Fixed
+* Multiple issues with Select and Checkboxes fields after inline editing:
+  - Fields now properly display labels or values based on the View configuration;
+  - Entry links are preserved after editing;
+  - Checkboxes fields with empty values now show "Empty" text with proper styling when inline editing is enabled;
+  - Checkboxes fields properly restore original content when inline editing is disabled.
+* Date picker now respects WordPress's "Week Starts On" setting instead of always starting on Monday.
 
 = 2.3.0 on June 9, 2025 =
 

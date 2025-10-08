@@ -1,4 +1,4 @@
-/*! elementor - v3.31.0 - 11-08-2025 */
+/*! elementor - v3.32.0 - 05-10-2025 */
 (self["webpackChunkelementor"] = self["webpackChunkelementor"] || []).push([["vendors-node_modules_styled-components_dist_styled-components_browser_esm_js-node_modules_bab-0097ba"],{
 
 /***/ "../node_modules/@babel/runtime/helpers/arrayWithoutHoles.js":

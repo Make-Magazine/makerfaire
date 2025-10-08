@@ -371,7 +371,7 @@
   display: inline-block;
 }
 .tl-gk_foundation_trustedlogin-auth footer li:after {
-  color: #86909b;
+  color: rgb(134.4545454545, 143.9090909091, 154.5454545455);
   content: "•";
   padding: 0 0.75rem;
 }

@@ -1,4 +1,4 @@
-/*! elementor - v3.31.0 - 11-08-2025 */
+/*! elementor - v3.32.0 - 05-10-2025 */
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
@@ -120,18 +120,36 @@ function App() {
 /*!***********************************************************!*\
   !*** ../app/assets/js/event-track/apps-event-tracking.js ***!
   \***********************************************************/
-/***/ ((__unused_webpack_module, exports) => {
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
 
 
+var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
 Object.defineProperty(exports, "__esModule", ({
   value: true
 }));
-exports.appsEventTrackingDispatch = void 0;
+exports.appsEventTrackingDispatch = exports.AppsEventTracking = void 0;
+var _defineProperty2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/defineProperty */ "../node_modules/@babel/runtime/helpers/defineProperty.js"));
+var _classCallCheck2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "../node_modules/@babel/runtime/helpers/classCallCheck.js"));
+var _createClass2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/createClass */ "../node_modules/@babel/runtime/helpers/createClass.js"));
+var _eventsConfig = _interopRequireDefault(__webpack_require__(/*! ../../../../core/common/modules/events-manager/assets/js/events-config */ "../core/common/modules/events-manager/assets/js/events-config.js"));
+function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
+function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { (0, _defineProperty2.default)(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
 function _createForOfIteratorHelper(r, e) { var t = "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"]; if (!t) { if (Array.isArray(r) || (t = _unsupportedIterableToArray(r)) || e && r && "number" == typeof r.length) { t && (r = t); var _n = 0, F = function F() {}; return { s: F, n: function n() { return _n >= r.length ? { done: !0 } : { done: !1, value: r[_n++] }; }, e: function e(r) { throw r; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var o, a = !0, u = !1; return { s: function s() { t = t.call(r); }, n: function n() { var r = t.next(); return a = r.done, r; }, e: function e(r) { u = !0, o = r; }, f: function f() { try { a || null == t.return || t.return(); } finally { if (u) throw o; } } }; }
 function _unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return _arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0; } }
 function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }
+var EVENTS_MAP = {
+  PAGE_VIEWS_WEBSITE_TEMPLATES: 'page_views_website_templates',
+  KITS_CLOUD_UPGRADE_CLICKED: 'kits_cloud_upgrade_clicked',
+  EXPORT_KIT_CUSTOMIZATION: 'export_kit_customization',
+  IMPORT_KIT_CUSTOMIZATION: 'import_kit_customization',
+  KIT_IMPORT_STATUS: 'kit_import_status',
+  KIT_CLOUD_LIBRARY_APPLY: 'kit_cloud_library_apply',
+  KIT_CLOUD_LIBRARY_DELETE: 'kit_cloud_library_delete',
+  IMPORT_EXPORT_ADMIN_ACTION: 'ie_admin_action',
+  KIT_IMPORT_UPLOAD_FILE: 'kit_import_upload_file'
+};
 var appsEventTrackingDispatch = exports.appsEventTrackingDispatch = function appsEventTrackingDispatch(command, eventParams) {
   // Add existing eventParams key value pair to the data/details object.
   var objectCreator = function objectCreator(array, obj) {
@@ -170,6 +188,91 @@ var appsEventTrackingDispatch = exports.appsEventTrackingDispatch = function app
   init();
   $e.run(command, data);
 };
+var AppsEventTracking = exports.AppsEventTracking = /*#__PURE__*/function () {
+  function AppsEventTracking() {
+    (0, _classCallCheck2.default)(this, AppsEventTracking);
+  }
+  return (0, _createClass2.default)(AppsEventTracking, null, [{
+    key: "dispatchEvent",
+    value: function dispatchEvent(eventName, payload) {
+      return elementorCommon.eventsManager.dispatchEvent(eventName, payload);
+    }
+  }, {
+    key: "sendPageViewsWebsiteTemplates",
+    value: function sendPageViewsWebsiteTemplates(page) {
+      return this.dispatchEvent(EVENTS_MAP.PAGE_VIEWS_WEBSITE_TEMPLATES, {
+        trigger: _eventsConfig.default.triggers.pageLoaded,
+        page_loaded: page,
+        secondary_location: page
+      });
+    }
+  }, {
+    key: "sendKitsCloudUpgradeClicked",
+    value: function sendKitsCloudUpgradeClicked(upgradeLocation) {
+      return this.dispatchEvent(EVENTS_MAP.KITS_CLOUD_UPGRADE_CLICKED, {
+        trigger: _eventsConfig.default.triggers.click,
+        secondary_location: upgradeLocation,
+        upgrade_location: upgradeLocation
+      });
+    }
+  }, {
+    key: "sendExportKitCustomization",
+    value: function sendExportKitCustomization(payload) {
+      return this.dispatchEvent(EVENTS_MAP.EXPORT_KIT_CUSTOMIZATION, _objectSpread({
+        trigger: _eventsConfig.default.triggers.click
+      }, payload));
+    }
+  }, {
+    key: "sendImportKitCustomization",
+    value: function sendImportKitCustomization(payload) {
+      return this.dispatchEvent(EVENTS_MAP.IMPORT_KIT_CUSTOMIZATION, _objectSpread({
+        trigger: _eventsConfig.default.triggers.click
+      }, payload));
+    }
+  }, {
+    key: "sendKitImportStatus",
+    value: function sendKitImportStatus() {
+      var error = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
+      return this.dispatchEvent(EVENTS_MAP.KIT_IMPORT_STATUS, _objectSpread({
+        kit_import_status: !error
+      }, error && {
+        kit_import_error: error.message
+      }));
+    }
+  }, {
+    key: "sendKitCloudLibraryApply",
+    value: function sendKitCloudLibraryApply(kitId, kitApplyUrl) {
+      return this.dispatchEvent(EVENTS_MAP.KIT_CLOUD_LIBRARY_APPLY, _objectSpread({
+        trigger: _eventsConfig.default.triggers.click,
+        kit_cloud_id: kitId
+      }, kitApplyUrl && {
+        kit_apply_url: kitApplyUrl
+      }));
+    }
+  }, {
+    key: "sendKitCloudLibraryDelete",
+    value: function sendKitCloudLibraryDelete() {
+      return this.dispatchEvent(EVENTS_MAP.KIT_CLOUD_LIBRARY_DELETE, {
+        trigger: _eventsConfig.default.triggers.click
+      });
+    }
+  }, {
+    key: "sendImportExportAdminAction",
+    value: function sendImportExportAdminAction(actionType) {
+      return this.dispatchEvent(EVENTS_MAP.IMPORT_EXPORT_ADMIN_ACTION, {
+        trigger: _eventsConfig.default.triggers.click,
+        action_type: actionType
+      });
+    }
+  }, {
+    key: "sendKitImportUploadFile",
+    value: function sendKitImportUploadFile(status) {
+      return this.dispatchEvent(EVENTS_MAP.KIT_IMPORT_UPLOAD_FILE, {
+        kit_import_upload_file_status: status
+      });
+    }
+  }]);
+}();
 
 /***/ }),
 
@@ -382,11 +485,12 @@ var _react = __webpack_require__(/*! react */ "react");
 function usePageTitle(_ref) {
   var title = _ref.title,
     prefix = _ref.prefix;
+  var prefixRef = (0, _react.useRef)(prefix);
   (0, _react.useEffect)(function () {
     if (!prefix) {
-      prefix = __('Elementor', 'elementor');
+      prefixRef.current = __('Elementor', 'elementor');
     }
-    document.title = "".concat(prefix, " | ").concat(title);
+    document.title = "".concat(prefixRef.current, " | ").concat(title);
   }, [title, prefix]);
 }
 
@@ -904,11 +1008,13 @@ function Collapse(props) {
     if (props.isOpened !== isOpened) {
       setIsOpened(props.isOpened);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.isOpened]);
   (0, _react.useEffect)(function () {
     if (props.onChange) {
       props.onChange(isOpened);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpened]);
   return /*#__PURE__*/_react.default.createElement(_collapseContext.CollapseContext.Provider, {
     value: {
@@ -1242,17 +1348,20 @@ function Tooltip(props) {
         nodes[nodes.length - 1].remove();
       }
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.disabled]);
   (0, _react.useEffect)(function () {
     if (isLibraryLoaded) {
       setTipsy();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLibraryLoaded, showTooltip]);
   (0, _react.useEffect)(function () {
     // The "show" state should not be changed while the component is disabled.
     if (!props.disabled && props.show !== showTooltip) {
       setShowTooltip(props.show);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.show]);
   return /*#__PURE__*/_react.default.createElement(props.tag, {
     className: (0, _utils.arrayToClassName)(classes),
@@ -1676,6 +1785,7 @@ function UnfilteredFilesDialog(props) {
         onEnable();
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [enableUnfilteredFiles]);
 
   // Enabling unfiltered files ajax status.
@@ -1689,11 +1799,13 @@ function UnfilteredFilesDialog(props) {
         setShow(true);
         break;
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ajaxState]);
   (0, _react.useEffect)(function () {
     if (show && onLoad) {
       onLoad();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [show]);
   if (!show) {
     return null;
@@ -2128,22 +2240,31 @@ Heading.defaultProps = {
 
 
 var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
+var _typeof = __webpack_require__(/*! @babel/runtime/helpers/typeof */ "../node_modules/@babel/runtime/helpers/typeof.js");
 Object.defineProperty(exports, "__esModule", ({
   value: true
 }));
-exports["default"] = Icon;
-var _react = _interopRequireDefault(__webpack_require__(/*! react */ "react"));
-function Icon(props) {
-  return /*#__PURE__*/_react.default.createElement("i", {
-    className: "eps-icon ".concat(props.className)
-  });
-}
+exports["default"] = void 0;
+var _react = _interopRequireWildcard(__webpack_require__(/*! react */ "react"));
+var _extends2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/extends */ "../node_modules/@babel/runtime/helpers/extends.js"));
+var _objectWithoutProperties2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/objectWithoutProperties */ "../node_modules/@babel/runtime/helpers/objectWithoutProperties.js"));
+var _excluded = ["className"];
+function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function _interopRequireWildcard(e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, default: e }; if (null === e || "object" != _typeof(e) && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (var _t in e) "default" !== _t && {}.hasOwnProperty.call(e, _t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, _t)) && (i.get || i.set) ? o(f, _t, i) : f[_t] = e[_t]); return f; })(e, t); }
+var Icon = (0, _react.forwardRef)(function (props, ref) {
+  var className = props.className,
+    rest = (0, _objectWithoutProperties2.default)(props, _excluded);
+  return /*#__PURE__*/_react.default.createElement("i", (0, _extends2.default)({
+    ref: ref,
+    className: "eps-icon ".concat(className)
+  }, rest));
+});
 Icon.propTypes = {
   className: PropTypes.string.isRequired
 };
 Icon.defaultProps = {
   className: ''
 };
+var _default = exports["default"] = Icon;
 
 /***/ }),
 
@@ -3223,6 +3344,7 @@ var Modal = exports.Modal = function Modal(props) {
     return function () {
       return document.removeEventListener('mousedown', closeModal, false);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.show]);
   if (!props.show) {
     return null;
@@ -3317,6 +3439,7 @@ var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/h
 var _defineProperty2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/defineProperty */ "../node_modules/@babel/runtime/helpers/defineProperty.js"));
 var _router = __webpack_require__(/*! @reach/router */ "../node_modules/@reach/router/es/index.js");
 var _router2 = _interopRequireDefault(__webpack_require__(/*! @elementor/router */ "@elementor/router"));
+var _popoverDialog = _interopRequireDefault(__webpack_require__(/*! ../popover-dialog/popover-dialog */ "../app/assets/js/ui/popover-dialog/popover-dialog.js"));
 var _icon = _interopRequireDefault(__webpack_require__(/*! elementor-app/ui/atoms/icon */ "../app/assets/js/ui/atoms/icon.js"));
 function _callSuper(t, o, e) { return o = (0, _getPrototypeOf2.default)(o), (0, _possibleConstructorReturn2.default)(t, _isNativeReflectConstruct() ? Reflect.construct(o, e || [], (0, _getPrototypeOf2.default)(t).constructor) : o.apply(t, e)); }
 function _isNativeReflectConstruct() { try { var t = !Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); } catch (t) {} return (_isNativeReflectConstruct = function _isNativeReflectConstruct() { return !!t; })(); }
@@ -3358,11 +3481,12 @@ var Button = exports["default"] = /*#__PURE__*/function (_React$Component) {
     key: "getIcon",
     value: function getIcon() {
       if (this.props.icon) {
+        var iconRef = _react.default.createRef(null);
         var tooltip = this.props.tooltip || this.props.text;
         var icon = /*#__PURE__*/_react.default.createElement(_icon.default, {
+          ref: iconRef,
           className: this.props.icon,
-          "aria-hidden": "true",
-          title: tooltip
+          "aria-hidden": "true"
         });
         var screenReaderText = '';
         if (this.props.hideText) {
@@ -3370,7 +3494,10 @@ var Button = exports["default"] = /*#__PURE__*/function (_React$Component) {
             className: "sr-only"
           }, tooltip);
         }
-        return /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, icon, screenReaderText);
+        return /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, icon, screenReaderText, this.props.tooltip && /*#__PURE__*/_react.default.createElement(_popoverDialog.default, {
+          targetRef: iconRef,
+          wrapperClass: "e-kit-library__tooltip"
+        }, this.props.tooltip));
       }
       return '';
     }
@@ -3784,6 +3911,7 @@ function Select2(props) {
     return function () {
       $select2.select2('destroy').off('select2:select select2:unselect');
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.settings, props.options]);
 
   // Listen to changes in the prop `value`, if changed update the select 2.
@@ -3993,6 +4121,176 @@ Panel.Body = _panelBody.default;
 /***/ (() => {
 
 
+
+/***/ }),
+
+/***/ "../app/assets/js/ui/popover-dialog/popover-dialog.js":
+/*!************************************************************!*\
+  !*** ../app/assets/js/ui/popover-dialog/popover-dialog.js ***!
+  \************************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+/* provided dependency */ var PropTypes = __webpack_require__(/*! prop-types */ "../node_modules/prop-types/index.js");
+
+
+var _typeof = __webpack_require__(/*! @babel/runtime/helpers/typeof */ "../node_modules/@babel/runtime/helpers/typeof.js");
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports["default"] = PopoverDialog;
+var _react = _interopRequireWildcard(__webpack_require__(/*! react */ "react"));
+function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function _interopRequireWildcard(e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, default: e }; if (null === e || "object" != _typeof(e) && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (var _t in e) "default" !== _t && {}.hasOwnProperty.call(e, _t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, _t)) && (i.get || i.set) ? o(f, _t, i) : f[_t] = e[_t]); return f; })(e, t); }
+function PopoverDialog(props) {
+  var targetRef = props.targetRef,
+    offsetTop = props.offsetTop,
+    offsetLeft = props.offsetLeft,
+    wrapperClass = props.wrapperClass,
+    trigger = props.trigger,
+    hideAfter = props.hideAfter,
+    popoverRef = (0, _react.useCallback)(function (popoverEl) {
+      var target = targetRef === null || targetRef === void 0 ? void 0 : targetRef.current;
+
+      // If the target or the popover element does not exist on the page anymore after a re-render, do nothing.
+      if (!target || !popoverEl) {
+        return;
+      }
+
+      /**
+       * Show Popover
+       */
+      var showPopover = function showPopover() {
+        popoverEl.style.display = 'block';
+        popoverEl.setAttribute('aria-expanded', true);
+        var targetRect = target.getBoundingClientRect(),
+          popoverRect = popoverEl.getBoundingClientRect(),
+          widthDifference = popoverRect.width - targetRect.width;
+        popoverEl.style.top = targetRect.bottom + offsetTop + 'px';
+        popoverEl.style.left = targetRect.left - widthDifference / 2 - offsetLeft + 'px';
+
+        // 16px to compensate for the arrow width.
+        popoverEl.style.setProperty('--popover-arrow-offset-end', (popoverRect.width - 16) / 2 + 'px');
+      };
+
+      /**
+       * Hide Popover
+       */
+      var hidePopover = function hidePopover() {
+        popoverEl.style.display = 'none';
+        popoverEl.setAttribute('aria-expanded', false);
+      };
+
+      /**
+       * Handle the Popover's hover functionality
+       */
+      var handlePopoverHover = function handlePopoverHover() {
+        var hideOnMouseOut = true,
+          timeOut = null;
+
+        // Show popover on hover of the target
+        target.addEventListener('mouseover', function () {
+          hideOnMouseOut = true;
+          showPopover();
+        });
+
+        // Hide popover when not overing over the target or the popover itself
+        target.addEventListener('mouseleave', function () {
+          timeOut = setTimeout(function () {
+            if (hideOnMouseOut) {
+              if ('block' === popoverEl.style.display) {
+                hidePopover();
+              }
+            }
+          }, hideAfter);
+        });
+
+        // Don't hide the popover if the user is still hovering over it.
+        popoverEl.addEventListener('mouseover', function () {
+          hideOnMouseOut = false;
+          if (timeOut) {
+            clearTimeout(timeOut);
+            timeOut = null;
+          }
+        });
+
+        // Once the user stops hovering over the popover, hide it.
+        popoverEl.addEventListener('mouseleave', function () {
+          timeOut = setTimeout(function () {
+            if (hideOnMouseOut) {
+              if ('block' === popoverEl.style.display) {
+                hidePopover();
+              }
+            }
+          }, hideAfter);
+          hideOnMouseOut = true;
+        });
+      };
+
+      /**
+       * Handle the Popover's click functionality
+       */
+      var handlePopoverClick = function handlePopoverClick() {
+        var popoverIsActive = false;
+        target.addEventListener('click', function (e) {
+          e.preventDefault();
+          e.stopPropagation();
+          if (popoverIsActive) {
+            hidePopover();
+            popoverIsActive = false;
+          } else {
+            showPopover();
+            popoverIsActive = true;
+          }
+        });
+
+        // Make sure the popover doesn't close when it is clicked on.
+        popoverEl.addEventListener('click', function (e) {
+          e.stopPropagation();
+        });
+
+        // Hide the popover when clicking outside of it.
+        document.body.addEventListener('click', function () {
+          if (popoverIsActive) {
+            hidePopover();
+            popoverIsActive = false;
+          }
+        });
+      };
+      if ('hover' === trigger) {
+        handlePopoverHover();
+      } else if ('click' === trigger) {
+        handlePopoverClick();
+      }
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [targetRef]);
+  var wrapperClasses = 'e-app__popover';
+  if (wrapperClass) {
+    wrapperClasses += ' ' + wrapperClass;
+  }
+  return /*#__PURE__*/_react.default.createElement("div", {
+    className: wrapperClasses,
+    ref: popoverRef
+  }, props.children);
+}
+PopoverDialog.propTypes = {
+  targetRef: PropTypes.oneOfType([PropTypes.func, PropTypes.shape({
+    current: PropTypes.any
+  })]).isRequired,
+  trigger: PropTypes.string,
+  direction: PropTypes.string,
+  offsetTop: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  offsetLeft: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  wrapperClass: PropTypes.string,
+  children: PropTypes.any,
+  hideAfter: PropTypes.number
+};
+PopoverDialog.defaultProps = {
+  direction: 'bottom',
+  trigger: 'hover',
+  offsetTop: 10,
+  offsetLeft: 0,
+  hideAfter: 300
+};
 
 /***/ }),
 
@@ -4262,6 +4560,7 @@ function Table(_ref) {
     if (onSelect) {
       onSelect(selected);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selected]);
   return /*#__PURE__*/_react.default.createElement(_tableContext.Context.Provider, {
     value: {
@@ -4354,26 +4653,18 @@ function fetchCloudKitsEligibility() {
 }
 function _fetchCloudKitsEligibility() {
   _fetchCloudKitsEligibility = (0, _asyncToGenerator2.default)(/*#__PURE__*/_regenerator.default.mark(function _callee() {
-    var _elementorCommon;
-    var isCloudKitsExperimentActive, response;
+    var response;
     return _regenerator.default.wrap(function (_context) {
       while (1) switch (_context.prev = _context.next) {
         case 0:
-          isCloudKitsExperimentActive = (_elementorCommon = elementorCommon) === null || _elementorCommon === void 0 || (_elementorCommon = _elementorCommon.config) === null || _elementorCommon === void 0 || (_elementorCommon = _elementorCommon.experimentalFeatures) === null || _elementorCommon === void 0 ? void 0 : _elementorCommon['cloud-library'];
-          if (isCloudKitsExperimentActive) {
-            _context.next = 1;
-            break;
-          }
-          return _context.abrupt("return", false);
-        case 1:
-          _context.next = 2;
+          _context.next = 1;
           return $e.data.get('cloud-kits/eligibility', {}, {
             refresh: true
           });
-        case 2:
+        case 1:
           response = _context.sent;
           return _context.abrupt("return", response === null || response === void 0 ? void 0 : response.data);
-        case 3:
+        case 2:
         case "end":
           return _context.stop();
       }
@@ -4397,7 +4688,7 @@ var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/inte
 Object.defineProperty(exports, "__esModule", ({
   value: true
 }));
-exports.stringToRemValues = exports.rgbToHex = exports.pxToRem = exports.isOneOf = exports.arrayToObjectByKey = exports.arrayToClassName = void 0;
+exports.stringToRemValues = exports.rgbToHex = exports.pxToRem = exports.isOneOf = exports.htmlDecodeTextContent = exports.arrayToObjectByKey = exports.arrayToClassName = void 0;
 var _typeof2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/typeof */ "../node_modules/@babel/runtime/helpers/typeof.js"));
 var pxToRem = exports.pxToRem = function pxToRem(pixels) {
   if (!pixels) {
@@ -4440,192 +4731,9 @@ var arrayToObjectByKey = exports.arrayToObjectByKey = function arrayToObjectByKe
   });
   return finalObject;
 };
-
-/***/ }),
-
-/***/ "../app/modules/import-export-customization/assets/js/export/components/export-complete-download-link.js":
-/*!***************************************************************************************************************!*\
-  !*** ../app/modules/import-export-customization/assets/js/export/components/export-complete-download-link.js ***!
-  \***************************************************************************************************************/
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-"use strict";
-/* provided dependency */ var __ = __webpack_require__(/*! @wordpress/i18n */ "@wordpress/i18n")["__"];
-
-
-var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
-Object.defineProperty(exports, "__esModule", ({
-  value: true
-}));
-exports["default"] = ExportCompleteDownloadLink;
-var _react = _interopRequireDefault(__webpack_require__(/*! react */ "react"));
-var _ui = __webpack_require__(/*! @elementor/ui */ "@elementor/ui");
-var _propTypes = _interopRequireDefault(__webpack_require__(/*! prop-types */ "../node_modules/prop-types/index.js"));
-function ExportCompleteDownloadLink(_ref) {
-  var onDownloadClick = _ref.onDownloadClick;
-  return /*#__PURE__*/_react.default.createElement(_ui.Typography, {
-    variant: "body2",
-    color: "text.secondary",
-    "data-testid": "export-complete-download-link"
-  }, __('Is the automatic download not starting?', 'elementor'), ' ', /*#__PURE__*/_react.default.createElement(_ui.Link, {
-    href: "#",
-    onClick: onDownloadClick,
-    sx: {
-      cursor: 'pointer',
-      textDecoration: 'underline'
-    }
-  }, __('Download manually', 'elementor')), '. ');
-}
-ExportCompleteDownloadLink.propTypes = {
-  onDownloadClick: _propTypes.default.func.isRequired
-};
-
-/***/ }),
-
-/***/ "../app/modules/import-export-customization/assets/js/export/components/export-complete-heading.js":
-/*!*********************************************************************************************************!*\
-  !*** ../app/modules/import-export-customization/assets/js/export/components/export-complete-heading.js ***!
-  \*********************************************************************************************************/
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-"use strict";
-/* provided dependency */ var __ = __webpack_require__(/*! @wordpress/i18n */ "@wordpress/i18n")["__"];
-
-
-var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
-Object.defineProperty(exports, "__esModule", ({
-  value: true
-}));
-exports["default"] = ExportCompleteHeading;
-var _react = _interopRequireDefault(__webpack_require__(/*! react */ "react"));
-var _ui = __webpack_require__(/*! @elementor/ui */ "@elementor/ui");
-var _propTypes = _interopRequireDefault(__webpack_require__(/*! prop-types */ "../node_modules/prop-types/index.js"));
-function ExportCompleteHeading(_ref) {
-  var isCloudExport = _ref.isCloudExport;
-  return /*#__PURE__*/_react.default.createElement(_ui.Box, {
-    "data-testid": "export-complete-heading"
-  }, /*#__PURE__*/_react.default.createElement(_ui.Typography, {
-    variant: "h4",
-    component: "h2",
-    gutterBottom: true
-  }, isCloudExport ? __('Your website template is now saved to the library!', 'elementor') : __('Your .zip file is ready', 'elementor')), /*#__PURE__*/_react.default.createElement(_ui.Typography, {
-    variant: "body2",
-    color: "text.secondary",
-    sx: {
-      mb: 3
-    }
-  }, isCloudExport ? /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, __('You can find it in the My Website Templates tab.', 'elementor'), ' ', /*#__PURE__*/_react.default.createElement(_ui.Link, {
-    href: elementorAppConfig.base_url + '#/kit-library/cloud',
-    sx: {
-      cursor: 'pointer'
-    }
-  }, __('Take me there', 'elementor'))) : __('Once the download is complete, you can upload it to be used for other sites.', 'elementor')));
-}
-ExportCompleteHeading.propTypes = {
-  isCloudExport: _propTypes.default.bool.isRequired
-};
-
-/***/ }),
-
-/***/ "../app/modules/import-export-customization/assets/js/export/components/export-complete-icon.js":
-/*!******************************************************************************************************!*\
-  !*** ../app/modules/import-export-customization/assets/js/export/components/export-complete-icon.js ***!
-  \******************************************************************************************************/
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-"use strict";
-
-
-var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
-Object.defineProperty(exports, "__esModule", ({
-  value: true
-}));
-exports["default"] = ExportCompleteIcon;
-var _react = _interopRequireDefault(__webpack_require__(/*! react */ "react"));
-var _ui = __webpack_require__(/*! @elementor/ui */ "@elementor/ui");
-function ExportCompleteIcon() {
-  return /*#__PURE__*/_react.default.createElement(_ui.Box, {
-    sx: {
-      mb: 2
-    },
-    "data-testid": "export-complete-icon"
-  }, /*#__PURE__*/_react.default.createElement("img", {
-    src: elementorAppConfig.assets_url + 'images/go-pro.svg',
-    alt: "",
-    style: {
-      width: '80px',
-      height: '80px'
-    }
-  }));
-}
-
-/***/ }),
-
-/***/ "../app/modules/import-export-customization/assets/js/export/components/export-complete-summary.js":
-/*!*********************************************************************************************************!*\
-  !*** ../app/modules/import-export-customization/assets/js/export/components/export-complete-summary.js ***!
-  \*********************************************************************************************************/
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-"use strict";
-/* provided dependency */ var __ = __webpack_require__(/*! @wordpress/i18n */ "@wordpress/i18n")["__"];
-
-
-var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
-Object.defineProperty(exports, "__esModule", ({
-  value: true
-}));
-exports["default"] = ExportCompleteSummary;
-var _react = _interopRequireDefault(__webpack_require__(/*! react */ "react"));
-var _ui = __webpack_require__(/*! @elementor/ui */ "@elementor/ui");
-var _propTypes = _interopRequireDefault(__webpack_require__(/*! prop-types */ "../node_modules/prop-types/index.js"));
-function ExportCompleteSummary(_ref) {
-  var kitInfo = _ref.kitInfo,
-    includes = _ref.includes;
-  return /*#__PURE__*/_react.default.createElement(_ui.Box, {
-    sx: {
-      width: '100%',
-      border: 1,
-      borderRadius: 1,
-      borderColor: 'action.focus',
-      p: 2.5
-    },
-    "data-testid": "export-complete-summary"
-  }, /*#__PURE__*/_react.default.createElement(_ui.Typography, {
-    variant: "h6",
-    component: "h3",
-    gutterBottom: true
-  }, kitInfo.title), kitInfo.description && /*#__PURE__*/_react.default.createElement(_ui.Typography, {
-    variant: "body2",
-    color: "text.secondary",
-    sx: {
-      mb: 2
-    }
-  }, kitInfo.description), /*#__PURE__*/_react.default.createElement(_ui.Typography, {
-    variant: "caption",
-    color: "text.secondary",
-    sx: {
-      display: 'block',
-      mb: 1
-    }
-  }, __('Exported items:', 'elementor')), /*#__PURE__*/_react.default.createElement(_ui.Typography, {
-    variant: "body2"
-  }, includes.map(function (item) {
-    var itemLabels = {
-      content: __('Content', 'elementor'),
-      templates: __('Templates', 'elementor'),
-      settings: __('Settings & configurations', 'elementor'),
-      plugins: __('Plugins', 'elementor')
-    };
-    return itemLabels[item] || item;
-  }).join(', ')));
-}
-ExportCompleteSummary.propTypes = {
-  kitInfo: _propTypes.default.shape({
-    title: _propTypes.default.string,
-    description: _propTypes.default.string
-  }).isRequired,
-  includes: _propTypes.default.arrayOf(_propTypes.default.string).isRequired
+var htmlDecodeTextContent = exports.htmlDecodeTextContent = function htmlDecodeTextContent(input) {
+  var doc = new DOMParser().parseFromString(input, 'text/html');
+  return doc.documentElement.textContent;
 };
 
 /***/ }),
@@ -4649,10 +4757,16 @@ var _react = _interopRequireDefault(__webpack_require__(/*! react */ "react"));
 var _ui = __webpack_require__(/*! @elementor/ui */ "@elementor/ui");
 var _propTypes = _interopRequireDefault(__webpack_require__(/*! prop-types */ "../node_modules/prop-types/index.js"));
 var _icons = __webpack_require__(/*! ../../shared/components/icons */ "../app/modules/import-export-customization/assets/js/shared/components/icons/index.js");
+var _exportContext = __webpack_require__(/*! ../context/export-context */ "../app/modules/import-export-customization/assets/js/export/context/export-context.js");
 var HELP_URL = 'https://go.elementor.com/app-import-download-failed';
 function ExportError(_ref) {
   var statusText = _ref.statusText;
+  var _useExportContext = (0, _exportContext.useExportContext)(),
+    dispatch = _useExportContext.dispatch;
   var handleTryAgain = function handleTryAgain() {
+    dispatch({
+      type: 'RESET_STATE'
+    });
     window.location.href = elementorAppConfig.base_url + '#/export-customization/';
   };
   var handleLearnMore = function handleLearnMore() {
@@ -4723,12 +4837,14 @@ function ExportIntro() {
   }, /*#__PURE__*/_react.default.createElement(_ui.Typography, {
     variant: "h4",
     component: "h2",
-    gutterBottom: true
+    gutterBottom: true,
+    color: "text.primary"
   }, __('Export a Website template?', 'elementor')), /*#__PURE__*/_react.default.createElement(_ui.Typography, {
-    variant: "body1",
+    variant: "subtitle1",
     color: "text.secondary"
   }, __('Choose which Elementor components - templates, content and site settings - to include in your website templates file. By default, all of your components will be exported.', 'elementor'), ' ', /*#__PURE__*/_react.default.createElement(_ui.Link, {
     href: "https://go.elementor.com/app-what-are-kits",
+    color: "info.light",
     target: "_blank",
     rel: "noopener noreferrer"
   }, __('Learn more', 'elementor'))));
@@ -4754,12 +4870,15 @@ Object.defineProperty(exports, "__esModule", ({
 exports["default"] = ExportKitFooter;
 var _react = _interopRequireWildcard(__webpack_require__(/*! react */ "react"));
 var _ui = __webpack_require__(/*! @elementor/ui */ "@elementor/ui");
+var _router = __webpack_require__(/*! @reach/router */ "../node_modules/@reach/router/es/index.js");
 var _useCloudKitsEligibility = _interopRequireDefault(__webpack_require__(/*! elementor-app/hooks/use-cloud-kits-eligibility */ "../app/assets/js/hooks/use-cloud-kits-eligibility.js"));
 var _useConnectState2 = _interopRequireDefault(__webpack_require__(/*! ../../shared/hooks/use-connect-state */ "../app/modules/import-export-customization/assets/js/shared/hooks/use-connect-state.js"));
 var _exportContext = __webpack_require__(/*! ../context/export-context */ "../app/modules/import-export-customization/assets/js/export/context/export-context.js");
+var _appsEventTracking = __webpack_require__(/*! elementor-app/event-track/apps-event-tracking */ "../app/assets/js/event-track/apps-event-tracking.js");
 function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function _interopRequireWildcard(e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, default: e }; if (null === e || "object" != _typeof(e) && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (var _t in e) "default" !== _t && {}.hasOwnProperty.call(e, _t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, _t)) && (i.get || i.set) ? o(f, _t, i) : f[_t] = e[_t]); return f; })(e, t); }
 function ExportKitFooter() {
   var connectButtonRef = (0, _react.useRef)();
+  var navigate = (0, _router.useNavigate)();
   var _useConnectState = (0, _useConnectState2.default)(),
     isConnected = _useConnectState.isConnected,
     isConnecting = _useConnectState.isConnecting,
@@ -4768,7 +4887,8 @@ function ExportKitFooter() {
     handleConnectError = _useConnectState.handleConnectError;
   var _useExportContext = (0, _exportContext.useExportContext)(),
     dispatch = _useExportContext.dispatch,
-    isTemplateNameValid = _useExportContext.isTemplateNameValid;
+    isTemplateNameValid = _useExportContext.isTemplateNameValid,
+    isExporting = _useExportContext.isExporting;
   var _useCloudKitsEligibil = (0, _useCloudKitsEligibility.default)({
       enabled: isConnected
     }),
@@ -4800,7 +4920,7 @@ function ExportKitFooter() {
       return;
     }
     if (!isCloudKitsEligible) {
-      window.location.href = elementorAppConfig.base_url + '#/kit-library/cloud';
+      navigate('/kit-library/cloud');
     } else {
       dispatch({
         type: 'SET_KIT_SAVE_SOURCE',
@@ -4810,16 +4930,22 @@ function ExportKitFooter() {
         type: 'SET_EXPORT_STATUS',
         payload: _exportContext.EXPORT_STATUS.EXPORTING
       });
-      window.location.href = elementorAppConfig.base_url + '#/export-customization/process';
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isConnecting, isCheckingEligibility, isCloudKitsEligible, dispatch]);
   (0, _react.useEffect)(function () {
     if (isConnecting && !isCheckingEligibility) {
       setConnecting(false);
     }
   }, [isConnecting, isCheckingEligibility, setConnecting]);
+  (0, _react.useEffect)(function () {
+    if (isExporting) {
+      navigate('/export-customization/process');
+    }
+  }, [isExporting, navigate]);
   var handleUpgradeClick = function handleUpgradeClick() {
-    window.location.href = elementorAppConfig.base_url + '#/kit-library/cloud';
+    _appsEventTracking.AppsEventTracking.sendKitsCloudUpgradeClicked(elementorCommon.eventsManager.config.secondaryLocations.kitLibrary.kitExportCustomization);
+    navigate('/kit-library/cloud');
   };
   var handleUploadClick = function handleUploadClick() {
     dispatch({
@@ -4830,7 +4956,6 @@ function ExportKitFooter() {
       type: 'SET_EXPORT_STATUS',
       payload: _exportContext.EXPORT_STATUS.EXPORTING
     });
-    window.location.href = elementorAppConfig.base_url + '#/export-customization/process';
   };
   var handleExportAsZip = function handleExportAsZip() {
     dispatch({
@@ -4841,7 +4966,6 @@ function ExportKitFooter() {
       type: 'SET_EXPORT_STATUS',
       payload: _exportContext.EXPORT_STATUS.EXPORTING
     });
-    window.location.href = elementorAppConfig.base_url + '#/export-customization/process';
   };
   var renderSaveToLibraryButton = function renderSaveToLibraryButton() {
     if (!isConnected) {
@@ -4902,6 +5026,78 @@ function ExportKitFooter() {
 
 /***/ }),
 
+/***/ "../app/modules/import-export-customization/assets/js/export/components/export-kit-parts-selection.js":
+/*!************************************************************************************************************!*\
+  !*** ../app/modules/import-export-customization/assets/js/export/components/export-kit-parts-selection.js ***!
+  \************************************************************************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports["default"] = ExportKitPartsSelection;
+var _react = _interopRequireDefault(__webpack_require__(/*! react */ "react"));
+var _exportContext = __webpack_require__(/*! ../context/export-context */ "../app/modules/import-export-customization/assets/js/export/context/export-context.js");
+var _components = __webpack_require__(/*! ../../shared/components */ "../app/modules/import-export-customization/assets/js/shared/components/index.js");
+var _kitContentData = _interopRequireDefault(__webpack_require__(/*! ../../shared/kit-content-data */ "../app/modules/import-export-customization/assets/js/shared/kit-content-data.js"));
+function ExportKitPartsSelection() {
+  var _useExportContext = (0, _exportContext.useExportContext)(),
+    data = _useExportContext.data,
+    dispatch = _useExportContext.dispatch;
+  var handleCheckboxChange = function handleCheckboxChange(itemType) {
+    var isChecked = data.includes.includes(itemType);
+    var kitItem = _kitContentData.default.find(function (item) {
+      return item.type === itemType;
+    });
+    if (isChecked && kitItem !== null && kitItem !== void 0 && kitItem.required) {
+      return;
+    }
+    var actionType = isChecked ? 'REMOVE_INCLUDE' : 'ADD_INCLUDE';
+    dispatch({
+      type: actionType,
+      payload: itemType
+    });
+  };
+  var handleSaveCustomization = function handleSaveCustomization(key, payload, hasEnabledCustomization, excludedValues) {
+    dispatch({
+      type: 'SET_CUSTOMIZATION',
+      payload: {
+        key: key,
+        value: payload
+      }
+    });
+    dispatch({
+      type: 'SET_DATA_FOR_ANALYTICS',
+      payload: {
+        key: key,
+        value: excludedValues
+      }
+    });
+    if (hasEnabledCustomization) {
+      dispatch({
+        type: 'ADD_INCLUDE',
+        payload: key
+      });
+    } else {
+      dispatch({
+        type: 'REMOVE_INCLUDE',
+        payload: key
+      });
+    }
+  };
+  return /*#__PURE__*/_react.default.createElement(_components.KitPartsSelection, {
+    data: data,
+    onCheckboxChange: handleCheckboxChange,
+    handleSaveCustomization: handleSaveCustomization
+  });
+}
+
+/***/ }),
+
 /***/ "../app/modules/import-export-customization/assets/js/export/components/export-processing.js":
 /*!***************************************************************************************************!*\
   !*** ../app/modules/import-export-customization/assets/js/export/components/export-processing.js ***!
@@ -4926,6 +5122,7 @@ function ExportProcessing(_ref) {
     size: 20
   }), /*#__PURE__*/_react.default.createElement(_ui.Typography, {
     variant: "h5",
+    color: 'text.primary',
     component: "h2"
   }, statusText), /*#__PURE__*/_react.default.createElement(_ui.Typography, {
     variant: "body1",
@@ -4935,93 +5132,6 @@ function ExportProcessing(_ref) {
 ExportProcessing.propTypes = {
   statusText: _propTypes.default.string.isRequired
 };
-
-/***/ }),
-
-/***/ "../app/modules/import-export-customization/assets/js/export/components/kit-content.js":
-/*!*********************************************************************************************!*\
-  !*** ../app/modules/import-export-customization/assets/js/export/components/kit-content.js ***!
-  \*********************************************************************************************/
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-"use strict";
-/* provided dependency */ var __ = __webpack_require__(/*! @wordpress/i18n */ "@wordpress/i18n")["__"];
-
-
-var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
-Object.defineProperty(exports, "__esModule", ({
-  value: true
-}));
-exports["default"] = KitContent;
-var _react = _interopRequireDefault(__webpack_require__(/*! react */ "react"));
-var _ui = __webpack_require__(/*! @elementor/ui */ "@elementor/ui");
-var _kitContentData = _interopRequireDefault(__webpack_require__(/*! ../../shared/kit-content-data */ "../app/modules/import-export-customization/assets/js/shared/kit-content-data.js"));
-var _exportContext = __webpack_require__(/*! ../context/export-context */ "../app/modules/import-export-customization/assets/js/export/context/export-context.js");
-function KitContent() {
-  var _useExportContext = (0, _exportContext.useExportContext)(),
-    data = _useExportContext.data,
-    dispatch = _useExportContext.dispatch;
-  var handleCheckboxChange = function handleCheckboxChange(itemType) {
-    var isChecked = data.includes.includes(itemType);
-    var actionType = isChecked ? 'REMOVE_INCLUDE' : 'ADD_INCLUDE';
-    dispatch({
-      type: actionType,
-      payload: itemType
-    });
-  };
-  return /*#__PURE__*/_react.default.createElement(_ui.Stack, {
-    spacing: 2
-  }, _kitContentData.default.map(function (item) {
-    return /*#__PURE__*/_react.default.createElement(_ui.Box, {
-      key: item.type,
-      sx: {
-        mb: 3,
-        border: 1,
-        borderRadius: 1,
-        borderColor: 'action.focus',
-        p: 2.5
-      }
-    }, /*#__PURE__*/_react.default.createElement(_ui.Box, {
-      sx: {
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'flex-start'
-      }
-    }, /*#__PURE__*/_react.default.createElement(_ui.Box, {
-      sx: {
-        flex: 1
-      }
-    }, /*#__PURE__*/_react.default.createElement(_ui.FormControlLabel, {
-      control: /*#__PURE__*/_react.default.createElement(_ui.Checkbox, {
-        checked: data.includes.includes(item.type),
-        onChange: function onChange() {
-          return handleCheckboxChange(item.type);
-        },
-        sx: {
-          py: 0
-        }
-      }),
-      label: /*#__PURE__*/_react.default.createElement(_ui.Typography, {
-        variant: "body1",
-        sx: {
-          fontWeight: 500
-        }
-      }, item.data.title)
-    }), /*#__PURE__*/_react.default.createElement(_ui.Typography, {
-      variant: "body2",
-      color: "text.secondary",
-      sx: {
-        mt: 1,
-        ml: 4
-      }
-    }, item.data.features.open.join(', '))), /*#__PURE__*/_react.default.createElement(_ui.Link, {
-      href: "#",
-      sx: {
-        alignSelf: 'center'
-      }
-    }, __('Edit', 'elementor'))));
-  }));
-}
 
 /***/ }),
 
@@ -5059,7 +5169,7 @@ function KitInfo() {
       border: 1,
       borderRadius: 1,
       borderColor: 'action.focus',
-      p: 2.5
+      p: 3.5
     }
   }, /*#__PURE__*/_react.default.createElement(_ui.Typography, {
     variant: "caption",
@@ -5121,8 +5231,8 @@ exports.ExportContextProvider = ExportContextProvider;
 exports.useExportContext = useExportContext;
 var _react = _interopRequireWildcard(__webpack_require__(/*! react */ "react"));
 var _slicedToArray2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/slicedToArray */ "../node_modules/@babel/runtime/helpers/slicedToArray.js"));
-var _toConsumableArray2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/toConsumableArray */ "../node_modules/@babel/runtime/helpers/toConsumableArray.js"));
 var _defineProperty2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/defineProperty */ "../node_modules/@babel/runtime/helpers/defineProperty.js"));
+var _toConsumableArray2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/toConsumableArray */ "../node_modules/@babel/runtime/helpers/toConsumableArray.js"));
 var _propTypes = _interopRequireDefault(__webpack_require__(/*! prop-types */ "../node_modules/prop-types/index.js"));
 function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function _interopRequireWildcard(e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, default: e }; if (null === e || "object" != _typeof(e) && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (var _t in e) "default" !== _t && {}.hasOwnProperty.call(e, _t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, _t)) && (i.get || i.set) ? o(f, _t, i) : f[_t] = e[_t]); return f; })(e, t); }
 function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
@@ -5138,15 +5248,29 @@ var initialState = {
   exportedData: null,
   exportStatus: EXPORT_STATUS.PENDING,
   plugins: [],
-  includes: ['content', 'templates', 'settings', 'plugins'],
-  // All items selected by default
+  customization: {
+    settings: null,
+    templates: null,
+    content: null,
+    plugins: null
+  },
+  includes: ['content'].concat((0, _toConsumableArray2.default)(elementorAppConfig.hasPro ? ['templates'] : []), ['settings', 'plugins']),
   kitInfo: {
     title: null,
     description: null,
     source: null
+  },
+  analytics: {
+    customization: {
+      settings: null,
+      templates: null,
+      content: null,
+      plugins: null
+    }
   }
 };
 function exportReducer(state, _ref) {
+  var _state$analytics;
   var type = _ref.type,
     payload = _ref.payload;
   switch (type) {
@@ -5192,8 +5316,22 @@ function exportReducer(state, _ref) {
       return _objectSpread(_objectSpread({}, state), {}, {
         includes: state.includes.filter(function (item) {
           return item !== payload;
-        })
+        }),
+        // Clear customization when removing from includes
+        customization: _objectSpread(_objectSpread({}, state.customization), {}, (0, _defineProperty2.default)({}, payload, null))
       });
+    case 'SET_CUSTOMIZATION':
+      return _objectSpread(_objectSpread({}, state), {}, {
+        customization: _objectSpread(_objectSpread({}, state.customization), {}, (0, _defineProperty2.default)({}, payload.key, payload.value))
+      });
+    case 'SET_DATA_FOR_ANALYTICS':
+      return _objectSpread(_objectSpread({}, state), {}, {
+        analytics: {
+          customization: _objectSpread(_objectSpread({}, (_state$analytics = state.analytics) === null || _state$analytics === void 0 ? void 0 : _state$analytics.customization), {}, (0, _defineProperty2.default)({}, payload.key, payload.value))
+        }
+      });
+    case 'RESET_STATE':
+      return _objectSpread({}, initialState);
     default:
       return state;
   }
@@ -5296,6 +5434,7 @@ var _regenerator = _interopRequireDefault(__webpack_require__(/*! @babel/runtime
 var _asyncToGenerator2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/asyncToGenerator */ "../node_modules/@babel/runtime/helpers/asyncToGenerator.js"));
 var _slicedToArray2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/slicedToArray */ "../node_modules/@babel/runtime/helpers/slicedToArray.js"));
 var _react = __webpack_require__(/*! react */ "react");
+var _router = __webpack_require__(/*! @reach/router */ "../node_modules/@reach/router/es/index.js");
 var _screenshot = __webpack_require__(/*! ../utils/screenshot */ "../app/modules/import-export-customization/assets/js/export/utils/screenshot.js");
 var _exportContext = __webpack_require__(/*! ../context/export-context */ "../app/modules/import-export-customization/assets/js/export/context/export-context.js");
 var STATUS_PROCESSING = 'processing';
@@ -5303,33 +5442,32 @@ var STATUS_ERROR = 'error';
 var useExportKit = exports.useExportKit = function useExportKit(_ref) {
   var includes = _ref.includes,
     kitInfo = _ref.kitInfo,
-    plugins = _ref.plugins,
+    customization = _ref.customization,
     isExporting = _ref.isExporting,
     dispatch = _ref.dispatch;
   var _useState = (0, _react.useState)(STATUS_PROCESSING),
     _useState2 = (0, _slicedToArray2.default)(_useState, 2),
     status = _useState2[0],
     setStatus = _useState2[1];
+  var navigate = (0, _router.useNavigate)();
   var exportKit = (0, _react.useCallback)(/*#__PURE__*/(0, _asyncToGenerator2.default)(/*#__PURE__*/_regenerator.default.mark(function _callee() {
-    var _kitInfo$title, _kitInfo$description, _elementorCommon, _window$wpApiSettings, exportData, isCloudKitFeatureActive, isCloudExport, screenshot, baseUrl, exportUrl, response, result, _result$data, _result$data2, errorMessage, isExportLocal, isExportToCloud, exportedData, _exportedData, _t;
+    var _kitInfo$title, _kitInfo$description, _window$wpApiSettings, exportData, isCloudExport, screenshot, baseUrl, exportUrl, response, result, _result$data, _result$data2, errorMessage, isExportLocal, isExportToCloud, exportedData, _exportedData, _t;
     return _regenerator.default.wrap(function (_context) {
       while (1) switch (_context.prev = _context.next) {
         case 0:
           _context.prev = 0;
           setStatus(STATUS_PROCESSING);
           exportData = {
-            include: includes,
             kitInfo: {
               title: ((_kitInfo$title = kitInfo.title) === null || _kitInfo$title === void 0 ? void 0 : _kitInfo$title.trim()) || null,
               description: ((_kitInfo$description = kitInfo.description) === null || _kitInfo$description === void 0 ? void 0 : _kitInfo$description.trim()) || null,
               source: kitInfo.source
             },
-            plugins: plugins || [],
-            selectedCustomPostTypes: []
+            include: includes,
+            customization: customization
           };
-          isCloudKitFeatureActive = (_elementorCommon = elementorCommon) === null || _elementorCommon === void 0 || (_elementorCommon = _elementorCommon.config) === null || _elementorCommon === void 0 || (_elementorCommon = _elementorCommon.experimentalFeatures) === null || _elementorCommon === void 0 ? void 0 : _elementorCommon['cloud-library'];
           isCloudExport = 'cloud' === kitInfo.source;
-          if (!(isCloudKitFeatureActive && isCloudExport)) {
+          if (!isCloudExport) {
             _context.next = 2;
             break;
           }
@@ -5386,7 +5524,8 @@ var useExportKit = exports.useExportKit = function useExportKit(_ref) {
             break;
           }
           _exportedData = {
-            kit: result.data.kit
+            kit: result.data.kit,
+            manifest: result.data.manifest
           };
           dispatch({
             type: 'SET_EXPORTED_DATA',
@@ -5401,7 +5540,7 @@ var useExportKit = exports.useExportKit = function useExportKit(_ref) {
             type: 'SET_EXPORT_STATUS',
             payload: _exportContext.EXPORT_STATUS.COMPLETED
           });
-          window.location.href = elementorAppConfig.base_url + '#/export-customization/complete';
+          navigate('/export-customization/complete');
           _context.next = 10;
           break;
         case 9:
@@ -5413,7 +5552,7 @@ var useExportKit = exports.useExportKit = function useExportKit(_ref) {
           return _context.stop();
       }
     }, _callee, null, [[0, 9]]);
-  })), [includes, kitInfo, plugins, dispatch]);
+  })), [includes, kitInfo, customization, dispatch, navigate]);
   (0, _react.useEffect)(function () {
     if (isExporting) {
       exportKit();
@@ -5458,7 +5597,6 @@ var _export = _interopRequireDefault(__webpack_require__(/*! ./export */ "../app
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
-/* provided dependency */ var __ = __webpack_require__(/*! @wordpress/i18n */ "@wordpress/i18n")["__"];
 
 
 var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
@@ -5468,22 +5606,25 @@ Object.defineProperty(exports, "__esModule", ({
 }));
 exports["default"] = ExportComplete;
 var _react = _interopRequireWildcard(__webpack_require__(/*! react */ "react"));
+var _slicedToArray2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/slicedToArray */ "../node_modules/@babel/runtime/helpers/slicedToArray.js"));
 var _router = __webpack_require__(/*! @reach/router */ "../node_modules/@reach/router/es/index.js");
 var _ui = __webpack_require__(/*! @elementor/ui */ "@elementor/ui");
+var _i18n = __webpack_require__(/*! @wordpress/i18n */ "@wordpress/i18n");
 var _components = __webpack_require__(/*! ../../shared/components */ "../app/modules/import-export-customization/assets/js/shared/components/index.js");
 var _exportContext = __webpack_require__(/*! ../context/export-context */ "../app/modules/import-export-customization/assets/js/export/context/export-context.js");
-var _exportCompleteSummary = _interopRequireDefault(__webpack_require__(/*! ../components/export-complete-summary */ "../app/modules/import-export-customization/assets/js/export/components/export-complete-summary.js"));
-var _exportCompleteIcon = _interopRequireDefault(__webpack_require__(/*! ../components/export-complete-icon */ "../app/modules/import-export-customization/assets/js/export/components/export-complete-icon.js"));
-var _exportCompleteHeading = _interopRequireDefault(__webpack_require__(/*! ../components/export-complete-heading */ "../app/modules/import-export-customization/assets/js/export/components/export-complete-heading.js"));
-var _exportCompleteDownloadLink = _interopRequireDefault(__webpack_require__(/*! ../components/export-complete-download-link */ "../app/modules/import-export-customization/assets/js/export/components/export-complete-download-link.js"));
+var _utils = __webpack_require__(/*! ../../shared/utils/utils */ "../app/modules/import-export-customization/assets/js/shared/utils/utils.js");
+var _appsEventTracking = __webpack_require__(/*! elementor-app/event-track/apps-event-tracking */ "../app/assets/js/event-track/apps-event-tracking.js");
 function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function _interopRequireWildcard(e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, default: e }; if (null === e || "object" != _typeof(e) && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (var _t in e) "default" !== _t && {}.hasOwnProperty.call(e, _t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, _t)) && (i.get || i.set) ? o(f, _t, i) : f[_t] = e[_t]); return f; })(e, t); }
 var INVALID_FILENAME_CHARS = /[<>:"/\\|?*]/g;
 function ExportComplete() {
+  var navigate = (0, _router.useNavigate)();
   var _useExportContext = (0, _exportContext.useExportContext)(),
     data = _useExportContext.data,
     isCompleted = _useExportContext.isCompleted;
   var exportedData = data.exportedData,
-    kitInfo = data.kitInfo;
+    kitInfo = data.kitInfo,
+    includes = data.includes,
+    analytics = data.analytics;
   var downloadLink = (0, _react.useRef)(null);
   var downloadFile = function downloadFile(event) {
     event === null || event === void 0 || event.preventDefault();
@@ -5503,7 +5644,28 @@ function ExportComplete() {
     if ('cloud' !== kitInfo.source && exportedData !== null && exportedData !== void 0 && exportedData.file) {
       downloadFile();
     }
-  }, [exportedData, kitInfo.source, downloadFile]);
+  }, [exportedData, kitInfo.source]);
+  (0, _react.useEffect)(function () {
+    _appsEventTracking.AppsEventTracking.sendPageViewsWebsiteTemplates(elementorCommon.eventsManager.config.secondaryLocations.kitLibrary.kitExportSummary);
+  }, []);
+  (0, _react.useEffect)(function () {
+    if (exportedData.manifest) {
+      var _exportedData$manifes, _exportedData$manifes2;
+      var contentCounts = getContentCounts();
+      _appsEventTracking.AppsEventTracking.sendExportKitCustomization({
+        kit_export_content: includes.includes('content'),
+        kit_export_templates: includes.includes('templates'),
+        kit_export_settings: includes.includes('settings'),
+        kit_export_plugins: includes.includes('plugins'),
+        kit_export_customization_modals: analytics === null || analytics === void 0 ? void 0 : analytics.customization,
+        kit_description: Boolean(kitInfo.description),
+        kit_page_count: contentCounts.page || 0,
+        kit_post_count: contentCounts.post || 0,
+        kit_post_type_count: (_exportedData$manifes = exportedData.manifest) !== null && _exportedData$manifes !== void 0 && _exportedData$manifes['custom-post-type-title'] ? Object.keys((_exportedData$manifes2 = exportedData.manifest) === null || _exportedData$manifes2 === void 0 ? void 0 : _exportedData$manifes2['custom-post-type-title']).length : 0,
+        kit_source: kitInfo.source
+      });
+    }
+  }, [includes, exportedData === null || exportedData === void 0 ? void 0 : exportedData.manifest, analytics === null || analytics === void 0 ? void 0 : analytics.customization, kitInfo.description]);
   var handleDone = function handleDone() {
     window.top.location = elementorAppConfig.admin_url;
   };
@@ -5522,35 +5684,174 @@ function ExportComplete() {
     color: "primary",
     size: "small",
     onClick: function onClick() {
-      return window.location.href = elementorAppConfig.base_url + '#/kit-library/cloud';
+      return navigate('/kit-library/cloud');
     },
     "data-testid": "view-in-library-button"
-  }, __('View in Library', 'elementor')) : /*#__PURE__*/_react.default.createElement(_ui.Button, {
+  }, (0, _i18n.__)('View in Library', 'elementor')) : /*#__PURE__*/_react.default.createElement(_ui.Button, {
     variant: "contained",
     color: "primary",
     size: "small",
     onClick: handleDone,
     "data-testid": "done-button"
-  }, __('Done', 'elementor')));
+  }, (0, _i18n.__)('Done', 'elementor')));
   var headerContent = /*#__PURE__*/_react.default.createElement(_components.PageHeader, {
-    title: __('Export', 'elementor')
+    title: (0, _i18n.__)('Export', 'elementor')
   });
+  var getTemplatesSummary = function getTemplatesSummary() {
+    var _exportedData$manifes3, _elementorAppConfig$i;
+    var templates = exportedData === null || exportedData === void 0 || (_exportedData$manifes3 = exportedData.manifest) === null || _exportedData$manifes3 === void 0 ? void 0 : _exportedData$manifes3.templates;
+    if (!templates) {
+      return (0, _i18n.__)('No templates exported', 'elementor');
+    }
+    var templatesByType = {};
+    Object.values(templates).forEach(function (template) {
+      var docType = template.doc_type;
+      if (!templatesByType[docType]) {
+        templatesByType[docType] = 0;
+      }
+      templatesByType[docType]++;
+    });
+    var summaryTitles = ((_elementorAppConfig$i = elementorAppConfig['import-export-customization']) === null || _elementorAppConfig$i === void 0 || (_elementorAppConfig$i = _elementorAppConfig$i.summaryTitles) === null || _elementorAppConfig$i === void 0 ? void 0 : _elementorAppConfig$i.templates) || {};
+    var summaryParts = Object.entries(templatesByType).map(function (_ref) {
+      var _ref2 = (0, _slicedToArray2.default)(_ref, 2),
+        docType = _ref2[0],
+        count = _ref2[1];
+      var label = summaryTitles[docType];
+      if (!label) {
+        return null;
+      }
+      var title = count > 1 ? label.plural : label.single;
+      return "".concat(count, " ").concat(title);
+    }).filter(function (part) {
+      return part !== null;
+    });
+    return summaryParts.length > 0 ? summaryParts.join(' | ') : (0, _i18n.__)('No templates exported', 'elementor');
+  };
+  var getContentCounts = function getContentCounts() {
+    var _exportedData$manifes4, _exportedData$manifes5;
+    var content = exportedData === null || exportedData === void 0 || (_exportedData$manifes4 = exportedData.manifest) === null || _exportedData$manifes4 === void 0 ? void 0 : _exportedData$manifes4.content;
+    var wpContent = exportedData === null || exportedData === void 0 || (_exportedData$manifes5 = exportedData.manifest) === null || _exportedData$manifes5 === void 0 ? void 0 : _exportedData$manifes5['wp-content'];
+    var counts = {};
+    var countItems = function countItems(_ref3) {
+      var _ref4 = (0, _slicedToArray2.default)(_ref3, 2),
+        docType = _ref4[0],
+        docs = _ref4[1];
+      var count = Object.keys(docs).length;
+      if (count > 0) {
+        counts[docType] = (counts[docType] || 0) + count;
+      }
+    };
+    Object.entries(content || {}).forEach(countItems);
+    Object.entries(wpContent || {}).forEach(countItems);
+    return counts;
+  };
+  var getContentSummary = function getContentSummary() {
+    var _exportedData$manifes6, _exportedData$manifes7, _exportedData$manifes8, _elementorAppConfig$i2;
+    var content = exportedData === null || exportedData === void 0 || (_exportedData$manifes6 = exportedData.manifest) === null || _exportedData$manifes6 === void 0 ? void 0 : _exportedData$manifes6.content;
+    var wpContent = exportedData === null || exportedData === void 0 || (_exportedData$manifes7 = exportedData.manifest) === null || _exportedData$manifes7 === void 0 ? void 0 : _exportedData$manifes7['wp-content'];
+    var taxonomies = exportedData === null || exportedData === void 0 || (_exportedData$manifes8 = exportedData.manifest) === null || _exportedData$manifes8 === void 0 ? void 0 : _exportedData$manifes8.taxonomies;
+    if (!content && !wpContent && !taxonomies) {
+      return (0, _i18n.__)('No content exported', 'elementor');
+    }
+    var summaryTitles = ((_elementorAppConfig$i2 = elementorAppConfig['import-export-customization']) === null || _elementorAppConfig$i2 === void 0 || (_elementorAppConfig$i2 = _elementorAppConfig$i2.summaryTitles) === null || _elementorAppConfig$i2 === void 0 ? void 0 : _elementorAppConfig$i2.content) || {};
+    var counts = getContentCounts();
+    var summaryPartsMap = {};
+    Object.entries(counts).forEach(function (_ref5) {
+      var _ref6 = (0, _slicedToArray2.default)(_ref5, 2),
+        docType = _ref6[0],
+        count = _ref6[1];
+      var label = summaryTitles[docType];
+      if (!label) {
+        return;
+      }
+      var title = count > 1 ? label.plural : label.single;
+      summaryPartsMap[docType] = {
+        count: count,
+        title: title
+      };
+    });
+    if (Object.keys(taxonomies || {}).length) {
+      var allTaxonomiesSet = new Set();
+      Object.values(taxonomies).forEach(function (postTypeTaxonomies) {
+        postTypeTaxonomies.forEach(function (taxonomy) {
+          allTaxonomiesSet.add(taxonomy.name);
+        });
+      });
+      if (allTaxonomiesSet.size) {
+        summaryPartsMap.taxonomies = {
+          count: allTaxonomiesSet.size,
+          title: (0, _i18n.__)('Taxonomies', 'elementor')
+        };
+      }
+    }
+    var summaryParts = Object.values(summaryPartsMap).map(function (_ref7) {
+      var count = _ref7.count,
+        title = _ref7.title;
+      return "".concat(count, " ").concat(title);
+    });
+    return summaryParts.length > 0 ? summaryParts.join(' | ') : (0, _i18n.__)('No content exported', 'elementor');
+  };
+  var getPluginsSummary = function getPluginsSummary() {
+    var _exportedData$manifes9, _exportedData$manifes0;
+    return exportedData !== null && exportedData !== void 0 && (_exportedData$manifes9 = exportedData.manifest) !== null && _exportedData$manifes9 !== void 0 && _exportedData$manifes9.plugins ? exportedData === null || exportedData === void 0 || (_exportedData$manifes0 = exportedData.manifest) === null || _exportedData$manifes0 === void 0 ? void 0 : _exportedData$manifes0.plugins.map(function (plugin) {
+      return plugin.name;
+    }).join(' | ') : (0, _i18n.__)('No plugins exported', 'elementor');
+  };
+  var getSettingsSummary = function getSettingsSummary() {
+    var _exportedData$manifes1;
+    var siteSettings = exportedData === null || exportedData === void 0 || (_exportedData$manifes1 = exportedData.manifest) === null || _exportedData$manifes1 === void 0 ? void 0 : _exportedData$manifes1['site-settings'];
+    if (!siteSettings) {
+      return (0, _i18n.__)('No settings exported', 'elementor');
+    }
+    var summary = (0, _utils.buildKitSettingsSummary)(siteSettings);
+    return summary.length > 0 ? summary : (0, _i18n.__)('No settings exported', 'elementor');
+  };
+  var summaryData = {
+    content: {
+      title: (0, _i18n.__)('Content', 'elementor'),
+      subTitle: getContentSummary()
+    },
+    templates: {
+      title: (0, _i18n.__)('Templates', 'elementor'),
+      subTitle: getTemplatesSummary()
+    },
+    settings: {
+      title: (0, _i18n.__)('Site settings', 'elementor'),
+      subTitle: getSettingsSummary()
+    },
+    plugins: {
+      title: (0, _i18n.__)('Plugins', 'elementor'),
+      subTitle: getPluginsSummary()
+    }
+  };
   return /*#__PURE__*/_react.default.createElement(_components.BaseLayout, {
     topBar: /*#__PURE__*/_react.default.createElement(_components.TopBar, null, headerContent),
     footer: /*#__PURE__*/_react.default.createElement(_components.Footer, null, footerContent)
   }, /*#__PURE__*/_react.default.createElement(_components.CenteredContent, {
-    hasFooter: true
+    hasFooter: true,
+    maxWidth: "800px"
   }, /*#__PURE__*/_react.default.createElement(_ui.Stack, {
     spacing: 3,
     alignItems: "center",
     "data-testid": "export-complete-content"
-  }, /*#__PURE__*/_react.default.createElement(_exportCompleteIcon.default, null), /*#__PURE__*/_react.default.createElement(_exportCompleteHeading.default, {
-    isCloudExport: isCloudExport
-  }), /*#__PURE__*/_react.default.createElement(_exportCompleteSummary.default, {
-    kitInfo: kitInfo,
-    includes: data.includes
-  }), !isCloudExport && /*#__PURE__*/_react.default.createElement(_exportCompleteDownloadLink.default, {
-    onDownloadClick: downloadFile
+  }, /*#__PURE__*/_react.default.createElement(_components.CompleteIcon, {
+    imageSrc: elementorAppConfig.assets_url + 'images/kit-is-live.svg',
+    altText: "",
+    testId: "export-complete-icon"
+  }), /*#__PURE__*/_react.default.createElement(_components.CompleteHeading, {
+    title: isCloudExport ? (0, _i18n.__)('Your website template is now saved to the library!', 'elementor') : (0, _i18n.__)('Your .zip file is ready', 'elementor'),
+    subtitle: isCloudExport ? (0, _i18n.__)('You can find it in the My Website Templates tab.', 'elementor') : (0, _i18n.__)('Once the download is complete, you can upload it to be used for other sites.', 'elementor'),
+    linkText: isCloudExport ? (0, _i18n.__)('Take me there', 'elementor') : undefined,
+    linkHref: isCloudExport ? elementorAppConfig.base_url + '#/kit-library/cloud' : undefined,
+    testId: "export-complete-heading"
+  }), /*#__PURE__*/_react.default.createElement(_components.CompleteSummary, {
+    summaryData: summaryData,
+    testId: "export-complete-summary"
+  }), !isCloudExport && /*#__PURE__*/_react.default.createElement(_components.DownloadLink, {
+    message: (0, _i18n.__)('Is the automatic download not starting?', 'elementor'),
+    linkText: (0, _i18n.__)('Download manually', 'elementor'),
+    onClick: downloadFile,
+    testId: "export-complete-download-link"
   }))));
 }
 
@@ -5567,22 +5868,36 @@ function ExportComplete() {
 
 
 var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
+var _typeof = __webpack_require__(/*! @babel/runtime/helpers/typeof */ "../node_modules/@babel/runtime/helpers/typeof.js");
 Object.defineProperty(exports, "__esModule", ({
   value: true
 }));
 exports["default"] = ExportKit;
-var _react = _interopRequireDefault(__webpack_require__(/*! react */ "react"));
+var _react = _interopRequireWildcard(__webpack_require__(/*! react */ "react"));
 var _ui = __webpack_require__(/*! @elementor/ui */ "@elementor/ui");
+var _exportContext = __webpack_require__(/*! ../context/export-context */ "../app/modules/import-export-customization/assets/js/export/context/export-context.js");
 var _components = __webpack_require__(/*! ../../shared/components */ "../app/modules/import-export-customization/assets/js/shared/components/index.js");
 var _exportIntro = _interopRequireDefault(__webpack_require__(/*! ../components/export-intro */ "../app/modules/import-export-customization/assets/js/export/components/export-intro.js"));
 var _exportKitFooter = _interopRequireDefault(__webpack_require__(/*! ../components/export-kit-footer */ "../app/modules/import-export-customization/assets/js/export/components/export-kit-footer.js"));
-var _kitContent = _interopRequireDefault(__webpack_require__(/*! ../components/kit-content */ "../app/modules/import-export-customization/assets/js/export/components/kit-content.js"));
+var _exportKitPartsSelection = _interopRequireDefault(__webpack_require__(/*! ../components/export-kit-parts-selection */ "../app/modules/import-export-customization/assets/js/export/components/export-kit-parts-selection.js"));
 var _kitInfo = _interopRequireDefault(__webpack_require__(/*! ../components/kit-info */ "../app/modules/import-export-customization/assets/js/export/components/kit-info.js"));
+var _appsEventTracking = __webpack_require__(/*! elementor-app/event-track/apps-event-tracking */ "../app/assets/js/event-track/apps-event-tracking.js");
+function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function _interopRequireWildcard(e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, default: e }; if (null === e || "object" != _typeof(e) && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (var _t in e) "default" !== _t && {}.hasOwnProperty.call(e, _t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, _t)) && (i.get || i.set) ? o(f, _t, i) : f[_t] = e[_t]); return f; })(e, t); }
 function ExportKit() {
+  var _useExportContext = (0, _exportContext.useExportContext)(),
+    dispatch = _useExportContext.dispatch;
+  (0, _react.useEffect)(function () {
+    dispatch({
+      type: 'RESET_STATE'
+    });
+  }, [dispatch]);
   var footerContent = /*#__PURE__*/_react.default.createElement(_exportKitFooter.default, null);
   var headerContent = /*#__PURE__*/_react.default.createElement(_components.PageHeader, {
     title: __('Export', 'elementor')
   });
+  (0, _react.useEffect)(function () {
+    _appsEventTracking.AppsEventTracking.sendPageViewsWebsiteTemplates(elementorCommon.eventsManager.config.secondaryLocations.kitLibrary.kitExportCustomization);
+  }, []);
   return /*#__PURE__*/_react.default.createElement(_components.BaseLayout, {
     topBar: /*#__PURE__*/_react.default.createElement(_components.TopBar, null, headerContent),
     footer: /*#__PURE__*/_react.default.createElement(_components.Footer, null, footerContent)
@@ -5593,7 +5908,7 @@ function ExportKit() {
       maxWidth: '1075px',
       mx: 'auto'
     }
-  }, /*#__PURE__*/_react.default.createElement(_exportIntro.default, null), /*#__PURE__*/_react.default.createElement(_kitInfo.default, null), /*#__PURE__*/_react.default.createElement(_kitContent.default, null)));
+  }, /*#__PURE__*/_react.default.createElement(_exportIntro.default, null), /*#__PURE__*/_react.default.createElement(_kitInfo.default, null), /*#__PURE__*/_react.default.createElement(_exportKitPartsSelection.default, null)));
 }
 
 /***/ }),
@@ -5629,11 +5944,11 @@ function ExportProcess() {
     isPending = _useExportContext.isPending;
   var kitInfo = data.kitInfo,
     includes = data.includes,
-    plugins = data.plugins;
+    customization = data.customization;
   var _useExportKit = (0, _useExportKit2.useExportKit)({
       includes: includes,
       kitInfo: kitInfo,
-      plugins: plugins,
+      customization: customization,
       isExporting: isExporting,
       dispatch: dispatch
     }),
@@ -5706,6 +6021,1879 @@ var generateScreenshot = exports.generateScreenshot = function generateScreensho
 
 /***/ }),
 
+/***/ "../app/modules/import-export-customization/assets/js/import/components/drop-zone.js":
+/*!*******************************************************************************************!*\
+  !*** ../app/modules/import-export-customization/assets/js/import/components/drop-zone.js ***!
+  \*******************************************************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports["default"] = void 0;
+var _extends2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/extends */ "../node_modules/@babel/runtime/helpers/extends.js"));
+var _objectWithoutProperties2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/objectWithoutProperties */ "../node_modules/@babel/runtime/helpers/objectWithoutProperties.js"));
+var _react = _interopRequireDefault(__webpack_require__(/*! react */ "react"));
+var _propTypes = _interopRequireDefault(__webpack_require__(/*! prop-types */ "../node_modules/prop-types/index.js"));
+var _ui = __webpack_require__(/*! @elementor/ui */ "@elementor/ui");
+var _icons = __webpack_require__(/*! @elementor/icons */ "@elementor/icons");
+var _i18n = __webpack_require__(/*! @wordpress/i18n */ "@wordpress/i18n");
+var _useDropZone2 = _interopRequireDefault(__webpack_require__(/*! ../hooks/use-drop-zone */ "../app/modules/import-export-customization/assets/js/import/hooks/use-drop-zone.js"));
+var _fileValidation = __webpack_require__(/*! ../utils/file-validation */ "../app/modules/import-export-customization/assets/js/import/utils/file-validation.js");
+var _excluded = ["onFileSelect", "onError", "filetypes", "className", "isLoading", "error", "onButtonClick", "onFileChoose", "helperText"];
+var StyledDropZoneBox = (0, _ui.styled)(_ui.Box, {
+  shouldForwardProp: function shouldForwardProp(prop) {
+    return !['isDragOver', 'isLoading'].includes(prop);
+  }
+})(function (_ref) {
+  var theme = _ref.theme,
+    isDragOver = _ref.isDragOver,
+    isLoading = _ref.isLoading;
+  return {
+    border: 2,
+    borderColor: isDragOver ? theme.palette.primary.main : theme.palette.divider,
+    borderStyle: 'dashed',
+    backgroundColor: isDragOver ? theme.palette.action.hover : theme.palette.background.default,
+    transition: 'all 0.2s ease-in-out',
+    cursor: isLoading ? 'not-allowed' : 'normal',
+    position: 'relative',
+    borderRadius: theme.spacing(0.5)
+  };
+});
+var StyledContentStack = (0, _ui.styled)(_ui.Stack, {
+  shouldForwardProp: function shouldForwardProp(prop) {
+    return prop !== 'isLoading';
+  }
+})(function (_ref2) {
+  var isLoading = _ref2.isLoading;
+  return {
+    opacity: isLoading ? 0.5 : 1,
+    transition: 'opacity 0.2s ease-in-out'
+  };
+});
+var DropZone = function DropZone(_ref3) {
+  var onFileSelect = _ref3.onFileSelect,
+    _ref3$onError = _ref3.onError,
+    onError = _ref3$onError === void 0 ? function () {} : _ref3$onError,
+    _ref3$filetypes = _ref3.filetypes,
+    filetypes = _ref3$filetypes === void 0 ? ['application/zip'] : _ref3$filetypes,
+    _ref3$className = _ref3.className,
+    className = _ref3$className === void 0 ? '' : _ref3$className,
+    _ref3$isLoading = _ref3.isLoading,
+    isLoading = _ref3$isLoading === void 0 ? false : _ref3$isLoading,
+    error = _ref3.error,
+    onButtonClick = _ref3.onButtonClick,
+    onFileChoose = _ref3.onFileChoose,
+    _ref3$helperText = _ref3.helperText,
+    helperText = _ref3$helperText === void 0 ? (0, _i18n.__)('Upload a .zip file', 'elementor') : _ref3$helperText,
+    props = (0, _objectWithoutProperties2.default)(_ref3, _excluded);
+  var _useDropZone = (0, _useDropZone2.default)({
+      onFileSelect: onFileSelect,
+      onError: onError,
+      filetypes: filetypes,
+      isLoading: isLoading,
+      onButtonClick: onButtonClick,
+      onFileChoose: onFileChoose
+    }),
+    isDragOver = _useDropZone.isDragOver,
+    fileInputRef = _useDropZone.fileInputRef,
+    fileInputId = _useDropZone.fileInputId,
+    handleDragEnter = _useDropZone.handleDragEnter,
+    handleDragLeave = _useDropZone.handleDragLeave,
+    handleDragOver = _useDropZone.handleDragOver,
+    handleDrop = _useDropZone.handleDrop,
+    handleFileInputChange = _useDropZone.handleFileInputChange,
+    handleUploadClick = _useDropZone.handleUploadClick;
+  return /*#__PURE__*/_react.default.createElement(_ui.Box, (0, _extends2.default)({
+    className: className,
+    onDragEnter: handleDragEnter,
+    onDragLeave: handleDragLeave,
+    onDragOver: handleDragOver,
+    onDrop: handleDrop,
+    "data-testid": "drop-zone"
+  }, props), /*#__PURE__*/_react.default.createElement(StyledDropZoneBox, {
+    isDragOver: isDragOver,
+    isLoading: isLoading
+  }, /*#__PURE__*/_react.default.createElement(StyledContentStack, {
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 1,
+    p: 6,
+    minHeight: "520px",
+    isLoading: isLoading
+  }, /*#__PURE__*/_react.default.createElement(_ui.Box, {
+    "data-testid": "icon-container"
+  }, isLoading ? /*#__PURE__*/_react.default.createElement(_ui.CircularProgress, {
+    size: 40,
+    "data-testid": "loading-spinner",
+    sx: {
+      color: 'primary.dark'
+    }
+  }) : /*#__PURE__*/_react.default.createElement(_icons.UploadIcon, {
+    "data-testid": "upload-icon",
+    sx: {
+      fontSize: '40px',
+      color: 'text.disabled'
+    }
+  })), /*#__PURE__*/_react.default.createElement(_ui.Stack, {
+    spacing: 2,
+    alignItems: "center",
+    textAlign: "center",
+    "data-testid": "text-container"
+  }, /*#__PURE__*/_react.default.createElement(_ui.Box, {
+    "data-testid": "main-text"
+  }, /*#__PURE__*/_react.default.createElement(_ui.Link, {
+    variant: "body1",
+    component: "span",
+    onClick: handleUploadClick,
+    "data-testid": "click-to-upload"
+  }, (0, _i18n.__)('Click to upload', 'elementor')), /*#__PURE__*/_react.default.createElement(_ui.Typography, {
+    variant: "body1",
+    component: "span",
+    color: "text.primary",
+    sx: {
+      marginLeft: 0.5
+    }
+  }, (0, _i18n.__)('or drag and drop', 'elementor'))), /*#__PURE__*/_react.default.createElement(_ui.Typography, {
+    variant: "body2",
+    color: error ? 'error' : 'text.secondary',
+    "data-testid": "helper-text"
+  }, error ? error.message : helperText)), /*#__PURE__*/_react.default.createElement("input", {
+    ref: fileInputRef,
+    id: fileInputId,
+    type: "file",
+    accept: (0, _fileValidation.getAcceptedFileTypes)(filetypes),
+    onChange: handleFileInputChange,
+    style: {
+      display: 'none'
+    },
+    "data-testid": "file-input"
+  }))));
+};
+DropZone.propTypes = {
+  className: _propTypes.default.string,
+  onFileSelect: _propTypes.default.func.isRequired,
+  onError: _propTypes.default.func,
+  filetypes: _propTypes.default.array,
+  isLoading: _propTypes.default.bool,
+  error: _propTypes.default.shape({
+    message: _propTypes.default.string.isRequired
+  }),
+  onButtonClick: _propTypes.default.func,
+  onFileChoose: _propTypes.default.func,
+  helperText: _propTypes.default.string
+};
+var _default = exports["default"] = DropZone;
+
+/***/ }),
+
+/***/ "../app/modules/import-export-customization/assets/js/import/components/import-error.js":
+/*!**********************************************************************************************!*\
+  !*** ../app/modules/import-export-customization/assets/js/import/components/import-error.js ***!
+  \**********************************************************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+/* provided dependency */ var __ = __webpack_require__(/*! @wordpress/i18n */ "@wordpress/i18n")["__"];
+
+
+var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports["default"] = ImportError;
+var _react = _interopRequireDefault(__webpack_require__(/*! react */ "react"));
+var _ui = __webpack_require__(/*! @elementor/ui */ "@elementor/ui");
+var _propTypes = _interopRequireDefault(__webpack_require__(/*! prop-types */ "../node_modules/prop-types/index.js"));
+var _components = __webpack_require__(/*! ../../shared/components */ "../app/modules/import-export-customization/assets/js/shared/components/index.js");
+var _importContext = __webpack_require__(/*! ../context/import-context */ "../app/modules/import-export-customization/assets/js/import/context/import-context.js");
+var HELP_URL = 'https://go.elementor.com/app-import-download-failed';
+function ImportError(_ref) {
+  var statusText = _ref.statusText;
+  var _useImportContext = (0, _importContext.useImportContext)(),
+    dispatch = _useImportContext.dispatch;
+  var handleTryAgain = function handleTryAgain() {
+    dispatch({
+      type: 'RESET_STATE'
+    });
+    window.location.href = elementorAppConfig.base_url + '#/import-customization/';
+  };
+  var handleLearnMore = function handleLearnMore() {
+    window.open(HELP_URL, '_blank');
+  };
+  return /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, /*#__PURE__*/_react.default.createElement(_ui.Box, {
+    sx: {
+      width: 60,
+      height: 60,
+      borderRadius: '50%',
+      backgroundColor: 'error.main',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      color: 'white'
+    }
+  }, /*#__PURE__*/_react.default.createElement(_components.XIcon, {
+    sx: {
+      fontSize: '24px'
+    }
+  })), /*#__PURE__*/_react.default.createElement(_ui.Typography, {
+    variant: "h5",
+    component: "h2",
+    "data-testid": "import-error"
+  }, statusText), /*#__PURE__*/_react.default.createElement(_ui.Stack, {
+    direction: "row",
+    spacing: 2
+  }, /*#__PURE__*/_react.default.createElement(_ui.Button, {
+    variant: "contained",
+    onClick: handleTryAgain,
+    "data-testid": "import-error-try-again-button"
+  }, __('Try Again', 'elementor')), /*#__PURE__*/_react.default.createElement(_ui.Button, {
+    variant: "outlined",
+    onClick: handleLearnMore,
+    "data-testid": "import-error-learn-more-button"
+  }, __('Learn More', 'elementor'))));
+}
+ImportError.propTypes = {
+  statusText: _propTypes.default.string.isRequired
+};
+
+/***/ }),
+
+/***/ "../app/modules/import-export-customization/assets/js/import/components/import-kit-parts-selection.js":
+/*!************************************************************************************************************!*\
+  !*** ../app/modules/import-export-customization/assets/js/import/components/import-kit-parts-selection.js ***!
+  \************************************************************************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
+var _typeof = __webpack_require__(/*! @babel/runtime/helpers/typeof */ "../node_modules/@babel/runtime/helpers/typeof.js");
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports["default"] = ImportKitPartsSelection;
+var _react = _interopRequireWildcard(__webpack_require__(/*! react */ "react"));
+var _importContext = __webpack_require__(/*! ../context/import-context */ "../app/modules/import-export-customization/assets/js/import/context/import-context.js");
+var _components = __webpack_require__(/*! ../../shared/components */ "../app/modules/import-export-customization/assets/js/shared/components/index.js");
+var _kitContentData = _interopRequireDefault(__webpack_require__(/*! ../../shared/kit-content-data */ "../app/modules/import-export-customization/assets/js/shared/kit-content-data.js"));
+function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function _interopRequireWildcard(e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, default: e }; if (null === e || "object" != _typeof(e) && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (var _t in e) "default" !== _t && {}.hasOwnProperty.call(e, _t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, _t)) && (i.get || i.set) ? o(f, _t, i) : f[_t] = e[_t]); return f; })(e, t); }
+function ImportKitPartsSelection() {
+  var _useImportContext = (0, _importContext.useImportContext)(),
+    data = _useImportContext.data,
+    dispatch = _useImportContext.dispatch;
+  var handleCheckboxChange = function handleCheckboxChange(itemType) {
+    var isChecked = data.includes.includes(itemType);
+    var kitItem = _kitContentData.default.find(function (item) {
+      return item.type === itemType;
+    });
+    if (isChecked && kitItem !== null && kitItem !== void 0 && kitItem.required) {
+      return;
+    }
+    var actionType = isChecked ? 'REMOVE_INCLUDE' : 'ADD_INCLUDE';
+    dispatch({
+      type: actionType,
+      payload: itemType
+    });
+  };
+  var handleSaveCustomization = function handleSaveCustomization(key, payload, hasEnabledCustomization) {
+    dispatch({
+      type: 'SET_CUSTOMIZATION',
+      payload: {
+        key: key,
+        value: payload
+      }
+    });
+    if (hasEnabledCustomization) {
+      dispatch({
+        type: 'ADD_INCLUDE',
+        payload: key
+      });
+    } else {
+      dispatch({
+        type: 'REMOVE_INCLUDE',
+        payload: key
+      });
+    }
+  };
+  (0, _react.useEffect)(function () {
+    if (data.uploadedData) {
+      var _data$uploadedData, _data$uploadedData2, _data$uploadedData3;
+      var includes = [];
+      if ((_data$uploadedData = data.uploadedData) !== null && _data$uploadedData !== void 0 && (_data$uploadedData = _data$uploadedData.manifest) !== null && _data$uploadedData !== void 0 && _data$uploadedData['site-settings']) {
+        includes.push('settings');
+      }
+      if (0 < Object.keys(((_data$uploadedData2 = data.uploadedData) === null || _data$uploadedData2 === void 0 || (_data$uploadedData2 = _data$uploadedData2.manifest) === null || _data$uploadedData2 === void 0 ? void 0 : _data$uploadedData2.templates) || {}).length && elementorAppConfig.hasPro) {
+        includes.push('templates');
+      }
+      if ((_data$uploadedData3 = data.uploadedData) !== null && _data$uploadedData3 !== void 0 && (_data$uploadedData3 = _data$uploadedData3.manifest) !== null && _data$uploadedData3 !== void 0 && _data$uploadedData3.content) {
+        includes.push('content');
+      }
+      dispatch({
+        type: 'ADD_INCLUDES',
+        payload: includes
+      });
+    }
+  }, [data.uploadedData, dispatch]);
+  return /*#__PURE__*/_react.default.createElement(_components.KitPartsSelection, {
+    data: data,
+    onCheckboxChange: handleCheckboxChange,
+    handleSaveCustomization: handleSaveCustomization,
+    testId: "import-kit-parts-content"
+  });
+}
+
+/***/ }),
+
+/***/ "../app/modules/import-export-customization/assets/js/import/components/plugin-activation.js":
+/*!***************************************************************************************************!*\
+  !*** ../app/modules/import-export-customization/assets/js/import/components/plugin-activation.js ***!
+  \***************************************************************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports.PluginActivation = PluginActivation;
+var _react = _interopRequireDefault(__webpack_require__(/*! react */ "react"));
+var _ui = __webpack_require__(/*! @elementor/ui */ "@elementor/ui");
+var _propTypes = _interopRequireDefault(__webpack_require__(/*! prop-types */ "../node_modules/prop-types/index.js"));
+var _importContext = __webpack_require__(/*! ../context/import-context */ "../app/modules/import-export-customization/assets/js/import/context/import-context.js");
+var _pluginStatusItem = _interopRequireDefault(__webpack_require__(/*! ./plugin-status-item */ "../app/modules/import-export-customization/assets/js/import/components/plugin-status-item.js"));
+function PluginActivation(_ref) {
+  var _data$uploadedData;
+  var plugins = _ref.plugins;
+  var _useImportContext = (0, _importContext.useImportContext)(),
+    data = _useImportContext.data;
+  return /*#__PURE__*/_react.default.createElement(_ui.Stack, null, (_data$uploadedData = data.uploadedData) === null || _data$uploadedData === void 0 || (_data$uploadedData = _data$uploadedData.manifest) === null || _data$uploadedData === void 0 || (_data$uploadedData = _data$uploadedData.plugins) === null || _data$uploadedData === void 0 || (_data$uploadedData = _data$uploadedData.filter(function (plugin) {
+    var _data$customization;
+    if (data !== null && data !== void 0 && (_data$customization = data.customization) !== null && _data$customization !== void 0 && _data$customization.plugins) {
+      return true === data.customization.plugins[plugin.plugin];
+    }
+    return true;
+  })) === null || _data$uploadedData === void 0 ? void 0 : _data$uploadedData.map(function (plugin) {
+    var status = '';
+    if (!(plugins !== null && plugins !== void 0 && plugins.length)) {
+      status = 'activating';
+    } else if (plugins !== null && plugins !== void 0 && plugins.includes(plugin.name)) {
+      status = 'activated';
+    }
+    return /*#__PURE__*/_react.default.createElement(_pluginStatusItem.default, {
+      key: plugin.name,
+      name: plugin.name,
+      status: status
+    });
+  }));
+}
+PluginActivation.propTypes = {
+  plugins: _propTypes.default.arrayOf(_propTypes.default.string)
+};
+
+/***/ }),
+
+/***/ "../app/modules/import-export-customization/assets/js/import/components/plugin-status-item.js":
+/*!****************************************************************************************************!*\
+  !*** ../app/modules/import-export-customization/assets/js/import/components/plugin-status-item.js ***!
+  \****************************************************************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports["default"] = PluginStatusItem;
+var _react = _interopRequireDefault(__webpack_require__(/*! react */ "react"));
+var _propTypes = _interopRequireDefault(__webpack_require__(/*! prop-types */ "../node_modules/prop-types/index.js"));
+var _ui = __webpack_require__(/*! @elementor/ui */ "@elementor/ui");
+function PluginStatusItem(_ref) {
+  var name = _ref.name,
+    status = _ref.status;
+  return /*#__PURE__*/_react.default.createElement(_ui.Box, {
+    display: "flex",
+    alignItems: "center",
+    px: 3,
+    py: 2
+  }, /*#__PURE__*/_react.default.createElement(_ui.Checkbox, {
+    checked: true,
+    disabled: true,
+    sx: {
+      mr: 2
+    }
+  }), /*#__PURE__*/_react.default.createElement(_ui.Typography, {
+    variant: "body1"
+  }, name, " ", status));
+}
+PluginStatusItem.propTypes = {
+  name: _propTypes.default.string.isRequired,
+  status: _propTypes.default.string
+};
+
+/***/ }),
+
+/***/ "../app/modules/import-export-customization/assets/js/import/context/import-context.js":
+/*!*********************************************************************************************!*\
+  !*** ../app/modules/import-export-customization/assets/js/import/context/import-context.js ***!
+  \*********************************************************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
+var _typeof = __webpack_require__(/*! @babel/runtime/helpers/typeof */ "../node_modules/@babel/runtime/helpers/typeof.js");
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports.ImportContext = exports.IMPORT_STATUS = exports.ACTION_TYPE = void 0;
+exports["default"] = ImportContextProvider;
+exports.useImportContext = useImportContext;
+var _react = _interopRequireWildcard(__webpack_require__(/*! react */ "react"));
+var _slicedToArray2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/slicedToArray */ "../node_modules/@babel/runtime/helpers/slicedToArray.js"));
+var _toConsumableArray2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/toConsumableArray */ "../node_modules/@babel/runtime/helpers/toConsumableArray.js"));
+var _defineProperty2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/defineProperty */ "../node_modules/@babel/runtime/helpers/defineProperty.js"));
+var _propTypes = _interopRequireDefault(__webpack_require__(/*! prop-types */ "../node_modules/prop-types/index.js"));
+var _versionUtils = __webpack_require__(/*! ../utils/version-utils */ "../app/modules/import-export-customization/assets/js/import/utils/version-utils.js");
+function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function _interopRequireWildcard(e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, default: e }; if (null === e || "object" != _typeof(e) && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (var _t in e) "default" !== _t && {}.hasOwnProperty.call(e, _t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, _t)) && (i.get || i.set) ? o(f, _t, i) : f[_t] = e[_t]); return f; })(e, t); }
+function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
+function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { (0, _defineProperty2.default)(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
+var IMPORT_STATUS = exports.IMPORT_STATUS = {
+  PENDING: 'PENDING',
+  UPLOADING: 'UPLOADING',
+  CUSTOMIZING: 'CUSTOMIZING',
+  IMPORTING: 'IMPORTING',
+  COMPLETED: 'COMPLETED'
+};
+var ACTION_TYPE = exports.ACTION_TYPE = {
+  APPLY_ALL: 'apply-all'
+};
+var importReducer = function importReducer(state, _ref) {
+  var type = _ref.type,
+    payload = _ref.payload;
+  switch (type) {
+    case 'SET_IMPORT_STATUS':
+      return _objectSpread(_objectSpread({}, state), {}, {
+        importStatus: payload
+      });
+    case 'SET_FILE':
+      return _objectSpread(_objectSpread({}, state), {}, {
+        file: payload
+      });
+    case 'SET_UPLOADED_DATA':
+      return _objectSpread(_objectSpread({}, state), {}, {
+        uploadedData: payload
+      });
+    case 'SET_IMPORTED_DATA':
+      return _objectSpread(_objectSpread({}, state), {}, {
+        importedData: payload
+      });
+    case 'SET_KIT_UPLOAD_PARAMS':
+      return _objectSpread(_objectSpread({}, state), {}, {
+        kitUploadParams: payload
+      });
+    case 'SET_ACTION_TYPE':
+      return _objectSpread(_objectSpread({}, state), {}, {
+        actionType: payload
+      });
+    case 'SET_RUNNERS_STATE':
+      return _objectSpread(_objectSpread({}, state), {}, {
+        runnersState: _objectSpread(_objectSpread({}, state.runnersState), payload)
+      });
+    case 'ADD_INCLUDE':
+      return _objectSpread(_objectSpread({}, state), {}, {
+        includes: state.includes.includes(payload) ? state.includes : [].concat((0, _toConsumableArray2.default)(state.includes), [payload])
+      });
+    case 'ADD_INCLUDES':
+      return _objectSpread(_objectSpread({}, state), {}, {
+        includes: Array.from(new Set([].concat((0, _toConsumableArray2.default)(state.includes), (0, _toConsumableArray2.default)(payload))))
+      });
+    case 'REMOVE_INCLUDE':
+      return _objectSpread(_objectSpread({}, state), {}, {
+        includes: state.includes.filter(function (item) {
+          return item !== payload;
+        }),
+        // Clear customization when removing from includes
+        customization: _objectSpread(_objectSpread({}, state.customization), {}, (0, _defineProperty2.default)({}, payload, null))
+      });
+    case 'RESET_STATE':
+      return _objectSpread({}, initialState);
+    case 'SET_CUSTOMIZATION':
+      return _objectSpread(_objectSpread({}, state), {}, {
+        customization: _objectSpread(_objectSpread({}, state.customization), {}, (0, _defineProperty2.default)({}, payload.key, payload.value))
+      });
+    default:
+      return state;
+  }
+};
+var ImportContext = exports.ImportContext = (0, _react.createContext)();
+var initialState = {
+  file: null,
+  uploadedData: null,
+  importedData: null,
+  kitUploadParams: null,
+  actionType: null,
+  plugins: [],
+  includes: ['plugins'],
+  importStatus: IMPORT_STATUS.PENDING,
+  runnersState: {},
+  customization: {
+    settings: null,
+    templates: null,
+    content: null,
+    plugins: null
+  }
+};
+function ImportContextProvider(props) {
+  var _data$uploadedData, _data$uploadedData2;
+  var _useReducer = (0, _react.useReducer)(importReducer, initialState),
+    _useReducer2 = (0, _slicedToArray2.default)(_useReducer, 2),
+    data = _useReducer2[0],
+    dispatch = _useReducer2[1];
+  var isOldExport = (0, _versionUtils.isVersionLessThan)((_data$uploadedData = data.uploadedData) === null || _data$uploadedData === void 0 || (_data$uploadedData = _data$uploadedData.manifest) === null || _data$uploadedData === void 0 ? void 0 : _data$uploadedData.version, elementorAppConfig['import-export-customization'].manifestVersion);
+  var isOldElementorVersion = (0, _versionUtils.isVersionLessThan)(elementorAppConfig['import-export-customization'].elementorVersion, (_data$uploadedData2 = data.uploadedData) === null || _data$uploadedData2 === void 0 || (_data$uploadedData2 = _data$uploadedData2.manifest) === null || _data$uploadedData2 === void 0 ? void 0 : _data$uploadedData2.elementor_version);
+  return /*#__PURE__*/_react.default.createElement(ImportContext.Provider, {
+    value: {
+      data: data,
+      dispatch: dispatch,
+      runnersState: data.runnersState,
+      isUploading: data.importStatus === IMPORT_STATUS.UPLOADING,
+      isCustomizing: data.importStatus === IMPORT_STATUS.CUSTOMIZING,
+      isProcessing: data.importStatus === IMPORT_STATUS.IMPORTING,
+      isCompleted: data.importStatus === IMPORT_STATUS.COMPLETED,
+      isOldExport: isOldExport,
+      isOldElementorVersion: isOldElementorVersion
+    }
+  }, props.children);
+}
+ImportContextProvider.propTypes = {
+  children: _propTypes.default.node.isRequired
+};
+function useImportContext() {
+  var context = (0, _react.useContext)(ImportContext);
+  if (!context) {
+    throw new Error('useImportContext must be used within an ImportContextProvider');
+  }
+  return context;
+}
+
+/***/ }),
+
+/***/ "../app/modules/import-export-customization/assets/js/import/hooks/use-drop-zone.js":
+/*!******************************************************************************************!*\
+  !*** ../app/modules/import-export-customization/assets/js/import/hooks/use-drop-zone.js ***!
+  \******************************************************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports["default"] = void 0;
+var _slicedToArray2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/slicedToArray */ "../node_modules/@babel/runtime/helpers/slicedToArray.js"));
+var _react = __webpack_require__(/*! react */ "react");
+var _i18n = __webpack_require__(/*! @wordpress/i18n */ "@wordpress/i18n");
+var _fileValidation = __webpack_require__(/*! ../utils/file-validation */ "../app/modules/import-export-customization/assets/js/import/utils/file-validation.js");
+var useDropZone = function useDropZone(_ref) {
+  var onFileSelect = _ref.onFileSelect,
+    onError = _ref.onError,
+    filetypes = _ref.filetypes,
+    isLoading = _ref.isLoading,
+    onButtonClick = _ref.onButtonClick,
+    onFileChoose = _ref.onFileChoose;
+  var _useState = (0, _react.useState)(false),
+    _useState2 = (0, _slicedToArray2.default)(_useState, 2),
+    isDragOver = _useState2[0],
+    setIsDragOver = _useState2[1];
+  var _useState3 = (0, _react.useState)(0),
+    _useState4 = (0, _slicedToArray2.default)(_useState3, 2),
+    setDragCounter = _useState4[1];
+  var fileInputRef = (0, _react.useRef)(null);
+  var fileInputId = (0, _react.useId)();
+  var handleDragEnter = function handleDragEnter(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragCounter(function (prev) {
+      return prev + 1;
+    });
+    if (e.dataTransfer.items && e.dataTransfer.items.length > 0) {
+      setIsDragOver(true);
+    }
+  };
+  var handleDragLeave = function handleDragLeave(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragCounter(function (prev) {
+      var newCounter = prev - 1;
+      if (newCounter <= 0) {
+        setIsDragOver(false);
+      }
+      return newCounter;
+    });
+  };
+  var handleDragOver = function handleDragOver(e) {
+    e.preventDefault();
+    e.stopPropagation();
+  };
+  var handleDrop = function handleDrop(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragOver(false);
+    setDragCounter(0);
+    if (isLoading) {
+      return;
+    }
+    if (!e.dataTransfer.files || 0 === e.dataTransfer.files.length) {
+      return;
+    }
+    var file = e.dataTransfer.files[0];
+    if (file && (0, _fileValidation.isValidFileType)(file.type, file.name, filetypes)) {
+      onFileSelect(file, e, 'drop');
+    } else {
+      onError({
+        id: 'file_not_allowed',
+        message: (0, _i18n.__)('This file type is not allowed', 'elementor')
+      });
+    }
+  };
+  var handleFileInputChange = function handleFileInputChange(e) {
+    if (!e.target.files || 0 === e.target.files.length) {
+      return;
+    }
+    var file = e.target.files[0];
+    if (!file) {
+      return;
+    }
+    if (!(0, _fileValidation.isValidFileType)(file.type, file.name, filetypes)) {
+      onError({
+        id: 'file_not_allowed',
+        message: (0, _i18n.__)('This file type is not allowed', 'elementor')
+      });
+      return;
+    }
+    onFileSelect(file, e, 'browse');
+    if (onFileChoose) {
+      onFileChoose(file);
+    }
+  };
+  var handleUploadClick = function handleUploadClick(e) {
+    if (onButtonClick) {
+      onButtonClick(e);
+    }
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
+  };
+  return {
+    isDragOver: isDragOver,
+    fileInputRef: fileInputRef,
+    fileInputId: fileInputId,
+    handleDragEnter: handleDragEnter,
+    handleDragLeave: handleDragLeave,
+    handleDragOver: handleDragOver,
+    handleDrop: handleDrop,
+    handleFileInputChange: handleFileInputChange,
+    handleUploadClick: handleUploadClick
+  };
+};
+var _default = exports["default"] = useDropZone;
+
+/***/ }),
+
+/***/ "../app/modules/import-export-customization/assets/js/import/hooks/use-import-kit.js":
+/*!*******************************************************************************************!*\
+  !*** ../app/modules/import-export-customization/assets/js/import/hooks/use-import-kit.js ***!
+  \*******************************************************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports.IMPORT_PROCESSING_STATUS = void 0;
+exports.useImportKit = useImportKit;
+var _regenerator = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/regenerator */ "../node_modules/@babel/runtime/regenerator/index.js"));
+var _defineProperty2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/defineProperty */ "../node_modules/@babel/runtime/helpers/defineProperty.js"));
+var _slicedToArray2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/slicedToArray */ "../node_modules/@babel/runtime/helpers/slicedToArray.js"));
+var _asyncToGenerator2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/asyncToGenerator */ "../node_modules/@babel/runtime/helpers/asyncToGenerator.js"));
+var _react = __webpack_require__(/*! react */ "react");
+var _importContext = __webpack_require__(/*! ../context/import-context */ "../app/modules/import-export-customization/assets/js/import/context/import-context.js");
+function _createForOfIteratorHelper(r, e) { var t = "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"]; if (!t) { if (Array.isArray(r) || (t = _unsupportedIterableToArray(r)) || e && r && "number" == typeof r.length) { t && (r = t); var _n = 0, F = function F() {}; return { s: F, n: function n() { return _n >= r.length ? { done: !0 } : { done: !1, value: r[_n++] }; }, e: function e(r) { throw r; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var o, a = !0, u = !1; return { s: function s() { t = t.call(r); }, n: function n() { var r = t.next(); return a = r.done, r; }, e: function e(r) { u = !0, o = r; }, f: function f() { try { a || null == t.return || t.return(); } finally { if (u) throw o; } } }; }
+function _unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return _arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0; } }
+function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }
+function request(_x) {
+  return _request.apply(this, arguments);
+}
+function _request() {
+  _request = (0, _asyncToGenerator2.default)(/*#__PURE__*/_regenerator.default.mark(function _callee3(_ref) {
+    var _window$wpApiSettings;
+    var data, path, _ref$method, method, baseUrl, requestUrl, response, result, _result$data, _result$data2, errorMessage;
+    return _regenerator.default.wrap(function (_context3) {
+      while (1) switch (_context3.prev = _context3.next) {
+        case 0:
+          data = _ref.data, path = _ref.path, _ref$method = _ref.method, method = _ref$method === void 0 ? 'POST' : _ref$method;
+          baseUrl = elementorAppConfig['import-export-customization'].restApiBaseUrl;
+          requestUrl = "".concat(baseUrl, "/").concat(path);
+          _context3.next = 1;
+          return fetch(requestUrl, {
+            method: method,
+            headers: {
+              'Content-Type': 'application/json',
+              'X-WP-Nonce': ((_window$wpApiSettings = window.wpApiSettings) === null || _window$wpApiSettings === void 0 ? void 0 : _window$wpApiSettings.nonce) || ''
+            },
+            body: JSON.stringify(data)
+          });
+        case 1:
+          response = _context3.sent;
+          _context3.next = 2;
+          return response.json();
+        case 2:
+          result = _context3.sent;
+          if (response.ok) {
+            _context3.next = 3;
+            break;
+          }
+          errorMessage = (result === null || result === void 0 || (_result$data = result.data) === null || _result$data === void 0 ? void 0 : _result$data.message) || "HTTP error! with the following code: ".concat(result === null || result === void 0 || (_result$data2 = result.data) === null || _result$data2 === void 0 ? void 0 : _result$data2.code);
+          throw new Error(errorMessage);
+        case 3:
+          return _context3.abrupt("return", result);
+        case 4:
+        case "end":
+          return _context3.stop();
+      }
+    }, _callee3);
+  }));
+  return _request.apply(this, arguments);
+}
+var IMPORT_PROCESSING_STATUS = exports.IMPORT_PROCESSING_STATUS = {
+  PENDING: 'PENDING',
+  IN_PROGRESS: 'IN_PROGRESS',
+  DONE: 'DONE'
+};
+function useImportKit(_ref2) {
+  var data = _ref2.data,
+    includes = _ref2.includes,
+    customization = _ref2.customization,
+    isProcessing = _ref2.isProcessing,
+    dispatch = _ref2.dispatch;
+  var _useState = (0, _react.useState)(IMPORT_PROCESSING_STATUS.PENDING),
+    _useState2 = (0, _slicedToArray2.default)(_useState, 2),
+    status = _useState2[0],
+    setImportStatus = _useState2[1];
+  var _useState3 = (0, _react.useState)(null),
+    _useState4 = (0, _slicedToArray2.default)(_useState3, 2),
+    error = _useState4[0],
+    setError = _useState4[1];
+  var runImportRunners = /*#__PURE__*/function () {
+    var _ref3 = (0, _asyncToGenerator2.default)(/*#__PURE__*/_regenerator.default.mark(function _callee() {
+      var session, runners, stopIterations, _iterator, _step, runner, _result$data$imported, result, runnerKey, _t, _t2;
+      return _regenerator.default.wrap(function (_context) {
+        while (1) switch (_context.prev = _context.next) {
+          case 0:
+            setImportStatus(IMPORT_PROCESSING_STATUS.IN_PROGRESS);
+            session = data.importedData.session;
+            runners = data.importedData.runners;
+            stopIterations = null;
+            _iterator = _createForOfIteratorHelper(runners);
+            _context.prev = 1;
+            _iterator.s();
+          case 2:
+            if ((_step = _iterator.n()).done) {
+              _context.next = 8;
+              break;
+            }
+            runner = _step.value;
+            _context.prev = 3;
+            if (!stopIterations) {
+              _context.next = 4;
+              break;
+            }
+            return _context.abrupt("continue", 8);
+          case 4:
+            _context.next = 5;
+            return request({
+              data: {
+                session: session,
+                runner: runner
+              },
+              path: 'import-runner'
+            });
+          case 5:
+            result = _context.sent;
+            runnerKey = 'elementor-content' === runner ? 'content' : runner;
+            dispatch({
+              type: 'SET_RUNNERS_STATE',
+              payload: (0, _defineProperty2.default)({}, runnerKey, ((_result$data$imported = result.data.imported_data) === null || _result$data$imported === void 0 ? void 0 : _result$data$imported[runnerKey]) || result.data[runnerKey])
+            });
+            _context.next = 7;
+            break;
+          case 6:
+            _context.prev = 6;
+            _t = _context["catch"](3);
+            stopIterations = _t;
+            setError(_t);
+          case 7:
+            _context.next = 2;
+            break;
+          case 8:
+            _context.next = 10;
+            break;
+          case 9:
+            _context.prev = 9;
+            _t2 = _context["catch"](1);
+            _iterator.e(_t2);
+          case 10:
+            _context.prev = 10;
+            _iterator.f();
+            return _context.finish(10);
+          case 11:
+            setImportStatus(IMPORT_PROCESSING_STATUS.DONE);
+            dispatch({
+              type: 'SET_IMPORT_STATUS',
+              payload: _importContext.IMPORT_STATUS.COMPLETED
+            });
+          case 12:
+          case "end":
+            return _context.stop();
+        }
+      }, _callee, null, [[1, 9, 10, 11], [3, 6]]);
+    }));
+    return function runImportRunners() {
+      return _ref3.apply(this, arguments);
+    };
+  }();
+  function importKit() {
+    return _importKit.apply(this, arguments);
+  }
+  function _importKit() {
+    _importKit = (0, _asyncToGenerator2.default)(/*#__PURE__*/_regenerator.default.mark(function _callee2() {
+      var _data$kitUploadParams, _data$kitUploadParams2, _data$uploadedData, importData, result, _t3;
+      return _regenerator.default.wrap(function (_context2) {
+        while (1) switch (_context2.prev = _context2.next) {
+          case 0:
+            _context2.prev = 0;
+            setImportStatus(IMPORT_PROCESSING_STATUS.IN_PROGRESS);
+            importData = {
+              id: (_data$kitUploadParams = data.kitUploadParams) === null || _data$kitUploadParams === void 0 ? void 0 : _data$kitUploadParams.id,
+              referrer: (_data$kitUploadParams2 = data.kitUploadParams) === null || _data$kitUploadParams2 === void 0 ? void 0 : _data$kitUploadParams2.referrer,
+              session: data === null || data === void 0 || (_data$uploadedData = data.uploadedData) === null || _data$uploadedData === void 0 ? void 0 : _data$uploadedData.session,
+              include: includes,
+              customization: customization
+            };
+            _context2.next = 1;
+            return request({
+              data: importData,
+              path: 'import'
+            });
+          case 1:
+            result = _context2.sent;
+            dispatch({
+              type: 'SET_IMPORTED_DATA',
+              payload: result.data
+            });
+            _context2.next = 3;
+            break;
+          case 2:
+            _context2.prev = 2;
+            _t3 = _context2["catch"](0);
+            setError(_t3);
+            setImportStatus(IMPORT_PROCESSING_STATUS.DONE);
+          case 3:
+          case "end":
+            return _context2.stop();
+        }
+      }, _callee2, null, [[0, 2]]);
+    }));
+    return _importKit.apply(this, arguments);
+  }
+  (0, _react.useEffect)(function () {
+    if (isProcessing && data.includes.length) {
+      importKit();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data.includes, isProcessing]);
+  (0, _react.useEffect)(function () {
+    if (isProcessing && data.importedData && !error) {
+      runImportRunners();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data.importedData, isProcessing, error]);
+  return {
+    status: status,
+    error: error
+  };
+}
+
+/***/ }),
+
+/***/ "../app/modules/import-export-customization/assets/js/import/hooks/use-upload-kit.js":
+/*!*******************************************************************************************!*\
+  !*** ../app/modules/import-export-customization/assets/js/import/hooks/use-upload-kit.js ***!
+  \*******************************************************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports.useUploadKit = useUploadKit;
+var _regenerator = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/regenerator */ "../node_modules/@babel/runtime/regenerator/index.js"));
+var _defineProperty2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/defineProperty */ "../node_modules/@babel/runtime/helpers/defineProperty.js"));
+var _asyncToGenerator2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/asyncToGenerator */ "../node_modules/@babel/runtime/helpers/asyncToGenerator.js"));
+var _slicedToArray2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/slicedToArray */ "../node_modules/@babel/runtime/helpers/slicedToArray.js"));
+var _react = __webpack_require__(/*! react */ "react");
+var _importContext = __webpack_require__(/*! ../context/import-context */ "../app/modules/import-export-customization/assets/js/import/context/import-context.js");
+var _appsEventTracking = __webpack_require__(/*! ../../../../../../assets/js/event-track/apps-event-tracking */ "../app/assets/js/event-track/apps-event-tracking.js");
+function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
+function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { (0, _defineProperty2.default)(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
+function useUploadKit() {
+  var _useImportContext = (0, _importContext.useImportContext)(),
+    data = _useImportContext.data,
+    isUploading = _useImportContext.isUploading,
+    dispatch = _useImportContext.dispatch;
+  var _useState = (0, _react.useState)(false),
+    _useState2 = (0, _slicedToArray2.default)(_useState, 2),
+    uploading = _useState2[0],
+    setUploading = _useState2[1];
+  var _useState3 = (0, _react.useState)(null),
+    _useState4 = (0, _slicedToArray2.default)(_useState3, 2),
+    error = _useState4[0],
+    setError = _useState4[1];
+  function uploadKit() {
+    return _uploadKit.apply(this, arguments);
+  }
+  function _uploadKit() {
+    _uploadKit = (0, _asyncToGenerator2.default)(/*#__PURE__*/_regenerator.default.mark(function _callee() {
+      var _window$wpApiSettings, baseUrl, uploadUrl, uploadData, _data$kitUploadParams, id, source, fileUrl, response, result, _result$data, _result$data2, errorMessage, _t;
+      return _regenerator.default.wrap(function (_context) {
+        while (1) switch (_context.prev = _context.next) {
+          case 0:
+            _context.prev = 0;
+            setUploading(true);
+            baseUrl = elementorAppConfig['import-export-customization'].restApiBaseUrl;
+            uploadUrl = "".concat(baseUrl, "/upload");
+            uploadData = null;
+            if (data.file) {
+              uploadData = new FormData();
+              uploadData.append('e_import_file', data.file);
+            }
+            if (data.kitUploadParams) {
+              _data$kitUploadParams = data.kitUploadParams, id = _data$kitUploadParams.id, source = _data$kitUploadParams.source, fileUrl = _data$kitUploadParams.fileUrl;
+              uploadData = JSON.stringify({
+                referrer: source,
+                source: source,
+                kit_id: id,
+                file_url: fileUrl
+              });
+            }
+            _context.next = 1;
+            return fetch(uploadUrl, {
+              method: 'POST',
+              headers: _objectSpread({
+                'X-WP-Nonce': ((_window$wpApiSettings = window.wpApiSettings) === null || _window$wpApiSettings === void 0 ? void 0 : _window$wpApiSettings.nonce) || ''
+              }, 'string' === typeof uploadData ? {
+                'Content-Type': 'application/json'
+              } : null),
+              body: uploadData
+            });
+          case 1:
+            response = _context.sent;
+            _context.next = 2;
+            return response.json();
+          case 2:
+            result = _context.sent;
+            if (response.ok) {
+              _context.next = 3;
+              break;
+            }
+            errorMessage = (result === null || result === void 0 || (_result$data = result.data) === null || _result$data === void 0 ? void 0 : _result$data.message) || "HTTP error! with the following code: ".concat(result === null || result === void 0 || (_result$data2 = result.data) === null || _result$data2 === void 0 ? void 0 : _result$data2.code);
+            throw new Error(errorMessage);
+          case 3:
+            if (data.file) {
+              _appsEventTracking.AppsEventTracking.sendKitImportUploadFile('Success');
+            }
+            dispatch({
+              type: 'SET_UPLOADED_DATA',
+              payload: result.data
+            });
+            _context.next = 5;
+            break;
+          case 4:
+            _context.prev = 4;
+            _t = _context["catch"](0);
+            setError(_t);
+            _appsEventTracking.AppsEventTracking.sendKitImportUploadFile(_t.message);
+          case 5:
+            _context.prev = 5;
+            setUploading(false);
+            return _context.finish(5);
+          case 6:
+          case "end":
+            return _context.stop();
+        }
+      }, _callee, null, [[0, 4, 5, 6]]);
+    }));
+    return _uploadKit.apply(this, arguments);
+  }
+  (0, _react.useEffect)(function () {
+    if (isUploading && (data.file || data.kitUploadParams)) {
+      uploadKit();
+    } else {
+      setError(null);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isUploading, data.file, data.kitUploadParams]);
+  return {
+    uploading: uploading,
+    error: error
+  };
+}
+
+/***/ }),
+
+/***/ "../app/modules/import-export-customization/assets/js/import/import.js":
+/*!*****************************************************************************!*\
+  !*** ../app/modules/import-export-customization/assets/js/import/import.js ***!
+  \*****************************************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports["default"] = Import;
+var _react = _interopRequireDefault(__webpack_require__(/*! react */ "react"));
+var _importContext = _interopRequireDefault(__webpack_require__(/*! ./context/import-context */ "../app/modules/import-export-customization/assets/js/import/context/import-context.js"));
+var _router = __webpack_require__(/*! @reach/router */ "../node_modules/@reach/router/es/index.js");
+var _router2 = _interopRequireDefault(__webpack_require__(/*! @elementor/router */ "@elementor/router"));
+var _importKit = _interopRequireDefault(__webpack_require__(/*! ./pages/import-kit */ "../app/modules/import-export-customization/assets/js/import/pages/import-kit.js"));
+var _importComplete = _interopRequireDefault(__webpack_require__(/*! ./pages/import-complete */ "../app/modules/import-export-customization/assets/js/import/pages/import-complete.js"));
+var _importCustomization = _interopRequireDefault(__webpack_require__(/*! ./pages/import-customization */ "../app/modules/import-export-customization/assets/js/import/pages/import-customization.js"));
+var _importProcess = _interopRequireDefault(__webpack_require__(/*! ./pages/import-process */ "../app/modules/import-export-customization/assets/js/import/pages/import-process.js"));
+function Import() {
+  return /*#__PURE__*/_react.default.createElement(_importContext.default, null, /*#__PURE__*/_react.default.createElement(_router.LocationProvider, {
+    history: _router2.default.appHistory
+  }, /*#__PURE__*/_react.default.createElement(_router.Router, null, /*#__PURE__*/_react.default.createElement(_importKit.default, {
+    path: "/",
+    default: true
+  }), /*#__PURE__*/_react.default.createElement(_importCustomization.default, {
+    path: "/content"
+  }), /*#__PURE__*/_react.default.createElement(_importProcess.default, {
+    path: "/process"
+  }), /*#__PURE__*/_react.default.createElement(_importComplete.default, {
+    path: "/complete"
+  }))));
+}
+
+/***/ }),
+
+/***/ "../app/modules/import-export-customization/assets/js/import/index.js":
+/*!****************************************************************************!*\
+  !*** ../app/modules/import-export-customization/assets/js/import/index.js ***!
+  \****************************************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+Object.defineProperty(exports, "default", ({
+  enumerable: true,
+  get: function get() {
+    return _import.default;
+  }
+}));
+var _import = _interopRequireDefault(__webpack_require__(/*! ./import */ "../app/modules/import-export-customization/assets/js/import/import.js"));
+
+/***/ }),
+
+/***/ "../app/modules/import-export-customization/assets/js/import/pages/import-complete.js":
+/*!********************************************************************************************!*\
+  !*** ../app/modules/import-export-customization/assets/js/import/pages/import-complete.js ***!
+  \********************************************************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
+var _typeof = __webpack_require__(/*! @babel/runtime/helpers/typeof */ "../node_modules/@babel/runtime/helpers/typeof.js");
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports["default"] = ImportComplete;
+var _react = _interopRequireWildcard(__webpack_require__(/*! react */ "react"));
+var _slicedToArray2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/slicedToArray */ "../node_modules/@babel/runtime/helpers/slicedToArray.js"));
+var _router = __webpack_require__(/*! @reach/router */ "../node_modules/@reach/router/es/index.js");
+var _ui = __webpack_require__(/*! @elementor/ui */ "@elementor/ui");
+var _i18n = __webpack_require__(/*! @wordpress/i18n */ "@wordpress/i18n");
+var _components = __webpack_require__(/*! ../../shared/components */ "../app/modules/import-export-customization/assets/js/shared/components/index.js");
+var _importContext = __webpack_require__(/*! ../context/import-context */ "../app/modules/import-export-customization/assets/js/import/context/import-context.js");
+var _appsEventTracking = __webpack_require__(/*! elementor-app/event-track/apps-event-tracking */ "../app/assets/js/event-track/apps-event-tracking.js");
+var _utils = __webpack_require__(/*! ../../shared/utils/utils */ "../app/modules/import-export-customization/assets/js/shared/utils/utils.js");
+function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function _interopRequireWildcard(e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, default: e }; if (null === e || "object" != _typeof(e) && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (var _t in e) "default" !== _t && {}.hasOwnProperty.call(e, _t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, _t)) && (i.get || i.set) ? o(f, _t, i) : f[_t] = e[_t]); return f; })(e, t); }
+var handleDone = function handleDone() {
+  window.top.location = elementorAppConfig.admin_url;
+};
+function ImportComplete() {
+  var _runnersState$templat2, _elementorAppConfig;
+  var _useImportContext = (0, _importContext.useImportContext)(),
+    data = _useImportContext.data,
+    isCompleted = _useImportContext.isCompleted,
+    runnersState = _useImportContext.runnersState;
+  var includes = data.includes,
+    analytics = data.analytics,
+    uploadedData = data.uploadedData;
+  var navigate = (0, _router.useNavigate)();
+  var getTemplatesSummary = (0, _react.useCallback)(function () {
+    var _runnersState$templat, _elementorAppConfig$i;
+    var templatesSummary = runnersState === null || runnersState === void 0 || (_runnersState$templat = runnersState.templates) === null || _runnersState$templat === void 0 ? void 0 : _runnersState$templat.succeed_summary;
+    if (!templatesSummary) {
+      return (0, _i18n.__)('No templates imported', 'elementor');
+    }
+    var summaryTitles = ((_elementorAppConfig$i = elementorAppConfig['import-export-customization']) === null || _elementorAppConfig$i === void 0 || (_elementorAppConfig$i = _elementorAppConfig$i.summaryTitles) === null || _elementorAppConfig$i === void 0 ? void 0 : _elementorAppConfig$i.templates) || {};
+    var summaryParts = Object.entries(templatesSummary).map(function (_ref) {
+      var _ref2 = (0, _slicedToArray2.default)(_ref, 2),
+        docType = _ref2[0],
+        count = _ref2[1];
+      var label = summaryTitles[docType];
+      if (!label) {
+        return null;
+      }
+      var title = count > 1 ? label.plural : label.single;
+      return "".concat(count, " ").concat(title);
+    }).filter(function (part) {
+      return part !== null;
+    });
+    return summaryParts.length > 0 ? summaryParts.join(' | ') : (0, _i18n.__)('No templates imported', 'elementor');
+  }, [runnersState === null || runnersState === void 0 || (_runnersState$templat2 = runnersState.templates) === null || _runnersState$templat2 === void 0 ? void 0 : _runnersState$templat2.succeed_summary]);
+  var getContentSummary = (0, _react.useCallback)(function () {
+    var _elementorAppConfig$i2;
+    var elementorContent = runnersState === null || runnersState === void 0 ? void 0 : runnersState['elementor-content'];
+    var wpContent = runnersState === null || runnersState === void 0 ? void 0 : runnersState['wp-content'];
+    var content = runnersState === null || runnersState === void 0 ? void 0 : runnersState.content;
+    var taxonomies = runnersState === null || runnersState === void 0 ? void 0 : runnersState.taxonomies;
+    var contentCounts = {};
+    var summaryTitles = ((_elementorAppConfig$i2 = elementorAppConfig['import-export-customization']) === null || _elementorAppConfig$i2 === void 0 || (_elementorAppConfig$i2 = _elementorAppConfig$i2.summaryTitles) === null || _elementorAppConfig$i2 === void 0 ? void 0 : _elementorAppConfig$i2.content) || {};
+    var countSucceedItems = function countSucceedItems(contentSection) {
+      if (!contentSection) {
+        return {};
+      }
+      var counts = {};
+      Object.entries(contentSection).forEach(function (_ref3) {
+        var _ref4 = (0, _slicedToArray2.default)(_ref3, 2),
+          docType = _ref4[0],
+          result = _ref4[1];
+        if (result !== null && result !== void 0 && result.succeed && Object.keys(result.succeed).length > 0) {
+          counts[docType] = (counts[docType] || 0) + Object.keys(result.succeed).length;
+        }
+      });
+      return counts;
+    };
+    var wpContentCounts = countSucceedItems(wpContent);
+    var contentCountsFromContent = countSucceedItems(content);
+    var elementorContentCounts = countSucceedItems(elementorContent);
+    [wpContentCounts, contentCountsFromContent, elementorContentCounts].forEach(function (counts) {
+      Object.entries(counts).forEach(function (_ref5) {
+        var _ref6 = (0, _slicedToArray2.default)(_ref5, 2),
+          docType = _ref6[0],
+          count = _ref6[1];
+        contentCounts[docType] = (contentCounts[docType] || 0) + count;
+      });
+    });
+    var totalTaxonomies = 0;
+    if (taxonomies) {
+      Object.values(taxonomies).forEach(function (taxonomy) {
+        Object.values(taxonomy).forEach(function (terms) {
+          totalTaxonomies += terms.length;
+        });
+      });
+    }
+    var totalNavMenuItems = 0;
+    [wpContent, content, elementorContent].forEach(function (contentSection) {
+      var _contentSection$nav_m;
+      if (contentSection !== null && contentSection !== void 0 && (_contentSection$nav_m = contentSection.nav_menu_item) !== null && _contentSection$nav_m !== void 0 && _contentSection$nav_m.succeed) {
+        totalNavMenuItems += Object.keys(contentSection.nav_menu_item.succeed).length;
+      }
+    });
+    var hasContent = Object.keys(contentCounts).length > 0 || totalTaxonomies > 0 || totalNavMenuItems > 0;
+    if (!hasContent) {
+      return (0, _i18n.__)('No content imported', 'elementor');
+    }
+    var summaryParts = [];
+    Object.entries(contentCounts).forEach(function (_ref7) {
+      var _ref8 = (0, _slicedToArray2.default)(_ref7, 2),
+        docType = _ref8[0],
+        count = _ref8[1];
+      var label = summaryTitles[docType];
+      if (label && count > 0) {
+        var title = count > 1 ? label.plural : label.single;
+        summaryParts.push("".concat(count, " ").concat(title));
+      }
+    });
+    if (totalTaxonomies > 0) {
+      var taxonomyLabel = totalTaxonomies > 1 ? (0, _i18n.__)('Taxonomies', 'elementor') : (0, _i18n.__)('Taxonomy', 'elementor');
+      summaryParts.push("".concat(totalTaxonomies, " ").concat(taxonomyLabel));
+    }
+    if (totalNavMenuItems > 0) {
+      var menuLabel = totalNavMenuItems > 1 ? (0, _i18n.__)('Menus', 'elementor') : (0, _i18n.__)('Menu', 'elementor');
+      summaryParts.push("".concat(totalNavMenuItems, " ").concat(menuLabel));
+    }
+    return summaryParts.length > 0 ? summaryParts.join(' | ') : (0, _i18n.__)('No content imported', 'elementor');
+  }, [runnersState]);
+  var getPluginsSummary = (0, _react.useCallback)(function () {
+    var plugins = Array.isArray(runnersState === null || runnersState === void 0 ? void 0 : runnersState.plugins) ? runnersState === null || runnersState === void 0 ? void 0 : runnersState.plugins : Object.values((runnersState === null || runnersState === void 0 ? void 0 : runnersState.plugins) || {});
+    return runnersState !== null && runnersState !== void 0 && runnersState.plugins ? plugins.join(' | ') : (0, _i18n.__)('No plugins imported', 'elementor');
+  }, [runnersState === null || runnersState === void 0 ? void 0 : runnersState.plugins]);
+  var getSettingsSummary = (0, _react.useCallback)(function () {
+    var _data$customization, _data$uploadedData;
+    var siteSettings = data.includes.includes('settings') ? (data === null || data === void 0 || (_data$customization = data.customization) === null || _data$customization === void 0 ? void 0 : _data$customization.settings) || (data === null || data === void 0 || (_data$uploadedData = data.uploadedData) === null || _data$uploadedData === void 0 ? void 0 : _data$uploadedData.manifest['site-settings']) || {} : {};
+    if (!Object.keys(siteSettings).length || !Object.keys(runnersState['site-settings'] || {}).length) {
+      return (0, _i18n.__)('No settings imported', 'elementor');
+    }
+    var summary = (0, _utils.buildKitSettingsSummary)(siteSettings);
+    return summary.length > 0 ? summary : (0, _i18n.__)('No settings imported', 'elementor');
+  }, [data, runnersState]);
+  var summaryData = (0, _react.useMemo)(function () {
+    return {
+      content: {
+        title: (0, _i18n.__)('Content', 'elementor'),
+        subTitle: getContentSummary()
+      },
+      templates: {
+        title: (0, _i18n.__)('Templates', 'elementor'),
+        subTitle: getTemplatesSummary()
+      },
+      settings: {
+        title: (0, _i18n.__)('Site settings', 'elementor'),
+        subTitle: getSettingsSummary()
+      },
+      plugins: {
+        title: (0, _i18n.__)('Plugins', 'elementor'),
+        subTitle: getPluginsSummary()
+      }
+    };
+  }, [getPluginsSummary, getTemplatesSummary, getSettingsSummary, getContentSummary]);
+  (0, _react.useEffect)(function () {
+    if (!isCompleted) {
+      navigate('/import-customization', {
+        replace: true
+      });
+    }
+  }, [isCompleted, navigate]);
+  var footerContent = /*#__PURE__*/_react.default.createElement(_ui.Stack, {
+    direction: "row",
+    spacing: 1
+  }, /*#__PURE__*/_react.default.createElement(_ui.Button, {
+    variant: "outlined",
+    color: "secondary",
+    size: "small",
+    "data-testid": "see-it-live-button",
+    href: (_elementorAppConfig = elementorAppConfig) === null || _elementorAppConfig === void 0 ? void 0 : _elementorAppConfig.home_url,
+    target: "_blank"
+  }, (0, _i18n.__)('See it Live', 'elementor')), /*#__PURE__*/_react.default.createElement(_ui.Button, {
+    variant: "contained",
+    color: "primary",
+    size: "small",
+    onClick: handleDone,
+    "data-testid": "close-button"
+  }, (0, _i18n.__)('Close', 'elementor')));
+  var headerContent = /*#__PURE__*/_react.default.createElement(_components.PageHeader, {
+    title: (0, _i18n.__)('Import', 'elementor')
+  });
+  (0, _react.useEffect)(function () {
+    _appsEventTracking.AppsEventTracking.sendPageViewsWebsiteTemplates(elementorCommon.eventsManager.config.secondaryLocations.kitLibrary.kitImportSummary);
+  }, []);
+  (0, _react.useEffect)(function () {
+    var _data$kitUploadParams, _uploadedData$manifes;
+    _appsEventTracking.AppsEventTracking.sendImportKitCustomization({
+      kit_source: (data === null || data === void 0 || (_data$kitUploadParams = data.kitUploadParams) === null || _data$kitUploadParams === void 0 ? void 0 : _data$kitUploadParams.source) || 'file',
+      kit_import_content: includes.includes('content'),
+      kit_import_templates: includes.includes('templates'),
+      kit_import_settings: includes.includes('settings'),
+      kit_import_plugins: includes.includes('plugins'),
+      kit_import_deselected: analytics === null || analytics === void 0 ? void 0 : analytics.customization,
+      kit_description: !!(uploadedData !== null && uploadedData !== void 0 && (_uploadedData$manifes = uploadedData.manifest) !== null && _uploadedData$manifes !== void 0 && _uploadedData$manifes.description)
+    });
+  }, [includes, analytics, uploadedData, data]);
+  return /*#__PURE__*/_react.default.createElement(_components.BaseLayout, {
+    topBar: /*#__PURE__*/_react.default.createElement(_components.TopBar, null, headerContent),
+    footer: /*#__PURE__*/_react.default.createElement(_components.Footer, null, footerContent)
+  }, /*#__PURE__*/_react.default.createElement(_components.CenteredContent, {
+    hasFooter: true,
+    maxWidth: "800px"
+  }, /*#__PURE__*/_react.default.createElement(_ui.Stack, {
+    spacing: 3,
+    alignItems: "center",
+    "data-testid": "import-complete-content"
+  }, /*#__PURE__*/_react.default.createElement(_components.CompleteIcon, {
+    imageSrc: elementorAppConfig.assets_url + 'images/kit-is-live.svg',
+    altText: (0, _i18n.__)('Kit is live illustration', 'elementor'),
+    testId: "import-complete-icon"
+  }), /*#__PURE__*/_react.default.createElement(_components.CompleteHeading, {
+    title: (0, _i18n.__)('Your website templates is now live on your site!', 'elementor'),
+    subtitle: (0, _i18n.__)('You\'ve imported and applied the following to your site:', 'elementor'),
+    testId: "import-complete-heading"
+  }), /*#__PURE__*/_react.default.createElement(_components.CompleteSummary, {
+    summaryData: summaryData,
+    testId: "import-complete-summary"
+  }), /*#__PURE__*/_react.default.createElement(_ui.Box, {
+    mt: 2
+  }, /*#__PURE__*/_react.default.createElement(_ui.Stack, {
+    direction: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    spacing: 3
+  }, /*#__PURE__*/_react.default.createElement(_ui.Typography, {
+    variant: "body2",
+    color: "text.secondary"
+  }, (0, _i18n.__)('Build sites faster with Website Templates.', 'elementor'), /*#__PURE__*/_react.default.createElement(_ui.Link, {
+    href: "https://go.elementor.com/app-what-are-kits",
+    color: "info.light",
+    target: "_blank",
+    sx: {
+      ml: 1,
+      textDecoration: 'none'
+    }
+  }, (0, _i18n.__)('Show me how', 'elementor'))))))));
+}
+
+/***/ }),
+
+/***/ "../app/modules/import-export-customization/assets/js/import/pages/import-customization.js":
+/*!*************************************************************************************************!*\
+  !*** ../app/modules/import-export-customization/assets/js/import/pages/import-customization.js ***!
+  \*************************************************************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
+var _typeof = __webpack_require__(/*! @babel/runtime/helpers/typeof */ "../node_modules/@babel/runtime/helpers/typeof.js");
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports["default"] = ImportCustomization;
+var _react = _interopRequireWildcard(__webpack_require__(/*! react */ "react"));
+var _ui = __webpack_require__(/*! @elementor/ui */ "@elementor/ui");
+var _router = __webpack_require__(/*! @reach/router */ "../node_modules/@reach/router/es/index.js");
+var _i18n = __webpack_require__(/*! @wordpress/i18n */ "@wordpress/i18n");
+var _components = __webpack_require__(/*! ../../shared/components */ "../app/modules/import-export-customization/assets/js/shared/components/index.js");
+var _importKitPartsSelection = _interopRequireDefault(__webpack_require__(/*! ../components/import-kit-parts-selection */ "../app/modules/import-export-customization/assets/js/import/components/import-kit-parts-selection.js"));
+var _importContext = __webpack_require__(/*! ../context/import-context */ "../app/modules/import-export-customization/assets/js/import/context/import-context.js");
+var _appsEventTracking = __webpack_require__(/*! elementor-app/event-track/apps-event-tracking */ "../app/assets/js/event-track/apps-event-tracking.js");
+function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function _interopRequireWildcard(e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, default: e }; if (null === e || "object" != _typeof(e) && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (var _t in e) "default" !== _t && {}.hasOwnProperty.call(e, _t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, _t)) && (i.get || i.set) ? o(f, _t, i) : f[_t] = e[_t]); return f; })(e, t); }
+var headerContent = /*#__PURE__*/_react.default.createElement(_components.PageHeader, {
+  title: (0, _i18n.__)('Import', 'elementor')
+});
+function ImportCustomization() {
+  var _useImportContext = (0, _importContext.useImportContext)(),
+    isCustomizing = _useImportContext.isCustomizing,
+    dispatch = _useImportContext.dispatch,
+    isProcessing = _useImportContext.isProcessing,
+    data = _useImportContext.data;
+  var navigate = (0, _router.useNavigate)();
+  (0, _react.useEffect)(function () {
+    _appsEventTracking.AppsEventTracking.sendPageViewsWebsiteTemplates(elementorCommon.eventsManager.config.secondaryLocations.kitLibrary.kitImportCustomization);
+  }, []);
+  var footerContent = /*#__PURE__*/_react.default.createElement(_ui.Stack, {
+    direction: "row",
+    spacing: 1
+  }, /*#__PURE__*/_react.default.createElement(_ui.Button, {
+    variant: "text",
+    color: "secondary",
+    size: "small",
+    onClick: function onClick() {
+      if (data !== null && data !== void 0 && data.kitUploadParams) {
+        var _data$kitUploadParams, _data$kitUploadParams2;
+        var url = '';
+        if ('cloud' === (data === null || data === void 0 || (_data$kitUploadParams = data.kitUploadParams) === null || _data$kitUploadParams === void 0 ? void 0 : _data$kitUploadParams.source)) {
+          url = 'kit-library/cloud';
+        } else if ('kit-library' === (data === null || data === void 0 || (_data$kitUploadParams2 = data.kitUploadParams) === null || _data$kitUploadParams2 === void 0 ? void 0 : _data$kitUploadParams2.source)) {
+          url = 'kit-library';
+        }
+        navigate(url, {
+          replace: true
+        });
+      } else {
+        dispatch({
+          type: 'RESET_STATE'
+        });
+        dispatch({
+          type: 'SET_IMPORT_STATUS',
+          payload: _importContext.IMPORT_STATUS.PENDING
+        });
+      }
+    },
+    "data-testid": "import-back-button"
+  }, (0, _i18n.__)('Back', 'elementor')), /*#__PURE__*/_react.default.createElement(_ui.Button, {
+    variant: "contained",
+    color: "primary",
+    size: "small",
+    onClick: function onClick() {
+      dispatch({
+        type: 'SET_IMPORT_STATUS',
+        payload: _importContext.IMPORT_STATUS.IMPORTING
+      });
+      navigate('import-customization/process');
+    },
+    "data-testid": "import-apply-button"
+  }, (0, _i18n.__)('Import and apply', 'elementor')));
+  (0, _react.useEffect)(function () {
+    if (isProcessing) {
+      navigate('import-customization/process');
+    } else if (!isCustomizing) {
+      navigate('import-customization', {
+        replace: true
+      });
+    }
+  }, [isProcessing, isCustomizing, navigate]);
+  return /*#__PURE__*/_react.default.createElement(_components.BaseLayout, {
+    topBar: /*#__PURE__*/_react.default.createElement(_components.TopBar, null, headerContent),
+    footer: /*#__PURE__*/_react.default.createElement(_components.Footer, null, footerContent)
+  }, /*#__PURE__*/_react.default.createElement(_ui.Stack, {
+    spacing: 4,
+    sx: {
+      mt: 4,
+      mx: 'auto'
+    }
+  }, /*#__PURE__*/_react.default.createElement(_ui.Stack, {
+    spacing: 2
+  }, /*#__PURE__*/_react.default.createElement(_ui.Typography, {
+    variant: "h4",
+    component: "h2",
+    gutterBottom: true,
+    color: "text.primary"
+  }, (0, _i18n.__)('Select which parts you want to apply', 'elementor')), /*#__PURE__*/_react.default.createElement(_ui.Stack, null, /*#__PURE__*/_react.default.createElement(_ui.Typography, {
+    variant: "subtitle2"
+  }, (0, _i18n.__)('These are the templates, content and site settings that come with your website templates.', 'elementor')), /*#__PURE__*/_react.default.createElement(_ui.Typography, {
+    variant: "subtitle2"
+  }, (0, _i18n.__)('All items are already selected by default. Uncheck the ones you don\'t want.', 'elementor')))), /*#__PURE__*/_react.default.createElement(_importKitPartsSelection.default, null)));
+}
+
+/***/ }),
+
+/***/ "../app/modules/import-export-customization/assets/js/import/pages/import-kit.js":
+/*!***************************************************************************************!*\
+  !*** ../app/modules/import-export-customization/assets/js/import/pages/import-kit.js ***!
+  \***************************************************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
+var _typeof = __webpack_require__(/*! @babel/runtime/helpers/typeof */ "../node_modules/@babel/runtime/helpers/typeof.js");
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports["default"] = ImportKit;
+var _react = _interopRequireWildcard(__webpack_require__(/*! react */ "react"));
+var _router = __webpack_require__(/*! @reach/router */ "../node_modules/@reach/router/es/index.js");
+var _ui = __webpack_require__(/*! @elementor/ui */ "@elementor/ui");
+var _i18n = __webpack_require__(/*! @wordpress/i18n */ "@wordpress/i18n");
+var _useQueryParams = _interopRequireDefault(__webpack_require__(/*! elementor-app/hooks/use-query-params */ "../app/assets/js/hooks/use-query-params.js"));
+var _components = __webpack_require__(/*! ../../shared/components */ "../app/modules/import-export-customization/assets/js/shared/components/index.js");
+var _dropZone = _interopRequireDefault(__webpack_require__(/*! ../components/drop-zone */ "../app/modules/import-export-customization/assets/js/import/components/drop-zone.js"));
+var _importContext = __webpack_require__(/*! ../context/import-context */ "../app/modules/import-export-customization/assets/js/import/context/import-context.js");
+var _useUploadKit2 = __webpack_require__(/*! ../hooks/use-upload-kit */ "../app/modules/import-export-customization/assets/js/import/hooks/use-upload-kit.js");
+var _importError = _interopRequireDefault(__webpack_require__(/*! ../components/import-error */ "../app/modules/import-export-customization/assets/js/import/components/import-error.js"));
+var _appsEventTracking = __webpack_require__(/*! elementor-app/event-track/apps-event-tracking */ "../app/assets/js/event-track/apps-event-tracking.js");
+function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function _interopRequireWildcard(e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, default: e }; if (null === e || "object" != _typeof(e) && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (var _t in e) "default" !== _t && {}.hasOwnProperty.call(e, _t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, _t)) && (i.get || i.set) ? o(f, _t, i) : f[_t] = e[_t]); return f; })(e, t); }
+function ImportKit() {
+  var _useImportContext = (0, _importContext.useImportContext)(),
+    data = _useImportContext.data,
+    dispatch = _useImportContext.dispatch;
+  var navigate = (0, _router.useNavigate)();
+  var _useQueryParams$getAl = (0, _useQueryParams.default)().getAll(),
+    id = _useQueryParams$getAl.id,
+    referrer = _useQueryParams$getAl.referrer,
+    fileUrl = _useQueryParams$getAl.file_url,
+    actionType = _useQueryParams$getAl.action_type,
+    nonce = _useQueryParams$getAl.nonce;
+  var _useUploadKit = (0, _useUploadKit2.useUploadKit)(),
+    uploading = _useUploadKit.uploading,
+    error = _useUploadKit.error;
+  var headerContent = /*#__PURE__*/_react.default.createElement(_components.PageHeader, {
+    title: (0, _i18n.__)('Import', 'elementor')
+  });
+  var onFileSelect = function onFileSelect(file) {
+    dispatch({
+      type: 'SET_IMPORT_STATUS',
+      payload: _importContext.IMPORT_STATUS.UPLOADING
+    });
+    dispatch({
+      type: 'SET_FILE',
+      payload: file
+    });
+  };
+  (0, _react.useEffect)(function () {
+    dispatch({
+      type: 'RESET_STATE'
+    });
+  }, [dispatch]);
+  (0, _react.useEffect)(function () {
+    if (data.uploadedData) {
+      if (data.actionType === _importContext.ACTION_TYPE.APPLY_ALL) {
+        var _data$uploadedData, _data$uploadedData2, _data$uploadedData3, _data$uploadedData4;
+        var includes = [];
+        if ((_data$uploadedData = data.uploadedData) !== null && _data$uploadedData !== void 0 && (_data$uploadedData = _data$uploadedData.manifest) !== null && _data$uploadedData !== void 0 && _data$uploadedData['site-settings']) {
+          includes.push('settings');
+        }
+        if (0 < Object.keys(((_data$uploadedData2 = data.uploadedData) === null || _data$uploadedData2 === void 0 || (_data$uploadedData2 = _data$uploadedData2.manifest) === null || _data$uploadedData2 === void 0 ? void 0 : _data$uploadedData2.templates) || {}).length) {
+          includes.push('templates');
+        }
+        if ((_data$uploadedData3 = data.uploadedData) !== null && _data$uploadedData3 !== void 0 && (_data$uploadedData3 = _data$uploadedData3.manifest) !== null && _data$uploadedData3 !== void 0 && _data$uploadedData3.content) {
+          includes.push('content');
+        }
+        if ((_data$uploadedData4 = data.uploadedData) !== null && _data$uploadedData4 !== void 0 && (_data$uploadedData4 = _data$uploadedData4.manifest) !== null && _data$uploadedData4 !== void 0 && _data$uploadedData4.plugins) {
+          includes.push('plugins');
+        }
+        dispatch({
+          type: 'ADD_INCLUDES',
+          payload: includes
+        });
+        dispatch({
+          type: 'SET_IMPORT_STATUS',
+          payload: _importContext.IMPORT_STATUS.IMPORTING
+        });
+        navigate('import-customization/process');
+      } else {
+        dispatch({
+          type: 'SET_IMPORT_STATUS',
+          payload: _importContext.IMPORT_STATUS.CUSTOMIZING
+        });
+        navigate('import-customization/content');
+      }
+    }
+  }, [data.uploadedData, dispatch, navigate, data.actionType]);
+  (0, _react.useEffect)(function () {
+    if (id || fileUrl) {
+      dispatch({
+        type: 'SET_KIT_UPLOAD_PARAMS',
+        payload: {
+          id: id,
+          source: referrer,
+          fileUrl: fileUrl,
+          nonce: nonce
+        }
+      });
+      if (actionType) {
+        dispatch({
+          type: 'SET_ACTION_TYPE',
+          payload: actionType
+        });
+      }
+      dispatch({
+        type: 'SET_IMPORT_STATUS',
+        payload: _importContext.IMPORT_STATUS.UPLOADING
+      });
+    }
+  }, [id, referrer, fileUrl, actionType, nonce, dispatch]);
+  (0, _react.useEffect)(function () {
+    _appsEventTracking.AppsEventTracking.sendPageViewsWebsiteTemplates(elementorCommon.eventsManager.config.secondaryLocations.kitLibrary.kitImportUploadBox);
+  }, []);
+  var renderContent = function renderContent() {
+    if (error) {
+      return /*#__PURE__*/_react.default.createElement(_components.CenteredContent, {
+        "data-testid": "import-error"
+      }, /*#__PURE__*/_react.default.createElement(_ui.Stack, {
+        spacing: 3,
+        alignItems: "center"
+      }, /*#__PURE__*/_react.default.createElement(_importError.default, {
+        statusText: (0, _i18n.__)('Uploading failed', 'elementor')
+      })));
+    }
+    if (uploading || referrer) {
+      return /*#__PURE__*/_react.default.createElement(_components.CenteredContent, {
+        "data-testid": "import-loader"
+      }, /*#__PURE__*/_react.default.createElement(_ui.CircularProgress, {
+        size: 30
+      }));
+    }
+    return /*#__PURE__*/_react.default.createElement(_ui.Stack, {
+      "data-testid": "content-container",
+      direction: "column",
+      alignItems: "flex-start",
+      justifyContent: "center",
+      sx: {
+        pt: 8,
+        gap: 7,
+        maxWidth: 1080,
+        mx: 'auto'
+      }
+    }, /*#__PURE__*/_react.default.createElement(_ui.Stack, {
+      direction: "column",
+      sx: {
+        gap: 3
+      }
+    }, /*#__PURE__*/_react.default.createElement(_ui.Typography, {
+      variant: "h4",
+      color: "text.primary",
+      "data-testid": "import-title"
+    }, (0, _i18n.__)('Import a website template', 'elementor')), /*#__PURE__*/_react.default.createElement(_ui.Typography, {
+      variant: "body1",
+      color: "text.secondary",
+      "data-testid": "import-description"
+    }, (0, _i18n.__)('Upload a file with templates, site settings, content, etc., and apply them to your site ', 'elementor'), /*#__PURE__*/_react.default.createElement(_ui.Link, {
+      href: "#",
+      color: "info.light",
+      sx: {
+        ml: 1,
+        textDecoration: 'none'
+      },
+      "data-testid": "import-learn-more-link"
+    }, (0, _i18n.__)('Learn more', 'elementor')))), /*#__PURE__*/_react.default.createElement(_ui.Stack, {
+      sx: {
+        width: '100%'
+      },
+      "data-testid": "import-card"
+    }, /*#__PURE__*/_react.default.createElement(_ui.Box, {
+      sx: {
+        p: 0
+      },
+      "data-testid": "import-card-content"
+    }, /*#__PURE__*/_react.default.createElement(_dropZone.default, {
+      onFileSelect: onFileSelect
+    }))));
+  };
+  return /*#__PURE__*/_react.default.createElement(_components.BaseLayout, {
+    topBar: /*#__PURE__*/_react.default.createElement(_components.TopBar, null, headerContent)
+  }, renderContent());
+}
+
+/***/ }),
+
+/***/ "../app/modules/import-export-customization/assets/js/import/pages/import-process.js":
+/*!*******************************************************************************************!*\
+  !*** ../app/modules/import-export-customization/assets/js/import/pages/import-process.js ***!
+  \*******************************************************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
+var _typeof = __webpack_require__(/*! @babel/runtime/helpers/typeof */ "../node_modules/@babel/runtime/helpers/typeof.js");
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports["default"] = ImportProcess;
+var _react = _interopRequireWildcard(__webpack_require__(/*! react */ "react"));
+var _ui = __webpack_require__(/*! @elementor/ui */ "@elementor/ui");
+var _router = __webpack_require__(/*! @reach/router */ "../node_modules/@reach/router/es/index.js");
+var _i18n = __webpack_require__(/*! @wordpress/i18n */ "@wordpress/i18n");
+var _components = __webpack_require__(/*! ../../shared/components */ "../app/modules/import-export-customization/assets/js/shared/components/index.js");
+var _useImportKit2 = __webpack_require__(/*! ../hooks/use-import-kit */ "../app/modules/import-export-customization/assets/js/import/hooks/use-import-kit.js");
+var _importError = _interopRequireDefault(__webpack_require__(/*! ../components/import-error */ "../app/modules/import-export-customization/assets/js/import/components/import-error.js"));
+var _importContext = __webpack_require__(/*! ../context/import-context */ "../app/modules/import-export-customization/assets/js/import/context/import-context.js");
+var _pluginActivation = __webpack_require__(/*! ../components/plugin-activation */ "../app/modules/import-export-customization/assets/js/import/components/plugin-activation.js");
+var _appsEventTracking = __webpack_require__(/*! elementor-app/event-track/apps-event-tracking */ "../app/assets/js/event-track/apps-event-tracking.js");
+function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function _interopRequireWildcard(e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, default: e }; if (null === e || "object" != _typeof(e) && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (var _t in e) "default" !== _t && {}.hasOwnProperty.call(e, _t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, _t)) && (i.get || i.set) ? o(f, _t, i) : f[_t] = e[_t]); return f; })(e, t); }
+var headerContent = /*#__PURE__*/_react.default.createElement(_components.PageHeader, {
+  title: (0, _i18n.__)('Import', 'elementor')
+});
+function ImportProcess() {
+  var _useImportContext = (0, _importContext.useImportContext)(),
+    data = _useImportContext.data,
+    dispatch = _useImportContext.dispatch,
+    isProcessing = _useImportContext.isProcessing,
+    runnersState = _useImportContext.runnersState;
+  var includes = data.includes,
+    customization = data.customization;
+  var _useImportKit = (0, _useImportKit2.useImportKit)({
+      data: data,
+      includes: includes,
+      customization: customization,
+      isProcessing: isProcessing,
+      dispatch: dispatch
+    }),
+    status = _useImportKit.status,
+    error = _useImportKit.error;
+  var navigate = (0, _router.useNavigate)();
+  (0, _react.useEffect)(function () {
+    if (!error) {
+      if (_useImportKit2.IMPORT_PROCESSING_STATUS.DONE === status) {
+        _appsEventTracking.AppsEventTracking.sendKitImportStatus();
+        navigate('import-customization/complete');
+      } else if (!isProcessing) {
+        navigate('import-customization', {
+          replace: true
+        });
+      }
+    } else {
+      _appsEventTracking.AppsEventTracking.sendKitImportStatus(error);
+    }
+  }, [status, error, navigate, isProcessing]);
+  return /*#__PURE__*/_react.default.createElement(_components.BaseLayout, {
+    topBar: /*#__PURE__*/_react.default.createElement(_components.TopBar, null, headerContent)
+  }, /*#__PURE__*/_react.default.createElement(_components.CenteredContent, null, /*#__PURE__*/_react.default.createElement(_ui.Stack, {
+    spacing: 3,
+    alignItems: "center"
+  }, status === _useImportKit2.IMPORT_PROCESSING_STATUS.IN_PROGRESS && !error && /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, /*#__PURE__*/_react.default.createElement(_ui.Stack, {
+    spacing: 3,
+    alignItems: "center"
+  }, /*#__PURE__*/_react.default.createElement(_ui.CircularProgress, {
+    size: 30
+  }), /*#__PURE__*/_react.default.createElement(_ui.Typography, {
+    variant: "h5"
+  }, (0, _i18n.__)('Settings up your website templates...', 'elementor')), /*#__PURE__*/_react.default.createElement(_ui.Stack, null, /*#__PURE__*/_react.default.createElement(_ui.Typography, {
+    variant: "subtitle1"
+  }, (0, _i18n.__)('This usually take a few moments.', 'elementor')), /*#__PURE__*/_react.default.createElement(_ui.Typography, {
+    variant: "subtitle1"
+  }, (0, _i18n.__)('Don\'t close this window until the process is finished.', 'elementor')))), /*#__PURE__*/_react.default.createElement(_pluginActivation.PluginActivation, {
+    plugins: runnersState === null || runnersState === void 0 ? void 0 : runnersState.plugins
+  })), error && /*#__PURE__*/_react.default.createElement(_importError.default, {
+    statusText: error.message
+  }))));
+}
+
+/***/ }),
+
+/***/ "../app/modules/import-export-customization/assets/js/import/utils/file-validation.js":
+/*!********************************************************************************************!*\
+  !*** ../app/modules/import-export-customization/assets/js/import/utils/file-validation.js ***!
+  \********************************************************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports.isValidFileType = exports.getValidExtensions = exports.getMimeTypeToExtensionMap = exports.getAcceptedFileTypes = void 0;
+var _toConsumableArray2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/toConsumableArray */ "../node_modules/@babel/runtime/helpers/toConsumableArray.js"));
+var getMimeTypeToExtensionMap = exports.getMimeTypeToExtensionMap = function getMimeTypeToExtensionMap() {
+  return {
+    'application/zip': ['zip'],
+    'application/json': ['json'],
+    'application/pdf': ['pdf'],
+    'text/plain': ['txt'],
+    'image/jpeg': ['jpg', 'jpeg'],
+    'image/png': ['png'],
+    'image/gif': ['gif'],
+    'text/csv': ['csv'],
+    'application/xml': ['xml'],
+    'text/xml': ['xml']
+  };
+};
+var getValidExtensions = exports.getValidExtensions = function getValidExtensions(filetypes) {
+  var mimeToExtMap = getMimeTypeToExtensionMap();
+  var validExtensions = [];
+  filetypes.forEach(function (mimeType) {
+    if (mimeToExtMap[mimeType]) {
+      validExtensions.push.apply(validExtensions, (0, _toConsumableArray2.default)(mimeToExtMap[mimeType]));
+    }
+  });
+  return validExtensions;
+};
+var isValidFileType = exports.isValidFileType = function isValidFileType(fileType) {
+  var fileName = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';
+  var filetypes = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : [];
+  if (0 === filetypes.length) {
+    return true;
+  }
+  if (filetypes.includes(fileType)) {
+    return true;
+  }
+  var extension = fileName.toLowerCase().split('.').pop();
+  var validExtensions = getValidExtensions(filetypes);
+  return validExtensions.includes(extension);
+};
+var getAcceptedFileTypes = exports.getAcceptedFileTypes = function getAcceptedFileTypes(filetypes) {
+  var acceptTypes = (0, _toConsumableArray2.default)(filetypes);
+  var validExtensions = getValidExtensions(filetypes);
+  validExtensions.forEach(function (ext) {
+    acceptTypes.push(".".concat(ext));
+  });
+  return acceptTypes.join(',');
+};
+
+/***/ }),
+
+/***/ "../app/modules/import-export-customization/assets/js/import/utils/version-utils.js":
+/*!******************************************************************************************!*\
+  !*** ../app/modules/import-export-customization/assets/js/import/utils/version-utils.js ***!
+  \******************************************************************************************/
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports.isVersionLessThan = exports.compareVersions = void 0;
+/**
+ * Compare two semantic versions.
+ *
+ * @param {string|number} a - First version to compare
+ * @param {string|number} b - Second version to compare
+ * @return {number} - Negative if a < b, positive if a > b, zero if equal
+ *
+ * @example
+ * compareVersions('3.9.1', '3.33.0')   // -1 (3.9.1 is older)
+ * compareVersions('3.33.1', '3.33.0')  // 1 (3.33.1 is newer)
+ * compareVersions('3.33.0', '3.33.0')  // 0 (equal)
+ */
+var compareVersions = exports.compareVersions = function compareVersions(a, b) {
+  var aParts = String(a || '0.0.0').split('.').map(Number);
+  var bParts = String(b || '0.0.0').split('.').map(Number);
+  for (var i = 0; i < Math.max(aParts.length, bParts.length); i++) {
+    var aVal = aParts[i] || 0;
+    var bVal = bParts[i] || 0;
+    if (aVal !== bVal) {
+      return aVal - bVal;
+    }
+  }
+  return 0;
+};
+
+/**
+ * Check if version A is less than version B.
+ *
+ * @param {string|number} a - First version
+ * @param {string|number} b - Second version
+ * @return {boolean} - True if a < b
+ *
+ * @example
+ * isVersionLessThan('3.9.1', '3.33.0')  // true
+ * isVersionLessThan('3.33.1', '3.33.0') // false
+ */
+var isVersionLessThan = exports.isVersionLessThan = function isVersionLessThan(a, b) {
+  return compareVersions(a, b) < 0;
+};
+
+/***/ }),
+
 /***/ "../app/modules/import-export-customization/assets/js/module.js":
 /*!**********************************************************************!*\
   !*** ../app/modules/import-export-customization/assets/js/module.js ***!
@@ -5725,6 +7913,7 @@ var _classCallCheck2 = _interopRequireDefault(__webpack_require__(/*! @babel/run
 var _defineProperty2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/defineProperty */ "../node_modules/@babel/runtime/helpers/defineProperty.js"));
 var _router = _interopRequireDefault(__webpack_require__(/*! @elementor/router */ "@elementor/router"));
 var _export = _interopRequireDefault(__webpack_require__(/*! ./export */ "../app/modules/import-export-customization/assets/js/export/index.js"));
+var _import = _interopRequireDefault(__webpack_require__(/*! ./import */ "../app/modules/import-export-customization/assets/js/import/index.js"));
 function _createForOfIteratorHelper(r, e) { var t = "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"]; if (!t) { if (Array.isArray(r) || (t = _unsupportedIterableToArray(r)) || e && r && "number" == typeof r.length) { t && (r = t); var _n = 0, F = function F() {}; return { s: F, n: function n() { return _n >= r.length ? { done: !0 } : { done: !1, value: r[_n++] }; }, e: function e(r) { throw r; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var o, a = !0, u = !1; return { s: function s() { t = t.call(r); }, n: function n() { var r = t.next(); return a = r.done, r; }, e: function e(r) { u = !0, o = r; }, f: function f() { try { a || null == t.return || t.return(); } finally { if (u) throw o; } } }; }
 function _unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return _arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0; } }
 function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }
@@ -5733,6 +7922,9 @@ var ImportExportCustomization = exports["default"] = /*#__PURE__*/(0, _createCla
   (0, _defineProperty2.default)(this, "routes", [{
     path: '/export-customization/*',
     component: _export.default
+  }, {
+    path: '/import-customization/*',
+    component: _import.default
   }]);
   var _iterator = _createForOfIteratorHelper(this.routes),
     _step;
@@ -5750,6 +7942,534 @@ var ImportExportCustomization = exports["default"] = /*#__PURE__*/(0, _createCla
 
 /***/ }),
 
+/***/ "../app/modules/import-export-customization/assets/js/shared/components/complete-heading.js":
+/*!**************************************************************************************************!*\
+  !*** ../app/modules/import-export-customization/assets/js/shared/components/complete-heading.js ***!
+  \**************************************************************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports["default"] = CompleteHeading;
+var _react = _interopRequireDefault(__webpack_require__(/*! react */ "react"));
+var _ui = __webpack_require__(/*! @elementor/ui */ "@elementor/ui");
+var _propTypes = _interopRequireDefault(__webpack_require__(/*! prop-types */ "../node_modules/prop-types/index.js"));
+function CompleteHeading(_ref) {
+  var title = _ref.title,
+    subtitle = _ref.subtitle,
+    linkText = _ref.linkText,
+    linkHref = _ref.linkHref,
+    linkOnClick = _ref.linkOnClick,
+    _ref$testId = _ref.testId,
+    testId = _ref$testId === void 0 ? 'complete-heading' : _ref$testId;
+  return /*#__PURE__*/_react.default.createElement(_ui.Box, {
+    "data-testid": testId
+  }, /*#__PURE__*/_react.default.createElement(_ui.Typography, {
+    variant: "h4",
+    color: "text.primary",
+    component: "h2",
+    gutterBottom: true
+  }, title), /*#__PURE__*/_react.default.createElement(_ui.Typography, {
+    variant: "body1",
+    color: "text.secondary",
+    sx: {
+      mb: 3
+    }
+  }, subtitle, linkText && linkHref && /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, ' ', /*#__PURE__*/_react.default.createElement(_ui.Link, {
+    href: linkHref,
+    onClick: linkOnClick,
+    sx: {
+      cursor: 'pointer',
+      textDecoration: 'underline'
+    },
+    color: "info.light"
+  }, linkText))));
+}
+CompleteHeading.propTypes = {
+  title: _propTypes.default.string.isRequired,
+  subtitle: _propTypes.default.string.isRequired,
+  linkText: _propTypes.default.string,
+  linkHref: _propTypes.default.string,
+  linkOnClick: _propTypes.default.func,
+  testId: _propTypes.default.string
+};
+
+/***/ }),
+
+/***/ "../app/modules/import-export-customization/assets/js/shared/components/complete-icon.js":
+/*!***********************************************************************************************!*\
+  !*** ../app/modules/import-export-customization/assets/js/shared/components/complete-icon.js ***!
+  \***********************************************************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports["default"] = CompleteIcon;
+var _react = _interopRequireDefault(__webpack_require__(/*! react */ "react"));
+var _ui = __webpack_require__(/*! @elementor/ui */ "@elementor/ui");
+var _propTypes = _interopRequireDefault(__webpack_require__(/*! prop-types */ "../node_modules/prop-types/index.js"));
+function CompleteIcon(_ref) {
+  var imageSrc = _ref.imageSrc,
+    altText = _ref.altText,
+    _ref$width = _ref.width,
+    width = _ref$width === void 0 ? '200px' : _ref$width,
+    _ref$marginBottom = _ref.marginBottom,
+    marginBottom = _ref$marginBottom === void 0 ? 2 : _ref$marginBottom,
+    _ref$testId = _ref.testId,
+    testId = _ref$testId === void 0 ? 'complete-icon' : _ref$testId;
+  return /*#__PURE__*/_react.default.createElement(_ui.Box, {
+    sx: {
+      mb: marginBottom
+    },
+    "data-testid": testId
+  }, /*#__PURE__*/_react.default.createElement("img", {
+    src: imageSrc,
+    alt: altText,
+    style: {
+      width: width
+    }
+  }));
+}
+CompleteIcon.propTypes = {
+  imageSrc: _propTypes.default.string.isRequired,
+  altText: _propTypes.default.string.isRequired,
+  width: _propTypes.default.string,
+  marginBottom: _propTypes.default.number,
+  testId: _propTypes.default.string
+};
+
+/***/ }),
+
+/***/ "../app/modules/import-export-customization/assets/js/shared/components/complete-summary.js":
+/*!**************************************************************************************************!*\
+  !*** ../app/modules/import-export-customization/assets/js/shared/components/complete-summary.js ***!
+  \**************************************************************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports["default"] = CompleteSummary;
+var _react = _interopRequireDefault(__webpack_require__(/*! react */ "react"));
+var _slicedToArray2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/slicedToArray */ "../node_modules/@babel/runtime/helpers/slicedToArray.js"));
+var _ui = __webpack_require__(/*! @elementor/ui */ "@elementor/ui");
+var _propTypes = _interopRequireDefault(__webpack_require__(/*! prop-types */ "../node_modules/prop-types/index.js"));
+var _i18n = __webpack_require__(/*! @wordpress/i18n */ "@wordpress/i18n");
+var _summarySection = _interopRequireDefault(__webpack_require__(/*! ./summary-section */ "../app/modules/import-export-customization/assets/js/shared/components/summary-section.js"));
+function CompleteSummary(_ref) {
+  var summaryData = _ref.summaryData,
+    _ref$testId = _ref.testId,
+    testId = _ref$testId === void 0 ? 'complete-summary' : _ref$testId;
+  return /*#__PURE__*/_react.default.createElement(_ui.Box, {
+    sx: {
+      width: '100%',
+      border: 1,
+      borderRadius: 1,
+      borderColor: 'action.focus',
+      p: 2.5,
+      textAlign: 'start'
+    },
+    "data-testid": testId
+  }, /*#__PURE__*/_react.default.createElement(_ui.Typography, {
+    variant: "subtitle1",
+    color: "text.primary",
+    sx: {
+      mb: 2
+    }
+  }, (0, _i18n.__)('What\'s included:', 'elementor')), /*#__PURE__*/_react.default.createElement(_ui.Stack, {
+    spacing: 2,
+    sx: {
+      maxWidth: '1075px'
+    }
+  }, Object.entries(summaryData).map(function (_ref2) {
+    var _ref3 = (0, _slicedToArray2.default)(_ref2, 2),
+      sectionKey = _ref3[0],
+      sectionValue = _ref3[1];
+    return sectionValue ? /*#__PURE__*/_react.default.createElement(_summarySection.default, {
+      key: sectionKey,
+      sectionKey: sectionKey,
+      title: sectionValue.title,
+      subTitle: sectionValue.subTitle
+    }) : null;
+  })));
+}
+CompleteSummary.propTypes = {
+  summaryData: _propTypes.default.objectOf(_propTypes.default.shape({
+    title: _propTypes.default.string.isRequired,
+    subTitle: _propTypes.default.string.isRequired
+  })).isRequired,
+  testId: _propTypes.default.string
+};
+
+/***/ }),
+
+/***/ "../app/modules/import-export-customization/assets/js/shared/components/customization-list-setting-section.js":
+/*!********************************************************************************************************************!*\
+  !*** ../app/modules/import-export-customization/assets/js/shared/components/customization-list-setting-section.js ***!
+  \********************************************************************************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
+var _typeof = __webpack_require__(/*! @babel/runtime/helpers/typeof */ "../node_modules/@babel/runtime/helpers/typeof.js");
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports.ListSettingSection = ListSettingSection;
+var _react = _interopRequireWildcard(__webpack_require__(/*! react */ "react"));
+var _toConsumableArray2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/toConsumableArray */ "../node_modules/@babel/runtime/helpers/toConsumableArray.js"));
+var _slicedToArray2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/slicedToArray */ "../node_modules/@babel/runtime/helpers/slicedToArray.js"));
+var _i18n = __webpack_require__(/*! @wordpress/i18n */ "@wordpress/i18n");
+var _ui = __webpack_require__(/*! @elementor/ui */ "@elementor/ui");
+var PropTypes = _interopRequireWildcard(__webpack_require__(/*! prop-types */ "../node_modules/prop-types/index.js"));
+var _utils = __webpack_require__(/*! elementor-app/utils/utils */ "../app/assets/js/utils/utils.js");
+function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function _interopRequireWildcard(e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, default: e }; if (null === e || "object" != _typeof(e) && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (var _t in e) "default" !== _t && {}.hasOwnProperty.call(e, _t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, _t)) && (i.get || i.set) ? o(f, _t, i) : f[_t] = e[_t]); return f; })(e, t); }
+var DEFAULT_VISIBLE_ITEMS_COUNT = 16;
+function ListSettingSection(_ref) {
+  var items = _ref.items,
+    title = _ref.title,
+    loading = _ref.loading,
+    settings = _ref.settings,
+    onSettingChange = _ref.onSettingChange,
+    settingKey = _ref.settingKey,
+    _ref$disabled = _ref.disabled,
+    disabled = _ref$disabled === void 0 ? false : _ref$disabled;
+  var _useState = (0, _react.useState)(false),
+    _useState2 = (0, _slicedToArray2.default)(_useState, 2),
+    showMore = _useState2[0],
+    setShowMore = _useState2[1];
+  return /*#__PURE__*/_react.default.createElement(_ui.Box, {
+    key: settingKey,
+    sx: {
+      mb: 3,
+      border: 1,
+      borderRadius: 1,
+      borderColor: 'action.focus',
+      p: 2.5
+    }
+  }, /*#__PURE__*/_react.default.createElement(_ui.Stack, {
+    spacing: 2
+  }, /*#__PURE__*/_react.default.createElement(_ui.Typography, {
+    variant: "h6"
+  }, title), /*#__PURE__*/_react.default.createElement(_ui.Grid, {
+    container: true,
+    spacing: 1,
+    alignItems: "start"
+  }, loading ? /*#__PURE__*/_react.default.createElement(_ui.Grid, {
+    item: true,
+    xs: 12,
+    sx: {
+      p: 1,
+      alignItems: 'center',
+      textAlign: 'center'
+    }
+  }, /*#__PURE__*/_react.default.createElement(_ui.CircularProgress, {
+    size: 30
+  })) : /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, /*#__PURE__*/_react.default.createElement(_ui.Grid, {
+    key: 'all',
+    item: true,
+    xs: 12,
+    sx: {
+      py: 1,
+      px: 0
+    }
+  }, /*#__PURE__*/_react.default.createElement(_ui.FormControlLabel, {
+    control: /*#__PURE__*/_react.default.createElement(_ui.Checkbox, {
+      color: "info",
+      checked: settings.length === items.length,
+      indeterminate: settings.length > 0 && settings.length !== items.length,
+      onChange: function onChange(e, checked) {
+        if (checked) {
+          onSettingChange(items.map(function (_ref2) {
+            var value = _ref2.value;
+            return value;
+          }), true);
+        } else {
+          onSettingChange([], true);
+        }
+      },
+      disabled: disabled,
+      sx: {
+        p: 0
+      }
+    }),
+    sx: {
+      gap: 1
+    },
+    slotProps: {
+      typography: {
+        sx: {
+          fontWeight: 500
+        }
+      }
+    },
+    label: "".concat((0, _i18n.__)('All', 'elementor-pro'), " ").concat(title.toLowerCase())
+  })), (showMore ? items : items.slice(0, DEFAULT_VISIBLE_ITEMS_COUNT)).map(function (item) {
+    return /*#__PURE__*/_react.default.createElement(_ui.Grid, {
+      key: item.value,
+      item: true,
+      xs: 3,
+      sx: {
+        py: 1,
+        px: 0
+      }
+    }, /*#__PURE__*/_react.default.createElement(_ui.FormControlLabel, {
+      sx: {
+        maxWidth: '100%',
+        gap: 1
+      },
+      control: /*#__PURE__*/_react.default.createElement(_ui.Checkbox, {
+        color: "info",
+        checked: settings.includes(item.value),
+        onChange: function onChange(e, checked) {
+          if (checked) {
+            onSettingChange([].concat((0, _toConsumableArray2.default)(settings), [item.value]));
+          } else {
+            onSettingChange(settings.filter(function (setting) {
+              return setting !== item.value;
+            }));
+          }
+        },
+        sx: {
+          p: 0
+        },
+        disabled: disabled
+      }),
+      slotProps: {
+        typography: {
+          sx: {
+            maxWidth: '100%',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap'
+          }
+        }
+      },
+      label: (0, _utils.htmlDecodeTextContent)(item.label)
+    }));
+  })))), items.length > DEFAULT_VISIBLE_ITEMS_COUNT && /*#__PURE__*/_react.default.createElement(_ui.Button, {
+    variant: "text",
+    color: "info",
+    onClick: function onClick() {
+      return setShowMore(!showMore);
+    }
+  }, showMore ? (0, _i18n.__)('Show less', 'elementor') : (0, _i18n.__)('Show more', 'elementor')));
+}
+ListSettingSection.propTypes = {
+  title: PropTypes.string.isRequired,
+  children: PropTypes.node,
+  loading: PropTypes.bool,
+  disabled: PropTypes.bool,
+  checked: PropTypes.bool,
+  settingKey: PropTypes.string,
+  onSettingChange: PropTypes.func.isRequired,
+  items: PropTypes.arrayOf(PropTypes.shape({
+    label: PropTypes.string.isRequired,
+    value: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
+  })),
+  settings: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.string, PropTypes.number]))
+};
+
+/***/ }),
+
+/***/ "../app/modules/import-export-customization/assets/js/shared/components/customization-setting-section.js":
+/*!***************************************************************************************************************!*\
+  !*** ../app/modules/import-export-customization/assets/js/shared/components/customization-setting-section.js ***!
+  \***************************************************************************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+/* provided dependency */ var __ = __webpack_require__(/*! @wordpress/i18n */ "@wordpress/i18n")["__"];
+
+
+var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
+var _typeof = __webpack_require__(/*! @babel/runtime/helpers/typeof */ "../node_modules/@babel/runtime/helpers/typeof.js");
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports.SettingSection = void 0;
+var _react = _interopRequireDefault(__webpack_require__(/*! react */ "react"));
+var _ui = __webpack_require__(/*! @elementor/ui */ "@elementor/ui");
+var PropTypes = _interopRequireWildcard(__webpack_require__(/*! prop-types */ "../node_modules/prop-types/index.js"));
+function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function _interopRequireWildcard(e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, default: e }; if (null === e || "object" != _typeof(e) && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (var _t in e) "default" !== _t && {}.hasOwnProperty.call(e, _t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, _t)) && (i.get || i.set) ? o(f, _t, i) : f[_t] = e[_t]); return f; })(e, t); }
+var SettingSection = exports.SettingSection = function SettingSection(_ref) {
+  var _ref$checked = _ref.checked,
+    checked = _ref$checked === void 0 ? false : _ref$checked,
+    title = _ref.title,
+    description = _ref.description,
+    children = _ref.children,
+    settingKey = _ref.settingKey,
+    onSettingChange = _ref.onSettingChange,
+    _ref$hasToggle = _ref.hasToggle,
+    hasToggle = _ref$hasToggle === void 0 ? true : _ref$hasToggle,
+    _ref$disabled = _ref.disabled,
+    disabled = _ref$disabled === void 0 ? false : _ref$disabled,
+    _ref$notExported = _ref.notExported,
+    notExported = _ref$notExported === void 0 ? false : _ref$notExported;
+  var getToggle = function getToggle() {
+    if (notExported) {
+      return /*#__PURE__*/_react.default.createElement(_ui.Typography, {
+        "data-testid": "".concat(settingKey, "-description"),
+        variant: "body1",
+        color: "text.secondary"
+      }, __('Not exported', 'elementor'));
+    }
+    if (!hasToggle) {
+      return null;
+    }
+    return /*#__PURE__*/_react.default.createElement(_ui.Switch, {
+      "data-testid": "".concat(settingKey, "-switch"),
+      checked: checked,
+      onChange: function onChange(e, isChecked) {
+        return onSettingChange && onSettingChange(settingKey, isChecked);
+      },
+      color: "info",
+      size: "medium",
+      sx: {
+        alignSelf: 'center'
+      },
+      disabled: disabled
+    });
+  };
+  return /*#__PURE__*/_react.default.createElement(_ui.Box, {
+    key: settingKey,
+    sx: {
+      mb: 3,
+      border: 1,
+      borderRadius: 1,
+      borderColor: 'action.focus',
+      p: 2.5
+    }
+  }, /*#__PURE__*/_react.default.createElement(_ui.Box, {
+    sx: {
+      display: 'flex',
+      justifyContent: 'space-between',
+      alignItems: 'center'
+    }
+  }, /*#__PURE__*/_react.default.createElement(_ui.Stack, {
+    spacing: 1
+  }, /*#__PURE__*/_react.default.createElement(_ui.Typography, {
+    variant: "h6"
+  }, title), description && /*#__PURE__*/_react.default.createElement(_ui.Typography, {
+    "data-testid": "".concat(settingKey, "-description"),
+    variant: "body1",
+    color: "text.secondary"
+  }, description)), getToggle()), children && /*#__PURE__*/_react.default.createElement(_ui.Box, {
+    sx: {
+      mt: 1
+    }
+  }, children));
+};
+SettingSection.propTypes = {
+  title: PropTypes.string.isRequired,
+  description: PropTypes.string,
+  children: PropTypes.node,
+  hasToggle: PropTypes.bool,
+  checked: PropTypes.bool,
+  disabled: PropTypes.bool,
+  settingKey: PropTypes.string,
+  onSettingChange: PropTypes.func,
+  notExported: PropTypes.bool
+};
+
+/***/ }),
+
+/***/ "../app/modules/import-export-customization/assets/js/shared/components/download-link.js":
+/*!***********************************************************************************************!*\
+  !*** ../app/modules/import-export-customization/assets/js/shared/components/download-link.js ***!
+  \***********************************************************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports["default"] = DownloadLink;
+var _react = _interopRequireDefault(__webpack_require__(/*! react */ "react"));
+var _ui = __webpack_require__(/*! @elementor/ui */ "@elementor/ui");
+var _propTypes = _interopRequireDefault(__webpack_require__(/*! prop-types */ "../node_modules/prop-types/index.js"));
+function DownloadLink(_ref) {
+  var message = _ref.message,
+    linkText = _ref.linkText,
+    onClick = _ref.onClick,
+    _ref$testId = _ref.testId,
+    testId = _ref$testId === void 0 ? 'download-link' : _ref$testId;
+  return /*#__PURE__*/_react.default.createElement(_ui.Typography, {
+    variant: "body2",
+    color: "text.secondary",
+    "data-testid": testId
+  }, message, ' ', /*#__PURE__*/_react.default.createElement(_ui.Link, {
+    href: "#",
+    onClick: onClick,
+    color: "info.light",
+    sx: {
+      cursor: 'pointer',
+      textDecoration: 'underline'
+    }
+  }, linkText), '. ');
+}
+DownloadLink.propTypes = {
+  message: _propTypes.default.string.isRequired,
+  linkText: _propTypes.default.string.isRequired,
+  onClick: _propTypes.default.func.isRequired,
+  testId: _propTypes.default.string
+};
+
+/***/ }),
+
+/***/ "../app/modules/import-export-customization/assets/js/shared/components/icons/external-link-icon.js":
+/*!**********************************************************************************************************!*\
+  !*** ../app/modules/import-export-customization/assets/js/shared/components/icons/external-link-icon.js ***!
+  \**********************************************************************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports.ExternalLinkIcon = void 0;
+var _react = _interopRequireDefault(__webpack_require__(/*! react */ "react"));
+var _extends2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/extends */ "../node_modules/@babel/runtime/helpers/extends.js"));
+var _ui = __webpack_require__(/*! @elementor/ui */ "@elementor/ui");
+var ExternalLinkIcon = exports.ExternalLinkIcon = function ExternalLinkIcon(props) {
+  return /*#__PURE__*/_react.default.createElement(_ui.SvgIcon, (0, _extends2.default)({
+    viewBox: "0 0 18 18",
+    sx: {
+      fontSize: 16,
+      color: 'info.light'
+    }
+  }, props), /*#__PURE__*/_react.default.createElement("path", {
+    fillRule: "evenodd",
+    clipRule: "evenodd",
+    d: "M11 1C11 0.585786 11.3358 0.25 11.75 0.25H16.75C17.1642 0.25 17.5 0.585786 17.5 1V6C17.5 6.41421 17.1642 6.75 16.75 6.75C16.3358 6.75 16 6.41421 16 6V2.81066L7.28033 11.5303C6.98744 11.8232 6.51256 11.8232 6.21967 11.5303C5.92678 11.2374 5.92678 10.7626 6.21967 10.4697L14.9393 1.75H11.75C11.3358 1.75 11 1.41421 11 1ZM0.805456 4.05546C1.32118 3.53973 2.02065 3.25 2.75 3.25H7.75C8.16421 3.25 8.5 3.58579 8.5 4C8.5 4.41421 8.16421 4.75 7.75 4.75H2.75C2.41848 4.75 2.10054 4.8817 1.86612 5.11612C1.6317 5.35054 1.5 5.66848 1.5 6V15C1.5 15.3315 1.6317 15.6495 1.86612 15.8839C2.10054 16.1183 2.41848 16.25 2.75 16.25H11.75C12.0815 16.25 12.3995 16.1183 12.6339 15.8839C12.8683 15.6495 13 15.3315 13 15V10C13 9.58579 13.3358 9.25 13.75 9.25C14.1642 9.25 14.5 9.58579 14.5 10V15C14.5 15.7293 14.2103 16.4288 13.6945 16.9445C13.1788 17.4603 12.4793 17.75 11.75 17.75H2.75C2.02065 17.75 1.32118 17.4603 0.805456 16.9445C0.289731 16.4288 0 15.7293 0 15V6C0 5.27065 0.289731 4.57118 0.805456 4.05546Z",
+    fill: "currentColor"
+  }));
+};
+
+/***/ }),
+
 /***/ "../app/modules/import-export-customization/assets/js/shared/components/icons/index.js":
 /*!*********************************************************************************************!*\
   !*** ../app/modules/import-export-customization/assets/js/shared/components/icons/index.js ***!
@@ -5762,6 +8482,12 @@ var ImportExportCustomization = exports["default"] = /*#__PURE__*/(0, _createCla
 Object.defineProperty(exports, "__esModule", ({
   value: true
 }));
+Object.defineProperty(exports, "ExternalLinkIcon", ({
+  enumerable: true,
+  get: function get() {
+    return _externalLinkIcon.ExternalLinkIcon;
+  }
+}));
 Object.defineProperty(exports, "XIcon", ({
   enumerable: true,
   get: function get() {
@@ -5769,6 +8495,7 @@ Object.defineProperty(exports, "XIcon", ({
   }
 }));
 var _xIcon = __webpack_require__(/*! ./x-icon */ "../app/modules/import-export-customization/assets/js/shared/components/icons/x-icon.js");
+var _externalLinkIcon = __webpack_require__(/*! ./external-link-icon */ "../app/modules/import-export-customization/assets/js/shared/components/icons/external-link-icon.js");
 
 /***/ }),
 
@@ -5818,12 +8545,51 @@ var XIcon = exports.XIcon = (0, _react.forwardRef)(function (props, ref) {
 "use strict";
 
 
+var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
 Object.defineProperty(exports, "__esModule", ({
   value: true
+}));
+var _exportNames = {
+  KitPartsSelection: true,
+  CompleteIcon: true,
+  CompleteHeading: true,
+  CompleteSummary: true,
+  DownloadLink: true
+};
+Object.defineProperty(exports, "CompleteHeading", ({
+  enumerable: true,
+  get: function get() {
+    return _completeHeading.default;
+  }
+}));
+Object.defineProperty(exports, "CompleteIcon", ({
+  enumerable: true,
+  get: function get() {
+    return _completeIcon.default;
+  }
+}));
+Object.defineProperty(exports, "CompleteSummary", ({
+  enumerable: true,
+  get: function get() {
+    return _completeSummary.default;
+  }
+}));
+Object.defineProperty(exports, "DownloadLink", ({
+  enumerable: true,
+  get: function get() {
+    return _downloadLink.default;
+  }
+}));
+Object.defineProperty(exports, "KitPartsSelection", ({
+  enumerable: true,
+  get: function get() {
+    return _kitPartsSelection.default;
+  }
 }));
 var _layout = __webpack_require__(/*! ./layout */ "../app/modules/import-export-customization/assets/js/shared/components/layout/index.js");
 Object.keys(_layout).forEach(function (key) {
   if (key === "default" || key === "__esModule") return;
+  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
   if (key in exports && exports[key] === _layout[key]) return;
   Object.defineProperty(exports, key, {
     enumerable: true,
@@ -5835,6 +8601,7 @@ Object.keys(_layout).forEach(function (key) {
 var _icons = __webpack_require__(/*! ./icons */ "../app/modules/import-export-customization/assets/js/shared/components/icons/index.js");
 Object.keys(_icons).forEach(function (key) {
   if (key === "default" || key === "__esModule") return;
+  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
   if (key in exports && exports[key] === _icons[key]) return;
   Object.defineProperty(exports, key, {
     enumerable: true,
@@ -5843,6 +8610,908 @@ Object.keys(_icons).forEach(function (key) {
     }
   });
 });
+var _kitPartsSelection = _interopRequireDefault(__webpack_require__(/*! ./kit-parts-selection */ "../app/modules/import-export-customization/assets/js/shared/components/kit-parts-selection.js"));
+var _completeIcon = _interopRequireDefault(__webpack_require__(/*! ./complete-icon */ "../app/modules/import-export-customization/assets/js/shared/components/complete-icon.js"));
+var _completeHeading = _interopRequireDefault(__webpack_require__(/*! ./complete-heading */ "../app/modules/import-export-customization/assets/js/shared/components/complete-heading.js"));
+var _completeSummary = _interopRequireDefault(__webpack_require__(/*! ./complete-summary */ "../app/modules/import-export-customization/assets/js/shared/components/complete-summary.js"));
+var _downloadLink = _interopRequireDefault(__webpack_require__(/*! ./download-link */ "../app/modules/import-export-customization/assets/js/shared/components/download-link.js"));
+
+/***/ }),
+
+/***/ "../app/modules/import-export-customization/assets/js/shared/components/kit-content-customization-dialog.js":
+/*!******************************************************************************************************************!*\
+  !*** ../app/modules/import-export-customization/assets/js/shared/components/kit-content-customization-dialog.js ***!
+  \******************************************************************************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
+var _typeof = __webpack_require__(/*! @babel/runtime/helpers/typeof */ "../node_modules/@babel/runtime/helpers/typeof.js");
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports.KitContentCustomizationDialog = KitContentCustomizationDialog;
+var _react = _interopRequireWildcard(__webpack_require__(/*! react */ "react"));
+var _defineProperty2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/defineProperty */ "../node_modules/@babel/runtime/helpers/defineProperty.js"));
+var _slicedToArray2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/slicedToArray */ "../node_modules/@babel/runtime/helpers/slicedToArray.js"));
+var _propTypes = _interopRequireDefault(__webpack_require__(/*! prop-types */ "../node_modules/prop-types/index.js"));
+var _ui = __webpack_require__(/*! @elementor/ui */ "@elementor/ui");
+var _i18n = __webpack_require__(/*! @wordpress/i18n */ "@wordpress/i18n");
+var _kitCustomizationDialog = __webpack_require__(/*! ./kit-customization-dialog */ "../app/modules/import-export-customization/assets/js/shared/components/kit-customization-dialog.js");
+var _customizationListSettingSection = __webpack_require__(/*! ./customization-list-setting-section */ "../app/modules/import-export-customization/assets/js/shared/components/customization-list-setting-section.js");
+var _customizationSettingSection = __webpack_require__(/*! ./customization-setting-section */ "../app/modules/import-export-customization/assets/js/shared/components/customization-setting-section.js");
+var _appsEventTracking = __webpack_require__(/*! elementor-app/event-track/apps-event-tracking */ "../app/assets/js/event-track/apps-event-tracking.js");
+var _useKitCustomizationCustomPostTypes = __webpack_require__(/*! ../hooks/use-kit-customization-custom-post-types */ "../app/modules/import-export-customization/assets/js/shared/hooks/use-kit-customization-custom-post-types.js");
+var _upgradeVersionBanner = __webpack_require__(/*! ./upgrade-version-banner */ "../app/modules/import-export-customization/assets/js/shared/components/upgrade-version-banner.js");
+var _analyticsTransformer = __webpack_require__(/*! ../utils/analytics-transformer */ "../app/modules/import-export-customization/assets/js/shared/utils/analytics-transformer.js");
+function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function _interopRequireWildcard(e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, default: e }; if (null === e || "object" != _typeof(e) && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (var _t in e) "default" !== _t && {}.hasOwnProperty.call(e, _t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, _t)) && (i.get || i.set) ? o(f, _t, i) : f[_t] = e[_t]); return f; })(e, t); }
+function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
+function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { (0, _defineProperty2.default)(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
+var transformAnalyticsData = function transformAnalyticsData(payload, customPostTypes) {
+  var optionsArray = [{
+    key: 'customPostTypes',
+    options: customPostTypes
+  }];
+  var transformed = {};
+  for (var _i = 0, _Object$entries = Object.entries(payload); _i < _Object$entries.length; _i++) {
+    var _Object$entries$_i = (0, _slicedToArray2.default)(_Object$entries[_i], 2),
+      key = _Object$entries$_i[0],
+      value = _Object$entries$_i[1];
+    transformed[key] = (0, _analyticsTransformer.transformValueForAnalytics)(key, value, optionsArray);
+  }
+  return transformed;
+};
+function KitContentCustomizationDialog(_ref) {
+  var _data$customization$c2;
+  var open = _ref.open,
+    handleClose = _ref.handleClose,
+    _handleSaveChanges = _ref.handleSaveChanges,
+    data = _ref.data,
+    isImport = _ref.isImport,
+    isOldElementorVersion = _ref.isOldElementorVersion;
+  var _useKitCustomizationC = (0, _useKitCustomizationCustomPostTypes.useKitCustomizationCustomPostTypes)({
+      data: data
+    }),
+    customPostTypes = _useKitCustomizationC.customPostTypes;
+  var _useState = (0, _react.useState)(function () {
+      if (data.customization.content) {
+        return data.customization.content;
+      }
+      return {
+        customPostTypes: []
+      };
+    }),
+    _useState2 = (0, _slicedToArray2.default)(_useState, 2),
+    settings = _useState2[0],
+    setSettings = _useState2[1];
+  (0, _react.useEffect)(function () {
+    if (customPostTypes) {
+      setSettings(function (prevSettings) {
+        var _data$customization$c;
+        return _objectSpread(_objectSpread({}, prevSettings), {}, {
+          customPostTypes: ((_data$customization$c = data.customization.content) === null || _data$customization$c === void 0 ? void 0 : _data$customization$c.customPostTypes) || customPostTypes.map(function (_ref2) {
+            var value = _ref2.value;
+            return value;
+          })
+        });
+      });
+    }
+  }, [customPostTypes, (_data$customization$c2 = data.customization.content) === null || _data$customization$c2 === void 0 ? void 0 : _data$customization$c2.customPostTypes]);
+  (0, _react.useEffect)(function () {
+    if (open) {
+      setSettings(function (prevState) {
+        if (!data.includes.includes('content')) {
+          return {
+            customPostTypes: []
+          };
+        }
+        return prevState;
+      });
+    }
+  }, [open, data, setSettings]);
+  (0, _react.useEffect)(function () {
+    if (open) {
+      _appsEventTracking.AppsEventTracking.sendPageViewsWebsiteTemplates(elementorCommon.eventsManager.config.secondaryLocations.kitLibrary.kitExportCustomizationEdit);
+    }
+  }, [open]);
+  var handleSettingsChange = function handleSettingsChange(settingKey, payload) {
+    setSettings(function (prev) {
+      return _objectSpread(_objectSpread({}, prev), {}, (0, _defineProperty2.default)({}, settingKey, payload));
+    });
+  };
+  return /*#__PURE__*/_react.default.createElement(_kitCustomizationDialog.KitCustomizationDialog, {
+    open: open,
+    title: (0, _i18n.__)('Edit content', 'elementor'),
+    handleClose: handleClose,
+    handleSaveChanges: function handleSaveChanges() {
+      var transformedAnalytics = transformAnalyticsData(settings, customPostTypes);
+      _handleSaveChanges('content', settings, true, transformedAnalytics);
+    }
+  }, /*#__PURE__*/_react.default.createElement(_ui.Stack, {
+    gap: 2
+  }, isOldElementorVersion && /*#__PURE__*/_react.default.createElement(_upgradeVersionBanner.UpgradeVersionBanner, null), isImport && !(customPostTypes !== null && customPostTypes !== void 0 && customPostTypes.length) ? /*#__PURE__*/_react.default.createElement(_customizationSettingSection.SettingSection, {
+    title: (0, _i18n.__)('Custom post types', 'elementor'),
+    settingKey: "customPostTypes",
+    notExported: true
+  }) : /*#__PURE__*/_react.default.createElement(_customizationListSettingSection.ListSettingSection, {
+    settingKey: "customPostTypes",
+    title: (0, _i18n.__)('Custom post types', 'elementor'),
+    onSettingChange: function onSettingChange(selectedCustomPostTypes) {
+      handleSettingsChange('customPostTypes', selectedCustomPostTypes);
+    },
+    settings: settings.customPostTypes,
+    items: customPostTypes
+  })));
+}
+KitContentCustomizationDialog.propTypes = {
+  open: _propTypes.default.bool.isRequired,
+  isImport: _propTypes.default.bool,
+  isOldElementorVersion: _propTypes.default.bool,
+  handleClose: _propTypes.default.func.isRequired,
+  handleSaveChanges: _propTypes.default.func.isRequired,
+  data: _propTypes.default.object.isRequired
+};
+
+/***/ }),
+
+/***/ "../app/modules/import-export-customization/assets/js/shared/components/kit-customization-dialog.js":
+/*!**********************************************************************************************************!*\
+  !*** ../app/modules/import-export-customization/assets/js/shared/components/kit-customization-dialog.js ***!
+  \**********************************************************************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports.KitCustomizationDialog = KitCustomizationDialog;
+var _react = _interopRequireDefault(__webpack_require__(/*! react */ "react"));
+var _ui = __webpack_require__(/*! @elementor/ui */ "@elementor/ui");
+var _i18n = __webpack_require__(/*! @wordpress/i18n */ "@wordpress/i18n");
+var _propTypes = _interopRequireDefault(__webpack_require__(/*! prop-types */ "../node_modules/prop-types/index.js"));
+function KitCustomizationDialog(_ref) {
+  var open = _ref.open,
+    title = _ref.title,
+    handleClose = _ref.handleClose,
+    handleSaveChanges = _ref.handleSaveChanges,
+    children = _ref.children,
+    _ref$saveDisabled = _ref.saveDisabled,
+    saveDisabled = _ref$saveDisabled === void 0 ? false : _ref$saveDisabled;
+  return /*#__PURE__*/_react.default.createElement(_ui.Dialog, {
+    open: open,
+    onClose: handleClose,
+    maxWidth: "md",
+    fullWidth: true
+  }, /*#__PURE__*/_react.default.createElement(_ui.DialogHeader, {
+    onClose: handleClose
+  }, /*#__PURE__*/_react.default.createElement(_ui.DialogTitle, null, title)), /*#__PURE__*/_react.default.createElement(_ui.DialogContent, {
+    dividers: true,
+    sx: {
+      p: 3
+    }
+  }, children), /*#__PURE__*/_react.default.createElement(_ui.DialogActions, null, /*#__PURE__*/_react.default.createElement(_ui.Button, {
+    onClick: handleClose,
+    color: "secondary"
+  }, (0, _i18n.__)('Cancel', 'elementor')), /*#__PURE__*/_react.default.createElement(_ui.Button, {
+    disabled: saveDisabled,
+    onClick: function onClick() {
+      handleSaveChanges();
+      handleClose();
+    },
+    variant: "contained",
+    color: "primary"
+  }, (0, _i18n.__)('Save changes', 'elementor'))));
+}
+KitCustomizationDialog.propTypes = {
+  open: _propTypes.default.bool.isRequired,
+  handleClose: _propTypes.default.func.isRequired,
+  handleSaveChanges: _propTypes.default.func.isRequired,
+  children: _propTypes.default.node.isRequired,
+  title: _propTypes.default.string.isRequired,
+  saveDisabled: _propTypes.default.bool
+};
+
+/***/ }),
+
+/***/ "../app/modules/import-export-customization/assets/js/shared/components/kit-parts-selection.js":
+/*!*****************************************************************************************************!*\
+  !*** ../app/modules/import-export-customization/assets/js/shared/components/kit-parts-selection.js ***!
+  \*****************************************************************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+/* provided dependency */ var __ = __webpack_require__(/*! @wordpress/i18n */ "@wordpress/i18n")["__"];
+
+
+var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
+var _typeof = __webpack_require__(/*! @babel/runtime/helpers/typeof */ "../node_modules/@babel/runtime/helpers/typeof.js");
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports["default"] = KitPartsSelection;
+var _react = _interopRequireWildcard(__webpack_require__(/*! react */ "react"));
+var _slicedToArray2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/slicedToArray */ "../node_modules/@babel/runtime/helpers/slicedToArray.js"));
+var _ui = __webpack_require__(/*! @elementor/ui */ "@elementor/ui");
+var _propTypes = _interopRequireDefault(__webpack_require__(/*! prop-types */ "../node_modules/prop-types/index.js"));
+var _appsEventTracking = __webpack_require__(/*! elementor-app/event-track/apps-event-tracking */ "../app/assets/js/event-track/apps-event-tracking.js");
+var _kitContentData = _interopRequireDefault(__webpack_require__(/*! ../kit-content-data */ "../app/modules/import-export-customization/assets/js/shared/kit-content-data.js"));
+var _useContextDetection2 = _interopRequireDefault(__webpack_require__(/*! ../hooks/use-context-detection */ "../app/modules/import-export-customization/assets/js/shared/hooks/use-context-detection.js"));
+var _reExportBanner = __webpack_require__(/*! ./re-export-banner */ "../app/modules/import-export-customization/assets/js/shared/components/re-export-banner.js");
+var _upgradeVersionBanner = __webpack_require__(/*! ./upgrade-version-banner */ "../app/modules/import-export-customization/assets/js/shared/components/upgrade-version-banner.js");
+function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function _interopRequireWildcard(e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, default: e }; if (null === e || "object" != _typeof(e) && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (var _t in e) "default" !== _t && {}.hasOwnProperty.call(e, _t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, _t)) && (i.get || i.set) ? o(f, _t, i) : f[_t] = e[_t]); return f; })(e, t); }
+function KitPartsSelection(_ref) {
+  var data = _ref.data,
+    onCheckboxChange = _ref.onCheckboxChange,
+    testId = _ref.testId,
+    handleSaveCustomization = _ref.handleSaveCustomization;
+  var _useState = (0, _react.useState)(null),
+    _useState2 = (0, _slicedToArray2.default)(_useState, 2),
+    activeDialog = _useState2[0],
+    setActiveDialog = _useState2[1];
+  var _useContextDetection = (0, _useContextDetection2.default)(),
+    isImport = _useContextDetection.isImport,
+    contextData = _useContextDetection.contextData;
+  var isSiteSettingsExported = function isSiteSettingsExported() {
+    var _contextData$data;
+    var siteSettings = contextData === null || contextData === void 0 || (_contextData$data = contextData.data) === null || _contextData$data === void 0 || (_contextData$data = _contextData$data.uploadedData) === null || _contextData$data === void 0 || (_contextData$data = _contextData$data.manifest) === null || _contextData$data === void 0 ? void 0 : _contextData$data['site-settings'];
+    if (!siteSettings) {
+      return false;
+    }
+    return Object.values(siteSettings).some(Boolean);
+  };
+  var isContentSettingsExported = function isContentSettingsExported() {
+    var _contextData$data2, _contextData$data3, _contextData$data4, _contextData$data5;
+    var taxonomies = contextData === null || contextData === void 0 || (_contextData$data2 = contextData.data) === null || _contextData$data2 === void 0 || (_contextData$data2 = _contextData$data2.uploadedData) === null || _contextData$data2 === void 0 || (_contextData$data2 = _contextData$data2.manifest) === null || _contextData$data2 === void 0 ? void 0 : _contextData$data2.taxonomies;
+    var content = contextData === null || contextData === void 0 || (_contextData$data3 = contextData.data) === null || _contextData$data3 === void 0 || (_contextData$data3 = _contextData$data3.uploadedData) === null || _contextData$data3 === void 0 || (_contextData$data3 = _contextData$data3.manifest) === null || _contextData$data3 === void 0 ? void 0 : _contextData$data3.content;
+    var wpContent = contextData === null || contextData === void 0 || (_contextData$data4 = contextData.data) === null || _contextData$data4 === void 0 || (_contextData$data4 = _contextData$data4.uploadedData) === null || _contextData$data4 === void 0 || (_contextData$data4 = _contextData$data4.manifest) === null || _contextData$data4 === void 0 ? void 0 : _contextData$data4['wp-content'];
+    var customPostTypes = contextData === null || contextData === void 0 || (_contextData$data5 = contextData.data) === null || _contextData$data5 === void 0 || (_contextData$data5 = _contextData$data5.uploadedData) === null || _contextData$data5 === void 0 || (_contextData$data5 = _contextData$data5.manifest) === null || _contextData$data5 === void 0 ? void 0 : _contextData$data5['custom-post-type-title'];
+    return taxonomies || content || wpContent || customPostTypes;
+  };
+  var isExported = function isExported(item) {
+    var _contextData$data6;
+    switch (item.type) {
+      case 'settings':
+        return isSiteSettingsExported();
+      case 'content':
+        return isContentSettingsExported();
+      default:
+        return contextData === null || contextData === void 0 || (_contextData$data6 = contextData.data) === null || _contextData$data6 === void 0 || (_contextData$data6 = _contextData$data6.uploadedData) === null || _contextData$data6 === void 0 || (_contextData$data6 = _contextData$data6.manifest) === null || _contextData$data6 === void 0 ? void 0 : _contextData$data6[item.type];
+    }
+  };
+  var isDisabled = function isDisabled(item) {
+    var _item$data$features, _contextData$data7;
+    if ((_item$data$features = item.data.features) !== null && _item$data$features !== void 0 && _item$data$features.locked && !elementorAppConfig.hasPro) {
+      return true;
+    }
+    if (isImport) {
+      return !isExported(item) || item.required;
+    }
+    return item.required && (contextData === null || contextData === void 0 || (_contextData$data7 = contextData.data) === null || _contextData$data7 === void 0 || (_contextData$data7 = _contextData$data7.includes) === null || _contextData$data7 === void 0 ? void 0 : _contextData$data7.includes(item.type));
+  };
+  var isEditDisabled = function isEditDisabled(item) {
+    if (isImport) {
+      var _contextData$data8;
+      var manifestKey = 'settings' === item.type ? 'site-settings' : item.type;
+      return !(contextData !== null && contextData !== void 0 && (_contextData$data8 = contextData.data) !== null && _contextData$data8 !== void 0 && (_contextData$data8 = _contextData$data8.uploadedData) !== null && _contextData$data8 !== void 0 && (_contextData$data8 = _contextData$data8.manifest) !== null && _contextData$data8 !== void 0 && _contextData$data8[manifestKey]);
+    }
+    return false;
+  };
+  var getDialogComponent = function getDialogComponent(item) {
+    var _window$elementorModu, _reg$get;
+    var reg = (_window$elementorModu = window.elementorModules) === null || _window$elementorModu === void 0 || (_window$elementorModu = _window$elementorModu.importExport) === null || _window$elementorModu === void 0 ? void 0 : _window$elementorModu.customizationDialogsRegistry;
+    var registered = reg === null || reg === void 0 || (_reg$get = reg.get) === null || _reg$get === void 0 ? void 0 : _reg$get.call(reg, item.type);
+    return (registered === null || registered === void 0 ? void 0 : registered.component) || item.dialog;
+  };
+  var renderFeatureDescription = function renderFeatureDescription(item, isLockedFeaturesNoPro) {
+    var _item$data$features2, _item$data$features3, _item$data$features4;
+    var featuresText = [item.data.features.open.join(', '), ((_item$data$features2 = item.data.features) === null || _item$data$features2 === void 0 || (_item$data$features2 = _item$data$features2.locked) === null || _item$data$features2 === void 0 ? void 0 : _item$data$features2.length) > 0 && item.data.features.open.length > 0 ? ', ' : '', (_item$data$features3 = item.data.features) === null || _item$data$features3 === void 0 || (_item$data$features3 = _item$data$features3.locked) === null || _item$data$features3 === void 0 ? void 0 : _item$data$features3.join(', ')].join('');
+    var description = /*#__PURE__*/_react.default.createElement(_ui.Typography, {
+      variant: "body2",
+      color: "text.secondary",
+      sx: {
+        mt: 1,
+        ml: 4
+      }
+    }, featuresText);
+    return isLockedFeaturesNoPro ? /*#__PURE__*/_react.default.createElement(_ui.Tooltip, {
+      title: ((_item$data$features4 = item.data.features) === null || _item$data$features4 === void 0 ? void 0 : _item$data$features4.tooltip) || __('This feature requires Elementor Pro', 'elementor'),
+      arrow: true,
+      placement: "top"
+    }, description) : description;
+  };
+  var renderCheckboxControl = function renderCheckboxControl(item, disabled) {
+    return /*#__PURE__*/_react.default.createElement(_ui.FormControlLabel, {
+      control: /*#__PURE__*/_react.default.createElement(_ui.Checkbox, {
+        color: "info",
+        checked: data.includes.includes(item.type),
+        onChange: function onChange() {
+          return onCheckboxChange(item.type);
+        },
+        disabled: disabled,
+        sx: {
+          p: 0,
+          mx: 1
+        },
+        "data-testid": "KitContentDataSelection-".concat(item.type),
+        "data-type": item.type
+      }),
+      label: /*#__PURE__*/_react.default.createElement(_ui.Typography, {
+        color: "text.primary",
+        variant: "body1",
+        sx: {
+          fontWeight: 500
+        }
+      }, item.data.title),
+      sx: {
+        '& .MuiFormControlLabel-label.Mui-disabled': {
+          color: 'text.primary'
+        }
+      }
+    });
+  };
+  var getSectionEditButton = function getSectionEditButton(item, isLockedFeaturesNoPro) {
+    if (isLockedFeaturesNoPro) {
+      return /*#__PURE__*/_react.default.createElement(_ui.Button, {
+        variant: "contained",
+        color: "promotion",
+        onClick: function onClick() {
+          _appsEventTracking.AppsEventTracking.sendKitsCloudUpgradeClicked(item.type);
+          window.open('https://go.elementor.com/go-pro-import-export', '_blank');
+        },
+        startIcon: /*#__PURE__*/_react.default.createElement("span", {
+          className: "eicon-upgrade-crown"
+        }),
+        sx: {
+          alignSelf: 'center'
+        },
+        "data-type": item.type,
+        disabled: isEditDisabled(item)
+      }, __('Upgrade', 'elementor'));
+    }
+    if (!isImport) {
+      return /*#__PURE__*/_react.default.createElement(_ui.Button, {
+        color: "secondary",
+        onClick: function onClick() {
+          return setActiveDialog(item.type);
+        },
+        sx: {
+          alignSelf: 'center'
+        },
+        "data-type": item.type,
+        disabled: isEditDisabled(item)
+      }, __('Edit', 'elementor'));
+    }
+    return isExported(item) ? /*#__PURE__*/_react.default.createElement(_ui.Button, {
+      color: "secondary",
+      onClick: function onClick() {
+        return setActiveDialog(item.type);
+      },
+      sx: {
+        alignSelf: 'center'
+      },
+      "data-type": item.type,
+      disabled: isEditDisabled(item)
+    }, __('Edit', 'elementor')) : /*#__PURE__*/_react.default.createElement(_ui.Typography, {
+      variant: "body1",
+      color: "text.disabled",
+      sx: {
+        alignSelf: 'center'
+      }
+    }, __('Not exported', 'elementor'));
+  };
+  return /*#__PURE__*/_react.default.createElement(_ui.Stack, {
+    spacing: 2,
+    "data-testid": testId
+  }, (contextData === null || contextData === void 0 ? void 0 : contextData.isOldExport) && /*#__PURE__*/_react.default.createElement(_reExportBanner.ReExportBanner, null), (contextData === null || contextData === void 0 ? void 0 : contextData.isOldElementorVersion) && /*#__PURE__*/_react.default.createElement(_upgradeVersionBanner.UpgradeVersionBanner, null), _kitContentData.default.map(function (item) {
+    var _item$data$features5;
+    var isLockedFeaturesNoPro = ((_item$data$features5 = item.data.features) === null || _item$data$features5 === void 0 ? void 0 : _item$data$features5.locked) && !elementorAppConfig.hasPro;
+    var disabled = isDisabled(item);
+    var DialogComponent = getDialogComponent(item);
+    return /*#__PURE__*/_react.default.createElement(_react.Fragment, {
+      key: item.type
+    }, /*#__PURE__*/_react.default.createElement(_ui.Box, {
+      "data-testid": "KitPartsSelectionRow-".concat(item.type),
+      key: item.type,
+      sx: {
+        mb: 3,
+        border: 1,
+        borderRadius: 1,
+        borderColor: 'action.focus',
+        p: 2.5
+      }
+    }, /*#__PURE__*/_react.default.createElement(_ui.Box, {
+      sx: {
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'flex-start'
+      }
+    }, /*#__PURE__*/_react.default.createElement(_ui.Box, {
+      sx: {
+        flex: 1,
+        opacity: isLockedFeaturesNoPro ? 0.5 : 1
+      }
+    }, renderCheckboxControl(item, disabled), renderFeatureDescription(item, isLockedFeaturesNoPro)), getSectionEditButton(item, isLockedFeaturesNoPro))), DialogComponent && /*#__PURE__*/_react.default.createElement(DialogComponent, {
+      open: activeDialog === item.type,
+      handleClose: function handleClose() {
+        return setActiveDialog(null);
+      },
+      data: data,
+      handleSaveChanges: handleSaveCustomization,
+      isImport: isImport,
+      isOldExport: contextData.isOldExport,
+      isOldElementorVersion: contextData.isOldElementorVersion
+    }));
+  }));
+}
+KitPartsSelection.propTypes = {
+  data: _propTypes.default.object.isRequired,
+  onCheckboxChange: _propTypes.default.func.isRequired,
+  handleSaveCustomization: _propTypes.default.func.isRequired,
+  testId: _propTypes.default.string
+};
+
+/***/ }),
+
+/***/ "../app/modules/import-export-customization/assets/js/shared/components/kit-plugins-customization-dialog.js":
+/*!******************************************************************************************************************!*\
+  !*** ../app/modules/import-export-customization/assets/js/shared/components/kit-plugins-customization-dialog.js ***!
+  \******************************************************************************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+/* provided dependency */ var __ = __webpack_require__(/*! @wordpress/i18n */ "@wordpress/i18n")["__"];
+
+
+var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
+var _typeof = __webpack_require__(/*! @babel/runtime/helpers/typeof */ "../node_modules/@babel/runtime/helpers/typeof.js");
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports.KitPluginsCustomizationDialog = KitPluginsCustomizationDialog;
+var _react = _interopRequireWildcard(__webpack_require__(/*! react */ "react"));
+var _defineProperty2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/defineProperty */ "../node_modules/@babel/runtime/helpers/defineProperty.js"));
+var _slicedToArray2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/slicedToArray */ "../node_modules/@babel/runtime/helpers/slicedToArray.js"));
+var _ui = __webpack_require__(/*! @elementor/ui */ "@elementor/ui");
+var _icons = __webpack_require__(/*! ./icons */ "../app/modules/import-export-customization/assets/js/shared/components/icons/index.js");
+var _propTypes = _interopRequireDefault(__webpack_require__(/*! prop-types */ "../node_modules/prop-types/index.js"));
+var _useKitPlugins2 = _interopRequireDefault(__webpack_require__(/*! ../hooks/use-kit-plugins */ "../app/modules/import-export-customization/assets/js/shared/hooks/use-kit-plugins.js"));
+var _appsEventTracking = __webpack_require__(/*! elementor-app/event-track/apps-event-tracking */ "../app/assets/js/event-track/apps-event-tracking.js");
+var _upgradeVersionBanner = __webpack_require__(/*! ./upgrade-version-banner */ "../app/modules/import-export-customization/assets/js/shared/components/upgrade-version-banner.js");
+var _analyticsTransformer = __webpack_require__(/*! ../utils/analytics-transformer */ "../app/modules/import-export-customization/assets/js/shared/utils/analytics-transformer.js");
+function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function _interopRequireWildcard(e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, default: e }; if (null === e || "object" != _typeof(e) && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (var _t in e) "default" !== _t && {}.hasOwnProperty.call(e, _t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, _t)) && (i.get || i.set) ? o(f, _t, i) : f[_t] = e[_t]); return f; })(e, t); }
+function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
+function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { (0, _defineProperty2.default)(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
+var transformAnalyticsData = function transformAnalyticsData(payload) {
+  var transformed = {};
+  for (var _i = 0, _Object$entries = Object.entries(payload); _i < _Object$entries.length; _i++) {
+    var _Object$entries$_i = (0, _slicedToArray2.default)(_Object$entries[_i], 2),
+      key = _Object$entries$_i[0],
+      value = _Object$entries$_i[1];
+    transformed[key] = (0, _analyticsTransformer.transformValueForAnalytics)(key, value, []);
+  }
+  return transformed;
+};
+var REQUIRED_PLUGINS = ['elementor/elementor'];
+function KitPluginsCustomizationDialog(_ref) {
+  var _data$uploadedData2, _data$includes, _data$customization2;
+  var open = _ref.open,
+    handleClose = _ref.handleClose,
+    handleSaveChanges = _ref.handleSaveChanges,
+    data = _ref.data,
+    isImport = _ref.isImport,
+    isOldElementorVersion = _ref.isOldElementorVersion;
+  var _useKitPlugins = (0, _useKitPlugins2.default)({
+      open: open && !isImport
+    }),
+    fetchedPluginsList = _useKitPlugins.pluginsList,
+    fetchIsLoading = _useKitPlugins.isLoading;
+  var pluginsList = (0, _react.useMemo)(function () {
+    if (isImport) {
+      var _data$uploadedData;
+      return ((data === null || data === void 0 || (_data$uploadedData = data.uploadedData) === null || _data$uploadedData === void 0 || (_data$uploadedData = _data$uploadedData.manifest) === null || _data$uploadedData === void 0 ? void 0 : _data$uploadedData.plugins) || []).reduce(function (acc, plugin) {
+        acc[plugin.plugin] = plugin;
+        return acc;
+      }, {});
+    }
+    return fetchedPluginsList;
+  }, [isImport, data === null || data === void 0 || (_data$uploadedData2 = data.uploadedData) === null || _data$uploadedData2 === void 0 || (_data$uploadedData2 = _data$uploadedData2.manifest) === null || _data$uploadedData2 === void 0 ? void 0 : _data$uploadedData2.plugins, fetchedPluginsList]);
+  var isLoading = isImport ? false : fetchIsLoading;
+  var _useState = (0, _react.useState)({}),
+    _useState2 = (0, _slicedToArray2.default)(_useState, 2),
+    plugins = _useState2[0],
+    setPlugins = _useState2[1];
+  var initialState = (data === null || data === void 0 || (_data$includes = data.includes) === null || _data$includes === void 0 ? void 0 : _data$includes.includes('plugins')) || false;
+  (0, _react.useEffect)(function () {
+    var _data$customization;
+    if (0 === Object.keys(pluginsList).length) {
+      return;
+    }
+    var initialPluginsState = {};
+    if (data !== null && data !== void 0 && (_data$customization = data.customization) !== null && _data$customization !== void 0 && _data$customization.plugins) {
+      initialPluginsState = data.customization.plugins;
+    } else {
+      Object.keys(pluginsList).forEach(function (pluginKey) {
+        initialPluginsState[pluginKey] = initialState;
+      });
+    }
+    REQUIRED_PLUGINS.forEach(function (pluginKey) {
+      if (initialPluginsState.hasOwnProperty(pluginKey)) {
+        initialPluginsState[pluginKey] = true;
+      }
+    });
+    setPlugins(initialPluginsState);
+  }, [pluginsList, data === null || data === void 0 || (_data$customization2 = data.customization) === null || _data$customization2 === void 0 ? void 0 : _data$customization2.plugins, initialState]);
+  var isRequiredPlugin = (0, _react.useCallback)(function (pluginKey) {
+    return REQUIRED_PLUGINS.includes(pluginKey);
+  }, []);
+  var nonRequiredPlugins = (0, _react.useMemo)(function () {
+    return Object.keys(plugins).filter(function (pluginKey) {
+      return !isRequiredPlugin(pluginKey);
+    });
+  }, [plugins, isRequiredPlugin]);
+  var isAllSelected = (0, _react.useMemo)(function () {
+    return nonRequiredPlugins.length > 0 && nonRequiredPlugins.every(function (pluginKey) {
+      return plugins[pluginKey];
+    });
+  }, [nonRequiredPlugins, plugins]);
+  var isIndeterminate = (0, _react.useMemo)(function () {
+    return nonRequiredPlugins.some(function (pluginKey) {
+      return plugins[pluginKey];
+    }) && !isAllSelected;
+  }, [nonRequiredPlugins, plugins, isAllSelected]);
+  var handleToggleChange = (0, _react.useCallback)(function (settingKey) {
+    if (isRequiredPlugin(settingKey)) {
+      return;
+    }
+    setPlugins(function (prev) {
+      return _objectSpread(_objectSpread({}, prev), {}, (0, _defineProperty2.default)({}, settingKey, !prev[settingKey]));
+    });
+  }, [isRequiredPlugin]);
+  var handleSelectAll = (0, _react.useCallback)(function () {
+    var allNonRequiredSelected = nonRequiredPlugins.every(function (pluginKey) {
+      return plugins[pluginKey];
+    });
+    var newState = _objectSpread({}, plugins);
+    nonRequiredPlugins.forEach(function (pluginKey) {
+      newState[pluginKey] = !allNonRequiredSelected;
+    });
+    REQUIRED_PLUGINS.forEach(function (pluginKey) {
+      if (newState.hasOwnProperty(pluginKey)) {
+        newState[pluginKey] = true;
+      }
+    });
+    setPlugins(newState);
+  }, [plugins, nonRequiredPlugins]);
+  var getPluginsSelection = (0, _react.useCallback)(function () {
+    var selectedPlugins = {};
+    Object.entries(plugins).forEach(function (_ref2) {
+      var _ref3 = (0, _slicedToArray2.default)(_ref2, 2),
+        pluginKey = _ref3[0],
+        isSelected = _ref3[1];
+      selectedPlugins[pluginKey] = isSelected;
+    });
+    return selectedPlugins;
+  }, [plugins]);
+  (0, _react.useEffect)(function () {
+    if (open) {
+      _appsEventTracking.AppsEventTracking.sendPageViewsWebsiteTemplates(elementorCommon.eventsManager.config.secondaryLocations.kitLibrary.kitExportCustomizationEdit);
+    }
+  }, [open]);
+  var SettingSection = function SettingSection(_ref4) {
+    var title = _ref4.title,
+      description = _ref4.description,
+      children = _ref4.children,
+      settingKey = _ref4.settingKey;
+    return /*#__PURE__*/_react.default.createElement(_ui.Box, {
+      key: settingKey,
+      sx: {
+        mb: 3,
+        border: 1,
+        borderRadius: 1,
+        borderColor: 'action.focus',
+        p: 2.5
+      }
+    }, /*#__PURE__*/_react.default.createElement(_ui.Box, {
+      sx: {
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center'
+      }
+    }, /*#__PURE__*/_react.default.createElement(_ui.Box, null, /*#__PURE__*/_react.default.createElement(_ui.Typography, {
+      variant: "h6"
+    }, title), description && /*#__PURE__*/_react.default.createElement(_ui.Typography, {
+      variant: "body1",
+      color: "text.secondary"
+    }, description))), children && /*#__PURE__*/_react.default.createElement(_ui.Box, {
+      sx: {
+        mt: 2
+      }
+    }, children));
+  };
+  SettingSection.propTypes = {
+    title: _propTypes.default.string.isRequired,
+    description: _propTypes.default.string,
+    children: _propTypes.default.node,
+    settingKey: _propTypes.default.string
+  };
+  var SubSetting = function SubSetting(_ref5) {
+    var label = _ref5.label,
+      settingKey = _ref5.settingKey,
+      version = _ref5.version,
+      pluginUri = _ref5.pluginUri;
+    var isRequired = isRequiredPlugin(settingKey);
+    return /*#__PURE__*/_react.default.createElement(_ui.Box, {
+      sx: {
+        py: 1.5
+      }
+    }, /*#__PURE__*/_react.default.createElement(_ui.FormControlLabel, {
+      control: /*#__PURE__*/_react.default.createElement(_ui.Checkbox, {
+        checked: plugins[settingKey],
+        onChange: function onChange() {
+          return handleToggleChange(settingKey);
+        },
+        color: "info",
+        size: "medium",
+        sx: {
+          py: 0
+        },
+        disabled: isRequired
+      }),
+      label: /*#__PURE__*/_react.default.createElement(_ui.Typography, {
+        variant: "body1",
+        sx: {
+          fontWeight: 400,
+          color: isRequired ? 'text.disabled' : 'inherit'
+        }
+      }, label)
+    }), version && /*#__PURE__*/_react.default.createElement(_ui.Typography, {
+      variant: "body1",
+      color: "text.secondary",
+      sx: {
+        fontWeight: 400,
+        ml: 4
+      }
+    }, pluginUri ? /*#__PURE__*/_react.default.createElement(_ui.Link, {
+      href: pluginUri,
+      target: "_blank",
+      rel: "noopener noreferrer",
+      color: "info.light",
+      underline: "hover",
+      sx: {
+        display: 'inline-flex',
+        alignItems: 'center',
+        gap: 0.5
+      }
+    }, __('Version', 'elementor'), " ", version, /*#__PURE__*/_react.default.createElement(_icons.ExternalLinkIcon, null)) : /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, __('Version', 'elementor'), " ", version)));
+  };
+  SubSetting.propTypes = {
+    label: _propTypes.default.string.isRequired,
+    settingKey: _propTypes.default.string.isRequired,
+    version: _propTypes.default.string,
+    pluginUri: _propTypes.default.string
+  };
+  return /*#__PURE__*/_react.default.createElement(_ui.Dialog, {
+    open: open,
+    onClose: handleClose,
+    maxWidth: "md",
+    fullWidth: true,
+    PaperProps: {
+      sx: {
+        minHeight: '600px'
+      }
+    }
+  }, /*#__PURE__*/_react.default.createElement(_ui.DialogHeader, {
+    onClose: handleClose
+  }, /*#__PURE__*/_react.default.createElement(_ui.DialogTitle, null, __('Edit plugins', 'elementor'))), /*#__PURE__*/_react.default.createElement(_ui.DialogContent, {
+    dividers: true,
+    sx: {
+      p: 3
+    }
+  }, /*#__PURE__*/_react.default.createElement(_ui.Stack, {
+    gap: 2
+  }, isOldElementorVersion && /*#__PURE__*/_react.default.createElement(_upgradeVersionBanner.UpgradeVersionBanner, null), isLoading ? /*#__PURE__*/_react.default.createElement(_ui.Stack, {
+    spacing: 3,
+    alignItems: "center",
+    sx: {
+      py: 8
+    }
+  }, /*#__PURE__*/_react.default.createElement(_ui.CircularProgress, {
+    size: 30
+  })) : /*#__PURE__*/_react.default.createElement(SettingSection, {
+    title: __('Plugin name and version', 'elementor')
+  }, /*#__PURE__*/_react.default.createElement(_ui.Stack, null, /*#__PURE__*/_react.default.createElement(_ui.Box, {
+    sx: {
+      py: 1.5
+    }
+  }, /*#__PURE__*/_react.default.createElement(_ui.FormControlLabel, {
+    control: /*#__PURE__*/_react.default.createElement(_ui.Checkbox, {
+      checked: isAllSelected,
+      indeterminate: isIndeterminate,
+      onChange: handleSelectAll,
+      color: "info",
+      size: "medium",
+      sx: {
+        py: 0
+      }
+    }),
+    label: /*#__PURE__*/_react.default.createElement(_ui.Typography, {
+      variant: "body1",
+      sx: {
+        fontWeight: 500
+      }
+    }, __('All plugins', 'elementor'))
+  })), Object.entries(pluginsList).map(function (_ref6) {
+    var _ref7 = (0, _slicedToArray2.default)(_ref6, 2),
+      pluginKey = _ref7[0],
+      pluginData = _ref7[1];
+    return /*#__PURE__*/_react.default.createElement(SubSetting, {
+      key: pluginKey,
+      label: pluginData.name,
+      settingKey: pluginKey,
+      version: pluginData.version,
+      pluginUri: pluginData.pluginUri
+    });
+  }))))), /*#__PURE__*/_react.default.createElement(_ui.DialogActions, null, /*#__PURE__*/_react.default.createElement(_ui.Button, {
+    onClick: handleClose,
+    color: "secondary"
+  }, __('Cancel', 'elementor')), /*#__PURE__*/_react.default.createElement(_ui.Button, {
+    onClick: function onClick() {
+      var pluginsSelection = getPluginsSelection();
+      var hasEnabledCustomization = Object.values(pluginsSelection).some(Boolean);
+      var transformedAnalytics = transformAnalyticsData(pluginsSelection);
+      handleSaveChanges('plugins', pluginsSelection, hasEnabledCustomization, transformedAnalytics);
+      handleClose();
+    },
+    variant: "contained",
+    color: "primary",
+    disabled: isLoading
+  }, __('Save changes', 'elementor'))));
+}
+KitPluginsCustomizationDialog.propTypes = {
+  open: _propTypes.default.bool.isRequired,
+  handleClose: _propTypes.default.func.isRequired,
+  handleSaveChanges: _propTypes.default.func.isRequired,
+  data: _propTypes.default.object.isRequired,
+  isImport: _propTypes.default.bool,
+  isOldElementorVersion: _propTypes.default.bool
+};
+
+/***/ }),
+
+/***/ "../app/modules/import-export-customization/assets/js/shared/components/kit-settings-customization-dialog.js":
+/*!*******************************************************************************************************************!*\
+  !*** ../app/modules/import-export-customization/assets/js/shared/components/kit-settings-customization-dialog.js ***!
+  \*******************************************************************************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
+var _typeof = __webpack_require__(/*! @babel/runtime/helpers/typeof */ "../node_modules/@babel/runtime/helpers/typeof.js");
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports.KitSettingsCustomizationDialog = KitSettingsCustomizationDialog;
+var _react = _interopRequireWildcard(__webpack_require__(/*! react */ "react"));
+var _defineProperty2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/defineProperty */ "../node_modules/@babel/runtime/helpers/defineProperty.js"));
+var _slicedToArray2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/slicedToArray */ "../node_modules/@babel/runtime/helpers/slicedToArray.js"));
+var _ui = __webpack_require__(/*! @elementor/ui */ "@elementor/ui");
+var _i18n = __webpack_require__(/*! @wordpress/i18n */ "@wordpress/i18n");
+var _propTypes = _interopRequireDefault(__webpack_require__(/*! prop-types */ "../node_modules/prop-types/index.js"));
+var _customizationSettingSection = __webpack_require__(/*! ./customization-setting-section */ "../app/modules/import-export-customization/assets/js/shared/components/customization-setting-section.js");
+var _kitCustomizationDialog = __webpack_require__(/*! ./kit-customization-dialog */ "../app/modules/import-export-customization/assets/js/shared/components/kit-customization-dialog.js");
+var _appsEventTracking = __webpack_require__(/*! elementor-app/event-track/apps-event-tracking */ "../app/assets/js/event-track/apps-event-tracking.js");
+var _useContextDetection2 = _interopRequireDefault(__webpack_require__(/*! ../hooks/use-context-detection */ "../app/modules/import-export-customization/assets/js/shared/hooks/use-context-detection.js"));
+var _upgradeVersionBanner = __webpack_require__(/*! ./upgrade-version-banner */ "../app/modules/import-export-customization/assets/js/shared/components/upgrade-version-banner.js");
+var _analyticsTransformer = __webpack_require__(/*! ../utils/analytics-transformer */ "../app/modules/import-export-customization/assets/js/shared/utils/analytics-transformer.js");
+function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function _interopRequireWildcard(e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, default: e }; if (null === e || "object" != _typeof(e) && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (var _t in e) "default" !== _t && {}.hasOwnProperty.call(e, _t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, _t)) && (i.get || i.set) ? o(f, _t, i) : f[_t] = e[_t]); return f; })(e, t); }
+function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
+function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { (0, _defineProperty2.default)(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
+var transformAnalyticsData = function transformAnalyticsData(payload) {
+  var transformed = {};
+  for (var _i = 0, _Object$entries = Object.entries(payload); _i < _Object$entries.length; _i++) {
+    var _Object$entries$_i = (0, _slicedToArray2.default)(_Object$entries[_i], 2),
+      key = _Object$entries$_i[0],
+      value = _Object$entries$_i[1];
+    transformed[key] = (0, _analyticsTransformer.transformValueForAnalytics)(key, value, []);
+  }
+  return transformed;
+};
+function getInitialState(contextData, isImport) {
+  var _data$uploadedData;
+  var data = contextData.data;
+  var initialState = data.includes.includes('settings');
+  if (isImport && !(contextData !== null && contextData !== void 0 && contextData.isOldExport) && !(data !== null && data !== void 0 && (_data$uploadedData = data.uploadedData) !== null && _data$uploadedData !== void 0 && (_data$uploadedData = _data$uploadedData.manifest) !== null && _data$uploadedData !== void 0 && (_data$uploadedData = _data$uploadedData['site-settings']) !== null && _data$uploadedData !== void 0 && _data$uploadedData.theme)) {
+    initialState = false;
+  }
+  return initialState;
+}
+function isExported(contextData) {
+  var _contextData$data2;
+  if (contextData !== null && contextData !== void 0 && contextData.isOldExport) {
+    var _contextData$data;
+    return contextData === null || contextData === void 0 || (_contextData$data = contextData.data) === null || _contextData$data === void 0 || (_contextData$data = _contextData$data.uploadedData) === null || _contextData$data === void 0 || (_contextData$data = _contextData$data.manifest) === null || _contextData$data === void 0 ? void 0 : _contextData$data.theme;
+  }
+  return contextData === null || contextData === void 0 || (_contextData$data2 = contextData.data) === null || _contextData$data2 === void 0 || (_contextData$data2 = _contextData$data2.uploadedData) === null || _contextData$data2 === void 0 || (_contextData$data2 = _contextData$data2.manifest) === null || _contextData$data2 === void 0 || (_contextData$data2 = _contextData$data2['site-settings']) === null || _contextData$data2 === void 0 ? void 0 : _contextData$data2.theme;
+}
+function KitSettingsCustomizationDialog(_ref) {
+  var _contextData$data3;
+  var open = _ref.open,
+    handleClose = _ref.handleClose,
+    _handleSaveChanges = _ref.handleSaveChanges,
+    data = _ref.data;
+  var _useContextDetection = (0, _useContextDetection2.default)(),
+    isImport = _useContextDetection.isImport,
+    contextData = _useContextDetection.contextData;
+  var initialState = getInitialState(contextData, isImport);
+  var _useState = (0, _react.useState)(function () {
+      if (data.customization.settings) {
+        return _objectSpread({}, data.customization.settings);
+      }
+      return {
+        theme: initialState
+      };
+    }),
+    _useState2 = (0, _slicedToArray2.default)(_useState, 2),
+    settings = _useState2[0],
+    setSettings = _useState2[1];
+  (0, _react.useEffect)(function () {
+    if (open) {
+      if (data.customization.settings) {
+        setSettings(_objectSpread({}, data.customization.settings));
+      } else {
+        setSettings({
+          theme: initialState
+        });
+      }
+    }
+  }, [open, data.customization.settings, data === null || data === void 0 ? void 0 : data.uploadedData, initialState]);
+  (0, _react.useEffect)(function () {
+    if (open) {
+      _appsEventTracking.AppsEventTracking.sendPageViewsWebsiteTemplates(elementorCommon.eventsManager.config.secondaryLocations.kitLibrary.kitExportCustomizationEdit);
+    }
+  }, [open]);
+  var handleToggleChange = function handleToggleChange(settingKey) {
+    setSettings(function (prev) {
+      return _objectSpread(_objectSpread({}, prev), {}, (0, _defineProperty2.default)({}, settingKey, !prev[settingKey]));
+    });
+  };
+  return /*#__PURE__*/_react.default.createElement(_kitCustomizationDialog.KitCustomizationDialog, {
+    open: open,
+    title: (0, _i18n.__)('Edit settings & configurations', 'elementor'),
+    handleClose: handleClose,
+    handleSaveChanges: function handleSaveChanges() {
+      var transformedAnalytics = transformAnalyticsData(settings);
+      _handleSaveChanges('settings', settings, true, transformedAnalytics);
+    }
+  }, /*#__PURE__*/_react.default.createElement(_ui.Stack, {
+    gap: 2
+  }, (contextData === null || contextData === void 0 ? void 0 : contextData.isOldElementorVersion) && /*#__PURE__*/_react.default.createElement(_upgradeVersionBanner.UpgradeVersionBanner, null), isImport && !isExported(contextData) ? /*#__PURE__*/_react.default.createElement(_customizationSettingSection.SettingSection, {
+    title: (0, _i18n.__)('Theme', 'elementor'),
+    settingKey: "theme",
+    notExported: true
+  }) : /*#__PURE__*/_react.default.createElement(_customizationSettingSection.SettingSection, {
+    key: "theme",
+    checked: settings.theme,
+    title: (0, _i18n.__)('Theme', 'elementor'),
+    description: (0, _i18n.__)('Only public WordPress themes are supported', 'elementor'),
+    settingKey: "theme",
+    onSettingChange: handleToggleChange,
+    disabled: isImport && !(contextData !== null && contextData !== void 0 && (_contextData$data3 = contextData.data) !== null && _contextData$data3 !== void 0 && (_contextData$data3 = _contextData$data3.uploadedData) !== null && _contextData$data3 !== void 0 && (_contextData$data3 = _contextData$data3.manifest) !== null && _contextData$data3 !== void 0 && (_contextData$data3 = _contextData$data3['site-settings']) !== null && _contextData$data3 !== void 0 && _contextData$data3.theme)
+  })));
+}
+KitSettingsCustomizationDialog.propTypes = {
+  open: _propTypes.default.bool.isRequired,
+  handleClose: _propTypes.default.func.isRequired,
+  handleSaveChanges: _propTypes.default.func.isRequired,
+  data: _propTypes.default.object.isRequired
+};
 
 /***/ }),
 
@@ -6084,18 +9753,16 @@ var _topBar = _interopRequireDefault(__webpack_require__(/*! ./top-bar */ "../ap
 
 
 var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
-var _typeof = __webpack_require__(/*! @babel/runtime/helpers/typeof */ "../node_modules/@babel/runtime/helpers/typeof.js");
 Object.defineProperty(exports, "__esModule", ({
   value: true
 }));
 exports["default"] = PageHeader;
-var _react = _interopRequireWildcard(__webpack_require__(/*! react */ "react"));
-var _slicedToArray2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/slicedToArray */ "../node_modules/@babel/runtime/helpers/slicedToArray.js"));
+var _react = _interopRequireDefault(__webpack_require__(/*! react */ "react"));
 var _extends2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/extends */ "../node_modules/@babel/runtime/helpers/extends.js"));
 var _ui = __webpack_require__(/*! @elementor/ui */ "@elementor/ui");
 var _propTypes = _interopRequireDefault(__webpack_require__(/*! prop-types */ "../node_modules/prop-types/index.js"));
 var _icons = __webpack_require__(/*! ../icons */ "../app/modules/import-export-customization/assets/js/shared/components/icons/index.js");
-function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function _interopRequireWildcard(e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, default: e }; if (null === e || "object" != _typeof(e) && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (var _t in e) "default" !== _t && {}.hasOwnProperty.call(e, _t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, _t)) && (i.get || i.set) ? o(f, _t, i) : f[_t] = e[_t]); return f; })(e, t); }
+var _useContextDetection2 = _interopRequireDefault(__webpack_require__(/*! ../../hooks/use-context-detection */ "../app/modules/import-export-customization/assets/js/shared/hooks/use-context-detection.js"));
 var ElementorLogo = function ElementorLogo(props) {
   return /*#__PURE__*/_react.default.createElement(_ui.SvgIcon, (0, _extends2.default)({
     viewBox: "0 0 32 32"
@@ -6118,18 +9785,20 @@ var StyledElementorLogo = (0, _ui.styled)(ElementorLogo)(function (_ref) {
 function PageHeader(_ref2) {
   var _ref2$title = _ref2.title,
     title = _ref2$title === void 0 ? __('Export', 'elementor') : _ref2$title;
-  var _useState = (0, _react.useState)(false),
-    _useState2 = (0, _slicedToArray2.default)(_useState, 2),
-    isHelpModalOpen = _useState2[0],
-    setIsHelpModalOpen = _useState2[1];
+  var _useContextDetection = (0, _useContextDetection2.default)(),
+    isImport = _useContextDetection.isImport,
+    contextData = _useContextDetection.contextData;
   var handleClose = function handleClose() {
-    window.top.location = elementorAppConfig.admin_url + 'admin.php?page=elementor-tools';
-  };
-  var handleHelpClick = function handleHelpClick() {
-    setIsHelpModalOpen(true);
-  };
-  var handleHelpModalClose = function handleHelpModalClose() {
-    setIsHelpModalOpen(false);
+    var path = 'admin.php?page=elementor-tools#tab-import-export-kit';
+    if (isImport) {
+      var _contextData$data, _contextData$data2;
+      if ('cloud' === (contextData === null || contextData === void 0 || (_contextData$data = contextData.data) === null || _contextData$data === void 0 || (_contextData$data = _contextData$data.kitUploadParams) === null || _contextData$data === void 0 ? void 0 : _contextData$data.source)) {
+        path = 'admin.php?page=elementor-app#kit-library/cloud';
+      } else if ('kit-library' === (contextData === null || contextData === void 0 || (_contextData$data2 = contextData.data) === null || _contextData$data2 === void 0 || (_contextData$data2 = _contextData$data2.kitUploadParams) === null || _contextData$data2 === void 0 ? void 0 : _contextData$data2.source)) {
+        path = "admin.php?page=elementor-app#kit-library";
+      }
+    }
+    window.top.location = elementorAppConfig.admin_url + path;
   };
   return /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, /*#__PURE__*/_react.default.createElement(_ui.Stack, {
     direction: "row",
@@ -6151,47 +9820,9 @@ function PageHeader(_ref2) {
     spacing: 1,
     alignItems: "center"
   }, /*#__PURE__*/_react.default.createElement(_ui.IconButton, {
-    onClick: handleHelpClick,
-    "aria-label": __('Help', 'elementor')
-  }, /*#__PURE__*/_react.default.createElement(_ui.Box, {
-    component: "i",
-    className: "eicon-info-circle"
-  })), /*#__PURE__*/_react.default.createElement(_ui.IconButton, {
     onClick: handleClose,
     "aria-label": __('Close', 'elementor')
-  }, /*#__PURE__*/_react.default.createElement(_icons.XIcon, null))), /*#__PURE__*/_react.default.createElement(_ui.Dialog, {
-    open: isHelpModalOpen,
-    onClose: handleHelpModalClose,
-    maxWidth: "sm"
-  }, /*#__PURE__*/_react.default.createElement(_ui.DialogTitle, null, __('Export a Website Template', 'elementor')), /*#__PURE__*/_react.default.createElement(_ui.DialogContent, null, /*#__PURE__*/_react.default.createElement(_ui.Box, {
-    sx: {
-      mb: 3
-    }
-  }, /*#__PURE__*/_react.default.createElement(_ui.Typography, {
-    variant: "h6",
-    gutterBottom: true
-  }, __("What's a Website Template?", 'elementor')), /*#__PURE__*/_react.default.createElement(_ui.Typography, {
-    variant: "body2",
-    color: "text.secondary",
-    paragraph: true
-  }, __('A Website Template is a .zip file that contains all the parts of a complete site. It\'s an easy way to get a site up and running quickly.', 'elementor')), /*#__PURE__*/_react.default.createElement(_ui.Link, {
-    href: "https://go.elementor.com/app-what-are-kits",
-    target: "_blank",
-    variant: "body2"
-  }, __('Learn more about Website Templates', 'elementor'))), /*#__PURE__*/_react.default.createElement(_ui.Box, null, /*#__PURE__*/_react.default.createElement(_ui.Typography, {
-    variant: "h6",
-    gutterBottom: true
-  }, __('How does exporting work?', 'elementor')), /*#__PURE__*/_react.default.createElement(_ui.Typography, {
-    variant: "body2",
-    color: "text.secondary",
-    paragraph: true
-  }, __('To turn your site into a Website Template, select the templates, content, settings and plugins you want to include. Once it\'s ready, you\'ll get a .zip file that you can import to other sites.', 'elementor')), /*#__PURE__*/_react.default.createElement(_ui.Link, {
-    href: "https://go.elementor.com/app-export-kit",
-    target: "_blank",
-    variant: "body2"
-  }, __('Learn More', 'elementor')))), /*#__PURE__*/_react.default.createElement(_ui.DialogActions, null, /*#__PURE__*/_react.default.createElement(_ui.Button, {
-    onClick: handleHelpModalClose
-  }, __('Close', 'elementor')))));
+  }, /*#__PURE__*/_react.default.createElement(_icons.XIcon, null))));
 }
 PageHeader.propTypes = {
   title: _propTypes.default.string
@@ -6251,6 +9882,165 @@ TopBar.propTypes = {
 
 /***/ }),
 
+/***/ "../app/modules/import-export-customization/assets/js/shared/components/re-export-banner.js":
+/*!**************************************************************************************************!*\
+  !*** ../app/modules/import-export-customization/assets/js/shared/components/re-export-banner.js ***!
+  \**************************************************************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+/* provided dependency */ var __ = __webpack_require__(/*! @wordpress/i18n */ "@wordpress/i18n")["__"];
+
+
+var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports.ReExportBanner = ReExportBanner;
+var _react = _interopRequireDefault(__webpack_require__(/*! react */ "react"));
+var _ui = __webpack_require__(/*! @elementor/ui */ "@elementor/ui");
+function ReExportBanner() {
+  return /*#__PURE__*/_react.default.createElement(_ui.Paper, {
+    color: "secondary",
+    elevation: 0,
+    variant: "elevation"
+  }, /*#__PURE__*/_react.default.createElement(_ui.Stack, {
+    direction: "row",
+    sx: {
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      gap: '5px',
+      p: 2.5
+    }
+  }, /*#__PURE__*/_react.default.createElement(_ui.Stack, {
+    direction: "row",
+    sx: {
+      alignItems: 'center',
+      gap: '5px'
+    }
+  }, /*#__PURE__*/_react.default.createElement(_ui.Box, {
+    component: "i",
+    className: "eicon-info-circle"
+  }), /*#__PURE__*/_react.default.createElement(_ui.Typography, {
+    variant: "body2"
+  }, __('This website template was exported from an older version of Elementor. If possible, re-export it with the latest version for better capabilities.', 'elementor'))), /*#__PURE__*/_react.default.createElement(_ui.Link, {
+    href: "http://go.elementor.com/app-import-export-errors-old-kits",
+    variant: "body2",
+    color: "info.light",
+    underline: "hover",
+    target: "_blank",
+    rel: "noopener noreferrer"
+  }, __('Learn more', 'elementor'))));
+}
+
+/***/ }),
+
+/***/ "../app/modules/import-export-customization/assets/js/shared/components/summary-section.js":
+/*!*************************************************************************************************!*\
+  !*** ../app/modules/import-export-customization/assets/js/shared/components/summary-section.js ***!
+  \*************************************************************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports["default"] = SummarySection;
+var _react = _interopRequireDefault(__webpack_require__(/*! react */ "react"));
+var _ui = __webpack_require__(/*! @elementor/ui */ "@elementor/ui");
+var _propTypes = _interopRequireDefault(__webpack_require__(/*! prop-types */ "../node_modules/prop-types/index.js"));
+function SummarySection(_ref) {
+  var title = _ref.title,
+    subTitle = _ref.subTitle,
+    sectionKey = _ref.sectionKey;
+  return /*#__PURE__*/_react.default.createElement(_ui.Box, {
+    "data-testid": "summary_section_".concat(sectionKey)
+  }, /*#__PURE__*/_react.default.createElement(_ui.Stack, {
+    direction: "row",
+    alignItems: "center",
+    spacing: 1
+  }, /*#__PURE__*/_react.default.createElement(_ui.Typography, {
+    variant: "body2",
+    color: "text.primary"
+  }, title)), /*#__PURE__*/_react.default.createElement(_ui.Typography, {
+    variant: "body2",
+    color: "text.tertiary",
+    "data-testid": "summary_section_".concat(sectionKey, "_subtitle")
+  }, subTitle));
+}
+SummarySection.propTypes = {
+  title: _propTypes.default.string.isRequired,
+  subTitle: _propTypes.default.string.isRequired,
+  sectionKey: _propTypes.default.string.isRequired
+};
+
+/***/ }),
+
+/***/ "../app/modules/import-export-customization/assets/js/shared/components/upgrade-version-banner.js":
+/*!********************************************************************************************************!*\
+  !*** ../app/modules/import-export-customization/assets/js/shared/components/upgrade-version-banner.js ***!
+  \********************************************************************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+/* provided dependency */ var __ = __webpack_require__(/*! @wordpress/i18n */ "@wordpress/i18n")["__"];
+
+
+var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports.UpgradeVersionBanner = UpgradeVersionBanner;
+var _react = _interopRequireDefault(__webpack_require__(/*! react */ "react"));
+var _ui = __webpack_require__(/*! @elementor/ui */ "@elementor/ui");
+function UpgradeVersionBanner() {
+  return /*#__PURE__*/_react.default.createElement(_ui.Paper, {
+    color: "info",
+    elevation: 0,
+    variant: "elevation"
+  }, /*#__PURE__*/_react.default.createElement(_ui.Stack, {
+    direction: "row",
+    sx: {
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      gap: '5px',
+      py: 1.5,
+      px: 2.5
+    }
+  }, /*#__PURE__*/_react.default.createElement(_ui.Stack, {
+    direction: "row",
+    sx: {
+      alignItems: 'center',
+      gap: '5px'
+    }
+  }, /*#__PURE__*/_react.default.createElement(_ui.SvgIcon, {
+    viewBox: "0 0 22 22",
+    sx: {
+      fontSize: 16,
+      color: 'info.light'
+    }
+  }, /*#__PURE__*/_react.default.createElement("path", {
+    fillRule: "evenodd",
+    clipRule: "evenodd",
+    d: "M4.58268 4.35352C4.5219 4.35352 4.46361 4.37766 4.42064 4.42064C4.37766 4.46361 4.35352 4.5219 4.35352 4.58268V6.64518H6.64518V4.35352H4.58268ZM4.58268 2.97852C4.15723 2.97852 3.7492 3.14753 3.44837 3.44837C3.14753 3.7492 2.97852 4.15723 2.97852 4.58268V17.416C2.97852 17.8415 3.14753 18.2495 3.44837 18.5503C3.74921 18.8512 4.15723 19.0202 4.58268 19.0202H17.416C17.8415 19.0202 18.2495 18.8512 18.5503 18.5503C18.8512 18.2495 19.0202 17.8415 19.0202 17.416V4.58268C19.0202 4.15723 18.8512 3.74921 18.5503 3.44837C18.2495 3.14753 17.8415 2.97852 17.416 2.97852H4.58268ZM8.02018 4.35352V6.64518H17.6452V4.58268C17.6452 4.5219 17.621 4.46361 17.5781 4.42064C17.5351 4.37766 17.4768 4.35352 17.416 4.35352H8.02018ZM17.6452 8.02018H4.35352V17.416C4.35352 17.4768 4.37766 17.5351 4.42064 17.5781C4.46361 17.621 4.5219 17.6452 4.58268 17.6452H17.416C17.4768 17.6452 17.5351 17.621 17.5781 17.5781C17.621 17.5351 17.6452 17.4768 17.6452 17.416V8.02018Z",
+    fill: "currentColor"
+  })), /*#__PURE__*/_react.default.createElement(_ui.Typography, {
+    variant: "body2"
+  }, __('You’re using an older Elementor version. Update for full customization.', 'elementor'))), /*#__PURE__*/_react.default.createElement(_ui.Button, {
+    variant: "outlined",
+    onClick: function onClick() {
+      var _elementorAppConfig$i;
+      return window.open((_elementorAppConfig$i = elementorAppConfig['import-export-customization']) === null || _elementorAppConfig$i === void 0 ? void 0 : _elementorAppConfig$i.upgradeVersionUrl, '_blank');
+    },
+    color: "info"
+  }, __('Update version', 'elementor'))));
+}
+
+/***/ }),
+
 /***/ "../app/modules/import-export-customization/assets/js/shared/hooks/use-connect-state.js":
 /*!**********************************************************************************************!*\
   !*** ../app/modules/import-export-customization/assets/js/shared/hooks/use-connect-state.js ***!
@@ -6306,6 +10096,263 @@ function useConnectState() {
 
 /***/ }),
 
+/***/ "../app/modules/import-export-customization/assets/js/shared/hooks/use-context-detection.js":
+/*!**************************************************************************************************!*\
+  !*** ../app/modules/import-export-customization/assets/js/shared/hooks/use-context-detection.js ***!
+  \**************************************************************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports["default"] = useContextDetection;
+var _react = __webpack_require__(/*! react */ "react");
+var _importContext = __webpack_require__(/*! ../../import/context/import-context */ "../app/modules/import-export-customization/assets/js/import/context/import-context.js");
+var _exportContext = __webpack_require__(/*! ../../export/context/export-context */ "../app/modules/import-export-customization/assets/js/export/context/export-context.js");
+function useContextDetection() {
+  var importContext = (0, _react.useContext)(_importContext.ImportContext);
+  var exportContext = (0, _react.useContext)(_exportContext.ExportContext);
+  if (importContext) {
+    return {
+      isImport: true,
+      contextData: importContext
+    };
+  }
+  if (exportContext) {
+    return {
+      isImport: false,
+      contextData: exportContext
+    };
+  }
+  throw new Error('useContextDetection must be used within either an ImportContextProvider or ExportContextProvider');
+}
+
+/***/ }),
+
+/***/ "../app/modules/import-export-customization/assets/js/shared/hooks/use-custom-post-types.js":
+/*!**************************************************************************************************!*\
+  !*** ../app/modules/import-export-customization/assets/js/shared/hooks/use-custom-post-types.js ***!
+  \**************************************************************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports.useCustomPostTypes = useCustomPostTypes;
+var _slicedToArray2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/slicedToArray */ "../node_modules/@babel/runtime/helpers/slicedToArray.js"));
+var _react = __webpack_require__(/*! react */ "react");
+function useCustomPostTypes() {
+  var _ref = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
+    _ref$include = _ref.include,
+    include = _ref$include === void 0 ? [] : _ref$include;
+  var _useState = (0, _react.useState)([]),
+    _useState2 = (0, _slicedToArray2.default)(_useState, 2),
+    customPostTypes = _useState2[0],
+    setCustomPostTypes = _useState2[1];
+  (0, _react.useEffect)(function () {
+    var _elementorAppConfig$i;
+    var cpt = Object.assign({}, ((_elementorAppConfig$i = elementorAppConfig['import-export-customization']) === null || _elementorAppConfig$i === void 0 || (_elementorAppConfig$i = _elementorAppConfig$i.summaryTitles) === null || _elementorAppConfig$i === void 0 || (_elementorAppConfig$i = _elementorAppConfig$i.content) === null || _elementorAppConfig$i === void 0 ? void 0 : _elementorAppConfig$i.customPostTypes) || {});
+    if (include.length) {
+      var _elementorAppConfig$i2;
+      Object.entries(((_elementorAppConfig$i2 = elementorAppConfig['import-export-customization']) === null || _elementorAppConfig$i2 === void 0 || (_elementorAppConfig$i2 = _elementorAppConfig$i2.summaryTitles) === null || _elementorAppConfig$i2 === void 0 ? void 0 : _elementorAppConfig$i2.content) || {}).forEach(function (_ref2) {
+        var _ref3 = (0, _slicedToArray2.default)(_ref2, 2),
+          postType = _ref3[0],
+          post = _ref3[1];
+        if (include.includes(postType)) {
+          cpt[postType] = post;
+        }
+      });
+    }
+    if (Object.keys(cpt).length) {
+      setCustomPostTypes(Object.entries(cpt).map(function (_ref4) {
+        var _ref5 = (0, _slicedToArray2.default)(_ref4, 2),
+          postType = _ref5[0],
+          post = _ref5[1];
+        return {
+          value: postType,
+          label: post.single
+        };
+      }));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  return {
+    customPostTypes: customPostTypes
+  };
+}
+
+/***/ }),
+
+/***/ "../app/modules/import-export-customization/assets/js/shared/hooks/use-kit-customization-custom-post-types.js":
+/*!********************************************************************************************************************!*\
+  !*** ../app/modules/import-export-customization/assets/js/shared/hooks/use-kit-customization-custom-post-types.js ***!
+  \********************************************************************************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports.useKitCustomizationCustomPostTypes = useKitCustomizationCustomPostTypes;
+var _typeof2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/typeof */ "../node_modules/@babel/runtime/helpers/typeof.js"));
+var _react = __webpack_require__(/*! react */ "react");
+var _useCustomPostTypes2 = __webpack_require__(/*! ./use-custom-post-types */ "../app/modules/import-export-customization/assets/js/shared/hooks/use-custom-post-types.js");
+function useKitCustomizationCustomPostTypes(_ref) {
+  var data = _ref.data;
+  var isImport = data === null || data === void 0 ? void 0 : data.hasOwnProperty('uploadedData');
+  var _useCustomPostTypes = (0, _useCustomPostTypes2.useCustomPostTypes)({
+      include: ['post']
+    }),
+    builtInCustomPostTypes = _useCustomPostTypes.customPostTypes;
+  var customPostTypes = (0, _react.useMemo)(function () {
+    var _data$uploadedData, _data$uploadedData2, _data$uploadedData3;
+    if (!isImport) {
+      return builtInCustomPostTypes;
+    }
+    var customPostTypesTitles = Object.values((data === null || data === void 0 || (_data$uploadedData = data.uploadedData) === null || _data$uploadedData === void 0 || (_data$uploadedData = _data$uploadedData.manifest) === null || _data$uploadedData === void 0 ? void 0 : _data$uploadedData['custom-post-type-title']) || {}).map(function (postType) {
+      return {
+        value: postType.name,
+        label: postType.label
+      };
+    });
+    if (!customPostTypesTitles.some(function (postType) {
+      return 'post' === postType.value;
+    })) {
+      customPostTypesTitles.push({
+        value: 'post',
+        label: 'Post'
+      });
+    }
+    var wpContent = (data === null || data === void 0 || (_data$uploadedData2 = data.uploadedData) === null || _data$uploadedData2 === void 0 || (_data$uploadedData2 = _data$uploadedData2.manifest) === null || _data$uploadedData2 === void 0 ? void 0 : _data$uploadedData2['wp-content']) || {};
+    var content = (data === null || data === void 0 || (_data$uploadedData3 = data.uploadedData) === null || _data$uploadedData3 === void 0 || (_data$uploadedData3 = _data$uploadedData3.manifest) === null || _data$uploadedData3 === void 0 ? void 0 : _data$uploadedData3.content) || {};
+    return customPostTypesTitles.filter(function (postType) {
+      var postTypeValue = postType.value;
+      var wpContentObject = wpContent[postTypeValue];
+      var isInWpContent = wpContentObject && 'object' === (0, _typeof2.default)(wpContentObject) && Object.keys(wpContentObject).length > 0;
+      var contentObject = content[postTypeValue];
+      var isInElementorContent = contentObject && 'object' === (0, _typeof2.default)(contentObject) && Object.keys(contentObject).length > 0;
+      return isInWpContent || isInElementorContent;
+    });
+  }, [isImport, data === null || data === void 0 ? void 0 : data.uploadedData, builtInCustomPostTypes]);
+  return {
+    customPostTypes: customPostTypes
+  };
+}
+
+/***/ }),
+
+/***/ "../app/modules/import-export-customization/assets/js/shared/hooks/use-kit-plugins.js":
+/*!********************************************************************************************!*\
+  !*** ../app/modules/import-export-customization/assets/js/shared/hooks/use-kit-plugins.js ***!
+  \********************************************************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports["default"] = useKitPlugins;
+var _regenerator = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/regenerator */ "../node_modules/@babel/runtime/regenerator/index.js"));
+var _asyncToGenerator2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/asyncToGenerator */ "../node_modules/@babel/runtime/helpers/asyncToGenerator.js"));
+var _slicedToArray2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/slicedToArray */ "../node_modules/@babel/runtime/helpers/slicedToArray.js"));
+var _react = __webpack_require__(/*! react */ "react");
+function useKitPlugins(_ref) {
+  var open = _ref.open;
+  var _useState = (0, _react.useState)({}),
+    _useState2 = (0, _slicedToArray2.default)(_useState, 2),
+    pluginsList = _useState2[0],
+    setPluginsList = _useState2[1];
+  var _useState3 = (0, _react.useState)(false),
+    _useState4 = (0, _slicedToArray2.default)(_useState3, 2),
+    isLoading = _useState4[0],
+    setIsLoading = _useState4[1];
+  var fetchPlugins = (0, _react.useCallback)(/*#__PURE__*/(0, _asyncToGenerator2.default)(/*#__PURE__*/_regenerator.default.mark(function _callee() {
+    var _window$wpApiSettings, requestUrl, response, result, errorMessage, pluginsObject, _t;
+    return _regenerator.default.wrap(function (_context) {
+      while (1) switch (_context.prev = _context.next) {
+        case 0:
+          setIsLoading(true);
+          _context.prev = 1;
+          requestUrl = "".concat(elementorCommon.config.urls.rest, "wp/v2/plugins/");
+          _context.next = 2;
+          return fetch(requestUrl, {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-WP-Nonce': ((_window$wpApiSettings = window.wpApiSettings) === null || _window$wpApiSettings === void 0 ? void 0 : _window$wpApiSettings.nonce) || ''
+            }
+          });
+        case 2:
+          response = _context.sent;
+          _context.next = 3;
+          return response.json();
+        case 3:
+          result = _context.sent;
+          if (response.ok) {
+            _context.next = 4;
+            break;
+          }
+          errorMessage = (result === null || result === void 0 ? void 0 : result.message) || "HTTP error! Status: ".concat(response.status);
+          throw new Error(errorMessage);
+        case 4:
+          if (Array.isArray(result)) {
+            _context.next = 5;
+            break;
+          }
+          return _context.abrupt("return");
+        case 5:
+          pluginsObject = {};
+          result.forEach(function (plugin) {
+            pluginsObject[plugin.plugin] = {
+              name: plugin.name,
+              plugin: plugin.plugin,
+              pluginUri: plugin.plugin_uri,
+              version: plugin.version
+            };
+          });
+          setPluginsList(pluginsObject);
+          _context.next = 7;
+          break;
+        case 6:
+          _context.prev = 6;
+          _t = _context["catch"](1);
+          setPluginsList({});
+        case 7:
+          _context.prev = 7;
+          setIsLoading(false);
+          return _context.finish(7);
+        case 8:
+        case "end":
+          return _context.stop();
+      }
+    }, _callee, null, [[1, 6, 7, 8]]);
+  })), []);
+  (0, _react.useEffect)(function () {
+    if (open) {
+      fetchPlugins();
+    }
+  }, [open, fetchPlugins]);
+  return {
+    pluginsList: pluginsList,
+    isLoading: isLoading
+  };
+}
+
+/***/ }),
+
 /***/ "../app/modules/import-export-customization/assets/js/shared/kit-content-data.js":
 /*!***************************************************************************************!*\
   !*** ../app/modules/import-export-customization/assets/js/shared/kit-content-data.js ***!
@@ -6320,22 +10367,31 @@ Object.defineProperty(exports, "__esModule", ({
   value: true
 }));
 exports["default"] = void 0;
+var _kitPluginsCustomizationDialog = __webpack_require__(/*! ./components/kit-plugins-customization-dialog */ "../app/modules/import-export-customization/assets/js/shared/components/kit-plugins-customization-dialog.js");
+var _kitContentCustomizationDialog = __webpack_require__(/*! ./components/kit-content-customization-dialog */ "../app/modules/import-export-customization/assets/js/shared/components/kit-content-customization-dialog.js");
+var _kitSettingsCustomizationDialog = __webpack_require__(/*! ./components/kit-settings-customization-dialog */ "../app/modules/import-export-customization/assets/js/shared/components/kit-settings-customization-dialog.js");
 var kitContentData = [{
   type: 'content',
   data: {
     title: __('Content', 'elementor'),
     features: {
-      open: [__('Elementor Pages', 'elementor'), __('Landing Pages', 'elementor'), __('Elementor Posts', 'elementor'), __('WP Pages', 'elementor'), __('WP Posts', 'elementor'), __('WP Menus', 'elementor'), __('Custom Post Types', 'elementor')]
+      open: [__('Elementor Pages', 'elementor'), __('Elementor Posts', 'elementor'), __('WP Pages', 'elementor'), __('WP Posts', 'elementor'), __('WP Menus', 'elementor'), __('Custom Post Types', 'elementor')]
     }
-  }
+  },
+  dialog: _kitContentCustomizationDialog.KitContentCustomizationDialog,
+  required: false
 }, {
   type: 'templates',
   data: {
     title: __('Templates', 'elementor'),
     features: {
-      open: [__('Saved Templates', 'elementor'), __('Headers', 'elementor'), __('Footers', 'elementor'), __('Archives', 'elementor'), __('Single Posts', 'elementor'), __('Single Pages', 'elementor'), __('Search Results', 'elementor'), __('404 Error Page', 'elementor'), __('Popups', 'elementor'), __('Global widgets', 'elementor')]
+      open: [__('Saved Templates', 'elementor')],
+      locked: [__('Headers', 'elementor'), __('Footers', 'elementor'), __('Archives', 'elementor'), __('Single Posts', 'elementor'), __('Single Pages', 'elementor'), __('Search Results', 'elementor'), __('404 Error Page', 'elementor'), __('Popups', 'elementor'), __('Global widgets', 'elementor')],
+      tooltip: __('To import or export these components, you’ll need Elementor Pro.', 'elementor')
     }
-  }
+  },
+  dialog: null,
+  required: false
 }, {
   type: 'settings',
   data: {
@@ -6343,17 +10399,141 @@ var kitContentData = [{
     features: {
       open: [__('Global Colors', 'elementor'), __('Global Fonts', 'elementor'), __('Theme Style Settings', 'elementor'), __('Layout Settings', 'elementor'), __('Lightbox Settings', 'elementor'), __('Background Settings', 'elementor'), __('Custom Fonts', 'elementor'), __('Icons', 'elementor'), __('Code', 'elementor')]
     }
-  }
+  },
+  dialog: _kitSettingsCustomizationDialog.KitSettingsCustomizationDialog,
+  required: false
 }, {
   type: 'plugins',
   data: {
     title: __('Plugins', 'elementor'),
     features: {
-      open: [__('All plugins are required for this website templates work', 'elementor')]
+      open: [__('All plugins are required for this website templates to work', 'elementor')]
     }
-  }
+  },
+  dialog: _kitPluginsCustomizationDialog.KitPluginsCustomizationDialog,
+  required: true
 }];
 var _default = exports["default"] = kitContentData;
+
+/***/ }),
+
+/***/ "../app/modules/import-export-customization/assets/js/shared/utils/analytics-transformer.js":
+/*!**************************************************************************************************!*\
+  !*** ../app/modules/import-export-customization/assets/js/shared/utils/analytics-transformer.js ***!
+  \**************************************************************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports.transformValueForAnalytics = exports.getTotalAvailableCount = exports.ANALYTICS_TRANSFORM_RULES = void 0;
+var _typeof2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/typeof */ "../node_modules/@babel/runtime/helpers/typeof.js"));
+var ANALYTICS_TRANSFORM_RULES = exports.ANALYTICS_TRANSFORM_RULES = {
+  STRING: function STRING(value) {
+    return value;
+  },
+  BOOLEAN: function BOOLEAN(value) {
+    return value;
+  },
+  EMPTY_ARRAY: function EMPTY_ARRAY() {
+    return 'None';
+  },
+  FULL_ARRAY: function FULL_ARRAY() {
+    return 'All';
+  },
+  PARTIAL_ARRAY: function PARTIAL_ARRAY() {
+    return 'Partial';
+  }
+};
+var getTotalAvailableCount = exports.getTotalAvailableCount = function getTotalAvailableCount(key, optionsArray) {
+  var optionsMap = optionsArray.reduce(function (map, _ref) {
+    var optionKey = _ref.key,
+      options = _ref.options;
+    map[optionKey] = options.length;
+    return map;
+  }, {});
+  return optionsMap[key] || 0;
+};
+var transformValueForAnalytics = exports.transformValueForAnalytics = function transformValueForAnalytics(key, value, optionsArray) {
+  if ('string' === typeof value || 'boolean' === typeof value) {
+    return ANALYTICS_TRANSFORM_RULES[(0, _typeof2.default)(value).toUpperCase()](value);
+  }
+  if ('object' === (0, _typeof2.default)(value) && value !== null && !Array.isArray(value) && 'enabled' in value) {
+    return value.enabled;
+  }
+  if (Array.isArray(value)) {
+    if (0 === value.length) {
+      return ANALYTICS_TRANSFORM_RULES.EMPTY_ARRAY();
+    }
+    var totalAvailable = getTotalAvailableCount(key, optionsArray);
+    var isFullSelection = value.length === totalAvailable;
+    return isFullSelection ? ANALYTICS_TRANSFORM_RULES.FULL_ARRAY() : ANALYTICS_TRANSFORM_RULES.PARTIAL_ARRAY();
+  }
+  return value;
+};
+
+/***/ }),
+
+/***/ "../app/modules/import-export-customization/assets/js/shared/utils/string.js":
+/*!***********************************************************************************!*\
+  !*** ../app/modules/import-export-customization/assets/js/shared/utils/string.js ***!
+  \***********************************************************************************/
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports.formatToTitleCase = formatToTitleCase;
+function formatToTitleCase(str) {
+  return str.replace(/([A-Z])/g, ' $1').replace(/^./, function (s) {
+    return s.toUpperCase();
+  }).trim();
+}
+
+/***/ }),
+
+/***/ "../app/modules/import-export-customization/assets/js/shared/utils/utils.js":
+/*!**********************************************************************************!*\
+  !*** ../app/modules/import-export-customization/assets/js/shared/utils/utils.js ***!
+  \**********************************************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports.buildKitSettingsSummary = buildKitSettingsSummary;
+var _slicedToArray2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/slicedToArray */ "../node_modules/@babel/runtime/helpers/slicedToArray.js"));
+var _string = __webpack_require__(/*! ./string */ "../app/modules/import-export-customization/assets/js/shared/utils/string.js");
+function buildKitSettingsSummary(siteSettings) {
+  var _Object$entries;
+  var exportedSettings = Array.isArray(siteSettings) ? siteSettings
+  // eslint-disable-next-line no-unused-vars
+  : (_Object$entries = Object.entries(siteSettings)) === null || _Object$entries === void 0 ? void 0 : _Object$entries.filter(function (_ref) {
+    var _ref2 = (0, _slicedToArray2.default)(_ref, 2),
+      _ = _ref2[0],
+      isSelected = _ref2[1];
+    return isSelected;
+  }).map(function (_ref3) {
+    var _ref4 = (0, _slicedToArray2.default)(_ref3, 1),
+      settingKey = _ref4[0];
+    return settingKey;
+  });
+  var formattedSettings = exportedSettings.map(function (setting) {
+    return (0, _string.formatToTitleCase)(setting);
+  });
+  return formattedSettings.length > 0 ? formattedSettings.join(' | ') : '';
+}
 
 /***/ }),
 
@@ -7581,6 +11761,7 @@ function ExportComplete() {
     if (!isSavedToCloud) {
       downloadFile();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [exportContext.data.downloadUrl, isSavedToCloud]);
   var heading = (0, _react.useMemo)(function () {
     return isSavedToCloud ? __('Your website template is now saved to the library!', 'elementor') : __('Your .zip file is ready', 'elementor');
@@ -8273,8 +12454,7 @@ function ExportProcess() {
     },
     exportKit = /*#__PURE__*/function () {
       var _ref2 = (0, _asyncToGenerator2.default)(/*#__PURE__*/_regenerator.default.mark(function _callee() {
-        var _elementorCommon;
-        var _sharedContext$data, includes, selectedCustomPostTypes, kitData, isCloudKitFeatureActive, scr;
+        var _sharedContext$data, includes, selectedCustomPostTypes, kitData, scr;
         return _regenerator.default.wrap(function (_context) {
           while (1) switch (_context.prev = _context.next) {
             case 0:
@@ -8290,8 +12470,7 @@ function ExportProcess() {
                 plugins: pluginsData,
                 selectedCustomPostTypes: selectedCustomPostTypes
               };
-              isCloudKitFeatureActive = (_elementorCommon = elementorCommon) === null || _elementorCommon === void 0 || (_elementorCommon = _elementorCommon.config) === null || _elementorCommon === void 0 || (_elementorCommon = _elementorCommon.experimentalFeatures) === null || _elementorCommon === void 0 ? void 0 : _elementorCommon['cloud-library'];
-              if (!(isCloudKitFeatureActive && _useKit2.KIT_SOURCE_MAP.CLOUD === exportContext.data.kitInfo.source)) {
+              if (!(_useKit2.KIT_SOURCE_MAP.CLOUD === exportContext.data.kitInfo.source)) {
                 _context.next = 2;
                 break;
               }
@@ -13254,7 +17433,7 @@ var Onboarding = exports["default"] = /*#__PURE__*/(0, _createClass2.default)(fu
   _router.default.addRoute({
     path: '/onboarding/*',
     component: React.lazy(function () {
-      return __webpack_require__.e(/*! import() | onboarding */ "onboarding").then(__webpack_require__.bind(__webpack_require__, /*! ./app */ "../app/modules/onboarding/assets/js/app.js"));
+      return Promise.all(/*! import() | onboarding */[__webpack_require__.e("app_modules_onboarding_assets_js_utils_modules_post-onboarding-tracker_js"), __webpack_require__.e("onboarding")]).then(__webpack_require__.bind(__webpack_require__, /*! ./app */ "../app/modules/onboarding/assets/js/app.js"));
     })
   });
 });
@@ -13311,6 +17490,188 @@ function render(app, domElement) {
 var _default = exports["default"] = {
   render: render
 };
+
+/***/ }),
+
+/***/ "../core/common/modules/events-manager/assets/js/events-config.js":
+/*!************************************************************************!*\
+  !*** ../core/common/modules/events-manager/assets/js/events-config.js ***!
+  \************************************************************************/
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports["default"] = void 0;
+var eventsConfig = {
+  triggers: {
+    click: 'Click',
+    accordionClick: 'Accordion Click',
+    toggleClick: 'Toggle Click',
+    dropdownClick: 'Click Dropdown',
+    editorLoaded: 'Editor Loaded',
+    visible: 'Visible',
+    pageLoaded: 'Page Loaded'
+  },
+  locations: {
+    widgetPanel: 'Widget Panel',
+    topBar: 'Top Bar',
+    elementorEditor: 'Elementor Editor',
+    templatesLibrary: {
+      library: 'Templates Library'
+    },
+    app: {
+      import: 'Import Kit',
+      export: 'Export Kit',
+      kitLibrary: 'Kit Library',
+      cloudKitLibrary: 'Cloud Kit Library'
+    },
+    variables: 'Variables Panel',
+    admin: 'WP admin'
+  },
+  secondaryLocations: {
+    layout: 'Layout Section',
+    basic: 'Basic Section',
+    'pro-elements': 'Pro Section',
+    general: 'General Section',
+    'theme-elements': 'Site Section',
+    'theme-elements-single': 'Single Section',
+    'woocommerce-elements': 'WooCommerce Section',
+    wordpress: 'WordPress Section',
+    categories: 'Widgets Tab',
+    global: 'Globals Tab',
+    'whats-new': 'What\'s New',
+    'document-settings': 'Document Settings icon',
+    'preview-page': 'Preview Page',
+    'publish-button': 'Publish Button',
+    'widget-panel': 'Widget Panel Icon',
+    finder: 'Finder',
+    help: 'Help',
+    elementorLogoDropdown: 'top_bar_elementor_logo_dropdown',
+    elementorLogo: 'Elementor Logo',
+    eLogoMenu: 'E-logo Menu',
+    notes: 'Notes',
+    siteSettings: 'Site Settings',
+    structure: 'Structure',
+    documentNameDropdown: 'Document Name dropdown',
+    responsiveControls: 'Responsive controls',
+    launchpad: 'launchpad',
+    checklistHeader: 'Checklist Header',
+    checklistSteps: 'Checklist Steps',
+    userPreferences: 'User Preferences',
+    contextMenu: 'Context Menu',
+    templateLibrary: {
+      saveModal: 'Save to Modal',
+      moveModal: 'Move to Modal',
+      bulkMoveModal: 'Bulk Move to Modal',
+      copyModal: 'Copy to Modal',
+      bulkCopyModal: 'Bulk Copy to Modal',
+      saveModalSelectFolder: 'Save to Modal - select folder',
+      saveModalSelectConnect: 'Save to Modal - connect',
+      saveModalSelectUpgrade: 'Save to Modal - upgrade',
+      importModal: 'Import Modal',
+      newFolderModal: 'New Folder Modal',
+      deleteDialog: 'Delete Dialog',
+      deleteFolderDialog: 'Delete Folder Dialog',
+      renameDialog: 'Rename Dialog',
+      createFolderDialog: 'Create Folder Dialog',
+      applySettingsDialog: 'Apply Settings Dialog',
+      cloudTab: 'Cloud Tab',
+      siteTab: 'Site Tab',
+      cloudTabFolder: 'Cloud Tab - Folder',
+      cloudTabConnect: 'Cloud Tab - Connect',
+      cloudTabUpgrade: 'Cloud Tab - Upgrade',
+      morePopup: 'Context Menu',
+      quotaBar: 'Quota Bar'
+    },
+    kitLibrary: {
+      cloudKitLibrary: 'kits_cloud_library',
+      cloudKitLibraryConnect: 'kits_cloud_library_connect',
+      cloudKitLibraryUpgrade: 'kits_cloud_library_upgrade',
+      kitExportCustomization: 'kit_export_customization',
+      kitExport: 'kit_export',
+      kitExportCustomizationEdit: 'kit_export_customization_edit',
+      kitExportSummary: 'kit_export_summary',
+      kitImportUploadBox: 'kit_import_upload_box',
+      kitImportCustomization: 'kit_import_customization',
+      kitImportSummary: 'kit_import_summary'
+    },
+    variablesPopover: 'Variables Popover',
+    admin: {
+      pluginToolsTab: 'plugin_tools_tab',
+      pluginWebsiteTemplatesTab: 'plugin_website_templates_tab'
+    }
+  },
+  elements: {
+    accordionSection: 'Accordion section',
+    buttonIcon: 'Button Icon',
+    mainCta: 'Main CTA',
+    button: 'Button',
+    link: 'Link',
+    dropdown: 'Dropdown',
+    toggle: 'Toggle',
+    launchpadChecklist: 'Checklist popup'
+  },
+  names: {
+    v1: {
+      layout: 'v1_widgets_tab_layout_section',
+      basic: 'v1_widgets_tab_basic_section',
+      'pro-elements': 'v1_widgets_tab_pro_section',
+      general: 'v1_widgets_tab_general_section',
+      'theme-elements': 'v1_widgets_tab_site_section',
+      'theme-elements-single': 'v1_widgets_tab_single_section',
+      'woocommerce-elements': 'v1_widgets_tab_woocommerce_section',
+      wordpress: 'v1_widgets_tab_wordpress_section',
+      categories: 'v1_widgets_tab',
+      global: 'v1_globals_tab'
+    },
+    topBar: {
+      whatsNew: 'top_bar_whats_new',
+      documentSettings: 'top_bar_document_settings_icon',
+      previewPage: 'top_bar_preview_page',
+      publishButton: 'top_bar_publish_button',
+      widgetPanel: 'top_bar_widget_panel_icon',
+      finder: 'top_bar_finder',
+      help: 'top_bar_help',
+      history: 'top_bar_elementor_logo_dropdown_history',
+      userPreferences: 'top_bar_elementor_logo_dropdown_user_preferences',
+      keyboardShortcuts: 'top_bar_elementor_logo_dropdown_keyboard_shortcuts',
+      exitToWordpress: 'top_bar_elementor_logo_dropdown_exit_to_wordpress',
+      themeBuilder: 'top_bar_elementor_logo_dropdown_theme_builder',
+      notes: 'top_bar_notes',
+      siteSettings: 'top_bar_site_setting',
+      structure: 'top_bar_structure',
+      documentNameDropdown: 'top_bar_document_name_dropdown',
+      responsiveControls: 'top_bar_responsive_controls',
+      launchpadOn: 'top_bar_checklist_icon_show',
+      launchpadOff: 'top_bar_checklist_icon_hide',
+      elementorLogoDropdown: 'open_e_menu',
+      connectAccount: 'connect_account',
+      accountConnected: 'account_connected'
+    },
+    // ChecklistSteps event names are generated dynamically, based on stepId and action type taken: title, action, done, undone, upgrade
+    elementorEditor: {
+      checklist: {
+        checklistHeaderClose: 'checklist_header_close_icon',
+        checklistFirstPopup: 'checklist popup triggered'
+      },
+      userPreferences: {
+        checklistShow: 'checklist_userpreferences_toggle_show',
+        checklistHide: 'checklist_userpreferences_toggle_hide'
+      }
+    },
+    variables: {
+      open: 'open_variables_popover',
+      add: 'add_new_variable',
+      connect: 'connect_variable',
+      save: 'save_new_variable'
+    }
+  }
+};
+var _default = exports["default"] = eventsConfig;
 
 /***/ }),
 
@@ -23625,6 +27986,17 @@ module.exports = elementorAppPackages.hooks;
 
 /***/ }),
 
+/***/ "@elementor/icons":
+/*!************************************!*\
+  !*** external "elementorV2.icons" ***!
+  \************************************/
+/***/ ((module) => {
+
+"use strict";
+module.exports = elementorV2.icons;
+
+/***/ }),
+
 /***/ "@elementor/router":
 /*!**********************************************!*\
   !*** external "elementorAppPackages.router" ***!
@@ -23764,8 +28136,9 @@ module.exports = ReactDOM;
 /******/ 		__webpack_require__.u = (chunkId) => {
 /******/ 			// return url for filenames not based on template
 /******/ 			if (chunkId === "vendors-node_modules_react-query_devtools_index_js") return "bb8b6cce5ae5b36077e0.bundle.js";
-/******/ 			if (chunkId === "kit-library") return "" + chunkId + ".8357091f2047eb2634d3.bundle.js";
-/******/ 			if (chunkId === "onboarding") return "" + chunkId + ".04d189eccf40ae88f85d.bundle.js";
+/******/ 			if (chunkId === "kit-library") return "" + chunkId + ".ed7fc5d9656556af9353.bundle.js";
+/******/ 			if (chunkId === "app_modules_onboarding_assets_js_utils_modules_post-onboarding-tracker_js") return "cb72c088a03a8e0c21b1.bundle.js";
+/******/ 			if (chunkId === "onboarding") return "" + chunkId + ".50bce36b17131b8d21b7.bundle.js";
 /******/ 			// return url for filenames based on template
 /******/ 			return undefined;
 /******/ 		};

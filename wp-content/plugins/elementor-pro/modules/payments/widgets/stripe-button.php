@@ -246,7 +246,7 @@ class Stripe_Button extends Payment_Button {
 	 *
 	 * @return array
 	 */
-	protected function render_button( Widget_Base $instance = null, $tag = 'a' ) {
+	protected function render_button( ?Widget_Base $instance = null, $tag = 'a' ) {
 		$settings = $this->get_settings_for_display();
 		?>
 

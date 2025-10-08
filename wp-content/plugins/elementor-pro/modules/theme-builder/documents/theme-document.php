@@ -17,7 +17,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 abstract class Theme_Document extends Library_Document {
 
+	const EXPORT_GROUP = 'theme-builder';
+
 	const LOCATION_META_KEY = '_elementor_location';
+
+	private const IMPORT_EXPORT_NAME = 'import-export';
+	private const IMPORT_EXPORT_CUSTOMIZATION_NAME = 'import-export-customization';
 
 	public static function get_properties() {
 		$properties = parent::get_properties();
@@ -252,10 +257,7 @@ abstract class Theme_Document extends Library_Document {
 			$conflicts = $theme_builder->get_conditions_manager()->get_conditions_conflicts_by_location( $condition, $this->get_location() );
 
 			if ( $conflicts ) {
-				/** @var Import_Export_Module $import_export_module */
-				$import_export_module = Plugin::elementor()->app->get_component( 'import-export' );
-
-				$override_conditions = $import_export_module->import->get_settings( 'overrideConditions' );
+				$override_conditions = $this->get_import_instance()->get_settings( 'overrideConditions' );
 
 				if ( ! $override_conditions || ! in_array( $data['id'], $override_conditions, true ) ) {
 					return;
@@ -279,6 +281,54 @@ abstract class Theme_Document extends Library_Document {
 		}
 
 		$theme_builder->get_conditions_manager()->save_conditions( $this->get_main_id(), $conditions );
+	}
+
+	/**
+	 * Get the import instance from the appropriate import-export component.
+	 *
+	 * Attempts to get the import instance from the customization component if the
+	 * experiment is active and has a valid import property, otherwise falls back
+	 * to the standard import-export component.
+	 *
+	 * @return mixed The import instance
+	 * @throws \Exception If no valid import instance can be found
+	 */
+	private function get_import_instance() {
+		$is_customization_active = Plugin::elementor()->experiments->is_feature_active(
+			self::IMPORT_EXPORT_CUSTOMIZATION_NAME
+		);
+
+		if ( $is_customization_active ) {
+			$import_instance = $this->try_get_import_from_component( self::IMPORT_EXPORT_CUSTOMIZATION_NAME );
+
+			if ( $import_instance ) {
+				return $import_instance;
+			}
+		}
+
+		$import_instance = $this->try_get_import_from_component( self::IMPORT_EXPORT_NAME );
+
+		if ( ! $import_instance ) {
+			throw new \Exception( 'No valid import-export component found' );
+		}
+
+		return $import_instance;
+	}
+
+	/**
+	 * Attempt to get import instance from a specific component.
+	 *
+	 * @param string $component_name The name of the component to check
+	 * @return mixed|null The import instance if valid, null otherwise
+	 */
+	private function try_get_import_from_component( $component_name ) {
+		$component = Plugin::elementor()->app->get_component( $component_name );
+
+		if ( ! $component || ! isset( $component->import ) || is_null( $component->import ) ) {
+			return null;
+		}
+
+		return $component->import;
 	}
 
 	protected function register_controls() {

@@ -156,7 +156,7 @@ class Save_To_Database extends Action_Base {
 	 * @param Action_Base     $action Should be class based on ActionBase (do not type hint to support third party plugins)
 	 * @param \Exception|null $exception
 	 */
-	private function save_action_log( $action, \Exception $exception = null ) {
+	private function save_action_log( $action, ?\Exception $exception = null ) {
 		if ( ! $this->submission_id || $action->get_name() === $this->get_name() ) {
 			return;
 		}
@@ -190,7 +190,7 @@ class Save_To_Database extends Action_Base {
 	 * Save_To_Database constructor.
 	 */
 	public function __construct() {
-		add_action( 'elementor_pro/forms/actions/after_run', function ( Action_Base $action, \Exception $exception = null ) {
+		add_action( 'elementor_pro/forms/actions/after_run', function ( Action_Base $action, ?\Exception $exception = null ) {
 			$this->save_action_log( $action, $exception );
 		}, 10, 2 );
 	}

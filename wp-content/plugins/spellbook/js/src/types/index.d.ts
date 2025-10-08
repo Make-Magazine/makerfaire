@@ -11,7 +11,6 @@ export interface BaseProduct {
     documentation: string;
     sections: {
         description: string;
-        changelog: string;
     };
     banners: {
         high?: string;
@@ -30,8 +29,15 @@ export interface BaseProduct {
     is_installed: boolean;
     is_active: boolean;
     has_settings: boolean;
+    is_deprecated?: boolean;
 }
 
+export interface DetailedProduct extends BaseProduct {
+    sections: {
+        description: string;
+        changelog: string;
+    };
+}
 export type ProductType = 'perk' | 'connect' | 'shop' | 'free';
 export type LicensedProductType = 'perk' | 'connect' | 'shop';
 

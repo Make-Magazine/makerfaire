@@ -109,7 +109,7 @@ class GravityPerks {
 			add_filter( 'gform_addon_navigation', array( 'GWPerks', 'add_menu_item' ) );
 
 			// show various plugin messages after the plugin row
-			add_action( 'after_plugin_row_' . self::$basename, array( 'GWPerks', 'after_plugin_row' ), 10, 2 );
+			add_action( 'after_plugin_row_spellbook/spellbook.php', array( 'GWPerks', 'after_plugin_row' ), 10, 2 );
 			add_action( 'after_plugin_row', array( 'GWPerks', 'after_product_plugin_row' ), 10, 2 );
 
 			if ( self::is_gravity_perks_page() ) {
@@ -219,7 +219,7 @@ class GravityPerks {
 		define( 'GW_URL', GW_PROTOCOL . '://' . GW_DOMAIN );
 
 		if ( ! defined( 'GWAPI_URL' ) ) {
-			define( 'GWAPI_URL', GW_URL . '/gwapi/v6/' );
+			define( 'GWAPI_URL', GW_URL . '/gwapi/v7/' );
 		}
 
 		define( 'GW_UPGRADE_URL', GW_URL . '/upgrade/' );
@@ -1386,35 +1386,21 @@ class GravityPerks {
 			return '';
 		}
 
-		$string = wp_strip_all_tags( $string );
-		$string = stripslashes( $string );
-
-		// Remove "# Changelog"
-		$string = preg_replace( '/^# Changelog\s*/mi', '', $string );
-		$string = implode( "\n", array_map( 'trim', explode( "\n", $string ) ) );
-
-		// Fix indention
-		$string = preg_replace( '/^[ \t]+/m', '', $string );
-
-		$string = str_replace( '## ', "\n#### ", $string );
-		$parsed = self::markdown( trim( $string ) );
-
-		return $parsed;
+		return wp_kses_post( $string );
 	}
 
 	/**
 	 * There are on-going issues with this Markdown library and versions of PHP 7.1+. Usage is currently limited to
 	 * formatting the changelog of Gravity Perks.
 	 *
+	 * @deprecated 3.0.13, we now format changelogs as HTML from the API and pass them through wp_kses_post().
+	 *
 	 * @param $string
 	 *
 	 * @return mixed
 	 */
 	public static function markdown( $string ) {
-		if ( ! version_compare( phpversion(), '5.3', '>=' ) ) {
-			return sprintf( '<div class="error"><p>%s</p></div>%s', __( 'Does this page look strange? Your PHP version is out-of-date. <strong>Please upgrade.</strong>', 'spellbook' ), $string );
-		}
-		return include 'includes/_markdown.php';
+		_deprecated_function( __method__, '3.0.13' );
 	}
 
 	public static function dynamic_setting_actions( $position, $form_id ) {

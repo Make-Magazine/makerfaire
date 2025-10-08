@@ -2,12 +2,13 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by gravityview on 11-July-2025 using {@see https://github.com/BrianHenryIE/strauss}.
+ * Modified by gravityview on 02-October-2025 using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\GravityView\Foundation;
 
 use GravityKit\GravityView\Foundation\Components\NewsletterSignup;
+use GravityKit\GravityView\Foundation\Components\SecureDownload;
 use GravityKit\GravityView\Foundation\Integrations\GravityForms;
 use GravityKit\GravityView\Foundation\Integrations\HelpScout;
 use GravityKit\GravityView\Foundation\Integrations\TrustedLogin;
@@ -23,6 +24,8 @@ use GravityKit\GravityView\Foundation\Encryption\Encryption;
 use GravityKit\GravityView\Foundation\Helpers\Core as CoreHelpers;
 use GravityKit\GravityView\Foundation\Helpers\Arr;
 use GravityKit\GravityView\Foundation\WP\RESTController;
+use GravityKit\GravityView\Foundation\Notices\NoticeManager as Notices;
+use GravityKit\GravityView\Foundation\Settings\WPDebugSettings;
 
 /**
  * Core class that initializes Foundation.
@@ -33,15 +36,17 @@ use GravityKit\GravityView\Foundation\WP\RESTController;
  * @method static TrustedLogin trustedlogin()
  * @method static HelpScout helpscout()
  * @method static GravityForms gravityforms()
- * @method static Logger\Framework logger( string $logger_name = null, string $logger_title = null )
- * @method static Settings\Framework settings()
- * @method static Licenses\Framework licenses()
- * @method static Translations translations()
+ * @method static LoggerFramework logger( string $logger_name = null, string $logger_title = null )
+ * @method static SettingsFramework settings()
+ * @method static LicensesFramework licenses()
+ * @method static TranslationsFramework translations()
  * @method static AdminMenu admin_menu()
  * @method static PluginActivationHandler plugin_activation_handler()
+ * @method static Notices notices()
+ * @method static SecureDownload secure_download()
  */
 class Core {
-	const VERSION = '1.2.25';
+	const VERSION = '1.6.0';
 
 	const ID = 'gk_foundation';
 
@@ -314,10 +319,12 @@ class Core {
 			'admin_menu'      => AdminMenu::get_instance(),
 			'ajax_router'     => AjaxRouter::get_instance(),
 			'rest_controller' => RESTController::get_instance(),
+			'notices'         => Notices::get_instance(),
 			'encryption'      => Encryption::get_instance(),
 			'trustedlogin'    => TrustedLogin::get_instance(),
 			'helpscout'       => HelpScout::get_instance(),
 			'gravityforms'    => GravityForms::get_instance(),
+			'secure_download' => SecureDownload::get_instance(),
 		];
 
 		foreach ( $this->_components as $instance ) {
@@ -337,6 +344,8 @@ class Core {
 			add_action( 'admin_enqueue_scripts', [ $this, 'inline_scripts_and_styles' ], 20 );
 
 			add_action( 'admin_footer', [ $this, 'show_loaded_by_message_on_admin_pages' ] );
+
+			$this->detect_namespace_conflict();
 		}
 
 		class_alias( __CLASS__, 'GravityKitFoundation' );
@@ -361,9 +370,11 @@ class Core {
 	 * @return void
 	 */
 	public function configure_settings() {
+		new WPDebugSettings();
+
 		add_filter(
 			'gk/foundation/settings/data/plugins',
-			function ( $plugins ) {
+			function ( $plugins, $payload = [] ) {
 				$gk_settings = $this->settings()->get_plugin_settings( self::ID );
 
 				// If multisite and not the main site, get default settings from the main site.
@@ -592,13 +603,17 @@ HTML;
 				 * @filter gk/foundation/settings
 				 *
 				 * @since  1.0.0
+				 * @since  1.6.0 Added $payload parameter.
 				 *
 				 * @param array $all_settings GravityKit general settings.
+				 * @param array $payload      Request payload, if this is an Ajax request.
 				 */
-				$all_settings = apply_filters( 'gk/foundation/settings', $all_settings );
+				$all_settings = apply_filters( 'gk/foundation/settings', $all_settings, $payload );
 
 				return array_merge( $plugins, $all_settings );
-			}
+			},
+			10,
+			2
 		);
 	}
 
@@ -876,5 +891,70 @@ HTML;
 		) ?: [ '0' ];
 
 		return max( $foundation_versions );
+	}
+
+	/**
+	 * Detects and registers notices for namespace conflicts.
+	 *
+	 * This detects when a plugin has both vendor/ and vendor_prefixed/ Foundation copies,
+	 * which can cause conflicts when the standalone Foundation plugin is active.
+	 *
+	 * Only runs when the standalone Foundation plugin (gk-foundation) is the one that loaded.
+	 *
+	 * @since 1.6.0
+	 *
+	 * @return void
+	 */
+	private function detect_namespace_conflict() {
+		$foundation_source = Arr::first(
+			$this->_registered_plugins,
+			function ( $plugin ) {
+				return $plugin['loads_foundation'];
+			}
+		);
+
+		if ( ! $foundation_source || 'gk-foundation' !== $foundation_source['text_domain'] ) {
+			return;
+		}
+
+		$conflicting_plugins = [];
+
+		// Check each registered plugin for namespace conflicts.
+		foreach ( $this->_registered_plugins as $plugin_file => $plugin_data ) {
+			// Skip if this is the current plugin that loaded Foundation.
+			if ( $plugin_data['loads_foundation'] ) {
+				continue;
+			}
+
+			$plugin_dir = dirname( $plugin_file );
+
+			// Check if plugin has non-namespaced Foundation in vendor/.
+			$vendor_foundation = $plugin_dir . '/vendor/gravitykit/foundation/src/Core.php';
+
+			if ( file_exists( $vendor_foundation ) ) {
+				$plugin_name           = CoreHelpers::get_plugin_data( $plugin_file )['Name'] ?? $plugin_data['text_domain'];
+				$conflicting_plugins[] = esc_html( $plugin_name );
+			}
+		}
+
+		if ( empty( $conflicting_plugins ) ) {
+			return;
+		}
+
+		$this->notices()->add_runtime(
+			[
+				'namespace'    => 'gk-foundation',
+				'slug'         => 'namespace-conflicts',
+				'message'      => strtr(
+					// translators: [plugins] is replaced with a list of plugin names.
+					__( '[plugins] contain both namespaced and non-namespaced Foundation, which may cause conflicts with the standalone Foundation plugin.', 'gk-gravityview' ),
+					[ '[plugins]' => '<strong>' . implode( ', ', $conflicting_plugins ) . '</strong>' ]
+				),
+				'severity'     => 'warning',
+				'context'      => 'all',
+				'dismissible'  => false,
+				'capabilities' => [ 'manage_options' ],
+			]
+		);
 	}
 }

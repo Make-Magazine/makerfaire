@@ -98,14 +98,7 @@ class Conditions_Manager {
 			return;
 		}
 
-		$container = Plugin::instance()->get_elementor_pro_container();
-
-		if ( $container->has( Wordpress_Adapter::class ) ) {
-			$args[] = $container->get( Wordpress_Adapter::class );
-		} else {
-			$args[] = new Wordpress_Adapter();
-		}
-
+		$args[] = new Wordpress_Adapter();
 		$class_name = '\\ElementorPro\\Modules\\DisplayConditions\\Conditions\\' . $id;
 
 		/** @var Condition_Base $condition */

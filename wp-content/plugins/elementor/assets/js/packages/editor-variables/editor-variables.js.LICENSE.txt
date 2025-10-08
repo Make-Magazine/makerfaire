@@ -1,20 +1,26 @@
+/*! ../../../context/variable-type-context */
+
 /*! ../../../hooks/use-permissions */
 
 /*! ../../../hooks/use-prop-variables */
 
-/*! ../../../prop-types/color-variable-prop-type */
+/*! ../../../utils/unlink-variable */
 
-/*! ../../../prop-types/font-variable-prop-type */
+/*! ../../../variables-registry/variable-type-registry */
 
-/*! ../../color-variable-restore */
-
-/*! ../../font-variable-restore */
+/*! ../../context/variable-selection-popover.context */
 
 /*! ../../hooks/use-permissions */
 
+/*! ../../hooks/use-prop-variables */
+
 /*! ../../utils/validations */
 
+/*! ../../variable-restore */
+
 /*! ../../variable-selection-popover */
+
+/*! ../../variables-registry/variable-type-registry */
 
 /*! ../components/ui/color-indicator */
 
@@ -22,21 +28,31 @@
 
 /*! ../components/ui/variable/deleted-variable */
 
+/*! ../components/ui/variable/mismatch-variable */
+
 /*! ../components/ui/variable/missing-variable */
 
 /*! ../components/variable-selection-popover */
 
+/*! ../context/variable-selection-popover.context */
+
+/*! ../context/variable-type-context */
+
 /*! ../deleted-variable-alert */
+
+/*! ../fields/label-field */
+
+/*! ../hooks/use-initial-value */
 
 /*! ../hooks/use-permissions */
 
 /*! ../hooks/use-prop-variables */
 
+/*! ../mismatch-variable-alert */
+
 /*! ../missing-variable-alert */
 
 /*! ../prop-types/color-variable-prop-type */
-
-/*! ../prop-types/font-variable-prop-type */
 
 /*! ../service */
 
@@ -46,59 +62,47 @@
 
 /*! ../tags/assigned-tag */
 
-/*! ../tags/deleted-tag */
+/*! ../tags/warning-variable-tag */
 
-/*! ../tags/missing-tag */
+/*! ../transformers/inheritance-transformer */
 
-/*! ../utils */
+/*! ../transformers/variable-transformer */
 
 /*! ../utils/tracking */
 
 /*! ../utils/validations */
 
-/*! ../variable-selection-popover.context */
+/*! ../variables-registry/variable-type-registry */
 
 /*! ./api */
 
-/*! ./color-variable-creation */
+/*! ./components/fields/color-field */
 
-/*! ./color-variable-edit */
+/*! ./components/fields/font-field */
 
-/*! ./color-variables-selection */
+/*! ./components/ui/color-indicator */
+
+/*! ./components/variables-manager/variables-manager-panel */
 
 /*! ./components/variables-repeater-item-slot */
 
-/*! ./controls/color-variable-control */
-
-/*! ./controls/font-variable-control */
+/*! ./controls/variable-control */
 
 /*! ./create-style-variables-repository */
 
-/*! ./fields/color-field */
-
-/*! ./fields/font-field */
+/*! ./create-variable-type-registry */
 
 /*! ./fields/label-field */
 
-/*! ./font-variable-creation */
-
-/*! ./font-variable-edit */
-
-/*! ./font-variables-selection */
-
-/*! ./hooks/use-prop-color-variable-action */
-
-/*! ./hooks/use-prop-font-variable-action */
+/*! ./hooks/use-prop-variable-action */
 
 /*! ./init */
-
-/*! ./init-color-variables */
-
-/*! ./init-font-variables */
 
 /*! ./prop-types/color-variable-prop-type */
 
 /*! ./prop-types/font-variable-prop-type */
+
+/*! ./register-variable-types */
 
 /*! ./renderers/style-variables-renderer */
 
@@ -112,13 +116,13 @@
 
 /*! ./sync/enqueue-font */
 
-/*! ./transformers/inheritance-transformer */
-
-/*! ./transformers/variable-transformer */
-
 /*! ./ui/color-indicator */
 
 /*! ./ui/delete-confirmation-dialog */
+
+/*! ./ui/edit-confirmation-dialog */
+
+/*! ./ui/form-field */
 
 /*! ./ui/menu-item-content */
 
@@ -128,13 +132,27 @@
 
 /*! ./ui/styled-menu-list */
 
-/*! ./utils */
+/*! ./use-prop-variables */
 
 /*! ./utils/resolve-css-variable */
 
-/*! ./utils/validations */
+/*! ./variable-creation */
 
-/*! ./variable-selection-popover.context */
+/*! ./variable-edit */
+
+/*! ./variable-edit-menu */
+
+/*! ./variable-editable-cell */
+
+/*! ./variable-table-cell */
+
+/*! ./variables-manager-table */
+
+/*! ./variables-manager/variables-manager-panel */
+
+/*! ./variables-registry/variable-type-registry */
+
+/*! ./variables-selection */
 
 /*! @elementor/editor */
 
@@ -145,6 +163,8 @@
 /*! @elementor/editor-current-user */
 
 /*! @elementor/editor-editing-panel */
+
+/*! @elementor/editor-panels */
 
 /*! @elementor/editor-props */
 
@@ -204,6 +224,10 @@
   !*** external ["elementorV2","editorCanvas"] ***!
   \***********************************************/
 
+/*!***********************************************!*\
+  !*** external ["elementorV2","editorPanels"] ***!
+  \***********************************************/
+
 /*!*************************************************!*\
   !*** external ["elementorV2","editorControls"] ***!
   \*************************************************/
@@ -232,10 +256,6 @@
   !*** ./packages/packages/core/editor-variables/src/index.ts ***!
   \**************************************************************/
 
-/*!**************************************************************!*\
-  !*** ./packages/packages/core/editor-variables/src/utils.ts ***!
-  \**************************************************************/
-
 /*!****************************************************************!*\
   !*** ./packages/packages/core/editor-variables/src/service.ts ***!
   \****************************************************************/
@@ -257,24 +277,40 @@
   \**************************************************************************/
 
 /*!****************************************************************************!*\
-  !*** ./packages/packages/core/editor-variables/src/init-font-variables.ts ***!
-  \****************************************************************************/
-
-/*!****************************************************************************!*\
   !*** ./packages/packages/core/editor-variables/src/repeater-injections.ts ***!
   \****************************************************************************/
-
-/*!*****************************************************************************!*\
-  !*** ./packages/packages/core/editor-variables/src/init-color-variables.ts ***!
-  \*****************************************************************************/
 
 /*!******************************************************************************!*\
   !*** ./packages/packages/core/editor-variables/src/hooks/use-permissions.ts ***!
   \******************************************************************************/
 
+/*!******************************************************************************!*\
+  !*** ./packages/packages/core/editor-variables/src/utils/unlink-variable.ts ***!
+  \******************************************************************************/
+
+/*!********************************************************************************!*\
+  !*** ./packages/packages/core/editor-variables/src/hooks/use-initial-value.ts ***!
+  \********************************************************************************/
+
 /*!*********************************************************************************!*\
   !*** ./packages/packages/core/editor-variables/src/hooks/use-prop-variables.ts ***!
   \*********************************************************************************/
+
+/*!*********************************************************************************!*\
+  !*** ./packages/packages/core/editor-variables/src/register-variable-types.tsx ***!
+  \*********************************************************************************/
+
+/*!**********************************************************************************!*\
+  !*** ./packages/packages/core/editor-variables/src/components/ui/form-field.tsx ***!
+  \**********************************************************************************/
+
+/*!**********************************************************************************!*\
+  !*** ./packages/packages/core/editor-variables/src/components/variable-edit.tsx ***!
+  \**********************************************************************************/
+
+/*!***********************************************************************************!*\
+  !*** ./packages/packages/core/editor-variables/src/controls/variable-control.tsx ***!
+  \***********************************************************************************/
 
 /*!***********************************************************************************!*\
   !*** ./packages/packages/core/editor-variables/src/style-variables-repository.ts ***!
@@ -284,8 +320,16 @@
   !*** ./packages/packages/core/editor-variables/src/components/ui/no-variables.tsx ***!
   \************************************************************************************/
 
+/*!*************************************************************************************!*\
+  !*** ./packages/packages/core/editor-variables/src/components/variable-restore.tsx ***!
+  \*************************************************************************************/
+
 /*!**************************************************************************************!*\
   !*** ./packages/packages/core/editor-variables/src/components/fields/font-field.tsx ***!
+  \**************************************************************************************/
+
+/*!**************************************************************************************!*\
+  !*** ./packages/packages/core/editor-variables/src/components/variable-creation.tsx ***!
   \**************************************************************************************/
 
 /*!***************************************************************************************!*\
@@ -297,31 +341,23 @@
   \***************************************************************************************/
 
 /*!***************************************************************************************!*\
-  !*** ./packages/packages/core/editor-variables/src/components/font-variable-edit.tsx ***!
-  \***************************************************************************************/
-
-/*!***************************************************************************************!*\
   !*** ./packages/packages/core/editor-variables/src/components/ui/color-indicator.tsx ***!
   \***************************************************************************************/
 
-/*!****************************************************************************************!*\
-  !*** ./packages/packages/core/editor-variables/src/components/color-variable-edit.tsx ***!
-  \****************************************************************************************/
+/*!***************************************************************************************!*\
+  !*** ./packages/packages/core/editor-variables/src/context/variable-type-context.tsx ***!
+  \***************************************************************************************/
 
 /*!****************************************************************************************!*\
   !*** ./packages/packages/core/editor-variables/src/components/ui/styled-menu-list.tsx ***!
   \****************************************************************************************/
 
 /*!****************************************************************************************!*\
-  !*** ./packages/packages/core/editor-variables/src/components/ui/tags/deleted-tag.tsx ***!
+  !*** ./packages/packages/core/editor-variables/src/components/variables-selection.tsx ***!
   \****************************************************************************************/
 
 /*!****************************************************************************************!*\
-  !*** ./packages/packages/core/editor-variables/src/components/ui/tags/missing-tag.tsx ***!
-  \****************************************************************************************/
-
-/*!****************************************************************************************!*\
-  !*** ./packages/packages/core/editor-variables/src/controls/font-variable-control.tsx ***!
+  !*** ./packages/packages/core/editor-variables/src/hooks/use-prop-variable-action.tsx ***!
   \****************************************************************************************/
 
 /*!****************************************************************************************!*\
@@ -340,14 +376,6 @@
   !*** ./packages/packages/core/editor-variables/src/components/ui/tags/assigned-tag.tsx ***!
   \*****************************************************************************************/
 
-/*!*****************************************************************************************!*\
-  !*** ./packages/packages/core/editor-variables/src/controls/color-variable-control.tsx ***!
-  \*****************************************************************************************/
-
-/*!******************************************************************************************!*\
-  !*** ./packages/packages/core/editor-variables/src/components/font-variable-restore.tsx ***!
-  \******************************************************************************************/
-
 /*!******************************************************************************************!*\
   !*** ./packages/packages/core/editor-variables/src/create-style-variables-repository.ts ***!
   \******************************************************************************************/
@@ -357,20 +385,8 @@
   \******************************************************************************************/
 
 /*!*******************************************************************************************!*\
-  !*** ./packages/packages/core/editor-variables/src/components/color-variable-restore.tsx ***!
-  \*******************************************************************************************/
-
-/*!*******************************************************************************************!*\
-  !*** ./packages/packages/core/editor-variables/src/components/font-variable-creation.tsx ***!
-  \*******************************************************************************************/
-
-/*!*******************************************************************************************!*\
   !*** ./packages/packages/core/editor-variables/src/prop-types/font-variable-prop-type.ts ***!
   \*******************************************************************************************/
-
-/*!********************************************************************************************!*\
-  !*** ./packages/packages/core/editor-variables/src/components/color-variable-creation.tsx ***!
-  \********************************************************************************************/
 
 /*!********************************************************************************************!*\
   !*** ./packages/packages/core/editor-variables/src/prop-types/color-variable-prop-type.ts ***!
@@ -379,18 +395,6 @@
 /*!********************************************************************************************!*\
   !*** ./packages/packages/core/editor-variables/src/renderers/style-variables-renderer.tsx ***!
   \********************************************************************************************/
-
-/*!*********************************************************************************************!*\
-  !*** ./packages/packages/core/editor-variables/src/components/font-variables-selection.tsx ***!
-  \*********************************************************************************************/
-
-/*!*********************************************************************************************!*\
-  !*** ./packages/packages/core/editor-variables/src/hooks/use-prop-font-variable-action.tsx ***!
-  \*********************************************************************************************/
-
-/*!**********************************************************************************************!*\
-  !*** ./packages/packages/core/editor-variables/src/components/color-variables-selection.tsx ***!
-  \**********************************************************************************************/
 
 /*!**********************************************************************************************!*\
   !*** ./packages/packages/core/editor-variables/src/components/ui/deleted-variable-alert.tsx ***!
@@ -401,20 +405,28 @@
   \**********************************************************************************************/
 
 /*!**********************************************************************************************!*\
-  !*** ./packages/packages/core/editor-variables/src/hooks/use-prop-color-variable-action.tsx ***!
-  \**********************************************************************************************/
-
-/*!**********************************************************************************************!*\
   !*** ./packages/packages/core/editor-variables/src/transformers/inheritance-transformer.tsx ***!
   \**********************************************************************************************/
+
+/*!***********************************************************************************************!*\
+  !*** ./packages/packages/core/editor-variables/src/components/ui/mismatch-variable-alert.tsx ***!
+  \***********************************************************************************************/
 
 /*!***********************************************************************************************!*\
   !*** ./packages/packages/core/editor-variables/src/components/variable-selection-popover.tsx ***!
   \***********************************************************************************************/
 
 /*!************************************************************************************************!*\
+  !*** ./packages/packages/core/editor-variables/src/components/ui/edit-confirmation-dialog.tsx ***!
+  \************************************************************************************************/
+
+/*!************************************************************************************************!*\
   !*** ./packages/packages/core/editor-variables/src/transformers/utils/resolve-css-variable.ts ***!
   \************************************************************************************************/
+
+/*!*************************************************************************************************!*\
+  !*** ./packages/packages/core/editor-variables/src/components/ui/tags/warning-variable-tag.tsx ***!
+  \*************************************************************************************************/
 
 /*!*************************************************************************************************!*\
   !*** ./packages/packages/core/editor-variables/src/components/ui/variable/deleted-variable.tsx ***!
@@ -436,6 +448,38 @@
   !*** ./packages/packages/core/editor-variables/src/components/ui/variable/assigned-variable.tsx ***!
   \**************************************************************************************************/
 
-/*!*******************************************************************************************************!*\
-  !*** ./packages/packages/core/editor-variables/src/components/variable-selection-popover.context.tsx ***!
-  \*******************************************************************************************************/
+/*!**************************************************************************************************!*\
+  !*** ./packages/packages/core/editor-variables/src/components/ui/variable/mismatch-variable.tsx ***!
+  \**************************************************************************************************/
+
+/*!**************************************************************************************************!*\
+  !*** ./packages/packages/core/editor-variables/src/variables-registry/variable-type-registry.ts ***!
+  \**************************************************************************************************/
+
+/*!****************************************************************************************************!*\
+  !*** ./packages/packages/core/editor-variables/src/context/variable-selection-popover.context.tsx ***!
+  \****************************************************************************************************/
+
+/*!*********************************************************************************************************!*\
+  !*** ./packages/packages/core/editor-variables/src/components/variables-manager/variable-edit-menu.tsx ***!
+  \*********************************************************************************************************/
+
+/*!*********************************************************************************************************!*\
+  !*** ./packages/packages/core/editor-variables/src/variables-registry/create-variable-type-registry.ts ***!
+  \*********************************************************************************************************/
+
+/*!**********************************************************************************************************!*\
+  !*** ./packages/packages/core/editor-variables/src/components/variables-manager/variable-table-cell.tsx ***!
+  \**********************************************************************************************************/
+
+/*!*************************************************************************************************************!*\
+  !*** ./packages/packages/core/editor-variables/src/components/variables-manager/variable-editable-cell.tsx ***!
+  \*************************************************************************************************************/
+
+/*!**************************************************************************************************************!*\
+  !*** ./packages/packages/core/editor-variables/src/components/variables-manager/variables-manager-panel.tsx ***!
+  \**************************************************************************************************************/
+
+/*!**************************************************************************************************************!*\
+  !*** ./packages/packages/core/editor-variables/src/components/variables-manager/variables-manager-table.tsx ***!
+  \**************************************************************************************************************/

@@ -1,7 +1,7 @@
 === GravityView - DataTables Layout ===
 Tags: gravityview
 Requires at least: 4.4
-Tested up to: 6.7.1
+Tested up to: 6.8.2
 Stable tag: trunk
 Contributors: The GravityKit Team
 License: GPL 3 or higher
@@ -15,6 +15,25 @@ Display entries in a dynamic table powered by DataTables & GravityView.
 3. Follow the instructions
 
 == Changelog ==
+
+= 3.5.5 on August 6, 2025 =
+
+This is a hotfix release to revert to 3.5.2; the 3.5.3 release introduced multiple issues that we will return to in a future release.
+
+= 3.5.4 on August 4, 2025 =
+
+This update resolves an issue where Views using the DataTables layout were not working in Dashboard Views.
+
+#### 🐛 Fixed
+
+* Views using the DataTables layout were not working in Dashboard Views.
+
+= 3.5.3 on July 31, 2025 =
+
+This update resolves a compatibility issue with the Yoast SEO plugin.
+
+#### 🐛 Fixed
+* Conflict with the Yoast SEO plugin that could prevent DataTables from rendering.
 
 = 3.5.2 on April 9, 2025 =
 

@@ -14,7 +14,6 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Applied_Global_Classes_Usage {
 
-
 	/**
 	 * Document types that should be excluded from usage reporting.
 	 *
@@ -100,10 +99,10 @@ class Applied_Global_Classes_Usage {
 		$this->class_usages = [];
 
 		$class_ids = Global_Classes_Repository::make()
-			->all()
-			->get_items()
-			->keys()
-			->all();
+												->all()
+												->get_items()
+												->keys()
+												->all();
 
 		Plugin::$instance->db->iterate_elementor_documents(
 			function ( $document ) use ( $class_ids ) {

@@ -1,15 +1,15 @@
-=== Gum Elementor Addon ===
+=== Gum Addon for Elementor===
 Contributors: celomitan
 Donate link: https://wordpressfoundation.org/donate/
 Tags: elementor, blog, slide, pricing, menu
 Requires at least: 6.0
 Tested up to: 6.6.2
 Requires PHP: 7.0
-Stable tag: 1.3.13
+Stable tag: 1.3.14
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
-Offers inbuilt elementor widgets that help to create design more attractive
+Offers inbuilt widgets for elementor that help to create design more attractive
 == Description ==
 
 This plugin addon for Elementor Website Builder it mean you need install <a href="https://wordpress.org/plugins/elementor/">Elementor</a> plugin and activate before.

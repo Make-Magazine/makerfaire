@@ -66,10 +66,16 @@ abstract class GPPA_Object_Type {
 		/**
 		 * Modify the properties that are available for filtering and ordering for the current object type.
 		 *
-		 * @since 1.0-beta-3.35
-		 *
 		 * @param array  $props       The properties available for filtering/ordering for the current object type.
 		 * @param string $object_type The current object type.
+		 *
+		 * @usage gppa_object_type_properties Filter the properties for all object types
+		 * @usage gppa_object_type_properties_TYPE Filter the properties for the specified object type
+		 *
+		 * @example Add Menu Order Property for Post Object
+		 * <github-file>snippet-library/gp-populate-anything/gppa-add-menu-order-property.php</github-file>
+		 *
+		 * @since 1.0-beta-3.35
 		 */
 		return gf_apply_filters( array( 'gppa_object_type_properties', $this->id ), $this->get_properties( $primary_property_value ), $this->id );
 	}

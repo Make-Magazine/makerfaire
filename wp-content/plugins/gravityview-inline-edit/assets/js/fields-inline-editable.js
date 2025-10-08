@@ -264,7 +264,7 @@
 				editableOptions.format = 'yyyy-mm-dd';
 				editableOptions.viewformat = self.convertDateFormat( $field.data( 'dateformat' ) );
 				editableOptions.datepicker = {
-					firstDay: 1,
+					weekStart: gv_inline_x.week_starts_on || 0, // Use WordPress week start setting, fallback to 0 (Sunday)
 					showOn: 'focus',
 				};
 				editableOptions.mode = 'popup';
@@ -349,7 +349,6 @@
 				editableOptions.select2 = {
 					allowClear: true,
 					placeholder: gv_inline_x.searchforuserstext,
-					dropdownParent: '.editable-container',
 					minimumInputLength: 1,
 					width: '200px',
 					dropdownAutoWidth: true,
@@ -378,6 +377,114 @@
 			}
 
 			$field.editable( editableOptions );
+
+			// For select fields, override display to show value instead of text.
+			if ( field_type === 'select' ) {
+				$field.editable( 'option', 'display', function( value, sourceData ) {
+					const source = $field.data( 'source' );
+					const choiceDisplay = $( this ).attr( 'data-choice_display' );
+					const entryLink = $( this ).data( 'entry-link' );
+
+					if ( source && Array.isArray( source ) ) {
+						const choice = source.find( ( c ) => c.value === value );
+
+						if ( ! choice ) {
+							return;
+						}
+
+						// Determine what to display based on choice_display setting.
+						const displayText = ( choiceDisplay === 'label' ) ? choice.text : choice.value;
+
+						// Preserve link if it exists.
+						if ( entryLink ) {
+							$( this ).html( `<a href="${entryLink}">${displayText}</a>` );
+						} else {
+							$( this ).text( displayText );
+						}
+					} else {
+						$( this ).text( value );
+					}
+				} );
+			}
+
+			// For checkbox fields, fix empty state styling and link preservation.
+			if ( field_type === 'checklist' ) {
+				const initialContent = $field.html();
+				$field.data( 'checkbox-original-content', initialContent );
+				
+				// For initial content, store empty state if field currently has values.
+				const currentValue = $field.data( 'value' );
+				if ( Array.isArray( currentValue ) && currentValue.length > 0 ) {
+					// Field has values, so store empty state as initial content.
+					const entryLink = $field.data( 'entry-link' );
+					const emptyInitial = entryLink ? `<a href="${entryLink}"></a>` : '';
+					$field.data( 'checkbox-initial-content', emptyInitial );
+				} else {
+					// Field is already empty, store current content.
+					$field.data( 'checkbox-initial-content', initialContent );
+				}
+				
+				$field.editable( 'option', 'display', function( value, sourceData ) {
+					const $this = $( this );
+					const entryLink = $this.data( 'entry-link' );
+					const emptyText = gv_inline_x.emptytext || 'Empty';
+					const choiceDisplay = $this.attr( 'data-choice_display' );
+					const source = $this.data( 'source' );
+					
+					if ( !Array.isArray( value ) || value.length === 0 ) {
+						$this.addClass( 'editable-empty' );
+
+						$this.html( entryLink ? `<a href="${entryLink}" class="editable-empty">${emptyText}</a>` : `<span class="editable-empty">${emptyText}</span>` );
+
+						return;
+					}
+					
+					$this.removeClass( 'editable-empty' );
+					let displayContent = '<ul class="bulleted">';
+					
+					value.forEach( val => {
+						let displayText = val;
+						
+						// Find the choice in source data to get proper display text.
+						if ( source && Array.isArray( source ) ) {
+							const choice = source.find( c => c.value === val );
+
+							if ( choice ) {
+								displayText = ( choiceDisplay === 'label' ) ? choice.text : choice.value;
+							}
+						}
+						
+						displayContent += `<li>${displayText}</li>`;
+					} );
+					
+					displayContent += '</ul>';
+
+					$this.html( entryLink ? `<a href="${entryLink}">${displayContent}</a>` : displayContent );
+				} );
+				
+				// Update stored original content and data value after successful save
+				$field.on( 'save', function( e, params ) {
+					const $this = $( this );
+					const initialContent = $this.data( 'checkbox-initial-content' );
+					
+					// Update original content based on the saved value
+					if ( Array.isArray( params.newValue ) && params.newValue.length > 0 ) {
+						// Field has values - store current display
+						$this.data( 'checkbox-original-content', $this.html() );
+					} else {
+						// Field is empty - store initial empty content
+						$this.data( 'checkbox-original-content', initialContent );
+					}
+
+					// Always update the data-value attribute to match the saved value
+					$this.data( 'value', params.newValue );
+				} );
+			}
+
+			// For lookup fields, set display to show label text instead of value
+			if ( $field.hasClass( 'gv-inline-edit-lookup' ) ) {
+				$field.attr( 'data-choice_display', 'label' );
+			}
 
 			// For textarea fields
 			if ( $field.data( 'maxLength' ) ) {
@@ -432,6 +539,26 @@
 				} );
 			}
 
+			// Setting the dropdown parent for select2 to the closest editable container to fix the dropdown positioning for column editing
+			if ( editable.$element.data( 'fieldid' ) === 'created_by' && editable.$element.data( 'type' ) === 'select2' ) {
+				var $select2Input = $( editable.input.$input );
+				if ( $select2Input.length && $select2Input.hasClass( 'select2-hidden-accessible' ) ) {
+					// Find the closest editable container for this specific field
+					var $specificContainer = editable.container.$element.parent();
+
+					// Ensure we have a valid container
+					if ( !$specificContainer.length ) {
+						console.warn( 'Could not find specific container for select2 dropdown positioning' );
+						return;
+					}
+
+					// Update the select2 dropdown parent to use this specific container
+					$select2Input.select2( 'destroy' ).select2( $.extend( {}, editable.options.select2, {
+						dropdownParent: $specificContainer
+					} ) );
+				}
+			}
+
 			// We're in Entries. The first column has a link, so we need to move the form up one level.
 			if ( 'inline' === editable.options.mode ) {
 				if ( editable.container.$element.parents( '.column-primary' ).length && editable.container.$tip ) {
@@ -451,6 +578,19 @@
 				editable.input.$input[ 0 ].addEventListener( 'input', function () {
 					$( this ).addClass( 'edited-input' );
 				} );
+			}
+
+			// Override the activate method for radiolist to focus on checked radio button
+			if ( editable.input.type === 'radiolist' && editable.input.$input ) {
+				editable.input.activate = function() {
+					var $checkedRadio = this.$input.filter( ':checked' );
+					if ( $checkedRadio.length > 0 ) {
+						$checkedRadio.focus();
+					} else {
+						// Fallback to first radio button if none are checked
+						this.$input.first().focus();
+					}
+				};
 			}
 
 			// Fix for Checkboxes, Radio and Image choices fields popovers not showing fully if the count of elements is too high
@@ -817,6 +957,37 @@
 			document.querySelector( '.select2-search__field' ).focus();
 		} );
 
+		// Handle checkbox empty state when inline editing is toggled.
+		$( document ).on( 'gravityview-inline-edit/set-state', function( e, data ) {
+			const state = data.state;
+			const $views = data.views;
+			
+			$views.find( '[data-type="checklist"]' ).each( function() {
+				const $field = $( this );
+				const originalContent = $field.data( 'checkbox-original-content' );
+				
+				if ( state === 'enabled' ) {
+					const currentValue = $field.data( 'value' );
+
+					if ( !currentValue || !Array.isArray( currentValue ) || currentValue.length === 0 ) {
+						$field.addClass( 'editable-empty' );
+
+						const emptyText = gv_inline_x.emptytext || 'Empty';
+						const entryLink = $field.data( 'entry-link' );
+
+						$field.html( entryLink ? `<a href="${entryLink}" class="editable-empty">${emptyText}</a>` : `<span class="editable-empty">${emptyText}</span>` );
+					}
+				} else if ( state === 'disabled' ) {
+					const hasEmptyClass = $field.hasClass( 'editable-empty' ) || $field.find( '.editable-empty' ).length > 0;
+					const hasEmptyText = $field.text().trim() === (gv_inline_x.emptytext || 'Empty');
+					
+					if ( (hasEmptyClass || hasEmptyText) && originalContent !== undefined ) {
+						$field.html( originalContent ).removeClass( 'editable-empty' );
+					}
+				}
+			} );
+		} );
+
 		/**
 		 * Trigger to extend global gv_inline_x object's templates data
 		 */
@@ -844,5 +1015,4 @@
 			$( self.init );
 		}
 	} );
-
 }( jQuery ) );

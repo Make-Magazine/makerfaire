@@ -15,10 +15,6 @@ class Module extends Module_Base {
 		return 'cloud-library';
 	}
 
-	public static function is_active(): bool {
-		return Plugin::elementor()->experiments->is_feature_active( 'cloud-library' );
-	}
-
 	public function __construct() {
 		parent::__construct();
 

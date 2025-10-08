@@ -1,4 +1,4 @@
-/*! elementor - v3.31.0 - 11-08-2025 */
+/*! elementor - v3.32.0 - 05-10-2025 */
 :root {
   --direction-multiplier: 1;
 }
@@ -502,7 +502,7 @@ body.rtl {
   justify-content: flex-end;
 }
 #elementor-toast .dialog-buttons-wrapper:not(:empty) {
-  margin-top: 15px;
+  margin-block-start: 15px;
 }
 #elementor-toast .dialog-button {
   font-size: 12px;

@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by __root__ on 09-June-2025 using Strauss.
+ * Modified by __root__ on 11-September-2025 using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 
@@ -42,14 +42,101 @@ class ProductDependencyChecker {
 	private $products;
 
 	/**
+	 * Cache for dependency check results to avoid redundant checks.
+	 *
+	 * @since 1.3.0
+	 *
+	 * @var array
+	 */
+	private $dependency_cache = [];
+
+	/**
+	 * Whether to use caching for dependency checks.
+	 *
+	 * @since 1.3.0
+	 *
+	 * @var bool
+	 */
+	private $use_cache;
+
+	/**
 	 * Class constructor.
 	 *
 	 * @since 1.2.0
+	 * @since 1.3.0 Added $use_cache parameter.
 	 *
-	 * @param array $products Products data. {@see ProductManager::get_product_schema()}.
+	 * @param array $products  Products data. {@see ProductManager::get_product_schema()}.
+	 * @param bool  $use_cache (optional) Whether to use caching for dependency checks. Default: true.
 	 */
-	public function __construct( array $products = [] ) {
-		$this->products = $products;
+	public function __construct( array $products = [], bool $use_cache = true ) {
+		$this->products  = $products;
+		$this->use_cache = $use_cache;
+	}
+
+	/**
+	 * Clears the dependency cache.
+	 *
+	 * @since 1.3.0
+	 *
+	 * @return void
+	 */
+	public function clear_cache(): void {
+		$this->dependency_cache = [];
+	}
+
+	/**
+	 * Gets a cached dependency result or null if not cached.
+	 *
+	 * @since 1.3.0
+	 *
+	 * @param string $product_text_domain The product text domain.
+	 * @param mixed  $product_version     The product version.
+	 *
+	 * @return array|null
+	 */
+	private function get_cached_dependency_result( string $product_text_domain, $product_version ): ?array {
+		if ( ! $this->use_cache ) {
+			return null;
+		}
+
+		$cache_key = $this->get_cache_key( $product_text_domain, $product_version );
+
+		return $this->dependency_cache[ $cache_key ] ?? null;
+	}
+
+	/**
+	 * Sets a cached dependency result.
+	 *
+	 * @since 1.3.0
+	 *
+	 * @param string $product_text_domain The product text domain.
+	 * @param mixed  $product_version     The product version.
+	 * @param array  $result              The dependency check result.
+	 *
+	 * @return void
+	 */
+	private function set_cached_dependency_result( string $product_text_domain, $product_version, array $result ): void {
+		if ( ! $this->use_cache ) {
+			return;
+		}
+
+		$cache_key = $this->get_cache_key( $product_text_domain, $product_version );
+
+		$this->dependency_cache[ $cache_key ] = $result;
+	}
+
+	/**
+	 * Generates a cache key for a product and version.
+	 *
+	 * @since 1.3.0
+	 *
+	 * @param string $product_text_domain The product text domain.
+	 * @param mixed  $product_version     The product version.
+	 *
+	 * @return string
+	 */
+	private function get_cache_key( string $product_text_domain, $product_version ): string {
+		return $product_text_domain . '|' . ( $product_version ?? 'null' );
 	}
 
 	/**
@@ -217,7 +304,10 @@ class ProductDependencyChecker {
 	 * @return array
 	 */
 	public function check_dependencies( $product_text_domain = '', $product_version = null ): array {
-		$check_dependencies = function ( $product_text_domain, $product_version = null, $checked_dependencies = [], $unmet_dependencies = [] ) use ( &$check_dependencies ) {
+		// Clear cache at the start of each top-level product dependency check to prevent cross-product pollution.
+		$this->clear_cache();
+
+		$check_dependencies = function ( $product_text_domain, $product_version = null, $checked_dependencies = [], $unmet_dependencies = [], $is_top_level = true ) use ( &$check_dependencies ) {
 			if ( empty( $unmet_dependencies ) ) {
 				$unmet_dependencies = [
 					'system' => [],
@@ -233,6 +323,23 @@ class ProductDependencyChecker {
 			}
 
 			$checked_dependencies[ $product_text_domain ] = true;
+
+			// Only use cache for recursive calls, not top-level calls.
+			if ( ! $is_top_level ) {
+				$instance_cached_result = $this->get_cached_dependency_result( $product_text_domain, $product_version );
+
+				if ( null !== $instance_cached_result ) {
+					// Merge cached unmet dependencies with current ones.
+					foreach ( $instance_cached_result['unmet'] as $type => $unmet_items ) {
+						$unmet_dependencies[ $type ] = array_merge( $unmet_dependencies[ $type ], $unmet_items );
+					}
+
+					return [
+						'status' => $instance_cached_result['status'] && empty( $unmet_dependencies['system'] ) && empty( $unmet_dependencies['plugin'] ),
+						'unmet'  => $unmet_dependencies,
+					];
+				}
+			}
 
 			$missing_name_placeholder = strtr(
 				_x( "Product with '[text_domain]' text domain", 'Placeholders inside [] are not to be translated.', 'gk-gravityedit' ),
@@ -251,10 +358,17 @@ class ProductDependencyChecker {
 					'resolvable'       => false,
 				];
 
-				return [
+				$result = [
 					'status' => false,
 					'unmet'  => $unmet_dependencies,
 				];
+
+				// Only cache recursive calls, not top-level calls.
+				if ( ! $is_top_level ) {
+					$this->set_cached_dependency_result( $product_text_domain, $product_version, $result );
+				}
+
+				return $result;
 			}
 
 			if ( ! $product_version ) {
@@ -274,10 +388,17 @@ class ProductDependencyChecker {
 						'resolvable'       => false,
 					];
 
-					return [
+					$result = [
 						'status' => false,
 						'unmet'  => $unmet_dependencies,
 					];
+
+					// Only cache recursive calls, not top-level calls.
+					if ( ! $is_top_level ) {
+						$this->set_cached_dependency_result( $product_text_domain, $product_version, $result );
+					}
+
+					return $result;
 				}
 			}
 
@@ -293,10 +414,17 @@ class ProductDependencyChecker {
 					'resolvable'       => false,
 				];
 
-				return [
+				$result = [
 					'status' => false,
 					'unmet'  => $unmet_dependencies,
 				];
+
+				// Only cache recursive calls, not top-level calls.
+				if ( ! $is_top_level ) {
+					$this->set_cached_dependency_result( $product_text_domain, $product_version, $result );
+				}
+
+				return $result;
 			}
 
 			foreach ( ( $dependencies['plugin'] ?? [] ) as $dependency_data ) {
@@ -340,7 +468,7 @@ class ProductDependencyChecker {
 
 				// Check for dependencies of the dependent product. Love me some recursion :D!
 				if ( ! empty( $dependencies_of_dependency['plugin'] ) || ! empty( $dependencies_of_dependency['system'] ) ) {
-					$dependencies_of_dependency = $check_dependencies( $dependency_text_domain, $dependency_data['version'], $checked_dependencies, $unmet_dependencies );
+					$dependencies_of_dependency = $check_dependencies( $dependency_text_domain, $dependency_data['version'], $checked_dependencies, $unmet_dependencies, false );
 
 					if ( ! $dependencies_of_dependency['status'] ) {
 						$unmet_dependencies = array_merge( $unmet_dependencies, $dependencies_of_dependency['unmet'] );
@@ -354,10 +482,17 @@ class ProductDependencyChecker {
 				$unmet_dependencies['system'] = $this->process_system_dependency( $product_text_domain, $dependency_data, $unmet_dependencies['system'] );
 			}
 
-			return [
+			$result = [
 				'status' => empty( $unmet_dependencies['system'] ) && empty( $unmet_dependencies['plugin'] ),
 				'unmet'  => $unmet_dependencies,
 			];
+
+			// Only cache recursive calls, not top-level calls.
+			if ( ! $is_top_level ) {
+				$this->set_cached_dependency_result( $product_text_domain, $product_version, $result );
+			}
+
+			return $result;
 		};
 
 		$result = $check_dependencies( $product_text_domain, $product_version );

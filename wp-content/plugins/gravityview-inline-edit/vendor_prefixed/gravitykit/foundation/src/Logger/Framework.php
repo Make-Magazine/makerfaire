@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by __root__ on 09-June-2025 using Strauss.
+ * Modified by __root__ on 11-September-2025 using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 
@@ -10,15 +10,16 @@ namespace GravityKit\GravityEdit\Foundation\Logger;
 
 use GravityKit\GravityEdit\Foundation\Core as FoundationCore;
 use GravityKit\GravityEdit\Foundation\Helpers\Core as CoreHelpers;
-use GravityKit\GravityEdit\Foundation\Helpers\Arr;
+use GravityKit\GravityEdit\Foundation\Helpers\WP;
 use GravityKit\GravityEdit\Foundation\ThirdParty\Monolog\Handler\ChromePHPHandler;
 use GravityKit\GravityEdit\Foundation\ThirdParty\Monolog\Handler\StreamHandler;
+use GravityKit\GravityEdit\Foundation\ThirdParty\Monolog\Handler\RotatingFileHandler;
 use GravityKit\GravityEdit\Foundation\ThirdParty\Monolog\Logger as MonologLogger;
 use GravityKit\GravityEdit\Foundation\Settings\Framework as SettingsFramework;
 use GravityKit\GravityEdit\Foundation\Encryption\Encryption;
-use Exception;
 use GravityKit\GravityEdit\Foundation\ThirdParty\Psr\Log\LoggerInterface;
 use GravityKit\GravityEdit\Foundation\ThirdParty\Psr\Log\LoggerTrait;
+use Exception;
 
 /**
  * Logging framework for GravityKit.
@@ -29,6 +30,15 @@ class Framework implements LoggerInterface {
 	const DEFAULT_LOGGER_ID = 'gravitykit';
 
 	const DEFAULT_LOGGER_TITLE = 'GravityKit';
+
+	/**
+	 * Minimum file size (in bytes) required to trigger log rotation.
+	 *
+	 * @since 1.3.0
+	 *
+	 * @var int
+	 */
+	const ROTATION_FILE_SIZE_THRESHOLD = 10 * 1024 * 1024; // 10MB.
 
 	/**
 	 * Instances of the logger class instantiated by various plugins.
@@ -95,13 +105,6 @@ class Framework implements LoggerInterface {
 	 * @return void
 	 */
 	private function __construct( $logger_id, $logger_title ) {
-		global $initialized;
-
-		if ( ! $initialized ) {
-			add_filter( 'gk/foundation/settings/' . FoundationCore::ID . '/save/before', [ $this, 'save_settings' ] );
-			add_filter( 'gk/foundation/settings', [ $this, 'get_settings' ] );
-		}
-
 		$this->_settings = SettingsFramework::get_instance();
 
 		$this->_logger_id    = $logger_id;
@@ -125,8 +128,6 @@ class Framework implements LoggerInterface {
 
 			$this->_logger->pushHandler( $logger_handler );
 		}
-
-		$initialized = true;
 	}
 
 	/**
@@ -151,11 +152,23 @@ class Framework implements LoggerInterface {
 	}
 
 	/**
+	 * Initializes the logger component.
+	 * This method is called by {@see Core::init()}.
+	 *
+	 * @since 1.3.0
+	 *
+	 * @return void
+	 */
+	public function init() {
+		new Settings( $this );
+	}
+
+	/**
 	 * Returns handler that will process log messages.
 	 *
 	 * @since 1.0.0
 	 *
-	 * @return void|ChromePHPHandler|GravityFormsHandler|StreamHandler|QueryMonitorHandler
+	 * @return void|ChromePHPHandler|GravityFormsHandler|StreamHandler|RotatingFileHandler|WeeklyRotatingFileHandler|QueryMonitorHandler
 	 */
 	public function get_logger_handler() {
 		$settings = $this->_settings->get_plugin_settings( FoundationCore::ID );
@@ -168,347 +181,75 @@ class Framework implements LoggerInterface {
 			return;
 		}
 
+		// Get log level - default to DEBUG for backward compatibility with older settings.
+		$log_level_name = isset( $settings['logger_level'] ) ? $settings['logger_level'] : 'debug';
+		$log_level      = Settings::get_monolog_level( $log_level_name );
+
 		switch ( $settings['logger_type'] ) {
 			case 'file':
 				try {
-					return new StreamHandler( $this->get_log_file() );
+					// Check if we should migrate existing log file.
+					$this->maybe_migrate_existing_log();
+
+					// Get rotation settings.
+					$max_files       = isset( $settings['logger_max_files'] ) ? absint( $settings['logger_max_files'] ) : 7;
+					$rotation_period = isset( $settings['logger_rotation_period'] ) ? $settings['logger_rotation_period'] : RotatingFileHandler::FILE_PER_DAY;
+
+					// If weekly rotation is selected but WeeklyRotatingFileHandler doesn't exist, fall back to daily.
+					if ( 'Y-\WW' === $rotation_period && ! class_exists( __NAMESPACE__ . '\WeeklyRotatingFileHandler' ) ) {
+						$rotation_period = RotatingFileHandler::FILE_PER_DAY;
+					}
+
+					// Use custom handler for weekly rotation.
+					if ( 'Y-\WW' === $rotation_period ) {
+						$handler = new WeeklyRotatingFileHandler(
+							$this->get_log_file(),
+							$max_files,
+							$log_level
+						);
+					} else {
+						// Use standard handler for daily/monthly/yearly rotation.
+						$handler = new RotatingFileHandler(
+							$this->get_log_file(),
+							$max_files,
+							$log_level
+						);
+					}
+
+					$handler->setFilenameFormat( '{filename}-{date}', $rotation_period );
+
+					return $handler;
 				} catch ( Exception $e ) {
 					error_log( 'Could not initialize file logging for GravityKit:' . $e->getMessage() ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
 
 					return;
 				}
 			case 'query_monitor':
-				return new QueryMonitorHandler();
+				return new QueryMonitorHandler( $log_level );
 			case 'chrome_logger':
-				return new ChromePHPHandler();
+				return new ChromePHPHandler( $log_level );
 		}
 	}
 
 	/**
-	 * Returns UI settings for the logger.
+	 * Closes all logger handlers.
 	 *
-	 * @since 1.0.0
-	 * @since 1.0.3 Added $gk_settings parameter.
+	 * @since 1.3.0
 	 *
-	 * @param array $gk_settings GravityKit general settings object.
-	 *
-	 * @return array[]
+	 * @return void
 	 */
-	public function get_settings( $gk_settings ) {
-		$saved_gk_settings_values = $this->_settings->get_plugin_settings( FoundationCore::ID );
-
-		// If multisite and not the main site, get default settings from the main site.
-		// This allows site admins to configure the default settings for all subsites.
-		// If no settings are found on the main site, default settings (set below) will be used.
-		if ( ! is_main_site() && empty( $saved_gk_settings_values ) ) {
-			$saved_gk_settings_values = $this->_settings->get_plugin_settings( FoundationCore::ID, get_main_site_id() );
-		}
-
-		$default_logger_settings = [
-			'logger'      => 0,
-			'logger_type' => 'file',
-		];
-
-		$log_file    = $this->get_log_file();
-		$logger      = Arr::get( $saved_gk_settings_values, 'logger', $default_logger_settings['logger'] );
-		$logger_type = Arr::get( $saved_gk_settings_values, 'logger_type', $default_logger_settings['logger_type'] );
-
-		add_filter(
-			'gk/foundation/inline-styles',
-			function ( $styles ) {
-				$css      = <<<CSS
-.bg-yellow-50 {
-    --tw-bg-opacity: 1;
-    background-color: rgba(255, 251, 235, var(--tw-bg-opacity))
-}
-
-.bg-blue-50 {
-    --tw-bg-opacity: 1;
-    background-color: rgba(239, 246, 255, var(--tw-bg-opacity))
-}
-
-.text-yellow-400 {
-    --tw-text-opacity: 1;
-    color: rgba(251, 191, 36, var(--tw-text-opacity))
-}
-
-.text-yellow-700 {
-    --tw-text-opacity: 1;
-    color: rgba(180, 83, 9, var(--tw-text-opacity))
-}
-
-.text-blue-400 {
-    --tw-text-opacity: 1;
-    color: rgba(96, 165, 250, var(--tw-text-opacity))
-}
-
-.text-blue-700 {
-    --tw-text-opacity: 1;
-    color: rgba(29, 78, 216, var(--tw-text-opacity))
-}
-
-.hover\:text-yellow-600:hover {
-    --tw-text-opacity: 1;
-    color: rgba(217, 119, 6, var(--tw-text-opacity))
-}
-
-.hover\:text-blue-600:hover {
-    --tw-text-opacity: 1;
-    color: rgba(37, 99, 235, var(--tw-text-opacity))
-}
-CSS;
-				$styles[] = [
-					'style' => $css,
-				];
-
-				return $styles;
-			}
-		);
-
-		$query_monitor_notice = strtr(
-			esc_html_x( 'You must install [link]Query Monitor[/link] WordPress plugin to use this option.', 'Placeholders inside [] are not to be translated.', 'gk-gravityedit' ),
-			[
-				'[link]'  => '<a href="https://wordpress.org/plugins/query-monitor/" class="font-medium underline text-yellow-700 hover:text-yellow-600">',
-				'[/link]' => '</a>',
-			]
-		);
-
-		$chrome_logger_tip = strtr(
-			esc_html_x( 'You must install [link]Chrome Logger[/link] browser extension to use this option.', 'Placeholders inside [] are not to be translated.', 'gk-gravityedit' ),
-			[
-				'[link]'  => '<a href="https://craig.is/writing/chrome-logger" class="font-medium underline text-yellow-700 hover:text-yellow-600">',
-				'[/link]' => '</a>',
-			]
-		);
-
-		$gravity_forms_logger_tip = strtr(
-			esc_html_x( 'Logging is currently handled by [link]Gravity Forms[/link].', 'Placeholders inside [] are not to be translated.', 'gk-gravityedit' ),
-			[
-				'[link]'  => '<a href="' . admin_url( 'admin.php?page=gf_settings&subview=gravityformslogging' ) . '" class="font-medium underline text-yellow-700 hover:text-yellow-600">',
-				'[/link]' => '</a>',
-			]
-		);
-
-		$info_icon = <<<HTML
-<svg class="h-5 w-5 text-yellow-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-	<path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
-</svg>
-HTML;
-
-		$checkmark_icon = <<<HTML
-<svg class="h-5 w-5 text-blue-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-	<path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-</svg>
-HTML;
-
-		$notice_template = <<<HTML
-<div class="bg-%color%-50 p-4">
-	<div class="flex">
-		<div class="flex-shrink-0">
-			%icon%
-		</div>
-	    <div class="ml-3">
-			<p class="text-sm text-%color%-700">
-			%notice%
-			</p>
-		</div>
-	</div>
-</div>
-HTML;
-
-		$logger_settings = [];
-
-		$_update_gk_settings = function () use ( &$logger_settings, &$gk_settings, $default_logger_settings ) {
-			// Add logging settings under the Technical section in GravityKit settings.
-			Arr::set(
-				$gk_settings,
-				'gk_foundation.sections.2.settings',
-				array_merge(
-					Arr::get( $gk_settings, 'gk_foundation.sections.2.settings' ),
-					$logger_settings
-				)
-			);
-
-			// Update defaults.
-			Arr::set(
-				$gk_settings,
-				'gk_foundation.defaults',
-				array_merge(
-					Arr::get( $gk_settings, 'gk_foundation.defaults' ),
-					$default_logger_settings
-				)
-			);
-		};
-
-		if ( ! $logger && class_exists( 'GFLogging' ) && get_option( 'gform_enable_logging' ) ) {
-			$logger_settings[] = [
-				'id'       => 'gravity_forms_logger_tip',
-				'html'     => strtr(
-					$notice_template,
-					[
-						'%color%'  => 'yellow',
-						'%icon%'   => $info_icon,
-						'%notice%' => $gravity_forms_logger_tip,
-					]
-				),
-				'requires' => [
-					'id'       => 'logger',
-					'operator' => '!=',
-					'value'    => '1',
-				],
-			];
-		}
-
-		$logger_settings = array_merge(
-			$logger_settings,
-			[
-				[
-					'id'    => 'logger',
-					'type'  => 'checkbox',
-					'title' => esc_html__( 'Enable Logging', 'gk-gravityedit' ),
-					'value' => $logger,
-				],
-				[
-					'id'          => 'logger_type',
-					'type'        => 'select',
-					'title'       => esc_html__( 'Log Type', 'gk-gravityedit' ),
-					'description' => esc_html__( 'Where to store log output.', 'gk-gravityedit' ),
-					'value'       => $logger_type,
-					'choices'     => [
-						[
-							'title' => esc_html__( 'File', 'gk-gravityedit' ),
-							'value' => 'file',
-						],
-						[
-							'title' => esc_html__( 'Query Monitor', 'gk-gravityedit' ),
-							'value' => 'query_monitor',
-						],
-						[
-							'title' => esc_html__( 'Chrome Logger', 'gk-gravityedit' ),
-							'value' => 'chrome_logger',
-						],
-					],
-					'requires'    => [
-						'id'       => 'logger',
-						'operator' => '=',
-						'value'    => '1',
-					],
-				],
-				[
-					'id'              => 'chrome_logger_tip',
-					'html'            => strtr(
-						$notice_template,
-						[
-							'%color%'  => 'yellow',
-							'%icon%'   => $info_icon,
-							'%notice%' => $chrome_logger_tip,
-						]
-					),
-					'requires'        => [
-						'id'       => 'logger_type',
-						'operator' => '=',
-						'value'    => 'chrome_logger',
-					],
-					'excludeFromSave' => true,
-				],
-			]
-		);
-
-		if ( ! class_exists( 'QueryMonitor' ) ) {
-			$logger_settings[] = [
-				'id'              => 'query_monitor_notice',
-				'html'            => strtr(
-					$notice_template,
-					[
-						'%color%'  => 'yellow',
-						'%icon%'   => $info_icon,
-						'%notice%' => $query_monitor_notice,
-					]
-				),
-				'requires'        => [
-					'id'       => 'logger_type',
-					'operator' => '=',
-					'value'    => 'query_monitor',
-				],
-				'excludeFromSave' => true,
-			];
-		}
-
-		if ( ! $this->_logger || 'file' !== $logger_type || ! file_exists( $log_file ) ) {
-			$_update_gk_settings();
-
-			return $gk_settings;
-		}
-
-		$download_link = sprintf(
-			'%s/%s/%s',
-			content_url(),
-			$this->_log_path,
-			basename( $log_file )
-		);
-
-		$download_notice = strtr(
-			esc_html_x( 'Download [link]log file[/link] ([size] / [date_modified]).', 'Placeholders inside [] are not to be translated.', 'gk-gravityedit' ),
-			[
-				'[link]'          => '<a href="' . $download_link . '" class="font-medium underline text-blue-700 hover:text-blue-600">',
-				'[/link]'         => '</a>',
-				'[size]'          => size_format( filesize( $log_file ) ?: 0, 2 ),
-				'[date_modified]' => date_i18n( 'Y-m-d @ H:i:s', filemtime( $log_file ) ),
-			]
-		);
-
-		$logger_settings[] = [
-			'id'       => 'log_file',
-			'html'     => strtr(
-				$notice_template,
-				[
-					'%color%'  => 'blue',
-					'%icon%'   => $checkmark_icon,
-					'%notice%' => $download_notice,
-				]
-			),
-			'requires' => [
-				'id'       => 'logger_type',
-				'operator' => '=',
-				'value'    => 'file',
-			],
-		];
-
-		$_update_gk_settings();
-
-		return $gk_settings;
-	}
-
-	/**
-	 * Deletes log files when UI savings are saved and the logger type is no longer "file".
-	 *
-	 * @since 1.0.0
-	 *
-	 * @param array $new_settings Settings to save.
-	 *
-	 * @return array
-	 */
-	public function save_settings( $new_settings ) {
-		$current_settings = $this->_settings->get_plugin_settings( FoundationCore::ID );
-
-		if ( ! $this->_logger || empty( $current_settings['logger'] ) || 'file' !== $current_settings['logger_type'] ) {
-			return $new_settings;
-		}
-
-		if ( ! empty( $new_settings['logger'] ) && 'file' === $new_settings['logger_type'] ) {
-			return $new_settings;
+	public function close_handlers() {
+		if ( ! $this->_logger ) {
+			return;
 		}
 
 		$handlers = $this->_logger->getHandlers();
 
+		// Currently only supports single handler setup - closes the primary handler.
 		if ( isset( $handlers[0] ) && method_exists( $handlers[0], 'close' ) ) {
 			// @phpstan-ignore-next-line
 			$handlers[0]->close();
 		}
-
-		wp_delete_file( $this->get_log_file() );
-
-		return $new_settings;
 	}
 
 	/**
@@ -520,6 +261,62 @@ HTML;
 		$hash = substr( Encryption::get_instance()->hash( FoundationCore::ID ), 0, 10 );
 
 		return sprintf( '%s/%s/gravitykit-%s.log', WP_CONTENT_DIR, $this->_log_path, $hash );
+	}
+
+	/**
+	 * Returns the log path relative to WP_CONTENT_DIR.
+	 *
+	 * @since 1.3.0
+	 *
+	 * @return string
+	 */
+	public function get_log_path() {
+		return $this->_log_path;
+	}
+
+	/**
+	 * Migrates existing log file to rotated format if it's larger than 10MB.
+	 *
+	 * @since 1.3.0
+	 *
+	 * @return void
+	 */
+	private function maybe_migrate_existing_log() {
+		$log_file = $this->get_log_file();
+
+		// Check if old log file exists.
+		if ( ! file_exists( $log_file ) ) {
+			return;
+		}
+
+		// Check if it's already a rotated file (contains date pattern).
+		if ( preg_match( '/-\d{4}-\d{2}-\d{2}\.log$/', $log_file ) ) {
+			return;
+		}
+
+		// Get file size.
+		$file_size = filesize( $log_file );
+
+		// Only migrate if file is larger than 10MB.
+		if ( $file_size < self::ROTATION_FILE_SIZE_THRESHOLD ) {
+			return;
+		}
+
+		// Create backup with current date.
+		$backup_file = str_replace( '.log', '-' . current_time( 'Y-m-d' ) . '-migrated.log', $log_file );
+
+		// Rename existing file.
+		if ( rename( $log_file, $backup_file ) ) {
+			// Set a transient to show admin notice.
+			WP::set_transient(
+                'gk_foundation_log_migrated',
+                [
+					'old_size' => size_format( $file_size ),
+					'new_file' => basename( $backup_file ),
+				],
+                DAY_IN_SECONDS
+            );
+		}
 	}
 
 	/**

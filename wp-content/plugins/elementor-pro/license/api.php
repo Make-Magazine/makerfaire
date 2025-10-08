@@ -633,4 +633,15 @@ class API {
 
 		return $tier;
 	}
+
+	public static function get_plan_type() {
+		if ( ! static::is_license_active() ) {
+			return 'free';
+		}
+
+		$license_data = static::get_license_data();
+		$plan_type = $license_data['tier'] ?? 'free';
+
+		return $plan_type;
+	}
 }

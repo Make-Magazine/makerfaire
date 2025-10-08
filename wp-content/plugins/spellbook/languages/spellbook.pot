@@ -2,14 +2,14 @@
 # This file is distributed under the GPL2.
 msgid ""
 msgstr ""
-"Project-Id-Version: Spellbook 3.0.10\n"
-"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/cloned-perk-UWKh0Me9-_\n"
+"Project-Id-Version: Spellbook 3.0.15\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/cloned-perk-wRl0Up3zst\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2025-07-16T18:48:21+00:00\n"
+"POT-Creation-Date: 2025-09-17T15:03:11+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.10.0\n"
 "X-Domain: spellbook\n"
@@ -18,7 +18,7 @@ msgstr ""
 #: spellbook.php
 #: class-gravityperks.php:204
 #: class-gravityperks.php:1177
-#: class-gravityperks.php:1445
+#: class-gravityperks.php:1431
 msgid "Spellbook"
 msgstr ""
 
@@ -143,12 +143,8 @@ msgstr ""
 msgid "Let's get this fixed."
 msgstr ""
 
-#: class-gravityperks.php:1415
-msgid "Does this page look strange? Your PHP version is out-of-date. <strong>Please upgrade.</strong>"
-msgstr ""
-
-#: class-gravityperks.php:1509
-#: class-gravityperks.php:1513
+#: class-gravityperks.php:1495
+#: class-gravityperks.php:1499
 msgid "Perks"
 msgstr ""
 
@@ -188,147 +184,151 @@ msgstr ""
 msgid "Product deregistered successfully"
 msgstr ""
 
-#: includes/api/class-rest-products-controller.php:134
+#: includes/api/class-rest-products-controller.php:149
 msgid "Plugin is not installed."
 msgstr ""
 
-#: includes/api/class-rest-products-controller.php:143
-#: includes/api/class-rest-products-controller.php:320
-#: includes/api/class-rest-products-controller.php:523
+#: includes/api/class-rest-products-controller.php:158
+#: includes/api/class-rest-products-controller.php:335
+#: includes/api/class-rest-products-controller.php:538
 msgid "This plugin can only be managed from the network admin's Plugins page."
 msgstr ""
 
-#: includes/api/class-rest-products-controller.php:173
+#: includes/api/class-rest-products-controller.php:188
 msgid "Failed to remove plugin."
 msgstr ""
 
-#: includes/api/class-rest-products-controller.php:228
+#: includes/api/class-rest-products-controller.php:243
 msgid "Plugin is already installed."
 msgstr ""
 
-#: includes/api/class-rest-products-controller.php:237
+#: includes/api/class-rest-products-controller.php:252
 msgid "No download URL available for this plugin."
 msgstr ""
 
-#: includes/api/class-rest-products-controller.php:280
+#: includes/api/class-rest-products-controller.php:295
 msgid "Plugin installation failed for an unknown reason."
 msgstr ""
 
-#: includes/api/class-rest-products-controller.php:311
+#: includes/api/class-rest-products-controller.php:326
 msgid "Plugin is already inactive."
 msgstr ""
 
-#: includes/api/class-rest-products-controller.php:358
+#: includes/api/class-rest-products-controller.php:373
 msgid "Plugin is already active."
 msgstr ""
 
-#: includes/api/class-rest-products-controller.php:367
+#: includes/api/class-rest-products-controller.php:382
 msgid "Plugin must be installed before it can be activated."
 msgstr ""
 
-#: includes/api/class-rest-products-controller.php:468
-#: includes/api/class-rest-products-controller.php:493
-#: includes/api/class-rest-products-controller.php:680
+#: includes/api/class-rest-products-controller.php:483
+#: includes/api/class-rest-products-controller.php:508
+#: includes/api/class-rest-products-controller.php:695
 msgid "Plugin not found."
 msgstr ""
 
-#: includes/api/class-rest-products-controller.php:514
+#: includes/api/class-rest-products-controller.php:529
 msgid "Plugin must be installed before it can be updated."
 msgstr ""
 
-#: includes/api/class-rest-products-controller.php:538
+#: includes/api/class-rest-products-controller.php:553
 msgid "No update available for this plugin."
 msgstr ""
 
-#: includes/api/class-rest-products-controller.php:587
+#: includes/api/class-rest-products-controller.php:602
 msgid "Plugin update failed for an unknown reason."
 msgstr ""
 
-#: includes/api/class-rest-products-controller.php:598
+#: includes/api/class-rest-products-controller.php:613
 msgid "Plugin updated but reactivation failed: "
 msgstr ""
 
-#: includes/api/class-rest-products-controller.php:752
+#: includes/api/class-rest-products-controller.php:718
+msgid "Plugin details not found."
+msgstr ""
+
+#: includes/api/class-rest-products-controller.php:802
 msgid "Unique identifier for the plugin."
 msgstr ""
 
-#: includes/api/class-rest-products-controller.php:757
+#: includes/api/class-rest-products-controller.php:807
 msgid "Plugin name."
 msgstr ""
 
-#: includes/api/class-rest-products-controller.php:761
+#: includes/api/class-rest-products-controller.php:811
 msgid "Plugin version."
 msgstr ""
 
-#: includes/api/class-rest-products-controller.php:765
+#: includes/api/class-rest-products-controller.php:815
 msgid "Available update version."
 msgstr ""
 
-#: includes/api/class-rest-products-controller.php:769
+#: includes/api/class-rest-products-controller.php:819
 msgid "Plugin slug."
 msgstr ""
 
-#: includes/api/class-rest-products-controller.php:773
+#: includes/api/class-rest-products-controller.php:823
 msgid "Plugin file path."
 msgstr ""
 
-#: includes/api/class-rest-products-controller.php:777
+#: includes/api/class-rest-products-controller.php:827
 msgid "Plugin file path (alias for backwards compatibility)."
 msgstr ""
 
-#: includes/api/class-rest-products-controller.php:781
+#: includes/api/class-rest-products-controller.php:831
 msgid "Plugin homepage URL."
 msgstr ""
 
-#: includes/api/class-rest-products-controller.php:786
+#: includes/api/class-rest-products-controller.php:836
 msgid "Documentation URL."
 msgstr ""
 
-#: includes/api/class-rest-products-controller.php:791
+#: includes/api/class-rest-products-controller.php:841
 msgid "Plugin sections including description and changelog."
 msgstr ""
 
-#: includes/api/class-rest-products-controller.php:799
+#: includes/api/class-rest-products-controller.php:849
 msgid "Plugin banner images."
 msgstr ""
 
-#: includes/api/class-rest-products-controller.php:813
+#: includes/api/class-rest-products-controller.php:863
 msgid "Plugin icons."
 msgstr ""
 
-#: includes/api/class-rest-products-controller.php:827
+#: includes/api/class-rest-products-controller.php:877
 msgid "Plugin categories."
 msgstr ""
 
-#: includes/api/class-rest-products-controller.php:832
+#: includes/api/class-rest-products-controller.php:882
 msgid "Whether the plugin is installed."
 msgstr ""
 
-#: includes/api/class-rest-products-controller.php:836
+#: includes/api/class-rest-products-controller.php:886
 msgid "Whether the plugin is active."
 msgstr ""
 
-#: includes/api/class-rest-products-controller.php:840
+#: includes/api/class-rest-products-controller.php:890
 msgid "Plugin type."
 msgstr ""
 
-#: includes/api/class-rest-products-controller.php:845
+#: includes/api/class-rest-products-controller.php:895
 msgid "Last updated date."
 msgstr ""
 
-#: includes/api/class-rest-products-controller.php:849
+#: includes/api/class-rest-products-controller.php:899
 msgid "Download URL for the plugin."
 msgstr ""
 
-#: includes/api/class-rest-products-controller.php:854
+#: includes/api/class-rest-products-controller.php:904
 msgid "Whether the plugin has settings."
 msgstr ""
 
-#: includes/class-gwapi.php:294
+#: includes/class-gwapi.php:298
 msgid "<strong>Important Note!</strong> GP Google Sheets has been converted to GC Google Sheets"
 msgstr ""
 
-#: includes/class-gwapi.php:298
+#: includes/class-gwapi.php:302
 msgid "GC Google Sheets has been activated."
 msgstr ""
 
@@ -349,6 +349,298 @@ msgstr ""
 msgid "Uh-oh! <strong>%s</strong> needs your attention."
 msgstr ""
 
-#: model/perk.php:650
+#: model/perk.php:644
 msgid "There was an issue deleting this perk. The perk directory was not available."
+msgstr ""
+
+#: js/built/dashboard.js:2
+msgid "Oops! Something went wrong."
+msgstr ""
+
+#: js/built/dashboard.js:2
+msgid "We've encountered an unexpected error. Please try refreshing the page."
+msgstr ""
+
+#: js/built/dashboard.js:2
+msgid "If this error persists, please contact"
+msgstr ""
+
+#: js/built/dashboard.js:2
+msgid "Gravity Wiz Support"
+msgstr ""
+
+#: js/built/dashboard.js:2
+msgid " for assistance."
+msgstr ""
+
+#: js/built/dashboard.js:2
+msgid "Refresh Page"
+msgstr ""
+
+#: js/built/dashboard.js:2
+msgid "Updating..."
+msgstr ""
+
+#: js/built/dashboard.js:2
+msgid "Update"
+msgstr ""
+
+#: js/built/dashboard.js:2
+msgid "Registering..."
+msgstr ""
+
+#: js/built/dashboard.js:2
+msgid "Register to Update"
+msgstr ""
+
+#: js/built/dashboard.js:2
+msgid "Register"
+msgstr ""
+
+#: js/built/dashboard.js:2
+msgid "Upgrade License to Update"
+msgstr ""
+
+#: js/built/dashboard.js:2
+msgid "Upgrade License to Register"
+msgstr ""
+
+#: js/built/dashboard.js:2
+msgid "Enter License to Update"
+msgstr ""
+
+#: js/built/dashboard.js:2
+msgid "Enter License to Register"
+msgstr ""
+
+#: js/built/dashboard.js:2
+msgid "Unregistered"
+msgstr ""
+
+#: js/built/dashboard.js:2
+msgid "Settings"
+msgstr ""
+
+#: js/built/dashboard.js:2
+msgid "Documentation"
+msgstr ""
+
+#: js/built/dashboard.js:2
+msgid "Delete"
+msgstr ""
+
+#: js/built/dashboard.js:2
+msgid "Legacy free plugin—delete to manage in Spellbook."
+msgstr ""
+
+#: js/built/dashboard.js:2
+msgid "Active"
+msgstr ""
+
+#: js/built/dashboard.js:2
+msgid "Inactive"
+msgstr ""
+
+#: js/built/dashboard.js:2
+msgid "Not Installed"
+msgstr ""
+
+#: js/built/dashboard.js:2
+msgid "Toggle Perk"
+msgstr ""
+
+#: js/built/dashboard.js:2
+msgid "Installing..."
+msgstr ""
+
+#: js/built/dashboard.js:2
+msgid "Install"
+msgstr ""
+
+#: js/built/dashboard.js:2
+msgid "Buy License"
+msgstr ""
+
+#: js/built/dashboard.js:2
+msgid "Gravity Perks Settings"
+msgstr ""
+
+#: js/built/dashboard.js:2
+msgid "Changelog"
+msgstr ""
+
+#: js/built/dashboard.js:2
+msgid "Loading changelog..."
+msgstr ""
+
+#: js/built/dashboard.js:2
+msgid "Changelog not available"
+msgstr ""
+
+#: js/built/dashboard.js:2
+msgid "Delete Plugin"
+msgstr ""
+
+#: js/built/dashboard.js:2
+msgid "How would you like to delete %s?"
+msgstr ""
+
+#: js/built/dashboard.js:2
+msgid "Are you sure you want to delete %s?"
+msgstr ""
+
+#: js/built/dashboard.js:2
+msgid "Deleting..."
+msgstr ""
+
+#: js/built/dashboard.js:2
+msgid "Delete (Keep Data)"
+msgstr ""
+
+#: js/built/dashboard.js:2
+msgid "Uninstalling..."
+msgstr ""
+
+#: js/built/dashboard.js:2
+msgid "Uninstall (Delete Data)"
+msgstr ""
+
+#: js/built/dashboard.js:2
+msgid "Yes"
+msgstr ""
+
+#: js/built/dashboard.js:2
+msgid "No"
+msgstr ""
+
+#: js/built/dashboard.js:2
+msgid "Update Available"
+msgstr ""
+
+#: js/built/dashboard.js:2
+msgid "Activated"
+msgstr ""
+
+#: js/built/dashboard.js:2
+msgid "Installed"
+msgstr ""
+
+#: js/built/dashboard.js:2
+msgid "All Perks"
+msgstr ""
+
+#: js/built/dashboard.js:2
+msgid "All Connections"
+msgstr ""
+
+#: js/built/dashboard.js:2
+msgid "All Plugins"
+msgstr ""
+
+#: js/built/dashboard.js:2
+msgid "All Free Plugins"
+msgstr ""
+
+#: js/built/dashboard.js:2
+msgid "License Mismatch"
+msgstr ""
+
+#: js/built/dashboard.js:2
+msgid "Invalid"
+msgstr ""
+
+#: js/built/dashboard.js:2
+msgid "Expired"
+msgstr ""
+
+#: js/built/dashboard.js:2
+msgid "Site Inactive"
+msgstr ""
+
+#: js/built/dashboard.js:2
+msgid "Renew License"
+msgstr ""
+
+#: js/built/dashboard.js:2
+msgid "Upgrade"
+msgstr ""
+
+#: js/built/dashboard.js:2
+msgid "Manage License"
+msgstr ""
+
+#: js/built/dashboard.js:2
+msgid "License Key"
+msgstr ""
+
+#: js/built/dashboard.js:2
+msgid "No License Key"
+msgstr ""
+
+#: js/built/dashboard.js:2
+msgid "Status"
+msgstr ""
+
+#: js/built/dashboard.js:2
+msgid "Sites"
+msgstr ""
+
+#: js/built/dashboard.js:2
+msgid "Expires"
+msgstr ""
+
+#: js/built/dashboard.js:2
+msgid "Never"
+msgstr ""
+
+#: js/built/dashboard.js:2
+msgid "N/A"
+msgstr ""
+
+#: js/built/dashboard.js:2
+msgid "Deactivating..."
+msgstr ""
+
+#: js/built/dashboard.js:2
+msgid "Deactivate"
+msgstr ""
+
+#: js/built/dashboard.js:2
+msgid "Are you sure you want to deactivate this license?"
+msgstr ""
+
+#: js/built/dashboard.js:2
+msgid "Manage"
+msgstr ""
+
+#: js/built/dashboard.js:2
+msgid "Enter License Key"
+msgstr ""
+
+#: js/built/dashboard.js:2
+msgid "Validating..."
+msgstr ""
+
+#: js/built/dashboard.js:2
+msgid "Activate License"
+msgstr ""
+
+#: js/built/dashboard.js:2
+msgid "Don't have a license?"
+msgstr ""
+
+#: js/built/dashboard.js:2
+msgid "Get one now"
+msgstr ""
+
+#: js/built/dashboard.js:2
+msgid "Learn more"
+msgstr ""
+
+#: js/built/dashboard.js:2
+msgid "Failed to load license info."
+msgstr ""
+
+#: js/built/dashboard.js:2
+msgid "An unknown error occurred"
 msgstr ""

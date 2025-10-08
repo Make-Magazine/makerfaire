@@ -642,7 +642,7 @@ class Animated_Headline extends Base_Widget {
 			}
 		}
 
-		if ( settings.link.url ) { #>
+		if ( settings.link?.url ) { #>
 			<a href="#">
 		<# } #>
 				<{{{ tag }}} class="{{{ headlineClasses }}}">
@@ -672,7 +672,7 @@ class Animated_Headline extends Base_Widget {
 						<span class="elementor-headline-plain-text elementor-headline-text-wrapper">{{{ elementor.helpers.sanitize( settings.after_text, { ALLOW_DATA_ATTR: false } ) }}}</span>
 					<# } #>
 				</{{{ tag }}}>
-		<# if ( settings.link.url ) { #>
+		<# if ( settings.link?.url ) { #>
 			</a>
 		<# } #>
 		<?php

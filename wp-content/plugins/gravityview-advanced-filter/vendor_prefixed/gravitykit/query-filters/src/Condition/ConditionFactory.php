@@ -2,7 +2,7 @@
 /**
  * @license MIT
  *
- * Modified by gravitykit on 10-February-2025 using {@see https://github.com/BrianHenryIE/strauss}.
+ * Modified by gravitykit on 25-September-2025 using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\AdvancedFilter\QueryFilters\Condition;
@@ -75,12 +75,22 @@ final class ConditionFactory {
 			return null;
 		}
 
+		// Take the form ID from the filter if available.
+		$form_id  = $filter->form_id() ?: $form_id;
+		$value    = $filter->value();
+		$operator = $filter->operator();
+
+		if ( $this->is_not_contains( $filter ) ) {
+			$value    = '%' . $value . '%';
+			$operator = GF_Query_Condition::NLIKE;
+		}
+
 		$condition = array_filter(
 			[
 				'key'      => $filter->key(),
 				// Value needs to be `-1` to avoid database results.
-				'value'    => $filter->equals( Filter::locked() ) ? - 1 : $filter->value(),
-				'operator' => $filter->operator(),
+				'value'    => $filter->equals( Filter::locked() ) ? - 1 : $value,
+				'operator' => $operator,
 			],
 			static function ( $v, $k ) {
 				return 'value' === $k || is_numeric( $v ) || ! empty( $v );
@@ -220,5 +230,16 @@ final class ConditionFactory {
 		return
 			$field->type === 'number'
 			|| GFCommon::is_product_field( $field->type );
+	}
+
+	/**
+	 * Returns whether the filter is a NOT CONTAINS filter.
+	 *
+	 * @since 2.5.0
+	 *
+	 * @return bool Whether the filter is a NOT CONTAINS filter.
+	 */
+	private function is_not_contains( Filter $filter ): bool {
+		return in_array( $filter->operator(), [ 'ncontains', 'notcontains' ], true );
 	}
 }

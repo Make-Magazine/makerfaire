@@ -198,11 +198,11 @@ class FieldRepeater extends Field {
         }
 
         $values = $this->getOption('values');
+		$countRows = 0;
 
         if (!empty($values)){
             switch ($this->getMode()) {
                 case 'xml':
-                    $countRows = 0;
                     for ($k = 0; $k < $values[$this->getPostIndex()]['countRows']; $k++) {
                         $importData['i'] = $k;
                         // Init importData in all sub fields.
@@ -223,7 +223,6 @@ class FieldRepeater extends Field {
                     ACFService::update_post_meta($this, $this->getPostID(), $this->getFieldName(), $countRows);
                     break;
                 case 'csv':
-                    $countRows = 0;
                     $fields = array_shift($values);
                     if (!empty($fields)) {
                         // Init importData in all sub fields
@@ -251,7 +250,6 @@ class FieldRepeater extends Field {
                     ACFService::update_post_meta($this, $this->getPostID(), $this->getFieldName(), $countRows);
                     break;
                 case 'fixed':
-                    $countRows = 0;
                     foreach ($values as $row_number => $fields) {
                         if (!empty($fields)) {
                             $countRows++;
@@ -279,6 +277,31 @@ class FieldRepeater extends Field {
                     break;
             }
         }
+
+	    if ( apply_filters( 'pmxi_remove_old_acf_repeater_rows', true, $this->getPostID(), $this->getFieldName(), $countRows ) ) {
+
+		    // Remove old repeater rows from previous runs as they may not be removed when using some import settings.
+		    global $wpdb;
+
+		    $wpdb->query(
+			    $wpdb->prepare(
+				    "DELETE FROM {$wpdb->postmeta}
+        					WHERE post_id = %d
+        					AND (
+            					(meta_key LIKE %s AND CAST(SUBSTRING_INDEX(SUBSTRING(meta_key, CHAR_LENGTH(%s) + 2), '_', 1) AS UNSIGNED) >= %d)
+            				OR
+            					(meta_key LIKE %s AND CAST(SUBSTRING_INDEX(SUBSTRING(meta_key, CHAR_LENGTH(%s) + 3), '_', 1) AS UNSIGNED) >= %d)
+        					)",
+				    $this->getPostID(),
+				    $this->getFieldName() . '_%',
+				    $this->getFieldName(),
+				    $countRows,
+				    '_' . $this->getFieldName() . '_%',
+				    $this->getFieldName(),
+				    $countRows
+			    )
+		    );
+	    }
     }
 
     /**

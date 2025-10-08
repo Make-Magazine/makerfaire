@@ -1,4 +1,4 @@
-/*! elementor - v3.31.0 - 11-08-2025 */
+/*! elementor - v3.32.0 - 05-10-2025 */
 @import "//fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap";
 @import "//fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap";
 @import "//fonts.googleapis.com/css2?family=Source%20Serif%20Pro&display=swap";
@@ -753,10 +753,10 @@ h6,
   position: fixed;
   height: 100%;
   width: 100%;
+  inset-block-end: 0;
   inset-inline-start: 0;
   background-color: var(--app-lightbox-background-color);
   z-index: 1040;
-  bottom: 0;
 }
 .eps-app__header {
   flex-shrink: 0;
@@ -905,9 +905,9 @@ h6,
 
 .elementor-loader-wrapper {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  inset-block-start: 50%;
+  inset-inline-start: 50%;
+  transform: translate(calc(-50% * var(--direction-multiplier)), -50%);
   width: 300px;
   display: flex;
   flex-direction: column;
@@ -1055,7 +1055,7 @@ h6,
 .e-app-import-export-wizard-step__notice {
   display: block;
   position: sticky;
-  top: 100%; /* Will prevent text overlapping when window height is too short. */
+  inset-block-start: 100%; /* Will prevent text overlapping when window height is too short. */
   color: var(--e-app-import-export-wizard-step-block-end-text-color);
   font-style: italic;
   margin-block-end: 0;
@@ -2664,7 +2664,7 @@ h6,
   height: 20px;
   display: flex;
   align-items: flex-start;
-  margin-top: 4px;
+  margin-block-start: 4px;
 }
 .e-app-export-kit-information__validation-error {
   color: var(--e-a-color-danger);
@@ -2801,11 +2801,19 @@ h6,
   margin-inline-start: 1.5rem;
 }
 
-#eps-app-header-btn-apply,
 #eps-app-header-btn-promotion,
 #eps-app-header-btn-connect {
   margin-inline-start: 0.625rem;
   margin-inline-end: 0.625rem;
+}
+
+#eps-app-header-btn-apply {
+  margin-inline-start: 0.625rem;
+}
+
+#eps-app-header-btn-download {
+  margin-inline-end: 1rem;
+  margin-inline-start: 1rem;
 }
 
 .e-kit-library__apply-button {
@@ -2882,9 +2890,9 @@ h6,
   min-width: 0;
   padding: 12px 0;
   position: absolute;
-  top: 25px;
-  left: 100%;
-  transform: translateX(-100%);
+  inset-block-start: 25px;
+  inset-inline-start: 100%;
+  transform: translateX(calc(-100% * var(--direction-multiplier)));
 }
 .e-kit-library__kit-item-actions-popover-item {
   display: flex;
@@ -3170,7 +3178,7 @@ h6,
 .e-kit-library__index-layout-heading {
   padding: 1.875rem 2.75rem;
   position: sticky;
-  top: -1px;
+  inset-block-start: -1px;
   width: 100%;
   z-index: 2;
   background-color: var(--app-background-color);
@@ -4025,6 +4033,6 @@ h6,
   margin-block-end: 20px;
 }
 .e-onboarding__page-chooseFeatures .e-onboarding__page-content {
-  margin-bottom: 0;
+  margin-block-end: 0;
 }
 /*# sourceMappingURL=app-rtl.css.map */

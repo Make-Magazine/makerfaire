@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import apiFetch from '@wordpress/api-fetch';
-import type { BaseProduct, LicensedProductType, LicenseData } from '../../types';
+import type { BaseProduct, DetailedProduct, LicensedProductType, LicenseData } from '../../types';
 import useStore from '../../store';
 
 export const useProducts = () => {
@@ -30,6 +30,20 @@ export const useProducts = () => {
       }, {} as Record<string, Record<string, BaseProduct>>);
     },
     staleTime: Infinity // Only refetch when we explicitly invalidate
+  });
+};
+
+export const useProductDetails = (productId: number) => {
+  return useQuery<DetailedProduct>({
+    queryKey: ['product-details', productId],
+    queryFn: async ({ signal }) => {
+      return await apiFetch<DetailedProduct>({
+        path: `/gwiz/v1/products/${productId}/details`,
+        signal
+      });
+    },
+    enabled: false, // Only fetch when explicitly called
+    staleTime: Infinity
   });
 };
 

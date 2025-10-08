@@ -113,6 +113,8 @@
 
 /*! ./transformers/styles/flex-transformer */
 
+/*! ./transformers/styles/perspective-origin-transformer */
+
 /*! ./transformers/styles/position-transformer */
 
 /*! ./transformers/styles/shadow-transformer */
@@ -121,7 +123,11 @@
 
 /*! ./transformers/styles/stroke-transformer */
 
+/*! ./transformers/styles/transform-functions-transformer */
+
 /*! ./transformers/styles/transform-move-transformer */
+
+/*! ./transformers/styles/transform-origin-transformer */
 
 /*! ./transformers/styles/transform-rotate-transformer */
 
@@ -129,7 +135,7 @@
 
 /*! ./transformers/styles/transform-skew-transformer */
 
-/*! ./transformers/styles/transform-transformer */
+/*! ./transformers/styles/transition-transformer */
 
 /*! ./undoable-actions/paste-element-style */
 
@@ -485,16 +491,16 @@
   !*** ./packages/packages/core/editor-canvas/src/transformers/shared/image-src-transformer.ts ***!
   \***********************************************************************************************/
 
-/*!***********************************************************************************************!*\
-  !*** ./packages/packages/core/editor-canvas/src/transformers/styles/transform-transformer.ts ***!
-  \***********************************************************************************************/
-
 /*!************************************************************************************************!*\
   !*** ./packages/packages/core/editor-canvas/src/transformers/styles/background-transformer.ts ***!
   \************************************************************************************************/
 
 /*!************************************************************************************************!*\
   !*** ./packages/packages/core/editor-canvas/src/transformers/styles/color-stop-transformer.ts ***!
+  \************************************************************************************************/
+
+/*!************************************************************************************************!*\
+  !*** ./packages/packages/core/editor-canvas/src/transformers/styles/transition-transformer.ts ***!
   \************************************************************************************************/
 
 /*!**************************************************************************************************!*\
@@ -514,6 +520,10 @@
   \*****************************************************************************************************/
 
 /*!******************************************************************************************************!*\
+  !*** ./packages/packages/core/editor-canvas/src/transformers/styles/transform-origin-transformer.ts ***!
+  \******************************************************************************************************/
+
+/*!******************************************************************************************************!*\
   !*** ./packages/packages/core/editor-canvas/src/transformers/styles/transform-rotate-transformer.ts ***!
   \******************************************************************************************************/
 
@@ -525,12 +535,20 @@
   !*** ./packages/packages/core/editor-canvas/src/transformers/styles/create-multi-props-transformer.ts ***!
   \********************************************************************************************************/
 
+/*!********************************************************************************************************!*\
+  !*** ./packages/packages/core/editor-canvas/src/transformers/styles/perspective-origin-transformer.ts ***!
+  \********************************************************************************************************/
+
 /*!*********************************************************************************************************!*\
   !*** ./packages/packages/core/editor-canvas/src/style-commands/undoable-actions/paste-element-style.ts ***!
   \*********************************************************************************************************/
 
 /*!*********************************************************************************************************!*\
   !*** ./packages/packages/core/editor-canvas/src/style-commands/undoable-actions/reset-element-style.ts ***!
+  \*********************************************************************************************************/
+
+/*!*********************************************************************************************************!*\
+  !*** ./packages/packages/core/editor-canvas/src/transformers/styles/transform-functions-transformer.ts ***!
   \*********************************************************************************************************/
 
 /*!**********************************************************************************************************!*\

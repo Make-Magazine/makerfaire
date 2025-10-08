@@ -217,6 +217,7 @@ final class GravityView_Inline_Edit {
 			'source_url',
 			'date_created',
 			'entry_tags',
+			'lookup',
 			'image_choice',
 		);
 

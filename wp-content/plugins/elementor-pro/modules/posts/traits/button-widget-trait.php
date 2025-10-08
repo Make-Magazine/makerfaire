@@ -15,6 +15,10 @@ use Elementor\Icons_Manager;
 use Elementor\Utils;
 use Elementor\Widget_Base;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
+
 trait Button_Widget_Trait {
 	/**
 	 * Get button sizes.
@@ -199,6 +203,7 @@ trait Button_Widget_Trait {
 				'default' => '',
 				'title' => esc_html__( 'Add your custom id WITHOUT the Pound key. e.g: my-id', 'elementor-pro' ),
 				'description' => sprintf(
+					/* translators: 1: `<code>` opening tag, 2: `</code>` closing tag. */
 					esc_html__( 'Please make sure the ID is unique and not used elsewhere on the page. This field allows %1$sA-z 0-9%2$s & underscore chars without spaces.', 'elementor-pro' ),
 					'<code>',
 					'</code>'
@@ -349,6 +354,15 @@ trait Button_Widget_Trait {
 			]
 		);
 
+		$this->add_group_control(
+			Group_Control_Box_Shadow::get_type(),
+			[
+				'name' => 'button_box_shadow',
+				'selector' => '{{WRAPPER}} .elementor-button',
+				'condition' => $args['section_condition'],
+			]
+		);
+
 		$this->end_controls_tab();
 
 		$this->start_controls_tab(
@@ -393,12 +407,18 @@ trait Button_Widget_Trait {
 			[
 				'label' => esc_html__( 'Border Color', 'elementor-pro' ),
 				'type' => Controls_Manager::COLOR,
-				'condition' => [
-					'border_border!' => '',
-				],
 				'selectors' => [
 					'{{WRAPPER}} .elementor-button:hover, {{WRAPPER}} .elementor-button:focus' => 'border-color: {{VALUE}};',
 				],
+				'condition' => $args['section_condition'],
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Box_Shadow::get_type(),
+			[
+				'name' => 'button_hover_box_shadow',
+				'selector' => '{{WRAPPER}} .elementor-button:hover, {{WRAPPER}} .elementor-button:focus',
 				'condition' => $args['section_condition'],
 			]
 		);
@@ -441,7 +461,7 @@ trait Button_Widget_Trait {
 			]
 		);
 
-		$this->add_control(
+		$this->add_responsive_control(
 			'border_radius',
 			[
 				'label' => esc_html__( 'Border Radius', 'elementor-pro' ),
@@ -450,15 +470,6 @@ trait Button_Widget_Trait {
 				'selectors' => [
 					'{{WRAPPER}} .elementor-button' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
-				'condition' => $args['section_condition'],
-			]
-		);
-
-		$this->add_group_control(
-			Group_Control_Box_Shadow::get_type(),
-			[
-				'name' => 'button_box_shadow',
-				'selector' => '{{WRAPPER}} .elementor-button',
 				'condition' => $args['section_condition'],
 			]
 		);
@@ -488,12 +499,12 @@ trait Button_Widget_Trait {
 	 * @since  3.4.0
 	 * @access protected
 	 */
-	protected function render_button( Widget_Base $instance = null ) {
+	protected function render_button( ?Widget_Base $instance = null ) {
 		if ( empty( $instance ) ) {
 			$instance = $this;
 		}
 
-		$settings = $instance->get_settings();
+		$settings = $instance->get_settings_for_display();
 
 		if ( empty( $settings['text'] ) && empty( $settings['selected_icon']['value'] ) ) {
 			return;
@@ -501,13 +512,14 @@ trait Button_Widget_Trait {
 
 		$instance->add_render_attribute( 'wrapper', 'class', 'elementor-button-wrapper' );
 
+		$instance->add_render_attribute( 'button', 'class', 'elementor-button' );
+
 		if ( ! empty( $settings['link']['url'] ) ) {
 			$instance->add_link_attributes( 'button', $settings['link'] );
 			$instance->add_render_attribute( 'button', 'class', 'elementor-button-link' );
+		} else {
+			$instance->add_render_attribute( 'button', 'role', 'button' );
 		}
-
-		$instance->add_render_attribute( 'button', 'class', 'elementor-button' );
-		$instance->add_render_attribute( 'button', 'role', 'button' );
 
 		if ( ! empty( $settings['button_css_id'] ) ) {
 			$instance->add_render_attribute( 'button', 'id', $settings['button_css_id'] );
@@ -515,9 +527,11 @@ trait Button_Widget_Trait {
 
 		if ( ! empty( $settings['size'] ) ) {
 			$instance->add_render_attribute( 'button', 'class', 'elementor-size-' . $settings['size'] );
+		} else {
+			$instance->add_render_attribute( 'button', 'class', 'elementor-size-sm' ); // BC, to make sure the class is always present
 		}
 
-		if ( $settings['hover_animation'] ) {
+		if ( ! empty( $settings['hover_animation'] ) ) {
 			$instance->add_render_attribute( 'button', 'class', 'elementor-animation-' . $settings['hover_animation'] );
 		}
 		?>

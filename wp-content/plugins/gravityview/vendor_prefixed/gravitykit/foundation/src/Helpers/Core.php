@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by gravityview on 11-July-2025 using {@see https://github.com/BrianHenryIE/strauss}.
+ * Modified by gravityview on 02-October-2025 using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\GravityView\Foundation\Helpers;
@@ -23,7 +23,10 @@ class Core {
 	 * @return void|mixed Send JSON response if an Ajax request or return the response as is.
 	 */
 	public static function process_return( $return_object = true ) {
-		$is_error = $return_object instanceof Exception;
+		// Treat WP_Error objects the same way we treat Exceptions when returning a response.
+		$is_wp_error  = function_exists( 'is_wp_error' ) && is_wp_error( $return_object );
+		$is_exception = $return_object instanceof Exception;
+		$is_error     = $is_wp_error || $is_exception;
 
 		if ( wp_doing_ajax() ) {
 			$buffer = ob_get_clean();
@@ -34,14 +37,30 @@ class Core {
 				header( 'GravityKit: ' . wp_json_encode( $buffer ) );
 			}
 
-			if ( $is_error ) {
-				wp_send_json_error( $return_object->getMessage() );
-			} else {
+			if ( ! $is_error ) {
 				wp_send_json_success( $return_object );
+			}
+
+			if ( $is_wp_error ) {
+				// Build a consistent error payload for WP_Error responses.
+				$payload = [
+					'code'    => $return_object->get_error_code(),
+					'message' => $return_object->get_error_message(),
+					'data'    => $return_object->get_error_data(),
+				];
+
+				// Allow custom HTTP status via `status` key inside error data.
+				$status = is_array( $payload['data'] ) && isset( $payload['data']['status'] )
+					? (int) $payload['data']['status']
+					: 400;
+
+				wp_send_json_error( $payload, $status );
+			} else { // Exception.
+				wp_send_json_error( $return_object->getMessage() );
 			}
 		}
 
-		if ( $is_error ) {
+		if ( $is_exception ) {
 			throw new Exception( $return_object->getMessage() );
 		}
 
@@ -352,10 +371,23 @@ class Core {
 	/**
 	 * Checks if script is executed in a CLI environment.
 	 *
+	 * @since 1.2.0
+	 *
 	 * @return bool
 	 */
 	public static function is_cli() {
 		return php_sapi_name() === 'cli';
+	}
+
+	/**
+	 * Checks if we're debugging Foundation.
+	 *
+	 * @since 1.5.0
+	 *
+	 * @return bool
+	 */
+	public static function is_foundation_debug() {
+		return defined( 'GK_FOUNDATION_DEBUG' ) && GK_FOUNDATION_DEBUG;
 	}
 
 	/**
@@ -383,5 +415,114 @@ class Core {
 		return $operator
 			? version_compare( $clean1, $clean2, $operator )
 			: version_compare( $clean1, $clean2 );
+	}
+
+	/**
+	 * Checks if the WordPress site is accessible by performing HTTP requests to various endpoints.
+	 * Useful for verifying site health after configuration changes.
+	 *
+	 * @since 1.5.0
+	 *
+	 * @param array<string, mixed> $args {
+	 *     Optional. Arguments to customize the health check.
+	 *
+	 *     @type array  $custom_checks     Additional endpoint checks to perform.
+	 *     @type array  $request_args      Additional arguments to pass to wp_remote_get().
+	 * }
+	 *
+	 * @return bool True if site is accessible, false otherwise.
+	 */
+	public static function is_site_accessible( $args = [] ) {
+		$defaults = [
+			'custom_checks' => [],
+			'request_args'  => [],
+		];
+
+		$args = wp_parse_args( $args, $defaults );
+
+		/**
+		 * Filters if site health check should be skipped. This is useful if loopback is restricted.
+		 *
+		 * @since 1.5.0
+		 *
+		 * @param bool $skip_site_health_check Whether to skip site health check.
+		 *
+		 * @return bool True if site health check should be skipped.
+		 */
+		if ( true === apply_filters( 'gk/foundation/skip-site-health-check', false ) ) {
+			return true;
+		}
+
+		// Determine the correct admin URL based on context.
+		$admin_url = self::is_network_admin() ? network_admin_url( 'admin-ajax.php' ) : admin_url( 'admin-ajax.php' );
+
+		$checks_to_try = [
+			// Try admin-ajax.php first.
+			[
+				'url'              => add_query_arg(
+					[
+						'action' => 'heartbeat',
+						'_nonce' => wp_create_nonce( 'heartbeat-nonce' ),
+					],
+					$admin_url
+				),
+				'acceptable_codes' => [ 200, 400 ],
+			],
+			// Try the home URL as fallback.
+			[
+				'url'              => home_url( '/?nocache=' . time() ),
+				'acceptable_codes' => [ 200, 301, 302 ],
+			],
+		];
+
+		// In network admin context, also check the main network site.
+		// network_home_url() is available in multisite installs, which is when is_network_admin() would be true.
+		if ( self::is_network_admin() ) {
+			$checks_to_try[] = [
+				'url'              => network_home_url( '/?nocache=' . time() ),
+				'acceptable_codes' => [ 200, 301, 302 ],
+			];
+		}
+
+		// Try wp-login.php as last resort.
+		$checks_to_try[] = [
+			'url'              => wp_login_url(),
+			'acceptable_codes' => [ 200 ],
+		];
+
+		// Add custom checks if provided.
+		if ( ! empty( $args['custom_checks'] ) ) {
+			$checks_to_try = array_merge( $checks_to_try, $args['custom_checks'] );
+		}
+
+		// Prepare default request arguments.
+		$default_request_args = [
+			'timeout'     => 3,
+			'redirection' => 0,
+			'sslverify'   => false,
+			'headers'     => [
+				'Cache-Control' => 'no-cache',
+			],
+		];
+
+		// Merge with any custom request arguments provided.
+		$request_args = wp_parse_args( $args['request_args'], $default_request_args );
+
+		foreach ( $checks_to_try as $check ) {
+			$response = wp_remote_get(
+				$check['url'],
+				$request_args
+			);
+
+			if ( ! is_wp_error( $response ) ) {
+				$status_code = wp_remote_retrieve_response_code( $response );
+
+				if ( in_array( $status_code, $check['acceptable_codes'], true ) ) {
+					return true;
+				}
+			}
+		}
+
+		return false;
 	}
 }

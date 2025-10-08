@@ -1,4 +1,4 @@
-/*! elementor - v3.31.0 - 11-08-2025 */
+/*! elementor - v3.32.0 - 05-10-2025 */
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
@@ -314,11 +314,12 @@ var _react = __webpack_require__(/*! react */ "react");
 function usePageTitle(_ref) {
   var title = _ref.title,
     prefix = _ref.prefix;
+  var prefixRef = (0, _react.useRef)(prefix);
   (0, _react.useEffect)(function () {
     if (!prefix) {
-      prefix = __('Elementor', 'elementor');
+      prefixRef.current = __('Elementor', 'elementor');
     }
-    document.title = "".concat(prefix, " | ").concat(title);
+    document.title = "".concat(prefixRef.current, " | ").concat(title);
   }, [title, prefix]);
 }
 
@@ -836,11 +837,13 @@ function Collapse(props) {
     if (props.isOpened !== isOpened) {
       setIsOpened(props.isOpened);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.isOpened]);
   (0, _react.useEffect)(function () {
     if (props.onChange) {
       props.onChange(isOpened);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpened]);
   return /*#__PURE__*/_react.default.createElement(_collapseContext.CollapseContext.Provider, {
     value: {
@@ -1317,6 +1320,7 @@ function UnfilteredFilesDialog(props) {
         onEnable();
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [enableUnfilteredFiles]);
 
   // Enabling unfiltered files ajax status.
@@ -1330,11 +1334,13 @@ function UnfilteredFilesDialog(props) {
         setShow(true);
         break;
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ajaxState]);
   (0, _react.useEffect)(function () {
     if (show && onLoad) {
       onLoad();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [show]);
   if (!show) {
     return null;
@@ -1916,22 +1922,31 @@ Heading.defaultProps = {
 
 
 var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
+var _typeof = __webpack_require__(/*! @babel/runtime/helpers/typeof */ "../node_modules/@babel/runtime/helpers/typeof.js");
 Object.defineProperty(exports, "__esModule", ({
   value: true
 }));
-exports["default"] = Icon;
-var _react = _interopRequireDefault(__webpack_require__(/*! react */ "react"));
-function Icon(props) {
-  return /*#__PURE__*/_react.default.createElement("i", {
-    className: "eps-icon ".concat(props.className)
-  });
-}
+exports["default"] = void 0;
+var _react = _interopRequireWildcard(__webpack_require__(/*! react */ "react"));
+var _extends2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/extends */ "../node_modules/@babel/runtime/helpers/extends.js"));
+var _objectWithoutProperties2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/objectWithoutProperties */ "../node_modules/@babel/runtime/helpers/objectWithoutProperties.js"));
+var _excluded = ["className"];
+function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function _interopRequireWildcard(e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, default: e }; if (null === e || "object" != _typeof(e) && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (var _t in e) "default" !== _t && {}.hasOwnProperty.call(e, _t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, _t)) && (i.get || i.set) ? o(f, _t, i) : f[_t] = e[_t]); return f; })(e, t); }
+var Icon = (0, _react.forwardRef)(function (props, ref) {
+  var className = props.className,
+    rest = (0, _objectWithoutProperties2.default)(props, _excluded);
+  return /*#__PURE__*/_react.default.createElement("i", (0, _extends2.default)({
+    ref: ref,
+    className: "eps-icon ".concat(className)
+  }, rest));
+});
 Icon.propTypes = {
   className: PropTypes.string.isRequired
 };
 Icon.defaultProps = {
   className: ''
 };
+var _default = exports["default"] = Icon;
 
 /***/ }),
 
@@ -3088,6 +3103,7 @@ var Modal = exports.Modal = function Modal(props) {
     return function () {
       return document.removeEventListener('mousedown', closeModal, false);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.show]);
   if (!props.show) {
     return null;
@@ -3249,6 +3265,7 @@ var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/h
 var _defineProperty2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/defineProperty */ "../node_modules/@babel/runtime/helpers/defineProperty.js"));
 var _router = __webpack_require__(/*! @reach/router */ "../node_modules/@reach/router/es/index.js");
 var _router2 = _interopRequireDefault(__webpack_require__(/*! @elementor/router */ "@elementor/router"));
+var _popoverDialog = _interopRequireDefault(__webpack_require__(/*! ../popover-dialog/popover-dialog */ "../app/assets/js/ui/popover-dialog/popover-dialog.js"));
 var _icon = _interopRequireDefault(__webpack_require__(/*! elementor-app/ui/atoms/icon */ "../app/assets/js/ui/atoms/icon.js"));
 function _callSuper(t, o, e) { return o = (0, _getPrototypeOf2.default)(o), (0, _possibleConstructorReturn2.default)(t, _isNativeReflectConstruct() ? Reflect.construct(o, e || [], (0, _getPrototypeOf2.default)(t).constructor) : o.apply(t, e)); }
 function _isNativeReflectConstruct() { try { var t = !Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); } catch (t) {} return (_isNativeReflectConstruct = function _isNativeReflectConstruct() { return !!t; })(); }
@@ -3290,11 +3307,12 @@ var Button = exports["default"] = /*#__PURE__*/function (_React$Component) {
     key: "getIcon",
     value: function getIcon() {
       if (this.props.icon) {
+        var iconRef = _react.default.createRef(null);
         var tooltip = this.props.tooltip || this.props.text;
         var icon = /*#__PURE__*/_react.default.createElement(_icon.default, {
+          ref: iconRef,
           className: this.props.icon,
-          "aria-hidden": "true",
-          title: tooltip
+          "aria-hidden": "true"
         });
         var screenReaderText = '';
         if (this.props.hideText) {
@@ -3302,7 +3320,10 @@ var Button = exports["default"] = /*#__PURE__*/function (_React$Component) {
             className: "sr-only"
           }, tooltip);
         }
-        return /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, icon, screenReaderText);
+        return /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, icon, screenReaderText, this.props.tooltip && /*#__PURE__*/_react.default.createElement(_popoverDialog.default, {
+          targetRef: iconRef,
+          wrapperClass: "e-kit-library__tooltip"
+        }, this.props.tooltip));
       }
       return '';
     }
@@ -3781,6 +3802,7 @@ function Select2(props) {
     return function () {
       $select2.select2('destroy').off('select2:select select2:unselect');
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.settings, props.options]);
 
   // Listen to changes in the prop `value`, if changed update the select 2.
@@ -3824,6 +3846,176 @@ Select2.defaultProps = {
 
 /***/ }),
 
+/***/ "../app/assets/js/ui/popover-dialog/popover-dialog.js":
+/*!************************************************************!*\
+  !*** ../app/assets/js/ui/popover-dialog/popover-dialog.js ***!
+  \************************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+/* provided dependency */ var PropTypes = __webpack_require__(/*! prop-types */ "../node_modules/prop-types/index.js");
+
+
+var _typeof = __webpack_require__(/*! @babel/runtime/helpers/typeof */ "../node_modules/@babel/runtime/helpers/typeof.js");
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports["default"] = PopoverDialog;
+var _react = _interopRequireWildcard(__webpack_require__(/*! react */ "react"));
+function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function _interopRequireWildcard(e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, default: e }; if (null === e || "object" != _typeof(e) && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (var _t in e) "default" !== _t && {}.hasOwnProperty.call(e, _t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, _t)) && (i.get || i.set) ? o(f, _t, i) : f[_t] = e[_t]); return f; })(e, t); }
+function PopoverDialog(props) {
+  var targetRef = props.targetRef,
+    offsetTop = props.offsetTop,
+    offsetLeft = props.offsetLeft,
+    wrapperClass = props.wrapperClass,
+    trigger = props.trigger,
+    hideAfter = props.hideAfter,
+    popoverRef = (0, _react.useCallback)(function (popoverEl) {
+      var target = targetRef === null || targetRef === void 0 ? void 0 : targetRef.current;
+
+      // If the target or the popover element does not exist on the page anymore after a re-render, do nothing.
+      if (!target || !popoverEl) {
+        return;
+      }
+
+      /**
+       * Show Popover
+       */
+      var showPopover = function showPopover() {
+        popoverEl.style.display = 'block';
+        popoverEl.setAttribute('aria-expanded', true);
+        var targetRect = target.getBoundingClientRect(),
+          popoverRect = popoverEl.getBoundingClientRect(),
+          widthDifference = popoverRect.width - targetRect.width;
+        popoverEl.style.top = targetRect.bottom + offsetTop + 'px';
+        popoverEl.style.left = targetRect.left - widthDifference / 2 - offsetLeft + 'px';
+
+        // 16px to compensate for the arrow width.
+        popoverEl.style.setProperty('--popover-arrow-offset-end', (popoverRect.width - 16) / 2 + 'px');
+      };
+
+      /**
+       * Hide Popover
+       */
+      var hidePopover = function hidePopover() {
+        popoverEl.style.display = 'none';
+        popoverEl.setAttribute('aria-expanded', false);
+      };
+
+      /**
+       * Handle the Popover's hover functionality
+       */
+      var handlePopoverHover = function handlePopoverHover() {
+        var hideOnMouseOut = true,
+          timeOut = null;
+
+        // Show popover on hover of the target
+        target.addEventListener('mouseover', function () {
+          hideOnMouseOut = true;
+          showPopover();
+        });
+
+        // Hide popover when not overing over the target or the popover itself
+        target.addEventListener('mouseleave', function () {
+          timeOut = setTimeout(function () {
+            if (hideOnMouseOut) {
+              if ('block' === popoverEl.style.display) {
+                hidePopover();
+              }
+            }
+          }, hideAfter);
+        });
+
+        // Don't hide the popover if the user is still hovering over it.
+        popoverEl.addEventListener('mouseover', function () {
+          hideOnMouseOut = false;
+          if (timeOut) {
+            clearTimeout(timeOut);
+            timeOut = null;
+          }
+        });
+
+        // Once the user stops hovering over the popover, hide it.
+        popoverEl.addEventListener('mouseleave', function () {
+          timeOut = setTimeout(function () {
+            if (hideOnMouseOut) {
+              if ('block' === popoverEl.style.display) {
+                hidePopover();
+              }
+            }
+          }, hideAfter);
+          hideOnMouseOut = true;
+        });
+      };
+
+      /**
+       * Handle the Popover's click functionality
+       */
+      var handlePopoverClick = function handlePopoverClick() {
+        var popoverIsActive = false;
+        target.addEventListener('click', function (e) {
+          e.preventDefault();
+          e.stopPropagation();
+          if (popoverIsActive) {
+            hidePopover();
+            popoverIsActive = false;
+          } else {
+            showPopover();
+            popoverIsActive = true;
+          }
+        });
+
+        // Make sure the popover doesn't close when it is clicked on.
+        popoverEl.addEventListener('click', function (e) {
+          e.stopPropagation();
+        });
+
+        // Hide the popover when clicking outside of it.
+        document.body.addEventListener('click', function () {
+          if (popoverIsActive) {
+            hidePopover();
+            popoverIsActive = false;
+          }
+        });
+      };
+      if ('hover' === trigger) {
+        handlePopoverHover();
+      } else if ('click' === trigger) {
+        handlePopoverClick();
+      }
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [targetRef]);
+  var wrapperClasses = 'e-app__popover';
+  if (wrapperClass) {
+    wrapperClasses += ' ' + wrapperClass;
+  }
+  return /*#__PURE__*/_react.default.createElement("div", {
+    className: wrapperClasses,
+    ref: popoverRef
+  }, props.children);
+}
+PopoverDialog.propTypes = {
+  targetRef: PropTypes.oneOfType([PropTypes.func, PropTypes.shape({
+    current: PropTypes.any
+  })]).isRequired,
+  trigger: PropTypes.string,
+  direction: PropTypes.string,
+  offsetTop: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  offsetLeft: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  wrapperClass: PropTypes.string,
+  children: PropTypes.any,
+  hideAfter: PropTypes.number
+};
+PopoverDialog.defaultProps = {
+  direction: 'bottom',
+  trigger: 'hover',
+  offsetTop: 10,
+  offsetLeft: 0,
+  hideAfter: 300
+};
+
+/***/ }),
+
 /***/ "../app/assets/js/utils/utils.js":
 /*!***************************************!*\
   !*** ../app/assets/js/utils/utils.js ***!
@@ -3837,7 +4029,7 @@ var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/inte
 Object.defineProperty(exports, "__esModule", ({
   value: true
 }));
-exports.stringToRemValues = exports.rgbToHex = exports.pxToRem = exports.isOneOf = exports.arrayToObjectByKey = exports.arrayToClassName = void 0;
+exports.stringToRemValues = exports.rgbToHex = exports.pxToRem = exports.isOneOf = exports.htmlDecodeTextContent = exports.arrayToObjectByKey = exports.arrayToClassName = void 0;
 var _typeof2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/typeof */ "../node_modules/@babel/runtime/helpers/typeof.js"));
 var pxToRem = exports.pxToRem = function pxToRem(pixels) {
   if (!pixels) {
@@ -3879,6 +4071,10 @@ var arrayToObjectByKey = exports.arrayToObjectByKey = function arrayToObjectByKe
     return finalObject[item[key]] = item;
   });
   return finalObject;
+};
+var htmlDecodeTextContent = exports.htmlDecodeTextContent = function htmlDecodeTextContent(input) {
+  var doc = new DOMParser().parseFromString(input, 'text/html');
+  return doc.documentElement.textContent;
 };
 
 /***/ }),
@@ -4977,6 +5173,47 @@ function _nonIterableSpread() {
   throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
 }
 module.exports = _nonIterableSpread, module.exports.__esModule = true, module.exports["default"] = module.exports;
+
+/***/ }),
+
+/***/ "../node_modules/@babel/runtime/helpers/objectWithoutProperties.js":
+/*!*************************************************************************!*\
+  !*** ../node_modules/@babel/runtime/helpers/objectWithoutProperties.js ***!
+  \*************************************************************************/
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+var objectWithoutPropertiesLoose = __webpack_require__(/*! ./objectWithoutPropertiesLoose.js */ "../node_modules/@babel/runtime/helpers/objectWithoutPropertiesLoose.js");
+function _objectWithoutProperties(e, t) {
+  if (null == e) return {};
+  var o,
+    r,
+    i = objectWithoutPropertiesLoose(e, t);
+  if (Object.getOwnPropertySymbols) {
+    var n = Object.getOwnPropertySymbols(e);
+    for (r = 0; r < n.length; r++) o = n[r], -1 === t.indexOf(o) && {}.propertyIsEnumerable.call(e, o) && (i[o] = e[o]);
+  }
+  return i;
+}
+module.exports = _objectWithoutProperties, module.exports.__esModule = true, module.exports["default"] = module.exports;
+
+/***/ }),
+
+/***/ "../node_modules/@babel/runtime/helpers/objectWithoutPropertiesLoose.js":
+/*!******************************************************************************!*\
+  !*** ../node_modules/@babel/runtime/helpers/objectWithoutPropertiesLoose.js ***!
+  \******************************************************************************/
+/***/ ((module) => {
+
+function _objectWithoutPropertiesLoose(r, e) {
+  if (null == r) return {};
+  var t = {};
+  for (var n in r) if ({}.hasOwnProperty.call(r, n)) {
+    if (-1 !== e.indexOf(n)) continue;
+    t[n] = r[n];
+  }
+  return t;
+}
+module.exports = _objectWithoutPropertiesLoose, module.exports.__esModule = true, module.exports["default"] = module.exports;
 
 /***/ }),
 

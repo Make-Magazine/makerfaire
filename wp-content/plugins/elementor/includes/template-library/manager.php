@@ -239,7 +239,9 @@ class Manager {
 	 * @return array Library data.
 	 */
 	public function get_library_data( array $args ) {
-		$library_data = Api::get_library_data( ! empty( $args['sync'] ) );
+		$force_update = ! empty( $args['sync'] );
+
+		$library_data = Api::get_library_data( $force_update );
 
 		if ( empty( $library_data ) ) {
 			return $library_data;
@@ -249,12 +251,19 @@ class Manager {
 		Plugin::$instance->documents->get_document_types();
 
 		$filter_sources = ! empty( $args['filter_sources'] ) ? $args['filter_sources'] : [];
-		$force_update = ! empty( $args['sync'] );
 
-		return [
+		$full_library_data = [
 			'templates' => $this->get_templates( $filter_sources, $force_update ),
 			'config' => $library_data['types_data'],
 		];
+
+		/**
+		 * Filter the full library data.
+		 *
+		 * @since 3.32.2
+		 * @param-out $full_library_data - 'templates' and 'config' data ('config' holds the list of categories).
+		 */
+		return apply_filters( 'elementor/library/full-data', $full_library_data );
 	}
 
 	/**
@@ -832,11 +841,8 @@ class Manager {
 		$sources = [
 			'local',
 			'remote',
+			'cloud',
 		];
-
-		if ( Plugin::$instance->experiments->is_feature_active( 'cloud-library' ) ) {
-			$sources[] = 'cloud';
-		}
 
 		foreach ( $sources as $source_filename ) {
 			$class_name = ucwords( $source_filename );

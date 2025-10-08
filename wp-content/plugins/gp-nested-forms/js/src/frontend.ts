@@ -172,6 +172,15 @@ const ko = window.ko;
 							console.error( 'Failed to activate focus trap: ', error );
 						}
 					}
+
+					/**
+					 * Do something when the nested form modal is opened.
+					 *
+					 * @since 1.2.13
+					 *
+					 * @param \GPNestedForms gpnf The instance of GPNestedForms (specific to the parent form and Nested Form field) that is initializing the modal.
+					 */
+					gform.doAction( 'gpnf_modal_opened', self );
 				},
 				onClose: function() {
 					self.clearModalContent();
@@ -182,6 +191,15 @@ const ko = window.ko;
 					}
 
 					self.isActive = false;
+
+					/**
+					 * Do something when the nested form modal is closed.
+					 *
+					 * @since 1.2.13
+					 *
+					 * @param \GPNestedForms gpnf The instance of GPNestedForms (specific to the parent form and Nested Form field) that is initializing the modal.
+					 */
+					gform.doAction( 'gpnf_modal_closed', self );
 				},
 				beforeOpen: function() {
 					self.$modal
@@ -1272,8 +1290,11 @@ const ko = window.ko;
 					// Convert array of values to string.
 					parentValue = parentValue.join(', ');
 
-					// Convert to number if the input type is number.
-					if (inputType === 'number') {
+					if (parentValue === 'gf_other_choice') {
+						// For Radio Button, if "Other" is selected, get the value from the "Other" input.
+						parentValue = $parentInput.closest('.gfield').find('.gchoice_other_control').val();
+					} else if (inputType === 'number') {
+						// Convert to number if the input type is number.
 						if (window.gf_global?.gfcalc?.[self.formId]) {
 							const fieldId = Number(inputId.split('.').pop());
 							const gfcalc = window.gf_global.gfcalc[self.formId];

@@ -20,6 +20,8 @@ class Custom_Code_Metabox extends Assets_Base {
 	const OPTION_LOCATION_BODY_END = 'elementor_body_end';
 
 	const OPTION_PRIORITY_LENGTH = 10;
+	const DEFAULT_PRIORITY = 1;
+	const DEFAULT_LOCATION = self::OPTION_LOCATION_HEAD;
 
 	const INPUT_OPTION_ENSURE_JQUERY = 'ensure_jquery';
 

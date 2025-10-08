@@ -41,6 +41,15 @@ class GravityView_Widget_Search extends \GV\Widget {
 	private $search_method = 'get';
 
 	/**
+	 * Holds the recorded areas for rendering the settings.
+	 *
+	 * @since 2.44
+	 *
+	 * @var array
+	 */
+	private array $area_settings = [];
+
+	/**
 	 * Contains the context for the search fields to render.
 	 *
 	 * @since 2.42
@@ -89,6 +98,11 @@ class GravityView_Widget_Search extends \GV\Widget {
 			add_action( 'gravityview_render_search_active_areas', [ $this, 'render_search_active_areas' ], 10, 3 );
 			add_action( 'gravityview_render_available_search_fields', [ $this, 'render_available_search_fields' ], 10, 2 );
 			add_action( 'gk/gravityview/template/before-field-render', [ $this, 'record_search_field_context' ], 9, 5 );
+
+			add_action( 'gk/gravityview/admin-views/row/before', [ $this, 'reset_area_recording' ], 10, 4 );
+			add_action( 'gk/gravityview/admin-views/row/after', [ $this, 'render_area_settings' ], 10, 5 );
+			add_action( 'gk/gravityview/admin-views/area/actions', [ $this, 'add_search_area_settings_button' ], 10, 6 );
+			add_filter( 'gravityview_template_area_options', [ $this, 'add_search_area_settings' ], 10, 3 );
 		}
 
 		parent::__construct( esc_html__( 'Search Bar', 'gk-gravityview' ), null, [], $settings );
@@ -525,8 +539,15 @@ class GravityView_Widget_Search extends \GV\Widget {
 		$widgets = (array) get_option( 'widget_gravityview_search', [] );
 
 		foreach ( $widgets as $widget ) {
-			if ( ! empty( $widget['view_id'] ) && $widget['view_id'] == $view->ID ) {
-				if ( $_fields = json_decode( $widget['search_fields'], true ) ) {
+			if ( ! empty( $widget['view_id'] ) && $widget['view_id'] == $view->ID ) { // phpcs:ignore WordPress.PHP.StrictComparisons.LooseComparison
+
+				$_fields = \GV\Utils::get( $widget, 'search_fields' );
+
+				if ( is_string( $_fields ) ) {
+					$_fields = json_decode( $_fields, true );
+				}
+
+				if ( $_fields ) {
 					foreach ( $_fields as $field ) {
 						if ( empty( $field['form_id'] ) ) {
 							$field['form_id'] = $view->form ? $view->form->ID : 0;
@@ -730,25 +751,23 @@ class GravityView_Widget_Search extends \GV\Widget {
 			/**
 			 * Get and normalize the dates according to the input format.
 			 */
-			$curr_start = $this->normalize_date($get['gv_start'] ?? '');
-
-			// If gv_end is not explicitly set but gv_start is, use start date as end date.
-			$curr_end = isset( $get['gv_end'] )
-				? $this->normalize_date( $get['gv_end'] )
-				: $curr_start;
+			$curr_start = $this->normalize_date( $get['gv_start'] ?? '' );
+			$curr_end   = $this->normalize_date( $get['gv_end'] ?? '' );
 
 			if ( $view ) {
 				/**
 				 * Override start and end dates if View is limited to some already.
 				 */
-				$start_date = $view->settings->get( 'start_date' );
+				$start_date      = $view->settings->get( 'start_date' );
 				$start_timestamp = strtotime( $curr_start );
+
 				if ( $start_date && $start_timestamp ) {
 					$curr_start = $start_timestamp < strtotime( $start_date ) ? $start_date : $curr_start;
 				}
 
-				$end_date = $view->settings->get( 'end_date' );
+				$end_date      = $view->settings->get( 'end_date' );
 				$end_timestamp = strtotime( $curr_end );
+
 				if ( $end_date && $end_timestamp ) {
 					$curr_end = $end_timestamp > strtotime( $end_date ) ? $end_date : $curr_end;
 				}
@@ -826,7 +845,7 @@ class GravityView_Widget_Search extends \GV\Widget {
 				gv_empty( $value, false, false )
 				|| (
 					is_array( $value ) && 1 === count( $value )
-					&& gv_empty( $value[0], false, false )
+					&& gv_empty( array_values($value)[0], false, false )
 				)
 			) {
 				/**
@@ -932,6 +951,33 @@ class GravityView_Widget_Search extends \GV\Widget {
 	 * @param \GV\Request $request The request object
 	 */
 	public function gf_query_filter( &$query, $view, $request ) {
+		// Check if this View is currently in the rendering process.
+		// This helps identify Views embedded via [gravityview] shortcode.
+		$is_view_rendering = \GV\View::is_rendering( $view->ID );
+
+		// Handle Mock_Request (used for Views rendered via shortcode).
+		if ( $request instanceof \GV\Mock_Request ) {
+			// Mock requests indicate shortcode-rendered Views, allow filters.
+			$is_view_rendering = true;
+		}
+
+		// For Views being rendered (e.g., via shortcode in Single Entry), always apply filters.
+		if ( $is_view_rendering ) {
+			// Continue processing filters below.
+		} elseif ( $request && $request->is_entry() ) {
+			// Don't apply search filters when viewing a single entry with a valid (non-mock) request.
+			return;
+		} elseif ( ! $request && gravityview()->request && gravityview()->request->is_entry() ) {
+			// When $request is null but context is single entry, check the main View.
+			$main_view = gravityview()->request->is_view();
+
+			// Suppress filters if no main View, or if this is the main View.
+			if ( ! $main_view || $view->ID === $main_view->ID ) {
+				return;
+			}
+			// Otherwise it's a different (embedded) View → continue processing filters.
+		}
+
 		/**
 		 * This is a shortcut to get all the needed search criteria.
 		 * We feed these into an new GF_Query and tack them onto the current object.
@@ -1329,7 +1375,7 @@ class GravityView_Widget_Search extends \GV\Widget {
 	}
 
 	/**
-	 * Prepare the field filters to GFAPI
+	 * Prepares the field filters to GFAPI.
 	 *
 	 * The type post_category, multiselect and checkbox support multi-select search - each value needs to be separated
 	 * in an independent filter so we could apply the ANY search mode.
@@ -1355,6 +1401,10 @@ class GravityView_Widget_Search extends \GV\Widget {
 
 		$form = null;
 
+		// Check if this View is currently rendering (e.g., via shortcode).
+		// If so, we allow filtering on any field even without configured searchable fields.
+		$is_view_rendering = \GV\View::is_rendering( $view->ID );
+
 		if ( count( $filter_key ) > 1 ) {
 			// form is specified
 			[ $field_id, $form_id ] = $filter_key;
@@ -1379,22 +1429,31 @@ class GravityView_Widget_Search extends \GV\Widget {
 			}
 
 			// form is in searchable fields
-			$found = false;
-			foreach ( $searchable_fields as $field ) {
-				if ( $field_id == $field['field'] && $form->ID == $field['form_id'] ) {
-					$found = true;
-					break;
-				}
-			}
+			// Skip this check for shortcode-rendered Views with no searchable fields configured.
+			if ( ! $is_view_rendering || ! empty( $searchable_fields ) ) {
+				$found = false;
 
-			if ( ! $found ) {
-				return false;
+				foreach ( $searchable_fields as $field ) {
+					if ( $field_id == $field['field'] && $form->ID == $field['form_id'] ) {
+						$found = true;
+
+						break;
+					}
+				}
+
+				if ( ! $found ) {
+					return false;
+				}
 			}
 		} else {
 			$field_id          = reset( $filter_key );
 			$searchable_fields = wp_list_pluck( $searchable_fields, 'field' );
-			if ( ! in_array( 'search_all', $searchable_fields ) && ! in_array( $field_id, $searchable_fields ) ) {
-				return false;
+
+			// For shortcode-rendered Views with no searchable fields, allow all fields.
+			if ( ! $is_view_rendering || ! empty( $searchable_fields ) ) {
+				if ( ! in_array( 'search_all', $searchable_fields, true ) && ! in_array( $field_id, $searchable_fields, true ) ) {
+					return false;
+				}
 			}
 		}
 
@@ -1739,7 +1798,7 @@ class GravityView_Widget_Search extends \GV\Widget {
 			$this->enqueue_datepicker();
 		}
 
-		$search_layout = ( ! empty( $widget_args['search_layout'] ) ? $widget_args['search_layout'] : 'rows' );
+		$search_layout = ( ! empty( $widget_args['search_layout'] ) ? $widget_args['search_layout'] . ' gv-search-rows' : 'rows' );
 		$custom_class  = ! empty( $widget_args['custom_class'] ) ? $widget_args['custom_class'] : '';
 
 		$data = [
@@ -2351,8 +2410,13 @@ class GravityView_Widget_Search extends \GV\Widget {
 			$content = ob_get_clean();
 
 			// replace input names.
-			echo str_replace( sprintf( 'name="%ss[', $type ), sprintf( 'name="%s[', $name ), $content );
+			echo str_replace(
+				[ sprintf( 'name="%ss[', $type ), 'name="areas[' ],
+				[ sprintf( 'name="%s[', $name ), sprintf( 'name="%s[', $name ) ],
+				$content
+			);
 			echo '</div>';
+
 			/**
 			 * Allows additional content after the zone was rendered.
 			 *
@@ -2419,6 +2483,143 @@ class GravityView_Widget_Search extends \GV\Widget {
 			'rendering' => $rendering,
 		];
 	}
+
+	/**
+	 * Resets the recorded areas for the next row.
+	 *
+	 * @since 2.44
+	 *
+	 * @param bool   $is_dynamic  Whether the area is dynamic.
+	 * @param string $template_id The template ID.
+	 * @param string $type        The object type (widget or field).
+	 * @param string $zone        The render zone.
+	 */
+	public function reset_area_recording( $is_dynamic, $template_id, $type, $zone ): void {
+		if ( 'search' !== $type ) {
+			return;
+		}
+
+		$this->area_settings = [];
+	}
+
+	/**
+	 * Renders a "Clear all fields" button in the View configuration.
+	 *
+	 * @since 2.44
+	 *
+	 * @param array  $area        The area.
+	 * @param string $type        The type.
+	 * @param array  $values      The values in the area.
+	 * @param bool   $is_dynamic  Whether the zone is dynamic.
+	 * @param string $template_id The template ID.
+	 * @param string $zone        The zone.
+	 */
+	public function add_search_area_settings_button( $area, $type, $values, $is_dynamic, $template_id, $zone ): void {
+		if ( 'search' !== $type ) {
+			return;
+		}
+
+		$area['settings'] = $values[ $zone . '_' . $area['areaid'] ]['area_settings'] ?? [];
+		// Record the area for rendering the settings after the row.
+		$this->area_settings[] = $area;
+
+		printf(
+			'<a role="button" href="javascript:void(0);" class="gv-search-area-settings" data-areaid="%s" title="%s"><i class="dashicons dashicons-admin-generic"></i></a>',
+			esc_attr( $zone . '_' . $area['areaid'] ),
+			esc_attr__( 'Configure Area Settings', 'gk-gravityview' ),
+		);
+	}
+
+	/**
+	 * Registers the area settings for the search fields.
+	 *
+	 * @since 2.44
+	 *
+	 * @param array  $settings    The area settings.
+	 * @param string $template_id The template ID.
+	 * @param string $field_id    The Field ID.
+	 *
+	 * @return array
+	 */
+	public function add_search_area_settings( $settings, $template_id, $field_id ): array {
+		if ( ! is_array( $settings ) ) {
+			$settings = [];
+		}
+
+		if ( 'area_settings' !== $field_id ) {
+			return $settings;
+		}
+
+		$settings['layout'] = [
+			'type'    => 'select',
+			'label'   => __( 'Arrange Fields:', 'gk-gravityview' ),
+			'choices' => [
+				'column' => esc_html__( 'Stacked (vertical)', 'gk-gravityview' ),
+				'row'    => esc_html__( 'Side by side (horizontal)', 'gk-gravityview' ),
+			],
+			'value'   => 'column',
+		];
+
+		return $settings;
+	}
+
+	/**
+	 * Renders the settings for a search area.
+	 *
+	 * @since 2.44
+	 *
+	 * @param bool   $is_dynamic  Whether the area is dynamic.
+	 * @param View   $view        The View.
+	 * @param string $template_id The template ID.
+	 * @param string $type        The object type (widget or field).
+	 * @param string $zone        The render zone.
+	 */
+	public function render_area_settings( $is_dynamic, $view, $template_id, $type, $zone ): void {
+		if ( 'search' !== $type || ! $this->area_settings ) {
+			return;
+		}
+
+		$html = '';
+
+		foreach ( $this->area_settings as $area ) {
+			if ( ! isset( $area['areaid'] ) ) {
+				continue;
+			}
+
+			$settings = GravityView_Render_Settings::render_field_options(
+				0,
+				'area',
+				$template_id,
+				'area_settings',
+				esc_html__( 'Column', 'gk-gravityview' ),
+				$zone . '_' . $area['areaid'],
+				null,
+				'area_settings',
+				$area['settings'] ?? [],
+				'area_settings',
+				[
+					'label' => esc_html__( 'Column Settings', 'gk-gravityview' ),
+				]
+			);
+
+			// Remove no options indicator to avoid disabling the search widget settings icon.
+			$settings = str_replace( GravityView_Render_Settings::NO_OPTIONS, '', $settings );
+
+			$html .= sprintf(
+				'<div class="area-settings-container" data-areaid="%s">%s</div>',
+				$zone . '_' . $area['areaid'],
+				$settings
+			);
+		}
+
+		if ( $html ) {
+			printf( '<div style="display:none;" class="area-settings-wrapper">%s</div>', $html );
+		}
+
+		// Reset areas for next rendering.
+		$this->area_settings = [];
+	}
+
 } // end class
 
 new GravityView_Widget_Search();

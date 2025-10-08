@@ -18,7 +18,15 @@
          render: function() {
             this.$input = this.$tpl.parent();
             var field = this.options.scope;
-            $( this.$input ).find( 'input' ).attr( 'multiple', $( field ).data( 'multiple' ) );
+            var isMultiple = $( field ).data( 'multiple' );
+            
+            $( this.$input ).find( 'input' ).attr( 'multiple', isMultiple );
+            
+            // Add a warning when uploading multiple files
+            if ( isMultiple ) {
+                var warningHtml = '<p class="gv-multiple-file-upload-warning">' + gv_inline_x.multipleFileWarning + '</p>';
+                $( this.$input ).prepend( warningHtml );
+            }
         },
 
         /**
