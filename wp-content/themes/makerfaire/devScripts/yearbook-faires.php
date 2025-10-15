@@ -4,6 +4,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
+
+add_filter('acf/validate_post', '__return_false');
+
 include 'db_connect.php';
 $year    = (isset($_GET['year']) ? $_GET['year'] : '2025');
 
@@ -216,4 +219,6 @@ function update_acf_term_field($field_name, $taxonomy_slug, $value, $post_id) {
     // Also assign the term to the post in WP core (if "Save Terms" is off)
     wp_set_post_terms($post_id, [$term_id], $taxonomy_slug, false);
 }
+
+remove_filter('acf/validate_post', '__return_false');
 ?>
