@@ -105,7 +105,7 @@ if ($result && $result->num_rows > 0) {
 
         $existing_posts = get_posts($args);
 
-        if ( empty($existing_posts) && $event_type != "School"  && $event_type != "Mini"  && $event_type != "Featured") {
+        if ( empty($existing_posts) && $event_type != "School" ) {
             $post_data = array (
                 'comment_status'    => 'closed',
                 'ping_status'       => 'closed',
