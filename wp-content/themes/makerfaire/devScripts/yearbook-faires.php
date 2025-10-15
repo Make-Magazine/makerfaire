@@ -5,8 +5,6 @@
  * and open the template in the editor.
  */
 
-add_filter('acf/validate_post', '__return_false');
-
 include 'db_connect.php';
 $year    = (isset($_GET['year']) ? $_GET['year'] : '2025');
 
@@ -84,6 +82,7 @@ if ($result && $result->num_rows > 0) {
             require_once( ABSPATH . 'wp-admin/includes/image.php' );
             require_once( ABSPATH . 'wp-admin/includes/file.php' );
             require_once( ABSPATH . 'wp-admin/includes/media.php' );
+            add_filter('acf/validate_post', '__return_false');
         }
 
         // Query for posts with the same title
