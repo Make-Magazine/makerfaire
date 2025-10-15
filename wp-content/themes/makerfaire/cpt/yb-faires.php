@@ -206,11 +206,20 @@ function yb_faires_content_column($column, $post_id) {
 			break;
 		case 'faire_country':
 			$faire_country = get_field("country", $post_id);
-			echo $faire_country->name;
+			if (is_string($faire_country)) {
+				echo get_term_by('id', $faire_country, 'countries')->name;
+			} elseif (is_object($faire_country)) {
+				echo esc_html($faire_country->name);
+			}
 			break;
+
 		case 'faire_region':
 			$faire_region = get_field("region", $post_id);
-			echo $faire_region->name;
+			if (is_string($faire_region)) {
+				echo get_term_by('id', $faire_region, 'regions');
+			} elseif (is_object($faire_region)) {
+				echo esc_html($faire_region->name);
+			}
 			break;
 	}
 }
@@ -400,4 +409,102 @@ function add_extra_tablenav($post_type) {
 		echo join("\n", $options);
 		echo '</select>';
 	}
+}
+
+// now we want to map submitting the post event survey gravity form to add to our yearbook faire fields if the title and date match
+add_action( 'gform_after_submission_242', 'edit_yearbook_faire', 10, 2 );
+function edit_yearbook_faire( $entry, $form ) {
+    $date_value = rgar( $entry, '153' ); 
+	if ( ! empty( $date_value ) ) {
+		$timestamp = strtotime( $date_value );
+		$year = date( 'Y', $timestamp );
+	}
+	$title 			= rgar( $entry, '151' );
+	$nice_name		= trim(str_ireplace("maker faire", "", $title));
+	$attendee_num 	= rgar( $entry, '157' );
+	$exhibit_num  	= rgar( $entry, '161' );
+	$name  			= rgar( $entry, '96.3' ) . " " . rgar( $entry, '96.6' );
+	//$email  		= rgar( $entry, '98' ); this is the producer email, not a contact email
+	$video  		= rgar( $entry, '191' );
+	$photos			= str_replace('[', "", str_replace(']', "", str_replace('"', "", rgar( $entry, '122' ))));
+	$photo_credit	= rgar( $entry, '189' );
+
+	global $wpdb;
+	$sql = $wpdb->prepare("
+		SELECT p.ID
+		FROM {$wpdb->posts} p
+		INNER JOIN {$wpdb->postmeta} m ON p.ID = m.post_id
+		WHERE p.post_type = %s
+		AND LOWER(p.post_title) LIKE %s
+		AND m.meta_key = 'start_date'
+		AND m.meta_value BETWEEN %d AND %d
+		LIMIT 1
+	",
+		'yb_faires',
+		'%' . $wpdb->esc_like(mb_strtolower($nice_name)) . '%',
+		"{$year}0101",
+		"{$year}1231"
+	);
+	$post_id = $wpdb->get_var($sql);
+	// we got a match! let's update it with more details
+	if (!empty($post_id)) {
+
+		// set our acf fields
+		update_field('producer_section_producer_or_org', $name, $post_id);
+		update_field('faire_info_faire_video', $video, $post_id);
+		update_field('faire_info_number_of_projects', $exhibit_num, $post_id);
+		update_field('faire_info_number_of_attendees', $attendee_num, $post_id);
+		update_field('faire_highlights_photo_credit', $photo_credit, $post_id);
+
+		// finally, get all the additional photos
+		if (!is_array($photos)) {
+			$photos = explode(',', $photos);
+		}
+
+		$attachment_ids = [];
+
+		foreach ($photos as $file_url) {
+			$file_url = trim(stripslashes($file_url)); // remove escaping
+			$file_url = str_replace('\\/', '/', $file_url); // fix escaped slashes
+
+			// Get file path from URL
+			$upload_dir = wp_upload_dir();
+			$file_path  = str_replace($upload_dir['baseurl'], $upload_dir['basedir'], $file_url);
+
+			if (!file_exists($file_path)) {
+				error_log($file_path . " doesn't exist?");
+				continue;
+			}
+
+			// Prepare attachment
+			$filetype = wp_check_filetype(basename($file_path), null);
+
+			$attachment = [
+				'guid'           => $file_url,
+				'post_mime_type' => $filetype['type'],
+				'post_title'     => sanitize_file_name(basename($file_path)),
+				'post_content'   => '',
+				'post_status'    => 'inherit'
+			];
+
+			// Insert into Media Library (if not already)
+			$attach_id = wp_insert_attachment($attachment, $file_path, $post_id);
+
+			if (!is_wp_error($attach_id)) {
+				// Generate image metadata
+				require_once(ABSPATH . 'wp-admin/includes/image.php');
+				$attach_data = wp_generate_attachment_metadata($attach_id, $file_path);
+				wp_update_attachment_metadata($attach_id, $attach_data);
+
+				$attachment_ids[] = $attach_id;
+			} 
+		}
+
+		if (!empty($attachment_ids)) {
+			// Update ACF Gallery field
+			update_field("faire_highlights_faire_images", $attachment_ids, $post_id);
+		}
+
+	} 	
+  
 }

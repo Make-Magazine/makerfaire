@@ -17,6 +17,11 @@ get_header();
 
 		//faire location				
 		$faire_country = get_field("country", $faire_id);
+		if (is_string($faire_country)) {
+			$faire_country = get_term_by('id', $faire_country, 'countries')->name;
+		} elseif (is_object($faire_country)) {
+			$faire_country =  esc_html($faire_country->name);
+		}
 
 		// Faire Horizontal logo		
 		$topSection 			= get_field('top_section');		
@@ -26,17 +31,17 @@ get_header();
 		
 		// Faire Info Section
 		$faireInfo 				= get_field('faire_info');
-		$faire_video 			= $faireInfo['faire_video'];
+		$faire_video 			= !empty($faireInfo['faire_video']) ? $faireInfo['faire_video'] : "";
 		
-		$faire_num_attendees 	= $faireInfo['number_of_attendees'];
-		$faire_num_projects 	= $faireInfo['number_of_projects'];
+		$faire_num_attendees 	= !empty($faireInfo['number_of_attendees']) ? $faireInfo['number_of_attendees'] : "";
+		$faire_num_projects 	= !empty($faireInfo['number_of_projects']) ? $faireInfo['number_of_projects'] : "";
 
 		// Social Links
-		$socialLinks 			= $faireInfo['social_links'];
-		$fb_link 				= $socialLinks['facebook'];
-		$twit_link 				= $socialLinks['twitter'];
-		$insta_link 			= $socialLinks['instagram'];
-		$ytube_link 			= $socialLinks['youtube'];
+		$socialLinks 			= !empty($faireInfo['social_links']) ? $faireInfo['social_links'] : array();
+		$fb_link 				= !empty($socialLinks['facebook']) ? $socialLinks['facebook'] : "";
+		$twit_link 				= !empty($socialLinks['twitter']) ? $socialLinks['twitter'] : "";
+		$insta_link 			= !empty($socialLinks['instagram']) ? $socialLinks['instagram'] : "";
+		$ytube_link 			= !empty($socialLinks['youtube']) ? $socialLinks['youtube'] : "";
 
 		// Producer Section
 		$producerSection 		= get_field('producer_section');
@@ -45,16 +50,16 @@ get_header();
 		$faire_graphic_alt		= !empty($producerSection['faire_graphic']['alt']) 			? $producerSection['faire_graphic']['alt'] 	 	 		     	: "Maker Faire " . $faire_year . " " . $faire_name . " Custom Image";
 		$faire_badge 			= isset($producerSection['circular_faire_logo']['url']) 	? $producerSection['circular_faire_logo']['sizes']['thumbnail']	: get_stylesheet_directory_uri()."/images/default-badge.png";
 		
-		$producer_org 			= $producerSection['producer_or_org'];
-		$contact 				= $producerSection['contact_email'];
+		$producer_org 			= !empty($producerSection['producer_or_org']) ? $producerSection['producer_or_org'] : "";;
+		$contact 				= !empty($producerSection['contact_email']) ? $producerSection['contact_email'] : "";;
 		$contactLink			= (str_contains($contact, "@") ? "mailto:" . $contact : $contact);
 		
-		$faire_link 			= $producerSection['link_to_faire'];
+		$faire_link 			= !empty($producerSection['link_to_faire']) ? $producerSection['link_to_faire'] : "";;
 
 		// Highlights Section
 		$highlightsSection 		= get_field("faire_highlights");
-		$highlightImages 		= $highlightsSection['faire_images'];	
-		$photo_credit			= $highlightsSection['photo_credit'];		
+		$highlightImages 		= !empty($highlightsSection['faire_images']) ? $highlightsSection['faire_images'] : "";;	
+		$photo_credit			= !empty($highlightsSection['photo_credit']) ? $highlightsSection['photo_credit'] : "";;		
 		
 		//Projects Section
 		//find any projects associated with this faire
@@ -117,7 +122,7 @@ get_header();
 				<?php } ?>
 			</div>
 			<h5 class="faire-date"><?php echo strtoupper($faire_date); ?></h5>
-			<h4 class="faire-country"><?php echo $faire_country->name; ?></h4>
+			<h4 class="faire-country"><?php echo $faire_country; ?></h4>
 			<div class="blue-spacer"></div>
 			<?php if($faire_num_projects != ''){?>
 				<h3 class="faire-stat">Projects: <?php echo number_format($faire_num_projects); ?></h3>
