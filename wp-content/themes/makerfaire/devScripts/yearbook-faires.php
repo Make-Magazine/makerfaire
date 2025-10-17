@@ -6,6 +6,9 @@
  */
 
 include 'db_connect.php';
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 $year    = (isset($_GET['year']) ? $_GET['year'] : '2025');
 
 $sql =  'SELECT faire_name, faire_nicename, event_dt, event_type, event_start_dt, event_end_dt, faire_url, venue_address_city, venue_address_state, venue_address_country, venue_address_region, lat, lng, faire_image 
@@ -141,8 +144,8 @@ if ($result && $result->num_rows > 0) {
                     [
                         'key'     => 'start_date',
                         'value'   => [
-                            "20230101",
-                            "{$previous_year}1231"
+                            "{$previous_year}1231",
+                            "20230101"
                         ],
                         'compare' => 'BETWEEN',
                         'type'    => 'NUMERIC',
@@ -151,6 +154,7 @@ if ($result && $result->num_rows > 0) {
             ];
 
             $existing_posts = get_posts($args);
+            
             if ( !empty($existing_posts) ) {
                 $pastyr_postid = $existing_posts[0]->ID;
                 $logo = get_field('top_section_horizontal_faire_logo', $pastyr_postid);
