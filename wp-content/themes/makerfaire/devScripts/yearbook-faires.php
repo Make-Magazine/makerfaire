@@ -144,8 +144,8 @@ if ($result && $result->num_rows > 0) {
                     [
                         'key'     => 'start_date',
                         'value'   => [
-                            "{$previous_year}1231",
-                            "20230101"
+                            "20230101",
+                            "{$previous_year}1231"
                         ],
                         'compare' => 'BETWEEN',
                         'type'    => 'NUMERIC',
