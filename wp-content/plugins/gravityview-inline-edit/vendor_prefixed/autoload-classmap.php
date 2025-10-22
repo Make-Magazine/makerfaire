@@ -64,6 +64,7 @@ return array(
    'GravityKit\GravityEdit\Foundation\Notices\NoticeFactory' => $strauss_src . '/gravitykit/foundation/src/Notices/NoticeFactory.php',
    'GravityKit\GravityEdit\Foundation\Notices\NoticeManager' => $strauss_src . '/gravitykit/foundation/src/Notices/NoticeManager.php',
    'GravityKit\GravityEdit\Foundation\Notices\NoticeRenderer' => $strauss_src . '/gravitykit/foundation/src/Notices/NoticeRenderer.php',
+   'GravityKit\GravityEdit\Foundation\Settings\WPDebugSettings' => $strauss_src . '/gravitykit/foundation/src/Settings/WPDebugSettings.php',
    'GravityKit\GravityEdit\Foundation\Settings\Helpers' => $strauss_src . '/gravitykit/foundation/src/Settings/Helpers.php',
    'GravityKit\GravityEdit\Foundation\Settings\Framework' => $strauss_src . '/gravitykit/foundation/src/Settings/Framework.php',
    'GravityKit\GravityEdit\Foundation\Settings\ValidatorException' => $strauss_src . '/gravitykit/foundation/src/Settings/SettingsValidator.php',

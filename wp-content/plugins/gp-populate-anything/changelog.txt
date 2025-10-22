@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.1.48 | October 9, 2025
+
+- Fixed an issue with Gravity Forms Coupons when coupon codes were populated via URL parameters with conditional logic enabled.
+- Fixed an issue where merge tags for dynamically populated choice fields did not return correct values when resending notifications.
+
 ## 2.1.47 | October 2, 2025
 
 - Fixed an issue where users assigned to multiple sites in multisite installations would not appear when using the User Object to populate choice fields on subsites other than their primary blog.

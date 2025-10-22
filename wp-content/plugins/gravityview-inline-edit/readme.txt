@@ -1,7 +1,7 @@
 === GravityEdit ===
 Tags: gravity forms, inline edit, gravityview
 Requires at least: 5.1
-Tested up to: 6.8.2
+Tested up to: 6.8.3
 Contributors: The GravityKit Team
 License: GPL 2
 Requires PHP: 7.2.0
@@ -19,6 +19,19 @@ Inline Editing is a powerful way to quickly make changes to a form entry without
 3. Set your license key
 
 == Changelog ==
+
+= 2.6.0 on October 16, 2025 =
+
+This update adds support for the Multiple Choice field and fixes unintended HTML markup in exported entries.
+
+#### 🚀 Added
+* Support for editing Multiple Choice field values (Gravity Forms 2.9+).
+
+#### 🐛 Fixed
+* Field values were wrapped in GravityEdit-specific HTML markup when exporting View entries using the Export widget.
+
+#### 🔧 Updated
+* [Foundation](https://www.gravitykit.com/foundation/) to version 1.6.0.
 
 = 2.5.1 on September 11, 2025 =
 

@@ -1,7 +1,7 @@
 === GravityView - DataTables Layout ===
 Tags: gravityview
 Requires at least: 4.4
-Tested up to: 6.8.2
+Tested up to: 6.8.3
 Stable tag: trunk
 Contributors: The GravityKit Team
 License: GPL 3 or higher
@@ -16,6 +16,18 @@ Display entries in a dynamic table powered by DataTables & GravityView.
 
 == Changelog ==
 
+= 3.6 on October 9, 2025 =
+
+This update adds support for Date field searches in client-side processing mode, and fixes rendering and search-related issues.
+
+#### 🚀 Added
+* Support for searching Date and Entry Date fields using single or range inputs in client-side processing mode.
+
+#### 🐛 Fixed
+* Number field search using ranges not working in client-side processing mode.
+* Clearing search no longer reload the pages.
+* JavaScript errors that occurred when the same View was rendered multiple times on a page.
+
 = 3.5.5 on August 6, 2025 =
 
 This is a hotfix release to revert to 3.5.2; the 3.5.3 release introduced multiple issues that we will return to in a future release.
@@ -25,7 +37,6 @@ This is a hotfix release to revert to 3.5.2; the 3.5.3 release introduced multip
 This update resolves an issue where Views using the DataTables layout were not working in Dashboard Views.
 
 #### 🐛 Fixed
-
 * Views using the DataTables layout were not working in Dashboard Views.
 
 = 3.5.3 on July 31, 2025 =

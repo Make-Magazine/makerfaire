@@ -2,13 +2,15 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by __root__ on 11-September-2025 using Strauss.
+ * Modified by __root__ on 16-October-2025 using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 
 namespace GravityKit\GravityEdit\Foundation\Licenses;
 
 use Exception;
+use GravityKit\GravityEdit\Foundation\Logger\Framework as LoggerFramework;
+use GravityKit\GravityEdit\Foundation\Helpers\Core as CoreHelpers;
 
 class Helpers {
 	/**
@@ -30,18 +32,55 @@ class Helpers {
 			'body'      => $args,
 		];
 
-		$response = wp_remote_post(
+		$http_response = wp_remote_post(
 			$url,
 			$request_parameters
 		);
 
-		if ( is_wp_error( $response ) ) {
-			throw new Exception( $response->get_error_message() );
+		if ( CoreHelpers::is_foundation_debug() ) {
+			LoggerFramework::get_instance()->debug(
+                'GK API Request',
+                [
+					'url'                => $url,
+					'request_body'       => $args,
+					'request_parameters' => $request_parameters,
+				]
+            );
 		}
 
-		$body = wp_remote_retrieve_body( $response );
+		if ( is_wp_error( $http_response ) ) {
+			if ( CoreHelpers::is_foundation_debug() ) {
+				LoggerFramework::get_instance()->debug(
+                    'GK API Request Error',
+                    [
+						'url'        => $url,
+						'error'      => $http_response->get_error_message(),
+						'error_code' => $http_response->get_error_code(),
+						'error_data' => $http_response->get_error_data(),
+					]
+                );
+			}
 
-		$response = json_decode( $body, true );
+			throw new Exception( $http_response->get_error_message() );
+		}
+
+		$body         = wp_remote_retrieve_body( $http_response );
+		$http_status  = wp_remote_retrieve_response_code( $http_response );
+		$http_headers = wp_remote_retrieve_headers( $http_response );
+		$response     = json_decode( $body, true );
+
+		if ( CoreHelpers::is_foundation_debug() ) {
+			LoggerFramework::get_instance()->debug(
+                'GK API Response',
+                [
+					'url'              => $url,
+					'http_status'      => $http_status,
+					'response_headers' => is_object( $http_headers ) ? $http_headers->getAll() : $http_headers,
+					'response_body'    => $response,
+					'raw_body_length'  => strlen( $body ),
+				]
+            );
+		}
 
 		if ( json_last_error() !== JSON_ERROR_NONE ) {
 			throw new Exception( esc_html__( 'Unable to process remote request. Invalid response body.', 'gk-gravityedit' ) );

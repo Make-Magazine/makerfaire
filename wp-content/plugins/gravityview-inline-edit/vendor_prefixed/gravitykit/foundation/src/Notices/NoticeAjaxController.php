@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by __root__ on 11-September-2025 using Strauss.
+ * Modified by __root__ on 16-October-2025 using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 
@@ -73,9 +73,10 @@ final class NoticeAjaxController {
 	 */
 	public function routes( array $routes ): array {
 		return $routes + [
-			'dismiss' => [ $this, 'dismiss' ],
-			'snooze'  => [ $this, 'snooze' ],
-			'live'    => [ $this, 'live' ],
+			'dismiss'        => [ $this, 'dismiss' ],
+			'dismiss_global' => [ $this, 'dismiss_global' ],
+			'snooze'         => [ $this, 'snooze' ],
+			'live'           => [ $this, 'live' ],
 		];
 	}
 
@@ -117,7 +118,7 @@ final class NoticeAjaxController {
 				$this->repository->dismiss_for_user( $user_id, $notice_id );
 
 				/**
-				 * Fires after a notice has been dismissed via AJAX.
+				 * Fires after a notice has been dismissed via Ajax.
 				 *
 				 * @action `gk/foundation/notices/ajax/dismissed`
 				 *
@@ -140,6 +141,142 @@ final class NoticeAjaxController {
 		}
 
 		return true;
+	}
+
+	/**
+	 * Handles the notice "dismiss_global" Ajax action.
+	 * This permanently removes the notice from the database for all users.
+	 *
+	 * @since 1.4.0
+	 *
+	 * @param array $payload Ajax payload.
+	 *
+	 * @throws NoticeException When requirements are not met or global dismissal fails.
+	 *
+	 * @return array Response with success status and affected notices.
+	 */
+	public function dismiss_global( array $payload ): array {
+		$user_id = Users::current_id();
+
+		if ( ! $user_id ) {
+			throw NoticeException::forbidden( 'Not logged in' );
+		}
+
+		// Normalize input to an array of string IDs.
+		if ( isset( $payload['ids'] ) && is_array( $payload['ids'] ) ) {
+			$notice_ids = array_filter( $payload['ids'], 'is_string' );
+		} else {
+			$notice_id = $payload['id'] ?? null;
+
+			if ( ! $notice_id ) {
+				throw NoticeException::validation( __( 'Missing "id" parameter', 'gk-gravityedit' ) );
+			}
+
+			$notice_ids = [ (string) $notice_id ];
+		}
+
+		$results = [
+			'global'   => [],
+			'personal' => [],
+			'errors'   => [],
+		];
+
+		foreach ( $notice_ids as $notice_id ) {
+			try {
+				$notice = $this->manager->get_notice( $notice_id );
+
+				if ( ! $notice instanceof StoredNoticeInterface ) {
+					// Runtime notice or not found - fall back to personal dismiss.
+					$this->repository->dismiss_for_user( $user_id, $notice_id );
+
+					$results['personal'][] = $notice_id;
+
+					continue;
+				}
+
+				// Check if notice is globally dismissible and user has capability.
+				if ( $notice->is_globally_dismissible() ) {
+					$required_caps  = $notice->get_global_dismiss_capability();
+					$has_capability = false;
+
+					// Check if user has any of the required capabilities.
+					if ( is_array( $required_caps ) ) {
+						foreach ( $required_caps as $cap ) {
+							if ( current_user_can( $cap ) ) {
+								$has_capability = true;
+								break;
+							}
+						}
+					} else {
+						$has_capability = current_user_can( $required_caps );
+					}
+
+					if ( $has_capability ) {
+						// Remove from database entirely.
+						$this->repository->remove( $notice_id );
+
+						$results['global'][] = $notice_id;
+
+						/**
+						 * Fires after a notice has been globally dismissed via Ajax.
+						 *
+						 * @action `gk/foundation/notices/ajax/dismissed-global`
+						 *
+						 * @since  1.4.0
+						 *
+						 * @param string $notice_id ID of the globally dismissed notice.
+						 * @param int    $user_id   ID of the user who globally dismissed the notice.
+						 */
+						do_action( 'gk/foundation/notices/ajax/dismissed-global', $notice_id, $user_id );
+					} else {
+						// Fall back to personal dismiss if user lacks capability.
+						$results['personal'][] = $notice_id;
+
+						$this->repository->dismiss_for_user( $user_id, $notice_id );
+
+						/**
+						 * Fires after a notice has been dismissed via Ajax.
+						 *
+						 * @action `gk/foundation/notices/ajax/dismissed`
+						 *
+						 * @since  1.3.0
+						 *
+						 * @param string $notice_id ID of the dismissed notice.
+						 * @param int    $user_id   ID of the user who dismissed the notice.
+						 */
+						do_action( 'gk/foundation/notices/ajax/dismissed', $notice_id, $user_id );
+					}
+				} else {
+					// Fall back to personal dismiss if not globally dismissible.
+					$this->repository->dismiss_for_user( $user_id, $notice_id );
+
+					$results['personal'][] = $notice_id;
+
+					/**
+					 * Fires after a notice has been dismissed via Ajax.
+					 *
+					 * @action `gk/foundation/notices/ajax/dismissed`
+					 *
+					 * @since  1.3.0
+					 *
+					 * @param string $notice_id ID of the dismissed notice.
+					 * @param int    $user_id   ID of the user who dismissed the notice.
+					 */
+					do_action( 'gk/foundation/notices/ajax/dismissed', $notice_id, $user_id );
+				}
+			} catch ( NoticeException $e ) {
+				$results['errors'][] = [
+					'id'    => $notice_id,
+					'error' => $e->get_error_message(),
+				];
+			}
+		}
+
+		if ( ! empty( $results['errors'] ) && empty( $results['global'] ) && empty( $results['personal'] ) ) {
+			throw NoticeException::persistence( 'dismiss_global_failed', [ 'errors' => $results['errors'] ] );
+		}
+
+		return $results;
 	}
 
 	/**
@@ -172,7 +309,7 @@ final class NoticeAjaxController {
 		$this->repository->snooze_for_user( $user_id, $notice_id, $snooze_until );
 
 		/**
-		 * Fires after a notice has been snoozed via AJAX.
+		 * Fires after a notice has been snoozed via Ajax.
 		 *
 		 * @action `gk/foundation/notices/ajax/snoozed`
 		 *

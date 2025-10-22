@@ -1453,6 +1453,16 @@ const ko = window.ko;
 						}
 						var current_page = $( `#gform_source_page_number_${formId}` ).val();
 						$( document ).trigger( 'gform_page_loaded', [ formId, current_page] );
+
+						// Trigger gform/post_render to ensure Signature fields are initialized on page navigation
+						gform?.utils?.trigger({
+							event: 'gform/post_render',
+							native: false,
+							data: {
+								formId: formId,
+								currentPage: current_page,
+							}
+						});
 						window[ `gf_submitting_${formId}` ] = false;
 					} else if ( ! is_redirect) {
 						var confirmation_content = $( this ).contents().find( '.GF_AJAX_POSTBACK' ).html();

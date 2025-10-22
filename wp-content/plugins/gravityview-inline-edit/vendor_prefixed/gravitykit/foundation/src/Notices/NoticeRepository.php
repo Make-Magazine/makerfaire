@@ -2,12 +2,13 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by __root__ on 11-September-2025 using Strauss.
+ * Modified by __root__ on 16-October-2025 using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 
 namespace GravityKit\GravityEdit\Foundation\Notices;
 
+use GravityKit\GravityEdit\Foundation\Logger\Framework as Logger;
 use GravityKit\GravityEdit\Foundation\State\StateManagerFactory;
 use GravityKit\GravityEdit\Foundation\Helpers\Users;
 use GravityKit\GravityEdit\Foundation\Exceptions\UserException;
@@ -113,12 +114,12 @@ final class NoticeRepository {
 			$this->global_state_manager->add( $notice_id, $notice->as_definition() );
 		} catch ( BaseException $e ) {
 			throw NoticeException::persistence(
-                __METHOD__,
-                [
+				__METHOD__,
+				[
 					'notice_id' => $notice_id,
 					'error'     => $e->getMessage(),
 				]
-            );
+			);
 		}
 
 		/**
@@ -126,7 +127,7 @@ final class NoticeRepository {
 		 *
 		 * @action `gk/foundation/notices/saved`
 		 *
-		 * @since 1.3.0
+		 * @since  1.3.0
 		 *
 		 * @param StoredNoticeInterface $notice The notice that was persisted.
 		 */
@@ -198,13 +199,13 @@ final class NoticeRepository {
 				$usm->add( self::USER_META_DEFS_KEY, $defs );
 			} catch ( BaseException $e ) {
 				throw NoticeException::persistence(
-                    __METHOD__,
-                    [
+					__METHOD__,
+					[
 						'notice_id' => $notice_id,
 						'user_id'   => $user_id,
 						'error'     => $e->getMessage(),
 					]
-                );
+				);
 			}
 		}
 
@@ -213,7 +214,7 @@ final class NoticeRepository {
 		 *
 		 * @action `gk/foundation/notices/saved`
 		 *
-		 * @since 1.3.0
+		 * @since  1.3.0
 		 *
 		 * @param StoredNoticeInterface $notice The notice that was persisted.
 		 */
@@ -225,7 +226,7 @@ final class NoticeRepository {
 	 *
 	 * @since 1.3.0
 	 *
-	 * @param StoredNoticeInterface $notice Notice instance to persist.
+	 * @param StoredNoticeInterface $notice   Notice instance to persist.
 	 * @param array<int>            $excludes Array of user IDs to exclude.
 	 *
 	 * @throws NoticeException When persistence fails.
@@ -246,12 +247,12 @@ final class NoticeRepository {
 			$this->global_state_manager->add( $notice_id, $definition );
 		} catch ( BaseException $e ) {
 			throw NoticeException::persistence(
-                __METHOD__,
-                [
+				__METHOD__,
+				[
 					'notice_id' => $notice_id,
 					'error'     => $e->getMessage(),
 				]
-            );
+			);
 		}
 
 		/**
@@ -259,7 +260,7 @@ final class NoticeRepository {
 		 *
 		 * @action `gk/foundation/notices/saved`
 		 *
-		 * @since 1.3.0
+		 * @since  1.3.0
 		 *
 		 * @param StoredNoticeInterface $notice The notice that was persisted.
 		 */
@@ -267,9 +268,10 @@ final class NoticeRepository {
 	}
 
 	/**
-	 * Removes a stored notice from global storage.
+	 * Removes a stored notice from storage (global or user-scoped).
 	 *
 	 * @since 1.3.0
+	 * @since 1.4.0 Enhanced to handle user-scoped notices.
 	 *
 	 * @param string $notice_id Notice ID.
 	 *
@@ -278,34 +280,69 @@ final class NoticeRepository {
 	 * @return void
 	 */
 	public function remove( string $notice_id ): void {
+		$removed_from_global = false;
+		$removed_from_users  = false;
+
+		// Try to remove from global storage.
 		$all = $this->global_state_manager->all();
 
-		if ( ! isset( $all[ $notice_id ] ) ) {
-			return; // Nothing to remove.
+		if ( isset( $all[ $notice_id ] ) ) {
+			try {
+				$this->global_state_manager->remove( $notice_id );
+
+				$removed_from_global = true;
+			} catch ( BaseException $e ) {
+				throw NoticeException::persistence(
+					__METHOD__,
+					[
+						'notice_id' => $notice_id,
+						'error'     => $e->getMessage(),
+						'context'   => 'global',
+					]
+				);
+			}
 		}
 
-		try {
-			$this->global_state_manager->remove( $notice_id );
-		} catch ( BaseException $e ) {
-			throw NoticeException::persistence(
-                __METHOD__,
-                [
-					'notice_id' => $notice_id,
-					'error'     => $e->getMessage(),
-				]
-            );
+		// Also remove from all users' storage if it's a user-scoped notice.
+		// This ensures complete removal even if the notice was stored per-user.
+		$users = get_users( [ 'fields' => 'ID' ] );
+
+		foreach ( $users as $user_id ) {
+			$user = Users::get( $user_id );
+
+			if ( $user instanceof UserException ) {
+				continue;
+			}
+
+			$user_meta = $this->state_factory->make_user( $user, self::OPTION_PERSISTED );
+			$defs      = (array) $user_meta->get( self::USER_META_DEFS_KEY );
+
+			if ( isset( $defs[ $notice_id ] ) ) {
+				unset( $defs[ $notice_id ] );
+
+				try {
+					$user_meta->add( self::USER_META_DEFS_KEY, $defs );
+
+					$removed_from_users = true;
+				} catch ( BaseException $e ) {
+					Logger::get_instance()->error( "Failed to remove notice '{$notice_id}' from user ID #{$user_id}: {$e->getMessage()}" );
+				}
+			}
 		}
 
-		/**
-		 * Fires after a notice has been removed from storage.
-		 *
-		 * @action `gk/foundation/notices/removed`
-		 *
-		 * @since 1.3.0
-		 *
-		 * @param string $notice_id The ID of the notice that was removed.
-		 */
-		do_action( 'gk/foundation/notices/removed', $notice_id );
+		// Only fire the action if something was actually removed.
+		if ( $removed_from_global || $removed_from_users ) {
+			/**
+			 * Fires after a notice has been removed from storage.
+			 *
+			 * @action `gk/foundation/notices/removed`
+			 *
+			 * @since  1.3.0
+			 *
+			 * @param string $notice_id The ID of the notice that was removed.
+			 */
+			do_action( 'gk/foundation/notices/removed', $notice_id );
+		}
 	}
 
 	/**
@@ -368,7 +405,7 @@ final class NoticeRepository {
 	 *
 	 * @since 1.3.0
 	 *
-	 * @param int   $user_id     User ID.
+	 * @param int   $user_id User ID.
 	 * @param array $changes Associative array noticeKey => newState.
 	 *
 	 * @throws NoticeException When user state update fails.
@@ -380,12 +417,12 @@ final class NoticeRepository {
 
 		if ( $user instanceof UserException ) {
 			throw NoticeException::persistence(
-                __METHOD__,
-                [
+				__METHOD__,
+				[
 					'uid'       => $user_id,
 					'exception' => $user->to_array(),
 				]
-            );
+			);
 		}
 
 		$user_meta = $this->state_factory->make_user( $user, self::OPTION_PERSISTED );
@@ -395,10 +432,10 @@ final class NoticeRepository {
 		 *
 		 * @filter `gk/foundation/notices/user-state`
 		 *
-		 * @since 1.3.0
+		 * @since  1.3.0
 		 *
-		 * @param array $changes  State changes to apply.
-		 * @param int   $user_id  User ID.
+		 * @param array $changes State changes to apply.
+		 * @param int   $user_id User ID.
 		 */
 		$changes = apply_filters( 'gk/foundation/notices/user-state', $changes, $user_id );
 
@@ -429,12 +466,12 @@ final class NoticeRepository {
 			$user_meta->add( self::USER_META_STATE_KEY, $state_after );
 		} catch ( BaseException $e ) {
 			throw NoticeException::persistence(
-                __METHOD__,
-                [
+				__METHOD__,
+				[
 					'user_id' => $user_id,
 					'error'   => $e->getMessage(),
 				]
-            );
+			);
 		}
 	}
 
@@ -455,12 +492,12 @@ final class NoticeRepository {
 
 		if ( $user instanceof UserException ) {
 			throw NoticeException::persistence(
-                __METHOD__,
-                [
+				__METHOD__,
+				[
 					'uid' => $user_id,
 					'id'  => $notice_id,
 				]
-            );
+			);
 		}
 
 		$user_meta = $this->state_factory->make_user( $user, self::OPTION_PERSISTED );
@@ -477,13 +514,13 @@ final class NoticeRepository {
 			$user_meta->add( self::USER_META_DEFS_KEY, $defs );
 		} catch ( BaseException $e ) {
 			throw NoticeException::persistence(
-                __METHOD__,
-                [
+				__METHOD__,
+				[
 					'user_id'   => $user_id,
 					'notice_id' => $notice_id,
 					'error'     => $e->getMessage(),
 				]
-            );
+			);
 		}
 	}
 

@@ -667,6 +667,22 @@ final class GravityView_Inline_Edit_AJAX {
 	 * @return boolean|WP_Error  true if all's well or WP_Error if the fields not valid
 	 */
 	private function validate_field( $field_value, $gf_field, $field_type, $entry = array() ) {
+		// For Multiple Choice field, we need to merge the current entry values with the new field values for the selections validation to work.
+		if ( 'multi_choice' === $gf_field->type && is_array( $field_value ) ) {
+			$complete_field_value = array();
+			
+			foreach ( $gf_field->inputs as $input ) {
+				$input_id = $input['id'];
+
+				if ( isset( $field_value[ $input_id ] ) ) {
+					$complete_field_value[ $input_id ] = $field_value[ $input_id ];
+				} else {
+					$complete_field_value[ $input_id ] = rgar( $entry, $input_id );
+				}
+			}
+
+			$field_value = $complete_field_value;
+		}
 
 		if ( $gf_field instanceof \GF_Field_Checkbox && $gf_field->isRequired && is_array( $field_value ) ) {
 
@@ -684,7 +700,6 @@ final class GravityView_Inline_Edit_AJAX {
 				return new WP_Error( strtolower( $field_type ) . '_validation_failed', __( 'This field must have at least one checked option.', 'gk-gravityedit' ) );
 			}
 
-			return true;
 		}
 
 		// Get all values for the image choice field so we can pass it to the validation, because it doesn't pass existing values to the $field_value

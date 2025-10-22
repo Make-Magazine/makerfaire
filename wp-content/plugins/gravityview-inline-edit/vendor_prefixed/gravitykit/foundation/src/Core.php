@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by __root__ on 11-September-2025 using Strauss.
+ * Modified by __root__ on 16-October-2025 using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 
@@ -26,6 +26,7 @@ use GravityKit\GravityEdit\Foundation\Helpers\Core as CoreHelpers;
 use GravityKit\GravityEdit\Foundation\Helpers\Arr;
 use GravityKit\GravityEdit\Foundation\WP\RESTController;
 use GravityKit\GravityEdit\Foundation\Notices\NoticeManager as Notices;
+use GravityKit\GravityEdit\Foundation\Settings\WPDebugSettings;
 
 /**
  * Core class that initializes Foundation.
@@ -46,7 +47,7 @@ use GravityKit\GravityEdit\Foundation\Notices\NoticeManager as Notices;
  * @method static SecureDownload secure_download()
  */
 class Core {
-	const VERSION = '1.3.1';
+	const VERSION = '1.6.0';
 
 	const ID = 'gk_foundation';
 
@@ -344,6 +345,8 @@ class Core {
 			add_action( 'admin_enqueue_scripts', [ $this, 'inline_scripts_and_styles' ], 20 );
 
 			add_action( 'admin_footer', [ $this, 'show_loaded_by_message_on_admin_pages' ] );
+
+			$this->detect_namespace_conflict();
 		}
 
 		class_alias( __CLASS__, 'GravityKitFoundation' );
@@ -368,9 +371,11 @@ class Core {
 	 * @return void
 	 */
 	public function configure_settings() {
+		new WPDebugSettings();
+
 		add_filter(
 			'gk/foundation/settings/data/plugins',
-			function ( $plugins ) {
+			function ( $plugins, $payload = [] ) {
 				$gk_settings = $this->settings()->get_plugin_settings( self::ID );
 
 				// If multisite and not the main site, get default settings from the main site.
@@ -599,13 +604,17 @@ HTML;
 				 * @filter gk/foundation/settings
 				 *
 				 * @since  1.0.0
+				 * @since  1.6.0 Added $payload parameter.
 				 *
 				 * @param array $all_settings GravityKit general settings.
+				 * @param array $payload      Request payload, if this is an Ajax request.
 				 */
-				$all_settings = apply_filters( 'gk/foundation/settings', $all_settings );
+				$all_settings = apply_filters( 'gk/foundation/settings', $all_settings, $payload );
 
 				return array_merge( $plugins, $all_settings );
-			}
+			},
+			10,
+			2
 		);
 	}
 
@@ -883,5 +892,70 @@ HTML;
 		) ?: [ '0' ];
 
 		return max( $foundation_versions );
+	}
+
+	/**
+	 * Detects and registers notices for namespace conflicts.
+	 *
+	 * This detects when a plugin has both vendor/ and vendor_prefixed/ Foundation copies,
+	 * which can cause conflicts when the standalone Foundation plugin is active.
+	 *
+	 * Only runs when the standalone Foundation plugin (gk-foundation) is the one that loaded.
+	 *
+	 * @since 1.6.0
+	 *
+	 * @return void
+	 */
+	private function detect_namespace_conflict() {
+		$foundation_source = Arr::first(
+			$this->_registered_plugins,
+			function ( $plugin ) {
+				return $plugin['loads_foundation'];
+			}
+		);
+
+		if ( ! $foundation_source || 'gk-foundation' !== $foundation_source['text_domain'] ) {
+			return;
+		}
+
+		$conflicting_plugins = [];
+
+		// Check each registered plugin for namespace conflicts.
+		foreach ( $this->_registered_plugins as $plugin_file => $plugin_data ) {
+			// Skip if this is the current plugin that loaded Foundation.
+			if ( $plugin_data['loads_foundation'] ) {
+				continue;
+			}
+
+			$plugin_dir = dirname( $plugin_file );
+
+			// Check if plugin has non-namespaced Foundation in vendor/.
+			$vendor_foundation = $plugin_dir . '/vendor/gravitykit/foundation/src/Core.php';
+
+			if ( file_exists( $vendor_foundation ) ) {
+				$plugin_name           = CoreHelpers::get_plugin_data( $plugin_file )['Name'] ?? $plugin_data['text_domain'];
+				$conflicting_plugins[] = esc_html( $plugin_name );
+			}
+		}
+
+		if ( empty( $conflicting_plugins ) ) {
+			return;
+		}
+
+		$this->notices()->add_runtime(
+			[
+				'namespace'    => 'gk-foundation',
+				'slug'         => 'namespace-conflicts',
+				'message'      => strtr(
+					// translators: [plugins] is replaced with a list of plugin names.
+					__( '[plugins] contain both namespaced and non-namespaced Foundation, which may cause conflicts with the standalone Foundation plugin.', 'gk-gravityedit' ),
+					[ '[plugins]' => '<strong>' . implode( ', ', $conflicting_plugins ) . '</strong>' ]
+				),
+				'severity'     => 'warning',
+				'context'      => 'all',
+				'dismissible'  => false,
+				'capabilities' => [ 'manage_options' ],
+			]
+		);
 	}
 }

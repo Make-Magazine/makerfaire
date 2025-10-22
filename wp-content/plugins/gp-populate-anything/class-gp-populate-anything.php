@@ -143,6 +143,9 @@ class GP_Populate_Anything extends GP_Plugin {
 		/* Form Submission */
 		add_action( 'gform_save_field_value', array( $this, 'maybe_save_choice_label' ), 10, 4 );
 
+		/* Resend Notifications */
+		add_filter( 'gform_before_resend_notifications', array( $this, 'modify_submitted_form_object' ), 9 );
+
 		/* Field Value Parsing */
 		add_filter( 'gppa_modify_field_value_date', array( $this, 'modify_field_values_date' ), 10, 2 );
 		add_filter( 'gppa_modify_field_value_time', array( $this, 'modify_field_values_time' ), 10, 2 );
@@ -3756,6 +3759,20 @@ class GP_Populate_Anything extends GP_Plugin {
 
 		return $value;
 
+	}
+
+	public function modify_submitted_form_object( $form ) {
+		if ( ! is_array( $form['fields'] ) ) {
+			return $form;
+		}
+
+		foreach ( $form['fields'] as &$field ) {
+			if ( rgar( $field, 'gppa-choices-enabled' ) ) {
+				$field->choices = $this->get_input_choices( $field );
+			}
+		}
+
+		return $form;
 	}
 
 	/**

@@ -384,7 +384,12 @@ final class GravityView_Inline_Edit_GravityView extends GravityView_Inline_Edit_
 	 * @return string HTML for the field value wrapped in an X-editable-format
 	 */
 	public function wrap_gravityview_field_value( $output, $context ) {
-		$is_export = $context->template instanceof GV\Field_CSV_Template && ( get_query_var( 'csv' ) || get_query_var( 'tsv' ) );
+		// Check if we're in a CSV/TSV export context:
+		// 1. Direct export: query vars are set;
+		// 2. REST API export: template is Field_CSV_Template AND we're in a REST request.
+		$is_direct_export = get_query_var( 'csv' ) || get_query_var( 'tsv' );
+		$is_rest_export   = $context->template instanceof GV\Field_CSV_Template && defined( 'REST_REQUEST' ) && REST_REQUEST;
+		$is_export        = $context->template instanceof GV\Field_CSV_Template && ( $is_direct_export || $is_rest_export );
 
 		if ( ! $this->is_inline_edit_enabled( $context ) || $is_export ) {
 			return $output;

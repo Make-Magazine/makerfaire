@@ -159,7 +159,32 @@
 					return;
 				}
 
+				/**
+				 * Create an array to hold all fields that need to be processed, including dependent fields.
+				 * This handles the case where a Section field with conditional logic affects other fields
+				 * within that section. We need to process both the section and its dependent fields for copying.
+				 */
+				var fieldsToProcess = [];
+				
 				fields.forEach( function ( fieldId ) {
+					// Add the original field
+					if ( fieldsToProcess.indexOf( fieldId ) === -1 ) {
+						fieldsToProcess.push( fieldId );
+					}
+					
+					// Check if this field is a section and has dependent fields
+					var conditionalLogic = window.gf_form_conditional_logic && window.gf_form_conditional_logic[formId];
+					if ( conditionalLogic && conditionalLogic.dependents && conditionalLogic.dependents[fieldId] ) {
+						var dependentFields = conditionalLogic.dependents[fieldId];
+						for ( var j = 0; j < dependentFields.length; j++ ) {
+							if ( fieldsToProcess.indexOf( dependentFields[j] ) === -1 ) {
+								fieldsToProcess.push( dependentFields[j] );
+							}
+						}
+					}
+				});
+
+				fieldsToProcess.forEach( function ( fieldId ) {
 					var fieldSettings = self.getFieldSettings( fieldId );
 
 					if ( ! fieldSettings ) {

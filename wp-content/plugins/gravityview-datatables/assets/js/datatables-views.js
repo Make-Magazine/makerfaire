@@ -935,81 +935,69 @@ window.gvDTFixedHeaderColumns = window.gvDTFixedHeaderColumns || {};
 
 			// Reset search results.
 			$( '.gv-search-clear', $searchWidgetForm ).off().on( 'click', function ( e ) {
-				var tableId = $( '#gv-datatables-' + viewId ).find( '.dataTable' ).attr( 'id' );
-
-				if ( !tableId || !$.fn.DataTable.isDataTable( '#' + tableId ) || !gvDataTables.tables[ viewId ] ) {
-					return;
-				}
-
-				var tableData = gvDataTables.tables[ viewId ].data ?? null;
-				var isSearch = $searchWidgetForm.hasClass( 'gv-is-search' );
-
 				// prevent event from bubbling and firing
 				e.preventDefault();
 				e.stopImmediatePropagation();
 
-				var $table = $( '#' + tableId );
-
-				if ( isSearch && $searchWidgetForm.serialize() !== $searchWidgetForm.attr( 'data-state' ) ) {
-					var formData = {};
-					var serializedData = $searchWidgetForm.attr( 'data-state' ).split( '&' );
-					for ( var i = 0; i < serializedData.length; i++ ) {
-						var item = serializedData[ i ].split( '=' );
-						formData[ decodeURIComponent( item[ 0 ] ) ] = decodeURIComponent( item[ 1 ] );
-					}
-
-					$.each( formData, function ( name, value ) {
-						var $el = $searchWidgetForm.find( '[name="' + name + '"]' );
-						$el.val( value );
-					} );
-
-					$( '.gv-search-clear', $searchWidgetForm ).text( gvGlobals.clear );
-
+				if ( !gvDataTables.tables[ viewId ] ) {
 					return;
+				}
+
+				var tableData = gvDataTables.tables[ viewId ].data ?? null;
+				var $container = $( '#gv-datatables-' + viewId );
+				var $table;
+
+				// Check if fixed columns is activated.
+				if ( $container.find( '.DTFC_ScrollWrapper' ).length > 0 ) {
+					$table = $container.find( '.dataTables_scrollBody .gv-datatables' );
+				} else {
+					$table = $container.find( '.gv-datatables' );
 				}
 
 				// clear form fields. because default input values are set, form.reset() does not work.
 				// instead, a more comprehensive solution is required: https://stackoverflow.com/questions/680241/resetting-a-multi-stage-form-with-jquery/24496012#24496012
 
-				$( 'input[type="search"], input:text, input:password, input:file, select, textarea', $searchWidgetForm ).val( '' );
+				$( 'input[type="search"], input:text, input:password, input:file, input[type="number"], select, textarea', $searchWidgetForm ).val( '' );
 				$( 'input:checkbox, input:radio', $searchWidgetForm ).removeAttr( 'checked' ).removeAttr( 'selected' );
 
-				if ( $searchWidgetForm.serialize() !== $searchWidgetForm.attr( 'data-state' ) ) {
-					// assign new data to the global object
+				// assign new data to the global object
+				if ( tableData ) {
 					tableData.getData = false;
 					gvDataTables.tables[ viewId ].data = tableData;
+				}
 
-					// remove search query from URL
-					const url = new URL( window.location.href );
+				// remove search query from URL
+				const url = new URL( window.location.href );
 
-					[ 'gv_search', 'mode' ].forEach( param => url.searchParams.delete( param ) );
+				[ 'gv_search', 'mode' ].forEach( param => url.searchParams.delete( param ) );
 
-					[ ...url.searchParams.keys() ].forEach( key => key.startsWith( 'filter_' ) && url.searchParams.delete( key ) );
+				[ ...url.searchParams.keys() ].forEach( key => key.startsWith( 'filter_' ) && url.searchParams.delete( key ) );
 
-					window.history.pushState( null, null, url.toString() );
+				[ ...url.searchParams.keys() ].forEach( key => key.startsWith( 'gv_' ) && url.searchParams.delete( key ) );
 
-					// update form state
-					$searchWidgetForm.removeClass( 'gv-is-search' );
-					$searchWidgetForm.attr( 'data-state', $searchWidgetForm.serialize() );
+				window.history.pushState( null, null, url.toString() );
 
-					const currentTableOptions = $table.DataTable().init();
+				// update form state
+				$searchWidgetForm.removeClass( 'gv-is-search' );
+				$searchWidgetForm.attr( 'data-state', $searchWidgetForm.serialize() );
 
-					if ( currentTableOptions._ajax ) {
-						// If Ajax was disabled before, re-enable it.
-						$table.DataTable().settings()[ 0 ].ajax = currentTableOptions._ajax;
-					}
+				const currentTableOptions = $table.DataTable().init();
 
-					const shouldUseAjax = currentTableOptions.serverSide ||
-						( !currentTableOptions.serverSide && !gvDataTables.tables[ viewId ].allRecordsLoaded );
+				if ( currentTableOptions._ajax ) {
+					// If Ajax was disabled before, re-enable it.
+					$table.DataTable().settings()[ 0 ].ajax = currentTableOptions._ajax;
+				}
 
-					// Reload table.
-					if ( shouldUseAjax ) {
-						gvDataTables.tables[ viewId ].allRecordsLoaded = true;
+				const shouldUseAjax = currentTableOptions.serverSide ||
+					( !currentTableOptions.serverSide && !gvDataTables.tables[ viewId ].allRecordsLoaded );
 
-						$table.DataTable().ajax.reload();
-					} else {
-						$table.DataTable().draw();
-					}
+				// Reload table.
+				if ( shouldUseAjax ) {
+					gvDataTables.tables[ viewId ].allRecordsLoaded = true;
+
+					$table.DataTable().ajax.reload();
+				} else {
+					$table.DataTable().draw();
 				}
 
 				$( this ).hide( 100 );
@@ -1036,6 +1024,44 @@ window.gvDTFixedHeaderColumns = window.gvDTFixedHeaderColumns || {};
 				var tableData = gvDataTables.tables[ viewId ].data ?? null;
 				var inputs = $( this ).serializeArray().filter( function ( k ) {
 					return $.trim( k.value ) !== '';
+				} );
+
+				// For date range searches, ensure both start and end are included even if empty.
+				$( this ).find( '.gv-search-date-range' ).each( function () {
+					// Check for entry date inputs (gv_start/gv_end).
+					let startInput = $( this ).find( '[name="gv_start"]' );
+					let endInput = $( this ).find( '[name="gv_end"]' );
+					let startName, endName;
+
+					if ( startInput.length ) {
+						// Entry date field
+						startName = 'gv_start';
+						endName = 'gv_end';
+					} else {
+						// Regular date field - find filter_X[start] and filter_X[end]
+						startInput = $( this ).find( 'input[name*="[start]"]' );
+						endInput = $( this ).find( 'input[name*="[end]"]' );
+
+						if ( startInput.length ) {
+							startName = startInput.attr( 'name' );
+							endName = endInput.attr( 'name' );
+						}
+					}
+
+					if ( startName ) {
+						const hasStart = inputs.some( input => input.name === startName );
+						const hasEnd = inputs.some( input => input.name === endName );
+
+						// Only add empty values if at least one of them already has a value (user is searching with this date range)
+						if ( hasStart || hasEnd ) {
+							if ( !hasStart ) {
+								inputs.push( { name: startName, value: '' } );
+							}
+							if ( !hasEnd ) {
+								inputs.push( { name: endName, value: '' } );
+							}
+						}
+					}
 				} );
 
 				// handle form state
@@ -1117,13 +1143,14 @@ window.gvDTFixedHeaderColumns = window.gvDTFixedHeaderColumns || {};
 				let nonColumnSearch = false;
 
 				while ( filterIndex < filters.length && !nonColumnSearch ) {
-					let searchBarInputName = filters[ filterIndex ].replace( 'filter_', 'gv_' );
+					const filterKey = filters[ filterIndex ];
+					let searchBarInputName = filterKey.replace( 'filter_', 'gv_' );
 
-					searchBarInputName = [ 'gv_start', 'gv_end' ].includes( searchBarInputName ) ? 'date_created' : searchBarInputName;
+					// Map entry date inputs to date_created column.
+					searchBarInputName = [ 'gv_start', 'gv_end' ].includes( searchBarInputName ) ? 'gv_date_created' : searchBarInputName;
 
 					if ( searchBarInputName === 'mode' ) {
 						filterIndex++;
-
 						continue;
 					}
 
@@ -1187,6 +1214,38 @@ window.gvDTFixedHeaderColumns = window.gvDTFixedHeaderColumns || {};
 		return formatter.format( amount );
 	}
 
+	// Parse date string based on format (mdy, dmy, ymd) and convert to timestamp.
+	function parseDateString( dateStr, format ) {
+		if (!dateStr) {
+			return 0;
+		}
+
+		const parts = dateStr.split(/[\/\-\.]/);
+
+		if ( parts.length !== 3 ) {
+			return 0;
+		}
+
+			let year, month, day;
+
+		if ( format === 'mdy' ) {
+			[ month, day, year ] = parts;
+		} else if ( format === 'dmy' ) {
+			[ day, month, year ] = parts;
+		} else if ( format === 'ymd' ) {
+			[ year, month, day ] = parts;
+		}
+
+		if ( !year || !month || !day ) {
+			return 0;
+		}
+
+		// Convert to ISO format (YYYY-MM-DD) and create timestamp.
+		const isoDate = `${ year }-${ month.padStart( 2, '0' ) }-${ day.padStart( 2, '0' ) }`;
+
+		return ( new Date( isoDate + 'T00:00:00Z' ) ).getTime();
+	}
+
 	// Custom filter and search function for client-side processing.
 	// Search widget values are first used to filter data, followed by column filters.
 	function configureClientSideFilterAndSearch() {
@@ -1213,11 +1272,111 @@ window.gvDTFixedHeaderColumns = window.gvDTFixedHeaderColumns || {};
 				].join( ',' );
 
 				searchWidgetValues = form.find( supportedInputTypes ).map( function () {
+					const inputName = $( this ).attr( 'name' );
+
+					// Skip date range inputs and date inputs - they'll be processed separately.
+					if ( inputName === 'gv_start' || inputName === 'gv_end' || inputName.match( /\[start\]$|\[end\]$/ ) ) {
+						return null;
+					}
+					
+					// Skip date inputs that are in date search elements.
+					const isInDateElement = $( this ).closest( '.gv-search-date' ).length > 0;
+
+					if ( isInDateElement && inputName.match( /^filter_\d+$/ ) ) {
+						return null;
+					}
+
 					return {
 						value: $( this ).val().toLocaleLowerCase().trim(),
-						filterName: $( this ).attr( 'name' )
+						filterName: inputName
 					};
-				} ).get().filter( sv => sv.value !== '' );
+				} ).get().filter( sv => sv !== null && sv.value !== '' );
+
+				// Date searches (both single and range).
+				form.find( '.gv-search-date' ).each( function () {
+					// Check for entry date inputs (gv_start/gv_end) or regular date field inputs (filter_X[start]/filter_X[end])
+					let startInput = $( this ).find( '[name="gv_start"]' );
+					let endInput = $( this ).find( '[name="gv_end"]' );
+					let isEntryDate = startInput.length > 0;
+
+					if ( !isEntryDate ) {
+						// Regular date field - find filter_X[start] and filter_X[end].
+						startInput = $( this ).find( 'input[name*="[start]"]' );
+						endInput = $( this ).find( 'input[name*="[end]"]' );
+
+						// If no range inputs found, look for single date input.
+						if ( startInput.length === 0 && endInput.length === 0 ) {
+							startInput = $( this ).find( 'input' );
+						}
+					}
+
+					const start = ( startInput.val() || '' ).trim();
+					const end = ( endInput.val() || '' ).trim();
+
+					if ( start || end ) {
+						let columnName;
+
+						if ( isEntryDate ) {
+							// Entry date maps to gv_date_created column.
+							columnName = 'gv_date_created';
+						} else {
+							// Regular date field - extract field ID from input name like "filter_3[start]" or "filter_3".
+							const nameMatch = startInput.attr( 'name' ).match( /filter_(\d+)/ );
+
+							columnName = nameMatch ? 'gv_' + nameMatch[1] : '';
+						}
+
+						// Detect date format from input class (mdy, dmy, ymd).
+						const inputClass = startInput.attr( 'class' ) || '';
+						let dateFormat = 'mdy'; // default.
+
+						if ( inputClass.includes( 'dmy' ) ) {
+							dateFormat = 'dmy';
+						} else if ( inputClass.includes( 'ymd' ) ) {
+							dateFormat = 'ymd';
+						}
+
+						// Check if this is a range input by looking for [start] or [end] in the input name, or if it's entry date.
+						const isRangeInput = startInput.attr( 'name' ).includes( '[start]' ) || startInput.attr( 'name' ).includes( '[end]' ) || isEntryDate;
+
+						if ( isRangeInput ) {
+							// Date range input.
+							searchWidgetValues.push( {
+								filterName: columnName,
+								value: { start: start, end: end },
+								inputType: 'date_range',
+								dateFormat: dateFormat
+							} );
+						} else {
+							// Single date input.
+							searchWidgetValues.push( {
+								filterName: columnName,
+								value: start,
+								inputType: 'date_single',
+								dateFormat: dateFormat
+							} );
+						}
+					}
+				} );
+
+				// Number range searches.
+				form.find( '.gv-search-number-range' ).each( function () {
+					const inputs = $( this ).find( 'input[type="number"]' );
+					const minInput = inputs.filter( '[name*="[min]"]' );
+					const maxInput = inputs.filter( '[name*="[max]"]' );
+					const min = ( minInput.val() || '' ).trim();
+					const max = ( maxInput.val() || '' ).trim();
+
+					if ( min || max ) {
+						const filterName = minInput.attr( 'name' ).replace( '[min]', '' );
+
+						searchWidgetValues.push( {
+							filterName: filterName,
+							value: { min: min, max: max },
+							inputType: 'number_range'
+						} );
+					}
+				} );
 			}
 
 			// Get columns with filter search values.
@@ -1248,7 +1407,106 @@ window.gvDTFixedHeaderColumns = window.gvDTFixedHeaderColumns || {};
 			// First check if the row matches search widget values, if applicable.
 			// This should be checked only if all records are loaded since otherwise the DT already contains filtered data returned by the server.
 			if ( searchWidgetValues.length && gvDataTables.tables[ viewId ].allRecordsLoaded ) {
-				const searchFn = ( { value: searchWidgetValue, filterName } ) => {
+				const searchFn = ( { value: searchWidgetValue, filterName, inputType, dateFormat } ) => {
+					// Date range search requires additional processing.
+					if ( inputType === 'date_range' ) {
+						// Find the date column by filterName.
+						const column = columns.find( column => column.name === filterName );
+
+						if ( !column ) {
+							return true;
+						}
+
+						const cellValue = shadowData?.[ dataIndex ]?.[ column.idx ] ?? '';
+						const cellTimestamp = parseInt( cellValue, 10 );
+						const start = searchWidgetValue.start;
+						const end = searchWidgetValue.end;
+
+						if ( isNaN( cellTimestamp ) ) {
+							return false;
+						}
+
+						const startTimestamp = parseDateString( start, dateFormat );
+						const endTimestamp = parseDateString( end, dateFormat );
+
+						if ( startTimestamp && endTimestamp ) {
+							return cellTimestamp >= startTimestamp && cellTimestamp <= endTimestamp;
+						}
+
+						if ( startTimestamp ) {
+							return cellTimestamp >= startTimestamp;
+						}
+
+						if ( endTimestamp ) {
+							return cellTimestamp <= endTimestamp;
+						}
+
+						return true;
+					}
+
+					// Single date search requires additional processing.
+					if ( inputType === 'date_single' ) {
+						const column = columns.find( column => column.name === filterName );
+
+						if ( !column ) {
+							return true;
+						}
+
+						const cellValue = shadowData?.[ dataIndex ]?.[ column.idx ] ?? '';
+						const cellTimestamp = parseInt( cellValue, 10 );
+
+						if ( isNaN( cellTimestamp ) ) {
+							return false;
+						}
+
+						// Parse search date.
+						const searchTimestamp = parseDateString( searchWidgetValue, dateFormat );
+
+						if ( !searchTimestamp ) {
+							return true;
+						}
+
+						// Compare dates (ignore time).
+						const cellDate = new Date( cellTimestamp );
+						const searchDate = new Date( searchTimestamp );
+						const cellDateOnly = new Date( cellDate.getFullYear(), cellDate.getMonth(), cellDate.getDate() );
+						const searchDateOnly = new Date( searchDate.getFullYear(), searchDate.getMonth(), searchDate.getDate() );
+
+						return cellDateOnly.getTime() === searchDateOnly.getTime();
+					}
+
+					// Number range search requires additional processing.
+					if ( inputType === 'number_range' ) {
+						const column = columns.find( column => filterName === column.name.replace( 'gv_', 'filter_' ).replace( /\./g, '_' ) );
+
+						if ( !column ) {
+							return true;
+						}
+
+						const cellValue = shadowData?.[ dataIndex ]?.[ column.idx ] ?? '';
+						const num = parseFloat( cellValue.toString().trim() );
+						const min = searchWidgetValue.min;
+						const max = searchWidgetValue.max;
+
+						if ( isNaN(num) ) {
+							return false;
+						}
+
+						if ( min && max ) {
+							return num >= parseFloat(min) && num <= parseFloat(max);
+						}
+
+						if ( min ) {
+							return num >= parseFloat(min);
+						}
+
+						if ( max ) {
+							return num <= parseFloat(max);
+						}
+
+						return true;
+					}
+
 					const column = columns.find( column => filterName === column.name.replace( 'gv_', 'filter_' ).replace( '.', '_' ) );
 					const exactMatch = ( searchWidgetValue.startsWith( '"' ) && searchWidgetValue.endsWith( '"' ) ) || column?.atts?.field_type === 'select';
 

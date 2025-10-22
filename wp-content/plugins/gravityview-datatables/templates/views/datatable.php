@@ -10,6 +10,8 @@ $gravityview->template->get_template_part( 'datatable/datatable', 'footer' );
 
 $content = ob_get_clean();
 
+$anchor_id = $gravityview->view->get_anchor_id();
+
 /**
  * @filter `gravityview/view/wrapper_container` Modify the wrapper container.
  * @since  2.7
@@ -20,11 +22,9 @@ $content = ob_get_clean();
  */
 $wrapper_container = apply_filters(
 	'gravityview/view/wrapper_container',
-	'<div id="' . esc_attr( $gravityview->view->get_anchor_id() ) . '">{content}</div>',
-	$gravityview->view->get_anchor_id(),
+	'<div id="' . esc_attr( $anchor_id ) . '" class="gv-template-datatables">{content}</div>',
+	$anchor_id,
 	$gravityview->view
 );
 
 echo $wrapper_container ? str_replace( '{content}', $content, $wrapper_container ) : $content;
-
-

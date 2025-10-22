@@ -796,6 +796,19 @@ export default class GPFUPField {
 			}
 
 			sortHidddenGFInput(this.formId, this.fieldId, this.$store.state.fileOrder);
+
+			/**
+			 * Action to process/validate file after upload.
+			 *
+			 * @since 1.5.8
+			 *
+			 * @param int           		formId 			The current form ID
+			 * @param int           		fieldId   		The current uploader field ID
+			 * @param {MOxieFile}			file			File being uploaded. MOxieFile extends File/Blob.
+			 * @param {Plupload.Uploader}	up 				Current Plupload instance
+			 * @param {GPFUPField}			gpfupInstance 	Current File Upload Pro class instance
+			 */
+			window.gform.doAction('gpfup_after_upload', this.formId, this.fieldId, file, up, this);
 		});
 
 		this.Uploader.bind('FilesRemoved', (up: Plupload.Uploader, files: MOxieFile[]) => {

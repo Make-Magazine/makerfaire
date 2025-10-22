@@ -1,6 +1,10 @@
 
 # Changelog
 
+## 1.2.15 | October 15, 2025
+
+- Fixed an issue where Signature fields inside multi-page nested forms failed to initialize.
+
 ## 1.2.14 | September 17, 2025
 
 - Fixed an issue where copying a parent Radio field with the "Other" option via the `{Parent}` merge tag would incorrectly transfer "gf_other_choice" instead of the user-defined text.

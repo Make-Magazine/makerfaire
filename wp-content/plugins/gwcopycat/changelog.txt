@@ -1,6 +1,10 @@
 
 # Changelog
 
+## 1.4.94 | October 15, 2025
+
+- Fixed issue where values would not copy to fields inside a conditionally hidden Section.
+
 ## 1.4.93 | May 14, 2025
 
 - Removed redundant check for Gravity Perks in preparation for Spellbook.

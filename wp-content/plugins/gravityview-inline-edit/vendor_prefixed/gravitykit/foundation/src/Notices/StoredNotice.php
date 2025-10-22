@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by __root__ on 11-September-2025 using Strauss.
+ * Modified by __root__ on 16-October-2025 using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 
@@ -36,6 +36,15 @@ class StoredNotice extends Notice implements StoredNoticeInterface {
 	 * @var string
 	 */
 	private const DEFAULT_SCOPE = 'global';
+
+	/**
+	 * Default capability required for global dismissal.
+	 *
+	 * @since 1.4.0
+	 *
+	 * @var string
+	 */
+	private const DEFAULT_GLOBAL_DISMISS_CAPABILITY = 'manage_options';
 
 	/**
 	 * Live notice – default polling interval (seconds).
@@ -330,6 +339,55 @@ class StoredNotice extends Notice implements StoredNoticeInterface {
 			}
 		}
 
+		// Add globally dismissible flag if applicable and user has capability.
+		if ( $this->is_globally_dismissible() ) {
+			$required_caps  = $this->get_global_dismiss_capability();
+			$has_capability = false;
+
+			// Check if user has any of the required capabilities.
+			if ( is_array( $required_caps ) ) {
+				foreach ( $required_caps as $cap ) {
+					if ( current_user_can( $cap ) ) {
+						$has_capability = true;
+						break;
+					}
+				}
+			} else {
+				$has_capability = current_user_can( $required_caps );
+			}
+
+			if ( $has_capability ) {
+				$payload['globally_dismissible']      = true;
+				$payload['global_dismiss_capability'] = $required_caps;
+			}
+		}
+
 		return $payload;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * @since 1.4.0
+	 */
+	public function is_globally_dismissible(): bool {
+		return ! empty( $this->data['globally_dismissible'] );
+	}
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * @since 1.4.0
+	 */
+	public function get_global_dismiss_capability() {
+		$caps = $this->data['global_dismiss_capability'] ?? self::DEFAULT_GLOBAL_DISMISS_CAPABILITY;
+
+		// Cast single value to array and filter out empty strings.
+		if ( is_array( $caps ) ) {
+			/** @phpstan-ignore-next-line */
+			return array_values( array_filter( $caps, 'strlen' ) );
+		}
+
+		return $caps;
 	}
 }

@@ -20,6 +20,8 @@ The Notices framework enables GravityKit products to display WP admin notices in
     - [`order`](#order)
     - [`severity`](#severity)
     - [`dismissible`](#dismissible)
+    - [`globally_dismissible` (for stored notices only)](#globally_dismissible-for-stored-notices-only)
+    - [`global_dismiss_capability` (for stored notices only)](#global_dismiss_capability-for-stored-notices-only)
     - [`sticky`](#sticky)
     - [`snooze`](#snooze)
     - [`condition`](#condition)
@@ -42,6 +44,7 @@ The Notices framework enables GravityKit products to display WP admin notices in
   - [Stored Notice – User](#stored-notice--user)
   - [Live Notice](#live-notice)
   - [Flash Notice](#flash-notice)
+  - [Globally Dismissible Notice](#globally-dismissible-notice)
   - [Notice with Capabilities and Custom Screen](#notice-with-capabilities-and-custom-screen)
   - [Notice with All Parameters](#notice-with-all-parameters)
   - [Using `not:` Prefix for Exclusions](#using-not-prefix-for-exclusions)
@@ -263,6 +266,36 @@ Controls whether users can dismiss the notice. Default: `true`.
 **Example:**
 ```php
 'dismissible' => false // Notice cannot be dismissed.
+```
+
+#### `globally_dismissible` (for stored notices only)
+
+Controls whether the notice can be dismissed globally (removed from the database entirely) instead of just per-user dismissal. When enabled, users with the required capability will see an option to dismiss the notice for everyone. Default: `false`.
+
+This is useful for notices about issues that have been resolved where the first admin to fix the issue can dismiss the notice for all users.
+
+**Example:**
+```php
+'globally_dismissible' => true // Notice can be dismissed for all users
+```
+
+#### `global_dismiss_capability` (for stored notices only)
+
+Specifies the capability or capabilities required to dismiss a notice globally. Only applies when `globally_dismissible` is `true`. Default: `'manage_options'`.
+
+Accepts:
+- **String**: A single capability
+- **Array**: Multiple capabilities (user needs at least one)
+
+**Examples:**
+```php
+// Single capability
+'globally_dismissible' => true,
+'global_dismiss_capability' => 'manage_network' // Only super admins can dismiss globally
+
+// Multiple capabilities
+'globally_dismissible' => true,
+'global_dismiss_capability' => ['manage_network', 'manage_options'] // Super admins OR site admins
 ```
 
 #### `sticky`
@@ -590,6 +623,26 @@ NoticeManager::get_instance()->add_stored([
 ```
 
 **Note:** Global flash notices are dismissed per-user rather than removed entirely, allowing other users to see them. User-scoped flash notices are removed from the specific user's storage after display.
+
+## Globally Dismissible Notice
+
+This example shows a notice about a configuration issue that can be dismissed for all users once the problem is resolved:
+
+```php
+NoticeManager::get_instance()->add_stored([
+    'namespace'             => 'gk-gravityview',
+    'slug'                  => 'misconfigured-page-warning',
+    'message'               => 'Page X is misconfigured. Please review <a href="/wp-admin/post.php?post=123&action=edit">page settings</a>.',
+    'severity'              => 'error',
+    'dismissible'           => true,
+    'globally_dismissible'  => true,  // Allow admins to dismiss for everyone
+    'global_dismiss_capability' => 'manage_options', // Only admins can dismiss globally
+    'scope'                 => 'global',
+    'capabilities'          => [ 'manage_options' ], // Only show to admins
+]);
+```
+
+When an admin with `manage_options` capability dismisses this notice, they'll see a confirmation dialog asking whether to dismiss it for everyone (removing it from the database) or just for themselves. This is useful for notices about issues that, once resolved by one admin, don't need to be shown to others.
 
 ## Notice with Capabilities and Custom Screen
 

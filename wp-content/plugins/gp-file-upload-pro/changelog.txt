@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.5.8 | October 9, 2025
+
+- Added [`gpfup_after_upload`](https://gravitywiz.com/documentation/gpfup_after_upload) JavaScript action hook.
+
 ## 1.5.7 | June 11, 2025
 
 - Added support for previewing and cropping newer versions of HEIC / HEIF files.

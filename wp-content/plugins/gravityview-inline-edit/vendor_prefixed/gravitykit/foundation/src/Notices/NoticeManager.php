@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by __root__ on 11-September-2025 using Strauss.
+ * Modified by __root__ on 16-October-2025 using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 
@@ -150,7 +150,6 @@ final class NoticeManager {
 
 			return $notice;
 		} catch ( Throwable $e ) {
-			Logger::get_instance()->error( 'add_runtime() failed: ' . $e->getMessage(), [ 'definition' => $data ] );
 			return null;
 		}
 	}
@@ -206,8 +205,6 @@ final class NoticeManager {
 
 			return $notice;
 		} catch ( Throwable $e ) {
-			Logger::get_instance()->error( 'add_stored() failed: ' . $e->getMessage(), [ 'definition' => $data ] );
-
 			return null;
 		}
 	}

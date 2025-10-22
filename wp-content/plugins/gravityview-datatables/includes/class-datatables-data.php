@@ -1319,26 +1319,25 @@ class GV_Extension_DataTables_Data {
 			return;
 		}
 
-		static $_printed_scripts = array();
+		$script_config_json = wp_json_encode( $this->get_datatables_script_configuration( $post, $gravityview->view ) );
 
-		$script_config_json = json_encode( $this->get_datatables_script_configuration( $post, $gravityview->view ) );
-
-		$hash_of_config = sha1( $script_config_json . json_encode( $gravityview->view->settings->all() ) );
-
-		if ( isset( $_printed_scripts[ $hash_of_config ] ) ) {
-			return;
-		}
 		?>
 		<script type="text/javascript">
-					if ( ! window.gvDTglobals ) {
-						window.gvDTglobals = [];
-					}
+			(function() {
+				if ( ! window.gvDTglobals ) {
+					window.gvDTglobals = [];
+				}
 
-					window.gvDTglobals.push(<?php echo $script_config_json; ?>);
+				const config = <?php echo $script_config_json; ?>;
+				const configStr = JSON.stringify( config );
+
+				// Only push if not already in the array.
+				if ( ! window.gvDTglobals.some( existing => JSON.stringify( existing ) === configStr ) ) {
+					window.gvDTglobals.push( config );
+				}
+			})();
 		</script>
 		<?php
-
-		$_printed_scripts[ $hash_of_config ] = true;
 	}
 
 	/**

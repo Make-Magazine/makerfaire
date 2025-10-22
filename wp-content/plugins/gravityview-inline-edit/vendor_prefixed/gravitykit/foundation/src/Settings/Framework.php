@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by __root__ on 11-September-2025 using Strauss.
+ * Modified by __root__ on 16-October-2025 using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 
@@ -56,6 +56,15 @@ class Framework {
 	 * @var array
 	 */
 	private $_settings_data = [];
+
+	/**
+	 * Request payload from Ajax requests.
+	 *
+	 * @since 1.6.0
+	 *
+	 * @var array
+	 */
+	private $_request_payload = [];
 
 	/**
 	 * Class constructor.
@@ -185,7 +194,18 @@ class Framework {
 	 * @return array
 	 */
 	public function get_plugins_settings_data() {
-		$plugins_settings_data = apply_filters( 'gk/foundation/settings/data/plugins', [] );
+		/**
+		 * Modifies plugins' settings.
+		 *
+		 * @filter `gk/foundation/settings/data/plugins`
+		 *
+		 * @since  1.0.0
+		 * @since  1.6.0 Added $payload parameter.
+		 *
+		 * @param array $plugins_data Plugins data.
+		 * @param array $payload      Request payload, if this is an Ajax request.
+		 */
+		$plugins_settings_data = apply_filters( 'gk/foundation/settings/data/plugins', [], $this->_request_payload );
 
 		if ( ! is_array( $plugins_settings_data ) ) {
 			LoggerFramework::get_instance()->error( 'Invalid settings data. Expected array, got ' . print_r( $plugins_settings_data, true ) ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_print_r
@@ -208,15 +228,6 @@ class Framework {
 			);
 		}
 
-		/**
-		 * Modifies plugins' settings.
-		 *
-		 * @filter `gk/foundation/settings/data/plugins`
-		 *
-		 * @since  1.0.0
-		 *
-		 * @param array $plugins_data Plugins data.
-		 */
 		return array_filter( $plugins_settings_data );
 	}
 
@@ -361,10 +372,12 @@ class Framework {
 		 * @filter `gk/foundation/settings/{plugin}/save/before`
 		 *
 		 * @since  1.0.0
+		 * @since  1.6.0 Added $payload parameter.
 		 *
 		 * @param array $settings Plugin settings.
+		 * @param array $payload  Request payload, if this is an Ajax request.
 		 */
-		$settings_data[ $plugin ] = apply_filters( "gk/foundation/settings/{$plugin}/save/before", $settings_data[ $plugin ] );
+		$settings_data[ $plugin ] = apply_filters( "gk/foundation/settings/{$plugin}/save/before", $settings_data[ $plugin ], $this->_request_payload );
 
 		return $this->save_all_settings( $settings_data, $site_id );
 	}
@@ -461,19 +474,19 @@ class Framework {
 		}
 
 		/**
-		 * Modifies global settings configuration.
+		 * Modifies extra data passed from backend to UI and back (during save operations).
 		 *
-		 * @filter `gk/foundation/settings/data/config`
+		 * @filter `gk/foundation/settings/data/extra`
 		 *
-		 * @since  1.0.0 Introduced but not (yet) used.
+		 * @since  1.6.0
 		 *
-		 * @param array $config Configuration.
+		 * @param array $extra Extra data.
 		 */
-		$config = apply_filters( 'gk/foundation/settings/data/config', [] );
+		$extra = apply_filters( 'gk/foundation/settings/data/extra', [] );
 
 		$script_data = array_merge(
 			[
-				'config'            => $config,
+				'extra'             => $extra,
 				'plugins'           => array_values( $plugins_data ),
 				'languageDirection' => is_rtl() ? 'rtl' : 'ltr',
 			],
@@ -581,6 +594,9 @@ class Framework {
 			throw new Exception( esc_html__( 'Invalid request.', 'gk-gravityedit' ) );
 		}
 
+		// Store payload for use in filters/actions.
+		$this->_request_payload = $settings_data;
+
 		try {
 			$plugins_data = $this->get_plugins_settings_data();
 
@@ -653,10 +669,12 @@ class Framework {
 			 * @filter `gk/foundation/settings/{$plugin}/validation/before`
 			 *
 			 * @since  1.0.0
+			 * @since  1.6.0 Added $payload parameter.
 			 *
 			 * @param array $ui_settings Settings.
+			 * @param array $payload     Request payload, if this is an Ajax request.
 			 */
-			$ui_settings = apply_filters( "gk/foundation/settings/{$plugin_id}/validation/before", $ui_settings );
+			$ui_settings = apply_filters( "gk/foundation/settings/{$plugin_id}/validation/before", $ui_settings, $this->_request_payload );
 
 			$this->_validator->validate( $plugin_id, $plugin_settings, $ui_settings );
 
@@ -666,10 +684,12 @@ class Framework {
 			 * @filter `gk/foundation/settings/{$plugin}/validation/after`
 			 *
 			 * @since  1.0.0
+			 * @since  1.6.0 Added $payload parameter.
 			 *
 			 * @param array $ui_settings Settings.
+			 * @param array $payload     Request payload, if this is an Ajax request.
 			 */
-			$ui_settings = apply_filters( "gk/foundation/settings/{$plugin_id}/validation/after", $ui_settings );
+			$ui_settings = apply_filters( "gk/foundation/settings/{$plugin_id}/validation/after", $ui_settings, $this->_request_payload );
 
 			$this->save_plugin_settings( $plugin_id, $ui_settings );
 

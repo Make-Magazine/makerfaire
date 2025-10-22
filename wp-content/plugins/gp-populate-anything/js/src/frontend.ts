@@ -109,6 +109,7 @@ window.gform.addAction('gform_post_conditional_logic_field_action', function(
 
 	if (
 		$targetField.length &&
+		!$targetField.hasClass('gf_coupon_code') &&
 		defaultValues &&
 		typeof defaultValues === 'string' &&
 		action === 'show' &&

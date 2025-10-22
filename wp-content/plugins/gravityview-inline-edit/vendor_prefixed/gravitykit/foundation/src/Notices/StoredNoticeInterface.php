@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by __root__ on 11-September-2025 using Strauss.
+ * Modified by __root__ on 16-October-2025 using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 
@@ -62,4 +62,22 @@ interface StoredNoticeInterface extends NoticeInterface {
 	 * @return void
 	 */
 	public function apply_live_updates( NoticeRepository $repository ): void;
+
+	/**
+	 * Returns whether the notice can be globally dismissed (removed from database).
+	 *
+	 * @since 1.4.0
+	 *
+	 * @return bool True if the notice can be globally dismissed.
+	 */
+	public function is_globally_dismissible(): bool;
+
+	/**
+	 * Returns the capability required for global dismissal.
+	 *
+	 * @since 1.4.0
+	 *
+	 * @return string|array The capability required for global dismissal.
+	 */
+	public function get_global_dismiss_capability();
 }
