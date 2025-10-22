@@ -37,7 +37,7 @@ function getAllEntries($email, $formID = '', $page = '', $years = '') {
   $return['data'] = array();
 
   //TBD - Dynamically build the form array based on formtype
-  $forms = array(278, 260, 304);
+  $forms = array( 304, 278, 260 );
 
   //TBD also filter based on created by email
   $search_criteria = array(
