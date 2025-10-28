@@ -350,6 +350,7 @@ function buildMakerData($entry, $form_id) {
             'type'          => implode("|", $exhibit_type),
             'public_desc'   => (isset($entry['16']) ? htmlentities(addslashes($entry['16']), ENT_QUOTES) : ''),
             'project_photo' => $project_photo,
+            'additional_photos' => $project_gallery,
             'main_category' => $main_category,
             'category'      => $all_categories,
             'project_video' => (isset($entry['32']) ? $entry['32'] : ''),
