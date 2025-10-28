@@ -19,6 +19,11 @@ class PMXI_Admin_Manage extends PMXI_Controller_Admin {
 	 */
 	public function index() {
 
+		// Run preview cleanup when manage imports page loads
+		if (function_exists('wpai_cleanup_preview_imports')) {
+			wpai_cleanup_preview_imports();
+		}
+
 		$get = $this->input->get(array(
 			's' => '',
 			'order_by' => 'registered_on',
@@ -43,7 +48,7 @@ class PMXI_Admin_Manage extends PMXI_Controller_Admin {
 		}
 
 		$list = new PMXI_Import_List();
-		$by = array('parent_import_id' => 0);
+		$by = array('parent_import_id' => 0, 'is_preview' => 0);
 		if ('' != $s) {
 			$like = '%' . preg_replace('%\s+%', '%', preg_replace('/[%?]/', '\\\\$0', $s)) . '%';
 			$by[] = array(array('name LIKE' => $like, 'type LIKE' => $like, 'path LIKE' => $like, 'friendly_name LIKE' => $like), 'OR');

@@ -458,7 +458,7 @@ final class XmlExportCpt
                                         }
                                     }
 
-									// Explicitly allow a value of 0 regardless if it's int or string.
+                                    // Explicitly allow a value of 0 regardless if it's int or string.
                                     if (!$field_value && 0 !== $field_value && '0' !== $field_value) {
                                         if (XmlExportEngine::get_addons_service()->isAcfAddonActive()) {
                                             $field_value = XmlExportACF::get_acf_block_value($entry, $field_options['name']);
@@ -467,20 +467,28 @@ final class XmlExportCpt
 
 
                                     if (XmlExportEngine::get_addons_service()->isAcfAddonActive()) {
-                                        XmlExportACF::export_acf_field(
-                                            $field_value,
-                                            $exportOptions,
-                                            $ID,
-                                            $entry->ID,
-                                            $article,
-                                            $xmlWriter,
-                                            $acfs,
-                                            $element_name,
-                                            $element_name_ns,
-                                            $fieldSnippet,
-                                            $field_options['group_id'],
-                                            $preview
-                                        );
+                                        // Sanitize field value to prevent ACF addon crashes
+                                        $sanitized_field_value = self::sanitizeAcfFieldValue($field_value, $field_options, $fieldLabel, $entry->ID);
+
+                                        try {
+                                            XmlExportACF::export_acf_field(
+                                                $sanitized_field_value,
+                                                $exportOptions,
+                                                $ID,
+                                                $entry->ID,
+                                                $article,
+                                                $xmlWriter,
+                                                $acfs,
+                                                $element_name,
+                                                $element_name_ns,
+                                                $fieldSnippet,
+                                                $field_options['group_id'],
+                                                $preview
+                                            );
+                                        } catch (Exception $e) {
+                                            // Fallback: if ACF addon still fails, export the raw value
+                                            wp_all_export_write_article($article, $element_name, $sanitized_field_value);
+                                        }
                                     }
                                 }
                             }

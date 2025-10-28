@@ -2,6 +2,9 @@
 
 <form class="wpallimport-template <?php echo ! $this->isWizard ? 'edit' : '' ?> wpallimport-step-3" method="post">
 
+	<!-- Hidden field for preview unique key override - updated by preview modal before refresh -->
+	<input type="hidden" name="wpai_preview_unique_key" id="wpai-preview-unique-key-hidden" value="" />
+
 	<div class="wpallimport-wrapper">
 		<div class="wpallimport-header">
 			<div class="wpallimport-logo"></div>
@@ -14,6 +17,9 @@
 		</div>
 		<div class="clear"></div>
 	</div>
+
+
+
 
 	<?php $visible_sections = apply_filters('pmxi_visible_template_sections', array('caption', 'main', 'taxonomies', 'cf', 'featured', 'other', 'nested'), $post['custom_type']); ?>
 
@@ -230,6 +236,7 @@
 						<?php else: ?>
 							<a href="<?php echo esc_url(remove_query_arg('id', remove_query_arg('action', $this->baseUrl))); ?>" class="back rad3" style="float:none;"><?php _e('Back to Manage Imports', 'wp-all-import-pro') ?></a>
 						<?php endif; ?>
+						<button type="button" id="wpai-full-preview-btn" class="button button-secondary button-hero wpallimport-large-button" style="margin: 0 10px; background: 50% #425f9a; color: #fff;"><?php _e('Preview', 'wp-all-import-pro') ?></button>
 						<input type="submit" class="button button-primary button-hero wpallimport-large-button" value="<?php _e( ($this->isWizard) ? 'Continue to Import Settings' : 'Update Template', 'wp-all-import-pro') ?>" />
 					</div>
 
@@ -248,3 +255,5 @@
 	</table>
 
 </form>
+
+<?php include __DIR__ . '/full-preview-modal.php'; ?>

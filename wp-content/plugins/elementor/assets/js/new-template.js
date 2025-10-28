@@ -1,4 +1,4 @@
-/*! elementor - v3.32.0 - 05-10-2025 */
+/*! elementor - v3.32.0 - 21-10-2025 */
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
@@ -149,15 +149,24 @@ module.exports = elementorModules.common.views.modal.Layout.extend({
   },
   initialize: function initialize() {
     elementorModules.common.views.modal.Layout.prototype.initialize.apply(this, arguments);
-    var lookupControlIdPrefix = 'elementor-new-template__form__';
-    var templateTypeSelectId = "".concat(lookupControlIdPrefix, "template-type");
     this.showLogo();
     this.showContentView();
     this.initElements();
     this.lockProBehavior = new _lockPro.default(this.elements);
     this.lockProBehavior.bindEvents();
+    this.setupDynamicControlsVisibility();
+  },
+  setupDynamicControlsVisibility: function setupDynamicControlsVisibility() {
+    // eslint-disable-next-line camelcase
+    var isFormControlsDefined = 'undefined' !== typeof elementor_new_template_form_controls;
+    if (!isFormControlsDefined) {
+      return;
+    }
+    var CONTROL_ID_PREFIX = 'elementor-new-template__form__';
+    var templateTypeSelectId = "".concat(CONTROL_ID_PREFIX, "template-type");
     var dynamicControlsVisibilityListener = function dynamicControlsVisibilityListener() {
-      elementorAdmin.templateControls.setDynamicControlsVisibility(lookupControlIdPrefix, elementor_new_template_form_controls);
+      // eslint-disable-next-line camelcase
+      elementorAdmin.templateControls.setDynamicControlsVisibility(CONTROL_ID_PREFIX, elementor_new_template_form_controls);
     };
     this.getModal().onShow = function () {
       dynamicControlsVisibilityListener();
@@ -380,7 +389,8 @@ var NewTemplateModule = elementorModules.ViewModule.extend({
   },
   showModalByHash: function showModalByHash() {
     if ('#add_new' === location.hash) {
-      this.layout.showModal();
+      var _this$layout;
+      (_this$layout = this.layout) === null || _this$layout === void 0 || _this$layout.showModal();
       location.hash = '';
     }
   },
@@ -390,8 +400,9 @@ var NewTemplateModule = elementorModules.ViewModule.extend({
     this.showModalByHash();
   },
   onAddButtonClick: function onAddButtonClick(event) {
+    var _this$layout2;
     event.preventDefault();
-    this.layout.showModal();
+    (_this$layout2 = this.layout) === null || _this$layout2 === void 0 || _this$layout2.showModal();
   }
 });
 jQuery(function () {

@@ -975,17 +975,37 @@ final Class XmlCsvExport
                     $data = fgetcsv($in, 0, XmlExportEngine::$exportOptions['delimiter']);
                     if (empty($data)) continue;
 
-                    if (count(array_values($data)) < count($old_headers)) {
-                        $difference = count($old_headers) - count(array_values($data));
+                    // Handle CSV parsing issues by ensuring proper column count
+                    $data_values = array_values($data);
+                    $data_count = count($data_values);
+                    $headers_count = count($old_headers);
+					
+                    if ($data_count < $headers_count) {
+                        // Add empty values for missing columns
+                        $difference = $headers_count - $data_count;
                         for ($i = 0; $i < $difference; $i++) {
-                            $data[] = "";
+                            $data_values[] = "";
+                        }
+                    } elseif ($data_count > $headers_count) {
+                        // Handle case where CSV parsing created too many columns due to unescaped delimiters
+                        // Try to reconstruct the original data by joining excess columns
+                        $excess_count = $data_count - $headers_count;
+                        if ($excess_count > 0) {
+                            // Take the expected number of columns minus 1, then join the rest
+                            $fixed_data = array_slice($data_values, 0, $headers_count - 1);
+                            $remaining_data = array_slice($data_values, $headers_count - 1);
+                            $fixed_data[] = implode(XmlExportEngine::$exportOptions['delimiter'], $remaining_data);
+                            $data_values = $fixed_data;
                         }
                     }
 
-                    $data_assoc = array_combine($old_headers, array_values($data));
+                    $data_assoc = array_combine($old_headers, $data_values);
+
                     $line = array();
                     foreach ($headers as $header) {
-                        $line[$header] = (isset($data_assoc[$header])) ? $data_assoc[$header] : '';
+                        $value = (isset($data_assoc[$header])) ? $data_assoc[$header] : '';
+                        // Only sanitize when reconstructing from corrupted CSV data
+                        $line[$header] = self::sanitizeCorruptedCsvData($value);
                     }
                     self::getCsvWriter()->writeCsv($out, $line, XmlExportEngine::$exportOptions['delimiter']);
                     apply_filters('wp_all_export_after_csv_line', $out, XmlExportEngine::$exportID);
@@ -1212,5 +1232,93 @@ final Class XmlCsvExport
 
     private static function isRteExport($item) {
         return isset($item['enable_real_time_exports']) && $item['enable_real_time_exports'];
+    }
+
+    /**
+     * Sanitize corrupted CSV data during merge operations only
+     * This is specifically for handling data that was already corrupted in existing CSV files
+     *
+     * @param mixed $value The value to sanitize
+     * @return mixed The sanitized value
+     */
+    private static function sanitizeCorruptedCsvData($value) {
+        // Only process strings
+        if (!is_string($value)) {
+            return $value;
+        }
+
+        // Don't modify empty values
+        if (empty($value)) {
+            return $value;
+        }
+
+        // Allow filtering to disable or customize sanitization
+        $sanitize = apply_filters('wp_all_export_sanitize_csv_data', true, $value);
+        if (!$sanitize) {
+            return $value;
+        }
+
+        // Skip sanitization for serialized data or JSON to avoid breaking structured data
+        if (is_serialized($value) || self::isJson($value)) {
+            return $value;
+        }
+
+        // Skip sanitization for ACF field data patterns to avoid breaking addon compatibility
+        if (self::looksLikeAcfData($value)) {
+            return $value;
+        }
+
+        // Only apply minimal sanitization to fix the specific issues that caused array_combine() errors:
+        // 1. Normalize line endings that break CSV row parsing
+        // 2. Don't modify the content otherwise - let the CSV writer handle proper escaping
+
+        // Convert Windows/Mac line endings to Unix, but preserve the newlines
+        $value = str_replace(["\r\n", "\r"], "\n", $value);
+
+        // Allow custom sanitization
+        return apply_filters('wp_all_export_csv_sanitized_value', $value);
+    }
+
+    /**
+     * Check if a string is valid JSON
+     *
+     * @param string $string
+     * @return bool
+     */
+    private static function isJson($string) {
+        if (!is_string($string)) {
+            return false;
+        }
+        json_decode($string);
+        return (json_last_error() == JSON_ERROR_NONE);
+    }
+
+    /**
+     * Check if a string looks like ACF field data that shouldn't be sanitized
+     *
+     * @param string $value
+     * @return bool
+     */
+    private static function looksLikeAcfData($value) {
+        if (!is_string($value) || strlen($value) < 10) {
+            return false;
+        }
+
+        // Check for common ACF field patterns
+        $acf_patterns = [
+            'field_',           // ACF field keys
+            'acf-field',        // ACF field references
+            'a:',               // Serialized array start
+            's:',               // Serialized string start
+            'O:',               // Serialized object start
+        ];
+
+        foreach ($acf_patterns as $pattern) {
+            if (strpos($value, $pattern) === 0) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

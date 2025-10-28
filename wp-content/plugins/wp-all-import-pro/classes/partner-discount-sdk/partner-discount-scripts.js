@@ -74,4 +74,33 @@ document.addEventListener("DOMContentLoaded", () => {
         })
     })
   })
-})
+
+  //filters
+  const filterButtons = document.querySelectorAll('.soflyy_pd_sdk-filters .soflyy_pd_sdk-filter-btn');
+  const cards = document.querySelectorAll('.soflyy_pd_sdk-grid-item');
+
+  filterButtons.forEach(button => {
+    button.addEventListener('click', () => {
+      // Remove 'is-active' from all buttons
+      filterButtons.forEach(btn => btn.classList.remove('is-active'));
+      // Add 'is-active' to the clicked button
+      button.classList.add('is-active');
+
+      const filterValue = button.getAttribute('data-filter');
+
+      cards.forEach(card => {
+        const cardCategory = card.getAttribute('data-category');
+
+        // Show all if filter is '*', otherwise match category
+        if (filterValue === '*' || cardCategory === filterValue) {
+          card.style.display = '';
+          card.classList.remove('hidden');
+        } else {
+          card.style.display = 'none';
+          card.classList.add('hidden');
+        }
+      });
+    });
+  });
+});
+

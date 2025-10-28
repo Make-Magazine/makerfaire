@@ -13,7 +13,7 @@
         'berlindb/core' => array(
             'pretty_version' => 'dev-master',
             'version' => 'dev-master',
-            'reference' => '4d5f7386f99464cf89d121878a7a25b014eddefe',
+            'reference' => '6a9383ab2dad726bf2d6dbda6687da848eda22ea',
             'type' => 'library',
             'install_path' => __DIR__ . '/../berlindb/core',
             'aliases' => array(

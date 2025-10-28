@@ -59,6 +59,9 @@ class PMXI_Addon_View {
         $session    = new \PMXI_Handler();
         $templateId = ! empty( $session->is_loaded_template ) ? $session->is_loaded_template : false;
 
+        // Initialize options to empty array to ensure we always return an array
+        $options = [];
+
         if ( $templateId ) {
             $defaults = $this->addon->defaultOptions( $this->type, $this->subtype );
             $template = new \PMXI_Template_Record();
@@ -68,9 +71,9 @@ class PMXI_Addon_View {
                 $options         = $templateOptions + $defaults;
             }
         } elseif ( ! $import->isEmpty() ) {
-            $options = $import->options;
+            $options = $import->options ?? [];
         } else {
-            $options = $session->options;
+            $options = $session->options ?? [];
         }
 
         return $options;

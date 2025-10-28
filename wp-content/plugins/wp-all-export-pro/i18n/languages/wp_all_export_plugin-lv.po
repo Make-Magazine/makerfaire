@@ -1,12 +1,16 @@
 msgid ""
 msgstr ""
+"Project-Id-Version: WP All Export Pro\n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: lv\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: POEditor.com\n"
-"Project-Id-Version: WP All Export Pro\n"
-"Language: lv\n"
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n != 0 ? 1 : 2);\n"
+"X-Generator: Poedit 3.7\n"
 
 #. Plugin Name of the plugin/theme
 #: actions/admin_menu.php:11 actions/admin_menu.php:14
@@ -835,10 +839,12 @@ msgid "Customer Account Email Address"
 msgstr ""
 
 #: models/export/record.php:443
-msgid "The other two files in this zip are the export file containing all of your data and the import template for WP All Import. \n"
+msgid ""
+"The other two files in this zip are the export file containing all of your data and the import template for WP All Import. \n"
 "\n"
 "To import this data, create a new import with WP All Import and upload this zip file."
-msgstr "Pārējie divi faili zip arhīvā ir eksporta fails, kas satur visus datus un WP All Import importa veidne. \n"
+msgstr ""
+"Pārējie divi faili zip arhīvā ir eksporta fails, kas satur visus datus un WP All Import importa veidne. \n"
 "\n"
 "Lai importētu šos datus izveidojiet jaunu WP All Import importu un augšupielādējiet šo zip failu."
 
@@ -1596,7 +1602,7 @@ msgstr "nekad"
 
 #: views/admin/manage/index.php:302
 msgid "%d Records Exported"
-msgstr "% ieraksti "
+msgstr "%d ieraksti "
 
 #: views/admin/manage/index.php:304
 msgid "Format: %s"
@@ -1799,17 +1805,14 @@ msgid "Uploads folder %s must be writable"
 msgstr "Augšupielādes mapei %s ir jābūt rakstīšanas tiesībām."
 
 #. Plugin URI of the plugin/theme
-#: 
 msgid "http://www.wpallimport.com/export/"
 msgstr ""
 
 #. Description of the plugin/theme
-#: 
 msgid "Export any post type to a CSV or XML file. Edit the exported data, and then re-import it later using WP All Import."
 msgstr ""
 
 #. Author of the plugin/theme
-#: 
 msgid "Soflyy"
 msgstr ""
 
@@ -1983,7 +1986,5 @@ msgid "A license key is required to access plugin updates. You can use your lice
 msgstr ""
 
 #. Plugin Name of the plugin/theme
-#: 
 msgid "WP All Export Pro"
 msgstr ""
-

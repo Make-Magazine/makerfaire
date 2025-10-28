@@ -4,8 +4,8 @@ Tags: page builder, editor, landing page, drag-and-drop, elementor,
 Requires at least: 6.6
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 3.32.4
-Beta tag: 3.32.0-beta3
+Stable tag: 3.32.5
+Beta tag: 3.33.0-beta2
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -349,7 +349,13 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 
 == Changelog ==
 
+= 3.32.5 - 2025-10-21 =
+
+* Fix: Create Template dialog doesn't close in WordPress Templates section
+* Fix: Website Template fails to apply when Custom Code or Custom Icons are included
+
 = 3.32.4 - 2025-10-05 =
+
 * Tweak: Added notice for Load Google Fonts Locally feature to clarify behavior and setup
 
 = 3.32.3 - 2025-09-29 =

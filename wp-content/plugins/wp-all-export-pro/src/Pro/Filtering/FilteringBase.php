@@ -226,8 +226,8 @@ abstract class FilteringBase implements FilteringInterface
                 if ($table_alias) $q .= " OR $table_alias.meta_value IS NULL";
                 break;
             case 'is_not_empty':
-                $q = "IS NOT NULL ";
-                if ($table_alias) $q .= " AND $table_alias.meta_value <> '' ";
+                $q = "<> '' ";
+                if ($table_alias) $q .= " AND $table_alias.meta_value IS NOT NULL ";
                 break;
 	        case 'is_in_list':
 		        $values = array_map('trim', explode(',', $value));

@@ -2881,7 +2881,9 @@
 		var $input = $('input[name="xpath"]');
 
 		$input.on('change', function(){
-			$('.tagno').trigger('change');
+			// Only trigger tagno change for the XML preview sidebar, not the full preview modal
+			// The full preview modal has its own tagno input that should only respond to user interaction
+			$('.tag input[name="tagno"]').trigger('change');
 			// console.log('XPath changed - ', $(this).val());
 			// $.post('admin.php?page=pmxi-admin-import&action=evaluate', {xpath: $(this).val(), show_element: 1, root_element:$('#root_element').val(), is_csv: $('input[name="is_csv"]').length, delimiter:$('input[name="is_csv"]').val(), security: wp_all_import_security}, function (response) {
 			// 	console.log('Rsponse - ', response);
@@ -3146,12 +3148,22 @@
 		}
 
 		// Add all possible tags as options if not already added
-		tags.forEach(tag => {
-			if (tag.trim() && !$select.find(`option[value="${tag.trim()}"]`).length) {
+	tags.forEach(tag => {
+		if (tag.trim()) {
+			// Check if option already exists by iterating through options instead of using selector
+			let optionExists = false;
+			$select.find('option').each(function() {
+				if ($(this).val() === tag.trim()) {
+					optionExists = true;
+					return false; // break
+				}
+			});
+			
+			if (!optionExists) {
 				$select.append(`<option value="${tag.trim()}">${tag.trim()}</option>`);
 			}
-		});
-
+		}
+	});
 		// Insert the select element after the hidden input
 		$hiddenInput.after($select);
 

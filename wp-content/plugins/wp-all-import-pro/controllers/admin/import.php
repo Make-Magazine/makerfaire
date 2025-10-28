@@ -1691,6 +1691,30 @@ class PMXI_Admin_Import extends PMXI_Controller_Admin {
 					}
 
 					if ($this->isWizard) {
+                        // If user ran a preview with a custom unique identifier, use it as default for Step 4
+                        // This captures the unique key that was actually used for running previews
+                        $preview_unique_key = PMXI_Plugin::$session->get('preview_unique_key');
+                        if (!empty($preview_unique_key)) {
+                            $auto_detected_key = '';
+                            // Auto-detect what the default would be
+                            if (empty($post['unique_key'])) {
+                                if (empty(PMXI_Plugin::$session->deligate)) {
+                                    if ($post['custom_type'] == 'import_users') {
+                                        $auto_detected_key = !empty($post['pmui']['login']) ? $post['pmui']['login'] : '';
+                                    } elseif ($post['custom_type'] == 'shop_customer') {
+                                        $auto_detected_key = !empty($post['pmsci_customer']['login']) ? $post['pmsci_customer']['login'] : '';
+                                    } else {
+                                        $auto_detected_key = !empty($post['title']) ? $post['title'] : '';
+                                    }
+                                }
+                            }
+
+                            // If preview unique key is different from auto-detected, use it
+                            if ($preview_unique_key !== $auto_detected_key) {
+                                $post['unique_key'] = $preview_unique_key;
+                            }
+                        }
+
                         PMXI_Plugin::$session->set('options', $post);
                         PMXI_Plugin::$session->save_data();
 
@@ -1869,6 +1893,9 @@ class PMXI_Admin_Import extends PMXI_Controller_Admin {
 		add_thickbox();
 		wp_enqueue_script('media-upload');
 		wp_enqueue_script('quicktags');
+
+		// Make sure $post data is available to the view
+		$this->data['post'] = $post;
 
 		$this->render();
 	}

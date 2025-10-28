@@ -3543,6 +3543,16 @@ class PMXI_Import_Record extends PMXI_Model_Record {
                                                         );
                                                         if (!is_wp_error($term)) {
                                                             $is_created_term = TRUE;
+
+                                                            /**
+                                                             * Fires once a taxonomy term has been created during import.
+                                                             *
+                                                             * @param int    $term_id   The term ID.
+                                                             * @param string $taxonomy  The taxonomy slug.
+                                                             * @param int    $import_id The import ID.
+                                                             */
+                                                            do_action('wp_all_import_created_term', $term['term_id'], $tx_name, $this->id);
+
                                                             if (empty($parent_id)) {
                                                                 $logger and call_user_func($logger, sprintf(__('- Creating parent %s %s `%s` ...', 'wp-all-import-pro'), $custom_type_details->labels->singular_name, $tx_name, $single_tax['name']));
                                                             }

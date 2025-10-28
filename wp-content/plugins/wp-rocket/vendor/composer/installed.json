@@ -7,15 +7,15 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/berlindb/core.git",
-                "reference": "4d5f7386f99464cf89d121878a7a25b014eddefe"
+                "reference": "6a9383ab2dad726bf2d6dbda6687da848eda22ea"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/berlindb/core/zipball/4d5f7386f99464cf89d121878a7a25b014eddefe",
-                "reference": "4d5f7386f99464cf89d121878a7a25b014eddefe",
+                "url": "https://api.github.com/repos/berlindb/core/zipball/6a9383ab2dad726bf2d6dbda6687da848eda22ea",
+                "reference": "6a9383ab2dad726bf2d6dbda6687da848eda22ea",
                 "shasum": ""
             },
-            "time": "2024-10-14T18:35:55+00:00",
+            "time": "2025-10-23T20:00:35+00:00",
             "default-branch": true,
             "type": "library",
             "installation-source": "dist",

@@ -71,6 +71,7 @@ CREATE TABLE {$table_prefix}imports (
   	settings_update_on DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
   	last_activity DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',			
   	iteration BIGINT(20) NOT NULL DEFAULT 0,
+  	is_preview BOOL NOT NULL DEFAULT 0,
 	PRIMARY KEY  (id)
 ) $charset_collate;
 CREATE TABLE {$table_prefix}posts (

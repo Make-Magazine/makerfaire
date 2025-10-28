@@ -435,7 +435,12 @@ class AttachmentHandler{
 				if (!empty($imgs)){
 					foreach ($imgs as $img) {
 						if ( ! is_numeric($img) ){
-							$gallery_images[] = json_decode($img, true);
+							// WP All Export Pro encodes gallery image data as base64_encode(json_encode(...))
+							// so we need to base64_decode first, then json_decode
+							$decoded_img = json_decode(base64_decode($img), true);
+							if ($decoded_img !== null) {
+								$gallery_images[] = $decoded_img;
+							}
 						}
 					}
 				}

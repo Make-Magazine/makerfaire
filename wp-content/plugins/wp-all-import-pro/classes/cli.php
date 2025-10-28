@@ -153,7 +153,7 @@ class PMXI_Cli {
         try {
             $items = [];
             $imports = new PMXI_Import_List();
-            foreach ($imports->setColumns($imports->getTable() . '.*')->getBy(array('id !=' => ''))->convertRecords() as $import){
+            foreach ($imports->setColumns($imports->getTable() . '.*')->getBy(array('id !=' => '', 'is_preview' => 0))->convertRecords() as $import){
                 $import->getById($import->id);
                 if ( ! $import->isEmpty() && $import->parent_import_id != 99999 ){
                     $items[] = [

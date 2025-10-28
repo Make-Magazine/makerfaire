@@ -1,4 +1,4 @@
-/*! elementor - v3.32.0 - 05-10-2025 */
+/*! elementor - v3.32.0 - 21-10-2025 */
 (self["webpackChunkelementorFrontend"] = self["webpackChunkelementorFrontend"] || []).push([["frontend-modules"],{
 
 /***/ "../app/assets/js/event-track/apps-event-tracking.js":

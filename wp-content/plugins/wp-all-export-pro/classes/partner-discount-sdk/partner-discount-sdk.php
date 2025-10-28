@@ -10,11 +10,15 @@ if (!defined('ABSPATH')) {
 if (!class_exists('Soflyy_Partner_Discount')) {
 
     class Soflyy_Partner_Discount {
-        const VERSION = '1.0.1';
+        const VERSION = '1.0.4';
         private $partners;
+        private $css_variables;
+        private $filters;
 
-        public function __construct($partners = []) {
+        public function __construct($partners = [], $css_variables = [], $filters = []) {
             $this->partners = empty($partners) ? $this->get_default_partners() : $partners;
+            $this->css_variables = $this->merge_css_variables($css_variables);
+            $this->filters = empty($filters) ? $this->get_default_filters() : $filters;
         }
 
         public static function enqueue_assets() {
@@ -36,76 +40,90 @@ if (!class_exists('Soflyy_Partner_Discount')) {
             }
         }
 
+        private function get_default_filters() {
+            return [];
+        }
+
         private function get_default_partners() {
             return [
                 [
-                    'name' => 'AnalyticsWP',
-                    'desc' => 'This privacy-compliant WordPress analytics plugin gives detailed insights into user behavior beyond what traditional tools can provide, and has a dedicated integration for WooCommerce.',
-                    'code' => 'wpallimport2024',
-                    'discount' => '20%',
-                    'link' => 'https://analyticswp.com/pricing/?wt_coupon=wpallimport2024',
-                    'image' => 'https://www.wpallimport.com/wp-content/uploads/2025/05/analyticswp-logo.svg'
-                ],
-                [
-                    'name' => 'Breakdance',
-                    'desc' => 'Created by the same team behind WP All Import, Breakdance is a modern visual site builder for WordPress that combines professional power with drag & drop ease of use.',
-                    'code' => 'WPAI',
-                    'discount' => '35%',
-                    'link' => 'https://breakdance.com/checkout?edd_action=add_to_cart&discount=WPAI&download_id=14&edd_options%5Bprice_id%5D=1',
-                    'image' => 'https://www.wpallimport.com/wp-content/uploads/2024/08/cropped-favicon.png'
-                ],
-                [
-                    'name' => 'WPCodeBox',
-                    'desc' => 'Save code from inside Breakdance to WPCodebox in one click. Use cloud snippets to share across your sites and explore the Code Snippet Repository full of tested snippets.',
-                    'code' => 'KMWOV0WBKJ',
-                    'discount' => '20%',
-                    'link' => 'https://wpcodebox.com/',
-                    'image' => 'https://www.wpallimport.com/wp-content/uploads/2024/08/WPCodeBox-Logo-Small-Dark.png'
-                ],
-                [
-                    'name' => 'Oxygen',
-                    'desc' => 'Created by the same team behind WP All Import, Oxygen is the go-to WordPress website builder for highly advanced users & developers who love to code.',
-                    'code' => 'WPAI20',
-                    'discount' => '20%',
-                    'link' => 'https://oxygenbuilder.com/checkout/?edd_action=add_to_cart&download_id=4790638&discount=WPAI20',
-                    'image' => 'https://www.wpallimport.com/wp-content/uploads/2025/01/logo-minimal-black.png'
-                ],
-                [
-                    'name' => 'Meta Box',
-                    'desc' => 'Meta Box is a WordPress custom fields plugin for flexible content management using custom post types and custom fields.',
-                    'code' => 'BREAKDANCE20',
-                    'discount' => '20%',
-                    'link' => 'https://metabox.io/pricing/',
-                    'image' => 'https://www.wpallimport.com/wp-content/uploads/2025/03/metabox-logo-square.png'
-                ],
-                [
-                    'name' => 'Slim SEO',
-                    'desc' => 'Premium SEO plugins that are lightweight, performant, and support Meta Box & page builders. Built by the same team at MetaBox.io.',
-                    'code' => 'BREAKDANCE20',
-                    'discount' => '20%',
-                    'link' => 'https://wpslimseo.com/products/',
-                    'image' => 'https://www.wpallimport.com/wp-content/uploads/2025/03/slimseo-logo-square.png'
+                    'name' => 'Partner name',
+                    'desc' => 'Partner description',
+                    'code' => 'Discount code',
+                    'discount' => '0%',
+                    'link' => 'https://example.com',
+                    'image' => 'https://example.com/logo.svg',
+                    'category' => ''
                 ]
             ];
+        }
+
+        private function get_default_css_variables() {
+            return [
+                'primary-color' => '#00b3b6',        // Main accent color (buttons, links)
+                'primary-color-hover' => '#009da0',  // Hover state for primary color
+                'black' => '#000',                   // Primary text color
+                'white' => '#fff',                   // Card backgrounds
+                'gray' => '#757575',                 // Secondary text color
+                'light-gray' => '#f5f5f7',          // Section background, code background
+                'medium-gray' => '#79848e',          // Unused (kept for compatibility)
+                'dark-gray' => '#333',               // Headings, dark text
+                'border-gray' => '#979797',          // Discount badge border
+                'text-gray' => '#585858',            // Discount badge text
+                'hover-gray' => '#eaeaea',           // Code hover background
+                'success-bg' => '#e6f7f7',            // Copied code background
+                'btn-text-color' => '#fff',        // Button text color
+                'btn-text-color-hover' => '#fff',  // Hover state for button text color
+            ];
+        }
+
+        private function merge_css_variables($custom_variables) {
+            $default_variables = $this->get_default_css_variables();
+            return array_merge($default_variables, $custom_variables);
+        }
+
+        private function generate_css_variables_style() {
+            $css_rules = [];
+            foreach ($this->css_variables as $key => $value) {
+                $css_rules[] = "--{$key}: {$value}";
+            }
+            return implode('; ', $css_rules);
+        }
+
+        private function is_percentage($input) {
+            $input = trim($input);
+            return preg_match('/^\d+(\.\d+)?%$/', $input) === 1;
         }
 
         public function render() {
             ob_start();
             $partners = $this->partners;
+            $css_variables_style = $this->generate_css_variables_style();
+            $filters = $this->filters;
             ?>
-            <div class="soflyy_pd_sdk-section">
+            <div class="soflyy_pd_sdk-section" style="<?php echo esc_attr($css_variables_style); ?>">
                 <div class="soflyy_pd_sdk-container">
                     <div class="soflyy_pd_sdk-header">
                         <h1>Partner Discounts</h1>
                         <p>Exclusive discounts on premium WordPress tools and plugins for our users.</p>
                     </div>
+
+                    <?php if (!empty($filters)): ?>
+                        <div class="soflyy_pd_sdk-filters" aria-label="Filters">
+                        <button class="soflyy_pd_sdk-filter-btn is-active" data-filter="*">All</button>
+                        <?php foreach ($filters as $filter): ?>
+                            <button class="soflyy_pd_sdk-filter-btn" data-filter="<?php echo esc_html($filter['slug']); ?>"><?php echo esc_html($filter['name']); ?></button>
+                        <?php endforeach; ?>
+                        </div>
+                    <?php endif; ?>
+
                     <div class="soflyy_pd_sdk-inner-wrap">
                         <div class="soflyy_pd_sdk-grid-container">
                             <?php foreach ($partners as $partner): ?>
-                                <div class="soflyy_pd_sdk-grid-item">
+                                <div class="soflyy_pd_sdk-grid-item" data-category="<?php if (isset($partner['category']))echo esc_html($partner['category']); ?>">
                                     <div class="soflyy_pd_sdk-partner-card">
                                         <?php if (!empty($partner['discount'])): ?>
-                                        <div class="soflyy_pd_sdk-discount-badge"><?php echo esc_html($partner['discount']); ?> OFF</div>
+                                            <div class="soflyy_pd_sdk-discount-badge"><?php echo esc_html($partner['discount']); ?> <?php if ($this->is_percentage($partner['discount'])):?>OFF<?php endif;?></div>
                                         <?php endif; ?>
                                         <div class="soflyy_pd_sdk-partner-top">
                                             <?php if (!empty($partner['image'])): ?>
@@ -119,10 +137,16 @@ if (!class_exists('Soflyy_Partner_Discount')) {
                                             </div>
                                         </div>
                                         <div class="soflyy_pd_sdk-partner-bottom">
-                                            <div class="soflyy_pd_sdk-partner-code">
-                                                <span>Code:</span>
-                                                <code data-original-text="<?php echo esc_attr($partner['code']); ?>"><?php echo esc_html($partner['code']); ?></code>
-                                            </div>
+                                            <?php if ($this->is_percentage($partner['discount'])):?>
+                                                <div class="soflyy_pd_sdk-partner-code">
+                                                    <span>Code:</span>
+                                                    <code data-original-text="<?php echo esc_attr($partner['code']); ?>"><?php echo esc_html($partner['code']); ?></code>
+                                                </div>
+                                            <?php else: ?>
+                                                <div class="soflyy_pd_sdk-partner-code">
+                                                    <div><?php echo $partner['code']; ?></div>
+                                                </div>
+                                            <?php endif; ?>
                                             <a class="soflyy_pd_sdk-claim-btn" href="<?php echo esc_url($partner['link']); ?>" target="_blank" rel="noopener">
                                                 Claim
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17l9.2-9.2M17 17V7H7"/></svg>
@@ -130,10 +154,10 @@ if (!class_exists('Soflyy_Partner_Discount')) {
                                         </div>
                                     </div>
                                 </div>
-                        <?php endforeach; ?>
+                            <?php endforeach; ?>
+                        </div>
                     </div>
                 </div>
-            </div>
             </div>  
             <?php
             return ob_get_clean();
@@ -143,8 +167,8 @@ if (!class_exists('Soflyy_Partner_Discount')) {
     add_action('wp_enqueue_scripts', ['Soflyy_Partner_Discount', 'enqueue_assets']);
     add_action('admin_enqueue_scripts', ['Soflyy_Partner_Discount', 'enqueue_assets']);
 
-    function render_partner_discount_ui($partners = []) {
-        $partner_ui = new Soflyy_Partner_Discount($partners);
+    function render_partner_discount_ui($partners = [], $css_variables = [], $filters = []) {
+        $partner_ui = new Soflyy_Partner_Discount($partners, $css_variables, $filters);
         return $partner_ui->render();
     }
     

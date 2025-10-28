@@ -104,13 +104,40 @@ class PMXI_XLSParser{
 			$spreadsheetDelimiter = ",";
 			$spreadsheetDelimiter = apply_filters('wp_all_import_phpexcel_delimiter', $spreadsheetDelimiter, $this->_filename);
 
-			// Create a CSV writer and set the settings
-			$objWriter = IOFactory::createWriter($objSpreadsheet, 'Csv');
-			$objWriter->setDelimiter($spreadsheetDelimiter)
-			          ->setEnclosure('"')
-			          ->setLineEnding("\r\n")
-			          ->setSheetIndex(0)
-			          ->save($this->csv_path);
+			// Instead of using the CSV writer which uses raw values, manually create CSV with formatted values
+			// This preserves quotes and other formatting from Excel's custom number formats
+			$worksheet = $objSpreadsheet->getActiveSheet();
+			$highestRow = $worksheet->getHighestRow();
+			$highestCol = $worksheet->getHighestDataColumn();
+			$highestColIndex = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::columnIndexFromString($highestCol);
+
+			$csvHandle = fopen($this->csv_path, 'w');
+			if ($csvHandle === false) {
+				throw new Exception("Could not open CSV file for writing: " . $this->csv_path);
+			}
+
+			for ($row = 1; $row <= $highestRow; $row++) {
+				$rowData = array();
+				for ($col = 1; $col <= $highestColIndex; $col++) {
+					$cell = $worksheet->getCellByColumnAndRow($col, $row);
+					$formatCode = $cell->getStyle()->getNumberFormat()->getFormatCode();
+
+					// Check if the format code contains quotes (indicating text should be added to display)
+					// Excel custom formats use quotes to add literal text to the display
+					if (strpos($formatCode, '"') !== false && $formatCode !== 'General') {
+						// Use formatted value to preserve the quotes added by custom format
+						$value = $cell->getFormattedValue();
+					} else {
+						// Use raw value for normal cells
+						$value = $cell->getValue();
+					}
+
+					$rowData[] = $value;
+				}
+				fputcsv($csvHandle, $rowData, $spreadsheetDelimiter, '"');
+			}
+
+			fclose($csvHandle);
 		}
 
         include_once(PMXI_Plugin::ROOT_DIR . '/libraries/XmlImportCsvParse.php');
@@ -255,7 +282,7 @@ class PMXI_XLSParser{
 			if ($xml !== false) {
 				$index = 0;
 				foreach ($xml->si as $si) {
-					$shared_strings[$index] = (string)$si->t;
+						$shared_strings[$index] = (string)$si->t;
 					$index++;
 				}
 			}
