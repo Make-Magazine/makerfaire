@@ -222,7 +222,9 @@ function updateMakerTables($entry, $form_id, $blog_id) {
         . "                         faire_year      = '" . $entryData['faire_year']     . "', "
         . "                         status          = '" . $entryData['status']         . "', "
         . "                         entry_link      = '" . $entryData['link']           . "', "
-        . "                         last_change_date    = now()";
+        . "                         last_change_date= now()"
+        . "                         project_gallery = '" . $entryData['project_gallery']. "', "
+        . "                         last_change_date= 'North America' ";
 
     $wpdb->query($wp_mf_entitysql);
     $entry_write_count = $entry_write_count + 1;
