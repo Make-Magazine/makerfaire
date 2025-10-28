@@ -186,7 +186,7 @@ function updateMakerTables($entry, $form_id, $blog_id) {
      * Update Entry Table - wp_mf_dir_entry
      * Fields - blog_id, entry_id, form_id, title, type, public_desc, project_photo, main_category, category, project_video, inspiration, website, social, state, country, faire_name, faire_year, status, last_change_date,      
      */
-    $wp_mf_entitysql = "insert into wp_mf_dir_entry (blog_id, entry_id, form_id, title, type, public_desc, project_photo, main_category, category, project_video, inspiration, website, social, state, country, faire_name, faire_year, status, entry_link, last_change_date) "
+    $wp_mf_entitysql = "insert into wp_mf_dir_entry (blog_id, entry_id, form_id, title, type, public_desc, project_photo, main_category, category, project_video, inspiration, website, social, state, country, faire_name, faire_year, status, entry_link, last_change_date, project_gallery, region) "
         . " VALUES (" . $blog_id . ", " . $entryID . ", " . $entryData['form_id'] . ", "
         . " '" . $entryData['title']            . "', "
         . " '" . $entryData['type']             . "', "
@@ -204,6 +204,8 @@ function updateMakerTables($entry, $form_id, $blog_id) {
         . " '" . $entryData['faire_year']       . "', "
         . " '" . $entryData['status']           . "', "
         . " '" . $entryData['link']             . "', now()) "
+        . " '" . $entryData['project_gallery']  . "', "
+        . " 'North America' "
         . " ON DUPLICATE KEY UPDATE title           = '" . $entryData['title']          . "', "
         . "                         type            = '" . $entryData['type']           . "', "
         . "                         public_desc     = '" . $entryData['public_desc']    . "', "
@@ -350,7 +352,7 @@ function buildMakerData($entry, $form_id) {
             'type'          => implode("|", $exhibit_type),
             'public_desc'   => (isset($entry['16']) ? htmlentities(addslashes($entry['16']), ENT_QUOTES) : ''),
             'project_photo' => $project_photo,
-            'additional_photos' => $project_gallery,
+            'project_gallery' => $project_gallery,
             'main_category' => $main_category,
             'category'      => $all_categories,
             'project_video' => (isset($entry['32']) ? $entry['32'] : ''),

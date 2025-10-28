@@ -35,6 +35,7 @@ $fieldHdrs = array(
     'faire_post',
     'maker_location_state',
     'maker_location_country',
+    'maker_location_region',
     'main_category',
     'all_categories',
     'mf_exhibit_link', 
@@ -44,8 +45,8 @@ $fieldHdrs = array(
 
 
 //build output data
-$blogSql = "SELECT wp_mf_dir_entry.entry_id, title, status, project_photo, additional_photos, public_desc, project_video, inspiration, website, faire_year, 
-        faire_name, state, country, social, main_category, category,
+$blogSql = "SELECT wp_mf_dir_entry.entry_id, title, status, project_photo, project_gallery, public_desc, project_video, inspiration, website, faire_year, 
+        faire_name, state, country, region, social, main_category, category,
         (select GROUP_CONCAT(maker_type separator '|') 
          	from  wp_mf_dir_maker_to_entry 
          	where wp_mf_dir_maker_to_entry.entry_id=wp_mf_dir_entry.entry_id 
@@ -207,7 +208,7 @@ foreach ($results as $data) {
         ($entity_decode?$data['title']:html_entity_decode($data['title'],ENT_QUOTES, 'UTF-8')),
         'Maker Names (not publicly visible) ' . $data['maker_or_group_name'],
         $data['project_photo'],
-        $data['additional_photos'],
+        $data['project_gallery'],
         ($entity_decode?$data['public_desc']:html_entity_decode($data['public_desc'],ENT_QUOTES, 'UTF-8')),
         $data['project_video'],        
         ($entity_decode?$data['inspiration']:html_entity_decode($data['inspiration'],ENT_QUOTES, 'UTF-8')),
@@ -223,6 +224,7 @@ foreach ($results as $data) {
         $data['faire_name'],
         $data['state'],
         $data['country'],
+        $data['region'],
         $main_category,
         $all_categories,
         'https://makerfaire.com/maker/entry/'.$data['entry_id'],
