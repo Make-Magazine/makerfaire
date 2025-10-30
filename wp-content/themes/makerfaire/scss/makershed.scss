@@ -1,12 +1,16 @@
 .related-makershed-wrapper {
-	margin: 15px;
-	margin-bottom: 25px;
+	margin-bottom: 35px;
+	border-top: solid 5px;
 	h3 {
 		color: #333;
 		padding: 10px;
 		text-align: center;
 		font-size: 1.75rem;
 		font-family: "Roboto Bold";
+	}
+	.related-makershed-items {
+		margin: 15px auto !important;
+  		width: 90%;
 	}
 	.card-deck .card {
 		a {

@@ -186,6 +186,8 @@ function updateMakerTables($entry, $form_id, $blog_id) {
      * Update Entry Table - wp_mf_dir_entry
      * Fields - blog_id, entry_id, form_id, title, type, public_desc, project_photo, main_category, category, project_video, inspiration, website, social, state, country, faire_name, faire_year, status, last_change_date,      
      */
+    $entryData['project_photo'] = clean_photos($entryData['project_photo']);
+    $entryData['project_gallery'] = clean_photos($entryData['project_gallery']);
     $wp_mf_entitysql = "insert into wp_mf_dir_entry (blog_id, entry_id, form_id, title, type, public_desc, project_photo, main_category, category, project_video, inspiration, website, social, state, country, faire_name, faire_year, status, entry_link, last_change_date, project_gallery, region) "
         . " VALUES (" . $blog_id . ", " . $entryID . ", " . $entryData['form_id'] . ", "
         . " '" . $entryData['title']            . "', "
@@ -203,9 +205,9 @@ function updateMakerTables($entry, $form_id, $blog_id) {
         . " '" . $entryData['faire_name']       . "', "
         . " '" . $entryData['faire_year']       . "', "
         . " '" . $entryData['status']           . "', "
-        . " '" . $entryData['link']             . "', now()) "
+        . " '" . $entryData['link']             . "', now() "
         . " '" . $entryData['project_gallery']  . "', "
-        . " 'North America' "
+        . " 'North America' )"
         . " ON DUPLICATE KEY UPDATE title           = '" . $entryData['title']          . "', "
         . "                         type            = '" . $entryData['type']           . "', "
         . "                         public_desc     = '" . $entryData['public_desc']    . "', "
@@ -222,7 +224,7 @@ function updateMakerTables($entry, $form_id, $blog_id) {
         . "                         faire_year      = '" . $entryData['faire_year']     . "', "
         . "                         status          = '" . $entryData['status']         . "', "
         . "                         entry_link      = '" . $entryData['link']           . "', "
-        . "                         last_change_date= now()"
+        . "                         last_change_date= now(),"
         . "                         project_gallery = '" . $entryData['project_gallery']. "', "
         . "                         last_change_date= 'North America' ";
 
@@ -433,4 +435,20 @@ function buildMakerData($entry, $form_id) {
 
     $return = array('maker' => $makerArray, 'entry' => $entryArray);
     return $return;
+}
+
+function clean_photos($value) {
+    // If JSON array (e.g. ["url1","url2"])
+    $decoded = json_decode($value, true);
+    error_log($value);
+    if (is_array($decoded)) {
+        // Join multiple URLs into one pipe-delimited string
+        return implode('|', array_map('trim', $decoded));
+    }
+
+    // Otherwise, remove outer brackets or quotes just in case
+    $value = trim($value, '[]"');
+    $value = stripslashes($value);
+
+    return $value;
 }
