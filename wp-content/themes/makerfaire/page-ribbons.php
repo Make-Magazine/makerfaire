@@ -181,7 +181,7 @@ foreach ($yearSql as $year) {
               <div class="card" dir-paginate="ribbon in ribbons| filter:query |orderBy: 'project_name' |itemsPerPage: 100" current-page="currentPage">              
                   <div class="card-header">
                     <a href="{{ribbon.link}}">
-                      <img src="{{ribbon.project_photo}}" on-error="/wp-content/themes/makerfaire/images/default-mtm-image.jpg" alt="{{ribbon.project_name}} Photo" class="card-image" />
+                      <img ng-src="{{ribbon.project_photo}}" data-no-lazy="true" on-error="/wp-content/themes/makerfaire/images/default-mtm-image.jpg" alt="{{ribbon.project_name}} Photo" class="card-image" />
                     </a>
                     <div class="ribbons">
                       <div class="blueRibbon" aria-label="Blue Ribbon Count" ng-if="ribbon.blueCount > 0">
