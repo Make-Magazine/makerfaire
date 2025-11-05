@@ -47,6 +47,9 @@ class GPFUP_Compatibility_GravityPDF {
 			$extension = pathinfo( $file_url, PATHINFO_EXTENSION );
 			$file_name = pathinfo( $file_url, PATHINFO_FILENAME );
 
+			// Get secure download URL using Gravity Forms field method
+			$secure_file_url = $this->get_secure_file_url( $file_url, $field );
+
 			if ( ! in_array( strtolower( $extension ), array(
 				'gif',
 				'png',
@@ -55,9 +58,10 @@ class GPFUP_Compatibility_GravityPDF {
 				'wmf',
 				'svg',
 				'bmp',
+				'webp',
 			), true ) ) {
 				// Link directly to other file types (e.g. PDF) without further processing
-				$html .= '<ul><li><a href="' . esc_url( $file_url ) . '">' . $file_name . '</a>' . "</li></ul>\n";
+				$html .= '<ul><li><a href="' . esc_url( $secure_file_url ) . '">' . $file_name . '</a>' . "</li></ul>\n";
 				continue;
 			}
 
@@ -76,9 +80,9 @@ class GPFUP_Compatibility_GravityPDF {
 			$link_images = apply_filters( 'gpfup_gravity_pdf_link_images', true, $file_url, $field, $entry, $form );
 
 			if ( $link_images ) {
-				$html .= '<a href="' . esc_url( $file_url ) . '"><img src="' . $file_url . '" /></a>' . "\n";
+				$html .= '<a href="' . esc_url( $secure_file_url ) . '"><img src="' . $secure_file_url . '" /></a>' . "\n";
 			} else {
-				$html .= '<img src="' . $file_url . '" />' . "\n";
+				$html .= '<img src="' . $secure_file_url . '" />' . "\n";
 			}
 
 			if ( count( $file_urls ) > 1 && $file_index + 1 < count( $file_urls ) ) {
@@ -96,6 +100,24 @@ class GPFUP_Compatibility_GravityPDF {
 			'ul'  => array(),
 			'li'  => array(),
 		) );
+	}
+
+	/**
+	 * Get secure file URL using Gravity Forms field's get_download_url method.
+	 *
+	 * @param string $file_url The original file URL.
+	 * @param array  $field    The current field being processed.
+	 *
+	 * @return string The secure download URL.
+	 */
+	private function get_secure_file_url( $file_url, $field ) {
+		// Create a GF_Field_FileUpload instance to use its security methods
+		$file_field = new GF_Field_FileUpload();
+		$file_field->formId = rgar( $field, 'formId' );
+		$file_field->id = rgar( $field, 'id' );
+
+		// Use Gravity Forms' built-in secure download URL generation
+		return $file_field->get_download_url( $file_url );
 	}
 
 

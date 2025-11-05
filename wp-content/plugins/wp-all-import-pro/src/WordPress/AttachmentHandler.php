@@ -483,6 +483,16 @@ class AttachmentHandler{
 
 			foreach ( $images as $image ){
 
+				// Extract URL from gallery image data if needed
+				if ($source_type == 'gallery'){
+					$image_data = $image;
+					$image = $image_data['url'];
+					$image_title = $image_data['title'];
+					$image_caption = $image_data['caption'];
+					$image_alt = $image_data['alt'];
+					$image_description = $image_data['description'];
+				}
+
 				$base64_name = false;
 
 				$is_base64_images_allowed = apply_filters("wp_all_import_is_base64_images_allowed", true, $image, self::$importRecord->id);
@@ -511,14 +521,6 @@ class AttachmentHandler{
 					continue;
 				}
 
-				if ($source_type == 'gallery'){
-					$image_data = $image;
-					$image = $image_data['url'];
-					$image_title = $image_data['title'];
-					$image_caption = $image_data['caption'];
-					$image_alt = $image_data['alt'];
-					$image_description = $image_data['description'];
-				}
 				$original_image_url = $image;
 				// Trying to get image full size.
 				if ($content_images_try_go_get_full_size) {
@@ -1703,6 +1705,11 @@ class AttachmentHandler{
 	}
 
 	public function get_base64_image_type($base64string) {
+		// Return null if not a string
+		if (!is_string($base64string)) {
+			return null;
+		}
+
 		// Check if the string starts with the data URL scheme
 		if (preg_match('/^data:image\/(\w+);base64,/', $base64string, $matches)) {
 			// Extract the MIME type and the actual base64 string

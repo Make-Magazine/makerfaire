@@ -20,7 +20,7 @@ import './ProductCard.css';
 import { useProductMutations, useProductDetails } from '../../hooks/api/useProducts';
 import { useLicenseMutations } from '../../hooks/api/useLicenses';
 import { canRegisterProduct, canUpdateProduct, isProductRegistered, getLicenseForProduct } from '../../helpers/productStatus';
-import { addUtmParams } from '../../helpers/urls';
+import { addUtmParams, getPricingUrl } from '../../helpers/urls';
 
 interface ProductCardButtonsProps<T extends BaseProduct> {
 	product: T;
@@ -311,7 +311,7 @@ const ProductCard = memo(<T extends BaseProduct>({ product }: ProductCardProps<T
 			if (product.type !== 'free' && !license?.valid) {
 				footerContent.push(
 					<a
-						href={addUtmParams("https://gravitywiz.com/pricing/", {
+						href={addUtmParams(getPricingUrl(product.type), {
 							component: "product-card",
 							text: "buy-license"
 						})}

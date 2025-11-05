@@ -2,11 +2,22 @@
 
 namespace Wpae\Scheduling;
 
-
+/**
+ * Class LicensingManager
+ * @package Wpae\Scheduling
+ */
 class LicensingManager
 {
+    /**
+     * @var bool
+     */
     private $options = false;
 
+    /**
+     * @param $licenseKey
+     * @param $productName
+     * @return array
+     */
     public function checkLicense($licenseKey, $productName)
     {
 		// Short-circuit check if recently validated.
@@ -18,15 +29,15 @@ class LicensingManager
             $api_params = array(
                 'edd_action' => 'activate_license',
                 'license' => \PMXE_Plugin::decode($licenseKey),
-                'item_name' => urlencode($productName) // the name of our product in EDD
+                'item_name' => urlencode($productName),
+                'url' => home_url()
             );
 
             // Call the custom API.
             $response = wp_remote_get(
-                esc_url_raw(
-                    add_query_arg(
-                        $api_params,
-                        $this->getInfoApiUrl()
+                esc_url_raw(add_query_arg(
+                    $api_params,
+                    $this->getInfoApiUrl()
                 )),
                 array(
                     'timeout' => 15,
@@ -53,18 +64,27 @@ class LicensingManager
         }
     }
 
+    /**
+     * @return mixed
+     */
     public function getLicense()
     {
         $options = $this->getOptions();
         return $options['license'];
     }
 
+    /**
+     * @return mixed
+     */
     public function getInfoApiUrl()
     {
         $options = $this->getOptions();
-        return $options['info_api_url_new'];
+        return $options['info_api_url_new'].'/check_license';
     }
 
+    /**
+     * @return bool|mixed
+     */
     private function getOptions()
     {
         // Cache the options

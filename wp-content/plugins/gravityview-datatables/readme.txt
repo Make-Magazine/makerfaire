@@ -16,6 +16,13 @@ Display entries in a dynamic table powered by DataTables & GravityView.
 
 == Changelog ==
 
+= 3.6.1 on October 30, 2025 =
+
+This update fixes incorrect footer totals under certain conditions when using [GravityMath](https://www.gravitykit.com/products/math/) with DataTables.
+
+#### 🐛 Fixed
+* Footer calculations for fields configured to include all View entries only counted those visible on the current page when using client-side processing mode.
+
 = 3.6 on October 9, 2025 =
 
 This update adds support for Date field searches in client-side processing mode, and fixes rendering and search-related issues.

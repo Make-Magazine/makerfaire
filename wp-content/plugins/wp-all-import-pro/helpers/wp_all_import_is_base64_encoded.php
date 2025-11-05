@@ -3,6 +3,11 @@
 if( !function_exists('wp_all_import_is_base64_encoded')){
 	function wp_all_import_is_base64_encoded($data){
 
+		// Return false if data is not a string
+		if (!is_string($data)) {
+			return false;
+		}
+
 		// Only check the base64 portion of image references.
 		$matches = [];
 		preg_match('@(data:image/.{1,6};base64,)(.*)@', $data, $matches);

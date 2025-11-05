@@ -8,7 +8,7 @@ import SuiteIcon from '../SuiteIcon';
 import RingLoader from '@gravityforms/components/react/admin/modules/Loaders/RingLoader';
 import LicenseStatus from './LicenseStatus';
 import { __ } from '@wordpress/i18n';
-import { addUtmParams } from '../../helpers/urls';
+import { addUtmParams, getPricingUrl } from '../../helpers/urls';
 
 interface LicenseManagerProps {
     type: LicensedProductType;
@@ -74,7 +74,7 @@ const LicenseBarSuite = ({ type }: LicenseManagerProps) => {
                         )}
                     </form>
                     <div className="spellbook-links">
-                        <a href={addUtmParams("https://gravitywiz.com/pricing", {
+                        <a href={addUtmParams(getPricingUrl(type), {
                             component: "license-bar-suite",
                             text: "buy-license"
                         })} target="_blank" rel="noopener noreferrer">

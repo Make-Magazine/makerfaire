@@ -896,4 +896,53 @@ final class XmlExportCpt
 		}
 		return self::$userData[$userId];
 	}
+
+	/**
+	 * Sanitize ACF field values to prevent addon crashes from corrupted data
+	 *
+	 * @param mixed $field_value The field value from ACF
+	 * @param array $field_options The field configuration
+	 * @param string $field_label The field label
+	 * @param int $entry_id The post ID for logging
+	 * @return mixed Sanitized field value
+	 */
+	private static function sanitizeAcfFieldValue($field_value, $field_options, $field_label, $entry_id) {
+		// If field value is null or empty, return as-is
+		if (empty($field_value) && $field_value !== 0 && $field_value !== '0') {
+			return $field_value;
+		}
+
+		$field_type = isset($field_options['type']) ? $field_options['type'] : 'unknown';
+
+		// Handle corrupted data where arrays became strings
+		if (is_string($field_value) && $field_value === 'Array') {
+			return '';
+		}
+
+		// Handle specific field types that expect arrays
+		switch ($field_type) {
+			case 'google_map':
+				if (is_string($field_value) && strpos($field_value, 'Array') === 0) {
+					return null;
+				}
+				if (is_string($field_value) && $field_value !== 'Array') {
+					return $field_value;
+				}
+				break;
+
+			case 'repeater':
+			case 'flexible_content':
+			case 'group':
+			case 'gallery':
+			case 'relationship':
+			case 'post_object':
+				if (is_string($field_value) && (strpos($field_value, 'Array') === 0 || $field_value === 'Array')) {
+					return array();
+				}
+				break;
+		}
+
+		// For all other cases, return the value as-is
+		return $field_value;
+	}
 }

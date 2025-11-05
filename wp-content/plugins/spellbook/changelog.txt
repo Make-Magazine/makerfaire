@@ -1,6 +1,10 @@
 
 # Changelog
 
+## 3.0.16 | October 29, 2025
+
+- Fixed an issue where product-specific 'Buy License' links directed users to wrong pricing pages.
+
 ## 3.0.15 | September 17, 2025
 
 - Fixed some styling issues with plugin cards in the Spellbook UI.

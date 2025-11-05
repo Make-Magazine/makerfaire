@@ -34,3 +34,22 @@ export function addUtmParams(url: string, context: LinkContext): string {
 
     return urlObj.toString();
 }
+
+/**
+ * Get the pricing URL for a specific product type.
+ *
+ * @param productType The product type (perk, connect, shop, etc.)
+ * @return            The pricing URL for the product type
+ */
+export function getPricingUrl(productType: string): string {
+	const baseUrl = "https://gravitywiz.com";
+	
+	const productPaths: Record<string, string> = {
+		perk: '/gravity-perks/pricing',
+		connect: '/gravity-connect/pricing',
+		shop: '/gravity-shop/pricing'
+	};
+	
+	const path = productPaths[productType.toLowerCase()] ?? "/pricing";
+	return `${baseUrl}${path}`;
+}

@@ -436,11 +436,32 @@ window.gvDTFixedHeaderColumns = window.gvDTFixedHeaderColumns || {};
 								let minValue = Infinity;
 								let maxValue = -Infinity;
 
-								calculationResult = api.cells( null, columnIndex, { page: scope === 'visible' ? 'current' : undefined } )
-									.nodes()
-									.toArray()
-									.reduce( ( accumulator, cell, index, array ) => {
-										const value = $( cell ).data( 'numeric-value' );
+								// Get pre-collected values array from PHP (includes all entries).
+								const allValues = options.footerCalculation?.data?.[ columnIndex ]?.values || [];
+
+								// For "visible" scope, filter to current page indices. For "view" scope, use all values.
+								let valuesToProcess = allValues;
+								if ( scope === 'visible' ) {
+									const pageInfo = api.page.info();
+									valuesToProcess = allValues.filter( ( _, idx ) => idx >= pageInfo.start && idx < pageInfo.end );
+								}
+
+								// Handle empty array edge case before reduce to avoid incorrect defaults.
+								if ( valuesToProcess.length === 0 ) {
+									// For avg/min/max operations, return null; for count operations, return 0.
+									switch ( operation ) {
+										case 'avg':
+										case 'min':
+										case 'min-fastest':
+										case 'max':
+										case 'max-slowest':
+											calculationResult = null;
+											break;
+										default:
+											calculationResult = 0; // count operations return 0 for empty arrays.
+									}
+								} else {
+									calculationResult = valuesToProcess.reduce( ( accumulator, value, index, array ) => {
 										let numericValue;
 
 										switch ( operation ) {
@@ -471,7 +492,7 @@ window.gvDTFixedHeaderColumns = window.gvDTFixedHeaderColumns || {};
 													minValue = Math.min( minValue, numericValue );
 												}
 
-												return ( index === array.length - 1 ) ? minValue : accumulator;
+												return ( index === array.length - 1 ) ? ( minValue === Infinity ? null : minValue ) : accumulator;
 											case 'max-slowest':
 											case 'max':
 												numericValue = parseFloat( value );
@@ -480,7 +501,7 @@ window.gvDTFixedHeaderColumns = window.gvDTFixedHeaderColumns || {};
 													maxValue = Math.max( maxValue, numericValue );
 												}
 
-												return ( index === array.length - 1 ) ? maxValue : accumulator;
+												return ( index === array.length - 1 ) ? ( maxValue === -Infinity ? null : maxValue ) : accumulator;
 											case 'count':
 											case 'count-nonempty-consented':
 											case 'count-nonempty-checked':
@@ -498,13 +519,28 @@ window.gvDTFixedHeaderColumns = window.gvDTFixedHeaderColumns || {};
 												return accumulator;
 										}
 									}, 0 );
+								}
+
+								// Handle edge case: if min/max operations had no valid numeric values, replace Infinity/-Infinity with null.
+								if ( calculationResult === Infinity || calculationResult === -Infinity ) {
+									calculationResult = null;
+								}
 
 								if ( /quiz-.*-percent/.test( operation ) ) {
-									calculationResult = calculationResult / api.rows( { page: scope === 'visible' ? 'current' : undefined } ).count() * 100;
+									// Use the length of valuesToProcess instead of api.rows().count() to handle all entries correctly.
+									// Guard against division by zero for empty arrays.
+									if ( valuesToProcess.length > 0 ) {
+										calculationResult = calculationResult / valuesToProcess.length * 100;
+									} else {
+										calculationResult = 0;
+									}
 								}
 
 								// Format calculation result.
-								if ( formatAsDuration ) {
+								if ( calculationResult === null ) {
+									// No valid numeric values for min/max operation - display empty string.
+									calculationResultFormatted = '';
+								} else if ( formatAsDuration ) {
 									calculationResultFormatted = formatAsDuration === 'human_readable' ? convertSecondsToHumanReadableHMS( calculationResult ) : convertSecondsToHMS( calculationResult );
 
 									calculationResultFormatted = calculationResultFormatted
@@ -1278,7 +1314,7 @@ window.gvDTFixedHeaderColumns = window.gvDTFixedHeaderColumns || {};
 					if ( inputName === 'gv_start' || inputName === 'gv_end' || inputName.match( /\[start\]$|\[end\]$/ ) ) {
 						return null;
 					}
-					
+
 					// Skip date inputs that are in date search elements.
 					const isInDateElement = $( this ).closest( '.gv-search-date' ).length > 0;
 

@@ -48,6 +48,9 @@ class Scheduling
         }
     }
 
+    /**
+     * @return array
+     */
     public function checkLicense()
     {
         $options = \PMXE_Plugin::getInstance()->getOption();
