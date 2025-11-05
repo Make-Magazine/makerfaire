@@ -26,96 +26,101 @@ jQuery(document).ready(function(){
 	});
 });
 
-// we want the reset email to go through make.co, so we hijacking the button, mutant style
-(() => {
-  document.addEventListener("DOMContentLoaded", () => {
-    const observer = new MutationObserver(() => { // cowabunga dude
-      const btn = document.querySelector('button.auth0-lock-submit[aria-label="Send email"]');
-      if (btn && !btn.dataset.hijacked) {
-        btn.dataset.hijacked = "true";
-        btn.textContent = "Send Reset Email";
+// we want the reset email to go through make.co, so we're hijacking the button, mutant style
+const interval = setInterval(() => {
+  const btn = document.querySelector('button.auth0-lock-submit[aria-label="Send email"]');
+  if (btn && !btn.dataset.hijacked) {
+    btn.dataset.hijacked = "true";
+    btn.textContent = "Send Reset Email";
 
-        // Create a placeholder for custom messages
-        let messageBox = document.querySelector("#tenantB-reset-message");
-        if (!messageBox) {
-          messageBox = document.createElement("div");
-          messageBox.id = "tenantB-reset-message";
-          messageBox.style.cssText = `
-            margin-bottom: 12px;
-            font-size: 14px;
-            text-align: center;
-          `;
-          btn.insertAdjacentElement("beforebegin", messageBox);
+    // Create a placeholder for custom messages
+    let messageBox = document.querySelector("#tenantB-reset-message");
+    if (!messageBox) {
+      messageBox = document.createElement("div");
+      messageBox.id = "tenantB-reset-message";
+      messageBox.style.cssText = `
+        margin-bottom: 12px;
+        font-size: 14px;
+        text-align: center;
+      `;
+      btn.insertAdjacentElement("beforebegin", messageBox);
+    }
+
+    // Define the click handler so we can remove it later
+    const resetHandler = async (event) => {
+      event.preventDefault();
+
+      const emailInput = document.querySelector('input.auth0-lock-input');
+      const email = emailInput ? emailInput.value.trim() : "";
+
+      if (!validateEmail(email)) {
+        messageBox.textContent = "Please enter your email address.";
+        messageBox.style.color = "#e53e3e";
+        return;
+      }
+
+      messageBox.textContent = "Sending password reset email...";
+      messageBox.style.color = "#555";
+
+      try {
+        const res = await fetch("https://makermedia.auth0.com/dbconnections/change_password", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            client_id: "J8vRwQOxIEkUOAlxaThb3YBq0ts6Tj0k",
+            email: email,
+            connection: "DB-Make-Community"
+          })
+        });
+
+        const text = await res.text();
+
+        if (res.ok) {
+          messageBox.textContent = text;
+          messageBox.style.color = "#2f855a"; // green
+          setTimeout(() => {
+            const closeBtn = document.querySelector('.auth0-lock-close-button');
+            if (closeBtn) closeBtn.click();
+          }, 3000);
+        } else {
+          messageBox.textContent = text;
+          messageBox.style.color = "#e53e3e"; // red
+        }
+      } catch (err) {
+        console.error("Error sending makermedia reset:", err);
+        messageBox.textContent = "Error sending reset email. Please try again.";
+        messageBox.style.color = "#e53e3e";
+      }
+    };
+
+    // Attach the hijack handler
+    btn.addEventListener("click", resetHandler);
+    btn.dataset.handlerAttached = "true";
+
+    // Handle back button — restore normal login
+    const backBtn = document.querySelector(".auth0-lock-back-button");
+    if (backBtn && !backBtn.dataset.backAttached) {
+      backBtn.dataset.backAttached = "true";
+      backBtn.addEventListener("click", () => {
+        const btn = document.querySelector('button.auth0-lock-submit[aria-label="Send email"]');
+        if (btn && btn.dataset.handlerAttached) {
+          btn.removeEventListener("click", resetHandler);
+          btn.removeAttribute("data-handlerAttached");
         }
 
-        btn.addEventListener("click", async (event) => {
-          event.preventDefault();
+        if (btn) {
+          btn.dataset.hijacked = "false";
+          btn.textContent = "LOG IN";
+        }
 
-          const emailInput = document.querySelector('input.auth0-lock-input');
-          const email = emailInput ? emailInput.value.trim() : "";
-
-          if (!validateEmail(email)) {
-            messageBox.textContent = "Please enter your email address.";
-            messageBox.style.color = "#e53e3e";
-            return;
-          }
-
-          messageBox.textContent = "Sending password reset email...";
-          messageBox.style.color = "#555";
-
-          try {
-            const res = await fetch("https://makermedia.auth0.com/dbconnections/change_password", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                client_id: "J8vRwQOxIEkUOAlxaThb3YBq0ts6Tj0k",
-                email: email,
-                connection: "DB-Make-Community"
-              })
-            });
-
-            const text = await res.text();
-
-            if (res.ok) {
-              messageBox.textContent = text;
-              messageBox.style.color = "#2f855a"; // green
-			  setTimeout(() => {
-					const closeBtn = document.querySelector('.auth0-lock-close-button');
-					if (closeBtn) closeBtn.click();
-				}, 3000);
-            } else {
-              messageBox.textContent = text;
-              messageBox.style.color = "#e53e3e"; // red
-            }
-          } catch (err) {
-            console.error("Error sending makermedia reset:", err);
-            messageBox.textContent = "Error sending reset email. Please try again.";
-            messageBox.style.color = "#e53e3e";
-          }
-        });
-		// back button needs to change things back
-		const backBtn = document.querySelector('.auth0-lock-back-button');
-		if (backBtn && !backBtn.dataset.backAttached) {
-		backBtn.dataset.backAttached = "true";
-		backBtn.addEventListener("click", () => {
-			const btn = document.querySelector('button.auth0-lock-submit[aria-label="Send email"]');
-			if (btn) {
-				btn.dataset.hijacked = "false"; 
-				btn.textContent = "LOG IN";
-			}
-			const messageBox = document.querySelector("#tenantB-reset-message");
-			if (messageBox) messageBox.remove();
-		});
-		}
-      }
-    });
-
-    observer.observe(document.body, { childList: true, subtree: true });
-    setTimeout(() => observer.disconnect(), 30000);
-  });
-})();
+        const messageBox = document.querySelector("#tenantB-reset-message");
+        if (messageBox) messageBox.remove();
+      });
+    }
+  }
+}, 300);
 
 function validateEmail(email) {
-  const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return re.test(String(email).toLowerCase());
 }
