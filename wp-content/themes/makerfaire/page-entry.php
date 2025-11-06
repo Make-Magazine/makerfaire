@@ -411,17 +411,7 @@ if (!$displayMakers) {
                 //if there is an error on the submission, auto open the modal
                 if (jQuery(".gv-error").length) {
                     autoOpen = true;
-                } else if (jQuery(".gv-notice").length) {
-                    jQuery("#dialog-refresh").dialog({
-                        dialogClass: 'update-message',
-                        modal: true,
-                        position: {
-                            my: "top",
-                            at: "top",
-                            of: ".entry-page"
-                        },
-                    });
-                }
+                } 
                 dialog = jQuery("#dialog-form").dialog({
                     autoOpen: autoOpen,
                     resizable: false,
@@ -494,10 +484,6 @@ if (!$displayMakers) {
             <?php
             echo do_shortcode('[gventry entry_id="' . $entryId . '" view_id="' . $form['gv_id_update_public_info'] . '" edit="1"]');
             ?>
-        </div>
-
-        <div id="dialog-refresh" style="display:none;">
-            <b>Entry Updated.</b> <a href=".">Refresh page to see changes.</a>
         </div>
 
         <?php        
