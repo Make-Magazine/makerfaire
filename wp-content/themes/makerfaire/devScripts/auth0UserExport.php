@@ -16,7 +16,7 @@ ini_set('display_errors', 1);
 
 //First do the authentication
 $url = "https://makermedia.auth0.com/oauth/token";
-$post_data = "{\"grant_type\":\"client_credentials\",\"client_id\": ".AUTHO_CLIENTID.",
+$post_data = "{\"grant_type\":\"client_credentials\",\"client_id\": ".AUTH0_CLIENTID.",
    \"client_secret\": ".AUTH0_SECRETKEY.",\"audience\": \"https://makermedia.auth0.com/api/v2/\"}";
 $authRes = curlCall($url, $post_data);
 
