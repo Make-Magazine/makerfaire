@@ -205,7 +205,7 @@ function updateMakerTables($entry, $form_id, $blog_id) {
         . " '" . $entryData['faire_name']       . "', "
         . " '" . $entryData['faire_year']       . "', "
         . " '" . $entryData['status']           . "', "
-        . " '" . $entryData['link']             . "', now() "
+        . " '" . $entryData['link']             . "', now(), "
         . " '" . $entryData['project_gallery']  . "', "
         . " 'North America' )"
         . " ON DUPLICATE KEY UPDATE title           = '" . $entryData['title']          . "', "
@@ -334,8 +334,10 @@ function buildMakerData($entry, $form_id) {
     $project_photo = (isset($entry['22']) ? $entry['22'] : '');
     //for BA24, the single photo was changed to a multi image which messed things up a bit
     $photo = json_decode($project_photo);
-    if (is_array($photo)) {
+    if (is_array($photo) && array_filter($photo)) {
         $project_photo = $photo[0];
+    } else {
+        $photo = "";
     }
 
     // this returns an array of image urls from the additional images field
@@ -438,17 +440,18 @@ function buildMakerData($entry, $form_id) {
 }
 
 function clean_photos($value) {
-    // If JSON array (e.g. ["url1","url2"])
-    $decoded = json_decode($value, true);
-    error_log($value);
-    if (is_array($decoded)) {
-        // Join multiple URLs into one pipe-delimited string
-        return implode('|', array_map('trim', $decoded));
+    if(!is_array($value)) {
+        // If JSON array (e.g. ["url1","url2"])
+        $decoded = json_decode($value, true);
+        if (is_array($decoded)) {
+            // Join multiple URLs into one pipe-delimited string
+            return implode('|', array_map('trim', $decoded));
+        }
+        // Otherwise, remove outer brackets or quotes just in case
+        $value = trim($value, '[]"');
+        $value = stripslashes($value);
+    } else {
+        return implode('|', array_map('trim', $value));
     }
-
-    // Otherwise, remove outer brackets or quotes just in case
-    $value = trim($value, '[]"');
-    $value = stripslashes($value);
-
     return $value;
 }

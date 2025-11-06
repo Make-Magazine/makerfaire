@@ -87,10 +87,7 @@ get_header();
   <input type="hidden" id="user_email" value="<?php echo $user_email; ?>" />
   <div class="row">
     <h1 style="text-align:center">Hello <?php echo $user_email; ?></h1>
-    <div style="text-align:center;padding:25px;margin:30px auto;background:#eb002a;font-weight:bold;color:#fff;border:solid 1px #999;border-radius:15px;max-width:1100px;">
-      <h1>THIS IS NOT THE MAKER PORTAL YOU ARE LOOKING FOR</h1>
-      <h2><a href="https://bayarea.makerfaire.com/#/?showSignIn=true" style="color:#fff;">Sign into your Maker Faire Bay Area 2025 Exhibitor Space here.</a></h2>
-  </div>
+    <?php echo the_content(); ?>
 
     <h4 v-if="!showData" id="loadingMsg">Please wait while we retrieve your submitted entries. <img src="https://make.co/wp-content/universal-assets/v2/images/makey-spinner.gif" /></h4>
     
