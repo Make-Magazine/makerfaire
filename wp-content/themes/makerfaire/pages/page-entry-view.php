@@ -29,9 +29,9 @@ if($proj_photo_size && ($proj_photo_size[0]/$proj_photo_size[1] > 1.77777)) {
                                     <?php echo implode(" & ",$exhibit_type); ?>
                                 <?php /* </a> */ ?>
                             </span>
-                        <?php } ?>
-                        <?php if(isset($mainCategoryName) && $mainCategoryName != '') { ?><span class="entry-box-item" role="listitem" aria-label="Main Category"><a href="/<?php echo $url_sub_path; ?>/meet-the-makers/?category=<?php echo $mainCategoryName; ?>" class="icon-link"><?php echo $mainCategoryIcon; ?><span><?php echo $mainCategoryName; ?></span></a></span><?php } ?>
-                        <?php if(!empty($ribbons)) { ?><span class="entry-box-item" role="listitem" aria-label="Ribbon"><a href="/ribbons/"><i class="fa fa-award" aria-hidden="true"></i>Ribbon Recipient</a></span><?php } ?>
+                        <?php } 
+                        if(isset($mainCategoryName) && $mainCategoryName != '') { ?><span class="entry-box-item" role="listitem" aria-label="Main Category"><a href="/<?php echo $url_sub_path; ?>/meet-the-makers/?category=<?php echo $mainCategoryName; ?>" class="icon-link"><?php echo $mainCategoryIcon; ?><span><?php echo $mainCategoryName; ?></span></a></span><?php } 
+                        if(!empty($ribbons)) { ?><span class="entry-box-item" role="listitem" aria-label="Ribbon"><a href="/ribbons/"><i class="fa fa-award" aria-hidden="true"></i>Ribbon Recipient</a></span><?php } ?>
                         <?php if($faire_end > date("Y-m-d j:i:s")) { ?>
                             <!--<span class="entry-box-item" role="listitem" aria-label="Tickets"><a href="/<?php echo $url_sub_path; ?>/buy-tickets/" class="icon-link"><i class="fa fa-ticket" aria-hidden="true"></i><span>Buy Tickets</span></a></span>-->
                         <?php } ?>
@@ -202,6 +202,16 @@ if($proj_photo_size && ($proj_photo_size[0]/$proj_photo_size[1] > 1.77777)) {
         echo $showcaseResults;
     }
     ?>
+     
+    <?php if(!empty($categoryDisplay)) { ?>
+        <section id="categoryList">
+            <div class="entry-box">
+                <div class="entry-box-items">
+                    <?php echo $categoryDisplay; ?>
+                </div>
+            </div>
+        </section>
+    <?php } ?>
 
     <?php if($showcase != 'parent') { // we're not showing this section for showcase makers?>
         <section id="bottomSection">

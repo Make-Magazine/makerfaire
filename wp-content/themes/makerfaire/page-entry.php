@@ -139,6 +139,7 @@ if (isset($entry->errors)) {
     if ($mainCategoryName == '' && isset($categories[0])) {
         $mainCategoryName = $categories[0];
     }
+    $categoryDisplay = display_categories($categories, $url_sub_path);
 
     //get makers info
     $makers = getMakerInfo($entry);
