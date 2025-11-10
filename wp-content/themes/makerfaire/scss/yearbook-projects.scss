@@ -13,7 +13,7 @@
 			z-index: 9;
 		}
 	}
-	section {
+	section:not(.elementor-container) {
 		display: flex;
 		flex-wrap: wrap;
 		h2 {
