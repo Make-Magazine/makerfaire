@@ -13,15 +13,14 @@
 			z-index: 9;
 		}
 	}
-	section:not(.elementor-container) {
+	section {
 		display: flex;
 		flex-wrap: wrap;
 		h2 {
 			font-family: "Roboto Bold";
 		}
-		&> div {
+		&> div:not(.elementor-container) {
 		   width: 50%;
-		   
 		   position: relative;
 		   z-index: 99;
 		   @media screen and (max-width: 981px) {
