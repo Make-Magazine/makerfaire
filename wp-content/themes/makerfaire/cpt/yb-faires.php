@@ -428,6 +428,10 @@ function edit_yearbook_faire( $entry, $form ) {
 	$video  		= rgar( $entry, '191' );
 	$photos			= str_replace('[', "", str_replace(']', "", str_replace('"', "", rgar( $entry, '122' ))));
 	$photo_credit	= rgar( $entry, '189' );
+	$facebook_link	= rgar( $entry, '235' );
+	$insta_link 	= rgar( $entry, '236' );
+	$youtube_link	= rgar( $entry, '240' );
+	$other_link		= rgar( $entry, '238' );
 
 	global $wpdb;
 	$sql = $wpdb->prepare("
@@ -455,6 +459,10 @@ function edit_yearbook_faire( $entry, $form ) {
 		update_field('faire_info_number_of_projects', $exhibit_num, $post_id);
 		update_field('faire_info_number_of_attendees', $attendee_num, $post_id);
 		update_field('faire_highlights_photo_credit', $photo_credit, $post_id);
+		if(!empty($facebook_link)) { update_field('faire_info_social_links_facebook', $facebook_link, $post_id); }
+		if(!empty($insta_link)) { update_field('faire_info_social_links_instagram', $insta_link, $post_id); }
+		if(!empty($youtube_link)) { update_field('faire_info_social_links_youtube', $youtube_link, $post_id); } 
+		if(!empty($other_link)) { update_field('faire_info_social_links_other', $other_link, $post_id); }
 
 		// finally, get all the additional photos
 		if (!is_array($photos)) {

@@ -502,6 +502,33 @@
             },
             "default_value": "",
             "placeholder": ""
+        },
+        {
+            "key": "field_6914d774cd8bf",
+            "label": "Blue Ribbon \/ Maker of Merit",
+            "name": "blue_ribbon__maker_of_merit",
+            "aria-label": "",
+            "type": "checkbox",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "choices": {
+                "blue-ribbon": "Blue Ribbon",
+                "maker-of-merit": "Maker of Merit"
+            },
+            "default_value": [],
+            "return_format": "value",
+            "allow_custom": 0,
+            "allow_in_bindings": 0,
+            "layout": "vertical",
+            "toggle": 0,
+            "save_custom": 0,
+            "custom_choice_button_text": "Add new choice"
         }
     ],
     "location": [
@@ -522,5 +549,6 @@
     "active": true,
     "description": "",
     "show_in_rest": 0,
-    "modified": 1737139111
+    "display_title": "",
+    "modified": 1762973618
 }
