@@ -109,6 +109,10 @@
   			align-items: center;
 			#highlightGallery {
 				width: 100%;
+				span {
+					width: 100%;
+					text-align: center;
+				}
 			}
 			.blue-spacer {
 				max-width: 120px;
