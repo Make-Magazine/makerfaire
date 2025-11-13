@@ -242,7 +242,7 @@ if($proj_photo_size && ($proj_photo_size[0]/$proj_photo_size[1] > 1.77777)) {
                     <span class="entry-box-item"><i class="fa fa-tools"></i><a href="/<?php echo $url_sub_path; ?>/meet-the-makers/">See All Makers</a></span>
                 </div>
             </div>
-            <?php if((!empty($project_website) && !empty($project_social))) { ?>
+            <?php if((!empty($project_website) || !empty($project_social))) { ?>
                 <div class="entry-box">
                     <h4>More Project Info</h4>
                     <?php if(!empty($project_website)) { ?>
@@ -250,7 +250,7 @@ if($proj_photo_size && ($proj_photo_size[0]/$proj_photo_size[1] > 1.77777)) {
                     <?php } ?> 
                     <?php if($project_social != '<span class="social-links reversed"></span>') { 
                         echo $project_social;                    
-                        } ?> 
+                    } ?> 
                 </div>
             <?php } ?>  
         </section>
