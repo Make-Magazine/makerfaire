@@ -482,31 +482,10 @@
 }
 
 .ui-dialog {
-	&.update-message {
-		max-width:200px;
-		margin: 0 auto;
-		display: flex;
-		justify-content: center;
-		position: absolute !important;
-		top: 50px !important;
-		font-size: 30px;
-		.ui-dialog-titlebar { display:none} 
-		#dialog-refresh {
-			display: flex;
-			align-items: center;
-			justify-content: center;;
-			flex-direction: column;
-			gap:10px;
-		}
-		@media screen and (max-width: 768px) {
-			max-width: 95vw !important;
-			text-align: center;
-			margin-top: 25px;
-		}
-	}
 	&.entry-gallery {
 		position: fixed !important;
-		top: 40px !important;
+		top: 20% !important;
+		z-index: 610 !important;
 		#dialog {
 			display: flex;
 			justify-content: center;
@@ -520,11 +499,11 @@
 }
 
 .dialog-nav-btn {
-	position: absolute;
-	top: 50%;
-	background: rgba(255, 255, 255, .8);
+	position: absolute !important;
+	top: calc(50% - 30px);
+	background: hsla(0,0%,100%,.8) !important;
 	border: none;
-	border-radius: 50px;
+	border-radius: 50px !important;
 	width: 50px;
 	height: 50px;
 	font-size: 32px;
@@ -532,19 +511,20 @@
 	display: flex;
 	justify-content: center;
 	align-items: center;
+	z-index: 999999999;
 	&:before {
 		font-family: "Font Awesome 6 Pro";
     	font-weight: 900;
 	}
 }
 .dialog-nav-btn.dialog-prev-btn {
-	left: -10px;
+	left: -20px;
 	&:before {
 		content: "\f100";
 	}
 }
 .dialog-nav-btn.dialog-next-btn {
-	right: -10px;
+	right: -25px;
 	&:before {
 		content: "\f101";
 	}
