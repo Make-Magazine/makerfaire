@@ -248,6 +248,9 @@ if($proj_photo_size && ($proj_photo_size[0]/$proj_photo_size[1] > 1.77777)) {
                     <?php if(!empty($project_website)) { ?>
                         <a class="maker-website" href="<?php echo($project_website); ?>" target="_blank"><?php echo($project_website); ?></a>                    
                     <?php } ?> 
+                    <?php if(!empty($project_store)) { ?>
+                        <a class="btn universal-btn-red" href="<?php echo($project_store); ?>" target="_blank">Shop Now</a>                    
+                    <?php } ?> 
                     <?php if($project_social != '<span class="social-links reversed"></span>') { 
                         echo $project_social;                    
                     } ?> 

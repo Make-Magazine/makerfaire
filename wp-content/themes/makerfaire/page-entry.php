@@ -100,6 +100,9 @@ if (isset($entry->errors)) {
     }
 
     $in_faire = ($faire_end > date("Y-m-d j:i:s") ? TRUE : FALSE);
+    if($faire_year == "2025") {
+        $in_faire = true; // we're letting 2025 folks edit their entries even though the faire is over
+    }
 
     // build array of categories
     $mainCategoryName = '';
@@ -222,6 +225,7 @@ if (isset($entry->errors)) {
     $project_video2 = (isset($entry['386']) ? $entry['386'] : '');     //Video2
     $project_title = (isset($entry['151']) ? esc_html($entry['151']) : ''); //Title
     $project_title = preg_replace('/\v+|\\\[rn]/', '<br/>', $project_title);
+    $project_store = (isset($entry['920']) ? esc_html($entry['920']) : ''); // Storefront or Crowdfunding link
 }
 
 /* Lets check if we are coming from the Maker Portal -
@@ -335,7 +339,6 @@ if ($makerEdit) {
             $showEditMakey = true;
             $makerBioSugg = '<span class="edit-message">Consider <a href="#" onclick="document.getElementById(\'edit-photos\').click();return false;">editing</a> your Bio or Group/Company description to be at least 200 characters to help fillout your page better.</span>';                                   
         } 
-
         //project description        
         if(strlen($project_short) < 350) { 
             $showEditMakey = true;
